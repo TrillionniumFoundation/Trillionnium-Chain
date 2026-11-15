@@ -1,0 +1,417 @@
+{
+  "schema": "selected-composition-exact-operation-model-v2-reconstructed",
+  "reconstruction_new_run": true,
+  "new_native_benchmark": false,
+  "qualifier": "explicit achieved schedules, not physical lower bounds",
+  "domain_hex": "54524e4d2d504f4e2d53454c45435445442d4556454e542d52455345415243482d523100",
+  "domain_bytes": 36,
+  "profile_hex": "6c6f63616c2d70726f64756374382d6671343239343936373239312d6e36342d72382d73656c65637465642d7631",
+  "profile_bytes": 46,
+  "hash_length_table": {
+    "leaf": {
+      "part_lengths": [
+        46,
+        1,
+        1,
+        256
+      ],
+      "input_bytes": 361,
+      "full_sha256_compressions": 6
+    },
+    "node": {
+      "part_lengths": [
+        46,
+        1,
+        1,
+        32,
+        32
+      ],
+      "input_bytes": 173,
+      "full_sha256_compressions": 3
+    },
+    "task": {
+      "part_lengths": [
+        46,
+        32,
+        32
+      ],
+      "input_bytes": 163,
+      "full_sha256_compressions": 3
+    },
+    "context": {
+      "part_lengths": [
+        46,
+        32,
+        32,
+        32,
+        32,
+        32
+      ],
+      "input_bytes": 274,
+      "full_sha256_compressions": 5
+    },
+    "noise-seed": {
+      "part_lengths": [
+        32,
+        8
+      ],
+      "input_bytes": 95,
+      "full_sha256_compressions": 2
+    },
+    "selected-coordinate": {
+      "part_lengths": [
+        32
+      ],
+      "input_bytes": 92,
+      "full_sha256_compressions": 2
+    },
+    "noise-eight": {
+      "part_lengths": [
+        32,
+        2,
+        4
+      ],
+      "input_bytes": 98,
+      "full_sha256_compressions": 2
+    },
+    "event": {
+      "part_lengths": [
+        32,
+        8,
+        3,
+        256,
+        256
+      ],
+      "input_bytes": 617,
+      "full_sha256_compressions": 10
+    },
+    "ticket": {
+      "part_lengths": [
+        32
+      ],
+      "input_bytes": 79,
+      "full_sha256_compressions": 2
+    }
+  },
+  "fixture_replays": [
+    {
+      "name": "real_lottery_hit_p_1_64",
+      "result": {
+        "status": "ACCEPT_SELECTED_EVENT_ONLY",
+        "event_id": "924dc6430266b51e856366901229d37f2aedc5bb45d576b010da7c13695025e5",
+        "ticket": "021041180e552a9210ed732c5a31f628bcc316829140778adf9cec22c6e91053"
+      },
+      "counts": {
+        "sha256_calls": 56,
+        "sha256_input_bytes": 8128,
+        "sha256_compression_blocks": 152,
+        "scalar_multiplications": 2048,
+        "scalar_additions": 1920
+      },
+      "counts_match_retained_native_observation": true,
+      "new_native_measurement": false,
+      "tag_call_counts": {
+        "context": 3,
+        "event": 1,
+        "leaf": 2,
+        "node": 12,
+        "noise-eight": 32,
+        "noise-seed": 1,
+        "selected-coordinate": 1,
+        "task": 3,
+        "ticket": 1
+      },
+      "unique_hash_counts": {
+        "distinct_hash_inputs": 52,
+        "unique_hash_input_bytes": 7254,
+        "full_hash_compressions_after_output_cache": 136
+      },
+      "prefix_cached_compressions": 93,
+      "prefix_cache_payload": {
+        "chaining_state_bytes": 2976,
+        "prefix_key_bytes": 16128,
+        "python_object_overhead_included": false
+      }
+    },
+    {
+      "name": "false_noisy_product_0",
+      "result": {
+        "status": "REJECT",
+        "error": "NOISY_PRODUCT"
+      },
+      "counts": {
+        "sha256_calls": 54,
+        "sha256_input_bytes": 7691,
+        "sha256_compression_blocks": 144,
+        "scalar_multiplications": 1536,
+        "scalar_additions": 1472
+      },
+      "counts_match_retained_native_observation": true,
+      "new_native_measurement": false,
+      "tag_call_counts": {
+        "context": 2,
+        "event": 1,
+        "leaf": 2,
+        "node": 12,
+        "noise-eight": 32,
+        "noise-seed": 1,
+        "selected-coordinate": 1,
+        "task": 2,
+        "ticket": 1
+      },
+      "unique_hash_counts": {
+        "distinct_hash_inputs": 52,
+        "unique_hash_input_bytes": 7254,
+        "full_hash_compressions_after_output_cache": 136
+      },
+      "prefix_cached_compressions": 93,
+      "prefix_cache_payload": {
+        "chaining_state_bytes": 2976,
+        "prefix_key_bytes": 16128,
+        "python_object_overhead_included": false
+      }
+    },
+    {
+      "name": "false_useful_product_0",
+      "result": {
+        "status": "REJECT",
+        "error": "USEFUL_PRODUCT"
+      },
+      "counts": {
+        "sha256_calls": 54,
+        "sha256_input_bytes": 7691,
+        "sha256_compression_blocks": 144,
+        "scalar_multiplications": 2048,
+        "scalar_additions": 1920
+      },
+      "counts_match_retained_native_observation": true,
+      "new_native_measurement": false,
+      "tag_call_counts": {
+        "context": 2,
+        "event": 1,
+        "leaf": 2,
+        "node": 12,
+        "noise-eight": 32,
+        "noise-seed": 1,
+        "selected-coordinate": 1,
+        "task": 2,
+        "ticket": 1
+      },
+      "unique_hash_counts": {
+        "distinct_hash_inputs": 52,
+        "unique_hash_input_bytes": 7254,
+        "full_hash_compressions_after_output_cache": 136
+      },
+      "prefix_cached_compressions": 93,
+      "prefix_cache_payload": {
+        "chaining_state_bytes": 2976,
+        "prefix_key_bytes": 16128,
+        "python_object_overhead_included": false
+      }
+    }
+  ],
+  "producer_schedules": [
+    {
+      "algorithm": "prepared_trees_direct_U",
+      "sample_nonces": [
+        24,
+        25,
+        26
+      ],
+      "scope": "exact schedule; not a time measurement or complete mining search",
+      "preparation_counts": {
+        "sha256_calls": 254,
+        "sha256_input_bytes": 68006,
+        "sha256_compression_blocks": 1146,
+        "scalar_multiplications": 0,
+        "scalar_additions": 0
+      },
+      "preparation_prefix_cached_compressions": 894,
+      "original_matrix_payload_bytes": 32768,
+      "merkle_hash_payload_bytes": 8128,
+      "useful_product_cache_payload_bytes": 0,
+      "trials": [
+        {
+          "nonce": 24,
+          "event_id": "924dc6430266b51e856366901229d37f2aedc5bb45d576b010da7c13695025e5",
+          "ticket": "021041180e552a9210ed732c5a31f628bcc316829140778adf9cec22c6e91053",
+          "meets_target": true,
+          "counts": {
+            "sha256_calls": 40,
+            "sha256_input_bytes": 4893,
+            "sha256_compression_blocks": 96,
+            "scalar_multiplications": 2048,
+            "scalar_additions": 1920
+          },
+          "new_hash_inputs_after_lifetime_output_cache": {
+            "distinct_hash_inputs": 38,
+            "unique_hash_input_bytes": 4456,
+            "full_hash_compressions_after_output_cache": 88
+          },
+          "prefix_cached_new_compressions": 57,
+          "bounded_cache_new_compressions": 57,
+          "witness_equals_unmodified_reference": true
+        },
+        {
+          "nonce": 25,
+          "event_id": "68d1ebd2aac8eb33c4ffe2d193be11d0dfa60ab45f6a980ebd4ca7942f0af2e6",
+          "ticket": "e65bdedba3bdc7fd984ace1024744eb5f87bdfb200491f72ead7b761e1d79490",
+          "meets_target": false,
+          "counts": {
+            "sha256_calls": 40,
+            "sha256_input_bytes": 4893,
+            "sha256_compression_blocks": 96,
+            "scalar_multiplications": 2048,
+            "scalar_additions": 1920
+          },
+          "new_hash_inputs_after_lifetime_output_cache": {
+            "distinct_hash_inputs": 36,
+            "unique_hash_input_bytes": 4019,
+            "full_hash_compressions_after_output_cache": 80
+          },
+          "prefix_cached_new_compressions": 47,
+          "bounded_cache_new_compressions": 47,
+          "witness_equals_unmodified_reference": true
+        },
+        {
+          "nonce": 26,
+          "event_id": "f593f3e3c4727e323b1ec46d7c8c8aef57120299c7c1c298e8af2391d9a21870",
+          "ticket": "24d531ac342a8a66fa8af11ff3c2b43d5e0b4d66c8777e7be3ef7324c94f66c4",
+          "meets_target": false,
+          "counts": {
+            "sha256_calls": 40,
+            "sha256_input_bytes": 4893,
+            "sha256_compression_blocks": 96,
+            "scalar_multiplications": 2048,
+            "scalar_additions": 1920
+          },
+          "new_hash_inputs_after_lifetime_output_cache": {
+            "distinct_hash_inputs": 36,
+            "unique_hash_input_bytes": 4019,
+            "full_hash_compressions_after_output_cache": 80
+          },
+          "prefix_cached_new_compressions": 47,
+          "bounded_cache_new_compressions": 47,
+          "witness_equals_unmodified_reference": true
+        }
+      ],
+      "final_prefix_cache_payload": {
+        "chaining_state_bytes": 33440,
+        "prefix_key_bytes": 230144,
+        "python_object_overhead_included": false
+      },
+      "final_bounded_cache_payload": {
+        "prefix_state_bytes": 160,
+        "prefix_key_bytes": 320,
+        "full_digest_bytes": 64,
+        "full_digest_key_bytes": 437,
+        "max_prefix_slots": 5,
+        "max_full_digest_slots": 2,
+        "python_object_overhead_included": false,
+        "transient_compression_workspace_included": false
+      },
+      "bounded_total_compressions": 1045
+    },
+    {
+      "algorithm": "prepared_trees_and_all_512_U",
+      "sample_nonces": [
+        24,
+        25,
+        26
+      ],
+      "scope": "exact schedule; not a time measurement or complete mining search",
+      "preparation_counts": {
+        "sha256_calls": 254,
+        "sha256_input_bytes": 68006,
+        "sha256_compression_blocks": 1146,
+        "scalar_multiplications": 262144,
+        "scalar_additions": 229376
+      },
+      "preparation_prefix_cached_compressions": 894,
+      "original_matrix_payload_bytes": 32768,
+      "merkle_hash_payload_bytes": 8128,
+      "useful_product_cache_payload_bytes": 131072,
+      "trials": [
+        {
+          "nonce": 24,
+          "event_id": "924dc6430266b51e856366901229d37f2aedc5bb45d576b010da7c13695025e5",
+          "ticket": "021041180e552a9210ed732c5a31f628bcc316829140778adf9cec22c6e91053",
+          "meets_target": true,
+          "counts": {
+            "sha256_calls": 40,
+            "sha256_input_bytes": 4893,
+            "sha256_compression_blocks": 96,
+            "scalar_multiplications": 1536,
+            "scalar_additions": 1472
+          },
+          "new_hash_inputs_after_lifetime_output_cache": {
+            "distinct_hash_inputs": 38,
+            "unique_hash_input_bytes": 4456,
+            "full_hash_compressions_after_output_cache": 88
+          },
+          "prefix_cached_new_compressions": 57,
+          "bounded_cache_new_compressions": 57,
+          "witness_equals_unmodified_reference": true
+        },
+        {
+          "nonce": 25,
+          "event_id": "68d1ebd2aac8eb33c4ffe2d193be11d0dfa60ab45f6a980ebd4ca7942f0af2e6",
+          "ticket": "e65bdedba3bdc7fd984ace1024744eb5f87bdfb200491f72ead7b761e1d79490",
+          "meets_target": false,
+          "counts": {
+            "sha256_calls": 40,
+            "sha256_input_bytes": 4893,
+            "sha256_compression_blocks": 96,
+            "scalar_multiplications": 1536,
+            "scalar_additions": 1472
+          },
+          "new_hash_inputs_after_lifetime_output_cache": {
+            "distinct_hash_inputs": 36,
+            "unique_hash_input_bytes": 4019,
+            "full_hash_compressions_after_output_cache": 80
+          },
+          "prefix_cached_new_compressions": 47,
+          "bounded_cache_new_compressions": 47,
+          "witness_equals_unmodified_reference": true
+        },
+        {
+          "nonce": 26,
+          "event_id": "f593f3e3c4727e323b1ec46d7c8c8aef57120299c7c1c298e8af2391d9a21870",
+          "ticket": "24d531ac342a8a66fa8af11ff3c2b43d5e0b4d66c8777e7be3ef7324c94f66c4",
+          "meets_target": false,
+          "counts": {
+            "sha256_calls": 40,
+            "sha256_input_bytes": 4893,
+            "sha256_compression_blocks": 96,
+            "scalar_multiplications": 1536,
+            "scalar_additions": 1472
+          },
+          "new_hash_inputs_after_lifetime_output_cache": {
+            "distinct_hash_inputs": 36,
+            "unique_hash_input_bytes": 4019,
+            "full_hash_compressions_after_output_cache": 80
+          },
+          "prefix_cached_new_compressions": 47,
+          "bounded_cache_new_compressions": 47,
+          "witness_equals_unmodified_reference": true
+        }
+      ],
+      "final_prefix_cache_payload": {
+        "chaining_state_bytes": 33440,
+        "prefix_key_bytes": 230144,
+        "python_object_overhead_included": false
+      },
+      "final_bounded_cache_payload": {
+        "prefix_state_bytes": 160,
+        "prefix_key_bytes": 320,
+        "full_digest_bytes": 64,
+        "full_digest_key_bytes": 437,
+        "max_prefix_slots": 5,
+        "max_full_digest_slots": 2,
+        "python_object_overhead_included": false,
+        "transient_compression_workspace_included": false
+      },
+      "bounded_total_compressions": 1045
+    }
+  ]
+}

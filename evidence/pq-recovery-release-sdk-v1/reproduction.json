@@ -1,0 +1,482 @@
+{
+  "schema": "trnm.recovery-release-sdk.local-reproduction.v1",
+  "status": "COMPONENT_RESULTS_HOLD_NO_GO",
+  "baseline_commit": "59f75acd1d4261972b8aaa45e0c36259fcafd45c",
+  "baseline_tree": "c0dc8282e5b2618ffb35061f108bb2fa96e9b348",
+  "scope": "Local x86_64 worktree component tests. Frozen source hashes identify inputs; no complete final-commit, prospective-merge, ARM or hosted-CI execution is claimed.",
+  "source_manifest_timing": "Collected after component runs; not a full-tree before-and-after execution attestation.",
+  "source_files": {
+    ".github/workflows/pon-pq-system-continuation.yml": {
+      "sha256": "d7d1d758878cecb77685ac4f0d5c76fc3a10e8b70aed09d8ab025b0b31c6018d",
+      "git_blob": "8f63d48924c991d9972a02ab1b13721df48e7adb"
+    },
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "sha256": "c70ca146921cba39a8a663b262b93907bfa274079c27f41e79bf7489dd28e714",
+      "git_blob": "32d02c7ada48ce4935dd85cbf43347800768f352"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "sha256": "f383cb92f6646f66e883c7f91c8f0d236e0daddbfa3521076bcff0f32c47433e",
+      "git_blob": "5962a3697dcdb4aaaa03421357b7a125d3d97ae6"
+    },
+    "docs/security/PQ_CELL_ACTIVATION_CURRENT_PUBLICATION_V1.md": {
+      "sha256": "de699bb0cf7b575a135b49fec1c92a06d48fb05ca748f2c0c787addf62afd082",
+      "git_blob": "8f1f3e45aa372164630cc6132acb8a558a62d3cb"
+    },
+    "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md": {
+      "sha256": "fcfef6a6f97a9efc4f45738e3fc2f8c5fd827666e9b7e7962eb25beb83d6a657",
+      "git_blob": "6e498baab34441a196aab250c6eec4b32c6ecb01"
+    },
+    "scripts/ci/check_pq_research_integration.py": {
+      "sha256": "f8187e8950d7e45004f6dc22e35babb0581f95fa9e9a7dbc9661fb285f58d004",
+      "git_blob": "7789ac9fde02282516d444c9b87b4b47c9754044"
+    },
+    "trillionnium/crates/trnm-checkpoint-store/src/lib.rs": {
+      "sha256": "efb556c3e4a2839a176d5c9ee76625690d4319115faec11b2aa761940637e2b3",
+      "git_blob": "7c1812d9e71c65e36c827adfcfdf3714ba5d575b"
+    },
+    "trillionnium/crates/trnm-checkpoint-store/src/live_journal_v2.rs": {
+      "sha256": "798f958fee01354721909425a31b9df9575a615c42ed442e4546fef58165cf06",
+      "git_blob": "566c2a94f11ea4949cace063f8b2e6dab57e0397"
+    },
+    "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs": {
+      "sha256": "28ba249a335cf1bd0f81b76739a3286c98d18421739ecc633f063841831c4eb4",
+      "git_blob": "b236ce047843a68cf371e02d6bb480fea6fc71ff"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs": {
+      "sha256": "da7ff070555cb88c7ee88cc3b764611097c79db26a0c00960d9d8e7779b78227",
+      "git_blob": "a8a6f872fd354fccdd1f1f28609f487719c4fdaf"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/mldsa_native_differential.py": {
+      "sha256": "222395c704bc8b63ef47e196c1fc9e99b8735b51532307504777a92fb3217218",
+      "git_blob": "3139f70e31719cecfb601dd18e9fe417de1245df"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_mldsa_native_source.py": {
+      "sha256": "e68630ca453cb4edf96f7116904dad963efa3172c6a839fa7aafdb0811910813",
+      "git_blob": "e3b9315f18339dcb84b2fb16834cdb3c882724c5"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_tuf_sdk_source.py": {
+      "sha256": "fb4c5138114e735a98c09db2f7c62595b30c6d72c01f9203250cbafc4f0a17d4",
+      "git_blob": "41197a6708924fc698bcb2116e25435acfa7292f"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/tuf_sdk_differential.py": {
+      "sha256": "6d721cacaabe5fbbdc4608293247c6660fbcc573b1d307ffb77636b3c3cbf0ba",
+      "git_blob": "a60707d620330d123007f799d2ce57554860e1a0"
+    },
+    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": {
+      "sha256": "92b9d2942a0ad2473ebee418accb20090e3fbc1f42f4b9ff2fcdc7e9d13ab204",
+      "git_blob": "c6e3c62219e6f10030cee3dad4df2f2045acd9cd"
+    },
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs": {
+      "sha256": "1fd5b39e0925b258a1b0ba21b86bebd70d723552fd2b98a1bb8f377c0edd76fc",
+      "git_blob": "ca3706440a070818173a6209ffc350bb94bf6199"
+    }
+  },
+  "toolchain": {
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2",
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "dependency_graph": "trillionnium/Cargo.lock unchanged; locked/offline scoped Rust commands"
+  },
+  "checkpoint": {
+    "red": {
+      "result": "EXPECTED_REGRESSIONS_FAILED",
+      "exit_code": 101,
+      "passed": 11,
+      "failed": 3,
+      "ignored": 0,
+      "production_source": "baseline commit",
+      "tests_added": [
+        "structural_reopen_cannot_bypass_recovery_through_direct_owner_methods",
+        "live_same_inode_rollback_cannot_export_or_extend_cached_history",
+        "live_same_length_prefix_edit_cannot_export_a_cached_journal_pin"
+      ],
+      "red_test_file_digest_retained": false,
+      "log": "validation/checkpoint-red.log"
+    },
+    "final_all_targets": {
+      "result": "FAIL",
+      "exit_code": 101,
+      "passed": 43,
+      "failed": 4,
+      "ignored": 0,
+      "binaries": {
+        "library": {
+          "passed": 10,
+          "failed": 1
+        },
+        "node_commit_ledger": {
+          "passed": 15,
+          "failed": 0
+        },
+        "cold_recovery": {
+          "passed": 15,
+          "failed": 0
+        },
+        "cross_process": {
+          "passed": 3,
+          "failed": 3
+        }
+      },
+      "diagnosis": "One unit test directly reports bind checkpoint socket EPERM. Three process tests report daemon exited at startup. No skip, permission bypass, transport substitution or threshold change was applied. These four are not passes.",
+      "log": "validation/checkpoint-all-targets-final.log"
+    },
+    "strict_clippy": {
+      "result": "PASS",
+      "exit_code": 0,
+      "all_targets": true,
+      "log": "validation/checkpoint-clippy-final.log"
+    },
+    "cost": "Complete live journal verification is O(record count) per check, with a fixed record buffer and an 85-byte head read cap."
+  },
+  "release": {
+    "red": {
+      "result": "EXPECTED_REGRESSIONS_FAILED",
+      "exit_code": 101,
+      "passed": 1,
+      "failed": 2,
+      "ignored": 0,
+      "filtered": 15,
+      "production_source_sha256": "58427450f4411d37e0320adc2563a568979931b95b9b48274552b6555490f2a1",
+      "log": "release-negative-before-isolated.log"
+    },
+    "full_package": {
+      "result": "PASS",
+      "exit_code": 0,
+      "passed": 18,
+      "failed": 0,
+      "ignored": 0,
+      "doc_tests": 0,
+      "log": "release-after.log"
+    },
+    "strict_clippy": {
+      "result": "PASS",
+      "exit_code": 0,
+      "all_targets": true,
+      "log": "release-clippy.log"
+    }
+  },
+  "sdk": {
+    "result": "PASS",
+    "schema": "trnm.pq.tuf-sdk-differential.v1",
+    "scope": "actual SSlibKey/CryptoSigner and Rust ML-DSA-65/1 signature APIs only",
+    "upstream": {
+      "commit": "15064ca640222edba024af9f13191fa5dbad3825",
+      "files": 46,
+      "source_sha256": "fa7343ae1f4cea3a34817e556e7d93d577e6a5eb97e9359896b0dd3b5970241b"
+    },
+    "backend": {
+      "cryptography": "50.0.2",
+      "extension_sha256": "1e5d23fa66915204b9b67202a46993844d81cda56f6ad52cead2def37617ee29",
+      "openssl": "OpenSSL 4.0.3 29 Sep 2026",
+      "sdk": "1.5.1"
+    },
+    "positive_metadata_pairs": 18,
+    "sdk_verifications": 66,
+    "rust_verifications": 66,
+    "sdk_generic_key_dispatch": "ML-DSA not registered by default in pinned 1.5.1",
+    "full_tuf_updater_qualified": false,
+    "oracle_sha256": "e1f7b62df7ba43aa9b5c9f0cb6df96e937afcc1666b6b7d9fe5707af2881d518",
+    "fixture_sha256": "d56d1c460e0372e262fe4d0cfc4b255b9dc325eda93e512638bedbd3e18deef2",
+    "runner_sha256": "6d721cacaabe5fbbdc4608293247c6660fbcc573b1d307ffb77636b3c3cbf0ba"
+  },
+  "independent_c": {
+    "result": "PASS",
+    "upstream": {
+      "commit": "834a90d5e846ffa1e1611bd24e160bb2e9b86d35",
+      "files": 112,
+      "source_sha256": "a540cabc7c7160e5792be229bc1c47948d2cb2d8627d7121598478aa97675418"
+    },
+    "canonical_backend": "RustCrypto ml-dsa 0.1.1; pure, empty context",
+    "fixed_seed_signatures": 20,
+    "native_verification_cases": 391,
+    "rust_verification_cases": 396,
+    "categories": {
+      "application_message_limit": 1,
+      "cross_backend_negative": 80,
+      "native_to_rust_positive": 20,
+      "nonempty_context_refused_by_application": 40,
+      "strict_spki": 25,
+      "wrong_key_pin": 20,
+      "wycheproof_application_policy": 210
+    },
+    "wycheproof": {
+      "invalid": 131,
+      "total": 210,
+      "valid": 79
+    },
+    "vector_sha256": "1ca235f61928421a173a171780beb00264ae9155dc33c52a11e1766cc7979034",
+    "adapter_sha256": "2c8639b02cebb49e9eea8a079080b33913b808c10176784d07fbc75afb7233a6",
+    "runner_sha256": "222395c704bc8b63ef47e196c1fc9e99b8735b51532307504777a92fb3217218",
+    "binaries": [
+      {
+        "path": "/workspace/scratch/fae095a59687/target-interop/debug/examples/pq_message_oracle",
+        "sha256": "e1f7b62df7ba43aa9b5c9f0cb6df96e937afcc1666b6b7d9fe5707af2881d518"
+      },
+      {
+        "path": "/workspace/scratch/fae095a59687/interop-observations/mldsa-native-build/mldsa-native-oracle",
+        "sha256": "d80feed44fc9d74f571921daf55ac773271515220a807273a5578d7bb20e5518"
+      }
+    ]
+  },
+  "interop_checks": {
+    "c_source_guard": {
+      "log": "mldsa-source-guard-final.log",
+      "result": "PASS",
+      "tests": 9
+    },
+    "oracle_build": {
+      "log": "rust-sdk-oracle-build.log",
+      "result": "PASS"
+    },
+    "oracle_strict_clippy": {
+      "arguments": "--example pq_message_oracle -- -D warnings",
+      "log": "crypto-oracle-clippy.log",
+      "result": "PASS"
+    },
+    "original_tuf_tests": {
+      "filtered": 0,
+      "ignored": 0,
+      "log": "tuf-tap21-original-tests.log",
+      "result": "PASS",
+      "tests": 8
+    },
+    "python_ast_and_workflow_yaml": {
+      "result": "PASS",
+      "tool_output_only": true
+    },
+    "sdk_source_guard": {
+      "log": "tuf-sdk-source-guard-final.log",
+      "result": "PASS",
+      "tests": 13
+    },
+    "targeted_git_diff_check": {
+      "result": "PASS",
+      "tool_output_only": true
+    },
+    "targeted_rustfmt": {
+      "result": "PASS",
+      "tool_output_only": true
+    },
+    "tls_and_mtls": {
+      "log": "tls-tests.log",
+      "result": "PASS",
+      "source_unchanged": true,
+      "tests": 18
+    }
+  },
+  "transport": {
+    "result": "PASS",
+    "tests": 18,
+    "source_commit": "59f75acd1d4261972b8aaa45e0c36259fcafd45c",
+    "source_unchanged": true,
+    "provider": "OpenSSL 3.5.9 fixed TLS/mTLS provider; distinct from the SDK cryptography wheel backend",
+    "provider_inputs": [
+      {
+        "bytes": 8933400,
+        "sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+        "provider_relative_path": "bin/openssl"
+      },
+      {
+        "bytes": 3449,
+        "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda",
+        "provider_relative_path": "include/openssl/opensslv.h"
+      },
+      {
+        "bytes": 4729,
+        "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996",
+        "provider_relative_path": "include/openssl/configuration.h"
+      },
+      {
+        "bytes": 12380600,
+        "sha256": "fda16ed5c2188f643f8edc1574966efa56f1685a640705eba602c2242c02ce08",
+        "provider_relative_path": "lib/libcrypto.a"
+      },
+      {
+        "bytes": 2123050,
+        "sha256": "e15be5fe884475c5efdd00ad40173d9abe71a2127f476145bed6ef2d86dfd5c9",
+        "provider_relative_path": "lib/libssl.a"
+      }
+    ],
+    "log": "interop-observations/tls-tests.log",
+    "scope": "x86_64 Linux localhost, unchanged original TLS/mTLS suites; no runtime integration"
+  },
+  "source_checks": {
+    "pq_source_pins": {
+      "result": "PASS",
+      "expected_blobs": 466,
+      "qualification": "HOLD_NO_GO"
+    },
+    "pq_source_negative_tests": {
+      "result": "PASS",
+      "tests": 35
+    },
+    "repository": {
+      "result": "PASS",
+      "local_links": 2613,
+      "scope": "Executed before the final documentation and compact reproduction record additions; those later links separately reviewed."
+    }
+  },
+  "retained_attempts": [
+    {
+      "exit_code": 130,
+      "log": "rust-oracle-build.log",
+      "reason": "shared target artifact lock; retried in private target",
+      "result": "BUILD_INTERRUPTED"
+    },
+    {
+      "prior_runner": "tuf-sdk-runner-before-namespace.py",
+      "reason": "initial captured-source loader omitted actual upstream namespace package; fixed and regression added",
+      "record": "namespace-preparation-failure.json",
+      "result": "FAIL"
+    },
+    {
+      "result": "BUILD_INTERRUPTED",
+      "scope": "Additional Node library baseline build",
+      "exit_code": 130,
+      "tests_executed": 0,
+      "reason": "Stopped own redundant build under shared 8 GiB resource pressure; compiler warned SQLite I/O boundary UNQUALIFIED because RUSTC was not absolute. No Node acceptance is claimed.",
+      "raw_log_retained": false
+    },
+    {
+      "result": "FAIL",
+      "scope": "Initial checkpoint package runs",
+      "reason": "Unix socket EPERM and startup failures retained in earlier logs; final all-target run has the same four failing tests."
+    }
+  ],
+  "local_observation_digests": {
+    "validation/checkpoint-red.log": {
+      "sha256": "b71342d05067972b9da4869e25ecd11e0b782a6e080872cb079bc36ccd526ae3",
+      "bytes": 2595
+    },
+    "validation/checkpoint-green.log": {
+      "sha256": "9605b2966f8537a874080ee696f15547a33990a3246b15b90f40b9e8d6577185",
+      "bytes": 1859
+    },
+    "validation/checkpoint-all-targets.log": {
+      "sha256": "53be9e4472dfc596442ebd003758c48355bfd40e4ad7d9cb7db8e61194635898",
+      "bytes": 6795
+    },
+    "validation/checkpoint-all-targets-final.log": {
+      "sha256": "38a3ed851d802a66709075eaf0dd2c6729bde355d28fa517dc4a8c2612e89815",
+      "bytes": 6923
+    },
+    "validation/checkpoint-cold-final.log": {
+      "sha256": "563bb5290217e4f4bf34b905742864a9dcad1fc2aecabf453559d86374b65922",
+      "bytes": 1648
+    },
+    "validation/checkpoint-clippy.log": {
+      "sha256": "dfd528a60abbf3a7a80727256be1e5fb6dd0b201bc72ace141b4866cbd3bd63e",
+      "bytes": 870
+    },
+    "validation/checkpoint-clippy-final.log": {
+      "sha256": "f0d6259bdc680eff1d41f3e70096c6967b749b320d83c51d8a22f075f9566e42",
+      "bytes": 836
+    },
+    "validation/chain-source-negatives.log": {
+      "sha256": "0ff633d1393f7aba1be0034fd3ccba898c09cc7f8f4448c7326736713065e5a4",
+      "bytes": 5707
+    },
+    "validation/chain-source-final.log": {
+      "sha256": "ede96fb4793c31852a8170c1df9213a8d0490c9e3a69593cef2734f4b051082e",
+      "bytes": 557
+    },
+    "validation/chain-repository.log": {
+      "sha256": "c74eb89a5bb556850190e84f1d2fc037838299c5b2317b0215823c15f1524c91",
+      "bytes": 307
+    },
+    "release-negative-before-isolated.log": {
+      "sha256": "26fd4e1ccba8d1706db7124f5b380cfa6b1914fbe6c036d8378cdf5529a03418",
+      "bytes": 4035
+    },
+    "release-after.log": {
+      "sha256": "cc79e6e1112b10724a60bcc5a2b83b43bf70b1b466daf428727c8de0adc63196",
+      "bytes": 2410
+    },
+    "release-clippy.log": {
+      "sha256": "1dc52ff06145eaaf7f66c5be5c01c705a565d915c5f9eba866332264ec130e82",
+      "bytes": 1512
+    },
+    "interop-observations/crypto-oracle-clippy.log": {
+      "sha256": "6c77508b4383c4dfc12c7fb33cefe1bd601fc1cf1e0b365b9a700f9fd52888f1",
+      "bytes": 1389
+    },
+    "interop-observations/mldsa-native-differential.json": {
+      "sha256": "575e3ac79ae142e99a37b950af9c4eedbe3d6a22734147f6dfa1026850836961",
+      "bytes": 2481
+    },
+    "interop-observations/mldsa-native-differential.log": {
+      "sha256": "bcde051fbf05092e2ee09e084de0ca63e86a8d9ae7af570c1637bf4501dd5c25",
+      "bytes": 2211
+    },
+    "interop-observations/mldsa-source-guard-final.log": {
+      "sha256": "a5469fe9ac189cb5a068d0487ae440139d861e3732d7bc4b83dc77fe5a921610",
+      "bytes": 1667
+    },
+    "interop-observations/mldsa-source-guard.log": {
+      "sha256": "0164195fa088648a08c44a76597f5c5733385f96862176ddb4f23eb64acf115f",
+      "bytes": 1667
+    },
+    "interop-observations/namespace-preparation-failure.json": {
+      "sha256": "4aeea6ed60c8c4d82b48289abfc4a9015ebf3447da813edc2c2ea8d88f6b3f92",
+      "bytes": 218
+    },
+    "interop-observations/rust-oracle-build.log": {
+      "sha256": "b0ae086a7b26ebf259a931e28b9986307cb21c53692449ada5e2a7e019d7f786",
+      "bytes": 57
+    },
+    "interop-observations/rust-sdk-oracle-build.log": {
+      "sha256": "4aab58e7aef903581a5e705df92a6ae933f81df7ed1f2d48fed6ba56a042c51e",
+      "bytes": 1940
+    },
+    "interop-observations/tls-tests.json": {
+      "sha256": "8b3c5ca8145513b60fd586aae5a2d83c795111576dfefcb9a58e7629e18a5020",
+      "bytes": 8429
+    },
+    "interop-observations/tls-tests.log": {
+      "sha256": "974237e1e0e98993fd1372842964093c97de57515b906e962cac3eb6fb204861",
+      "bytes": 3214
+    },
+    "interop-observations/tuf-sdk-differential.json": {
+      "sha256": "2aa2d1cf03a4e40a14f7ad1d20e736a71b04d1a301eea83dc618c7188290c195",
+      "bytes": 25549
+    },
+    "interop-observations/tuf-sdk-differential.log": {
+      "sha256": "f35d8b83c80c70f4ba43f8ef6dd7f472c1e0bc2ec0e2396dc2f1ebe9fd0660f5",
+      "bytes": 1141
+    },
+    "interop-observations/tuf-sdk-runner-before-namespace.py": {
+      "sha256": "36082f9c65b7083a7261bcdc531f8541029ab9a79ab8d75104e482a78ea2f2ff",
+      "bytes": 14191
+    },
+    "interop-observations/tuf-sdk-source-guard-final.log": {
+      "sha256": "ab824f8c966e93e227238422edddcde95d56d7cb5027cd5ff6ad5a8bfcda676a",
+      "bytes": 1910
+    },
+    "interop-observations/tuf-sdk-source-guard.log": {
+      "sha256": "2163193a9c15b43e7df7426d1ebc2d05cc47b14d221a4cc1424280afd911d788",
+      "bytes": 1748
+    },
+    "interop-observations/tuf-tap21-original-tests.log": {
+      "sha256": "b908a12e9b3cc79490f4ea118eb3b10eaa8516fc3dd7e9159ee0a0c239d3518f",
+      "bytes": 1232
+    }
+  },
+  "log_storage": "Raw local observations are not included in this source/compact-manifest publication. These digests are an index, not a durable raw-log archive. Reproduction commands and CI retain failures on rerun.",
+  "qualification": {
+    "production_activation": false,
+    "independent_security_acceptance": false,
+    "whole_chain_pq": false,
+    "physical_all_copy_rollback_resistance": false,
+    "complete_tuf_updater": false,
+    "deployed_final_use_effect_witness": false,
+    "arm64_executed_this_run": false,
+    "prospective_merge_executed_this_run": false
+  },
+  "remaining": [
+    "Unix daemon/process gate on a host that permits its sockets",
+    "Independent fresh witness deployment and fault-domain qualification",
+    "Atomic FinalUse/budget/effect consumption across actual owners and provider reconciliation",
+    "Complete TUF updater and real installer/activation owner integration",
+    "Current production key generation, backup/recovery and signing-device evidence",
+    "Whole-chain PoN/quantum work, migration, original-capacity and independently composed security acceptance"
+  ]
+}

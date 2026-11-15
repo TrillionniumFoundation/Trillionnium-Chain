@@ -1,0 +1,15 @@
+{
+  "failed_commands": [
+    "workspace-strict-clippy"
+  ],
+  "failure": null,
+  "missing_commands": [],
+  "model_efficacy_certified": false,
+  "native_test_total_required": 42,
+  "planned_commands": 25,
+  "production_activation": false,
+  "reader_suites_required": 6,
+  "recorded_commands": 25,
+  "result": "FAIL",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81"
+}

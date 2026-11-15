@@ -1,0 +1,47 @@
+[
+  {
+    "source": "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+    "target": "../../config/pon/pq128-lifetime-budget-v1.json",
+    "present": true
+  },
+  {
+    "source": "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+    "target": "../../scripts/ci/pq_lifetime_budget.py",
+    "present": true
+  },
+  {
+    "source": "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+    "target": "WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md",
+    "present": true
+  },
+  {
+    "source": "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+    "target": "../../config/pon/pq128-lifetime-example-v1.json",
+    "present": true
+  },
+  {
+    "source": "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+    "target": "../../evidence/pq128-lifetime-budget-20261108/README.md",
+    "present": true
+  },
+  {
+    "source": "evidence/pq128-lifetime-budget-20261108/README.md",
+    "target": "../../docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+    "present": true
+  },
+  {
+    "source": "evidence/pq128-lifetime-budget-20261108/README.md",
+    "target": "../../config/pon/pq128-lifetime-budget-v1.json",
+    "present": true
+  },
+  {
+    "source": "evidence/pq128-lifetime-budget-20261108/README.md",
+    "target": "../../config/pon/pq128-lifetime-example-v1.json",
+    "present": true
+  },
+  {
+    "source": "evidence/pq128-lifetime-budget-20261108/README.md",
+    "target": "../../scripts/ci/pq_lifetime_budget.py",
+    "present": true
+  }
+]

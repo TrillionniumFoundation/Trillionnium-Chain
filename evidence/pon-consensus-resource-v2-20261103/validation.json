@@ -1,0 +1,267 @@
+{
+  "schema": "pon-consensus-resource-validation-v2",
+  "qualification_status": "HOLD",
+  "baseline_commit": "af064bf751ed92c82da0b113682a7dfff3225d97",
+  "source_state_at_native_execution": "candidate-working-tree",
+  "source_sha256": {
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "da3c6d28be39effcdb0d792e858d11aabbe83cafaaff326c45c9133cb4b818c7",
+    "scripts/pon_w1_legal_strategy_reader_v3.py": "88657a45b22a350c140ae8bcbe7f294544e8d9788c86592238cc9c6437bd58ff",
+    "scripts/ci/test_pon_w1_legal_strategy_reader_v3.py": "c06ddf1a90c01de32f692b36a3025727daaa5e963f91f86a4ff1e5c6d1cd15cd",
+    "config/pon/pq-cross-branch-corpus-v1.json": "358017d0bc8befc8d6e863668423cb40158bafc250873155a70bc85d16a36ddc",
+    "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+  },
+  "native_selected_tests": {
+    "native-consensus-arithmetic": {
+      "passed": 10,
+      "selector": "consensus::tests::",
+      "binary_sha256": "2a2725d66a255886c67f0f736734ce2c13284ef2c064251c3f7d2ebdf88f6eb2"
+    },
+    "native-trnm-crypto-primitives-0": {
+      "passed": 1,
+      "selector": "pon_work::tests::owned_square_transpose_preserves_allocation_and_exact_permutation",
+      "binary_sha256": "c422b171b50c52674fe7fa243e20782a6ad7af4990fe383393668d2f5b722595"
+    },
+    "native-trnm-crypto-primitives-1": {
+      "passed": 1,
+      "selector": "pon_work::tests::in_place_corrections_match_independent_scalar_for_full_w1_shape",
+      "binary_sha256": "c422b171b50c52674fe7fa243e20782a6ad7af4990fe383393668d2f5b722595"
+    },
+    "native-trnm-crypto-primitives-10": {
+      "passed": 1,
+      "selector": "pon_work::tests::product_row_and_final_cancellation_never_yield_verified_work",
+      "binary_sha256": "c422b171b50c52674fe7fa243e20782a6ad7af4990fe383393668d2f5b722595"
+    },
+    "native-trnm-crypto-primitives-2": {
+      "passed": 1,
+      "selector": "pon_work::tests::in_place_correction_cancellation_stops_before_each_row_and_retry_is_fresh",
+      "binary_sha256": "c422b171b50c52674fe7fa243e20782a6ad7af4990fe383393668d2f5b722595"
+    },
+    "native-trnm-crypto-primitives-3": {
+      "passed": 1,
+      "selector": "pon_work::tests::full_limb_matrix_products_match_reference_for_all_w1_shapes",
+      "binary_sha256": "c422b171b50c52674fe7fa243e20782a6ad7af4990fe383393668d2f5b722595"
+    },
+    "native-trnm-crypto-primitives-4": {
+      "passed": 1,
+      "selector": "pon_work::tests::full_limb_preserves_every_cancellation_boundary_and_retry_isolation",
+      "binary_sha256": "c422b171b50c52674fe7fa243e20782a6ad7af4990fe383393668d2f5b722595"
+    },
+    "native-trnm-crypto-primitives-5": {
+      "passed": 1,
+      "selector": "pon_work::tests::fast_and_scalar_verifiers_preserve_observation_order_and_cancelled_results",
+      "binary_sha256": "c422b171b50c52674fe7fa243e20782a6ad7af4990fe383393668d2f5b722595"
+    },
+    "native-trnm-crypto-primitives-6": {
+      "passed": 1,
+      "selector": "pon_work::tests::column_limb_full_proofs_keep_exact_statement_and_challenge_binding",
+      "binary_sha256": "c422b171b50c52674fe7fa243e20782a6ad7af4990fe383393668d2f5b722595"
+    },
+    "native-trnm-crypto-primitives-7": {
+      "passed": 1,
+      "selector": "pon_work::tests::optimized_producer_matches_full_verifier_for_structures_and_extreme_fields",
+      "binary_sha256": "c422b171b50c52674fe7fa243e20782a6ad7af4990fe383393668d2f5b722595"
+    },
+    "native-trnm-crypto-primitives-8": {
+      "passed": 1,
+      "selector": "pon_work::tests::decoded_output_is_the_real_matrix_product",
+      "binary_sha256": "c422b171b50c52674fe7fa243e20782a6ad7af4990fe383393668d2f5b722595"
+    },
+    "native-trnm-crypto-primitives-9": {
+      "passed": 1,
+      "selector": "pon_work::tests::fixed_task_preparation_is_byte_identical_across_challenges_and_shapes",
+      "binary_sha256": "c422b171b50c52674fe7fa243e20782a6ad7af4990fe383393668d2f5b722595"
+    },
+    "native-trnm-data-availability-0": {
+      "passed": 1,
+      "selector": "cell::retention::tests::actual_capacity_is_allocated_before_ack_and_full_refusal_survives_reopen",
+      "binary_sha256": "9150a3b3adb5c1e2e56f4ec4ea823380aab3284cd0f30ebf36fc175b41f3214f"
+    },
+    "native-trnm-data-availability-1": {
+      "passed": 1,
+      "selector": "cell::retention::tests::pending_ack_never_claims_bytes_and_keeps_original_reservation",
+      "binary_sha256": "9150a3b3adb5c1e2e56f4ec4ea823380aab3284cd0f30ebf36fc175b41f3214f"
+    },
+    "native-trnm-pon-node-0": {
+      "passed": 1,
+      "selector": "store::storage_service::tests::native_cell_retirement_rejects_another_chain_and_reconciles_orphaned_funding",
+      "binary_sha256": "2a2725d66a255886c67f0f736734ce2c13284ef2c064251c3f7d2ebdf88f6eb2"
+    },
+    "native-trnm-pon-node-1": {
+      "passed": 1,
+      "selector": "store::storage_service::tests::native_cell_retirement_cannot_release_a_pending_effect_before_reconciliation",
+      "binary_sha256": "2a2725d66a255886c67f0f736734ce2c13284ef2c064251c3f7d2ebdf88f6eb2"
+    },
+    "native-trnm-service-settlement-0": {
+      "passed": 1,
+      "selector": "native_budget::tests::reorg_and_restart_preserve_pending_and_completed_effects_without_redispatch",
+      "binary_sha256": "be11b240619dbded5442ad0b2d75d388412844340d868fc0c3a170f422fdac04"
+    },
+    "native-trnm-service-settlement-1": {
+      "passed": 1,
+      "selector": "native_budget::tests::effect_window_replay_survives_reorg_and_restart_only_for_reconciliation",
+      "binary_sha256": "be11b240619dbded5442ad0b2d75d388412844340d868fc0c3a170f422fdac04"
+    }
+  },
+  "native_passed": 27,
+  "python_control_counts": {
+    "source-integrity-controls": 34,
+    "reader-controls": 18,
+    "work-query-model-controls": 21,
+    "pq-source-pin-controls": 34
+  },
+  "local_static_checks": {
+    "strict-clippy": {
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "8be4801e4c7e0807ff522904c0b43f1ec6aa3b076852f02e3b5a69381b0b9066"
+    },
+    "format-check": {
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "cargo-metadata-native": {
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--filter-platform",
+        "x86_64-unknown-linux-gnu",
+        "--format-version=1"
+      ],
+      "stdout_sha256": "47924ddc7e1aed924560f6a0cb739be25bdb07fdbe1f428bf847d276b91512a9",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "embedded-source-inventory": {
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source-integrity-controls": {
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "stdout_sha256": "f281bd53a7bd071f3a939564e92cb738d4f1c90206af7c719ac1c4559ab0f65a",
+      "stderr_sha256": "79efaf9a478e583ec079affa3cf0a222a88420c55493a0c4ecbdbb2abd557876"
+    },
+    "reader-controls": {
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pon_w1_legal_strategy_reader_v3.py",
+        "-v"
+      ],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "fa828a31f73169a4e47e983530ddce35a150842f681b34d38f79951c61b52fd9"
+    },
+    "work-query-model-controls": {
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "-B",
+        "formal/pon-nakamoto-v1/test_work_query_bound.py"
+      ],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "b622d116dde4ae74c137ba6bcf48612351b31e569dc2c57f4c4b9e8053b9c301"
+    },
+    "pq-source-pin-check": {
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "stdout_sha256": "1c4509d6888e318cd297b7da9788ea5fcbc548118f521225308fb42f8fef9e0f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pq-source-pin-controls": {
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_research_integration.py",
+        "-v"
+      ],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "8f3ef47b5097e30c247af5f6159f2cab949d731b60617e2cb11f42f39725b65b"
+    }
+  },
+  "native_cargo_graph": {
+    "target": "x86_64-unknown-linux-gnu",
+    "all_features": true,
+    "locked": true,
+    "workspace_packages": 26,
+    "resolved_nodes": 138
+  },
+  "preserved_failures": {
+    "unfiltered_offline_cargo_metadata": {
+      "exit_code": 101,
+      "reason": "anstyle-wincon 3.0.11 is absent from the offline cache; target-filtered Linux all-feature graph is a separate successful result",
+      "cross_platform_graph_validated": false
+    },
+    "initial_shared_target_comparison": {
+      "valid_candidate_comparison": false
+    },
+    "intermediate_general_reduction_comparison": {
+      "superseded": true,
+      "measurements_retained": true
+    }
+  },
+  "native_tests_full_workspace": false,
+  "public_service_measured": false,
+  "work_hardness_accepted": false,
+  "production_activation": false
+}

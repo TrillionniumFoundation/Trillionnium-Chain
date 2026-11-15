@@ -1,0 +1,53 @@
+{
+  "schema": "chain-native-original-manifest-profiles-v1",
+  "source_commits": [
+    "36f5d18a93834792025326cfb178415d78103e42",
+    "14fcbede085b414a9621aef3f288d2b1ca1839ae"
+  ],
+  "manifest_path": "trillionnium/Cargo.toml",
+  "manifest_git_blobs": {
+    "36f5d18a93834792025326cfb178415d78103e42": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+    "14fcbede085b414a9621aef3f288d2b1ca1839ae": "44df8f8d5eec880d10da42c12a903c03658cfc65"
+  },
+  "manifest_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+  "cargo_summary_label": "test [unoptimized + debuginfo]",
+  "original_manifest_profile_overrides": {
+    "test": {
+      "package": {
+        "curve25519-dalek": {
+          "opt-level": 3
+        },
+        "ed25519-dalek": {
+          "opt-level": 3
+        },
+        "sha2": {
+          "opt-level": 3,
+          "debug-assertions": true,
+          "overflow-checks": true
+        },
+        "trnm-protocol": {
+          "opt-level": 3,
+          "debug-assertions": true,
+          "overflow-checks": true
+        },
+        "trnm-mvcc-fee": {
+          "opt-level": 1,
+          "debug-assertions": true,
+          "overflow-checks": true
+        },
+        "trnm-crypto-primitives": {
+          "opt-level": 3,
+          "debug-assertions": true,
+          "overflow-checks": true
+        },
+        "trnm-pon-node": {
+          "opt-level": 3,
+          "debug-assertions": true,
+          "overflow-checks": true
+        }
+      }
+    }
+  },
+  "scope": "Exact pre-existing source profile settings. Cargo summary label is not a claim that every package has opt-level=0. No profile or compiler flag relaxation was introduced by this task.",
+  "ambient_overrides_receipt": "toolchain-provider.json"
+}

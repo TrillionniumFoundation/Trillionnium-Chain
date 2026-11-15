@@ -1,0 +1,48 @@
+{
+  "baseline": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "candidate_code_commit": "314b87c36a6612b87f4a3ccff70771fdac6632ad",
+  "integration": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+  "merged_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0",
+  "merged_tree": "e881dd7cf318a562b09de38ff7774a508724fa18",
+  "ordered_parents": [
+    "314b87c36a6612b87f4a3ccff70771fdac6632ad",
+    "62d2d90c9e1f4c8450c89843f1e08360a24283ce"
+  ],
+  "resolved_conflicts": [
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json"
+  ],
+  "pin_updates": {
+    "scripts/ci/ci_job.sh": {
+      "old": "8c874bed56a391e57d688b1da7320164c75b4545",
+      "new": "999978fc66c562ccdb9a6aa4db34fd1d256c135f"
+    },
+    "scripts/ci/check_ci_contract.py": {
+      "old": "da2f35c76bb589c35883a1bdfed8d261fa6b7652",
+      "new": "ae3ec54e9f17d9ea7833271d40014e8a2e89b33e"
+    },
+    "scripts/ci/test_ci_contract.py": {
+      "old": "a93cd4614c64fc9c4c79340a2dd0a4d1760d503d",
+      "new": "b385422c23f7a4cd9654e6d4cb8f7bfbe51306ef"
+    },
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": {
+      "old": "bf34412ed71bfc3d5de20c02745f86e682507f4c",
+      "new": "dc662dc57a272f0e3fc8fbc30f9604a68e948cd6"
+    },
+    ".github/workflows/pon-recent-batch-acceptance.yml": {
+      "old": "92d03597f3bcac48daedda52b140f15f6c07f907",
+      "new": "9a1f6e675f6aa0e2fee6aca6f7780aa87af5cbd2"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "old": "88c3190ba9c0f4b5ec56136ef8ce9a252cbaf16b",
+      "new": "20181ce2072f530296b4cda95c931ea3c0691902"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs": {
+      "old": "86ddedea0b03e0016707b5b0a0fbc940d2472ab2",
+      "new": "f30e827038dddb0285716af8ff8c04316ee148bd"
+    }
+  },
+  "status": "committed-clean",
+  "consensus_blob": "989ac5f08b8e4f707cda613617fd5245eb6a6463",
+  "native_test_sha256": "7b18ed2243d23c732bcac7be9f6085ee1339fc43453f7f243cb088d8f6be34ac"
+}

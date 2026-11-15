@@ -1,0 +1,42 @@
+diff --git a/trillionnium/crates/trnm-checkpoint-store/src/lib.rs b/trillionnium/crates/trnm-checkpoint-store/src/lib.rs
+index 8c49ef4c7..033948992 100644
+--- a/trillionnium/crates/trnm-checkpoint-store/src/lib.rs
++++ b/trillionnium/crates/trnm-checkpoint-store/src/lib.rs
+@@ -143,6 +142,0 @@ enum AuthorityOpenModeV2 {
+-#[derive(Clone, Copy)]
+-enum InitialHeadCreationV2 {
+-    Allowed,
+-    Forbidden,
+-}
+-
+@@ -399,6 +393 @@ impl ExternalCheckpointAuthorityV2 {
+-        let initial_head_creation = if matches!(mode, AuthorityOpenModeV2::ExistingPinned(_)) {
+-            InitialHeadCreationV2::Forbidden
+-        } else {
+-            InitialHeadCreationV2::Allowed
+-        };
+-        authority.reconcile_anchor_v2(initial_head_creation)?;
++        authority.reconcile_anchor_v2()?;
+@@ -702,4 +691 @@ impl ExternalCheckpointAuthorityV2 {
+-    fn reconcile_anchor_v2(
+-        &mut self,
+-        initial_head_creation: InitialHeadCreationV2,
+-    ) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
++    fn reconcile_anchor_v2(&mut self) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
+@@ -731,8 +716,0 @@ impl ExternalCheckpointAuthorityV2 {
+-                // The earlier presence check is not a lease: the head may be
+-                // removed before this observation. Pinned recovery must reject
+-                // here as well, including for an empty, otherwise matching log.
+-                if matches!(initial_head_creation, InitialHeadCreationV2::Forbidden) {
+-                    return Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+-                        "existing checkpoint head disappeared before reconciliation",
+-                    ));
+-                }
+@@ -1950,6 +1928 @@ mod tests {
+-            matches!(
+-                authority.reconcile_anchor_v2(InitialHeadCreationV2::Forbidden),
+-                Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+-                    "existing checkpoint head disappeared before reconciliation"
+-                ))
+-            ),
++            authority.reconcile_anchor_v2().is_err(),

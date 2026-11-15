@@ -1,0 +1,24 @@
+{
+  "command": [
+    "/root/.cargo/bin/cargo",
+    "+1.95.0",
+    "clippy",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "base": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "working_source_changes": {
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": "241003ed34eff9a0a0ab4992acfa527ad38d702d",
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs": "e0ac7c518715943c8ba1bd73f383beef8d7a7781"
+  },
+  "scope": "working source lint only; not native runtime or final merged value-pool source",
+  "build_jobs": 2,
+  "incremental": false
+}

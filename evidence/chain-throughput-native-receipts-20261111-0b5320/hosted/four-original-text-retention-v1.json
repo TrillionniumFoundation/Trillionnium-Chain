@@ -1,0 +1,122 @@
+{
+  "schema": "four-artifact-original-text-retention-v1",
+  "rows": [
+    {
+      "schema": "original-artifact-text-retention-v1",
+      "artifact_id": 13831493931,
+      "role": "x64-four-second",
+      "observed_utc": "2026-11-11T07:02:25.087505+00:00",
+      "source_zip": {
+        "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13831493931.zip",
+        "bytes": 9301098,
+        "sha256": "7899f7639483fa67030f348f26fc0520fd63727377a3ce1948e62354e737dc29",
+        "git_blob_sha1": "f40f1786e90b9c93810ed97851c5fa7ae5f9877d"
+      },
+      "selected_members": 139,
+      "excluded_members": 15,
+      "selected_original_bytes": 50039022,
+      "archive": {
+        "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13831493931-raw-text-package-v1/original-text.tar.gz",
+        "bytes": 2711142,
+        "sha256": "6c091ffa5bad85c0a753c7f7ff1ccbc989b6f418cb249d812b220b4509d13d72",
+        "git_blob_sha1": "b9b2b69b7b270fcd15dc7d7e4a8482fe8efb496f"
+      },
+      "member_manifest": {
+        "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13831493931-raw-text-package-v1/original-text-manifest.json",
+        "bytes": 90946,
+        "sha256": "9622f440f5fede504c9803349ce6c31fd9208becd04d66941e3b9e22e4060af7",
+        "git_blob_sha1": "843746034232051f64a00c42198f08501566f8ad"
+      },
+      "new_native_execution": false,
+      "network_download": false
+    },
+    {
+      "schema": "original-artifact-text-retention-v1",
+      "artifact_id": 13831414961,
+      "role": "arm64-four-second",
+      "observed_utc": "2026-11-11T07:02:28.494118+00:00",
+      "source_zip": {
+        "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13831414961.zip",
+        "bytes": 9013530,
+        "sha256": "d32856170ad787b01d924b50a74274abb2af72f8fac142db793e1bc3e76acd44",
+        "git_blob_sha1": "f951a82169a7891a976d36a9d23b46e06b04b884"
+      },
+      "selected_members": 139,
+      "excluded_members": 15,
+      "selected_original_bytes": 51190133,
+      "archive": {
+        "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13831414961-raw-text-package-v1/original-text.tar.gz",
+        "bytes": 2750610,
+        "sha256": "58a01276314407f31d8703ca44fdb4bc2554cb7735f6d889f6faa7fdb152927f",
+        "git_blob_sha1": "5b4697f229b5ec7b4ce768421ff3df60a8db53e3"
+      },
+      "member_manifest": {
+        "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13831414961-raw-text-package-v1/original-text-manifest.json",
+        "bytes": 90949,
+        "sha256": "1f76335f1748b68627dfa9a40a722e08e48d7e66f0e11eedd0f7552c17f651db",
+        "git_blob_sha1": "6ac8e4fe817eb5e0dff651ff7b50e98f0ce4d229"
+      },
+      "new_native_execution": false,
+      "network_download": false
+    },
+    {
+      "schema": "original-artifact-text-retention-v1",
+      "artifact_id": 13834081764,
+      "role": "exact-head-protocol-contract",
+      "observed_utc": "2026-11-11T07:02:28.646052+00:00",
+      "source_zip": {
+        "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13834081764.zip",
+        "bytes": 123886,
+        "sha256": "28c7ad48d1b39e2380e7cafb11894e3652390be3d4ddfea460338822dd62e840",
+        "git_blob_sha1": "5dab43291b56cd41b547a21fac2d57e7d722f738"
+      },
+      "selected_members": 53,
+      "excluded_members": 0,
+      "selected_original_bytes": 1551909,
+      "archive": {
+        "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13834081764-raw-text-package-v1/original-text.tar.gz",
+        "bytes": 99369,
+        "sha256": "85df65356685f3d36972ead024b2218936ee0e490bc9f885c038215cdff0a0e1",
+        "git_blob_sha1": "ac055b96bb552eb9f0e7f2520af190d390c9f02a"
+      },
+      "member_manifest": {
+        "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13834081764-raw-text-package-v1/original-text-manifest.json",
+        "bytes": 32009,
+        "sha256": "9cda897aee461e0e71e665b214f29396052ac7eb4342b761168122dd433a859f",
+        "git_blob_sha1": "b07ce91108641a97c367e20c080666e687c76fd5"
+      },
+      "new_native_execution": false,
+      "network_download": false
+    },
+    {
+      "schema": "original-artifact-text-retention-v1",
+      "artifact_id": 13832340481,
+      "role": "exact-head-repository-truth",
+      "observed_utc": "2026-11-11T07:02:28.653869+00:00",
+      "source_zip": {
+        "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481.zip",
+        "bytes": 10829,
+        "sha256": "62ca19d15cff093a24039f5a517a718a7664cd33171128d3e1e2c0239a9eb4d4",
+        "git_blob_sha1": "4c7e9bc6bce8eaba98396c96405e5492b67e2380"
+      },
+      "selected_members": 14,
+      "excluded_members": 0,
+      "selected_original_bytes": 34295,
+      "archive": {
+        "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text.tar.gz",
+        "bytes": 7435,
+        "sha256": "b5f54a924f339721be38246c05889ab7cf86ac253743930974cae8ef02d7f27a",
+        "git_blob_sha1": "97f9a08cfc84778281a1d324ef75d0aa72ceb53b"
+      },
+      "member_manifest": {
+        "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text-manifest.json",
+        "bytes": 9251,
+        "sha256": "7cb3719b9f96eb4c3c28ad8f4a36ba71152ac1785eab9dba209d1f5c408824f1",
+        "git_blob_sha1": "1000868738696bbfac1cefb68b49e292d740b3d4"
+      },
+      "new_native_execution": false,
+      "network_download": false
+    }
+  ],
+  "source_ref_written": false
+}

@@ -1,0 +1,12 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_w1_staged_observer.py"
+  ],
+  "returncode": 0,
+  "wall_seconds": 3.8076376479998544,
+  "TMPDIR": "/dev/shm/trnm-w1-v2-79360d3567d1/tests",
+  "temporary_filesystem": "tmpfs",
+  "unchanged_disk_floor_bytes": 1073741824,
+  "free_bytes_after": 4648656896
+}

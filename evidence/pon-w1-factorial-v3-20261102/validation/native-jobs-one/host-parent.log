@@ -1,0 +1,27 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: unknown or duplicate Cargo loader directory: observed="/workspace/scratch/e08750459604/pon-v3-target-682/release"; derived_normal={"/tmp/trnm-original-budget-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib", "/tmp/trnm-original-budget-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib", "/workspace/scratch/e08750459604/pon-v3-target-682/x86_64-unknown-linux-gnu/release", "/workspace/scratch/e08750459604/pon-v3-target-682/x86_64-unknown-linux-gnu/release/deps"}
+    Finished `release` profile [optimized] target(s) in 0.11s
+     Running unittests src/lib.rs (/workspace/scratch/e08750459604/pon-v3-target-682/x86_64-unknown-linux-gnu/release/deps/trnm_pon_node-62418a327cf7d485)
+
+running 19 tests
+test host_kernel_parent::kernel_parent::tests::canonical_systemd_slice_name_maps_to_the_actual_root_cgroup ... ok
+test host_kernel_parent::kernel_parent::tests::cpu_limit_requires_exactly_two_ascii_whitespace_tokens ... ok
+test host_kernel_parent::kernel_parent::tests::exactly_one_fixed_system_parent_name_is_eligible ... ok
+test host_kernel_parent::kernel_parent::tests::fake_root_or_wrong_parent_never_counts_as_root_kernel_budget ... ok
+test host_kernel_parent::kernel_parent::tests::finite_cpu_memory_process_limits_and_burst_required ... ok
+test host_kernel_parent::kernel_parent::tests::fixed_parent_constant_is_exactly_the_canonical_directory_and_name ... ok
+test host_kernel_parent::kernel_parent::tests::kernel_resource_counters_require_complete_bounded_real_format ... ok
+test host_kernel_parent::kernel_parent::tests::limit_reader_checks_complete_utf8_after_fragmented_reads ... ok
+test host_kernel_parent::kernel_parent::tests::limit_reader_keeps_all_five_reads_before_validation_and_observes_changes ... ok
+test host_kernel_parent::kernel_parent::tests::limit_reader_keeps_exact_128_byte_bound_and_rejects_long_prefixes ... ok
+test host_kernel_parent::kernel_parent::tests::limit_reader_never_accepts_a_valid_prefix_before_a_read_error ... ok
+test host_kernel_parent::kernel_parent::tests::limit_reader_reopens_the_current_path_and_propagates_open_failure ... ok
+test host_kernel_parent::kernel_parent::tests::limit_reader_waits_for_real_eof_after_short_reads_and_interruptions ... ok
+test host_kernel_parent::kernel_parent::tests::membership_requires_exact_parent_or_slash_delimited_descendant ... ok
+test host_kernel_parent::kernel_parent::tests::no_public_nonloopback_without_root_owned_kernel_parent ... ok
+test host_kernel_parent::kernel_parent::tests::read_kernel_membership_from_current_os_thread_not_process_leader ... ok
+test host_kernel_parent::kernel_parent::tests::real_linux_cgroup_v2_cpu_stat_is_parsed_without_claiming_a_quota ... ok
+test host_kernel_parent::kernel_parent::tests::shipped_systemd_slice_is_the_one_fixed_finite_kernel_parent ... ok
+test host_kernel_parent::kernel_parent::tests::two_aggregate_samples_never_accept_cpu_counter_rewind_or_mem_task_delta ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 825 filtered out; finished in 0.01s
+

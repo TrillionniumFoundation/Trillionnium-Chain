@@ -1,0 +1,13 @@
+{"stage": "preflight", "state": "started", "source": "f388f46d9df150a3599b9d961b48918b3ff1fb48"}
+{"stage": "preflight", "state": "returned", "exit_code": 0, "seconds": 0.054054008000093745}
+{"stage": "cargo-metadata", "state": "started", "source": "f388f46d9df150a3599b9d961b48918b3ff1fb48"}
+{"stage": "cargo-metadata", "state": "returned", "exit_code": 0, "seconds": 0.2967427960002169}
+{"stage": "cargo-fmt", "state": "started", "source": "f388f46d9df150a3599b9d961b48918b3ff1fb48"}
+{"stage": "cargo-fmt", "state": "returned", "exit_code": 0, "seconds": 15.42601428999933}
+{"stage": "m06-tests", "state": "started", "source": "f388f46d9df150a3599b9d961b48918b3ff1fb48"}
+Traceback (most recent call last):
+  File "/workspace/scratch/f4976366a32a/verify_native_s3.py", line 182, in <module>
+    main()
+  File "/workspace/scratch/f4976366a32a/verify_native_s3.py", line 164, in main
+    raise RuntimeError('actual M06 transcript does not cover the complete retained inventory')
+RuntimeError: actual M06 transcript does not cover the complete retained inventory

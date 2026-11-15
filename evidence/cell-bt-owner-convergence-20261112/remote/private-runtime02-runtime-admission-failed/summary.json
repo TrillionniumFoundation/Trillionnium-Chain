@@ -1,0 +1,181 @@
+{
+  "aggregate_process_tree_memory_qualified": false,
+  "attempt": 3,
+  "before_identity": {
+    "head": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "status": "",
+    "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+  },
+  "bytecode_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-full-preflight/unused-supervisor-bytecode",
+  "bytecode_path_absent_before": true,
+  "caller_change": "New private environment generation 2 with original isolated flags and unchanged runtime guards",
+  "commands": [
+    {
+      "argv": [
+        "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+      ],
+      "cwd": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b",
+      "elapsed_seconds": 0.1138994109351188,
+      "environment_override": null,
+      "exit_code": 1,
+      "name": "source-before",
+      "started_unix_ns": 1794476202096721414,
+      "status": "completed",
+      "stderr": {
+        "bytes": 815,
+        "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-runtime-admission/source-before.stderr",
+        "sha256": "21d0eb6a0413c817414e69105551949e48a7955a8e348794538e13f01becb67e"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-runtime-admission/source-before.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+      ],
+      "cwd": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b",
+      "elapsed_seconds": 0.11421777005307376,
+      "environment_override": null,
+      "exit_code": 1,
+      "name": "source-after",
+      "started_unix_ns": 1794476202227868746,
+      "status": "completed",
+      "stderr": {
+        "bytes": 815,
+        "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-runtime-admission/source-after.stderr",
+        "sha256": "21d0eb6a0413c817414e69105551949e48a7955a8e348794538e13f01becb67e"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-runtime-admission/source-after.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 300
+    }
+  ],
+  "completed": true,
+  "completed_unix_ns": 1794476202345421579,
+  "cts1_or_chb1_admission_performed": false,
+  "end_error": "AssertionError: ",
+  "environment_generation": 2,
+  "error": "AssertionError: ",
+  "helper_sha256": "d82a18f91d0bdf275b96a5c8de86976ba15a870d67bab00a442db6c9497f9338",
+  "hepta_final_use": false,
+  "input_audit_sha256": "61f300cf7dd7eb7e455fcec6ada78a1cb392431ac3f8df40a1b36e7aa4781e7c",
+  "model_executed": false,
+  "model_generation": 1,
+  "model_loaded": false,
+  "native_operation_started": false,
+  "observer_sha256": "07152d3082cfc6e9a0d12bbfa8cdccd3f04023d44bc52780c16ac8b4624ec211",
+  "original_hepta_owner_used": false,
+  "passed": false,
+  "pins_before": [
+    {
+      "bytes": 11466,
+      "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-control/observe-full-preflight-env2-v1.py",
+      "sha256": "07152d3082cfc6e9a0d12bbfa8cdccd3f04023d44bc52780c16ac8b4624ec211"
+    },
+    {
+      "bytes": 8088,
+      "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-control/full-preflight-env2-v1.py",
+      "sha256": "d82a18f91d0bdf275b96a5c8de86976ba15a870d67bab00a442db6c9497f9338"
+    },
+    {
+      "bytes": 10308,
+      "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/source-inputs.native-v2-env2.json",
+      "sha256": "d2fb314ef4f8d2e4dfd05076ddd7d8e0465880d935cf8812e3b9b8785d1a6bae"
+    },
+    {
+      "bytes": 14093,
+      "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/source-inputs.native-v2-env2.verification.json",
+      "sha256": "61f300cf7dd7eb7e455fcec6ada78a1cb392431ac3f8df40a1b36e7aa4781e7c"
+    },
+    {
+      "bytes": 31028464,
+      "path": "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+      "sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5"
+    },
+    {
+      "bytes": 11231,
+      "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/ci/verify_ci_source.py",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    },
+    {
+      "bytes": 7104,
+      "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/preparation-success.json",
+      "sha256": "b8b2781739bf3623a0581e5ce5dd4036078f9477421e149afafe1c2e83ffd5f9"
+    },
+    {
+      "bytes": 8338,
+      "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/summary.json",
+      "sha256": "678b1bd68e857c4811bbf951330c7f6a00b1a5e337b8791eec04edb3780fed53"
+    },
+    {
+      "bytes": 2054,
+      "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/accepted-release-main.json",
+      "sha256": "b13585218eaf08c051c593ea699aae380322ab19fb8e021b9609a51ff47b8b09"
+    },
+    {
+      "bytes": 45100,
+      "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_cell_sealed_worker_v1.py",
+      "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+    },
+    {
+      "bytes": 22751,
+      "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_python_runtime_contract.py",
+      "sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc"
+    },
+    {
+      "bytes": 7097177,
+      "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/runtime-snapshot.projected.v2.json",
+      "sha256": "1085538a9d5901bf8e724347c97166669d8dd1ac5815c3e8825cfaa1ba3dd11a"
+    }
+  ],
+  "preparation_adapter_only": true,
+  "production_activation": false,
+  "resource_end": {
+    "cgroup": {
+      "cpu.max": "400000 100000",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "memory.max": "max",
+      "memory.peak": "45441024"
+    },
+    "cgroup_path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1cf1dd1e5-2564-199a.service",
+    "nice": 10
+  },
+  "resource_start": {
+    "cgroup": {
+      "cpu.max": "400000 100000",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "memory.max": "max",
+      "memory.peak": "35450880"
+    },
+    "cgroup_path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1cf1dd1e5-2564-199a.service",
+    "nice": 10
+  },
+  "schema": "trnm.bt-runtime-import-observation.v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_input_sha256": "d2fb314ef4f8d2e4dfd05076ddd7d8e0465880d935cf8812e3b9b8785d1a6bae",
+  "started_unix_ns": 1794476202096709564,
+  "traceback": "Traceback (most recent call last):\n  File \"/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-control/observe-full-preflight-env2-v1.py\", line 152, in main\n    assert run('source-before', verifier, 300, env) == 0\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213",
+  "whole_job_memory_cap_qualified": false
+}

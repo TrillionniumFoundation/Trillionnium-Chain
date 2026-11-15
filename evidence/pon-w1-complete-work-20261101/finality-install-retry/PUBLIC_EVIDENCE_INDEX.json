@@ -1,0 +1,73 @@
+{
+  "schema": "pon-finality-public-evidence-index-v1",
+  "source_commit": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+  "source_tree": "fef6125b338e5697896c0a32d0488458d8d93244",
+  "run_id": 41299973511,
+  "attempts_retained": [
+    1,
+    2
+  ],
+  "one_authorized_retry": true,
+  "artifact_downloads": 0,
+  "temporary_download_or_materialization_credentials_retained": false,
+  "credential_pattern_alert_count": 0,
+  "allowlist": [
+    {
+      "path": "attempt-1-triage.json",
+      "bytes": 7825,
+      "sha256": "142022f3ff5266fef44cf53dd6d79783d0f575ed8749dfa33072df5112110107"
+    },
+    {
+      "path": "triage-report.json",
+      "bytes": 7467,
+      "sha256": "5e749480c887aa5527143ccafb4f983f3aaffe1a05b736733eb0cdeffbe6f2eb"
+    },
+    {
+      "path": "conclusion.zh.txt",
+      "bytes": 2374,
+      "sha256": "dacd7c3ee680c49805ed94f066d50efa14a731ae9a43058be807ca0485ec391d"
+    },
+    {
+      "path": "release-finality-reference.7c5.yml",
+      "bytes": 7450,
+      "sha256": "5b90700d4d0ac685ed2874540a394ede3afc8fc453a508718a7ac24df8b50f40"
+    },
+    {
+      "path": "job-124828701949.log",
+      "bytes": 130406,
+      "sha256": "823df77f6f1998734d3e1bf51ab685f1abe21cc89aea822a7311292cd2c5ed78"
+    },
+    {
+      "path": "job-124828701857-arm-merge-success.log",
+      "bytes": 150088,
+      "sha256": "8f3948bc2aac47a253e923d9c3f464008ae174f0068cdbd55545cc49e5748709"
+    },
+    {
+      "path": "job-124832823723-attempt-2.log",
+      "bytes": 149007,
+      "sha256": "8ea2e65f5f2d6d2a6aa0728eee47f55b5ec6eccd906767ba017bde6a95ed76d0"
+    },
+    {
+      "path": "run-41299973511-jobs.json",
+      "bytes": 11429,
+      "sha256": "0cf9a326b54f4553a8222a8c8b4e4aeca9cf9542370921778d3dcba35be89179"
+    },
+    {
+      "path": "run-41299973511-attempt-2-jobs-final.json",
+      "bytes": 11429,
+      "sha256": "cb558f1f826686bc0fb7320be4c27dadff5b9f2883ec90543725e22f4370174f"
+    },
+    {
+      "path": "run-41299973511-attempt-1-status.json",
+      "bytes": 608,
+      "sha256": "b1e1f7c50a629309d12edbeef8fdbc511d5f205b468b6afe00d484a6a79f2eb9"
+    },
+    {
+      "path": "run-41299973511-attempt-2-status.json",
+      "bytes": 608,
+      "sha256": "ea8533b82f983e25ade3e76d7c101d0b3afcabb03d9aa7ccba6d4f0642b18715"
+    }
+  ],
+  "all_files_copied_and_reopened_byte_equal": true,
+  "scope": "Exact listed public logs, metadata, workflow and read-only reports. Initial failure and successful rerun both retained; no test/budget change."
+}

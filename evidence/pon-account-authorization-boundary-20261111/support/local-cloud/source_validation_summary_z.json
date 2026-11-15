@@ -1,0 +1,687 @@
+{
+  "schema": "chain-source-validation-summary-v2",
+  "created_utc": "2026-11-11T01:42:39.188808+00:00",
+  "reviewer": "/root/pq_profile_review",
+  "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+  "status": "OWN_18_RECORDS_PASS_CI_CONTRACT_TESTS_DELEGATED_PENDING",
+  "executed_command_count": 18,
+  "passed_command_count": 18,
+  "failed_command_count": 0,
+  "executed_python_test_suites": {
+    "w1_lifetime": 19,
+    "pq_research_integration": 59,
+    "ci_source_integrity": 43
+  },
+  "python_tests_total": 121,
+  "closure_reproduction_commands": 7,
+  "closure_cmp_commands": 7,
+  "closure_scope": "All seven commands in the workflow reproduce group and every corresponding cmp were run. This is not a claim that the full named-control roster, hosted workflow, prospective-merge lane or Rust/native tests were executed by this reviewer.",
+  "corpus_positive": {
+    "canonical_default_provider_contract_checked": true,
+    "canonical_pnq2_contract_checked": true,
+    "continuous_npq6_combination_accepted": false,
+    "cryptographic_acceptance": false,
+    "exact_source_blobs": 1085,
+    "legacy_qtx1_optional_adapter_contract_checked": true,
+    "native_transfer_account_contract_checked": true,
+    "native_transport_contract_checked": true,
+    "node_activated": false,
+    "production_confidentiality_accepted": false,
+    "schema": "trnm-pq-cross-branch-check-v1",
+    "status": "HOLD_NO_GO",
+    "upstream_heads": 6,
+    "whole_native_authorization_migrated": false
+  },
+  "records": [
+    {
+      "id": "source-w1-lifetime-ledger-tests",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-lifetime-ledger-tests",
+      "argv": [
+        "python3",
+        "scripts/ci/test_w1_lifetime_ledger.py"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:34:24.316020+00:00",
+      "finished_utc": "2026-11-11T01:34:24.951327+00:00",
+      "elapsed_seconds": 0.603648303999762,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "f37c1d49fa7eda6c485a713a4a6e2e5171f3209c3dd1dc81660d40fb54bede1e",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": 19,
+      "test_elapsed_seconds": 0.293,
+      "child_resources": {
+        "user_cpu_seconds": 0.375712,
+        "system_cpu_seconds": 0.12163099999999999,
+        "maximum_rss_kib": 19576,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-w1-lifetime-reproduce",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-lifetime-reproduce",
+      "argv": [
+        "python3",
+        "scripts/w1_lifetime_ledger.py",
+        "--input",
+        "evidence/pon-w1-lifetime-account-boundary-20261110/project-input.json"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:34:46.051171+00:00",
+      "finished_utc": "2026-11-11T01:34:46.339110+00:00",
+      "elapsed_seconds": 0.2450381809994724,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "b050b861ec172305d708ba7c01ca47d547b1646cc3daee1d6aec9877d2cf3390",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "child_resources": {
+        "user_cpu_seconds": 0.078091,
+        "system_cpu_seconds": 0.011973999999999999,
+        "maximum_rss_kib": 15476,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-pq-research-integration-check",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-pq-research-integration-check",
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:35:17.367236+00:00",
+      "finished_utc": "2026-11-11T01:35:18.465105+00:00",
+      "elapsed_seconds": 1.060375441999895,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "e21d9aedf7617528ecc6e810f34e92ae9e91368675fd6b453c9cc546f238dee1",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "child_resources": {
+        "user_cpu_seconds": 0.676682,
+        "system_cpu_seconds": 0.18497999999999998,
+        "maximum_rss_kib": 16008,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-w1-lifetime-cmp",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-lifetime-cmp",
+      "argv": [
+        "cmp",
+        "evidence/pon-w1-lifetime-account-boundary-20261110/project-report.json",
+        "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-lifetime-reproduce/stdout.log"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:35:17.377139+00:00",
+      "finished_utc": "2026-11-11T01:35:17.509167+00:00",
+      "elapsed_seconds": 0.10026294299950678,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "child_resources": {
+        "user_cpu_seconds": 0.0033240000000000006,
+        "system_cpu_seconds": 0.0,
+        "maximum_rss_kib": 13464,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-w1-composition-unknown-reproduce",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-unknown-reproduce",
+      "argv": [
+        "python3",
+        "scripts/w1_qrom_composition_budget.py"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:35:36.429585+00:00",
+      "finished_utc": "2026-11-11T01:35:36.907324+00:00",
+      "elapsed_seconds": 0.435337693999827,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "e130e7ffb3ef74d9583b8b4ae7a74e50312a729e42688764dfaac157ba4e9041",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "child_resources": {
+        "user_cpu_seconds": 0.11768799999999999,
+        "system_cpu_seconds": 0.019206,
+        "maximum_rss_kib": 13696,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-w1-composition-example-reproduce",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-example-reproduce",
+      "argv": [
+        "python3",
+        "scripts/w1_qrom_composition_budget.py",
+        "--example"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:35:36.431874+00:00",
+      "finished_utc": "2026-11-11T01:35:36.781205+00:00",
+      "elapsed_seconds": 0.2935612510000283,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "afa82237a9ad859193e53e0ebad83652c63c76ea0058c1213e61d81a04aa5457",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "child_resources": {
+        "user_cpu_seconds": 0.056068999999999994,
+        "system_cpu_seconds": 0.01261000000000001,
+        "maximum_rss_kib": 13696,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-w1-semantics-reproduce",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-semantics-reproduce",
+      "argv": [
+        "python3",
+        "scripts/w1_qrom_semantics_audit.py",
+        "--out",
+        "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-semantics-reproduce/report.json"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:35:36.441555+00:00",
+      "finished_utc": "2026-11-11T01:35:42.363610+00:00",
+      "elapsed_seconds": 5.868374550000226,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "child_resources": {
+        "user_cpu_seconds": 5.217877,
+        "system_cpu_seconds": 0.22736499999999998,
+        "maximum_rss_kib": 49528,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-pq-research-integration-tests",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-pq-research-integration-tests",
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:36:01.363761+00:00",
+      "finished_utc": "2026-11-11T01:40:32.585459+00:00",
+      "elapsed_seconds": 271.16298387200004,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "8560da752d7ffbd824c2d607c1b2a8b6c1930667386e6f59dedacae90834ed7f",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": 59,
+      "test_elapsed_seconds": 270.247,
+      "child_resources": {
+        "user_cpu_seconds": 194.709753,
+        "system_cpu_seconds": 60.834143000000005,
+        "maximum_rss_kib": 29504,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-ci-integrity-tests",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-ci-integrity-tests",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:36:01.367207+00:00",
+      "finished_utc": "2026-11-11T01:36:08.356186+00:00",
+      "elapsed_seconds": 6.933758772000147,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "68c47b83f5c00b2e0353303ac33dfe820b5f086f5cfd71c54c0a65982bcde977",
+      "stderr_sha256": "fa6d227c543119191d3f6a514a1b2bf2bc3f6a2be3fd26be2f84b15b00caf97e",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": 43,
+      "test_elapsed_seconds": 6.495,
+      "child_resources": {
+        "user_cpu_seconds": 2.452918,
+        "system_cpu_seconds": 2.260799,
+        "maximum_rss_kib": 21468,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-w1-semantics-cmp",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-semantics-cmp",
+      "argv": [
+        "cmp",
+        "evidence/pon-w1-qrom-semantics-current-20261109/report.json",
+        "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-semantics-reproduce/report.json"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:36:14.426269+00:00",
+      "finished_utc": "2026-11-11T01:36:14.708164+00:00",
+      "elapsed_seconds": 0.2136590440004511,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "child_resources": {
+        "user_cpu_seconds": 0.003927000000000003,
+        "system_cpu_seconds": 0.0,
+        "maximum_rss_kib": 13708,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-w1-composition-unknown-cmp",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-unknown-cmp",
+      "argv": [
+        "cmp",
+        "evidence/pon-w1-qrom-formal-bridge-20261107/composition-unknown.json",
+        "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-unknown-reproduce/stdout.log"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:36:14.426413+00:00",
+      "finished_utc": "2026-11-11T01:36:14.655337+00:00",
+      "elapsed_seconds": 0.19484013999954186,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "child_resources": {
+        "user_cpu_seconds": 0.002744,
+        "system_cpu_seconds": 0.0,
+        "maximum_rss_kib": 13716,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-w1-composition-example-cmp",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-example-cmp",
+      "argv": [
+        "cmp",
+        "evidence/pon-w1-qrom-formal-bridge-20261107/composition-example.json",
+        "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-example-reproduce/stdout.log"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:36:14.427331+00:00",
+      "finished_utc": "2026-11-11T01:36:14.651321+00:00",
+      "elapsed_seconds": 0.15324627699919802,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "child_resources": {
+        "user_cpu_seconds": 0.002026,
+        "system_cpu_seconds": 0.0,
+        "maximum_rss_kib": 13708,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-w1-joint-oracle-separated-reproduce",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-separated-reproduce",
+      "argv": [
+        "python3",
+        "scripts/w1_qrom_joint_oracle_diagnostic.py",
+        "--example",
+        "separated"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:36:20.109488+00:00",
+      "finished_utc": "2026-11-11T01:36:20.537302+00:00",
+      "elapsed_seconds": 0.3948611819996586,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "0373ec119814b52efeecdff6f654dd1d3d8008908ef7a6eea3ec92b648928d17",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "child_resources": {
+        "user_cpu_seconds": 0.027598999999999995,
+        "system_cpu_seconds": 0.017787999999999998,
+        "maximum_rss_kib": 13496,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-w1-joint-oracle-alias-reproduce",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-alias-reproduce",
+      "argv": [
+        "python3",
+        "scripts/w1_qrom_joint_oracle_diagnostic.py",
+        "--example",
+        "alias"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:36:20.135027+00:00",
+      "finished_utc": "2026-11-11T01:36:20.592688+00:00",
+      "elapsed_seconds": 0.3899690289999853,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "1e427168ad06f93dee645982bd412e58b97ce825132559e7a07a47f2a6530522",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "child_resources": {
+        "user_cpu_seconds": 0.054223,
+        "system_cpu_seconds": 0.035727999999999996,
+        "maximum_rss_kib": 13696,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-w1-joint-oracle-unknown-reproduce",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-unknown-reproduce",
+      "argv": [
+        "python3",
+        "scripts/w1_qrom_joint_oracle_diagnostic.py"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:36:20.173700+00:00",
+      "finished_utc": "2026-11-11T01:36:20.641624+00:00",
+      "elapsed_seconds": 0.40607975399962015,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "cac5fa1b09a64207bfde34931de1937894e31739912e9bcea70705b0fac899eb",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "child_resources": {
+        "user_cpu_seconds": 0.057089999999999995,
+        "system_cpu_seconds": 0.09303800000000001,
+        "maximum_rss_kib": 13708,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-w1-joint-oracle-unknown-cmp",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-unknown-cmp",
+      "argv": [
+        "cmp",
+        "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-unknown.json",
+        "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-unknown-reproduce/stdout.log"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:36:25.367563+00:00",
+      "finished_utc": "2026-11-11T01:36:25.529923+00:00",
+      "elapsed_seconds": 0.12918809999973746,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "child_resources": {
+        "user_cpu_seconds": 0.0,
+        "system_cpu_seconds": 0.0019510000000000083,
+        "maximum_rss_kib": 13540,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-w1-joint-oracle-alias-cmp",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-alias-cmp",
+      "argv": [
+        "cmp",
+        "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-alias.json",
+        "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-alias-reproduce/stdout.log"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:36:25.433610+00:00",
+      "finished_utc": "2026-11-11T01:36:25.646233+00:00",
+      "elapsed_seconds": 0.18025245999979234,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "child_resources": {
+        "user_cpu_seconds": 0.003030999999999999,
+        "system_cpu_seconds": 0.0,
+        "maximum_rss_kib": 13696,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    },
+    {
+      "id": "source-w1-joint-oracle-separated-cmp",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-separated-cmp",
+      "argv": [
+        "cmp",
+        "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-separated.json",
+        "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-separated-reproduce/stdout.log"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "started_utc": "2026-11-11T01:36:25.462178+00:00",
+      "finished_utc": "2026-11-11T01:36:25.664365+00:00",
+      "elapsed_seconds": 0.13386553799955436,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "source_clean_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recorder_sha256": "86d497c38986114c8d1d158f6736e18441e27b12d9d12a5ebf4713414c70c5f6",
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "child_resources": {
+        "user_cpu_seconds": 0.0021259999999999994,
+        "system_cpu_seconds": 0.0,
+        "maximum_rss_kib": 13556,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+      },
+      "qualification_granted": false
+    }
+  ],
+  "reproduced_reports": [
+    {
+      "component": "semantics",
+      "generation_record": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-semantics-reproduce",
+      "cmp_record": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-semantics-cmp",
+      "expected_fixture": "evidence/pon-w1-qrom-semantics-current-20261109/report.json",
+      "actual_report": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-semantics-reproduce/report.json",
+      "bytes": 76729,
+      "sha256": "129e7b8bc1b6d34ef55acc25bd12cae273bdc65bdeee9649b1b43e214a4e9ebe",
+      "actual_cmp_exit": 0,
+      "top_level_status": "RECOMPUTED_FIXED_GUEST_IMAGE_AND_ENCODING_BOUNDARIES"
+    },
+    {
+      "component": "lifetime",
+      "generation_record": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-lifetime-reproduce",
+      "cmp_record": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-lifetime-cmp",
+      "expected_fixture": "evidence/pon-w1-lifetime-account-boundary-20261110/project-report.json",
+      "actual_report": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-lifetime-reproduce/stdout.log",
+      "bytes": 31311,
+      "sha256": "b050b861ec172305d708ba7c01ca47d547b1646cc3daee1d6aec9877d2cf3390",
+      "actual_cmp_exit": 0,
+      "top_level_status": "CONDITIONAL_ACCOUNTING_AND_SELECTED_SOURCE_SURVEY_SECURITY_HOLD"
+    },
+    {
+      "component": "composition-unknown",
+      "generation_record": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-unknown-reproduce",
+      "cmp_record": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-unknown-cmp",
+      "expected_fixture": "evidence/pon-w1-qrom-formal-bridge-20261107/composition-unknown.json",
+      "actual_report": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-unknown-reproduce/stdout.log",
+      "bytes": 6878,
+      "sha256": "e130e7ffb3ef74d9583b8b4ae7a74e50312a729e42688764dfaac157ba4e9041",
+      "actual_cmp_exit": 0,
+      "top_level_status": "hypothetical_sequential_expression_only"
+    },
+    {
+      "component": "composition-example",
+      "generation_record": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-example-reproduce",
+      "cmp_record": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-example-cmp",
+      "expected_fixture": "evidence/pon-w1-qrom-formal-bridge-20261107/composition-example.json",
+      "actual_report": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-example-reproduce/stdout.log",
+      "bytes": 11101,
+      "sha256": "afa82237a9ad859193e53e0ebad83652c63c76ea0058c1213e61d81a04aa5457",
+      "actual_cmp_exit": 0,
+      "top_level_status": "hypothetical_sequential_expression_only"
+    },
+    {
+      "component": "joint-oracle-unknown",
+      "generation_record": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-unknown-reproduce",
+      "cmp_record": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-unknown-cmp",
+      "expected_fixture": "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-unknown.json",
+      "actual_report": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-unknown-reproduce/stdout.log",
+      "bytes": 2833,
+      "sha256": "cac5fa1b09a64207bfde34931de1937894e31739912e9bcea70705b0fac899eb",
+      "actual_cmp_exit": 0,
+      "top_level_status": "finite_hypothetical_joint_law_only"
+    },
+    {
+      "component": "joint-oracle-alias",
+      "generation_record": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-alias-reproduce",
+      "cmp_record": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-alias-cmp",
+      "expected_fixture": "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-alias.json",
+      "actual_report": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-alias-reproduce/stdout.log",
+      "bytes": 3364,
+      "sha256": "1e427168ad06f93dee645982bd412e58b97ce825132559e7a07a47f2a6530522",
+      "actual_cmp_exit": 0,
+      "top_level_status": "finite_hypothetical_joint_law_only"
+    },
+    {
+      "component": "joint-oracle-separated",
+      "generation_record": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-separated-reproduce",
+      "cmp_record": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-separated-cmp",
+      "expected_fixture": "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-separated.json",
+      "actual_report": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-separated-reproduce/stdout.log",
+      "bytes": 3363,
+      "sha256": "0373ec119814b52efeecdff6f654dd1d3d8008908ef7a6eea3ec92b648928d17",
+      "actual_cmp_exit": 0,
+      "top_level_status": "finite_hypothetical_joint_law_only"
+    }
+  ],
+  "environment_confirmed": {
+    "LD_LIBRARY_PATH": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/lib",
+    "CARGO_BUILD_JOBS": "1",
+    "TMPDIR": "/workspace/scratch/a4188f5c86b5/validation-tmp"
+  },
+  "all_log_hashes_independently_verified": true,
+  "all_recorded_heads_unchanged_and_clean": true,
+  "repository_edited_by_reviewer": false,
+  "cargo_executed_by_reviewer": false,
+  "native_tests_executed_by_reviewer": false,
+  "qualification_granted": false,
+  "reused_lane": {
+    "record": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-same-device",
+    "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+    "argv": [
+      "bash",
+      "scripts/ci/ci_job.sh",
+      "repository-truth"
+    ],
+    "observed_check_repository": {
+      "activation": false,
+      "head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "local_links": 6623,
+      "normal_dependency_edges": 27,
+      "result": "PASS",
+      "runtime_implemented": false,
+      "rust_files": 1472,
+      "source_state": "committed-clean",
+      "tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "workspace_packages": 26
+    },
+    "observed_inventory_pass": true,
+    "positive_ci_contract_validation": "check_repository.py invokes check_ci_contract.validate(root); the actual check_repository observation is PASS. No separate check_ci_contract CLI command is claimed.",
+    "formal_ci_contract_test_suite": "PENDING: delegated same-source full repository-truth lane is still running; do not count as PASS yet.",
+    "whole_lane_pass_claimed": false
+  },
+  "history_preserved": {
+    "y_failure_record": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/source-w1-lifetime-ledger-tests",
+    "y_failure_returncode": 1,
+    "y_failure_stderr_sha256": "21be63299fc3ef865d15cdca17cecd35975f017955d6adf78526f9ce6273fefe",
+    "y_failure_rewritten": false,
+    "m8_historical_report": "evidence/pon-w1-lifetime-current-20261109/project-report.json",
+    "m8_report_sha256": "8ee20462d669a0e21b0fe964585f85fa2a49e7e58273459ab2501b4a2e39dfc0",
+    "m8_bytes_unchanged": true
+  },
+  "limits": [
+    "Source and arithmetic reproduction do not grant whole-chain PQ, native-cohort, consensus or production qualification.",
+    "The Y failed comparison remains a failed observation; the Z success is a separate recorded execution.",
+    "CI contract unittest results and the entire repository-truth lane remain delegated and pending at this snapshot."
+  ]
+}

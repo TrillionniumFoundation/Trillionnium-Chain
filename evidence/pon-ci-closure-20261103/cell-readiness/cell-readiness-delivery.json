@@ -1,0 +1,614 @@
+{
+  "schema": "cell-startup-readiness-delivery-v1",
+  "frozen_at": "2026-11-03T15:53:55.632298+00:00",
+  "worktree": "/workspace/scratch/abae1861b451/chain-cell-ready",
+  "branch": "fix/chain-cell-ready-20261103",
+  "base_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "base_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+  "candidate_is_uncommitted": true,
+  "changed_paths": [
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs"
+  ],
+  "source": {
+    "path": "/workspace/scratch/abae1861b451/chain-cell-ready/trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+    "bytes": 34032,
+    "sha256": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0"
+  },
+  "source_git_blob": "6a568982251c7b14727e4a55b6e4d843f8c89c56",
+  "patch": {
+    "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/cell-startup-readiness.patch",
+    "bytes": 29479,
+    "sha256": "ac6979ebf447adf0cf6e051a4d20a0a0604bb510588e83c29fdec2ff7de75bcd"
+  },
+  "actual_changes": [
+    "One bounded startup-ready channel per original fixture worker; all receiver waits share the one setup deadline of 10 seconds.",
+    "Ready follows real serving-thread DB open, original bound/address validation and nonblocking listener setup. Original production serve functions still handle every TCP request.",
+    "Wait for setup before signing TTL; record complete fixture/DB/listener/thread setup wall duration, including failure-stage records.",
+    "Bounded static phase, IO kind, OS errno, numeric arrival/expiry metadata; no request/signature/key/payload/arbitrary error text.",
+    "Keep real proxy upstream request and original delayed real response; no extra readiness TCP connections, no request retry."
+  ],
+  "preserved_contract": {
+    "original_assertion_occurrences": 32,
+    "all_original_assertion_conditions_retained": true,
+    "added_preparation_assertions": 2,
+    "original_sequence_selectors": 3,
+    "new_tests": 0,
+    "registry_total": 172,
+    "ordinary_client_request_ms": 200,
+    "rendezvous_request_ms": 250,
+    "short_ttl_client_request_ms": 4000,
+    "client_overall_ms": 10000,
+    "signed_short_ttl_seconds": 2,
+    "signed_long_ttl_seconds": 300,
+    "peer_max_connections": 64,
+    "peer_max_response_bytes": 4194304,
+    "parallelism": 2,
+    "manifest_delay_after_signed_expiry_ms": 25,
+    "production_protocol_modified": false,
+    "gate_or_workflow_modified": false,
+    "source_pin_modified": false,
+    "new_commit_or_push": false
+  },
+  "host": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "kernel": "6.18.57"
+  },
+  "provider_env": {
+    "path": "/workspace/scratch/abae1861b451/original-pq-provider/provider.env",
+    "bytes": 510,
+    "sha256": "92886badc92051b5338ea482e4b8041c2a6434b26a37a1c2f5e17e0c1586485b"
+  },
+  "feature_closure": {
+    "initial_package_feature_difference_retained": {
+      "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/06-feature-closure.json",
+      "bytes": 2996,
+      "sha256": "f02836351363d4ee3dd7c836d636ea8cef489d42a7b8aeae1f9d0d2f8366c3a0"
+    },
+    "corrected_workspace_feature_comparison": {
+      "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/07-workspace-feature-closure.json",
+      "bytes": 12806,
+      "sha256": "05e4afa75bfd96ae6cfe8701d5f0d97c05246269e01edb978a3f7fe21be8bf0a"
+    },
+    "matching_reachable_packages": 91,
+    "explicit_features": "trnm-crypto-primitives/pq-native-openssl,rusqlite/hooks,rustix/process,ml-dsa/default",
+    "no_manifest_or_lock_change": true,
+    "caveat": "Cargo tree normal/build/dev feature sets are compared per package identity, possibly unioning host/build contexts. This remains selected-package verification."
+  },
+  "native_executions": [
+    {
+      "label": "02-exact-superseded-endpoint",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "filtered_out": 171,
+      "harness_wall_seconds": 0.11,
+      "setup_elapsed_ns": [
+        40339679
+      ],
+      "log": {
+        "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/02-exact-superseded-endpoint.log",
+        "bytes": 1392,
+        "sha256": "38d65ae339aaa7fff426f6a80f44188891d5f9990353186c741606731071e897"
+      }
+    },
+    {
+      "label": "03-exact-short-ttl",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "filtered_out": 171,
+      "harness_wall_seconds": 2.06,
+      "setup_elapsed_ns": [
+        46879600
+      ],
+      "log": {
+        "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/03-exact-short-ttl.log",
+        "bytes": 1667,
+        "sha256": "26c034685121ddaa3a18a3bd02ee5ee06764251be41984e68a74572e7361c656"
+      }
+    },
+    {
+      "label": "04-original-sequence-controls",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0,
+      "filtered_out": 169,
+      "harness_wall_seconds": 2.13,
+      "setup_elapsed_ns": [
+        31447551,
+        26773147,
+        22467241
+      ],
+      "log": {
+        "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/04-original-sequence-controls.log",
+        "bytes": 3868,
+        "sha256": "00f387ed0376eed50e9ba9915f2c686f79cbc21640d8c099463a194844488098"
+      }
+    },
+    {
+      "label": "08-workspace-features-exact-superseded",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "filtered_out": 171,
+      "harness_wall_seconds": 0.1,
+      "setup_elapsed_ns": [
+        30319159
+      ],
+      "log": {
+        "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/08-workspace-features-exact-superseded.log",
+        "bytes": 2102,
+        "sha256": "5ed199710dd0bb4cafd81b4d877e971442de5c3344836f18a1d110d21ddfa1f0"
+      }
+    },
+    {
+      "label": "09-workspace-features-exact-short-ttl",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "filtered_out": 171,
+      "harness_wall_seconds": 2.01,
+      "setup_elapsed_ns": [
+        44736649
+      ],
+      "log": {
+        "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/09-workspace-features-exact-short-ttl.log",
+        "bytes": 1669,
+        "sha256": "bab0bf7c0c1cd3800f2eaa514306deeeee7a2539c7eef2379caa250cdb310923"
+      }
+    },
+    {
+      "label": "10-workspace-features-original-sequence-controls",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0,
+      "filtered_out": 169,
+      "harness_wall_seconds": 1.66,
+      "setup_elapsed_ns": [
+        41121039,
+        30662798,
+        48322751
+      ],
+      "log": {
+        "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/10-workspace-features-original-sequence-controls.log",
+        "bytes": 3871,
+        "sha256": "6b2fa80e10d4e2b7d96c4d500e6db0c062393dbee62bf99ed5c15524d2f03e34"
+      }
+    }
+  ],
+  "distinct_original_tests_passed_with_workspace_features": 3,
+  "required_hosted_failures_retained": [
+    {
+      "head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+      "run": 41658914621,
+      "job": 125996626572,
+      "result": "171 pass / 1 fail",
+      "selector": "tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint",
+      "source_line": 446,
+      "failure": "announce IO WouldBlock errno 11",
+      "original_log": {
+        "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/bebb-runtime-head-job125996626572.log",
+        "bytes": 227139,
+        "sha256": "b4bc0f65ee7663d3f4b9f8c802b3737312573ee051798474a4724906b182ee74"
+      }
+    },
+    {
+      "head": "0153600a002c420d20128983c3280ff6c16e70c4",
+      "tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+      "run": 41658914621,
+      "job": 125996626554,
+      "result": "171 pass / 1 fail",
+      "selector": "tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication",
+      "source_line": 398,
+      "failure": "fixture required a real manifest request, observation absent",
+      "original_log": {
+        "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/bebb-runtime-prospective-merge-job125996626554.log",
+        "bytes": 230467,
+        "sha256": "b06ecb631e787a669252c9ef1659b3452f0ee07f931a0c46cb9943b2497f4ad6"
+      }
+    }
+  ],
+  "receipt_metadata_corrections": [
+    {
+      "file": "05-package-strict-clippy.json",
+      "field": "profile",
+      "recorded": "test (unchanged)",
+      "actual": "dev/check (unchanged, all targets)",
+      "reason": "Initial runner used a generic test-profile metadata label; original log explicitly reports Finished dev profile. The receipt and log are preserved unchanged; final strict-Clippy receipt has the correct label."
+    }
+  ],
+  "commands": [
+    {
+      "label": "01-compile",
+      "base_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "base_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+      "dirty_test_candidate": true,
+      "started_at": "2026-11-03T15:44:59.922295+00:00",
+      "command": [
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "--all-features",
+        "--features",
+        "trnm-crypto-primitives/pq-native-openssl",
+        "--no-run"
+      ],
+      "cwd": "/workspace/scratch/abae1861b451/chain-cell-ready",
+      "target_dir": "/workspace/scratch/abae1861b451/cell-ready-target",
+      "profile": "test (unchanged)",
+      "provider_env_sha256": "92886badc92051b5338ea482e4b8041c2a6434b26a37a1c2f5e17e0c1586485b",
+      "source_sha256_before": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "source_sha256_after": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "exit_code": 0,
+      "wall_seconds": 53.181918408,
+      "log": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/01-compile.log",
+      "log_bytes": 3213,
+      "log_sha256": "16c2b75b1052703b2b3296c3b09205ca0a4851b98f34e229211a4ae5c0636ea8"
+    },
+    {
+      "label": "02-exact-superseded-endpoint",
+      "base_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "base_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+      "dirty_test_candidate": true,
+      "started_at": "2026-11-03T15:46:43.466030+00:00",
+      "command": [
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "--all-features",
+        "--features",
+        "trnm-crypto-primitives/pq-native-openssl",
+        "cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/abae1861b451/chain-cell-ready",
+      "target_dir": "/workspace/scratch/abae1861b451/cell-ready-target",
+      "profile": "test (unchanged)",
+      "provider_env_sha256": "92886badc92051b5338ea482e4b8041c2a6434b26a37a1c2f5e17e0c1586485b",
+      "source_sha256_before": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "source_sha256_after": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "exit_code": 0,
+      "wall_seconds": 0.2766822180001327,
+      "log": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/02-exact-superseded-endpoint.log",
+      "log_bytes": 1392,
+      "log_sha256": "38d65ae339aaa7fff426f6a80f44188891d5f9990353186c741606731071e897"
+    },
+    {
+      "label": "03-exact-short-ttl",
+      "base_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "base_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+      "dirty_test_candidate": true,
+      "started_at": "2026-11-03T15:46:50.822231+00:00",
+      "command": [
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "--all-features",
+        "--features",
+        "trnm-crypto-primitives/pq-native-openssl",
+        "cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/abae1861b451/chain-cell-ready",
+      "target_dir": "/workspace/scratch/abae1861b451/cell-ready-target",
+      "profile": "test (unchanged)",
+      "provider_env_sha256": "92886badc92051b5338ea482e4b8041c2a6434b26a37a1c2f5e17e0c1586485b",
+      "source_sha256_before": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "source_sha256_after": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "exit_code": 0,
+      "wall_seconds": 2.2404529589998674,
+      "log": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/03-exact-short-ttl.log",
+      "log_bytes": 1667,
+      "log_sha256": "26c034685121ddaa3a18a3bd02ee5ee06764251be41984e68a74572e7361c656"
+    },
+    {
+      "label": "04-original-sequence-controls",
+      "base_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "base_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+      "dirty_test_candidate": true,
+      "started_at": "2026-11-03T15:47:00.907898+00:00",
+      "command": [
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "--all-features",
+        "--features",
+        "trnm-crypto-primitives/pq-native-openssl",
+        "cell::discovery::sequence_tests::",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/abae1861b451/chain-cell-ready",
+      "target_dir": "/workspace/scratch/abae1861b451/cell-ready-target",
+      "profile": "test (unchanged)",
+      "provider_env_sha256": "92886badc92051b5338ea482e4b8041c2a6434b26a37a1c2f5e17e0c1586485b",
+      "source_sha256_before": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "source_sha256_after": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "exit_code": 0,
+      "wall_seconds": 2.2206973339998513,
+      "log": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/04-original-sequence-controls.log",
+      "log_bytes": 3868,
+      "log_sha256": "00f387ed0376eed50e9ba9915f2c686f79cbc21640d8c099463a194844488098"
+    },
+    {
+      "label": "05-package-strict-clippy",
+      "base_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "base_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+      "dirty_test_candidate": true,
+      "started_at": "2026-11-03T15:48:01.860638+00:00",
+      "command": [
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--all-targets",
+        "--all-features",
+        "--features",
+        "trnm-crypto-primitives/pq-native-openssl",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/abae1861b451/chain-cell-ready",
+      "target_dir": "/workspace/scratch/abae1861b451/cell-ready-target",
+      "profile": "test (unchanged)",
+      "provider_env_sha256": "92886badc92051b5338ea482e4b8041c2a6434b26a37a1c2f5e17e0c1586485b",
+      "source_sha256_before": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "source_sha256_after": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "exit_code": 0,
+      "wall_seconds": 17.57248046299992,
+      "log": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/05-package-strict-clippy.log",
+      "log_bytes": 2213,
+      "log_sha256": "d295a943b33e2974be786accbf4e95469f0d5c4cc0e5cdd333d10f07de6428e9"
+    },
+    {
+      "label": "08-workspace-features-exact-superseded",
+      "base_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "base_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+      "dirty_test_candidate": true,
+      "started_at": "2026-11-03T15:50:15.105623+00:00",
+      "command": [
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "--all-features",
+        "--features",
+        "trnm-crypto-primitives/pq-native-openssl,rusqlite/hooks,rustix/process,ml-dsa/default",
+        "cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/abae1861b451/chain-cell-ready",
+      "target_dir": "/workspace/scratch/abae1861b451/cell-ready-target",
+      "profile": "test (unchanged)",
+      "provider_env_sha256": "92886badc92051b5338ea482e4b8041c2a6434b26a37a1c2f5e17e0c1586485b",
+      "source_sha256_before": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "source_sha256_after": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "exit_code": 0,
+      "wall_seconds": 27.738249434999943,
+      "log": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/08-workspace-features-exact-superseded.log",
+      "log_bytes": 2102,
+      "log_sha256": "5ed199710dd0bb4cafd81b4d877e971442de5c3344836f18a1d110d21ddfa1f0"
+    },
+    {
+      "label": "09-workspace-features-exact-short-ttl",
+      "base_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "base_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+      "dirty_test_candidate": true,
+      "started_at": "2026-11-03T15:51:17.834068+00:00",
+      "command": [
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "--all-features",
+        "--features",
+        "trnm-crypto-primitives/pq-native-openssl,rusqlite/hooks,rustix/process,ml-dsa/default",
+        "cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/abae1861b451/chain-cell-ready",
+      "target_dir": "/workspace/scratch/abae1861b451/cell-ready-target",
+      "profile": "test (unchanged)",
+      "provider_env_sha256": "92886badc92051b5338ea482e4b8041c2a6434b26a37a1c2f5e17e0c1586485b",
+      "source_sha256_before": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "source_sha256_after": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "exit_code": 0,
+      "wall_seconds": 2.2288092799999504,
+      "log": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/09-workspace-features-exact-short-ttl.log",
+      "log_bytes": 1669,
+      "log_sha256": "bab0bf7c0c1cd3800f2eaa514306deeeee7a2539c7eef2379caa250cdb310923"
+    },
+    {
+      "label": "10-workspace-features-original-sequence-controls",
+      "base_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "base_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+      "dirty_test_candidate": true,
+      "started_at": "2026-11-03T15:51:20.399978+00:00",
+      "command": [
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "--all-features",
+        "--features",
+        "trnm-crypto-primitives/pq-native-openssl,rusqlite/hooks,rustix/process,ml-dsa/default",
+        "cell::discovery::sequence_tests::",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/abae1861b451/chain-cell-ready",
+      "target_dir": "/workspace/scratch/abae1861b451/cell-ready-target",
+      "profile": "test (unchanged)",
+      "provider_env_sha256": "92886badc92051b5338ea482e4b8041c2a6434b26a37a1c2f5e17e0c1586485b",
+      "source_sha256_before": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "source_sha256_after": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "exit_code": 0,
+      "wall_seconds": 1.7869024360002186,
+      "log": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/10-workspace-features-original-sequence-controls.log",
+      "log_bytes": 3871,
+      "log_sha256": "6b2fa80e10d4e2b7d96c4d500e6db0c062393dbee62bf99ed5c15524d2f03e34"
+    },
+    {
+      "label": "11-workspace-features-package-strict-clippy",
+      "base_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "base_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+      "dirty_test_candidate": true,
+      "started_at": "2026-11-03T15:51:40.992271+00:00",
+      "command": [
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--all-targets",
+        "--all-features",
+        "--features",
+        "trnm-crypto-primitives/pq-native-openssl,rusqlite/hooks,rustix/process,ml-dsa/default",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/abae1861b451/chain-cell-ready",
+      "target_dir": "/workspace/scratch/abae1861b451/cell-ready-target",
+      "profile": "dev/check (unchanged, all targets)",
+      "provider_env_sha256": "92886badc92051b5338ea482e4b8041c2a6434b26a37a1c2f5e17e0c1586485b",
+      "source_sha256_before": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "source_sha256_after": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "exit_code": 0,
+      "wall_seconds": 12.310638597999969,
+      "log": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/cell-ready/11-workspace-features-package-strict-clippy.log",
+      "log_bytes": 782,
+      "log_sha256": "309c42bdefe0081da0c4892fe13e437e40a1c75ca3e116b673ea7a2ee0747a08"
+    }
+  ],
+  "final_checks": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-cell-ready-20261103\", \"remote_policy_mutated\": false}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/root/.cargo/bin/rustfmt",
+        "+1.95.0",
+        "--check",
+        "--edition",
+        "2021",
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "exit_code": 0,
+      "stdout": " M trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/root/.cargo/bin/rustc",
+        "+1.95.0",
+        "-vV"
+      ],
+      "exit_code": 0,
+      "stdout": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+      "stderr": ""
+    }
+  ],
+  "scope_limits": [
+    "These original hosted failures and new local passes occur on different hosts; startup delay is a concrete fixture race, not a proved sole cause of the hosted errno 11.",
+    "Ready acknowledges initialization, not an executed request or future service availability; original scheduling/IO deadline failure remains a failure.",
+    "No full workspace runtime, hosted rerun, ARM runtime or public-service acceptance is claimed. Root integrates and runs complete gates.",
+    "Elapsed setup is measured and separate from existing TTL/request budgets; the 2-second signed expiry still uses floor wall seconds, unchanged.",
+    "Native groups overlap; 1+1+3 runs are five invocations of three distinct selectors, not five distinct controls."
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/920",
+  "number": 920,
+  "state": "open",
+  "draft": true,
+  "head": "fix/chain-daa-monotone-witness-20261111-7f73",
+  "head_sha": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+  "base": "fix/chain-joint-production-tail-20261110-8e76",
+  "base_sha": "249f772cc2a2ace5e363fd5fbfec4241a26f4d4d",
+  "author": "ProfHepta",
+  "author_id": 102159240,
+  "scope": "initial implementation PR readback; later evidence-only publication is separate"
+}

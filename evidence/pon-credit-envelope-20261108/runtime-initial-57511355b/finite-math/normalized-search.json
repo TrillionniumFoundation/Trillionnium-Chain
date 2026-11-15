@@ -1,0 +1,1830 @@
+{
+  "cases": [
+    {
+      "case_id": "normalized-retention-and-winners-only",
+      "input": {
+        "restricted_example": {
+          "baseline": {
+            "composition_lower_bound_proved": false,
+            "consensus_activation": false,
+            "evidence": "conditional finite arithmetic on caller-supplied premises",
+            "global_cost_lower_bound_proved": false,
+            "kind": "classical_sampling_distribution",
+            "marked": [
+              "0",
+              "1",
+              "2",
+              "3"
+            ],
+            "masses": [
+              {
+                "label": "0",
+                "probability": {
+                  "denominator": 8,
+                  "numerator": 1
+                }
+              },
+              {
+                "label": "1",
+                "probability": {
+                  "denominator": 8,
+                  "numerator": 1
+                }
+              },
+              {
+                "label": "2",
+                "probability": {
+                  "denominator": 8,
+                  "numerator": 1
+                }
+              },
+              {
+                "label": "3",
+                "probability": {
+                  "denominator": 8,
+                  "numerator": 1
+                }
+              },
+              {
+                "label": "4",
+                "probability": {
+                  "denominator": 8,
+                  "numerator": 1
+                }
+              },
+              {
+                "label": "5",
+                "probability": {
+                  "denominator": 8,
+                  "numerator": 1
+                }
+              },
+              {
+                "label": "6",
+                "probability": {
+                  "denominator": 8,
+                  "numerator": 1
+                }
+              },
+              {
+                "label": "7",
+                "probability": {
+                  "denominator": 8,
+                  "numerator": 1
+                }
+              }
+            ],
+            "network_security_proved": false,
+            "normalization": "sum of all declared probability masses equals one exactly",
+            "quantum_state_preparation_implemented": false,
+            "release_ready": false,
+            "schema": "trnm-normalized-search-cost-v1",
+            "state_scope": "basis masses only; preparation, phases and reflection not constructed",
+            "success_contract": "finite-marked-event-v1",
+            "success_probability": {
+              "denominator": 2,
+              "numerator": 1
+            },
+            "w1_quantum_attack_implemented": false
+          },
+          "restricted": {
+            "composition_lower_bound_proved": false,
+            "consensus_activation": false,
+            "evidence": "conditional finite arithmetic on caller-supplied premises",
+            "global_cost_lower_bound_proved": false,
+            "kind": "classical_sampling_distribution",
+            "marked": [
+              "0"
+            ],
+            "masses": [
+              {
+                "label": "0",
+                "probability": {
+                  "denominator": 2,
+                  "numerator": 1
+                }
+              },
+              {
+                "label": "4",
+                "probability": {
+                  "denominator": 2,
+                  "numerator": 1
+                }
+              }
+            ],
+            "network_security_proved": false,
+            "normalization": "sum of all declared probability masses equals one exactly",
+            "quantum_state_preparation_implemented": false,
+            "release_ready": false,
+            "schema": "trnm-normalized-search-cost-v1",
+            "state_scope": "basis masses only; preparation, phases and reflection not constructed",
+            "success_contract": "finite-marked-event-v1",
+            "success_probability": {
+              "denominator": 2,
+              "numerator": 1
+            },
+            "w1_quantum_attack_implemented": false
+          }
+        },
+        "winners_only_example": {
+          "baseline": {
+            "composition_lower_bound_proved": false,
+            "consensus_activation": false,
+            "evidence": "conditional finite arithmetic on caller-supplied premises",
+            "global_cost_lower_bound_proved": false,
+            "kind": "quantum_computational_basis_probabilities",
+            "marked": [
+              "0",
+              "1"
+            ],
+            "masses": [
+              {
+                "label": "0",
+                "probability": {
+                  "denominator": 8,
+                  "numerator": 1
+                }
+              },
+              {
+                "label": "1",
+                "probability": {
+                  "denominator": 8,
+                  "numerator": 1
+                }
+              },
+              {
+                "label": "2",
+                "probability": {
+                  "denominator": 8,
+                  "numerator": 1
+                }
+              },
+              {
+                "label": "3",
+                "probability": {
+                  "denominator": 8,
+                  "numerator": 1
+                }
+              },
+              {
+                "label": "4",
+                "probability": {
+                  "denominator": 8,
+                  "numerator": 1
+                }
+              },
+              {
+                "label": "5",
+                "probability": {
+                  "denominator": 8,
+                  "numerator": 1
+                }
+              },
+              {
+                "label": "6",
+                "probability": {
+                  "denominator": 8,
+                  "numerator": 1
+                }
+              },
+              {
+                "label": "7",
+                "probability": {
+                  "denominator": 8,
+                  "numerator": 1
+                }
+              }
+            ],
+            "network_security_proved": false,
+            "normalization": "sum of all declared probability masses equals one exactly",
+            "quantum_state_preparation_implemented": false,
+            "release_ready": false,
+            "schema": "trnm-normalized-search-cost-v1",
+            "state_scope": "basis masses only; preparation, phases and reflection not constructed",
+            "success_contract": "finite-marked-event-v1",
+            "success_probability": {
+              "denominator": 4,
+              "numerator": 1
+            },
+            "w1_quantum_attack_implemented": false
+          },
+          "restricted": {
+            "composition_lower_bound_proved": false,
+            "consensus_activation": false,
+            "evidence": "conditional finite arithmetic on caller-supplied premises",
+            "global_cost_lower_bound_proved": false,
+            "kind": "quantum_computational_basis_probabilities",
+            "marked": [
+              "0"
+            ],
+            "masses": [
+              {
+                "label": "0",
+                "probability": {
+                  "denominator": 1,
+                  "numerator": 1
+                }
+              }
+            ],
+            "network_security_proved": false,
+            "normalization": "sum of all declared probability masses equals one exactly",
+            "quantum_state_preparation_implemented": false,
+            "release_ready": false,
+            "schema": "trnm-normalized-search-cost-v1",
+            "state_scope": "basis masses only; preparation, phases and reflection not constructed",
+            "success_contract": "finite-marked-event-v1",
+            "success_probability": {
+              "denominator": 1,
+              "numerator": 1
+            },
+            "w1_quantum_attack_implemented": false
+          }
+        }
+      },
+      "result": {
+        "restricted_example": {
+          "baseline_probability": {
+            "denominator": 2,
+            "numerator": 1
+          },
+          "composition_lower_bound_proved": false,
+          "consensus_activation": false,
+          "evidence": "conditional finite arithmetic on caller-supplied premises",
+          "global_cost_lower_bound_proved": false,
+          "marked_retention": {
+            "denominator": 4,
+            "numerator": 1
+          },
+          "network_security_proved": false,
+          "normalized_success_ratio": {
+            "denominator": 1,
+            "numerator": 1
+          },
+          "quantum_state_preparation_implemented": false,
+          "raw_domain_retention": {
+            "denominator": 4,
+            "numerator": 1
+          },
+          "release_ready": false,
+          "restricted_probability": {
+            "denominator": 2,
+            "numerator": 1
+          },
+          "restriction_cost": "not supplied; finding and sampling the subset are not free",
+          "schema": "trnm-normalized-search-cost-v1",
+          "success_contract": "finite-marked-event-v1",
+          "w1_quantum_attack_implemented": false
+        },
+        "winners_only_example": {
+          "baseline_probability": {
+            "denominator": 4,
+            "numerator": 1
+          },
+          "composition_lower_bound_proved": false,
+          "consensus_activation": false,
+          "evidence": "conditional finite arithmetic on caller-supplied premises",
+          "global_cost_lower_bound_proved": false,
+          "marked_retention": {
+            "denominator": 2,
+            "numerator": 1
+          },
+          "network_security_proved": false,
+          "normalized_success_ratio": {
+            "denominator": 1,
+            "numerator": 4
+          },
+          "quantum_state_preparation_implemented": false,
+          "raw_domain_retention": {
+            "denominator": 8,
+            "numerator": 1
+          },
+          "release_ready": false,
+          "restricted_probability": {
+            "denominator": 1,
+            "numerator": 1
+          },
+          "restriction_cost": "not supplied; finding and sampling the subset are not free",
+          "schema": "trnm-normalized-search-cost-v1",
+          "success_contract": "finite-marked-event-v1",
+          "w1_quantum_attack_implemented": false
+        }
+      }
+    },
+    {
+      "case_id": "classical-slower-quantum-faster-ideal",
+      "input": {
+        "a_classical": {
+          "denominator": 5,
+          "numerator": 2
+        },
+        "a_quantum": {
+          "denominator": 5,
+          "numerator": 2
+        },
+        "baseline": {
+          "composition_lower_bound_proved": false,
+          "consensus_activation": false,
+          "evidence": "conditional finite arithmetic on caller-supplied premises",
+          "global_cost_lower_bound_proved": false,
+          "kind": "classical_sampling_distribution",
+          "marked": [
+            "win"
+          ],
+          "masses": [
+            {
+              "label": "win",
+              "probability": {
+                "denominator": 4,
+                "numerator": 1
+              }
+            },
+            {
+              "label": "lose",
+              "probability": {
+                "denominator": 4,
+                "numerator": 3
+              }
+            }
+          ],
+          "network_security_proved": false,
+          "normalization": "sum of all declared probability masses equals one exactly",
+          "quantum_state_preparation_implemented": false,
+          "release_ready": false,
+          "schema": "trnm-normalized-search-cost-v1",
+          "state_scope": "basis masses only; preparation, phases and reflection not constructed",
+          "success_contract": "finite-marked-event-v1",
+          "success_probability": {
+            "denominator": 4,
+            "numerator": 1
+          },
+          "w1_quantum_attack_implemented": false
+        },
+        "shortcut": {
+          "composition_lower_bound_proved": false,
+          "consensus_activation": false,
+          "evidence": "conditional finite arithmetic on caller-supplied premises",
+          "global_cost_lower_bound_proved": false,
+          "kind": "classical_sampling_distribution",
+          "marked": [
+            "win"
+          ],
+          "masses": [
+            {
+              "label": "win",
+              "probability": {
+                "denominator": 16,
+                "numerator": 1
+              }
+            },
+            {
+              "label": "lose",
+              "probability": {
+                "denominator": 16,
+                "numerator": 15
+              }
+            }
+          ],
+          "network_security_proved": false,
+          "normalization": "sum of all declared probability masses equals one exactly",
+          "quantum_state_preparation_implemented": false,
+          "release_ready": false,
+          "schema": "trnm-normalized-search-cost-v1",
+          "state_scope": "basis masses only; preparation, phases and reflection not constructed",
+          "success_contract": "finite-marked-event-v1",
+          "success_probability": {
+            "denominator": 16,
+            "numerator": 1
+          },
+          "w1_quantum_attack_implemented": false
+        }
+      },
+      "result": {
+        "assumptions": [
+          "same declared baseline and shortcut success probabilities for both categories",
+          "classical independent sampling and ideal fixed-cost amplitude amplification",
+          "all repeated sampling/oracle stages included in the supplied cost ratios",
+          "state preparation, subset membership, reflection and uncomputation are caller premises",
+          "no additive campaign setup, post-win proof, rounding, network interruption or variable-time speedup",
+          "endpoint probabilities are formal scaling values, not exact Grover iteration counts"
+        ],
+        "baseline_probability": {
+          "denominator": 4,
+          "numerator": 1
+        },
+        "classical_relative_cost": {
+          "denominator": 5,
+          "numerator": 8
+        },
+        "classical_unit_cost_ratio": {
+          "denominator": 5,
+          "numerator": 2
+        },
+        "composition_lower_bound_proved": false,
+        "consensus_activation": false,
+        "evidence": "conditional finite arithmetic on caller-supplied premises",
+        "global_cost_lower_bound_proved": false,
+        "model": "ideal-fixed-cost-search-scaling",
+        "network_security_proved": false,
+        "normalized_success_ratio": {
+          "denominator": 4,
+          "numerator": 1
+        },
+        "quantum_relative_cost": {
+          "denominator": 5,
+          "numerator": 4
+        },
+        "quantum_state_preparation_implemented": false,
+        "quantum_unit_cost_ratio": {
+          "denominator": 5,
+          "numerator": 2
+        },
+        "release_ready": false,
+        "schema": "trnm-normalized-search-cost-v1",
+        "shortcut_probability": {
+          "denominator": 16,
+          "numerator": 1
+        },
+        "success_contract": "finite-marked-event-v1",
+        "w1_quantum_attack_implemented": false
+      }
+    },
+    {
+      "case_id": "required-quantum-stages-reverse-apparent-advantage",
+      "input": {
+        "baseline": {
+          "composition_lower_bound_proved": false,
+          "consensus_activation": false,
+          "evidence": "conditional finite arithmetic on caller-supplied premises",
+          "global_cost_lower_bound_proved": false,
+          "kind": "classical_sampling_distribution",
+          "marked": [
+            "win"
+          ],
+          "masses": [
+            {
+              "label": "win",
+              "probability": {
+                "denominator": 4,
+                "numerator": 1
+              }
+            },
+            {
+              "label": "lose",
+              "probability": {
+                "denominator": 4,
+                "numerator": 3
+              }
+            }
+          ],
+          "network_security_proved": false,
+          "normalization": "sum of all declared probability masses equals one exactly",
+          "quantum_state_preparation_implemented": false,
+          "release_ready": false,
+          "schema": "trnm-normalized-search-cost-v1",
+          "state_scope": "basis masses only; preparation, phases and reflection not constructed",
+          "success_contract": "finite-marked-event-v1",
+          "success_probability": {
+            "denominator": 4,
+            "numerator": 1
+          },
+          "w1_quantum_attack_implemented": false
+        },
+        "classical_baseline": {
+          "components": {
+            "other_required": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "phase_or_reflection": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "predicate": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 10
+              },
+              "unit": "declared_resource_units"
+            },
+            "sampling_or_state_preparation": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "subset_membership": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "uncomputation": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            }
+          },
+          "composition_lower_bound_proved": false,
+          "consensus_activation": false,
+          "evidence": "conditional finite arithmetic on caller-supplied premises",
+          "global_cost_lower_bound_proved": false,
+          "kind": "classical_sampling_distribution",
+          "network_security_proved": false,
+          "quantum_state_preparation_implemented": false,
+          "release_ready": false,
+          "schema": "trnm-normalized-search-cost-v1",
+          "total": {
+            "amount": {
+              "denominator": 1,
+              "numerator": 10
+            },
+            "unit": "declared_resource_units"
+          },
+          "w1_quantum_attack_implemented": false
+        },
+        "classical_shortcut": {
+          "components": {
+            "other_required": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "phase_or_reflection": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "predicate": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 4
+              },
+              "unit": "declared_resource_units"
+            },
+            "sampling_or_state_preparation": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "subset_membership": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "uncomputation": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            }
+          },
+          "composition_lower_bound_proved": false,
+          "consensus_activation": false,
+          "evidence": "conditional finite arithmetic on caller-supplied premises",
+          "global_cost_lower_bound_proved": false,
+          "kind": "classical_sampling_distribution",
+          "network_security_proved": false,
+          "quantum_state_preparation_implemented": false,
+          "release_ready": false,
+          "schema": "trnm-normalized-search-cost-v1",
+          "total": {
+            "amount": {
+              "denominator": 1,
+              "numerator": 4
+            },
+            "unit": "declared_resource_units"
+          },
+          "w1_quantum_attack_implemented": false
+        },
+        "quantum_baseline": {
+          "components": {
+            "other_required": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "phase_or_reflection": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "predicate": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 4
+              },
+              "unit": "declared_resource_units"
+            },
+            "sampling_or_state_preparation": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 2
+              },
+              "unit": "declared_resource_units"
+            },
+            "subset_membership": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "uncomputation": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 4
+              },
+              "unit": "declared_resource_units"
+            }
+          },
+          "composition_lower_bound_proved": false,
+          "consensus_activation": false,
+          "evidence": "conditional finite arithmetic on caller-supplied premises",
+          "global_cost_lower_bound_proved": false,
+          "kind": "quantum_computational_basis_probabilities",
+          "network_security_proved": false,
+          "quantum_state_preparation_implemented": false,
+          "release_ready": false,
+          "schema": "trnm-normalized-search-cost-v1",
+          "total": {
+            "amount": {
+              "denominator": 1,
+              "numerator": 10
+            },
+            "unit": "declared_resource_units"
+          },
+          "w1_quantum_attack_implemented": false
+        },
+        "quantum_incomplete_zero_stage_claim": {
+          "components": {
+            "other_required": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "phase_or_reflection": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "predicate": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 4
+              },
+              "unit": "declared_resource_units"
+            },
+            "sampling_or_state_preparation": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "subset_membership": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "uncomputation": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            }
+          },
+          "composition_lower_bound_proved": false,
+          "consensus_activation": false,
+          "evidence": "conditional finite arithmetic on caller-supplied premises",
+          "global_cost_lower_bound_proved": false,
+          "kind": "quantum_computational_basis_probabilities",
+          "network_security_proved": false,
+          "quantum_state_preparation_implemented": false,
+          "release_ready": false,
+          "schema": "trnm-normalized-search-cost-v1",
+          "total": {
+            "amount": {
+              "denominator": 1,
+              "numerator": 4
+            },
+            "unit": "declared_resource_units"
+          },
+          "w1_quantum_attack_implemented": false
+        },
+        "quantum_with_required_stages": {
+          "components": {
+            "other_required": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "phase_or_reflection": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "predicate": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 4
+              },
+              "unit": "declared_resource_units"
+            },
+            "sampling_or_state_preparation": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 1
+              },
+              "unit": "declared_resource_units"
+            },
+            "subset_membership": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 0
+              },
+              "unit": "declared_resource_units"
+            },
+            "uncomputation": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 1
+              },
+              "unit": "declared_resource_units"
+            }
+          },
+          "composition_lower_bound_proved": false,
+          "consensus_activation": false,
+          "evidence": "conditional finite arithmetic on caller-supplied premises",
+          "global_cost_lower_bound_proved": false,
+          "kind": "quantum_computational_basis_probabilities",
+          "network_security_proved": false,
+          "quantum_state_preparation_implemented": false,
+          "release_ready": false,
+          "schema": "trnm-normalized-search-cost-v1",
+          "total": {
+            "amount": {
+              "denominator": 1,
+              "numerator": 6
+            },
+            "unit": "declared_resource_units"
+          },
+          "w1_quantum_attack_implemented": false
+        },
+        "shortcut": {
+          "composition_lower_bound_proved": false,
+          "consensus_activation": false,
+          "evidence": "conditional finite arithmetic on caller-supplied premises",
+          "global_cost_lower_bound_proved": false,
+          "kind": "classical_sampling_distribution",
+          "marked": [
+            "win"
+          ],
+          "masses": [
+            {
+              "label": "win",
+              "probability": {
+                "denominator": 16,
+                "numerator": 1
+              }
+            },
+            {
+              "label": "lose",
+              "probability": {
+                "denominator": 16,
+                "numerator": 15
+              }
+            }
+          ],
+          "network_security_proved": false,
+          "normalization": "sum of all declared probability masses equals one exactly",
+          "quantum_state_preparation_implemented": false,
+          "release_ready": false,
+          "schema": "trnm-normalized-search-cost-v1",
+          "state_scope": "basis masses only; preparation, phases and reflection not constructed",
+          "success_contract": "finite-marked-event-v1",
+          "success_probability": {
+            "denominator": 16,
+            "numerator": 1
+          },
+          "w1_quantum_attack_implemented": false
+        }
+      },
+      "result": {
+        "incomplete_cost_assertion": {
+          "assumptions": [
+            "same declared baseline and shortcut success probabilities for both categories",
+            "classical independent sampling and ideal fixed-cost amplitude amplification",
+            "all repeated sampling/oracle stages included in the supplied cost ratios",
+            "state preparation, subset membership, reflection and uncomputation are caller premises",
+            "no additive campaign setup, post-win proof, rounding, network interruption or variable-time speedup",
+            "endpoint probabilities are formal scaling values, not exact Grover iteration counts"
+          ],
+          "baseline_probability": {
+            "denominator": 4,
+            "numerator": 1
+          },
+          "classical_relative_cost": {
+            "denominator": 5,
+            "numerator": 8
+          },
+          "classical_unit_cost_ratio": {
+            "denominator": 5,
+            "numerator": 2
+          },
+          "composition_lower_bound_proved": false,
+          "consensus_activation": false,
+          "evidence": "conditional finite arithmetic on caller-supplied premises",
+          "global_cost_lower_bound_proved": false,
+          "model": "ideal-fixed-cost-search-scaling",
+          "network_security_proved": false,
+          "normalized_success_ratio": {
+            "denominator": 4,
+            "numerator": 1
+          },
+          "quantum_relative_cost": {
+            "denominator": 5,
+            "numerator": 4
+          },
+          "quantum_state_preparation_implemented": false,
+          "quantum_unit_cost_ratio": {
+            "denominator": 5,
+            "numerator": 2
+          },
+          "release_ready": false,
+          "schema": "trnm-normalized-search-cost-v1",
+          "shortcut_probability": {
+            "denominator": 16,
+            "numerator": 1
+          },
+          "success_contract": "finite-marked-event-v1",
+          "w1_quantum_attack_implemented": false
+        },
+        "with_required_stages": {
+          "assumptions": [
+            "same declared baseline and shortcut success probabilities for both categories",
+            "classical independent sampling and ideal fixed-cost amplitude amplification",
+            "all repeated sampling/oracle stages included in the supplied cost ratios",
+            "state preparation, subset membership, reflection and uncomputation are caller premises",
+            "no additive campaign setup, post-win proof, rounding, network interruption or variable-time speedup",
+            "endpoint probabilities are formal scaling values, not exact Grover iteration counts"
+          ],
+          "baseline_probability": {
+            "denominator": 4,
+            "numerator": 1
+          },
+          "classical_relative_cost": {
+            "denominator": 5,
+            "numerator": 8
+          },
+          "classical_unit_cost_ratio": {
+            "denominator": 5,
+            "numerator": 2
+          },
+          "composition_lower_bound_proved": false,
+          "consensus_activation": false,
+          "evidence": "conditional finite arithmetic on caller-supplied premises",
+          "global_cost_lower_bound_proved": false,
+          "model": "ideal-fixed-cost-search-scaling",
+          "network_security_proved": false,
+          "normalized_success_ratio": {
+            "denominator": 4,
+            "numerator": 1
+          },
+          "quantum_relative_cost": {
+            "denominator": 5,
+            "numerator": 6
+          },
+          "quantum_state_preparation_implemented": false,
+          "quantum_unit_cost_ratio": {
+            "denominator": 5,
+            "numerator": 3
+          },
+          "release_ready": false,
+          "schema": "trnm-normalized-search-cost-v1",
+          "shortcut_probability": {
+            "denominator": 16,
+            "numerator": 1
+          },
+          "success_contract": "finite-marked-event-v1",
+          "w1_quantum_attack_implemented": false
+        }
+      }
+    },
+    {
+      "case_id": "renewal-failures-proof-tail-and-shared-preparation",
+      "input": {
+        "premises": {
+          "independent_stationary_attempts": true,
+          "no_deadline_or_external_interruptions": true,
+          "unsuccessful_attempts_return_same_state": true
+        },
+        "preparation": {
+          "amount": {
+            "denominator": 1,
+            "numerator": 7
+          },
+          "unit": "declared_resource_units"
+        },
+        "tasks": [
+          {
+            "composition_lower_bound_proved": false,
+            "consensus_activation": false,
+            "evidence": "conditional finite arithmetic on caller-supplied premises",
+            "expected_attempt_cost": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 7
+              },
+              "unit": "declared_resource_units"
+            },
+            "expected_attempts": {
+              "denominator": 1,
+              "numerator": 4
+            },
+            "global_cost_lower_bound_proved": false,
+            "network_security_proved": false,
+            "outcomes": [
+              {
+                "attempt_cost": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 8
+                  },
+                  "unit": "declared_resource_units"
+                },
+                "expected_cost_until_success": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 8
+                  },
+                  "unit": "declared_resource_units"
+                },
+                "expected_occurrences_until_success": {
+                  "denominator": 1,
+                  "numerator": 1
+                },
+                "kind": "success",
+                "name": "win",
+                "probability": {
+                  "denominator": 4,
+                  "numerator": 1
+                },
+                "restart_cost": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 0
+                  },
+                  "unit": "declared_resource_units"
+                }
+              },
+              {
+                "attempt_cost": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 4
+                  },
+                  "unit": "declared_resource_units"
+                },
+                "expected_cost_until_success": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 12
+                  },
+                  "unit": "declared_resource_units"
+                },
+                "expected_occurrences_until_success": {
+                  "denominator": 1,
+                  "numerator": 2
+                },
+                "kind": "failure",
+                "name": "failed",
+                "probability": {
+                  "denominator": 2,
+                  "numerator": 1
+                },
+                "restart_cost": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 2
+                  },
+                  "unit": "declared_resource_units"
+                }
+              },
+              {
+                "attempt_cost": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 2
+                  },
+                  "unit": "declared_resource_units"
+                },
+                "expected_cost_until_success": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 8
+                  },
+                  "unit": "declared_resource_units"
+                },
+                "expected_occurrences_until_success": {
+                  "denominator": 1,
+                  "numerator": 1
+                },
+                "kind": "abandon_attempt_and_restart",
+                "name": "abandoned",
+                "probability": {
+                  "denominator": 4,
+                  "numerator": 1
+                },
+                "restart_cost": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 6
+                  },
+                  "unit": "declared_resource_units"
+                }
+              }
+            ],
+            "quantum_state_preparation_implemented": false,
+            "release_ready": false,
+            "repeated_cost_until_success": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 28
+              },
+              "unit": "declared_resource_units"
+            },
+            "schema": "trnm-normalized-search-cost-v1",
+            "success_event": "one valid winner with guaranteed proof completion",
+            "success_only_proof_once": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 11
+              },
+              "unit": "declared_resource_units"
+            },
+            "success_probability": {
+              "denominator": 4,
+              "numerator": 1
+            },
+            "task": "first",
+            "total_excluding_campaign_preparation": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 39
+              },
+              "unit": "declared_resource_units"
+            },
+            "w1_quantum_attack_implemented": false
+          },
+          {
+            "composition_lower_bound_proved": false,
+            "consensus_activation": false,
+            "evidence": "conditional finite arithmetic on caller-supplied premises",
+            "expected_attempt_cost": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 7
+              },
+              "unit": "declared_resource_units"
+            },
+            "expected_attempts": {
+              "denominator": 1,
+              "numerator": 4
+            },
+            "global_cost_lower_bound_proved": false,
+            "network_security_proved": false,
+            "outcomes": [
+              {
+                "attempt_cost": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 8
+                  },
+                  "unit": "declared_resource_units"
+                },
+                "expected_cost_until_success": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 8
+                  },
+                  "unit": "declared_resource_units"
+                },
+                "expected_occurrences_until_success": {
+                  "denominator": 1,
+                  "numerator": 1
+                },
+                "kind": "success",
+                "name": "win",
+                "probability": {
+                  "denominator": 4,
+                  "numerator": 1
+                },
+                "restart_cost": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 0
+                  },
+                  "unit": "declared_resource_units"
+                }
+              },
+              {
+                "attempt_cost": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 4
+                  },
+                  "unit": "declared_resource_units"
+                },
+                "expected_cost_until_success": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 12
+                  },
+                  "unit": "declared_resource_units"
+                },
+                "expected_occurrences_until_success": {
+                  "denominator": 1,
+                  "numerator": 2
+                },
+                "kind": "failure",
+                "name": "failed",
+                "probability": {
+                  "denominator": 2,
+                  "numerator": 1
+                },
+                "restart_cost": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 2
+                  },
+                  "unit": "declared_resource_units"
+                }
+              },
+              {
+                "attempt_cost": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 2
+                  },
+                  "unit": "declared_resource_units"
+                },
+                "expected_cost_until_success": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 8
+                  },
+                  "unit": "declared_resource_units"
+                },
+                "expected_occurrences_until_success": {
+                  "denominator": 1,
+                  "numerator": 1
+                },
+                "kind": "abandon_attempt_and_restart",
+                "name": "abandoned",
+                "probability": {
+                  "denominator": 4,
+                  "numerator": 1
+                },
+                "restart_cost": {
+                  "amount": {
+                    "denominator": 1,
+                    "numerator": 6
+                  },
+                  "unit": "declared_resource_units"
+                }
+              }
+            ],
+            "quantum_state_preparation_implemented": false,
+            "release_ready": false,
+            "repeated_cost_until_success": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 28
+              },
+              "unit": "declared_resource_units"
+            },
+            "schema": "trnm-normalized-search-cost-v1",
+            "success_event": "one valid winner with guaranteed proof completion",
+            "success_only_proof_once": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 11
+              },
+              "unit": "declared_resource_units"
+            },
+            "success_probability": {
+              "denominator": 4,
+              "numerator": 1
+            },
+            "task": "second",
+            "total_excluding_campaign_preparation": {
+              "amount": {
+                "denominator": 1,
+                "numerator": 39
+              },
+              "unit": "declared_resource_units"
+            },
+            "w1_quantum_attack_implemented": false
+          }
+        ]
+      },
+      "result": {
+        "shared_campaign": {
+          "assumptions": [
+            "outcomes are a declared exhaustive mutually exclusive partition of each attempt",
+            "independent stationary attempts conditional on the declared preparation",
+            "every unsuccessful attempt returns to the same state with its restart cost charged",
+            "success-only proof is produced exactly once after a successful attempt",
+            "proof completion is guaranteed after success; otherwise its failures must enter the outcome partition",
+            "no state-dependent task choice, cache evolution, finite deadline or honest-block interruption",
+            "shared setup is charged once; cold task costs do not imply any composition lower bound"
+          ],
+          "composition_lower_bound_proved": false,
+          "consensus_activation": false,
+          "evidence": "conditional finite arithmetic on caller-supplied premises",
+          "expected_total_cost": {
+            "amount": {
+              "denominator": 1,
+              "numerator": 85
+            },
+            "unit": "declared_resource_units"
+          },
+          "formula": "P + sum_tasks(E[C]/q + H)",
+          "global_cost_lower_bound_proved": false,
+          "model": "independent-stationary-renewal",
+          "network_security_proved": false,
+          "preparation_charge_count": 1,
+          "quantum_state_preparation_implemented": false,
+          "release_ready": false,
+          "schema": "trnm-normalized-search-cost-v1",
+          "shared_preparation_once": {
+            "amount": {
+              "denominator": 1,
+              "numerator": 7
+            },
+            "unit": "declared_resource_units"
+          },
+          "tasks": [
+            {
+              "composition_lower_bound_proved": false,
+              "consensus_activation": false,
+              "evidence": "conditional finite arithmetic on caller-supplied premises",
+              "expected_attempt_cost": {
+                "amount": {
+                  "denominator": 1,
+                  "numerator": 7
+                },
+                "unit": "declared_resource_units"
+              },
+              "expected_attempts": {
+                "denominator": 1,
+                "numerator": 4
+              },
+              "global_cost_lower_bound_proved": false,
+              "network_security_proved": false,
+              "outcomes": [
+                {
+                  "attempt_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 8
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_cost_until_success": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 8
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_occurrences_until_success": {
+                    "denominator": 1,
+                    "numerator": 1
+                  },
+                  "kind": "success",
+                  "name": "win",
+                  "probability": {
+                    "denominator": 4,
+                    "numerator": 1
+                  },
+                  "restart_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 0
+                    },
+                    "unit": "declared_resource_units"
+                  }
+                },
+                {
+                  "attempt_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 4
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_cost_until_success": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 12
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_occurrences_until_success": {
+                    "denominator": 1,
+                    "numerator": 2
+                  },
+                  "kind": "failure",
+                  "name": "failed",
+                  "probability": {
+                    "denominator": 2,
+                    "numerator": 1
+                  },
+                  "restart_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 2
+                    },
+                    "unit": "declared_resource_units"
+                  }
+                },
+                {
+                  "attempt_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 2
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_cost_until_success": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 8
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_occurrences_until_success": {
+                    "denominator": 1,
+                    "numerator": 1
+                  },
+                  "kind": "abandon_attempt_and_restart",
+                  "name": "abandoned",
+                  "probability": {
+                    "denominator": 4,
+                    "numerator": 1
+                  },
+                  "restart_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 6
+                    },
+                    "unit": "declared_resource_units"
+                  }
+                }
+              ],
+              "quantum_state_preparation_implemented": false,
+              "release_ready": false,
+              "repeated_cost_until_success": {
+                "amount": {
+                  "denominator": 1,
+                  "numerator": 28
+                },
+                "unit": "declared_resource_units"
+              },
+              "schema": "trnm-normalized-search-cost-v1",
+              "success_event": "one valid winner with guaranteed proof completion",
+              "success_only_proof_once": {
+                "amount": {
+                  "denominator": 1,
+                  "numerator": 11
+                },
+                "unit": "declared_resource_units"
+              },
+              "success_probability": {
+                "denominator": 4,
+                "numerator": 1
+              },
+              "task": "first",
+              "total_excluding_campaign_preparation": {
+                "amount": {
+                  "denominator": 1,
+                  "numerator": 39
+                },
+                "unit": "declared_resource_units"
+              },
+              "w1_quantum_attack_implemented": false
+            },
+            {
+              "composition_lower_bound_proved": false,
+              "consensus_activation": false,
+              "evidence": "conditional finite arithmetic on caller-supplied premises",
+              "expected_attempt_cost": {
+                "amount": {
+                  "denominator": 1,
+                  "numerator": 7
+                },
+                "unit": "declared_resource_units"
+              },
+              "expected_attempts": {
+                "denominator": 1,
+                "numerator": 4
+              },
+              "global_cost_lower_bound_proved": false,
+              "network_security_proved": false,
+              "outcomes": [
+                {
+                  "attempt_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 8
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_cost_until_success": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 8
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_occurrences_until_success": {
+                    "denominator": 1,
+                    "numerator": 1
+                  },
+                  "kind": "success",
+                  "name": "win",
+                  "probability": {
+                    "denominator": 4,
+                    "numerator": 1
+                  },
+                  "restart_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 0
+                    },
+                    "unit": "declared_resource_units"
+                  }
+                },
+                {
+                  "attempt_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 4
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_cost_until_success": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 12
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_occurrences_until_success": {
+                    "denominator": 1,
+                    "numerator": 2
+                  },
+                  "kind": "failure",
+                  "name": "failed",
+                  "probability": {
+                    "denominator": 2,
+                    "numerator": 1
+                  },
+                  "restart_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 2
+                    },
+                    "unit": "declared_resource_units"
+                  }
+                },
+                {
+                  "attempt_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 2
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_cost_until_success": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 8
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_occurrences_until_success": {
+                    "denominator": 1,
+                    "numerator": 1
+                  },
+                  "kind": "abandon_attempt_and_restart",
+                  "name": "abandoned",
+                  "probability": {
+                    "denominator": 4,
+                    "numerator": 1
+                  },
+                  "restart_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 6
+                    },
+                    "unit": "declared_resource_units"
+                  }
+                }
+              ],
+              "quantum_state_preparation_implemented": false,
+              "release_ready": false,
+              "repeated_cost_until_success": {
+                "amount": {
+                  "denominator": 1,
+                  "numerator": 28
+                },
+                "unit": "declared_resource_units"
+              },
+              "schema": "trnm-normalized-search-cost-v1",
+              "success_event": "one valid winner with guaranteed proof completion",
+              "success_only_proof_once": {
+                "amount": {
+                  "denominator": 1,
+                  "numerator": 11
+                },
+                "unit": "declared_resource_units"
+              },
+              "success_probability": {
+                "denominator": 4,
+                "numerator": 1
+              },
+              "task": "second",
+              "total_excluding_campaign_preparation": {
+                "amount": {
+                  "denominator": 1,
+                  "numerator": 39
+                },
+                "unit": "declared_resource_units"
+              },
+              "w1_quantum_attack_implemented": false
+            }
+          ],
+          "w1_quantum_attack_implemented": false
+        },
+        "single_task": {
+          "assumptions": [
+            "outcomes are a declared exhaustive mutually exclusive partition of each attempt",
+            "independent stationary attempts conditional on the declared preparation",
+            "every unsuccessful attempt returns to the same state with its restart cost charged",
+            "success-only proof is produced exactly once after a successful attempt",
+            "proof completion is guaranteed after success; otherwise its failures must enter the outcome partition",
+            "no state-dependent task choice, cache evolution, finite deadline or honest-block interruption",
+            "shared setup is charged once; cold task costs do not imply any composition lower bound"
+          ],
+          "composition_lower_bound_proved": false,
+          "consensus_activation": false,
+          "evidence": "conditional finite arithmetic on caller-supplied premises",
+          "expected_total_cost": {
+            "amount": {
+              "denominator": 1,
+              "numerator": 46
+            },
+            "unit": "declared_resource_units"
+          },
+          "formula": "P + sum_tasks(E[C]/q + H)",
+          "global_cost_lower_bound_proved": false,
+          "model": "independent-stationary-renewal",
+          "network_security_proved": false,
+          "preparation_charge_count": 1,
+          "quantum_state_preparation_implemented": false,
+          "release_ready": false,
+          "schema": "trnm-normalized-search-cost-v1",
+          "shared_preparation_once": {
+            "amount": {
+              "denominator": 1,
+              "numerator": 7
+            },
+            "unit": "declared_resource_units"
+          },
+          "tasks": [
+            {
+              "composition_lower_bound_proved": false,
+              "consensus_activation": false,
+              "evidence": "conditional finite arithmetic on caller-supplied premises",
+              "expected_attempt_cost": {
+                "amount": {
+                  "denominator": 1,
+                  "numerator": 7
+                },
+                "unit": "declared_resource_units"
+              },
+              "expected_attempts": {
+                "denominator": 1,
+                "numerator": 4
+              },
+              "global_cost_lower_bound_proved": false,
+              "network_security_proved": false,
+              "outcomes": [
+                {
+                  "attempt_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 8
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_cost_until_success": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 8
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_occurrences_until_success": {
+                    "denominator": 1,
+                    "numerator": 1
+                  },
+                  "kind": "success",
+                  "name": "win",
+                  "probability": {
+                    "denominator": 4,
+                    "numerator": 1
+                  },
+                  "restart_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 0
+                    },
+                    "unit": "declared_resource_units"
+                  }
+                },
+                {
+                  "attempt_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 4
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_cost_until_success": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 12
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_occurrences_until_success": {
+                    "denominator": 1,
+                    "numerator": 2
+                  },
+                  "kind": "failure",
+                  "name": "failed",
+                  "probability": {
+                    "denominator": 2,
+                    "numerator": 1
+                  },
+                  "restart_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 2
+                    },
+                    "unit": "declared_resource_units"
+                  }
+                },
+                {
+                  "attempt_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 2
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_cost_until_success": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 8
+                    },
+                    "unit": "declared_resource_units"
+                  },
+                  "expected_occurrences_until_success": {
+                    "denominator": 1,
+                    "numerator": 1
+                  },
+                  "kind": "abandon_attempt_and_restart",
+                  "name": "abandoned",
+                  "probability": {
+                    "denominator": 4,
+                    "numerator": 1
+                  },
+                  "restart_cost": {
+                    "amount": {
+                      "denominator": 1,
+                      "numerator": 6
+                    },
+                    "unit": "declared_resource_units"
+                  }
+                }
+              ],
+              "quantum_state_preparation_implemented": false,
+              "release_ready": false,
+              "repeated_cost_until_success": {
+                "amount": {
+                  "denominator": 1,
+                  "numerator": 28
+                },
+                "unit": "declared_resource_units"
+              },
+              "schema": "trnm-normalized-search-cost-v1",
+              "success_event": "one valid winner with guaranteed proof completion",
+              "success_only_proof_once": {
+                "amount": {
+                  "denominator": 1,
+                  "numerator": 11
+                },
+                "unit": "declared_resource_units"
+              },
+              "success_probability": {
+                "denominator": 4,
+                "numerator": 1
+              },
+              "task": "first",
+              "total_excluding_campaign_preparation": {
+                "amount": {
+                  "denominator": 1,
+                  "numerator": 39
+                },
+                "unit": "declared_resource_units"
+              },
+              "w1_quantum_attack_implemented": false
+            }
+          ],
+          "w1_quantum_attack_implemented": false
+        },
+        "two_separate_cold_campaigns": {
+          "amount": {
+            "denominator": 1,
+            "numerator": 92
+          },
+          "unit": "declared_resource_units"
+        }
+      }
+    }
+  ],
+  "diagnostic_bounds": {
+    "max_entries": 4096,
+    "max_fraction_bits": 512
+  },
+  "schema": "trnm-normalized-search-cost-report-v1",
+  "scope": {
+    "composition_lower_bound_proved": false,
+    "consensus_activation": false,
+    "evidence": "conditional finite arithmetic on caller-supplied premises",
+    "global_cost_lower_bound_proved": false,
+    "network_security_proved": false,
+    "quantum_state_preparation_implemented": false,
+    "release_ready": false,
+    "schema": "trnm-normalized-search-cost-v1",
+    "w1_quantum_attack_implemented": false
+  },
+  "source_binding": [
+    {
+      "path": "formal/pon-nakamoto-v1/normalized_search_cost.py",
+      "sha256": "1f77753abbfddeee9a7bd0911ce2a882e5f689c8d3181c7dfe122de3c7ba5424"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_normalized_search_cost.py",
+      "sha256": "31d47507ba4780fa9d28208898f2760ddf9af23443aa2317af5bc8683630015c"
+    }
+  ]
+}

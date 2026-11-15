@@ -1,0 +1,350 @@
+{
+  "incoming_changed_files": [
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha": "bc7c328d3bc5dbcbd465494f27701c39af083c5d",
+      "status": "modified"
+    },
+    {
+      "path": "docs/development/specs/pon/WORK_EXPENSIVE_RESEARCH_V1.md",
+      "sha": "abdb66bd9b4b7ea3dcf3acc956a8133f36f3997d",
+      "status": "added"
+    },
+    {
+      "path": "evidence/pon-work-expensive-v1-20261105/README.md",
+      "sha": "a0275e9c439a02638ebabfaf54cd59193b5f15cd",
+      "status": "added"
+    },
+    {
+      "path": "evidence/pon-work-expensive-v1-20261105/composition.json",
+      "sha": "60335b22cd47afa9deefc0d202dffd481f650b1b",
+      "status": "added"
+    },
+    {
+      "path": "evidence/pon-work-expensive-v1-20261105/execution-source-commit.txt",
+      "sha": "30d67fc3c13afffe6c2592396a0a591c6cd07872",
+      "status": "added"
+    },
+    {
+      "path": "evidence/pon-work-expensive-v1-20261105/historical-v1.json",
+      "sha": "7a3275f3c597072ce8f1085a0512725aea6ed741",
+      "status": "added"
+    },
+    {
+      "path": "evidence/pon-work-expensive-v1-20261105/reproduction-v1.json",
+      "sha": "a7935971905f2237a3031e3e9b9009f1a4259961",
+      "status": "added"
+    },
+    {
+      "path": "evidence/pon-work-expensive-v1-20261105/reproduction.json",
+      "sha": "3d7786976af8eb2b18a2ab20e56bc10b27ff28ec",
+      "status": "added"
+    },
+    {
+      "path": "evidence/pon-work-expensive-v1-20261105/source-publication.json",
+      "sha": "ef151fdf160a7684846edf82fe60b490c5b58194",
+      "status": "added"
+    },
+    {
+      "path": "evidence/pon-work-expensive-v1-20261105/summary.json",
+      "sha": "be9d130ad312d51e93677e7c3625ca11ca362b61",
+      "status": "added"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_work_expensive_mode_a.py",
+      "sha": "45a34597b9fd8d6f8a631b9fd62eacdb55b90318",
+      "status": "added"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_expensive_mode_a.py",
+      "sha": "4f2a4baf6100a4a818227ed3c5f8661f801378ba",
+      "status": "added"
+    },
+    {
+      "path": "scripts/ci/run_work_expensive_campaign_v1.py",
+      "sha": "dba09f0efa05ef56595dc764c9a89c8595b58063",
+      "status": "added"
+    },
+    {
+      "path": "scripts/ci/run_work_expensive_verifier_v1.py",
+      "sha": "07700ba956e11ea252ccf6e7038725cde4b85c02",
+      "status": "added"
+    },
+    {
+      "path": "scripts/ci/test_pon_work_expensive_reader_v1.py",
+      "sha": "b450c5e13eaf5c53427b6bd5c1448c7e67baaafc",
+      "status": "added"
+    },
+    {
+      "path": "scripts/ci/test_work_expensive_verifier_v1.py",
+      "sha": "24c467087faaec4861d75497e31c8d79c960e15b",
+      "status": "added"
+    },
+    {
+      "path": "scripts/pon_work_expensive_reader_v1.py",
+      "sha": "ead1eed53c01c5d8d78112515f95a79e89669f58",
+      "status": "added"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_v1.rs",
+      "sha": "c258df9b422991ed29b56d03d7f43c7b6d125a9d",
+      "status": "added"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_verifier_v1.rs",
+      "sha": "97cd83b6df80e51cc652cd841860d01b0e0d36f4",
+      "status": "added"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+      "sha": "a16c67726f7bba29c349c487cb42eb56467380cc",
+      "status": "modified"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "sha": "8210411b21e805de81c73c12a66a493ad4bcfd69",
+      "status": "modified"
+    }
+  ],
+  "incoming_head": "fcc8f8a73d9f9463601b3f720afdd2b7f56ed920",
+  "incoming_production_rust_inputs_preserved": true,
+  "incoming_tree": "7aca314d3f603721af9516d281c38571bf72bf36",
+  "merge_method": "Exact verified incoming blobs/tree and common-base three-way application; one existing plan; no overlapping conflict.",
+  "ordered_merge_parents": [
+    "fcc8f8a73d9f9463601b3f720afdd2b7f56ed920",
+    "0da4b6cecf55fa4c868ce744567ae5019a9905bb"
+  ],
+  "original_native_source": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+  "push_policy": {
+    "activation": false,
+    "branch": "fix/chain-six-axis-performance-20261103",
+    "expected_head": "fcc8f8a73d9f9463601b3f720afdd2b7f56ed920",
+    "force": false,
+    "main_modified": false
+  },
+  "retained_evidence_head": "0da4b6cecf55fa4c868ce744567ae5019a9905bb",
+  "runtime_native_execution_of_merged_head_claimed": false,
+  "schema": "pon-ordered-request-concurrent-publication-v1",
+  "shared_base": "cbead1508ce8b6d9deb2a86b4bc3181da09694e7",
+  "static_check_receipts": [
+    {
+      "log_raw_utf8": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.70s\n",
+      "receipt": {
+        "after": {
+          "base": null,
+          "candidate": "0da4b6cecf55fa4c868ce744567ae5019a9905bb",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "0da4b6cecf55fa4c868ce744567ae5019a9905bb",
+          "tested_tree": "34118e5b1e05982b44516fad88f6e10690b3f5ae",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 978281657,
+          "tracked_entries": 10178,
+          "tracked_worktree_verified": true
+        },
+        "argv": [
+          "cargo",
+          "clippy",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "before": {
+          "base": null,
+          "candidate": "0da4b6cecf55fa4c868ce744567ae5019a9905bb",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "0da4b6cecf55fa4c868ce744567ae5019a9905bb",
+          "tested_tree": "34118e5b1e05982b44516fad88f6e10690b3f5ae",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 978281657,
+          "tracked_entries": 10178,
+          "tracked_worktree_verified": true
+        },
+        "cwd": "/workspace/scratch/add353b13222/chain",
+        "elapsed_ns": 6244095602,
+        "environment": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_ENCODED_RUSTFLAGS": null,
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/workspace/scratch/7318042bb6cb/target",
+          "GITHUB_RUN_ATTEMPT": null,
+          "GITHUB_RUN_ID": null,
+          "OPENSSL_DIR": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install",
+          "OPENSSL_STATIC": "1",
+          "RUNNER_ARCH": null,
+          "RUSTC": null,
+          "RUSTC_WORKSPACE_WRAPPER": null,
+          "RUSTC_WRAPPER": null,
+          "RUSTFLAGS": null,
+          "RUST_TEST_THREADS": null,
+          "TRNM_PQ_OPENSSL": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/bin/openssl",
+          "TRNM_PQ_OPENSSL_SHA256": "35f28c82e7e4fdcd06b0a42062efd224a5fd5d32d5cc9894252f8206219d496e",
+          "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+        },
+        "exit_code": 0,
+        "log_bytes": 72,
+        "log_file": "final-clippy.log",
+        "log_sha256": "a7642a0867425c6137f6fda230ee0c5445d5148745ccd7b4f5b0b4f2b4540d91",
+        "schema": "trnm-pq-native-command-v1",
+        "started_utc": "2026-11-05T10:45:14.580766+00:00",
+        "status": "command_succeeded",
+        "whole_chain_quantum_security_qualified": false
+      },
+      "receipt_file": "final-clippy.json",
+      "receipt_raw_utf8": "{\n  \"after\": {\n    \"base\": null,\n    \"candidate\": \"0da4b6cecf55fa4c868ce744567ae5019a9905bb\",\n    \"kind\": \"head\",\n    \"prospective_merge\": null,\n    \"schema\": \"trnm-ci-source-v1\",\n    \"tested_commit\": \"0da4b6cecf55fa4c868ce744567ae5019a9905bb\",\n    \"tested_tree\": \"34118e5b1e05982b44516fad88f6e10690b3f5ae\",\n    \"tests_executed_by_identity_check\": false,\n    \"tracked_bytes\": 978281657,\n    \"tracked_entries\": 10178,\n    \"tracked_worktree_verified\": true\n  },\n  \"argv\": [\n    \"cargo\",\n    \"clippy\",\n    \"--locked\",\n    \"--offline\",\n    \"--manifest-path\",\n    \"trillionnium/Cargo.toml\",\n    \"--workspace\",\n    \"--all-targets\",\n    \"--all-features\",\n    \"--\",\n    \"-D\",\n    \"warnings\"\n  ],\n  \"before\": {\n    \"base\": null,\n    \"candidate\": \"0da4b6cecf55fa4c868ce744567ae5019a9905bb\",\n    \"kind\": \"head\",\n    \"prospective_merge\": null,\n    \"schema\": \"trnm-ci-source-v1\",\n    \"tested_commit\": \"0da4b6cecf55fa4c868ce744567ae5019a9905bb\",\n    \"tested_tree\": \"34118e5b1e05982b44516fad88f6e10690b3f5ae\",\n    \"tests_executed_by_identity_check\": false,\n    \"tracked_bytes\": 978281657,\n    \"tracked_entries\": 10178,\n    \"tracked_worktree_verified\": true\n  },\n  \"cwd\": \"/workspace/scratch/add353b13222/chain\",\n  \"elapsed_ns\": 6244095602,\n  \"environment\": {\n    \"CARGO_BUILD_JOBS\": \"1\",\n    \"CARGO_ENCODED_RUSTFLAGS\": null,\n    \"CARGO_INCREMENTAL\": \"0\",\n    \"CARGO_TARGET_DIR\": \"/workspace/scratch/7318042bb6cb/target\",\n    \"GITHUB_RUN_ATTEMPT\": null,\n    \"GITHUB_RUN_ID\": null,\n    \"OPENSSL_DIR\": \"/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install\",\n    \"OPENSSL_STATIC\": \"1\",\n    \"RUNNER_ARCH\": null,\n    \"RUSTC\": null,\n    \"RUSTC_WORKSPACE_WRAPPER\": null,\n    \"RUSTC_WRAPPER\": null,\n    \"RUSTFLAGS\": null,\n    \"RUST_TEST_THREADS\": null,\n    \"TRNM_PQ_OPENSSL\": \"/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/bin/openssl\",\n    \"TRNM_PQ_OPENSSL_SHA256\": \"35f28c82e7e4fdcd06b0a42062efd224a5fd5d32d5cc9894252f8206219d496e\",\n    \"TRNM_PQ_OPENSSL_VERSION\": \"3.5.9\"\n  },\n  \"exit_code\": 0,\n  \"log_bytes\": 72,\n  \"log_file\": \"final-clippy.log\",\n  \"log_sha256\": \"a7642a0867425c6137f6fda230ee0c5445d5148745ccd7b4f5b0b4f2b4540d91\",\n  \"schema\": \"trnm-pq-native-command-v1\",\n  \"started_utc\": \"2026-11-05T10:45:14.580766+00:00\",\n  \"status\": \"command_succeeded\",\n  \"whole_chain_quantum_security_qualified\": false\n}\n",
+      "receipt_sha256": "346692a526e121d5fa81e3b6a6809afb5d45eb17e3f9ff2f7b0b3b320804b492"
+    },
+    {
+      "log_raw_utf8": "...........................................\n----------------------------------------------------------------------\nRan 43 tests in 3.913s\n\nOK\n{\"receipt\": \"/tmp/trnm-ci-raw-source-5nrmj4vj/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-trub40u1/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-ubqfn4vv/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-sp5dza8l/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-d9jgsmbt/.git/receipt-PASS\", \"result\": \"PASS\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-d9jgsmbt/.git/receipt-FAIL\", \"result\": \"FAIL\"}\n",
+      "receipt": {
+        "after": {
+          "base": null,
+          "candidate": "0da4b6cecf55fa4c868ce744567ae5019a9905bb",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "0da4b6cecf55fa4c868ce744567ae5019a9905bb",
+          "tested_tree": "34118e5b1e05982b44516fad88f6e10690b3f5ae",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 978281657,
+          "tracked_entries": 10178,
+          "tracked_worktree_verified": true
+        },
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/ci",
+          "-p",
+          "test_ci_source_integrity.py"
+        ],
+        "before": {
+          "base": null,
+          "candidate": "0da4b6cecf55fa4c868ce744567ae5019a9905bb",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "0da4b6cecf55fa4c868ce744567ae5019a9905bb",
+          "tested_tree": "34118e5b1e05982b44516fad88f6e10690b3f5ae",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 978281657,
+          "tracked_entries": 10178,
+          "tracked_worktree_verified": true
+        },
+        "cwd": "/workspace/scratch/add353b13222/chain",
+        "elapsed_ns": 9256374175,
+        "environment": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_ENCODED_RUSTFLAGS": null,
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/workspace/scratch/7318042bb6cb/target",
+          "GITHUB_RUN_ATTEMPT": null,
+          "GITHUB_RUN_ID": null,
+          "OPENSSL_DIR": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install",
+          "OPENSSL_STATIC": "1",
+          "RUNNER_ARCH": null,
+          "RUSTC": null,
+          "RUSTC_WORKSPACE_WRAPPER": null,
+          "RUSTC_WRAPPER": null,
+          "RUSTFLAGS": null,
+          "RUST_TEST_THREADS": null,
+          "TRNM_PQ_OPENSSL": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/bin/openssl",
+          "TRNM_PQ_OPENSSL_SHA256": "35f28c82e7e4fdcd06b0a42062efd224a5fd5d32d5cc9894252f8206219d496e",
+          "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+        },
+        "exit_code": 0,
+        "log_bytes": 626,
+        "log_file": "final-source-negatives.log",
+        "log_sha256": "fd504fbff863e0f9ef1ca73740b42a82d76b595d0e624c33837d158c9ef79ec2",
+        "schema": "trnm-pq-native-command-v1",
+        "started_utc": "2026-11-05T10:45:14.566759+00:00",
+        "status": "command_succeeded",
+        "whole_chain_quantum_security_qualified": false
+      },
+      "receipt_file": "final-source-negatives.json",
+      "receipt_raw_utf8": "{\n  \"after\": {\n    \"base\": null,\n    \"candidate\": \"0da4b6cecf55fa4c868ce744567ae5019a9905bb\",\n    \"kind\": \"head\",\n    \"prospective_merge\": null,\n    \"schema\": \"trnm-ci-source-v1\",\n    \"tested_commit\": \"0da4b6cecf55fa4c868ce744567ae5019a9905bb\",\n    \"tested_tree\": \"34118e5b1e05982b44516fad88f6e10690b3f5ae\",\n    \"tests_executed_by_identity_check\": false,\n    \"tracked_bytes\": 978281657,\n    \"tracked_entries\": 10178,\n    \"tracked_worktree_verified\": true\n  },\n  \"argv\": [\n    \"python3\",\n    \"-m\",\n    \"unittest\",\n    \"discover\",\n    \"-s\",\n    \"scripts/ci\",\n    \"-p\",\n    \"test_ci_source_integrity.py\"\n  ],\n  \"before\": {\n    \"base\": null,\n    \"candidate\": \"0da4b6cecf55fa4c868ce744567ae5019a9905bb\",\n    \"kind\": \"head\",\n    \"prospective_merge\": null,\n    \"schema\": \"trnm-ci-source-v1\",\n    \"tested_commit\": \"0da4b6cecf55fa4c868ce744567ae5019a9905bb\",\n    \"tested_tree\": \"34118e5b1e05982b44516fad88f6e10690b3f5ae\",\n    \"tests_executed_by_identity_check\": false,\n    \"tracked_bytes\": 978281657,\n    \"tracked_entries\": 10178,\n    \"tracked_worktree_verified\": true\n  },\n  \"cwd\": \"/workspace/scratch/add353b13222/chain\",\n  \"elapsed_ns\": 9256374175,\n  \"environment\": {\n    \"CARGO_BUILD_JOBS\": \"1\",\n    \"CARGO_ENCODED_RUSTFLAGS\": null,\n    \"CARGO_INCREMENTAL\": \"0\",\n    \"CARGO_TARGET_DIR\": \"/workspace/scratch/7318042bb6cb/target\",\n    \"GITHUB_RUN_ATTEMPT\": null,\n    \"GITHUB_RUN_ID\": null,\n    \"OPENSSL_DIR\": \"/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install\",\n    \"OPENSSL_STATIC\": \"1\",\n    \"RUNNER_ARCH\": null,\n    \"RUSTC\": null,\n    \"RUSTC_WORKSPACE_WRAPPER\": null,\n    \"RUSTC_WRAPPER\": null,\n    \"RUSTFLAGS\": null,\n    \"RUST_TEST_THREADS\": null,\n    \"TRNM_PQ_OPENSSL\": \"/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/bin/openssl\",\n    \"TRNM_PQ_OPENSSL_SHA256\": \"35f28c82e7e4fdcd06b0a42062efd224a5fd5d32d5cc9894252f8206219d496e\",\n    \"TRNM_PQ_OPENSSL_VERSION\": \"3.5.9\"\n  },\n  \"exit_code\": 0,\n  \"log_bytes\": 626,\n  \"log_file\": \"final-source-negatives.log\",\n  \"log_sha256\": \"fd504fbff863e0f9ef1ca73740b42a82d76b595d0e624c33837d158c9ef79ec2\",\n  \"schema\": \"trnm-pq-native-command-v1\",\n  \"started_utc\": \"2026-11-05T10:45:14.566759+00:00\",\n  \"status\": \"command_succeeded\",\n  \"whole_chain_quantum_security_qualified\": false\n}\n",
+      "receipt_sha256": "7c2872a78c94c9c4d77ae9e8be2c0b1fd4dced9efd2b517243c4abd03c967e70"
+    },
+    {
+      "log_raw_utf8": "{\"activation\": false, \"head\": \"0da4b6cecf55fa4c868ce744567ae5019a9905bb\", \"local_links\": 3175, \"normal_dependency_edges\": 25, \"result\": \"PASS\", \"runtime_implemented\": false, \"rust_files\": 1155, \"source_state\": \"committed-clean\", \"tree\": \"34118e5b1e05982b44516fad88f6e10690b3f5ae\", \"workspace_packages\": 26}\n",
+      "receipt": {
+        "after": {
+          "base": null,
+          "candidate": "0da4b6cecf55fa4c868ce744567ae5019a9905bb",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "0da4b6cecf55fa4c868ce744567ae5019a9905bb",
+          "tested_tree": "34118e5b1e05982b44516fad88f6e10690b3f5ae",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 978281657,
+          "tracked_entries": 10178,
+          "tracked_worktree_verified": true
+        },
+        "argv": [
+          "python3",
+          "scripts/ci/check_repository.py"
+        ],
+        "before": {
+          "base": null,
+          "candidate": "0da4b6cecf55fa4c868ce744567ae5019a9905bb",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "0da4b6cecf55fa4c868ce744567ae5019a9905bb",
+          "tested_tree": "34118e5b1e05982b44516fad88f6e10690b3f5ae",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 978281657,
+          "tracked_entries": 10178,
+          "tracked_worktree_verified": true
+        },
+        "cwd": "/workspace/scratch/add353b13222/chain",
+        "elapsed_ns": 65655149511,
+        "environment": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_ENCODED_RUSTFLAGS": null,
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/workspace/scratch/7318042bb6cb/target",
+          "GITHUB_RUN_ATTEMPT": null,
+          "GITHUB_RUN_ID": null,
+          "OPENSSL_DIR": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install",
+          "OPENSSL_STATIC": "1",
+          "RUNNER_ARCH": null,
+          "RUSTC": null,
+          "RUSTC_WORKSPACE_WRAPPER": null,
+          "RUSTC_WRAPPER": null,
+          "RUSTFLAGS": null,
+          "RUST_TEST_THREADS": null,
+          "TRNM_PQ_OPENSSL": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/bin/openssl",
+          "TRNM_PQ_OPENSSL_SHA256": "35f28c82e7e4fdcd06b0a42062efd224a5fd5d32d5cc9894252f8206219d496e",
+          "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+        },
+        "exit_code": 0,
+        "log_bytes": 307,
+        "log_file": "final-source-repository.log",
+        "log_sha256": "97aa90e1e53d96fd212a614914fa2968c67dc9b5e61f2483ddd4d760d982750e",
+        "schema": "trnm-pq-native-command-v1",
+        "started_utc": "2026-11-05T10:45:14.558031+00:00",
+        "status": "command_succeeded",
+        "whole_chain_quantum_security_qualified": false
+      },
+      "receipt_file": "final-source-repository.json",
+      "receipt_raw_utf8": "{\n  \"after\": {\n    \"base\": null,\n    \"candidate\": \"0da4b6cecf55fa4c868ce744567ae5019a9905bb\",\n    \"kind\": \"head\",\n    \"prospective_merge\": null,\n    \"schema\": \"trnm-ci-source-v1\",\n    \"tested_commit\": \"0da4b6cecf55fa4c868ce744567ae5019a9905bb\",\n    \"tested_tree\": \"34118e5b1e05982b44516fad88f6e10690b3f5ae\",\n    \"tests_executed_by_identity_check\": false,\n    \"tracked_bytes\": 978281657,\n    \"tracked_entries\": 10178,\n    \"tracked_worktree_verified\": true\n  },\n  \"argv\": [\n    \"python3\",\n    \"scripts/ci/check_repository.py\"\n  ],\n  \"before\": {\n    \"base\": null,\n    \"candidate\": \"0da4b6cecf55fa4c868ce744567ae5019a9905bb\",\n    \"kind\": \"head\",\n    \"prospective_merge\": null,\n    \"schema\": \"trnm-ci-source-v1\",\n    \"tested_commit\": \"0da4b6cecf55fa4c868ce744567ae5019a9905bb\",\n    \"tested_tree\": \"34118e5b1e05982b44516fad88f6e10690b3f5ae\",\n    \"tests_executed_by_identity_check\": false,\n    \"tracked_bytes\": 978281657,\n    \"tracked_entries\": 10178,\n    \"tracked_worktree_verified\": true\n  },\n  \"cwd\": \"/workspace/scratch/add353b13222/chain\",\n  \"elapsed_ns\": 65655149511,\n  \"environment\": {\n    \"CARGO_BUILD_JOBS\": \"1\",\n    \"CARGO_ENCODED_RUSTFLAGS\": null,\n    \"CARGO_INCREMENTAL\": \"0\",\n    \"CARGO_TARGET_DIR\": \"/workspace/scratch/7318042bb6cb/target\",\n    \"GITHUB_RUN_ATTEMPT\": null,\n    \"GITHUB_RUN_ID\": null,\n    \"OPENSSL_DIR\": \"/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install\",\n    \"OPENSSL_STATIC\": \"1\",\n    \"RUNNER_ARCH\": null,\n    \"RUSTC\": null,\n    \"RUSTC_WORKSPACE_WRAPPER\": null,\n    \"RUSTC_WRAPPER\": null,\n    \"RUSTFLAGS\": null,\n    \"RUST_TEST_THREADS\": null,\n    \"TRNM_PQ_OPENSSL\": \"/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/bin/openssl\",\n    \"TRNM_PQ_OPENSSL_SHA256\": \"35f28c82e7e4fdcd06b0a42062efd224a5fd5d32d5cc9894252f8206219d496e\",\n    \"TRNM_PQ_OPENSSL_VERSION\": \"3.5.9\"\n  },\n  \"exit_code\": 0,\n  \"log_bytes\": 307,\n  \"log_file\": \"final-source-repository.log\",\n  \"log_sha256\": \"97aa90e1e53d96fd212a614914fa2968c67dc9b5e61f2483ddd4d760d982750e\",\n  \"schema\": \"trnm-pq-native-command-v1\",\n  \"started_utc\": \"2026-11-05T10:45:14.558031+00:00\",\n  \"status\": \"command_succeeded\",\n  \"whole_chain_quantum_security_qualified\": false\n}\n",
+      "receipt_sha256": "debd24caf44f8cf5102f8d5b03dc7c8507b6352e1ceb8bcb18c332697bb756c8"
+    }
+  ],
+  "static_checks_below_bind_to": "0da4b6cecf55fa4c868ce744567ae5019a9905bb",
+  "static_results_are_not_relabelled_to_the_merge": true
+}

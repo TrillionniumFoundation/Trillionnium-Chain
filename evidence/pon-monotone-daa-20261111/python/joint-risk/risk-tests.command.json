@@ -1,0 +1,47 @@
+{
+  "actual_relevant_env": {
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "NATIVE_RISK_LEDGER_RUN": "/workspace/scratch/7f73fe002713/daa-risk-typed-probe/fixture-copy/run.json",
+    "PYTHONDONTWRITEBYTECODE": null,
+    "PYTHONHASHSEED": null,
+    "PYTHONHOME": null,
+    "PYTHONNOUSERSITE": null,
+    "PYTHONPATH": "/workspace/scratch/7f73fe002713/chain-daa/formal/pon-nakamoto-v1",
+    "TZ": null,
+    "VIRTUAL_ENV": null
+  },
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-m",
+    "unittest",
+    "-v",
+    "test_native_risk_ledger"
+  ],
+  "completed_at_utc": "2026-11-11T23:59:32.007715+00:00",
+  "cwd": "/workspace/scratch/7f73fe002713/chain-daa",
+  "elapsed_wall_ns": 17808915950,
+  "env_overrides": {
+    "NATIVE_RISK_LEDGER_RUN": "/workspace/scratch/7f73fe002713/daa-risk-typed-probe/fixture-copy/run.json",
+    "PYTHONPATH": "/workspace/scratch/7f73fe002713/chain-daa/formal/pon-nakamoto-v1"
+  },
+  "environment_capture_scope": "execution-relevant-nonsensitive-variables; inherited environment otherwise retained",
+  "exit_code": 0,
+  "exit_matches_expectation": true,
+  "expected_exit": 0,
+  "expected_tests": 27,
+  "name": "risk-tests",
+  "started_at_utc": "2026-11-11T23:59:14.071780+00:00",
+  "stderr": {
+    "bytes": 5111,
+    "path": "risk-tests.stderr.log",
+    "sha256": "aab6c6fea92bc1fbde50e2ce62907445394c0509d7316cf36070bf3582db463e"
+  },
+  "stdout": {
+    "bytes": 0,
+    "path": "risk-tests.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "tests_match_expectation": true,
+  "tests_run": 27
+}

@@ -1,0 +1,213 @@
+{
+  "schema": "qrom-latest-followup-sources-v1",
+  "observation_date": "2026-11-09",
+  "recorded_at_utc": "2026-11-09T14:47:40.928734+00:00",
+  "source_revision": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+  "source_tree": "c82829c3a5710960081d91930cf425f9a768e9e4",
+  "repo_source_files": [
+    {
+      "path": "docs/security/W1_QROM_MANUSCRIPT_REVIEW_20261108.md",
+      "source_revision": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "git_blob": "5cdfd9420ca778a437e30cd3447eeb6249ac25a8",
+      "bytes": 21127,
+      "sha256": "d51a63c3fa7a6060e00bf771c5191f580eafe1a491978c8da886d53e0de928f0",
+      "materialized_in_repo_worktree": true,
+      "worktree_equals_git_object": true
+    },
+    {
+      "path": "scripts/w1_cdhz_revision_compare.py",
+      "source_revision": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "git_blob": "01e41e74c049a6b9b70404685767017cfd6535ab",
+      "bytes": 6278,
+      "sha256": "fb1af0a6b4f606d90e15e4c5e9781831f07e5c61549c57ed05067616111084c6",
+      "materialized_in_repo_worktree": true,
+      "worktree_equals_git_object": true
+    },
+    {
+      "path": "scripts/w1_qrom_composition_budget.py",
+      "source_revision": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "git_blob": "021c7dc0f93bb6115ccf4b322fd100608bd37760",
+      "bytes": 21292,
+      "sha256": "4d3d6a3b8efcac266cfaf7fb2204a4f3b0482ea0ead2481b72617556f0771427",
+      "materialized_in_repo_worktree": true,
+      "worktree_equals_git_object": true
+    },
+    {
+      "path": "config/pon/pq-proof-profile-binding-v1.json",
+      "source_revision": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "git_blob": "0024bd4bc57273c60f6a8e6b0b4ad3243b3aeaf0",
+      "bytes": 2378,
+      "sha256": "9154595097a2abe460f23e53ab96b3de5712702b156ada71fc5d2d65c337e424",
+      "materialized_in_repo_worktree": true,
+      "worktree_equals_git_object": true
+    },
+    {
+      "path": "docs/security/W1_QROM_PROOF_CHAIN_20261108.md",
+      "source_revision": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "git_blob": "b37236403e1ecb9905f05931545552a1a2309653",
+      "bytes": 15485,
+      "sha256": "1f6e9fb71e318104a1fa458b92ba0b4e2671c9c89845a6a5603050e0e7634b0b",
+      "materialized_in_repo_worktree": true,
+      "worktree_equals_git_object": true
+    },
+    {
+      "path": "evidence/pon-w1-qrom-proof-chain-20261108/manuscript-comparison.json",
+      "source_revision": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "git_blob": "4019abb76cf7805854fcac477650022a1eacba9a",
+      "bytes": 74335,
+      "sha256": "5c0d265707758448d263aa3c02788a9f13025e0644143024596e07a03940279f",
+      "materialized_in_repo_worktree": false,
+      "worktree_equals_git_object": null
+    }
+  ],
+  "public_source_access": [
+    {
+      "url": "https://eprint.iacr.org/2025/2166",
+      "kind": "official manuscript metadata",
+      "result": "read_success",
+      "latest_revision_date": "2026-03-02",
+      "source_ref": "turn13view2"
+    },
+    {
+      "url": "https://eprint.iacr.org/archive/versions/2025/2166",
+      "kind": "official archive history",
+      "result": "HTTP 403",
+      "source_ref": "turn11view0"
+    },
+    {
+      "url": "https://eprint.iacr.org/2025/2166.pdf",
+      "kind": "official latest PDF",
+      "result": "HTTP 403",
+      "source_ref": "turn15view1"
+    },
+    {
+      "url": "https://eprint.iacr.org/archive/2025/2166/1772467621.pdf",
+      "kind": "official March frozen PDF",
+      "result": "web tool unavailable; normal urllib GET HTTP 403",
+      "source_ref": "turn11view1",
+      "local_attempt": "qrom-followup-inputs/official-fetch-attempt01.json"
+    },
+    {
+      "url": "https://eprint.iacr.org/archive/2025/2166/1767247987.pdf",
+      "kind": "official January frozen PDF",
+      "result": "web tool unavailable; normal urllib GET HTTP 403",
+      "source_ref": "turn11view2",
+      "local_attempt": "qrom-followup-inputs/official-fetch-attempt01.json"
+    },
+    {
+      "url": "https://infoscience.epfl.ch/entities/publication/029a1aad-a83a-4e7a-bbf7-03819bb7dd4b",
+      "kind": "author institution publication record",
+      "result": "read_success; no exposed fulltext link",
+      "doi": "10.1007/978-3-032-25336-1_14",
+      "pages": "389-415",
+      "source_ref": "turn12view0"
+    },
+    {
+      "url": "https://link.springer.com/chapter/10.1007/978-3-032-25336-1_14",
+      "kind": "publisher version of record",
+      "result": "subscription preview only; no purchase or login",
+      "first_online": "2026-05-09",
+      "source_ref": "turn12view1"
+    },
+    {
+      "url": "https://zihanhu.cn/",
+      "kind": "author homepage",
+      "result": "paper link points to ePrint; pq-bcs.pdf marked slides",
+      "source_ref": "turn12view3"
+    },
+    {
+      "url": "https://dizidizidi.github.io/",
+      "kind": "author homepage",
+      "result": "paper link points to ePrint",
+      "source_ref": "turn13view1"
+    },
+    {
+      "url": "https://ic-people.epfl.ch/~achiesa/",
+      "kind": "author institution homepage",
+      "result": "paper link points to ePrint",
+      "source_ref": "turn14view1"
+    },
+    {
+      "url": "https://yuxi-zheng.github.io/",
+      "kind": "author homepage",
+      "result": "read_success; no direct paper fulltext link",
+      "source_ref": "turn15view0"
+    },
+    {
+      "url": "https://zihanhu.cn/assets/pdf/pq-bcs.pdf",
+      "kind": "author slides",
+      "result": "tool content-length failure, 13802289 bytes; not used as manuscript",
+      "source_ref": "turn12view2"
+    },
+    {
+      "url": "https://files01.core.ac.uk/download/690750245.pdf",
+      "kind": "aggregate search result only",
+      "result": "search extract dated January 1 2026; not independently downloaded or used as latest primary source",
+      "source_ref": "turn13search9"
+    }
+  ],
+  "queries": [
+    {
+      "system": "system1",
+      "query": "\"How to Prove Post-Quantum Security for Succinct Non-Interactive Reductions\" pdf March 2026",
+      "domains": [
+        "epfl.ch",
+        "zihanhu.cn",
+        "dizidizidi.github.io",
+        "iacr.org"
+      ],
+      "recency_days": 365
+    },
+    {
+      "scope": "earlier exact-title search",
+      "purpose": "locate normal author, publisher and institutional publication records; no version equivalence inferred from search snippets"
+    }
+  ],
+  "retained_inputs": [
+    {
+      "path": "qrom-followup-inputs/git-object-inventory.json",
+      "bytes": 7481,
+      "sha256": "31807bcb4d0162bf07bfd34e41ae557872cc564702294639c997e1cca0d84ccf"
+    },
+    {
+      "path": "qrom-followup-inputs/local-pdf-name-inventory.json",
+      "bytes": 339,
+      "sha256": "2e41f5c7b5821d7673accdc951b15b6ca9bdecece7e25ae7fb79d009c3434af4"
+    },
+    {
+      "path": "qrom-followup-inputs/official-fetch-attempt01.json",
+      "bytes": 509,
+      "sha256": "dffa881cb5c9ffb99addf2a514947fc5ad0c2de66d4e9cbbe88ecf68e21f6934"
+    },
+    {
+      "path": "qrom-followup-inputs/tracked-comparison-review.json",
+      "bytes": 930,
+      "sha256": "2bd09694ca9b70a8114fd9abd68839e6be0d5f295b76b928b9fdfb5f79fa5734"
+    },
+    {
+      "path": "qrom-followup-inputs/tracked-comparison-source.json",
+      "bytes": 5168,
+      "sha256": "1995f1cd2b5f525de8dc5483dafcae89b9bc5c6c84fcc31c5139db4f77dfa23e"
+    },
+    {
+      "path": "qrom-followup-inputs/tracked-manuscript-comparison.json",
+      "bytes": 74335,
+      "sha256": "5c0d265707758448d263aa3c02788a9f13025e0644143024596e07a03940279f"
+    }
+  ],
+  "report": {
+    "path": "qrom-latest-followup.md",
+    "bytes": 12108,
+    "sha256": "cf9f9c8286c15649db04e5fd435848e0e9f45ee4fcbeeb064830e51ab48b9d83"
+  },
+  "qualification": {
+    "latest_metadata_observed": "2026-03-02",
+    "existing_tracked_comparison_found": true,
+    "existing_comparison_internal_checks_passed": 13,
+    "existing_comparison_internal_checks_total": 13,
+    "pdfs_reacquired_this_followup": false,
+    "pdf_text_or_render_comparison_rerun_this_followup": false,
+    "frozen_repo_profile_modified": false,
+    "full_w1_security_qualified": false
+  }
+}

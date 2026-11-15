@@ -1,0 +1,19 @@
+{
+  "artifact_id": 13586459476,
+  "status": "UNKNOWN",
+  "attempted": false,
+  "errors": [
+    "archive/source/manifest not authenticated; pure reader not attempted"
+  ],
+  "business_qualification": false,
+  "family": "factorial",
+  "arch": "x64",
+  "source_kind": "prospective-merge",
+  "tested_commit": "28df21f965e0348690836c9c854dab645827a03d",
+  "stage1_status": null,
+  "stage1_errors": [
+    "ValueError: GitHub ZIP digest/size mismatch"
+  ],
+  "stage1_sha256": "87a8288a893979de18e71a5982a5e63beba94b86e8500409b75b0e9b1de38771",
+  "finished_utc": "2026-11-07T20:19:14.073798+00:00"
+}

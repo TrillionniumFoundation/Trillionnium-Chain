@@ -1,0 +1,49 @@
+{
+  "build_stderr_sha256": "e7a16b137735c0bffe4371366acc7fc02194b309eca21609ed147942dda8081c",
+  "build_stdout_sha256": "09eeeed16e3269fac49f199bcd435f66fbefca4d5066f007b6b5966e75047157",
+  "bytes": 19752832,
+  "cargo_artifact": {
+    "executable": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-target/release/examples/cell_native_shard_research_next_use_v2",
+    "features": [
+      "default",
+      "pq-native-openssl"
+    ],
+    "filenames": [
+      "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-target/release/examples/cell_native_shard_research_next_use_v2"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "package_id": "path+file:///home/qq/work/chain-bt-owner-convergence-20261112-4a0b/trillionnium/crates/trnm-pon-node#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": false
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "example"
+      ],
+      "name": "cell_native_shard_research_next_use_v2",
+      "src_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_next_use_v2.rs",
+      "test": false
+    }
+  },
+  "historical_s3_profile_performance_reused": false,
+  "native_operation_started": false,
+  "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-target/release/examples/cell_native_shard_research_next_use_v2",
+  "profile": "release",
+  "provider_sha256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62",
+  "schema": "trnm.bt-frozen-b-native-release-main.v1",
+  "sha256": "ef4d33be1574c27852187546f4393f301eb175b8246f647ce3d15a5d21fd2155",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+}

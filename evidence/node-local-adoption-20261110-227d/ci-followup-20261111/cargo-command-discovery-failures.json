@@ -1,0 +1,22 @@
+{
+  "observed_utc": "2026-11-11T04:13:02.833663+00:00",
+  "scope": "post-hoc preservation of orchestration failures reported by exec tool; no native Cargo process started",
+  "source": "eb32162449eab623f69bbd7016b694600cb382c5",
+  "attempts": [
+    {
+      "name": "cargo-metadata",
+      "wrapper_exit": 1,
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: 'cargo'",
+      "cargo_exit": null,
+      "elapsed_seconds": null
+    },
+    {
+      "name": "cargo-fmt",
+      "wrapper_exit": 1,
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: 'cargo'",
+      "cargo_exit": null,
+      "elapsed_seconds": null
+    }
+  ],
+  "correction": "Use the exact explicit installed Cargo/Rustc/Rustfmt paths and CARGO_HOME from the earlier retained validation record; repository configuration unchanged."
+}

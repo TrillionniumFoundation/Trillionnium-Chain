@@ -1,0 +1,2729 @@
+{
+  "schema": "c5dd-account-graph-internal-source-readback-v1",
+  "created_utc": "2026-11-03T23:05:36.074650+00:00",
+  "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "scope": "Original client baseline before/after arithmetic observations; original final SQL structural facts. Not new runtime execution, per-call timing, benchmark or optimization acceptance.",
+  "archive": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/c5dd7c-original-campaign-13276003536.zip",
+    "bytes": 60966255,
+    "sha256": "78e1b41ced06d6b77568a132d60623a1a7b5059ef9791dd43cc8ed4110efaacb"
+  },
+  "reader": {
+    "path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-internal-review/read_internal_evidence.py",
+    "sha256": "e134d6ef86ce6f085d4a1c1c2e14ef3ea6d8f65d868b12a10eec3e9862a440a7"
+  },
+  "source_bindings": [
+    {
+      "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "bytes": 46714,
+      "sha256": "ae959fee2acb706962b3add2625ebac946b5435d2632b9d54870e7b4d6a94913",
+      "current_workspace_bytes_equal": true
+    },
+    {
+      "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "bytes": 29530,
+      "sha256": "5253bd06d8b677652bc5be227c9d7ce1d3dc16dc70e5a569b42ceb7f0fa1ec6b",
+      "current_workspace_bytes_equal": true
+    },
+    {
+      "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_reader.rs",
+      "bytes": 2658,
+      "sha256": "ec5350aff6e8ea735e9bcc5d941e39850e60df0ae64e87a48db55c2ed193a554",
+      "current_workspace_bytes_equal": true
+    },
+    {
+      "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_decode.rs",
+      "bytes": 10298,
+      "sha256": "3dd44667ea0181d804a50977add6b9e1995127060e685ccd0ba18be7d59641b0",
+      "current_workspace_bytes_equal": true
+    },
+    {
+      "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs",
+      "bytes": 11867,
+      "sha256": "8ce99b8cd82f4a709fd967b8f87cbf04c8084b817b3d77d3681be6d1f69cd35d",
+      "current_workspace_bytes_equal": true
+    },
+    {
+      "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+      "bytes": 63475,
+      "sha256": "152565e9f09ac2c8dfee7958b3fb6012c81fc5f246978e82954e337f66eaf072",
+      "current_workspace_bytes_equal": true
+    },
+    {
+      "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "bytes": 94152,
+      "sha256": "b9f7aa9d535d07abf947612ed05df523f7d29f2faf560cb027cae47856e134e5",
+      "current_workspace_bytes_equal": true
+    },
+    {
+      "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "bytes": 22051,
+      "sha256": "2300f470a2c6fed43ba7f9e9e49782332f52a0cf45fe27f39c7a201bbbac4e92",
+      "current_workspace_bytes_equal": true
+    },
+    {
+      "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "bytes": 17092,
+      "sha256": "e91b5f6fbdefff92d02d670b8d04ca9d4c7b3d2fdc598e450324fe89b513f6ec",
+      "current_workspace_bytes_equal": true
+    },
+    {
+      "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "bytes": 13538,
+      "sha256": "d544bd342d3f86ad925f4f8178c557e5be1c48b8419711e0c325ff0626ee04e5",
+      "current_workspace_bytes_equal": true
+    },
+    {
+      "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 331511,
+      "sha256": "a334ed1aca71058244cfbf42ca8c3b40ccd93cb6e62a063212fe2890828265db",
+      "current_workspace_bytes_equal": true
+    },
+    {
+      "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "bytes": 19006,
+      "sha256": "a9d22ca6982afe6677c4d799a137c9e730a54d38d640ef551f9c4e02c4e5df4e",
+      "current_workspace_bytes_equal": true
+    },
+    {
+      "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation/tests.rs",
+      "bytes": 41577,
+      "sha256": "2b914cba0efefed6368a5fc9a659380bfe9b2a4d15379df3cdc9ec72cd5db902",
+      "current_workspace_bytes_equal": true
+    },
+    {
+      "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_readback_tests.rs",
+      "bytes": 26122,
+      "sha256": "78b8541e0d1da0d04239b72137cd99543a0f0882d552e545f3e9fea01bc931d8",
+      "current_workspace_bytes_equal": true
+    }
+  ],
+  "runs": [
+    {
+      "run": 1,
+      "member": "run-1-raw/baseline.json",
+      "member_bytes": 2725120,
+      "member_sha256": "d17a1694f595f030c052d7d943ef36ec90f48868e02864b93596803723ad8fa5",
+      "client_arithmetic_before": {
+        "account_node_decode_arithmetic": {
+          "charge_is_process_rss_bound": false,
+          "counters": {
+            "borrow_conflicts": 0,
+            "bounded_probe_refusals": 6,
+            "calls": 22766,
+            "exact_hits": 19768,
+            "original_decodes": 2998,
+            "retained": 2992
+          },
+          "excluded": "allocator metadata, SQLite, temporary row buffers, stacks and other caches",
+          "hard_software_charge_ceiling_bytes": 4194304,
+          "has_consensus_authority": false,
+          "probe_limit": 8,
+          "record_byte_limit": 163,
+          "retained": {
+            "allocated_slot_bytes": 3342336,
+            "allocated_slots": 8192,
+            "occupied_slots": 2992,
+            "retained_record_bytes": 370276,
+            "retained_software_charge_bytes": 3342408
+          },
+          "retained_software_charge_limit_bytes": 3342408,
+          "schema": "pon-native-account-node-decode-arithmetic-v1",
+          "scope": "exact current SQL blob and expected ID only; every row and full graph relation is checked again",
+          "slot_limit": 8192,
+          "slot_size_bytes": 408
+        },
+        "cache_policy": "immutable-first-bounded-material-no-live-eviction",
+        "charge_is_process_rss_bound": false,
+        "complete_root_arithmetic": {
+          "charge_is_process_rss_bound": false,
+          "counters": {
+            "actual_changed_keys": 0,
+            "calculations": 4,
+            "cold_roots": 0,
+            "complete_computations": 6,
+            "complete_hits": 45,
+            "context_misses": 0,
+            "derived_checked_apply": 4,
+            "derived_full_root": 0,
+            "derived_rebuilt_tree": 0,
+            "exact_root_hits": 2,
+            "material_uses": 4,
+            "offers": 30,
+            "offers_absent_or_refused": 0,
+            "offers_borrow_conflicts": 0,
+            "offers_preserved_partitions": 0,
+            "offers_retained": 30,
+            "original_error_fallbacks": 0,
+            "partition_exact_string_hits": 0,
+            "partition_inputs_hashed": 0,
+            "partition_inputs_observed": 0,
+            "partition_retention_refusals": 0,
+            "partition_roots_computed": 0,
+            "partition_roots_reused": 0,
+            "partition_string_encodings_reused": 0
+          },
+          "entry_limit": 1,
+          "has_consensus_authority": false,
+          "payload_limit_bytes": 2097152,
+          "retained_material": {
+            "exact_string_charge_bytes": 0,
+            "exact_string_entries": 0,
+            "keys": 1037,
+            "kind": "canonical-map-and-tree",
+            "payload_bytes": 101935,
+            "retained_software_charge_bytes": 2025834
+          },
+          "retained_software_charge_limit_bytes": 16777216,
+          "retention_observation_available": true,
+          "schema": "pon-native-complete-root-arithmetic-v3",
+          "scope": "one opaque canonical map/tree OR original leaf-hash/partition-root entry with bounded exact plain JSON strings in the same payload pool; every current State row is fully observed, with exact current key/string comparisons separated from actual encodings and hashes; no stored state, row-set, root claim or validity verdict is supplied",
+          "temporary_workspace_is_separate": true
+        },
+        "counters": {
+          "delta_leaf_computations": 1036,
+          "delta_leaf_hits": 12691,
+          "delta_payload_bytes_observed": 1306807,
+          "delta_rows_observed": 13727,
+          "execution_parent_active_candidates": 4,
+          "execution_parent_checked_apply": 4,
+          "execution_parent_full_root": 0,
+          "execution_parent_historical_candidates": 0,
+          "execution_parent_rebuilt_tree": 0,
+          "packet_bytes_observed": 5754948,
+          "packet_computations": 4,
+          "packet_hits": 53,
+          "record_bytes_observed": 300393,
+          "record_computations": 5,
+          "record_hits": 138
+        },
+        "deltas": {
+          "charge_limit_bytes": 4194304,
+          "entries": 5,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 212212
+        },
+        "has_consensus_authority": false,
+        "history_sql_traversal": "complete-original-O(H)-and-actual-delta-bytes",
+        "packets": {
+          "charge_limit_bytes": 4194304,
+          "entries": 4,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 410160
+        },
+        "records": {
+          "charge_limit_bytes": 4194304,
+          "entries": 5,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 20157
+        },
+        "retained_software_charge_limit_bytes": 12582912,
+        "schema": "pon-native-history-arithmetic-observation-v1",
+        "scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+        "stage_observation_failed": false,
+        "stages": [
+          {
+            "stage": "record",
+            "totals": {
+              "calls": 143,
+              "cpu_known_calls": 143,
+              "cpu_ns": 837722,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 961065
+            }
+          },
+          {
+            "stage": "packet",
+            "totals": {
+              "calls": 90,
+              "cpu_known_calls": 90,
+              "cpu_ns": 4027798,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 4102872
+            }
+          },
+          {
+            "stage": "delta",
+            "totals": {
+              "calls": 86,
+              "cpu_known_calls": 86,
+              "cpu_ns": 15464697,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 15548358
+            }
+          },
+          {
+            "stage": "verify_state",
+            "totals": {
+              "calls": 47,
+              "cpu_known_calls": 47,
+              "cpu_ns": 81765177,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 302784647
+            }
+          },
+          {
+            "stage": "verify_history",
+            "totals": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 10816981,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 10835848
+            }
+          },
+          {
+            "stage": "publish",
+            "totals": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 179912825,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 706417906
+            }
+          },
+          {
+            "stage": "read_active",
+            "totals": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 50091501,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 195411117
+            }
+          },
+          {
+            "stage": "state_at",
+            "totals": {
+              "calls": 16,
+              "cpu_known_calls": 16,
+              "cpu_ns": 52662252,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 197983814
+            }
+          },
+          {
+            "stage": "execute",
+            "totals": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 102644180,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 400161556
+            }
+          },
+          {
+            "stage": "admission",
+            "totals": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 342001447,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1398878302
+            }
+          },
+          {
+            "stage": "activation",
+            "totals": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 81701207,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 228133419
+            }
+          },
+          {
+            "stage": "complete_commitment",
+            "totals": {
+              "calls": 51,
+              "cpu_known_calls": 51,
+              "cpu_ns": 49280679,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 124974590
+            }
+          },
+          {
+            "stage": "complete_state_root",
+            "totals": {
+              "calls": 6,
+              "cpu_known_calls": 6,
+              "cpu_ns": 1416930,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1424728
+            }
+          },
+          {
+            "stage": "account_graph",
+            "totals": {
+              "calls": 34,
+              "cpu_known_calls": 34,
+              "cpu_ns": 63066532,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 284074804
+            }
+          },
+          {
+            "stage": "persisted_state_root",
+            "totals": {
+              "calls": 41,
+              "cpu_known_calls": 41,
+              "cpu_ns": 1349200,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 76273357
+            }
+          },
+          {
+            "stage": "execution_parent_binding",
+            "totals": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 511278,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 515133
+            }
+          }
+        ]
+      },
+      "client_arithmetic_after": {
+        "account_node_decode_arithmetic": {
+          "charge_is_process_rss_bound": false,
+          "counters": {
+            "borrow_conflicts": 0,
+            "bounded_probe_refusals": 136,
+            "calls": 103093,
+            "exact_hits": 99926,
+            "original_decodes": 3167,
+            "retained": 3031
+          },
+          "excluded": "allocator metadata, SQLite, temporary row buffers, stacks and other caches",
+          "hard_software_charge_ceiling_bytes": 4194304,
+          "has_consensus_authority": false,
+          "probe_limit": 8,
+          "record_byte_limit": 163,
+          "retained": {
+            "allocated_slot_bytes": 3342336,
+            "allocated_slots": 8192,
+            "occupied_slots": 3031,
+            "retained_record_bytes": 376177,
+            "retained_software_charge_bytes": 3342408
+          },
+          "retained_software_charge_limit_bytes": 3342408,
+          "schema": "pon-native-account-node-decode-arithmetic-v1",
+          "scope": "exact current SQL blob and expected ID only; every row and full graph relation is checked again",
+          "slot_limit": 8192,
+          "slot_size_bytes": 408
+        },
+        "cache_policy": "immutable-first-bounded-material-no-live-eviction",
+        "charge_is_process_rss_bound": false,
+        "complete_root_arithmetic": {
+          "charge_is_process_rss_bound": false,
+          "counters": {
+            "actual_changed_keys": 94,
+            "calculations": 48,
+            "cold_roots": 0,
+            "complete_computations": 44,
+            "complete_hits": 111,
+            "context_misses": 0,
+            "derived_checked_apply": 48,
+            "derived_full_root": 0,
+            "derived_rebuilt_tree": 0,
+            "exact_root_hits": 11,
+            "material_uses": 48,
+            "offers": 109,
+            "offers_absent_or_refused": 0,
+            "offers_borrow_conflicts": 0,
+            "offers_preserved_partitions": 0,
+            "offers_retained": 109,
+            "original_error_fallbacks": 0,
+            "partition_exact_string_hits": 0,
+            "partition_inputs_hashed": 0,
+            "partition_inputs_observed": 0,
+            "partition_retention_refusals": 0,
+            "partition_roots_computed": 0,
+            "partition_roots_reused": 0,
+            "partition_string_encodings_reused": 0
+          },
+          "entry_limit": 1,
+          "has_consensus_authority": false,
+          "payload_limit_bytes": 2097152,
+          "retained_material": {
+            "exact_string_charge_bytes": 0,
+            "exact_string_entries": 0,
+            "keys": 1046,
+            "kind": "canonical-map-and-tree",
+            "payload_bytes": 103510,
+            "retained_software_charge_bytes": 2043240
+          },
+          "retained_software_charge_limit_bytes": 16777216,
+          "retention_observation_available": true,
+          "schema": "pon-native-complete-root-arithmetic-v3",
+          "scope": "one opaque canonical map/tree OR original leaf-hash/partition-root entry with bounded exact plain JSON strings in the same payload pool; every current State row is fully observed, with exact current key/string comparisons separated from actual encodings and hashes; no stored state, row-set, root claim or validity verdict is supplied",
+          "temporary_workspace_is_separate": true
+        },
+        "counters": {
+          "delta_leaf_computations": 1058,
+          "delta_leaf_hits": 43734,
+          "delta_payload_bytes_observed": 4267039,
+          "delta_rows_observed": 44792,
+          "execution_parent_active_candidates": 6,
+          "execution_parent_checked_apply": 13,
+          "execution_parent_full_root": 0,
+          "execution_parent_historical_candidates": 7,
+          "execution_parent_rebuilt_tree": 0,
+          "packet_bytes_observed": 23220167,
+          "packet_computations": 13,
+          "packet_hits": 273,
+          "record_bytes_observed": 1384889,
+          "record_computations": 14,
+          "record_hits": 628
+        },
+        "deltas": {
+          "charge_limit_bytes": 4194304,
+          "entries": 14,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 227366
+        },
+        "has_consensus_authority": false,
+        "history_sql_traversal": "complete-original-O(H)-and-actual-delta-bytes",
+        "packets": {
+          "charge_limit_bytes": 4194304,
+          "entries": 13,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 870318
+        },
+        "records": {
+          "charge_limit_bytes": 4194304,
+          "entries": 14,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 56935
+        },
+        "retained_software_charge_limit_bytes": 12582912,
+        "schema": "pon-native-history-arithmetic-observation-v1",
+        "scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+        "stage_observation_failed": false,
+        "stages": [
+          {
+            "stage": "record",
+            "totals": {
+              "calls": 642,
+              "cpu_known_calls": 642,
+              "cpu_ns": 4636740,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 83395841
+            }
+          },
+          {
+            "stage": "packet",
+            "totals": {
+              "calls": 369,
+              "cpu_known_calls": 369,
+              "cpu_ns": 12333505,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 12649309
+            }
+          },
+          {
+            "stage": "delta",
+            "totals": {
+              "calls": 356,
+              "cpu_known_calls": 356,
+              "cpu_ns": 102782208,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 333027243
+            }
+          },
+          {
+            "stage": "verify_state",
+            "totals": {
+              "calls": 142,
+              "cpu_known_calls": 142,
+              "cpu_ns": 4369229766,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 19596172926
+            }
+          },
+          {
+            "stage": "verify_history",
+            "totals": {
+              "calls": 38,
+              "cpu_known_calls": 38,
+              "cpu_ns": 112323954,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 112369762
+            }
+          },
+          {
+            "stage": "publish",
+            "totals": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 2187458308,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 9484586863
+            }
+          },
+          {
+            "stage": "read_active",
+            "totals": {
+              "calls": 19,
+              "cpu_known_calls": 19,
+              "cpu_ns": 362563021,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1584134041
+            }
+          },
+          {
+            "stage": "state_at",
+            "totals": {
+              "calls": 41,
+              "cpu_known_calls": 41,
+              "cpu_ns": 1168180004,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5009653894
+            }
+          },
+          {
+            "stage": "execute",
+            "totals": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 121818788,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 419344839
+            }
+          },
+          {
+            "stage": "admission",
+            "totals": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 4181022524,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 17807962385
+            }
+          },
+          {
+            "stage": "activation",
+            "totals": {
+              "calls": 5,
+              "cpu_known_calls": 5,
+              "cpu_ns": 1338503680,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5720237538
+            }
+          },
+          {
+            "stage": "complete_commitment",
+            "totals": {
+              "calls": 155,
+              "cpu_known_calls": 155,
+              "cpu_ns": 145501491,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 297950691
+            }
+          },
+          {
+            "stage": "complete_state_root",
+            "totals": {
+              "calls": 44,
+              "cpu_known_calls": 44,
+              "cpu_ns": 12164957,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 88851694
+            }
+          },
+          {
+            "stage": "account_graph",
+            "totals": {
+              "calls": 105,
+              "cpu_known_calls": 105,
+              "cpu_ns": 4221142912,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 19063255280
+            }
+          },
+          {
+            "stage": "persisted_state_root",
+            "totals": {
+              "calls": 117,
+              "cpu_known_calls": 117,
+              "cpu_ns": 16536043,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 91546512
+            }
+          },
+          {
+            "stage": "execution_parent_binding",
+            "totals": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 6603055,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 6620089
+            }
+          }
+        ]
+      },
+      "decode_delta": {
+        "borrow_conflicts": 0,
+        "bounded_probe_refusals": 130,
+        "calls": 80327,
+        "exact_hits": 80158,
+        "original_decodes": 169,
+        "retained": 39
+      },
+      "decode_exact_hit_percent": 99.78960996925069,
+      "complete_arithmetic_delta": {
+        "actual_changed_keys": 94,
+        "calculations": 44,
+        "cold_roots": 0,
+        "complete_computations": 38,
+        "complete_hits": 66,
+        "context_misses": 0,
+        "derived_checked_apply": 44,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 9,
+        "material_uses": 44,
+        "offers": 79,
+        "offers_absent_or_refused": 0,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 0,
+        "offers_retained": 79,
+        "original_error_fallbacks": 0,
+        "partition_exact_string_hits": 0,
+        "partition_inputs_hashed": 0,
+        "partition_inputs_observed": 0,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 0,
+        "partition_roots_reused": 0,
+        "partition_string_encodings_reused": 0
+      },
+      "stage_deltas": {
+        "record": {
+          "calls": 499,
+          "cpu_known_calls": 499,
+          "cpu_ns": 3799018,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 82434776
+        },
+        "packet": {
+          "calls": 279,
+          "cpu_known_calls": 279,
+          "cpu_ns": 8305707,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 8546437
+        },
+        "delta": {
+          "calls": 270,
+          "cpu_known_calls": 270,
+          "cpu_ns": 87317511,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 317478885
+        },
+        "verify_state": {
+          "calls": 95,
+          "cpu_known_calls": 95,
+          "cpu_ns": 4287464589,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 19293388279
+        },
+        "verify_history": {
+          "calls": 25,
+          "cpu_known_calls": 25,
+          "cpu_ns": 101506973,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 101533914
+        },
+        "publish": {
+          "calls": 9,
+          "cpu_known_calls": 9,
+          "cpu_ns": 2007545483,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 8778168957
+        },
+        "read_active": {
+          "calls": 5,
+          "cpu_known_calls": 5,
+          "cpu_ns": 312471520,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 1388722924
+        },
+        "state_at": {
+          "calls": 25,
+          "cpu_known_calls": 25,
+          "cpu_ns": 1115517752,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 4811670080
+        },
+        "execute": {
+          "calls": 9,
+          "cpu_known_calls": 9,
+          "cpu_ns": 19174608,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 19183283
+        },
+        "admission": {
+          "calls": 9,
+          "cpu_known_calls": 9,
+          "cpu_ns": 3839021077,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 16409084083
+        },
+        "activation": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 1256802473,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 5492104119
+        },
+        "complete_commitment": {
+          "calls": 104,
+          "cpu_known_calls": 104,
+          "cpu_ns": 96220812,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 172976101
+        },
+        "complete_state_root": {
+          "calls": 38,
+          "cpu_known_calls": 38,
+          "cpu_ns": 10748027,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 87426966
+        },
+        "account_graph": {
+          "calls": 71,
+          "cpu_known_calls": 71,
+          "cpu_ns": 4158076380,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 18779180476
+        },
+        "persisted_state_root": {
+          "calls": 76,
+          "cpu_known_calls": 76,
+          "cpu_ns": 15186843,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 15273155
+        },
+        "execution_parent_binding": {
+          "calls": 9,
+          "cpu_known_calls": 9,
+          "cpu_ns": 6091777,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 6104956
+        }
+      },
+      "all_signed_rounds_confirmed_in_window": false,
+      "state_backend": "authenticated-v1",
+      "sql_retained_complete_states": {
+        "member": "run-1-raw/baseline/independent-client/native.sqlite",
+        "bytes": 3366912,
+        "sha256": "cb2899eda4aeb0e8ff5d4202b7e6329e3019aa3a576661e92eb1b674a6b72350",
+        "rows": [
+          {
+            "height": 4,
+            "record_sha256": "5fd8aec3db016a22dec205cfe19769454a7b37d8923657d24dcb2e1aa996189e",
+            "block": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "account_root": "d1ae26943d2e07ef1a8768f2b2fbfefed55fd96fc285670f6fb9dc4343737417",
+            "state_root": "297f128981e1cc0086dd238fbe1b9e8437bd09bd121288c841233ed49f0a30e9",
+            "non_account_root": "057173cc466f9e2ac9da5ae61feb7614e71f3197c1e828c9510f9dde62c8f128",
+            "non_account_count": 9,
+            "delta_rows": 259,
+            "account_delta_rows": 257,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 5,
+            "record_sha256": "766482e08e50178b0e37083d6f1f7a69f85a5149b32987ef84de4dcbef8a3bf7",
+            "block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "aa1b069828baa6d8ddf0d51f5da29e0e676efd34be9b552ba41ca1c7d9e003b6",
+            "non_account_root": "e04b2fd1aec6023e6acd8abbd20a120c2081041c9f7f35c1c8732cb5d71fe31f",
+            "non_account_count": 10,
+            "delta_rows": 4,
+            "account_delta_rows": 2,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 6,
+            "record_sha256": "5fe0c5acc7417ccbcbee0a449600e5daa882412e4013975dec9de16ee1949606",
+            "block": "8ef5fe551a5abd2371e14fb78f141c5dc0a5e69de147fbe63557277ef430e3bf",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "498e9e8cc1c27502b59b2451939f344c594431c9c9c28420eababcd13a159736",
+            "non_account_root": "101eb17fa75a8c65a873b8310043758be70baeeb72833d48c0111dacfc9fd12b",
+            "non_account_count": 11,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 7,
+            "record_sha256": "5562f273d550c10bd6da0915a7f042db5553fa79e195034376906a4e412300f3",
+            "block": "108bbb687ecfe3ef7dfa5504d6411cf567fe1de0650f6296e0f80f295ff7a96f",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "1b5b0ab67d865ba0f887966b30c1ebf3556963bd7c563fbcf4c167d5c44a11b6",
+            "non_account_root": "41ff354d6aaece22345acb4e5004f8913b3774714376815d64b80c5fbfb3d99b",
+            "non_account_count": 12,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 8,
+            "record_sha256": "923589e2e2b6b69af62718a03062a8fcb40f4980bf218266ab4cc8c5f2eea6f9",
+            "block": "e3d7f8a5800268feb4548d8df592599d5b211ec5bb38f9858c2a74d14cb0330b",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "c3d9da3afda58b91f7b532a228d6911b418cce782aa92c2732d74912df7cba8e",
+            "non_account_root": "c616e43a2a05d5c78478701e98a68d161e96a4857bf258d04c1da5d3f2e4fb71",
+            "non_account_count": 13,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 9,
+            "record_sha256": "c1a56944bfdc8dde4fca68bc7b94ccf9b2123c1e27bdf834b8bd69e81eb02244",
+            "block": "04754cf13fb5d0cd9ff4b64e9b05889473568d5a37684a338bdc5bc00b32c4f7",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "4d23e3a9b8417487b08672807211118e276d4f057f9a1ee0fe2a0eaf63775f7d",
+            "non_account_root": "8c2838a99439d2992f54fd8c0e195e9fe343b3839fbacad7af1171c300284b76",
+            "non_account_count": 14,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 10,
+            "record_sha256": "513ab082802ebc79869539c3fecd956f5649838de41d205095ac1d71f0c3c41e",
+            "block": "fda06aaf8d12ecf52f22706f1c6f9a35fa8c59a5eb0bbc708b245624a8b4fabf",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "980f6e18e73196b86e81cf61916693bdffcc9cfc31c78c21beb4ddb8009cabb3",
+            "non_account_root": "bc54945857361afd5f6b32d764d64a7944053b2040f5b1e8062b4b4dc8be7f90",
+            "non_account_count": 15,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 11,
+            "record_sha256": "d496d522eafb91806b478ea3dc689e87f3fd6fd0d574fe430614a1fa1c60c53d",
+            "block": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "b8d2834e8cb1662eac2845ee497d543cb4213d94c6d5ce474c227e030b26cf33",
+            "non_account_root": "c043b7338974fd77da7b591857e283ecadc3fba44432d38b9526402be42b7d77",
+            "non_account_count": 16,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          }
+        ],
+        "reader": "Exact disposable bytes; mode=ro&immutable=1, query_only=ON; SELECT only; no WAL/SHM; bytes rehashed unchanged",
+        "semantic_native_verification_performed": false
+      }
+    },
+    {
+      "run": 2,
+      "member": "run-2-raw/baseline.json",
+      "member_bytes": 2660680,
+      "member_sha256": "cc1916952acbc79e632b258a65eb36ada97ec850178c3dc18e1fae9a21485425",
+      "client_arithmetic_before": {
+        "account_node_decode_arithmetic": {
+          "charge_is_process_rss_bound": false,
+          "counters": {
+            "borrow_conflicts": 0,
+            "bounded_probe_refusals": 6,
+            "calls": 22766,
+            "exact_hits": 19768,
+            "original_decodes": 2998,
+            "retained": 2992
+          },
+          "excluded": "allocator metadata, SQLite, temporary row buffers, stacks and other caches",
+          "hard_software_charge_ceiling_bytes": 4194304,
+          "has_consensus_authority": false,
+          "probe_limit": 8,
+          "record_byte_limit": 163,
+          "retained": {
+            "allocated_slot_bytes": 3342336,
+            "allocated_slots": 8192,
+            "occupied_slots": 2992,
+            "retained_record_bytes": 370276,
+            "retained_software_charge_bytes": 3342408
+          },
+          "retained_software_charge_limit_bytes": 3342408,
+          "schema": "pon-native-account-node-decode-arithmetic-v1",
+          "scope": "exact current SQL blob and expected ID only; every row and full graph relation is checked again",
+          "slot_limit": 8192,
+          "slot_size_bytes": 408
+        },
+        "cache_policy": "immutable-first-bounded-material-no-live-eviction",
+        "charge_is_process_rss_bound": false,
+        "complete_root_arithmetic": {
+          "charge_is_process_rss_bound": false,
+          "counters": {
+            "actual_changed_keys": 0,
+            "calculations": 4,
+            "cold_roots": 0,
+            "complete_computations": 6,
+            "complete_hits": 45,
+            "context_misses": 0,
+            "derived_checked_apply": 4,
+            "derived_full_root": 0,
+            "derived_rebuilt_tree": 0,
+            "exact_root_hits": 2,
+            "material_uses": 4,
+            "offers": 30,
+            "offers_absent_or_refused": 0,
+            "offers_borrow_conflicts": 0,
+            "offers_preserved_partitions": 0,
+            "offers_retained": 30,
+            "original_error_fallbacks": 0,
+            "partition_exact_string_hits": 0,
+            "partition_inputs_hashed": 0,
+            "partition_inputs_observed": 0,
+            "partition_retention_refusals": 0,
+            "partition_roots_computed": 0,
+            "partition_roots_reused": 0,
+            "partition_string_encodings_reused": 0
+          },
+          "entry_limit": 1,
+          "has_consensus_authority": false,
+          "payload_limit_bytes": 2097152,
+          "retained_material": {
+            "exact_string_charge_bytes": 0,
+            "exact_string_entries": 0,
+            "keys": 1037,
+            "kind": "canonical-map-and-tree",
+            "payload_bytes": 101935,
+            "retained_software_charge_bytes": 2025834
+          },
+          "retained_software_charge_limit_bytes": 16777216,
+          "retention_observation_available": true,
+          "schema": "pon-native-complete-root-arithmetic-v3",
+          "scope": "one opaque canonical map/tree OR original leaf-hash/partition-root entry with bounded exact plain JSON strings in the same payload pool; every current State row is fully observed, with exact current key/string comparisons separated from actual encodings and hashes; no stored state, row-set, root claim or validity verdict is supplied",
+          "temporary_workspace_is_separate": true
+        },
+        "counters": {
+          "delta_leaf_computations": 1036,
+          "delta_leaf_hits": 12691,
+          "delta_payload_bytes_observed": 1306807,
+          "delta_rows_observed": 13727,
+          "execution_parent_active_candidates": 4,
+          "execution_parent_checked_apply": 4,
+          "execution_parent_full_root": 0,
+          "execution_parent_historical_candidates": 0,
+          "execution_parent_rebuilt_tree": 0,
+          "packet_bytes_observed": 5754948,
+          "packet_computations": 4,
+          "packet_hits": 53,
+          "record_bytes_observed": 300393,
+          "record_computations": 5,
+          "record_hits": 138
+        },
+        "deltas": {
+          "charge_limit_bytes": 4194304,
+          "entries": 5,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 212212
+        },
+        "has_consensus_authority": false,
+        "history_sql_traversal": "complete-original-O(H)-and-actual-delta-bytes",
+        "packets": {
+          "charge_limit_bytes": 4194304,
+          "entries": 4,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 410160
+        },
+        "records": {
+          "charge_limit_bytes": 4194304,
+          "entries": 5,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 20157
+        },
+        "retained_software_charge_limit_bytes": 12582912,
+        "schema": "pon-native-history-arithmetic-observation-v1",
+        "scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+        "stage_observation_failed": false,
+        "stages": [
+          {
+            "stage": "record",
+            "totals": {
+              "calls": 143,
+              "cpu_known_calls": 143,
+              "cpu_ns": 833532,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 956045
+            }
+          },
+          {
+            "stage": "packet",
+            "totals": {
+              "calls": 90,
+              "cpu_known_calls": 90,
+              "cpu_ns": 4102217,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 4176609
+            }
+          },
+          {
+            "stage": "delta",
+            "totals": {
+              "calls": 86,
+              "cpu_known_calls": 86,
+              "cpu_ns": 15614164,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 15688679
+            }
+          },
+          {
+            "stage": "verify_state",
+            "totals": {
+              "calls": 47,
+              "cpu_known_calls": 47,
+              "cpu_ns": 82262867,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 303277007
+            }
+          },
+          {
+            "stage": "verify_history",
+            "totals": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 10912583,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 10923640
+            }
+          },
+          {
+            "stage": "publish",
+            "totals": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 179027544,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 703591380
+            }
+          },
+          {
+            "stage": "read_active",
+            "totals": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 50455640,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 195792044
+            }
+          },
+          {
+            "stage": "state_at",
+            "totals": {
+              "calls": 16,
+              "cpu_known_calls": 16,
+              "cpu_ns": 53226126,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 198563388
+            }
+          },
+          {
+            "stage": "execute",
+            "totals": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 102183097,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 398875332
+            }
+          },
+          {
+            "stage": "admission",
+            "totals": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 341937862,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1397182783
+            }
+          },
+          {
+            "stage": "activation",
+            "totals": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 82058271,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 229436584
+            }
+          },
+          {
+            "stage": "complete_commitment",
+            "totals": {
+              "calls": 51,
+              "cpu_known_calls": 51,
+              "cpu_ns": 48854159,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 123553794
+            }
+          },
+          {
+            "stage": "complete_state_root",
+            "totals": {
+              "calls": 6,
+              "cpu_known_calls": 6,
+              "cpu_ns": 1139199,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1146967
+            }
+          },
+          {
+            "stage": "account_graph",
+            "totals": {
+              "calls": 34,
+              "cpu_known_calls": 34,
+              "cpu_ns": 63519972,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 284534416
+            }
+          },
+          {
+            "stage": "persisted_state_root",
+            "totals": {
+              "calls": 41,
+              "cpu_known_calls": 41,
+              "cpu_ns": 1349357,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1394436
+            }
+          },
+          {
+            "stage": "execution_parent_binding",
+            "totals": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 515094,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 518969
+            }
+          }
+        ]
+      },
+      "client_arithmetic_after": {
+        "account_node_decode_arithmetic": {
+          "charge_is_process_rss_bound": false,
+          "counters": {
+            "borrow_conflicts": 0,
+            "bounded_probe_refusals": 134,
+            "calls": 102399,
+            "exact_hits": 99234,
+            "original_decodes": 3165,
+            "retained": 3031
+          },
+          "excluded": "allocator metadata, SQLite, temporary row buffers, stacks and other caches",
+          "hard_software_charge_ceiling_bytes": 4194304,
+          "has_consensus_authority": false,
+          "probe_limit": 8,
+          "record_byte_limit": 163,
+          "retained": {
+            "allocated_slot_bytes": 3342336,
+            "allocated_slots": 8192,
+            "occupied_slots": 3031,
+            "retained_record_bytes": 376177,
+            "retained_software_charge_bytes": 3342408
+          },
+          "retained_software_charge_limit_bytes": 3342408,
+          "schema": "pon-native-account-node-decode-arithmetic-v1",
+          "scope": "exact current SQL blob and expected ID only; every row and full graph relation is checked again",
+          "slot_limit": 8192,
+          "slot_size_bytes": 408
+        },
+        "cache_policy": "immutable-first-bounded-material-no-live-eviction",
+        "charge_is_process_rss_bound": false,
+        "complete_root_arithmetic": {
+          "charge_is_process_rss_bound": false,
+          "counters": {
+            "actual_changed_keys": 94,
+            "calculations": 48,
+            "cold_roots": 0,
+            "complete_computations": 44,
+            "complete_hits": 111,
+            "context_misses": 0,
+            "derived_checked_apply": 48,
+            "derived_full_root": 0,
+            "derived_rebuilt_tree": 0,
+            "exact_root_hits": 11,
+            "material_uses": 48,
+            "offers": 109,
+            "offers_absent_or_refused": 0,
+            "offers_borrow_conflicts": 0,
+            "offers_preserved_partitions": 0,
+            "offers_retained": 109,
+            "original_error_fallbacks": 0,
+            "partition_exact_string_hits": 0,
+            "partition_inputs_hashed": 0,
+            "partition_inputs_observed": 0,
+            "partition_retention_refusals": 0,
+            "partition_roots_computed": 0,
+            "partition_roots_reused": 0,
+            "partition_string_encodings_reused": 0
+          },
+          "entry_limit": 1,
+          "has_consensus_authority": false,
+          "payload_limit_bytes": 2097152,
+          "retained_material": {
+            "exact_string_charge_bytes": 0,
+            "exact_string_entries": 0,
+            "keys": 1046,
+            "kind": "canonical-map-and-tree",
+            "payload_bytes": 103510,
+            "retained_software_charge_bytes": 2043240
+          },
+          "retained_software_charge_limit_bytes": 16777216,
+          "retention_observation_available": true,
+          "schema": "pon-native-complete-root-arithmetic-v3",
+          "scope": "one opaque canonical map/tree OR original leaf-hash/partition-root entry with bounded exact plain JSON strings in the same payload pool; every current State row is fully observed, with exact current key/string comparisons separated from actual encodings and hashes; no stored state, row-set, root claim or validity verdict is supplied",
+          "temporary_workspace_is_separate": true
+        },
+        "counters": {
+          "delta_leaf_computations": 1058,
+          "delta_leaf_hits": 43734,
+          "delta_payload_bytes_observed": 4267039,
+          "delta_rows_observed": 44792,
+          "execution_parent_active_candidates": 6,
+          "execution_parent_checked_apply": 13,
+          "execution_parent_full_root": 0,
+          "execution_parent_historical_candidates": 7,
+          "execution_parent_rebuilt_tree": 0,
+          "packet_bytes_observed": 23220167,
+          "packet_computations": 13,
+          "packet_hits": 273,
+          "record_bytes_observed": 1384889,
+          "record_computations": 14,
+          "record_hits": 628
+        },
+        "deltas": {
+          "charge_limit_bytes": 4194304,
+          "entries": 14,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 227366
+        },
+        "has_consensus_authority": false,
+        "history_sql_traversal": "complete-original-O(H)-and-actual-delta-bytes",
+        "packets": {
+          "charge_limit_bytes": 4194304,
+          "entries": 13,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 870318
+        },
+        "records": {
+          "charge_limit_bytes": 4194304,
+          "entries": 14,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 56935
+        },
+        "retained_software_charge_limit_bytes": 12582912,
+        "schema": "pon-native-history-arithmetic-observation-v1",
+        "scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+        "stage_observation_failed": false,
+        "stages": [
+          {
+            "stage": "record",
+            "totals": {
+              "calls": 642,
+              "cpu_known_calls": 642,
+              "cpu_ns": 4637308,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5196502
+            }
+          },
+          {
+            "stage": "packet",
+            "totals": {
+              "calls": 369,
+              "cpu_known_calls": 369,
+              "cpu_ns": 12639118,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 12955817
+            }
+          },
+          {
+            "stage": "delta",
+            "totals": {
+              "calls": 356,
+              "cpu_known_calls": 356,
+              "cpu_ns": 103060761,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 334483633
+            }
+          },
+          {
+            "stage": "verify_state",
+            "totals": {
+              "calls": 142,
+              "cpu_known_calls": 142,
+              "cpu_ns": 4351691372,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 19181269995
+            }
+          },
+          {
+            "stage": "verify_history",
+            "totals": {
+              "calls": 38,
+              "cpu_known_calls": 38,
+              "cpu_ns": 113655319,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 267737451
+            }
+          },
+          {
+            "stage": "publish",
+            "totals": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 2162315942,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 9217917806
+            }
+          },
+          {
+            "stage": "read_active",
+            "totals": {
+              "calls": 19,
+              "cpu_known_calls": 19,
+              "cpu_ns": 366622984,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1663457842
+            }
+          },
+          {
+            "stage": "state_at",
+            "totals": {
+              "calls": 41,
+              "cpu_known_calls": 41,
+              "cpu_ns": 1176846147,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5165813752
+            }
+          },
+          {
+            "stage": "execute",
+            "totals": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 121760629,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 418462108
+            }
+          },
+          {
+            "stage": "admission",
+            "totals": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 4170939829,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 17930251187
+            }
+          },
+          {
+            "stage": "activation",
+            "totals": {
+              "calls": 5,
+              "cpu_known_calls": 5,
+              "cpu_ns": 1339249909,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5724821429
+            }
+          },
+          {
+            "stage": "complete_commitment",
+            "totals": {
+              "calls": 155,
+              "cpu_known_calls": 155,
+              "cpu_ns": 146288354,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 681074965
+            }
+          },
+          {
+            "stage": "complete_state_root",
+            "totals": {
+              "calls": 44,
+              "cpu_known_calls": 44,
+              "cpu_ns": 12101963,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 88975276
+            }
+          },
+          {
+            "stage": "account_graph",
+            "totals": {
+              "calls": 105,
+              "cpu_known_calls": 105,
+              "cpu_ns": 4202258711,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 18494758466
+            }
+          },
+          {
+            "stage": "persisted_state_root",
+            "totals": {
+              "calls": 117,
+              "cpu_known_calls": 117,
+              "cpu_ns": 16996112,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 17140750
+            }
+          },
+          {
+            "stage": "execution_parent_binding",
+            "totals": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 6694831,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 6710181
+            }
+          }
+        ]
+      },
+      "decode_delta": {
+        "borrow_conflicts": 0,
+        "bounded_probe_refusals": 128,
+        "calls": 79633,
+        "exact_hits": 79466,
+        "original_decodes": 167,
+        "retained": 39
+      },
+      "decode_exact_hit_percent": 99.79028794595206,
+      "complete_arithmetic_delta": {
+        "actual_changed_keys": 94,
+        "calculations": 44,
+        "cold_roots": 0,
+        "complete_computations": 38,
+        "complete_hits": 66,
+        "context_misses": 0,
+        "derived_checked_apply": 44,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 9,
+        "material_uses": 44,
+        "offers": 79,
+        "offers_absent_or_refused": 0,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 0,
+        "offers_retained": 79,
+        "original_error_fallbacks": 0,
+        "partition_exact_string_hits": 0,
+        "partition_inputs_hashed": 0,
+        "partition_inputs_observed": 0,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 0,
+        "partition_roots_reused": 0,
+        "partition_string_encodings_reused": 0
+      },
+      "stage_deltas": {
+        "record": {
+          "calls": 499,
+          "cpu_known_calls": 499,
+          "cpu_ns": 3803776,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 4240457
+        },
+        "packet": {
+          "calls": 279,
+          "cpu_known_calls": 279,
+          "cpu_ns": 8536901,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 8779208
+        },
+        "delta": {
+          "calls": 270,
+          "cpu_known_calls": 270,
+          "cpu_ns": 87446597,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 318794954
+        },
+        "verify_state": {
+          "calls": 95,
+          "cpu_known_calls": 95,
+          "cpu_ns": 4269428505,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 18877992988
+        },
+        "verify_history": {
+          "calls": 25,
+          "cpu_known_calls": 25,
+          "cpu_ns": 102742736,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 256813811
+        },
+        "publish": {
+          "calls": 9,
+          "cpu_known_calls": 9,
+          "cpu_ns": 1983288398,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 8514326426
+        },
+        "read_active": {
+          "calls": 5,
+          "cpu_known_calls": 5,
+          "cpu_ns": 316167344,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 1467665798
+        },
+        "state_at": {
+          "calls": 25,
+          "cpu_known_calls": 25,
+          "cpu_ns": 1123620021,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 4967250364
+        },
+        "execute": {
+          "calls": 9,
+          "cpu_known_calls": 9,
+          "cpu_ns": 19577532,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 19586776
+        },
+        "admission": {
+          "calls": 9,
+          "cpu_known_calls": 9,
+          "cpu_ns": 3829001967,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 16533068404
+        },
+        "activation": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 1257191638,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 5495384845
+        },
+        "complete_commitment": {
+          "calls": 104,
+          "cpu_known_calls": 104,
+          "cpu_ns": 97434195,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 557521171
+        },
+        "complete_state_root": {
+          "calls": 38,
+          "cpu_known_calls": 38,
+          "cpu_ns": 10962764,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 87828309
+        },
+        "account_graph": {
+          "calls": 71,
+          "cpu_known_calls": 71,
+          "cpu_ns": 4138738739,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 18210224050
+        },
+        "persisted_state_root": {
+          "calls": 76,
+          "cpu_known_calls": 76,
+          "cpu_ns": 15646755,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 15746314
+        },
+        "execution_parent_binding": {
+          "calls": 9,
+          "cpu_known_calls": 9,
+          "cpu_ns": 6179737,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 6191212
+        }
+      },
+      "all_signed_rounds_confirmed_in_window": false,
+      "state_backend": "authenticated-v1",
+      "sql_retained_complete_states": {
+        "member": "run-2-raw/baseline/independent-client/native.sqlite",
+        "bytes": 3366912,
+        "sha256": "cb2899eda4aeb0e8ff5d4202b7e6329e3019aa3a576661e92eb1b674a6b72350",
+        "rows": [
+          {
+            "height": 4,
+            "record_sha256": "5fd8aec3db016a22dec205cfe19769454a7b37d8923657d24dcb2e1aa996189e",
+            "block": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "account_root": "d1ae26943d2e07ef1a8768f2b2fbfefed55fd96fc285670f6fb9dc4343737417",
+            "state_root": "297f128981e1cc0086dd238fbe1b9e8437bd09bd121288c841233ed49f0a30e9",
+            "non_account_root": "057173cc466f9e2ac9da5ae61feb7614e71f3197c1e828c9510f9dde62c8f128",
+            "non_account_count": 9,
+            "delta_rows": 259,
+            "account_delta_rows": 257,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 5,
+            "record_sha256": "766482e08e50178b0e37083d6f1f7a69f85a5149b32987ef84de4dcbef8a3bf7",
+            "block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "aa1b069828baa6d8ddf0d51f5da29e0e676efd34be9b552ba41ca1c7d9e003b6",
+            "non_account_root": "e04b2fd1aec6023e6acd8abbd20a120c2081041c9f7f35c1c8732cb5d71fe31f",
+            "non_account_count": 10,
+            "delta_rows": 4,
+            "account_delta_rows": 2,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 6,
+            "record_sha256": "5fe0c5acc7417ccbcbee0a449600e5daa882412e4013975dec9de16ee1949606",
+            "block": "8ef5fe551a5abd2371e14fb78f141c5dc0a5e69de147fbe63557277ef430e3bf",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "498e9e8cc1c27502b59b2451939f344c594431c9c9c28420eababcd13a159736",
+            "non_account_root": "101eb17fa75a8c65a873b8310043758be70baeeb72833d48c0111dacfc9fd12b",
+            "non_account_count": 11,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 7,
+            "record_sha256": "5562f273d550c10bd6da0915a7f042db5553fa79e195034376906a4e412300f3",
+            "block": "108bbb687ecfe3ef7dfa5504d6411cf567fe1de0650f6296e0f80f295ff7a96f",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "1b5b0ab67d865ba0f887966b30c1ebf3556963bd7c563fbcf4c167d5c44a11b6",
+            "non_account_root": "41ff354d6aaece22345acb4e5004f8913b3774714376815d64b80c5fbfb3d99b",
+            "non_account_count": 12,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 8,
+            "record_sha256": "923589e2e2b6b69af62718a03062a8fcb40f4980bf218266ab4cc8c5f2eea6f9",
+            "block": "e3d7f8a5800268feb4548d8df592599d5b211ec5bb38f9858c2a74d14cb0330b",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "c3d9da3afda58b91f7b532a228d6911b418cce782aa92c2732d74912df7cba8e",
+            "non_account_root": "c616e43a2a05d5c78478701e98a68d161e96a4857bf258d04c1da5d3f2e4fb71",
+            "non_account_count": 13,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 9,
+            "record_sha256": "c1a56944bfdc8dde4fca68bc7b94ccf9b2123c1e27bdf834b8bd69e81eb02244",
+            "block": "04754cf13fb5d0cd9ff4b64e9b05889473568d5a37684a338bdc5bc00b32c4f7",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "4d23e3a9b8417487b08672807211118e276d4f057f9a1ee0fe2a0eaf63775f7d",
+            "non_account_root": "8c2838a99439d2992f54fd8c0e195e9fe343b3839fbacad7af1171c300284b76",
+            "non_account_count": 14,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 10,
+            "record_sha256": "513ab082802ebc79869539c3fecd956f5649838de41d205095ac1d71f0c3c41e",
+            "block": "fda06aaf8d12ecf52f22706f1c6f9a35fa8c59a5eb0bbc708b245624a8b4fabf",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "980f6e18e73196b86e81cf61916693bdffcc9cfc31c78c21beb4ddb8009cabb3",
+            "non_account_root": "bc54945857361afd5f6b32d764d64a7944053b2040f5b1e8062b4b4dc8be7f90",
+            "non_account_count": 15,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 11,
+            "record_sha256": "d496d522eafb91806b478ea3dc689e87f3fd6fd0d574fe430614a1fa1c60c53d",
+            "block": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "b8d2834e8cb1662eac2845ee497d543cb4213d94c6d5ce474c227e030b26cf33",
+            "non_account_root": "c043b7338974fd77da7b591857e283ecadc3fba44432d38b9526402be42b7d77",
+            "non_account_count": 16,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          }
+        ],
+        "reader": "Exact disposable bytes; mode=ro&immutable=1, query_only=ON; SELECT only; no WAL/SHM; bytes rehashed unchanged",
+        "semantic_native_verification_performed": false
+      }
+    },
+    {
+      "run": 3,
+      "member": "run-3-raw/baseline.json",
+      "member_bytes": 2597004,
+      "member_sha256": "fb11939f6909f30effa8f340b727ec69e25aed3e36934ca139063088314e1252",
+      "client_arithmetic_before": {
+        "account_node_decode_arithmetic": {
+          "charge_is_process_rss_bound": false,
+          "counters": {
+            "borrow_conflicts": 0,
+            "bounded_probe_refusals": 6,
+            "calls": 22766,
+            "exact_hits": 19768,
+            "original_decodes": 2998,
+            "retained": 2992
+          },
+          "excluded": "allocator metadata, SQLite, temporary row buffers, stacks and other caches",
+          "hard_software_charge_ceiling_bytes": 4194304,
+          "has_consensus_authority": false,
+          "probe_limit": 8,
+          "record_byte_limit": 163,
+          "retained": {
+            "allocated_slot_bytes": 3342336,
+            "allocated_slots": 8192,
+            "occupied_slots": 2992,
+            "retained_record_bytes": 370276,
+            "retained_software_charge_bytes": 3342408
+          },
+          "retained_software_charge_limit_bytes": 3342408,
+          "schema": "pon-native-account-node-decode-arithmetic-v1",
+          "scope": "exact current SQL blob and expected ID only; every row and full graph relation is checked again",
+          "slot_limit": 8192,
+          "slot_size_bytes": 408
+        },
+        "cache_policy": "immutable-first-bounded-material-no-live-eviction",
+        "charge_is_process_rss_bound": false,
+        "complete_root_arithmetic": {
+          "charge_is_process_rss_bound": false,
+          "counters": {
+            "actual_changed_keys": 0,
+            "calculations": 4,
+            "cold_roots": 0,
+            "complete_computations": 6,
+            "complete_hits": 45,
+            "context_misses": 0,
+            "derived_checked_apply": 4,
+            "derived_full_root": 0,
+            "derived_rebuilt_tree": 0,
+            "exact_root_hits": 2,
+            "material_uses": 4,
+            "offers": 30,
+            "offers_absent_or_refused": 0,
+            "offers_borrow_conflicts": 0,
+            "offers_preserved_partitions": 0,
+            "offers_retained": 30,
+            "original_error_fallbacks": 0,
+            "partition_exact_string_hits": 0,
+            "partition_inputs_hashed": 0,
+            "partition_inputs_observed": 0,
+            "partition_retention_refusals": 0,
+            "partition_roots_computed": 0,
+            "partition_roots_reused": 0,
+            "partition_string_encodings_reused": 0
+          },
+          "entry_limit": 1,
+          "has_consensus_authority": false,
+          "payload_limit_bytes": 2097152,
+          "retained_material": {
+            "exact_string_charge_bytes": 0,
+            "exact_string_entries": 0,
+            "keys": 1037,
+            "kind": "canonical-map-and-tree",
+            "payload_bytes": 101935,
+            "retained_software_charge_bytes": 2025834
+          },
+          "retained_software_charge_limit_bytes": 16777216,
+          "retention_observation_available": true,
+          "schema": "pon-native-complete-root-arithmetic-v3",
+          "scope": "one opaque canonical map/tree OR original leaf-hash/partition-root entry with bounded exact plain JSON strings in the same payload pool; every current State row is fully observed, with exact current key/string comparisons separated from actual encodings and hashes; no stored state, row-set, root claim or validity verdict is supplied",
+          "temporary_workspace_is_separate": true
+        },
+        "counters": {
+          "delta_leaf_computations": 1036,
+          "delta_leaf_hits": 12691,
+          "delta_payload_bytes_observed": 1306807,
+          "delta_rows_observed": 13727,
+          "execution_parent_active_candidates": 4,
+          "execution_parent_checked_apply": 4,
+          "execution_parent_full_root": 0,
+          "execution_parent_historical_candidates": 0,
+          "execution_parent_rebuilt_tree": 0,
+          "packet_bytes_observed": 5754948,
+          "packet_computations": 4,
+          "packet_hits": 53,
+          "record_bytes_observed": 300393,
+          "record_computations": 5,
+          "record_hits": 138
+        },
+        "deltas": {
+          "charge_limit_bytes": 4194304,
+          "entries": 5,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 212212
+        },
+        "has_consensus_authority": false,
+        "history_sql_traversal": "complete-original-O(H)-and-actual-delta-bytes",
+        "packets": {
+          "charge_limit_bytes": 4194304,
+          "entries": 4,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 410160
+        },
+        "records": {
+          "charge_limit_bytes": 4194304,
+          "entries": 5,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 20157
+        },
+        "retained_software_charge_limit_bytes": 12582912,
+        "schema": "pon-native-history-arithmetic-observation-v1",
+        "scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+        "stage_observation_failed": false,
+        "stages": [
+          {
+            "stage": "record",
+            "totals": {
+              "calls": 143,
+              "cpu_known_calls": 143,
+              "cpu_ns": 840517,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 962851
+            }
+          },
+          {
+            "stage": "packet",
+            "totals": {
+              "calls": 90,
+              "cpu_known_calls": 90,
+              "cpu_ns": 4012981,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 79260303
+            }
+          },
+          {
+            "stage": "delta",
+            "totals": {
+              "calls": 86,
+              "cpu_known_calls": 86,
+              "cpu_ns": 15648318,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 15726310
+            }
+          },
+          {
+            "stage": "verify_state",
+            "totals": {
+              "calls": 47,
+              "cpu_known_calls": 47,
+              "cpu_ns": 81572732,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 378748298
+            }
+          },
+          {
+            "stage": "verify_history",
+            "totals": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 10789958,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 10800983
+            }
+          },
+          {
+            "stage": "publish",
+            "totals": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 178570847,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 628460003
+            }
+          },
+          {
+            "stage": "read_active",
+            "totals": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 49830656,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 278349783
+            }
+          },
+          {
+            "stage": "state_at",
+            "totals": {
+              "calls": 16,
+              "cpu_known_calls": 16,
+              "cpu_ns": 53223012,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 356891252
+            }
+          },
+          {
+            "stage": "execute",
+            "totals": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 101803314,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 398426250
+            }
+          },
+          {
+            "stage": "admission",
+            "totals": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 340567063,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1466792417
+            }
+          },
+          {
+            "stage": "activation",
+            "totals": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 81747052,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 223141644
+            }
+          },
+          {
+            "stage": "complete_commitment",
+            "totals": {
+              "calls": 51,
+              "cpu_known_calls": 51,
+              "cpu_ns": 48824915,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 124535647
+            }
+          },
+          {
+            "stage": "complete_state_root",
+            "totals": {
+              "calls": 6,
+              "cpu_known_calls": 6,
+              "cpu_ns": 1129604,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1137030
+            }
+          },
+          {
+            "stage": "account_graph",
+            "totals": {
+              "calls": 34,
+              "cpu_known_calls": 34,
+              "cpu_ns": 62601281,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 284596544
+            }
+          },
+          {
+            "stage": "persisted_state_root",
+            "totals": {
+              "calls": 41,
+              "cpu_known_calls": 41,
+              "cpu_ns": 1258835,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1300844
+            }
+          },
+          {
+            "stage": "execution_parent_binding",
+            "totals": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 593329,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 597103
+            }
+          }
+        ]
+      },
+      "client_arithmetic_after": {
+        "account_node_decode_arithmetic": {
+          "charge_is_process_rss_bound": false,
+          "counters": {
+            "borrow_conflicts": 0,
+            "bounded_probe_refusals": 136,
+            "calls": 103307,
+            "exact_hits": 100140,
+            "original_decodes": 3167,
+            "retained": 3031
+          },
+          "excluded": "allocator metadata, SQLite, temporary row buffers, stacks and other caches",
+          "hard_software_charge_ceiling_bytes": 4194304,
+          "has_consensus_authority": false,
+          "probe_limit": 8,
+          "record_byte_limit": 163,
+          "retained": {
+            "allocated_slot_bytes": 3342336,
+            "allocated_slots": 8192,
+            "occupied_slots": 3031,
+            "retained_record_bytes": 376177,
+            "retained_software_charge_bytes": 3342408
+          },
+          "retained_software_charge_limit_bytes": 3342408,
+          "schema": "pon-native-account-node-decode-arithmetic-v1",
+          "scope": "exact current SQL blob and expected ID only; every row and full graph relation is checked again",
+          "slot_limit": 8192,
+          "slot_size_bytes": 408
+        },
+        "cache_policy": "immutable-first-bounded-material-no-live-eviction",
+        "charge_is_process_rss_bound": false,
+        "complete_root_arithmetic": {
+          "charge_is_process_rss_bound": false,
+          "counters": {
+            "actual_changed_keys": 94,
+            "calculations": 48,
+            "cold_roots": 0,
+            "complete_computations": 44,
+            "complete_hits": 111,
+            "context_misses": 0,
+            "derived_checked_apply": 48,
+            "derived_full_root": 0,
+            "derived_rebuilt_tree": 0,
+            "exact_root_hits": 11,
+            "material_uses": 48,
+            "offers": 109,
+            "offers_absent_or_refused": 0,
+            "offers_borrow_conflicts": 0,
+            "offers_preserved_partitions": 0,
+            "offers_retained": 109,
+            "original_error_fallbacks": 0,
+            "partition_exact_string_hits": 0,
+            "partition_inputs_hashed": 0,
+            "partition_inputs_observed": 0,
+            "partition_retention_refusals": 0,
+            "partition_roots_computed": 0,
+            "partition_roots_reused": 0,
+            "partition_string_encodings_reused": 0
+          },
+          "entry_limit": 1,
+          "has_consensus_authority": false,
+          "payload_limit_bytes": 2097152,
+          "retained_material": {
+            "exact_string_charge_bytes": 0,
+            "exact_string_entries": 0,
+            "keys": 1046,
+            "kind": "canonical-map-and-tree",
+            "payload_bytes": 103510,
+            "retained_software_charge_bytes": 2043240
+          },
+          "retained_software_charge_limit_bytes": 16777216,
+          "retention_observation_available": true,
+          "schema": "pon-native-complete-root-arithmetic-v3",
+          "scope": "one opaque canonical map/tree OR original leaf-hash/partition-root entry with bounded exact plain JSON strings in the same payload pool; every current State row is fully observed, with exact current key/string comparisons separated from actual encodings and hashes; no stored state, row-set, root claim or validity verdict is supplied",
+          "temporary_workspace_is_separate": true
+        },
+        "counters": {
+          "delta_leaf_computations": 1058,
+          "delta_leaf_hits": 43734,
+          "delta_payload_bytes_observed": 4267039,
+          "delta_rows_observed": 44792,
+          "execution_parent_active_candidates": 6,
+          "execution_parent_checked_apply": 13,
+          "execution_parent_full_root": 0,
+          "execution_parent_historical_candidates": 7,
+          "execution_parent_rebuilt_tree": 0,
+          "packet_bytes_observed": 23220167,
+          "packet_computations": 13,
+          "packet_hits": 273,
+          "record_bytes_observed": 1384889,
+          "record_computations": 14,
+          "record_hits": 628
+        },
+        "deltas": {
+          "charge_limit_bytes": 4194304,
+          "entries": 14,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 227366
+        },
+        "has_consensus_authority": false,
+        "history_sql_traversal": "complete-original-O(H)-and-actual-delta-bytes",
+        "packets": {
+          "charge_limit_bytes": 4194304,
+          "entries": 13,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 870318
+        },
+        "records": {
+          "charge_limit_bytes": 4194304,
+          "entries": 14,
+          "entry_limit": 64,
+          "retained_software_charge_bytes": 56935
+        },
+        "retained_software_charge_limit_bytes": 12582912,
+        "schema": "pon-native-history-arithmetic-observation-v1",
+        "scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+        "stage_observation_failed": false,
+        "stages": [
+          {
+            "stage": "record",
+            "totals": {
+              "calls": 642,
+              "cpu_known_calls": 642,
+              "cpu_ns": 4611201,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5192640
+            }
+          },
+          {
+            "stage": "packet",
+            "totals": {
+              "calls": 369,
+              "cpu_known_calls": 369,
+              "cpu_ns": 12147319,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 87634763
+            }
+          },
+          {
+            "stage": "delta",
+            "totals": {
+              "calls": 356,
+              "cpu_known_calls": 356,
+              "cpu_ns": 104175208,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 104472744
+            }
+          },
+          {
+            "stage": "verify_state",
+            "totals": {
+              "calls": 142,
+              "cpu_known_calls": 142,
+              "cpu_ns": 4372417927,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 19520998638
+            }
+          },
+          {
+            "stage": "verify_history",
+            "totals": {
+              "calls": 38,
+              "cpu_known_calls": 38,
+              "cpu_ns": 114253814,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 267734203
+            }
+          },
+          {
+            "stage": "publish",
+            "totals": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 2191792829,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 9337079425
+            }
+          },
+          {
+            "stage": "read_active",
+            "totals": {
+              "calls": 19,
+              "cpu_known_calls": 19,
+              "cpu_ns": 362352410,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1594660077
+            }
+          },
+          {
+            "stage": "state_at",
+            "totals": {
+              "calls": 41,
+              "cpu_known_calls": 41,
+              "cpu_ns": 1169898311,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5168997202
+            }
+          },
+          {
+            "stage": "execute",
+            "totals": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 121375229,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 494675421
+            }
+          },
+          {
+            "stage": "admission",
+            "totals": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 4193012014,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 18115888201
+            }
+          },
+          {
+            "stage": "activation",
+            "totals": {
+              "calls": 5,
+              "cpu_known_calls": 5,
+              "cpu_ns": 1331384671,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5702511346
+            }
+          },
+          {
+            "stage": "complete_commitment",
+            "totals": {
+              "calls": 155,
+              "cpu_known_calls": 155,
+              "cpu_ns": 144163385,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 371908724
+            }
+          },
+          {
+            "stage": "complete_state_root",
+            "totals": {
+              "calls": 44,
+              "cpu_known_calls": 44,
+              "cpu_ns": 11571066,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 11630954
+            }
+          },
+          {
+            "stage": "account_graph",
+            "totals": {
+              "calls": 105,
+              "cpu_known_calls": 105,
+              "cpu_ns": 4224276149,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 18993898939
+            }
+          },
+          {
+            "stage": "persisted_state_root",
+            "totals": {
+              "calls": 117,
+              "cpu_known_calls": 117,
+              "cpu_ns": 16542432,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 16686042
+            }
+          },
+          {
+            "stage": "execution_parent_binding",
+            "totals": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 6719288,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 83398719
+            }
+          }
+        ]
+      },
+      "decode_delta": {
+        "borrow_conflicts": 0,
+        "bounded_probe_refusals": 130,
+        "calls": 80541,
+        "exact_hits": 80372,
+        "original_decodes": 169,
+        "retained": 39
+      },
+      "decode_exact_hit_percent": 99.79016898225748,
+      "complete_arithmetic_delta": {
+        "actual_changed_keys": 94,
+        "calculations": 44,
+        "cold_roots": 0,
+        "complete_computations": 38,
+        "complete_hits": 66,
+        "context_misses": 0,
+        "derived_checked_apply": 44,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 9,
+        "material_uses": 44,
+        "offers": 79,
+        "offers_absent_or_refused": 0,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 0,
+        "offers_retained": 79,
+        "original_error_fallbacks": 0,
+        "partition_exact_string_hits": 0,
+        "partition_inputs_hashed": 0,
+        "partition_inputs_observed": 0,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 0,
+        "partition_roots_reused": 0,
+        "partition_string_encodings_reused": 0
+      },
+      "stage_deltas": {
+        "record": {
+          "calls": 499,
+          "cpu_known_calls": 499,
+          "cpu_ns": 3770684,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 4229789
+        },
+        "packet": {
+          "calls": 279,
+          "cpu_known_calls": 279,
+          "cpu_ns": 8134338,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 8374460
+        },
+        "delta": {
+          "calls": 270,
+          "cpu_known_calls": 270,
+          "cpu_ns": 88526890,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 88746434
+        },
+        "verify_state": {
+          "calls": 95,
+          "cpu_known_calls": 95,
+          "cpu_ns": 4290845195,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 19142250340
+        },
+        "verify_history": {
+          "calls": 25,
+          "cpu_known_calls": 25,
+          "cpu_ns": 103463856,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 256933220
+        },
+        "publish": {
+          "calls": 9,
+          "cpu_known_calls": 9,
+          "cpu_ns": 2013221982,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 8708619422
+        },
+        "read_active": {
+          "calls": 5,
+          "cpu_known_calls": 5,
+          "cpu_ns": 312521754,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 1316310294
+        },
+        "state_at": {
+          "calls": 25,
+          "cpu_known_calls": 25,
+          "cpu_ns": 1116675299,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 4812105950
+        },
+        "execute": {
+          "calls": 9,
+          "cpu_known_calls": 9,
+          "cpu_ns": 19571915,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 96249171
+        },
+        "admission": {
+          "calls": 9,
+          "cpu_known_calls": 9,
+          "cpu_ns": 3852444951,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 16649095784
+        },
+        "activation": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 1249637619,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 5479369702
+        },
+        "complete_commitment": {
+          "calls": 104,
+          "cpu_known_calls": 104,
+          "cpu_ns": 95338470,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 247373077
+        },
+        "complete_state_root": {
+          "calls": 38,
+          "cpu_known_calls": 38,
+          "cpu_ns": 10441462,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 10493924
+        },
+        "account_graph": {
+          "calls": 71,
+          "cpu_known_calls": 71,
+          "cpu_ns": 4161674868,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 18709302395
+        },
+        "persisted_state_root": {
+          "calls": 76,
+          "cpu_known_calls": 76,
+          "cpu_ns": 15283597,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 15385198
+        },
+        "execution_parent_binding": {
+          "calls": 9,
+          "cpu_known_calls": 9,
+          "cpu_ns": 6125959,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 82801616
+        }
+      },
+      "all_signed_rounds_confirmed_in_window": false,
+      "state_backend": "authenticated-v1",
+      "sql_retained_complete_states": {
+        "member": "run-3-raw/baseline/independent-client/native.sqlite",
+        "bytes": 3366912,
+        "sha256": "cb2899eda4aeb0e8ff5d4202b7e6329e3019aa3a576661e92eb1b674a6b72350",
+        "rows": [
+          {
+            "height": 4,
+            "record_sha256": "5fd8aec3db016a22dec205cfe19769454a7b37d8923657d24dcb2e1aa996189e",
+            "block": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "account_root": "d1ae26943d2e07ef1a8768f2b2fbfefed55fd96fc285670f6fb9dc4343737417",
+            "state_root": "297f128981e1cc0086dd238fbe1b9e8437bd09bd121288c841233ed49f0a30e9",
+            "non_account_root": "057173cc466f9e2ac9da5ae61feb7614e71f3197c1e828c9510f9dde62c8f128",
+            "non_account_count": 9,
+            "delta_rows": 259,
+            "account_delta_rows": 257,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 5,
+            "record_sha256": "766482e08e50178b0e37083d6f1f7a69f85a5149b32987ef84de4dcbef8a3bf7",
+            "block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "aa1b069828baa6d8ddf0d51f5da29e0e676efd34be9b552ba41ca1c7d9e003b6",
+            "non_account_root": "e04b2fd1aec6023e6acd8abbd20a120c2081041c9f7f35c1c8732cb5d71fe31f",
+            "non_account_count": 10,
+            "delta_rows": 4,
+            "account_delta_rows": 2,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 6,
+            "record_sha256": "5fe0c5acc7417ccbcbee0a449600e5daa882412e4013975dec9de16ee1949606",
+            "block": "8ef5fe551a5abd2371e14fb78f141c5dc0a5e69de147fbe63557277ef430e3bf",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "498e9e8cc1c27502b59b2451939f344c594431c9c9c28420eababcd13a159736",
+            "non_account_root": "101eb17fa75a8c65a873b8310043758be70baeeb72833d48c0111dacfc9fd12b",
+            "non_account_count": 11,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 7,
+            "record_sha256": "5562f273d550c10bd6da0915a7f042db5553fa79e195034376906a4e412300f3",
+            "block": "108bbb687ecfe3ef7dfa5504d6411cf567fe1de0650f6296e0f80f295ff7a96f",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "1b5b0ab67d865ba0f887966b30c1ebf3556963bd7c563fbcf4c167d5c44a11b6",
+            "non_account_root": "41ff354d6aaece22345acb4e5004f8913b3774714376815d64b80c5fbfb3d99b",
+            "non_account_count": 12,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 8,
+            "record_sha256": "923589e2e2b6b69af62718a03062a8fcb40f4980bf218266ab4cc8c5f2eea6f9",
+            "block": "e3d7f8a5800268feb4548d8df592599d5b211ec5bb38f9858c2a74d14cb0330b",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "c3d9da3afda58b91f7b532a228d6911b418cce782aa92c2732d74912df7cba8e",
+            "non_account_root": "c616e43a2a05d5c78478701e98a68d161e96a4857bf258d04c1da5d3f2e4fb71",
+            "non_account_count": 13,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 9,
+            "record_sha256": "c1a56944bfdc8dde4fca68bc7b94ccf9b2123c1e27bdf834b8bd69e81eb02244",
+            "block": "04754cf13fb5d0cd9ff4b64e9b05889473568d5a37684a338bdc5bc00b32c4f7",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "4d23e3a9b8417487b08672807211118e276d4f057f9a1ee0fe2a0eaf63775f7d",
+            "non_account_root": "8c2838a99439d2992f54fd8c0e195e9fe343b3839fbacad7af1171c300284b76",
+            "non_account_count": 14,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 10,
+            "record_sha256": "513ab082802ebc79869539c3fecd956f5649838de41d205095ac1d71f0c3c41e",
+            "block": "fda06aaf8d12ecf52f22706f1c6f9a35fa8c59a5eb0bbc708b245624a8b4fabf",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "980f6e18e73196b86e81cf61916693bdffcc9cfc31c78c21beb4ddb8009cabb3",
+            "non_account_root": "bc54945857361afd5f6b32d764d64a7944053b2040f5b1e8062b4b4dc8be7f90",
+            "non_account_count": 15,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          },
+          {
+            "height": 11,
+            "record_sha256": "d496d522eafb91806b478ea3dc689e87f3fd6fd0d574fe430614a1fa1c60c53d",
+            "block": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+            "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+            "state_root": "b8d2834e8cb1662eac2845ee497d543cb4213d94c6d5ce474c227e030b26cf33",
+            "non_account_root": "c043b7338974fd77da7b591857e283ecadc3fba44432d38b9526402be42b7d77",
+            "non_account_count": 16,
+            "delta_rows": 2,
+            "account_delta_rows": 0,
+            "non_account_delta_rows": 2
+          }
+        ],
+        "reader": "Exact disposable bytes; mode=ro&immutable=1, query_only=ON; SELECT only; no WAL/SHM; bytes rehashed unchanged",
+        "semantic_native_verification_performed": false
+      }
+    }
+  ],
+  "native_executions": 0,
+  "repository_or_target_mutations": false
+}

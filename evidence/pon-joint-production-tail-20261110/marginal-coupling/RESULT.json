@@ -1,0 +1,67 @@
+{
+  "schema": "joint-tail-marginal-rearrangement-evidence-v1",
+  "parent_commit": "29dd8eb7a1e127f44ce334673a5636e4fd7c58d8",
+  "recorded_at_utc": "2026-11-10T08:46:29.481479+00:00",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "test_check.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "b9ea865e1c4605844d182f05e3843cb655946470bb2b346ea5e6b2da8c5d1f39"
+    },
+    {
+      "argv": [
+        "python3",
+        "check.py"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "b6038dcde484a5f3dfcdb1699b7e041d5d78e85554c344e80ce6bed79b844048",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 4336,
+      "sha256": "6e37204faabefe3e2438ba794b2508b746294d0e63d86b9a4b19efe1cdfb9398"
+    },
+    {
+      "path": "check.py",
+      "bytes": 2385,
+      "sha256": "f4d67b65183b8d0fa81a2f9ec67d50d36a4a80d18fc9c251ef99366509a0a0ab"
+    },
+    {
+      "path": "control.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "control.stdout.log",
+      "bytes": 210,
+      "sha256": "b6038dcde484a5f3dfcdb1699b7e041d5d78e85554c344e80ce6bed79b844048"
+    },
+    {
+      "path": "test_check.py",
+      "bytes": 2868,
+      "sha256": "91afc5923a07d4257e5bd832cdfb237f18a0611b8d92b47072bd18435c340c45"
+    },
+    {
+      "path": "tests.stderr.log",
+      "bytes": 892,
+      "sha256": "b9ea865e1c4605844d182f05e3843cb655946470bb2b346ea5e6b2da8c5d1f39"
+    },
+    {
+      "path": "tests.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "new_test_methods": 7,
+  "qualification": "HOLD_NO_GO",
+  "native_failure_bound": null,
+  "production_activation": false
+}

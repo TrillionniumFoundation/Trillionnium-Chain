@@ -1,0 +1,101 @@
+{
+  "actual_w1_lower_bound": false,
+  "commands": [
+    {
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "00-preflight",
+      "source_unchanged": true
+    },
+    {
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "01-new-query-frontier-tests",
+      "source_unchanged": true
+    },
+    {
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "02-retained-fixed-probability-tests",
+      "source_unchanged": true
+    },
+    {
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "03-new-query-frontier-check",
+      "source_unchanged": true
+    },
+    {
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "04-retained-cost-contract",
+      "source_unchanged": true
+    },
+    {
+      "exit_code": 2,
+      "launch_error": null,
+      "name": "05-original-repository-check",
+      "source_unchanged": true
+    },
+    {
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "06-ci-contract-static",
+      "source_unchanged": true
+    },
+    {
+      "exit_code": null,
+      "launch_error": "FileNotFoundError(2, 'No such file or directory')",
+      "name": "07-cargo-metadata-locked-offline",
+      "source_unchanged": true
+    },
+    {
+      "exit_code": null,
+      "launch_error": "FileNotFoundError(2, 'No such file or directory')",
+      "name": "08-cargo-fmt",
+      "source_unchanged": true
+    }
+  ],
+  "commit": "51683089c7ec75cca3e0bcfb2201c08aa5dab654",
+  "native_admission_changed": false,
+  "prior_166_ci_methods": {
+    "evidence_kind": "parent-agent-prior-terminal-observation-only",
+    "raw_output_in_this_packet": false,
+    "reported_result": "PASS",
+    "rerun_here": false
+  },
+  "qualification": "HOLD_NO_GO",
+  "repository_check_stderr": "Repository check failed: broken link docs/README.md -> ../evidence/pon-v1/README.md\n",
+  "repository_check_stdout": "",
+  "retained_cost_contract": {
+    "binding_validation": "PASS",
+    "qualification": "HOLD_NO_GO",
+    "unknown_cost_points": 16
+  },
+  "schema": "query-frontier-final-validation-summary-v1",
+  "source": {
+    "all_nine_before_after_snapshots_unchanged": true,
+    "canonical_digest_encoding": "UTF-8 JSON with sorted keys and compact separators",
+    "canonical_manifest_sha256": "d29cfff0a587ceba6b83ae324e12fe8bfb09d8bd1355985a049f544fce8553ea",
+    "manifest_file_sha256": "a32d295cd571d4722f5a31f19de59b836f5c892fb4139140d3af8c7d4cfb5c03",
+    "mismatch_count": 0,
+    "missing_tracked_count": 21020,
+    "present_bytes": 172829574,
+    "present_file_count": 5146
+  },
+  "tree": "c85745e3396723b07bda7c86a36618c7863e65a5",
+  "unit_tests": {
+    "01-new-query-frontier-tests": {
+      "ends_in_ok": true,
+      "reported_tests": [
+        20
+      ]
+    },
+    "02-retained-fixed-probability-tests": {
+      "ends_in_ok": true,
+      "reported_tests": [
+        16
+      ]
+    }
+  }
+}

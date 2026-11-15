@@ -1,0 +1,37 @@
+{
+  "schema": "trnm-pq-composition-environment-observations-v1",
+  "scope": "Initial setup observations; not native acceptance results",
+  "observations": [
+    {
+      "action": "Clone the existing desktop partial repository into an isolated checkout",
+      "host": "desktop",
+      "job_id": "1a1bae25b05-12894-1e09",
+      "exit_code": 128,
+      "result": "FAIL",
+      "diagnostic": "Local clone upload-pack reported lazy fetching disabled and could not fetch promisor object 33aaacd3b150a99ff5f16842387b3d73c783c6c4; cloning did not succeed. This observation alone does not establish repository corruption."
+    },
+    {
+      "action": "Fetch the existing PQ128 branch and add a separate desktop worktree",
+      "host": "desktop",
+      "job_id": "1a1bae5027e-12894-1e1d",
+      "exit_code": 0,
+      "result": "PASS",
+      "source_revision": "88568e2511fcf166e6824947ac97b06b72104385",
+      "qualification": "Checkout/preflight only"
+    },
+    {
+      "action": "Initial local pin-refresh preparation",
+      "result": "FAIL",
+      "diagnostic": "The source pin preparation stopped on FileNotFoundError for tracked evidence/crypto-profile-20261104/recompute_benchmark.py before writing the corpus. Subsequent inspection found 25 tracked pinned paths absent from this materialized checkout."
+    },
+    {
+      "action": "Initial local repository check",
+      "exit_code": 2,
+      "result": "FAIL",
+      "diagnostic": "Repository check failed on missing linked evidence/pon-v1/README.md. The tracked source and source-integrity requirements were not weakened."
+    }
+  ],
+  "native_validation_passed": false,
+  "whole_chain_pq_qualified": false,
+  "production_activation": false
+}

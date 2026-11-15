@@ -1,0 +1,15 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "scripts/test_cell_learning_completion_join.py",
+    "-v"
+  ],
+  "elapsed_seconds": 0.6861994339997182,
+  "exit_code": 0,
+  "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/learning-completion.log",
+  "log_sha256": "2768dfb9f7cf50d16c8914b5f3255ee85161c7799c5c2b456aa201fba1fc829a",
+  "name": "learning-completion",
+  "started_utc": "2026-11-11T01:28:26.095213+00:00",
+  "tests": 13
+}

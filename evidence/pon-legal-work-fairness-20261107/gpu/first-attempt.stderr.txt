@@ -1,0 +1,2 @@
+usage: code.py [-h] [--payload PAYLOAD] [--out OUT] [--cpu-check]
+code.py: error: unrecognized arguments: /content/hepta_jobs/c44f27ec-d560-443d-8b75-0bb0fb5534fe/code.py

@@ -1,0 +1,22 @@
+{
+  "schema": "pon-native-inventory-reconciliation-validation-v1",
+  "source": "6e48656b51fc9bd85de386b3f01f41daa6e35069",
+  "commands_passed": 17,
+  "selected_tests": {
+    "pq-source-negatives": 37,
+    "history-controls": 6,
+    "source-negatives": 43,
+    "repository-negatives": 50,
+    "native-path-controls": 52,
+    "native-retained-tests": 10,
+    "native-kernel-tests": 135
+  },
+  "selected_tests_total": 333,
+  "measured_source": "a1a69c624db33205a69973b98a6db0f7d22e0782",
+  "measurement_repeated": false,
+  "security_gate": "HOLD",
+  "performance_qualification": "HOLD",
+  "production_activation": false,
+  "inventory_blob": "7c71aacb00920a8711c9028c8854bba3d22a098e",
+  "runtime_and_fullpath_tools_unchanged_from_measured_source": true
+}

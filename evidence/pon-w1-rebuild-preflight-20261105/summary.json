@@ -1,0 +1,58 @@
+{
+  "schema": "TRNM-W1-REBUILD-PREFLIGHT1",
+  "source_commit": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+  "guest_bytes": 376200,
+  "guest_sha256": "2f07c5d7020cf375cd152064bfd2c2f4a67f2a0da88f107cd958b2cf1db3c347",
+  "source_and_guest_lock_changed": false,
+  "expected_image_id": [
+    1958252411,
+    3287394615,
+    1805488136,
+    1516578702,
+    78549041,
+    790278610,
+    301018785,
+    4279049364
+  ],
+  "actual_image_id": [
+    1614071157,
+    1670307213,
+    2018851700,
+    887022195,
+    1599728455,
+    181873632,
+    3933603284,
+    3973038956
+  ],
+  "full_v2_proof_observed": false,
+  "saved_receipt_controls_executed": 0,
+  "first_segment_started": true,
+  "original_run_interrupted": true,
+  "original_run_terminal_observation_available": false,
+  "repaired_preflight_stages_started": 0,
+  "limits_changed": false,
+  "pq_128_qualified": false,
+  "production_activation": false,
+  "build_environment": {
+    "HOME": "/workspace/shared/w1-home",
+    "CARGO_HOME": "/workspace/shared/chain-cargo",
+    "RUSTUP_HOME": "/workspace/shared/chain-rustup",
+    "RISC0_HOME": "/workspace/shared/w1-tools",
+    "host_rust": "1.95.0",
+    "guest_rust": "1.88.0-dev",
+    "RISC0_BUILD_LOCKED": "1"
+  },
+  "files": {
+    "actual-prepared-manifest.json": "1834e9f431a4df5851145a7870a953c9468ff7e6fd2ffc60198601ecc9198cad",
+    "host-attempt1-rzup-path.log": "e29391ada7ef184ec12529d6487527490ae3aaec4d3912a30b745387e5520f81",
+    "host-attempt2-cargo-home.log": "8af03b3b81b8e2020db1e13b142bbe5aefb169c95610a3198118766c7ccaa8f0",
+    "host-build.log": "80ac0ddce53bbaa8d81935fe657b976c6e37a90b335ced0efc49a46af4807cb4",
+    "image-rejection.json": "2eb370638608ba0e01bd34ecc1012458de260f804fb1fca2cc9a83a87c93c7dc",
+    "interrupted-original-run.log": "1a42d3845c1a276c42930b70e265fd29b8ef5cb016ca99d400aa5f224f18ed9e",
+    "w1-native-preproof.json": "9eb261d8e4414a16bf27d9ffb0253f2bcef0961ad60f226e21d50739f78c3774",
+    "w1-observer-after.log": "194f07f9c817653d9c3479ee7e8b4c63ca49d5432c53f9a33c85fcd00dc77ff0",
+    "w1-verifier-build.log": "b509b52c8fab91e18b6b992a4f73593c3fedbfcdd96fcf890e218810768f9936",
+    "w1-verifier-clippy.log": "53023a673a8d26fbd4f4f3e71bd347b829564294bbd4768733792176218d98c5",
+    "w1-verifier-tests.log": "8f978f29bf862c67a8031d8027375d15c960ab7b18089186e78de106953b86bc"
+  }
+}

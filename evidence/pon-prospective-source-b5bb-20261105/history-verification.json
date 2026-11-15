@@ -1,0 +1,47 @@
+{
+  "base_tree": "4da766ac44bf30d5a330f1fb70a78beb6f3bb382",
+  "borrowed_object_directory_read_only": "/workspace/scratch/822cc50e24f0/round2-chain-green/.git/objects",
+  "base_tree_already_available": false,
+  "base_tree_fetch": {
+    "args": [
+      "-c",
+      "protocol.version=2",
+      "fetch",
+      "--no-tags",
+      "--no-auto-maintenance",
+      "--filter=blob:none",
+      "origin",
+      "4da766ac44bf30d5a330f1fb70a78beb6f3bb382"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 6.491009093000002,
+    "stdout": "",
+    "stderr": "From https://github.com/TrillionniumFoundation/Trillionnium-Chain\n * branch              4da766ac44bf30d5a330f1fb70a78beb6f3bb382 -> FETCH_HEAD\n"
+  },
+  "checks": {
+    "ancestor": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "parents": {
+      "exit_code": 0,
+      "stdout": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0 b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c\n",
+      "stderr": ""
+    },
+    "tree": {
+      "exit_code": 0,
+      "stdout": "8be28a72673ce318d60a464898ab610d9ba39216\n",
+      "stderr": ""
+    },
+    "graph_count": {
+      "exit_code": 0,
+      "stdout": "12771\n",
+      "stderr": ""
+    }
+  },
+  "no_shallow_file": true,
+  "no_grafts_file": true,
+  "replacement_refs": [],
+  "own_object_bytes": 3123371
+}

@@ -1,0 +1,7 @@
+/dev/shm/trnm-final-checks/publication-source.bundle is okay
+The bundle contains this ref:
+3e601d0c6769b973b8436245293ad00ecb86c3f9 HEAD
+The bundle requires these 2 refs:
+0ba09db0cf1c684013a896dd83f29c327f58521e 
+1c885019fdf1cc2f33af8da0780da603fff1c353 
+The bundle uses this hash algorithm: sha1

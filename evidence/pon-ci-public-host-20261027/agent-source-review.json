@@ -1,0 +1,34 @@
+{
+  "schema": "independent-from-zero-host-source-review-v1",
+  "status": "source snapshot reviewed; not yet a commit or hosted acceptance",
+  "source_parent": "17b824d2546d9593f23a6446a769c299c2052233",
+  "reviewed_file_sha256": {
+    "scripts/ci/run_from_zero_host.py": "35c3383335ce1adf0c0e7cb95fd19750811de80ebbd29497b38649672d5c1b02",
+    "scripts/ci/public_host_ci_observation.py": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de",
+    "scripts/ci/test_from_zero_host_ci.py": "dbfc68f731c509e560b23e8fdbb8babe78ee7c1e867c69be4b294d8cb9bcb3c2"
+  },
+  "native_source_unchanged_from_parent": {
+    "scripts/ci/run_from_zero_native.py": "c4879cac3d5e37c16285435280db5be05cbd6791088640b35b9ed0dc05e354ed",
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs": "d10a3871e19ae2479c9eb3420ddf0bc47e89a1ef72d34ac5be5b82fad99eb023",
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs": "405a28c6dedbfa1bdc4fb54ae35d649f88003d5304032180fced08c2a3e91753",
+    "config/systemd/trnmponpublic.slice": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+    "scripts/ci/replay_pinned_native.py": "d14d2f61ab98bb30b5932530437064dce5d3a330c05a9530988fe776cefea44a",
+    "scripts/ci/check_required_native_test.py": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28"
+  },
+  "workflow_and_lane_byte_deltas": {
+    "scripts/ci/ci_job.sh": "only one wrapper prefix",
+    ".github/workflows/pon-priority-acceptance.yml": "only one wrapper prefix",
+    ".github/workflows/trnm-required-baseline.yml": "only one wrapper prefix and new required static refusal-test step"
+  },
+  "resolved_findings": [
+    "late-signal success cleared and exit_status requires no failure",
+    "inside snapshots bind outer provisioned parent boot inode caps unit hash and same service",
+    "NoNewPrivileges=yes and empty CapabilityBoundingSet observed through actual /proc/thread-self/status"
+  ],
+  "scope": "No edit to reviewed worktree. No native builds/tests, local systemd command or sysfs mutation executed by independent reviewer. Synthetic tests reported by author are separate from this static review.",
+  "remaining_observations": [
+    "Actual hosted systemd provisioning and native five-test runner have not run on this snapshot",
+    "Whole original from-zero Python including format/build shares fixed25percent/2GiB parent; original60/900/90second deadlines unchanged and may still fail",
+    "Not a general hostile-code sandbox or hardkill/powerloss cleanup qualification"
+  ]
+}

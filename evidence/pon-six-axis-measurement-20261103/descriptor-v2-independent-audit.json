@@ -1,0 +1,175 @@
+{
+  "wall": {
+    "sha256": "2c0cf9618d552dbc1b698d6410df3c12e7be7d08f437122717a4d1bc302814d2",
+    "observed_samples": 512,
+    "observed_cohorts": 8,
+    "root_retention_and_arithmetic_equal": true,
+    "results": [
+      {
+        "cohort": "payload-64-accounts-64-cold",
+        "median_ratio": 0.987653838842587,
+        "p95_ratio": 1.3194702459194079,
+        "nonregression": false,
+        "five_percent_improvement": false
+      },
+      {
+        "cohort": "payload-64-accounts-64-warm",
+        "median_ratio": 0.8569480775918958,
+        "p95_ratio": 0.8620049253063052,
+        "nonregression": true,
+        "five_percent_improvement": true
+      },
+      {
+        "cohort": "payload-1024-accounts-64-cold",
+        "median_ratio": 1.0076818161664636,
+        "p95_ratio": 0.9973284459462487,
+        "nonregression": false,
+        "five_percent_improvement": false
+      },
+      {
+        "cohort": "payload-1024-accounts-64-warm",
+        "median_ratio": 0.9505426371844923,
+        "p95_ratio": 1.017122387250925,
+        "nonregression": true,
+        "five_percent_improvement": false
+      },
+      {
+        "cohort": "payload-2100-accounts-64-cold",
+        "median_ratio": 0.9746423497764565,
+        "p95_ratio": 0.9894960151602219,
+        "nonregression": true,
+        "five_percent_improvement": false
+      },
+      {
+        "cohort": "payload-2100-accounts-64-warm",
+        "median_ratio": 0.9195097951282614,
+        "p95_ratio": 0.8682672760017207,
+        "nonregression": true,
+        "five_percent_improvement": true
+      },
+      {
+        "cohort": "payload-64-accounts-2100-cold",
+        "median_ratio": 0.9756812705205314,
+        "p95_ratio": 1.0856226979385308,
+        "nonregression": true,
+        "five_percent_improvement": false
+      },
+      {
+        "cohort": "payload-64-accounts-2100-warm",
+        "median_ratio": 0.9267015467803918,
+        "p95_ratio": 0.8819573921814348,
+        "nonregression": true,
+        "five_percent_improvement": true
+      }
+    ],
+    "reference_roots": {
+      "payload-64-accounts-64-cold": "f18f255d5c57d2dd4f07ad7e59f3132818486a6a95f2a1e399225052d8a12d15",
+      "payload-64-accounts-64-warm": "f18f255d5c57d2dd4f07ad7e59f3132818486a6a95f2a1e399225052d8a12d15",
+      "payload-1024-accounts-64-cold": "3586d8ddc4a96613ba959db1792de9c0f821ced5aeb59861ca98918bb48cc785",
+      "payload-1024-accounts-64-warm": "3586d8ddc4a96613ba959db1792de9c0f821ced5aeb59861ca98918bb48cc785",
+      "payload-2100-accounts-64-cold": "f0803de37f03e922c2e0333f8b3cb73bade330f79110924cb3f1fc8ac0813369",
+      "payload-2100-accounts-64-warm": "f0803de37f03e922c2e0333f8b3cb73bade330f79110924cb3f1fc8ac0813369",
+      "payload-64-accounts-2100-cold": "b7ec54365ff509571cdea076a2ebb2f7a778bfe8ce14e3535eda5918c22a0dd3",
+      "payload-64-accounts-2100-warm": "b7ec54365ff509571cdea076a2ebb2f7a778bfe8ce14e3535eda5918c22a0dd3"
+    }
+  },
+  "allocations": {
+    "sha256": "ef0b8d5e56b9ce177ac2aa7fb3f3e5631563c345aabf4c5dd69e08eabe61c459",
+    "observed_samples": 32,
+    "observed_cohorts": 8,
+    "root_retention_and_arithmetic_equal": true,
+    "results": [
+      {
+        "cohort": "payload-64-accounts-64-cold",
+        "original_requested_bytes": 1414983,
+        "borrowed_requested_bytes": 1137575,
+        "reduction_bytes": 277408,
+        "reduction_fraction": 0.19605041191307604,
+        "five_percent_reduction": true,
+        "original_requests": 489,
+        "borrowed_requests": 351
+      },
+      {
+        "cohort": "payload-64-accounts-64-warm",
+        "original_requested_bytes": 336057,
+        "borrowed_requested_bytes": 58649,
+        "reduction_bytes": 277408,
+        "reduction_fraction": 0.8254790110011099,
+        "five_percent_reduction": true,
+        "original_requests": 161,
+        "borrowed_requests": 23
+      },
+      {
+        "cohort": "payload-1024-accounts-64-cold",
+        "original_requested_bytes": 19884421,
+        "borrowed_requested_bytes": 15398773,
+        "reduction_bytes": 4485648,
+        "reduction_fraction": 0.225586050506575,
+        "five_percent_reduction": true,
+        "original_requests": 6258,
+        "borrowed_requests": 4111
+      },
+      {
+        "cohort": "payload-1024-accounts-64-warm",
+        "original_requested_bytes": 11914739,
+        "borrowed_requested_bytes": 7429091,
+        "reduction_bytes": 4485648,
+        "reduction_fraction": 0.37647891405762224,
+        "five_percent_reduction": true,
+        "original_requests": 3839,
+        "borrowed_requests": 1692
+      },
+      {
+        "cohort": "payload-2100-accounts-64-cold",
+        "original_requested_bytes": 38334381,
+        "borrowed_requested_bytes": 29144225,
+        "reduction_bytes": 9190156,
+        "reduction_fraction": 0.23973664789317972,
+        "five_percent_reduction": true,
+        "original_requests": 11739,
+        "borrowed_requests": 7341
+      },
+      {
+        "cohort": "payload-2100-accounts-64-warm",
+        "original_requested_bytes": 30686319,
+        "borrowed_requested_bytes": 21496163,
+        "reduction_bytes": 9190156,
+        "reduction_fraction": 0.29948707761266513,
+        "five_percent_reduction": true,
+        "original_requests": 9398,
+        "borrowed_requests": 5000
+      },
+      {
+        "cohort": "payload-64-accounts-2100-cold",
+        "original_requested_bytes": 1414983,
+        "borrowed_requested_bytes": 1137575,
+        "reduction_bytes": 277408,
+        "reduction_fraction": 0.19605041191307604,
+        "five_percent_reduction": true,
+        "original_requests": 489,
+        "borrowed_requests": 351
+      },
+      {
+        "cohort": "payload-64-accounts-2100-warm",
+        "original_requested_bytes": 336057,
+        "borrowed_requested_bytes": 58649,
+        "reduction_bytes": 277408,
+        "reduction_fraction": 0.8254790110011099,
+        "five_percent_reduction": true,
+        "original_requests": 161,
+        "borrowed_requests": 23
+      }
+    ],
+    "reference_roots": {
+      "payload-64-accounts-64-cold": "f18f255d5c57d2dd4f07ad7e59f3132818486a6a95f2a1e399225052d8a12d15",
+      "payload-64-accounts-64-warm": "f18f255d5c57d2dd4f07ad7e59f3132818486a6a95f2a1e399225052d8a12d15",
+      "payload-1024-accounts-64-cold": "3586d8ddc4a96613ba959db1792de9c0f821ced5aeb59861ca98918bb48cc785",
+      "payload-1024-accounts-64-warm": "3586d8ddc4a96613ba959db1792de9c0f821ced5aeb59861ca98918bb48cc785",
+      "payload-2100-accounts-64-cold": "f0803de37f03e922c2e0333f8b3cb73bade330f79110924cb3f1fc8ac0813369",
+      "payload-2100-accounts-64-warm": "f0803de37f03e922c2e0333f8b3cb73bade330f79110924cb3f1fc8ac0813369",
+      "payload-64-accounts-2100-cold": "b7ec54365ff509571cdea076a2ebb2f7a778bfe8ce14e3535eda5918c22a0dd3",
+      "payload-64-accounts-2100-warm": "b7ec54365ff509571cdea076a2ebb2f7a778bfe8ce14e3535eda5918c22a0dd3"
+    }
+  },
+  "audit": "independent parser: exact all8 planned cohorts,512 wall starts/completions,32 allocation starts/completions; original root, retention, ordering, typed fields and computed thresholds validated; no rerun"
+}

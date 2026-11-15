@@ -1,0 +1,262 @@
+{
+  "schema": "pon-hepta-owner-acceptance-interop-v1",
+  "classification": "native_mechanism_qualification_only",
+  "repository": "https://github.com/TrillionniumFoundation/hepta-private-ci",
+  "repository_private": false,
+  "pull_request": {
+    "number": 5318,
+    "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/pull/5318",
+    "draft": true,
+    "state": "open",
+    "head": "9c352c77d21923eb7c2022c96496228ee428d278",
+    "base_head": "b8d12ad02a2d8311581a4aa69e6cdf07d18f9758",
+    "base_branch": "research/ndu-native-nextuse-source-20261107-8ef7"
+  },
+  "branch": "fix/pon-evaluated-noupdate-bundle-20261107-525798",
+  "base_source": {
+    "commit": "b8d12ad02a2d8311581a4aa69e6cdf07d18f9758",
+    "tree": "fa3ebc76de39de4335dc8f923e7d00a88c1c2901"
+  },
+  "tested_source": {
+    "commit": "e0a3bd2bde77c58a0ae7d211214f326371a72a4a",
+    "tree": "a28ed8f9dbc3569b8108e7f5fe5096b16c881792"
+  },
+  "published_head": "9c352c77d21923eb7c2022c96496228ee428d278",
+  "published_tree": "25d16999e4bdf0adc1ab7f9875cd4c4575e725df",
+  "evidence_only_commits_after_tested_source": [
+    "2616391624de696f44beec31d6ddd71c3bc4e1f1",
+    "9c352c77d21923eb7c2022c96496228ee428d278"
+  ],
+  "remote_head_and_tree_verified": true,
+  "merged": false,
+  "production_activated": false,
+  "main_integration_qualified": false,
+  "source_change": {
+    "original_path": "PR5315/PR5316 evaluated NoUpdate -> existing same-model native task owner",
+    "production_added_lines": 19,
+    "total_source_delta": {
+      "files": 5,
+      "insertions": 260,
+      "deletions": 26
+    },
+    "mechanism": "Compare the complete request.selected_bundle.digest() with the verified selected manifest.bundle_digest after the existing authentication and source checks.",
+    "preserved": [
+      "four-stage Evaluation::NoUpdate only",
+      "host-pinned expected head",
+      "per-receipt signature/trust/time checks in prepare and observe",
+      "owner_checkpoint completed-task domain",
+      "existing selection and operation digest bytes",
+      "independent FinalUse and native Control publication"
+    ],
+    "duplicate_exploratory_api_delivered": false
+  },
+  "acceptance": [
+    {
+      "command_class": "crate_clippy_fixer",
+      "argv": [
+        "just",
+        "fix",
+        "-p",
+        "codex-hepta-agentd"
+      ],
+      "source_commit": "e0a3bd2bde77c58a0ae7d211214f326371a72a4a",
+      "source_tree": "a28ed8f9dbc3569b8108e7f5fe5096b16c881792",
+      "exit_code": 0,
+      "source_before_after_identical": true,
+      "wall_seconds": 118.3493760060519,
+      "counts": null,
+      "receipt": {
+        "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/9c352c77d21923eb7c2022c96496228ee428d278/qualification/pon-evaluated-no-update-20261107-525798/raw/accepted-evaluated-noupdate-clippy-v1.receipt.json",
+        "sha256": "209eafebfa4c5f0632529175fe1df2c2be3e472732b747be4a550f356495a17a"
+      },
+      "logs": [
+        {
+          "stream": "stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/9c352c77d21923eb7c2022c96496228ee428d278/qualification/pon-evaluated-no-update-20261107-525798/raw/accepted-evaluated-noupdate-clippy-v1.stdout.log"
+        },
+        {
+          "stream": "stderr",
+          "bytes": 2330,
+          "sha256": "b8818867fae5eb6338b56d54475a8b1437de291cc888ef46a77a7c963cb8b9fc",
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/9c352c77d21923eb7c2022c96496228ee428d278/qualification/pon-evaluated-no-update-20261107-525798/raw/accepted-evaluated-noupdate-clippy-v1.stderr.log"
+        }
+      ]
+    },
+    {
+      "command_class": "same_source_native_helper_build",
+      "argv": [
+        "cargo",
+        "build",
+        "--locked",
+        "-p",
+        "codex-hepta-infer-worker-host",
+        "--bin",
+        "hepta-joint-propose",
+        "--message-format=json"
+      ],
+      "source_commit": "e0a3bd2bde77c58a0ae7d211214f326371a72a4a",
+      "source_tree": "a28ed8f9dbc3569b8108e7f5fe5096b16c881792",
+      "exit_code": 0,
+      "source_before_after_identical": true,
+      "wall_seconds": 55.70721674594097,
+      "counts": null,
+      "receipt": {
+        "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/9c352c77d21923eb7c2022c96496228ee428d278/qualification/pon-evaluated-no-update-20261107-525798/raw/accepted-evaluated-noupdate-helper-v1.receipt.json",
+        "sha256": "f02082a144a6e614a7de25066418619fee6cd148ad725474e3d02733b4490944"
+      },
+      "logs": [
+        {
+          "stream": "stdout",
+          "bytes": 1095498,
+          "sha256": "6c72af09cf27c358c897c99ecd6f2ad62a563fbff95f999a148ccfc239b54da0",
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/9c352c77d21923eb7c2022c96496228ee428d278/qualification/pon-evaluated-no-update-20261107-525798/raw/accepted-evaluated-noupdate-helper-v1.stdout.log"
+        },
+        {
+          "stream": "stderr",
+          "bytes": 343,
+          "sha256": "8290aea690a5eae174d5c9a97ddf2f64dfcca77d541fd750fd14a7999540166c",
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/9c352c77d21923eb7c2022c96496228ee428d278/qualification/pon-evaluated-no-update-20261107-525798/raw/accepted-evaluated-noupdate-helper-v1.stderr.log"
+        }
+      ]
+    },
+    {
+      "command_class": "native_owner_original_selector",
+      "argv": [
+        "just",
+        "test",
+        "-p",
+        "codex-hepta-agentd",
+        "--lib",
+        "-E",
+        "test(neuron_generation) | test(learning_iteration)",
+        "--status-level",
+        "all",
+        "--final-status-level",
+        "all"
+      ],
+      "source_commit": "e0a3bd2bde77c58a0ae7d211214f326371a72a4a",
+      "source_tree": "a28ed8f9dbc3569b8108e7f5fe5096b16c881792",
+      "exit_code": 0,
+      "source_before_after_identical": true,
+      "wall_seconds": 138.0380254238844,
+      "counts": {
+        "tests_run": 60,
+        "passed": 60,
+        "failed": 0,
+        "skipped": 662,
+        "test_seconds": 17.696,
+        "retry_or_flaky_markers": false
+      },
+      "receipt": {
+        "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/9c352c77d21923eb7c2022c96496228ee428d278/qualification/pon-evaluated-no-update-20261107-525798/raw/accepted-evaluated-noupdate-native-v1.receipt.json",
+        "sha256": "9808e24368c62be2742d77e55b7cead879a832465677a478e2f164ca83c11ac5"
+      },
+      "logs": [
+        {
+          "stream": "stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/9c352c77d21923eb7c2022c96496228ee428d278/qualification/pon-evaluated-no-update-20261107-525798/raw/accepted-evaluated-noupdate-native-v1.stdout.log"
+        },
+        {
+          "stream": "stderr",
+          "bytes": 253089,
+          "sha256": "36205963dd330dcdb66428336312c27d41f9ae0423782eefa55559fde75320b7",
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/9c352c77d21923eb7c2022c96496228ee428d278/qualification/pon-evaluated-no-update-20261107-525798/raw/accepted-evaluated-noupdate-native-v1.stderr.log"
+        }
+      ]
+    }
+  ],
+  "native_test_scope": {
+    "tests_run": 60,
+    "passed": 60,
+    "failed": 0,
+    "skipped": 662,
+    "test_seconds": 17.696,
+    "all_workspace_tests_claimed": false,
+    "original_profile_and_selector": true,
+    "public_channel_case": "Reconcile a retained terminal fixture result through the existing handle.submit and owner.run; fixed-clock stages were generated beforehand by the fixture owner.",
+    "independent_fixture_cases": [
+      "artifact CURRENT advancement",
+      "FinalUse revocation"
+    ],
+    "raw_fixture_files": 54,
+    "raw_fixture_bytes": 146271,
+    "per_fixture_model_executions": 1,
+    "per_fixture_final_use_nonces": 1,
+    "distinct_external_customer_task_count": null,
+    "historical_readback_authority": "DENY_ALL",
+    "observer_terminal_condition": "STOP, no pending request, output acknowledged",
+    "separate_runtime_drain_assertion": true,
+    "observation_has_drain_flag": false
+  },
+  "evidence": {
+    "report": {
+      "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/9c352c77d21923eb7c2022c96496228ee428d278/qualification/pon-evaluated-no-update-20261107-525798/README.md",
+      "sha256": "b1e43000ef94f9f077cc002ab3b905d5f915b9c84992ff88afd385cf002e97f3"
+    },
+    "manifest": {
+      "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/9c352c77d21923eb7c2022c96496228ee428d278/qualification/pon-evaluated-no-update-20261107-525798/MANIFEST.json",
+      "sha256": "56443a7d04a33c2f8de1b311a61d3281939c70be62744c1aeb21da1563545135",
+      "bytes": 46033
+    },
+    "committed_file_count": 130,
+    "raw_file_count": 128,
+    "raw_bytes": 4974975,
+    "committed_blob_inventory_verified": true,
+    "remote_native_log": {
+      "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/9c352c77d21923eb7c2022c96496228ee428d278/qualification/pon-evaluated-no-update-20261107-525798/raw/accepted-evaluated-noupdate-native-v1.stderr.log",
+      "bytes": 253089,
+      "sha256": "36205963dd330dcdb66428336312c27d41f9ae0423782eefa55559fde75320b7"
+    },
+    "publication_receipt_sha256": "fc5df3c0c414d7c9ae2f6ffbc80a94986fd309087d4bbc607d9f77c477c95fe6",
+    "original_failed_runs_retained": true,
+    "unselected_exploration": {
+      "commit": "34060ab1d9544c67e20de4898ae4db112bee3067",
+      "tree": "9040b06fa0ed7c611d9ab4898ce9d2c227d3a933",
+      "selected_for_runtime": false,
+      "old_pass_not_transferred": true,
+      "patch_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/9c352c77d21923eb7c2022c96496228ee428d278/qualification/pon-evaluated-no-update-20261107-525798/raw/development-candidate-34060ab.patch",
+      "patch_sha256": "d0961254703b0c9958bdf49aba6041206fe9b50e7df1d7435c157c63f776d93e",
+      "bundle_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/9c352c77d21923eb7c2022c96496228ee428d278/qualification/pon-evaluated-no-update-20261107-525798/raw/unselected-development-34060ab.bundle",
+      "bundle_sha256": "4ef5cb72c37b2f1c419ecfc1df79dbec2286c02d418574656fe632ff04492c0a"
+    },
+    "raw_whitespace_preserved": true,
+    "raw_whitespace_check_diagnostic_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/9c352c77d21923eb7c2022c96496228ee428d278/qualification/pon-evaluated-no-update-20261107-525798/raw/publication-raw-whitespace-check.json"
+  },
+  "compute": {
+    "requested_preference": [
+      "HeptaRuntime Colab",
+      "HeptaRuntime Kaggle"
+    ],
+    "selected": "HeptaRuntime native desktop CPU",
+    "cargo_build_jobs": 2,
+    "toolchain": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "provider_search_scope": "available callable tools and scoped tracked project metadata",
+    "provider_search_outcome": "No configured callable Colab/Kaggle entry discovered in that scope.",
+    "colab_kaggle_job_claimed": false,
+    "external_allocation_claimed": false
+  },
+  "boundaries": {
+    "independent_customers_controls_and_budgets": "not evidenced in the authorized materials examined this run",
+    "independent_real_evaluation_sources": "not qualified",
+    "prospectively_frozen_cost_matched_real_trial": "not performed",
+    "complete_training_evaluation_storage_service_costs": "unknown",
+    "learning_checkpoint_backend": "memory-backed engineering fixture",
+    "trainer_evaluator_and_issuer_custody": "deterministic engineering fixtures and test keys",
+    "production_learning_owner_cross_process_recovery": "not qualified",
+    "operating_system_power_loss_safety": "not qualified",
+    "production_canary_installation_real_next_task_withdrawal_rollback": "not qualified",
+    "model_improvement_or_adoption_claim": false,
+    "learning_improvement_bonus_qualified": false,
+    "external_business_reuse_ratio": null,
+    "successful_steps_or_readbacks_are_distinct_external_tasks": false,
+    "cross_repository_qualification_with_chain": false,
+    "chain_source_reference_only": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "historical_cross_repo_evidence_transfer_allowed": false,
+    "cross_branch_test_count_addition_allowed": false,
+    "third_party_contact_performed": false
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "logs": {
+    "settlement/green-attempt-1-dependency-native.log": {
+      "compressed_bytes": 130,
+      "compressed_sha256": "253f92043863dfc49ef0a500a92b25ad52132eaae548917c490bea627eb6060c",
+      "original_bytes": 127,
+      "original_sha256": "3a394785649db52ecb4966cc9fa60499798dfb35daf8e36d3b18428b3acb4483",
+      "stored_as": "settlement/green-attempt-1-dependency-native.log.gz"
+    },
+    "settlement/green-attempt-1-dependency-preflight.log": {
+      "compressed_bytes": 152,
+      "compressed_sha256": "0dfedd552b3b229bbdfa535c9d1a5049eed2f9a1e85db3423a90846dd6b16fc9",
+      "original_bytes": 166,
+      "original_sha256": "160ea403692186d011c9c0f3ce8f198e26f14596e3ac3e6250c57004405a813c",
+      "stored_as": "settlement/green-attempt-1-dependency-preflight.log.gz"
+    },
+    "settlement/green-attempt-2-native.log": {
+      "compressed_bytes": 1137,
+      "compressed_sha256": "f671e95629045b21b8dc89334a4b7d38567e7ef5fc25981238b182d3db5c68b4",
+      "original_bytes": 4409,
+      "original_sha256": "3ab8e177a585c728b296aa111e89566f9fdec08eee3ae6c43839a8b5a1d91634",
+      "stored_as": "settlement/green-attempt-2-native.log.gz"
+    },
+    "settlement/green-attempt-2-preflight.log": {
+      "compressed_bytes": 152,
+      "compressed_sha256": "0dfedd552b3b229bbdfa535c9d1a5049eed2f9a1e85db3423a90846dd6b16fc9",
+      "original_bytes": 166,
+      "original_sha256": "160ea403692186d011c9c0f3ce8f198e26f14596e3ac3e6250c57004405a813c",
+      "stored_as": "settlement/green-attempt-2-preflight.log.gz"
+    },
+    "settlement/red-native.log": {
+      "compressed_bytes": 2337,
+      "compressed_sha256": "eee16dc1fbf7a69f82f76bfd8a7ca51a0709e31216e0763aa3abf0e4940725ff",
+      "original_bytes": 11775,
+      "original_sha256": "4ea18ba1f5aa7af8fcf8b4cb89b381bba68d8453f04c34a45637a5ee49e268d7",
+      "stored_as": "settlement/red-native.log.gz"
+    },
+    "settlement/red-preflight.log": {
+      "compressed_bytes": 152,
+      "compressed_sha256": "0dfedd552b3b229bbdfa535c9d1a5049eed2f9a1e85db3423a90846dd6b16fc9",
+      "original_bytes": 166,
+      "original_sha256": "160ea403692186d011c9c0f3ce8f198e26f14596e3ac3e6250c57004405a813c",
+      "stored_as": "settlement/red-preflight.log.gz"
+    },
+    "strategy/archive-package.log": {
+      "compressed_bytes": 144,
+      "compressed_sha256": "90e7e69774030d5e819619be0699e58de29d9c262145747db0b9dc3baedef164",
+      "original_bytes": 164,
+      "original_sha256": "b066af4bcfb3e9223c27be6a29239711e95edd3c91b9f655cc16b3f3b6a3dd83",
+      "stored_as": "strategy/archive-package.log.gz"
+    },
+    "strategy/archive-small-parts.log": {
+      "compressed_bytes": 146,
+      "compressed_sha256": "3f8223fbd7d44fbc2eda29387b3562026f41f48f027110eb7620e451559ca527",
+      "original_bytes": 165,
+      "original_sha256": "bd65c07aa8745ac307de840273f0132423d0f3daa512e9e2743eef3918f6853b",
+      "stored_as": "strategy/archive-small-parts.log.gz"
+    },
+    "strategy/campaign.log": {
+      "compressed_bytes": 813,
+      "compressed_sha256": "5164d7b50c3977d07ee3f320a48688738580ff0467bffaf21e147d27ac7a0c30",
+      "original_bytes": 5024,
+      "original_sha256": "6e3fcb58c5309f701164120d7d2996b49f21822bbacb2b42ca4253cafe7a1732",
+      "stored_as": "strategy/campaign.log.gz"
+    },
+    "strategy/initial-format-failure.log": {
+      "compressed_bytes": 2367,
+      "compressed_sha256": "189f748ad5930edc49029b7904be5a7c4b876876867c0b08d8d83efaea4e2bc0",
+      "original_bytes": 9211,
+      "original_sha256": "9e2a41cee1ab6b6cd95156568025f7bb9f1f09b42b318bd206467ab443d9c76b",
+      "stored_as": "strategy/initial-format-failure.log.gz"
+    },
+    "strategy/native-build.log": {
+      "compressed_bytes": 231,
+      "compressed_sha256": "751fb173b8defff76bc611f11dad20a6c24448da49d7fbf1227a61cc68922a2a",
+      "original_bytes": 276,
+      "original_sha256": "0ee6a208cf45afd8d443aff9ecb2837cb4e8dc2e961efea319fee69d253e8a5e",
+      "stored_as": "strategy/native-build.log.gz"
+    },
+    "strategy/native-clippy.log": {
+      "compressed_bytes": 832,
+      "compressed_sha256": "39bca892ef295e9975a8269942f0845db91942138494ca59fcd551ca47cd7fb8",
+      "original_bytes": 3051,
+      "original_sha256": "004ab5b7540f958eaba430253900eee425eebd04d25dad99ed8dee27153f9fbb",
+      "stored_as": "strategy/native-clippy.log.gz"
+    },
+    "strategy/native-format.log": {
+      "compressed_bytes": 20,
+      "compressed_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_as": "strategy/native-format.log.gz"
+    },
+    "strategy/native-tests.log": {
+      "compressed_bytes": 710,
+      "compressed_sha256": "59f0ee4a89e61c772d7bd150f84181eb2a2fa3d652e27d61eda749fbf77e27b0",
+      "original_bytes": 1367,
+      "original_sha256": "675222fcbf109a62bc64fd76a718c23f15b72a1083898c8a533d449e1eab6fdb",
+      "stored_as": "strategy/native-tests.log.gz"
+    },
+    "strategy/python-controls-final.log": {
+      "compressed_bytes": 951,
+      "compressed_sha256": "1047a84f08f16a50f10183ddb28e5df11fb977305f62414c9d6732cd598e0db0",
+      "original_bytes": 5145,
+      "original_sha256": "a65fb0d6983a5e781a1f05b690e8c02933be7937864c98a2e7122ac1d70e6940",
+      "stored_as": "strategy/python-controls-final.log.gz"
+    },
+    "strategy/python-controls.log": {
+      "compressed_bytes": 951,
+      "compressed_sha256": "551f260e8d0e5f1f0640cec025f1388a5aab0c071ab02911a4527a6e04df8a2e",
+      "original_bytes": 5145,
+      "original_sha256": "51a2044d8dd541725dfe34bbf4ecdf4007566d9f56fd3e5a49f74a494c21002a",
+      "stored_as": "strategy/python-controls.log.gz"
+    }
+  },
+  "schema": "six-workpackages-lossless-log-storage-v1",
+  "scope": "Transport encoding only. Original logs and command-record identities are unchanged; no whitespace normalization."
+}

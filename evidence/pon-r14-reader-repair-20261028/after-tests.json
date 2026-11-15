@@ -1,0 +1,30 @@
+[
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_pon_public_v3*.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 0.3359005759994034,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "540fc07ca5be8cec40789252df42151ca5707e5925e3d11ae2a94b1c132ec86b"
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/ci/test_read_original_native_campaign.py",
+      "-v"
+    ],
+    "exit_code": 2,
+    "wall_seconds": 0.09856691699678777,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "54eef03bb802037a377e534dbd17513feb2cf700b9effe451ad42e0465b31c7d"
+  }
+]

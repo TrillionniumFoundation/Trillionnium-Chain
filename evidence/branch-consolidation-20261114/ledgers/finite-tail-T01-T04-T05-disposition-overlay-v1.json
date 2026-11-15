@@ -1,0 +1,238 @@
+{
+  "schema": "chain-finite-tail-ci-compatible-components-overlay-v1",
+  "recorded_utc": "2026-11-14T04:20:23.222393+00:00",
+  "input": {
+    "path": "/private/tmp/chain-audit-20261114-branch-graph/multi-base-27-source-audit-v1/assigned-review-packages-v1/prci-finite-tail-review-v1/eleven-head-final-finite-tail-v1.json",
+    "sha256": "8f96b4812bdc79454349d98bcdc7970b7d00ae91977b3be8c8fd5eccf3d2e999"
+  },
+  "independent_worktree": "/private/tmp/chain-ci-binding-repair-20261114",
+  "branch": "fix/chain-ci-binding-repair-20261114",
+  "baseline": "e82419698aa3fd527c6f828da11cc8749dcb007b",
+  "head": "c34a729ac27da5787398a646457256fdddab132f",
+  "tree": "1992dfedba841c3fe15f107f6e8bfcbdcf287a23",
+  "worktree_clean": true,
+  "scope_frozen_to": [
+    "T01",
+    "T04",
+    "T05"
+  ],
+  "components": [
+    {
+      "id": "T01",
+      "summary": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T01-implementation/commit-summary.json",
+      "summary_sha256": "8855af828c749506205afb6b4bb90cf250979bce0de717a6f38ef6049671f6b9",
+      "commit": "eb3a02048eb219558697dffa710e41de8e471899",
+      "tree": "a7ae467fcca7265fc238d167abcd0085045db6a4",
+      "parent": "e82419698aa3fd527c6f828da11cc8749dcb007b",
+      "path_blobs": [
+        {
+          "path": "config/pon/pq-cross-branch-corpus-v1.json",
+          "selected_blob": "e7fe5a8ad7dab7065b169c17e77ba82a8c8b3ead"
+        },
+        {
+          "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+          "selected_blob": "59b72243c392f6a07e466678d7610ae661588d5c"
+        },
+        {
+          "path": "scripts/ci/check_pq_research_integration.py",
+          "selected_blob": "5601cd1b148d1c7f7dd88a1c60451b4b50e0791e"
+        },
+        {
+          "path": "scripts/ci/test_pon_public_v3_phase_read.py",
+          "selected_blob": "ec44035e965267b180273ed3187e373767c38134"
+        },
+        {
+          "path": "scripts/ci/test_pq_research_integration.py",
+          "selected_blob": "bb1a764f7a1baee29820698e45b5b4a8ad9835c3"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+          "selected_blob": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+          "selected_blob": "7919f646c4fd9f44000b0f59493fa71e84f991ea"
+        }
+      ],
+      "patch": {
+        "path": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T01-implementation/commit.patch",
+        "bytes": 24190,
+        "sha256": "6630d0996b46330c0250b531ec50f5d75aaf1c5e18060dfa16a9db409db25f08"
+      },
+      "source_provenance": "exact original branches named in component preservation receipts; only the reviewed compatible components selected",
+      "qualification_granted": false,
+      "original_tip": "1d11f875493f8125e36b9adceacb342df108e5e5",
+      "original_parent": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "disposition": "compatible_port_with_fresh_opt_in_v5_namespace_and_default_complete_v4_preserved",
+      "original_native_controls_retained": 2,
+      "additional_native_v4_serialization_control": 1,
+      "native_validation": "pending root final combined Linux batch",
+      "python_phase_tests_passed": 96,
+      "root_integrated_commit": "c5f8ac825f6706a4b432331633e10ed9d839a8d4",
+      "old_v4_consumers_reject_v5": true
+    },
+    {
+      "id": "T04",
+      "summary": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T04-implementation/commit-summary.json",
+      "summary_sha256": "e97e615abb9ec2e2817e40fa1970403a11938968b0a384e1b058d62db41d8e21",
+      "commit": "bc24ed14f01167233f9a53306a4d82ba77049c42",
+      "tree": "6a14350f88ad7e9bf09f4ce00daf4f21d850228a",
+      "parent": "eb3a02048eb219558697dffa710e41de8e471899",
+      "path_blobs": [
+        {
+          "path": ".github/workflows/pon-native-campaign-qualification.yml",
+          "selected_blob": "a11dbcd8476d149fa89aeac7979c5ddefad9108c"
+        },
+        {
+          "path": "config/pon/pq-cross-branch-corpus-v1.json",
+          "selected_blob": "4c8585e833f803d6e7ec05bd212b79630da0bc29"
+        },
+        {
+          "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+          "selected_blob": "980f842fb196e1de2b502f5524106d7a7c6d590a"
+        },
+        {
+          "path": "scripts/ci/check_ci_contract.py",
+          "selected_blob": "cf50296173d0068ab556b3ca062c9deb104841fb"
+        },
+        {
+          "path": "scripts/ci/check_collected_unit_empty_v1.py",
+          "selected_blob": "e21e8b05889d9264d022656e13097d512841c79c"
+        },
+        {
+          "path": "scripts/ci/check_pq_research_integration.py",
+          "selected_blob": "1713d998a1de359146cf2d1891f348a4b73ce31e"
+        },
+        {
+          "path": "scripts/ci/ci_job.sh",
+          "selected_blob": "3ac93a88d3fd36937a199051e6353444965c9b7a"
+        },
+        {
+          "path": "scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-history-epoch-v1-native.yml",
+          "selected_blob": "4407770349745a3e1d3cc0ad0a1fd0e63fc12ca4"
+        },
+        {
+          "path": "scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-native-campaign-qualification.yml",
+          "selected_blob": "48da7db69981dc732f13b78e3358c79d94ef12c0"
+        },
+        {
+          "path": "scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-pure-admission-daa-v2.yml",
+          "selected_blob": "02220e4c42f7752329c9c334c6276cecd604c417"
+        },
+        {
+          "path": "scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-pure-history-raw-joint.yml",
+          "selected_blob": "a08b60199f5e39312db34151c6dfad4add551248"
+        },
+        {
+          "path": "scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/manifest.json",
+          "selected_blob": "5ad0ef5e93b270720badc4a17bf87b485fd304d3"
+        },
+        {
+          "path": "scripts/ci/test_ci_contract.py",
+          "selected_blob": "de6f4639f4aae2d6ab38867d8db0bb29475dfd6a"
+        },
+        {
+          "path": "scripts/ci/test_collected_unit_empty_v1.py",
+          "selected_blob": "8ed2a26a759a65625c25054286b4cc9ec0d505c2"
+        },
+        {
+          "path": "scripts/ci/test_pq_research_integration.py",
+          "selected_blob": "845872ee42e84495517cd80e7731364ba49948e2"
+        }
+      ],
+      "patch": {
+        "path": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T04-implementation/commit.patch",
+        "bytes": 151461,
+        "sha256": "177ac2e70280c41c400e20be252d9c97fd5e4bb51b61866409fb477c45d8eeec"
+      },
+      "source_provenance": "exact original branches named in component preservation receipts; only the reviewed compatible components selected",
+      "qualification_granted": false,
+      "original_tip": "b23c0ef85f058507185b2ccb404a5d648e447c06",
+      "original_parent": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "disposition": "compatible_readonly_reader_port_with_one_current_trap_and_frozen_inactive_historical_inputs",
+      "original_current_standalone_tests_passed": 20,
+      "original_historical_trap_test_passed": 1,
+      "all_original_test_method_asts_preserved": 21,
+      "current_trap_shell_cases_passed": 6,
+      "historical_trap_shell_cases_passed": 36,
+      "all_component_tests_passed": 23,
+      "retired_workflows_restored": false,
+      "systemd_or_cgroup_mutation_executed": false
+    },
+    {
+      "id": "T05",
+      "summary": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T05-implementation/commit-summary.json",
+      "summary_sha256": "af3465bd907a9f173797172ca152a974858d28f3391e8a26c17f3279a0dc8c19",
+      "commit": "c34a729ac27da5787398a646457256fdddab132f",
+      "tree": "1992dfedba841c3fe15f107f6e8bfcbdcf287a23",
+      "parent": "bc24ed14f01167233f9a53306a4d82ba77049c42",
+      "path_blobs": [
+        {
+          "path": "config/pon/pq-cross-branch-corpus-v1.json",
+          "selected_blob": "279a0459260c3028118ae754bcca4fda13ff12d6"
+        },
+        {
+          "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+          "selected_blob": "49abbce497a04d183d9bb7cc908367ce8e355d22"
+        },
+        {
+          "path": "scripts/ci/check_ci_contract.py",
+          "selected_blob": "07091cbeeebdb37141907b5a246330f1f23d7d66"
+        },
+        {
+          "path": "scripts/ci/check_pq_research_integration.py",
+          "selected_blob": "6db3657ed82b06de182c260fac354060484c0755"
+        },
+        {
+          "path": "scripts/ci/ci_job.sh",
+          "selected_blob": "ba703105bcbec8a368c08309abd0e8705ddd4a40"
+        },
+        {
+          "path": "scripts/ci/collect_pinned_codeql_metadata_v1.py",
+          "selected_blob": "bd4b98f504ad756d09b2176367cec691bb5e2091"
+        },
+        {
+          "path": "scripts/ci/read_codeql_semantic_observations_v1.py",
+          "selected_blob": "8a2013b437ecbcd1745aca7f70c80e0f492a84d6"
+        },
+        {
+          "path": "scripts/ci/test_ci_contract.py",
+          "selected_blob": "5f295c239e71b07c6fd5111bb064febcc9c48a50"
+        },
+        {
+          "path": "scripts/ci/test_codeql_semantic_observations_v1.py",
+          "selected_blob": "2ab766684e6c6d1a2cfbe14b1032000f9cceebf0"
+        },
+        {
+          "path": "scripts/ci/test_collect_pinned_codeql_metadata_v1.py",
+          "selected_blob": "140da79d4026661fb50969419a03c21bc91228f1"
+        },
+        {
+          "path": "scripts/ci/test_pq_research_integration.py",
+          "selected_blob": "334a4e4c584dea236daefd376099bcf80590c90c"
+        }
+      ],
+      "patch": {
+        "path": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T05-implementation/commit.patch",
+        "bytes": 55405,
+        "sha256": "d28f4c1eaec7580aef9ee62e7e8180c385c3cf6ab3c7aa7dad51938e067962ce"
+      },
+      "source_provenance": "exact original branches named in component preservation receipts; only the reviewed compatible components selected",
+      "qualification_granted": false,
+      "original_tip": "b23c0ef85f058507185b2ccb404a5d648e447c06",
+      "original_parent": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "disposition": "compatible_original_byte_collector_and_pure_semantic_closure_port",
+      "original_collector_tests_passed": 26,
+      "original_semantic_tests_passed": 4,
+      "collector_and_26_tests_byte_identical": true,
+      "pure_functions_and_constants_exact_source_segments": 6,
+      "original_semantic_test_method_asts_preserved": 4,
+      "old_runner_querypack_toolchain_or_scanning_workflow_restored": false,
+      "codeql_scan_executed": false
+    }
+  ],
+  "host_provisioning_native_campaign_or_remote_write_performed": false,
+  "original_4_second_required_gate_failure_preserved": true,
+  "final_combined_head_qualification_claimed": false,
+  "qualifications_remain_false": true
+}

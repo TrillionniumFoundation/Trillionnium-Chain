@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/workspace/scratch/8a53368149fe/pq-reproducer/fixed-native-tests",
+    "ingress::pq_network::live_admission_tests",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+  "returncode": 0,
+  "failure": null,
+  "elapsed_ns": 4610948518,
+  "timeout_seconds": 300,
+  "files": {
+    "stdout.log": {
+      "bytes": 1331,
+      "sha256": "9db4d7888ad4cf8a49d3ebaf13066446123208ad7a84c4d7188b79b06c04f17e"
+    },
+    "stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "profile_overrides": false,
+  "acceptance_granted": false
+}

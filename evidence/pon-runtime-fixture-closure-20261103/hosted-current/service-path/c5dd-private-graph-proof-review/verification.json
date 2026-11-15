@@ -1,0 +1,13 @@
+{
+  "schema": "static-review-package-verification-v1",
+  "indexed_files": 11,
+  "indexed_hashes_match": true,
+  "source_pairs_match": 17,
+  "pinned_crate_checksums_match": true,
+  "first_reader_exit": 1,
+  "corrected_reader_exit": 0,
+  "native_runs": 0,
+  "source_or_target_writes": false,
+  "review_sha256": "b647356732459f91005ffb5db013fe8ad401a233d95d0df0871f717e0c89dc3c",
+  "artifact_index_sha256": "4f88bd4c316c8b6d2a4b7a2ff6bc4d8040f44430ca33895372253c34dbc9f54e"
+}

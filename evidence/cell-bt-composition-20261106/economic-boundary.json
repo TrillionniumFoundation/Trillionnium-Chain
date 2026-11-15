@@ -1,0 +1,446 @@
+{
+  "schema": "trnm-cell-custody-economic-boundary-review-v1",
+  "kind": "source_review_not_a_funding_or_execution_capability",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "commit": "c16c7e0e93cf5eb14f6dac140358441a47d82c7e",
+  "tree": "4aa564ca3eb297f6afa03976f16eacb6ffd7554a",
+  "reviewed_working_files_equal_committed_blobs": true,
+  "scope": "Exact H2 native task transitions, current-chain funding/payment observations, M12 local resource/effect journal, and Cell retention/release adapters. Absence statements below apply to these reviewed paths, not to every experimental module in the repository.",
+  "files": [
+    {
+      "id": "native_executor",
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "bytes": 149837,
+      "sha256": "d7ae3ab6b2084696b43b075604ed260074c023088ba3edcf5e145444e29b838d",
+      "git_blob_oid": "abd64c5146305aa55370a5f5990c6758c8314694",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c16c7e0e93cf5eb14f6dac140358441a47d82c7e/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
+    },
+    {
+      "id": "funding_snapshot",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/funding.rs",
+      "bytes": 3030,
+      "sha256": "7cd7a6155e35d413ba1b31678a3e36c6d9f18bc2d6b49f3e9032a0146f34bc11",
+      "git_blob_oid": "71ab19e0ad93dc6962ca91c74c2f5c606e6fdca2",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c16c7e0e93cf5eb14f6dac140358441a47d82c7e/trillionnium/crates/trnm-pon-node/src/store/funding.rs"
+    },
+    {
+      "id": "payment_observer",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+      "bytes": 21603,
+      "sha256": "a2096b5dc5f8ec8290fe638e127e138000d932af34c74798e2a64a0d598d4da9",
+      "git_blob_oid": "377064d416246f6c29c2cbd7e3481fd3e3498819",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c16c7e0e93cf5eb14f6dac140358441a47d82c7e/trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs"
+    },
+    {
+      "id": "local_budget",
+      "path": "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+      "bytes": 68208,
+      "sha256": "dd200bb218967dc4456ad48cf81a4e648202f0ed6593972717d7ee4a5eafe4db",
+      "git_blob_oid": "f8e5c12c3015d4c25eb8d5cc87ee944578405783",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c16c7e0e93cf5eb14f6dac140358441a47d82c7e/trillionnium/crates/trnm-service-settlement/src/native_budget.rs"
+    },
+    {
+      "id": "cell_adapter",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+      "bytes": 16522,
+      "sha256": "f6afb07b4549342cd150db6283c4f380cf6980d61dbd25d6c0dc2f8740bc4871",
+      "git_blob_oid": "17d1933b0f4dc8e56d24debbb25b9f4c2f8e64d6",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c16c7e0e93cf5eb14f6dac140358441a47d82c7e/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs"
+    },
+    {
+      "id": "release_adapter",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service/release.rs",
+      "bytes": 22559,
+      "sha256": "81cb9c33029b882779d41ac1698035859276c7adb31eb4639faf85a0c1c2e3d5",
+      "git_blob_oid": "daef6ff4c8a52745c29f552f99757fa8bb1636ce",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c16c7e0e93cf5eb14f6dac140358441a47d82c7e/trillionnium/crates/trnm-pon-node/src/store/storage_service/release.rs"
+    },
+    {
+      "id": "physical_retention",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+      "bytes": 72494,
+      "sha256": "7dd1731e34c57eaadaa1c323872f548d545cc6157de0fba8d852b606a60d1260",
+      "git_blob_oid": "d73bc05d617e8148ee49e6650ccfb435d4d72b1b",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c16c7e0e93cf5eb14f6dac140358441a47d82c7e/trillionnium/crates/trnm-data-availability/src/cell/retention.rs"
+    },
+    {
+      "id": "release_catalog",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/archive.rs",
+      "bytes": 47454,
+      "sha256": "2bee4959b92123208046d60e6a04dd7527b4dd7fb9a86664a1f24daae492901b",
+      "git_blob_oid": "7749eafe3e8ec128090f44b609ec1789b521d65d",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c16c7e0e93cf5eb14f6dac140358441a47d82c7e/trillionnium/crates/trnm-data-availability/src/cell/archive.rs"
+    }
+  ],
+  "native_task_money_paths": [
+    {
+      "command": "TaskReserve",
+      "tag": 2,
+      "authorization": "Native authenticated sender becomes task owner; task-instance-v3 identity binds network, parameters, owner, nonce, provider, budget and deadline.",
+      "implemented_effect": "Debits the owner's native account by the positive budget and creates a reserved task row carrying that remaining amount.",
+      "references": [
+        {
+          "file_id": "native_executor",
+          "symbols": [
+            "apply_task_command, tag 2",
+            "View::debit",
+            "View::deadline"
+          ]
+        }
+      ]
+    },
+    {
+      "command": "TaskCancel",
+      "tag": 3,
+      "authorization": "Task owner only; task status must still be reserved.",
+      "implemented_effect": "Credits the task's remaining amount back to the owner, zeros remaining and sets cancelled.",
+      "references": [
+        {
+          "file_id": "native_executor",
+          "symbols": [
+            "apply_task_command, tag 3",
+            "View::credit"
+          ]
+        }
+      ]
+    },
+    {
+      "command": "TaskReceipt",
+      "tag": 4,
+      "authorization": "Named provider only; reserved status; height strictly before native task deadline; nonzero output.",
+      "implemented_effect": "Binds the output and changes status to receipt. It performs no provider credit; ordinary TaskCancel no longer accepts this status.",
+      "references": [
+        {
+          "file_id": "native_executor",
+          "symbols": [
+            "apply_task_command, tag 4"
+          ]
+        }
+      ]
+    },
+    {
+      "command": "TaskAccept",
+      "tag": 5,
+      "authorization": "Task owner only; receipt status; exact recorded output; height strictly before native task deadline.",
+      "implemented_effect": "Executes the actual native provider credit from the remaining task escrow, then zeros remaining and sets settled.",
+      "references": [
+        {
+          "file_id": "native_executor",
+          "symbols": [
+            "apply_task_command, tag 5",
+            "View::credit"
+          ]
+        }
+      ]
+    },
+    {
+      "command": "Mandatory expiry",
+      "authorization": "Native mandatory transition; remaining positive and native deadline at or before current height, processed under mandatory_expiry_per_block.",
+      "implemented_effect": "Credits remaining to the original owner, zeros remaining and sets expired. This also applies to an unsettled receipt; receipt alone does not guarantee provider payment.",
+      "references": [
+        {
+          "file_id": "native_executor",
+          "symbols": [
+            "mandatory",
+            "credit_state"
+          ]
+        }
+      ]
+    }
+  ],
+  "observations_and_local_journal": [
+    {
+      "id": "current_funding",
+      "confirmed": "Node obtains the active chain anchor and exact monetary row from its verified native state. New Storage/Repair work accepts live native task funding in reserved or receipt status; an existing receipt output must match the claim subject.",
+      "references": [
+        {
+          "file_id": "funding_snapshot",
+          "symbols": [
+            "Node::native_funding_observation",
+            "NativeFundingOwnerV1 for Node"
+          ]
+        },
+        {
+          "file_id": "local_budget",
+          "symbols": [
+            "funding",
+            "Funding::check_subject",
+            "BudgetState::check_funding"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "actual_payment_proof",
+      "confirmed": "Node payment observation reexecutes the specific admitted native transition and checks branch/header context, exact task/source, command transaction, subject, beneficiary and amount. Net account differences or an ACK alone are not payment proof.",
+      "references": [
+        {
+          "file_id": "payment_observer",
+          "symbols": [
+            "Node::native_payment_observation",
+            "PaymentObserver::observe_command",
+            "PaymentObserver::record"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "payment_journal",
+      "confirmed": "record_native_payment observes and records an already executed native payment. reobserve_native_payment checks the same recorded monetary effect against the current native chain without rewriting its historical observation. Neither API issues money or grants execution authority.",
+      "references": [
+        {
+          "file_id": "local_budget",
+          "symbols": [
+            "NativeBudgetStoreV1::record_native_payment",
+            "NativeBudgetStoreV1::reobserve_native_payment"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "monotonic_costs",
+      "confirmed": "M12 is a local resource/effect journal, not a second monetary ledger. Reorganization can invalidate current funding or payment branch membership but does not erase admitted resource costs, pending effect identities or past payment observations. Pending/Done recovery cannot redispatch the old effect.",
+      "references": [
+        {
+          "file_id": "local_budget",
+          "symbols": [
+            "module documentation",
+            "NativeBudgetStoreV1::check_effects",
+            "NativeBudgetStoreV1::begin_effect_in_window",
+            "NativeBudgetStoreV1::reobserve_completed_effect"
+          ]
+        }
+      ]
+    }
+  ],
+  "cell_custody_boundaries": [
+    {
+      "id": "adapter_money_authority",
+      "implemented": "The Cell adapters bind existing native task funding to local budgets/effects and retained payload readback.",
+      "not_implemented_by_reviewed_adapter": "They do not submit TaskReserve, TaskReceipt or TaskAccept; they do not add a cancellation-resistant native lock or pay the provider. M12 monetary_reservation/committed_units are local holds, not additional native account debits or provider credits.",
+      "references": [
+        {
+          "file_id": "cell_adapter",
+          "symbols": [
+            "module documentation",
+            "Node::retain_native_cell",
+            "Node::repair_native_cell"
+          ]
+        },
+        {
+          "file_id": "release_adapter",
+          "symbols": [
+            "Node::retain_native_cell_release",
+            "Node::repair_native_cell_release_member"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "byte_time",
+      "implemented": "Storage admission checks retained_bytes and checked manifest_size * (retain_until_height - retain_from_height), with the term ending no later than the budget deadline.",
+      "not_implemented_by_reviewed_adapter": "The byte-block reservation is neither a per-byte-time native price schedule nor proof of future service or a schedule of periodic native payouts.",
+      "references": [
+        {
+          "file_id": "cell_adapter",
+          "symbols": [
+            "Node::retain_native_cell"
+          ]
+        },
+        {
+          "file_id": "release_adapter",
+          "symbols": [
+            "storage_binding"
+          ]
+        },
+        {
+          "file_id": "local_budget",
+          "symbols": [
+            "NativeBudgetResourcesV1::Storage"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "renewal_and_exit",
+      "implemented": "Exact immutable contracts bind terms and identities. New release roots may share the exact old physical contracts; they cannot silently extend those old terms. A declared successor is checked by freshly reading its actual payload, matching manifest and ensuring coverage beyond the current height before retirement.",
+      "not_implemented_by_reviewed_adapter": "There is no automatic funded renewal or native cancellation/exit settlement workflow. A different store ID alone does not attest independent administration or a distinct failure domain.",
+      "references": [
+        {
+          "file_id": "physical_retention",
+          "symbols": [
+            "CellRetentionContractV1",
+            "CellRetentionStoreV1::retire_controlled"
+          ]
+        },
+        {
+          "file_id": "release_adapter",
+          "symbols": [
+            "module documentation"
+          ]
+        },
+        {
+          "file_id": "release_catalog",
+          "symbols": [
+            "CellReleaseRetentionContractV2::validate",
+            "CellReleaseRetentionStoreV2::reserve_release"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "retrieval_challenges",
+      "implemented": "Acknowledgement, verify/readback, reconciliation and repair check actual retained bytes and hashes under the supplied bounds.",
+      "not_implemented_by_reviewed_adapter": "These local checks are not a scheduled WAN retrieval challenge protocol, independent replica proof, byte-time service accrual or challenge-conditioned native settlement.",
+      "references": [
+        {
+          "file_id": "physical_retention",
+          "symbols": [
+            "CellRetentionStoreV1::acknowledge",
+            "CellRetentionStoreV1::verify",
+            "CellRetentionStoreV1::reconcile_acknowledgement_controlled"
+          ]
+        },
+        {
+          "file_id": "cell_adapter",
+          "symbols": [
+            "module documentation"
+          ]
+        },
+        {
+          "file_id": "release_catalog",
+          "symbols": [
+            "module documentation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "repair",
+      "implemented": "Repair uses a separate current native task/Repair budget and immutable operation/subject, with CPU, download/upload and attempt reservations, actual retained-byte verification and original-effect reconciliation.",
+      "not_implemented_by_reviewed_adapter": "Repair resource charges and completion readback do not themselves pay a repair provider. The local driver does not establish ongoing network replica monitoring or guaranteed repair finance.",
+      "references": [
+        {
+          "file_id": "cell_adapter",
+          "symbols": [
+            "Node::repair_native_cell",
+            "RepairCpuOwner",
+            "native_cell_repair_subject_v1"
+          ]
+        },
+        {
+          "file_id": "release_adapter",
+          "symbols": [
+            "Node::repair_native_cell_release_member"
+          ]
+        },
+        {
+          "file_id": "physical_retention",
+          "symbols": [
+            "CellRetentionStoreV1::repair_controlled",
+            "CellRetentionStoreV1::reconcile_repair_controlled"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cancel_and_reorg",
+      "implemented": "New effects reobserve genuine current funding. Original pending/completed effects and local physical history remain bound to their original identities across reorg; native payment currentness must be reobserved separately.",
+      "not_implemented_by_reviewed_adapter": "Local retention cannot prevent the native owner cancelling a still-reserved task or guarantee funding survives a reorganization. It does not define compensation, reorg finality insurance or automatic settlement of future custody obligations.",
+      "references": [
+        {
+          "file_id": "native_executor",
+          "symbols": [
+            "apply_task_command, tag 3",
+            "mandatory"
+          ]
+        },
+        {
+          "file_id": "local_budget",
+          "symbols": [
+            "NativeBudgetStoreV1::check_effects",
+            "NativeBudgetStoreV1::reobserve_native_payment"
+          ]
+        },
+        {
+          "file_id": "cell_adapter",
+          "symbols": [
+            "module documentation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rooted_gc",
+      "implemented": "Root retirement requires an acknowledged, expired, verified duty and settled original repairs. Physical object reclamation is separate and holds the catalog writer while rejecting references from every other live/pending/expired-but-not-retired root; original per-object terms and any required successor still apply. Node retirement reobserves original completed effects against the current native chain.",
+      "not_implemented_by_reviewed_adapter": "Expiry alone does not reclaim bytes. A general historical-version selection/rollback-window policy and CURRENT/FinalUse authorization remain external; these reviewed APIs do not infer them. Local retirement does not rewind after a later reorganization.",
+      "references": [
+        {
+          "file_id": "release_catalog",
+          "symbols": [
+            "CellReleaseRetentionStoreV2::retire_release",
+            "CellReleaseRetentionStoreV2::retire_object",
+            "module documentation"
+          ]
+        },
+        {
+          "file_id": "release_adapter",
+          "symbols": [
+            "Node::completed_release_anchor",
+            "Node::retire_native_cell_release",
+            "Node::retire_native_cell_release_member"
+          ]
+        },
+        {
+          "file_id": "cell_adapter",
+          "symbols": [
+            "Node::retire_native_cell"
+          ]
+        },
+        {
+          "file_id": "physical_retention",
+          "symbols": [
+            "CellRetentionStoreV1::retire_controlled"
+          ]
+        }
+      ]
+    }
+  ],
+  "change_in_this_candidate": {
+    "implemented": "Single-Cell retention and repair now call the existing read-only check_effects before creating local monetary/resource holds or the first physical reservation. Known inadmissible first work is refused before those reservations, while exact admitted Pending/Done recovery remains available after the service window.",
+    "scope_limits": [
+      "No native task command, monetary rule, signed namespace or stored monetary schema was changed.",
+      "This admission fix does not refund an already admitted unknown effect, lock cancellation, initiate provider payment or prove future byte-time custody."
+    ],
+    "references": [
+      {
+        "file_id": "cell_adapter",
+        "symbols": [
+          "Node::retain_native_cell",
+          "Node::repair_native_cell"
+        ]
+      },
+      {
+        "file_id": "local_budget",
+        "symbols": [
+          "NativeBudgetStoreV1::check_effects"
+        ]
+      }
+    ]
+  },
+  "remaining_protocol_and_authorization_work": [
+    "Specify immutable custody pricing, term extension, renewal and exit/refund/penalty rules, including their relation to native task deadlines and actual byte-time service.",
+    "Specify fresh retrievability challenges, independent failure-domain evidence, repair triggers and repair finance, with bounded proof/admission costs.",
+    "Define cancellation and reorganization settlement semantics in the native authority where stronger guarantees require consensus enforcement; a local M12 record cannot provide those guarantees.",
+    "Compose actual authorized provider receipt and owner acceptance/payment transactions where the existing native task protocol is sufficient; bind them to exact custody/service evidence and current-chain observations.",
+    "Specify retained version roots and rollback windows before GC, without turning transport, local readback or catalog presence into release selection or FinalUse authority."
+  ],
+  "claims": {
+    "complete_paid_custody_market": false,
+    "cancellation_and_reorg_resistant_storage_escrow": false,
+    "provider_paid_by_cell_adapter": false,
+    "independent_replica_availability_proven": false,
+    "long_term_retrieval_challenge_settlement_complete": false,
+    "production_activation": false
+  }
+}

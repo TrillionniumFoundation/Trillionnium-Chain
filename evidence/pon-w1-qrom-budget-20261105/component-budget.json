@@ -1,0 +1,1141 @@
+{
+  "generator": "scripts/w1_security_budget.py",
+  "hash_and_sampling_arithmetic": {
+    "canonical_digest_codomain_cardinality": "269903886087112502248563194479599378733081424069948722819014098894255554561",
+    "canonical_digest_codomain_log2_display_only": 247.2551247706009,
+    "ideal_iid_field_sampler": {
+      "all_zero_probability": {
+        "denominator": "16428751811598850197311699254593454081",
+        "negative_log2_display_only": 123.62756238530045,
+        "numerator": "1"
+      },
+      "draws_per_random_bits_call": 4,
+      "full_transcript_distance": null,
+      "max_fri_query_index_bits_from_source_cycle_bound": 26,
+      "single_call_total_variation_at_26_bits": {
+        "denominator": "1102514871014340860447763990885413485212073984",
+        "negative_log2_display_only": 123.62756240679829,
+        "numerator": "67108863"
+      },
+      "uniform_independent_field_outputs_assumed_not_proved": true
+    },
+    "poseidon2_digest_field_elements": 8,
+    "poseidon2_digest_stored_bits": 256,
+    "qrom_random_oracle_sigma_instantiated": null
+  },
+  "limitations": [
+    "The toy formula depends on upstream conjectures; a failed budget is not an attack.",
+    "The upstream proven formula is a component estimator, not a verified RBR or QROM theorem for this implementation.",
+    "The sqrt enclosure evaluates the mathematical formula conservatively; it does not emulate f32 rounding.",
+    "The four-archive scope omits SHA-extension semantics, all accepted recursive programs, transcript/hash instantiation and composition.",
+    "po2 24 diagnoses the source-wide comment; it is above the saved profile default control-set maximum po2 22.",
+    "A per-proof failure budget and a quantum query/work budget are different inputs; the latter is not supplied or inferred.",
+    "Sampler bias is proved only for an ideal iid field-output experiment; concrete sponge and adaptive transcript assumptions remain unproved."
+  ],
+  "parameters": {
+    "base_field_modulus": 2013265921,
+    "circuits": {
+      "recursion": {
+        "biggest_combo": 6,
+        "n_trace_polys": 163,
+        "tap_count": 643,
+        "w_accum": 12,
+        "w_code": 23,
+        "w_data": 128
+      },
+      "rv32im": {
+        "biggest_combo": 6,
+        "n_trace_polys": 315,
+        "tap_count": 790,
+        "w_accum": 103,
+        "w_code": 1,
+        "w_data": 211
+      }
+    },
+    "extension_degree": 4,
+    "extension_field_cardinality": "16428751811598850197311699254593454081",
+    "extension_field_log2_display_only": 123.62756238530045,
+    "fri_fold": 16,
+    "fri_min_degree": 256,
+    "fri_queries": 50,
+    "inverse_rate": 4,
+    "max_degree_assumed_by_upstream_calculator": 5,
+    "max_degree_independently_proved_for_every_accepted_program": false
+  },
+  "qualification": {
+    "attack_on_complete_w1_established": false,
+    "consensus_admission": false,
+    "full_recursive_security_bits": null,
+    "production_qualified": false,
+    "qrom_theorem_instantiated": false,
+    "quantum_security_bits": null
+  },
+  "query_only_necessary_condition": {
+    "changes_the_locked_verifier": true,
+    "queries_for_strictly_smaller_fri_term": 65,
+    "sufficient_for_full_toy_sum": false
+  },
+  "research_target": {
+    "error_budget": {
+      "denominator": "340282366920938463463374607431768211456",
+      "negative_log2_display_only": 128.0,
+      "numerator": "1"
+    },
+    "failure_probability_bits": 128,
+    "protocol_policy_adopted": false,
+    "quantum_query_work_factor_bits": null
+  },
+  "rows": [
+    {
+      "circuit": "rv32im",
+      "po2": 13,
+      "trace_rows": 8192,
+      "upstream_proven_list_decoding_formula": {
+        "error_upper_rational": {
+          "denominator": "11697317666492447705728373420796398448857270313316187942726612881081591103500282128531828554663229286898031276274077361458192852069827403107443824156906721747639701410190955625753821854065490257931927552",
+          "negative_log2_display_only": 47.77386317254559,
+          "numerator": "48609422399596813944212694559224851319061246368682560824486457789500459425935720505449809195652065065397079596248974655881633836157163764693718346038125646383526793639675828897528408076557"
+        },
+        "folding_rounds": 2,
+        "m_plus": 6,
+        "meets_research_error_budget": false,
+        "query_increase_alone_excluded_by_subtotal": true,
+        "query_independent_subtotal": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 55.5866164882558,
+          "numerator": "303644660341012017216"
+        },
+        "terms": {
+          "deep_ali_upper": {
+            "denominator": "5742322571808972657335647606208604323931750234569913433152161664789240678071007096378864561396175974546435529677",
+            "negative_log2_display_only": 104.59400625100858,
+            "numerator": "187566095039861052625031320169754740977782107900565836871390637638988104583872512"
+          },
+          "fri_folding": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 97.58312423905517,
+            "numerator": "69208128"
+          },
+          "fri_proximity": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 55.586616488256126,
+            "numerator": "303644660340942176256"
+          },
+          "fri_queries": {
+            "denominator": "2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376",
+            "negative_log2_display_only": 47.780294032077336,
+            "numerator": "8427465705576358635622839396817058164066162897508094340376170494254080797249"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 104.35609935739608,
+            "numerator": "632832"
+          }
+        }
+      },
+      "upstream_toy_model": {
+        "error": {
+          "denominator": "20825917094973893605231378065074041501500880201369514014780168339456",
+          "negative_log2_display_only": 99.93121954634917,
+          "numerator": "17230962943893081294149062434161164289"
+        },
+        "meets_research_error_budget": false,
+        "minimum_queries_with_other_parameters_unchanged": null,
+        "query_increase_alone_can_meet_budget": false,
+        "query_independent_floor": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 104.35609707765374,
+          "numerator": "632833"
+        },
+        "terms": {
+          "constraints": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 123.62756238530045,
+            "numerator": "1"
+          },
+          "fri_queries": {
+            "denominator": "1267650600228229401496703205376",
+            "negative_log2_display_only": 100.0,
+            "numerator": "1"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 104.35609935739608,
+            "numerator": "632832"
+          }
+        }
+      }
+    },
+    {
+      "circuit": "rv32im",
+      "po2": 14,
+      "trace_rows": 16384,
+      "upstream_proven_list_decoding_formula": {
+        "error_upper_rational": {
+          "denominator": "8505583414837777368864847572270929123318644870566611745003379484851653866071850559334795417802097522061146203146051384521757273616642868867442100576090411336496782942549353855373315043301467805840310272",
+          "negative_log2_display_only": 47.75474082016456,
+          "numerator": "35817451877117059414037258398641436241841617974649323370669761283503494466427957537895532672408406607340961836480887348815387629093594600650307364353225963772039939744065298167783000736313"
+        },
+        "folding_rounds": 2,
+        "m_plus": 6,
+        "meets_research_error_budget": false,
+        "query_increase_alone_excluded_by_subtotal": true,
+        "query_independent_subtotal": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 53.58661648825597,
+          "numerator": "1214578641363908384832"
+        },
+        "terms": {
+          "deep_ali_upper": {
+            "denominator": "4175470396032485494878753454740773024230600405999392946392292866418030869662192688635633522622022286527047739897",
+            "negative_log2_display_only": 103.59958856600048,
+            "numerator": "271720066422306230227051717119247021811577797080424238160234530179446498054373376"
+          },
+          "fri_folding": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 96.58314625233064,
+            "numerator": "138414144"
+          },
+          "fri_proximity": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 53.586616488256126,
+            "numerator": "1214578641363768705024"
+          },
+          "fri_queries": {
+            "denominator": "2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376",
+            "negative_log2_display_only": 47.780294032077336,
+            "numerator": "8427465705576358635622839396817058164066162897508094340376170494254080797249"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 103.35609935739608,
+            "numerator": "1265664"
+          }
+        }
+      },
+      "upstream_toy_model": {
+        "error": {
+          "denominator": "20825917094973893605231378065074041501500880201369514014780168339456",
+          "negative_log2_display_only": 99.86556962343057,
+          "numerator": "18033172808536712162757024117025669121"
+        },
+        "meets_research_error_budget": false,
+        "minimum_queries_with_other_parameters_unchanged": null,
+        "query_increase_alone_can_meet_budget": false,
+        "query_independent_floor": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 103.35609821752446,
+          "numerator": "1265665"
+        },
+        "terms": {
+          "constraints": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 123.62756238530045,
+            "numerator": "1"
+          },
+          "fri_queries": {
+            "denominator": "1267650600228229401496703205376",
+            "negative_log2_display_only": 100.0,
+            "numerator": "1"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 103.35609935739608,
+            "numerator": "1265664"
+          }
+        }
+      }
+    },
+    {
+      "circuit": "rv32im",
+      "po2": 18,
+      "trace_rows": 262144,
+      "upstream_proven_list_decoding_formula": {
+        "error_upper_rational": {
+          "denominator": "93545361183220521751756505172169003142662216171616870591780957700560385155474968182300208822430221108169178612790035009663949610817456793142892196994045496681717670390050970665321936761062005194723688448",
+          "negative_log2_display_only": 45.301399529382365,
+          "numerator": "2157457018143385729230315735509970219309839338097342563084871069995641518090806287527024723344685871051587008965990606394398081484531213203933316898961362265590371993709388269338264253854845"
+        },
+        "folding_rounds": 3,
+        "m_plus": 6,
+        "meets_research_error_budget": false,
+        "query_increase_alone_excluded_by_subtotal": true,
+        "query_independent_subtotal": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 45.58661648825611,
+          "numerator": "310932132189128130628704"
+        },
+        "terms": {
+          "deep_ali_upper": {
+            "denominator": "45922292129346346892861748131235983181283890744869154727574976922468819024596615378391632280117583605776440992573",
+            "negative_log2_display_only": 99.6048434991352,
+            "numerator": "47640679840439771877417118696922096603080322908288864363506221757834110736411918336"
+          },
+          "fri_folding": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 91.9982043893603,
+            "numerator": "3321891936"
+          },
+          "fri_proximity": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 45.586616488256126,
+            "numerator": "310932132189124788486144"
+          },
+          "fri_queries": {
+            "denominator": "2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376",
+            "negative_log2_display_only": 47.780294032077336,
+            "numerator": "8427465705576358635622839396817058164066162897508094340376170494254080797249"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 99.35609935739608,
+            "numerator": "20250624"
+          }
+        }
+      },
+      "upstream_toy_model": {
+        "error": {
+          "denominator": "20825917094973893605231378065074041501500880201369514014780168339456",
+          "negative_log2_display_only": 98.64242084639453,
+          "numerator": "42099468747845638220995874602960814081"
+        },
+        "meets_research_error_budget": false,
+        "minimum_queries_with_other_parameters_unchanged": null,
+        "query_increase_alone_can_meet_budget": false,
+        "query_independent_floor": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 99.35609928615408,
+          "numerator": "20250625"
+        },
+        "terms": {
+          "constraints": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 123.62756238530045,
+            "numerator": "1"
+          },
+          "fri_queries": {
+            "denominator": "1267650600228229401496703205376",
+            "negative_log2_display_only": 100.0,
+            "numerator": "1"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 99.35609935739608,
+            "numerator": "20250624"
+          }
+        }
+      }
+    },
+    {
+      "circuit": "rv32im",
+      "po2": 20,
+      "trace_rows": 1048576,
+      "upstream_proven_list_decoding_formula": {
+        "error_upper_rational": {
+          "denominator": "11693069786484522645613672334087106874260384709171774401977385808708680637094009977758554841512696845550659340605574170707687772050871746426552243500449019763666169917497558988328661885789536963260317696",
+          "negative_log2_display_only": 41.56703968034242,
+          "numerator": "3589242213554334495404203560529276136141339103487960176671585165876080814648252084410939485412732540283317028595756653681583833010114585986462340911235642996797829105934790136388866932879091"
+        },
+        "folding_rounds": 3,
+        "m_plus": 6,
+        "meets_research_error_budget": false,
+        "query_increase_alone_excluded_by_subtotal": true,
+        "query_independent_subtotal": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 41.586616488256126,
+          "numerator": "4974914115026009984339040"
+        },
+        "terms": {
+          "deep_ali_upper": {
+            "denominator": "5740237247810145280586494083828988777743420948403299129154765813959371704989472084922167025582677664840029291571",
+            "negative_log2_display_only": 97.60510679524253,
+            "numerator": "23815788623972732822644959760559413820646227219697787142935734490073343545177014272"
+          },
+          "fri_folding": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 89.99820542125558,
+            "numerator": "13287558240"
+          },
+          "fri_proximity": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 41.586616488256126,
+            "numerator": "4974914115025996615778304"
+          },
+          "fri_queries": {
+            "denominator": "2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376",
+            "negative_log2_display_only": 47.780294032077336,
+            "numerator": "8427465705576358635622839396817058164066162897508094340376170494254080797249"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 97.35609935739608,
+            "numerator": "81002496"
+          }
+        }
+      },
+      "upstream_toy_model": {
+        "error": {
+          "denominator": "20825917094973893605231378065074041501500880201369514014780168339456",
+          "negative_log2_display_only": 97.14198066803257,
+          "numerator": "119111615753634201607360196157953277953"
+        },
+        "meets_research_error_budget": false,
+        "minimum_queries_with_other_parameters_unchanged": null,
+        "query_increase_alone_can_meet_budget": false,
+        "query_independent_floor": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 97.35609933958557,
+          "numerator": "81002497"
+        },
+        "terms": {
+          "constraints": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 123.62756238530045,
+            "numerator": "1"
+          },
+          "fri_queries": {
+            "denominator": "1267650600228229401496703205376",
+            "negative_log2_display_only": 100.0,
+            "numerator": "1"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 97.35609935739608,
+            "numerator": "81002496"
+          }
+        }
+      }
+    },
+    {
+      "circuit": "rv32im",
+      "po2": 22,
+      "trace_rows": 4194304,
+      "upstream_proven_list_decoding_formula": {
+        "error_upper_rational": {
+          "denominator": "46772178783981671644488018692768415178312603473138893493197165240265524611158704270480461596464780494171847698744955474824110431430515621205313180912744178207307450314780407830660659320945927942320422912",
+          "negative_log2_display_only": 37.58538512417749,
+          "numerator": "226808475837636985410027687514023551944197002631620745608645763483733140973641307105495577892552657204588946522996044783354850331784857366779363580733283658655964611882040751872306057824249393"
+        },
+        "folding_rounds": 4,
+        "m_plus": 6,
+        "meets_research_error_budget": false,
+        "query_increase_alone_excluded_by_subtotal": true,
+        "query_independent_subtotal": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 37.586616488256126,
+          "numerator": "79598625840416017043427456"
+        },
+        "terms": {
+          "deep_ali_upper": {
+            "denominator": "22960899722618139051986599355046805826256098541616647772630165783265557443094925459168218101194812972627104407537",
+            "negative_log2_display_only": 95.605172627468,
+            "numerator": "381034412798575112698064957817344083206763898577378014131702246285798649430716448768"
+          },
+          "fri_folding": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 87.58316817995068,
+            "numerator": "70866964608"
+          },
+          "fri_proximity": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 37.586616488256126,
+            "numerator": "79598625840415945852452864"
+          },
+          "fri_queries": {
+            "denominator": "2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376",
+            "negative_log2_display_only": 47.780294032077336,
+            "numerator": "8427465705576358635622839396817058164066162897508094340376170494254080797249"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 95.35609935739608,
+            "numerator": "324009984"
+          }
+        }
+      },
+      "upstream_toy_model": {
+        "error": {
+          "denominator": "20825917094973893605231378065074041501500880201369514014780168339456",
+          "negative_log2_display_only": 95.2995175344472,
+          "numerator": "427160203776788455152817482377923133441"
+        },
+        "meets_research_error_budget": false,
+        "minimum_queries_with_other_parameters_unchanged": null,
+        "query_increase_alone_can_meet_budget": false,
+        "query_independent_floor": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 95.35609935294345,
+          "numerator": "324009985"
+        },
+        "terms": {
+          "constraints": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 123.62756238530045,
+            "numerator": "1"
+          },
+          "fri_queries": {
+            "denominator": "1267650600228229401496703205376",
+            "negative_log2_display_only": 100.0,
+            "numerator": "1"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 95.35609935739608,
+            "numerator": "324009984"
+          }
+        }
+      }
+    },
+    {
+      "circuit": "rv32im",
+      "po2": 24,
+      "trace_rows": 16777216,
+      "upstream_proven_list_decoding_formula": {
+        "error_upper_rational": {
+          "denominator": "654155995712712139974122049470914645697035851201725179701621276361971914403597444212224302784154154841497286844642044047207455052078615703775483570243277903154492545904459658215432605040758923752112128",
+          "negative_log2_display_only": 33.58653949720281,
+          "numerator": "50713722172363687776709972095531794387745253775433232472714921544040721021372071377992426109314811820101323433726373465699334555119152348946362893452201330746844592201915980688809443066025089"
+        },
+        "folding_rounds": 4,
+        "m_plus": 6,
+        "meets_research_error_budget": false,
+        "query_increase_alone_excluded_by_subtotal": true,
+        "query_independent_subtotal": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 33.586616488256126,
+          "numerator": "1273578013446655418403131520"
+        },
+        "terms": {
+          "deep_ali_upper": {
+            "denominator": "321131292383860279356360618446122285131687062436574179427610068941904018417872184656338905121911573366441138753",
+            "negative_log2_display_only": 93.60518908603683,
+            "numerator": "21316355888242123612979096963884892236412305697506650019182370343885590915115384832"
+          },
+          "fri_folding": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 85.58316824444417,
+            "numerator": "283467845760"
+          },
+          "fri_proximity": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 33.586616488256126,
+            "numerator": "1273578013446655133639245824"
+          },
+          "fri_queries": {
+            "denominator": "2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376",
+            "negative_log2_display_only": 47.780294032077336,
+            "numerator": "8427465705576358635622839396817058164066162897508094340376170494254080797249"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 93.35609935739608,
+            "numerator": "1296039936"
+          }
+        }
+      },
+      "upstream_toy_model": {
+        "error": {
+          "denominator": "20825917094973893605231378065074041501500880201369514014780168339456",
+          "negative_log2_display_only": 93.34174450343718,
+          "numerator": "1659354555869405469334646627257802555393"
+        },
+        "meets_research_error_budget": false,
+        "minimum_queries_with_other_parameters_unchanged": null,
+        "query_increase_alone_can_meet_budget": false,
+        "query_independent_floor": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 93.35609935628293,
+          "numerator": "1296039937"
+        },
+        "terms": {
+          "constraints": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 123.62756238530045,
+            "numerator": "1"
+          },
+          "fri_queries": {
+            "denominator": "1267650600228229401496703205376",
+            "negative_log2_display_only": 100.0,
+            "numerator": "1"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 93.35609935739608,
+            "numerator": "1296039936"
+          }
+        }
+      }
+    },
+    {
+      "circuit": "recursion",
+      "po2": 13,
+      "trace_rows": 8192,
+      "upstream_proven_list_decoding_formula": {
+        "error_upper_rational": {
+          "denominator": "11697317666492447705728373420796398448857270313316187942726612881081591103500282128531828554663229286898031276274077361458192852069827403107443824156906721747639701410190955625753821854065490257931927552",
+          "negative_log2_display_only": 47.776928641419886,
+          "numerator": "48506245727670343584870766380946675204360135514733855906017766422688183400939228089161527001835321535236849511332437648139042229204701925546144801864318302604889411683687751201578241126669"
+        },
+        "folding_rounds": 2,
+        "m_plus": 6,
+        "meets_research_error_budget": false,
+        "query_increase_alone_excluded_by_subtotal": true,
+        "query_independent_subtotal": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 56.52238768344054,
+          "numerator": "158734178796825552960"
+        },
+        "terms": {
+          "deep_ali_upper": {
+            "denominator": "5742322571808972657335647606208604323931750234569913433152161664789240678071007096378864561396175974546435529677",
+            "negative_log2_display_only": 104.59932649688977,
+            "numerator": "186875678842688124838936372703638534020599916199683194939775487513380617008971776"
+          },
+          "fri_folding": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 97.58312423905517,
+            "numerator": "69208128"
+          },
+          "fri_proximity": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 56.52238768344117,
+            "numerator": "158734178796756271104"
+          },
+          "fri_queries": {
+            "denominator": "2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376",
+            "negative_log2_display_only": 47.780294032077336,
+            "numerator": "8427465705576358635622839396817058164066162897508094340376170494254080797249"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 107.45763738385814,
+            "numerator": "73728"
+          }
+        }
+      },
+      "upstream_toy_model": {
+        "error": {
+          "denominator": "20825917094973893605231378065074041501500880201369514014780168339456",
+          "negative_log2_display_only": 99.99181581467484,
+          "numerator": "16522214422703077322854649685222621185"
+        },
+        "meets_research_error_budget": false,
+        "minimum_queries_with_other_parameters_unchanged": null,
+        "query_increase_alone_can_meet_budget": false,
+        "query_independent_floor": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 107.45761781618701,
+          "numerator": "73729"
+        },
+        "terms": {
+          "constraints": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 123.62756238530045,
+            "numerator": "1"
+          },
+          "fri_queries": {
+            "denominator": "1267650600228229401496703205376",
+            "negative_log2_display_only": 100.0,
+            "numerator": "1"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 107.45763738385814,
+            "numerator": "73728"
+          }
+        }
+      }
+    },
+    {
+      "circuit": "recursion",
+      "po2": 14,
+      "trace_rows": 16384,
+      "upstream_proven_list_decoding_formula": {
+        "error_upper_rational": {
+          "denominator": "8505583414837777368864847572270929123318644870566611745003379484851653866071850559334795417802097522061146203146051384521757273616642868867442100576090411336496782942549353855373315043301467805840310272",
+          "negative_log2_display_only": 47.76687931752008,
+          "numerator": "35517356482751628568375728380960928910585627362239917858308359696247421507935638285284985980906785596518319406168243929502447966348597024827547805444953739721580945649759088918112463847993"
+        },
+        "folding_rounds": 2,
+        "m_plus": 6,
+        "meets_research_error_budget": false,
+        "query_increase_alone_excluded_by_subtotal": true,
+        "query_independent_subtotal": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 54.522387683440854,
+          "numerator": "634936715187163646016"
+        },
+        "terms": {
+          "deep_ali_upper": {
+            "denominator": "4175470396032485494878753454740773024230600405999392946392292866418030869662192688635633522622022286527047739897",
+            "negative_log2_display_only": 103.6022570382039,
+            "numerator": "271217945551635010018982664416617054367328035851842297655269514939037709812891648"
+          },
+          "fri_folding": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 96.58314625233064,
+            "numerator": "138414144"
+          },
+          "fri_proximity": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 54.52238768344117,
+            "numerator": "634936715187025084416"
+          },
+          "fri_queries": {
+            "denominator": "2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376",
+            "negative_log2_display_only": 47.780294032077336,
+            "numerator": "8427465705576358635622839396817058164066162897508094340376170494254080797249"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 106.45763738385814,
+            "numerator": "147456"
+          }
+        }
+      },
+      "upstream_toy_model": {
+        "error": {
+          "denominator": "20825917094973893605231378065074041501500880201369514014780168339456",
+          "negative_log2_display_only": 99.9836779052625,
+          "numerator": "16615675766156704220168198619148582913"
+        },
+        "meets_research_error_budget": false,
+        "minimum_queries_with_other_parameters_unchanged": null,
+        "query_increase_alone_can_meet_budget": false,
+        "query_independent_floor": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 106.4576275999894,
+          "numerator": "147457"
+        },
+        "terms": {
+          "constraints": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 123.62756238530045,
+            "numerator": "1"
+          },
+          "fri_queries": {
+            "denominator": "1267650600228229401496703205376",
+            "negative_log2_display_only": 100.0,
+            "numerator": "1"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 106.45763738385814,
+            "numerator": "147456"
+          }
+        }
+      }
+    },
+    {
+      "circuit": "recursion",
+      "po2": 18,
+      "trace_rows": 262144,
+      "upstream_proven_list_decoding_formula": {
+        "error_upper_rational": {
+          "denominator": "93545361183220521751756505172169003142662216171616870591780957700560385155474968182300208822430221108169178612790035009663949610817456793142892196994045496681717670390050970665321936761062005194723688448",
+          "negative_log2_display_only": 46.018377197726636,
+          "numerator": "1312533412593998337736550939180555874876062284803858255495007366111448722175704251106547875698752444796192677174562613914029338296657578092128764645896609220745962171750308560664694518805629"
+        },
+        "folding_rounds": 3,
+        "m_plus": 6,
+        "meets_research_error_budget": false,
+        "query_increase_alone_excluded_by_subtotal": true,
+        "query_independent_subtotal": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 46.52238768344114,
+          "numerator": "162543799087881745861728"
+        },
+        "terms": {
+          "deep_ali_upper": {
+            "denominator": "45922292129346346892861748131235983181283890744869154727574976922468819024596615378391632280117583605776440992573",
+            "negative_log2_display_only": 99.60501077093261,
+            "numerator": "47635156510862388455128359117193167374314880337554256714900787591000510964042825728"
+          },
+          "fri_folding": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 91.9982043893603,
+            "numerator": "3321891936"
+          },
+          "fri_proximity": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 46.52238768344117,
+            "numerator": "162543799087878421610496"
+          },
+          "fri_queries": {
+            "denominator": "2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376",
+            "negative_log2_display_only": 47.780294032077336,
+            "numerator": "8427465705576358635622839396817058164066162897508094340376170494254080797249"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 102.45763738385814,
+            "numerator": "2359296"
+          }
+        }
+      },
+      "upstream_toy_model": {
+        "error": {
+          "denominator": "20825917094973893605231378065074041501500880201369514014780168339456",
+          "negative_log2_display_only": 99.75871562491838,
+          "numerator": "19419516069765511139574666636927434753"
+        },
+        "meets_research_error_budget": false,
+        "minimum_queries_with_other_parameters_unchanged": null,
+        "query_increase_alone_can_meet_budget": false,
+        "query_independent_floor": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 102.4576367723644,
+          "numerator": "2359297"
+        },
+        "terms": {
+          "constraints": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 123.62756238530045,
+            "numerator": "1"
+          },
+          "fri_queries": {
+            "denominator": "1267650600228229401496703205376",
+            "negative_log2_display_only": 100.0,
+            "numerator": "1"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 102.45763738385814,
+            "numerator": "2359296"
+          }
+        }
+      }
+    },
+    {
+      "circuit": "recursion",
+      "po2": 20,
+      "trace_rows": 1048576,
+      "upstream_proven_list_decoding_formula": {
+        "error_upper_rational": {
+          "denominator": "11693069786484522645613672334087106874260384709171774401977385808708680637094009977758554841512696845550659340605574170707687772050871746426552243500449019763666169917497558988328661885789536963260317696",
+          "negative_log2_display_only": 42.48516798527157,
+          "numerator": "1899409506260792835505299493082861614552604282377558060306341991383482000582303157250901822660309758547726471190165049389209398917703890302178015963538747784557696922795143784160188095934195"
+        },
+        "folding_rounds": 3,
+        "m_plus": 6,
+        "meets_research_error_budget": false,
+        "query_increase_alone_excluded_by_subtotal": true,
+        "query_independent_subtotal": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 42.52238768344117,
+          "numerator": "2600700785406068042763360"
+        },
+        "terms": {
+          "deep_ali_upper": {
+            "denominator": "5740237247810145280586494083828988777743420948403299129154765813959371704989472084922167025582677664840029291571",
+            "negative_log2_display_only": 97.60514861936508,
+            "numerator": "23815098207775559894858864813093297832299068819467878665639727619543502332945760256"
+          },
+          "fri_folding": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 89.99820542125558,
+            "numerator": "13287558240"
+          },
+          "fri_proximity": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 42.52238768344117,
+            "numerator": "2600700785406054745767936"
+          },
+          "fri_queries": {
+            "denominator": "2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376",
+            "negative_log2_display_only": 47.780294032077336,
+            "numerator": "8427465705576358635622839396817058164066162897508094340376170494254080797249"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 100.45763738385814,
+            "numerator": "9437184"
+          }
+        }
+      },
+      "upstream_toy_model": {
+        "error": {
+          "denominator": "20825917094973893605231378065074041501500880201369514014780168339456",
+          "negative_log2_display_only": 99.21074830151106,
+          "numerator": "28391805041313693281675364293819760641"
+        },
+        "meets_research_error_budget": false,
+        "minimum_queries_with_other_parameters_unchanged": null,
+        "query_increase_alone_can_meet_budget": false,
+        "query_independent_floor": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 100.45763723098469,
+          "numerator": "9437185"
+        },
+        "terms": {
+          "constraints": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 123.62756238530045,
+            "numerator": "1"
+          },
+          "fri_queries": {
+            "denominator": "1267650600228229401496703205376",
+            "negative_log2_display_only": 100.0,
+            "numerator": "1"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 100.45763738385814,
+            "numerator": "9437184"
+          }
+        }
+      }
+    },
+    {
+      "circuit": "recursion",
+      "po2": 22,
+      "trace_rows": 4194304,
+      "upstream_proven_list_decoding_formula": {
+        "error_upper_rational": {
+          "denominator": "46772178783981671644488018692768415178312603473138893493197165240265524611158704270480461596464780494171847698744955474824110431430515621205313180912744178207307450314780407830660659320945927942320422912",
+          "negative_log2_display_only": 38.52003310814109,
+          "numerator": "118659414632978910940002404156395217340268695528622342171369558930022175619988635495729935348327549842433565652424167035283894389475570731332360509547448637649591671116719473824099494852372017"
+        },
+        "folding_rounds": 4,
+        "m_plus": 6,
+        "meets_research_error_budget": false,
+        "query_increase_alone_excluded_by_subtotal": true,
+        "query_independent_subtotal": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 38.52238768344117,
+          "numerator": "41611212566496946837000320"
+        },
+        "terms": {
+          "deep_ali_upper": {
+            "denominator": "22960899722618139051986599355046805826256098541616647772630165783265557443094925459168218101194812972627104407537",
+            "negative_log2_display_only": 95.60518308388453,
+            "numerator": "381031651133786420986920578027479621897351615714249059882992977208869024730829553664"
+          },
+          "fri_folding": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 87.58316817995068,
+            "numerator": "70866964608"
+          },
+          "fri_proximity": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 38.52238768344117,
+            "numerator": "41611212566496875932286976"
+          },
+          "fri_queries": {
+            "denominator": "2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376",
+            "negative_log2_display_only": 47.780294032077336,
+            "numerator": "8427465705576358635622839396817058164066162897508094340376170494254080797249"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 98.45763738385814,
+            "numerator": "37748736"
+          }
+        }
+      },
+      "upstream_toy_model": {
+        "error": {
+          "denominator": "20825917094973893605231378065074041501500880201369514014780168339456",
+          "negative_log2_display_only": 98.0318313786382,
+          "numerator": "64280960927506421850078154921389064193"
+        },
+        "meets_research_error_budget": false,
+        "minimum_queries_with_other_parameters_unchanged": null,
+        "query_increase_alone_can_meet_budget": false,
+        "query_independent_floor": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 98.45763734563977,
+          "numerator": "37748737"
+        },
+        "terms": {
+          "constraints": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 123.62756238530045,
+            "numerator": "1"
+          },
+          "fri_queries": {
+            "denominator": "1267650600228229401496703205376",
+            "negative_log2_display_only": 100.0,
+            "numerator": "1"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 98.45763738385814,
+            "numerator": "37748736"
+          }
+        }
+      }
+    },
+    {
+      "circuit": "recursion",
+      "po2": 24,
+      "trace_rows": 16777216,
+      "upstream_proven_list_decoding_formula": {
+        "error_upper_rational": {
+          "denominator": "654155995712712139974122049470914645697035851201725179701621276361971914403597444212224302784154154841497286844642044047207455052078615703775483570243277903154492545904459658215432605040758923752112128",
+          "negative_log2_display_only": 34.522240409848564,
+          "numerator": "26512546633555716466938763174568211313768743353543971883524247155253310360220908968506057865097053168509641085043954985225626004758160386496164893768011159577424163120489924647802524694385793"
+        },
+        "folding_rounds": 4,
+        "m_plus": 6,
+        "meets_research_error_budget": false,
+        "query_increase_alone_excluded_by_subtotal": true,
+        "query_independent_subtotal": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 34.52238768344117,
+          "numerator": "665779401063950298535432320"
+        },
+        "terms": {
+          "deep_ali_upper": {
+            "denominator": "321131292383860279356360618446122285131687062436574179427610068941904018417872184656338905121911573366441138753",
+            "negative_log2_display_only": 93.60519170016511,
+            "numerator": "21316317263559764288347707036753920897482139544891737633073136281561525682895323136"
+          },
+          "fri_folding": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 85.58316824444417,
+            "numerator": "283467845760"
+          },
+          "fri_proximity": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 34.52238768344117,
+            "numerator": "665779401063950014916591616"
+          },
+          "fri_queries": {
+            "denominator": "2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376",
+            "negative_log2_display_only": 47.780294032077336,
+            "numerator": "8427465705576358635622839396817058164066162897508094340376170494254080797249"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 96.45763738385814,
+            "numerator": "150994944"
+          }
+        }
+      },
+      "upstream_toy_model": {
+        "error": {
+          "denominator": "20825917094973893605231378065074041501500880201369514014780168339456",
+          "negative_log2_display_only": 96.33883821085949,
+          "numerator": "207837584472277336123689317431666278401"
+        },
+        "meets_research_error_budget": false,
+        "minimum_queries_with_other_parameters_unchanged": null,
+        "query_increase_alone_can_meet_budget": false,
+        "query_independent_floor": {
+          "denominator": "16428751811598850197311699254593454081",
+          "negative_log2_display_only": 96.45763737430354,
+          "numerator": "150994945"
+        },
+        "terms": {
+          "constraints": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 123.62756238530045,
+            "numerator": "1"
+          },
+          "fri_queries": {
+            "denominator": "1267650600228229401496703205376",
+            "negative_log2_display_only": 100.0,
+            "numerator": "1"
+          },
+          "plonk_plookup": {
+            "denominator": "16428751811598850197311699254593454081",
+            "negative_log2_display_only": 96.45763738385814,
+            "numerator": "150994944"
+          }
+        }
+      }
+    }
+  ],
+  "schema": "TRNM-W1-COMPONENT-SECURITY-BUDGET1",
+  "scope": "Exact-source component formula evaluation; no whole-proof or QROM security claim.",
+  "source_comment_check": {
+    "comment_rv32im_po2_20_bits": 97,
+    "comment_rv32im_po2_24_bits": 95,
+    "computed_rv32im_po2_20_display": 97.14198066803257,
+    "computed_rv32im_po2_24_display": 93.34174450343718,
+    "po2_24_comment_reproduced": false
+  },
+  "source_commit": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9",
+  "source_integrity": [
+    {
+      "archive_matches_lock_and_pin": true,
+      "archive_sha256": "21c0c921e5e2d44197940d387a45e29c6165e318b5a168fdfdbd50f50ba03678",
+      "files": [
+        {
+          "bytes": 1762,
+          "path": "src/lib.rs",
+          "sha256": "107521d2426442fbc9358b7b9ae5650be92d670ea85e9a34aec7b9e9cc27dc6d"
+        },
+        {
+          "bytes": 12957,
+          "path": "src/adapter.rs",
+          "sha256": "1d1aca1dd7cc4c12477e0d887a3edfa0825b822efee671170ec667c7dd65ca1d"
+        },
+        {
+          "bytes": 8222,
+          "path": "src/taps.rs",
+          "sha256": "f5f69bcbed730cc8acd43da89dd4e37ca7560b9eb991a37238482f3655f7e402"
+        },
+        {
+          "bytes": 11127,
+          "path": "src/prove/soundness.rs",
+          "sha256": "6d814ec839d0f4b33f275cdfa2d382f4ce455957b1ec7932d9bc717ccf732921"
+        },
+        {
+          "bytes": 2509,
+          "path": "src/core/hash/poseidon2/rng.rs",
+          "sha256": "8c5868a8b258896835e2c3c93a84cfe01167f1a446e4d74a3b7be94ae1bf8017"
+        },
+        {
+          "bytes": 13790,
+          "path": "src/core/hash/poseidon2/mod.rs",
+          "sha256": "a2993a2e29fa33345a6a9ce0b4f192efe7412746b92b172b0eed8ce78ee8471f"
+        },
+        {
+          "bytes": 5802,
+          "path": "src/verify/fri.rs",
+          "sha256": "a601cfad5d01b294f934d697d6d832c57662e4778eac20ac549b1da53d11e377"
+        }
+      ],
+      "package": "risc0-zkp-3.0.5"
+    },
+    {
+      "archive_matches_lock_and_pin": true,
+      "archive_sha256": "d6eb2d2b2c6cac0e43cbb2202daacee1a2f24d0dfa03fd08887a11dc6defdcc1",
+      "files": [
+        {
+          "bytes": 28372,
+          "path": "src/field/baby_bear.rs",
+          "sha256": "df3e77d606dd74d78fb6b6f3dbbe72455c5ed5b091f7a74de8c049e85b857ff3"
+        }
+      ],
+      "package": "risc0-core-3.0.2"
+    },
+    {
+      "archive_matches_lock_and_pin": true,
+      "archive_sha256": "40dd640122abcc67d4d4e4f055c68cbc3ad2efb8589c65c2b23d354632971b60",
+      "files": [
+        {
+          "bytes": 90720,
+          "path": "src/taps.rs",
+          "sha256": "d32cbf5350d6f724cf3582ef92fb6c392f993b51ee89c5384f7ad79bab43ce83"
+        }
+      ],
+      "package": "risc0-circuit-recursion-4.0.5"
+    },
+    {
+      "archive_matches_lock_and_pin": true,
+      "archive_sha256": "cb11231aa4b74bcc0c8d16597893fbd7ea6f6a9ebbc35e16bfd06b467c7ee104",
+      "files": [
+        {
+          "bytes": 111221,
+          "path": "src/zirgen/taps.rs",
+          "sha256": "b423f7bd396cd4a7ea25c326ba077dca7f96dd144fd8e44d9474bfb2489818d2"
+        }
+      ],
+      "package": "risc0-circuit-rv32im-4.0.5"
+    }
+  ],
+  "source_lock_sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865"
+}

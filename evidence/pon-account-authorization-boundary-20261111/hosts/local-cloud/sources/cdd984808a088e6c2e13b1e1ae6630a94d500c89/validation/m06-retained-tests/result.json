@@ -1,0 +1,34 @@
+{
+  "id": "m06-retained-tests",
+  "argv": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-mvcc-fee",
+    "--all-features",
+    "--tests",
+    "--",
+    "--test-threads=1"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 357.3789076820003,
+  "finished_utc": "2026-11-11T01:49:48.477847+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "4d38646636e350ab976fe3a11a4a028909e2b4bc396c31f6030eb6e34610c14e",
+  "stderr_sha256": "0658c3946af92fa83a595e22c68c039a84d083d6b19dff927b2bd31a4d478056",
+  "pass": true,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 334.08997,
+    "system_cpu_seconds": 18.819587000000002,
+    "maximum_rss_kib": 724304,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

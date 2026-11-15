@@ -1,0 +1,610 @@
+{
+  "controller_timeout_does_not_replace_inner_harness_timeout": true,
+  "jobs": [
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794239449409,
+      "created_utc": "2026-11-09T15:50:49.409000+00:00",
+      "exit_code": 2,
+      "idempotency_key": "chain-hepta-481716-m5-source-01",
+      "job_id": "1a1c1014940-336d-45",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_source.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 4380,
+          "path": "controller-logs/rog_m5_source.stdout.log",
+          "sha256": "69262589a7da629a5d960b6f17e2f0eb5ed5a26a27306f0970104de9437f982a"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "f4b6c14769e8eb52015d09edfb1f0e0510dbbab69c51beb69c75b570502c52c6",
+      "role": "rog_m5_source",
+      "state": "failed"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794239542970,
+      "created_utc": "2026-11-09T15:52:22.970000+00:00",
+      "exit_code": 2,
+      "idempotency_key": "chain-hepta-481716-m5-source-02",
+      "job_id": "1a1c102b6ba-336d-46",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_source2.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 5852,
+          "path": "controller-logs/rog_m5_source2.stdout.log",
+          "sha256": "9ad32ed87e40a8f3b32faf7388eb67d1374d9209aac69cb3ed50a03ffe6560cb"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "1faa2b9c23d7ca056edc3fe3186647b3e334652b17e462670647d98354236ca3",
+      "role": "rog_m5_source2",
+      "state": "failed"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794239656726,
+      "created_utc": "2026-11-09T15:54:16.726000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-source-03",
+      "job_id": "1a1c1047316-336d-49",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_source3.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 6913,
+          "path": "controller-logs/rog_m5_source3.stdout.log",
+          "sha256": "f018448f6e68e6102eef4b5ead74ef2d0fc78bb101b7ae6e038e5690e76bca52"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "7c53fde93b99aabb900106887733193105f386aafd5b486a37a6a454b108b2e1",
+      "role": "rog_m5_source3",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794239710643,
+      "created_utc": "2026-11-09T15:55:10.643000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-retained-da-01",
+      "job_id": "1a1c10545b3-336d-4a",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_da.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 10841,
+          "path": "controller-logs/rog_m5_da.stdout.log",
+          "sha256": "5e7d66db29dfafc0be8f31017040d8236860f0a978e7104d399673312187d28b"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "de91acc6d3806011f9ded9d033637625398b468910721804d29d72cd29f69ebd",
+      "role": "rog_m5_da",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794239881749,
+      "created_utc": "2026-11-09T15:58:01.749000+00:00",
+      "exit_code": 2,
+      "idempotency_key": "chain-hepta-481716-m5-retained-other-four-01",
+      "job_id": "1a1c107e215-336d-4e",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_four.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 76351,
+          "path": "controller-logs/rog_m5_four.stdout.log",
+          "sha256": "a0b5e89d879ea9ca54b02623b2eb6d321402fd0a25ae60411b2307636e0c836d"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "b56c9e9ebba2bc83f368c4420c2cdfefba70533ca83dd9e21f850e3bfd49b907",
+      "role": "rog_m5_four",
+      "state": "failed"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794240532143,
+      "created_utc": "2026-11-09T16:08:52.143000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-running-test-context-01",
+      "job_id": "1a1c111ceaf-336d-5c",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_context.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 3061,
+          "path": "controller-logs/rog_m5_context.stdout.log",
+          "sha256": "ec2d3a3babd88c87046fb1add1f149c2c6c096a2e245bcd0a102ad71db1ed42d"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "7e40b3249dc4f473f50686810219066f284feb5f3a92ee0bf66150e85203ad8d",
+      "role": "rog_m5_context",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794240766325,
+      "created_utc": "2026-11-09T16:12:46.325000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-post-four-identities-01",
+      "job_id": "1a1c1156175-336d-60",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_postfour.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 4521,
+          "path": "controller-logs/rog_m5_postfour.stdout.log",
+          "sha256": "abfaf792ba5034ce9167ce89fcdf9739b55fc59794010b99da04f20fda54f0a0"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "4dd83c4198c1c51480590bc38bf05f71731840c11ec44ef4acb55049eef644db",
+      "role": "rog_m5_postfour",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794240831608,
+      "created_utc": "2026-11-09T16:13:51.608000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-five-package-build-01",
+      "job_id": "1a1c1166078-336d-63",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_unified.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 3541,
+          "path": "controller-logs/rog_m5_unified.stdout.log",
+          "sha256": "b7e07b88d1749acf7775c0cfa7bf9b82513805ab6993c05a657eec760c996b02"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "a03759a5c99fc849eaf85f47610a332c12188586b2357264668991fc9024212c",
+      "role": "rog_m5_unified",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794241044324,
+      "created_utc": "2026-11-09T16:17:24.324000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-direct-da-01",
+      "job_id": "1a1c1199f64-336d-6d",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_direct_da.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 2023,
+          "path": "controller-logs/rog_m5_direct_da.stdout.log",
+          "sha256": "985a69bd309e726d02f8a484aa81719af52c88cd752ed2aedfb27ebf49f41e03"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "4ed00138f3eef622ff7f035728afc89a4bff23ff5d3b2de61ef1736801afac28",
+      "role": "rog_m5_direct_da",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794241130995,
+      "created_utc": "2026-11-09T16:18:50.995000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-direct-node-01",
+      "job_id": "1a1c11af1f3-336d-6f",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_direct_node.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 2741,
+          "path": "controller-logs/rog_m5_direct_node.stdout.log",
+          "sha256": "705a85bc14a701fbd3e29e506458483d5895e54e43693f22a30e5c66fd0898b0"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "225e3464fdda0ce4ea3d79de1166dd78fd17ee12c4ba7b08bac352195902d03b",
+      "role": "rog_m5_direct_node",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794241679717,
+      "created_utc": "2026-11-09T16:27:59.717000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-direct-crypto-01",
+      "job_id": "1a1c1235165-e62c-3",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_direct_crypto.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 1897,
+          "path": "controller-logs/rog_m5_direct_crypto.stdout.log",
+          "sha256": "3cccdeb763eacbcb427cb1736866a1b8215ba45d30a33d0dc70c18637e2e384f"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "a892728be8dea043a54dbfcbe6a2d7308177501b0f7e5ade504f0671c2385260",
+      "role": "rog_m5_direct_crypto",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794241707075,
+      "created_utc": "2026-11-09T16:28:27.075000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-direct-protocol-01",
+      "job_id": "1a1c123bc43-e62c-4",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_direct_protocol.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 1873,
+          "path": "controller-logs/rog_m5_direct_protocol.stdout.log",
+          "sha256": "4f8c10653d22c26882b65704f7fda9d65e52cac2baf3a0995d698680584cfe54"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "f9db64df38898fd3cf15f39e0eebfb36cd2bd13374f34c1328c6595f2753b60c",
+      "role": "rog_m5_direct_protocol",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794241753481,
+      "created_utc": "2026-11-09T16:29:13.481000+00:00",
+      "exit_code": 2,
+      "idempotency_key": "chain-hepta-481716-m5-direct-release-01",
+      "job_id": "1a1c1247189-e62c-8",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_direct_release.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 1909,
+          "path": "controller-logs/rog_m5_direct_release.stdout.log",
+          "sha256": "c51acf00d86b8e6f2da63945aa2da82210da6e68c7fc5f837b471ea72f69be2c"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "f488730fc36b0d42af02e806a18da69df749ffa82d73ce4df180882cb81f7aef",
+      "role": "rog_m5_direct_release",
+      "state": "failed"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794241827827,
+      "created_utc": "2026-11-09T16:30:27.827000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-check-clippy-01",
+      "job_id": "1a1c12593f3-e62c-a",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_check.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 3461,
+          "path": "controller-logs/rog_m5_check.stdout.log",
+          "sha256": "57998de8a8691c1d94fd83ac137ad7d2c329ac96ed578aeec3babf3c3b6a9cb2"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "f1526620189042e6299ffb81e06ab3450e1c91976d2ddd2c2fdb314b8a73a02c",
+      "role": "rog_m5_check",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794242023838,
+      "created_utc": "2026-11-09T16:33:43.838000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-provider-probe-01",
+      "job_id": "1a1c128919e-e62c-15",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_provider_probe.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 6439,
+          "path": "controller-logs/rog_m5_provider_probe.stdout.log",
+          "sha256": "c71251b41ab29d3b43468a9ab88024f643efb34651ab2ef49c0187d51fe4ee25"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "5eb78bdcbee5f492405ff9a80311ca80edd29d1e4fde80de802af082c78fd90a",
+      "role": "rog_m5_provider_probe",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794242353691,
+      "created_utc": "2026-11-09T16:39:13.691000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-provider-prepare-01",
+      "job_id": "1a1c12d9a1b-e62c-1e",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_provider_prepare.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 6327,
+          "path": "controller-logs/rog_m5_provider_prepare.stdout.log",
+          "sha256": "952fb50c12266b6b00c087fb9c30b775cade87617e253e90ec1ded4e0982e2df"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "dfa679ea24192a6671cee9143966479d1b37e01307b1197f7d526fd4aa3f7382",
+      "role": "rog_m5_provider_prepare",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794242658018,
+      "created_utc": "2026-11-09T16:44:18.018000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-canonical359-build-01",
+      "job_id": "1a1c1323ee2-e62c-28",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_canonical_build.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 5246,
+          "path": "controller-logs/rog_m5_canonical_build.stdout.log",
+          "sha256": "673a6340458ac5ed0fc96ce228b4bfa5be20329736a23ef2c17c5bcd86805313"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "46683da5b26d4733e47e09d1a64ca0291500bea8d2ff0f3d783bee9223adcd33",
+      "role": "rog_m5_canonical_build",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794242831258,
+      "created_utc": "2026-11-09T16:47:11.258000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-canonical359-release-01",
+      "job_id": "1a1c134e39a-e62c-2c",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_canonical_release.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 2013,
+          "path": "controller-logs/rog_m5_canonical_release.stdout.log",
+          "sha256": "0e6950e8a64b95fc0ef8e5a0c9cc2261d52766cc3e7c059fda15802b459ad8d6"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "b78a950ae840a7c2dd9e7bcc707982c4ae81cccac9bc8c9fd6b7d5c3283a42cb",
+      "role": "rog_m5_canonical_release",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794242955900,
+      "created_utc": "2026-11-09T16:49:15.900000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-canonical359-da-01",
+      "job_id": "1a1c136ca7c-e62c-33",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_canonical_da.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 2123,
+          "path": "controller-logs/rog_m5_canonical_da.stdout.log",
+          "sha256": "fab976d9054de149114fd4c46bc7cfdc50ff7f7499cec85ea2c3cc6061567e21"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "9b08a223ee5a60428748352d26e7839a9fe22ca4902298d183bf992f32cac0a0",
+      "role": "rog_m5_canonical_da",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794243089465,
+      "created_utc": "2026-11-09T16:51:29.465000+00:00",
+      "exit_code": 2,
+      "idempotency_key": "chain-hepta-481716-m5-canonical359-node-01",
+      "job_id": "1a1c138d439-e62c-37",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_canonical_node.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 2854,
+          "path": "controller-logs/rog_m5_canonical_node.stdout.log",
+          "sha256": "20d83ad789b5c004b4cb7933da5cf72a2a71a0e9ab7ea0f261398383d3c2d0a1"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "a03d106cc340dd5eba9c1752cd4f2b6f53339ed49c01fc5d592cc370903157f4",
+      "role": "rog_m5_canonical_node",
+      "state": "failed"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794243545502,
+      "created_utc": "2026-11-09T16:59:05.502000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-canonical359-crypto-01",
+      "job_id": "1a1c13fc99e-e62c-45",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_canonical_crypto.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 1998,
+          "path": "controller-logs/rog_m5_canonical_crypto.stdout.log",
+          "sha256": "3ca9e636bbcc7fcab6f384169704c9abb010dc1167bfc2d17d6b941d4d3a65ea"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "8ef3c0ec0ad8ed183793a41e9cbd29f3fa8e10f41c13a8171c58c5cc23c067ce",
+      "role": "rog_m5_canonical_crypto",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794243580807,
+      "created_utc": "2026-11-09T16:59:40.807000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-canonical359-protocol-01",
+      "job_id": "1a1c1405387-e62c-46",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_canonical_protocol.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 1974,
+          "path": "controller-logs/rog_m5_canonical_protocol.stdout.log",
+          "sha256": "65b8d8203a2567e6cbbc95df14da1439b332fe15672afe84b87a1bb6cbf8c9a5"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "69443fff6be18784d7c61e20b421a783912ff1427a93d56d8525052c1a83149d",
+      "role": "rog_m5_canonical_protocol",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794243630488,
+      "created_utc": "2026-11-09T17:00:30.488000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-canonical359-check-clippy-01",
+      "job_id": "1a1c1411598-e62c-47",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_canonical_check.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 4312,
+          "path": "controller-logs/rog_m5_canonical_check.stdout.log",
+          "sha256": "a695d25220b35ebc102cb4330ebbe4bcc3bb4f5f325b596cbc634d872695a54b"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "348ed25c81cda3730d0b8a9bf6e783e5cda691e7ec1814d88fbc54a9b7a6b27a",
+      "role": "rog_m5_canonical_check",
+      "state": "succeeded"
+    },
+    {
+      "controller_timed_out": false,
+      "created_unix_ms": 1794243713851,
+      "created_utc": "2026-11-09T17:01:53.851000+00:00",
+      "exit_code": 0,
+      "idempotency_key": "chain-hepta-481716-m5-native-collect-01",
+      "job_id": "1a1c1425b3b-e62c-4a",
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "path": "controller-logs/rog_m5_collect.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 556,
+          "path": "controller-logs/rog_m5_collect.stdout.log",
+          "sha256": "c138ef9a1c205da2bac3e80e87860738fcc2dbc66e958b318f943892373462df"
+        }
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "request_digest": "80bc7506e0f1918a58253e33ac041d4e7737aea8d91819eca4640a2ad4c9e299",
+      "role": "rog_m5_collect",
+      "state": "succeeded"
+    }
+  ],
+  "original_start_status_requests_and_streams_in": "controller-records-01.tar.gz",
+  "schema": "m5-all-native-stage-terminal-index-v1",
+  "terminal_byte_counts_equal_local_bytes": true,
+  "terminal_job_count": 24,
+  "verified_stdout_stderr_stream_count": 48
+}

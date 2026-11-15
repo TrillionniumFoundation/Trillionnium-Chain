@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/run_work_time_contract_v1.py",
+    "--output-dir",
+    "/workspace/scratch/7f73fe002713/daa-final-validation/work-time",
+    "--campaign",
+    "--frozen-baseline-source",
+    "/workspace/scratch/7f73fe002713/frozen-work-baseline"
+  ],
+  "cwd": "/workspace/scratch/7f73fe002713/chain-daa",
+  "source_commit": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+  "exit_code": 1,
+  "scope": "actual first attempt; reference class setup checkout failed before any named reference or work-time test completed"
+}

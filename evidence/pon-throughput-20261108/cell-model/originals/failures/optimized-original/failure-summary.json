@@ -1,0 +1,13 @@
+{
+  "status": "failed-optimized-transfer",
+  "native_source_commit": "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251",
+  "build_profile": "release",
+  "cell_binary_sha256": "63e8f3cb97ce5a0d14bc03c501d2f191ef7c717d2671606f4fb8d08198f9938f",
+  "runner_sha256": "06b219c4ca44f7fc2449d5995b6947f8ff63c524f633f2ce961367c125bb7ae7",
+  "observed_failure": "response-header ConnectionReset os104 after 2.049700966999808 seconds",
+  "transfer_completed": false,
+  "model_forwards_run": false,
+  "root_cause_status": "bounded-worker teardown/admission race suspected; minimal reproduction and repair pending",
+  "production_activation": false,
+  "independent_accepted": false
+}

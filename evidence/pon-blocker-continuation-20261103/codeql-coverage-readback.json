@@ -1,0 +1,281 @@
+{
+  "schema": "trnm-codeql-coverage-readback-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "recorded_utc": "2026-11-03 13:13:40 UTC",
+  "read_time_scope": "Immutable run/artifact/compare records were read during this review; the explicitly timestamped final API recheck below records the latest mutable PR/main state.",
+  "read_only": true,
+  "acceptance_authority": false,
+  "workflow_rerun": false,
+  "remote_mutation_performed": false,
+  "artifact_download_handling": "ZIP read and verified in memory; no signed download URL or token retained in this record.",
+  "investigated_source": {
+    "pr": 688,
+    "head": "1b0d60d574c4b3e2172f314cd2655644373b0a27",
+    "head_tree": "afe7c0f29c224c7262755d38d69930bf5030b8a0",
+    "base": "9a05cae09b175a51773db398541b14ab76061a39",
+    "prospective_merge": "bc9277d9a513cbb5712a925422871974dac247a8",
+    "head_ref": "refs/pull/688/head",
+    "merge_ref": "refs/pull/688/merge"
+  },
+  "export_run": {
+    "run_id": 41635095613,
+    "job_id": 125914392643,
+    "workflow": ".github/workflows/codeql-analysis-export.yml",
+    "name": "CodeQL exact-source analysis export",
+    "run_attempt": 1,
+    "event": "pull_request",
+    "conclusion": "failure",
+    "created_utc": "2026-11-03T12:22:01Z",
+    "export_started_utc": "2026-11-03T12:23:00.682122+00:00",
+    "export_finished_utc": "2026-11-03T12:42:40.805755+00:00",
+    "failed_step": {
+      "number": 5,
+      "name": "Export exact PR analyses with the existing read-only token"
+    },
+    "exact_error": "CodeQL analyses/checks did not complete and stabilize before the deadline",
+    "requested_wait_seconds": 1200,
+    "poll_seconds": 30,
+    "wait_log_lines": 37,
+    "selection_snapshots": 38,
+    "source_before_verified": true,
+    "source_after_verified": true,
+    "preflight_audit_passed": true,
+    "exporter_offline_tests_passed": 16,
+    "evidence_hash_step_passed": true,
+    "evidence_upload_step_passed": true,
+    "http_permission_error_observed": false,
+    "exact_source_analysis_build": "not observed",
+    "target_pr_gate_authenticated": false,
+    "target_pr_gate_verdict": null,
+    "complete": false
+  },
+  "retained_artifact": {
+    "artifact_id": 13231211906,
+    "name": "codeql-analysis-export-41635095613-1",
+    "size_bytes": 346987,
+    "zip_sha256": "03ec8e689b9384cbb693a2955ca01c6131661c6a1aec1d59940ae96efa0405e7",
+    "github_zip_digest_matched": true,
+    "zip_entry_count": 200,
+    "manifest_file_hashes_verified": 198,
+    "manifest_mismatch_count": 0,
+    "selection_snapshots": 38,
+    "all_selections": {
+      "ready": false,
+      "check_count": 0,
+      "analysis_count": 0
+    },
+    "raw_check_api_pages": 76,
+    "all_raw_check_pages": {
+      "total_count": 0,
+      "returned_check_count": 0
+    },
+    "raw_analysis_api_pages": 38,
+    "all_raw_analysis_page_lengths": 0,
+    "exported_sarif_subsets": 0,
+    "exported_check_annotations": 0
+  },
+  "producer_coverage": {
+    "observed_head_workflow_runs": 15,
+    "exact_head_codeql_analysis_producer_runs": 0,
+    "exact_head_current_check_runs": 78,
+    "exact_head_current_codeql_checks": 0,
+    "exact_merge_current_check_runs": 0,
+    "default_branch": "main",
+    "protected_branches_at_final_recheck": {
+      "complete": true,
+      "branches": [
+        {
+          "name": "fix/chain-bulk-state-tree-20261017",
+          "protected": true,
+          "sha": "57c1ed545d067937cbd7aaa7570d5f22123265e6"
+        },
+        {
+          "name": "main",
+          "protected": true,
+          "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+        }
+      ]
+    },
+    "current_base_was_default_or_protected": false,
+    "recent_default_setup_producer": {
+      "run_id": 41496516281,
+      "head": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "path": "dynamic/github-code-scanning/codeql",
+      "event": "dynamic",
+      "name": "Scheduled",
+      "created_utc": "2026-11-02T18:00:53Z",
+      "conclusion": "success"
+    },
+    "confirmed_direct_cause": "The exact-source CodeQL check and analysis sets stayed empty throughout the original export deadline.",
+    "inferred_trigger_cause": "The read-only exporter starts for all same-repository PRs, while the existing default CodeQL setup covers PRs targeting the default or protected branches; PR 688 targeted an unprotected feature branch.",
+    "inference_limit": "Protected-branch/default-setup coverage is cross-checked against current repository observations and official triggering rules. The retained run artifact does not contain a historical branch-protection snapshot.",
+    "security_finding_verdict": "unknown; no exact-source analysis was exported, so empty results are not a zero-finding or security-pass statement",
+    "failing_check_would_still_be_exportable": true
+  },
+  "retarget_investigation": {
+    "investigated_candidate_head": "1b0d60d574c4b3e2172f314cd2655644373b0a27",
+    "main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "common_ancestor": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+    "main_to_candidate": {
+      "status": "diverged",
+      "candidate_ahead_by": 1042,
+      "candidate_behind_by": 1,
+      "total_candidate_commits": 1042
+    },
+    "old_base_to_candidate": {
+      "base": "9a05cae09b175a51773db398541b14ab76061a39",
+      "status": "ahead",
+      "candidate_ahead_by": 95,
+      "candidate_behind_by": 0
+    },
+    "main_only_commit": {
+      "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "parent": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+      "message": "docs: clear public repository homepage README [skip ci]",
+      "files_changed": 1,
+      "path": "README.md",
+      "additions": 0,
+      "deletions": 1,
+      "common_ancestor_and_candidate_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "common_ancestor_and_candidate_content": "one LF byte",
+      "main_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "main_content": "empty file",
+      "code_protocol_workflow_or_permission_changes": 0,
+      "merge_inference": "The only main-side change is at a path unchanged in the investigated candidate, so the known three-way content implies no conflict. Actual GitHub prospective-merge SHA/tree must still be verified."
+    },
+    "pr685_at_review": {
+      "draft": true,
+      "state": "open",
+      "head": "9a05cae09b175a51773db398541b14ab76061a39",
+      "base_branch": "fix/chain-pon-next-cost-20261101",
+      "base": "a1f6cd3411681d5f1295e1deadba0b639bb7d4d5",
+      "body_says": "Stacked on #682",
+      "comments": 0,
+      "reviews": 0
+    },
+    "pr688_at_initial_review": {
+      "draft": true,
+      "state": "open",
+      "head": "1b0d60d574c4b3e2172f314cd2655644373b0a27",
+      "base_branch": "fix/chain-pon-work-safety-20261103",
+      "base": "9a05cae09b175a51773db398541b14ab76061a39",
+      "comments": 0,
+      "reviews": 0
+    },
+    "repository_constraints": {
+      "agents_instruction": "Preserve concurrent changes and use the existing integration candidate into main.",
+      "sole_plan": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "preserve": [
+        "existing #688 candidate",
+        "exact #685 and #683 ancestor changes",
+        "failed observations",
+        "original business and resource gates",
+        "Draft / HOLD",
+        "all qualification and activation restrictions"
+      ],
+      "forbidden": [
+        "force push",
+        "self-approval",
+        "protected-main bypass",
+        "production activation"
+      ],
+      "fixed_pr688_base_requirement_found": false,
+      "search_scope": "Visible task instructions; AGENTS.md; sole-plan #688 sections; repository Markdown/workflow/script references; PR #685/#688 descriptions, comment counts and review arrays. This does not claim access to unseen user conversation history."
+    },
+    "assessment": "A normal Draft retarget to main matches the observed integration boundary and makes the target branch eligible for existing default CodeQL coverage without changing protection, permissions or scanning configuration.",
+    "retarget_alone_guarantees_new_workflow_run": false,
+    "intended_normal_followup": "An already intended new source push after retarget supplies a pull_request synchronize event; verify actual default producer and new exact head/base/merge evidence.",
+    "existing_export_run_reusable_after_base_change": false,
+    "risks": [
+      "review scope expands from 95 to 1042 candidate commits at the investigated head",
+      "prior prospective-merge evidence binds the old base and must not qualify the new merge",
+      "the actual new merge must preserve main's empty README",
+      "producer coverage and findings remain unknown until actual exact-source results are read back"
+    ]
+  },
+  "final_mutable_state_recheck": {
+    "read_started_utc": "2026-11-03 13:11:52 UTC",
+    "pr685": {
+      "number": 685,
+      "state": "open",
+      "draft": true,
+      "head": {
+        "ref": "fix/chain-pon-work-safety-20261103",
+        "sha": "9a05cae09b175a51773db398541b14ab76061a39"
+      },
+      "base": {
+        "ref": "fix/chain-pon-next-cost-20261101",
+        "sha": "a1f6cd3411681d5f1295e1deadba0b639bb7d4d5"
+      },
+      "comments": 0,
+      "review_comments": 0
+    },
+    "pr688": {
+      "number": 688,
+      "state": "open",
+      "draft": true,
+      "head": {
+        "ref": "fix/chain-six-axis-performance-20261103",
+        "sha": "469c4d4bb36efb37045d968f35f83cb2c1771933"
+      },
+      "base": {
+        "ref": "fix/chain-pon-work-safety-20261103",
+        "sha": "9a05cae09b175a51773db398541b14ab76061a39"
+      },
+      "comments": 0,
+      "review_comments": 0
+    },
+    "main": {
+      "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "protected": true
+    },
+    "protected": {
+      "complete": true,
+      "branches": [
+        {
+          "name": "fix/chain-bulk-state-tree-20261017",
+          "protected": true,
+          "sha": "57c1ed545d067937cbd7aaa7570d5f22123265e6"
+        },
+        {
+          "name": "main",
+          "protected": true,
+          "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+        }
+      ]
+    },
+    "read_finished_utc": "2026-11-03 13:11:53 UTC"
+  },
+  "scope_warning": "PR 688 moved to head 469c4d4bb36efb37045d968f35f83cb2c1771933 by the final recheck. The run/artifact and 1042/1 ancestry comparison in this record remain bound only to investigated head 1b0d60d574c4b3e2172f314cd2655644373b0a27; no new-head validation or qualification is inferred.",
+  "sources": {
+    "run": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41635095613",
+    "jobs": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41635095613/jobs",
+    "job_logs": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/125914392643/logs",
+    "artifacts": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41635095613/artifacts",
+    "artifact_metadata": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13231211906",
+    "head_runs": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs?head_sha=1b0d60d574c4b3e2172f314cd2655644373b0a27&per_page=100",
+    "head_checks": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/1b0d60d574c4b3e2172f314cd2655644373b0a27/check-runs?per_page=100",
+    "merge_checks": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/bc9277d9a513cbb5712a925422871974dac247a8/check-runs?per_page=100",
+    "pr685": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/685",
+    "pr688": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/688",
+    "pr685_reviews": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/685/reviews?per_page=100",
+    "pr688_reviews": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/688/reviews?per_page=100",
+    "repository": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+    "main_branch": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches/main",
+    "protected_branches": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches?protected=true&per_page=100",
+    "main_runs": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs?branch=main&per_page=100",
+    "main_compare": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/dd6e1c3cbeacbdc532b0679297835b3a0aac78f0...1b0d60d574c4b3e2172f314cd2655644373b0a27?per_page=1&page=2",
+    "old_base_compare": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/9a05cae09b175a51773db398541b14ab76061a39...1b0d60d574c4b3e2172f314cd2655644373b0a27?per_page=1&page=2",
+    "main_commit": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "main_only_compare": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/9fedf7ecbbe07177069c030592b4e03dcffebb81...dd6e1c3cbeacbdc532b0679297835b3a0aac78f0?per_page=1",
+    "common_readme": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/README.md?ref=9fedf7ecbbe07177069c030592b4e03dcffebb81",
+    "exporter_source": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/1b0d60d574c4b3e2172f314cd2655644373b0a27/scripts/export_codeql_analysis.py",
+    "exporter_workflow": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/1b0d60d574c4b3e2172f314cd2655644373b0a27/.github/workflows/codeql-analysis-export.yml",
+    "agents": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/1b0d60d574c4b3e2172f314cd2655644373b0a27/AGENTS.md",
+    "sole_plan": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/1b0d60d574c4b3e2172f314cd2655644373b0a27/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "official_default_setup": "https://docs.github.com/en/code-security/concepts/code-scanning/setup-types",
+    "official_default_setup_configuration": "https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/configure-code-scanning/configure-code-scanning",
+    "official_pull_request_triggers": "https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request",
+    "official_draft_semantics": "https://docs.github.com/en/pull-requests/reference/pull-requests#draft-pull-requests"
+  }
+}

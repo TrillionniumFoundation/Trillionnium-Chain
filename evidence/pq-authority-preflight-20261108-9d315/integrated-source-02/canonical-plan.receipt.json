@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/bin/bash",
+    "scripts/ci/check_canonical_development_plan.sh"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 375.6524978100788,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794126721.41988,
+  "label": "canonical-plan",
+  "logs": {
+    "canonical-plan.stderr.log": {
+      "bytes": 8289,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-02/canonical-plan.stderr.log",
+      "sha256": "02224d8b942ec6a45ea54647ebcaea3be32263156194040db64479d867ba3c09"
+    },
+    "canonical-plan.stdout.log": {
+      "bytes": 307,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-02/canonical-plan.stdout.log",
+      "sha256": "92caa60a860dc15cc2831dffefb4566c7fc5fbbf81861e3c3c8e2c1723edb935"
+    }
+  },
+  "passed": true,
+  "readback": {},
+  "started_unix_seconds": 1794126345.7673826
+}

@@ -1,0 +1,8 @@
+tree 6a5fad57d4e7dc6007c830650da6a351b3e8448e
+parent 29ac3c8e86ebc59462da45d10fced1ca020e02c9
+author ProfHepta <102159240+ProfHepta@users.noreply.github.com> 1794195607 +0000
+committer ProfHepta <102159240+ProfHepta@users.noreply.github.com> 1794195607 +0000
+
+fix(pon): align current source pins and test-only codec accessors
+
+Retain production canonical encoding and native context checks. Preserve the prior strict Clippy and repository failures as evidence; narrow only the three accessor methods now used by test fixtures.

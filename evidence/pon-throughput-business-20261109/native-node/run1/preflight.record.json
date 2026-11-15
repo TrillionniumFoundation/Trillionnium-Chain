@@ -1,0 +1,43 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/workspace/scratch/a0d4983b1065/chain-throughput",
+  "disk_after": {
+    "free_bytes": 6301044736,
+    "total_bytes": 67586535424,
+    "used_bytes": 57832742912
+  },
+  "disk_before": {
+    "free_bytes": 6305951744,
+    "total_bytes": 67586535424,
+    "used_bytes": 57827835904
+  },
+  "exit_code": 0,
+  "extra_env": {},
+  "name": "preflight",
+  "rusage": {
+    "ru_idrss": 0,
+    "ru_inblock": 416,
+    "ru_isrss": 0,
+    "ru_ixrss": 0,
+    "ru_majflt": 0,
+    "ru_maxrss": 17988,
+    "ru_minflt": 5214,
+    "ru_msgrcv": 0,
+    "ru_msgsnd": 0,
+    "ru_nivcsw": 83,
+    "ru_nsignals": 0,
+    "ru_nswap": 0,
+    "ru_nvcsw": 57,
+    "ru_oublock": 8,
+    "ru_stime": 0.136729,
+    "ru_utime": 0.093245
+  },
+  "rusage_maxrss_unit": "KiB (Linux)",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "7c3b3d25cf803875bebf9e15c8560f068e4a56c395c7b59236f00b92cf17e95c",
+  "waited_pid": 29,
+  "wall_ns": 737148744
+}

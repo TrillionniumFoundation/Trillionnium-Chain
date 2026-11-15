@@ -1,0 +1,268 @@
+{
+  "failed_original_phases": 9,
+  "large_raw_reports": [
+    {
+      "bytes": 49131602,
+      "large_raw_report_copied": false,
+      "member": "run-1-raw/report.json",
+      "sha256": "ad831082a16b23c70934f29a5cb7292027bd7c4d27ebc44c206a40391ec187dd",
+      "summary_fields_verified": [
+        {
+          "fields": [
+            "actor_reports_successful_without_cap_or_kill",
+            "all_signed_rounds_confirmed_in_window",
+            "attacker_processes_ready",
+            "attacker_processes_requested",
+            "confirmation_rounds",
+            "confirmation_rounds_in_window",
+            "confirmation_rounds_observed",
+            "cpu_budget_refusals",
+            "depletion_at_ns",
+            "finite_phase_criteria_met",
+            "full_work_accepted",
+            "full_work_failed",
+            "genuine_budget_depletion_observed",
+            "mode",
+            "observer_complete",
+            "receiver_client_state_equal",
+            "submission_count",
+            "successful_submissions",
+            "verifier_errors"
+          ],
+          "finite_phase_criteria_met": false,
+          "json_pointer": "/phases/0",
+          "mode": "baseline"
+        },
+        {
+          "fields": [
+            "actor_reports_successful_without_cap_or_kill",
+            "all_signed_rounds_confirmed_in_window",
+            "attacker_processes_ready",
+            "attacker_processes_requested",
+            "confirmation_rounds",
+            "confirmation_rounds_in_window",
+            "confirmation_rounds_observed",
+            "cpu_budget_refusals",
+            "depletion_at_ns",
+            "finite_phase_criteria_met",
+            "full_work_accepted",
+            "full_work_failed",
+            "genuine_budget_depletion_observed",
+            "mode",
+            "observer_complete",
+            "receiver_client_state_equal",
+            "submission_count",
+            "successful_submissions",
+            "verifier_errors"
+          ],
+          "finite_phase_criteria_met": false,
+          "json_pointer": "/phases/1",
+          "mode": "from-zero"
+        },
+        {
+          "fields": [
+            "actor_reports_successful_without_cap_or_kill",
+            "all_signed_rounds_confirmed_in_window",
+            "attacker_processes_ready",
+            "attacker_processes_requested",
+            "confirmation_rounds",
+            "confirmation_rounds_in_window",
+            "confirmation_rounds_observed",
+            "cpu_budget_refusals",
+            "depletion_at_ns",
+            "finite_phase_criteria_met",
+            "full_work_accepted",
+            "full_work_failed",
+            "genuine_budget_depletion_observed",
+            "mode",
+            "observer_complete",
+            "receiver_client_state_equal",
+            "submission_count",
+            "successful_submissions",
+            "verifier_errors"
+          ],
+          "finite_phase_criteria_met": false,
+          "json_pointer": "/phases/2",
+          "mode": "late-product"
+        }
+      ]
+    },
+    {
+      "bytes": 48570094,
+      "large_raw_report_copied": false,
+      "member": "run-2-raw/report.json",
+      "sha256": "8c4c6e9070e490b399e9cf6ce8ea17932e673b423b14045d0855e45616b47b74",
+      "summary_fields_verified": [
+        {
+          "fields": [
+            "actor_reports_successful_without_cap_or_kill",
+            "all_signed_rounds_confirmed_in_window",
+            "attacker_processes_ready",
+            "attacker_processes_requested",
+            "confirmation_rounds",
+            "confirmation_rounds_in_window",
+            "confirmation_rounds_observed",
+            "cpu_budget_refusals",
+            "depletion_at_ns",
+            "finite_phase_criteria_met",
+            "full_work_accepted",
+            "full_work_failed",
+            "genuine_budget_depletion_observed",
+            "mode",
+            "observer_complete",
+            "receiver_client_state_equal",
+            "submission_count",
+            "successful_submissions",
+            "verifier_errors"
+          ],
+          "finite_phase_criteria_met": false,
+          "json_pointer": "/phases/0",
+          "mode": "baseline"
+        },
+        {
+          "fields": [
+            "actor_reports_successful_without_cap_or_kill",
+            "all_signed_rounds_confirmed_in_window",
+            "attacker_processes_ready",
+            "attacker_processes_requested",
+            "confirmation_rounds",
+            "confirmation_rounds_in_window",
+            "confirmation_rounds_observed",
+            "cpu_budget_refusals",
+            "depletion_at_ns",
+            "finite_phase_criteria_met",
+            "full_work_accepted",
+            "full_work_failed",
+            "genuine_budget_depletion_observed",
+            "mode",
+            "observer_complete",
+            "receiver_client_state_equal",
+            "submission_count",
+            "successful_submissions",
+            "verifier_errors"
+          ],
+          "finite_phase_criteria_met": false,
+          "json_pointer": "/phases/1",
+          "mode": "from-zero"
+        },
+        {
+          "fields": [
+            "actor_reports_successful_without_cap_or_kill",
+            "all_signed_rounds_confirmed_in_window",
+            "attacker_processes_ready",
+            "attacker_processes_requested",
+            "confirmation_rounds",
+            "confirmation_rounds_in_window",
+            "confirmation_rounds_observed",
+            "cpu_budget_refusals",
+            "depletion_at_ns",
+            "finite_phase_criteria_met",
+            "full_work_accepted",
+            "full_work_failed",
+            "genuine_budget_depletion_observed",
+            "mode",
+            "observer_complete",
+            "receiver_client_state_equal",
+            "submission_count",
+            "successful_submissions",
+            "verifier_errors"
+          ],
+          "finite_phase_criteria_met": false,
+          "json_pointer": "/phases/2",
+          "mode": "late-product"
+        }
+      ]
+    },
+    {
+      "bytes": 48601931,
+      "large_raw_report_copied": false,
+      "member": "run-3-raw/report.json",
+      "sha256": "b2fbdc75167f6182cab31d09d3b1a11058954704822ca2e450a10e6bb5376c44",
+      "summary_fields_verified": [
+        {
+          "fields": [
+            "actor_reports_successful_without_cap_or_kill",
+            "all_signed_rounds_confirmed_in_window",
+            "attacker_processes_ready",
+            "attacker_processes_requested",
+            "confirmation_rounds",
+            "confirmation_rounds_in_window",
+            "confirmation_rounds_observed",
+            "cpu_budget_refusals",
+            "depletion_at_ns",
+            "finite_phase_criteria_met",
+            "full_work_accepted",
+            "full_work_failed",
+            "genuine_budget_depletion_observed",
+            "mode",
+            "observer_complete",
+            "receiver_client_state_equal",
+            "submission_count",
+            "successful_submissions",
+            "verifier_errors"
+          ],
+          "finite_phase_criteria_met": false,
+          "json_pointer": "/phases/0",
+          "mode": "baseline"
+        },
+        {
+          "fields": [
+            "actor_reports_successful_without_cap_or_kill",
+            "all_signed_rounds_confirmed_in_window",
+            "attacker_processes_ready",
+            "attacker_processes_requested",
+            "confirmation_rounds",
+            "confirmation_rounds_in_window",
+            "confirmation_rounds_observed",
+            "cpu_budget_refusals",
+            "depletion_at_ns",
+            "finite_phase_criteria_met",
+            "full_work_accepted",
+            "full_work_failed",
+            "genuine_budget_depletion_observed",
+            "mode",
+            "observer_complete",
+            "receiver_client_state_equal",
+            "submission_count",
+            "successful_submissions",
+            "verifier_errors"
+          ],
+          "finite_phase_criteria_met": false,
+          "json_pointer": "/phases/1",
+          "mode": "from-zero"
+        },
+        {
+          "fields": [
+            "actor_reports_successful_without_cap_or_kill",
+            "all_signed_rounds_confirmed_in_window",
+            "attacker_processes_ready",
+            "attacker_processes_requested",
+            "confirmation_rounds",
+            "confirmation_rounds_in_window",
+            "confirmation_rounds_observed",
+            "cpu_budget_refusals",
+            "depletion_at_ns",
+            "finite_phase_criteria_met",
+            "full_work_accepted",
+            "full_work_failed",
+            "genuine_budget_depletion_observed",
+            "mode",
+            "observer_complete",
+            "receiver_client_state_equal",
+            "submission_count",
+            "successful_submissions",
+            "verifier_errors"
+          ],
+          "finite_phase_criteria_met": false,
+          "json_pointer": "/phases/2",
+          "mode": "late-product"
+        }
+      ]
+    }
+  ],
+  "original_hosted_runs": 3,
+  "rerun_performed": false,
+  "scope": "Every field of the retained phase summary was checked against original archive JSON; no campaign rerun.",
+  "source_commit": "31543fb6dde565b62b47436e0b1d399b6d0bd772",
+  "summary": "local-observations/campaign-894-phase-summary.json"
+}

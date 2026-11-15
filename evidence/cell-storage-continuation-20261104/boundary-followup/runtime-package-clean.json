@@ -1,0 +1,23 @@
+{
+  "observed_utc": "2026-11-05T01:16:45.671463+00:00",
+  "argv": [
+    "bash",
+    "/workspace/scratch/73305aff6ced/runtime/run-storage-runtime.sh",
+    "cargo",
+    "clean",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-sqlite-io-boundary"
+  ],
+  "cwd": "/workspace/scratch/73305aff6ced/validation-a9b860",
+  "own_target_directory": "/workspace/scratch/73305aff6ced/target",
+  "exit_code": 0,
+  "log_sha256": "3b186a3daebdded7902fce75f8d7b117821921654200ca345b1e17a4ca8794d3",
+  "source_changed": false,
+  "qualification_guard_changed": false,
+  "profiles_changed": false,
+  "selected_tests_changed": false
+}

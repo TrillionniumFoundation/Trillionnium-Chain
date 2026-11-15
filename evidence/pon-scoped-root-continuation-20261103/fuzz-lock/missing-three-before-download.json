@@ -1,0 +1,28 @@
+[
+  {
+    "checksum": "c3d036a3c4ab069c7b410a2ce876bd74808d2d0888a82667669f8e783a898bf1",
+    "name": "arbitrary",
+    "source": "registry+https://github.com/rust-lang/crates.io-index",
+    "version": "1.4.2"
+  },
+  {
+    "checksum": "1c00acbd29eabad4a2392fa0e921c874934dbbf4194312ad20f04a0ed67a3cb3",
+    "dependencies": [
+      "getrandom 0.4.2",
+      "libc"
+    ],
+    "name": "jobserver",
+    "source": "registry+https://github.com/rust-lang/crates.io-index",
+    "version": "0.1.35"
+  },
+  {
+    "checksum": "5037190e1f70cbeef565bd267599242926f724d3b8a9f510fd7e0b540cfa4404",
+    "dependencies": [
+      "arbitrary",
+      "cc"
+    ],
+    "name": "libfuzzer-sys",
+    "source": "registry+https://github.com/rust-lang/crates.io-index",
+    "version": "0.4.10"
+  }
+]

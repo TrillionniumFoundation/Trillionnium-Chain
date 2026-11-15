@@ -1,0 +1,418 @@
+{
+  "schema": "trnm-native-receipts-pinned-filesystem-transfer-v1",
+  "created_utc": "2026-11-14T04:39:43.340675+00:00",
+  "source_host": "rog",
+  "source_directory": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2",
+  "source_native_job_id": "1a1d841ef46-392-d20",
+  "native_job_terminal_status": "succeeded/exit0 as supplied by root; copied raw summary independently confirms every listed step exit0",
+  "source_head": "e82419698aa3fd527c6f828da11cc8749dcb007b",
+  "source_tree": "ada07bbe2235257052fafcbca840667259cb527c",
+  "source_manifest_sha256": "a6159214a8cda62c1dcc757bfdaa7ca3fb6c8908d172c6ed73f0cee0777ce276",
+  "source_manifest_shape": {
+    "kind": "dict",
+    "length": 2,
+    "keys": [
+      "files_sha256",
+      "identity"
+    ]
+  },
+  "original_files_count": 13,
+  "original_file_bytes": 339017,
+  "files": [
+    {
+      "name": "summary.json",
+      "size": 6406,
+      "sha256": "44a27c321a67d0737b6a273fe67ac463a39056da3b18cf61b0e617671fee4cf1",
+      "source_version": "66306:34754899:6406:1794629840753118950:1794629840753118950",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/summary.json",
+      "chunks": [
+        {
+          "chunk_sha256": "44a27c321a67d0737b6a273fe67ac463a39056da3b18cf61b0e617671fee4cf1",
+          "eof": true,
+          "next_offset": 6406,
+          "offset": 0,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/summary.json",
+          "size": 6406,
+          "version": "66306:34754899:6406:1794629840753118950:1794629840753118950"
+        }
+      ],
+      "destination": "/private/tmp/chain-consolidation-20261114-root/native-statement-parallel-clippy-e824-receipts-mac-v1/summary.json",
+      "write_receipt": {
+        "mode": 384,
+        "sha256": "44a27c321a67d0737b6a273fe67ac463a39056da3b18cf61b0e617671fee4cf1",
+        "size": 6406,
+        "version": "16777233:606141025:6406:1794631097262739266:1794631097263398855",
+        "written": 6406
+      }
+    },
+    {
+      "name": "steps.json",
+      "size": 5409,
+      "sha256": "046fa31a8318aaea7c599eeab829c19f11cb86ba677b6d656426c867d507782f",
+      "source_version": "66306:34754872:5409:1794629840162715058:1794629840162715058",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/steps.json",
+      "chunks": [
+        {
+          "chunk_sha256": "046fa31a8318aaea7c599eeab829c19f11cb86ba677b6d656426c867d507782f",
+          "eof": true,
+          "next_offset": 5409,
+          "offset": 0,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/steps.json",
+          "size": 5409,
+          "version": "66306:34754872:5409:1794629840162715058:1794629840162715058"
+        }
+      ],
+      "destination": "/private/tmp/chain-consolidation-20261114-root/native-statement-parallel-clippy-e824-receipts-mac-v1/steps.json",
+      "write_receipt": {
+        "mode": 384,
+        "sha256": "046fa31a8318aaea7c599eeab829c19f11cb86ba677b6d656426c867d507782f",
+        "size": 5409,
+        "version": "16777233:606141037:5409:1794631098326620021:1794631098327098484",
+        "written": 5409
+      }
+    },
+    {
+      "name": "actual-source-manifest.json",
+      "size": 315029,
+      "sha256": "a6159214a8cda62c1dcc757bfdaa7ca3fb6c8908d172c6ed73f0cee0777ce276",
+      "source_version": "66306:34754882:315029:1794629564548243254:1794629564548243254",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/actual-source-manifest.json",
+      "chunks": [
+        {
+          "chunk_sha256": "8a81f244f2cd24404477a82f94bb93251e91f0e846f6f01b09c1333235bd1e0d",
+          "eof": false,
+          "next_offset": 65536,
+          "offset": 0,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/actual-source-manifest.json",
+          "size": 315029,
+          "version": "66306:34754882:315029:1794629564548243254:1794629564548243254"
+        },
+        {
+          "chunk_sha256": "fbec26743e7519abc5f0c57315574db7fee49a1b3abc43c9e4bd4613ba8b37ef",
+          "eof": false,
+          "next_offset": 131072,
+          "offset": 65536,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/actual-source-manifest.json",
+          "size": 315029,
+          "version": "66306:34754882:315029:1794629564548243254:1794629564548243254"
+        },
+        {
+          "chunk_sha256": "ebc9914105213df55687819118d0b4fe51cfd02b924482c3a8c73d9684b3d2bc",
+          "eof": false,
+          "next_offset": 196608,
+          "offset": 131072,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/actual-source-manifest.json",
+          "size": 315029,
+          "version": "66306:34754882:315029:1794629564548243254:1794629564548243254"
+        },
+        {
+          "chunk_sha256": "9bbafa3747db9762086e32e4a7fd12755e7a01cc8c4c2b3a38f8389e34ff0f11",
+          "eof": false,
+          "next_offset": 262144,
+          "offset": 196608,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/actual-source-manifest.json",
+          "size": 315029,
+          "version": "66306:34754882:315029:1794629564548243254:1794629564548243254"
+        },
+        {
+          "chunk_sha256": "17def08ecb096236121fa5000a1ebdc97bbe520d1c983af3aea95cf71395ab3f",
+          "eof": true,
+          "next_offset": 315029,
+          "offset": 262144,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/actual-source-manifest.json",
+          "size": 315029,
+          "version": "66306:34754882:315029:1794629564548243254:1794629564548243254"
+        }
+      ],
+      "destination": "/private/tmp/chain-consolidation-20261114-root/native-statement-parallel-clippy-e824-receipts-mac-v1/actual-source-manifest.json",
+      "write_receipt": {
+        "mode": 384,
+        "sha256": "a6159214a8cda62c1dcc757bfdaa7ca3fb6c8908d172c6ed73f0cee0777ce276",
+        "size": 315029,
+        "version": "16777233:606141090:315029:1794631107602360108:1794631107602818863",
+        "written": 315029
+      }
+    },
+    {
+      "name": "pre-update-preflight.log",
+      "size": 175,
+      "sha256": "29aaae57601cc357c22f2d3185d722d324b12d45289c05be50872b794b1a9640",
+      "source_version": "66306:34754868:175:1794629563641869453:1794629563641869453",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/pre-update-preflight.log",
+      "chunks": [
+        {
+          "chunk_sha256": "29aaae57601cc357c22f2d3185d722d324b12d45289c05be50872b794b1a9640",
+          "eof": true,
+          "next_offset": 175,
+          "offset": 0,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/pre-update-preflight.log",
+          "size": 175,
+          "version": "66306:34754868:175:1794629563641869453:1794629563641869453"
+        }
+      ],
+      "destination": "/private/tmp/chain-consolidation-20261114-root/native-statement-parallel-clippy-e824-receipts-mac-v1/pre-update-preflight.log",
+      "write_receipt": {
+        "mode": 384,
+        "sha256": "29aaae57601cc357c22f2d3185d722d324b12d45289c05be50872b794b1a9640",
+        "size": 175,
+        "version": "16777233:606141102:175:1794631108873724782:1794631108874155703",
+        "written": 175
+      }
+    },
+    {
+      "name": "bundle-verify.log",
+      "size": 449,
+      "sha256": "780df24417371000cde760b2bc16dfccc04d4423fde199e83b48d0aee0721cc4",
+      "source_version": "66306:34754875:449:1794629563650856551:1794629563650856551",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/bundle-verify.log",
+      "chunks": [
+        {
+          "chunk_sha256": "780df24417371000cde760b2bc16dfccc04d4423fde199e83b48d0aee0721cc4",
+          "eof": true,
+          "next_offset": 449,
+          "offset": 0,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/bundle-verify.log",
+          "size": 449,
+          "version": "66306:34754875:449:1794629563650856551:1794629563650856551"
+        }
+      ],
+      "destination": "/private/tmp/chain-consolidation-20261114-root/native-statement-parallel-clippy-e824-receipts-mac-v1/bundle-verify.log",
+      "write_receipt": {
+        "mode": 384,
+        "sha256": "780df24417371000cde760b2bc16dfccc04d4423fde199e83b48d0aee0721cc4",
+        "size": 449,
+        "version": "16777233:606141121:449:1794631109864278415:1794631109864712794",
+        "written": 449
+      }
+    },
+    {
+      "name": "bundle-fetch.log",
+      "size": 132,
+      "sha256": "ad64f9b5d914aa8de637f9e086ec20c30f579636d8263b75148c9843861a42d5",
+      "source_version": "66306:34754877:132:1794629564078051272:1794629564078051272",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/bundle-fetch.log",
+      "chunks": [
+        {
+          "chunk_sha256": "ad64f9b5d914aa8de637f9e086ec20c30f579636d8263b75148c9843861a42d5",
+          "eof": true,
+          "next_offset": 132,
+          "offset": 0,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/bundle-fetch.log",
+          "size": 132,
+          "version": "66306:34754877:132:1794629564078051272:1794629564078051272"
+        }
+      ],
+      "destination": "/private/tmp/chain-consolidation-20261114-root/native-statement-parallel-clippy-e824-receipts-mac-v1/bundle-fetch.log",
+      "write_receipt": {
+        "mode": 384,
+        "sha256": "ad64f9b5d914aa8de637f9e086ec20c30f579636d8263b75148c9843861a42d5",
+        "size": 132,
+        "version": "16777233:606141151:132:1794631111295670247:1794631111296226336",
+        "written": 132
+      }
+    },
+    {
+      "name": "fast-forward.log",
+      "size": 3317,
+      "sha256": "f06f854b86c28418eab972aa62b8bfab5b173711a88a2580bac62c168aec3c67",
+      "source_version": "66306:34754880:3317:1794629564154833084:1794629564154833084",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/fast-forward.log",
+      "chunks": [
+        {
+          "chunk_sha256": "f06f854b86c28418eab972aa62b8bfab5b173711a88a2580bac62c168aec3c67",
+          "eof": true,
+          "next_offset": 3317,
+          "offset": 0,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/fast-forward.log",
+          "size": 3317,
+          "version": "66306:34754880:3317:1794629564154833084:1794629564154833084"
+        }
+      ],
+      "destination": "/private/tmp/chain-consolidation-20261114-root/native-statement-parallel-clippy-e824-receipts-mac-v1/fast-forward.log",
+      "write_receipt": {
+        "mode": 384,
+        "sha256": "f06f854b86c28418eab972aa62b8bfab5b173711a88a2580bac62c168aec3c67",
+        "size": 3317,
+        "version": "16777233:606141175:3317:1794631113022114708:1794631113022598504",
+        "written": 3317
+      }
+    },
+    {
+      "name": "preflight.log",
+      "size": 175,
+      "sha256": "29aaae57601cc357c22f2d3185d722d324b12d45289c05be50872b794b1a9640",
+      "source_version": "66306:34754886:175:1794629564583226329:1794629564583226329",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/preflight.log",
+      "chunks": [
+        {
+          "chunk_sha256": "29aaae57601cc357c22f2d3185d722d324b12d45289c05be50872b794b1a9640",
+          "eof": true,
+          "next_offset": 175,
+          "offset": 0,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/preflight.log",
+          "size": 175,
+          "version": "66306:34754886:175:1794629564583226329:1794629564583226329"
+        }
+      ],
+      "destination": "/private/tmp/chain-consolidation-20261114-root/native-statement-parallel-clippy-e824-receipts-mac-v1/preflight.log",
+      "write_receipt": {
+        "mode": 384,
+        "sha256": "29aaae57601cc357c22f2d3185d722d324b12d45289c05be50872b794b1a9640",
+        "size": 175,
+        "version": "16777233:606141197:175:1794631114759013096:1794631114759486976",
+        "written": 175
+      }
+    },
+    {
+      "name": "statement-boundaries.log",
+      "size": 828,
+      "sha256": "bfd6a2264641603f19597a38425c1777455446c76e38d8a6fa22497716101eed",
+      "source_version": "66306:34754887:828:1794629594583465990:1794629594583465990",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/statement-boundaries.log",
+      "chunks": [
+        {
+          "chunk_sha256": "bfd6a2264641603f19597a38425c1777455446c76e38d8a6fa22497716101eed",
+          "eof": true,
+          "next_offset": 828,
+          "offset": 0,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/statement-boundaries.log",
+          "size": 828,
+          "version": "66306:34754887:828:1794629594583465990:1794629594583465990"
+        }
+      ],
+      "destination": "/private/tmp/chain-consolidation-20261114-root/native-statement-parallel-clippy-e824-receipts-mac-v1/statement-boundaries.log",
+      "write_receipt": {
+        "mode": 384,
+        "sha256": "bfd6a2264641603f19597a38425c1777455446c76e38d8a6fa22497716101eed",
+        "size": 828,
+        "version": "16777233:606141211:828:1794631115945653796:1794631115946235093",
+        "written": 828
+      }
+    },
+    {
+      "name": "m06-parallel-preparation.log",
+      "size": 2145,
+      "sha256": "806fd2d8d2277097e2542819c4bfc87dc4a219939828e527890cb652c467cab6",
+      "source_version": "66306:34754891:2145:1794629623200181740:1794629623200181740",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/m06-parallel-preparation.log",
+      "chunks": [
+        {
+          "chunk_sha256": "806fd2d8d2277097e2542819c4bfc87dc4a219939828e527890cb652c467cab6",
+          "eof": true,
+          "next_offset": 2145,
+          "offset": 0,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/m06-parallel-preparation.log",
+          "size": 2145,
+          "version": "66306:34754891:2145:1794629623200181740:1794629623200181740"
+        }
+      ],
+      "destination": "/private/tmp/chain-consolidation-20261114-root/native-statement-parallel-clippy-e824-receipts-mac-v1/m06-parallel-preparation.log",
+      "write_receipt": {
+        "mode": 384,
+        "sha256": "806fd2d8d2277097e2542819c4bfc87dc4a219939828e527890cb652c467cab6",
+        "size": 2145,
+        "version": "16777233:606141223:2145:1794631117349917299:1794631117350423137",
+        "written": 2145
+      }
+    },
+    {
+      "name": "node-parallel-admission.log",
+      "size": 1155,
+      "sha256": "6dee53a403c7176430dfe3a805c61a88a0190e3a77b3afa199501e84deed948e",
+      "source_version": "66306:34754893:1155:1794629787904134687:1794629787904134687",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/node-parallel-admission.log",
+      "chunks": [
+        {
+          "chunk_sha256": "6dee53a403c7176430dfe3a805c61a88a0190e3a77b3afa199501e84deed948e",
+          "eof": true,
+          "next_offset": 1155,
+          "offset": 0,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/node-parallel-admission.log",
+          "size": 1155,
+          "version": "66306:34754893:1155:1794629787904134687:1794629787904134687"
+        }
+      ],
+      "destination": "/private/tmp/chain-consolidation-20261114-root/native-statement-parallel-clippy-e824-receipts-mac-v1/node-parallel-admission.log",
+      "write_receipt": {
+        "mode": 384,
+        "sha256": "6dee53a403c7176430dfe3a805c61a88a0190e3a77b3afa199501e84deed948e",
+        "size": 1155,
+        "version": "16777233:606141257:1155:1794631118769050144:1794631118769435481",
+        "written": 1155
+      }
+    },
+    {
+      "name": "strict-clippy.log",
+      "size": 3797,
+      "sha256": "f8b57cc389a492a9f90dfa09fe3bfaf17299ba161d94e2094bbd90775e65de77",
+      "source_version": "66306:34754894:3797:1794629831823548810:1794629831823548810",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/strict-clippy.log",
+      "chunks": [
+        {
+          "chunk_sha256": "f8b57cc389a492a9f90dfa09fe3bfaf17299ba161d94e2094bbd90775e65de77",
+          "eof": true,
+          "next_offset": 3797,
+          "offset": 0,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/strict-clippy.log",
+          "size": 3797,
+          "version": "66306:34754894:3797:1794629831823548810:1794629831823548810"
+        }
+      ],
+      "destination": "/private/tmp/chain-consolidation-20261114-root/native-statement-parallel-clippy-e824-receipts-mac-v1/strict-clippy.log",
+      "write_receipt": {
+        "mode": 384,
+        "sha256": "f8b57cc389a492a9f90dfa09fe3bfaf17299ba161d94e2094bbd90775e65de77",
+        "size": 3797,
+        "version": "16777233:606141278:3797:1794631120867189553:1794631120867679932",
+        "written": 3797
+      }
+    },
+    {
+      "name": "fmt.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:34754898:0:1794629840161171741:1794629840161171741",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/fmt.log",
+      "chunks": [
+        {
+          "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "eof": true,
+          "next_offset": 0,
+          "offset": 0,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-statement-parallel-clippy-e824-v2/fmt.log",
+          "size": 0,
+          "version": "66306:34754898:0:1794629840161171741:1794629840161171741"
+        }
+      ],
+      "destination": "/private/tmp/chain-consolidation-20261114-root/native-statement-parallel-clippy-e824-receipts-mac-v1/fmt.log",
+      "write_receipt": {
+        "mode": 384,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "version": "16777233:606141298:0:1794631122164692756:1794631122165193594",
+        "written": 0
+      }
+    }
+  ],
+  "validation": {
+    "source_chunks_bound_to_original_version_tokens": true,
+    "complete_dest_size_and_sha256_equal_source": true,
+    "summary_step_hashes_match_original_logs": true,
+    "source_inputs_changed": false,
+    "tests_rerun": false,
+    "pack_initial_directory_equality_rejection": "Runtime coordination files excluded from the explicit 13-original-file roster; no source file or archive was changed by the rejected first pack attempt.",
+    "rog_packaging_started": false,
+    "unknown_root_zip_request_retried": false,
+    "remote_writes": false,
+    "native_or_hosted_campaign_started": false,
+    "qualification_granted": false
+  },
+  "native_result_scope": {
+    "original_statement_tests": 3,
+    "parallel_original_tests": 4,
+    "strict_all_target_all_feature_clippy": true,
+    "fmt": true,
+    "four_second_hosted_campaign_started": false
+  },
+  "prior_transfer_observation": "An initial preflight.log file-info read returned INVALID_ARGUMENT; a pinned binary read and subsequent file-info both confirmed the same complete original bytes. No source write was performed."
+}

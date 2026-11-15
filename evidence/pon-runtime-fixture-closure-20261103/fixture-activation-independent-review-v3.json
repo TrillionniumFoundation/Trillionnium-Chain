@@ -1,0 +1,93 @@
+{
+  "schema": "trnm-evaluation-paid-activation-independent-review-v3",
+  "reviewer": "service_path_review",
+  "reviewed_utc": "2026-11-03T21:26:59.263908+00:00",
+  "scope": "read-only source review; no native test executed by reviewer; no repository file modification",
+  "source": {
+    "path": "trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+    "sha256": "bd2a3c2886d4a866e71a0f5579c5c2d054ecebb40c9fc60ed379cb8e400c8b21"
+  },
+  "candidate": {
+    "path": "/workspace/scratch/b5a148b09b11/next-validation/evaluation-paid-activation-review/v3/evaluation_sync_observation.rs",
+    "sha256": "402f29fa7ef75e4ba3b406290890a960db335d084620125d95c9cc539e857b04",
+    "patch_sha256": "ddb71e205a061322bede39aa18bcc70733fd6ea9b158042f618ca3e798f51c03"
+  },
+  "original_fixture_reconstruction_exact": true,
+  "v2_to_v3_only_head_enum_correction": true,
+  "checks": [
+    {
+      "name": "original_fixture_identity",
+      "result": "PASS_SOURCE",
+      "evidence": "Exact original bytes reconstruct after reversing only new helper/control and two offline calls; every old assertion/120-second listener/two-second policy/three 64-page chunks unchanged"
+    },
+    {
+      "name": "native_domain_ownership",
+      "result": "PASS_SOURCE",
+      "evidence": "Same Node bound-domain identity checked before reserve; no new ServiceMutationCpuDomain constructed by helper"
+    },
+    {
+      "name": "existing_packet_activation",
+      "result": "PASS_SOURCE",
+      "evidence": "Original stored packet ID/encoding, stored_blocks, result block/active, generation+1, physical_execution=false; existing path returns before full W1, correctly disclosed"
+    },
+    {
+      "name": "settlement",
+      "result": "PASS_SOURCE",
+      "evidence": "Existing metered native outcome always receives operation.finish; helper demands known positive CPU/balance identity/no live owners"
+    },
+    {
+      "name": "offline_lease",
+      "result": "PASS_SOURCE",
+      "evidence": "Previous listener is stopped/joined; original offline build/helper have no added network performance window; original network leases unchanged"
+    },
+    {
+      "name": "listener_readiness",
+      "result": "PASS_SOURCE",
+      "evidence": "Both initial and reconstructed listener receive actual pinned V3 Head; success, expected tip, positive solve_trials/body bytes checked before stop and join"
+    },
+    {
+      "name": "readiness_request_type",
+      "result": "PASS_SOURCE",
+      "evidence": "V3 call uses public_v3::Request::Head; native helper still ingress::Request::Submit"
+    },
+    {
+      "name": "new_control_pool_setup",
+      "result": "PASS_SOURCE",
+      "evidence": "Same PoolLimits as existing original fixture enabled before first Server::start; current V3 startup requires pool snapshot"
+    },
+    {
+      "name": "listener_shutdown",
+      "result": "PASS_SOURCE",
+      "evidence": "Both actual workers removed from Option, stop set, join and both nested Results unwrapped; retained Drop joins on unwind"
+    },
+    {
+      "name": "budget_restart_identity",
+      "result": "PASS_SOURCE",
+      "evidence": "Same domain across restart, paid debit increases after both actual activations, initial credit unchanged, final live owners zero"
+    },
+    {
+      "name": "original_unmetered_refusal",
+      "result": "PASS_SOURCE",
+      "evidence": "New control asserts OWNER_REORG_TERMINATION_CPU_REQUIRED and same active tuple before correcting call"
+    },
+    {
+      "name": "scope_limits",
+      "result": "PASS_SOURCE",
+      "evidence": "No full W1 replay for existing tip, no new durable crash epoch from metered seam, no Host/network-performance claim"
+    }
+  ],
+  "verdict": "PASS_SOURCE_REVIEW_IN_STATED_OFFLINE_FIXTURE_SCOPE",
+  "remaining_gates": [
+    "actual direct control terminal result",
+    "exact final Cargo fmt/Clippy/integration test",
+    "original full Host fixture on exact final source"
+  ],
+  "native_test_result_claimed": false,
+  "cargo_qualification_claimed": false,
+  "host_qualification_claimed": false,
+  "original_service_performance_blocker_closed": false,
+  "earlier_failures_retained": {
+    "v1": "actual 10.05-second initial-domain wait failure reported by parent; static restart-readiness race separately identified; no unobserved pool error invented",
+    "v2": "actual E0308 mismatched Head enum compile failure reported by parent; native body not run"
+  }
+}

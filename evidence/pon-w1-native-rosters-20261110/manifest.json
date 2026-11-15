@@ -1,0 +1,47 @@
+[
+  {
+    "path": "README.md",
+    "bytes": 2602,
+    "sha256": "d6fe3a6d9fd1b2e7b795eaeba90d029ee72fe20b14ddafcfd6237772387ae24b"
+  },
+  {
+    "path": "factorial-example.log",
+    "bytes": 1211,
+    "sha256": "60db4ede137a5d1b2db13a97f5d19da7545e1745949f38f353731e4ad0e0e94d"
+  },
+  {
+    "path": "fuzz-metadata.json",
+    "bytes": 721715,
+    "sha256": "70de427bd2ea813a9211a669ff82e996030cb7d432426bced3c1b20b1146ef0c"
+  },
+  {
+    "path": "history-import.log",
+    "bytes": 15607,
+    "sha256": "33255db48b39ca0f0fe76c7d7753ebd85f0f1c2593516ff9a88e9bb9c23a8a8f"
+  },
+  {
+    "path": "legal-example.log",
+    "bytes": 1374,
+    "sha256": "f38f25feea96f2513aca2fbfd328f609b352796443f8581455940ac9eecc29e5"
+  },
+  {
+    "path": "roster-source-and-controls-1732.json",
+    "bytes": 2276,
+    "sha256": "ea2566958bd408d4cf075f2a52eee117c21e6b761a909baf294f4eb338c98f1e"
+  },
+  {
+    "path": "roster-source-and-controls-full-index-1737.json",
+    "bytes": 3244,
+    "sha256": "250651c4d22eb791571f32c3a4f6ec5ef24ff23bf081ea18d8d35f9a31a1e436"
+  },
+  {
+    "path": "roster-source-and-controls-full-index-1737.log",
+    "bytes": 44403,
+    "sha256": "65a4db8fa1cd52143321300d061ff365ead19e6941f219e0c968f67afb1f7340"
+  },
+  {
+    "path": "workspace-metadata.json",
+    "bytes": 834192,
+    "sha256": "2d598a8afe441bac4d9b1fdd1f5403da7c06afd00164780e89e9fc9f8aec3578"
+  }
+]

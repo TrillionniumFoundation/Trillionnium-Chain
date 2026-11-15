@@ -1,0 +1,95 @@
+[
+  {
+    "accepted": false,
+    "actor_label": "publisher",
+    "credit_added": 0,
+    "full_native_units_checked": 1,
+    "output_index": 0,
+    "packet_sha256": "4e1a26af41a0695604ccef7c184c2bdda858d871062ffcb9f338ce8f1ba86d93",
+    "reason": "AGGREGATE_TARGET"
+  },
+  {
+    "accepted": false,
+    "actor_label": "publisher",
+    "credit_added": 0,
+    "full_native_units_checked": 1,
+    "output_index": 1,
+    "packet_sha256": "1464f1b0da0e1b57a8af33d92112aba149e824a9012e5f9e4c0df5dc8f9e8f67",
+    "reason": "AGGREGATE_TARGET"
+  },
+  {
+    "accepted": false,
+    "actor_label": "publisher",
+    "credit_added": 0,
+    "full_native_units_checked": 1,
+    "output_index": 2,
+    "packet_sha256": "b54f2bc0a843221a3336a195f88a2a9efa2a8ffa8775e44c9253a8d8d1e63965",
+    "reason": "AGGREGATE_TARGET"
+  },
+  {
+    "accepted": false,
+    "actor_label": "publisher",
+    "credit_added": 0,
+    "full_native_units_checked": 1,
+    "output_index": 3,
+    "packet_sha256": "28705b46bbcd5634f11722d50b579bc7fbb67290b2657104f990723e54fb09fc",
+    "reason": "AGGREGATE_TARGET"
+  },
+  {
+    "accepted": false,
+    "actor_label": "publisher",
+    "credit_added": 0,
+    "full_native_units_checked": 1,
+    "output_index": 4,
+    "packet_sha256": "d73d0042c67d44cfb57337b1868eaebcde4bc9770cdccce1e2c96396e1f50572",
+    "reason": "AGGREGATE_TARGET"
+  },
+  {
+    "accepted": false,
+    "actor_label": "publisher",
+    "credit_added": 0,
+    "full_native_units_checked": 1,
+    "output_index": 5,
+    "packet_sha256": "33daaf81ecd4f8715f86074f7643ff4cc7911e75e49a71feeaf3b88898d194e8",
+    "reason": "AGGREGATE_TARGET"
+  },
+  {
+    "accepted": true,
+    "actor_label": "publisher",
+    "credit_added": 16,
+    "full_native_units_checked": 1,
+    "identity": "6deeb989a375408e491eee9c878777d14a3deaa2ae2c6fab8f51bac60bc796f9",
+    "output_index": 6,
+    "packet_sha256": "3ef1ec9af68deca7d3144ededb83a6b9037a296c454cffa30eef5a01daab2ba8",
+    "reason": "VALID_MU1"
+  },
+  {
+    "accepted": true,
+    "actor_label": "publisher",
+    "credit_added": 16,
+    "full_native_units_checked": 1,
+    "identity": "77cd5c88760cb747ea1d84bc556032ac0afd071b786fddfb94d9915732f66e69",
+    "output_index": 7,
+    "packet_sha256": "31de6f0e1084325f4be8b4a4dafc3ab67eb9c2213bc027f9d57b0fb8767d9a9b",
+    "reason": "VALID_MU1"
+  },
+  {
+    "accepted": true,
+    "actor_label": "helper-republication",
+    "credit_added": 0,
+    "full_native_units_checked": 1,
+    "identity": "6deeb989a375408e491eee9c878777d14a3deaa2ae2c6fab8f51bac60bc796f9",
+    "output_index": 8,
+    "packet_sha256": "3ef1ec9af68deca7d3144ededb83a6b9037a296c454cffa30eef5a01daab2ba8",
+    "reason": "VALID_MU1"
+  },
+  {
+    "accepted": false,
+    "actor_label": "publisher",
+    "credit_added": 0,
+    "full_native_units_checked": 1,
+    "output_index": 9,
+    "packet_sha256": "8f203b929b9ce5b2076bee030aa18d64f8c01318b9147e81d499eb5e2bd298be",
+    "reason": "AGGREGATE_TARGET"
+  }
+]

@@ -1,0 +1,774 @@
+{
+  "schema": "value-pool-independent-benchmark-audit-v1",
+  "reviewer_scope": "Read-only review; no builds, extra timing trials, retries, threshold changes, source modifications or dropped samples.",
+  "files": {
+    "plan": {
+      "bytes": 7056,
+      "sha256": "ba7e661ff8871b3ed423a57cb2c2d71cdbf3df42096f72f07bd8908605114046"
+    },
+    "freeze": {
+      "bytes": 5587,
+      "sha256": "1a5c7712a558c506291c66ce1d524c9a0eccaf6cedec22230bc2a20e476c15e7"
+    },
+    "result": {
+      "bytes": 122992,
+      "sha256": "c6078db175fd298dc4c7863826781aae081526f42ec0dbb5bb2cac6b56d2fc86"
+    },
+    "execution": {
+      "bytes": 11169,
+      "sha256": "b9569a8e92027a8c5a0c3a055d2f4eace84afd23c458bf8252e2de6bd71d2856"
+    }
+  },
+  "preregistration": {
+    "same_driver_sha256": "e92fdd30b459f4afaf762458e7863d7cc1f1bb0a63e990f11a229cdd67c937d6",
+    "input_reconstruction": "Independent Python reconstruction matched all 8 registered complete JSON SHA256/byte/key denominators before timing.",
+    "measured_tree_difference": "Exactly five frozen source/test files; the identical driver is not part of the A/B source difference.",
+    "baseline_tree_with_driver": "372c0bbdf7a6eb396bca8cb59325576f3e30f3bc",
+    "candidate_tree_with_driver": "414e1e6973019b127edab9e5c03ff9a1cc76efcf",
+    "api_scope": "Direct root_with_arithmetic and complete derive_snapshot_with_arithmetic; derive includes original encode_for_cache before fallback. Input/reference setup, result validation/destruction and logging are outside the operation timer as preregistered.",
+    "cold_scope": "Empty arithmetic owner after common setup, not cold OS pages, allocator or global empty-hash state.",
+    "profile": "Original Cargo test profile: protocol opt3, M06 opt1, driver opt3, all debug assertions and overflow checks retained; exact fields independently read from both Cargo build receipts.",
+    "sequence": [
+      [
+        0,
+        "baseline"
+      ],
+      [
+        0,
+        "candidate"
+      ],
+      [
+        1,
+        "candidate"
+      ],
+      [
+        1,
+        "baseline"
+      ],
+      [
+        2,
+        "baseline"
+      ],
+      [
+        2,
+        "candidate"
+      ],
+      [
+        3,
+        "candidate"
+      ],
+      [
+        3,
+        "baseline"
+      ],
+      [
+        4,
+        "baseline"
+      ],
+      [
+        4,
+        "candidate"
+      ]
+    ],
+    "calls_per_case_api": "cold1, warm8, changed1, restored1; repeated has late_grammar and late_wire as well.",
+    "thresholds": "Repeated warm root median ratio<=0.85; repeated warm complete derive<=0.95; all eight unique/collision cold/warm API median ratios<=1.05."
+  },
+  "artifacts": {
+    "baseline": {
+      "cargo_json_sha256": "500d0a25a3c6139f3135fed7f161faa9584471f73fab4f2e9b5e090876196b21",
+      "cargo_stderr_sha256": "79442065de3b49f739a98e8091861503b2199b8029d83ca59148b5b17c2b0a32",
+      "driver_features": [
+        "default"
+      ],
+      "driver_profile": {
+        "debug_assertions": true,
+        "debuginfo": 2,
+        "opt_level": "3",
+        "overflow_checks": true,
+        "test": true
+      },
+      "executable": "/workspace/scratch/abae1861b451/value-pool-baseline-target/debug/deps/value_pool_component-48b8537ec2f28d14",
+      "executable_bytes": 56664872,
+      "executable_sha256": "dbe480e4b1e0cae1423c05b36b2fc4f29a9a31fdc6f97578da94a43de6af4d21",
+      "preflight_sha256": "2b060e8a43ada8bc9c3e2a89d1f5b779628a8f2715621ecead29bd27c7a34562",
+      "profiles": {
+        "trnm_mvcc_fee": {
+          "features": [
+            "default"
+          ],
+          "package_id": "path+file:///workspace/scratch/abae1861b451/value-pool-baseline/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": false
+          },
+          "source": "/workspace/scratch/abae1861b451/value-pool-baseline/trillionnium/crates/trnm-mvcc-fee/src/lib.rs"
+        },
+        "trnm_protocol": {
+          "features": [],
+          "package_id": "path+file:///workspace/scratch/abae1861b451/value-pool-baseline/trillionnium/crates/trnm-protocol#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": false
+          },
+          "source": "/workspace/scratch/abae1861b451/value-pool-baseline/trillionnium/crates/trnm-protocol/src/lib.rs"
+        }
+      },
+      "source_identity": {
+        "driver_sha256": "e92fdd30b459f4afaf762458e7863d7cc1f1bb0a63e990f11a229cdd67c937d6",
+        "expected_measured_tree": "372c0bbdf7a6eb396bca8cb59325576f3e30f3bc",
+        "head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "tracked_patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_files": [
+          "trillionnium/crates/trnm-pon-node/tests/value_pool_component.rs"
+        ]
+      }
+    },
+    "candidate": {
+      "cargo_json_sha256": "0676e470e16ba72ba511e3867cf7b115d8a719178d69c37782e8d37f44b77d4e",
+      "cargo_stderr_sha256": "54288df52baedc5d6045ae50dae4f3dc9fa70ecd063504922360b8f4c1a01ee7",
+      "driver_features": [
+        "default"
+      ],
+      "driver_profile": {
+        "debug_assertions": true,
+        "debuginfo": 2,
+        "opt_level": "3",
+        "overflow_checks": true,
+        "test": true
+      },
+      "executable": "/workspace/scratch/abae1861b451/value-pool-target/debug/deps/value_pool_component-48b8537ec2f28d14",
+      "executable_bytes": 57235680,
+      "executable_sha256": "474e1c85a9723acc6d748f118e000abdc5f45e2bb2ebf6d9edd97c32e425d305",
+      "preflight_sha256": "f9aa4ba34b76d9e434dfc941a8719cab42ac16284b95a59c4dc0011de38c91f0",
+      "profiles": {
+        "trnm_mvcc_fee": {
+          "features": [
+            "default"
+          ],
+          "package_id": "path+file:///workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": false
+          },
+          "source": "/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-mvcc-fee/src/lib.rs"
+        },
+        "trnm_protocol": {
+          "features": [],
+          "package_id": "path+file:///workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-protocol#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": false
+          },
+          "source": "/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-protocol/src/lib.rs"
+        }
+      },
+      "source_identity": {
+        "driver_sha256": "e92fdd30b459f4afaf762458e7863d7cc1f1bb0a63e990f11a229cdd67c937d6",
+        "expected_measured_tree": "414e1e6973019b127edab9e5c03ff9a1cc76efcf",
+        "head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "tracked_patch_sha256": "111bb65c0a066ea02a793f8138f5afabd7ad5cafbf79c171d04aafcbc827c3c1",
+        "untracked_files": [
+          "trillionnium/crates/trnm-pon-node/tests/value_pool_component.rs"
+        ]
+      }
+    }
+  },
+  "post_execution_identity": "Both original ELF bytes rehashed after timing; full frozen scripts/plan/source hashes and recorded source_after identities unchanged.",
+  "processes": [
+    {
+      "pair": 0,
+      "variant": "baseline",
+      "returncode": 0,
+      "samples": 70,
+      "stdout_sha256": "5967d1ea810537fd39e58f5fa68d2d2e64ae85fa3b5c3408027cc0d9f98ca55e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_wall_ns": 11569593824
+    },
+    {
+      "pair": 0,
+      "variant": "candidate",
+      "returncode": 0,
+      "samples": 70,
+      "stdout_sha256": "4e6283f68c7cf82a50f6d21ca0585142866409874851ac902a25380451d431d4",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_wall_ns": 10683248522
+    },
+    {
+      "pair": 1,
+      "variant": "candidate",
+      "returncode": 0,
+      "samples": 70,
+      "stdout_sha256": "08e27908314b382a5ccb57f18ba015ba663eb7474a9d7b9eeec2976e7c35a408",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_wall_ns": 10465296315
+    },
+    {
+      "pair": 1,
+      "variant": "baseline",
+      "returncode": 0,
+      "samples": 70,
+      "stdout_sha256": "fc1a40efc3d8719d711c2e597d9cfe3b1194b0dcb55f8b8df31e282c0121baa4",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_wall_ns": 11117671655
+    },
+    {
+      "pair": 2,
+      "variant": "baseline",
+      "returncode": 0,
+      "samples": 70,
+      "stdout_sha256": "e5dab944b7ed68a3517336320b1223c76a59bc11c6efd23ffed86cf9608be4ca",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_wall_ns": 11471534166
+    },
+    {
+      "pair": 2,
+      "variant": "candidate",
+      "returncode": 0,
+      "samples": 70,
+      "stdout_sha256": "eec7de0e2580f0a9f46cee0b383a8f8cf2eaa21ed6549fe6ef37c828f1b47cf7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_wall_ns": 10606773406
+    },
+    {
+      "pair": 3,
+      "variant": "candidate",
+      "returncode": 0,
+      "samples": 70,
+      "stdout_sha256": "e184b9748f44c11d0f4b3b67db8e1eb77ea6a022dd26bc87c154bcb067751300",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_wall_ns": 10515470723
+    },
+    {
+      "pair": 3,
+      "variant": "baseline",
+      "returncode": 0,
+      "samples": 70,
+      "stdout_sha256": "d3509663a589cca6453ce464844de6ca6d7ca060e307a356ff46057372935395",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_wall_ns": 10911411524
+    },
+    {
+      "pair": 4,
+      "variant": "baseline",
+      "returncode": 0,
+      "samples": 70,
+      "stdout_sha256": "7cd61dd9586441c4e7db44ed4284f7c7066cdb77b5f6ba807acd8b6ca0f234a6",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_wall_ns": 11472629403
+    },
+    {
+      "pair": 4,
+      "variant": "candidate",
+      "returncode": 0,
+      "samples": 70,
+      "stdout_sha256": "1349e7dec63230477c58879d315eb776225f46ed9434b89a7cdf3d96be3bd449",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_wall_ns": 10254811047
+    }
+  ],
+  "sample_counts": {
+    "processes": 10,
+    "samples": 700,
+    "successes": 660,
+    "expected_RANGE": 20,
+    "expected_LIMIT": 20,
+    "unknown_clocks": 0,
+    "missing_samples": 0,
+    "timeouts": 0,
+    "retries": 0
+  },
+  "statistic": "Independently recomputed from original stdout using exact rational candidate/baseline ratios. Each warm process value is the sum of eight correlated calls. Median is over five separately launched process pairs.",
+  "rules": [
+    {
+      "case": "repeated",
+      "api": "root",
+      "phase": "warm",
+      "pairs": [
+        {
+          "pair": 0,
+          "baseline_cpu_ns": 368036546,
+          "candidate_cpu_ns": 65791311,
+          "ratio": 0.1787629835000136,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 1,
+          "baseline_cpu_ns": 299363400,
+          "candidate_cpu_ns": 42212620,
+          "ratio": 0.14100795220791854,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 2,
+          "baseline_cpu_ns": 365152815,
+          "candidate_cpu_ns": 65737294,
+          "ratio": 0.1800268032987778,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 3,
+          "baseline_cpu_ns": 330475387,
+          "candidate_cpu_ns": 41054317,
+          "ratio": 0.12422806240635403,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 4,
+          "baseline_cpu_ns": 342641314,
+          "candidate_cpu_ns": 50149569,
+          "ratio": 0.14636171106908608,
+          "exceeds_1_05": false
+        }
+      ],
+      "median_ratio": 0.14636171106908608,
+      "exact_median_fraction": "50149569/342641314",
+      "limit": 0.85,
+      "threshold_headroom": 0.703638288930914,
+      "pass": true
+    },
+    {
+      "case": "repeated",
+      "api": "commitment",
+      "phase": "warm",
+      "pairs": [
+        {
+          "pair": 0,
+          "baseline_cpu_ns": 774067988,
+          "candidate_cpu_ns": 467486086,
+          "ratio": 0.6039341417643019,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 1,
+          "baseline_cpu_ns": 779479902,
+          "candidate_cpu_ns": 484085448,
+          "ratio": 0.6210364715728104,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 2,
+          "baseline_cpu_ns": 707079287,
+          "candidate_cpu_ns": 484463534,
+          "ratio": 0.6851615411554263,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 3,
+          "baseline_cpu_ns": 730577981,
+          "candidate_cpu_ns": 453619781,
+          "ratio": 0.6209053554818263,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 4,
+          "baseline_cpu_ns": 734497751,
+          "candidate_cpu_ns": 487705842,
+          "ratio": 0.6639990950768752,
+          "exceeds_1_05": false
+        }
+      ],
+      "median_ratio": 0.6210364715728104,
+      "exact_median_fraction": "26893636/43304439",
+      "limit": 0.95,
+      "threshold_headroom": 0.3289635284271896,
+      "pass": true
+    },
+    {
+      "case": "unique",
+      "api": "root",
+      "phase": "cold",
+      "pairs": [
+        {
+          "pair": 0,
+          "baseline_cpu_ns": 134958581,
+          "candidate_cpu_ns": 140599777,
+          "ratio": 1.0417994614214268,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 1,
+          "baseline_cpu_ns": 139044355,
+          "candidate_cpu_ns": 141280810,
+          "ratio": 1.0160844717500397,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 2,
+          "baseline_cpu_ns": 141610820,
+          "candidate_cpu_ns": 142930402,
+          "ratio": 1.0093183698816235,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 3,
+          "baseline_cpu_ns": 148253595,
+          "candidate_cpu_ns": 141240779,
+          "ratio": 0.9526971605646393,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 4,
+          "baseline_cpu_ns": 137806485,
+          "candidate_cpu_ns": 143238488,
+          "ratio": 1.0394176152160037,
+          "exceeds_1_05": false
+        }
+      ],
+      "median_ratio": 1.0160844717500397,
+      "exact_median_fraction": "28256162/27808871",
+      "limit": 1.05,
+      "threshold_headroom": 0.03391552824996024,
+      "pass": true
+    },
+    {
+      "case": "unique",
+      "api": "root",
+      "phase": "warm",
+      "pairs": [
+        {
+          "pair": 0,
+          "baseline_cpu_ns": 333653348,
+          "candidate_cpu_ns": 307755454,
+          "ratio": 0.9223808358128629,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 1,
+          "baseline_cpu_ns": 349351907,
+          "candidate_cpu_ns": 363973573,
+          "ratio": 1.04185368880783,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 2,
+          "baseline_cpu_ns": 363563401,
+          "candidate_cpu_ns": 366009036,
+          "ratio": 1.0067268459731458,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 3,
+          "baseline_cpu_ns": 356523867,
+          "candidate_cpu_ns": 363126152,
+          "ratio": 1.0185184937422436,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 4,
+          "baseline_cpu_ns": 368359342,
+          "candidate_cpu_ns": 318713809,
+          "ratio": 0.8652252641932453,
+          "exceeds_1_05": false
+        }
+      ],
+      "median_ratio": 1.0067268459731458,
+      "exact_median_fraction": "366009036/363563401",
+      "limit": 1.05,
+      "threshold_headroom": 0.04327315402685431,
+      "pass": true
+    },
+    {
+      "case": "unique",
+      "api": "commitment",
+      "phase": "cold",
+      "pairs": [
+        {
+          "pair": 0,
+          "baseline_cpu_ns": 195801586,
+          "candidate_cpu_ns": 237623517,
+          "ratio": 1.2135934230890244,
+          "exceeds_1_05": true
+        },
+        {
+          "pair": 1,
+          "baseline_cpu_ns": 180453422,
+          "candidate_cpu_ns": 195947443,
+          "ratio": 1.0858616080996237,
+          "exceeds_1_05": true
+        },
+        {
+          "pair": 2,
+          "baseline_cpu_ns": 194559450,
+          "candidate_cpu_ns": 194324000,
+          "ratio": 0.9987898300493756,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 3,
+          "baseline_cpu_ns": 220054909,
+          "candidate_cpu_ns": 183616843,
+          "ratio": 0.8344137553413998,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 4,
+          "baseline_cpu_ns": 193567676,
+          "candidate_cpu_ns": 168099738,
+          "ratio": 0.8684287659681361,
+          "exceeds_1_05": false
+        }
+      ],
+      "median_ratio": 0.9987898300493756,
+      "exact_median_fraction": "3886480/3891189",
+      "limit": 1.05,
+      "threshold_headroom": 0.05121016995062435,
+      "pass": true
+    },
+    {
+      "case": "unique",
+      "api": "commitment",
+      "phase": "warm",
+      "pairs": [
+        {
+          "pair": 0,
+          "baseline_cpu_ns": 789606152,
+          "candidate_cpu_ns": 725490130,
+          "ratio": 0.9187999968875622,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 1,
+          "baseline_cpu_ns": 780846103,
+          "candidate_cpu_ns": 794275936,
+          "ratio": 1.017199077959668,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 2,
+          "baseline_cpu_ns": 781946603,
+          "candidate_cpu_ns": 769603873,
+          "ratio": 0.9842153799854797,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 3,
+          "baseline_cpu_ns": 762492381,
+          "candidate_cpu_ns": 742558601,
+          "ratio": 0.9738570764813976,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 4,
+          "baseline_cpu_ns": 796782427,
+          "candidate_cpu_ns": 774825045,
+          "ratio": 0.9724424369113251,
+          "exceeds_1_05": false
+        }
+      ],
+      "median_ratio": 0.9738570764813976,
+      "exact_median_fraction": "742558601/762492381",
+      "limit": 1.05,
+      "threshold_headroom": 0.07614292351860234,
+      "pass": true
+    },
+    {
+      "case": "collision",
+      "api": "root",
+      "phase": "cold",
+      "pairs": [
+        {
+          "pair": 0,
+          "baseline_cpu_ns": 149263625,
+          "candidate_cpu_ns": 129754695,
+          "ratio": 0.8692988328536172,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 1,
+          "baseline_cpu_ns": 139608003,
+          "candidate_cpu_ns": 143034736,
+          "ratio": 1.024545390854133,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 2,
+          "baseline_cpu_ns": 185450910,
+          "candidate_cpu_ns": 151016117,
+          "ratio": 0.8143185547053935,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 3,
+          "baseline_cpu_ns": 143219852,
+          "candidate_cpu_ns": 152760304,
+          "ratio": 1.0666140333673855,
+          "exceeds_1_05": true
+        },
+        {
+          "pair": 4,
+          "baseline_cpu_ns": 146425408,
+          "candidate_cpu_ns": 138890526,
+          "ratio": 0.9485411575564809,
+          "exceeds_1_05": false
+        }
+      ],
+      "median_ratio": 0.9485411575564809,
+      "exact_median_fraction": "69445263/73212704",
+      "limit": 1.05,
+      "threshold_headroom": 0.10145884244351909,
+      "pass": true
+    },
+    {
+      "case": "collision",
+      "api": "root",
+      "phase": "warm",
+      "pairs": [
+        {
+          "pair": 0,
+          "baseline_cpu_ns": 379222087,
+          "candidate_cpu_ns": 333866726,
+          "ratio": 0.8803989468050156,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 1,
+          "baseline_cpu_ns": 361100289,
+          "candidate_cpu_ns": 379052494,
+          "ratio": 1.0497152883751915,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 2,
+          "baseline_cpu_ns": 316670638,
+          "candidate_cpu_ns": 332426124,
+          "ratio": 1.049753542353996,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 3,
+          "baseline_cpu_ns": 287654519,
+          "candidate_cpu_ns": 351771006,
+          "ratio": 1.2228940717597419,
+          "exceeds_1_05": true
+        },
+        {
+          "pair": 4,
+          "baseline_cpu_ns": 392243262,
+          "candidate_cpu_ns": 340786762,
+          "ratio": 0.8688148274679605,
+          "exceeds_1_05": false
+        }
+      ],
+      "median_ratio": 1.0497152883751915,
+      "exact_median_fraction": "379052494/361100289",
+      "limit": 1.05,
+      "threshold_headroom": 0.0002847116248084753,
+      "pass": true
+    },
+    {
+      "case": "collision",
+      "api": "commitment",
+      "phase": "cold",
+      "pairs": [
+        {
+          "pair": 0,
+          "baseline_cpu_ns": 254399959,
+          "candidate_cpu_ns": 195330016,
+          "ratio": 0.7678067904091133,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 1,
+          "baseline_cpu_ns": 192914665,
+          "candidate_cpu_ns": 193838419,
+          "ratio": 1.0047884073509912,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 2,
+          "baseline_cpu_ns": 197120728,
+          "candidate_cpu_ns": 193349071,
+          "ratio": 0.9808662587731515,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 3,
+          "baseline_cpu_ns": 151501243,
+          "candidate_cpu_ns": 199811217,
+          "ratio": 1.3188750999224474,
+          "exceeds_1_05": true
+        },
+        {
+          "pair": 4,
+          "baseline_cpu_ns": 188993366,
+          "candidate_cpu_ns": 185730786,
+          "ratio": 0.9827370660195555,
+          "exceeds_1_05": false
+        }
+      ],
+      "median_ratio": 0.9827370660195555,
+      "exact_median_fraction": "92865393/94496683",
+      "limit": 1.05,
+      "threshold_headroom": 0.06726293398044458,
+      "pass": true
+    },
+    {
+      "case": "collision",
+      "api": "commitment",
+      "phase": "warm",
+      "pairs": [
+        {
+          "pair": 0,
+          "baseline_cpu_ns": 902398787,
+          "candidate_cpu_ns": 788527647,
+          "ratio": 0.8738128401318429,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 1,
+          "baseline_cpu_ns": 703329646,
+          "candidate_cpu_ns": 785393698,
+          "ratio": 1.1166793586289407,
+          "exceeds_1_05": true
+        },
+        {
+          "pair": 2,
+          "baseline_cpu_ns": 783357841,
+          "candidate_cpu_ns": 770658379,
+          "ratio": 0.9837884280525124,
+          "exceeds_1_05": false
+        },
+        {
+          "pair": 3,
+          "baseline_cpu_ns": 700365981,
+          "candidate_cpu_ns": 779641014,
+          "ratio": 1.1131908675615698,
+          "exceeds_1_05": true
+        },
+        {
+          "pair": 4,
+          "baseline_cpu_ns": 735108867,
+          "candidate_cpu_ns": 725104747,
+          "ratio": 0.9863909681285343,
+          "exceeds_1_05": false
+        }
+      ],
+      "median_ratio": 0.9863909681285343,
+      "exact_median_fraction": "725104747/735108867",
+      "limit": 1.05,
+      "threshold_headroom": 0.06360903187146565,
+      "pass": true
+    }
+  ],
+  "preregistered_component_pass": true,
+  "important_limits": [
+    "Collision warm-root median ratio 1.0497152883751915 passes 1.05 by only 0.0002847116248085; a pair ratio is 1.2228940717597419. Preserve all five raw paired ratios. This does not show universal or per-pair non-regression.",
+    "Other controls also contain individual regressions even when the preregistered median passes; no pair was excluded.",
+    "The repeated direct-root cache retains 2100 entries with 455566-byte warm payload versus baseline445/2094369; unique and collision retain438 versus baseline445. This is a real retained-coverage tradeoff, not a process RSS guarantee.",
+    "FullRootArithmetic does not expose private material charge/failed-cache observation. The driver leaves it null; semantic tests cover that separately.",
+    "Five process pairs do not establish statistical independence, confidence intervals, p95/p99 or stable tail behavior. Forty correlated warm intervals are not forty process replicates.",
+    "Original ARM CPU gates, same Host service budgets, four-second confirmation, F0 and thirty-second pressure outcomes remain separate and unqualified by this finite x86_64 component experiment."
+  ]
+}

@@ -1,0 +1,300 @@
+{
+  "schema": "frozen-native-vs-current-c4-source-v1",
+  "frozen_upstream_commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+  "current_c4_commit": "8df4b21d893906570d48f5beafabb3b31e0aefbc",
+  "counts": {
+    "same": 39,
+    "different": 1,
+    "missing": 1
+  },
+  "files": [
+    {
+      "frozen_path": "src/pon_work.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "frozen_sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "current_c4_sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/arithmetic_facts.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs",
+      "frozen_sha256": "b6f453410f588391b8a05427299f7e7c3b10d1972d2057620146cde5ca28fbb9",
+      "current_c4_sha256": "b6f453410f588391b8a05427299f7e7c3b10d1972d2057620146cde5ca28fbb9",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/arithmetic_facts/churn_controls.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs",
+      "frozen_sha256": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5",
+      "current_c4_sha256": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/arithmetic_facts/controls.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs",
+      "frozen_sha256": "1e53a6aa598d0fcb23866253f5c89add025cdd0654d6e82570a761a2d253f7a5",
+      "current_c4_sha256": "1e53a6aa598d0fcb23866253f5c89add025cdd0654d6e82570a761a2d253f7a5",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/arithmetic_facts/full_limb_controls.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/full_limb_controls.rs",
+      "frozen_sha256": "b418bcbac9261335b0296f46fed8644f2cdc11d3df368bee9b39f7909a357905",
+      "current_c4_sha256": "b418bcbac9261335b0296f46fed8644f2cdc11d3df368bee9b39f7909a357905",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/arithmetic_facts/tests.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs",
+      "frozen_sha256": "f93b72aa1b5dec2b991de6586214f274a7797f8a347d0444125101f0e52cee2f",
+      "current_c4_sha256": "f93b72aa1b5dec2b991de6586214f274a7797f8a347d0444125101f0e52cee2f",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/artifacts.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs",
+      "frozen_sha256": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919",
+      "current_c4_sha256": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/blocked_one_zero.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs",
+      "frozen_sha256": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031",
+      "current_c4_sha256": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/blocked_zero.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs",
+      "frozen_sha256": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f",
+      "current_c4_sha256": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/blocked_zero_paired.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
+      "frozen_sha256": "0c9c4ddb772292efd0cf92dc174e8b2353b1e0f16f36df484a5e16b280316a0f",
+      "current_c4_sha256": "0c9c4ddb772292efd0cf92dc174e8b2353b1e0f16f36df484a5e16b280316a0f",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/facts.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs",
+      "frozen_sha256": "d3e10fd0b3f2ab50fbf95778bd38353a1c9da38f44cf6f558d309661f47606a2",
+      "current_c4_sha256": "d3e10fd0b3f2ab50fbf95778bd38353a1c9da38f44cf6f558d309661f47606a2",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/facts/tests.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs",
+      "frozen_sha256": "010410761dc0a71e03f32f43e82b09f808ee69cab860f5a708081ae661f6396e",
+      "current_c4_sha256": "010410761dc0a71e03f32f43e82b09f808ee69cab860f5a708081ae661f6396e",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/integer_paired.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs",
+      "frozen_sha256": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101",
+      "current_c4_sha256": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/legal_attempt.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs",
+      "frozen_sha256": "e029837d050952046c9c4fa694a8191470a8733cd96a3dc81e98cc46af59a0a3",
+      "current_c4_sha256": "732f85082c7125d4c3ef6299a5ce3b5b657399df95f88b5498aa338abfa3c655",
+      "status": "different"
+    },
+    {
+      "frozen_path": "src/pon_work/legal_attempt/low_rank.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs",
+      "frozen_sha256": "b167b51b07a6fbf186a1485c1f742de3df1007cb9794c364c7421d77e0afacb4",
+      "current_c4_sha256": null,
+      "status": "missing"
+    },
+    {
+      "frozen_path": "src/pon_work/maintenance_limb.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
+      "frozen_sha256": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d",
+      "current_c4_sha256": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/maintenance_periodic.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs",
+      "frozen_sha256": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac",
+      "current_c4_sha256": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/maintenance_prefix.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
+      "frozen_sha256": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899",
+      "current_c4_sha256": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/paired_product.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs",
+      "frozen_sha256": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab",
+      "current_c4_sha256": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/rejection_cache.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+      "frozen_sha256": "93d708c2eac3684af0a397e6b51de452c4857048c23c26ced8d0601b8819fcea",
+      "current_c4_sha256": "93d708c2eac3684af0a397e6b51de452c4857048c23c26ced8d0601b8819fcea",
+      "status": "same"
+    },
+    {
+      "frozen_path": "src/pon_work/structured.rs",
+      "current_c4_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
+      "frozen_sha256": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c",
+      "current_c4_sha256": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/integer_evolution_v3.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
+      "frozen_sha256": "b16311bcbff7af586641931e1980e6886df6543fc6700251c3b44ec8a9adc305",
+      "current_c4_sha256": "b16311bcbff7af586641931e1980e6886df6543fc6700251c3b44ec8a9adc305",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/integer_factor_v2.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs",
+      "frozen_sha256": "2300d2683378211e4e6d9e1720a6869eb2f1d30d35666f810cb6876613dccc38",
+      "current_c4_sha256": "2300d2683378211e4e6d9e1720a6869eb2f1d30d35666f810cb6876613dccc38",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/lib.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/lib.rs",
+      "frozen_sha256": "73948f7e8300ffb36cc831185170e31e94b43f8e7edc40d6150f02827cbe5a75",
+      "current_c4_sha256": "73948f7e8300ffb36cc831185170e31e94b43f8e7edc40d6150f02827cbe5a75",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/pon_growth.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/pon_growth.rs",
+      "frozen_sha256": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+      "current_c4_sha256": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/pon_state.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/pon_state.rs",
+      "frozen_sha256": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb",
+      "current_c4_sha256": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/pon_state_bulk_tests.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/pon_state_bulk_tests.rs",
+      "frozen_sha256": "c3e16e156883125f5b7e6f601a5bd8abff7ba7139457220d1cde5299ce800f89",
+      "current_c4_sha256": "c3e16e156883125f5b7e6f601a5bd8abff7ba7139457220d1cde5299ce800f89",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/pon_wire.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "frozen_sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd",
+      "current_c4_sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "frozen_sha256": "8b18f12347a32c4ad55dae7c8fd7400144e0505fdd26ee7407362beafee7f0bb",
+      "current_c4_sha256": "8b18f12347a32c4ad55dae7c8fd7400144e0505fdd26ee7407362beafee7f0bb",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs",
+      "frozen_sha256": "04d70da9048f5e85a6b580ccfdcf9bcd26576af802084af53bc37f70de71c647",
+      "current_c4_sha256": "04d70da9048f5e85a6b580ccfdcf9bcd26576af802084af53bc37f70de71c647",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/pq_frame.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+      "frozen_sha256": "e1d95756a2aad8b45349a92ef2bf834e204f456ec717177b6bac94bc1508fecd",
+      "current_c4_sha256": "e1d95756a2aad8b45349a92ef2bf834e204f456ec717177b6bac94bc1508fecd",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/pq_native_accounts_v2.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs",
+      "frozen_sha256": "97590751be4683e965c99d6f67f48ad2a97e9aad96c64b47267ff1cdef8b7b62",
+      "current_c4_sha256": "97590751be4683e965c99d6f67f48ad2a97e9aad96c64b47267ff1cdef8b7b62",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/pq_native_accounts_v2/tests.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2/tests.rs",
+      "frozen_sha256": "29c450985b2151b22a67e4863ea042cfdccc87bc4aba7646e43d1a5bb19aefdb",
+      "current_c4_sha256": "29c450985b2151b22a67e4863ea042cfdccc87bc4aba7646e43d1a5bb19aefdb",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/pq_transaction.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/pq_transaction.rs",
+      "frozen_sha256": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3",
+      "current_c4_sha256": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/qualified_work_task.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs",
+      "frozen_sha256": "429d696b9d8438efc8e17733555a4f4913e6d19a96c86b2af411a85ab863ffc5",
+      "current_c4_sha256": "429d696b9d8438efc8e17733555a4f4913e6d19a96c86b2af411a85ab863ffc5",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/qualified_work_task/lifecycle_v2.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v2.rs",
+      "frozen_sha256": "a1ea641665dc38f8e4dc88d4d2c86358f0b8daa64ee56984e8ba36cd93cf5bd8",
+      "current_c4_sha256": "a1ea641665dc38f8e4dc88d4d2c86358f0b8daa64ee56984e8ba36cd93cf5bd8",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/qualified_work_task/lifecycle_v3.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v3.rs",
+      "frozen_sha256": "312a344ce187b3e942b29e0675915600c85c4f8db72b25ae04e8dc5ae1188069",
+      "current_c4_sha256": "312a344ce187b3e942b29e0675915600c85c4f8db72b25ae04e8dc5ae1188069",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
+      "frozen_sha256": "e84890971bb6416e56913fdac1c735a8437e0e67770e1076530cdf5e7f2b41b8",
+      "current_c4_sha256": "e84890971bb6416e56913fdac1c735a8437e0e67770e1076530cdf5e7f2b41b8",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
+      "frozen_sha256": "aeb3429701913abe20cdead6a33b022548214a1796a48f40fdb85a953a903719",
+      "current_c4_sha256": "aeb3429701913abe20cdead6a33b022548214a1796a48f40fdb85a953a903719",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/qualified_work_task/pq_lifecycle_v5.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v5.rs",
+      "frozen_sha256": "002de1ce7bcfafa1c6d3dc540666311e8c8a2a973374f5c0f6a096c34ae643b4",
+      "current_c4_sha256": "002de1ce7bcfafa1c6d3dc540666311e8c8a2a973374f5c0f6a096c34ae643b4",
+      "status": "same"
+    },
+    {
+      "frozen_path": "vendor/trnm-protocol/src/sha2_backend_tests.rs",
+      "current_c4_path": "trillionnium/crates/trnm-protocol/src/sha2_backend_tests.rs",
+      "frozen_sha256": "b55c61c1be3be33e1ffa8d865416a0ac61e2270a41e953fbc51d48390d485379",
+      "current_c4_sha256": "b55c61c1be3be33e1ffa8d865416a0ac61e2270a41e953fbc51d48390d485379",
+      "status": "same"
+    }
+  ],
+  "scope": "Exact 41 source-file identity only. It does not establish current Node end-to-end timing or whole-build equivalence."
+}

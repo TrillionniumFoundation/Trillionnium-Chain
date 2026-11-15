@@ -1,0 +1,16 @@
+{
+  "all_gates_passed": false,
+  "completed_stages_preserved": true,
+  "last_reported_command": "node-required-02",
+  "observed_at_unix_ns": 1794468331695256023,
+  "original_summary_modified": false,
+  "original_summary_sha256": "64ee04d0f1ca821278c71ae3c04be69ae62da8cd5eeb76d7906007f6ae50da1c",
+  "reason": "repeated rustc SIGKILL while compiling Node release library/test; no native PQ or Node lib execution. Stop repeated non-executing compilation attempts and continue exact required commands on original research host. Cause of SIGKILL not diagnosed.",
+  "runner_exit_code": 130,
+  "schema": "cell-bt-local-campaign-controlled-interruption-v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "target_locks": {
+    "target-discovery.owner.lock": "released",
+    "target-discovery/release/.cargo-lock": "released"
+  }
+}

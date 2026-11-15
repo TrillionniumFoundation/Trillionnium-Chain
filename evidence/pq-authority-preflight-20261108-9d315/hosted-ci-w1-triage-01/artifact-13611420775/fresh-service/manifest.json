@@ -1,0 +1,191 @@
+{
+  "schema": "trnm-w1-fresh-service-execution-v1",
+  "source_before": {
+    "commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+    "tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+    "tracked_source_identity": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "head",
+      "tested_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+      "candidate": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "base": null,
+      "prospective_merge": null,
+      "tracked_worktree_verified": true,
+      "tracked_entries": 11587,
+      "tracked_bytes": 1141476687,
+      "tests_executed_by_identity_check": false
+    },
+    "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+  },
+  "source_after": {
+    "commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+    "tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+    "tracked_source_identity": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "head",
+      "tested_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+      "candidate": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "base": null,
+      "prospective_merge": null,
+      "tracked_worktree_verified": true,
+      "tracked_entries": 11587,
+      "tracked_bytes": 1141476687,
+      "tests_executed_by_identity_check": false
+    },
+    "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+  },
+  "source_expected": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+  "source_recompiled": true,
+  "all_named_tests_passed": false,
+  "runs": [
+    {
+      "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-77260bdf1a282259",
+          "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "exit_code": 0,
+        "timed_out": false,
+        "elapsed_ns": 19088106249,
+        "log": "original.log",
+        "executed": true,
+        "process_exit_code": 0,
+        "expected_source": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+        "source_before_verified": true,
+        "source_after_verified": true,
+        "source_verified": true
+      },
+      "passed": false,
+      "log_sha256": "0b59bdf472fa8326d9fa7b90fd939b523b27dc9d3259e8cd72894fba6e9db5a3",
+      "report_path": "original/report.json",
+      "failure": "CONFIRMATION_TARGET",
+      "failure_diagnostic": {
+        "schema": "trnm-w1-fresh-failure-diagnostic-v1",
+        "native_returncode": 0,
+        "finite_target_met": false,
+        "last_history_replay": {
+          "phase": "from-zero-pressure",
+          "history_call_index": 1,
+          "replay_accepted": false,
+          "replay_error": "PUBLIC_REQUEST_DEADLINE"
+        },
+        "acceptance_authority": false
+      }
+    },
+    {
+      "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-77260bdf1a282259",
+          "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1",
+          "--ignored"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "exit_code": 101,
+        "timed_out": false,
+        "elapsed_ns": 18899663475,
+        "log": "fresh.log",
+        "executed": true,
+        "process_exit_code": 101,
+        "expected_source": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+        "source_before_verified": true,
+        "source_after_verified": true,
+        "source_verified": true
+      },
+      "passed": false,
+      "log_sha256": "f7875a9567888138edf14324eadcf8a9b933e3ee03aa1863f4827f2890cacbdd",
+      "report_path": "fresh/report.json",
+      "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+      "failure_diagnostic": {
+        "schema": "trnm-w1-fresh-failure-diagnostic-v1",
+        "native_returncode": 101,
+        "finite_target_met": false,
+        "last_history_replay": {
+          "phase": "from-zero-pressure",
+          "history_call_index": 0,
+          "replay_accepted": false,
+          "replay_error": "PUBLIC_REQUEST_DEADLINE"
+        },
+        "acceptance_authority": false
+      }
+    }
+  ],
+  "failures": [
+    "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+    "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+  ],
+  "passed": false,
+  "execution_finished": true,
+  "requested_window_ns": 4000000000,
+  "attack_workers": 16,
+  "independent_wan_accepted": false,
+  "work_hardness_accepted": false,
+  "production_activation": false,
+  "build": {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "public_v3_from_zero",
+      "--no-run",
+      "--message-format=json"
+    ],
+    "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_ns": 10797840149,
+    "log": "build.log",
+    "executed": true,
+    "process_exit_code": 0,
+    "expected_source": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+    "source_before_verified": true,
+    "source_after_verified": true,
+    "source_verified": true
+  },
+  "binary_sha256_before": "51829d71b64ba002ef47ff3220a1a5b3ac59db96221aa42cbb2c67bcd8ee9f2f",
+  "binary_sha256_after": "51829d71b64ba002ef47ff3220a1a5b3ac59db96221aa42cbb2c67bcd8ee9f2f",
+  "files": {
+    "build.log": "2082610963853315582271f375f2b50c1e72bcaf1675b5f73eefc3082c16c81a",
+    "fresh/baseline/independent-client/native.sqlite": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769",
+    "fresh/baseline/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fresh/baseline/receiver/native.sqlite": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+    "fresh/baseline/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fresh/pressure/independent-client/native.sqlite": "dc3ff57c202f49cc418d73f824ccdeb8f3413024c3818b1188e5957cc1be2d96",
+    "fresh/pressure/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fresh/pressure/receiver/native.sqlite": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+    "fresh/pressure/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fresh/producer/native.sqlite": "0d5e8e88b221b194617e773a59987dbca33fde482bfe5b8edd23a976a6c2b770",
+    "fresh/producer/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fresh/report.json": "34d716162e01624862bd6fd301bd2831856f07918f6154c97729b476ca4feba5",
+    "fresh.log": "f7875a9567888138edf14324eadcf8a9b933e3ee03aa1863f4827f2890cacbdd",
+    "original/baseline/independent-client/native.sqlite": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769",
+    "original/baseline/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original/baseline/receiver/native.sqlite": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+    "original/baseline/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original/pressure/independent-client/native.sqlite": "48d7f579d04e0c857d74e489afd1597ab1704cde428f55c026ad25243dd208e6",
+    "original/pressure/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original/pressure/receiver/native.sqlite": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+    "original/pressure/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original/producer/native.sqlite": "0d5e8e88b221b194617e773a59987dbca33fde482bfe5b8edd23a976a6c2b770",
+    "original/producer/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original/report.json": "b670862dd41815ce7f31c07b0d1e4dbd0f693f3b48befae98af0786381ebcb12",
+    "original.log": "0b59bdf472fa8326d9fa7b90fd939b523b27dc9d3259e8cd72894fba6e9db5a3",
+    "public_v3_from_zero": "51829d71b64ba002ef47ff3220a1a5b3ac59db96221aa42cbb2c67bcd8ee9f2f"
+  }
+}

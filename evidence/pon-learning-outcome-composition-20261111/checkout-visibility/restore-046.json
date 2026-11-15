@@ -1,0 +1,24 @@
+{
+  "actual_oid": "7afea2a3978109990eac67370aa278af23686cf4",
+  "bytes": 2011407,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "7afea2a3978109990eac67370aa278af23686cf4"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 2011407,
+  "expected_oid": "7afea2a3978109990eac67370aa278af23686cf4",
+  "finished_at": "2026-11-12T01:41:54.616070+00:00",
+  "path": "evidence/pon-fresh-work-floor-20261107/history/complete-history.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLWZyZXNoLXdvcmstZmxvb3ItMjAyNjExMDcvaGlzdG9yeS9jb21wbGV0ZS1oaXN0b3J5LnRhci5neg==",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "ae641088a180a823855f95be0f17eb640c11a6e83a289719364578a5b90c97bd",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:54.561099+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

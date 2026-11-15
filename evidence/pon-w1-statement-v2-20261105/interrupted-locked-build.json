@@ -1,0 +1,9 @@
+{
+  "schema": "TRNM-W1-INTERRUPTED-BUILD1",
+  "log": "interrupted-locked-build.log",
+  "reason": "Executor transport disconnected; no build completion JSON; previous process no longer existed on recovery",
+  "observed_success": false,
+  "exit_code": null,
+  "new_proofs_generated": 0,
+  "log_sha256": "3539963d95dd72f3a37b3c98c8f1f75977139829bd8f65d460783ba475ec2ae1"
+}

@@ -1,0 +1,40 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "gh",
+        "pr",
+        "view",
+        "778",
+        "--repo",
+        "TrillionniumFoundation/Trillionnium-Chain",
+        "--json",
+        "number,title,baseRefName,headRefName,headRefOid,isDraft,url,body"
+      ],
+      "exit_code": 0,
+      "label": "before",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "7495bef1f1d329333bcaf8b3944d1d97cea9dd7984221ca9754ea917fe2b9e93"
+    },
+    {
+      "argv": [
+        "gh",
+        "pr",
+        "edit",
+        "778",
+        "--repo",
+        "TrillionniumFoundation/Trillionnium-Chain",
+        "--body-file",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/publication-final-1a14f7d48263/pr778-body-1a14.md"
+      ],
+      "exit_code": 1,
+      "label": "edit",
+      "stderr_sha256": "9c4f5d81ed2acfc14cd655978ab0fe9f7fe985bba53d8d843aafdf989f122e2c",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "edit_completed_and_read_back": false,
+  "error": "RuntimeError: edit failed",
+  "schema": "TRNM-W1-PR-BODY-READBACK1",
+  "target_head": "1a14f7d4826363daefac9ec10131c66d7e70ece7"
+}

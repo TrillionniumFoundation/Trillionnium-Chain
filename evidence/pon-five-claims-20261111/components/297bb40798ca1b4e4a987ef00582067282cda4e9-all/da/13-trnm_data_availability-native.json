@@ -1,0 +1,51 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_data_availability-64b25e344716c90a",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "child_reaped": true,
+  "cwd": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability",
+  "dispatch_object": {
+    "bytes": 16411728,
+    "device": 2050,
+    "inode": 52884626,
+    "sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f"
+  },
+  "dispatch_object_after_sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f",
+  "dispatch_object_stable": true,
+  "elapsed_ns": 250168075831,
+  "exit_code": 101,
+  "label": "13-trnm_data_availability-native",
+  "native_observation": {
+    "bytes": 16411728,
+    "device": 2050,
+    "exe_link": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_data_availability-64b25e344716c90a",
+    "executable_opened_monotonic_ns": 1472178581735512,
+    "hash_finished_monotonic_ns": 1472178638798349,
+    "inode": 52884626,
+    "observation_started_monotonic_ns": 1472178581659342,
+    "process": {
+      "parent_pid": 68035,
+      "pid": 91835,
+      "start_ticks": 147217858
+    },
+    "process_binding_finished_monotonic_ns": 1472178581763304,
+    "sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f",
+    "status": "OBSERVED"
+  },
+  "owned_pid": 91835,
+  "performance_measurement": false,
+  "started_unix_ns": 1794394512529790555,
+  "status": "command_failed",
+  "stderr": {
+    "bytes": 15013,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/13-trnm_data_availability-native.stderr.log",
+    "sha256": "8a55fa92e1835a538ed81f7a62c06fddeaa3b59664e0ee49af1e10bc005e4b6b"
+  },
+  "stdout": {
+    "bytes": 82052,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/13-trnm_data_availability-native.stdout.log",
+    "sha256": "373d810ec5846c908163da960fb2250fc08ac307121ff992478f87be6b734f3b"
+  }
+}

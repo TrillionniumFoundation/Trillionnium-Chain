@@ -1,0 +1,24 @@
+{
+  "schema": "w1-wire-admission-campaign-v1",
+  "qualification": "HOLD_NO_GO",
+  "machine": {
+    "system": "Linux",
+    "node": "qian-qi",
+    "release": "7.0.0-38-generic",
+    "version": "#38~24.04.4-Ubuntu SMP PREEMPT_DYNAMIC Mon Sep 14 16:37:11 UTC 2",
+    "machine": "x86_64",
+    "processor": "x86_64"
+  },
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "rayon_num_threads": "8",
+  "baseline_source_commit": "3bbd072e4983eceee4531d7576d329da5b0d0900",
+  "proof_source_commit": "3bbd072e4983eceee4531d7576d329da5b0d0900",
+  "retained_full_proof_hashes": {
+    "statement.bin": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+    "sha.proof.bin": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+    "arith.proof.bin": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204"
+  },
+  "new_proofs_generated": 0,
+  "production_resource_contract": false,
+  "canonical_field_changes_require_the_original_cryptographic_verifier": true
+}

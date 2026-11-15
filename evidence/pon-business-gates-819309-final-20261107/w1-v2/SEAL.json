@@ -1,0 +1,17 @@
+{
+  "schema": "trnm-final819-w1-transport-v2-package-seal",
+  "sealed_utc": "2026-11-07T21:09:08.222422+00:00",
+  "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+  "payload_files": 150,
+  "payload_bytes": 16679674,
+  "sha256sums_sha256": "3599d9306ef108b8afc305709d1603a0f33cb683f730dfeb9ba489e661bf3b50",
+  "coverage_sha256": "d0da1651882ed694eae48303ec76155942b58f0d0658b1a709321b1bd8f702b7",
+  "coverage_bytes": 18717,
+  "v1_seal_sha256": "c44f24f7f219a41d9a613b06e84a322ab052bd1a091e9d9c9bb8202ab94bd215",
+  "external_archive_count": 6,
+  "external_observed_bytes": 974948747,
+  "final_independent_readbacks": 19,
+  "final_unknown": 1,
+  "native_campaign_commands": 602,
+  "original_total_process_records": 690
+}

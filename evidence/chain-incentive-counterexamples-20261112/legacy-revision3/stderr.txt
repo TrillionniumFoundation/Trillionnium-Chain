@@ -1,0 +1,7 @@
+test_revision3_first_pair_is_order_sensitive_and_late_third_rejects (test_native_execution.NativeExecutionTests.test_revision3_first_pair_is_order_sensitive_and_late_third_rejects) ... ok
+test_exact_artifact_copy_across_authors_does_not_gain_second_intake (test_native_execution.NativeExecutionTests.test_exact_artifact_copy_across_authors_does_not_gain_second_intake) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 14.255s
+
+OK

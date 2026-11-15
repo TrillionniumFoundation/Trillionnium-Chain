@@ -1,0 +1,44 @@
+{
+  "scope": "independent-arithmetic-candidate-only-not-native-admission",
+  "a_correct": 24,
+  "b_correct": 23,
+  "bundle_correct": 25,
+  "split_standalone_correct": [
+    2,
+    20,
+    23
+  ],
+  "split_without_correct": [
+    20,
+    2,
+    24
+  ],
+  "split_weights": [
+    200000,
+    920000,
+    40000
+  ],
+  "exact_zero_subset_checks": 4,
+  "unsplit_group_fraction": 0.6666666666666666,
+  "split_group_fraction": 0.9655172413793104,
+  "budget": 100000,
+  "unsplit_payouts": [
+    66666,
+    33333
+  ],
+  "split_payouts": [
+    17241,
+    79310,
+    3448
+  ],
+  "all_coefficients_range": [
+    -1000,
+    1000
+  ],
+  "z_bias": [
+    1000,
+    -1000
+  ],
+  "production_activation": false,
+  "economic_security_qualified": false
+}

@@ -1,0 +1,421 @@
+{
+  "schema": "b4bdf-w1-history-four-lane-terminal-count-readback-v1",
+  "observed_utc": "2026-11-03T23:05:14.432258+00:00",
+  "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+  "actual_merge": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+  "tested_tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+  "source_registry_reference": {
+    "file": "/workspace/scratch/b5a148b09b11/next-validation/full-node-fixture-diagnostics/plan.json",
+    "sha256": "c85222711cb8ef0a65c11a828d8471cfc6f7faa7bd9b9a6228f745530171e27d",
+    "same_26_history_names_verified": true
+  },
+  "lanes": [
+    {
+      "lane": "x64-actual-merge",
+      "run_id": 41732369770,
+      "job_id": 126252721619,
+      "attempt": 1,
+      "source_before_after": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "kind": "prospective-merge",
+        "prospective_merge": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+        "tested_tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 884109821,
+        "tracked_entries": 7757,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_equal": true,
+      "command": "cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::history_import::tests:: -- --test-threads=1 --nocapture",
+      "profile": "release",
+      "all_features_flag": false,
+      "selected_registry": 26,
+      "passed": 25,
+      "failed": 0,
+      "ignored": 1,
+      "filtered_out": 932,
+      "same_profile_total_registry": 958,
+      "elapsed_seconds": 17.99,
+      "passed_names": [
+        "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+        "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+        "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+        "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+        "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+        "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+        "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+        "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+        "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+        "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+        "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+        "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+        "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+        "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+        "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+        "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+        "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+        "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+        "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+        "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+        "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+        "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+        "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+      ],
+      "ignored_entries": [
+        {
+          "name": "ingress::history_import::tests::history_kill_cut_child",
+          "reason": "ignored, subprocess fixture: parent selects a real SIGKILL cut"
+        }
+      ],
+      "original_log_receipt": {
+        "file": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/20261103T230453269Z-w1-factorial-x64-merge-job-log.json",
+        "sha256": "1f4739c19cb9218e1d7130c5eac4c664bbd31a7689f537e0e62bb992d9d9d5bf"
+      },
+      "decoded_complete_github_job_log": {
+        "bytes": 203385,
+        "sha256": "f9e558de4e4206b9bc4a9fb6af29706523583dcde597d4f9fd413bdbf29b6757"
+      },
+      "normalized_history_section": {
+        "bytes": 14631,
+        "sha256": "d350a9b3a2f86abaf9b7829c894a715e893a9185ddf237e8eef72f7781ee4f76"
+      },
+      "artifact_metadata": {
+        "id": 13279195288,
+        "name": "w1-legal-factorial-prospective-merge-x64-d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb-1",
+        "size_in_bytes": 174300643,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13279195288",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13279195288/zip",
+        "expired": false,
+        "created_at": "2026-11-03T22:58:36Z",
+        "expires_at": "2026-12-03T22:58:19Z",
+        "updated_at": "2026-11-03T22:58:36Z",
+        "digest": "sha256:f5b3be32f85d4e041743cd34ee23a8e8d5e7bd42deb17c8dca6fc633eadc01da",
+        "workflow_run": {
+          "id": 41732369770,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "b4bdf142f513081715ecc8d1f9674291e85302cc"
+        }
+      },
+      "whole_artifact_downloaded_or_digest_locally_verified": false,
+      "native_elf_sha256": null,
+      "elf_scope": "The original job log binds Cargo invocation, retained source and named outcomes; it does not provide a retained History ELF digest."
+    },
+    {
+      "lane": "arm64-head",
+      "run_id": 41732369770,
+      "job_id": 126252721567,
+      "attempt": 1,
+      "source_before_after": {
+        "base": null,
+        "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "tested_tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 884109821,
+        "tracked_entries": 7757,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_equal": true,
+      "command": "cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::history_import::tests:: -- --test-threads=1 --nocapture",
+      "profile": "release",
+      "all_features_flag": false,
+      "selected_registry": 26,
+      "passed": 25,
+      "failed": 0,
+      "ignored": 1,
+      "filtered_out": 932,
+      "same_profile_total_registry": 958,
+      "elapsed_seconds": 18.12,
+      "passed_names": [
+        "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+        "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+        "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+        "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+        "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+        "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+        "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+        "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+        "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+        "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+        "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+        "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+        "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+        "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+        "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+        "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+        "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+        "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+        "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+        "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+        "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+        "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+        "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+      ],
+      "ignored_entries": [
+        {
+          "name": "ingress::history_import::tests::history_kill_cut_child",
+          "reason": "ignored, subprocess fixture: parent selects a real SIGKILL cut"
+        }
+      ],
+      "original_log_receipt": {
+        "file": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/20261103T230448952Z-w1-factorial-arm-head-job-log.json",
+        "sha256": "4e2e37e02789018e4d89bc2bc36426dc2eccb85bd1204d1c523dcc948ad2a63c"
+      },
+      "decoded_complete_github_job_log": {
+        "bytes": 202044,
+        "sha256": "edea5b0710f130087d84001570c83239e18fab03faf67c3015fca61482c6b96d"
+      },
+      "normalized_history_section": {
+        "bytes": 14626,
+        "sha256": "cbf960afeb5ad08afcd91daad626bd529c8c0418d818f28e424fcf22e234bfe3"
+      },
+      "artifact_metadata": {
+        "id": 13277334431,
+        "name": "w1-legal-factorial-head-arm64-b4bdf142f513081715ecc8d1f9674291e85302cc-1",
+        "size_in_bytes": 174239162,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13277334431",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13277334431/zip",
+        "expired": false,
+        "created_at": "2026-11-03T22:59:28Z",
+        "expires_at": "2026-12-03T22:59:15Z",
+        "updated_at": "2026-11-03T22:59:28Z",
+        "digest": "sha256:2750afa38efd01637603d0b63bf0c562c87bba80decd23bacfde36ceaab5a90a",
+        "workflow_run": {
+          "id": 41732369770,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "b4bdf142f513081715ecc8d1f9674291e85302cc"
+        }
+      },
+      "whole_artifact_downloaded_or_digest_locally_verified": false,
+      "native_elf_sha256": null,
+      "elf_scope": "The original job log binds Cargo invocation, retained source and named outcomes; it does not provide a retained History ELF digest."
+    },
+    {
+      "lane": "arm64-actual-merge",
+      "run_id": 41732369770,
+      "job_id": 126252721481,
+      "attempt": 1,
+      "source_before_after": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "kind": "prospective-merge",
+        "prospective_merge": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+        "tested_tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 884109821,
+        "tracked_entries": 7757,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_equal": true,
+      "command": "cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::history_import::tests:: -- --test-threads=1 --nocapture",
+      "profile": "release",
+      "all_features_flag": false,
+      "selected_registry": 26,
+      "passed": 25,
+      "failed": 0,
+      "ignored": 1,
+      "filtered_out": 932,
+      "same_profile_total_registry": 958,
+      "elapsed_seconds": 17.99,
+      "passed_names": [
+        "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+        "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+        "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+        "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+        "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+        "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+        "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+        "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+        "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+        "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+        "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+        "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+        "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+        "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+        "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+        "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+        "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+        "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+        "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+        "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+        "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+        "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+        "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+      ],
+      "ignored_entries": [
+        {
+          "name": "ingress::history_import::tests::history_kill_cut_child",
+          "reason": "ignored, subprocess fixture: parent selects a real SIGKILL cut"
+        }
+      ],
+      "original_log_receipt": {
+        "file": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/20261103T230440174Z-w1-factorial-arm-merge-job-log.json",
+        "sha256": "648a01b575abd6b391980dd87b5424227baaf90e9ddc78ffab4f62d35656f1a2"
+      },
+      "decoded_complete_github_job_log": {
+        "bytes": 202838,
+        "sha256": "b895e97b816d4f5993635be78492377f31f9a2d47a4b1cf0f922554778c8cab2"
+      },
+      "normalized_history_section": {
+        "bytes": 14627,
+        "sha256": "e20bf8e7a0b7118c4ed0cc484c034eef6e3a71a756b51f205b7f77097be74e52"
+      },
+      "artifact_metadata": {
+        "id": 13278417560,
+        "name": "w1-legal-factorial-prospective-merge-arm64-d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb-1",
+        "size_in_bytes": 174227351,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13278417560",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13278417560/zip",
+        "expired": false,
+        "created_at": "2026-11-03T22:58:48Z",
+        "expires_at": "2026-12-03T22:58:35Z",
+        "updated_at": "2026-11-03T22:58:48Z",
+        "digest": "sha256:b99197fc0489dc02b4382ea5135406d2809878fcace89a432e14fb59d894b3b7",
+        "workflow_run": {
+          "id": 41732369770,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "b4bdf142f513081715ecc8d1f9674291e85302cc"
+        }
+      },
+      "whole_artifact_downloaded_or_digest_locally_verified": false,
+      "native_elf_sha256": null,
+      "elf_scope": "The original job log binds Cargo invocation, retained source and named outcomes; it does not provide a retained History ELF digest."
+    },
+    {
+      "lane": "x64-head",
+      "run_id": 41732369770,
+      "job_id": 126252721529,
+      "attempt": 1,
+      "source_before_after": {
+        "base": null,
+        "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "tested_tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 884109821,
+        "tracked_entries": 7757,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_equal": true,
+      "command": "cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::history_import::tests:: -- --test-threads=1 --nocapture",
+      "profile": "release",
+      "all_features_flag": false,
+      "selected_registry": 26,
+      "passed": 25,
+      "failed": 0,
+      "ignored": 1,
+      "filtered_out": 932,
+      "same_profile_total_registry": 958,
+      "elapsed_seconds": 17.7,
+      "passed_names": [
+        "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+        "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+        "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+        "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+        "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+        "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+        "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+        "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+        "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+        "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+        "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+        "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+        "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+        "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+        "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+        "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+        "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+        "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+        "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+        "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+        "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+        "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+        "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+      ],
+      "ignored_entries": [
+        {
+          "name": "ingress::history_import::tests::history_kill_cut_child",
+          "reason": "ignored, subprocess fixture: parent selects a real SIGKILL cut"
+        }
+      ],
+      "original_log_receipt": {
+        "file": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/20261103T230444687Z-w1-factorial-x64-head-job-log.json",
+        "sha256": "10e484d1cf835a20961f73cd24e091aa912433d8bbaf51e265dc34e8bd0a6c18"
+      },
+      "decoded_complete_github_job_log": {
+        "bytes": 200798,
+        "sha256": "82098226ec71277d987d3a538d695c110d8a6a36d600447cd02b8571bdc817ba"
+      },
+      "normalized_history_section": {
+        "bytes": 14597,
+        "sha256": "1095c2c3d21083d8e8eb06235ab33449a88b689f112c3a0b1d51627187b8f7a8"
+      },
+      "artifact_metadata": {
+        "id": 13278376250,
+        "name": "w1-legal-factorial-head-x64-b4bdf142f513081715ecc8d1f9674291e85302cc-1",
+        "size_in_bytes": 174180503,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13278376250",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13278376250/zip",
+        "expired": false,
+        "created_at": "2026-11-03T22:50:16Z",
+        "expires_at": "2026-12-03T22:50:05Z",
+        "updated_at": "2026-11-03T22:50:16Z",
+        "digest": "sha256:9cab68adbaffd5aa23898583845803f2a0062dd2b720e07cfa89d712bd37b345",
+        "workflow_run": {
+          "id": 41732369770,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "b4bdf142f513081715ecc8d1f9674291e85302cc"
+        }
+      },
+      "whole_artifact_downloaded_or_digest_locally_verified": false,
+      "native_elf_sha256": null,
+      "elf_scope": "The original job log binds Cargo invocation, retained source and named outcomes; it does not provide a retained History ELF digest."
+    }
+  ],
+  "same_25_unique_passed_names_all_four_lanes": true,
+  "counts_scope": "25 unique History names repeated in four release/default-feature lanes; not 100 unique tests. The 958 default-feature population is separate from the 974 all-feature Node population.",
+  "observed_history_count_contract_pass": true,
+  "whole_w1_workflow_pass": false,
+  "whole_w1_factorial_benchmark_qualified_by_this_reader": false,
+  "newer_source_qualified": false,
+  "nine_host_runtime_selectors_qualified": false,
+  "source_or_native_budget_changed": false,
+  "artifact_scope": "All four GitHub artifact IDs/sizes/declared SHA256 retained; large unrelated grid archives were not downloaded and their entire digests were not locally reverified.",
+  "original_records": {
+    "file": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-history-four-lane-original-job-logs.json.gz",
+    "bytes": 153240,
+    "sha256": "9faab61fd3b7ebc114faca5edcea21067419ee988aeac9b85f2d4c1d177c825a"
+  },
+  "reader": {
+    "file": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/check-w1-history-four-lane.py",
+    "sha256": "22bfa0f7699e21c0de3fa774147068d6f0616693ee3308bd3d1d554e8f1d0adf",
+    "executes_native_code": false
+  }
+}

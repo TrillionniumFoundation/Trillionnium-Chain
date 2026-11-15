@@ -1,0 +1,24 @@
+{
+  "id": "fuzz-graph",
+  "argv": [
+    "cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "tests/fuzz/Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "returncode": 101,
+  "launch_error": null,
+  "elapsed_seconds": 119.24366819099987,
+  "finished_utc": "2026-11-11T00:57:18.439726+00:00",
+  "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_status_after": "",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "0990ea14d35be37f4df1c30e814b14696ec56a251e8d82f4ae0b3322d7615f00",
+  "pass": false,
+  "qualification_granted": false
+}

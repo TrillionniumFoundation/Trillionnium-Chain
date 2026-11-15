@@ -1,0 +1,28 @@
+{
+  "bytes": 867837,
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--format-version",
+    "1",
+    "--all-features",
+    "--manifest-path",
+    "trillionnium/Cargo.toml"
+  ],
+  "cwd": "/data/chain-root-operation-owned-20261112-df05-v4",
+  "elapsed_ns": 12830643306,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "log": "metadata-all-features.log",
+  "name": "metadata-all-features",
+  "process_exit_code": 0,
+  "sha256": "12bec4866b307356c9c76654c0bf006902e3823acf42d03adc3b9977c648142d",
+  "source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

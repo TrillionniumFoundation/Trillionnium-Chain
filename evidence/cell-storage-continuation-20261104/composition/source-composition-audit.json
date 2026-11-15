@@ -1,0 +1,84 @@
+{
+  "schema": "trnm.cell.storage-composition-audit.v1",
+  "tested_commit": "b110ba5bc1f755e5988c1b1f710243677976bcc8",
+  "tested_tree": "20d41d881353ae7f66f1d15f326274ee811f7c65",
+  "ordered_parents": [
+    "d0737cf5434894ce47fad8082376fc417313c2cb",
+    "f69413581dea0f7e2685bdd444d080ea57fc6630"
+  ],
+  "required_paths": 338,
+  "pinned_blobs": 424,
+  "required_paths_are_exact_parent_union": true,
+  "pinned_paths_are_exact_parent_union": true,
+  "missing_or_mismatched_pins": {},
+  "dropped_required_paths": [],
+  "dropped_pinned_paths": [],
+  "incoming_changed_paths": 13,
+  "incoming_preserved_paths": [
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/MODEL_COMMONS.md",
+      "d073_blob": "6c68e7e46cfc24126792c41521402db653db499d",
+      "composition_blob": "6c68e7e46cfc24126792c41521402db653db499d"
+    },
+    {
+      "path": "evidence/model-evaluation-integrity-20261104/REPRODUCE.md",
+      "d073_blob": "10866f156dc8b3814eb1e6f91a49b7b5f1c6c0af",
+      "composition_blob": "10866f156dc8b3814eb1e6f91a49b7b5f1c6c0af"
+    },
+    {
+      "path": "scripts/llm_parent_material.py",
+      "d073_blob": "f8169dddce53778d08fc4c5ee4d2872890d4c62f",
+      "composition_blob": "f8169dddce53778d08fc4c5ee4d2872890d4c62f"
+    },
+    {
+      "path": "scripts/llm_runtime_pilot.py",
+      "d073_blob": "4a433bf0a0bf992e4ad0e81826e9dde2d8246420",
+      "composition_blob": "4a433bf0a0bf992e4ad0e81826e9dde2d8246420"
+    },
+    {
+      "path": "scripts/test_llm_parent_material.py",
+      "d073_blob": "6907ecea9bfcd0cdfbe0baeb6a3713ffe2721eb4",
+      "composition_blob": "6907ecea9bfcd0cdfbe0baeb6a3713ffe2721eb4"
+    },
+    {
+      "path": "scripts/test_llm_runtime_artifact_loading.py",
+      "d073_blob": "c17acbd11ba46bdf9b74f858edacbde4c44fc3f2",
+      "composition_blob": "c17acbd11ba46bdf9b74f858edacbde4c44fc3f2"
+    },
+    {
+      "path": "scripts/test_llm_runtime_pilot.py",
+      "d073_blob": "1c5f1c40f5773092df70c3cf3294723e2a176eca",
+      "composition_blob": "1c5f1c40f5773092df70c3cf3294723e2a176eca"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/application_v6_tests.rs",
+      "d073_blob": "9f0bec5c315ee0dc13aaeaeb63651634cf79dc60",
+      "composition_blob": "9f0bec5c315ee0dc13aaeaeb63651634cf79dc60"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+      "d073_blob": "ca80f9e69580c2fabb7b94aa91f0ef1400afcdb4",
+      "composition_blob": "ca80f9e69580c2fabb7b94aa91f0ef1400afcdb4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/pq_storage.rs",
+      "d073_blob": "a696bc185d24cebf6bc44df33c39bcc4efb3c20f",
+      "composition_blob": "a696bc185d24cebf6bc44df33c39bcc4efb3c20f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs",
+      "d073_blob": "8843158bec9b6c1c9872a357d400ac43cf52a552",
+      "composition_blob": "8843158bec9b6c1c9872a357d400ac43cf52a552"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs",
+      "d073_blob": "d196d99231008100c5019533eb5d9f741532d2f2",
+      "composition_blob": "d196d99231008100c5019533eb5d9f741532d2f2"
+    }
+  ],
+  "incoming_canonical_plan": "Both continuation sections preserved; composed plan is intentionally not byte-identical.",
+  "entire_m06_directory_unchanged_from_d073": true,
+  "cargo_lock_unchanged_from_d073": true,
+  "original_qualification_assertions_unchanged": true,
+  "runtime_tests_executed_by_this_audit": false
+}

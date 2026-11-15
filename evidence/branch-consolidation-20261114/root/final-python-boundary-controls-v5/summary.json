@@ -1,0 +1,95 @@
+{
+  "head": "319be2400b1a77a827614d6a876ec273db32103d",
+  "tree": "5d465af575c2ca75980bd96a6074e3448882b668",
+  "prior": "b8ca952d6bf2e86b05a3039cbc683ad17be01eb7",
+  "prior_component_receipts": [
+    "/private/tmp/chain-consolidation-20261114-root/final-python-boundary-controls-v2",
+    "/private/tmp/chain-consolidation-20261114-root/final-python-boundary-controls-v3",
+    "/private/tmp/chain-consolidation-20261114-root/final-python-boundary-controls-v4"
+  ],
+  "known_unexecuted_historical_control": {
+    "reason": "frozen historical source pins were compared with current physical sources in the pre-existing setUpClass",
+    "ran_tests": 0,
+    "first_mismatch": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+    "status": "pending explicit historical fixture reproduction; old pins unchanged"
+  },
+  "sources": [
+    "scripts/ci/ci_job.sh",
+    "scripts/ci/run_w1_fresh_service_v1.py",
+    "scripts/ci/test_ci_contract.py",
+    "scripts/ci/test_pon_public_v3_phase_read.py",
+    "scripts/ci/test_run_w1_fresh_service_v1.py",
+    "scripts/ci/test_w1_lifetime_ledger.py",
+    "scripts/pon_public_v3_phase_read.py"
+  ],
+  "paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/ci_job.sh",
+    "scripts/ci/run_w1_fresh_service_v1.py",
+    "scripts/ci/test_ci_contract.py",
+    "scripts/ci/test_pon_public_v3_phase_read.py",
+    "scripts/ci/test_pq_research_integration.py",
+    "scripts/ci/test_run_w1_fresh_service_v1.py",
+    "scripts/ci/test_w1_lifetime_ledger.py",
+    "scripts/pon_public_v3_phase_read.py"
+  ],
+  "steps": [
+    {
+      "label": "preflight",
+      "exit": 0,
+      "seconds": 0.044,
+      "sha256": "56375c21df596b70348e1b7c230e4d64c2a5cb1de197572d8ae9fe5cb8b94789"
+    },
+    {
+      "label": "required-baseline-export-contract-controls",
+      "exit": 0,
+      "seconds": 0.316,
+      "sha256": "e2484f5496584cad498ce84aec1570d170c70e21d909018baa6cb3bf462969f1"
+    },
+    {
+      "label": "source-guards",
+      "exit": 0,
+      "seconds": 2.039,
+      "sha256": "3c711108561bd82ac4159c098f69cfee67b94c92b8ce2240a3bd0de6d8941ee9"
+    },
+    {
+      "label": "corpus",
+      "exit": 0,
+      "seconds": 0.388,
+      "sha256": "6b6fc76248ba732d705ae8d62273fb26203d2c66f33ecd7a56bbf8fca5cf94eb"
+    },
+    {
+      "label": "ci-contract",
+      "exit": 0,
+      "seconds": 0.067,
+      "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+    },
+    {
+      "label": "diff",
+      "exit": 0,
+      "seconds": 0.047,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "precommit",
+      "exit": 0,
+      "seconds": 0.045,
+      "sha256": "56375c21df596b70348e1b7c230e4d64c2a5cb1de197572d8ae9fe5cb8b94789"
+    },
+    {
+      "label": "stage",
+      "exit": 0,
+      "seconds": 0.05,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "commit",
+      "exit": 0,
+      "seconds": 0.068,
+      "sha256": "6662248acb34e05f5e06b62e940dabc1ae46fb78987ac8450ac5350b5cf98d1d"
+    }
+  ]
+}

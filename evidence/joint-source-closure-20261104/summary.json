@@ -1,0 +1,914 @@
+{
+  "schema": "joint-source-closure-observation-v1",
+  "observation_date_utc": "2026-11-04",
+  "status": "HOLD_NO_GO",
+  "scope": "Candidate source-integrity, finite admission-scan, and reversible-component decoder evidence; no production or whole-chain acceptance.",
+  "provenance": {
+    "component_observation_base": "d0737cf5434894ce47fad8082376fc417313c2cb",
+    "preserved_delivery_parent": "8e3df70c1e57a45bb5bbcd6092665dee116695ea",
+    "preserved_delivery_parent_tree": "3a0e89d5f34eb2d889997b3d28441175d3739af1",
+    "delivery_identity": "The Git commit containing this evidence packet identifies the delivered candidate. No final self-referential commit SHA is invented in this file.",
+    "source_hashes_are_sha256_not_git_object_ids": true,
+    "tested_selected_source_sha256": {
+      "formal/pon-nakamoto-v1/reversible_components.py": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0",
+      "formal/pon-nakamoto-v1/test_reversible_components.py": "9e16585a34932212305b78f8719013672f7c3eba781d2adb227612e87cb210ea",
+      "formal/pon-nakamoto-v1/REVERSIBLE_COMPONENTS.md": "35f02dab716e65fc2535d10df3d441c80eaa28d19e2f4294eccd75bed9d5bc1c",
+      "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs": "525cdca926a8396e65ed0862341fa2178ae7bbd1d53eee646b83821d44e61ddc",
+      "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs": "ec2674e91b92e06db9a094fe4ce795b441c6612390f28f2fe1ab9a8b187bcbe1"
+    },
+    "earlier_runs_relabelled_as_delivery_combination": false,
+    "same_chain_hepta_pair_qualified_across_all_results": false,
+    "concurrent_paths_preserved": [
+      ".github/workflows/pon-legacy-reorg-cost-20261104.yml",
+      ".github/workflows/pon-recent-batch-acceptance.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
+      "evidence/pon-retained-runtime-readback-20261104/93e-legacy-reorg-profiling-candidate-handoff-v2.json",
+      "evidence/pq-recovery-release-transport-20261104/REPRODUCE.md",
+      "evidence/pq-recovery-release-transport-20261104/baseline_cold_recovery.rs",
+      "evidence/pq-recovery-release-transport-20261104/before_empty_head_fix.patch",
+      "evidence/pq-recovery-release-transport-20261104/observations.json",
+      "formal/pon-nakamoto-v1/pq_mtls_probe.c",
+      "formal/pon-nakamoto-v1/test_pq_mtls_probe.py",
+      "formal/pon-nakamoto-v1/test_pq_tls.py",
+      "scripts/ci/check_pq_research_integration.py",
+      "scripts/ci/test_pq_research_integration.py",
+      "trillionnium/Cargo.lock",
+      "trillionnium/crates/trnm-checkpoint-store/README.md",
+      "trillionnium/crates/trnm-checkpoint-store/src/journal_checkpoint_v1.rs",
+      "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+      "trillionnium/crates/trnm-checkpoint-store/src/main.rs",
+      "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs",
+      "trillionnium/crates/trnm-checkpoint-store/tests/cross_process.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+      "trillionnium/crates/trnm-release-bundle/Cargo.toml",
+      "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+      "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+      "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs"
+    ],
+    "previous_preserved_parent": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+    "previous_preserved_parent_tree": "2cba5b274d0d09074a5716c802bc58e5c3735678",
+    "preserved_recovery_release_parent": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+    "additional_merged_component_commit": "3844f19f4cb668f0b06b7fc8d124feb0e9b22528",
+    "quantum_event_research_preserved": true
+  },
+  "p0": {
+    "complete_freeze_and_acceptance": false,
+    "asset_and_authority_inventory": "docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md",
+    "inventory_limit": "Existing first-pass audit, not a complete current authority attestation. Explicit e0b4c82e effect-host and runtime-authorizer routes are distinguished in the README; observations retain their own profile limitations.",
+    "claim_guard": "docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md",
+    "profiles": {
+      "config/pon/work-profile-v1.json": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "config/pon/performance-six-axis-v1.json": "e5cc64538d8adeb56556c7dfb84a6410459f5b65ed171194f7f7c12fea8c7094",
+      "config/pon/post-quantum-transition-v1.json": "96758f0820cd5689d3a600a1e2cbddcebfd4bb265ab46bd3613832501f3330b3",
+      "config/pon/work-security-acceptance-v1.json": "4ca674c305112d51672efcab6c0f886e477a5397191addb806d209a08266165f"
+    },
+    "original_business_gate": {
+      "window_ns": 4000000000,
+      "hostile_workers": 16,
+      "required_unique_confirmed_transactions": 1,
+      "confirmation_depth": 6,
+      "host_cpu_quota_ns_per_second": 250000000,
+      "host_memory_bytes": 2147483648,
+      "native_runner": "scripts/ci/run_from_zero_native.py"
+    },
+    "growth_pq_composition": false,
+    "hepta_route_source": "e0b4c82e129d42d98cb9a98bf97fe41d1e3b1b53"
+  },
+  "source_controls": {
+    "pre_concurrent_candidate": {
+      "base": "d0737cf5434894ce47fad8082376fc417313c2cb",
+      "negative_controls": {
+        "tests": 101,
+        "passed": 101,
+        "failed": 0,
+        "exit_code": 0,
+        "modules": [
+          "test_pq_research_integration",
+          "test_pq_chain_claim_guard",
+          "test_pq_authority_surface_scan",
+          "test_pq_external_rollback_oracle",
+          "test_pq_quantum_daa_scenarios",
+          "test_project_boundary"
+        ]
+      },
+      "source_inventory_exit_code": 0,
+      "ci_contract_exit_code": 0,
+      "first_repository_check_exit_code": 2,
+      "first_repository_check_reason": "Plan link referenced this evidence README before it was written; original failure retained.",
+      "initial_pins": {
+        "pinned_blobs": 394,
+        "required_paths": 306
+      }
+    },
+    "current_manifest_at_delivery_parent": {
+      "pinned_blobs": 411,
+      "required_paths": 326,
+      "our_pin_changes": [
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+          "before": null,
+          "after": "f33fecef7776e0f8ee98176a19e5e31d45489a83"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+          "before": "a6fd9c8e4f514d19ca58295272cde7968b9b5abd",
+          "after": "02673f72fac1d5d919a9604be876d4e93efd7cfe"
+        }
+      ],
+      "preexisting_four_pq_pin_mismatches_fixed_by_preserved_concurrent_commit": true,
+      "gate_state_remains": "HOLD_NO_GO"
+    },
+    "cargo_metadata_observation": {
+      "command": [
+        "cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "seconds": 0.910234673996456,
+      "workspace_packages": 26,
+      "resolved_packages": 175
+    },
+    "cargo_metadata_scope": "Default locked offline graph, not all-features graph.",
+    "workspace_format_observation": {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0
+    },
+    "final_delivery_commit_controls": "Recorded separately by the integrator after the containing commit; earlier source controls are not substituted for those results.",
+    "intermediate_bd_manifest": {
+      "pinned_blobs": 399,
+      "required_paths": 311,
+      "scope": "candidate after Legacy observation integration, before recovery/release/TLS integration"
+    },
+    "later_quantum_integration_pin_refresh": [
+      {
+        "path": "scripts/ci/ci_job.sh",
+        "before": "3aa25ccde7db9fedad8b4b29c5600ef01fc38e56",
+        "after": "6399f8c644395d273689ededa2c1ed99e4ae1364"
+      }
+    ]
+  },
+  "hepta_pair": {
+    "runtime_repository": "TrillionniumFoundation/hepta-private-ci",
+    "v8_actual_counterexamples": {
+      "chain_commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+      "chain_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+      "checks": {
+        "exact_v8_baseline": {
+          "accepted": true,
+          "verified_source_files": 42
+        },
+        "ignored_package_shadows_pinned_module": {
+          "accepted": true,
+          "import_sentinel": true,
+          "imported_unlisted_package": true,
+          "original_pinned_source_unchanged": true,
+          "verified_source_files": 42
+        },
+        "omitted_dependency_assume-unchanged": {
+          "accepted": true,
+          "altered_sha256": "155a02cd9d9c8ff876c3e7b6ce373b9f4ca9439d04bc37f134a130aa9efa43b8",
+          "git_status": "",
+          "original_sha256": "e13a3fa6e4d70d08b88595defbad0e65ac3b4a208226000f3fed597869c5b39c",
+          "verified_source_files": 42
+        },
+        "omitted_dependency_skip-worktree": {
+          "accepted": true,
+          "altered_sha256": "155a02cd9d9c8ff876c3e7b6ce373b9f4ca9439d04bc37f134a130aa9efa43b8",
+          "git_status": "",
+          "original_sha256": "e13a3fa6e4d70d08b88595defbad0e65ac3b4a208226000f3fed597869c5b39c",
+          "verified_source_files": 42
+        },
+        "omitted_dependency_visible_negative": {
+          "accepted": false,
+          "error": "Command '['git', '--literal-pathspecs', '-c', 'core.fsmonitor=false', '-c', 'core.trustctime=true', '-c', 'core.checkstat=default', '-c', 'core.ignorestat=false', '-c', 'advice.graftFileDeprecated=false', 'diff', '--exit-code', 'HEAD', '--', 'scripts', 'formal', 'config']' returned non-zero exit status 1.",
+          "error_type": "CalledProcessError"
+        },
+        "pinned_dependency_hidden_negative": {
+          "accepted": false,
+          "error": "execution source size or path changed: scripts/llm_runtime_pilot.py",
+          "error_type": "ValueError"
+        }
+      },
+      "hepta_commit": "e0b4c82e129d42d98cb9a98bf97fe41d1e3b1b53",
+      "manifest_sha256": "e712ccdd8218e81ade0ac7202f00259fc60c1ebd5f10a468323b7298df406ab5",
+      "materialized_source_paths": 584,
+      "scope": "source-integrity counterexamples; not product qualification",
+      "verifier_sha256": "fb714e7872dbba2baa1e7ff34ab249194c285bc9e2c8664da443cda999e22e11"
+    },
+    "omitted_dependency": "scripts/llm_runtime_release.py",
+    "dependency_entry": "scripts/llm_cell_release.py runtime_material_command branch",
+    "ignored_import_shadow": "scripts/llm_runtime_pilot/__init__.py",
+    "audited_local_source_closure_files": {
+      "v8": 42,
+      "v9_required": 43
+    },
+    "v9_delivery": "Separate Hepta companion candidate, including actual ordered-merge validation. Its final commit, execution, and acceptance are not asserted by this Chain packet.",
+    "static_closure_is_complete_python_sandbox": false,
+    "a1_accepted": false,
+    "a2_accepted": false,
+    "a3_accepted": false
+  },
+  "b1": {
+    "base": "d0737cf5434894ce47fad8082376fc417313c2cb",
+    "modified_files": {
+      "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs": "525cdca926a8396e65ed0862341fa2178ae7bbd1d53eee646b83821d44e61ddc",
+      "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs": "ec2674e91b92e06db9a094fe4ce795b441c6612390f28f2fe1ab9a8b187bcbe1"
+    },
+    "change": "Same serde_json canonical serializer counts payload bytes without per-cell output Vec. Original whole-State traversal, threshold, overflow sums, callback schedule and owner/epoch/commit rules remain.",
+    "canonical_serializer": {
+      "locked_version": "1.0.149",
+      "registry_package_checksum": "83fc039473c5595ace860d8c4fafa220ff474b3fc6bfdb4293327f1a37e94d86",
+      "source_sha256": "f2b8cc0b97e30c49dbc58698fa22c14a7d56ea616cdb57b067835a59af49a75f",
+      "matches_locked_archive": true,
+      "implication": "Locked serde_json::to_vec is Vec::with_capacity(128) followed by the same to_writer; new counting sink changes the destination only, with the serializer and Value map iteration unchanged."
+    },
+    "error_precedence": "Serializer failure precedes byte-count overflow; sticky checked-count overflow still completes serialization. Outer key/value sums retain checked arithmetic.",
+    "threshold_bytes": 8388608,
+    "exact_threshold_fits": true,
+    "cancellation_callback_indices": "0, 256, 512, ... before serializing the indexed item",
+    "preparation_still_holds_original_node_mutex": true,
+    "whole_state_traversal_eliminated": false,
+    "extracted_semantic_controls": {
+      "passed": 2,
+      "failed": 0,
+      "scope": "Exact added test bodies and production scan extracted with actual dependency types. Full Node test compilation failed twice before tests executed.",
+      "record": "scan-control-corrected/manifest.json"
+    },
+    "build_boundary_controls": {
+      "passed": 13,
+      "failed": 0,
+      "ignored": 0,
+      "fence": "sqlite-3.51.3-normal-native-linux-layout-v3",
+      "log": "qualified-io-boundary-canonical.log"
+    },
+    "native_commands_d073": {
+      "schema": "joint-closure-native-hotpath-command-manifest-v1",
+      "observed_utc": "2026-11-04T12:52:43.995958+00:00",
+      "base": "d0737cf5434894ce47fad8082376fc417313c2cb",
+      "cwd": "/workspace/scratch/ddfe66a42a4c/chain",
+      "modified_files": {
+        "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs": "525cdca926a8396e65ed0862341fa2178ae7bbd1d53eee646b83821d44e61ddc",
+        "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs": "ec2674e91b92e06db9a094fe4ce795b441c6612390f28f2fe1ab9a8b187bcbe1"
+      },
+      "environment_wrapper": "run-native.sh",
+      "environment_wrapper_sha256": "d5a1c75f621bca1839229531323ea542b5af7092b16d7378c28c69aa6f78cf97",
+      "commands": [
+        {
+          "name": "qualified-sqlite-boundary",
+          "command": [
+            "bash",
+            "/workspace/scratch/ddfe66a42a4c/records/hotpath/run-native.sh",
+            "cargo",
+            "test",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--locked",
+            "--offline",
+            "-p",
+            "trnm-sqlite-io-boundary",
+            "--lib",
+            "--",
+            "--nocapture"
+          ],
+          "exit": 0,
+          "passed": 13,
+          "failed": 0,
+          "ignored": 0,
+          "log": "qualified-io-boundary-canonical.log",
+          "log_sha256": "c60940c7349ce47905a43969c65323aa1ec2fe778ef735e58b403a6e64c7296d"
+        },
+        {
+          "name": "native-detached-original-profile",
+          "command": [
+            "bash",
+            "/workspace/scratch/ddfe66a42a4c/records/hotpath/run-native.sh",
+            "cargo",
+            "test",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--locked",
+            "--offline",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::detached_admission::tests::",
+            "--",
+            "--nocapture"
+          ],
+          "exit": 101,
+          "compiler_signal": 9,
+          "node_tests_executed": false,
+          "log": "native-detached-module.log",
+          "log_sha256": "2c681dc83c6d52987ecaa2620a3b557ae68a2a7c5405c6d52f6799ed6e90a5e9"
+        },
+        {
+          "name": "native-detached-codegen64-semantic",
+          "command": [
+            "bash",
+            "/workspace/scratch/ddfe66a42a4c/records/hotpath/run-native.sh",
+            "cargo",
+            "test",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--locked",
+            "--offline",
+            "--config",
+            "profile.test.package.trnm-pon-node.codegen-units=64",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::detached_admission::tests::",
+            "--",
+            "--nocapture"
+          ],
+          "exit": 101,
+          "compiler_signal": 9,
+          "node_tests_executed": false,
+          "log": "native-detached-module-codegen64.log",
+          "log_sha256": "c71273c3fd5eb936671c58510d0c4ea208fab9ec96e6538548980c759d055884"
+        },
+        {
+          "name": "strict-clippy-production-lib",
+          "command": [
+            "bash",
+            "/workspace/scratch/ddfe66a42a4c/records/hotpath/run-native.sh",
+            "cargo",
+            "clippy",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--locked",
+            "--offline",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit": 0,
+          "optional_sqlite_scope_qualified": false,
+          "log": "native-clippy-lib.log",
+          "log_sha256": "466d477798cb29c8aeba9be1beea29e0bde90f440004bf6b083de097c31fbbc9"
+        }
+      ],
+      "scope": "All records are for d0737cf5434894ce47fad8082376fc417313c2cb plus the two listed source changes (and separately identified cached dependency binaries for the extracted harness). They cannot qualify a later integration combination."
+    },
+    "scan_observation": {
+      "scope": {
+        "allocator_observer": false,
+        "asymptotic_gate_qualified": false,
+        "callbacks": "same original every-256 entries",
+        "four_second_gate_qualified": false,
+        "memory_scope": "requested allocator traffic within scan, not live heap/physical copies/RSS",
+        "order": "alternate buffered/counted within every pair",
+        "paired_rounds": 32,
+        "production_activation": false,
+        "schema": "detached-payload-scan-scope-v1",
+        "scope": "exact production scan function and original buffered function, using actual M06 State/ExecutionControl and Node Error types; generated account-like Values, no Node/SQL/Host/native ingress execution",
+        "source_functions": "mechanically extracted and digest bound in manifest.json",
+        "threshold_bytes": 8388608,
+        "timing_binary_has_custom_allocator": false,
+        "warmup_scans_per_arm": 4
+      },
+      "samples_by_binary": {
+        "allocation": 256,
+        "timing": 256
+      },
+      "cases": [
+        {
+          "case": "account64",
+          "classification": "fits",
+          "observed_payload_bytes": 6646,
+          "allocator_calls_per_scan": {
+            "buffered": [
+              64.0,
+              0.0,
+              64.0,
+              8192.0,
+              0.0
+            ],
+            "counted": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "median_batch_normalized_ns": {
+            "buffered": 19232.421875,
+            "counted": 16770.6484375
+          },
+          "paired_median_time_change_percent": -12.985831860312668,
+          "batch_p95_ns": {
+            "buffered": 5292146,
+            "counted": 8097355
+          },
+          "repeat_count": 64,
+          "batch_p95_change_percent": 53.00702210407648,
+          "p95_regression_at_most_ten_percent": false
+        },
+        {
+          "case": "account1024",
+          "classification": "fits",
+          "observed_payload_bytes": 107434,
+          "allocator_calls_per_scan": {
+            "buffered": [
+              1024.0,
+              0.0,
+              1024.0,
+              131072.0,
+              0.0
+            ],
+            "counted": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "median_batch_normalized_ns": {
+            "buffered": 734494.203125,
+            "counted": 615139.78125
+          },
+          "paired_median_time_change_percent": -10.148892703588286,
+          "batch_p95_ns": {
+            "buffered": 34818039,
+            "counted": 40221044
+          },
+          "repeat_count": 32,
+          "batch_p95_change_percent": 15.517832580979075,
+          "p95_regression_at_most_ten_percent": false
+        },
+        {
+          "case": "escaped1024",
+          "classification": "fits",
+          "observed_payload_bytes": 990122,
+          "allocator_calls_per_scan": {
+            "buffered": [
+              1024.0,
+              3072.0,
+              1024.0,
+              131072.0,
+              1835008.0
+            ],
+            "counted": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "median_batch_normalized_ns": {
+            "buffered": 3855836.53125,
+            "counted": 1681367.28125
+          },
+          "paired_median_time_change_percent": -50.27147670036221,
+          "batch_p95_ns": {
+            "buffered": 78647007,
+            "counted": 41986361
+          },
+          "repeat_count": 16,
+          "batch_p95_change_percent": -46.61416549519806,
+          "p95_regression_at_most_ten_percent": true
+        },
+        {
+          "case": "large2048",
+          "classification": "held-required",
+          "observed_payload_bytes": 8390601,
+          "allocator_calls_per_scan": {
+            "buffered": [
+              2043.0,
+              4086.0,
+              2043.0,
+              261504.0,
+              25098255.0
+            ],
+            "counted": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "median_batch_normalized_ns": {
+            "buffered": 9900126.625,
+            "counted": 8382816.625
+          },
+          "paired_median_time_change_percent": -7.21430491070848,
+          "batch_p95_ns": {
+            "buffered": 57267030,
+            "counted": 50791066
+          },
+          "repeat_count": 4,
+          "batch_p95_change_percent": -11.308363643094467,
+          "p95_regression_at_most_ten_percent": true
+        }
+      ]
+    },
+    "allocation_column_order": [
+      "allocate_calls",
+      "reallocate_calls",
+      "deallocate_calls",
+      "allocate_requested_bytes",
+      "reallocate_requested_bytes"
+    ],
+    "timing_quantiles": "Nearest-rank p95 of 32 whole timing batches per arm; not independent per-request or per-scan latency p95.",
+    "paired_median_formula": "median(100 * (counted_batch_ns / buffered_batch_ns - 1)) across the 32 pairs",
+    "large2048_entries_visited": 2043,
+    "paired_component_max_p95_regression_fraction": 0.1,
+    "all_cohorts_meet_p95_condition": false,
+    "p95_failing_cohorts": [
+      "account64",
+      "account1024"
+    ],
+    "performance_acceptance": false,
+    "retained_nonpasses": [
+      {
+        "phase": "initial-native-build",
+        "outcome": "INTERRUPTED_EXIT_130",
+        "reason": "RUSTC was not absolute, optional SQLite boundary was unqualified; no tests executed",
+        "log": "snapshot-count-tests.log"
+      },
+      {
+        "phase": "absolute-compiler-build",
+        "outcome": "INTERRUPTED_EXIT_130",
+        "reason": "missing normal rustup toolchain loader path; no tests executed",
+        "log": "snapshot-count-tests-qualified.log"
+      },
+      {
+        "phase": "loader-environment-build",
+        "outcome": "INTERRUPTED_EXIT_130",
+        "reason": "previous failed build-script cache did not rerun for environment; no tests executed",
+        "log": "snapshot-count-tests-canonical-loader.log"
+      },
+      {
+        "phase": "duplicate-loader-path-component-run",
+        "outcome": "13_SCOPES_PASS_OPTIONAL_LAYOUT_UNQUALIFIED",
+        "reason": "supplying both toolchain lib and host rustlib duplicated Cargo-provided host rustlib; not qualified layout evidence",
+        "log": "qualified-io-boundary.log"
+      },
+      {
+        "phase": "extracted-control-first-run",
+        "outcome": "1_PASS_1_FAIL",
+        "reason": "test compared raw serde error with Node Error prefix. Corrected test to use same conversion; production function unchanged",
+        "log": "scan-observation/controls.log"
+      },
+      {
+        "phase": "qualified-original-profile-native-detached-module",
+        "outcome": "BUILD_SIGKILL_EXIT_101_NO_TESTS_EXECUTED",
+        "reason": "rustc lib-test compilation terminated by SIGKILL. Shared cgroup limit 8 GiB; postfailure current approximately at limit. No prebuild oom counter so causation not independently proven.",
+        "log": "native-detached-module.log"
+      },
+      {
+        "phase": "qualified-codegen64-semantic-native-detached-module",
+        "outcome": "BUILD_SIGKILL_EXIT_101_NO_TESTS_EXECUTED",
+        "reason": "rustc lib-test compilation terminated by SIGKILL despite command-line package codegen-units=64. No source Cargo profile changed.",
+        "log": "native-detached-module-codegen64.log"
+      },
+      {
+        "phase": "clippy-lib-optional-sqlite-layout",
+        "outcome": "LINT_EXIT_0_OPTIONAL_LAYOUT_UNQUALIFIED",
+        "reason": "cargo-clippy supplied /root/.rustup toolchain loader path while runtime93 absolute RUSTC/LD paths were selected. Strict Rust lib lint passed; optional SQLite native layout was not checked as qualified.",
+        "log": "native-clippy-lib.log"
+      }
+    ],
+    "shared_build_environment": {
+      "cgroup_memory_max_bytes": 8589934592,
+      "oom_kill_counter_after_original": 12,
+      "oom_kill_counter_after_codegen64": 13,
+      "counter_scope": "Shared concurrent cgroup; no attribution of all counts to this run and no independently proven individual OOM causation."
+    },
+    "combined_candidate_strict_clippy": {
+      "schema": "joint-closure-native-hotpath-combined-clippy-result-v1",
+      "finished_utc": "2026-11-04T12:57:18.107520+00:00",
+      "base_head": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+      "observed_head_after": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+      "result": "PASS_RUST_LIB_LINT_OPTIONAL_SQLITE_SCOPE_UNQUALIFIED",
+      "exit": 0,
+      "command": [
+        "bash",
+        "/workspace/scratch/ddfe66a42a4c/records/hotpath/run-native.sh",
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "environment_wrapper_sha256": "d5a1c75f621bca1839229531323ea542b5af7092b16d7378c28c69aa6f78cf97",
+      "log": "combined-bd2777-clippy-lib.log",
+      "log_sha256": "68286f5fd550a220567531c0ffb33501ae9e56ff2c233c6df48b8eb9b352bc46",
+      "preflight_exit": 0,
+      "preflight_log": "combined-bd2777-preflight.log",
+      "pre_run_inputs_record": "combined-bd2777-clippy-inputs.json",
+      "tracked_rust_cargo_count": 1126,
+      "tracked_rust_cargo_drift": [],
+      "node_lib_dep_info_sha256": "a88bf7a620310a41d66bccd2222d2b2edc97b4f39afef4006eb0d6b07f24cfb4",
+      "node_lib_input_drift": [],
+      "node_test_execution": false,
+      "optional_sqlite_layout_qualified": false,
+      "scope": "One strict production Node lib lint on combined candidate only. Optional SQLite native boundary remains unqualified as observed in same environment. No lib-test code generation or native test execution. Earlier d073 records not reused as this result."
+    },
+    "combined_candidate_node_library_source_files_hashed": 101,
+    "combined_clippy_record_hash": {
+      "sha256": "87689bc5db9c4fedb07b16617f80d9aafd19c03d4b10785cd38be2a93acb88fb",
+      "bytes": 16008
+    },
+    "production_qualification": false
+  },
+  "c2": {
+    "scope": "C2 reversible component artifact decoder hardening only",
+    "base_commit": "d0737cf5434894ce47fad8082376fc417313c2cb",
+    "modified_files": [
+      "formal/pon-nakamoto-v1/reversible_components.py",
+      "formal/pon-nakamoto-v1/test_reversible_components.py",
+      "formal/pon-nakamoto-v1/REVERSIBLE_COMPONENTS.md"
+    ],
+    "tested_selected_source_sha256": {
+      "formal/pon-nakamoto-v1/reversible_components.py": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0",
+      "formal/pon-nakamoto-v1/test_reversible_components.py": "9e16585a34932212305b78f8719013672f7c3eba781d2adb227612e87cb210ea",
+      "formal/pon-nakamoto-v1/REVERSIBLE_COMPONENTS.md": "35f02dab716e65fc2535d10df3d441c80eaa28d19e2f4294eccd75bed9d5bc1c"
+    },
+    "preflight": "PASS --dev",
+    "baseline_regression": {
+      "tests": 17,
+      "failures": 16,
+      "errors": 1,
+      "exit_code": 1,
+      "meaning": "16 structured malformed artifacts accepted by the old decoder; zero-gate valid constructor output rejected"
+    },
+    "fixed_suite": {
+      "tests": 17,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "exit_code": 0
+    },
+    "actual_reopened_components": {
+      "fq32-multiply": {
+        "checks": 113,
+        "all_checks_passed": true,
+        "qubits": 6550,
+        "compute_gates": 9701,
+        "total_gates": 19434,
+        "netlist_sha256": "dcec9df253b72e10150a1ddbcd6e2e626e9887d28152c4e0dfba74f2e555a7f1",
+        "netlist_bytes": 156051,
+        "netlist_equals_historical_component_bytes": true
+      },
+      "sha256-compression-64-rounds": {
+        "checks": 7,
+        "all_checks_passed": true,
+        "qubits": 117293,
+        "compute_gates": 193885,
+        "total_gates": 388026,
+        "netlist_sha256": "54ed564637f829fe7bc43fa5ea6a734d435e078bd6a62b5ca2e17b2102c17fd0",
+        "netlist_bytes": 3109204,
+        "netlist_equals_historical_component_bytes": true
+      }
+    },
+    "source_unchanged_during_tests_and_observation": true,
+    "git_diff_check": "PASS for the three owned files",
+    "wire_layout_and_generated_component_bytes_changed": false,
+    "signed_domain_or_consensus_activation_changed": false,
+    "complete_w1_oracle": false,
+    "quantum_hardware_executed": false,
+    "quantum_daa_security_closed": false,
+    "production_qualification": false,
+    "remote_mutations": false,
+    "logs": {
+      "baseline-with-regressions.log": "23f692c911c74ee998d59c3ebbd13f767b3f5fc25697383a87cbacc815cb0921",
+      "fixed-tests.log": "392802fda0d2e4db67702000f8c2dc7dee18fd7a6416065241c5a6a27736a538",
+      "full-observation.json": "745bff5af2814aaee104e3d704aa40895a181c34152c168b53174123cacc9e74",
+      "full-observation/report.json": "e98cf4311daf050d517c841ffbe1256555675c56d0e45260fe384a5258102c30"
+    }
+  },
+  "decoder_compatibility": {
+    "wire_layout_changed": false,
+    "qir_magic_changed": false,
+    "existing_generated_component_bytes_changed": false,
+    "newly_accepted_zero_gate_output": "Already constructible by Circuit.finish; fixes reader/writer mismatch. Old readers still reject it.",
+    "newly_rejected_structures": "Malformed compute/copy/inverse declarations, writes to inputs, and output use during compute. Arbitrary input-mutating reversible circuits remain outside this restricted construction.",
+    "guarantee": "Structural compute/copy/exact-inverse cleanup for the restricted accepted construction; not correctness of the claimed arithmetic/hash function.",
+    "structural_check_applied_at": "decode",
+    "direct_metrics_or_encode_validate_arbitrary_circuit": false,
+    "signed_authority_or_native_w1_domain_changed": false,
+    "external_generic_exchange_requires_explicit_acceptance_profile": true
+  },
+  "c1_c2_d_historical_context": {
+    "new_fastest_legal_solver_or_quantum_daa_closure": false,
+    "historical_complete_w1_proof_source": "64be7c4ad51d432e7736ad135476262e23e968f5",
+    "historical_hardened_verifier_source": "dd4fb0a65a734bdccac23a061dc0d6c72b69188f",
+    "historical_proof_packet": "evidence/pon-w1-complete-succinct-20261028/README.md",
+    "historical_native_witness_bytes": 49188,
+    "historical_succinct_receipt_bytes": 256886,
+    "historical_native_decode_replay_median_ms": 0.5543925,
+    "historical_hardened_decode_verify_median_ms": 16.660953,
+    "historical_benefit_gate_passed": false,
+    "historical_results_transferred_to_current_combination": false,
+    "new_main_path_proof_backend": false
+  },
+  "production_gates": {
+    "P0": {
+      "status": "OPEN",
+      "accepted": false
+    },
+    "A1": {
+      "status": "OPEN",
+      "accepted": false
+    },
+    "A2": {
+      "status": "OPEN",
+      "accepted": false
+    },
+    "A3": {
+      "status": "OPEN",
+      "accepted": false
+    },
+    "B1": {
+      "status": "OPEN",
+      "accepted": false
+    },
+    "B2": {
+      "status": "OPEN",
+      "accepted": false
+    },
+    "C1": {
+      "status": "OPEN",
+      "accepted": false
+    },
+    "C2": {
+      "status": "OPEN",
+      "accepted": false
+    },
+    "D": {
+      "status": "OPEN",
+      "accepted": false
+    },
+    "E": {
+      "status": "OPEN",
+      "accepted": false
+    }
+  },
+  "production_activation": false,
+  "whole_chain_post_quantum_qualified": false,
+  "public_network_ready": false,
+  "independent_accepted": false,
+  "reproducibility": {
+    "script": "measure_snapshot_payload.py",
+    "script_sha256": "0791dde2f6779b0d18311a6dd4fdac412fa3d3552c6a7193849902054cec324c",
+    "script_byte_identical_to_original_observer": false,
+    "script_required_arguments": [
+      "--repo",
+      "--target",
+      "--output",
+      "--rustc"
+    ],
+    "script_optional_arguments": [
+      "--base",
+      "--native-dir (repeatable)"
+    ],
+    "raw_logs_binaries_and_qir_committed_in_this_packet": false,
+    "raw_record_hashes": {
+      "quantum/summary.json": {
+        "sha256": "c6baf86bf3a9517f4470ca984f72ccf493b7f997994fa6676fa79417b0d3bde1",
+        "bytes": 2676
+      },
+      "quantum/baseline-with-regressions.log": {
+        "sha256": "23f692c911c74ee998d59c3ebbd13f767b3f5fc25697383a87cbacc815cb0921",
+        "bytes": 17130
+      },
+      "quantum/fixed-tests.log": {
+        "sha256": "392802fda0d2e4db67702000f8c2dc7dee18fd7a6416065241c5a6a27736a538",
+        "bytes": 2841
+      },
+      "quantum/full-observation/report.json": {
+        "sha256": "e98cf4311daf050d517c841ffbe1256555675c56d0e45260fe384a5258102c30",
+        "bytes": 28989
+      },
+      "hotpath/status.json": {
+        "sha256": "ad944f22be72fc19dd77a7c142b2ec88f37567dcff055ea581d0543e4c049003",
+        "bytes": 9522
+      },
+      "hotpath/native-command-manifest.json": {
+        "sha256": "78e3d44f398675521a25b29cf6ac199f871e0e0300a9beee0955948d1589acae",
+        "bytes": 3608
+      },
+      "hotpath/serde-serializer-equivalence.json": {
+        "sha256": "49bc3ace176bf98ae6c9307d6b8b453e07e974cd9d9cd34218ff3f14c6da4a34",
+        "bytes": 1044
+      },
+      "hotpath/scan-observation/manifest.json": {
+        "sha256": "d4410e1364f9834c3632228593b27a4fb3354ee1ad7231df3d88442fb50fc78e",
+        "bytes": 9543
+      },
+      "hotpath/scan-observation/summary.json": {
+        "sha256": "f910f561cad55ae1e9fb5e4ce059362d78053be9cfcb4ca3003b9dfb73fc6a44",
+        "bytes": 3665
+      },
+      "hotpath/scan-observation/allocation-samples.jsonl": {
+        "sha256": "24a272d0ae2abe9b63ac04337f7a9f1c8343a3467ec8ee629c25d0a11507d800",
+        "bytes": 113257
+      },
+      "hotpath/scan-observation/timing-samples.jsonl": {
+        "sha256": "49b01d0c39b8d9a4b982d5636bed303a556245a496f68bed8375e0a5f11a2bf9",
+        "bytes": 110059
+      },
+      "hotpath/scan-control-corrected/manifest.json": {
+        "sha256": "28fd71ca0413de701f57ab70cb280e6d3feb710ca9b05d16eba822b3b8903e9c",
+        "bytes": 4003
+      },
+      "hotpath/qualified-io-boundary-canonical.log": {
+        "sha256": "c60940c7349ce47905a43969c65323aa1ec2fe778ef735e58b403a6e64c7296d",
+        "bytes": 1782
+      },
+      "hotpath/native-detached-module.log": {
+        "sha256": "2c681dc83c6d52987ecaa2620a3b557ae68a2a7c5405c6d52f6799ed6e90a5e9",
+        "bytes": 3944
+      },
+      "hotpath/native-detached-module-codegen64.log": {
+        "sha256": "c71273c3fd5eb936671c58510d0c4ea208fab9ec96e6538548980c759d055884",
+        "bytes": 3258
+      },
+      "hotpath/native-clippy-lib.log": {
+        "sha256": "466d477798cb29c8aeba9be1beea29e0bde90f440004bf6b083de097c31fbbc9",
+        "bytes": 3591
+      },
+      "hotpath/combined-bd2777-clippy-inputs.json": {
+        "sha256": "847966948d69a011905ae10fc04e2cebf07c3c3d48cd0d0b02e88c30cb617fe2",
+        "bytes": 169427
+      },
+      "hotpath/combined-bd2777-clippy-result.json": {
+        "sha256": "87689bc5db9c4fedb07b16617f80d9aafd19c03d4b10785cd38be2a93acb88fb",
+        "bytes": 16008
+      },
+      "hotpath/combined-bd2777-clippy-lib.log": {
+        "sha256": "68286f5fd550a220567531c0ffb33501ae9e56ff2c233c6df48b8eb9b352bc46",
+        "bytes": 766
+      },
+      "pair-review/v8-counterexamples.json": {
+        "sha256": "fe5848a1715a423e6bc4d8b06e09d23baca3873d9c7153c688e88206b60e7fca",
+        "bytes": 2089
+      },
+      "integration/source-negative-controls.json": {
+        "sha256": "f19dfcaeb9dedff6453b86118426efa3195992e647c03f3a1081eb34e5707b39",
+        "bytes": 423
+      },
+      "integration/source-negative-controls.log": {
+        "sha256": "f62c3f8c2466fb5a5a3a5bc67be79c808334bd9df4866b321c1cfda21eea29b5",
+        "bytes": 15876
+      },
+      "integration/repository-controls.json": {
+        "sha256": "3c718ed8728ded647c9cbd161a45122696cc28fc6987ba3eba234f89084cc594",
+        "bytes": 620
+      },
+      "integration/concurrent-update.json": {
+        "sha256": "6eee36f2abd0c8f3ee026385479299cbc4d2fc185932b7d362b0ae69af15784d",
+        "bytes": 1432
+      },
+      "integration/cargo-graph.json": {
+        "sha256": "640439220bfd39fec8b617c69e0a0937e26b603289f39c1620328fa54456fffb",
+        "bytes": 277
+      },
+      "integration/cargo-fmt.json": {
+        "sha256": "6826f7eb38f88b9f3cddfe30e0f37c56a7f45cfd8c16a354f9c205e027529b07",
+        "bytes": 156
+      }
+    },
+    "record_availability": "Detailed local run records are not bundled here. Hashes identify those original observations; the committed script and source permit new separately identified runs.",
+    "script_execution_ast_identical_excluding_module_docstring": true,
+    "original_observer_sha256": "0cc9a4c8e7d6c49439572bf367d1702f766cc7a078cc28f282ffb1ef0bf6a8c0",
+    "script_documentation_change": "Only the module docstring clarifies that this observer does not execute the Node call graph; separate native validation is required. All command-line parameters and execution statements are unchanged."
+  }
+}

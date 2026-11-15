@@ -1,0 +1,261 @@
+{
+  "schema": "post-write-readback-initial-controls-v1",
+  "scope": "Preserved initial local b276 source observations. The new signed-transfer fixture correction is subsequent. No hosted or service qualification is claimed.",
+  "delta_observer_environment": {
+    "TRNM_RETAINED_DELTA_COST_PATH": "/workspace/scratch/abae1861b451/combined-retained-delta-debug.jsonl"
+  },
+  "delta_observer_scope": "Debug-profile functional equality and retained samples only; not the required release-profile cost observation.",
+  "observations": [
+    {
+      "case": "authenticated-initial",
+      "receipt": {
+        "schema": "native-test-execution-v1",
+        "source_commit": "b2766b4e6ac4107335add262984c9fa9474f76e6",
+        "source_tree": "23878bbc8c71f1796606a643f59426d3bb169b1b",
+        "cwd": "/workspace/scratch/abae1861b451/chain-next",
+        "worktree_clean_before": true,
+        "worktree_clean_after": true,
+        "test_artifact": {
+          "reason": "compiler-artifact",
+          "package_id": "path+file:///workspace/scratch/abae1861b451/chain-next/trillionnium/crates/trnm-pon-node#0.1.0",
+          "manifest_path": "/workspace/scratch/abae1861b451/chain-next/trillionnium/crates/trnm-pon-node/Cargo.toml",
+          "target": {
+            "kind": [
+              "lib"
+            ],
+            "crate_types": [
+              "lib"
+            ],
+            "name": "trnm_pon_node",
+            "src_path": "/workspace/scratch/abae1861b451/chain-next/trillionnium/crates/trnm-pon-node/src/lib.rs",
+            "edition": "2021",
+            "doc": true,
+            "doctest": true,
+            "test": true
+          },
+          "profile": {
+            "opt_level": "3",
+            "debuginfo": 2,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/workspace/scratch/abae1861b451/target/debug/deps/trnm_pon_node-bc529951eafca1c3"
+          ],
+          "executable": "/workspace/scratch/abae1861b451/target/debug/deps/trnm_pon_node-bc529951eafca1c3",
+          "fresh": false
+        },
+        "binary_sha256": "f247b33bcba9e0d2befabb28bc94f49d85f9652245e353e606f1e11b1f46417c",
+        "binary_unchanged": true,
+        "command": [
+          "/workspace/scratch/abae1861b451/target/debug/deps/trnm_pon_node-bc529951eafca1c3",
+          "store::native_authenticated::",
+          "--include-ignored",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 101,
+        "elapsed_ns": 33374200367,
+        "user_cpu_s": 32.08818,
+        "system_cpu_s": 0.588703,
+        "max_rss_kib": 87552,
+        "native_summaries": [
+          [
+            "FAILED",
+            "78",
+            "1",
+            "0",
+            "0",
+            "856"
+          ]
+        ],
+        "physical_host_qualification": false,
+        "performance_or_throughput_claim": false,
+        "stdout.log_sha256": "6485d27ed5bfbccc3eb0514c527c34e08e5b942e8fe06248cf9999576676fd26",
+        "stderr.log_sha256": "23ffd0563472264593d93a0f42189c997ffa48fb228370016af5759505682940"
+      }
+    },
+    {
+      "case": "reorg-initial",
+      "receipt": {
+        "schema": "native-test-execution-v1",
+        "source_commit": "b2766b4e6ac4107335add262984c9fa9474f76e6",
+        "source_tree": "23878bbc8c71f1796606a643f59426d3bb169b1b",
+        "cwd": "/workspace/scratch/abae1861b451/chain-next",
+        "worktree_clean_before": true,
+        "worktree_clean_after": true,
+        "test_artifact": {
+          "reason": "compiler-artifact",
+          "package_id": "path+file:///workspace/scratch/abae1861b451/chain-next/trillionnium/crates/trnm-pon-node#0.1.0",
+          "manifest_path": "/workspace/scratch/abae1861b451/chain-next/trillionnium/crates/trnm-pon-node/Cargo.toml",
+          "target": {
+            "kind": [
+              "lib"
+            ],
+            "crate_types": [
+              "lib"
+            ],
+            "name": "trnm_pon_node",
+            "src_path": "/workspace/scratch/abae1861b451/chain-next/trillionnium/crates/trnm-pon-node/src/lib.rs",
+            "edition": "2021",
+            "doc": true,
+            "doctest": true,
+            "test": true
+          },
+          "profile": {
+            "opt_level": "3",
+            "debuginfo": 2,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/workspace/scratch/abae1861b451/target/debug/deps/trnm_pon_node-bc529951eafca1c3"
+          ],
+          "executable": "/workspace/scratch/abae1861b451/target/debug/deps/trnm_pon_node-bc529951eafca1c3",
+          "fresh": false
+        },
+        "binary_sha256": "f247b33bcba9e0d2befabb28bc94f49d85f9652245e353e606f1e11b1f46417c",
+        "binary_unchanged": true,
+        "command": [
+          "/workspace/scratch/abae1861b451/target/debug/deps/trnm_pon_node-bc529951eafca1c3",
+          "store::reorg_readback_tests::",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 101,
+        "elapsed_ns": 4474761011,
+        "user_cpu_s": 3.856795,
+        "system_cpu_s": 0.20374399999999998,
+        "max_rss_kib": 29320,
+        "native_summaries": [
+          [
+            "FAILED",
+            "5",
+            "1",
+            "0",
+            "0",
+            "929"
+          ]
+        ],
+        "physical_host_qualification": false,
+        "performance_or_throughput_claim": false,
+        "stdout.log_sha256": "2ba93e80db25375a9d6818dd762ae743bfa724ebedb78b36c65aa429c726b359",
+        "stderr.log_sha256": "f25b407aefcb320f59a50d9e45c7de5b2544bad2ea479566ec409487eb1c0bdd"
+      }
+    },
+    {
+      "case": "delta-observer-setup-corrected",
+      "receipt": {
+        "schema": "native-test-execution-v1",
+        "source_commit": "b2766b4e6ac4107335add262984c9fa9474f76e6",
+        "source_tree": "23878bbc8c71f1796606a643f59426d3bb169b1b",
+        "cwd": "/workspace/scratch/abae1861b451/chain-next",
+        "worktree_clean_before": true,
+        "worktree_clean_after": true,
+        "test_artifact": {
+          "reason": "compiler-artifact",
+          "package_id": "path+file:///workspace/scratch/abae1861b451/chain-next/trillionnium/crates/trnm-pon-node#0.1.0",
+          "manifest_path": "/workspace/scratch/abae1861b451/chain-next/trillionnium/crates/trnm-pon-node/Cargo.toml",
+          "target": {
+            "kind": [
+              "lib"
+            ],
+            "crate_types": [
+              "lib"
+            ],
+            "name": "trnm_pon_node",
+            "src_path": "/workspace/scratch/abae1861b451/chain-next/trillionnium/crates/trnm-pon-node/src/lib.rs",
+            "edition": "2021",
+            "doc": true,
+            "doctest": true,
+            "test": true
+          },
+          "profile": {
+            "opt_level": "3",
+            "debuginfo": 2,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/workspace/scratch/abae1861b451/target/debug/deps/trnm_pon_node-bc529951eafca1c3"
+          ],
+          "executable": "/workspace/scratch/abae1861b451/target/debug/deps/trnm_pon_node-bc529951eafca1c3",
+          "fresh": false
+        },
+        "binary_sha256": "f247b33bcba9e0d2befabb28bc94f49d85f9652245e353e606f1e11b1f46417c",
+        "binary_unchanged": true,
+        "command": [
+          "/workspace/scratch/abae1861b451/target/debug/deps/trnm_pon_node-bc529951eafca1c3",
+          "store::native_authenticated::stored_delta_stream_tests::retained_delta_stream_cost_preserves_all_paired_observations",
+          "--exact",
+          "--include-ignored",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "elapsed_ns": 21621774372,
+        "user_cpu_s": 20.514381,
+        "system_cpu_s": 1.01803,
+        "max_rss_kib": 229416,
+        "native_summaries": [
+          [
+            "ok",
+            "1",
+            "0",
+            "0",
+            "0",
+            "934"
+          ]
+        ],
+        "physical_host_qualification": false,
+        "performance_or_throughput_claim": false,
+        "stdout.log_sha256": "c1306618e0ac05de9c1d912b8dfbac890f1ffeb8ffa8596c3a32c7a51e55d989",
+        "stderr.log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "retained_raw_logs": [
+    {
+      "path": "authenticated-initial-stderr.txt",
+      "sha256": "23ffd0563472264593d93a0f42189c997ffa48fb228370016af5759505682940",
+      "bytes": 4426
+    },
+    {
+      "path": "authenticated-initial-stdout.txt",
+      "sha256": "6485d27ed5bfbccc3eb0514c527c34e08e5b942e8fe06248cf9999576676fd26",
+      "bytes": 10968
+    },
+    {
+      "path": "delta-observer-setup-corrected-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "delta-observer-setup-corrected-stdout.txt",
+      "sha256": "c1306618e0ac05de9c1d912b8dfbac890f1ffeb8ffa8596c3a32c7a51e55d989",
+      "bytes": 244
+    },
+    {
+      "path": "reorg-initial-stderr.txt",
+      "sha256": "f25b407aefcb320f59a50d9e45c7de5b2544bad2ea479566ec409487eb1c0bdd",
+      "bytes": 313
+    },
+    {
+      "path": "reorg-initial-stdout.txt",
+      "sha256": "2ba93e80db25375a9d6818dd762ae743bfa724ebedb78b36c65aa429c726b359",
+      "bytes": 918
+    }
+  ]
+}

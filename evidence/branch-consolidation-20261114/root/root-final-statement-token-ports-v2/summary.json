@@ -1,0 +1,179 @@
+{
+  "base": "a660e5f5edfa0839a78d287895b75f4cc2cf7493",
+  "commits": [
+    {
+      "label": "statement-boundary",
+      "head": "51b95f5784deb22bcf2c7f60c127df16acf1f05e",
+      "tree": "417cff1e7b57f762562add5911e7f2361bba6ee7",
+      "paths": [
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "scripts/ci/check_pq_research_integration.py",
+        "scripts/ci/test_pq_research_integration.py",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+      ],
+      "patch_sha256": "1c2f33ce4de848c9d4c3a2dc0c4528875a80b2cecdddaadb9d402479a5c1fc07",
+      "patch_bytes": 19110
+    },
+    {
+      "label": "Rust-token-reader",
+      "head": "e82419698aa3fd527c6f828da11cc8749dcb007b",
+      "tree": "ada07bbe2235257052fafcbca840667259cb527c",
+      "paths": [
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "scripts/ci/check_ci_contract.py",
+        "scripts/ci/check_pq_research_integration.py",
+        "scripts/ci/ci_job.sh",
+        "scripts/ci/rust_source_tokens.py",
+        "scripts/ci/test_ci_contract.py",
+        "scripts/ci/test_pq_research_integration.py",
+        "scripts/ci/test_rust_source_tokens.py"
+      ],
+      "patch_sha256": "87b64ba5d9163b22d5c559ed91f2fbdccd9fce247dd07b3179243d951e9ba4cc",
+      "patch_bytes": 21548
+    }
+  ],
+  "head": "e82419698aa3fd527c6f828da11cc8749dcb007b",
+  "tree": "ada07bbe2235257052fafcbca840667259cb527c",
+  "original_statement_assertions_unchanged": true,
+  "statement_source_only_rustfmt_adaptation": false,
+  "rust_token_source_and_five_controls_byte_identical": true,
+  "statement_native_controls": "pending fixed-source Linux",
+  "steps": [
+    {
+      "label": "preflight-initial",
+      "exit": 0,
+      "seconds": 0.07,
+      "sha256": "56375c21df596b70348e1b7c230e4d64c2a5cb1de197572d8ae9fe5cb8b94789"
+    },
+    {
+      "label": "fast-forward-fixed-root",
+      "exit": 0,
+      "seconds": 0.112,
+      "sha256": "af343f82df57572facb6b9de25002b8dfe9131d3b797b6f9b33fc5223371bf58"
+    },
+    {
+      "label": "statement-preflight",
+      "exit": 0,
+      "seconds": 0.048,
+      "sha256": "56375c21df596b70348e1b7c230e4d64c2a5cb1de197572d8ae9fe5cb8b94789"
+    },
+    {
+      "label": "statement-format",
+      "exit": 0,
+      "seconds": 5.401,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "statement-inventory",
+      "exit": 0,
+      "seconds": 0.062,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "label": "statement-source-guard",
+      "exit": 0,
+      "seconds": 0.764,
+      "sha256": "bbd360650834ae1657a2106283afca3752803370d1c09801d3390a81ff3d37dc"
+    },
+    {
+      "label": "statement-boundary-ci-contract",
+      "exit": 0,
+      "seconds": 0.069,
+      "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+    },
+    {
+      "label": "statement-boundary-corpus",
+      "exit": 0,
+      "seconds": 0.58,
+      "sha256": "9b60fe93b8bee1d1e0d9292819281f52ae7bcb3c4739777578433040cc0c0ba3"
+    },
+    {
+      "label": "statement-boundary-diff",
+      "exit": 0,
+      "seconds": 0.048,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "statement-boundary-precommit",
+      "exit": 0,
+      "seconds": 0.045,
+      "sha256": "56375c21df596b70348e1b7c230e4d64c2a5cb1de197572d8ae9fe5cb8b94789"
+    },
+    {
+      "label": "statement-boundary-stage",
+      "exit": 0,
+      "seconds": 0.047,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "statement-boundary-commit",
+      "exit": 0,
+      "seconds": 0.066,
+      "sha256": "b1c60bb290a9a293f002c1d25d2cd341153e06d885e2d0b2e71f1cf9ffac7a86"
+    },
+    {
+      "label": "tokens-preflight",
+      "exit": 0,
+      "seconds": 0.044,
+      "sha256": "56375c21df596b70348e1b7c230e4d64c2a5cb1de197572d8ae9fe5cb8b94789"
+    },
+    {
+      "label": "tokens-original-five",
+      "exit": 0,
+      "seconds": 0.028,
+      "sha256": "464dc155ae43eb4937b23a477e5eea9434ed63978a796d0b70698a5c751dd308"
+    },
+    {
+      "label": "tokens-source-guard",
+      "exit": 0,
+      "seconds": 0.999,
+      "sha256": "111cfdf46846e63851fa4109771a83b868f6571869c31ff3f7445251326355aa"
+    },
+    {
+      "label": "tokens-ci-command-mutations",
+      "exit": 0,
+      "seconds": 0.278,
+      "sha256": "c44f81b4e0587f8c6c206680fc08ac5f3db9a3b7ed3ccb99395b672aa1f29e7e"
+    },
+    {
+      "label": "Rust-token-reader-ci-contract",
+      "exit": 0,
+      "seconds": 0.063,
+      "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+    },
+    {
+      "label": "Rust-token-reader-corpus",
+      "exit": 0,
+      "seconds": 0.372,
+      "sha256": "6d0b62cd0ae72f94235b5affbcacaa14235d42bebf9fb112060321b519931169"
+    },
+    {
+      "label": "Rust-token-reader-diff",
+      "exit": 0,
+      "seconds": 0.044,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "Rust-token-reader-precommit",
+      "exit": 0,
+      "seconds": 0.045,
+      "sha256": "56375c21df596b70348e1b7c230e4d64c2a5cb1de197572d8ae9fe5cb8b94789"
+    },
+    {
+      "label": "Rust-token-reader-stage",
+      "exit": 0,
+      "seconds": 0.043,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "Rust-token-reader-commit",
+      "exit": 0,
+      "seconds": 0.062,
+      "sha256": "6b69ebab3d6c4ef6142eac35ad83ae7cf927eeffa6ffa414f53b9cbc78ae6db7"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+
+thread 'store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit' (62) panicked at crates/trnm-pon-node/src/store/reorg_readback_tests.rs:485:9:
+assertion `left == right` failed
+  left: 1
+ right: 2
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

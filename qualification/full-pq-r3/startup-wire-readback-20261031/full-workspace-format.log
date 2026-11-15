@@ -1,0 +1,89 @@
+Diff in /workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs:89:
+         StateBackend::Legacy => Ok("legacy"),
+         StateBackend::AuthenticatedV1 => Ok("authenticated-v1"),
+         StateBackend::PermanentAccountGrowthV2 => Err("GROWTH_REHEARSAL_SOURCE_PROFILE".into()),
+-        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => Err("GROWTH_REHEARSAL_SOURCE_PROFILE".into()),
++        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => {
++            Err("GROWTH_REHEARSAL_SOURCE_PROFILE".into())
++        }
+     }
+ }
+ fn schema_id() -> Hash {
+Diff in /workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs:28:
+ }
+ fn open(path: &Path, backend: StateBackend) -> Node {
+     match backend {
+-        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => panic!("use the independently pinned PQ network fixture"),
++        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => {
++            panic!("use the independently pinned PQ network fixture")
++        }
+         StateBackend::Legacy => Node::open(path, settings(backend), 1).unwrap(),
+         StateBackend::AuthenticatedV1 => {
+             Node::open_with_authenticated_state(path, settings(backend), 1).unwrap()
+Diff in /workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs:30:
+     )
+     .unwrap();
+     match backend {
+-        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => panic!("use the independently pinned PQ network fixture"),
++        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => {
++            panic!("use the independently pinned PQ network fixture")
++        }
+         StateBackend::Legacy => Node::open(path, settings, 1).unwrap(),
+         StateBackend::AuthenticatedV1 => {
+             Node::open_with_authenticated_state(path, settings, 1).unwrap()
+Diff in /workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-pon-node/src/store.rs:963:
+         self.storage_context()?;
+         if trnm_mvcc_fee::pon_executor::pq_accounts_v2::enabled(&self.settings.app) {
+             ensure(
+-                matches!(self.state_backend, StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3),
++                matches!(
++                    self.state_backend,
++                    StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3
++                ),
+                 "PQ_NETWORK_BACKEND",
+             )?;
+         }
+Diff in /workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-pon-node/src/store.rs:971:
+     }
+     pub(crate) fn require_classical_network_profile(&self) -> Result<()> {
+         ensure(
+-            !matches!(self.state_backend, StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3),
++            !matches!(
++                self.state_backend,
++                StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3
++            ),
+             "PQ_NETWORK_REQUIRED",
+         )?;
+         Ok(())
+Diff in /workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-pon-node/src/store.rs:1229:
+             )?;
+         }
+ 
+-        let pq_selected = matches!(state_backend, StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3);
++        let pq_selected = matches!(
++            state_backend,
++            StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3
++        );
+ 
+         ensure(pq_selected == pq_network.is_some(), "PQ_NETWORK_BACKEND")?;
+         ensure(
+Diff in /workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-pon-node/src/store.rs:1238:
+         )?;
+         ensure(
+             !pq_selected
+-                || (owner_policy.is_none() && mining_owner.is_none()
++                || (owner_policy.is_none()
++                    && mining_owner.is_none()
+                     && match state_backend {
+                         StateBackend::PqNetworkV2 => continuous_owner.is_none(),
+-                        StateBackend::PqContinuousV3 => continuous_owner.as_ref().is_some_and(|owner| owner.is_pq_startup_owner())
+-                            && settings.is_native_pq_application_v6(),
++                        StateBackend::PqContinuousV3 => {
++                            continuous_owner
++                                .as_ref()
++                                .is_some_and(|owner| owner.is_pq_startup_owner())
++                                && settings.is_native_pq_application_v6()
++                        }
+                         _ => false,
+                     }),
+             "PQ_NETWORK_OWNER_COMBINATION",

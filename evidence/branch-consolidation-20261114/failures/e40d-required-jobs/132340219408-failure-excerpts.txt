@@ -1,0 +1,73 @@
+1344: 2026-11-14T05:07:09.8825056Z   PYTHONDONTWRITEBYTECODE: 1
+1345: 2026-11-14T05:07:09.8825396Z   TRNM_EXPECTED_SOURCE_SHA: e40d7071c4724e6600deef8a2820bf35c1982289
+1346: 2026-11-14T05:07:09.8825776Z   TRNM_COST_RUNNER_LABEL: ubuntu-24.04
+1347: 2026-11-14T05:07:09.8826110Z   CARGO_HOME: /home/runner/work/_temp/cargo-cross-arch-cost
+1348: 2026-11-14T05:07:09.8826565Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-cross-arch-cost
+1349: 2026-11-14T05:07:09.8827222Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/ci-observations
+1350: 2026-11-14T05:07:09.8827700Z ##[endgroup]
+1351: 2026-11-14T05:12:45.8809653Z {"cleanup": "already-collected", "command_argv": ["python3", "scripts/ci/run_from_zero_native.py", "--out", "/home/runner/work/_temp/ci-observations/from-zero-native"], "consensus_or_model_authority": false, "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain", "failure": null, "final_host_errors": [], "final_parent_lease": {"consensus_or_model_authority": false, "creator_service": "trnm-from-zero-43551533528-1-cross-arch-cost-4510.service", "current_service": "trnm-from-zero-43551533528-1-cross-arch-cost-4510.service", "host_readiness_only": true, "parent_identity": {"boot_id": "253bccab-9397-4929-ab0c-6d08bb6a2fec", "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622", "limits": {"cpu.max": "25000 100000", "cpu.max.burst": "0", "memory.max": "2147483648", "memory.swap.max": "0", "pids.max": "256"}, "parent": {"canonical_path": "/sys/fs/cgroup/trnmponpublic.slice", "device": 31, "directory": true, "gid": 0, "inode": 7219, "mode": 493, "symlink": false, "uid": 0}, "unit_file": {"ctime_ns": 1794633087131539903, "device": 29, "inode": 1519, "mtime_ns": 1794633087131539903, "path": "/run/systemd/system/trnmponpublic.slice", "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622", "size_bytes": 325}}, "schema": "trnm-ci-public-fixture-parent-binding-v1", "seal_file": {"ctime_ns": 1794633092108151011, "device": 29, "inode": 1565, "mtime_ns": 1794633092108151011, "path": "/run/trnm-public-fixture-43551533528-1-cross-arch-cost/parent.json", "sha256": "b6eede2e8ee7e1425cf4c806b1b7d6c47b4f9c1d2442cc9fa8488c4aae27a1dd", "size_bytes": 3199}, "seal_sha256": "b6eede2e8ee7e1425cf4c806b1b7d6c47b4f9c1d2442cc9fa8488c4aae27a1dd"}, "gid": 1001, "host_readiness_only": true, "parent_lease": {"consensus_or_model_authority": false, "creator_service": "trnm-from-zero-43551533528-1-cross-arch-cost-4510.service", "current_service": "trnm-from-zero-43551533528-1-cross-arch-cost-4510.service", "host_readiness_only": true, "parent_identity": {"boot_id": "253bccab-9397-4929-ab0c-6d08bb6a2fec", "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622", "limits": {"cpu.max": "25000 100000", "cpu.max.burst": "0", "memory.max": "2147483648", "memory.swap.max": "0", "pids.max": "256"}, "parent": {"canonical_path": "/sys/fs/cgroup/trnmponpublic.slice", "device": 31, "directory": true, "gid": 0, "inode": 7219, "mode": 493, "symlink": false, "uid": 0}, "unit_file": {"ctime_ns": 1794633087131539903, "device": 29, "inode": 1519, "mtime_ns": 1794633087131539903, "path": "/run/systemd/system/trnmponpublic.slice", "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622", "size_bytes": 325}}, "schema": "trnm-ci-public-fixture-parent-binding-v1", "seal_file": {"ctime_ns": 1794633092108151011, "device": 29, "inode": 1565, "mtime_ns": 1794633092108151011, "path": "/run/trnm-public-fixture-43551533528-1-cross-arch-cost/parent.json", "sha256": "b6eede2e8ee7e1425cf4c806b1b7d6c47b4f9c1d2442cc9fa8488c4aae27a1dd", "size_bytes": 3199}, "seal_sha256": "b6eede2e8ee7e1425cf4c806b1b7d6c47b4f9c1d2442cc9fa8488c4aae27a1dd"}, "parent_reused": false, "passed": false, "preparation": {"binary_path": "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392", "binary_sha256": "98ce80b50e7f2126d20b6c8fa1782825feed0a8cc12dfb89cb441da28b84fbdb", "build_env": {"CARGO_BUILD_JOBS": "2", "CARGO_ENCODED_RUSTFLAGS": null, "CARGO_HOME": "/home/runner/work/_temp/cargo-cross-arch-cost", "CARGO_INCREMENTAL": "0", "CARGO_TARGET_DIR": "/home/runner/work/_temp/target-cross-arch-cost", "OPENSSL_CONF": null, "OPENSSL_DIR": null, "OPENSSL_MODULES": null, "OPENSSL_STATIC": null, "RUSTFLAGS": null, "RUSTUP_TOOLCHAIN": null, "TRNM_PQ_OPENSSL": null, "TRNM_PQ_OPENSSL_SHA256": null, "TRNM_PQ_OPENSSL_VERSION": null}, "completed": true, "consensus_or_model_authority": false, "failure_type": null, "format_preparation": {"process": {"command": ["cargo", "fmt", "--manifest-path", "trillionnium/Cargo.toml", "--all", "--", "--check"], "cpu_ns": 15783001000, "cpu_scope": "entire child, not apportioned to nested wall intervals", "exit_code": 0, "involuntary_switches": 339, "major_faults": 0, "max_rss_kib": 264216, "minor_faults": 53066, "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution", "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "system_cpu_ns": 197250000, "timed_out": false, "user_cpu_ns": 15585751000, "voluntary_switches": 32, "wait4_cpu_resolution_ns": 1000, "wall_ns": 15786663640}, "timeout_seconds": 60, "tool_versions": {"cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)", "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n", "rustfmt": "rustfmt 1.9.0-stable (59807616e1 2026-04-14)"}}, "native_tests_executed": false, "process": {"command": ["cargo", "test", "--locked", "--release", "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-pon-node", "--test", "public_v3_from_zero", "--no-run", "--message-format=json"], "cpu_ns": 442907956000, "cpu_scope": "entire child, not apportioned to nested wall intervals", "exit_code": 0, "involuntary_switches": 4135, "major_faults": 343, "max_rss_kib": 1902256, "minor_faults": 4138217, "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution", "stderr_sha256": "01f6b1a549c8a1467a00317d5bb4159e10c95b706c09e9adc17ac51bd5a123df", "stdout_sha256": "772289a76cfd8a733a83397aa3ad00bfe423ab3a4d5c96cfc2308fde3f023cc1", "system_cpu_ns": 12938883000, "timed_out": false, "user_cpu_ns": 429969073000, "voluntary_switches": 11564, "wait4_cpu_resolution_ns": 1000, "wall_ns": 227245600406}, "schema": "trnm-ci-original-native-build-preparation-v1", "service_resource_observation": false, "source_after": {"commit": "e40d7071c4724e6600deef8a2820bf35c1982289", "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a", "tracked_source_identity": {"base": null, "candidate": "e40d7071c4724e6600deef8a2820bf35c1982289", "kind": "head", "prospective_merge": null, "schema": "trnm-ci-source-v1", "tested_commit": "e40d7071c4724e6600deef8a2820bf35c1982289", "tested_tree": "6c6e1a3b1e3239a7cb95290485c1942ce22ef8a6", "tests_executed_by_identity_check": false, "tracked_bytes": 3939584486, "tracked_entries": 40758, "tracked_worktree_verified": true}, "tree": "6c6e1a3b1e3239a7cb95290485c1942ce22ef8a6"}, "source_before": {"commit": "e40d7071c4724e6600deef8a2820bf35c1982289", "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a", "tracked_source_identity": {"base": null, "candidate": "e40d7071c4724e6600deef8a2820bf35c1982289", "kind": "head", "prospective_merge": null, "schema": "trnm-ci-source-v1", "tested_commit": "e40d7071c4724e6600deef8a2820bf35c1982289", "tested_tree": "6c6e1a3b1e3239a7cb95290485c1942ce22ef8a6", "tests_executed_by_identity_check": false, "tracked_bytes": 3939584486, "tracked_entries": 40758, "tracked_worktree_verified": true}, "tree": "6c6e1a3b1e3239a7cb95290485c1942ce22ef8a6"}, "source_error": null}, "schema": "trnm-ci-original-public-host-controller-v2", "service": "trnm-from-zero-43551533528-1-cross-arch-cost-4510.service", "systemd_run_exit": 1, "uid": 1001}
+1352: 2026-11-14T05:12:45.8930615Z ##[error]Process completed with exit code 1.
+1353: 2026-11-14T05:12:45.8984906Z ##[group]Run python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
+1354: 2026-11-14T05:12:45.8985689Z [36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"[0m
+1355: 2026-11-14T05:12:45.9005683Z shell: /usr/bin/bash -e {0}
+1356: 2026-11-14T05:12:45.9005940Z env:
+1357: 2026-11-14T05:12:45.9006128Z   CI: true
+1358: 2026-11-14T05:12:45.9006323Z   CARGO_INCREMENTAL: 0
+1359: 2026-11-14T05:12:45.9006545Z   CARGO_BUILD_JOBS: 2
+1360: 2026-11-14T05:12:45.9006758Z   RUST_TEST_THREADS: 1
+1361: 2026-11-14T05:12:45.9007167Z   CARGO_TERM_COLOR: never
+1362: 2026-11-14T05:12:45.9007427Z   PYTHONDONTWRITEBYTECODE: 1
+1363: 2026-11-14T05:12:45.9007767Z   TRNM_EXPECTED_SOURCE_SHA: e40d7071c4724e6600deef8a2820bf35c1982289
+1364: 2026-11-14T05:12:45.9008159Z   TRNM_COST_RUNNER_LABEL: ubuntu-24.04
+1365: 2026-11-14T05:12:45.9008496Z   CARGO_HOME: /home/runner/work/_temp/cargo-cross-arch-cost
+1366: 2026-11-14T05:12:45.9008905Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-cross-arch-cost
+1367: 2026-11-14T05:12:45.9009361Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/ci-observations
+1368: 2026-11-14T05:12:45.9009689Z ##[endgroup]
+1369: 2026-11-14T05:12:50.6264177Z {
+1370: 2026-11-14T05:12:50.6264577Z   "base": null,
+1371: 2026-11-14T05:12:50.6265060Z   "candidate": "e40d7071c4724e6600deef8a2820bf35c1982289",
+1372: 2026-11-14T05:12:50.6265570Z   "kind": "head",
+1373: 2026-11-14T05:12:50.6265885Z   "prospective_merge": null,
+1374: 2026-11-14T05:12:50.6266341Z   "schema": "trnm-ci-source-v1",
+1375: 2026-11-14T05:12:50.6266869Z   "tested_commit": "e40d7071c4724e6600deef8a2820bf35c1982289",
+1376: 2026-11-14T05:12:50.6267784Z   "tested_tree": "6c6e1a3b1e3239a7cb95290485c1942ce22ef8a6",
+1377: 2026-11-14T05:12:50.6268367Z   "tests_executed_by_identity_check": false,
+1378: 2026-11-14T05:12:50.6268848Z   "tracked_bytes": 3939584486,
+1379: 2026-11-14T05:12:50.6269296Z   "tracked_entries": 40758,
+1380: 2026-11-14T05:12:50.6269708Z   "tracked_worktree_verified": true
+1381: 2026-11-14T05:12:50.6270123Z }
+1398: 2026-11-14T05:12:50.6460952Z   TRNM_EXPECTED_SOURCE_SHA: e40d7071c4724e6600deef8a2820bf35c1982289
+1399: 2026-11-14T05:12:50.6461693Z   TRNM_COST_RUNNER_LABEL: ubuntu-24.04
+1400: 2026-11-14T05:12:50.6462298Z   CARGO_HOME: /home/runner/work/_temp/cargo-cross-arch-cost
+1401: 2026-11-14T05:12:50.6463048Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-cross-arch-cost
+1402: 2026-11-14T05:12:50.6463827Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/ci-observations
+1403: 2026-11-14T05:12:50.6464441Z ##[endgroup]
+1404: 2026-11-14T05:12:50.8318320Z (node:7140) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+1405: 2026-11-14T05:12:50.8319607Z (Use `node --trace-deprecation ...` to show where the warning was created)
+1406: 2026-11-14T05:12:50.8767876Z With the provided path, there will be 158 files uploaded
+1407: 2026-11-14T05:12:50.8771439Z Artifact name is valid!
+1408: 2026-11-14T05:12:50.8772247Z Root directory input is valid!
+1409: 2026-11-14T05:12:51.2943159Z Beginning upload of artifact content to blob storage
+1410: 2026-11-14T05:12:52.3126885Z (node:7140) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+1411: 2026-11-14T05:12:53.1677490Z Uploaded bytes 8388608
+1412: 2026-11-14T05:12:53.2742087Z Uploaded bytes 9668610
+1413: 2026-11-14T05:12:53.3496521Z Finished uploading artifact content to blob storage!
+1414: 2026-11-14T05:12:53.3499722Z SHA256 digest of uploaded artifact zip is f89415eb88cf043c0de2ab24d21d1b92059f23b30cdd049b9410b6aa05137b7c
+1415: 2026-11-14T05:12:53.3502141Z Finalizing artifact upload
+1416: 2026-11-14T05:12:53.9175511Z Artifact cost-x64-e40d7071c4724e6600deef8a2820bf35c1982289-1.zip successfully finalized. Artifact ID 14099943887
+1417: 2026-11-14T05:12:53.9177358Z Artifact cost-x64-e40d7071c4724e6600deef8a2820bf35c1982289-1 has been successfully uploaded! Final size is 9668610 bytes. Artifact ID is 14099943887
+1418: 2026-11-14T05:12:53.9185849Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43551533528/artifacts/14099943887
+1419: 2026-11-14T05:12:53.9515040Z Post job cleanup.
+1420: 2026-11-14T05:12:54.0469374Z [command]/usr/bin/git version
+1421: 2026-11-14T05:12:54.0519621Z git version 2.56.1
+1422: 2026-11-14T05:12:54.0566504Z Temporarily overriding HOME='/home/runner/work/_temp/2067371d-5324-4a42-805d-8256a1a782d6' before making global git config changes
+1423: 2026-11-14T05:12:54.0568064Z Adding repository directory to the temporary git global config as a safe directory
+1424: 2026-11-14T05:12:54.0573935Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain
+1425: 2026-11-14T05:12:54.0621395Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+1426: 2026-11-14T05:12:54.0664830Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+1427: 2026-11-14T05:12:54.1053737Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+1428: 2026-11-14T05:12:54.1104170Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+1429: 2026-11-14T05:12:54.1503765Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+1430: 2026-11-14T05:12:54.1553149Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+1431: 2026-11-14T05:12:54.2130058Z Cleaning up orphan processes
+1432: 2026-11-14T05:12:54.2498920Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

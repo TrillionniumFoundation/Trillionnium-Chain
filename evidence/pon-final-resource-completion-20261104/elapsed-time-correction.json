@@ -1,0 +1,14 @@
+{
+  "schema": "trnm-honest-elapsed-correction-v1",
+  "historical_source": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "original_summary": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/service-path/c5dd-baseline-critical-path/small-readback.json",
+  "original_sha256": "63f5cf4a73141d032b8cb4a426a3e8aae7b8c3bd7be69fab4a76e28a4b991763",
+  "original_bytes_modified": false,
+  "correction_scope": "distinguish phase epoch end from first-round elapsed duration; no timestamp, outcome or denominator changed",
+  "actual_first_round_wall_seconds": [
+    22.903326238,
+    22.906293095,
+    22.813969019
+  ],
+  "interpretation": "The first actual round lasts 22.81-22.91 seconds, including 20.48-20.64 seconds of independent client import and its nested 5.48-5.50-second complete-page activation. Its phase-epoch start is about 1.00 second and its phase-epoch end is 23.81-23.91 seconds; the original sequential loop delays round2. Receiver ACK progress is separate from independent confirmation."
+}

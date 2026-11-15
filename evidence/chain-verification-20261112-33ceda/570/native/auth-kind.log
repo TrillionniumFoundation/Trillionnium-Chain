@@ -1,0 +1,15 @@
+
+running 1 test
+test ingress::tests::authenticated_activation_recovery::authenticated_context_retry_requires_exact_local_identity_and_kind ... 
+thread 'ingress::tests::authenticated_activation_recovery::authenticated_context_retry_requires_exact_local_identity_and_kind' (36019) panicked at crates/trnm-pon-node/src/ingress/authenticated_recovery_tests.rs:456:9:
+assertion failed: authenticated_dispatch_needs_retry(&Error::new(code))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    ingress::tests::authenticated_activation_recovery::authenticated_context_retry_requires_exact_local_identity_and_kind
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1425 filtered out; finished in 0.00s
+

@@ -1,0 +1,9 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_ci_contract.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "scope": "complete CI-contract controls on current uncommitted shared checkout"
+}

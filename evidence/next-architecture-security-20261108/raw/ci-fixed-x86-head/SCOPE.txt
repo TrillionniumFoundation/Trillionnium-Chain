@@ -1,0 +1,6 @@
+Exact-source component observations under the default Cargo features.
+Head and prospective merge, x86_64 and ARM64, remain separate records.
+Synthetic Cell bytes are not models. Local recovery and packet reads
+do not qualify WAN throughput, DHT, independent custody, Hepta FinalUse,
+useful-work hardness, QROM/PQ128, sustainable rewards or production.
+Original required gates remain unchanged. Qualification: HOLD_NO_GO.

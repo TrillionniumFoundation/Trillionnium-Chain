@@ -1,0 +1,38 @@
+{
+  "README.md": {
+    "bytes": 6363,
+    "sha256": "722c6b809b97389bd1952506a433690c7d355c21f51504b4bf217737aeadd504"
+  },
+  "candidate-reader.diff": {
+    "bytes": 30561,
+    "sha256": "ab546f6e14e9c6d6347ebf7743e92269c11d2f9579f8d69ceed88dffc1492b0f"
+  },
+  "commands.json": {
+    "bytes": 18586,
+    "sha256": "9a11b7f8a15ec4fbff03de745f7a4429ea587f34851100bc54ff66e6c7c5b30a"
+  },
+  "ddl-independent-binding.json": {
+    "bytes": 1225,
+    "sha256": "97e3580a8c59cc7cdabc2f330faa8f10ef33221d0a68c7c4cce21e5c7744178e"
+  },
+  "markdown-targets.json": {
+    "bytes": 280,
+    "sha256": "a09fb82800d017e6027888978d68ca4a9098896bd4114445f7236e54e7086264"
+  },
+  "raw-files.json": {
+    "bytes": 9159,
+    "sha256": "d45b57baa1f1b9ba9ee6797535c557da8e0d97e64f9567e941fd8f78e7910b30"
+  },
+  "raw-observations.tar.gz": {
+    "bytes": 575345,
+    "sha256": "2a775e74624173056dcca8b0fbd33bd58192af643757a77cfc8a005760d9b4ac"
+  },
+  "retained-test-methods.json": {
+    "bytes": 7201,
+    "sha256": "2033625e67802967bef587b52e49f2261470980ff1ab6d485e9ec77df481fab9"
+  },
+  "source-binding.json": {
+    "bytes": 1200,
+    "sha256": "0401535da1e337e332908bad283a48561e1140e81b7b731f476dedf08bd843bb"
+  }
+}

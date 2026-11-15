@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_repository.py"
+  ],
+  "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+  "elapsed_seconds": 293.029696,
+  "exception": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-08T12:29:21.724838+00:00",
+  "passed": true,
+  "stage": "repository-negative",
+  "started_utc": "2026-11-08T12:24:28.695149+00:00",
+  "stderr": "repository-negative.stderr.log",
+  "stderr_sha256": "6cc87e0b9fb4a615e48a51304b33165478f0fab938bacb7300484834881b3a19",
+  "stdout": "repository-negative.stdout.log",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_methods": 50,
+  "unittest_terminal_receipt_valid": true
+}

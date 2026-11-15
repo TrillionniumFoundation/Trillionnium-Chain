@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/workspace/scratch/8a53368149fe/pq-reproducer/legacy-native-tests",
+    "pq_rollback_witness::tests::invalid_external_checkpoint_is_rejected_before_touching_recovery_storage",
+    "--exact",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+  "returncode": 101,
+  "failure": null,
+  "elapsed_ns": 566009984,
+  "timeout_seconds": 1800,
+  "files": {
+    "stdout.log": {
+      "bytes": 1706,
+      "sha256": "c902ed14d0d29e9393dfa99e43a466c0b945e55e38614a56f2b29f31612508bc"
+    },
+    "stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "profile_overrides": false,
+  "acceptance_granted": false
+}

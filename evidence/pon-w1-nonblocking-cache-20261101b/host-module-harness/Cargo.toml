@@ -1,0 +1,11 @@
+[package]
+name = "pon-host-exact-module-check"
+version = "0.0.0"
+edition = "2021"
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rusqlite = { version = "=0.39.0", features = ["bundled", "fallible_uint", "hooks"] }
+trnm-transport = { path = "/workspace/scratch/41dfa6d31b4e/pon-security/trillionnium/crates/trnm-transport" }
+[dev-dependencies]
+tempfile = "3"

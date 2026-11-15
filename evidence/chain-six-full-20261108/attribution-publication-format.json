@@ -1,0 +1,8 @@
+{
+  "schema": "chain-six-document-publication-format-v1",
+  "original_sha256": "a8ffd0b48f1e25cf3d694fc7348dbb1928b9273c1b8a4a8b09c34ec3e9dfeab0",
+  "published_sha256": "47b36269a5d62d553731ee879cbfcc2093a9559a76a06d659ee281f6d9573437",
+  "transformation": "Remove exactly six Markdown hard-break trailing two-space pairs to satisfy the unchanged repository whitespace gate. No wording or measured value changed.",
+  "original_retained_in": "archives/github-work-security-original-controls.tar.xz",
+  "original_bytes_modified": false
+}

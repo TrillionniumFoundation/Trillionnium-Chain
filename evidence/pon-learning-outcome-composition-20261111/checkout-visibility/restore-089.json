@@ -1,0 +1,24 @@
+{
+  "actual_oid": "4e6555154315fd193c4eeb361c6cde0e2b646347",
+  "bytes": 1807629,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "4e6555154315fd193c4eeb361c6cde0e2b646347"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1807629,
+  "expected_oid": "4e6555154315fd193c4eeb361c6cde0e2b646347",
+  "finished_at": "2026-11-12T01:41:58.074131+00:00",
+  "path": "evidence/pq-m15-native-followthrough-20261107/targeted-and-complete-native.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcHEtbTE1LW5hdGl2ZS1mb2xsb3d0aHJvdWdoLTIwMjYxMTA3L3RhcmdldGVkLWFuZC1jb21wbGV0ZS1uYXRpdmUudGFyLmd6",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "ec94ac14f8617739994cbc69c2982fe6e2b45312fb2da93fa44751cd052a8d6a",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:58.041456+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

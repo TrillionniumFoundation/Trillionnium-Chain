@@ -1,0 +1,16 @@
+{
+  "schema": "trnm-final819-w1-range-v3-seal",
+  "sealed_utc": "2026-11-07T21:23:17.359511+00:00",
+  "payload_files": 54,
+  "payload_bytes": 6654393,
+  "sha256sums_sha256": "6bb8cb82fde10ab661607385552e8d7bc100db6878848ebaaeb698a67baa7aa7",
+  "coverage_sha256": "365c332315154cfe21fb99df52b709aac4d06203461dbbfcb306317156938cea",
+  "coverage_bytes": 20093,
+  "v2_seal_sha256": "f2952e394846e5f15d4f016bc00895b283872111ebe29ee2f09b468401d79edc",
+  "final_independent_readbacks": 20,
+  "final_unknown": 0,
+  "original_campaign_commands": 632,
+  "original_native_manifests": 24,
+  "original_process_records": 724,
+  "business_gate_unchanged": "HOLD"
+}

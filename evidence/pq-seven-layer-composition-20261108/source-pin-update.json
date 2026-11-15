@@ -1,0 +1,108 @@
+{
+  "base": "88568e2511fcf166e6824947ac97b06b72104385",
+  "expected_new_paths": [
+    "config/pon/pq-authority-effects-v1.json",
+    "config/pon/pq128-source-lock-v1.json",
+    "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+    "docs/security/PQ_ROOT_RECOVERY_POLICY_V1.md",
+    "docs/security/PQ_SEVEN_LAYER_REVIEW_20261108.md",
+    "formal/pon-nakamoto-v1/pq_root_recovery_policy_v1.py",
+    "formal/pon-nakamoto-v1/test_pq_root_recovery_policy_v1.py",
+    "scripts/ci/pq_authority_effect_register.py",
+    "scripts/ci/test_pq_authority_effect_register.py"
+  ],
+  "schema": "trnm-pq-source-pin-update-v1",
+  "unsupported_claims_enabled": false,
+  "updated": [
+    {
+      "new_git_blob": "d2558a65786a890c98abbc1d2a9957a40dd9009e",
+      "old_git_blob": "b335abeb79a7a3cd8d9329cdc76339b9ee934fd0",
+      "path": "docs/security/PQ128_LIFETIME_BUDGET_V1.md"
+    },
+    {
+      "new_git_blob": "4f295fa26b6e4d9fdb87bdf7d8fb26b8ee749b85",
+      "old_git_blob": "013550a720c8599fbe79b971ce818c40be4be17b",
+      "path": "scripts/ci/check_ci_contract.py"
+    },
+    {
+      "new_git_blob": "9cb4dd53d335066beab5c54301914b4460b48656",
+      "old_git_blob": "b45493f5d6a4df8293c18afd978a910286cf0d17",
+      "path": "scripts/ci/check_pq_research_integration.py"
+    },
+    {
+      "new_git_blob": "417240369ee0e5715c195768969207343946be1d",
+      "old_git_blob": "a0965b9cbb00300738ab2058ed970e48386f404b",
+      "path": "scripts/ci/ci_job.sh"
+    },
+    {
+      "new_git_blob": "9b616a77ee437b195349887d6e60f880903ebf7d",
+      "old_git_blob": "efc82efc575006507f6308f32cecd822df7adc81",
+      "path": "scripts/ci/pq_chain_claim_guard.py"
+    },
+    {
+      "new_git_blob": "1de78fbee6948d23b39df9628ead1e2a913a250e",
+      "old_git_blob": "6291e9cd3b4eff37b3a15b645f2966c874e3ef12",
+      "path": "scripts/ci/pq_lifetime_budget.py"
+    },
+    {
+      "new_git_blob": "2fe0ae75c4a4d8822594183f7ce0670706ffec2c",
+      "old_git_blob": "074decf98f16a57e822b10590787bc19f7a54b2d",
+      "path": "scripts/ci/test_ci_contract.py"
+    },
+    {
+      "new_git_blob": "9716d5bf04f6084494a857a096cb3e8423c29a17",
+      "old_git_blob": "e357107a2d1d819676cec0ec406115aa986952e7",
+      "path": "scripts/ci/test_pq_chain_claim_guard.py"
+    },
+    {
+      "new_git_blob": "fde7fa3f388db9ab9f9760b9229f928a7b2f2767",
+      "old_git_blob": "950628c2083a8a29e1d2ed4942cf73c847a34bf2",
+      "path": "scripts/ci/test_pq_lifetime_budget.py"
+    },
+    {
+      "new_git_blob": "b0026de87a476f6d290ecf7d58f50884a326635d",
+      "old_git_blob": null,
+      "path": "config/pon/pq-authority-effects-v1.json"
+    },
+    {
+      "new_git_blob": "863d00d4b02de7a8c948535a023345b26327a230",
+      "old_git_blob": null,
+      "path": "config/pon/pq128-source-lock-v1.json"
+    },
+    {
+      "new_git_blob": "8ee00106a86103828f29f24aeb4102109d95bde4",
+      "old_git_blob": null,
+      "path": "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md"
+    },
+    {
+      "new_git_blob": "68165413efba01d5842753a72b38dcfb1593d997",
+      "old_git_blob": null,
+      "path": "docs/security/PQ_ROOT_RECOVERY_POLICY_V1.md"
+    },
+    {
+      "new_git_blob": "aceecb30f6ce52cbadfa61b56d7a2f3e38f9559b",
+      "old_git_blob": null,
+      "path": "docs/security/PQ_SEVEN_LAYER_REVIEW_20261108.md"
+    },
+    {
+      "new_git_blob": "6aad2204780d9de43c6e05b18846950170fb44da",
+      "old_git_blob": null,
+      "path": "formal/pon-nakamoto-v1/pq_root_recovery_policy_v1.py"
+    },
+    {
+      "new_git_blob": "02f0971177f0c762e23a7d2a1728b8e43818b07c",
+      "old_git_blob": null,
+      "path": "formal/pon-nakamoto-v1/test_pq_root_recovery_policy_v1.py"
+    },
+    {
+      "new_git_blob": "850e1e32db89efd477c716692c920eab4289b3e1",
+      "old_git_blob": null,
+      "path": "scripts/ci/pq_authority_effect_register.py"
+    },
+    {
+      "new_git_blob": "027ae4556270dc113e616f785dbb4bfd10965212",
+      "old_git_blob": null,
+      "path": "scripts/ci/test_pq_authority_effect_register.py"
+    }
+  ]
+}

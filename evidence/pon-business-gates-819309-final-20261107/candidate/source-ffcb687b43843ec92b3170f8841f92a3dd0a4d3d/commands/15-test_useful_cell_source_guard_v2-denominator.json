@@ -1,0 +1,49 @@
+{
+  "command_record": "commands/15-test_useful_cell_source_guard_v2.json",
+  "duplicate_test_names": {},
+  "expected_tests": 20,
+  "missing_expected_test_names": [],
+  "observed_full_test_ids": [
+    "__main__.UsefulCellSourceGuardTests.test_changes_before_v2_import_are_rejected_from_ast_expectations",
+    "__main__.UsefulCellSourceGuardTests.test_complete_real_fixture_and_repeated_identity_remain_valid",
+    "__main__.UsefulCellSourceGuardTests.test_dataclass_runtime_generated_method_cannot_be_rebound",
+    "__main__.UsefulCellSourceGuardTests.test_default_lambda_code_cannot_be_replaced",
+    "__main__.UsefulCellSourceGuardTests.test_deleted_or_callable_object_bindings_are_refused",
+    "__main__.UsefulCellSourceGuardTests.test_derived_schema_constants_cannot_be_relabelled",
+    "__main__.UsefulCellSourceGuardTests.test_forged_function_module_name_and_qualname_do_not_replace_code",
+    "__main__.UsefulCellSourceGuardTests.test_functools_wraps_cannot_hide_changed_outer_code",
+    "__main__.UsefulCellSourceGuardTests.test_historical_replay_still_never_reads_present_wall_clock",
+    "__main__.UsefulCellSourceGuardTests.test_identical_code_and_globals_cannot_retain_different_builtins",
+    "__main__.UsefulCellSourceGuardTests.test_identical_code_in_different_globals_is_refused",
+    "__main__.UsefulCellSourceGuardTests.test_keyword_defaults_are_rebuilt_from_source",
+    "__main__.UsefulCellSourceGuardTests.test_lru_cache_outer_wrapper_must_be_native_and_have_the_real_target",
+    "__main__.UsefulCellSourceGuardTests.test_original_foreign_function_rebinding_attack_is_refused",
+    "__main__.UsefulCellSourceGuardTests.test_positional_defaults_are_rebuilt_from_source_not_current_function",
+    "__main__.UsefulCellSourceGuardTests.test_repository_function_import_alias_is_checked_by_identity",
+    "__main__.UsefulCellSourceGuardTests.test_repository_module_alias_cannot_point_to_a_separate_namespace",
+    "__main__.UsefulCellSourceGuardTests.test_undeclared_global_cannot_shadow_an_executed_builtin",
+    "__main__.UsefulCellSourceGuardTests.test_upstream_defaults_are_guarded_too",
+    "__main__.UsefulCellSourceGuardTests.test_upstream_v1_source_replay_and_product_consumer_bindings_are_guarded"
+  ],
+  "observed_ran_tests": 20,
+  "observed_verbose_test_starts": 20,
+  "original_final_status_rows": [
+    "OK"
+  ],
+  "original_summary_rows": [
+    [
+      "20",
+      "16.139"
+    ]
+  ],
+  "passed": true,
+  "path": "formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py",
+  "process_exit_code": 0,
+  "process_timed_out": false,
+  "raw_log_bytes": 3336,
+  "raw_log_sha256": "7ba5b512ab685884630de443bcb98d58228d722d2e89b46013e27abafd2b4d6c",
+  "scope": "Original unittest CLI output; counts are test methods, not subtests.",
+  "source_sha256": "f9e95ff81abb61f31994c5c2d97bd60e32db922de35c48f709cf5d565304433d",
+  "strict_zero_failure_skip_expected_failure_success": true,
+  "unexpected_test_names": []
+}

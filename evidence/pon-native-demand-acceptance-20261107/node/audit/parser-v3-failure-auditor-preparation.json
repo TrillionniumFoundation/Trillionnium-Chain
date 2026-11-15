@@ -1,0 +1,44 @@
+{
+  "created_unix_seconds": 1794065800.2381618,
+  "failure_auditor_scope": "Terminal native result or confirmed original host-job terminal status required before raw read; target coverage only; qualification always false.",
+  "files": {
+    "audit_failed_node_observation_recovery_v1.py": {
+      "bytes": 29432,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/audit_failed_node_observation_recovery_v1.py",
+      "sha256": "3add13fa42e47103c90d6e35c98c7be0accccc739963bad26aabcb8c930900cf",
+      "validation": "AST only; tool not executed"
+    },
+    "parse_complete_node_log_recovery_v1.py": {
+      "bytes": 25955,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/parse_complete_node_log_recovery_v1.py",
+      "sha256": "d6878878e290fe414a2c208fb9f0300b59a4595572f187edf90f733b96770be0",
+      "validation": "AST only; tool not executed"
+    },
+    "parse_complete_node_log_recovery_v2.py": {
+      "bytes": 28389,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/parse_complete_node_log_recovery_v2.py",
+      "sha256": "f95cb9167909866d1a355c10dd1587a7a5034c233fe9caa1d40a4ac81209c05f",
+      "validation": "AST only; tool not executed"
+    },
+    "parse_complete_node_log_recovery_v3.py": {
+      "bytes": 29075,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/parse_complete_node_log_recovery_v3.py",
+      "sha256": "9d28c5ffd3760a505bc6fd4aeab8bf93d98f0607690170e8fe8aad63b7686b83",
+      "validation": "AST only; tool not executed"
+    }
+  },
+  "node_live_log_read": false,
+  "original_run_recorder": {
+    "bytes": 7770,
+    "matches_inventory_and_capture": true,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/run_remote_node_gate.py",
+    "sha256": "049c64cf32927bcd16a82059707a468c91d6fc9be7d7abc9047bb3efcd2d8123"
+  },
+  "production_activation": false,
+  "schema": "pon-parser-v3-and-failure-auditor-preparation-v1",
+  "source_or_original_job_or_recorder_modified": false,
+  "success_parser_v3_change": "Actually reads explicit --run-recorder and checks its size/hash against inventory, capture and pinned observed recorder SHA.",
+  "tests_started": false,
+  "v1_v2_preserved": true,
+  "validation_scope": "AST and artifact byte/hash verification only; no final parser/auditor execution."
+}

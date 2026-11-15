@@ -1,0 +1,67 @@
+{
+  "artifact_id": 13917333858,
+  "maximum_part_bytes": 4194304,
+  "ordered_parts": [
+    {
+      "bytes": 4194304,
+      "path": "arm64/original.zip.part-000",
+      "sha256": "eb1f5f0f5c609a2c8fea9b520f7c3814f59b667435326893da7f42b16e325f5b"
+    },
+    {
+      "bytes": 4194304,
+      "path": "arm64/original.zip.part-001",
+      "sha256": "17677c341183df93d6b5e46f9b12656f5c9bc90075e52d1f410956306ddffbc3"
+    },
+    {
+      "bytes": 4194304,
+      "path": "arm64/original.zip.part-002",
+      "sha256": "7018c78456bedf782c6e344d6b2535ebfe723bb3502efc50bf535344ccb7bc1c"
+    },
+    {
+      "bytes": 4194304,
+      "path": "arm64/original.zip.part-003",
+      "sha256": "ccb065c7476af15f459e35fa401736e21b1b9406e4be538be3d8a2ae9bd880d5"
+    },
+    {
+      "bytes": 4194304,
+      "path": "arm64/original.zip.part-004",
+      "sha256": "c0ccbdd125181b30ef5034d5f2acc8b066d05b6a8d971fec65b8805514b8da5c"
+    },
+    {
+      "bytes": 4194304,
+      "path": "arm64/original.zip.part-005",
+      "sha256": "5dc0fd3d04575924273e282783450c31e2eee74efde731803e1279259bbe73df"
+    },
+    {
+      "bytes": 4194304,
+      "path": "arm64/original.zip.part-006",
+      "sha256": "acd8c74b0a35878bf96bd1b8c0cbeec969f83f1ab68b4f0496f22ffa493b621a"
+    },
+    {
+      "bytes": 4194304,
+      "path": "arm64/original.zip.part-007",
+      "sha256": "1479ba6052d76d3faa886c093f1290cda035b03d1f4dc336f2c208940a355748"
+    },
+    {
+      "bytes": 4194304,
+      "path": "arm64/original.zip.part-008",
+      "sha256": "5ead77908cb9c1bc57eb041517e80baf803454521e0615212c49bc8832ce7239"
+    },
+    {
+      "bytes": 4194304,
+      "path": "arm64/original.zip.part-009",
+      "sha256": "8535eb46a96104cde25c976dc86f11a1c750b04a1864373cf2bdeb702b845062"
+    },
+    {
+      "bytes": 3081035,
+      "path": "arm64/original.zip.part-010",
+      "sha256": "19cfe28b9461aaadb9912fbc68577d2e55176c782f2da74681a150dbef443a91"
+    }
+  ],
+  "original_zip": {
+    "bytes": 45024075,
+    "sha256": "da553653d88eced182fa698e2c4d099cc7bb5c64d29083a87bf6791c2cbde6fd"
+  },
+  "reassembly": "concatenate ordered_parts in this exact order; verify original_zip bytes and SHA256 before unzip",
+  "schema": "ordered-original-zip-parts-v1"
+}

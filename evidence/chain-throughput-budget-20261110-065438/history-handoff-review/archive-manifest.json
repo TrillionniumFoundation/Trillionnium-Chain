@@ -1,0 +1,28 @@
+{
+  "archive": "review-packet.tar.xz",
+  "sha256": "16d20fe7a669bc0d6cfd681220e3469113b7306ef2601f75ee7fd14fd8e7cc4c",
+  "members": [
+    {
+      "path": "reader-17-review.json",
+      "bytes": 1170,
+      "sha256": "af0328e0a5cc3efa4dda4d66e9e8a5bd5ea0e5ee65e4196a36c15e2fc5c7b4ee"
+    },
+    {
+      "path": "reader-17.stderr.txt",
+      "bytes": 2831,
+      "sha256": "b511e44a156f7109805c4a1363686790d9472c0149eb56417d80254ecbd14085"
+    },
+    {
+      "path": "reader-17.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source-freeze.json",
+      "bytes": 1866,
+      "sha256": "cd0882c6bbd1aea0bd84cfde6436f6b89898984c8bb4f6f321efe25642dcc85e"
+    }
+  ],
+  "roundtrip_all_members_verified": true,
+  "native_execution_performed_by_packaging": false
+}

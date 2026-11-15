@@ -1,0 +1,6 @@
+{
+  "bytes": 37119702,
+  "sha256": "aea5e0796d9b72f9fca3b0feea788286938e535a010560ad667ea5e7e1f607e0",
+  "committed": false,
+  "reason": "Partial cryptographic receipts retained locally, not a complete proof; complete raw stage observations are committed."
+}

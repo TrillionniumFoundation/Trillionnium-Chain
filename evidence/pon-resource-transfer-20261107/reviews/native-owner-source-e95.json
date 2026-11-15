@@ -1,0 +1,183 @@
+{
+  "created_utc": "2026-11-07T15:11:28.484615+00:00",
+  "evidence_kind": "Independent manual inspection of the exact committed source and source equality; no tests executed by this review; runtime qualification and portable audit are separate artifacts.",
+  "head_at_review": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+  "material_limits": [
+    "No proof of attacker minimum fresh neural work. Prepared canonical claims can expose correct business products; seal work does not imply new neural computation.",
+    "One trusted owner/protected journal/fixed epoch only. File locking is per file; same policy can be used in another file. No global anti-clone or whole-database rollback guarantee.",
+    "CPU, GPU, energy, capital and whole-service work lower bounds are unproved; logical MACs do not establish hardware costs.",
+    "All example keys are public test fixtures under common control. Independent operators, external funded demand and actual application consumer use remain unestablished.",
+    "Canonical clock uses host wall time plus immutable anchor; trusted clock is an assumption and cross-run/host rollback resistance is not established.",
+    "Transport raw.len is retained frame bytes: temporary BufReader may prefetch/discard trailing bytes. One controlled frame per connection is accounted; malicious trailing-stream/whole-wire totals are not measured.",
+    "write_all failure reports unknown partial sent bytes; kernel acceptance does not prove client application consumption.",
+    "Owner raw replies and timing/error stages are observable; hidden verifier feedback assumption has not been proved.",
+    "Reopen/startup recomputes direct business observations and model merging outside K; repeat startup/parse/signature/transport costs are not globally capped.",
+    "Static inspection is not a proof of the callback or physical minimum resource lower bound, and does not establish independent demand. Runtime evidence must refer to the exact-source validation, final canonical runner hashes and independent portable audit separately."
+  ],
+  "native_tests_executed_by_this_review": false,
+  "prior_review": {
+    "bytes": 5988,
+    "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/native-owner-independent-review-v1.json",
+    "preserved": true,
+    "sha256": "2d09a3728e80814e2bb4fc7754fa707ced10a98e1c2f21c4464db5bbb22978fa"
+  },
+  "qualification": {
+    "chainwork_awarded": 0,
+    "external_demand_authenticated": false,
+    "global_public_network_cap": false,
+    "independent_operators": false,
+    "minimum_fresh_neural_cost_proven": false,
+    "production_activation": false
+  },
+  "reviewed_properties": [
+    {
+      "evidence": "FrozenRelation::prepare now compares every request.scope with intent.authorization_scope; correctly_resigned_foreign_request_scope_is_rejected changes second request, rebuilds request commitment and signatures, expects AuthorizationScope",
+      "exact_source_review": "confirmed_under_explicit_scope",
+      "property": "request authorization scope matches capsule scope for every request",
+      "source_anchors": [
+        "FrozenRelation::prepare (lines 131-158)",
+        "correctly_resigned_foreign_request_scope_is_rejected (702-718)"
+      ],
+      "status": "source_fix_present_in_exact_commit_and_negative_control_source_inspected"
+    },
+    {
+      "evidence": "single locked journal, fixed policy, immediate transaction verifies issued/count/max, aggregate and per-candidate caps before reserve; no refund branch",
+      "exact_source_review": "confirmed_under_explicit_scope",
+      "property": "shared closed owner aggregate reservation budget",
+      "source_anchors": [
+        "VerificationAuthority::held_file/create/open (550-629)",
+        "reserve_authenticated (813-879)"
+      ],
+      "status": "source_path_reviewed_under_trusted_owner_and_journal_assumptions"
+    },
+    {
+      "evidence": "execute commits started before replay callback; prior started/unknown returns Unknown; open changes started to unknown without refund",
+      "exact_source_review": "confirmed_under_explicit_scope",
+      "property": "durable start before replay and no unknown retry",
+      "source_anchors": [
+        "execute (888-925)",
+        "prior (769-803)",
+        "open (611-629)"
+      ],
+      "status": "source_path_reviewed"
+    },
+    {
+      "evidence": "good includes VerifiedHit and VerifiedMiss; closed_candidates insert and complete receipt commit in same transaction; already-reserved other request checks closed before callback",
+      "exact_source_review": "confirmed_under_explicit_scope",
+      "property": "successful ticket miss closes same candidate",
+      "source_anchors": [
+        "execute good/receipt/transaction (925-978)",
+        "successful_miss_also_closes_candidate (534-554)",
+        "already_reserved_second_receiver_cannot_replay_closed_candidate (557-576)"
+      ],
+      "status": "source_path_and_targeted_test_reviewed"
+    },
+    {
+      "evidence": "observation new_candidate_completion is !cached && receipt.first_record; cached response has zero new full-cell/seed/step counts and explicit historical flags",
+      "exact_source_review": "confirmed_under_explicit_scope",
+      "property": "cached historical receipt is not a fresh ticket or context revalidation",
+      "source_anchors": [
+        "SubmissionState::observation (513-530)",
+        "prior (769-803)"
+      ],
+      "status": "source_path_reviewed"
+    },
+    {
+      "evidence": "successful reference calls provide known 37008 logical MACs each; early rejection calls and started/unknown calls carry upper bounds, not actual-MAC claims; seal callbacks count seed and steps including cancellation; Cell cost is a logical operation count, not hardware executed instruction count. Seal progress is reported after each actual seed/step hash. Started/unknown intervals preserve potentially completed work without counting it as observed exact MACs.",
+      "exact_source_review": "confirmed_under_explicit_scope",
+      "property": "partial replay cost accounting",
+      "source_anchors": [
+        "snapshot (980-1042)",
+        "replay (1051-1144)",
+        "pon_grouped_fresh_seal_v0::endpoint_with_progress (99-120)",
+        "pon_routed_int257_grouped::verify (405-467)"
+      ],
+      "status": "source_accounting_reviewed"
+    },
+    {
+      "evidence": "replay rechecks native admission after work, rejects time rollback, rejects request deadlines/arrival violations",
+      "exact_source_review": "confirmed_under_explicit_scope",
+      "property": "post-work current context and deadline",
+      "source_anchors": [
+        "replay post-work recheck (1125-1133)",
+        "example fixture_now (232-243)"
+      ],
+      "status": "source_path_reviewed"
+    },
+    {
+      "evidence": "snapshot scope excludes parsing/signatures/transport/preparation; example reports startup preparation and main-thread CPU; cached replies and authentication remain repeatable; budget does not cap startup, authentication, cached response generation, malformed input parsing, connection handling, all packet bytes or receiver/auditor computation.",
+      "exact_source_review": "confirmed_under_explicit_scope",
+      "property": "costs beyond callback budget are explicit",
+      "source_anchors": [
+        "snapshot cost_scope (1037-1042)",
+        "example preparation (342-346)",
+        "example serve raw framing/measurement (595-653)"
+      ],
+      "status": "scope_reviewed"
+    },
+    {
+      "evidence": "two_owner_files_with_the_same_policy_are_a_global_cap_counterexample creates two journals with same policy and records independently",
+      "exact_source_review": "confirmed_under_explicit_scope",
+      "property": "owner clone counterexample retained",
+      "source_anchors": [
+        "two_owner_files_with_the_same_policy_are_a_global_cap_counterexample (722-736)"
+      ],
+      "status": "source_and_counterexample_test_reviewed"
+    }
+  ],
+  "reviewed_property_count": 9,
+  "reviewer_role": "demand_cost_audit child independent of native source author",
+  "schema": "manual-grouped-owner-independent-source-review-v1",
+  "source_commit": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+  "source_files": {
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_grouped_fresh_seal_v0.rs": {
+      "bytes": 11106,
+      "changed_since_prior_review": false,
+      "git_blob": "6f181598fe0c0fd33c851441b52d6740c4abe248",
+      "matches_worktree": true,
+      "prior_review_sha256": "e76b14e338e8de3a4a5dce5f7d420c18418329ef58bc7cc1e58988a703fbadda",
+      "sha256": "e76b14e338e8de3a4a5dce5f7d420c18418329ef58bc7cc1e58988a703fbadda"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_routed_int257_grouped.rs": {
+      "bytes": 30403,
+      "changed_since_prior_review": false,
+      "git_blob": "7f82a73b41c6841b05cd2e54a4fb1fd750efb555",
+      "matches_worktree": true,
+      "prior_review_sha256": "3081b617eefd9277540c11b0468865b54ee97c473e438b93a5087cd847e3ddd0",
+      "sha256": "3081b617eefd9277540c11b0468865b54ee97c473e438b93a5087cd847e3ddd0"
+    },
+    "trillionnium/crates/trnm-pon-node/examples/grouped_verification_authority_v0.rs": {
+      "bytes": 29413,
+      "changed_since_prior_review": true,
+      "git_blob": "897c68d8f03db7bf9293d55542fd20a717ed546b",
+      "matches_worktree": true,
+      "prior_review_sha256": "a94a10d7e13a4fb7bc32d7779124c2e07ad4db7339403fd3c7f7b718f9833524",
+      "sha256": "44bdcdc084ccb4543ab082391b94e5a60e367d865e13cf5705fc0b608455a788"
+    },
+    "trillionnium/crates/trnm-pon-node/src/grouped_verification_authority_v0.rs": {
+      "bytes": 43916,
+      "changed_since_prior_review": true,
+      "git_blob": "33977d59d5f5d2d621138ba1eb596b2ee73ab51d",
+      "matches_worktree": true,
+      "prior_review_sha256": "c535c830e359773f0e75be8fe129b0cf95e9360a725103a3afeacf99f9212226",
+      "sha256": "95f395355341d5e3dea53288dca20ae042ee2332ed914397328b60c721821084"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/grouped_verification_authority_v0.rs": {
+      "bytes": 25618,
+      "changed_since_prior_review": true,
+      "git_blob": "9bf67990093d3eed9d6cbe704cfd49ef72ef1864",
+      "matches_worktree": true,
+      "prior_review_sha256": "a90e7a4c147971acca98532e009c184738cfe665f6a1de42e701d99bc443b465",
+      "sha256": "4a4445a44e6ec3e918c93c3b50c658ada96919f775c59ea1f571225d0a4df018"
+    }
+  },
+  "source_sha256": {
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_grouped_fresh_seal_v0.rs": "e76b14e338e8de3a4a5dce5f7d420c18418329ef58bc7cc1e58988a703fbadda",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_routed_int257_grouped.rs": "3081b617eefd9277540c11b0468865b54ee97c473e438b93a5087cd847e3ddd0",
+    "trillionnium/crates/trnm-pon-node/examples/grouped_verification_authority_v0.rs": "44bdcdc084ccb4543ab082391b94e5a60e367d865e13cf5705fc0b608455a788",
+    "trillionnium/crates/trnm-pon-node/src/grouped_verification_authority_v0.rs": "95f395355341d5e3dea53288dca20ae042ee2332ed914397328b60c721821084",
+    "trillionnium/crates/trnm-pon-node/tests/grouped_verification_authority_v0.rs": "4a4445a44e6ec3e918c93c3b50c658ada96919f775c59ea1f571225d0a4df018"
+  },
+  "source_tree": "c815d3710d5f7feffc043aed1aa6e003e03d3a10",
+  "status": "SOURCE_REVIEW_COMPLETE_WITH_EXPLICIT_OPEN_GATES"
+}

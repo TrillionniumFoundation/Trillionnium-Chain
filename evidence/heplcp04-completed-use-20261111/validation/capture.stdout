@@ -1,0 +1,9 @@
+{
+  "authority": "DENY_ALL",
+  "current_permission": "NOT_EXPORTED",
+  "files": 32,
+  "manifest_sha256": "cdb672408af7dcc018c2d2615006c14421f21d863842ea02b7b63d55cd53c564",
+  "native_source": "93fc43f6e87c4514485adcb01a7ffec8ad3b632f",
+  "output": "/home/qian-qi/work/chain-pon-outcome-7612-final/evidence/heplcp04-completed-use-20261111/native-readbacks",
+  "qualification": "HOLD_NO_GO"
+}

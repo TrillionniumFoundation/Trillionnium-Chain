@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File [35m"<string>"[0m, line [35m82[0m, in [35m<module>[0m
+    assert digest([31mread[0m[1;31m(path)[0m) == expected, name
+                  [31m~~~~[0m[1;31m^^^^^^[0m
+  File [35m"<string>"[0m, line [35m34[0m, in [35mread[0m
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+[1;35mFileNotFoundError[0m: [35m[Errno 2] No such file or directory: '/home/qq/work/chain-cell-four-gates-20261111-2bfb/scripts/ci/run_cell_storage_four_gates_v1.py'[0m

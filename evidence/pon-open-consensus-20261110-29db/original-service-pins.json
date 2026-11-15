@@ -1,0 +1,228 @@
+{
+  "archive_bytes": 83560661,
+  "archive_sha256": "715587a56f595588c4eca4b36ba6e0a326b78e69078a4240cc878959e1f02cfe",
+  "artifact_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13761459229/zip",
+  "manifest": {
+    "bytes": 319979,
+    "path": "artifact-files.json",
+    "sha256": "fae151a16d60033c4c0efbea845be45d6884b864d82394a889b4508ab1e00277"
+  },
+  "report_bytes_retained_in_git": false,
+  "reports": [
+    {
+      "bytes": 55193326,
+      "path": "run-1-raw/report.json",
+      "sha256": "b96c4e005020a21b6b517f4c23e8904d6309d33b6ba71dd725bf6dcb67a4db0e"
+    },
+    {
+      "bytes": 55378230,
+      "path": "run-2-raw/report.json",
+      "sha256": "fb174b9ff583604cf71d2d134c67b8afac2712ed1e56a1ed30248e06f469dd51"
+    },
+    {
+      "bytes": 56087365,
+      "path": "run-3-raw/report.json",
+      "sha256": "0cbb68b43030aa8fe138642037fd727d7e5fc2cba93617029494339b26eea175"
+    }
+  ],
+  "retained_small_originals": [
+    {
+      "bytes": 303,
+      "path": "SCOPE.txt",
+      "sha256": "ce6e78baf98f002f35edf9e67a9c04614f5ba357365acff42313d8dc18542ab9"
+    },
+    {
+      "bytes": 319979,
+      "path": "artifact-files.json",
+      "sha256": "fae151a16d60033c4c0efbea845be45d6884b864d82394a889b4508ab1e00277"
+    },
+    {
+      "bytes": 595,
+      "path": "binary-before.json",
+      "sha256": "738640151c85634e52c95b778c2faeca7ae6dce778d1aba5a81e2b57916800eb"
+    },
+    {
+      "bytes": 336,
+      "path": "cargo-version.txt",
+      "sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e"
+    },
+    {
+      "bytes": 1974,
+      "path": "hardware.json",
+      "sha256": "ab1bcce33e1b08c91194bab0d269da1d4d69e6d1b5d20ff3a652ac5561a7027e"
+    },
+    {
+      "bytes": 1563,
+      "path": "resource-after-native.json",
+      "sha256": "e42b341024ebcb3ed208cdaf260680a6063b9be20151cdae828ddbff6cd54d02"
+    },
+    {
+      "bytes": 1546,
+      "path": "resource-before-build.json",
+      "sha256": "66c060ddc7551f2767a34e530ef08dc82d1d569449c6ed801a126f6925dfd9de"
+    },
+    {
+      "bytes": 8560,
+      "path": "results.json",
+      "sha256": "7f74e21cfbeff5e27ca233a1264785338aa8d6a5e7138804614c16ddec244160"
+    },
+    {
+      "bytes": 337,
+      "path": "run-1-raw/campaign-failure.json",
+      "sha256": "2e5acae99883c9518952556c56605421aaa2d13f06e1be7e37b1f9bbc5d953cc"
+    },
+    {
+      "bytes": 1563,
+      "path": "run-1-resource-after.json",
+      "sha256": "93e1da1540e20f70cd931938e3ea952b133e21d615cc05d27a77956aef3927cf"
+    },
+    {
+      "bytes": 1563,
+      "path": "run-1-resource-before.json",
+      "sha256": "6bd62595c18e54cc31f9d8f2fd28266ba079e9874ff8e7f8c70d0f3e911007ca"
+    },
+    {
+      "bytes": 1368,
+      "path": "run-1-result.json",
+      "sha256": "fec001d5000ccf8f1ba992c4f550b8aa0f1e0cfe4040c7d4e2b7f610b967f4de"
+    },
+    {
+      "bytes": 423,
+      "path": "run-1-source-after.json",
+      "sha256": "3bf55a5ff07413f32f5bd5894a64f6c4a7c8dcfb8fdf658469453c4a885447c4"
+    },
+    {
+      "bytes": 1615,
+      "path": "run-1.stderr.log",
+      "sha256": "b1d7b18715a12612430a335afd74dc9e2b28b6772f0a3517238a35a6c8e7c551"
+    },
+    {
+      "bytes": 271,
+      "path": "run-1.stdout.log",
+      "sha256": "363d351d6bcebbf41a53111293dc7ce3484f7144c41aa54881b5c4516003c00b"
+    },
+    {
+      "bytes": 1013,
+      "path": "run-1.step.json",
+      "sha256": "0bb0c2372d18c3930e181bcfc077f15f19080465a370a5fedae8d55fa7123128"
+    },
+    {
+      "bytes": 337,
+      "path": "run-2-raw/campaign-failure.json",
+      "sha256": "d924efd3c8fdf6f33db06c4b68493240895305c5f2a402012000417a0754ab94"
+    },
+    {
+      "bytes": 1563,
+      "path": "run-2-resource-after.json",
+      "sha256": "b99641e6094f65239da6d9eb6b006359c6d5f2ded82c84cd2a082db06b2f504a"
+    },
+    {
+      "bytes": 1563,
+      "path": "run-2-resource-before.json",
+      "sha256": "ef007ca0e4636b021dc9cb97f3a21b0a246390f96fc65bdf97add84d05dd7e61"
+    },
+    {
+      "bytes": 1367,
+      "path": "run-2-result.json",
+      "sha256": "56704c67e1dedd2e8213bf3e84301a5590035b165c3333af9eac8d543b084aef"
+    },
+    {
+      "bytes": 423,
+      "path": "run-2-source-after.json",
+      "sha256": "3bf55a5ff07413f32f5bd5894a64f6c4a7c8dcfb8fdf658469453c4a885447c4"
+    },
+    {
+      "bytes": 1615,
+      "path": "run-2.stderr.log",
+      "sha256": "4d77478a504903cf7a827758ed133f6bd968ce487b322c9f9fa0c38d125ac984"
+    },
+    {
+      "bytes": 271,
+      "path": "run-2.stdout.log",
+      "sha256": "da3c27fa12ceef2bcb6f264d2475a89590041574edfd1f389989e69dd798e72d"
+    },
+    {
+      "bytes": 1012,
+      "path": "run-2.step.json",
+      "sha256": "35bca1cc486a56a37468080b4c64b1b8cc48f672d63294e735bd59ad0793977c"
+    },
+    {
+      "bytes": 337,
+      "path": "run-3-raw/campaign-failure.json",
+      "sha256": "fd7fe547c1e460a78075c7605758deec76e41d332f9a675ba8fbfa7863297f21"
+    },
+    {
+      "bytes": 1563,
+      "path": "run-3-resource-after.json",
+      "sha256": "23a6b658b2b56f9152add84412ac939587fe51a6925cf7d8bcdc11feea8f17b4"
+    },
+    {
+      "bytes": 1563,
+      "path": "run-3-resource-before.json",
+      "sha256": "80ac578e8d2086afb164a562a26be14064c2162cc9a53045feffbc81bc627a9d"
+    },
+    {
+      "bytes": 1368,
+      "path": "run-3-result.json",
+      "sha256": "09f22eb3a91bd25cea59ef85f094f848492b705f4b1aafad1d13384ed19f4559"
+    },
+    {
+      "bytes": 423,
+      "path": "run-3-source-after.json",
+      "sha256": "3bf55a5ff07413f32f5bd5894a64f6c4a7c8dcfb8fdf658469453c4a885447c4"
+    },
+    {
+      "bytes": 1615,
+      "path": "run-3.stderr.log",
+      "sha256": "cf7900124d112f5f02833ea6445b6b912aad9022e2d33f6f819b0315f6e17174"
+    },
+    {
+      "bytes": 271,
+      "path": "run-3.stdout.log",
+      "sha256": "570dac8f6749df2003d6dd20329dfe75f58c32701f199a0ff026e21bee927b51"
+    },
+    {
+      "bytes": 1013,
+      "path": "run-3.step.json",
+      "sha256": "0649f785c583263632fe7ab6755630f31ad0138831489c51e4743f687d0c5ec0"
+    },
+    {
+      "bytes": 11686,
+      "path": "run-native-campaign.py",
+      "sha256": "c1dfb715aaf8c0c86d66c9ebee6cf64c4a829b89fdf93767e2ce9f847b8534c0"
+    },
+    {
+      "bytes": 196,
+      "path": "rustc-version.txt",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "bytes": 423,
+      "path": "source-after-native.json",
+      "sha256": "3bf55a5ff07413f32f5bd5894a64f6c4a7c8dcfb8fdf658469453c4a885447c4"
+    },
+    {
+      "bytes": 423,
+      "path": "source-after.json",
+      "sha256": "3bf55a5ff07413f32f5bd5894a64f6c4a7c8dcfb8fdf658469453c4a885447c4"
+    },
+    {
+      "bytes": 423,
+      "path": "source-before-build.json",
+      "sha256": "3bf55a5ff07413f32f5bd5894a64f6c4a7c8dcfb8fdf658469453c4a885447c4"
+    },
+    {
+      "bytes": 423,
+      "path": "source-before-campaigns.json",
+      "sha256": "3bf55a5ff07413f32f5bd5894a64f6c4a7c8dcfb8fdf658469453c4a885447c4"
+    },
+    {
+      "bytes": 423,
+      "path": "source-before.json",
+      "sha256": "3bf55a5ff07413f32f5bd5894a64f6c4a7c8dcfb8fdf658469453c4a885447c4"
+    }
+  ],
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42781760995",
+  "source_head": "aaa3c53965bf0cf472e52451e205e9a020e834ab",
+  "source_tree": "fe3ce4c61bc2e3d477ea328b7742d0b2598282b3"
+}

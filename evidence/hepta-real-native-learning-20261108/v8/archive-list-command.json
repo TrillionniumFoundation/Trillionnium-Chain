@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/home/qq/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "nextest",
+    "list",
+    "--archive-file",
+    "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/transfer/agentd-nextest.tar.zst",
+    "--workspace-remap",
+    "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/source/codex-rs",
+    "--extract-to",
+    "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/extracted",
+    "--list-type",
+    "binaries-only",
+    "--message-format",
+    "json"
+  ],
+  "returncode": 0
+}

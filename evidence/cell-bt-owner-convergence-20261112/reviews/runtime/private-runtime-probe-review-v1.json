@@ -1,0 +1,109 @@
+{
+  "all_other_fields_and_all_digest_values_must_remain_equal": true,
+  "allowed_path_projection_fields": [
+    "prefix",
+    "stdlib_root",
+    "python.executable",
+    "files keys",
+    "managed_inventory items",
+    "preflight_import_probe_mapped_files keys"
+  ],
+  "external_data_not_all_elf": [
+    "/usr/lib/locale/C.utf8/LC_CTYPE",
+    "/usr/lib/locale/locale-archive",
+    "/usr/lib/x86_64-linux-gnu/gconv/gconv-modules.cache"
+  ],
+  "findings": [
+    "No blocking issue identified in the physical-probe source. This finding is not an execution result.",
+    "The original env/bin/python link spells the noncanonical cpython-3.12 alias; mapping its resolved canonical target is required. The other two links both point relatively to python.",
+    "The actual interpreter tag is DT_RPATH=$ORIGIN/../lib; no DT_RUNPATH was reported in this inspection. No ELF rewrite is needed or authorized.",
+    "The source pins new canonical interpreter bytes/version/implementation/SOABI; unchanged load_snapshot/configure/verify_files are mandatory before a success receipt.",
+    "The stdlib=new/python/lib/python3.12 and purelib=new/env/lib/python3.12/site-packages expectations are appropriate for the actual two-root POSIX CPython contract. There is no requirement that headers or every sysconfig path use one prefix.",
+    "The physical probe has an exact three-key clean environment, checks unused bytecode path, and verifies canonical module origins and executable maps against the projected files while rejecting old runtime roots.",
+    "The contract code runs in a separately named exec namespace rather than an added sys.modules entry. With the declared -c entry, the module-origin scan does not mistakenly demand that the repository helper be a runtime snapshot member.",
+    "The projected historical preflight map is not used as actual new map evidence; the report explicitly marks full sealed runtime-import admission, model execution, FinalUse and activation false.",
+    "The enclosing copy driver must require probe exit zero in addition to its JSON report, because report publication precedes final maps-file publication."
+  ],
+  "h_called_by_reviewer": false,
+  "inspection_stdout": {
+    "authoritative_process_status_independently_checked": false,
+    "both_read_pages_same_job": true,
+    "bytes": 17439,
+    "empty_stderr": true,
+    "path": "validation/durable-current-remote/private-runtime02-inspection/inspect.stdout",
+    "raw_pages": 2,
+    "sdk_bytes_hex_reassembly_verified": true,
+    "sha256": "fc1db7f6ae8a4a1c7dafccfd8b836d074d9ad9786aef995c6ea76888f63caa56"
+  },
+  "model_execution_observed": false,
+  "observed_external_member_count": 13,
+  "observed_file_symlinks": [
+    {
+      "expected_payload_sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5",
+      "link_text": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12-linux-x86_64-gnu/bin/python3.12",
+      "path": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/bin/python",
+      "resolved_target": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12"
+    },
+    {
+      "expected_payload_sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5",
+      "link_text": "python",
+      "path": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/bin/python3",
+      "resolved_target": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12"
+    },
+    {
+      "expected_payload_sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5",
+      "link_text": "python",
+      "path": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/bin/python3.12",
+      "resolved_target": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12"
+    }
+  ],
+  "observed_parent_symlinks": [],
+  "observed_python_dynamic": {
+    "argv": [
+      "/usr/bin/readelf",
+      "-d",
+      "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12"
+    ],
+    "exit_code": 0,
+    "selected_lines": [
+      " 0x000000000000000f (RPATH)              Library rpath: [$ORIGIN/../lib]",
+      " 0x0000000000000001 (NEEDED)             Shared library: [libpthread.so.0]",
+      " 0x0000000000000001 (NEEDED)             Shared library: [libdl.so.2]",
+      " 0x0000000000000001 (NEEDED)             Shared library: [libutil.so.1]",
+      " 0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]",
+      " 0x0000000000000001 (NEEDED)             Shared library: [librt.so.1]",
+      " 0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]"
+    ],
+    "stderr": ""
+  },
+  "observed_snapshot_top_level_keys": [
+    "actual_model_execution",
+    "distributions",
+    "files",
+    "immutable_held_runtime_closure",
+    "installation_report_sha256",
+    "managed_inventory",
+    "observed_environment_isolated",
+    "platform",
+    "prefix",
+    "preflight_import_probe_mapped_files",
+    "production_qualification",
+    "python",
+    "requirements_sha256",
+    "schema",
+    "stdlib_root",
+    "wheels"
+  ],
+  "probe": {
+    "bytes": 6232,
+    "path": "validation/durable-current-remote/remote_private_runtime_probe_v1.py",
+    "sha256": "b36333de24d3128eb619baa0cfb1417901d2b483f0e29b922cf5609d8b68bbef"
+  },
+  "probe_execution_observed": false,
+  "reviewer": "release_acceptance",
+  "runtime_admission_observed": false,
+  "schema": "trnm.private-runtime-probe-source-review.v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_or_old_runtime_modified": false,
+  "status": "STATIC_PROBE_REVIEW_PASSED_EXECUTION_PENDING"
+}

@@ -1,0 +1,72 @@
+{
+  "schema": "trnm-pq-content-chain-evidence-manifest-v1",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 2664,
+      "sha256": "bff2194fe0f72d0332378a678b6d40139dc380cb38c958732fca4cd82bec469a"
+    },
+    {
+      "path": "input/independent-execution-inputs.json",
+      "bytes": 3538,
+      "sha256": "f8814c99415b552c3664318dadb7dd1b692ea63e6171fa8ad9df5854872db00b"
+    },
+    {
+      "path": "input/native-result.json",
+      "bytes": 18354,
+      "sha256": "b6f25ae1ee224ab9a619b7d7993635284495f43bc28f05f7c2b1bd8eacd4dc4b"
+    },
+    {
+      "path": "input/next-use-observations.json",
+      "bytes": 2354,
+      "sha256": "8b3c438eea2d1199aa0d753c36e5d64506f042dd6984f9f819b02273d840e242"
+    },
+    {
+      "path": "input/next-use-result.json",
+      "bytes": 1697,
+      "sha256": "a1d4948b0a904ac9d12da251222907c6cbe936f3b62fbf17a2412aa98043871a"
+    },
+    {
+      "path": "input/worker/ready.json",
+      "bytes": 4247,
+      "sha256": "cfd0380d9f66c025bbf0bd4da3d6a4d00594684e70c3ada5e163eae408b2911c"
+    },
+    {
+      "path": "input-manifest.json",
+      "bytes": 1138,
+      "sha256": "6d0dc17996cee9cbdb215c2991e9b5fe75f22277436784877589ad9dd78d4598"
+    },
+    {
+      "path": "validation/final/inventory-complete.json",
+      "bytes": 1962,
+      "sha256": "0e7fbb70d8f0a177ef4adea2480e341a880e1868e8da5e1d341487d4b3b82914"
+    },
+    {
+      "path": "validation/final/inventory-complete.log",
+      "bytes": 7467,
+      "sha256": "3a7a599c65508837e7c109ed8735bbab7b12a02b2aa4bc5103c532a93a2c19b6"
+    },
+    {
+      "path": "validation/final/run_final.py",
+      "bytes": 622,
+      "sha256": "22273b8dcb9d0df27ab9c736bd62201c5a99f664eb43227a3895521c8f759a59"
+    },
+    {
+      "path": "validation/initial/content-chain-review.json",
+      "bytes": 1964,
+      "sha256": "548606c16f25e5e40dd34749cbe485765bcfd3fc3b234a2a2a2a99540e591741"
+    },
+    {
+      "path": "validation/initial/content-chain-review.log",
+      "bytes": 45835,
+      "sha256": "08eb979c6fdbae251aee0fad947fa9acc2d3c590d6bd836742d126020ea39a5e"
+    },
+    {
+      "path": "validation/initial/run_checks.py",
+      "bytes": 792,
+      "sha256": "5084c389bee9f3d885c1fc4b19d0b2bf41a08e69f97d93f80fc964f8061e07ab"
+    }
+  ],
+  "native_execution": false,
+  "whole_chain_pq_qualified": false
+}

@@ -1,0 +1,305 @@
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs b/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs
+index 5107b47fa3..c8167acecd 100644
+--- a/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs
++++ b/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs
+@@ -13,6 +13,9 @@ use std::{
+ use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
+ use zeroize::Zeroizing;
+ 
++#[path = "auth_time_fairness_tests.rs"]
++mod time_fairness;
++
+ fn context() -> CellDiscoveryContextV1 {
+     CellDiscoveryContextV1 {
+         namespace: [1; 32],
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_time_fairness_tests.rs b/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_time_fairness_tests.rs
+new file mode 100644
+index 0000000000..6244859ea8
+--- /dev/null
++++ b/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_time_fairness_tests.rs
+@@ -0,0 +1,285 @@
++//! Eligible sources may accept a complete query and withhold every reply byte.
++//! These controlled TCP cases establish bounded scheduling, not independent
++//! operators, open-network Sybil resistance or a public availability claim.
++
++use super::*;
++
++struct WithholdingSource {
++    bootstrap: CellBootstrapPinV3,
++    authority: CellPqKeyPinV2,
++    stop: Arc<AtomicBool>,
++    worker: Option<thread::JoinHandle<Vec<[u8; 32]>>>,
++}
++
++impl WithholdingSource {
++    fn start(seed: u8) -> Self {
++        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
++        listener.set_nonblocking(true).unwrap();
++        let (_, authority) = key_and_pin(seed);
++        let bootstrap = bootstrap(listener.local_addr().unwrap(), &authority);
++        let stop = Arc::new(AtomicBool::new(false));
++        let shutdown = Arc::clone(&stop);
++        let worker = thread::spawn(move || {
++            let overall = Instant::now() + Duration::from_secs(20);
++            let mut nonces = Vec::new();
++            // Keep every accepted socket open without replying, including
++            // after the client abandons it. Cleanup is explicitly stoppable.
++            let mut held_streams = Vec::new();
++            while !shutdown.load(Ordering::Relaxed)
++                && nonces.len() < MAX_DISCOVERY_CONNECTIONS as usize
++                && Instant::now() < overall
++            {
++                match listener.accept() {
++                    Ok((mut stream, _)) => {
++                        let query = read_query(
++                            &mut stream,
++                            overall.min(Instant::now() + Duration::from_secs(2)),
++                        )
++                        .unwrap();
++                        assert_eq!(query.bootstrap, bootstrap);
++                        nonces.push(query.nonce);
++                        held_streams.push(stream);
++                    }
++                    Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
++                        thread::sleep(Duration::from_millis(2));
++                    }
++                    Err(error) => panic!("withholding bootstrap accept: {error}"),
++                }
++            }
++            nonces
++        });
++        Self {
++            bootstrap,
++            authority,
++            stop,
++            worker: Some(worker),
++        }
++    }
++
++    fn finish(mut self) -> Vec<[u8; 32]> {
++        self.stop.store(true, Ordering::Relaxed);
++        self.worker.take().unwrap().join().unwrap()
++    }
++}
++
++impl Drop for WithholdingSource {
++    fn drop(&mut self) {
++        self.stop.store(true, Ordering::Relaxed);
++        if let Some(worker) = self.worker.take() {
++            let _ = worker.join();
++        }
++    }
++}
++
++fn options(
++    request: CellDiscoveryRequestV3,
++    withholding: &[WithholdingSource],
++    honest: Option<&SignedSource>,
++    peers: &[SocketAddr],
++) -> CellDiscoveryOptionsV3 {
++    let mut bootstraps: Vec<_> = withholding.iter().map(|source| source.bootstrap).collect();
++    let mut authorities: Vec<_> = withholding
++        .iter()
++        .map(|source| source.authority.clone())
++        .collect();
++    if let Some(honest) = honest {
++        bootstraps.push(honest.bootstrap);
++        authorities.push(honest.authority.clone());
++    }
++    let mut addresses = peers.to_vec();
++    addresses.extend(bootstraps.iter().map(|bootstrap| bootstrap.endpoint));
++    CellDiscoveryOptionsV3 {
++        request,
++        bootstraps,
++        bootstrap_keys: CellPqKeyPinsV2::new(authorities).unwrap(),
++        addresses: policy(&addresses),
++    }
++}
++
++#[test]
++fn authenticated_v3_three_withholding_sources_leave_time_for_honest_fourth_cold_fetch() {
++    let now = epoch_now();
++    let tmp = tempfile::tempdir().unwrap();
++    let bytes: Vec<_> = (0..32_836).map(|index| (index % 251) as u8).collect();
++    let (manifest, cells) = served_payload(tmp.path(), &bytes);
++    let (provider_key, provider_pin) = key_and_pin(71);
++    let request = request(manifest.id(), now);
++    let advertisement = record(request, cells.address, 1, now, &provider_key, false);
++    let mut body = vec![1];
++    body.extend(advertisement.encode());
++    let withholding: Vec<_> = (72..75).map(WithholdingSource::start).collect();
++    let honest = SignedSource::start(75, body, Duration::ZERO, 1);
++    let options = options(request, &withholding, Some(&honest), &[cells.address]);
++    let directory = CellProviderDirectoryV3::open(
++        &tmp.path().join("directory"),
++        context(),
++        CellPqKeyPinsV2::new(vec![provider_pin]).unwrap(),
++        options.source_pins().unwrap(),
++    )
++    .unwrap();
++    let store = CellStoreV1::open(&tmp.path().join("consumer"), cache()).unwrap();
++    let output = tmp.path().join("complete");
++    let limits = CellPeerLimitsV1 {
++        max_connections: 8,
++        ..limits()
++    };
++    let started = Instant::now();
++    let original_deadline = started + Duration::from_secs(4);
++    let result = fetch_authenticated_discovered_cell_to_file_pq_observed(
++        &store,
++        &directory,
++        &options,
++        limits,
++        original_deadline,
++        &output,
++    );
++    let finished = Instant::now();
++    let withheld_queries: Vec<_> = withholding
++        .into_iter()
++        .map(|source| source.finish().len())
++        .collect();
++    let honest_queries = honest.finish();
++    eprintln!(
++        "authenticated-v3 withholding: elapsed={:?}, withheld_queries={withheld_queries:?}, honest_queries={}, result={:?}",
++        finished.duration_since(started),
++        honest_queries.len(),
++        result.as_ref().map(|(_, report)| report),
++    );
++    let (received, report) = result.expect("eligible withholding sources starved honest fourth");
++    assert_eq!(withheld_queries, vec![1, 1, 1]);
++    assert_eq!(honest_queries.len(), 1);
++    assert!(finished < original_deadline);
++    assert_eq!(received.id(), manifest.id());
++    assert_eq!(fs::read(output).unwrap(), bytes);
++    assert_eq!(report.discovered_providers, vec![cells.address]);
++    assert!(!report.manifest_initial_cache_hit);
++    assert_eq!(report.discovery.connection_attempts, 4);
++    assert_eq!(report.discovery.bootstrap_validation_attempts, 4);
++    assert_eq!(report.discovery.record_validation_attempts, 1);
++    assert_eq!(report.discovery.signature_attempts(), 5);
++    assert_eq!(report.discovery.rejected_bootstraps, 3);
++    assert_eq!(report.discovery.ineligible_bootstraps, 0);
++    assert_eq!(report.fetch.cached_chunks, 0);
++    assert_eq!(report.fetch.downloaded_chunks, manifest.chunks().len());
++    assert_eq!(report.fetch.connection_attempts, limits.max_connections);
++    assert_eq!(
++        report.discovery.received_response_bytes,
++        (RESPONSE_HEADER_BYTES + 1 + CELL_PROVIDER_RECORD_BYTES_V3 + ML_DSA_65_SIGNATURE_BYTES)
++            as u64
++    );
++    assert!(
++        report.fetch.received_response_bytes
++            >= report.discovery.received_response_bytes + bytes.len() as u64
++    );
++}
++
++#[test]
++fn authenticated_v3_all_withholding_sources_refuse_with_original_deadline_and_counters() {
++    let now = epoch_now();
++    let tmp = tempfile::tempdir().unwrap();
++    let (_, provider_pin) = key_and_pin(71);
++    let request = request([20; 32], now);
++    let withholding: Vec<_> = (72..74).map(WithholdingSource::start).collect();
++    let options = options(request, &withholding, None, &[]);
++    let directory = CellProviderDirectoryV3::open(
++        &tmp.path().join("directory"),
++        context(),
++        CellPqKeyPinsV2::new(vec![provider_pin]).unwrap(),
++        options.source_pins().unwrap(),
++    )
++    .unwrap();
++    let store = CellStoreV1::open(&tmp.path().join("consumer"), cache()).unwrap();
++    let output = tmp.path().join("missing");
++    let limits = CellPeerLimitsV1 {
++        max_connections: 4,
++        ..limits()
++    };
++    let started = Instant::now();
++    let original_deadline = started + Duration::from_secs(2);
++    let failure = fetch_authenticated_discovered_cell_to_file_pq_observed(
++        &store,
++        &directory,
++        &options,
++        limits,
++        original_deadline,
++        &output,
++    )
++    .unwrap_err();
++    let finished = Instant::now();
++    let observed_queries: Vec<_> = withholding
++        .into_iter()
++        .map(|source| source.finish())
++        .collect();
++    eprintln!(
++        "authenticated-v3 all-withholding: elapsed={:?}, query_counts={:?}, failure={failure:?}",
++        finished.duration_since(started),
++        observed_queries.iter().map(Vec::len).collect::<Vec<_>>(),
++    );
++    assert!(finished < original_deadline);
++    assert!(matches!(
++        failure.cause,
++        CellErrorV1::Invalid("authenticated discovery has no admissible provider")
++    ));
++    assert_eq!(failure.discovery.connection_attempts, 4);
++    assert_eq!(failure.discovery.bootstrap_validation_attempts, 4);
++    assert_eq!(failure.discovery.record_validation_attempts, 0);
++    assert_eq!(failure.discovery.rejected_bootstraps, 4);
++    assert_eq!(failure.discovery.ineligible_bootstraps, 0);
++    assert_eq!(failure.total_connection_attempts, 4);
++    assert_eq!(failure.total_received_response_bytes, Some(0));
++    assert!(!output.exists());
++    for nonces in observed_queries {
++        assert_eq!(nonces.len(), 2);
++        assert_ne!(nonces[0], nonces[1]);
++    }
++    assert_eq!(
++        directory
++            .usage_at(wall_now().unwrap().as_secs(), deadline())
++            .unwrap()
++            .retained_identities,
++        0
++    );
++}
++
++#[test]
++fn authenticated_v3_time_sharing_never_refunds_exhausted_connection_budget() {
++    let now = epoch_now();
++    let tmp = tempfile::tempdir().unwrap();
++    let (_, provider_pin) = key_and_pin(71);
++    let request = request([20; 32], now);
++    let withholding = vec![WithholdingSource::start(72)];
++    let honest = SignedSource::start(75, vec![0], Duration::ZERO, 1);
++    let options = options(request, &withholding, Some(&honest), &[]);
++    let directory = CellProviderDirectoryV3::open(
++        &tmp.path().join("directory"),
++        context(),
++        CellPqKeyPinsV2::new(vec![provider_pin]).unwrap(),
++        options.source_pins().unwrap(),
++    )
++    .unwrap();
++    let store = CellStoreV1::open(&tmp.path().join("consumer"), cache()).unwrap();
++    let output = tmp.path().join("missing");
++    let limits = CellPeerLimitsV1 {
++        max_connections: 1,
++        ..limits()
++    };
++    let original_deadline = Instant::now() + Duration::from_secs(2);
++    let failure = fetch_authenticated_discovered_cell_to_file_pq_observed(
++        &store,
++        &directory,
++        &options,
++        limits,
++        original_deadline,
++        &output,
++    )
++    .unwrap_err();
++    assert!(Instant::now() < original_deadline);
++    assert_eq!(failure.discovery.connection_attempts, 1);
++    assert_eq!(failure.discovery.bootstrap_validation_attempts, 1);
++    assert_eq!(failure.discovery.record_validation_attempts, 0);
++    assert_eq!(failure.total_connection_attempts, 1);
++    assert_eq!(failure.total_received_response_bytes, Some(0));
++    assert!(!output.exists());
++    assert_eq!(withholding.into_iter().next().unwrap().finish().len(), 1);
++    assert!(honest.finish().is_empty());
++}

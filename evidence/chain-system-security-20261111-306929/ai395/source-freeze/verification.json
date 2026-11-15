@@ -1,0 +1,195 @@
+{
+  "schema": "root-metadata-static-archive-independent-bindings-v1",
+  "artifact_integrity": "PASS",
+  "original_payloads_verified": 89,
+  "tar_members_verified": 90,
+  "command_receipts_verified": 26,
+  "raw_stream_bindings_verified": 52,
+  "command_receipts": [
+    {
+      "path": "root-metadata-freeze-813/authority-current.json",
+      "name": "authority-current",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-813/authority-prior-refusal.json",
+      "name": "authority-prior-refusal",
+      "actual_exit_code": 2,
+      "expected_exit_code": 2
+    },
+    {
+      "path": "root-metadata-freeze-813/commit-preflight.json",
+      "name": "commit-preflight",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-813/corpus-current.json",
+      "name": "corpus-current",
+      "actual_exit_code": 1,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-813/metadata-add.json",
+      "name": "metadata-add",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-813/metadata-commit.json",
+      "name": "metadata-commit",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-813/metadata-diff-check.json",
+      "name": "metadata-diff-check",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-813/preflight.json",
+      "name": "preflight",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-813/root-current.json",
+      "name": "root-current",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/authority-and-root-controls.json",
+      "name": "authority-and-root-controls",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/authority-current.json",
+      "name": "authority-current",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/cargo-format.json",
+      "name": "cargo-format",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/commit-preflight.json",
+      "name": "commit-preflight",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/corpus-current.json",
+      "name": "corpus-current",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/locked-all-features-graph.json",
+      "name": "locked-all-features-graph",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/locked-default-graph.json",
+      "name": "locked-default-graph",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/metadata-add.json",
+      "name": "metadata-add",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/metadata-bundle-verify.json",
+      "name": "metadata-bundle-verify",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/metadata-bundle.json",
+      "name": "metadata-bundle",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/metadata-commit.json",
+      "name": "metadata-commit",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/metadata-diff-check.json",
+      "name": "metadata-diff-check",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/preflight.json",
+      "name": "preflight",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/repository-links.json",
+      "name": "repository-links",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/reviewed-corpus-before-commit.json",
+      "name": "reviewed-corpus-before-commit",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/root-current.json",
+      "name": "root-current",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "root-metadata-freeze-f21/source-rejection-controls.json",
+      "name": "source-rejection-controls",
+      "actual_exit_code": 0,
+      "expected_exit_code": 0
+    }
+  ],
+  "import_head": "813620f387199bef3eae2493e2af07c70444db58",
+  "first_freeze_head": "f21d6be70d8880a4a81c00902fdaee1897a06e31",
+  "first_freeze_status": "HOLD",
+  "preserved_prior_refusal_exit": 2,
+  "preserved_prior_refusal_expected_exit": 2,
+  "preserved_corpus_failure_exit": 1,
+  "preserved_corpus_failure_expected_exit": 0,
+  "final_freeze_head": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+  "final_original_status": "HOLD",
+  "final_commands_all_expected_exit_zero": true,
+  "final_original_source_before_after_equal": true,
+  "original_source_receipt": {
+    "schema": "trnm-ci-source-v1",
+    "kind": "head",
+    "tested_commit": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+    "tested_tree": "371c3f55de7940e276496efe2008b537ba4d8268",
+    "candidate": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+    "base": null,
+    "prospective_merge": null,
+    "tracked_worktree_verified": true,
+    "tracked_entries": 28327,
+    "tracked_bytes": 2578801275,
+    "tests_executed_by_identity_check": false
+  },
+  "bundle_bytes": 8507,
+  "bundle_sha256": "90e00b6e836c50d9009af0bac336ed16c40cf8b57d9be250f27febd49c4e615b",
+  "this_readback_reran_static_gates": false,
+  "this_readback_reran_native_tests": false,
+  "production_activation": false
+}

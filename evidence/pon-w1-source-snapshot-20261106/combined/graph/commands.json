@@ -1,0 +1,162 @@
+{
+  "source_head": "ef9ba3f94975bb14c049ebc3cdd60d5d6a9e7391",
+  "environment_overrides": {
+    "PATH": "/workspace/scratch/d5a18aa06915/toolchains/rust-1.95.0/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/opt/codex/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/agent/.local/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+    "RUSTC": "/workspace/scratch/d5a18aa06915/toolchains/rust-1.95.0/bin/rustc",
+    "RUSTFMT": "/workspace/scratch/d5a18aa06915/toolchains/rust-1.95.0/bin/rustfmt",
+    "CARGO_HOME": "/workspace/scratch/bf693a71b444/toolchain/cargo",
+    "CARGO_NET_OFFLINE": "true",
+    "CARGO_TARGET_DIR": "/workspace/scratch/006e9a6c46c6/validation/combined-graph/target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_BUILD_JOBS": "2"
+  },
+  "observations": [
+    {
+      "name": "metadata-workspace-default",
+      "argv": [
+        "/workspace/scratch/d5a18aa06915/toolchains/rust-1.95.0/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 101,
+      "started_unix_ns": 1794009840847299172,
+      "elapsed_seconds": 0.23364029799995478,
+      "stdout_path": "/workspace/scratch/006e9a6c46c6/validation/combined-graph/metadata-workspace-default.json",
+      "stderr_path": "/workspace/scratch/006e9a6c46c6/validation/combined-graph/metadata-workspace-default.stderr.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "2402e9de8158527c1a46d37c21ef5b104f9fd856dd69bee6e960dd6f4430f8ae"
+    },
+    {
+      "name": "metadata-workspace-all-features",
+      "argv": [
+        "/workspace/scratch/d5a18aa06915/toolchains/rust-1.95.0/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1",
+        "--all-features"
+      ],
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 101,
+      "started_unix_ns": 1794009841081193963,
+      "elapsed_seconds": 0.09335064200058696,
+      "stdout_path": "/workspace/scratch/006e9a6c46c6/validation/combined-graph/metadata-workspace-all-features.json",
+      "stderr_path": "/workspace/scratch/006e9a6c46c6/validation/combined-graph/metadata-workspace-all-features.stderr.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "2402e9de8158527c1a46d37c21ef5b104f9fd856dd69bee6e960dd6f4430f8ae"
+    },
+    {
+      "name": "metadata-native",
+      "argv": [
+        "/workspace/scratch/d5a18aa06915/toolchains/rust-1.95.0/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "started_unix_ns": 1794009841174873418,
+      "elapsed_seconds": 0.15760858499925234,
+      "stdout_path": "/workspace/scratch/006e9a6c46c6/validation/combined-graph/metadata-native.json",
+      "stderr_path": "/workspace/scratch/006e9a6c46c6/validation/combined-graph/metadata-native.stderr.log",
+      "stdout_sha256": "d4efb76d0471405f42710e5a1e42cf0ed9529c529108234c97a1e934699a104c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "packages": 69,
+      "workspace_members": 1,
+      "resolve_nodes": 69
+    },
+    {
+      "name": "fmt-workspace",
+      "argv": [
+        "/workspace/scratch/d5a18aa06915/toolchains/rust-1.95.0/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "started_unix_ns": 1794009841338273349,
+      "elapsed_seconds": 48.30172909600151,
+      "stdout_path": "/workspace/scratch/006e9a6c46c6/validation/combined-graph/fmt-workspace.stdout.log",
+      "stderr_path": "/workspace/scratch/006e9a6c46c6/validation/combined-graph/fmt-workspace.stderr.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "44d0bf02b0209346efe0f61589d002f859a4680e21230c2b3ff7c0aea1c40016"
+    },
+    {
+      "name": "fmt-native",
+      "argv": [
+        "/workspace/scratch/d5a18aa06915/toolchains/rust-1.95.0/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "started_unix_ns": 1794009889640281243,
+      "elapsed_seconds": 13.322970446002728,
+      "stdout_path": "/workspace/scratch/006e9a6c46c6/validation/combined-graph/fmt-native.stdout.log",
+      "stderr_path": "/workspace/scratch/006e9a6c46c6/validation/combined-graph/fmt-native.stderr.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "fmt-hardened",
+      "argv": [
+        "/workspace/scratch/d5a18aa06915/toolchains/rust-1.95.0/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "started_unix_ns": 1794009902963560694,
+      "elapsed_seconds": 0.05718777700167266,
+      "stdout_path": "/workspace/scratch/006e9a6c46c6/validation/combined-graph/fmt-hardened.stdout.log",
+      "stderr_path": "/workspace/scratch/006e9a6c46c6/validation/combined-graph/fmt-hardened.stderr.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "fmt-v2",
+      "argv": [
+        "/workspace/scratch/d5a18aa06915/toolchains/rust-1.95.0/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "started_unix_ns": 1794009903021022022,
+      "elapsed_seconds": 13.698178609000024,
+      "stdout_path": "/workspace/scratch/006e9a6c46c6/validation/combined-graph/fmt-v2.stdout.log",
+      "stderr_path": "/workspace/scratch/006e9a6c46c6/validation/combined-graph/fmt-v2.stderr.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

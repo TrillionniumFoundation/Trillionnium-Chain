@@ -1,0 +1,44 @@
+{
+  "bytes": 7922,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_ci_source_integrity.py",
+    "-v"
+  ],
+  "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+  "elapsed_ns": 27501152787,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "log": "source-integrity-controls.log",
+  "name": "source-integrity-controls",
+  "process_exit_code": 0,
+  "sha256": "9da4a5671d2162b7680513015192151350a60b94015ba00f11150dc8e213cc51",
+  "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "target_after_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_before_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_identity_error": null,
+  "timed_out": false
+}

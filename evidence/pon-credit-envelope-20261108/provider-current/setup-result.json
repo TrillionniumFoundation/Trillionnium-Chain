@@ -1,0 +1,12 @@
+{
+  "command": [
+    "bash",
+    "scripts/ci/prepare_pq_provider.sh"
+  ],
+  "elapsed_seconds": 173.97798929689452,
+  "exit_code": 0,
+  "source_commit": "57511355b9dfb1fc02c90eb0713fd8e95263a662",
+  "source_modified": false,
+  "source_unchanged": true,
+  "started_utc": "2026-11-08T12:52:42.442848+00:00"
+}

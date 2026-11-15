@@ -1,0 +1,20 @@
+{
+  "actual_work_or_native_security_qualification": false,
+  "all_chunk_hashes_match": true,
+  "all_chunk_versions_pinned": true,
+  "archive_and_manifest_hashes_match_remote_receipt": true,
+  "archive_bytes": 854280,
+  "archive_sha256": "5fda3a5d87d3a8b5dbd41d40a9f2c613d7866c6af2e4b3bbc82c20d9c88c8829",
+  "chunk_count": 14,
+  "exact_physical_source_tree_matches_manifest": true,
+  "execution_attestation": false,
+  "gitignore_used_for_inventory": false,
+  "manifest_sha256": "be3594c56ba817d94851585eeb22d8bef0d02db54dac10870c691d50344dd416",
+  "raw_source_bytes_preserved": true,
+  "result": "PASS",
+  "schema": "hepta-runtime-evidence-copy-verification-v1",
+  "source_bytes": 11647156,
+  "source_directory_count": 27,
+  "source_file_count": 208,
+  "symlinks_or_special_files": false
+}

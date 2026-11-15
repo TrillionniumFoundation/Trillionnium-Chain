@@ -1,0 +1,111 @@
+{
+  "exact_guest_embedded_in_proof_host_offset": 412672,
+  "guest_bytes": 349796,
+  "guest_sha256": "f40b91c5be0ea5b9cae5a10cb93989fe9412239524e24a7c1aec17c629cdb8d8",
+  "proof_host_sha256": "de867e2b77079b8d73b890823d3b3cc23f6b6d810660a5291216b32d886b43d5",
+  "proof_source_commit": "65c97a95cab4702a368855397c65413e2a754b97",
+  "proof_source_tree": "70e0ce2e61bb6726b371f392a2362ad3680e24a5",
+  "r0vm_archive_sha256": "71a0adaa64235be13e9b8471bea5c4ded64bf97c6bd1eb9c2285b966c0b62fee",
+  "r0vm_sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6",
+  "same_operator_review_not_independent_security_acceptance": true,
+  "schema": "trnm-w1-evidence-static-source-binding-v1",
+  "setup_and_validation_logs": [
+    {
+      "original_bytes": 1481,
+      "original_name": "w1-build-transition.json",
+      "original_sha256": "4355354e81a902587cce78fa78ecaea9abf67689089aa80aeb2eae98d62a80b7",
+      "path": "setup-and-validation/w1-build-transition.json"
+    },
+    {
+      "original_bytes": 3321,
+      "original_name": "w1-client-build-resolved.log",
+      "original_sha256": "79d1f6744929d434b094aac5433a54553447aadff4057b82bbdbbb68b4d636cf",
+      "path": "setup-and-validation/w1-client-build-resolved.log.gz"
+    },
+    {
+      "original_bytes": 279,
+      "original_name": "w1-client-build.log",
+      "original_sha256": "538a6c251a2b33036e98ae58236104bdcada2bbf958beb231b25a76785f45907",
+      "path": "setup-and-validation/w1-client-build.log.gz"
+    },
+    {
+      "original_bytes": 699,
+      "original_name": "w1-decoder-tests.log",
+      "original_sha256": "9a6cbe74dcea3c6f45165138263ebc0847a3f80499bd09b531577f2d2188c4fa",
+      "path": "setup-and-validation/w1-decoder-tests.log.gz"
+    },
+    {
+      "original_bytes": 314,
+      "original_name": "w1-execute-build-final.log",
+      "original_sha256": "aebd891e404bedac3ead935002578270873566faf028a2660db8ded17e6cc3d1",
+      "path": "setup-and-validation/w1-execute-build-final.log.gz"
+    },
+    {
+      "original_bytes": 683,
+      "original_name": "w1-execute-build.log",
+      "original_sha256": "5618a3ba802617730a544d57125698b7c4d24ab1b03cd0da022b10f6be0a3367",
+      "path": "setup-and-validation/w1-execute-build.log.gz"
+    },
+    {
+      "original_bytes": 56,
+      "original_name": "w1-execution-controls-observer.log",
+      "original_sha256": "ada6169c6500f66256b3945ff6fe6dbd8b6345aecab64a7d9f291555fbc134bc",
+      "path": "setup-and-validation/w1-execution-controls-observer.log.gz"
+    },
+    {
+      "original_bytes": 0,
+      "original_name": "w1-final-fmt.log",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "setup-and-validation/w1-final-fmt.log.gz"
+    },
+    {
+      "original_bytes": 12948,
+      "original_name": "w1-final-clippy.log",
+      "original_sha256": "6e98304997e2a38b5570fea38921ee703f567d26ba355e69b5393bef187e9085",
+      "path": "setup-and-validation/w1-final-clippy.log.gz"
+    },
+    {
+      "original_bytes": 1180,
+      "original_name": "w1-final-clippy-wrapper-fix.log",
+      "original_sha256": "442bd518940ba55a7fcf35b7c434da4485332512775e6e6d21bb47442c3656d1",
+      "path": "setup-and-validation/w1-final-clippy-wrapper-fix.log.gz"
+    },
+    {
+      "original_bytes": 314,
+      "original_name": "w1-native-cost-build.log",
+      "original_sha256": "e7e206f4112ca50f521b86b7f8ebbc2c181c35029ce7e0a451f1c2a38946b717",
+      "path": "setup-and-validation/w1-native-cost-build.log.gz"
+    },
+    {
+      "original_bytes": 1083,
+      "original_name": "w1-native-final-tests.log",
+      "original_sha256": "7f51c7e063efa29414d740745b7f3a72f92f66f3f57cf7bf925f5c697414c342",
+      "path": "setup-and-validation/w1-native-final-tests.log.gz"
+    },
+    {
+      "original_bytes": 32178,
+      "original_name": "w1-prover-build-failure-rust188-dependencies.log",
+      "original_sha256": "1d423d32d8c8ebd97279121d384b3968988a801801c2bca1a10449edd5e21a61",
+      "path": "setup-and-validation/w1-prover-build-failure-rust188-dependencies.log.gz"
+    },
+    {
+      "original_bytes": 57,
+      "original_name": "w1-prover-build-locked-retry.log",
+      "original_sha256": "b0ae086a7b26ebf259a931e28b9986307cb21c53692449ada5e2a7e019d7f786",
+      "path": "setup-and-validation/w1-prover-build-locked-retry.log.gz"
+    },
+    {
+      "original_bytes": 32178,
+      "original_name": "w1-prover-build.log",
+      "original_sha256": "1d423d32d8c8ebd97279121d384b3968988a801801c2bca1a10449edd5e21a61",
+      "path": "setup-and-validation/w1-prover-build.log.gz"
+    },
+    {
+      "original_bytes": 3535,
+      "original_name": "w1-relation-build.log",
+      "original_sha256": "5e6d19e64b0cad0f54063833b6815c776d16708418744ef60172e1f95761aa2d",
+      "path": "setup-and-validation/w1-relation-build.log.gz"
+    }
+  ],
+  "source_wrapper_lint_fix_commit": "d2aa63db38cbf90b509d4668f09db7a83aaec3de"
+}

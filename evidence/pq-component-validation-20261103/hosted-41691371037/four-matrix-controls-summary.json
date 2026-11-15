@@ -1,0 +1,202 @@
+[
+  {
+    "artifact_id": 13262116480,
+    "commands": 43,
+    "passed": 42,
+    "failed": 1,
+    "sources": [
+      [
+        "45962558a7133375b16c0ac2600f2edb4a115585",
+        "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+        "head"
+      ]
+    ],
+    "all_log_sizes_and_hashes_verified": true,
+    "all_source_before_after_equal": true,
+    "failures": [
+      {
+        "selector": "store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse",
+        "exit_code": 101,
+        "error": [
+          "expected PQ_WITNESS_CAS, got PQ_WITNESS_OBSERVATION_ROLLBACK",
+          "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 963 filtered out; finished in 0.37s"
+        ],
+        "last_failure_marks": [
+          {
+            "error": {
+              "code": "PQ_WITNESS_OBSERVATION_ROLLBACK",
+              "io_kind": null,
+              "origin": "exact_diagnostic_string_or_unknown",
+              "raw_os_error": null,
+              "sqlite_extended_code": null
+            },
+            "id": 19,
+            "kind": "client_advance",
+            "marks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "phase": "client_entry",
+            "thread_cpu_ns": 4066,
+            "wall_ns": 4046
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "artifact_id": 13262010223,
+    "commands": 43,
+    "passed": 42,
+    "failed": 1,
+    "sources": [
+      [
+        "45962558a7133375b16c0ac2600f2edb4a115585",
+        "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+        "head"
+      ]
+    ],
+    "all_log_sizes_and_hashes_verified": true,
+    "all_source_before_after_equal": true,
+    "failures": [
+      {
+        "selector": "store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse",
+        "exit_code": 101,
+        "error": [
+          "expected PQ_WITNESS_CAS, got PQ_WITNESS_OBSERVATION_ROLLBACK",
+          "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 963 filtered out; finished in 0.46s"
+        ],
+        "last_failure_marks": [
+          {
+            "error": {
+              "code": "PQ_WITNESS_OBSERVATION_ROLLBACK",
+              "io_kind": null,
+              "origin": "exact_diagnostic_string_or_unknown",
+              "raw_os_error": null,
+              "sqlite_extended_code": null
+            },
+            "id": 19,
+            "kind": "client_advance",
+            "marks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "phase": "client_entry",
+            "thread_cpu_ns": 7840,
+            "wall_ns": 8040
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "artifact_id": 13261235455,
+    "commands": 43,
+    "passed": 42,
+    "failed": 1,
+    "sources": [
+      [
+        "9762e8e5c0485d148a01cf0810790497cb21968f",
+        "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+        "prospective-merge"
+      ]
+    ],
+    "all_log_sizes_and_hashes_verified": true,
+    "all_source_before_after_equal": true,
+    "failures": [
+      {
+        "selector": "store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse",
+        "exit_code": 101,
+        "error": [
+          "expected PQ_WITNESS_CAS, got PQ_WITNESS_OBSERVATION_ROLLBACK",
+          "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 963 filtered out; finished in 0.41s"
+        ],
+        "last_failure_marks": [
+          {
+            "error": {
+              "code": "PQ_WITNESS_OBSERVATION_ROLLBACK",
+              "io_kind": null,
+              "origin": "exact_diagnostic_string_or_unknown",
+              "raw_os_error": null,
+              "sqlite_extended_code": null
+            },
+            "id": 19,
+            "kind": "client_advance",
+            "marks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "phase": "client_entry",
+            "thread_cpu_ns": 6304,
+            "wall_ns": 6375
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "artifact_id": 13260673197,
+    "commands": 43,
+    "passed": 42,
+    "failed": 1,
+    "sources": [
+      [
+        "9762e8e5c0485d148a01cf0810790497cb21968f",
+        "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+        "prospective-merge"
+      ]
+    ],
+    "all_log_sizes_and_hashes_verified": true,
+    "all_source_before_after_equal": true,
+    "failures": [
+      {
+        "selector": "store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse",
+        "exit_code": 101,
+        "error": [
+          "expected PQ_WITNESS_CAS, got PQ_WITNESS_OBSERVATION_ROLLBACK",
+          "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 963 filtered out; finished in 0.25s"
+        ],
+        "last_failure_marks": [
+          {
+            "error": {
+              "code": "PQ_WITNESS_OBSERVATION_ROLLBACK",
+              "io_kind": null,
+              "origin": "exact_diagnostic_string_or_unknown",
+              "raw_os_error": null,
+              "sqlite_extended_code": null
+            },
+            "id": 19,
+            "kind": "client_advance",
+            "marks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "phase": "client_entry",
+            "thread_cpu_ns": 3626,
+            "wall_ns": 3606
+          }
+        ]
+      }
+    ]
+  }
+]

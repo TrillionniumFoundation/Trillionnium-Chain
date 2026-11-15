@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "python",
+    "/workspace/scratch/8a6ecb667c1e/integration-review/scan_terminal_sensitive_patterns_v1.py",
+    "--plan",
+    "/workspace/scratch/8a6ecb667c1e/terminal-evidence-preparation-v1/frozen-selection-ready-v5.json",
+    "--report",
+    "/workspace/scratch/8a6ecb667c1e/terminal-evidence-review-supplement-final-20261106-v1/sensitive-pattern-review.json"
+  ],
+  "available_bytes_after": 1069678592,
+  "available_bytes_before": 1073692672,
+  "cwd": "/workspace/scratch/8a6ecb667c1e",
+  "elapsed_ns": 19362444521,
+  "exit_code": 0,
+  "interrupted": null,
+  "label": "limited-sensitive-pattern-scan",
+  "native_tests_executed": 0,
+  "plan": {
+    "bytes": 3308604,
+    "path": "/workspace/scratch/8a6ecb667c1e/terminal-evidence-preparation-v1/frozen-selection-ready-v5.json",
+    "sha256": "a13a654264d6409f40d642c8f04976fb6ed1f146403b45ed42f4217778b047fa"
+  },
+  "raw_observations_modified": false,
+  "schema": "trnm-terminal-archive-command-receipt-v1",
+  "started_epoch_ns": 1793965368920101365,
+  "stderr": {
+    "bytes": 0,
+    "path": "/workspace/scratch/8a6ecb667c1e/terminal-evidence-review-supplement-final-20261106-v1/limited-sensitive-pattern-scan.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 349,
+    "path": "/workspace/scratch/8a6ecb667c1e/terminal-evidence-review-supplement-final-20261106-v1/limited-sensitive-pattern-scan.stdout.log",
+    "sha256": "69a4f79d66ed0d3e23d4a1a406789d1925a4d7d63f1c92b53069a77f70a052e8"
+  }
+}

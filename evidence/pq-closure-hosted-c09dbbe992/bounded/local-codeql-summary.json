@@ -1,0 +1,849 @@
+{
+  "api_producer_or_pr_security_gate_qualification_inferred": false,
+  "cells": [
+    {
+      "artifact": {
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13829501465/zip",
+        "created_at": "2026-11-11T04:44:50Z",
+        "digest": "sha256:fbdc2304a2c88b8eb8ab31af2a2a22ad11abffe6a47abd6e7c7fe5e80b12052b",
+        "expired": false,
+        "expires_at": "2026-11-25T04:44:49Z",
+        "id": 13829501465,
+        "name": "codeql-sarif-rust-prospective-merge-61589dddd13e7495369aaecad9212668049417c1",
+        "node_id": "MDg6QXJ0aWZhY3QxMzgyOTUwMTQ2NQ==",
+        "size_in_bytes": 206563,
+        "updated_at": "2026-11-11T04:44:50Z",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13829501465",
+        "workflow_run": {
+          "head_branch": "fix/chain-pq-closure-20261111-d4d2",
+          "head_repository_id": 1323087357,
+          "head_sha": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+          "id": 42955582992,
+          "repository_id": 1323087357
+        }
+      },
+      "sarif": [
+        {
+          "bytes": 7692030,
+          "path": "codeql-results/rust/prospective-merge/rust.sarif",
+          "results": 857,
+          "runs": 1,
+          "sha256": "1e9062153b990161c5002115ff4777d9a7b8d762680ca444b057bc7a9dac00c7"
+        }
+      ],
+      "source_after": {
+        "base": "31543fb6dde565b62b47436e0b1d399b6d0bd772",
+        "candidate": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "kind": "prospective-merge",
+        "prospective_merge": "61589dddd13e7495369aaecad9212668049417c1",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "61589dddd13e7495369aaecad9212668049417c1",
+        "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2554106689,
+        "tracked_entries": 27912,
+        "tracked_worktree_verified": true
+      },
+      "source_before": {
+        "base": "31543fb6dde565b62b47436e0b1d399b6d0bd772",
+        "candidate": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "kind": "prospective-merge",
+        "prospective_merge": "61589dddd13e7495369aaecad9212668049417c1",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "61589dddd13e7495369aaecad9212668049417c1",
+        "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2554106689,
+        "tracked_entries": 27912,
+        "tracked_worktree_verified": true
+      },
+      "step_outcomes": {
+        "code_scanning_upload": "never",
+        "event_commit": "61589dddd13e7495369aaecad9212668049417c1",
+        "expected_source_commit": "61589dddd13e7495369aaecad9212668049417c1",
+        "language": "rust",
+        "outcomes": {
+          "analyze": "success",
+          "initialize": "success",
+          "retention_controls": "success",
+          "sarif_verify": "success",
+          "source_after": "success",
+          "source_before": "success"
+        },
+        "schema": "trnm-codeql-local-evidence-v1",
+        "source_kind": "prospective-merge"
+      },
+      "zip_members": [
+        {
+          "bytes": 7692030,
+          "path": "codeql-results/rust/prospective-merge/rust.sarif",
+          "sha256": "1e9062153b990161c5002115ff4777d9a7b8d762680ca444b057bc7a9dac00c7"
+        },
+        {
+          "bytes": 512,
+          "path": "codeql-identity/rust/prospective-merge/source-after.json",
+          "sha256": "0e57d692cb35b6754ec9ff6051b524c1cfc07c618e794f87e385ebb4265e32a2"
+        },
+        {
+          "bytes": 512,
+          "path": "codeql-identity/rust/prospective-merge/source-after.log",
+          "sha256": "0e57d692cb35b6754ec9ff6051b524c1cfc07c618e794f87e385ebb4265e32a2"
+        },
+        {
+          "bytes": 512,
+          "path": "codeql-identity/rust/prospective-merge/source-before.json",
+          "sha256": "0e57d692cb35b6754ec9ff6051b524c1cfc07c618e794f87e385ebb4265e32a2"
+        },
+        {
+          "bytes": 512,
+          "path": "codeql-identity/rust/prospective-merge/source-before.log",
+          "sha256": "0e57d692cb35b6754ec9ff6051b524c1cfc07c618e794f87e385ebb4265e32a2"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/rust/prospective-merge/source-comparison.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 483,
+          "path": "codeql-identity/rust/prospective-merge/step-outcomes.json",
+          "sha256": "277abd64b97f0cd14c5d2e0c5f899dea81d25481847b1d8a648c014502fe3909"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/rust/prospective-merge/tracked-index-after.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/rust/prospective-merge/tracked-worktree-after.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/rust/prospective-merge/worktree-diff-names.z",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/rust/prospective-merge/worktree-diff-stat.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/rust/prospective-merge/worktree-status-after.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/rust/prospective-merge/worktree-status.z",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13829034755/zip",
+        "created_at": "2026-11-11T04:54:56Z",
+        "digest": "sha256:1b73d4ab40a3b15d80b38840181b8bd8415ff23efbd8273beb7ce92aee4c290a",
+        "expired": false,
+        "expires_at": "2026-11-25T04:54:55Z",
+        "id": 13829034755,
+        "name": "codeql-sarif-rust-head-61589dddd13e7495369aaecad9212668049417c1",
+        "node_id": "MDg6QXJ0aWZhY3QxMzgyOTAzNDc1NQ==",
+        "size_in_bytes": 206922,
+        "updated_at": "2026-11-11T04:54:56Z",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13829034755",
+        "workflow_run": {
+          "head_branch": "fix/chain-pq-closure-20261111-d4d2",
+          "head_repository_id": 1323087357,
+          "head_sha": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+          "id": 42955582992,
+          "repository_id": 1323087357
+        }
+      },
+      "sarif": [
+        {
+          "bytes": 7692014,
+          "path": "codeql-results/rust/head/rust.sarif",
+          "results": 857,
+          "runs": 1,
+          "sha256": "ec3916e0c4bff2bf41a326d476a3f3adf62dc3ff19d5f4438f4f63e517c67781"
+        }
+      ],
+      "source_after": {
+        "base": null,
+        "candidate": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2554106689,
+        "tracked_entries": 27912,
+        "tracked_worktree_verified": true
+      },
+      "source_before": {
+        "base": null,
+        "candidate": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2554106689,
+        "tracked_entries": 27912,
+        "tracked_worktree_verified": true
+      },
+      "step_outcomes": {
+        "code_scanning_upload": "never",
+        "event_commit": "61589dddd13e7495369aaecad9212668049417c1",
+        "expected_source_commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "language": "rust",
+        "outcomes": {
+          "analyze": "success",
+          "initialize": "success",
+          "retention_controls": "success",
+          "sarif_verify": "success",
+          "source_after": "success",
+          "source_before": "success"
+        },
+        "schema": "trnm-codeql-local-evidence-v1",
+        "source_kind": "head"
+      },
+      "zip_members": [
+        {
+          "bytes": 7692014,
+          "path": "codeql-results/rust/head/rust.sarif",
+          "sha256": "ec3916e0c4bff2bf41a326d476a3f3adf62dc3ff19d5f4438f4f63e517c67781"
+        },
+        {
+          "bytes": 423,
+          "path": "codeql-identity/rust/head/source-after.log",
+          "sha256": "fe10dd498ecf4b215731210d21afc23166d184fb206b4a4863553cff65616a2a"
+        },
+        {
+          "bytes": 423,
+          "path": "codeql-identity/rust/head/source-after.json",
+          "sha256": "fe10dd498ecf4b215731210d21afc23166d184fb206b4a4863553cff65616a2a"
+        },
+        {
+          "bytes": 423,
+          "path": "codeql-identity/rust/head/source-before.json",
+          "sha256": "fe10dd498ecf4b215731210d21afc23166d184fb206b4a4863553cff65616a2a"
+        },
+        {
+          "bytes": 423,
+          "path": "codeql-identity/rust/head/source-before.log",
+          "sha256": "fe10dd498ecf4b215731210d21afc23166d184fb206b4a4863553cff65616a2a"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/rust/head/source-comparison.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 470,
+          "path": "codeql-identity/rust/head/step-outcomes.json",
+          "sha256": "bb7772c9c74014158fc6b1ce59687bda9d9e268bc2b7af68521f39896f13e851"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/rust/head/tracked-index-after.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/rust/head/tracked-worktree-after.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/rust/head/worktree-diff-names.z",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/rust/head/worktree-diff-stat.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/rust/head/worktree-status-after.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/rust/head/worktree-status.z",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13828957383/zip",
+        "created_at": "2026-11-11T04:39:56Z",
+        "digest": "sha256:d3c469a7ea3cef2531e60b213b93701895b23b4319263cc04931dfcb1296de09",
+        "expired": false,
+        "expires_at": "2026-11-25T04:39:54Z",
+        "id": 13828957383,
+        "name": "codeql-sarif-python-prospective-merge-61589dddd13e7495369aaecad9212668049417c1",
+        "node_id": "MDg6QXJ0aWZhY3QxMzgyODk1NzM4Mw==",
+        "size_in_bytes": 94567,
+        "updated_at": "2026-11-11T04:39:56Z",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13828957383",
+        "workflow_run": {
+          "head_branch": "fix/chain-pq-closure-20261111-d4d2",
+          "head_repository_id": 1323087357,
+          "head_sha": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+          "id": 42955582992,
+          "repository_id": 1323087357
+        }
+      },
+      "sarif": [
+        {
+          "bytes": 944494,
+          "path": "codeql-results/python/prospective-merge/python.sarif",
+          "results": 2,
+          "runs": 1,
+          "sha256": "e03c7a0a75b33013402763acee46e6bf35e0f330033d12c7c09bc474439eb320"
+        }
+      ],
+      "source_after": {
+        "base": "31543fb6dde565b62b47436e0b1d399b6d0bd772",
+        "candidate": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "kind": "prospective-merge",
+        "prospective_merge": "61589dddd13e7495369aaecad9212668049417c1",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "61589dddd13e7495369aaecad9212668049417c1",
+        "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2554106689,
+        "tracked_entries": 27912,
+        "tracked_worktree_verified": true
+      },
+      "source_before": {
+        "base": "31543fb6dde565b62b47436e0b1d399b6d0bd772",
+        "candidate": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "kind": "prospective-merge",
+        "prospective_merge": "61589dddd13e7495369aaecad9212668049417c1",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "61589dddd13e7495369aaecad9212668049417c1",
+        "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2554106689,
+        "tracked_entries": 27912,
+        "tracked_worktree_verified": true
+      },
+      "step_outcomes": {
+        "code_scanning_upload": "never",
+        "event_commit": "61589dddd13e7495369aaecad9212668049417c1",
+        "expected_source_commit": "61589dddd13e7495369aaecad9212668049417c1",
+        "language": "python",
+        "outcomes": {
+          "analyze": "success",
+          "initialize": "success",
+          "retention_controls": "success",
+          "sarif_verify": "success",
+          "source_after": "success",
+          "source_before": "success"
+        },
+        "schema": "trnm-codeql-local-evidence-v1",
+        "source_kind": "prospective-merge"
+      },
+      "zip_members": [
+        {
+          "bytes": 944494,
+          "path": "codeql-results/python/prospective-merge/python.sarif",
+          "sha256": "e03c7a0a75b33013402763acee46e6bf35e0f330033d12c7c09bc474439eb320"
+        },
+        {
+          "bytes": 512,
+          "path": "codeql-identity/python/prospective-merge/source-after.log",
+          "sha256": "0e57d692cb35b6754ec9ff6051b524c1cfc07c618e794f87e385ebb4265e32a2"
+        },
+        {
+          "bytes": 512,
+          "path": "codeql-identity/python/prospective-merge/source-after.json",
+          "sha256": "0e57d692cb35b6754ec9ff6051b524c1cfc07c618e794f87e385ebb4265e32a2"
+        },
+        {
+          "bytes": 512,
+          "path": "codeql-identity/python/prospective-merge/source-before.json",
+          "sha256": "0e57d692cb35b6754ec9ff6051b524c1cfc07c618e794f87e385ebb4265e32a2"
+        },
+        {
+          "bytes": 512,
+          "path": "codeql-identity/python/prospective-merge/source-before.log",
+          "sha256": "0e57d692cb35b6754ec9ff6051b524c1cfc07c618e794f87e385ebb4265e32a2"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/python/prospective-merge/source-comparison.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 485,
+          "path": "codeql-identity/python/prospective-merge/step-outcomes.json",
+          "sha256": "5fd4f677d5217a4b61d7ec71f1ba0de92578a0d5dd42a343c452f5241ea97876"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/python/prospective-merge/tracked-index-after.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/python/prospective-merge/tracked-worktree-after.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/python/prospective-merge/worktree-diff-names.z",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/python/prospective-merge/worktree-diff-stat.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/python/prospective-merge/worktree-status-after.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/python/prospective-merge/worktree-status.z",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13828895988/zip",
+        "created_at": "2026-11-11T04:34:37Z",
+        "digest": "sha256:318fe94e158c006fa844fceb562da5707edcb15dcfb4c9c930c43c70d8e1c128",
+        "expired": false,
+        "expires_at": "2026-11-25T04:34:36Z",
+        "id": 13828895988,
+        "name": "codeql-sarif-python-head-61589dddd13e7495369aaecad9212668049417c1",
+        "node_id": "MDg6QXJ0aWZhY3QxMzgyODg5NTk4OA==",
+        "size_in_bytes": 94369,
+        "updated_at": "2026-11-11T04:34:37Z",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13828895988",
+        "workflow_run": {
+          "head_branch": "fix/chain-pq-closure-20261111-d4d2",
+          "head_repository_id": 1323087357,
+          "head_sha": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+          "id": 42955582992,
+          "repository_id": 1323087357
+        }
+      },
+      "sarif": [
+        {
+          "bytes": 944481,
+          "path": "codeql-results/python/head/python.sarif",
+          "results": 2,
+          "runs": 1,
+          "sha256": "b5567df5c380cbf1af6efddd4d69e7c47a2cc14748f1aab06d3a9fa60bd8a3a7"
+        }
+      ],
+      "source_after": {
+        "base": null,
+        "candidate": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2554106689,
+        "tracked_entries": 27912,
+        "tracked_worktree_verified": true
+      },
+      "source_before": {
+        "base": null,
+        "candidate": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2554106689,
+        "tracked_entries": 27912,
+        "tracked_worktree_verified": true
+      },
+      "step_outcomes": {
+        "code_scanning_upload": "never",
+        "event_commit": "61589dddd13e7495369aaecad9212668049417c1",
+        "expected_source_commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "language": "python",
+        "outcomes": {
+          "analyze": "success",
+          "initialize": "success",
+          "retention_controls": "success",
+          "sarif_verify": "success",
+          "source_after": "success",
+          "source_before": "success"
+        },
+        "schema": "trnm-codeql-local-evidence-v1",
+        "source_kind": "head"
+      },
+      "zip_members": [
+        {
+          "bytes": 944481,
+          "path": "codeql-results/python/head/python.sarif",
+          "sha256": "b5567df5c380cbf1af6efddd4d69e7c47a2cc14748f1aab06d3a9fa60bd8a3a7"
+        },
+        {
+          "bytes": 423,
+          "path": "codeql-identity/python/head/source-after.json",
+          "sha256": "fe10dd498ecf4b215731210d21afc23166d184fb206b4a4863553cff65616a2a"
+        },
+        {
+          "bytes": 423,
+          "path": "codeql-identity/python/head/source-after.log",
+          "sha256": "fe10dd498ecf4b215731210d21afc23166d184fb206b4a4863553cff65616a2a"
+        },
+        {
+          "bytes": 423,
+          "path": "codeql-identity/python/head/source-before.json",
+          "sha256": "fe10dd498ecf4b215731210d21afc23166d184fb206b4a4863553cff65616a2a"
+        },
+        {
+          "bytes": 423,
+          "path": "codeql-identity/python/head/source-before.log",
+          "sha256": "fe10dd498ecf4b215731210d21afc23166d184fb206b4a4863553cff65616a2a"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/python/head/source-comparison.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 472,
+          "path": "codeql-identity/python/head/step-outcomes.json",
+          "sha256": "9b144de0f6db60d4fd231314646bc762533768f58c4c76544183f5a7da6400d7"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/python/head/tracked-index-after.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/python/head/tracked-worktree-after.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/python/head/worktree-diff-names.z",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/python/head/worktree-diff-stat.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/python/head/worktree-status-after.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/python/head/worktree-status.z",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13828152902/zip",
+        "created_at": "2026-11-11T04:28:05Z",
+        "digest": "sha256:c21d25240ce7009d1f151eae3e8465057a9be4edd32d57726db9f86261934a6f",
+        "expired": false,
+        "expires_at": "2026-11-25T04:28:04Z",
+        "id": 13828152902,
+        "name": "codeql-sarif-actions-head-61589dddd13e7495369aaecad9212668049417c1",
+        "node_id": "MDg6QXJ0aWZhY3QxMzgyODE1MjkwMg==",
+        "size_in_bytes": 18010,
+        "updated_at": "2026-11-11T04:28:05Z",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13828152902",
+        "workflow_run": {
+          "head_branch": "fix/chain-pq-closure-20261111-d4d2",
+          "head_repository_id": 1323087357,
+          "head_sha": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+          "id": 42955582992,
+          "repository_id": 1323087357
+        }
+      },
+      "sarif": [
+        {
+          "bytes": 137622,
+          "path": "codeql-results/actions/head/actions.sarif",
+          "results": 0,
+          "runs": 1,
+          "sha256": "62b3d414fb40b0538fad053f48370b47b2bb275bfcb0b56fc881b71f4c264e2f"
+        }
+      ],
+      "source_after": {
+        "base": null,
+        "candidate": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2554106689,
+        "tracked_entries": 27912,
+        "tracked_worktree_verified": true
+      },
+      "source_before": {
+        "base": null,
+        "candidate": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2554106689,
+        "tracked_entries": 27912,
+        "tracked_worktree_verified": true
+      },
+      "step_outcomes": {
+        "code_scanning_upload": "never",
+        "event_commit": "61589dddd13e7495369aaecad9212668049417c1",
+        "expected_source_commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "language": "actions",
+        "outcomes": {
+          "analyze": "success",
+          "initialize": "success",
+          "retention_controls": "success",
+          "sarif_verify": "success",
+          "source_after": "success",
+          "source_before": "success"
+        },
+        "schema": "trnm-codeql-local-evidence-v1",
+        "source_kind": "head"
+      },
+      "zip_members": [
+        {
+          "bytes": 137622,
+          "path": "codeql-results/actions/head/actions.sarif",
+          "sha256": "62b3d414fb40b0538fad053f48370b47b2bb275bfcb0b56fc881b71f4c264e2f"
+        },
+        {
+          "bytes": 423,
+          "path": "codeql-identity/actions/head/source-after.json",
+          "sha256": "fe10dd498ecf4b215731210d21afc23166d184fb206b4a4863553cff65616a2a"
+        },
+        {
+          "bytes": 423,
+          "path": "codeql-identity/actions/head/source-after.log",
+          "sha256": "fe10dd498ecf4b215731210d21afc23166d184fb206b4a4863553cff65616a2a"
+        },
+        {
+          "bytes": 423,
+          "path": "codeql-identity/actions/head/source-before.json",
+          "sha256": "fe10dd498ecf4b215731210d21afc23166d184fb206b4a4863553cff65616a2a"
+        },
+        {
+          "bytes": 423,
+          "path": "codeql-identity/actions/head/source-before.log",
+          "sha256": "fe10dd498ecf4b215731210d21afc23166d184fb206b4a4863553cff65616a2a"
+        },
+        {
+          "bytes": 473,
+          "path": "codeql-identity/actions/head/step-outcomes.json",
+          "sha256": "d6321e212f9f3cde2d7715b23a9a73a5ea2677b42d08c14ba1803e0b31196b6c"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/actions/head/source-comparison.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/actions/head/tracked-index-after.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/actions/head/tracked-worktree-after.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/actions/head/worktree-diff-names.z",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/actions/head/worktree-diff-stat.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/actions/head/worktree-status-after.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/actions/head/worktree-status.z",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13827778785/zip",
+        "created_at": "2026-11-11T04:28:44Z",
+        "digest": "sha256:c21d41683e313afca43636014986213c4f45cd0de5e2819e25e7d2916c11193d",
+        "expired": false,
+        "expires_at": "2026-11-25T04:28:43Z",
+        "id": 13827778785,
+        "name": "codeql-sarif-actions-prospective-merge-61589dddd13e7495369aaecad9212668049417c1",
+        "node_id": "MDg6QXJ0aWZhY3QxMzgyNzc3ODc4NQ==",
+        "size_in_bytes": 18540,
+        "updated_at": "2026-11-11T04:28:44Z",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13827778785",
+        "workflow_run": {
+          "head_branch": "fix/chain-pq-closure-20261111-d4d2",
+          "head_repository_id": 1323087357,
+          "head_sha": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+          "id": 42955582992,
+          "repository_id": 1323087357
+        }
+      },
+      "sarif": [
+        {
+          "bytes": 137635,
+          "path": "codeql-results/actions/prospective-merge/actions.sarif",
+          "results": 0,
+          "runs": 1,
+          "sha256": "2d5b796b730e6a9c1dd6e87b5a66c5ac55c114194fba25d69c7cd046af50a28b"
+        }
+      ],
+      "source_after": {
+        "base": "31543fb6dde565b62b47436e0b1d399b6d0bd772",
+        "candidate": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "kind": "prospective-merge",
+        "prospective_merge": "61589dddd13e7495369aaecad9212668049417c1",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "61589dddd13e7495369aaecad9212668049417c1",
+        "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2554106689,
+        "tracked_entries": 27912,
+        "tracked_worktree_verified": true
+      },
+      "source_before": {
+        "base": "31543fb6dde565b62b47436e0b1d399b6d0bd772",
+        "candidate": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "kind": "prospective-merge",
+        "prospective_merge": "61589dddd13e7495369aaecad9212668049417c1",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "61589dddd13e7495369aaecad9212668049417c1",
+        "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2554106689,
+        "tracked_entries": 27912,
+        "tracked_worktree_verified": true
+      },
+      "step_outcomes": {
+        "code_scanning_upload": "never",
+        "event_commit": "61589dddd13e7495369aaecad9212668049417c1",
+        "expected_source_commit": "61589dddd13e7495369aaecad9212668049417c1",
+        "language": "actions",
+        "outcomes": {
+          "analyze": "success",
+          "initialize": "success",
+          "retention_controls": "success",
+          "sarif_verify": "success",
+          "source_after": "success",
+          "source_before": "success"
+        },
+        "schema": "trnm-codeql-local-evidence-v1",
+        "source_kind": "prospective-merge"
+      },
+      "zip_members": [
+        {
+          "bytes": 137635,
+          "path": "codeql-results/actions/prospective-merge/actions.sarif",
+          "sha256": "2d5b796b730e6a9c1dd6e87b5a66c5ac55c114194fba25d69c7cd046af50a28b"
+        },
+        {
+          "bytes": 512,
+          "path": "codeql-identity/actions/prospective-merge/source-after.log",
+          "sha256": "0e57d692cb35b6754ec9ff6051b524c1cfc07c618e794f87e385ebb4265e32a2"
+        },
+        {
+          "bytes": 512,
+          "path": "codeql-identity/actions/prospective-merge/source-after.json",
+          "sha256": "0e57d692cb35b6754ec9ff6051b524c1cfc07c618e794f87e385ebb4265e32a2"
+        },
+        {
+          "bytes": 512,
+          "path": "codeql-identity/actions/prospective-merge/source-before.json",
+          "sha256": "0e57d692cb35b6754ec9ff6051b524c1cfc07c618e794f87e385ebb4265e32a2"
+        },
+        {
+          "bytes": 512,
+          "path": "codeql-identity/actions/prospective-merge/source-before.log",
+          "sha256": "0e57d692cb35b6754ec9ff6051b524c1cfc07c618e794f87e385ebb4265e32a2"
+        },
+        {
+          "bytes": 486,
+          "path": "codeql-identity/actions/prospective-merge/step-outcomes.json",
+          "sha256": "4a7bdf9baa25cd3f6439c89f36ebb7e304ff9bca99c85df25fe87f425673fe44"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/actions/prospective-merge/source-comparison.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/actions/prospective-merge/tracked-index-after.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/actions/prospective-merge/tracked-worktree-after.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/actions/prospective-merge/worktree-diff-names.z",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/actions/prospective-merge/worktree-diff-stat.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/actions/prospective-merge/worktree-status-after.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "codeql-identity/actions/prospective-merge/worktree-status.z",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    }
+  ],
+  "code_scanning_upload": "never",
+  "six_cells_complete": true,
+  "source_head": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+  "source_merge": "61589dddd13e7495369aaecad9212668049417c1"
+}

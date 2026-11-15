@@ -1,0 +1,186 @@
+{
+  "scope": "Observed setup/compile/control outcomes retained from existing logs only. No setup command is a wall measurement or final-source acceptance.",
+  "events": [
+    {
+      "source_log": "borrowed-partition-m06.log",
+      "source_log_bytes": 124,
+      "source_log_sha256": "9fe7d18d3e1dde6b9dcd7060cf62257f2880f897ac50433d31e4b56f11c0f907",
+      "status": "DEPENDENCY_UNAVAILABLE",
+      "note": "Initial offline attempt could not download rand_core 0.10.1; no test ran.",
+      "observed_log_lines": [
+        {
+          "line": 1,
+          "text": "error: failed to download `rand_core v0.10.1`"
+        },
+        {
+          "line": 3,
+          "text": "Caused by:"
+        },
+        {
+          "line": 4,
+          "text": "  attempting to make an HTTP request, but --offline was specified"
+        }
+      ],
+      "recorded_exit_code": null,
+      "exit_note": "No standalone exit receipt in the retained summary-log set; outcome above comes from the cited log lines."
+    },
+    {
+      "source_log": "borrowed-partition-m06-cached.log",
+      "source_log_bytes": 4661,
+      "source_log_sha256": "63785aa0704d96b7e2a1164013fe129f8e41925e64632ac141486f6cbe9e1c35",
+      "status": "PASS_10_TESTS",
+      "note": "Subsequent dependency-cached M06 arithmetic selector ran 10 passing tests.",
+      "observed_log_lines": [
+        {
+          "line": 87,
+          "text": "    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 12s"
+        },
+        {
+          "line": 90,
+          "text": "running 10 tests"
+        },
+        {
+          "line": 102,
+          "text": "test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 97 filtered out; finished in 0.55s"
+        }
+      ],
+      "recorded_exit_code": null,
+      "exit_note": "No standalone exit receipt in the retained summary-log set; outcome above comes from the cited log lines."
+    },
+    {
+      "source_log": "borrowed-node-build.log",
+      "source_log_bytes": 540,
+      "source_log_sha256": "efd57f8a787e2eb5f4debeb87471378760e9a20d13947d0e37d53cdfaad46c1e",
+      "status": "ZERO_TESTS_NOT_ACCEPTANCE",
+      "note": "Node compiled, but the initial selector matched zero tests; this is not a passing validation of candidate behavior.",
+      "observed_log_lines": [
+        {
+          "line": 3,
+          "text": "    Finished `test` profile [unoptimized + debuginfo] target(s) in 5m 08s"
+        },
+        {
+          "line": 6,
+          "text": "running 0 tests"
+        },
+        {
+          "line": 8,
+          "text": "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 960 filtered out; finished in 0.00s"
+        }
+      ],
+      "recorded_exit_code": 0
+    },
+    {
+      "source_log": "descriptor-node-build.log",
+      "source_log_bytes": 692,
+      "source_log_sha256": "a43415371dda82e7436cd6cb12cfb1765901a67eecf6e2a009e81ced183eb2e3",
+      "status": "PASS_1_TEST",
+      "note": "Corrected exact descriptor commitment/error-order selector ran one passing test.",
+      "observed_log_lines": [
+        {
+          "line": 3,
+          "text": "    Finished `test` profile [unoptimized + debuginfo] target(s) in 5m 15s"
+        },
+        {
+          "line": 9,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 961 filtered out; finished in 0.02s"
+        }
+      ],
+      "recorded_exit_code": null,
+      "exit_note": "No standalone exit receipt in the retained summary-log set; outcome above comes from the cited log lines."
+    },
+    {
+      "source_log": "pq-observer.log",
+      "source_log_bytes": 3875,
+      "source_log_sha256": "7ce2b4cc20ce5f775b2214ad2151131fd33f591bc5030dad3570a5d820cd1291",
+      "status": "PASS_4_WITH_WARNING",
+      "note": "Initial observer run passed four tests but emitted unused observe_operation/observe_phase import warning; imports were removed before strict final validation.",
+      "observed_log_lines": [
+        {
+          "line": 33,
+          "text": "warning: unused imports: `observe_operation` and `observe_phase`"
+        },
+        {
+          "line": 39,
+          "text": "    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default"
+        },
+        {
+          "line": 41,
+          "text": "warning: `trnm-pon-node` (lib test) generated 1 warning (run `cargo fix --lib -p trnm-pon-node --tests` to apply 1 suggestion)"
+        },
+        {
+          "line": 42,
+          "text": "    Finished `test` profile [unoptimized + debuginfo] target(s) in 6m 09s"
+        },
+        {
+          "line": 45,
+          "text": "running 4 tests"
+        },
+        {
+          "line": 58,
+          "text": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 955 filtered out; finished in 0.00s"
+        }
+      ],
+      "recorded_exit_code": 0
+    },
+    {
+      "source_log": "borrowed-component-split-build.stderr",
+      "source_log_bytes": 3184,
+      "source_log_sha256": "1c3c324277c2a93c07e37d2496185fdb44ba600658000a24ddef494957324bab",
+      "status": "UNUSED_RELEASE_PREPARATION",
+      "note": "Accidental release-profile preparation finished; no campaign used this release binary. The registered and measured profile is test.",
+      "observed_log_lines": [
+        {
+          "line": 87,
+          "text": "    Finished `release` profile [optimized] target(s) in 1m 51s"
+        }
+      ],
+      "recorded_exit_code": null,
+      "exit_note": "No standalone exit receipt in the retained summary-log set; outcome above comes from the cited log lines."
+    },
+    {
+      "source_log": "borrowed-component-split-test-build.stderr",
+      "source_log_bytes": 206,
+      "source_log_sha256": "ae054c00b93266790206dde0b38c244bab73abab581e4af8492928afadde92d0",
+      "status": "TEST_PROFILE_BUILD_FINISHED",
+      "note": "Approved test-profile two-example build finished.",
+      "observed_log_lines": [
+        {
+          "line": 2,
+          "text": "    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.84s"
+        }
+      ],
+      "recorded_exit_code": null,
+      "exit_note": "No standalone exit receipt in the retained summary-log set; outcome above comes from the cited log lines."
+    },
+    {
+      "source_log": "borrowed-component-allocation-overflow.stdout",
+      "source_log_bytes": 189,
+      "source_log_sha256": "72a7d3b9797211f777f2f0b7a948e0b517ecff28b40523ce6c8202ea5bcfbdff",
+      "status": "PASS_1_TEST",
+      "note": "Separate allocation observer overflow/saturation control ran one passing test.",
+      "observed_log_lines": [
+        {
+          "line": 5,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+        }
+      ],
+      "recorded_exit_code": null,
+      "exit_note": "No standalone exit receipt in the retained summary-log set; outcome above comes from the cited log lines."
+    },
+    {
+      "source_log": "borrowed-component-split-clippy.stderr",
+      "source_log_bytes": 2368,
+      "source_log_sha256": "c9b776b403b064cc1b130ce41080ac96bacadf3992798c01d68604da1cca653f",
+      "status": "NARROW_CLIPPY_FINISHED",
+      "note": "Narrow split-example Clippy invocation finished; this is not final full-repository Clippy qualification.",
+      "observed_log_lines": [
+        {
+          "line": 62,
+          "text": "    Finished `test` profile [unoptimized + debuginfo] target(s) in 16.38s"
+        }
+      ],
+      "recorded_exit_code": null,
+      "exit_note": "No standalone exit receipt in the retained summary-log set; outcome above comes from the cited log lines."
+    }
+  ]
+}

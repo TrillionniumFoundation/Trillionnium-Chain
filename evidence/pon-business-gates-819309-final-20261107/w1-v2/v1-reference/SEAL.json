@@ -1,0 +1,15 @@
+{
+  "schema": "trnm-w1-metadata-package-seal-v1",
+  "sealed_utc": "2026-11-07T20:27:02.181568+00:00",
+  "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+  "payload_files": 400,
+  "payload_bytes": 18261701,
+  "sha256sums_sha256": "90b8dc544c3ae1c3bd4c8d1c779b9a0a0742133936084c7376dbd134742cd5f5",
+  "core_sha256": "0ff4c1fc91e9ab732166a23e4a310151b7c5041810db96110092fe8e79066ba1",
+  "core_bytes": 13245,
+  "large_archives_external": true,
+  "external_archive_count": 20,
+  "external_observed_bytes": 899726420,
+  "independent_component_readbacks": 14,
+  "unknown": 6
+}

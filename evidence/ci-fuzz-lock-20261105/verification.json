@@ -1,0 +1,128 @@
+{
+  "historical_ci": {
+    "run": 41985420968,
+    "job": 127144977223,
+    "artifact": 13410854312,
+    "source": "6ee529046d295e3175f09112492abee373f1f54c",
+    "zip_sha256": "cc91b61998efce77713bd611e941ae7b21c58b2497e61f9b981b038d05a2b0ac"
+  },
+  "reproduced_current_parent": "a16a89f92a0db5ff6af9c1d7790f201841f079aa",
+  "tested_fix_source": "e6e64acd39ecb450d3ef6b3d1136fb86a523f5c5",
+  "original_fuzz_result": "FAIL",
+  "original_fuzz_error": "command exited 1; retained /workspace/shared/fuzz-lock-original-run/fuzz/canonical_wire.log",
+  "original_fuzz_observations": [
+    {
+      "command": [
+        "cargo",
+        "fuzz",
+        "--version"
+      ],
+      "cwd": "/workspace/scratch/29755d2a47ef/chain-hex-current",
+      "elapsed_ns": 4059680281,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "e6e64acd39ecb450d3ef6b3d1136fb86a523f5c5",
+      "log": "cargo-fuzz-version.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "rustc",
+        "--version",
+        "--verbose"
+      ],
+      "cwd": "/workspace/scratch/29755d2a47ef/chain-hex-current",
+      "elapsed_ns": 5023758706,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "e6e64acd39ecb450d3ef6b3d1136fb86a523f5c5",
+      "log": "compiler.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "fetch",
+        "--locked",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml"
+      ],
+      "cwd": "/workspace/scratch/29755d2a47ef/chain-hex-current",
+      "elapsed_ns": 7982049099,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "e6e64acd39ecb450d3ef6b3d1136fb86a523f5c5",
+      "log": "fetch.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "fuzz",
+        "run",
+        "--fuzz-dir",
+        "tests/fuzz",
+        "--sanitizer",
+        "address",
+        "--debug-assertions",
+        "canonical_wire",
+        "/workspace/shared/fuzz-lock-original-run/fuzz/corpus/canonical_wire",
+        "--",
+        "-max_total_time=60",
+        "-timeout=10",
+        "-rss_limit_mb=2048",
+        "-max_len=2049",
+        "-seed=20261004",
+        "-print_final_stats=1",
+        "-artifact_prefix=/workspace/shared/fuzz-lock-original-run/fuzz/artifacts/canonical_wire/"
+      ],
+      "cwd": "/workspace/scratch/29755d2a47ef/chain-hex-current",
+      "elapsed_ns": 881632439228,
+      "executed": true,
+      "exit_code": 1,
+      "expected_source": "e6e64acd39ecb450d3ef6b3d1136fb86a523f5c5",
+      "log": "canonical_wire.log",
+      "process_exit_code": 1,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    }
+  ],
+  "original_settings": {
+    "toolchain": "nightly-2026-10-01",
+    "cargo_fuzz": "0.13.2",
+    "seconds_per_target": 60,
+    "sanitizer": "address",
+    "single_input_timeout_seconds": 10,
+    "rss_limit_mb": 2048,
+    "per_command_timeout_seconds": 1200
+  },
+  "canonical_wire": {
+    "executed_units": 17068443,
+    "reported_runtime_seconds": 61,
+    "final_coverage": 303,
+    "peak_rss_mb": 458,
+    "leak_sanitizer_completed": false,
+    "terminal_error": "LeakSanitizer fatal: ptrace unavailable",
+    "accepted": false
+  },
+  "remaining_targets": "NOT_RUN after original first-target failure",
+  "raw_receipt_hashes_verified": 72,
+  "current_zip_sha256": "0af77c83d62344d15e019a8e2435d98e3903268d792f74cca2bda5361d3d9189",
+  "package_versions_sources_checksums_unchanged": 147,
+  "lock_change": "add only mandatory serde and serde_json edges for trnm-data-availability",
+  "acceptance_granted": false
+}

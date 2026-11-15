@@ -1,0 +1,24 @@
+test_adaptive_prefix_spending_under_one_correlated_joint_law (__main__.PredictableRiskBankTests.test_adaptive_prefix_spending_under_one_correlated_joint_law) ... ok
+test_failure_before_or_outside_its_start_is_refused (__main__.PredictableRiskBankTests.test_failure_before_or_outside_its_start_is_refused) ... ok
+test_incomplete_or_nonprefix_probability_law_is_refused (__main__.PredictableRiskBankTests.test_incomplete_or_nonprefix_probability_law_is_refused) ... ok
+test_path_budget_cannot_be_replaced_by_small_expected_allocation (__main__.PredictableRiskBankTests.test_path_budget_cannot_be_replaced_by_small_expected_allocation) ... ok
+test_perfectly_correlated_failures_are_not_multiplied (__main__.PredictableRiskBankTests.test_perfectly_correlated_failures_are_not_multiplied) ... ok
+test_postselection_does_not_preserve_unconditional_risk (__main__.PredictableRiskBankTests.test_postselection_does_not_preserve_unconditional_risk) ... ok
+test_finite_oracle_truth_table_advice_sharp_probability (__main__.ResidualAdviceAndObservabilityTests.test_finite_oracle_truth_table_advice_sharp_probability) ... ok
+test_first_success_restart_has_exact_conditional_risk_one (__main__.ResidualAdviceAndObservabilityTests.test_first_success_restart_has_exact_conditional_risk_one) ... ok
+test_joint_record_profile_matches_explicit_four_bit_purification (__main__.ResidualAdviceAndObservabilityTests.test_joint_record_profile_matches_explicit_four_bit_purification) ... ok
+test_same_local_state_admits_dirac_failure_probabilities_zero_and_one (__main__.ResidualAdviceAndObservabilityTests.test_same_local_state_admits_dirac_failure_probabilities_zero_and_one) ... ok
+test_a_fixed_probability_threshold_cannot_be_silently_lowered (__main__.SharedLifetimePackingTests.test_a_fixed_probability_threshold_cannot_be_silently_lowered) ... ok
+test_conflicting_identity_or_noncausal_input_is_refused (__main__.SharedLifetimePackingTests.test_conflicting_identity_or_noncausal_input_is_refused) ... ok
+test_coverage_is_checked_even_at_unobserved_cuts (__main__.SharedLifetimePackingTests.test_coverage_is_checked_even_at_unobserved_cuts) ... ok
+test_disjoint_half_open_windows_give_additive_credit (__main__.SharedLifetimePackingTests.test_disjoint_half_open_windows_give_additive_credit) ... ok
+test_overlapping_windows_cannot_charge_one_output_twice (__main__.SharedLifetimePackingTests.test_overlapping_windows_cannot_charge_one_output_twice) ... ok
+test_repeated_delivery_does_not_start_a_new_work_clock (__main__.SharedLifetimePackingTests.test_repeated_delivery_does_not_start_a_new_work_clock) ... ok
+test_sweep_matches_every_cut_on_all_small_interval_pairs (__main__.SharedLifetimePackingTests.test_sweep_matches_every_cut_on_all_small_interval_pairs) ... ok
+test_thirty_two_overlapping_windows_use_one_lifetime_tail (__main__.SharedLifetimePackingTests.test_thirty_two_overlapping_windows_use_one_lifetime_tail) ... ok
+test_weighted_packing_can_improve_uniform_overlap_division (__main__.SharedLifetimePackingTests.test_weighted_packing_can_improve_uniform_overlap_division) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.029s
+
+OK

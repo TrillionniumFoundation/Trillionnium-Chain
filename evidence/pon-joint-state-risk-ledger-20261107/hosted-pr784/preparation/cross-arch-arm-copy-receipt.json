@@ -1,0 +1,407 @@
+{
+  "label": "cross-arch-arm",
+  "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-cross-arch-arm-review/archive-ready",
+  "archive_relative_directory": "reviews/cross-arch-arm",
+  "source_before": [
+    {
+      "path": "README.md",
+      "bytes": 1972,
+      "sha256": "2c05a99d9ae4fded3f862213ad0f6634c21eb7e7d6f41a0d24ee9d627da480d8"
+    },
+    {
+      "path": "actor.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "actor.stdout",
+      "bytes": 10,
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+    },
+    {
+      "path": "annotations.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "annotations.stdout",
+      "bytes": 956,
+      "sha256": "758f040316285cb0044ad0be86470d70f6cb448fc9b9eb6fbade2d8d0f66ada8"
+    },
+    {
+      "path": "artifact-download-v2.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifact-result-v2.json",
+      "bytes": 9732,
+      "sha256": "9b90126774dc056c42b82cf4ec7a3b38859a7bf47fcd1494a5a6ea054481db27"
+    },
+    {
+      "path": "artifact-result.json",
+      "bytes": 764,
+      "sha256": "c8426a94fce8d1cf3244706c04772fb1bd6ecb91f483deffd0720f4a1a219bf6"
+    },
+    {
+      "path": "artifact.zip",
+      "bytes": 8752882,
+      "sha256": "56a055a59f8064cbf6c9e3fd578048f516229011d2af6ec7eeed1d16d2576194"
+    },
+    {
+      "path": "base-diff.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "base-diff.stdout",
+      "bytes": 116,
+      "sha256": "eb6267800ed5e4a2eb3afc3d47affb924fc7bddd654c47cf9ad3ff645a7df9fa"
+    },
+    {
+      "path": "check-run.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "check-run.stdout",
+      "bytes": 3759,
+      "sha256": "09dc9e5c440358fc4f4b1d0df930ba5c8829b9f7ba9eb5f2c8bd9b6738caf330"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 1439,
+      "sha256": "8db56b09663727b085e952a569800e92dc51c1655e142d3fcc7cd43c26a3d35d"
+    },
+    {
+      "path": "confirmation-diagnosis.json",
+      "bytes": 4958,
+      "sha256": "f5820414b0a64c4c053729b68d0c5a28220b0ae173ee7f243b4972e2baf860d0"
+    },
+    {
+      "path": "confirmation-phases.json",
+      "bytes": 19211,
+      "sha256": "91179f6bd0fe16b9066e65af57a3b93883cfcc5f0e127fc58db7c2cc0e3acd46"
+    },
+    {
+      "path": "failure-excerpt.txt",
+      "bytes": 10498,
+      "sha256": "06825c36d2bbb398be65a5cb801870118473e836413fe2ae4713970a4ef761b9"
+    },
+    {
+      "path": "final-diagnosis.json",
+      "bytes": 3092,
+      "sha256": "139cd145e55e2d6ff1db17b19e0156097690f08996b955930844689263558898"
+    },
+    {
+      "path": "job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "job-log.stdout",
+      "bytes": 158907,
+      "sha256": "c2cff6441773e7b9dd5deaffa7865a7abc810480191b48e3d4db2467f1d7e1d2"
+    },
+    {
+      "path": "job.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "job.stdout",
+      "bytes": 3911,
+      "sha256": "6d72ad1a01aca50a2a985668684a7a6ae1450bc1be503361db1b727ba8fc4abe"
+    },
+    {
+      "path": "physical-sha256.json",
+      "bytes": 3947,
+      "sha256": "b03fcf9a9293c07ac0cd9a17d5b3d3f790c5b20a98e9f941a2d595bf328bfffb"
+    },
+    {
+      "path": "result.json",
+      "bytes": 2071,
+      "sha256": "89538329216a5074f2d90d1fa1c480ed75a7e69170b348c8eced13102b1fa16b"
+    },
+    {
+      "path": "run-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "run-artifacts.stdout",
+      "bytes": 7391,
+      "sha256": "3f99c0c50936ea8f9f90c2c8f67570d4e859633437e03b179aa2aef655bb5a2a"
+    }
+  ],
+  "source_after": [
+    {
+      "path": "README.md",
+      "bytes": 1972,
+      "sha256": "2c05a99d9ae4fded3f862213ad0f6634c21eb7e7d6f41a0d24ee9d627da480d8"
+    },
+    {
+      "path": "actor.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "actor.stdout",
+      "bytes": 10,
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+    },
+    {
+      "path": "annotations.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "annotations.stdout",
+      "bytes": 956,
+      "sha256": "758f040316285cb0044ad0be86470d70f6cb448fc9b9eb6fbade2d8d0f66ada8"
+    },
+    {
+      "path": "artifact-download-v2.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifact-result-v2.json",
+      "bytes": 9732,
+      "sha256": "9b90126774dc056c42b82cf4ec7a3b38859a7bf47fcd1494a5a6ea054481db27"
+    },
+    {
+      "path": "artifact-result.json",
+      "bytes": 764,
+      "sha256": "c8426a94fce8d1cf3244706c04772fb1bd6ecb91f483deffd0720f4a1a219bf6"
+    },
+    {
+      "path": "artifact.zip",
+      "bytes": 8752882,
+      "sha256": "56a055a59f8064cbf6c9e3fd578048f516229011d2af6ec7eeed1d16d2576194"
+    },
+    {
+      "path": "base-diff.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "base-diff.stdout",
+      "bytes": 116,
+      "sha256": "eb6267800ed5e4a2eb3afc3d47affb924fc7bddd654c47cf9ad3ff645a7df9fa"
+    },
+    {
+      "path": "check-run.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "check-run.stdout",
+      "bytes": 3759,
+      "sha256": "09dc9e5c440358fc4f4b1d0df930ba5c8829b9f7ba9eb5f2c8bd9b6738caf330"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 1439,
+      "sha256": "8db56b09663727b085e952a569800e92dc51c1655e142d3fcc7cd43c26a3d35d"
+    },
+    {
+      "path": "confirmation-diagnosis.json",
+      "bytes": 4958,
+      "sha256": "f5820414b0a64c4c053729b68d0c5a28220b0ae173ee7f243b4972e2baf860d0"
+    },
+    {
+      "path": "confirmation-phases.json",
+      "bytes": 19211,
+      "sha256": "91179f6bd0fe16b9066e65af57a3b93883cfcc5f0e127fc58db7c2cc0e3acd46"
+    },
+    {
+      "path": "failure-excerpt.txt",
+      "bytes": 10498,
+      "sha256": "06825c36d2bbb398be65a5cb801870118473e836413fe2ae4713970a4ef761b9"
+    },
+    {
+      "path": "final-diagnosis.json",
+      "bytes": 3092,
+      "sha256": "139cd145e55e2d6ff1db17b19e0156097690f08996b955930844689263558898"
+    },
+    {
+      "path": "job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "job-log.stdout",
+      "bytes": 158907,
+      "sha256": "c2cff6441773e7b9dd5deaffa7865a7abc810480191b48e3d4db2467f1d7e1d2"
+    },
+    {
+      "path": "job.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "job.stdout",
+      "bytes": 3911,
+      "sha256": "6d72ad1a01aca50a2a985668684a7a6ae1450bc1be503361db1b727ba8fc4abe"
+    },
+    {
+      "path": "physical-sha256.json",
+      "bytes": 3947,
+      "sha256": "b03fcf9a9293c07ac0cd9a17d5b3d3f790c5b20a98e9f941a2d595bf328bfffb"
+    },
+    {
+      "path": "result.json",
+      "bytes": 2071,
+      "sha256": "89538329216a5074f2d90d1fa1c480ed75a7e69170b348c8eced13102b1fa16b"
+    },
+    {
+      "path": "run-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "run-artifacts.stdout",
+      "bytes": 7391,
+      "sha256": "3f99c0c50936ea8f9f90c2c8f67570d4e859633437e03b179aa2aef655bb5a2a"
+    }
+  ],
+  "destination": [
+    {
+      "path": "README.md",
+      "bytes": 1972,
+      "sha256": "2c05a99d9ae4fded3f862213ad0f6634c21eb7e7d6f41a0d24ee9d627da480d8"
+    },
+    {
+      "path": "actor.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "actor.stdout",
+      "bytes": 10,
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+    },
+    {
+      "path": "annotations.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "annotations.stdout",
+      "bytes": 956,
+      "sha256": "758f040316285cb0044ad0be86470d70f6cb448fc9b9eb6fbade2d8d0f66ada8"
+    },
+    {
+      "path": "artifact-download-v2.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifact-result-v2.json",
+      "bytes": 9732,
+      "sha256": "9b90126774dc056c42b82cf4ec7a3b38859a7bf47fcd1494a5a6ea054481db27"
+    },
+    {
+      "path": "artifact-result.json",
+      "bytes": 764,
+      "sha256": "c8426a94fce8d1cf3244706c04772fb1bd6ecb91f483deffd0720f4a1a219bf6"
+    },
+    {
+      "path": "artifact.zip",
+      "bytes": 8752882,
+      "sha256": "56a055a59f8064cbf6c9e3fd578048f516229011d2af6ec7eeed1d16d2576194"
+    },
+    {
+      "path": "base-diff.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "base-diff.stdout",
+      "bytes": 116,
+      "sha256": "eb6267800ed5e4a2eb3afc3d47affb924fc7bddd654c47cf9ad3ff645a7df9fa"
+    },
+    {
+      "path": "check-run.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "check-run.stdout",
+      "bytes": 3759,
+      "sha256": "09dc9e5c440358fc4f4b1d0df930ba5c8829b9f7ba9eb5f2c8bd9b6738caf330"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 1439,
+      "sha256": "8db56b09663727b085e952a569800e92dc51c1655e142d3fcc7cd43c26a3d35d"
+    },
+    {
+      "path": "confirmation-diagnosis.json",
+      "bytes": 4958,
+      "sha256": "f5820414b0a64c4c053729b68d0c5a28220b0ae173ee7f243b4972e2baf860d0"
+    },
+    {
+      "path": "confirmation-phases.json",
+      "bytes": 19211,
+      "sha256": "91179f6bd0fe16b9066e65af57a3b93883cfcc5f0e127fc58db7c2cc0e3acd46"
+    },
+    {
+      "path": "failure-excerpt.txt",
+      "bytes": 10498,
+      "sha256": "06825c36d2bbb398be65a5cb801870118473e836413fe2ae4713970a4ef761b9"
+    },
+    {
+      "path": "final-diagnosis.json",
+      "bytes": 3092,
+      "sha256": "139cd145e55e2d6ff1db17b19e0156097690f08996b955930844689263558898"
+    },
+    {
+      "path": "job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "job-log.stdout",
+      "bytes": 158907,
+      "sha256": "c2cff6441773e7b9dd5deaffa7865a7abc810480191b48e3d4db2467f1d7e1d2"
+    },
+    {
+      "path": "job.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "job.stdout",
+      "bytes": 3911,
+      "sha256": "6d72ad1a01aca50a2a985668684a7a6ae1450bc1be503361db1b727ba8fc4abe"
+    },
+    {
+      "path": "physical-sha256.json",
+      "bytes": 3947,
+      "sha256": "b03fcf9a9293c07ac0cd9a17d5b3d3f790c5b20a98e9f941a2d595bf328bfffb"
+    },
+    {
+      "path": "result.json",
+      "bytes": 2071,
+      "sha256": "89538329216a5074f2d90d1fa1c480ed75a7e69170b348c8eced13102b1fa16b"
+    },
+    {
+      "path": "run-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "run-artifacts.stdout",
+      "bytes": 7391,
+      "sha256": "3f99c0c50936ea8f9f90c2c8f67570d4e859633437e03b179aa2aef655bb5a2a"
+    }
+  ],
+  "file_count": 26,
+  "payload_bytes": 8985616,
+  "source_before_after_equal": true,
+  "destination_exactly_equal": true,
+  "copy_completed_at": "2026-11-08T01:17:33.705608+00:00",
+  "meaning": "Byte identity at the retained source/copy endpoints; not an execution attestation."
+}

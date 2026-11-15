@@ -1,0 +1,836 @@
+{
+  "all_four_artifacts_consistent_with_identified_hosted_runs": true,
+  "artifacts": [
+    {
+      "all_GitHub_job_steps_success": true,
+      "artifact_id": 13576628790,
+      "artifact_name": "w1-qrom-closure-prospective-merge-x64-f14298a2728b22fda625267e2e4844b70f829b37-1",
+      "ci_status_sha256": "f973a1923748b3b6747b29fd162192bf5e75dd9bdb89498d165b34532c0a0c7c",
+      "files": [
+        {
+          "bytes": 247,
+          "path": "SCOPE.txt",
+          "sha256": "3178014c84895a7bd43c4e2cfd2f525295f99dc895624236ad51b89f8c1e75e6"
+        },
+        {
+          "bytes": 1726,
+          "path": "ci-status.json",
+          "sha256": "f973a1923748b3b6747b29fd162192bf5e75dd9bdb89498d165b34532c0a0c7c"
+        },
+        {
+          "bytes": 92,
+          "path": "completion.log",
+          "sha256": "5a32eb7cb425803686919c2f6d408c3f44a7fa0684eee9716f34a4760ede935d"
+        },
+        {
+          "bytes": 11101,
+          "path": "composition-example.json",
+          "sha256": "afa82237a9ad859193e53e0ebad83652c63c76ea0058c1213e61d81a04aa5457"
+        },
+        {
+          "bytes": 6878,
+          "path": "composition-unknown.json",
+          "sha256": "e130e7ffb3ef74d9583b8b4ae7a74e50312a729e42688764dfaac157ba4e9041"
+        },
+        {
+          "bytes": 3364,
+          "path": "joint-oracle-alias.json",
+          "sha256": "1e427168ad06f93dee645982bd412e58b97ce825132559e7a07a47f2a6530522"
+        },
+        {
+          "bytes": 3363,
+          "path": "joint-oracle-separated.json",
+          "sha256": "0373ec119814b52efeecdff6f654dd1d3d8008908ef7a6eea3ec92b648928d17"
+        },
+        {
+          "bytes": 2833,
+          "path": "joint-oracle-unknown.json",
+          "sha256": "cac5fa1b09a64207bfde34931de1937894e31739912e9bcea70705b0fac899eb"
+        },
+        {
+          "bytes": 31311,
+          "path": "lifetime.json",
+          "sha256": "e91edf52b5295a0f69d8ac2f555ea9807ba0e2881d5d06aece65eb686d315b0c"
+        },
+        {
+          "bytes": 349,
+          "path": "named-controls-check.log",
+          "sha256": "30321c598d571e9a810d7d5c2319cc4eedc62d9ee6e3a35717234af23e9481b5"
+        },
+        {
+          "bytes": 41811,
+          "path": "named-controls.json",
+          "sha256": "4a88cb6c1a253b1786e1bd44ed94a3336f6e5529568b7d9fdf6e7d05a32056a3"
+        },
+        {
+          "bytes": 20027,
+          "path": "named-controls.log",
+          "sha256": "52dc8c8728521aea095913ceb449a408e45773fd7284e671011149bad38a6c4b"
+        },
+        {
+          "bytes": 133,
+          "path": "preflight.log",
+          "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+        },
+        {
+          "bytes": 76729,
+          "path": "semantics.json",
+          "sha256": "66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221"
+        },
+        {
+          "bytes": 512,
+          "path": "source-after.json",
+          "sha256": "fb9e42f6d546aeb227398bd7bd42b3a0e16c565e66a4b565a17f85fd369c628d"
+        },
+        {
+          "bytes": 512,
+          "path": "source-after.log",
+          "sha256": "fb9e42f6d546aeb227398bd7bd42b3a0e16c565e66a4b565a17f85fd369c628d"
+        },
+        {
+          "bytes": 512,
+          "path": "source-before.json",
+          "sha256": "fb9e42f6d546aeb227398bd7bd42b3a0e16c565e66a4b565a17f85fd369c628d"
+        },
+        {
+          "bytes": 512,
+          "path": "source-before.log",
+          "sha256": "fb9e42f6d546aeb227398bd7bd42b3a0e16c565e66a4b565a17f85fd369c628d"
+        }
+      ],
+      "job_id": 128422919996,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162582/job/128422919996",
+      "named_completion_sha256": "4a88cb6c1a253b1786e1bd44ed94a3336f6e5529568b7d9fdf6e7d05a32056a3",
+      "named_tests": 105,
+      "reproduced_pinned_reports": [
+        {
+          "artifact_path": "semantics.json",
+          "candidate_source_path": "evidence/pon-w1-qrom-semantics-20261107/report.json",
+          "sha256": "66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221"
+        },
+        {
+          "artifact_path": "lifetime.json",
+          "candidate_source_path": "evidence/pon-w1-lifetime-20261107/project-report.json",
+          "sha256": "e91edf52b5295a0f69d8ac2f555ea9807ba0e2881d5d06aece65eb686d315b0c"
+        },
+        {
+          "artifact_path": "composition-unknown.json",
+          "candidate_source_path": "evidence/pon-w1-qrom-formal-bridge-20261107/composition-unknown.json",
+          "sha256": "e130e7ffb3ef74d9583b8b4ae7a74e50312a729e42688764dfaac157ba4e9041"
+        },
+        {
+          "artifact_path": "composition-example.json",
+          "candidate_source_path": "evidence/pon-w1-qrom-formal-bridge-20261107/composition-example.json",
+          "sha256": "afa82237a9ad859193e53e0ebad83652c63c76ea0058c1213e61d81a04aa5457"
+        },
+        {
+          "artifact_path": "joint-oracle-unknown.json",
+          "candidate_source_path": "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-unknown.json",
+          "sha256": "cac5fa1b09a64207bfde34931de1937894e31739912e9bcea70705b0fac899eb"
+        },
+        {
+          "artifact_path": "joint-oracle-alias.json",
+          "candidate_source_path": "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-alias.json",
+          "sha256": "1e427168ad06f93dee645982bd412e58b97ce825132559e7a07a47f2a6530522"
+        },
+        {
+          "artifact_path": "joint-oracle-separated.json",
+          "candidate_source_path": "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-separated.json",
+          "sha256": "0373ec119814b52efeecdff6f654dd1d3d8008908ef7a6eea3ec92b648928d17"
+        }
+      ],
+      "roster_sha256": "ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f",
+      "run_id": 42379162582,
+      "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162582",
+      "source": {
+        "base": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+        "candidate": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+        "kind": "prospective-merge",
+        "prospective_merge": "f14298a2728b22fda625267e2e4844b70f829b37",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "f14298a2728b22fda625267e2e4844b70f829b37",
+        "tested_tree": "e08b5dcd9ae2e90d0a36cb5d85e6ce1def387e85",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1100983593,
+        "tracked_entries": 11144,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_identical_bytes": true,
+      "source_json_sha256": "fb9e42f6d546aeb227398bd7bd42b3a0e16c565e66a4b565a17f85fd369c628d",
+      "suites": [
+        {
+          "module": "test_w1_lifetime_ledger",
+          "tests_run": 19
+        },
+        {
+          "module": "test_w1_qrom_composition_budget",
+          "tests_run": 16
+        },
+        {
+          "module": "test_w1_qrom_joint_oracle_diagnostic",
+          "tests_run": 10
+        },
+        {
+          "module": "test_w1_qrom_semantics_audit",
+          "tests_run": 22
+        },
+        {
+          "module": "test_w1_zkr_artifact_audit",
+          "tests_run": 9
+        },
+        {
+          "module": "test_w1_zkr_control_id_audit",
+          "tests_run": 8
+        },
+        {
+          "module": "test_w1_qrom_closure_controls",
+          "tests_run": 21
+        }
+      ],
+      "workflow": "closure",
+      "zip_bytes": 51243,
+      "zip_sha256": "19b66c295d087facb6b8f2adda92f14bee0cea1ee10718f8a2ec7cf5cbb0e5eb"
+    },
+    {
+      "all_GitHub_job_steps_success": true,
+      "artifact_id": 13576264915,
+      "artifact_name": "w1-qrom-closure-head-x64-1a14f7d4826363daefac9ec10131c66d7e70ece7-1",
+      "ci_status_sha256": "9ae73e86f486d922dd1284c0d07a81120b43d450ce39d1a5ca0c76b00d9dc506",
+      "files": [
+        {
+          "bytes": 247,
+          "path": "SCOPE.txt",
+          "sha256": "3178014c84895a7bd43c4e2cfd2f525295f99dc895624236ad51b89f8c1e75e6"
+        },
+        {
+          "bytes": 1713,
+          "path": "ci-status.json",
+          "sha256": "9ae73e86f486d922dd1284c0d07a81120b43d450ce39d1a5ca0c76b00d9dc506"
+        },
+        {
+          "bytes": 92,
+          "path": "completion.log",
+          "sha256": "5a32eb7cb425803686919c2f6d408c3f44a7fa0684eee9716f34a4760ede935d"
+        },
+        {
+          "bytes": 11101,
+          "path": "composition-example.json",
+          "sha256": "afa82237a9ad859193e53e0ebad83652c63c76ea0058c1213e61d81a04aa5457"
+        },
+        {
+          "bytes": 6878,
+          "path": "composition-unknown.json",
+          "sha256": "e130e7ffb3ef74d9583b8b4ae7a74e50312a729e42688764dfaac157ba4e9041"
+        },
+        {
+          "bytes": 3364,
+          "path": "joint-oracle-alias.json",
+          "sha256": "1e427168ad06f93dee645982bd412e58b97ce825132559e7a07a47f2a6530522"
+        },
+        {
+          "bytes": 3363,
+          "path": "joint-oracle-separated.json",
+          "sha256": "0373ec119814b52efeecdff6f654dd1d3d8008908ef7a6eea3ec92b648928d17"
+        },
+        {
+          "bytes": 2833,
+          "path": "joint-oracle-unknown.json",
+          "sha256": "cac5fa1b09a64207bfde34931de1937894e31739912e9bcea70705b0fac899eb"
+        },
+        {
+          "bytes": 31311,
+          "path": "lifetime.json",
+          "sha256": "e91edf52b5295a0f69d8ac2f555ea9807ba0e2881d5d06aece65eb686d315b0c"
+        },
+        {
+          "bytes": 349,
+          "path": "named-controls-check.log",
+          "sha256": "30321c598d571e9a810d7d5c2319cc4eedc62d9ee6e3a35717234af23e9481b5"
+        },
+        {
+          "bytes": 41811,
+          "path": "named-controls.json",
+          "sha256": "4a88cb6c1a253b1786e1bd44ed94a3336f6e5529568b7d9fdf6e7d05a32056a3"
+        },
+        {
+          "bytes": 20027,
+          "path": "named-controls.log",
+          "sha256": "9b01d53bd7351ffc4bc9081d65643d18b3cbdfc83539ac5bc2c36bba2c062013"
+        },
+        {
+          "bytes": 133,
+          "path": "preflight.log",
+          "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+        },
+        {
+          "bytes": 76729,
+          "path": "semantics.json",
+          "sha256": "66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221"
+        },
+        {
+          "bytes": 423,
+          "path": "source-after.json",
+          "sha256": "68785449d187892ff6a2840fc15687d7cdac62f2832c4fe22559ce8b3d97bd00"
+        },
+        {
+          "bytes": 423,
+          "path": "source-after.log",
+          "sha256": "68785449d187892ff6a2840fc15687d7cdac62f2832c4fe22559ce8b3d97bd00"
+        },
+        {
+          "bytes": 423,
+          "path": "source-before.json",
+          "sha256": "68785449d187892ff6a2840fc15687d7cdac62f2832c4fe22559ce8b3d97bd00"
+        },
+        {
+          "bytes": 423,
+          "path": "source-before.log",
+          "sha256": "68785449d187892ff6a2840fc15687d7cdac62f2832c4fe22559ce8b3d97bd00"
+        }
+      ],
+      "job_id": 128422919879,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162582/job/128422919879",
+      "named_completion_sha256": "4a88cb6c1a253b1786e1bd44ed94a3336f6e5529568b7d9fdf6e7d05a32056a3",
+      "named_tests": 105,
+      "reproduced_pinned_reports": [
+        {
+          "artifact_path": "semantics.json",
+          "candidate_source_path": "evidence/pon-w1-qrom-semantics-20261107/report.json",
+          "sha256": "66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221"
+        },
+        {
+          "artifact_path": "lifetime.json",
+          "candidate_source_path": "evidence/pon-w1-lifetime-20261107/project-report.json",
+          "sha256": "e91edf52b5295a0f69d8ac2f555ea9807ba0e2881d5d06aece65eb686d315b0c"
+        },
+        {
+          "artifact_path": "composition-unknown.json",
+          "candidate_source_path": "evidence/pon-w1-qrom-formal-bridge-20261107/composition-unknown.json",
+          "sha256": "e130e7ffb3ef74d9583b8b4ae7a74e50312a729e42688764dfaac157ba4e9041"
+        },
+        {
+          "artifact_path": "composition-example.json",
+          "candidate_source_path": "evidence/pon-w1-qrom-formal-bridge-20261107/composition-example.json",
+          "sha256": "afa82237a9ad859193e53e0ebad83652c63c76ea0058c1213e61d81a04aa5457"
+        },
+        {
+          "artifact_path": "joint-oracle-unknown.json",
+          "candidate_source_path": "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-unknown.json",
+          "sha256": "cac5fa1b09a64207bfde34931de1937894e31739912e9bcea70705b0fac899eb"
+        },
+        {
+          "artifact_path": "joint-oracle-alias.json",
+          "candidate_source_path": "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-alias.json",
+          "sha256": "1e427168ad06f93dee645982bd412e58b97ce825132559e7a07a47f2a6530522"
+        },
+        {
+          "artifact_path": "joint-oracle-separated.json",
+          "candidate_source_path": "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-separated.json",
+          "sha256": "0373ec119814b52efeecdff6f654dd1d3d8008908ef7a6eea3ec92b648928d17"
+        }
+      ],
+      "roster_sha256": "ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f",
+      "run_id": 42379162582,
+      "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162582",
+      "source": {
+        "base": null,
+        "candidate": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+        "tested_tree": "e08b5dcd9ae2e90d0a36cb5d85e6ce1def387e85",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1100983593,
+        "tracked_entries": 11144,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_identical_bytes": true,
+      "source_json_sha256": "68785449d187892ff6a2840fc15687d7cdac62f2832c4fe22559ce8b3d97bd00",
+      "suites": [
+        {
+          "module": "test_w1_lifetime_ledger",
+          "tests_run": 19
+        },
+        {
+          "module": "test_w1_qrom_composition_budget",
+          "tests_run": 16
+        },
+        {
+          "module": "test_w1_qrom_joint_oracle_diagnostic",
+          "tests_run": 10
+        },
+        {
+          "module": "test_w1_qrom_semantics_audit",
+          "tests_run": 22
+        },
+        {
+          "module": "test_w1_zkr_artifact_audit",
+          "tests_run": 9
+        },
+        {
+          "module": "test_w1_zkr_control_id_audit",
+          "tests_run": 8
+        },
+        {
+          "module": "test_w1_qrom_closure_controls",
+          "tests_run": 21
+        }
+      ],
+      "workflow": "closure",
+      "zip_bytes": 50999,
+      "zip_sha256": "3844129a1d26de6c957924e0f51e37c6fbb399edabd743d9f97cc7b2874c84c6"
+    },
+    {
+      "all_GitHub_job_steps_success": true,
+      "artifact_id": 13577200111,
+      "artifact_name": "w1-qrom-implementation-prospective-merge-x64-f14298a2728b22fda625267e2e4844b70f829b37-1",
+      "ci_status_sha256": "a8024a50436899737f67cb85ead4304ca98ebbf976206e14a3cda00842c89e7d",
+      "files": [
+        {
+          "bytes": 213,
+          "path": "SCOPE.txt",
+          "sha256": "4b4d950ac7787ada036c0f063f4890949471d44814598e03ae9c95bb28fc161d"
+        },
+        {
+          "bytes": 783,
+          "path": "budget-hypothetical-input.json",
+          "sha256": "b09d51c53c68ca6de3c32891ef3b28f0a9e26fa0bf6a6206d5498895322e6081"
+        },
+        {
+          "bytes": 0,
+          "path": "budget-hypothetical-input.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 5947,
+          "path": "budget-hypothetical.json",
+          "sha256": "5ca0fa2e5479e0375975cf02ffff361756de67eb11e2c7bb9251b7b6874f2bb0"
+        },
+        {
+          "bytes": 0,
+          "path": "budget-hypothetical.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 3947,
+          "path": "budget-unknown.json",
+          "sha256": "286b8fa0b442effb0655f59433ae5cbf9a1deeb50b69fe1260c93c69396e5ce2"
+        },
+        {
+          "bytes": 0,
+          "path": "budget-unknown.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 2430,
+          "path": "ci-status.json",
+          "sha256": "a8024a50436899737f67cb85ead4304ca98ebbf976206e14a3cda00842c89e7d"
+        },
+        {
+          "bytes": 88,
+          "path": "ci-status.log",
+          "sha256": "ad700bb90ffca4a0140f96c1a7d92c0d0091b7136c7950df687121104e524b2e"
+        },
+        {
+          "bytes": 69290,
+          "path": "implementation.json",
+          "sha256": "eebf074f5f4a77cb7277035300294ef9308cb5ec5d0441336665bafcb6647c8b"
+        },
+        {
+          "bytes": 0,
+          "path": "implementation.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 40632,
+          "path": "named-tests.json",
+          "sha256": "f0f11131bc18fae2c15f24ec5701ccd616785e696523b88da8ca31170e5719ff"
+        },
+        {
+          "bytes": 14506,
+          "path": "named-tests.log",
+          "sha256": "5e0bd3a5cb721526ca4cf2bb10c75e306f2e248e8fe78b53c22d7e6a925c8cee"
+        },
+        {
+          "bytes": 133,
+          "path": "preflight.log",
+          "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+        },
+        {
+          "bytes": 14,
+          "path": "python-version.txt",
+          "sha256": "5b3e43dc38ca01e3f5a7854ba50d4330864b0c1e0f646650b2c78cf072acc366"
+        },
+        {
+          "bytes": 124,
+          "path": "report-scopes.log",
+          "sha256": "7d3b1fedb6bfe92ab756acf620fda6a6388e245ce1c22dc752296ef330e2899d"
+        },
+        {
+          "bytes": 10677,
+          "path": "required-tests.json",
+          "sha256": "ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8"
+        },
+        {
+          "bytes": 512,
+          "path": "source-after.json",
+          "sha256": "fb9e42f6d546aeb227398bd7bd42b3a0e16c565e66a4b565a17f85fd369c628d"
+        },
+        {
+          "bytes": 512,
+          "path": "source-after.log",
+          "sha256": "fb9e42f6d546aeb227398bd7bd42b3a0e16c565e66a4b565a17f85fd369c628d"
+        },
+        {
+          "bytes": 512,
+          "path": "source-before.json",
+          "sha256": "fb9e42f6d546aeb227398bd7bd42b3a0e16c565e66a4b565a17f85fd369c628d"
+        },
+        {
+          "bytes": 512,
+          "path": "source-before.log",
+          "sha256": "fb9e42f6d546aeb227398bd7bd42b3a0e16c565e66a4b565a17f85fd369c628d"
+        },
+        {
+          "bytes": 12245,
+          "path": "test_w1_control_tree_audit.json",
+          "sha256": "10461628673938536b100c3002b690e0c2e362f5bb0838290f52169f92835b90"
+        },
+        {
+          "bytes": 3750,
+          "path": "test_w1_fri_transcript_audit.json",
+          "sha256": "14f8d74981fef43da262cec4158596662c71338ab05ac105ea9fe73946f1f6f1"
+        },
+        {
+          "bytes": 6742,
+          "path": "test_w1_qrom_conditional_budget.json",
+          "sha256": "46f01eaec4847869b9c76abd3507d22b061e60e45c281df69601dd3865ff3c6e"
+        },
+        {
+          "bytes": 9276,
+          "path": "test_w1_qrom_implementation_audit.json",
+          "sha256": "e6f97ac535f6e37c1ce5b5492d3e076d9567831500a52fdca3419ad475935042"
+        },
+        {
+          "bytes": 6625,
+          "path": "test_w1_qrom_workflow_gate.json",
+          "sha256": "fb42619d97ea1c951808d6b638ea49db1171e66f5308f79a3d1778c574a479c3"
+        }
+      ],
+      "job_id": 128422919084,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162380/job/128422919084",
+      "named_completion_sha256": "f0f11131bc18fae2c15f24ec5701ccd616785e696523b88da8ca31170e5719ff",
+      "named_tests": 81,
+      "reproduced_pinned_reports": [],
+      "roster_sha256": "ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8",
+      "run_id": 42379162380,
+      "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162380",
+      "source": {
+        "base": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+        "candidate": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+        "kind": "prospective-merge",
+        "prospective_merge": "f14298a2728b22fda625267e2e4844b70f829b37",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "f14298a2728b22fda625267e2e4844b70f829b37",
+        "tested_tree": "e08b5dcd9ae2e90d0a36cb5d85e6ce1def387e85",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1100983593,
+        "tracked_entries": 11144,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_identical_bytes": true,
+      "source_json_sha256": "fb9e42f6d546aeb227398bd7bd42b3a0e16c565e66a4b565a17f85fd369c628d",
+      "suites": [
+        {
+          "module": "test_w1_control_tree_audit",
+          "tests_run": 28
+        },
+        {
+          "module": "test_w1_qrom_conditional_budget",
+          "tests_run": 13
+        },
+        {
+          "module": "test_w1_qrom_implementation_audit",
+          "tests_run": 19
+        },
+        {
+          "module": "test_w1_fri_transcript_audit",
+          "tests_run": 7
+        },
+        {
+          "module": "test_w1_qrom_workflow_gate",
+          "tests_run": 14
+        }
+      ],
+      "workflow": "implementation",
+      "zip_bytes": 35647,
+      "zip_sha256": "c6655d2d8bac4d6dd03f7274f928c5cc0cac02cf22ae01ffe3a74fd58db499ff"
+    },
+    {
+      "all_GitHub_job_steps_success": true,
+      "artifact_id": 13576214983,
+      "artifact_name": "w1-qrom-implementation-head-x64-1a14f7d4826363daefac9ec10131c66d7e70ece7-1",
+      "ci_status_sha256": "9931d7ff2876024ade2388f0dff7abf45761cc92864101a16a3cf0d37ea87b2f",
+      "files": [
+        {
+          "bytes": 213,
+          "path": "SCOPE.txt",
+          "sha256": "4b4d950ac7787ada036c0f063f4890949471d44814598e03ae9c95bb28fc161d"
+        },
+        {
+          "bytes": 783,
+          "path": "budget-hypothetical-input.json",
+          "sha256": "b09d51c53c68ca6de3c32891ef3b28f0a9e26fa0bf6a6206d5498895322e6081"
+        },
+        {
+          "bytes": 0,
+          "path": "budget-hypothetical-input.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 5947,
+          "path": "budget-hypothetical.json",
+          "sha256": "5ca0fa2e5479e0375975cf02ffff361756de67eb11e2c7bb9251b7b6874f2bb0"
+        },
+        {
+          "bytes": 0,
+          "path": "budget-hypothetical.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 3947,
+          "path": "budget-unknown.json",
+          "sha256": "286b8fa0b442effb0655f59433ae5cbf9a1deeb50b69fe1260c93c69396e5ce2"
+        },
+        {
+          "bytes": 0,
+          "path": "budget-unknown.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 2417,
+          "path": "ci-status.json",
+          "sha256": "9931d7ff2876024ade2388f0dff7abf45761cc92864101a16a3cf0d37ea87b2f"
+        },
+        {
+          "bytes": 88,
+          "path": "ci-status.log",
+          "sha256": "ad700bb90ffca4a0140f96c1a7d92c0d0091b7136c7950df687121104e524b2e"
+        },
+        {
+          "bytes": 69290,
+          "path": "implementation.json",
+          "sha256": "eebf074f5f4a77cb7277035300294ef9308cb5ec5d0441336665bafcb6647c8b"
+        },
+        {
+          "bytes": 0,
+          "path": "implementation.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 40632,
+          "path": "named-tests.json",
+          "sha256": "f0f11131bc18fae2c15f24ec5701ccd616785e696523b88da8ca31170e5719ff"
+        },
+        {
+          "bytes": 14506,
+          "path": "named-tests.log",
+          "sha256": "f8995dddbfe5b479b107ef2af2a378e49a556ed225ebdda52f5dad406725bf63"
+        },
+        {
+          "bytes": 133,
+          "path": "preflight.log",
+          "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+        },
+        {
+          "bytes": 14,
+          "path": "python-version.txt",
+          "sha256": "5b3e43dc38ca01e3f5a7854ba50d4330864b0c1e0f646650b2c78cf072acc366"
+        },
+        {
+          "bytes": 124,
+          "path": "report-scopes.log",
+          "sha256": "7d3b1fedb6bfe92ab756acf620fda6a6388e245ce1c22dc752296ef330e2899d"
+        },
+        {
+          "bytes": 10677,
+          "path": "required-tests.json",
+          "sha256": "ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8"
+        },
+        {
+          "bytes": 423,
+          "path": "source-after.json",
+          "sha256": "68785449d187892ff6a2840fc15687d7cdac62f2832c4fe22559ce8b3d97bd00"
+        },
+        {
+          "bytes": 423,
+          "path": "source-after.log",
+          "sha256": "68785449d187892ff6a2840fc15687d7cdac62f2832c4fe22559ce8b3d97bd00"
+        },
+        {
+          "bytes": 423,
+          "path": "source-before.json",
+          "sha256": "68785449d187892ff6a2840fc15687d7cdac62f2832c4fe22559ce8b3d97bd00"
+        },
+        {
+          "bytes": 423,
+          "path": "source-before.log",
+          "sha256": "68785449d187892ff6a2840fc15687d7cdac62f2832c4fe22559ce8b3d97bd00"
+        },
+        {
+          "bytes": 12245,
+          "path": "test_w1_control_tree_audit.json",
+          "sha256": "10461628673938536b100c3002b690e0c2e362f5bb0838290f52169f92835b90"
+        },
+        {
+          "bytes": 3750,
+          "path": "test_w1_fri_transcript_audit.json",
+          "sha256": "14f8d74981fef43da262cec4158596662c71338ab05ac105ea9fe73946f1f6f1"
+        },
+        {
+          "bytes": 6742,
+          "path": "test_w1_qrom_conditional_budget.json",
+          "sha256": "46f01eaec4847869b9c76abd3507d22b061e60e45c281df69601dd3865ff3c6e"
+        },
+        {
+          "bytes": 9276,
+          "path": "test_w1_qrom_implementation_audit.json",
+          "sha256": "e6f97ac535f6e37c1ce5b5492d3e076d9567831500a52fdca3419ad475935042"
+        },
+        {
+          "bytes": 6625,
+          "path": "test_w1_qrom_workflow_gate.json",
+          "sha256": "fb42619d97ea1c951808d6b638ea49db1171e66f5308f79a3d1778c574a479c3"
+        }
+      ],
+      "job_id": 128422918978,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162380/job/128422918978",
+      "named_completion_sha256": "f0f11131bc18fae2c15f24ec5701ccd616785e696523b88da8ca31170e5719ff",
+      "named_tests": 81,
+      "reproduced_pinned_reports": [],
+      "roster_sha256": "ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8",
+      "run_id": 42379162380,
+      "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162380",
+      "source": {
+        "base": null,
+        "candidate": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+        "tested_tree": "e08b5dcd9ae2e90d0a36cb5d85e6ce1def387e85",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1100983593,
+        "tracked_entries": 11144,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_identical_bytes": true,
+      "source_json_sha256": "68785449d187892ff6a2840fc15687d7cdac62f2832c4fe22559ce8b3d97bd00",
+      "suites": [
+        {
+          "module": "test_w1_control_tree_audit",
+          "tests_run": 28
+        },
+        {
+          "module": "test_w1_qrom_conditional_budget",
+          "tests_run": 13
+        },
+        {
+          "module": "test_w1_qrom_implementation_audit",
+          "tests_run": 19
+        },
+        {
+          "module": "test_w1_fri_transcript_audit",
+          "tests_run": 7
+        },
+        {
+          "module": "test_w1_qrom_workflow_gate",
+          "tests_run": 14
+        }
+      ],
+      "workflow": "implementation",
+      "zip_bytes": 35406,
+      "zip_sha256": "65eae425778fc7f453781a8dc2183187dae3499efc323ed35c37ed6ce9a439b0"
+    }
+  ],
+  "base": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+  "baseline": {
+    "conclusion_at_collection": null,
+    "other_failed_jobs_preserved": [
+      {
+        "conclusion": "failure",
+        "id": 128422919456,
+        "name": "protocol-contract"
+      },
+      {
+        "conclusion": "failure",
+        "id": 128422919693,
+        "name": "cross-arch-cost (x64)"
+      },
+      {
+        "conclusion": "failure",
+        "id": 128422919765,
+        "name": "external-evidence-contract"
+      },
+      {
+        "conclusion": "failure",
+        "id": 128422919834,
+        "name": "prospective-merge (protocol-contract)"
+      },
+      {
+        "conclusion": "failure",
+        "id": 128422919836,
+        "name": "cross-arch-cost (arm64)"
+      },
+      {
+        "conclusion": "failure",
+        "id": 128422919867,
+        "name": "prospective-merge (external-evidence-contract)"
+      }
+    ],
+    "repository_truth": [
+      {
+        "conclusion": "success",
+        "inventory_success_line": "2026-11-07T13:58:12.5335801Z distributed source inventory: PASS",
+        "job_id": 128422919672,
+        "job_name": "repository-truth",
+        "log_bytes": 374020,
+        "log_sha256": "b9aa1ba88c73bd44fcd40e9e7423c9ccfa7afc77998e4d0b067d3fa0069b7a1c"
+      },
+      {
+        "conclusion": "success",
+        "inventory_success_line": "2026-11-07T13:58:54.2211361Z distributed source inventory: PASS",
+        "job_id": 128422919976,
+        "job_name": "prospective-merge (repository-truth)",
+        "log_bytes": 375298,
+        "log_sha256": "f55e0e1e8ec8e049956420f2a12ad45d6906d22560e9bed8eee290de568517ba"
+      }
+    ],
+    "run_id": 42379162489,
+    "status_at_collection": "in_progress",
+    "whole_baseline_pass_claimed": false
+  },
+  "candidate": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+  "candidate_tree": "e08b5dcd9ae2e90d0a36cb5d85e6ce1def387e85",
+  "canonical_merge_tree_reason": "Base is an ancestor of candidate; the canonical merge tree is the candidate tree, matching the separately retrieved GitHub commit.",
+  "local_available_blob_bytes": 1055822246,
+  "local_missing_blob_size_count": 29,
+  "local_tree_entry_count": 11144,
+  "ordered_merge_parents": [
+    "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+    "1a14f7d4826363daefac9ec10131c66d7e70ece7"
+  ],
+  "prospective_merge": "f14298a2728b22fda625267e2e4844b70f829b37",
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "post_quantum_soundness_qualified": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false,
+    "unconditional_project_security_bits": null
+  },
+  "schema": "TRNM-W1-QROM-HOSTED-INDEPENDENT-READBACK1",
+  "scope": "Readback and consistency validation of retained GitHub API/artifacts. The local clone has missing historical blob bodies; complete worktree hashing was executed by the identified hosted jobs, not repeated here. Named record checks are not execution attestations independent of GitHub and trusted workflow code."
+}

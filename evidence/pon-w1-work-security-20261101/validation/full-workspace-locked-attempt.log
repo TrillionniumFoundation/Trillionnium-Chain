@@ -1,0 +1,4 @@
+error: no matching package named `ml-dsa` found
+location searched: crates.io index
+required by package `trnm-crypto-primitives v0.1.0 (/workspace/scratch/76b96c45510e/trillionnium-chain/trillionnium/crates/trnm-crypto-primitives)`
+As a reminder, you're using offline mode (--offline) which can sometimes cause surprising resolution failures, if this error is too confusing you may wish to retry without `--offline`.

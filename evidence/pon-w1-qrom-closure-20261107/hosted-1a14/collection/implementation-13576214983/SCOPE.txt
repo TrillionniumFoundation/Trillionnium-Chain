@@ -1,0 +1,1 @@
+Offline construction mapping, saved-fixture consistency and hypothetical component arithmetic only. No new proof verification, QROM instantiation, quantum-work qualification or consensus admission is established.

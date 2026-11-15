@@ -1,0 +1,109 @@
+{
+  "actual_target_correct_for_time_rejected_proof": true,
+  "backend": "pnh1-authenticated",
+  "cold_context_equality_is_external_native_observation": true,
+  "default_consensus_rules_changed": false,
+  "externally_pinned_report_sha256": "e3fd4c236991529124ab5a493c31c0559694403aa57ec570267f8ac7ad0fec6d",
+  "fresh_adjusted_target_native_refusal_is_only_policy_isolation": true,
+  "full_execution_identity_verified": false,
+  "full_python_transcript_and_product_recomputed": true,
+  "growth_witness_hashes_recomputed": 0,
+  "host_and_source_provenance_checked_by_reader": false,
+  "independent_research_time_refusals": 1,
+  "joint_consensus_security_proven": false,
+  "minimum_cost_qualified": false,
+  "native_new_profile_installed": false,
+  "packet_identities": {
+    "packets/backwards.pnk": {
+      "bytes": 49508,
+      "sha256": "0af1a129625bccaa14930b30c2e134a82d0455aa976e2afb88dd7a98d74af751"
+    },
+    "packets/equal.pnk": {
+      "bytes": 49508,
+      "sha256": "955c1a42f0a727765b7e8cde5506ed66d982c849b58d912796e8b53c1307c4ca"
+    },
+    "packets/fast.pnk": {
+      "bytes": 49508,
+      "sha256": "49cb52fe255363b8d2011fcd0b8a1458ae7a7f35ed8fb9d8132ebc268a1cce11"
+    },
+    "packets/first.pnk": {
+      "bytes": 49508,
+      "sha256": "3d6279c1b368ebc20c1b181d2409473c77f8ae5b5d2ad2d3d228bf3c484b6dba"
+    },
+    "packets/fresh_adjusted.pnk": {
+      "bytes": 49508,
+      "sha256": "ebf2147fd487577bebd1d69aca01fc19aabe04474410d55207a7114179813734"
+    },
+    "packets/high.pnk": {
+      "bytes": 49508,
+      "sha256": "c391d76d66cdea0dceb49abb825b267d5c5219263b70040f4609c7c5cdc2ca1d"
+    },
+    "packets/other_anchor.pnk": {
+      "bytes": 49508,
+      "sha256": "4578a64c7450103d27c11a8065d6174afd3ec78aae10d25392a318f5811e97b3"
+    }
+  },
+  "production_activation": false,
+  "profile_id": "6040ba139b20732b8258ff007dee06f0a6dfe255f3c901381f8a469a1af28ec5",
+  "quantum_cost_qualified": false,
+  "reader_performed_native_admission": false,
+  "reader_reopened_native_database": false,
+  "reader_replayed_state_execution_or_task_eligibility": false,
+  "reader_verified_growth_account_proofs": false,
+  "record_and_oracle_consistency": "PASS",
+  "records": [
+    {
+      "id": "f5b4f7c623d150236c0a1efebc9aedb7af4f8b7c33f8330a2a627956aa68cb16",
+      "label": "first",
+      "original_native_observation": "admitted",
+      "research_verdict": "PASS",
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    {
+      "id": "3940e594e34aea69868398fa2e2aff169602b63a37c3ae720b60796d2ab2949f",
+      "label": "fast",
+      "original_native_observation": "admitted",
+      "research_verdict": "PASS",
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    {
+      "id": "2bd5ad06ef7487f5d4b37df6cf92ec70b67c37f9d2366dcb27b46acd93679249",
+      "label": "high",
+      "original_native_observation": "admitted",
+      "research_verdict": "PASS",
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    {
+      "id": "ba8e25c48be79970c4d895d285fb097b47bbf9a05992629453685b83dc8afc31",
+      "label": "other_anchor",
+      "original_native_observation": "admitted",
+      "research_verdict": "PASS",
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    {
+      "id": "443e2b24d09d512097cb70bd6c4b0dfce2a4c7804c95aa5a0a49273a2a9052a1",
+      "label": "fresh_adjusted",
+      "original_native_observation": "TARGET",
+      "research_verdict": "PASS",
+      "target": "7b1d7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    {
+      "id": "03e7c763115b4be7b517205d6b244797b0318482cd9e7b60ec913f3eaa6c4fd3",
+      "label": "backwards",
+      "original_native_observation": "admitted",
+      "research_verdict": "SCHEDULE_TIME_NONDECREASING",
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    {
+      "id": "cf77c80bf6e9bd79a3a53776af46a39110d786c74b5714ea082f1a6a67e6aeae",
+      "label": "equal",
+      "original_native_observation": "admitted",
+      "research_verdict": "PASS",
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    }
+  ],
+  "research_schedule_passes": 6,
+  "schema": "pon-native-branch-work-schedule-reader-v1",
+  "unique_full_python_verified_proofs": 7,
+  "unique_legacy_native_admitted_packets_observed": 6
+}

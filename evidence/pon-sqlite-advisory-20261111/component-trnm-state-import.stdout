@@ -1,0 +1,24 @@
+
+running 17 tests
+test tests::authority_namespace_prefixes_are_never_importable ... ok
+test tests::cutover_signer_commitment_is_permutation_invariant ... ok
+test tests::durable_handoff_transitions_atomically_and_rejects_stale_mutation ... ok
+test tests::finalized_export_projection_and_cutover_are_exactly_bound ... ok
+test tests::finalized_source_binding_rejects_context_and_row_set_substitution ... ok
+test tests::incremental_delta_recomputes_and_applies_exact_state ... ok
+test tests::incremental_delta_rejects_base_substitution_and_entry_tampering ... ok
+test tests::projection_rejects_rows_substituted_after_export_verification ... ok
+test tests::signing_state_is_never_importable ... ok
+test tests::sqlite_incremental_readback_pins_metadata_and_rows_to_one_snapshot ... ok
+test tests::sqlite_incremental_store_commits_and_reopens_exact_readback ... ok
+test tests::sqlite_incremental_store_rejects_same_root_foreign_checkpoint_context ... ok
+test tests::sqlite_incremental_store_rejects_symlinked_store_and_sidecar_paths ... ok
+test tests::sqlite_incremental_store_replays_empty_delta_idempotently ... ok
+test tests::sqlite_process_kill_rolls_back_uncommitted_delta ... 
+running 1 test
+ok
+test tests::sqlite_snapshot_export_import_is_exact_and_rejects_row_substitution ... ok
+test tests::verified_context_capability_is_required_for_typed_delta_path ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+

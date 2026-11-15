@@ -1,0 +1,40 @@
+{
+  "command_record": "commands/14-test_useful_cell_relation_v2_adversarial.json",
+  "duplicate_test_names": {},
+  "expected_tests": 11,
+  "missing_expected_test_names": [],
+  "observed_full_test_ids": [
+    "__main__.StatefulCellSpliceTests.test_a_fully_self_consistent_producer_task_cannot_replace_owner_admission",
+    "__main__.StatefulCellSpliceTests.test_donor_proofs_are_valid_with_equal_and_different_actual_tensors",
+    "__main__.StatefulCellSpliceTests.test_foreign_checkpoint_is_not_adopted_by_rehashing_its_task_identity",
+    "__main__.StatefulCellSpliceTests.test_historical_result_ignores_wall_clock_and_survives_current_expiry",
+    "__main__.StatefulCellSpliceTests.test_real_foreign_tensor_values_fail_even_after_all_chain_hashes_are_repaired",
+    "__main__.StatefulCellSpliceTests.test_reordering_omission_and_duplication_fail_after_renumbering_and_rehashing",
+    "__main__.StatefulCellSpliceTests.test_repeated_live_verification_neither_consumes_nor_commits_nor_grants_authority",
+    "__main__.StatefulCellSpliceTests.test_same_tensor_segment_from_another_valid_task_is_refused",
+    "__main__.StatefulCellSpliceTests.test_shape_and_dtype_are_executed_despite_self_consistent_segment_hashes",
+    "__main__.StatefulCellSpliceTests.test_today_revocation_or_clock_cannot_enter_the_historical_api",
+    "__main__.StatefulCellSpliceTests.test_valid_w1_from_another_task_fails_even_when_both_matrices_are_identical"
+  ],
+  "observed_ran_tests": 11,
+  "observed_verbose_test_starts": 11,
+  "original_final_status_rows": [
+    "OK"
+  ],
+  "original_summary_rows": [
+    [
+      "11",
+      "40.060"
+    ]
+  ],
+  "passed": true,
+  "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v2_adversarial.py",
+  "process_exit_code": 0,
+  "process_timed_out": false,
+  "raw_log_bytes": 2146,
+  "raw_log_sha256": "665f32f5868a5c150663058ae7e895d01a068aaf529e1f68b0b9796bc9562c1f",
+  "scope": "Original unittest CLI output; counts are test methods, not subtests.",
+  "source_sha256": "a96e7b50d5582beec2c8d520ddca17b6f90765083c37e472c3c09b219a9cce46",
+  "strict_zero_failure_skip_expected_failure_success": true,
+  "unexpected_test_names": []
+}

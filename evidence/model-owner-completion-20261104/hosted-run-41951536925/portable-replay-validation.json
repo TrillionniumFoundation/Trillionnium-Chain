@@ -1,0 +1,128 @@
+{
+  "actual_result": {
+    "accepted_no_update": false,
+    "accepted_phases": 0,
+    "adoption": false,
+    "attempted_phases": 1,
+    "campaign_opportunity_consumed": true,
+    "candidate_artifact_created": false,
+    "full_release_evaluation": false,
+    "independent_management_or_future_task_custody_established": false,
+    "local_spent": 1,
+    "model_or_runtime_quality_gain": "NOT_EVALUATED",
+    "not_started_phases": 11,
+    "quality_evaluations_started": 0,
+    "registered_phases": 12,
+    "retry_authorized": false,
+    "reward": false,
+    "run_outcome": "aborted",
+    "train_roles_started": 0
+  },
+  "additional_offline_config_pins": {
+    "config/pon/devnet-v1.json": {
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "size": 1964
+    },
+    "config/pon/ledger-v1.json": {
+      "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "size": 7793
+    },
+    "config/pon/model-family-v1.json": {
+      "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+      "size": 1383
+    },
+    "config/pon/work-profile-v1.json": {
+      "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "size": 1596
+    }
+  },
+  "archive_bytes_unchanged": true,
+  "artifact_bytes_unchanged": true,
+  "audit_outcome": "CONSISTENT_FAILED_ATTEMPT_EVIDENCE",
+  "checks": 203,
+  "executed_arguments": {
+    "archive": "/dev/shm/trnm-model-owner-f4976366a32a-observations/hosted-run-41951536925/artifact.zip",
+    "artifact_dir": "/dev/shm/trnm-model-owner-f4976366a32a-observations/hosted-run-41951536925/artifact",
+    "audit_history_dir": "/dev/shm/trnm-model-owner-f4976366a32a-observations/hosted-run-41951536925",
+    "output": "/dev/shm/trnm-model-owner-f4976366a32a-observations/hosted-run-41951536925/portable-artifact-review.json",
+    "registration": "/workspace/scratch/f4976366a32a/hosted-original-authority/published-registration.json",
+    "source_root": "/workspace/scratch/f4976366a32a/chain",
+    "temporary_root": "/dev/shm/trnm-model-owner-f4976366a32a-observations/hosted-run-41951536925"
+  },
+  "exit_code": 0,
+  "failed_checks": [],
+  "files": {
+    "artifact.zip": {
+      "sha256": "0890a0ff94f3ba2fc912b45805531c2058f4ca344f538133d863ab74f35ec924",
+      "size": 55433
+    },
+    "independent-artifact-review-final.json": {
+      "sha256": "0b1bfcde574dfbad563ef10af9c4a25120bb0fa94a8eed980c8642038bd9709e",
+      "size": 44390
+    },
+    "independent-artifact-review.json": {
+      "sha256": "a2703367709f65f94e109654505d958385cf866717dd955d470de82fe57c6589",
+      "size": 33062
+    },
+    "independent_artifact_review.first_run.py": {
+      "sha256": "8f4e4a9e2401ec377282f9ec8405157ae3b5500d98299b5508bdd2f34b47a42e",
+      "size": 27346
+    },
+    "independent_artifact_review.py": {
+      "sha256": "22a8cac3d873f1afd9af88b82e4b6ab57d0f8d26d92622ca7303f42988a4d7c4",
+      "size": 28706
+    },
+    "portable-artifact-review.json": {
+      "sha256": "4dba09ee3c4d0657e59902bc7f1ff57a422b5a7403331ca5b66d4b7e9e37b708",
+      "size": 51263
+    },
+    "portable_artifact_review.py": {
+      "sha256": "c4e0576214315c6fe12010848a01074e7ee2d1830d6992282363fac34e40cdb7",
+      "size": 36864
+    }
+  },
+  "forbidden_model_modules_loaded": [],
+  "frozen_source_commit": "f388f46d9df150a3599b9d961b48918b3ff1fb48",
+  "hardcoded_runtime_path_scan": {
+    "workspace_or_tmpfs_absolute_paths_present": false
+  },
+  "historical_audit_files_unchanged": true,
+  "model_execution_performed": false,
+  "new_trial_or_registration_performed": false,
+  "original_source_registration_or_plan_modified": false,
+  "portable_read_only_replay_invocations": 1,
+  "reference_comparison": {
+    "all_original_checks_identical": true,
+    "compared_fields": [
+      "ledger",
+      "actual_loader",
+      "not_started_phases",
+      "scope_conclusion",
+      "retained_file_verification",
+      "zip",
+      "artifact_inventory_before",
+      "frozen_source_check"
+    ],
+    "original_checks": 189,
+    "reference_sha256": "0b1bfcde574dfbad563ef10af9c4a25120bb0fa94a8eed980c8642038bd9709e",
+    "substantive_findings_identical": true
+  },
+  "registered_source_hashes_verified": 609,
+  "registration": {
+    "sha256": "1bce00490405ab6c1e4eee3e2a9d8d45ba96a5efe3e61aa13b5b3f3977e26e1b",
+    "size": 100969
+  },
+  "replay_interpreter": {
+    "implementation": "CPython",
+    "isolated": true,
+    "no_site": true,
+    "version": "3.12.14"
+  },
+  "run_attempt": 1,
+  "run_id": 41951536925,
+  "schema": "portable-offline-replay-validation-v1",
+  "scope_note": "The hosted attempt validated its complete Git checkout. Four extra fixed configuration inputs are required only for the portable offline verifier; they do not rewrite registration.source_hashes or the original experiment.",
+  "scoring_performed": false,
+  "source_snapshot_unchanged": true,
+  "verified_source_snapshot_files": 13
+}

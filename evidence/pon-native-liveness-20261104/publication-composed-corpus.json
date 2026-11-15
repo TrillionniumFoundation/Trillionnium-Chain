@@ -1,0 +1,21 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "publication-composed-corpus",
+  "command": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+  "tree": "87f974c3ad327d5da2c61286ec86fcb1580b3fcf",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T15:07:56.669453+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 187373762,
+  "finished_at": "2026-11-04T15:07:56.857021+00:00",
+  "log_bytes": 557,
+  "log_sha256": "b01666bd8d16b02a650094456b046e71a1ecbdbc224daae5db4743e61b8337b5",
+  "final_head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+  "final_dirty_paths": []
+}

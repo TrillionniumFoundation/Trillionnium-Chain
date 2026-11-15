@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/home/qq/chain-incentive-evidence-stage-20261112-306929/ai395/incentives/verify_archive.py",
+    "--previous-receipt",
+    "/home/qq/chain-incentive-evidence-stage-20261112-306929/original-819-native-from-98.json"
+  ],
+  "checker_sha256": "8a026362dc8045eb7f528231fd4cecee5fb5e2a47390714136587e75fc728331",
+  "cwd": "/home/qq/chain-incentive-evidence-stage-20261112-306929/ai395/incentives",
+  "duration_seconds": 2.649262868799269,
+  "exit_code": 0,
+  "files_extracted": 0,
+  "finished_utc": "2026-11-12T02:44:59.189032+00:00",
+  "native_tests_started": false,
+  "original_cloud_report_bytes": 11398,
+  "original_cloud_report_reproduced": true,
+  "original_cloud_report_sha256": "941ef2ae5a34433b0ba72b0b8839ad16d2d414a997e27fae54fb712f731079a2",
+  "python": "3.14.4 (main, Aug 20 2026, 10:41:58) [GCC 15.2.0]",
+  "python_scientific_methods_started": false,
+  "schema": "chain-incentive-ai395-recovered-artifact-recheck-v1",
+  "scope": "new standard-library archive-only readback; not another native or scientific test",
+  "started_utc": "2026-11-12T02:44:56.539773+00:00",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 11398,
+  "stdout_sha256": "941ef2ae5a34433b0ba72b0b8839ad16d2d414a997e27fae54fb712f731079a2"
+}

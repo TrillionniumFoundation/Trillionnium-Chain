@@ -1,0 +1,199 @@
+{
+  "all_four_job_log_pins_verified": true,
+  "all_original_report_pins_verified": true,
+  "archive": "recovered-native-codeql-selected-raw.tar.gz",
+  "archive_bytes": 20705422,
+  "archive_identity": "new_independent_recovery",
+  "archive_sha256": "e5cb5c7cffebf9c48ba0f414ac4b6e2c31af39ce403bdf2a99dbcaeffb459da0",
+  "baseline": "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6",
+  "candidate": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "complete_original_native_reports": 6,
+  "completed": true,
+  "completed_utc": "2026-11-12T02:40:44.962471+00:00",
+  "credential_candidates": 0,
+  "github_writes": false,
+  "identity": {
+    "exit_code": 0,
+    "expected": "ProfHepta",
+    "observed": "ProfHepta"
+  },
+  "local_execution_environment_unavailable": true,
+  "native_baseline_source_equivalent_ancestor": "8dee97636e2b6932fb7a22b1b54f2cab09ae8406",
+  "old_archive_and_32_review_files_recovered": false,
+  "old_archive_historical_identity": {
+    "bytes": 20717541,
+    "sha256": "5b8217aad2620fbc7197e94e1fb2241d5a8e3ade46d3bbb310bdb7ac3e1a6094",
+    "state": "historically_verified_local; not claimed restored by this operation"
+  },
+  "old_rebuild_kit_historical_identity": {
+    "bytes": 282249,
+    "sha256": "c06a64e087c070dc00a984d38aa6fc66b00563efefae669ac6fda5d061e0d39a",
+    "state": "historically_verified_local; not available to this operation"
+  },
+  "operations": [
+    {
+      "api_path": "/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13907637512/zip",
+      "elapsed_seconds": 7.299872078001499,
+      "error": null,
+      "exit_code": 0,
+      "method": "GET",
+      "output": "archives/codeql-analysis-export-43131212704-1.zip",
+      "stderr": "transport/codeql-analysis-export-43131212704-1.zip.stderr"
+    },
+    {
+      "api_path": "/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13771988503/zip",
+      "elapsed_seconds": 5.12834308994934,
+      "error": null,
+      "exit_code": 0,
+      "method": "GET",
+      "output": "archives/codeql-analysis-export-42812987744-1.zip",
+      "stderr": "transport/codeql-analysis-export-42812987744-1.zip.stderr"
+    },
+    {
+      "api_path": "/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13908385566/zip",
+      "elapsed_seconds": 18.764015291118994,
+      "error": null,
+      "exit_code": 0,
+      "method": "GET",
+      "output": "archives/pon-native-campaign-43131213399-1.zip",
+      "stderr": "transport/pon-native-campaign-43131213399-1.zip.stderr"
+    },
+    {
+      "api_path": "/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13764479890/zip",
+      "elapsed_seconds": 28.185458096908405,
+      "error": null,
+      "exit_code": 0,
+      "method": "GET",
+      "output": "archives/pon-native-campaign-42798575923-1.zip",
+      "stderr": "transport/pon-native-campaign-42798575923-1.zip.stderr"
+    },
+    {
+      "api_path": "/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/130895528586/logs",
+      "elapsed_seconds": 14.351471272995695,
+      "error": null,
+      "exit_code": 0,
+      "method": "GET",
+      "output": "selected/actions-readback/job-130895528586.log",
+      "stderr": "transport/job-130895528586.log.stderr"
+    },
+    {
+      "api_path": "/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/130895528586",
+      "elapsed_seconds": 1.9204411059617996,
+      "error": null,
+      "exit_code": 0,
+      "method": "GET",
+      "output": "selected/actions-readback/job-130895528586.json",
+      "stderr": "transport/job-130895528586.json.stderr"
+    },
+    {
+      "api_path": "/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/130895531125/logs",
+      "elapsed_seconds": 7.733073449926451,
+      "error": null,
+      "exit_code": 0,
+      "method": "GET",
+      "output": "selected/actions-readback/job-130895531125.log",
+      "stderr": "transport/job-130895531125.log.stderr"
+    },
+    {
+      "api_path": "/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/130895531125",
+      "elapsed_seconds": 2.0215630989987403,
+      "error": null,
+      "exit_code": 0,
+      "method": "GET",
+      "output": "selected/actions-readback/job-130895531125.json",
+      "stderr": "transport/job-130895531125.json.stderr"
+    },
+    {
+      "api_path": "/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/129818848318/logs",
+      "elapsed_seconds": 4.928114106180146,
+      "error": null,
+      "exit_code": 0,
+      "method": "GET",
+      "output": "selected/actions-readback/job-129818848318.log",
+      "stderr": "transport/job-129818848318.log.stderr"
+    },
+    {
+      "api_path": "/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/129818848318",
+      "elapsed_seconds": 7.185140763176605,
+      "error": null,
+      "exit_code": 0,
+      "method": "GET",
+      "output": "selected/actions-readback/job-129818848318.json",
+      "stderr": "transport/job-129818848318.json.stderr"
+    },
+    {
+      "api_path": "/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/129769944910/logs",
+      "elapsed_seconds": 5.028870448004454,
+      "error": null,
+      "exit_code": 0,
+      "method": "GET",
+      "output": "selected/actions-readback/job-129769944910.log",
+      "stderr": "transport/job-129769944910.log.stderr"
+    },
+    {
+      "api_path": "/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/129769944910",
+      "elapsed_seconds": 2.8228307829704136,
+      "error": null,
+      "exit_code": 0,
+      "method": "GET",
+      "output": "selected/actions-readback/job-129769944910.json",
+      "stderr": "transport/job-129769944910.json.stderr"
+    },
+    {
+      "api_path": "/repos/TrillionniumFoundation/Trillionnium-Chain/compare/8dee97636e2b6932fb7a22b1b54f2cab09ae8406...30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6",
+      "elapsed_seconds": 2.6213859950657934,
+      "error": null,
+      "exit_code": 0,
+      "method": "GET",
+      "output": "selected/actions-readback/ancestor-to-baseline-compare.json",
+      "stderr": "transport/ancestor-to-baseline-compare.json.stderr"
+    }
+  ],
+  "original_artifact_members": 522,
+  "original_artifacts": [
+    {
+      "artifact_id": 13907637512,
+      "bytes": 188967,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212704/artifacts/13907637512",
+      "original_zip": "codeql-analysis-export-43131212704-1.zip",
+      "run_id": 43131212704,
+      "selected_members": 205,
+      "sha256": "b4fd7c45c887a989385351e2420e40926ec69ad0c6884326b80fdd6c2be253f0"
+    },
+    {
+      "artifact_id": 13771988503,
+      "bytes": 173123,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42812987744/artifacts/13771988503",
+      "original_zip": "codeql-analysis-export-42812987744-1.zip",
+      "run_id": 42812987744,
+      "selected_members": 205,
+      "sha256": "d390cba3b2376ef2895ee0c7540a730278ff535c8cb8e8ce4c2bf79c3a6ab677"
+    },
+    {
+      "artifact_id": 13908385566,
+      "bytes": 75824870,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131213399/artifacts/13908385566",
+      "original_zip": "pon-native-campaign-43131213399-1.zip",
+      "run_id": 43131213399,
+      "selected_members": 56,
+      "sha256": "5f9e198666160d366c27c95be45bc119aa565dbfb2a6a57d960beeed62271d1c"
+    },
+    {
+      "artifact_id": 13764479890,
+      "bytes": 70312435,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42798575923/artifacts/13764479890",
+      "original_zip": "pon-native-campaign-42798575923-1.zip",
+      "run_id": 42798575923,
+      "selected_members": 56,
+      "sha256": "0d67e7bd3a775ab655a3c0c191c30c16942108e0a9ab23451016c5f6e4f9f780"
+    }
+  ],
+  "passed": true,
+  "schema": "remote-existing-ci-recovery-v1",
+  "script_sha256": "3954b7d4a1c8dc99ad4c4f90b911309c196bef7449fe48a06dddd5cbb83cb35c",
+  "selected_manifest_sha256": "9f9ff7aa40a48146a83e36ec3ca47fe2196286c849959197f29381566dff3375",
+  "source_worktrees_modified": false,
+  "started_utc": "2026-11-12T02:38:11.877941+00:00",
+  "verified_members": 534,
+  "workflow_reruns": false
+}

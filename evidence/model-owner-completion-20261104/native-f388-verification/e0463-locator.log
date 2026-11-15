@@ -1,0 +1,510 @@
+       Fresh find-msvc-tools v0.1.9
+       Fresh shlex v1.3.0
+       Fresh cc v1.2.59
+       Fresh typenum v1.20.1
+       Fresh unicode-ident v1.0.24
+       Fresh proc-macro2 v1.0.106
+       Fresh cfg-if v1.0.4
+       Fresh quote v1.0.45
+       Fresh syn v2.0.117
+       Fresh zeroize v1.8.2
+       Fresh version_check v0.9.5
+       Fresh libc v0.2.184
+       Fresh vcpkg v0.2.15
+       Fresh pkg-config v0.3.32
+       Fresh generic-array v0.14.7
+       Fresh cmov v0.5.4
+       Fresh ctutils v0.4.6
+       Fresh rand_core v0.10.1
+       Fresh getrandom v0.4.2
+       Fresh hybrid-array v0.4.15
+       Fresh crypto-common v0.1.7
+       Fresh block-buffer v0.10.4
+       Fresh digest v0.10.7
+       Fresh autocfg v1.5.1
+       Fresh cpufeatures v0.2.17
+       Fresh semver v1.0.27
+       Fresh rustc_version v0.4.1
+       Fresh sha2-asm v0.6.4
+       Fresh crypto-common v0.2.2
+       Fresh winnow v1.0.4
+       Fresh const-oid v0.10.2
+       Fresh equivalent v1.0.2
+       Fresh bitflags v2.11.0
+       Fresh indexmap v2.13.1
+       Fresh der v0.8.3
+       Fresh toml_parser v1.1.3+spec-1.1.0
+       Fresh digest v0.11.3
+       Fresh sha2 v0.10.9
+       Fresh serde_core v1.0.228
+       Fresh toml_datetime v1.1.1+spec-1.1.0
+       Fresh toml_edit v0.25.13+spec-1.1.0
+       Fresh num-traits v0.2.19
+       Fresh spki v0.8.1
+       Fresh curve25519-dalek-derive v0.1.1
+       Fresh thiserror-impl v1.0.69
+       Fresh serde_derive v1.0.228
+       Fresh keccak v0.2.2
+       Fresh cfg_aliases v0.2.2
+       Fresh sponge-cursor v0.1.0
+       Fresh foldhash v0.2.0
+       Fresh foreign-types-shared v0.1.1
+       Fresh subtle v2.6.1
+       Fresh signature v2.2.0
+       Fresh ed25519 v2.2.3
+       Fresh curve25519-dalek v4.1.3
+       Fresh foreign-types v0.3.2
+       Fresh hashbrown v0.16.1
+       Fresh shake v0.1.0
+       Fresh serde v1.0.228
+       Fresh thiserror v1.0.69
+       Fresh pkcs8 v0.11.0
+       Fresh module-lattice v0.2.3
+       Fresh proc-macro-crate v3.5.0
+       Fresh signature v3.0.0
+       Fresh openssl-sys v0.9.117
+       Fresh openssl-macros v0.1.1
+       Fresh hex v0.4.3
+       Fresh trnm-protocol v0.1.0 (/workspace/scratch/f4976366a32a/chain/trillionnium/crates/trnm-protocol)
+       Fresh borsh-derive v1.8.0
+       Fresh openssl v0.10.81
+       Fresh ml-dsa v0.1.1
+       Fresh libsqlite3-sys v0.37.0
+       Fresh anyhow v1.0.103
+       Fresh hashlink v0.11.1
+       Fresh ed25519-dalek v2.2.0
+       Fresh zmij v1.0.21
+       Fresh fallible-streaming-iterator v0.1.9
+       Fresh fallible-iterator v0.3.0
+       Fresh linux-raw-sys v0.12.1
+       Fresh smallvec v1.15.1
+       Fresh memchr v2.8.0
+       Fresh itoa v1.0.18
+       Fresh serde_json v1.0.149
+       Fresh rusqlite v0.39.0
+       Fresh rustix v1.1.4
+       Fresh trnm-crypto-primitives v0.1.0 (/workspace/scratch/f4976366a32a/chain/trillionnium/crates/trnm-crypto-primitives)
+       Fresh borsh v1.8.0
+       Fresh trnm-verification-profiles v0.1.0 (/workspace/scratch/f4976366a32a/chain/trillionnium/crates/trnm-verification-profiles)
+       Fresh fastrand v2.3.0
+       Fresh once_cell v1.21.4
+       Fresh tempfile v3.27.0
+       Dirty trnm-mvcc-fee v0.1.0 (/workspace/scratch/f4976366a32a/chain/trillionnium/crates/trnm-mvcc-fee): the dependency `hex` was rebuilt (1793839350.414095012s, 27m 48s after last build at 1793837682.073164249s)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/f4976366a32a/chain/trillionnium/crates/trnm-mvcc-fee)
+     Running `CARGO=/workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo CARGO_CRATE_NAME=pon_commitment CARGO_MANIFEST_DIR=/workspace/scratch/f4976366a32a/chain/trillionnium/crates/trnm-mvcc-fee CARGO_MANIFEST_PATH=/workspace/scratch/f4976366a32a/chain/trillionnium/crates/trnm-mvcc-fee/Cargo.toml CARGO_PKG_AUTHORS='Trillionnium Contributors' CARGO_PKG_DESCRIPTION='' CARGO_PKG_HOMEPAGE='' CARGO_PKG_LICENSE=MIT CARGO_PKG_LICENSE_FILE='' CARGO_PKG_NAME=trnm-mvcc-fee CARGO_PKG_README=README.md CARGO_PKG_REPOSITORY='' CARGO_PKG_RUST_VERSION='' CARGO_PKG_VERSION=0.1.0 CARGO_PKG_VERSION_MAJOR=0 CARGO_PKG_VERSION_MINOR=1 CARGO_PKG_VERSION_PATCH=0 CARGO_PKG_VERSION_PRE='' CARGO_PRIMARY_PACKAGE=1 CARGO_TARGET_TMPDIR=/workspace/scratch/f4976366a32a/native-target/tmp LD_LIBRARY_PATH='/workspace/scratch/f4976366a32a/native-target/debug/deps:/workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib' /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc --crate-name pon_commitment --edition=2021 crates/trnm-mvcc-fee/tests/pon_commitment.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,link -C opt-level=1 -C embed-bitcode=no -C debug-assertions=on --test --cfg 'feature="default"' --cfg 'feature="pq-native-openssl"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "pq-native-openssl"))' -C metadata=730247f10b974a43 -C extra-filename=-cc6e9d0ddb262622 --out-dir /workspace/scratch/f4976366a32a/native-target/debug/deps -C strip=debuginfo -L dependency=/workspace/scratch/f4976366a32a/native-target/debug/deps --extern borsh=/workspace/scratch/f4976366a32a/native-target/debug/deps/libborsh-cbc2c4291fe7b204.rlib --extern hex=/workspace/scratch/f4976366a32a/native-target/debug/deps/libhex-2fc7d26d85c71ab4.rlib --extern ml_dsa=/workspace/scratch/f4976366a32a/native-target/debug/deps/libml_dsa-ab5f81e5a4366aa4.rlib --extern openssl=/workspace/scratch/f4976366a32a/native-target/debug/deps/libopenssl-5f936585bfde4f5f.rlib --extern rusqlite=/workspace/scratch/f4976366a32a/native-target/debug/deps/librusqlite-a4049fad72073537.rlib --extern serde=/workspace/scratch/f4976366a32a/native-target/debug/deps/libserde-9d830d9fb05068c2.rlib --extern serde_json=/workspace/scratch/f4976366a32a/native-target/debug/deps/libserde_json-d9de496d4ac3237b.rlib --extern sha2=/workspace/scratch/f4976366a32a/native-target/debug/deps/libsha2-08ddb7486a5a61fb.rlib --extern tempfile=/workspace/scratch/f4976366a32a/native-target/debug/deps/libtempfile-bd3cb6a0727fc564.rlib --extern trnm_crypto_primitives=/workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_crypto_primitives-fd6d3306d4c67c38.rlib --extern trnm_mvcc_fee=/workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_mvcc_fee-933f68c93334b86a.rlib --extern trnm_protocol=/workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_protocol-9616047c4669ff63.rlib --extern trnm_verification_profiles=/workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_verification_profiles-29ca9343ecb3fda7.rlib -L native=/workspace/scratch/f4976366a32a/native-target/debug/build/libsqlite3-sys-3d4b08bddecd514c/out -L native=/workspace/scratch/f4976366a32a/native-target/debug/build/sha2-asm-7b2123667de20e96/out -L native=/workspace/scratch/f4976366a32a/native-target/debug/build/sha2-asm-7b2123667de20e96/out -L native=/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/lib`
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-d1237ef7159db0a2.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd_detect-e305c7135f50bfab.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-d1237ef7159db0a2.rmeta
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd_detect-e305c7135f50bfab.rmeta
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-d1237ef7159db0a2.so
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-d1237ef7159db0a2.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-d1237ef7159db0a2.rlib
+ INFO rustc_metadata::locator dylib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-d1237ef7159db0a2.so
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd_detect-e305c7135f50bfab.rmeta
+ INFO rustc_metadata::locator Rejecting via crate name
+ INFO rustc_metadata::locator metadata mismatch
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd_detect-e305c7135f50bfab.rlib
+ INFO rustc_metadata::locator Rejecting via crate name
+ INFO rustc_metadata::locator metadata mismatch
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libcore-120cbae4e86ec454.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libcore-120cbae4e86ec454.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libcore-120cbae4e86ec454.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libcore-120cbae4e86ec454.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/liballoc-6e6df4ffe0af4d15.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/liballoc-6e6df4ffe0af4d15.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/liballoc-6e6df4ffe0af4d15.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/liballoc-6e6df4ffe0af4d15.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libcompiler_builtins-27cfc16bdf3bb694.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libcompiler_builtins-27cfc16bdf3bb694.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libcompiler_builtins-27cfc16bdf3bb694.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libcompiler_builtins-27cfc16bdf3bb694.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/liblibc-5b1ad6df1855186c.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/liblibc-5b1ad6df1855186c.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/liblibc-5b1ad6df1855186c.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/liblibc-5b1ad6df1855186c.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_core-75c1307561ed9634.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_core-75c1307561ed9634.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_core-75c1307561ed9634.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_core-75c1307561ed9634.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libunwind-545faafa3c69262e.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libunwind-545faafa3c69262e.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libunwind-545faafa3c69262e.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libunwind-545faafa3c69262e.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libminiz_oxide-5ad929a15a8e6727.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libminiz_oxide-5ad929a15a8e6727.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libminiz_oxide-5ad929a15a8e6727.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libminiz_oxide-5ad929a15a8e6727.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libadler2-1f570ee5c6635aae.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libadler2-1f570ee5c6635aae.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libadler2-1f570ee5c6635aae.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libadler2-1f570ee5c6635aae.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libhashbrown-1448c95121de53aa.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libhashbrown-1448c95121de53aa.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libhashbrown-1448c95121de53aa.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libhashbrown-1448c95121de53aa.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_alloc-5bc57914b232292d.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_alloc-5bc57914b232292d.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_alloc-5bc57914b232292d.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_alloc-5bc57914b232292d.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd_detect-e305c7135f50bfab.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd_detect-e305c7135f50bfab.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd_detect-e305c7135f50bfab.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd_detect-e305c7135f50bfab.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_demangle-146c3f1190dee2e2.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_demangle-146c3f1190dee2e2.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_demangle-146c3f1190dee2e2.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_demangle-146c3f1190dee2e2.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libcfg_if-0ce073fff809ec38.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libcfg_if-0ce073fff809ec38.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libcfg_if-0ce073fff809ec38.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libcfg_if-0ce073fff809ec38.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libaddr2line-a79a8816d9fd6004.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libaddr2line-a79a8816d9fd6004.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libaddr2line-a79a8816d9fd6004.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libaddr2line-a79a8816d9fd6004.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libgimli-46dc78dc6a8cb06a.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libgimli-46dc78dc6a8cb06a.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libgimli-46dc78dc6a8cb06a.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libgimli-46dc78dc6a8cb06a.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libobject-2a81194c9d07bbf6.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libobject-2a81194c9d07bbf6.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libobject-2a81194c9d07bbf6.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libobject-2a81194c9d07bbf6.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libmemchr-ea71fa85f6699d6b.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libmemchr-ea71fa85f6699d6b.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libmemchr-ea71fa85f6699d6b.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libmemchr-ea71fa85f6699d6b.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libpanic_unwind-4be5972b22d3a6da.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libpanic_unwind-4be5972b22d3a6da.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libpanic_unwind-4be5972b22d3a6da.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libpanic_unwind-4be5972b22d3a6da.rlib
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libserde_json-d9de496d4ac3237b.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libserde_core-16bbd6aca2e4d576.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libserde_core-16bbd6aca2e4d576.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libserde_core-16bbd6aca2e4d576.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libserde_core-16bbd6aca2e4d576.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libzmij-d0f0be0e981a2a4e.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libzmij-d0f0be0e981a2a4e.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libzmij-d0f0be0e981a2a4e.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libzmij-d0f0be0e981a2a4e.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libitoa-812a2061b055b717.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libitoa-812a2061b055b717.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libitoa-812a2061b055b717.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libitoa-812a2061b055b717.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libmemchr-2c0b9e58475ea957.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libmemchr-2c0b9e58475ea957.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libmemchr-2c0b9e58475ea957.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libmemchr-2c0b9e58475ea957.rlib
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_crypto_primitives-fd6d3306d4c67c38.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libanyhow-2b596a6e957b0f0f.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libanyhow-2b596a6e957b0f0f.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libanyhow-2b596a6e957b0f0f.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libanyhow-2b596a6e957b0f0f.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libed25519_dalek-089036d059f94d97.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libed25519_dalek-089036d059f94d97.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libed25519_dalek-089036d059f94d97.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libed25519_dalek-089036d059f94d97.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libed25519-4f4985658e9ddf60.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libed25519-4f4985658e9ddf60.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libed25519-4f4985658e9ddf60.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libed25519-4f4985658e9ddf60.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsignature-3b0586cec66d5f9c.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsignature-3b0586cec66d5f9c.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsignature-3b0586cec66d5f9c.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsignature-3b0586cec66d5f9c.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcurve25519_dalek-fc1917dc30f3cf9e.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcurve25519_dalek-fc1917dc30f3cf9e.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcurve25519_dalek-fc1917dc30f3cf9e.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcurve25519_dalek-fc1917dc30f3cf9e.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libdigest-8364cf172238a69d.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libdigest-8364cf172238a69d.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libdigest-8364cf172238a69d.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libdigest-8364cf172238a69d.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcrypto_common-32a84a61a3eb6332.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcrypto_common-32a84a61a3eb6332.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcrypto_common-32a84a61a3eb6332.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcrypto_common-32a84a61a3eb6332.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libgeneric_array-443559cedb433ad2.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libgeneric_array-443559cedb433ad2.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libgeneric_array-443559cedb433ad2.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libgeneric_array-443559cedb433ad2.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtypenum-031fbdd68d92c830.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtypenum-031fbdd68d92c830.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtypenum-031fbdd68d92c830.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtypenum-031fbdd68d92c830.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libblock_buffer-022e9d7379ec98cd.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libblock_buffer-022e9d7379ec98cd.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libblock_buffer-022e9d7379ec98cd.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libblock_buffer-022e9d7379ec98cd.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcfg_if-cc3921fbd46ed034.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcfg_if-cc3921fbd46ed034.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcfg_if-cc3921fbd46ed034.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcfg_if-cc3921fbd46ed034.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsubtle-3f6b30fa6215d241.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsubtle-3f6b30fa6215d241.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsubtle-3f6b30fa6215d241.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsubtle-3f6b30fa6215d241.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libzeroize-c5267413455351f5.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libzeroize-c5267413455351f5.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libzeroize-c5267413455351f5.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libzeroize-c5267413455351f5.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcurve25519_dalek_derive-c6b1740b8e300a4d.so
+ INFO rustc_metadata::locator dylib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcurve25519_dalek_derive-c6b1740b8e300a4d.so
+ INFO rustc_metadata::locator Rejecting via proc macro: expected false got true
+ INFO rustc_metadata::locator metadata mismatch
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcurve25519_dalek_derive-c6b1740b8e300a4d.so
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcurve25519_dalek_derive-c6b1740b8e300a4d.so
+ INFO rustc_metadata::locator dylib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcurve25519_dalek_derive-c6b1740b8e300a4d.so
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcpufeatures-bb94c12fd6ffc57b.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcpufeatures-bb94c12fd6ffc57b.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcpufeatures-bb94c12fd6ffc57b.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcpufeatures-bb94c12fd6ffc57b.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsha2-08ddb7486a5a61fb.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsha2-08ddb7486a5a61fb.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsha2-08ddb7486a5a61fb.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsha2-08ddb7486a5a61fb.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsha2_asm-c71cae901f6a2bf5.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsha2_asm-c71cae901f6a2bf5.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsha2_asm-c71cae901f6a2bf5.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsha2_asm-c71cae901f6a2bf5.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_protocol-9616047c4669ff63.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_protocol-9616047c4669ff63.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_protocol-9616047c4669ff63.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_protocol-9616047c4669ff63.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libserde-9d830d9fb05068c2.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libserde-9d830d9fb05068c2.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libserde-9d830d9fb05068c2.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libserde-9d830d9fb05068c2.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libserde_derive-97a9801697fc0bb7.so
+ INFO rustc_metadata::locator dylib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libserde_derive-97a9801697fc0bb7.so
+ INFO rustc_metadata::locator Rejecting via proc macro: expected false got true
+ INFO rustc_metadata::locator metadata mismatch
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libserde_derive-97a9801697fc0bb7.so
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libserde_derive-97a9801697fc0bb7.so
+ INFO rustc_metadata::locator dylib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libserde_derive-97a9801697fc0bb7.so
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libthiserror-c2d03c4ef7c6963b.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libthiserror-c2d03c4ef7c6963b.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libthiserror-c2d03c4ef7c6963b.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libthiserror-c2d03c4ef7c6963b.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libthiserror_impl-1be925ce220965b5.so
+ INFO rustc_metadata::locator dylib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libthiserror_impl-1be925ce220965b5.so
+ INFO rustc_metadata::locator Rejecting via proc macro: expected false got true
+ INFO rustc_metadata::locator metadata mismatch
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libthiserror_impl-1be925ce220965b5.so
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libthiserror_impl-1be925ce220965b5.so
+ INFO rustc_metadata::locator dylib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libthiserror_impl-1be925ce220965b5.so
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libhex-2fc7d26d85c71ab4.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libhex-2fc7d26d85c71ab4.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libhex-2fc7d26d85c71ab4.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libhex-2fc7d26d85c71ab4.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libml_dsa-ab5f81e5a4366aa4.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libml_dsa-ab5f81e5a4366aa4.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libml_dsa-ab5f81e5a4366aa4.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libml_dsa-ab5f81e5a4366aa4.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libpkcs8-b5f154b5ce1ee0c9.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libpkcs8-b5f154b5ce1ee0c9.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libpkcs8-b5f154b5ce1ee0c9.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libpkcs8-b5f154b5ce1ee0c9.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libder-6f9228acbe1134f6.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libder-6f9228acbe1134f6.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libder-6f9228acbe1134f6.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libder-6f9228acbe1134f6.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libconst_oid-ba23e7ab74246713.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libconst_oid-ba23e7ab74246713.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libconst_oid-ba23e7ab74246713.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libconst_oid-ba23e7ab74246713.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libspki-196ac755f027527c.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libspki-196ac755f027527c.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libspki-196ac755f027527c.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libspki-196ac755f027527c.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libctutils-785dde9ec6395a1e.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libctutils-785dde9ec6395a1e.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libctutils-785dde9ec6395a1e.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libctutils-785dde9ec6395a1e.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcmov-0b0cd91cda43e32f.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcmov-0b0cd91cda43e32f.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcmov-0b0cd91cda43e32f.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcmov-0b0cd91cda43e32f.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libhybrid_array-27fafdc708046a9a.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libhybrid_array-27fafdc708046a9a.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libhybrid_array-27fafdc708046a9a.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libhybrid_array-27fafdc708046a9a.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libmodule_lattice-5a8d3b37486ed353.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libmodule_lattice-5a8d3b37486ed353.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libmodule_lattice-5a8d3b37486ed353.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libmodule_lattice-5a8d3b37486ed353.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libnum_traits-50109b1873dc5d43.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libnum_traits-50109b1873dc5d43.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libnum_traits-50109b1873dc5d43.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libnum_traits-50109b1873dc5d43.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libshake-dcd2fb23858cafb7.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libshake-dcd2fb23858cafb7.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libshake-dcd2fb23858cafb7.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libshake-dcd2fb23858cafb7.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libdigest-c2f65bdc5107aca0.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libdigest-c2f65bdc5107aca0.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libdigest-c2f65bdc5107aca0.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libdigest-c2f65bdc5107aca0.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcrypto_common-8a4749a6e87e0f3d.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcrypto_common-8a4749a6e87e0f3d.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcrypto_common-8a4749a6e87e0f3d.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libcrypto_common-8a4749a6e87e0f3d.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/librand_core-4dcca60f438351a2.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/librand_core-4dcca60f438351a2.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/librand_core-4dcca60f438351a2.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/librand_core-4dcca60f438351a2.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libgetrandom-dd97d89e51449732.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libgetrandom-dd97d89e51449732.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libgetrandom-dd97d89e51449732.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libgetrandom-dd97d89e51449732.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/liblibc-06f87f0e4ef831a4.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/liblibc-06f87f0e4ef831a4.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/liblibc-06f87f0e4ef831a4.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/liblibc-06f87f0e4ef831a4.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libkeccak-587ac8c906abcbde.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libkeccak-587ac8c906abcbde.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libkeccak-587ac8c906abcbde.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libkeccak-587ac8c906abcbde.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsponge_cursor-5f11b140491bbc90.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsponge_cursor-5f11b140491bbc90.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsponge_cursor-5f11b140491bbc90.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsponge_cursor-5f11b140491bbc90.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsignature-ee47c3f63cef7d79.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsignature-ee47c3f63cef7d79.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsignature-ee47c3f63cef7d79.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libsignature-ee47c3f63cef7d79.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libopenssl-5f936585bfde4f5f.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libopenssl-5f936585bfde4f5f.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libopenssl-5f936585bfde4f5f.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libopenssl-5f936585bfde4f5f.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libopenssl_sys-64d13b2112b2cfc8.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libopenssl_sys-64d13b2112b2cfc8.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libopenssl_sys-64d13b2112b2cfc8.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libopenssl_sys-64d13b2112b2cfc8.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libforeign_types-8ca8b9106058ed7f.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libforeign_types-8ca8b9106058ed7f.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libforeign_types-8ca8b9106058ed7f.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libforeign_types-8ca8b9106058ed7f.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libforeign_types_shared-3a5b33eb2e1981da.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libforeign_types_shared-3a5b33eb2e1981da.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libforeign_types_shared-3a5b33eb2e1981da.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libforeign_types_shared-3a5b33eb2e1981da.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libopenssl_macros-e7365f43a31f6434.so
+ INFO rustc_metadata::locator dylib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libopenssl_macros-e7365f43a31f6434.so
+ INFO rustc_metadata::locator Rejecting via proc macro: expected false got true
+ INFO rustc_metadata::locator metadata mismatch
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libopenssl_macros-e7365f43a31f6434.so
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libopenssl_macros-e7365f43a31f6434.so
+ INFO rustc_metadata::locator dylib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libopenssl_macros-e7365f43a31f6434.so
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libbitflags-0ae8635f413e6d95.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libbitflags-0ae8635f413e6d95.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libbitflags-0ae8635f413e6d95.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libbitflags-0ae8635f413e6d95.rlib
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_mvcc_fee-933f68c93334b86a.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_crypto_primitives-fd6d3306d4c67c38.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_crypto_primitives-fd6d3306d4c67c38.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_crypto_primitives-fd6d3306d4c67c38.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_crypto_primitives-fd6d3306d4c67c38.rlib
+ INFO rustc_metadata::locator Rejecting via hash: expected 289bb485127ecd4b83909516b17745af got 72d80f2c2de79bab1288ee2c2f25bd11
+ INFO rustc_metadata::locator metadata mismatch
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_protocol-9616047c4669ff63.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libgetopts-e6d22c100c4f8a03.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libgetopts-e6d22c100c4f8a03.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libgetopts-e6d22c100c4f8a03.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libgetopts-e6d22c100c4f8a03.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_std-56350ff0a024971a.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_std-56350ff0a024971a.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_std-56350ff0a024971a.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_std-56350ff0a024971a.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-3710056540f41481.rlib
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libserde_json-d9de496d4ac3237b.rlib
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_crypto_primitives-fd6d3306d4c67c38.rlib
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_protocol-9616047c4669ff63.rlib
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_mvcc_fee-933f68c93334b86a.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libcore-120cbae4e86ec454.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libcore-120cbae4e86ec454.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libcore-120cbae4e86ec454.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libcore-120cbae4e86ec454.rlib
+error[E0463]: can't find crate for `trnm_mvcc_fee`
+ --> crates/trnm-mvcc-fee/tests/pon_commitment.rs:4:5
+  |
+4 | use trnm_mvcc_fee::{
+  |     ^^^^^^^^^^^^^ can't find crate
+
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/f4976366a32a/native-target/debug/deps/libhex-2fc7d26d85c71ab4.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libpanic_unwind-4be5972b22d3a6da.rlib
+ INFO rustc_metadata::locator lib candidate: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libpanic_unwind-4be5972b22d3a6da.rmeta
+ INFO rustc_metadata::locator rmeta reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libpanic_unwind-4be5972b22d3a6da.rmeta
+ INFO rustc_metadata::locator rlib reading metadata from: /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libpanic_unwind-4be5972b22d3a6da.rlib
+For more information about this error, try `rustc --explain E0463`.
+error: could not compile `trnm-mvcc-fee` (test "pon_commitment") due to 1 previous error
+
+Caused by:
+  process didn't exit successfully: `CARGO=/workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo CARGO_CRATE_NAME=pon_commitment CARGO_MANIFEST_DIR=/workspace/scratch/f4976366a32a/chain/trillionnium/crates/trnm-mvcc-fee CARGO_MANIFEST_PATH=/workspace/scratch/f4976366a32a/chain/trillionnium/crates/trnm-mvcc-fee/Cargo.toml CARGO_PKG_AUTHORS='Trillionnium Contributors' CARGO_PKG_DESCRIPTION='' CARGO_PKG_HOMEPAGE='' CARGO_PKG_LICENSE=MIT CARGO_PKG_LICENSE_FILE='' CARGO_PKG_NAME=trnm-mvcc-fee CARGO_PKG_README=README.md CARGO_PKG_REPOSITORY='' CARGO_PKG_RUST_VERSION='' CARGO_PKG_VERSION=0.1.0 CARGO_PKG_VERSION_MAJOR=0 CARGO_PKG_VERSION_MINOR=1 CARGO_PKG_VERSION_PATCH=0 CARGO_PKG_VERSION_PRE='' CARGO_PRIMARY_PACKAGE=1 CARGO_TARGET_TMPDIR=/workspace/scratch/f4976366a32a/native-target/tmp LD_LIBRARY_PATH='/workspace/scratch/f4976366a32a/native-target/debug/deps:/workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib' /workspace/scratch/79360d3567d1/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc --crate-name pon_commitment --edition=2021 crates/trnm-mvcc-fee/tests/pon_commitment.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,link -C opt-level=1 -C embed-bitcode=no -C debug-assertions=on --test --cfg 'feature="default"' --cfg 'feature="pq-native-openssl"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "pq-native-openssl"))' -C metadata=730247f10b974a43 -C extra-filename=-cc6e9d0ddb262622 --out-dir /workspace/scratch/f4976366a32a/native-target/debug/deps -C strip=debuginfo -L dependency=/workspace/scratch/f4976366a32a/native-target/debug/deps --extern borsh=/workspace/scratch/f4976366a32a/native-target/debug/deps/libborsh-cbc2c4291fe7b204.rlib --extern hex=/workspace/scratch/f4976366a32a/native-target/debug/deps/libhex-2fc7d26d85c71ab4.rlib --extern ml_dsa=/workspace/scratch/f4976366a32a/native-target/debug/deps/libml_dsa-ab5f81e5a4366aa4.rlib --extern openssl=/workspace/scratch/f4976366a32a/native-target/debug/deps/libopenssl-5f936585bfde4f5f.rlib --extern rusqlite=/workspace/scratch/f4976366a32a/native-target/debug/deps/librusqlite-a4049fad72073537.rlib --extern serde=/workspace/scratch/f4976366a32a/native-target/debug/deps/libserde-9d830d9fb05068c2.rlib --extern serde_json=/workspace/scratch/f4976366a32a/native-target/debug/deps/libserde_json-d9de496d4ac3237b.rlib --extern sha2=/workspace/scratch/f4976366a32a/native-target/debug/deps/libsha2-08ddb7486a5a61fb.rlib --extern tempfile=/workspace/scratch/f4976366a32a/native-target/debug/deps/libtempfile-bd3cb6a0727fc564.rlib --extern trnm_crypto_primitives=/workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_crypto_primitives-fd6d3306d4c67c38.rlib --extern trnm_mvcc_fee=/workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_mvcc_fee-933f68c93334b86a.rlib --extern trnm_protocol=/workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_protocol-9616047c4669ff63.rlib --extern trnm_verification_profiles=/workspace/scratch/f4976366a32a/native-target/debug/deps/libtrnm_verification_profiles-29ca9343ecb3fda7.rlib -L native=/workspace/scratch/f4976366a32a/native-target/debug/build/libsqlite3-sys-3d4b08bddecd514c/out -L native=/workspace/scratch/f4976366a32a/native-target/debug/build/sha2-asm-7b2123667de20e96/out -L native=/workspace/scratch/f4976366a32a/native-target/debug/build/sha2-asm-7b2123667de20e96/out -L native=/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/lib` (exit status: 1)

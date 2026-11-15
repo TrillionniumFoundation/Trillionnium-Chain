@@ -1,0 +1,1641 @@
+{
+  "actual_loader": {
+    "actual_backend": "cpu",
+    "actual_environment": {
+      "accelerate": "1.15.0",
+      "numpy": "1.26.4",
+      "peft": "0.18.0",
+      "safetensors": "0.7.0",
+      "tokenizers": "0.22.2",
+      "torch": "2.9.1+cpu",
+      "transformers": "4.57.3"
+    },
+    "actual_threads": 1,
+    "child_exit_code": 0,
+    "contract": "ee9358fd440a49091aabf7c655c81b0b9ad9f7d67a007d10e09f89b299525d2f",
+    "cost": {
+      "child_cpu_ns": 22112388863,
+      "child_peak_rss_bytes": 1438318592,
+      "child_wall_ns": 21802929042,
+      "complete_economic_cost": false,
+      "observed_numbers_contained": true,
+      "observer_cpu_ns": 280697550,
+      "rss_sampling_gap_count": 1,
+      "sampled_peak_rss_bytes": 1399828480,
+      "scope": "Partial real observations from failed phase; no full-pilot aggregate or release economics.",
+      "stage_bytes_read": 0,
+      "stage_bytes_written": 8192,
+      "stage_cpu_sum_ns": 22102868208,
+      "stage_wall_sum_ns": 21793427424,
+      "strict_supervision_complete": false,
+      "supervised_wall_ns": 22862756740,
+      "waited_child_cpu_ns": 23167982000,
+      "waited_peak_rss_bytes": 1438318592
+    },
+    "derived_backbone_root": "c320c094769446c21d7e4a33795d7f9310b5e4c8ca5a6fecca40207b1f735b7c",
+    "forward_executed": true,
+    "gap": {
+      "at_wall_ns": 22807811732,
+      "elapsed_ns": 50177313,
+      "initial_rss": null,
+      "initial_state": "R (running)",
+      "interpretation": "Later zombie/exit diagnostics cannot replace the missing live RSS observation.",
+      "late_proof_produces_rss": false,
+      "later_state": "Z (zombie)",
+      "pidfd_ready_after_wait": false,
+      "reconciliation_mode": "unproved-exit-race"
+    },
+    "generated_tokens_total": 64,
+    "greedy_decode_executed": true,
+    "independent_argmax_or_tokenizer_reexecution": false,
+    "locked_dependencies_matched": 31,
+    "parameter_count": 134515008,
+    "phase_accepted": false,
+    "prediction_file_sha256": "85d1a0f769ccf07c3fe01c4942681a1d8296c36f431f459f21d9626045cf804b",
+    "prediction_request_response_hashes_valid": true,
+    "prediction_task_scope": "first eight public training fixtures; no calibration/evaluation tasks",
+    "quality_scoring_performed": false,
+    "receipt_file_sha256": "d1f59b95447e3b25a493d2812c3dded882d2225d41e5985aee025e0a9ea87839",
+    "receipt_hash": "9dab39fde25ad85350936ec05975138d3b3fb4424563f280d50c8e7bf01d8260",
+    "receipt_not_recorded_reason": "run.phase persists failed supervision, then raises before observe_phase and ledger.child_receipt",
+    "receipt_recorded_in_ledger": false,
+    "requests": 8,
+    "source_weight_sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+    "standalone_child_outcome": "success",
+    "stop_reason": "rss-observation-unavailable",
+    "supervisor_outcome": "failed"
+  },
+  "artifact_bytes_unchanged": true,
+  "artifact_inventory_after": {
+    "collection.json": {
+      "sha256": "995fbaa54864d352c851831dabab8623b7cadd8c6cbc91ab054c7e908dfa8338",
+      "size": 32507
+    },
+    "dependencies-exit.json": {
+      "sha256": "0386332692f06977d5c4750e05bad4a95559bb6b5d91fde12020dc6aef35f583",
+      "size": 405
+    },
+    "dependencies.log": {
+      "sha256": "330bb13b296caec4e020bf9dcd796d6b8e9e23b06a38cd48e5ff22a376a99378",
+      "size": 8132
+    },
+    "environment.json": {
+      "sha256": "d2f0e26b24cdb338cb4b3c8b2f12db207a3f3bbdbc7327ec8b76eee2ea817a3d",
+      "size": 1825
+    },
+    "execution-terminal.json": {
+      "sha256": "4d2bbb6b3074aad703aa2f9b3b9db9f16a26e3a9b6285480d7cc0264c362c13c",
+      "size": 368
+    },
+    "installed-metadata-exit.json": {
+      "sha256": "a3b3e7750002fb6320ef2032f3bb4091dc154236d0908848961ea34c067edcd2",
+      "size": 256
+    },
+    "installed-metadata.log": {
+      "sha256": "501104f568982a5e02932361cd55162e3f27d1528b34907d489b16df23097b7a",
+      "size": 695
+    },
+    "launch-intent.json": {
+      "sha256": "6fc2d9ff0b9220ec86ffc95f0815eee1772a8bd00aa023c1a70f665c51bdea39",
+      "size": 1244
+    },
+    "ledger.sqlite3": {
+      "sha256": "c1d19a734b401faf69778f077b9ae2937da89a6c742e41625a087f30b8e48c46",
+      "size": 36864
+    },
+    "original-pilot-exit.json": {
+      "sha256": "e67b74e376a13628afa41c3ae41649ad8ff2baeb56ced758dcc91c1a6da95668",
+      "size": 852
+    },
+    "original-pilot.log": {
+      "sha256": "102139bc230c2e2882c607f7504178aba2979bda3d51d48bd6a24889c9167173",
+      "size": 5311
+    },
+    "run/abort.json": {
+      "sha256": "b81a1eb2e99d6fa1816865e752b0e6f3222349ff23cca448b9047951e43caa00",
+      "size": 4485
+    },
+    "run/experiment-freeze.json": {
+      "sha256": "938232a8143d49dc7d789f5b36dd5a5ee58c2e0eb9b557c8c8558eeddd0d4a71",
+      "size": 782
+    },
+    "run/experiment-plan.json": {
+      "sha256": "ed52d6b44ea50354b16c317715a36ddc2311c11b6b5351108e4ac2b842f29519",
+      "size": 11443
+    },
+    "run/loader-1thread-plan.json": {
+      "sha256": "fe5e8a3c9852187228251d307de7ed2f8bc1e9aa8018c10092264c944ade98cb",
+      "size": 11443
+    },
+    "run/loader-1thread/actual-receipt.json": {
+      "sha256": "d1f59b95447e3b25a493d2812c3dded882d2225d41e5985aee025e0a9ea87839",
+      "size": 23207
+    },
+    "run/loader-1thread/predictions.json": {
+      "sha256": "85d1a0f769ccf07c3fe01c4942681a1d8296c36f431f459f21d9626045cf804b",
+      "size": 12298
+    },
+    "run/loader-1thread/process.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    "run/loader-1thread/supervisor.json": {
+      "sha256": "051fbc4eb586def3a23674aa29597e77969753c2f9dff3503cee9713ff12c2c0",
+      "size": 4059
+    },
+    "run/loader-1thread/target-contract.json": {
+      "sha256": "014b50de8a61a5b452e33244e01cedbb044321124b099fd2da3bf461651cb997",
+      "size": 56809
+    },
+    "run/phase-outcomes.json": {
+      "sha256": "046a96bb431db86e08996ebdaf1f24cd8c681f117cf82bfa2b9c00c7b2d5a46b",
+      "size": 4085
+    },
+    "run/trial-checkpoint.json": {
+      "sha256": "c6da2cb85d1662183ac4aabc1bbb098a1b55251648f398fd64a961f2cc0bbb35",
+      "size": 524
+    },
+    "stages.jsonl": {
+      "sha256": "9ed6c0abe4a3ea7daf46256125d3aba3e72fa7c9eca7994a02b05a1a48254ee4",
+      "size": 2513
+    },
+    "validation.json": {
+      "sha256": "8d34274bcaa96970218ea5dfbadaf7c7d440015d099907be2afe987e147a7c48",
+      "size": 1265
+    },
+    "venv-exit.json": {
+      "sha256": "2404069a94ef5e2dcb6c3c7c07a1e80136ee4d071c277677922f67e3b83d6372",
+      "size": 160
+    },
+    "venv.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    }
+  },
+  "artifact_inventory_before": {
+    "collection.json": {
+      "sha256": "995fbaa54864d352c851831dabab8623b7cadd8c6cbc91ab054c7e908dfa8338",
+      "size": 32507
+    },
+    "dependencies-exit.json": {
+      "sha256": "0386332692f06977d5c4750e05bad4a95559bb6b5d91fde12020dc6aef35f583",
+      "size": 405
+    },
+    "dependencies.log": {
+      "sha256": "330bb13b296caec4e020bf9dcd796d6b8e9e23b06a38cd48e5ff22a376a99378",
+      "size": 8132
+    },
+    "environment.json": {
+      "sha256": "d2f0e26b24cdb338cb4b3c8b2f12db207a3f3bbdbc7327ec8b76eee2ea817a3d",
+      "size": 1825
+    },
+    "execution-terminal.json": {
+      "sha256": "4d2bbb6b3074aad703aa2f9b3b9db9f16a26e3a9b6285480d7cc0264c362c13c",
+      "size": 368
+    },
+    "installed-metadata-exit.json": {
+      "sha256": "a3b3e7750002fb6320ef2032f3bb4091dc154236d0908848961ea34c067edcd2",
+      "size": 256
+    },
+    "installed-metadata.log": {
+      "sha256": "501104f568982a5e02932361cd55162e3f27d1528b34907d489b16df23097b7a",
+      "size": 695
+    },
+    "launch-intent.json": {
+      "sha256": "6fc2d9ff0b9220ec86ffc95f0815eee1772a8bd00aa023c1a70f665c51bdea39",
+      "size": 1244
+    },
+    "ledger.sqlite3": {
+      "sha256": "c1d19a734b401faf69778f077b9ae2937da89a6c742e41625a087f30b8e48c46",
+      "size": 36864
+    },
+    "original-pilot-exit.json": {
+      "sha256": "e67b74e376a13628afa41c3ae41649ad8ff2baeb56ced758dcc91c1a6da95668",
+      "size": 852
+    },
+    "original-pilot.log": {
+      "sha256": "102139bc230c2e2882c607f7504178aba2979bda3d51d48bd6a24889c9167173",
+      "size": 5311
+    },
+    "run/abort.json": {
+      "sha256": "b81a1eb2e99d6fa1816865e752b0e6f3222349ff23cca448b9047951e43caa00",
+      "size": 4485
+    },
+    "run/experiment-freeze.json": {
+      "sha256": "938232a8143d49dc7d789f5b36dd5a5ee58c2e0eb9b557c8c8558eeddd0d4a71",
+      "size": 782
+    },
+    "run/experiment-plan.json": {
+      "sha256": "ed52d6b44ea50354b16c317715a36ddc2311c11b6b5351108e4ac2b842f29519",
+      "size": 11443
+    },
+    "run/loader-1thread-plan.json": {
+      "sha256": "fe5e8a3c9852187228251d307de7ed2f8bc1e9aa8018c10092264c944ade98cb",
+      "size": 11443
+    },
+    "run/loader-1thread/actual-receipt.json": {
+      "sha256": "d1f59b95447e3b25a493d2812c3dded882d2225d41e5985aee025e0a9ea87839",
+      "size": 23207
+    },
+    "run/loader-1thread/predictions.json": {
+      "sha256": "85d1a0f769ccf07c3fe01c4942681a1d8296c36f431f459f21d9626045cf804b",
+      "size": 12298
+    },
+    "run/loader-1thread/process.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    "run/loader-1thread/supervisor.json": {
+      "sha256": "051fbc4eb586def3a23674aa29597e77969753c2f9dff3503cee9713ff12c2c0",
+      "size": 4059
+    },
+    "run/loader-1thread/target-contract.json": {
+      "sha256": "014b50de8a61a5b452e33244e01cedbb044321124b099fd2da3bf461651cb997",
+      "size": 56809
+    },
+    "run/phase-outcomes.json": {
+      "sha256": "046a96bb431db86e08996ebdaf1f24cd8c681f117cf82bfa2b9c00c7b2d5a46b",
+      "size": 4085
+    },
+    "run/trial-checkpoint.json": {
+      "sha256": "c6da2cb85d1662183ac4aabc1bbb098a1b55251648f398fd64a961f2cc0bbb35",
+      "size": 524
+    },
+    "stages.jsonl": {
+      "sha256": "9ed6c0abe4a3ea7daf46256125d3aba3e72fa7c9eca7994a02b05a1a48254ee4",
+      "size": 2513
+    },
+    "validation.json": {
+      "sha256": "8d34274bcaa96970218ea5dfbadaf7c7d440015d099907be2afe987e147a7c48",
+      "size": 1265
+    },
+    "venv-exit.json": {
+      "sha256": "2404069a94ef5e2dcb6c3c7c07a1e80136ee4d071c277677922f67e3b83d6372",
+      "size": 160
+    },
+    "venv.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    }
+  },
+  "artifact_root": "/dev/shm/trnm-model-owner-f4976366a32a-observations/hosted-run-41951536925/artifact",
+  "audit_outcome": "CONSISTENT_FAILED_ATTEMPT_EVIDENCE",
+  "checks": [
+    {
+      "detail": null,
+      "name": "retained_registration_bytes",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "registration_pins",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "plan_and_policy_hashes",
+      "passed": true
+    },
+    {
+      "detail": {
+        "count": 609,
+        "mismatches": []
+      },
+      "name": "all_frozen_source_hashes_match",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_bytes",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_entry_inventory",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:collection.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:collection.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:dependencies-exit.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:dependencies-exit.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:dependencies.log",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:dependencies.log",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:environment.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:environment.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:execution-terminal.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:execution-terminal.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:installed-metadata.log",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:installed-metadata.log",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:installed-metadata-exit.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:installed-metadata-exit.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:launch-intent.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:launch-intent.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:ledger.sqlite3",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:ledger.sqlite3",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:original-pilot-exit.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:original-pilot-exit.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:original-pilot.log",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:original-pilot.log",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:run/abort.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:run/abort.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:run/experiment-freeze.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:run/experiment-freeze.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:run/experiment-plan.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:run/experiment-plan.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:run/loader-1thread/actual-receipt.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:run/loader-1thread/actual-receipt.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:run/loader-1thread/predictions.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:run/loader-1thread/predictions.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:run/loader-1thread/process.log",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:run/loader-1thread/process.log",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:run/loader-1thread/supervisor.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:run/loader-1thread/supervisor.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:run/loader-1thread/target-contract.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:run/loader-1thread/target-contract.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:run/loader-1thread-plan.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:run/loader-1thread-plan.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:run/phase-outcomes.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:run/phase-outcomes.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:run/trial-checkpoint.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:run/trial-checkpoint.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:stages.jsonl",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:stages.jsonl",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:validation.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:validation.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:venv-exit.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:venv-exit.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_safe_path:venv.log",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_equals_extracted:venv.log",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "zip_uncompressed_size",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "exact_extracted_inventory",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:validation.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:launch-intent.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:environment.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:stages.jsonl",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:execution-terminal.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:venv.log",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:venv-exit.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:dependencies.log",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:dependencies-exit.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:installed-metadata.log",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:installed-metadata-exit.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:original-pilot.log",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:original-pilot-exit.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:run/experiment-plan.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:run/experiment-freeze.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:run/trial-checkpoint.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:run/phase-outcomes.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:run/abort.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:run/loader-1thread-plan.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:run/loader-1thread/actual-receipt.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:run/loader-1thread/supervisor.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:run/loader-1thread/target-contract.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:run/loader-1thread/predictions.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_file_hash:run/loader-1thread/process.log",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "retained_files_complete",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "no_collector_omissions",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "collector_missing_paths_absent",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "admission_pins:collection.admission",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "admission_pins:validation.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "admission_pins:launch-intent.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "collection_outcome",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "wrapper_known_failure",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "registered_plan_exact",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "one_thread_plan_exact",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "strict_original_plan",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "ledger_file_pin",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "spent-ledger_sqlite_header",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "spent-ledger_query_only",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "spent-ledger_quick_check",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "spent-ledger_detached_bytes_unchanged",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "spent-ledger_no_sidecars",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "collector_readback_exact",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "original_authority_bytes",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "registered-empty-ledger_sqlite_header",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "registered-empty-ledger_query_only",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "registered-empty-ledger_quick_check",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "registered-empty-ledger_detached_bytes_unchanged",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "registered-empty-ledger_no_sidecars",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "original_genesis",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "actual_journal_events",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "aborted_terminal",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "abort_equals_journal_terminal",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "abort_cause",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "checkpoint_exact",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "freeze_matches_committed_reserve",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "phase_record_exact",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "pilot_log_phase_exact",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "strict_resource_failure_preserved",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "missing_rss_not_reclassified",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "standalone_actual_receipt_identity",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "actual_model_material_binding",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "child_installed_versions_match",
+      "passed": true
+    },
+    {
+      "detail": {
+        "named_pins": 30,
+        "selected_torch_wheel": [
+          "https://download-r2.pytorch.org/whl/cpu/torch-2.9.1%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl"
+        ],
+        "torch_version": "2.9.1+cpu"
+      },
+      "name": "all_locked_dependency_versions_match",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "seven_material_download_verifications",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "contract_raw_canonical",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "source_and_derived_tensor_inventory",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "loader_prediction_file_hash",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "exact_training_fixture_request_set",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "loader_prediction_context:0",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "loader_prediction_context:1",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "loader_prediction_context:2",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "loader_prediction_context:3",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "loader_prediction_context:4",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "loader_prediction_context:5",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "loader_prediction_context:6",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "loader_prediction_context:7",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_exact_stage_inventory",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_stage_fields:material-verification",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:material-verification:cpu_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:material-verification:wall_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:material-verification:memory_peak_bytes",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:material-verification:bytes_read",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:material-verification:bytes_written",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:material-verification:gpu_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_cpu_gpu_scope:material-verification",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_stage_fields:declared-family-check",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:declared-family-check:cpu_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:declared-family-check:wall_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:declared-family-check:memory_peak_bytes",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:declared-family-check:bytes_read",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:declared-family-check:bytes_written",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:declared-family-check:gpu_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_cpu_gpu_scope:declared-family-check",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_stage_fields:runtime-import",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:runtime-import:cpu_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:runtime-import:wall_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:runtime-import:memory_peak_bytes",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:runtime-import:bytes_read",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:runtime-import:bytes_written",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:runtime-import:gpu_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_cpu_gpu_scope:runtime-import",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_stage_fields:model-load",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:model-load:cpu_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:model-load:wall_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:model-load:memory_peak_bytes",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:model-load:bytes_read",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:model-load:bytes_written",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:model-load:gpu_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_cpu_gpu_scope:model-load",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_stage_fields:derived-material-check",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:derived-material-check:cpu_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:derived-material-check:wall_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:derived-material-check:memory_peak_bytes",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:derived-material-check:bytes_read",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:derived-material-check:bytes_written",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:derived-material-check:gpu_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_cpu_gpu_scope:derived-material-check",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_stage_fields:real-forward-greedy-decode",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:real-forward-greedy-decode:cpu_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:real-forward-greedy-decode:wall_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:real-forward-greedy-decode:memory_peak_bytes",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:real-forward-greedy-decode:bytes_read",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:real-forward-greedy-decode:bytes_written",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_integer:real-forward-greedy-decode:gpu_ns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_cpu_gpu_scope:real-forward-greedy-decode",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "cost_numeric_containment",
+      "passed": true
+    },
+    {
+      "detail": "RUNTIME_COST_SUPERVISOR_INCOMPLETE",
+      "name": "unmodified_success_validator_rejects_actual_records",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "all_eleven_later_phase_directories_absent",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "no_roster_or_assessment",
+      "passed": true
+    }
+  ],
+  "earlier_audit_harness_error": {
+    "reason": "Initial audit expected 31 name==version entries; frozen lock uses 30 plus the architecture-selected direct Torch wheel. No actual dependency mismatch was found; this review parser was corrected.",
+    "report": "independent-artifact-review.json",
+    "report_sha256": "a2703367709f65f94e109654505d958385cf866717dd955d470de82fe57c6589",
+    "source": "independent_artifact_review.first_run.py",
+    "source_sha256": "8f4e4a9e2401ec377282f9ec8405157ae3b5500d98299b5508bdd2f34b47a42e",
+    "trial_reexecuted": false
+  },
+  "forbidden_model_modules_loaded": [],
+  "frozen_source_check": {
+    "count": 609,
+    "mismatches": []
+  },
+  "full_release_or_quality_acceptance": false,
+  "intent_commit": "6bdaf9598d72c118798eb51a03db2e1c0e7c8507",
+  "ledger": {
+    "after_sha256": "c1d19a734b401faf69778f077b9ae2937da89a6c742e41625a087f30b8e48c46",
+    "before_sha256": "c1d19a734b401faf69778f077b9ae2937da89a6c742e41625a087f30b8e48c46",
+    "bytes": 36864,
+    "checkpoint": "7fb9fc657cfd9b84d5a1a06f5c93329daba2faa77ab067561427fe45df9670d8",
+    "collector_readback_exact": true,
+    "event_kinds": [
+      "reserve-v2",
+      "phase",
+      "terminal"
+    ],
+    "event_roots": [
+      "89eb5e8b82f1c4768e5d3c638e9c41ecb037f58b43f36bcf186e2082a8fbec01",
+      "0193790959e19e6cb8294bf935ed16db69e9e4bd73099b68cdf4ae1b3c373b76",
+      "7fb9fc657cfd9b84d5a1a06f5c93329daba2faa77ab067561427fe45df9670d8"
+    ],
+    "events": 3,
+    "maximum": 1,
+    "original_authority_sha256": "8470b5b30aec002780fad5db4252b05355c2fba72a1292a275788ea840c9fffe",
+    "read_only_immutable_replay": true,
+    "receipt_count": 0,
+    "roster": null,
+    "sha256": "c1d19a734b401faf69778f077b9ae2937da89a6c742e41625a087f30b8e48c46",
+    "spent": 1,
+    "state": "aborted"
+  },
+  "model_execution_performed": false,
+  "new_trial_or_registration_performed": false,
+  "not_started_phases": [
+    "loader-reference",
+    "train-candidate",
+    "train-current-backbone",
+    "train-fresh-budget-matched-lora",
+    "train-budget-matched-full-tune",
+    "train-randomized-rank-matched-lora",
+    "evaluate-candidate",
+    "evaluate-current-backbone",
+    "evaluate-fresh-budget-matched-lora",
+    "evaluate-budget-matched-full-tune",
+    "evaluate-randomized-rank-matched-lora"
+  ],
+  "original_artifact_writes": false,
+  "retained_file_verification": [
+    {
+      "actual": {
+        "sha256": "8d34274bcaa96970218ea5dfbadaf7c7d440015d099907be2afe987e147a7c48",
+        "size": 1265
+      },
+      "declared": {
+        "path": "validation.json",
+        "sha256": "8d34274bcaa96970218ea5dfbadaf7c7d440015d099907be2afe987e147a7c48",
+        "size": 1265
+      },
+      "matched": true,
+      "path": "validation.json"
+    },
+    {
+      "actual": {
+        "sha256": "6fc2d9ff0b9220ec86ffc95f0815eee1772a8bd00aa023c1a70f665c51bdea39",
+        "size": 1244
+      },
+      "declared": {
+        "path": "launch-intent.json",
+        "sha256": "6fc2d9ff0b9220ec86ffc95f0815eee1772a8bd00aa023c1a70f665c51bdea39",
+        "size": 1244
+      },
+      "matched": true,
+      "path": "launch-intent.json"
+    },
+    {
+      "actual": {
+        "sha256": "d2f0e26b24cdb338cb4b3c8b2f12db207a3f3bbdbc7327ec8b76eee2ea817a3d",
+        "size": 1825
+      },
+      "declared": {
+        "path": "environment.json",
+        "sha256": "d2f0e26b24cdb338cb4b3c8b2f12db207a3f3bbdbc7327ec8b76eee2ea817a3d",
+        "size": 1825
+      },
+      "matched": true,
+      "path": "environment.json"
+    },
+    {
+      "actual": {
+        "sha256": "9ed6c0abe4a3ea7daf46256125d3aba3e72fa7c9eca7994a02b05a1a48254ee4",
+        "size": 2513
+      },
+      "declared": {
+        "path": "stages.jsonl",
+        "sha256": "9ed6c0abe4a3ea7daf46256125d3aba3e72fa7c9eca7994a02b05a1a48254ee4",
+        "size": 2513
+      },
+      "matched": true,
+      "path": "stages.jsonl"
+    },
+    {
+      "actual": {
+        "sha256": "4d2bbb6b3074aad703aa2f9b3b9db9f16a26e3a9b6285480d7cc0264c362c13c",
+        "size": 368
+      },
+      "declared": {
+        "path": "execution-terminal.json",
+        "sha256": "4d2bbb6b3074aad703aa2f9b3b9db9f16a26e3a9b6285480d7cc0264c362c13c",
+        "size": 368
+      },
+      "matched": true,
+      "path": "execution-terminal.json"
+    },
+    {
+      "actual": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "declared": {
+        "path": "venv.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "matched": true,
+      "path": "venv.log"
+    },
+    {
+      "actual": {
+        "sha256": "2404069a94ef5e2dcb6c3c7c07a1e80136ee4d071c277677922f67e3b83d6372",
+        "size": 160
+      },
+      "declared": {
+        "path": "venv-exit.json",
+        "sha256": "2404069a94ef5e2dcb6c3c7c07a1e80136ee4d071c277677922f67e3b83d6372",
+        "size": 160
+      },
+      "matched": true,
+      "path": "venv-exit.json"
+    },
+    {
+      "actual": {
+        "sha256": "330bb13b296caec4e020bf9dcd796d6b8e9e23b06a38cd48e5ff22a376a99378",
+        "size": 8132
+      },
+      "declared": {
+        "path": "dependencies.log",
+        "sha256": "330bb13b296caec4e020bf9dcd796d6b8e9e23b06a38cd48e5ff22a376a99378",
+        "size": 8132
+      },
+      "matched": true,
+      "path": "dependencies.log"
+    },
+    {
+      "actual": {
+        "sha256": "0386332692f06977d5c4750e05bad4a95559bb6b5d91fde12020dc6aef35f583",
+        "size": 405
+      },
+      "declared": {
+        "path": "dependencies-exit.json",
+        "sha256": "0386332692f06977d5c4750e05bad4a95559bb6b5d91fde12020dc6aef35f583",
+        "size": 405
+      },
+      "matched": true,
+      "path": "dependencies-exit.json"
+    },
+    {
+      "actual": {
+        "sha256": "501104f568982a5e02932361cd55162e3f27d1528b34907d489b16df23097b7a",
+        "size": 695
+      },
+      "declared": {
+        "path": "installed-metadata.log",
+        "sha256": "501104f568982a5e02932361cd55162e3f27d1528b34907d489b16df23097b7a",
+        "size": 695
+      },
+      "matched": true,
+      "path": "installed-metadata.log"
+    },
+    {
+      "actual": {
+        "sha256": "a3b3e7750002fb6320ef2032f3bb4091dc154236d0908848961ea34c067edcd2",
+        "size": 256
+      },
+      "declared": {
+        "path": "installed-metadata-exit.json",
+        "sha256": "a3b3e7750002fb6320ef2032f3bb4091dc154236d0908848961ea34c067edcd2",
+        "size": 256
+      },
+      "matched": true,
+      "path": "installed-metadata-exit.json"
+    },
+    {
+      "actual": {
+        "sha256": "102139bc230c2e2882c607f7504178aba2979bda3d51d48bd6a24889c9167173",
+        "size": 5311
+      },
+      "declared": {
+        "path": "original-pilot.log",
+        "sha256": "102139bc230c2e2882c607f7504178aba2979bda3d51d48bd6a24889c9167173",
+        "size": 5311
+      },
+      "matched": true,
+      "path": "original-pilot.log"
+    },
+    {
+      "actual": {
+        "sha256": "e67b74e376a13628afa41c3ae41649ad8ff2baeb56ced758dcc91c1a6da95668",
+        "size": 852
+      },
+      "declared": {
+        "path": "original-pilot-exit.json",
+        "sha256": "e67b74e376a13628afa41c3ae41649ad8ff2baeb56ced758dcc91c1a6da95668",
+        "size": 852
+      },
+      "matched": true,
+      "path": "original-pilot-exit.json"
+    },
+    {
+      "actual": {
+        "sha256": "ed52d6b44ea50354b16c317715a36ddc2311c11b6b5351108e4ac2b842f29519",
+        "size": 11443
+      },
+      "declared": {
+        "path": "run/experiment-plan.json",
+        "sha256": "ed52d6b44ea50354b16c317715a36ddc2311c11b6b5351108e4ac2b842f29519",
+        "size": 11443
+      },
+      "matched": true,
+      "path": "run/experiment-plan.json"
+    },
+    {
+      "actual": {
+        "sha256": "938232a8143d49dc7d789f5b36dd5a5ee58c2e0eb9b557c8c8558eeddd0d4a71",
+        "size": 782
+      },
+      "declared": {
+        "path": "run/experiment-freeze.json",
+        "sha256": "938232a8143d49dc7d789f5b36dd5a5ee58c2e0eb9b557c8c8558eeddd0d4a71",
+        "size": 782
+      },
+      "matched": true,
+      "path": "run/experiment-freeze.json"
+    },
+    {
+      "actual": {
+        "sha256": "c6da2cb85d1662183ac4aabc1bbb098a1b55251648f398fd64a961f2cc0bbb35",
+        "size": 524
+      },
+      "declared": {
+        "path": "run/trial-checkpoint.json",
+        "sha256": "c6da2cb85d1662183ac4aabc1bbb098a1b55251648f398fd64a961f2cc0bbb35",
+        "size": 524
+      },
+      "matched": true,
+      "path": "run/trial-checkpoint.json"
+    },
+    {
+      "actual": {
+        "sha256": "046a96bb431db86e08996ebdaf1f24cd8c681f117cf82bfa2b9c00c7b2d5a46b",
+        "size": 4085
+      },
+      "declared": {
+        "path": "run/phase-outcomes.json",
+        "sha256": "046a96bb431db86e08996ebdaf1f24cd8c681f117cf82bfa2b9c00c7b2d5a46b",
+        "size": 4085
+      },
+      "matched": true,
+      "path": "run/phase-outcomes.json"
+    },
+    {
+      "actual": {
+        "sha256": "b81a1eb2e99d6fa1816865e752b0e6f3222349ff23cca448b9047951e43caa00",
+        "size": 4485
+      },
+      "declared": {
+        "path": "run/abort.json",
+        "sha256": "b81a1eb2e99d6fa1816865e752b0e6f3222349ff23cca448b9047951e43caa00",
+        "size": 4485
+      },
+      "matched": true,
+      "path": "run/abort.json"
+    },
+    {
+      "actual": {
+        "sha256": "fe5e8a3c9852187228251d307de7ed2f8bc1e9aa8018c10092264c944ade98cb",
+        "size": 11443
+      },
+      "declared": {
+        "path": "run/loader-1thread-plan.json",
+        "sha256": "fe5e8a3c9852187228251d307de7ed2f8bc1e9aa8018c10092264c944ade98cb",
+        "size": 11443
+      },
+      "matched": true,
+      "path": "run/loader-1thread-plan.json"
+    },
+    {
+      "actual": {
+        "sha256": "d1f59b95447e3b25a493d2812c3dded882d2225d41e5985aee025e0a9ea87839",
+        "size": 23207
+      },
+      "declared": {
+        "path": "run/loader-1thread/actual-receipt.json",
+        "sha256": "d1f59b95447e3b25a493d2812c3dded882d2225d41e5985aee025e0a9ea87839",
+        "size": 23207
+      },
+      "matched": true,
+      "path": "run/loader-1thread/actual-receipt.json"
+    },
+    {
+      "actual": {
+        "sha256": "051fbc4eb586def3a23674aa29597e77969753c2f9dff3503cee9713ff12c2c0",
+        "size": 4059
+      },
+      "declared": {
+        "path": "run/loader-1thread/supervisor.json",
+        "sha256": "051fbc4eb586def3a23674aa29597e77969753c2f9dff3503cee9713ff12c2c0",
+        "size": 4059
+      },
+      "matched": true,
+      "path": "run/loader-1thread/supervisor.json"
+    },
+    {
+      "actual": {
+        "sha256": "014b50de8a61a5b452e33244e01cedbb044321124b099fd2da3bf461651cb997",
+        "size": 56809
+      },
+      "declared": {
+        "path": "run/loader-1thread/target-contract.json",
+        "sha256": "014b50de8a61a5b452e33244e01cedbb044321124b099fd2da3bf461651cb997",
+        "size": 56809
+      },
+      "matched": true,
+      "path": "run/loader-1thread/target-contract.json"
+    },
+    {
+      "actual": {
+        "sha256": "85d1a0f769ccf07c3fe01c4942681a1d8296c36f431f459f21d9626045cf804b",
+        "size": 12298
+      },
+      "declared": {
+        "path": "run/loader-1thread/predictions.json",
+        "sha256": "85d1a0f769ccf07c3fe01c4942681a1d8296c36f431f459f21d9626045cf804b",
+        "size": 12298
+      },
+      "matched": true,
+      "path": "run/loader-1thread/predictions.json"
+    },
+    {
+      "actual": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "declared": {
+        "path": "run/loader-1thread/process.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "matched": true,
+      "path": "run/loader-1thread/process.log"
+    }
+  ],
+  "review_script_sha256": "22a8cac3d873f1afd9af88b82e4b6ab57d0f8d26d92622ca7303f42988a4d7c4",
+  "run_attempt": 1,
+  "run_id": 41951536925,
+  "schema": "independent-read-only-artifact-review-v1",
+  "scope_conclusion": {
+    "accepted_no_update": false,
+    "accepted_phases": 0,
+    "adoption": false,
+    "attempted_phases": 1,
+    "campaign_opportunity_consumed": true,
+    "candidate_artifact_created": false,
+    "full_release_evaluation": false,
+    "independent_management_or_future_task_custody_established": false,
+    "local_spent": 1,
+    "model_or_runtime_quality_gain": "NOT_EVALUATED",
+    "not_started_phases": 11,
+    "quality_evaluations_started": 0,
+    "registered_phases": 12,
+    "retry_authorized": false,
+    "reward": false,
+    "run_outcome": "aborted",
+    "train_roles_started": 0
+  },
+  "source_commit": "f388f46d9df150a3599b9d961b48918b3ff1fb48",
+  "zip": {
+    "entries": 26,
+    "sha256": "0890a0ff94f3ba2fc912b45805531c2058f4ca344f538133d863ab74f35ec924",
+    "size": 55433,
+    "uncompressed_bytes": 221532
+  },
+  "zip_bytes_unchanged": true
+}

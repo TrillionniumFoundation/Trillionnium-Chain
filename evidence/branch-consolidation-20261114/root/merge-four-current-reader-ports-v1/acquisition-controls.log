@@ -1,0 +1,11 @@
+test_exact_closure_returns_only_after_every_local_readback_and_provider_exit (__main__.CompleteAcquisitionTests.test_exact_closure_returns_only_after_every_local_readback_and_provider_exit) ... ok
+test_existing_cache_cannot_be_reported_as_cold_acquisition (__main__.CompleteAcquisitionTests.test_existing_cache_cannot_be_reported_as_cold_acquisition) ... ok
+test_materialization_cannot_spend_new_network_budget (__main__.CompleteAcquisitionTests.test_materialization_cannot_spend_new_network_budget) ... ok
+test_provider_failure_is_not_promoted_after_complete_readback (__main__.CompleteAcquisitionTests.test_provider_failure_is_not_promoted_after_complete_readback) ... ok
+test_ready_wait_cannot_renew_original_transfer_deadline (__main__.CompleteAcquisitionTests.test_ready_wait_cannot_renew_original_transfer_deadline) ... ok
+test_wrong_generation_or_asserted_use_authority_cannot_materialize_or_fallback (__main__.CompleteAcquisitionTests.test_wrong_generation_or_asserted_use_authority_cannot_materialize_or_fallback) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.017s
+
+OK

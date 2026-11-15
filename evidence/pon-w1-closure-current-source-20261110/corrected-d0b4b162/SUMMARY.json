@@ -1,0 +1,154 @@
+{
+  "schema": "TRNM-W1-CLOSURE-CURRENT-LOCAL-VALIDATION2",
+  "source_before": {
+    "head": "d0b4b16268fc6338ecd77906f12097fbae58435e",
+    "tree": "853c847c9602f6515aded0084d8e04e2c5afd5e8",
+    "status": ""
+  },
+  "source_after": {
+    "head": "d0b4b16268fc6338ecd77906f12097fbae58435e",
+    "tree": "853c847c9602f6515aded0084d8e04e2c5afd5e8",
+    "status": ""
+  },
+  "source_endpoints_equal": true,
+  "commands": [
+    {
+      "name": "ci-contract",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "seconds": 39.843
+    },
+    {
+      "name": "source-integrity",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit_code": 0,
+      "seconds": 3.064
+    },
+    {
+      "name": "pq-corpus",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "seconds": 78.727
+    },
+    {
+      "name": "repository",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "seconds": 18.052
+    },
+    {
+      "name": "observer-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_w1_lifetime_current_observation.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.378
+    },
+    {
+      "name": "workflow-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_w1_qrom_closure_current_controls.py"
+      ],
+      "exit_code": 0,
+      "seconds": 16.309
+    },
+    {
+      "name": "corpus-check",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.394
+    },
+    {
+      "name": "inventory-check",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.065
+    },
+    {
+      "name": "cargo-graph",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": null,
+      "seconds": 0.001
+    }
+  ],
+  "actual_local_workflow_steps": {
+    "observations": {
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "source_before": {
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "preflight": {
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "named_controls": {
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "historical_refusal": {
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "reproduce": {
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "source_after": {
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "checkout": {
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "completion": {
+      "outcome": "success",
+      "conclusion": "success"
+    }
+  },
+  "checkout_prerequisite_basis": "preexisting isolated local clone and clean committed source, independently checked by actual source_before/source_after blocks; not actions/checkout execution",
+  "hosted_actions_executed": false,
+  "historical_positive_workflow_executed_this_campaign": false,
+  "native_build_or_clippy_pass_claimed": false
+}

@@ -1,0 +1,3 @@
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 637298725, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 604442624, "outcome": "success", "stage": "sealed-base-capture", "wall_ns": 637378973}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 39113276, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 604442624, "outcome": "success", "stage": "sealed-parent-verification", "wall_ns": 39113149}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 1462316137, "error_type": "AssertionError", "gpu_ns": 0, "memory_peak_bytes": 604442624, "outcome": "failed", "stage": "runtime-import", "wall_ns": 1339442121}

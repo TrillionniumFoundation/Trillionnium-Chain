@@ -1,0 +1,178 @@
+{
+  "business_campaign_executed": false,
+  "cache_recovery": "All 154 locked registry archive SHA256 checks matched Cargo.lock in existing complete local cache; no dependencies or Cargo.lock changed; same original offline/all-targets/all-features/deny-warnings flags preserved",
+  "commands": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/workspace/scratch/de92d82e166f/chain_latency",
+      "elapsed_seconds": 0.073623962,
+      "label": "committed-preflight",
+      "returncode": 0,
+      "rust_bytes_unchanged": true,
+      "source_head_unchanged": true,
+      "stderr": {
+        "bytes": 0,
+        "path": "/workspace/scratch/de92d82e166f/latency-validation-rust/committed-preflight.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 178,
+        "path": "/workspace/scratch/de92d82e166f/latency-validation-rust/committed-preflight.stdout.log",
+        "sha256": "689c7b32588fa46500aeb275f362173d71e6bc69f7f8a68ed6a756a13e113c73"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/workspace/scratch/de92d82e166f/chain_latency/trillionnium",
+      "elapsed_seconds": 0.491430253,
+      "label": "committed-metadata-selected",
+      "returncode": 0,
+      "rust_bytes_unchanged": true,
+      "source_head_unchanged": true,
+      "stderr": {
+        "bytes": 104,
+        "path": "/workspace/scratch/de92d82e166f/latency-validation-rust/committed-metadata-selected.stderr.log",
+        "sha256": "e237bf68452f394ffe54e018832419d40907390b5a98d44e8939943ca20bf452"
+      },
+      "stdout": {
+        "bytes": 839603,
+        "path": "/workspace/scratch/de92d82e166f/latency-validation-rust/committed-metadata-selected.stdout.log",
+        "sha256": "b636e334f0a6ff455c8ca5ff0375abe08a686901aeaccb6d6dacad390264bdf2"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/workspace/scratch/de92d82e166f/chain_latency/trillionnium",
+      "elapsed_seconds": 0.441965235,
+      "label": "committed-metadata-all-features",
+      "returncode": 0,
+      "rust_bytes_unchanged": true,
+      "source_head_unchanged": true,
+      "stderr": {
+        "bytes": 0,
+        "path": "/workspace/scratch/de92d82e166f/latency-validation-rust/committed-metadata-all-features.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 850823,
+        "path": "/workspace/scratch/de92d82e166f/latency-validation-rust/committed-metadata-all-features.stdout.log",
+        "sha256": "8b1c39bcbb91665741b7b002e6a70e797111aec390fdeca91809bb5aabba51cd"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "cwd": "/workspace/scratch/de92d82e166f/chain_latency/trillionnium",
+      "elapsed_seconds": 16.903403397,
+      "label": "committed-fmt",
+      "returncode": 0,
+      "rust_bytes_unchanged": true,
+      "source_head_unchanged": true,
+      "stderr": {
+        "bytes": 0,
+        "path": "/workspace/scratch/de92d82e166f/latency-validation-rust/committed-fmt.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/workspace/scratch/de92d82e166f/latency-validation-rust/committed-fmt.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/de92d82e166f/chain_latency/trillionnium",
+      "elapsed_seconds": 69.132141238,
+      "label": "committed-clippy-complete-cache",
+      "returncode": 0,
+      "rust_bytes_unchanged": true,
+      "source_head_unchanged": true,
+      "stderr": {
+        "bytes": 6549,
+        "path": "/workspace/scratch/de92d82e166f/latency-validation-rust/committed-clippy-complete-cache.stderr.log",
+        "sha256": "d68c5854e2fcd83703936a8c18df774e8559d9ff166a5db8c40d4a34adabbcd4"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/workspace/scratch/de92d82e166f/latency-validation-rust/committed-clippy-complete-cache.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "complete_cache_used": "/workspace/scratch/525798dad3c2/cargo-home",
+  "manifest_hashes": {
+    "rust-toolchain.toml": {
+      "bytes": 86,
+      "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+    },
+    "trillionnium/Cargo.lock": {
+      "bytes": 40044,
+      "sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be"
+    },
+    "trillionnium/Cargo.toml": {
+      "bytes": 2204,
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    }
+  },
+  "new_work_proof_generated": false,
+  "proof_latency_qualification": false,
+  "retained_failed_attempts": [
+    {
+      "label": "precommit-clippy",
+      "log": "precommit-clippy.stderr.log",
+      "returncode": 1,
+      "scope": "rustup tool dispatch/recovery before project compilation"
+    },
+    {
+      "label": "committed-clippy",
+      "log": "committed-clippy.stderr.log",
+      "returncode": 101,
+      "scope": "offline required crate absent in first selected cargo cache before project compilation"
+    }
+  ],
+  "rust_source_file_count": 1198,
+  "rust_source_identity_sha256": "cca3b8ea815d21ddfe8ef2a02d0526a57c224f75ab1ed0415b667b7afbdb856b",
+  "rust_tests_executed": false,
+  "schema": "trnm-latency-rust-validation-v1",
+  "source_was_clean_before_and_after": true,
+  "target_directory": "/workspace/scratch/de92d82e166f/latency-cargo-target",
+  "tested_commit": "baa64498b8bb47198c99f8e9382cb36829f594f4",
+  "tested_tree": "d7929f82e8e563298adc0aebc673ccac0cd11b47",
+  "toolchain": "rustc/cargo 1.95.0; rustfmt 1.9.0-stable; clippy 0.1.95",
+  "workspace_all_features_graph_packages": 180,
+  "workspace_default_graph_packages": 175,
+  "workspace_member_count": 26
+}

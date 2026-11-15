@@ -1,0 +1,1218 @@
+diff --git a/trillionnium/crates/trnm-mvcc-fee/examples/borrowed_non_account_allocations.rs b/trillionnium/crates/trnm-mvcc-fee/examples/borrowed_non_account_allocations.rs
+new file mode 100644
+--- /dev/null
++++ b/trillionnium/crates/trnm-mvcc-fee/examples/borrowed_non_account_allocations.rs
+@@ -0,0 +1,187 @@
++//! Allocation-only companion. Wall acceptance uses a different executable with
++//! the standard allocator; this allocator's observation overhead is never timed.
++
++#[path = "support/borrowed_non_account_cost.rs"]
++mod support;
++
++use serde::Serialize;
++use serde_json::{json, Value};
++use std::alloc::{GlobalAlloc, Layout, System};
++use std::cell::Cell;
++use support::{emit, Cohort, COHORTS, ORDER};
++
++#[derive(Clone, Copy, Default, PartialEq, Eq, Serialize)]
++struct Allocations {
++    allocation_requests: usize,
++    reallocation_requests: usize,
++    deallocations: usize,
++    requested_bytes: usize,
++    overflow: bool,
++}
++
++thread_local! {
++    static ALLOCATIONS: Cell<Option<Allocations>> = const { Cell::new(None) };
++}
++
++fn add_saturating(value: &mut usize, increment: usize) -> bool {
++    match value.checked_add(increment) {
++        Some(next) => {
++            *value = next;
++            false
++        }
++        None => {
++            *value = usize::MAX;
++            true
++        }
++    }
++}
++
++fn count_allocation(bytes: usize, allocation: bool, reallocation: bool) {
++    let _ = ALLOCATIONS.try_with(|counter| {
++        if let Some(mut current) = counter.get() {
++            current.overflow |=
++                add_saturating(&mut current.allocation_requests, usize::from(allocation));
++            current.overflow |= add_saturating(
++                &mut current.reallocation_requests,
++                usize::from(reallocation),
++            );
++            current.overflow |= add_saturating(
++                &mut current.deallocations,
++                usize::from(!allocation && !reallocation),
++            );
++            current.overflow |= add_saturating(&mut current.requested_bytes, bytes);
++            counter.set(Some(current));
++        }
++    });
++}
++
++struct ObservedAllocator;
++
++// SAFETY: unchanged pointer/layout arguments are forwarded to System. The
++// const-initialized TLS Cell neither allocates nor accesses observed allocations.
++// Saturating integer arithmetic cannot panic; overflow invalidates the sample.
++unsafe impl GlobalAlloc for ObservedAllocator {
++    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
++        count_allocation(layout.size(), true, false);
++        unsafe { System.alloc(layout) }
++    }
++    unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
++        count_allocation(layout.size(), true, false);
++        unsafe { System.alloc_zeroed(layout) }
++    }
++    unsafe fn dealloc(&self, pointer: *mut u8, layout: Layout) {
++        count_allocation(0, false, false);
++        unsafe { System.dealloc(pointer, layout) }
++    }
++    unsafe fn realloc(&self, pointer: *mut u8, layout: Layout, size: usize) -> *mut u8 {
++        count_allocation(size, false, true);
++        unsafe { System.realloc(pointer, layout, size) }
++    }
++}
++
++#[global_allocator]
++static ALLOCATOR: ObservedAllocator = ObservedAllocator;
++
++fn cohort(cells: usize, accounts: usize, warm: bool) -> Result<Value, String> {
++    let cohort = Cohort::new(cells, accounts, warm)?;
++    let mut caches = cohort.caches()?;
++    let mut counts = [Allocations::default(); 4];
++    let mut last_observations = [None, None];
++    for (position, arm) in ORDER.into_iter().enumerate() {
++        let index = arm.index();
++        cohort.reset_if_cold(&mut caches[index]);
++        emit(
++            &json!({"record":"sample_started","mode":"allocations","cohort":cohort.id,
++            "position":position,"arm":arm.name()}),
++        )?;
++        ALLOCATIONS.with(|counter| counter.set(Some(Allocations::default())));
++        let actual = arm.calculate(std::hint::black_box(&cohort.state), &mut caches[index]);
++        let captured = ALLOCATIONS.with(Cell::take);
++        // Observation, checking and output allocate only after counters stop.
++        let check = cohort.check(&actual, &caches[index]);
++        let observation = caches[index].observation();
++        emit(
++            &json!({"record":"sample_completed","mode":"allocations","cohort":cohort.id,
++            "position":position,"arm":arm.name(),"counts":captured,
++            "measurement_available":captured.is_some(),"check":check,"arithmetic":support::arithmetic_json(observation)}),
++        )?;
++        check.require_valid()?;
++        let captured = captured.ok_or("allocation observation missing")?;
++        if captured.overflow {
++            return Err("allocation counter overflow; sample invalid".into());
++        }
++        counts[position] = captured;
++        last_observations[index] = Some(observation);
++    }
++    if last_observations[0] != last_observations[1] {
++        return Err("arithmetic observations differ between identical-input arms".into());
++    }
++    let deterministic = counts[0] == counts[3] && counts[1] == counts[2];
++    let original = counts[0].requested_bytes;
++    let borrowed = counts[1].requested_bytes;
++    let reduction_pass =
++        deterministic && original > 0 && (borrowed as u128) * 100 <= (original as u128) * 95;
++    let result = json!({"record":"cohort_completed","mode":"allocations","cohort":cohort.id,
++        "payload_cells":cells,"account_rows":accounts,"warm":warm,"completed_samples":ORDER.len(),
++        "deterministic_samples":deterministic,"original_requested_bytes":original,"borrowed_requested_bytes":borrowed,
++        "requested_bytes_reduction":(original as i128)-(borrowed as i128),
++        "requested_bytes_reduction_fraction":(original>0).then(||1.0-borrowed as f64/original as f64),
++        "allocation_five_percent_reduction_pass":reduction_pass,"overflow":false,
++        "counts_in_abba_order":counts,"requested_bytes_are_peak_or_rss":false});
++    emit(&result)?;
++    if !deterministic {
++        return Err("allocation samples not deterministic; see raw cohort".into());
++    }
++    Ok(result)
++}
++
++fn run() -> Result<(), String> {
++    support::require_argument("--run-allocation-observation")?;
++    support::start("allocations")?;
++    let mut results = Vec::with_capacity(COHORTS.len() * 2);
++    for (cells, accounts) in COHORTS {
++        for warm in [false, true] {
++            results.push(cohort(cells, accounts, warm)?);
++        }
++    }
++    emit(
++        &json!({"record":"campaign_completed","mode":"allocations","completed_cohorts":results.len(),
++        "completed_allocation_samples":COHORTS.len()*2*ORDER.len(),"overflow":false,
++        "allocation_five_percent_reduction_all_cohorts":results.iter().all(|r|r["allocation_five_percent_reduction_pass"]==true),
++        "wall_rule_evaluated":false,"cohort_results":results,
++        "combined_component_verdict":"requires matching-source standard-allocator wall campaign",
++        "service_cpu_gate_qualified":false,"host_qualified":false,"public_throughput_claim":false}),
++    )
++}
++
++fn main() {
++    if let Err(error) = run() {
++        let _ = emit(
++            &json!({"record":"campaign_failed","mode":"allocations","error":error,
++            "campaign_complete":false,"acceptance_pass":false}),
++        );
++        eprintln!("borrowed non-account allocation observation failed: {error}");
++        std::process::exit(1);
++    }
++}
++
++#[test]
++fn saturated_allocator_observations_flag_overflow_without_panicking() {
++    let near_limit = Allocations {
++        allocation_requests: usize::MAX,
++        reallocation_requests: usize::MAX,
++        deallocations: usize::MAX,
++        requested_bytes: usize::MAX,
++        overflow: false,
++    };
++    ALLOCATIONS.with(|counter| counter.set(Some(near_limit)));
++    count_allocation(1, true, false);
++    count_allocation(1, false, true);
++    count_allocation(0, false, false);
++    let captured = ALLOCATIONS.with(Cell::take).unwrap();
++    assert!(captured.overflow);
++    assert_eq!(captured.allocation_requests, usize::MAX);
++    assert_eq!(captured.reallocation_requests, usize::MAX);
++    assert_eq!(captured.deallocations, usize::MAX);
++    assert_eq!(captured.requested_bytes, usize::MAX);
++}
+diff --git a/trillionnium/crates/trnm-mvcc-fee/examples/borrowed_non_account_cost.rs b/trillionnium/crates/trnm-mvcc-fee/examples/borrowed_non_account_cost.rs
+new file mode 100644
+--- /dev/null
++++ b/trillionnium/crates/trnm-mvcc-fee/examples/borrowed_non_account_cost.rs
+@@ -0,0 +1,113 @@
++//! Standard-allocator wall observation of one non-account root component.
++//! Allocation observations run in the separate borrowed_non_account_allocations
++//! executable; neither this crate nor its shared support installs an allocator.
++#![forbid(unsafe_code)]
++
++#[path = "support/borrowed_non_account_cost.rs"]
++mod support;
++
++use serde_json::{json, Value};
++use std::time::Instant;
++use support::{emit, Arm, Cohort, COHORTS, ORDER, ROUNDS};
++
++fn median(mut values: Vec<f64>) -> f64 {
++    values.sort_by(f64::total_cmp);
++    (values[(values.len() - 1) / 2] + values[values.len() / 2]) / 2.0
++}
++
++fn p95(values: &[u128]) -> u128 {
++    let mut values = values.to_vec();
++    values.sort_unstable();
++    values[(values.len() * 95).div_ceil(100) - 1]
++}
++
++fn cohort(cells: usize, accounts: usize, warm: bool, campaign: Instant) -> Result<Value, String> {
++    let cohort = Cohort::new(cells, accounts, warm)?;
++    let mut caches = cohort.caches()?;
++    let mut timings: [Vec<u128>; 2] = std::array::from_fn(|_| Vec::with_capacity(2 * ROUNDS));
++    let mut ratios = Vec::with_capacity(ROUNDS);
++    let mut last_observations = [None, None];
++    for round in 0..ROUNDS {
++        let mut totals = [0u128; 2];
++        for (position, arm) in ORDER.into_iter().enumerate() {
++            let index = arm.index();
++            cohort.reset_if_cold(&mut caches[index]);
++            emit(
++                &json!({"record":"sample_started","mode":"wall","cohort":cohort.id,
++                "round":round,"position":position,"arm":arm.name()}),
++            )?;
++            // JSONL output and flushing are outside this measured interval.
++            // No custom GlobalAlloc or TLS observer is installed in this binary.
++            let started = Instant::now();
++            let actual = arm.calculate(std::hint::black_box(&cohort.state), &mut caches[index]);
++            let finished = Instant::now();
++            let elapsed_ns = finished.duration_since(started).as_nanos();
++            let check = cohort.check(&actual, &caches[index]);
++            let observation = caches[index].observation();
++            emit(
++                &json!({"record":"sample_completed","mode":"wall","cohort":cohort.id,
++                "round":round,"position":position,"arm":arm.name(),
++                "started_monotonic_ns":started.duration_since(campaign).as_nanos(),
++                "finished_monotonic_ns":finished.duration_since(campaign).as_nanos(),
++                "elapsed_ns":elapsed_ns,"check":check,"arithmetic":support::arithmetic_json(observation)}),
++            )?;
++            check.require_valid()?;
++            if elapsed_ns == 0 {
++                return Err("zero-resolution wall observation".into());
++            }
++            totals[index] += elapsed_ns;
++            timings[index].push(elapsed_ns);
++            last_observations[index] = Some(observation);
++        }
++        if last_observations[0] != last_observations[1] {
++            return Err("arithmetic observations differ between identical-input arms".into());
++        }
++        ratios.push(totals[Arm::Borrowed.index()] as f64 / totals[Arm::Owned.index()] as f64);
++    }
++    let paired_median = median(ratios.clone());
++    let original_p95 = p95(&timings[Arm::Owned.index()]);
++    let borrowed_p95 = p95(&timings[Arm::Borrowed.index()]);
++    let p95_ratio = borrowed_p95 as f64 / original_p95 as f64;
++    let result = json!({"record":"cohort_completed","mode":"wall","cohort":cohort.id,
++        "payload_cells":cells,"account_rows":accounts,"warm":warm,
++        "completed_samples_per_arm":2 * ROUNDS,"completed_abba_rounds":ROUNDS,
++        "paired_wall_ratios":ratios,"paired_median_wall_ratio":paired_median,
++        "original_wall_p95_ns":original_p95,"borrowed_wall_p95_ns":borrowed_p95,
++        "p95_wall_ratio":p95_ratio,
++        "wall_nonregression_pass":paired_median <= 1.0 && p95_ratio <= 1.10,
++        "wall_five_percent_improvement_pass":paired_median <= 0.95 && p95_ratio <= 1.10,
++        "p99":null});
++    emit(&result)?;
++    Ok(result)
++}
++
++fn run() -> Result<(), String> {
++    support::require_argument("--run-component-observation")?;
++    let campaign = Instant::now();
++    support::start("wall")?;
++    let mut results = Vec::with_capacity(COHORTS.len() * 2);
++    for (cells, accounts) in COHORTS {
++        for warm in [false, true] {
++            results.push(cohort(cells, accounts, warm, campaign)?);
++        }
++    }
++    emit(&json!({"record":"campaign_completed","mode":"wall",
++        "completed_cohorts":results.len(),"completed_wall_samples":COHORTS.len()*2*ROUNDS*ORDER.len(),
++        "allocator":"standard Rust allocator; no custom GlobalAlloc in this executable",
++        "wall_nonregression_all_cohorts":results.iter().all(|r|r["wall_nonregression_pass"]==true),
++        "wall_five_percent_improvement_all_cohorts":results.iter().all(|r|r["wall_five_percent_improvement_pass"]==true),
++        "allocation_rule_evaluated":false,"cohort_results":results,
++        "combined_component_verdict":"requires matching-source allocation campaign",
++        "service_cpu_gate_qualified":false,"host_qualified":false,"public_throughput_claim":false}))
++}
++
++fn main() {
++    if let Err(error) = run() {
++        let _ = emit(
++            &json!({"record":"campaign_failed","mode":"wall","error":error,
++            "campaign_complete":false,"acceptance_pass":false}),
++        );
++        eprintln!("borrowed non-account wall observation failed: {error}");
++        std::process::exit(1);
++    }
++}
+diff --git a/trillionnium/crates/trnm-mvcc-fee/examples/support/borrowed_non_account_cost.rs b/trillionnium/crates/trnm-mvcc-fee/examples/support/borrowed_non_account_cost.rs
+new file mode 100644
+--- /dev/null
++++ b/trillionnium/crates/trnm-mvcc-fee/examples/support/borrowed_non_account_cost.rs
+@@ -0,0 +1,240 @@
++//! Exact shared fixtures and algorithms for separate wall/allocation binaries.
++#![forbid(unsafe_code)]
++
++use serde::Serialize;
++use serde_json::{json, Value};
++use std::io::{self, Write};
++use trnm_mvcc_fee::pon_executor::{self, BorrowedNonAccountState, State};
++use trnm_protocol::pon_wire::{Hash, StateRootArithmetic, StateRootArithmeticObservation};
++
++pub const RETAINED_BYTES: usize = 2 * 1024 * 1024;
++pub const ROUNDS: usize = 16;
++pub const COHORTS: [(usize, usize); 4] = [(64, 64), (1024, 64), (2100, 64), (64, 2100)];
++pub const ORDER: [Arm; 4] = [Arm::Owned, Arm::Borrowed, Arm::Borrowed, Arm::Owned];
++
++#[derive(Clone, Copy)]
++pub enum Arm {
++    Owned,
++    Borrowed,
++}
++
++impl Arm {
++    pub fn index(self) -> usize {
++        match self {
++            Self::Owned => 0,
++            Self::Borrowed => 1,
++        }
++    }
++    pub fn name(self) -> &'static str {
++        match self {
++            Self::Owned => "original_owned_partition",
++            Self::Borrowed => "borrowed_partition",
++        }
++    }
++    pub fn calculate(
++        self,
++        state: &State,
++        arithmetic: &mut StateRootArithmetic,
++    ) -> pon_executor::Result<Hash> {
++        match self {
++            Self::Owned => pon_executor::root_with_arithmetic(&owned_partition(state), arithmetic),
++            Self::Borrowed => BorrowedNonAccountState::new(state).root_with_arithmetic(arithmetic),
++        }
++    }
++}
++
++fn owned_partition(state: &State) -> State {
++    state
++        .iter()
++        .filter(|(key, _)| !key.starts_with("account:"))
++        .map(|(key, value)| (key.clone(), value.clone()))
++        .collect()
++}
++
++pub fn emit(value: &Value) -> Result<(), String> {
++    let mut out = io::stdout().lock();
++    serde_json::to_writer(&mut out, value).map_err(|error| error.to_string())?;
++    out.write_all(b"\n").map_err(|error| error.to_string())?;
++    out.flush().map_err(|error| error.to_string())
++}
++
++pub fn arithmetic_json(observation: StateRootArithmeticObservation) -> Value {
++    let StateRootArithmeticObservation {
++        input_keys,
++        leaf_hashes_computed,
++        exact_string_hits,
++        string_encodings_reused,
++        reused_partitions,
++        computed_partitions,
++        retained_payload_bytes,
++        retained_string_entries,
++        retained_string_charge_bytes,
++        retention_refused,
++    } = observation;
++    json!({"input_keys":input_keys,"leaf_hashes_computed":leaf_hashes_computed,
++        "exact_string_hits":exact_string_hits,"string_encodings_reused":string_encodings_reused,
++        "reused_partitions":reused_partitions,"computed_partitions":computed_partitions,
++        "retained_payload_bytes":retained_payload_bytes,"retained_string_entries":retained_string_entries,
++        "retained_string_charge_bytes":retained_string_charge_bytes,"retention_refused":retention_refused})
++}
++
++pub fn require_argument(argument: &str) -> Result<(), String> {
++    if std::env::args().skip(1).collect::<Vec<_>>() == [argument] {
++        Ok(())
++    } else {
++        Err(format!("required sole argument: {argument}"))
++    }
++}
++
++pub fn start(mode: &str) -> Result<(), String> {
++    let sample_count = match mode {
++        "wall" => COHORTS.len() * 2 * ROUNDS * ORDER.len(),
++        "allocations" => COHORTS.len() * 2 * ORDER.len(),
++        _ => return Err("unregistered observation mode".into()),
++    };
++    let planned: Vec<_> = COHORTS.into_iter().flat_map(|(cells, accounts)| {
++        [false, true].into_iter().map(move |warm| json!({
++            "id":cohort_id(cells,accounts,warm),"payload_cells":cells,"account_rows":accounts,"warm":warm
++        }))
++    }).collect();
++    emit(
++        &json!({"record":"campaign_started","schema":"borrowed-non-account-component-cost-v2",
++        "mode":mode,"planned_cohorts":planned,"planned_samples":sample_count,
++        "component_scope":"non-account partition construction, complete grammar and root; excludes account root, liabilities, Host, I/O and service paths",
++        "comparison":"same input and arithmetic algorithm; original owned projection versus borrowed descriptors",
++        "input_rule":{"payload":"4080 ASCII x bytes per cell","payload_key":"fixture-large-parent:{index:04}",
++            "account_key":"account:{index:064x}","account_balance":1,"account_nonce":"index",
++            "meta_issued":"account_rows","model_current":"hex of 32 zero bytes"},
++        "retained_payload_limit_bytes":RETAINED_BYTES,"order":"ABBA","wall_rounds":ROUNDS,
++        "allocation_samples_per_cohort":ORDER.len(),"allocation_requested_bytes_minimum_reduction_fraction":0.05,
++        "allocation_samples_must_be_deterministic":true,"overflow_invalidates_sample":true,
++        "wall_nonregression_maximum_paired_median_ratio":1.0,"wall_maximum_p95_ratio":1.10,
++        "separate_wall_improvement_maximum_paired_median_ratio":0.95,
++        "all_eight_cohorts_required":true,"p99":null,
++        "raw_capture":"sample_started and sample_completed JSONL flushed outside measurement; missing completion is unfinished",
++        "binary_identity":"capturing runner must bind both binaries and exact shared source",
++        "service_cpu_gate_qualified":false,"host_qualified":false,"public_throughput_claim":false}),
++    )
++}
++
++fn cohort_id(cells: usize, accounts: usize, warm: bool) -> String {
++    format!(
++        "payload-{cells}-accounts-{accounts}-{}",
++        if warm { "warm" } else { "cold" }
++    )
++}
++
++pub struct Cohort {
++    pub id: String,
++    pub state: State,
++    expected: Hash,
++    warm: bool,
++}
++
++impl Cohort {
++    pub fn new(cells: usize, accounts: usize, warm: bool) -> Result<Self, String> {
++        let id = cohort_id(cells, accounts, warm);
++        emit(
++            &json!({"record":"cohort_started","cohort":id,"payload_cells":cells,
++            "account_rows":accounts,"warm":warm}),
++        )?;
++        let mut state: State = (0..cells)
++            .map(|index| {
++                (
++                    format!("fixture-large-parent:{index:04}"),
++                    json!("x".repeat(4080)),
++                )
++            })
++            .collect();
++        for index in 0..accounts {
++            state.insert(
++                format!("account:{index:064x}"),
++                json!({"balance":1,"nonce":index}),
++            );
++        }
++        state.insert("meta:issued".into(), json!(accounts));
++        state.insert("model:current".into(), json!(hex::encode([0; 32])));
++        let reference = owned_partition(&state);
++        let expected = pon_executor::root(&reference).map_err(str::to_owned)?;
++        let payload: usize = reference
++            .iter()
++            .map(|(key, value)| {
++                key.len()
++                    + serde_json::to_vec(value)
++                        .expect("fixed canonical fixture")
++                        .len()
++            })
++            .sum();
++        emit(
++            &json!({"record":"cohort_prepared","cohort":id,"actual_non_account_rows":reference.len(),
++            "canonical_non_account_payload_bytes":payload,"reference_root":hex::encode(expected),
++            "source_state_rows":state.len()}),
++        )?;
++        Ok(Self {
++            id,
++            state,
++            expected,
++            warm,
++        })
++    }
++
++    pub fn reset_if_cold(&self, cache: &mut StateRootArithmetic) {
++        if !self.warm {
++            *cache = StateRootArithmetic::new(RETAINED_BYTES);
++        }
++    }
++
++    pub fn caches(&self) -> Result<[StateRootArithmetic; 2], String> {
++        let mut caches = std::array::from_fn(|_| StateRootArithmetic::new(RETAINED_BYTES));
++        if self.warm {
++            for arm in [Arm::Owned, Arm::Borrowed] {
++                emit(&json!({"record":"warmup_started","cohort":self.id,"arm":arm.name()}))?;
++                let actual = arm.calculate(&self.state, &mut caches[arm.index()]);
++                let check = self.check(&actual, &caches[arm.index()]);
++                emit(
++                    &json!({"record":"warmup_completed","cohort":self.id,"arm":arm.name(),"check":check}),
++                )?;
++                check.require_valid()?;
++            }
++        }
++        Ok(caches)
++    }
++
++    pub fn check(
++        &self,
++        actual: &pon_executor::Result<Hash>,
++        cache: &StateRootArithmetic,
++    ) -> SampleCheck {
++        SampleCheck {
++            root_matches_independent_original: actual
++                .as_ref()
++                .is_ok_and(|root| *root == self.expected),
++            actual_root: actual.as_ref().ok().map(hex::encode),
++            error: actual.as_ref().err().copied(),
++            retained_payload_bytes: cache.retained_payload_bytes(),
++            retention_within_original_cap: cache.retained_payload_bytes() <= RETAINED_BYTES,
++        }
++    }
++}
++
++#[derive(Serialize)]
++pub struct SampleCheck {
++    root_matches_independent_original: bool,
++    actual_root: Option<String>,
++    error: Option<&'static str>,
++    retained_payload_bytes: usize,
++    retention_within_original_cap: bool,
++}
++
++impl SampleCheck {
++    pub fn require_valid(&self) -> Result<(), String> {
++        if self.root_matches_independent_original && self.retention_within_original_cap {
++            Ok(())
++        } else {
++            Err(
++                "incorrect/error root or retained payload exceeded original cap; see raw sample"
++                    .into(),
++            )
++        }
++    }
++}
+diff --git a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs
+--- a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs
++++ b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs
+@@ -329,6 +329,73 @@
+     })
+ }
+ 
++/// A borrowed complete non-account partition for pure root calculations. The
++/// immutable source supplies every row; this view accepts no claimed digest,
++/// precomputed leaf or partial update and grants no execution authority.
++pub struct BorrowedNonAccountState<'a> {
++    rows: Vec<(&'a String, &'a Value)>,
++}
++
++impl<'a> BorrowedNonAccountState<'a> {
++    pub fn new(state: &'a State) -> Self {
++        Self {
++            // Filter the immutable State once. Subsequent grammar, component
++            // and encoding passes visit only these borrowed descriptors; no
++            // account rows are rescanned and no key or JSON value is cloned.
++            rows: state
++                .iter()
++                .filter(|(key, _)| !key.starts_with("account:"))
++                .collect(),
++        }
++    }
++
++    pub fn len(&self) -> usize {
++        self.rows.len()
++    }
++
++    pub fn is_empty(&self) -> bool {
++        self.rows.is_empty()
++    }
++
++    pub fn iter(&self) -> impl Iterator<Item = (&'a String, &'a Value)> + Clone + '_ {
++        self.rows.iter().copied()
++    }
++
++    pub fn get(&self, key: &str) -> Option<&'a Value> {
++        self.rows
++            .binary_search_by(|(name, _)| name.as_str().cmp(key))
++            .ok()
++            .map(|index| self.rows[index].1)
++    }
++
++    pub fn root(&self) -> Result<Hash> {
++        // Keep the independent root's grammar -> count -> wire order over the
++        // exact complete partition, without cloning its keys or JSON values.
++        for (_, value) in self.iter() {
++            validate_canonical(value)?;
++        }
++        if self.len() > 65_536 {
++            return Err("LIMIT");
++        }
++        state_root_from_entries(self.iter().map(|(key, value)| {
++            serde_json::to_vec(value)
++                .map(|bytes| (key.as_bytes(), bytes))
++                .map_err(|_| "NONCANONICAL")
++        }))
++        .map_err(|error| match error {
++            StateRootInputError::Input(error) => error,
++            StateRootInputError::Wire(_) => "LIMIT",
++        })
++    }
++
++    pub fn root_with_arithmetic(
++        &self,
++        arithmetic: &mut trnm_protocol::pon_wire::StateRootArithmetic,
++    ) -> Result<Hash> {
++        arithmetic_root_from_rows(self.iter(), self.len(), arithmetic)
++    }
++}
++
+ /// Optional bounded tree arithmetic over the complete actual State. This is a
+ /// root calculation, not a checked execution-parent or admission capability.
+ /// No root claim, partial update or caller-produced leaf hash can enter it.
+@@ -337,16 +404,24 @@
+     state: &State,
+     arithmetic: &mut trnm_protocol::pon_wire::StateRootArithmetic,
+ ) -> Result<Hash> {
++    arithmetic_root_from_rows(state.iter(), state.len(), arithmetic)
++}
++
++fn arithmetic_root_from_rows<'a>(
++    rows: impl Iterator<Item = (&'a String, &'a Value)> + Clone,
++    count: usize,
++    arithmetic: &mut trnm_protocol::pon_wire::StateRootArithmetic,
++) -> Result<Hash> {
+     // The complete canonical pass must still precede every wire bound. In
+     // particular, a late invalid number wins over an early oversized key.
+-    for value in state.values() {
++    for (_, value) in rows.clone() {
+         validate_canonical(value)?;
+     }
+-    if state.len() > 65_536 {
++    if count > 65_536 {
+         return Err("LIMIT");
+     }
+     let mut input = arithmetic.input_builder();
+-    for (key, value) in state {
++    for (key, value) in rows {
+         // Only a full current String/key equality can skip encoding. The
+         // builder proves eligibility from its private original wire bytes;
+         // every miss keeps the existing encoder and its actual allocations.
+diff --git a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs
+--- a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs
++++ b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs
+@@ -1,6 +1,106 @@
+ use super::*;
+ use serde_json::json;
+ use trnm_protocol::pon_wire::StateRootArithmetic;
++
++fn owned_non_accounts(state: &State) -> State {
++    state
++        .iter()
++        .filter(|(key, _)| !key.starts_with("account:"))
++        .map(|(key, value)| (key.clone(), value.clone()))
++        .collect()
++}
++
++#[test]
++fn borrowed_non_account_partition_keeps_actual_rows_changes_and_original_roots() {
++    let mut state = State::from([
++        ("account:one".into(), json!({"balance":7,"nonce":2})),
++        ("accounting".into(), json!("included")),
++        ("meta:issued".into(), json!(7)),
++        ("plain".into(), json!("x".repeat(4080))),
++        ("escaped".into(), json!("\"\\\n\u{001f}")),
++        ("nested".into(), json!({"a":["plain",1,null]})),
++    ]);
++    let mut arithmetic = StateRootArithmetic::new(16 * 1024);
++    for step in 0..7 {
++        match step {
++            1 => state.get_mut("account:one").unwrap()["nonce"] = json!(3),
++            2 => {
++                state.insert("new".into(), json!("new"));
++            }
++            3 => {
++                state.insert("plain".into(), json!("y".repeat(4080)));
++            }
++            4 => {
++                state.remove("escaped");
++            }
++            5 => {
++                state.insert("account:zero".into(), json!({"balance":0,"nonce":99}));
++            }
++            6 => state.clear(),
++            _ => {}
++        }
++        let original = owned_non_accounts(&state);
++        let view = BorrowedNonAccountState::new(&state);
++        assert_eq!(view.len(), original.len());
++        assert_eq!(view.is_empty(), original.is_empty());
++        assert!(view.iter().eq(original.iter()));
++        assert_eq!(view.get("account:one"), None);
++        assert_eq!(view.get("not-present"), None);
++        for (key, value) in view.iter() {
++            let (source_key, source_value) = state.get_key_value(key).unwrap();
++            assert!(std::ptr::eq(key, source_key));
++            assert!(std::ptr::eq(value, source_value));
++            assert!(std::ptr::eq(view.get(key).unwrap(), source_value));
++        }
++        let expected = root(&original);
++        assert_eq!(view.root(), expected);
++        assert_eq!(view.root_with_arithmetic(&mut arithmetic), expected);
++        assert_eq!(view.root_with_arithmetic(&mut arithmetic), expected);
++        assert!(arithmetic.retained_payload_bytes() <= 16 * 1024);
++    }
++}
++
++#[test]
++fn borrowed_non_account_partition_keeps_full_grammar_before_count_and_wire_limits() {
++    let mut arithmetic = StateRootArithmetic::new(16 * 1024);
++    let warm = State::from([("warm".into(), json!("prior complete material"))]);
++    BorrowedNonAccountState::new(&warm)
++        .root_with_arithmetic(&mut arithmetic)
++        .unwrap();
++    let previous = arithmetic.observation();
++    let mut cases = vec![
++        State::from([("a".repeat(161), json!(0)), ("z".into(), json!(0.5))]),
++        State::from([
++            ("a".into(), json!("x".repeat(4096))),
++            ("z".into(), json!("é")),
++        ]),
++        State::from([("a".repeat(161), json!(0))]),
++        State::from([("a".into(), json!("x".repeat(4096)))]),
++    ];
++    let mut too_many: State = (0..65_537)
++        .map(|index| (format!("row:{index:05}"), json!(0)))
++        .collect();
++    cases.push(too_many.clone());
++    too_many.insert("zz-late-invalid".into(), json!(0.5));
++    cases.push(too_many);
++    for (index, state) in cases.iter_mut().enumerate() {
++        state.insert("account:excluded".into(), json!({"balance":0,"nonce":99}));
++        let original = owned_non_accounts(state);
++        let expected = root(&original);
++        assert_eq!(
++            expected,
++            Err(match index {
++                0 | 5 => "RANGE",
++                1 => "NONCANONICAL",
++                _ => "LIMIT",
++            })
++        );
++        let view = BorrowedNonAccountState::new(state);
++        assert_eq!(view.root(), expected);
++        assert_eq!(view.root_with_arithmetic(&mut arithmetic), expected);
++        assert_eq!(arithmetic.observation(), previous);
++    }
++}
+ 
+ fn plain_ascii_reference(bytes: &[u8]) -> bool {
+     bytes
+diff --git a/trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs b/trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs
+--- a/trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs
++++ b/trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs
+@@ -543,6 +543,33 @@
+         .ok_or(StateWitnessError::Aggregate)?;
+     Ok((escrow, rewards, issued))
+ }
++
++// Preserve components above for the independent owned-State reference. The
++// compact borrowed partition visits exactly those same ordered rows and uses
++// an exact key lookup only after all liability checks, matching error order.
++fn borrowed_components(
++    state: &pon_executor::BorrowedNonAccountState<'_>,
++) -> Result<(u64, u64, u64)> {
++    let mut escrow = 0u64;
++    let mut rewards = 0u64;
++    for (key, value) in state.iter() {
++        if key.starts_with("task:") || key.starts_with("quota:") || key.starts_with("release:") {
++            escrow = escrow
++                .checked_add(number(value, "remaining")?)
++                .ok_or(StateWitnessError::Aggregate)?;
++        } else if key.starts_with("reward:") {
++            rewards = rewards
++                .checked_add(number(value, "amount")?)
++                .ok_or(StateWitnessError::Aggregate)?;
++        }
++    }
++    let issued = state
++        .get("meta:issued")
++        .and_then(Value::as_u64)
++        .ok_or(StateWitnessError::Aggregate)?;
++    Ok((escrow, rewards, issued))
++}
++
+ fn commitment(
+     context: Context,
+     state_root: Hash,
+@@ -694,6 +721,54 @@
+         &non_accounts(state),
+         calculate_non_account_root,
+     )
++}
++
++/// The native arithmetic cache can borrow the complete non-account partition.
++/// Keep the independent complete-state reference above unchanged. Both paths
++/// retain account parsing, full root, account root/count/balance, liabilities,
++/// conservation and finally non-account root calculation in that exact order.
++pub(crate) fn commitment_from_complete_state_with_borrowed_roots(
++    settings: &Settings,
++    state: &State,
++    lifts: Option<&crate::account_archive_prototype::native_store::LiftCache>,
++    calculate_root: impl FnOnce() -> pon_executor::Result<Hash>,
++    calculate_non_account_root: impl FnOnce(
++        &pon_executor::BorrowedNonAccountState<'_>,
++    ) -> pon_executor::Result<Hash>,
++) -> Result<StateCommitment> {
++    let account_values = accounts(state)?;
++    let state_root = relation(calculate_root())?;
++    let account_root = match lifts {
++        Some(lifts) => {
++            crate::account_archive_prototype::account_root_with_lifts(&account_values, lifts)?
++        }
++        None => crate::account_archive_prototype::account_root(&account_values)?,
++    };
++    let account_count = account_values.len() as u64;
++    let account_balance = total(account_values.values().map(|value| value.balance))?;
++    let partition = pon_executor::BorrowedNonAccountState::new(state);
++    let (escrow_balance, reward_balance, issued) = borrowed_components(&partition)?;
++    if total([account_balance, escrow_balance, reward_balance].into_iter())? != issued {
++        return Err(StateWitnessError::Conservation.into());
++    }
++    let mut out = StateCommitment {
++        schema: COMMITMENT_SCHEMA.into(),
++        network: settings.network(),
++        parameters: settings.parameters(),
++        genesis: settings.genesis(),
++        state_root,
++        account_root,
++        account_count,
++        account_balance,
++        non_account_root: relation(calculate_non_account_root(&partition))?,
++        non_account_count: partition.len() as u64,
++        escrow_balance,
++        reward_balance,
++        issued,
++        id: [0; 32],
++    };
++    out.id = out.digest();
++    Ok(out)
+ }
+ 
+ /// Opaque operation-local source, never constructed from a digest claim alone.
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs
+--- a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs
+@@ -4,7 +4,7 @@
+ #[cfg(test)]
+ use super::complete;
+ use super::StateCommitment;
+-use crate::account_archive_execution::state_witness::commitment_from_complete_state_with_roots;
++use crate::account_archive_execution::state_witness::commitment_from_complete_state_with_borrowed_roots;
+ use crate::account_archive_prototype::native_store::LiftCache;
+ use crate::{Result, Settings};
+ use std::cell::RefCell;
+@@ -211,7 +211,7 @@
+             }
+         }
+         self.root_arithmetic.complete_computation();
+-        let value = commitment_from_complete_state_with_roots(
++        let value = commitment_from_complete_state_with_borrowed_roots(
+             settings,
+             state,
+             Some(&self.lifts),
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs
+--- a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs
+@@ -4,6 +4,112 @@
+ use serde_json::json;
+ use std::cell::Cell;
+ use trnm_protocol::pon_wire::hash;
++
++#[test]
++fn borrowed_complete_partition_preserves_original_commitments_and_error_order() {
++    use crate::account_archive_execution::state_witness::{
++        commitment_from_complete_state, commitment_from_complete_state_with_borrowed_roots,
++    };
++    let settings = Settings::development(Some(1)).unwrap();
++    let original = settings.initial.clone();
++    let mut cases = vec![original.clone(), State::new()];
++    for change in [
++        "nonce",
++        "zero",
++        "unknown",
++        "issued",
++        "issued-absent",
++        "issued-nonnumeric",
++        "reward",
++        "liabilities",
++        "escrow-overflow",
++        "grammar",
++        "account-first",
++    ] {
++        let mut state = original.clone();
++        match change {
++            "nonce" => {
++                state
++                    .values_mut()
++                    .find(|value| value.get("nonce").is_some())
++                    .unwrap()["nonce"] = json!(9)
++            }
++            "zero" => {
++                state.insert(
++                    format!("account:{}", "91".repeat(32)),
++                    json!({"balance":0,"nonce":99}),
++                );
++            }
++            "unknown" => {
++                state.insert(
++                    "future-obligation:opaque".into(),
++                    json!({"value":[1,"retained"]}),
++                );
++            }
++            "issued" => {
++                state.insert("meta:issued".into(), json!(u64::MAX));
++            }
++            "issued-absent" => {
++                state.remove("meta:issued");
++            }
++            "issued-nonnumeric" => {
++                state.insert("meta:issued".into(), json!("bad"));
++            }
++            "reward" => {
++                state.insert("reward:bad".into(), json!({"amount":"bad"}));
++            }
++            "liabilities" => {
++                state.insert("task:one".into(), json!({"remaining":1}));
++                state.insert("quota:two".into(), json!({"remaining":2}));
++                state.insert("release:three".into(), json!({"remaining":3}));
++                state.insert("reward:four".into(), json!({"amount":4}));
++                state.insert(
++                    "meta:issued".into(),
++                    json!(state["meta:issued"].as_u64().unwrap() + 10),
++                );
++            }
++            "escrow-overflow" => {
++                state.insert("task:one".into(), json!({"remaining":u64::MAX}));
++                state.insert("quota:two".into(), json!({"remaining":1}));
++            }
++            "grammar" => {
++                state.insert("a".repeat(161), json!(0));
++                state.insert("zz-invalid".into(), json!(0.5));
++            }
++            "account-first" => {
++                state.insert("account:malformed".into(), json!({"balance":0}));
++                state.insert("zz-invalid".into(), json!(0.5));
++            }
++            _ => unreachable!(),
++        }
++        cases.push(state);
++    }
++    for state in cases {
++        let expected = commitment_from_complete_state(&settings, &state);
++        let actual = commitment_from_complete_state_with_borrowed_roots(
++            &settings,
++            &state,
++            None,
++            || trnm_mvcc_fee::pon_executor::root(&state),
++            |partition| {
++                assert_eq!(
++                    partition.len(),
++                    state
++                        .keys()
++                        .filter(|key| !key.starts_with("account:"))
++                        .count()
++                );
++                for (key, value) in partition.iter() {
++                    let (source_key, source_value) = state.get_key_value(key).unwrap();
++                    assert!(std::ptr::eq(key, source_key));
++                    assert!(std::ptr::eq(value, source_value));
++                }
++                partition.root()
++            },
++        );
++        assert_eq!(format!("{actual:?}"), format!("{expected:?}"));
++    }
++}
+ 
+ fn large_settings() -> Settings {
+     let mut settings = Settings::development(Some(1)).unwrap();
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs
+--- a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs
+@@ -251,8 +251,12 @@
+     pub(super) fn calculate_non_accounts(
+         &self,
+         settings: &Settings,
+-        actual: &State,
++        actual: &pon_executor::BorrowedNonAccountState<'_>,
+     ) -> pon_executor::Result<Hash> {
++        // Preserve the original shared eligibility check before attempting to
++        // take material. A shared borrow permits eligibility but forces the
++        // counted cold calculation below; a mutable borrow cannot establish
++        // eligibility and keeps the original uncounted independent fallback.
+         let use_partitions = self.material.try_borrow().is_ok_and(|material| {
+             material.as_ref().is_some_and(|material| {
+                 material.context
+@@ -264,10 +268,33 @@
+                     && matches!(&material.source, MaterialSource::Partitions(_))
+             })
+         });
+-        if use_partitions {
+-            self.calculate(settings, actual)
+-        } else {
+-            pon_executor::root(actual)
++        if !use_partitions {
++            return actual.root();
++        }
++        self.count(|c| c.calculations = c.calculations.saturating_add(1));
++        let prior = match self.material.try_borrow_mut() {
++            Ok(mut material) => material.take(),
++            Err(_) => {
++                self.count(|c| c.cold_roots = c.cold_roots.saturating_add(1));
++                return actual.root();
++            }
++        };
++        match prior {
++            Some(Material {
++                source: MaterialSource::Partitions(arithmetic),
++                ..
++            }) => {
++                self.count(|c| {
++                    c.material_uses = c.material_uses.saturating_add(1);
++                });
++                self.calculate_partition_inputs(
++                    settings,
++                    arithmetic,
++                    |arithmetic| actual.root_with_arithmetic(arithmetic),
++                    || actual.root(),
++                )
++            }
++            _ => actual.root(),
+         }
+     }
+ 
+@@ -275,9 +302,24 @@
+         &self,
+         settings: &Settings,
+         actual: &State,
++        arithmetic: StateRootArithmetic,
++    ) -> pon_executor::Result<Hash> {
++        self.calculate_partition_inputs(
++            settings,
++            arithmetic,
++            |arithmetic| pon_executor::root_with_arithmetic(actual, arithmetic),
++            || pon_executor::root(actual),
++        )
++    }
++
++    fn calculate_partition_inputs(
++        &self,
++        settings: &Settings,
+         mut arithmetic: StateRootArithmetic,
++        calculate: impl FnOnce(&mut StateRootArithmetic) -> pon_executor::Result<Hash>,
++        original: impl FnOnce() -> pon_executor::Result<Hash>,
+     ) -> pon_executor::Result<Hash> {
+-        let result = pon_executor::root_with_arithmetic(actual, &mut arithmetic);
++        let result = calculate(&mut arithmetic);
+         if result.is_ok() {
+             let observation = arithmetic.observation();
+             self.count(|c| {
+@@ -325,7 +367,7 @@
+                 self.count(|c| {
+                     c.original_error_fallbacks = c.original_error_fallbacks.saturating_add(1)
+                 });
+-                pon_executor::root(actual)
++                original()
+             }
+         }
+     }
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs
+--- a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs
+@@ -250,6 +250,125 @@
+ }
+ 
+ #[test]
++fn borrowed_non_account_fallback_keeps_shared_and_mutable_borrow_accounting() {
++    let settings = settings();
++    let cache = RootArithmetic::default();
++    equal(&cache, &settings, &settings.initial);
++    let partition = pon_executor::BorrowedNonAccountState::new(&settings.initial);
++    let expected = partition.root();
++    let malformed = State::from([
++        ("a".repeat(161), json!(0)),
++        ("zz-invalid-number".into(), json!(-0.0)),
++    ]);
++    let invalid = pon_executor::BorrowedNonAccountState::new(&malformed);
++    assert_eq!(invalid.root(), Err("RANGE"));
++    let retained_before = cache.observation()["retained_material"].clone();
++
++    let shared = cache.material.borrow();
++    assert!(matches!(
++        &shared.as_ref().unwrap().source,
++        MaterialSource::Partitions(_)
++    ));
++    let before = cache.counters.get();
++    assert_eq!(
++        cache.calculate_non_accounts(&settings, &partition),
++        expected
++    );
++    assert_eq!(
++        cache.calculate_non_accounts(&settings, &invalid),
++        Err("RANGE")
++    );
++    let mut expected_counters = serde_json::to_value(before).unwrap();
++    expected_counters["calculations"] = json!(before.calculations + 2);
++    expected_counters["cold_roots"] = json!(before.cold_roots + 2);
++    assert_eq!(
++        serde_json::to_value(cache.counters.get()).unwrap(),
++        expected_counters
++    );
++    assert_eq!(cache.observation()["retained_material"], retained_before);
++    drop(shared);
++
++    let exclusive = cache.material.borrow_mut();
++    let before = serde_json::to_value(cache.counters.get()).unwrap();
++    assert_eq!(
++        cache.calculate_non_accounts(&settings, &partition),
++        expected
++    );
++    assert_eq!(
++        cache.calculate_non_accounts(&settings, &invalid),
++        Err("RANGE")
++    );
++    assert_eq!(serde_json::to_value(cache.counters.get()).unwrap(), before);
++    assert!(matches!(
++        &exclusive.as_ref().unwrap().source,
++        MaterialSource::Partitions(_)
++    ));
++    drop(exclusive);
++    assert_eq!(cache.observation()["retained_material"], retained_before);
++
++    let before = cache.counters.get();
++    assert_eq!(
++        cache.calculate_non_accounts(&settings, &partition),
++        expected
++    );
++    let after = cache.counters.get();
++    assert_eq!(after.calculations, before.calculations + 1);
++    assert_eq!(after.material_uses, before.material_uses + 1);
++    assert_eq!(after.cold_roots, before.cold_roots);
++}
++
++#[test]
++fn borrowed_non_account_fallback_keeps_absent_canonical_and_foreign_material() {
++    let settings = settings();
++    let cache = RootArithmetic::default();
++    let partition = pon_executor::BorrowedNonAccountState::new(&settings.initial);
++    let expected = partition.root();
++    let before = serde_json::to_value(cache.counters.get()).unwrap();
++    assert_eq!(
++        cache.calculate_non_accounts(&settings, &partition),
++        expected
++    );
++    assert_eq!(serde_json::to_value(cache.counters.get()).unwrap(), before);
++    assert!(cache.material.borrow().is_none());
++
++    cache.offer(&settings, Some(&snapshot(&settings.initial)));
++    let retained_before = cache.observation()["retained_material"].clone();
++    let before = serde_json::to_value(cache.counters.get()).unwrap();
++    assert_eq!(
++        cache.calculate_non_accounts(&settings, &partition),
++        expected
++    );
++    assert_eq!(serde_json::to_value(cache.counters.get()).unwrap(), before);
++    assert_eq!(cache.observation()["retained_material"], retained_before);
++    assert!(matches!(
++        &cache.material.borrow().as_ref().unwrap().source,
++        MaterialSource::Canonical(_)
++    ));
++
++    cache.offer(&settings, None);
++    equal(&cache, &settings, &settings.initial);
++    let retained_before = cache.observation()["retained_material"].clone();
++    let context = [
++        settings.network(),
++        settings.parameters(),
++        settings.genesis(),
++    ];
++    for component in 0..3 {
++        let mut foreign = settings.clone();
++        match component {
++            0 => foreign.app.network[0] ^= 1,
++            1 => foreign.app.parameters[0] ^= 1,
++            _ => foreign.genesis[0] ^= 1,
++        }
++        let before = serde_json::to_value(cache.counters.get()).unwrap();
++        assert_eq!(cache.calculate_non_accounts(&foreign, &partition), expected);
++        assert_eq!(serde_json::to_value(cache.counters.get()).unwrap(), before);
++        assert_eq!(cache.observation()["retained_material"], retained_before);
++        assert_eq!(cache.material.borrow().as_ref().unwrap().context, context);
++    }
++}
++
++#[test]
+ fn complete_commitment_keeps_account_error_order_with_root_material() {
+     let settings = settings();
+     let cache = super::super::ArithmeticCache::default();

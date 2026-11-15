@@ -1,0 +1,119 @@
+{
+  "schema": "heplcp04-hosted-validation.v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_id": 43029319486,
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43029319486",
+  "published_candidate": "6bf73a220ec147dba333da2404bd6c3ce7f4b1f8",
+  "local_tested_twin": "843934e3c377f7344a48b4b462a3672cf4b3f00d",
+  "equal_source_tree": "6c004b08b87daa4a225a8728363b21f3fe08ab4a",
+  "lanes": [
+    {
+      "lane": "head",
+      "job_id": 130551975254,
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-11T13:28:16Z",
+      "completed_at": "2026-11-11T13:29:16Z",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43029319486/job/130551975254",
+      "source_before": {
+        "base": null,
+        "candidate": "6bf73a220ec147dba333da2404bd6c3ce7f4b1f8",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "6bf73a220ec147dba333da2404bd6c3ce7f4b1f8",
+        "tested_tree": "6c004b08b87daa4a225a8728363b21f3fe08ab4a",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2615627576,
+        "tracked_entries": 28869,
+        "tracked_worktree_verified": true
+      },
+      "source_after": {
+        "base": null,
+        "candidate": "6bf73a220ec147dba333da2404bd6c3ce7f4b1f8",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "6bf73a220ec147dba333da2404bd6c3ce7f4b1f8",
+        "tested_tree": "6c004b08b87daa4a225a8728363b21f3fe08ab4a",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2615627576,
+        "tracked_entries": 28869,
+        "tracked_worktree_verified": true
+      },
+      "test_methods": 14,
+      "test_result": "PASS",
+      "original_source_guard_before": "PASS",
+      "original_source_guard_after": "PASS",
+      "raw_log": {
+        "path": "evidence/heplcp04-interop-20261111/hosted-validation/head-job-log.json",
+        "decoded_bytes": 171114,
+        "decoded_sha256": "5d2821eeca92669d41726696e0d471c0a3fa1b6c30c11bee5b530f9c931a5a65"
+      }
+    },
+    {
+      "lane": "prospective-merge",
+      "job_id": 130551974647,
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-11T13:28:08Z",
+      "completed_at": "2026-11-11T13:29:34Z",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43029319486/job/130551974647",
+      "source_before": {
+        "base": "c84162378f34b9284e90587df4c466dfee3e193b",
+        "candidate": "6bf73a220ec147dba333da2404bd6c3ce7f4b1f8",
+        "kind": "prospective-merge",
+        "prospective_merge": "1698cf9d02dc88da96d2db4e0641a9011cc3bb2b",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "1698cf9d02dc88da96d2db4e0641a9011cc3bb2b",
+        "tested_tree": "df0baad8f8629e3195f80417b7bfc53a02e33af9",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2615651172,
+        "tracked_entries": 28870,
+        "tracked_worktree_verified": true
+      },
+      "source_after": {
+        "base": "c84162378f34b9284e90587df4c466dfee3e193b",
+        "candidate": "6bf73a220ec147dba333da2404bd6c3ce7f4b1f8",
+        "kind": "prospective-merge",
+        "prospective_merge": "1698cf9d02dc88da96d2db4e0641a9011cc3bb2b",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "1698cf9d02dc88da96d2db4e0641a9011cc3bb2b",
+        "tested_tree": "df0baad8f8629e3195f80417b7bfc53a02e33af9",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2615651172,
+        "tracked_entries": 28870,
+        "tracked_worktree_verified": true
+      },
+      "test_methods": 14,
+      "test_result": "PASS",
+      "original_source_guard_before": "PASS",
+      "original_source_guard_after": "PASS",
+      "raw_log": {
+        "path": "evidence/heplcp04-interop-20261111/hosted-validation/prospective-merge-job-log.json",
+        "decoded_bytes": 172111,
+        "decoded_sha256": "18ee47643d399cc575789129b027057ccfc64673c1c12771c96b8f31c29b2a16"
+      }
+    }
+  ],
+  "test_count_interpretation": "Each lane repeats the same 14 structural tests. Do not add these to the 65 local methods as unique tests.",
+  "local_validation": {
+    "test_methods": 65,
+    "result": "PASS",
+    "source_guard": "REFUSED_SPARSE_INDEX",
+    "retained_in": "../frozen-validation/RESULT.json"
+  },
+  "qualification": {
+    "structural_full_checkout_head": true,
+    "structural_full_checkout_prospective_merge": true,
+    "whole_repository_ci_pass": false,
+    "ordinary_complete_chain_count": 0,
+    "ordinary_adoption_chain_count": 0,
+    "ordinary_no_update_rollback_chain_count": 0,
+    "independent_consumer": false,
+    "hepta_final_use": false,
+    "signature_or_custody_validation": false,
+    "authority_granted": false
+  },
+  "scope": "This records the exact tested commits above. Later evidence-only commits do not retroactively become tested commits. The original sparse-source refusal is retained; these hosted runs separately verify complete source checkout. No production or owner-authority claim is added."
+}

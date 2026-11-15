@@ -1,0 +1,41 @@
+{
+  "argv": [
+    "cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--test",
+    "model_composition_v4",
+    "-j",
+    "2",
+    "same_full_bundle_admits_split_reward_redistribution_with_known_aliases",
+    "--",
+    "--exact",
+    "--nocapture"
+  ],
+  "cwd": "/workspace/scratch/3069292387f3/incentives",
+  "duration_seconds": 70.48314002499956,
+  "economic_security_qualified": false,
+  "environment": {
+    "CARGO_HOME": "/workspace/scratch/747d27b1ca86/cargo-home",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_TARGET_DIR": "/workspace/scratch/3069292387f3/incentive-target",
+    "RUSTC": null,
+    "TRNM_MODEL_COMPOSITION_RUN_ID": null,
+    "TRNM_MODEL_COMPOSITION_VECTORS": null,
+    "TRNM_NATIVE_EXECUTOR": null
+  },
+  "exit_code": 0,
+  "finished_utc": "2026-11-12T00:15:11.043402+00:00",
+  "production_activation": false,
+  "schema": "chain-incentive-local-command-observation-v1",
+  "source_commit_after": "8197606d844e9d4c79c068a07746fabf2506fed4",
+  "source_commit_before": "8197606d844e9d4c79c068a07746fabf2506fed4",
+  "source_status_after": "",
+  "source_status_before": "",
+  "started_utc": "2026-11-12T00:14:00.560243+00:00"
+}

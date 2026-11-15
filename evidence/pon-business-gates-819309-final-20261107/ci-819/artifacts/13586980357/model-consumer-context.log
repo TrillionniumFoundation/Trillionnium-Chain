@@ -1,0 +1,21 @@
+test_context_layer_cannot_bypass_existing_v2_owner (__main__.ConsumerContextIntegrationTests.test_context_layer_cannot_bypass_existing_v2_owner) ... ok
+test_full_owner_accepts_bound_context_without_promoting_independence (__main__.ConsumerContextIntegrationTests.test_full_owner_accepts_bound_context_without_promoting_independence) ... ok
+test_improved_candidate_can_remain_on_safety_hold_without_breaking_lineage (__main__.ConsumerContextIntegrationTests.test_improved_candidate_can_remain_on_safety_hold_without_breaking_lineage) ... ok
+test_old_v2_signatures_cannot_be_used_as_context_signatures (__main__.ConsumerContextIntegrationTests.test_old_v2_signatures_cannot_be_used_as_context_signatures) ... ok
+test_resealed_other_series_keeps_v2_scope_but_requires_new_context_signatures (__main__.ConsumerContextIntegrationTests.test_resealed_other_series_keeps_v2_scope_but_requires_new_context_signatures) ... ok
+test_valid_late_v2_receipt_does_not_establish_causal_generation_use (__main__.ConsumerContextIntegrationTests.test_valid_late_v2_receipt_does_not_establish_causal_generation_use) ... ok
+test_actual_six_signatures_and_three_contexts (__main__.ConsumerContextTests.test_actual_six_signatures_and_three_contexts) ... ok
+test_both_keys_are_required_and_last_failure_emits_no_partial_result (__main__.ConsumerContextTests.test_both_keys_are_required_and_last_failure_emits_no_partial_result) ... ok
+test_changed_expected_window_and_rehashed_statement_need_new_signatures (__main__.ConsumerContextTests.test_changed_expected_window_and_rehashed_statement_need_new_signatures) ... ok
+test_changed_plan_assessment_and_receipt_each_need_new_signatures (__main__.ConsumerContextTests.test_changed_plan_assessment_and_receipt_each_need_new_signatures) ... ok
+test_every_array_has_exact_bounded_cardinality (__main__.ConsumerContextTests.test_every_array_has_exact_bounded_cardinality) ... ok
+test_later_use_cannot_explain_an_already_registered_successor (__main__.ConsumerContextTests.test_later_use_cannot_explain_an_already_registered_successor) ... ok
+test_message_is_canonical_and_domain_separated (__main__.ConsumerContextTests.test_message_is_canonical_and_domain_separated) ... ok
+test_strict_statement_and_signature_encodings (__main__.ConsumerContextTests.test_strict_statement_and_signature_encodings) ... ok
+test_unknown_envelope_field_does_not_grant_authority (__main__.ConsumerContextTests.test_unknown_envelope_field_does_not_grant_authority) ... ok
+test_unmodified_signature_cannot_bind_a_changed_expected_context (__main__.ConsumerContextTests.test_unmodified_signature_cannot_bind_a_changed_expected_context) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.394s
+
+OK

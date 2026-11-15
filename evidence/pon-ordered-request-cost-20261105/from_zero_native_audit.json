@@ -1,0 +1,423 @@
+{
+  "schema": "independent-from-zero-native-audit-v1",
+  "source_commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+  "source_tree": "7ce7ac50f788dd421e7cc0c9ddb957ade3e8df73",
+  "manifest_path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/manifest.json",
+  "manifest_sha256": "dbf36552e7cba5e5ba476823824cf17528d953331116efb043fe97b7f43779d2",
+  "outer_receipt_path": "/workspace/scratch/add353b13222/validation/original-from-zero-native.json",
+  "outer_receipt_sha256": "ed8d4ee655f718dc85f166376d55a2815143d35ee7d45fcc85d4f7846bc3c1a8",
+  "outer_status": "command_failed",
+  "outer_exit_code": 1,
+  "outer_elapsed_ns": 291428682413,
+  "integrity_checks": {
+    "source_before_equals_after": true,
+    "source_is_frozen_commit": true,
+    "outer_source_before_equals_after": true,
+    "outer_source_matches_manifest": true,
+    "outer_log_sha256_matches": true,
+    "manifest_stable_during_audit": true,
+    "all_manifest_file_hashes_match": true,
+    "copied_binary_matches_before_and_after": true,
+    "planned_names_match_manifest_order": true,
+    "exact_named_process_logs_and_receipts_match": true
+  },
+  "manifest_files_checked": 50,
+  "file_hash_mismatches": [],
+  "source_recompiled": true,
+  "format_passed": true,
+  "native_build_command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--release",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--test",
+    "public_v3_from_zero",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "native_build_exit_code": 0,
+  "native_build_timed_out": false,
+  "planned_native_invocations": 5,
+  "invoked": 5,
+  "returned": 5,
+  "named_test_passes": 5,
+  "named_test_failures": 0,
+  "native_process_timeouts": 0,
+  "unexecuted_planned_invocations": [],
+  "invocations": [
+    {
+      "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+      "status": "returned",
+      "exit_code": 0,
+      "timed_out": false,
+      "named_test_passed": true,
+      "exact_named_execution": {
+        "result": "PASS",
+        "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      },
+      "actual_stdout_summary": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+      ],
+      "exact_named_log_prefix_present": true,
+      "one_test_pass_summary": true,
+      "process_receipt_matches_manifest": true,
+      "stdout_sha256_matches": true,
+      "stderr_sha256_matches": true,
+      "wall_ns": 6834352,
+      "whole_child_cpu_ns": 3003000,
+      "cpu_scope": "entire child, not apportioned to nested wall intervals",
+      "max_rss_kib": 33968,
+      "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+    },
+    {
+      "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+      "status": "returned",
+      "exit_code": 0,
+      "timed_out": false,
+      "named_test_passed": true,
+      "exact_named_execution": {
+        "result": "PASS",
+        "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      },
+      "actual_stdout_summary": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+      ],
+      "exact_named_log_prefix_present": true,
+      "one_test_pass_summary": true,
+      "process_receipt_matches_manifest": true,
+      "stdout_sha256_matches": true,
+      "stderr_sha256_matches": true,
+      "wall_ns": 5655469,
+      "whole_child_cpu_ns": 5043000,
+      "cpu_scope": "entire child, not apportioned to nested wall intervals",
+      "max_rss_kib": 33968,
+      "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+    },
+    {
+      "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+      "status": "returned",
+      "exit_code": 0,
+      "timed_out": false,
+      "named_test_passed": true,
+      "exact_named_execution": {
+        "result": "PASS",
+        "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      },
+      "actual_stdout_summary": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.03s"
+      ],
+      "exact_named_log_prefix_present": true,
+      "one_test_pass_summary": true,
+      "process_receipt_matches_manifest": true,
+      "stdout_sha256_matches": true,
+      "stderr_sha256_matches": true,
+      "wall_ns": 33811291,
+      "whole_child_cpu_ns": 22794000,
+      "cpu_scope": "entire child, not apportioned to nested wall intervals",
+      "max_rss_kib": 33968,
+      "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+    },
+    {
+      "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+      "status": "returned",
+      "exit_code": 0,
+      "timed_out": false,
+      "named_test_passed": true,
+      "exact_named_execution": {
+        "result": "PASS",
+        "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      },
+      "actual_stdout_summary": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 9.62s"
+      ],
+      "exact_named_log_prefix_present": true,
+      "one_test_pass_summary": true,
+      "process_receipt_matches_manifest": true,
+      "stdout_sha256_matches": true,
+      "stderr_sha256_matches": true,
+      "wall_ns": 9630463813,
+      "whole_child_cpu_ns": 7169760000,
+      "cpu_scope": "entire child, not apportioned to nested wall intervals",
+      "max_rss_kib": 157176,
+      "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+    },
+    {
+      "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+      "status": "returned",
+      "exit_code": 0,
+      "timed_out": false,
+      "named_test_passed": true,
+      "exact_named_execution": {
+        "result": "PASS",
+        "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      },
+      "actual_stdout_summary": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.46s"
+      ],
+      "exact_named_log_prefix_present": true,
+      "one_test_pass_summary": true,
+      "process_receipt_matches_manifest": true,
+      "stdout_sha256_matches": true,
+      "stderr_sha256_matches": true,
+      "wall_ns": 8468598770,
+      "whole_child_cpu_ns": 3790086000,
+      "cpu_scope": "entire child, not apportioned to nested wall intervals",
+      "max_rss_kib": 106688,
+      "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+    }
+  ],
+  "planned_acceptance_stages": 3,
+  "reached_acceptance_stages": 3,
+  "passed_acceptance_stages": 2,
+  "failed_acceptance_stages": 1,
+  "unexecuted_acceptance_stages": [],
+  "acceptance_stages": [
+    {
+      "name": "service_report",
+      "relative_path": "native/report.json",
+      "validator_status": "passed",
+      "validator_error": null,
+      "actual_report_state": "present",
+      "actual_bytes": 3474589,
+      "actual_sha256": "8fccafca5232b9ef46aff4e5ffcc290036737968867be340470ac854d5303123",
+      "matches_before_validation": true,
+      "matches_retained_manifest_identity": true,
+      "validated_summary_present": true
+    },
+    {
+      "name": "sustained_report",
+      "relative_path": "native/sustained/report.json",
+      "validator_status": "passed",
+      "validator_error": null,
+      "actual_report_state": "present",
+      "actual_bytes": 19126551,
+      "actual_sha256": "f2bd1d26e7044dead50c6557f68e003786adcdda87c757b8b9920aec95e7a1c8",
+      "matches_before_validation": true,
+      "matches_retained_manifest_identity": true,
+      "validated_summary_present": true
+    },
+    {
+      "name": "confirmation_report",
+      "relative_path": "confirmation/report.json",
+      "validator_status": "failed",
+      "validator_error": "CONFIRMATION_TARGET",
+      "actual_report_state": "present",
+      "actual_bytes": 15024443,
+      "actual_sha256": "3e7ca3825361fe9df23d3827c92af5f6411316c2e42f1a4085fcc05a2aef024d",
+      "matches_before_validation": true,
+      "matches_retained_manifest_identity": true,
+      "validated_summary_present": false
+    }
+  ],
+  "raw_reports_present": 3,
+  "raw_reports_missing": 0,
+  "native_execution_completed": true,
+  "legacy_execution_finished": false,
+  "finalization_completed": true,
+  "acceptance_passed": false,
+  "overall_passed": false,
+  "failures": [
+    "CONFIRMATION_TARGET"
+  ],
+  "confirmation_diagnostic_present": true,
+  "same_packet_sequence_in_both_scenarios": true,
+  "phases": [
+    {
+      "mode": "attack-free-baseline",
+      "workers": 0,
+      "original_window_ns": 4000000000,
+      "business_transaction_denominator": 1,
+      "submit_ack": {
+        "attempts": 7,
+        "successful_in_original_window": 7,
+        "failed_or_late": 0
+      },
+      "native_execution": {
+        "status": "not_separately_observed",
+        "count": null,
+        "reason": "No separate execution-count measure is supplied; ACKs are not relabelled."
+      },
+      "chain_inclusion": {
+        "status": "not_separately_observed",
+        "count": null,
+        "reason": "No separate inclusion-count measure is supplied; ACKs are not relabelled."
+      },
+      "history_response": {
+        "attempts": 16,
+        "successful_in_original_window": 16,
+        "failed_or_late": 0
+      },
+      "independent_page_replay": {
+        "attempts": 16,
+        "accepted_in_original_window": 0,
+        "failed_or_late": 16
+      },
+      "replay_error_counts": {
+        "PUBLIC_HOST_KERNEL_PARENT": 16
+      },
+      "raw_replay_accepted_counts": {
+        "accepted": 0,
+        "rejected": 16,
+        "unknown": 0
+      },
+      "independent_confirmation": {
+        "status": "reported_unconfirmed",
+        "reported_confirmed_transactions": 0,
+        "required_transactions": 1,
+        "unconfirmed": 1,
+        "unknown_count": 0,
+        "raw_count_matches_diagnostic": true,
+        "final_stage_observed": false,
+        "latency_ns": null,
+        "p99_ns": null,
+        "confirmation_tps": null,
+        "confirmation_tps_status": "not_qualified_or_inferred_from_fixed_window",
+        "unconfirmed_latency_lower_bound_ns": 3993028837,
+        "lower_bound_reaches_window_end": false
+      },
+      "receiver_denominator": {
+        "accepted_connections_seen": 95,
+        "retained_records": 95,
+        "records_not_retained": 0,
+        "measurement_failures": 0,
+        "record_lifecycle": {
+          "closed": 95,
+          "unfinished": 0,
+          "unknown": 0
+        },
+        "dispatch_outcomes": {
+          "accepted": 95,
+          "rejected": 0,
+          "unknown": 0
+        },
+        "all_seen_records_closed_and_retained": true,
+        "unobserved_client_attempts": null
+      },
+      "unmeasured_resource_fields": {
+        "all_worker_cpu_ns": null,
+        "physical_network_bytes": null,
+        "disk_growth_bytes": null
+      },
+      "request_peak_rss": {
+        "known_count": 0,
+        "missing_count": 95,
+        "known_sum": null,
+        "max_known": null
+      },
+      "finite_business_target_met": false
+    },
+    {
+      "mode": "from-zero-pressure",
+      "workers": 16,
+      "original_window_ns": 4000000000,
+      "business_transaction_denominator": 1,
+      "submit_ack": {
+        "attempts": 7,
+        "successful_in_original_window": 7,
+        "failed_or_late": 0
+      },
+      "native_execution": {
+        "status": "not_separately_observed",
+        "count": null,
+        "reason": "No separate execution-count measure is supplied; ACKs are not relabelled."
+      },
+      "chain_inclusion": {
+        "status": "not_separately_observed",
+        "count": null,
+        "reason": "No separate inclusion-count measure is supplied; ACKs are not relabelled."
+      },
+      "history_response": {
+        "attempts": 16,
+        "successful_in_original_window": 16,
+        "failed_or_late": 0
+      },
+      "independent_page_replay": {
+        "attempts": 16,
+        "accepted_in_original_window": 0,
+        "failed_or_late": 16
+      },
+      "replay_error_counts": {
+        "PUBLIC_HOST_KERNEL_PARENT": 16
+      },
+      "raw_replay_accepted_counts": {
+        "accepted": 0,
+        "rejected": 16,
+        "unknown": 0
+      },
+      "independent_confirmation": {
+        "status": "reported_unconfirmed",
+        "reported_confirmed_transactions": 0,
+        "required_transactions": 1,
+        "unconfirmed": 1,
+        "unknown_count": 0,
+        "raw_count_matches_diagnostic": true,
+        "final_stage_observed": false,
+        "latency_ns": null,
+        "p99_ns": null,
+        "confirmation_tps": null,
+        "confirmation_tps_status": "not_qualified_or_inferred_from_fixed_window",
+        "unconfirmed_latency_lower_bound_ns": 3965852565,
+        "lower_bound_reaches_window_end": false
+      },
+      "receiver_denominator": {
+        "accepted_connections_seen": 549,
+        "retained_records": 549,
+        "records_not_retained": 0,
+        "measurement_failures": 0,
+        "record_lifecycle": {
+          "closed": 549,
+          "unfinished": 0,
+          "unknown": 0
+        },
+        "dispatch_outcomes": {
+          "accepted": 99,
+          "rejected": 435,
+          "unknown": 15
+        },
+        "all_seen_records_closed_and_retained": true,
+        "unobserved_client_attempts": null
+      },
+      "unmeasured_resource_fields": {
+        "all_worker_cpu_ns": null,
+        "physical_network_bytes": null,
+        "disk_growth_bytes": null
+      },
+      "request_peak_rss": {
+        "known_count": 0,
+        "missing_count": 549,
+        "known_sum": null,
+        "max_known": null
+      },
+      "finite_business_target_met": false
+    }
+  ],
+  "scope": {
+    "harness_pass_is_business_completion": false,
+    "ack_is_execution_or_inclusion": false,
+    "closed_receiver_record_is_native_success": false,
+    "no_report_would_mean": "unknown/not_observed, never numeric zero",
+    "this_confirmation_report": "present with explicit per-phase confirmed count zero; null validated summary means failed acceptance, not absent bytes",
+    "confirmation_tps": null,
+    "network_capacity_tps": null,
+    "whole_population_p99_ns": null,
+    "no_cpu_tail_inference": "Whole-child CPU and nested request thread samples do not establish isolated post-disconnect or whole-request CPU.",
+    "causal_attribution": "All 32 independent replay errors explicitly report PUBLIC_HOST_KERNEL_PARENT; no timing-contention or budget hypothesis is inferred.",
+    "production_activation": false
+  },
+  "native_test_success_scope": "native protocol/accounting invariants; finite business target is a separately retained actual outcome and cannot be inferred from cargo exit zero",
+  "native_report_scope": "same-source, task, target and signed business; attack-free versus independently driven loopback attack clients; shared controller, not independent operators or a saturated WAN benchmark"
+}

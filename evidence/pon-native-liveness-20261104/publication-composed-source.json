@@ -1,0 +1,27 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "publication-composed-source",
+  "command": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+    "--output",
+    "/dev/shm/trnm-final-checks/publication-composed-source-receipt.json"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+  "tree": "87f974c3ad327d5da2c61286ec86fcb1580b3fcf",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T15:07:56.696311+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 3060260995,
+  "finished_at": "2026-11-04T15:07:59.756773+00:00",
+  "log_bytes": 421,
+  "log_sha256": "8d7124bdfd3b09264484d73a4a20636aabeb996ef5694e3db400cc53f7ea8c8e",
+  "final_head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+  "final_dirty_paths": []
+}

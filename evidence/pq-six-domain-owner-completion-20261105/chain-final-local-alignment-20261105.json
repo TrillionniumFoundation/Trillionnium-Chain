@@ -1,0 +1,60 @@
+{
+  "archive_reencoded": false,
+  "branch": "refs/heads/fix/chain-pq-six-domain-owner-completion-20261105",
+  "clean": true,
+  "commit_imports": [
+    {
+      "commit": "88f7981a9d05307883b452e80f5221c84b109339",
+      "raw_commit_hash_verified": true,
+      "tree": "30527f5d6984978190ec4838b50241e54c08f5fc"
+    },
+    {
+      "commit": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+      "raw_commit_hash_verified": true,
+      "tree": "4a0314e72ebc45659986d03e7ca2f96cab9399ea"
+    }
+  ],
+  "five_evidence_paths": [
+    {
+      "bytes": 4206,
+      "git_blob": "fd4b395599d1e90e838633951757eb5eb802a734",
+      "path": "evidence/pon-architecture-continuation-20261105/LATEST_COMPOSITION.md",
+      "sha256": "2eae14ed72818c17c8a62dde484d91aa760f5c2cebc268508544ee46d383f9b7"
+    },
+    {
+      "bytes": 11341,
+      "git_blob": "e3c32fd05375f0a7ad62cd4e69e0631188886bd5",
+      "path": "evidence/pon-architecture-continuation-20261105/README.md",
+      "sha256": "a155600f1fd6ec8ec44e87b5f4537e9e68d008005a71cb6354c76998a7bfa910"
+    },
+    {
+      "bytes": 18524,
+      "git_blob": "f718fd646df2c430aea0dd7ce513500cccc134d6",
+      "path": "evidence/pon-architecture-continuation-20261105/latest-composition.json",
+      "sha256": "bd6e9098072da447c1692cc34f8491e6865c369b74f86f811debd201b9cf720a"
+    },
+    {
+      "bytes": 14658,
+      "git_blob": "b7afc6aa120596bc0a636c7bd8bf4542d9072c8e",
+      "path": "evidence/pon-architecture-continuation-20261105/latest-records-index.json",
+      "sha256": "a091f518b1c83d6475290f892f6c99c26cb3bfa388b5f5b2d957d18a8a8b96c8"
+    },
+    {
+      "bytes": 592368,
+      "git_blob": "ec517f7b8b8d6e1c74e5c761b8560b549005397d",
+      "path": "evidence/pon-architecture-continuation-20261105/latest-records.tar.gz",
+      "sha256": "69e1cc345a541a2eb29ed98eec0b1a8bb2472144340b421ff2503ede26b53750"
+    }
+  ],
+  "head": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+  "local_ref_updated_with_expected_old": true,
+  "native_builds_or_tests_run": false,
+  "network_or_publication_used": false,
+  "node_src_and_pool_equal_bbc": true,
+  "node_src_and_pool_files_verified": 203,
+  "node_src_tree": "19af251b5950faabb43566422031eb1f767df0d2",
+  "previous_head": "bbc940cbdbdd6092158f735565004812ee834281",
+  "removed_merge_metadata": [],
+  "tree": "4a0314e72ebc45659986d03e7ca2f96cab9399ea",
+  "worktree_bytes_and_modes_verified": true
+}

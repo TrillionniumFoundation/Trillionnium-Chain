@@ -1,0 +1,8 @@
+{
+  "parent": "dd3cb8776a0e3be668f5ce95dd6d5eded7f2f80e",
+  "changed_path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+  "before_sha256": "391948cc2cd266cb9172db0a2da9b361071e0418c05625bee18fc1850a1d80fe",
+  "after_sha256": "613976eee7316f08c2f720c69d4a682f63e0ad164072b2efb6364e2d6d003bdc",
+  "sole_added_entry": "config/pon/joint-consensus-qualification-v1.json",
+  "parameters_or_thresholds_changed": false
+}

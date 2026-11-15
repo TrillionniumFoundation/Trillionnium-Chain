@@ -1,0 +1,9 @@
+
+running 4 tests
+test store::account_profile_scope_tests::cold_open_rechecks_account_scope_without_rewriting_existing_storage ... ok
+test store::account_profile_scope_tests::growth_owner_rechecks_scope_before_open_recovery_and_noop_activation ... ok
+test store::account_profile_scope_tests::invalid_account_scope_never_creates_legacy_or_authenticated_namespace ... ok
+test store::account_profile_scope_tests::warm_owner_rechecks_current_account_scope_before_reads_recovery_and_activation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 1398 filtered out; finished in 0.36s
+

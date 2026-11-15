@@ -1,0 +1,13 @@
+{
+  "base": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "candidate": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+  "kind": "prospective-merge",
+  "prospective_merge": "6b3c58f215087ba5f36218d05495f56132877ba7",
+  "schema": "trnm-ci-source-v1",
+  "tested_commit": "6b3c58f215087ba5f36218d05495f56132877ba7",
+  "tested_tree": "f81f35d014eeeedf266e2a4fd8a5fc46f83d0f4e",
+  "tests_executed_by_identity_check": false,
+  "tracked_bytes": 1734126476,
+  "tracked_entries": 16760,
+  "tracked_worktree_verified": true
+}

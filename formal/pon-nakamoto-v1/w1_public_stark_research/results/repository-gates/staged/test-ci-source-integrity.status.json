@@ -1,0 +1,12 @@
+{
+  "label": "test-ci-source-integrity",
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "exit_code": 0,
+  "outer_wall_seconds": 34.84483951400034,
+  "stdout_sha256": "700311f9bfa863280bad72756a43de159b0d12d1cd0add52e69b3aef46be0653",
+  "stderr_sha256": "323513b63574f5f49b2a70231f0f2436b02f20811474be6779714bf401dcb9e2"
+}

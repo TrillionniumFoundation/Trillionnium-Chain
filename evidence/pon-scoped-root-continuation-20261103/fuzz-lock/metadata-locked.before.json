@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/workspace/scratch/4eec83b6ae24/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "metadata",
+    "--offline",
+    "--locked",
+    "--format-version",
+    "1",
+    "--manifest-path",
+    "tests/fuzz/Cargo.toml"
+  ],
+  "exit_code": 101,
+  "stdout": "",
+  "stderr": "error: no matching package named `libfuzzer-sys` found\nlocation searched: crates.io index\nrequired by package `trnm-development-fuzz v0.0.0 (/workspace/scratch/abae1861b451/chain-math/tests/fuzz)`\nAs a reminder, you're using offline mode (--offline) which can sometimes cause surprising resolution failures, if this error is too confusing you may wish to retry without `--offline`.\n",
+  "lock_sha256_after": "6c39a792fd03e539e72406f6e3e440066630c8607cc2cb2000ae6efb50ec195a"
+}

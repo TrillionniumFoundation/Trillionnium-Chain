@@ -1,0 +1,13 @@
+error: unexpected closing delimiter: `]`
+    --> /workspace/scratch/822cc50e24f0/chain-integration/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs:8493:1
+     |
+   2 | pub const FILES: &[(&str, &[u8])] = &[
+     |                                      - the nearest open delimiter
+...
+5559 |     ),
+     |     - missing open `(` for this delimiter
+...
+8493 | ];
+     | ^ unexpected closing delimiter
+
+Error writing files: failed to resolve mod `source_inventory`: cannot parse /workspace/scratch/822cc50e24f0/chain-integration/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs

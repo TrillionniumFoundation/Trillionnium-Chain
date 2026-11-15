@@ -1,0 +1,14 @@
+{
+  "name": "provider-version",
+  "argv": [
+    "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider-temp/trnm-pq-provider-3.5.9.XwCOxz9W/install/bin/openssl",
+    "version",
+    "-a"
+  ],
+  "started_unix_ns": 1794068716468036592,
+  "ended_unix_ns": 1794068716471667609,
+  "exit_code": 0,
+  "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/provider-version.log",
+  "log_bytes": 870,
+  "log_sha256": "3931f03911aa6957b4265e8fd148beffaf5858e10a5b2c8910f43990f4c21583"
+}

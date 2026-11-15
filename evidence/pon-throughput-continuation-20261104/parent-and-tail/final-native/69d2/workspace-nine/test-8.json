@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "bash",
+    "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+    "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+    "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+    "--exact",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "child_system_seconds": 0.011886000000000008,
+  "child_user_seconds": 0.18078799999999973,
+  "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node",
+  "exit_code": 0,
+  "finished_at": "2026-11-04T09:01:04.022075+00:00",
+  "label": "test-8",
+  "max_child_rss_kib": 97124,
+  "started_at": "2026-11-04T09:01:03.794266+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "1fff8f41d4ba659c0cc93d8287ac35e98f6574b7bb048f1e1cdd3f63444138cc",
+  "wall_ns": 227810188
+}

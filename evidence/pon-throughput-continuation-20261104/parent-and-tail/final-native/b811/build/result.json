@@ -1,0 +1,60 @@
+{
+  "action": "build",
+  "all_commands_succeeded": true,
+  "binary": "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+  "binary_after_sha256": "7cef941c2174339125cbc43d56ed6b79976466ec225388860e1b20415ff889c3",
+  "binary_bytes": 395050296,
+  "binary_sha256": "7cef941c2174339125cbc43d56ed6b79976466ec225388860e1b20415ff889c3",
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "child_system_seconds": 0.013839999999999991,
+      "child_user_seconds": 0.03544000000000003,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:32:21.521565+00:00",
+      "label": "preflight",
+      "max_child_rss_kib": 15232,
+      "started_at": "2026-11-04T08:32:21.472442+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+      "wall_ns": 49126197
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "child_system_seconds": 13.977345,
+      "child_user_seconds": 621.099823,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:38:04.663457+00:00",
+      "label": "build",
+      "max_child_rss_kib": 3260316,
+      "started_at": "2026-11-04T08:32:21.521942+00:00",
+      "stderr_sha256": "ed4ff8534100f053e7bb37563bbd04577998f8722897e4ad98160d3b7b8e4106",
+      "stdout_sha256": "257aa317193b573c7dab200a12a78dc4dc6f69bb95d3154d2a66645b94421c37",
+      "wall_ns": 343141664982
+    }
+  ],
+  "full_node_suite_executed": false,
+  "public_confirmation_measured": false,
+  "schema": "final-composed-local-native-observation-v1",
+  "source_manifest_sha256": "27920633e57be739926218c370ecfbdfea624df71d84b89c2f9e3fc6f48605d2",
+  "source_unchanged": true
+}

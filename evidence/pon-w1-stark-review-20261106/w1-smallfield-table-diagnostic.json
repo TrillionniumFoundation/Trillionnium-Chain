@@ -1,0 +1,33 @@
+{
+  "source_publication": "https://cic.iacr.org/p/3/3/44",
+  "source_pdf": "https://cic.iacr.org/p/3/3/44/pdf",
+  "doi": "10.62056/akdkmpxqi",
+  "publication_date": "2026-10-26",
+  "locations": "Corollary 4 and Remark 2: PDF page 12; Table 2: PDF page 14",
+  "source_pdf_bytes_hashed": false,
+  "parameters": {
+    "base_field_size": 2013265921,
+    "extension_degree": 4,
+    "extension_field_size": "16428751811598850197311699254593454081",
+    "block_length": 2097152,
+    "rate_numerator": 1,
+    "rate_denominator": 4,
+    "queries": 50
+  },
+  "method": "90-digit Decimal evaluation; 256 ternary-search iterations on a continuous delta interval",
+  "delta_numerical": "0.72243193084741760495823504340969045554263933169175242601514912745999509871110393931813925",
+  "negative_log2_probability_lower_bound_numerical": "92.4543301564346177862518772681854364173080577696145281323306384425094201695498948317705554",
+  "conjectured_query_only_negative_log2": "99.9999999999999999999999999999999999999999999999999999999999999999999999999999999999999997",
+  "difference_display": "7.5456698435653822137481227318145635826919422303854718676693615574905798304501051682294443",
+  "matches_published_one_decimal_display": true,
+  "certified_global_optimization": false,
+  "full_w1_attack_established": false,
+  "quantum_security_bits": null,
+  "scope": "Construction 1 extension-code information-theoretic success lower bound. The FRI connection requires BSCH+26 Lemma 8.4 and list-size Corollaries 2/3; Lemma 6 does not transfer verbatim to ethSTARK.",
+  "limitations": [
+    "No known polynomial-time implementation is established by the cited paper.",
+    "n is the paper block length, not a measured W1 trace size.",
+    "This does not replace the locked component equations or subtract a loss from official 96/99 estimates."
+  ],
+  "script_sha256": "bcf767b873ec1dc3e3b40f69d65ca7eeafb2bb1bb2aa6408cd1bc8a8d378ab0e"
+}

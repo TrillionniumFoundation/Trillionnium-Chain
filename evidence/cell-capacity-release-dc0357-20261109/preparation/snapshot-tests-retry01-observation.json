@@ -1,0 +1,28 @@
+{
+  "command": [
+    "/workspace/scratch/a6fe7c2e72c7/pq-validation/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "release_snapshot::tests",
+    "--",
+    "--nocapture"
+  ],
+  "source_head": "0746a462e80067b78317597f2fa4bacf5e3db958",
+  "snapshot_sources": {
+    "trillionnium/crates/trnm-data-availability/src/cell/release_snapshot.rs": "8b8ec738cfdc47b62b1686b833f36dc94618a7bff246c592c2fb61fcc9947869",
+    "trillionnium/crates/trnm-data-availability/src/cell/release_snapshot/tests.rs": "6548cd25c75f9ff432ce87aa46e4e2a4c65d7705b154596512e452789f0449d3"
+  },
+  "provider_version": "3.5.9",
+  "provider_sha256": "f2a00a03fc000a464cdadb915e894e381cc67f7ce309ff5b0de658148e8233ce",
+  "build_jobs": 2,
+  "started_unix": 1794231629.4902344,
+  "completed": true,
+  "exit": 0,
+  "elapsed_seconds": 206.87223291397095
+}

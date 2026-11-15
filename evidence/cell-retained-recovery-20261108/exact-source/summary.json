@@ -1,0 +1,306 @@
+{
+  "phase": "exact",
+  "head": "9e37f42528c970230c192a10da81f882444c29af",
+  "tree": "cce7bfc83f9a2e712b68d0569d1a0b21d98f314c",
+  "initial_git_status": "",
+  "started_unix": 1794159177.0739944,
+  "platform": "Linux",
+  "machine": "x86_64",
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "build_jobs": 2,
+  "test_threads": 1,
+  "incremental": false,
+  "debug_info": 0,
+  "production_qualified": false,
+  "independent_wan_qualified": false,
+  "gates": [
+    {
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.04288392000034946,
+      "log": "preflight.log",
+      "log_sha256": "9d7d491625803521ee8da8cc6a8752f5a5aed2ba84fd714fc6bfea00102fe6b9",
+      "log_bytes": 178
+    },
+    {
+      "name": "source-before",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "9e37f42528c970230c192a10da81f882444c29af",
+        "--output",
+        "/workspace/scratch/2b54b253422c/validation/exact-01/source-before.json"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 4.702261273000204,
+      "log": "source-before.log",
+      "log_sha256": "0e2f89c4443fa9d090b775534de29f8378e44fb3f45658b47e425fa9a2bb70a3",
+      "log_bytes": 423
+    },
+    {
+      "name": "graph-workspace-default",
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.28200335200017435,
+      "log": "graph-workspace-default.log",
+      "log_sha256": "5d9261d3ad6b4221a44f4e748d095e09d5c4bab065de8da006b3c11bed9d94cc",
+      "log_bytes": 840321
+    },
+    {
+      "name": "graph-workspace-all-features",
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.09944654100036132,
+      "log": "graph-workspace-all-features.log",
+      "log_sha256": "03045afea83de451f6d1e2839d9ae889821ffcc5430c973c17400bfbc17c7d6f",
+      "log_bytes": 855471
+    },
+    {
+      "name": "graph-fuzz",
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.10801273800007039,
+      "log": "graph-fuzz.log",
+      "log_sha256": "a36127511ef4f29e482f60c90812eefb48a5e2092646639044465a9a0b5a90d7",
+      "log_bytes": 722892
+    },
+    {
+      "name": "format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 11.634531289000279,
+      "log": "format.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0
+    },
+    {
+      "name": "independent-version-vector",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/cell_complete_version_vector.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.03625654999996186,
+      "log": "independent-version-vector.log",
+      "log_sha256": "a52fe4645753dc3f3f7bbb47038dee80d69e9c30465a2596fa1d1130d7be4f9d",
+      "log_bytes": 43
+    },
+    {
+      "name": "complete-cell-tests",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--",
+        "--test-threads=1"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 57.603406493999955,
+      "log": "complete-cell-tests.log",
+      "log_sha256": "3e14e4290c4d40e65140a1fc4ec28dd6cfc43d142fa09372382ea3b4393443f8",
+      "log_bytes": 60586
+    },
+    {
+      "name": "workspace-strict-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 88.73741453899993,
+      "log": "workspace-strict-clippy.log",
+      "log_sha256": "ceee8976dd76fe658a5911e66aa337ffcbf6157987831a98f102affeee2d61b9",
+      "log_bytes": 5658
+    },
+    {
+      "name": "source-negative-controls",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 2.7697670009997637,
+      "log": "source-negative-controls.log",
+      "log_sha256": "4b74422bf094ddec06caed998bd5ee7a9f87713c6a7d2ccf2b49cf84d3d445ac",
+      "log_bytes": 6898
+    },
+    {
+      "name": "pq-source-negative-controls",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 22.285888969000098,
+      "log": "pq-source-negative-controls.log",
+      "log_sha256": "c82e95d8aec06f938747f28bcd186ad9807fdd747596ffa5800923001a51ef7e",
+      "log_bytes": 137
+    },
+    {
+      "name": "ci-contract-controls",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 13.338233066999692,
+      "log": "ci-contract-controls.log",
+      "log_sha256": "b5b0478f6b3f4639694554e990cf7e932083dbd36833e56691dfe9325960a33f",
+      "log_bytes": 18071
+    },
+    {
+      "name": "repository-and-links",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 45.528887232000216,
+      "log": "repository-and-links.log",
+      "log_sha256": "0f0ae00ccba6c9ac8718f0fb6ade1d46443740d1655cb7ea6c49451e21eb8127",
+      "log_bytes": 307
+    },
+    {
+      "name": "pq-source-corpus",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.15768720699998084,
+      "log": "pq-source-corpus.log",
+      "log_sha256": "c3addda1705bc112a092a2bbd35b4374fd51bc031ec093cf775777e5f2b46f99",
+      "log_bytes": 557
+    },
+    {
+      "name": "source-inventory",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.049166523999701894,
+      "log": "source-inventory.log",
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "log_bytes": 35
+    },
+    {
+      "name": "implementation-report",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/report_current_implementation.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.03398479799989218,
+      "log": "implementation-report.log",
+      "log_sha256": "431e373353829a7aa76abab6c3a606519c90290e2dc0909202c9a9f4cab92be3",
+      "log_bytes": 71
+    },
+    {
+      "name": "source-after",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "9e37f42528c970230c192a10da81f882444c29af",
+        "--output",
+        "/workspace/scratch/2b54b253422c/validation/exact-01/source-after.json"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 2.271392153999841,
+      "log": "source-after.log",
+      "log_sha256": "0e2f89c4443fa9d090b775534de29f8378e44fb3f45658b47e425fa9a2bb70a3",
+      "log_bytes": 423
+    },
+    {
+      "name": "unchanged-worktree",
+      "command": [
+        "git",
+        "diff",
+        "--exit-code"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.013181880000047386,
+      "log": "unchanged-worktree.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0
+    }
+  ],
+  "finished_unix": 1794159426.8166137,
+  "complete": true,
+  "all_passed": true
+}

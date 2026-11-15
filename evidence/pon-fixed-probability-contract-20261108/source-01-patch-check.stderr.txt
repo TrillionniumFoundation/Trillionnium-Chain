@@ -1,0 +1,6 @@
+error: 打补丁失败：scripts/ci/check_ci_contract.py:246
+error: scripts/ci/check_ci_contract.py：补丁未应用
+error: 打补丁失败：scripts/ci/ci_job.sh:226
+error: scripts/ci/ci_job.sh：补丁未应用
+error: 打补丁失败：scripts/ci/test_ci_contract.py:456
+error: scripts/ci/test_ci_contract.py：补丁未应用

@@ -1,0 +1,11 @@
+
+running 6 tests
+test store::growth::tests::read_epoch::native_growth_v2_account_queries_refuse_foreign_commit_inside_read_snapshot ... ok
+test store::growth::tests::read_epoch::native_growth_v2_autocommit_queries_recheck_foreign_epoch_after_read ... ok
+test store::growth::tests::read_epoch::native_growth_v2_head_and_exact_observations_refuse_foreign_commit_at_ready ... ok
+test store::growth::tests::read_epoch::native_growth_v2_read_snapshot_hides_foreign_epoch_until_release ... ok
+test store::growth::tests::read_epoch::native_growth_v2_successful_payment_rechecks_epoch_after_read_snapshot ... ok
+test store::growth::tests::read_epoch::native_growth_v2_working_queries_refuse_foreign_commit_inside_read_snapshot ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 1387 filtered out; finished in 0.37s
+

@@ -1,0 +1,11 @@
+{
+  "ci_contract_preliminary": "Final source CI168 full streams are in python/ci-contract; preliminary observation log is not represented as original full stdout.",
+  "pq_corpus_tests": {
+    "elapsed_seconds_reported": 789.261,
+    "exit_code_observed": 0,
+    "source_file": "scripts/ci/test_pq_research_integration.py",
+    "source_sha256_at_collection": "181915e4255f0ab76599339597ff353c8c2f78b7540aa4d0b7031c09a57286a8",
+    "tests_run": 57
+  },
+  "scope": "supplemental observations started before frozen implementation commit; not substituted for final frozen-source gates"
+}

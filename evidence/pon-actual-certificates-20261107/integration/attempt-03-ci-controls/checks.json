@@ -1,0 +1,62 @@
+{
+  "scope": "working-tree component checks, not committed-source or remote CI",
+  "checks": [
+    {
+      "name": "source-integrity",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.507051225999021,
+      "stdout": {
+        "archive": "source-integrity.stdout.gz",
+        "raw_sha256": "7cf39e342cc0f50efc8b5dfa1a6e7247799cd678c04c39d422dd2407236e6f6a",
+        "raw_bytes": 484
+      },
+      "stderr": {
+        "archive": "source-integrity.stderr.gz",
+        "raw_sha256": "600ffedaec07d5994ff5c9f388a42d6fd09c155c8a83a4cefef193e893e06acd",
+        "raw_bytes": 6414
+      }
+    },
+    {
+      "name": "ci-contract",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 14.277414872998634,
+      "stdout": {
+        "archive": "ci-contract.stdout.gz",
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_bytes": 0
+      },
+      "stderr": {
+        "archive": "ci-contract.stderr.gz",
+        "raw_sha256": "c0393d7b86fcc259b0245eab749a2584a2ab1c8106ecdb3890c4ca3ebd421352",
+        "raw_bytes": 17343
+      }
+    },
+    {
+      "name": "project-boundary",
+      "argv": [
+        "python3",
+        "scripts/ci/test_project_boundary.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 5.035506620999513,
+      "stdout": {
+        "archive": "project-boundary.stdout.gz",
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_bytes": 0
+      },
+      "stderr": {
+        "archive": "project-boundary.stderr.gz",
+        "raw_sha256": "d212abc1bb2d9548fd53fe09f9ddfc0ec0d741b057ffe434eaebbaa9c3ee75da",
+        "raw_bytes": 2425
+      }
+    }
+  ]
+}

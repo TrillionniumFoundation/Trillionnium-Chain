@@ -1,0 +1,20 @@
+test_all_four_original_logs_pass_both_corrected_guards_and_fail_old (__main__.AuthenticatedSuiteCount.test_all_four_original_logs_pass_both_corrected_guards_and_fail_old) ... ok
+test_complete_roster_matches_source_owners_and_subgroups (__main__.AuthenticatedSuiteCount.test_complete_roster_matches_source_owners_and_subgroups) ... ok
+test_missing_duplicate_wrong_group_and_current_identity_rejected (__main__.AuthenticatedSuiteCount.test_missing_duplicate_wrong_group_and_current_identity_rejected) ... ok
+test_original_execution_and_downstream_requirements_unchanged (__main__.AuthenticatedSuiteCount.test_original_execution_and_downstream_requirements_unchanged) ... ok
+test_reduced_extra_failed_ignored_partial_and_repeated_summary_rejected (__main__.AuthenticatedSuiteCount.test_reduced_extra_failed_ignored_partial_and_repeated_summary_rejected) ... ok
+test_exact_assertions_cannot_move_under_a_skipping_condition (__main__.WorkspaceArtifactFeatures.test_exact_assertions_cannot_move_under_a_skipping_condition) ... ok
+test_exact_per_crate_features_pass_actual_workflow_assertions (__main__.WorkspaceArtifactFeatures.test_exact_per_crate_features_pass_actual_workflow_assertions) ... ok
+test_expected_map_cannot_silently_follow_changed_features (__main__.WorkspaceArtifactFeatures.test_expected_map_cannot_silently_follow_changed_features) ... ok
+test_missing_extra_cross_crate_and_duplicate_features_are_rejected (__main__.WorkspaceArtifactFeatures.test_missing_extra_cross_crate_and_duplicate_features_are_rejected) ... ok
+test_subset_set_equality_and_disabled_guards_are_rejected (__main__.WorkspaceArtifactFeatures.test_subset_set_equality_and_disabled_guards_are_rejected) ... ok
+test_actual_native_registry_passes_current_guard_and_rejects_stale_count (__main__.WorkspaceSemanticRegistry.test_actual_native_registry_passes_current_guard_and_rejects_stale_count) ... ok
+test_empty_missing_duplicate_extra_and_wrong_group_registries_rejected (__main__.WorkspaceSemanticRegistry.test_empty_missing_duplicate_extra_and_wrong_group_registries_rejected) ... ok
+test_missing_exact_control_in_each_crate_rejected (__main__.WorkspaceSemanticRegistry.test_missing_exact_control_in_each_crate_rejected) ... ok
+test_original_build_and_execution_contract_remains_required (__main__.WorkspaceSemanticRegistry.test_original_build_and_execution_contract_remains_required) ... ok
+test_selected_postwrite_roster_matches_source_and_four_executed_native_logs (__main__.WorkspaceSemanticRegistry.test_selected_postwrite_roster_matches_source_and_four_executed_native_logs) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.905s
+
+OK

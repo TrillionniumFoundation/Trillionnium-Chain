@@ -1,0 +1,24 @@
+{
+  "actual_oid": "d6fafcd100224cb9c33e9d4b854b533a23baaacf",
+  "bytes": 1545993,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "d6fafcd100224cb9c33e9d4b854b533a23baaacf"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1545993,
+  "expected_oid": "d6fafcd100224cb9c33e9d4b854b533a23baaacf",
+  "finished_at": "2026-11-12T01:41:55.659489+00:00",
+  "path": "evidence/pon-pq-local-origin-runtime-20261028-r8/raw-native-records.zip",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXBxLWxvY2FsLW9yaWdpbi1ydW50aW1lLTIwMjYxMDI4LXI4L3Jhdy1uYXRpdmUtcmVjb3Jkcy56aXA=",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "4ebe0c59fa64383172f4afae2ef7f2a76e61c8d80e34224d34956abaf5321cb7",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:55.609458+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

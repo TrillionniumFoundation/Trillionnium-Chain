@@ -1,0 +1,34 @@
+{
+  "argv": [
+    "/bin/bash",
+    "scripts/project-preflight.sh",
+    "--staged"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 0.3155256761237979,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794125357.9930546,
+  "label": "preflight-before-commit",
+  "logs": {
+    "preflight-before-commit.stderr.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/preflight-before-commit.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preflight-before-commit.stdout.log": {
+      "bytes": 181,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/preflight-before-commit.stdout.log",
+      "sha256": "ae09ebb285e9ecd2dcfbecf6c7d3a0ccd01904ab6244fecd1cefa632c67935d7"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+    "mode": "--staged",
+    "packages": 26,
+    "project": "trillionnium-chain",
+    "remote_policy_mutated": false,
+    "result": "PASS"
+  },
+  "started_unix_seconds": 1794125357.677529
+}

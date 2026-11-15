@@ -1,0 +1,30 @@
+$ cargo test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives pon_work::artifacts::tests
+    Finished `release` profile [optimized] target(s) in 0.15s
+     Running unittests src/lib.rs (trillionnium/target/release/deps/trnm_crypto_primitives-036765dd68e17337)
+
+running 2 tests
+test pon_work::artifacts::tests::shape_rejection_and_raw_noncanonical_bytes_preserve_parent_semantics ... ok
+test pon_work::artifacts::tests::exact_original_domains_raw_bytes_and_matrix_boundaries ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 133 filtered out; finished in 0.00s
+
+     Running tests/pq_openssl_native.rs (trillionnium/target/release/deps/pq_openssl_native-b98db190d19bc1f7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/qualified_task_lifecycle_v2.rs (trillionnium/target/release/deps/qualified_task_lifecycle_v2-aedb49571b4bd4aa)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/qualified_work_task.rs (trillionnium/target/release/deps/qualified_work_task-3f0d714ad37df484)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+
+exit_code=0

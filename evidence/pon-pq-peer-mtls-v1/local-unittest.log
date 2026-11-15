@@ -1,0 +1,16 @@
+test_hostname_and_trustroot_refused (test_pq_mtls_probe.PQMutualTLSProbeTests.test_hostname_and_trustroot_refused) ... ok
+test_key_pinned_identity_rejects_even_valid_tls_trust (test_pq_mtls_probe.PQMutualTLSProbeTests.test_key_pinned_identity_rejects_even_valid_tls_trust) ... ok
+test_missing_client_certificate_refused_by_server (test_pq_mtls_probe.PQMutualTLSProbeTests.test_missing_client_certificate_refused_by_server) ... ok
+test_network_parameter_change_changes_exporter_binding (test_pq_mtls_probe.PQMutualTLSProbeTests.test_network_parameter_change_changes_exporter_binding) ... ok
+test_noncanonical_pinned_peer_identity_rejects_before_connect (test_pq_mtls_probe.PQMutualTLSProbeTests.test_noncanonical_pinned_peer_identity_rejects_before_connect) ... ok
+test_real_mutual_tls_hybrid_and_same_secret_exporter (test_pq_mtls_probe.PQMutualTLSProbeTests.test_real_mutual_tls_hybrid_and_same_secret_exporter) ... ok
+test_signed_hello_no_default_acceptance_of_peer_chosen_channel (test_pq_mtls_probe.PQMutualTLSProbeTests.test_signed_hello_no_default_acceptance_of_peer_chosen_channel) ... ok
+test_signed_hello_real_mtls_exporter_cannot_replay_into_another_session (test_pq_mtls_probe.PQMutualTLSProbeTests.test_signed_hello_real_mtls_exporter_cannot_replay_into_another_session) ... ok
+test_signed_hello_wrong_network_role_generation_expiry_and_signature_reject (test_pq_mtls_probe.PQMutualTLSProbeTests.test_signed_hello_wrong_network_role_generation_expiry_and_signature_reject) ... ok
+test_untrusted_client_certificate_refused_before_application (test_pq_mtls_probe.PQMutualTLSProbeTests.test_untrusted_client_certificate_refused_before_application) ... ok
+test_x25519_only_and_no_shared_hybrid_group_refused (test_pq_mtls_probe.PQMutualTLSProbeTests.test_x25519_only_and_no_shared_hybrid_group_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 7.644s
+
+OK

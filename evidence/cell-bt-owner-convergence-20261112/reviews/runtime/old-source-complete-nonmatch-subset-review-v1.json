@@ -1,0 +1,36 @@
+{
+  "actually_verified_bytes_reported": 1792716670,
+  "actually_verified_entries_reported": 27584,
+  "all_nonmatch_errors": "FileNotFoundError",
+  "all_nonmatch_flags": "S",
+  "cause_or_writer_identified": false,
+  "complete_nonmatch_rows_independently_read": 102,
+  "diagnostic_index_before_after_sha256": "ea921423ef074057ac46fa03244059c7d1bc71b7d9bc59271cbace5e3d253517",
+  "evidence": {
+    "bytes": 120822,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/old-source-nonmatches/old-source-nonmatches.json",
+    "sha256": "6aa3ff0f366eacd8dcfd474c6208c6fd5f1dd46f0262ab711c2171b633353ec9"
+  },
+  "expected_tracked_bytes": 2552660560,
+  "expected_tracked_entries": 27686,
+  "full_physical_source_passed": false,
+  "head_and_index_blob_identities_equal_for_every_nonmatch": true,
+  "missing_paths_expected_bytes": 759943890,
+  "native_operation_started": false,
+  "nonmatch_and_hidden_path_sets_equal": true,
+  "original_full_row_inventory": {
+    "bytes": 10626711,
+    "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/source-index-diagnostic-02/all-tracked-byte-observation.json",
+    "sha256": "a370754f245b5cd31f6d55219264f642494828929684896b00ac6e5b67b2d5d2"
+  },
+  "original_report": {
+    "bytes": 129666,
+    "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/source-index-diagnostic-02/summary.json",
+    "sha256": "23b1ec49a7491eea583ec171d208fe050a5acd531f9377f8d1f5bcbb5d179029"
+  },
+  "review_only": true,
+  "reviewer": "release_acceptance",
+  "schema": "trnm.bt-old-source-complete-nonmatch-subset-independent-review.v1",
+  "scope": "The complete 102-row nonmatch subset and its exact bytes were locally read. The 27,584 matched-entry aggregate is retained from the diagnostic report; this reviewer did not independently retrieve every source byte or the deferred full 10,626,711-byte row inventory. The earlier independent private-runtime projection/probe is separate evidence and is not promoted into full runtime/model admission.",
+  "supersedes_uncertainty_only": "full-runtime-preflight-failure-review-v1.json could not enumerate the individual causes from the earlier 385-byte diagnostic stdout; this separately recovered complete nonmatch subset now does. Original failure review and raw files are unchanged."
+}

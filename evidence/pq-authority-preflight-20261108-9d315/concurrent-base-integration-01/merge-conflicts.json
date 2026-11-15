@@ -1,0 +1,9 @@
+{
+  "base": "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+  "ours": "62ed4e4facae4e0eb9f3fdeb82001acb3b21be47",
+  "paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "theirs": "8d8f05566b2a1612a3bf4a6c6c71635df454d397"
+}

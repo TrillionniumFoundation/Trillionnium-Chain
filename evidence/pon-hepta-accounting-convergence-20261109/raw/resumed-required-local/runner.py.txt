@@ -1,0 +1,100 @@
+import datetime
+import hashlib
+import json
+import os
+import pathlib
+import shutil
+import subprocess
+import sys
+import time
+
+ROOT = pathlib.Path('/workspace/scratch/d9bbb5ad0229/chain-accounting-convergence')
+OUT = pathlib.Path('/workspace/scratch/d9bbb5ad0229/chain-c1-gates-resume-20261109-cadence-01')
+SHA = 'e8f81ca15634d0393e7bc6257193b4dbe88d9b2e'
+TREE = '563992ef5bd3db98d95b7e249ea67cbbec2e2978'
+COMMANDS = [
+    ('source-negatives', ['python3', '-u', '-B', 'scripts/ci/test_ci_source_integrity.py']),
+    ('ci-negatives', ['python3', '-u', '-B', 'scripts/ci/test_ci_contract.py']),
+    ('corpus-negatives', ['python3', '-u', '-B', 'scripts/ci/test_pq_research_integration.py']),
+    ('corpus-identity', ['python3', '-B', 'scripts/ci/check_pq_research_integration.py']),
+    ('repository-links', ['python3', '-B', 'scripts/ci/check_repository.py']),
+]
+
+
+def utc():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+
+def git(*args):
+    return subprocess.check_output(['git', *args], cwd=ROOT, text=True).strip()
+
+
+def save(name, value):
+    (OUT / name).write_text(json.dumps(value, indent=2, sort_keys=True) + '\n')
+
+
+OUT.mkdir(exist_ok=False)
+assert git('rev-parse', 'HEAD') == SHA
+assert git('rev-parse', 'HEAD^{tree}') == TREE
+assert not git('status', '--porcelain')
+env = dict(os.environ, PYTHONDONTWRITEBYTECODE='1')
+old = pathlib.Path('/workspace/scratch/d9bbb5ad0229/accounting-convergence-setup/gates-c1/source-negatives.json')
+save('recovery-context.json', {
+    'schema': 'chain-c1-interrupted-gates-resume-v1',
+    'created_utc': utc(), 'candidate': SHA, 'tree': TREE,
+    'source_root': str(ROOT), 'output_root': str(OUT),
+    'old_session_id': 58416,
+    'old_session_reconciliation': 'write_stdin returned Unknown process id 58416; no terminal result is inferred.',
+    'old_receipt_path': str(old),
+    'old_receipt_sha256': hashlib.sha256(old.read_bytes()).hexdigest(),
+    'old_receipt_status': json.loads(old.read_text())['status'],
+    'old_receipt_exit_code': json.loads(old.read_text())['exit_code'],
+    'old_log_exists': old.with_suffix('.log').exists(),
+    'old_receipts_modified': False,
+    'existing_python_134_native_263_cli_14_rerun': False,
+    'strict_clippy': 'Separately owned new remote attempt on the same exact candidate.',
+    'disk_before': shutil.disk_usage(OUT)._asdict(),
+    'qualification': 'HOLD_NO_GO',
+})
+preflight = ['bash', 'scripts/project-preflight.sh']
+with (OUT / 'preflight.stdout').open('xb') as stdout, (OUT / 'preflight.stderr').open('xb') as stderr:
+    pre = subprocess.run(preflight, cwd=ROOT, env=env, stdout=stdout, stderr=stderr)
+save('preflight.json', {'argv': preflight, 'exit_code': pre.returncode, 'candidate': SHA, 'tree': TREE})
+if pre.returncode:
+    sys.exit(pre.returncode)
+summary = {
+    'schema': 'chain-c1-resumed-gates-summary-v1', 'source': SHA, 'tree': TREE,
+    'started_utc': utc(), 'planned_labels': [x[0] for x in COMMANDS],
+    'results': [], 'all_commands_executed': False, 'all_commands_passed': False,
+    'qualification': 'HOLD_NO_GO',
+}
+save('summary.json', summary)
+for label, argv in COMMANDS:
+    command = ['python3', '-B', 'scripts/ci/record_pq_native_command.py',
+               '--kind', 'head', '--candidate', SHA, '--tested', SHA,
+               '--label', label, '--output', str(OUT), '--', *argv]
+    started = time.monotonic()
+    with (OUT / (label + '.recorder.stdout')).open('xb') as stdout, (OUT / (label + '.recorder.stderr')).open('xb') as stderr:
+        result = subprocess.run(command, cwd=ROOT, env=env, stdout=stdout, stderr=stderr)
+    receipt = json.loads((OUT / (label + '.json')).read_text())
+    row = {
+        'label': label, 'status': receipt['status'], 'exit_code': receipt['exit_code'],
+        'recorder_exit_code': result.returncode, 'wall_seconds': time.monotonic() - started,
+        'log_sha256': receipt.get('log_sha256'), 'log_bytes': receipt.get('log_bytes'),
+        'before': receipt.get('before'), 'after': receipt.get('after'),
+    }
+    summary['results'].append(row)
+    save('summary.json', summary)
+    print(json.dumps(row), flush=True)
+    if receipt['status'] == 'record_failed':
+        summary['stopped_reason'] = 'Source/receipt recording failure; no unverified-source follow-on command launched.'
+        break
+summary['all_commands_executed'] = len(summary['results']) == len(COMMANDS)
+summary['all_commands_passed'] = summary['all_commands_executed'] and all(r['status'] == 'command_succeeded' for r in summary['results'])
+summary['ended_utc'] = utc()
+summary['head_after'] = git('rev-parse', 'HEAD')
+summary['tree_after'] = git('rev-parse', 'HEAD^{tree}')
+summary['status_after'] = git('status', '--porcelain')
+summary['disk_after'] = shutil.disk_usage(OUT)._asdict()
+save('summary.json', summary)
+sys.exit(0 if summary['all_commands_passed'] else 1)

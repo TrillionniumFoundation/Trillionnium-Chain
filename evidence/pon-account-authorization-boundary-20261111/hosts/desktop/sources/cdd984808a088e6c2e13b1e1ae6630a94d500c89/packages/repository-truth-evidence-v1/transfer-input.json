@@ -1,0 +1,130 @@
+{
+  "schema": "trnm-desktop-evidence-transfer-input-v1",
+  "archive": {
+    "archive": "/home/qian-qi/chain-pq-a418-final-records/archives/repository-truth-evidence-v1.tar.gz",
+    "archive_bytes": 194065,
+    "archive_sha256": "f0499cffadc88c4377305e7b453090a638d513f4859e59cbb93b7a4c57fdc9ba",
+    "file_count": 37,
+    "full_lane_pass": true,
+    "full_lane_returncode": 0,
+    "manifest": "/home/qian-qi/chain-pq-a418-final-records/archives/repository-truth-evidence-v1.manifest.json",
+    "manifest_sha256": "ca16102819e0267ab0e33431dc2a14d701039c6cb627525f1c91acab43c36ddf",
+    "qualification_granted": false,
+    "source_head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+    "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec"
+  },
+  "frozen_remote_version": "2050:52882878:194065:1794365213349744898:1794365213458418088",
+  "chunks": [
+    {
+      "offset": 0,
+      "next_offset": 65536,
+      "chunk_sha256": "455b8d020ed8d395d1bb0a62c9e1e5e22ea9965fa7a83bd9592334563895db09",
+      "size": 194065,
+      "version": "2050:52882878:194065:1794365213349744898:1794365213458418088"
+    },
+    {
+      "offset": 65536,
+      "next_offset": 131072,
+      "chunk_sha256": "5607b515ba0e7066bfe54849ef40ed9dd37e95a98abc7a23aa0973f4111fd1b2",
+      "size": 194065,
+      "version": "2050:52882878:194065:1794365213349744898:1794365213458418088"
+    },
+    {
+      "offset": 131072,
+      "next_offset": 194065,
+      "chunk_sha256": "e09612c23e63a8df0c2cbeb09e9b71492db0d5559b1160ac9481b2697e557859",
+      "size": 194065,
+      "version": "2050:52882878:194065:1794365213349744898:1794365213458418088"
+    }
+  ],
+  "full_lane_job": {
+    "at_unix_ms": 1794365059987,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1c86d5a18-135c4-66",
+    "launch_nonce": "675402ec85461c44d69808447918c8fe",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 11316,
+        "stored": 11316
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "collection_job": {
+    "at_unix_ms": 1794365213540,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1c8802ea2-135c4-a5",
+    "launch_nonce": "76bfae3a66b7113f0e63dd40879399dd",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 628,
+        "stored": 628
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "collection_stdout": {
+    "bytes_hex": "7b2261726368697665223a20222f686f6d652f7169616e2d71692f636861696e2d70712d613431382d66696e616c2d7265636f7264732f61726368697665732f7265706f7369746f72792d74727574682d65766964656e63652d76312e7461722e677a222c2022617263686976655f6279746573223a203139343036352c2022617263686976655f736861323536223a202266303439396366666164633838633433373733303565376234353330393061363338643531336634383539653539636262393362376134633537666463396261222c202266696c655f636f756e74223a2033372c202266756c6c5f6c616e655f70617373223a20747275652c202266756c6c5f6c616e655f72657475726e636f6465223a20302c20226d616e6966657374223a20222f686f6d652f7169616e2d71692f636861696e2d70712d613431382d66696e616c2d7265636f7264732f61726368697665732f7265706f7369746f72792d74727574682d65766964656e63652d76312e6d616e69666573742e6a736f6e222c20226d616e69666573745f736861323536223a202263613136313032383139653032363761623065333334333164633261313464373031303339633663623632373532356631633931616361623433633336646466222c20227175616c696669636174696f6e5f6772616e746564223a2066616c73652c2022736f757263655f68656164223a202263646439383438303861303838653663326531336231653161653636333061393464353030633839222c2022736f757263655f74726565223a202231656433396236656265353563623030633233386632366636626663393336316162393366616563227d0a",
+    "eof": true,
+    "next_offset": 628,
+    "offset": 0,
+    "size": 628,
+    "text": "{\"archive\": \"/home/qian-qi/chain-pq-a418-final-records/archives/repository-truth-evidence-v1.tar.gz\", \"archive_bytes\": 194065, \"archive_sha256\": \"f0499cffadc88c4377305e7b453090a638d513f4859e59cbb93b7a4c57fdc9ba\", \"file_count\": 37, \"full_lane_pass\": true, \"full_lane_returncode\": 0, \"manifest\": \"/home/qian-qi/chain-pq-a418-final-records/archives/repository-truth-evidence-v1.manifest.json\", \"manifest_sha256\": \"ca16102819e0267ab0e33431dc2a14d701039c6cb627525f1c91acab43c36ddf\", \"qualification_granted\": false, \"source_head\": \"cdd984808a088e6c2e13b1e1ae6630a94d500c89\", \"source_tree\": \"1ed39b6ebe55cb00c238f26f6bfc9361ab93faec\"}\n"
+  },
+  "collection_stderr": {
+    "bytes_hex": "",
+    "eof": true,
+    "next_offset": 0,
+    "offset": 0,
+    "size": 0,
+    "text": ""
+  }
+}

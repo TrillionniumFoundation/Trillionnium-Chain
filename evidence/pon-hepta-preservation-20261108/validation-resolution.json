@@ -1,0 +1,106 @@
+{
+  "original_campaign_summary_preserved": true,
+  "original_campaign_all_commands_succeeded": false,
+  "original_failed_commands": [
+    "repository-controls"
+  ],
+  "followup_command": "repository-controls",
+  "followup_receipt": {
+    "after": {
+      "base": null,
+      "candidate": "91dd3082633ea0b3a5ec9b0ed91f28603229be01",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "91dd3082633ea0b3a5ec9b0ed91f28603229be01",
+      "tested_tree": "8a14e5aa053af94d1f19cfb8b907a09c6ac4399b",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2485347114,
+      "tracked_entries": 26120,
+      "tracked_worktree_verified": true
+    },
+    "argv": [
+      "python3",
+      "-u",
+      "-B",
+      "scripts/ci/test_repository.py"
+    ],
+    "before": {
+      "base": null,
+      "candidate": "91dd3082633ea0b3a5ec9b0ed91f28603229be01",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "91dd3082633ea0b3a5ec9b0ed91f28603229be01",
+      "tested_tree": "8a14e5aa053af94d1f19cfb8b907a09c6ac4399b",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2485347114,
+      "tracked_entries": 26120,
+      "tracked_worktree_verified": true
+    },
+    "cwd": "/workspace/scratch/ac851b3fedf0/chain-integrated",
+    "elapsed_ns": 215955749413,
+    "environment": {
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_TARGET_DIR": "/workspace/scratch/ac851b3fedf0/target-chain-integrated",
+      "GITHUB_RUN_ATTEMPT": null,
+      "GITHUB_RUN_ID": null,
+      "OPENSSL_DIR": "/workspace/scratch/ac851b3fedf0/provider/trnm-pq-provider-3.5.9.srxvzDCv/install",
+      "OPENSSL_STATIC": "1",
+      "RUNNER_ARCH": null,
+      "RUSTC": null,
+      "RUSTC_WORKSPACE_WRAPPER": null,
+      "RUSTC_WRAPPER": null,
+      "RUSTFLAGS": null,
+      "RUST_TEST_THREADS": "1",
+      "TRNM_PQ_OPENSSL": "/workspace/scratch/ac851b3fedf0/provider/trnm-pq-provider-3.5.9.srxvzDCv/install/bin/openssl",
+      "TRNM_PQ_OPENSSL_SHA256": "2b1c8c97c617f33f76bb38ca6aac088cd9ea41cf07244d755b4a41825d6af05b",
+      "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+    },
+    "exit_code": 0,
+    "log_bytes": 5345,
+    "log_file": "repository-controls.log",
+    "log_sha256": "e2402392bde96e6a8487082e891b2defbd916a9061faca95bc9f6049cb3db3e2",
+    "schema": "trnm-pq-native-command-v1",
+    "started_utc": "2026-11-09T03:00:37.412464+00:00",
+    "status": "command_succeeded",
+    "whole_chain_quantum_security_qualified": false
+  },
+  "followup_environment": {
+    "schema": "trnm-repository-fixture-environment-followup-v1",
+    "source": "91dd3082633ea0b3a5ec9b0ed91f28603229be01",
+    "argv": [
+      "python3",
+      "-u",
+      "-B",
+      "scripts/ci/test_repository.py"
+    ],
+    "automatic_retry": false,
+    "reason": "Original full repository-control fixture copy failed with ENOSPC in shared /tmp tmpfs.",
+    "original_receipt_sha256": "232d8569c3b4c863ca45d099726dbdb941582d949012825c36d548cadcb40488",
+    "original_log_sha256": "4d7412e445c806224a1987b05a40e93e8c6fbdc4b8d2c3b8c44f4bd4eae12685",
+    "original_receipt": "/workspace/scratch/ac851b3fedf0/chain-validation-runtime-91dd3082/repository-controls.json",
+    "original_status_preserved": true,
+    "explicit_environment_change": {
+      "TMPDIR": "/workspace/scratch/ac851b3fedf0/chain-repository-fixture-temp"
+    },
+    "source_tests_and_thresholds_changed": false,
+    "resource_acceptance_claim": false,
+    "filesystem_before": "Filesystem     Type    1024-blocks     Used Available Capacity Mounted on\ntmpfs          tmpfs       5103236    62488   5040748       2% /tmp\noverlay        overlay    66002476 55600704   7029948      89% /workspace\n",
+    "recorder_exit_code": 0,
+    "followup_status": "command_succeeded",
+    "followup_exit_code": 0,
+    "same_argv": true,
+    "same_complete_source": true,
+    "filesystem_after": "Filesystem     Type    1024-blocks     Used Available Capacity Mounted on\ntmpfs          tmpfs       5103236  2548632   2554604      50% /tmp\noverlay        overlay    66002476 56446912   6183740      91% /workspace\n"
+  },
+  "followup_terminal_lines": [
+    "Ran 50 tests in 201.022s",
+    "OK"
+  ],
+  "all_local_command_scopes_have_passing_observations": true,
+  "all_hosted_ci_passed": false,
+  "production_activation": false
+}

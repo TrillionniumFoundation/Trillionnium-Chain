@@ -1,0 +1,17 @@
+{
+  "schema": "service-after-review-fixes-observation-v1",
+  "capture": "original stdout and stderr shell redirection; log bytes not rewritten",
+  "scope": "working-tree targeted suite with these file digests; not whole-repository committed-source provenance",
+  "initial_tool_chunk_id": "22056c",
+  "completion_tool_chunk_id": "b99df0",
+  "exit_code": 0,
+  "command": "python3 -m unittest -v test_service_work_settlement_v1 > /workspace/scratch/68dd104c2e6a/validation-setup/service-after-review-fixes.log 2>&1",
+  "cwd": "/workspace/scratch/68dd104c2e6a/chain-lifecycle/formal/pon-nakamoto-v1",
+  "reported_test_count": 25,
+  "source_sha256": {
+    "formal/pon-nakamoto-v1/service_work_settlement_v1.py": "42f8b451b9ccbfab0ee2ac7c432f5f4ff6042710620e13e407d69e6f6a32dda2",
+    "formal/pon-nakamoto-v1/test_service_work_settlement_v1.py": "bf51ff532d996962f44b574435020f83bef0566186dacc7d6fe191889f5c77a6",
+    "docs/development/specs/pon/SERVICE_WORK_SETTLEMENT_V1.md": "f478337bf8cc6dec859ae5b06a573a718ac29fa4a375e42042f3076bee10d550"
+  },
+  "log_sha256": "e4bef439dec933b0ad76de827c87f34b3cecd71bf8b4a3af0536b57a23d46d71"
+}

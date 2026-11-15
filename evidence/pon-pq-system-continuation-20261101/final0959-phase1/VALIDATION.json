@@ -1,0 +1,40 @@
+{
+  "byte_identical_publication_files": 66,
+  "byte_roundtrip": {
+    "all_original_bytes_equal_restored_bytes": true,
+    "bytes": 125071629,
+    "files": 1767,
+    "frozen_plan_sha256": "42430692640970e9bab601953b598988b0f5ec233d6023bb59fd491c872481c6",
+    "schema": "trnm-evidence-byte-roundtrip-v1"
+  },
+  "deterministic_reencoding_from_restored_raw_files": true,
+  "gzip_sha256": "d0c2904d2de7231de9017b9a55bbd637d0964a7076fa94b8bb9e5f85789ebcac",
+  "manifest_sha256": "290493a19cc8188315c6ce5ecbe10ea9032e067b978ea1034f9c978696151c62",
+  "negative_controls": {
+    "archive_corruption_controls": [
+      {
+        "case": "changed-chunk-byte",
+        "output_created": false,
+        "reason": "package SHA256 mismatch: chunks/part-00000.b64",
+        "result": "REFUSE"
+      },
+      {
+        "case": "wrong-chunk-size",
+        "output_created": false,
+        "reason": "package size mismatch: chunks/part-00000.b64",
+        "result": "REFUSE"
+      }
+    ],
+    "native_tests_reexecuted": 0,
+    "scope": "archive restoration only; no native application execution",
+    "unsafe_path_cases_refused": 8
+  },
+  "raw_file_count": 1767,
+  "raw_manifest_sha256": "703d5ec9f26f0efcc83fbbf4dafcbde998101480e8e312227e383900bf443663",
+  "raw_total_bytes": 125071629,
+  "schema": "trnm-pq-evidence-collection-validation-v1",
+  "scope": "byte preservation, deterministic packaging and restoration controls only; no application tests reexecuted",
+  "source_snapshots": "0959 and d2 as explicitly recorded; no later-base qualification",
+  "tar_sha256": "7a290e0dc98808ecd1d934aa6cd0bf7291fdb3fb93b763e8a4c5279936f69d11",
+  "whole_chain_pq_qualified": false
+}

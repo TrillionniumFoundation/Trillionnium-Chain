@@ -1,0 +1,168 @@
+{
+  "all_commands_succeeded": true,
+  "command_count": 16,
+  "execution_host": "ai395",
+  "observations": [
+    {
+      "elapsed_ns": 9226359214,
+      "exit_code": 0,
+      "label": "b-authority-controls",
+      "log_bytes": 117,
+      "status": "command_succeeded",
+      "unittest_seconds": 0.428,
+      "unittest_tests": 18
+    },
+    {
+      "elapsed_ns": 9105780932,
+      "exit_code": 0,
+      "label": "b-authority-source",
+      "log_bytes": 13223,
+      "result_fields": {
+        "schema": "trnm-pq-authority-effects-result-v1",
+        "status": "HOLD"
+      },
+      "status": "command_succeeded"
+    },
+    {
+      "elapsed_ns": 78801523027,
+      "exit_code": 0,
+      "label": "b-ci-contract-controls",
+      "log_bytes": 32210,
+      "status": "command_succeeded",
+      "unittest_seconds": 70.034,
+      "unittest_tests": 187
+    },
+    {
+      "elapsed_ns": 8826706362,
+      "exit_code": 0,
+      "label": "b-ci-contract-source",
+      "log_bytes": 591,
+      "result_fields": {},
+      "status": "command_succeeded"
+    },
+    {
+      "elapsed_ns": 152342360717,
+      "exit_code": 0,
+      "label": "b-corpus-controls",
+      "log_bytes": 161,
+      "status": "command_succeeded",
+      "unittest_seconds": 142.805,
+      "unittest_tests": 60
+    },
+    {
+      "elapsed_ns": 9323946324,
+      "exit_code": 0,
+      "label": "b-corpus-source",
+      "log_bytes": 558,
+      "result_fields": {
+        "schema": "trnm-pq-cross-branch-check-v1",
+        "status": "HOLD_NO_GO"
+      },
+      "status": "command_succeeded"
+    },
+    {
+      "elapsed_ns": 9115492879,
+      "exit_code": 0,
+      "label": "b-current-qrom-source",
+      "log_bytes": 104746,
+      "result_fields": {
+        "result": "CURRENT_MAPPING_REPRODUCED_SECURITY_HOLD",
+        "schema": "TRNM-W1-QROM-CURRENT-IMPLEMENTATION-AUDIT2"
+      },
+      "status": "command_succeeded"
+    },
+    {
+      "elapsed_ns": 11843091107,
+      "exit_code": 0,
+      "label": "b-graph-vectors",
+      "log_bytes": 60,
+      "result_fields": {
+        "objects": 9,
+        "result": "PASS"
+      },
+      "status": "command_succeeded"
+    },
+    {
+      "elapsed_ns": 8782785546,
+      "exit_code": 0,
+      "label": "b-hash-purpose-controls",
+      "log_bytes": 132,
+      "status": "command_succeeded",
+      "unittest_seconds": 0.155,
+      "unittest_tests": 33
+    },
+    {
+      "elapsed_ns": 8597087940,
+      "exit_code": 0,
+      "label": "b-hash-purpose-source",
+      "log_bytes": 6392,
+      "result_fields": {
+        "schema": "trnm-hash-use-contract-result-v1",
+        "status": "HOLD_NO_GO"
+      },
+      "status": "command_succeeded"
+    },
+    {
+      "elapsed_ns": 9719581888,
+      "exit_code": 0,
+      "label": "b-inventory",
+      "log_bytes": 35,
+      "status": "command_succeeded"
+    },
+    {
+      "elapsed_ns": 10270832879,
+      "exit_code": 0,
+      "label": "b-recorder-controls",
+      "log_bytes": 1177,
+      "status": "command_succeeded",
+      "unittest_seconds": 0.859,
+      "unittest_tests": 9
+    },
+    {
+      "elapsed_ns": 25796695574,
+      "exit_code": 0,
+      "label": "b-repository",
+      "log_bytes": 307,
+      "result_fields": {
+        "result": "PASS"
+      },
+      "status": "command_succeeded"
+    },
+    {
+      "elapsed_ns": 8593314367,
+      "exit_code": 0,
+      "label": "b-root-dependency-source",
+      "log_bytes": 7896,
+      "result_fields": {
+        "schema": "trnm-pq-root-dependency-register-result-v3",
+        "status": "HOLD"
+      },
+      "status": "command_succeeded"
+    },
+    {
+      "elapsed_ns": 11714273175,
+      "exit_code": 0,
+      "label": "b-source-controls",
+      "log_bytes": 6898,
+      "status": "command_succeeded",
+      "unittest_seconds": 2.879,
+      "unittest_tests": 43
+    },
+    {
+      "elapsed_ns": 11851793556,
+      "exit_code": 0,
+      "label": "b-vectors",
+      "log_bytes": 60,
+      "result_fields": {
+        "result": "PASS",
+        "vectors": 5
+      },
+      "status": "command_succeeded"
+    }
+  ],
+  "schema": "frozen-b-ai395-python-controls-v1",
+  "source": "9fd6ee29a7a663cef547040d9d42cc36a371a17e",
+  "tree": "7351f83fa9ac5c0e7540fa64bce06ea6f328602f",
+  "unittest_count": 350,
+  "whole_chain_quantum_security_qualified": false
+}

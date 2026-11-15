@@ -1,0 +1,411 @@
+{
+  "schema": "trnm-prepublication-evidence-readonly-review-v1",
+  "reviewed_at_utc": "2026-11-04T15:06:43.006936+00:00",
+  "directory": "/workspace/scratch/e537ad232c79/chain/evidence/pon-native-liveness-20261104",
+  "source_snapshot": "Evidence about 2b native run, fc9 and 0647 successful source checks, and 0ba failed composition checks; live 1c885 merge is outside this review.",
+  "results_json_sha256_at_start": "d66cfdb2fa1a21afdb1fb1fb94085a6ea015778c07b76b968115ffdfc39a6e31",
+  "results_json_unchanged_during_read": true,
+  "payload_files_checked": 95,
+  "old_input_artifacts_checked": 33,
+  "command_logs_checked": 31,
+  "unlisted_payload_files": [],
+  "listed_payload_files_missing": [],
+  "local_readme_links_checked": 6,
+  "errors": [],
+  "native_regressions": {
+    "planned": 23,
+    "executed": 0,
+    "not_run": 23,
+    "selectors": [
+      {
+        "selector": "store::admission_header_tests::admission_header_public_precheck_honors_each_original_cancellation",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "store::admission_header_tests::admission_header_target_and_time_share_only_one_current_window",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "store::admission_header_tests::admission_header_epoch_change_never_becomes_consensus_invalid_or_success",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "store::admission_header_tests::admission_header_epoch_change_keeps_original_resource_refusal",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "store::admission_header_tests::admission_header_checks_do_not_replace_or_close_callers_transaction",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "store::growth::tests::header_window::native_growth_v2_single_header_window_preserves_retarget_time_and_error_order",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "store::growth::tests::header_window::native_growth_v2_single_header_window_reloads_each_admission_context",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "store::growth::tests::header_window::native_growth_v2_single_header_window_still_rejects_changed_retained_headers",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "store::growth::tests::header_window::native_growth_v2_single_header_window_foreign_write_refuses_before_work_or_duplicate_return",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "store::growth::tests::header_window::native_growth_v2_single_header_window_keeps_epoch_fences_before_and_after_precheck",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "ingress::tests::public_v3_header_resource_refusal_precedes_parent_state_and_work",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "ingress::public_v3::tests::dropped_queue_task_is_not_observed_closed_before_its_last_grant_releases",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "ingress::public_v3::tests::connection_is_not_observed_closed_before_its_original_slot_releases",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "ingress::public_v3::tests::accepted_setup_error_closes_socket_before_releasing_slot_and_observation",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "ingress::public_v3::tests::finished_queue_and_failed_send_keep_output_owned_until_request_closes",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "ingress::public_v3::tests::shutdown_joins_all_workers_and_releases_queued_permits_before_returning_first_error",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "ingress::public_v3::pq_identity::tests::pq_response_expiry_stop_and_cancel_do_not_start_signing",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "ingress::public_v3::pq_identity::tests::pq_response_cancellation_between_encoding_and_signing_stops_new_work",
+        "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "ingress::public_v3::completion_deadline_tests::completion_at_or_after_work_deadline_cannot_start_output_or_rewrite_native_outcome",
+        "source_commit": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "ingress::public_v3::completion_deadline_tests::completion_gate_enforces_original_total_service_stop_and_cancel_before_encoding_error",
+        "source_commit": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "ingress::public_v3::completion_deadline_tests::timely_completion_transfers_output_under_original_total_and_service_caps",
+        "source_commit": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "ingress::public_v3::completion_deadline_tests::rejected_completion_releases_output_before_connection_slot_and_close_observation",
+        "source_commit": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      },
+      {
+        "selector": "ingress::public_v3::completion_deadline_tests::completion_gate_keeps_live_serialization_and_orphan_outcomes_distinct",
+        "source_commit": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "function_and_test_annotation_present": true,
+        "executed": false
+      }
+    ]
+  },
+  "original_report": {
+    "bytes": 14612673,
+    "sha256": "a8dfce1f27c3f164131aae98ba001e7bf466693f78075e84738419a0c75d5f5c",
+    "native_source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+    "cargo_returncode": 0,
+    "strict_reader_returncode": 1,
+    "phases": [
+      {
+        "mode": "attack-free-baseline",
+        "workers": 0,
+        "window_ns": 4000000000,
+        "confirmed": 0,
+        "required": 1,
+        "confirmation_latency_ns": null,
+        "submit_attempts": 7,
+        "submit_status_counts": {
+          "ok": 7
+        },
+        "history_responses": 16,
+        "replay_attempts": 16,
+        "replay_error_counts": {
+          "PUBLIC_HOST_KERNEL_PARENT": 16
+        },
+        "attack_attempts": 0,
+        "attack_status_counts": {},
+        "attack_error_counts": {},
+        "overlap_demonstrated": true,
+        "overlapping_false_calls": 0
+      },
+      {
+        "mode": "from-zero-pressure",
+        "workers": 16,
+        "window_ns": 4000000000,
+        "confirmed": 0,
+        "required": 1,
+        "confirmation_latency_ns": null,
+        "submit_attempts": 7,
+        "submit_status_counts": {
+          "ok": 7
+        },
+        "history_responses": 16,
+        "replay_attempts": 16,
+        "replay_error_counts": {
+          "PUBLIC_HOST_KERNEL_PARENT": 16
+        },
+        "attack_attempts": 450,
+        "attack_status_counts": {
+          "refused": 434,
+          "error": 16
+        },
+        "attack_error_counts": {
+          "IO: Resource temporarily unavailable (os error 11)": 15,
+          "FRAME_DEADLINE": 1
+        },
+        "overlap_demonstrated": false,
+        "overlapping_false_calls": 0
+      }
+    ],
+    "retained_binary": false,
+    "binary_sha256": null
+  },
+  "check_source_bindings": [
+    {
+      "name": "frozen-source-verification",
+      "result": "PASS",
+      "source_commit": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+      "returncode": 0
+    },
+    {
+      "name": "repository-check",
+      "result": "PASS",
+      "source_commit": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+      "returncode": 0
+    },
+    {
+      "name": "corpus-check",
+      "result": "HOLD_NO_GO",
+      "source_commit": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+      "returncode": 0
+    },
+    {
+      "name": "final-reader-tests",
+      "result": "PASS",
+      "source_commit": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+      "returncode": 0
+    },
+    {
+      "name": "source-control-tests",
+      "result": "PASS",
+      "source_commit": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+      "returncode": 0
+    },
+    {
+      "name": "strict-clippy",
+      "result": "FAIL",
+      "source_commit": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+      "returncode": 101
+    },
+    {
+      "name": "strict-clippy-fixed",
+      "result": "PASS",
+      "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+      "returncode": 0
+    },
+    {
+      "name": "original-four-second-native",
+      "result": "PASS_INVARIANTS_ONLY_BUSINESS_TARGET_NOT_MET",
+      "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+      "returncode": 0
+    },
+    {
+      "name": "original-confirmation-readback",
+      "result": "FAIL",
+      "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+      "returncode": 1
+    },
+    {
+      "name": "composition-cargo-graph",
+      "result": "PASS",
+      "source_commit": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+      "returncode": 0
+    },
+    {
+      "name": "composition-clippy",
+      "result": "PASS",
+      "source_commit": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+      "returncode": 0
+    },
+    {
+      "name": "composition-corpus",
+      "result": "PASS",
+      "source_commit": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+      "returncode": 0
+    },
+    {
+      "name": "composition-format",
+      "result": "PASS",
+      "source_commit": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+      "returncode": 0
+    },
+    {
+      "name": "composition-full-cargo-graph",
+      "result": "PASS",
+      "source_commit": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+      "returncode": 0
+    },
+    {
+      "name": "composition-owner-controls",
+      "result": "FAIL",
+      "source_commit": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+      "returncode": 1
+    },
+    {
+      "name": "composition-reader-controls",
+      "result": "PASS",
+      "source_commit": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+      "returncode": 0
+    },
+    {
+      "name": "composition-repository",
+      "result": "PASS",
+      "source_commit": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+      "returncode": 0
+    },
+    {
+      "name": "composition-source-verification",
+      "result": "PASS",
+      "source_commit": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+      "returncode": 0
+    },
+    {
+      "name": "cutoff-clippy",
+      "result": "PASS",
+      "source_commit": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+      "returncode": 0
+    },
+    {
+      "name": "cutoff-corpus",
+      "result": "PASS",
+      "source_commit": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+      "returncode": 0
+    },
+    {
+      "name": "cutoff-format",
+      "result": "PASS",
+      "source_commit": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+      "returncode": 0
+    },
+    {
+      "name": "cutoff-reader-controls",
+      "result": "PASS",
+      "source_commit": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+      "returncode": 0
+    },
+    {
+      "name": "cutoff-source-bundle",
+      "result": "PASS",
+      "source_commit": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+      "returncode": 0
+    },
+    {
+      "name": "cutoff-source-verification",
+      "result": "PASS",
+      "source_commit": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+      "returncode": 0
+    },
+    {
+      "name": "publication-staged-source-refusal",
+      "result": "FAIL",
+      "source_commit": "1470e4e166945e8eb4ce4aed4706e1c2b36dc97b",
+      "returncode": 1
+    },
+    {
+      "name": "latest-composition-clippy",
+      "result": "FAIL",
+      "source_commit": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+      "returncode": 101
+    },
+    {
+      "name": "latest-composition-corpus",
+      "result": "PASS",
+      "source_commit": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+      "returncode": 0
+    },
+    {
+      "name": "latest-composition-format",
+      "result": "PASS",
+      "source_commit": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+      "returncode": 0
+    },
+    {
+      "name": "latest-composition-reader-controls",
+      "result": "FAIL",
+      "source_commit": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+      "returncode": 120
+    },
+    {
+      "name": "latest-composition-source-bundle",
+      "result": "PASS",
+      "source_commit": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+      "returncode": 0
+    },
+    {
+      "name": "latest-composition-source",
+      "result": "PASS",
+      "source_commit": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+      "returncode": 0
+    }
+  ],
+  "did_run_tests": false,
+  "did_write_repository": false
+}

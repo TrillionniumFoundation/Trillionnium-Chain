@@ -1,0 +1,11 @@
+{
+  "legacy_source_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+  "fixed_runtime_commit": "618d1bd225db4df8fb7c1d0fc53af991d7f7fdf7",
+  "legacy_method_sha256": "403600a21130797bf2129bb2a1973516ddabcadf4949b60bdc918b4f95cae6b2",
+  "adaptation": "Only add ignored _expected: Checkpoint parameter to run the unchanged new tests against the exact old open_existing body; all cryptography, SQLite, requests, and deadline code executes normally.",
+  "legacy_source_sha256": "4e09dace2068267ad200ea3a7f96d0c26b5656f493bf05bccd223229e8d72efe",
+  "fixed_source_sha256": "8edd159a4246cf1c423f00a17fed924a049af7667412fea054b9de8bcbc29601",
+  "runtime_patch_not_for_integration": true,
+  "fixed_test_binary_sha256": "9359584045d3698f8efe404ec6b99b2ae88c543b30a1537c385b444c58316835",
+  "legacy_test_binary_sha256": "e3789e525ad4c1b3e0acc50442b927c36ee751ec30cbae53a8ce206bffd0b25a"
+}

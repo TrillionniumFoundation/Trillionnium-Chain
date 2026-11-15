@@ -1,0 +1,31 @@
+{
+  "schema": "pon-continuation-validation-summary-v1",
+  "tested_commit": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+  "tested_tree": "dcbeaec3ae9cf300c10223f12ae9890e05285b22",
+  "static_commands": 12,
+  "public_v3": {
+    "passed": 59,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 1263
+  },
+  "mvcc_default_feature_tests": {
+    "passed": 259,
+    "failed": 0,
+    "ignored": 9,
+    "filtered": 0,
+    "harnesses": 17,
+    "feature_gated_zero_test_harness": "pq_account_owner"
+  },
+  "strict_clippy": {
+    "workspace": true,
+    "all_targets": true,
+    "all_features": true,
+    "warnings_denied": true,
+    "exit_code": 0
+  },
+  "all_features_runtime_tests_executed": false,
+  "qualification": "HOLD_NO_GO",
+  "production_activation": false,
+  "publication_extension_scope": "Only evidence directory, including RUNNING progress semantics in diagnostic collector; native code, tests, Cargo graph and configuration unchanged."
+}

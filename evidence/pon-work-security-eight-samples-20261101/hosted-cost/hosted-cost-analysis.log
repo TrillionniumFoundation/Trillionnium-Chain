@@ -1,0 +1,13 @@
+PASS 13093136677 w1-false-trace-head-arm64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1
+PASS 13093301643 w1-legal-strategy-v2-prospective-merge-x64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1
+PASS 13093396655 w1-false-trace-head-x64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1
+PASS 13093416862 w1-legal-strategy-head-x64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1
+PASS 13093421854 w1-legal-strategy-prospective-merge-arm64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1
+PASS 13093436001 w1-false-trace-prospective-merge-x64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1
+PASS 13093480950 w1-legal-strategy-head-arm64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1
+PASS 13093776046 w1-legal-strategy-prospective-merge-x64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1
+PASS 13093880577 w1-false-trace-prospective-merge-arm64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1
+PASS 13093891287 w1-legal-strategy-v2-prospective-merge-arm64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1
+PASS 13093926141 w1-legal-strategy-v2-head-arm64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1
+PASS 13094025188 w1-legal-strategy-v2-head-x64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1
+{"result": "PASS", "json": "/tmp/trnm-pon-hosted-3bbc/cost-artifacts/hosted-cost-analysis.json", "markdown": "/tmp/trnm-pon-hosted-3bbc/cost-artifacts/hosted-cost-analysis.md", "v2_ratio_range": [0.9606375908284712, 0.9845470857885806], "false_trace_ratio_range": [19.42496128164137, 22.884952844933974]}

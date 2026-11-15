@@ -1,0 +1,12 @@
+{
+  "changed_source_hashes": {
+    "formal/pon-nakamoto-v1/WORK_LIFECYCLE_CERTIFICATE_V1.md": {
+      "final_source": "065a19ba3e6d40159866d40ed29b765d73066c2da67a2d7b09c29df6e231f1b4",
+      "first_observation": "460d1cd99cb6f501f54f22567fab1ea52b2a33d0f25d8c6f12a6f801c3542576"
+    }
+  },
+  "final_reproduction_directory": "run-02-final",
+  "first_observation_preserved": true,
+  "independent_ai_review": "code_audit reviewed finite-help proof and signature/extent/source-DAG/full-predicate paths; no substantive freeze blocker. This is not independent human or physical-system qualification.",
+  "reason": "Clarified source_commit as baseline anchor and exact source_manifest as new-file binding; clarified bounded initial classical advice and no per-window reset of retained help. No executable source changed."
+}

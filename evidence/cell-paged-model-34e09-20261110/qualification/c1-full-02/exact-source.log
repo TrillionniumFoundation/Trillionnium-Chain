@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/ci/verify_ci_source.py", line 219, in <module>
+    main()
+    ~~~~^^
+  File "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/ci/verify_ci_source.py", line 210, in main
+    result = verify(args.kind, args.expected_head, args.expected_base, args.expected_merge)
+  File "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/ci/verify_ci_source.py", line 156, in verify
+    clean()
+    ~~~~~^^
+  File "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/ci/verify_ci_source.py", line 135, in clean
+    raise ValueError('index hides tracked worktree entries')
+ValueError: index hides tracked worktree entries

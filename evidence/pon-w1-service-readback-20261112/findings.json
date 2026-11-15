@@ -1,0 +1,234 @@
+{
+  "artifact": {
+    "all_crc_checked": true,
+    "bytes": 5953185,
+    "files": 57,
+    "id": 13918630109,
+    "sha256": "454d78fbb47f518af1347cbbad787a23b7f7e9755a988dd2cd9d80af92be2d70"
+  },
+  "binary_before_equals_after": true,
+  "host_counter_observation": {
+    "after": {
+      "file_sha256": "190f16bdddff58fb020b7171db7e7f82dd4b929ae04ca3d55595fdb239c8fa8b",
+      "nr_periods": 1109,
+      "nr_throttled": 1056,
+      "observed_utc": "2026-11-12T05:24:00.875268+00:00",
+      "throttled_usec": 102137324,
+      "usage_usec": 26649127
+    },
+    "before": {
+      "file_sha256": "8a20c25b1a3a6f162ea7b985e28a72d1d2183bd05f8b6339043a9273eaac70ab",
+      "nr_periods": 6,
+      "nr_throttled": 4,
+      "observed_utc": "2026-11-12T05:22:10.569340+00:00",
+      "throttled_usec": 247211,
+      "usage_usec": 114220
+    },
+    "delta": {
+      "nr_periods": 1103,
+      "nr_throttled": 1052,
+      "throttled_usec": 101890113,
+      "usage_usec": 26534907
+    },
+    "limits": {
+      "cpu.max": "25000 100000",
+      "cpu.max.burst": "0",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    },
+    "memory_events_all_zero": true,
+    "read_errors": {},
+    "scope": "Complete controller inside interval includes build, source checks, both native tests and reporting; not four-second phase-specific or per-request attribution."
+  },
+  "independent_w1_math_replay": false,
+  "manifest_sha256": "a25fefc6441121ae56126a4b13aa2045860620b193fa2517b7e49c964078d0a1",
+  "native_rerun": false,
+  "observations": {
+    "fresh": {
+      "finite_target_met": false,
+      "honest_chain_acquisition_wall_ns": 186507754,
+      "honest_chain_process_cpu_ns": 37751201,
+      "phases": [
+        {
+          "accepted_submissions": 7,
+          "attacks": {
+            "calls": 0,
+            "error_counts": {},
+            "status_counts": {}
+          },
+          "business_started_ns": 126849,
+          "client_confirmation_latency_ns": 1797712234,
+          "client_confirmed_transactions": 1,
+          "confirmation_ended_ns": 1797839083,
+          "finite_business_target_met": true,
+          "history_calls": 7,
+          "history_pages_replayed": 7,
+          "honest_head_successes_in_window": 70,
+          "invariant_target_met": true,
+          "last_replay": {
+            "history_call_index": 6,
+            "replay_ended_ns": 1796804899,
+            "replay_error": null,
+            "replay_started_ns": 1598051267,
+            "replay_thread_cpu_ns": 49680827,
+            "replay_wall_ns": 198753632,
+            "supplied_packets": 1
+          },
+          "last_submission_end_ns": 220144488,
+          "maximum_honest_head_gap_ns": 103095120,
+          "mode": "attack-free-baseline",
+          "submissions": 7,
+          "verification_errors": []
+        },
+        {
+          "accepted_submissions": 7,
+          "attacks": {
+            "calls": 236,
+            "error_counts": {
+              "FRAME_DEADLINE": 1,
+              "IO: Resource temporarily unavailable (os error 11)": 15,
+              "None": 220
+            },
+            "status_counts": {
+              "error": 16,
+              "refused": 220
+            }
+          },
+          "business_started_ns": 101486345,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_transactions": 0,
+          "confirmation_ended_ns": null,
+          "finite_business_target_met": false,
+          "history_calls": 3,
+          "history_pages_replayed": 2,
+          "honest_head_successes_in_window": 18,
+          "invariant_target_met": true,
+          "last_replay": {
+            "history_call_index": 2,
+            "replay_ended_ns": 4000987683,
+            "replay_error": "PUBLIC_REQUEST_DEADLINE",
+            "replay_started_ns": 3800028410,
+            "replay_thread_cpu_ns": 18482465,
+            "replay_wall_ns": 200959273,
+            "supplied_packets": 1
+          },
+          "last_submission_end_ns": 2008660220,
+          "maximum_honest_head_gap_ns": 302475827,
+          "mode": "from-zero-pressure",
+          "submissions": 7,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ],
+      "report_bytes": 7738487,
+      "report_sha256": "4724c776430f88434edfcc7d7024475c839554d08c1890fa54cf7c5f252228d5",
+      "schema": "public-v3-fresh-challenge-confirmation-pressure-v1"
+    },
+    "original": {
+      "finite_target_met": false,
+      "honest_chain_acquisition_wall_ns": 185680124,
+      "honest_chain_process_cpu_ns": 37662338,
+      "phases": [
+        {
+          "accepted_submissions": 7,
+          "attacks": {
+            "calls": 0,
+            "error_counts": {},
+            "status_counts": {}
+          },
+          "business_started_ns": 137131,
+          "client_confirmation_latency_ns": 1787982368,
+          "client_confirmed_transactions": 1,
+          "confirmation_ended_ns": 1788119499,
+          "finite_business_target_met": true,
+          "history_calls": 7,
+          "history_pages_replayed": 7,
+          "honest_head_successes_in_window": 69,
+          "invariant_target_met": true,
+          "last_replay": {
+            "history_call_index": 6,
+            "replay_ended_ns": 1787026021,
+            "replay_error": null,
+            "replay_started_ns": 1582904589,
+            "replay_thread_cpu_ns": 49194951,
+            "replay_wall_ns": 204121432,
+            "supplied_packets": 1
+          },
+          "last_submission_end_ns": 217666141,
+          "maximum_honest_head_gap_ns": 109220709,
+          "mode": "attack-free-baseline",
+          "submissions": 7,
+          "verification_errors": []
+        },
+        {
+          "accepted_submissions": 7,
+          "attacks": {
+            "calls": 367,
+            "error_counts": {
+              "FRAME_DEADLINE": 4,
+              "IO: Resource temporarily unavailable (os error 11)": 11,
+              "None": 351,
+              "PUBLIC_CLIENT_DEADLINE": 1
+            },
+            "status_counts": {
+              "error": 16,
+              "refused": 351
+            }
+          },
+          "business_started_ns": 15494853,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_transactions": 0,
+          "confirmation_ended_ns": null,
+          "finite_business_target_met": false,
+          "history_calls": 5,
+          "history_pages_replayed": 4,
+          "honest_head_successes_in_window": 28,
+          "invariant_target_met": true,
+          "last_replay": {
+            "history_call_index": 4,
+            "replay_ended_ns": 4001116728,
+            "replay_error": "PUBLIC_REQUEST_DEADLINE",
+            "replay_started_ns": 3906324324,
+            "replay_thread_cpu_ns": 8453340,
+            "replay_wall_ns": 94792404,
+            "supplied_packets": 1
+          },
+          "last_submission_end_ns": 1211857594,
+          "maximum_honest_head_gap_ns": 203934242,
+          "mode": "from-zero-pressure",
+          "submissions": 7,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ],
+      "report_bytes": 11109248,
+      "report_sha256": "11a150380cb5b638c355f1dab1874dabeb31b02fcda43599fa9a85a4e0bd2d21",
+      "schema": "public-v3-signed-confirmation-pressure-v1"
+    }
+  },
+  "production_activation": false,
+  "qualification": "HOLD",
+  "schema": "w1-service-independent-readback-v1",
+  "scope": "Artifact integrity and reported observation readback; no new native execution, no causal optimization proof, no independent execution authentication.",
+  "source_before_equals_after": true,
+  "source_commit": "229b14c2d366a257f51f287d502a550df2332338",
+  "source_review": {
+    "findings": [
+      "Successful History pages advance after=next; actual observed pages each contain one packet. No evidence for repeated complete seven-block replay per request.",
+      "Fresh business test explicitly panics at fresh_challenge.rs:244 when finite target is false; original native test intentionally asserts only safety/accounting, and strict reader separately refuses false finite target.",
+      "History importer releases shared Node writer during CPU refill and full W1; each page full verification remains mandatory.",
+      "begin_cpu_observed retries original shared account at two-millisecond intervals with original Host/resource callback and absolute deadline. No safe shortcut or causal performance repair is established by this readback."
+    ],
+    "fresh_path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs",
+    "history_path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+    "test_path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs"
+  },
+  "summary_source": {
+    "bytes": 175141,
+    "sha256": "161f2f64e3fd12f592159b0a92e9fc35731ee94731c95b63ad519b404264239f"
+  },
+  "tree": "b386c32458589f81944ddd69c04a56c28c55e284"
+}

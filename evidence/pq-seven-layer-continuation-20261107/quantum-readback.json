@@ -1,0 +1,1136 @@
+{
+  "campaign_artifacts": {
+    "constructive": {
+      "assertions": {
+        "constructive_upper_bound_for_declared_fixed_context_only": true,
+        "mining_security_qualified": false,
+        "native_node_executed_by_campaign": false,
+        "native_sized_run_is_macro_semantics_not_leaf_gate_execution": true,
+        "physical_hardware_calibrated": false,
+        "production_activation": false,
+        "quantum_cost_lower_bound_or_optimality_proved": false,
+        "quantum_hardware_executed": false,
+        "reduced_gate_controls_are_not_native_parameter_runs": true
+      },
+      "declared_sources": 16,
+      "manifest_sha256": "5a16b5cb6c587a9324e8aaf50a5f920990f0a63fda19185c13cb73630837883f",
+      "report_bytes": 40443,
+      "report_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/constructive-campaign/report.json",
+      "report_sha256": "be96288f81b235d8add601071e8d56c35d389f5f046e74dfb994d0839afe9926",
+      "source": {
+        "all_sources_committed_at_head": true,
+        "git_head": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "source_sha256": {
+          "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+          "formal/pon-nakamoto-v1/experiments/w1_quantum_oracle_campaign.py": "b3a0cd0916a1e17cff3a011c6942acae7b05aa053aefbc2a882bfe4f63012d0a",
+          "formal/pon-nakamoto-v1/quantum_oracle_resources.py": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f",
+          "formal/pon-nakamoto-v1/reference.py": "5c5e7cba07709ff6fd390eb7eea3e9db1e9d588809a9ad6a06a9884b8856aa71",
+          "formal/pon-nakamoto-v1/reversible_components.py": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0",
+          "formal/pon-nakamoto-v1/test_w1_quantum_oracle.py": "3e1ed86090092e59da120916f69e923dd2a88c6caedf740ea0585c3f06085c78",
+          "formal/pon-nakamoto-v1/vectors/header.bin": "af1eb43700a2ac269c7360e21acd6be5f21f9d7e0400b4a62e07f4ee6b12e71b",
+          "formal/pon-nakamoto-v1/vectors/work.bin": "35de8899201fd8a30f32f440d2e9145b4fef867d0d331efc271de1f1be822fc0",
+          "formal/pon-nakamoto-v1/w1_quantum_oracle.py": "5a1a250680299561cb83b0b7d17ab57cf180e64277f981f5130cdf04e70aeb99",
+          "formal/pon-nakamoto-v1/w1_quantum_primitives.py": "1d1f0a800e24e1d82aab1794ec0cf207ed845e7a7080bacd41b0d0c575f98ac1",
+          "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+          "scripts/pon_daa_schedule_reader.py": "8a3d3f81dfc9a5393294595bf4ae14a8e716a56c624106b461697e3c097b526d",
+          "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+          "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "e029837d050952046c9c4fa694a8191470a8733cd96a3dc81e98cc46af59a0a3",
+          "trillionnium/crates/trnm-protocol/src/pon_growth.rs": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+          "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+        },
+        "uncommitted_source_files": []
+      }
+    },
+    "restricted": {
+      "assertions": {
+        "attacker_minimum_cost_or_consensus_security_proved": false,
+        "cost_ratios_are_constructive_census_ratios_only": true,
+        "full_relation_checked_for_every_native_shape_winner": true,
+        "matched_classical_quantum_speedup_measured": false,
+        "native_macro_execution_is_not_leaf_gate_execution": true,
+        "native_node_or_quantum_hardware_executed": false,
+        "production_activation": false,
+        "subset_may_discard_full_legal_winners": true,
+        "unfiltered_low_nonce_superposition_dimension_retained": true,
+        "uniform_tickets_or_prefix_ticket_independence_proved": false
+      },
+      "declared_sources": 18,
+      "manifest_sha256": "fc33c830327d43c919d56056ab312499c4c88f6bf70c6f7fefdb406957dfe081",
+      "report_bytes": 215863,
+      "report_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/restricted-campaign/report.json",
+      "report_sha256": "8165e8c21067c2b3e8593d857c29293b25a506b9b557b38bd670ab3523373b65",
+      "source": {
+        "all_sources_committed_at_head": true,
+        "git_head": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "source_sha256": {
+          "formal/pon-nakamoto-v1/experiments/w1_quantum_oracle_campaign.py": "b3a0cd0916a1e17cff3a011c6942acae7b05aa053aefbc2a882bfe4f63012d0a",
+          "formal/pon-nakamoto-v1/experiments/w1_restricted_oracle_campaign.py": "876c732404602439117aaec1b100409501c245129bc55885d1886877e170f6f5",
+          "formal/pon-nakamoto-v1/quantum_adversarial_search.py": "1d6833b0cc52abc549e6169d8da70c774a3f779d7ce0d7f6381590d37e096387",
+          "formal/pon-nakamoto-v1/quantum_oracle_resources.py": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f",
+          "formal/pon-nakamoto-v1/reversible_components.py": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0",
+          "formal/pon-nakamoto-v1/test_w1_quantum_oracle.py": "3e1ed86090092e59da120916f69e923dd2a88c6caedf740ea0585c3f06085c78",
+          "formal/pon-nakamoto-v1/test_w1_quantum_restricted_oracle.py": "6d3ebffc20dc2a1dada6e03841a5fd387fe7d6164a30eac5eb6000c052e6e74f",
+          "formal/pon-nakamoto-v1/vectors/header.bin": "af1eb43700a2ac269c7360e21acd6be5f21f9d7e0400b4a62e07f4ee6b12e71b",
+          "formal/pon-nakamoto-v1/vectors/work.bin": "35de8899201fd8a30f32f440d2e9145b4fef867d0d331efc271de1f1be822fc0",
+          "formal/pon-nakamoto-v1/w1_marked_domain.py": "1a34e85ad780dc89af40f8dfe31ab310fd2d289473bb3473d347c7f8fc347460",
+          "formal/pon-nakamoto-v1/w1_quantum_oracle.py": "5a1a250680299561cb83b0b7d17ab57cf180e64277f981f5130cdf04e70aeb99",
+          "formal/pon-nakamoto-v1/w1_quantum_primitives.py": "1d1f0a800e24e1d82aab1794ec0cf207ed845e7a7080bacd41b0d0c575f98ac1",
+          "formal/pon-nakamoto-v1/w1_quantum_restricted_oracle.py": "b590ed91d491577c494a667a9271410b420dc35b7088705ef99982c2abd3b702",
+          "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+          "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+          "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "e029837d050952046c9c4fa694a8191470a8733cd96a3dc81e98cc46af59a0a3",
+          "trillionnium/crates/trnm-protocol/src/pon_growth.rs": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+          "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+        },
+        "uncommitted_source_files": []
+      }
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "timeout",
+        "1500",
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_oracle_resources.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "test_quantum_oracle_resources",
+      "log_bytes": 4273,
+      "log_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_quantum_oracle_resources.log",
+      "log_sha256": "bdab235ead658db177355d7e3ed7fa1b905a6213dafd0bff9acfe099ca48f38d",
+      "passed_test_names": [
+        "test_quantum_oracle_resources.ResourceAccounting.test_aborted_search_has_no_free_prepare_or_compute",
+        "test_quantum_oracle_resources.ResourceAccounting.test_any_missing_stage_preserves_unknown_complete_cost",
+        "test_quantum_oracle_resources.ResourceAccounting.test_candidate_recheck_is_mandatory_explicit_validated_input",
+        "test_quantum_oracle_resources.ResourceAccounting.test_command_demo_explicitly_separates_unknown_w1",
+        "test_quantum_oracle_resources.ResourceAccounting.test_costed_manifest_never_claims_verified_w1_or_lower_bound",
+        "test_quantum_oracle_resources.ResourceAccounting.test_distance_budget_uses_exact_failure_not_rounded_equality",
+        "test_quantum_oracle_resources.ResourceAccounting.test_distance_cap_is_a_failure_not_best_effort_success",
+        "test_quantum_oracle_resources.ResourceAccounting.test_distillation_failure_cannot_be_fixed_by_code_distance",
+        "test_quantum_oracle_resources.ResourceAccounting.test_exact_total_failure_budget_equality_remains_accepted",
+        "test_quantum_oracle_resources.ResourceAccounting.test_forward_inverse_phase_and_diffusion_are_distinct",
+        "test_quantum_oracle_resources.ResourceAccounting.test_incomplete_w1_cannot_be_promoted_by_supplied_compute",
+        "test_quantum_oracle_resources.ResourceAccounting.test_integer_bool_negative_and_huge_counts_refused",
+        "test_quantum_oracle_resources.ResourceAccounting.test_invalid_stage_subtotals_and_depths_refused",
+        "test_quantum_oracle_resources.ResourceAccounting.test_json_roundtrip_duplicate_nonfinite_and_size",
+        "test_quantum_oracle_resources.ResourceAccounting.test_magic_budget_does_not_round_away_positive_headroom",
+        "test_quantum_oracle_resources.ResourceAccounting.test_model_and_preprocessing_duplicates_refused",
+        "test_quantum_oracle_resources.ResourceAccounting.test_parallel_instances_pay_replicated_registers_and_gates",
+        "test_quantum_oracle_resources.ResourceAccounting.test_physical_error_worsening_cannot_reduce_selected_distance",
+        "test_quantum_oracle_resources.ResourceAccounting.test_preprocessing_shared_once_per_task_and_amortized_exactly",
+        "test_quantum_oracle_resources.ResourceAccounting.test_proof_cost_charged_only_after_completed_winner",
+        "test_quantum_oracle_resources.ResourceAccounting.test_surface_code_union_formula_independent",
+        "test_quantum_oracle_resources.ResourceAccounting.test_threshold_and_nonfinite_errors_refused",
+        "test_quantum_oracle_resources.ResourceAccounting.test_unknown_w1_never_invents_component_counts",
+        "test_quantum_oracle_resources.ResourceAccounting.test_workload_failures_and_schema_fail_closed",
+        "test_quantum_oracle_resources.ResourceAccounting.test_zero_iteration_failed_trials_still_pay_complete_candidate_recheck"
+      ],
+      "receipt_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_quantum_oracle_resources.json",
+      "receipt_sha256": "28e4a9b8c896b84e9cc123430b72b6a56e6d957adb8f8443d92876c8e13dbcd7",
+      "recorder_log_sha256": "8dae7b68ec169f90cf0ac836cf0d8c7affc76160cfb6749d4da83aeb54610706",
+      "source_before_after_equal": true,
+      "tracked_bytes": 1106065430,
+      "tracked_entries": 11034
+    },
+    {
+      "argv": [
+        "timeout",
+        "1500",
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_network_sim.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "test_quantum_network_sim",
+      "log_bytes": 6731,
+      "log_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_quantum_network_sim.log",
+      "log_sha256": "f59d85bd285b63c3159ba86756d48cffeddd22f071010dd31565d8c43d1c376e",
+      "passed_test_names": [
+        "test_quantum_network_sim.AdversarialPolicyControls.test_adaptive_release_defers_future_prefix_then_uses_local_timer",
+        "test_quantum_network_sim.AdversarialPolicyControls.test_adaptive_release_uses_only_miner_delivered_public_view",
+        "test_quantum_network_sim.AdversarialPolicyControls.test_branch_minimum_and_epoch_extremes_allow_valid_backward_timestamps",
+        "test_quantum_network_sim.AdversarialPolicyControls.test_explicit_timeout_can_release_without_work_advantage",
+        "test_quantum_network_sim.AdversarialPolicyControls.test_interrupted_domain_setup_resumes_paid_remaining_work",
+        "test_quantum_network_sim.AdversarialPolicyControls.test_optimizer_refuses_persistent_m_or_fixed_count_throughput_claim",
+        "test_quantum_network_sim.AdversarialPolicyControls.test_parent_change_discards_only_unfinished_old_domain_setup",
+        "test_quantum_network_sim.AdversarialPolicyControls.test_persistent_zero_domain_freezes_header_and_charges_shared_setup_once",
+        "test_quantum_network_sim.AdversarialPolicyControls.test_refresh_is_after_measured_batches_and_pays_setup_again",
+        "test_quantum_network_sim.AdversarialPolicyControls.test_repeated_shocks_do_not_forgive_or_duplicate_domain_setup",
+        "test_quantum_network_sim.AdversarialPolicyControls.test_sampled_shared_m_is_not_resampled_per_processor_or_retry",
+        "test_quantum_network_sim.AdversarialPolicyControls.test_setup_remainder_uses_exact_elapsed_and_upward_conversion",
+        "test_quantum_network_sim.AdversarialPolicyControls.test_slow_effective_clock_after_permitted_speed_factor_is_censored",
+        "test_quantum_network_sim.AdversarialPolicyControls.test_slow_quantum_resource_clocks_censor_at_finite_horizon",
+        "test_quantum_network_sim.AdversarialPolicyControls.test_trial_selection_never_receives_sampled_marked_count",
+        "test_quantum_network_sim.AdversarialPolicyControls.test_upward_mode_preserves_classical_clocks_and_rejects_unknown_mode",
+        "test_quantum_network_sim.AdversarialPolicyControls.test_upward_mode_rounds_exact_stage_sum_and_search_and_proof_deadlines",
+        "test_quantum_network_sim.CampaignControls.test_independent_readback_detects_integer_credit_mutation",
+        "test_quantum_network_sim.CampaignControls.test_readback_replay_and_forged_qualification_rejected",
+        "test_quantum_network_sim.EventControls.test_classical_clock_uses_target_probability_and_share",
+        "test_quantum_network_sim.EventControls.test_deferred_bundle_adopts_prefix_then_descendant_at_exact_bound",
+        "test_quantum_network_sim.EventControls.test_failed_trials_charge_recheck_without_generating_proof",
+        "test_quantum_network_sim.EventControls.test_future_wait_does_not_spend_unobserved_horizon",
+        "test_quantum_network_sim.EventControls.test_horizon_censors_partial_search_and_candidate_check",
+        "test_quantum_network_sim.EventControls.test_private_future_parent_does_not_stop_descendant_search",
+        "test_quantum_network_sim.EventControls.test_private_search_ignores_public_tip_while_honest_search_restarts",
+        "test_quantum_network_sim.EventControls.test_private_timestamp_phase_boundaries",
+        "test_quantum_network_sim.EventControls.test_resource_limits_and_seed_reproducibility",
+        "test_quantum_network_sim.EventControls.test_shock_cancels_active_trial_and_restart_has_new_clock",
+        "test_quantum_network_sim.EventControls.test_unprocessed_zero_duration_proof_is_censored_at_event_limit",
+        "test_quantum_network_sim.EventControls.test_winner_check_then_proof_then_delivery_are_distinct",
+        "test_quantum_network_sim.FiniteGroverTests.test_explicit_marked_fraction_and_missing_physics",
+        "test_quantum_network_sim.FiniteGroverTests.test_finite_round_overshoot_and_parallel_measurements",
+        "test_quantum_network_sim.FiniteGroverTests.test_invalid_probability_and_iteration_inputs",
+        "test_quantum_network_sim.ValidationTests.test_checked_512_bit_credit",
+        "test_quantum_network_sim.ValidationTests.test_equal_work_retains_tip_and_heavier_branch_reorgs",
+        "test_quantum_network_sim.ValidationTests.test_six_easy_descendants_do_not_confirm_a_hard_inclusion",
+        "test_quantum_network_sim.ValidationTests.test_targets_profiles_mtp_and_future_bound",
+        "test_quantum_network_sim.ValidationTests.test_unavailable_backend_and_invalid_profiles_fail_closed"
+      ],
+      "receipt_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_quantum_network_sim.json",
+      "receipt_sha256": "f7d2592321d3052910a7e0ec543f386ed83fbbd701444972f89cd88ec2db140c",
+      "recorder_log_sha256": "aa6e75888fc04fd73e757798b14227f7e1d24a3f94341b8464c2cf71f2ce587d",
+      "source_before_after_equal": true,
+      "tracked_bytes": 1106065430,
+      "tracked_entries": 11034
+    },
+    {
+      "argv": [
+        "timeout",
+        "1500",
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_candidate_check_clock.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "test_quantum_candidate_check_clock",
+      "log_bytes": 1220,
+      "log_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_quantum_candidate_check_clock.log",
+      "log_sha256": "9e0d800e3616aa49f3f88a8dc5cdb57d277fceed6a939718f4f6a7a4f4f6053b",
+      "passed_test_names": [
+        "test_quantum_candidate_check_clock.CandidateCheckClockTests.test_cancel_after_exact_readout_end_retains_started_check",
+        "test_quantum_candidate_check_clock.CandidateCheckClockTests.test_cancel_before_exact_readout_end_does_not_invent_check",
+        "test_quantum_candidate_check_clock.CandidateCheckClockTests.test_completed_failed_trial_pays_full_check_for_every_processor",
+        "test_quantum_candidate_check_clock.CandidateCheckClockTests.test_exact_binary_phase_boundary_has_no_positive_elapsed_check",
+        "test_quantum_candidate_check_clock.CandidateCheckClockTests.test_horizon_after_readout_retains_censored_check",
+        "test_quantum_candidate_check_clock.CandidateCheckClockTests.test_nonzero_search_start_is_included_in_elapsed_accounting"
+      ],
+      "receipt_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_quantum_candidate_check_clock.json",
+      "receipt_sha256": "c651337e5c56d9e8a1d78687e24cdb96210e59d26d4b2989d3d58d6da66163a4",
+      "recorder_log_sha256": "604aafdf6a0171c5bf1ad535f4458f58199c247cf76608cc90ee2110f33a0933",
+      "source_before_after_equal": true,
+      "tracked_bytes": 1106065430,
+      "tracked_entries": 11034
+    },
+    {
+      "argv": [
+        "timeout",
+        "1500",
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_adversarial_search.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "test_quantum_adversarial_search",
+      "log_bytes": 2243,
+      "log_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_quantum_adversarial_search.log",
+      "log_sha256": "ac55b161f6f6635f620c381621759254c3ebbaa9a1e3417e672e232312fc1b31",
+      "passed_test_names": [
+        "test_quantum_adversarial_search.BoundedPolicyControls.test_explicit_grid_and_zero_probability_tie_break",
+        "test_quantum_adversarial_search.BoundedPolicyControls.test_fresh_shared_domain_renewal_objective_includes_setup_and_single_proof",
+        "test_quantum_adversarial_search.BoundedPolicyControls.test_independent_integer_grid_and_candidate_check_cost",
+        "test_quantum_adversarial_search.BoundedPolicyControls.test_same_processor_budget_beats_first_peak",
+        "test_quantum_adversarial_search.CampaignReadbackControls.test_bounded_grid_rejects_unbounded_or_mixed_profile_claim",
+        "test_quantum_adversarial_search.CampaignReadbackControls.test_campaign_roundtrip_and_rehashed_forgery_controls",
+        "test_quantum_adversarial_search.CampaignReadbackControls.test_integer_work_consistent_wrong_target_is_independently_rejected",
+        "test_quantum_adversarial_search.FiniteDomainControls.test_domain_and_exact_binomial_limits_fail_explicitly",
+        "test_quantum_adversarial_search.FiniteDomainControls.test_enumerate_every_small_predicate_before_parallel_averaging",
+        "test_quantum_adversarial_search.FiniteDomainControls.test_exact_amplitude_vectors_all_small_marked_counts",
+        "test_quantum_adversarial_search.FiniteDomainControls.test_exact_binomial_weights_and_no_solution_mass",
+        "test_quantum_adversarial_search.FiniteDomainControls.test_integer_ticket_sampler_uses_inclusive_boundary_once_per_domain"
+      ],
+      "receipt_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_quantum_adversarial_search.json",
+      "receipt_sha256": "4b6aa5dcafd7ab6784a85cdd53eb784316ad6b5b1efff8eb27ffb347dc610525",
+      "recorder_log_sha256": "dc6bc25952c60b09e8822f9e4624a66b4aba8a682ef3c8489310d0f432c0963e",
+      "source_before_after_equal": true,
+      "tracked_bytes": 1106065430,
+      "tracked_entries": 11034
+    },
+    {
+      "argv": [
+        "timeout",
+        "1500",
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_resource_clock.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "test_quantum_resource_clock",
+      "log_bytes": 2947,
+      "log_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_quantum_resource_clock.log",
+      "log_sha256": "407a74793747717f9f96a20a0eba6c47b734febcaf0e47ddc43520981f1fe2f0",
+      "passed_test_names": [
+        "test_quantum_resource_clock.ResourceClockControls.test_all_processors_pay_data_and_factories",
+        "test_quantum_resource_clock.ResourceClockControls.test_campaign_magic_state_budget_is_not_reset_per_trial",
+        "test_quantum_resource_clock.ResourceClockControls.test_campaign_rederives_clocks_and_replays_trace",
+        "test_quantum_resource_clock.ResourceClockControls.test_campaign_source_head_cannot_be_invented",
+        "test_quantum_resource_clock.ResourceClockControls.test_certificate_and_bound_clock_mutation_rejected",
+        "test_quantum_resource_clock.ResourceClockControls.test_clock_cannot_be_forged_with_new_checksum",
+        "test_quantum_resource_clock.ResourceClockControls.test_clock_rounds_up_never_down",
+        "test_quantum_resource_clock.ResourceClockControls.test_construction_mode_replaces_forged_circuit_inputs_and_replays",
+        "test_quantum_resource_clock.ResourceClockControls.test_fixed_distance_uses_whole_event_envelope",
+        "test_quantum_resource_clock.ResourceClockControls.test_full_compute_inverse_and_readout_all_paid",
+        "test_quantum_resource_clock.ResourceClockControls.test_invalid_budget_and_model_refused",
+        "test_quantum_resource_clock.ResourceClockControls.test_larger_campaign_can_require_larger_distance",
+        "test_quantum_resource_clock.ResourceClockControls.test_proof_and_classical_check_do_not_change_quantum_gate_budget",
+        "test_quantum_resource_clock.ResourceClockControls.test_real_event_run_has_checked_resource_envelope",
+        "test_quantum_resource_clock.ResourceClockControls.test_serial_stage_cost_is_not_max_after_aggregation",
+        "test_quantum_resource_clock.ResourceClockControls.test_truncation_is_preserved_as_incomplete",
+        "test_quantum_resource_clock.ResourceClockControls.test_unbudgeted_processors_speed_and_propagation_refused",
+        "test_quantum_resource_clock.ResourceClockControls.test_unknown_complete_oracle_and_zero_readout_are_refused"
+      ],
+      "receipt_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_quantum_resource_clock.json",
+      "receipt_sha256": "ab8510717263fd35c8cbace5911be1f635086028db9fe7c654290770027bdeb8",
+      "recorder_log_sha256": "39635d70520ab9af7f6720ee6448fce95f0a3752292081dfb7903f46fc945167",
+      "source_before_after_equal": true,
+      "tracked_bytes": 1106065430,
+      "tracked_entries": 11034
+    },
+    {
+      "argv": [
+        "timeout",
+        "1500",
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_daa_model.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "test_quantum_daa_model",
+      "log_bytes": 3307,
+      "log_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_quantum_daa_model.log",
+      "log_sha256": "74de288817cff9cbbcd138b3d69913d99b690e215b0b0c148e06f8d3d0b7808a",
+      "passed_test_names": [
+        "test_quantum_daa_model.ConditionalScheduleTests.test_asert_failures_retained_and_longer_model_budgets_can_catch_up",
+        "test_quantum_daa_model.ConditionalScheduleTests.test_fixed_probability_is_conditional_on_linear_winner_cost",
+        "test_quantum_daa_model.ConditionalScheduleTests.test_periodic_classical_control_and_quantum_hypothesis_diverge",
+        "test_quantum_daa_model.ConditionalScheduleTests.test_proof_delay_is_charged_and_budget_failure_is_preserved",
+        "test_quantum_daa_model.ConditionalScheduleTests.test_separate_integer_readback_all_rows_and_no_quantum_claim",
+        "test_quantum_daa_model.ConditionalScheduleTests.test_separate_readback_rejects_chainwork_and_timestamp_mutations",
+        "test_quantum_daa_model.IntegerRulesTests.test_asert_rejects_noninteger_and_out_of_range_parameters",
+        "test_quantum_daa_model.IntegerRulesTests.test_cost_ratio_assumptions_have_the_required_counterexample",
+        "test_quantum_daa_model.IntegerRulesTests.test_fixed_probability_budget_clamps_ceilings_and_minimum",
+        "test_quantum_daa_model.IntegerRulesTests.test_future_timestamp_wait_is_charged_not_assumed_away",
+        "test_quantum_daa_model.IntegerRulesTests.test_modeled_constants_match_frozen_development_profile",
+        "test_quantum_daa_model.IntegerRulesTests.test_pinned_bchn_calculate_asert_vectors",
+        "test_quantum_daa_model.IntegerRulesTests.test_scenario_bounds_and_no_cost_policy_substitution",
+        "test_quantum_daa_model.IntegerRulesTests.test_signed_division_rounding_and_extreme_target_clamps",
+        "test_quantum_daa_model.IntegerRulesTests.test_steady_honest_control_identical_across_clock_variants",
+        "test_quantum_daa_model.IntegerRulesTests.test_uniform_ticket_probability_keeps_inclusive_target",
+        "test_quantum_daa_model.ReceiptIntegrityTests.test_duplicate_json_keys_are_not_silently_accepted",
+        "test_quantum_daa_model.ReceiptIntegrityTests.test_full_campaign_roundtrip_and_artifact_source_scope_mutations",
+        "test_quantum_daa_model.ReceiptIntegrityTests.test_replacement_refs_cannot_change_fixed_source_identity"
+      ],
+      "receipt_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_quantum_daa_model.json",
+      "receipt_sha256": "15baddf73f4d8a45a6dc958203b26e11b350860e95b101174822c06f042a6060",
+      "recorder_log_sha256": "5050aa36407eedb10db2b0b1f85aae62afa05d4d8f938103d3afae9ee08a213b",
+      "source_before_after_equal": true,
+      "tracked_bytes": 1106065430,
+      "tracked_entries": 11034
+    },
+    {
+      "argv": [
+        "timeout",
+        "1500",
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_w1_quantum_oracle.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "test_w1_quantum_oracle",
+      "log_bytes": 3114,
+      "log_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_w1_quantum_oracle.log",
+      "log_sha256": "52a3eee5c5fd0d7a930984379f3821fa2ef4a1b30d3d41575c9b16a49053384c",
+      "passed_test_names": [
+        "test_w1_quantum_oracle.ConstructionControls.test_campaign_numeric_parser_and_git_commitment_fail_closed",
+        "test_w1_quantum_oracle.ConstructionControls.test_complete_reduced_gate_phase_success_and_forced_noise_exhaustion",
+        "test_w1_quantum_oracle.ConstructionControls.test_diffusion_small_statevector_is_reflection_and_clears_ancillas",
+        "test_w1_quantum_oracle.ConstructionControls.test_exported_request_accounts_phase_inverse_and_diffusion",
+        "test_w1_quantum_oracle.ConstructionControls.test_leaf_output_cannot_alias_search_input",
+        "test_w1_quantum_oracle.ConstructionControls.test_native_shape_symbolic_upper_counts_and_complete_macro_roundtrip",
+        "test_w1_quantum_oracle.ConstructionControls.test_reduced_matrix_prefixes_match_independent_scalar_reference",
+        "test_w1_quantum_oracle.ConstructionControls.test_symbolic_census_equals_enumerated_schedule_and_literal_reverse",
+        "test_w1_quantum_oracle.FixedHeaderControls.test_fixed_prefix_precomputation_full_suffix_hashing_and_growth_witness",
+        "test_w1_quantum_oracle.FixedHeaderControls.test_header_task_target_schema_and_domains_fail_closed",
+        "test_w1_quantum_oracle.FixedHeaderControls.test_pnh1_pgh2_native_known_hash_domains",
+        "test_w1_quantum_oracle.LeafAndSelectionControls.test_add_and_accept_all_four_bit_inputs_including_noncanonical",
+        "test_w1_quantum_oracle.LeafAndSelectionControls.test_deleted_leaf_inverse_gate_is_detected_as_dirty_scratch",
+        "test_w1_quantum_oracle.LeafAndSelectionControls.test_scalar_compression_matches_universal_gate_chaining_inputs",
+        "test_w1_quantum_oracle.LeafAndSelectionControls.test_selection_exhaustive_rejected_streams_arbitrary_xor_destination",
+        "test_w1_quantum_oracle.LeafAndSelectionControls.test_selection_keeps_first_words_after_rejection_and_ignores_surplus",
+        "test_w1_quantum_oracle.LeafAndSelectionControls.test_unsigned_comparison_exhaustive_inclusive_boundary"
+      ],
+      "receipt_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_w1_quantum_oracle.json",
+      "receipt_sha256": "86e2c4e919df5a2e135cb7a854bc61ff7819949f2c7c96f9c89641cbeaa31c8e",
+      "recorder_log_sha256": "18c0dd671d5056315f72759123fec98d9293a26b885901bbfb2238dd89d5c4a3",
+      "source_before_after_equal": true,
+      "tracked_bytes": 1106065430,
+      "tracked_entries": 11034
+    },
+    {
+      "argv": [
+        "timeout",
+        "1500",
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_w1_marked_domain.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "test_w1_marked_domain",
+      "log_bytes": 5498,
+      "log_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_w1_marked_domain.log",
+      "log_sha256": "f76b15e1f3ea53e90b11d5b4093692aafda8c4bc6810efe21ec690d746c729ac",
+      "passed_test_names": [
+        "test_w1_marked_domain.CampaignBoundaryTests.test_case_definitions_keep_native_and_reduced_bounds",
+        "test_w1_marked_domain.CampaignBoundaryTests.test_duplicate_json_keys_and_nonfinite_values_rejected",
+        "test_w1_marked_domain.CampaignBoundaryTests.test_exact_uniform_denominator_survives_json",
+        "test_w1_marked_domain.CampaignBoundaryTests.test_largest_reduced_census_roundtrips_beyond_old_two_megabyte_limit",
+        "test_w1_marked_domain.CampaignBoundaryTests.test_report_io_refuses_over_cap_without_fallback",
+        "test_w1_marked_domain.CampaignBoundaryTests.test_source_hash_mutation_rejected",
+        "test_w1_marked_domain.CampaignBoundaryTests.test_source_record_rejects_fake_committed_claim",
+        "test_w1_marked_domain.LiteralDomainTests.test_actual_bounded_noise_exhaustion_is_unmarked",
+        "test_w1_marked_domain.LiteralDomainTests.test_aliasing_one_template_in_input_does_not_refill_it",
+        "test_w1_marked_domain.LiteralDomainTests.test_all_marked_measurements_stop_after_one_paid_winning_batch",
+        "test_w1_marked_domain.LiteralDomainTests.test_all_native_winners_verified_and_public_product_precomputed_once",
+        "test_w1_marked_domain.LiteralDomainTests.test_binary_rational_clocks_never_round_total_down",
+        "test_w1_marked_domain.LiteralDomainTests.test_census_counts_scope_and_ticket_mutations_are_rejected",
+        "test_w1_marked_domain.LiteralDomainTests.test_changing_nonce_subspace_does_not_imply_independent_tickets",
+        "test_w1_marked_domain.LiteralDomainTests.test_changing_target_changes_the_challenge_and_ticket",
+        "test_w1_marked_domain.LiteralDomainTests.test_different_templates_pay_refresh_and_revisit_pays_single_resident_setup",
+        "test_w1_marked_domain.LiteralDomainTests.test_directly_forged_template_metadata_is_rejected",
+        "test_w1_marked_domain.LiteralDomainTests.test_failed_zero_iteration_measurements_still_pay_every_candidate_check",
+        "test_w1_marked_domain.LiteralDomainTests.test_measurement_input_bounds_are_strict",
+        "test_w1_marked_domain.LiteralDomainTests.test_native_census_is_a_subspace_and_not_full_nonce64",
+        "test_w1_marked_domain.LiteralDomainTests.test_native_fixed_vector_ticket",
+        "test_w1_marked_domain.LiteralDomainTests.test_native_proof_hash_mutation_is_rejected",
+        "test_w1_marked_domain.LiteralDomainTests.test_nonce_bytes_are_actual_little_endian_header_field",
+        "test_w1_marked_domain.LiteralDomainTests.test_pgh2_native_ticket_is_bound_to_witness_and_domain",
+        "test_w1_marked_domain.LiteralDomainTests.test_prefix_membership_checks_first_raw_words_before_rejection",
+        "test_w1_marked_domain.LiteralDomainTests.test_prefix_restricted_winners_are_subset_of_full_winners",
+        "test_w1_marked_domain.LiteralDomainTests.test_reduced_control_has_no_native_proof_claim",
+        "test_w1_marked_domain.LiteralDomainTests.test_rethresholded_old_ticket_table_is_rejected",
+        "test_w1_marked_domain.LiteralDomainTests.test_same_empty_domain_persists_across_parallel_measurements_and_retries",
+        "test_w1_marked_domain.LiteralDomainTests.test_same_template_replay_has_identical_marked_set",
+        "test_w1_marked_domain.LiteralDomainTests.test_saved_domain_is_rechecked_before_measurement",
+        "test_w1_marked_domain.LiteralDomainTests.test_scalar_and_existing_macro_predicate_agree",
+        "test_w1_marked_domain.LiteralDomainTests.test_unsupported_native_census_size_refuses_before_enumeration",
+        "test_w1_marked_domain.LiteralDomainTests.test_wrong_nonce_and_bool_nonce_rejected"
+      ],
+      "receipt_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_w1_marked_domain.json",
+      "receipt_sha256": "229668921b73a908c9229a8e754a945458bca7f81535588e42458e58314355b5",
+      "recorder_log_sha256": "56ce366c288cabe2f8d763ca48ae0bfa923bf40181cd43a9b48a2ae4179e89c8",
+      "source_before_after_equal": true,
+      "tracked_bytes": 1106065430,
+      "tracked_entries": 11034
+    },
+    {
+      "argv": [
+        "timeout",
+        "1500",
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_w1_quantum_restricted_oracle.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "test_w1_quantum_restricted_oracle",
+      "log_bytes": 2384,
+      "log_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_w1_quantum_restricted_oracle.log",
+      "log_sha256": "059f3ca213dc97976d738ed822eaf74be4b503bdd61662fa33819bbc0162b0df",
+      "passed_test_names": [
+        "test_w1_quantum_restricted_oracle.RestrictedCampaignControls.test_literal_replay_refuses_rehashed_free_domain_filtering",
+        "test_w1_quantum_restricted_oracle.RestrictedCampaignControls.test_parser_preserves_inclusive_256_bit_denominator_and_rejects_aliases",
+        "test_w1_quantum_restricted_oracle.RestrictedCampaignControls.test_rehashed_source_and_security_claim_mutations_are_refused",
+        "test_w1_quantum_restricted_oracle.RestrictedOracleControls.test_actual_gates_restore_success_and_rejected_noncanonical_raw_factors",
+        "test_w1_quantum_restricted_oracle.RestrictedOracleControls.test_changed_target_rebuilds_challenge_and_construction_identity",
+        "test_w1_quantum_restricted_oracle.RestrictedOracleControls.test_distinct_source_identity_and_immutable_report_copy",
+        "test_w1_quantum_restricted_oracle.RestrictedOracleControls.test_every_reduced_operation_is_counted_and_reversed",
+        "test_w1_quantum_restricted_oracle.RestrictedOracleControls.test_gate_limit_and_missing_inverse_are_explicit",
+        "test_w1_quantum_restricted_oracle.RestrictedOracleControls.test_native_census_uses_half_noise_hashes_and_no_compaction",
+        "test_w1_quantum_restricted_oracle.RestrictedOracleControls.test_reduced_surplus_words_are_not_extra_restrictions",
+        "test_w1_quantum_restricted_oracle.RestrictedOracleControls.test_retention_is_exact_conditional_raw_word_algebra_only",
+        "test_w1_quantum_restricted_oracle.RestrictedOracleControls.test_subset_matches_independent_full_relation_and_retains_lost_winners"
+      ],
+      "receipt_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/test_w1_quantum_restricted_oracle.json",
+      "receipt_sha256": "feaf265de2fd80fc4d27d51645b8a0947eb54e5086d523f82d73dd9fb60f99fc",
+      "recorder_log_sha256": "2eea4b20126d4c15f67a4c64125aa8d607f0dbd356c4721d84d1cd158d54447d",
+      "source_before_after_equal": true,
+      "tracked_bytes": 1106065430,
+      "tracked_entries": 11034
+    },
+    {
+      "argv": [
+        "timeout",
+        "1500",
+        "python3",
+        "formal/pon-nakamoto-v1/experiments/w1_quantum_oracle_campaign.py",
+        "--out",
+        "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/constructive-campaign"
+      ],
+      "exit_code": 0,
+      "label": "constructive-observe",
+      "log_bytes": 254,
+      "log_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/constructive-observe.log",
+      "log_sha256": "7c507815919829ae48e12778a85f2c51297c924664b211e2454d550d65430e71",
+      "observed_stdout": {
+        "bytes": 40443,
+        "cases": 4,
+        "macro_cases": 2,
+        "reduced_gate_cases": 2,
+        "report_sha256": "be96288f81b235d8add601071e8d56c35d389f5f046e74dfb994d0839afe9926",
+        "result": "CONSTRUCTIVE_UPPER_BOUND_AND_SCOPED_EXECUTION_OBSERVED",
+        "security_qualified": false
+      },
+      "receipt_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/constructive-observe.json",
+      "receipt_sha256": "4ca30e1321eeb99f4a280e02d8ab69106d2ec33afeff6ada9ee4e7589f7ab7b6",
+      "recorder_log_sha256": "5fd0e3e6b03157949f96078bf2d515db0ca12c1292370c62650eb8587aa06cfd",
+      "source_before_after_equal": true,
+      "tracked_bytes": 1106065430,
+      "tracked_entries": 11034
+    },
+    {
+      "argv": [
+        "timeout",
+        "1500",
+        "python3",
+        "formal/pon-nakamoto-v1/experiments/w1_quantum_oracle_campaign.py",
+        "--verify",
+        "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/constructive-campaign"
+      ],
+      "exit_code": 0,
+      "label": "constructive-replay",
+      "log_bytes": 164,
+      "log_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/constructive-replay.log",
+      "log_sha256": "877b9531e802a162b5a740f8ced2bf0a2803ef717ef1c461b8b08a9cdf74e893",
+      "observed_stdout": {
+        "cases": 4,
+        "current_native_execution": false,
+        "quantum_hardware_executed": false,
+        "result": "CONSTRUCTIVE_SOURCE_BOUND_REPLAY_PASS",
+        "security_qualified": false
+      },
+      "receipt_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/constructive-replay.json",
+      "receipt_sha256": "918a04f1322455fd1f1b0c47156fa2a9a00ebf4886ccf43ba3d95f626f9da513",
+      "recorder_log_sha256": "cf60a09ede7988f070622025c28a4b92132b928352753363afec29493e4e0497",
+      "source_before_after_equal": true,
+      "tracked_bytes": 1106065430,
+      "tracked_entries": 11034
+    },
+    {
+      "argv": [
+        "timeout",
+        "1500",
+        "python3",
+        "formal/pon-nakamoto-v1/experiments/w1_restricted_oracle_campaign.py",
+        "--out",
+        "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/restricted-campaign"
+      ],
+      "exit_code": 0,
+      "label": "restricted-observe",
+      "log_bytes": 245,
+      "log_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/restricted-observe.log",
+      "log_sha256": "fc2e29aff1302b69a9915a49c1a5f87921fc2714807813e7d96397c07ecad203",
+      "observed_stdout": {
+        "actual_reduced_gate_controls": 2,
+        "cases": 5,
+        "discarded_full_winners": 25,
+        "literal_nonces": 60,
+        "native_PNW1_winners_verified": 3,
+        "production_activation": false,
+        "result": "RESTRICTED_W1_DIFFERENTIAL_OBSERVED",
+        "security_qualified": false
+      },
+      "receipt_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/restricted-observe.json",
+      "receipt_sha256": "de12e3ca4fe51c587683fb1631276e838c97370cfd51537fd02c90606f851055",
+      "recorder_log_sha256": "225d3995b68c1b9303d179c3ea8cac2f9cda1568df998a7ff6c2d72b88545fe1",
+      "source_before_after_equal": true,
+      "tracked_bytes": 1106065430,
+      "tracked_entries": 11034
+    },
+    {
+      "argv": [
+        "timeout",
+        "1500",
+        "python3",
+        "formal/pon-nakamoto-v1/experiments/w1_restricted_oracle_campaign.py",
+        "--verify",
+        "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/restricted-campaign"
+      ],
+      "exit_code": 0,
+      "label": "restricted-replay",
+      "log_bytes": 248,
+      "log_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/restricted-replay.log",
+      "log_sha256": "24339fa95f641023a68ac2c5696c5bb4b020e9b649bd7f85e96ba98fa992d18f",
+      "observed_stdout": {
+        "actual_reduced_gate_controls": 2,
+        "cases": 5,
+        "discarded_full_winners": 25,
+        "literal_nonces": 60,
+        "native_PNW1_winners_verified": 3,
+        "production_activation": false,
+        "result": "RESTRICTED_W1_DIFFERENTIAL_REPLAY_PASS",
+        "security_qualified": false
+      },
+      "receipt_file": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum/restricted-replay.json",
+      "receipt_sha256": "709eee8acd2491adf9d577a4785d5713679270d079258aaf3d92f589a132aff0",
+      "recorder_log_sha256": "44da10b0a3ef81be43744a192f9ec55bd36e8800b3d2371818233072a814c75e",
+      "source_before_after_equal": true,
+      "tracked_bytes": 1106065430,
+      "tracked_entries": 11034
+    }
+  ],
+  "commands_verified": 13,
+  "constructive_cases": [
+    {
+      "execution_mode": "macro",
+      "metrics": {
+        "forward_gate_count": 8859008357,
+        "logical_qubits": 22253173,
+        "phase_oracle_depth_upper_bound": 1969835151,
+        "phase_oracle_gate_count": 17718016715,
+        "profile": "PNH1"
+      },
+      "name": "retained-pnh1",
+      "nonce": 42,
+      "observation": {
+        "accepted_word_counts": [
+          1024,
+          1024,
+          1024,
+          1024
+        ],
+        "challenge": "0bd7f24bd02166370261030d660c77dfb83ede815b2ed303fefb21ee31a2aeb8",
+        "clean_ancillas": true,
+        "inverse_executed": true,
+        "leaf_gates_executed": null,
+        "macro_calls_executed": 5543956,
+        "mode": "macro",
+        "native_shape": true,
+        "noise_complete": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "nonce": 42,
+        "nonce_preserved": true,
+        "outer_X_Z_gates_executed": null,
+        "phase": 1,
+        "phase_sign_observed_by_classical_basis_interpreter": true,
+        "quantum_hardware_executed": false,
+        "ticket": "8e894dbb4a7e3692341d82b56ada1ed676814bfdf5f8ea7dfea6641ef624667b",
+        "trace": "f76eee881ea86e95d5d9a4c4068ad7a14c02719a8e9713e510be62ed74269aa8",
+        "winner": false
+      },
+      "recorded_resource_arithmetic_consistent": true
+    },
+    {
+      "execution_mode": "macro",
+      "metrics": {
+        "forward_gate_count": 8859397919,
+        "logical_qubits": 22253429,
+        "phase_oracle_depth_upper_bound": 1969864925,
+        "phase_oracle_gate_count": 17718795839,
+        "profile": "PGH2"
+      },
+      "name": "pgh2-witness-bound",
+      "nonce": 42,
+      "observation": {
+        "accepted_word_counts": [
+          1024,
+          1024,
+          1024,
+          1024
+        ],
+        "challenge": "345eb24dfefd875ee8069b71e84aeaeea424075a5ea9beca53585b4172c1d731",
+        "clean_ancillas": true,
+        "inverse_executed": true,
+        "leaf_gates_executed": null,
+        "macro_calls_executed": 5543958,
+        "mode": "macro",
+        "native_shape": true,
+        "noise_complete": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "nonce": 42,
+        "nonce_preserved": true,
+        "outer_X_Z_gates_executed": null,
+        "phase": 1,
+        "phase_sign_observed_by_classical_basis_interpreter": true,
+        "quantum_hardware_executed": false,
+        "ticket": "8d1e72cef5ed892c98749c78436e2fc281d6383ec83624216e3ed4cf783c9d11",
+        "trace": "61cb99ae41af346bfaa164d1478314941842d8f09c791b4213c0d7cebbb459f4",
+        "winner": false
+      },
+      "recorded_resource_arithmetic_consistent": true
+    },
+    {
+      "execution_mode": "gates",
+      "metrics": {
+        "forward_gate_count": 4690387,
+        "logical_qubits": 120597,
+        "phase_oracle_depth_upper_bound": 370875,
+        "phase_oracle_gate_count": 9380775,
+        "profile": "PNH1"
+      },
+      "name": "reduced-gate-success",
+      "nonce": 0,
+      "observation": {
+        "accepted_word_counts": [
+          6,
+          5,
+          6,
+          6
+        ],
+        "challenge": "34ea794d4da0a8a01072263c88daba0e23d88eaba0505b44e4ad81d7a9e98451",
+        "clean_ancillas": true,
+        "inverse_executed": true,
+        "leaf_gates_executed": 9380772,
+        "macro_calls_executed": 244,
+        "mode": "gates",
+        "native_shape": false,
+        "noise_complete": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "nonce": 0,
+        "nonce_preserved": true,
+        "outer_X_Z_gates_executed": 3,
+        "phase": -1,
+        "phase_sign_observed_by_classical_basis_interpreter": true,
+        "quantum_hardware_executed": false,
+        "ticket": "639ba5c0c65e99e48c37f6d749b4111f0340ff2123d44e2de771a8aa0cf6f2e1",
+        "trace": "5de543cbb320bd3121371d9fb99a96eb1863b0579702c976e0b48a655f298c73",
+        "winner": true
+      },
+      "recorded_resource_arithmetic_consistent": true
+    },
+    {
+      "execution_mode": "gates",
+      "metrics": {
+        "forward_gate_count": 4690387,
+        "logical_qubits": 120597,
+        "phase_oracle_depth_upper_bound": 370875,
+        "phase_oracle_gate_count": 9380775,
+        "profile": "PNH1"
+      },
+      "name": "reduced-gate-noise-exhaustion",
+      "nonce": 78,
+      "observation": {
+        "accepted_word_counts": [
+          0,
+          6,
+          4,
+          7
+        ],
+        "challenge": "269db8869e5e77abf1106c0cb1d4911e16b9aab3de5d0845707fb9ed24ae452e",
+        "clean_ancillas": true,
+        "inverse_executed": true,
+        "leaf_gates_executed": 9380772,
+        "macro_calls_executed": 244,
+        "mode": "gates",
+        "native_shape": false,
+        "noise_complete": [
+          false,
+          true,
+          true,
+          true
+        ],
+        "nonce": 78,
+        "nonce_preserved": true,
+        "outer_X_Z_gates_executed": 3,
+        "phase": 1,
+        "phase_sign_observed_by_classical_basis_interpreter": true,
+        "quantum_hardware_executed": false,
+        "ticket": "4e92226037a18de6b75d32b8b1957fd241bec039cd4dd248c6343d2c8170e240",
+        "trace": "a8e90bcdc3769566ba962fb44f8db27e2ba2a377e1ab8d6fc68f4a479913e29c",
+        "winner": false
+      },
+      "recorded_resource_arithmetic_consistent": true
+    }
+  ],
+  "declared_source_files_read_back": {
+    "formal/pon-nakamoto-v1/contract_wire.py": {
+      "committed_sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+      "working_file_sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+    },
+    "formal/pon-nakamoto-v1/experiments/w1_quantum_oracle_campaign.py": {
+      "committed_sha256": "b3a0cd0916a1e17cff3a011c6942acae7b05aa053aefbc2a882bfe4f63012d0a",
+      "working_file_sha256": "b3a0cd0916a1e17cff3a011c6942acae7b05aa053aefbc2a882bfe4f63012d0a"
+    },
+    "formal/pon-nakamoto-v1/experiments/w1_restricted_oracle_campaign.py": {
+      "committed_sha256": "876c732404602439117aaec1b100409501c245129bc55885d1886877e170f6f5",
+      "working_file_sha256": "876c732404602439117aaec1b100409501c245129bc55885d1886877e170f6f5"
+    },
+    "formal/pon-nakamoto-v1/quantum_adversarial_search.py": {
+      "committed_sha256": "1d6833b0cc52abc549e6169d8da70c774a3f779d7ce0d7f6381590d37e096387",
+      "working_file_sha256": "1d6833b0cc52abc549e6169d8da70c774a3f779d7ce0d7f6381590d37e096387"
+    },
+    "formal/pon-nakamoto-v1/quantum_oracle_resources.py": {
+      "committed_sha256": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f",
+      "working_file_sha256": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f"
+    },
+    "formal/pon-nakamoto-v1/reference.py": {
+      "committed_sha256": "5c5e7cba07709ff6fd390eb7eea3e9db1e9d588809a9ad6a06a9884b8856aa71",
+      "working_file_sha256": "5c5e7cba07709ff6fd390eb7eea3e9db1e9d588809a9ad6a06a9884b8856aa71"
+    },
+    "formal/pon-nakamoto-v1/reversible_components.py": {
+      "committed_sha256": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0",
+      "working_file_sha256": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0"
+    },
+    "formal/pon-nakamoto-v1/test_w1_quantum_oracle.py": {
+      "committed_sha256": "3e1ed86090092e59da120916f69e923dd2a88c6caedf740ea0585c3f06085c78",
+      "working_file_sha256": "3e1ed86090092e59da120916f69e923dd2a88c6caedf740ea0585c3f06085c78"
+    },
+    "formal/pon-nakamoto-v1/test_w1_quantum_restricted_oracle.py": {
+      "committed_sha256": "6d3ebffc20dc2a1dada6e03841a5fd387fe7d6164a30eac5eb6000c052e6e74f",
+      "working_file_sha256": "6d3ebffc20dc2a1dada6e03841a5fd387fe7d6164a30eac5eb6000c052e6e74f"
+    },
+    "formal/pon-nakamoto-v1/vectors/header.bin": {
+      "committed_sha256": "af1eb43700a2ac269c7360e21acd6be5f21f9d7e0400b4a62e07f4ee6b12e71b",
+      "working_file_sha256": "af1eb43700a2ac269c7360e21acd6be5f21f9d7e0400b4a62e07f4ee6b12e71b"
+    },
+    "formal/pon-nakamoto-v1/vectors/work.bin": {
+      "committed_sha256": "35de8899201fd8a30f32f440d2e9145b4fef867d0d331efc271de1f1be822fc0",
+      "working_file_sha256": "35de8899201fd8a30f32f440d2e9145b4fef867d0d331efc271de1f1be822fc0"
+    },
+    "formal/pon-nakamoto-v1/w1_marked_domain.py": {
+      "committed_sha256": "1a34e85ad780dc89af40f8dfe31ab310fd2d289473bb3473d347c7f8fc347460",
+      "working_file_sha256": "1a34e85ad780dc89af40f8dfe31ab310fd2d289473bb3473d347c7f8fc347460"
+    },
+    "formal/pon-nakamoto-v1/w1_quantum_oracle.py": {
+      "committed_sha256": "5a1a250680299561cb83b0b7d17ab57cf180e64277f981f5130cdf04e70aeb99",
+      "working_file_sha256": "5a1a250680299561cb83b0b7d17ab57cf180e64277f981f5130cdf04e70aeb99"
+    },
+    "formal/pon-nakamoto-v1/w1_quantum_primitives.py": {
+      "committed_sha256": "1d1f0a800e24e1d82aab1794ec0cf207ed845e7a7080bacd41b0d0c575f98ac1",
+      "working_file_sha256": "1d1f0a800e24e1d82aab1794ec0cf207ed845e7a7080bacd41b0d0c575f98ac1"
+    },
+    "formal/pon-nakamoto-v1/w1_quantum_restricted_oracle.py": {
+      "committed_sha256": "b590ed91d491577c494a667a9271410b420dc35b7088705ef99982c2abd3b702",
+      "working_file_sha256": "b590ed91d491577c494a667a9271410b420dc35b7088705ef99982c2abd3b702"
+    },
+    "formal/pon-nakamoto-v1/work_oracle.py": {
+      "committed_sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+      "working_file_sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+    },
+    "scripts/pon_daa_schedule_reader.py": {
+      "committed_sha256": "8a3d3f81dfc9a5393294595bf4ae14a8e716a56c624106b461697e3c097b526d",
+      "working_file_sha256": "8a3d3f81dfc9a5393294595bf4ae14a8e716a56c624106b461697e3c097b526d"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": {
+      "committed_sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "working_file_sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": {
+      "committed_sha256": "e029837d050952046c9c4fa694a8191470a8733cd96a3dc81e98cc46af59a0a3",
+      "working_file_sha256": "e029837d050952046c9c4fa694a8191470a8733cd96a3dc81e98cc46af59a0a3"
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_growth.rs": {
+      "committed_sha256": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+      "working_file_sha256": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f"
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_wire.rs": {
+      "committed_sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd",
+      "working_file_sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+    }
+  },
+  "distinct_native_scalar_proof_sha256": [
+    "8825cf4f32d57187be312e6c71a5c2b787bc6b485fdf6aa711198ed464523012",
+    "ae3a1a56a35f9206c019560f8d2bcb835e6bcbd94d061b9931a8701a16464cf1",
+    "c34f271ee98c63cbb78b01e533c9692f2e3966567aa3ef7e82733d2d0e3eb695"
+  ],
+  "distinct_passed_unittest_names": 182,
+  "full_nonce64_resource_census_only": [
+    {
+      "full": {
+        "forward_gate_count": 8859008357,
+        "logical_qubits": 22253173,
+        "phase_oracle_depth_upper_bound": 1969835151,
+        "phase_oracle_gate_count": 17718016715
+      },
+      "native_full_nonce64_executed": false,
+      "nonce_bits": 64,
+      "profile": "PNH1",
+      "restricted": {
+        "forward_gate_count": 7996084477,
+        "logical_qubits": 22029941,
+        "phase_oracle_depth_upper_bound": 1102032975,
+        "phase_oracle_gate_count": 15992168955
+      },
+      "restricted_construction_sha256": "9eea6b39e565e2856c3e9ea29746c8461574fcbc711e47f884741764fab8bc82"
+    },
+    {
+      "full": {
+        "forward_gate_count": 8859397919,
+        "logical_qubits": 22253429,
+        "phase_oracle_depth_upper_bound": 1969864925,
+        "phase_oracle_gate_count": 17718795839
+      },
+      "native_full_nonce64_executed": false,
+      "nonce_bits": 64,
+      "profile": "PGH2",
+      "restricted": {
+        "forward_gate_count": 7996474039,
+        "logical_qubits": 22030197,
+        "phase_oracle_depth_upper_bound": 1102062749,
+        "phase_oracle_gate_count": 15992948079
+      },
+      "restricted_construction_sha256": "175ee99dd6eed9fb87ea68772db3eb4880e9657ee912b9d386c818c7cd4bad9d"
+    }
+  ],
+  "head": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+  "input_directory": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/quantum",
+  "limitations": [
+    "Counts and hashes bind the recorded executions; this reader did not rerun the campaigns or independently prove the circuit.",
+    "Constructive run has four cases: two native-size scalar macro non-winners and two reduced classical basis-interpreter gate controls; no optional historical native-admission fixture was used.",
+    "Restricted native cases enumerate only low two nonce bits (four candidates each); remaining 62 bits are unsearched. No full nonce64 marked-domain characterization follows.",
+    "Three PNW1 winners are checked by the separate Python scalar relation, not by native Rust Node admission; parent/task/time/required-target admission is outside this campaign.",
+    "Resource figures are upper bounds for two deliberately nonoptimal fixed-context constructions, not a lower bound or the cheapest legal quantum attack.",
+    "Restricted search retains the unfiltered nonce dimension, discards legal winners, and must use its own marked count. Prefix/ticket independence is unproved.",
+    "No quantum hardware, physical calibration, measured quantum latency, calibrated classical/quantum advantage, or complete end-to-end machine-failure bound is supplied.",
+    "These two campaigns do not execute the broad network/adversarial/OHIE/Fast-DAA campaigns. Unit checks do not establish mixed-resource common-prefix, growth, quality or liveness for deployed DAA and fork choice.",
+    "Classical observer wall times are not quantum mining clocks. All production and whole-chain qualification remains HOLD."
+  ],
+  "product_disposition": "HOLD",
+  "production_activation": false,
+  "progress_sha256": "13a87c784a5dff45b04b2eba93adb6b8587c52f70206cf0666ec9ade023e6c10",
+  "quantum_mining_security_qualified": false,
+  "reader_source_sha256": "8b33a4f9aa757a921c2ce50e588df6682b8063c91cde705e06e91058ec92ed09",
+  "restricted_cases": [
+    {
+      "discarded_full_winners": 0,
+      "domain_size": 4,
+      "full_marked_count": 2,
+      "low_nonce_bits": 2,
+      "name": "native_pnh1",
+      "native_PNW1_scalar_verified": 2,
+      "native_shape": true,
+      "recorded_resource_arithmetic_consistent": true,
+      "reduced_gate_observations": [],
+      "restricted_marked_count": 2,
+      "unsearched_nonce_bits": 62
+    },
+    {
+      "discarded_full_winners": 0,
+      "domain_size": 4,
+      "full_marked_count": 0,
+      "low_nonce_bits": 2,
+      "name": "native_pnh1_changed_target",
+      "native_PNW1_scalar_verified": 0,
+      "native_shape": true,
+      "recorded_resource_arithmetic_consistent": true,
+      "reduced_gate_observations": [],
+      "restricted_marked_count": 0,
+      "unsearched_nonce_bits": 62
+    },
+    {
+      "discarded_full_winners": 0,
+      "domain_size": 4,
+      "full_marked_count": 1,
+      "low_nonce_bits": 2,
+      "name": "native_pgh2",
+      "native_PNW1_scalar_verified": 1,
+      "native_shape": true,
+      "recorded_resource_arithmetic_consistent": true,
+      "reduced_gate_observations": [],
+      "restricted_marked_count": 1,
+      "unsearched_nonce_bits": 62
+    },
+    {
+      "discarded_full_winners": 25,
+      "domain_size": 32,
+      "full_marked_count": 32,
+      "low_nonce_bits": 5,
+      "name": "reduced_prefix_losses",
+      "native_PNW1_scalar_verified": 0,
+      "native_shape": false,
+      "recorded_resource_arithmetic_consistent": true,
+      "reduced_gate_observations": [
+        {
+          "accepted_word_counts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "accepted_word_counts_scope": "first N*R raw words only",
+          "challenge": "81f605f4cb56ca8f6d56e6b1ad451fcaf29e8cb9d43fd8662d16a7bb86860e0a",
+          "clean_ancillas": true,
+          "full_legal_winner_predicate_equivalence": false,
+          "inverse_executed": true,
+          "leaf_gates_executed": 9370516,
+          "macro_calls_executed": 68,
+          "mode": "gates",
+          "native_shape": false,
+          "noise_complete": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "nonce": 4,
+          "nonce_preserved": true,
+          "outer_X_Z_gates_executed": 3,
+          "phase": -1,
+          "phase_sign_observed_by_classical_basis_interpreter": true,
+          "predicate_schema": "trnm-w1-prefix-restricted-phase-oracle-v1",
+          "prefix_all_accepted": true,
+          "quantum_hardware_executed": false,
+          "ticket": "67db28e6cfaab53800c0f64988983e326fb2197985167e36d178f6a9cbeb75ba",
+          "trace": "44f0612f7d995d5121fd4efe46216db7bbd5ab7749bd376dc8b8616e767a9e19",
+          "trace_matches_full_w1_only_when_prefix_all_accepted": true,
+          "winner": true
+        },
+        {
+          "accepted_word_counts": [
+            1,
+            0,
+            1,
+            1
+          ],
+          "accepted_word_counts_scope": "first N*R raw words only",
+          "challenge": "34ea794d4da0a8a01072263c88daba0e23d88eaba0505b44e4ad81d7a9e98451",
+          "clean_ancillas": true,
+          "full_legal_winner_predicate_equivalence": false,
+          "inverse_executed": true,
+          "leaf_gates_executed": 9370516,
+          "macro_calls_executed": 68,
+          "mode": "gates",
+          "native_shape": false,
+          "noise_complete": [
+            true,
+            false,
+            true,
+            true
+          ],
+          "nonce": 0,
+          "nonce_preserved": true,
+          "outer_X_Z_gates_executed": 3,
+          "phase": 1,
+          "phase_sign_observed_by_classical_basis_interpreter": true,
+          "predicate_schema": "trnm-w1-prefix-restricted-phase-oracle-v1",
+          "prefix_all_accepted": false,
+          "quantum_hardware_executed": false,
+          "ticket": "e06c0fcfdc37b8b5c84d994188de779ac73a949f16f4d1be34abf6f32022721b",
+          "trace": "0877f91faf787a0e340729b36951c7587fdf5a419e47f863f7259c2ed04f44c4",
+          "trace_matches_full_w1_only_when_prefix_all_accepted": true,
+          "winner": false
+        }
+      ],
+      "restricted_marked_count": 7,
+      "unsearched_nonce_bits": 59
+    },
+    {
+      "discarded_full_winners": 0,
+      "domain_size": 16,
+      "full_marked_count": 0,
+      "low_nonce_bits": 4,
+      "name": "reduced_zero_marked",
+      "native_PNW1_scalar_verified": 0,
+      "native_shape": false,
+      "recorded_resource_arithmetic_consistent": true,
+      "reduced_gate_observations": [],
+      "restricted_marked_count": 0,
+      "unsearched_nonce_bits": 60
+    }
+  ],
+  "restricted_totals": {
+    "actual_reduced_gate_controls": 2,
+    "cases": 5,
+    "discarded_full_winners": 25,
+    "literal_nonces": 60,
+    "native_PNW1_winners_verified": 3
+  },
+  "result": "RECORDED_EXECUTION_AND_OUTPUT_CONSISTENCY_PASS",
+  "reviewed_at_utc": "2026-11-07T10:50:53.602023+00:00",
+  "reviewer_independently_reproved_oracle_semantics": false,
+  "reviewer_recomputed_recorded_outcome_counts_and_resource_arithmetic": true,
+  "reviewer_reran_native_node": false,
+  "reviewer_reran_tests_or_campaigns": false,
+  "runner_sha256": "e8c68133c4ad16d86e20497844e9a75ea226434ce47a63b10d132524542ac7b3",
+  "schema": "trnm-independent-quantum-output-readback-v1",
+  "source_root": "/workspace/scratch/a6448796d7e7/chain-pq",
+  "terminal_result_sha256": "5ee76dbdfacbc90fbefe54b483ea7fcf7fa8f8d4ec4cbc76f5664ced57f0895c",
+  "tree": "b2586f06e82de55484a2e5752563e8b669c3ea17",
+  "unit_suite_counts": {
+    "test_quantum_adversarial_search": 12,
+    "test_quantum_candidate_check_clock": 6,
+    "test_quantum_daa_model": 19,
+    "test_quantum_network_sim": 39,
+    "test_quantum_oracle_resources": 25,
+    "test_quantum_resource_clock": 18,
+    "test_w1_marked_domain": 34,
+    "test_w1_quantum_oracle": 17,
+    "test_w1_quantum_restricted_oracle": 12
+  },
+  "whole_chain_pq_qualified": false
+}

@@ -1,0 +1,77 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "elapsed_ns": 1264015,
+      "exit_code": 0,
+      "name": "head_before",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 41,
+      "stdout_sha256": "c7c2fde3f4e36b51a0540fc059191efb3267fe5af78eb08594c1e58bacb72e04"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "elapsed_ns": 719016206,
+      "exit_code": 0,
+      "name": "status_before",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "elapsed_ns": 28008204,
+      "exit_code": 0,
+      "name": "preflight_before",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 179,
+      "stdout_sha256": "c32203b226220547f074c87c1e888e954c9e0f255d476247f1e8cc713924626d"
+    },
+    {
+      "argv": [
+        "git",
+        "bundle",
+        "verify",
+        "/home/qq/chain-verification-validation-33ceda-20261112/import-e974/candidate.bundle"
+      ],
+      "elapsed_ns": 1530835,
+      "exit_code": 0,
+      "name": "bundle_verify",
+      "stderr_bytes": 92,
+      "stderr_sha256": "a47c757a5bf7de74b0f13267cceaa71045f1dc8687239dd6afb211cc00933626",
+      "stdout_bytes": 190,
+      "stdout_sha256": "a0abed68f4aa38d8079633722a7cbb5249ccecbcfece5988c4f6d3feff1b50bd"
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "/home/qq/chain-verification-validation-33ceda-20261112/import-e974/candidate.bundle",
+        "refs/heads/fix/chain-verification-isolation-20261112-33ceda"
+      ],
+      "elapsed_ns": 2726332,
+      "exit_code": 128,
+      "name": "bundle_fetch",
+      "stderr_bytes": 92,
+      "stderr_sha256": "83e9849bfcd784ea99fdb69caba29b00f9569f82c83ff0971447fad31b662be7",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "source": "e974fd617e0e2c0d1fc88584b1301a7ffb714a73"
+}

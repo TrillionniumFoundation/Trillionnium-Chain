@@ -1,0 +1,22 @@
+# Recovered C3 hosted CI evidence
+
+Candidate: 030de92be05bfd4f73e199098c12dfeaedf29b17; base #879: 30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6.
+
+This recovery restores 65 original connector/decoded payload files against their pre-outage SHA-256, including ten complete failed-job logs, plus four complete retrieval stdout/result captures. It reads exact historical Git objects and four small existing QROM artifacts. It does not run tests, rerun workflows, or alter source, frozen reports, assertions or budgets.
+
+## Actual failures
+
+- QROM implementation run 43131213029: the pinned verifier contract permits 9,233 bytes; unchanged actual main.rs is 11,172 bytes. The reader rejects limit+1 before the later hash check. The required named roster is incomplete.
+- QROM closure run 43131212890: 105 named controls pass in each job, then generated semantics differs from the frozen report at byte 73514 / line 1696. The sole JSON difference is the unchanged w1_zkvm/Cargo.lock provenance hash. Both workflow failures remain failures.
+- Next architecture run 43131212900: four matrix jobs pass preceding execution and source checks; artifact upload fails because generated .exit/.log filenames contain Rust :: separators. No artifact was published by this run. The proposed filename-only correction preserves actual selectors and all native standards.
+- Work security run 43131212866: metadata reports 20 successful jobs, two failed fresh-service jobs and one conditional skip. Original native service exits zero but finite_target_met is false, so the reader rejects CONFIRMATION_TARGET. Fresh native service exits 101 on its original four-second/six-depth business assertion. Its failure is not an artifact transport problem or outer timeout.
+
+Read qrom/REVIEW.json, next-work/REVIEW.json and their exact-source comparisons. The unchanged direct source inputs establish the scope of inherited predicates; for timing-sensitive service failure, no paired baseline/candidate runtime comparison was performed.
+
+## Recovery boundary
+
+The former local environment became unavailable. All ten original full job logs and their original metadata survive in this recovery. Four original QROM ZIPs are fetched by stable artifact IDs and verified against their previously recorded GitHub size and SHA-256; all 84 members are retained.
+
+The former local selection of 18 fresh-service artifact members (46,409 bytes) is NOT claimed to have survived in full. Exact untruncated extraction stdout/result records remain, containing native log text and diagnostics. No complete fresh-service ZIP, multi-megabyte report.json, native binary or SQLite is re-downloaded here; complete fresh ZIP SHA-256 is not independently verified.
+
+Invalid original JSON, if any, is retained unchanged with .raw appended and explicitly mapped. Temporary signed download URLs are excluded. Connector JSON files are complete serialized connector results, not original HTTP response bytes. Source identity never establishes security qualification or business-target success.

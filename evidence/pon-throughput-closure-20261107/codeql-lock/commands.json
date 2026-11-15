@@ -1,0 +1,55 @@
+[
+  {
+    "ordinal": 1,
+    "argv": [
+      "cargo",
+      "metadata",
+      "--offline",
+      "--manifest-path",
+      "/workspace/scratch/ae364bcbabfb/publication-check/evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/crypto/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "exit_code": 0,
+    "elapsed_ns": 59947573,
+    "lock_sha256_after": "a5282de5bdb579a886a8ca579aa89a419280548a4ff93e04791dc670d9d4da60",
+    "stdout_sha256": "7b82fa65c0f48d05daea27782574022c8af341a563f74fe4cc107a43d7491387",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "ordinal": 2,
+    "argv": [
+      "cargo",
+      "metadata",
+      "--offline",
+      "--manifest-path",
+      "/workspace/scratch/ae364bcbabfb/publication-check/evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/crypto/Cargo.toml",
+      "--format-version",
+      "1",
+      "--locked"
+    ],
+    "exit_code": 0,
+    "elapsed_ns": 34805852,
+    "lock_sha256_after": "a5282de5bdb579a886a8ca579aa89a419280548a4ff93e04791dc670d9d4da60",
+    "stdout_sha256": "7b82fa65c0f48d05daea27782574022c8af341a563f74fe4cc107a43d7491387",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "ordinal": 3,
+    "argv": [
+      "cargo",
+      "metadata",
+      "--offline",
+      "--manifest-path",
+      "/workspace/scratch/ae364bcbabfb/publication-check/evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/crypto/Cargo.toml",
+      "--format-version",
+      "1",
+      "--locked"
+    ],
+    "exit_code": 0,
+    "elapsed_ns": 45871790,
+    "lock_sha256_after": "a5282de5bdb579a886a8ca579aa89a419280548a4ff93e04791dc670d9d4da60",
+    "stdout_sha256": "7b82fa65c0f48d05daea27782574022c8af341a563f74fe4cc107a43d7491387",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

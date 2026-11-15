@@ -1,0 +1,11 @@
+.......................................................................................................................................
+----------------------------------------------------------------------
+Ran 135 tests in 642.529s
+
+OK
+{"receipt": "/tmp/trnm-ci-raw-source-5ihag9fq/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-xb93ctui/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-a_c21oa2/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-d7yi6_6p/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-amktk0io/.git/receipt-PASS", "result": "PASS"}
+{"receipt": "/tmp/trnm-ci-raw-source-amktk0io/.git/receipt-FAIL", "result": "FAIL"}

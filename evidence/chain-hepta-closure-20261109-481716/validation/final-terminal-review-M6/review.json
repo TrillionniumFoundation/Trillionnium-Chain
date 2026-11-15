@@ -1,0 +1,674 @@
+{
+  "schema": "closure-evidence-M6-terminal-incremental-review-v1",
+  "completed_utc": "2026-11-09T17:47:17.661133+00:00",
+  "conclusion": "NO_MATERIAL_INCONSISTENCY_FOUND; ENGINEERING_RESULTS_CONFIRMED; PRODUCTION_QUALIFICATION_REMAINS_HOLD_NO_GO",
+  "method": "Read-only incremental inspection after the parent READY. Existing M6 control logs, source guards, raw Git commit objects, native archive, compiler/direct/provider identity observations, original stdout, ignored-scope sidecar and final display text were checked. No tests, native retries, source edits, publication actions or network requests.",
+  "scope": "Closes the M6 controls/native-terminal exclusions in the preceding M6 publication static review, within the evidence limits stated here. It does not close ordinary daemon, service, WAN, cryptographic or production qualification.",
+  "components": [
+    {
+      "path": "controls-lineage-reviewed.json",
+      "bytes": 21970,
+      "sha256": "0f18d30642434ec6b9246ba02272d7ded82d33c859647705bdc1ff6562d4a7e8"
+    },
+    {
+      "path": "native-byte-review.json",
+      "bytes": 27907,
+      "sha256": "92717b2a02037feb9536be9837c6eba29a6fadc16d28cb5b6dc3a460f788eac0"
+    }
+  ],
+  "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+  "source_tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1",
+  "publication_inputs": [
+    {
+      "path": "README.md",
+      "bytes": 23271,
+      "sha256": "fef27c5644cf4c23dc9543c2cddc2f8551e271548695432b0e5dacd47f6cace9"
+    },
+    {
+      "path": "execution-status.json",
+      "bytes": 10724,
+      "sha256": "cbca1a1b4907814f164f6bdfb00243c3d3c7c9ba047040a902664c864f154dda"
+    },
+    {
+      "path": "candidate-profile.json",
+      "bytes": 4052,
+      "sha256": "175524d6cafe93f1f175d272bee1b9be4d22c954909be3fca6d4955362900775"
+    },
+    {
+      "path": "qualification-plan.json",
+      "bytes": 4018,
+      "sha256": "94d02a1f21b9e33b5fb22ea53fe0445433aaa8e03d5f0ca446ad3c33cd3b3df8"
+    },
+    {
+      "path": "qualification-packet.json",
+      "bytes": 230,
+      "sha256": "30f71c34f28eeba630127859947379b4ea6eb853f53c0090686cc3694fe77463"
+    },
+    {
+      "path": "qualification-review.json",
+      "bytes": 14086,
+      "sha256": "d536c4d56b66d6ca622d7cc400205d91e6ea93a59d8012d45ba73f65fdaa0356"
+    },
+    {
+      "path": "qualification-identities.json",
+      "bytes": 593,
+      "sha256": "9b3f1ade3bf13dd975da543df087a7a045bb9296dd95dabec373fa1a507c6681"
+    },
+    {
+      "path": "source/source-lineage.json",
+      "bytes": 3143,
+      "sha256": "6678d6f6afad38b069e6f5fa0be8f7a34dd2c54c63594f1a5c35856f13ad171d"
+    },
+    {
+      "path": "validation/root-M6-native-delivery-review.json",
+      "bytes": 1630,
+      "sha256": "6c1750fbc9149b772fdd9da39448466f79d3bd378cf6de0417fcbf7816e5adee"
+    }
+  ],
+  "prior_static_review": {
+    "path": "pon_pq_patch/final-static-review-M6/review.json",
+    "sha256": "2a816d14699a8f3d70bef77532ad4e11b29eb4ace9ab62e96994d6ec978d6271",
+    "preserved": true,
+    "five_qualification_core_files_unchanged": true,
+    "previous_lock_proof_manifest_and_original_contract_review_remains_separate": true
+  },
+  "controls_summary": {
+    "full_test_files": {
+      "campaign_reader": 23,
+      "ci_contract": 176,
+      "corpus": 59,
+      "proof_profile": 26,
+      "scope": 11
+    },
+    "total_controls": 295,
+    "separate_CLI_count": 2,
+    "seven_commands_exit_zero": true,
+    "fourteen_log_sizes_and_sha256_match": true,
+    "all_verbose_test_statuses_ok": true,
+    "input_inventory_equal_before_after": 1380,
+    "fixed_git_fixture_bytes_verified": 12,
+    "raw_lineage_commit_objects_verified": 6,
+    "qualification_from_CLI": "HOLD",
+    "ordinary_daemon_qualification_inferred": false
+  },
+  "native_summary": {
+    "archive_sha256": "c59397c89f1ed4e50605dfe337b77d2b63d82309f339ea7fa29f8884c99c16f9",
+    "archive_bytes": 1022076,
+    "payload_members_verified": 180,
+    "regular_members_including_manifest": 181,
+    "native_delivery_files": 15,
+    "native_delivery_bytes": 1150008,
+    "five_actual_compiler_event_direct_identity_joins_verified": 5,
+    "top_level_counts": {
+      "passed": 2450,
+      "failed": 0,
+      "ignored": 41,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    "main_roster": 2491,
+    "node_nested_summaries_separately_retained": 4,
+    "node_exact_child_original_section_and_COMPLETE_observed": true,
+    "check_exit": 0,
+    "clippy_exit": 0,
+    "clippy_warnings_denied": true,
+    "fmt_exit": 0,
+    "native_status": "PASS_WITH_RETAINED_IGNORED_GATES_OPEN",
+    "all_five_retained_library_harnesses_complete": true,
+    "ordinary_daemon_execution": false
+  },
+  "ignored_scope_correction": {
+    "top_level_ignored": 41,
+    "node": 39,
+    "protocol": 2,
+    "all_41_never_executed_at_any_depth": false,
+    "all_41_business_gates": false,
+    "existing_ignored_helper_executed_in_child": true,
+    "nonignored_migration_children": 2,
+    "new_nonignored_journal_child": 1,
+    "nested_counts_added_to_top_level": false,
+    "original_business_service_capacity_heavy_release_gates_closed": false,
+    "M5_frozen_raw_and_summary_not_rewritten": true,
+    "sidecar_binds_original_M5_README_ignored_json_archive_hashes": true,
+    "scope_note": "This supersedes any broad earlier narrative equating the top-level ignored count to globally unexecuted bodies. The raw outer ignored flags describe the outer argv/counts; the original helper parent uses --ignored internally."
+  },
+  "final_text_consistency": {
+    "root_README_and_execution_status_match_verified_M6_controls_and_native_results": true,
+    "M5_canonical_failure_2449_1_41_preserved": true,
+    "M5_dynamic_355_release_56_11_remains_separate": true,
+    "M6_success_does_not_establish_M5_EAGAIN_cause": true,
+    "source_M6_separated_from_future_evidence_child": true,
+    "0746_campaign_not_relabelled_as_M6": true,
+    "ordinary_daemon_model_loader_evaluator_build_load_fields_not_filled_from_cfg_test_ELFs": true,
+    "service_thresholds": {
+      "host_service_seconds": 4,
+      "separate_campaign_seconds": 30,
+      "thresholds_changed": false,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/097f59f505f8ec42f72e3b8255e6cb7822a70646/docs/development/specs/pon/CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md",
+      "wan_minimum_hours": 72,
+      "wan_minimum_independently_administered_failure_domains": 3
+    },
+    "qualification": "HOLD_NO_GO",
+    "authority": "DENY_ALL",
+    "production_activation": false,
+    "publication_status_is_dated_prepublication_observation_not_new_remote_verification": true
+  },
+  "display_links": {
+    "scope": "All current display Markdown excluding immutable research-originals; inline and reference-style destinations. External targets not fetched. Not a general secrets audit of repository or archive internals.",
+    "display_MD_count": 17,
+    "relative_destinations": 54,
+    "external_destinations": 126,
+    "reference_definition_destinations": 28,
+    "files": [
+      {
+        "path": "README.md",
+        "bytes": 23271,
+        "sha256": "fef27c5644cf4c23dc9543c2cddc2f8551e271548695432b0e5dacd47f6cace9",
+        "relative_destinations": 38,
+        "external_destinations": 6
+      },
+      {
+        "path": "final-pon-research.md",
+        "bytes": 45056,
+        "sha256": "abe22f9fc778d97a3792584a9fc6b1cc5e9613e2a32d1c16773d836936ab2dfb",
+        "relative_destinations": 0,
+        "external_destinations": 64
+      },
+      {
+        "path": "history-import-review/AUTHORIZATION_NOTE.md",
+        "bytes": 804,
+        "sha256": "7b29f02ce64f894947588eb652c3d2ac50d6ce48a8ade320ec98267a177bbe1d",
+        "relative_destinations": 1,
+        "external_destinations": 0
+      },
+      {
+        "path": "history-import-review/README.md",
+        "bytes": 12140,
+        "sha256": "d4b8d401fa16d9f645d1d56ff678173417ff8600b111fd9b5f2060d06ee817e1",
+        "relative_destinations": 1,
+        "external_destinations": 13
+      },
+      {
+        "path": "history-import-review/snapshot-followup.md",
+        "bytes": 11398,
+        "sha256": "4dca78e2e7ab2a0d0af4c2ed6c280f6c5455d76515dd3eb3c5368a6abdd96258",
+        "relative_destinations": 4,
+        "external_destinations": 5
+      },
+      {
+        "path": "native/M4/README.md",
+        "bytes": 8244,
+        "sha256": "37c8b70b72f7e547d8af0a9c78d801cfcf30538b90762a12688658bb41a50489",
+        "relative_destinations": 0,
+        "external_destinations": 0
+      },
+      {
+        "path": "ordinary-daemon-717-engineering-gap.md",
+        "bytes": 11758,
+        "sha256": "191020ef6f85c86be99ecbb849be94a7077aa7d9cb34540564eb8bd8f67418a6",
+        "relative_destinations": 0,
+        "external_destinations": 9
+      },
+      {
+        "path": "original-campaign/README.md",
+        "bytes": 5046,
+        "sha256": "7b6031c09db9e97b7fc797e939fc63aa2a602c894c82e907d1d1b941e3bb5815",
+        "relative_destinations": 0,
+        "external_destinations": 0
+      },
+      {
+        "path": "original-history-snapshots/README.md",
+        "bytes": 2694,
+        "sha256": "e5efb47cb90200a331c33bc99ef23b4191adf3c3e1adf12e85d212cad05a54a7",
+        "relative_destinations": 0,
+        "external_destinations": 0
+      },
+      {
+        "path": "qrom-latest-followup.md",
+        "bytes": 12173,
+        "sha256": "7d9cadeabe82b7c7ed956c61f915a7cf349ad3e35ff1e5dcb94f087be1ce844c",
+        "relative_destinations": 5,
+        "external_destinations": 17
+      },
+      {
+        "path": "qualification-history/README.md",
+        "bytes": 1068,
+        "sha256": "30fae197cbf27feb06860e455342f7295c10b274d275ce2cf02f7d8c123bc06c",
+        "relative_destinations": 0,
+        "external_destinations": 0
+      },
+      {
+        "path": "validation/fd-probe-static-review/README.md",
+        "bytes": 3633,
+        "sha256": "1ef313577d4c2a65bf731c6110ccba718b1ac2df612bf8fa5017a380427ac00d",
+        "relative_destinations": 1,
+        "external_destinations": 0
+      },
+      {
+        "path": "validation/journal-isolation-static-review/README.md",
+        "bytes": 5116,
+        "sha256": "582b9f32939bf5c57686a37e5c020949b85bd9f93de313784d789174eb56a65a",
+        "relative_destinations": 2,
+        "external_destinations": 5
+      },
+      {
+        "path": "validation/native-M5/README.md",
+        "bytes": 11748,
+        "sha256": "bed8238258ddba1193138bcd743f8581ddd97011c575838033eb73338a26561b",
+        "relative_destinations": 0,
+        "external_destinations": 0
+      },
+      {
+        "path": "validation/native-M6/README.md",
+        "bytes": 10776,
+        "sha256": "ca0ef579f9e20e6eacdd8f1a78c67a7b8680699ef784e7e362faef51993396fb",
+        "relative_destinations": 0,
+        "external_destinations": 0
+      },
+      {
+        "path": "validation/provider-fixture-static-review/README.md",
+        "bytes": 6439,
+        "sha256": "d32fd9adae40a3150c5865269d44a430b57008bc7edd2f66cbb5d9263babf1c9",
+        "relative_destinations": 1,
+        "external_destinations": 7
+      },
+      {
+        "path": "validation/publication-static-review-M6/README.md",
+        "bytes": 5005,
+        "sha256": "57370e582c2e75e20e4472f5cc8168bbef02236e739993fbd29adf566c640990",
+        "relative_destinations": 1,
+        "external_destinations": 0
+      }
+    ],
+    "relative_checks": [
+      {
+        "source": "README.md",
+        "destination": "source/source-lineage.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "qualification-history/M4/qualification-identities.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "qualification-history/M5/qualification-identities.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "candidate-profile.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "qualification-plan.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "qualification-packet.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "qualification-review.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/M6-controls/summary.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/final-source-structure-M6/results.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "source/hepta-717-lock-object-verification.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/native-M6/README.md",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/native-M6/artifact-direct-crossjoin.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/root-M6-native-delivery-review.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/native-M6/journal-exact-child.log",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/native-M6/ignored-scope-correction.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/M5-controls/summary.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/ci-M4-passed/summary.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/readers-M4/summary.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/final-source-structure-M5/results.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "binding-review/m2-python-controls.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/ci-M3-failed/summary.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "native/M4/README.md",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/fd-probe-static-review/README.md",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "source/M5-freeze.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/provider-fixture-static-review/README.md",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/native-M5/README.md",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/native-M6/ignored-scope-correction.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "source/M6-freeze.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "validation/journal-isolation-static-review/README.md",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "execution-status.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "original-campaign/README.md",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "history-import-review/README.md",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "history-import-review/snapshot-followup.md",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "original-history-snapshots/README.md",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "ordinary-daemon-717-engineering-gap.md",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "final-pon-research.md",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "final-pon-research-sources.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "README.md",
+        "destination": "qrom-latest-followup.md",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "history-import-review/AUTHORIZATION_NOTE.md",
+        "destination": "README.md",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "history-import-review/README.md",
+        "destination": "review.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "history-import-review/snapshot-followup.md",
+        "destination": "README.md",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "history-import-review/snapshot-followup.md",
+        "destination": "review.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "history-import-review/snapshot-followup.md",
+        "destination": "snapshot-followup.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "history-import-review/snapshot-followup.md",
+        "destination": "AUTHORIZATION_NOTE.md",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "qrom-latest-followup.md",
+        "destination": "qrom-followup-inputs/official-fetch-attempt01.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "qrom-latest-followup.md",
+        "destination": "qrom-latest-followup-sources.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "qrom-latest-followup.md",
+        "destination": "qrom-followup-inputs/tracked-manuscript-comparison.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "qrom-latest-followup.md",
+        "destination": "qrom-followup-inputs/tracked-comparison-review.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "qrom-latest-followup.md",
+        "destination": "qrom-latest-followup-sources.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "validation/fd-probe-static-review/README.md",
+        "destination": "review.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "validation/journal-isolation-static-review/README.md",
+        "destination": "review.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "validation/journal-isolation-static-review/README.md",
+        "destination": "reviewed.patch",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "validation/provider-fixture-static-review/README.md",
+        "destination": "review.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "source": "validation/publication-static-review-M6/README.md",
+        "destination": "review.json",
+        "kind": "inline",
+        "exists": true,
+        "inside_package": true
+      }
+    ],
+    "missing_outside_or_sandbox_findings": [],
+    "private_Library_or_signed_URL_findings": []
+  },
+  "explicit_limits": [
+    "No native binary or provider-library entity was included in the small log packet; compiler/direct/provider identity observations were joined, not locally rehashed from remote ELF/library entities.",
+    "The recorded selected environment is not claimed to equal an entire Cargo environment, and the test ELF is not an ordinary daemon binary.",
+    "The historical M5 EAGAIN holder and causal mechanism remain unestablished; isolated M6 success does not infer them.",
+    "This review does not independently rerun the controller transport stream validation or verify a later remote PR head/hosted-check state; its retained files are byte-bound in the delivered packet.",
+    "No ordinary daemon learning lifecycle, original 4-second service or separate 30-second campaign, independent three-domain/72h deployment, full PQ/lifetime theorem or all-strategies PoN cost lower bound is granted."
+  ],
+  "material_findings": []
+}

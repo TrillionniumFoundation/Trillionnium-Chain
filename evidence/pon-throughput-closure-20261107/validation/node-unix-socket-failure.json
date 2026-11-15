@@ -1,0 +1,359 @@
+{
+  "actions": {
+    "native_tests_rerun": false,
+    "permission_bypass": false,
+    "privilege_escalation": false,
+    "repository_head_changed": false,
+    "repository_tracked_files_changed": false,
+    "security_policy_changed": false
+  },
+  "coverage_and_limits": [
+    "All three named guarded NPQ6 integration controls remain FAILED in the original full suite; no waiver or green qualification is applied.",
+    "The child had spawned and opened the existing witness before reaching the listener constructor. It failed before writing ready.pending/ready.",
+    "The parent fails at Process::start before Node::create_with_pq_witness, maintenance packet generation, TCP server startup or the first Submit. These runs do not exercise their intended valid-submit, invalid-signature recovery, replay, cleanup-sentinel or independent restart assertions.",
+    "The separately listed independent_witness_process_child test returns immediately when its fixture environment variable is absent. Its ordinary-suite ok line is not evidence that an external witness process listener succeeded.",
+    "The 1150 passed tests are retained individually; neither their count nor this permission diagnosis replaces the three missing integration controls.",
+    "Unchanged test/store/witness file bytes across e70, a9, parallel 271 and publication b596 show this listener setup was not introduced by the throughput patch. They do not prove the failed integration behavior would pass on another environment.",
+    "AF_UNIX socket creation was probed only to diagnose the existing failure; no alternative transport, socketpair workaround, policy adjustment, privilege escalation or full-suite rerun was attempted."
+  ],
+  "created_utc": "2026-11-07T11:15:37.882759+00:00",
+  "failures": [
+    {
+      "child_panic": {
+        "column": 71,
+        "errno": 1,
+        "errno_name": "EPERM",
+        "expression": "UnixListener::bind(directory.join(\"witness.sock\")).unwrap()",
+        "line": 330,
+        "message": "Operation not permitted",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+        "rust_error_kind": "PermissionDenied"
+      },
+      "coverage_completed": false,
+      "failure_section_log_line": 1243,
+      "name": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+      "parent_panic": {
+        "column": 21,
+        "line": 211,
+        "message": "independent witness exited before ready (exit status: 101)",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs"
+      },
+      "phase_diagnostics": [
+        {
+          "has_open_operations": false,
+          "last_failure": null,
+          "last_service_failure": null,
+          "last_tcp_failure": null,
+          "process_id": 3731,
+          "records_closed": 0,
+          "records_completed": 0,
+          "records_started": 0
+        },
+        {
+          "has_open_operations": false,
+          "last_failure": null,
+          "last_service_failure": null,
+          "last_tcp_failure": null,
+          "process_id": 1629,
+          "records_closed": 0,
+          "records_completed": 0,
+          "records_started": 0
+        }
+      ],
+      "reclassified_as_pass": false,
+      "stage": "First independent witness process startup, before readiness publication and before guarded Node creation/packet generation/TCP service/Submit/replay/restart assertions.",
+      "status": "FAILED",
+      "waived": false
+    },
+    {
+      "child_panic": {
+        "column": 71,
+        "errno": 1,
+        "errno_name": "EPERM",
+        "expression": "UnixListener::bind(directory.join(\"witness.sock\")).unwrap()",
+        "line": 330,
+        "message": "Operation not permitted",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+        "rust_error_kind": "PermissionDenied"
+      },
+      "coverage_completed": false,
+      "failure_section_log_line": 1254,
+      "name": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics",
+      "parent_panic": {
+        "column": 21,
+        "line": 211,
+        "message": "independent witness exited before ready (exit status: 101)",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs"
+      },
+      "phase_diagnostics": [
+        {
+          "has_open_operations": false,
+          "last_failure": null,
+          "last_service_failure": null,
+          "last_tcp_failure": null,
+          "process_id": 3735,
+          "records_closed": 0,
+          "records_completed": 0,
+          "records_started": 0
+        },
+        {
+          "has_open_operations": false,
+          "last_failure": null,
+          "last_service_failure": null,
+          "last_tcp_failure": null,
+          "process_id": 1629,
+          "records_closed": 0,
+          "records_completed": 0,
+          "records_started": 0
+        }
+      ],
+      "reclassified_as_pass": false,
+      "stage": "First independent witness process startup, before readiness publication and before guarded Node creation/packet generation/TCP service/Submit/replay/restart assertions.",
+      "status": "FAILED",
+      "waived": false
+    },
+    {
+      "child_panic": {
+        "column": 71,
+        "errno": 1,
+        "errno_name": "EPERM",
+        "expression": "UnixListener::bind(directory.join(\"witness.sock\")).unwrap()",
+        "line": 330,
+        "message": "Operation not permitted",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+        "rust_error_kind": "PermissionDenied"
+      },
+      "coverage_completed": false,
+      "failure_section_log_line": 1265,
+      "name": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart",
+      "parent_panic": {
+        "column": 21,
+        "line": 211,
+        "message": "independent witness exited before ready (exit status: 101)",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs"
+      },
+      "phase_diagnostics": [
+        {
+          "has_open_operations": false,
+          "last_failure": null,
+          "last_service_failure": null,
+          "last_tcp_failure": null,
+          "process_id": 3739,
+          "records_closed": 0,
+          "records_completed": 0,
+          "records_started": 0
+        },
+        {
+          "has_open_operations": false,
+          "last_failure": null,
+          "last_service_failure": null,
+          "last_tcp_failure": null,
+          "process_id": 1629,
+          "records_closed": 0,
+          "records_completed": 0,
+          "records_started": 0
+        }
+      ],
+      "reclassified_as_pass": false,
+      "stage": "First independent witness process startup, before readiness publication and before guarded Node creation/packet generation/TCP service/Submit/replay/restart assertions.",
+      "status": "FAILED",
+      "waived": false
+    }
+  ],
+  "original_execution": {
+    "argv": [
+      "cargo",
+      "test",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--all-features",
+      "--lib",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 101,
+    "log": {
+      "bytes": 154084,
+      "relative_to_workspace": "validation/exact-source/node-lib.log",
+      "sha256": "3920b9dea6408a57b204fa49217549759c8ef7a8b8f963b8edd55c6a91ce0932"
+    },
+    "receipt": {
+      "bytes": 2427,
+      "relative_to_workspace": "validation/exact-source/node-lib.json",
+      "sha256": "ecee69e73431f0547a1fac3aa189606b76709266eece417972f0f93474e96572"
+    },
+    "source_before_after_equal": true,
+    "suite_elapsed_seconds": 1305.61,
+    "suite_failed": 3,
+    "suite_filtered_out": 0,
+    "suite_ignored": 31,
+    "suite_measured": 0,
+    "suite_passed": 1150,
+    "suite_result": "FAILED",
+    "tested_commit": "a9efd4cba7546a8ef1e854ee0acdce9f5903ac2d",
+    "tested_tree": "807e589d4cb8c2c0d2c2123e8e4ff0870d6a1eb7",
+    "wrapper_elapsed_ns_including_build": 1817292567610
+  },
+  "probe": {
+    "access_controls_bypassed": false,
+    "created_utc": "2026-11-07T11:13:44.313815+00:00",
+    "direct_libc_socket_confirmation": {
+      "address_family": 1,
+      "bind_attempted": false,
+      "errno": 1,
+      "errno_name": "EPERM",
+      "listen_attempted": false,
+      "operation": "libc.socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0)",
+      "protocol": 0,
+      "return_value": -1,
+      "socket_type": 524289
+    },
+    "directory_mode": "0o700",
+    "interpretation": "AF_UNIX socket creation itself returns EPERM. The original Python socket constructor failed before bind or listen; the direct libc socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0) confirmation also returned -1/EPERM. A normal file in the private writable scratch directory succeeded. The probe identifies a same-class environment permission restriction without identifying the enforcing security layer; it does not execute guarded NPQ6 assertions.",
+    "native_tests_rerun": false,
+    "operations": [
+      {
+        "errno": 1,
+        "errno_name": "EPERM",
+        "message": "[Errno 1] Operation not permitted",
+        "operation": "socket(AF_UNIX, SOCK_STREAM, 0)",
+        "returned": "error"
+      }
+    ],
+    "ordinary_file_create_read_succeeded": true,
+    "original_three_failures_reclassified_as_pass": false,
+    "pid": 5,
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+    "policies_changed": false,
+    "privileges_escalated": false,
+    "qualification": false,
+    "schema": "pon-unix-witness-permission-probe-v1",
+    "scope": "Minimal AF_UNIX pathname listener operations under the current unchanged tool execution sandbox; no repository/native test execution.",
+    "socket_path_created": false,
+    "socket_path_utf8_bytes": 72,
+    "temporary_probe_directory_removed": true
+  },
+  "probe_file": {
+    "bytes": 1717,
+    "relative_to_workspace": "unix-witness-permission-probe.json",
+    "sha256": "d5b5e0299ca9170d0888adaca87956f0b21edf434e6e9056d53bec18f82db8e0"
+  },
+  "qualification": {
+    "guarded_npq6_combined_controls_passed": false,
+    "node_full_suite_passed": false,
+    "production_activation": false,
+    "production_ready": false,
+    "public_network_ready": false,
+    "rollback_witness_integration_qualified": false
+  },
+  "result": "FAILED_UNQUALIFIED",
+  "schema": "pon-node-unix-socket-failure-diagnosis-v1",
+  "scope": "Read-only diagnosis of preserved full Node suite failures plus independent minimal AF_UNIX creation permission probes. No test, repository source, security policy or permission change.",
+  "source_comparison": [
+    {
+      "identical_across_all_four_commits": true,
+      "observations": [
+        {
+          "bytes": 26042,
+          "commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+          "git_blob": "13c61b99303639372f058de580f2da6de0f53f16",
+          "sha256": "1c55ec019547f319f18bf7a636b0352bc9e6b72485223b7f8bcb520096f8d58f"
+        },
+        {
+          "bytes": 26042,
+          "commit": "a9efd4cba7546a8ef1e854ee0acdce9f5903ac2d",
+          "git_blob": "13c61b99303639372f058de580f2da6de0f53f16",
+          "sha256": "1c55ec019547f319f18bf7a636b0352bc9e6b72485223b7f8bcb520096f8d58f"
+        },
+        {
+          "bytes": 26042,
+          "commit": "271a87f831aa7e08f3c2024f738504c1422122dd",
+          "git_blob": "13c61b99303639372f058de580f2da6de0f53f16",
+          "sha256": "1c55ec019547f319f18bf7a636b0352bc9e6b72485223b7f8bcb520096f8d58f"
+        },
+        {
+          "bytes": 26042,
+          "commit": "b59610295776ea44694ecef97d9f0e1de40bba0c",
+          "git_blob": "13c61b99303639372f058de580f2da6de0f53f16",
+          "sha256": "1c55ec019547f319f18bf7a636b0352bc9e6b72485223b7f8bcb520096f8d58f"
+        }
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs"
+    },
+    {
+      "identical_across_all_four_commits": true,
+      "observations": [
+        {
+          "bytes": 16488,
+          "commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+          "git_blob": "97f614be188d2acecef88e81da690c8121c7a595",
+          "sha256": "744f9aa2a9e33959dd2474e977c2d16e205458091e8eb6ba52740b71ed53849d"
+        },
+        {
+          "bytes": 16488,
+          "commit": "a9efd4cba7546a8ef1e854ee0acdce9f5903ac2d",
+          "git_blob": "97f614be188d2acecef88e81da690c8121c7a595",
+          "sha256": "744f9aa2a9e33959dd2474e977c2d16e205458091e8eb6ba52740b71ed53849d"
+        },
+        {
+          "bytes": 16488,
+          "commit": "271a87f831aa7e08f3c2024f738504c1422122dd",
+          "git_blob": "97f614be188d2acecef88e81da690c8121c7a595",
+          "sha256": "744f9aa2a9e33959dd2474e977c2d16e205458091e8eb6ba52740b71ed53849d"
+        },
+        {
+          "bytes": 16488,
+          "commit": "b59610295776ea44694ecef97d9f0e1de40bba0c",
+          "git_blob": "97f614be188d2acecef88e81da690c8121c7a595",
+          "sha256": "744f9aa2a9e33959dd2474e977c2d16e205458091e8eb6ba52740b71ed53849d"
+        }
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs"
+    },
+    {
+      "identical_across_all_four_commits": true,
+      "observations": [
+        {
+          "bytes": 36217,
+          "commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+          "git_blob": "e7c3a2f010ae5669501897bf87badbc6d043e488",
+          "sha256": "8edd159a4246cf1c423f00a17fed924a049af7667412fea054b9de8bcbc29601"
+        },
+        {
+          "bytes": 36217,
+          "commit": "a9efd4cba7546a8ef1e854ee0acdce9f5903ac2d",
+          "git_blob": "e7c3a2f010ae5669501897bf87badbc6d043e488",
+          "sha256": "8edd159a4246cf1c423f00a17fed924a049af7667412fea054b9de8bcbc29601"
+        },
+        {
+          "bytes": 36217,
+          "commit": "271a87f831aa7e08f3c2024f738504c1422122dd",
+          "git_blob": "e7c3a2f010ae5669501897bf87badbc6d043e488",
+          "sha256": "8edd159a4246cf1c423f00a17fed924a049af7667412fea054b9de8bcbc29601"
+        },
+        {
+          "bytes": 36217,
+          "commit": "b59610295776ea44694ecef97d9f0e1de40bba0c",
+          "git_blob": "e7c3a2f010ae5669501897bf87badbc6d043e488",
+          "sha256": "8edd159a4246cf1c423f00a17fed924a049af7667412fea054b9de8bcbc29601"
+        }
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs"
+    }
+  ],
+  "underlying_operation": {
+    "attribution": "The independent probe confirms denial at AF_UNIX socket creation under the current unchanged sandbox. It supports a same-class environment restriction as the cause of the fixture startup failures. Do not describe the original log alone as proof that the bind syscall ran.",
+    "directly_observed_in_minimal_probe": "socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0) = -1, errno EPERM",
+    "enforcing_security_layer_identified": false,
+    "expression_includes_socket_creation_bind_and_listen": true,
+    "ordinary_file_permission_control_succeeded": true,
+    "original_log_has_no_syscall_trace": true,
+    "probe_bind_syscall_reached": false,
+    "probe_listen_syscall_reached": false,
+    "rust_expression": "std::os::unix::net::UnixListener::bind(pathname)"
+  }
+}

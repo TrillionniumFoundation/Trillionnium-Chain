@@ -1,0 +1,12 @@
+{
+  "action": "add missing local origin metadata from existing integration checkout",
+  "source_checkout": "/workspace/scratch/822cc50e24f0/chain-integration",
+  "destination_checkout": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+  "origin_scheme": "https",
+  "origin_host": "github.com",
+  "origin_path": "/TrillionniumFoundation/Trillionnium-Chain.git",
+  "commit_after": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+  "tree_after": "54442c70933c1ea37ebfe725628cbdd8685b746e",
+  "git_status_after": "",
+  "initial_result_sha256": "e6dbde983ab37e4ccb19edfaf69f4e5ed45b4a1d2c1c32ba4e0d02eb23b42d1a"
+}

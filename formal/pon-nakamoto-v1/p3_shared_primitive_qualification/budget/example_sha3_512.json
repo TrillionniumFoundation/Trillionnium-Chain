@@ -1,0 +1,61 @@
+{
+  "schema": "p3.sponge.query_budget.v1",
+  "claim": "sponge_preimage_and_collision_only",
+  "parameters": {
+    "rate_bits": 576,
+    "capacity_bits": 1024,
+    "digest_bits": 512
+  },
+  "construction": {
+    "model": "uniform_random_bitstring_permutation",
+    "sponge_mode": "fixed_output_sponge",
+    "message_encoding": "injective",
+    "padding": "injective",
+    "padded_messages_nonempty": true,
+    "output": "first_d_bits_of_first_squeeze_block"
+  },
+  "initial_state": {
+    "at_start_of_counted_lifetime": "permutation_independent",
+    "construction_dependent_advice": "none",
+    "later_permutation_dependent_state": "only_from_counted_queries"
+  },
+  "queries": {
+    "basis": "hypothetical_adversary_upper_bound",
+    "scope": "entire_shared_primitive_lifetime",
+    "unit": "swap",
+    "coverage": {
+      "all_roles_and_unlisted_uses": true,
+      "all_forward_and_inverse_calls": true,
+      "all_precomputation": true,
+      "failed_aborted_offline_and_cross_session": true,
+      "all_permutation_dependent_side_information": true
+    },
+    "by_role": {
+      "leaf": {
+        "precomputation": {"forward": "0", "inverse": "0"},
+        "online": {"forward": "2305843009213693952", "inverse": "0"}
+      },
+      "branch": {
+        "precomputation": {"forward": "0", "inverse": "0"},
+        "online": {"forward": "2305843009213693952", "inverse": "0"}
+      },
+      "transcript": {
+        "precomputation": {"forward": "0", "inverse": "0"},
+        "online": {"forward": "2305843009213693952", "inverse": "0"}
+      },
+      "other": {
+        "precomputation": {"forward": "9223372036854775808", "inverse": "0"},
+        "online": {"forward": "0", "inverse": "2305843009213693952"}
+      }
+    }
+  },
+  "candidate_outputs": {
+    "preimage_total_padded_blocks_bound": "4",
+    "collision_pair_total_padded_blocks_bound": "8"
+  },
+  "targets": {
+    "fixed_preimage_target_count": "1",
+    "selection": "fixed_independently_of_permutation",
+    "budget_per_event": "same_entire_lifetime_q"
+  }
+}

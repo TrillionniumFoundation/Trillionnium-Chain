@@ -1,0 +1,38 @@
+{
+  "actual_relevant_env": {
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "NATIVE_RISK_LEDGER_RUN": null,
+    "PYTHONDONTWRITEBYTECODE": null,
+    "PYTHONHASHSEED": null,
+    "PYTHONHOME": null,
+    "PYTHONNOUSERSITE": null,
+    "PYTHONPATH": null,
+    "TZ": null,
+    "VIRTUAL_ENV": null
+  },
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "completed_at_utc": "2026-11-11T23:59:14.042934+00:00",
+  "cwd": "/workspace/scratch/7f73fe002713/chain-daa",
+  "elapsed_wall_ns": 2071283571,
+  "env_overrides": {},
+  "environment_capture_scope": "execution-relevant-nonsensitive-variables; inherited environment otherwise retained",
+  "exit_code": 0,
+  "exit_matches_expectation": true,
+  "expected_exit": 0,
+  "name": "preflight",
+  "started_at_utc": "2026-11-11T23:59:11.971186+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "preflight.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 175,
+    "path": "preflight.stdout.log",
+    "sha256": "f02d051544b06277430cab47b70669e0c9037420144ee74422af5711d0bf99ee"
+  }
+}

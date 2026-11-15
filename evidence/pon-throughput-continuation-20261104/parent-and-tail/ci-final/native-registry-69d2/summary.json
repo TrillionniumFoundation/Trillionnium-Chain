@@ -1,0 +1,812 @@
+{
+  "schema": "final-69d2-selected-registry-and-execution-readback-v1",
+  "created_at": "2026-11-04T09:05:09.237790+00:00",
+  "scope": "Offline reconciliation of the already executed final 69d2 dirty Node and M06 controls; this reader runs no native code.",
+  "base_commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+  "native_manifest_sha256": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+  "node_elf_sha256": "5349b31b55279a52dd75b679c5c3a12cb0c0d784dc259098409bb376f056045d",
+  "m06_elf_sha256": "4e411e4057438162f4cc333c384f23931399e0493e86c3d4ed90d1cc6207c43a",
+  "source_keys": [
+    "node_source_before",
+    "node_source_after",
+    "components_source_before",
+    "components_source_after",
+    "nine_source_before",
+    "nine_source_after"
+  ],
+  "previous_node_execution_keys": [
+    "node_core_append_reorg",
+    "node_core_authenticated",
+    "node_core_archive_store",
+    "node_core_tcp_1",
+    "node_core_tcp_2",
+    "node_core_tcp_3",
+    "node_core_tcp_4",
+    "node_core_tcp_5",
+    "node_core_tcp_6"
+  ],
+  "artifacts": {
+    "node_registry_all_receipt": {
+      "path": "../../final-native/69d2/native/registry-all.json",
+      "compression": "none",
+      "original_bytes": 732,
+      "original_sha256": "2d7edd83637e860311a1e59ffd6783622d0ae90937cbf9180b91dbac11bd3c12",
+      "stored_sha256": "2d7edd83637e860311a1e59ffd6783622d0ae90937cbf9180b91dbac11bd3c12"
+    },
+    "node_registry_all_stdout": {
+      "path": "../../final-native/69d2/native/registry-all.stdout.gz",
+      "compression": "gzip",
+      "original_bytes": 114182,
+      "original_sha256": "e68e056d703230abd8928979a0b4e206b5ed34bef9aff8b7d873393bc8c6bddb",
+      "stored_sha256": "c3eefc295751dfc8f96e1a2777ee4a896237f0fca74206378c4c0b09c3d98cc7"
+    },
+    "node_registry_all_stderr": {
+      "path": "../../final-native/69d2/native/registry-all.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "node_registry_ignored_receipt": {
+      "path": "../../final-native/69d2/native/registry-ignored.json",
+      "compression": "none",
+      "original_bytes": 766,
+      "original_sha256": "0e1ac4d2af69429c3a5898bbe5872ee0ce49d96c54dd70c3bdea7d806d47f983",
+      "stored_sha256": "0e1ac4d2af69429c3a5898bbe5872ee0ce49d96c54dd70c3bdea7d806d47f983"
+    },
+    "node_registry_ignored_stdout": {
+      "path": "../../final-native/69d2/native/registry-ignored.stdout",
+      "compression": "none",
+      "original_bytes": 2691,
+      "original_sha256": "dda33d1617b05e9f47f63690fa7aa55a7eed9b5ba8a486e3a53dd2865d660b1d",
+      "stored_sha256": "dda33d1617b05e9f47f63690fa7aa55a7eed9b5ba8a486e3a53dd2865d660b1d"
+    },
+    "node_registry_ignored_stderr": {
+      "path": "../../final-native/69d2/native/registry-ignored.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "m06_registry_all_receipt": {
+      "path": "../../final-native/69d2/components/m06-registry-all.json",
+      "compression": "none",
+      "original_bytes": 751,
+      "original_sha256": "6c9f2a023edd9bb3ee80d29a055696166b3309080792a875bc9166a1ebfe34f1",
+      "stored_sha256": "6c9f2a023edd9bb3ee80d29a055696166b3309080792a875bc9166a1ebfe34f1"
+    },
+    "m06_registry_all_stdout": {
+      "path": "../../final-native/69d2/components/m06-registry-all.stdout",
+      "compression": "none",
+      "original_bytes": 12709,
+      "original_sha256": "11d6c10291567f370d942feb13b3890c75fc71664c96c19066b1ff12c78a5914",
+      "stored_sha256": "11d6c10291567f370d942feb13b3890c75fc71664c96c19066b1ff12c78a5914"
+    },
+    "m06_registry_all_stderr": {
+      "path": "../../final-native/69d2/components/m06-registry-all.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "m06_registry_ignored_receipt": {
+      "path": "../../final-native/69d2/components/m06-registry-ignored.json",
+      "compression": "none",
+      "original_bytes": 771,
+      "original_sha256": "e6eb2939061888fc07a7d4bb1c717a258fb1cd60d2e1864cb9e7d74d9d0e3fae",
+      "stored_sha256": "e6eb2939061888fc07a7d4bb1c717a258fb1cd60d2e1864cb9e7d74d9d0e3fae"
+    },
+    "m06_registry_ignored_stdout": {
+      "path": "../../final-native/69d2/components/m06-registry-ignored.stdout",
+      "compression": "none",
+      "original_bytes": 547,
+      "original_sha256": "d36a6749bed011fa90c70a23753db601386e9ff4c7e44ed876a68441af915473",
+      "stored_sha256": "d36a6749bed011fa90c70a23753db601386e9ff4c7e44ed876a68441af915473"
+    },
+    "m06_registry_ignored_stderr": {
+      "path": "../../final-native/69d2/components/m06-registry-ignored.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "node_result": {
+      "path": "../../final-native/69d2/native/result.json",
+      "compression": "none",
+      "original_bytes": 16199,
+      "original_sha256": "f0bed1919b86308488079cd46f5937759a45de45bc37fe3f35e0ed5dfb5e460f",
+      "stored_sha256": "f0bed1919b86308488079cd46f5937759a45de45bc37fe3f35e0ed5dfb5e460f"
+    },
+    "node_source_before": {
+      "path": "../../final-native/69d2/native/source-before.json.gz",
+      "compression": "gzip",
+      "original_bytes": 176577,
+      "original_sha256": "e0592125fa980227c3e94cc5d506b6689a1374f5d2dc988cbe31b8668fa70e81",
+      "stored_sha256": "d316659ba60c117dccd0941a883b6c3c593c6ba177c8f687523e9a8440dc1e87"
+    },
+    "node_source_after": {
+      "path": "../../final-native/69d2/native/source-after.json.gz",
+      "compression": "gzip",
+      "original_bytes": 176577,
+      "original_sha256": "e0592125fa980227c3e94cc5d506b6689a1374f5d2dc988cbe31b8668fa70e81",
+      "stored_sha256": "d316659ba60c117dccd0941a883b6c3c593c6ba177c8f687523e9a8440dc1e87"
+    },
+    "components_result": {
+      "path": "../../final-native/69d2/components/result.json",
+      "compression": "none",
+      "original_bytes": 8445,
+      "original_sha256": "3ae36feed95fe30494b0e6d5ecdae06d754924486b31f2caeb438a1c2553e917",
+      "stored_sha256": "3ae36feed95fe30494b0e6d5ecdae06d754924486b31f2caeb438a1c2553e917"
+    },
+    "components_source_before": {
+      "path": "../../final-native/69d2/components/source-before.json.gz",
+      "compression": "gzip",
+      "original_bytes": 176577,
+      "original_sha256": "e0592125fa980227c3e94cc5d506b6689a1374f5d2dc988cbe31b8668fa70e81",
+      "stored_sha256": "d316659ba60c117dccd0941a883b6c3c593c6ba177c8f687523e9a8440dc1e87"
+    },
+    "components_source_after": {
+      "path": "../../final-native/69d2/components/source-after.json.gz",
+      "compression": "gzip",
+      "original_bytes": 176577,
+      "original_sha256": "e0592125fa980227c3e94cc5d506b6689a1374f5d2dc988cbe31b8668fa70e81",
+      "stored_sha256": "d316659ba60c117dccd0941a883b6c3c593c6ba177c8f687523e9a8440dc1e87"
+    },
+    "nine_result": {
+      "path": "../../final-native/69d2/workspace-nine/result.json",
+      "compression": "none",
+      "original_bytes": 31067,
+      "original_sha256": "590d7318af405dd8bf6196e65a6dc69156ed8e5950aadef2f66f4006f6d143d7",
+      "stored_sha256": "590d7318af405dd8bf6196e65a6dc69156ed8e5950aadef2f66f4006f6d143d7"
+    },
+    "nine_source_before": {
+      "path": "../../final-native/69d2/workspace-nine/source-before.json.gz",
+      "compression": "gzip",
+      "original_bytes": 176577,
+      "original_sha256": "e0592125fa980227c3e94cc5d506b6689a1374f5d2dc988cbe31b8668fa70e81",
+      "stored_sha256": "d316659ba60c117dccd0941a883b6c3c593c6ba177c8f687523e9a8440dc1e87"
+    },
+    "nine_source_after": {
+      "path": "../../final-native/69d2/workspace-nine/source-after.json.gz",
+      "compression": "gzip",
+      "original_bytes": 176577,
+      "original_sha256": "e0592125fa980227c3e94cc5d506b6689a1374f5d2dc988cbe31b8668fa70e81",
+      "stored_sha256": "d316659ba60c117dccd0941a883b6c3c593c6ba177c8f687523e9a8440dc1e87"
+    },
+    "node_core_append_reorg_receipt": {
+      "path": "../../final-native/69d2/native/append-reorg.json",
+      "compression": "none",
+      "original_bytes": 766,
+      "original_sha256": "544b1c7ba5a12ed00e156220fc90f8f2e1a547c7ff4b6134c1449be973f40789",
+      "stored_sha256": "544b1c7ba5a12ed00e156220fc90f8f2e1a547c7ff4b6134c1449be973f40789"
+    },
+    "node_core_append_reorg_stdout": {
+      "path": "../../final-native/69d2/native/append-reorg.stdout",
+      "compression": "none",
+      "original_bytes": 1870,
+      "original_sha256": "c216a1c0c7954ae5897027cdf789d5a66421ac2795b8d756e2b2a6dec8a9ba3d",
+      "stored_sha256": "c216a1c0c7954ae5897027cdf789d5a66421ac2795b8d756e2b2a6dec8a9ba3d"
+    },
+    "node_core_append_reorg_stderr": {
+      "path": "../../final-native/69d2/native/append-reorg.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "node_core_authenticated_receipt": {
+      "path": "../../final-native/69d2/native/authenticated.json",
+      "compression": "none",
+      "original_bytes": 791,
+      "original_sha256": "ecf1c1bec73908607e75fa60c14fc9f3feaedc223b0393ef7ee40244e078b0ec",
+      "stored_sha256": "ecf1c1bec73908607e75fa60c14fc9f3feaedc223b0393ef7ee40244e078b0ec"
+    },
+    "node_core_authenticated_stdout": {
+      "path": "../../final-native/69d2/native/authenticated.stdout",
+      "compression": "none",
+      "original_bytes": 34497,
+      "original_sha256": "5e1fe4b7db5cb47e65c4b76eafa417a5e5ec767049868b60d0082ff3855dbe22",
+      "stored_sha256": "5e1fe4b7db5cb47e65c4b76eafa417a5e5ec767049868b60d0082ff3855dbe22"
+    },
+    "node_core_authenticated_stderr": {
+      "path": "../../final-native/69d2/native/authenticated.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "node_core_archive_store_receipt": {
+      "path": "../../final-native/69d2/native/archive-store.json",
+      "compression": "none",
+      "original_bytes": 792,
+      "original_sha256": "dcefc7b75bc545e879a0ebce69df26e6f63904037197d0845b694ec9c8f672d9",
+      "stored_sha256": "dcefc7b75bc545e879a0ebce69df26e6f63904037197d0845b694ec9c8f672d9"
+    },
+    "node_core_archive_store_stdout": {
+      "path": "../../final-native/69d2/native/archive-store.stdout",
+      "compression": "none",
+      "original_bytes": 5900,
+      "original_sha256": "9858ffe78d74de228bd33cf7f74b9f137ed9a4a06f0a22cba507184a108f2971",
+      "stored_sha256": "9858ffe78d74de228bd33cf7f74b9f137ed9a4a06f0a22cba507184a108f2971"
+    },
+    "node_core_archive_store_stderr": {
+      "path": "../../final-native/69d2/native/archive-store.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "node_core_tcp_1_receipt": {
+      "path": "../../final-native/69d2/native/tcp-1.json",
+      "compression": "none",
+      "original_bytes": 858,
+      "original_sha256": "b6bd6a7aeab8fd0fec95aaa4ce0193a1d934c9dbdbdb05251efea6a817f22ee6",
+      "stored_sha256": "b6bd6a7aeab8fd0fec95aaa4ce0193a1d934c9dbdbdb05251efea6a817f22ee6"
+    },
+    "node_core_tcp_1_stdout": {
+      "path": "../../final-native/69d2/native/tcp-1.stdout",
+      "compression": "none",
+      "original_bytes": 349,
+      "original_sha256": "ffea1083a82888f7f5cc328280fee218afe2bc65919902775c089c48daaca235",
+      "stored_sha256": "ffea1083a82888f7f5cc328280fee218afe2bc65919902775c089c48daaca235"
+    },
+    "node_core_tcp_1_stderr": {
+      "path": "../../final-native/69d2/native/tcp-1.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "node_core_tcp_2_receipt": {
+      "path": "../../final-native/69d2/native/tcp-2.json",
+      "compression": "none",
+      "original_bytes": 880,
+      "original_sha256": "5070f2aaf831cae6482435f154548c838cdfabb05be33c60bfc13d135b22ec79",
+      "stored_sha256": "5070f2aaf831cae6482435f154548c838cdfabb05be33c60bfc13d135b22ec79"
+    },
+    "node_core_tcp_2_stdout": {
+      "path": "../../final-native/69d2/native/tcp-2.stdout",
+      "compression": "none",
+      "original_bytes": 355,
+      "original_sha256": "1f4c9015a3019da6e64f3bcbdda304d8ee0c4c50384e8ed56313cd059e276926",
+      "stored_sha256": "1f4c9015a3019da6e64f3bcbdda304d8ee0c4c50384e8ed56313cd059e276926"
+    },
+    "node_core_tcp_2_stderr": {
+      "path": "../../final-native/69d2/native/tcp-2.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "node_core_tcp_3_receipt": {
+      "path": "../../final-native/69d2/native/tcp-3.json",
+      "compression": "none",
+      "original_bytes": 871,
+      "original_sha256": "05a2b2327e5b24b9470b4312d5ef3e642ccb01d494e33301df26db734b096feb",
+      "stored_sha256": "05a2b2327e5b24b9470b4312d5ef3e642ccb01d494e33301df26db734b096feb"
+    },
+    "node_core_tcp_3_stdout": {
+      "path": "../../final-native/69d2/native/tcp-3.stdout",
+      "compression": "none",
+      "original_bytes": 339,
+      "original_sha256": "043903616ad35b3b9add8df3320eae65513480e1deef0e77c9de24797557d4e2",
+      "stored_sha256": "043903616ad35b3b9add8df3320eae65513480e1deef0e77c9de24797557d4e2"
+    },
+    "node_core_tcp_3_stderr": {
+      "path": "../../final-native/69d2/native/tcp-3.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "node_core_tcp_4_receipt": {
+      "path": "../../final-native/69d2/native/tcp-4.json",
+      "compression": "none",
+      "original_bytes": 890,
+      "original_sha256": "50b86872d64c745424f1dcca8176af708a8861c1828348d725243c1fb8704345",
+      "stored_sha256": "50b86872d64c745424f1dcca8176af708a8861c1828348d725243c1fb8704345"
+    },
+    "node_core_tcp_4_stdout": {
+      "path": "../../final-native/69d2/native/tcp-4.stdout",
+      "compression": "none",
+      "original_bytes": 379,
+      "original_sha256": "6885d58de7339d1cd88edfd095ae0b97c45cf5fa37c7b3c51f6f9c0af1039731",
+      "stored_sha256": "6885d58de7339d1cd88edfd095ae0b97c45cf5fa37c7b3c51f6f9c0af1039731"
+    },
+    "node_core_tcp_4_stderr": {
+      "path": "../../final-native/69d2/native/tcp-4.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "node_core_tcp_5_receipt": {
+      "path": "../../final-native/69d2/native/tcp-5.json",
+      "compression": "none",
+      "original_bytes": 883,
+      "original_sha256": "6ce1dde9d83e01d349fefdb2376c40ca1a9b2ab93bd9f369e56ae5c351e71225",
+      "stored_sha256": "6ce1dde9d83e01d349fefdb2376c40ca1a9b2ab93bd9f369e56ae5c351e71225"
+    },
+    "node_core_tcp_5_stdout": {
+      "path": "../../final-native/69d2/native/tcp-5.stdout",
+      "compression": "none",
+      "original_bytes": 361,
+      "original_sha256": "676847a3e6e803bb81ad69585d773aa50f2f426a8846647fd972e250862aa2a7",
+      "stored_sha256": "676847a3e6e803bb81ad69585d773aa50f2f426a8846647fd972e250862aa2a7"
+    },
+    "node_core_tcp_5_stderr": {
+      "path": "../../final-native/69d2/native/tcp-5.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "node_core_tcp_6_receipt": {
+      "path": "../../final-native/69d2/native/tcp-6.json",
+      "compression": "none",
+      "original_bytes": 874,
+      "original_sha256": "b0bb961dfd5848d944ca4f89e05c3da4e6ff7901ef2b9a0b22ea9f71cd945409",
+      "stored_sha256": "b0bb961dfd5848d944ca4f89e05c3da4e6ff7901ef2b9a0b22ea9f71cd945409"
+    },
+    "node_core_tcp_6_stdout": {
+      "path": "../../final-native/69d2/native/tcp-6.stdout",
+      "compression": "none",
+      "original_bytes": 347,
+      "original_sha256": "1fb2bea3e4be4e8cec59bd4c4dec4c12d369c3920b9852f8840c9028cfc9e925",
+      "stored_sha256": "1fb2bea3e4be4e8cec59bd4c4dec4c12d369c3920b9852f8840c9028cfc9e925"
+    },
+    "node_core_tcp_6_stderr": {
+      "path": "../../final-native/69d2/native/tcp-6.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_1_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-1.json",
+      "compression": "none",
+      "original_bytes": 951,
+      "original_sha256": "c75ff39ffb212d2c6e182dee8d7a068b9e5cb741974d87149a451d73583fefd2",
+      "stored_sha256": "c75ff39ffb212d2c6e182dee8d7a068b9e5cb741974d87149a451d73583fefd2"
+    },
+    "nine_1_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-1.stdout",
+      "compression": "none",
+      "original_bytes": 427,
+      "original_sha256": "234ee2313473af6b2dd53d79e70509784931d2b3d256d68a6ed895e201f28050",
+      "stored_sha256": "234ee2313473af6b2dd53d79e70509784931d2b3d256d68a6ed895e201f28050"
+    },
+    "nine_1_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-1.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_1_reader_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-1-reader.json",
+      "compression": "none",
+      "original_bytes": 920,
+      "original_sha256": "a20acbb9fdc407f0851d937fff2f54a8e541e122bf644690ef4fdc3d4c638abb",
+      "stored_sha256": "a20acbb9fdc407f0851d937fff2f54a8e541e122bf644690ef4fdc3d4c638abb"
+    },
+    "nine_1_reader_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-1-reader.stdout",
+      "compression": "none",
+      "original_bytes": 228,
+      "original_sha256": "5ff271dd037c2caffcd08d078d4520a6bd2defc861f6b3b8aa0fa31008ce73ac",
+      "stored_sha256": "5ff271dd037c2caffcd08d078d4520a6bd2defc861f6b3b8aa0fa31008ce73ac"
+    },
+    "nine_1_reader_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-1-reader.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_2_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-2.json",
+      "compression": "none",
+      "original_bytes": 933,
+      "original_sha256": "a458748b9b6b6968511ca4a817cc913b2437a1e62a9ee26e4c4db425b2949b86",
+      "stored_sha256": "a458748b9b6b6968511ca4a817cc913b2437a1e62a9ee26e4c4db425b2949b86"
+    },
+    "nine_2_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-2.stdout",
+      "compression": "none",
+      "original_bytes": 417,
+      "original_sha256": "3ca26eada50e5f18a1e795932894f7a09a7d636f07414a6ebd3c285884e90493",
+      "stored_sha256": "3ca26eada50e5f18a1e795932894f7a09a7d636f07414a6ebd3c285884e90493"
+    },
+    "nine_2_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-2.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_2_reader_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-2-reader.json",
+      "compression": "none",
+      "original_bytes": 915,
+      "original_sha256": "23dc00bbbc3fdb86390c361f98e81ad5c6a10292633814e625bd2a4459f1bae4",
+      "stored_sha256": "23dc00bbbc3fdb86390c361f98e81ad5c6a10292633814e625bd2a4459f1bae4"
+    },
+    "nine_2_reader_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-2-reader.stdout",
+      "compression": "none",
+      "original_bytes": 223,
+      "original_sha256": "8a328629afc26e50031f1c32c20a98b6924407d63e5b343edaf96ca2715f58f4",
+      "stored_sha256": "8a328629afc26e50031f1c32c20a98b6924407d63e5b343edaf96ca2715f58f4"
+    },
+    "nine_2_reader_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-2-reader.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_3_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-3.json",
+      "compression": "none",
+      "original_bytes": 922,
+      "original_sha256": "024b51031ce3682115df1da68c37e4c82ff6a54d6d52de8761acd004b0a28642",
+      "stored_sha256": "024b51031ce3682115df1da68c37e4c82ff6a54d6d52de8761acd004b0a28642"
+    },
+    "nine_3_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-3.stdout",
+      "compression": "none",
+      "original_bytes": 393,
+      "original_sha256": "e9e6be5032d2e903bae9598b9e3ee19def590b6a3745095d04bf981210c9aa00",
+      "stored_sha256": "e9e6be5032d2e903bae9598b9e3ee19def590b6a3745095d04bf981210c9aa00"
+    },
+    "nine_3_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-3.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_3_reader_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-3-reader.json",
+      "compression": "none",
+      "original_bytes": 891,
+      "original_sha256": "d985f511266833b0cbcec2e3760077fd3b7d3bcc758c47b0b91e0a8c94f9e25f",
+      "stored_sha256": "d985f511266833b0cbcec2e3760077fd3b7d3bcc758c47b0b91e0a8c94f9e25f"
+    },
+    "nine_3_reader_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-3-reader.stdout",
+      "compression": "none",
+      "original_bytes": 211,
+      "original_sha256": "8734b207402682d64c7c8a49c7ec07cc773d94b713e62dc54b6dc83a0c17ec6d",
+      "stored_sha256": "8734b207402682d64c7c8a49c7ec07cc773d94b713e62dc54b6dc83a0c17ec6d"
+    },
+    "nine_3_reader_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-3-reader.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_4_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-4.json",
+      "compression": "none",
+      "original_bytes": 925,
+      "original_sha256": "d17407cb07325573b0972716583faa8fa5a6b2ffe611f6558c4e8fba70118fff",
+      "stored_sha256": "d17407cb07325573b0972716583faa8fa5a6b2ffe611f6558c4e8fba70118fff"
+    },
+    "nine_4_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-4.stdout",
+      "compression": "none",
+      "original_bytes": 2595,
+      "original_sha256": "21bfe54d207fb3ffe10b0a51bd6c4caa4ec485871bd90a569f3a9477b7d0b5a4",
+      "stored_sha256": "21bfe54d207fb3ffe10b0a51bd6c4caa4ec485871bd90a569f3a9477b7d0b5a4"
+    },
+    "nine_4_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-4.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_4_reader_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-4-reader.json",
+      "compression": "none",
+      "original_bytes": 894,
+      "original_sha256": "fee52284a16cbc58722862a0de3a1e41b53830ec42843dac83660fed4e76c881",
+      "stored_sha256": "fee52284a16cbc58722862a0de3a1e41b53830ec42843dac83660fed4e76c881"
+    },
+    "nine_4_reader_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-4-reader.stdout",
+      "compression": "none",
+      "original_bytes": 202,
+      "original_sha256": "d9a7dedaa75251a24069df13114233b229c041f34e557e332c6ddfcc842df8e1",
+      "stored_sha256": "d9a7dedaa75251a24069df13114233b229c041f34e557e332c6ddfcc842df8e1"
+    },
+    "nine_4_reader_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-4-reader.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_5_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-5.json",
+      "compression": "none",
+      "original_bytes": 922,
+      "original_sha256": "0d98208f051dc127e07aba5e21c46082a3a41197883b48947f8100957282c815",
+      "stored_sha256": "0d98208f051dc127e07aba5e21c46082a3a41197883b48947f8100957282c815"
+    },
+    "nine_5_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-5.stdout",
+      "compression": "none",
+      "original_bytes": 2652,
+      "original_sha256": "7d52a5de4fb90ef2d52660df323637e33c5d1c73105897b4da50307d1263448f",
+      "stored_sha256": "7d52a5de4fb90ef2d52660df323637e33c5d1c73105897b4da50307d1263448f"
+    },
+    "nine_5_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-5.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_5_reader_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-5-reader.json",
+      "compression": "none",
+      "original_bytes": 881,
+      "original_sha256": "fe4f0cdf04b30abcd9cd7daf73adc59aea5896a62405eb3435453692e110cb4d",
+      "stored_sha256": "fe4f0cdf04b30abcd9cd7daf73adc59aea5896a62405eb3435453692e110cb4d"
+    },
+    "nine_5_reader_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-5-reader.stdout",
+      "compression": "none",
+      "original_bytes": 201,
+      "original_sha256": "10929f53167969d7f914dad31fdbf7ff3586b69d0e2c19ae2a2bcc90205df641",
+      "stored_sha256": "10929f53167969d7f914dad31fdbf7ff3586b69d0e2c19ae2a2bcc90205df641"
+    },
+    "nine_5_reader_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-5-reader.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_6_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-6.json",
+      "compression": "none",
+      "original_bytes": 912,
+      "original_sha256": "216523427763f7a470e86d7f6fdb7fafd7f495ed640df981b8d4c4cfc001c2c1",
+      "stored_sha256": "216523427763f7a470e86d7f6fdb7fafd7f495ed640df981b8d4c4cfc001c2c1"
+    },
+    "nine_6_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-6.stdout",
+      "compression": "none",
+      "original_bytes": 377,
+      "original_sha256": "88060e3dea14a99b85e4a67dab61e617b0d173d851994f6850114f21a26c617a",
+      "stored_sha256": "88060e3dea14a99b85e4a67dab61e617b0d173d851994f6850114f21a26c617a"
+    },
+    "nine_6_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-6.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_6_reader_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-6-reader.json",
+      "compression": "none",
+      "original_bytes": 895,
+      "original_sha256": "29ea6070d55ce17dc8dc422a1c52a452ccd7393eaa25a465468186a48a19423f",
+      "stored_sha256": "29ea6070d55ce17dc8dc422a1c52a452ccd7393eaa25a465468186a48a19423f"
+    },
+    "nine_6_reader_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-6-reader.stdout",
+      "compression": "none",
+      "original_bytes": 203,
+      "original_sha256": "6bf0f1b512518deef9c06750ccf958977f102f8d30ca6fe67b5fc437a5ddc18f",
+      "stored_sha256": "6bf0f1b512518deef9c06750ccf958977f102f8d30ca6fe67b5fc437a5ddc18f"
+    },
+    "nine_6_reader_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-6-reader.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_7_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-7.json",
+      "compression": "none",
+      "original_bytes": 920,
+      "original_sha256": "91c4be05bcfc91bdca25be3cc7c5254edf73877ed01c985a85e40f48c4f7342b",
+      "stored_sha256": "91c4be05bcfc91bdca25be3cc7c5254edf73877ed01c985a85e40f48c4f7342b"
+    },
+    "nine_7_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-7.stdout",
+      "compression": "none",
+      "original_bytes": 369,
+      "original_sha256": "34cf186ebf587553a76291512ef4601aceaaa901cb370fa9918c29135e6fd7f2",
+      "stored_sha256": "34cf186ebf587553a76291512ef4601aceaaa901cb370fa9918c29135e6fd7f2"
+    },
+    "nine_7_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-7.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_7_reader_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-7-reader.json",
+      "compression": "none",
+      "original_bytes": 891,
+      "original_sha256": "f46c1ba534754a04903fc2c7810eae1e5e723c259fc0ab99fd66c6c45cfc716d",
+      "stored_sha256": "f46c1ba534754a04903fc2c7810eae1e5e723c259fc0ab99fd66c6c45cfc716d"
+    },
+    "nine_7_reader_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-7-reader.stdout",
+      "compression": "none",
+      "original_bytes": 199,
+      "original_sha256": "00fa275517a16b64aff45e72f05bfd82dda8ab761029e5456a121cc87012589d",
+      "stored_sha256": "00fa275517a16b64aff45e72f05bfd82dda8ab761029e5456a121cc87012589d"
+    },
+    "nine_7_reader_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-7-reader.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_8_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-8.json",
+      "compression": "none",
+      "original_bytes": 926,
+      "original_sha256": "d3cfa1bae4ccd115a49997c1f4ef73b9f3d9e91c17ed06c2ea5259a859b12a4b",
+      "stored_sha256": "d3cfa1bae4ccd115a49997c1f4ef73b9f3d9e91c17ed06c2ea5259a859b12a4b"
+    },
+    "nine_8_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-8.stdout",
+      "compression": "none",
+      "original_bytes": 379,
+      "original_sha256": "1fff8f41d4ba659c0cc93d8287ac35e98f6574b7bb048f1e1cdd3f63444138cc",
+      "stored_sha256": "1fff8f41d4ba659c0cc93d8287ac35e98f6574b7bb048f1e1cdd3f63444138cc"
+    },
+    "nine_8_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-8.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_8_reader_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-8-reader.json",
+      "compression": "none",
+      "original_bytes": 895,
+      "original_sha256": "15eabac50881e64f8fe4d2ad94905cb3ddc0aeb7c3d037a23806b4939af8f54a",
+      "stored_sha256": "15eabac50881e64f8fe4d2ad94905cb3ddc0aeb7c3d037a23806b4939af8f54a"
+    },
+    "nine_8_reader_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-8-reader.stdout",
+      "compression": "none",
+      "original_bytes": 204,
+      "original_sha256": "1b6fcb9e6aefd618948223a17d6baec0700b4c331a76226b2b93304c7fe7e7e7",
+      "stored_sha256": "1b6fcb9e6aefd618948223a17d6baec0700b4c331a76226b2b93304c7fe7e7e7"
+    },
+    "nine_8_reader_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-8-reader.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_9_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-9.json",
+      "compression": "none",
+      "original_bytes": 922,
+      "original_sha256": "eed99fbb0b8d10154a95d15d9968161b13c047efbff00568d6e860876869bc29",
+      "stored_sha256": "eed99fbb0b8d10154a95d15d9968161b13c047efbff00568d6e860876869bc29"
+    },
+    "nine_9_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-9.stdout",
+      "compression": "none",
+      "original_bytes": 373,
+      "original_sha256": "f9ac5695ed11f4cc6bb4b27fe0239cbbd0260a878209d5a5a9a29f9f36ecf2df",
+      "stored_sha256": "f9ac5695ed11f4cc6bb4b27fe0239cbbd0260a878209d5a5a9a29f9f36ecf2df"
+    },
+    "nine_9_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-9.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nine_9_reader_receipt": {
+      "path": "../../final-native/69d2/workspace-nine/test-9-reader.json",
+      "compression": "none",
+      "original_bytes": 881,
+      "original_sha256": "c28607b268badcced1daf48c8a545c019797b785a20d5055ffdc07b377114453",
+      "stored_sha256": "c28607b268badcced1daf48c8a545c019797b785a20d5055ffdc07b377114453"
+    },
+    "nine_9_reader_stdout": {
+      "path": "../../final-native/69d2/workspace-nine/test-9-reader.stdout",
+      "compression": "none",
+      "original_bytes": 201,
+      "original_sha256": "e6d96e3c02826197ce8709b59f469a84b1e874202280f98c1d18c77401ccb4fb",
+      "stored_sha256": "e6d96e3c02826197ce8709b59f469a84b1e874202280f98c1d18c77401ccb4fb"
+    },
+    "nine_9_reader_stderr": {
+      "path": "../../final-native/69d2/workspace-nine/test-9-reader.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "m06_library_receipt": {
+      "path": "../../final-native/69d2/components/m06-complete-library.json",
+      "compression": "none",
+      "original_bytes": 773,
+      "original_sha256": "ccaf85f56e280426789d067e6ce7d37cca7b56a6803da329c81ae5a0673aac9a",
+      "stored_sha256": "ccaf85f56e280426789d067e6ce7d37cca7b56a6803da329c81ae5a0673aac9a"
+    },
+    "m06_library_stdout": {
+      "path": "../../final-native/69d2/components/m06-complete-library.stdout",
+      "compression": "none",
+      "original_bytes": 27697,
+      "original_sha256": "2ad43cd320eb49549610be8b118874ec7fb2fd7839ae1f6a7764fcc58f278d7c",
+      "stored_sha256": "2ad43cd320eb49549610be8b118874ec7fb2fd7839ae1f6a7764fcc58f278d7c"
+    },
+    "m06_library_stderr": {
+      "path": "../../final-native/69d2/components/m06-complete-library.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sqlite_scope_receipt": {
+      "path": "../../final-native/69d2/components/sqlite-original-transaction-scopes.json",
+      "compression": "none",
+      "original_bytes": 833,
+      "original_sha256": "f8cd2fe0793972008c6ab1c6e3172da344a1a0a6237fbe518aa02cbce3f98cd3",
+      "stored_sha256": "f8cd2fe0793972008c6ab1c6e3172da344a1a0a6237fbe518aa02cbce3f98cd3"
+    },
+    "sqlite_scope_stdout": {
+      "path": "../../final-native/69d2/components/sqlite-original-transaction-scopes.stdout",
+      "compression": "none",
+      "original_bytes": 2713,
+      "original_sha256": "708bd18f02d4b6325beadea4ced5fb25b5dd5cd37c8c1bf6959d340a0aa09565",
+      "stored_sha256": "708bd18f02d4b6325beadea4ced5fb25b5dd5cd37c8c1bf6959d340a0aa09565"
+    },
+    "sqlite_scope_stderr": {
+      "path": "../../final-native/69d2/components/sqlite-original-transaction-scopes.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final_workflow": {
+      "path": "../pon-original-workspace-large-state-cpu.yml.gz",
+      "compression": "gzip",
+      "original_bytes": 29673,
+      "original_sha256": "28bdbe712b26e6e6f12ba67b5dc5d1fe43e5fbdf8a81b3d8a3d86c8a937642c9",
+      "stored_sha256": "fa80cf3a7220d653478031fae0fcd168a77c8bd0321c2f30a3fa5c6b7dfafb3f"
+    },
+    "base_workflow": {
+      "path": "../native-registry-b811/raw/workspace-b811.yml.gz",
+      "compression": "gzip",
+      "original_bytes": 29385,
+      "original_sha256": "5fc4762309966c7222eb85607d31a4f0addef2792516c6996a5bbc74a4300c1e",
+      "stored_sha256": "bcaa82527662f471c8a43102ff96f30c6b6c3dee6e7338b7609af77cb00f95eb"
+    }
+  },
+  "claim_boundary": {
+    "selected_workspace_controls": 58,
+    "node_selected": 40,
+    "node_selected_from_root_original_logs": 31,
+    "node_selected_from_new_exact_runs": 9,
+    "m06_selected_from_complete_library": 18,
+    "full_node_suite_executed": false,
+    "public_service_qualification": false,
+    "clean_commit_qualification": false
+  },
+  "parent_ci_final_sha256sums_sha256": "b1c021c60901fe0d2a7829c8fb285f2a7a9aba0cd3dbcc503d0e70b8bdeb9a69",
+  "historical_b811_registry_sha256sums_sha256": "d414b79b024672369b22a600fe31e00eadf6bb6cbeb0c46022309fdf9ce7b97a"
+}

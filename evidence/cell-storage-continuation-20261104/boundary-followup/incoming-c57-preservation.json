@@ -1,0 +1,600 @@
+{
+  "schema": "trnm.incoming-evidence-preservation-observation.v1",
+  "observed_at_utc": "2026-11-05T01:26:17.406044+00:00",
+  "result": "PASS",
+  "source_clone": "/workspace/scratch/017388516f34/chain",
+  "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+  "report_path": "/workspace/scratch/73305aff6ced/observations/incoming-c57-preservation.json",
+  "commits": {
+    "N": {
+      "commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+      "tree": "ea600542130341144d697776d92048988d44572b",
+      "parents": [
+        "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c",
+        "20cdab3b882c942f28c719a74b3fd22b1837f9fa"
+      ]
+    },
+    "incoming": {
+      "commit": "c57c2432c47ca207d6dd84585dc06dede50a16d0",
+      "tree": "95a877919f9ed053aac6a06990a12c07afbed129",
+      "parents": [
+        "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771"
+      ]
+    }
+  },
+  "incoming_commit_sequence": [
+    {
+      "commit": "e8caede9855a6f78011fbc2aaa5af75a341ab9c9",
+      "tree": "53d0f7328b364466734ad576444bbf389dfe3b90",
+      "parents": [
+        "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c"
+      ]
+    },
+    {
+      "commit": "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+      "tree": "b3d0dad19f4df6fba8c5ebf0e879f68091067790",
+      "parents": [
+        "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+        "e8caede9855a6f78011fbc2aaa5af75a341ab9c9"
+      ]
+    },
+    {
+      "commit": "c57c2432c47ca207d6dd84585dc06dede50a16d0",
+      "tree": "95a877919f9ed053aac6a06990a12c07afbed129",
+      "parents": [
+        "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "name": "canonical_origin_exact",
+      "passed": true
+    },
+    {
+      "name": "incoming_tree_exact",
+      "passed": true
+    },
+    {
+      "name": "N_is_ancestor_of_incoming",
+      "passed": true
+    },
+    {
+      "name": "exactly_three_incoming_commits",
+      "passed": true
+    },
+    {
+      "name": "exactly_the_four_declared_evidence_paths_changed",
+      "passed": true
+    },
+    {
+      "name": "no_files_added_or_deleted",
+      "passed": true
+    },
+    {
+      "name": "all_existing_evidence_paths_keep_mode_and_type",
+      "passed": true
+    },
+    {
+      "name": "every_other_repository_path_is_exactly_preserved",
+      "passed": true
+    },
+    {
+      "name": "subtree_unchanged_trillionnium",
+      "passed": true
+    },
+    {
+      "name": "subtree_unchanged_scripts",
+      "passed": true
+    },
+    {
+      "name": "subtree_unchanged_config",
+      "passed": true
+    },
+    {
+      "name": "subtree_unchanged_docs",
+      "passed": true
+    },
+    {
+      "name": "subtree_unchanged_formal",
+      "passed": true
+    },
+    {
+      "name": "subtree_unchanged_.github",
+      "passed": true
+    },
+    {
+      "name": "N_actual_blob_hash_evidence/pon-quantum-domain-20261104/README.md",
+      "passed": true
+    },
+    {
+      "name": "incoming_actual_blob_hash_evidence/pon-quantum-domain-20261104/README.md",
+      "passed": true
+    },
+    {
+      "name": "N_actual_blob_hash_evidence/pon-quantum-domain-20261104/reproduction.json",
+      "passed": true
+    },
+    {
+      "name": "incoming_actual_blob_hash_evidence/pon-quantum-domain-20261104/reproduction.json",
+      "passed": true
+    },
+    {
+      "name": "N_actual_blob_hash_evidence/pq-historical-migration-20261104/README.md",
+      "passed": true
+    },
+    {
+      "name": "incoming_actual_blob_hash_evidence/pq-historical-migration-20261104/README.md",
+      "passed": true
+    },
+    {
+      "name": "N_actual_blob_hash_evidence/pq-historical-migration-20261104/reproduction.json",
+      "passed": true
+    },
+    {
+      "name": "incoming_actual_blob_hash_evidence/pq-historical-migration-20261104/reproduction.json",
+      "passed": true
+    },
+    {
+      "name": "corpus_blob_unchanged",
+      "passed": true
+    },
+    {
+      "name": "460_unique_pins_retained",
+      "passed": true
+    },
+    {
+      "name": "changed_evidence_paths_are_disjoint_from_all_460_pin_keys",
+      "passed": true
+    },
+    {
+      "name": "all_460_pinned_tree_entries_equal_N_and_match_their_pins",
+      "passed": true
+    },
+    {
+      "name": "no_changed_evidence_directory_references_native_and_scripts",
+      "passed": true
+    },
+    {
+      "name": "no_changed_evidence_directory_references_config",
+      "passed": true
+    },
+    {
+      "name": "no_changed_evidence_directory_references_formal_python",
+      "passed": true
+    },
+    {
+      "name": "corpus_selected_evidence_locators_do_not_select_the_four_changed_files",
+      "passed": true
+    },
+    {
+      "name": "quantum_prior_measurements_failures_and_original_source_scope_preserved",
+      "passed": true
+    },
+    {
+      "name": "PQ_original_checks_failures_source_snapshot_and_authority_limits_preserved",
+      "passed": true
+    },
+    {
+      "name": "PQ_pre_reset_subtree_flag_retained_under_explicit_historical_name",
+      "passed": true
+    },
+    {
+      "name": "quantum_interrupted_Clippy_retry_not_promoted_to_pass",
+      "passed": true
+    }
+  ],
+  "scope": "Exact Git-object preservation relative to N; evidence scope and static fixture/include consumers only.",
+  "runtime_tests_executed": false,
+  "rust_compilation_executed": false,
+  "checkout_performed": false,
+  "repository_files_written": false,
+  "source_subtrees": {
+    "trillionnium": {
+      "N_tree": "81fbd17e50c6c62de7834c9cb7872dc4e89f5444",
+      "incoming_tree": "81fbd17e50c6c62de7834c9cb7872dc4e89f5444",
+      "equal": true
+    },
+    "scripts": {
+      "N_tree": "de7608122fd3ee86b00e74380423bab4ce45d8d7",
+      "incoming_tree": "de7608122fd3ee86b00e74380423bab4ce45d8d7",
+      "equal": true
+    },
+    "config": {
+      "N_tree": "545c7a2de37654061e96e34b17edd6b43730270a",
+      "incoming_tree": "545c7a2de37654061e96e34b17edd6b43730270a",
+      "equal": true
+    },
+    "docs": {
+      "N_tree": "b4cd0d19db3ded3ed8d554faf5a8b963035eb644",
+      "incoming_tree": "b4cd0d19db3ded3ed8d554faf5a8b963035eb644",
+      "equal": true
+    },
+    "formal": {
+      "N_tree": "7f4bf053f974354afcc45d549162d8647e5a5548",
+      "incoming_tree": "7f4bf053f974354afcc45d549162d8647e5a5548",
+      "equal": true
+    },
+    ".github": {
+      "N_tree": "fb1b66eae9e56fc113832b1cfbffb12f74b4b2e6",
+      "incoming_tree": "fb1b66eae9e56fc113832b1cfbffb12f74b4b2e6",
+      "equal": true
+    }
+  },
+  "exact_changed_paths": [
+    "evidence/pon-quantum-domain-20261104/README.md",
+    "evidence/pon-quantum-domain-20261104/reproduction.json",
+    "evidence/pq-historical-migration-20261104/README.md",
+    "evidence/pq-historical-migration-20261104/reproduction.json"
+  ],
+  "unchanged_repository_path_count": 9048,
+  "changed_path_content_identities": [
+    {
+      "path": "evidence/pon-quantum-domain-20261104/README.md",
+      "N": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "55e10e36e530ce6008a139dacde1a93bf25ab1e7"
+      },
+      "incoming": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "4dab4fc316362ca7752debd1a7658bb9d4ad69f7"
+      },
+      "N_content": {
+        "bytes": 15444,
+        "sha256": "a0ff2940d5da90889b1c31e3b2c93cc63391754d7cfb1592aea48fe9e7f97d32",
+        "recomputed_git_blob": "55e10e36e530ce6008a139dacde1a93bf25ab1e7"
+      },
+      "incoming_content": {
+        "bytes": 17651,
+        "sha256": "24457f77d7a0f35349904639a1b2ab577a2d3e62dee505337753283ec7eecb4f",
+        "recomputed_git_blob": "4dab4fc316362ca7752debd1a7658bb9d4ad69f7"
+      }
+    },
+    {
+      "path": "evidence/pon-quantum-domain-20261104/reproduction.json",
+      "N": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "5a2226900326800c3c9232af5ec033a678a5af92"
+      },
+      "incoming": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "4760cd4f5aef7c2e34ff33880d3eb87f4fbbe401"
+      },
+      "N_content": {
+        "bytes": 56330,
+        "sha256": "129825f3d3a13b3f685088b2b9906f84e1d91b4213e6adb4e4f8d6622828d360",
+        "recomputed_git_blob": "5a2226900326800c3c9232af5ec033a678a5af92"
+      },
+      "incoming_content": {
+        "bytes": 62199,
+        "sha256": "f7e7ec01685727973d7cb8ccc484bc45c291e482bb3a1f41ddd931822c27f529",
+        "recomputed_git_blob": "4760cd4f5aef7c2e34ff33880d3eb87f4fbbe401"
+      }
+    },
+    {
+      "path": "evidence/pq-historical-migration-20261104/README.md",
+      "N": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "5713bf0d28793d3018989df6cb6060917523d82a"
+      },
+      "incoming": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "ce1ad11872091ca485478eaf4574f0d04bd89752"
+      },
+      "N_content": {
+        "bytes": 13368,
+        "sha256": "6edaf4972502fe3da1afbbf2964130cc3d4ce69882f08ffb49b26b72428b88cc",
+        "recomputed_git_blob": "5713bf0d28793d3018989df6cb6060917523d82a"
+      },
+      "incoming_content": {
+        "bytes": 16886,
+        "sha256": "d64146425a9ebcba18edc6c9238d8cdd5cfc8b3f98f5c8437f15dea5b4a5964a",
+        "recomputed_git_blob": "ce1ad11872091ca485478eaf4574f0d04bd89752"
+      }
+    },
+    {
+      "path": "evidence/pq-historical-migration-20261104/reproduction.json",
+      "N": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "1c4eda6b245492bea1c7288b61bd26fdb914c9e5"
+      },
+      "incoming": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "79a1229a01daf5d7cc1342ec6ab6846709b97eb3"
+      },
+      "N_content": {
+        "bytes": 26625,
+        "sha256": "d4acd93915330743f1a774ae8cbaf3e5bc0d41413e2d85ec18b4d957b80273d4",
+        "recomputed_git_blob": "1c4eda6b245492bea1c7288b61bd26fdb914c9e5"
+      },
+      "incoming_content": {
+        "bytes": 82488,
+        "sha256": "bcc2203f1f5047ceae1f63d3c060f8c4a5429051419b63e5bf7b5a84999644c0",
+        "recomputed_git_blob": "79a1229a01daf5d7cc1342ec6ab6846709b97eb3"
+      }
+    }
+  ],
+  "corpus": {
+    "path": "config/pon/pq-cross-branch-corpus-v1.json",
+    "unchanged_git_blob": "ad20d25934d345896c0b02ccd70c1dc74d0beeda",
+    "pin_count": 460,
+    "changed_paths_intersection": [],
+    "pinned_tree_entry_mismatches": [],
+    "selected_evidence_locators": [
+      {
+        "json_pointer": "/required_paths/38",
+        "path": "evidence/pon-pq-cell-deadline-native-v1/README.md"
+      },
+      {
+        "json_pointer": "/required_paths/39",
+        "path": "evidence/pon-pq-cell-deadline-native-v1/baseline-real-tcp.log"
+      },
+      {
+        "json_pointer": "/required_paths/40",
+        "path": "evidence/pon-pq-cell-deadline-native-v1/fixed-python.log"
+      },
+      {
+        "json_pointer": "/required_paths/41",
+        "path": "evidence/pon-pq-cell-deadline-native-v1/local-qualification.json"
+      },
+      {
+        "json_pointer": "/required_paths/42",
+        "path": "evidence/pon-pq-cell-deadline-native-v1/native-clippy.log"
+      },
+      {
+        "json_pointer": "/required_paths/43",
+        "path": "evidence/pon-pq-cell-deadline-native-v1/native-format.log"
+      },
+      {
+        "json_pointer": "/required_paths/44",
+        "path": "evidence/pon-pq-cell-deadline-native-v1/native-rust.log"
+      },
+      {
+        "json_pointer": "/required_paths/45",
+        "path": "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json"
+      },
+      {
+        "json_pointer": "/required_paths/46",
+        "path": "evidence/pon-pq-pql11b-source-guard-v1/local-qualification.json"
+      },
+      {
+        "json_pointer": "/required_paths/47",
+        "path": "evidence/pon-pq-spki-v1/README.md"
+      },
+      {
+        "json_pointer": "/required_paths/48",
+        "path": "evidence/pon-pq-tpq1-native-v1/README.md"
+      },
+      {
+        "json_pointer": "/required_paths/49",
+        "path": "evidence/pon-pq-tpq1-native-v1/native-sanitizer-test.log"
+      },
+      {
+        "json_pointer": "/required_paths/50",
+        "path": "evidence/pon-pq-tpq1-native-v1/native-test.log"
+      },
+      {
+        "json_pointer": "/deadline_native_crypto_refinement/evidence",
+        "path": "evidence/pon-pq-cell-deadline-native-v1/local-qualification.json"
+      },
+      {
+        "json_pointer": "/native_account_owner_slice_v1/evidence",
+        "path": "evidence/pon-pq-account-native-20261028/README.md"
+      },
+      {
+        "json_pointer": "/superseded_native_network_owner_slice_v1/evidence",
+        "path": "evidence/pon-pq-native-reconstruction-20261027/README.md"
+      },
+      {
+        "json_pointer": "/native_network_owner_slice_v2/evidence",
+        "path": "qualification/full-pq-r3/README.md"
+      }
+    ],
+    "method": "The unchanged corpus and unchanged non-evidence tree entries preserve all 460 pin values and their actual Git object identities; no prior native receipt is relabeled."
+  },
+  "consumer_audit": {
+    "exact_committed_source_searches": [
+      {
+        "scope": "native_and_scripts",
+        "git_arguments": [
+          "grep",
+          "-n",
+          "-E",
+          "pon-quantum-domain-20261104|pq-historical-migration-20261104",
+          "c57c2432c47ca207d6dd84585dc06dede50a16d0",
+          "--",
+          "trillionnium",
+          "scripts"
+        ],
+        "exit_code": 1,
+        "matches": []
+      },
+      {
+        "scope": "config",
+        "git_arguments": [
+          "grep",
+          "-n",
+          "-E",
+          "pon-quantum-domain-20261104|pq-historical-migration-20261104",
+          "c57c2432c47ca207d6dd84585dc06dede50a16d0",
+          "--",
+          "config"
+        ],
+        "exit_code": 1,
+        "matches": []
+      },
+      {
+        "scope": "formal_python",
+        "git_arguments": [
+          "grep",
+          "-n",
+          "-E",
+          "pon-quantum-domain-20261104|pq-historical-migration-20261104",
+          "c57c2432c47ca207d6dd84585dc06dede50a16d0",
+          "--",
+          ":(glob)formal/**/*.py"
+        ],
+        "exit_code": 1,
+        "matches": []
+      }
+    ],
+    "native_include_macro_source_file_count": 51,
+    "compiled_source_inventory": {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "git_blob": "ecdbe50d905b47f4cb3dd3f55cdb43db76a07890",
+      "changed_evidence_references": []
+    },
+    "native_regression_fixture_assessment": "No fixed include_str/include_bytes or explicit runtime fixture locator in native/scripts/config selects these four files. All native test code, included inputs, config and pinned fixtures remain exact N objects.",
+    "generic_repository_gate_consumers": [
+      {
+        "path": "scripts/ci/check_repository.py",
+        "git_blob": "c257b87a570c5c2bcfe0a111c23ab26221c92a6a",
+        "locations": [
+          "all_files(root), lines 43-44",
+          "check(root), lines 99-113"
+        ],
+        "consumes_changed_files": [
+          "evidence/pon-quantum-domain-20261104/README.md",
+          "evidence/pon-quantum-domain-20261104/reproduction.json",
+          "evidence/pq-historical-migration-20261104/README.md",
+          "evidence/pq-historical-migration-20261104/reproduction.json"
+        ],
+        "purpose": "Generic JSON syntax/duplicate-key parsing and Markdown local-link validation; these structural gate inputs did change."
+      },
+      {
+        "path": "scripts/ci/check_pq_research_integration.py",
+        "git_blob": "ef21ca549861e903dc767b396932cf6c337d8265",
+        "locations": [
+          "pin reads, lines 560-569",
+          "selected evidence reads, lines 583-611"
+        ],
+        "consumes_changed_files": [],
+        "purpose": "Reads the 460 unchanged pins and separate unchanged corpus-selected evidence locators."
+      }
+    ],
+    "whole_commit_and_tree_identity_changed": true,
+    "all_script_inputs_unchanged_claimed": false
+  },
+  "evidence_preservation": {
+    "quantum": {
+      "added_top_level_keys": [
+        "additional_fast_daa_primary_source_lookup",
+        "environment_interruption",
+        "integration_committed_source_gate",
+        "published_integration_checkpoint"
+      ],
+      "removed_top_level_keys": [],
+      "changed_common_top_level_keys": [
+        "result",
+        "rust_gates"
+      ],
+      "unchanged_common_top_level_keys": [
+        "artifact_policy",
+        "events",
+        "integration_parent_preserved",
+        "joint_suite",
+        "known_prefreeze_regressions",
+        "literal_domains",
+        "merge_preparation",
+        "prepared_integration_audit",
+        "qualification",
+        "research_parent",
+        "research_source_commit",
+        "research_source_tree",
+        "restricted_construction",
+        "schema",
+        "source_files_changed_from_parent",
+        "source_gates"
+      ]
+    },
+    "PQ": {
+      "added_top_level_keys": [
+        "environment_scope",
+        "evidence_readme_identity",
+        "locked_closure_equivalence_scope",
+        "pre_reset_m06_source_subtree_unchanged_after_full_run",
+        "restored_cancelled_observations",
+        "restored_environment",
+        "restored_interrupted_observations",
+        "restored_native_checks",
+        "restored_native_counts",
+        "restored_native_published_commit",
+        "restored_native_source_unchanged_after_run",
+        "restored_native_tree",
+        "restored_raw_log_retention",
+        "restored_resume_preflight",
+        "restored_source_receipts_rechecked",
+        "reverse_patch_reconstruction_after_restore",
+        "source_inputs_scope"
+      ],
+      "removed_top_level_keys": [
+        "m06_source_subtree_unchanged_after_full_run"
+      ],
+      "changed_common_top_level_keys": [
+        "lineage",
+        "restored_source_checks",
+        "status"
+      ],
+      "unchanged_common_top_level_keys": [
+        "environment",
+        "executed_checks",
+        "full_node_unit_suite_executed",
+        "locked_closure_equivalence_from_full_m06_run",
+        "production_activation",
+        "qualification",
+        "raw_log_retention",
+        "red_input_reconstruction",
+        "remaining",
+        "retained_failed_observations",
+        "schema",
+        "seed_proof_verified",
+        "source_inputs",
+        "source_network_retired"
+      ]
+    },
+    "quantum_old_fields_exactly_preserved": [
+      "events",
+      "joint_suite",
+      "known_prefreeze_regressions",
+      "literal_domains",
+      "qualification",
+      "research_source_commit",
+      "research_source_tree",
+      "source_gates",
+      "rust_gates.observations"
+    ],
+    "PQ_old_fields_exactly_preserved": [
+      "source_inputs",
+      "executed_checks",
+      "retained_failed_observations",
+      "raw_log_retention",
+      "red_input_reconstruction",
+      "qualification",
+      "production_activation",
+      "source_network_retired",
+      "seed_proof_verified",
+      "full_node_unit_suite_executed"
+    ],
+    "PQ_original_subtree_flag_relabeling": {
+      "from": "m06_source_subtree_unchanged_after_full_run",
+      "to": "pre_reset_m06_source_subtree_unchanged_after_full_run",
+      "value": false
+    },
+    "new_receipt_runtime_results_independently_reexecuted": false,
+    "quantum_native_strict_clippy_accepted": false,
+    "PQ_restored_native_validation_source": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5"
+  },
+  "assessment": "Evidence-only incoming. Native source and fixed regression inputs are preserved from N. Repository-wide JSON/Markdown/source-identity checks have changed bookkeeping inputs; no additional native rerun is justified solely by this four-file delta.",
+  "limits": [
+    "No native, Python runtime, Clippy or performance test was rerun. Newly appended external receipts are recorded as incoming evidence, not independently qualified by this observation.",
+    "The exact object comparison does not require either working tree to be clean and does not inspect or alter the root checkout untracked boundary evidence or frozen validation worktree."
+  ]
+}

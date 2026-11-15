@@ -1,0 +1,8 @@
+tree 46164cd85fff00e3a080acc29fef25a27751082b
+parent e798d7125724d4b9f98c24d00cc80031f2eab4a9
+author ProfHepta <102159240+ProfHepta@users.noreply.github.com> 1794193160 +0000
+committer ProfHepta <102159240+ProfHepta@users.noreply.github.com> 1794193160 +0000
+
+fix(pon): require complete native admission for completion priority
+
+Preserve the original CPU interval and commit fences across public, Growth, and History admission. Keep signed resource semantics in a fresh r18 namespace and retain cold-progress and same-byte regression controls.

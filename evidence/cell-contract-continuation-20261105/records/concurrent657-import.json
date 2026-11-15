@@ -1,0 +1,279 @@
+{
+  "status": "TARGET_657_FULL_TREE_AND_CHANGED_BLOBS_VERIFIED",
+  "observed_at_utc": "2026-11-05T09:24:48.750714+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "base": "0841750c6716189121d5e630de218dd5b02981b3",
+  "head": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+  "expected_head_tree": "7ce7ac50f788dd421e7cc0c9ddb957ade3e8df73",
+  "observed_current_head": "f03be25066fefa1674b104f22cbc6aea09652a80",
+  "commits": [
+    {
+      "sha": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "tree": "7ce7ac50f788dd421e7cc0c9ddb957ade3e8df73",
+      "parents": [
+        "dda4cc47362065819e9591f11f713933e7a853bf",
+        "59546d6ccc6525daec5881a0364b5e95254939d5"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "dda4cc47362065819e9591f11f713933e7a853bf",
+      "tree": "95fc95096e795e8f7a63d5d8a31e77b43af2e399",
+      "parents": [
+        "0841750c6716189121d5e630de218dd5b02981b3",
+        "4e180ebe4f1dc9ffd62fdc3d3c38c209da09a73c"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "59546d6ccc6525daec5881a0364b5e95254939d5",
+      "tree": "519268a7b1a4f76c3b3a9d9fe318b1bcbc507028",
+      "parents": [
+        "6ee529046d295e3175f09112492abee373f1f54c"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "4e180ebe4f1dc9ffd62fdc3d3c38c209da09a73c",
+      "tree": "40455fc141f8e9734e349d3e7f9f3ab33ddbfee0",
+      "parents": [
+        "6ee529046d295e3175f09112492abee373f1f54c"
+      ],
+      "raw_sha1_verified": true
+    }
+  ],
+  "changed_blobs": [
+    {
+      "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "sha": "da9affc4e22086fd8a675fe063dc87328ecd5b23",
+      "mode": "100644",
+      "bytes": 14489,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "sha": "16f1728d042b1d1955e48b67695cc092171258de",
+      "mode": "100644",
+      "bytes": 91246,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha": "825dddd7c8d3abdeaa84a62cbff4ce8e6d8e1382",
+      "mode": "100644",
+      "bytes": 525151,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_REQUEST_RESOURCE_OBSERVATION.md",
+      "sha": "7a36e2f11c9d633e2c66903db23dd9af9996c2e4",
+      "mode": "100644",
+      "bytes": 11855,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/ci-native-constants-roster-20261105/127104910293.txt",
+      "sha": "7b86fa60983b73bafd4919b4b6c6d5718dfe9591",
+      "mode": "100644",
+      "bytes": 2267,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/ci-native-constants-roster-20261105/127104910652.txt",
+      "sha": "402bfd1a9fdcbda7e058af6de3e75f565f0f5234",
+      "mode": "100644",
+      "bytes": 2267,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/ci-native-constants-roster-20261105/127104910725.txt",
+      "sha": "a5019d6e20f6d0d08c1093d4cab038e8ccd4d137",
+      "mode": "100644",
+      "bytes": 2267,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/ci-native-constants-roster-20261105/127104910967.txt",
+      "sha": "7b86fa60983b73bafd4919b4b6c6d5718dfe9591",
+      "mode": "100644",
+      "bytes": 2267,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/ci-native-constants-roster-20261105/README.md",
+      "sha": "74e8d11f8626fddd59f72088c99e0d2c941c93ef",
+      "mode": "100644",
+      "bytes": 2961,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "scripts/ci/check_native_constants_roster.py",
+      "sha": "d283c5491ec52f4c47a5ea41cb3136eddd418b28",
+      "mode": "100644",
+      "bytes": 3076,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "scripts/ci/test_native_constants_roster.py",
+      "sha": "dcd3f0d757dbd77676c84a476045e05fdd4b0be7",
+      "mode": "100644",
+      "bytes": 4031,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "scripts/ci/test_pon_public_v3_phase_read.py",
+      "sha": "7d9d5c13e94ef1e5c0366d3ea75bf5435cd4ca3d",
+      "mode": "100644",
+      "bytes": 77445,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "scripts/pon_public_v3_phase_read.py",
+      "sha": "1f5a5fa2e1c95719553b0de0cd20464a0d15310a",
+      "mode": "100644",
+      "bytes": 68512,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "sha": "b06b7e0111afe50f4dd561b0bcf5e8dc65529394",
+      "mode": "100644",
+      "bytes": 341695,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof.rs",
+      "sha": "ecd5e028329ab448868e45bfae74cbade09ca428",
+      "mode": "100644",
+      "bytes": 29354,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
+      "sha": "b9c1178ded8ac279ef0d96f4feda1dba65923233",
+      "mode": "100644",
+      "bytes": 20930,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "sha": "891ec08f59a6e2346735bd08b1bf363466fe38a3",
+      "mode": "100644",
+      "bytes": 386697,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "sha": "e8e3afa160cbf6e958d2d6b47b2cf7561f229ba4",
+      "mode": "100644",
+      "bytes": 77581,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+      "sha": "377064d416246f6c29c2cbd7e3481fd3e3498819",
+      "mode": "100644",
+      "bytes": 21603,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+      "sha": "16b9eebe277e36a2101f18d481883bb45a9d76e8",
+      "mode": "100644",
+      "bytes": 32770,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/observation.rs",
+      "sha": "e519d4967106a5472ce30197d6fab99a8d40c814",
+      "mode": "100644",
+      "bytes": 11564,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+      "sha": "4bf4a6582020b6e1439b559e4ee236e7ac69e9a0",
+      "mode": "100644",
+      "bytes": 92421,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_timestamp.rs",
+      "sha": "fcfaf9cd03008c9d1cc402fc13b68d40070e1e07",
+      "mode": "100644",
+      "bytes": 8070,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/parallel_preparation.rs",
+      "sha": "0182e91efb2dda2eee911e6d8dde769a0e9e50e1",
+      "mode": "100644",
+      "bytes": 25146,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs",
+      "sha": "3fe5fcbb14e6ca663a9e964abf5d1700482b3978",
+      "mode": "100644",
+      "bytes": 18698,
+      "raw_sha1_verified": true
+    }
+  ],
+  "snapshots": [
+    {
+      "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "tree": "7ce7ac50f788dd421e7cc0c9ddb957ade3e8df73",
+      "raw_sha1_verified": true,
+      "recursive_entries": 11154
+    },
+    {
+      "commit": "dda4cc47362065819e9591f11f713933e7a853bf",
+      "tree": "95fc95096e795e8f7a63d5d8a31e77b43af2e399",
+      "raw_sha1_verified": true,
+      "recursive_entries": 11152
+    },
+    {
+      "commit": "59546d6ccc6525daec5881a0364b5e95254939d5",
+      "tree": "519268a7b1a4f76c3b3a9d9fe318b1bcbc507028",
+      "raw_sha1_verified": true,
+      "recursive_entries": 11113
+    },
+    {
+      "commit": "4e180ebe4f1dc9ffd62fdc3d3c38c209da09a73c",
+      "tree": "40455fc141f8e9734e349d3e7f9f3ab33ddbfee0",
+      "raw_sha1_verified": true,
+      "recursive_entries": 11119
+    }
+  ],
+  "unique_tree_blob_objects_checked": 10017,
+  "available_tree_blob_objects": 10016,
+  "target_head_missing_objects": [],
+  "historical_snapshot_missing_objects": [
+    {
+      "sha": "1b2904edf0f62dca1d8e365f9a9c4546e29c97fe",
+      "occurrences": [
+        {
+          "commit": "4e180ebe4f1dc9ffd62fdc3d3c38c209da09a73c",
+          "path": "config/pon/pq-cross-branch-corpus-v1.json",
+          "type": "blob"
+        }
+      ]
+    }
+  ],
+  "base_is_ancestor": true,
+  "objects_imported_by_this_agent": false,
+  "object_availability_explanation": "Objects were initially unavailable, then became readable through the existing object database. Shared alternates exist; these checks cannot identify which other session supplied them. This agent did not fetch/import objects. Parent reported successful fast-forward before this receipt.",
+  "alternate_object_databases": [
+    "/workspace/scratch/aea25ba345a8/chain/.git/objects",
+    "/workspace/scratch/fd8e3e31d21a/chain-pon-work/.git/objects"
+  ],
+  "actions_by_this_agent": {
+    "git_network_fetch": false,
+    "git_object_writes": false,
+    "working_tree_writes": false,
+    "real_index_writes": false,
+    "head_or_ref_writes": false
+  },
+  "verification_scope": "Raw Git SHA-1 recomputed for all four API-described commits, their four root trees, and all 25 changed-file blobs. Recursive traversal plus batch-check checked availability, type and size of every tree/blob across four snapshots. Target 657 and other parent snapshots are complete except the one explicitly listed historical side-branch blob. No full raw hash recomputation of unchanged blobs is claimed. No source test or business acceptance claim.",
+  "remote_metadata_file": "concurrent657-remote.json"
+}

@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/bin/python",
+    "/home/qq/hepta-smollm2-weight-research-20261103/inputs/source/chain/scripts/llm_inherited_runtime.py",
+    "train",
+    "--materials",
+    "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base",
+    "--output",
+    "/home/qq/chain-learning-d9fb-20261108/generation-1",
+    "--operation-id",
+    "chain-learning-d9fb-20261108-train-1",
+    "--input",
+    "/home/qq/chain-learning-d9fb-20261108/training-input-1.json",
+    "--input-sha256",
+    "b84448b6a0000477e0170f19e443c583d4c7d149118f0901ead486db04931b67",
+    "--threads",
+    "4",
+    "--steps",
+    "10",
+    "--bootstrap"
+  ],
+  "elapsed_seconds": 23.62132302299142,
+  "generation": 1,
+  "returncode": 0
+}

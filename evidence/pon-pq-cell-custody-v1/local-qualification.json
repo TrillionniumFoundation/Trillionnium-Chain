@@ -1,0 +1,38 @@
+{
+  "schema": "trnm-pq-cell-custody-local-qualification-v1",
+  "source_parent_pr": 406,
+  "parent_commit": "53e3e526fcffa88886665203ea86aaa0b025a636",
+  "dependency_pq_envelope_blob": "27e40b04ac8eaa381ad4dc017f23f226f99f3f41",
+  "source_git_blobs": {
+    "pq_envelope.py": "27e40b04ac8eaa381ad4dc017f23f226f99f3f41",
+    "pq_cell_custody.py": "2ad8d8364369cbeaf2ffce4fd0110f69a3b60e07",
+    "test_pq_cell_custody.py": "4614ea957b1a9b88b9e47abbec6998cf728d94e1"
+  },
+  "source_sha256": {
+    "pq_envelope.py": "d3fdc1faef02d7911f8e073c73fb82e2236093a0bd98395805cba22dde7bfbbb",
+    "pq_cell_custody.py": "bf56b7b7f2d09b0e5031a1479a11db00f223050c56d4a5481c9d0d3cd851e470",
+    "test_pq_cell_custody.py": "f103429b38f507e8ef2be8216913b5cd77a7af48b3bc1de786a0155f4d2d866b"
+  },
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_pq_cell_custody.py"
+  ],
+  "python": "3.13.5",
+  "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "filesystem": "overlayfs",
+  "log": "local-unittest.log",
+  "log_sha256": "4c4d683c326d85367dd2965238f49ac3cb349c15b38e26f3c8b4c1b233a351f3",
+  "environment": "ephemeral local sandbox; no independent operated network or production keys",
+  "actual_tests_passed": 13,
+  "returncode": 0,
+  "result": "PASS",
+  "independent_accepted": false,
+  "native_integrated": false,
+  "production_activation": false,
+  "backend": "OpenSSL default-provider genuine ML-DSA-65 via unchanged pq_envelope.py",
+  "scope": "offline signature, Merkle exact bytes, pinning, local SQLite replay observation"
+}

@@ -1,0 +1,77 @@
+{
+  "schema": "current-ci-job-diagnosis-v1",
+  "retrieved_at": "2026-10-22T06:52:36.351568+00:00",
+  "repository": "TrillionniumFoundation/hepta-private-ci",
+  "head": "097d97137a43aee84fb96be12e44135278776748",
+  "base": "75531105b27329abaeb955e77c2c04a6d14f3bcb",
+  "prospective_merge": "5a915bb6eb6704a789ced9976dd26acf706146ac",
+  "source": "GitHub plugin decoded original job logs; logs preserved as returned UTF-8 content",
+  "files": [
+    {
+      "path": "rust-39727948126-job119656119098.log",
+      "bytes": 502661,
+      "sha256": "3306a980251df6db53432ca317578f57914580285db63cf69fab77a9b06382e3"
+    },
+    {
+      "path": "yaml-39727952293-job119656129899.log",
+      "bytes": 463171,
+      "sha256": "7f13b628e8f090f4308e3ed8cabe381d77b83f0bbe04a7c1c1165338d4d925f9"
+    },
+    {
+      "path": "rust-39727948126-job119656119209-arm.log",
+      "bytes": 364385,
+      "sha256": "4a960ec20b36d840d0e28d4f4dc82d0c3a57d38fba1325d90316b07f9ecb4947"
+    },
+    {
+      "path": "pr2559-current.json",
+      "bytes": 5469,
+      "sha256": "77bdad47a26ce64395ff2fa2365f269df1634cef54a864b1822976ac5b68e105"
+    },
+    {
+      "path": "rust-jobs.json",
+      "bytes": 61014,
+      "sha256": "bf343df7ce1e34e47be646879b788feae868330f8f98f09c4011b09ebf0e645e"
+    },
+    {
+      "path": "yaml-jobs.json",
+      "bytes": 4080,
+      "sha256": "2f72a9022641e03e2834e8a32ddd766cdb5cb1a9a5f2471278f647da6e710271"
+    }
+  ],
+  "jobs": [
+    {
+      "job": 119656119098,
+      "run": 39727948126,
+      "classification": "linker/runner resource failure",
+      "first_failure": "2026-10-22T06:21:24.3634690Z linking with cc failed; ld signal 7 Bus error",
+      "later_evidence": "2026-10-22T06:23:57.4051345Z zstd Write error: No space left on device",
+      "inference_limit": "Later ENOSPC supports resource exhaustion, but does not independently prove the first linker crash cause; no Rust source error observed. Nextest test execution never reached."
+    },
+    {
+      "job": 119656119209,
+      "run": 39727948126,
+      "classification": "runner shutdown",
+      "first_failure": "2026-10-22T06:06:15.7553510Z exit143; 06:06:15.8240619Z runner received a shutdown signal",
+      "inference_limit": "No source failure established; not a pass."
+    },
+    {
+      "job": 119656129899,
+      "run": 39727952293,
+      "classification": "current source strict Clippy",
+      "first_failure": "2026-10-22T06:14:23.0621479Z core/src/tasks/mod.rs:3896 abort_unstarted_turn too many arguments (8/7)",
+      "prior_passes": {
+        "core_response_provider_selectors": 10,
+        "four_yaml_consumer_crate_lib_tests": [
+          429,
+          173,
+          52,
+          145
+        ],
+        "total_consumer_tests": 799
+      },
+      "failed_command": "cargo +1.96.0 clippy --locked -p codex-skills -p codex-core-plugins -p codex-external-agent-migration -p codex-skills-extension --all-targets -- -D warnings",
+      "inference_limit": "These component results do not pass the overall YAML job or full Core suite."
+    }
+  ],
+  "remote_actions": "Read-only; no rerun, cancellation, dispatch, push, or gate change."
+}

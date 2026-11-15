@@ -1,0 +1,72 @@
+{
+  "added_evidence_paths": 114,
+  "binding_files": {
+    "compile-input-readback.json": "8fb71a04769e747d13a44dee16ced730edb17ce77526682c53d510e347bd6350",
+    "literal-includes-readback.json": "1f27e3bd8b9337e0a35e0311d7f3e8fab153ea4414246df825a576ad0e4e2765",
+    "native-depfiles-and-build-output.tar.gz": "9fe1a8948dcbf90acf07aa6a2da9546f38090343432a40538dfd633140fd3863",
+    "upstream-path-binding.json": "9b63db2f09bf240905bc664cd44db4756afc8081f0d340bc057a0a0921cb1215"
+  },
+  "build_or_test_execution": false,
+  "build_output_count": 20,
+  "cache_required_for_remaining_audit": false,
+  "changed_compile_input_intersection": [],
+  "changed_explicit_runtime_input_intersection": [],
+  "changed_literal_include_intersection": [],
+  "compiler_depfile_count": 230,
+  "conclusion": "The exact 116 docs/evidence path changes do not intersect the observed H compiler inputs or reviewed explicit runtime repository inputs. H native observations remain bound to unchanged inputs; this is not a new test run of the successor commit. Final integration must retain these H inputs.",
+  "created_utc_ns": 1793847475908025412,
+  "exact_git_and_github_compare_agree": true,
+  "literal_include_count": 42,
+  "modified_paths": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "evidence/cell-storage-continuation-20261104/boundary-followup/README.md"
+  ],
+  "normalized_repo_compile_input_count": 149,
+  "prior_native_verification_sha256": "a9465b60dc31a244c91c0e3dd0a8238ae7f6eea3be0ee835e5c7fb9cd9054651",
+  "qualification": false,
+  "runtime_repo_inputs": [
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/fixtures/rejection-cases.json",
+      "sha256": "88506a919cb0d067da648e023175acc2536c935f600ff5d8c10d4ba81d3f90e8"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/pq_genesis_handoff.py",
+      "sha256": "5256cb6024f34999efd6221a2c3bd6681d7887e8f6df0f01c9e14910c3cff7be"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/pq_transaction.py",
+      "sha256": "6cc50a82b83c780e0b74ea0580930a05aa538a784f4192627d7f34eacb009534"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/pq_envelope.py",
+      "sha256": "f2619f45b0bb569349e133cff2b81fdd156241bedb657f00ad401331d023cbbc"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/pq_openssl_backend.py",
+      "sha256": "ac9217a8238ecb5ade4e877670b8f01243b20fe1f231c0eba7fbc1832a8c05c3"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/pq_operation_budget.py",
+      "sha256": "e4bca5d0d47b2d1f41822876df8771ee9b23665d5ea753b53b99562a4e143f4c"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/strict_signature.py",
+      "sha256": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e"
+    }
+  ],
+  "runtime_review": {
+    "example_main": "standalone CLI paths are not invoked by cargo example test harness",
+    "observation_sink": "optional create_new output, not an input",
+    "provider": "environment-pinned OpenSSL executable and declared prefix/ossl-modules, OPENSSL_CONF=/dev/null, temporary key/message/signature files",
+    "python_oracles": "pq_account_owner.rs passes constructed input via stdin to verify_handoff/preflight_transfer/parse_signed_transfer; six local modules above have no docs/evidence traversal or input",
+    "rust_fixture": "src/tests.rs vector_inventory_matches_executable_candidate_assertions reads only fixed fixtures/rejection-cases.json",
+    "sqlite": "temporary test databases and sidecars"
+  },
+  "same_native_tree": "72c1c7ab529ef6b4df3bec5b45bbc9a3009755ff",
+  "schema": "model-owner-native-docs-only-continuation-v1",
+  "status": "READ_ONLY_INPUT_BINDING_CONFIRMED",
+  "upstream_base": "23a56123e3112de06d7c684ef2057578759176ff",
+  "upstream_head": "67097f5add069c49788fc5ba21c35d1db07167c4",
+  "verified_source": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1",
+  "verified_tree": "30309765887b6d2f54a5e37d58f8608dc60a2518"
+}

@@ -1,0 +1,10 @@
+test_cancellation_unit_controls_retain_original_module_names (__main__.NativeSelectorTests.test_cancellation_unit_controls_retain_original_module_names) ... ok
+test_duplicate_v3_inventory_is_still_rejected (__main__.NativeSelectorTests.test_duplicate_v3_inventory_is_still_rejected) ... ok
+test_multiple_names_matching_pinned_v3_owner_are_rejected (__main__.NativeSelectorTests.test_multiple_names_matching_pinned_v3_owner_are_rejected) ... ok
+test_v2_and_v3_share_function_name_but_only_v3_is_selected (__main__.NativeSelectorTests.test_v2_and_v3_share_function_name_but_only_v3_is_selected) ... ok
+test_v2_cannot_substitute_for_missing_v3_owner (__main__.NativeSelectorTests.test_v2_cannot_substitute_for_missing_v3_owner) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.001s
+
+OK

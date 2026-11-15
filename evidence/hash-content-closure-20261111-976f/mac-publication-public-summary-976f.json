@@ -1,0 +1,98 @@
+{
+  "schema": "trnm-hash-publication-summary-v1",
+  "actor": "ProfHepta",
+  "channel": "HeptaRuntime local GitHub",
+  "source": {
+    "base": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+    "head": "9fd6ee29a7a663cef547040d9d42cc36a371a17e",
+    "tree": "7351f83fa9ac5c0e7540fa64bce06ea6f328602f"
+  },
+  "branch": "fix/chain-hash-transitive-20261111-976f",
+  "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+  "publication_job": {
+    "id": "1a1cd5368e2-2564-1251",
+    "idempotency_key": "hash-transitive-976f-mac-publish-b-v1",
+    "state": "succeeded",
+    "exit_code": 0,
+    "timed_out": false,
+    "cancelled": false,
+    "output_complete": true,
+    "output_durable": true
+  },
+  "preflight": {
+    "development": "PASS",
+    "exact_push": "PASS",
+    "packages": 26,
+    "remote_policy_mutated": false
+  },
+  "push": {
+    "mode": "normal",
+    "exit_code": 0,
+    "remote_before": "absent",
+    "remote_after": "9fd6ee29a7a663cef547040d9d42cc36a371a17e"
+  },
+  "pr": {
+    "base": "fix/chain-pq-live-retry-20261111-fa62381e",
+    "base_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+    "draft": true,
+    "head": "fix/chain-hash-transitive-20261111-976f",
+    "head_repo": "TrillionniumFoundation/Trillionnium-Chain",
+    "head_sha": "9fd6ee29a7a663cef547040d9d42cc36a371a17e",
+    "number": 927,
+    "state": "open",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/927"
+  },
+  "initial_body_sha256": "74413ba018a7e3a3e26c58a3df63a7dcc669f25b11915c391573c3ac906f4e47",
+  "bundle": {
+    "bytes": 59720,
+    "sha256": "db5efc64269d1cc15ad0681fc5185832be1db0879791aae16d279497d28a1fa5"
+  },
+  "logs": {
+    "stdout": {
+      "bytes": 9919,
+      "sha256": "720ef049736d82ab82ff5e599a76212a7f761600f473397a39c1e1b2840a9ebc"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "prior_setup_failures": [
+    {
+      "job": "1a1cd07b058-2564-116d",
+      "exit_code": 128,
+      "stage": "shared clone",
+      "reason": "Promisor object unavailable; clone failed before checkout or preflight."
+    },
+    {
+      "job": "1a1cd1f3042-2564-11a6",
+      "exit_code": 1,
+      "stage": "broad checkout",
+      "reason": "Checkout subprocess exceeded 600 seconds; its empty unowned lock was preserved before recovery."
+    }
+  ],
+  "resolved_transport_observations": [
+    {
+      "operation": "bundle upload",
+      "observation": "Initial large-write MCP replies timed out; their execution outcomes were initially unknown.",
+      "resolution": "Subsequent chunked upload committed 59720 bytes and the entire artifact hash was independently recomputed."
+    },
+    {
+      "operation": "publisher start",
+      "observation": "MCP start replies timed out. Early read-only observations did not find the eventual job.",
+      "resolution": "The original stable-key job was recovered after delayed launch, then its successful terminal status and complete output were read. No second publisher was started."
+    },
+    {
+      "operation": "read-only process inventory",
+      "observation": "Host-filtered inventory exceeded the 1 MiB response budget.",
+      "resolution": "Recovered only this operation's controller record and then read its exact job id. No unrelated inventory is included here."
+    }
+  ],
+  "scope": {
+    "publishing_checkout": "Minimal sparse set covering the original preflight's real reads",
+    "full_physical_source_validation_claimed_by_publisher": false,
+    "native_qualification_claimed_by_publisher": false,
+    "whole_chain_status": "HOLD_NO_GO",
+    "production_activation": false
+  }
+}

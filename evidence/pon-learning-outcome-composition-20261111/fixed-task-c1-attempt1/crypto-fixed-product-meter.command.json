@@ -1,0 +1,44 @@
+{
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-crypto-primitives",
+    "--test",
+    "qualified_work_task",
+    "repeated_challenges_bind_one_product_meter_and_maintenance_produces_no_learning_credit",
+    "--",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+  "elapsed_seconds": 33.30974,
+  "exact_test_required": true,
+  "exactly_one_test_passed": true,
+  "execution_error": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-12T00:22:40.039150+00:00",
+  "interrupted": false,
+  "label": "crypto-fixed-product-meter",
+  "observation_accepted": true,
+  "source_report_sha256": null,
+  "sqlite_unqualified_diagnostic": false,
+  "started_utc": "2026-11-12T00:22:06.729419+00:00",
+  "stderr": "crypto-fixed-product-meter.stderr",
+  "stderr_sha256": "125f2a24930ff59094a9b708313dd0e4f43947d0452cb0b971b8bd6e63e77a84",
+  "stdout": "crypto-fixed-product-meter.stdout",
+  "stdout_sha256": "a999044bf1890a7a8982e4f5527d017a238563a3b95d10539578aad173b15e54",
+  "test_harness_counts": [
+    [
+      "1",
+      "0",
+      "0"
+    ]
+  ],
+  "timed_out": false
+}

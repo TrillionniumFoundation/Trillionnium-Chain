@@ -1,0 +1,214 @@
+{
+  "schema": "trnm-full-closure-reproduction-v1",
+  "recorded_utc": "2026-11-04T07:06:53.445246+00:00",
+  "base_commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+  "scope": "actual component-source tests and source checks; a composed commit and unique Chain/Hepta profile still require their own clean native executions",
+  "source_sha256": {
+    ".github/workflows/pon-pq-system-continuation.yml": "32ecb8dc738e80d27fbd40fb05a74f14d8335faff774a40e844d649a4c96d3a9",
+    "config/pon/pq-cross-branch-corpus-v1.json": "84895f8d8b1d682eb0497cf27d47023f3cda8b9de82768964e753590368f3bb9",
+    "config/pon/pq-system-required-tests-v1.json": "e01f5dd331a160d926d029f85a24714ae5c9ccaf3067819692544c115f1a6ebb",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "2c6d43b3ebc5fd40ea05b7d63ed11ede3ea8a08346036debbcc579ef29cfcc79",
+    "docs/protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md": "10fc5e095c932393a201a2eb8f41f5d6ee17792d0a96ab71f4cbc051253e4ab1",
+    "docs/protocol/pon-nakamoto-v1/details/W1_FACT_REUSE_V1.md": "5a247950386f5a90655e2ec4328e4659b0b38d5acda4daf5f8bddf603f05b1e1",
+    "formal/pon-nakamoto-v1/experiments/architecture_compare.py": "7d23bcc7d3f64d6120b4a29d0f0bb7395029050bcfafb8ad52e700db4f9cabf3",
+    "formal/pon-nakamoto-v1/experiments/test_architecture_compare.py": "12a5baace6012264c0fbd06cc29e49d701022aca0026e8cea078d98bc270dd78",
+    "scripts/ci/run_from_zero_native.py": "5e163bf9d7f46e5d3a14bbb1040096ab01c41e5851d77ef5605492b4be82c8e9",
+    "scripts/ci/run_public_fixture_native.py": "23e7a41ab61e0266483b51e51e58cac80be6d06fd2977835bd76c50c76f35df8",
+    "tests/fuzz/Cargo.lock": "8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d",
+    "trillionnium/Cargo.lock": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs": "d3e10fd0b3f2ab50fbf95778bd38353a1c9da38f44cf6f558d309661f47606a2",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs": "010410761dc0a71e03f32f43e82b09f808ee69cab860f5a708081ae661f6396e",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention.rs": "37ebf33ffec0a96de94e875bd9de0e60555f10cae216ef2307c6adc8279e8a13",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs": "f3a09c6bffbce364b8c8ab850c7d6d83cbe19031cf6e95df7a1a01b150ad21a6",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tests.rs": "b024855d9993baff5381015f9b401c93b2745ff0941818c23dbfcfb8bff06bd3",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs": "1ff59905db66cf478c4840b65529835872e0239b00884a9f371412581a0dd3e8"
+  },
+  "architecture_reader_red_green": {
+    "base_commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+    "original_reader_sha256": "02d04dfb5fc11bf8125d29cca79be612d7fef6ad4088b8ec50d3c96a12204ac4",
+    "candidate_reader_sha256": "7d23bcc7d3f64d6120b4a29d0f0bb7395029050bcfafb8ad52e700db4f9cabf3",
+    "synthetic_metadata_only": true,
+    "cryptographic_verification_executed": false,
+    "results": [
+      {
+        "control": "unchanged_synthetic_control",
+        "input_sha256": "c6d7180f888c9f90dfff34bccedfbec55f124bf6c5dea4b0d17d409a8466f965",
+        "original": {
+          "accepted": true
+        },
+        "candidate": {
+          "accepted": true
+        }
+      },
+      {
+        "control": "duplicate_confirmation",
+        "input_sha256": "6ff940850f232581b2967b98a3c4cc78749f2dd945d54337bfab906e125d4aac",
+        "original": {
+          "accepted": true
+        },
+        "candidate": {
+          "accepted": false,
+          "error": "ARCHITECTURE_TRANSACTION_IDENTITIES"
+        }
+      },
+      {
+        "control": "foreign_network",
+        "input_sha256": "1cad27bcc61928381b47d33398c0a32c0476c19ca75acc20f94503da31f87d30",
+        "original": {
+          "accepted": true
+        },
+        "candidate": {
+          "accepted": false,
+          "error": "ARCHITECTURE_CONFIRMATION_CONTEXT"
+        }
+      },
+      {
+        "control": "zero_required_work_observation",
+        "input_sha256": "f77e686ceb2db4b3528d8045440c45f9b5b7239e53b56515c7718fc6efad17e7",
+        "original": {
+          "accepted": true
+        },
+        "candidate": {
+          "accepted": false,
+          "error": "ARCHITECTURE_CONFIRMATION_WORK"
+        }
+      }
+    ]
+  },
+  "root_checks": [
+    {
+      "name": "architecture_reader",
+      "tests_passed": 14,
+      "result": "PASS",
+      "command": "python -m unittest discover -s formal/pon-nakamoto-v1/experiments -p test_architecture_compare.py -v",
+      "log_sha256": "786d5e2ab2a9666c8093a6b3639a1050d8e79bf841661edac18be2b03f97502a"
+    },
+    {
+      "name": "architecture_host",
+      "tests_passed": 17,
+      "result": "PASS",
+      "command": "python scripts/ci/test_architecture_host_ci.py",
+      "log_sha256": "2274f650799c8db58517c444fe6890c9b7fb6cb8450ef6ae728cc691096b2d67"
+    },
+    {
+      "name": "source_integrity",
+      "tests_passed": 34,
+      "result": "PASS",
+      "command": "python scripts/ci/test_ci_source_integrity.py",
+      "log_sha256": "31c52a9746bfd31934a55b63bf6fa44a216ce1191521caad56abfc4ba06a6807"
+    },
+    {
+      "name": "pq_claim_guard",
+      "tests_passed": 22,
+      "result": "PASS",
+      "command": "python scripts/ci/test_pq_chain_claim_guard.py",
+      "log_sha256": "bc31729f779e7d13e73e67b343fc415d6c4517ab7047a7e7f71e2968277d27fc"
+    },
+    {
+      "name": "locked workspace graph",
+      "result": "PASS",
+      "command": "cargo metadata --manifest-path trillionnium/Cargo.toml --locked --offline --format-version 1 --no-deps",
+      "packages": 26,
+      "log_sha256": "cd62f86527af559054fbc3f33126ecb6a7dabea6ab736e4ff435fe787c7f8440"
+    },
+    {
+      "name": "full current PQ corpus",
+      "result": "PASS_WITH_HOLD_NO_GO",
+      "exact_source_blobs": 389,
+      "command": "python scripts/ci/check_pq_research_integration.py",
+      "log_sha256": "8f22903e62d0b4b2e4cf248cb6a6e606a1cd2aec29d1ea87f2f3141c2e8553cc"
+    },
+    {
+      "name": "pq_corpus_negatives",
+      "result": "PASS",
+      "command": "python scripts/ci/test_pq_research_integration.py",
+      "log_sha256": "4805c772d00661c220ba56c2a57097581ff9d38d910b095504e1e744838509a2",
+      "tests_passed": 34
+    },
+    {
+      "name": "workspace_fmt_final",
+      "result": "PASS",
+      "command": "cargo fmt --manifest-path trillionnium/Cargo.toml --all --check",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "repository_final",
+      "result": "PASS",
+      "command": "python scripts/ci/check_repository.py",
+      "log_sha256": "9f72f06ef9c6f22e84d22f063ca44ef11f7c911140e8a9ee0a8664069625005a",
+      "observation": {
+        "activation": false,
+        "head": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "local_links": 2107,
+        "normal_dependency_edges": 24,
+        "result": "PASS",
+        "runtime_implemented": false,
+        "rust_files": 1093,
+        "source_state": "dirty-candidate",
+        "tree": "75fe3367c4896a4f2d5f5dd561914613ec999343",
+        "workspace_packages": 26
+      }
+    }
+  ],
+  "component_manifests": [
+    "w1-cache.json",
+    "pq-cold-ledger.json",
+    "../cell-repair-writer-deadline-20261104/report.json",
+    "../cell-repair-writer-deadline-20261104/postcommit.json"
+  ],
+  "fuzz_lock": {
+    "only_added_package": "sha2-asm 0.6.4",
+    "only_changed_existing_edge": "sha2 0.10.9 adds sha2-asm",
+    "old_versions_and_checksums_preserved": true,
+    "canonical_index_checksums_checked": true,
+    "resolution_command": "cargo update --locked --offline --workspace --manifest-path tests/fuzz/Cargo.toml",
+    "locked_resolution_changes": 0,
+    "full_fuzz_and_supply_chain_execution": "requires new exact-source CI; not claimed by lock resolution"
+  },
+  "base_original_4s_confirmation": {
+    "run_id": 41785836318,
+    "job_id": 126429599676,
+    "artifact_id": 13301873260,
+    "artifact_name": "head-protocol-contract-40a5ba25e40fd5eda5b04fc1c3811320d438de11-1",
+    "report_path": "from-zero-native/confirmation/report.json",
+    "report_sha256": "0e9ec03fa9f98e1313685fb668259ef453dcdf5ae99e05da1648978ae4b3e724",
+    "source_commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+    "source_tree": "75fe3367c4896a4f2d5f5dd561914613ec999343",
+    "finite_target_met": false,
+    "invariant_target_met": true,
+    "phases": [
+      {
+        "mode": "attack-free-baseline",
+        "workers": 0,
+        "requested_window_ns": 4000000000,
+        "client_confirmation_latency_ns": 3101156294,
+        "confirmation_ended_ns": 3101306684,
+        "client_confirmed_transactions": 1,
+        "client_confirmed_before_original_window_end": true,
+        "finite_business_target_met": true,
+        "full_native_state_equal": true
+      },
+      {
+        "mode": "from-zero-pressure",
+        "workers": 16,
+        "requested_window_ns": 4000000000,
+        "client_confirmation_latency_ns": null,
+        "confirmation_ended_ns": null,
+        "client_confirmed_transactions": 0,
+        "client_confirmed_before_original_window_end": false,
+        "finite_business_target_met": false,
+        "full_native_state_equal": false
+      }
+    ]
+  },
+  "qualification": {
+    "whole_pq_authorization_migrated": false,
+    "whole_effect_rollback_recovery_accepted": false,
+    "original_business_target_closed": false,
+    "independent_cell_failure_domains_accepted": false,
+    "prospective_model_evolution_accepted": false,
+    "cross_protocol_architecture_winner_qualified": false,
+    "production_activation": false
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "packages": 193,
+  "graph_sha256": "b56109c1e4ef16b6147eb6fc0d82f3444dc512a048e2a222002b9278be3fdc94",
+  "guest_build_dependency": false,
+  "prover_or_node_dependency": false,
+  "sdk": [
+    "3.0.6"
+  ],
+  "source_declaration_not_compiler_attestation": true
+}

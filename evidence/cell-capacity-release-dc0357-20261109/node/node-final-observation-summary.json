@@ -1,0 +1,86 @@
+{
+  "started_at_utc": "2026-11-09T14:55:03.888463+00:00",
+  "completed_at_utc": "2026-11-09T14:59:47.171321+00:00",
+  "elapsed_seconds": 283.282853591023,
+  "phase": "cargo-test",
+  "exit_code": 0,
+  "interrupted": false,
+  "wrapper_failure": null,
+  "test_command": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-pon-node",
+    "--features",
+    "pq-native-openssl",
+    "--lib",
+    "storage_service",
+    "--",
+    "--test-threads=1"
+  ],
+  "original_package_profile": true,
+  "profile_overrides": [],
+  "incremental_enabled": false,
+  "head_at_test_start": "6ea3bf3fe13d66333bba3a8c7b97e14b4319b39f",
+  "head_at_completion": "6ea3bf3fe13d66333bba3a8c7b97e14b4319b39f",
+  "tree_at_start": "6c4401a94defeecb9696c2da1442dcbd27b56352",
+  "tree_at_completion": "6c4401a94defeecb9696c2da1442dcbd27b56352",
+  "clean_commit_required": true,
+  "loader_path_seed": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+  "sqlite_build_outputs": [
+    {
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-target/debug/build/trnm-sqlite-io-boundary-4a0d643267ff45d3/output",
+      "retained": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/node-storage-original-qualified-exact-6ea3bf3-20261109-v1-final-trnm-sqlite-io-boundary-4a0d643267ff45d3-output.txt",
+      "sha256": "42256a28d08757e774ce19f1e1e5d82f2163760a97eb098488dd27842edd02da",
+      "mtime_ns": 1794235733592820000,
+      "qualified": true,
+      "unqualified_reason": null
+    },
+    {
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-target/debug/build/trnm-sqlite-io-boundary-6eadf8fe8239b4a5/output",
+      "retained": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/node-storage-original-qualified-exact-6ea3bf3-20261109-v1-final-trnm-sqlite-io-boundary-6eadf8fe8239b4a5-output.txt",
+      "sha256": "229912e65a5c5236eb6b8ae20fdfa231f525dd9cdbe802475010cfc189ab238a",
+      "mtime_ns": 1794236111008015600,
+      "qualified": true,
+      "unqualified_reason": null
+    }
+  ],
+  "sqlite_gate_qualified": true,
+  "sqlite_build_reexecuted": true,
+  "sqlite_reexecuted_paths": [
+    "/home/qq/work/chain-cell-capacity-dc0357-20261109-target/debug/build/trnm-sqlite-io-boundary-6eadf8fe8239b4a5/output"
+  ],
+  "sqlite_required_requalification_paths": [
+    "/home/qq/work/chain-cell-capacity-dc0357-20261109-target/debug/build/trnm-sqlite-io-boundary-6eadf8fe8239b4a5/output"
+  ],
+  "sqlite_requalified_paths": [
+    "/home/qq/work/chain-cell-capacity-dc0357-20261109-target/debug/build/trnm-sqlite-io-boundary-6eadf8fe8239b4a5/output"
+  ],
+  "sqlite_requalification_valid": true,
+  "working_tree_status_at_test_start": "",
+  "working_tree_status_at_completion": "",
+  "source_changed_during_test": [],
+  "unchanged_source_pass": true,
+  "disk_after": {
+    "total_bytes": 1966736678912,
+    "used_bytes": 1262465290240,
+    "available_bytes": 604291137536
+  },
+  "filesystem_capacity_after": {
+    "/tmp": {
+      "available_bytes": 58363879424,
+      "free_inodes": 103,
+      "device": 50
+    },
+    "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/tmp/node-storage-original-qualified-exact-6ea3bf3-20261109-v1": {
+      "available_bytes": 604291137536,
+      "free_inodes": 113031039,
+      "device": 66306
+    }
+  },
+  "log_sha256": "c0088e29fd849f33d8437f9b46f21de3877a0d5fb53cb320896f35d86cb2dd17"
+}

@@ -1,0 +1,42 @@
+{
+  "gzip": {
+    "bytes": 645264,
+    "sha256": "bb047bef1a7534c6e6f23928ee6468aff706d7df3fc81e3d4f8f01bf4f46da53"
+  },
+  "observation": {
+    "complete_checkout_claimed": false,
+    "completed_at_utc": "2026-11-08T11:38:05.664315+00:00",
+    "config_and_sparse_unchanged": true,
+    "final_markdown_link_audit": {
+      "links_checked": 3701,
+      "markdown_files": 567,
+      "matches_repository_checker_link_extraction": true,
+      "missing_targets": []
+    },
+    "index_flags_manually_changed_by_this_task": false,
+    "native_or_source_acceptance_claimed": false,
+    "observed_head_after": "d8280daa8651ca387813b25e2a712f3fd1c82a1d",
+    "post_materialization_index_status_counts": {
+      "H": 10991,
+      "S": 142
+    },
+    "remaining_missing_count": 142,
+    "required_pin_paths_missing": [],
+    "required_pin_paths_verified_count": 25,
+    "restoration_baseline_head": "88568e2511fcf166e6824947ac97b06b72104385",
+    "restored_by_method": {
+      "restored-from-local-fixed-head-blob": 8436,
+      "restored-via-github-connector-exact-head-blob": 72
+    },
+    "restored_bytes": 1000066492,
+    "restored_count": 8508,
+    "schema": "trnm-local-worktree-materialization-v1",
+    "shared_git_objects_or_refs_written_by_this_task": false,
+    "status": "required-pins-and-markdown-targets-restored-with-explicit-unmaterialized-remainder"
+  },
+  "raw": {
+    "bytes": 4524273,
+    "sha256": "f26f468b2a83a00b1f541e6cd0560f14397051a9e3a6402e143dd6b3cb6eec2f"
+  },
+  "scope": "earlier local sparse checkout; not either desktop campaign"
+}

@@ -1,0 +1,13 @@
+{
+  "source_commit": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+  "tree": "c82829c3a5710960081d91930cf425f9a768e9e4",
+  "parent": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+  "branch": "refs/heads/fix/chain-hepta-closure-candidate-20261109-481716",
+  "created_at": "2026-11-09T14:14:09.261105+00:00",
+  "changed_paths": [
+    "scripts/ci/test_ci_contract.py",
+    "config/pon/pq-cross-branch-corpus-v1.json"
+  ],
+  "native_source_unchanged": true,
+  "qualification": "HOLD_NO_GO"
+}

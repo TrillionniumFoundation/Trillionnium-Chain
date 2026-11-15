@@ -1,0 +1,24 @@
+{
+  "schema": "trnm-admission-fence-documentation-v1",
+  "state": "DOCUMENTATION_WRITTEN_PENDING_FROZEN_VALIDATION",
+  "native_execution": false,
+  "commit_or_push": false,
+  "pin_updates": {},
+  "files": [
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107/evidence/pon-business-gates-819309-final-20261107/README.md",
+      "bytes": 16653,
+      "sha256": "9acbdddfe104c92830db22631c81759bf1c2c0acf6e5faf3c5ccd1f6513183a1"
+    },
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "bytes": 581730,
+      "sha256": "87fa344d0b070e4087f0872fddb219b768180c4e439243d26e3f03b4b6961c04"
+    },
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107/docs/protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md",
+      "bytes": 23882,
+      "sha256": "264f62c126a6a57a4dad7553f0acf6a2f6e184469340fc7cc389aa480afb6f66"
+    }
+  ]
+}

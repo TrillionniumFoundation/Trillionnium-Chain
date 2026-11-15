@@ -1,0 +1,16 @@
+{
+  "schema": "retained-evidence-package-attempt-v1",
+  "attempt": 1,
+  "returncode": 1,
+  "stage": "workflow-byte-pin",
+  "exception": "AssertionError at assert sha(workflow_raw) == WORKFLOW_SHA",
+  "expected_workflow_sha256": "f664c1577e75b5b81f09900da6c6ef3737b881dff88d7000753f0cb9c7ed3a03",
+  "subsequently_observed_workflow_sha256": "09394b3aaab541795b825322633feceee5bbdcc15ef48370de1b79308a292e43",
+  "subsequently_observed_head": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+  "observed_delta": "Committed workflow broadened evidence paths and changed the exact proof descriptor pin; all three suite commands retained their reader/source-binding scope.",
+  "original_zip_and_audit_hash_checks_had_completed": true,
+  "original_reader_attempt_files_were_preserved": true,
+  "native_execution_performed": false,
+  "repository_mutated": false,
+  "scope": "Evidence packaging attempt only; not another audit reader or native campaign. This receipt records the observed failure retrospectively."
+}

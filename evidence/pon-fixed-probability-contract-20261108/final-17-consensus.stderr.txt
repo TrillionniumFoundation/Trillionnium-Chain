@@ -1,0 +1,3 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/pon-fixed-probability-contract-20261108-63b38/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8m 31s
+     Running unittests src/lib.rs (/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-target/debug/deps/trnm_pon_node-fc27c767cf2f262e)

@@ -1,0 +1,27 @@
+   Compiling serde_json v1.0.149
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-data-availability)
+    Finished `release` profile [optimized] target(s) in 7.68s
+     Running unittests src/lib.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/trnm_data_availability-3f6fb05bb0ff5e2e)
+
+running 18 tests
+test tests::admission_is_atomic_replay_safe_and_bounded ... ok
+test tests::attestation_and_certificate_reject_foreign_committed_context ... ok
+test tests::attestation_high_watermark_rejects_deleted_rows_and_sequence_reuse ... ok
+test tests::attestation_manifest_is_stable_across_certificate_retention_and_repair ... ok
+test tests::certified_batch_and_da_head_share_one_fresh_sqlite_snapshot ... ok
+test tests::durable_before_attest_survives_reopen_and_rejects_bad_signature ... ok
+test tests::open_existing_requires_precreated_regular_nonsymlink_store ... ok
+test tests::row_tamper_is_rejected_on_reopen ... ok
+test tests::schema_drift_and_sidecar_are_fail_closed_without_migration ... ok
+test tests::signed_full_range_retrieval_proof_repairs_exact_certified_bytes_and_reopens ... ok
+test tests::signed_full_range_retrieval_proof_time_chunk_and_store_binding_fail_closed ... ok
+test tests::signed_full_range_retrieval_rejects_active_committee_nonmember_responder ... ok
+test tests::signed_full_range_retrieval_rejects_certificate_author_key_outside_policy ... ok
+test tests::signed_full_range_retrieval_signatures_and_fresh_readback_fail_closed ... ok
+test tests::tamper_latches_unavailable_and_exact_repair_recovers ... ok
+test tests::typed_namespace_and_batch_derivation_are_deterministic ... ok
+test tests::under_quorum_and_signed_equivocation_are_distinct ... ok
+test tests::weighted_certificate_retrieval_retention_and_gc_close ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.69s
+

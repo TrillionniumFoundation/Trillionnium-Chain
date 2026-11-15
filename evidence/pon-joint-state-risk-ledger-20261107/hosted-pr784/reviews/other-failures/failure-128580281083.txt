@@ -1,0 +1,44 @@
+1447: 2026-11-08T00:46:23.6224898Z [36;1m            attempt['complete_success'] = ([0m
+1448: 2026-11-08T00:46:23.6225163Z [36;1m                step['complete_success'] and one_test_passed[0m
+1449: 2026-11-08T00:46:23.6225443Z [36;1m                and attempt['original_criteria_met'])[0m
+1450: 2026-11-08T00:46:23.6225747Z [36;1m        except (OSError, ValueError, KeyError, TypeError) as error:[0m
+1451: 2026-11-08T00:46:23.6226078Z [36;1m            attempt['report_validation_failure'] = str(error)[0m
+1452: 2026-11-08T00:46:23.6226387Z [36;1m        bounds.write_new(out / f'{name}-result.json', attempt)[0m
+1453: 2026-11-08T00:46:23.6226688Z [36;1m        resources(f'{name}-resource-after.json')[0m
+1454: 2026-11-08T00:46:23.6226967Z [36;1m        source_observation(f'{name}-source-after.json')[0m
+1455: 2026-11-08T00:46:23.6227553Z [36;1m        bounds.require(bounds.sha(binary) == digest, 'TEST_BINARY_CHANGED')[0m
+1460: 2026-11-08T00:46:23.6229208Z [36;1m        and all(row['complete_success'] for row in result['attempts']))[0m
+1461: 2026-11-08T00:46:23.6229510Z [36;1m    if not result['complete_success']:[0m
+1462: 2026-11-08T00:46:23.6229792Z [36;1m        result['failure'] = 'ORIGINAL_THREE_RUN_CAMPAIGN_FAILED'[0m
+1463: 2026-11-08T00:46:23.6230192Z [36;1mexcept (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:[0m
+1464: 2026-11-08T00:46:23.6230551Z [36;1m    result['failure'] = str(error)[0m
+1465: 2026-11-08T00:46:23.6230784Z [36;1m    result['complete_success'] = False[0m
+1466: 2026-11-08T00:46:23.6231001Z [36;1mfinally:[0m
+1467: 2026-11-08T00:46:23.6231182Z [36;1m    for name, observation in ([0m
+1468: 2026-11-08T00:46:23.6231485Z [36;1m            ('source', lambda: source_observation('source-after-native.json')),[0m
+1471: 2026-11-08T00:46:23.6232338Z [36;1m            value = observation()[0m
+1472: 2026-11-08T00:46:23.6232556Z [36;1m            if name == 'source':[0m
+1473: 2026-11-08T00:46:23.6232791Z [36;1m                result['source_after'] = value[0m
+1474: 2026-11-08T00:46:23.6233096Z [36;1m        except (OSError, ValueError, subprocess.SubprocessError) as error:[0m
+1475: 2026-11-08T00:46:23.6233453Z [36;1m            result['finalization_failures'].append(f'{name}: {error}')[0m
+1476: 2026-11-08T00:46:23.6233788Z [36;1m    if binary is not None and result['binary'] is not None:[0m
+1477: 2026-11-08T00:46:23.6234039Z [36;1m        try:[0m
+1478: 2026-11-08T00:46:23.6234257Z [36;1m            result['binary']['sha256_after'] = bounds.sha(binary)[0m
+1479: 2026-11-08T00:46:23.6234562Z [36;1m            bounds.require(result['binary']['sha256_after'][0m
+1480: 2026-11-08T00:46:23.6234842Z [36;1m                           == result['binary']['sha256_before'],[0m
+1481: 2026-11-08T00:46:23.6235107Z [36;1m                           'TEST_BINARY_CHANGED')[0m
+1482: 2026-11-08T00:46:23.6235361Z [36;1m        except (OSError, ValueError) as error:[0m
+1483: 2026-11-08T00:46:23.6235652Z [36;1m            result['finalization_failures'].append(f'binary: {error}')[0m
+1484: 2026-11-08T00:46:23.6236058Z [36;1m    result['complete_success'] = ([0m
+1485: 2026-11-08T00:46:23.6236355Z [36;1m        result['complete_success'] and not result['finalization_failures'])[0m
+1486: 2026-11-08T00:46:23.6236724Z [36;1m    result['completed_utc'] = datetime.now(timezone.utc).isoformat()[0m
+1487: 2026-11-08T00:46:23.6237041Z [36;1m    bounds.write_new(out / 'results.json', result)[0m
+1564: 2026-11-08T00:54:51.6988765Z CPU time consumed: 6min 9.151s
+1565: 2026-11-08T00:54:51.6989066Z Memory peak: 1.7G
+1566: 2026-11-08T00:54:51.6989314Z Memory swap peak: 0B
+1567: 2026-11-08T00:54:51.7113507Z ##[error]Process completed with exit code 1.
+1568: 2026-11-08T00:54:51.7157166Z ##[group]Run set -uo pipefail
+1569: 2026-11-08T00:54:51.7157671Z [36;1mset -uo pipefail[0m
+1570: 2026-11-08T00:54:51.7158159Z [36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$OUT/source-after.json" > "$OUT/source-after.log" 2>&1[0m
+1571: 2026-11-08T00:54:51.7158655Z [36;1msource_status=$?[0m
+1572: 2026-11-08T00:54:51.7158849Z [36;1mpython3 - <<'PY'[0m

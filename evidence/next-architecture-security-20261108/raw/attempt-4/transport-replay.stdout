@@ -1,0 +1,9 @@
+
+running 4 tests
+test store::authenticated_replay_tests::authenticated_replay_ack_rechecks_old_gap_and_pending_bytes_after_reservation ... ok
+test store::authenticated_replay_tests::authenticated_replay_checks_are_operation_local_and_reopen_recovers_full_history ... ok
+test store::authenticated_replay_tests::authenticated_replay_retired_digest_and_cold_gap_still_refuse ... ok
+test store::authenticated_replay_tests::authenticated_replay_signed_socket_whole_request_history_cost_observation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 1183 filtered out; finished in 13.30s
+

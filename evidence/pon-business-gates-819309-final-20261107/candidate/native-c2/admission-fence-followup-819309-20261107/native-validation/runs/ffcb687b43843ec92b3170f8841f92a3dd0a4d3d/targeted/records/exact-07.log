@@ -1,0 +1,9 @@
+    Finished `test` profile [unoptimized] target(s) in 0.13s
+     Running unittests src/lib.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/admission-fence-target/debug/deps/trnm_pon_node-3d075b189916f208)
+
+running 1 test
+test store::legacy_admission_readback::tests::legacy_pair_matches_full_replays_snapshot_cadence_and_cold_publication ... legacy_admission_before_durable_commit_callbacks=[(1, 22, 22), (2, 23, 28), (64, 333, 648), (127, 648, 1278), (128, 648, 648), (129, 18, 18)]
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1204 filtered out; finished in 179.64s
+

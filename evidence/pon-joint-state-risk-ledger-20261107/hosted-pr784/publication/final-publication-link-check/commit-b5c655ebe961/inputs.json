@@ -1,0 +1,12 @@
+{
+  "commit": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "expected_non_evidence_paths": 2415,
+  "expected_verifier_sha256": "70d86546550555b3b3b17e6ed83798f493d7e3421ed6ea05f838bfca25d62eb3",
+  "required_ancestors": [
+    "b66e66d2465258d808c0f56ff851123306d4bdb4",
+    "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+    "2d46d8682201bc0619f5b156af50e77fb399322e"
+  ],
+  "tested_source_commit": "2d46d8682201bc0619f5b156af50e77fb399322e",
+  "tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff"
+}

@@ -1,0 +1,235 @@
+{
+  "schema": "pon-architecture-business-failure-v1",
+  "source_commit": "d992451cc8bfb3d69a1c9f1906bee6732255fad6",
+  "execution_owner_exit_code": 2,
+  "native_selector_exit_code": 101,
+  "samples": 18,
+  "passed_samples": 0,
+  "errors": [
+    "PUBLIC_HOST_KERNEL_PARENT"
+  ],
+  "raw_report_sha256": "0e7df1f6857b74317ebd342feb9ecde9918cb4c15bc738bdc834f9d216486518",
+  "raw_report_bytes": 3971061,
+  "raw_report_archive_path": "integrated/native/business/native/report.json",
+  "qualified_business_comparison": false,
+  "original_4s_16_hostile_w1_acceptance": false,
+  "production_activation": false,
+  "observations": [
+    {
+      "scenario": "disjoint-recipients",
+      "sample": 0,
+      "position": 0,
+      "mode": "serial-signed-batches",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "sample": 0,
+      "position": 1,
+      "mode": "concurrent-proposer-batches",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "sample": 0,
+      "position": 2,
+      "mode": "signed-reference-dag",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "sample": 1,
+      "position": 0,
+      "mode": "concurrent-proposer-batches",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "sample": 1,
+      "position": 1,
+      "mode": "signed-reference-dag",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "sample": 1,
+      "position": 2,
+      "mode": "serial-signed-batches",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "sample": 2,
+      "position": 0,
+      "mode": "signed-reference-dag",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "sample": 2,
+      "position": 1,
+      "mode": "serial-signed-batches",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "sample": 2,
+      "position": 2,
+      "mode": "concurrent-proposer-batches",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "hot-recipient",
+      "sample": 0,
+      "position": 0,
+      "mode": "serial-signed-batches",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "hot-recipient",
+      "sample": 0,
+      "position": 1,
+      "mode": "concurrent-proposer-batches",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "hot-recipient",
+      "sample": 0,
+      "position": 2,
+      "mode": "signed-reference-dag",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "hot-recipient",
+      "sample": 1,
+      "position": 0,
+      "mode": "concurrent-proposer-batches",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "hot-recipient",
+      "sample": 1,
+      "position": 1,
+      "mode": "signed-reference-dag",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "hot-recipient",
+      "sample": 1,
+      "position": 2,
+      "mode": "serial-signed-batches",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "hot-recipient",
+      "sample": 2,
+      "position": 0,
+      "mode": "signed-reference-dag",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "hot-recipient",
+      "sample": 2,
+      "position": 1,
+      "mode": "serial-signed-batches",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    },
+    {
+      "scenario": "hot-recipient",
+      "sample": 2,
+      "position": 2,
+      "mode": "concurrent-proposer-batches",
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "finite_business_target_met": false,
+      "native_state_equal": false,
+      "cold_reopen_equal": true
+    }
+  ]
+}

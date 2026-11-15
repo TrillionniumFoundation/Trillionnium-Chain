@@ -1,0 +1,307 @@
+{
+  "schema": "growth-persistence-control-attempt-history-v1",
+  "scope": "History preserves two unqualified expected regression reproductions and two resource aborts before any canonical test terminal result. This is not a native control qualification or the original Host/4s/16 result.",
+  "frozen_green_commit": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+  "green_status": "NOT_RUN",
+  "b1_account_prefix_status": "NOT_RUN",
+  "qualification": "HOLD",
+  "production_activation": false,
+  "attempts": [
+    {
+      "directory": "native-red",
+      "result": "EXPECTED_REGRESSION_REPRODUCED",
+      "cargo_exit_code": 101,
+      "elapsed_seconds": 158.54179,
+      "head": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+      "native_inputs": {
+        "files": 1214,
+        "aggregate_sha256": "8ab8e6a6b193684a5feaea768227ac2fb777fd91c7ee4e13d8e63a6fb8115c07"
+      },
+      "runner_sha256": "7f08bfc59b9f439eff5db273127b4c7705c4ee4068a5090e52ad80dea6658e6b",
+      "command": [
+        "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "--config",
+        "profile.test.debug=0",
+        "--config",
+        "profile.test.package.trnm-pon-node.debug=0",
+        "--config",
+        "profile.test.package.trnm-pon-node.opt-level=0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "growth_persistence_cancellation",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "selected_rustc": null,
+      "rustc_sha256": null,
+      "source_unchanged": true,
+      "test_result_lines": [
+        "test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.52s"
+      ],
+      "sqlite_unqualified_warnings": [
+        "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute"
+      ],
+      "timeout_observed": false,
+      "resource_abort_observed": false,
+      "oom_observed": false,
+      "min_estimated_available_bytes": 1951948800,
+      "memory_events_delta": {
+        "low": 0,
+        "high": 0,
+        "max": 8689,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "artifacts": {
+        "result.json": {
+          "bytes": 9780,
+          "sha256": "c3bee8621c057e4886fb63faaa6144397a324db6c5f17e51d76438e7618c1f30"
+        },
+        "cargo.log": {
+          "bytes": 5624,
+          "sha256": "4aaac1df180de7da1ca698015c25dec931197de6b0eb5a1c1274e818a8adda55"
+        },
+        "preflight.log": {
+          "bytes": 170,
+          "sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069"
+        },
+        "native-inputs-before.json": {
+          "bytes": 239708,
+          "sha256": "3b8fffbfd83099a3b31c4b7161a9d6ea505c20ecf5afe5254266ad3a96cbd369"
+        },
+        "native-inputs-after.json": {
+          "bytes": 239708,
+          "sha256": "3b8fffbfd83099a3b31c4b7161a9d6ea505c20ecf5afe5254266ad3a96cbd369"
+        }
+      }
+    },
+    {
+      "directory": "native-red-rustup",
+      "result": "EXPECTED_REGRESSION_REPRODUCED",
+      "cargo_exit_code": 101,
+      "elapsed_seconds": 1.003345,
+      "head": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+      "native_inputs": {
+        "files": 1214,
+        "aggregate_sha256": "8ab8e6a6b193684a5feaea768227ac2fb777fd91c7ee4e13d8e63a6fb8115c07"
+      },
+      "runner_sha256": "7f08bfc59b9f439eff5db273127b4c7705c4ee4068a5090e52ad80dea6658e6b",
+      "command": [
+        "/root/.cargo/bin/cargo",
+        "--config",
+        "profile.test.debug=0",
+        "--config",
+        "profile.test.package.trnm-pon-node.debug=0",
+        "--config",
+        "profile.test.package.trnm-pon-node.opt-level=0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "growth_persistence_cancellation",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "selected_rustc": null,
+      "rustc_sha256": null,
+      "source_unchanged": true,
+      "test_result_lines": [
+        "test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s"
+      ],
+      "sqlite_unqualified_warnings": [
+        "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute"
+      ],
+      "timeout_observed": false,
+      "resource_abort_observed": false,
+      "oom_observed": false,
+      "min_estimated_available_bytes": 2919911424,
+      "memory_events_delta": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "artifacts": {
+        "result.json": {
+          "bytes": 9689,
+          "sha256": "14a592564e6371d5f696612112d931312b74a9b1af0520d1edc2dfeff337675a"
+        },
+        "cargo.log": {
+          "bytes": 1782,
+          "sha256": "474a18414b936c6460e51c3e1a599dd3df52a775f9a392785cb34e75a82f301a"
+        },
+        "preflight.log": {
+          "bytes": 170,
+          "sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069"
+        },
+        "native-inputs-before.json": {
+          "bytes": 239708,
+          "sha256": "3b8fffbfd83099a3b31c4b7161a9d6ea505c20ecf5afe5254266ad3a96cbd369"
+        },
+        "native-inputs-after.json": {
+          "bytes": 239708,
+          "sha256": "3b8fffbfd83099a3b31c4b7161a9d6ea505c20ecf5afe5254266ad3a96cbd369"
+        }
+      }
+    },
+    {
+      "directory": "native-red-canonical",
+      "result": "ABORTED_RESOURCE",
+      "cargo_exit_code": -15,
+      "elapsed_seconds": 151.13987,
+      "head": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+      "native_inputs": {
+        "files": 1214,
+        "aggregate_sha256": "8ab8e6a6b193684a5feaea768227ac2fb777fd91c7ee4e13d8e63a6fb8115c07"
+      },
+      "runner_sha256": "ae20081596e452c1f0b8a5f7db17acc0fba650e840fed9a9914bdedd24cba52f",
+      "command": [
+        "/root/.cargo/bin/cargo",
+        "--config",
+        "profile.test.debug=0",
+        "--config",
+        "profile.test.package.trnm-pon-node.debug=0",
+        "--config",
+        "profile.test.package.trnm-pon-node.opt-level=0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "growth_persistence_cancellation",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "selected_rustc": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "rustc_sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+      "source_unchanged": true,
+      "test_result_lines": [],
+      "sqlite_unqualified_warnings": [],
+      "timeout_observed": false,
+      "resource_abort_observed": true,
+      "oom_observed": false,
+      "min_estimated_available_bytes": 521940992,
+      "memory_events_delta": {
+        "low": 0,
+        "high": 0,
+        "max": 41045,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "artifacts": {
+        "result.json": {
+          "bytes": 9824,
+          "sha256": "9688b62a762cdbd1542127f437ad00c52412d3a79ba5b228b36a139650c22b33"
+        },
+        "cargo.log": {
+          "bytes": 3837,
+          "sha256": "039e0e91ac0c30f0104adca00c2cf73d00d1a5c94a2a449ea286fcba08c9d097"
+        },
+        "preflight.log": {
+          "bytes": 170,
+          "sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069"
+        },
+        "native-inputs-before.json": {
+          "bytes": 239708,
+          "sha256": "3b8fffbfd83099a3b31c4b7161a9d6ea505c20ecf5afe5254266ad3a96cbd369"
+        },
+        "native-inputs-after.json": {
+          "bytes": 239708,
+          "sha256": "3b8fffbfd83099a3b31c4b7161a9d6ea505c20ecf5afe5254266ad3a96cbd369"
+        }
+      }
+    },
+    {
+      "directory": "native-red-canonical-retry1",
+      "result": "ABORTED_RESOURCE",
+      "cargo_exit_code": -15,
+      "elapsed_seconds": 34.959484,
+      "head": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+      "native_inputs": {
+        "files": 1214,
+        "aggregate_sha256": "8ab8e6a6b193684a5feaea768227ac2fb777fd91c7ee4e13d8e63a6fb8115c07"
+      },
+      "runner_sha256": "ae20081596e452c1f0b8a5f7db17acc0fba650e840fed9a9914bdedd24cba52f",
+      "command": [
+        "/root/.cargo/bin/cargo",
+        "--config",
+        "profile.test.debug=0",
+        "--config",
+        "profile.test.package.trnm-pon-node.debug=0",
+        "--config",
+        "profile.test.package.trnm-pon-node.opt-level=0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "growth_persistence_cancellation",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "selected_rustc": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "rustc_sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+      "source_unchanged": true,
+      "test_result_lines": [],
+      "sqlite_unqualified_warnings": [],
+      "timeout_observed": false,
+      "resource_abort_observed": true,
+      "oom_observed": false,
+      "min_estimated_available_bytes": 523464704,
+      "memory_events_delta": {
+        "low": 0,
+        "high": 0,
+        "max": 45086,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "artifacts": {
+        "result.json": {
+          "bytes": 9824,
+          "sha256": "1484ea3b792e9284537ba458f177eac1fa3fc7b6993972322fc1242672084c2b"
+        },
+        "cargo.log": {
+          "bytes": 115,
+          "sha256": "4430dd6a8ad74352776f24958dfa76d29962bcfd69fefa0e5bef2b0d695f18e4"
+        },
+        "preflight.log": {
+          "bytes": 170,
+          "sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069"
+        },
+        "native-inputs-before.json": {
+          "bytes": 239708,
+          "sha256": "3b8fffbfd83099a3b31c4b7161a9d6ea505c20ecf5afe5254266ad3a96cbd369"
+        },
+        "native-inputs-after.json": {
+          "bytes": 239708,
+          "sha256": "3b8fffbfd83099a3b31c4b7161a9d6ea505c20ecf5afe5254266ad3a96cbd369"
+        }
+      }
+    }
+  ]
+}

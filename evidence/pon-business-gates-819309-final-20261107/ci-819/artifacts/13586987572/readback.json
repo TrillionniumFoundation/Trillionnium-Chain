@@ -1,0 +1,335 @@
+{
+  "artifact_id": 13586987572,
+  "metadata": {
+    "id": 13586987572,
+    "node_id": "MDg6QXJ0aWZhY3QxMzU4Njk4NzU3Mg==",
+    "name": "priority-ubuntu-24.04-arm-prospective-merge-state-819309fd312298e099642e1253b1d4ba07113e98-1",
+    "size_in_bytes": 20136,
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586987572",
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586987572/zip",
+    "expired": false,
+    "digest": "sha256:668f57bceb67f565331dcf75132fea8fb38c57787ca63948427242345096f49b",
+    "created_at": "2026-11-07T19:25:26Z",
+    "updated_at": "2026-11-07T19:25:26Z",
+    "expires_at": "2026-12-07T19:25:26Z",
+    "workflow_run": {
+      "id": 42402618518,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+    }
+  },
+  "errors": [],
+  "state_control_readback_passed": true,
+  "scope": "original State controls only; not service/History or throughput qualification",
+  "download": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586987572/zip"
+    ],
+    "exit_code": 0,
+    "timeout": false,
+    "error": null,
+    "bytes": 20136,
+    "sha256": "668f57bceb67f565331dcf75132fea8fb38c57787ca63948427242345096f49b"
+  },
+  "archive_inventory": [
+    {
+      "name": "capacity.log",
+      "bytes": 25247,
+      "compressed_bytes": 2598
+    },
+    {
+      "name": "large-state-admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner.log",
+      "bytes": 77308,
+      "compressed_bytes": 7576
+    },
+    {
+      "name": "large-state-authenticated_large_parent_original_schedule_supplementary_denominator.log",
+      "bytes": 36541,
+      "compressed_bytes": 4651
+    },
+    {
+      "name": "migration.log",
+      "bytes": 6773,
+      "compressed_bytes": 1357
+    },
+    {
+      "name": "push-source-context.json",
+      "bytes": 2356,
+      "compressed_bytes": 830
+    },
+    {
+      "name": "source.json",
+      "bytes": 512,
+      "compressed_bytes": 289
+    },
+    {
+      "name": "state-monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission.log",
+      "bytes": 655,
+      "compressed_bytes": 334
+    },
+    {
+      "name": "state-test_every_reorg_process_cut_and_admission_gap_recovers_once.log",
+      "bytes": 954,
+      "compressed_bytes": 397
+    },
+    {
+      "name": "state-test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry.log",
+      "bytes": 487,
+      "compressed_bytes": 270
+    }
+  ],
+  "retained_files": {
+    "capacity.log": {
+      "bytes": 25247,
+      "sha256": "f125fe5200e2525a92d539e71ccd4bc8bcec3cd94426c10d182e0cae7d7c457f"
+    },
+    "large-state-admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner.log": {
+      "bytes": 77308,
+      "sha256": "892fd4ac61170d17ee7bb4f94f3a65def3db63daddcfa9baa2b9e813a482d7ac"
+    },
+    "large-state-authenticated_large_parent_original_schedule_supplementary_denominator.log": {
+      "bytes": 36541,
+      "sha256": "5c96559996d3e5cdaedcc0f8d419608cc07b5ae1cf6828285123ca19f0dcd304"
+    },
+    "migration.log": {
+      "bytes": 6773,
+      "sha256": "f328870d4f6bdc039f4468fef30ddd2b6c529091eeb63deef45aa188120c3276"
+    },
+    "push-source-context.json": {
+      "bytes": 2356,
+      "sha256": "0b4904e2055609f09701c1f4f18e79be864ec5c5fcd0c6e6b9145c43261907d7"
+    },
+    "source.json": {
+      "bytes": 512,
+      "sha256": "bdca5e149877335223e365561edb2df9f8f2249922bccf618a5b15d11ea13b50"
+    },
+    "state-monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission.log": {
+      "bytes": 655,
+      "sha256": "6bba4d4d6db1b4071df31da19710636f8c0363fd4c4f12c8454e955a4cb661ff"
+    },
+    "state-test_every_reorg_process_cut_and_admission_gap_recovers_once.log": {
+      "bytes": 954,
+      "sha256": "d35acb02e7c2472a8ecf2d1a3253485528a568685fce09987b063edc50441843"
+    },
+    "state-test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry.log": {
+      "bytes": 487,
+      "sha256": "69bb034426acf444a89d8e13e68deb764b43300fe144912b8cd51197dbc10e75"
+    }
+  },
+  "internal_file_manifest": "not supplied by original state workflow; all archive members retained with independent SHA256",
+  "job_id": 128493671763,
+  "job_status": "completed",
+  "job_conclusion": "success",
+  "job_log": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128493671763/logs"
+    ],
+    "exit_code": 0,
+    "timeout": false,
+    "error": null,
+    "bytes": 322847,
+    "sha256": "d270ad75997efd620a4c4e3568a64b7076f4c2064703b1d6c145223a78b05c12"
+  },
+  "source_binding": {
+    "kind": "prospective-merge",
+    "tested_commit": "28df21f965e0348690836c9c854dab645827a03d",
+    "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+    "before_after_equal": true,
+    "resolver_context_equal": true,
+    "log_source_identity_count": 2
+  },
+  "state_steps": [
+    {
+      "name": "Execute original large-state CPU-budget tests",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T18:44:10Z",
+      "completed_at": "2026-11-07T18:50:02Z"
+    },
+    {
+      "name": "Execute original native full-capacity test",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T18:50:02Z",
+      "completed_at": "2026-11-07T19:23:37Z"
+    },
+    {
+      "name": "Execute original source-preserving migration tests",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T19:23:37Z",
+      "completed_at": "2026-11-07T19:23:42Z"
+    },
+    {
+      "name": "Execute actual obligation ranges and native reorganization regressions",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T19:23:42Z",
+      "completed_at": "2026-11-07T19:25:24Z"
+    }
+  ],
+  "named_controls": [
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T192707Z-819309fd3122-ee0ee036/state-artifact-read-v1/13586987572/large-state-admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner.log",
+      "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "pass": true,
+      "bytes": 77308,
+      "sha256": "892fd4ac61170d17ee7bb4f94f3a65def3db63daddcfa9baa2b9e813a482d7ac",
+      "readback": {
+        "result": "PASS",
+        "test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      }
+    },
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T192707Z-819309fd3122-ee0ee036/state-artifact-read-v1/13586987572/large-state-authenticated_large_parent_original_schedule_supplementary_denominator.log",
+      "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+      "pass": true,
+      "bytes": 36541,
+      "sha256": "5c96559996d3e5cdaedcc0f8d419608cc07b5ae1cf6828285123ca19f0dcd304",
+      "readback": {
+        "result": "PASS",
+        "test": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      }
+    },
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T192707Z-819309fd3122-ee0ee036/state-artifact-read-v1/13586987572/capacity.log",
+      "selector": "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+      "pass": true,
+      "bytes": 25247,
+      "sha256": "f125fe5200e2525a92d539e71ccd4bc8bcec3cd94426c10d182e0cae7d7c457f",
+      "readback": {
+        "result": "PASS",
+        "test": "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      }
+    },
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T192707Z-819309fd3122-ee0ee036/state-artifact-read-v1/13586987572/state-monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission.log",
+      "selector": "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission",
+      "pass": true,
+      "bytes": 655,
+      "sha256": "6bba4d4d6db1b4071df31da19710636f8c0363fd4c4f12c8454e955a4cb661ff",
+      "readback": {
+        "result": "PASS",
+        "test": "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      }
+    },
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T192707Z-819309fd3122-ee0ee036/state-artifact-read-v1/13586987572/state-test_every_reorg_process_cut_and_admission_gap_recovers_once.log",
+      "selector": "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+      "pass": true,
+      "bytes": 954,
+      "sha256": "d35acb02e7c2472a8ecf2d1a3253485528a568685fce09987b063edc50441843",
+      "readback": {
+        "result": "PASS",
+        "test": "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      }
+    },
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T192707Z-819309fd3122-ee0ee036/state-artifact-read-v1/13586987572/state-test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry.log",
+      "selector": "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry",
+      "pass": true,
+      "bytes": 487,
+      "sha256": "69bb034426acf444a89d8e13e68deb764b43300fe144912b8cd51197dbc10e75",
+      "readback": {
+        "result": "PASS",
+        "test": "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      }
+    }
+  ],
+  "migration": {
+    "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T192707Z-819309fd3122-ee0ee036/state-artifact-read-v1/13586987572/migration.log",
+    "bytes": 6773,
+    "sha256": "f328870d4f6bdc039f4468fef30ddd2b6c529091eeb63deef45aa188120c3276",
+    "running_lines": [
+      "running 40 tests",
+      "running 1 test",
+      "running 1 test",
+      "running 1 test",
+      "running 1 test",
+      "running 1 test",
+      "running 1 test",
+      "running 1 test",
+      "running 1 test"
+    ],
+    "all_summary_lines": [
+      "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1185 filtered out; finished in 0.00s",
+      "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1185 filtered out; finished in 0.00s",
+      "test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 1146 filtered out; finished in 5.06s"
+    ],
+    "main_summary": "test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 1146 filtered out; finished in 5.06s",
+    "main_executed_tests": 40,
+    "standalone_ok_line_count": 41,
+    "named_ok_lines": [
+      "test store::authenticated_migration::growth_rehearsal::snapshot::receipt_copy_tests::receipt_copy_rejects_digest_mismatch_and_concurrent_extension ... ok",
+      "test store::authenticated_migration::growth_rehearsal::snapshot::receipt_copy_tests::receipt_copy_retains_complete_bytes_without_a_new_size_limit ... ok",
+      "test store::authenticated_migration::growth_reservation_io::tests::creation_readback_binds_original_files_even_when_replacements_have_equal_bytes ... ok",
+      "test store::authenticated_migration::growth_reservation_io::tests::creation_readback_rejects_equal_byte_directory_replacement ... ok",
+      "test store::authenticated_migration::growth_reservation_io::tests::creation_refuses_ancestor_symlink_before_any_target_write ... ok",
+      "test store::authenticated_migration::growth_reservation_io::tests::creation_refuses_parent_substitution_after_open_without_writing_decoy ... ok",
+      "test store::authenticated_migration::growth_reservation_io::tests::creation_refuses_real_directory_substitution_before_chmod_or_file_creation ... ok",
+      "test store::authenticated_migration::growth_reservation_io::tests::creation_refuses_target_symlink_before_chmod_or_file_creation ... ok",
+      "test store::authenticated_migration::growth_reservation_io::tests::creation_writes_only_held_target_after_target_or_ancestor_replacement ... ok",
+      "test store::authenticated_migration::growth_reservation_io::tests::late_ancestor_symlink_cannot_preserve_path_acceptance ... ok",
+      "test store::authenticated_migration::growth_reservation_io::tests::late_path_policy_and_object_changes_cannot_pass_readback ... ok",
+      "test store::authenticated_migration::growth_reservation_io::tests::readback_is_bounded_and_rejects_symlink_fifo_alias_and_permissions ... ok",
+      "test store::authenticated_migration::growth_reservation_io::tests::special_permission_bits_refuse_at_open_and_final_readback ... ok",
+      "test store::authenticated_migration::tests::authenticated_migration_atomic_target_creation_never_overwrites_a_racing_destination ... ok",
+      "test store::authenticated_migration::tests::authenticated_migration_cancellation_never_publishes_partial_destination ... ok",
+      "test store::authenticated_migration::tests::authenticated_migration_last_callback_cannot_hide_raw_file_or_receipt_changes ... ok",
+      "test store::authenticated_migration::tests::authenticated_migration_preserves_signed_branches_and_irreversible_local_facts ... ok",
+      "test store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens ... ok",
+      "test store::authenticated_migration::tests::authenticated_migration_rechecks_retained_authority_including_inactive_branches ... ok",
+      "test store::authenticated_migration::tests::authenticated_migration_refuses_source_descendants_and_existing_destinations ... ok",
+      "test store::authenticated_migration::tests::authenticated_migration_rejects_external_owner_journal_and_required_marker ... ok",
+      "test store::authenticated_migration::tests::authenticated_migration_retains_partial_reorganization_then_target_recovers_once ... ok",
+      "test store::authenticated_migration::tests::authenticated_migration_snapshot_blocks_source_sql_writer_and_rejects_changed_target ... ok",
+      "test store::authenticated_migration::tests::growth_rehearsal_cancel_and_late_disk_tamper_preserve_failed_stages_and_source ... ok",
+      "test store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_budget_is_aggregate_and_cleans_success ... ok",
+      "test store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_replays_copies_and_rejects_replaced_wal_paths ... ok",
+      "test store::authenticated_migration::tests::growth_rehearsal_cold_verifier_refuses_wal_archives_without_writes ... ok",
+      "test store::authenticated_migration::tests::growth_rehearsal_cold_verifier_rejects_resealed_source_and_activation_claim ... ok",
+      "test store::authenticated_migration::tests::growth_rehearsal_file_hash_bounds_append_without_hiding_corruption ... ok",
+      "test store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open ... ok",
+      "test store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open ... ok",
+      "test store::authenticated_migration::tests::growth_rehearsal_file_receipt_retains_one_mib_limit ... ok",
+      "test store::authenticated_migration::tests::growth_rehearsal_late_destination_collision_keeps_pending_and_does_not_replace ... ok",
+      "test store::authenticated_migration::tests::growth_rehearsal_preserves_all_native_facts_nonce_liabilities_and_cold_checkpoint ... ok",
+      "test store::authenticated_migration::tests::growth_rehearsal_preserves_reference_budget_history_and_rejects_resealed_corruption ... ok",
+      "test store::authenticated_migration::tests::growth_rehearsal_process_exit_retains_pending_and_source_reopens ... ok",
+      "test store::authenticated_migration::tests::growth_rehearsal_rejects_complete_state_reference_before_creating_a_candidate ... ok",
+      "test store::authenticated_migration::tests::growth_rehearsal_rejects_inactive_source_corruption_without_publication ... ok",
+      "test store::authenticated_migration::tests::migration_block_id_copy_preserves_complete_fixed_width_refusals ... ok",
+      "test store::authenticated_migration::tests::migration_genesis_packet_copy_keeps_null_and_type_semantics ... ok",
+      "test store::reorg_cancellation::tests::cancelled_lifecycle_survives_explicit_authenticated_migration_without_rewriting_source ... ok"
+    ],
+    "main_40_summary_passed": true,
+    "fifo_subprocesses_are_not_additional_main_tests": true
+  },
+  "finished_utc": "2026-11-07T19:33:31.281801+00:00"
+}

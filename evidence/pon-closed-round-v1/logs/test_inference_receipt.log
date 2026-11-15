@@ -1,0 +1,10 @@
+test_duplicate_or_implicit_receipt_fields_reject (__main__.InferenceBindingTests.test_duplicate_or_implicit_receipt_fields_reject) ... ok
+test_every_service_identity_is_bound (__main__.InferenceBindingTests.test_every_service_identity_is_bound) ... ok
+test_expected_boolean_counter_alias_rejects (__main__.InferenceBindingTests.test_expected_boolean_counter_alias_rejects) ... ok
+test_expected_cost_nonce_and_returned_output_cannot_be_omitted (__main__.InferenceBindingTests.test_expected_cost_nonce_and_returned_output_cannot_be_omitted) ... ok
+test_oversized_receipt_rejects_before_json (__main__.InferenceBindingTests.test_oversized_receipt_rejects_before_json) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.043s
+
+OK

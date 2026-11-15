@@ -1,0 +1,129 @@
+{
+  "commit": "51c215b45c41180fc044ec806fde39c7ceffb75c",
+  "tree": "8f59f0f2895e7b9add7d727a84466eb7203c743a",
+  "parent": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+  "worktree": "/private/tmp/chain-ci-binding-repair-20261114",
+  "branch": "fix/chain-ci-binding-repair-20261114",
+  "clean": true,
+  "changed_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "scripts/ci/test_ci_contract.py"
+  ],
+  "tests": {
+    "before": {
+      "run": 225,
+      "pass": 224,
+      "fail": 1,
+      "skip": 0,
+      "failure": "CiContractTests.test_model_oracles_must_precede_documentation_tests"
+    },
+    "after": {
+      "run": 225,
+      "pass": 225,
+      "fail": 0,
+      "skip": 0
+    },
+    "typed_pending_original_wiring_methods": [
+      "test_actual_pilot_registers_all_36_original_controls_once (__main__.TypedPendingWorkerWiringTests.test_actual_pilot_registers_all_36_original_controls_once) ... ok",
+      "test_each_original_import_must_be_present_unconditional_and_unique (__main__.TypedPendingWorkerWiringTests.test_each_original_import_must_be_present_unconditional_and_unique) ... ok",
+      "test_each_original_module_refuses_missing_renamed_duplicate_skipped_or_stubbed_controls (__main__.TypedPendingWorkerWiringTests.test_each_original_module_refuses_missing_renamed_duplicate_skipped_or_stubbed_controls) ... ok",
+      "test_existing_pilot_ci_command_cannot_be_removed_duplicated_hidden_or_moved (__main__.TypedPendingWorkerWiringTests.test_existing_pilot_ci_command_cannot_be_removed_duplicated_hidden_or_moved) ... ok"
+    ],
+    "roster_unchanged": true,
+    "unchanged_other_method_asts": 223
+  },
+  "reason": "Whole-line receipt-retention comments made the old literal block absent before mutation. Extract the actual complete subshell, compare every non-comment byte to the original block, then move the actual block; preserve exact line multiset and one occurrence in the cross-lane control.",
+  "production_lane_checker_workflow_unchanged": true,
+  "no_native_or_hosted_test_claim": true,
+  "commands": [
+    {
+      "name": "pre-commit-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.073,
+      "bytes": 167,
+      "sha256": "5a50395959c308d79c47de79377045e1510e1d8a249c78273a1abf20c7eb005c"
+    },
+    {
+      "name": "pre-commit-diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.049,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "stage-fixture-repair",
+      "argv": [
+        "git",
+        "add",
+        "--",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.06,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "commit-fixture-repair",
+      "argv": [
+        "git",
+        "commit",
+        "-m",
+        "test(ci): preserve comments in oracle order mutation fixtures"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.087,
+      "bytes": 162,
+      "sha256": "9c4574cd50724cb975e14f6befd48426c00235f28de51eca7c16c4c1be4c38bc"
+    }
+  ],
+  "files": {
+    "test-ci-contract-full-before.log": {
+      "bytes": 99582,
+      "sha256": "3b3a8d3e16832a9903363784c5633c82999049b948344d810bd0041645a854d6"
+    },
+    "test-ci-contract-full-after.log": {
+      "bytes": 39141,
+      "sha256": "ed7d72b33b8cda2433d0028ef55db58eaf1b24b9cd6f8095861701939ad4fd0a"
+    },
+    "fixture-repair.patch": {
+      "bytes": 3609,
+      "sha256": "a423e32605f9cac3082fd50af8cbecbf07ae11ecac87236049900f023f812b99"
+    },
+    "fixture-repair-source-proof-v1.json": {
+      "bytes": 22461,
+      "sha256": "02e0465990480f40411e1e3a77ce3f9d9730b82f6ccd3f8ef07fe2c0fa5e3873"
+    },
+    "oracle-order-fixture-cause-v1.json": {
+      "bytes": 18403,
+      "sha256": "86e071a593d7230dded95ed7050f2fe5e6269b594a097921958ac8b0cb90acba"
+    },
+    "repair-summary.json": {
+      "bytes": 1434,
+      "sha256": "e3dadb73a4644ed00e24693ca1deba2d87b2d9ed21d9de9a239b5c27f165d650"
+    },
+    "steps.json": {
+      "bytes": 1151,
+      "sha256": "aceae0fecbbc471ee725f4a743bf9fd9efe61f908cb02a920a5ba8131a4a38a8"
+    },
+    "repair-steps.json": {
+      "bytes": 842,
+      "sha256": "85e2850b93489b987492145dc37fc9c3ae379766fc6972bb2918ca6be953c0d5"
+    },
+    "receipt-verification-rejection-v1.json": {
+      "bytes": 426,
+      "sha256": "00d5f842f99594a213b6098bd0d68328c23240504cffd14b3713fb8c58e0d5e5"
+    }
+  },
+  "qualification_granted": false
+}

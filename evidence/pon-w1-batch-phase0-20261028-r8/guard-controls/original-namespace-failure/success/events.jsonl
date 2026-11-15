@@ -1,0 +1,4 @@
+{"kind": "stop_requested", "monotonic": 72852.184456603, "reason": "cpu"}
+{"kind": "signal", "monotonic": 72852.184504455, "pid": 7, "birth": 148, "signal": 15}
+{"kind": "signal", "monotonic": 72852.18451422, "pid": 7, "birth": 148, "signal": 15}
+{"kind": "wait4", "monotonic": 72852.683973955, "pid": 7, "returncode": -15, "user_seconds": 0.0, "system_seconds": 0.001316, "maxrss_kib": 12544}

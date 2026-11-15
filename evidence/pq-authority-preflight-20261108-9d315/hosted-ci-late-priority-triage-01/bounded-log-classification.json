@@ -1,0 +1,1969 @@
+{
+  "jobs": [
+    {
+      "errors": [
+        {
+          "context_before": [
+            "CARGO_TARGET_DIR: /home/runner/work/_temp/target-priority",
+            "##[endgroup]",
+            "{\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_from_zero_native.py\", \"--out\", \"/home/runner/work/_temp/priority-observations/from-zero-native\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-42463825143-1-native-priorities-2815.service\", \"current_service\": \"trnm-from-zero-42463825143-1-native-priorities-2815.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"31454951-48f6-4941-9eea-6eda068bdbfe\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 33, \"directory\": true, \"gid\": 0, \"inode\": 7777, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794127409387856086, \"device\": 31, \"inode\": 1478, \"mtime_ns\": 1794127409387856086, \"path\": \"/run/systemd/system/trnmponpublic.slice\", "
+          ],
+          "line": 1215,
+          "text": "##[error]Process completed with exit code 1."
+        }
+      ],
+      "groups": [
+        {
+          "line": 2,
+          "text": "##[group]Runner Image Provisioner"
+        },
+        {
+          "line": 11,
+          "text": "##[group]Operating System"
+        },
+        {
+          "line": 16,
+          "text": "##[group]Runner Image"
+        },
+        {
+          "line": 22,
+          "text": "##[group]GITHUB_TOKEN Permissions"
+        },
+        {
+          "line": 34,
+          "text": "##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "line": 64,
+          "text": "##[group]Getting Git version info"
+        },
+        {
+          "line": 73,
+          "text": "##[group]Initializing the repository"
+        },
+        {
+          "line": 91,
+          "text": "##[group]Disabling automatic garbage collection"
+        },
+        {
+          "line": 94,
+          "text": "##[group]Setting up auth"
+        },
+        {
+          "line": 103,
+          "text": "##[group]Fetching the repository"
+        },
+        {
+          "line": 881,
+          "text": "##[group]Determining the checkout info"
+        },
+        {
+          "line": 885,
+          "text": "##[group]Checking out the ref"
+        },
+        {
+          "line": 969,
+          "text": "##[group]Removing auth"
+        },
+        {
+          "line": 979,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1019,
+          "text": "##[group]Run rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy"
+        },
+        {
+          "line": 1043,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1196,
+          "text": "##[group]Run python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\""
+        },
+        {
+          "line": 1216,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1332,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1474,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2046,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2083,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2146,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2223,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2362,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 3174,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 3210,
+          "text": "##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        }
+      ],
+      "job": 128678655166,
+      "json_records": [
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "result",
+            "mode",
+            "project",
+            "packages",
+            "branch",
+            "remote_policy_mutated"
+          ],
+          "line": 1018,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".failure",
+              "value": null
+            },
+            {
+              "path": ".passed",
+              "value": false
+            },
+            {
+              "path": ".preparation.failure_type",
+              "value": null
+            },
+            {
+              "path": ".systemd_run_exit",
+              "value": 1
+            }
+          ],
+          "keys": [
+            "cleanup",
+            "command_argv",
+            "consensus_or_model_authority",
+            "cwd",
+            "failure",
+            "final_host_errors",
+            "final_parent_lease",
+            "gid",
+            "host_readiness_only",
+            "parent_lease",
+            "parent_reused",
+            "passed",
+            "preparation",
+            "schema",
+            "service",
+            "systemd_run_exit",
+            "uid"
+          ],
+          "line": 1214,
+          "schema": "trnm-ci-original-public-host-controller-v2"
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1261,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1275,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1289,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1303,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1317,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1331,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1472,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2082,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".passed",
+              "value": true
+            }
+          ],
+          "keys": [
+            "passed",
+            "schema"
+          ],
+          "line": 2136,
+          "schema": "public-v3-actual-local-replay-depletion-v1"
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2144,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".passed",
+              "value": true
+            }
+          ],
+          "keys": [
+            "scope",
+            "rounds",
+            "passed"
+          ],
+          "line": 2145,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2270,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2284,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2298,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2312,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2326,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2346,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2361,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 3173,
+          "schema": null
+        }
+      ],
+      "logs": {
+        "bytes": 1869187,
+        "sha256": "abf7fce87f6c43def75df8021110e2bbdb169da581c2a32b60b884e4dab3bcf6"
+      }
+    },
+    {
+      "errors": [
+        {
+          "context_before": [
+            "CARGO_TARGET_DIR: /home/runner/work/_temp/target-priority",
+            "##[endgroup]",
+            "{\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_from_zero_native.py\", \"--out\", \"/home/runner/work/_temp/priority-observations/from-zero-native\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-42463825143-1-native-priorities-2452.service\", \"current_service\": \"trnm-from-zero-42463825143-1-native-priorities-2452.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"73fec35e-c6a1-4931-a30d-2f8f59c7cdb6\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7066, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794127375024261259, \"device\": 29, \"inode\": 1480, \"mtime_ns\": 1794127375024261259, \"path\": \"/run/systemd/system/trnmponpublic.slice\", "
+          ],
+          "line": 1218,
+          "text": "##[error]Process completed with exit code 1."
+        }
+      ],
+      "groups": [
+        {
+          "line": 2,
+          "text": "##[group]Runner Image Provisioner"
+        },
+        {
+          "line": 11,
+          "text": "##[group]Operating System"
+        },
+        {
+          "line": 16,
+          "text": "##[group]Runner Image"
+        },
+        {
+          "line": 22,
+          "text": "##[group]GITHUB_TOKEN Permissions"
+        },
+        {
+          "line": 34,
+          "text": "##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "line": 64,
+          "text": "##[group]Getting Git version info"
+        },
+        {
+          "line": 73,
+          "text": "##[group]Initializing the repository"
+        },
+        {
+          "line": 91,
+          "text": "##[group]Disabling automatic garbage collection"
+        },
+        {
+          "line": 94,
+          "text": "##[group]Setting up auth"
+        },
+        {
+          "line": 103,
+          "text": "##[group]Fetching the repository"
+        },
+        {
+          "line": 879,
+          "text": "##[group]Determining the checkout info"
+        },
+        {
+          "line": 883,
+          "text": "##[group]Checking out the ref"
+        },
+        {
+          "line": 972,
+          "text": "##[group]Removing auth"
+        },
+        {
+          "line": 982,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1022,
+          "text": "##[group]Run rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy"
+        },
+        {
+          "line": 1046,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1199,
+          "text": "##[group]Run python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\""
+        },
+        {
+          "line": 1219,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1335,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1477,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2049,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2086,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2149,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2226,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2365,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 3177,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 3213,
+          "text": "##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        }
+      ],
+      "job": 128678655031,
+      "json_records": [
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "result",
+            "mode",
+            "project",
+            "packages",
+            "branch",
+            "remote_policy_mutated"
+          ],
+          "line": 1021,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".failure",
+              "value": null
+            },
+            {
+              "path": ".passed",
+              "value": false
+            },
+            {
+              "path": ".preparation.failure_type",
+              "value": null
+            },
+            {
+              "path": ".systemd_run_exit",
+              "value": 1
+            }
+          ],
+          "keys": [
+            "cleanup",
+            "command_argv",
+            "consensus_or_model_authority",
+            "cwd",
+            "failure",
+            "final_host_errors",
+            "final_parent_lease",
+            "gid",
+            "host_readiness_only",
+            "parent_lease",
+            "parent_reused",
+            "passed",
+            "preparation",
+            "schema",
+            "service",
+            "systemd_run_exit",
+            "uid"
+          ],
+          "line": 1217,
+          "schema": "trnm-ci-original-public-host-controller-v2"
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1264,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1278,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1292,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1306,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1320,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1334,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1475,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2085,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".passed",
+              "value": true
+            }
+          ],
+          "keys": [
+            "passed",
+            "schema"
+          ],
+          "line": 2139,
+          "schema": "public-v3-actual-local-replay-depletion-v1"
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2147,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".passed",
+              "value": true
+            }
+          ],
+          "keys": [
+            "scope",
+            "rounds",
+            "passed"
+          ],
+          "line": 2148,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2273,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2287,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2301,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2315,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2329,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2349,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2364,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 3176,
+          "schema": null
+        }
+      ],
+      "logs": {
+        "bytes": 1868462,
+        "sha256": "eec83a351ce72041d694d83fc41d6ac2e0c5cfed2fc1e668853bf1e7f9f9c01a"
+      }
+    },
+    {
+      "errors": [
+        {
+          "context_before": [
+            "CARGO_TARGET_DIR: /home/runner/work/_temp/target-priority",
+            "##[endgroup]",
+            "{\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_from_zero_native.py\", \"--out\", \"/home/runner/work/_temp/priority-observations/from-zero-native\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-42463825143-1-native-priorities-2944.service\", \"current_service\": \"trnm-from-zero-42463825143-1-native-priorities-2944.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"c8ccaeca-07f8-406d-af32-4fae7f5355db\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7252, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794127422430399939, \"device\": 29, \"inode\": 1660, \"mtime_ns\": 1794127422430399939, \"path\": \"/run/systemd/system/trnmponpublic.slice\", "
+          ],
+          "line": 1220,
+          "text": "##[error]Process completed with exit code 1."
+        }
+      ],
+      "groups": [
+        {
+          "line": 2,
+          "text": "##[group]Runner Image Provisioner"
+        },
+        {
+          "line": 11,
+          "text": "##[group]Operating System"
+        },
+        {
+          "line": 16,
+          "text": "##[group]Runner Image"
+        },
+        {
+          "line": 22,
+          "text": "##[group]GITHUB_TOKEN Permissions"
+        },
+        {
+          "line": 34,
+          "text": "##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "line": 64,
+          "text": "##[group]Getting Git version info"
+        },
+        {
+          "line": 73,
+          "text": "##[group]Initializing the repository"
+        },
+        {
+          "line": 91,
+          "text": "##[group]Disabling automatic garbage collection"
+        },
+        {
+          "line": 94,
+          "text": "##[group]Setting up auth"
+        },
+        {
+          "line": 103,
+          "text": "##[group]Fetching the repository"
+        },
+        {
+          "line": 881,
+          "text": "##[group]Determining the checkout info"
+        },
+        {
+          "line": 885,
+          "text": "##[group]Checking out the ref"
+        },
+        {
+          "line": 974,
+          "text": "##[group]Removing auth"
+        },
+        {
+          "line": 984,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1024,
+          "text": "##[group]Run rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy"
+        },
+        {
+          "line": 1048,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1201,
+          "text": "##[group]Run python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\""
+        },
+        {
+          "line": 1221,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1337,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1479,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2051,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2088,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2151,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2228,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2367,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 3179,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 3215,
+          "text": "##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        }
+      ],
+      "job": 128678655028,
+      "json_records": [
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "result",
+            "mode",
+            "project",
+            "packages",
+            "branch",
+            "remote_policy_mutated"
+          ],
+          "line": 1023,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".failure",
+              "value": null
+            },
+            {
+              "path": ".passed",
+              "value": false
+            },
+            {
+              "path": ".preparation.failure_type",
+              "value": null
+            },
+            {
+              "path": ".systemd_run_exit",
+              "value": 1
+            }
+          ],
+          "keys": [
+            "cleanup",
+            "command_argv",
+            "consensus_or_model_authority",
+            "cwd",
+            "failure",
+            "final_host_errors",
+            "final_parent_lease",
+            "gid",
+            "host_readiness_only",
+            "parent_lease",
+            "parent_reused",
+            "passed",
+            "preparation",
+            "schema",
+            "service",
+            "systemd_run_exit",
+            "uid"
+          ],
+          "line": 1219,
+          "schema": "trnm-ci-original-public-host-controller-v2"
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1266,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1280,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1294,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1308,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1322,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1336,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1477,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2087,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".passed",
+              "value": true
+            }
+          ],
+          "keys": [
+            "passed",
+            "schema"
+          ],
+          "line": 2141,
+          "schema": "public-v3-actual-local-replay-depletion-v1"
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2149,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".passed",
+              "value": true
+            }
+          ],
+          "keys": [
+            "scope",
+            "rounds",
+            "passed"
+          ],
+          "line": 2150,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2275,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2289,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2303,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2317,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2331,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2351,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2366,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 3178,
+          "schema": null
+        }
+      ],
+      "logs": {
+        "bytes": 1869495,
+        "sha256": "735d91040b384f5581ae5338851516e0a0f6b7b986d730f83fd2cac4981577b7"
+      }
+    },
+    {
+      "errors": [
+        {
+          "context_before": [
+            "CARGO_TARGET_DIR: /home/runner/work/_temp/target-priority",
+            "##[endgroup]",
+            "{\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_from_zero_native.py\", \"--out\", \"/home/runner/work/_temp/priority-observations/from-zero-native\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-42463825143-1-native-priorities-2573.service\", \"current_service\": \"trnm-from-zero-42463825143-1-native-priorities-2573.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"c10e2d4e-5ace-4e1e-a557-4edaf4d0a2b4\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 33, \"directory\": true, \"gid\": 0, \"inode\": 7004, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794127396631244092, \"device\": 31, \"inode\": 1471, \"mtime_ns\": 1794127396631244092, \"path\": \"/run/systemd/system/trnmponpublic.slice\", "
+          ],
+          "line": 1213,
+          "text": "##[error]Process completed with exit code 1."
+        }
+      ],
+      "groups": [
+        {
+          "line": 2,
+          "text": "##[group]Runner Image Provisioner"
+        },
+        {
+          "line": 11,
+          "text": "##[group]Operating System"
+        },
+        {
+          "line": 16,
+          "text": "##[group]Runner Image"
+        },
+        {
+          "line": 22,
+          "text": "##[group]GITHUB_TOKEN Permissions"
+        },
+        {
+          "line": 34,
+          "text": "##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "line": 64,
+          "text": "##[group]Getting Git version info"
+        },
+        {
+          "line": 73,
+          "text": "##[group]Initializing the repository"
+        },
+        {
+          "line": 91,
+          "text": "##[group]Disabling automatic garbage collection"
+        },
+        {
+          "line": 94,
+          "text": "##[group]Setting up auth"
+        },
+        {
+          "line": 103,
+          "text": "##[group]Fetching the repository"
+        },
+        {
+          "line": 879,
+          "text": "##[group]Determining the checkout info"
+        },
+        {
+          "line": 883,
+          "text": "##[group]Checking out the ref"
+        },
+        {
+          "line": 967,
+          "text": "##[group]Removing auth"
+        },
+        {
+          "line": 977,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1017,
+          "text": "##[group]Run rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy"
+        },
+        {
+          "line": 1041,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1194,
+          "text": "##[group]Run python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\""
+        },
+        {
+          "line": 1214,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1330,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1472,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2044,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2081,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2144,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2221,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 2360,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 3172,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 3208,
+          "text": "##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        }
+      ],
+      "job": 128678654970,
+      "json_records": [
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "result",
+            "mode",
+            "project",
+            "packages",
+            "branch",
+            "remote_policy_mutated"
+          ],
+          "line": 1016,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".failure",
+              "value": null
+            },
+            {
+              "path": ".passed",
+              "value": false
+            },
+            {
+              "path": ".preparation.failure_type",
+              "value": null
+            },
+            {
+              "path": ".systemd_run_exit",
+              "value": 1
+            }
+          ],
+          "keys": [
+            "cleanup",
+            "command_argv",
+            "consensus_or_model_authority",
+            "cwd",
+            "failure",
+            "final_host_errors",
+            "final_parent_lease",
+            "gid",
+            "host_readiness_only",
+            "parent_lease",
+            "parent_reused",
+            "passed",
+            "preparation",
+            "schema",
+            "service",
+            "systemd_run_exit",
+            "uid"
+          ],
+          "line": 1212,
+          "schema": "trnm-ci-original-public-host-controller-v2"
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1259,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1273,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1287,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1301,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1315,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1329,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 1470,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2080,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".passed",
+              "value": true
+            }
+          ],
+          "keys": [
+            "passed",
+            "schema"
+          ],
+          "line": 2134,
+          "schema": "public-v3-actual-local-replay-depletion-v1"
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2142,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".passed",
+              "value": true
+            }
+          ],
+          "keys": [
+            "scope",
+            "rounds",
+            "passed"
+          ],
+          "line": 2143,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2268,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2282,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2296,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2310,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2324,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2344,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 2359,
+          "schema": null
+        },
+        {
+          "details": [
+            {
+              "path": ".result",
+              "value": "PASS"
+            }
+          ],
+          "keys": [
+            "executed_tests",
+            "result",
+            "scope",
+            "test"
+          ],
+          "line": 3171,
+          "schema": null
+        }
+      ],
+      "logs": {
+        "bytes": 1868423,
+        "sha256": "f82c20c8b26bc1190023f2e52cc317bc78046c0b8cd7516b36fef7fe2c5fde94"
+      }
+    }
+  ],
+  "observed_head": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+  "result": "OBSERVED",
+  "run": 42463825143,
+  "schema": "trnm-pq-hosted-late-priority-bounded-readback-v1",
+  "scope": "original job logs, metadata and annotations only; no downloaded native artifacts or reruns"
+}

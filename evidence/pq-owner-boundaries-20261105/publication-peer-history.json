@@ -1,0 +1,89 @@
+{
+  "schema": "chain-E-peer-exact-object-import-v1",
+  "incoming_blob_receipt": "blob-import-receipt.json",
+  "incoming_blob_receipt_sha256": "279779edcecbc88edb10f8752f408d36771bf9b76181e4cc4260bdcf10364768",
+  "additional_parent_blob": {
+    "path": "evidence/pq-current-root-integration-20261104/PUBLICATION_SCOPE.json",
+    "sha": "d39b16df46a4433dfc4e9bce58d6a0a36bbcf65b",
+    "bytes": 13415,
+    "sha256": "7a94d318325a71f34359c99be9f46cd4f25a401656f7b33e1cbc7af8ebf9f44c",
+    "source_commit": "583077fdc543ae4dee012a2a8ac2aa419c79a788",
+    "display_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/583077fdc543ae4dee012a2a8ac2aa419c79a788/evidence/pq-current-root-integration-20261104/PUBLICATION_SCOPE.json",
+    "git_blob_sha_verified": true
+  },
+  "parent_tree_nodes": [
+    {
+      "path": "",
+      "sha": "e91cda166f538f09cb6bf8cd8bdfac1008519634",
+      "raw_bytes": 882,
+      "raw_sha256": "b540655ab6b9169361e038d96a5940753b24bed89de226a9dd60364b5b9b2e31",
+      "git_sha_verified": true
+    },
+    {
+      "path": "evidence",
+      "sha": "cb390e39b21cd08f4f515132bd810515f385c8d3",
+      "raw_bytes": 9315,
+      "raw_sha256": "d3260d52854757ee8bab4889221331b0663b6f402a8951506d03fe880f05d09a",
+      "git_sha_verified": true
+    },
+    {
+      "path": "evidence/pq-current-root-integration-20261104",
+      "sha": "077e7d666ea2c50655516e8c88909646e0f02d23",
+      "raw_bytes": 388,
+      "raw_sha256": "ad34a4e3253cbd685742ce0027557a53c73e7ab2febcb81b4e643d4afbd60437",
+      "git_sha_verified": true
+    }
+  ],
+  "exact_commits": [
+    {
+      "commit": "583077fdc543ae4dee012a2a8ac2aa419c79a788",
+      "tree": "e91cda166f538f09cb6bf8cd8bdfac1008519634",
+      "parents": [
+        "70df2c644ed8dd64afa1e7533743664cddacb9da"
+      ],
+      "raw_commit_sha256": "b9b59edc7454f8e45f151158b099e3bf2e422cdd135bab500460a6d628e89534",
+      "raw_commit_git_sha_verified": true,
+      "distinct_leaf_blobs": 8634,
+      "missing_leaf_blobs": 0
+    },
+    {
+      "commit": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+      "tree": "e7e7583c70486c8b366b28e745b05744109fd963",
+      "parents": [
+        "583077fdc543ae4dee012a2a8ac2aa419c79a788"
+      ],
+      "raw_commit_sha256": "8ef898b5288cc1ee413f211f6ddb4070175bbbe9195ec814d51692aafbe8345e",
+      "raw_commit_git_sha_verified": true,
+      "distinct_leaf_blobs": 8634,
+      "missing_leaf_blobs": 0
+    }
+  ],
+  "archive_index_sha256": "63a4202d8137cfd8678abd115eb5b8b6bd00b9c79f8d52d8a1765e543ac71125",
+  "archive_all_indexed_files_unchanged": true,
+  "head_before": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+  "head_after": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+  "index_sha256_before": "94f7c0990412e1f60b333440d7532c9157291f1e803dac418b4f6ecae57427f6",
+  "index_sha256_after": "94f7c0990412e1f60b333440d7532c9157291f1e803dac418b4f6ecae57427f6",
+  "status_before": " M evidence/pq-owner-boundaries-20261105/README.md\n?? evidence/pq-owner-boundaries-20261105/cache-cleanup-r2-link-space.json\n?? evidence/pq-owner-boundaries-20261105/runtime-R2-source-publication.json\n?? evidence/pq-owner-boundaries-20261105/source-integration/\n?? evidence/pq-owner-boundaries-20261105/source-pair-scope.md\n?? evidence/pq-owner-boundaries-20261105/source-pair.json\n?? evidence/pq-owner-boundaries-20261105/source-publication.json\n",
+  "status_after": " M evidence/pq-owner-boundaries-20261105/README.md\n?? evidence/pq-owner-boundaries-20261105/cache-cleanup-r2-link-space.json\n?? evidence/pq-owner-boundaries-20261105/publication-peer-preservation.json\n?? evidence/pq-owner-boundaries-20261105/runtime-R2-source-publication.json\n?? evidence/pq-owner-boundaries-20261105/source-integration/\n?? evidence/pq-owner-boundaries-20261105/source-pair-scope.md\n?? evidence/pq-owner-boundaries-20261105/source-pair.json\n?? evidence/pq-owner-boundaries-20261105/source-publication.json\n",
+  "head_index_worktree_writes_by_child": false,
+  "parent_concurrent_evidence_edits_preserved": true,
+  "remote_writes": false,
+  "rust_executed": false,
+  "completed_utc": "2026-11-05T06:23:47.011554+00:00",
+  "scope": "Exact Git object transport only. Existing source-pair and all historical execution scopes remain unchanged.",
+  "peer_vs_fixed_source": {
+    "source": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+    "peer_tip": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+    "changed_paths": [
+      "evidence/pq-current-root-integration-20261104/LATE_INTEGRATION.md",
+      "evidence/pq-current-root-integration-20261104/PUBLICATION_SCOPE.json",
+      "evidence/pq-current-root-integration-20261104/README.md",
+      "evidence/pq-current-root-integration-20261104/late-integration.json",
+      "evidence/pq-current-root-integration-20261104/late-verification-records.tar.gz"
+    ],
+    "exactly_five_evidence_paths": true,
+    "no_code_configuration_plan_or_corpus_changes": true,
+    "raw_diff_sha256": "0f543d184d2022797d50d72150775f495bae9d08630985bc0c2279fd820a8f7c"
+  }
+}

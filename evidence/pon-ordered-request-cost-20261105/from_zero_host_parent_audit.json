@@ -1,0 +1,982 @@
+{
+  "schema": "from-zero-host-parent-audit-v1",
+  "audit_started_utc": "2026-11-05T10:30:28.530010+00:00",
+  "audit_completed_utc": "2026-11-05T10:31:23.785985+00:00",
+  "source": {
+    "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+    "tree": "7ce7ac50f788dd421e7cc0c9ddb957ade3e8df73",
+    "repository": "/workspace/scratch/add353b13222/chain",
+    "tracked_worktree_clean_before_and_after": true,
+    "files": {
+      "host_parent": {
+        "relative_path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+        "absolute_path": "/workspace/scratch/add353b13222/chain/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+        "git_blob": "7089e961965af9209f2d588061c8526c5acba161",
+        "sha256": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d",
+        "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs"
+      },
+      "history_ingress": {
+        "relative_path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "absolute_path": "/workspace/scratch/add353b13222/chain/trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "git_blob": "8619f003694361afe4e10c7eb4e7aa7df41a0dbe",
+        "sha256": "86ba0b079409073ed4d96116c4b05e0772946fbe8f9b21760a8d155d5f0c327d",
+        "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/ingress.rs"
+      },
+      "public_receiver": {
+        "relative_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "absolute_path": "/workspace/scratch/add353b13222/chain/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "git_blob": "891ec08f59a6e2346735bd08b1bf363466fe38a3",
+        "sha256": "325c3d0fd88e7bd361255d2d50f0e89155a3b735483f302bf2d3bcfe8851ba93",
+        "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+      },
+      "confirmation_fixture": {
+        "relative_path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+        "absolute_path": "/workspace/scratch/add353b13222/chain/trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+        "git_blob": "87825357c881a1283ef46ce0226c2eacfd5af6cb",
+        "sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs"
+      },
+      "host_runner": {
+        "relative_path": "scripts/ci/run_from_zero_host.py",
+        "absolute_path": "/workspace/scratch/add353b13222/chain/scripts/ci/run_from_zero_host.py",
+        "git_blob": "b7d6c49f3f21a946ed5dd20147205dcee9b0f17b",
+        "sha256": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791",
+        "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/scripts/ci/run_from_zero_host.py"
+      },
+      "native_runner": {
+        "relative_path": "scripts/ci/run_from_zero_native.py",
+        "absolute_path": "/workspace/scratch/add353b13222/chain/scripts/ci/run_from_zero_native.py",
+        "git_blob": "4960474ac61bdee7d1af738e9f06910e19f8bd35",
+        "sha256": "18c5f255df1bb69eb0a8629d3376b40b4f4d24c081cc81e15c4dc5d562f2d97a",
+        "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/scripts/ci/run_from_zero_native.py"
+      },
+      "fixed_parent_unit": {
+        "relative_path": "config/systemd/trnmponpublic.slice",
+        "absolute_path": "/workspace/scratch/add353b13222/chain/config/systemd/trnmponpublic.slice",
+        "git_blob": "8981b6aeed4c08c21679664940366b36a991444a",
+        "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+        "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/config/systemd/trnmponpublic.slice"
+      }
+    }
+  },
+  "method": {
+    "source_modified": false,
+    "configuration_modified": false,
+    "budgets_or_deadlines_modified": false,
+    "native_binary_executed": false,
+    "cargo_executed": false,
+    "new_workload_run": false,
+    "inputs_modified": false,
+    "sqlite_connection": "URI mode=ro&immutable=1; PRAGMA query_only=ON; all retained WAL files were empty",
+    "sqlite_stability": "Main database, WAL and SHM file hashes unchanged across each read",
+    "source_identity_check_is_execution_test": false
+  },
+  "inputs": {
+    "confirmation_report": {
+      "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/report.json",
+      "bytes": 15024443,
+      "sha256": "3e7ca3825361fe9df23d3827c92af5f6411316c2e42f1a4085fcc05a2aef024d"
+    },
+    "host_readiness_receipt": {
+      "path": "/workspace/scratch/add353b13222/validation/original-host-readiness.json",
+      "bytes": 2383,
+      "sha256": "0c279ac20098bcf392c3ad18bce80aeda87e21d55009f3c9012abb51d47c5df4"
+    },
+    "host_readiness_log": {
+      "path": "/workspace/scratch/add353b13222/validation/original-host-readiness.log",
+      "bytes": 95,
+      "sha256": "f83ae7239b5ca746748c411437088139d89927cbf52986af6ee5e4fb436707ab"
+    },
+    "native_run_receipt": {
+      "path": "/workspace/scratch/add353b13222/validation/original-from-zero-native.json",
+      "bytes": 2368,
+      "sha256": "ed8d4ee655f718dc85f166376d55a2815143d35ee7d45fcc85d4f7846bc3c1a8"
+    },
+    "native_manifest": {
+      "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/manifest.json",
+      "bytes": 66739,
+      "sha256": "dbf36552e7cba5e5ba476823824cf17528d953331116efb043fe97b7f43779d2"
+    },
+    "confirmation_process": {
+      "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "bytes": 943,
+      "sha256": "d4ad55d7cedafccd43bc47465a20831a628730cc74339df13865e3395abb70a1"
+    },
+    "prior_native_audit": {
+      "path": "/workspace/scratch/add353b13222/staged-evidence/from_zero_native_audit.json",
+      "bytes": 15522,
+      "sha256": "7bc3a39cf07ec5561d7e96bfad482ff80930a271d3feb51bd30775160a70e557"
+    }
+  },
+  "prior_host_readiness": {
+    "started_utc": "2026-11-05T09:53:32.757368+00:00",
+    "elapsed_ns": 7273842770,
+    "exit_code": 1,
+    "status": "command_failed",
+    "result": {
+      "passed": false,
+      "failure": "HOSTED_CI_ONLY_NO_LOCAL_PROVISION",
+      "host_readiness_only": true
+    },
+    "source_commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+    "source_tree": "7ce7ac50f788dd421e7cc0c9ddb957ade3e8df73",
+    "before_after_source_equal": true,
+    "refusal_site": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/scripts/ci/run_from_zero_host.py#L282-L289",
+    "outer_native_child_started": false,
+    "parent_provisioning_reached": false,
+    "scope": "Hosted-CI eligibility refusal before lease/provision/native child. This is separate from the subsequently executed local native run and does not identify that later run's parent-open syscall branch."
+  },
+  "original_native_run": {
+    "started_utc": "2026-11-05T09:54:28.202508+00:00",
+    "elapsed_ns": 291428682413,
+    "exit_code": 1,
+    "status": "command_failed",
+    "confirmation_native_process_exit_code": 0,
+    "confirmation_native_process_timed_out": false,
+    "confirmation_acceptance": "failed",
+    "confirmation_validator_error": "CONFIRMATION_TARGET",
+    "harness_pass_implies_business_success": false,
+    "raw_report_present": true
+  },
+  "report": {
+    "schema": "public-v3-signed-confirmation-pressure-v1",
+    "context": {
+      "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+      "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+      "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    "finite_target_met": false,
+    "invariant_target_met": true,
+    "same_packet_sequence_in_both_runs": true,
+    "signed_packet_count": 7,
+    "signed_packet_sha256s": [
+      "5142a64fff0ca2b9c6f446a017c8969aba324d361f0faad71216541b07e41d7f",
+      "eb10bfd346273d780082da8e6323fdb4213d7741f1d53696d554482b6dc8ddb6",
+      "f63210778101d2a029368d8c67e410def1e21dfa356c5b98f20d83150a71cd30",
+      "083a571636ae701d2b4d0a7c3f12eba7c4efd391aaee80d3c44c516be5fef5da",
+      "9c424114ab6b8b2d77105e13841e541b486e1976d18b6504cc73227e24b8052c",
+      "db456abf752bbab63d8a2633cea321cefc4afb4ce1c5bd176a114ea6f4a3aeed",
+      "c23152030e8cb8ac484905ad6364dcb4d7e7c08706fc3b18eb31db006b945617"
+    ],
+    "production_activation": false,
+    "public_network_ready": false,
+    "work_profile_qualified": false,
+    "phases": [
+      {
+        "mode": "attack-free-baseline",
+        "workers": 0,
+        "requested_window_ns": 4000000000,
+        "history_responses": 16,
+        "history_successful_in_window": 16,
+        "submit_ack": {
+          "attempts": 7,
+          "successful_in_original_window": 7,
+          "failed_or_late": 0
+        },
+        "independent_replay_attempts": 16,
+        "accepted_replays": 0,
+        "error_counts": {
+          "PUBLIC_HOST_KERNEL_PARENT": 16
+        },
+        "history_call_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "prior_after_values": [
+          "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516"
+        ],
+        "next_after_all_null": true,
+        "host_check_totals": {
+          "resolve": {
+            "calls_started": 16,
+            "calls_completed": 16,
+            "calls_accepted": 0,
+            "calls_rejected": 16,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "wall_clock_unknown_calls": 0,
+            "last_error_code_null_count": 16
+          },
+          "initial": {
+            "calls_started": 0,
+            "calls_completed": 0,
+            "calls_accepted": 0,
+            "calls_rejected": 0,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "wall_clock_unknown_calls": 0,
+            "last_error_code_null_count": 16
+          },
+          "checkpoint": {
+            "calls_started": 0,
+            "calls_completed": 0,
+            "calls_accepted": 0,
+            "calls_rejected": 0,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "wall_clock_unknown_calls": 0,
+            "last_error_code_null_count": 16
+          },
+          "final": {
+            "calls_started": 0,
+            "calls_completed": 0,
+            "calls_accepted": 0,
+            "calls_rejected": 0,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "wall_clock_unknown_calls": 0,
+            "last_error_code_null_count": 16
+          }
+        },
+        "import_observation_schema_values": [
+          "pon-local-history-import-observation-v1"
+        ],
+        "native_phase_count_per_observation": [
+          19
+        ],
+        "all_native_phases_unentered_replay_count": 16,
+        "null_native_import_inputs_replay_count": 16,
+        "empty_native_packet_records_replay_count": 16,
+        "measurement_failures": 0,
+        "confirmed_business_transactions": 0,
+        "business_transactions_required": 1,
+        "independent_final_confirmation_stage": null,
+        "independent_client_confirmation": null,
+        "finite_business_target_met": false,
+        "native_execution_count": null,
+        "chain_inclusion_count": null,
+        "separate_execution_and_inclusion_measurement_status": "not_separately_observed; retained database rows are reported separately",
+        "confirmation_tps": null
+      },
+      {
+        "mode": "from-zero-pressure",
+        "workers": 16,
+        "requested_window_ns": 4000000000,
+        "history_responses": 16,
+        "history_successful_in_window": 16,
+        "submit_ack": {
+          "attempts": 7,
+          "successful_in_original_window": 7,
+          "failed_or_late": 0
+        },
+        "independent_replay_attempts": 16,
+        "accepted_replays": 0,
+        "error_counts": {
+          "PUBLIC_HOST_KERNEL_PARENT": 16
+        },
+        "history_call_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "prior_after_values": [
+          "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516"
+        ],
+        "next_after_all_null": true,
+        "host_check_totals": {
+          "resolve": {
+            "calls_started": 16,
+            "calls_completed": 16,
+            "calls_accepted": 0,
+            "calls_rejected": 16,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "wall_clock_unknown_calls": 0,
+            "last_error_code_null_count": 16
+          },
+          "initial": {
+            "calls_started": 0,
+            "calls_completed": 0,
+            "calls_accepted": 0,
+            "calls_rejected": 0,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "wall_clock_unknown_calls": 0,
+            "last_error_code_null_count": 16
+          },
+          "checkpoint": {
+            "calls_started": 0,
+            "calls_completed": 0,
+            "calls_accepted": 0,
+            "calls_rejected": 0,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "wall_clock_unknown_calls": 0,
+            "last_error_code_null_count": 16
+          },
+          "final": {
+            "calls_started": 0,
+            "calls_completed": 0,
+            "calls_accepted": 0,
+            "calls_rejected": 0,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "wall_clock_unknown_calls": 0,
+            "last_error_code_null_count": 16
+          }
+        },
+        "import_observation_schema_values": [
+          "pon-local-history-import-observation-v1"
+        ],
+        "native_phase_count_per_observation": [
+          19
+        ],
+        "all_native_phases_unentered_replay_count": 16,
+        "null_native_import_inputs_replay_count": 16,
+        "empty_native_packet_records_replay_count": 16,
+        "measurement_failures": 0,
+        "confirmed_business_transactions": 0,
+        "business_transactions_required": 1,
+        "independent_final_confirmation_stage": null,
+        "independent_client_confirmation": null,
+        "finite_business_target_met": false,
+        "native_execution_count": null,
+        "chain_inclusion_count": null,
+        "separate_execution_and_inclusion_measurement_status": "not_separately_observed; retained database rows are reported separately",
+        "confirmation_tps": null
+      }
+    ]
+  },
+  "call_path": {
+    "receiver_listener": "127.0.0.1:0",
+    "receiver_setup": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs#L1277-L1334",
+    "receiver_library_guard": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs#L2097-L2114",
+    "listener_guard": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs#L1239-L1251",
+    "receiver_loopback_requires_fixed_parent": false,
+    "independent_history_import": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/ingress.rs#L2553-L2598",
+    "independent_history_fixture_call": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs#L1424-L1482",
+    "history_explicit_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+    "history_loopback_requires_fixed_parent": true,
+    "explicit_some_parent_opens_for_any_source_address": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs#L445-L451",
+    "all_32_rejections_at": "HistoryHostPhase::Resolve before initial verification and before history_import::receive_observed",
+    "host_resolve_last_error_code_null": true,
+    "fixture_provisions_host_parent": false,
+    "native_runner_provisions_host_parent": false,
+    "separate_database_implies_independent_operator": false
+  },
+  "parent_error_branches": [
+    {
+      "line": 366,
+      "predicate": "The supplied path is not absolute.",
+      "historical_status": "excluded_for_this_frozen_call_site",
+      "evidence": "Public History passes the fixed absolute literal, not caller data.",
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs#L366"
+    },
+    {
+      "line": 369,
+      "predicate": "fs::canonicalize(user_path) returns any I/O error.",
+      "historical_status": "possible_not_disambiguated",
+      "historical_errno": null,
+      "current_observation_supports": "The later strict path-resolution observation returns errno 2, but is not historical syscall evidence.",
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs#L369"
+    },
+    {
+      "line": 373,
+      "predicate": "The canonical path is not the approved parent or differs from the supplied path.",
+      "historical_status": "possible_not_disambiguated",
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs#L373"
+    },
+    {
+      "line": 380,
+      "predicate": "Parent metadata is not a directory, not uid 0, or has group/other write bits.",
+      "historical_status": "possible_not_disambiguated",
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs#L380"
+    }
+  ],
+  "historical_failure_branch": {
+    "status": "unknown_among_369_373_380",
+    "errno": null,
+    "parent_metadata": null,
+    "root_cause_confirmed": false,
+    "failure_after_host_resolve_claimed": false
+  },
+  "current_host_filesystem": {
+    "observed_at_utc": "2026-11-05T10:30:28.702211+00:00",
+    "path": "/sys/fs/cgroup/trnmponpublic.slice",
+    "is_absolute": true,
+    "python_resolve_strict": {
+      "status": "error",
+      "errno": 2,
+      "error_type": "FileNotFoundError"
+    },
+    "lstat": {
+      "status": "error",
+      "errno": 2,
+      "error_type": "FileNotFoundError"
+    },
+    "cgroup_v2_controllers_file_present": true,
+    "current_process_cgroup": "0::/",
+    "native_function_executed": false,
+    "historical_errno_inferred": false,
+    "scope": "Read-only current filesystem observation, later than the original run. Python strict path resolution is not a replay of the original Rust syscall."
+  },
+  "sqlite": {
+    "read_only": true,
+    "immutable_uri": true,
+    "query_only": true,
+    "query_sql": {
+      "block_extent": "SELECT count(*), min(height), max(height), count(packet) FROM blocks",
+      "active": "SELECT lower(hex(a.tip)), a.generation, a.state_slot, b.height FROM active a LEFT JOIN blocks b ON b.id=a.tip ORDER BY a.singleton",
+      "metadata": "SELECT key, lower(hex(value)) FROM metadata ORDER BY key",
+      "block_fingerprint_input": "SELECT id, parent, height, chainwork, packet, state_root FROM blocks ORDER BY height, id",
+      "table_counts": "SELECT count(*) FROM each of events, deltas, kv"
+    },
+    "fingerprint_encoding": "SHA256 of UTF-8 JSON with sorted keys, compact separators, ensure_ascii=true. Block rows retain id,parent,height,chainwork_hex,packet_bytes,packet_sha256,state_root; packet bytes themselves are not emitted.",
+    "databases": [
+      {
+        "role": "producer",
+        "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/producer/native.sqlite",
+        "uri": "file:///workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/producer/native.sqlite?mode=ro&immutable=1",
+        "query_only": 1,
+        "observed_at_utc": "2026-11-05T10:30:28.694691+00:00",
+        "file_identity_before": {
+          "main": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/producer/native.sqlite",
+            "bytes": 499712,
+            "sha256": "0d5e8e88b221b194617e773a59987dbca33fde482bfe5b8edd23a976a6c2b770"
+          },
+          "wal": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/producer/native.sqlite-wal",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "shm": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/producer/native.sqlite-shm",
+            "bytes": 32768,
+            "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+          }
+        },
+        "file_identity_after": {
+          "main": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/producer/native.sqlite",
+            "bytes": 499712,
+            "sha256": "0d5e8e88b221b194617e773a59987dbca33fde482bfe5b8edd23a976a6c2b770"
+          },
+          "wal": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/producer/native.sqlite-wal",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "shm": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/producer/native.sqlite-shm",
+            "bytes": 32768,
+            "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+          }
+        },
+        "files_unchanged_during_read": true,
+        "result": {
+          "block_count": 8,
+          "minimum_height": 0,
+          "maximum_height": 7,
+          "non_null_packet_count": 7,
+          "active": [
+            {
+              "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "generation": 7,
+              "state_slot": 0,
+              "tip_height": 7
+            }
+          ],
+          "other_table_counts": {
+            "events": 7,
+            "deltas": 16,
+            "kv": 14
+          },
+          "metadata": {
+            "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+            "schema": "9cfc36489e0ae98abd0110a9974d5c4f388cab91ebd701f93fba401830fb6658"
+          },
+          "block_rows_canonical_sha256": "2f0b29236b2d11a901f8c841ed57ced50de3a0dfd9f72e193a3d94a79107abcb",
+          "ordered_packet_sha256s": [
+            "5142a64fff0ca2b9c6f446a017c8969aba324d361f0faad71216541b07e41d7f",
+            "eb10bfd346273d780082da8e6323fdb4213d7741f1d53696d554482b6dc8ddb6",
+            "f63210778101d2a029368d8c67e410def1e21dfa356c5b98f20d83150a71cd30",
+            "083a571636ae701d2b4d0a7c3f12eba7c4efd391aaee80d3c44c516be5fef5da",
+            "9c424114ab6b8b2d77105e13841e541b486e1976d18b6504cc73227e24b8052c",
+            "db456abf752bbab63d8a2633cea321cefc4afb4ce1c5bd176a114ea6f4a3aeed",
+            "c23152030e8cb8ac484905ad6364dcb4d7e7c08706fc3b18eb31db006b945617"
+          ],
+          "packet_sequence_matches_report_signed_packets": true
+        },
+        "result_canonical_sha256": "92e7f1bb35c7d068d041b4aecc4731bc91b47f0718430cb6122dde7fe28d0b47"
+      },
+      {
+        "role": "baseline/receiver",
+        "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/baseline/receiver/native.sqlite",
+        "uri": "file:///workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/baseline/receiver/native.sqlite?mode=ro&immutable=1",
+        "query_only": 1,
+        "observed_at_utc": "2026-11-05T10:30:28.697498+00:00",
+        "file_identity_before": {
+          "main": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/baseline/receiver/native.sqlite",
+            "bytes": 499712,
+            "sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14"
+          },
+          "wal": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/baseline/receiver/native.sqlite-wal",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "shm": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/baseline/receiver/native.sqlite-shm",
+            "bytes": 32768,
+            "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+          }
+        },
+        "file_identity_after": {
+          "main": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/baseline/receiver/native.sqlite",
+            "bytes": 499712,
+            "sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14"
+          },
+          "wal": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/baseline/receiver/native.sqlite-wal",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "shm": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/baseline/receiver/native.sqlite-shm",
+            "bytes": 32768,
+            "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+          }
+        },
+        "files_unchanged_during_read": true,
+        "result": {
+          "block_count": 8,
+          "minimum_height": 0,
+          "maximum_height": 7,
+          "non_null_packet_count": 7,
+          "active": [
+            {
+              "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "generation": 7,
+              "state_slot": 0,
+              "tip_height": 7
+            }
+          ],
+          "other_table_counts": {
+            "events": 7,
+            "deltas": 16,
+            "kv": 14
+          },
+          "metadata": {
+            "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+            "schema": "9cfc36489e0ae98abd0110a9974d5c4f388cab91ebd701f93fba401830fb6658"
+          },
+          "block_rows_canonical_sha256": "2f0b29236b2d11a901f8c841ed57ced50de3a0dfd9f72e193a3d94a79107abcb",
+          "ordered_packet_sha256s": [
+            "5142a64fff0ca2b9c6f446a017c8969aba324d361f0faad71216541b07e41d7f",
+            "eb10bfd346273d780082da8e6323fdb4213d7741f1d53696d554482b6dc8ddb6",
+            "f63210778101d2a029368d8c67e410def1e21dfa356c5b98f20d83150a71cd30",
+            "083a571636ae701d2b4d0a7c3f12eba7c4efd391aaee80d3c44c516be5fef5da",
+            "9c424114ab6b8b2d77105e13841e541b486e1976d18b6504cc73227e24b8052c",
+            "db456abf752bbab63d8a2633cea321cefc4afb4ce1c5bd176a114ea6f4a3aeed",
+            "c23152030e8cb8ac484905ad6364dcb4d7e7c08706fc3b18eb31db006b945617"
+          ],
+          "packet_sequence_matches_report_signed_packets": true
+        },
+        "result_canonical_sha256": "92e7f1bb35c7d068d041b4aecc4731bc91b47f0718430cb6122dde7fe28d0b47"
+      },
+      {
+        "role": "pressure/receiver",
+        "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/pressure/receiver/native.sqlite",
+        "uri": "file:///workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/pressure/receiver/native.sqlite?mode=ro&immutable=1",
+        "query_only": 1,
+        "observed_at_utc": "2026-11-05T10:30:28.700252+00:00",
+        "file_identity_before": {
+          "main": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/pressure/receiver/native.sqlite",
+            "bytes": 499712,
+            "sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14"
+          },
+          "wal": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/pressure/receiver/native.sqlite-wal",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "shm": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/pressure/receiver/native.sqlite-shm",
+            "bytes": 32768,
+            "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+          }
+        },
+        "file_identity_after": {
+          "main": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/pressure/receiver/native.sqlite",
+            "bytes": 499712,
+            "sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14"
+          },
+          "wal": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/pressure/receiver/native.sqlite-wal",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "shm": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/pressure/receiver/native.sqlite-shm",
+            "bytes": 32768,
+            "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+          }
+        },
+        "files_unchanged_during_read": true,
+        "result": {
+          "block_count": 8,
+          "minimum_height": 0,
+          "maximum_height": 7,
+          "non_null_packet_count": 7,
+          "active": [
+            {
+              "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "generation": 7,
+              "state_slot": 0,
+              "tip_height": 7
+            }
+          ],
+          "other_table_counts": {
+            "events": 7,
+            "deltas": 16,
+            "kv": 14
+          },
+          "metadata": {
+            "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+            "schema": "9cfc36489e0ae98abd0110a9974d5c4f388cab91ebd701f93fba401830fb6658"
+          },
+          "block_rows_canonical_sha256": "2f0b29236b2d11a901f8c841ed57ced50de3a0dfd9f72e193a3d94a79107abcb",
+          "ordered_packet_sha256s": [
+            "5142a64fff0ca2b9c6f446a017c8969aba324d361f0faad71216541b07e41d7f",
+            "eb10bfd346273d780082da8e6323fdb4213d7741f1d53696d554482b6dc8ddb6",
+            "f63210778101d2a029368d8c67e410def1e21dfa356c5b98f20d83150a71cd30",
+            "083a571636ae701d2b4d0a7c3f12eba7c4efd391aaee80d3c44c516be5fef5da",
+            "9c424114ab6b8b2d77105e13841e541b486e1976d18b6504cc73227e24b8052c",
+            "db456abf752bbab63d8a2633cea321cefc4afb4ce1c5bd176a114ea6f4a3aeed",
+            "c23152030e8cb8ac484905ad6364dcb4d7e7c08706fc3b18eb31db006b945617"
+          ],
+          "packet_sequence_matches_report_signed_packets": true
+        },
+        "result_canonical_sha256": "92e7f1bb35c7d068d041b4aecc4731bc91b47f0718430cb6122dde7fe28d0b47"
+      },
+      {
+        "role": "baseline/independent-client",
+        "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/baseline/independent-client/native.sqlite",
+        "uri": "file:///workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/baseline/independent-client/native.sqlite?mode=ro&immutable=1",
+        "query_only": 1,
+        "observed_at_utc": "2026-11-05T10:30:28.701105+00:00",
+        "file_identity_before": {
+          "main": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/baseline/independent-client/native.sqlite",
+            "bytes": 147456,
+            "sha256": "ff19287bdbd7620b2dc9b974b64af2c376f187ecbdc9728f4af501200d86b274"
+          },
+          "wal": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/baseline/independent-client/native.sqlite-wal",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "shm": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/baseline/independent-client/native.sqlite-shm",
+            "bytes": 32768,
+            "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+          }
+        },
+        "file_identity_after": {
+          "main": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/baseline/independent-client/native.sqlite",
+            "bytes": 147456,
+            "sha256": "ff19287bdbd7620b2dc9b974b64af2c376f187ecbdc9728f4af501200d86b274"
+          },
+          "wal": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/baseline/independent-client/native.sqlite-wal",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "shm": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/baseline/independent-client/native.sqlite-shm",
+            "bytes": 32768,
+            "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+          }
+        },
+        "files_unchanged_during_read": true,
+        "result": {
+          "block_count": 1,
+          "minimum_height": 0,
+          "maximum_height": 0,
+          "non_null_packet_count": 0,
+          "active": [
+            {
+              "tip": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "generation": 0,
+              "state_slot": 0,
+              "tip_height": 0
+            }
+          ],
+          "other_table_counts": {
+            "events": 0,
+            "deltas": 0,
+            "kv": 7
+          },
+          "metadata": {
+            "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+            "schema": "9cfc36489e0ae98abd0110a9974d5c4f388cab91ebd701f93fba401830fb6658"
+          },
+          "block_rows_canonical_sha256": "a04aa68d31ac73a8872b4cd6c3e78ad3619ee533a67f17eb8031fe71ede37f59",
+          "ordered_packet_sha256s": [],
+          "packet_sequence_matches_report_signed_packets": false
+        },
+        "result_canonical_sha256": "2bc8255ee6e88298325482509943850d2cdba22300bfc602756000cc44449b4c"
+      },
+      {
+        "role": "pressure/independent-client",
+        "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/pressure/independent-client/native.sqlite",
+        "uri": "file:///workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/pressure/independent-client/native.sqlite?mode=ro&immutable=1",
+        "query_only": 1,
+        "observed_at_utc": "2026-11-05T10:30:28.702139+00:00",
+        "file_identity_before": {
+          "main": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/pressure/independent-client/native.sqlite",
+            "bytes": 147456,
+            "sha256": "ff19287bdbd7620b2dc9b974b64af2c376f187ecbdc9728f4af501200d86b274"
+          },
+          "wal": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/pressure/independent-client/native.sqlite-wal",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "shm": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/pressure/independent-client/native.sqlite-shm",
+            "bytes": 32768,
+            "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+          }
+        },
+        "file_identity_after": {
+          "main": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/pressure/independent-client/native.sqlite",
+            "bytes": 147456,
+            "sha256": "ff19287bdbd7620b2dc9b974b64af2c376f187ecbdc9728f4af501200d86b274"
+          },
+          "wal": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/pressure/independent-client/native.sqlite-wal",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "shm": {
+            "path": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/pressure/independent-client/native.sqlite-shm",
+            "bytes": 32768,
+            "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+          }
+        },
+        "files_unchanged_during_read": true,
+        "result": {
+          "block_count": 1,
+          "minimum_height": 0,
+          "maximum_height": 0,
+          "non_null_packet_count": 0,
+          "active": [
+            {
+              "tip": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "generation": 0,
+              "state_slot": 0,
+              "tip_height": 0
+            }
+          ],
+          "other_table_counts": {
+            "events": 0,
+            "deltas": 0,
+            "kv": 7
+          },
+          "metadata": {
+            "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+            "schema": "9cfc36489e0ae98abd0110a9974d5c4f388cab91ebd701f93fba401830fb6658"
+          },
+          "block_rows_canonical_sha256": "a04aa68d31ac73a8872b4cd6c3e78ad3619ee533a67f17eb8031fe71ede37f59",
+          "ordered_packet_sha256s": [],
+          "packet_sequence_matches_report_signed_packets": false
+        },
+        "result_canonical_sha256": "2bc8255ee6e88298325482509943850d2cdba22300bfc602756000cc44449b4c"
+      }
+    ],
+    "producer_and_receivers_same_block_fingerprint": true,
+    "independent_clients_same_genesis_block_fingerprint": true,
+    "metadata_context_matches_report": true,
+    "metadata_keys": [
+      "genesis",
+      "parameters",
+      "schema"
+    ],
+    "host_cgroup_authority_can_be_imported_from_sqlite": false,
+    "interpretation": "Retained receiver and producer states contain heights 0..7; both independent clients remain at height 0. These are read-only row observations, not new native validation or per-request execution/inclusion measurements."
+  },
+  "unclosed_interface": {
+    "status": "observed",
+    "description": "The ordinary loopback receiver can start without a Host parent, but its independent verifier calls the public History importer, which requires the actual fixed administrator-owned cgroup parent even for a loopback source. This run never crosses that Host resolution boundary. The existing hosted provisioning wrapper refused locally before provision.",
+    "historical_provisioning_absence_proven": false,
+    "blockchain_parent_invalidity_proven": false,
+    "algorithm_throughput_failure_proven": false
+  },
+  "narrow_next_slice": {
+    "status": "recommendation_only_not_implemented",
+    "diagnostic": "Retain a bounded trusted-local rejection stage for the same KernelBudget::open attempt: nonabsolute path, canonicalize I/O kind/raw errno, canonical identity, or metadata eligibility. Preserve the external PUBLIC_HOST_KERNEL_PARENT code and every existing eligibility check. Do not substitute a second later filesystem snapshot for the failed operation.",
+    "integration": "At the authorized hosted execution boundary, retain readiness/provisioning/membership evidence for the existing fixed parent before interpreting native independent confirmation. Use the existing hosted wrapper and exact reviewed unit; keep local hosted-only refusal and full failed-request denominators. No local provisioning or environment spoofing was performed.",
+    "no_guard_bypass": true,
+    "no_private_import_substitution": true,
+    "no_new_parent_name": true,
+    "no_budget_or_deadline_change": true,
+    "no_new_run_authorized_or_performed_by_this_audit": true
+  },
+  "concurrent_cbead_check": {
+    "observed_at_utc": "2026-11-05T10:30:29.795736+00:00",
+    "requested_commit_prefix": "cbead",
+    "readable_local_repository_count": 26,
+    "local_repositories_checked": [
+      "/workspace/scratch/0c2d131ac5a9/chain-storage",
+      "/workspace/scratch/1790ff0f3cc3/chain",
+      "/workspace/scratch/188afcb2a4b3/chain",
+      "/workspace/scratch/188afcb2a4b3/native-base",
+      "/workspace/scratch/3042e909dc8c/chain",
+      "/workspace/scratch/42d46a663b73/chain",
+      "/workspace/scratch/42d46a663b73/red-discovery",
+      "/workspace/scratch/48266f5bd43f/chain",
+      "/workspace/scratch/708bcecd45db/chain",
+      "/workspace/scratch/7318042bb6cb/chain",
+      "/workspace/scratch/768fd621f7e2/chain",
+      "/workspace/scratch/822cc50e24f0/prospective-merge-822cc50e/checkout",
+      "/workspace/scratch/822cc50e24f0/round2-chain",
+      "/workspace/scratch/822cc50e24f0/round2-chain-green",
+      "/workspace/scratch/8de1bcb09af8/chain",
+      "/workspace/scratch/add353b13222/chain",
+      "/workspace/scratch/aea25ba345a8/chain",
+      "/workspace/scratch/aea25ba345a8/chain-pq-agent/repo",
+      "/workspace/scratch/aea25ba345a8/research-agent",
+      "/workspace/scratch/baeed38792e5/chain",
+      "/workspace/scratch/baeed38792e5/evolution-work",
+      "/workspace/scratch/c06d5ac2767b/chain-storage",
+      "/workspace/scratch/fd8e3e31d21a/chain-pon-work",
+      "/workspace/scratch/fee7901564fd-next/native-composed",
+      "/workspace/scratch/fee7901564fd-next/state",
+      "/workspace/scratch/fee7901564fd-recovered/chain"
+    ],
+    "matching_commits": [
+      {
+        "repository": "/workspace/scratch/1790ff0f3cc3/chain",
+        "commit": "cbead1508ce8b6d9deb2a86b4bc3181da09694e7"
+      },
+      {
+        "repository": "/workspace/scratch/42d46a663b73/chain",
+        "commit": "cbead1508ce8b6d9deb2a86b4bc3181da09694e7"
+      },
+      {
+        "repository": "/workspace/scratch/708bcecd45db/chain",
+        "commit": "cbead1508ce8b6d9deb2a86b4bc3181da09694e7"
+      },
+      {
+        "repository": "/workspace/scratch/add353b13222/chain",
+        "commit": "cbead1508ce8b6d9deb2a86b4bc3181da09694e7"
+      }
+    ],
+    "network_queried": false,
+    "fix_status": "no_change_in_the_seven_reviewed_host_resolution_and_f0_call_path_files",
+    "remote_fix_absence_claimed": false,
+    "reviewed_at_utc": "2026-11-05T10:31:23.783648+00:00",
+    "commit": "cbead1508ce8b6d9deb2a86b4bc3181da09694e7",
+    "tree": "624c8aad419ee05dc71a4aac507abea429018289",
+    "source_file_comparison": [
+      {
+        "source_role": "host_parent",
+        "relative_path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+        "frozen_blob": "7089e961965af9209f2d588061c8526c5acba161",
+        "concurrent_blob": "7089e961965af9209f2d588061c8526c5acba161",
+        "same_blob": true,
+        "concurrent_github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cbead1508ce8b6d9deb2a86b4bc3181da09694e7/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs"
+      },
+      {
+        "source_role": "history_ingress",
+        "relative_path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "frozen_blob": "8619f003694361afe4e10c7eb4e7aa7df41a0dbe",
+        "concurrent_blob": "8619f003694361afe4e10c7eb4e7aa7df41a0dbe",
+        "same_blob": true,
+        "concurrent_github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cbead1508ce8b6d9deb2a86b4bc3181da09694e7/trillionnium/crates/trnm-pon-node/src/ingress.rs"
+      },
+      {
+        "source_role": "public_receiver",
+        "relative_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "frozen_blob": "891ec08f59a6e2346735bd08b1bf363466fe38a3",
+        "concurrent_blob": "891ec08f59a6e2346735bd08b1bf363466fe38a3",
+        "same_blob": true,
+        "concurrent_github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cbead1508ce8b6d9deb2a86b4bc3181da09694e7/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+      },
+      {
+        "source_role": "confirmation_fixture",
+        "relative_path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+        "frozen_blob": "87825357c881a1283ef46ce0226c2eacfd5af6cb",
+        "concurrent_blob": "87825357c881a1283ef46ce0226c2eacfd5af6cb",
+        "same_blob": true,
+        "concurrent_github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cbead1508ce8b6d9deb2a86b4bc3181da09694e7/trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs"
+      },
+      {
+        "source_role": "host_runner",
+        "relative_path": "scripts/ci/run_from_zero_host.py",
+        "frozen_blob": "b7d6c49f3f21a946ed5dd20147205dcee9b0f17b",
+        "concurrent_blob": "b7d6c49f3f21a946ed5dd20147205dcee9b0f17b",
+        "same_blob": true,
+        "concurrent_github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cbead1508ce8b6d9deb2a86b4bc3181da09694e7/scripts/ci/run_from_zero_host.py"
+      },
+      {
+        "source_role": "native_runner",
+        "relative_path": "scripts/ci/run_from_zero_native.py",
+        "frozen_blob": "4960474ac61bdee7d1af738e9f06910e19f8bd35",
+        "concurrent_blob": "4960474ac61bdee7d1af738e9f06910e19f8bd35",
+        "same_blob": true,
+        "concurrent_github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cbead1508ce8b6d9deb2a86b4bc3181da09694e7/scripts/ci/run_from_zero_native.py"
+      },
+      {
+        "source_role": "fixed_parent_unit",
+        "relative_path": "config/systemd/trnmponpublic.slice",
+        "frozen_blob": "8981b6aeed4c08c21679664940366b36a991444a",
+        "concurrent_blob": "8981b6aeed4c08c21679664940366b36a991444a",
+        "same_blob": true,
+        "concurrent_github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cbead1508ce8b6d9deb2a86b4bc3181da09694e7/config/systemd/trnmponpublic.slice"
+      }
+    ],
+    "concurrent_commit_executed": false,
+    "scope": "Local immutable object comparison only. All seven reviewed files have identical Git blobs at frozen 657 and concurrent cbead. No broader remote execution or whole-commit correctness claim."
+  },
+  "scope": {
+    "new_parent_import_success_claimed": false,
+    "confirmation_tps": null,
+    "network_capacity_tps": null,
+    "new_pair_run_claimed": false,
+    "historical_results_rewritten": false,
+    "guard_loosening_recommended": false
+  }
+}

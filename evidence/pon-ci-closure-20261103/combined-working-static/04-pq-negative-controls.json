@@ -1,0 +1,27 @@
+{
+  "label": "04-pq-negative-controls",
+  "command": [
+    "python3",
+    "scripts/ci/test_pq_research_integration.py"
+  ],
+  "cwd": "/workspace/scratch/abae1861b451/chain-post-ci",
+  "started_at": "2026-11-03T16:36:08.577583+00:00",
+  "elapsed_seconds": 16.149769976000243,
+  "exit_code": 0,
+  "stdout": {
+    "path": "/workspace/scratch/abae1861b451/post-ci-static-validation/04-pq-negative-controls.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "/workspace/scratch/abae1861b451/post-ci-static-validation/04-pq-negative-controls.stderr",
+    "bytes": 134,
+    "sha256": "2139b1bfc6432adbd626626b1fa8778689e5210c8f00f7d9e5536b303392c665"
+  },
+  "actual_unittest_count": 34,
+  "unittest_harness_seconds": 16.045,
+  "skipped_lines": [],
+  "source_before_receipt": "/workspace/scratch/abae1861b451/post-ci-static-validation/source-before.json",
+  "source_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "scope": "Original read-only candidate gate; test mutations, if any, confined by the original test to temporary fixtures. Not native runtime acceptance."
+}

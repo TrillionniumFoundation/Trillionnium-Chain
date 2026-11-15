@@ -1,0 +1,118 @@
+{
+  "schema": "trnm-w1-combined-source-gates-v1",
+  "head": "ef9ba3f94975bb14c049ebc3cdd60d5d6a9e7391",
+  "tree": "15def345d2d033d9b57323d89ae6c5993c868fc3",
+  "source_state": "committed-clean-at-start",
+  "commands": [
+    {
+      "name": "all-w1",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_w1*py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "elapsed_seconds": 14.200940614999126,
+      "log": "/workspace/scratch/006e9a6c46c6/validation/combined-gates/all-w1.log"
+    },
+    {
+      "name": "source-integrity",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "elapsed_seconds": 6.369561422998231,
+      "log": "/workspace/scratch/006e9a6c46c6/validation/combined-gates/source-integrity.log"
+    },
+    {
+      "name": "ci-contract",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "elapsed_seconds": 13.289857150000898,
+      "log": "/workspace/scratch/006e9a6c46c6/validation/combined-gates/ci-contract.log"
+    },
+    {
+      "name": "pq-integration-tests",
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "elapsed_seconds": 50.91748280599859,
+      "log": "/workspace/scratch/006e9a6c46c6/validation/combined-gates/pq-integration-tests.log"
+    },
+    {
+      "name": "claim-guard-tests",
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_chain_claim_guard.py"
+      ],
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "elapsed_seconds": 0.35372238799754996,
+      "log": "/workspace/scratch/006e9a6c46c6/validation/combined-gates/claim-guard-tests.log"
+    },
+    {
+      "name": "pq-integration-check",
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "elapsed_seconds": 0.4174326590000419,
+      "log": "/workspace/scratch/006e9a6c46c6/validation/combined-gates/pq-integration-check.log"
+    },
+    {
+      "name": "claim-guard",
+      "argv": [
+        "python3",
+        "scripts/ci/pq_chain_claim_guard.py"
+      ],
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "elapsed_seconds": 0.04851069700089283,
+      "log": "/workspace/scratch/006e9a6c46c6/validation/combined-gates/claim-guard.log"
+    },
+    {
+      "name": "repository",
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "elapsed_seconds": 55.1324367490015,
+      "log": "/workspace/scratch/006e9a6c46c6/validation/combined-gates/repository.log"
+    },
+    {
+      "name": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "elapsed_seconds": 0.016024913998990087,
+      "log": "/workspace/scratch/006e9a6c46c6/validation/combined-gates/diff-check.log"
+    }
+  ],
+  "new_proofs_generated": 0,
+  "whole_chain_pq_qualified": false,
+  "production_activation": false
+}

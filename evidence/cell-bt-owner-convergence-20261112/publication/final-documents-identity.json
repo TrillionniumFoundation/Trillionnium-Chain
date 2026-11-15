@@ -1,0 +1,30 @@
+{
+  "files": {
+    "docs/development/specs/pon/CELL_BT_OWNER_CONVERGENCE_V1.md": {
+      "bytes": 10959,
+      "sha256": "58120263d940bb6400b3cd41eb421f34817ce5eb6f69099a5318b86c251ca32c"
+    },
+    "docs/development/specs/pon/CELL_NATIVE_SHARD_RESEARCH_V2.md": {
+      "bytes": 24979,
+      "sha256": "26c3aae0f4ec921f39edc3d2dfb193c03c40991b1d748540d6536c8ec6581a04"
+    },
+    "evidence/cell-bt-owner-convergence-20261112/README.md": {
+      "bytes": 20208,
+      "sha256": "391d15c99b6b26fbc9e77a5453fb441315c221fbfeab8047c1d1230d5af917da"
+    },
+    "evidence/cell-bt-owner-convergence-20261112/summary.json": {
+      "bytes": 16372,
+      "sha256": "956a5c776f184e4ff2ced93c13365ca8f5dd3a330bd06516b7d1a61346aa71a4"
+    },
+    "plan-prefix.txt": {
+      "bytes": 3635,
+      "sha256": "b8101f5ca772a5106bb03e6cc0d8117f85c6dbe10e4534e5a708f2a2c0f9dbf9"
+    }
+  },
+  "historical_drafts_overwritten": false,
+  "model_result_actual_file_binding_verified": true,
+  "production_activation": false,
+  "runtime_source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "runtime_source_tree": "a897ba4c74897a05ceb364f098b1bfe32c850213",
+  "schema": "trnm.bt-final-reviewed-publication-documents.v1"
+}

@@ -1,0 +1,46 @@
+{
+  "canceled_signal": 15,
+  "cancellation_event": {
+    "first_canceled_signal": 15,
+    "handoffs": [
+      {
+        "deferred_events": [
+          {
+            "observed_monotonic_ns": 1149962012549231,
+            "phase": "receiver-ack-publication",
+            "signal": 15
+          }
+        ],
+        "deferred_events_truncated": false,
+        "first_deferred": {
+          "observed_monotonic_ns": 1149962012549231,
+          "phase": "receiver-ack-publication",
+          "signal": 15
+        },
+        "observation_errors": [],
+        "observed_snapshot": {
+          "kind": "receiver",
+          "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/setup-evidence/root-real-receiver-validation-01/actual-controls/test_actual_post_ack_sigterm_retains_fact_and_vetoes_operation/receiver/ack.json",
+          "schema": "TRNM-W1-OBSERVED-SNAPSHOT1",
+          "sha256": "8521c0552592903b5a1d29557dd775f3cfecb51dc9f67a2587561a44c6434688"
+        },
+        "phase": "receiver-ack-publication",
+        "prior_canceled_signal": null,
+        "restoration_errors": [],
+        "restored_handler_cancellations": []
+      }
+    ],
+    "origin_exception": "Canceled",
+    "origin_phase": "receiver-ack-publication",
+    "schema": "TRNM-W1-CANCELLATION-HANDOFF1"
+  },
+  "observed_snapshot": {
+    "kind": "receiver",
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/setup-evidence/root-real-receiver-validation-01/actual-controls/test_actual_post_ack_sigterm_retains_fact_and_vetoes_operation/receiver/ack.json",
+    "schema": "TRNM-W1-OBSERVED-SNAPSHOT1",
+    "sha256": "8521c0552592903b5a1d29557dd775f3cfecb51dc9f67a2587561a44c6434688"
+  },
+  "operation_canceled": true,
+  "schema": "TRNM-W1-OPERATION-CANCELLATION1",
+  "scope": "independent-receiver"
+}

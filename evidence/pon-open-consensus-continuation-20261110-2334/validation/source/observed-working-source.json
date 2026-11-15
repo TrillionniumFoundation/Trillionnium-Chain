@@ -1,0 +1,87 @@
+{
+  "schema": "pon-continuation-observed-working-source-v1",
+  "parent_commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "qualification": "HOLD_NO_GO",
+  "whole_tree_execution_claim": false,
+  "note": "File-level snapshot after retained local controls; source-scoped receipts distinguish exact committed validation separately. No new all-workspace qualification.",
+  "changed_files": [
+    {
+      "path": ".github/workflows/pon-w1-work-security.yml",
+      "bytes": 48008,
+      "git_blob": "384f1cbe38be7b688e49f4a55c1246e9d3ec4005",
+      "sha256": "d6bfeef7f57e311fa904d6fd55fb77474e887c443d52a1ef858bd611111c49b7"
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "bytes": 197098,
+      "git_blob": "9781fc7225c50b3a8710ce10a1adba332c2617df",
+      "sha256": "ec51f57a21432c05a296ac64df6483dd96de6a1682d284cf5055eded3b7d4c2d"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "bytes": 855655,
+      "git_blob": "a5ca681129a34363def3dcacf013ec05672e3b58",
+      "sha256": "17c4f00efbab6b5a3138f72beda07dac87b2438797a8c2a3aef47b001d7818f0"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/NATIVE_EVALUATION_QUORUM_V2.md",
+      "bytes": 17123,
+      "git_blob": "b936ccd704117a7ac9590eaec8bed8246cd19ebe",
+      "sha256": "26c3bd0575ca55c2f6cbd52ee3a05ef9275973b58d75d76330dc89237c4e58fb"
+    },
+    {
+      "path": "docs/research/PON_W1_LIFECYCLE_COST_V4.md",
+      "bytes": 9706,
+      "git_blob": "a71b6e3ce2ff056c3aa4676f563feb1407e5ad1d",
+      "sha256": "bd27996ec12398e5fdf56cb683f18762653845aa6a9defca61a15b36a262443c"
+    },
+    {
+      "path": "scripts/ci/test_w1_factorial_native_gate.py",
+      "bytes": 9313,
+      "git_blob": "f48a131c4167222a3e0f020ad8822a46e27840eb",
+      "sha256": "0bd5c2e38518f2f6b0100d31a3cd22d1931d23f96bdefc2c7ddee9666dd7a0dc"
+    },
+    {
+      "path": "scripts/ci/test_w1_lifecycle_cost_v4.py",
+      "bytes": 15637,
+      "git_blob": "424f99c2aaa52b589b41ea9f97df241b7c8ed757",
+      "sha256": "61ae4d948ade903b55c9fd150d4454a4b092c20e274c93dcdf22831d979d6cde"
+    },
+    {
+      "path": "scripts/pon_w1_lifecycle_cost_v4.py",
+      "bytes": 25902,
+      "git_blob": "6e9d17012d01f6610f0edd422b86297d4f9f8189",
+      "sha256": "1d0fb8a0b0d0d3ba9be398801488e90feea7364c6adf5d805e06aa2c1811381b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+      "bytes": 33869,
+      "git_blob": "662ec394bffc84f568bca0f117456aa13f03e8b5",
+      "sha256": "cb2d527090ad4a2cf119a778b9854bde35fc12ee8e82f7f7d3218fc91fd5eca1"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs",
+      "bytes": 14565,
+      "git_blob": "e0c9345b649d138bc239b9c698c27ce124bd1572",
+      "sha256": "2a5bad8cd045ffd65a18a811c813cd948feef130d975eb6b34acb334f43d4757"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs",
+      "bytes": 26480,
+      "git_blob": "45dc4d2a8d88c61af6e978034b29792c91d10b65",
+      "sha256": "dc49f299bf6a88088853cd3bea04b762ad4c1606161d55f02efeb21d844e5a93"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "bytes": 436263,
+      "git_blob": "4fe60f533f051cd1a68c4358e96d210d8f7d32c0",
+      "sha256": "4f42c35ed3080ae0641433a5a725fb68eb7d19ce1bbbfe82dd20be1dd0fb0fa4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "bytes": 401209,
+      "git_blob": "af04938d292dd28bb52d75a22fed2e45dff8e78c",
+      "sha256": "6eda639f4db34ed8f6673100dc4c57da12aa0d1798e24a8bc7ac0120f0f49786"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "schema": "pon-credit-remote-apply-failure-v1",
+  "job_id": "1a1bb15c0c3-13c47-7c",
+  "stage": "git apply --check",
+  "base_commit": "8d5389748873dad6e296d17f2ff20483b5afa5bc",
+  "exit_code": 1,
+  "source_files_modified": false,
+  "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-credit-envelope-20261108-f7e62\", \"remote_policy_mutated\": false}\n",
+  "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 74, in <module>\n  File \"<stdin>\", line 50, in execute\nRuntimeError: {\"command\": [\"git\", \"apply\", \"--check\", \"-\"], \"exit\": 1, \"stdout\": \"\", \"stderr\": \"error: \\u6253\\u8865\\u4e01\\u5931\\u8d25\\uff1ascripts/ci/check_ci_contract.py:141\\nerror: scripts/ci/check_ci_contract.py\\uff1a\\u8865\\u4e01\\u672a\\u5e94\\u7528\\nerror: \\u6253\\u8865\\u4e01\\u5931\\u8d25\\uff1ascripts/ci/test_ci_contract.py:18\\nerror: scripts/ci/test_ci_contract.py\\uff1a\\u8865\\u4e01\\u672a\\u5e94\\u7528\\n\"}\n"
+}

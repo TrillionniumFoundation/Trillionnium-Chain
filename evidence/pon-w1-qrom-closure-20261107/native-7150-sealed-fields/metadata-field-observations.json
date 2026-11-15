@@ -1,0 +1,281 @@
+{
+  "binary_sha256": "d074b5f006f8f4099d280b5c1f4b9143be1cf00191d678af8b4b0d52de1bc508",
+  "changes": [
+    {
+      "changed_since_previous": {
+        "ctime_nsec": {
+          "after": 229264874,
+          "before": 224264977
+        },
+        "mtime_nsec": {
+          "after": 229264874,
+          "before": 223264998
+        }
+      },
+      "stage": "after_write_at"
+    },
+    {
+      "changed_since_previous": {},
+      "stage": "after_shrink"
+    },
+    {
+      "changed_since_previous": {},
+      "stage": "after_grow"
+    },
+    {
+      "changed_since_previous": {},
+      "stage": "after_chmod_add_exec"
+    },
+    {
+      "changed_since_previous": {
+        "ctime_nsec": {
+          "after": 249264461,
+          "before": 229264874
+        }
+      },
+      "stage": "after_chmod_same_mode"
+    },
+    {
+      "changed_since_previous": {
+        "ctime_nsec": {
+          "after": 254264358,
+          "before": 249264461
+        },
+        "mtime": {
+          "after": 1,
+          "before": 1794061673
+        },
+        "mtime_nsec": {
+          "after": 0,
+          "before": 229264874
+        }
+      },
+      "stage": "after_set_modified"
+    },
+    {
+      "changed_since_previous": {
+        "ctime_nsec": {
+          "after": 259264254,
+          "before": 254264358
+        },
+        "mode": {
+          "after": 33152,
+          "before": 33024
+        }
+      },
+      "stage": "after_chmod_nonexec_mode"
+    }
+  ],
+  "observations": [
+    {
+      "kind": "profile",
+      "memfd_flags": 11,
+      "pause_ms_between_operations": 5,
+      "required_seals": 47
+    },
+    {
+      "bytes_equal": true,
+      "ctime": 1794061673,
+      "ctime_nsec": 224264977,
+      "device": 1,
+      "gid": 1000,
+      "inode": 5757156,
+      "kind": "snapshot",
+      "mode": 33024,
+      "mtime": 1794061673,
+      "mtime_nsec": 223264998,
+      "seals": 47,
+      "size": 28,
+      "stage": "validated",
+      "uid": 1000
+    },
+    {
+      "errno": 1,
+      "kind": "operation",
+      "name": "write_at",
+      "ok": false
+    },
+    {
+      "bytes_equal": true,
+      "ctime": 1794061673,
+      "ctime_nsec": 229264874,
+      "device": 1,
+      "gid": 1000,
+      "inode": 5757156,
+      "kind": "snapshot",
+      "mode": 33024,
+      "mtime": 1794061673,
+      "mtime_nsec": 229264874,
+      "seals": 47,
+      "size": 28,
+      "stage": "after_write_at",
+      "uid": 1000
+    },
+    {
+      "errno": 1,
+      "kind": "operation",
+      "name": "shrink",
+      "ok": false
+    },
+    {
+      "bytes_equal": true,
+      "ctime": 1794061673,
+      "ctime_nsec": 229264874,
+      "device": 1,
+      "gid": 1000,
+      "inode": 5757156,
+      "kind": "snapshot",
+      "mode": 33024,
+      "mtime": 1794061673,
+      "mtime_nsec": 229264874,
+      "seals": 47,
+      "size": 28,
+      "stage": "after_shrink",
+      "uid": 1000
+    },
+    {
+      "errno": 1,
+      "kind": "operation",
+      "name": "grow",
+      "ok": false
+    },
+    {
+      "bytes_equal": true,
+      "ctime": 1794061673,
+      "ctime_nsec": 229264874,
+      "device": 1,
+      "gid": 1000,
+      "inode": 5757156,
+      "kind": "snapshot",
+      "mode": 33024,
+      "mtime": 1794061673,
+      "mtime_nsec": 229264874,
+      "seals": 47,
+      "size": 28,
+      "stage": "after_grow",
+      "uid": 1000
+    },
+    {
+      "errno": 1,
+      "kind": "operation",
+      "name": "chmod_add_exec",
+      "ok": false
+    },
+    {
+      "bytes_equal": true,
+      "ctime": 1794061673,
+      "ctime_nsec": 229264874,
+      "device": 1,
+      "gid": 1000,
+      "inode": 5757156,
+      "kind": "snapshot",
+      "mode": 33024,
+      "mtime": 1794061673,
+      "mtime_nsec": 229264874,
+      "seals": 47,
+      "size": 28,
+      "stage": "after_chmod_add_exec",
+      "uid": 1000
+    },
+    {
+      "errno": null,
+      "kind": "operation",
+      "name": "chmod_same_mode",
+      "ok": true
+    },
+    {
+      "bytes_equal": true,
+      "ctime": 1794061673,
+      "ctime_nsec": 249264461,
+      "device": 1,
+      "gid": 1000,
+      "inode": 5757156,
+      "kind": "snapshot",
+      "mode": 33024,
+      "mtime": 1794061673,
+      "mtime_nsec": 229264874,
+      "seals": 47,
+      "size": 28,
+      "stage": "after_chmod_same_mode",
+      "uid": 1000
+    },
+    {
+      "errno": null,
+      "kind": "operation",
+      "name": "set_modified",
+      "ok": true
+    },
+    {
+      "bytes_equal": true,
+      "ctime": 1794061673,
+      "ctime_nsec": 254264358,
+      "device": 1,
+      "gid": 1000,
+      "inode": 5757156,
+      "kind": "snapshot",
+      "mode": 33024,
+      "mtime": 1,
+      "mtime_nsec": 0,
+      "seals": 47,
+      "size": 28,
+      "stage": "after_set_modified",
+      "uid": 1000
+    },
+    {
+      "errno": null,
+      "kind": "operation",
+      "name": "chmod_nonexec_mode",
+      "ok": true
+    },
+    {
+      "bytes_equal": true,
+      "ctime": 1794061673,
+      "ctime_nsec": 259264254,
+      "device": 1,
+      "gid": 1000,
+      "inode": 5757156,
+      "kind": "snapshot",
+      "mode": 33152,
+      "mtime": 1,
+      "mtime_nsec": 0,
+      "seals": 47,
+      "size": 28,
+      "stage": "after_chmod_nonexec_mode",
+      "uid": 1000
+    }
+  ],
+  "records": [
+    {
+      "command": [
+        "rustc",
+        "--edition=2021",
+        "-D",
+        "warnings",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150-sealed-fields/field_probe_metadata.rs",
+        "--extern",
+        "rustix=/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/debug/deps/librustix-2ddee526af794e19.rlib",
+        "-L",
+        "dependency=/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/debug/deps",
+        "-o",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150-sealed-fields/metadata-field-probe"
+      ],
+      "elapsed_seconds": 0.4656588160432875,
+      "exit_code": 0,
+      "started_utc": "2026-11-07T14:27:52.756441+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150-sealed-fields/metadata-field-probe"
+      ],
+      "elapsed_seconds": 0.06462280196137726,
+      "exit_code": 0,
+      "started_utc": "2026-11-07T14:27:53.222757+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "db40bb16d4a8cac84c28bd0b945ab6cbd440ad87f20764517f58fad8223244e5"
+    }
+  ],
+  "source_clone_modified": false,
+  "source_sha256": "378e2d0289444396b99de70af46bf160e8e6ed0467bfd36cb04f61911cf8678b"
+}

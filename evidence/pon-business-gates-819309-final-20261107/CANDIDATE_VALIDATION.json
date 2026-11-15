@@ -1,0 +1,393 @@
+{
+  "schema": "trnm-admission-candidate-local-validation-v1",
+  "executed_commit": "ffcb687b43843ec92b3170f8841f92a3dd0a4d3d",
+  "executed_tree": "73dcb40e7021bb7f18d1ddb75fd26a53d0e1201a",
+  "source_control_methods": 666,
+  "source_control_suites": 17,
+  "source_controls_passed": true,
+  "library_exact_totals": {
+    "passed": 16,
+    "failed": 0,
+    "ignored": 0
+  },
+  "library_exact_results": [
+    {
+      "selector": "store::legacy_admission_root_tests::ordinary_admission_final_root_rechecks_warm_active_state_and_claim",
+      "passed": true,
+      "outer_summary": {
+        "line": 7,
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 1204,
+        "seconds": 4.35
+      },
+      "raw": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-01.log",
+        "bytes": 456,
+        "sha256": "85c75239df71495cd78af794d558e458c458ff9d1e041c58c801ac006b9057fd"
+      }
+    },
+    {
+      "selector": "store::legacy_reorg_root_tests::legacy_reorg_root_keeps_signed_history_cursor_and_cold_publication",
+      "passed": true,
+      "outer_summary": {
+        "line": 7,
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 1204,
+        "seconds": 1.2
+      },
+      "raw": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-02.log",
+        "bytes": 452,
+        "sha256": "39f772c4631d0b4e740a7335141d4a3c3ffc5635d58b626ce81ec9723ce4054f"
+      }
+    },
+    {
+      "selector": "store::legacy_reorg_root_tests::legacy_reorg_root_rechecks_untouched_rows_root_claims_and_original_errors",
+      "passed": true,
+      "outer_summary": {
+        "line": 7,
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 1204,
+        "seconds": 0.67
+      },
+      "raw": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-03.log",
+        "bytes": 459,
+        "sha256": "d244d14953302cd932813384d7bbb20d2e096b2622de580ee0b591f3caceb9db"
+      }
+    },
+    {
+      "selector": "store::legacy_reorg_root_tests::legacy_reorg_root_keeps_all_tail_cancellation_boundaries_and_rollback",
+      "passed": true,
+      "outer_summary": {
+        "line": 7,
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 1204,
+        "seconds": 0.13
+      },
+      "raw": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-04.log",
+        "bytes": 455,
+        "sha256": "d3ac5a83a89956b0f6088e1895ea767d559a653e81a58b46e613126fe33ede08"
+      }
+    },
+    {
+      "selector": "store::legacy_reorg_root_tests::legacy_reorg_root_never_selects_the_growth_or_authenticated_relation",
+      "passed": true,
+      "outer_summary": {
+        "line": 7,
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 1204,
+        "seconds": 0.3
+      },
+      "raw": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-05.log",
+        "bytes": 454,
+        "sha256": "df67d263fc6766820d73913ffa479dc4cca0ba6feeefedd1216d849835cc7ae3"
+      }
+    },
+    {
+      "selector": "store::legacy_reorg_root_tests::legacy_reorg_root_preserves_pq_v2_and_v6_state_validation",
+      "passed": true,
+      "outer_summary": {
+        "line": 7,
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 1204,
+        "seconds": 2.43
+      },
+      "raw": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-06.log",
+        "bytes": 443,
+        "sha256": "5254a9e710a8a0f04c5c7e2abb7a3acf3ebfe1261532e5c9e33865b9f9619d1a"
+      }
+    },
+    {
+      "selector": "store::legacy_admission_readback::tests::legacy_pair_matches_full_replays_snapshot_cadence_and_cold_publication",
+      "passed": true,
+      "outer_summary": {
+        "line": 8,
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 1204,
+        "seconds": 179.64
+      },
+      "raw": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-07.log",
+        "bytes": 609,
+        "sha256": "4c119d6f5e207c2f03f39c78bde48bd2c0981694d671f25cb65f831dae075739"
+      }
+    },
+    {
+      "selector": "store::legacy_admission_readback::tests::legacy_pair_rereads_snapshot_and_every_intermediate_delta_after_warm_use",
+      "passed": true,
+      "outer_summary": {
+        "line": 7,
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 1204,
+        "seconds": 0.93
+      },
+      "raw": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-08.log",
+        "bytes": 467,
+        "sha256": "8aaf0c28a1a161e6837059e33537c7af6be9931370387629e7d6de22f2f88236"
+      }
+    },
+    {
+      "selector": "store::legacy_admission_readback::tests::legacy_pair_child_snapshot_and_active_parent_keep_distinct_sql_sources",
+      "passed": true,
+      "outer_summary": {
+        "line": 7,
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 1204,
+        "seconds": 0.93
+      },
+      "raw": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-09.log",
+        "bytes": 465,
+        "sha256": "a2cb4a1a2f23a10e820e54f6cabd68272f4189e578aad4d0ee715e37ba4a61e8"
+      }
+    },
+    {
+      "selector": "store::legacy_admission_readback::tests::legacy_pair_ineligible_schema_keeps_original_reads_and_refuses_bad_delta_writes",
+      "passed": true,
+      "outer_summary": {
+        "line": 7,
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 1204,
+        "seconds": 0.91
+      },
+      "raw": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-10.log",
+        "bytes": 474,
+        "sha256": "c5f1b710a49d3f1d5e418061f9750d32b30058f755d4da158ba768741b1d5124"
+      }
+    },
+    {
+      "selector": "store::legacy_admission_readback::tests::legacy_pair_selection_excludes_authenticated_and_growth_state_relations",
+      "passed": true,
+      "outer_summary": {
+        "line": 7,
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 1204,
+        "seconds": 0.27
+      },
+      "raw": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-11.log",
+        "bytes": 466,
+        "sha256": "6df5a0edf8af8a7c7ed812063a7d277a74f03848886d8e0b71d6fc569d5e1ddc"
+      }
+    },
+    {
+      "selector": "store::legacy_admission_readback::tests::legacy_pair_cancellation_at_every_commit_callback_rolls_back_all_rows",
+      "passed": true,
+      "outer_summary": {
+        "line": 7,
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 1204,
+        "seconds": 1.26
+      },
+      "raw": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-12.log",
+        "bytes": 464,
+        "sha256": "056185733c7b87f31d6cc6ae212227eef20ca980c079f8bcd19717f4f13edd39"
+      }
+    },
+    {
+      "selector": "store::legacy_admission_readback::tests::legacy_pair_rejects_writes_ddl_and_transaction_aba_through_last_callback",
+      "passed": true,
+      "outer_summary": {
+        "line": 7,
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 1204,
+        "seconds": 8.64
+      },
+      "raw": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-13.log",
+        "bytes": 467,
+        "sha256": "937a537ff097422b285863c6f35756d67291928a68385ce3621d51f1796cc70a"
+      }
+    },
+    {
+      "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "passed": true,
+      "outer_summary": {
+        "line": 13,
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 1204,
+        "seconds": 47.39
+      },
+      "raw": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-14.log",
+        "bytes": 70665,
+        "sha256": "277bc24b2b2222ee32c75243d05d4ce8d85b074bfd76a8406a8a13a03d515084"
+      }
+    },
+    {
+      "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+      "passed": true,
+      "outer_summary": {
+        "line": 10,
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 1204,
+        "seconds": 29.22
+      },
+      "raw": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-15.log",
+        "bytes": 36691,
+        "sha256": "5585c5cb1629b4459ac5f22b84274992397186d8529d2ff1a26359875a28d30d"
+      }
+    },
+    {
+      "selector": "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+      "passed": true,
+      "outer_summary": {
+        "line": 7,
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 1204,
+        "seconds": 16.62
+      },
+      "raw": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-16.log",
+        "bytes": 465,
+        "sha256": "0ae5904f08f83d2a41d656081e7c45512e8de28b254da71f7c3848df8fe8bcd3"
+      }
+    }
+  ],
+  "history_separate_totals": {
+    "passed": 0,
+    "failed": 1,
+    "ignored": 0
+  },
+  "history_result": {
+    "selector": "test_full_transaction_pages_use_byte_limits_and_recover_all_native_state",
+    "native_effective_exit_code": 101,
+    "required_reader_exit_code": 1,
+    "actual_running_paths": [
+      "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/admission-fence-target/debug/deps/native_node-20dcaaae4a5626ba"
+    ],
+    "running_matches_unique_inventory_binary": true,
+    "all_summaries": [
+      {
+        "line": 19,
+        "status": "FAILED",
+        "passed": 0,
+        "failed": 1,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 30,
+        "seconds": 7.19
+      }
+    ],
+    "outer_summary": {
+      "line": 19,
+      "status": "FAILED",
+      "passed": 0,
+      "failed": 1,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 30,
+      "seconds": 7.19
+    },
+    "abnormal_process_diagnostics": [],
+    "supervised_interruption": false,
+    "verified_named_pass": false,
+    "raw": {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/history-supplement-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/history-supplement/records/history-integration-exact.log",
+      "bytes": 1238,
+      "sha256": "2cff66720472e2e6587c69a2b857f4755beec7168cbfce5872e0834688d21ca7"
+    },
+    "child_or_ambiguous_summaries_are_not_outer_totals": true
+  },
+  "actual_inventory": {
+    "integration_targets": 65,
+    "cell_tests": 12,
+    "library_tests": 1205,
+    "library_ignored": 33,
+    "all_native_test_targets": 67,
+    "native_test_inventory_total": 1574,
+    "native_default_body_count": 1517,
+    "native_ignored_total": 57
+  },
+  "source_receipt_sha256": "1bf17f697e533ba4608a576fd5bd7b051980a0887d5e5daf1245ad1b63ed6721",
+  "tracked_entries": 14593,
+  "tracked_bytes": 1642289032,
+  "main_manifest": {
+    "path": "candidate/native-c2/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/manifest.json",
+    "sha256": "5c6a5e3ef49c9eb162b9f7aafb729c59da5de3311bf84e88e91b4c1f67643f2a"
+  },
+  "history_manifest": {
+    "path": "candidate/native-c2/admission-fence-followup-819309-20261107/history-supplement-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/history-supplement/manifest.json",
+    "sha256": "9b9b4dbc86519ed3e2fe4099baaed374d1afc69584de1680036ace061be3268c"
+  },
+  "closure": {
+    "path": "candidate/native-c2/admission-fence-followup-819309-20261107/native-validation/closure-ffcb687b43843ec92b3170f8841f92a3dd0a4d3d-v1.json",
+    "sha256": "eacf57023fa949cd96818e9509b94118f4f7dadf83e79bbff64a5468dfcf5aa4"
+  },
+  "full_package_rerun": false,
+  "original_business_gates_passed": false,
+  "qualification": "HOLD",
+  "native_execution_on_archive_child": false
+}

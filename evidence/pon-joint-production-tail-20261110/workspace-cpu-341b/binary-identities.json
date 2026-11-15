@@ -1,0 +1,30 @@
+[
+  {
+    "artifact_id": 13773219591,
+    "source": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+    "kind": "head",
+    "node": "65497a5afd50708bd16c211e5b94e42479b7df19c3589053850ca5363db5a38e",
+    "m06": "9e710118adfafc31962d732ed683c042aac60397666acb669ef5e69286e4ade5"
+  },
+  {
+    "artifact_id": 13773623783,
+    "source": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+    "kind": "head",
+    "node": "20f195665c3188313333fd9b9c1fdb07299b3ff9c87df8862a1deaead8c2e7b7",
+    "m06": "ad7c52c2fe2b5a57f8469fa25238bf7a36ed55b545160c21cb973f71af1fa20e"
+  },
+  {
+    "artifact_id": 13774990553,
+    "source": "a040a36e5a16822e56cbed29a6dce31b8c265f67",
+    "kind": "prospective-merge",
+    "node": "57f9aa5509b0e247acd1726e6d489f487f27d77f15f886c103472d6a200fc955",
+    "m06": "ad7c52c2fe2b5a57f8469fa25238bf7a36ed55b545160c21cb973f71af1fa20e"
+  },
+  {
+    "artifact_id": 13775195019,
+    "source": "a040a36e5a16822e56cbed29a6dce31b8c265f67",
+    "kind": "prospective-merge",
+    "node": "d838806dc8d0a219cde11aedf2cf82e0b64c8b9c2b27df8804117c58737f8089",
+    "m06": "9e710118adfafc31962d732ed683c042aac60397666acb669ef5e69286e4ade5"
+  }
+]

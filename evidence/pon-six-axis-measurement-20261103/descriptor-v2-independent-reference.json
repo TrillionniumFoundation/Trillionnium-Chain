@@ -1,0 +1,53 @@
+{
+  "base": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "unchanged_functions": [
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "function": "root",
+      "sha256": "0ef14239f1e3a3708be6e8062bbcb4a2cb1ee730667561870c73148ff3e548d8",
+      "byte_identical_to_base": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+      "function": "non_accounts",
+      "sha256": "8818b1e02f3518120cb610f69a85d150f2ccb99e0f455c66586cc1b2cafdf0c7",
+      "byte_identical_to_base": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+      "function": "components",
+      "sha256": "94b935fb4718d849d71a319f5bf16057fe3e62557ac748ece2ee898aeb944294",
+      "byte_identical_to_base": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+      "function": "commitment_with_non_account_root",
+      "sha256": "bb04f2afbf6b90d69b0a558df3706f588bec54b12641b777ab23321b64012bf1",
+      "byte_identical_to_base": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+      "function": "commitment_from_complete_state",
+      "sha256": "18a887d8bf2770379bf63b8a5673141efccd3ad86057beef20a3b60ba2315c61",
+      "byte_identical_to_base": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+      "function": "commitment_from_complete_state_with_lifts",
+      "sha256": "c8b2466a1bc0e14381c9d1c53715442c3cc75f844d5f83e5ed012d52b9f4f4c8",
+      "byte_identical_to_base": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+      "function": "commitment_from_complete_state_with_root",
+      "sha256": "ba6f19a5a3709e4908202102f3564b53926442f049851cffbacfb16578482d2f",
+      "byte_identical_to_base": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+      "function": "commitment_from_complete_state_with_roots",
+      "sha256": "032ed3ace5cf2fe527e5db3c482d6dc2aaaa768dba016d1987ea7bd77e9bf3ca",
+      "byte_identical_to_base": true
+    }
+  ]
+}

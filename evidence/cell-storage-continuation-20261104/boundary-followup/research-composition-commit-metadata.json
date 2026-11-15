@@ -1,0 +1,40 @@
+{
+  "sha": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+  "node_id": "C_kwDOTty1_doAKDU2OGM5NzU5MGVlZTllOTVlNmI1MDIxYTQ5ZmQwYTVkMjA3MTZmYTc",
+  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+  "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+  "author": {
+    "name": "Tomasrgbsf",
+    "email": "273673612+Tomasrgbsf@users.noreply.github.com",
+    "date": "2026-11-05T00:56:34Z"
+  },
+  "committer": {
+    "name": "Tomasrgbsf",
+    "email": "273673612+Tomasrgbsf@users.noreply.github.com",
+    "date": "2026-11-05T00:56:34Z"
+  },
+  "tree": {
+    "sha": "ea600542130341144d697776d92048988d44572b",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/ea600542130341144d697776d92048988d44572b"
+  },
+  "message": "fix(cell): preserve concurrent research while integrating storage boundary checks\n\nCarry strict tensor maps, actual egress exhaustion, permanent retention pre-admission and the original physical-writer deadline. Preserve the historical migration and W1/DAA research source and evidence. Component receipts remain bound to their tested source; Node runtime and composed release gates remain HOLD.",
+  "parents": [
+    {
+      "sha": "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c"
+    },
+    {
+      "sha": "20cdab3b882c942f28c719a74b3fd22b1837f9fa",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/20cdab3b882c942f28c719a74b3fd22b1837f9fa",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/20cdab3b882c942f28c719a74b3fd22b1837f9fa"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

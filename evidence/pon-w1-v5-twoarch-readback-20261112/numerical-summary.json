@@ -1,0 +1,2765 @@
+{
+  "architectures": {
+    "arm64": {
+      "control_cells": 22,
+      "cost_cells": 44,
+      "fixed_arm_rows_in_cost_cells": 748,
+      "manifest_identity": {
+        "bytes": 6065080,
+        "sha256": "277f0b69972003c52c679731c2631704c050e41d92d02e865cbb4d30800c3538"
+      },
+      "outer_execution": {
+        "commands_without_wait4_usage": 0,
+        "elapsed_ns": 535854410418,
+        "failed_commands": 0,
+        "host": {
+          "allowed_cpus": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cgroup": {
+            "cpu.max": {
+              "unavailable": "FileNotFoundError"
+            },
+            "cpuset.cpus.effective": "0-3",
+            "memory.max": {
+              "unavailable": "FileNotFoundError"
+            },
+            "memory.swap.max": {
+              "unavailable": "FileNotFoundError"
+            },
+            "pids.max": {
+              "unavailable": "FileNotFoundError"
+            }
+          },
+          "logical_cpus": 4,
+          "machine": "aarch64",
+          "system": "Linux",
+          "uname": [
+            "Linux",
+            "runnervmkb2gk",
+            "7.0.0-1017-azure",
+            "#17~24.04.1-Ubuntu SMP PREEMPT Thu Sep 24 19:06:39 UTC 2026",
+            "aarch64",
+            "aarch64"
+          ]
+        },
+        "observed_wait4_cpu_ns_sum": 205653471000,
+        "observer_system_ns": 75472280000,
+        "observer_user_ns": 253338703000
+      },
+      "readback_identity": {
+        "bytes": 2149047,
+        "sha256": "86edb9c1d324ad6a67470dc052f4c707db29e96158fdcc530ac0a17f0cd73191"
+      },
+      "t1_h8": [
+        {
+          "class": "zero",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 7.92073,
+            "strategy": "blocked-zero"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 4.733355328125,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.17722075,
+                "numerator_ns": 715342128
+              },
+              "paid_setup": {
+                "cpu_ns": 1079592,
+                "wall_ns": 1078678
+              },
+              "physical_attempts": 2231,
+              "producer_total": {
+                "cpu_ns": 715342128,
+                "wall_ns": 715224153
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.175377390625,
+                "numerator_ns": 715224153
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.168652,
+                "numerator_ns": 714793728
+              },
+              "paid_setup": {
+                "cpu_ns": 147536,
+                "wall_ns": 146805
+              },
+              "physical_attempts": 2231,
+              "producer_total": {
+                "cpu_ns": 714793728,
+                "wall_ns": 714630575
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.166102734375,
+                "numerator_ns": 714630575
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.16374375,
+                "numerator_ns": 714479600
+              },
+              "paid_setup": {
+                "cpu_ns": 106592,
+                "wall_ns": 105795
+              },
+              "physical_attempts": 2231,
+              "producer_total": {
+                "cpu_ns": 714479600,
+                "wall_ns": 714306825
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.161044140625,
+                "numerator_ns": 714306825
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 13.591741,
+                "numerator_ns": 869871424
+              },
+              "paid_setup": {
+                "cpu_ns": 106088,
+                "wall_ns": 105509
+              },
+              "physical_attempts": 2312,
+              "producer_total": {
+                "cpu_ns": 869871424,
+                "wall_ns": 302934741
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 81,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 4.733355328125,
+                "numerator_ns": 302934741
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "rank-one",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 7.911629375,
+            "strategy": "prepared-structured"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 4.344901265625,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.988479125,
+                "numerator_ns": 575262664
+              },
+              "paid_setup": {
+                "cpu_ns": 1099992,
+                "wall_ns": 1098804
+              },
+              "physical_attempts": 1794,
+              "producer_total": {
+                "cpu_ns": 575262664,
+                "wall_ns": 575144706
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.98663603125,
+                "numerator_ns": 575144706
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.005487875,
+                "numerator_ns": 576351224
+              },
+              "paid_setup": {
+                "cpu_ns": 2205840,
+                "wall_ns": 2204611
+              },
+              "physical_attempts": 1794,
+              "producer_total": {
+                "cpu_ns": 576351224,
+                "wall_ns": 576234495
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.003663984375,
+                "numerator_ns": 576234495
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.9833895,
+                "numerator_ns": 574936928
+              },
+              "paid_setup": {
+                "cpu_ns": 376432,
+                "wall_ns": 375629
+              },
+              "physical_attempts": 1794,
+              "producer_total": {
+                "cpu_ns": 574936928,
+                "wall_ns": 574826128
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.98165825,
+                "numerator_ns": 574826128
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.086766,
+                "numerator_ns": 709553024
+              },
+              "paid_setup": {
+                "cpu_ns": 383192,
+                "wall_ns": 382213
+              },
+              "physical_attempts": 1884,
+              "producer_total": {
+                "cpu_ns": 709553024,
+                "wall_ns": 278073681
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 90,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 4.344901265625,
+                "numerator_ns": 278073681
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "rank-two-left",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 8.965080625,
+            "strategy": "prepared-generic"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 4.758563296875,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.18871825,
+                "numerator_ns": 652077968
+              },
+              "paid_setup": {
+                "cpu_ns": 1058680,
+                "wall_ns": 1058075
+              },
+              "physical_attempts": 2033,
+              "producer_total": {
+                "cpu_ns": 652077968,
+                "wall_ns": 651965455
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.186960234375,
+                "numerator_ns": 651965455
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.204508625,
+                "numerator_ns": 653088552
+              },
+              "paid_setup": {
+                "cpu_ns": 2137168,
+                "wall_ns": 2132702
+              },
+              "physical_attempts": 2033,
+              "producer_total": {
+                "cpu_ns": 653088552,
+                "wall_ns": 652954452
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.2024133125,
+                "numerator_ns": 652954452
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.182476375,
+                "numerator_ns": 651678488
+              },
+              "paid_setup": {
+                "cpu_ns": 481728,
+                "wall_ns": 480608
+              },
+              "physical_attempts": 2033,
+              "producer_total": {
+                "cpu_ns": 651678488,
+                "wall_ns": 651549902
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.18046721875,
+                "numerator_ns": 651549902
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 12.520022125,
+                "numerator_ns": 801281416
+              },
+              "paid_setup": {
+                "cpu_ns": 486048,
+                "wall_ns": 485512
+              },
+              "physical_attempts": 2136,
+              "producer_total": {
+                "cpu_ns": 801281416,
+                "wall_ns": 304548051
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 103,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 4.758563296875,
+                "numerator_ns": 304548051
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "rank-four-left",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 7.45403425,
+            "strategy": "prepared-generic"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 3.960738984375,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.451730125,
+                "numerator_ns": 540910728
+              },
+              "paid_setup": {
+                "cpu_ns": 1083520,
+                "wall_ns": 1082506
+              },
+              "physical_attempts": 1688,
+              "producer_total": {
+                "cpu_ns": 540910728,
+                "wall_ns": 540790350
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.44984921875,
+                "numerator_ns": 540790350
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.4699115,
+                "numerator_ns": 542074336
+              },
+              "paid_setup": {
+                "cpu_ns": 2145584,
+                "wall_ns": 2144010
+              },
+              "physical_attempts": 1688,
+              "producer_total": {
+                "cpu_ns": 542074336,
+                "wall_ns": 541964669
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.468197953125,
+                "numerator_ns": 541964669
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.450196375,
+                "numerator_ns": 540812568
+              },
+              "paid_setup": {
+                "cpu_ns": 595240,
+                "wall_ns": 594356
+              },
+              "physical_attempts": 1688,
+              "producer_total": {
+                "cpu_ns": 540812568,
+                "wall_ns": 540721534
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.44877396875,
+                "numerator_ns": 540721534
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.50233925,
+                "numerator_ns": 672149712
+              },
+              "paid_setup": {
+                "cpu_ns": 600176,
+                "wall_ns": 599405
+              },
+              "physical_attempts": 1792,
+              "producer_total": {
+                "cpu_ns": 672149712,
+                "wall_ns": 253487295
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 104,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 3.960738984375,
+                "numerator_ns": 253487295
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "rank-eight-left",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 10.239467125,
+            "strategy": "prepared-generic"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 5.72015615625,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.63953575,
+                "numerator_ns": 744930288
+              },
+              "paid_setup": {
+                "cpu_ns": 1086120,
+                "wall_ns": 1085340
+              },
+              "physical_attempts": 2319,
+              "producer_total": {
+                "cpu_ns": 744930288,
+                "wall_ns": 744795803
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.637434421875,
+                "numerator_ns": 744795803
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.638227375,
+                "numerator_ns": 744846552
+              },
+              "paid_setup": {
+                "cpu_ns": 2129928,
+                "wall_ns": 2129054
+              },
+              "physical_attempts": 2319,
+              "producer_total": {
+                "cpu_ns": 744846552,
+                "wall_ns": 744686735
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.635730234375,
+                "numerator_ns": 744686735
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.61833175,
+                "numerator_ns": 743573232
+              },
+              "paid_setup": {
+                "cpu_ns": 830704,
+                "wall_ns": 829856
+              },
+              "physical_attempts": 2319,
+              "producer_total": {
+                "cpu_ns": 743573232,
+                "wall_ns": 743421751
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.615964859375,
+                "numerator_ns": 743421751
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 14.131399875,
+                "numerator_ns": 904409592
+              },
+              "paid_setup": {
+                "cpu_ns": 831656,
+                "wall_ns": 830514
+              },
+              "physical_attempts": 2412,
+              "producer_total": {
+                "cpu_ns": 904409592,
+                "wall_ns": 366089994
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 93,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 5.72015615625,
+                "numerator_ns": 366089994
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "rank-four-right",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 9.305392125,
+            "strategy": "prepared-generic"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 4.83860653125,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.563185,
+                "numerator_ns": 676043840
+              },
+              "paid_setup": {
+                "cpu_ns": 1092504,
+                "wall_ns": 1091697
+              },
+              "physical_attempts": 2105,
+              "producer_total": {
+                "cpu_ns": 676043840,
+                "wall_ns": 675912756
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.5611368125,
+                "numerator_ns": 675912756
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.586090125,
+                "numerator_ns": 677509768
+              },
+              "paid_setup": {
+                "cpu_ns": 2165576,
+                "wall_ns": 2164090
+              },
+              "physical_attempts": 2105,
+              "producer_total": {
+                "cpu_ns": 677509768,
+                "wall_ns": 677409766
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.58452759375,
+                "numerator_ns": 677409766
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.555926625,
+                "numerator_ns": 675579304
+              },
+              "paid_setup": {
+                "cpu_ns": 673168,
+                "wall_ns": 672013
+              },
+              "physical_attempts": 2105,
+              "producer_total": {
+                "cpu_ns": 675579304,
+                "wall_ns": 675488989
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.554515453125,
+                "numerator_ns": 675488989
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 12.9746655,
+                "numerator_ns": 830378592
+              },
+              "paid_setup": {
+                "cpu_ns": 680168,
+                "wall_ns": 679066
+              },
+              "physical_attempts": 2208,
+              "producer_total": {
+                "cpu_ns": 830378592,
+                "wall_ns": 309670818
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 103,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 4.83860653125,
+                "numerator_ns": 309670818
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "rank-nine-left",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 8.56649825,
+            "strategy": "prepared-generic"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 5.28715540625,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.726684375,
+                "numerator_ns": 622507800
+              },
+              "paid_setup": {
+                "cpu_ns": 1090984,
+                "wall_ns": 1090298
+              },
+              "physical_attempts": 1941,
+              "producer_total": {
+                "cpu_ns": 622507800,
+                "wall_ns": 622374920
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.724608125,
+                "numerator_ns": 622374920
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.749727875,
+                "numerator_ns": 623982584
+              },
+              "paid_setup": {
+                "cpu_ns": 2127008,
+                "wall_ns": 2132884
+              },
+              "physical_attempts": 1941,
+              "producer_total": {
+                "cpu_ns": 623982584,
+                "wall_ns": 623855585
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.747743515625,
+                "numerator_ns": 623855585
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.73699675,
+                "numerator_ns": 623167792
+              },
+              "paid_setup": {
+                "cpu_ns": 1583672,
+                "wall_ns": 1582915
+              },
+              "physical_attempts": 1941,
+              "producer_total": {
+                "cpu_ns": 623167792,
+                "wall_ns": 623040946
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.73501478125,
+                "numerator_ns": 623040946
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 12.180689125,
+                "numerator_ns": 779564104
+              },
+              "paid_setup": {
+                "cpu_ns": 1580296,
+                "wall_ns": 1579643
+              },
+              "physical_attempts": 2064,
+              "producer_total": {
+                "cpu_ns": 779564104,
+                "wall_ns": 338377946
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 123,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 5.28715540625,
+                "numerator_ns": 338377946
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "full-rank-field",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 9.904761375,
+            "strategy": "prepared-generic"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 5.660447578125,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.238585625,
+                "numerator_ns": 719269480
+              },
+              "paid_setup": {
+                "cpu_ns": 1094592,
+                "wall_ns": 1093793
+              },
+              "physical_attempts": 2240,
+              "producer_total": {
+                "cpu_ns": 719269480,
+                "wall_ns": 719204936
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.237577125,
+                "numerator_ns": 719204936
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.255490625,
+                "numerator_ns": 720351400
+              },
+              "paid_setup": {
+                "cpu_ns": 2197928,
+                "wall_ns": 2196761
+              },
+              "physical_attempts": 2240,
+              "producer_total": {
+                "cpu_ns": 720351400,
+                "wall_ns": 720195424
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.2530535,
+                "numerator_ns": 720195424
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.242227125,
+                "numerator_ns": 719502536
+              },
+              "paid_setup": {
+                "cpu_ns": 1279600,
+                "wall_ns": 1278636
+              },
+              "physical_attempts": 2240,
+              "producer_total": {
+                "cpu_ns": 719502536,
+                "wall_ns": 719327334
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.23948959375,
+                "numerator_ns": 719327334
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 13.700687125,
+                "numerator_ns": 876843976
+              },
+              "paid_setup": {
+                "cpu_ns": 1253984,
+                "wall_ns": 1253404
+              },
+              "physical_attempts": 2340,
+              "producer_total": {
+                "cpu_ns": 876843976,
+                "wall_ns": 362268645
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 100,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 5.660447578125,
+                "numerator_ns": 362268645
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "sparse-diagonal",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 9.4361745,
+            "strategy": "prepared-structured"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 5.198811734375,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.717275875,
+                "numerator_ns": 685905656
+              },
+              "paid_setup": {
+                "cpu_ns": 1072872,
+                "wall_ns": 1072320
+              },
+              "physical_attempts": 2140,
+              "producer_total": {
+                "cpu_ns": 685905656,
+                "wall_ns": 685752751
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.714886734375,
+                "numerator_ns": 685752751
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.7038225,
+                "numerator_ns": 685044640
+              },
+              "paid_setup": {
+                "cpu_ns": 166512,
+                "wall_ns": 165430
+              },
+              "physical_attempts": 2140,
+              "producer_total": {
+                "cpu_ns": 685044640,
+                "wall_ns": 684940456
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.702194625,
+                "numerator_ns": 684940456
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.717083375,
+                "numerator_ns": 685893336
+              },
+              "paid_setup": {
+                "cpu_ns": 1140024,
+                "wall_ns": 1139040
+              },
+              "physical_attempts": 2140,
+              "producer_total": {
+                "cpu_ns": 685893336,
+                "wall_ns": 685747232
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.7148005,
+                "numerator_ns": 685747232
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 13.092215875,
+                "numerator_ns": 837901816
+              },
+              "paid_setup": {
+                "cpu_ns": 1149312,
+                "wall_ns": 1148588
+              },
+              "physical_attempts": 2228,
+              "producer_total": {
+                "cpu_ns": 837901816,
+                "wall_ns": 332723951
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 88,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 5.198811734375,
+                "numerator_ns": 332723951
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "one-zero-rank-one",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 9.7379155,
+            "strategy": "prepared-structured"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 5.233374296875,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.051386625,
+                "numerator_ns": 707288744
+              },
+              "paid_setup": {
+                "cpu_ns": 1075064,
+                "wall_ns": 1074378
+              },
+              "physical_attempts": 2207,
+              "producer_total": {
+                "cpu_ns": 707288744,
+                "wall_ns": 707170065
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.049532265625,
+                "numerator_ns": 707170065
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.035903625,
+                "numerator_ns": 706297832
+              },
+              "paid_setup": {
+                "cpu_ns": 154944,
+                "wall_ns": 154236
+              },
+              "physical_attempts": 2207,
+              "producer_total": {
+                "cpu_ns": 706297832,
+                "wall_ns": 706163540
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.0338053125,
+                "numerator_ns": 706163540
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.040972875,
+                "numerator_ns": 706622264
+              },
+              "paid_setup": {
+                "cpu_ns": 357584,
+                "wall_ns": 356881
+              },
+              "physical_attempts": 2207,
+              "producer_total": {
+                "cpu_ns": 706622264,
+                "wall_ns": 706475433
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.038678640625,
+                "numerator_ns": 706475433
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 13.53886125,
+                "numerator_ns": 866487120
+              },
+              "paid_setup": {
+                "cpu_ns": 360000,
+                "wall_ns": 359210
+              },
+              "physical_attempts": 2304,
+              "producer_total": {
+                "cpu_ns": 866487120,
+                "wall_ns": 334935955
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 97,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 5.233374296875,
+                "numerator_ns": 334935955
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "continuity-maintenance-v1",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 7.4371065,
+            "strategy": "maintenance-limb"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 4.244852609375,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.847335,
+                "numerator_ns": 566229440
+              },
+              "paid_setup": {
+                "cpu_ns": 1106160,
+                "wall_ns": 1105195
+              },
+              "physical_attempts": 1766,
+              "producer_total": {
+                "cpu_ns": 566229440,
+                "wall_ns": 566130596
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.8457905625,
+                "numerator_ns": 566130596
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.857852375,
+                "numerator_ns": 566902552
+              },
+              "paid_setup": {
+                "cpu_ns": 2084768,
+                "wall_ns": 2083695
+              },
+              "physical_attempts": 1766,
+              "producer_total": {
+                "cpu_ns": 566902552,
+                "wall_ns": 566821171
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.856580796875,
+                "numerator_ns": 566821171
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.84521375,
+                "numerator_ns": 566093680
+              },
+              "paid_setup": {
+                "cpu_ns": 1252432,
+                "wall_ns": 1251302
+              },
+              "physical_attempts": 1766,
+              "producer_total": {
+                "cpu_ns": 566093680,
+                "wall_ns": 565977599
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.843399984375,
+                "numerator_ns": 565977599
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 11.040417125,
+                "numerator_ns": 706586696
+              },
+              "paid_setup": {
+                "cpu_ns": 1238032,
+                "wall_ns": 1237205
+              },
+              "physical_attempts": 1880,
+              "producer_total": {
+                "cpu_ns": 706586696,
+                "wall_ns": 271670567
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 114,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 4.244852609375,
+                "numerator_ns": 271670567
+              }
+            }
+          ],
+          "target_index": 1
+        }
+      ],
+      "total_counts": {
+        "attempt_count": 274647,
+        "exhausted_searches": 880,
+        "hit_count": 17845,
+        "miss_count": 256802,
+        "proof_buffers": 170344,
+        "search_count": 17600,
+        "setup_calls": 8976,
+        "speculative_attempts": 3204,
+        "unsupported_setups": 3696,
+        "verifier_calls": 73288
+      }
+    },
+    "x64": {
+      "control_cells": 22,
+      "cost_cells": 44,
+      "fixed_arm_rows_in_cost_cells": 748,
+      "manifest_identity": {
+        "bytes": 6064914,
+        "sha256": "9ac8a5537c9f262de55d49cbfa9ead0f726342455ae951dde6b55073afe1c373"
+      },
+      "outer_execution": {
+        "commands_without_wait4_usage": 0,
+        "elapsed_ns": 546260444034,
+        "failed_commands": 0,
+        "host": {
+          "allowed_cpus": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cgroup": {
+            "cpu.max": {
+              "unavailable": "FileNotFoundError"
+            },
+            "cpuset.cpus.effective": "0-3",
+            "memory.max": {
+              "unavailable": "FileNotFoundError"
+            },
+            "memory.swap.max": {
+              "unavailable": "FileNotFoundError"
+            },
+            "pids.max": {
+              "unavailable": "FileNotFoundError"
+            }
+          },
+          "logical_cpus": 4,
+          "machine": "x86_64",
+          "system": "Linux",
+          "uname": [
+            "Linux",
+            "runnervm7aw5e",
+            "7.0.0-1017-azure",
+            "#17~24.04.1-Ubuntu SMP PREEMPT Thu Sep 24 18:46:57 UTC 2026",
+            "x86_64",
+            "x86_64"
+          ]
+        },
+        "observed_wait4_cpu_ns_sum": 182516415000,
+        "observer_system_ns": 98278700000,
+        "observer_user_ns": 256411890000
+      },
+      "readback_identity": {
+        "bytes": 2156512,
+        "sha256": "25126dabcf798ebe30fe4756e30ac4ddeaaedfb3ab1ef76a1ccb47c94723845c"
+      },
+      "t1_h8": [
+        {
+          "class": "zero",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 9.51814175,
+            "strategy": "blocked-zero"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 5.262022671875,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.002930328125,
+                "numerator_ns": 640187541
+              },
+              "paid_setup": {
+                "cpu_ns": 1675780,
+                "wall_ns": 1675253
+              },
+              "physical_attempts": 2231,
+              "producer_total": {
+                "cpu_ns": 640187541,
+                "wall_ns": 639957334
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.99933334375,
+                "numerator_ns": 639957334
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.994125375,
+                "numerator_ns": 639624024
+              },
+              "paid_setup": {
+                "cpu_ns": 159488,
+                "wall_ns": 153648
+              },
+              "physical_attempts": 2231,
+              "producer_total": {
+                "cpu_ns": 639624024,
+                "wall_ns": 639391702
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.99049534375,
+                "numerator_ns": 639391702
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.989185390625,
+                "numerator_ns": 639307865
+              },
+              "paid_setup": {
+                "cpu_ns": 105397,
+                "wall_ns": 104886
+              },
+              "physical_attempts": 2231,
+              "producer_total": {
+                "cpu_ns": 639307865,
+                "wall_ns": 639132500
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.9864453125,
+                "numerator_ns": 639132500
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 17.56219109375,
+                "numerator_ns": 1123980230
+              },
+              "paid_setup": {
+                "cpu_ns": 101571,
+                "wall_ns": 101049
+              },
+              "physical_attempts": 2312,
+              "producer_total": {
+                "cpu_ns": 1123980230,
+                "wall_ns": 336769451
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 81,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 5.262022671875,
+                "numerator_ns": 336769451
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "rank-one",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 8.16798621875,
+            "strategy": "full-limb-rank8-lazy"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 4.271457265625,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.182537390625,
+                "numerator_ns": 523682393
+              },
+              "paid_setup": {
+                "cpu_ns": 1648562,
+                "wall_ns": 1647621
+              },
+              "physical_attempts": 1794,
+              "producer_total": {
+                "cpu_ns": 523682393,
+                "wall_ns": 523467591
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.179181109375,
+                "numerator_ns": 523467591
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.19728090625,
+                "numerator_ns": 524625978
+              },
+              "paid_setup": {
+                "cpu_ns": 1808960,
+                "wall_ns": 1808381
+              },
+              "physical_attempts": 1794,
+              "producer_total": {
+                "cpu_ns": 524625978,
+                "wall_ns": 524449266
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.19451978125,
+                "numerator_ns": 524449266
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.16798621875,
+                "numerator_ns": 522751118
+              },
+              "paid_setup": {
+                "cpu_ns": 294997,
+                "wall_ns": 294187
+              },
+              "physical_attempts": 1794,
+              "producer_total": {
+                "cpu_ns": 522751118,
+                "wall_ns": 522566511
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.165101734375,
+                "numerator_ns": 522566511
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 14.291245015625,
+                "numerator_ns": 914639681
+              },
+              "paid_setup": {
+                "cpu_ns": 309281,
+                "wall_ns": 308479
+              },
+              "physical_attempts": 1884,
+              "producer_total": {
+                "cpu_ns": 914639681,
+                "wall_ns": 273373265
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 90,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 4.271457265625,
+                "numerator_ns": 273373265
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "rank-two-left",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 9.137944140625,
+            "strategy": "full-limb-rank8-lazy"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 4.864101765625,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.155193984375,
+                "numerator_ns": 585932415
+              },
+              "paid_setup": {
+                "cpu_ns": 1686227,
+                "wall_ns": 1685358
+              },
+              "physical_attempts": 2033,
+              "producer_total": {
+                "cpu_ns": 585932415,
+                "wall_ns": 585788421
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.152944078125,
+                "numerator_ns": 585788421
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.154081046875,
+                "numerator_ns": 585861187
+              },
+              "paid_setup": {
+                "cpu_ns": 1769571,
+                "wall_ns": 1768813
+              },
+              "physical_attempts": 2033,
+              "producer_total": {
+                "cpu_ns": 585861187,
+                "wall_ns": 585701675
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.151588671875,
+                "numerator_ns": 585701675
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.137944140625,
+                "numerator_ns": 584828425
+              },
+              "paid_setup": {
+                "cpu_ns": 438242,
+                "wall_ns": 437672
+              },
+              "physical_attempts": 2033,
+              "producer_total": {
+                "cpu_ns": 584828425,
+                "wall_ns": 584637331
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.134958296875,
+                "numerator_ns": 584637331
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 16.384342390625,
+                "numerator_ns": 1048597913
+              },
+              "paid_setup": {
+                "cpu_ns": 454357,
+                "wall_ns": 453675
+              },
+              "physical_attempts": 2136,
+              "producer_total": {
+                "cpu_ns": 1048597913,
+                "wall_ns": 311302513
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 103,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 4.864101765625,
+                "numerator_ns": 311302513
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "rank-four-left",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 7.56590884375,
+            "strategy": "full-limb-dense-lazy"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 4.1672258125,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 7.56590884375,
+                "numerator_ns": 484218166
+              },
+              "paid_setup": {
+                "cpu_ns": 1680309,
+                "wall_ns": 1679440
+              },
+              "physical_attempts": 1688,
+              "producer_total": {
+                "cpu_ns": 484218166,
+                "wall_ns": 484069960
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 7.563593125,
+                "numerator_ns": 484069960
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 7.568784328125,
+                "numerator_ns": 484402197
+              },
+              "paid_setup": {
+                "cpu_ns": 1765856,
+                "wall_ns": 1765037
+              },
+              "physical_attempts": 1688,
+              "producer_total": {
+                "cpu_ns": 484402197,
+                "wall_ns": 484317980
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 7.5674684375,
+                "numerator_ns": 484317980
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 7.581449578125,
+                "numerator_ns": 485212773
+              },
+              "paid_setup": {
+                "cpu_ns": 536237,
+                "wall_ns": 535605
+              },
+              "physical_attempts": 1688,
+              "producer_total": {
+                "cpu_ns": 485212773,
+                "wall_ns": 485047374
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 7.57886521875,
+                "numerator_ns": 485047374
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 13.436504265625,
+                "numerator_ns": 859936273
+              },
+              "paid_setup": {
+                "cpu_ns": 537849,
+                "wall_ns": 537119
+              },
+              "physical_attempts": 1792,
+              "producer_total": {
+                "cpu_ns": 859936273,
+                "wall_ns": 266702452
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 104,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 4.1672258125,
+                "numerator_ns": 266702452
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "rank-eight-left",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 10.380025328125,
+            "strategy": "full-limb-rank8-lazy"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 5.462040984375,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.39619459375,
+                "numerator_ns": 665356454
+              },
+              "paid_setup": {
+                "cpu_ns": 1695552,
+                "wall_ns": 1694391
+              },
+              "physical_attempts": 2319,
+              "producer_total": {
+                "cpu_ns": 665356454,
+                "wall_ns": 665104915
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.392264296875,
+                "numerator_ns": 665104915
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.43281934375,
+                "numerator_ns": 667700438
+              },
+              "paid_setup": {
+                "cpu_ns": 1822742,
+                "wall_ns": 1821793
+              },
+              "physical_attempts": 2319,
+              "producer_total": {
+                "cpu_ns": 667700438,
+                "wall_ns": 667272888
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.426138875,
+                "numerator_ns": 667272888
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.380025328125,
+                "numerator_ns": 664321621
+              },
+              "paid_setup": {
+                "cpu_ns": 838727,
+                "wall_ns": 837788
+              },
+              "physical_attempts": 2319,
+              "producer_total": {
+                "cpu_ns": 664321621,
+                "wall_ns": 663959817
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.374372140625,
+                "numerator_ns": 663959817
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 18.424354125,
+                "numerator_ns": 1179158664
+              },
+              "paid_setup": {
+                "cpu_ns": 841391,
+                "wall_ns": 840509
+              },
+              "physical_attempts": 2412,
+              "producer_total": {
+                "cpu_ns": 1179158664,
+                "wall_ns": 349570623
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 93,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 5.462040984375,
+                "numerator_ns": 349570623
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "rank-four-right",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 9.457459109375,
+            "strategy": "full-limb-sparse-lazy"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 5.0333325625,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.476173109375,
+                "numerator_ns": 606475079
+              },
+              "paid_setup": {
+                "cpu_ns": 1681150,
+                "wall_ns": 1680221
+              },
+              "physical_attempts": 2105,
+              "producer_total": {
+                "cpu_ns": 606475079,
+                "wall_ns": 606287525
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.473242578125,
+                "numerator_ns": 606287525
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.457459109375,
+                "numerator_ns": 605277383
+              },
+              "paid_setup": {
+                "cpu_ns": 1790804,
+                "wall_ns": 1790124
+              },
+              "physical_attempts": 2105,
+              "producer_total": {
+                "cpu_ns": 605277383,
+                "wall_ns": 605126978
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.45510903125,
+                "numerator_ns": 605126978
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.529813796875,
+                "numerator_ns": 609908083
+              },
+              "paid_setup": {
+                "cpu_ns": 599351,
+                "wall_ns": 598691
+              },
+              "physical_attempts": 2105,
+              "producer_total": {
+                "cpu_ns": 609908083,
+                "wall_ns": 610855704
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.544620375,
+                "numerator_ns": 610855704
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 16.912112140625,
+                "numerator_ns": 1082375177
+              },
+              "paid_setup": {
+                "cpu_ns": 594543,
+                "wall_ns": 593924
+              },
+              "physical_attempts": 2208,
+              "producer_total": {
+                "cpu_ns": 1082375177,
+                "wall_ns": 322133284
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 103,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 5.0333325625,
+                "numerator_ns": 322133284
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "rank-nine-left",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 8.68834315625,
+            "strategy": "full-limb-dense-lazy"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 4.741099390625,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.68834315625,
+                "numerator_ns": 556053962
+              },
+              "paid_setup": {
+                "cpu_ns": 1695281,
+                "wall_ns": 1694442
+              },
+              "physical_attempts": 1941,
+              "producer_total": {
+                "cpu_ns": 556053962,
+                "wall_ns": 555839358
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.68498996875,
+                "numerator_ns": 555839358
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.69108640625,
+                "numerator_ns": 556229530
+              },
+              "paid_setup": {
+                "cpu_ns": 1728920,
+                "wall_ns": 1728131
+              },
+              "physical_attempts": 1941,
+              "producer_total": {
+                "cpu_ns": 556229530,
+                "wall_ns": 556020327
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.687817609375,
+                "numerator_ns": 556020327
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.6897564375,
+                "numerator_ns": 556144412
+              },
+              "paid_setup": {
+                "cpu_ns": 2135635,
+                "wall_ns": 2134798
+              },
+              "physical_attempts": 1941,
+              "producer_total": {
+                "cpu_ns": 556144412,
+                "wall_ns": 555938722
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 8.68654253125,
+                "numerator_ns": 555938722
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 15.675739859375,
+                "numerator_ns": 1003247351
+              },
+              "paid_setup": {
+                "cpu_ns": 2118981,
+                "wall_ns": 2118192
+              },
+              "physical_attempts": 2064,
+              "producer_total": {
+                "cpu_ns": 1003247351,
+                "wall_ns": 303430361
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 123,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 4.741099390625,
+                "numerator_ns": 303430361
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "full-rank-field",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 10.227075359375,
+            "strategy": "full-limb-rank8-lazy"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 5.302556796875,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.24021659375,
+                "numerator_ns": 655373862
+              },
+              "paid_setup": {
+                "cpu_ns": 1687648,
+                "wall_ns": 1686819
+              },
+              "physical_attempts": 2240,
+              "producer_total": {
+                "cpu_ns": 655373862,
+                "wall_ns": 655152484
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.2367575625,
+                "numerator_ns": 655152484
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.252724421875,
+                "numerator_ns": 656174363
+              },
+              "paid_setup": {
+                "cpu_ns": 1852594,
+                "wall_ns": 1851326
+              },
+              "physical_attempts": 2240,
+              "producer_total": {
+                "cpu_ns": 656174363,
+                "wall_ns": 655967298
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.24948903125,
+                "numerator_ns": 655967298
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.227075359375,
+                "numerator_ns": 654532823
+              },
+              "paid_setup": {
+                "cpu_ns": 1861268,
+                "wall_ns": 1859719
+              },
+              "physical_attempts": 2240,
+              "producer_total": {
+                "cpu_ns": 654532823,
+                "wall_ns": 654286682
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 10.22322940625,
+                "numerator_ns": 654286682
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 17.81426853125,
+                "numerator_ns": 1140113186
+              },
+              "paid_setup": {
+                "cpu_ns": 1844894,
+                "wall_ns": 1843654
+              },
+              "physical_attempts": 2340,
+              "producer_total": {
+                "cpu_ns": 1140113186,
+                "wall_ns": 339363635
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 100,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 5.302556796875,
+                "numerator_ns": 339363635
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "sparse-diagonal",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 9.600023390625,
+            "strategy": "full-limb-rank8-lazy"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 5.124927625,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.601594640625,
+                "numerator_ns": 614502057
+              },
+              "paid_setup": {
+                "cpu_ns": 1673416,
+                "wall_ns": 1672509
+              },
+              "physical_attempts": 2140,
+              "producer_total": {
+                "cpu_ns": 614502057,
+                "wall_ns": 614337248
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.5990195,
+                "numerator_ns": 614337248
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.616061203125,
+                "numerator_ns": 615427917
+              },
+              "paid_setup": {
+                "cpu_ns": 175590,
+                "wall_ns": 175062
+              },
+              "physical_attempts": 2140,
+              "producer_total": {
+                "cpu_ns": 615427917,
+                "wall_ns": 615223685
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.612870078125,
+                "numerator_ns": 615223685
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.600023390625,
+                "numerator_ns": 614401497
+              },
+              "paid_setup": {
+                "cpu_ns": 1720649,
+                "wall_ns": 1720039
+              },
+              "physical_attempts": 2140,
+              "producer_total": {
+                "cpu_ns": 614401497,
+                "wall_ns": 614196411
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.596818921875,
+                "numerator_ns": 614196411
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 17.087314625,
+                "numerator_ns": 1093588136
+              },
+              "paid_setup": {
+                "cpu_ns": 1708241,
+                "wall_ns": 1707119
+              },
+              "physical_attempts": 2228,
+              "producer_total": {
+                "cpu_ns": 1093588136,
+                "wall_ns": 327995368
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 88,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 5.124927625,
+                "numerator_ns": 327995368
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "one-zero-rank-one",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 9.860382953125,
+            "strategy": "full-limb-sparse-lazy"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 5.18330034375,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.905303953125,
+                "numerator_ns": 633939453
+              },
+              "paid_setup": {
+                "cpu_ns": 1675060,
+                "wall_ns": 1674381
+              },
+              "physical_attempts": 2207,
+              "producer_total": {
+                "cpu_ns": 633939453,
+                "wall_ns": 633749817
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.902340890625,
+                "numerator_ns": 633749817
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.860382953125,
+                "numerator_ns": 631064509
+              },
+              "paid_setup": {
+                "cpu_ns": 167781,
+                "wall_ns": 167359
+              },
+              "physical_attempts": 2207,
+              "producer_total": {
+                "cpu_ns": 631064509,
+                "wall_ns": 630835054
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.85679771875,
+                "numerator_ns": 630835054
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.873309703125,
+                "numerator_ns": 631891821
+              },
+              "paid_setup": {
+                "cpu_ns": 322929,
+                "wall_ns": 322211
+              },
+              "physical_attempts": 2207,
+              "producer_total": {
+                "cpu_ns": 631891821,
+                "wall_ns": 631690049
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 9.870157015625,
+                "numerator_ns": 631690049
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 17.577529234375,
+                "numerator_ns": 1124961871
+              },
+              "paid_setup": {
+                "cpu_ns": 310821,
+                "wall_ns": 310131
+              },
+              "physical_attempts": 2304,
+              "producer_total": {
+                "cpu_ns": 1124961871,
+                "wall_ns": 331731222
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 97,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 5.18330034375,
+                "numerator_ns": 331731222
+              }
+            }
+          ],
+          "target_index": 1
+        },
+        {
+          "class": "continuity-maintenance-v1",
+          "horizon": 8,
+          "lowest_observed_fixed_arm_cpu": {
+            "milliseconds": 7.921472828125,
+            "strategy": "full-limb-rank8-lazy"
+          },
+          "lowest_observed_fixed_arm_wall": {
+            "milliseconds": 4.311890765625,
+            "strategy": "full-limb-rank8-batch4-lazy"
+          },
+          "primary_arms": [
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 7.939431953125,
+                "numerator_ns": 508123645
+              },
+              "paid_setup": {
+                "cpu_ns": 1686971,
+                "wall_ns": 1686228
+              },
+              "physical_attempts": 1766,
+              "producer_total": {
+                "cpu_ns": 508123645,
+                "wall_ns": 507982767
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-dense-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 7.937230734375,
+                "numerator_ns": 507982767
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 7.92718471875,
+                "numerator_ns": 507339822
+              },
+              "paid_setup": {
+                "cpu_ns": 1766747,
+                "wall_ns": 1765898
+              },
+              "physical_attempts": 1766,
+              "producer_total": {
+                "cpu_ns": 507339822,
+                "wall_ns": 507182809
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-sparse-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 7.924731390625,
+                "numerator_ns": 507182809
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 7.921472828125,
+                "numerator_ns": 506974261
+              },
+              "paid_setup": {
+                "cpu_ns": 1808719,
+                "wall_ns": 1807707
+              },
+              "physical_attempts": 1766,
+              "producer_total": {
+                "cpu_ns": 506974261,
+                "wall_ns": 506792114
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 0,
+              "strategy": "full-limb-rank8-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 7.91862678125,
+                "numerator_ns": 506792114
+              }
+            },
+            {
+              "accepted_winners": 64,
+              "cpu_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 14.311803609375,
+                "numerator_ns": 915955431
+              },
+              "paid_setup": {
+                "cpu_ns": 1814448,
+                "wall_ns": 1813700
+              },
+              "physical_attempts": 1880,
+              "producer_total": {
+                "cpu_ns": 915955431,
+                "wall_ns": 275961009
+              },
+              "searches": 64,
+              "setups": 8,
+              "speculative_attempts": 114,
+              "strategy": "full-limb-rank8-batch4-lazy",
+              "wall_per_accepted_winner": {
+                "denominator": 64,
+                "milliseconds": 4.311890765625,
+                "numerator_ns": 275961009
+              }
+            }
+          ],
+          "target_index": 1
+        }
+      ],
+      "total_counts": {
+        "attempt_count": 274647,
+        "exhausted_searches": 880,
+        "hit_count": 17845,
+        "miss_count": 256802,
+        "proof_buffers": 170344,
+        "search_count": 17600,
+        "setup_calls": 8976,
+        "speculative_attempts": 3204,
+        "unsupported_setups": 3696,
+        "verifier_calls": 73288
+      }
+    }
+  },
+  "new_native_execution": false,
+  "schema": "pon-w1-v5-readback-numeric-summary-v1",
+  "security_or_minimum_cost_lower_bound": false,
+  "source_commit": "229b14c2d366a257f51f287d502a550df2332338",
+  "source_tree": "b386c32458589f81944ddd69c04a56c28c55e284"
+}

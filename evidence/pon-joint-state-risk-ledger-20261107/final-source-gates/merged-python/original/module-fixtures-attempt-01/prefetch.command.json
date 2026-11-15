@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "fetch.negotiationAlgorithm=noop",
+    "fetch",
+    "--no-tags",
+    "--no-write-fetch-head",
+    "--recurse-submodules=no",
+    "--no-auto-maintenance",
+    "--filter=blob:none",
+    "--stdin",
+    "origin"
+  ],
+  "elapsed_seconds": 4.2709316711407155,
+  "exit_code": 0,
+  "requested_blob_ids": [
+    "19485f7be45b5239b875c3ad747205f4d680672d",
+    "1b2dba58b6a5f5ebdeb06dd55304443612d91d2f",
+    "3563ad5ef0435a209e15caa8c4a26ac03f713294",
+    "3788e3df4e6fbf297a8b7cb7e814df458a8d3cd8",
+    "9103b00e49c8344528ec0dfde5d87a0e2bab2ade",
+    "9ff3a0040311a0afabef8084ad8bb801abc72b0b",
+    "b25adf6ed73b53016e649b77e8d12a2e623509af",
+    "b6d0623e0f4d984bdaff1fac53f6962980dcce82",
+    "ba47e223927a8e689fb76159a20231937700d0ba",
+    "bb11c22b649174b05aae83f5c79a393884041210",
+    "e040a798bd75c453af3d7df4b504b001c0aec2e0",
+    "f0d2cd45d82c00234a115783d37491b06ac9b2f5",
+    "fb5c47628a0b9c022170a9839dbce6e4b17a13d4"
+  ]
+}

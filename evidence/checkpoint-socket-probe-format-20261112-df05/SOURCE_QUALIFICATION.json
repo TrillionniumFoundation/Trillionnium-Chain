@@ -1,0 +1,121 @@
+{
+  "all_original_commands_passed": true,
+  "arm_verified": false,
+  "checkpoint_package": {
+    "blocks": [
+      {
+        "consistent": true,
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 18
+        },
+        "declared": 18,
+        "observed_test_lines": 18,
+        "status": "ok"
+      },
+      {
+        "consistent": true,
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 15
+        },
+        "declared": 15,
+        "observed_test_lines": 15,
+        "status": "ok"
+      },
+      {
+        "consistent": true,
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 15
+        },
+        "declared": 15,
+        "observed_test_lines": 15,
+        "status": "ok"
+      },
+      {
+        "consistent": true,
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 6
+        },
+        "declared": 6,
+        "observed_test_lines": 6,
+        "status": "ok"
+      },
+      {
+        "consistent": true,
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4
+        },
+        "declared": 4,
+        "observed_test_lines": 4,
+        "status": "ok"
+      },
+      {
+        "consistent": true,
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0
+        },
+        "declared": 0,
+        "observed_test_lines": 0,
+        "status": "ok"
+      }
+    ],
+    "complete_success": true,
+    "parse_errors": [],
+    "scope": "full trnm-checkpoint-store package on the new source",
+    "socket_tests": {
+      "complete_checkpoint_request_rejects_a_copied_lease_replacement": [
+        "ok"
+      ],
+      "copied_lease_record_cannot_replace_a_live_checkpoint_endpoint": [
+        "ok"
+      ],
+      "different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint": [
+        "ok"
+      ],
+      "rejected_nonprivate_socket_parent_does_not_unlink_existing_listener": [
+        "ok"
+      ]
+    }
+  },
+  "native_scope_pass": true,
+  "old_root_s879_results_relabelled": false,
+  "old_socket_results_relabelled": false,
+  "original_three_30s_campaigns_verified": false,
+  "production_activation": false,
+  "prospective_merge_verified": false,
+  "source_integrity_controls": {
+    "complete_success": true,
+    "ending_status": [
+      "OK"
+    ],
+    "observed_success_lines": 43,
+    "summary_counts": [
+      43
+    ]
+  },
+  "status": "HOLD",
+  "whole_chain_pq_qualified": false
+}

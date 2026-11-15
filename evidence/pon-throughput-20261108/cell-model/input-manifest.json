@@ -1,0 +1,278 @@
+{
+  "expected_release": {
+    "cells": 11,
+    "chunks": 269,
+    "payload_bytes": 272190131,
+    "release": "d5f78d0a121aafb3bacc3b3714f27260fa653fda345a48a5ae490ab38ce10b56"
+  },
+  "files": {
+    "actual/baseline-read/ready.json": {
+      "git_blob_sha1": "523eff8dd4c46ccb00304634c6ffd9c4261af732",
+      "path": "originals/actual/baseline-read/ready.json",
+      "sha256": "275a9942f6e27083a035052fd2efe0a675c3093bbcedc5d13b00abfe55430288",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/baseline-read/ready.json"
+    },
+    "actual/candidate-read/ready.json": {
+      "git_blob_sha1": "59bd3eaf8daf506d779b9138a5bd68fa3b4bbfab",
+      "path": "originals/actual/candidate-read/ready.json",
+      "sha256": "7f43f30edff361d0934dbabb13442ac8ee95aacd387b453a791b239b8e028ef5",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/candidate-read/ready.json"
+    },
+    "actual/frozen-comparison.json": {
+      "git_blob_sha1": "94ec01d3bad1d76f9290124b01fcded04f282cb4",
+      "path": "originals/actual/frozen-comparison.json",
+      "sha256": "8b603a6ff9443a917885bd948ec130b01e3ab9d69c513d85794740e8c04c582f",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/frozen-comparison.json"
+    },
+    "actual/research-result.json": {
+      "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+      "path": "originals/actual/research-result.json",
+      "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+    },
+    "actual/transport/materialize-0-command.json": {
+      "git_blob_sha1": "d4778e947ec19c401e07e2db9be21b6f8f91ce59",
+      "path": "originals/actual/transport/materialize-0-command.json",
+      "sha256": "e1bc3a0a02d9c08dad95f6fb58e474defe2b7623f003893a29c8f8be8fcce3d6",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-0-command.json"
+    },
+    "actual/transport/materialize-0.log": {
+      "git_blob_sha1": "350cc2cb2a326a684aeb46d93bc9edf828881698",
+      "path": "originals/actual/transport/materialize-0.log",
+      "sha256": "690ef1ea9609692f0b2d9dfce03fcf2a2a5c76a06545ad4cb55421ac98fd89c4",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-0.log"
+    },
+    "actual/transport/materialize-1-command.json": {
+      "git_blob_sha1": "b449a020ebea1bdd80955b178690117d70969cb9",
+      "path": "originals/actual/transport/materialize-1-command.json",
+      "sha256": "ab51056c73123423769a6be318683cfc13fd19060f5d484da0175e3e51cc4315",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-1-command.json"
+    },
+    "actual/transport/materialize-1.log": {
+      "git_blob_sha1": "df8686e2e5bd4430764c7d6419acf82bf35bbc0a",
+      "path": "originals/actual/transport/materialize-1.log",
+      "sha256": "894713d9a4cc50088bf8a7816c8ad0ece59da15939a604d55d0bbce9f422f8b0",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-1.log"
+    },
+    "actual/transport/materialize-10-command.json": {
+      "git_blob_sha1": "bd1cf761a7729615665eb363dcd0b8c3439c923b",
+      "path": "originals/actual/transport/materialize-10-command.json",
+      "sha256": "37e7ed7aeaa73f0f31006a9e8f189cea0e0006e8bd9aa5d5ded03b52bb8cbec2",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-10-command.json"
+    },
+    "actual/transport/materialize-10.log": {
+      "git_blob_sha1": "0d4faee4b1f638113e6e3e274410413a68853b40",
+      "path": "originals/actual/transport/materialize-10.log",
+      "sha256": "6e2e8b1d07a4d2a7506a787107cb21b1cf8edff5593c26ae15f5a620b3bc76a3",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-10.log"
+    },
+    "actual/transport/materialize-2-command.json": {
+      "git_blob_sha1": "b121bf8704a9e9bebef036c47b06f29873d0d2e0",
+      "path": "originals/actual/transport/materialize-2-command.json",
+      "sha256": "ae6c4e8494d10bdddebab7222852614f61dc43d4bb47589c6ec3a7e412673ec0",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-2-command.json"
+    },
+    "actual/transport/materialize-2.log": {
+      "git_blob_sha1": "47c9234bd1bc06cc48d7f052b2035fd08e811c6f",
+      "path": "originals/actual/transport/materialize-2.log",
+      "sha256": "5329e63a5751684577859f10ce7c6ed4683cd9cb08cb106944b0fc7e5a076f15",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-2.log"
+    },
+    "actual/transport/materialize-3-command.json": {
+      "git_blob_sha1": "b2d78a2a73694a42b14392aeea4a2a7ce7c1e14c",
+      "path": "originals/actual/transport/materialize-3-command.json",
+      "sha256": "d1e3772b9e17021ed6e5b80dc9bad97cc7111a57e804e59268b1c43d9330c8cc",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-3-command.json"
+    },
+    "actual/transport/materialize-3.log": {
+      "git_blob_sha1": "aae49a11c283cb7e7289f1172886ede77cb56875",
+      "path": "originals/actual/transport/materialize-3.log",
+      "sha256": "6e40f94ec51a52b8e89d435341932872054bb9919406f70639ec0c6f73e545a6",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-3.log"
+    },
+    "actual/transport/materialize-4-command.json": {
+      "git_blob_sha1": "0aa8a376b115d8745a4c1f4853ec66862854951b",
+      "path": "originals/actual/transport/materialize-4-command.json",
+      "sha256": "b60e103caa5ada51673866c66049de4f73464646853775b086338ea12e18bd67",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-4-command.json"
+    },
+    "actual/transport/materialize-4.log": {
+      "git_blob_sha1": "eb40665d5b42d594fb78d2f63640fb0fed24862d",
+      "path": "originals/actual/transport/materialize-4.log",
+      "sha256": "7118223e3a07bd56315b70a196bb6fd2a3cffe771e66cb8b17554c74132779be",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-4.log"
+    },
+    "actual/transport/materialize-5-command.json": {
+      "git_blob_sha1": "fa27e4f68e1e6c1428696342638d3256ae8cabc1",
+      "path": "originals/actual/transport/materialize-5-command.json",
+      "sha256": "27cfc779d984403c11f1e7caaec0f9d6def4da001ce542db7db104a7e4fa8218",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-5-command.json"
+    },
+    "actual/transport/materialize-5.log": {
+      "git_blob_sha1": "a6565e579064fd7e841d53697ab0de0c044b91cd",
+      "path": "originals/actual/transport/materialize-5.log",
+      "sha256": "afc7ed1c3175205f251c2bcfb0e0bbf112751a592f9540472d1f969f3b66c500",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-5.log"
+    },
+    "actual/transport/materialize-6-command.json": {
+      "git_blob_sha1": "7c8489724829462782e35071250cf5475a95a69c",
+      "path": "originals/actual/transport/materialize-6-command.json",
+      "sha256": "e4264d7e8b5065de5ce8743c127c2e79577849bd30f24483ffea6083780fa031",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-6-command.json"
+    },
+    "actual/transport/materialize-6.log": {
+      "git_blob_sha1": "baed247c6869b67370b1a40a9f3c6861d0259422",
+      "path": "originals/actual/transport/materialize-6.log",
+      "sha256": "cedc5bd2a44560a9c206fd71514c2d357add5e3399607398837030debed79474",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-6.log"
+    },
+    "actual/transport/materialize-7-command.json": {
+      "git_blob_sha1": "c9d8b1d0e78de2a2814dd80d910624a92e590bd8",
+      "path": "originals/actual/transport/materialize-7-command.json",
+      "sha256": "cea06fb540eb735511d74dacc386e2c85c4ab19a84432ba2991af6c6d779bf3c",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-7-command.json"
+    },
+    "actual/transport/materialize-7.log": {
+      "git_blob_sha1": "cca33a469fdd59b4a0a55fa05f700f86f25d802b",
+      "path": "originals/actual/transport/materialize-7.log",
+      "sha256": "029a276dc74108795a2c6c77a2c520b6c3aa6a89e52f941319fda5029775efae",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-7.log"
+    },
+    "actual/transport/materialize-8-command.json": {
+      "git_blob_sha1": "975fc2eae259ff2db7ea5d8e10e18780fb997813",
+      "path": "originals/actual/transport/materialize-8-command.json",
+      "sha256": "b6dd2487b243e41167312c876dab32f4564488429ec86eaaa896ae50549a2b5b",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-8-command.json"
+    },
+    "actual/transport/materialize-8.log": {
+      "git_blob_sha1": "2b59dd0974413c37e3106fd60cc102c90060eca7",
+      "path": "originals/actual/transport/materialize-8.log",
+      "sha256": "210cd20078c60cb112b6eae7b7b3b87c04bd3e0ee3acb8c37502982921921fcd",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-8.log"
+    },
+    "actual/transport/materialize-9-command.json": {
+      "git_blob_sha1": "1a99aea939d92efb50b0716d23239889c30690b0",
+      "path": "originals/actual/transport/materialize-9-command.json",
+      "sha256": "af31d53621e7aca80e141474dec86d754e2d92e502d9d5dec0610a623b6c97c8",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-9-command.json"
+    },
+    "actual/transport/materialize-9.log": {
+      "git_blob_sha1": "b442e17108eccfeedebe5414246e4b87a96dfe78",
+      "path": "originals/actual/transport/materialize-9.log",
+      "sha256": "b1acfe5bdc09305f8a4468d6b40f3449fa04c55161c1de4ca5c1b6bec8df4051",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-9.log"
+    },
+    "actual/transport/offline-publisher-negative-command.json": {
+      "git_blob_sha1": "c43b0c9a84153fd5dc33b65a378cd7e5a85ab689",
+      "path": "originals/actual/transport/offline-publisher-negative-command.json",
+      "sha256": "6e715004fd086739816318846ae7c5d3328f1f3df891957d80486a55675e8493",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/offline-publisher-negative-command.json"
+    },
+    "actual/transport/offline-publisher-negative.log": {
+      "git_blob_sha1": "b3b71fdc5e928691b6ed86564f6086f0fe447893",
+      "path": "originals/actual/transport/offline-publisher-negative.log",
+      "sha256": "a304dbcf1f319e27c2325085df789b0cb12e99597cad5987c6305b6bfef29e69",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/offline-publisher-negative.log"
+    },
+    "actual/transport/publisher-to-replica-command.json": {
+      "git_blob_sha1": "1e8b6fbe54bde4fe1e5df7bd9c9c091f4d70803c",
+      "path": "originals/actual/transport/publisher-to-replica-command.json",
+      "sha256": "99eacfaf5cbc057265a65f01d3cbcc0dc300f81b08e99fa8513697a5d1abbe3a",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/publisher-to-replica-command.json"
+    },
+    "actual/transport/publisher-to-replica.log": {
+      "git_blob_sha1": "932ae6e2d681e54d445f2e9faea58a12afce469d",
+      "path": "originals/actual/transport/publisher-to-replica.log",
+      "sha256": "d9f633f888e06fd4ae6eecd4453558987de25d04add63b556066ed225f72eed3",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/publisher-to-replica.log"
+    },
+    "actual/transport/publisher-to-replica.tcr1": {
+      "git_blob_sha1": "b8ec666287751ce3d0005df4fb450ad5f24151ec",
+      "path": "originals/actual/transport/publisher-to-replica.tcr1",
+      "sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/publisher-to-replica.tcr1"
+    },
+    "actual/transport/replica-to-consumer-command.json": {
+      "git_blob_sha1": "9e0bd11f7b8afb4d32b687ef2d68b00735db4f3d",
+      "path": "originals/actual/transport/replica-to-consumer-command.json",
+      "sha256": "d23ff3debbeacdd6db30066aa5bda54004ac0e2b0577437c6008043f14265ad1",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/replica-to-consumer-command.json"
+    },
+    "actual/transport/replica-to-consumer.log": {
+      "git_blob_sha1": "932ae6e2d681e54d445f2e9faea58a12afce469d",
+      "path": "originals/actual/transport/replica-to-consumer.log",
+      "sha256": "d9f633f888e06fd4ae6eecd4453558987de25d04add63b556066ed225f72eed3",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/replica-to-consumer.log"
+    },
+    "actual/transport/replica-to-consumer.tcr1": {
+      "git_blob_sha1": "b8ec666287751ce3d0005df4fb450ad5f24151ec",
+      "path": "originals/actual/transport/replica-to-consumer.tcr1",
+      "sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/replica-to-consumer.tcr1"
+    },
+    "actual/transport/source-release.tcr1": {
+      "git_blob_sha1": "b8ec666287751ce3d0005df4fb450ad5f24151ec",
+      "path": "originals/actual/transport/source-release.tcr1",
+      "sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/source-release.tcr1"
+    },
+    "failures/optimized-original/failure-summary.json": {
+      "git_blob_sha1": "d07ebfd45b163cc8ca87d0a7f224416a51f91e0d",
+      "path": "originals/failures/optimized-original/failure-summary.json",
+      "sha256": "51ef8c31aad25639c8f8bd2d30636573b9e25783db34043ffbe16a50b7ac343f",
+      "source_path": "evidence/smollm-cell-replica-research-v1/failures/optimized-original/failure-summary.json"
+    },
+    "failures/optimized-original/publisher-to-replica-command.json": {
+      "git_blob_sha1": "df92fa0f382e7e7bab5da5139711c540dc20c6eb",
+      "path": "originals/failures/optimized-original/publisher-to-replica-command.json",
+      "sha256": "0ecdff32dc7611c4f7efc35797d7230c88ec905ed91ed6bd0afa81c24cfc1141",
+      "source_path": "evidence/smollm-cell-replica-research-v1/failures/optimized-original/publisher-to-replica-command.json"
+    },
+    "failures/optimized-original/publisher-to-replica.log": {
+      "git_blob_sha1": "83bd476f0cc47ee849465c1f392d29ff6f85c42e",
+      "path": "originals/failures/optimized-original/publisher-to-replica.log",
+      "sha256": "106122f18775a760f77ae68728e90a7409ea8cb4e579b48402193fa98c3ff842",
+      "source_path": "evidence/smollm-cell-replica-research-v1/failures/optimized-original/publisher-to-replica.log"
+    },
+    "training/gen1/actual-receipt.json": {
+      "git_blob_sha1": "d0c0f3080dabba7ed453ea7fda341b6ecced59a6",
+      "path": "originals/training/gen1/actual-receipt.json",
+      "sha256": "8dc89c733c69b04edbc5897772d7f6971ccead6a15d08c3d8fab22ed51820953",
+      "source_path": "evidence/smollm-cell-replica-research-v1/training/gen1/actual-receipt.json"
+    },
+    "training/gen1/command.json": {
+      "git_blob_sha1": "3515fde40d06cce0fee2b22fe6e0bd84c1f0f94a",
+      "path": "originals/training/gen1/command.json",
+      "sha256": "857db72a9ef4de87df3f1caeb3c02badfd8492c65b2f5aaf577e430f2b903b1a",
+      "source_path": "evidence/smollm-cell-replica-research-v1/training/gen1/command.json"
+    },
+    "training/gen2/actual-receipt.json": {
+      "git_blob_sha1": "a031f3472354847e7625aa17614858a4a01c7790",
+      "path": "originals/training/gen2/actual-receipt.json",
+      "sha256": "732850df8b222305e58b712a3d9e39ceeb1f0a6ad886e3ed13bafe68b6ac3f86",
+      "source_path": "evidence/smollm-cell-replica-research-v1/training/gen2/actual-receipt.json"
+    },
+    "training/gen2/command.json": {
+      "git_blob_sha1": "7c3498cae9acee557bbd383f9465b5e0185caff0",
+      "path": "originals/training/gen2/command.json",
+      "sha256": "e28121d2c7d9caf91fd399527bd83503782df8840a6e7c37e2c0bcd4457655bb",
+      "source_path": "evidence/smollm-cell-replica-research-v1/training/gen2/command.json"
+    },
+    "training/gen3/actual-receipt.json": {
+      "git_blob_sha1": "4cd8588aa2d0c07845f63514fd8f132ed018a22c",
+      "path": "originals/training/gen3/actual-receipt.json",
+      "sha256": "3d70c36bd864f8df939a666b91372327965dc916d0b78f2cfec4137ac3b9c6a2",
+      "source_path": "evidence/smollm-cell-replica-research-v1/training/gen3/actual-receipt.json"
+    },
+    "training/gen3/command.json": {
+      "git_blob_sha1": "a9c0c09a35a8b26b69efb74a9e3761dd696c69d7",
+      "path": "originals/training/gen3/command.json",
+      "sha256": "02432fe5e929658e2437615b318e5357536fe684dd5d781b41d06b3c5df53644",
+      "source_path": "evidence/smollm-cell-replica-research-v1/training/gen3/command.json"
+    }
+  },
+  "recorded_native_source_commit": "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251",
+  "retained_at_commit": "e02126dabef04f13792dec45d96ac5d6916d0651",
+  "schema": "trnm-cell-model-projection-input-v1",
+  "scope": "historical-smollm-replica-v1"
+}

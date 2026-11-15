@@ -1,0 +1,120 @@
+{
+  "actual_service_fee_paid": false,
+  "all_four_gates_passed": false,
+  "baseline_source": "040fb0cf460a6db568f0b4ec5ba581add3f2d2ba",
+  "draft": true,
+  "hepta_final_use": false,
+  "independent_failure_domains_qualified": false,
+  "local_collection": {
+    "all_previously_selected_files_recovered": false,
+    "archive_original_bytes_recovered": 3334418,
+    "archive_original_files_recovered": 198,
+    "archive_sha256": "b8ca4b885d89e19065e31766a0001bf9f1a941a02812e562f782119f637b360b",
+    "gap_report": "recovery/recovery-gap-report.json",
+    "integrity_review": "recovery/recovered-log-bindings.json",
+    "old_recorded_paths_rewritten": false,
+    "original_per_file_manifest_existed": false,
+    "original_workspace_restored": false,
+    "prior_selected_bytes_missing": 1330223,
+    "prior_selected_files_missing": 22,
+    "resource_scope_correction_finalized": true,
+    "selected_original_bytes_from_archive": 2626924,
+    "selected_original_bytes_from_exact_session": 1192,
+    "selected_original_bytes_staged": 2628116,
+    "selected_original_files_from_archive": 172,
+    "selected_original_files_from_exact_session": 1,
+    "selected_original_files_staged": 173
+  },
+  "local_model_preparation": {
+    "dependency_import_preflight_does_not_grant_execution": true,
+    "evidence": "model-preparation/prep-manifest.json",
+    "model_executed": false,
+    "model_loaded": false,
+    "native_operation_started": false,
+    "original_manifest_bytes_preserved": true,
+    "resource_scope_correction": "model-preparation/resource-scope-correction.json",
+    "status": "BLOCKED_HOST_AF_UNIX"
+  },
+  "local_observations": [
+    {
+      "evidence": "cloud/frozen-candidate-01/da-complete.stdout",
+      "name": "frozen B release DA",
+      "result": "789 unit tests passed, plus retained integration and doctest results",
+      "scope": "Full release package invocation; original higher-sequence and four new TCP controls are included."
+    },
+    {
+      "evidence": "cloud/frozen-candidate-01/native-grouped-example-default.stdout",
+      "name": "frozen B native default example",
+      "result": "14 passed; required complete-selection test separately 1 passed with exact reader",
+      "scope": "Native fixture tests; not a full real-model operation."
+    },
+    {
+      "evidence": "cloud/frozen-candidate-01/summary.json",
+      "name": "original sealed and paged examples",
+      "result": "11 passed each",
+      "scope": "Original example test suites."
+    },
+    {
+      "evidence": "cloud/frozen-candidate-dependency-recheck-01/summary.json",
+      "name": "locked dependency recheck",
+      "result": "both locked metadata graphs passed with unchanged source",
+      "scope": "Does not overwrite the earlier missing-dependency failures."
+    },
+    {
+      "evidence": "reviews/authority-current.json",
+      "name": "authority and corpus review",
+      "result": "HOLD / HOLD_NO_GO, source consistency only",
+      "scope": "44 curated paths and 994 corpus pins; no authority, provenance or whole-chain qualification expansion."
+    }
+  ],
+  "model_efficacy_qualified": false,
+  "native_model_run_claimed": false,
+  "pending_scope": [
+    "Final remote exact-source test/build results and release normal-main ELF binding are separate observations.",
+    "A real model operation requires the original actual 8 GiB / four-CPU cgroup, fresh operation/output, original deadlines and all original receipts.",
+    "This local archive does not claim a remote model result, a production activation, FinalUse, independent domains, real service payment or model-quality improvement.",
+    "Missing original Clippy raw records need a separately identified new run if fresh raw qualification is required; a later run cannot reconstruct the old logs."
+  ],
+  "production_activation": false,
+  "publication_scope": "Byte-preserved selected files from the recovered archive, an exact session-restored original patch, exact retained observer review support, and explicitly identified new derived reviews. Historical files retain their recorded source/profile. Missing originals are disclosed rather than recreated.",
+  "retained_negatives": [
+    {
+      "evidence": "discovery/original-hosted-job-130956234453.log",
+      "observation": "Historical hosted higher-sequence release failure: 784 passed / 1 failed; observed [0,1,0] instead of [0,0,0]. Cause not diagnosed."
+    },
+    {
+      "evidence": "discovery/baseline-full-lib.log",
+      "observation": "Separate original-source debug run: 784 passed / 1 failed in the PQ receipt-time-expiry test. It is distinct from the hosted higher-sequence failure."
+    },
+    {
+      "evidence": "discovery/baseline-release.log",
+      "observation": "Original-source targeted release compilation received SIGKILL; tests did not run. Cause not diagnosed."
+    },
+    {
+      "evidence": "control/frozen-candidate-01-controlled-interruption.json",
+      "observation": "Full local campaign was deliberately stopped after repeated Node rustc SIGKILL; original summary and incomplete last command are retained, not rewritten as success."
+    },
+    {
+      "evidence": "cloud/frozen-candidate-01/sealed-research-python-controls.stdout",
+      "observation": "Original Python control failure and strict-reader refusal remain retained."
+    },
+    {
+      "evidence": "grouped/native-example-default-03.controlled-interruption.json",
+      "observation": "Owned debug diagnostic interruption; no completed test result is claimed."
+    }
+  ],
+  "runtime_source": "8dc744e03d95b0adcf65fc87471b41e89f1287c3",
+  "schema": "trnm-bt-local-observation-summary-draft-v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_tree": "a897ba4c74897a05ceb364f098b1bfe32c850213",
+  "status": "RECOVERED_LOCAL_OBSERVATIONS_WITH_EXPLICIT_GAPS_NOT_FULL_ACCEPTANCE",
+  "unavailable_prior_raw_observations": [
+    {
+      "current_gate_pass_claim_from_recovery": false,
+      "current_raw_artifacts_available": false,
+      "gap_report": "recovery/recovery-gap-report.json",
+      "name": "static gates",
+      "previously_observed_result": "default and strict Clippy commands exited 0 in prior direct review"
+    }
+  ]
+}

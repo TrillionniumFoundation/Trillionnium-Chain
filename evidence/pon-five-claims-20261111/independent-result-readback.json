@@ -1,0 +1,193 @@
+{
+  "reviewed_utc": "2026-11-11T11:36:55.490077+00:00",
+  "source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "node": [
+    {
+      "file": "node/fixed-native-rebuilt-297bb40798ca/native-01.stdout.log",
+      "counts": [
+        1,
+        0,
+        0,
+        0,
+        1362
+      ],
+      "sha256": "0d80bae891a77ff6f23054dc8c81cd17382db7ccca2cd7705c3c44fcf007a54b"
+    },
+    {
+      "file": "node/fixed-native-rebuilt-297bb40798ca/native-02.stdout.log",
+      "counts": [
+        1,
+        0,
+        0,
+        0,
+        1362
+      ],
+      "sha256": "61224036984cadfd5ca8f3f0327b182ede729b4c38d33690d24c7c5e86be11bd"
+    },
+    {
+      "file": "node/fixed-native-rebuilt-297bb40798ca/native-03.stdout.log",
+      "counts": [
+        1,
+        0,
+        0,
+        0,
+        1362
+      ],
+      "sha256": "5812920aaebe377d9fb919bcb2c5b9cf430d7764194c37ea634f9e41f2e3930e"
+    },
+    {
+      "file": "node/fixed-native-rebuilt-297bb40798ca/native-04.stdout.log",
+      "counts": [
+        1,
+        0,
+        0,
+        0,
+        1362
+      ],
+      "sha256": "1c32c9f63efd2c9b55375680e451e9e574de3b8ea592bed3c19e50ae025d6d6f"
+    },
+    {
+      "file": "node/fixed-native-rebuilt-297bb40798ca/native-05.stdout.log",
+      "counts": [
+        1,
+        0,
+        0,
+        0,
+        1362
+      ],
+      "sha256": "1ebfed9c5a2e44306eee6089545ccc450a6469de231e0aba05937c3784684d69"
+    },
+    {
+      "file": "node/fixed-native-rebuilt-297bb40798ca/native-06.stdout.log",
+      "counts": [
+        1,
+        0,
+        0,
+        0,
+        1362
+      ],
+      "sha256": "6ed1dc86f6f5a1f536eeb8d3ede87a016cba5506d94bfa4b0ae31d169d8d9aa5"
+    },
+    {
+      "file": "node/fixed-native-rebuilt-297bb40798ca/native-07.stdout.log",
+      "counts": [
+        1,
+        0,
+        0,
+        0,
+        1362
+      ],
+      "sha256": "9e4c846df66e89a9d1cfb9a35058f7dce4f7676a997e4b09b8dc77fbf554f4f9"
+    },
+    {
+      "file": "node/fixed-native-rebuilt-297bb40798ca/native-08.stdout.log",
+      "counts": [
+        1,
+        0,
+        0,
+        0,
+        1362
+      ],
+      "sha256": "8066787c5179e811ae55f6bb2780be9b5db2ddaf73f1b7c2f14b3c2d8f6995e1"
+    },
+    {
+      "file": "node/fixed-native-rebuilt-297bb40798ca/native-09.stdout.log",
+      "counts": [
+        1,
+        0,
+        0,
+        0,
+        1362
+      ],
+      "sha256": "e9db8cbea30d69c14a3a3fb9bb7c0ec413b47c1caedea047c7eb471f35e2a2d4"
+    },
+    {
+      "file": "node/fixed-native-rebuilt-297bb40798ca/native-10.stdout.log",
+      "counts": [
+        1,
+        0,
+        0,
+        0,
+        1362
+      ],
+      "sha256": "92ff891bfa6a00d0be7d183861d8ead36c11aa7265ea4873f5e2c147c662a13f"
+    },
+    {
+      "file": "node/fixed-native-rebuilt-297bb40798ca/native-11.stdout.log",
+      "counts": [
+        1,
+        0,
+        0,
+        0,
+        1362
+      ],
+      "sha256": "1daf46fa66d921873276593ad58a4a128799eeb1770bd0d98e816572c8fe6976"
+    },
+    {
+      "file": "node/fixed-native-rebuilt-297bb40798ca/native-12.stdout.log",
+      "counts": [
+        1,
+        0,
+        0,
+        0,
+        1362
+      ],
+      "sha256": "9cbbebd9d6b0b92348fd1553a26f806a59baf4832bf20ca827273f099f2fa746"
+    },
+    {
+      "file": "node/fixed-native-rebuilt-297bb40798ca/native-13.stdout.log",
+      "counts": [
+        1,
+        0,
+        0,
+        0,
+        1362
+      ],
+      "sha256": "e528ed375e4bc1f7ffa3220040e1a309873f67baeb74eecfe365968f4899e06e"
+    },
+    {
+      "file": "node/fixed-native-rebuilt-297bb40798ca/native-14.stdout.log",
+      "counts": [
+        1,
+        0,
+        0,
+        0,
+        1362
+      ],
+      "sha256": "a109318620ad5d2287872743a0657f320894e0952d51e7b72976ae0c9d2de807"
+    }
+  ],
+  "crypto_counts": [
+    135,
+    0,
+    0,
+    0,
+    61
+  ],
+  "da_first_counts": [
+    740,
+    1,
+    0,
+    0,
+    0
+  ],
+  "da_integration_passed": 45,
+  "quiet_control_counts": [
+    1,
+    0,
+    0,
+    0,
+    740
+  ],
+  "quiet_library_counts": [
+    740,
+    1,
+    0,
+    0,
+    0
+  ],
+  "python_methods": 620,
+  "raw_result_parsing_completed": true,
+  "all_attempts_passed": false,
+  "production_qualification": false
+}

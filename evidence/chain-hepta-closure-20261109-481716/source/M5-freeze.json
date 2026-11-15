@@ -1,0 +1,18 @@
+{
+  "schema": "trnm-closure-source-freeze-v1",
+  "source_commit": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+  "tree": "fbbb4dca143775bae75ea825ff502f368e122ebb",
+  "parent": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+  "branch": "refs/heads/fix/chain-hepta-closure-candidate-20261109-481716",
+  "created_at": "2026-11-09T15:49:09.379439+00:00",
+  "changed_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "trillionnium/crates/trnm-data-availability/src/cell/residency/sealed_loader/tests.rs"
+  ],
+  "production_loader_unchanged": true,
+  "test_change": "original descriptor dev/ino identity plus live-original negative control; no weakened error/hash/deadline/cancellation/selection assertions",
+  "native_lock_sha256": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd",
+  "native_or_service_qualified": false,
+  "qualification": "HOLD_NO_GO"
+}

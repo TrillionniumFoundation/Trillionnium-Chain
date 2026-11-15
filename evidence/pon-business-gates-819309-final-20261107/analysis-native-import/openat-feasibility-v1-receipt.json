@@ -1,0 +1,48 @@
+{
+  "benchmark_or_profile_executed": false,
+  "conclusion": "safe_api_available_but_not_equivalent_under_current_Host_contract",
+  "implemented": false,
+  "optional_manifest_read": "No contents obtained; multi-file tool returned non-JSON error; no retry or actual CI path claim.",
+  "primary_documentation": [
+    "https://man7.org/linux/man-pages/man2/open.2.html",
+    "https://man7.org/linux/man-pages/man7/path_resolution.7.html",
+    "https://man7.org/linux/man-pages/man2/statx.2.html"
+  ],
+  "review_bytes": 6999,
+  "review_path": "/home/qian-qi/chain-throughput-local-admin-20261107/analysis-native-import-819309-20261107/openat-feasibility-v1.md",
+  "review_sha256": "f68503e027823985d1eb74afcd239a0cbff171af65b133a5fd1a8a0f0fcc1e57",
+  "schema": "trnm-host-dirfd-static-review-v1",
+  "source_after": {
+    "head": "819309fd312298e099642e1253b1d4ba07113e98",
+    "source_sha256": {
+      "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+      "trillionnium/crates/trnm-pon-node/Cargo.toml": "98f1a0ee417eb117c7a5a425de49160b21c4a147a756db0a0fa815ec9dbdeb7b",
+      "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d",
+      "trillionnium/crates/trnm-pon-node/src/lib.rs": "1f42a30d859ca726a5b2cdbaf4ce8291d0b2b62d4def3bbf47310dadd0c3e215",
+      "trillionnium/crates/trnm-pon-node/src/store/growth/observer.rs": "363be6631e286423a7d3b24d91d3e8dabde23105cc7b5e50429430e0ea207078",
+      "trillionnium/crates/trnm-pon-node/src/store/growth_reservation_io.rs": "780ae289d370b1e4b7234f8c0d72077178013de7d297354da66a7fd853ff5aa6"
+    },
+    "status": "",
+    "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267"
+  },
+  "source_before": {
+    "head": "819309fd312298e099642e1253b1d4ba07113e98",
+    "source_sha256": {
+      "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+      "trillionnium/crates/trnm-pon-node/Cargo.toml": "98f1a0ee417eb117c7a5a425de49160b21c4a147a756db0a0fa815ec9dbdeb7b",
+      "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d",
+      "trillionnium/crates/trnm-pon-node/src/lib.rs": "1f42a30d859ca726a5b2cdbaf4ce8291d0b2b62d4def3bbf47310dadd0c3e215",
+      "trillionnium/crates/trnm-pon-node/src/store/growth/observer.rs": "363be6631e286423a7d3b24d91d3e8dabde23105cc7b5e50429430e0ea207078",
+      "trillionnium/crates/trnm-pon-node/src/store/growth_reservation_io.rs": "780ae289d370b1e4b7234f8c0d72077178013de7d297354da66a7fd853ff5aa6"
+    },
+    "status": "",
+    "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267"
+  },
+  "source_unchanged": true,
+  "static_process_jobs": [
+    "1a1b7844a87-12894-b31",
+    "1a1b7874ece-12894-b3e",
+    "1a1b7884913-12894-b41"
+  ],
+  "tests_executed": false
+}

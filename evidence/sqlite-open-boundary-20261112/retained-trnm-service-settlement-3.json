@@ -1,0 +1,41 @@
+{
+  "package": "trnm-service-settlement",
+  "test": "tests::commit_uncertainty_reopens_to_exact_source_target_or_permanent_fence",
+  "argv": [
+    "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_service_settlement-e8b26e34e4187bec",
+    "--exact",
+    "tests::commit_uncertainty_reopens_to_exact_source_target_or_permanent_fence",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+  "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+  "build_receipt": "positive-owners-trnm-service-settlement.json",
+  "binary": {
+    "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_service_settlement-e8b26e34e4187bec",
+    "bytes": 36281664,
+    "sha256": "e176dd801f83387fe4a5c86d5cf67b31d0b708ef81aed65f542f8f5742500a99"
+  },
+  "elapsed_seconds": 0.2631707191467285,
+  "exit_code": 0,
+  "native_summaries": [
+    [
+      "ok",
+      "1",
+      "0",
+      "0"
+    ]
+  ],
+  "selected_source_and_binary_unchanged": true,
+  "passed": true,
+  "stdout": {
+    "path": "retained-trnm-service-settlement-3.stdout",
+    "bytes": 201,
+    "sha256": "1d00f274a0a749f36dd5cbe36f8b3a5391a0a4ba2619df7ace16bf83da0cea24"
+  },
+  "stderr": {
+    "path": "retained-trnm-service-settlement-3.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

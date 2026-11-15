@@ -1,0 +1,191 @@
+{
+  "schema": "trnm-state-cell-null-fixture-repair-v1",
+  "parent": "564bd23a656061e272c4af22029a4829d71b4f64",
+  "qualification": false,
+  "performance_claimed": false,
+  "steps": [
+    {
+      "label": "format-changed-test",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/rustfmt",
+        "+1.95.0",
+        "--edition",
+        "2021",
+        "trillionnium/crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.38458643294870853,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/format-changed-test.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "preflight-before-commit",
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.09407945303246379,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/preflight-before-commit.log",
+      "bytes": 166,
+      "sha256": "81734e4c77b0868eb81396d628fcac16a0e3d6b11ac0d1a71f3cbc977e9f9dce"
+    },
+    {
+      "label": "format-check",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 20.901119944173843,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/format-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "inventory-check",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.12571538402698934,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/inventory-check.log",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "label": "corpus-check",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.3298883098177612,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/corpus-check.log",
+      "bytes": 557,
+      "sha256": "bd2380956217c7b0b6fc86e59a936eccdfa10128c8f7cade2cd324e20ee3686f"
+    },
+    {
+      "label": "diff-check",
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.015337612945586443,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "reviewable-diff",
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "trillionnium/crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.011105342069640756,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/reviewable-diff.log",
+      "bytes": 3151,
+      "sha256": "77fee85da91f23b454a7712231669cd8683831ce67c7e04a8477c09854c28567"
+    },
+    {
+      "label": "preflight-commit",
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.09338922589085996,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/preflight-commit.log",
+      "bytes": 166,
+      "sha256": "81734e4c77b0868eb81396d628fcac16a0e3d6b11ac0d1a71f3cbc977e9f9dce"
+    },
+    {
+      "label": "stage-test-and-pin",
+      "argv": [
+        "/usr/bin/git",
+        "add",
+        "--",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "trillionnium/crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.03074388299137354,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/stage-test-and-pin.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "commit-null-fixture",
+      "argv": [
+        "/usr/bin/git",
+        "-c",
+        "user.name=ProfHepta",
+        "-c",
+        "user.email=102159240+ProfHepta@users.noreply.github.com",
+        "commit",
+        "-m",
+        "test(store): exercise NULL decoding with a damaged nullable fixture"
+      ],
+      "exit_code": 0,
+      "seconds": 0.0805017501115799,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/commit-null-fixture.log",
+      "bytes": 167,
+      "sha256": "d2e4b5811190591dd19b2f7490804633ed8ebfc1874acea65b04691e8d241220"
+    }
+  ],
+  "previous_failed_validation": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/validation.json",
+    "sha256": "620669cd022a6a6178422b11a620df067576b7dfa9360597b91a7c2daa69e0cd",
+    "result": "COMPONENT_FAILURE_RETAINED",
+    "failed_step": "same-scan-errors",
+    "retained": true
+  },
+  "preserved_failed_binary": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/failed-node-test-binary",
+    "bytes": 77968816,
+    "sha256": "9d81a0e0dc45f48ea8e31af842ecd282346a175992f7e9be5eca71c16b5a92e3"
+  },
+  "literal_original_decoder_unchanged": true,
+  "test_blob": "21af1126dcab93a88fd50dcb6d2a2649b018ec3b",
+  "test_sha256": "06e671b43eb8f909164ccafdc4c074e64d09279b29859e7f8f850d567a141730",
+  "production_store_unchanged": true,
+  "state": "NULL_FIXTURE_FIX_COMMITTED_COMPONENTS_PENDING",
+  "commit": "5fdf7c236bd0f63a2f544ec006a427d786e6b235",
+  "tree": "125c2a7a4330a134dbe5b073f38e76ba42bfd2bc",
+  "status": "",
+  "native_sources": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "git_blob": "6769b89e1544d82fb41d418adf11d6b26ef01cc3",
+      "bytes": 374585,
+      "sha256": "3d00e1e40f87947b2c0605dd3a3077c82a1dc92b130e7c89bb07eedf765b5a99"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs",
+      "git_blob": "21af1126dcab93a88fd50dcb6d2a2649b018ec3b",
+      "bytes": 13873,
+      "sha256": "06e671b43eb8f909164ccafdc4c074e64d09279b29859e7f8f850d567a141730"
+    }
+  ],
+  "adoption_contract": {
+    "original_path": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-20261107/adoption-contract-v2.json",
+    "copy_path": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/adoption-contract-v2.json",
+    "sha256": "270d029283f07152da8feff2ceba6f23208289e820c9eb5d77eb5a7fc819279c",
+    "unchanged": true
+  }
+}

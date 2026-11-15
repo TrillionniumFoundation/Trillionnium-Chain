@@ -1,0 +1,368 @@
+{
+  "schema": "TRNM-W1-JOIN-THREAD-DIAGNOSTICS1",
+  "interpretation": "Four partial-operation repetitions, not complete proof trials, budget acceptance, p99 or an exclusive causal attribution.",
+  "diagnostic_binary_sha256": "0147e53bb9278d34363c42d2588096cdb1aabd3c2a56d16e8a8fccf3c46355ec",
+  "original_full_trial_remains_failed": true,
+  "trials": [
+    {
+      "trial": "8a",
+      "report": {
+        "budget_acceptance_claim": false,
+        "cryptographic_integrity_verified": true,
+        "expected_claim_matched": true,
+        "full_proof_claim": false,
+        "input_sha256": [
+          "7217d21b493d66ecedf7a29db40ff880b6ec07dd70c999592b304f8a67622820",
+          "050f124b97c246b98762d15ac66e08ee3eeb117b71bd2af4a5c4224f92e293c9",
+          "497a0d48e2c6318cf72debb17c89b807dd262d3c5ebc9636aa30012b848ddf36"
+        ],
+        "output_bytes": 223154,
+        "output_sha256": "0fa3517f679127171633da0e10ca693dc6414b2fd27d192ab39c84823e539d27",
+        "prover_ns": 170049809658,
+        "rayon_threads": "8",
+        "schema": "TRNM-W1-JOIN-DIAGNOSTIC1"
+      },
+      "measurement": {
+        "aggregate_process_tree_peak_rss_bytes": null,
+        "cleanup_errors": [],
+        "command": [
+          "/workspace/shared/w1-host-target/release/w1-join-diagnostic",
+          "/workspace/shared/w1-run/pinned-bin/r0vm",
+          "/workspace/shared/w1-run/checkpoint-2/join-through-0031.bin",
+          "/workspace/shared/w1-run/checkpoint-2/lift-0032.bin",
+          "/workspace/shared/w1-run/checkpoint-2/join-through-0032.bin"
+        ],
+        "complete_proof_claim": false,
+        "completion_observed_before_deadline": true,
+        "cwd": "/workspace/scratch/79360d3567d1/chain",
+        "effective_deadline_monotonic": 10915.671460674,
+        "effective_remaining_seconds": 300.0,
+        "environment": {
+          "RAYON_NUM_THREADS": "8",
+          "RISC0_HOME": null,
+          "RUST_LOG": null
+        },
+        "error": null,
+        "final_known_group_probes": [
+          {
+            "group": 6,
+            "state": "ABSENT"
+          }
+        ],
+        "final_owned_session_members": [],
+        "finished_unix_ns": 1793868778015644751,
+        "group_probe_errors": [],
+        "known_owned_groups": [
+          6
+        ],
+        "max_bytes_per_output_log": 4194304,
+        "members_after_child_exit": [],
+        "note": "Stage exit 0 is not full proof success. Saved Succinct verification against the fixed image and external statement remains the cryptographic authority.",
+        "owned_session_observation_complete": true,
+        "pid": 6,
+        "proc_clock_ticks_per_second": 100,
+        "proc_disappearance_races": [],
+        "proc_scan_errors": [],
+        "proc_scope": "sampled members of the owned new session; missed short-lived or escaped-session descendants remain unmeasured; PID plus birth ticks identifies samples",
+        "process_group_remaining_after_child_exit": false,
+        "prover_resource_completeness_established": false,
+        "resource_scope": "wait4 direct child including descendants it reaped; killed-stage CPU can be a lower bound; maxrss is largest single process, not aggregate peak",
+        "returncode": 0,
+        "rusage": {
+          "involuntary_context_switches": 18421,
+          "major_faults": 11,
+          "max_single_process_rss_bytes": 1504980992,
+          "minor_faults": 417301,
+          "system_seconds": 19.529393,
+          "user_seconds": 718.046141,
+          "voluntary_context_switches": 5787
+        },
+        "sample_log_truncated": false,
+        "sampled_max_single_process_rss_bytes": 1488072704,
+        "schema": "TRNM-W1-STAGE-MEASUREMENT2",
+        "shared_cgroup": {},
+        "signal_attempts": [],
+        "stage_process_complete": true,
+        "started_monotonic": 10615.671460674,
+        "started_unix_ns": 1793868606494016781,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "ba8647c72b56d87145869fc51aa0c521a4e9687b467d14fad248c7c176305659",
+        "termination_grace_seconds": 5,
+        "termination_reasons": [],
+        "timed_out": false,
+        "wall_limit_seconds": 300.0,
+        "wall_seconds": 171.52165373000025
+      }
+    },
+    {
+      "trial": "4a",
+      "report": {
+        "budget_acceptance_claim": false,
+        "cryptographic_integrity_verified": true,
+        "expected_claim_matched": true,
+        "full_proof_claim": false,
+        "input_sha256": [
+          "7217d21b493d66ecedf7a29db40ff880b6ec07dd70c999592b304f8a67622820",
+          "050f124b97c246b98762d15ac66e08ee3eeb117b71bd2af4a5c4224f92e293c9",
+          "497a0d48e2c6318cf72debb17c89b807dd262d3c5ebc9636aa30012b848ddf36"
+        ],
+        "output_bytes": 223154,
+        "output_sha256": "321b45b9e9eb433ad1d053dab54fe6ed84fd70ac1bf867bf8e3108adc46fec89",
+        "prover_ns": 73530223587,
+        "rayon_threads": "4",
+        "schema": "TRNM-W1-JOIN-DIAGNOSTIC1"
+      },
+      "measurement": {
+        "aggregate_process_tree_peak_rss_bytes": null,
+        "cleanup_errors": [],
+        "command": [
+          "/workspace/shared/w1-host-target/release/w1-join-diagnostic",
+          "/workspace/shared/w1-run/pinned-bin/r0vm",
+          "/workspace/shared/w1-run/checkpoint-2/join-through-0031.bin",
+          "/workspace/shared/w1-run/checkpoint-2/lift-0032.bin",
+          "/workspace/shared/w1-run/checkpoint-2/join-through-0032.bin"
+        ],
+        "complete_proof_claim": false,
+        "completion_observed_before_deadline": true,
+        "cwd": "/workspace/scratch/79360d3567d1/chain",
+        "effective_deadline_monotonic": 11087.308673104,
+        "effective_remaining_seconds": 300.0,
+        "environment": {
+          "RAYON_NUM_THREADS": "4",
+          "RISC0_HOME": null,
+          "RUST_LOG": null
+        },
+        "error": null,
+        "final_known_group_probes": [
+          {
+            "group": 29,
+            "state": "ABSENT"
+          }
+        ],
+        "final_owned_session_members": [],
+        "finished_unix_ns": 1793868852372468008,
+        "group_probe_errors": [],
+        "known_owned_groups": [
+          29
+        ],
+        "max_bytes_per_output_log": 4194304,
+        "members_after_child_exit": [],
+        "note": "Stage exit 0 is not full proof success. Saved Succinct verification against the fixed image and external statement remains the cryptographic authority.",
+        "owned_session_observation_complete": true,
+        "pid": 29,
+        "proc_clock_ticks_per_second": 100,
+        "proc_disappearance_races": [],
+        "proc_scan_errors": [],
+        "proc_scope": "sampled members of the owned new session; missed short-lived or escaped-session descendants remain unmeasured; PID plus birth ticks identifies samples",
+        "process_group_remaining_after_child_exit": false,
+        "prover_resource_completeness_established": false,
+        "resource_scope": "wait4 direct child including descendants it reaped; killed-stage CPU can be a lower bound; maxrss is largest single process, not aggregate peak",
+        "returncode": 0,
+        "rusage": {
+          "involuntary_context_switches": 3182,
+          "major_faults": 1,
+          "max_single_process_rss_bytes": 1508331520,
+          "minor_faults": 417206,
+          "system_seconds": 5.606643,
+          "user_seconds": 259.295758,
+          "voluntary_context_switches": 1656
+        },
+        "sample_log_truncated": false,
+        "sampled_max_single_process_rss_bytes": 1491161088,
+        "schema": "TRNM-W1-STAGE-MEASUREMENT2",
+        "shared_cgroup": {},
+        "signal_attempts": [],
+        "stage_process_complete": true,
+        "started_monotonic": 10787.308673104,
+        "started_unix_ns": 1793868778131228769,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "dc447f5ba18e297d444e3a5833f193984be8f8e3218bba3ba47973c365c48de2",
+        "termination_grace_seconds": 5,
+        "termination_reasons": [],
+        "timed_out": false,
+        "wall_limit_seconds": 300.0,
+        "wall_seconds": 74.24126433299898
+      }
+    },
+    {
+      "trial": "8b",
+      "report": {
+        "budget_acceptance_claim": false,
+        "cryptographic_integrity_verified": true,
+        "expected_claim_matched": true,
+        "full_proof_claim": false,
+        "input_sha256": [
+          "7217d21b493d66ecedf7a29db40ff880b6ec07dd70c999592b304f8a67622820",
+          "050f124b97c246b98762d15ac66e08ee3eeb117b71bd2af4a5c4224f92e293c9",
+          "497a0d48e2c6318cf72debb17c89b807dd262d3c5ebc9636aa30012b848ddf36"
+        ],
+        "output_bytes": 223154,
+        "output_sha256": "5e8f80a693f439b6ed579e15ec438c308fe7594936ff1d0fcf817125c19f139e",
+        "prover_ns": 43443648830,
+        "rayon_threads": "8",
+        "schema": "TRNM-W1-JOIN-DIAGNOSTIC1"
+      },
+      "measurement": {
+        "aggregate_process_tree_peak_rss_bytes": null,
+        "cleanup_errors": [],
+        "command": [
+          "/workspace/shared/w1-host-target/release/w1-join-diagnostic",
+          "/workspace/shared/w1-run/pinned-bin/r0vm",
+          "/workspace/shared/w1-run/checkpoint-2/join-through-0031.bin",
+          "/workspace/shared/w1-run/checkpoint-2/lift-0032.bin",
+          "/workspace/shared/w1-run/checkpoint-2/join-through-0032.bin"
+        ],
+        "complete_proof_claim": false,
+        "completion_observed_before_deadline": true,
+        "cwd": "/workspace/scratch/79360d3567d1/chain",
+        "effective_deadline_monotonic": 11161.653676012,
+        "effective_remaining_seconds": 300.0,
+        "environment": {
+          "RAYON_NUM_THREADS": "8",
+          "RISC0_HOME": null,
+          "RUST_LOG": null
+        },
+        "error": null,
+        "final_known_group_probes": [
+          {
+            "group": 48,
+            "state": "ABSENT"
+          }
+        ],
+        "final_owned_session_members": [],
+        "finished_unix_ns": 1793868896611988667,
+        "group_probe_errors": [],
+        "known_owned_groups": [
+          48
+        ],
+        "max_bytes_per_output_log": 4194304,
+        "members_after_child_exit": [],
+        "note": "Stage exit 0 is not full proof success. Saved Succinct verification against the fixed image and external statement remains the cryptographic authority.",
+        "owned_session_observation_complete": true,
+        "pid": 48,
+        "proc_clock_ticks_per_second": 100,
+        "proc_disappearance_races": [],
+        "proc_scan_errors": [],
+        "proc_scope": "sampled members of the owned new session; missed short-lived or escaped-session descendants remain unmeasured; PID plus birth ticks identifies samples",
+        "process_group_remaining_after_child_exit": false,
+        "prover_resource_completeness_established": false,
+        "resource_scope": "wait4 direct child including descendants it reaped; killed-stage CPU can be a lower bound; maxrss is largest single process, not aggregate peak",
+        "returncode": 0,
+        "rusage": {
+          "involuntary_context_switches": 9938,
+          "major_faults": 0,
+          "max_single_process_rss_bytes": 1508794368,
+          "minor_faults": 417228,
+          "system_seconds": 7.167819,
+          "user_seconds": 234.217737,
+          "voluntary_context_switches": 5422
+        },
+        "sample_log_truncated": false,
+        "sampled_max_single_process_rss_bytes": 1508532224,
+        "schema": "TRNM-W1-STAGE-MEASUREMENT2",
+        "shared_cgroup": {},
+        "signal_attempts": [],
+        "stage_process_complete": true,
+        "started_monotonic": 10861.653676012,
+        "started_unix_ns": 1793868852476235277,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "eb54d0feee3b3e42ee41a17ab7ae37584f5731c93304d186ef9588ec75babda5",
+        "termination_grace_seconds": 5,
+        "termination_reasons": [],
+        "timed_out": false,
+        "wall_limit_seconds": 300.0,
+        "wall_seconds": 44.13578198600044
+      }
+    },
+    {
+      "trial": "4b",
+      "report": {
+        "budget_acceptance_claim": false,
+        "cryptographic_integrity_verified": true,
+        "expected_claim_matched": true,
+        "full_proof_claim": false,
+        "input_sha256": [
+          "7217d21b493d66ecedf7a29db40ff880b6ec07dd70c999592b304f8a67622820",
+          "050f124b97c246b98762d15ac66e08ee3eeb117b71bd2af4a5c4224f92e293c9",
+          "497a0d48e2c6318cf72debb17c89b807dd262d3c5ebc9636aa30012b848ddf36"
+        ],
+        "output_bytes": 223154,
+        "output_sha256": "d627d99fdeca4b23cb93e59b8ee36eef35f271d1f6f37da510f8b0b883dcf436",
+        "prover_ns": 48858783876,
+        "rayon_threads": "4",
+        "schema": "TRNM-W1-JOIN-DIAGNOSTIC1"
+      },
+      "measurement": {
+        "aggregate_process_tree_peak_rss_bytes": null,
+        "cleanup_errors": [],
+        "command": [
+          "/workspace/shared/w1-host-target/release/w1-join-diagnostic",
+          "/workspace/shared/w1-run/pinned-bin/r0vm",
+          "/workspace/shared/w1-run/checkpoint-2/join-through-0031.bin",
+          "/workspace/shared/w1-run/checkpoint-2/lift-0032.bin",
+          "/workspace/shared/w1-run/checkpoint-2/join-through-0032.bin"
+        ],
+        "complete_proof_claim": false,
+        "completion_observed_before_deadline": true,
+        "cwd": "/workspace/scratch/79360d3567d1/chain",
+        "effective_deadline_monotonic": 11205.884477284,
+        "effective_remaining_seconds": 300.0,
+        "environment": {
+          "RAYON_NUM_THREADS": "4",
+          "RISC0_HOME": null,
+          "RUST_LOG": null
+        },
+        "error": null,
+        "final_known_group_probes": [
+          {
+            "group": 71,
+            "state": "ABSENT"
+          }
+        ],
+        "final_owned_session_members": [],
+        "finished_unix_ns": 1793868945933772824,
+        "group_probe_errors": [],
+        "known_owned_groups": [
+          71
+        ],
+        "max_bytes_per_output_log": 4194304,
+        "members_after_child_exit": [],
+        "note": "Stage exit 0 is not full proof success. Saved Succinct verification against the fixed image and external statement remains the cryptographic authority.",
+        "owned_session_observation_complete": true,
+        "pid": 71,
+        "proc_clock_ticks_per_second": 100,
+        "proc_disappearance_races": [],
+        "proc_scan_errors": [],
+        "proc_scope": "sampled members of the owned new session; missed short-lived or escaped-session descendants remain unmeasured; PID plus birth ticks identifies samples",
+        "process_group_remaining_after_child_exit": false,
+        "prover_resource_completeness_established": false,
+        "resource_scope": "wait4 direct child including descendants it reaped; killed-stage CPU can be a lower bound; maxrss is largest single process, not aggregate peak",
+        "returncode": 0,
+        "rusage": {
+          "involuntary_context_switches": 6718,
+          "major_faults": 0,
+          "max_single_process_rss_bytes": 1507467264,
+          "minor_faults": 417193,
+          "system_seconds": 3.225501,
+          "user_seconds": 195.031592,
+          "voluntary_context_switches": 1662
+        },
+        "sample_log_truncated": false,
+        "sampled_max_single_process_rss_bytes": 1507205120,
+        "schema": "TRNM-W1-STAGE-MEASUREMENT2",
+        "shared_cgroup": {},
+        "signal_attempts": [],
+        "stage_process_complete": true,
+        "started_monotonic": 10905.884477284,
+        "started_unix_ns": 1793868896707040357,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "4aa763cbe94b85883a2bf3ad81b979b423d9463b8311b4cdcd97a57530a22d5d",
+        "termination_grace_seconds": 5,
+        "termination_reasons": [],
+        "timed_out": false,
+        "wall_limit_seconds": 300.0,
+        "wall_seconds": 49.22676492000028
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_run_from_zero_native.py"
+  ],
+  "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_ns": 18320142576,
+  "tests": 149,
+  "unittest_success": true,
+  "log": "/workspace/scratch/ae364bcbabfb/continuation-acceptance/retained-reader-controls/test_run_from_zero_native.log",
+  "log_bytes": 24541,
+  "log_sha256": "d785620caa62cbf3589b7efdbd252fe73006691946b94814b45cbe11024c9d58",
+  "test_source_before": "d94052e5777392461da80c3470d08222cc72f14a0e82f9b477b9fcf0da3f870b"
+}

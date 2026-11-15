@@ -1,0 +1,15 @@
+
+running 1 test
+test ingress::public_v3::completion_deadline_tests::unreserved_completion_bytes_close_without_output_or_native_outcome_rewrite ... 
+thread 'ingress::public_v3::completion_deadline_tests::unreserved_completion_bytes_close_without_output_or_native_outcome_rewrite' (37722) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:8860:13:
+assertion failed: self.connections.is_empty()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    ingress::public_v3::completion_deadline_tests::unreserved_completion_bytes_close_without_output_or_native_outcome_rewrite
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1425 filtered out; finished in 0.00s
+

@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/home/runner/work/_temp/target-prospective-merge/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+    "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "wall_ns": 102082803,
+  "user_cpu_ns": 17488000,
+  "system_cpu_ns": 6443000,
+  "cpu_ns": 23931000,
+  "max_rss_kib": 46408,
+  "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+  "minor_faults": 513,
+  "major_faults": 0,
+  "voluntary_switches": 31,
+  "involuntary_switches": 1,
+  "cpu_scope": "entire child, not apportioned to nested wall intervals",
+  "wait4_cpu_resolution_ns": 1000,
+  "stdout_sha256": "4601ee937d6b8dabc8d5646321e110bf6997dd4d80910e286ce58187d4cb8f34",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

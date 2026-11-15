@@ -1,0 +1,209 @@
+{
+  "schema": "chain-account-profile-static-review-v1",
+  "reviewer": "/root/pq_profile_review",
+  "reviewed_at_utc": "2026-11-11T00:51:15.151963+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "base_commit": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+  "review_mode": "STATIC_SOURCE_REVIEW_ONLY",
+  "conclusion": "No confirmed blocking defect found in the reviewed local Node guards, warm local-integrity mapping, or M06/Node API integration. This is not a Rust compiler, native test, or remote deployment result.",
+  "remote_mutations_performed_by_reviewer": false,
+  "remote_warm_patch_application": "UNCONFIRMED; local followup-after files are the reviewed intended result",
+  "compiled": false,
+  "native_tests_run": false,
+  "rustfmt_run": false,
+  "files": [
+    {
+      "repository_path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "local_path": "/workspace/scratch/a4188f5c86b5/coordination/node-patch/followup-after/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 383977,
+      "sha256": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca"
+    },
+    {
+      "repository_path": "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs",
+      "local_path": "/workspace/scratch/a4188f5c86b5/coordination/node-patch/growth-after/trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs",
+      "bytes": 9844,
+      "sha256": "c3eb664735f0977f86eb08157f209d1fc6a4af7ada0037976b0204fd9acc290d"
+    },
+    {
+      "repository_path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "local_path": "/workspace/scratch/a4188f5c86b5/coordination/node-patch/work/trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "bytes": 58175,
+      "sha256": "860f056313689e43cb03a941507e4c61e70892723d046bf7ac151e220984b447"
+    },
+    {
+      "repository_path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+      "local_path": "/workspace/scratch/a4188f5c86b5/coordination/node-patch/work/trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+      "bytes": 120278,
+      "sha256": "59398375101f36e234001dbd5bb15cd767a7b8537f457ccb104c41b110dfef4a"
+    },
+    {
+      "repository_path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "local_path": "/workspace/scratch/a4188f5c86b5/coordination/m06-patch/after/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "bytes": 151436,
+      "sha256": "30c367d0a8e9c7339f26b00606d9cd8bf3e34dd801ff23875c4c0b9ae5c24c2c"
+    },
+    {
+      "repository_path": "trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs",
+      "local_path": "/workspace/scratch/a4188f5c86b5/coordination/m06-patch/after/trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs",
+      "bytes": 12433,
+      "sha256": "9028a974376dd5a3b220e03f4ed97bf7eb41ead8be01868f87fdb4ce29f2a0b6"
+    }
+  ],
+  "patches": [
+    {
+      "local_path": "/workspace/scratch/a4188f5c86b5/coordination/node-patch/node-account-profile.patch",
+      "bytes": 11053,
+      "sha256": "3f9ac418cfab506cec16ae59fe540993fab38e229b7fbd00f193c3fda8dacc1c"
+    },
+    {
+      "local_path": "/workspace/scratch/a4188f5c86b5/coordination/node-patch/node-warm-integrity.patch",
+      "bytes": 3894,
+      "sha256": "23e4982a6b6a75806ed28536cbf64e795d5ac55c487e039ee00fc4470b1464db"
+    },
+    {
+      "local_path": "/workspace/scratch/a4188f5c86b5/coordination/m06-patch/m06.patch",
+      "bytes": 16067,
+      "sha256": "43c890ff75d1ddbc98ed2d4c4ec5e6e46a1412252f524ccf420bc474723f4130"
+    },
+    {
+      "local_path": "/workspace/scratch/a4188f5c86b5/coordination/node-patch/node-growth-scope-tests.patch",
+      "bytes": 5302,
+      "sha256": "e9c60bc4ba76791d98ba75f3278e28726a0043c01635ec725d42d7cf2d66e0c0"
+    }
+  ],
+  "scope": [
+    "Final local Node store.rs from followup-after, final scope tests from growth-after, and operator mining/continuous owner files from work. These are pre-rustfmt intended source bytes; later formatting requires a new artifact hash without changing this static review into an execution result.",
+    "Final local M06 pon_executor.rs plus new account_development_scope integration tests; public Config check, call ordering, error conversion and test API requirements.",
+    "Warm namespace, recovery and activation error provenance; startup errors and remote diagnostic strings retain their existing classification.",
+    "Both finish_mining_open callers and continuous startup construction were traced to ensure profile checking precedes installation of native owner markers while existing failed operation accounting is retained.",
+    "PermanentAccountGrowthV2 activate and recover dispatch was followed through exact-base growth.rs and growth/recovery.rs, including the no-op activation branch.",
+    "Exact-base error.rs, lib.rs and both Cargo manifests were checked for visibility, conversion, trait and dependency compatibility."
+  ],
+  "findings": [
+    {
+      "id": "S01",
+      "classification": "static-confirmation",
+      "subject": "M06 shared account-scope decision and Node API compatibility",
+      "result": "The public Config::check_account_profile returns Result<(), &static str>. Node already implements From<&str> for Error, so the new question-mark conversions and Error::from(error).local_integrity() calls have matching declared types. Settings.app and the error provenance constructors are crate-visible. No confirmed visibility, error-conversion or missing-dependency defect was found.",
+      "evidence": [
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs:32,1144",
+        "trillionnium/crates/trnm-pon-node/src/lib.rs:47,294",
+        "trillionnium/crates/trnm-pon-node/src/error.rs:223,235,277,343,391",
+        "trillionnium/crates/trnm-mvcc-fee/Cargo.toml:33",
+        "trillionnium/crates/trnm-pon-node/Cargo.toml:28,42"
+      ]
+    },
+    {
+      "id": "S02",
+      "classification": "static-confirmation",
+      "subject": "Warm local integrity is narrow and origin-aware",
+      "result": "namespace, recover and activate_with_fault_and_progress wrap only the current local Settings profile check in local_integrity. Progress callbacks remain outside that mapping. Startup opener checks use the original error conversion. New tests assert the warm error kind and requires_owner_stop, and assert that plain/remote copies of the same diagnostic do not gain owner-stop authority.",
+      "evidence": [
+        "trillionnium/crates/trnm-pon-node/src/store.rs:1654,1814,2905,6152,6631",
+        "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs"
+      ]
+    },
+    {
+      "id": "S03",
+      "classification": "concern-resolved-by-static-trace",
+      "subject": "PermanentAccountGrowthV2 direct activate branch",
+      "result": "Node::activate dispatches directly to growth_activate, but growth_activate calls growth_activate_with_progress, which calls growth_guard before BEGIN IMMEDIATE and again after acquiring the write transaction. growth_guard calls namespace, therefore the final warm scope guard is reached before the already-active/lower-work early return or native write. No bypass was found; no additional production-code edit was needed for this concern.",
+      "evidence": [
+        "trillionnium/crates/trnm-pon-node/src/store.rs:6139",
+        "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs:399-421",
+        "trillionnium/crates/trnm-pon-node/src/store/growth.rs:321-334"
+      ]
+    },
+    {
+      "id": "S04",
+      "classification": "static-confirmation",
+      "subject": "Operator marker and failed-accounting order",
+      "result": "The direct mining opener checks caller-supplied Settings before prepare_mining_owner. The checkpoint opener checks constructed Settings inside its measured build result before finish_mining_open can install the marker. Continuous classic and PQ settings are checked inside the built result before the opened closure installs its marker. The existing operation.finish and fault persistence paths remain in place for already-reserved startup work.",
+      "evidence": [
+        "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs:291,335,390,445,449-464",
+        "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs:784,848,903"
+      ]
+    },
+    {
+      "id": "S05",
+      "classification": "test-source-added-not-executed",
+      "subject": "Meaningful growth negative coverage within the existing test file",
+      "result": "The added growth test uses Settings::development_with_profiles(Some(1), native-public-evaluation-dev-v1, continuity_v1::PROFILE).with_permanent_account_growth_v2 and the real Node growth opener. It applies all 13 invalid-setting variants without packet mining, checks fresh namespace refusal, cold refusal with directory bytes unchanged, and warm growth_observe/recover/activate/activate_with_fault/growth_activate_with_progress errors with LocalStructure and requires_owner_stop. Warm active generation, SQLite total_changes, and the real GrowthStateCommitmentV2 remain compared to the valid baseline. The direct activate and direct progress APIs use an already-active target, covering the early return concern.",
+      "evidence": [
+        "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs:164",
+        "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs:18,244",
+        "trillionnium/crates/trnm-pon-node/src/store/growth.rs:252,360",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs:142"
+      ],
+      "patch_apply_check": "PASS against exact followup-after source; not a compiler/native test",
+      "source_changed": "Only the already-added account_profile_scope_tests.rs; no additional repository file or fixture"
+    },
+    {
+      "id": "L01",
+      "classification": "validation-limitation",
+      "subject": "Native execution is still required",
+      "result": "The final Node file contains four test functions. Its 13-case invalid Settings matrix is used for legacy/authenticated opening, cold reopening, warm operations, and the added real PermanentAccountGrowthV2 fresh/cold/warm test. The M06 file contains five test functions, for nine newly introduced test functions total. These tests have only been read statically by this reviewer. No native growth, operator, PQ cold-open or other behavioral pass is asserted."
+    },
+    {
+      "id": "L02",
+      "classification": "claim-boundary",
+      "subject": "No global zero-external-effects guarantee",
+      "result": "Some protected operator startup reads occur after existing reservation/journal accounting and must retain failed accounting. The growth observer creates a private Snapshot before entering the common opener check; it still subsequently rejects invalid account scope, but this review does not establish zero temporary-file effects for every observation/recovery entry point. Ordinary fresh legacy/authenticated namespace checks are specifically covered by the new test source.",
+      "evidence": [
+        "trillionnium/crates/trnm-pon-node/src/store/growth.rs:277-289",
+        "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs:396-464",
+        "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs:846-848"
+      ]
+    },
+    {
+      "id": "L03",
+      "classification": "claim-boundary",
+      "subject": "Research boundary, not production qualification or universal fence",
+      "result": "The patch keeps the legitimate classical development path and its state effects. The scope fields and rejected PQ markers prevent relabeling and partial-PQ selection from authorizing that path. It does not establish a production profile, complete legacy migration, a full immutable digest for arbitrary classical Config mutations, or an irreversible fence on every caller. Warm local_integrity gives existing service owner-stop rules the correct provenance signal."
+    }
+  ],
+  "supporting_exact_base_references": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/error.rs",
+      "git_blob": "22a1be7f0603920ca1662ffe9c4363e6db763929"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "git_blob": "0758122202468cdf7ad938c058442be15555c329"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "git_blob": "f03902e8ee3d081e3ffc9d965be4fdd3b5786c5f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+      "git_blob": "7c5d2f974a8faf0c48b7f636eca80e334b2a4214"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+      "git_blob": "ffb75776be6709778cdb856f00e0e17578c6e5b9"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "git_blob": "1dc918fa383246ccfb673818d627e918bf80f5bc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/profile.rs",
+      "git_blob": "c6b1dedaeca4bbd24d6f8e6facf00d7f3de41a19"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+      "git_blob": "166915e2e607e824ab3b9853824e1b8b8db57a86"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+      "git_blob": "0f611459c4c1c37488861ba36c82ba8302e40c4c"
+    }
+  ],
+  "next_required_validation": [
+    "Assemble the first Node patch, warm followup, M06 patch and growth test followup in that order as applicable. The growth patch is based on exact unformatted followup-after; if formatting has changed hunk context, replace only the test file from growth-after and run the repository formatter. Record final formatted hashes separately.",
+    "Run the actual M06 account_development_scope integration test and Node account_profile_scope_tests under the required repository environment/features.",
+    "Run the existing relevant PQ/classical reopen and growth/operator recovery regression tests selected by the root owner; report native output separately from this static review.",
+    "Confirm remote application and build status independently before describing the remote candidate as verified."
+  ]
+}

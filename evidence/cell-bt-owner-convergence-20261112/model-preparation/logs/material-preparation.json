@@ -1,0 +1,81 @@
+{
+  "complete": true,
+  "failures": [],
+  "hepta_final_use": false,
+  "model_executed": false,
+  "model_loaded": false,
+  "native_operation_started": false,
+  "original_parent_reconstructed_and_verified": [
+    {
+      "bytes": 933664,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/parent/artifact.safetensors",
+      "sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba"
+    },
+    {
+      "bytes": 20962,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/parent/wrapped-adapter.json",
+      "sha256": "b66cf58fc47319e4f7a54a47b952a51f13d98ba8c448651122d485b5ad2d6d1d"
+    }
+  ],
+  "production_activation": false,
+  "public_files": [
+    {
+      "bytes": 6772,
+      "elapsed_seconds": 22.168568093999966,
+      "existing_verified": false,
+      "name": "README.md",
+      "sha256": "4f97533ad95b1b2fea15fbc075c01b94578ebdd7c8138888fa43fa3abd530dc4",
+      "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/resolve/12fd25f77366fa6b3b4b768ec3050bf629380bac/README.md"
+    },
+    {
+      "bytes": 861,
+      "elapsed_seconds": 20.161305339000137,
+      "existing_verified": false,
+      "name": "config.json",
+      "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+      "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/resolve/12fd25f77366fa6b3b4b768ec3050bf629380bac/config.json"
+    },
+    {
+      "bytes": 132,
+      "elapsed_seconds": 20.307671747000313,
+      "existing_verified": false,
+      "name": "generation_config.json",
+      "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+      "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/resolve/12fd25f77366fa6b3b4b768ec3050bf629380bac/generation_config.json"
+    },
+    {
+      "bytes": 269060552,
+      "elapsed_seconds": 43.955089297000086,
+      "existing_verified": false,
+      "name": "model.safetensors",
+      "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+      "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/resolve/12fd25f77366fa6b3b4b768ec3050bf629380bac/model.safetensors"
+    },
+    {
+      "bytes": 655,
+      "elapsed_seconds": 11.992561946000023,
+      "existing_verified": false,
+      "name": "special_tokens_map.json",
+      "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+      "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/resolve/12fd25f77366fa6b3b4b768ec3050bf629380bac/special_tokens_map.json"
+    },
+    {
+      "bytes": 2104556,
+      "elapsed_seconds": 14.65360189400053,
+      "existing_verified": false,
+      "name": "tokenizer.json",
+      "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+      "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/resolve/12fd25f77366fa6b3b4b768ec3050bf629380bac/tokenizer.json"
+    },
+    {
+      "bytes": 3764,
+      "elapsed_seconds": 10.103060368000115,
+      "existing_verified": false,
+      "name": "tokenizer_config.json",
+      "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+      "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/resolve/12fd25f77366fa6b3b4b768ec3050bf629380bac/tokenizer_config.json"
+    }
+  ],
+  "schema": "trnm-local-model-material-preparation-v1",
+  "source_revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+}

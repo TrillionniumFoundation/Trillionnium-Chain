@@ -1,0 +1,1 @@
+{"executed_tests": 1, "result": "PASS", "scope": "named-libtest-execution-only", "test": "store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation"}

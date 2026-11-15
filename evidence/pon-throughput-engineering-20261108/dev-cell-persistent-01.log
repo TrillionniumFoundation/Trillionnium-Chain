@@ -1,0 +1,48 @@
+   Compiling rustix v1.1.4
+   Compiling linux-raw-sys v0.12.1
+   Compiling serde_json v1.0.149
+   Compiling tempfile v3.27.0
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/chain-throughput-engineering-20261108-86a09d93/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 33.06s
+     Running unittests src/lib.rs (/home/qian-qi/chain-throughput-engineering-20261108-86a09d93-target/debug/deps/trnm_data_availability-860e4d3b2378d360)
+
+running 36 tests
+test cell::network::persistent::rarest_tests::v3_invalid_local_inventory_range_and_v2_profile_cannot_dial ... ok
+test cell::network::persistent::tests::old_response_magic_is_rejected_without_namespace_fallback_or_redial ... ok
+test cell::network::persistent::tests::interrupted_frame_discards_connection_and_only_explicit_retry_spends_new_allowances ... ok
+test cell::network::persistent::tests::original_cancellation_stops_waiting_pool_request_without_new_frame_or_dial ... ok
+test cell::network::persistent::tests::reuse_keeps_original_connection_deadline_and_expired_session_cannot_redial ... ok
+test cell::network::persistent::tests::exhausted_response_budget_after_connection_wait_refuses_new_dial ... ok
+test cell::network::persistent::tests::exhausted_response_budget_after_connection_wait_refuses_reused_frame ... ok
+test cell::network::persistent::tests::quarantine_during_connection_wait_keeps_precedence_over_byte_exhaustion ... ok
+test cell::network::persistent::rarest_tests::v3_wrong_magic_or_noncanonical_inventory_quarantines_without_fallback ... ok
+test cell::network::persistent::tests::temporary_response_reservation_after_connection_wait_is_not_exhaustion ... ok
+test cell::network::persistent::rarest_tests::v3_partial_inventory_drops_connection_without_implicit_frame_retry ... ok
+test cell::network::persistent::tests::zero_egress_service_does_not_accept_an_already_queued_connection ... ok
+test cell::network::persistent::tests::last_response_byte_closes_reused_connection_without_admitting_idle_frame ... ok
+test cell::network::persistent::tests::exhausted_service_still_joins_an_already_admitted_incomplete_frame ... ok
+test cell::network::persistent::tests::server_temporary_egress_reservation_refunds_before_real_tcp_response ... ok
+test cell::network::persistent::tests::server_actual_egress_exhaustion_stops_intake_and_next_frame_without_shutdown ... ok
+test cell::network::persistent::tests::server_frame_and_byte_budgets_apply_across_reused_requests ... ok
+test cell::network::persistent::tests::server_rejects_old_magic_and_unknown_kind_without_serving_object_bytes ... ok
+test cell::network::persistent::rarest_tests::v3_cancellation_after_inventory_remains_terminal_without_a_payload_frame ... ok
+test cell::network::persistent::rarest_tests::v3_server_rejects_old_namespaces_and_invalid_inventory_before_object_bytes ... ok
+test cell::network::persistent::rarest_tests::v3_inventory_and_payload_keep_original_connection_and_session_deadlines ... ok
+test cell::network::persistent::rarest_tests::v3_inventory_spends_original_bytes_and_denies_a_fresh_payload_allowance ... ok
+test cell::tests::cache_budget::persistent_whole_cache_counts_catalog_payload_keys_and_exact_dedup ... ok
+test cell::network::persistent::tests::invalid_persistent_limits_never_open_transport_or_mutate_the_cache ... ok
+test cell::network::persistent::rarest_tests::v3_empty_inventory_is_a_hint_and_cannot_hide_real_verified_chunks ... ok
+test cell::network::persistent::rarest_tests::v3_claimed_inventory_never_admits_a_bad_chunk_or_partial_output ... ok
+test cell::retention::tests::retirement_writer_contention_keeps_the_original_deadline_and_persistent_duty ... ok
+test cell::network::persistent::rarest_tests::v3_partial_providers_schedule_rarest_chunks_first_with_two_reused_connections ... ok
+test cell::network::persistent::rarest_tests::v3_real_server_reuses_one_connection_for_manifest_inventory_and_verified_payload ... ok
+test cell::network::persistent::rarest_tests::v3_inventory_frame_exhaustion_keeps_verified_prefix_for_explicit_resume ... ok
+test cell::network::persistent::tests::real_manifest_and_two_chunks_reuse_one_connection_and_original_response_budget ... ok
+test cell::tests::cache_budget::ordinary_authorized_fetches_share_one_persistent_quota_and_failed_fetch_keeps_charge ... ok
+test cell::release::transport_tests::all_marker_profiles_fetch_two_members_through_one_persistent_connection ... ok
+test cell::network::persistent::tests::request_connection_and_byte_exhaustion_each_refuse_output_and_keep_verified_prefix ... ok
+test cell::release::transport_tests::persistent_release_and_prefetch_preflight_reject_aggregate_limits_before_payload ... ok
+test cell::network::persistent::rarest_tests::v3_real_inventory_crosses_page_256_and_reuses_its_reservation_for_tail_chunk ... ok
+
+test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 317 filtered out; finished in 15.08s
+

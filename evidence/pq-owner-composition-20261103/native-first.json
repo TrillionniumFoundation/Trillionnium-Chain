@@ -1,0 +1,43 @@
+{
+  "application_commit": "87ee23243dbfa97c9e6cb7681da6510be3715d05",
+  "application_tree": "eb6bfbec239c51aa278812e4b1e09e6b08527c02",
+  "compiler": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "features": "default canonical RustCrypto ML-DSA; optional OpenSSL differential feature not enabled",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "pq_rollback_witness::",
+    "--",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 101,
+  "raw_passed": 38,
+  "meaningful_required_passed": 37,
+  "harnesses_passed_not_counted": [
+    "store::pq_rollback_witness::combined_tests::independent_witness_process_child"
+  ],
+  "meaningful_failures": [
+    "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart"
+  ],
+  "not_selected_required": [
+    "ingress::pq_network::live_admission_tests::cancelled_intake_does_not_allocate_or_spend_connection_credit",
+    "ingress::pq_network::live_admission_tests::deadline_cancels_signature_owner_wait_without_waiting_for_unlock",
+    "ingress::pq_network::live_admission_tests::elapsed_deadline_refuses_before_charge_and_cached_replay_stays_live_only",
+    "ingress::pq_network::live_admission_tests::expiry_cancels_signature_owner_wait_and_preserves_unused_sequence",
+    "ingress::pq_network::live_admission_tests::failed_signature_keeps_charge_then_same_sequence_executes_real_pq_transfer"
+  ],
+  "first_failure": "independent witness exited before ready; no child diagnostics in this source",
+  "io_boundary_build_warning": "UNQUALIFIED: RUSTC must be absolute",
+  "original_exchange_limit_ms": 250,
+  "whole_chain_quantum_security_qualified": false,
+  "production_activation": false,
+  "log_sha256": "31517fe03759218a5a73f28659a3a0eba80d6e855c2e4f3d405c2228c9cf0932"
+}

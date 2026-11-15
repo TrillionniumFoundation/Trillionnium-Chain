@@ -1,0 +1,1 @@
+PASS: exact conditional arithmetic and source hashes; all qualification gates remain closed

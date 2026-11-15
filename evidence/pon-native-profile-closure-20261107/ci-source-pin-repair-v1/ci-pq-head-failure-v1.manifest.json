@@ -1,0 +1,177 @@
+{
+  "file_count": 42,
+  "files": {
+    "FINDING.json": {
+      "sha256": "4506b6b2cd12e5766919414ff8a50c6b2e7b58d114643ff502ab90078e8cf5d4",
+      "size_bytes": 6407
+    },
+    "README.md": {
+      "sha256": "95df551a0427a5342763916e20964f02030f9210b13999c35beffb5ab5f859d8",
+      "size_bytes": 5544
+    },
+    "github/download-manifest.json": {
+      "sha256": "8ca1ae160e02ad9613b5626ef836c87322d1dd09c58707bff1fe949624c905f2",
+      "size_bytes": 6194
+    },
+    "github/job-128582077608-metadata.json": {
+      "sha256": "d0e4a18bf691cb13d92b246e8a872c154e496f2dd9236487f124e6e6983f7438",
+      "size_bytes": 4255
+    },
+    "github/job-128582077608.log": {
+      "sha256": "697d624458f7d3e9c2b5e6cb439e5f81736f3c9e90f7924a784388aee760a871",
+      "size_bytes": 145338
+    },
+    "github/job-128582077667-metadata.json": {
+      "sha256": "c12b79b18ce22ffa0cec560d75c86ed739b6798c3a40831d266db476acae8840",
+      "size_bytes": 4263
+    },
+    "github/job-128582077667.log": {
+      "sha256": "2a99a80ad0f41097c1e44ee35729a74b42f2a95b1912617c99dbf88d90283aa7",
+      "size_bytes": 145253
+    },
+    "github/run-metadata.json": {
+      "sha256": "207c35dcbf5aaf16108db9f75d6a89ed311fb54173a8ea128e2f7c9d2f736c72",
+      "size_bytes": 15192
+    },
+    "proposed-eight-pin-sync.diff": {
+      "sha256": "f71864dea00f19ddac5a024472f526b18c40483558a817274d8d681df6e54153",
+      "size_bytes": 7163
+    },
+    "source-comparison/all-source-differences.json": {
+      "sha256": "eee6dd3c95c97b50aef722c3fc5de31e50fcc1f96b0545f04dad4dab68a1c7d1",
+      "size_bytes": 8422
+    },
+    "source-comparison/base/config/pon/pq-cross-branch-corpus-v1.json": {
+      "sha256": "08f191146a4343359dad6e49b9464a976f6aeba7f523b0c2b86f4c613d6cd5b2",
+      "size_bytes": 107477
+    },
+    "source-comparison/base/git-tree-recursive.json": {
+      "sha256": "e05173ba44ff196b682b749007b72f25a642b94a1dd75f7f1158d3e52c298894",
+      "size_bytes": 3890972
+    },
+    "source-comparison/base/scripts/ci/check_ci_contract.py": {
+      "sha256": "20c2a6e4d4ec77541c1d39cc3d210d200ed026249bd061e3aade00042124d45c",
+      "size_bytes": 64858
+    },
+    "source-comparison/base/scripts/ci/check_pq_research_integration.py": {
+      "sha256": "cc48441219a4ce68d92ff9d68b33c20acc082d5895a8618243f0395baf859396",
+      "size_bytes": 43747
+    },
+    "source-comparison/base/scripts/ci/ci_job.sh": {
+      "sha256": "f4ce4647d91fb26ea5743cc496503fa8318a3f006e4eddd494af9d02e3a1014b",
+      "size_bytes": 25482
+    },
+    "source-comparison/base/scripts/ci/test_ci_contract.py": {
+      "sha256": "37c3f267d9e5c86eebc606fce7df9962e9b1f0d4cd3b7cf0c786d68af4c77dd4",
+      "size_bytes": 90959
+    },
+    "source-comparison/base/trillionnium/crates/trnm-crypto-primitives/src/lib.rs": {
+      "sha256": "4f4984ff8d902e9f52c4568438dbb2b2a88e2d07d70e46ed8cb06a00240e4c9f",
+      "size_bytes": 7990
+    },
+    "source-comparison/base/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": {
+      "sha256": "25a25f42d8066aa0390a4fb9fc7e39cfb47784c8ae9844523644c4c56e9d59ad",
+      "size_bytes": 347763
+    },
+    "source-comparison/base/trillionnium/crates/trnm-pon-node/src/lib.rs": {
+      "sha256": "7da3267fd7769c80715f2c82d89dcee040afc14a6c50b889e9727dcf43076db6",
+      "size_bytes": 34525
+    },
+    "source-comparison/base/trillionnium/crates/trnm-pon-node/src/store/task_operation_v2/reconciliation.rs": {
+      "sha256": "67c1d17ddf57e0b18cb91ca948fa01c32ac92c2fbfa03b5b3655831acd052a7c",
+      "size_bytes": 17382
+    },
+    "source-comparison/base/trillionnium/crates/trnm-pon-node/tests/native_task_operation_v2.rs": {
+      "sha256": "5ce148eb993dcd0a5a5c6cce3e996d67f0cfa8124122729a31d1fafdcadec5f4",
+      "size_bytes": 28167
+    },
+    "source-comparison/comparison-result.json": {
+      "sha256": "9bf145eab13f08b9c1537a38279b3d4db18c21a883b092d33dd19acbbf444638",
+      "size_bytes": 10893
+    },
+    "source-comparison/complete-pin-tree-comparison.json": {
+      "sha256": "53d0dd50197c1f4a6dd884e9ee242f4de7671f365c3cea5039a4d0904193b0ab",
+      "size_bytes": 2531
+    },
+    "source-comparison/diffs/scripts__ci__check_ci_contract.py.full.diff": {
+      "sha256": "504a2149cca9518d1205d19cd61b73a3a925b60d5ae2b76b2043c06ced04f734",
+      "size_bytes": 3043
+    },
+    "source-comparison/diffs/scripts__ci__ci_job.sh.full.diff": {
+      "sha256": "edc31329779179671417b8e9ea37f6d222fbe320eb448947bcb83b68b34fabbe",
+      "size_bytes": 3017
+    },
+    "source-comparison/diffs/scripts__ci__test_ci_contract.py.full.diff": {
+      "sha256": "35ca8596b7d98e0de118ab0405fd464f101b73600c2bbbf78f79debff6cc95e5",
+      "size_bytes": 2275
+    },
+    "source-comparison/diffs/trillionnium__crates__trnm-crypto-primitives__src__lib.rs.full.diff": {
+      "sha256": "f6e570e958cd5fb394fd95e2f5bdf77aada0937b6d78ec7c6ad06107edd2161d",
+      "size_bytes": 334
+    },
+    "source-comparison/diffs/trillionnium__crates__trnm-pon-node__examples__support__distributed_source_inventory.rs.full.diff": {
+      "sha256": "ab2325ed0346bb823f079de7fed7550af5d76487d227a95b4180dd4f5456d025",
+      "size_bytes": 8961
+    },
+    "source-comparison/diffs/trillionnium__crates__trnm-pon-node__src__lib.rs.full.diff": {
+      "sha256": "81767527252b580ca7b4aa15cea827b183618cc19810169a0a9896df6e7757a7",
+      "size_bytes": 555
+    },
+    "source-comparison/diffs/trillionnium__crates__trnm-pon-node__src__store__task_operation_v2__reconciliation.rs.full.diff": {
+      "sha256": "cecead9d6c248e40aced3cc7bae9e57170857cd80c014ebea4427b5b0dd46d7c",
+      "size_bytes": 11166
+    },
+    "source-comparison/diffs/trillionnium__crates__trnm-pon-node__tests__native_task_operation_v2.rs.full.diff": {
+      "sha256": "3b3d9249ce13206c5455e00306d62caaa73614178569e8f06dca5912c24d782d",
+      "size_bytes": 17791
+    },
+    "source-comparison/head/config/pon/pq-cross-branch-corpus-v1.json": {
+      "sha256": "08f191146a4343359dad6e49b9464a976f6aeba7f523b0c2b86f4c613d6cd5b2",
+      "size_bytes": 107477
+    },
+    "source-comparison/head/git-tree-recursive.json": {
+      "sha256": "a6c4bab16bd522dde439f6218490f1e5221ca19cfc28546a7b94191477b873a0",
+      "size_bytes": 4016862
+    },
+    "source-comparison/head/scripts/ci/check_ci_contract.py": {
+      "sha256": "ead5cdd2588d7447eccb705260ff5a08970e3753e9334f9207db82c979033145",
+      "size_bytes": 65141
+    },
+    "source-comparison/head/scripts/ci/check_pq_research_integration.py": {
+      "sha256": "cc48441219a4ce68d92ff9d68b33c20acc082d5895a8618243f0395baf859396",
+      "size_bytes": 43747
+    },
+    "source-comparison/head/scripts/ci/ci_job.sh": {
+      "sha256": "e93794dea9102e2770da32c2c11647d8f0439f4167576616e2fcbc79ec5e43fd",
+      "size_bytes": 25765
+    },
+    "source-comparison/head/scripts/ci/test_ci_contract.py": {
+      "sha256": "33e6645d728d01a7ad6a90d29fd0910c6763ccc26b4e15a2bdab25ad99765328",
+      "size_bytes": 92840
+    },
+    "source-comparison/head/trillionnium/crates/trnm-crypto-primitives/src/lib.rs": {
+      "sha256": "b69caad8bcda8b41eb853667f4e3524f01ef47c1a854486ab71840a4b2e5441c",
+      "size_bytes": 8025
+    },
+    "source-comparison/head/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": {
+      "sha256": "dbf50b3da5e8469966f78c1e4426ae5664ecfa29290821030543066d0b7c9bb0",
+      "size_bytes": 353783
+    },
+    "source-comparison/head/trillionnium/crates/trnm-pon-node/src/lib.rs": {
+      "sha256": "5e93c26489d235fb8e8264ff7d2cd10d4a0ae680f3e1be5be9418a383645d61c",
+      "size_bytes": 34767
+    },
+    "source-comparison/head/trillionnium/crates/trnm-pon-node/src/store/task_operation_v2/reconciliation.rs": {
+      "sha256": "7013e82d3f04d8bb5b16be0e05b0b89d9ae842d4aad8f8bb271d2c14781f2182",
+      "size_bytes": 27133
+    },
+    "source-comparison/head/trillionnium/crates/trnm-pon-node/tests/native_task_operation_v2.rs": {
+      "sha256": "e4734c7a3d2f08890757f68d1b5cca65c0ead9d51d8e7113d298198fb056befb",
+      "size_bytes": 43939
+    }
+  },
+  "no_private_authentication_material": true,
+  "no_qualification_uplift": true,
+  "schema": "pon-pr785-public-ci-head-failure-manifest-v1",
+  "scope": "EXACT_PUBLIC_CI_AND_REPOSITORY_SOURCE_OBSERVATIONS"
+}

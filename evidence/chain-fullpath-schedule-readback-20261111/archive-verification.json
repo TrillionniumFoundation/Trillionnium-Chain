@@ -1,0 +1,29 @@
+{
+  "archive_bytes": 71025468,
+  "archive_path": "/workspace/scratch/3069292387f3/pon-native-53e1b98a-original.zip",
+  "archive_sha256": "9a2c2250205c6a5fe18524451addf56115aafbf951d9a5c2fd3f6056988e437e",
+  "artifact_id": 13894656010,
+  "github_digest_matched": true,
+  "manifest_bytes_verified": 522609424,
+  "manifest_file_count": 1765,
+  "manifest_member_hashes_verified": true,
+  "manifest_sha256": "d109aff9ea3dc147ce6703f360849f398e1965c07e58c20f4593bcb54f167325",
+  "native_experiment_executed": false,
+  "retained_subset_bytes": 26984446,
+  "retained_subset_files": 53,
+  "schema": "original-campaign-archive-readback-v1",
+  "scope": "Existing GitHub artifact reread; full original archive digest and each original manifest entry checked; only explicit subset copied for metrics",
+  "source": {
+    "head": "53e1b98a7955898b9feff4778f7136c0fd0199c8",
+    "tree": "094ccb0afc9e7ffbbcc83f85efb6ca4ad8d54aa0"
+  },
+  "workflow_run": {
+    "head_branch": "perf/pon-pq-packet-one-pass-20261110",
+    "head_repository_id": 1323087357,
+    "head_sha": "53e1b98a7955898b9feff4778f7136c0fd0199c8",
+    "id": 43104547221,
+    "repository_id": 1323087357
+  },
+  "zip_members": 1766,
+  "zip_uncompressed_bytes": 522929063
+}

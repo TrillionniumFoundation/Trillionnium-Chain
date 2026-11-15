@@ -1,0 +1,61 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "45962558a7133375b16c0ac2600f2edb4a115585",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "45962558a7133375b16c0ac2600f2edb4a115585",
+    "tested_tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 872294869,
+    "tracked_entries": 7533,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "/home/qian/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "-Vv"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "45962558a7133375b16c0ac2600f2edb4a115585",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "45962558a7133375b16c0ac2600f2edb4a115585",
+    "tested_tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 872294869,
+    "tracked_entries": 7533,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/home/qian/pq-witness-6f4fef89e370",
+  "elapsed_ns": 9140490096,
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qian/pq-witness-target-6f4fef89e370",
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": "/home/qian/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": "1",
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 0,
+  "log_bytes": 196,
+  "log_file": "compiler.log",
+  "log_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-03T18:26:38.336960+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

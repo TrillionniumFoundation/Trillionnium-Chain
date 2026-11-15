@@ -1,0 +1,392 @@
+{
+  "evidence_kind": "CONTROLLED_OBSERVATION",
+  "observation": {
+    "preparation_and_failed_attempt_cost": "UNKNOWN",
+    "records": [
+      {
+        "job_id": "1a1b867ae9c-12894-f17",
+        "operation": "help",
+        "receipt": {
+          "at_unix_ms": 1794095170480,
+          "audit_recorded": true,
+          "automatic_retry": false,
+          "cancelled": false,
+          "exit_code": 0,
+          "job_id": "1a1b867ae9c-12894-f17",
+          "launch_nonce": "575fe157536062470b34055dfbb09448",
+          "log_bytes": {
+            "stderr": {
+              "seen": 0,
+              "stored": 0
+            },
+            "stdout": {
+              "seen": 1714,
+              "stored": 1714
+            }
+          },
+          "log_errors": {
+            "stderr": null,
+            "stdout": null
+          },
+          "log_synced": {
+            "stderr": true,
+            "stdout": true
+          },
+          "log_truncated": {
+            "stderr": false,
+            "stdout": false
+          },
+          "output_complete": true,
+          "output_durable": true,
+          "state": "succeeded",
+          "terminal_publication_confirmed": true,
+          "terminal_publication_protocol": 1,
+          "timed_out": false
+        }
+      },
+      {
+        "job_id": "1a1b868ab5b-12894-f1f",
+        "operation": "subhelp",
+        "receipt": {
+          "at_unix_ms": 1794095249106,
+          "audit_recorded": true,
+          "automatic_retry": false,
+          "cancelled": false,
+          "exit_code": 0,
+          "job_id": "1a1b868ab5b-12894-f1f",
+          "launch_nonce": "38367a22deccc7809424b2ae7c48175a",
+          "log_bytes": {
+            "stderr": {
+              "seen": 0,
+              "stored": 0
+            },
+            "stdout": {
+              "seen": 5936,
+              "stored": 5936
+            }
+          },
+          "log_errors": {
+            "stderr": null,
+            "stdout": null
+          },
+          "log_synced": {
+            "stderr": true,
+            "stdout": true
+          },
+          "log_truncated": {
+            "stderr": false,
+            "stdout": false
+          },
+          "output_complete": true,
+          "output_durable": true,
+          "state": "succeeded",
+          "terminal_publication_confirmed": true,
+          "terminal_publication_protocol": 1,
+          "timed_out": false
+        }
+      },
+      {
+        "job_id": "1a1b86af80d-12894-f2f",
+        "operation": "readiness",
+        "receipt": {
+          "at_unix_ms": 1794095408680,
+          "audit_recorded": true,
+          "automatic_retry": false,
+          "cancelled": false,
+          "exit_code": 0,
+          "job_id": "1a1b86af80d-12894-f2f",
+          "launch_nonce": "d1fd5bc0a8145616dd5b52fcbba847af",
+          "log_bytes": {
+            "stderr": {
+              "seen": 0,
+              "stored": 0
+            },
+            "stdout": {
+              "seen": 4066,
+              "stored": 4066
+            }
+          },
+          "log_errors": {
+            "stderr": null,
+            "stdout": null
+          },
+          "log_synced": {
+            "stderr": true,
+            "stdout": true
+          },
+          "log_truncated": {
+            "stderr": false,
+            "stdout": false
+          },
+          "output_complete": true,
+          "output_durable": true,
+          "state": "succeeded",
+          "terminal_publication_confirmed": true,
+          "terminal_publication_protocol": 1,
+          "timed_out": false
+        }
+      },
+      {
+        "job_id": "1a1b86ca6b1-12894-f3f",
+        "operation": "source-probe-failed",
+        "receipt": {
+          "at_unix_ms": 1794095500671,
+          "audit_recorded": true,
+          "automatic_retry": false,
+          "cancelled": false,
+          "exit_code": 1,
+          "job_id": "1a1b86ca6b1-12894-f3f",
+          "launch_nonce": "a172df3c74a18eca770581bcabc76122",
+          "log_bytes": {
+            "stderr": {
+              "seen": 1813,
+              "stored": 1813
+            },
+            "stdout": {
+              "seen": 114,
+              "stored": 114
+            }
+          },
+          "log_errors": {
+            "stderr": null,
+            "stdout": null
+          },
+          "log_synced": {
+            "stderr": true,
+            "stdout": true
+          },
+          "log_truncated": {
+            "stderr": false,
+            "stdout": false
+          },
+          "output_complete": true,
+          "output_durable": true,
+          "state": "failed",
+          "terminal_publication_confirmed": true,
+          "terminal_publication_protocol": 1,
+          "timed_out": false
+        }
+      },
+      {
+        "job_id": "1a1b86da556-12894-f49",
+        "operation": "source-probe-corrected",
+        "receipt": {
+          "at_unix_ms": 1794095565813,
+          "audit_recorded": true,
+          "automatic_retry": false,
+          "cancelled": false,
+          "exit_code": 0,
+          "job_id": "1a1b86da556-12894-f49",
+          "launch_nonce": "1bbe88e8b4fe729a40ef17aa9b1c6849",
+          "log_bytes": {
+            "stderr": {
+              "seen": 0,
+              "stored": 0
+            },
+            "stdout": {
+              "seen": 3352,
+              "stored": 3352
+            }
+          },
+          "log_errors": {
+            "stderr": null,
+            "stdout": null
+          },
+          "log_synced": {
+            "stderr": true,
+            "stdout": true
+          },
+          "log_truncated": {
+            "stderr": false,
+            "stdout": false
+          },
+          "output_complete": true,
+          "output_durable": true,
+          "state": "succeeded",
+          "terminal_publication_confirmed": true,
+          "terminal_publication_protocol": 1,
+          "timed_out": false
+        }
+      },
+      {
+        "job_id": "1a1b87251f7-12894-f71",
+        "operation": "dedicated-path-rejected",
+        "receipt": {
+          "at_unix_ms": 1794095882849,
+          "audit_recorded": true,
+          "automatic_retry": false,
+          "cancelled": false,
+          "exit_code": 0,
+          "job_id": "1a1b87251f7-12894-f71",
+          "launch_nonce": "5e605c72408fde29e5d4444b77db8276",
+          "log_bytes": {
+            "stderr": {
+              "seen": 0,
+              "stored": 0
+            },
+            "stdout": {
+              "seen": 1784,
+              "stored": 1784
+            }
+          },
+          "log_errors": {
+            "stderr": null,
+            "stdout": null
+          },
+          "log_synced": {
+            "stderr": true,
+            "stdout": true
+          },
+          "log_truncated": {
+            "stderr": false,
+            "stdout": false
+          },
+          "output_complete": true,
+          "output_durable": true,
+          "state": "succeeded",
+          "terminal_publication_confirmed": true,
+          "terminal_publication_protocol": 1,
+          "timed_out": false
+        }
+      },
+      {
+        "job_id": "1a1b8747868-12894-f87",
+        "operation": "path-diagnosis",
+        "receipt": {
+          "at_unix_ms": 1794096022404,
+          "audit_recorded": true,
+          "automatic_retry": false,
+          "cancelled": false,
+          "exit_code": 0,
+          "job_id": "1a1b8747868-12894-f87",
+          "launch_nonce": "2428512f2a574f2d2e860a15708a0458",
+          "log_bytes": {
+            "stderr": {
+              "seen": 0,
+              "stored": 0
+            },
+            "stdout": {
+              "seen": 993,
+              "stored": 993
+            }
+          },
+          "log_errors": {
+            "stderr": null,
+            "stdout": null
+          },
+          "log_synced": {
+            "stderr": true,
+            "stdout": true
+          },
+          "log_truncated": {
+            "stderr": false,
+            "stdout": false
+          },
+          "output_complete": true,
+          "output_durable": true,
+          "state": "succeeded",
+          "terminal_publication_confirmed": true,
+          "terminal_publication_protocol": 1,
+          "timed_out": false
+        }
+      },
+      {
+        "job_id": "1a1b8770ec5-12894-f9b",
+        "operation": "execution",
+        "receipt": {
+          "at_unix_ms": 1794096250000,
+          "audit_recorded": true,
+          "automatic_retry": false,
+          "cancelled": false,
+          "exit_code": 0,
+          "job_id": "1a1b8770ec5-12894-f9b",
+          "launch_nonce": "3769d5d9c22df9d4784ca82a6b5a4d78",
+          "log_bytes": {
+            "stderr": {
+              "seen": 0,
+              "stored": 0
+            },
+            "stdout": {
+              "seen": 21248,
+              "stored": 21248
+            }
+          },
+          "log_errors": {
+            "stderr": null,
+            "stdout": null
+          },
+          "log_synced": {
+            "stderr": true,
+            "stdout": true
+          },
+          "log_truncated": {
+            "stderr": false,
+            "stdout": false
+          },
+          "output_complete": true,
+          "output_durable": true,
+          "state": "succeeded",
+          "terminal_publication_confirmed": true,
+          "terminal_publication_protocol": 1,
+          "timed_out": false
+        }
+      },
+      {
+        "job_id": "1a1b87a2400-12894-fac",
+        "operation": "postrun-readonly",
+        "receipt": {
+          "at_unix_ms": 1794096384126,
+          "audit_recorded": true,
+          "automatic_retry": false,
+          "cancelled": false,
+          "exit_code": 0,
+          "job_id": "1a1b87a2400-12894-fac",
+          "launch_nonce": "fd2d11c8a5df7ba76941c1220074dce8",
+          "log_bytes": {
+            "stderr": {
+              "seen": 0,
+              "stored": 0
+            },
+            "stdout": {
+              "seen": 2164,
+              "stored": 2164
+            }
+          },
+          "log_errors": {
+            "stderr": null,
+            "stdout": null
+          },
+          "log_synced": {
+            "stderr": true,
+            "stdout": true
+          },
+          "log_truncated": {
+            "stderr": false,
+            "stdout": false
+          },
+          "output_complete": true,
+          "output_durable": true,
+          "state": "succeeded",
+          "terminal_publication_confirmed": true,
+          "terminal_publication_protocol": 1,
+          "timed_out": false
+        }
+      }
+    ],
+    "schema": "pon-profile-colab-host-process-status-v1"
+  },
+  "original": {
+    "file_label": "host-process-status-v1.json",
+    "sha256": "0d46aa0c353a9f759c70889d8926bdbcb5b1acbef89c332f6412ffec1eb47df5",
+    "size_bytes": 5827
+  },
+  "projection": {
+    "not_original_bytes": true,
+    "omitted_fields": [],
+    "replacements": [
+      "Host home paths replaced by <HOST_HOME>",
+      "Task private state root replaced by <TASK_PRIVATE_STATE_ROOT>"
+    ]
+  },
+  "schema": "pon-cloud-public-projection-v1"
+}

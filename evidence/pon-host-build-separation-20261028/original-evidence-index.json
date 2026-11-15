@@ -1,0 +1,20 @@
+{
+  "schema": "pon-host-build-original-ci-artifact-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "run": 40605070256,
+  "job": 122542421868,
+  "artifact": 12781690726,
+  "source_commit": "73ffdd94f0b5461a2217a197a3d03a55b37117d5",
+  "artifact_sha256": "20df2c4f619e0bbb3f8c7b39065f07292927ee19f50e309ce6ca5bc2ff3ae49f",
+  "artifact_bytes": 74874,
+  "files": {
+    "original-build-process.json": "e80319aab7d05bea8cb78f400419deec9ecee8df4ba282fe3c1273ff2301452e",
+    "original-build-stderr.txt": "4225f462e333ea3d814425cc97dd7cf2f2216201199aeffdbb61da4a741b1cce",
+    "original-host-child.json": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321",
+    "original-host-controller.json": "ee89b55b184d4653e44f42db2da82292c679b20b76ebeae1fb51f4ce9436aa7a",
+    "original-native-manifest.json": "4a297c2aee522e0e77394e7528aba57c834666e0b67f1f579e7348be2b0887e3"
+  },
+  "original_result": "FAIL",
+  "tests_executed": 0,
+  "runtime_qualification": false
+}

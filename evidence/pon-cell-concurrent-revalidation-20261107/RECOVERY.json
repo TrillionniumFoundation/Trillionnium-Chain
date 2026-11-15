@@ -1,0 +1,1251 @@
+{
+  "all_11070_materialized_raw_sha256_and_git_blob_ids_verified": true,
+  "archive_bytes_match_original_previously_retained_sha256": true,
+  "cache_object_audit": "recovery-diagnostics/cache-object-audit.json",
+  "diagnostic_failure_is_ci_or_native_test_failure": false,
+  "native_download_sidecar_provenance": {
+    "bytes": 690,
+    "path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/recovered-native-download-verification.json",
+    "provenance": "Restored from the original complete concurrentNativeLocalVerified structured result retained in functions store using the original json.dump(sort_keys=True, indent=2) plus newline serializer. Readback matched. No independently retained original file SHA was available; this SHA is the recovered readback hash. No verification or test was rerun.",
+    "sha256": "8dd693129ffad12ec740f7dc747159202f7f0a8028922cf09d3952ddf261bbad"
+  },
+  "new_fresh_checks": {
+    "calculation_tests_rerun": false,
+    "origin": "Independent complete desktop checkout at exact acc2 after environment change",
+    "records_prefix": "fresh-checks/",
+    "source_before_after_equal": true,
+    "tracked_bytes": 1035950468,
+    "tracked_entries": 11070
+  },
+  "new_read_only_diagnostic_record": "recovery-diagnostics/cache-probe.json",
+  "new_recovery_commit_identity": "Derived by Git when this documentation/evidence addition is committed; not the old 7f54 identity.",
+  "old_local_original_inputs_unavailable": [
+    {
+      "original_sha256": "bd9197ab598f2eba625368f982c94d829202e8dd6bd98c519e87a8824ef5a5e0",
+      "path": "ci/concurrent-ci-acc2ec24-v1.transport.json",
+      "status": "old local raw sidecar unavailable; not reconstructed"
+    },
+    {
+      "path": "publication/publication-acc2.json",
+      "status": "old local combined receipt/process-capture wrapper unavailable; original desktop receipt, step ledger and all desktop stdout/stderr are retained instead"
+    },
+    {
+      "path": "publication/checks.json",
+      "status": "old root-local raw file unavailable; not reconstructed; separate fresh-checks contains new actual observations"
+    },
+    {
+      "path": "publication/source-before.stdout",
+      "status": "old root-local raw file unavailable; not reconstructed; separate fresh-checks contains new actual observations"
+    },
+    {
+      "path": "publication/source-before.stderr",
+      "status": "old root-local raw file unavailable; not reconstructed; separate fresh-checks contains new actual observations"
+    },
+    {
+      "path": "publication/source-after.stdout",
+      "status": "old root-local raw file unavailable; not reconstructed; separate fresh-checks contains new actual observations"
+    },
+    {
+      "path": "publication/source-after.stderr",
+      "status": "old root-local raw file unavailable; not reconstructed; separate fresh-checks contains new actual observations"
+    },
+    {
+      "path": "publication/repository-links.stdout",
+      "status": "old root-local raw file unavailable; not reconstructed; separate fresh-checks contains new actual observations"
+    },
+    {
+      "path": "publication/repository-links.stderr",
+      "status": "old root-local raw file unavailable; not reconstructed; separate fresh-checks contains new actual observations"
+    },
+    {
+      "path": "publication/ci-contract.stdout",
+      "status": "old root-local raw file unavailable; not reconstructed; separate fresh-checks contains new actual observations"
+    },
+    {
+      "path": "publication/ci-contract.stderr",
+      "status": "old root-local raw file unavailable; not reconstructed; separate fresh-checks contains new actual observations"
+    }
+  ],
+  "old_local_paths_unavailable": [
+    "/workspace/scratch/93ddee66e1b3/chain-cell",
+    "/dev/shm/cell-publication-evidence-final-93ddee66"
+  ],
+  "old_local_stdout_stderr_reconstructed": false,
+  "old_local_unpublished_evidence": {
+    "basis": "Prior root observation retained in conversation; old Git object and bundle are not available in this recovery checkout.",
+    "bundle_bytes": 2490611,
+    "bundle_sha256": "1b315af74a58914fbe2610472fbc13f84e9aa63d529de3cdc88198828fee81ec",
+    "bundle_upload_started": false,
+    "commit": "7f54bfe3be663bfffabfbab3d3ac6dff468e8470",
+    "exact_old_tree_reproduced": false,
+    "pushed": false,
+    "tree": "b35e12a110836201c719426b29894abbc44a8d7b"
+  },
+  "old_packaging_indexes_recreated_as_new_reviews": true,
+  "private_raw_evidence_included": false,
+  "reason": "The execution environment no longer exposed the previous local repository and shared-memory paths. This records present unavailability, not a finding that those files were deleted.",
+  "restored_and_new_file_origins": [
+    {
+      "bytes": 1803594,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "ci/concurrent-ci-acc2ec24-v1.tar.gz",
+      "sha256": "07e037a308804890aa4f8f6fbe2b3e04da7b8ed68600e79bfc0ade8f79f932c2",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/concurrent-ci-acc2ec24-20261107-v1.tar.gz"
+    },
+    {
+      "bytes": 348,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "ci/archive-origin.json",
+      "sha256": "71b6d27184112cc3062a7650dede3f08e417b1d4777d80aedcf95093ebdab63f",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/concurrent-ci-acc2ec24-20261107-v1.archive.json"
+    },
+    {
+      "bytes": 2087,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "ci/summary.json",
+      "sha256": "55f8586503e2c94148d51fa3879abd31a50eb9730fb832a2fd4d6c71f962d6ab",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/concurrent-ci-acc2ec24-20261107-v1/summary.json"
+    },
+    {
+      "bytes": 2846,
+      "origin": "Recovered from the original complete tool-output index, serialized identically and matched the independently retained original file SHA256 ea1bb1af5e1a1d057ff6d3b3568e87a3e930a2233170c102736751317393587c. No raw test output was reconstructed.",
+      "path": "ci/concurrent-ci-acc2ec24-v1.json",
+      "sha256": "ea1bb1af5e1a1d057ff6d3b3568e87a3e930a2233170c102736751317393587c"
+    },
+    {
+      "bytes": 679432,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "native/concurrent-native-acc2-evidence.tar.gz",
+      "sha256": "6fffb1e9538bd2a8fd0809488018694c1bd9b65225a8ac359dcdaa0d0888053b",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/concurrent-native-acc2-evidence.tar.gz"
+    },
+    {
+      "bytes": 713,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "native/archive-origin.json",
+      "sha256": "c7151c27240a08acf07f67d759f5d0684b47e097031ad5582f99d1b40e793661",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/concurrent-native-acc2-evidence.json"
+    },
+    {
+      "bytes": 44978,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "native/retained-validation.json",
+      "sha256": "b2d7bab3521f90645be5015f9fe6c291878760c884ed07feed30e1b8f5a2b941",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/concurrent-native-acc2/retained-validation.json"
+    },
+    {
+      "bytes": 7607,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "native/a4-a5-byte-continuity.json",
+      "sha256": "74c46c242135c24e6207a137989ebb3a6064e791964dfab9600632351c01b826",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/concurrent-native-acc2/a4-a5-byte-continuity.json"
+    },
+    {
+      "bytes": 690,
+      "origin": "Restored from the original complete concurrentNativeLocalVerified structured result retained in functions store using the original json.dump(sort_keys=True, indent=2) plus newline serializer. Readback matched. No independently retained original file SHA was available; this SHA is the recovered readback hash. No verification or test was rerun.",
+      "path": "native/download-verification.json",
+      "sha256": "8dd693129ffad12ec740f7dc747159202f7f0a8028922cf09d3952ddf261bbad",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/recovered-native-download-verification.json"
+    },
+    {
+      "bytes": 0,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/fetch-current.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/fetch-current.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/fetch-current.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/fetch-current.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/fetched-current.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/fetched-current.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/fetched-current.stdout",
+      "sha256": "442e3da5001f510272e3183ef93497112d1fb2183a880c79bf232ef4d0043c09",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/fetched-current.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/github-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/github-after.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/github-after.stdout",
+      "sha256": "751f39db77ac6517a8352a8fdc57bc87eb7712e5bedecacad9adf0554c3a9479",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/github-after.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/github-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/github-before.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/github-before.stdout",
+      "sha256": "442e3da5001f510272e3183ef93497112d1fb2183a880c79bf232ef4d0043c09",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/github-before.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/github-commit-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/github-commit-tree.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/github-commit-tree.stdout",
+      "sha256": "30d33c3b45ca4a75b02d7b4db7d8e5eedd5a3ac6b4eafb0b6bdcf9ff1d4a2d4f",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/github-commit-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/head.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/head.stdout",
+      "sha256": "751f39db77ac6517a8352a8fdc57bc87eb7712e5bedecacad9adf0554c3a9479",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/head.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/preserve-current-ancestry.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/preserve-current-ancestry.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/preserve-current-ancestry.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/preserve-current-ancestry.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/principal.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/principal.stderr"
+    },
+    {
+      "bytes": 10,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/principal.stdout",
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/principal.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/push-permission.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/push-permission.stderr"
+    },
+    {
+      "bytes": 5,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/push-permission.stdout",
+      "sha256": "a17fcf0a2f50e2d495e4f90ce263410edc183add6c62699a2facbccf60410f74",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/push-permission.stdout"
+    },
+    {
+      "bytes": 283,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/push.stderr",
+      "sha256": "71f274589625532fedb1ac4cc3b0c9ffa6429c4691e8a111935b4ff44b691ac1",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/push.stderr"
+    },
+    {
+      "bytes": 188,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/push.stdout",
+      "sha256": "cfed48ba2986043ac8bd1261337d793bc01769ae9e8de1a8729eb40521ea0e99",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/push.stdout"
+    },
+    {
+      "bytes": 614,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/receipt.json",
+      "sha256": "a808972b60caf49babb5cb6d92f5d8c7fcac6be92b0cc00572e19483472ff442",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/receipt.json"
+    },
+    {
+      "bytes": 0,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/status.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/status.stdout"
+    },
+    {
+      "bytes": 3027,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/steps.json",
+      "sha256": "e5209a147f8875bfe95543fccca6c76d001cb41a2c413d3a11d785252770ea6b",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/steps.json"
+    },
+    {
+      "bytes": 0,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/tree.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "original desktop file; copied without rewriting",
+      "path": "publication/tree.stdout",
+      "sha256": "30d33c3b45ca4a75b02d7b4db7d8e5eedd5a3ac6b4eafb0b6bdcf9ff1d4a2d4f",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/publication-public-acc2/tree.stdout"
+    },
+    {
+      "bytes": 41,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/head-before.stdout",
+      "sha256": "751f39db77ac6517a8352a8fdc57bc87eb7712e5bedecacad9adf0554c3a9479",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/head-before.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/head-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/head-before.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/tree-before.stdout",
+      "sha256": "30d33c3b45ca4a75b02d7b4db7d8e5eedd5a3ac6b4eafb0b6bdcf9ff1d4a2d4f",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/tree-before.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/tree-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/tree-before.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/status-before.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/status-before.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/status-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/status-before.stderr"
+    },
+    {
+      "bytes": 133,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/source-audit-preflight.stdout",
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/source-audit-preflight.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/source-audit-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/source-audit-preflight.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/select-development-branch.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/select-development-branch.stdout"
+    },
+    {
+      "bytes": 69,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/select-development-branch.stderr",
+      "sha256": "79825c8aa439238549f35be21678fc4e6375b45eb092e58e18cbc42cd59e3791",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/select-development-branch.stderr"
+    },
+    {
+      "bytes": 172,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/source-preflight.stdout",
+      "sha256": "f33bf3e12c8c76cb7acadce527d9c7f4af3741ce54dce174fd0762043d13554b",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/source-preflight.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/source-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/source-preflight.stderr"
+    },
+    {
+      "bytes": 1512148,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/target-tree.stdout",
+      "sha256": "7e73732ed82c9bbf62b790813b64ffdc48b57cd65a8dcf10c92e4aab7a10973f",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/target-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/target-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/target-tree.stderr"
+    },
+    {
+      "bytes": 423,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/fresh-acc2-source-before.stdout",
+      "sha256": "5520bc48e666bce6c9693a12d10886ce19261961a47cbdb12429f2340ff618d2",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/fresh-acc2-source-before.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/fresh-acc2-source-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/fresh-acc2-source-before.stderr"
+    },
+    {
+      "bytes": 307,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/fresh-acc2-repository-links.stdout",
+      "sha256": "9c4820b92ca684ede6fc43a8d8f799d5c963a5481cdad6c51a878e1af61e2bb2",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/fresh-acc2-repository-links.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/fresh-acc2-repository-links.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/fresh-acc2-repository-links.stderr"
+    },
+    {
+      "bytes": 180,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/fresh-acc2-ci-contract.stdout",
+      "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/fresh-acc2-ci-contract.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/fresh-acc2-ci-contract.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/fresh-acc2-ci-contract.stderr"
+    },
+    {
+      "bytes": 423,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/fresh-acc2-source-after.stdout",
+      "sha256": "5520bc48e666bce6c9693a12d10886ce19261961a47cbdb12429f2340ff618d2",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/fresh-acc2-source-after.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "new desktop recovery observation; not an original lost root-local log",
+      "path": "fresh-checks/fresh-acc2-source-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/fresh-acc2-source-after.stderr"
+    },
+    {
+      "bytes": 3435,
+      "origin": "new desktop recovery command ledger",
+      "path": "fresh-checks/steps.json",
+      "sha256": "d5b3f51a16e79c37ff4a0f1596f3207e4c7c537fe26d1294dd9b1ad5ee47ce01",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/prepare-steps.json"
+    },
+    {
+      "bytes": 2058,
+      "origin": "new complete-checkout recovery result",
+      "path": "fresh-checks/result.json",
+      "sha256": "00825ce3372345184bba7a0e2e52bad60f9be23a5878cd58d35b0963745bd4a7",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/prepare-result.json"
+    },
+    {
+      "bytes": 3404177,
+      "origin": "new complete-checkout raw SHA256 and Git blob identity verification for all 11070 entries",
+      "path": "fresh-checks/materialized-raw-source.json",
+      "sha256": "c28c641ee3fa50434b3574d946d2de8570e7c4a3992d10f96851ede4e0bc5ee5",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/materialized-raw-source.json"
+    },
+    {
+      "bytes": 17122,
+      "origin": "new cache coverage before checkout; actual raw identities verified after materialization",
+      "path": "fresh-checks/cache-availability-before-checkout.json",
+      "sha256": "05fda00c3666cbe6e55fc5b6da17710acea34548b0252f7e7c7ced5c566d5035",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3/cache-availability-before-checkout.json"
+    },
+    {
+      "bytes": 258566,
+      "origin": "independent original read-only cache audit with actual per-blob SHA1 and SHA256 verification",
+      "path": "recovery-diagnostics/cache-object-audit.json",
+      "sha256": "64b0dce9a2cc370220150a7c1e14c73a9369caea925f1b8ce65f95d064e98f88",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cache-object-audit.json"
+    },
+    {
+      "bytes": 1051,
+      "origin": "original recovery runtime request/status/output record",
+      "path": "recovery-runtime/jobs/cache-v2-launch.json",
+      "sha256": "99eb33a0dd81ecdfb45b9c8a857908ca14dc308985412b6ad937b0f53e7ae9d1",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/runtime-observations/cache-v2-launch.json"
+    },
+    {
+      "bytes": 2507,
+      "origin": "original recovery runtime request/status/output record",
+      "path": "recovery-runtime/jobs/cache-v2-output.json",
+      "sha256": "8a000702190ccce7d906d3188ca72ff48d5c042bf9ecbcff022946543ac906e0",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/runtime-observations/cache-v2-output.json"
+    },
+    {
+      "bytes": 731,
+      "origin": "original recovery runtime request/status/output record",
+      "path": "recovery-runtime/jobs/cache-v2-status.json",
+      "sha256": "15f440d6b0b9794b9d813ff7de14f81c563e50ed41f8eb7e5416d57fae68c74b",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/runtime-observations/cache-v2-status.json"
+    },
+    {
+      "bytes": 1051,
+      "origin": "original recovery runtime request/status/output record",
+      "path": "recovery-runtime/jobs/cache-v3-launch.json",
+      "sha256": "a3243cf2ead2138583914218eaf2cfa95906abda96f65a4e5c862a3ee2c97d76",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/runtime-observations/cache-v3-launch.json"
+    },
+    {
+      "bytes": 2534,
+      "origin": "original recovery runtime request/status/output record",
+      "path": "recovery-runtime/jobs/cache-v3-output.json",
+      "sha256": "50fab79f76436c8121fb676460f4ab05cd66d12578a4622ad7c271ae33ee7b8b",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/runtime-observations/cache-v3-output.json"
+    },
+    {
+      "bytes": 731,
+      "origin": "original recovery runtime request/status/output record",
+      "path": "recovery-runtime/jobs/cache-v3-status.json",
+      "sha256": "90bce8ccf9da02dd2d65902fcd5788dd68aa327b91f438904288bb15652b4c8c",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/runtime-observations/cache-v3-status.json"
+    },
+    {
+      "bytes": 1053,
+      "origin": "original recovery runtime request/status/output record",
+      "path": "recovery-runtime/jobs/complete-v3-launch.json",
+      "sha256": "84b0f51700f12111a7189dd6dd1a8017fe17ac69a7368388b9c921c6df34fb56",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/runtime-observations/complete-v3-launch.json"
+    },
+    {
+      "bytes": 6177,
+      "origin": "original recovery runtime request/status/output record",
+      "path": "recovery-runtime/jobs/complete-v3-output.json",
+      "sha256": "5df77502f30e37c8d7a5b41f077201b6346575bbef03df9e0cfeac2ae7a0e701",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/runtime-observations/complete-v3-output.json"
+    },
+    {
+      "bytes": 732,
+      "origin": "original recovery runtime request/status/output record",
+      "path": "recovery-runtime/jobs/complete-v3-status.json",
+      "sha256": "bf026946231deeacd3e107524bc351bbf9311f7d650f591d359ad819ed01f530",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/runtime-observations/complete-v3-status.json"
+    },
+    {
+      "bytes": 2166,
+      "origin": "original recovery runtime request/status/output record",
+      "path": "recovery-runtime/jobs/final-pack-metadata.json",
+      "sha256": "da85a0768a4c8314ee5f7d490b2016d5b0ee96f74747851fc5295f7f290f7d14",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/runtime-observations/final-pack-metadata.json"
+    },
+    {
+      "bytes": 6637,
+      "origin": "original recovery runtime request/status/output record",
+      "path": "recovery-runtime/jobs/network-launch.json",
+      "sha256": "af81cb4581e57a81bba44768c78b68d88901f43c76ff6dfc2f054fda8c728746",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/runtime-observations/network-launch.json"
+    },
+    {
+      "bytes": 2533,
+      "origin": "original recovery runtime request/status/output record",
+      "path": "recovery-runtime/jobs/network-output.json",
+      "sha256": "d8b385fb5dec4b8a4f4999e460f40bb7863a7470536d98909657917cc26c214c",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/runtime-observations/network-output.json"
+    },
+    {
+      "bytes": 4157,
+      "origin": "original recovery runtime request/status/output record",
+      "path": "recovery-runtime/jobs/network-progress-sample-1.json",
+      "sha256": "72396b2c06fca0a3334016672750378ac421e7fb66f46a8e1e652e3093222b5e",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/runtime-observations/network-progress-sample-1.json"
+    },
+    {
+      "bytes": 2228,
+      "origin": "original recovery runtime request/status/output record",
+      "path": "recovery-runtime/jobs/network-progress-sample-2.json",
+      "sha256": "cf171d33e894cca6c55ded6979b7170f772551f36e37d01bcc252791dd606ef4",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/runtime-observations/network-progress-sample-2.json"
+    },
+    {
+      "bytes": 731,
+      "origin": "original recovery runtime request/status/output record",
+      "path": "recovery-runtime/jobs/network-status.json",
+      "sha256": "5685c3740bd14e6324ff04d1f24c4ac92ae8899e02245df8c21e85f9b2ba7791",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/runtime-observations/network-status.json"
+    },
+    {
+      "bytes": 1652,
+      "origin": "original recovery runtime request/status/output record",
+      "path": "recovery-runtime/jobs/summary.json",
+      "sha256": "a6e40ad8125fb8794bb1c0122c94a45f33aacef669a016105042073b1d8f11f9",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/runtime-observations/summary.json"
+    },
+    {
+      "bytes": 2247,
+      "origin": "original preparation ledger; attempt outcome is recorded separately and is not inferred from prior successful steps",
+      "path": "recovery-runtime/network-attempt/steps.json",
+      "sha256": "191ca87e94d76a3e0893473dab15424fc5440a10c79b099f77b189a8aca28c53",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/prepare-steps.json"
+    },
+    {
+      "bytes": 171,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/network-attempt/source-preflight.stdout",
+      "sha256": "4c2e049d9efb1684bd43d022763bc0a075662f6c2cda48292d84cf357a92029a",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/source-preflight.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/network-attempt/source-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/source-preflight.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/network-attempt/base-head.stdout",
+      "sha256": "751f39db77ac6517a8352a8fdc57bc87eb7712e5bedecacad9adf0554c3a9479",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/base-head.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/network-attempt/base-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/base-head.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/network-attempt/base-tree.stdout",
+      "sha256": "30d33c3b45ca4a75b02d7b4db7d8e5eedd5a3ac6b4eafb0b6bdcf9ff1d4a2d4f",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/base-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/network-attempt/base-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/base-tree.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/network-attempt/base-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/base-status.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/network-attempt/base-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/base-status.stderr"
+    },
+    {
+      "bytes": 65,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/network-attempt/origin-url.stdout",
+      "sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/origin-url.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/network-attempt/origin-url.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/origin-url.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/network-attempt/clone-full-worktree.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/clone-full-worktree.stdout"
+    },
+    {
+      "bytes": 109,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/network-attempt/clone-full-worktree.stderr",
+      "sha256": "44eeddf3771d7f91bbf92223a6b7504a06fe0eda0b9ce9d3bfd5ddba7e0b0026",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/clone-full-worktree.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/network-attempt/select-acc2.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/select-acc2.stdout"
+    },
+    {
+      "bytes": 352,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/network-attempt/select-acc2.stderr",
+      "sha256": "acec9d4dc789226250176cb87ee456afd388c6cc815cde03e768a1c86194c483",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/select-acc2.stderr"
+    },
+    {
+      "bytes": 4649,
+      "origin": "original preparation ledger; attempt outcome is recorded separately and is not inferred from prior successful steps",
+      "path": "recovery-runtime/cache-v2-attempt/steps.json",
+      "sha256": "d53812388571fc9a4e4ed27ab44e34df6f407eeb62b8b90afd50bfe74940d1d7",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/prepare-steps.json"
+    },
+    {
+      "bytes": 171,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/source-preflight.stdout",
+      "sha256": "4c2e049d9efb1684bd43d022763bc0a075662f6c2cda48292d84cf357a92029a",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/source-preflight.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/source-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/source-preflight.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/base-head.stdout",
+      "sha256": "751f39db77ac6517a8352a8fdc57bc87eb7712e5bedecacad9adf0554c3a9479",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/base-head.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/base-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/base-head.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/base-tree.stdout",
+      "sha256": "30d33c3b45ca4a75b02d7b4db7d8e5eedd5a3ac6b4eafb0b6bdcf9ff1d4a2d4f",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/base-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/base-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/base-tree.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/base-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/base-status.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/base-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/base-status.stderr"
+    },
+    {
+      "bytes": 65,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/cache-origin-0.stdout",
+      "sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/cache-origin-0.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/cache-origin-0.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/cache-origin-0.stderr"
+    },
+    {
+      "bytes": 13,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/cache-object-dir-0.stdout",
+      "sha256": "d47773290b580aae76650999a1e916227528f0075499b9dac795e6fe8b119532",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/cache-object-dir-0.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/cache-object-dir-0.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/cache-object-dir-0.stderr"
+    },
+    {
+      "bytes": 65,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/cache-origin-1.stdout",
+      "sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/cache-origin-1.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/cache-origin-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/cache-origin-1.stderr"
+    },
+    {
+      "bytes": 13,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/cache-object-dir-1.stdout",
+      "sha256": "d47773290b580aae76650999a1e916227528f0075499b9dac795e6fe8b119532",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/cache-object-dir-1.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/cache-object-dir-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/cache-object-dir-1.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/clone-cached-worktree.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/clone-cached-worktree.stdout"
+    },
+    {
+      "bytes": 115,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/clone-cached-worktree.stderr",
+      "sha256": "e98f4f3158605f062be490e145c5c39deb3064e516f9c0bc9aba7110d58256b6",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/clone-cached-worktree.stderr"
+    },
+    {
+      "bytes": 1512148,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/target-tree.stdout",
+      "sha256": "7e73732ed82c9bbf62b790813b64ffdc48b57cd65a8dcf10c92e4aab7a10973f",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/target-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/target-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/target-tree.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/select-acc2.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/select-acc2.stdout"
+    },
+    {
+      "bytes": 119,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/select-acc2.stderr",
+      "sha256": "bed392b6a35ba8acb2cdc9b14a66aba8282f799a93758521ea817a299fc2b193",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/select-acc2.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/checkout-head.stdout",
+      "sha256": "751f39db77ac6517a8352a8fdc57bc87eb7712e5bedecacad9adf0554c3a9479",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/checkout-head.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/checkout-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/checkout-head.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/checkout-tree.stdout",
+      "sha256": "30d33c3b45ca4a75b02d7b4db7d8e5eedd5a3ac6b4eafb0b6bdcf9ff1d4a2d4f",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/checkout-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/checkout-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/checkout-tree.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/checkout-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/checkout-status.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/checkout-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/checkout-status.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/checkout-preflight.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/checkout-preflight.stdout"
+    },
+    {
+      "bytes": 59,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v2-attempt/checkout-preflight.stderr",
+      "sha256": "1e85d4622435cd769c79fc3bdd3ac3cef3c643c135889988e8479a1ffc4e893e",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/checkout-preflight.stderr"
+    },
+    {
+      "bytes": 70710,
+      "origin": "original recovery cache inspection",
+      "path": "recovery-runtime/cache-v2-attempt/cache-availability-before-checkout.json",
+      "sha256": "e880fd85f6266c57112f304b801336a3bf5fd1ab9c12a9f3c6fff2fa7fc10823",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/cache-availability-before-checkout.json"
+    },
+    {
+      "bytes": 80,
+      "origin": "original recovery cache inspection",
+      "path": "recovery-runtime/cache-v2-attempt/cache-coverage.stderr",
+      "sha256": "e9c1e943ba36926d8826ec0e39b9c3ed51ed7e2e7378647493a6f81ccb4c7e01",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare/cache-coverage.stderr"
+    },
+    {
+      "bytes": 4669,
+      "origin": "original preparation ledger; attempt outcome is recorded separately and is not inferred from prior successful steps",
+      "path": "recovery-runtime/cache-v3-attempt/steps.json",
+      "sha256": "8db7a36664ab19f95de0ca0e1f0d4edbd1862794829dc0c4f3bb201154478f67",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/prepare-steps.json"
+    },
+    {
+      "bytes": 171,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/source-preflight.stdout",
+      "sha256": "4c2e049d9efb1684bd43d022763bc0a075662f6c2cda48292d84cf357a92029a",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/source-preflight.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/source-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/source-preflight.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/base-head.stdout",
+      "sha256": "751f39db77ac6517a8352a8fdc57bc87eb7712e5bedecacad9adf0554c3a9479",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/base-head.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/base-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/base-head.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/base-tree.stdout",
+      "sha256": "30d33c3b45ca4a75b02d7b4db7d8e5eedd5a3ac6b4eafb0b6bdcf9ff1d4a2d4f",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/base-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/base-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/base-tree.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/base-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/base-status.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/base-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/base-status.stderr"
+    },
+    {
+      "bytes": 65,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/cache-origin-0.stdout",
+      "sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/cache-origin-0.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/cache-origin-0.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/cache-origin-0.stderr"
+    },
+    {
+      "bytes": 13,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/cache-object-dir-0.stdout",
+      "sha256": "d47773290b580aae76650999a1e916227528f0075499b9dac795e6fe8b119532",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/cache-object-dir-0.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/cache-object-dir-0.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/cache-object-dir-0.stderr"
+    },
+    {
+      "bytes": 65,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/cache-origin-1.stdout",
+      "sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/cache-origin-1.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/cache-origin-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/cache-origin-1.stderr"
+    },
+    {
+      "bytes": 13,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/cache-object-dir-1.stdout",
+      "sha256": "d47773290b580aae76650999a1e916227528f0075499b9dac795e6fe8b119532",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/cache-object-dir-1.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/cache-object-dir-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/cache-object-dir-1.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/clone-cached-worktree.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/clone-cached-worktree.stdout"
+    },
+    {
+      "bytes": 115,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/clone-cached-worktree.stderr",
+      "sha256": "9df0154621b8816c8c0c2a31927dfcfd34103002be43d9017f320e14f6febeef",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/clone-cached-worktree.stderr"
+    },
+    {
+      "bytes": 1512148,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/target-tree.stdout",
+      "sha256": "7e73732ed82c9bbf62b790813b64ffdc48b57cd65a8dcf10c92e4aab7a10973f",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/target-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/target-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/target-tree.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/select-acc2.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/select-acc2.stdout"
+    },
+    {
+      "bytes": 119,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/select-acc2.stderr",
+      "sha256": "bed392b6a35ba8acb2cdc9b14a66aba8282f799a93758521ea817a299fc2b193",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/select-acc2.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/checkout-head.stdout",
+      "sha256": "751f39db77ac6517a8352a8fdc57bc87eb7712e5bedecacad9adf0554c3a9479",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/checkout-head.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/checkout-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/checkout-head.stderr"
+    },
+    {
+      "bytes": 41,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/checkout-tree.stdout",
+      "sha256": "30d33c3b45ca4a75b02d7b4db7d8e5eedd5a3ac6b4eafb0b6bdcf9ff1d4a2d4f",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/checkout-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/checkout-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/checkout-tree.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/checkout-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/checkout-status.stdout"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/checkout-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/checkout-status.stderr"
+    },
+    {
+      "bytes": 0,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/checkout-preflight.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/checkout-preflight.stdout"
+    },
+    {
+      "bytes": 59,
+      "origin": "original recovery preparation stdout/stderr, including refusals and failures",
+      "path": "recovery-runtime/cache-v3-attempt/checkout-preflight.stderr",
+      "sha256": "1e85d4622435cd769c79fc3bdd3ac3cef3c643c135889988e8479a1ffc4e893e",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/checkout-preflight.stderr"
+    },
+    {
+      "bytes": 17122,
+      "origin": "original recovery cache inspection",
+      "path": "recovery-runtime/cache-v3-attempt/cache-availability-before-checkout.json",
+      "sha256": "05fda00c3666cbe6e55fc5b6da17710acea34548b0252f7e7c7ced5c566d5035",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/cache-availability-before-checkout.json"
+    },
+    {
+      "bytes": 80,
+      "origin": "original recovery cache inspection",
+      "path": "recovery-runtime/cache-v3-attempt/cache-coverage.stderr",
+      "sha256": "e9c1e943ba36926d8826ec0e39b9c3ed51ed7e2e7378647493a6f81ccb4c7e01",
+      "source_path": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/cache-coverage.stderr"
+    }
+  ],
+  "runtime_attempt_records": "recovery-runtime/",
+  "runtime_transition_summary": {
+    "arbitrary_pid_signalling": false,
+    "cached_v2": {
+      "cancelled": false,
+      "checkout_completed": true,
+      "exit_code": 1,
+      "job_id": "1a1b6d5516b-12894-72e",
+      "preflight_exit_code": 2,
+      "reason": "Development preflight refused detached HEAD.",
+      "state": "failed"
+    },
+    "cached_v3_initial": {
+      "cancelled": false,
+      "checkout_completed": true,
+      "exit_code": 1,
+      "job_id": "1a1b6d79561-12894-741",
+      "preflight_exit_code": 2,
+      "reason": "Development preflight refused detached HEAD.",
+      "state": "failed"
+    },
+    "calculation_tests_rerun": false,
+    "cancellation_reason": "No cancellation was necessary: both superseded preparation jobs had already reached natural failed terminal states before the final decision.",
+    "completed_v3": {
+      "all_materialized_raw_git_blob_and_sha256_checked": true,
+      "all_source_link_ci_checks_passed": true,
+      "branch": "fix/chain-cell-evidence-recovery-20261107",
+      "exit_code": 0,
+      "job_id": "1a1b6d9e62b-12894-750",
+      "state": "succeeded"
+    },
+    "earlier_failures_are_native_or_ci_test_failures": false,
+    "failed_or_cancelled_attempts_labeled_pass": false,
+    "original_network": {
+      "cancelled": false,
+      "checkout_exit_code": 128,
+      "exit_code": 1,
+      "job_id": "1a1b6bcb863-12894-653",
+      "reason": "Actual retained Git stderr reports curl 56 connection reset, unexpected disconnect and early EOF; the checkout did not complete.",
+      "state": "failed",
+      "timed_out": false
+    },
+    "owned_cancellation_requested": false,
+    "pack_deletion_requested": false,
+    "private_code_modified": false,
+    "schema": "pon-evidence-recovery-runtime-transitions-v1"
+  },
+  "schema": "pon-cell-evidence-recovery-v1",
+  "source_commit": "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030",
+  "source_tree": "e59270db7fe6ea77e01362b591dd98e4e93d62fe"
+}

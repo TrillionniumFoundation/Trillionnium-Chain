@@ -1,0 +1,39 @@
+{
+  "candidate": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+  "driver_sha256": "31f145c99ed03a713367996b79c2ca93661df54f823ccf7ee90c440ba7f9603f",
+  "finished_utc": "2026-11-07T15:33:16.357350+00:00",
+  "historical_missing_count": 359,
+  "original_499_report_unchanged_and_still_records_repository_pending": true,
+  "original_499_selected_rows_unchanged": true,
+  "post_quantum_soundness_qualified": false,
+  "production_qualified": false,
+  "record": {
+    "args": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "command_passed": true,
+    "exit_code": 0,
+    "expected_tests": null,
+    "final_plain_OK": false,
+    "label": "repository-check",
+    "non_ok_verbose_lines": [],
+    "reported_counts": [],
+    "seconds": 103.94225720292889,
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 307,
+    "stdout_sha256": "e051a0fbc95a4a0d98484da43ece1b2b9349f27cd48ffa4981c2f0f54df31735",
+    "successful_verbose_test_lines": 0,
+    "timed_out": false,
+    "timeout_seconds": 600,
+    "verbose_test_line_count": 0
+  },
+  "schema": "TRNM-W1-A-DESKTOP-REPOSITORY-CHECK2",
+  "scope": "Independent later repository check after exact-A historical link restoration; no rerun or expansion of the earlier 499 test coverage",
+  "selected_source_before_after_identical": true,
+  "selected_source_bytes": 1017004928,
+  "selected_source_count": 11036,
+  "tree": "23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0",
+  "whole_source_qualified": false
+}

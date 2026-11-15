@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "exit_code": 0,
+  "tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978"
+}

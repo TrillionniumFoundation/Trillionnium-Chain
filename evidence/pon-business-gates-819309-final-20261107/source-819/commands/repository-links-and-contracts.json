@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+  "end_utc": "2026-11-07T18:33:40.738091+00:00",
+  "exit_code": 0,
+  "log": "logs/repository-links-and-contracts.log",
+  "log_bytes": 307,
+  "log_sha256": "7cdc792b4268dadd42187ce3b411c810d616890523692ecb01d91b78601c3c9b",
+  "name": "repository-links-and-contracts",
+  "pid": 1320587,
+  "start_utc": "2026-11-07T18:32:01.358112+00:00",
+  "supervisor_timeout_seconds": 600,
+  "timed_out": false,
+  "wall_ns": 99379989936
+}

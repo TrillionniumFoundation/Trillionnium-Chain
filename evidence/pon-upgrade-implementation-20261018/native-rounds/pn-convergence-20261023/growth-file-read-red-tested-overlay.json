@@ -1,0 +1,13 @@
+{
+  "parent_head": "989391691df8d22c31a233159773a5ca5a4b6918",
+  "patches": {
+    "growth-rehearsal-public-exports.patch": "1e0562971ef2bc34a242d20659c04f1e05db712eba89dfedff15ba3b88dfee46",
+    "growth-rehearsal-file-read-red.patch": "e58d185732c59249b7b7dca4bee86445999c3ba79949aa20908b6a9312b33881"
+  },
+  "files": {
+    "trillionnium/crates/trnm-pon-node/src/lib.rs": "f679510494fa5f1011a04da8d5ae923245274b5e34245674480a6db3abae4f7b",
+    "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs": "fb4fd03c82eeccfafaa3a222dccd8df6982f79b4d497d0e9a116ef53991348a2",
+    "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal/snapshot.rs": "cf8dadff7aad307346dc03029475c67b0317a212a02283de2fa8e936d7bf0ec4",
+    "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration_tests.rs": "778f5cc767e7f1e855a6d2e1697e6f4a9eb9c9162fc575eda90efb51c8968de4"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "label": "qa2-02-credit",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "test_credit_feasibility.py",
+    "-v"
+  ],
+  "exit": 0,
+  "source_head": "103cdf67108a667d8570388f9dd402210c160157",
+  "duration_seconds": 1.6770649149548262,
+  "unittest_count": [
+    "31"
+  ]
+}

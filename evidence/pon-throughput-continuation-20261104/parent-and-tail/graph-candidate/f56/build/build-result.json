@@ -1,0 +1,61 @@
+{
+  "artifact": {
+    "executable": "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+    "features": [
+      "default",
+      "pq-native-openssl"
+    ],
+    "filenames": [
+      "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1"
+    ],
+    "fresh": false,
+    "manifest_path": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "package_id": "path+file:///workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node#0.1.0",
+    "profile": {
+      "debug_assertions": true,
+      "debuginfo": 2,
+      "opt_level": "3",
+      "overflow_checks": true,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "lib"
+      ],
+      "doc": true,
+      "doctest": true,
+      "edition": "2021",
+      "kind": [
+        "lib"
+      ],
+      "name": "trnm_pon_node",
+      "src_path": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "test": true
+    }
+  },
+  "base_head": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+  "command": [
+    "bash",
+    "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+    "cargo",
+    "test",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--all-features",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "executable_sha256": "dd6a1dee07568ba26022ccd690933af13788696e1925e442fe3ba471927f856f",
+  "exit_code": 0,
+  "finished_at": "2026-11-04T07:40:07.279031+00:00",
+  "source_manifest_sha256": "f56cc35bd9c9462c931776cc4e08fedeeaa7c73df5f00b2907cc2a057bc81381",
+  "source_unchanged": true,
+  "started_at": "2026-11-04T07:34:44.422249+00:00",
+  "stderr_sha256": "dbc6a8ad3772a569c95fbd2a856c47552fe3b0fb01c508a30d549bc2a373c8f8",
+  "stdout_sha256": "1460b520bb564b26c214170bd8de4f21ed7bc7b20cf83cc67e965bda8042e0c2"
+}

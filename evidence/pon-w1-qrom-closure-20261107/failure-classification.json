@@ -1,0 +1,282 @@
+{
+  "actual_top_level_failed_test_markers": 3,
+  "archive": {
+    "path": "evidence/pon-w1-qrom-closure-20261107/native-7150-observations.tar.gz",
+    "sha256": "e11d0f9d28621b459795e5c692ed05636275cf7d4461bda2cc7cbe5960a60e3e",
+    "unchanged": true
+  },
+  "counting_boundary": {
+    "aggregate_failed_zero_implies_no_test_failures": false,
+    "distinct_executed_top_level_test_count": null,
+    "explanation": "Completed test-result blocks were aggregated separately from named FAILED lines. The 1201-test node harness never emitted its final result block before timeout; its three FAILED lines are therefore not included in that aggregate.failed=0. Nested child harness output also prevents interpreting the summed counts as a unique top-level test roster.",
+    "full_workspace_passed": false
+  },
+  "harness": {
+    "final_stdout_lines": [
+      {
+        "line": 3757,
+        "text": "test store::continuity_tests::actual_65536_key_native_chain_rejects_growth_keeps_nonce_and_reopens has been running for over 60 seconds"
+      },
+      {
+        "line": 3758,
+        "text": "test store::continuity_tests::actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes has been running for over 60 seconds"
+      }
+    ],
+    "node_binary": "trnm_pon_node-d0b5619ab979ee7c",
+    "node_binary_launch_stderr_line": 340,
+    "node_binary_launch_text": "     Running unittests src/lib.rs (/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/debug/deps/trnm_pon_node-d0b5619ab979ee7c)",
+    "node_harness_failure_detail_section_retained": false,
+    "node_harness_final_result_retained": false,
+    "outer_harness_start": {
+      "line": 2985,
+      "text": "running 1201 tests"
+    }
+  },
+  "independent_review": {
+    "path": "evidence/pon-w1-qrom-closure-20261107/native-7150-release-owner-failure-review.json",
+    "scope": "Two release_owner FAILED markers, original archive bytes and child-mechanism crosscheck.",
+    "sha256": "d7a4f3e7dc2e5c2f89a01ea5ef5894207da58ce0e4a76df87514a80f918b0047"
+  },
+  "next_minimal_diagnostic": {
+    "broad_workspace_rerun_required": false,
+    "executed": false,
+    "observed_assertion_may_be_filled_only_from_new_evidence": true,
+    "procedure": "Hash the already-built node test binary and retain the exact runtime/source identity, then run each of the three full test names separately with --exact and --nocapture under a bounded timeout, retaining stdout/stderr/exit. Treat each as a separate diagnostic trial and keep this original archive unchanged.",
+    "tests": [
+      "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+      "release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay",
+      "release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement"
+    ]
+  },
+  "original_command": {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--locked",
+      "--",
+      "--test-threads=2"
+    ],
+    "consensus_admission": false,
+    "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+    "elapsed_seconds": 2700.0664454959333,
+    "exit_code": -9,
+    "expectation_met": false,
+    "expected_exit": 0,
+    "launch_error": null,
+    "name": "chain-workspace-tests",
+    "post_quantum_soundness_qualified": false,
+    "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+    "started_utc": "2026-11-07T13:10:39.050812+00:00",
+    "stderr_bytes": 55517,
+    "stderr_sha256": "bce799f158d802ae915bf633e41ad2f665b89eab127c3bea2cde4cd41725d2f9",
+    "stdout_bytes": 292446,
+    "stdout_sha256": "2ceabd7fed48450effe04219c991d4601d0ef7b4079cddfc4c50ed25d0c6bbaa",
+    "timed_out": true,
+    "timeout_seconds": 2700
+  },
+  "qualification": {
+    "archive_modified": false,
+    "full_workspace_passed": false,
+    "native_reexecuted": false,
+    "original_summary_modified": false,
+    "post_quantum_soundness_qualified": false,
+    "production_release_qualified": false,
+    "source_or_tests_modified": false,
+    "unconditional_project_security_bits": null
+  },
+  "retained_logs": {
+    "stderr_bytes": 55517,
+    "stderr_sha256": "bce799f158d802ae915bf633e41ad2f665b89eab127c3bea2cde4cd41725d2f9",
+    "stdout_bytes": 292446,
+    "stdout_sha256": "2ceabd7fed48450effe04219c991d4601d0ef7b4079cddfc4c50ed25d0c6bbaa"
+  },
+  "reviewed_utc": "2026-11-07T14:10:18.488774+00:00",
+  "reviews": [
+    {
+      "basis": "The ordinary #[test] starts a server thread and executes direct socket, metric and state assertions. It has no expected-panic, ignored or test-harness child reentry branch. Its unique FAILED marker is in the ongoing 1201-test node harness, with no corresponding passing parent result.",
+      "classification": "actual_top_level_test_failure_observed",
+      "classification_confidence": "high_from_source_and_harness_context",
+      "exact_failed_assertion": null,
+      "expected_child_negative_control": false,
+      "failure_is_environmental_or_flaky": null,
+      "log": {
+        "context": [
+          {
+            "line": 3403,
+            "text": "test ingress::public_v3::tests::w1_negative_cache_is_explicit_bounded_and_never_activated_by_default ... ok"
+          },
+          {
+            "line": 3404,
+            "text": "test ingress::public_v3::tests::worker_clock_unknown_and_incomplete_or_overflowed_intervals_disable_new_starts ... ok"
+          },
+          {
+            "line": 3405,
+            "text": "test ingress::public_v3::tests::slow_initial_frames_cannot_occupy_read_worker_or_renew_absolute_deadline ... ok"
+          },
+          {
+            "line": 3406,
+            "text": "test ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work ... FAILED"
+          },
+          {
+            "line": 3407,
+            "text": "test ingress::public_v3::work_arithmetic::tests::actual_paid_arithmetic_tcp_rejects_current_bad_products_then_activates_exact_valid_packet ... ok"
+          },
+          {
+            "line": 3408,
+            "text": "test ingress::public_v3::work_arithmetic::tests::arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challenges ... ok"
+          },
+          {
+            "line": 3409,
+            "text": "test ingress::public_v3::work_arithmetic::tests::explicit_arithmetic_setup_preserves_the_exact_cpu_owner_and_cold_start_credit ... ok"
+          }
+        ],
+        "exact_failed_marker": "test ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work ... FAILED",
+        "failed_marker_line": 3406,
+        "file": "chain-workspace-tests.stdout.log",
+        "full_test_name_occurrences": 1,
+        "name_present_in_stderr": false
+      },
+      "panic_message": null,
+      "security_implication_determined": false,
+      "source": {
+        "attribute": "#[test]",
+        "bytes": 398067,
+        "child_environment_or_subprocess_reentry_in_test_body": false,
+        "commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "expected_panic_attribute": false,
+        "function_declaration_line": 4312,
+        "function_last_line": 4483,
+        "git_blob_sha1": "f1685a044d44507a56191fd4aa7131acf32f48d6",
+        "ignored_attribute": false,
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "reviewed_function_with_attribute_sha256": "bd6a57cd866e2756a729632ba81c2739afa081c5158cd73306a24f02eb705a19",
+        "sha256": "3cc9dc504a6f1d7f4b2e1b4e80affef8fe8282778e323b3f85b6ccd064089424",
+        "thread_spawn_is_server_thread_not_test_harness_reentry": true
+      },
+      "source_diagnostic_candidates_only": {
+        "observed_failure_is_at_wait_metric": null,
+        "source_has_multiple_socket_and_state_assertions": true,
+        "wait_metric_deadline_seconds": 2
+      },
+      "test": "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+      "underlying_cause": null
+    },
+    {
+      "basis": "The ordinary test body performs direct unwrap/assert checks and has no expected-panic or child reentry branch. The single FAILED marker occurs in the ongoing 1201-test node harness, with no corresponding passing parent result.",
+      "classification": "actual_top_level_test_failure_observed",
+      "classification_confidence": "high_from_source_and_harness_context",
+      "exact_failed_assertion": null,
+      "expected_child_negative_control": false,
+      "log": {
+        "context": [
+          {
+            "line": 3642,
+            "text": "test release_owner::native_consumer_tests::isolated_fixed_root_static_node_claim_refresh_and_revocation ... ignored, requires reviewed static Node/test artifacts and a fresh rootless user/mount/PID namespace"
+          },
+          {
+            "line": 3643,
+            "text": "test pq_rollback_witness::tests::signed_current_cannot_regress_or_change_an_observed_generation ... ok"
+          },
+          {
+            "line": 3644,
+            "text": "test release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay ... FAILED"
+          },
+          {
+            "line": 3645,
+            "text": "test release_owner::root_separation_tests::all_three_service_keys_are_excluded_from_offline_root_and_every_online_role ... ok"
+          },
+          {
+            "line": 3646,
+            "text": "test release_owner::root_separation_tests::valid_dual_quorum_successor_cannot_reuse_an_independent_service_key ... ok"
+          }
+        ],
+        "exact_failed_marker": "test release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay ... FAILED",
+        "failed_marker_line": 3644,
+        "file": "chain-workspace-tests.stdout.log",
+        "full_test_name_occurrences": 1,
+        "name_present_in_stderr": false
+      },
+      "panic_message": null,
+      "security_implication_determined": false,
+      "source": {
+        "attribute": "#[test]",
+        "bytes": 5619,
+        "child_environment_or_subprocess_reentry_in_test_body": false,
+        "commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "expected_panic_attribute": false,
+        "function_declaration_line": 69,
+        "git_blob_sha1": "747eff7f36a40cd3cbc5fd00b758f6ecfd789883",
+        "ignored_attribute": false,
+        "path": "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+        "sha256": "34b062ac9ced40d9c90de4dca6ac7e636095ab71b81fb2884f2adb8ee09e034e"
+      },
+      "test": "release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay",
+      "underlying_cause": null
+    },
+    {
+      "basis": "The ordinary test body performs direct unwrap/assert checks and has no expected-panic or child reentry branch. The single FAILED marker occurs in the ongoing 1201-test node harness, with no corresponding passing parent result.",
+      "classification": "actual_top_level_test_failure_observed",
+      "classification_confidence": "high_from_source_and_harness_context",
+      "exact_failed_assertion": null,
+      "expected_child_negative_control": false,
+      "log": {
+        "context": [
+          {
+            "line": 3647,
+            "text": "test release_owner::sealed_tests::inherited_fifo_without_writer_is_refused_before_any_blocking_open ... ok"
+          },
+          {
+            "line": 3648,
+            "text": "test release_owner::sealed_tests::native_elf_profile_rejects_interpreter_dependencies_search_paths_and_wrong_machine ... ok"
+          },
+          {
+            "line": 3649,
+            "text": "test release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement ... FAILED"
+          },
+          {
+            "line": 3650,
+            "text": "test release_owner::sealed_tests::source_rewrite_or_path_exchange_during_sealing_refuses_authentication ... ok"
+          },
+          {
+            "line": 3651,
+            "text": "test release_owner::sealed_tests::unsealed_regular_input_and_a_different_sealed_descriptor_are_rejected ... ok"
+          }
+        ],
+        "exact_failed_marker": "test release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement ... FAILED",
+        "failed_marker_line": 3649,
+        "file": "chain-workspace-tests.stdout.log",
+        "full_test_name_occurrences": 1,
+        "name_present_in_stderr": false
+      },
+      "panic_message": null,
+      "security_implication_determined": false,
+      "source": {
+        "attribute": "#[test]",
+        "bytes": 6119,
+        "child_environment_or_subprocess_reentry_in_test_body": false,
+        "commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "expected_panic_attribute": false,
+        "function_declaration_line": 10,
+        "git_blob_sha1": "fa193407085124d8fb4f1329b4b4b22cf2207a13",
+        "ignored_attribute": false,
+        "path": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs",
+        "sha256": "8ae3a8be2c166f99918e46b69b66b80a5ccabf9549a1061dd93e538d61acd191"
+      },
+      "test": "release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement",
+      "underlying_cause": null
+    }
+  ],
+  "schema": "TRNM-W1-NATIVE-FAILURE-CLASSIFICATION1",
+  "scope_boundaries": [
+    "These are observed test failures in this native run, not expected child negative controls.",
+    "The retained stdout/stderr do not identify the exact failing assertion or panic cause for any of these three tests.",
+    "Neither a pure timing/environment explanation nor an implementation regression cause has been established.",
+    "The original cold-build workspace timeout and failures remain failures; this review does not replace them with a later result.",
+    "The independently completed fixed v2 release verification observations retain their narrower scope."
+  ],
+  "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "workspace_conclusion": "THREE_TOP_LEVEL_TEST_FAILURES_OBSERVED_AND_COMMAND_TIMED_OUT_INCOMPLETE"
+}

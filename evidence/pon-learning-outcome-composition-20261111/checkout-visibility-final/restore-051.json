@@ -1,0 +1,24 @@
+{
+  "actual_oid": "6cfdcad8e5a3e4e1acd4971b40f4cc7c7d9097c7",
+  "bytes": 4968319,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "6cfdcad8e5a3e4e1acd4971b40f4cc7c7d9097c7"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 4968319,
+  "expected_oid": "6cfdcad8e5a3e4e1acd4971b40f4cc7c7d9097c7",
+  "finished_at": "2026-11-12T01:55:17.863053+00:00",
+  "path": "evidence/pon-native-history-deadline-20261027/observations.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLW5hdGl2ZS1oaXN0b3J5LWRlYWRsaW5lLTIwMjYxMDI3L29ic2VydmF0aW9ucy50YXIuZ3o=",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "9e46c7ad94828e57af5e4f8b15422baefac94fd01cc205e6b0dcc07fe60883e3",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:17.794059+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "draft-node-check",
+  "command": [
+    "bash",
+    "/workspace/scratch/e537ad232c79/run-native.sh",
+    "cargo",
+    "check",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--all-features",
+    "--tests"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "51cd75b89a35dcb2eea507202181392177f243ad",
+  "tree": "55fe98b8595317cc0e5c11feba9a37c647acf923",
+  "dirty_paths": [
+    "M trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+  ],
+  "started_at": "2026-11-04T12:52:00.633932+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 318370644460,
+  "finished_at": "2026-11-04T12:57:19.004853+00:00",
+  "log_bytes": 4130,
+  "log_sha256": "151ede84339543259a4c4a5a0620dce947ad026329be630306b95a17c5da563c",
+  "final_head": "51cd75b89a35dcb2eea507202181392177f243ad",
+  "final_dirty_paths": [
+    "M trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+  ]
+}

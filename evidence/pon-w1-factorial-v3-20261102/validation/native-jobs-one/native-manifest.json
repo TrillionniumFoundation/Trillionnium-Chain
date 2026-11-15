@@ -1,0 +1,532 @@
+{
+  "artifact_sha256": {
+    "cache-explicit.log": "ec4b3f9d6b99ab640d0c07406103d74a35aaeed420eb25dcf8190236ecba7264",
+    "cargo-metadata.log": "d4a1bd7b5079a328f0dfb10a4f53f692dd6b3d990f16176ed5d064f2bc9958e0",
+    "cpu-completion.log": "f292f59f5efbee362832daed83cdf9ebcf5bab1bba13bf623259a432fb4954a7",
+    "factorial-example.log": "ac8dcaaba387660b54d9bd2fa3dd7ed02f18a3ba95ad6e58583fe4c41416e68c",
+    "format.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "header-binding.log": "6374fe9c04695588ca717ebc39f7066e65bb3784d62f0871ab186685135e2d34",
+    "history-import.log": "011159e5e51430e1c4598d725691bfdb4bb42b65e759cc4af5598c0793766a2c",
+    "host-parent.log": "fbdc9fe4e9367589de213efa35ac40e5560547b548aab39719109b55abfef2c7",
+    "native-runner.log": "7bdbb7da1b927c28aeb85f326826b82dcef9f4de89de3d9b943b1e684fb16974",
+    "preflight.log": "b779a8cbd0c8f6d444ec07df7369ab3ff9224f17b2c99c02a24e02bd6e5c3511",
+    "protocol-wire.log": "4d4487fc7c7cfb72651760cc515d9106ff3e8219f0fb6f57c0c9f9503b39ab0f",
+    "retained-rejection.log": "e559f3d23a66deff3715b35c853377da952540e71a6d584e991d6daf3a1a561e",
+    "strict-clippy.log": "63499c9a248165a25638838841eb5e344589d43ed5dd59bf32dc3cfac039c84f",
+    "work-fuzz.log": "7c38ee43d4511321c03a63af47c6c5c84504f05fbad00bf5d2699f75ea7a5d30"
+  },
+  "build_jobs": 1,
+  "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+  "independent_hardware_qualified": false,
+  "observations": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 1830405650,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "preflight.log",
+      "name": "preflight",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 2127275667,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "cargo-metadata.log",
+      "name": "cargo-metadata",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 15596635154,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "format.log",
+      "name": "format",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "host_kernel_parent::kernel_parent::tests::",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 2137556953,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 0,
+        "passed": 19
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "host-parent.log",
+      "name": "host-parent",
+      "observed_count_rows": [
+        [
+          "19",
+          "0"
+        ]
+      ],
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::history_import::tests::",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 13639567941,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 1,
+        "passed": 20
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "history-import.log",
+      "name": "history-import",
+      "observed_count_rows": [
+        [
+          "20",
+          "1"
+        ]
+      ],
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::w1_negative_cache_is_explicit_bounded_and_never_activated_by_default",
+        "--",
+        "--test-threads=1",
+        "--exact"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 2246480556,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 0,
+        "passed": 1
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "cache-explicit.log",
+      "name": "cache-explicit",
+      "observed_count_rows": [
+        [
+          "1",
+          "0"
+        ]
+      ],
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-protocol",
+        "--lib",
+        "pon_wire::",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 3017175444,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 1,
+        "passed": 18
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "protocol-wire.log",
+      "name": "protocol-wire",
+      "observed_count_rows": [
+        [
+          "18",
+          "1"
+        ]
+      ],
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "work_header_binding",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 18673129348,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 0,
+        "passed": 1
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "header-binding.log",
+      "name": "header-binding",
+      "observed_count_rows": [
+        [
+          "1",
+          "0"
+        ]
+      ],
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--example",
+        "pon_w1_legal_strategy_v3",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 4207176437,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 0,
+        "passed": 6
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "factorial-example.log",
+      "name": "factorial-example",
+      "observed_count_rows": [
+        [
+          "6",
+          "0"
+        ]
+      ],
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::scalar_cpu::completion_tests::",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 4798601963,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 0,
+        "passed": 11
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "cpu-completion.log",
+      "name": "cpu-completion",
+      "observed_count_rows": [
+        [
+          "11",
+          "0"
+        ]
+      ],
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "work_fuzz_semantics",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 5289941710,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 0,
+        "passed": 6
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "work-fuzz.log",
+      "name": "work-fuzz",
+      "observed_count_rows": [
+        [
+          "6",
+          "0"
+        ]
+      ],
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--example",
+        "pon_rejection_cost",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 17751028569,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 0,
+        "passed": 3
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "retained-rejection.log",
+      "name": "retained-rejection",
+      "observed_count_rows": [
+        [
+          "3",
+          "0"
+        ]
+      ],
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "-p",
+        "trnm-pon-node",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 153968083217,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "strict-clippy.log",
+      "name": "strict-clippy",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    }
+  ],
+  "prior_completed_w1_suite": {
+    "passed": 113,
+    "receipt": "pon-native-2b250859-observations/w1-complete.log",
+    "source": "2b250859e7c07088e6c3c01f75006372c684de61"
+  },
+  "production_activation": false,
+  "public_network_ready": false,
+  "public_service_measured": false,
+  "resource_fairness_qualified": false,
+  "result": "PASS",
+  "schema": "pon-v3-integrated-native-controls-v1",
+  "scope": "source-bound local correctness/lint controls; no work-cost or public Host qualification",
+  "source_after": {
+    "commit": "2b250859e7c07088e6c3c01f75006372c684de61",
+    "source_state": "committed-clean",
+    "tracked_bytes": 792733780,
+    "tracked_entries": 6881,
+    "tracked_worktree_verified": true,
+    "tree": "12c414a565f58fde6e98ec6eba503d9389ddd06f"
+  },
+  "source_before": {
+    "commit": "2b250859e7c07088e6c3c01f75006372c684de61",
+    "source_state": "committed-clean",
+    "tracked_bytes": 792733780,
+    "tracked_entries": 6881,
+    "tracked_worktree_verified": true,
+    "tree": "12c414a565f58fde6e98ec6eba503d9389ddd06f"
+  },
+  "source_changed": false,
+  "work_profile_qualified": false
+}

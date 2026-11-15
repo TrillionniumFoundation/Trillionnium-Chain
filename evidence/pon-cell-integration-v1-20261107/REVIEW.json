@@ -1,0 +1,31 @@
+{
+  "schema": "cell-integration-review-v1",
+  "code_source_commit": "1dcd925badfef079b4d75604480463672f0b4895",
+  "evidence_source_commit": "313f8e9cb38354fc046eb009f43f48d7ef428a4f",
+  "original_relation_tests_passed": 143,
+  "multimodal_unique_tests_passed": 59,
+  "native_unique_tests_passed": 12,
+  "ci_contract_unique_tests_passed": 103,
+  "source_integrity_unique_tests_passed": 43,
+  "multimodal_final_unique_w1": 96,
+  "native_retained_unique_claims": 11,
+  "native_retained_unique_w1_including_counterfactual": 55,
+  "native_cold_verifications_of_existing_proofs": 6,
+  "repeated_runs_not_added_to_counts": true,
+  "original_model_fixture_and_source_unchanged": true,
+  "original_child_timeout_unchanged": true,
+  "raw_failed_observations_preserved": true,
+  "local_final_ci_failure_exception_log_complete": false,
+  "remote_ci_is_per_file_pinned_not_clean_whole_tree": true,
+  "private_hepta_material_included": false,
+  "qualification": {
+    "generic_multimodal_graphs": false,
+    "public_proof_consumed_by_private_hepta_owner": false,
+    "external_delivery": false,
+    "production_model_adoption": false,
+    "independent_quality": false,
+    "work_cost_security": false,
+    "new_consensus_work_admission": false,
+    "production_activation": false
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "schema": "model-owner-concurrent-corpus-followup-v1",
+  "previous_audited_head": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+  "new_head": "23a56123e3112de06d7c684ef2057578759176ff",
+  "frozen_model_source": "f388f46d9df150a3599b9d961b48918b3ff1fb48",
+  "merge_tree_with_unresolved_corpus": "8f1dc58d0421a863279e9ff0078f5987dfc3dc76",
+  "new_pin_changes": {
+    "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth/account_prefix_tests.rs": [
+      "4ec279243a13ba92369fe7cb01d5ef72c469cbf7",
+      "10cccefbab932cc22569eb4a8c035f6de7defc05"
+    ]
+  },
+  "pinned_blobs_verified": 468,
+  "required_paths": 386,
+  "candidate_sha256": "fb3fce21d1832f2a3470ec2093cbe43fc33b542ac6fe6e8263286b919756381f",
+  "candidate_git_blob": "32714148c0c737c0f8532c4777013953420201e8",
+  "scope": "One new concurrent account-prefix test pin applied to the previously independently audited 468-pin union. Every resulting pin matches its actual merged Git tree entry. No blanket pin refresh.",
+  "model_source_and_budget_unchanged": true
+}

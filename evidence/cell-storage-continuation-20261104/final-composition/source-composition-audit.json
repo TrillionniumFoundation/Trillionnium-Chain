@@ -1,0 +1,174 @@
+{
+  "schema": "trnm.cell.final-concurrent-source-audit.v1",
+  "parents": [
+    "8e3df70c1e57a45bb5bbcd6092665dee116695ea",
+    "17bea70f6646c74e80bab0571e735dba903c2ea5"
+  ],
+  "original_storage_tested_commit": "b110ba5bc1f755e5988c1b1f710243677976bcc8",
+  "runtime_scopes_identical_to_E": [
+    "trillionnium/crates/trnm-data-availability",
+    "trillionnium/crates/trnm-mvcc-fee",
+    "trillionnium/crates/trnm-service-settlement",
+    "trillionnium/crates/trnm-pon-node/src",
+    "trillionnium/crates/trnm-pon-node/tests"
+  ],
+  "incoming_only_paths": [
+    {
+      "path": "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
+      "incoming_blob": "ca064e50bd89b63bd656ce340ed2efd2940569fb",
+      "composed_blob": "ca064e50bd89b63bd656ce340ed2efd2940569fb"
+    },
+    {
+      "path": "evidence/pon-quantum-event-resources-20261104/README.md",
+      "incoming_blob": "92f6a69a3e801722e2e1958767c45b79c4643686",
+      "composed_blob": "92f6a69a3e801722e2e1958767c45b79c4643686"
+    },
+    {
+      "path": "evidence/pon-quantum-event-resources-20261104/reproduction.json",
+      "incoming_blob": "95d02fe06e8fb3cda0a3aa909b287fbbc92197b2",
+      "composed_blob": "95d02fe06e8fb3cda0a3aa909b287fbbc92197b2"
+    },
+    {
+      "path": "evidence/pq-recovery-release-transport-20261104/REPRODUCE.md",
+      "incoming_blob": "5c4a3066dbacda1249725562a605399442ee5bd6",
+      "composed_blob": "5c4a3066dbacda1249725562a605399442ee5bd6"
+    },
+    {
+      "path": "evidence/pq-recovery-release-transport-20261104/baseline_cold_recovery.rs",
+      "incoming_blob": "df8e35f686ac3131284b7abc65dfaac7b837277d",
+      "composed_blob": "df8e35f686ac3131284b7abc65dfaac7b837277d"
+    },
+    {
+      "path": "evidence/pq-recovery-release-transport-20261104/before_empty_head_fix.patch",
+      "incoming_blob": "260fb86d5273b18712c6f5af16d56eec7f5365d7",
+      "composed_blob": "260fb86d5273b18712c6f5af16d56eec7f5365d7"
+    },
+    {
+      "path": "evidence/pq-recovery-release-transport-20261104/observations.json",
+      "incoming_blob": "d529b4b07f94a1b0cd9d0157c261a244c5471ec8",
+      "composed_blob": "d529b4b07f94a1b0cd9d0157c261a244c5471ec8"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md",
+      "incoming_blob": "3d035eb3389f677cf1c44ca0d8d860064c277e75",
+      "composed_blob": "3d035eb3389f677cf1c44ca0d8d860064c277e75"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py",
+      "incoming_blob": "4a91decd9ca9480be94e97a5968dd2cd036ca116",
+      "composed_blob": "4a91decd9ca9480be94e97a5968dd2cd036ca116"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/pq_mtls_probe.c",
+      "incoming_blob": "20783c634dd9b52addbe4e0ecb1b7d55130f969c",
+      "composed_blob": "20783c634dd9b52addbe4e0ecb1b7d55130f969c"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/quantum_network_sim.py",
+      "incoming_blob": "85ff6e5e4f8ae956ccd671f145357e98e705c470",
+      "composed_blob": "85ff6e5e4f8ae956ccd671f145357e98e705c470"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/quantum_oracle_resources.py",
+      "incoming_blob": "c923cd5e5d2b3bf5aa704fec8dec7f9409297568",
+      "composed_blob": "c923cd5e5d2b3bf5aa704fec8dec7f9409297568"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_pq_mtls_probe.py",
+      "incoming_blob": "e329c5c7b2b97e876a0226f49417418a41259665",
+      "composed_blob": "e329c5c7b2b97e876a0226f49417418a41259665"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_pq_tls.py",
+      "incoming_blob": "791277b4694939aba4174ced87f5cb7fffc780a0",
+      "composed_blob": "791277b4694939aba4174ced87f5cb7fffc780a0"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_quantum_network_sim.py",
+      "incoming_blob": "5e619af46cf62501816a204f58e84d6fee8706ed",
+      "composed_blob": "5e619af46cf62501816a204f58e84d6fee8706ed"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_quantum_oracle_resources.py",
+      "incoming_blob": "4880a5f3d04f620559a7f2fa90cde73f1a47e4ed",
+      "composed_blob": "4880a5f3d04f620559a7f2fa90cde73f1a47e4ed"
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "incoming_blob": "6399f8c644395d273689ededa2c1ed99e4ae1364",
+      "composed_blob": "6399f8c644395d273689ededa2c1ed99e4ae1364"
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "incoming_blob": "17e1155502ae7a15a9eea151a045dd24df2aae50",
+      "composed_blob": "17e1155502ae7a15a9eea151a045dd24df2aae50"
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/README.md",
+      "incoming_blob": "971c9ceb4192bffd2f1f23b89f1c520517fbebd3",
+      "composed_blob": "971c9ceb4192bffd2f1f23b89f1c520517fbebd3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/src/journal_checkpoint_v1.rs",
+      "incoming_blob": "85e768c20161ecc32064e3e253b73f2070f30583",
+      "composed_blob": "85e768c20161ecc32064e3e253b73f2070f30583"
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+      "incoming_blob": "8c49ef4c79b0edba265b586acf7a1a1c33ba3570",
+      "composed_blob": "8c49ef4c79b0edba265b586acf7a1a1c33ba3570"
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/src/main.rs",
+      "incoming_blob": "d7d098f7249a1fc80ab84c34eb309e4f094de889",
+      "composed_blob": "d7d098f7249a1fc80ab84c34eb309e4f094de889"
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs",
+      "incoming_blob": "718adc13e4a7cf610c14cb295f4c240d0187cfe3",
+      "composed_blob": "718adc13e4a7cf610c14cb295f4c240d0187cfe3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/tests/cross_process.rs",
+      "incoming_blob": "979f18cd43bee5480ad9b540130fd09abadd49fa",
+      "composed_blob": "979f18cd43bee5480ad9b540130fd09abadd49fa"
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/Cargo.toml",
+      "incoming_blob": "201c768b20e3afb44779bd6bc5da501def4241f5",
+      "composed_blob": "201c768b20e3afb44779bd6bc5da501def4241f5"
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+      "incoming_blob": "dd4e83155a2b1533c6d516908026ce159f84a5c9",
+      "composed_blob": "dd4e83155a2b1533c6d516908026ce159f84a5c9"
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+      "incoming_blob": "a1ca50f68a023ce1c8d9cf62f06604900c521ca0",
+      "composed_blob": "a1ca50f68a023ce1c8d9cf62f06604900c521ca0"
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+      "incoming_blob": "16da9022ef7f6946f6b5ae42767d4aa0398623e7",
+      "composed_blob": "16da9022ef7f6946f6b5ae42767d4aa0398623e7"
+    }
+  ],
+  "composed_shared_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/test_pq_research_integration.py",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+  ],
+  "required_paths": 358,
+  "pinned_blobs": 441,
+  "exact_required_and_pin_parent_unions": true,
+  "all_actual_blob_pins_match": true,
+  "incoming_cargo_lock_preserved": true,
+  "runtime_tests_executed_by_audit": false,
+  "notes": [
+    "Evidence additions are not attributed to either parent runtime validation.",
+    "The incoming checkpoint/release Cargo changes are preserved; the older C/E lockfile identities remain historical records."
+  ]
+}

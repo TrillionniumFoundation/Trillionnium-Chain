@@ -1,0 +1,27 @@
+test_submit_result_wall_cannot_exceed_its_parent_import (test_inspect_native_campaign_failure.FinalPageNestedWallControls) ... 
+======================================================================
+FAIL: test_submit_result_wall_cannot_exceed_its_parent_import (test_inspect_native_campaign_failure.FinalPageNestedWallControls) (excess=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/.git/final-page-nesting-20261111-1055/original/test_inspect_native_campaign_failure.py", line 435, in test_submit_result_wall_cannot_exceed_its_parent_import
+    self.assertEqual(result["status"], "unknown")
+AssertionError: 'observed_final_page_activation' != 'unknown'
+- observed_final_page_activation
++ unknown
+
+
+======================================================================
+FAIL: test_submit_result_wall_cannot_exceed_its_parent_import (test_inspect_native_campaign_failure.FinalPageNestedWallControls) (excess=1000000000000000000000000000000)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/.git/final-page-nesting-20261111-1055/original/test_inspect_native_campaign_failure.py", line 435, in test_submit_result_wall_cannot_exceed_its_parent_import
+    self.assertEqual(result["status"], "unknown")
+AssertionError: 'observed_final_page_activation' != 'unknown'
+- observed_final_page_activation
++ unknown
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (failures=2)

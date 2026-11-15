@@ -1,0 +1,12 @@
+    Checking trnm-transport v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-transport)
+    Checking trnm-mempool v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-mempool)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-sqlite-io-boundary)
+    Checking trnm-verification-profiles v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-verification-profiles)
+    Checking trnm-protocol v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-protocol)
+    Checking trnm-task-kernel v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-task-kernel)
+    Checking trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-service-settlement v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-service-settlement)
+    Checking trnm-data-availability v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-data-availability)
+    Checking trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-pon-node)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 01s

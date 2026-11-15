@@ -1,0 +1,2 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.45s
+     Running tests/research_work_schedule.rs (/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-target/debug/deps/research_work_schedule-731d9e3e1b76563b)

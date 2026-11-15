@@ -1,0 +1,1278 @@
+{
+  "cheapest_adversary_lower_bound": false,
+  "default_kernel": "FullLimb",
+  "denominator": "sum of actual inclusive attacker setup-and-four-search cohort CPU, including every attempt, from the same capture",
+  "explicit_full_column_added_to_default": false,
+  "modes": {
+    "explicit-5-path-campaign": {
+      "lanes": [
+        {
+          "actual_attacker_cohort_cpu_ns": 8952408,
+          "all_attempts": 573,
+          "architecture": "arm64",
+          "artifact_id": 13081131944,
+          "complete_record_counts": {
+            "campaign": 1,
+            "candidate": 288,
+            "cohort": 72,
+            "end": 1,
+            "material": 9,
+            "search": 288,
+            "verifier": 1440
+          },
+          "exhausted_searches": 0,
+          "per_material_ratio_range": {
+            "maximum": 24.111968365553604,
+            "minimum": 21.26921170438527
+          },
+          "per_material_sample_cohort_range": {
+            "count": 72,
+            "maximum": 26.62217738806549,
+            "maximum_record": {
+              "actual_attacker_cohort_cpu_ns": 103096,
+              "actual_searches": 4,
+              "actual_setup_calls": 1,
+              "class": "full-rank-field",
+              "ratio": 26.62217738806549,
+              "receiver_calls": 4,
+              "receiver_cpu_ns": 2744640,
+              "sample": 0
+            },
+            "minimum": 18.70743522752014,
+            "minimum_record": {
+              "actual_attacker_cohort_cpu_ns": 146976,
+              "actual_searches": 4,
+              "actual_setup_calls": 1,
+              "class": "periodic-dense-fixture",
+              "ratio": 18.70743522752014,
+              "receiver_calls": 4,
+              "receiver_cpu_ns": 2749544,
+              "sample": 0
+            }
+          },
+          "per_material_totals": [
+            {
+              "actual_attacker_cohort_cpu_ns": 1019576,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "continuity-maintenance-v1",
+              "ratio": 21.554567781116855,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21976520,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 910400,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "full-rank-field",
+              "ratio": 24.111968365553604,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21951536,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 999072,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "identity",
+              "ratio": 21.98947022837193,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21969064,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1032912,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "one-zero-left-rank-one",
+              "ratio": 21.26921170438527,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21969224,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 991752,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "one-zero-right-rank-one",
+              "ratio": 22.11837636828562,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21935944,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 985264,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "periodic-dense-fixture",
+              "ratio": 22.277050617905456,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21948776,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1030472,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "rank-one",
+              "ratio": 21.288310599414636,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21937008,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 975960,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "sparse-diagonal",
+              "ratio": 22.46612566088774,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21926040,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1007000,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "zero",
+              "ratio": 21.800270109235353,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21952872,
+              "samples": 8
+            }
+          ],
+          "raw_campaign_sha256": "0733db1c46cb89ce7ecbf3e7d01abe926a6213d2f75ccdefa20cb412704fdf6d",
+          "receiver_cpu_ns": 197566984,
+          "reported_cpu_fields": {
+            "CPU architecture": [
+              "8"
+            ],
+            "CPU implementer": [
+              "0x41"
+            ],
+            "CPU part": [
+              "0xd49"
+            ],
+            "model name": []
+          },
+          "source_commit": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+          "source_kind": "head",
+          "whole_lane_ratio": 22.06858579278335
+        },
+        {
+          "actual_attacker_cohort_cpu_ns": 9532600,
+          "all_attempts": 573,
+          "architecture": "arm64",
+          "artifact_id": 13081007770,
+          "complete_record_counts": {
+            "campaign": 1,
+            "candidate": 288,
+            "cohort": 72,
+            "end": 1,
+            "material": 9,
+            "search": 288,
+            "verifier": 1440
+          },
+          "exhausted_searches": 0,
+          "per_material_ratio_range": {
+            "maximum": 22.91021382430019,
+            "minimum": 19.498443692879274
+          },
+          "per_material_sample_cohort_range": {
+            "count": 72,
+            "maximum": 26.25882892524079,
+            "maximum_record": {
+              "actual_attacker_cohort_cpu_ns": 104656,
+              "actual_searches": 4,
+              "actual_setup_calls": 1,
+              "class": "full-rank-field",
+              "ratio": 26.25882892524079,
+              "receiver_calls": 4,
+              "receiver_cpu_ns": 2748144,
+              "sample": 0
+            },
+            "minimum": 17.690399302885847,
+            "minimum_record": {
+              "actual_attacker_cohort_cpu_ns": 156072,
+              "actual_searches": 4,
+              "actual_setup_calls": 1,
+              "class": "periodic-dense-fixture",
+              "ratio": 17.690399302885847,
+              "receiver_calls": 4,
+              "receiver_cpu_ns": 2760976,
+              "sample": 0
+            }
+          },
+          "per_material_totals": [
+            {
+              "actual_attacker_cohort_cpu_ns": 1074200,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "continuity-maintenance-v1",
+              "ratio": 20.446747346862782,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21963896,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 958544,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "full-rank-field",
+              "ratio": 22.91021382430019,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21960448,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1075608,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "identity",
+              "ratio": 20.416731746137998,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21960400,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1060480,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "one-zero-left-rank-one",
+              "ratio": 20.734452323476162,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21988472,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1045744,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "one-zero-right-rank-one",
+              "ratio": 21.007244602885603,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21968200,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1034520,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "periodic-dense-fixture",
+              "ratio": 21.257201407415998,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21991000,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1128312,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "rank-one",
+              "ratio": 19.498443692879274,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 22000328,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1044280,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "sparse-diagonal",
+              "ratio": 21.022668249894664,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21953552,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1110912,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "zero",
+              "ratio": 19.767211084226293,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21959632,
+              "samples": 8
+            }
+          ],
+          "raw_campaign_sha256": "1ce52e5faa84fa81825ad4ac6a036c62a7577a6efea2b3852c695043e99f2262",
+          "receiver_cpu_ns": 197745928,
+          "reported_cpu_fields": {
+            "CPU architecture": [
+              "8"
+            ],
+            "CPU implementer": [
+              "0x41"
+            ],
+            "CPU part": [
+              "0xd49"
+            ],
+            "model name": []
+          },
+          "source_commit": "c2d5f9ad0ed9402a919e4c87be3825f9aa91837d",
+          "source_kind": "prospective-merge",
+          "whole_lane_ratio": 20.744175565952627
+        },
+        {
+          "actual_attacker_cohort_cpu_ns": 5846119,
+          "all_attempts": 573,
+          "architecture": "x64",
+          "artifact_id": 13080808700,
+          "complete_record_counts": {
+            "campaign": 1,
+            "candidate": 288,
+            "cohort": 72,
+            "end": 1,
+            "material": 9,
+            "search": 288,
+            "verifier": 1440
+          },
+          "exhausted_searches": 0,
+          "per_material_ratio_range": {
+            "maximum": 24.534756103396465,
+            "minimum": 18.15831257494101
+          },
+          "per_material_sample_cohort_range": {
+            "count": 72,
+            "maximum": 32.17383223381876,
+            "maximum_record": {
+              "actual_attacker_cohort_cpu_ns": 48961,
+              "actual_searches": 4,
+              "actual_setup_calls": 1,
+              "class": "full-rank-field",
+              "ratio": 32.17383223381876,
+              "receiver_calls": 4,
+              "receiver_cpu_ns": 1575263,
+              "sample": 1
+            },
+            "minimum": 13.500205307836055,
+            "minimum_record": {
+              "actual_attacker_cohort_cpu_ns": 119333,
+              "actual_searches": 4,
+              "actual_setup_calls": 1,
+              "class": "periodic-dense-fixture",
+              "ratio": 13.500205307836055,
+              "receiver_calls": 4,
+              "receiver_cpu_ns": 1611020,
+              "sample": 0
+            }
+          },
+          "per_material_totals": [
+            {
+              "actual_attacker_cohort_cpu_ns": 672466,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "continuity-maintenance-v1",
+              "ratio": 18.988253681227008,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12768955,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 522455,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "full-rank-field",
+              "ratio": 24.534756103396465,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12818306,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 654823,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "identity",
+              "ratio": 19.40808584915313,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12708861,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 673227,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "one-zero-left-rank-one",
+              "ratio": 18.99260724837239,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12786336,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 699717,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "one-zero-right-rank-one",
+              "ratio": 18.15831257494101,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12705680,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 621801,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "periodic-dense-fixture",
+              "ratio": 20.775926703237854,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12918492,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 684950,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "rank-one",
+              "ratio": 18.467463318490402,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12649289,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 643522,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "sparse-diagonal",
+              "ratio": 19.791359114373712,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12736175,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 673158,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "zero",
+              "ratio": 18.832032004373417,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12676933,
+              "samples": 8
+            }
+          ],
+          "raw_campaign_sha256": "21bcef518f1d7146cbb9463ec0cbbbbd2007ae3892731d182711d245fe57955a",
+          "receiver_cpu_ns": 114769027,
+          "reported_cpu_fields": {
+            "CPU architecture": [],
+            "CPU implementer": [],
+            "CPU part": [],
+            "model name": [
+              "AMD EPYC 7763 64-Core Processor"
+            ]
+          },
+          "source_commit": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+          "source_kind": "head",
+          "whole_lane_ratio": 19.631661107137916
+        },
+        {
+          "actual_attacker_cohort_cpu_ns": 5693627,
+          "all_attempts": 573,
+          "architecture": "x64",
+          "artifact_id": 13080843641,
+          "complete_record_counts": {
+            "campaign": 1,
+            "candidate": 288,
+            "cohort": 72,
+            "end": 1,
+            "material": 9,
+            "search": 288,
+            "verifier": 1440
+          },
+          "exhausted_searches": 0,
+          "per_material_ratio_range": {
+            "maximum": 27.078306682610165,
+            "minimum": 18.806601965699382
+          },
+          "per_material_sample_cohort_range": {
+            "count": 72,
+            "maximum": 33.578178224483786,
+            "maximum_record": {
+              "actual_attacker_cohort_cpu_ns": 47558,
+              "actual_searches": 4,
+              "actual_setup_calls": 1,
+              "class": "full-rank-field",
+              "ratio": 33.578178224483786,
+              "receiver_calls": 4,
+              "receiver_cpu_ns": 1596911,
+              "sample": 0
+            },
+            "minimum": 13.949877581985586,
+            "minimum_record": {
+              "actual_attacker_cohort_cpu_ns": 115996,
+              "actual_searches": 4,
+              "actual_setup_calls": 1,
+              "class": "periodic-dense-fixture",
+              "ratio": 13.949877581985586,
+              "receiver_calls": 4,
+              "receiver_cpu_ns": 1618130,
+              "sample": 0
+            }
+          },
+          "per_material_totals": [
+            {
+              "actual_attacker_cohort_cpu_ns": 665402,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "continuity-maintenance-v1",
+              "ratio": 19.2927809053775,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12837455,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 475847,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "full-rank-field",
+              "ratio": 27.078306682610165,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12885131,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 660662,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "identity",
+              "ratio": 19.41069714922305,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12823910,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 680979,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "one-zero-left-rank-one",
+              "ratio": 18.806601965699382,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12806901,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 635096,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "one-zero-right-rank-one",
+              "ratio": 20.216220854799904,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12839241,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 597154,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "periodic-dense-fixture",
+              "ratio": 21.66949564099043,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12940026,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 673780,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "rank-one",
+              "ratio": 19.083648965537712,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12858181,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 632934,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "sparse-diagonal",
+              "ratio": 20.287677704152408,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12840761,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 671773,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "zero",
+              "ratio": 19.162790109158898,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12873045,
+              "samples": 8
+            }
+          ],
+          "raw_campaign_sha256": "835a4184dd53638f47556997a4eee4e9a695c78f6598210fa930363eda448cff",
+          "receiver_cpu_ns": 115704651,
+          "reported_cpu_fields": {
+            "CPU architecture": [],
+            "CPU implementer": [],
+            "CPU part": [],
+            "model name": [
+              "AMD EPYC 7763 64-Core Processor"
+            ]
+          },
+          "source_commit": "c2d5f9ad0ed9402a919e4c87be3825f9aa91837d",
+          "source_kind": "prospective-merge",
+          "whole_lane_ratio": 20.32178275816101
+        }
+      ],
+      "per_material_ratio_range": {
+        "maximum": 27.078306682610165,
+        "minimum": 18.15831257494101
+      },
+      "per_material_sample_cohort_range": {
+        "maximum": 33.578178224483786,
+        "minimum": 13.500205307836055
+      },
+      "whole_lane_ratio_range": {
+        "maximum": 22.06858579278335,
+        "minimum": 19.631661107137916
+      }
+    },
+    "original-4-path-campaign": {
+      "lanes": [
+        {
+          "actual_attacker_cohort_cpu_ns": 8604712,
+          "all_attempts": 573,
+          "architecture": "arm64",
+          "artifact_id": 13081131944,
+          "complete_record_counts": {
+            "campaign": 1,
+            "candidate": 288,
+            "cohort": 72,
+            "end": 1,
+            "material": 9,
+            "search": 288,
+            "verifier": 1152
+          },
+          "exhausted_searches": 0,
+          "per_material_ratio_range": {
+            "maximum": 24.975998765443304,
+            "minimum": 21.53039367115404
+          },
+          "per_material_sample_cohort_range": {
+            "count": 72,
+            "maximum": 26.56916627852818,
+            "maximum_record": {
+              "actual_attacker_cohort_cpu_ns": 103056,
+              "actual_searches": 4,
+              "actual_setup_calls": 1,
+              "class": "full-rank-field",
+              "ratio": 26.56916627852818,
+              "receiver_calls": 4,
+              "receiver_cpu_ns": 2738112,
+              "sample": 0
+            },
+            "minimum": 18.304371087689262,
+            "minimum_record": {
+              "actual_attacker_cohort_cpu_ns": 149528,
+              "actual_searches": 4,
+              "actual_setup_calls": 1,
+              "class": "periodic-dense-fixture",
+              "ratio": 18.304371087689262,
+              "receiver_calls": 4,
+              "receiver_cpu_ns": 2737016,
+              "sample": 0
+            }
+          },
+          "per_material_totals": [
+            {
+              "actual_attacker_cohort_cpu_ns": 1015112,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "continuity-maintenance-v1",
+              "ratio": 21.639511699201666,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21966528,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 881288,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "full-rank-field",
+              "ratio": 24.975998765443304,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 22011048,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 884488,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "identity",
+              "ratio": 24.852796193956276,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21982000,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1020344,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "one-zero-left-rank-one",
+              "ratio": 21.53039367115404,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21968408,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1004464,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "one-zero-right-rank-one",
+              "ratio": 21.888226954873446,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21985936,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 994464,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "periodic-dense-fixture",
+              "ratio": 22.10000965344145,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21977664,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 901792,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "rank-one",
+              "ratio": 24.365680777829034,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21972776,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1015728,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "sparse-diagonal",
+              "ratio": 21.678457224768835,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 22019416,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 887032,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "zero",
+              "ratio": 24.762064953688256,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21964744,
+              "samples": 8
+            }
+          ],
+          "raw_campaign_sha256": "23c32410a642a2ce6f638560baca8106c873fc94bf99751133a25d2931ac65cd",
+          "receiver_cpu_ns": 197848520,
+          "reported_cpu_fields": {
+            "CPU architecture": [
+              "8"
+            ],
+            "CPU implementer": [
+              "0x41"
+            ],
+            "CPU part": [
+              "0xd49"
+            ],
+            "model name": []
+          },
+          "source_commit": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+          "source_kind": "head",
+          "whole_lane_ratio": 22.993043811344297
+        },
+        {
+          "actual_attacker_cohort_cpu_ns": 9036080,
+          "all_attempts": 573,
+          "architecture": "arm64",
+          "artifact_id": 13081007770,
+          "complete_record_counts": {
+            "campaign": 1,
+            "candidate": 288,
+            "cohort": 72,
+            "end": 1,
+            "material": 9,
+            "search": 288,
+            "verifier": 1152
+          },
+          "exhausted_searches": 0,
+          "per_material_ratio_range": {
+            "maximum": 24.5794513804985,
+            "minimum": 19.89222636590753
+          },
+          "per_material_sample_cohort_range": {
+            "count": 72,
+            "maximum": 25.571982694315977,
+            "maximum_record": {
+              "actual_attacker_cohort_cpu_ns": 107248,
+              "actual_searches": 4,
+              "actual_setup_calls": 1,
+              "class": "identity",
+              "ratio": 25.571982694315977,
+              "receiver_calls": 4,
+              "receiver_cpu_ns": 2742544,
+              "sample": 1
+            },
+            "minimum": 17.292782569223785,
+            "minimum_record": {
+              "actual_attacker_cohort_cpu_ns": 158616,
+              "actual_searches": 4,
+              "actual_setup_calls": 1,
+              "class": "periodic-dense-fixture",
+              "ratio": 17.292782569223785,
+              "receiver_calls": 4,
+              "receiver_cpu_ns": 2742912,
+              "sample": 0
+            }
+          },
+          "per_material_totals": [
+            {
+              "actual_attacker_cohort_cpu_ns": 1104760,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "continuity-maintenance-v1",
+              "ratio": 19.89222636590753,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21976136,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 927000,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "full-rank-field",
+              "ratio": 23.778399137001077,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 22042576,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 893880,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "identity",
+              "ratio": 24.5794513804985,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21971080,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1101888,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "one-zero-left-rank-one",
+              "ratio": 19.921683510483824,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21951464,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1057624,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "one-zero-right-rank-one",
+              "ratio": 20.767062774672283,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21963744,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1038288,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "periodic-dense-fixture",
+              "ratio": 21.18304747815635,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21994104,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 936064,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "rank-one",
+              "ratio": 23.46577157117462,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21965464,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 1069864,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "sparse-diagonal",
+              "ratio": 20.53997891320766,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21974984,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 906712,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "zero",
+              "ratio": 24.234835317057676,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 21974016,
+              "samples": 8
+            }
+          ],
+          "raw_campaign_sha256": "ad49ee12ee9707a45230f1092130b1a51ca8580fac1892c846b2a2d0ce07da6b",
+          "receiver_cpu_ns": 197813568,
+          "reported_cpu_fields": {
+            "CPU architecture": [
+              "8"
+            ],
+            "CPU implementer": [
+              "0x41"
+            ],
+            "CPU part": [
+              "0xd49"
+            ],
+            "model name": []
+          },
+          "source_commit": "c2d5f9ad0ed9402a919e4c87be3825f9aa91837d",
+          "source_kind": "prospective-merge",
+          "whole_lane_ratio": 21.891524643429452
+        },
+        {
+          "actual_attacker_cohort_cpu_ns": 4980962,
+          "all_attempts": 573,
+          "architecture": "x64",
+          "artifact_id": 13080808700,
+          "complete_record_counts": {
+            "campaign": 1,
+            "candidate": 288,
+            "cohort": 72,
+            "end": 1,
+            "material": 9,
+            "search": 288,
+            "verifier": 1152
+          },
+          "exhausted_searches": 0,
+          "per_material_ratio_range": {
+            "maximum": 30.350465001278067,
+            "minimum": 18.93216399016682
+          },
+          "per_material_sample_cohort_range": {
+            "count": 72,
+            "maximum": 33.97166895252912,
+            "maximum_record": {
+              "actual_attacker_cohort_cpu_ns": 48851,
+              "actual_searches": 4,
+              "actual_setup_calls": 1,
+              "class": "full-rank-field",
+              "ratio": 33.97166895252912,
+              "receiver_calls": 4,
+              "receiver_cpu_ns": 1659550,
+              "sample": 0
+            },
+            "minimum": 13.670792904538027,
+            "minimum_record": {
+              "actual_attacker_cohort_cpu_ns": 119964,
+              "actual_searches": 4,
+              "actual_setup_calls": 1,
+              "class": "periodic-dense-fixture",
+              "ratio": 13.670792904538027,
+              "receiver_calls": 4,
+              "receiver_cpu_ns": 1640003,
+              "sample": 0
+            }
+          },
+          "per_material_totals": [
+            {
+              "actual_attacker_cohort_cpu_ns": 665411,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "continuity-maintenance-v1",
+              "ratio": 19.024100894033914,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12658846,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 418601,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "full-rank-field",
+              "ratio": 30.350465001278067,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12704735,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 418140,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "identity",
+              "ratio": 30.211699430812647,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12632720,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 668219,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "one-zero-left-rank-one",
+              "ratio": 18.957278975904607,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12667614,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 680553,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "one-zero-right-rank-one",
+              "ratio": 18.93216399016682,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12884341,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 615291,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "periodic-dense-fixture",
+              "ratio": 20.672834479945262,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12719809,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 450510,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "rank-one",
+              "ratio": 28.09998224234756,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12659323,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 641997,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "sparse-diagonal",
+              "ratio": 19.86353518785913,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12752330,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 422240,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "zero",
+              "ratio": 29.978616426676773,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12658171,
+              "samples": 8
+            }
+          ],
+          "raw_campaign_sha256": "2574e75c3081ba2adec36bb4dee957ac2a0de811dfd4d731382477c0747a04da",
+          "receiver_cpu_ns": 114337889,
+          "reported_cpu_fields": {
+            "CPU architecture": [],
+            "CPU implementer": [],
+            "CPU part": [],
+            "model name": [
+              "AMD EPYC 7763 64-Core Processor"
+            ]
+          },
+          "source_commit": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+          "source_kind": "head",
+          "whole_lane_ratio": 22.954981186365202
+        },
+        {
+          "actual_attacker_cohort_cpu_ns": 4964432,
+          "all_attempts": 573,
+          "architecture": "x64",
+          "artifact_id": 13080843641,
+          "complete_record_counts": {
+            "campaign": 1,
+            "candidate": 288,
+            "cohort": 72,
+            "end": 1,
+            "material": 9,
+            "search": 288,
+            "verifier": 1152
+          },
+          "exhausted_searches": 0,
+          "per_material_ratio_range": {
+            "maximum": 30.334121357277812,
+            "minimum": 19.293763181223095
+          },
+          "per_material_sample_cohort_range": {
+            "count": 72,
+            "maximum": 33.331549455392555,
+            "maximum_record": {
+              "actual_attacker_cohort_cpu_ns": 47649,
+              "actual_searches": 4,
+              "actual_setup_calls": 1,
+              "class": "full-rank-field",
+              "ratio": 33.331549455392555,
+              "receiver_calls": 4,
+              "receiver_cpu_ns": 1588215,
+              "sample": 1
+            },
+            "minimum": 13.00183545845854,
+            "minimum_record": {
+              "actual_attacker_cohort_cpu_ns": 123130,
+              "actual_searches": 4,
+              "actual_setup_calls": 1,
+              "class": "periodic-dense-fixture",
+              "ratio": 13.00183545845854,
+              "receiver_calls": 4,
+              "receiver_cpu_ns": 1600916,
+              "sample": 1
+            }
+          },
+          "per_material_totals": [
+            {
+              "actual_attacker_cohort_cpu_ns": 650285,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "continuity-maintenance-v1",
+              "ratio": 19.470327625579554,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12661262,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 419192,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "full-rank-field",
+              "ratio": 30.334121357277812,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12715821,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 440283,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "identity",
+              "ratio": 28.75905951399441,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12662125,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 657659,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "one-zero-left-rank-one",
+              "ratio": 19.293763181223095,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12688717,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 651448,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "one-zero-right-rank-one",
+              "ratio": 19.44200611560708,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12665456,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 625919,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "periodic-dense-fixture",
+              "ratio": 20.331125912458322,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12725638,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 451572,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "rank-one",
+              "ratio": 28.01451595758816,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12650571,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 639045,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "sparse-diagonal",
+              "ratio": 19.88526316613071,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12707578,
+              "samples": 8
+            },
+            {
+              "actual_attacker_cohort_cpu_ns": 429029,
+              "actual_searches": 32,
+              "actual_setup_calls": 8,
+              "class": "zero",
+              "ratio": 29.747506578809357,
+              "receiver_calls": 32,
+              "receiver_cpu_ns": 12762543,
+              "samples": 8
+            }
+          ],
+          "raw_campaign_sha256": "2d0a7d7d1d7f878f22e7570c81ed79657900681e274529b99342480bb886f83f",
+          "receiver_cpu_ns": 114239711,
+          "reported_cpu_fields": {
+            "CPU architecture": [],
+            "CPU implementer": [],
+            "CPU part": [],
+            "model name": [
+              "AMD EPYC 7763 64-Core Processor"
+            ]
+          },
+          "source_commit": "c2d5f9ad0ed9402a919e4c87be3825f9aa91837d",
+          "source_kind": "prospective-merge",
+          "whole_lane_ratio": 23.011637786558463
+        }
+      ],
+      "per_material_ratio_range": {
+        "maximum": 30.350465001278067,
+        "minimum": 18.93216399016682
+      },
+      "per_material_sample_cohort_range": {
+        "maximum": 33.97166895252912,
+        "minimum": 13.00183545845854
+      },
+      "whole_lane_ratio_range": {
+        "maximum": 23.011637786558463,
+        "minimum": 21.891524643429452
+      }
+    }
+  },
+  "modes_averaged": false,
+  "modes_pooled": false,
+  "numerator": "sum of production-column complete native receiver rejection CPU for all observed candidates in that capture",
+  "per_material_aggregation_key_within_lane": [
+    "class"
+  ],
+  "per_material_ratio_scope": "minimum and maximum across nine material classes after summing all eight samples within each class; each class includes eight actual setups and 32 searches",
+  "per_material_sample_aggregation_key_within_lane": [
+    "class",
+    "sample"
+  ],
+  "public_network_amplification_measured": false,
+  "public_service_accepted": false,
+  "run_id": 41299973417,
+  "schema": "pon-w1-default-production-rejection-ratios-v1",
+  "source_commit": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+  "source_summary_sha256": "85de6555fa2341dd80ef2259f218de8760f1cd449c525979266581c7585398d2",
+  "whole_lane_aggregation_key": [
+    "campaign_mode",
+    "architecture",
+    "source_kind"
+  ]
+}

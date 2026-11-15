@@ -1,0 +1,18 @@
+{
+  "allowlist": {
+    "bytes": 11362,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-state-audit-02/PUBLIC-ALLOWLIST.json",
+    "sha256": "eddb6a664aacbbc4396e98fd14b035cc98db5dc91fa0982ddb7299a0f9540fb2"
+  },
+  "archive": {
+    "bytes": 229793,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-state-audit-02/public-evidence.tar.gz",
+    "sha256": "765c191ddeb8b1020e796e503d45759ae7bdf6ff7045588f5a7123f14c0bba7d"
+  },
+  "private_material_archived": false,
+  "public_bytes": 742866,
+  "public_files": 59,
+  "publication_complete": true,
+  "schema": "TRNM-W1-CANCEL02-PUBLIC-PACKAGE1",
+  "state_report_sha256": "fdf24c78021513e1ba544c5838009351afe2c61fdf50d02ce2a83e7ffa690d93"
+}

@@ -1,0 +1,47 @@
+{
+  "artifacts": [
+    {
+      "bytes": 122521,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-failure-classification-v1/failure-classification.json",
+      "sha256": "775f6d170d3d67bd19c7f752013a730d892d157cf02d7af55353ee3f9e56baa4"
+    },
+    {
+      "bytes": 8347,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-failure-classification-v1/failure-classification.md",
+      "sha256": "d8de109dbbbfa964690cdd313807242596a33f51f4049202253cd10716fbdb8a"
+    }
+  ],
+  "inputs": {
+    "logs": {
+      "original": {
+        "bytes": 268168,
+        "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+        "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+      },
+      "remainder": {
+        "bytes": 50255,
+        "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+        "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+      }
+    },
+    "original_diagnosis": {
+      "bytes": 33222,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-690f-diagnosis-v1.json",
+      "sha256": "99dddd4fe1ec2249b02bd20da57b4a1a62803d7d108769be7e23ec4dbf6ea358"
+    },
+    "union": {
+      "bytes": 918710,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-cross-run-coverage-v1.json",
+      "sha256": "e858131ad9b7e9e0ceb83a57d5c2bb665adbac6b395fedacd59f2d8a3e6ddde2"
+    }
+  },
+  "node_live_log_read": false,
+  "qualification": false,
+  "schema": "pon-node-failure-classification-files-v1",
+  "script": {
+    "bytes": 17186,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/extract_node_failure_classification_recovery_v1.py",
+    "sha256": "269d63d9164fd0de02e90869c26d7ad261348b1abd6a90f7ff26583ebb57450e"
+  },
+  "tests_started": false
+}

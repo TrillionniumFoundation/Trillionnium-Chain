@@ -1,0 +1,57 @@
+{
+  "source_head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "requirements_sha256": "2acf07322b544b1d2318642b59877dd035bc7808590619f3cf23e75eedd0bbe7",
+  "started_utc": "2026-11-11T02:21:39.522443+00:00",
+  "venv": "/home/qian-qi/chain-pq-a418-final-python-venv",
+  "commands": [
+    {
+      "name": "venv",
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "venv",
+        "/home/qian-qi/chain-pq-a418-final-python-venv"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "pip",
+      "argv": [
+        "/home/qian-qi/chain-pq-a418-final-python-venv/bin/python",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--disable-pip-version-check",
+        "--only-binary=:all:",
+        "--require-hashes",
+        "--report",
+        "/home/qian-qi/chain-pq-a418-final-records/runtime-release-venv-setup/runtime-release-dependencies.json",
+        "-r",
+        "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/scripts/ci/runtime-release-requirements.txt"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "installed",
+      "argv": [
+        "/home/qian-qi/chain-pq-a418-final-python-venv/bin/python",
+        "-c",
+        "import json,sys,packaging; from pathlib import Path; assert packaging.__version__=='26.3'; assert Path(packaging.__file__).resolve().is_relative_to(Path(sys.prefix).resolve()); print(json.dumps({'version':packaging.__version__,'executable':sys.executable,'prefix':sys.prefix,'base_prefix':sys.base_prefix,'packaging_file':packaging.__file__},sort_keys=True))"
+      ],
+      "returncode": 0
+    }
+  ],
+  "source_or_tests_modified": false,
+  "installed": {
+    "base_prefix": "/usr",
+    "executable": "/home/qian-qi/chain-pq-a418-final-python-venv/bin/python",
+    "packaging_file": "/home/qian-qi/chain-pq-a418-final-python-venv/lib/python3.12/site-packages/packaging/__init__.py",
+    "prefix": "/home/qian-qi/chain-pq-a418-final-python-venv",
+    "version": "26.3"
+  },
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "finished_utc": "2026-11-11T02:21:55.336375+00:00",
+  "pass": true
+}

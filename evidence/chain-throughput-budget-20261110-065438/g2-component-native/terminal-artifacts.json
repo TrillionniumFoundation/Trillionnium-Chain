@@ -1,0 +1,51 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Action completed."
+    }
+  ],
+  "structuredContent": {
+    "artifacts": [
+      {
+        "id": 13820743494,
+        "name": "pon-budget-controls-fixed-7d6567b92575d1d84766afd49d0720b6f197b0e0-1",
+        "size_in_bytes": 30696475,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13820743494",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13820743494/zip",
+        "expired": false,
+        "created_at": "2026-11-11T01:52:40Z",
+        "expires_at": "2026-12-11T01:52:37Z",
+        "updated_at": "2026-11-11T01:52:40Z",
+        "digest": "sha256:f14479eb27957c6f5bd45fe5602137544db7597d74bcece3e9fbc6df1d0638b0",
+        "workflow_run": {
+          "id": 42938943118,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-throughput-budget-20261110-065438",
+          "head_sha": "7d6567b92575d1d84766afd49d0720b6f197b0e0"
+        }
+      },
+      {
+        "id": 13820199912,
+        "name": "pon-budget-controls-before-d6bbac6baf9e5356721ab56f7432058d07b6b49b-1",
+        "size_in_bytes": 30654060,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13820199912",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13820199912/zip",
+        "expired": false,
+        "created_at": "2026-11-11T01:52:41Z",
+        "expires_at": "2026-12-11T01:52:38Z",
+        "updated_at": "2026-11-11T01:52:41Z",
+        "digest": "sha256:cc7b922af95c21fb295173e771118b224f2557e2927bd38ea9949d79f7353aef",
+        "workflow_run": {
+          "id": 42938943118,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-throughput-budget-20261110-065438",
+          "head_sha": "7d6567b92575d1d84766afd49d0720b6f197b0e0"
+        }
+      }
+    ]
+  },
+  "isError": false
+}

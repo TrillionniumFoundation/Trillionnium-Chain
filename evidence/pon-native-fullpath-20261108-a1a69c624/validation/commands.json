@@ -1,0 +1,243 @@
+[
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "a1a69c624db33205a69973b98a6db0f7d22e0782",
+      "--output",
+      "/home/qian-qi/work/native-fullpath-qualification-20261108-3dfc/validation/source-before.json"
+    ],
+    "elapsed_ns": 229575852916,
+    "error": null,
+    "exit_code": 0,
+    "name": "source-before",
+    "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782"
+  },
+  {
+    "argv": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "elapsed_ns": 3725821025,
+    "error": null,
+    "exit_code": 0,
+    "name": "cargo-graph-default",
+    "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782"
+  },
+  {
+    "argv": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--all-features",
+      "--format-version",
+      "1"
+    ],
+    "elapsed_ns": 1276286009,
+    "error": null,
+    "exit_code": 0,
+    "name": "cargo-graph-all-features",
+    "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782"
+  },
+  {
+    "argv": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--check"
+    ],
+    "elapsed_ns": 19364408565,
+    "error": null,
+    "exit_code": 0,
+    "name": "format",
+    "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782"
+  },
+  {
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/pon-native-fullpath-v1",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "elapsed_ns": 26283220163,
+    "error": null,
+    "exit_code": 0,
+    "name": "fullpath-controls",
+    "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782"
+  },
+  {
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_ci_source_integrity.py",
+      "-v"
+    ],
+    "elapsed_ns": 49196062758,
+    "error": null,
+    "exit_code": 0,
+    "name": "source-integrity-controls",
+    "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782"
+  },
+  {
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_repository.py",
+      "-v"
+    ],
+    "elapsed_ns": 348374812266,
+    "error": null,
+    "exit_code": 0,
+    "name": "repository-controls",
+    "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782"
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "elapsed_ns": 455932224629,
+    "error": null,
+    "exit_code": 0,
+    "name": "repository-and-markdown",
+    "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782"
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_full_relation_context",
+      "--test",
+      "work_header_binding",
+      "--test",
+      "growth_persistence_cancellation",
+      "--test",
+      "work_fuzz_semantics",
+      "--",
+      "--test-threads=1"
+    ],
+    "elapsed_ns": 397972420512,
+    "error": null,
+    "exit_code": 0,
+    "name": "native-retained-tests",
+    "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782"
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-crypto-primitives",
+      "--lib",
+      "pon_work::",
+      "--",
+      "--test-threads=1"
+    ],
+    "elapsed_ns": 107966802121,
+    "error": null,
+    "exit_code": 0,
+    "name": "native-kernel-tests",
+    "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782"
+  },
+  {
+    "argv": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_full_relation_context",
+      "--example",
+      "native_fullpath_v1",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "elapsed_ns": 54349032318,
+    "error": null,
+    "exit_code": 0,
+    "name": "strict-clippy",
+    "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782"
+  },
+  {
+    "argv": [
+      "cargo",
+      "build",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--release",
+      "-p",
+      "trnm-pon-node",
+      "--example",
+      "native_fullpath_v1"
+    ],
+    "elapsed_ns": 50825239165,
+    "error": null,
+    "exit_code": 0,
+    "name": "release-build",
+    "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782"
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "a1a69c624db33205a69973b98a6db0f7d22e0782",
+      "--output",
+      "/home/qian-qi/work/native-fullpath-qualification-20261108-3dfc/validation/source-after.json"
+    ],
+    "elapsed_ns": 32351064112,
+    "error": null,
+    "exit_code": 0,
+    "name": "source-after",
+    "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782"
+  }
+]

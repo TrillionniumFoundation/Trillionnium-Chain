@@ -1,0 +1,37 @@
+{
+  "schema": "trnm-pq-provider-reuse-v1",
+  "source_commit": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+  "original_record": "/home/qian/pq-witness-evidence-6f4fef89e370/pq-provider/provider.json",
+  "original_record_sha256": "41a90fe4ba6fbcd7c0e90caaf26df7b46518c621f9aa06c07e7f777367a2f30e",
+  "original_build_source": "45962558a7133375b16c0ac2600f2edb4a115585",
+  "all_original_provider_input_hashes_reverified": true,
+  "fresh_provider_build_or_smoke_claim": false,
+  "native_backend_inputs": [
+    {
+      "bytes": 8933408,
+      "path": "/home/qian/pq-witness-build-6f4fef89e370/trnm-pq-provider-3.5.9.fsgv3LLJ/install/bin/openssl",
+      "sha256": "6dc38a9421d4188d71eccf17a66a1f184904ea5fff5a20b9d78724015039d878"
+    },
+    {
+      "bytes": 3449,
+      "path": "/home/qian/pq-witness-build-6f4fef89e370/trnm-pq-provider-3.5.9.fsgv3LLJ/install/include/openssl/opensslv.h",
+      "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+    },
+    {
+      "bytes": 4729,
+      "path": "/home/qian/pq-witness-build-6f4fef89e370/trnm-pq-provider-3.5.9.fsgv3LLJ/install/include/openssl/configuration.h",
+      "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+    },
+    {
+      "bytes": 12381248,
+      "path": "/home/qian/pq-witness-build-6f4fef89e370/trnm-pq-provider-3.5.9.fsgv3LLJ/install/lib/libcrypto.a",
+      "sha256": "a79f2a8c6e7cd2903aa719926bd2f1c0e0c378677904cfc43c53ae1ee643d53b"
+    },
+    {
+      "bytes": 2123138,
+      "path": "/home/qian/pq-witness-build-6f4fef89e370/trnm-pq-provider-3.5.9.fsgv3LLJ/install/lib/libssl.a",
+      "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727"
+    }
+  ],
+  "whole_chain_quantum_security_qualified": false
+}

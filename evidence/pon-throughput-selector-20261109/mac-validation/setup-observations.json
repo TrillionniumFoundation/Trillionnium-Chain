@@ -1,0 +1,38 @@
+{
+  "direct_sparse_fetch": {
+    "error": "github.com:443 connect timeout75s, missing promisor blob0a4ae71ebc0b917ba6c1298b2ac6f028fba99274",
+    "exit_code": 128,
+    "session_id": "dpty-7734761af158fbaf766025b64841df67dd39f1b27a446f57a6fe223f5efd2b56"
+  },
+  "documentation_correction": {
+    "change": "removed exactly one excess final LF",
+    "final_blob": "20a5b629bfca85e8c2f7467eb6fc7df6984e87cc",
+    "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  },
+  "initial_full_checkout": {
+    "outcome": "owned full checkout interrupted before source edits because historical blob transfer was slow",
+    "session_id": "dpty-083a0beb1ed1a7e543656d564c594169a7dcf50e1958bad95792c15657afd441"
+  },
+  "local_gh_blob_read": {
+    "blob_read_succeeded": false,
+    "error": "api.github.com:443 dial timeout; unguarded shell pipeline wrote empty Git blob, which was not accepted as requested source",
+    "session_id": "dpty-fa3a5937bed05b76750e68465ec669fc252c11e6f5bb81e9cd41be241cdfec59",
+    "shell_exit_code": 0
+  },
+  "login_sparse_fetch": {
+    "error": "github.com:443 connect timeout75s for blobcc5c01a3ad09490c6f263b7a7e624b2c618ce3bb",
+    "exit_code": 128,
+    "scope": "410 selected blobs transferred; subsequent original .gitattributes fetch failed",
+    "session_id": "dpty-629a52a95e347c3bdee02069a790a0b0e44851c717628e2147ad0361f15941c5"
+  },
+  "official_guard_scope": "PQ corpus and CI contract runs retain actual missing-source refusals; not passed or waived by these controls",
+  "original_attribute_recovery": {
+    "git_blob": "cc5c01a3ad09490c6f263b7a7e624b2c618ce3bb",
+    "sha256": "099bf04618f0e4fd5ef20185bbdb818e54368f238a06f89244421bc3e293b821",
+    "verified": true
+  },
+  "production_activation": false,
+  "schema": "trnm-throughput-setup-observations-v1",
+  "scope": "actual retained setup outcomes; terminal IDs refer to original HeptaRuntime Mac controller; no native business execution",
+  "source_materialization": "SSH Git transport used to complete only required source/manifests; historical evidence and Rust sources remain sparse"
+}

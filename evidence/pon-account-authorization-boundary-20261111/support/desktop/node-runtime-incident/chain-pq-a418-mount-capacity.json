@@ -1,0 +1,98 @@
+[
+  {
+    "path": "/run",
+    "type": "tmpfs",
+    "available": 13293633536,
+    "free": 13293633536,
+    "total": 13492310016,
+    "writable": false
+  },
+  {
+    "path": "/",
+    "type": "ext4",
+    "available": 56185647104,
+    "free": 76183920640,
+    "total": 982240026624,
+    "writable": false
+  },
+  {
+    "path": "/dev/shm",
+    "type": "tmpfs",
+    "available": 44715077632,
+    "free": 44715077632,
+    "total": 67461529600,
+    "writable": true
+  },
+  {
+    "path": "/opt/hepta-paper",
+    "type": "ext4",
+    "available": 56185647104,
+    "free": 76183920640,
+    "total": 982240026624,
+    "writable": false
+  },
+  {
+    "path": "/run/qemu",
+    "type": "tmpfs",
+    "available": 67461529600,
+    "free": 67461529600,
+    "total": 67461529600,
+    "writable": false
+  },
+  {
+    "path": "/data",
+    "type": "ext4",
+    "available": 173251256320,
+    "free": 213262860288,
+    "total": 983023263744,
+    "writable": true
+  },
+  {
+    "path": "/var/lib/hepta-authority-os3-20261023",
+    "type": "ext4",
+    "available": 173251256320,
+    "free": 213262860288,
+    "total": 983023263744,
+    "writable": false
+  },
+  {
+    "path": "/var/lib/hepta-secrets-product",
+    "type": "ext4",
+    "available": 173251256320,
+    "free": 213262860288,
+    "total": 983023263744,
+    "writable": false
+  },
+  {
+    "path": "/run/user/1000",
+    "type": "tmpfs",
+    "available": 13479759872,
+    "free": 13479759872,
+    "total": 13492305920,
+    "writable": true
+  },
+  {
+    "path": "/run/snapd/ns",
+    "type": "tmpfs",
+    "available": 13293633536,
+    "free": 13293633536,
+    "total": 13492310016,
+    "writable": false
+  },
+  {
+    "path": "/dev/shm/trill-organ-ui-cache-20261104-r1/target",
+    "type": "tmpfs",
+    "available": 22061162496,
+    "free": 22061162496,
+    "total": 25769803776,
+    "writable": true
+  },
+  {
+    "path": "/home/qian-qi/work/trill-organ-ui-target-20261104-r1",
+    "type": "tmpfs",
+    "available": 22061162496,
+    "free": 22061162496,
+    "total": 25769803776,
+    "writable": true
+  }
+]

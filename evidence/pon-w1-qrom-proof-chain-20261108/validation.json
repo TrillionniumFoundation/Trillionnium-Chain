@@ -1,0 +1,141 @@
+{
+  "date": "2026-11-08",
+  "distributed_source_inventory": {
+    "command": "python scripts/refresh_distributed_source_inventory.py --check",
+    "result": "PASS"
+  },
+  "fresh_replay": {
+    "complete_receipt_verified": false,
+    "compressed_report": "fri-query-replay.json.gz",
+    "generator_sha256": "4a6a4f96baea59d5ff872d65ce9ba4f77eaf97306b97446442d5584369453b0f",
+    "gzip_bytes": 469524,
+    "gzip_sha256": "b3cb785d4c9ace6d2ed7ef25607891e72ca3f9780dbc2fed7641c10b783e0c4c",
+    "raw_json_bytes": 2181134,
+    "raw_json_sha256": "8880a5a780601c24985fbe0676c796368c26b30cd8c0f7f4da24930a7f9a4413",
+    "result": "PASS"
+  },
+  "hosted_ci": {
+    "observed_by_this_local_packet": false,
+    "required_source_kinds": [
+      "head",
+      "prospective-merge"
+    ],
+    "status_requires_fresh_github_readback": true
+  },
+  "integration_base": "0c830e0be8939ce80c8443c9ad68021b87343a00",
+  "local_git_tree_assembly": {
+    "complete_source_verified": false,
+    "default_write_tree_result": "REFUSED_MISSING_HISTORICAL_GIT_BLOB",
+    "first_missing_git_blob": "d18c32b0ef3c6b08386bf016043d9b283d45c949",
+    "first_missing_git_path": "evidence/crypto-profile-20261104/continuation-59f75acd/README.md",
+    "scope": "Assemble the final index tree from fixed base identities and new blobs without pretending every historical blob is present locally. The remote tree must match; full-source verification remains a separate unchanged hosted gate.",
+    "tree_only_assembly_command": "git write-tree --missing-ok"
+  },
+  "local_named_tests": {
+    "actual_distinct_successful_tests": 69,
+    "actual_names": "named-controls.json",
+    "completion_log": "completion.log",
+    "required_names": "required-tests.json",
+    "result": "PASS",
+    "skips": 0
+  },
+  "manuscript_reproduction": {
+    "all_pages": 102,
+    "generator_sha256": "fb1af0a6b4f606d90e15e4c5e9781831f07e5c61549c57ed05067616111084c6",
+    "matches_prior_independent_per_page_observation": true,
+    "packaging_observation": "Initial whole-row assertion differed only because the earlier manifest used width/height and the new one records both dimensions arrays. All page identifiers, flags, four digests and both dimensions were then explicitly compared and matched.",
+    "result": "PASS",
+    "version_comparison_only": true
+  },
+  "pre_publication_guard_observation": {
+    "exact_new_commit_and_branch_push_gate": "Required before creating the new remote branch; recorded separately after immutable commit identity exists.",
+    "initial_invocation": "bash scripts/project-preflight.sh --push",
+    "initial_result": "REJECTED_PUSH_TARGET_MISMATCH",
+    "reason": "Manual invocation omitted the required origin URL and exact ref-update stdin. No remote branch operation occurred.",
+    "subsequent_dev_preflight": "PASS"
+  },
+  "project_preflight": {
+    "log": "preflight.log",
+    "mode": "--audit",
+    "result": "PASS"
+  },
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "post_quantum_soundness_qualified": false,
+    "pq_authorization_qualified": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false,
+    "unconditional_project_security_bits": null
+  },
+  "repository_check": {
+    "final_log": "repository-final.log",
+    "final_result": "repository-final-result.json",
+    "full_repository_pass": false,
+    "initial_log": "repository-initial.log",
+    "initial_result": "FAIL_MISSING_HISTORICAL_LINK_TARGET",
+    "later_exact_blob_restoration_result": "BLOCKED_MISSING_HISTORICAL_TARGETS",
+    "missing_targets": "historical-missing-targets.json",
+    "new_document_links": {
+      "new_docs_and_readme_local_links": 50,
+      "result": "PASS",
+      "scope_record": "new-link-scope.json",
+      "sole_plan_added_local_links": 5
+    },
+    "observed_binary_transfer_failure": "historical-binary-transfer.json",
+    "remaining_historical_targets": 19,
+    "remaining_target_scope": "19 missing fixed-HEAD historical targets remain. One binary has observed UTF-8/base64 transfer refusals; the other missing targets were not all attempted. No blanket unsupported-tool claim is made.",
+    "restoration_manifest": "historical-restoration.json.gz",
+    "restoration_raw_bytes": 935432,
+    "restoration_raw_sha256": "ca5bd2eed1e3a27e4668dd910cdd65058a429faf18f3efd90a0fd058af030f98",
+    "restored_bytes": 108413449,
+    "restored_files": 1594,
+    "skip_worktree_flags_cleared": false,
+    "source_guard_modified": false
+  },
+  "retained_guard_tests": {
+    "project_boundary": {
+      "actual_tests": 16,
+      "log": "project-boundary-negative-controls.log",
+      "result": "PASS"
+    },
+    "source_integrity": {
+      "actual_tests": 43,
+      "log": "source-integrity-negative-controls.log",
+      "result": "PASS"
+    }
+  },
+  "rust_validation": {
+    "cargo_on_path": false,
+    "new_clippy_run": false,
+    "new_native_regression_run": false,
+    "new_rust_format_check_run": false,
+    "rust_source_or_lockfile_modified": false,
+    "rustc_on_path": false
+  },
+  "schema": "TRNM-W1-QROM-PROOF-CHAIN-VALIDATION1",
+  "source_binding": {
+    "additional_nonexecuted_metadata_change": {
+      "path": ".gitattributes",
+      "purpose": "Preserve the new namespace raw command log bytes with -text -whitespace, matching existing evidence convention. No code execution or check is bypassed.",
+      "sha256": "d8f17186c9e24c7527b436ab43d3bec3ac4dbca2361d8525609c26d9789ff880"
+    },
+    "all_generator_and_test_bytes_unchanged_since_execution": true,
+    "before_after_execution_identical": true,
+    "complete_local_tracked_worktree_verified": false,
+    "execution_after_snapshot": "execution-source-after.json",
+    "execution_snapshot": "execution-source-before.json",
+    "final_workflow_review": "independent-workflow-review.json",
+    "final_workflow_syntax": "workflow-syntax.json",
+    "limitation": "Historical evidence is partially materialized and skip-worktree flags remain. Hosted unchanged full-source guard is required.",
+    "snapshot_files": 332,
+    "subsequent_change_reason": "Independent final workflow guard for report-scope completion and stale report bytes; independently validated on final workflow hash. No Python/test code changed.",
+    "subsequent_changes": [
+      {
+        "before_sha256": "1671c839eac91791f48bb234bf5dfe40a51a8fecb3e9daed4cb65de41f36f93d",
+        "final_sha256": "028b76e835ef3e381e0c4bc9e04a753584f4e783bf6a26f6fe2aeacbfcf1759c",
+        "path": ".github/workflows/pon-w1-qrom-proof-chain.yml"
+      }
+    ]
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "after_identity": {
+    "head": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "status": "",
+    "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+  },
+  "before_identity": {
+    "head": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "status": "",
+    "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+  },
+  "completed": true,
+  "copied_regular_bytes": 1006564981,
+  "copied_regular_files": 22419,
+  "elapsed_seconds": 28.759371254127473,
+  "expected_byte_map_sha256": "d95d018f2a65b30a44b30f3120757dc8c1865efc6169a02bd571e7009252bba0",
+  "expected_projection_sha256": "1085538a9d5901bf8e724347c97166669d8dd1ac5815c3e8825cfaa1ba3dd11a",
+  "expected_snapshot_bytes": 7097177,
+  "external_members": [
+    {
+      "path": "/usr/lib/locale/C.utf8/LC_CTYPE",
+      "sha256": "40680545df4f92443c15e7c6f51a7fdc9154ebedd9eff1ed5c48437039add365"
+    },
+    {
+      "path": "/usr/lib/locale/locale-archive",
+      "sha256": "dc0d80629dd3c805aff420244f479eefb5f8a0c096a0eb30763961a080149c8a"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/gconv/gconv-modules.cache",
+      "sha256": "52c227df9d53248238602c1ddaccd2c8ddc4cc6a61aa45d7c425af590b8806a5"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+      "sha256": "bda779ea9e9ad234f60315477d7cfd0bdde861cd8ddd9df8cdaf62f18c4cec14"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+      "sha256": "85e64f97e348786a8fb4d9f3d52fec289e2fb86bba20f0731dfe61990525e0f7"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libdl.so.2",
+      "sha256": "59d725ca30596a9863f4fa2552a7125f834842abc86b40890231c129358965d2"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1",
+      "sha256": "9d339ecb409578d6a5d587e6c537a8f9589b8a13fefba30d167433a4b5758bee"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libm.so.6",
+      "sha256": "1c488db6f4fe8cecb72456bc018de000b7a9b539c2994864b0416b5e8371b3d8"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libpthread.so.0",
+      "sha256": "1327fc40710691dbd94e88b6cf4efce27fefe8fbb93f7d1164a75b4dccaea696"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/librt.so.1",
+      "sha256": "9f3cc59207bcaaac74aaf7aca961f4816f0f4d945e4bd1c3cb98ec516becf161"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.35",
+      "sha256": "5bb0d21308f123b6ad46c6f35b42cedfcb8d6d439a53aa3dae04d880aaffdde3"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libutil.so.1",
+      "sha256": "1d5fdfec85a9c4ca1e7a8c3125aac07c92d551b902a02fdd6bbdf8c66c9e4c4a"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libz.so.1.3.1",
+      "sha256": "27fa6c6cb94fb5b099ead61758a300dbc392d1dbf307fff6c16a9b8e57fdc9de"
+    }
+  ],
+  "extras_unchanged": [
+    {
+      "bytes": 9554,
+      "path": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/ensurepip/__pycache__/__init__.cpython-312.pyc",
+      "sha256": "2ba42de6735d44c3dc740a47babdcee421d4ac570b5772e7cfbabaa0df249919"
+    },
+    {
+      "bytes": 408,
+      "path": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/ensurepip/__pycache__/__main__.cpython-312.pyc",
+      "sha256": "ba0156566977eecf5383dd49ac997b58d5676e461654d3a048831d8fa64a52b7"
+    },
+    {
+      "bytes": 1910,
+      "path": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/sqlite3/__pycache__/__init__.cpython-312.pyc",
+      "sha256": "7245844a4f9b2de3ff8e2cd98dbd7e461c02b4ca70faa5238297658d435f6ef5"
+    },
+    {
+      "bytes": 5134,
+      "path": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/sqlite3/__pycache__/dbapi2.cpython-312.pyc",
+      "sha256": "08551a87583a305e44bc538a91e97b464d729040de758d336acbfcefebc2d0d3"
+    },
+    {
+      "bytes": 31372,
+      "path": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/venv/__pycache__/__init__.cpython-312.pyc",
+      "sha256": "885e42502ef976777acb36ff7343c144d331faab6cc782d9ae754d86ae6eb78b"
+    },
+    {
+      "bytes": 563,
+      "path": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/venv/__pycache__/__main__.cpython-312.pyc",
+      "sha256": "54429c77331e3496d8745399849ca9f4cfa218e3241871eafa72c44dfc54f91a"
+    }
+  ],
+  "full_sealed_runtime_import_admission_performed": false,
+  "hepta_final_use": false,
+  "historical_non_path_metadata_preserved": true,
+  "historical_probe_map_is_projected_provenance_not_new_observation": true,
+  "model_executed": false,
+  "model_loaded": false,
+  "native_operation_started": false,
+  "new_inventory_exact": true,
+  "new_root": "/home/qq/work/chain-bt-4a0b-runtime02",
+  "observer_sha256": "5b4f4d4f7a0dcde9bcba6221fc4c8fd7b92f1be05c1fd706fa0545b496c2caba",
+  "old_and_new_expected_bytes_verified": true,
+  "old_runtime_inventory_unchanged": true,
+  "original_snapshot_member_bytes": 1112520241,
+  "original_snapshot_members": 22435,
+  "original_snapshot_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/runtime-snapshot.v2.json",
+  "original_snapshot_sha256": "e87a3658675836c130ba2a97a805bc6d86cc435135e72f4b6e40747e9271b9eb",
+  "passed": true,
+  "path_field_allowlist": [
+    "prefix",
+    "stdlib_root",
+    "python.executable",
+    "files.keys",
+    "managed_inventory.items",
+    "preflight_import_probe_mapped_files.keys"
+  ],
+  "probe_exit_code": 0,
+  "probe_receipt_sha256": "2f39466078a44753c590cf58958dfba55a78eda92add55b9e27736524ed7479a",
+  "probe_sha256": "b36333de24d3128eb619baa0cfb1417901d2b483f0e29b922cf5609d8b68bbef",
+  "production_activation": false,
+  "prospective_payload_bytes": 279627268,
+  "prospective_total_chunks": 95,
+  "python": {
+    "path": "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+    "sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5"
+  },
+  "schema": "trnm.bt-verified-private-runtime-projection.v1",
+  "snapshot": {
+    "bytes": 7097177,
+    "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/runtime-snapshot.projected.v2.json",
+    "sha256": "1085538a9d5901bf8e724347c97166669d8dd1ac5815c3e8825cfaa1ba3dd11a"
+  },
+  "snapshot_chunks": 2,
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_and_original_input_unchanged": true,
+  "started_unix_ns": 1794475303061899738,
+  "symlinks": [
+    {
+      "new_link_text": "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+      "new_path": "/home/qq/work/chain-bt-4a0b-runtime02/env/bin/python",
+      "new_resolved_target": "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+      "old_link_text": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12-linux-x86_64-gnu/bin/python3.12",
+      "old_path": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/bin/python",
+      "old_resolved_target": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+      "payload_sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5"
+    },
+    {
+      "new_link_text": "python",
+      "new_path": "/home/qq/work/chain-bt-4a0b-runtime02/env/bin/python3",
+      "new_resolved_target": "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+      "old_link_text": "python",
+      "old_path": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/bin/python3",
+      "old_resolved_target": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+      "payload_sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5"
+    },
+    {
+      "new_link_text": "python",
+      "new_path": "/home/qq/work/chain-bt-4a0b-runtime02/env/bin/python3.12",
+      "new_resolved_target": "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+      "old_link_text": "python",
+      "old_path": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/bin/python3.12",
+      "old_resolved_target": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+      "payload_sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5"
+    }
+  ]
+}

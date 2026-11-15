@@ -1,0 +1,21 @@
+{
+  "schema": "trnm-pq-native-tls-witness-required-tests-v1",
+  "expected_controls": {
+    "cli": 5
+  },
+  "production_activation": false,
+  "consensus_authority": false,
+  "public_wan_accepted": false,
+  "whole_chain_quantum_security_qualified": false,
+  "whole_node_rollback_protection": false,
+  "harness": "pq_tls_witness_cli",
+  "scopes": {
+    "cli": [
+      "witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database",
+      "witness_schema_identity_and_private_key_refusals_precede_owner_and_witness_io",
+      "witness_existing_mode_never_creates_or_reenrolls_and_create_never_reopens",
+      "witness_missing_and_backlogged_endpoints_refuse_without_owner_or_listener",
+      "witness_wrong_authenticated_service_binding_cannot_publish_ready_or_advance"
+    ]
+  }
+}

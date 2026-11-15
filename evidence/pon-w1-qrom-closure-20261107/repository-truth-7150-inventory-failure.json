@@ -1,0 +1,34 @@
+{
+  "schema": "TRNM-REPOSITORY-TRUTH-INVENTORY-FAILURE1",
+  "run_id": 42374726461,
+  "job_id": 128409876811,
+  "head": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "original_job_conclusion": "failure",
+  "failure_step": "Run actual repository-truth checks",
+  "failing_command": "python3 scripts/refresh_distributed_source_inventory.py --check",
+  "failure_message": "distributed native source inventory differs; refresh before freezing source",
+  "preceding_check_repository_result": "PASS on committed-clean 7150, 3601 links, 1275 Rust files, 26 packages",
+  "tree_comparison": [
+    {
+      "commit": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+      "inventory_sha256": "876d745cd0c421c8cfe68ed70b3bfd3edfe5087580de116a721e7268f7ef15e9",
+      "selected_count": 1358,
+      "recorded_count": 1358,
+      "missing_paths": [],
+      "extra_paths": []
+    },
+    {
+      "commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "inventory_sha256": "876d745cd0c421c8cfe68ed70b3bfd3edfe5087580de116a721e7268f7ef15e9",
+      "selected_count": 1360,
+      "recorded_count": 1358,
+      "missing_paths": [
+        "config/pon/w1-qrom-implementation-v1.json",
+        "config/pon/w1-qrom-required-tests-v1.json"
+      ],
+      "extra_paths": []
+    }
+  ],
+  "log_bytes": 219060,
+  "original_log_path_desktop": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/semantics-zkr/hosted-repository-truth-128409876811/logs.stdout"
+}

@@ -1,0 +1,25 @@
+{
+  "schema": "c2-history-four-lane-small-handoff-v1",
+  "observed_utc": "2026-11-03T23:05:38.520529+00:00",
+  "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+  "actual_merge": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+  "run_id": 41732369770,
+  "records": [
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/current-terminal-small-records-handoff.json",
+      "bytes": 4429,
+      "sha256": "6791432d16cb348666a75c6a31f09ab7e39188f03f246bdcdc18b974233e3b63"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-history-four-lane-terminal-readback.json",
+      "bytes": 26299,
+      "sha256": "c7edcbc14e68d890f7c375af99fc8afe8a4aad702a990e98cd918cdffb358b34"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-history-four-lane-original-job-logs.json.gz",
+      "bytes": 153240,
+      "sha256": "9faab61fd3b7ebc114faca5edcea21067419ee988aeac9b85f2d4c1d177c825a"
+    }
+  ],
+  "scope": "Four exact release/default-feature lanes each have 25 unique History PASS, 0 FAIL, 1 original ignored and 932 filtered from total958. Complete raw GitHub job logs verify each selector and source before/after. Large grid ZIPs and ELF were not downloaded; artifact metadata digests remain unverified locally. Full W1 workflow still fails at the independently retained fresh service gate. No all-feature974, nine-Host, performance or cross-candidate qualification is inferred."
+}

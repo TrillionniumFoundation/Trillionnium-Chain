@@ -1,0 +1,11 @@
+{
+  "schema": "TRNM-W1-WORKFLOW-LIFECYCLE-FOLLOWUP1",
+  "workflow_sha256": "0dd9bcc90b1a6056e183ec417825f5451591c5a9aa6725b872543c4e369c9827",
+  "retained_steps_unchanged": 15,
+  "all_run_blocks_bash_n": true,
+  "observer_tests_minimum": 21,
+  "actual_lifecycle_tests_passed": 21,
+  "direct_log_sha256": "1205ea3854b6568b5ab7e085e0cc3bd791eb48d468acebab0f025e1f71c0b6a6",
+  "hosted_ci_observed": false,
+  "new_full_proofs": 0
+}

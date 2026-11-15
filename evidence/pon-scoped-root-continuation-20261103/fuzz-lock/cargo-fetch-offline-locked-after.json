@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/workspace/scratch/4eec83b6ae24/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "fetch",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "tests/fuzz/Cargo.toml"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "lock_sha256": "8102aabc115e12470a5eee89735b3f3094134e1b3701cb61209e45b3129214a2"
+}

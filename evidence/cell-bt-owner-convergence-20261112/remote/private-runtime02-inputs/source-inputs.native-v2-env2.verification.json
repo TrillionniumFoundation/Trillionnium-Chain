@@ -1,0 +1,269 @@
+{
+  "environment_generation": 2,
+  "inputs": [
+    {
+      "category": "model",
+      "logical": "adapter/artifact.safetensors",
+      "previous_path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent/artifact.safetensors",
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent/artifact.safetensors",
+      "sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba",
+      "size": 933664
+    },
+    {
+      "category": "model",
+      "logical": "adapter/target-contract.json",
+      "previous_path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent/target-contract.json",
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent/target-contract.json",
+      "sha256": "ebc8ac84999a91acb823d1bf8959a7dbc61fe20d7ba137f11affe426605d9852",
+      "size": 56809
+    },
+    {
+      "category": "model",
+      "logical": "adapter/wrapped-adapter.json",
+      "previous_path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent/wrapped-adapter.json",
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent/wrapped-adapter.json",
+      "sha256": "b66cf58fc47319e4f7a54a47b952a51f13d98ba8c448651122d485b5ad2d6d1d",
+      "size": 20962
+    },
+    {
+      "category": "model",
+      "logical": "base/README.md",
+      "previous_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/README.md",
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/README.md",
+      "sha256": "4f97533ad95b1b2fea15fbc075c01b94578ebdd7c8138888fa43fa3abd530dc4",
+      "size": 6772
+    },
+    {
+      "category": "model",
+      "logical": "base/config.json",
+      "previous_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/config.json",
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/config.json",
+      "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+      "size": 861
+    },
+    {
+      "category": "model",
+      "logical": "base/generation_config.json",
+      "previous_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/generation_config.json",
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/generation_config.json",
+      "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+      "size": 132
+    },
+    {
+      "category": "model",
+      "logical": "base/material-manifest.json",
+      "previous_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/material-manifest.json",
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/material-manifest.json",
+      "sha256": "6e6a76d478f28906566c1cc8db9ef767922b7a215c9f795da8d845e965c59f0c",
+      "size": 1263
+    },
+    {
+      "category": "model",
+      "logical": "base/model.safetensors",
+      "previous_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/model.safetensors",
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/model.safetensors",
+      "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+      "size": 269060552
+    },
+    {
+      "category": "model",
+      "logical": "base/special_tokens_map.json",
+      "previous_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/special_tokens_map.json",
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/special_tokens_map.json",
+      "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+      "size": 655
+    },
+    {
+      "category": "model",
+      "logical": "base/tokenizer.json",
+      "previous_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/tokenizer.json",
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/tokenizer.json",
+      "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+      "size": 2104556
+    },
+    {
+      "category": "model",
+      "logical": "base/tokenizer_config.json",
+      "previous_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/tokenizer_config.json",
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/tokenizer_config.json",
+      "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+      "size": 3764
+    },
+    {
+      "category": "environment",
+      "logical": "config/pon/devnet-v1.json",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/config/pon/devnet-v1.json",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/config/pon/devnet-v1.json",
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "size": 1964
+    },
+    {
+      "category": "environment",
+      "logical": "config/pon/ledger-v1.json",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/config/pon/ledger-v1.json",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/config/pon/ledger-v1.json",
+      "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "size": 7793
+    },
+    {
+      "category": "environment",
+      "logical": "config/pon/model-family-smollm2-135m-v1.json",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/config/pon/model-family-smollm2-135m-v1.json",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/config/pon/model-family-smollm2-135m-v1.json",
+      "sha256": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52",
+      "size": 5293
+    },
+    {
+      "category": "environment",
+      "logical": "config/pon/model-family-v1.json",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/config/pon/model-family-v1.json",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/config/pon/model-family-v1.json",
+      "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+      "size": 1383
+    },
+    {
+      "category": "environment",
+      "logical": "config/pon/work-profile-v1.json",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/config/pon/work-profile-v1.json",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/config/pon/work-profile-v1.json",
+      "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "size": 1596
+    },
+    {
+      "category": "environment",
+      "logical": "formal/pon-nakamoto-v1/contract_wire.py",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/formal/pon-nakamoto-v1/contract_wire.py",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/formal/pon-nakamoto-v1/contract_wire.py",
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+      "size": 8924
+    },
+    {
+      "category": "environment",
+      "logical": "formal/pon-nakamoto-v1/llm_adapter_contract.py",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/formal/pon-nakamoto-v1/llm_adapter_contract.py",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/formal/pon-nakamoto-v1/llm_adapter_contract.py",
+      "sha256": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5",
+      "size": 27789
+    },
+    {
+      "category": "environment",
+      "logical": "runtime/material-plan.json",
+      "previous_path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/experiment-plan.json",
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/experiment-plan.json",
+      "sha256": "01ec1a644f37b9fc7a4c6616f589768df97f8eed7a289b5de86afadaa7ce6165",
+      "size": 10739
+    },
+    {
+      "category": "environment",
+      "logical": "runtime/runtime-snapshot.json",
+      "previous_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/runtime-snapshot.v2.json",
+      "previous_sha256": "e87a3658675836c130ba2a97a805bc6d86cc435135e72f4b6e40747e9271b9eb",
+      "previous_size": 7739511,
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/runtime-snapshot.projected.v2.json",
+      "sha256": "1085538a9d5901bf8e724347c97166669d8dd1ac5815c3e8825cfaa1ba3dd11a",
+      "size": 7097177
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/cell_sealed_bootstrap_v1.py",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/cell_sealed_bootstrap_v1.py",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/cell_sealed_bootstrap_v1.py",
+      "sha256": "0f1f10fdae8a60725ff489bac367b31454eda9223a71d358488bed3603ea7962",
+      "size": 4640
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_base_material.py",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_base_material.py",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_base_material.py",
+      "sha256": "10d4c21419dd297dcdee6bd128c7cc1fdc1d343e1a62017da61bc1787fde113b",
+      "size": 10405
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_cell_sealed_worker_v1.py",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_cell_sealed_worker_v1.py",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_cell_sealed_worker_v1.py",
+      "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b",
+      "size": 45100
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_inherited_runtime.py",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_inherited_runtime.py",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_inherited_runtime.py",
+      "sha256": "069ad93e4adde21761a3e5343a181128b36fe7697e881d2d41c5a6fbc06f155b",
+      "size": 16320
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_neural_read_worker.py",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_neural_read_worker.py",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_neural_read_worker.py",
+      "sha256": "242cc3ce99b3187a2ee1de25dba77b6f0f699d5427b6e4198e6c77684b4963e9",
+      "size": 24515
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_parent_material.py",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_parent_material.py",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_parent_material.py",
+      "sha256": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a",
+      "size": 8041
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_python_runtime_contract.py",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_python_runtime_contract.py",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_python_runtime_contract.py",
+      "sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc",
+      "size": 22751
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_runtime_exit_observation.py",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_runtime_exit_observation.py",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_runtime_exit_observation.py",
+      "sha256": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
+      "size": 10742
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_runtime_pilot.py",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_runtime_pilot.py",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_runtime_pilot.py",
+      "sha256": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7",
+      "size": 125239
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_runtime_rss_diagnostics.py",
+      "previous_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_runtime_rss_diagnostics.py",
+      "selected_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_runtime_rss_diagnostics.py",
+      "sha256": "d15f4ddc914475ecc8ab473a16f8916b7dd805d8b39d741e49a9d2f63d8fe320",
+      "size": 6867
+    },
+    {
+      "category": "python",
+      "logical": "python",
+      "previous_path": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+      "sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5",
+      "size": 31028464
+    }
+  ],
+  "migration_kind": "new-environment-generation-private-runtime-projection",
+  "model_efficacy_qualified": false,
+  "model_generation": 1,
+  "model_material_pins_unchanged": true,
+  "old_snapshot_sha256": "e87a3658675836c130ba2a97a805bc6d86cc435135e72f4b6e40747e9271b9eb",
+  "operation": "1d931efd2bdc5a9fe0f1b24ec91681bd18d4ef23a19392a5c6da144d1abef299",
+  "previous_source_sha256": "fb6fe559317f7c3cd6ef504581b89e7d8229a7c700d3c71b61099a32d443cec9",
+  "production_activation": false,
+  "projected_snapshot_sha256": "1085538a9d5901bf8e724347c97166669d8dd1ac5815c3e8825cfaa1ba3dd11a",
+  "python_original_sha256_preserved": true,
+  "remaining_environment_member_hashes_unchanged": true,
+  "same_independent_bytes": false,
+  "schema": "trnm.native-rs46-independent-input-migration.v1",
+  "source_sha256": "d2fb314ef4f8d2e4dfd05076ddd7d8e0465880d935cf8812e3b9b8785d1a6bae"
+}

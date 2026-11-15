@@ -1,0 +1,3711 @@
+{
+  "actions": {
+    "ci_rerun_or_cancel_requested": false,
+    "failure_reclassified_as_pass": false,
+    "historical_pins_or_gates_changed": false,
+    "repository_modified": false
+  },
+  "base": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "current_diff_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/protocol/pon-nakamoto-v1/details/NATIVE_ACCOUNT_GROWTH_V2.md",
+    "docs/research/PON_JOINT_RESOURCE_CONTRACT_20261108.md",
+    "docs/research/PON_W1_LIFECYCLE_COST_V4.md",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/ci_job.sh",
+    "scripts/ci/test_ci_contract.py",
+    "scripts/ci/test_w1_lifecycle_cost_v4.py",
+    "scripts/pon_w1_lifecycle_cost_v4.py",
+    "trillionnium/crates/trnm-pon-node/examples/pon_w1_lifecycle_cost_v4.rs",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs"
+  ],
+  "immutable_blob_comparisons": [
+    {
+      "path": "scripts/ci/check_public_readiness_evidence.py",
+      "same_bytes": true,
+      "versions": [
+        {
+          "blob": "18e8f5ce45370ba8abc8e36390fb923afe8fc982",
+          "bytes": 70294,
+          "commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+          "sha256": "bff8d8d7aaae498c03bfeca86098c840f4be2291966b23aea83ee21498062224"
+        },
+        {
+          "blob": "18e8f5ce45370ba8abc8e36390fb923afe8fc982",
+          "bytes": 70294,
+          "commit": "11791e2da79b69322271be2cffe03725165151d1",
+          "sha256": "bff8d8d7aaae498c03bfeca86098c840f4be2291966b23aea83ee21498062224"
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "same_bytes": true,
+      "versions": [
+        {
+          "blob": "c524695c9630ec49498dcd30619f548309ba1fa2",
+          "bytes": 119401,
+          "commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+          "sha256": "863db081feb9c02a6b479ebb9f131d1518aa6c52068553bcebee435688253ac8"
+        },
+        {
+          "blob": "c524695c9630ec49498dcd30619f548309ba1fa2",
+          "bytes": 119401,
+          "commit": "11791e2da79b69322271be2cffe03725165151d1",
+          "sha256": "863db081feb9c02a6b479ebb9f131d1518aa6c52068553bcebee435688253ac8"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "same_bytes": true,
+      "versions": [
+        {
+          "blob": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+          "bytes": 382866,
+          "commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+          "sha256": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554"
+        },
+        {
+          "blob": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+          "bytes": 382866,
+          "commit": "11791e2da79b69322271be2cffe03725165151d1",
+          "sha256": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554"
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "same_bytes": true,
+      "versions": [
+        {
+          "blob": "9d97dfadd5bad55383475b7583f384ea572f180c",
+          "bytes": 110854,
+          "commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+          "sha256": "baa7cba8096a3908c9b7ebe0705949b95061191ec78846006527fd80e6a5a0c8"
+        },
+        {
+          "blob": "9d97dfadd5bad55383475b7583f384ea572f180c",
+          "bytes": 110854,
+          "commit": "11791e2da79b69322271be2cffe03725165151d1",
+          "sha256": "baa7cba8096a3908c9b7ebe0705949b95061191ec78846006527fd80e6a5a0c8"
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/run_from_zero_host.py",
+      "same_bytes": true,
+      "versions": [
+        {
+          "blob": "7ec378d2eb26914441f1b15b1d4267c967986e76",
+          "bytes": 25031,
+          "commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+          "sha256": "4b33ee64dfd418e1439a26ac5ec19d4b34b18c3b3c35b8a302c162d4bb91d63f"
+        },
+        {
+          "blob": "7ec378d2eb26914441f1b15b1d4267c967986e76",
+          "bytes": 25031,
+          "commit": "11791e2da79b69322271be2cffe03725165151d1",
+          "sha256": "4b33ee64dfd418e1439a26ac5ec19d4b34b18c3b3c35b8a302c162d4bb91d63f"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "same_bytes": true,
+      "versions": [
+        {
+          "blob": "87825357c881a1283ef46ce0226c2eacfd5af6cb",
+          "bytes": 79067,
+          "commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+          "sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+        },
+        {
+          "blob": "87825357c881a1283ef46ce0226c2eacfd5af6cb",
+          "bytes": 79067,
+          "commit": "11791e2da79b69322271be2cffe03725165151d1",
+          "sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+        }
+      ]
+    }
+  ],
+  "implementation": "11791e2da79b69322271be2cffe03725165151d1",
+  "jobs": [
+    {
+      "artifact_source": {
+        "base": null,
+        "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+        "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2485379627,
+        "tracked_entries": 26124,
+        "tracked_worktree_verified": true
+      },
+      "complete_decoded_log": {
+        "bytes": 174401,
+        "file": "job-128954796906.decoded.log",
+        "lines": 1328,
+        "scope": "Complete UTF-8 log string returned by GitHub connector; not original compressed log archive bytes.",
+        "sha256": "e7428f444070359be85072e70f208b078af192f545bae9a9cf5d2bb370de3020"
+      },
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-09T03:05:08Z",
+          "conclusion": "failure",
+          "name": "Run actual protocol-contract checks",
+          "number": 8,
+          "started_at": "2026-11-09T03:00:24Z",
+          "status": "completed"
+        }
+      ],
+      "failure_analysis": {
+        "all_named_tests_passed": true,
+        "binary_before_after_match": true,
+        "binary_sha256_after": "167491cc586782782d90c66abad928fc12feba05a83f4fed8451ec674efb45b1",
+        "binary_sha256_before": "167491cc586782782d90c66abad928fc12feba05a83f4fed8451ec674efb45b1",
+        "build": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "cpu_ns": 94110000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "involuntary_switches": 5,
+          "major_faults": 0,
+          "max_rss_kib": 51716,
+          "minor_faults": 12804,
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+          "stderr_sha256": "a58a7822e22f5f9a949095cf5e2189dcdded99435193789598a16b73f325b4b1",
+          "stdout_sha256": "67f974ed9a9beb276d9c730aa85cfe423deb19863534d741183a278e94ac62b4",
+          "system_cpu_ns": 26747000,
+          "timed_out": false,
+          "user_cpu_ns": 67363000,
+          "voluntary_switches": 6,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 395661962
+        },
+        "cause_boundary": "117 fails the original four-second business gate under the original Host contract. Native process completion, invariant test success, successful Submit ACKs, and prior service reports do not grant confirmation credit. This readback establishes neither old/new performance equivalence nor causal attribution to one source change.",
+        "class": "actual original-resource finite-business acceptance failure",
+        "confirmation_observation": {
+          "network_capacity_qualified": false,
+          "original_gate_validated": false,
+          "original_gate_validation_error": "CONFIRMATION_TARGET",
+          "production_activation": false,
+          "schema": "trnm-original-confirmation-observation-v2",
+          "scope": "same original finite offer, 1 signed transaction per 4s phase; not saturated chain TPS; reported native observations only, no independent proof/state oracle",
+          "simulated_control": false,
+          "tail_latency_qualified": false
+        },
+        "controller_failure": null,
+        "execution_finished": false,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "final_host_errors": [],
+        "format_passed": true,
+        "full_source_before_after_match": true,
+        "inside_after_counters": {
+          "cgroup.events": "populated 1\nfrozen 0",
+          "cpu.stat": "usage_usec 20545263\nuser_usec 18025458\nsystem_usec 2519805\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 862\nnr_throttled 775\nthrottled_usec 70971497\nnr_bursts 0\nburst_usec 0",
+          "memory.current": "69971968",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "pids.current": "1"
+        },
+        "inside_before_counters": {
+          "cgroup.events": "populated 1\nfrozen 0",
+          "cpu.stat": "usage_usec 94681\nuser_usec 79887\nsystem_usec 14793\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 5\nnr_throttled 3\nthrottled_usec 164141\nnr_bursts 0\nburst_usec 0",
+          "memory.current": "17010688",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "pids.current": "1"
+        },
+        "manifest_entry": "from-zero-native/manifest.json",
+        "native_build_preparation_completed": true,
+        "native_build_preparation_process": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "cpu_ns": 344995358000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "involuntary_switches": 3510,
+          "major_faults": 243,
+          "max_rss_kib": 1782744,
+          "minor_faults": 4177824,
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+          "stderr_sha256": "a82023978bdd1b44756dd09dd627dae85bd4180e03f5d308bae9870a97181152",
+          "stdout_sha256": "cb7d9dceef6ffb1e23a05abc1769aebcf229b5f3570ba763557f68d539456a40",
+          "system_cpu_ns": 9033882000,
+          "timed_out": false,
+          "user_cpu_ns": 335961476000,
+          "voluntary_switches": 13500,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 183341411857
+        },
+        "observation_boundary": "Phase values come from retained native reports and existing diagnostic observation. The original confirmation validator rejects at CONFIRMATION_TARGET. No independent validation of every downstream confirmation condition is claimed.",
+        "original_host_limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "passed": false,
+        "phases": [
+          {
+            "business": {
+              "business_start_delay_ns": 133468,
+              "business_started_before_original_window_end": true,
+              "independent_confirmed_transactions_per_window_second": 0.25,
+              "lower_bound_reaches_original_window_end": null,
+              "observed_success_latency_ns": 1594365676,
+              "reported_finite_business_target_met": true,
+              "reported_independently_confirmed_in_window": 1,
+              "required_signed_transactions": 1,
+              "unconfirmed": 0,
+              "unconfirmed_latency_lower_bound_ns": null,
+              "unknown": 0
+            },
+            "history_response": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "independent_final_confirmation_stage": {
+              "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+              "confirmation_ended_ns": 1594496860,
+              "confirmation_started_ns": 1593673415,
+              "confirmation_thread_cpu_ns": 824339,
+              "confirmation_wall_ns": 823445,
+              "observation_returned": true
+            },
+            "independent_page_replay": {
+              "accepted_in_original_window": 7,
+              "attempts": 7,
+              "failed_or_late": 0
+            },
+            "last_independent_replay": {
+              "history_call_index": 6,
+              "replay_accepted": true,
+              "replay_ended_ns": 1593610367,
+              "replay_error": null,
+              "replay_started_ns": 1405004842,
+              "replay_thread_cpu_ns": 40482025,
+              "replay_wall_ns": 188605525
+            },
+            "last_native_import_phase": [
+              {
+                "accepted": true,
+                "completed": true,
+                "ended_ns": 188571402,
+                "error_code": null,
+                "parent_phase": null,
+                "phase": "history_import",
+                "started": true,
+                "started_ns": 123904,
+                "thread_cpu_ns": 40323741,
+                "wall_ns": 188447498
+              }
+            ],
+            "mode": "attack-free-baseline",
+            "signed_submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "verification_errors": [],
+            "window_ns": 4000000000
+          },
+          {
+            "business": {
+              "business_start_delay_ns": 71669679,
+              "business_started_before_original_window_end": true,
+              "independent_confirmed_transactions_per_window_second": 0.0,
+              "lower_bound_reaches_original_window_end": true,
+              "observed_success_latency_ns": null,
+              "reported_finite_business_target_met": false,
+              "reported_independently_confirmed_in_window": 0,
+              "required_signed_transactions": 1,
+              "unconfirmed": 1,
+              "unconfirmed_latency_lower_bound_ns": 3928330321,
+              "unknown": 0
+            },
+            "history_response": {
+              "attempts": 6,
+              "failed_or_late": 0,
+              "successful_in_original_window": 6
+            },
+            "independent_final_confirmation_stage": null,
+            "independent_page_replay": {
+              "accepted_in_original_window": 5,
+              "attempts": 6,
+              "failed_or_late": 1
+            },
+            "last_independent_replay": {
+              "history_call_index": 5,
+              "replay_accepted": false,
+              "replay_ended_ns": 4059499349,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE",
+              "replay_started_ns": 3767956406,
+              "replay_thread_cpu_ns": 21433326,
+              "replay_wall_ns": 291542943
+            },
+            "last_native_import_phase": [
+              {
+                "accepted": false,
+                "completed": true,
+                "ended_ns": 291316741,
+                "error_code": "PUBLIC_REQUEST_DEADLINE",
+                "parent_phase": null,
+                "phase": "history_import",
+                "started": true,
+                "started_ns": 202732,
+                "thread_cpu_ns": 21004369,
+                "wall_ns": 291114009
+              }
+            ],
+            "mode": "from-zero-pressure",
+            "signed_submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "window_ns": 4000000000
+          }
+        ],
+        "qualification_flags": {
+          "independent_wan_accepted": false,
+          "production_activation": false,
+          "work_hardness_accepted": false
+        },
+        "raw_report_flags": {
+          "finite_target_met": false,
+          "invariant_target_met": true,
+          "production_activation": false,
+          "public_network_ready": false,
+          "same_packet_sequence_in_both_runs": true,
+          "strongest_honest_producer_used": false,
+          "work_profile_qualified": false
+        },
+        "raw_report_scope": "same-source, task, target and signed business; attack-free versus independently driven loopback attack clients; shared controller, not independent operators or a saturated WAN benchmark",
+        "report_entry_identities": [
+          {
+            "bytes": 3477421,
+            "matches_manifest_retained_and_before_validation": true,
+            "sha256": "bca202857036ac61799aaa3eff91e65441cacf0d124e564f7d0e7ab779369b8a",
+            "stage": "service_report",
+            "zip_entry": "from-zero-native/native/report.json"
+          },
+          {
+            "bytes": 19657587,
+            "matches_manifest_retained_and_before_validation": true,
+            "sha256": "06b35d25de215311e979d8ddd7aec4df54356555f50f0c3e58bb0f8e0040366b",
+            "stage": "sustained_report",
+            "zip_entry": "from-zero-native/native/sustained/report.json"
+          },
+          {
+            "bytes": 11798737,
+            "matches_manifest_retained_and_before_validation": true,
+            "sha256": "824d044becdd497a1cf751f4cf205614f7ec05f57b2c90f5914d9c29f9a10d88",
+            "stage": "confirmation_report",
+            "zip_entry": "from-zero-native/confirmation/report.json"
+          }
+        ],
+        "source_after": {
+          "commit": "11791e2da79b69322271be2cffe03725165151d1",
+          "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          },
+          "tree": "162552848110fda532504b78865a16930bc6d9bb"
+        },
+        "source_before": {
+          "commit": "11791e2da79b69322271be2cffe03725165151d1",
+          "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          },
+          "tree": "162552848110fda532504b78865a16930bc6d9bb"
+        },
+        "source_recompiled": true,
+        "systemd_run_exit": 1,
+        "terminal": {
+          "acceptance_passed": false,
+          "acceptance_stages": {
+            "confirmation_report": {
+              "before_validation": {
+                "bytes": 11798737,
+                "sha256": "824d044becdd497a1cf751f4cf205614f7ec05f57b2c90f5914d9c29f9a10d88",
+                "state": "present"
+              },
+              "error": "CONFIRMATION_TARGET",
+              "path": "confirmation/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 11798737,
+                "sha256": "824d044becdd497a1cf751f4cf205614f7ec05f57b2c90f5914d9c29f9a10d88",
+                "state": "present"
+              },
+              "status": "failed"
+            },
+            "service_report": {
+              "before_validation": {
+                "bytes": 3477421,
+                "sha256": "bca202857036ac61799aaa3eff91e65441cacf0d124e564f7d0e7ab779369b8a",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 3477421,
+                "sha256": "bca202857036ac61799aaa3eff91e65441cacf0d124e564f7d0e7ab779369b8a",
+                "state": "present"
+              },
+              "status": "passed"
+            },
+            "sustained_report": {
+              "before_validation": {
+                "bytes": 19657587,
+                "sha256": "06b35d25de215311e979d8ddd7aec4df54356555f50f0c3e58bb0f8e0040366b",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/sustained/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 19657587,
+                "sha256": "06b35d25de215311e979d8ddd7aec4df54356555f50f0c3e58bb0f8e0040366b",
+                "state": "present"
+              },
+              "status": "passed"
+            }
+          },
+          "finalization_completed": true,
+          "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+          "native_execution_completed": true,
+          "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+          "native_invocations": [
+            {
+              "exit_code": 0,
+              "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "status": "returned",
+              "timed_out": false
+            }
+          ],
+          "schema": "trnm-from-zero-native-terminal-v1",
+          "scope": "child process terminals and original sequential report acceptance; diagnostic readback grants no acceptance or subsequent CI execution",
+          "subsequent_ci_steps_observed": false,
+          "unexecuted_acceptance_stages": [],
+          "unexecuted_native_tests": []
+        }
+      },
+      "job": {
+        "completed_at": "2026-11-09T03:05:16Z",
+        "conclusion": "failure",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42553751938/job/128954796906",
+        "id": 128954796906,
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "name": "protocol-contract",
+        "runner_name": "GitHub Actions 1000054763",
+        "started_at": "2026-11-09T02:57:57Z",
+        "status": "completed"
+      },
+      "original_artifact_zip": {
+        "api_bytes_and_digest_match": true,
+        "api_created_at": "2026-11-09T03:05:13Z",
+        "api_expired": false,
+        "artifact_id": 13646503409,
+        "artifact_name": "head-protocol-contract-11791e2da79b69322271be2cffe03725165151d1-1",
+        "bytes": 6393785,
+        "entry_count": 78,
+        "file": "head-protocol-contract-117-run42553751938.zip",
+        "sha256": "6e5b0dcf7fbc82fb38fb34159eb92c54d446ad2acd4bdf2d98de6d556cff3090",
+        "uncompressed_bytes": 51826850
+      },
+      "standalone_source_before_after_match": true,
+      "standalone_source_receipts_from_log": [
+        {
+          "decoded_log_line": 1056,
+          "identity": {
+            "base": null,
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "decoded_log_line": 1260,
+          "identity": {
+            "base": null,
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          }
+        }
+      ]
+    },
+    {
+      "artifact_source": {
+        "base": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+        "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+        "kind": "prospective-merge",
+        "prospective_merge": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+        "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2485379627,
+        "tracked_entries": 26124,
+        "tracked_worktree_verified": true
+      },
+      "complete_decoded_log": {
+        "bytes": 177034,
+        "file": "job-128954797047.decoded.log",
+        "lines": 1347,
+        "scope": "Complete UTF-8 log string returned by GitHub connector; not original compressed log archive bytes.",
+        "sha256": "9b1fdea9d3de20f89bc635e20b198f64ce68c8202f31dc9c5e7d07ba090dd9fb"
+      },
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-09T03:05:08Z",
+          "conclusion": "failure",
+          "name": "Execute the same lane on the prospective merge",
+          "number": 12,
+          "started_at": "2026-11-09T03:00:32Z",
+          "status": "completed"
+        }
+      ],
+      "failure_analysis": {
+        "all_named_tests_passed": true,
+        "binary_before_after_match": true,
+        "binary_sha256_after": "df9f3e87ded9659a80aa40f63eee4e8197e67f9fa9ada95105488f2bb4dd4099",
+        "binary_sha256_before": "df9f3e87ded9659a80aa40f63eee4e8197e67f9fa9ada95105488f2bb4dd4099",
+        "build": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "cpu_ns": 101085000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "involuntary_switches": 6,
+          "major_faults": 0,
+          "max_rss_kib": 50932,
+          "minor_faults": 12790,
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+          "stderr_sha256": "a58a7822e22f5f9a949095cf5e2189dcdded99435193789598a16b73f325b4b1",
+          "stdout_sha256": "83096b9947c75853318f7d6c0fea64f78881ea1a517ed0a091de571a0fe72039",
+          "system_cpu_ns": 42359000,
+          "timed_out": false,
+          "user_cpu_ns": 58726000,
+          "voluntary_switches": 6,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 404684600
+        },
+        "cause_boundary": "117 fails the original four-second business gate under the original Host contract. Native process completion, invariant test success, successful Submit ACKs, and prior service reports do not grant confirmation credit. This readback establishes neither old/new performance equivalence nor causal attribution to one source change.",
+        "class": "actual original-resource finite-business acceptance failure",
+        "confirmation_observation": {
+          "network_capacity_qualified": false,
+          "original_gate_validated": false,
+          "original_gate_validation_error": "CONFIRMATION_TARGET",
+          "production_activation": false,
+          "schema": "trnm-original-confirmation-observation-v2",
+          "scope": "same original finite offer, 1 signed transaction per 4s phase; not saturated chain TPS; reported native observations only, no independent proof/state oracle",
+          "simulated_control": false,
+          "tail_latency_qualified": false
+        },
+        "controller_failure": null,
+        "execution_finished": false,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "final_host_errors": [],
+        "format_passed": true,
+        "full_source_before_after_match": true,
+        "inside_after_counters": {
+          "cgroup.events": "populated 1\nfrozen 0",
+          "cpu.stat": "usage_usec 21662208\nuser_usec 17833466\nsystem_usec 3828741\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 892\nnr_throttled 814\nthrottled_usec 79636764\nnr_bursts 0\nburst_usec 0",
+          "memory.current": "69218304",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "pids.current": "1"
+        },
+        "inside_before_counters": {
+          "cgroup.events": "populated 1\nfrozen 0",
+          "cpu.stat": "usage_usec 94699\nuser_usec 75373\nsystem_usec 19326\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 5\nnr_throttled 3\nthrottled_usec 174875\nnr_bursts 0\nburst_usec 0",
+          "memory.current": "17272832",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "pids.current": "1"
+        },
+        "manifest_entry": "from-zero-native/manifest.json",
+        "native_build_preparation_completed": true,
+        "native_build_preparation_process": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "cpu_ns": 322011857000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "involuntary_switches": 3342,
+          "major_faults": 250,
+          "max_rss_kib": 1774744,
+          "minor_faults": 4237346,
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+          "stderr_sha256": "f96f372c6ca508658a896881de672f205b934b3f6b72d8c564df22902694e4ad",
+          "stdout_sha256": "96e81843b038e0c724166233471fe8bda9e41719115cc2b4b24dd5e95d17ccaf",
+          "system_cpu_ns": 11936895000,
+          "timed_out": false,
+          "user_cpu_ns": 310074962000,
+          "voluntary_switches": 13669,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 170158170477
+        },
+        "observation_boundary": "Phase values come from retained native reports and existing diagnostic observation. The original confirmation validator rejects at CONFIRMATION_TARGET. No independent validation of every downstream confirmation condition is claimed.",
+        "original_host_limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "passed": false,
+        "phases": [
+          {
+            "business": {
+              "business_start_delay_ns": 128300,
+              "business_started_before_original_window_end": true,
+              "independent_confirmed_transactions_per_window_second": 0.25,
+              "lower_bound_reaches_original_window_end": null,
+              "observed_success_latency_ns": 2767362934,
+              "reported_finite_business_target_met": true,
+              "reported_independently_confirmed_in_window": 1,
+              "required_signed_transactions": 1,
+              "unconfirmed": 0,
+              "unconfirmed_latency_lower_bound_ns": null,
+              "unknown": 0
+            },
+            "history_response": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "independent_final_confirmation_stage": {
+              "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+              "confirmation_ended_ns": 2767487749,
+              "confirmation_started_ns": 2766697619,
+              "confirmation_thread_cpu_ns": 791296,
+              "confirmation_wall_ns": 790130,
+              "observation_returned": true
+            },
+            "independent_page_replay": {
+              "accepted_in_original_window": 7,
+              "attempts": 7,
+              "failed_or_late": 0
+            },
+            "last_independent_replay": {
+              "history_call_index": 6,
+              "replay_accepted": true,
+              "replay_ended_ns": 2766642537,
+              "replay_error": null,
+              "replay_started_ns": 2385405833,
+              "replay_thread_cpu_ns": 79878849,
+              "replay_wall_ns": 381236704
+            },
+            "last_native_import_phase": [
+              {
+                "accepted": true,
+                "completed": true,
+                "ended_ns": 381168753,
+                "error_code": null,
+                "parent_phase": null,
+                "phase": "history_import",
+                "started": true,
+                "started_ns": 189882,
+                "thread_cpu_ns": 79620706,
+                "wall_ns": 380978871
+              }
+            ],
+            "mode": "attack-free-baseline",
+            "signed_submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "verification_errors": [],
+            "window_ns": 4000000000
+          },
+          {
+            "business": {
+              "business_start_delay_ns": 36135171,
+              "business_started_before_original_window_end": true,
+              "independent_confirmed_transactions_per_window_second": 0.0,
+              "lower_bound_reaches_original_window_end": true,
+              "observed_success_latency_ns": null,
+              "reported_finite_business_target_met": false,
+              "reported_independently_confirmed_in_window": 0,
+              "required_signed_transactions": 1,
+              "unconfirmed": 1,
+              "unconfirmed_latency_lower_bound_ns": 3963864829,
+              "unknown": 0
+            },
+            "history_response": {
+              "attempts": 3,
+              "failed_or_late": 0,
+              "successful_in_original_window": 3
+            },
+            "independent_final_confirmation_stage": null,
+            "independent_page_replay": {
+              "accepted_in_original_window": 2,
+              "attempts": 3,
+              "failed_or_late": 1
+            },
+            "last_independent_replay": {
+              "history_call_index": 2,
+              "replay_accepted": false,
+              "replay_ended_ns": 4036896171,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE",
+              "replay_started_ns": 3337310312,
+              "replay_thread_cpu_ns": 68890996,
+              "replay_wall_ns": 699585859
+            },
+            "last_native_import_phase": [
+              {
+                "accepted": false,
+                "completed": true,
+                "ended_ns": 699458580,
+                "error_code": "PUBLIC_REQUEST_DEADLINE",
+                "parent_phase": null,
+                "phase": "history_import",
+                "started": true,
+                "started_ns": 217272,
+                "thread_cpu_ns": 68546514,
+                "wall_ns": 699241308
+              }
+            ],
+            "mode": "from-zero-pressure",
+            "signed_submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "window_ns": 4000000000
+          }
+        ],
+        "qualification_flags": {
+          "independent_wan_accepted": false,
+          "production_activation": false,
+          "work_hardness_accepted": false
+        },
+        "raw_report_flags": {
+          "finite_target_met": false,
+          "invariant_target_met": true,
+          "production_activation": false,
+          "public_network_ready": false,
+          "same_packet_sequence_in_both_runs": true,
+          "strongest_honest_producer_used": false,
+          "work_profile_qualified": false
+        },
+        "raw_report_scope": "same-source, task, target and signed business; attack-free versus independently driven loopback attack clients; shared controller, not independent operators or a saturated WAN benchmark",
+        "report_entry_identities": [
+          {
+            "bytes": 3475435,
+            "matches_manifest_retained_and_before_validation": true,
+            "sha256": "af9f7973e9a262f87336f58c7527a5e4055e4d6895470909d4b38eb434d3490c",
+            "stage": "service_report",
+            "zip_entry": "from-zero-native/native/report.json"
+          },
+          {
+            "bytes": 19693462,
+            "matches_manifest_retained_and_before_validation": true,
+            "sha256": "ef44d3d3b5c4358c0d820311ee541eadf957142ef30a9b6382a8ad3642f920d4",
+            "stage": "sustained_report",
+            "zip_entry": "from-zero-native/native/sustained/report.json"
+          },
+          {
+            "bytes": 10838336,
+            "matches_manifest_retained_and_before_validation": true,
+            "sha256": "f8923d0627c937554af2934fa0c5cbfd60acf975dec63dfd4fb985d1c80800c0",
+            "stage": "confirmation_report",
+            "zip_entry": "from-zero-native/confirmation/report.json"
+          }
+        ],
+        "source_after": {
+          "commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+          "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          },
+          "tree": "162552848110fda532504b78865a16930bc6d9bb"
+        },
+        "source_before": {
+          "commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+          "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          },
+          "tree": "162552848110fda532504b78865a16930bc6d9bb"
+        },
+        "source_recompiled": true,
+        "systemd_run_exit": 1,
+        "terminal": {
+          "acceptance_passed": false,
+          "acceptance_stages": {
+            "confirmation_report": {
+              "before_validation": {
+                "bytes": 10838336,
+                "sha256": "f8923d0627c937554af2934fa0c5cbfd60acf975dec63dfd4fb985d1c80800c0",
+                "state": "present"
+              },
+              "error": "CONFIRMATION_TARGET",
+              "path": "confirmation/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 10838336,
+                "sha256": "f8923d0627c937554af2934fa0c5cbfd60acf975dec63dfd4fb985d1c80800c0",
+                "state": "present"
+              },
+              "status": "failed"
+            },
+            "service_report": {
+              "before_validation": {
+                "bytes": 3475435,
+                "sha256": "af9f7973e9a262f87336f58c7527a5e4055e4d6895470909d4b38eb434d3490c",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 3475435,
+                "sha256": "af9f7973e9a262f87336f58c7527a5e4055e4d6895470909d4b38eb434d3490c",
+                "state": "present"
+              },
+              "status": "passed"
+            },
+            "sustained_report": {
+              "before_validation": {
+                "bytes": 19693462,
+                "sha256": "ef44d3d3b5c4358c0d820311ee541eadf957142ef30a9b6382a8ad3642f920d4",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/sustained/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 19693462,
+                "sha256": "ef44d3d3b5c4358c0d820311ee541eadf957142ef30a9b6382a8ad3642f920d4",
+                "state": "present"
+              },
+              "status": "passed"
+            }
+          },
+          "finalization_completed": true,
+          "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+          "native_execution_completed": true,
+          "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+          "native_invocations": [
+            {
+              "exit_code": 0,
+              "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "status": "returned",
+              "timed_out": false
+            }
+          ],
+          "schema": "trnm-from-zero-native-terminal-v1",
+          "scope": "child process terminals and original sequential report acceptance; diagnostic readback grants no acceptance or subsequent CI execution",
+          "subsequent_ci_steps_observed": false,
+          "unexecuted_acceptance_stages": [],
+          "unexecuted_native_tests": []
+        }
+      },
+      "job": {
+        "completed_at": "2026-11-09T03:05:16Z",
+        "conclusion": "failure",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42553751938/job/128954797047",
+        "id": 128954797047,
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "name": "prospective-merge (protocol-contract)",
+        "runner_name": "GitHub Actions 1000054767",
+        "started_at": "2026-11-09T02:57:57Z",
+        "status": "completed"
+      },
+      "original_artifact_zip": {
+        "api_bytes_and_digest_match": true,
+        "api_created_at": "2026-11-09T03:05:13Z",
+        "api_expired": false,
+        "artifact_id": 13646038975,
+        "artifact_name": "merge-protocol-contract-b472c21f7b14ba27bb87d9d2f52d299365ed3145-1",
+        "bytes": 6335727,
+        "entry_count": 78,
+        "file": "merge-protocol-contract-b472-run42553751938.zip",
+        "sha256": "c2bcec82973c2a496fb389c45c8b67a25a1a351954e75033f37430fe70158bc0",
+        "uncompressed_bytes": 50752878
+      },
+      "standalone_source_before_after_match": true,
+      "standalone_source_receipts_from_log": [
+        {
+          "decoded_log_line": 1061,
+          "identity": {
+            "base": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "prospective-merge",
+            "prospective_merge": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "decoded_log_line": 1277,
+          "identity": {
+            "base": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "prospective-merge",
+            "prospective_merge": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          }
+        }
+      ]
+    },
+    {
+      "artifact_source": {
+        "base": null,
+        "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+        "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2485379627,
+        "tracked_entries": 26124,
+        "tracked_worktree_verified": true
+      },
+      "complete_decoded_log": {
+        "bytes": 359691,
+        "file": "job-128954796911.decoded.log",
+        "lines": 2861,
+        "scope": "Complete UTF-8 log string returned by GitHub connector; not original compressed log archive bytes.",
+        "sha256": "a5200ec7363c617e0f9610e0f51c7041a7b42e5f8cef78a78610b25c8162c0ab"
+      },
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-09T03:03:24Z",
+          "conclusion": "failure",
+          "name": "Run actual external-evidence-contract checks",
+          "number": 6,
+          "started_at": "2026-11-09T02:58:57Z",
+          "status": "completed"
+        }
+      ],
+      "failure_analysis": {
+        "actual_enum_field": "InitializeOrRecover { observation_only: bool }",
+        "artifact_limit": "External ZIP contains source.json only. Independent after-source identity is retained in the complete job log; before and after receipts match.",
+        "cause_boundary": "The exact-layout checker, its test fixtures, and the entire input store.rs have identical blobs in e798 and 117. This establishes an inherited static mismatch, not a fresh V4/History/Growth regression. The lane remains FAIL.",
+        "class": "inherited static source-contract and test-fixture mismatch",
+        "denominator_note": "Failures/errors include subtests; not 106 distinct named tests.",
+        "expected_enum_field": "InitializeOrRecover { growth_observation_only: bool }",
+        "failure_blocks_with_missing_old_source_replacement_needle": 5,
+        "failure_headers": [
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_authenticated_domain_cannot_relabel_legacy_tables (__main__.DurableStoreTests.test_authenticated_domain_cannot_relabel_legacy_tables)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_authenticated_tables_are_out_of_scope_even_with_resealed_metadata (__main__.DurableStoreTests.test_authenticated_tables_are_out_of_scope_even_with_resealed_metadata)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_changed_published_state_and_injected_schema_reject (__main__.DurableStoreTests.test_changed_published_state_and_injected_schema_reject)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_current_lifecycle_store_cannot_use_preserved_pre_lifecycle_identity (__main__.DurableStoreTests.test_current_lifecycle_store_cannot_use_preserved_pre_lifecycle_identity)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_current_v2_schema_and_complete_index_positive_control (__main__.DurableStoreTests.test_current_v2_schema_and_complete_index_positive_control)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_growth_domains_cannot_relabel_legacy_tables (__main__.DurableStoreTests.test_growth_domains_cannot_relabel_legacy_tables)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_missing_extra_or_changed_derived_rows_are_refused (__main__.DurableStoreTests.test_missing_extra_or_changed_derived_rows_are_refused)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_owned_sqlite_control_and_changed_packet_or_work_reject (__main__.DurableStoreTests.test_owned_sqlite_control_and_changed_packet_or_work_reject)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_permanent_growth_tables_remain_out_of_scope_after_metadata_resealing (__main__.DurableStoreTests.test_permanent_growth_tables_remain_out_of_scope_after_metadata_resealing)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_real_sqlite_internal_autoindexes_and_statistics_remain_supported (__main__.DurableStoreTests.test_real_sqlite_internal_autoindexes_and_statistics_remain_supported)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_resealed_wrong_half_link_is_not_accepted_as_derived_structure (__main__.DurableStoreTests.test_resealed_wrong_half_link_is_not_accepted_as_derived_structure)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_sqlite_like_prefix_user_index_is_not_internal (__main__.DurableStoreTests.test_sqlite_like_prefix_user_index_is_not_internal)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_sqlite_like_prefix_user_table_is_not_internal (__main__.DurableStoreTests.test_sqlite_like_prefix_user_table_is_not_internal)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_sqlite_like_prefix_user_trigger_is_not_internal (__main__.DurableStoreTests.test_sqlite_like_prefix_user_trigger_is_not_internal)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_sqlite_like_prefix_user_view_is_not_internal (__main__.DurableStoreTests.test_sqlite_like_prefix_user_view_is_not_internal)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_v2_schema_metadata_cannot_use_legacy_hash_domain (__main__.DurableStoreTests.test_v2_schema_metadata_cannot_use_legacy_hash_domain)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_witness_namespace_and_checkpoint_do_not_qualify_legacy_evidence (__main__.DurableStoreTests.test_witness_namespace_and_checkpoint_do_not_qualify_legacy_evidence)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_backend_decoys_and_historical_hash_cannot_authorize_bad_active_mapping (__main__.NativeDurableSchemaTests.test_backend_decoys_and_historical_hash_cannot_authorize_bad_active_mapping)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_current_backend_returns_the_exact_preserved_legacy_bytes (__main__.NativeDurableSchemaTests.test_current_backend_returns_the_exact_preserved_legacy_bytes)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_permanent_growth_mapping_is_exact_without_qualifying_its_storage (__main__.NativeDurableSchemaTests.test_permanent_growth_mapping_is_exact_without_qualifying_its_storage)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_pq_mapping_is_exact_without_qualifying_its_storage (__main__.NativeDurableSchemaTests.test_pq_mapping_is_exact_without_qualifying_its_storage)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_witness_v4_mapping_is_exact_and_only_legacy_schema_is_exported (__main__.NativeDurableSchemaTests.test_witness_v4_mapping_is_exact_and_only_legacy_schema_is_exported)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (label='ddl-unselected')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (label='schema-unselected')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (label='nested-pair')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let state_backend = StateBackend::AuthenticatedV1;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let settings = settings;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let (settings, _) = (settings, ());')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let ddl = StateBackend::AuthenticatedV1.ddl();')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let mut ddl = StateBackend::AuthenticatedV1.ddl();')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let ddl: String = StateBackend::AuthenticatedV1.ddl();')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let schema_id: Hash = StateBackend::AuthenticatedV1.schema_id();')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let (ddl, schema_id) = (StateBackend::AuthenticatedV1.ddl(), StateBackend::AuthenticatedV1.schema_id());')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let (state_backend, _) = (StateBackend::AuthenticatedV1, ());')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='state_backend = StateBackend::AuthenticatedV1;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='ddl = StateBackend::AuthenticatedV1.ddl();')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='schema_id = StateBackend::AuthenticatedV1.schema_id();')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='schema_id[0] = 0;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": true,
+            "contains_selected_modes_error": false,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (mode='SelectedOpen::ExistingPqOwner,')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": true,
+            "contains_selected_modes_error": false,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (mode='SelectedOpen::InitializeOrRecover {\\n                growth_observation_only: true,\\n            },')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": true,
+            "contains_selected_modes_error": false,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (mode='SelectedOpen::InitializeOrRecover {\\n                growth_observation_only: false,\\n            },')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (argument='            settings,')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (argument='            owners,')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (argument='            state_backend,')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (flags='(true, false)')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (flags='(false, false)')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (flags='(existing_owner_only, true)')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": true,
+            "contains_selected_modes_error": false,
+            "header": "FAIL: test_existing_owner_split_requires_the_reviewed_executable_contract (__main__.NativeDurableSchemaTests.test_existing_owner_split_requires_the_reviewed_executable_contract) (label='disabled-binding')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": true,
+            "contains_selected_modes_error": false,
+            "header": "FAIL: test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener (__main__.NativeDurableSchemaTests.test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener) (mutation='let (growth_observation_only, existing_owner_only) = match selection {')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener (__main__.NativeDurableSchemaTests.test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener) (statement='let existing_owner_only = false;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener (__main__.NativeDurableSchemaTests.test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener) (statement='existing_owner_only = false;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener (__main__.NativeDurableSchemaTests.test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener) (statement='let growth_observation_only = true;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener (__main__.NativeDurableSchemaTests.test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener) (statement='let alias = &mut existing_owner_only;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener (__main__.NativeDurableSchemaTests.test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener) (statement='let selection = SelectedOpen::ExistingPqOwner;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) (name='growth_states', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) (name='growth_states', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) (name='GrOwTh_StAtEs', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) (name='GrOwTh_StAtEs', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_peer_v1', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_peer_v1', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_request_v1', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_request_v1', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_NeTwOrK_PeEr_V1', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_NeTwOrK_PeEr_V1', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_NeTwOrK_ReQuEsT_V1', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_NeTwOrK_ReQuEsT_V1', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_resource_v2', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_resource_v2', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_peer_v2', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_peer_v2', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_request_v2', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_request_v2', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_NeTwOrK_ReSoUrCe_V2', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_NeTwOrK_ReSoUrCe_V2', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_NeTwOrK_ReQuEsT_V2', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_NeTwOrK_ReQuEsT_V2', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_future_owner_v99', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_future_owner_v99', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_unreviewed_extension', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_unreviewed_extension', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_witness_checkpoint_v1', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_witness_checkpoint_v1', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_WiTnEsS_ChEcKpOiNt_V1', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_WiTnEsS_ChEcKpOiNt_V1', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_witness_future_v99', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_witness_future_v99', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='archive_nodes', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='archive_nodes', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='native_state_commitments', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='native_state_commitments', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='ArChIvE_NoDeS', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='ArChIvE_NoDeS', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='pq_network_resource_v2', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='pq_network_resource_v2', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='pq_network_peer_v2', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='pq_network_peer_v2', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='pq_network_request_v2', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='pq_network_request_v2', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='Pq_NeTwOrK_FuTuRe_OwNeR_V99', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='Pq_NeTwOrK_FuTuRe_OwNeR_V99', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='settings.app.params[\"work_task_profile\"] = serde_json::json!(\"legacy-task-v1\");')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='settings.app.params[\"work_task_profile\"][0] = serde_json::json!(0);')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='settings.app = settings.app.clone();')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='let alias = &mut settings;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='let alias = &mut settings.app;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='let alias = &mut (settings.app);')",
+            "kind": "FAIL"
+          }
+        ],
+        "failure_or_error_blocks_with_selected_modes_error": 101,
+        "first_error": "ValueError: durable backend selected modes",
+        "reported_errors": 22,
+        "reported_failures": 84,
+        "reported_named_tests": 71,
+        "suite": "scripts/ci/test_public_readiness_evidence.py",
+        "suite_summary_lines": [
+          "Ran 38 tests in 0.606s",
+          "Ran 8 tests in 0.001s",
+          "Ran 9 tests in 6.483s",
+          "Ran 20 tests in 2.337s",
+          "Ran 24 tests in 2.644s",
+          "Ran 71 tests in 37.410s",
+          "FAILED (failures=84, errors=22)"
+        ]
+      },
+      "job": {
+        "completed_at": "2026-11-09T03:03:31Z",
+        "conclusion": "failure",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42553751938/job/128954796911",
+        "id": 128954796911,
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "name": "external-evidence-contract",
+        "runner_name": "GitHub Actions 1000054764",
+        "started_at": "2026-11-09T02:57:57Z",
+        "status": "completed"
+      },
+      "original_artifact_zip": {
+        "api_bytes_and_digest_match": true,
+        "api_created_at": "2026-11-09T03:03:28Z",
+        "api_expired": false,
+        "artifact_id": 13647015505,
+        "artifact_name": "head-external-evidence-contract-11791e2da79b69322271be2cffe03725165151d1-1",
+        "bytes": 376,
+        "entry_count": 1,
+        "file": "head-external-evidence-117-run42553751938.zip",
+        "sha256": "b473f30f5470999d6939d4f9dfc70ef6fdb503f00abcd8702010630af31b42df",
+        "uncompressed_bytes": 423
+      },
+      "standalone_source_before_after_match": true,
+      "standalone_source_receipts_from_log": [
+        {
+          "decoded_log_line": 1056,
+          "identity": {
+            "base": null,
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "decoded_log_line": 2800,
+          "identity": {
+            "base": null,
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          }
+        }
+      ]
+    },
+    {
+      "artifact_source": {
+        "base": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+        "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+        "kind": "prospective-merge",
+        "prospective_merge": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+        "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2485379627,
+        "tracked_entries": 26124,
+        "tracked_worktree_verified": true
+      },
+      "complete_decoded_log": {
+        "bytes": 361860,
+        "file": "job-128954797024.decoded.log",
+        "lines": 2876,
+        "scope": "Complete UTF-8 log string returned by GitHub connector; not original compressed log archive bytes.",
+        "sha256": "762824d5b222ab27505e6c544089cbddf05150950ca9b972ee9cf486afcfd223"
+      },
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-09T03:01:26Z",
+          "conclusion": "failure",
+          "name": "Execute the same lane on the prospective merge",
+          "number": 12,
+          "started_at": "2026-11-09T02:58:43Z",
+          "status": "completed"
+        }
+      ],
+      "failure_analysis": {
+        "actual_enum_field": "InitializeOrRecover { observation_only: bool }",
+        "artifact_limit": "External ZIP contains source.json only. Independent after-source identity is retained in the complete job log; before and after receipts match.",
+        "cause_boundary": "The exact-layout checker, its test fixtures, and the entire input store.rs have identical blobs in e798 and 117. This establishes an inherited static mismatch, not a fresh V4/History/Growth regression. The lane remains FAIL.",
+        "class": "inherited static source-contract and test-fixture mismatch",
+        "denominator_note": "Failures/errors include subtests; not 106 distinct named tests.",
+        "expected_enum_field": "InitializeOrRecover { growth_observation_only: bool }",
+        "failure_blocks_with_missing_old_source_replacement_needle": 5,
+        "failure_headers": [
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_authenticated_domain_cannot_relabel_legacy_tables (__main__.DurableStoreTests.test_authenticated_domain_cannot_relabel_legacy_tables)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_authenticated_tables_are_out_of_scope_even_with_resealed_metadata (__main__.DurableStoreTests.test_authenticated_tables_are_out_of_scope_even_with_resealed_metadata)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_changed_published_state_and_injected_schema_reject (__main__.DurableStoreTests.test_changed_published_state_and_injected_schema_reject)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_current_lifecycle_store_cannot_use_preserved_pre_lifecycle_identity (__main__.DurableStoreTests.test_current_lifecycle_store_cannot_use_preserved_pre_lifecycle_identity)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_current_v2_schema_and_complete_index_positive_control (__main__.DurableStoreTests.test_current_v2_schema_and_complete_index_positive_control)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_growth_domains_cannot_relabel_legacy_tables (__main__.DurableStoreTests.test_growth_domains_cannot_relabel_legacy_tables)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_missing_extra_or_changed_derived_rows_are_refused (__main__.DurableStoreTests.test_missing_extra_or_changed_derived_rows_are_refused)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_owned_sqlite_control_and_changed_packet_or_work_reject (__main__.DurableStoreTests.test_owned_sqlite_control_and_changed_packet_or_work_reject)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_permanent_growth_tables_remain_out_of_scope_after_metadata_resealing (__main__.DurableStoreTests.test_permanent_growth_tables_remain_out_of_scope_after_metadata_resealing)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_real_sqlite_internal_autoindexes_and_statistics_remain_supported (__main__.DurableStoreTests.test_real_sqlite_internal_autoindexes_and_statistics_remain_supported)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_resealed_wrong_half_link_is_not_accepted_as_derived_structure (__main__.DurableStoreTests.test_resealed_wrong_half_link_is_not_accepted_as_derived_structure)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_sqlite_like_prefix_user_index_is_not_internal (__main__.DurableStoreTests.test_sqlite_like_prefix_user_index_is_not_internal)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_sqlite_like_prefix_user_table_is_not_internal (__main__.DurableStoreTests.test_sqlite_like_prefix_user_table_is_not_internal)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_sqlite_like_prefix_user_trigger_is_not_internal (__main__.DurableStoreTests.test_sqlite_like_prefix_user_trigger_is_not_internal)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_sqlite_like_prefix_user_view_is_not_internal (__main__.DurableStoreTests.test_sqlite_like_prefix_user_view_is_not_internal)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_v2_schema_metadata_cannot_use_legacy_hash_domain (__main__.DurableStoreTests.test_v2_schema_metadata_cannot_use_legacy_hash_domain)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_witness_namespace_and_checkpoint_do_not_qualify_legacy_evidence (__main__.DurableStoreTests.test_witness_namespace_and_checkpoint_do_not_qualify_legacy_evidence)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_backend_decoys_and_historical_hash_cannot_authorize_bad_active_mapping (__main__.NativeDurableSchemaTests.test_backend_decoys_and_historical_hash_cannot_authorize_bad_active_mapping)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_current_backend_returns_the_exact_preserved_legacy_bytes (__main__.NativeDurableSchemaTests.test_current_backend_returns_the_exact_preserved_legacy_bytes)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_permanent_growth_mapping_is_exact_without_qualifying_its_storage (__main__.NativeDurableSchemaTests.test_permanent_growth_mapping_is_exact_without_qualifying_its_storage)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_pq_mapping_is_exact_without_qualifying_its_storage (__main__.NativeDurableSchemaTests.test_pq_mapping_is_exact_without_qualifying_its_storage)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "ERROR: test_witness_v4_mapping_is_exact_and_only_legacy_schema_is_exported (__main__.NativeDurableSchemaTests.test_witness_v4_mapping_is_exact_and_only_legacy_schema_is_exported)",
+            "kind": "ERROR"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (label='ddl-unselected')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (label='schema-unselected')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (label='nested-pair')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let state_backend = StateBackend::AuthenticatedV1;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let settings = settings;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let (settings, _) = (settings, ());')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let ddl = StateBackend::AuthenticatedV1.ddl();')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let mut ddl = StateBackend::AuthenticatedV1.ddl();')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let ddl: String = StateBackend::AuthenticatedV1.ddl();')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let schema_id: Hash = StateBackend::AuthenticatedV1.schema_id();')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let (ddl, schema_id) = (StateBackend::AuthenticatedV1.ddl(), StateBackend::AuthenticatedV1.schema_id());')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let (state_backend, _) = (StateBackend::AuthenticatedV1, ());')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='state_backend = StateBackend::AuthenticatedV1;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='ddl = StateBackend::AuthenticatedV1.ddl();')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='schema_id = StateBackend::AuthenticatedV1.schema_id();')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='schema_id[0] = 0;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": true,
+            "contains_selected_modes_error": false,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (mode='SelectedOpen::ExistingPqOwner,')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": true,
+            "contains_selected_modes_error": false,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (mode='SelectedOpen::InitializeOrRecover {\\n                growth_observation_only: true,\\n            },')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": true,
+            "contains_selected_modes_error": false,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (mode='SelectedOpen::InitializeOrRecover {\\n                growth_observation_only: false,\\n            },')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (argument='            settings,')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (argument='            owners,')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (argument='            state_backend,')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (flags='(true, false)')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (flags='(false, false)')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope (__main__.NativeDurableSchemaTests.test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope) (flags='(existing_owner_only, true)')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": true,
+            "contains_selected_modes_error": false,
+            "header": "FAIL: test_existing_owner_split_requires_the_reviewed_executable_contract (__main__.NativeDurableSchemaTests.test_existing_owner_split_requires_the_reviewed_executable_contract) (label='disabled-binding')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": true,
+            "contains_selected_modes_error": false,
+            "header": "FAIL: test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener (__main__.NativeDurableSchemaTests.test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener) (mutation='let (growth_observation_only, existing_owner_only) = match selection {')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener (__main__.NativeDurableSchemaTests.test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener) (statement='let existing_owner_only = false;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener (__main__.NativeDurableSchemaTests.test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener) (statement='existing_owner_only = false;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener (__main__.NativeDurableSchemaTests.test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener) (statement='let growth_observation_only = true;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener (__main__.NativeDurableSchemaTests.test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener) (statement='let alias = &mut existing_owner_only;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener (__main__.NativeDurableSchemaTests.test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener) (statement='let selection = SelectedOpen::ExistingPqOwner;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) (name='growth_states', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) (name='growth_states', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) (name='GrOwTh_StAtEs', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) (name='GrOwTh_StAtEs', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_peer_v1', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_peer_v1', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_request_v1', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_request_v1', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_NeTwOrK_PeEr_V1', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_NeTwOrK_PeEr_V1', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_NeTwOrK_ReQuEsT_V1', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_NeTwOrK_ReQuEsT_V1', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_resource_v2', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_resource_v2', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_peer_v2', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_peer_v2', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_request_v2', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_request_v2', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_NeTwOrK_ReSoUrCe_V2', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_NeTwOrK_ReSoUrCe_V2', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_NeTwOrK_ReQuEsT_V2', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_NeTwOrK_ReQuEsT_V2', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_future_owner_v99', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_future_owner_v99', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_unreviewed_extension', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_network_unreviewed_extension', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_witness_checkpoint_v1', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_witness_checkpoint_v1', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_WiTnEsS_ChEcKpOiNt_V1', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='Pq_WiTnEsS_ChEcKpOiNt_V1', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_witness_future_v99', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_pq_tables_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_pq_tables_cannot_be_inserted_into_legacy_literals) (name='pq_witness_future_v99', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='archive_nodes', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='archive_nodes', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='native_state_commitments', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='native_state_commitments', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='ArChIvE_NoDeS', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='ArChIvE_NoDeS', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='pq_network_resource_v2', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='pq_network_resource_v2', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='pq_network_peer_v2', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='pq_network_peer_v2', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='pq_network_request_v2', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='pq_network_request_v2', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='Pq_NeTwOrK_FuTuRe_OwNeR_V99', index=False)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='Pq_NeTwOrK_FuTuRe_OwNeR_V99', index=True)",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='settings.app.params[\"work_task_profile\"] = serde_json::json!(\"legacy-task-v1\");')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='settings.app.params[\"work_task_profile\"][0] = serde_json::json!(0);')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='settings.app = settings.app.clone();')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='let alias = &mut settings;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='let alias = &mut settings.app;')",
+            "kind": "FAIL"
+          },
+          {
+            "contains_missing_source_needle": false,
+            "contains_selected_modes_error": true,
+            "header": "FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='let alias = &mut (settings.app);')",
+            "kind": "FAIL"
+          }
+        ],
+        "failure_or_error_blocks_with_selected_modes_error": 101,
+        "first_error": "ValueError: durable backend selected modes",
+        "reported_errors": 22,
+        "reported_failures": 84,
+        "reported_named_tests": 71,
+        "suite": "scripts/ci/test_public_readiness_evidence.py",
+        "suite_summary_lines": [
+          "Ran 38 tests in 0.496s",
+          "Ran 8 tests in 0.001s",
+          "Ran 9 tests in 4.913s",
+          "Ran 20 tests in 1.602s",
+          "Ran 24 tests in 1.823s",
+          "Ran 71 tests in 21.561s",
+          "FAILED (failures=84, errors=22)"
+        ]
+      },
+      "job": {
+        "completed_at": "2026-11-09T03:01:31Z",
+        "conclusion": "failure",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42553751938/job/128954797024",
+        "id": 128954797024,
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "name": "prospective-merge (external-evidence-contract)",
+        "runner_name": "GitHub Actions 1000054770",
+        "started_at": "2026-11-09T02:57:57Z",
+        "status": "completed"
+      },
+      "original_artifact_zip": {
+        "api_bytes_and_digest_match": true,
+        "api_created_at": "2026-11-09T03:01:29Z",
+        "api_expired": false,
+        "artifact_id": 13646452916,
+        "artifact_name": "merge-external-evidence-contract-b472c21f7b14ba27bb87d9d2f52d299365ed3145-1",
+        "bytes": 424,
+        "entry_count": 1,
+        "file": "merge-external-evidence-b472-run42553751938.zip",
+        "sha256": "06379e92705e4951b11ca7203865a91473897589227f86e6b7c4655dfbdb56d1",
+        "uncompressed_bytes": 512
+      },
+      "standalone_source_before_after_match": true,
+      "standalone_source_receipts_from_log": [
+        {
+          "decoded_log_line": 1061,
+          "identity": {
+            "base": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "prospective-merge",
+            "prospective_merge": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "decoded_log_line": 2813,
+          "identity": {
+            "base": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "prospective-merge",
+            "prospective_merge": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          }
+        }
+      ]
+    },
+    {
+      "artifact_source": {
+        "base": null,
+        "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+        "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2485379627,
+        "tracked_entries": 26124,
+        "tracked_worktree_verified": true
+      },
+      "complete_decoded_log": {
+        "bytes": 166498,
+        "file": "job-128954796813.decoded.log",
+        "lines": 1324,
+        "scope": "Complete UTF-8 log string returned by GitHub connector; not original compressed log archive bytes.",
+        "sha256": "2a906dd090876a78dc85208a8cd9286daa3675d28775a2a33340b7b4e06f467d"
+      },
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-09T03:04:56Z",
+          "conclusion": "failure",
+          "name": "Execute exact native from-zero service controls",
+          "number": 12,
+          "started_at": "2026-11-09T03:00:23Z",
+          "status": "completed"
+        }
+      ],
+      "failure_analysis": {
+        "all_named_tests_passed": true,
+        "binary_before_after_match": true,
+        "binary_sha256_after": "e976b39e022536db87b2917ac59c4fd9795661f9e8f3953abaa0f3b111022a6b",
+        "binary_sha256_before": "e976b39e022536db87b2917ac59c4fd9795661f9e8f3953abaa0f3b111022a6b",
+        "build": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "cpu_ns": 100195000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "involuntary_switches": 4,
+          "major_faults": 0,
+          "max_rss_kib": 51216,
+          "minor_faults": 12801,
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+          "stderr_sha256": "a58a7822e22f5f9a949095cf5e2189dcdded99435193789598a16b73f325b4b1",
+          "stdout_sha256": "49d75f29119d55a89a25856aef31d1e4d93c4ba5e4ddb35ed619a9aeb7118f2f",
+          "system_cpu_ns": 42239000,
+          "timed_out": false,
+          "user_cpu_ns": 57956000,
+          "voluntary_switches": 17,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 400714479
+        },
+        "cause_boundary": "117 fails the original four-second business gate under the original Host contract. Native process completion, invariant test success, successful Submit ACKs, and prior service reports do not grant confirmation credit. This readback establishes neither old/new performance equivalence nor causal attribution to one source change.",
+        "class": "actual original-resource finite-business acceptance failure",
+        "confirmation_observation": {
+          "network_capacity_qualified": false,
+          "original_gate_validated": false,
+          "original_gate_validation_error": "CONFIRMATION_TARGET",
+          "production_activation": false,
+          "schema": "trnm-original-confirmation-observation-v2",
+          "scope": "same original finite offer, 1 signed transaction per 4s phase; not saturated chain TPS; reported native observations only, no independent proof/state oracle",
+          "simulated_control": false,
+          "tail_latency_qualified": false
+        },
+        "controller_failure": null,
+        "execution_finished": false,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "final_host_errors": [],
+        "format_passed": true,
+        "full_source_before_after_match": true,
+        "inside_after_counters": {
+          "cgroup.events": "populated 1\nfrozen 0",
+          "cpu.stat": "usage_usec 21646291\nuser_usec 17724712\nsystem_usec 3921579\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 888\nnr_throttled 820\nthrottled_usec 78807757\nnr_bursts 0\nburst_usec 0",
+          "memory.current": "69566464",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "pids.current": "1"
+        },
+        "inside_before_counters": {
+          "cgroup.events": "populated 1\nfrozen 0",
+          "cpu.stat": "usage_usec 97183\nuser_usec 80662\nsystem_usec 16521\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 6\nnr_throttled 3\nthrottled_usec 221307\nnr_bursts 0\nburst_usec 0",
+          "memory.current": "17276928",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "pids.current": "1"
+        },
+        "manifest_entry": "from-zero-native/manifest.json",
+        "native_build_preparation_completed": true,
+        "native_build_preparation_process": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "cpu_ns": 320469023000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "involuntary_switches": 3150,
+          "major_faults": 504,
+          "max_rss_kib": 1746660,
+          "minor_faults": 3997710,
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+          "stderr_sha256": "69bfb37abae8c3742076529f4ce01a7d9905c3024954951a902519b7e6cd609c",
+          "stdout_sha256": "c67706bc35a08a33bc2f71c9faa405ccb860a474df841fd57aa5ee06edbb77e9",
+          "system_cpu_ns": 10675380000,
+          "timed_out": false,
+          "user_cpu_ns": 309793643000,
+          "voluntary_switches": 12285,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 168187797974
+        },
+        "observation_boundary": "Phase values come from retained native reports and existing diagnostic observation. The original confirmation validator rejects at CONFIRMATION_TARGET. No independent validation of every downstream confirmation condition is claimed.",
+        "original_host_limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "passed": false,
+        "phases": [
+          {
+            "business": {
+              "business_start_delay_ns": 107942,
+              "business_started_before_original_window_end": true,
+              "independent_confirmed_transactions_per_window_second": 0.25,
+              "lower_bound_reaches_original_window_end": null,
+              "observed_success_latency_ns": 2686318447,
+              "reported_finite_business_target_met": true,
+              "reported_independently_confirmed_in_window": 1,
+              "required_signed_transactions": 1,
+              "unconfirmed": 0,
+              "unconfirmed_latency_lower_bound_ns": null,
+              "unknown": 0
+            },
+            "history_response": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "independent_final_confirmation_stage": {
+              "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+              "confirmation_ended_ns": 2686423685,
+              "confirmation_started_ns": 2685644709,
+              "confirmation_thread_cpu_ns": 779615,
+              "confirmation_wall_ns": 778976,
+              "observation_returned": true
+            },
+            "independent_page_replay": {
+              "accepted_in_original_window": 7,
+              "attempts": 7,
+              "failed_or_late": 0
+            },
+            "last_independent_replay": {
+              "history_call_index": 6,
+              "replay_accepted": true,
+              "replay_ended_ns": 2685589917,
+              "replay_error": null,
+              "replay_started_ns": 2300453949,
+              "replay_thread_cpu_ns": 79637936,
+              "replay_wall_ns": 385135968
+            },
+            "last_native_import_phase": [
+              {
+                "accepted": true,
+                "completed": true,
+                "ended_ns": 385069488,
+                "error_code": null,
+                "parent_phase": null,
+                "phase": "history_import",
+                "started": true,
+                "started_ns": 68318112,
+                "thread_cpu_ns": 79303271,
+                "wall_ns": 316751376
+              }
+            ],
+            "mode": "attack-free-baseline",
+            "signed_submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "verification_errors": [],
+            "window_ns": 4000000000
+          },
+          {
+            "business": {
+              "business_start_delay_ns": 113137451,
+              "business_started_before_original_window_end": true,
+              "independent_confirmed_transactions_per_window_second": 0.0,
+              "lower_bound_reaches_original_window_end": true,
+              "observed_success_latency_ns": null,
+              "reported_finite_business_target_met": false,
+              "reported_independently_confirmed_in_window": 0,
+              "required_signed_transactions": 1,
+              "unconfirmed": 1,
+              "unconfirmed_latency_lower_bound_ns": 3886862549,
+              "unknown": 0
+            },
+            "history_response": {
+              "attempts": 4,
+              "failed_or_late": 0,
+              "successful_in_original_window": 4
+            },
+            "independent_final_confirmation_stage": null,
+            "independent_page_replay": {
+              "accepted_in_original_window": 3,
+              "attempts": 4,
+              "failed_or_late": 1
+            },
+            "last_independent_replay": {
+              "history_call_index": 3,
+              "replay_accepted": false,
+              "replay_ended_ns": 4015711442,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE",
+              "replay_started_ns": 3818163086,
+              "replay_thread_cpu_ns": 16122164,
+              "replay_wall_ns": 197548356
+            },
+            "last_native_import_phase": [
+              {
+                "accepted": false,
+                "completed": true,
+                "ended_ns": 197411902,
+                "error_code": "PUBLIC_REQUEST_DEADLINE",
+                "parent_phase": null,
+                "phase": "history_import",
+                "started": true,
+                "started_ns": 258948,
+                "thread_cpu_ns": 15726788,
+                "wall_ns": 197152954
+              }
+            ],
+            "mode": "from-zero-pressure",
+            "signed_submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "window_ns": 4000000000
+          }
+        ],
+        "qualification_flags": {
+          "independent_wan_accepted": false,
+          "production_activation": false,
+          "work_hardness_accepted": false
+        },
+        "raw_report_flags": {
+          "finite_target_met": false,
+          "invariant_target_met": true,
+          "production_activation": false,
+          "public_network_ready": false,
+          "same_packet_sequence_in_both_runs": true,
+          "strongest_honest_producer_used": false,
+          "work_profile_qualified": false
+        },
+        "raw_report_scope": "same-source, task, target and signed business; attack-free versus independently driven loopback attack clients; shared controller, not independent operators or a saturated WAN benchmark",
+        "report_entry_identities": [
+          {
+            "bytes": 3478575,
+            "matches_manifest_retained_and_before_validation": true,
+            "sha256": "228ae774defb13b48aa9a824363be2538b16fc96f09c0098907b2429384c94df",
+            "stage": "service_report",
+            "zip_entry": "from-zero-native/native/report.json"
+          },
+          {
+            "bytes": 19740188,
+            "matches_manifest_retained_and_before_validation": true,
+            "sha256": "62f9dde33674b10d89f125389a076766dc81873cdaa4044865efff469ce7bae5",
+            "stage": "sustained_report",
+            "zip_entry": "from-zero-native/native/sustained/report.json"
+          },
+          {
+            "bytes": 11056931,
+            "matches_manifest_retained_and_before_validation": true,
+            "sha256": "81c5e18b80e1266bb94ceac0e0b1baf6af036383fd60210193a1eb8e1d1ac3b1",
+            "stage": "confirmation_report",
+            "zip_entry": "from-zero-native/confirmation/report.json"
+          }
+        ],
+        "source_after": {
+          "commit": "11791e2da79b69322271be2cffe03725165151d1",
+          "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          },
+          "tree": "162552848110fda532504b78865a16930bc6d9bb"
+        },
+        "source_before": {
+          "commit": "11791e2da79b69322271be2cffe03725165151d1",
+          "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          },
+          "tree": "162552848110fda532504b78865a16930bc6d9bb"
+        },
+        "source_recompiled": true,
+        "systemd_run_exit": 1,
+        "terminal": {
+          "acceptance_passed": false,
+          "acceptance_stages": {
+            "confirmation_report": {
+              "before_validation": {
+                "bytes": 11056931,
+                "sha256": "81c5e18b80e1266bb94ceac0e0b1baf6af036383fd60210193a1eb8e1d1ac3b1",
+                "state": "present"
+              },
+              "error": "CONFIRMATION_TARGET",
+              "path": "confirmation/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 11056931,
+                "sha256": "81c5e18b80e1266bb94ceac0e0b1baf6af036383fd60210193a1eb8e1d1ac3b1",
+                "state": "present"
+              },
+              "status": "failed"
+            },
+            "service_report": {
+              "before_validation": {
+                "bytes": 3478575,
+                "sha256": "228ae774defb13b48aa9a824363be2538b16fc96f09c0098907b2429384c94df",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 3478575,
+                "sha256": "228ae774defb13b48aa9a824363be2538b16fc96f09c0098907b2429384c94df",
+                "state": "present"
+              },
+              "status": "passed"
+            },
+            "sustained_report": {
+              "before_validation": {
+                "bytes": 19740188,
+                "sha256": "62f9dde33674b10d89f125389a076766dc81873cdaa4044865efff469ce7bae5",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/sustained/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 19740188,
+                "sha256": "62f9dde33674b10d89f125389a076766dc81873cdaa4044865efff469ce7bae5",
+                "state": "present"
+              },
+              "status": "passed"
+            }
+          },
+          "finalization_completed": true,
+          "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+          "native_execution_completed": true,
+          "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+          "native_invocations": [
+            {
+              "exit_code": 0,
+              "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "status": "returned",
+              "timed_out": false
+            }
+          ],
+          "schema": "trnm-from-zero-native-terminal-v1",
+          "scope": "child process terminals and original sequential report acceptance; diagnostic readback grants no acceptance or subsequent CI execution",
+          "subsequent_ci_steps_observed": false,
+          "unexecuted_acceptance_stages": [],
+          "unexecuted_native_tests": []
+        }
+      },
+      "job": {
+        "completed_at": "2026-11-09T03:05:03Z",
+        "conclusion": "failure",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42553751938/job/128954796813",
+        "id": 128954796813,
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "name": "cross-arch-cost (x64)",
+        "runner_name": "GitHub Actions 1000054758",
+        "started_at": "2026-11-09T02:57:57Z",
+        "status": "completed"
+      },
+      "original_artifact_zip": {
+        "api_bytes_and_digest_match": true,
+        "api_created_at": "2026-11-09T03:05:00Z",
+        "api_expired": false,
+        "artifact_id": 13647040442,
+        "artifact_name": "cost-x64-11791e2da79b69322271be2cffe03725165151d1-1",
+        "bytes": 9237586,
+        "entry_count": 154,
+        "file": "cross-arch-cost-x64-117-run42553751938.zip",
+        "sha256": "c9082628d831322ca674b91ddad8bb535e75219d10399f03e86083ef49960bfa",
+        "uncompressed_bytes": 68357549
+      },
+      "standalone_source_before_after_match": true,
+      "standalone_source_receipts_from_log": [
+        {
+          "decoded_log_line": 1057,
+          "identity": {
+            "base": null,
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "decoded_log_line": 1261,
+          "identity": {
+            "base": null,
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          }
+        }
+      ]
+    },
+    {
+      "artifact_source": {
+        "base": null,
+        "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+        "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2485379627,
+        "tracked_entries": 26124,
+        "tracked_worktree_verified": true
+      },
+      "complete_decoded_log": {
+        "bytes": 166596,
+        "file": "job-128954796735.decoded.log",
+        "lines": 1324,
+        "scope": "Complete UTF-8 log string returned by GitHub connector; not original compressed log archive bytes.",
+        "sha256": "aaa8adfb120cff711369742f646698ca665e90e54292dfd41c6dc5ced03ee123"
+      },
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-09T03:07:59Z",
+          "conclusion": "failure",
+          "name": "Execute exact native from-zero service controls",
+          "number": 12,
+          "started_at": "2026-11-09T03:02:38Z",
+          "status": "completed"
+        }
+      ],
+      "failure_analysis": {
+        "all_named_tests_passed": true,
+        "binary_before_after_match": true,
+        "binary_sha256_after": "c098e2ee6bffdb29555b1348a193b322bd6ebb3f265d26e11fec43b8950959f6",
+        "binary_sha256_before": "c098e2ee6bffdb29555b1348a193b322bd6ebb3f265d26e11fec43b8950959f6",
+        "build": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "cpu_ns": 104741000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "involuntary_switches": 6,
+          "major_faults": 0,
+          "max_rss_kib": 48048,
+          "minor_faults": 12764,
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+          "stderr_sha256": "a58a7822e22f5f9a949095cf5e2189dcdded99435193789598a16b73f325b4b1",
+          "stdout_sha256": "7e341e5f89fd812fc9042907fedf40059eb47c73719678212edb10477800cb0b",
+          "system_cpu_ns": 37549000,
+          "timed_out": false,
+          "user_cpu_ns": 67192000,
+          "voluntary_switches": 21,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 479766380
+        },
+        "cause_boundary": "117 fails the original four-second business gate under the original Host contract. Native process completion, invariant test success, successful Submit ACKs, and prior service reports do not grant confirmation credit. This readback establishes neither old/new performance equivalence nor causal attribution to one source change.",
+        "class": "actual original-resource finite-business acceptance failure",
+        "confirmation_observation": {
+          "network_capacity_qualified": false,
+          "original_gate_validated": false,
+          "original_gate_validation_error": "CONFIRMATION_TARGET",
+          "production_activation": false,
+          "schema": "trnm-original-confirmation-observation-v2",
+          "scope": "same original finite offer, 1 signed transaction per 4s phase; not saturated chain TPS; reported native observations only, no independent proof/state oracle",
+          "simulated_control": false,
+          "tail_latency_qualified": false
+        },
+        "controller_failure": null,
+        "execution_finished": false,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "final_host_errors": [],
+        "format_passed": true,
+        "full_source_before_after_match": true,
+        "inside_after_counters": {
+          "cgroup.events": "populated 1\nfrozen 0",
+          "cpu.stat": "usage_usec 21395645\nuser_usec 18123884\nsystem_usec 3271760\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 884\nnr_throttled 800\nthrottled_usec 70402418\nnr_bursts 0\nburst_usec 0",
+          "memory.current": "68706304",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "pids.current": "1"
+        },
+        "inside_before_counters": {
+          "cgroup.events": "populated 1\nfrozen 0",
+          "cpu.stat": "usage_usec 107433\nuser_usec 93759\nsystem_usec 13673\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 7\nnr_throttled 4\nthrottled_usec 298967\nnr_bursts 0\nburst_usec 0",
+          "memory.current": "17010688",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "pids.current": "1"
+        },
+        "manifest_entry": "from-zero-native/manifest.json",
+        "native_build_preparation_completed": true,
+        "native_build_preparation_process": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "cpu_ns": 414637660000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "involuntary_switches": 3930,
+          "major_faults": 171,
+          "max_rss_kib": 1760876,
+          "minor_faults": 5000740,
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+          "stderr_sha256": "c80c64b718d8ff4cf9e596ceb627cbd2f536c50df3650a3ac17317e8420406a2",
+          "stdout_sha256": "d4720376d6715083020a4eda55f0eb64d1bda5967e6b097498da0a085f991289",
+          "system_cpu_ns": 14662271000,
+          "timed_out": false,
+          "user_cpu_ns": 399975389000,
+          "voluntary_switches": 6689,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 218349688741
+        },
+        "observation_boundary": "Phase values come from retained native reports and existing diagnostic observation. The original confirmation validator rejects at CONFIRMATION_TARGET. No independent validation of every downstream confirmation condition is claimed.",
+        "original_host_limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "passed": false,
+        "phases": [
+          {
+            "business": {
+              "business_start_delay_ns": 54519534,
+              "business_started_before_original_window_end": true,
+              "independent_confirmed_transactions_per_window_second": 0.25,
+              "lower_bound_reaches_original_window_end": null,
+              "observed_success_latency_ns": 1813125459,
+              "reported_finite_business_target_met": true,
+              "reported_independently_confirmed_in_window": 1,
+              "required_signed_transactions": 1,
+              "unconfirmed": 0,
+              "unconfirmed_latency_lower_bound_ns": null,
+              "unknown": 0
+            },
+            "history_response": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "independent_final_confirmation_stage": {
+              "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+              "confirmation_ended_ns": 1867640529,
+              "confirmation_started_ns": 1866860734,
+              "confirmation_thread_cpu_ns": 781616,
+              "confirmation_wall_ns": 779795,
+              "observation_returned": true
+            },
+            "independent_page_replay": {
+              "accepted_in_original_window": 7,
+              "attempts": 7,
+              "failed_or_late": 0
+            },
+            "last_independent_replay": {
+              "history_call_index": 6,
+              "replay_accepted": true,
+              "replay_ended_ns": 1866801116,
+              "replay_error": null,
+              "replay_started_ns": 1670014775,
+              "replay_thread_cpu_ns": 49981608,
+              "replay_wall_ns": 196786341
+            },
+            "last_native_import_phase": [
+              {
+                "accepted": true,
+                "completed": true,
+                "ended_ns": 196713947,
+                "error_code": null,
+                "parent_phase": null,
+                "phase": "history_import",
+                "started": true,
+                "started_ns": 192453,
+                "thread_cpu_ns": 49717056,
+                "wall_ns": 196521494
+              }
+            ],
+            "mode": "attack-free-baseline",
+            "signed_submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "verification_errors": [],
+            "window_ns": 4000000000
+          },
+          {
+            "business": {
+              "business_start_delay_ns": 26883054,
+              "business_started_before_original_window_end": true,
+              "independent_confirmed_transactions_per_window_second": 0.0,
+              "lower_bound_reaches_original_window_end": true,
+              "observed_success_latency_ns": null,
+              "reported_finite_business_target_met": false,
+              "reported_independently_confirmed_in_window": 0,
+              "required_signed_transactions": 1,
+              "unconfirmed": 1,
+              "unconfirmed_latency_lower_bound_ns": 3973116946,
+              "unknown": 0
+            },
+            "history_response": {
+              "attempts": 7,
+              "failed_or_late": 1,
+              "successful_in_original_window": 6
+            },
+            "independent_final_confirmation_stage": null,
+            "independent_page_replay": {
+              "accepted_in_original_window": 6,
+              "attempts": 6,
+              "failed_or_late": 0
+            },
+            "last_independent_replay": {
+              "history_call_index": 5,
+              "replay_accepted": true,
+              "replay_ended_ns": 3912149759,
+              "replay_error": null,
+              "replay_started_ns": 3525110714,
+              "replay_thread_cpu_ns": 37905520,
+              "replay_wall_ns": 387039045
+            },
+            "last_native_import_phase": [
+              {
+                "accepted": true,
+                "completed": true,
+                "ended_ns": 296207059,
+                "error_code": null,
+                "parent_phase": null,
+                "phase": "history_import",
+                "started": true,
+                "started_ns": 224166,
+                "thread_cpu_ns": 37590464,
+                "wall_ns": 295982893
+              }
+            ],
+            "mode": "from-zero-pressure",
+            "signed_submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "verification_errors": [],
+            "window_ns": 4000000000
+          }
+        ],
+        "qualification_flags": {
+          "independent_wan_accepted": false,
+          "production_activation": false,
+          "work_hardness_accepted": false
+        },
+        "raw_report_flags": {
+          "finite_target_met": false,
+          "invariant_target_met": true,
+          "production_activation": false,
+          "public_network_ready": false,
+          "same_packet_sequence_in_both_runs": true,
+          "strongest_honest_producer_used": false,
+          "work_profile_qualified": false
+        },
+        "raw_report_scope": "same-source, task, target and signed business; attack-free versus independently driven loopback attack clients; shared controller, not independent operators or a saturated WAN benchmark",
+        "report_entry_identities": [
+          {
+            "bytes": 3474036,
+            "matches_manifest_retained_and_before_validation": true,
+            "sha256": "0e78ec205cf2bcc4fe17e5913c8f26569b2b72ad5b6b3a3eba768de149200af4",
+            "stage": "service_report",
+            "zip_entry": "from-zero-native/native/report.json"
+          },
+          {
+            "bytes": 19706092,
+            "matches_manifest_retained_and_before_validation": true,
+            "sha256": "7ed515f3cfd92b8467227eafcbe5bc4dc9d046fa2b13489e1f6dc9b906f970b0",
+            "stage": "sustained_report",
+            "zip_entry": "from-zero-native/native/sustained/report.json"
+          },
+          {
+            "bytes": 12056793,
+            "matches_manifest_retained_and_before_validation": true,
+            "sha256": "0062329de30d625ced57d93479b29cc1cda132dfd995658b30843cb619ac037a",
+            "stage": "confirmation_report",
+            "zip_entry": "from-zero-native/confirmation/report.json"
+          }
+        ],
+        "source_after": {
+          "commit": "11791e2da79b69322271be2cffe03725165151d1",
+          "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          },
+          "tree": "162552848110fda532504b78865a16930bc6d9bb"
+        },
+        "source_before": {
+          "commit": "11791e2da79b69322271be2cffe03725165151d1",
+          "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          },
+          "tree": "162552848110fda532504b78865a16930bc6d9bb"
+        },
+        "source_recompiled": true,
+        "systemd_run_exit": 1,
+        "terminal": {
+          "acceptance_passed": false,
+          "acceptance_stages": {
+            "confirmation_report": {
+              "before_validation": {
+                "bytes": 12056793,
+                "sha256": "0062329de30d625ced57d93479b29cc1cda132dfd995658b30843cb619ac037a",
+                "state": "present"
+              },
+              "error": "CONFIRMATION_TARGET",
+              "path": "confirmation/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 12056793,
+                "sha256": "0062329de30d625ced57d93479b29cc1cda132dfd995658b30843cb619ac037a",
+                "state": "present"
+              },
+              "status": "failed"
+            },
+            "service_report": {
+              "before_validation": {
+                "bytes": 3474036,
+                "sha256": "0e78ec205cf2bcc4fe17e5913c8f26569b2b72ad5b6b3a3eba768de149200af4",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 3474036,
+                "sha256": "0e78ec205cf2bcc4fe17e5913c8f26569b2b72ad5b6b3a3eba768de149200af4",
+                "state": "present"
+              },
+              "status": "passed"
+            },
+            "sustained_report": {
+              "before_validation": {
+                "bytes": 19706092,
+                "sha256": "7ed515f3cfd92b8467227eafcbe5bc4dc9d046fa2b13489e1f6dc9b906f970b0",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/sustained/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 19706092,
+                "sha256": "7ed515f3cfd92b8467227eafcbe5bc4dc9d046fa2b13489e1f6dc9b906f970b0",
+                "state": "present"
+              },
+              "status": "passed"
+            }
+          },
+          "finalization_completed": true,
+          "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+          "native_execution_completed": true,
+          "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+          "native_invocations": [
+            {
+              "exit_code": 0,
+              "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "status": "returned",
+              "timed_out": false
+            }
+          ],
+          "schema": "trnm-from-zero-native-terminal-v1",
+          "scope": "child process terminals and original sequential report acceptance; diagnostic readback grants no acceptance or subsequent CI execution",
+          "subsequent_ci_steps_observed": false,
+          "unexecuted_acceptance_stages": [],
+          "unexecuted_native_tests": []
+        }
+      },
+      "job": {
+        "completed_at": "2026-11-09T03:08:05Z",
+        "conclusion": "failure",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42553751938/job/128954796735",
+        "id": 128954796735,
+        "labels": [
+          "ubuntu-24.04-arm"
+        ],
+        "name": "cross-arch-cost (arm64)",
+        "runner_name": "GitHub Actions 1000054828",
+        "started_at": "2026-11-09T03:00:04Z",
+        "status": "completed"
+      },
+      "original_artifact_zip": {
+        "api_bytes_and_digest_match": true,
+        "api_created_at": "2026-11-09T03:08:03Z",
+        "api_expired": false,
+        "artifact_id": 13646613359,
+        "artifact_name": "cost-arm64-11791e2da79b69322271be2cffe03725165151d1-1",
+        "bytes": 8956585,
+        "entry_count": 154,
+        "file": "cross-arch-cost-arm64-117-run42553751938.zip",
+        "sha256": "44c23268b625a322d4edcce1da58f6d0d57d581f5aa4719bc3c1077a1a63f527",
+        "uncompressed_bytes": 68027663
+      },
+      "standalone_source_before_after_match": true,
+      "standalone_source_receipts_from_log": [
+        {
+          "decoded_log_line": 1057,
+          "identity": {
+            "base": null,
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "decoded_log_line": 1261,
+          "identity": {
+            "base": null,
+            "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2485379627,
+            "tracked_entries": 26124,
+            "tracked_worktree_verified": true
+          }
+        }
+      ]
+    }
+  ],
+  "method": "Read-only interpretation of complete retained connector-decoded job logs, exact original artifact ZIPs, and immutable local git blobs. No artifact commands or repository tests executed by this readback.",
+  "prospective_merge": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+  "pull_request": 827,
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_attempt": 1,
+  "run_id": 42553751938,
+  "run_snapshot": {
+    "conclusion": null,
+    "created_at": "2026-11-09T02:57:53Z",
+    "head_sha": "11791e2da79b69322271be2cffe03725165151d1",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42553751938",
+    "id": 42553751938,
+    "name": "trnm-required-baseline",
+    "status": "queued",
+    "updated_at": "2026-11-09T03:08:06Z"
+  },
+  "schema": "trnm-readonly-required-baseline-failure-readback-v1",
+  "snapshot_limits": {
+    "api_snapshots_are_atomic": false,
+    "artifacts_returned": 10,
+    "artifacts_total_at_snapshot": 10,
+    "complete_job_logs_retained": 6,
+    "jobs_returned": 19,
+    "jobs_total_at_snapshot": 19,
+    "note": "Selected jobs completed/failure; workflow metadata queued/null at this snapshot. Other jobs and later artifacts are outside this readback. Full run monitoring is separate.",
+    "other_artifacts_metadata_only": [
+      13647225632,
+      13646782612,
+      13646711888,
+      13646368551
+    ],
+    "overall_run_completion_claimed": false,
+    "selected_failed_jobs_retained": 6,
+    "selected_original_zips_retained": 6
+  },
+  "source_locations_at_implementation": {
+    "actual_enum": "trillionnium/crates/trnm-pon-node/src/store.rs:1375",
+    "external_fixture_setup": "scripts/ci/test_public_readiness_evidence.py:538",
+    "external_guard": "scripts/ci/check_public_readiness_evidence.py:427",
+    "fixture_import": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:1447-1461",
+    "growth_dispatch_selection": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:1952-1969",
+    "history_recheck": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs:30-36",
+    "history_resource_callback": "trillionnium/crates/trnm-pon-node/src/ingress.rs:2597-2614",
+    "ordinary_native_fixture": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:1285-1286",
+    "original_confirmation_guard": "scripts/ci/run_from_zero_native.py:759",
+    "protocol_lane_sequence": "scripts/ci/ci_job.sh:147-155"
+  },
+  "source_readback": {
+    "error_interpretation": "PUBLIC_REQUEST_DEADLINE in three replay outcomes is a local deadline return, not evidence of invalid proof or state corruption. Arm64 has no replay verification error; final History request failed or returned late before full independent confirmation.",
+    "history": "Fixture calls receive_public_page_from_before_observed with original absolute deadline. ingress.rs supplies history_import::Control with a real Host verify resource callback. Modified Control::check is on the actual replay path; this readback cannot exclude its effect on deadline outcome or timing.",
+    "public_growth": "Actual fixture constructs ordinary Node::open receivers and submits Request::Submit; public_v3 dispatch routes only GrowthSubmitV1/GrowthPacketStatusV1/GrowthHeadV1 to growth::dispatch. Changed Growth submit_result is not exercised by this confirmation fixture.",
+    "static_vs_dynamic": "Identical static checker/input blobs establish inherited source-layout mismatch. Identical native fixture/driver blobs do not establish runtime equivalence or inherited deadline results.",
+    "v4_example": "ci_job.sh uses set -euo pipefail. New pon_w1_lifecycle_cost_v4 example test is immediately after run_from_zero_host.py in the protocol lane. The earlier command fails, so V4 execution is not reached in these protocol jobs."
+  },
+  "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+  "written_utc": "2026-11-09T03:18:41.921289+00:00"
+}

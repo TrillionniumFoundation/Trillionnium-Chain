@@ -1,0 +1,26 @@
+{
+  "schema": "pon-native-w1-bridge-summary-v1",
+  "starting_commit": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+  "private_cargo_home": true,
+  "private_target": true,
+  "production_rust_unchanged": true,
+  "bridge_native_calls": 21,
+  "bridge_unit_sets": [
+    1,
+    2
+  ],
+  "bridge_controls": 10,
+  "outer_mu1_executed_by_this_probe": false,
+  "paths": {
+    "pon_work_io": {
+      "path": "/workspace/scratch/b9454e263603/native_w1_target/release/examples/pon_work_io",
+      "sha256": "41222016523672bd32670358f693476560f8641c03f6c738c7a75a2f0f0c7437",
+      "bytes": 554832
+    },
+    "pon_zero_io": {
+      "path": "/workspace/scratch/b9454e263603/native_w1_target/release/examples/pon_zero_io",
+      "sha256": "368293c7cf20a3c1b9a50d39be0b1bdb84bb80b44331968c76323599fd698749",
+      "bytes": 583304
+    }
+  }
+}

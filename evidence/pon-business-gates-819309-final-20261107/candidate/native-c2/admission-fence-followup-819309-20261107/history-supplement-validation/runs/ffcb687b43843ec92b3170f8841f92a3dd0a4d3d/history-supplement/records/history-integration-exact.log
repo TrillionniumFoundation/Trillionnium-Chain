@@ -1,0 +1,21 @@
+    Finished `test` profile [unoptimized] target(s) in 0.13s
+     Running tests/native_node.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/admission-fence-target/debug/deps/native_node-20dcaaae4a5626ba)
+
+running 1 test
+test test_full_transaction_pages_use_byte_limits_and_recover_all_native_state ... 
+thread 'test_full_transaction_pages_use_byte_limits_and_recover_all_native_state' (1970934) panicked at crates/trnm-pon-node/tests/native_node.rs:1407:37:
+called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: "PUBLIC_MUTATION_CPU_BUDGET", source: None, request_history_budget: false }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'test_full_transaction_pages_use_byte_limits_and_recover_all_native_state' (1970934) panicked at crates/trnm-pon-node/tests/native_node.rs:1432:12:
+called `Result::unwrap()` on an `Err` value: Any { .. }
+FAILED
+
+failures:
+
+failures:
+    test_full_transaction_pages_use_byte_limits_and_recover_all_native_state
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 30 filtered out; finished in 7.19s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test native_node`

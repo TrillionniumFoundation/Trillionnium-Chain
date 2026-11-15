@@ -1,0 +1,72 @@
+python3 - <<'PY'
+from pathlib import Path
+import os,sys,json,subprocess,time,hashlib
+root=Path('/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo')
+out=root.parent/'merged-native-gates'
+head='2d46d8682201bc0619f5b156af50e77fb399322e'
+tree='5ae5317304588cca8295a19dd512c8e853f1ef5b'
+pre=subprocess.run(['bash','scripts/project-preflight.sh'],cwd=root,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+print(json.dumps({'initial_preflight_returncode':pre.returncode,'output':pre.stdout.decode()}),flush=True)
+assert pre.returncode==0
+out.mkdir(exist_ok=False)
+(out/'initial-preflight.log').write_bytes(pre.stdout)
+env=os.environ.copy()
+toolchain='/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu'
+venv='/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv'
+target='/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target'
+env.update({'PATH':toolchain+'/bin:'+venv+'/bin:'+env['PATH'],'RUSTC':toolchain+'/bin/rustc','RUSTDOC':toolchain+'/bin/rustdoc','LD_LIBRARY_PATH':toolchain+'/lib','CARGO_HOME':'/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/cargo-home','CARGO_TARGET_DIR':target,'NATIVE_OWNER_JOURNAL_RUN':str(out/'fresh-native-owner/run.json'),'NATIVE_RISK_LEDGER_RUN':str(out/'fresh-native-risk/run.json'),'CARGO_NET_OFFLINE':'true','RUST_TEST_THREADS':'1'})
+stages=[]
+def stage(name,args):
+ start=time.monotonic()
+ with (out/(name+'.log')).open('wb') as log:
+  done=subprocess.run(args,cwd=root,env=env,stdout=log,stderr=subprocess.STDOUT)
+ row={'stage':name,'args':args,'returncode':done.returncode,'elapsed_seconds':time.monotonic()-start}
+ stages.append(row);(out/'stages.json').write_text(json.dumps(stages,indent=2)+'\n')
+ print(json.dumps(row),flush=True)
+ if done.returncode:
+  print((out/(name+'.log')).read_text()[-16000:],flush=True);sys.exit(done.returncode)
+ return (out/(name+'.log')).read_text().strip()
+assert stage('exact-head',['git','rev-parse','HEAD'])==head
+assert stage('exact-tree',['git','rev-parse','HEAD^{tree}'])==tree
+assert stage('initial-clean-tree',['git','status','--porcelain=v1','--untracked-files=all'])==''
+parents=stage('ordered-parents',['git','show','-s','--format=%P','HEAD']).split()
+assert len(parents)==2 and parents[0]=='b66e66d2465258d808c0f56ff851123306d4bdb4' and parents[1].startswith('cb314bb')
+assert subprocess.check_output(['git','show','b66e66d2465258d808c0f56ff851123306d4bdb4:AGENTS.md'],cwd=root)==(root/'AGENTS.md').read_bytes()
+stage('preflight-exact-merge',['bash','scripts/project-preflight.sh'])
+(out/'environment.json').write_text(json.dumps({k:env[k] for k in ['RUSTC','RUSTDOC','LD_LIBRARY_PATH','CARGO_HOME','CARGO_TARGET_DIR','NATIVE_OWNER_JOURNAL_RUN','NATIVE_RISK_LEDGER_RUN','CARGO_NET_OFFLINE','RUST_TEST_THREADS']},indent=2)+'\n')
+paths=['AGENTS.md','trillionnium/Cargo.toml','trillionnium/Cargo.lock','trillionnium/crates/trnm-pon-node/Cargo.toml','trillionnium/crates/trnm-pon-node/src/lib.rs','trillionnium/crates/trnm-pon-node/src/store.rs','trillionnium/crates/trnm-pon-node/src/cell_native_v1.rs','trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs','trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs','trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs','trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs','trillionnium/crates/trnm-pon-node/tests/native_owner_observation.rs','trillionnium/crates/trnm-pon-node/tests/cell_native_v1.rs','trillionnium/crates/trnm-pon-node/examples/native_owner_journal_v1.rs','trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs','trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs','trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs','trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs','formal/pon-nakamoto-v1/native_owner_journal.py','formal/pon-nakamoto-v1/native_risk_ledger.py','formal/pon-nakamoto-v1/test_native_owner_journal.py','formal/pon-nakamoto-v1/test_native_risk_ledger.py','formal/pon-nakamoto-v1/certificate_composition.py','formal/pon-nakamoto-v1/certificate_composition_evidence.py','formal/pon-nakamoto-v1/certificate_composition_tests.py','formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md']
+sources={}
+for name in paths:
+ raw=(root/name).read_bytes();dest=out/'sources'/name
+ if name.endswith('.md'):dest=dest.with_suffix('.md.source')
+ dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(raw)
+ sources[name]={'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'retained_path':str(dest.relative_to(out))}
+(out/'source-sha256.json').write_text(json.dumps(sources,indent=2,sort_keys=True)+'\n')
+(out/'scope.json').write_text(json.dumps({'head':head,'tree':tree,'ordered_parents':parents,'retained_rust_targets':['native_owner_journal','native_risk_ledger','native_owner_observation','cell_native_v1'],'standalone_examples_are_fresh_under_this_source':True,'source_checkout_is_sparse':True,'whole_workspace_or_production_host_qualification_claimed':False,'source_and_guard_edits_authorized':False,'push_or_commit_performed_by_this_job':False},indent=2)+'\n')
+cargo=[toolchain+'/bin/cargo']
+common=['--locked','--offline','--manifest-path','trillionnium/Cargo.toml','--config','profile.test.package.trnm-pon-node.opt-level=0','-p','trnm-pon-node']
+targets=['--test','native_owner_journal','--test','native_risk_ledger','--test','native_owner_observation','--test','cell_native_v1']
+stage('cargo-metadata-locked-offline',cargo+['metadata','--locked','--offline','--manifest-path','trillionnium/Cargo.toml','--format-version','1'])
+stage('cargo-fmt-all-check',cargo+['fmt','--all','--manifest-path','trillionnium/Cargo.toml','--','--check'])
+stage('strict-clippy-lib-owner-risk-observation-cell',cargo+['clippy']+common+['--lib']+targets+['--example','native_owner_journal_v1','--example','native_risk_ledger_v1','--','-D','warnings'])
+stage('retained-four-native-targets',cargo+['test']+common+targets+['--','--test-threads=1'])
+stage('build-fresh-owner-risk-examples',cargo+['build']+common+['--profile','test','--example','native_owner_journal_v1','--example','native_risk_ledger_v1'])
+assert not (out/'fresh-native-owner').exists()
+stage('fresh-native-owner-scenario',[target+'/debug/examples/native_owner_journal_v1',str(out/'fresh-native-owner')])
+assert not (out/'fresh-native-risk').exists()
+stage('fresh-native-risk-scenario',[target+'/debug/examples/native_risk_ledger_v1',str(out/'fresh-native-risk')])
+py=venv+'/bin/python'
+stage('independent-owner-reader',[py,'formal/pon-nakamoto-v1/native_owner_journal.py','--run',env['NATIVE_OWNER_JOURNAL_RUN'],'--output',str(out/'owner-checked.json')])
+stage('owner-reader-tests-21',[py,'-m','unittest','discover','-s','formal/pon-nakamoto-v1','-p','test_native_owner_journal.py','-v'])
+stage('independent-risk-reader',[py,'formal/pon-nakamoto-v1/native_risk_ledger.py','--run',env['NATIVE_RISK_LEDGER_RUN'],'--output',str(out/'risk-checked.json')])
+stage('risk-reader-tests-25',[py,'-m','unittest','discover','-s','formal/pon-nakamoto-v1','-p','test_native_risk_ledger.py','-v'])
+stage('actual-certificate-composition-join',[py,'formal/pon-nakamoto-v1/certificate_composition_evidence.py','--native-run',env['NATIVE_OWNER_JOURNAL_RUN'],'--output-dir',str(out/'composition')])
+stage('certificate-composition-tests-16',[py,'formal/pon-nakamoto-v1/certificate_composition_tests.py','-v'])
+assert stage('final-head',['git','rev-parse','HEAD'])==head
+assert stage('final-tree',['git','rev-parse','HEAD^{tree}'])==tree
+assert stage('final-clean-tree',['git','status','--porcelain=v1','--untracked-files=all'])==''
+assert all(hashlib.sha256((root/name).read_bytes()).hexdigest()==row['sha256'] for name,row in sources.items())
+result={'status':'PASS','head':head,'tree':tree,'all_stages_exit_zero':True,'source_hashes_stable':True,'two_fresh_standalone_native_examples_passed':True,'actual_CC1_packet_join_passed':True,'whole_workspace_or_production_qualified':False,'push_or_commit_performed':False}
+(out/'result.json').write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps(result),flush=True)
+PY

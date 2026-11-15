@@ -1,0 +1,141 @@
+## 只读 integration review 结论
+
+**没有发现需要立即回滚的确定性合并缺陷；有两项明确的组合适用边界，必须由合并版 native 验证覆盖。** 本次没有修改文件、构建或运行 native 测试，也没有产生新的性能或安全验收结果。
+
+审查固定在 **`f69a197543fceb538246b3f83c96104bba5a5c21`**。审查期间 Root HEAD 先后前进至 `7dfb88a3`、`6b17ae37`；对所审查的 Node、Crypto、M06、Protocol 和原 Host 启动脚本做了差异核对，相关源码与 `f69a1975` 相同。
+
+### 1. 新 PQ backend 自动进入 detached M06，不能沿用两个原 backend 的证据
+
+这是最重要的合并交互。
+
+`Node::detached_execution_supported()` 通过排除 Growth、其他 owner 模式和 root-rejection cache 来判断是否可执行，**没有把 backend 限定为 Legacy 或 Authenticated**。因此，新加入的 `PqNetworkV1` 也会满足条件，经 `admit_shared_checked()` 进入：
+
+`prepare_shared_admission → 释放 Node Mutex → PreparedExecution::execute → 重新获取 owner → commit_shared_admission`
+
+从源码看，必要绑定没有因合并丢失：
+
+- `Pin` 保留实际 backend、Node incarnation 的独立 `Arc`、目录/数据库/owner 文件身份、network/parameters/genesis 和 SQLite epoch。
+- 克隆的 M06 `Config` 包含 PQ account policy 的 `Arc`；锁外执行没有丢失该策略。
+- M06 仍使用原 `ExecutionControl`，重新取得 owner 后执行原父块、State、SQLite 版本检查。
+- `CommitFence` 仍在实际持久化事务内重新校验 epoch 和头部上下文。
+- PQ 的撤销/到期检查通过同一个执行回调继续传入，没有被换成无条件成功。
+
+这些说明源码结构中没有显见的 pin 丢失或父状态替换漏洞，**不能证明这个新增组合已执行正确**。原 History 的 Legacy/Auth 测试和 PQ 合并前的运行都不能单独覆盖它。
+
+至少应在最终合并源码上实际执行现有：
+
+`real_pq_transport_dispatch_consumes_qtx1_through_w1_and_native_account_owner`
+
+该测试通过真实 PQ TCP 提交 QTX1、执行 W1/M06、重试并查询确认，能直接触达这条组合路径。**撤销或到期恰好发生在锁外执行与重新提交之间**，仍需要独立的交互证据；现有 `begin → revoke → finish` 控制不能替代该时序。
+
+相关源码：[detached_admission.rs](sandbox:/workspace/scratch/56818e4fba76/chain-recovered/trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs)、[ingress.rs](sandbox:/workspace/scratch/56818e4fba76/chain-recovered/trillionnium/crates/trnm-pon-node/src/ingress.rs)、[pq_account_native.rs](sandbox:/workspace/scratch/56818e4fba76/chain-recovered/trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs)。
+
+### 2. PQ 专用服务尚未接入 WP2B 的公共 CPU 预算与结算体系
+
+`PqServer::handle()` 调用 `dispatch_shared_with_execution_progress()`，传递的是：
+
+- 原请求 deadline；
+- 原签名 expiry；
+- `pq_network_epoch` 撤销检查。
+
+这条包装路径构造的 `ExecutionControl` 使用空 worker-accounting，termination CPU 参数为 `None`。它没有绑定 `LiveRequestCpu`，也没有运行普通 public 服务的 CPU epoch 结算流程。
+
+因此：
+
+- PQ ledger 的 16 MiB / 4,096 条记录限制是**持久化 replay ledger 容量限制**。
+- 它不是实际线程 CPU 消耗预算。
+- ledger 达限、重开不恢复 ledger 容量，不能证明 WP2B 的实际 CPU 耗尽、worker 结算和 kill-cut 债务恢复。
+- PQ request signature 验证及 response 签名的实际 CPU 也不在该公共 mutation 计费路径内。
+
+这不是此次合并把原 public-v3 的收费绕掉了：PQ 服务源码明确限制为 loopback，经典 public-v3 入口仍使用原预算域。但它意味着**不能将 WP2B 的任何 PASS 套给 PQ 服务，也不能据此声明 PQ 公共服务已经具备相同的抗耗尽能力**。
+
+相关源码：[ingress/pq_network.rs](sandbox:/workspace/scratch/56818e4fba76/chain-recovered/trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs)、[store/pq_network.rs](sandbox:/workspace/scratch/56818e4fba76/chain-recovered/trillionnium/crates/trnm-pon-node/src/store/pq_network.rs)。
+
+### 3. 原 History CPU owner、epoch 和清算机制未见被覆盖
+
+核对了 **11 个关键文件的 Git blob**：History import 及原测试、scalar CPU 及结算测试、metered work facts、detached admission 及测试、reorg cancellation、authenticated pending activation、continuous CPU 和新 phase broker，均与 History `fe43` **逐字一致**。
+
+自动合并部分也没有看到独立字段互相覆盖：
+
+- `detached_execution` 与 `pq_network_epoch` 分别初始化、分别持有 `Arc`。
+- `public_service_cpu`、`public_service_epoch_listeners`、`public_service_epoch_unknown` 原初始化保留。
+- `rusqlite` 的 `hooks` feature 与新增 OpenSSL feature/dependency 同时保留。
+- `public_v3` 的差异只有在原 `bind_public_service_cpu_domain()` 之前调用 `require_classical_network_profile()`；没有构造额外 CPU account，也没有替换原 meter、worker accounting 或终结清算路径。
+- PQ replay/revocation 数据使用独立 SQLite 表及 metadata，而非可重组 State。其写入可能改变同一连接的 `total_changes`；原 detached commit 会据此重新完整验证父状态，不把 ledger 写入误当成父 State 已验证的证明。
+
+这仅证明保留了源码不变量，**五个原 SIGKILL cut 的合并版结果仍须实际执行**；原先的 `debt_reconciliation_complete: false` 也没有因新增 PQ ledger 而变成已完成结算。
+
+### 4. 经典默认行为没有被自动切到 PQ，但执行成本已经改变
+
+默认 feature 仍是空集合。标准 Legacy/Auth 构造器传入 `pq_network: None`，原 schema/domain 保留；PQ 使用不同 schema 和显式 policy marker。经典 listener 对 `PqNetworkV1` 返回 `PQ_NETWORK_REQUIRED`；PQ 服务没有失败后改走经典认证的分支。
+
+正常 Ed25519 输入改由 `OwnedEd25519Key` 持有后，仍使用原公钥和 Ed25519 签名语义。主要变化是密钥生命周期和错误输出；没有看到有效经典签名的 wire/domain 改写。
+
+但**不能宣称合并后经典路径成本不变**：
+
+- M06 的 `Prepared` 现在保留原 Envelope，同时克隆 payload 到 `ApplicationCommand`。
+- `tx.id()` 从最终应用阶段前移到 prepare 阶段。
+- 标准经典配置会增加 account-profile 检查。
+- 新 Packet codec 能识别 QTX1 framing；经典 M06 仍经经典 Envelope 解码拒绝它，没有变成 PQ 授权，但拒绝发生的阶段和输入处理范围有所变化。
+
+原 worker accounting 的包围范围保留，新增准备成本仍处于原执行范围内；实际 CPU、内存和尾延迟需要重新测量。**History 独立 ELF 的预算和性能结果不能直接用于合并版。**
+
+相关源码：[pon_executor.rs](sandbox:/workspace/scratch/56818e4fba76/chain-recovered/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs)、[Node lib.rs](sandbox:/workspace/scratch/56818e4fba76/chain-recovered/trillionnium/crates/trnm-pon-node/src/lib.rs)。
+
+### 5. 已排除的两个疑点
+
+**QTX1 的 48 字节 logical identity 与 Confirm 的 32 字节参数没有直接冲突。** Node 的 Confirm 使用 `hash(b"tx-id", raw_transaction)` 的实际 wire inclusion 身份；PQ 原生测试也明确这样构造查询。48 字节身份用于 M06 逻辑交易及 nonce 语义。没有把两者混为一个 ID。
+
+**原 Host warmup 与后续父域检查均保留。** `run_from_zero_host.py` 仍先记录原 parent 状态、完成独立 build preparation，再检查 parent/runtime unit 是否在准备期间出现，随后才安装固定 unit。未看到合并删掉 warmup、把编译重新放回公共配额，或修改原 Host 限制。
+
+### 交接判断
+
+可以继续对该合并候选执行 Root 已安排的静态检查、native 构建和原 hosted campaign；本次源码审查没有给出“应回滚合并”的确定性依据。
+
+必须在结果中继续明确：
+
+1. **PQ + detached M06 是新组合，尚不能从两个独立分支的证据推导成功。**
+2. **PQ ledger 容量安全与 WP2B 公共 CPU 预算/崩溃结算属于不同验收项。**
+3. **经典默认语义看起来保留，但其执行成本已变化，原性能证据不具备直接传递性。**
+4. **该审查不替代 combined native gate，也不改变 WP2B/WP3 的 HOLD 状态。**
+
+## 保存时补充：Root 报告的合并版静态结果
+
+Root 报告 combined source `6b17ae37e2d5369dec4f19cfdf3e9ae26b45676a` 已完成：
+
+- 全 workspace / all targets / all features strict Clippy：PASS，148.788870391 秒；执行前后源码全字节保持不变。
+- 150 项 Python controls：PASS。
+- Formatting：PASS。
+- 没有执行新的 PQ native 测试。
+
+以上是 Root 的独立运行报告，本只读审查没有重新执行或独立复核其运行原始流。它们不关闭本文列出的 PQ + detached M06、公共 CPU/清算或并发撤销组合缺口，状态仍为 HOLD。前文保留审查完成时的完整原结论。
+
+## 11 个关键文件的实际 Git blob 对照
+
+History 基线：`fe43f7c7f8971df37cbb7eda7080dac8ae4887aa`
+审查源：`f69a197543fceb538246b3f83c96104bba5a5c21`
+相关源一致性核对：`6b17ae37e2d5369dec4f19cfdf3e9ae26b45676a`
+
+Git 对象值来自实际 `git rev-parse <commit>:<path>`；本表的 blob 一致性不等于 native 验收。
+
+| 路径 | History fe43 blob | 审查 f69 blob | Combined 6b17 blob | 一致 |
+| --- | --- | --- | --- | --- |
+| trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs | e89df6a9150a2603f29e195a5e104f5dcb03a5d9 | e89df6a9150a2603f29e195a5e104f5dcb03a5d9 | e89df6a9150a2603f29e195a5e104f5dcb03a5d9 | 是 |
+| trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs | e74aa0c6e8d0ba705cd1a8e3113dab97932a00e7 | e74aa0c6e8d0ba705cd1a8e3113dab97932a00e7 | e74aa0c6e8d0ba705cd1a8e3113dab97932a00e7 | 是 |
+| trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs | 32463cc08d29919b66460238614f81cd4125f796 | 32463cc08d29919b66460238614f81cd4125f796 | 32463cc08d29919b66460238614f81cd4125f796 | 是 |
+| trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs | 918a104be77409e88264e811ceae64a80dda89be | 918a104be77409e88264e811ceae64a80dda89be | 918a104be77409e88264e811ceae64a80dda89be | 是 |
+| trillionnium/crates/trnm-pon-node/src/ingress/metered_work_facts.rs | e50508731d30f2b2bb33f6dafac1a90d1176d5a3 | e50508731d30f2b2bb33f6dafac1a90d1176d5a3 | e50508731d30f2b2bb33f6dafac1a90d1176d5a3 | 是 |
+| trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs | 126395ab2e84daa57387e657f3c46a7f90fe4f62 | 126395ab2e84daa57387e657f3c46a7f90fe4f62 | 126395ab2e84daa57387e657f3c46a7f90fe4f62 | 是 |
+| trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs | 4a2db3fd5d697670e795d837434755500c0bf59c | 4a2db3fd5d697670e795d837434755500c0bf59c | 4a2db3fd5d697670e795d837434755500c0bf59c | 是 |
+| trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs | c8817ac8449223bf3784bc5819811506a1b70c95 | c8817ac8449223bf3784bc5819811506a1b70c95 | c8817ac8449223bf3784bc5819811506a1b70c95 | 是 |
+| trillionnium/crates/trnm-pon-node/src/store/authenticated_pending_activation.rs | 3418cf9c93d9638e176730947691997447b6ea1f | 3418cf9c93d9638e176730947691997447b6ea1f | 3418cf9c93d9638e176730947691997447b6ea1f | 是 |
+| trillionnium/crates/trnm-pon-node/src/operator_continuous_cpu.rs | 7916afa8b6b46bad9de7fe57cd1d1db394f39a62 | 7916afa8b6b46bad9de7fe57cd1d1db394f39a62 | 7916afa8b6b46bad9de7fe57cd1d1db394f39a62 | 是 |
+| trillionnium/crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs | abe1bc3689adabee4bfbd2a0f84ae8e7b9cb59db | abe1bc3689adabee4bfbd2a0f84ae8e7b9cb59db | abe1bc3689adabee4bfbd2a0f84ae8e7b9cb59db | 是 |
+
+审查源码范围的 `git diff --name-only f69... 6b17... -- <scope>` 输出为空；未声称整个 Git tree 相同。
+
+- trillionnium/crates/trnm-pon-node
+- trillionnium/crates/trnm-crypto-primitives
+- trillionnium/crates/trnm-mvcc-fee
+- trillionnium/crates/trnm-protocol
+- scripts/ci/run_from_zero_host.py

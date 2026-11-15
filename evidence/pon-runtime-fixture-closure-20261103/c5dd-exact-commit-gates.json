@@ -1,0 +1,67 @@
+{
+  "schema": "trnm-exact-commit-gate-archive-summary-v1",
+  "packaged_utc": "2026-11-03T22:26:12.130623+00:00",
+  "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+  "status": "PASS",
+  "source": {
+    "schema": "trnm-exact-commit-static-graph-verification-v1",
+    "status": "PASS",
+    "expected_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "finished_utc": "2026-11-03T22:10:08.051381+00:00",
+    "worktree": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+    "source_before": {
+      "head": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+      "status": "",
+      "detached": true,
+      "locks": {
+        "trillionnium/Cargo.lock": {
+          "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+          "bytes": 39745
+        },
+        "tests/fuzz/Cargo.lock": {
+          "sha256": "8102aabc115e12470a5eee89735b3f3094134e1b3701cb61209e45b3129214a2",
+          "bytes": 33374
+        }
+      }
+    },
+    "source_after": {
+      "head": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+      "status": "",
+      "detached": true,
+      "locks": {
+        "trillionnium/Cargo.lock": {
+          "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+          "bytes": 39745
+        },
+        "tests/fuzz/Cargo.lock": {
+          "sha256": "8102aabc115e12470a5eee89735b3f3094134e1b3701cb61209e45b3129214a2",
+          "bytes": 33374
+        }
+      }
+    },
+    "error": null,
+    "command_count": 28,
+    "native_compilation_executed": false,
+    "native_tests_executed": false,
+    "new_target_directory_requested": false,
+    "current_development_worktree_mutated_by_driver": false,
+    "all_service_blockers_closed": false,
+    "scope": "Exact-commit source/static/metadata checks only. Previously completed native execution remains separately bound by its actual source/ELF receipts."
+  },
+  "records": 98,
+  "unique_raw_blobs": 57,
+  "archive": {
+    "path": "c5dd-exact-commit-gates.json.gz",
+    "bytes": 287914,
+    "sha256": "be088bcd29d898042c31e274d44b5f29a59293f43a8a305f27418f16b1a1ce60",
+    "uncompressed_bytes": 2604060,
+    "uncompressed_sha256": "bb76d533a4e149cb334d78ef1f592484362933370326e88cce7174a12281b654",
+    "gzip_mtime": 0
+  },
+  "native_compilation_or_execution": false,
+  "all_original_file_bytes_verified_after_archive": true,
+  "later_head_results_inherited": false
+}

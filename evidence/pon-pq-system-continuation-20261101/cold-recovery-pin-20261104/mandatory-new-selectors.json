@@ -1,0 +1,11 @@
+{
+  "new_cold_recovery": [
+    "pq_rollback_witness::tests::cold_reopen_requires_exact_independently_retained_checkpoint",
+    "pq_rollback_witness::tests::invalid_external_checkpoint_is_rejected_before_touching_recovery_storage"
+  ],
+  "imported_from_698": [
+    "store::pq_rollback_witness::tests::ordinary_admission_reuses_fresh_witness_guard_without_rechecking_unchanged_state",
+    "store::pq_rollback_witness::tests::expired_admission_commits_retirement_then_obtains_a_new_witness_guard"
+  ],
+  "expected_total_after_composition": 47
+}

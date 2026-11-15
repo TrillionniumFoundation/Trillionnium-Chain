@@ -1,0 +1,468 @@
+{
+  "caveats": [
+    "The four jobs build the original complete workspace with --no-run, then execute the same 50 distinct named selectors each; 200 is repeated executions, not 200 unique tests.",
+    "Full Rust test execution and public Host/client-confirmation gates are separate. These local CPU-policy examples explicitly do not certify Host availability, all honest service, budget depletion or production.",
+    "Runner ELF SHA and before/after check receipts are consistent; the original ZIPs contain no ELF bytes. Independent ELF digest is null.",
+    "Growth is 9 account/history cohorts at 64/1024/16384 accounts and 0/16/128 warmup blocks with fixed three witness owners, 8 measured blocks per cohort, 9 cancelled admissions and 9 cold reopens per lane. It has no p99, wall-time acceptance or throughput qualification and does not replace the original 65536 signed growth gate.",
+    "All raw ZIP members are losslessly retained with byte lengths and SHA-256, and independently replayed data readers match the original readbacks. Existing Python reader-controls logs are original hosted evidence, not newly executed tests."
+  ],
+  "cohort": {
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "head": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "merge": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+    "run": 41728500384,
+    "tracked_bytes": 882506480,
+    "tracked_entries": 7723,
+    "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+  },
+  "complete_runtime_suite_qualified": false,
+  "complete_workspace_test_execution": false,
+  "distinct_native_selectors_across_lanes": 50,
+  "full_readback": {
+    "bytes": 448562,
+    "file": "readback.json",
+    "sha256": "ef296db778e870a780d322208b069261c0c468989f58152bcd75f5af8d73daa5"
+  },
+  "growth_throughput_qualified": false,
+  "independent_elf_rehash_performed": false,
+  "lane_count": 4,
+  "lanes": [
+    {
+      "artifact_id": 13276244311,
+      "binaries": {
+        "m06": {
+          "binary_bytes_in_artifact": false,
+          "executable": "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/trnm_mvcc_fee-c1ca8832ef03e569",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "independent_binary_sha256": null,
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": true
+          },
+          "runner_before_after_hash_receipts_equal": true,
+          "runner_reported_sha256": "c2df3efebe362c00b74c36de10dbfdc0b5599cc4c655087d55cabf807b9184e1"
+        },
+        "node": {
+          "binary_bytes_in_artifact": false,
+          "executable": "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/trnm_pon_node-e639e83c29353087",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "independent_binary_sha256": null,
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": true
+          },
+          "runner_before_after_hash_receipts_equal": true,
+          "runner_reported_sha256": "fddf64c2fc9af4313ac45b41bbe4192a75002f19f6be72d446161bb5128b2313"
+        }
+      },
+      "build_resources": {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "elapsed_wall_clock": "15:00.63",
+        "exit": 0,
+        "max_rss_kbytes": 3535668,
+        "system_seconds": "142.06",
+        "user_seconds": "1662.21"
+      },
+      "failed": 0,
+      "growth_cohorts": 9,
+      "growth_native_blocks": 72,
+      "job_conclusion": "success",
+      "job_id": 126239415392,
+      "lane": "arm-head",
+      "original_records": {
+        "bytes": 196352,
+        "file": "arm-head-original-records.json.gz",
+        "original_record_bytes": 2503047,
+        "records": 316,
+        "sha256": "10e816f118b239f584b8764bb65d92e9560079b09807575f0a81f724c441e0d9"
+      },
+      "passed": 50,
+      "selected_native_unique_test_count": 50,
+      "source": {
+        "base": null,
+        "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 882506480,
+        "tracked_entries": 7723,
+        "tracked_worktree_verified": true
+      },
+      "zip_bytes": 320416,
+      "zip_sha256": "987a1bf21d1bf46eb1fb0515488a3d53e1a3159ee0c9d015a413b8a671d866c1"
+    },
+    {
+      "artifact_id": 13278153340,
+      "binaries": {
+        "m06": {
+          "binary_bytes_in_artifact": false,
+          "executable": "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/trnm_mvcc_fee-c1ca8832ef03e569",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "independent_binary_sha256": null,
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": true
+          },
+          "runner_before_after_hash_receipts_equal": true,
+          "runner_reported_sha256": "c2df3efebe362c00b74c36de10dbfdc0b5599cc4c655087d55cabf807b9184e1"
+        },
+        "node": {
+          "binary_bytes_in_artifact": false,
+          "executable": "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/trnm_pon_node-e639e83c29353087",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "independent_binary_sha256": null,
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": true
+          },
+          "runner_before_after_hash_receipts_equal": true,
+          "runner_reported_sha256": "b182d6d7c3e721f580c97774c95bb0bc4b63a6608fd42c41372fa3242c070e9c"
+        }
+      },
+      "build_resources": {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "elapsed_wall_clock": "15:36.60",
+        "exit": 0,
+        "max_rss_kbytes": 3607044,
+        "system_seconds": "144.93",
+        "user_seconds": "1729.77"
+      },
+      "failed": 0,
+      "growth_cohorts": 9,
+      "growth_native_blocks": 72,
+      "job_conclusion": "success",
+      "job_id": 126239415154,
+      "lane": "arm-merge",
+      "original_records": {
+        "bytes": 196515,
+        "file": "arm-merge-original-records.json.gz",
+        "original_record_bytes": 2503326,
+        "records": 316,
+        "sha256": "3679f4ce73caf52aea04f85b3fbcd66f358b61e13fb63298d0abf4696749a15c"
+      },
+      "passed": 50,
+      "selected_native_unique_test_count": 50,
+      "source": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "kind": "prospective-merge",
+        "prospective_merge": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+        "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 882506480,
+        "tracked_entries": 7723,
+        "tracked_worktree_verified": true
+      },
+      "zip_bytes": 320556,
+      "zip_sha256": "cd3c203341142f03c60b22c3913e6ef393e253ac8ffd7b418c856ef752141198"
+    },
+    {
+      "artifact_id": 13276159955,
+      "binaries": {
+        "m06": {
+          "binary_bytes_in_artifact": false,
+          "executable": "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/trnm_mvcc_fee-2afc0265afb18a0d",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "independent_binary_sha256": null,
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": true
+          },
+          "runner_before_after_hash_receipts_equal": true,
+          "runner_reported_sha256": "772233664ddf6be70a48b3547c18c54f6df51331e3868ce0a7d7f4bdb2ac10f4"
+        },
+        "node": {
+          "binary_bytes_in_artifact": false,
+          "executable": "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/trnm_pon_node-6f68592da7a7f6bb",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "independent_binary_sha256": null,
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": true
+          },
+          "runner_before_after_hash_receipts_equal": true,
+          "runner_reported_sha256": "6e1984c69b30504244ebe9a07b2bf646414c466cfccac9c56151ebe9f6d531c1"
+        }
+      },
+      "build_resources": {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "elapsed_wall_clock": "13:13.86",
+        "exit": 0,
+        "max_rss_kbytes": 3219400,
+        "system_seconds": "105.05",
+        "user_seconds": "1531.39"
+      },
+      "failed": 0,
+      "growth_cohorts": 9,
+      "growth_native_blocks": 72,
+      "job_conclusion": "success",
+      "job_id": 126239415080,
+      "lane": "x64-head",
+      "original_records": {
+        "bytes": 197041,
+        "file": "x64-head-original-records.json.gz",
+        "original_record_bytes": 2600998,
+        "records": 316,
+        "sha256": "86cf5d1e00f7194c8be6f2e2f918f2af3a392419b9d646c7be5bcf41e8efd091"
+      },
+      "passed": 50,
+      "selected_native_unique_test_count": 50,
+      "source": {
+        "base": null,
+        "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 882506480,
+        "tracked_entries": 7723,
+        "tracked_worktree_verified": true
+      },
+      "zip_bytes": 320792,
+      "zip_sha256": "9228581354a7a89498ee92320e9a9692b81eada21127f48f3a1d7e80fdabf11f"
+    },
+    {
+      "artifact_id": 13278037154,
+      "binaries": {
+        "m06": {
+          "binary_bytes_in_artifact": false,
+          "executable": "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/trnm_mvcc_fee-2afc0265afb18a0d",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "independent_binary_sha256": null,
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": true
+          },
+          "runner_before_after_hash_receipts_equal": true,
+          "runner_reported_sha256": "772233664ddf6be70a48b3547c18c54f6df51331e3868ce0a7d7f4bdb2ac10f4"
+        },
+        "node": {
+          "binary_bytes_in_artifact": false,
+          "executable": "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/trnm_pon_node-6f68592da7a7f6bb",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "independent_binary_sha256": null,
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": true
+          },
+          "runner_before_after_hash_receipts_equal": true,
+          "runner_reported_sha256": "ffab1e7c76f40a8f992203797c708ead8cf0b237f36927d007033c38cea690fb"
+        }
+      },
+      "build_resources": {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "elapsed_wall_clock": "13:33.83",
+        "exit": 0,
+        "max_rss_kbytes": 3226272,
+        "system_seconds": "110.76",
+        "user_seconds": "1566.08"
+      },
+      "failed": 0,
+      "growth_cohorts": 9,
+      "growth_native_blocks": 72,
+      "job_conclusion": "success",
+      "job_id": 126239414902,
+      "lane": "x64-merge",
+      "original_records": {
+        "bytes": 196908,
+        "file": "x64-merge-original-records.json.gz",
+        "original_record_bytes": 2601255,
+        "records": 316,
+        "sha256": "6eb08a84d7c64ff9e930ce169792f28d8994be31bc19ce33c0eae7320ae70806"
+      },
+      "passed": 50,
+      "selected_native_unique_test_count": 50,
+      "source": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "kind": "prospective-merge",
+        "prospective_merge": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+        "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 882506480,
+        "tracked_entries": 7723,
+        "tracked_worktree_verified": true
+      },
+      "zip_bytes": 320759,
+      "zip_sha256": "b529d88fc6fb8817b6494ccaa9e8ff30062100a53c38fa9a85ca2ad3ab2b1d43"
+    }
+  ],
+  "native_executed_by_readback": false,
+  "new_downloads_by_readback": false,
+  "observed_utc": "2026-11-03T23:42:50.298288+00:00",
+  "original_65536_signed_growth_gate_replaced": false,
+  "p99_qualified": false,
+  "production_activation": false,
+  "public_confirmation_target_qualified": false,
+  "public_host_qualified": false,
+  "release_qualified": false,
+  "repeated_native_execution_count": 200,
+  "result": "PASS_FOR_NAMED_ORIGINAL_WORKSPACE_CPU_LANES",
+  "schema": "trnm-workspace-cpu-four-lane-terminal-readback-v1",
+  "source_and_metadata": {
+    "bytes": 53322,
+    "file": "source-and-original-metadata.json.gz",
+    "original_record_bytes": 228198,
+    "records": 19,
+    "sha256": "35f628d9f5777b985ed56b260d548bafb99b985578015abce60add22578adc64"
+  },
+  "source_paths": [
+    {
+      "bytes": 27534,
+      "path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      "sha256": "8c47856853361356b055bfea745b90e62cefc77be235b4c7f48f6596cd0daddd"
+    },
+    {
+      "bytes": 2928,
+      "path": "scripts/ci/check_required_native_test.py",
+      "sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28"
+    },
+    {
+      "bytes": 18376,
+      "path": "scripts/ci/check_growth_scale_observation.py",
+      "sha256": "638b4274b5b94c5600cfaa5942efa5882a095ef7f8f47c7cf7733dbb137d5d22"
+    },
+    {
+      "bytes": 20716,
+      "path": "scripts/ci/test_growth_scale_observation.py",
+      "sha256": "094203a2b52622266a7805e31e9e3b2854ecdfac46f901c28ca852b027474763"
+    },
+    {
+      "bytes": 7722,
+      "path": "scripts/ci/verify_ci_source.py",
+      "sha256": "07fb32c6b1d6a5c9bd6200a4ef4f5916b0f25caa3ba4ac887a3ba58a407b7ff6"
+    },
+    {
+      "bytes": 8110,
+      "path": "scripts/ci/prepare_pq_provider.sh",
+      "sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa"
+    },
+    {
+      "bytes": 2204,
+      "path": "trillionnium/Cargo.toml",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "bytes": 39745,
+      "path": "trillionnium/Cargo.lock",
+      "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69"
+    },
+    {
+      "bytes": 39638,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+      "sha256": "cd8be69073987f500a5233f3233f7f19120621c5196c7c08c4c7b58a2a9945c4"
+    },
+    {
+      "bytes": 20714,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs",
+      "sha256": "c72721edacec33bce3676048db995a77d05accd5d970d347045ba07504e98573"
+    }
+  ],
+  "total_original_zip_record_bytes": 10208626,
+  "total_original_zip_records": 1264
+}

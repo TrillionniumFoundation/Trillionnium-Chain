@@ -1,0 +1,54 @@
+{
+  "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+    "before": "7ab1a49080c4b99c3c3e12d3c636a5d655577f91",
+    "after": "ec340a726169fd9ee230aba11a1efd4ff569d12c"
+  },
+  "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": {
+    "before": "4220d75e1eb42bc90c3b82fd60ef085d0d5fdbb2",
+    "after": "842c968a70e6a74c658fdb18bb51f5a6ca0f0a35"
+  },
+  "trillionnium/crates/trnm-pon-node/src/ingress.rs": {
+    "before": "52b115797c30bdb4b89d2eb73fc56b9b8bc9d033",
+    "after": "c2410e91c060ad6a250afa6aba3e9093c42e2d11"
+  },
+  "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs": {
+    "before": "bd89990d6e1d7bda56f0be69a526815d87edbc29",
+    "after": "6928e602fdc1f9854c3c56e334405e0138a4b66e"
+  },
+  "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs": {
+    "before": "c75147a7ec1c51fc402bb5bf2c9a88994b2a1ff7",
+    "after": "3c01e19043c680a8e36835231fb149bccf5048c5"
+  },
+  "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
+    "before": "3002ac2adf3537773ee37fb956e486b0ee857c28",
+    "after": "255b40422ee15a78e495ae13378d8bfd86b039b8"
+  },
+  "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs": {
+    "before": "20d040f84c0d33f71a035f730265aea6722a5c82",
+    "after": "d7137dae6339f608af262ced59fe404960beae14"
+  },
+  "trillionnium/crates/trnm-pon-node/src/store.rs": {
+    "before": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+    "after": "56a5b134d2b9113f1f7528c856fa2986bb6ec79c"
+  },
+  "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs": {
+    "before": "5a881abe6b660933f31f4c16b66e1f1f42daf5cd",
+    "after": "011987cec10513f1ad903559ee39cf92f79e68cc"
+  },
+  "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs": {
+    "before": "02673f72fac1d5d919a9604be876d4e93efd7cfe",
+    "after": "30a46e8141762e80a53a274751958a2dabbe4122"
+  },
+  "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs": {
+    "before": "1dc918fa383246ccfb673818d627e918bf80f5bc",
+    "after": "41b721a18b9d8381b860db067e4c8741a5f51328"
+  },
+  "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs": {
+    "before": null,
+    "after": "45fea5275bfe9971fc095f0607db7fa72718e758"
+  },
+  "trillionnium/crates/trnm-pon-node/src/store/detached_admission/prepared_held_native_completion_tests.rs": {
+    "before": null,
+    "after": "7c4c28220a1550e62a6bd3fdc391213d7aa795e9"
+  }
+}

@@ -1,0 +1,376 @@
+{
+  "base_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "candidate_code_tree": "367bf61031f47fecc64123de644c3bf23b9d39b5",
+  "contents": [
+    {
+      "archive_path": "evidence/HANDOFF.md",
+      "bytes": 7516,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/HANDOFF.md",
+      "sha256": "98d7ea21952637f47f9fa181b80fddfee6079181fc85473c8318ee76a7bdc848"
+    },
+    {
+      "archive_path": "evidence/analyze_benchmark.py",
+      "bytes": 17683,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/analyze_benchmark.py",
+      "sha256": "faf742e0ee78a81ebc5bec87e17acfa8f24a7697bf5c5e9209f90cbc59d13590"
+    },
+    {
+      "archive_path": "evidence/baseline-benchmark-build.jsonl",
+      "bytes": 102481,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/baseline-benchmark-build.jsonl",
+      "sha256": "500d0a25a3c6139f3135fed7f161faa9584471f73fab4f2e9b5e090876196b21"
+    },
+    {
+      "archive_path": "evidence/baseline-benchmark-build.stderr",
+      "bytes": 3959,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/baseline-benchmark-build.stderr",
+      "sha256": "79442065de3b49f739a98e8091861503b2199b8029d83ca59148b5b17c2b0a32"
+    },
+    {
+      "archive_path": "evidence/baseline-benchmark-preflight.log",
+      "bytes": 169,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/baseline-benchmark-preflight.log",
+      "sha256": "2b060e8a43ada8bc9c3e2a89d1f5b779628a8f2715621ecead29bd27c7a34562"
+    },
+    {
+      "archive_path": "evidence/benchmark-analysis.stderr",
+      "bytes": 0,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/benchmark-analysis.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_path": "evidence/benchmark-analysis.stdout",
+      "bytes": 1900,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/benchmark-analysis.stdout",
+      "sha256": "f74973cf64b380fe20098bcafad1922e41fba18b5c4510ba8ae20fa818c4658e"
+    },
+    {
+      "archive_path": "evidence/benchmark-execution-freeze.json",
+      "bytes": 5587,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/benchmark-execution-freeze.json",
+      "sha256": "1a5c7712a558c506291c66ce1d524c9a0eccaf6cedec22230bc2a20e476c15e7"
+    },
+    {
+      "archive_path": "evidence/benchmark-plan.json",
+      "bytes": 7056,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/benchmark-plan.json",
+      "sha256": "ba7e661ff8871b3ed423a57cb2c2d71cdbf3df42096f72f07bd8908605114046"
+    },
+    {
+      "archive_path": "evidence/benchmark-prepare-receipt.json",
+      "bytes": 3902,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/benchmark-prepare-receipt.json",
+      "sha256": "962b37027cf59e2c81eff04bd0f5ea2e4cba9ea1e534e2b00eeb1acb0593d4c7"
+    },
+    {
+      "archive_path": "evidence/benchmark-result.json",
+      "bytes": 122992,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/benchmark-result.json",
+      "sha256": "c6078db175fd298dc4c7863826781aae081526f42ec0dbb5bb2cac6b56d2fc86"
+    },
+    {
+      "archive_path": "evidence/benchmark-result.md",
+      "bytes": 2778,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/benchmark-result.md",
+      "sha256": "a841324769d7c8ce03dc65172dd21de24f335ece158c63bdfb65437bf2904db6"
+    },
+    {
+      "archive_path": "evidence/benchmark-runner.log",
+      "bytes": 8551,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/benchmark-runner.log",
+      "sha256": "9dd4ae6a60d7cf80ff4f1dc1558e96326cf51461e4e831f77e247424b59e63b6"
+    },
+    {
+      "archive_path": "evidence/benchmark-runner.stderr",
+      "bytes": 0,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/benchmark-runner.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_path": "evidence/candidate-benchmark-build.jsonl",
+      "bytes": 100169,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/candidate-benchmark-build.jsonl",
+      "sha256": "0676e470e16ba72ba511e3867cf7b115d8a719178d69c37782e8d37f44b77d4e"
+    },
+    {
+      "archive_path": "evidence/candidate-benchmark-build.stderr",
+      "bytes": 193,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/candidate-benchmark-build.stderr",
+      "sha256": "54288df52baedc5d6045ae50dae4f3dc9fa70ecd063504922360b8f4c1a01ee7"
+    },
+    {
+      "archive_path": "evidence/candidate-benchmark-preflight.log",
+      "bytes": 160,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/candidate-benchmark-preflight.log",
+      "sha256": "f9aa4ba34b76d9e434dfc941a8719cab42ac16284b95a59c4dc0011de38c91f0"
+    },
+    {
+      "archive_path": "evidence/component-clippy.log",
+      "bytes": 2315,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/component-clippy.log",
+      "sha256": "047c46df29d6c220f7162a59bc7dc1de51ccc021ca605b3efc53408fd3258ae8"
+    },
+    {
+      "archive_path": "evidence/implementation-checkpoint.json",
+      "bytes": 1301,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/implementation-checkpoint.json",
+      "sha256": "8f8bfdd11639342eafd11610918067929e1335864384bb9619fc1a76bd1e4d97"
+    },
+    {
+      "archive_path": "evidence/implementation-checkpoint.patch",
+      "bytes": 33506,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/implementation-checkpoint.patch",
+      "sha256": "e1ee6342781b16cc7caff3aa95775d3f17487e3d071f4c3063793b1a11833347"
+    },
+    {
+      "archive_path": "evidence/m06-full-root-tests.log",
+      "bytes": 967,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/m06-full-root-tests.log",
+      "sha256": "a55b5f93ab2a9df64b17881081633d3e3b5e87b276b6f31417c62e55b3bf78b5"
+    },
+    {
+      "archive_path": "evidence/m06-root-tests-v1.log",
+      "bytes": 3634,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/m06-root-tests-v1.log",
+      "sha256": "1f37b4a1aa768782fa2a39d6a370e4dc6516b133995f6f74b1ae8b38ccb16765"
+    },
+    {
+      "archive_path": "evidence/m06-root-tests.log",
+      "bytes": 1777,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/m06-root-tests.log",
+      "sha256": "a4d070f2d6dcf0ce8bc1ad62440ab162d39e9a221cb9352f59b6634a53c6a68f"
+    },
+    {
+      "archive_path": "evidence/measurements/execution.json",
+      "bytes": 11169,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/execution.json",
+      "sha256": "b9569a8e92027a8c5a0c3a055d2f4eace84afd23c458bf8252e2de6bd71d2856"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-00-baseline.stderr",
+      "bytes": 0,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-00-baseline.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-00-baseline.stdout",
+      "bytes": 70226,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-00-baseline.stdout",
+      "sha256": "5967d1ea810537fd39e58f5fa68d2d2e64ae85fa3b5c3408027cc0d9f98ca55e"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-00-candidate.stderr",
+      "bytes": 0,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-00-candidate.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-00-candidate.stdout",
+      "bytes": 70216,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-00-candidate.stdout",
+      "sha256": "4e6283f68c7cf82a50f6d21ca0585142866409874851ac902a25380451d431d4"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-01-baseline.stderr",
+      "bytes": 0,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-01-baseline.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-01-baseline.stdout",
+      "bytes": 70212,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-01-baseline.stdout",
+      "sha256": "fc1a40efc3d8719d711c2e597d9cfe3b1194b0dcb55f8b8df31e282c0121baa4"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-01-candidate.stderr",
+      "bytes": 0,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-01-candidate.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-01-candidate.stdout",
+      "bytes": 70218,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-01-candidate.stdout",
+      "sha256": "08e27908314b382a5ccb57f18ba015ba663eb7474a9d7b9eeec2976e7c35a408"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-02-baseline.stderr",
+      "bytes": 0,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-02-baseline.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-02-baseline.stdout",
+      "bytes": 70213,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-02-baseline.stdout",
+      "sha256": "e5dab944b7ed68a3517336320b1223c76a59bc11c6efd23ffed86cf9608be4ca"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-02-candidate.stderr",
+      "bytes": 0,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-02-candidate.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-02-candidate.stdout",
+      "bytes": 70224,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-02-candidate.stdout",
+      "sha256": "eec7de0e2580f0a9f46cee0b383a8f8cf2eaa21ed6549fe6ef37c828f1b47cf7"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-03-baseline.stderr",
+      "bytes": 0,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-03-baseline.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-03-baseline.stdout",
+      "bytes": 70213,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-03-baseline.stdout",
+      "sha256": "d3509663a589cca6453ce464844de6ca6d7ca060e307a356ff46057372935395"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-03-candidate.stderr",
+      "bytes": 0,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-03-candidate.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-03-candidate.stdout",
+      "bytes": 70224,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-03-candidate.stdout",
+      "sha256": "e184b9748f44c11d0f4b3b67db8e1eb77ea6a022dd26bc87c154bcb067751300"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-04-baseline.stderr",
+      "bytes": 0,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-04-baseline.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-04-baseline.stdout",
+      "bytes": 70209,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-04-baseline.stdout",
+      "sha256": "7cd61dd9586441c4e7db44ed4284f7c7066cdb77b5f6ba807acd8b6ca0f234a6"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-04-candidate.stderr",
+      "bytes": 0,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-04-candidate.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_path": "evidence/measurements/pair-04-candidate.stdout",
+      "bytes": 70212,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/measurements/pair-04-candidate.stdout",
+      "sha256": "1349e7dec63230477c58879d315eb776225f46ed9434b89a7cdf3d96be3bd449"
+    },
+    {
+      "archive_path": "evidence/node-large-tests.log",
+      "bytes": 743,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/node-large-tests.log",
+      "sha256": "a73f05718cacef9c94189c8f98cc93f2f314977b55cac39f74ae11b6efba8f8a"
+    },
+    {
+      "archive_path": "evidence/node-large-tests.log.before-count-fix",
+      "bytes": 1419,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/node-large-tests.log.before-count-fix",
+      "sha256": "ab372a71829df25a21edb96679514b78e4174f730f8919add08b5bd3b659ed7a"
+    },
+    {
+      "archive_path": "evidence/node-root-tests.log",
+      "bytes": 2767,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/node-root-tests.log",
+      "sha256": "5e4660f3286334af009121ccedc2fdefdc71814b297f2f2054e6260ad9f0dd91"
+    },
+    {
+      "archive_path": "evidence/protocol-doctest.log",
+      "bytes": 485,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/protocol-doctest.log",
+      "sha256": "d79ac4c59f8a666bfe9a7e68224e1e6b43f41677df73477fdd4684e605b21f03"
+    },
+    {
+      "archive_path": "evidence/protocol-tests-v1.log",
+      "bytes": 3492,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/protocol-tests-v1.log",
+      "sha256": "102c1a107b174fc904ef649c6456783c1df206c0e6b3b163d313003744939f40"
+    },
+    {
+      "archive_path": "evidence/protocol-tests.log",
+      "bytes": 2179,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/protocol-tests.log",
+      "sha256": "a6f10f2956d8a9b6430494b93787ce62dd93d04e3b0d91c1ad9a4da4e83c9cc6"
+    },
+    {
+      "archive_path": "evidence/run_benchmark.py",
+      "bytes": 9887,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/run_benchmark.py",
+      "sha256": "5d935a7996f70c514e753ec5cb440f1dfe16e2daf4e1fac48d85dd585adbdffa"
+    },
+    {
+      "archive_path": "evidence/source-freeze.json",
+      "bytes": 2864,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/source-freeze.json",
+      "sha256": "b8f0ac38e239552acae1693f95b7c62109aedcd9178be632f1296285eab25e4b"
+    },
+    {
+      "archive_path": "evidence/source-freeze.json.before-count-fix",
+      "bytes": 2424,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/source-freeze.json.before-count-fix",
+      "sha256": "23021ff1466e5c81db55852db09e73232ffb55b3c3af0366cae2a7c2636a63b0"
+    },
+    {
+      "archive_path": "evidence/source-freeze.patch",
+      "bytes": 34923,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/source-freeze.patch",
+      "sha256": "111bb65c0a066ea02a793f8138f5afabd7ad5cafbf79c171d04aafcbc827c3c1"
+    },
+    {
+      "archive_path": "evidence/source-freeze.patch.before-count-fix",
+      "bytes": 34001,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/source-freeze.patch.before-count-fix",
+      "sha256": "a0432974beb6d233bfefde11dc9655601ea4c11db5add8983d4b47b89a8264e0"
+    },
+    {
+      "archive_path": "evidence/value_pool_component.rs",
+      "bytes": 12064,
+      "path": "/workspace/scratch/abae1861b451/value-pool-evidence/value_pool_component.rs",
+      "sha256": "e92fdd30b459f4afaf762458e7863d7cc1f1bb0a63e990f11a229cdd67c937d6"
+    },
+    {
+      "archive_path": "source/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs",
+      "bytes": 15043,
+      "path": "/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs",
+      "sha256": "64dd7e47ad7c9916884a581f1e9ad50c00fa3aa4393b3546c44dd628ba106585"
+    },
+    {
+      "archive_path": "source/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs",
+      "bytes": 9981,
+      "path": "/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs",
+      "sha256": "3d417c3ee8af2d66c9985c768a9088a88cd733d1b7a4e1d2f858fd470f1a5397"
+    },
+    {
+      "archive_path": "source/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "bytes": 12457,
+      "path": "/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "sha256": "59b964d342a650c0f9b1b395034e113647841e939a6f5b30c1ed1f95c2995ca9"
+    },
+    {
+      "archive_path": "source/trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "bytes": 21244,
+      "path": "/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "sha256": "8b18f12347a32c4ad55dae7c8fd7400144e0505fdd26ee7407362beafee7f0bb"
+    },
+    {
+      "archive_path": "source/trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs",
+      "bytes": 30536,
+      "path": "/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs",
+      "sha256": "04d70da9048f5e85a6b580ccfdcf9bcd26576af802084af53bc37f70de71c647"
+    }
+  ],
+  "created_utc": "2026-11-03T16:23:21.106898+00:00",
+  "excluded": "Build binaries/targets and reproducible temporary Git indexes; ELF hashes and Cargo receipts included. No refs changed.",
+  "schema": "value-pool-delivery-manifest-v1",
+  "source_file_count": 5
+}

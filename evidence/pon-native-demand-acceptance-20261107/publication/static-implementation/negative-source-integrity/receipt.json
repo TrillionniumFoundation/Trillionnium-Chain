@@ -1,0 +1,27 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "elapsed_seconds": 16.331310510635376,
+  "exit_code": 0,
+  "head": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "independent_business_acceptance": false,
+  "label": "negative-source-integrity",
+  "schema": "pon-publication-static-gate-v1",
+  "started_unix_seconds": 1794067600.8755991,
+  "stderr": {
+    "bytes": 6415,
+    "sha256": "f90cac9dfcc01351e5d41641675d21e28462b9961a84086834363bc2a75ac218"
+  },
+  "stdout": {
+    "bytes": 484,
+    "sha256": "55e5e681a401abaa3147b3af23a7a2c2efed5d40996bfa39aaf20965d662f644"
+  },
+  "unittest_summaries": [
+    [
+      "43",
+      "16.134s"
+    ]
+  ]
+}

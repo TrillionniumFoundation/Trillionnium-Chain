@@ -1,0 +1,176 @@
+{
+  "schema": "round4-new-node-failure-readback-v1",
+  "readback_only": true,
+  "native_executed_by_reader": false,
+  "created_utc": "2026-11-04T01:03:50.664235+00:00",
+  "run_id": 41746463373,
+  "job_id": 126300605830,
+  "run_attempt": 1,
+  "lane": "ubuntu-24.04 head x64",
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463373/job/126300605830",
+  "artifact": {
+    "id": 13284469302,
+    "name": "pq-system-ubuntu-24.04-head-362fbebe5027d731f16c88f710bfef7e922cd230-1",
+    "bytes": 1053225,
+    "sha256": "a73afaa8fcf10d306f3b89095f8958f4b7caf32ee93c17d2bb967058708f090a",
+    "matches_job_upload_digest": true
+  },
+  "native_command": {
+    "schema": "trnm-pq-native-command-v1",
+    "argv": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "--",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "exit_code": 101,
+    "status": "command_failed",
+    "started_utc": "2026-11-04T00:34:17.042296+00:00",
+    "elapsed_ns": 1198373285080,
+    "log_file": "node-lib.log",
+    "log_bytes": 7291639,
+    "log_sha256": "b8fc142d00b90638b6ad723d83b01208492972df250352d79f22bbcb6eeb210d"
+  },
+  "source_before": {
+    "base": null,
+    "candidate": "362fbebe5027d731f16c88f710bfef7e922cd230",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "362fbebe5027d731f16c88f710bfef7e922cd230",
+    "tested_tree": "5a7a2eadfcfb75b9fdf38fa0e8a05c6a503d776d",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 926580636,
+    "tracked_entries": 7948,
+    "tracked_worktree_verified": true
+  },
+  "source_after": {
+    "base": null,
+    "candidate": "362fbebe5027d731f16c88f710bfef7e922cd230",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "362fbebe5027d731f16c88f710bfef7e922cd230",
+    "tested_tree": "5a7a2eadfcfb75b9fdf38fa0e8a05c6a503d776d",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 926580636,
+    "tracked_entries": 7948,
+    "tracked_worktree_verified": true
+  },
+  "before_after_exactly_equal": true,
+  "log_hash_verified": true,
+  "log_bytes_verified": true,
+  "registry": {
+    "scope": "original full-suite declaration and terminal, not nested child summaries",
+    "reported_registry_count": 974,
+    "native_full_suite_terminal_counts": {
+      "passed": 950,
+      "failed": 1,
+      "ignored": 23,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    "terminal_counts_sum": 974,
+    "all_974_named_tests_seen": true,
+    "named_ledger_unique_names": 974,
+    "named_ledger_literal_status_counts": {
+      "ok": 949,
+      "ignored": 23,
+      "FAILED": 1,
+      "unknown": 1
+    },
+    "individual_status_reconciliation_complete": false,
+    "registry_file": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/node-head-job-126300605830/node-head-test-registry.json"
+  },
+  "terminal_line": "test result: FAILED. 950 passed; 1 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1196.51s",
+  "libtest_duration_seconds": 1196.51,
+  "failed_tests": [
+    "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart"
+  ],
+  "failure": {
+    "panic_line": 2388,
+    "panic": "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart' (23320) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:332:10:",
+    "error": "called `Result::unwrap()` on an `Err` value: Error { code: Some(FrameEof), kind: Transport, message: \"FRAME_EOF\", source: None, request_history_budget: false }",
+    "child_snapshot_missing_or_invalid": true,
+    "last_parent_tcp_failure": {
+      "error": {
+        "code": "PQ_WITNESS_DEADLINE",
+        "io_kind": null,
+        "origin": "exact_diagnostic_string_or_unknown",
+        "raw_os_error": null,
+        "sqlite_extended_code": null
+      },
+      "id": 19,
+      "kind": "tcp_request",
+      "marks": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "phase": "tcp_handle",
+      "thread_cpu_ns": 120589787,
+      "wall_ns": 499338470
+    },
+    "last_parent_service_failure": null,
+    "measurement_failures": 0,
+    "nested_intervals_are_not_additive": true,
+    "operation_ids_are_process_local": true
+  },
+  "limits": [
+    "Original libtest full-registry terminal is distinct from two embedded one-test child summaries.",
+    "FRAME_EOF is the direct observed failure; the missing child diagnostic prevents a complete child-side causal account.",
+    "The separate x64 prospective-merge success is workflow metadata only in this refresh; no cross-lane success inheritance or comparative regression cause is inferred.",
+    "Current working-tree patch is not the tested 362fbebe source.",
+    "No retained script or executable was run; only ordinary Node command/source records were read."
+  ],
+  "files": [
+    {
+      "path": "clippy.json",
+      "bytes": 2358,
+      "sha256": "01b52b88ab3d1806b90e188d35bf3946c3cabdf841da48b8fe5ae64ea246fdc8"
+    },
+    {
+      "path": "node-head-test-registry.json",
+      "bytes": 251430,
+      "sha256": "30f4691955c75a8b5fa259e46169eaee020d4d6ff2801a4ef455e4a86b8a9111"
+    },
+    {
+      "path": "node-lib.json",
+      "bytes": 2366,
+      "sha256": "3e552cc66b378030629c95d6381a9dcef6fae3811af137c68d3677f6610596be"
+    },
+    {
+      "path": "node-lib.log",
+      "bytes": 7291639,
+      "sha256": "b8fc142d00b90638b6ad723d83b01208492972df250352d79f22bbcb6eeb210d"
+    },
+    {
+      "path": "pq-source.json",
+      "bytes": 1998,
+      "sha256": "cd8dd2e3230e160dbede97785b72ce121ca13f858dd5930bce782bdf77cdb3bc"
+    },
+    {
+      "path": "pq-source.log",
+      "bytes": 557,
+      "sha256": "01f8b236ffd929a5c12078cda4c44c61a86978b1de4077bace21058d2484b054"
+    },
+    {
+      "path": "source.json",
+      "bytes": 421,
+      "sha256": "8542b0dc31967a85d2d9519c4d2b83f607369c94b4846c1ec06f70ec79a14517"
+    }
+  ]
+}

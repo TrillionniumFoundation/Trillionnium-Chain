@@ -1,0 +1,60 @@
+{
+  "archive": "strict-clippy-s3.tar.gz",
+  "archive_bytes": 3503,
+  "archive_sha256": "35d021d8fb440eed501d9964abe1e390ee5e0489067506f1401b6e2c1b213718",
+  "copy_and_compressed_readback_verified": true,
+  "files": [
+    {
+      "bytes": 1478,
+      "path": "clippy-guard.json",
+      "sha256": "0864280f385fad7418fbe78ce05e8e9b6bb8c859b9f595409578b743704ba61a"
+    },
+    {
+      "bytes": 2505,
+      "path": "strict-clippy-launch/launch.json",
+      "sha256": "0d9450a21e8b03f7d3ede62304ce4521e46ee98c803ad47a9c86ada28147cc77"
+    },
+    {
+      "bytes": 2451,
+      "path": "strict-clippy/strict-clippy.json",
+      "sha256": "20bf06c73669c68b716460553ebe0630c663959bc4d0fea34aaec38d65e1e85b"
+    },
+    {
+      "bytes": 5171,
+      "path": "strict-clippy/strict-clippy.log",
+      "sha256": "532534bb16485a3a11a35ca89bf662008914414d82a83649a242d43e2812f889"
+    }
+  ],
+  "new_builds_or_tests_executed": false,
+  "original_actual_exit_code": 0,
+  "original_argv": [
+    "timeout",
+    "--signal=TERM",
+    "--kill-after=10",
+    "1800",
+    "cargo",
+    "+1.95.0",
+    "clippy",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "original_files_unchanged": true,
+  "original_timeout_seconds": 1800,
+  "production_activation": false,
+  "receipt_copy": "s3-strict-clippy.json",
+  "receipt_copy_bytes": 2451,
+  "receipt_copy_sha256": "20bf06c73669c68b716460553ebe0630c663959bc4d0fea34aaec38d65e1e85b",
+  "schema": "trnm-strict-clippy-s3-archive-v1",
+  "scope": "original strict Clippy on S3 only; evidence copy does not qualify C4",
+  "source": "454ae116159867ff6cddd91b964523df7f7e16f0",
+  "source_before_equals_after": true,
+  "tree": "3117250c4db0f2ae681d51ed6ee5e6a2fa7555a9",
+  "whole_chain_quantum_security_qualified": false
+}

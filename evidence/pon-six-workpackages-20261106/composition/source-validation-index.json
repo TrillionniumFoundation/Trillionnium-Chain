@@ -1,0 +1,149 @@
+{
+  "schema": "trnm-composed-validation-archive-v1",
+  "tested_commit": "361825dd1f924770562705d7a68c78170f0375c3",
+  "tested_tree": "92f8fbdc5b722498ede9dd85040d4716aa6a182e",
+  "archive": "source-validation.tar.gz",
+  "archive_bytes": 146499,
+  "archive_sha256": "69ba7d714da488ef830459b4e84e286bac80833b42aa836c5a4e64394eb24336",
+  "member_count": 27,
+  "uncompressed_member_bytes": 1700741,
+  "members": [
+    {
+      "path": "ci-contract-controls.log",
+      "bytes": 16831,
+      "sha256": "1eeb4dcf0fa2411138364e1a1aab114e735b0a4a0858829d6447d35e8a815754"
+    },
+    {
+      "path": "corpus.log",
+      "bytes": 557,
+      "sha256": "3d0ba4bb72c086c77b80a64470253a19ccfc885db126794b5e51a5bc145775b2"
+    },
+    {
+      "path": "inventory.log",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "path": "metadata-all-features.log",
+      "bytes": 824895,
+      "sha256": "3a7d32a3b225d1588a8d81623bc2748115995ff00c469357d407f9fe09282b2d"
+    },
+    {
+      "path": "metadata-default.log",
+      "bytes": 810200,
+      "sha256": "7c7b71c5681e0c8c04f6e14941f56456c5886be49e19231970ff323fa32b853d"
+    },
+    {
+      "path": "native-roster-controls.log",
+      "bytes": 104,
+      "sha256": "ceb1e92f6d57efcb897c8a3c2fc81fd145304212479ef444c6e6d1dce482f242"
+    },
+    {
+      "path": "pq-integration-controls.log",
+      "bytes": 137,
+      "sha256": "a20ceafe909950b3cbb60995d32f8bd30fa0457758965a12657d7954a55a4867"
+    },
+    {
+      "path": "preflight.log",
+      "bytes": 175,
+      "sha256": "4d80997cb215daa597a77d064d376b80858148e1c954ad58e314f383c4e6687f"
+    },
+    {
+      "path": "progress.json",
+      "bytes": 11086,
+      "sha256": "59c78455f71d93172d3a8a27eec28b641d7a098cd908faaaacf181b9fbaeae1e"
+    },
+    {
+      "path": "proof-readback-controls.log",
+      "bytes": 110,
+      "sha256": "e5ace0e39074cb89509e41107b0afa579e6c7202a9b19bdc12c2a12a4541b69e"
+    },
+    {
+      "path": "repository-controls.log",
+      "bytes": 5345,
+      "sha256": "3d31a67a1c8f7493a968906bcc93faffbec016eef370e6e54a8af99df9bcdc1e"
+    },
+    {
+      "path": "repository.log",
+      "bytes": 307,
+      "sha256": "53c010bfeff013ecc6f7e12674e34385879fec689ce2df49ce3a3f6427c7cc4a"
+    },
+    {
+      "path": "run_composed_clippy.py",
+      "bytes": 3718,
+      "sha256": "a7187aa571503fee8cb5cba2df511038412cf90bf0ebd8e35e56bbf0d4729445"
+    },
+    {
+      "path": "run_composed_source_validation.py",
+      "bytes": 5003,
+      "sha256": "3051df2b4cdf326588e71394eed593f74ea5225aea1167dc1990b27c20c32ef2"
+    },
+    {
+      "path": "rustfmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source-after.json",
+      "bytes": 423,
+      "sha256": "dfe877f1555cd82685479e495561b9fd42f820bc7e86059a30235da36cbd952e"
+    },
+    {
+      "path": "source-after.log",
+      "bytes": 423,
+      "sha256": "dfe877f1555cd82685479e495561b9fd42f820bc7e86059a30235da36cbd952e"
+    },
+    {
+      "path": "source-before.json",
+      "bytes": 423,
+      "sha256": "dfe877f1555cd82685479e495561b9fd42f820bc7e86059a30235da36cbd952e"
+    },
+    {
+      "path": "source-before.log",
+      "bytes": 423,
+      "sha256": "dfe877f1555cd82685479e495561b9fd42f820bc7e86059a30235da36cbd952e"
+    },
+    {
+      "path": "source-integrity-controls.log",
+      "bytes": 6898,
+      "sha256": "574aaee3dec4a1b41750aa5c27c5838949b4206a969e47b88e87dc2a5ba43461"
+    },
+    {
+      "path": "strategy-reader-controls.log",
+      "bytes": 123,
+      "sha256": "ea688f1100d539adf6a36abd3a1cc7ab41649de90d5f2d2789c8c64437c669a8"
+    },
+    {
+      "path": "strict-clippy-attempt.json",
+      "bytes": 352,
+      "sha256": "751edd257c7bf0d31e17333930e4fdf564f7ad56682e51f0729cf7872196df33"
+    },
+    {
+      "path": "strict-clippy-preflight.log",
+      "bytes": 175,
+      "sha256": "4d80997cb215daa597a77d064d376b80858148e1c954ad58e314f383c4e6687f"
+    },
+    {
+      "path": "strict-clippy-receipt.json",
+      "bytes": 1275,
+      "sha256": "d0ee7ba1862fb9fd18d5b80cf5211efb1569b67d0ae814ec377a8ee00f445812"
+    },
+    {
+      "path": "strict-clippy.log",
+      "bytes": 72,
+      "sha256": "a8dd5b4f852b782842253d071162bc7c3c44c3a9a07131cd1159e45bbb802a10"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 11651,
+      "sha256": "27232d01c27368c0a3db441d7819906ca9484c7c17e967147f87c2f58222289d"
+    },
+    {
+      "path": "whitespace.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "roundtrip_all_members_verified": true,
+  "scope": "Original recorded bytes, including command failures if present; compression adds no new execution claim."
+}

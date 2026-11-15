@@ -1,0 +1,177 @@
+{
+  "schema": "desktop-native-component-validation-v1",
+  "started_unix": 1794058341.0540984,
+  "commit": "9ce78655b574a638c54a0ee9c88d58ffdec74df7",
+  "tree": "c5d1fe8d033e3893e60ba0eb379d99d3ae6e0fd0",
+  "source_scope": "sparse checkout excludes evidence; component development only",
+  "qualification": {
+    "full_source_gate": false,
+    "business_history_gate": false,
+    "attack_pressure_gate": false,
+    "release": false
+  },
+  "steps": [
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794058341.073554,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-9ce/preflight.log",
+      "state": "passed",
+      "exit_code": 0,
+      "finished_unix": 1794058341.1642365,
+      "elapsed_seconds": 0.0906832218170166,
+      "log_sha256": "f17d39e260ff2e037df9d916ad7fc05301ab443190c6f5bbcb60425c7e71a10a"
+    },
+    {
+      "name": "toolchain",
+      "argv": [
+        "rustc",
+        "+1.95.0",
+        "--version",
+        "--verbose"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794058342.278484,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-9ce/toolchain.log",
+      "state": "passed",
+      "exit_code": 0,
+      "finished_unix": 1794058342.3034542,
+      "elapsed_seconds": 0.024970531463623047,
+      "log_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "name": "cargo-version",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "--version",
+        "--verbose"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794058342.3041756,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-9ce/cargo-version.log",
+      "state": "passed",
+      "exit_code": 0,
+      "finished_unix": 1794058342.3441787,
+      "elapsed_seconds": 0.04000377655029297,
+      "log_sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e"
+    },
+    {
+      "name": "provider-version",
+      "argv": [
+        "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider-temp/trnm-pq-provider-3.5.9.XwCOxz9W/install/bin/openssl",
+        "version",
+        "-a"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794058342.3449447,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-9ce/provider-version.log",
+      "state": "passed",
+      "exit_code": 0,
+      "finished_unix": 1794058342.348579,
+      "elapsed_seconds": 0.0036344528198242188,
+      "log_sha256": "3931f03911aa6957b4265e8fd148beffaf5858e10a5b2c8910f43990f4c21583"
+    },
+    {
+      "name": "fetch",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "fetch",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794058342.349199,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-9ce/fetch.log",
+      "state": "passed",
+      "exit_code": 0,
+      "finished_unix": 1794058796.2033913,
+      "elapsed_seconds": 453.8541929721832,
+      "log_sha256": "d9d588ad4d4b975d5d88488aa1c15ec046c5972e27e9fa9d501588a4a7c2465f"
+    },
+    {
+      "name": "node-components",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--all-features",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--",
+        "store::legacy_admission_readback::tests::",
+        "store::legacy_reorg_root_tests::",
+        "store::legacy_reorg_observation_tests::",
+        "store::historical_commitment_tests::",
+        "store::native_authenticated::post_write_readback::tests::",
+        "store::append_readback_tests::",
+        "store::reorg_readback_tests::",
+        "store::authenticated_migration::tests::growth_rehearsal_preserves_all_native_facts_nonce_liabilities_and_cold_checkpoint",
+        "ingress::public_v3::work_rejection::tests::",
+        "ingress::public_v3::work_arithmetic::tests::",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794058796.2199788,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-9ce/node-components.log",
+      "state": "failed",
+      "exit_code": 101,
+      "finished_unix": 1794059307.6428113,
+      "elapsed_seconds": 511.42283368110657,
+      "log_sha256": "5ba3d13e7aee229d60752c3f7655a6cdf7b07cc0d844cebf93d32179187408c0"
+    }
+  ],
+  "build_environment": {
+    "CARGO_HOME": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/cargo",
+    "CARGO_TARGET_DIR": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target",
+    "CARGO_BUILD_JOBS": "8",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "RUST_TEST_THREADS": "1",
+    "OPENSSL_DIR": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider-temp/trnm-pq-provider-3.5.9.XwCOxz9W/install",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider-temp/trnm-pq-provider-3.5.9.XwCOxz9W/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "79bd5e815ce341387d8299e66419fb8a56ba952892df8e3edc967cab60e83437",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider-temp/trnm-pq-provider-3.5.9.XwCOxz9W/install/lib/ossl-modules"
+  },
+  "provider_exports_sha256": "a7459f95527deeab783662483a6f203913fd05ac7fabf4608d00cf2e52479dc4",
+  "source_before": {
+    "head": "9ce78655b574a638c54a0ee9c88d58ffdec74df7",
+    "tree": "c5d1fe8d033e3893e60ba0eb379d99d3ae6e0fd0",
+    "branch": "fix/chain-native-9ce-validation",
+    "status": "",
+    "sparse_patterns": "/*\n!/evidence/",
+    "present_tracked_count": 2319,
+    "missing_tracked_count": 8656,
+    "present_projection_sha256": "9fa64c350cd5e26a662dc01a34c61ee1635085333be59286e52788c93a75f8ae",
+    "cargo_lock_sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be"
+  },
+  "result": "FAILED",
+  "error": "RuntimeError('node-components failed with exit 101')",
+  "source_after": {
+    "head": "9ce78655b574a638c54a0ee9c88d58ffdec74df7",
+    "tree": "c5d1fe8d033e3893e60ba0eb379d99d3ae6e0fd0",
+    "branch": "fix/chain-native-9ce-validation",
+    "status": "",
+    "sparse_patterns": "/*\n!/evidence/",
+    "present_tracked_count": 2319,
+    "missing_tracked_count": 8656,
+    "present_projection_sha256": "9fa64c350cd5e26a662dc01a34c61ee1635085333be59286e52788c93a75f8ae",
+    "cargo_lock_sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be"
+  },
+  "finished_unix": 1794059308.7801785
+}

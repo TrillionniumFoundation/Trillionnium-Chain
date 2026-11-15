@@ -1,0 +1,33 @@
+{
+  "schema": "chain-evidence-publication-base-alignment-v1",
+  "observed_utc": "2026-11-05T11:37:39.104517+00:00",
+  "before": {
+    "head": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+    "tree": "4a0314e72ebc45659986d03e7ca2f96cab9399ea",
+    "branch": "refs/heads/fix/chain-pq-six-domain-owner-completion-20261105",
+    "clean": true
+  },
+  "after": {
+    "head": "549c5a26616113c6aeee76a62f34dd780d729b75",
+    "tree": "3b3371727893db6789a50f18300307f63ea99b84",
+    "branch": "refs/heads/fix/chain-pq-six-domain-owner-completion-20261105",
+    "clean": true
+  },
+  "verified_raw_commit_ancestry_route": [
+    "549c5a26616113c6aeee76a62f34dd780d729b75",
+    "c69cf2beef9aac6a53ba9fc140cfd09f2e623fc6",
+    "fcc8f8a73d9f9463601b3f720afdd2b7f56ed920",
+    "dd10f0aee7de54cbbf6e67c78bf85a5e1d59244d",
+    "32c3d63c907d0060a5b02cd678c74b01e54ec0f9",
+    "13a9d30669785fa84a85985dfbcc744b2a8e3732",
+    "1d6a9f9b5e8abd9e86457f45199a4922f9376360"
+  ],
+  "native_execution_on_publication_base": false,
+  "native_test_source": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+  "prior_git_merge_attempt": {
+    "exit_code": 0,
+    "head_changed": false,
+    "output": "error: Could not read 70d071807028bb8dd6df706c12814b1753129639\nerror: could not parse commit 70d071807028bb8dd6df706c12814b1753129639\nAlready up to date.\n"
+  },
+  "method": "Exact verified fast-forward ancestry, guarded read-tree -m -u and expected-old local update-ref; no reset, force-push, network fetch or peer source edits."
+}

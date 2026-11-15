@@ -1,0 +1,40 @@
+{
+  "sha": "a040a36e5a16822e56cbed29a6dce31b8c265f67",
+  "node_id": "C_kwDOTty1_doAKGEwNDBhMzZlNWExNjgyMmU1NmNiZWQyOWE2ZGNlMzFiOGMyNjVmNjc",
+  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/a040a36e5a16822e56cbed29a6dce31b8c265f67",
+  "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/a040a36e5a16822e56cbed29a6dce31b8c265f67",
+  "author": {
+    "name": "Qian QI",
+    "email": "102159240+ProfHepta@users.noreply.github.com",
+    "date": "2026-11-10T12:24:00Z"
+  },
+  "committer": {
+    "name": "GitHub",
+    "email": "noreply@github.com",
+    "date": "2026-11-10T12:24:00Z"
+  },
+  "tree": {
+    "sha": "eb37d4499ca92121a81ef9c0af1e7b221d5f85b1",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/eb37d4499ca92121a81ef9c0af1e7b221d5f85b1"
+  },
+  "message": "Merge 341b7b6195a44d3f4a758c98f846457567ac1de3 into 0ff81958a611d2c0be54d2ca839b955ae7cb2772",
+  "parents": [
+    {
+      "sha": "0ff81958a611d2c0be54d2ca839b955ae7cb2772",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/0ff81958a611d2c0be54d2ca839b955ae7cb2772",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/0ff81958a611d2c0be54d2ca839b955ae7cb2772"
+    },
+    {
+      "sha": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/341b7b6195a44d3f4a758c98f846457567ac1de3",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/341b7b6195a44d3f4a758c98f846457567ac1de3"
+    }
+  ],
+  "verification": {
+    "verified": true,
+    "reason": "valid",
+    "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJq8wzgCRC1aQ7uu5UhlAAADzgQAA5iWurGY3xRAgywE13fKfdm\nSzqRhB0AYIRTio0h09AXTuS454BBuV6z8wXYVCeh+vX6GqqWfuJ9uRxhC0edvRt/\nviOeGzGtq/fW/RnuSHw2MNOsYHi+YZWw4fry8rWWR3Wk3Omta5qzq0AfdlYyhvRP\nCc0YFZp/5UWv63oxe4Km5ry+MLghLBpn7waX88igxEqVMxQIZLN48uGMg6w6aAco\nPfKgvkHUPddXd3okVV/VsOXG7fEfF2Y9Fv9rq8nzxHWxlnEo/rsShqtjhMg+OgUF\n2KR3C7R5x/fwdG0mEC8PkhwiQ++SS95YJiejRPnUDYXnicbCv7IUK3lQlmkxqhu3\nVNOIMz1PNd6jeSKxEsUTkPE0mV+kHhnQ6txi8LGmeefU2zL4wDjDQLJqXE1oDIBm\nRrg9DYeAhFM3iDqiY83cFdeC3ovKbQJVli4DMlKJ8eUPJ5+8Ip674MuFsv0/8QlJ\nNjyULqHZ44B56N27EiotJJyzBMpEp20ucvc3UqVrCvGOwNM7xA057VtLHDDbfsXQ\nWKtDQ7L4jsblRSBEgEMTPY+/+edu7j+cuN6vFLQra/iqAgO8Gzvrg+6ptwSxTbAW\n1SY+W0tLYvb5gZY76t+n7dOtrHkQw0ZhneJzVvBQZ/3PM24LipuP9RRY+Sm2/QCf\nhFOgEButkDJq8raQ9EOZ\n=Aci+\n-----END PGP SIGNATURE-----\n",
+    "payload": "tree eb37d4499ca92121a81ef9c0af1e7b221d5f85b1\nparent 0ff81958a611d2c0be54d2ca839b955ae7cb2772\nparent 341b7b6195a44d3f4a758c98f846457567ac1de3\nauthor Qian QI <102159240+ProfHepta@users.noreply.github.com> 1794313440 +0000\ncommitter GitHub <noreply@github.com> 1794313440 +0000\n\nMerge 341b7b6195a44d3f4a758c98f846457567ac1de3 into 0ff81958a611d2c0be54d2ca839b955ae7cb2772\n",
+    "verified_at": "2026-11-10T12:24:00Z"
+  }
+}

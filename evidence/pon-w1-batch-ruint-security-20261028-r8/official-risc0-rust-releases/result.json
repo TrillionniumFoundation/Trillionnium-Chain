@@ -1,0 +1,18 @@
+{
+  "schema": "TRNM-RISC0-RUST-OFFICIAL-RELEASES-READ1",
+  "url": "https://api.github.com/repos/risc0/rust/releases?per_page=10",
+  "final_url": "https://api.github.com/repos/risc0/rust/releases?per_page=10",
+  "http_status": 200,
+  "status": "READ_PUBLIC_METADATA",
+  "error": null,
+  "maximum_bytes": 524288,
+  "bytes": 50774,
+  "sha256": "8d8a1e619892f1b813d2adf187e7e09b49ede22e374066e5fc3fb019637e89a8",
+  "socket_timeout_seconds": 15,
+  "wall_seconds": 0.5235562029993162,
+  "process_cpu_seconds": 0.007397999999999995,
+  "source_sha256": "562479649067a1ad3bdb23a514c9f19db023f6fe404ffd9ea235ab0162e822e2",
+  "toolchain_downloaded": false,
+  "native_or_guest_execution": false,
+  "installation_or_mutation_of_toolchains": false
+}

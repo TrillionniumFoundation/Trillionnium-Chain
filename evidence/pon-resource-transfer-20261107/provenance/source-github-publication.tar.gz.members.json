@@ -1,0 +1,55 @@
+{
+  "archive": "source-github-publication.tar.gz",
+  "archive_bytes": 4185,
+  "archive_sha256": "81ce72955d21df129e87a202708c6dc804623d4526d04a0133ee80d353d6c371",
+  "container_metadata_normalized": true,
+  "member_bytes_unchanged": true,
+  "member_count": 7,
+  "members": [
+    {
+      "bytes": 1050,
+      "mode": "0o644",
+      "path": "source-github-publication/MANIFEST.json",
+      "sha256": "a62e8a7a7c6a625aed0ca271ae158107da4906522b03cc5916a7d0a1f4b6ec86"
+    },
+    {
+      "bytes": 730,
+      "mode": "0o644",
+      "path": "source-github-publication/api-readback-terminal-status.json",
+      "sha256": "932de749e244ab8b71988571082f288c6b252fd4f100610bb2b632cbc07e8dba"
+    },
+    {
+      "bytes": 10034,
+      "mode": "0o644",
+      "path": "source-github-publication/publish-source-e95.json",
+      "sha256": "a9a169a39ef333c213bdc5cd758cf82160b92d1af5f12eebd7cc0f37633114e3"
+    },
+    {
+      "bytes": 787,
+      "mode": "0o644",
+      "path": "source-github-publication/push-job-api-timeout-stderr.log",
+      "sha256": "dfa0d5d14ca1312bf341b1ec7d92c98d293a6bba71aafbf94f99e10d876c57ac"
+    },
+    {
+      "bytes": 727,
+      "mode": "0o644",
+      "path": "source-github-publication/push-job-terminal-status.json",
+      "sha256": "b9567e95e9cd5c318df503633ec3620705a7e287e61859d9f98fa5b7691764d7"
+    },
+    {
+      "bytes": 2311,
+      "mode": "0o644",
+      "path": "source-github-publication/source-e95-api-readback.json",
+      "sha256": "22658e70c73db95848a1f2cc8f27548dcd9f6b8f29727311bb2b459f31fc19e1"
+    },
+    {
+      "bytes": 1719,
+      "mode": "0o644",
+      "path": "source-github-publication/summary.json",
+      "sha256": "8026315505db25ff9fb6f784fa01a9ccf5dce7c8b6a6d8d748a540e879499f6c"
+    }
+  ],
+  "payload_bytes": 17358,
+  "readback_verified": true,
+  "schema": "pon-evidence-archive-members-v0"
+}

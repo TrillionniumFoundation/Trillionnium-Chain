@@ -1,0 +1,114 @@
+{
+  "additional_native_tests_or_commands_launched_for_checkpoint": false,
+  "authority": "DENY_ALL",
+  "blocking_observation": {
+    "cryptographic_bad_signature_rejection_proven_by_failed_sample": false,
+    "existing_matrix_comparison": "reports/native-41-existing-matrices.json",
+    "exit_code": 101,
+    "failure": "first legitimate Submit returned Connection reset by peer (os error 104); unwrap at combined_tests.rs:586:6",
+    "failure_report": "reports/native-41-failure.json",
+    "job_id": 130262955743,
+    "matrix": "ubuntu-24.04-arm, head",
+    "native_commands_exit_nonzero": 1,
+    "native_commands_exit_zero": 51,
+    "proximate_path": "high-confidence source/order-supported inference: durable charge/CAS while processing preconstructed bad frame exceeds fixed 250 ms witness cap; unavailable owner rejects the subsequent legitimate connection before body read",
+    "readonly_diagnosis": "reports/native-41-readonly-diagnosis.json",
+    "resource_lifecycle_defect_identified": false,
+    "retry_reconnect_deadline_or_threshold_relaxation_applied": false,
+    "run_id": 42941133598,
+    "selector": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+    "successful_siblings_do_not_replace_failed_sample": true,
+    "underlying_commit_wall_delay_root_cause_identified": false
+  },
+  "completed": {
+    "business": {
+      "job_id": 130267834428,
+      "original_completion_bytes_equal": true,
+      "original_material_readbacks": 2,
+      "python_controls": 144,
+      "report": "reports/business-corpus.json",
+      "run_id": 42941133593
+    },
+    "closure": {
+      "jobs": 6,
+      "per_source": {
+        "campaign_reader": 23,
+        "proof_profile": 26,
+        "scope": 11,
+        "trainer_no_update": 17
+      },
+      "report": "reports/closure-contracts.json",
+      "run_id": 42941133488
+    },
+    "corpus": {
+      "exact_source_blobs": 1079,
+      "inspector_status": "HOLD_NO_GO",
+      "job_id": 130267871370,
+      "original_corpus_controls_in_pq_arm_head": 59,
+      "preserved_required_paths": 987,
+      "report": "reports/business-corpus.json",
+      "run_id": 42941133277,
+      "source_and_claim_step_success_matrix_count": 4
+    },
+    "native_selector_upload": {
+      "all_original_required_reader_identities_match": true,
+      "archive_entries_retained_per_job": 170,
+      "completed_matrix_jobs": 4,
+      "filename_controls_per_job": 25,
+      "original_root_hashes_verified_per_job": 144,
+      "report": "reports/selector-readback.json",
+      "run_id": 42941133309,
+      "selectors_per_job": 18,
+      "source_before_after_identical": true,
+      "unique_reversible_labels": true,
+      "workflow_conclusion": "success"
+    },
+    "repository": {
+      "decoded_log_sha256": "e042069210d06ee15acb1d80d85def0a72c956ad7b83507648f38b56d3c8d7d0",
+      "local_links": 6651,
+      "log_member": "repository.log",
+      "normal_dependency_edges": 27,
+      "original_source": "artifacts/pq-system-controls-arm-head-9d4.zip",
+      "record_member": "repository.json",
+      "result": "PASS",
+      "rust_files": 1470,
+      "source_state": "committed-clean",
+      "workspace_packages": 26
+    }
+  },
+  "created_utc": "2026-11-11T03:33:16.467589+00:00",
+  "evidence_publication_commit_execution_claimed": false,
+  "execution_source": {
+    "base": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+    "head": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+    "parent": "8c95a8d0a9199e9f72405835c8f0662c36af7c42",
+    "prospective_merge": "a8a3bd2dd15d4ec06917ba3a0d1acd4681800cd6",
+    "tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0"
+  },
+  "hepta_final_use_accepted": false,
+  "independent_consumer_accepted": false,
+  "old_execution_qualification_transferred": false,
+  "ordinary_learning_closure_accepted": false,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "real_model_efficacy_accepted": false,
+  "remaining_snapshot": {
+    "live_status_claimed": false,
+    "observed_utc": "2026-11-11 03:24:07 UTC",
+    "pq_whole_jobs_running": true,
+    "required_baseline": {
+      "conclusion": null,
+      "head_sha": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42941133339",
+      "id": 42941133339,
+      "run_attempt": 1,
+      "status": "pending",
+      "updated_at": "2026-11-11T01:44:35Z"
+    },
+    "source": "observations/remaining-workflows-20261111T032407Z.json"
+  },
+  "schema": "trnm-nextuse-final-head-ci-checkpoint-v1",
+  "scope": "Archive and read back existing executions on the fixed source; publication of this checkpoint is not execution qualification of its future evidence commit.",
+  "source_index": "SOURCE_INDEX.json",
+  "whole_pr_green": false
+}

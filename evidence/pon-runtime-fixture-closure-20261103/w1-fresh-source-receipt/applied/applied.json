@@ -1,0 +1,12 @@
+{
+  "applied_utc": "2026-11-03T22:17:46.714346+00:00",
+  "base_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "path": ".github/workflows/pon-w1-work-security.yml",
+  "before_sha256": "7434725504d9ea31e96226d027fbaa2cf2080d56c5a58f41c453685311dc79cf",
+  "after_sha256": "a2fbb452b33462fa34847bb0d790e3b71b4d68d7af91a755803edff47332249f",
+  "patch_sha256": "c9530bea383e91f67a2deb81feebaff149f610f529037ca26d4c3941ea96d1af",
+  "changed_lines": 1,
+  "scope": "Canonical source-receipt output path in fresh-challenge-service only; same verify_ci_source arguments, all downstream source guards and native Host boundaries unchanged.",
+  "native_source_changed": false,
+  "host_or_service_acceptance": false
+}

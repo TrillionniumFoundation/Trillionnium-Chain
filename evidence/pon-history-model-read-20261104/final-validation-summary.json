@@ -1,0 +1,12 @@
+{
+  "all_planned_commands_executed": false,
+  "all_executed_commands_passed": false,
+  "source_unchanged": true,
+  "source_file_count": 7987,
+  "source_bytes": 929309500,
+  "records": 10,
+  "planned": 14,
+  "production_activation": false,
+  "original_f0_executed": false,
+  "public_service_qualified": false
+}

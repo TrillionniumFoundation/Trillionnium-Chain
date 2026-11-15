@@ -1,0 +1,30 @@
+{
+  "files": {
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs": {
+      "bytes": 114299,
+      "retained": "candidate-before/pon_commitment.rs.txt",
+      "sha256": "d330e462e793ea187ccb525ac7e2c03c6009135860f09417b5dc74f348f0e832"
+    },
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs": {
+      "bytes": 21699,
+      "retained": "candidate-before/unchanged_snapshot_tests.rs.txt",
+      "sha256": "a05f89968f93d427a6910767fa61e39063369dbb2b29fb6939b75e9543899956"
+    },
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": {
+      "bytes": 149747,
+      "retained": "candidate-before/pon_executor.rs.txt",
+      "sha256": "aa8ce1e89aa23a18fa5563b46fc9d43e9d834899a8301a8f70819c07e60d88b0"
+    },
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/canonical_comparison_tests.rs": {
+      "bytes": 3248,
+      "retained": "candidate-before/canonical_comparison_tests.rs.txt",
+      "sha256": "2a9c7130fc264b670e2b2041f99a2d51cf6f26faa4eb1200df04ce8a127bc29c"
+    }
+  },
+  "head": "b8116f65789a85148254f870c678a44f895316de",
+  "patch_file": "candidate-before-three-arm.patch",
+  "patch_sha256": "7682f1e32fc8584fdf2a0e985a49ce06bec7180f9af5977679d1d62502cf10b4",
+  "previous_measurement_scope": "40a5 base plus c798afd98869d9a669af92cde9ca7dc6f85fb59a3a05e83917f9937f787bc8c7 M06 manifest; previous two-arm logs are not the new three-arm result",
+  "schema": "checked-prefix-candidate-preservation-v1",
+  "scope": "actual independent checked-prefix candidate with its original two-arm test, preserved before adding a new preregistered three-arm experiment; no acceptance claimed"
+}

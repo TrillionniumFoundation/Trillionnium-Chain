@@ -1,0 +1,20 @@
+{
+  "schema": "trnm-v4-assisted-source-review-observation",
+  "source_commit": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+  "scope": "Read-only assistant review of native runner inventory, required CI wiring, custody/floor qualification language, migration review and dependency declaration boundaries.",
+  "review_executed_tests": false,
+  "external_independent_review": false,
+  "cryptographic_proof_verified": false,
+  "findings_at_frozen_source": [],
+  "preserved_limits": [
+    "26 exact V4 selector results do not substitute for full protocol, full workspace or all hosted gates.",
+    "Before/after source equality is not continuous enforced immutability or independent executor authentication.",
+    "A complete signed ancestor floor is conditional on authenticated sufficiently fresh external retention.",
+    "Default V3 opening remains unpinned; not every effect path is forced through the V4 API.",
+    "Signed provider declarations do not prove actual effects, provider independence or current production effect authority.",
+    "A refused newer orphan notification is not accepted into an internal pending queue; the caller retains it.",
+    "Evidence hashes and distinct labels do not authenticate people, devices, key identities, proofs or lifetime populations.",
+    "Earlier failed original native campaigns remain failed at their recorded source."
+  ],
+  "status": "HOLD"
+}

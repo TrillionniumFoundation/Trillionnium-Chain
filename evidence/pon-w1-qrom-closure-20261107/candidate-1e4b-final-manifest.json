@@ -1,0 +1,413 @@
+{
+  "existing_markdown_changes": [
+    {
+      "after_bytes": 631606,
+      "after_sha256": "31caccc146eb3d95c5744228c2706a6b8ee4aee05bcb0b189f5136340b6b2cdc",
+      "before_bytes": 629470,
+      "before_sha256": "c252a7a8dae1fd660f97334231b59c6c6f2024e2e6bc26d0ddf9be74fd7cec46",
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    },
+    {
+      "after_bytes": 27708,
+      "after_sha256": "aed71ac9f23bae32169cf49a89f46d1a8cf85646601eff060ba909913cf8d94c",
+      "before_bytes": 23418,
+      "before_sha256": "1fe2b8d4cef6fee9cf352376b66faec4ba9cc90d1033de553aebc4fa1cccc746",
+      "path": "docs/security/W1_QROM_CLOSURE_CONTINUATION_20261107.md"
+    },
+    {
+      "after_bytes": 17330,
+      "after_sha256": "2e0ebb393c89091ae893e844b0340b2ee77442167f6cf4628f0def7be6d2de94",
+      "before_bytes": 13577,
+      "before_sha256": "f082d455fd489a484da67763d894f018d95a082ee2b7e9ad9f50c3de2b25012e",
+      "path": "evidence/pon-w1-qrom-closure-20261107/README.md"
+    }
+  ],
+  "index_empty_at_preparation": true,
+  "manifest_self_hash_excluded": true,
+  "missing_existing_files_are_not_staged": true,
+  "missing_historical_evidence_count": 359,
+  "new_file_count_excluding_this_manifest": 74,
+  "new_files": [
+    {
+      "bytes": 7115,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-final-summary.json",
+      "sha256": "7ad3fd19e23a24ae6cf29005c0351cfdb3a207dd849ccc7d10df2bca135100d4"
+    },
+    {
+      "bytes": 5316,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/assemble-final-native-evidence.py",
+      "sha256": "1f1bb26bdf505e9727a4d225d72613862fb595251b2b123b415bde21d99b56db"
+    },
+    {
+      "bytes": 731,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/controller-terminal.json",
+      "sha256": "1f65b42512567bddf6fe95b1abbc7ea64b1513248156cfc2d70ae8e2d81e0430"
+    },
+    {
+      "bytes": 6641,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/copy-manifest.json",
+      "sha256": "5ef095f86b9202c4cc347ef547e1feb1380302b15e5ff7af05b9e5ff38cc7c74"
+    },
+    {
+      "bytes": 650,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/independent-archive-integrity.json",
+      "sha256": "a571ea7f8fb512a3f2deaa7e819cefdc4e6694549d5d886856515b1825e4a83f"
+    },
+    {
+      "bytes": 1341,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/independent-review-manifest.json",
+      "sha256": "5468c4efc264068ca89dd9d36d23de8fea09faa3cd0c0d8256cd3d2da2a1bd85"
+    },
+    {
+      "bytes": 530,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/independent-review-package-result.json",
+      "sha256": "d1dec8725d545eca1fcefcfc59be46cf9fb53d1aeec7f3f6c03581154aa26103"
+    },
+    {
+      "bytes": 16729,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/independent-review.py",
+      "sha256": "010727a4af63d8b49fc6291754db67110754b89a6b6fcf2ce5c064b99e0339f8"
+    },
+    {
+      "bytes": 12074,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/independent-review.tar.gz",
+      "sha256": "e76b70ea6911bd015a0f2eb5cf98f7283111ad148734b48ec22f8c744ce5b2e5"
+    },
+    {
+      "bytes": 24356,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/independent-summary.json",
+      "sha256": "90ee6d281e5b4d4e71ef3ca8c27eb49b66cf3260bf58840278ef0b3041e66d00"
+    },
+    {
+      "bytes": 6684,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/key-fifteen-completion.json",
+      "sha256": "c1dc07256e70241643786fe77319d92aa07dc1c829af95d2576fb2d9998e3d4c"
+    },
+    {
+      "bytes": 22123,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/manifest.json",
+      "sha256": "180332efa62927fd8b8f5e93b020d5bfe0ea7f0c5f01192c94fb18087129aa20"
+    },
+    {
+      "bytes": 57689,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/native-summary.json",
+      "sha256": "ddf738cce4d0d37d2d53cca440dc2f84b0a039372d88b299fe53b64fbd12cf1f"
+    },
+    {
+      "bytes": 1066112,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/observations.tar.gz",
+      "sha256": "787ecdea6f3dfb11f03b61dd20f2484b763453f390b3d9802ca37e0cc5ec89c0"
+    },
+    {
+      "bytes": 502,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/package-result.json",
+      "sha256": "2a88e22709834530107e147404ea7c8b8d4886e98b6a8965883377da7c048961"
+    },
+    {
+      "bytes": 9320,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/release-owner-compiled-roster.json",
+      "sha256": "103a55b257aab35772cf19cdc2530168248feceffbcf2579b26301d920639cec"
+    },
+    {
+      "bytes": 1029,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/release-owner-tests.json",
+      "sha256": "d75364e022ba0630bbfbd18dca949c7307dc2771c59d9721fdc73ecd0ab22591"
+    },
+    {
+      "bytes": 291,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/release-owner-tests.stderr.log",
+      "sha256": "d49ba74ab56f4e203a1cd95ff6f5dc586c753a20b49617fff0822c4235b66ed5"
+    },
+    {
+      "bytes": 5669,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/release-owner-tests.stdout.log",
+      "sha256": "36adedc308cbe8b23fc97e3631296c005c75b5becf78bb6f37261f477e244387"
+    },
+    {
+      "bytes": 327,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/review-process-semantics.json",
+      "sha256": "bd2db960108e07f3d0b933deae4f2f8223c79e6dbf53c3891f47ff9fa8c9e44f"
+    },
+    {
+      "bytes": 34607,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/run_candidate.py",
+      "sha256": "0de72bb06ab637ffb834a3f7d22a024f8f031dbadfd79bf53373f82823f764c7"
+    },
+    {
+      "bytes": 296,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/sealed-production-comment-only.json",
+      "sha256": "b07a04d2db8015a3f1d915c827ef96f6e543716f8d1c2d256112229905b54ebc"
+    },
+    {
+      "bytes": 1320,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/selected-source-comparison.json",
+      "sha256": "c41e51e20abf95eb3cf68d89b6b519683df94cfb2a258a55dd34e762e7437f49"
+    },
+    {
+      "bytes": 446,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/selected-source-third-check.json",
+      "sha256": "6d704ee74f133f58d8f8517d45210781af3ea65307b383efa2fe68029e65d7ee"
+    },
+    {
+      "bytes": 12566,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native-package-manifest.json",
+      "sha256": "52f7424ccc547c179a6811bd5793ab3324c3db118c021f87a438db22ff435a5d"
+    },
+    {
+      "bytes": 5301,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-preparation/fixture-inventory.json",
+      "sha256": "fa9c9dc7c4e15507008cfcc89bbdf9f0b460d67108bec49261e3c9ca5929d389"
+    },
+    {
+      "bytes": 8101,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-preparation/initial-report.json",
+      "sha256": "f70ff9a5815a3104ec236a837f1e7d23d20a2fd36fd901295d7e1e4dd539134c"
+    },
+    {
+      "bytes": 9510,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-preparation/manifest.json",
+      "sha256": "68db252a938c68d156f5be24ec2543450ce496918da10d7648c395f7c89a22be"
+    },
+    {
+      "bytes": 270118,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-preparation/observations.tar.gz",
+      "sha256": "a77a0655e100dcaf30a8a30271019f2dfedf411244cce9b2b2aab79a6d460747"
+    },
+    {
+      "bytes": 1489,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-preparation/restored-source-pins.json",
+      "sha256": "c907c6e09ca050260a04daf04639b279a940b0f2981ac7447fa9388e752b66a4"
+    },
+    {
+      "bytes": 701,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-python/ci-contract-source-147.json",
+      "sha256": "bb1b06cb2d95be8273de1a23294c0c19f3e25e7dd53917ac7d7ef71d02c304b5"
+    },
+    {
+      "bytes": 9041,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-python/executed-controller.py",
+      "sha256": "9d7cbb1eb45bce72ba774c667423957644afd44351c57eec56a7c450899e30c5"
+    },
+    {
+      "bytes": 4955,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-python/manifest.json",
+      "sha256": "ee062c2dcb31e906677433c9a95f6875c3b266f428504a0634f92e31a843bf25"
+    },
+    {
+      "bytes": 478855,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-python/observations.tar.gz",
+      "sha256": "2e32108380991aa71d8fe8a5af52ae0a0c2e9f0f9110bd195003308f72af9578"
+    },
+    {
+      "bytes": 666,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-python/pq-research-38.json",
+      "sha256": "28c3950473ddbecf55f3ffdd8a147679e379602d47c6f42cfe609ad493438cb9"
+    },
+    {
+      "bytes": 6109,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-python/report.json",
+      "sha256": "ddb692da9ee51d6bd8ced7129029e0834ae0fe420aef05ee599f9725835b944d"
+    },
+    {
+      "bytes": 700,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-python/w1-314.json",
+      "sha256": "1d576957cf2a4d2b9a0ab7f36c45e49c0cfb5ac14bd107c83f0b73b07f97a0e5"
+    },
+    {
+      "bytes": 158,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-repository/initial-check.stderr.log",
+      "sha256": "8df0cc04c894ff23b61527f455916dcc6ef5a70b451aa32bae11809b5f1d4749"
+    },
+    {
+      "bytes": 1220,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-repository/initial-report.json",
+      "sha256": "8872cf44c0ca1497d808158c369e95d762dd96be9a4efba1612a0bb0c3b6e2cd"
+    },
+    {
+      "bytes": 186,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-repository/link-restoration-complete.json",
+      "sha256": "46b3c4a95b8effb8d822ea8d2f325241fb69c470bc7af09bf908d196c4d36ed1"
+    },
+    {
+      "bytes": 126386,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-repository/link-restoration.json",
+      "sha256": "a3458ed22cb2bd6683d46ddae633b1146f9eed0b26a297f178a723d2c007b64c"
+    },
+    {
+      "bytes": 4405,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-repository/manifest.json",
+      "sha256": "d59ec48240c0cdb04ec72bbd3acb65013dfbbbbcd2f5927d952d3a0b1fc36ace"
+    },
+    {
+      "bytes": 2113947,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-repository/observations.tar.gz",
+      "sha256": "3e896af8114d5dfd3b5ae3f80b2151bd70845e11079609561e990e6c1024594c"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-repository/restored-check.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 307,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-repository/restored-check.stdout.log",
+      "sha256": "e051a0fbc95a4a0d98484da43ece1b2b9349f27cd48ffa4981c2f0f54df31735"
+    },
+    {
+      "bytes": 1531,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-repository/restored-report.json",
+      "sha256": "d2ff9226bd587fe3079299931458f13475296083e399fe10097648b0f84fbd8a"
+    },
+    {
+      "bytes": 4815,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/copy-manifest.json",
+      "sha256": "4ac2a5853acd681e849bc9173aad6c3b10bd3f0391ca93536edf38463d96eb7d"
+    },
+    {
+      "bytes": 3757,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/diagnostic-summary.json",
+      "sha256": "7776a1dea1ee55c48400de1e609b652eb20aec4eeb1aa8948906367d64e8e29f"
+    },
+    {
+      "bytes": 3249,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/manifest.json",
+      "sha256": "67cc0c4549a7eaeb6caaa49a9aaa5f5ce95d1ae3d69caee4cb54b81ba988446a"
+    },
+    {
+      "bytes": 561619,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/observations.tar.gz",
+      "sha256": "413a6c7bf5a589b876cf05dd72855379b1643b9da2cbe19d64bacc3a5d5a9d09"
+    },
+    {
+      "bytes": 401,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/package-result.json",
+      "sha256": "bebbc8ee583612096966efac10eb5a4f49b328c8ab2ba47520c62abe6d35d144"
+    },
+    {
+      "bytes": 5169,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/run_diagnostic.py",
+      "sha256": "e174c42a689eaff097c3801c4b5bbf6a37ca45c607d616653ccf16758040b4d3"
+    },
+    {
+      "bytes": 1131,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/service-exact-test.json",
+      "sha256": "924d9ada313f931ca5d6de8a98a160e5eaba34f3c0f14022129c9bf8d2617774"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/service-exact-test.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 239,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/service-exact-test.stdout.log",
+      "sha256": "3f5cb75229475635bd5f2e16f44ef41792e819838eebe5c5b30db9d67670c677"
+    },
+    {
+      "bytes": 6444,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/source-clock_contract.rs",
+      "sha256": "c3316e46b63ee47a2467dfe5a31d9ab934881d2d4dde0137b93a51f09b158b92"
+    },
+    {
+      "bytes": 5931,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/source-frontier_service.rs",
+      "sha256": "ebce1d727a1e8c89327b53b345d7e4da9b3329dbeb955b1a7356214b541c3273"
+    },
+    {
+      "bytes": 1305,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/source-identities.json",
+      "sha256": "bb912b3a458d55fb25b961b8196ccef65d323490216eab11cdda6a53d5a41eff"
+    },
+    {
+      "bytes": 3396,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/source-service_clock.rs",
+      "sha256": "702f582374706400530529bce619acd86228222152eb1e5d34bb453b1e169e60"
+    },
+    {
+      "bytes": 8222,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/source-service_store.rs",
+      "sha256": "b4a3a5c375db867241d3df56a78f0347af4853d785be285c77f92d0adfde89d8"
+    },
+    {
+      "bytes": 10775,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/source-service_test_fixture.rs",
+      "sha256": "7c34a71f0180c740fd7a4cef9bcd196ff09ed5d479c3153899ddc4d7331b96d6"
+    },
+    {
+      "bytes": 11809,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/source-service_tests.rs",
+      "sha256": "1b47a8384fa20bfd7c2a15c41f4a693eb8cede29c8100f45885d8ac80e66fee0"
+    },
+    {
+      "bytes": 10279,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-source-review/service-window-source-review.json",
+      "sha256": "70025d9625fc39200c61b3e5a5e9d398cc186ffe1f28df831ebf8ab0f8071ed5"
+    },
+    {
+      "bytes": 3695,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-transfer/assemble-bundle.py",
+      "sha256": "572396f2d82aa01a238f938ce9a164d4f158a982a8c91703e3a538e5004432f6"
+    },
+    {
+      "bytes": 564,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-transfer/binary-file-info.json",
+      "sha256": "5e577d9ddf864a9f755ba9c0dd0b8fefb290586ed8096f1bfde2f3b94eb5ab4c"
+    },
+    {
+      "bytes": 479,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-transfer/failed-upload-observations.json",
+      "sha256": "1c582a7b275e3c6ab1ef7793880356c26f6831eab19695a96dec5ed1629b948e"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-transfer/heads.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 46,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-transfer/heads.stdout",
+      "sha256": "dcc80cebda34987aaf62c420879ca68f2a5e6e0dbbb1686a9420edda9e3e5e43"
+    },
+    {
+      "bytes": 7041,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-transfer/manifest.json",
+      "sha256": "cd676c04b33ffd730da21e4caf49dda7a40fffdf0d89252e9ae5205a05db97d4"
+    },
+    {
+      "bytes": 15101,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-transfer/part-write-receipts.json",
+      "sha256": "b61cce9328a356f61ff8c7193f428243e3836cd393d98d644d1424a80efa5038"
+    },
+    {
+      "bytes": 732,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-transfer/process-terminal.json",
+      "sha256": "5979f2c3761bee02c7c66ecca8731adb669d5b47f4c17b50a8e64f04648ece06"
+    },
+    {
+      "bytes": 17910,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-transfer/transfer-report.json",
+      "sha256": "ae119d188ae215290e53d48e54880c95ed849613b297787923a4a0a9d9387947"
+    },
+    {
+      "bytes": 107,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-transfer/verify.stderr",
+      "sha256": "a7828a3b168e691f4bd2439148c7566e2ff8961300f00b077ea1d9b6ac554f0d"
+    },
+    {
+      "bytes": 207,
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-transfer/verify.stdout",
+      "sha256": "e69c530adada9a7b3c4af6fd1d9a4fff821a92411e4860d517102b3e50d8bad0"
+    }
+  ],
+  "original_obligation_disposition_sha256": "04913db0d754cd66b5d1209d84d798bc49d702f7b3cb18f2c74570b39740ed0b",
+  "post_quantum_soundness_qualified": false,
+  "production_configuration_scripts_formal_fixed_fixtures_unchanged": true,
+  "production_qualified": false,
+  "schema": "TRNM-W1-A-TESTED-B-FINAL-PACKET1",
+  "source_identity_scope": "All materialized pre-edit A entries checked again; exactly three Markdown changes. Missing historical evidence is explicit. Complete tracked-worktree qualification remains false.",
+  "status": "HOLD",
+  "tested_source": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+  "tested_tree": "23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0",
+  "unchanged_materialized_existing_files_checked": 11033,
+  "whole_source_qualified": false
+}

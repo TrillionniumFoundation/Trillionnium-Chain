@@ -1,0 +1,6 @@
+# Retain byte-exact original output, including failure logs and terminal blank lines.
+# Only these four new captured logs are data; text diffs remain available.
+pq-closure-integration-20261111/hosted-315/campaign/run-1.stdout.log -text -whitespace
+pq-closure-integration-20261111/hosted-315/campaign/run-2.stdout.log -text -whitespace
+pq-closure-integration-20261111/hosted-315/campaign/run-3.stdout.log -text -whitespace
+pq-closure-hosted-c09dbbe992/native/original-campaign-job-130309763995.log -text -whitespace

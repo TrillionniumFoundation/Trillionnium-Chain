@@ -1,0 +1,33 @@
+{
+  "schema": "TRNM-W1-OWNER-CAPACITY-C1B-COMMIT1",
+  "source_commit": "0f18f93f2d35b62c6ca6d63faf4f336d55cbf4bf",
+  "source_tree": "94334bb6b52cfd13040059a5e71f47d8cc9603f2",
+  "parent": "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11",
+  "repo_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo",
+  "branch": "fix/chain-w1-runtime-integrated-20261107",
+  "changed_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/ci_job.sh",
+    "scripts/ci/test_ci_contract.py",
+    "scripts/test_w1_generation_target_v2.py",
+    "scripts/test_w1_owned_generation_runtime_v2.py",
+    "scripts/test_w1_owner_cancellation_v1.py",
+    "scripts/w1_generation_target_v2.py",
+    "scripts/w1_owned_generation_runtime_v2.py",
+    "scripts/w1_owner_cancellation_v1.py"
+  ],
+  "changed_count": 11,
+  "source_clean": true,
+  "raw_source_guard": {
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/root-C1b-commit-01/source-after.json",
+    "sha256": "ff53757db8a8ae10931e26993b1a4234777dce62672e46fd4e2d618ad463c8be"
+  },
+  "candidate_manifest_sha256": "4c6ffb3f9dd1ea1017f748961c490e45623dd2091dac7718542cf214ebff529c",
+  "closed_edit_lock_count": 6,
+  "A_untouched_and_clean": true,
+  "exact_C1b_build_qualification_complete": false,
+  "new_heavy_cancellation_run": false,
+  "pushed": false
+}

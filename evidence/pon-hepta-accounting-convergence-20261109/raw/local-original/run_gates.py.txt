@@ -1,0 +1,23 @@
+import pathlib,json,subprocess,os,sys,time,hashlib
+root=pathlib.Path('/workspace/scratch/d9bbb5ad0229/chain-accounting-convergence')
+out=pathlib.Path('/workspace/scratch/d9bbb5ad0229/accounting-convergence-setup/gates-c1');out.mkdir(exist_ok=True)
+sha='e8f81ca15634d0393e7bc6257193b4dbe88d9b2e'
+env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1',CARGO_HOME='/workspace/scratch/ac851b3fedf0/toolchains/cargo',RUSTUP_HOME='/workspace/scratch/ac851b3fedf0/toolchains/rustup',CARGO_TARGET_DIR='/workspace/scratch/d9bbb5ad0229/accounting-convergence-setup/target-clippy',CARGO_INCREMENTAL='0',CARGO_BUILD_JOBS='1',RUST_TEST_THREADS='1')
+env['PATH']='/workspace/scratch/ac851b3fedf0/toolchains/cargo/bin:'+env['PATH']
+prior=json.loads(pathlib.Path('/workspace/scratch/ac851b3fedf0/chain-validation-runtime-91dd3082/crypto-library.json').read_text())
+for k in ('OPENSSL_DIR','OPENSSL_STATIC','TRNM_PQ_OPENSSL','TRNM_PQ_OPENSSL_SHA256','TRNM_PQ_OPENSSL_VERSION'):
+ if prior['environment'].get(k):env[k]=prior['environment'][k]
+cmds=[('source-negatives',['python3','-u','-B','scripts/ci/test_ci_source_integrity.py']),('ci-negatives',['python3','-u','-B','scripts/ci/test_ci_contract.py']),('corpus-negatives',['python3','-u','-B','scripts/ci/test_pq_research_integration.py']),('corpus-identity',['python3','-B','scripts/ci/check_pq_research_integration.py']),('repository-links',['python3','-B','scripts/ci/check_repository.py']),('strict-clippy',['cargo','+1.95.0','clippy','--manifest-path','trillionnium/Cargo.toml','--locked','--offline','--workspace','--all-targets','--all-features','--','-D','warnings'])]
+summary={'source':sha,'results':[],'all_commands_executed':False,'all_commands_passed':False,'qualification':'HOLD_NO_GO'}
+for label,argv in cmds:
+ command=['python3','scripts/ci/record_pq_native_command.py','--kind','head','--candidate',sha,'--tested',sha,'--label',label,'--output',str(out),'--',*argv]
+ t=time.monotonic();p=subprocess.run(command,cwd=root,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+ (out/(label+'.recorder.stdout')).write_bytes(p.stdout);(out/(label+'.recorder.stderr')).write_bytes(p.stderr)
+ receipt=json.loads((out/(label+'.json')).read_text())
+ row={'label':label,'status':receipt['status'],'exit_code':receipt['exit_code'],'recorder_exit_code':p.returncode,'wall_seconds':time.monotonic()-t,'log_sha256':receipt.get('log_sha256')}
+ summary['results'].append(row);(out/'summary.json').write_text(json.dumps(summary,indent=2)+'\n');print(json.dumps(row),flush=True)
+ if p.returncode!=0:break
+summary['all_commands_executed']=len(summary['results'])==len(cmds)
+summary['all_commands_passed']=summary['all_commands_executed'] and all(r['status']=='command_succeeded' for r in summary['results'])
+(out/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+sys.exit(0 if summary['all_commands_passed'] else 1)

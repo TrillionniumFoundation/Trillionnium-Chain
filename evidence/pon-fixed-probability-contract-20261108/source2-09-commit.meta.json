@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "git",
+    "commit",
+    "-m",
+    "Add fixed-probability cost contracts and bounded branch schedule research",
+    "-m",
+    "Add exact credit feasibility and finite amortized potential certificates, unproved source-bound MU1 cost envelopes and independent finite oracles. Add C0/C1 branch arithmetic, fresh target-bound PNH1/PGH2 evidence, complete scalar replay and mandatory CI checks. All activation, universal cost, quantum and joint-security qualifications remain closed."
+  ],
+  "exit": 0,
+  "duration_seconds": 0.25392872490920126,
+  "cwd": "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38",
+  "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3"
+}

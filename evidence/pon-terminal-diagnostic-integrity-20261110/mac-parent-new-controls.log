@@ -1,0 +1,98 @@
+test_conflicting_import_success_does_not_hide_stage_failure (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_conflicting_import_success_does_not_hide_stage_failure) ... FAIL
+test_missing_or_nonboolean_terminal_flags_remain_unknown (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_missing_or_nonboolean_terminal_flags_remain_unknown) ... 
+  test_missing_or_nonboolean_terminal_flags_remain_unknown (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_missing_or_nonboolean_terminal_flags_remain_unknown) (key='started', value=None) ... FAIL
+  test_missing_or_nonboolean_terminal_flags_remain_unknown (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_missing_or_nonboolean_terminal_flags_remain_unknown) (key='started', value='true') ... FAIL
+  test_missing_or_nonboolean_terminal_flags_remain_unknown (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_missing_or_nonboolean_terminal_flags_remain_unknown) (key='completed', value=1) ... FAIL
+  test_missing_or_nonboolean_terminal_flags_remain_unknown (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_missing_or_nonboolean_terminal_flags_remain_unknown) (key='accepted', value=0) ... FAIL
+test_unreturned_or_unstarted_stage_cannot_be_a_deadline_boundary (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_unreturned_or_unstarted_stage_cannot_be_a_deadline_boundary) ... 
+  test_unreturned_or_unstarted_stage_cannot_be_a_deadline_boundary (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_unreturned_or_unstarted_stage_cannot_be_a_deadline_boundary) (key='started') ... FAIL
+  test_unreturned_or_unstarted_stage_cannot_be_a_deadline_boundary (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_unreturned_or_unstarted_stage_cannot_be_a_deadline_boundary) (key='completed') ... FAIL
+
+======================================================================
+FAIL: test_conflicting_import_success_does_not_hide_stage_failure (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_conflicting_import_success_does_not_hide_stage_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/.git/throughput-terminal-integrity-20261110-1652/standalone-original/test_inspect_native_campaign_failure.py", line 251, in test_conflicting_import_success_does_not_hide_stage_failure
+    self.assertEqual(result["boundary_status"], "unknown")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'no_terminal_import_failure' != 'unknown'
+- no_terminal_import_failure
++ unknown
+
+
+======================================================================
+FAIL: test_missing_or_nonboolean_terminal_flags_remain_unknown (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_missing_or_nonboolean_terminal_flags_remain_unknown) (key='started', value=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/.git/throughput-terminal-integrity-20261110-1652/standalone-original/test_inspect_native_campaign_failure.py", line 243, in test_missing_or_nonboolean_terminal_flags_remain_unknown
+    self.assertEqual(result["boundary_status"], "unknown")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'observed_deadline_at_stage' != 'unknown'
+- observed_deadline_at_stage
++ unknown
+
+
+======================================================================
+FAIL: test_missing_or_nonboolean_terminal_flags_remain_unknown (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_missing_or_nonboolean_terminal_flags_remain_unknown) (key='started', value='true')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/.git/throughput-terminal-integrity-20261110-1652/standalone-original/test_inspect_native_campaign_failure.py", line 243, in test_missing_or_nonboolean_terminal_flags_remain_unknown
+    self.assertEqual(result["boundary_status"], "unknown")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'observed_deadline_at_stage' != 'unknown'
+- observed_deadline_at_stage
++ unknown
+
+
+======================================================================
+FAIL: test_missing_or_nonboolean_terminal_flags_remain_unknown (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_missing_or_nonboolean_terminal_flags_remain_unknown) (key='completed', value=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/.git/throughput-terminal-integrity-20261110-1652/standalone-original/test_inspect_native_campaign_failure.py", line 243, in test_missing_or_nonboolean_terminal_flags_remain_unknown
+    self.assertEqual(result["boundary_status"], "unknown")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'observed_deadline_at_stage' != 'unknown'
+- observed_deadline_at_stage
++ unknown
+
+
+======================================================================
+FAIL: test_missing_or_nonboolean_terminal_flags_remain_unknown (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_missing_or_nonboolean_terminal_flags_remain_unknown) (key='accepted', value=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/.git/throughput-terminal-integrity-20261110-1652/standalone-original/test_inspect_native_campaign_failure.py", line 243, in test_missing_or_nonboolean_terminal_flags_remain_unknown
+    self.assertEqual(result["boundary_status"], "unknown")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'observed_deadline_at_stage' != 'unknown'
+- observed_deadline_at_stage
++ unknown
+
+
+======================================================================
+FAIL: test_unreturned_or_unstarted_stage_cannot_be_a_deadline_boundary (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_unreturned_or_unstarted_stage_cannot_be_a_deadline_boundary) (key='started')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/.git/throughput-terminal-integrity-20261110-1652/standalone-original/test_inspect_native_campaign_failure.py", line 270, in test_unreturned_or_unstarted_stage_cannot_be_a_deadline_boundary
+    self.assertEqual(result["boundary_status"], "unknown")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'observed_deadline_at_stage' != 'unknown'
+- observed_deadline_at_stage
++ unknown
+
+
+======================================================================
+FAIL: test_unreturned_or_unstarted_stage_cannot_be_a_deadline_boundary (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_unreturned_or_unstarted_stage_cannot_be_a_deadline_boundary) (key='completed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/.git/throughput-terminal-integrity-20261110-1652/standalone-original/test_inspect_native_campaign_failure.py", line 270, in test_unreturned_or_unstarted_stage_cannot_be_a_deadline_boundary
+    self.assertEqual(result["boundary_status"], "unknown")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'observed_deadline_at_stage' != 'unknown'
+- observed_deadline_at_stage
++ unknown
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+FAILED (failures=7)

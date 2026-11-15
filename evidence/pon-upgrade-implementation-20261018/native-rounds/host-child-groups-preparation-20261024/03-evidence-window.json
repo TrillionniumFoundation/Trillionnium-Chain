@@ -1,0 +1,17 @@
+{
+  "actual_exit_status": "UNKNOWN",
+  "export_window_seconds": 60,
+  "fresh_leaf_phase": "CHILD_GROUPS_PREPARED",
+  "money_return": false,
+  "no_stop_delete_reset_retry_or_explicit_fd_retirement": true,
+  "old_unit_must_never_be_reused": true,
+  "ordinary_exit_will_lose_owner": true,
+  "original_owner_retained_during_window": true,
+  "outcome": "CHILD_GROUPS_PREPARED_ONLY",
+  "pid": 1311262,
+  "preparation_profile": "FRESH_U_CHILD_GROUPS_ONLY_V1",
+  "probe_completed_successfully": false,
+  "resource_return_proven": false,
+  "source": "03b67a955b8fcb6b6c920be584eaad5c0a71d34d",
+  "whole_u_terminal": false
+}

@@ -1,0 +1,11 @@
+{
+  "head": "8dc744e03d95b0adcf65fc87471b41e89f1287c3",
+  "scope": "selected source files only; final full committed-source gate is run by parent",
+  "files": {
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs": "ce9efc2dc6160bcd1fc47163167deffb5b1f51926e98405bba7f7344fbdf179e",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/equivocation_history_tests.rs": "35ace44907af0580609799cf54aadd4b4002800672a3370cedec67756e847e32",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/Cargo.lock": "9a09acd113a1db1918ff81922e9f3f9a91ddae94b873d75951bca2fd5f6868b3"
+  },
+  "selected_files_equal_before": true
+}

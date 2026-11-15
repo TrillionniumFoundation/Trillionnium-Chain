@@ -1,0 +1,19 @@
+
+running 1 test
+test cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_source ... FAILED
+
+failures:
+
+---- cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_source stdout ----
+authenticated-v3 quota preparation: result=Err(Invalid("authenticated discovery has no admissible provider")), observation=CellDiscoveryObservationV3 { connection_attempts: 2, received_response_bytes: 35476, record_validation_attempts: 8, bootstrap_validation_attempts: 2, announcement_signature_attempts: 0, rejected_records: 0, capacity_rejections: 0, rejected_bootstraps: 0, ineligible_bootstraps: 0 }, elapsed=3.265956624s, requests_left=0, actual_response_bytes=Ok(35476)
+
+thread 'cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_source' (1240784) panicked at crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs:1561:5:
+a quota-refused newer withdrawal allowed an older source: Ok([127.0.0.1:19001])
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_source
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 467 filtered out; finished in 7.75s
+

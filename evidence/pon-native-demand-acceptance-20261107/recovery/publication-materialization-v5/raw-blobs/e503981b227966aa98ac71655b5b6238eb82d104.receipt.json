@@ -1,0 +1,22 @@
+{
+  "actual_bytes": 1071463,
+  "actual_git_blob_sha1": "e503981b227966aa98ac71655b5b6238eb82d104",
+  "command": [
+    "/usr/bin/gh",
+    "api",
+    "-H",
+    "Accept: application/vnd.github.raw+json",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/e503981b227966aa98ac71655b5b6238eb82d104"
+  ],
+  "elapsed_seconds": 6.2423059940338135,
+  "exit_code": 0,
+  "expected_blob": "e503981b227966aa98ac71655b5b6238eb82d104",
+  "expected_bytes": 1071463,
+  "import_exit_code": 0,
+  "import_stderr": "",
+  "import_stdout": "e503981b227966aa98ac71655b5b6238eb82d104\n",
+  "imported": true,
+  "path": "evidence/pon-native-node-v1/model-current/model/train.json",
+  "raw_sha256": "6f969b6d4ae551bdccb77fa61de80f3e0344c71c96a66aed54dcea5fc3b85554",
+  "timed_out": false
+}

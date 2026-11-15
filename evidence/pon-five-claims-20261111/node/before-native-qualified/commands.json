@@ -1,0 +1,80 @@
+[
+  {
+    "label": "preflight-before-build",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "started_unix": 1794393102.190146,
+    "finished_unix": 1794393102.3052921,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 177,
+      "sha256": "7ba92de2e86e35bd8f486042978e0f3664c67111645b407ca022a311d6bdd436"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "rustc-version",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "--version"
+    ],
+    "started_unix": 1794393111.2216334,
+    "finished_unix": 1794393111.336316,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 36,
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "cargo-version",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "--version"
+    ],
+    "started_unix": 1794393111.3372715,
+    "finished_unix": 1794393111.3700154,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "metadata",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "started_unix": 1794393111.3703818,
+    "finished_unix": 1794393111.7356114,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 854849,
+      "sha256": "b6f2b29e8400ee9354d325c942b3e0e55cb98ada69c18c2f5138ae8782e521e6"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

@@ -1,0 +1,71 @@
+{
+  "files": [
+    {
+      "bytes": 10776,
+      "path": "README.md",
+      "sha256": "ca0ef579f9e20e6eacdd8f1a78c67a7b8680699ef784e7e362faef51993396fb"
+    },
+    {
+      "bytes": 26693,
+      "path": "archive-summary.json",
+      "sha256": "b8b136c5f0e5842e3bd4cd3aa683d39df9e23d1ff0573db031f5fc520a323130"
+    },
+    {
+      "bytes": 15324,
+      "path": "artifact-direct-crossjoin.json",
+      "sha256": "887b9e20798662b66547ce5769e7a18788caf72b0f6584a96203c42e2b09fa51"
+    },
+    {
+      "bytes": 35137,
+      "path": "controller-records-01.tar.gz",
+      "sha256": "9f680d63593052233b06c71d70c18d4871d6e76898e59ad14017a33fa56d3172"
+    },
+    {
+      "bytes": 8397,
+      "path": "controller-terminal.json",
+      "sha256": "5e49b5476f3c06ced8a018dc63b9bc8e3727b17a7301166ae1d58a3d685d96e7"
+    },
+    {
+      "bytes": 527,
+      "path": "controller-validation.json",
+      "sha256": "d8ce90116b0854016d294d1b0b253879af369692af7f0a143a46bfbeeb1264bd"
+    },
+    {
+      "bytes": 2079,
+      "path": "ignored-scope-correction.json",
+      "sha256": "afef05c066e615974cef165c2f559a801227828eadda33651dec46aca4e601fd"
+    },
+    {
+      "bytes": 820,
+      "path": "journal-exact-child-validation.json",
+      "sha256": "9703b8c92277531eabc480f40c0533d50a1b99c24de8273b6798c09ca1310b96"
+    },
+    {
+      "bytes": 420,
+      "path": "journal-exact-child.log",
+      "sha256": "4fef9cec72cf2950e85e94e6861a851840f2242beb42bc26a62c1da7cfe21d9f"
+    },
+    {
+      "bytes": 807,
+      "path": "local-validation.json",
+      "sha256": "a510bb232398db83a991c7e9735bb51c3a4233d96fea037f17cab2d9f3c256aa"
+    },
+    {
+      "bytes": 9008,
+      "path": "remote-transfer-receipt.json",
+      "sha256": "d1a9f793bed6e410742a732e0c68f8f9cb280aa86367bba1d5cc9977b0bd11d3"
+    },
+    {
+      "bytes": 14484,
+      "path": "retained-ignored-tests.json",
+      "sha256": "7276fbd8256fca03e7fe3e1d63a8bfc7070280611885cac44fe7c0f7d1c52afb"
+    },
+    {
+      "bytes": 1022076,
+      "path": "validation-logs-01.tar.gz",
+      "sha256": "c59397c89f1ed4e50605dfe337b77d2b63d82309f339ea7fa29f8884c99c16f9"
+    }
+  ],
+  "schema": "m6-native-delivery-files-v1",
+  "self_and_SHA256SUMS_excluded": true
+}

@@ -1,0 +1,260 @@
+[
+  {
+    "stage": "preflight-before-ff",
+    "args": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.09371915482915938
+  },
+  {
+    "stage": "initial-clean-tree",
+    "args": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.022724720183759928
+  },
+  {
+    "stage": "initial-head",
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.0027991500683128834
+  },
+  {
+    "stage": "fetch-exact-bundle",
+    "args": [
+      "git",
+      "fetch",
+      "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/native-risk-complete.bundle",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.32573345000855625
+  },
+  {
+    "stage": "fetched-head",
+    "args": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.0027094760444015265
+  },
+  {
+    "stage": "ff-exact-commit",
+    "args": [
+      "git",
+      "merge",
+      "--ff-only",
+      "b66e66d2465258d808c0f56ff851123306d4bdb4"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.2790040469262749
+  },
+  {
+    "stage": "exact-head",
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.003915813053026795
+  },
+  {
+    "stage": "exact-tree",
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.0031775240786373615
+  },
+  {
+    "stage": "preflight-exact-commit",
+    "args": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.0918949618935585
+  },
+  {
+    "stage": "cargo-metadata-locked-offline",
+    "args": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.3212360520847142
+  },
+  {
+    "stage": "cargo-fmt-all-check",
+    "args": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "fmt",
+      "--all",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--",
+      "--check"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 23.790766448015347
+  },
+  {
+    "stage": "strict-clippy-owner-and-risk",
+    "args": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--config",
+      "profile.test.package.trnm-pon-node.opt-level=0",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_owner_journal",
+      "--test",
+      "native_risk_ledger",
+      "--example",
+      "native_owner_journal_v1",
+      "--example",
+      "native_risk_ledger_v1",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 27.309577615000308
+  },
+  {
+    "stage": "native-owner-and-risk-tests",
+    "args": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--config",
+      "profile.test.package.trnm-pon-node.opt-level=0",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_owner_journal",
+      "--test",
+      "native_risk_ledger",
+      "--",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 168.2899897180032
+  },
+  {
+    "stage": "risk-reader-tests-25",
+    "args": [
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/pon-nakamoto-v1",
+      "-p",
+      "test_native_risk_ledger.py",
+      "-v"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 2.3185380639042705
+  },
+  {
+    "stage": "risk-independent-reader",
+    "args": [
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+      "formal/pon-nakamoto-v1/native_risk_ledger.py",
+      "--run",
+      "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/native-risk-attempt-02/native-run/run.json",
+      "--output",
+      "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/native-complete-source-gates/risk-checked.json"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.18850644305348396
+  },
+  {
+    "stage": "ci-contract-tests",
+    "args": [
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+      "scripts/ci/test_ci_contract.py"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 21.62875766889192
+  },
+  {
+    "stage": "ci-execution-tests",
+    "args": [
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+      "scripts/ci/test_ci_execution.py"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 31.270397930871695
+  },
+  {
+    "stage": "ci-source-integrity-negatives",
+    "args": [
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 4.737133004004136
+  },
+  {
+    "stage": "distributed-source-inventory-check",
+    "args": [
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.10204928903840482
+  },
+  {
+    "stage": "final-head",
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.0036326549015939236
+  },
+  {
+    "stage": "final-clean-tree",
+    "args": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.1954696010798216
+  }
+]

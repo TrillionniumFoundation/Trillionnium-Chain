@@ -1,0 +1,4 @@
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5m 43s

@@ -1,0 +1,282 @@
+{
+  "local_links_seen": 3559,
+  "missing_tracked_targets": [
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/crypto-profile-20261104/continuation-59f75acd/ac240-compare-metadata.json",
+      "references": [
+        {
+          "document": "evidence/crypto-profile-20261104/continuation-59f75acd/current-to-publication-comparison.md",
+          "target": "ac240-compare-metadata.json"
+        }
+      ],
+      "sha": "321534988edead06caa384a97e647e2f84490e47"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/crypto-profile-20261104/continuation-59f75acd/raw-observations.tar.gz",
+      "references": [
+        {
+          "document": "evidence/crypto-profile-20261104/continuation-59f75acd/README.md",
+          "target": "raw-observations.tar.gz"
+        }
+      ],
+      "sha": "89d6273cf27b4e1b06ae367edf3084661981fd7d"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/crypto-profile-20261104/raw-observations.tar.gz",
+      "references": [
+        {
+          "document": "evidence/crypto-profile-20261104/README.md",
+          "target": "raw-observations.tar.gz"
+        }
+      ],
+      "sha": "dabded05de2852e251a36e9fc85d67d6a4af63fc"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/crypto-profile-20261104/retirement-53a90ad6/raw-observations.tar.gz",
+      "references": [
+        {
+          "document": "evidence/crypto-profile-20261104/retirement-53a90ad6/README.md",
+          "target": "raw-observations.tar.gz"
+        },
+        {
+          "document": "evidence/crypto-profile-20261104/retirement-53a90ad6/README.md",
+          "target": "raw-observations.tar.gz"
+        }
+      ],
+      "sha": "3f2b9084d007b0fb43ef3da00266f526fa10ff85"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/hepta-pq4729-native-20261104.tar.xz",
+      "references": [
+        {
+          "document": "evidence/pon-pq-system-continuation-20261101/validation-20261104/README.md",
+          "target": "hepta-pq4729-native-20261104.tar.xz"
+        }
+      ],
+      "sha": "55734cc8c132680569e12fed1b4260182a3360f6"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/local-validation.tar.gz",
+      "references": [
+        {
+          "document": "evidence/pon-pq-system-continuation-20261101/validation-20261104/README.md",
+          "target": "local-validation.tar.gz"
+        }
+      ],
+      "sha": "154cc9ec8c084632da7ba34064ee49fd5f2c1465"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/pq-composed-60dae3-20261104-validation-evidence.tar.gz",
+      "references": [
+        {
+          "document": "evidence/pon-pq-system-continuation-20261101/validation-20261104/README.md",
+          "target": "pq-composed-60dae3-20261104-validation-evidence.tar.gz"
+        }
+      ],
+      "sha": "20f74b7c64813398bec395f6cbc2af718a79a223"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/pon-w1-lifetime-20261107/project-input.json",
+      "references": [
+        {
+          "document": "evidence/pon-w1-lifetime-20261107/README.md",
+          "target": "project-input.json"
+        }
+      ],
+      "sha": "ddcc9d4bbb7cdee3dd7e114bd4467dcf21a6cf73"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/pon-w1-lifetime-20261107/unit-tests.stderr.log",
+      "references": [
+        {
+          "document": "evidence/pon-w1-lifetime-20261107/README.md",
+          "target": "unit-tests.stderr.log"
+        }
+      ],
+      "sha": "cd98b05d5b34453cf0ee478f264ac9f4558712aa"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/observations.tar.gz",
+      "references": [
+        {
+          "document": "evidence/pon-w1-qrom-closure-20261107/README.md",
+          "target": "candidate-1e4b-native/observations.tar.gz"
+        }
+      ],
+      "sha": "f3f6c0e23807ddbca67577acf4706a362146c953"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-preparation/observations.tar.gz",
+      "references": [
+        {
+          "document": "evidence/pon-w1-qrom-closure-20261107/README.md",
+          "target": "candidate-1e4b-preparation/observations.tar.gz"
+        }
+      ],
+      "sha": "2d2b975a381ca470f043ca5838ca55215132244f"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-python/observations.tar.gz",
+      "references": [
+        {
+          "document": "evidence/pon-w1-qrom-closure-20261107/README.md",
+          "target": "candidate-1e4b-python/observations.tar.gz"
+        }
+      ],
+      "sha": "fec368256a438bfa9882ca68e04b1702295b45e5"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-repository/observations.tar.gz",
+      "references": [
+        {
+          "document": "evidence/pon-w1-qrom-closure-20261107/README.md",
+          "target": "candidate-1e4b-repository/observations.tar.gz"
+        }
+      ],
+      "sha": "20f485a3b57f148261d0a91e04581627c2403c1c"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/observations.tar.gz",
+      "references": [
+        {
+          "document": "evidence/pon-w1-qrom-closure-20261107/README.md",
+          "target": "candidate-1e4b-service-diagnostic/observations.tar.gz"
+        }
+      ],
+      "sha": "935a540144eb48477a333dfc88404e2cca3f859b"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/pon-w1-qrom-closure-20261107/hosted-7150-qrom.tar.gz",
+      "references": [
+        {
+          "document": "evidence/pon-w1-qrom-closure-20261107/README.md",
+          "target": "hosted-7150-qrom.tar.gz"
+        }
+      ],
+      "sha": "678cbbd3b6bd8c6bf9d9a4ce3ee89283bd584b4b"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/pon-w1-qrom-closure-20261107/local-validation-final.tar.gz",
+      "references": [
+        {
+          "document": "evidence/pon-w1-qrom-closure-20261107/README.md",
+          "target": "local-validation-final.tar.gz"
+        }
+      ],
+      "sha": "3a8ab0bc65047254bbafe477a4bbba42e38b1bc3"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/pon-w1-qrom-closure-20261107/local-validation-initial.tar.gz",
+      "references": [
+        {
+          "document": "evidence/pon-w1-qrom-closure-20261107/README.md",
+          "target": "local-validation-initial.tar.gz"
+        }
+      ],
+      "sha": "3698f7dda5ce2c8ec6f77255449b17378313540c"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/pon-w1-qrom-closure-20261107/native-7150-observations.tar.gz",
+      "references": [
+        {
+          "document": "evidence/pon-w1-qrom-closure-20261107/README.md",
+          "target": "native-7150-observations.tar.gz"
+        },
+        {
+          "document": "docs/security/W1_QROM_CLOSURE_CONTINUATION_20261107.md",
+          "target": "../../evidence/pon-w1-qrom-closure-20261107/native-7150-observations.tar.gz"
+        }
+      ],
+      "sha": "8f0cd650cf346132f727cd3837bd60f7deec1fde"
+    },
+    {
+      "bytes": null,
+      "kind": "blob",
+      "local_object": false,
+      "mode": "100644",
+      "path": "evidence/pon-w1-stark-review-20261106/w1-independent-calculator-candidate-audit.json.gz",
+      "references": [
+        {
+          "document": "evidence/pon-w1-stark-review-20261106/README.md",
+          "target": "w1-independent-calculator-candidate-audit.json.gz"
+        }
+      ],
+      "sha": "24ecabbee567de665de9e8de0b671117cc28ac80"
+    }
+  ],
+  "other_missing_targets": [],
+  "schema": "TRNM-HISTORICAL-LINK-TARGET-SCAN1",
+  "source_commit": "0c830e0be8939ce80c8443c9ad68021b87343a00"
+}

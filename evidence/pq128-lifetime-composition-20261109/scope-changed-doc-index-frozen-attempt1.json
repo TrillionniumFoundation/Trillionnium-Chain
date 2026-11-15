@@ -1,0 +1,27 @@
+{
+  "label": "scope-changed-doc-index-frozen-attempt1",
+  "scope": "all local Markdown link paths in the two changed documents checked against tracked Git index targets; not full repository gate or external URL/fragment validation",
+  "expected_head": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+  "expected_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+  "started_utc": "2026-11-09T14:02:34.768240+00:00",
+  "state": "completed",
+  "before": {
+    "head": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+    "tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+    "head_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "index_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "after": {
+    "head": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+    "tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+    "head_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "index_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "returncode": 0,
+  "elapsed_seconds": 0.7289025259997288,
+  "finished_utc": "2026-11-09T14:02:35.497136+00:00",
+  "stdout_bytes": 161737,
+  "stdout_sha256": "a8f47b5f00cf5f268f69b75d3f3f7fc51d33480145f9e42b3a737a0a024477cf",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

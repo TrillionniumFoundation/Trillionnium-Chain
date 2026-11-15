@@ -1,0 +1,28 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "96a98a635def8c13b2d4f234aa1daee59c57afa0",
+    "--output",
+    "/tmp/trnm-pn-convergence-20261023/evidence-root/pn1-root-final-prepare/source-before.json"
+  ],
+  "complete_success": true,
+  "cwd": "/tmp/trnm-pn-convergence-20261023/integration",
+  "elapsed_ns": 2027755020,
+  "elapsed_seconds": 2.02775502,
+  "error": null,
+  "name": "source-before",
+  "outer_stage_timeout_seconds": 120,
+  "returncode": 0,
+  "stderr": "source-before.stderr.log",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_truncated": false,
+  "stdout": "source-before.stdout.log",
+  "stdout_bytes": 421,
+  "stdout_sha256": "43573b12115c1d73ede3332caad86e8da8222f2cf17a9b1c0ae03365fe0c2acf",
+  "stdout_truncated": false
+}

@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.32s
+     Running unittests src/lib.rs (/workspace/scratch/dc0357cf2d6c/target/debug/deps/trnm_data_availability-41bde8e9d9cfe9e6)
+
+running 1 test
+test cell::discovery::pq::epoch_directory::tests::retained_source_ip_prefix_and_global_caps_are_exact_and_epoch_reclaims_all_512 ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 760 filtered out; finished in 106.79s
+

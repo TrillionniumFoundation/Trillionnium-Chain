@@ -1,0 +1,24 @@
+{
+  "id": "source-w1-lifetime-ledger-tests",
+  "argv": [
+    "python3",
+    "scripts/ci/test_w1_lifetime_ledger.py"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 0.603648303999762,
+  "finished_utc": "2026-11-11T01:34:24.951327+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "f37c1d49fa7eda6c485a713a4a6e2e5171f3209c3dd1dc81660d40fb54bede1e",
+  "pass": true,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 0.375712,
+    "system_cpu_seconds": 0.12163099999999999,
+    "maximum_rss_kib": 19576,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

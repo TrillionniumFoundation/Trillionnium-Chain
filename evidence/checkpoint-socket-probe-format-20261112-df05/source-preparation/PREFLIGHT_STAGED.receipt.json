@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--staged"
+  ],
+  "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+  "elapsed_ns": 731295583,
+  "exit_code": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdin_bytes": 0,
+  "stdin_sha256": null,
+  "stdout_sha256": "4cd9f8f3f7758c086155da3cae67d781306961443788acdede3a9bed2626a642",
+  "timed_out": false,
+  "timeout_seconds": 120
+}

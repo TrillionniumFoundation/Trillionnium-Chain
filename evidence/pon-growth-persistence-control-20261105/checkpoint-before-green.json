@@ -1,0 +1,298 @@
+{
+  "schema": "growth-persistence-control-evidence-checkpoint-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "code_green": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+  "red_base": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+  "qualification": "HOLD",
+  "production_activation": false,
+  "note": "All four completed attempts retained: two unqualified expected failure observations, two resource aborts before tests. Canonical RED/GREEN and B1 remain pending. Git objects only; no ref mutation. Actual canonical SQLite build output is retained; no owned-VFS resource qualification is claimed.",
+  "files": [
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red/result.json",
+      "bytes": 9780,
+      "sha256": "c3bee8621c057e4886fb63faaa6144397a324db6c5f17e51d76438e7618c1f30",
+      "blob": "9c2b7b32d3c079a572750512385f3fb4727e032e",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red/preflight.log",
+      "bytes": 170,
+      "sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+      "blob": "9762af90658b6e9a33e367cc9d815acf544d6e9e",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red/cargo.log",
+      "bytes": 5624,
+      "sha256": "4aaac1df180de7da1ca698015c25dec931197de6b0eb5a1c1274e818a8adda55",
+      "blob": "50be221dee4195e4ebd95aa2e7bbaf0ec3ee76ce",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red/native-inputs-before.json",
+      "bytes": 239708,
+      "sha256": "3b8fffbfd83099a3b31c4b7161a9d6ea505c20ecf5afe5254266ad3a96cbd369",
+      "blob": "181ec9fd22544480975c0fd0d3ded1f4f62b3176",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red/native-inputs-after.json",
+      "bytes": 239708,
+      "sha256": "3b8fffbfd83099a3b31c4b7161a9d6ea505c20ecf5afe5254266ad3a96cbd369",
+      "blob": "181ec9fd22544480975c0fd0d3ded1f4f62b3176",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red-rustup/result.json",
+      "bytes": 9689,
+      "sha256": "14a592564e6371d5f696612112d931312b74a9b1af0520d1edc2dfeff337675a",
+      "blob": "16bef2902363edc610bcc01bfd0502de9a3a6c3c",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red-rustup/preflight.log",
+      "bytes": 170,
+      "sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+      "blob": "9762af90658b6e9a33e367cc9d815acf544d6e9e",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red-rustup/cargo.log",
+      "bytes": 1782,
+      "sha256": "474a18414b936c6460e51c3e1a599dd3df52a775f9a392785cb34e75a82f301a",
+      "blob": "9386ff44ca1275803090fdb5b87f09ded56c0a39",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red-rustup/native-inputs-before.json",
+      "bytes": 239708,
+      "sha256": "3b8fffbfd83099a3b31c4b7161a9d6ea505c20ecf5afe5254266ad3a96cbd369",
+      "blob": "181ec9fd22544480975c0fd0d3ded1f4f62b3176",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red-rustup/native-inputs-after.json",
+      "bytes": 239708,
+      "sha256": "3b8fffbfd83099a3b31c4b7161a9d6ea505c20ecf5afe5254266ad3a96cbd369",
+      "blob": "181ec9fd22544480975c0fd0d3ded1f4f62b3176",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red-canonical/result.json",
+      "bytes": 9824,
+      "sha256": "9688b62a762cdbd1542127f437ad00c52412d3a79ba5b228b36a139650c22b33",
+      "blob": "2a9b26c76d7830a868de18684077755df34eb48d",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red-canonical/preflight.log",
+      "bytes": 170,
+      "sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+      "blob": "9762af90658b6e9a33e367cc9d815acf544d6e9e",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red-canonical/cargo.log",
+      "bytes": 3837,
+      "sha256": "039e0e91ac0c30f0104adca00c2cf73d00d1a5c94a2a449ea286fcba08c9d097",
+      "blob": "8ac4f43eb9eb716f10ea0a6cc815bed66e5c49c0",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red-canonical/native-inputs-before.json",
+      "bytes": 239708,
+      "sha256": "3b8fffbfd83099a3b31c4b7161a9d6ea505c20ecf5afe5254266ad3a96cbd369",
+      "blob": "181ec9fd22544480975c0fd0d3ded1f4f62b3176",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red-canonical/native-inputs-after.json",
+      "bytes": 239708,
+      "sha256": "3b8fffbfd83099a3b31c4b7161a9d6ea505c20ecf5afe5254266ad3a96cbd369",
+      "blob": "181ec9fd22544480975c0fd0d3ded1f4f62b3176",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red-canonical-retry1/result.json",
+      "bytes": 9824,
+      "sha256": "1484ea3b792e9284537ba458f177eac1fa3fc7b6993972322fc1242672084c2b",
+      "blob": "a98a897b845bcd59081f3f0aef5148e2e2079a89",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red-canonical-retry1/preflight.log",
+      "bytes": 170,
+      "sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+      "blob": "9762af90658b6e9a33e367cc9d815acf544d6e9e",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red-canonical-retry1/cargo.log",
+      "bytes": 115,
+      "sha256": "4430dd6a8ad74352776f24958dfa76d29962bcfd69fefa0e5bef2b0d695f18e4",
+      "blob": "7d753ce14b85366b2a923bac3b5161d3f6b370f6",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red-canonical-retry1/native-inputs-before.json",
+      "bytes": 239708,
+      "sha256": "3b8fffbfd83099a3b31c4b7161a9d6ea505c20ecf5afe5254266ad3a96cbd369",
+      "blob": "181ec9fd22544480975c0fd0d3ded1f4f62b3176",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-red-canonical-retry1/native-inputs-after.json",
+      "bytes": 239708,
+      "sha256": "3b8fffbfd83099a3b31c4b7161a9d6ea505c20ecf5afe5254266ad3a96cbd369",
+      "blob": "181ec9fd22544480975c0fd0d3ded1f4f62b3176",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/ffb-pristine-precheck/source.json",
+      "bytes": 421,
+      "sha256": "39ee876cd3bfb5e2d4bcd29216baa20f7bf0941df7adaa0b27c7fc83671eb789",
+      "blob": "be537d40b20a76f095636e851efc00a32e611b35",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/ffb-pristine-precheck/receipt.json",
+      "bytes": 1072,
+      "sha256": "5e7f9f0943cd85c94105d004e4fd1a70462e173b9f61a3f56ffbaa54ba238820",
+      "blob": "3fc4f2584bdc1d2108c6c0c53b6afcf4a610e5d2",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/ffb-pristine-precheck/0.log",
+      "bytes": 170,
+      "sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+      "blob": "9762af90658b6e9a33e367cc9d815acf544d6e9e",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/ffb-pristine-precheck/1.log",
+      "bytes": 421,
+      "sha256": "39ee876cd3bfb5e2d4bcd29216baa20f7bf0941df7adaa0b27c7fc83671eb789",
+      "blob": "be537d40b20a76f095636e851efc00a32e611b35",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/red-overlay.json",
+      "bytes": 740,
+      "sha256": "65ee268cd30aaaf43f0cd17b588847ca36dd13dea5bf22280ea4419893d9c588",
+      "blob": "bb6ab78787a9eb09a6919f91129ec82fdf6ccb35",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-attempt-history.json",
+      "bytes": 10440,
+      "sha256": "18734580f16486d2ec8af1240499080824dc4ec77b821b6b2e93835ed833d359",
+      "blob": "b98708a0c52a37ce7030fbf6bb1da5ce04ba280a",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/canonical-rustc-preparation.json",
+      "bytes": 606,
+      "sha256": "102861e33acf58e61e5c0d5fc2373e24395b0c2d40a02b9e4e0e4d17fe3bcac4",
+      "blob": "b106789c74f41feafe7992fe77929347ee4511dc",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/memory-boundary-controls-final.log",
+      "bytes": 963,
+      "sha256": "9110ce47d46c49fb09a93fe3838878e46a49ccec36b2f4eff28c9705aa5eece0",
+      "blob": "1328f0e33ec792678368c99a50865d67ab6c0d49",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/memory-monitor-result.json",
+      "bytes": 1716,
+      "sha256": "c498c711a2e365c4acf9ac823e16f1855c1eec40cc9e77be863e23d765439966",
+      "blob": "ac7d2184ee8c5e37a4c7d28427c0febd8d55661e",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/inactive-target-read-cache-advice.json",
+      "bytes": 1971,
+      "sha256": "e4ed516897697a806fc630287e7b3c103e23325e11ccc506457dab5f92ad8f9a",
+      "blob": "5799e8855ddddf1f072905a4e1fb6ed0d18e424e",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/inactive-target-read-cache-advice-skipped.json",
+      "bytes": 396,
+      "sha256": "2b4f91e2e62e645061a15c08f96545ce5f0790d045747b41ae13e5ae66f7243b",
+      "blob": "501fa6cb1646be070264ea14d6523e1e555ff43e",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/dependency-cache-inspection.json",
+      "bytes": 185,
+      "sha256": "eca8397c6226338cc040cf6d6fd7515884da74d8920ab6948b9ae5fa03fc5b6e",
+      "blob": "32cacb3349c40959c1a9dab9f3ffb5f1f68d12f2",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/syntax-format-result.json",
+      "bytes": 1997,
+      "sha256": "717f9d8d3cb28f0a6f0a256d0d1423a9ba5fd8a88fbb36b25151536fdfbad201",
+      "blob": "a2eed6dd0c99eddf84d0bd08400b494c1b7a4741",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-build-witness-red/build-output-0.log",
+      "bytes": 4953,
+      "sha256": "0642efe503d0b41acb879326fd9e8b1774d48584a6e6037562af0652f10f731e",
+      "blob": "4d137ad80e6e31ca80294b0b2891fa8fc9b26602",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/native-build-witness-red/receipt.json",
+      "bytes": 1290,
+      "sha256": "9e80702fda25e79f3c3fa851a7be85caeb93dfaa627ea08ef751ac333e2b1b38",
+      "blob": "7548374a3d433e424394d40dd377e564bbd0896a",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/run-bounded.py",
+      "bytes": 17204,
+      "sha256": "ae20081596e452c1f0b8a5f7db17acc0fba650e840fed9a9914bdedd24cba52f",
+      "blob": "25426a744175cb9f9d16b78ff4f7df2728a0ee09",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/test_memory_estimate.py",
+      "bytes": 3416,
+      "sha256": "9997f79462a57eb5ecdacd2e27f3ea92a1fc1ec0915aaaeab42d511f4b35346e",
+      "blob": "c536b6b721cfefdc6130317a6c49bdc8412c968b",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/run-account-prefix-bounded.py",
+      "bytes": 16778,
+      "sha256": "614f8fc36aa38b1df5d0c869cebcf2bf88c5a9aa7580892ef9becaceb19f4e65",
+      "blob": "384a1eb7c6fb3d361935f6a441c89b402a670e3a",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/historical/run-bounded-before-canonical-rustc.py",
+      "bytes": 16876,
+      "sha256": "7f08bfc59b9f439eff5db273127b4c7705c4ee4068a5090e52ad80dea6658e6b",
+      "blob": "8b88ad65a733f293195fa6519b80ce89f343bf43",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/red-overlay/recovery.rs",
+      "bytes": 30901,
+      "sha256": "c4f6c1840b6439519b2298da7071fa336ae27bcaf92400460d423ead236535d0",
+      "blob": "13e033f99922772d6f200b1a863d0b3e0686ec01",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/red-overlay/growth_persistence_cancellation.rs",
+      "bytes": 9286,
+      "sha256": "28c49b7211208f3a74269798b1cb34b45c925e158530e516a72e120c82195a37",
+      "blob": "336b191524aeaad6fc9d97e25f9c2f2563e16949",
+      "readback_verified": true
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "ordinal": 4,
+  "round": 2,
+  "variant": "baseline",
+  "command": [
+    "/tmp/pon-cache-benchmark-baseline/target/release/pon-cache-benchmark",
+    "baseline",
+    "2"
+  ],
+  "cwd": "/tmp/pon-cache-benchmark-baseline",
+  "exit_code": 0,
+  "started_unix_ns": 1793552648433764365,
+  "finished_unix_ns": 1793552652059402078,
+  "source_before": {
+    "source_files": 17,
+    "source_verified": true,
+    "elf_sha256": "a3867b20d9cffb12b42bda09470a4daafdcf0608cc74efe8a1fadec6c51bc681",
+    "lock_sha256": "2e04cdc62e48b6b0f95bb1d60406580be704d3b0a08a6bbc7d7036115f74c8e3"
+  },
+  "source_after": {
+    "source_files": 17,
+    "source_verified": true,
+    "elf_sha256": "a3867b20d9cffb12b42bda09470a4daafdcf0608cc74efe8a1fadec6c51bc681",
+    "lock_sha256": "2e04cdc62e48b6b0f95bb1d60406580be704d3b0a08a6bbc7d7036115f74c8e3"
+  },
+  "stdout_sha256": "6d623e1b9b2154980fe4fb6a1f4ed6f78e6ffa54a88471ca90e9eaa7c37b1853",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

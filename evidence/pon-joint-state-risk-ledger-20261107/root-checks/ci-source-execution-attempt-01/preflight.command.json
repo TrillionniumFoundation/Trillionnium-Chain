@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/workspace/scratch/8f0d1a7a75bb/chain_certificates",
+  "elapsed_seconds": 0.06171333599922946,
+  "exit_code": 0,
+  "name": "preflight",
+  "started_at_utc": "2026-11-07T23:42:16.926247+00:00",
+  "streams": {
+    "stderr": {
+      "bytes": 0,
+      "path": "preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 177,
+      "path": "preflight.stdout.log",
+      "sha256": "390eaae41b4cea9817edf58dae3def992730ea1e0af10cf6403a7fd9e47bd304"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schema": "pon-root-independent-hosted-file-read-v1",
+  "host": "desktop",
+  "atomic_snapshot": false,
+  "snapshot_scope": "independent_file",
+  "truncated": false,
+  "files": [
+    {
+      "eof": true,
+      "path": "/home/qian-qi/work/pon-joint-58fd59-11791e2d-main-hosted-collection/original-campaign/artifact-13646762679/results.json",
+      "sha256": "a70af957159cd8be0303ecd9e17404d2858cbc6c11c3ae7f82b38aa2d73399fc",
+      "size": 8560,
+      "version": "2050:50101163:8560:1794194222815156893:1794194222815156893"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/work/pon-joint-58fd59-11791e2d-main-hosted-collection/original-campaign/artifact-13646762679/binary-before.json",
+      "sha256": "1845943aae79488430bf0c7fbae83371f4a82276ae84274382a0099f273305b8",
+      "size": 595,
+      "version": "2050:50101150:595:1794194222689642843:1794194222689642843"
+    }
+  ]
+}

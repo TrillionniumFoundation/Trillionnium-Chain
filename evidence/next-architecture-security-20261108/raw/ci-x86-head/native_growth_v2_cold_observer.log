@@ -1,0 +1,12 @@
+    Finished `release` profile [optimized] target(s) in 0.07s
+     Running unittests src/lib.rs (/home/runner/work/_temp/target-next-architecture/release/deps/trnm_pon_node-55ae308ca29f5ac1)
+
+running 5 tests
+test store::growth::tests::native_growth_v2_cold_observer_bounds_copy_and_cleans_private_snapshot ... ok
+test store::growth::tests::native_growth_v2_cold_observer_fences_source_changes_despite_private_epoch ... ok
+test store::growth::tests::native_growth_v2_cold_observer_preserves_closed_wal_namespace ... ok
+test store::growth::tests::native_growth_v2_cold_observer_refuses_live_logs_before_sqlite_or_packet_absence ... ok
+test store::growth::tests::native_growth_v2_cold_observer_requires_existing_owner_without_creating_it ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 1182 filtered out; finished in 0.14s
+

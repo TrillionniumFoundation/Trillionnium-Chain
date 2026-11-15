@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/usr/bin/git",
+    "diff",
+    "--check",
+    "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "HEAD"
+  ],
+  "head": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "started_unix_seconds": 1794068084.5841436
+}

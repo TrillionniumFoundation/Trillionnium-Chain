@@ -1,0 +1,30 @@
+{
+  "source_baseline": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+  "stage": "RED_ORIGINAL_SOURCE_NEW_CONTROLS",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_quantum_oracle_resources.ResourceAccounting.test_distance_budget_uses_exact_failure_not_rounded_equality",
+    "test_quantum_oracle_resources.ResourceAccounting.test_exact_total_failure_budget_equality_remains_accepted",
+    "test_quantum_oracle_resources.ResourceAccounting.test_magic_budget_does_not_round_away_positive_headroom"
+  ],
+  "cwd": "/dev/shm/w1-decimal-boundary-822cc50e",
+  "exit_code": 1,
+  "wall_seconds": 0.10738707800010161,
+  "inputs": {
+    "quantum_oracle_resources.py": {
+      "bytes": 26839,
+      "sha256": "b188820f229ff0b094018747648443f48b1fe52e96fff9d91d6a9d1cfb106a4e",
+      "git_blob": "c923cd5e5d2b3bf5aa704fec8dec7f9409297568"
+    },
+    "test_quantum_oracle_resources.py": {
+      "bytes": 18007,
+      "sha256": "0c930e1f86fd4a3f8534a14fe418c83dfd5099b114272eb5de3e9866f95f54ef",
+      "git_blob": "c7e5ebd5111b7e4b303e9d9761c51d072f5fe802"
+    }
+  },
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "3f75db524bcf988df692e1624716af0df9a6525a66f8a5673da9f5057523b9a8"
+}

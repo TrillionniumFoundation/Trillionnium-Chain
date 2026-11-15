@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "python3",
+    "/workspace/scratch/b5a148b09b11/next-validation/c5dd-workspace-cpu-four-lane-readback/collect-workspace-cpu.py",
+    "--cohort",
+    "c5dd7c",
+    "--source-dir",
+    "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review",
+    "--output-dir",
+    "/workspace/scratch/b5a148b09b11/next-validation/c5dd-workspace-cpu-four-lane-readback",
+    "--repo",
+    "/workspace/scratch/b5a148b09b11/chain-six-axis"
+  ],
+  "started_utc": "2026-11-03T23:42:00.004773+00:00",
+  "completed_utc": "2026-11-03T23:42:00.128207+00:00",
+  "elapsed_seconds": 0.12343375699856551,
+  "exit_code": 1,
+  "native_executed": false,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "9c46b1cfd8dc0bc34a6a1e6da6c5610ae72b8d4d465f181edaf3d8271114de5e"
+}

@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "/workspace/scratch/56818e4fba76/chain-pq-target/release/trnm-cell",
+    "pack",
+    "--cache-max-bytes",
+    "536870912",
+    "--cache-max-chunks",
+    "1024",
+    "--cache-max-manifests",
+    "32",
+    "--cache-max-db-bytes",
+    "536870912",
+    "--store",
+    "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/publisher.sqlite",
+    "--input",
+    "/workspace/scratch/56818e4fba76/smollm-materials/README.md",
+    "--family",
+    "smollm2-135m-cpu-dev-v1",
+    "--base",
+    "c320c094769446c21d7e4a33795d7f9310b5e4c8ca5a6fecca40207b1f735b7c",
+    "--parent",
+    "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+    "--tokenizer",
+    "a1883207efeacecee399f4dc699d2b547eb2d6ddb7500522933ed76c1521fb93",
+    "--layout",
+    "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+    "--runtime",
+    "791fbe67ae7d2b2e0551e5f9f6fd77797ed9f8c210e7ca47f9acb6ac02895769"
+  ],
+  "elapsed_seconds": 0.008970136999778333,
+  "returncode": 0
+}

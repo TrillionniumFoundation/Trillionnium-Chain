@@ -1,0 +1,99 @@
+{
+  "schema": "trnm-pn-ci-cost-environment-followup-remote-v1",
+  "observed_utc": "2026-11-01T08:26:56.866477+00:00",
+  "tested_head": "acd8f79f2dcc22ecdee1d1a5fd88d619d06f37c9",
+  "tested_tree": "4e83d2d4ba6b15ddd962ef08652dbeb24858c533",
+  "run_id": 41287811776,
+  "job_id": 124792592288,
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41287811776/job/124792592288",
+  "artifact_id": 13075874381,
+  "artifact_name": "head-protocol-contract-acd8f79f2dcc22ecdee1d1a5fd88d619d06f37c9-1",
+  "artifact_zip_bytes": 5022285,
+  "artifact_zip_sha256": "ac77f3e4c540cd58d278b52fe659e5e5aedb86495f8695ac485a113c78b58cb0",
+  "retained_subset": true,
+  "files": [
+    {
+      "archive_entry": "from-zero-native/manifest.json",
+      "retained_file": "remote/from-zero-native/manifest.json.gz",
+      "raw_bytes": 20141,
+      "raw_sha256": "dc8d9043a77c0747c67c8261783eb3f7683fb9acd83e9b3d5987a9ec795ea9e8",
+      "gzip_sha256": "4a05b46d200b4b56ff3ab2bd2786b1e1254cfa5ec7da3fcd01cb35f0a88dc3e5"
+    },
+    {
+      "archive_entry": "from-zero-native/confirmation/report.json",
+      "retained_file": "remote/from-zero-native/confirmation/report.json.gz",
+      "raw_bytes": 5327057,
+      "raw_sha256": "c48578781ce951c54362b8de922a859086bffbe1e692f1e96660d4fa9a88056b",
+      "gzip_sha256": "6e07a02a36fea3f869463fe6ce6ae6dd80aa8b6e1d4f675e9f0c1aaadb5cb60c"
+    },
+    {
+      "archive_entry": "from-zero-native-host/child-result.json",
+      "retained_file": "remote/from-zero-native-host/child-result.json.gz",
+      "raw_bytes": 333,
+      "raw_sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321",
+      "gzip_sha256": "cbcd7a9c0f907ca97383bc2a9b51bb14687e5c2644ca8f9a4608ec145da686d9"
+    },
+    {
+      "archive_entry": "from-zero-native-host/controller-result.json",
+      "retained_file": "remote/from-zero-native-host/controller-result.json.gz",
+      "raw_bytes": 4507,
+      "raw_sha256": "195489713a0bbb261d674b2accf96606b8a463ebdf55e54de4c5de2320d16a92",
+      "gzip_sha256": "a57be5f4da7846e3bd60fac68ca76cb8ceae056824940db3f61d3ff7979d06ea"
+    },
+    {
+      "archive_entry": "from-zero-native-host/systemd-run.log",
+      "retained_file": "remote/from-zero-native-host/systemd-run.log.gz",
+      "raw_bytes": 6914,
+      "raw_sha256": "e8395bbcbdd9d9711469fe531e7e63d8fce531267ba98b0d337a3321e9ec535b",
+      "gzip_sha256": "92a1943dd8f3ff549bad59163bc0e434b10bdc160e4ab7074f2eea134f49d9a6"
+    },
+    {
+      "archive_entry": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "retained_file": "remote/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout.gz",
+      "raw_bytes": 189,
+      "raw_sha256": "bbcdd83622f55e12265e53022be573d06425f926c4a75ac0c58537a1456f6f7b",
+      "gzip_sha256": "1e0e049dc4bb34b035941acf1f83917710c0692b51963574e44eceb00bea2ce7"
+    },
+    {
+      "archive_entry": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "retained_file": "remote/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout.gz",
+      "raw_bytes": 3365,
+      "raw_sha256": "f947387e1662b280523d27ed1e29f9c8fb08bfe1f203b1dd1846eb7fbb20fab8",
+      "gzip_sha256": "cd1ef1d9be49a102e0a3870f4bb4df2d81134b36348ebe65746a19148589055a"
+    },
+    {
+      "archive_entry": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "retained_file": "remote/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout.gz",
+      "raw_bytes": 195,
+      "raw_sha256": "53c2df9c125e6da2e7f8352e9064301f45cefceed3c95593783989ea190686a8",
+      "gzip_sha256": "6e3fe0d4d6e4fa4b3baa26d475ab704c137f4ff935d4ab3244f2ef3f0ae8ff42"
+    },
+    {
+      "archive_entry": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "retained_file": "remote/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout.gz",
+      "raw_bytes": 915,
+      "raw_sha256": "ebd46d6fb0c266b736bcb179e4c6bcaa0e67e98ff8dc77fa8d5e54548865bf2b",
+      "gzip_sha256": "7af5591a3200aa69d544690dc1ae8d733f85ed3f840295fede68b6f8424e8a7a"
+    },
+    {
+      "archive_entry": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "retained_file": "remote/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout.gz",
+      "raw_bytes": 407,
+      "raw_sha256": "120419ba3e899434f513a801baabfa608793611accc9e87b85d81122d0ceea42",
+      "gzip_sha256": "7c2eead51cf362c28b7986e90134d315623c537ae3b2a4f4166a4b75a839a752"
+    }
+  ],
+  "original_outcome": {
+    "named_libtests": 5,
+    "executions_per_name": 1,
+    "each_exit_code": 0,
+    "driver_passed": false,
+    "failure": "CONFIRMATION_TARGET",
+    "finite_target_met": false,
+    "invariant_target_met": true,
+    "same_packet_sequence_in_both_runs": true,
+    "host_errors": [],
+    "native_child_exit": 1
+  },
+  "scope": "Exact already-completed old-head observation. No current/new-head native campaign execution or qualification is implied."
+}

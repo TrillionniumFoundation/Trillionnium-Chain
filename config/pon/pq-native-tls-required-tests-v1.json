@@ -1,0 +1,41 @@
+{
+  "schema": "trnm-pq-native-tls-required-tests-v1",
+  "expected_controls": {
+    "lib": 16,
+    "cli": 4,
+    "feature-off": 1
+  },
+  "production_activation": false,
+  "consensus_authority": false,
+  "public_wan_accepted": false,
+  "whole_chain_quantum_security_qualified": false,
+  "scopes": {
+    "lib": [
+      "ingress::pq_network::canonical_tests::pq_client_requires_complete_key_pin_after_identity_lookup",
+      "ingress::pq_network::tls::tests::tls_local_identity_requires_complete_key_pin_for_both_roles",
+      "ingress::pq_network::tls::tests::actual_tls_peer_identity_alias_refuses_before_application_dispatch_in_both_directions",
+      "ingress::pq_network::tls::tests::real_tls_node_submit_lost_ack_exact_receipt_and_cold_reopen",
+      "ingress::pq_network::tls::tests::tls_required_policy_refuses_plaintext_before_io_and_old_ledger_reopen",
+      "ingress::pq_network::tls::tests::tls_peer_cannot_relay_another_rostered_signers_request_into_node",
+      "ingress::pq_network::tls::tests::tls_ca_hostname_and_local_identity_pins_refuse",
+      "ingress::pq_network::tls::tests::actual_tls_node_refuses_classical_group_tls12_missing_certificate_and_plaintext",
+      "ingress::pq_network::tls::tests::tls_handshake_does_not_reset_the_original_client_deadline",
+      "ingress::pq_network::tls::tests::tls_invalid_intermediate_same_subject_chain_and_signature_spend_handshake_only",
+      "ingress::pq_network::tls::tests::tls_handshake_attempt_cap_is_durable_and_refuses_before_handshake_after_reopen",
+      "ingress::pq_network::tls::tests::tls_authentication_does_not_replace_native_work_or_pnq_signature_checks",
+      "ingress::pq_network::tls::tests::actual_tcp_bio_refuses_byte_65537_before_openssl_and_preserves_durable_debit",
+      "ingress::pq_network::tls::tests::tls_local_server_certificate_constraints_refuse_before_serving",
+      "ingress::pq_network::tls::tests::tls_local_client_certificate_time_purpose_and_root_leaf_refuse",
+      "ingress::pq_network::tls::tests::tls_local_role_specific_certificates_accept_without_client_hostname"
+    ],
+    "cli": [
+      "ordinary_binary_pq_tls_serve_dispatches_original_node_and_preserves_replay_after_exit",
+      "ordinary_binary_bad_config_pin_refuses_before_owner_creation",
+      "ordinary_binary_tls_nonloopback_refuses_before_config_and_owner",
+      "ordinary_binary_local_certificate_constraints_refuse_before_owner_creation"
+    ],
+    "feature-off": [
+      "ordinary_binary_without_tls_feature_refuses_without_classical_fallback"
+    ]
+  }
+}

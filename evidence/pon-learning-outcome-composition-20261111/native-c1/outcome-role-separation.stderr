@@ -1,0 +1,29 @@
+   Compiling libc v0.2.184
+   Compiling typenum v1.20.1
+   Compiling serde_json v1.0.149
+   Compiling generic-array v0.14.7
+   Compiling rusqlite v0.41.0
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling rustix v1.1.4
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-crypto-primitives)
+   Compiling sha2 v0.10.9
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling nix v0.30.1
+   Compiling getrandom v0.4.2
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-task-kernel)
+   Compiling getrandom v0.2.17
+   Compiling fs2 v0.4.3
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-verification-profiles)
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-release-bundle v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-release-bundle)
+   Compiling trnm-mempool v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-transport)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5m 38s
+     Running tests/outcome_role_separation.rs (/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/deps/outcome_role_separation-8dd4b06409438133)
+native role separation: 76 W1 blocks; miner=0 author=3 provider=1 payer=2; completed zero-score candidate; NoGain service credit=2000; model-author credit=10000; cold reopen; controlled inputs only

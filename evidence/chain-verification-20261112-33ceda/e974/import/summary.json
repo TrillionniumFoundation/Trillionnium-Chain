@@ -1,0 +1,153 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "elapsed_ns": 30652260,
+      "exit_code": 0,
+      "name": "status_before",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "elapsed_ns": 983465,
+      "exit_code": 0,
+      "name": "head_before",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 41,
+      "stdout_sha256": "c7c2fde3f4e36b51a0540fc059191efb3267fe5af78eb08594c1e58bacb72e04"
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "elapsed_ns": 25554993,
+      "exit_code": 0,
+      "name": "preflight_before",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 179,
+      "stdout_sha256": "c32203b226220547f074c87c1e888e954c9e0f255d476247f1e8cc713924626d"
+    },
+    {
+      "argv": [
+        "git",
+        "bundle",
+        "list-heads",
+        "/home/qq/chain-verification-validation-33ceda-20261112/import-e974/candidate.bundle"
+      ],
+      "elapsed_ns": 879459,
+      "exit_code": 0,
+      "name": "bundle_heads",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 46,
+      "stdout_sha256": "0683305056c0f95ff3b14da0bf39bbab306671d4d09efbfc6859f1dd808dcbad"
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "/home/qq/chain-verification-validation-33ceda-20261112/import-e974/candidate.bundle",
+        "HEAD"
+      ],
+      "elapsed_ns": 93983397,
+      "exit_code": 0,
+      "name": "bundle_fetch",
+      "stderr_bytes": 143,
+      "stderr_sha256": "6d088339a783f4da917cb57ca101bbe8ff5c4d481ad765578d800bdf50eede5c",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "merge",
+        "--ff-only",
+        "e974fd617e0e2c0d1fc88584b1301a7ffb714a73"
+      ],
+      "elapsed_ns": 48931254,
+      "exit_code": 0,
+      "name": "fast_forward",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 1058,
+      "stdout_sha256": "08e7b21f59355280e2e41b8f6c42e1ebec7bc1a0473832c40b607ce96b85da69"
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "elapsed_ns": 26133992,
+      "exit_code": 0,
+      "name": "preflight_after",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 179,
+      "stdout_sha256": "c32203b226220547f074c87c1e888e954c9e0f255d476247f1e8cc713924626d"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "e974fd617e0e2c0d1fc88584b1301a7ffb714a73",
+        "--output",
+        "/home/qq/chain-verification-validation-33ceda-20261112/import-e974-continuation/physical-source.json"
+      ],
+      "elapsed_ns": 5414360346,
+      "exit_code": 0,
+      "name": "source_identity",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 423,
+      "stdout_sha256": "ebea6ecb7f244891022e0bed9e757449a93a001876368a864e4521c9bc5e6bb0"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "elapsed_ns": 891738,
+      "exit_code": 0,
+      "name": "head_after",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 41,
+      "stdout_sha256": "ee8a1f38f545333335fd971cdb2d961c9cccea809de5b21bb056ba0f7da9004f"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "elapsed_ns": 31194600,
+      "exit_code": 0,
+      "name": "status_after",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "source": "e974fd617e0e2c0d1fc88584b1301a7ffb714a73"
+}

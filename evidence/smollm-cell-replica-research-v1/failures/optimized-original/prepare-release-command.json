@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/workspace/scratch/56818e4fba76/chain-pq-target/release/trnm-cell",
+    "prepare-release",
+    "--cache-max-bytes",
+    "536870912",
+    "--cache-max-chunks",
+    "1024",
+    "--cache-max-manifests",
+    "32",
+    "--cache-max-db-bytes",
+    "536870912",
+    "--store",
+    "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/publisher.sqlite",
+    "--manifests",
+    "5fc07d04621cff314f151e96b847c6de53f5bc469ba7caa9e9dc39e327d4187a,bbab66c829b63eabccdbc04d689db4a8a4deeab9c08f77101dc7f3e34e32def0,951afb93812a2662d7cc35c3582abc9baa044381c8b08527d7300f103a764fda,622779a4d87f2ee5e69024f2d75108b6a9c674941425648f12b0f3d50cb9f24c,d91fef2378eaa351db17ee4275569e04d744285d32dfeac7d8c261d59f3e2259,dbc7b56775d6d43bf94b319ce56186efa0fea3937696ae2d3d4059871fb8f1e0,3c65b021f9e000a07ee34eae572819105499809d9e2839ed0985f3813222e130,19fe60a19d91cf0ed47bfdece8f9c9c0f1902243546ffbc2fbe198b5dedabce1,6c1aa5784102e9a3704799f73333490d757257923340814b52ead395c8354f6e,3b06ff2aa133e7ae9e9dad446d28199dc90b3b53e04465226137df0e51e678c2,9d48a8e172974be14f380b422d6373841f04284d773fddbcd3895e2bf6d83296",
+    "--output",
+    "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/source-release.tcr1",
+    "--max-bytes",
+    "272190131",
+    "--max-chunks",
+    "269",
+    "--overall-ms",
+    "120000"
+  ],
+  "elapsed_seconds": 2.1408755660004317,
+  "returncode": 0
+}

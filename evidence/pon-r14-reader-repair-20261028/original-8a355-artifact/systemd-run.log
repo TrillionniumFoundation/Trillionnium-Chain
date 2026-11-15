@@ -1,0 +1,16 @@
+Running as unit: trnm-native-campaign-40614503458-1.service
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/pon-native-campaign-40614503458-1/run-native-campaign.py", line 22, in <module>
+    policy_vectors = load_profiles()
+                     ^^^^^^^^^^^^^^^
+  File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/pon_public_v3_policy_read.py", line 69, in load_profiles
+    require(config['schema'] == 'pon-public-resource-profile-vectors-v1'
+  File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/pon_public_v3_policy_read.py", line 23, in require
+    raise ValueError(message)
+ValueError: original resource numbers and explicit profile history required
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=1
+Service runtime: 107ms
+CPU time consumed: 84ms
+Memory peak: 3.0M
+Memory swap peak: 0B

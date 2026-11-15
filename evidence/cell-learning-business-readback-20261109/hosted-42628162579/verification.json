@@ -1,0 +1,504 @@
+{
+  "schema": "trnm-cell-learning-business-hosted-verification-v1",
+  "implementation_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+  "implementation_tree": "93fbb686a983fa57e33791411fd3a18d6b2258ae",
+  "delivery_commit_is_not_tested_implementation": true,
+  "source_before": {
+    "base": null,
+    "candidate": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+    "tested_tree": "93fbb686a983fa57e33791411fd3a18d6b2258ae",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2501239713,
+    "tracked_entries": 26173,
+    "tracked_worktree_verified": true
+  },
+  "source_after": {
+    "base": null,
+    "candidate": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+    "tested_tree": "93fbb686a983fa57e33791411fd3a18d6b2258ae",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2501239713,
+    "tracked_entries": 26173,
+    "tracked_worktree_verified": true
+  },
+  "collector_summary": {
+    "authority": "DENY_ALL",
+    "commands": [
+      {
+        "argv": [
+          "/usr/bin/python3",
+          "scripts/test_cell_adoption_readback.py",
+          "-v"
+        ],
+        "elapsed_seconds": 0.16457032300000662,
+        "inputs": {
+          "scripts/test_cell_adoption_readback.py": {
+            "bytes": 19436,
+            "sha256": "0cb9c8d37c924b54af2497ebf4571c1e3c63bfa00f7987206d1232a1b6e643f2"
+          }
+        },
+        "label": "adoption-controls",
+        "launched": true,
+        "outputs": {
+          "stderr.log": {
+            "bytes": 4725,
+            "sha256": "156bf8e39159d20feb69c5015ba845244ff26883b888d60b84319c405b60837e"
+          },
+          "stdout.log": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        "passed": true,
+        "returncode": 0,
+        "source_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "tests_passed": 26
+      },
+      {
+        "argv": [
+          "/usr/bin/python3",
+          "scripts/test_cell_learning_iteration_join.py",
+          "-v"
+        ],
+        "elapsed_seconds": 0.36511195200000657,
+        "inputs": {
+          "scripts/test_cell_learning_iteration_join.py": {
+            "bytes": 29021,
+            "sha256": "6bcb93909ecf036f727ae96b362565aecfe04103c500b810915a864ebc56290d"
+          }
+        },
+        "label": "iteration-controls",
+        "launched": true,
+        "outputs": {
+          "stderr.log": {
+            "bytes": 4459,
+            "sha256": "d4cb2f0273cf2b3bc8ff5da7cd0186c8ac67ce8aebb3c1d0266d591753c5e703"
+          },
+          "stdout.log": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        "passed": true,
+        "returncode": 0,
+        "source_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "tests_passed": 25
+      },
+      {
+        "argv": [
+          "/usr/bin/python3",
+          "scripts/test_cell_learning_completion_join.py",
+          "-v"
+        ],
+        "elapsed_seconds": 0.4651380779999954,
+        "inputs": {
+          "scripts/test_cell_learning_completion_join.py": {
+            "bytes": 13136,
+            "sha256": "2198a79f062a5852cebd5a19d64421b08a43ba7e69096f282721dc7ddc407b2b"
+          }
+        },
+        "label": "completion-controls",
+        "launched": true,
+        "outputs": {
+          "stderr.log": {
+            "bytes": 2372,
+            "sha256": "f527311132e30b3686a8b4730e18491689a533a7e695e9113d3e0d5eddd0ac90"
+          },
+          "stdout.log": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        "passed": true,
+        "returncode": 0,
+        "source_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "tests_passed": 13
+      },
+      {
+        "argv": [
+          "/usr/bin/python3",
+          "scripts/test_cell_learning_business_economics.py",
+          "-v"
+        ],
+        "elapsed_seconds": 0.11430648099999985,
+        "inputs": {
+          "scripts/test_cell_learning_business_economics.py": {
+            "bytes": 19961,
+            "sha256": "a962805044ba372384d5e6856fd54ee2fb53cf430f60ce374b62d8264b40965c"
+          }
+        },
+        "label": "economics-controls",
+        "launched": true,
+        "outputs": {
+          "stderr.log": {
+            "bytes": 4460,
+            "sha256": "da04d446d3aa4daa3bce128fd26cd47435bf2be0226d75cd5dba6c526f6b0a96"
+          },
+          "stdout.log": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        "passed": true,
+        "returncode": 0,
+        "source_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "tests_passed": 29
+      },
+      {
+        "argv": [
+          "/usr/bin/python3",
+          "scripts/test_cell_learning_business_join.py",
+          "-v"
+        ],
+        "elapsed_seconds": 0.36487043999999,
+        "inputs": {
+          "scripts/test_cell_learning_business_join.py": {
+            "bytes": 19992,
+            "sha256": "4c7e29a5390a63e182324d1499f64ba842c4d52a9e9926f2757d52739e58e5ff"
+          }
+        },
+        "label": "business-controls",
+        "launched": true,
+        "outputs": {
+          "stderr.log": {
+            "bytes": 3809,
+            "sha256": "df7d4f5cfcedaf4388b19f190e0d4a600daac35a7fcdac22c2aedc89bd9296a4"
+          },
+          "stdout.log": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        "passed": true,
+        "returncode": 0,
+        "source_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "tests_passed": 21
+      },
+      {
+        "argv": [
+          "/usr/bin/python3",
+          "scripts/ci/test_ci_contract.py",
+          "MergedQualificationLaneTests",
+          "-v"
+        ],
+        "elapsed_seconds": 2.219732327999992,
+        "inputs": {
+          "scripts/ci/test_ci_contract.py": {
+            "bytes": 173841,
+            "sha256": "eb4622dbf0d43d06a38476dd6c7e5785a7634454b557ecb47f47f217a9435e59"
+          }
+        },
+        "label": "ci-contract-controls",
+        "launched": true,
+        "outputs": {
+          "stderr.log": {
+            "bytes": 2079,
+            "sha256": "108b957544221cd0c8c17bb683178781cf644b5730308cecb37bd75e7ab2d640"
+          },
+          "stdout.log": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        "passed": true,
+        "returncode": 0,
+        "source_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "tests_passed": 10
+      },
+      {
+        "argv": [
+          "/usr/bin/python3",
+          "scripts/cell_learning_business_join.py",
+          "--bindings",
+          "evidence/cell-learning-business-readback-20261109/bindings/adopt-v1.json",
+          "--bindings-sha256",
+          "8ba561db51a2808a3d6a4ebcc684436cbb3619c94387c0f3939eadc34b7c88a8",
+          "--selection",
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/selection.bin",
+          "--completed",
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/completed.bin",
+          "--readback",
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/readback.json",
+          "--freeze",
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/freeze.json",
+          "--expected",
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/expected.json"
+        ],
+        "elapsed_seconds": 0.06444545700000504,
+        "inputs": {
+          "evidence/cell-learning-business-readback-20261109/bindings/adopt-v1.json": {
+            "bytes": 4094,
+            "sha256": "8ba561db51a2808a3d6a4ebcc684436cbb3619c94387c0f3939eadc34b7c88a8"
+          },
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/completed.bin": {
+            "bytes": 3687,
+            "sha256": "49687e0ece90dceb6409978616700c0b32ec342631a1941994ae3b7a886a7496"
+          },
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/expected.json": {
+            "bytes": 1730,
+            "sha256": "1fdc83d8411fa1b9c4e95f1814ae4a32df07b977e754a8676a3ad5ccf351e810"
+          },
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/freeze.json": {
+            "bytes": 3489,
+            "sha256": "00667a2e0a60f009702aeb589da642382b1a533ed0ad77f77a807bd3c472511d"
+          },
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/readback.json": {
+            "bytes": 26822,
+            "sha256": "a11c43e68721199443ca265c35d5197f6883a732b04ae0f25e480cb9ce6adc5b"
+          },
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/selection.bin": {
+            "bytes": 3213,
+            "sha256": "3c4060363122831d1279133cedfefcdc9d795d4653ae56287bc962d7a7b67aa9"
+          },
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/stdout.json": {
+            "bytes": 7135,
+            "sha256": "916bce16c6293421ff70c6c79bbf5aa811a7e37dde030fe4b2d3e7cab1af3fae"
+          }
+        },
+        "label": "original-adopt-v1",
+        "launched": true,
+        "outputs": {
+          "completion-review.json": {
+            "bytes": 7135,
+            "sha256": "916bce16c6293421ff70c6c79bbf5aa811a7e37dde030fe4b2d3e7cab1af3fae"
+          },
+          "report.json": {
+            "bytes": 12613,
+            "sha256": "2e6821f08b7cf76ceaf476d476609d562a4fcfabf291c09d4d12c6b448690645"
+          },
+          "stderr.log": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout.log": {
+            "bytes": 12613,
+            "sha256": "2e6821f08b7cf76ceaf476d476609d562a4fcfabf291c09d4d12c6b448690645"
+          }
+        },
+        "passed": true,
+        "readback_checks": {
+          "original_completion_bytes_equal": true,
+          "qualification": "HOLD_NO_GO",
+          "retrospective_bindings_only": true,
+          "source_execution_authenticated": false
+        },
+        "returncode": 0,
+        "source_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa"
+      },
+      {
+        "argv": [
+          "/usr/bin/python3",
+          "scripts/cell_learning_business_join.py",
+          "--bindings",
+          "evidence/cell-learning-business-readback-20261109/bindings/no-update-v9.json",
+          "--bindings-sha256",
+          "56821f43e6af00c0e7eeb21a1e965628333a0522b9833491f9e1f5bfac897bd6",
+          "--selection",
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/selection.bin",
+          "--completed",
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/completed.bin",
+          "--readback",
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/readback.json",
+          "--freeze",
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/freeze.json",
+          "--expected",
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/expected.json"
+        ],
+        "elapsed_seconds": 0.06440935300000206,
+        "inputs": {
+          "evidence/cell-learning-business-readback-20261109/bindings/no-update-v9.json": {
+            "bytes": 4134,
+            "sha256": "56821f43e6af00c0e7eeb21a1e965628333a0522b9833491f9e1f5bfac897bd6"
+          },
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/completed.bin": {
+            "bytes": 3508,
+            "sha256": "c890ca0ba1f5b5190e33bc93a0947c98a5cbfc4f77ad4f65ac8f428274ab222f"
+          },
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/expected.json": {
+            "bytes": 1671,
+            "sha256": "d670b3094b47e3807c8ab7a093359ef8e16af3edad9368e78f517897e0345f14"
+          },
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/freeze.json": {
+            "bytes": 3508,
+            "sha256": "ae6fbb4ea59fcf2c9ac2fbba5976501b27a7f5bc34838737a8fa99c05eb6bf69"
+          },
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/readback.json": {
+            "bytes": 24556,
+            "sha256": "fdfc6d1bd390a2d6f37ac563d7fe49886e2ac0492b4dff47af95e32f403162a9"
+          },
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/selection.bin": {
+            "bytes": 3018,
+            "sha256": "21ba8a9895ca7ae052dde45d7547b50e3b656e3c99eb50e004e1c60dd3967b62"
+          },
+          "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/stdout.json": {
+            "bytes": 7128,
+            "sha256": "c10249c3dae120636d53ce34eb3b9b38cd11aed586a252ddccb9cca71da81bb8"
+          }
+        },
+        "label": "original-no-update-v9",
+        "launched": true,
+        "outputs": {
+          "completion-review.json": {
+            "bytes": 7128,
+            "sha256": "c10249c3dae120636d53ce34eb3b9b38cd11aed586a252ddccb9cca71da81bb8"
+          },
+          "report.json": {
+            "bytes": 12234,
+            "sha256": "8a4b4861eab7c82296d9ef095584dcf7a54baef170b213839dc9606566d16d73"
+          },
+          "stderr.log": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout.log": {
+            "bytes": 12234,
+            "sha256": "8a4b4861eab7c82296d9ef095584dcf7a54baef170b213839dc9606566d16d73"
+          }
+        },
+        "passed": true,
+        "readback_checks": {
+          "original_completion_bytes_equal": true,
+          "qualification": "HOLD_NO_GO",
+          "retrospective_bindings_only": true,
+          "source_execution_authenticated": false
+        },
+        "returncode": 0,
+        "source_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa"
+      }
+    ],
+    "event": "push",
+    "passed": true,
+    "production_activation": false,
+    "python_executable": "/usr/bin/python3",
+    "python_version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "qualification": "HOLD_NO_GO",
+    "readbacks_passed": 2,
+    "run_attempt": "1",
+    "run_id": "42628162579",
+    "schema": "trnm-cell-learning-business-readback-run-v1",
+    "scope": "python-controls-and-retrospective-original-material-readbacks-only",
+    "selected_source_bytes_unchanged": true,
+    "source_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+    "source_files": {
+      ".github/workflows/cell-learning-business-readback.yml": {
+        "bytes": 3221,
+        "sha256": "5780e828c91e96af51b1e3e09ceb01db06bf27b4f19ccdb47c1a4a09103ef028"
+      },
+      "scripts/cell_adoption_readback.py": {
+        "bytes": 29721,
+        "sha256": "4574c8ba129eeac23f8c217d2fe3c25d0a8c659f38ec3449b87186a33486d4dc"
+      },
+      "scripts/cell_learning_business_economics.py": {
+        "bytes": 17691,
+        "sha256": "b7cb87ce511bc5d87a379c7b2eae4036e81bedd0222f18d252869ebb900cb507"
+      },
+      "scripts/cell_learning_business_join.py": {
+        "bytes": 17746,
+        "sha256": "df213357eba570ce89b32e5881cf7922ae642c835837e0b63961073e4ef56d79"
+      },
+      "scripts/cell_learning_completion_join.py": {
+        "bytes": 6806,
+        "sha256": "db90de5c974565c874a8d34679de907d6214bc84a6294c3ec5466c7e28eb4ed0"
+      },
+      "scripts/cell_learning_iteration_join.py": {
+        "bytes": 23114,
+        "sha256": "b602e6217b9ec2bb143c141ea02e27ec666ef75ddf993eb794c23eb3ded5da7d"
+      },
+      "scripts/ci/check_ci_contract.py": {
+        "bytes": 149548,
+        "sha256": "164e7240ec0f2f24f69f5aeb5da2f011c2d25bdad35f8f4281aa5b03be0c73f7"
+      },
+      "scripts/ci/ci_job.sh": {
+        "bytes": 38886,
+        "sha256": "97ab24ac445c9c4accf45bad3d35f2eb8e24f2e7b185cb994d42984479012b68"
+      },
+      "scripts/ci/run_cell_learning_business_readback.py": {
+        "bytes": 10241,
+        "sha256": "98ede47f6e46c90e86ca42cc735378620a0653239a9f53b38a1978dd68fcb7ad"
+      },
+      "scripts/ci/test_ci_contract.py": {
+        "bytes": 173841,
+        "sha256": "eb4622dbf0d43d06a38476dd6c7e5785a7634454b557ecb47f47f217a9435e59"
+      },
+      "scripts/ci/verify_ci_source.py": {
+        "bytes": 11231,
+        "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+      },
+      "scripts/test_cell_adoption_readback.py": {
+        "bytes": 19436,
+        "sha256": "0cb9c8d37c924b54af2497ebf4571c1e3c63bfa00f7987206d1232a1b6e643f2"
+      },
+      "scripts/test_cell_learning_business_economics.py": {
+        "bytes": 19961,
+        "sha256": "a962805044ba372384d5e6856fd54ee2fb53cf430f60ce374b62d8264b40965c"
+      },
+      "scripts/test_cell_learning_business_join.py": {
+        "bytes": 19992,
+        "sha256": "4c7e29a5390a63e182324d1499f64ba842c4d52a9e9926f2757d52739e58e5ff"
+      },
+      "scripts/test_cell_learning_completion_join.py": {
+        "bytes": 13136,
+        "sha256": "2198a79f062a5852cebd5a19d64421b08a43ba7e69096f282721dc7ddc407b2b"
+      },
+      "scripts/test_cell_learning_iteration_join.py": {
+        "bytes": 29021,
+        "sha256": "6bcb93909ecf036f727ae96b362565aecfe04103c500b810915a864ebc56290d"
+      }
+    },
+    "source_tree": "93fbb686a983fa57e33791411fd3a18d6b2258ae",
+    "tests_passed": 124
+  },
+  "artifact_verification": {
+    "github_artifact_digest_matches_download": true,
+    "zip_member_count": 31,
+    "all_zip_members_read_and_hashed": true,
+    "source_file_hash_checks": 16,
+    "command_input_hash_checks": 20,
+    "command_output_hash_checks": 20,
+    "test_counts_match_raw_logs": true,
+    "readbacks_equal_previously_published_reports": true,
+    "job_log_uncompressed_bytes": 149834,
+    "job_log_uncompressed_sha256": "3ddfe63e7d2b069fc56dee0779cb4752656ccd7240a5462a3f1018ec9433e25b",
+    "job_log_compressed_sha256": "0d4e76351c4a26ded61449b3927d8ef0c909a77b0cba88daac6eedd9dabe3642"
+  },
+  "preparation_observations": [
+    {
+      "scope": "local verification of downloaded hosted artifact, not the hosted job",
+      "initial_attempt": "FileNotFoundError: chain-loop/scripts/ci/verify_ci_source.py",
+      "reason": "The local selected-source projection did not yet contain the unchanged original source verifier.",
+      "resolution": "Fetched original bytes at the tested code commit, checked Git blob c775290c138c3b41a32e654f56ed5cbe9acec3ee and the hosted SHA-256, then reran only artifact verification.",
+      "record_kind": "explicitly transcribed tool observation, not a retained raw process log",
+      "hosted_tests_reexecuted": false
+    },
+    {
+      "scope": "local evidence preparation",
+      "observation": "exec_command failed: CreateProcess: Rejected: Failed to create unified exec process: exec-server transport disconnected",
+      "resolution": "A later pwd probe succeeded; exact original-byte verification and artifact checks were resumed. Hosted job status and implementation code were unaffected.",
+      "record_kind": "explicitly transcribed tool observation, not a retained raw process log"
+    }
+  ],
+  "qualification": {
+    "authority": "DENY_ALL",
+    "production_activation": false,
+    "full_business_loop": "HOLD_NO_GO",
+    "new_training": false,
+    "full_native_workspace_tested": false,
+    "prospective_merge_tested": false,
+    "all_required_ci_gates_evaluated": false,
+    "all_required_ci_gates_passed": null,
+    "independent_evaluation_authenticated": false,
+    "independent_consumer_authenticated": false,
+    "real_external_payment_authenticated": false,
+    "historical_training_source_execution_authenticated": false,
+    "hepta_final_use_authenticated": false,
+    "real_failure_reorg_recovery_authenticated": false
+  }
+}

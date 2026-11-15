@@ -1,0 +1,21 @@
+{
+  "bytes": 178,
+  "command": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/data/chain-root-operation-owned-20261112-df05-v4",
+  "elapsed_ns": 13714176997,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "log": "preflight.log",
+  "name": "preflight",
+  "process_exit_code": 0,
+  "sha256": "fc1261e998cbf55d30b7f3c43291c015a7909f52243152145584a322b26115d7",
+  "source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

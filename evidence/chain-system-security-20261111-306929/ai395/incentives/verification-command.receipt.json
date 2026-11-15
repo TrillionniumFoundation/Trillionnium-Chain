@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "/workspace/scratch/3069292387f3/incentives/evidence/chain-system-security-20261111-306929/ai395/incentives/verify_archive.py",
+    "--previous-receipt",
+    "/workspace/scratch/3069292387f3/incentives/evidence/chain-incentive-counterexamples-20261112/node-genesis-split/native.json"
+  ],
+  "checker_sha256": "8a026362dc8045eb7f528231fd4cecee5fb5e2a47390714136587e75fc728331",
+  "cwd": "/workspace/scratch/3069292387f3/incentives",
+  "duration_seconds": 2.2772595019996515,
+  "exit_code": 0,
+  "files_extracted": 0,
+  "finished_utc": "2026-11-12T02:28:42.600552+00:00",
+  "native_tests_started": false,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "schema": "chain-incentive-local-artifact-verification-command-v1",
+  "started_utc": "2026-11-12T02:28:40.323302+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "941ef2ae5a34433b0ba72b0b8839ad16d2d414a997e27fae54fb712f731079a2"
+}

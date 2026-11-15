@@ -1,0 +1,166 @@
+{
+  "schema": "pon-w1-nonblocking-cache-local-evidence-v1",
+  "base_commit": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+  "base_tree": "60a521c7299febfe26a8c7d38d3420d490d07cd8",
+  "execution_source_state": "uncommitted candidate; exact input blobs listed; evidence publication does not relabel the base as tested",
+  "inputs": {
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "sha256": "7f0c417c4f0b80515e6720f4775f11c8ec7578b516d8f1a98de0fc44fec1e904",
+      "git_blob": "0534bdf765a4dbb6be57b3aee49d1336ea9389d2"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "sha256": "2bd4b5a10474506ae62abf420c1f46665da7685cf0fcd28b39c043716a8a4902",
+      "git_blob": "23094ff51cd354ed8d2a14f10d10b797e4288e67"
+    },
+    "docs/protocol/pon-nakamoto-v1/details/W1_LOCAL_SECURITY_PROFILE.md": {
+      "sha256": "48c2715865add20bc988d957a94097c7156242fea323cf11f03ad6a9ede0784b",
+      "git_blob": "ecf2558bd6d09b132a339a6f0489af865b3dace3"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs": {
+      "sha256": "3aeaeee096e6bca9a195b70c9440734275b828e5783f33c1a28d8ab6df3f8f2d",
+      "git_blob": "4becc2bbe7dccefc04663d4aecfce166f197879c"
+    },
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs": {
+      "sha256": "79f8cb54bdbdfb6b5b664de18ba376159f7739741a0c3769baa4c886f8044b67",
+      "git_blob": "6c4e265b8787b2e50541df60a3a67ce95ec7634e"
+    },
+    "trillionnium/Cargo.lock": {
+      "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+      "git_blob": "7a298d02ad14470a8c45094b4791c24109fc4519"
+    },
+    "trillionnium/Cargo.toml": {
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "git_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65"
+    },
+    "rust-toolchain.toml": {
+      "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+      "git_blob": "8770b1d875864c5356dc4abad904b69ec484817f"
+    }
+  },
+  "native_results": {
+    "crypto_default_lib": {
+      "passed": 119,
+      "failed": 0
+    },
+    "rejection_cache_subset": {
+      "passed": 7,
+      "failed": 0,
+      "overlaps_crypto_lib": true
+    },
+    "host_exact_module_final": {
+      "passed": 19,
+      "failed": 0,
+      "scope": "directly includes actual host_kernel_parent.rs and actual error.rs with actual transport and unchanged locked dependency versions; not full Node",
+      "kernel_host_qualified": false
+    },
+    "host_initial": {
+      "passed": 18,
+      "failed": 1,
+      "reason": "new test incorrectly expected rejection of token-edge NBSP; original numeric.trim() accepts it; corrected test only"
+    },
+    "all_target_all_feature_clippy": {
+      "result": "BLOCKED",
+      "reason": "No space left on device (os error 28) while creating crypto rmeta temp directory; no lint success claimed"
+    }
+  },
+  "python_results": {
+    "ci_contract": 95,
+    "source_integrity_negatives": 34,
+    "pq_source_negatives": 34,
+    "legal_v2_reader": 11,
+    "native_campaign_runner": 5,
+    "query_bound": 21
+  },
+  "non_test_attempts": {
+    "legal-runner.log": "mistyped nonexistent runner test path; not executed, no pass credit"
+  },
+  "whole_node_native_suite": "NOT_RUN",
+  "original_4s_16_hostile_business": "NOT_RUN_IN_THIS_TASK; prior source failures retained",
+  "cheapest_legal_cost_bound": "UNQUALIFIED",
+  "whole_chain_quantum_cost": "UNQUALIFIED",
+  "model_utility": "UNQUALIFIED",
+  "production_activation": false,
+  "host_harness_dependency_version_drift": [],
+  "binaries": {
+    "crypto-lib-final.log": {
+      "path": "/tmp/trnm-pon-security-target/debug/deps/trnm_crypto_primitives-99102bf85b5fd691",
+      "sha256": "69a0bf45019816b25a23b2debb40a66f20f58a7c58079820c82728604a154b07"
+    },
+    "host-module-final.log": {
+      "path": "/tmp/trnm-pon-security-target/debug/deps/pon_host_exact_module_check-61b27b56d9ea3dfd",
+      "sha256": "559cc186ea745e999acab3b119a68127c035526c9f6170ac8c635546038d4093"
+    }
+  },
+  "logs": [
+    {
+      "path": "logs/ci-contract.log",
+      "bytes": 15864,
+      "sha256": "d7414e28376932eab2783663d9e0135f7aae1ee80ea11a8388644971d618ba23"
+    },
+    {
+      "path": "logs/clippy.log",
+      "bytes": 1178,
+      "sha256": "643dbd928c50ef8ab1fb8639f204752511b429dcdcefde71fa4e5855ee8e1bae"
+    },
+    {
+      "path": "logs/crypto-lib-final.log",
+      "bytes": 27190,
+      "sha256": "3663d339340b2b4933cedf1bcb6a8b244b35ac4730b6a599660caae74d6111f6"
+    },
+    {
+      "path": "logs/format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/host-module-final.log",
+      "bytes": 5673,
+      "sha256": "5ae7c36974a3c3c598ed48bf34ebe6092122532f22a38a3853fb4d28219c564d"
+    },
+    {
+      "path": "logs/host-module.log",
+      "bytes": 7027,
+      "sha256": "477f6bc0cc5e7efea51e09ad3b579e04d5bbb364601c2c11c48f9f6b3cfc2405"
+    },
+    {
+      "path": "logs/legal-reader.log",
+      "bytes": 111,
+      "sha256": "f02e2b097c1b12cc2c6c58ae5860f23e0a1f00c0346128d775358533dee1a67c"
+    },
+    {
+      "path": "logs/legal-runner.log",
+      "bytes": 153,
+      "sha256": "b45d56d3f0c5d1d22b3fcf56d078c594e8b432746ed27cd2252a322ace0e0aa7"
+    },
+    {
+      "path": "logs/pq-source-guard.log",
+      "bytes": 557,
+      "sha256": "0c693e64e1f86fc235194f12f687db50ef83fafbdd1ccf58157887dee40555c1"
+    },
+    {
+      "path": "logs/pq-source-negatives.log",
+      "bytes": 134,
+      "sha256": "addc065bb8d98ee6540162dc4ee2167b6d5267e8478e2e804c8449a5e2df7045"
+    },
+    {
+      "path": "logs/query-controls.log",
+      "bytes": 3080,
+      "sha256": "f858f7b7fbc430716948e8be1be8c0855effd6ac5175f91a5e096931be0c6dcf"
+    },
+    {
+      "path": "logs/rejection-cache.log",
+      "bytes": 2371,
+      "sha256": "3b32ce911ffbeff58b969364b94db2e75386762cef27addae52bf2ecd86f639d"
+    },
+    {
+      "path": "logs/runner-controls.log",
+      "bytes": 103,
+      "sha256": "1683faffcdfbe110d76dbff5223ec6c50e28683becee8feb448717707418bee4"
+    },
+    {
+      "path": "logs/source-negative.log",
+      "bytes": 5509,
+      "sha256": "dbb3703221c6edf48b5f8c84649c279dceed3acb93dfb00541df7dd32da50e75"
+    }
+  ]
+}

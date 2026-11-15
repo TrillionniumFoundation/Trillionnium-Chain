@@ -1,0 +1,27 @@
+{
+  "publication": {
+    "exit_code": 0,
+    "job_id": "1a1cfcc92d8-2564-1aba",
+    "operation_key": "root-operation-20261112-df05-native-publication-v2",
+    "output_complete": true,
+    "output_durable": true,
+    "runtime_idempotency_key": "root-operation-20261112-df05-native-publication-v2-resume1",
+    "state": "succeeded",
+    "terminal_publication_confirmed": true
+  },
+  "publication_receipt": {
+    "bytes": 576,
+    "sha256": "300d5e0a437cf83f9cbc1ae92793cd0b1e2e3b1e2f41f0974bf446d14bc11917"
+  },
+  "schema": "checkpoint-probe-prior-owner-closure-v1",
+  "validation": {
+    "exit_code": 0,
+    "job_id": "1a1cf53f912-2564-19f0",
+    "operation_key": "root-operation-20261112-df05-native-validation-v3",
+    "output_complete": true,
+    "output_durable": true,
+    "runtime_idempotency_key": "root-operation-20261112-df05-native-validation-v3",
+    "state": "succeeded",
+    "terminal_publication_confirmed": true
+  }
+}

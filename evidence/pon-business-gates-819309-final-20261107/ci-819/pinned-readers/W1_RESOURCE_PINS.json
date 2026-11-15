@@ -1,0 +1,13 @@
+{
+  "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+  "files": [
+    {
+      "path": "config/pon/work-security-acceptance-v1.json",
+      "git_blob": "fd29f1ee4d03b16b84c3ae445765955b9c1c2bab",
+      "bytes": 673,
+      "sha256": "4ca674c305112d51672efcab6c0f886e477a5397191addb806d209a08266165f"
+    }
+  ],
+  "original_profile_constant_verified": true,
+  "native_invocations": 0
+}

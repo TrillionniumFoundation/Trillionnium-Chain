@@ -1,0 +1,15 @@
+{
+  "source_commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+  "source_function": "caller_write_half_open",
+  "function_sha256": "05d73f62f6fe1887a70fe2f7b0583e493f2e8b341f29cdf02b70d291b2326657",
+  "harness_sha256": "283de3e084a95885f674ae3ebea7d7311db11058fbddc7d756c8a9d8f9f78fef",
+  "initial_environment_attempts": [
+    "rustc absent from default PATH",
+    "wrapper not executable directly; invoked existing bash wrapper"
+  ],
+  "compile_exit": 0,
+  "negative_exit": 101,
+  "expected_assertion_failure": true,
+  "scope": "Exact current function with std Result alias, actual localhost TCP; no Node/native admission suite executed",
+  "stderr": "\nthread 'main' (33) panicked at /workspace/scratch/7318d5f890d1/throughput-readback/half-close-original-40a5/original-half-close.rs:24:2:\ncompleted-request trailing byte must not hide closed caller write-half\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n"
+}

@@ -1,0 +1,9 @@
+
+running 4 tests
+test growth_public_cli_original_serve_exposes_fixed_growth_head ... ok
+test growth_public_cli_packet_file_rejects_fifo_symlink_and_oversize_before_dispatch ... ok
+test growth_public_cli_refuses_unsupported_owner_and_pool_before_store_creation ... ok
+test growth_public_cli_still_open_stdin_obeys_command_deadline_before_dispatch ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.71s
+

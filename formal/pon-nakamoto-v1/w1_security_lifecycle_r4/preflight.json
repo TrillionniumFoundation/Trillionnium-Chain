@@ -1,0 +1,6 @@
+{
+  "base": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+  "job_id": "1a1b975f38c-12894-146e",
+  "stdout": "{\"revision\": \"cc836dfc13ef0006eb0878abd8cb5eca9a76bec0\", \"head\": \"cc836dfc13ef0006eb0878abd8cb5eca9a76bec0\", \"branch\": \"fix/chain-w1-bounded-verifier-20261108-f16ac5\"}\n{\"preflight_exit\": 0, \"stdout\": \"{\\\"result\\\": \\\"PASS\\\", \\\"mode\\\": \\\"--dev\\\", \\\"project\\\": \\\"trillionnium-chain\\\", \\\"packages\\\": 26, \\\"branch\\\": \\\"fix/chain-w1-bounded-verifier-20261108-f16ac5\\\", \\\"remote_policy_mutated\\\": false}\\n\", \"stderr\": \"\"}\n",
+  "stderr": ""
+}

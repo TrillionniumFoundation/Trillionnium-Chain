@@ -1,0 +1,14 @@
+{
+  "carry": {
+    "source": "/home/qian-qi/work/chain-w1-carry-measurements-20261108-f16ac/01-B/proof/arith.proof.bin",
+    "bytes": 306213,
+    "sha256": "26a7d0848b436a547ea5add19cf882ffb5b5b4621993f5511b93542053d9ab68",
+    "fresh_proof_generated_by_this_integration": false
+  },
+  "packed": {
+    "source": "/home/qian-qi/work/chain-w1-packed-carry-measurements-20261108-f16ac/01-B/proof/arith.proof.bin",
+    "bytes": 453861,
+    "sha256": "2b96cb7c32e34ab22ba39e1de424281b6d20b7811cff24ba769cf2e6cb67a988",
+    "fresh_proof_generated_by_this_integration": false
+  }
+}

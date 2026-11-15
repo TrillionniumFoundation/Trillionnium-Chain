@@ -1,0 +1,137 @@
+{
+  "all_received_hashes_verified": true,
+  "files": [
+    {
+      "bytes": 677,
+      "name": "setup.json",
+      "sha256": "b3a0b2365ea205729fe2859571218d3c04e8a42bb73c0a4b9454824cec0bad40",
+      "version": "2050:56290776:677:1794061222570775195:1794061222570775195"
+    },
+    {
+      "bytes": 178,
+      "name": "preflight.stdout.log",
+      "sha256": "51a5abc2021052aea213b79dde0b32428dc5a763c2cc00d35986433f71cab67b",
+      "version": "2050:56290763:178:1794061222478212646:1794061222478212646"
+    },
+    {
+      "bytes": 0,
+      "name": "preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": "2050:56290775:0:1794061222478212646:1794061222478212646"
+    },
+    {
+      "bytes": 2413,
+      "name": "field_probe.rs",
+      "sha256": "eb2d629a927fd3c379ecf810b1ef0460f2c826a0fabe0e435ca9c4a983c0eaaf",
+      "version": "2050:56290862:2413:1794061246803936927:1794061246808677279"
+    },
+    {
+      "bytes": 859,
+      "name": "build.json",
+      "sha256": "01e9f987d65f201fc58735b634b5c5e055fe697386c8ee1302f433c833e8f5ce",
+      "version": "2050:56290865:859:1794061309809023938:1794061309809023938"
+    },
+    {
+      "bytes": 0,
+      "name": "build.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": "2050:56290859:0:1794061309492198258:1794061309492198258"
+    },
+    {
+      "bytes": 0,
+      "name": "build.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": "2050:56290863:0:1794061309492198258:1794061309492198258"
+    },
+    {
+      "bytes": 410,
+      "name": "probe.json",
+      "sha256": "0994db8594ea81b915d9f7e1a68791aee189c8a7aac072c3411f418e34129a86",
+      "version": "2050:56290870:410:1794061309842008582:1794061309842008582"
+    },
+    {
+      "bytes": 1478,
+      "name": "probe.stdout.log",
+      "sha256": "316098fc6fd178ad0d1051f9821d8c1c5e030159fc2674febe0bf00858cd229c",
+      "version": "2050:56290866:1478:1794061309830190393:1794061309830190393"
+    },
+    {
+      "bytes": 0,
+      "name": "probe.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": "2050:56290867:0:1794061309809023938:1794061309809023938"
+    },
+    {
+      "bytes": 5879,
+      "name": "field-observations.json",
+      "sha256": "c20cede2a5e1ec35f4e7030593632b34ccf6383c7b846ff0d0c9b5d775e9bbfa",
+      "version": "2050:56290871:5879:1794061309873666361:1794061309873666361"
+    },
+    {
+      "bytes": 178,
+      "name": "metadata-preflight.stdout.log",
+      "sha256": "51a5abc2021052aea213b79dde0b32428dc5a763c2cc00d35986433f71cab67b",
+      "version": "2050:56290995:178:1794061672751274750:1794061672751274750"
+    },
+    {
+      "bytes": 0,
+      "name": "metadata-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": "2050:56290996:0:1794061672751274750:1794061672751274750"
+    },
+    {
+      "bytes": 2973,
+      "name": "field_probe_metadata.rs",
+      "sha256": "378e2d0289444396b99de70af46bf160e8e6ed0467bfd36cb04f61911cf8678b",
+      "version": "2050:56290997:2973:1794061672754238824:1794061672754238824"
+    },
+    {
+      "bytes": 876,
+      "name": "metadata-build.json",
+      "sha256": "7fb1987b4d34d3283c56deef781289b8d2c5a4be001cbc80b98b11fcadda76b8",
+      "version": "2050:56291000:876:1794061673222265019:1794061673222265019"
+    },
+    {
+      "bytes": 0,
+      "name": "metadata-build.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": "2050:56290998:0:1794061672755274668:1794061672755274668"
+    },
+    {
+      "bytes": 0,
+      "name": "metadata-build.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": "2050:56290999:0:1794061672755274668:1794061672755274668"
+    },
+    {
+      "bytes": 419,
+      "name": "metadata-probe.json",
+      "sha256": "cba9a717ba517d536c49d756b8fc6d40612d92c0c5bee9b321aa024072464c23",
+      "version": "2050:56291003:419:1794061673287862901:1794061673287862901"
+    },
+    {
+      "bytes": 2365,
+      "name": "metadata-probe.stdout.log",
+      "sha256": "db40bb16d4a8cac84c28bd0b945ab6cbd440ad87f20764517f58fad8223244e5",
+      "version": "2050:56291001:2365:1794061673259264254:1794061673259264254"
+    },
+    {
+      "bytes": 0,
+      "name": "metadata-probe.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": "2050:56291002:0:1794061673222265019:1794061673222265019"
+    },
+    {
+      "bytes": 6705,
+      "name": "metadata-field-observations.json",
+      "sha256": "a9f3279d13e7a823d46633ae1793575f3efded7b57bbdb105297728425ff53d1",
+      "version": "2050:56291006:6705:1794061673332262746:1794061673332262746"
+    }
+  ],
+  "large_ELF_payloads_omitted_but_hashes_retained_in_observations": true,
+  "post_quantum_soundness_qualified": false,
+  "probe_scope": "Anonymous memfd syscall sequences using the same pinned rustix library; not a run of the corrected crate test suite.",
+  "schema": "TRNM-M15-SEALED-FIELD-PROBE-TRANSFER1",
+  "source_clone_modified": false,
+  "source_commit_observed": "7150d96a2112875b4afcf3023361a5cef4a0e4b1"
+}

@@ -1,0 +1,244 @@
+{
+  "ancestor_execution_transferred": false,
+  "archival_conversion": {
+    "change": "archive paths refer to checkpoint root; full job logs stored as reversible gzip with decoded-byte hashes; evidence values unchanged",
+    "original_readback_json_bytes": 14101,
+    "original_readback_json_sha256": "b7e19a847cf344cc30048d91518b30613da26ad08fa5466efa48cd234166bb5b"
+  },
+  "artifact": {
+    "all_347_archive_entries_retained": true,
+    "bytes": 460552,
+    "id": 13823694514,
+    "path": "artifacts/pq-system-controls-arm-head-9d4.zip",
+    "sha256": "191db73c44e8b28102a62734921f45d29d04c93836693522920193faa9b43697"
+  },
+  "checkpoint_path_base": "evidence/nextuse-final-9d4-20261111",
+  "failed_command_original": {
+    "after": {
+      "base": null,
+      "candidate": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+      "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2552886421,
+      "tracked_entries": 27994,
+      "tracked_worktree_verified": true
+    },
+    "argv": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+      "--",
+      "--exact",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "before": {
+      "base": null,
+      "candidate": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+      "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2552886421,
+      "tracked_entries": 27994,
+      "tracked_worktree_verified": true
+    },
+    "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+    "elapsed_ns": 6457986377,
+    "environment": {
+      "CARGO_BUILD_JOBS": "2",
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_TARGET_DIR": "/home/runner/work/_temp/pq-system-target",
+      "GITHUB_RUN_ATTEMPT": "1",
+      "GITHUB_RUN_ID": "42941133598",
+      "OPENSSL_DIR": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.O5TMFggR/install",
+      "OPENSSL_STATIC": "1",
+      "RUNNER_ARCH": "ARM64",
+      "RUSTC": null,
+      "RUSTC_WORKSPACE_WRAPPER": null,
+      "RUSTC_WRAPPER": null,
+      "RUSTFLAGS": null,
+      "RUST_TEST_THREADS": "1",
+      "TRNM_PQ_OPENSSL": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.O5TMFggR/install/bin/openssl",
+      "TRNM_PQ_OPENSSL_SHA256": "bb22962025a392b16afa4a94952d1fab903aaa18558491933501fae513de808a",
+      "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+    },
+    "exit_code": 101,
+    "log_bytes": 31612,
+    "log_file": "native-41.log",
+    "log_sha256": "ec6e3ed466f237c32c0890d7b80e9cc97c4b92111a70eb26d8e88a7a2a14f644",
+    "schema": "trnm-pq-native-command-v1",
+    "started_utc": "2026-11-11T02:42:51.241451+00:00",
+    "status": "command_failed",
+    "whole_chain_quantum_security_qualified": false
+  },
+  "failing_rust_source": {
+    "blobs": {
+      "8c95a8d0a9199e9f72405835c8f0662c36af7c42": "13c61b99303639372f058de580f2da6de0f53f16",
+      "HEAD": "13c61b99303639372f058de580f2da6de0f53f16",
+      "df927b6ffaecff293b9e9428e3ba516f47cd101a": "13c61b99303639372f058de580f2da6de0f53f16"
+    },
+    "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+    "unchanged_from_pr_base": true
+  },
+  "head": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+  "job_id": 130262955743,
+  "job_scope": "ubuntu-24.04-arm, head; intermediate original control artifact, whole job still in progress",
+  "native_commands": {
+    "count": 52,
+    "exit_nonzero": 1,
+    "exit_zero": 51,
+    "failed": [
+      {
+        "exit_code": 101,
+        "log_bytes": 31612,
+        "log_file": "native-41.log",
+        "log_sha256": "ec6e3ed466f237c32c0890d7b80e9cc97c4b92111a70eb26d8e88a7a2a14f644",
+        "record": "native-41.json",
+        "selector": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+        "status": "command_failed"
+      }
+    ]
+  },
+  "no_local_rust_run_started": true,
+  "no_threshold_changed": true,
+  "panic_original_lines": [
+    "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart' (23043) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:586:6:",
+    "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection reset by peer (os error 104)\", source: Some(Os { code: 104, kind: ConnectionReset, message: \"Connection reset by peer\" }), request_history_budget: false }",
+    "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1397 filtered out; finished in 1.43s"
+  ],
+  "phase_diagnostics_excerpt": [
+    {
+      "budgets_unchanged": true,
+      "last_failure": {
+        "error": {
+          "code": null,
+          "io_kind": "broken_pipe",
+          "origin": "io",
+          "raw_os_error": 32,
+          "sqlite_extended_code": null
+        },
+        "id": 13,
+        "kind": "witness_connection",
+        "marks": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "phase": "witness_write",
+        "thread_cpu_ns": 26998848,
+        "wall_ns": 458379070
+      },
+      "last_service_failure": null,
+      "last_tcp_failure": null,
+      "process_id": 23045,
+      "schema": "pon-pq-test-phase-observation-v1"
+    },
+    {
+      "budgets_unchanged": true,
+      "last_failure": {
+        "error": {
+          "code": "PQ_WITNESS_UNAVAILABLE",
+          "io_kind": null,
+          "origin": "exact_diagnostic_string_or_unknown",
+          "raw_os_error": null,
+          "sqlite_extended_code": null
+        },
+        "id": 19,
+        "kind": "tcp_request",
+        "marks": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "phase": "tcp_read_request",
+        "thread_cpu_ns": 229664,
+        "wall_ns": 230665
+      },
+      "last_service_failure": null,
+      "last_tcp_failure": {
+        "error": {
+          "code": "PQ_WITNESS_UNAVAILABLE",
+          "io_kind": null,
+          "origin": "exact_diagnostic_string_or_unknown",
+          "raw_os_error": null,
+          "sqlite_extended_code": null
+        },
+        "id": 19,
+        "kind": "tcp_request",
+        "marks": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "phase": "tcp_read_request",
+        "thread_cpu_ns": 229664,
+        "wall_ns": 230665
+      },
+      "process_id": 23042,
+      "schema": "pon-pq-test-phase-observation-v1"
+    }
+  ],
+  "qualification": "HOLD_NO_GO",
+  "run_id": 42941133598,
+  "schema": "trnm-pr892-final-pq-native-observation-v1",
+  "source_and_repository_controls": {
+    "inventory": {
+      "log_bytes": 35,
+      "log_file": "inventory.log",
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "record": "inventory.json",
+      "stdout": "distributed source inventory: PASS"
+    },
+    "pq-hold": {
+      "log_bytes": 4835,
+      "log_file": "pq-hold.log",
+      "log_sha256": "4ceb7ff78a6022cc70b6bb8a821692d8c6f1f4a284a76234b265260d20bcebfb",
+      "record": "pq-hold.json",
+      "stdout": "{\"gates\": {\"authorization\": {\"source_paths\": [\"trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs\", \"trillionnium/crates/trnm-pon-node/src/ingress.rs\", \"trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs\", \"trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs\", \"trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs\", \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\", \"trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\", \"trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs\", \"trillionnium/crates/trnm-pon-node/src/public_submit.rs\", \"trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs\", \"trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs\", \"trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs\", \"trillionnium/crates/trnm-data-availability/src/cell/closure.rs\", \"trillionnium/crates/trnm-data-availability/src/cell/release.rs\", \"trillionnium/crates/trnm-pon-node/src/store/funding.rs\", \"trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs\", \"scripts/ci/pq_authority_surface_scan.py\", \"scripts/ci/test_pq_authority_surface_scan.py\", \"scripts/ci/pq_authority_effect_register.py\", \"scripts/ci/test_pq_authority_effect_register.py\", \"config/pon/pq-authority-effects-v1.json\", \"docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md\", \"docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md\"], \"status\": \"UNQUALIFIED\"}, \"capacity_and_invalid_input\": {\"source_paths\": [\"trillionnium/crates/trnm-protocol/src/pq_frame.rs\", \"config/pon/post-quantum-transition-v1.json\"], \"status\": \"UNQUALIFIED\"}, \"independent_end_to_end\": {\"source_paths\": [\"docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md\", \"config/pon/pq-cross-branch-corpus-v1.json\", \"scripts/ci/pq_source_reader.py\"], \"status\": \"UNQUALIFIED\"}, \"lifetime_budget\": {\"source_paths\": [\"config/pon/pq128-lifetime-budget-v1.json\", \"config/pon/pq128-source-lock-v1.json\", \"scripts/ci/pq_lifetime_budget.py\", \"scripts/ci/test_pq_lifetime_budget.py\", \"docs/security/PQ128_LIFETIME_BUDGET_V1.md\"], \"status\": \"UNQUALIFIED\"}, \"migration_and_rollback\": {\"source_paths\": [\"trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs\", \"trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs\", \"trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs\", \"trillionnium/crates/trnm-pon-node/src/store/storage_service.rs\", \"trillionnium/crates/trnm-service-settlement/src/native_budget.rs\", \"trillionnium/crates/trnm-data-availability/src/cell/retention.rs\", \"scripts/ci/pq_external_rollback_oracle.py\", \"scripts/ci/test_pq_external_rollback_oracle.py\", \"docs/security/PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md\", \"trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs\", \"trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs\", \"trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs\", \"trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs\", \"docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md\"], \"status\": \"UNQUALIFIED\"}, \"proof_pq128\": {\"source_paths\": [\"trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs\", \"docs/security/POST_QUANTUM_TRANSITION_V1.md\"], \"status\": \"UNQUALIFIED\"}, \"quantum_mining_fork_choice\": {\"source_paths\": [\"config/pon/devnet-v1.json\", \"docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md\", \"scripts/ci/pq_quantum_daa_scenarios.py\", \"scripts/ci/test_pq_quantum_daa_scenarios.py\", \"docs/security/PQ_QUANTUM_DAA_SENSITIVITY_20261031.md\"], \"status\": \"UNQUALIFIED\"}}, \"lifetime_budget\": {\"actual_lifetime_failure_bound\": null, \"allocated_sum\": {\"denominator\": \"340282366920938463463374607431768211456\", \"numerator\": \"1\"}, \"composition_coverage_proved\": false, \"manifest_sha256\": \"639a283d352b713b1373161099649d251ed5c14172b71f6955a7ab22d2618719\", \"model_arithmetic_sum\": null, \"schema\": \"trnm-pq128-lifetime-budget-result-v1\", \"source_binding_scope\": \"declared-event-paths-only\", \"source_lock_sha256\": \"29ba9abdbb39d96bece885a0cd821fd9ad428413974cd530d26434f5a7daf84a\", \"source_revision_bound\": true, \"status\": \"HOLD\", \"theorem_applicability_verified\": false, \"unknown_query_budgets\": [\"sha256\", \"sha512\", \"shake128\", \"shake256\"], \"unknown_terms\": [\"signature-lifetime-unqualified\", \"commitment-lifetime-unqualified\", \"proof-lifetime-unqualified\", \"ledger-lifetime-unqualified\", \"transport-lifetime-unqualified\", \"recovery-lifetime-unqualified\", \"release-lifetime-unqualified\", \"application-lifetime-unqualified\"]}, \"note\": \"Source/flag refusal only; no independent crypto, quantum cost, WAN, rollback or production evidence.\", \"pq_128_qualified\": false, \"production_activation\": false, \"schema\": \"trnm-whole-chain-pq-claim-guard-v1\", \"status\": \"HOLD\", \"whole_chain_pq_qualified\": false}"
+    },
+    "pq-source": {
+      "log_bytes": 558,
+      "log_file": "pq-source.log",
+      "log_sha256": "8793fbe30b01dd62830c3bef5face6c018474777c94b60e900dc5a075e6c4d6e",
+      "record": "pq-source.json",
+      "stdout": "{\"canonical_default_provider_contract_checked\": true, \"canonical_pnq2_contract_checked\": true, \"continuous_npq6_combination_accepted\": false, \"cryptographic_acceptance\": false, \"exact_source_blobs\": 1079, \"legacy_qtx1_optional_adapter_contract_checked\": true, \"native_transfer_account_contract_checked\": true, \"native_transport_contract_checked\": true, \"node_activated\": false, \"production_confidentiality_accepted\": false, \"schema\": \"trnm-pq-cross-branch-check-v1\", \"status\": \"HOLD_NO_GO\", \"upstream_heads\": 6, \"whole_native_authorization_migrated\": false}"
+    },
+    "repository": {
+      "log_bytes": 307,
+      "log_file": "repository.log",
+      "log_sha256": "e042069210d06ee15acb1d80d85def0a72c956ad7b83507648f38b56d3c8d7d0",
+      "record": "repository.json",
+      "stdout": "{\"activation\": false, \"head\": \"9d4a68191f4e30135b07d3f1e1bc9a1a2367773e\", \"local_links\": 6651, \"normal_dependency_edges\": 27, \"result\": \"PASS\", \"runtime_implemented\": false, \"rust_files\": 1470, \"source_state\": \"committed-clean\", \"tree\": \"b5c5f5d35431c9408a77d4c30376be7427bcbdd0\", \"workspace_packages\": 26}"
+    }
+  },
+  "source_before_after_verified_for_all_52_commands": true,
+  "tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0"
+}

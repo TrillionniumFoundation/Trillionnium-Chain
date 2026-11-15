@@ -1,0 +1,203 @@
+{
+  "archives": [
+    {
+      "bytes": 219293,
+      "download": "HeptaRuntime h_binary_read with pinned version and verified chunk hashes",
+      "path": "attempt-01.tar.gz",
+      "sha256": "47118f14cd59dc471400d6858e5753ad2fc3c308a4836c880869d3dcaef7eec4"
+    },
+    {
+      "bytes": 219979,
+      "download": "HeptaRuntime h_binary_read with pinned version and verified chunk hashes",
+      "path": "attempt-02.tar.gz",
+      "sha256": "c6d23678039ce480d1313e764e18f50a9b2ee5276cdf3558e9c664a16426ceca"
+    },
+    {
+      "bytes": 76183,
+      "download": "HeptaRuntime h_binary_read with pinned version and verified chunk hashes",
+      "path": "attempt-03.tar.gz",
+      "sha256": "eb145093b649e4ea3c818395cf4b654a774d4d87048b0a3136127aa58af14410"
+    }
+  ],
+  "auxiliary_jobs": [
+    {
+      "job_id": "1a1b852ef53-12894-e56",
+      "purpose": "initial preflight"
+    },
+    {
+      "job_id": "1a1b853cc83-12894-e5e",
+      "purpose": "source synchronization part 1"
+    },
+    {
+      "job_id": "1a1b8546786-12894-e63",
+      "purpose": "source synchronization part 2"
+    },
+    {
+      "job_id": "1a1b855ef7b-12894-e73",
+      "purpose": "export four rustfmt-formatted source files"
+    },
+    {
+      "job_id": "1a1b85a2759-12894-e97",
+      "purpose": "synchronize reader test harness fix and precise rollback documentation"
+    },
+    {
+      "job_id": "1a1b85c87bb-12894-eb2",
+      "purpose": "archive attempt-01"
+    },
+    {
+      "job_id": "1a1b85e759b-12894-ecb",
+      "purpose": "archive attempt-02"
+    },
+    {
+      "job_id": "1a1b860b84b-12894-ee1",
+      "purpose": "read retained SQLite build qualification output"
+    },
+    {
+      "job_id": "1a1b86d7d25-12894-f47",
+      "purpose": "archive attempt-03 recorded-readiness fix validation"
+    }
+  ],
+  "checkout": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout",
+  "host": "desktop",
+  "preserved_failures": [
+    {
+      "attempt": "attempt-01",
+      "cause": "The unittest fixture assigned cls.run to a dict, shadowing TestCase.run. The harness raised TypeError before executing cases. Fixed to cls.document; all 22 cases then passed on both actual runs.",
+      "raw_log": "attempt-01/reader-tests.log",
+      "returncode": 1,
+      "stage": "reader-tests"
+    },
+    {
+      "attempt": "attempt-01",
+      "cause": "LD_LIBRARY_PATH did not include the canonical Rust toolchain lib directory. Attempt-02 supplies the existing required directory with absolute RUSTC and RUSTDOC. No SQLite guard was modified.",
+      "raw_log": "attempt-01/native-tests.log",
+      "result": "Optional SQLite bounded I/O build witness unqualified; ordinary owner native operations and tests passed.",
+      "stage": "native build environment"
+    },
+    {
+      "cause": "Shell source exceeded HeptaRuntime 64 KiB request limit. No command executed; compressed payload was split into two subsequent admitted jobs.",
+      "result": "rejected before job admission",
+      "stage": "initial source synchronization request"
+    },
+    {
+      "cause": "Requested stdout cursor exceeded available log length; explicit offset zero subsequently read the durable output. No execution was replayed.",
+      "result": "read refused",
+      "stage": "process log read"
+    }
+  ],
+  "schema": "pon-native-risk-runtime-jobs-v1",
+  "target": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target",
+  "terminal_statuses": {
+    "attempt-01": {
+      "at_unix_ms": 1794094193017,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 1,
+      "job_id": "1a1b8557b5a-12894-e6c",
+      "launch_nonce": "662fc369c78fd37c5246cd5bb72167e4",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 2573,
+          "stored": 2573
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "failed",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "attempt-02": {
+      "at_unix_ms": 1794094519008,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b85b51ee-12894-ea8",
+      "launch_nonce": "8d0ba30795a51d27d273e009333424ab",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 3156,
+          "stored": 3156
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "attempt-03": {
+      "at_unix_ms": 1794095459083,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b86b72a3-12894-f34",
+      "launch_nonce": "16c477e87fac0306726fe30d9a4e053a",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 3604,
+          "stored": 3604
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    }
+  }
+}

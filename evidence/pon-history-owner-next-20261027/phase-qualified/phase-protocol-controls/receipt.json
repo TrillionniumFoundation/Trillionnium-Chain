@@ -1,0 +1,32 @@
+{
+  "schema": "history-frozen-native-control-v2",
+  "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+  "binary_sha256": "ab429f029fcef972187151167528697fd01668cb979ac823edec96b083950d1c",
+  "argv": [
+    "/tmp/history-phase-qualified-20261028/public_v3_multiprocess",
+    "phase_host::",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "outer_observer_timeout_seconds": 30,
+  "started_utc": "2026-10-28T00:51:58.435858+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 0.007807877998857293,
+  "timed_out": false,
+  "stdout.txt": {
+    "bytes": 289,
+    "sha256": "47adf27ed10e2ef9862ca6f180d82728ea4187fb5b7cd69dab3bd646b95015bf"
+  },
+  "stderr.txt": {
+    "bytes": 842,
+    "sha256": "ba8e312c259c84e8d06c0d864cbac0b1f57eb662c1de23778e5c4e48eb773cdd"
+  },
+  "harness_results": [
+    {
+      "outcome": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    }
+  ]
+}

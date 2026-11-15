@@ -1,0 +1,13 @@
+{
+  "adopted_build_sha256": "44f1b873832e8a0f68f3b81fc4543b18f0b551d49ea2cced599e5da68aec1e70",
+  "base_head": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+  "executable_sha256": "65d283d519c942230a44b99db1b05308f226d5bca9706f8a1db059a7b852e144",
+  "executable_unchanged": true,
+  "finished_at": "2026-11-04T08:03:44.418500+00:00",
+  "native_input_count": 1194,
+  "passed": 5,
+  "scope": "Existing complete Node --lib --all-features test ELF compiled by graph agent, adopted by SHA; only five named TCP controls executed here; no Cargo, complete suite, hosted service, or throughput run",
+  "source_manifest_sha256": "0e9dd2812f4ae9388e5bba175934ee71632c4e053f5f94906d0dd21a22209c88",
+  "source_unchanged": true,
+  "tests": 5
+}

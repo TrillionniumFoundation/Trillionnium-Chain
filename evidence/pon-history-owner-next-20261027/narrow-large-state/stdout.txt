@@ -1,0 +1,12 @@
+
+running 1 test
+test store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner ... {"admitted_parent":"0d8bc316c037050a8ae9a58ba53c84970c48792f8bf471999ee5644672b1c6a2","all_honest_service_qualified":false,"authenticated_backend":false,"budget_depletion_demonstrated":false,"complete_key_utf8_and_canonical_value_bytes":8625548,"early_capacity_observed_lower_bound_bytes":8391103,"genesis":"46f490f617a7aae11650bf20b790943699528de11341fd730b06b2017e24283a","genesis_fixture":"2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth","genesis_state_root":"afd8ca7ce215c51c620ca9d5823e9d7b3e4ccc47231ada4ef102366c15e66159","host_qualified":false,"native_result":{"Err":"PUBLIC_MUTATION_CPU_BUDGET"},"original_cpu_receipt":{"accounting_unavailable":false,"finished_workers":2,"known_workers":2,"live_paid_cpu_ns":2763941364,"live_refused":true,"owner_cpu_ns":2763667338,"residual_cpu_ns":3866,"schema":"service-owner-scoped-thread-cpu-settlement-v1","scoped_worker_cpu_ns":277892,"spawned_workers":2,"started_workers":2,"total_cpu_ns":2763945230},"schema":"native-large-parent-schedule-parity-v1"}
+FAILED
+
+failures:
+
+failures:
+    store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 765 filtered out; finished in 28.71s
+

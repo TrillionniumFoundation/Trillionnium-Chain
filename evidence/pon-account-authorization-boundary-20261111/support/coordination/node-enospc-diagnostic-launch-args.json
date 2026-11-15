@@ -1,0 +1,10 @@
+{
+  "host": "desktop",
+  "executable": "/usr/bin/python3",
+  "args": [
+    "-"
+  ],
+  "stdin": "import json,os,subprocess,time\nfrom pathlib import Path\nroots=['/home/qian-qi','/tmp','/dev/shm','/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final-target']\nout={'utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'disks':[],'own_processes':[],'read_only':True}\nfor p in roots:\n s=os.statvfs(p);out['disks'].append({'path':p,'device':os.stat(p).st_dev,'available_bytes':s.f_bavail*s.f_frsize,'free_bytes':s.f_bfree*s.f_frsize,'total_bytes':s.f_blocks*s.f_frsize})\nmarkers=[b'chain-pq-a418-final-records',b'chain-pq-profile-boundary-20261111-a418-final']\nfor p in Path('/proc').iterdir():\n if not p.name.isdigit() or int(p.name)==os.getpid():continue\n try:\n  cmd=(p/'cmdline').read_bytes();cwd=str((p/'cwd').resolve());name=(p/'comm').read_text().strip()\n  if any(m in cmd for m in markers) or cwd.startswith(roots[3][:-7]):\n   out['own_processes'].append({'pid':int(p.name),'name':name,'cwd':cwd,'exe':str((p/'exe').resolve()),'status':{l.split(':',1)[0]:l.split(':',1)[1].strip() for l in (p/'status').read_text().splitlines() if l.startswith(('State:','PPid:','VmRSS:'))}})\n except (OSError,ValueError):pass\nfor argv,key in [(['/usr/bin/du','-B1','-s',roots[3]],'own_target_du'),(['/usr/bin/findmnt','-rn','-o','TARGET,SOURCE,FSTYPE,AVAIL,SIZE'],'mounts')]:\n r=subprocess.run(argv,capture_output=True);out[key]={'code':r.returncode,'stdout':r.stdout.decode(errors='replace'),'stderr':r.stderr.decode(errors='replace')}\nprint(json.dumps(out,indent=2))\n",
+  "cwd": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final",
+  "idempotency_key": "pq-a418-node-unknown-enospc-readonly-diagnostic-1"
+}

@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "scripts/ci/test_ci_source_integrity.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+  "end_utc": "2026-11-07T18:08:27.456428+00:00",
+  "exit_code": 0,
+  "log": "logs/02-test_ci_source_integrity.log",
+  "log_bytes": 6898,
+  "log_sha256": "20d167f74d423947756fec94fb6975f1fd8dedc3b971063a4e459db03deff109",
+  "name": "02-test_ci_source_integrity",
+  "pid": 1256067,
+  "start_utc": "2026-11-07T18:08:22.561310+00:00",
+  "supervisor_timeout_seconds": 1800,
+  "timed_out": false,
+  "wall_ns": 4895127617
+}

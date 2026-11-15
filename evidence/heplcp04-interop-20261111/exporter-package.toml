@@ -1,0 +1,8 @@
+[package]
+name = "heplcp04-interop-export"
+version = "0.0.0"
+edition = "2024"
+[dependencies]
+codex-hepta-types = { path = "../hepta-types" }
+codex-hepta-learning-artifacts = { path = "../hepta-learning-artifacts" }
+serde_json = "1"

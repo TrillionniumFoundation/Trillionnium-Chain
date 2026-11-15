@@ -1,0 +1,133 @@
+test_cli_rejects_changed_source_without_success_report (test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_cli_rejects_changed_source_without_success_report) ... ok
+test_cli_reports_new_schema_without_historical_comparison (test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_cli_reports_new_schema_without_historical_comparison) ... ok
+test_current_selected_source_observation_preserves_unknown_security (test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_current_selected_source_observation_preserves_unknown_security) ... ok
+test_historical_reader_and_contract_hashes_are_independently_frozen (test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_historical_reader_and_contract_hashes_are_independently_frozen) ... ok
+test_historical_reader_mutation_is_refused (test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_historical_reader_mutation_is_refused) ... ok
+test_historical_reader_still_rejects_current_source (test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_historical_reader_still_rejects_current_source) ... ok
+test_ledger_arithmetic_and_input_semantics_are_not_rewritten (test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_ledger_arithmetic_and_input_semantics_are_not_rewritten) ... ok
+test_missing_file_and_symlink_do_not_count_as_source_observations (test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_missing_file_and_symlink_do_not_count_as_source_observations) ... ok
+test_noncanonical_paths_and_symlink_roots_are_refused (test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_noncanonical_paths_and_symlink_roots_are_refused) ... ok
+test_only_the_reviewed_store_source_delta_is_present (test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_only_the_reviewed_store_source_delta_is_present) ... ok
+test_other_selected_source_mutation_is_refused (test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_other_selected_source_mutation_is_refused) ... ok
+test_private_current_context_does_not_change_legacy_function_or_pins (test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_private_current_context_does_not_change_legacy_function_or_pins) ... ok
+test_source_and_manifest_changed_together_do_not_repin_the_reader (test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_source_and_manifest_changed_together_do_not_repin_the_reader) ... ok
+test_store_source_mutation_is_refused (test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_store_source_mutation_is_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.299s
+
+OK
+test_cli_duplicate_nonfinite_deep_and_oversized_input_fail_structurally (test_w1_qrom_composition_budget.CompositionBudgetTests.test_cli_duplicate_nonfinite_deep_and_oversized_input_fail_structurally) ... ok
+test_cli_example_roundtrip_retains_exact_inputs (test_w1_qrom_composition_budget.CompositionBudgetTests.test_cli_example_roundtrip_retains_exact_inputs) ... ok
+test_component_must_cover_shifted_queries_not_only_original_t (test_w1_qrom_composition_budget.CompositionBudgetTests.test_component_must_cover_shifted_queries_not_only_original_t) ... ok
+test_enlarged_query_points_and_commutator_are_not_simple_error_sum (test_w1_qrom_composition_budget.CompositionBudgetTests.test_enlarged_query_points_and_commutator_are_not_simple_error_sum) ... ok
+test_exact_target_boundary_and_large_expression_are_not_clamped (test_w1_qrom_composition_budget.CompositionBudgetTests.test_exact_target_boundary_and_large_expression_are_not_clamped) ... ok
+test_input_cannot_override_version_security_or_qualification (test_w1_qrom_composition_budget.CompositionBudgetTests.test_input_cannot_override_version_security_or_qualification) ... ok
+test_intermediate_size_requires_common_slice_coverage (test_w1_qrom_composition_budget.CompositionBudgetTests.test_intermediate_size_requires_common_slice_coverage) ... ok
+test_known_parameter_or_instance_slice_mismatch_is_refused (test_w1_qrom_composition_budget.CompositionBudgetTests.test_known_parameter_or_instance_slice_mismatch_is_refused) ... ok
+test_missing_description_blocks_conditional_claim_not_raw_arithmetic (test_w1_qrom_composition_budget.CompositionBudgetTests.test_missing_description_blocks_conditional_claim_not_raw_arithmetic) ... ok
+test_numeric_coercion_negative_coefficients_and_unknown_models_are_refused (test_w1_qrom_composition_budget.CompositionBudgetTests.test_numeric_coercion_negative_coefficients_and_unknown_models_are_refused) ... ok
+test_only_dependencies_of_missing_query_cost_are_suppressed (test_w1_qrom_composition_budget.CompositionBudgetTests.test_only_dependencies_of_missing_query_cost_are_suppressed) ... ok
+test_strict_relaxed_and_all_oracle_components_must_match (test_w1_qrom_composition_budget.CompositionBudgetTests.test_strict_relaxed_and_all_oracle_components_must_match) ... ok
+test_unknown_commutativity_does_not_disappear_under_zero_coefficient (test_w1_qrom_composition_budget.CompositionBudgetTests.test_unknown_commutativity_does_not_disappear_under_zero_coefficient) ... ok
+test_unknown_inputs_never_become_zero_or_security_bits (test_w1_qrom_composition_budget.CompositionBudgetTests.test_unknown_inputs_never_become_zero_or_security_bits) ... ok
+test_zero_assumed_errors_never_qualify_three_independent_security_lines (test_w1_qrom_composition_budget.CompositionBudgetTests.test_zero_assumed_errors_never_qualify_three_independent_security_lines) ... ok
+test_zero_envelope_without_domain_or_parameter_scope_stays_unknown (test_w1_qrom_composition_budget.CompositionBudgetTests.test_zero_envelope_without_domain_or_parameter_scope_stays_unknown) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.266s
+
+OK
+test_absent_range_or_bytes_remain_unknown (test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_absent_range_or_bytes_remain_unknown) ... ok
+test_cardinality_is_explicit_and_no_native_digest_conversion_is_accepted (test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_cardinality_is_explicit_and_no_native_digest_conversion_is_accepted) ... ok
+test_cli_examples_roundtrip_with_exact_fractions (test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_cli_examples_roundtrip_with_exact_fractions) ... ok
+test_cli_malformed_deep_duplicate_and_oversized_inputs_fail_structurally (test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_cli_malformed_deep_duplicate_and_oversized_inputs_fail_structurally) ... ok
+test_degenerate_one_element_range_does_not_claim_distinguishability (test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_degenerate_one_element_range_does_not_claim_distinguishability) ... ok
+test_distinct_encoded_inputs_positive_control_matches_product_law (test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_distinct_encoded_inputs_positive_control_matches_product_law) ... ok
+test_empty_encoding_is_an_actual_byte_string_not_unknown (test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_empty_encoding_is_an_actual_byte_string_not_unknown) ... ok
+test_exhaustive_joint_distribution_has_uniform_marginals_and_nonzero_alias_gap (test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_exhaustive_joint_distribution_has_uniform_marginals_and_nonzero_alias_gap) ... ok
+test_gap_and_guess_success_use_distinct_advantage_conventions (test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_gap_and_guess_success_use_distinct_advantage_conventions) ... ok
+test_noncanonical_or_unbounded_encoding_is_refused (test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_noncanonical_or_unbounded_encoding_is_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.325s
+
+OK
+setUpClass (test_w1_qrom_semantics_audit.W1SemanticsAuditTests) ... ERROR
+
+======================================================================
+ERROR: setUpClass (test_w1_qrom_semantics_audit.W1SemanticsAuditTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/be35ba3f1307/closure-continuation/scripts/ci/test_w1_qrom_semantics_audit.py", line 43, in setUpClass
+    cls.binary = (ROOT / AUDIT.GUEST_PATH).read_bytes()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/be35ba3f1307/closure-continuation/evidence/pon-w1-full-v2-20261105/guest.bin'
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.135s
+
+FAILED (errors=1)
+test_artifact_digest_pin_rejects_unrelated_content_before_zip_parsing (test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_artifact_digest_pin_rejects_unrelated_content_before_zip_parsing) ... ok
+test_missing_duplicate_extra_and_path_shaped_zip_entries_rejected (test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_missing_duplicate_extra_and_path_shaped_zip_entries_rejected) ... ok
+test_noncanonical_field_words_fail_the_lossless_encoding_claim (test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_noncanonical_field_words_fail_the_lossless_encoding_claim) ... ok
+test_over_capacity_and_wrong_exponents_are_rejected (test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_over_capacity_and_wrong_exponents_are_rejected) ... ok
+test_partial_words_and_partial_rows_are_rejected (test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_partial_words_and_partial_rows_are_rejected) ... ok
+test_recorded_actual_zip_inventory_has_all_32_and_default_27 (test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_recorded_actual_zip_inventory_has_all_32_and_default_27) ... ok
+test_recorded_join_povw_has_only_eight_capacity_rows_remaining (test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_recorded_join_povw_has_only_eight_capacity_rows_remaining) ... ok
+test_shape_and_record_do_not_claim_control_id_or_trace_semantics (test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_shape_and_record_do_not_claim_control_id_or_trace_semantics) ... ok
+test_shape_uses_little_endian_canonical_words_and_exact_width (test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_shape_uses_little_endian_canonical_words_and_exact_width) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.245s
+
+OK
+test_degree_order_roots_match_small_reference_dft_and_inverse (test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_degree_order_roots_match_small_reference_dft_and_inverse) ... ok
+test_native_rejects_partial_rows_noncanonical_words_and_bad_limits (test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_native_rejects_partial_rows_noncanonical_words_and_bad_limits) ... ok
+test_native_result_rejects_boolean_numeric_aliases_and_nonfinite_observations (test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_native_result_rejects_boolean_numeric_aliases_and_nonfinite_observations) ... ok
+test_native_result_rejects_missing_extra_and_null_payloads (test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_native_result_rejects_missing_extra_and_null_payloads) ... ok
+test_native_result_requires_root_bytes_normal_words_and_exact_geometry (test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_native_result_requires_root_bytes_normal_words_and_exact_geometry) ... ok
+test_native_seven_independent_known_answers_pass (test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_native_seven_independent_known_answers_pass) ... ok
+test_native_zero_code_commitment_matches_analytic_constant_tree (test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_native_zero_code_commitment_matches_analytic_constant_tree) ... ok
+test_source_integrity_and_requested_roster_fail_before_native_execution (test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_source_integrity_and_requested_roster_fail_before_native_execution) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.941s
+
+OK
+test_boolean_test_count_is_refused (test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_boolean_test_count_is_refused) ... ok
+test_complete_actual_named_test_accepted_without_qualification (test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_complete_actual_named_test_accepted_without_qualification) ... ok
+test_completion_overwrite_is_refused (test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_completion_overwrite_is_refused) ... ok
+test_duplicate_and_nonfinite_json_are_refused (test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_duplicate_and_nonfinite_json_are_refused) ... ok
+test_duplicate_success_cannot_replace_missing_started_id (test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_duplicate_success_cannot_replace_missing_started_id) ... ok
+test_empty_completion_suites_are_refused (test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_empty_completion_suites_are_refused) ... ok
+test_expected_failure_actual_test_is_refused (test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_expected_failure_actual_test_is_refused) ... ok
+test_extra_unreviewed_actual_test_is_refused (test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_extra_unreviewed_actual_test_is_refused) ... ok
+test_missing_completion_after_zero_exit_is_refused (test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_missing_completion_after_zero_exit_is_refused) ... ok
+test_real_load_tests_system_exit_zero_is_refused (test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_real_load_tests_system_exit_zero_is_refused) ... ok
+test_roster_drift_is_refused_before_execution (test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_roster_drift_is_refused_before_execution) ... ok
+test_scope_upgrade_is_refused (test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_scope_upgrade_is_refused) ... ok
+test_skipped_actual_test_is_refused (test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_skipped_actual_test_is_refused) ... ok
+test_unregistered_required_test_is_refused (test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_unregistered_required_test_is_refused) ... ok
+test_current_lifetime_or_refusal_scope_drift_cannot_pass_completion (test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_current_lifetime_or_refusal_scope_drift_cannot_pass_completion) ... ok
+test_current_roster_digest_matches_workflow_and_preserves_distinct_namespace (test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_current_roster_digest_matches_workflow_and_preserves_distinct_namespace) ... ok
+test_current_workflow_keeps_historical_fixed_source_and_original_roster (test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_current_workflow_keeps_historical_fixed_source_and_original_roster) ... ok
+test_workflow_final_status_cannot_overwrite_an_old_completion (test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_final_status_cannot_overwrite_an_old_completion) ... ok
+test_workflow_malformed_consumed_json_is_refused (test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_malformed_consumed_json_is_refused) ... ok
+test_workflow_matching_record_cannot_mask_failed_or_missing_stage (test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_matching_record_cannot_mask_failed_or_missing_stage) ... ok
+test_workflow_real_fixture_completion_retains_unqualified_scope (test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_real_fixture_completion_retains_unqualified_scope) ... ok
+test_workflow_reserves_a_fresh_directory_without_reuse (test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_reserves_a_fresh_directory_without_reuse) ... ok
+test_workflow_source_identity_remains_strict_under_optimization (test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_source_identity_remains_strict_under_optimization) ... ok
+test_workflow_zero_exit_without_named_completion_is_refused (test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_zero_exit_without_named_completion_is_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 14.034s
+
+OK
+Current QROM closure controls refused: required named completion differs: started_ids

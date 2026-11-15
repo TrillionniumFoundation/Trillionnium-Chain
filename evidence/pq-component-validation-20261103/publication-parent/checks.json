@@ -1,0 +1,87 @@
+{
+  "parent": "af570eaef44870ba3ec1f3d5be2cbdde2981931d",
+  "parent_tree": "37bb4b692b249838c5839cafbf2469217867945f",
+  "worktree": "/home/qian/pq-evidence-publication-6f4fef89e370",
+  "commands": [
+    {
+      "name": "fetch",
+      "argv": [
+        "git",
+        "fetch",
+        "--no-tags",
+        "origin",
+        "af570eaef44870ba3ec1f3d5be2cbdde2981931d"
+      ],
+      "exit_code": 0,
+      "seconds": 4.490591676905751,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "ef8514e70c1f265e197c492bf2407ccde464ed409bd5c65bdfc29b8f516b3361"
+    },
+    {
+      "name": "worktree",
+      "argv": [
+        "git",
+        "worktree",
+        "add",
+        "-b",
+        "docs/chain-pq-evidence-publication-20261103",
+        "/home/qian/pq-evidence-publication-6f4fef89e370",
+        "af570eaef44870ba3ec1f3d5be2cbdde2981931d"
+      ],
+      "exit_code": 0,
+      "seconds": 4.715821882709861,
+      "stdout_sha256": "7d492c9fe9369e855d9747b60df25e7c9a641be37b0f80f61bd4bfe30dbac98c",
+      "stderr_sha256": "7d2ef1a61530df8820899fe5ab30a165fdb7f34e80b5e35543ba354c3727877f"
+    },
+    {
+      "name": "head",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "seconds": 0.004127996042370796,
+      "stdout_sha256": "141affa1bccc8b60051a834b8a937c7d436e3171d2d372306b69b2417414e4cc",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "tree",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit_code": 0,
+      "seconds": 0.0036316239275038242,
+      "stdout_sha256": "e51ef0fa1ef665ae0130628819c736497e797c70c704e0510248f250238cf12b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clean",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5761242401786149,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.12546980706974864,
+      "stdout_sha256": "1b8cbbf2de2f8cd9989779624394ac4857ed42b03441d291a33ffbc6574a70f7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "all_succeeded": true,
+  "native_tests_executed": false
+}

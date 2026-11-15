@@ -1,0 +1,38 @@
+{
+  "schema": "trnm-root-native-owner-observations-v1",
+  "scope": "read-only controller observations; original native output is copied separately",
+  "initial": {
+    "session_id": "dpty-de80a4bbd503d715ad859eff44375c0a91063933df8e29d1812410ef2efc3661",
+    "status": {
+      "boot": "b1620269-aaef-43e7-bf47-bc6eb1c1a447",
+      "bytes_seen": 9572,
+      "bytes_stored": 9572,
+      "capture_error": null,
+      "closed": false,
+      "created_unix_ms": 1794447734816,
+      "exit_code": 0,
+      "output_complete": true,
+      "owner_pid": 2286042,
+      "pid": 2286043,
+      "state": "exited"
+    },
+    "output_complete": true
+  },
+  "full_v4": {
+    "session_id": "dpty-d746ee5dbcb2eaf34f512bfc0436a6f8ab75c15dc1abedf1405bcee36b3dc618",
+    "status": {
+      "boot": "b1620269-aaef-43e7-bf47-bc6eb1c1a447",
+      "bytes_seen": 5490,
+      "bytes_stored": 5490,
+      "capture_error": null,
+      "closed": false,
+      "created_unix_ms": 1794450266482,
+      "exit_code": 0,
+      "output_complete": true,
+      "owner_pid": 2325516,
+      "pid": 2325522,
+      "state": "exited"
+    },
+    "output_complete": true
+  }
+}

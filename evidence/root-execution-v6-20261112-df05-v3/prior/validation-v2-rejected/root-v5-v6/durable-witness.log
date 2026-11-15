@@ -1,0 +1,21 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=["/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib"]; observed=["/data/chain-root-operation-v6-df05-target-v2/debug", "/data/chain-root-operation-v6-df05-target-v2/debug/deps", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"]; allowed=["/data/chain-root-operation-v6-df05-target-v2/debug", "/data/chain-root-operation-v6-df05-target-v2/debug/deps", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"]
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-root-operation-recovered-20261112-df05/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.43s
+     Running tests/root_witness_v5_durable_native.rs (/data/chain-root-operation-v6-df05-target-v2/debug/deps/root_witness_v5_durable_native-47550934f9d1de46)
+
+running 12 tests
+test native_durable_witness_v5_budget_replacement_on_ok_or_err_and_cancellation_fence ... ok
+test native_durable_witness_v5_complete_policy_and_live_stored_binding_are_enforced ... ok
+test native_durable_witness_v5_exact_cas_retry_and_cold_reopen_have_dual_family_receipts ... ok
+test native_durable_witness_v5_exclusive_lock_and_named_inode_are_required ... ok
+test native_durable_witness_v5_foreign_namespace_and_extra_schema_are_refused ... ok
+test native_durable_witness_v5_real_sqlite_commit_busy_fences_until_explicit_reopen ... ok
+test native_durable_witness_v5_root_lost_ack_cold_recovery_does_not_repeat_cas ... ok
+test native_durable_witness_v5_signer_callback_cannot_replace_committed_row_before_ack ... ok
+test native_durable_witness_v5_signing_failure_and_wrong_quorum_preserve_committed_head ... ok
+test native_durable_witness_v5_stale_database_requires_surviving_independent_reopen_pin ... ok
+test native_durable_witness_v5_unauthenticated_requests_cannot_mutate_or_fence ... ok
+test native_durable_witness_v5_wrong_predecessor_and_competing_successor_are_mismatches ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 479.85s
+

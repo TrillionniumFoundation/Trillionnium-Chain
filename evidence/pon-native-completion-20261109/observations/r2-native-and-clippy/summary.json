@@ -1,0 +1,12 @@
+{
+  "actual_distinct_native_passes": 89,
+  "schema": "same-committed-source-native-qualification-v1",
+  "source_head": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+  "source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+  "retained_all_pass": true,
+  "strict_clippy_pass": true,
+  "selected_unique_tests": 91,
+  "ignored_tests": 2,
+  "fixed_host_contract": false,
+  "production_qualification": "HOLD_NO_GO"
+}

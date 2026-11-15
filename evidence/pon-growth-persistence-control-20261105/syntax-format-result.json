@@ -1,0 +1,73 @@
+{
+  "runner_syntax": {
+    "status": "PASS",
+    "sha256": "63304f366437759f9b7e39a472cc03be1e2931acd478a0dbf70c2e61cc5806f4"
+  },
+  "rustfmt": [
+    {
+      "file": "recovery.rs",
+      "command": [
+        "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+        "--edition",
+        "2021",
+        "--config",
+        "skip_children=true",
+        "--emit",
+        "stdout"
+      ],
+      "exit_code": 0,
+      "formatted_bytes_unchanged": true,
+      "stderr": "",
+      "sha256": "b63257386f21d5b9088807e5170883169f37b5e242363de8ef20b295842f1e26"
+    },
+    {
+      "file": "growth_persistence_cancellation.rs",
+      "command": [
+        "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+        "--edition",
+        "2021",
+        "--config",
+        "skip_children=true",
+        "--emit",
+        "stdout"
+      ],
+      "exit_code": 0,
+      "formatted_bytes_unchanged": true,
+      "stderr": "",
+      "sha256": "28c49b7211208f3a74269798b1cb34b45c925e158530e516a72e120c82195a37"
+    },
+    {
+      "file": "growth.rs",
+      "command": [
+        "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+        "--edition",
+        "2021",
+        "--config",
+        "skip_children=true",
+        "--emit",
+        "stdout"
+      ],
+      "exit_code": 0,
+      "formatted_bytes_unchanged": true,
+      "stderr": "",
+      "sha256": "8d91d31bee99594a450dc0809d1fecb98a1cb5789c053d5ebac849d719d6fd53"
+    },
+    {
+      "file": "recovery.red.rs",
+      "command": [
+        "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+        "--edition",
+        "2021",
+        "--config",
+        "skip_children=true",
+        "--emit",
+        "stdout"
+      ],
+      "exit_code": 0,
+      "formatted_bytes_unchanged": true,
+      "stderr": "",
+      "sha256": "c4f6c1840b6439519b2298da7071fa336ae27bcaf92400460d423ead236535d0"
+    }
+  ],
+  "rustfmt_version": "rustfmt 1.9.0-stable (59807616e1 2026-04-14)"
+}

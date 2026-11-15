@@ -1,0 +1,4 @@
+[fix/chain-audit-final-20261114 f05171583] Retain immutable cross-repository dependency inspector and original controls
+ 9 files changed, 694 insertions(+), 7 deletions(-)
+ create mode 100644 scripts/ci/check_cross_repo_candidate.py
+ create mode 100644 scripts/ci/test_cross_repo_candidate.py

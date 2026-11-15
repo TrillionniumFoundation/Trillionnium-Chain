@@ -1,0 +1,92 @@
+{
+  "schema": "root-hosted-artifact-catalog-v1",
+  "observed_at_utc": "2026-11-11 06:21:49 UTC",
+  "scope": "GitHub metadata readback; no ZIP download or native execution.",
+  "runs": [
+    {
+      "run_id": 42960214402,
+      "artifacts": [
+        {
+          "id": 13833530665,
+          "name": "pon-budget-controls-budget-before-v2-89fb2269b0dd306fbd32c36f464842c3d7daee2b-1",
+          "size_in_bytes": 30719516,
+          "digest": "sha256:15dbf077d85cb878162e2ed85547c1766343df89886485f4babdc15f69d45414",
+          "created_at": "2026-11-11T06:07:47Z",
+          "expired": false,
+          "workflow_run": {
+            "id": 42960214402,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-throughput-budget-20261110-065438",
+            "head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395"
+          }
+        },
+        {
+          "id": 13833220372,
+          "name": "pon-budget-controls-pool-scan-before-ae657e262278ae4a058220f66a6a0495721eb9ad-1",
+          "size_in_bytes": 30872676,
+          "digest": "sha256:03e719c7682f06447ce87ff1cc09643007649523a9413b9bfe0c8f9e415a2a1f",
+          "created_at": "2026-11-11T06:00:44Z",
+          "expired": false,
+          "workflow_run": {
+            "id": 42960214402,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-throughput-budget-20261110-065438",
+            "head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395"
+          }
+        },
+        {
+          "id": 13832876006,
+          "name": "pon-budget-controls-fixed-11e242dbaaae14a9d16282fe8deaf36827e98395-1",
+          "size_in_bytes": 42529271,
+          "digest": "sha256:fc0d092bd47b222c95b42412512019df3817b660b08e2e73bed98f2c2391b72c",
+          "created_at": "2026-11-11T06:00:51Z",
+          "expired": false,
+          "workflow_run": {
+            "id": 42960214402,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-throughput-budget-20261110-065438",
+            "head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395"
+          }
+        },
+        {
+          "id": 13832229500,
+          "name": "pon-budget-controls-pool-before-v2-84e68b4f7a9b2f48f9c47ed05c9a44229d186e30-1",
+          "size_in_bytes": 30700264,
+          "digest": "sha256:4fc83c261d2dbe98c8902e5cfe6a69805a9fc850a0727e7f36e4a42077d73fbc",
+          "created_at": "2026-11-11T06:04:31Z",
+          "expired": false,
+          "workflow_run": {
+            "id": 42960214402,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-throughput-budget-20261110-065438",
+            "head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395"
+          }
+        }
+      ]
+    },
+    {
+      "run_id": 42960214803,
+      "artifacts": [
+        {
+          "id": 13833660378,
+          "name": "pon-native-campaign-x64-head-release-11e242dbaaae14a9d16282fe8deaf36827e98395-1",
+          "size_in_bytes": 81779634,
+          "digest": "sha256:96b801074e063222a807a75a012da57f3255f95f3cc0301b7eb012f8188aec78",
+          "created_at": "2026-11-11T06:09:24Z",
+          "expired": false,
+          "workflow_run": {
+            "id": 42960214803,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-throughput-budget-20261110-065438",
+            "head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395"
+          }
+        }
+      ]
+    }
+  ]
+}

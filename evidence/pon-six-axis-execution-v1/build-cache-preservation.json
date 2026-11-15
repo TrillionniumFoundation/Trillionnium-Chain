@@ -1,0 +1,100 @@
+{
+  "schema": "inactive-target-preservation-completion-v1",
+  "started_utc": "2026-11-05T03:06:02.615745+00:00",
+  "status": "COMPLETE",
+  "target_path": "/workspace/scratch/fee7901564fd/target-cell",
+  "head_before_cleanup": "23a56123e3112de06d7c684ef2057578759176ff",
+  "archive": {
+    "path": "/dev/shm/fee7901564fd-inactive-target-preservation/target-cell.tar.gz",
+    "bytes": 304082890,
+    "sha256": "567e5d7abb6525082ef3aaa334f401e73d4a2b31767d1ed5795fb8e57540f07b",
+    "status": "VERIFIED",
+    "location": "RAM; not copied to scratch"
+  },
+  "original_manifest": {
+    "path": "/dev/shm/fee7901564fd-inactive-target-preservation/manifest.json",
+    "bytes": 1854485,
+    "sha256": "3c96ad95732e370bcfef1f8c8979498ae8aab74648af2051e1ddf716030319af"
+  },
+  "initial_abort_receipt": {
+    "path": "/dev/shm/fee7901564fd-inactive-target-preservation/preservation-receipt.json",
+    "bytes": 3950,
+    "sha256": "44fdf3dd72b865158386f50762ff9c92c7c8f15ff72d765447515bcc81c0e4e7"
+  },
+  "exception_authorization": "Parent explicitly permits only directory mtime_ns/ctime_ns differences after complete unchanged regular-file bytes, metadata, paths, types, modes, inode/nlink, file mtime/ctime verification. Cause of directory timestamp changes unknown.",
+  "excluded_comparison_fields_for_directories_only": [
+    "mtime_ns",
+    "ctime_ns"
+  ],
+  "regular_file_comparison_fields_excluded": [],
+  "no_native_execution": true,
+  "no_Cargo_or_tests": true,
+  "native_TMPDIR_changed": false,
+  "native_performance_profile_changed": false,
+  "original_target_deleted": true,
+  "events": [
+    {
+      "at_utc": "2026-11-05T03:06:05.373687+00:00",
+      "step": "canonical_manifest_full_content_reverification",
+      "status": "PASS",
+      "paths": 3166,
+      "directory_timestamp_difference_count": 160
+    },
+    {
+      "at_utc": "2026-11-05T03:06:05.374704+00:00",
+      "step": "authorized_exact_target_cleanup_ready",
+      "status": "PASS",
+      "target_path": "/workspace/scratch/fee7901564fd/target-cell"
+    },
+    {
+      "at_utc": "2026-11-05T03:06:05.596511+00:00",
+      "step": "exact_owned_target_removed_after_validation",
+      "status": "PASS",
+      "observed_filesystem_free_byte_change": 1082195968
+    }
+  ],
+  "disk_before_cleanup": {
+    "free_bytes": 16793600,
+    "available_bytes": 0
+  },
+  "canonical_reverification": {
+    "status": "PASS",
+    "paths": 3166,
+    "regular_paths_fully_hashed": 2661,
+    "directory_timestamp_difference_count": 160,
+    "all_other_metadata_and_content_identical": true,
+    "native_source_bytes_identical": true,
+    "native_source_aggregate_sha256": "79a693c3feefbf6c3c89aec9616b2705954b6e34ba3b15c9f0108929f78c23e5"
+  },
+  "directory_timestamp_diff": {
+    "path": "/dev/shm/fee7901564fd-inactive-target-preservation/directory-timestamp-exception.json",
+    "bytes": 64502,
+    "sha256": "88af291d8d4aebf9df53b51ad200beeea5cbf4c4b81ec8f9fbb65af8682c64c7",
+    "cause": "unknown"
+  },
+  "process_check_before_cleanup": {
+    "visible_build_processes": [],
+    "target_path_references": [],
+    "scan_errors": {
+      "PermissionError": 16
+    },
+    "scope": "visible PID namespace; parent also confirms no owned Cargo"
+  },
+  "disk_after_cleanup": {
+    "free_bytes": 1098989568,
+    "available_bytes": 0
+  },
+  "observed_filesystem_free_byte_change": 1082195968,
+  "manifest_regular_allocated_bytes_with_all_links_inside_target": 1079975936,
+  "filesystem_accounting_note": "Observed free-space change can include concurrent unrelated writes. Manifest regular allocated bytes with all links inside target is the attributable regular-file block estimate; no external hardlinked path was removed.",
+  "native_source_after_cleanup_aggregate_sha256": "79a693c3feefbf6c3c89aec9616b2705954b6e34ba3b15c9f0108929f78c23e5",
+  "native_source_after_cleanup_identical": true,
+  "head_after_cleanup": "23a56123e3112de06d7c684ef2057578759176ff",
+  "restore_instructions": {
+    "path": "/dev/shm/fee7901564fd-inactive-target-preservation/RESTORE_AFTER_DIRECTORY_TIMESTAMP_EXCEPTION.txt",
+    "bytes": 1873,
+    "sha256": "00ca26cdf275854818d47cd84eca8716c593219d30f473908d3df660721a4fa6"
+  },
+  "archive_location_policy": "Complete gzip remains in owned RAM directory; not copied to disk or Git. Manifest and original/full metadata diffs remain beside it. Small receipt and restore guidance copied to scratch.",
+  "completed_utc": "2026-11-05T03:06:05.596493+00:00"
+}

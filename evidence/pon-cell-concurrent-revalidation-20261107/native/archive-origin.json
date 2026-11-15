@@ -1,0 +1,19 @@
+{
+  "archive": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/concurrent-native-acc2-evidence.tar.gz",
+  "bytes": 679432,
+  "cold_distinct_claims": 2,
+  "cold_distinct_w1": 10,
+  "cold_invocations": 6,
+  "cold_stores": 3,
+  "head": "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030",
+  "payload_files": 176,
+  "retained_byte_continuity": true,
+  "retained_distinct_claims": 11,
+  "retained_distinct_w1": 55,
+  "sha256": "6fffb1e9538bd2a8fd0809488018694c1bd9b65225a8ac359dcdaa0d0888053b",
+  "source_files": 1369,
+  "source_set_sha256": "95c8094b8248615554a202f936e5d6d72ba3a6792b87e19f3bc2470e85ab61b8",
+  "test_count": 12,
+  "test_execution_seconds": 3.34,
+  "tree": "e59270db7fe6ea77e01362b591dd98e4e93d62fe"
+}

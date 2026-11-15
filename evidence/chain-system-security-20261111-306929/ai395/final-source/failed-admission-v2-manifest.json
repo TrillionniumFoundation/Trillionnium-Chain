@@ -1,0 +1,216 @@
+{
+  "files": [
+    {
+      "bytes": 13289,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2.py",
+      "path": "actual-admission-driver-v2.py",
+      "sha256": "e712f5baa0d13a4173000b7440251155f61e671ca4828769ec2dbad06cfe0b05"
+    },
+    {
+      "bytes": 2411,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/evidence-child-inputs-v1.json",
+      "path": "actual-evidence-child-inputs-v1.json",
+      "sha256": "15521f7820da0afb7d10a93e7cffe15eebc83824f8d9d9ea122c4f2f10f1b00d"
+    },
+    {
+      "bytes": 230,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/clean-before.attempt.json",
+      "path": "operation/clean-before.attempt.json",
+      "sha256": "12ae0ed83a31decb6f92e285e0f92bd32f1765cb08f68e6ea6026063a302e91c"
+    },
+    {
+      "bytes": 94,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/clean-before.owner.json",
+      "path": "operation/clean-before.owner.json",
+      "sha256": "443237e8fac0ff5eb1e0f3c8912d4886c086c2dba11c5f7e5a1203bfa104ea4c"
+    },
+    {
+      "bytes": 536,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/clean-before.receipt.json",
+      "path": "operation/clean-before.receipt.json",
+      "sha256": "b0957077e76f09e164d9e9d50a0efdd3de5f4747aa59679534e203024c3b5262"
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/clean-before.stderr",
+      "path": "operation/clean-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/clean-before.stdout",
+      "path": "operation/clean-before.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 223,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/failure-head.attempt.json",
+      "path": "operation/failure-head.attempt.json",
+      "sha256": "1cc3387a1ba09ff81dfeb604e8e84cf8587c92b1f49362e953238e9f22661a29"
+    },
+    {
+      "bytes": 94,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/failure-head.owner.json",
+      "path": "operation/failure-head.owner.json",
+      "sha256": "03561bc9ff1ead2c376754dd0483d823cf68ec89fbceb4083cb2e88b4eca3c97"
+    },
+    {
+      "bytes": 530,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/failure-head.receipt.json",
+      "path": "operation/failure-head.receipt.json",
+      "sha256": "655f03c2710c9a9e9aae5e517afb2a49a09c4e5a4eb30e3d75eb1ba55f4d409f"
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/failure-head.stderr",
+      "path": "operation/failure-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/failure-head.stdout",
+      "path": "operation/failure-head.stdout",
+      "sha256": "da10f4ea21dafa85715646445aceb4e7de13e44462b8231b7317b6e64ef2e409"
+    },
+    {
+      "bytes": 243,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/failure-staged.attempt.json",
+      "path": "operation/failure-staged.attempt.json",
+      "sha256": "6789eac3a40dfc9dfb2608fbcb472a0b67bf5f183bdb542bffdfb05eeb36033d"
+    },
+    {
+      "bytes": 94,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/failure-staged.owner.json",
+      "path": "operation/failure-staged.owner.json",
+      "sha256": "af7f8e1d3c23f0b1e479545b83adcd333e976e47211bfe4420e87d3250e97479"
+    },
+    {
+      "bytes": 549,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/failure-staged.receipt.json",
+      "path": "operation/failure-staged.receipt.json",
+      "sha256": "6d9e7f4a3799ea10f69bcc656d3214f1c4267ce584ae362231169e58e0b2142e"
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/failure-staged.stderr",
+      "path": "operation/failure-staged.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/failure-staged.stdout",
+      "path": "operation/failure-staged.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 232,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/failure-status.attempt.json",
+      "path": "operation/failure-status.attempt.json",
+      "sha256": "6cebd14b4db6a8d356e2d0248a3b218b6316a8ecd3c80a7d355643769b9d2159"
+    },
+    {
+      "bytes": 94,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/failure-status.owner.json",
+      "path": "operation/failure-status.owner.json",
+      "sha256": "174f3510e9de92d5e9aa6756f99804600e57e729506991066e222e4b42e41efb"
+    },
+    {
+      "bytes": 538,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/failure-status.receipt.json",
+      "path": "operation/failure-status.receipt.json",
+      "sha256": "569ebbfe7c8787257197fa5fc81da57d4c4ab59af7f20f861dc5864005eff873"
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/failure-status.stderr",
+      "path": "operation/failure-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/failure-status.stdout",
+      "path": "operation/failure-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 4399,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/failure.json",
+      "path": "operation/failure.json",
+      "sha256": "6d1a6be879eb56a2cf73b7624735fce5c7527014b66e9ab9e5c2764561c9cc79"
+    },
+    {
+      "bytes": 222,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/head-before.attempt.json",
+      "path": "operation/head-before.attempt.json",
+      "sha256": "a0e54b04949abd9e91bd239c3d076e30404a5dded87eec52fe275cbcfb87caff"
+    },
+    {
+      "bytes": 94,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/head-before.owner.json",
+      "path": "operation/head-before.owner.json",
+      "sha256": "60fa9d2b95b16fadec4f4c12ec681bbd1ebe12542131c52e29a45183e11796a5"
+    },
+    {
+      "bytes": 529,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/head-before.receipt.json",
+      "path": "operation/head-before.receipt.json",
+      "sha256": "dcb673471656abe2fab89f1f0c42bac507b6f572429fbf3c898c9b90b95ed422"
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/head-before.stderr",
+      "path": "operation/head-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/head-before.stdout",
+      "path": "operation/head-before.stdout",
+      "sha256": "da10f4ea21dafa85715646445aceb4e7de13e44462b8231b7317b6e64ef2e409"
+    },
+    {
+      "bytes": 235,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/preflight-before.attempt.json",
+      "path": "operation/preflight-before.attempt.json",
+      "sha256": "3643b16c74ef87470bbd3083d992516152fb2ad6c432018dea085b7b07d4c858"
+    },
+    {
+      "bytes": 94,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/preflight-before.owner.json",
+      "path": "operation/preflight-before.owner.json",
+      "sha256": "fefce8f236faed594df612e5ee0b183eae1b52e555e9304fd0557778cd71dbc9"
+    },
+    {
+      "bytes": 543,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/preflight-before.receipt.json",
+      "path": "operation/preflight-before.receipt.json",
+      "sha256": "41576762afce9308b3b848896e5177d2e6daa3289fa29042490d331133d67019"
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/preflight-before.stderr",
+      "path": "operation/preflight-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 172,
+      "original_path": "/home/qq/chain-system-security-final-integration-20261112-306929/admit-source-evidence-E-v2/preflight-before.stdout",
+      "path": "operation/preflight-before.stdout",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127"
+    },
+    {
+      "bytes": 2025,
+      "original_path": "/home/qq/.local/state/hepta-runtime-mac-worker/terminals/dpty-073ef4b64a8f845feae9d4030d48d793fe1a55bb4e43b10ef51874f471a216f5/output.log",
+      "path": "original-owner-pty.log",
+      "sha256": "2fc752933e7b11088b73d0d2916729b8a1f9d61ac064c5bf352379afe8b6deae"
+    }
+  ],
+  "native_tests_executed": false,
+  "original_head": "2d72fa3293989b01596ec8ce0ba3ff370dc4c584",
+  "original_output_complete": true,
+  "original_owner_exit_code": 1,
+  "original_pty_session": "dpty-073ef4b64a8f845feae9d4030d48d793fe1a55bb4e43b10ef51874f471a216f5",
+  "reason": "Existing transient Cargo build lock was absent; original driver stopped before its source check or any copied/staged repository files. All owners had released the checkout. The successor uses its own outside integration lock for evidence-only admission.",
+  "repository_mutated": false,
+  "schema": "trnm-evidence-child-pre-mutation-failure-v1"
+}

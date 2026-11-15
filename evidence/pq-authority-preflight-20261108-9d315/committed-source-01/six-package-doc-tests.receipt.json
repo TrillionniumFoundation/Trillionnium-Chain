@@ -1,0 +1,95 @@
+{
+  "argv": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-release-bundle",
+    "-p",
+    "trnm-protocol",
+    "-p",
+    "trnm-crypto-primitives",
+    "-p",
+    "trnm-checkpoint-types",
+    "-p",
+    "trnm-checkpoint-store",
+    "-p",
+    "trnm-verification-profiles",
+    "--doc",
+    "--all-features",
+    "--no-fail-fast",
+    "--",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 3.0235443220008165,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794121041.7397587,
+  "label": "six-package-doc-tests",
+  "logs": {
+    "six-package-doc-tests.stderr.log": {
+      "bytes": 419,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/six-package-doc-tests.stderr.log",
+      "sha256": "33ef0bc37576576efc90d7ecdee4a9572fb7272ba04839cf3b07257d9e751129"
+    },
+    "six-package-doc-tests.stdout.log": {
+      "bytes": 4235,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/six-package-doc-tests.stdout.log",
+      "sha256": "63ec689b8338030cae43bd4dd344f38f1343e7769de7edb2528301a3979a45ad"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "ignored_names": [],
+    "passed_names": [],
+    "summaries": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  "started_unix_seconds": 1794121038.7162132
+}

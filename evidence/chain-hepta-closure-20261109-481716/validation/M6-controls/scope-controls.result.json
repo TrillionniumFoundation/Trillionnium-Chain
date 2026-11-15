@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "scripts/test_cell_learning_scope_join.py",
+    "-v"
+  ],
+  "completed_at_utc": "2026-11-09T17:18:00.410553+00:00",
+  "elapsed_seconds": 2.356441191997874,
+  "engineering_timeout_seconds": 240,
+  "exit_code": 0,
+  "expected_count_matched": true,
+  "expected_test_count": 11,
+  "label": "scope-controls",
+  "observed_test_counts": [
+    11
+  ],
+  "process_exit_after_timeout": null,
+  "raw_unittest_summary": [
+    "Ran 11 tests in 1.664s",
+    "OK"
+  ],
+  "started_at_utc": "2026-11-09T17:17:58.054125+00:00",
+  "status": "PASS",
+  "stderr": {
+    "bytes": 1944,
+    "path": "scope-controls.stderr.log",
+    "sha256": "ac2f481470a7cad0a66434f9122023f8fc6a50fb192af5153d3da2050699672c"
+  },
+  "stdout": {
+    "bytes": 0,
+    "path": "scope-controls.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false
+}

@@ -1,0 +1,183 @@
+{
+  "files": [
+    {
+      "bytes": 441,
+      "path": "README.md",
+      "sha256": "dad597334afd81e92fefcf70163a8f2e23587db79aa3ae81c073004ba67de846"
+    },
+    {
+      "bytes": 1598,
+      "path": "f1/README.md",
+      "sha256": "c568b32416ef64cf68e11fadffe2b2bd67450d16f7fe64adcc706cca75f2ae21"
+    },
+    {
+      "bytes": 4749,
+      "path": "f1/setup/branch-rule-recovery-summary.json",
+      "sha256": "148ae7d1fa8f325b011d1e34f57f04e6ef2340d3b2e65af9ae3e5c6d3e9fac2f"
+    },
+    {
+      "bytes": 59,
+      "path": "f1/setup/original-branch-preflight.stderr",
+      "sha256": "1e85d4622435cd769c79fc3bdd3ac3cef3c643c135889988e8479a1ffc4e893e"
+    },
+    {
+      "bytes": 0,
+      "path": "f1/setup/original-branch-preflight.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1733,
+      "path": "f1/setup/original-staged-check-failures.json",
+      "sha256": "560e0c1b1875c26fd2021e0065e3679d5f75d5581f8491032954249bfd16de7e"
+    },
+    {
+      "bytes": 847,
+      "path": "f1/setup/original-staged-diff-check-failures.zip",
+      "sha256": "1f766994ce5a20592b3aa9b79ac8b50734570d8286043d0f1c7b61f00af67b4c"
+    },
+    {
+      "bytes": 707,
+      "path": "f1/source-review/patch-carrier.json",
+      "sha256": "3d228a75be2763bca0e912d6a16d4b608069c3697ba470686edd759f1483a156"
+    },
+    {
+      "bytes": 3831,
+      "path": "f1/source-review/pon_work-2bb56596-to-7d8d4c59.patch.zip",
+      "sha256": "c8a00a3760569a6a751e0f0ae273b9dd8895d1b0e7f694b96fd258ae4d13a33e"
+    },
+    {
+      "bytes": 5929,
+      "path": "f1/source-review/reviewed-source-mapping.json",
+      "sha256": "2374eef85e8dd280e9925e6c814f2a8b11109159e26eb77737b37496ca4c971d"
+    },
+    {
+      "bytes": 0,
+      "path": "f1/validation/actual-fixed-reader.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3799,
+      "path": "f1/validation/actual-fixed-reader.stdout",
+      "sha256": "d77f16d77fbd7ca7cdc0c9e4394c5272218b66c6102063d9e6f38a1dcbb4d8d8"
+    },
+    {
+      "bytes": 0,
+      "path": "f1/validation/diff-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "f1/validation/diff-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 660,
+      "path": "f1/validation/old-mapping-control.py",
+      "sha256": "ba4f806b036311f95fdea0e518828b986d029acfe37feae97e4b1f91f5930393"
+    },
+    {
+      "bytes": 0,
+      "path": "f1/validation/old-mapping-refusal.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 153,
+      "path": "f1/validation/old-mapping-refusal.stdout",
+      "sha256": "90a17ac78f4f084f3870e17f568175fd8e3acf687506e09020f66d7ba515362c"
+    },
+    {
+      "bytes": 2881,
+      "path": "f1/validation/original-fixed-controls-16.stderr",
+      "sha256": "75cb87e93166571ed2a709a65446eb1948c1158b1d07691ba867d14f252e3a8c"
+    },
+    {
+      "bytes": 0,
+      "path": "f1/validation/original-fixed-controls-16.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "f1/validation/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 176,
+      "path": "f1/validation/preflight.stdout",
+      "sha256": "9d6c19e895e5795b948d5f0f9a61fe95dd345bb61ecfa7af950c9f8ba1c37fb3"
+    },
+    {
+      "bytes": 1148,
+      "path": "f1/validation/source-inputs-after.json",
+      "sha256": "b2fb7c82489480674a1af3d004c6a9cada73938e7f73dd70ec5bb51b80d81143"
+    },
+    {
+      "bytes": 1148,
+      "path": "f1/validation/source-inputs-before.json",
+      "sha256": "b2fb7c82489480674a1af3d004c6a9cada73938e7f73dd70ec5bb51b80d81143"
+    },
+    {
+      "bytes": 6054,
+      "path": "f1/validation/summary.json",
+      "sha256": "cf27d1e898280b73322ac97b43137e8edd3369c8e058b038245ae107a09dd471"
+    },
+    {
+      "bytes": 5102,
+      "path": "historical/fixed_probability_contract_v1-2bb56596.json",
+      "sha256": "e249dfcda10720a1fc388cef9613302253a96b125c0ab1f0eda1b584b72cebef"
+    },
+    {
+      "bytes": 4119,
+      "path": "original-diagnostics/selection-index.json",
+      "sha256": "c9d4572bf548a148e7cd2e44178ed13b88e60cd2d7270a1a1be0962e2754c7e1"
+    },
+    {
+      "bytes": 202716,
+      "path": "original-diagnostics/summary.json",
+      "sha256": "d47c5501b2087a4ac8d9b092b51f246450cf57b2f02b5dbaf83b96e63672bef3"
+    },
+    {
+      "bytes": 8136,
+      "path": "original-diagnostics/unit-006-lines-74-74.stderr",
+      "sha256": "fa01e9864e501b6e21162eb2a616de8650806915d288b23c6709b2d01649d8b0"
+    },
+    {
+      "bytes": 0,
+      "path": "original-diagnostics/unit-006-lines-74-74.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 878,
+      "path": "original-diagnostics/unit-010-lines-78-78.stderr",
+      "sha256": "10e0b8e08782eb86bd60c13d1c23897f044fdbc9cd71a574f59669857fc8eb0f"
+    },
+    {
+      "bytes": 0,
+      "path": "original-diagnostics/unit-010-lines-78-78.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "original-diagnostics/unit-022-lines-90-90.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 175,
+      "path": "original-diagnostics/unit-022-lines-90-90.stdout",
+      "sha256": "1feeea04b855e9e8f575d9a904d0971c83c7ee5239ab3eefca75357c63fcc8f2"
+    },
+    {
+      "bytes": 68677,
+      "path": "original-diagnostics/unit-023-lines-91-91.stderr",
+      "sha256": "546e228268abc5820ef0aa44749a73d20c92c29655d12cd32300f9f7747d2430"
+    },
+    {
+      "bytes": 0,
+      "path": "original-diagnostics/unit-023-lines-91-91.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "qualification_granted": false,
+  "schema": "fixed-joint-f1-evidence-index-v1",
+  "scope": "Originals and targeted F1 validation only; source consistency does not grant qualification.",
+  "source_checkpoint": "7d8d4c59fcd01480a12e1c64835b202079091800"
+}

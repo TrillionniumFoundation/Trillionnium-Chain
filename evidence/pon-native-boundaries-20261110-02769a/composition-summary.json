@@ -1,0 +1,519 @@
+{
+  "schema": "pon-composition-evidence-v1",
+  "checked_source": "f5e836c2b88f7fe0f7cb3f1992601c6943df733e",
+  "checked_tree": "6866639dce1132a1e716505ab4156c43b3ca01b3",
+  "merge_parents": [
+    "bf010229a877eb7baf162830abf23bb515ac3a36",
+    "df927b6ffaecff293b9e9428e3ba516f47cd101a"
+  ],
+  "tracked_entries": 27867,
+  "tracked_bytes": 2552906464,
+  "original_guarded_commands": 25,
+  "original_command_passes": 23,
+  "original_command_failures": 2,
+  "recovery_guarded_commands": 3,
+  "recovery_command_passes": 3,
+  "all_guarded_observations": 28,
+  "all_command_passes": 26,
+  "all_command_failures": 2,
+  "commands": [
+    {
+      "label": "ci-contract-controls",
+      "receipt": "committed-f5e836c2/ci-contract-controls.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 85425080434,
+      "log_bytes": 31748,
+      "log_sha256": "1f7d3ad3013a585ddbe6e68f69fbbb23fa119802decfa98ae8d5480005a3018f"
+    },
+    {
+      "label": "ci-contract-inspector",
+      "receipt": "committed-f5e836c2/ci-contract-inspector.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 9612954140,
+      "log_bytes": 431,
+      "log_sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+    },
+    {
+      "label": "corpus-preflight",
+      "receipt": "committed-f5e836c2/corpus-preflight.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 11139919759,
+      "log_bytes": 178,
+      "log_sha256": "62caf045b230d133e34648a4f9f1b797055195909d17ffb13a2667ea5f0360db"
+    },
+    {
+      "label": "from-zero-retained-log-controls",
+      "receipt": "committed-f5e836c2/from-zero-retained-log-controls.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 15599894103,
+      "log_bytes": 2883,
+      "log_sha256": "10489633ab75c62701826dad5c177f3da80a02f38652af17db9e10409b139871"
+    },
+    {
+      "label": "fuzz-graph",
+      "receipt": "committed-f5e836c2/fuzz-graph.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 8318337824,
+      "log_bytes": 749870,
+      "log_sha256": "e1d597f9dfa9fe094b55b40c2c852caacea9314409b378b0dbe78f56218d0a69"
+    },
+    {
+      "label": "inventory",
+      "receipt": "committed-f5e836c2/inventory.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 8864040138,
+      "log_bytes": 35,
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "label": "material-reader-controls",
+      "receipt": "committed-f5e836c2/material-reader-controls.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 32307805498,
+      "log_bytes": 5048,
+      "log_sha256": "bc6660c93249ee2e72f92a25d855dc5f27b706a91eafbe2303683a2c11996488"
+    },
+    {
+      "label": "native-journal-suites",
+      "receipt": "committed-f5e836c2/native-journal-suites.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 85755797899,
+      "log_bytes": 3233,
+      "log_sha256": "ed943f383e9ba890bb7d1853fe2cdfcfd3948e813e29082376c74d12303ccb42"
+    },
+    {
+      "label": "native-mvcc-tests-recovery",
+      "receipt": "committed-f5e836c2/native-mvcc-tests-recovery.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 280218393371,
+      "log_bytes": 32877,
+      "log_sha256": "578b5b7fd4622245f1b8fd85b58c661cda8a2f15fc5c3524b097e4c732f80f1d"
+    },
+    {
+      "label": "native-mvcc-tests",
+      "receipt": "committed-f5e836c2/native-mvcc-tests.json",
+      "status": "command_failed",
+      "exit_code": 101,
+      "elapsed_ns": 167394562588,
+      "log_bytes": 8049,
+      "log_sha256": "f6bdf31ecc25651efb4476419b7c963c3548ac178b552762d04aa1afaf089fd9"
+    },
+    {
+      "label": "native-preflight",
+      "receipt": "committed-f5e836c2/native-preflight.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 9120579605,
+      "log_bytes": 178,
+      "log_sha256": "62caf045b230d133e34648a4f9f1b797055195909d17ffb13a2667ea5f0360db"
+    },
+    {
+      "label": "native-public-v3-tests",
+      "receipt": "committed-f5e836c2/native-public-v3-tests.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 684456121119,
+      "log_bytes": 6982,
+      "log_sha256": "2919ae6118e195b739c23a6bf2ea30df2b5dd508907f5cc949f9a5bf509cf41b"
+    },
+    {
+      "label": "pq-authority-effects",
+      "receipt": "committed-f5e836c2/pq-authority-effects.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 14097822078,
+      "log_bytes": 13223,
+      "log_sha256": "a276dd286eb1b2cc6ce514fae004be0659eae745a0e9975d73db289a04ebe919"
+    },
+    {
+      "label": "pq-corpus-controls",
+      "receipt": "committed-f5e836c2/pq-corpus-controls.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 179281960287,
+      "log_bytes": 9605,
+      "log_sha256": "138386525b73d3c0ccea3029d7637d7a68b2f9a01b3fe355a2c65cd563aa991a"
+    },
+    {
+      "label": "pq-corpus",
+      "receipt": "committed-f5e836c2/pq-corpus.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 14009362653,
+      "log_bytes": 558,
+      "log_sha256": "8793fbe30b01dd62830c3bef5face6c018474777c94b60e900dc5a075e6c4d6e"
+    },
+    {
+      "label": "proof-profile-controls",
+      "receipt": "committed-f5e836c2/proof-profile-controls.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 21843079743,
+      "log_bytes": 3993,
+      "log_sha256": "18fee3482f5d1ac05d22b43bffc37a72cc6445cfd26dbe887606d7767f43c6e9"
+    },
+    {
+      "label": "proof-profile-inspector",
+      "receipt": "committed-f5e836c2/proof-profile-inspector.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 21347337860,
+      "log_bytes": 8272,
+      "log_sha256": "43cfbec2cb5633c8c7c6739193ae3d13346ce87eec9e018678e1f233292e7354"
+    },
+    {
+      "label": "qrom-current-controls",
+      "receipt": "committed-f5e836c2/qrom-current-controls.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 23631715811,
+      "log_bytes": 2179,
+      "log_sha256": "d3cdcc8fcbdaa27b2571ac0ae2f677b3086e6cd537f865d8d7a4d8c02bbf2f67"
+    },
+    {
+      "label": "qrom-current-inspector",
+      "receipt": "committed-f5e836c2/qrom-current-inspector.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 21363241540,
+      "log_bytes": 103904,
+      "log_sha256": "3457b0c594087801ca2bd902a5e32677c1ccf9518244e0df48fa5af443fefd49"
+    },
+    {
+      "label": "recovery-preflight",
+      "receipt": "committed-f5e836c2/recovery-preflight.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 20456978013,
+      "log_bytes": 178,
+      "log_sha256": "62caf045b230d133e34648a4f9f1b797055195909d17ffb13a2667ea5f0360db"
+    },
+    {
+      "label": "repository-links",
+      "receipt": "committed-f5e836c2/repository-links.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 39715627798,
+      "log_bytes": 307,
+      "log_sha256": "bea900d9f8b14f158a96c7f01f0565c1d22a9bff9a6dec82a74af852c3411e80"
+    },
+    {
+      "label": "source-integrity-controls",
+      "receipt": "committed-f5e836c2/source-integrity-controls.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 15182766381,
+      "log_bytes": 7586,
+      "log_sha256": "df36850de313fb3f3f0c267dc98cf5ae90c18607c9385231df2b1473c1e35c7b"
+    },
+    {
+      "label": "strict-workspace-clippy-recovery",
+      "receipt": "committed-f5e836c2/strict-workspace-clippy-recovery.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 113582502166,
+      "log_bytes": 315,
+      "log_sha256": "cc56b299c42f834ac1fd7cc138891292b2383d3821da1072e54727986b3b8cb8"
+    },
+    {
+      "label": "strict-workspace-clippy",
+      "receipt": "committed-f5e836c2/strict-workspace-clippy.json",
+      "status": "command_failed",
+      "exit_code": 101,
+      "elapsed_ns": 15054335279,
+      "log_bytes": 635,
+      "log_sha256": "b0c879906a252097bc2a17677fec8464eb6ab5a62b48532687f72fdbced2bc9b"
+    },
+    {
+      "label": "w1-factorial-gate-controls",
+      "receipt": "committed-f5e836c2/w1-factorial-gate-controls.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 32417064457,
+      "log_bytes": 1514,
+      "log_sha256": "28f9f1650f707f65666bd87cb6d410dbfd569e7b112cbec1a4013e0ba09144a7"
+    },
+    {
+      "label": "w1-lifecycle-controls",
+      "receipt": "committed-f5e836c2/w1-lifecycle-controls.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 23510288517,
+      "log_bytes": 2226,
+      "log_sha256": "4674726cf9bc7d7db78788186ea6dbda87733f67461178df52bd95fe7a4d0fc5"
+    },
+    {
+      "label": "workspace-format",
+      "receipt": "committed-f5e836c2/workspace-format.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 27592094217,
+      "log_bytes": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "workspace-graph",
+      "receipt": "committed-f5e836c2/workspace-graph.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "elapsed_ns": 9640252125,
+      "log_bytes": 880284,
+      "log_sha256": "cd46ee911b007f1318236d67d11803ef662954741cd899b04919dacf54459330"
+    }
+  ],
+  "python_control_methods": {
+    "pq-corpus-controls": 59,
+    "source-integrity-controls": 43,
+    "ci-contract-controls": 177,
+    "qrom-current-controls": 14,
+    "proof-profile-controls": 26,
+    "w1-lifecycle-controls": 15,
+    "w1-factorial-gate-controls": 9,
+    "material-reader-controls": 32,
+    "from-zero-retained-log-controls": 20
+  },
+  "python_control_total": 395,
+  "python_control_skips": 0,
+  "native_journal_harnesses": [
+    {
+      "passed": 11,
+      "failed": 0,
+      "ignored": 2,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 12,
+      "failed": 0,
+      "ignored": 2,
+      "measured": 0,
+      "filtered_out": 0
+    }
+  ],
+  "native_public_filter": "ingress::public_v3::tests::",
+  "native_public_harnesses": [
+    {
+      "passed": 59,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 1263
+    }
+  ],
+  "native_mvcc_harnesses": [
+    {
+      "passed": 153,
+      "failed": 0,
+      "ignored": 9,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 8,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 16,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 8,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 17,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 8,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    }
+  ],
+  "native_mvcc_harness_names": [
+    "unittests src/lib.rs",
+    "tests/capacity_progress.rs",
+    "tests/checkpoint_tile_material_v1.rs",
+    "tests/checkpoint_tile_policy_v1.rs",
+    "tests/continuity_v1.rs",
+    "tests/evaluation_quorum_v2.rs",
+    "tests/incremental_prefix.rs",
+    "tests/model_evolution_v5.rs",
+    "tests/pon_commitment.rs",
+    "tests/pq2_authority_capacity.rs",
+    "tests/pq3_quota_authority.rs",
+    "tests/pq4_task_authority.rs",
+    "tests/pq5_task_renewal.rs",
+    "tests/pq_account_owner.rs",
+    "tests/qualified_task_lifecycle_v2.rs",
+    "tests/qualified_task_lifecycle_v3.rs",
+    "tests/qualified_task_lifecycle_v4.rs"
+  ],
+  "native_mvcc_runtime_feature_scope": "Default package features; pq_account_owner feature-gated harness contains zero selected tests. All features belong to the separate static Clippy command.",
+  "native_mvcc_totals": {
+    "passed": 259,
+    "failed": 0,
+    "ignored": 9,
+    "measured": 0,
+    "filtered_out": 0
+  },
+  "original_mvcc_methods_executed": 0,
+  "original_mvcc_failure": "linker signal 7 / Bus error before test execution; original log does not by itself establish ENOSPC causation",
+  "original_clippy_failure": "explicit ENOSPC creating temporary rmeta directories; not a lint verdict",
+  "recovery_scope": "Removed only this task’s regenerable incremental cache; original source, argv, captured environment and failed evidence preserved.",
+  "native_cost_measured_source": "39336622c63df1ae746d83a76bb53202cd01ba17",
+  "native_cost_experiment_repeated": false,
+  "native_cost_execution_identity_transferred": false,
+  "retained_log_input_binding": {
+    "command": [
+      "python3",
+      "scripts/ci/record_pq_native_command.py",
+      "--kind",
+      "head",
+      "--candidate",
+      "f5e836c2b88f7fe0f7cb3f1992601c6943df733e",
+      "--tested",
+      "f5e836c2b88f7fe0f7cb3f1992601c6943df733e",
+      "--output",
+      "/workspace/scratch/02769a703573/observations/validation-f5e836c2",
+      "--label",
+      "from-zero-retained-log-controls",
+      "--",
+      "timeout",
+      "240",
+      "python3",
+      "scripts/ci/test_from_zero_filter_cost_v1.py",
+      "-v"
+    ],
+    "command_exit_code": 0,
+    "elapsed_ns": 15927485150,
+    "native_execution_identity_transferred": false,
+    "native_execution_repeated": false,
+    "native_log_after_sha256": "953ef816f391839d1bae8b7c3cb2c6653b2bfad2eb611968288167afcf2d3f7d",
+    "native_log_before_sha256": "953ef816f391839d1bae8b7c3cb2c6653b2bfad2eb611968288167afcf2d3f7d",
+    "native_log_expected_sha256": "953ef816f391839d1bae8b7c3cb2c6653b2bfad2eb611968288167afcf2d3f7d",
+    "native_log_path": "/workspace/scratch/02769a703573/observations/from-zero-filter-exact-head/native.jsonl",
+    "native_log_unchanged": true,
+    "production_activation": false,
+    "reader_executed_source": "f5e836c2b88f7fe0f7cb3f1992601c6943df733e",
+    "retained_native_executed_source": "39336622c63df1ae746d83a76bb53202cd01ba17",
+    "schema": "pon-from-zero-retained-log-replay-binding-v1",
+    "started_utc": "2026-11-10T10:23:38.005997+00:00",
+    "status": "reader-replay-command-complete",
+    "work_cost_lower_bound_proved": false
+  },
+  "archive": {
+    "path": "composition-records.tar.xz",
+    "bytes": 127944,
+    "sha256": "caf93d3596c53d0131bd9289033d7837e8e5b928b42b0bc360cd6b34513bdc41"
+  },
+  "file_count": 70,
+  "uncompressed_member_bytes": 2205260,
+  "qualification": "HOLD / NO-GO",
+  "production_activation": false,
+  "whole_chain_quantum_security_qualified": false,
+  "work_cost_lower_bound_proved": false,
+  "open_consensus_qualified": false,
+  "model_net_benefit_qualified": false,
+  "hosted_ci_at_packaging": "No hosted execution pass claimed."
+}

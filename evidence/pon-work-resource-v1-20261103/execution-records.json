@@ -1,0 +1,98 @@
+[
+  {
+    "name": "baseline-allocation-1",
+    "command": [
+      "/workspace/scratch/ed36d74e0124/w1-resource-local/baseline-valid-work",
+      "1"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.08332824600074673,
+    "binary_before": "be8ac27f5df6f0608d8d99f0f5b5acfae32f499e123288f2287019e93ccd96d3",
+    "binary_after": "be8ac27f5df6f0608d8d99f0f5b5acfae32f499e123288f2287019e93ccd96d3",
+    "instrumented": true
+  },
+  {
+    "name": "baseline-allocation-2",
+    "command": [
+      "/workspace/scratch/ed36d74e0124/w1-resource-local/baseline-valid-work",
+      "2"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.09760067400202388,
+    "binary_before": "be8ac27f5df6f0608d8d99f0f5b5acfae32f499e123288f2287019e93ccd96d3",
+    "binary_after": "be8ac27f5df6f0608d8d99f0f5b5acfae32f499e123288f2287019e93ccd96d3",
+    "instrumented": true
+  },
+  {
+    "name": "candidate-allocation-1",
+    "command": [
+      "/workspace/scratch/ed36d74e0124/w1-resource-local/candidate-valid-work",
+      "1"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.08147606799684581,
+    "binary_before": "f8c8a4f6645787e098a5e8038cdedcde423a5031599fb6bb920614340a245c6e",
+    "binary_after": "f8c8a4f6645787e098a5e8038cdedcde423a5031599fb6bb920614340a245c6e",
+    "instrumented": true
+  },
+  {
+    "name": "candidate-allocation-2",
+    "command": [
+      "/workspace/scratch/ed36d74e0124/w1-resource-local/candidate-valid-work",
+      "2"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.08805805799784139,
+    "binary_before": "f8c8a4f6645787e098a5e8038cdedcde423a5031599fb6bb920614340a245c6e",
+    "binary_after": "f8c8a4f6645787e098a5e8038cdedcde423a5031599fb6bb920614340a245c6e",
+    "instrumented": true
+  },
+  {
+    "name": "cost-0-baseline",
+    "command": [
+      "/workspace/scratch/ed36d74e0124/w1-resource-local/baseline-valid-work",
+      "512"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 7.917261219998181,
+    "binary_before": "be8ac27f5df6f0608d8d99f0f5b5acfae32f499e123288f2287019e93ccd96d3",
+    "binary_after": "be8ac27f5df6f0608d8d99f0f5b5acfae32f499e123288f2287019e93ccd96d3",
+    "instrumented": false
+  },
+  {
+    "name": "cost-1-candidate",
+    "command": [
+      "/workspace/scratch/ed36d74e0124/w1-resource-local/candidate-valid-work",
+      "512"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 6.683581975001289,
+    "binary_before": "f8c8a4f6645787e098a5e8038cdedcde423a5031599fb6bb920614340a245c6e",
+    "binary_after": "f8c8a4f6645787e098a5e8038cdedcde423a5031599fb6bb920614340a245c6e",
+    "instrumented": false
+  },
+  {
+    "name": "cost-2-candidate",
+    "command": [
+      "/workspace/scratch/ed36d74e0124/w1-resource-local/candidate-valid-work",
+      "512"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 7.388369972999499,
+    "binary_before": "f8c8a4f6645787e098a5e8038cdedcde423a5031599fb6bb920614340a245c6e",
+    "binary_after": "f8c8a4f6645787e098a5e8038cdedcde423a5031599fb6bb920614340a245c6e",
+    "instrumented": false
+  },
+  {
+    "name": "cost-3-baseline",
+    "command": [
+      "/workspace/scratch/ed36d74e0124/w1-resource-local/baseline-valid-work",
+      "512"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 7.545878358996561,
+    "binary_before": "be8ac27f5df6f0608d8d99f0f5b5acfae32f499e123288f2287019e93ccd96d3",
+    "binary_after": "be8ac27f5df6f0608d8d99f0f5b5acfae32f499e123288f2287019e93ccd96d3",
+    "instrumented": false
+  }
+]

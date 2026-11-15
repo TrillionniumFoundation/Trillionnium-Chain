@@ -1,0 +1,133 @@
+{
+  "acceptance_granted": false,
+  "artifact_sha256": {
+    "cargo-fuzz-version.log": "3e2aa5c2baaf44e5a4968cc3fedb864f4717f85b713deacf3fc4294162358ca1",
+    "compiler.log": "78918a82c9e6588fc2530813e1abfffadceaa6a358efd7321e1a99d4705c4d9a",
+    "fetch.log": "b8cc63ec3bc045865321a56fd4cd4867310822b42e132712c4d9c2787eca8669"
+  },
+  "cargo_fuzz_sha256": "aa4c15c8b61b5ed575a2e3f800f42b6be313b72cd43d3569b1c97f6ae081e6f6",
+  "error": "command exited 101; retained /home/runner/work/_temp/ci-observations/fuzz/fetch.log",
+  "input_sha256": {
+    "scripts/ci/run_fuzz_smoke.py": "7de4c8111796eb5cde023fb4cbd699d610daab543cd90d4209ada44b8d3921d9",
+    "scripts/ci/tool-versions.env": "b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408",
+    "tests/fuzz/Cargo.lock": "6c39a792fd03e539e72406f6e3e440066630c8607cc2cb2000ae6efb50ec195a",
+    "tests/fuzz/Cargo.toml": "4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321",
+    "tests/fuzz/fuzz_targets/authenticated_state.rs": "8c4dd6f38247fbff5e38c7605fb2907e75cb33d0787a1469d92d8ce97037e2c4",
+    "tests/fuzz/fuzz_targets/canonical_wire.rs": "18eff08678c0f6f4f25a8be3c20936159cc3318e9fa0723b3909e26f8db5939b",
+    "tests/fuzz/fuzz_targets/support/work_certificate.rs": "2aa0c14985dbadcfd341da9d6a9a1658fad6bad48d6334ee8a49db0c22a85a60",
+    "tests/fuzz/fuzz_targets/work_certificate.rs": "c4c6ef07993ec1d91a42628149293541948f3e65710e431f34e6efe94bcc8905",
+    "tests/fuzz/seeds/authenticated_state/aggregate": "0a1e9400fc742d4af2ba29f657b4b4264330d21320f57a13a64f4ded5a6bd3a4",
+    "tests/fuzz/seeds/authenticated_state/cancel": "20f783fb390cfe73593585a0688344b503f67505db9229ab69a4e92e088a0df2",
+    "tests/fuzz/seeds/authenticated_state/codec": "916ed3c50b9d7e682ea70fe12b614a743112eeceb36311d9c29379231b8425aa",
+    "tests/fuzz/seeds/authenticated_state/compact-account": "6da126d8ce1a0d6fcc93061325e2e4230cd29c9da4fc82320a5b284444434d0e",
+    "tests/fuzz/seeds/authenticated_state/compact-aggregate": "03acfd2ad0f2f5b8f9411683b504f115917c75f32a4be5746684e3076f0485c7",
+    "tests/fuzz/seeds/authenticated_state/compact-cancel": "5a3a6d709d4ac43030a93782e00f4af2c90956f6501d0018eddc456020601492",
+    "tests/fuzz/seeds/authenticated_state/compact-codec": "2a52122f9975d6434a978f4d0bf5ad0c61546c9f53fbb350c41eb2276c5530bb",
+    "tests/fuzz/seeds/authenticated_state/compact-duplicate": "46b4b6538729205fed3fc5f3bc4706903a433328a0187bcf56d04ce132d65c89",
+    "tests/fuzz/seeds/authenticated_state/compact-missing": "8d4560462103aabdf4c956f2778c29a21ce692b5ff2bceba613ca966093a6520",
+    "tests/fuzz/seeds/authenticated_state/compact-valid": "58c8823eb8bfa5cabd655846de06c9fa3ecad7d86221a8622fa1a7f36a682834",
+    "tests/fuzz/seeds/authenticated_state/context": "c052b277343e2c0d889ebc1383376db582e82871294c2e458a1920a69622fec2",
+    "tests/fuzz/seeds/authenticated_state/duplicate": "92094adbf172a7eb1a4ed5435e67944810b68da15ebd2e98fff5caf32de4ec9f",
+    "tests/fuzz/seeds/authenticated_state/missing": "01c2231f44d8b0d41fbc0b65a14da6de1e7f768f1ed64a43754d125cc26b566c",
+    "tests/fuzz/seeds/authenticated_state/ordering": "78581b65deb8434cc573db149b8df93ea923cceb8f12d7f7563f38d4fcb99013",
+    "tests/fuzz/seeds/authenticated_state/parent": "37ee4bb14c4fe8fc2b0822769921c1dc8a023d63543bcf979fdfd2966f8c4cff",
+    "tests/fuzz/seeds/authenticated_state/partition": "f4136fd67c4f5977ef6f5d3d4a2a55b8aeeaf9fc90b83aa8b18cfb0bb2ad752a",
+    "tests/fuzz/seeds/authenticated_state/proof": "6d47616c93ba74ff37e04089ea0caabad721d0f53fcda38506c0604a4a9be143",
+    "tests/fuzz/seeds/authenticated_state/range-cancel": "86608414398334754d0a18f2196065cca784588cfb8fb6093b534b78f9e684ce",
+    "tests/fuzz/seeds/authenticated_state/range-checkpoint": "3a31812ff6b0feef995199a071012e82ba3b3ad540cdb294db64e76e2eeb6d7f",
+    "tests/fuzz/seeds/authenticated_state/range-codec": "edc06321c30afef52c7fe7b765fb1e922272708ffa718cbe5e4f24a4a5139185",
+    "tests/fuzz/seeds/authenticated_state/range-commitment": "b6d4d4639e48284ef2c16a9b358fb8c0db834025e8c99b6b119d811532a6361a",
+    "tests/fuzz/seeds/authenticated_state/range-count": "f6fe0a9b91c4ffc0d63e32a5416cc70ca00fec431895330b489806bcfa2662a6",
+    "tests/fuzz/seeds/authenticated_state/range-decoder": "b038cd4f307ab96397dd4a619fe914c35d3694a9c584b81c5e6601f680a624bb",
+    "tests/fuzz/seeds/authenticated_state/range-duplicate": "1a61661cd773a7d698ee2078d0749ee47208620635dae89b6173fc7c877bc820",
+    "tests/fuzz/seeds/authenticated_state/range-frontier": "d9736f52dcf84c9313b7a8b05ef256aecfb0f4c249c9b1e9d638201c1bb2d1c9",
+    "tests/fuzz/seeds/authenticated_state/range-frontier-order": "1854f4b63efddefb65adc56ee9f0d691e1e937ffbfd28ac72d0c68f9739053b9",
+    "tests/fuzz/seeds/authenticated_state/range-key": "1bb76b69f9faebcd59879d5dc191b027bc07bdee16b3f5f6937123f12430dd42",
+    "tests/fuzz/seeds/authenticated_state/range-missing": "2100bb279e10d9c82d99b90dbc132b50bf9a84f786f9da7f178cacd6bf000f36",
+    "tests/fuzz/seeds/authenticated_state/range-order": "9eba78a53ec575f1865052a45f83cb3b1dcfc1f67e463b56911719f203c043d1",
+    "tests/fuzz/seeds/authenticated_state/range-parent": "464e249498150c6eba1cafcf3904485cd0ad91a57ec874ca9f053b6be8af4c63",
+    "tests/fuzz/seeds/authenticated_state/range-rank": "edc7f3d82829c5631183fbbcbf8210882b2fbd7947348fdfc747e33ca9f40d9a",
+    "tests/fuzz/seeds/authenticated_state/range-valid": "6f897b14915e37112b1ad1993c30df795c69c29a40ccb1891f9dc5a7778764dd",
+    "tests/fuzz/seeds/authenticated_state/range-value": "52ca4c821b62d1a6bbff1e874ddf7021ba3334db11442335f646a9b483861629",
+    "tests/fuzz/seeds/authenticated_state/valid": "dad127fcf8670ce791aad570df96b26da284283a396628c4c4a2660d4cb9dda0"
+  },
+  "observations": [
+    {
+      "command": [
+        "cargo",
+        "fuzz",
+        "--version"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 1812834564,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "bfe1f33959a02d0766b33f6acc082e5990d82ea1",
+      "log": "cargo-fuzz-version.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "rustc",
+        "--version",
+        "--verbose"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 1806508722,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "bfe1f33959a02d0766b33f6acc082e5990d82ea1",
+      "log": "compiler.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "fetch",
+        "--locked",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 1902086295,
+      "executed": true,
+      "exit_code": 101,
+      "expected_source": "bfe1f33959a02d0766b33f6acc082e5990d82ea1",
+      "log": "fetch.log",
+      "process_exit_code": 101,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    }
+  ],
+  "result": "FAIL",
+  "sanitizer": "address",
+  "sanitizer_environment": {},
+  "schema": "trnm-coverage-guided-fuzz-v1",
+  "seconds_per_target": 60,
+  "source": {
+    "commit": "bfe1f33959a02d0766b33f6acc082e5990d82ea1",
+    "source_state": "committed-clean",
+    "tracked_bytes": 859735858,
+    "tracked_entries": 7159,
+    "tracked_worktree_verified": true,
+    "tree": "383a3cbc8a4a71f27e4f18d7df089b860f302439"
+  },
+  "source_consistent": true,
+  "source_expected": "bfe1f33959a02d0766b33f6acc082e5990d82ea1",
+  "targets": {},
+  "tools": {
+    "TRNM_CARGO_DENY_VERSION": "0.20.2",
+    "TRNM_CARGO_FUZZ_VERSION": "0.13.2",
+    "TRNM_FUZZ_TOOLCHAIN": "nightly-2026-10-01"
+  }
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "label": "01-build",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "build",
+      "--offline",
+      "--locked",
+      "--release",
+      "--example",
+      "packed_carry_backend",
+      "--example",
+      "tagged_sha3_backend",
+      "--example",
+      "tagged_sha3_wire_controls"
+    ],
+    "exit_code": 0,
+    "wall_s": 47.056910522980615
+  },
+  {
+    "label": "02-tests",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--all-features"
+    ],
+    "exit_code": 0,
+    "wall_s": 77.11333456798457
+  },
+  {
+    "label": "03-clippy",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "clippy",
+      "--offline",
+      "--locked",
+      "--release",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit_code": 0,
+    "wall_s": 2.3720807458739728
+  }
+]

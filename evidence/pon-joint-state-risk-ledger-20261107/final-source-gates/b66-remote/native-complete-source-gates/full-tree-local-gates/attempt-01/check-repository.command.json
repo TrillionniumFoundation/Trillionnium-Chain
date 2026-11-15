@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/workspace/scratch/8f0d1a7a75bb/chain_certificates",
+  "elapsed_seconds": 41.422609580000426,
+  "environment_override": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "exit_code": 0,
+  "started_at_utc": "2026-11-07T23:57:29.658731+00:00",
+  "streams": {
+    "stderr": {
+      "bytes": 0,
+      "file": "check-repository.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 307,
+      "file": "check-repository.stdout.log",
+      "sha256": "a256115d7938fb4f1b9824d2a029a6f303faf37677ca6293a938749f351511f9"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "binary_sha256": "4554dcdbc147fa1d574a604bf89eb1ad90c7243f4c2e9f65fdaae4b45e7d98bd",
+  "command": [
+    "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/debug/deps/trnm_pon_node-d0b5619ab979ee7c",
+    "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+  "diagnostic_passed": true,
+  "elapsed_seconds": 0.4158178991638124,
+  "exactly_one_requested_nonignored_test_reported": true,
+  "exit_code": 0,
+  "full_workspace_passed": false,
+  "name": "ingress",
+  "original_workspace_result_replaced": false,
+  "post_quantum_soundness_qualified": false,
+  "result": {
+    "failed": 0,
+    "filtered_out": 1200,
+    "ignored": 0,
+    "measured": 0,
+    "passed": 1,
+    "result": "ok"
+  },
+  "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "started_utc": "2026-11-07T14:14:18.664599+00:00",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 239,
+  "stdout_sha256": "3bb20252814bf4a7ec1f2ed07d88558968db6a8d29e001d6b9dff7919852b9de",
+  "test": "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+  "timed_out": false,
+  "timeout_seconds": 90
+}

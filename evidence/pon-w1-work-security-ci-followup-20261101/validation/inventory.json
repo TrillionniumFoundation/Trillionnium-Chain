@@ -1,0 +1,13 @@
+{
+  "name": "inventory",
+  "command": [
+    "python3",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "exit_code": 0,
+  "started_unix_ns": 1793524915834386360,
+  "ended_unix_ns": 1793524915912990663,
+  "stdout_bytes": 35,
+  "stderr_bytes": 0
+}

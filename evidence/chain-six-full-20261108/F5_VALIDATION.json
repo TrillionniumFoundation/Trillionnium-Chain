@@ -1,0 +1,56 @@
+{
+  "codeql_missing_api_evidence_retained": true,
+  "current_corpus_pin_changes": 4,
+  "current_corpus_pins": 899,
+  "f4_original_result": "FAIL_RETAINED",
+  "f5_source_before_after_equal": true,
+  "final_evidence_commit_relationship": "Only evidence/chain-six-full-20261108/ changes after checked F5; later-head publication gates have their own external record.",
+  "generated_inventory_added_paths": [
+    "config/pon/w1-qrom-current-source-observation-v1.json"
+  ],
+  "historical_work_cost_contract_unchanged": true,
+  "hosted_native_confirmation_failures_retained": true,
+  "independent_review": {
+    "job": "1a1bd491c97-138b0-663",
+    "read_only_completed": true,
+    "review_sha256": "0b7ee6442561d06a1f7542e0a2eca811af38e22b626023a0f626b8b42c682652",
+    "test_commands_executed": 0
+  },
+  "lockfiles_unchanged": 29,
+  "native_algorithm_and_main_sources_unchanged": true,
+  "native_compilation": {
+    "all_passed": true,
+    "commands": 8,
+    "job": "1a1bd3f0286-138b0-649",
+    "native_experiment_rerun": false,
+    "validation_sha256": "bc7c6f2792ffcf760744fe69760af0ae4cca0c974ee954d3d81f4e013d239765"
+  },
+  "native_generated_inventory_exception": true,
+  "new_native_or_model_experiments_in_f5_validation": false,
+  "original_manifest_unchanged": true,
+  "original_mldsa_downstream_independent_c_executed": false,
+  "original_native_execution_head": "1a446a79700cc093a2b1a7f10367ef4a5ddbd680",
+  "original_native_learning_files": 517,
+  "other_native_formal_fuzz_entries_unchanged": 4017,
+  "private_hepta_source_exported": false,
+  "production_activation": false,
+  "public_archive_bytes": 45869184,
+  "public_archives": 16,
+  "published_hepta_maintenance_head": "bdf35d0991a02cdf201cc098257132fe3282f99f",
+  "python_validation": {
+    "all_passed": true,
+    "commands": 13,
+    "fixed_named_controls": 257,
+    "job": "1a1bd43ce29-138b0-653",
+    "summary_sha256": "dc3073f20e709113be23271f8141f687cd4710752b695ca4d18fdd24503a6252"
+  },
+  "qrom_selected_inputs": 39,
+  "qualification": "HOLD_NO_GO",
+  "real_model_execution_head": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+  "required_paths": 807,
+  "schema": "chain-six-f5-validated-code-and-public-evidence-v1",
+  "tracked_bytes": 2483808033,
+  "tracked_entries": 26114,
+  "validated_chain_head": "ab610cf95a6ec39b38e20e64e6367f5b529b3633",
+  "validated_chain_tree": "abd4442d789b29889960f9b0acc712b9fefed498"
+}

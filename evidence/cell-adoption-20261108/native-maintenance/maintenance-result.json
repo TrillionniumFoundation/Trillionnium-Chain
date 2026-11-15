@@ -1,0 +1,207 @@
+{
+  "commands": [
+    {
+      "command": [
+        "just",
+        "fix",
+        "-p",
+        "codex-hepta-agentd",
+        "--lib",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "log": {
+        "bytes": 20626,
+        "path": "/home/qian-qi/work/cell-adoption-native-observations-20261108-3279/maintenance-2c2a/scoped-fix.log",
+        "sha256": "269a46167d1b791fb6dadd3b0f3873794ceacd64df25b452e14df81d4cb75690"
+      },
+      "name": "scoped-fix",
+      "resources": {
+        "CPUQuotaPerSecUSec": "2s",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cell-adoption-native-maintenance-20261108-3279.service",
+        "MemoryMax": "8589934592",
+        "Nice": "10",
+        "RuntimeMaxUSec": "1h 30min",
+        "cpu.max": "200000 100000",
+        "cpu.stat": "usage_usec 154786433\nuser_usec 140737713\nsystem_usec 14048719\nnice_usec 140779000\ncore_sched.force_idle_usec 0\nnr_periods 1021\nnr_throttled 152\nthrottled_usec 308267\nnr_bursts 0\nburst_usec 0",
+        "memory.max": "8589934592",
+        "memory.peak": "2460360704",
+        "memory.swap.max": "max",
+        "memory.swap.peak": "0"
+      },
+      "source": {
+        "files": {
+          "lib.rs": "a46db835d8e52ce9cce1b6e760c6287fa8b376f30266f77c0cf868b1e21c7d37",
+          "neuron_generation_adopted_learning_tests.rs": "3362451eadb11fcc780ee974bf5d01286f1ad7f169429b21403259c2b733d97f",
+          "neuron_generation_current_types.rs": "0c3861d8a02c4ad9b997e52aabe7ee63527dad37c14031f5e6feca5d7e0bed9c",
+          "neuron_generation_learning_readback.rs": "53d56b92464d450ec72bd77f017308fa1868b6f2753cb4b6e4b108bb0828adc8",
+          "neuron_generation_learning_readback_test_support.rs": "e7705226d5c6cdb36d416fe0f5afb00c8977bbc38489ca77c46f0768cf258834",
+          "neuron_generation_learning_runtime.rs": "7e2da259231d6d1ee4c67925507e99838a0ef31ae2a710384ccfc158d2aa293e",
+          "neuron_generation_learning_runtime_tests.rs": "bfd127e95115090105bab515bba5296b6432b18608e2812ed241b5e8e9a1e6b2",
+          "neuron_generation_runtime.rs": "97bf066feb1e9dc3d7c0f503461d4609f630fa6a4b5649ea28d5902590400eba",
+          "neuron_generation_service.rs": "f41b8d52fa819d3e47191f9167f5536bd74fcbdeac1f438c6e4ca61061d0ca59"
+        },
+        "head": "2c2a3adbcc4d6d6784e4ba76106bb1beb700e3bd",
+        "status": "",
+        "tree": "319737f613f1a9f786df78c4fb79e9c32cac5542"
+      },
+      "wall_seconds": 102.00597071700031
+    },
+    {
+      "command": [
+        "just",
+        "fmt"
+      ],
+      "exit_code": 0,
+      "log": {
+        "bytes": 73,
+        "path": "/home/qian-qi/work/cell-adoption-native-observations-20261108-3279/maintenance-2c2a/post-fmt.log",
+        "sha256": "b6a6d5ad920f48c9b49a3ca8c2308227b7849b9e0a498dc452f3a7bd2f7fb752"
+      },
+      "name": "post-fmt",
+      "resources": {
+        "CPUQuotaPerSecUSec": "2s",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cell-adoption-native-maintenance-20261108-3279.service",
+        "MemoryMax": "8589934592",
+        "Nice": "10",
+        "RuntimeMaxUSec": "1h 30min",
+        "cpu.max": "200000 100000",
+        "cpu.stat": "usage_usec 154908911\nuser_usec 140798173\nsystem_usec 14110737\nnice_usec 140829000\ncore_sched.force_idle_usec 0\nnr_periods 1022\nnr_throttled 152\nthrottled_usec 308267\nnr_bursts 0\nburst_usec 0",
+        "memory.max": "8589934592",
+        "memory.peak": "2460360704",
+        "memory.swap.max": "max",
+        "memory.swap.peak": "0"
+      },
+      "source": {
+        "files": {
+          "lib.rs": "a46db835d8e52ce9cce1b6e760c6287fa8b376f30266f77c0cf868b1e21c7d37",
+          "neuron_generation_adopted_learning_tests.rs": "3362451eadb11fcc780ee974bf5d01286f1ad7f169429b21403259c2b733d97f",
+          "neuron_generation_current_types.rs": "0c3861d8a02c4ad9b997e52aabe7ee63527dad37c14031f5e6feca5d7e0bed9c",
+          "neuron_generation_learning_readback.rs": "53d56b92464d450ec72bd77f017308fa1868b6f2753cb4b6e4b108bb0828adc8",
+          "neuron_generation_learning_readback_test_support.rs": "e7705226d5c6cdb36d416fe0f5afb00c8977bbc38489ca77c46f0768cf258834",
+          "neuron_generation_learning_runtime.rs": "7e2da259231d6d1ee4c67925507e99838a0ef31ae2a710384ccfc158d2aa293e",
+          "neuron_generation_learning_runtime_tests.rs": "bfd127e95115090105bab515bba5296b6432b18608e2812ed241b5e8e9a1e6b2",
+          "neuron_generation_runtime.rs": "97bf066feb1e9dc3d7c0f503461d4609f630fa6a4b5649ea28d5902590400eba",
+          "neuron_generation_service.rs": "f41b8d52fa819d3e47191f9167f5536bd74fcbdeac1f438c6e4ca61061d0ca59"
+        },
+        "head": "2c2a3adbcc4d6d6784e4ba76106bb1beb700e3bd",
+        "status": "",
+        "tree": "319737f613f1a9f786df78c4fb79e9c32cac5542"
+      },
+      "wall_seconds": 0.07805796200409532
+    },
+    {
+      "command": [
+        "just",
+        "clippy",
+        "-p",
+        "codex-hepta-agentd",
+        "--lib",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "log": {
+        "bytes": 20095,
+        "path": "/home/qian-qi/work/cell-adoption-native-observations-20261108-3279/maintenance-2c2a/strict-clippy.log",
+        "sha256": "9dcf0f2aec0d48b4e24a2079dcfee0107d651efa3d98527fec48becef7701c42"
+      },
+      "name": "strict-clippy",
+      "resources": {
+        "CPUQuotaPerSecUSec": "2s",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cell-adoption-native-maintenance-20261108-3279.service",
+        "MemoryMax": "8589934592",
+        "Nice": "10",
+        "RuntimeMaxUSec": "1h 30min",
+        "cpu.max": "200000 100000",
+        "cpu.stat": "usage_usec 351443669\nuser_usec 322540275\nsystem_usec 28903393\nnice_usec 322612000\ncore_sched.force_idle_usec 0\nnr_periods 2222\nnr_throttled 330\nthrottled_usec 646369\nnr_bursts 0\nburst_usec 0",
+        "memory.max": "8589934592",
+        "memory.peak": "2509205504",
+        "memory.swap.max": "max",
+        "memory.swap.peak": "0"
+      },
+      "source": {
+        "files": {
+          "lib.rs": "a46db835d8e52ce9cce1b6e760c6287fa8b376f30266f77c0cf868b1e21c7d37",
+          "neuron_generation_adopted_learning_tests.rs": "3362451eadb11fcc780ee974bf5d01286f1ad7f169429b21403259c2b733d97f",
+          "neuron_generation_current_types.rs": "0c3861d8a02c4ad9b997e52aabe7ee63527dad37c14031f5e6feca5d7e0bed9c",
+          "neuron_generation_learning_readback.rs": "53d56b92464d450ec72bd77f017308fa1868b6f2753cb4b6e4b108bb0828adc8",
+          "neuron_generation_learning_readback_test_support.rs": "e7705226d5c6cdb36d416fe0f5afb00c8977bbc38489ca77c46f0768cf258834",
+          "neuron_generation_learning_runtime.rs": "7e2da259231d6d1ee4c67925507e99838a0ef31ae2a710384ccfc158d2aa293e",
+          "neuron_generation_learning_runtime_tests.rs": "bfd127e95115090105bab515bba5296b6432b18608e2812ed241b5e8e9a1e6b2",
+          "neuron_generation_runtime.rs": "97bf066feb1e9dc3d7c0f503461d4609f630fa6a4b5649ea28d5902590400eba",
+          "neuron_generation_service.rs": "f41b8d52fa819d3e47191f9167f5536bd74fcbdeac1f438c6e4ca61061d0ca59"
+        },
+        "head": "2c2a3adbcc4d6d6784e4ba76106bb1beb700e3bd",
+        "status": "",
+        "tree": "319737f613f1a9f786df78c4fb79e9c32cac5542"
+      },
+      "wall_seconds": 119.96678920596605
+    }
+  ],
+  "error": null,
+  "exit_code": 0,
+  "resources_after": {
+    "CPUQuotaPerSecUSec": "2s",
+    "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cell-adoption-native-maintenance-20261108-3279.service",
+    "MemoryMax": "8589934592",
+    "Nice": "10",
+    "RuntimeMaxUSec": "1h 30min",
+    "cpu.max": "200000 100000",
+    "cpu.stat": "usage_usec 351481319\nuser_usec 322554430\nsystem_usec 28926889\nnice_usec 322621000\ncore_sched.force_idle_usec 0\nnr_periods 2222\nnr_throttled 330\nthrottled_usec 646369\nnr_bursts 0\nburst_usec 0",
+    "memory.max": "8589934592",
+    "memory.peak": "2509205504",
+    "memory.swap.max": "max",
+    "memory.swap.peak": "0"
+  },
+  "resources_before": {
+    "CPUQuotaPerSecUSec": "2s",
+    "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cell-adoption-native-maintenance-20261108-3279.service",
+    "MemoryMax": "8589934592",
+    "Nice": "10",
+    "RuntimeMaxUSec": "1h 30min",
+    "cpu.max": "200000 100000",
+    "cpu.stat": "usage_usec 62944\nuser_usec 32636\nsystem_usec 30308\nnice_usec 31000\ncore_sched.force_idle_usec 0\nnr_periods 1\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "memory.max": "8589934592",
+    "memory.peak": "18976768",
+    "memory.swap.max": "max",
+    "memory.swap.peak": "0"
+  },
+  "source_after": {
+    "files": {
+      "lib.rs": "a46db835d8e52ce9cce1b6e760c6287fa8b376f30266f77c0cf868b1e21c7d37",
+      "neuron_generation_adopted_learning_tests.rs": "3362451eadb11fcc780ee974bf5d01286f1ad7f169429b21403259c2b733d97f",
+      "neuron_generation_current_types.rs": "0c3861d8a02c4ad9b997e52aabe7ee63527dad37c14031f5e6feca5d7e0bed9c",
+      "neuron_generation_learning_readback.rs": "53d56b92464d450ec72bd77f017308fa1868b6f2753cb4b6e4b108bb0828adc8",
+      "neuron_generation_learning_readback_test_support.rs": "e7705226d5c6cdb36d416fe0f5afb00c8977bbc38489ca77c46f0768cf258834",
+      "neuron_generation_learning_runtime.rs": "7e2da259231d6d1ee4c67925507e99838a0ef31ae2a710384ccfc158d2aa293e",
+      "neuron_generation_learning_runtime_tests.rs": "bfd127e95115090105bab515bba5296b6432b18608e2812ed241b5e8e9a1e6b2",
+      "neuron_generation_runtime.rs": "97bf066feb1e9dc3d7c0f503461d4609f630fa6a4b5649ea28d5902590400eba",
+      "neuron_generation_service.rs": "f41b8d52fa819d3e47191f9167f5536bd74fcbdeac1f438c6e4ca61061d0ca59"
+    },
+    "head": "2c2a3adbcc4d6d6784e4ba76106bb1beb700e3bd",
+    "status": "",
+    "tree": "319737f613f1a9f786df78c4fb79e9c32cac5542"
+  },
+  "source_before": {
+    "files": {
+      "lib.rs": "a46db835d8e52ce9cce1b6e760c6287fa8b376f30266f77c0cf868b1e21c7d37",
+      "neuron_generation_adopted_learning_tests.rs": "3362451eadb11fcc780ee974bf5d01286f1ad7f169429b21403259c2b733d97f",
+      "neuron_generation_current_types.rs": "0c3861d8a02c4ad9b997e52aabe7ee63527dad37c14031f5e6feca5d7e0bed9c",
+      "neuron_generation_learning_readback.rs": "53d56b92464d450ec72bd77f017308fa1868b6f2753cb4b6e4b108bb0828adc8",
+      "neuron_generation_learning_readback_test_support.rs": "e7705226d5c6cdb36d416fe0f5afb00c8977bbc38489ca77c46f0768cf258834",
+      "neuron_generation_learning_runtime.rs": "7e2da259231d6d1ee4c67925507e99838a0ef31ae2a710384ccfc158d2aa293e",
+      "neuron_generation_learning_runtime_tests.rs": "bfd127e95115090105bab515bba5296b6432b18608e2812ed241b5e8e9a1e6b2",
+      "neuron_generation_runtime.rs": "97bf066feb1e9dc3d7c0f503461d4609f630fa6a4b5649ea28d5902590400eba",
+      "neuron_generation_service.rs": "f41b8d52fa819d3e47191f9167f5536bd74fcbdeac1f438c6e4ca61061d0ca59"
+    },
+    "head": "2c2a3adbcc4d6d6784e4ba76106bb1beb700e3bd",
+    "status": "",
+    "tree": "319737f613f1a9f786df78c4fb79e9c32cac5542"
+  },
+  "source_unchanged": true,
+  "tested_candidate": "2c2a3adbcc4d6d6784e4ba76106bb1beb700e3bd",
+  "tests_rerun_after_maintenance": false
+}

@@ -1,0 +1,386 @@
+{
+  "scope": "original preparation source and outputs; not final native evidence",
+  "archive_sha256": "32ccf6f11c6ce2a4dda912f8957e4113063202931f88a2f0338545ad54be1d23",
+  "files": [
+    {
+      "path": ".github/workflows/pon-next-architecture-security.yml",
+      "bytes": 25129,
+      "sha256": "ad1fbf16c2e01f556d00e5250fff104c4d51baaaaeef37c2efa8d74744219798"
+    },
+    {
+      "path": ".hepta-lock-eb3e9edf5821ba43777d9e7a",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".hepta-lock-ed8feae2a8ae104dfdbbd993",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "PREPARATION.txt",
+      "bytes": 160,
+      "sha256": "eff850d1719b07d6f0c6e331655618bb9eb3077ba89b123981ead59cb147cc89"
+    },
+    {
+      "path": "before/.github/workflows/pon-next-architecture-security.yml",
+      "bytes": 21439,
+      "sha256": "452259c53bc997471dfadb3489819ff45814b89b333c5d8007400be967f57d2b"
+    },
+    {
+      "path": "before/run_exact_gates_previous.py",
+      "bytes": 39150,
+      "sha256": "806329aaa71ff9952ebefa84995ebd0a0ae576e6e89ed0774cb77f7891892d4a"
+    },
+    {
+      "path": "before/run_storage_convergence_exact_gates.py",
+      "bytes": 61074,
+      "sha256": "aa19862eb0efd8531a92c041fe7cea232dbcccaa6c3f375dfc7f1fee8b122b0d"
+    },
+    {
+      "path": "before/run_storage_convergence_exact_gates_selftest.py",
+      "bytes": 8637,
+      "sha256": "a5d582b799cc63b659b9889d971f8c036443ed4420ddcf54f6f367cb1dc63a03"
+    },
+    {
+      "path": "before/scripts/ci/check_required_native_test.py",
+      "bytes": 2928,
+      "sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28"
+    },
+    {
+      "path": "before/scripts/ci/test_cell_discovery_v3_ci.py",
+      "bytes": 5747,
+      "sha256": "920710c8903df49c9e889d26fb835d9ad0314bc6277cb2c12c193e2e3eefb1c1"
+    },
+    {
+      "path": "before/scripts/ci/test_cell_storage_convergence_ci.py",
+      "bytes": 20070,
+      "sha256": "ca28445d9f1a368f5cb082370494608d7d9a09078a05e7b09af27101a2eb10a0"
+    },
+    {
+      "path": "before/storage-convergence-exact-gates-config-template.json",
+      "bytes": 10343,
+      "sha256": "2a4064b6423c5b0ee8bddc19d1498444799370854a45c748a37cf6e9007e9fb2"
+    },
+    {
+      "path": "before/storage-convergence-process-death-observation.json",
+      "bytes": 1342,
+      "sha256": "2cb662ae41ac64242233b0595eab2886f564b1ef53f445ea0ed82c8618530102"
+    },
+    {
+      "path": "build-ci08.py",
+      "bytes": 256391,
+      "sha256": "2dfe4a62f58421a847a149cb8d5b018251aa143dc0bdbf92a67d4552da32c50b"
+    },
+    {
+      "path": "run_exact_gates_previous.py",
+      "bytes": 39150,
+      "sha256": "806329aaa71ff9952ebefa84995ebd0a0ae576e6e89ed0774cb77f7891892d4a"
+    },
+    {
+      "path": "run_storage_convergence_exact_gates.py",
+      "bytes": 66477,
+      "sha256": "288b26c6c6ef17aa3ed2e213b473bf80e46f82b739d810018649f0672f585e10"
+    },
+    {
+      "path": "run_storage_convergence_exact_gates_selftest.py",
+      "bytes": 12181,
+      "sha256": "de59fae57d1c8773171f173bacbc231d3140b6e9211f2059c4685dc4a988d327"
+    },
+    {
+      "path": "scripts/ci/check_required_native_test.py",
+      "bytes": 2928,
+      "sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28"
+    },
+    {
+      "path": "scripts/ci/test_cell_discovery_v3_ci.py",
+      "bytes": 5747,
+      "sha256": "920710c8903df49c9e889d26fb835d9ad0314bc6277cb2c12c193e2e3eefb1c1"
+    },
+    {
+      "path": "scripts/ci/test_cell_storage_convergence_ci.py",
+      "bytes": 36215,
+      "sha256": "0aa462af9dafed86fea0c33987772a4cdb158d21de990fb6fda6478d9986ab0d"
+    },
+    {
+      "path": "source-identity.json",
+      "bytes": 7429,
+      "sha256": "a9b35d458e7ec29fc07cefeebe859956079bfa824918e1cfa5ffb121bef61bb3"
+    },
+    {
+      "path": "static-review.json",
+      "bytes": 18572,
+      "sha256": "d388fd21b059db9cbaabe6908a360e58f587cb4e93ff2b649952b4c4ee37bf17"
+    },
+    {
+      "path": "storage-convergence-exact-gates-config-template.json",
+      "bytes": 11839,
+      "sha256": "2890269d8268f6fa548414520b89a71370b42c0f091b7518ad3a6105950f78af"
+    },
+    {
+      "path": "storage-convergence-final-ci.patch",
+      "bytes": 30264,
+      "sha256": "82d38f02e271dcd89797d09a4b7d64ab752e151a7d798c57261dcb3d0c56467d"
+    },
+    {
+      "path": "storage-convergence-final-tooling.patch",
+      "bytes": 16951,
+      "sha256": "08d5f0cccfd25d8a4d23eb5bfbe5bd20cdfdf17c66587afc2cfab7d1386d9bde"
+    },
+    {
+      "path": "storage-convergence-process-death-observation.json",
+      "bytes": 1342,
+      "sha256": "2cb662ae41ac64242233b0595eab2886f564b1ef53f445ea0ed82c8618530102"
+    },
+    {
+      "path": "transport-observations.json",
+      "bytes": 1678,
+      "sha256": "981e470a09e8cda07bf645a8077405d2999f760d00db3c4fc8e885b69873ee73"
+    },
+    {
+      "path": "verification/apply-check-storage-convergence-final-ci.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/apply-check-storage-convergence-final-ci.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/apply-check-storage-convergence-final-tooling.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/apply-check-storage-convergence-final-tooling.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-00.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-00.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-02.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-02.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-03.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-03.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-04.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-04.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-05.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-05.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-06.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-06.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-07.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-07.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-08.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-08.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-09.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-09.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-10.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-10.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-11.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-11.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-12.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-12.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-13.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-13.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-14.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-14.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-15.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-15.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-16.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-16.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-17.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-17.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-18.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-18.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-19.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/bash-syntax-19.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/commands.json",
+      "bytes": 18590,
+      "sha256": "003444c67bdd61e3052f8e9bda94995f460aeba65be9894420ac17b1dddc4fd4"
+    },
+    {
+      "path": "verification/exact-runner-synthetic-controls.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/exact-runner-synthetic-controls.stdout.log",
+      "bytes": 2887,
+      "sha256": "e6681507b2cd388804cba94c12e4824f59e43aa4c8c31b737dad6d3b27d7a16f"
+    },
+    {
+      "path": "verification/retained-discovery-workflow-controls.stderr.log",
+      "bytes": 880,
+      "sha256": "72dccc61becf9b6386962f2d8055585509bce15c37a4534e6797d50c14f63c3b"
+    },
+    {
+      "path": "verification/retained-discovery-workflow-controls.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/workflow-mutation-controls.stderr.log",
+      "bytes": 3246,
+      "sha256": "1121dd073bc6f9404640470aa2355497e937e4e3175fcd4f671c9ead9c7a2716"
+    },
+    {
+      "path": "verification/workflow-mutation-controls.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

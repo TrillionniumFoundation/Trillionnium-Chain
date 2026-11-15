@@ -1,0 +1,33 @@
+{
+  "command": [
+    "/workspace/scratch/62902f6722b7/native-next/rust-1.95.0/bin/cargo",
+    "metadata",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "tests/fuzz/Cargo.toml",
+    "--all-features",
+    "--format-version",
+    "1"
+  ],
+  "cwd": "/workspace/scratch/10a9f8f2cba0/chain-fairness",
+  "environment_overrides": {
+    "CARGO_HOME": "/workspace/scratch/10a9f8f2cba0/fuzz-cache-followup-cargo",
+    "CARGO_NET_OFFLINE": "true",
+    "CARGO_TARGET_DIR": "/workspace/scratch/10a9f8f2cba0/fuzz-metadata-target",
+    "RUSTC": "/workspace/scratch/62902f6722b7/native-next/rust-1.95.0/bin/rustc"
+  },
+  "expected_source_sha": "a4302cbf401d59391bcd38978ce3e2c68f60e49e",
+  "network_permitted": false,
+  "original_failure_preserved": true,
+  "path_prefix": "/workspace/scratch/62902f6722b7/native-next/rust-1.95.0/bin",
+  "repair_provenance_sha256": "edd1221650eeea90b91ae3dc969c323caaab04bac1749f2ac535d25388bc9cc1",
+  "schema": "pon-fuzz-offline-metadata-request-v0",
+  "source_before": {
+    "commit": "a4302cbf401d59391bcd38978ce3e2c68f60e49e",
+    "fuzz_lock_sha256": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1",
+    "native_lock_sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "tree": "e7ddee5ecf6f9844b728a34c0fe6d6e06bb4ee56",
+    "working_tree_status": ""
+  }
+}

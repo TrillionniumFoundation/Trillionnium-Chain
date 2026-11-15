@@ -1,0 +1,20 @@
+{
+  "name": "format",
+  "command": [
+    "/root/.cargo/bin/cargo",
+    "+1.95.0",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "base_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "source_scope": "combined uncommitted candidate; original current source pins identify changed code; evidence/docs are not native coverage",
+  "working_tracked_patch_sha256": "1bd1e9376131d6f4f872360695916c29a09b6449ce9b0fd751e944e13bedc5c5",
+  "target": "/workspace/scratch/abae1861b451/post-ci-target",
+  "jobs": 2,
+  "incremental": 0,
+  "provider_env_sha256": "92886badc92051b5338ea482e4b8041c2a6434b26a37a1c2f5e17e0c1586485b"
+}

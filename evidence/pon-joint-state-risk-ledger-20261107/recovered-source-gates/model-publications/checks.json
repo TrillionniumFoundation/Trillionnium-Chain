@@ -1,0 +1,325 @@
+{
+  "schema": "pon-finite-model-publication-v1",
+  "checks": [
+    {
+      "name": "fetch-model-bundle",
+      "argv": [
+        "git",
+        "fetch",
+        "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/finite-models-final.bundle",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 4.970940443919972,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "64a7c180dfd9dcb1bfb75de39ce1d6e0a79cc27524b5c56ee23d3334ad44ef30"
+    },
+    {
+      "name": "checkout-evidence-path",
+      "argv": [
+        "git",
+        "sparse-checkout",
+        "add",
+        "evidence/pon-joint-state-risk-ledger-20261107"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 3.2198755198623985,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "1-8527ec98-merge",
+      "argv": [
+        "git",
+        "merge",
+        "--ff-only",
+        "8527ec98698f706b471f9dd985a92c601e2f02ff"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.08860353287309408,
+      "stdout_sha256": "ea5c28f1ee701469208d3d1fef90182e450a7f23bc01dd3b7381fdf6543eb260",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "1-8527ec98-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.09868076490238309,
+      "stdout_sha256": "390eaae41b4cea9817edf58dae3def992730ea1e0af10cf6403a7fd9e47bd304",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "1-8527ec98-finite-state",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "formal/pon-nakamoto-v1/finite_joint_state_tests.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 1.5559530819300562,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "09e8b29b919ef7839bd6ad67bb2b029338d39f5c32a5302786ebc045fcd42f2c"
+    },
+    {
+      "name": "1-8527ec98-ci-contract",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.167514035012573,
+      "stdout_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "1-8527ec98-source-clean",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.04900961788371205,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "1-8527ec98-push",
+      "argv": [
+        "git",
+        "push",
+        "origin",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 6.823214013827965,
+      "stdout_sha256": "7c7f070dca3c60e7e7f3c6cd93fbcdbcea034f3ce0cff3fbb40dcc7e6b0e17a7",
+      "stderr_sha256": "093819335a5d005b4e16e1c7430eac61941b528f6e90e142fd58498f9da331e0"
+    },
+    {
+      "name": "1-8527ec98-remote-readback",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-pon-joint-state-risk-ledger-20261107",
+        "--jq",
+        ".object.sha"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 1.762122220126912,
+      "stdout_sha256": "04c7aeb509d1636817ed9f6088802c24b761936e5dedde3ca871aab02558708c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "2-628ec7f3-merge",
+      "argv": [
+        "git",
+        "merge",
+        "--ff-only",
+        "628ec7f367e64139eff84a23956e00f9e4e613ee"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.8951103358995169,
+      "stdout_sha256": "b0d331a46854c037f89a31f7f57bd87ed9a3545a1f919be3f8c93f3082a66fa0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "2-628ec7f3-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.08374717901460826,
+      "stdout_sha256": "390eaae41b4cea9817edf58dae3def992730ea1e0af10cf6403a7fd9e47bd304",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "2-628ec7f3-finite-state",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "formal/pon-nakamoto-v1/finite_joint_state_tests.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 2.1358587860595435,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "3ed147be8405c875ac42fc3b3382a8e4027a3393a1d930e9a3c9235d1e1a35d5"
+    },
+    {
+      "name": "2-628ec7f3-event-coverage",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "formal/pon-nakamoto-v1/certificate_event_coverage_tests.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 2.4026660269591957,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "f4e87d6d08e339335a76b3cced0ce0df0a9362bd416e8e0c7e0523b0b95546cf"
+    },
+    {
+      "name": "2-628ec7f3-ci-contract",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.1722837220877409,
+      "stdout_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "2-628ec7f3-source-clean",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.45040840608999133,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "2-628ec7f3-push",
+      "argv": [
+        "git",
+        "push",
+        "origin",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 6.288352655014023,
+      "stdout_sha256": "7c7f070dca3c60e7e7f3c6cd93fbcdbcea034f3ce0cff3fbb40dcc7e6b0e17a7",
+      "stderr_sha256": "a5cd47e304a6388100119d4c7fa172551d1138243a5fca5d2b1986b3afe1475a"
+    },
+    {
+      "name": "2-628ec7f3-remote-readback",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-pon-joint-state-risk-ledger-20261107",
+        "--jq",
+        ".object.sha"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 1.7996402180287987,
+      "stdout_sha256": "30b17b6b0d97eff137ec0ecbe156a73091adc37ace73b3fd05ee2d5f9e7c9443",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "3-6615ffa3-merge",
+      "argv": [
+        "git",
+        "merge",
+        "--ff-only",
+        "6615ffa37a0d8f6451bf3e49c2500b4626ffae6c"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.053247151896357536,
+      "stdout_sha256": "610be0a0573aab685c9d9140e083e72042ea69ccffcccd7c35f7b18fbeb2fe7e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "3-6615ffa3-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.0985618089325726,
+      "stdout_sha256": "390eaae41b4cea9817edf58dae3def992730ea1e0af10cf6403a7fd9e47bd304",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "3-6615ffa3-finite-state",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "formal/pon-nakamoto-v1/finite_joint_state_tests.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 1.972933734068647,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "81c0881b8196c04707de20352cd9e3dea424387ee6d9d4b2bb547dd00e3688c7"
+    },
+    {
+      "name": "3-6615ffa3-event-coverage",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "formal/pon-nakamoto-v1/certificate_event_coverage_tests.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 1.048594234045595,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "7cbaf06d13b687fc8ede4a8af8e5d514f7b5339f964f32ae07af50b134e00fa2"
+    },
+    {
+      "name": "3-6615ffa3-ci-contract",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.1611951149534434,
+      "stdout_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "3-6615ffa3-ci-negative-tests",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 20.756593097932637,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "ec911d384ac58e9b8bd4d78ff9536ac29f27edb87eb08c1ecde7dd6cdb8fa770"
+    },
+    {
+      "name": "3-6615ffa3-source-clean",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.16967386985197663,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "3-6615ffa3-push",
+      "argv": [
+        "git",
+        "push",
+        "origin",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 8.738834215095267,
+      "stdout_sha256": "7c7f070dca3c60e7e7f3c6cd93fbcdbcea034f3ce0cff3fbb40dcc7e6b0e17a7",
+      "stderr_sha256": "d3be342199c75878567f5ee7c7aeb319624a66a2dfe2d3a83145de99736373ff"
+    },
+    {
+      "name": "3-6615ffa3-remote-readback",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-pon-joint-state-risk-ledger-20261107",
+        "--jq",
+        ".object.sha"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 2.883998703910038,
+      "stdout_sha256": "d756cc9a0677c7d7a198a0e67c588feb4eb3c28d11ba17a534b206ab4397f446",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "production_qualified": false
+}

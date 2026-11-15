@@ -1,0 +1,132 @@
+{
+  "schema": "trnm.cell.w1-concurrent-preservation-audit.v1",
+  "parents": [
+    "03163dcb849a15cd267fcaf704a533a88cd54131",
+    "7b2677e023263136297a460a727ced70280061ea"
+  ],
+  "entire_root_workspace_config_and_source_checker_unchanged_from_K": true,
+  "incoming_nonplan_files": [
+    {
+      "path": ".github/workflows/pon-w1-transparent-profile.yml",
+      "incoming_blob": "77fd5fcf169d9a80609cfcc0ff36198dd16e3035",
+      "composed_blob": "77fd5fcf169d9a80609cfcc0ff36198dd16e3035"
+    },
+    {
+      "path": "evidence/pon-w1-transparent-profile-20261104/README.md",
+      "incoming_blob": "d209d9da2c0690bbe1ff5319aa4acab713d0fb20",
+      "composed_blob": "d209d9da2c0690bbe1ff5319aa4acab713d0fb20"
+    },
+    {
+      "path": "evidence/pon-w1-transparent-profile-20261104/comparison-declaration.json",
+      "incoming_blob": "72ab3308f8ebf3794025a77cd065ad5b5d785803",
+      "composed_blob": "72ab3308f8ebf3794025a77cd065ad5b5d785803"
+    },
+    {
+      "path": "evidence/pon-w1-transparent-profile-20261104/comparison.json",
+      "incoming_blob": "6f9eacdd39ba2250010cbd06a35e78ef3d907d87",
+      "composed_blob": "6f9eacdd39ba2250010cbd06a35e78ef3d907d87"
+    },
+    {
+      "path": "evidence/pon-w1-transparent-profile-20261104/controls.json",
+      "incoming_blob": "be001963d039420b28c15b932969f99a3d664dd2",
+      "composed_blob": "be001963d039420b28c15b932969f99a3d664dd2"
+    },
+    {
+      "path": "evidence/pon-w1-transparent-profile-20261104/native.json",
+      "incoming_blob": "bde61e4346fe851cd68ef85cce08595067421580",
+      "composed_blob": "bde61e4346fe851cd68ef85cce08595067421580"
+    },
+    {
+      "path": "evidence/pon-w1-transparent-profile-20261104/profile.json",
+      "incoming_blob": "9e96ee8bc4bd8676b3179d4caf379d33aa4d29ea",
+      "composed_blob": "9e96ee8bc4bd8676b3179d4caf379d33aa4d29ea"
+    },
+    {
+      "path": "evidence/pon-w1-transparent-profile-20261104/regressions.json",
+      "incoming_blob": "9c5c857cd2d6488375527d317b801b7169261bb5",
+      "composed_blob": "9c5c857cd2d6488375527d317b801b7169261bb5"
+    },
+    {
+      "path": "evidence/pon-w1-transparent-profile-20261104/reproduction.json",
+      "incoming_blob": "22c2fe5341d92fbcb0156bdd9d79ee190eb01f58",
+      "composed_blob": "22c2fe5341d92fbcb0156bdd9d79ee190eb01f58"
+    },
+    {
+      "path": "evidence/pon-w1-transparent-profile-20261104/security-map.json",
+      "incoming_blob": "0888ef42a6d71a40fc58dc67f99dae1cd501c31c",
+      "composed_blob": "0888ef42a6d71a40fc58dc67f99dae1cd501c31c"
+    },
+    {
+      "path": "evidence/pon-w1-transparent-profile-20261104/transparent.json",
+      "incoming_blob": "edc54d3ce8c4c5c0f647d9ed8798fbbb38ef042b",
+      "composed_blob": "edc54d3ce8c4c5c0f647d9ed8798fbbb38ef042b"
+    },
+    {
+      "path": "evidence/pon-w1-transparent-profile-20261104/validation.json",
+      "incoming_blob": "24092128a9bb46aa456fd91f0ce7b804f4c697f7",
+      "composed_blob": "24092128a9bb46aa456fd91f0ce7b804f4c697f7"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/README.md",
+      "incoming_blob": "77916a99a1cbcd80005583751822a6f98c2b4b5a",
+      "composed_blob": "77916a99a1cbcd80005583751822a6f98c2b4b5a"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs",
+      "incoming_blob": "0bf34baab016fc93e8bdd7c1cbd993905bd5d31b",
+      "composed_blob": "0bf34baab016fc93e8bdd7c1cbd993905bd5d31b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs",
+      "incoming_blob": "8d2308d33151da6641c8798381904e95256ea55e",
+      "composed_blob": "8d2308d33151da6641c8798381904e95256ea55e"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock",
+      "incoming_blob": "91e93fe1667cb9fc4c58eca0c4e42bd0973bf917",
+      "composed_blob": "91e93fe1667cb9fc4c58eca0c4e42bd0973bf917"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml",
+      "incoming_blob": "50443c0fbc0169c400b9106ec3a22fa069d70b3b",
+      "composed_blob": "50443c0fbc0169c400b9106ec3a22fa069d70b3b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-native-cost.rs",
+      "incoming_blob": "e4a6a605fc49b4d65673643593f802091f3d75a2",
+      "composed_blob": "e4a6a605fc49b4d65673643593f802091f3d75a2"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+      "incoming_blob": "73cf2a28ca16d5d1046c012c559959d831276907",
+      "composed_blob": "73cf2a28ca16d5d1046c012c559959d831276907"
+    },
+    {
+      "path": "scripts/ci/test_w1_profile_source_map.py",
+      "incoming_blob": "8862fa5593df1097173e7e3314e66058c8b6c60b",
+      "composed_blob": "8862fa5593df1097173e7e3314e66058c8b6c60b"
+    },
+    {
+      "path": "scripts/ci/test_w1_transparent_compare.py",
+      "incoming_blob": "1006eac64bde9903fa06704fe38779e356b29ed4",
+      "composed_blob": "1006eac64bde9903fa06704fe38779e356b29ed4"
+    },
+    {
+      "path": "scripts/w1_profile_source_map.py",
+      "incoming_blob": "bbcbd8322e2008d8dd7786ce319d0c0e2f1908f6",
+      "composed_blob": "bbcbd8322e2008d8dd7786ce319d0c0e2f1908f6"
+    },
+    {
+      "path": "scripts/w1_transparent_compare.py",
+      "incoming_blob": "5f8cc2291a11465c537ad7b52efccad46e9baed7",
+      "composed_blob": "5f8cc2291a11465c537ad7b52efccad46e9baed7"
+    }
+  ],
+  "source_pins": 442,
+  "required_paths": 359,
+  "runtime_tests_executed_by_audit": false,
+  "notes": [
+    "The independent formal W1 profile and its evidence are preserved without a new performance or proof-acceptance claim.",
+    "The actual K source-control receipt and all earlier C/E runtime results retain their source identities."
+  ]
+}

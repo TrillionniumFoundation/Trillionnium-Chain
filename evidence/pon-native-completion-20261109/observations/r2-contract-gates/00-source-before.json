@@ -1,0 +1,63 @@
+{
+  "label": "source-before",
+  "argv": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+    "--output",
+    "/data/chain-abg-70ae-20261108/evidence/r2-contract-gates/source-before.json"
+  ],
+  "command": "python3 scripts/ci/verify_ci_source.py --kind head --expected-head 843d7c3c0b58b5b0491f686df6a7fd3c26991d6c --output /data/chain-abg-70ae-20261108/evidence/r2-contract-gates/source-before.json",
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "expected_head": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+  "expected_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+  "before": {
+    "head": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+    "tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "started_utc": "2026-11-09T03:42:28.999128+00:00",
+  "timeout_seconds": 300,
+  "timeout_scope": "source/graph command wall-time supervisor only; no product deadline changed",
+  "stdout": "/data/chain-abg-70ae-20261108/evidence/r2-contract-gates/00-source-before.stdout",
+  "stderr": "/data/chain-abg-70ae-20261108/evidence/r2-contract-gates/00-source-before.stderr",
+  "expected_tests": null,
+  "tests_run": null,
+  "skipped": null,
+  "failures": null,
+  "errors": null,
+  "timed_out": false,
+  "exit_code": 0,
+  "passed": true,
+  "elapsed_seconds": 7.337466,
+  "after": {
+    "head": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+    "tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "source_identity_report": {
+    "base": null,
+    "candidate": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+    "tested_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2485434728,
+    "tracked_entries": 26128,
+    "tracked_worktree_verified": true
+  },
+  "finished_utc": "2026-11-09T03:42:36.428556+00:00",
+  "stdout_bytes": 423,
+  "stderr_bytes": 0,
+  "stdout_sha256": "bf433725273b50643c859a3aea408d80d931b5ba0103d2ebba161d3e77dd6b51",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

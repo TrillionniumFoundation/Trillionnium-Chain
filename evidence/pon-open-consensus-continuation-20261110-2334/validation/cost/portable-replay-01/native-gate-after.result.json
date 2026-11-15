@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "scripts/ci/test_w1_factorial_native_gate.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "expected_test_methods": 9,
+  "name": "native-gate-after",
+  "native_executed": false,
+  "observed_test_methods": [
+    9
+  ],
+  "reader_or_control_wall_ns": 11990490246,
+  "stderr_bytes": 1514,
+  "stderr_sha256": "f88911f7ebbb3e270590db49ea48f51c91e6b00c2316599124f357ba4c00034d",
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

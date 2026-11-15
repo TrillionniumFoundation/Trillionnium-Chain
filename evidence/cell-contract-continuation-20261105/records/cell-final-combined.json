@@ -1,0 +1,61 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "f03be25066fefa1674b104f22cbc6aea09652a80",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "f03be25066fefa1674b104f22cbc6aea09652a80",
+    "tested_tree": "155213c2468edc411325f4f1853b471a6b25f355",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 963585205,
+    "tracked_entries": 10032,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "bash",
+    "evidence/cell-contract-continuation-20261105/verify-chain.sh"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "f03be25066fefa1674b104f22cbc6aea09652a80",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "f03be25066fefa1674b104f22cbc6aea09652a80",
+    "tested_tree": "155213c2468edc411325f4f1853b471a6b25f355",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 963585205,
+    "tracked_entries": 10032,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/workspace/scratch/42d46a663b73/chain",
+  "elapsed_ns": 386776613791,
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/workspace/scratch/42d46a663b73/target",
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": "1",
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 0,
+  "log_bytes": 81372,
+  "log_file": "cell-final-combined.log",
+  "log_sha256": "e7f2fe614d457f75a16ed0fdb69547f7fe7048e20048e6763eaff52e1658939a",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-05T09:23:22.434985+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

@@ -1,0 +1,65 @@
+{
+  "findings": [
+    "Linux main calls original::run_with_retention(retain); its Rust #[path] is a compile-time module location, not a runtime source lookup.",
+    "Native retain destructures explicit output/source_path/received_path. Node, catalog, plan, providers, journals and caches all derive from the absolute operation output. funding::open_node forwards that explicit path to Node::open_with_permanent_account_growth_v2.",
+    "The funding, grouped request and recovery helper source files have no current_dir/current_exe/CARGO_MANIFEST_DIR/environment path lookup or fixed old host/repository path. groups_v3 constructs request metadata; recovery uses supplied owner objects and output.",
+    "Shared frozen-B CARGO_MANIFEST_DIR occurs only in include_str! for BOOTSTRAP. The embedded bytes are hashed and compared with the independently pinned sealed bootstrap member before execution.",
+    "Shared read_pinned requires every input path to be absolute. The child executable is spec.python.path, with -I -S -B -X private pycache_prefix and an environment cleared to LANG/LC_ALL/TMPDIR; model/environment material paths and Python identity come from the independently hashed source input.",
+    "No reviewed entry/callback code requires the ELF to remain beside the original Cargo source tree. Copying the already accepted normal release ELF to a new create-only locator can preserve artifact identity, provided actual source/ELF readback and the new complete runtime/model operations pass.",
+    "This narrow source review does not prove arbitrary binary/system portability, unchanged dynamic loader/provider behavior, or new model execution. The original full source guard, full Python runtime guard, exact resource limits and new operation input/audit checks remain required."
+  ],
+  "partial_bundle_repository_is_not_a_complete_checkout": true,
+  "relocated_execution_observed": false,
+  "review_only": true,
+  "review_passed": true,
+  "reviewed_sources": [
+    {
+      "bytes": 959,
+      "git_blob_oid": "736ef1058756e87a9d4605084b1b28ffc9079c2c",
+      "repository_path": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_next_use_v2.rs",
+      "runtime_locator_pattern_matches": [],
+      "sha256": "a3b56b022f17960220c781da8d4bf0911ddf907be0fdfe5bc4304bb7809e8b37",
+      "source": "exact a67d83a05d6ff4c2fdc4a5fd5c23fc38d38b563d GitHub primary source and byte-identical blob present in recovered frozen-B bundle"
+    },
+    {
+      "bytes": 28303,
+      "git_blob_oid": "c326a6bc26c857607518e0c90e499b4662e30485",
+      "repository_path": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs",
+      "runtime_locator_pattern_matches": [],
+      "sha256": "6f6fb3397d6be92d851aa4ad631ea7ddba70247f80f5e6d1bf56311bf78e77b6",
+      "source": "exact a67d83a05d6ff4c2fdc4a5fd5c23fc38d38b563d GitHub primary source and byte-identical blob present in recovered frozen-B bundle"
+    },
+    {
+      "bytes": 11742,
+      "git_blob_oid": "850c3bd2cb33795bf68946352dcfa398b85d23cd",
+      "repository_path": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/funding.rs",
+      "runtime_locator_pattern_matches": [],
+      "sha256": "c34feb23f683ab7e768f02a9a961fdb199dc23b01f50b69f0e9267ea9c075c7f",
+      "source": "exact a67d83a05d6ff4c2fdc4a5fd5c23fc38d38b563d GitHub primary source and byte-identical blob present in recovered frozen-B bundle"
+    },
+    {
+      "bytes": 14211,
+      "git_blob_oid": "0b2a0ecc3636995d814cd90e6e84bb78fe74d302",
+      "repository_path": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/groups_v3.rs",
+      "runtime_locator_pattern_matches": [],
+      "sha256": "23eb3f58582fe04b0ab2c10c3b135108e06e45d640b8b610ebe272da12293d85",
+      "source": "exact a67d83a05d6ff4c2fdc4a5fd5c23fc38d38b563d GitHub primary source and byte-identical blob present in recovered frozen-B bundle"
+    },
+    {
+      "bytes": 16707,
+      "git_blob_oid": "6b28e3d3f318ea36e3f29ee44240db5dbc678366",
+      "repository_path": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs",
+      "runtime_locator_pattern_matches": [],
+      "sha256": "517e27e7d514d0469deab4004bcb76b224938712e09208cee58e211d2cdafdb4",
+      "source": "exact a67d83a05d6ff4c2fdc4a5fd5c23fc38d38b563d GitHub primary source and byte-identical blob present in recovered frozen-B bundle"
+    }
+  ],
+  "reviewer": "release_acceptance",
+  "schema": "trnm.independent-native-elf-relocation-source-review.v1",
+  "shared_source": {
+    "bytes": 45417,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/shared-mod-frozen-B.rs",
+    "sha256": "eea76e23fa3151bbbf673aa60cbd3b330ad9f6043ff2cd077bb8504bd96ac92d"
+  },
+  "source_commit": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+}

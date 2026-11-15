@@ -1,0 +1,925 @@
+{
+  "schema": "trnm-fixed-tested-source-to-publication-base-comparison-v1",
+  "kind": "bounded-read-only-source-addendum",
+  "assembled_utc": "2026-11-05T00:45:21.065873+00:00",
+  "fixed_tested_commit": "59f75acd1d4261972b8aaa45e0c36259fcafd45c",
+  "fixed_tested_tree": "c0dc8282e5b2618ffb35061f108bb2fa96e9b348",
+  "observed_publication_base_commit": "ac2402e4c8b99eee21c6db3e28f8984071478797",
+  "observed_publication_base_tree": "68c5fda28e64f689cabbee8cd8ae99cc7050dd74",
+  "actual_publication_commit": null,
+  "relationship": {
+    "direct_parent": "59f75acd1d4261972b8aaa45e0c36259fcafd45c",
+    "ahead_by": 1,
+    "files": 18,
+    "source": "read-only GitHub plugin compare and git/commits API",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/59f75acd1d4261972b8aaa45e0c36259fcafd45c...ac2402e4c8b99eee21c6db3e28f8984071478797"
+  },
+  "changed_paths": [
+    {
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "status": "modified",
+      "base_blob": "a4514773242feac59d6d0ee34adf911b22e485ce",
+      "head_blob": "8f63d48924c991d9972a02ab1b13721df48e7adb",
+      "base_mode": "100644",
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 73,
+      "deletions": 0,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/.github%2Fworkflows%2Fpon-pq-system-continuation.yml",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "status": "modified",
+      "base_blob": "75718738865cd1a2bb0f1f743188e99aef3830a8",
+      "head_blob": "32d02c7ada48ce4935dd85cbf43347800768f352",
+      "base_mode": "100644",
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 20,
+      "deletions": 12,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/config%2Fpon%2Fpq-cross-branch-corpus-v1.json",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "status": "modified",
+      "base_blob": "41c3eb88a043970ab2e694d1e358b3d507997314",
+      "head_blob": "5962a3697dcdb4aaaa03421357b7a125d3d97ae6",
+      "base_mode": "100644",
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 16,
+      "deletions": 0,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/docs%2Fdevelopment%2FTRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "docs/security/PQ_CELL_ACTIVATION_CURRENT_PUBLICATION_V1.md",
+      "status": "added",
+      "base_blob": null,
+      "head_blob": "8f1f3e45aa372164630cc6132acb8a558a62d3cb",
+      "base_mode": null,
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 97,
+      "deletions": 0,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/docs%2Fsecurity%2FPQ_CELL_ACTIVATION_CURRENT_PUBLICATION_V1.md",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
+      "status": "modified",
+      "base_blob": "ca064e50bd89b63bd656ce340ed2efd2940569fb",
+      "head_blob": "6e498baab34441a196aab250c6eec4b32c6ecb01",
+      "base_mode": "100644",
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 60,
+      "deletions": 8,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/docs%2Fsecurity%2FPQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "evidence/pq-recovery-release-sdk-v1/REPRODUCE.md",
+      "status": "added",
+      "base_blob": null,
+      "head_blob": "71d15e2a58ea8b8746797dd55d9b891941cc4e9a",
+      "base_mode": null,
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 171,
+      "deletions": 0,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/evidence%2Fpq-recovery-release-sdk-v1%2FREPRODUCE.md",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "evidence/pq-recovery-release-sdk-v1/reproduction.json",
+      "status": "added",
+      "base_blob": null,
+      "head_blob": "5a7f925e7ff18766d6e7eecdb49926f151dbaaec",
+      "base_mode": null,
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 482,
+      "deletions": 0,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/evidence%2Fpq-recovery-release-sdk-v1%2Freproduction.json",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "status": "modified",
+      "base_blob": "bdc82bfcfc292e690947575df310d15508b59d6d",
+      "head_blob": "7789ac9fde02282516d444c9b87b4b47c9754044",
+      "base_mode": "100644",
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 3,
+      "deletions": 0,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/scripts%2Fci%2Fcheck_pq_research_integration.py",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+      "status": "modified",
+      "base_blob": "8c49ef4c79b0edba265b586acf7a1a1c33ba3570",
+      "head_blob": "7c1812d9e71c65e36c827adfcfdf3714ba5d575b",
+      "base_mode": "100644",
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 50,
+      "deletions": 12,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium%2Fcrates%2Ftrnm-checkpoint-store%2Fsrc%2Flib.rs",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/src/live_journal_v2.rs",
+      "status": "added",
+      "base_blob": null,
+      "head_blob": "566c2a94f11ea4949cace063f8b2e6dab57e0397",
+      "base_mode": null,
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 106,
+      "deletions": 0,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium%2Fcrates%2Ftrnm-checkpoint-store%2Fsrc%2Flive_journal_v2.rs",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs",
+      "status": "modified",
+      "base_blob": "718adc13e4a7cf610c14cb295f4c240d0187cfe3",
+      "head_blob": "b236ce047843a68cf371e02d6bb480fea6fc71ff",
+      "base_mode": "100644",
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 126,
+      "deletions": 0,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium%2Fcrates%2Ftrnm-checkpoint-store%2Ftests%2Fcold_recovery.rs",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs",
+      "status": "modified",
+      "base_blob": "a3d2be3d0269dc563a63d0e1c11f69a748d13a3d",
+      "head_blob": "a8a6f872fd354fccdd1f1f28609f487719c4fdaf",
+      "base_mode": "100644",
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 25,
+      "deletions": 9,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium%2Fcrates%2Ftrnm-crypto-primitives%2Fexamples%2Fpq_message_oracle.rs",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/mldsa_native_differential.py",
+      "status": "modified",
+      "base_blob": "a9b5b66eba27ccb0f87d07adbaab93c328c07ee9",
+      "head_blob": "3139f70e31719cecfb601dd18e9fe417de1245df",
+      "base_mode": "100644",
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 7,
+      "deletions": 6,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium%2Fcrates%2Ftrnm-crypto-primitives%2Ftests%2Findependent_backend%2Fmldsa_native_differential.py",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_mldsa_native_source.py",
+      "status": "modified",
+      "base_blob": "b85e0828f68e51369d3c5eb24b136e2fa2ff0581",
+      "head_blob": "e3b9315f18339dcb84b2fb16834cdb3c882724c5",
+      "base_mode": "100644",
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 30,
+      "deletions": 25,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium%2Fcrates%2Ftrnm-crypto-primitives%2Ftests%2Findependent_backend%2Ftest_mldsa_native_source.py",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_tuf_sdk_source.py",
+      "status": "added",
+      "base_blob": null,
+      "head_blob": "41197a6708924fc698bcb2116e25435acfa7292f",
+      "base_mode": null,
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 64,
+      "deletions": 0,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium%2Fcrates%2Ftrnm-crypto-primitives%2Ftests%2Findependent_backend%2Ftest_tuf_sdk_source.py",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/tuf_sdk_differential.py",
+      "status": "added",
+      "base_blob": null,
+      "head_blob": "a60707d620330d123007f799d2ce57554860e1a0",
+      "base_mode": null,
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 282,
+      "deletions": 0,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium%2Fcrates%2Ftrnm-crypto-primitives%2Ftests%2Findependent_backend%2Ftuf_sdk_differential.py",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+      "status": "modified",
+      "base_blob": "a1ca50f68a023ce1c8d9cf62f06604900c521ca0",
+      "head_blob": "c6e3c62219e6f10030cee3dad4df2f2045acd9cd",
+      "base_mode": "100644",
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 35,
+      "deletions": 8,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium%2Fcrates%2Ftrnm-release-bundle%2Fsrc%2Fpq_release.rs",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+      "status": "modified",
+      "base_blob": "16da9022ef7f6946f6b5ae42767d4aa0398623e7",
+      "head_blob": "ca3706440a070818173a6209ffc350bb94bf6199",
+      "base_mode": "100644",
+      "head_mode": null,
+      "head_mode_scope": "not provided by GitHub compare; restore owner verifies Git tree separately",
+      "additions": 127,
+      "deletions": 0,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium%2Fcrates%2Ftrnm-release-bundle%2Fsrc%2Fpq_release%2Ftests.rs",
+      "review": "read complete supplied patch; added files read as complete patch; new full M15/checkpoint sources fetched for relevant function context"
+    }
+  ],
+  "prior_32_path_scope": [
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "tested_59f_blob": "75718738865cd1a2bb0f1f743188e99aef3830a8",
+      "publication_base_ac240_blob": "32d02c7ada48ce4935dd85cbf43347800768f352",
+      "unchanged": false,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "tested_59f_blob": "41c3eb88a043970ab2e694d1e358b3d507997314",
+      "publication_base_ac240_blob": "5962a3697dcdb4aaaa03421357b7a125d3d97ae6",
+      "unchanged": false,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "docs/security/CRYPTO_PROFILE_V1_20261104.md",
+      "tested_59f_blob": "11f3668904f6fe460b9f15866c3090be55a3e486",
+      "publication_base_ac240_blob": "11f3668904f6fe460b9f15866c3090be55a3e486",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/README.md",
+      "tested_59f_blob": "deebbbef900d714c30e36a0ecfa0eb9557938f7b",
+      "publication_base_ac240_blob": "deebbbef900d714c30e36a0ecfa0eb9557938f7b",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/recompute_benchmark.py",
+      "tested_59f_blob": "e9a873baa73d60f578b9723a9cf11cdf84a44c15",
+      "publication_base_ac240_blob": "e9a873baa73d60f578b9723a9cf11cdf84a44c15",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/recompute_profile_ids.py",
+      "tested_59f_blob": "ca5334fba301046c9f89132b62a4e10872c8d5cd",
+      "publication_base_ac240_blob": "ca5334fba301046c9f89132b62a4e10872c8d5cd",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "tested_59f_blob": "bdc82bfcfc292e690947575df310d15508b59d6d",
+      "publication_base_ac240_blob": "7789ac9fde02282516d444c9b87b4b47c9754044",
+      "unchanged": false,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_parameter_bench.rs",
+      "tested_59f_blob": "3d3c56ce1b8db9122b51ffba4cadd36028dc5b2c",
+      "publication_base_ac240_blob": "3d3c56ce1b8db9122b51ffba4cadd36028dc5b2c",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+      "tested_59f_blob": "f87ba7c313f3bed616b1b3514ef5e9035095dfec",
+      "publication_base_ac240_blob": "f87ba7c313f3bed616b1b3514ef5e9035095dfec",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+      "tested_59f_blob": "3a38da1061df615b98e46b0d2fd56133f493b4cd",
+      "publication_base_ac240_blob": "3a38da1061df615b98e46b0d2fd56133f493b4cd",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+      "tested_59f_blob": "a5c8c6ba0ecedee4922137ebaa106ddf91fe4c75",
+      "publication_base_ac240_blob": "a5c8c6ba0ecedee4922137ebaa106ddf91fe4c75",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+      "tested_59f_blob": "9ab0df1e3c69b38e290cc5f2113983f56ec23862",
+      "publication_base_ac240_blob": "9ab0df1e3c69b38e290cc5f2113983f56ec23862",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+      "tested_59f_blob": "e195858e5a642ed88ab21c9d233edb38749933a5",
+      "publication_base_ac240_blob": "e195858e5a642ed88ab21c9d233edb38749933a5",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "tested_59f_blob": "f9bb1b209e708eb9a5fafe72901bbd0399ac2946",
+      "publication_base_ac240_blob": "f9bb1b209e708eb9a5fafe72901bbd0399ac2946",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "tested_59f_blob": "49435a5e4dd69853a5ab5099f21963ef47899ade",
+      "publication_base_ac240_blob": "49435a5e4dd69853a5ab5099f21963ef47899ade",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+      "tested_59f_blob": "2882767d02ed8be8ceacfb974e2626ee248e623a",
+      "publication_base_ac240_blob": "2882767d02ed8be8ceacfb974e2626ee248e623a",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "tested_59f_blob": "d258b3250f1a84eab4661e5df7a81351cac0e277",
+      "publication_base_ac240_blob": "d258b3250f1a84eab4661e5df7a81351cac0e277",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+      "tested_59f_blob": "eb2a3e7a159398625a389d390156845401ff6dab",
+      "publication_base_ac240_blob": "eb2a3e7a159398625a389d390156845401ff6dab",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",
+      "tested_59f_blob": "62181b32dc37eeb38ecd2cd72374126d78c31af2",
+      "publication_base_ac240_blob": "62181b32dc37eeb38ecd2cd72374126d78c31af2",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/lib.rs",
+      "tested_59f_blob": "daae244780e8d777a5505113e85a6c125d8d8029",
+      "publication_base_ac240_blob": "daae244780e8d777a5505113e85a6c125d8d8029",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+      "tested_59f_blob": "07537462b6a2a57f8b29b2bb59c16862b770aa91",
+      "publication_base_ac240_blob": "07537462b6a2a57f8b29b2bb59c16862b770aa91",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs",
+      "tested_59f_blob": "fd42e648e19fe792e6f392f411181c1c49f37a59",
+      "publication_base_ac240_blob": "fd42e648e19fe792e6f392f411181c1c49f37a59",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs",
+      "tested_59f_blob": "0b9109e5b1028dbcba96b44bd61b4f711a940542",
+      "publication_base_ac240_blob": "0b9109e5b1028dbcba96b44bd61b4f711a940542",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/reproduction.json",
+      "tested_59f_blob": "199332d125ec5cc3b00e03396f22b947b379c29e",
+      "publication_base_ac240_blob": "199332d125ec5cc3b00e03396f22b947b379c29e",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/raw-observations.tar.gz",
+      "tested_59f_blob": "dabded05de2852e251a36e9fc85d67d6a4af63fc",
+      "publication_base_ac240_blob": "dabded05de2852e251a36e9fc85d67d6a4af63fc",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/parameter-observations.jsonl",
+      "tested_59f_blob": "c96012fb8d50422b0924e46f2454201df60f74aa",
+      "publication_base_ac240_blob": "c96012fb8d50422b0924e46f2454201df60f74aa",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "config/pon/pq-system-required-tests-v1.json",
+      "tested_59f_blob": "1f1b4098ac5a90238b1e56b9bb0b3d5a9daa9fe8",
+      "publication_base_ac240_blob": "1f1b4098ac5a90238b1e56b9bb0b3d5a9daa9fe8",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "config/pon/work-profile-v1.json",
+      "tested_59f_blob": "54e43139d3691b62f76f9e8976e1d2a974e8524b",
+      "publication_base_ac240_blob": "54e43139d3691b62f76f9e8976e1d2a974e8524b",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/Cargo.toml",
+      "tested_59f_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "publication_base_ac240_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/Cargo.toml",
+      "tested_59f_blob": "ed83f028c9b961cf356d7a8fb96c8c916fe768a5",
+      "publication_base_ac240_blob": "ed83f028c9b961cf356d7a8fb96c8c916fe768a5",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+      "tested_59f_blob": "cb0fa7b3a837b63b47e8dd5925656fe4f50ae43b",
+      "publication_base_ac240_blob": "cb0fa7b3a837b63b47e8dd5925656fe4f50ae43b",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    },
+    {
+      "path": "docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md",
+      "tested_59f_blob": "5e99d0151f3b5c122b82de8900f20519030f9436",
+      "publication_base_ac240_blob": "5e99d0151f3b5c122b82de8900f20519030f9436",
+      "unchanged": true,
+      "basis": "complete 18-path direct-child GitHub compare plus previously pinned 59f tree"
+    }
+  ],
+  "prior_scope_summary": {
+    "unchanged": 29,
+    "changed": 3
+  },
+  "unchanged_profile_contracts": {
+    "core_profile_candidate_authentication": true,
+    "historical_current_type_split": true,
+    "deterministic_candidate_budgets": true,
+    "legacy_65_baseline": true,
+    "candidate_65_and_87_current_effects_still_refused": true,
+    "original_49_selector_roster": true,
+    "workspace_and_fuzz_manifests_and_lockfiles": true,
+    "native_work_wire_and_work_profile": true,
+    "comparison_is_runtime_execution": false
+  },
+  "semantic_delta": [
+    {
+      "area": "checkpoint runtime admission",
+      "before_59f": "StructuralOnly open was restricted for daemon/export but direct load_checked and compare_and_advance_checked did not require strict recovery admission.",
+      "ac240_change": "Both direct runtime APIs now require recovery admission; load, export, startup and CAS validate retained journal bytes.",
+      "refs": [
+        {
+          "path": "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+          "git_blob": "7c1812d9e71c65e36c827adfcfdf3714ba5d575b",
+          "symbols": [
+            "ExternalCheckpointAuthorityV2::open",
+            "require_recovery_admission_v1",
+            "load_checked",
+            "compare_and_advance_checked"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium/crates/trnm-checkpoint-store/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "area": "checkpoint live integrity and bounded head reads",
+      "ac240_change": "validate_live_journal_v2 scans the full durable prefix with one fixed record buffer and positional reads, verifies sequence/previous hash/record digest/head, compares observed metadata before/after, checks sibling anchor and endpoints. Head read is bounded to canonical84 plus1 bytes. CAS post-validation errors poison the owner.",
+      "cost": "O(journal record count) per check, not constant-time access or production throughput qualification.",
+      "remaining": "Cold-start freshness still requires independently retained checkpoint; no guarantee against rolling back every authority, malicious kernel/device, or full effect atomicity.",
+      "refs": [
+        {
+          "path": "trillionnium/crates/trnm-checkpoint-store/src/live_journal_v2.rs",
+          "git_blob": "566c2a94f11ea4949cace063f8b2e6dab57e0397",
+          "symbols": [
+            "ExternalCheckpointAuthorityV2::validate_live_journal_v2",
+            "modification_state"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium/crates/trnm-checkpoint-store/src/live_journal_v2.rs"
+        },
+        {
+          "path": "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+          "git_blob": "7c1812d9e71c65e36c827adfcfdf3714ba5d575b",
+          "symbols": [
+            "read_anchor_v2",
+            "compare_and_advance_checked"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium/crates/trnm-checkpoint-store/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "area": "Cell current publication authorization",
+      "before_59f": "Activation compared content digest with the latest manifest but did not retain/recheck publication expiry or publishing root generation.",
+      "ac240_change": "Private CurrentPqReleaseV1 stores signed content/root_generation/expires_at. CellActivation now requires equal content, current root generation and manifest expiry strictly after trusted owner now; replay reconstructs the same facts. Rejection precedes state mutation.",
+      "remaining": "This enforces acceptance of new activation events; it is not automatic deactivation, a deployed installer owner, FinalUse or independent durable recovery. No signed message/checkpoint-domain/public wire change is present in this delta.",
+      "refs": [
+        {
+          "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+          "git_blob": "c6e3c62219e6f10030cee3dad4df2f2045acd9cd",
+          "symbols": [
+            "CurrentPqReleaseV1",
+            "PqReleaseAuthorityV1::accept",
+            "PqReleaseAuthorityV1::recover_pinned",
+            "PqReleaseAuthorityV1::current_content"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium/crates/trnm-release-bundle/src/pq_release.rs"
+        }
+      ]
+    },
+    {
+      "area": "actual bounded TUF SDK differential",
+      "ac240_change": "pq_message_oracle adds tuf_sign/tuf_verify calls to the existing production TAP21 functions. New runner pins securesystemslib1.5.1 commit15064ca640222edba024af9f13191fa5dbad3825, captures source, invokes actual CryptoSigner/SSlibKey, preserves the original C differential and source-attack suite.",
+      "remaining": "Bounded ML-DSA-65/1 signature APIs; generic Key.from_dict remains opt-in/unregistered in that SDK. This does not activate ML-DSA-87, broaden CPQ1, qualify a full TUF updater or transfer old observations.",
+      "refs": [
+        {
+          "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs",
+          "git_blob": "a8a6f872fd354fccdd1f1f28609f487719c4fdaf",
+          "symbols": [
+            "handle"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs"
+        },
+        {
+          "path": "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/tuf_sdk_differential.py",
+          "git_blob": "a60707d620330d123007f799d2ce57554860e1a0",
+          "symbols": [
+            "PinnedSdkLoader",
+            "run",
+            "main"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/tuf_sdk_differential.py"
+        }
+      ]
+    },
+    {
+      "area": "CI/source ownership",
+      "ac240_change": "Adds actual SDK job for head/prospective-merge and x64/ARM, plus original checkpoint/release all-target command; source checker includes the new helper and SDK source guards.",
+      "remaining": "Workflow code is not a completed hosted CI run. Existing failures remain failures.",
+      "refs": [
+        {
+          "path": ".github/workflows/pon-pq-system-continuation.yml",
+          "git_blob": "8f63d48924c991d9972a02ab1b13721df48e7adb",
+          "symbols": [
+            "tuf-sdk-interoperability"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/.github/workflows/pon-pq-system-continuation.yml"
+        },
+        {
+          "path": "scripts/ci/check_pq_research_integration.py",
+          "git_blob": "7789ac9fde02282516d444c9b87b4b47c9754044",
+          "symbols": [
+            "NATIVE_REQUIRED_PATHS"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/scripts/ci/check_pq_research_integration.py"
+        }
+      ]
+    }
+  ],
+  "hash_boundaries": [
+    {
+      "role": "M15 root identity",
+      "algorithm": "SHA-256",
+      "bytes": 32,
+      "refs": [
+        {
+          "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+          "git_blob": "c6e3c62219e6f10030cee3dad4df2f2045acd9cd",
+          "symbols": [
+            "PqReleaseRootV1::digest"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium/crates/trnm-release-bundle/src/pq_release.rs"
+        }
+      ],
+      "changed": false
+    },
+    {
+      "role": "M15 root signing digest",
+      "algorithm": "SHA-512",
+      "bytes": 64,
+      "refs": [
+        {
+          "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+          "git_blob": "c6e3c62219e6f10030cee3dad4df2f2045acd9cd",
+          "symbols": [
+            "PqReleaseRootV1::signing_message"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium/crates/trnm-release-bundle/src/pq_release.rs"
+        }
+      ],
+      "changed": false,
+      "note": "application message construction for pure ML-DSA-65, not HashML-DSA"
+    },
+    {
+      "role": "M15 checkpoint",
+      "algorithm": "SHA-256",
+      "bytes": 32,
+      "refs": [
+        {
+          "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+          "git_blob": "c6e3c62219e6f10030cee3dad4df2f2045acd9cd",
+          "symbols": [
+            "next_checkpoint"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium/crates/trnm-release-bundle/src/pq_release.rs"
+        }
+      ],
+      "changed": false
+    },
+    {
+      "role": "M15 metadata content",
+      "algorithm": "externally supplied32B value; NodeSoftware accept_bundle binds unchanged V0 SHA256 digest",
+      "bytes": 32,
+      "refs": [
+        {
+          "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+          "git_blob": "c6e3c62219e6f10030cee3dad4df2f2045acd9cd",
+          "symbols": [
+            "PqReleaseAuthorityV1::accept_bundle",
+            "PqReleaseAuthorityV1::accept"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium/crates/trnm-release-bundle/src/pq_release.rs"
+        }
+      ],
+      "changed": false,
+      "note": "not a uniform content-hash algorithm claim for all roles"
+    },
+    {
+      "role": "checkpoint journal record",
+      "algorithm": "SHA-256",
+      "bytes": 32,
+      "refs": [
+        {
+          "path": "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+          "git_blob": "7c1812d9e71c65e36c827adfcfdf3714ba5d575b",
+          "symbols": [
+            "digest_record_v2"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium/crates/trnm-checkpoint-store/src/lib.rs"
+        },
+        {
+          "path": "trillionnium/crates/trnm-checkpoint-store/src/live_journal_v2.rs",
+          "git_blob": "566c2a94f11ea4949cace063f8b2e6dab57e0397",
+          "symbols": [
+            "validate_live_journal_v2"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium/crates/trnm-checkpoint-store/src/live_journal_v2.rs"
+        }
+      ],
+      "changed": false,
+      "note": "new consumer validates existing hash-chain grammar against retained root; no crypto_profile_id adoption is established"
+    },
+    {
+      "role": "checkpoint sibling anchor checksum",
+      "algorithm": "SHA-256",
+      "bytes": 32,
+      "refs": [
+        {
+          "path": "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+          "git_blob": "7c1812d9e71c65e36c827adfcfdf3714ba5d575b",
+          "symbols": [
+            "digest_anchor_v2",
+            "encode_anchor_v2",
+            "decode_anchor_v2"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium/crates/trnm-checkpoint-store/src/lib.rs"
+        }
+      ],
+      "changed": false
+    },
+    {
+      "role": "registry/candidate and native W1",
+      "algorithm": "same source/pins as fixed59f",
+      "refs": [
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+          "git_blob": "eb2a3e7a159398625a389d390156845401ff6dab",
+          "symbols": [
+            "CryptoProfile::hash_rule",
+            "BoundCryptoProfile::commitment"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+        },
+        {
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+          "git_blob": "7e6fa33cbaa50d76f1a8fd0146a44ca3623345b3",
+          "symbols": [
+            "hash"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+        },
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+          "git_blob": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+          "symbols": [
+            "hash",
+            "Header::challenge"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ac2402e4c8b99eee21c6db3e28f8984071478797/trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+        }
+      ],
+      "changed": false
+    }
+  ],
+  "m15_crypto_profile_id_integrated": false,
+  "pins": {
+    "before_count": 462,
+    "after_count": 466,
+    "before_required": 379,
+    "after_required": 383,
+    "added": [
+      "docs/security/PQ_CELL_ACTIVATION_CURRENT_PUBLICATION_V1.md",
+      "trillionnium/crates/trnm-checkpoint-store/src/live_journal_v2.rs",
+      "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_tuf_sdk_source.py",
+      "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/tuf_sdk_differential.py"
+    ],
+    "removed": [],
+    "added_required": [
+      "docs/security/PQ_CELL_ACTIVATION_CURRENT_PUBLICATION_V1.md",
+      "trillionnium/crates/trnm-checkpoint-store/src/live_journal_v2.rs",
+      "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_tuf_sdk_source.py",
+      "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/tuf_sdk_differential.py"
+    ],
+    "removed_required": [],
+    "changed_existing": [
+      {
+        "path": ".github/workflows/pon-pq-system-continuation.yml",
+        "before": "a4514773242feac59d6d0ee34adf911b22e485ce",
+        "after": "8f63d48924c991d9972a02ab1b13721df48e7adb"
+      },
+      {
+        "path": "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
+        "before": "ca064e50bd89b63bd656ce340ed2efd2940569fb",
+        "after": "6e498baab34441a196aab250c6eec4b32c6ecb01"
+      },
+      {
+        "path": "scripts/ci/check_pq_research_integration.py",
+        "before": "bdc82bfcfc292e690947575df310d15508b59d6d",
+        "after": "7789ac9fde02282516d444c9b87b4b47c9754044"
+      },
+      {
+        "path": "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+        "before": "8c49ef4c79b0edba265b586acf7a1a1c33ba3570",
+        "after": "7c1812d9e71c65e36c827adfcfdf3714ba5d575b"
+      },
+      {
+        "path": "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs",
+        "before": "718adc13e4a7cf610c14cb295f4c240d0187cfe3",
+        "after": "b236ce047843a68cf371e02d6bb480fea6fc71ff"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs",
+        "before": "a3d2be3d0269dc563a63d0e1c11f69a748d13a3d",
+        "after": "a8a6f872fd354fccdd1f1f28609f487719c4fdaf"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/mldsa_native_differential.py",
+        "before": "a9b5b66eba27ccb0f87d07adbaab93c328c07ee9",
+        "after": "3139f70e31719cecfb601dd18e9fe417de1245df"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_mldsa_native_source.py",
+        "before": "b85e0828f68e51369d3c5eb24b136e2fa2ff0581",
+        "after": "e3b9315f18339dcb84b2fb16834cdb3c882724c5"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+        "before": "a1ca50f68a023ce1c8d9cf62f06604900c521ca0",
+        "after": "c6e3c62219e6f10030cee3dad4df2f2045acd9cd"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "before": "16da9022ef7f6946f6b5ae42767d4aa0398623e7",
+        "after": "ca3706440a070818173a6209ffc350bb94bf6199"
+      }
+    ],
+    "assertions": {
+      "production_activation": false,
+      "independent_accepted": false,
+      "native_pq_node_integrated": false,
+      "quantum_pon_hardness_qualified": false,
+      "physical_rollback_resistant": false,
+      "hepta_final_use_integrated": false,
+      "public_wan_accepted": false,
+      "allow_legacy_fallback": false
+    }
+  },
+  "publication_integration_finding": {
+    "severity": "must fix generated inventory before claiming publication source gates",
+    "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "unchanged_git_blob": "f9bb1b209e708eb9a5fafe72901bbd0399ac2946",
+    "missing_new_path": "trillionnium/crates/trnm-checkpoint-store/src/live_journal_v2.rs",
+    "basis": "new .rs path matches inspected generator scope; inherited generated file lacks it and is absent from complete18-file delta. This is a static finding, not an executed failing gate.",
+    "required_action": "Generate inventory in separate publication checkout, inspect the new entry, update only its exact corpus pin, then run real source/inventory checks. Do not touch frozen59f."
+  },
+  "concurrent_evidence": {
+    "manifest_path": "evidence/pq-recovery-release-sdk-v1/reproduction.json",
+    "manifest_git_blob": "5a7f925e7ff18766d6e7eecdb49926f151dbaaec",
+    "scope": "Local x86_64 worktree component tests. Frozen source hashes identify inputs; no complete final-commit, prospective-merge, ARM or hosted-CI execution is claimed.",
+    "source_manifest_timing": "Collected after component runs; not a full-tree before-and-after execution attestation.",
+    "log_storage": "Raw local observations are not included in this source/compact-manifest publication. These digests are an index, not a durable raw-log archive. Reproduction commands and CI retain failures on rerun.",
+    "checkpoint_final_all_targets": {
+      "result": "FAIL",
+      "exit_code": 101,
+      "passed": 43,
+      "failed": 4,
+      "ignored": 0,
+      "binaries": {
+        "library": {
+          "passed": 10,
+          "failed": 1
+        },
+        "node_commit_ledger": {
+          "passed": 15,
+          "failed": 0
+        },
+        "cold_recovery": {
+          "passed": 15,
+          "failed": 0
+        },
+        "cross_process": {
+          "passed": 3,
+          "failed": 3
+        }
+      },
+      "diagnosis": "One unit test directly reports bind checkpoint socket EPERM. Three process tests report daemon exited at startup. No skip, permission bypass, transport substitution or threshold change was applied. These four are not passes.",
+      "log": "validation/checkpoint-all-targets-final.log"
+    },
+    "release_full_package": {
+      "result": "PASS",
+      "exit_code": 0,
+      "passed": 18,
+      "failed": 0,
+      "ignored": 0,
+      "doc_tests": 0,
+      "log": "release-after.log"
+    },
+    "retained_attempts": [
+      {
+        "exit_code": 130,
+        "log": "rust-oracle-build.log",
+        "reason": "shared target artifact lock; retried in private target",
+        "result": "BUILD_INTERRUPTED"
+      },
+      {
+        "prior_runner": "tuf-sdk-runner-before-namespace.py",
+        "reason": "initial captured-source loader omitted actual upstream namespace package; fixed and regression added",
+        "record": "namespace-preparation-failure.json",
+        "result": "FAIL"
+      },
+      {
+        "result": "BUILD_INTERRUPTED",
+        "scope": "Additional Node library baseline build",
+        "exit_code": 130,
+        "tests_executed": 0,
+        "reason": "Stopped own redundant build under shared 8 GiB resource pressure; compiler warned SQLite I/O boundary UNQUALIFIED because RUSTC was not absolute. No Node acceptance is claimed.",
+        "raw_log_retained": false
+      },
+      {
+        "result": "FAIL",
+        "scope": "Initial checkpoint package runs",
+        "reason": "Unix socket EPERM and startup failures retained in earlier logs; final all-target run has the same four failing tests."
+      }
+    ],
+    "credited_as_our_59f_execution": false,
+    "credited_as_complete_final_ac240_execution": false,
+    "raw_logs_downloaded_or_reexecuted_by_this_review": false,
+    "four_failures_preserved": true
+  },
+  "draft_language_change": "Call all locally recorded native/source/benchmark observations FIXED tested59f, never latest remote/current publication runtime. Preserve ac240 improvements and their separately scoped compact evidence. Native/benchmark pending placeholders remain unknown until actual receipts are complete.",
+  "limitations": [
+    "Only the18-path direct-child delta and named relevant functions were read; this is not full repository security acceptance.",
+    "No Cargo, runner, collector, unit test or remote mutation was performed for this addendum.",
+    "Concurrent evidence explicitly uses after-run source hashes and working-tree component observations; it does not provide full-tree before/after attestation or a durable raw-log archive.",
+    "A successful old59f result cannot establish ac240 or a later publication tree passed; unchanged profile blobs alone do not transfer runtime qualification.",
+    "All whole-chain gates, deployed effect/witness/updater qualification, ML-DSA-87 activation and quantum/work security remain unqualified."
+  ]
+}

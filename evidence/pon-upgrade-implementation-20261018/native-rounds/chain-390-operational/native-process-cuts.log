@@ -1,0 +1,23 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 4.38s
+     Running tests/native_node.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/native_node-946a951b13a9aaf3)
+
+running 2 tests
+test test_every_reorg_process_cut_and_admission_gap_recovers_once ... actual child exit86 at admitted
+actual child exit86 at intent
+actual child exit86 at detach:0
+actual child exit86 at detach:1
+actual child exit86 at attach:2
+actual child exit86 at attach:3
+actual child exit86 at attach:4
+actual child exit86 at before-publish
+actual child exit86 at published
+ok
+test test_initialization_process_cuts_recover_only_the_owned_context ... actual child exit86 at init-intent
+actual child exit86 at init-schema
+actual child exit86 at init-before-commit
+actual child exit86 at init-committed
+ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 29 filtered out; finished in 6.13s
+

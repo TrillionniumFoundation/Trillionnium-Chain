@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--format-version",
+    "1",
+    "--manifest-path",
+    "trillionnium/Cargo.toml"
+  ],
+  "elapsed_seconds": 0.1809984390001773,
+  "exit_code": 0,
+  "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/cargo-metadata-locked-offline.log",
+  "log_sha256": "81bb7691688e2d2ea4e36009b9136e6183a04b494ef8db3927f5b9c4be05e6f7",
+  "name": "cargo-metadata-locked-offline",
+  "package_count": 177,
+  "resolve_node_count": 177,
+  "started_utc": "2026-11-11T01:28:50.267577+00:00",
+  "stderr_log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/cargo-metadata-locked-offline.stderr.log",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "tests": null,
+  "workspace_default_member_count": 26,
+  "workspace_member_count": 26
+}

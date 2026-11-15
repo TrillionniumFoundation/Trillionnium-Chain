@@ -1,0 +1,11 @@
+
+running 1 test
+test store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation ... FAILED
+
+failures:
+
+failures:
+    store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 765 filtered out; finished in 2.40s
+

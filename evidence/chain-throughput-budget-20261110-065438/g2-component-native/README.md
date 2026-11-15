@@ -1,0 +1,11 @@
+# G2 original-budget native comparison: preserved failure
+
+This is the exact observation of Actions run [42938943118](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42938943118), attempt 1, driver/fixed source `7d6567b92575d1d84766afd49d0720b6f197b0e0`. Both native release builds succeeded. The workflow and both component jobs failed. No result here is a result for the subsequent handoff or ordinary-pool changes.
+
+The four mining controls met both-arm expectations: fixed four passes, old production three designated failures and one equivalence pass. Fixed History Continue reached accepted detached Execution but failed the held Commit CPU budget; Cancel passed its native assertions but the reader rejected the missing final account observation; Expire passed native and reader. Old History failed at the intended assertion but also lacked the reader-required final flow. All failures remain failures.
+
+`independent-readback.json` and `first-failure-analysis.md` explain the observed phases and their limits. `raw-observations.tar.xz` retains all 108 nonbinary artifact members byte for byte, including every process receipt, source receipt, complete test roster, compiler/profile record, stdout, stderr and original runner report. `retention-manifest.json` binds all 110 official members to the original ZIP identities and records verified delivery hashes. Download receipts containing temporary signed URLs are excluded.
+
+The two actual libtest binaries are retained losslessly in ordered `.xz.part-*` files. Concatenate each arm's parts in the manifest's order and decompress the resulting xz stream; verify the restored size and SHA256 against its `native/trnm-pon-node-libtest` member before use. Compression and decompression were performed and their roundtrip hashes verified when this package was created. This packaging did not execute either native binary again. The two complete job logs are retained as deterministic gzip files with original-byte digests.
+
+This component experiment is not a service campaign, full business-liveness qualification, sustained TPS test or WAN measurement. It does not supersede the separate original 30-second or four-second service observations.

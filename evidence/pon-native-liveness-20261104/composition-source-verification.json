@@ -1,0 +1,27 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "composition-source-verification",
+  "command": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+    "--output",
+    "/workspace/scratch/e537ad232c79/composition-source-receipt.json"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+  "tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T13:55:59.242223+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 3204922094,
+  "finished_at": "2026-11-04T13:56:02.447378+00:00",
+  "log_bytes": 421,
+  "log_sha256": "8fdc2678701cd96d944bc3909e08e35651e611e2b2515421df5643faa6b1c575",
+  "final_head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+  "final_dirty_paths": []
+}

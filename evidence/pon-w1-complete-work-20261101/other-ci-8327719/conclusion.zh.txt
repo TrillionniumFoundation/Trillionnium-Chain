@@ -1,0 +1,13 @@
+8327719 其他 CI 失败只读核对
+
+1. recent batch exact-source run 41298626798：4 个 job 均在 Rust 安装、格式、编译及测试之前失败。verify_ci_source 已成功；随后 16 个固定 Git blob 检查中，两个 query-bound Python 文件的 pin 仍是 base/c041 的旧值，而本分支 8d9 扩展了文件。其余 14 个 pin 匹配。第一个不匹配位于 .github/workflows/pon-recent-batch-acceptance.yml:73，第二个在 :74。最后 *.log 不存在的错误是原生阶段未执行后的次生失败。父任务负责修复 pin；本审计不改源。
+
+2. original native campaign run 41298626861：原生 release 编译成功，三个完整的 30 秒 × 3 模式实验均实际运行，退出码均为 101；没有启动失败、报告校验失败、600 秒外部超时或收尾身份失败。每个 phase 的第一轮 7 个诚实提交均及时 ACK，但原计划的 3 轮独立确认均为 0/3。无攻击基线也失败，不能把这个条件缩写成“只有攻击压力失败”。3 个基线 client 的持久最大高度为 10，active 高度仍为 4；6 个攻击 phase 持久最大高度为 6，active 仍为 4。所有 receiver active 高度均为 11。8 个 phase 的本地导入错误为 PUBLIC_REQUEST_DEADLINE；第 2 次实验的 late-product phase 没有该导入错误，其最后 history 网络调用在窗口后返回 IO 暂不可用，未进入本地导入。6 个攻击 phase 均未观察到原验收要求的 paid-credit depletion。攻击提交 ACK 和被接受的攻击工作均为 0。
+
+3. required baseline run 41298626810：已失败 4 个 job 为 protocol-contract head/merge 与 cross-arch-cost x64/ARM。四份 manifest 均格式检查成功、原生构建成功、五个指定原生测试全部成功，唯一报告失败为 CONFIRMATION_TARGET。无攻击 4 秒 baseline 全部确认 1 笔，分别用时 merge 2.591671 秒、head 2.394960 秒、x64 3.486847 秒、ARM 2.285667 秒；压力阶段全部为 0 笔。压力 client 持久最大/active 高度分别是 merge 2/0、head 3/0、x64 0/0、ARM 2/0。原生测试的 PASS 只证明其限定不变量，不代表确认指标已通过。最新状态快照中仅两条 runtime shard 仍在运行，其他已完成的非失败 job 都成功。
+
+4. 身份与范围：全部五份原始 ZIP 已按 GitHub artifact SHA256/大小、ZIP CRC、安全路径核验。原 campaign 的三份 Python reader 结果与 CI 原结果逐字段相同，唯一归一化字段为输入文件的本地路径。required 四份 service/sustained reader 与 CI 结果相同，confirmation reader 均再次拒绝 CONFIRMATION_TARGET。共 6048 个检查通过。数据库以只读 immutable 模式打开，存储高度与 active 高度分别报告。这里没有重新执行 native admission；没有跨 Host 的新旧核因果对照，不把这些服务失败归因为 FullLimb，也不凭 workflow 名称宣称历史失败。
+
+资源域不同：original campaign 的 receiver + verifier 在共同 0.25 CPU / 2 GiB 的固定公共父 cgroup，攻击进程留在外部 controller 的原有 4 CPU / 16 GiB 域。required baseline 的 from-zero fixture 使用共同 0.25 CPU Host。各域的 CPU 数据不可混作单个接收方耗时。
+
+明确可修的新问题是 recent-batch 的两个旧 pin；其余失败是实际原验收条件不满足。本分析没有修改源文件、deadline、预算、成功条件或资格标志。

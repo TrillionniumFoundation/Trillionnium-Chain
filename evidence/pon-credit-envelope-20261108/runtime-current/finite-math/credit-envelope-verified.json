@@ -1,0 +1,47 @@
+{
+  "cases": [
+    {
+      "case_id": "proportional-exact",
+      "inequalities_checked": 12,
+      "status": "FEASIBLE_FOR_DECLARED_RECTANGULAR_ENVELOPES"
+    },
+    {
+      "case_id": "exponent-mismatch-rho-three-halves",
+      "status": "INFEASIBLE_FOR_DECLARED_RECTANGULAR_ENVELOPES",
+      "verified_cycle_product": "9/16"
+    },
+    {
+      "case_id": "exponent-mismatch-rho-two",
+      "inequalities_checked": 4,
+      "status": "FEASIBLE_FOR_DECLARED_RECTANGULAR_ENVELOPES"
+    },
+    {
+      "case_id": "three-cycle-without-negative-two-cycle",
+      "status": "INFEASIBLE_FOR_DECLARED_RECTANGULAR_ENVELOPES",
+      "verified_cycle_product": "8/9"
+    },
+    {
+      "case_id": "wide-single-scale",
+      "inequalities_checked": 0,
+      "status": "FEASIBLE_FOR_DECLARED_RECTANGULAR_ENVELOPES"
+    },
+    {
+      "case_id": "robust-uncertainty-only-refusal",
+      "status": "INFEASIBLE_FOR_DECLARED_RECTANGULAR_ENVELOPES",
+      "verified_cycle_product": "1/4"
+    },
+    {
+      "case_id": "proportional-intervals",
+      "inequalities_checked": 12,
+      "status": "FEASIBLE_FOR_DECLARED_RECTANGULAR_ENVELOPES"
+    }
+  ],
+  "qualification": {
+    "actual_w1_lower_bounds_proved": false,
+    "all_legal_classical_and_quantum_strategies_covered": false,
+    "mixed_mining_consensus_qualified": false,
+    "production_activation": false,
+    "stateful_composition_proved": false
+  },
+  "verification": "PASS"
+}

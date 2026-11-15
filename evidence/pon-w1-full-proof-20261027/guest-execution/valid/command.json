@@ -1,0 +1,8 @@
+{
+  "argv": [
+    "/workspace/scratch/56818e4fba76/target-w1/release/w1-execute-control",
+    "/workspace/scratch/56818e4fba76/toolchains/risc0-prover-3.0.3/r0vm",
+    "valid"
+  ],
+  "timeout_seconds": 300
+}

@@ -1,0 +1,46 @@
+{
+  "schema": "pon-pq-pql5-quorum-local-qualification-v1",
+  "scope": "research-only-not-production",
+  "parent_pr": 457,
+  "parent_commit": "ceb00ad90c034043ce088972db141a5d5b4c9b7c",
+  "source_files": {
+    "pq_pql5_quorum.py": {
+      "sha256": "e0009fc1e1d6bc7c46507e9d6ac2f67f7b815b8ca38f02657c344d1e2e97062f",
+      "git_blob_sha1": "15d9f718ce4676546cae30e29f1abee66524247e",
+      "bytes": 14556
+    },
+    "test_pq_pql5_quorum.py": {
+      "sha256": "6c527f1b7e0000c2476f3f2eee6d7984338f9d0fd8fa30dd65dc004d7282bf6c",
+      "git_blob_sha1": "264465af1b10347c6b6e5eac324555cdf935bb1d",
+      "bytes": 14071
+    },
+    "PQ_PQL5_FRESH_QUORUM_RESEARCH_V1.md": {
+      "sha256": "97e7770c88cd3a9cabbe21149774f661f2200a1ad9c5d54313b1a7422526da99",
+      "git_blob_sha1": "546dafa70a5e2683cd70bfd0901e0990cd9f1de6",
+      "bytes": 6025
+    }
+  },
+  "environment": {
+    "python": "3.13.5",
+    "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+    "sqlite": "3.46.1",
+    "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+    "filesystem": "local container overlayfs",
+    "operator_count_independent": 0
+  },
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_pq_pql5_quorum.py"
+  ],
+  "test_methods": 15,
+  "passed": 15,
+  "failed": 0,
+  "known_negative": "A 2/3 rollback of independent-looking local witness stores plus censorship of honest third still yields fresh stale quorum",
+  "full_chain_pq_accepted": false,
+  "native_rust_qualified": false,
+  "independent_accepted": false,
+  "production_activation": false
+}

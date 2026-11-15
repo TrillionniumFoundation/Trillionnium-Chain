@@ -1,0 +1,21 @@
+{
+  "actual_artifact_to_direct_before_after_join_verified": 5,
+  "all_manifest_file_sizes_and_sha256_match": true,
+  "all_source_provider_context_profile_fields_joined": true,
+  "archive_bytes": 1022076,
+  "archive_sha256": "c59397c89f1ed4e50605dfe337b77d2b63d82309f339ea7fa29f8884c99c16f9",
+  "manifest_sha256": "332cc4aa8a579bb1daf20282af4e6fb6f7f9b09d16a227828cc328a87f0a8486",
+  "only_safe_regular_relative_members": true,
+  "original_files_verified": 180,
+  "schema": "m6-native-evidence-local-verification-v1",
+  "source_matches_fixed_M6": true,
+  "standard_native_validation_status": "PASS_WITH_RETAINED_IGNORED_GATES_OPEN",
+  "tar_members_verified": 181,
+  "unified_standard_top_level_totals": {
+    "failed": 0,
+    "filtered_out": 0,
+    "ignored": 41,
+    "measured": 0,
+    "passed": 2450
+  }
+}

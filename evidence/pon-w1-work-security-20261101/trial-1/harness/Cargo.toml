@@ -1,0 +1,23 @@
+[package]
+name = "trnm-w1-cost-module-validation"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+trnm-crypto-primitives = { package = "trnm-w1-module-validation", path = "../w1-verifier-harness" }
+trnm-protocol = { path = "protocol" }
+sha2 = "=0.10.9"
+hex = "=0.4.3"
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = "=1.0.154"
+rustix = { version = "=1.1.4", features = ["time"] }
+
+[[example]]
+name = "pon_w1_false_trace_reuse_v1"
+path = "../trillionnium-chain/trillionnium/crates/trnm-pon-node/examples/pon_w1_false_trace_reuse_v1.rs"
+
+[profile.test]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true

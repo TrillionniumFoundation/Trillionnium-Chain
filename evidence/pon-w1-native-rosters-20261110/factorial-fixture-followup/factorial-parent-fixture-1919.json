@@ -1,0 +1,61 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "13a9eed1fb247b9e29c39d25872c43312601418a",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "13a9eed1fb247b9e29c39d25872c43312601418a",
+    "tested_tree": "445c137938a04ea1360b2dbf1256b3a5a253e6d8",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2544115185,
+    "tracked_entries": 26630,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "scripts/ci/test_w1_factorial_native_gate.py"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "13a9eed1fb247b9e29c39d25872c43312601418a",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "13a9eed1fb247b9e29c39d25872c43312601418a",
+    "tested_tree": "445c137938a04ea1360b2dbf1256b3a5a253e6d8",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2544115185,
+    "tracked_entries": 26630,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/home/qq/work/chain-w1-native-rosters-20261110",
+  "elapsed_ns": 4153626571,
+  "environment": {
+    "CARGO_BUILD_JOBS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": null,
+    "CARGO_TARGET_DIR": null,
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 1,
+  "log_bytes": 632,
+  "log_file": "factorial-parent-fixture-1919.log",
+  "log_sha256": "4c2805ca334c48b1a15777594e37a32dcc6e23f287b63373c8c9237ac7e607cc",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-10T19:17:47.923244+00:00",
+  "status": "command_failed",
+  "whole_chain_quantum_security_qualified": false
+}

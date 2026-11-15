@@ -1,0 +1,43 @@
+{
+  "schema": "pon-six-axis-parent-hosted-scope-v1",
+  "head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+  "prospective_merge": "0153600a002c420d20128983c3280ff6c16e70c4",
+  "scope": "Published parent source only; not final continuation or its new prospective merge. Original denominators remain.",
+  "four_second": {
+    "backend": "legacy Node::open",
+    "attack_free_confirmed": 1,
+    "attack_free_planned": 1,
+    "attack_free_latency_ns": 3202131159,
+    "pressure_confirmed": 0,
+    "pressure_planned": 1,
+    "pressure_verifier_error": "PUBLIC_REQUEST_DEADLINE",
+    "gate_validated": false
+  },
+  "f0": {
+    "confirmed_in_30_seconds": 1,
+    "planned_confirmations": 6,
+    "four_second_successes": 0,
+    "failure": "NATIVE_F0_FAILED",
+    "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41658914767"
+  },
+  "native_original_campaigns": {
+    "backend": "authenticated-v1",
+    "confirmed": 3,
+    "planned_confirmations": 27,
+    "planned_packet_exposures": 189,
+    "unobserved_scheduled_rounds": 15,
+    "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41658915167"
+  },
+  "pq_and_cpu": {
+    "all_four_head_merge_x64_arm_matrices_original_pq_selectors": "43/43 passed in each matrix",
+    "full_node_x64": "934 passed; 0 failed; 23 ignored in each matrix",
+    "full_node_arm": "932 passed; 2 original large-parent CPU failures; 23 ignored in each matrix",
+    "old_test_only_observer_strict_clippy": "redundant_closure_call failure in all four matrices",
+    "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41658914755",
+    "workspace_cpu_run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41658914609"
+  },
+  "public_service_accepted": false,
+  "whole_chain_pq_accepted": false,
+  "activation": false
+}

@@ -1,0 +1,54 @@
+{
+  "archive_sha256": "856524b9bb284a83fe12ed098da9858a687d08e25ddad0ed5c7121f1e38f15c6",
+  "archive_bytes": 159519,
+  "member_count": 94,
+  "original_file_count": 93,
+  "manifest_sha256": "05eb5a3dc8627346541ca8ce00dd10f195a5c93ffd17233bf13a975ed8ef09fd",
+  "all_manifest_members_verified": true,
+  "source_matches": true,
+  "final_owner_status": "FAILED_ASSERTION_AND_INCOMPLETE_SCOPE",
+  "elfs": [
+    {
+      "bytes": 59820968,
+      "cargo_profile": "test (no --release)",
+      "cargo_running_line": "     Running unittests src/lib.rs (/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe)",
+      "cfg_test": true,
+      "identity_read_complete": true,
+      "is_elf": true,
+      "ordinary_daemon_build_identity": null,
+      "ordinary_daemon_load_identity": null,
+      "reported_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe",
+      "resolved_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe",
+      "sha256": "ca0f7f7c7a8a0d2bee57333237bb84af69676e957f6f40ff00004d07da1b69c3"
+    },
+    {
+      "bytes": 128517000,
+      "cargo_profile": "test (no --release)",
+      "cargo_running_line": "     Running unittests src/lib.rs (/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3)",
+      "cfg_test": true,
+      "identity_read_complete": true,
+      "is_elf": true,
+      "ordinary_daemon_build_identity": null,
+      "ordinary_daemon_load_identity": null,
+      "reported_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3",
+      "resolved_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3",
+      "sha256": "62d97d12f375842d92372542810ae95bfaf5fda6af1109b53680d09a2221607a"
+    }
+  ],
+  "overlap": [
+    {
+      "bytes_equal": true,
+      "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe",
+      "sha256_equal": true,
+      "test02_sha256": "ca0f7f7c7a8a0d2bee57333237bb84af69676e957f6f40ff00004d07da1b69c3",
+      "test03_sha256": "ca0f7f7c7a8a0d2bee57333237bb84af69676e957f6f40ff00004d07da1b69c3"
+    },
+    {
+      "bytes_equal": true,
+      "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3",
+      "sha256_equal": true,
+      "test02_sha256": "62d97d12f375842d92372542810ae95bfaf5fda6af1109b53680d09a2221607a",
+      "test03_sha256": "62d97d12f375842d92372542810ae95bfaf5fda6af1109b53680d09a2221607a"
+    }
+  ]
+}

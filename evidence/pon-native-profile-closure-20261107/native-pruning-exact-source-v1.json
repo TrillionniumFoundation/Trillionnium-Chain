@@ -1,0 +1,18 @@
+{
+  "audit_recorded": true,
+  "job_id": "1a1b8625792-12894-ef2",
+  "stderr": {
+    "eof": true,
+    "next_offset": 0,
+    "offset": 0,
+    "size": 0,
+    "text": ""
+  },
+  "stdout": {
+    "eof": true,
+    "next_offset": 2858,
+    "offset": 0,
+    "size": 2858,
+    "text": "{\"path\": \"trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs\", \"sha256\": \"55eec1690b926144891a8cfdc19af50eac1ee7f64ba718c647d44d0d3d613588\", \"git_blob\": \"489958346860bca53e140f32dad73861d2eb6f34\", \"head\": \"4a7e07e970d5bdb79626dda6bc98ae7906a02f18\", \"lines\": [\"2599:        } else if k.starts_with(\\\"evaluation-archive:\\\") {\", \"2600:            let value = state.get(&k).ok_or(\\\"STATE\\\")?;\", \"2601:            let closed = field(&value[\\\"public_evaluation\\\"][\\\"closed\\\"], \\\"closed_height\\\")?;\", \"2602:            if height.saturating_sub(closed) > 256 {\", \"2603:                state.remove(&k);\", \"2604:            }\", \"2605:        } else if k.starts_with(\\\"task:\\\") || k.starts_with(\\\"quota:\\\") {\", \"2606:            let value = state.get(&k).ok_or(\\\"STATE\\\")?;\", \"2607:            if field(value, \\\"remaining\\\")? == 0 && field(value, \\\"deadline\\\")? < height {\", \"2608:                state.remove(&k);\", \"2609:            }\", \"2610:        } else if k.starts_with(\\\"artifact:\\\") {\", \"2611:            let parts: Vec<_> = k.split(':').collect();\"]}\n{\"path\": \"trillionnium/crates/trnm-mvcc-fee/src/pon_executor/funded_service_v1.rs\", \"sha256\": \"83bdee5bf7980ab8aa2447dee593d6e89858e2e95b59a5fcbd263d5e3391b52b\", \"git_blob\": \"70411ab97a738bf10f9c50de47bd95f1be62649a\", \"head\": \"4a7e07e970d5bdb79626dda6bc98ae7906a02f18\", \"lines\": [\"320:                && reservation.task == contract.task_id(cfg.network, cfg.parameters, sender, nonce),\", \"321:            \\\"SERVICE_CONTRACT_BINDING\\\",\", \"322:        )?;\", \"323:        let key = format!(\\\"task:{}\\\", hex::encode(reservation.task));\", \"324:        require(state.get(&key).is_none(), \\\"DUPLICATE\\\")?;\", \"325:        state.deadline(cfg, contract.dispute_deadline, height)?;\", \"326:        state.debit(&hex::encode(sender), contract.budget)?;\", \"327:        let record = ServiceContractRecordV1 {\", \"328:            schema: RECORD_SCHEMA.into(),\", \"329:            network: cfg.network,\", \"330:            parameters: cfg.parameters,\", \"331:            payer: sender,\", \"332:            reservation_nonce: nonce,\", \"333:            contract_digest: contract.digest(cfg.network, cfg.parameters, sender),\", \"334:            terms: contract,\", \"335:            reserved_at: height,\", \"336:            receipt_height: None,\", \"337:            delivered_output: None,\", \"338:            resolution: None,\", \"339:        };\", \"340:        let mut row = json!({\", \"341:            \\\"owner\\\":hex::encode(sender),\", \"342:            \\\"provider\\\":hex::encode(record.terms.provider),\", \"343:            \\\"remaining\\\":record.terms.budget,\", \"344:            \\\"deadline\\\":record.terms.dispute_deadline,\", \"345:            \\\"status\\\":\\\"reserved\\\",\", \"346:            \\\"output\\\":null\", \"347:        });\", \"348:        write_record(&mut row, &record)?;\", \"349:        state.put(key, row);\", \"350:        return Ok(true);\"]}\n"
+  }
+}

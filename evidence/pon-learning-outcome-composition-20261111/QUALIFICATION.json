@@ -1,0 +1,42 @@
+{
+  "authority": "DENY_ALL",
+  "commands": 26,
+  "current_permission": "NOT_EXPORTED",
+  "evidence_commit_contains_no_code_changes": true,
+  "hepta_evidence_head": "ef3a398d460574813957a25f5455e12c60db6d5d",
+  "hepta_native_tests": 8,
+  "hepta_pr": 6062,
+  "hepta_runtime_source": "93fc43f6e87c4514485adcb01a7ffec8ad3b632f",
+  "independent_B_C_qualified": false,
+  "independent_evaluation_certified": false,
+  "model_efficacy_certified": false,
+  "native_test_total": 42,
+  "native_tests": {
+    "adoption-cli": 13,
+    "adoption-library": 25,
+    "crypto-fixed-product-meter": 1,
+    "crypto-fresh-challenge-refusal": 1,
+    "node-single-output-owner": 1,
+    "outcome-role-separation": 1
+  },
+  "ordinary_daemon_qualified": false,
+  "output_ack_event_verified": false,
+  "production_qualification": "HOLD_NO_GO",
+  "project_boundary_negative_tests": 16,
+  "provider": "original pinned OpenSSL 3.5.9 fresh build and smoke",
+  "reader_test_total": 110,
+  "reader_tests": {
+    "reader-cell_adoption_readback": 26,
+    "reader-cell_learning_completion_join": 13,
+    "reader-cell_learning_iteration_join": 25,
+    "reader-cell_learning_local_decision_join": 14,
+    "reader-cell_learning_local_use_join": 19,
+    "reader-cell_learning_scope_join": 13
+  },
+  "result": "PASS",
+  "schema": "pon-learning-outcome-component-qualification-v1",
+  "source_negative_tests": 43,
+  "strict_clippy": "workspace/all-targets/all-features/-D warnings",
+  "tested_source": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "tested_tree": "895c77972eb0a923d10115fbd167209fdd0cd8cc"
+}

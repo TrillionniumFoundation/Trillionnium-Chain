@@ -1,0 +1,12 @@
+   Compiling openssl-sys v0.9.117
+    Checking libsqlite3-sys v0.37.0
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling openssl v0.10.81
+    Checking rusqlite v0.39.0
+    Checking trnm-task-kernel v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-task-kernel)
+    Checking trnm-crypto-primitives v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-service-settlement v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-service-settlement)
+    Checking trnm-data-availability v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-data-availability)
+    Checking trnm-mvcc-fee v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-pon-node v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-pon-node)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 15s

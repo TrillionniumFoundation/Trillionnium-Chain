@@ -1,0 +1,17 @@
+{
+  "head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "install_script_sha256": "7988b55c01f9fc1fb72506c1110ddd80e53ad6109b3ab2f5626c402ede8dcd88",
+  "locks": {
+    "tests/fuzz/Cargo.lock": {
+      "bytes": 34319,
+      "sha256": "c6c47bf71d51a8f046874418c81097cd03697de09d1149f2ad7839d1713107ae"
+    },
+    "trillionnium/Cargo.lock": {
+      "bytes": 40597,
+      "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+    }
+  },
+  "run_supply_chain_sha256": "3ba25e784966e4d52efe22d400ddb73657a02550a8d7ac955c2968b652d839f6",
+  "status": "",
+  "tool_versions_sha256": "b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408"
+}

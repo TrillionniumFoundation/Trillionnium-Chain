@@ -1,0 +1,29 @@
+RUST_MIN_STACK=8388608 NEXTEST_PROFILE=local python3 ../scripts/run-nextest.py "$@"
+  Extracting 1 binary and 9 linked paths to /home/qq/hepta-learning-native-681642e-d9fb-20261108/extracted
+   Extracted 139 files to /home/qq/hepta-learning-native-681642e-d9fb-20261108/extracted in 0.95s
+────────────
+ Nextest run ID c312dd94-ce6e-49eb-9958-98c8827b6fec with nextest profile: local
+    Starting 1 test across 1 binary (753 tests skipped)
+       START             codex-hepta-agentd neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback
+
+running 1 test
+        SLOW [> 30.000s] codex-hepta-agentd neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback
+
+thread 'neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback' (201945) panicked at hepta-agentd/src/neuron_generation_runtime_test_support.rs:39:23:
+generation service fixture: Protocol("prompt pipeline durable owners failed to open: RegistryOpen(\"StateLocked\")")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback ... FAILED
+
+failures:
+
+failures:
+    neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 753 filtered out; finished in 40.16s
+
+        FAIL [  40.171s] codex-hepta-agentd neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback
+────────────
+     Summary [  40.174s] 1 test run: 0 passed, 1 failed, 753 skipped
+        FAIL [  40.171s] codex-hepta-agentd neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback
+error: test run failed
+error: recipe `test` failed on line 89 with exit code 100

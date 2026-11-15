@@ -1,0 +1,84 @@
+{
+  "example-tests": {
+    "status": "command_succeeded",
+    "exit_code": 0,
+    "elapsed_ns": 57945526628,
+    "log_bytes": 4003,
+    "log_sha256": "d2e5ae5a198ff579349f668347a693f46ab2265cbe34942f25b6db059420b61b"
+  },
+  "v4-build": {
+    "status": "command_succeeded",
+    "exit_code": 0,
+    "elapsed_ns": 61958976819,
+    "log_bytes": 114272,
+    "log_sha256": "7267006acb6e71b3cedd2fa6b5bf9b83cd1fdb8d059301366dca5a69b0d9d9f7"
+  },
+  "clippy": {
+    "status": "command_failed",
+    "exit_code": 101,
+    "elapsed_ns": 163685543121,
+    "log_bytes": 376,
+    "log_sha256": "597c28837408cdceb6d89e1dafcce07f02c59c6ce2bba65d11ea1d1465ee8a4d"
+  },
+  "clippy-disk-retry": {
+    "status": "command_succeeded",
+    "exit_code": 0,
+    "elapsed_ns": 189462038346,
+    "log_bytes": 2607,
+    "log_sha256": "1be77adb07ddd292741f5233a27a46f8ccc036e9fea2021b0f3624206a9d20ef"
+  },
+  "actual_v4": {
+    "complete": {
+      "status": "COMPLETE_DECLARED_OBSERVATION",
+      "counts": {
+        "attempts": 3848,
+        "candidates": 288,
+        "cohorts": 936,
+        "searches": 1888,
+        "verified_searches": 1888,
+        "verifiers": 3776
+      },
+      "complete_records": 23069,
+      "native_exit": 0,
+      "reader_exit": 0,
+      "wall_ns": 4378646923,
+      "child_cpu": {
+        "user_seconds": 4.3137870000000005,
+        "system_seconds": 0.04698800000000003,
+        "scope": "one serial native child; source verifier/reader outside interval"
+      },
+      "binary_sha256": "bd74dea5a8b1ddc57e86f1d181c3cdb287321dc0b9651e03b6f21adfcfe2f45a",
+      "raw_sha256": "2ae1c73382b3d4bede8412c9ff725d6e51bf37ea50ff6810a84617c4c8ec6f04",
+      "unknown_unfinished_cost": null
+    },
+    "terminated": {
+      "status": "INCOMPLETE",
+      "counts": {
+        "attempts": 0,
+        "candidates": 0,
+        "cohorts": 1,
+        "searches": 0,
+        "verified_searches": 0,
+        "verifiers": 0
+      },
+      "complete_records": 9,
+      "native_exit": -15,
+      "reader_exit": 3,
+      "wall_ns": 2743984,
+      "child_cpu": {
+        "user_seconds": 0.002407000000000714,
+        "system_seconds": 0.0,
+        "scope": "one serial native child; source verifier/reader outside interval"
+      },
+      "binary_sha256": "bd74dea5a8b1ddc57e86f1d181c3cdb287321dc0b9651e03b6f21adfcfe2f45a",
+      "raw_sha256": "aa2bf4bddff47a234c36941091409a34013243555f2a254854695dea92430073",
+      "unknown_unfinished_cost": null
+    }
+  },
+  "retained_binary_gzip": {
+    "path": "/workspace/scratch/pon-joint-58fd59-build/final-native/v4-observation/pon_w1_lifecycle_cost_v4.bin.gz",
+    "sha256": "f283ca3e275052ea5352946a06c403325904ae911833f5a9f58d70ee8977d541",
+    "bytes": 373296
+  },
+  "all_legal_cost_or_public_resource_qualified": false
+}

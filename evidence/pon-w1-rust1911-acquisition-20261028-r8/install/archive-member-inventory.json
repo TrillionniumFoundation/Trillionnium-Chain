@@ -1,0 +1,2417 @@
+{
+  "schema": "TRNM-RISC0-1911-AUTHENTICATED-TAR-INVENTORY1",
+  "archive_sha256": "e082a1dc44abdef1d95460295a70218eb294ab999b834570ec932d05641cce5d",
+  "regular_logical_bytes": 1580625805,
+  "projected_allocated_bytes_from_headers": 1581359104,
+  "overhead_reserve_bytes": 16777216,
+  "members": [
+    {
+      "name": ".",
+      "normalized_name": ".",
+      "size": 0,
+      "type": "5",
+      "linkname": ""
+    },
+    {
+      "name": "./lib",
+      "normalized_name": "lib",
+      "size": 0,
+      "type": "5",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/librustc_driver-fb7a6e72c778a40d.so",
+      "normalized_name": "lib/librustc_driver-fb7a6e72c778a40d.so",
+      "size": 287739664,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib",
+      "normalized_name": "lib/rustlib",
+      "size": 0,
+      "type": "5",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf",
+      "size": 0,
+      "type": "5",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib",
+      "size": 0,
+      "type": "5",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/self-contained",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/self-contained",
+      "size": 0,
+      "type": "5",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/liballoc-7a2fe1baeb03d6e2.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/liballoc-7a2fe1baeb03d6e2.rlib",
+      "size": 6990010,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libadler2-7c3cbfbe45554503.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libadler2-7c3cbfbe45554503.rlib",
+      "size": 27890,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libtest-f84bc9cda33173e8.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libtest-f84bc9cda33173e8.rlib",
+      "size": 2823772,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libaddr2line-4df1da167153103b.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libaddr2line-4df1da167153103b.rlib",
+      "size": 491404,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libcore-af551d1adf7206b5.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libcore-af551d1adf7206b5.rlib",
+      "size": 40807198,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libstd_detect-c03fd675faaed7b5.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libstd_detect-c03fd675faaed7b5.rlib",
+      "size": 329126,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libpanic_unwind-5d87d3556612e5d9.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libpanic_unwind-5d87d3556612e5d9.rlib",
+      "size": 9114,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libmemchr-c60b87f96c98c20b.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libmemchr-c60b87f96c98c20b.rlib",
+      "size": 642832,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libcfg_if-84a75de39e4a2516.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libcfg_if-84a75de39e4a2516.rlib",
+      "size": 8802,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/librustc_literal_escaper-9c610e87f753b4e7.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/librustc_literal_escaper-9c610e87f753b4e7.rlib",
+      "size": 127384,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libminiz_oxide-beffc0ddf67415c3.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libminiz_oxide-beffc0ddf67415c3.rlib",
+      "size": 207926,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libgimli-f7a66fbda527f6fc.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libgimli-f7a66fbda527f6fc.rlib",
+      "size": 6021888,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/librustc_std_workspace_std-0d25af178d6dfd58.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/librustc_std_workspace_std-0d25af178d6dfd58.rlib",
+      "size": 9744,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libhashbrown-e58ac0e162a42d55.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libhashbrown-e58ac0e162a42d55.rlib",
+      "size": 1436952,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libobject-ee16c0ac358cce5c.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libobject-ee16c0ac358cce5c.rlib",
+      "size": 8792998,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libproc_macro-53248795b1061485.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libproc_macro-53248795b1061485.rlib",
+      "size": 2419936,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libstd-ea8d6840c463e159.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libstd-ea8d6840c463e159.rlib",
+      "size": 8155352,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/librustc_std_workspace_alloc-8c3ba571eec46e4a.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/librustc_std_workspace_alloc-8c3ba571eec46e4a.rlib",
+      "size": 5244,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/librustc_demangle-a216d8d69f888084.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/librustc_demangle-a216d8d69f888084.rlib",
+      "size": 327848,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libsysroot-c78f0272e9160f7c.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libsysroot-c78f0272e9160f7c.rlib",
+      "size": 5060,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libunwind-db853a3ca99590a5.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libunwind-db853a3ca99590a5.rlib",
+      "size": 4838,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libgetopts-49b52b140bb30736.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libgetopts-49b52b140bb30736.rlib",
+      "size": 432982,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libcompiler_builtins-1f7770adcf1885e0.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libcompiler_builtins-1f7770adcf1885e0.rlib",
+      "size": 3921018,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libpanic_abort-53f8956b7b1318db.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libpanic_abort-53f8956b7b1318db.rlib",
+      "size": 11708,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/librustc_std_workspace_core-bb078c928b8a6a1f.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/librustc_std_workspace_core-bb078c928b8a6a1f.rlib",
+      "size": 8726,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/riscv32im-risc0-zkvm-elf/lib/liblibc-7e3bdcdbca330182.rlib",
+      "normalized_name": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/liblibc-7e3bdcdbca330182.rlib",
+      "size": 26934,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu",
+      "size": 0,
+      "type": "5",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib",
+      "size": 0,
+      "type": "5",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/self-contained",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/self-contained",
+      "size": 0,
+      "type": "5",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_driver_impl-6ec6e010c521c64f.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_driver_impl-6ec6e010c521c64f.rmeta",
+      "size": 685366,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libblake3-0d8cd7f993e7d658.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libblake3-0d8cd7f993e7d658.rmeta",
+      "size": 357458,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/liblibc-25204e70f0772726.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liblibc-25204e70f0772726.rmeta",
+      "size": 5728514,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libpanic_abort-a6f0ae055e370588.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpanic_abort-a6f0ae055e370588.rlib",
+      "size": 9408,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librand-70c9c8056ff95f16.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librand-70c9c8056ff95f16.rmeta",
+      "size": 1358324,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_mir_dataflow-3f9c2d0eba95b7bd.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_mir_dataflow-3f9c2d0eba95b7bd.rmeta",
+      "size": 1612415,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libflate2-52c5737a1e40cdcf.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libflate2-52c5737a1e40cdcf.rmeta",
+      "size": 621351,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing_subscriber-0c9cfe85e7496152.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing_subscriber-0c9cfe85e7496152.rmeta",
+      "size": 2326812,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libgetrandom-5579b6099ec9576f.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libgetrandom-5579b6099ec9576f.rmeta",
+      "size": 68928,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hash-14e6f407f3ebdc31.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hash-14e6f407f3ebdc31.rmeta",
+      "size": 35766,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libwasm_encoder-6681556d9f9e031d.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libwasm_encoder-6681556d9f9e031d.rmeta",
+      "size": 1629557,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_properties-7e0fbf988df66445.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_properties-7e0fbf988df66445.rmeta",
+      "size": 94624,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_passes-e46767eda3c551d9.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_passes-e46767eda3c551d9.rmeta",
+      "size": 1490548,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libfastrand-553fab7fc1d0efa3.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libfastrand-553fab7fc1d0efa3.rmeta",
+      "size": 192045,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libdatafrog-c397c018db181b82.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libdatafrog-c397c018db181b82.rmeta",
+      "size": 367895,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_locale_data-3310939ae0058aee.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_locale_data-3310939ae0058aee.rmeta",
+      "size": 791188,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/liblock_api-4178ae9ee7a233d3.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liblock_api-4178ae9ee7a233d3.rmeta",
+      "size": 376810,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_driver-fb7a6e72c778a40d.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_driver-fb7a6e72c778a40d.so",
+      "size": 0,
+      "type": "1",
+      "linkname": "./lib/librustc_driver-fb7a6e72c778a40d.so"
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libcrossbeam_utils-09c4ca71c6ad664c.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcrossbeam_utils-09c4ca71c6ad664c.rmeta",
+      "size": 682814,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_session-354940b88fb0e840.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_session-354940b88fb0e840.rmeta",
+      "size": 2309503,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hir_analysis-1f5cd54ca4d6f558.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hir_analysis-1f5cd54ca4d6f558.rmeta",
+      "size": 3583624,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libpin_project_lite-4bcf2b3d73f55f26.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpin_project_lite-4bcf2b3d73f55f26.rmeta",
+      "size": 95122,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libmatchers-0aa8664dd5144ebe.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libmatchers-0aa8664dd5144ebe.rmeta",
+      "size": 51208,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libonce_cell-c23ac6fc3a808bc3.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libonce_cell-c23ac6fc3a808bc3.rmeta",
+      "size": 229089,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libcore-55a8e5b653ad34c7.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcore-55a8e5b653ad34c7.rlib",
+      "size": 60995240,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libserde-41957c3c25cf7ab0.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libserde-41957c3c25cf7ab0.rmeta",
+      "size": 5857583,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_index_macros-5367b345b9227915.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_index_macros-5367b345b9227915.so",
+      "size": 2880128,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libanstyle-4ea6f598d0140aac.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libanstyle-4ea6f598d0140aac.rmeta",
+      "size": 231306,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libpunycode-87e0181151fe6a01.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpunycode-87e0181151fe6a01.rmeta",
+      "size": 6940,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustix-331a8b1447ae382a.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustix-331a8b1447ae382a.rmeta",
+      "size": 4126789,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libtypenum-fde5cead666178d2.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtypenum-fde5cead666178d2.rmeta",
+      "size": 2251140,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libstatic_assertions-c0444ffaa312dd1a.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libstatic_assertions-c0444ffaa312dd1a.rmeta",
+      "size": 50325,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libarrayvec-00ebb7c1f10e463e.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libarrayvec-00ebb7c1f10e463e.rmeta",
+      "size": 332883,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_apfloat-61207414dbcdaf0e.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_apfloat-61207414dbcdaf0e.rmeta",
+      "size": 764404,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_baked_icu_data-4cb1f5796b0ce504.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_baked_icu_data-4cb1f5796b0ce504.rmeta",
+      "size": 84701,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libsha2-4aa78ca9c500bd3e.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libsha2-4aa78ca9c500bd3e.rmeta",
+      "size": 666354,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libparking_lot-82c09e623df278f4.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libparking_lot-82c09e623df278f4.rmeta",
+      "size": 207079,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libcrc32fast-7f34bf20abe640a7.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcrc32fast-7f34bf20abe640a7.rmeta",
+      "size": 48559,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libryu-016ca69fc45f8056.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libryu-016ca69fc45f8056.rmeta",
+      "size": 57481,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libdarling_macro-15e30beee6be0549.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libdarling_macro-15e30beee6be0549.so",
+      "size": 4645592,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libcc-c8942d0723136d79.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcc-c8942d0723136d79.rmeta",
+      "size": 635947,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ty_utils-e03aeb90d8b0a11c.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ty_utils-e03aeb90d8b0a11c.rmeta",
+      "size": 854135,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_target-8570779e1e1b0bef.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_target-8570779e1e1b0bef.rmeta",
+      "size": 5457068,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_fs_util-189e4703eb803f2b.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_fs_util-189e4703eb803f2b.rmeta",
+      "size": 17094,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_lexer-d5202ecc6b409781.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_lexer-d5202ecc6b409781.rmeta",
+      "size": 140143,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libena-433fb2ae61e154ec.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libena-433fb2ae61e154ec.rmeta",
+      "size": 234373,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing_log-172cad3c4ea7d8d4.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing_log-172cad3c4ea7d8d4.rmeta",
+      "size": 72558,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libperf_event_open_sys-b8d399c43d704ce6.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libperf_event_open_sys-b8d399c43d704ce6.rmeta",
+      "size": 482734,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_locale_core-a642767c61c31c21.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_locale_core-a642767c61c31c21.rmeta",
+      "size": 1840541,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libpolonius_engine-1456754c0b42f48e.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpolonius_engine-1456754c0b42f48e.rmeta",
+      "size": 421247,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libtwox_hash-ba438c36e217d095.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtwox_hash-ba438c36e217d095.rmeta",
+      "size": 790651,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libannotate_snippets-ca6c4351f35914e1.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libannotate_snippets-ca6c4351f35914e1.rmeta",
+      "size": 211034,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_collections-16892578da9a199e.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_collections-16892578da9a199e.rmeta",
+      "size": 402024,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_parse_format-3b73f668095b22d0.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_parse_format-3b73f668095b22d0.rmeta",
+      "size": 90472,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libthorin-e2537ebafccd76e4.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libthorin-e2537ebafccd76e4.rmeta",
+      "size": 777013,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libgetopts-1cb301d7a2f7753c.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libgetopts-1cb301d7a2f7753c.rmeta",
+      "size": 170105,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libregex_automata-e1b3c6dad59aef7d.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libregex_automata-e1b3c6dad59aef7d.rmeta",
+      "size": 1158923,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_normalization-73996ffc3e1cc256.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_normalization-73996ffc3e1cc256.rmeta",
+      "size": 1720363,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libsysroot-ff40615e465d7225.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libsysroot-ff40615e465d7225.rlib",
+      "size": 5744,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing-30c6473c30a8104f.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing-30c6473c30a8104f.rmeta",
+      "size": 559736,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_provider-49c2bfa75a3c9471.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_provider-49c2bfa75a3c9471.rmeta",
+      "size": 561793,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libtinyvec_macros-028841ebae183ca7.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtinyvec_macros-028841ebae183ca7.rmeta",
+      "size": 2735,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_stable_hash-12b052eed0ccfcf9.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_stable_hash-12b052eed0ccfcf9.rmeta",
+      "size": 106944,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_demangle-ec6131dc309e0798.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_demangle-ec6131dc309e0798.rmeta",
+      "size": 86643,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libpotential_utf-c0d61044b3312b0f.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpotential_utf-c0d61044b3312b0f.rmeta",
+      "size": 59152,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/liboverload-a9ad6069fff15127.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liboverload-a9ad6069fff15127.rmeta",
+      "size": 26405,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libcfg_if-b34851c60440dc6d.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcfg_if-b34851c60440dc6d.rlib",
+      "size": 9254,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libgeneric_array-dfa093e76e192d8d.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libgeneric_array-dfa093e76e192d8d.rmeta",
+      "size": 1018108,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libregex_syntax-a761bf41f021d1e1.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libregex_syntax-a761bf41f021d1e1.rmeta",
+      "size": 4807127,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_sanitizers-1acaaef6abad1cdc.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_sanitizers-1acaaef6abad1cdc.rmeta",
+      "size": 198854,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_infer-2c8f5c9e697d8da7.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_infer-2c8f5c9e697d8da7.rmeta",
+      "size": 2455165,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libnu_ansi_term-4a73866d9915bf43.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libnu_ansi_term-4a73866d9915bf43.rmeta",
+      "size": 252284,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libcrypto_common-f93188646302abc2.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcrypto_common-f93188646302abc2.rmeta",
+      "size": 31300,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_traits-6f9523e0d80de126.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_traits-6f9523e0d80de126.rmeta",
+      "size": 213627,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_expand-041d186cf0efcc25.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_expand-041d186cf0efcc25.rmeta",
+      "size": 1519544,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libdisplaydoc-1dd561f332011f31.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libdisplaydoc-1dd561f332011f31.so",
+      "size": 3333448,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libstable_deref_trait-897024df80757c15.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libstable_deref_trait-897024df80757c15.rmeta",
+      "size": 15848,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libthread_local-77b502168cdab402.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libthread_local-77b502168cdab402.rmeta",
+      "size": 122766,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerofrom_derive-d25ab6fc8e5de166.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerofrom_derive-d25ab6fc8e5de166.so",
+      "size": 4327104,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libconstant_time_eq-840f0e742432ad68.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libconstant_time_eq-840f0e742432ad68.rmeta",
+      "size": 10137,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libwasmparser-0aba2f3d1a269b9f.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libwasmparser-0aba2f3d1a269b9f.rmeta",
+      "size": 3698099,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libfallible_iterator-87a73bc463db897d.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libfallible_iterator-87a73bc463db897d.rmeta",
+      "size": 502680,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libunwind-54a8e3ed5aa69f08.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunwind-54a8e3ed5aa69f08.rlib",
+      "size": 24518,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hir_typeck-545ed086da57026b.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hir_typeck-545ed086da57026b.rmeta",
+      "size": 4018956,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libnix-6b50e5cd2db0e975.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libnix-6b50e5cd2db0e975.rmeta",
+      "size": 3140254,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_public-7043f13fd04beeb4.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_public-7043f13fd04beeb4.rlib",
+      "size": 6669792,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libdigest-3b654f37d68443eb.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libdigest-3b654f37d68443eb.rmeta",
+      "size": 189138,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libblock_buffer-ecdf36f3af393fd7.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libblock_buffer-ecdf36f3af393fd7.rmeta",
+      "size": 63857,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-4b6d21ccc96c10ae.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-4b6d21ccc96c10ae.rlib",
+      "size": 12952370,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/liballoc-00767fe8d46dd948.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liballoc-00767fe8d46dd948.rlib",
+      "size": 7051692,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libcfg_if-13edfae5a785302d.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcfg_if-13edfae5a785302d.rmeta",
+      "size": 5373,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libaho_corasick-ceb9c3f7efaeba26.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libaho_corasick-ceb9c3f7efaeba26.rmeta",
+      "size": 2044695,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libregex_automata-edae7a6d0bcec96c.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libregex_automata-edae7a6d0bcec96c.rmeta",
+      "size": 4587830,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libbitflags-943f0c30230afefc.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libbitflags-943f0c30230afefc.rmeta",
+      "size": 219055,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerotrie-6d9ca5d18396b752.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerotrie-6d9ca5d18396b752.rmeta",
+      "size": 638306,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libelsa-60eef918477e080f.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libelsa-60eef918477e080f.rmeta",
+      "size": 275933,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_incremental-8a5390dae2eb2a52.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_incremental-8a5390dae2eb2a52.rmeta",
+      "size": 480674,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libderive_setters-7242de9bb1a4149a.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libderive_setters-7242de9bb1a4149a.so",
+      "size": 3575392,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd_detect-455ecb017170ce75.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd_detect-455ecb017170ce75.rlib",
+      "size": 619598,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_demangle-84af6ff87ce5d471.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_demangle-84af6ff87ce5d471.rlib",
+      "size": 341862,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_type_ir-f293ed7b47350516.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_type_ir-f293ed7b47350516.rmeta",
+      "size": 4924839,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libpanic_unwind-b707aba1e33cd9ce.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpanic_unwind-b707aba1e33cd9ce.rlib",
+      "size": 20666,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_builtin_macros-39c62cacabf3d4ac.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_builtin_macros-39c62cacabf3d4ac.rmeta",
+      "size": 1305553,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerovec-c5957030f7b4c894.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerovec-c5957030f7b4c894.rmeta",
+      "size": 2081050,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libderive_where-5db72b8b62f934be.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libderive_where-5db72b8b62f934be.so",
+      "size": 4033528,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_lint_defs-f5267c6cfb809756.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_lint_defs-f5267c6cfb809756.rmeta",
+      "size": 590838,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_attr_parsing-11a8f4904ebf8a8f.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_attr_parsing-11a8f4904ebf8a8f.rmeta",
+      "size": 3415825,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libunic_langid_impl-b8db4daf11a8ed72.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunic_langid_impl-b8db4daf11a8ed72.rmeta",
+      "size": 167208,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/liblibc-dd429daac68fce73.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liblibc-dd429daac68fce73.rlib",
+      "size": 3711786,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libgetopts-c4ac772fd8f5fabb.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libgetopts-c4ac772fd8f5fabb.rlib",
+      "size": 488066,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing_core-121098d1a064e85f.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing_core-121098d1a064e85f.rmeta",
+      "size": 622008,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libthiserror_impl-1c386c4533fff98b.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libthiserror_impl-1c386c4533fff98b.so",
+      "size": 3799104,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_query_impl-8efebeecfa175826.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_query_impl-8efebeecfa175826.rmeta",
+      "size": 8011154,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librand_xoshiro-99fa848002e6d1a9.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librand_xoshiro-99fa848002e6d1a9.rmeta",
+      "size": 329494,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_metadata-29e20910e75602f3.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_metadata-29e20910e75602f3.rmeta",
+      "size": 1912129,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libobject-6176683dd5e5b11f.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libobject-6176683dd5e5b11f.rlib",
+      "size": 8742540,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libcrossbeam_epoch-21ee4d523dcf443c.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcrossbeam_epoch-21ee4d523dcf443c.rmeta",
+      "size": 361953,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libgetrandom-166e5be528333bbf.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libgetrandom-166e5be528333bbf.rmeta",
+      "size": 103422,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_proc_macro-3291728db314da06.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_proc_macro-3291728db314da06.rmeta",
+      "size": 1266669,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerovec_derive-bdd540696038e81f.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerovec_derive-bdd540696038e81f.so",
+      "size": 3736112,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libar_archive_writer-cbd655e3f894cf7e.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libar_archive_writer-cbd655e3f894cf7e.rmeta",
+      "size": 414854,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libproc_macro_hack-60073e5f083a0af0.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libproc_macro_hack-60073e5f083a0af0.so",
+      "size": 805760,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_literal_escaper-492293a489de764f.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_literal_escaper-492293a489de764f.rmeta",
+      "size": 116237,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing_tree-cd610c879bbe3178.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing_tree-cd610c879bbe3178.rmeta",
+      "size": 181183,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_interface-9919ba959cffa4d4.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_interface-9919ba959cffa4d4.rmeta",
+      "size": 623592,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_privacy-5981ad11e0c07772.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_privacy-5981ad11e0c07772.rmeta",
+      "size": 282406,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libref_cast_impl-8d02ae6c5bec2a12.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libref_cast_impl-8d02ae6c5bec2a12.so",
+      "size": 2907656,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libmemchr-d9cb5c7a6c459783.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libmemchr-d9cb5c7a6c459783.rmeta",
+      "size": 1355239,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ast_ir-b567a697e77d9b8a.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ast_ir-b567a697e77d9b8a.rmeta",
+      "size": 105294,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_std-df1f0ccd946b5a72.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_std-df1f0ccd946b5a72.rlib",
+      "size": 10416,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_pattern_analysis-dee4b9e302b4b92a.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_pattern_analysis-dee4b9e302b4b92a.rmeta",
+      "size": 1088663,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libtermize-978438520f71b0cc.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtermize-978438520f71b0cc.rmeta",
+      "size": 8758,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_width-6c01939c1d3ea6fb.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_width-6c01939c1d3ea6fb.rmeta",
+      "size": 860873,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libmeasureme-232ea36c65ff8885.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libmeasureme-232ea36c65ff8885.rmeta",
+      "size": 334787,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libpsm-25b5bbbe290ffc44.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpsm-25b5bbbe290ffc44.rmeta",
+      "size": 24210,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerocopy-940afdec1f5f055d.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerocopy-940afdec1f5f055d.rmeta",
+      "size": 4999623,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_const_eval-d938319c8c6e36c2.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_const_eval-d938319c8c6e36c2.rmeta",
+      "size": 5964315,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libserde_path_to_error-2d911e2a3128c031.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libserde_path_to_error-2d911e2a3128c031.rmeta",
+      "size": 444066,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libobject-00ea738764d0b0a5.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libobject-00ea738764d0b0a5.rmeta",
+      "size": 8572121,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_transmute-f2b58decacaf07b4.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_transmute-f2b58decacaf07b4.rmeta",
+      "size": 346450,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libjobserver-6f2aa14a30a7fbc1.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libjobserver-6f2aa14a30a7fbc1.rmeta",
+      "size": 94982,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libhashbrown-c1845836acb7541f.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libhashbrown-c1845836acb7541f.rmeta",
+      "size": 1421969,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libleb128-e5d0e0f59b563e9b.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libleb128-e5d0e0f59b563e9b.rmeta",
+      "size": 23061,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_error_messages-c94d21cf9df7a174.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_error_messages-c94d21cf9df7a174.rmeta",
+      "size": 201941,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_thread_pool-418e07cb65264aae.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_thread_pool-418e07cb65264aae.rmeta",
+      "size": 626860,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/liblazy_static-dbca0b38586ba242.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liblazy_static-dbca0b38586ba242.rmeta",
+      "size": 20287,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libserde_json-7ce3603ee6fc3686.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libserde_json-7ce3603ee6fc3686.rmeta",
+      "size": 1646012,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_data_structures-8bfb1047fc190139.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_data_structures-8bfb1047fc190139.rmeta",
+      "size": 2895978,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libadler2-02a15075de1c30f5.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libadler2-02a15075de1c30f5.rmeta",
+      "size": 19587,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libschemars_derive-135a5e54f57a455a.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libschemars_derive-135a5e54f57a455a.so",
+      "size": 4715144,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libscopeguard-c72b0ede6116f891.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libscopeguard-c72b0ede6116f891.rmeta",
+      "size": 25597,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hash-72428a1c7806e7b6.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hash-72428a1c7806e7b6.rmeta",
+      "size": 21278,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_mir_build-ffac61dd11cd0dcd.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_mir_build-ffac61dd11cd0dcd.rmeta",
+      "size": 2025177,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_query_system-5ef48487209677be.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_query_system-5ef48487209677be.rmeta",
+      "size": 1437763,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libscoped_tls-7d69d9b5466537c9.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libscoped_tls-7d69d9b5466537c9.rmeta",
+      "size": 14919,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_fluent_macro-fd14730d7e4f5740.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_fluent_macro-fd14730d7e4f5740.so",
+      "size": 2109928,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libeither-b27ae62550250600.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libeither-b27ae62550250600.rmeta",
+      "size": 246198,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hir_id-f60f3e854584a2df.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hir_id-f60f3e854584a2df.rmeta",
+      "size": 72248,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libgimli-0ff3e9bfd54fe094.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libgimli-0ff3e9bfd54fe094.rmeta",
+      "size": 6892583,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_next_trait_solver-b0cfd81d5cf5ea5e.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_next_trait_solver-b0cfd81d5cf5ea5e.rmeta",
+      "size": 2319865,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_core-b2e6b78885378ccd.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_core-b2e6b78885378ccd.rlib",
+      "size": 9186,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libmd5-1e973b83f3a6b8ad.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libmd5-1e973b83f3a6b8ad.rmeta",
+      "size": 81407,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libmemmap2-c1003f6dec906fe3.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libmemmap2-c1003f6dec906fe3.rmeta",
+      "size": 54208,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libthiserror-f4323822d734ea6a.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libthiserror-f4323822d734ea6a.rmeta",
+      "size": 30851,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libtinyvec-12b85c6fbeb6d90d.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtinyvec-12b85c6fbeb6d90d.rmeta",
+      "size": 1720437,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libfoldhash-075d2986cc5eaf4b.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libfoldhash-075d2986cc5eaf4b.rmeta",
+      "size": 96830,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libcrossbeam_deque-30a820fef69d009b.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcrossbeam_deque-30a820fef69d009b.rmeta",
+      "size": 226411,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing_attributes-eb9a8daa446edf3d.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing_attributes-eb9a8daa446edf3d.so",
+      "size": 4135176,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_span-0b3d5b94264d6984.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_span-0b3d5b94264d6984.rmeta",
+      "size": 2453434,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libproc_macro-57e38e62723f815b.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libproc_macro-57e38e62723f815b.rlib",
+      "size": 2777766,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_abi-b836df1e9fe77acb.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_abi-b836df1e9fe77acb.rmeta",
+      "size": 1466209,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libthin_vec-4ae5bc91123a9eec.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libthin_vec-4ae5bc91123a9eec.rmeta",
+      "size": 406306,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_error_codes-8031fae3a36cc57e.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_error_codes-8031fae3a36cc57e.rmeta",
+      "size": 26834,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librand_core-c7ae603229c458b7.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librand_core-c7ae603229c458b7.rmeta",
+      "size": 172879,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_resolve-8956548211ac0315.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_resolve-8956548211ac0315.rmeta",
+      "size": 2579457,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libmemchr-0b5080f1f25fafd9.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libmemchr-0b5080f1f25fafd9.rlib",
+      "size": 1485162,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_borrowck-3e4a521e645c84d8.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_borrowck-3e4a521e645c84d8.rmeta",
+      "size": 4201037,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libdyn_clone-c7cccf66ef46147b.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libdyn_clone-c7cccf66ef46147b.rmeta",
+      "size": 35536,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libcompiler_builtins-09abfc8770ca5ce6.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcompiler_builtins-09abfc8770ca5ce6.rlib",
+      "size": 3358572,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_log-cf0dd721fd5edc45.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_log-cf0dd721fd5edc45.rmeta",
+      "size": 47141,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_macros-598b766cf4250d8a.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_macros-598b766cf4250d8a.so",
+      "size": 5062848,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/liblitemap-b96ddbb7b6a132dd.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liblitemap-b96ddbb7b6a132dd.rmeta",
+      "size": 329566,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libunic_langid_macros_impl-d786ea7193a79e4c.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunic_langid_macros_impl-d786ea7193a79e4c.so",
+      "size": 1386128,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libyoke_derive-07623f63f5ac9304.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libyoke_derive-07623f63f5ac9304.so",
+      "size": 3929328,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ast_pretty-ac33a4f2dc1f1756.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ast_pretty-ac33a4f2dc1f1756.rmeta",
+      "size": 356208,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libsmallvec-09636c9128556a3e.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libsmallvec-09636c9128556a3e.rmeta",
+      "size": 247114,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libitoa-501c8af8f9488620.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libitoa-501c8af8f9488620.rmeta",
+      "size": 87160,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librand_chacha-4571a9160c1a455d.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librand_chacha-4571a9160c1a455d.rmeta",
+      "size": 157018,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libminiz_oxide-07986d2065f237e7.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libminiz_oxide-07986d2065f237e7.rlib",
+      "size": 219206,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicase-39c1bdf3929c5b42.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicase-39c1bdf3929c5b42.rmeta",
+      "size": 119757,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ast_passes-38925ed5518b90b1.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ast_passes-38925ed5518b90b1.rmeta",
+      "size": 596835,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libunic_langid-adb05b0677927a0f.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunic_langid-adb05b0677927a0f.rmeta",
+      "size": 9510,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_codegen_ssa-fb2f63c2f7f33c4d.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_codegen_ssa-fb2f63c2f7f33c4d.rmeta",
+      "size": 4744155,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/liballocator_api2-4bb424b5ac182239.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liballocator_api2-4bb424b5ac182239.rmeta",
+      "size": 800612,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_graphviz-5518977f718bd17e.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_graphviz-5518977f718bd17e.rmeta",
+      "size": 123000,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_arena-14688ccf5262036a.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_arena-14688ccf5262036a.rmeta",
+      "size": 84945,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_feature-a88309f8f95d73cb.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_feature-a88309f8f95d73cb.rmeta",
+      "size": 334496,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libpulldown_cmark-a23f8c0bf84cba5a.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpulldown_cmark-a23f8c0bf84cba5a.rmeta",
+      "size": 1613059,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_alloc-7e20c7fbd9a00d05.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_alloc-7e20c7fbd9a00d05.rlib",
+      "size": 5700,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libtempfile-68975559f451d42a.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtempfile-68975559f451d42a.rmeta",
+      "size": 259634,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_script-56c94301c0ed2621.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_script-56c94301c0ed2621.rmeta",
+      "size": 644818,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libyoke-bdf06c7dd4f76522.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libyoke-bdf06c7dd4f76522.rmeta",
+      "size": 254724,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libtinystr-bf0f3b4554f9a309.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtinystr-bf0f3b4554f9a309.rmeta",
+      "size": 352159,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libparking_lot_core-03f6187db34f5aff.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libparking_lot_core-03f6187db34f5aff.rmeta",
+      "size": 191191,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libsharded_slab-ec88fa0cdd9d9d7c.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libsharded_slab-ec88fa0cdd9d9d7c.rmeta",
+      "size": 1099870,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_index-2a577f037f6f5016.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_index-2a577f037f6f5016.rmeta",
+      "size": 664417,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libgsgdt-46cab321b2329f8c.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libgsgdt-46cab321b2329f8c.rmeta",
+      "size": 313036,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libfluent_syntax-54731bdbb79fe91f.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libfluent_syntax-54731bdbb79fe91f.rmeta",
+      "size": 501152,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_lint-3404d81b38a6e653.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_lint-3404d81b38a6e653.rmeta",
+      "size": 3935433,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libodht-f1ed371a2106a374.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libodht-f1ed371a2106a374.rmeta",
+      "size": 295658,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libpulldown_cmark_escape-9b4ba189d587f611.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpulldown_cmark_escape-9b4ba189d587f611.rmeta",
+      "size": 37314,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libregex-a321f074a3cebdc4.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libregex-a321f074a3cebdc4.rmeta",
+      "size": 754805,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/liblibloading-adb3ae119435a648.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liblibloading-adb3ae119435a648.rmeta",
+      "size": 149580,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libequivalent-7c86eff7db3abc37.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libequivalent-7c86eff7db3abc37.rmeta",
+      "size": 8096,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libstacker-d621628707b3a674.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libstacker-d621628707b3a674.rmeta",
+      "size": 19863,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_middle-5cc1c024d233d15d.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_middle-5cc1c024d233d15d.rmeta",
+      "size": 25844022,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libitertools-eae26805a57b74a0.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libitertools-eae26805a57b74a0.rmeta",
+      "size": 2952274,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libruzstd-f0f60dc0fb414f90.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libruzstd-f0f60dc0fb414f90.rmeta",
+      "size": 513623,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_trait_selection-7ff92ded43ad7de2.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_trait_selection-7ff92ded43ad7de2.rmeta",
+      "size": 5915534,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_type_ir_macros-e0918ad8fb5bded1.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_type_ir_macros-e0918ad8fb5bded1.so",
+      "size": 3867504,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-4b6d21ccc96c10ae.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-4b6d21ccc96c10ae.so",
+      "size": 10192352,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_list-d1b2848e662d2624.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_list-d1b2848e662d2624.rmeta",
+      "size": 190480,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/liblinux_raw_sys-2b8a86d9ae5d50c1.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liblinux_raw_sys-2b8a86d9ae5d50c1.rmeta",
+      "size": 1646826,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libminiz_oxide-5acd96078472363a.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libminiz_oxide-5acd96078472363a.rmeta",
+      "size": 403161,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerofrom-9b8d632514ce0293.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerofrom-9b8d632514ce0293.rmeta",
+      "size": 91855,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libref_cast-4b72be474929b934.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libref_cast-4b72be474929b934.rmeta",
+      "size": 28695,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libjiff-54a47e123a288f7b.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libjiff-54a47e123a288f7b.rmeta",
+      "size": 7908126,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libobject-013a2c5ad428bde3.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libobject-013a2c5ad428bde3.rmeta",
+      "size": 9206264,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libtype_map-8e60acfc8ee16ca6.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtype_map-8e60acfc8ee16ca6.rmeta",
+      "size": 131634,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libintl_pluralrules-8ba0ff93d960df7e.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libintl_pluralrules-8ba0ff93d960df7e.rmeta",
+      "size": 444616,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libfluent_langneg-08ae19c80f9e6f42.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libfluent_langneg-08ae19c80f9e6f42.rmeta",
+      "size": 45114,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ast-e6d617b3d7999683.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ast-e6d617b3d7999683.rmeta",
+      "size": 5270656,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libbstr-3cfed752391e87ab.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libbstr-3cfed752391e87ab.rmeta",
+      "size": 1740832,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_errors-fa99bbd5b8e754d6.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_errors-fa99bbd5b8e754d6.rmeta",
+      "size": 2100264,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libindexmap-67a4c6eb48edc189.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libindexmap-67a4c6eb48edc189.rmeta",
+      "size": 1603087,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librand-c4d0abd529e2e24c.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librand-c4d0abd529e2e24c.rmeta",
+      "size": 1139079,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_mir_transform-d33a432b0aca4929.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_mir_transform-d33a432b0aca4929.rmeta",
+      "size": 3282694,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_symbol_mangling-09cdb5d028cecb70.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_symbol_mangling-09cdb5d028cecb70.rmeta",
+      "size": 224990,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hir_pretty-32adf2363f4e5580.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hir_pretty-32adf2363f4e5580.rmeta",
+      "size": 120982,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libhashbrown-a2957026f51dea3a.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libhashbrown-a2957026f51dea3a.rlib",
+      "size": 1449796,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libppv_lite86-9e501a554aff7585.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libppv_lite86-9e501a554aff7585.rmeta",
+      "size": 1158090,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libfluent_bundle-6882a2d05f91a7ef.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libfluent_bundle-6882a2d05f91a7ef.rmeta",
+      "size": 547579,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_security-813a80eefeb71fbf.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_security-813a80eefeb71fbf.rmeta",
+      "size": 1824305,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_codegen_llvm-d7a44e777d7a6f69.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_codegen_llvm-d7a44e777d7a6f69.rmeta",
+      "size": 2945959,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hashes-98f77ba6b4d0f4c2.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hashes-98f77ba6b4d0f4c2.rmeta",
+      "size": 22175,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libtermcolor-e11dc7db2c79fe6d.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtermcolor-e11dc7db2c79fe6d.rmeta",
+      "size": 290754,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libcpufeatures-3f7750ef3eca0448.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcpufeatures-3f7750ef3eca0448.rmeta",
+      "size": 39022,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_llvm-89d8c4363947be50.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_llvm-89d8c4363947be50.rmeta",
+      "size": 34961,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libctrlc-56f5071e0d75222f.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libctrlc-56f5071e0d75222f.rmeta",
+      "size": 46977,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/liblog-1b285332b9c607bf.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liblog-1b285332b9c607bf.rmeta",
+      "size": 216557,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libregex_syntax-a8915bd7fc83150f.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libregex_syntax-a8915bd7fc83150f.rmeta",
+      "size": 4371623,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librand_core-a9191fcb019858ed.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librand_core-a9191fcb019858ed.rmeta",
+      "size": 150138,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-97560f7d81dee195.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-97560f7d81dee195.rlib",
+      "size": 4051788,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libintl_memoizer-96d8aa87ae9b5d33.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libintl_memoizer-96d8aa87ae9b5d33.rmeta",
+      "size": 44181,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_literal_escaper-be774a2df3a1d717.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_literal_escaper-be774a2df3a1d717.rlib",
+      "size": 128724,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libarrayref-c106816d262e09df.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libarrayref-c106816d262e09df.rmeta",
+      "size": 16876,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libschemars-157418b55da681a7.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libschemars-157418b55da681a7.rmeta",
+      "size": 1520137,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libpathdiff-aa764e7846070598.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpathdiff-aa764e7846070598.rmeta",
+      "size": 13493,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libself_cell-ba65aae61e3eb99d.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libself_cell-ba65aae61e3eb99d.rmeta",
+      "size": 71651,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_public_bridge-02743f9bb12e0f93.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_public_bridge-02743f9bb12e0f93.rlib",
+      "size": 2263148,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libshlex-d363fe8d72e494ae.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libshlex-d363fe8d72e494ae.rmeta",
+      "size": 56639,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libsha1-491df9b97b2b97bd.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libsha1-491df9b97b2b97bd.rmeta",
+      "size": 347000,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_locale-5778aa0776f4f4ac.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_locale-5778aa0776f4f4ac.rmeta",
+      "size": 1216907,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libserde_derive-381ef738aab835bf.so",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libserde_derive-381ef738aab835bf.so",
+      "size": 4738496,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libnu_ansi_term-d887b35f2c9cc08b.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libnu_ansi_term-d887b35f2c9cc08b.rmeta",
+      "size": 231885,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librand_chacha-7fd7e94cc7e2a0a0.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librand_chacha-7fd7e94cc7e2a0a0.rmeta",
+      "size": 161715,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libwriteable-b52d05db9c5bcdcb.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libwriteable-b52d05db9c5bcdcb.rmeta",
+      "size": 265571,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_monomorphize-0a0c3762374507d4.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_monomorphize-0a0c3762374507d4.rmeta",
+      "size": 408813,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_serialize-ddfa7dd6924e18a1.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_serialize-ddfa7dd6924e18a1.rmeta",
+      "size": 425965,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_xid-6dc6c0e55d2f46d7.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_xid-6dc6c0e55d2f46d7.rmeta",
+      "size": 22938,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libunic_langid_macros-1b7f1554a7729fd7.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunic_langid_macros-1b7f1554a7729fd7.rmeta",
+      "size": 13047,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hir-35224909ff02dc1a.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hir-35224909ff02dc1a.rmeta",
+      "size": 4171106,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ast_lowering-768b00b68972abb4.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ast_lowering-768b00b68972abb4.rmeta",
+      "size": 924593,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libgimli-39163de75a9d2f3c.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libgimli-39163de75a9d2f3c.rlib",
+      "size": 6044900,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_parse-dd33f84c81c0cd4c.rmeta",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_parse-dd33f84c81c0cd4c.rmeta",
+      "size": 3372567,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libadler2-d6d502d43edb4821.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libadler2-d6d502d43edb4821.rlib",
+      "size": 28814,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/lib/libaddr2line-0511f9217f762616.rlib",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libaddr2line-0511f9217f762616.rlib",
+      "size": 473238,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin",
+      "size": 0,
+      "type": "5",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/llc",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llc",
+      "size": 145376536,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-dis",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-dis",
+      "size": 3931720,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-nm",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-nm",
+      "size": 46938384,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-objcopy",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-objcopy",
+      "size": 6706224,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-objdump",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-objdump",
+      "size": 38612656,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld",
+      "size": 0,
+      "type": "5",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld/wasm-ld",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld/wasm-ld",
+      "size": 422784,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld/ld.lld",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld/ld.lld",
+      "size": 0,
+      "type": "1",
+      "linkname": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld/wasm-ld"
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld/ld64.lld",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld/ld64.lld",
+      "size": 0,
+      "type": "1",
+      "linkname": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld/wasm-ld"
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld/lld-link",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld/lld-link",
+      "size": 0,
+      "type": "1",
+      "linkname": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld/wasm-ld"
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-profdata",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-profdata",
+      "size": 8541680,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/rust-objcopy",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/rust-objcopy",
+      "size": 0,
+      "type": "1",
+      "linkname": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-objcopy"
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-as",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-as",
+      "size": 5491248,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-ar",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-ar",
+      "size": 45531288,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-cov",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-cov",
+      "size": 6915576,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-strip",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-strip",
+      "size": 0,
+      "type": "1",
+      "linkname": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-objcopy"
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/rust-lld",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/rust-lld",
+      "size": 153790072,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-size",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-size",
+      "size": 5602744,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-readobj",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-readobj",
+      "size": 10001552,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-link",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-link",
+      "size": 6395472,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/opt",
+      "normalized_name": "lib/rustlib/x86_64-unknown-linux-gnu/bin/opt",
+      "size": 148650768,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./bin",
+      "normalized_name": "bin",
+      "size": 0,
+      "type": "5",
+      "linkname": ""
+    },
+    {
+      "name": "./bin/rustc",
+      "normalized_name": "bin/rustc",
+      "size": 6984,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./bin/cargo-clippy",
+      "normalized_name": "bin/cargo-clippy",
+      "size": 1872544,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./bin/lld-wrapper",
+      "normalized_name": "bin/lld-wrapper",
+      "size": 0,
+      "type": "1",
+      "linkname": "./lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld/wasm-ld"
+    },
+    {
+      "name": "./bin/rustdoc_tool_binary",
+      "normalized_name": "bin/rustdoc_tool_binary",
+      "size": 16619640,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./bin/.strip-rustdoc_tool_binary-stamp",
+      "normalized_name": "bin/.strip-rustdoc_tool_binary-stamp",
+      "size": 19,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./bin/clippy-driver",
+      "normalized_name": "bin/clippy-driver",
+      "size": 18235872,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./bin/cargo",
+      "normalized_name": "bin/cargo",
+      "size": 46542256,
+      "type": "0",
+      "linkname": ""
+    },
+    {
+      "name": "./bin/rustfmt",
+      "normalized_name": "bin/rustfmt",
+      "size": 8516496,
+      "type": "0",
+      "linkname": ""
+    }
+  ]
+}

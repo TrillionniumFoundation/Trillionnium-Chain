@@ -1,0 +1,273 @@
+{
+  "id": 13093520419,
+  "name": "head",
+  "sha256": "9b62f0ed279bd90219cc11a7c1e98ef45a87d4e759c84c51f06d3133c8cfaf68",
+  "size": 5092958,
+  "members": [
+    {
+      "path": "fresh-service/build.log",
+      "size": 106130,
+      "crc32": 1277110804
+    },
+    {
+      "path": "fresh-service/fresh/baseline/independent-client/owner.lock",
+      "size": 0,
+      "crc32": 0
+    },
+    {
+      "path": "fresh-service/fresh/baseline/receiver/native.sqlite",
+      "size": 499712,
+      "crc32": 3752630567
+    },
+    {
+      "path": "fresh-service/fresh/baseline/independent-client/native.sqlite",
+      "size": 499712,
+      "crc32": 1581979833
+    },
+    {
+      "path": "fresh-service/fresh/baseline/receiver/owner.lock",
+      "size": 0,
+      "crc32": 0
+    },
+    {
+      "path": "fresh-service/fresh/pressure/independent-client/native.sqlite",
+      "size": 245760,
+      "crc32": 3643880431
+    },
+    {
+      "path": "fresh-service/fresh/pressure/independent-client/owner.lock",
+      "size": 0,
+      "crc32": 0
+    },
+    {
+      "path": "fresh-service/fresh/pressure/receiver/native.sqlite",
+      "size": 499712,
+      "crc32": 3752630567
+    },
+    {
+      "path": "fresh-service/fresh/pressure/receiver/owner.lock",
+      "size": 0,
+      "crc32": 0
+    },
+    {
+      "path": "fresh-service/fresh/producer/native.sqlite",
+      "size": 499712,
+      "crc32": 3407097486
+    },
+    {
+      "path": "fresh-service/fresh/producer/owner.lock",
+      "size": 0,
+      "crc32": 0
+    },
+    {
+      "path": "fresh-service/fresh/report.json",
+      "size": 4549758,
+      "crc32": 3173607917
+    },
+    {
+      "path": "fresh-service/fresh.log",
+      "size": 914,
+      "crc32": 3882964447
+    },
+    {
+      "path": "fresh-service/manifest.json",
+      "size": 8092,
+      "crc32": 1598430228
+    },
+    {
+      "path": "fresh-service/original/baseline/independent-client/native.sqlite",
+      "size": 499712,
+      "crc32": 1581979833
+    },
+    {
+      "path": "fresh-service/original/baseline/independent-client/owner.lock",
+      "size": 0,
+      "crc32": 0
+    },
+    {
+      "path": "fresh-service/original/baseline/receiver/native.sqlite",
+      "size": 499712,
+      "crc32": 3752630567
+    },
+    {
+      "path": "fresh-service/original/baseline/receiver/owner.lock",
+      "size": 0,
+      "crc32": 0
+    },
+    {
+      "path": "fresh-service/original/pressure/independent-client/native.sqlite",
+      "size": 294912,
+      "crc32": 2860028373
+    },
+    {
+      "path": "fresh-service/original/pressure/independent-client/owner.lock",
+      "size": 0,
+      "crc32": 0
+    },
+    {
+      "path": "fresh-service/original/pressure/receiver/native.sqlite",
+      "size": 499712,
+      "crc32": 3752630567
+    },
+    {
+      "path": "fresh-service/original/pressure/receiver/owner.lock",
+      "size": 0,
+      "crc32": 0
+    },
+    {
+      "path": "fresh-service/original/producer/native.sqlite",
+      "size": 499712,
+      "crc32": 3407097486
+    },
+    {
+      "path": "fresh-service/original/producer/owner.lock",
+      "size": 0,
+      "crc32": 0
+    },
+    {
+      "path": "fresh-service/original/report.json",
+      "size": 5734429,
+      "crc32": 3544029257
+    },
+    {
+      "path": "fresh-service/original.log",
+      "size": 420,
+      "crc32": 3366715287
+    },
+    {
+      "path": "fresh-service/public_v3_from_zero",
+      "size": 10566784,
+      "crc32": 1733054578
+    },
+    {
+      "path": "fresh-service-controls.log",
+      "size": 111,
+      "crc32": 1617500161
+    },
+    {
+      "path": "fresh-service-host/actual-systemd-parent.log",
+      "size": 200,
+      "crc32": 3011331718
+    },
+    {
+      "path": "fresh-service-host/after-provision.json",
+      "size": 1634,
+      "crc32": 1467158867
+    },
+    {
+      "path": "fresh-service-host/before-provision.json",
+      "size": 2801,
+      "crc32": 2973239635
+    },
+    {
+      "path": "fresh-service-host/child-final-load-state.log",
+      "size": 10,
+      "crc32": 321726484
+    },
+    {
+      "path": "fresh-service-host/child-load-state.log",
+      "size": 10,
+      "crc32": 321726484
+    },
+    {
+      "path": "fresh-service-host/controller-result.json",
+      "size": 4222,
+      "crc32": 1841092633
+    },
+    {
+      "path": "fresh-service-host/inside-after.json",
+      "size": 1710,
+      "crc32": 2546302663
+    },
+    {
+      "path": "fresh-service-host/child-result.json",
+      "size": 353,
+      "crc32": 4132391591
+    },
+    {
+      "path": "fresh-service-host/inside-before.json",
+      "size": 1698,
+      "crc32": 1846968623
+    },
+    {
+      "path": "fresh-service-host/install-reviewed-unit.log",
+      "size": 0,
+      "crc32": 0
+    },
+    {
+      "path": "fresh-service-host/outside-after.json",
+      "size": 1666,
+      "crc32": 2812908230
+    },
+    {
+      "path": "fresh-service-host/parent-properties.log",
+      "size": 146,
+      "crc32": 4046598973
+    },
+    {
+      "path": "fresh-service-host/prepare-build/process.json",
+      "size": 920,
+      "crc32": 1591950845
+    },
+    {
+      "path": "fresh-service-host/prepare-build/stderr",
+      "size": 7011,
+      "crc32": 903798637
+    },
+    {
+      "path": "fresh-service-host/prepare-build/stdout",
+      "size": 106186,
+      "crc32": 1733784861
+    },
+    {
+      "path": "fresh-service-host/prepare-build.json",
+      "size": 3401,
+      "crc32": 2778758855
+    },
+    {
+      "path": "fresh-service-host/start-fixed-parent.log",
+      "size": 0,
+      "crc32": 0
+    },
+    {
+      "path": "fresh-service-host/systemd-reload.log",
+      "size": 0,
+      "crc32": 0
+    },
+    {
+      "path": "fresh-service-host/systemd-run.log",
+      "size": 585,
+      "crc32": 423375277
+    },
+    {
+      "path": "fresh-service-host/unprovisioned-parent.json",
+      "size": 229,
+      "crc32": 2035026314
+    },
+    {
+      "path": "original-host-controls.log",
+      "size": 119,
+      "crc32": 4216644453
+    },
+    {
+      "path": "original-native-controls.log",
+      "size": 12948,
+      "crc32": 1049773208
+    },
+    {
+      "path": "preflight.log",
+      "size": 133,
+      "crc32": 1692302564
+    },
+    {
+      "path": "source-after.json",
+      "size": 421,
+      "crc32": 3703831469
+    },
+    {
+      "path": "source-before.json",
+      "size": 421,
+      "crc32": 3703831469
+    }
+  ]
+}

@@ -1,0 +1,481 @@
+{
+  "schema": "trnm-final819-range-v3-authoritative-job-receipts",
+  "only_one_live_gh_range_retrieval_invocation": true,
+  "cli_normal_redirect_handling_not_independently_counted_as_wire_hops": true,
+  "all_original_ci_and_native_execution_unchanged": true,
+  "original_v1_v2_and_core14_unchanged": true,
+  "original_pure_wrapper_sha256": "d6de643b9440731fc23272f3c5f81fccdcfa62f6d8d57e1729540b715fc8d2ca",
+  "preparation_controls_scope": "12 synthetic response-parser refusal controls; no GitHub/native results inferred",
+  "package_command": [
+    "/usr/bin/python3",
+    "/home/qian-qi/throughput-final-ci-observation-20261107/build_w1_range_v3_package.py"
+  ],
+  "records": {
+    "final819_w1_range_v3_cli_prep_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "-"
+        ],
+        "created_unix_ms": 1794085657422,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b7d69b4e-12894-c78",
+        "idempotency_key": "acceptance-final819-range-v3-cli-readiness-no-network",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b7d69b4e-12894-c78",
+        "request_digest": "ffc07287688ad9ddcbee81b5818acea7918635346406ffebbe28a71af928ad8d",
+        "request_fingerprint": 18428855601100150000,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b7d69b4e-12894-c78"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b7d69b4e-12894-c78"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_w1_v2_final_cliRead": {
+      "audit_recorded": true,
+      "job_id": "1a1b7d69b4e-12894-c78",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 563,
+        "offset": 0,
+        "size": 563,
+        "text": "{\"name\": \"gh-api-help\", \"exit_code\": 0, \"stdout_bytes\": 5856, \"stdout_sha256\": \"ac14534b0dab56ddba00994c50a5cc1e13ceceb8ef7f4b8a439f6c4990567063\", \"relevant_lines\": [\"  -H, --header key:value      Add a HTTP request header in key:value format\", \"  -i, --include               Include HTTP response status line and headers in the output\"]}\n{\"name\": \"gh-version\", \"exit_code\": 0, \"stdout_bytes\": 104, \"stdout_sha256\": \"bea5e34b2e2a652e5952756f8757bee261c2175fab4c90de801c56503c5edbac\", \"relevant_lines\": [\"gh version 2.45.0 (2025-07-18 Ubuntu 2.45.0-1ubuntu0.3)\"]}\n"
+      }
+    },
+    "final819_w1_range_v3_prep_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "-"
+        ],
+        "created_unix_ms": 1794085884340,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b7da11b4-12894-c8a",
+        "idempotency_key": "acceptance-final819-prepare-range-v3-strict-reader-controls",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b7da11b4-12894-c8a",
+        "request_digest": "b713fabf49580505279f0bd9b10016d5ae3782e1f41240b7bca1066b039211c9",
+        "request_fingerprint": 13192163432974518000,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b7da11b4-12894-c8a"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b7da11b4-12894-c8a"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_w1_v3_rangePrepRead": {
+      "audit_recorded": true,
+      "job_id": "1a1b7da11b4-12894-c8a",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 446,
+        "offset": 0,
+        "size": 446,
+        "text": "{\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/read_w1_range_v3_819.py\", \"bytes\": 9977, \"sha256\": \"cb675b382fa570d1a419378b12c2bfadf64913b391ca6767338c0b5c360fdc4e\"}\n{\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/test_range_v3_response_controls.py\", \"bytes\": 2392, \"sha256\": \"56bcc1d2d4e0098466640d32b0c3519dc71d43067764ebf232581b052fb1e8e0\"}\n{\"parser_controls_exit_code\": 0, \"real_range_get_executed\": false}\n"
+      }
+    },
+    "final819_w1_v3_rangePrepStatus": {
+      "at_unix_ms": 1794085886202,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b7da11b4-12894-c8a",
+      "launch_nonce": "2af011d0725062e0d2026238640f2997",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 446,
+          "stored": 446
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "final819_w1_range_v3_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "-"
+        ],
+        "created_unix_ms": 1794086027864,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b7dc4258-12894-c91",
+        "idempotency_key": "acceptance-final819-one-authorized-120s-4mib-range-v3",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b7dc4258-12894-c91",
+        "request_digest": "8a2cd352437f66e70b6b840dd998f0ebaa6d9f7523a5882faf42c60bfdcc123d",
+        "request_fingerprint": 9956565226482526000,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b7dc4258-12894-c91"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b7dc4258-12894-c91"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_w1_range_v3_first_read": {
+      "audit_recorded": true,
+      "job_id": "1a1b7dc4258-12894-c91",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 1333,
+        "offset": 0,
+        "size": 1333,
+        "text": "{\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/read_w1_range_v3_819_b.py\", \"bytes\": 10251, \"sha256\": \"6940ee045dc0022bf7a50f422402daf2dcffb2c4adf69ad9111586e18b0ed04c\"}\n{\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/test_range_v3_response_controls_b.py\", \"bytes\": 2394, \"sha256\": \"54ca592965600d54d24362f0b8e3a95c03466b8a36aa5806c1b42aa5e41a98f8\"}\n{\"parser_controls_exit_code\": 0, \"parser_controls\": 12, \"same_original_pure_reader_unchanged\": true, \"launching_only_authorized_range_get\": true}\n{\"directory\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3\", \"completed\": true, \"errors\": [], \"http\": {\"status_line\": \"HTTP/1.1 206 Partial Content\", \"status\": 206, \"headers\": {\"content-length\": \"3208816\", \"content-range\": \"bytes 170967040-174175855/174175856\", \"content-type\": \"application/zip\"}, \"raw_headers_sha256\": \"9e56b291ec966878afb55f7f0b9fbe64cc1cc9695caec10b797b8ec3bca47310\", \"raw_header_bytes\": 1159}, \"body_bytes\": 3208816, \"assembled_archive\": {\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3/13586509176/artifact.zip\", \"bytes\": 174175856, \"sha256\": \"d5e6720c1070b1772107be2d316aea6d27dfdf8dd68535103650730138e9bf38\", \"complete_github_size_digest_matched\": true, \"original_partial_unchanged\": true, \"body_was_only_original_tail\": true}}\n"
+      }
+    },
+    "final819_w1_v3_rangeStatus": {
+      "at_unix_ms": 1794086044874,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b7dc4258-12894-c91",
+      "launch_nonce": "810f3e46d021cff18fa9b17457a4fadd",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 1333,
+          "stored": 1333
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "final819_w1_range_v3_validate_prep_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "-"
+        ],
+        "created_unix_ms": 1794086161962,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b7de4e2a-12894-c99",
+        "idempotency_key": "acceptance-final819-prepare-network-free-range-original-validation",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b7de4e2a-12894-c99",
+        "request_digest": "00725f10006bfee50dcd0ae088dbe6de0331a246f019899cb6d32fafc6371b50",
+        "request_fingerprint": 32192669676207844,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b7de4e2a-12894-c99"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b7de4e2a-12894-c99"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_w1_v3_validatorPrepStatus": {
+      "at_unix_ms": 1794086163853,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b7de4e2a-12894-c99",
+      "launch_nonce": "f87dc7eab274d69092f1f0b80d4cf996",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 232,
+          "stored": 232
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "final819_w1_v3_validatorPrepRead": {
+      "audit_recorded": true,
+      "job_id": "1a1b7de4e2a-12894-c99",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 232,
+        "offset": 0,
+        "size": 232,
+        "text": "{\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/validate_range_v3_original_w1.py\", \"bytes\": 7737, \"sha256\": \"2ea6155945f2673ca998e3e90d8032857edb465f1bf06e2c66824a92af3a3c08\", \"network_calls\": 0, \"native_calls\": 0}\n"
+      }
+    },
+    "final819_w1_range_v3_validation_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "/home/qian-qi/throughput-final-ci-observation-20261107/validate_range_v3_original_w1.py"
+        ],
+        "created_unix_ms": 1794086217480,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b7df2708-12894-c9b",
+        "idempotency_key": "acceptance-final819-once-validate-complete-range-original-artifact",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b7df2708-12894-c9b",
+        "request_digest": "970e1700eba671c49d2c7cf1111c9af3fc4a2e0074ae3a115e92538280927170",
+        "request_fingerprint": 10884662642122060000,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b7df2708-12894-c9b"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b7df2708-12894-c9b"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_w1_range_v3_validation_read1": {
+      "audit_recorded": true,
+      "job_id": "1a1b7df2708-12894-c9b",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 133,
+        "offset": 0,
+        "size": 133,
+        "text": "{\"artifact_id\": 13586509176, \"source_archive_manifest_status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": []}\n"
+      }
+    },
+    "final819_w1_range_v3_final_read": {
+      "audit_recorded": true,
+      "job_id": "1a1b7df2708-12894-c9b",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 924,
+        "offset": 133,
+        "size": 924,
+        "text": "{\"schema\": \"trnm-final819-range-v3-original-pure-reader\", \"command\": [\"/usr/bin/python3\", \"/home/qian-qi/throughput-final-ci-observation-20261107/read_w1_pure_records_819_v2.py\", \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3/13586509176\"], \"original_wrapper_sha256\": \"d6de643b9440731fc23272f3c5f81fccdcfa62f6d8d57e1729540b715fc8d2ca\", \"observer_timeout_seconds\": 240, \"source_or_ci_or_native_recreated\": false, \"exit_code\": 0, \"timed_out\": false, \"complete_component_readback\": true, \"native_campaign_commands\": 30, \"errors\": [], \"business_qualification\": false, \"stdout\": {\"bytes\": 166, \"sha256\": \"46c5d7d3220114478c22d706e8efbe3ef1f67611bbca8517e4e387f5a5e0e01d\"}, \"stderr\": {\"bytes\": 0, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"}}\n"
+      }
+    },
+    "final819_w1_range_v3_final_status": {
+      "at_unix_ms": 1794086335958,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b7df2708-12894-c9b",
+      "launch_nonce": "d9eb4917d192c87b4afd785dac510614",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 924,
+          "stored": 924
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "final819_w1_range_v3_package_prep_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "-"
+        ],
+        "created_unix_ms": 1794086434695,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b7e27787-12894-ca3",
+        "idempotency_key": "acceptance-final819-prepare-fixed-range-v3-final-package",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b7e27787-12894-ca3",
+        "request_digest": "afecea0de2294cd4b9a48eff4619f5271b89209bbbb1e07e471e288079b118fc",
+        "request_fingerprint": 12676764396490936000,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b7e27787-12894-ca3"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b7e27787-12894-ca3"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_w1_range_v3_final_builderPrep": {
+      "audit_recorded": true,
+      "job_id": "1a1b7e27787-12894-ca3",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 190,
+        "offset": 0,
+        "size": 190,
+        "text": "{\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/build_w1_range_v3_package.py\", \"bytes\": 11433, \"sha256\": \"2282b8d2f3a3c2d98db016e74f893c9f11d42e3811d1d08fefa45fd1082aeeba\"}\n"
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "annotations_count": 2,
+  "base": "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+  "check_output": {
+    "annotations_count": 2,
+    "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128580281336/annotations",
+    "summary": null,
+    "text": null,
+    "title": null
+  },
+  "check_run_conclusion": "failure",
+  "check_run_id": 128580281336,
+  "ci_rerun_cancel_or_write_performed": false,
+  "event": "pull_request",
+  "failed_steps": [
+    {
+      "completed_at": "2026-11-08T00:45:35Z",
+      "conclusion": "failure",
+      "name": "Retrieve exact historical failed artifact without reclassifying it",
+      "number": 2,
+      "started_at": "2026-11-08T00:45:35Z",
+      "status": "completed"
+    }
+  ],
+  "head": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "job_conclusion": "failure",
+  "job_id": 128580281336,
+  "job_log_fetch_exit": 0,
+  "job_name": "retained-pressure-failure",
+  "job_status": "completed",
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209882/job/128580281336",
+  "repository_modified": false,
+  "run_attempt": 1,
+  "run_conclusion": null,
+  "run_id": 42431209882,
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209882",
+  "schema": "pr784-retained-failure-readonly-review-v1",
+  "workflow_diff_empty": true,
+  "workflow_head_read_exit": 0,
+  "workflow_path": ".github/workflows/pon-priority-acceptance.yml"
+}

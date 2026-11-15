@@ -1,0 +1,87 @@
+{
+  "schema": "pon-six-axis-local-measurement-plan-v1",
+  "registered_before_measurement": true,
+  "scope": "local development observations only; original fixed-host acceptance unchanged",
+  "parser_component": {
+    "test": "account_archive_prototype::account_prefix_tests::prefix_range_component_cost_abba",
+    "candidate_source_sha256": "346ab49e53d8c78a6d98298abf1f98d5501350a9124960276006840678d6bd95",
+    "baseline": "exact independent pre-range parser in the test, including matching test-only observation guard",
+    "cohorts_account_rows_working_rows": [
+      [
+        8,
+        0
+      ],
+      [
+        8,
+        64
+      ],
+      [
+        8,
+        4096
+      ],
+      [
+        8,
+        65528
+      ],
+      [
+        4096,
+        64
+      ]
+    ],
+    "rounds_per_cohort": 16,
+    "arm_order": "ABBA",
+    "calls_per_sample": 8,
+    "planned_completed_samples": 320,
+    "paired_round_ratio": "mean of the two B elapsed_ns values divided by mean of the two A elapsed_ns values in the same round",
+    "statistic": "median of all 16 paired round ratios; no outlier exclusion or fastest-arm selection",
+    "component_gate": {
+      "maps_errors_parser_calls_and_visited_rows_must_match_contract": true,
+      "all_started_samples_must_complete": true,
+      "maximum_median_ratio_every_cohort": 1.1,
+      "maximum_median_ratio_8_accounts_65528_working_rows": 0.5
+    },
+    "failure_rule": "Any failed assertion, missing return, missing cohort or exceeded ratio leaves the component performance gate unpassed; preserve every attempted sample.",
+    "does_not_measure": [
+      "ordinary-binary CPU",
+      "RSS",
+      "full W1",
+      "root",
+      "durable commit",
+      "response",
+      "client import",
+      "independent confirmation"
+    ],
+    "whole_request_speedup_claim": false
+  },
+  "fixed_touched_set_native_matrix": {
+    "test": "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
+    "account_counts": [
+      64,
+      1024,
+      16384
+    ],
+    "warmup_history_blocks": [
+      0,
+      16,
+      128
+    ],
+    "measured_blocks_per_cohort": 8,
+    "preexisting_test_contract_unchanged": true,
+    "workers": 1,
+    "full_work_search_attempt_limit": 4096,
+    "one_signed_transfer_per_measured_block": true,
+    "all_failed_cancelled_and_incomplete_attempts_retained": true,
+    "correctness_gate": "Existing full-State reference, fixed witness owners, all SQL rows on cancellation, old nonce, cold reopen and journal differential assertions must pass.",
+    "latency_scope": "current-source direct Node wall observations; descriptive scaling curves only",
+    "p99": null,
+    "sufficient_block_observations_for_p99": false,
+    "original_4105_history_gate_substitution": false,
+    "native_deadlines_or_resource_limits_changed": false
+  },
+  "shared_host_limitations": {
+    "original_acceptance_host": false,
+    "other_sessions_may_compete_for_the_same_8_gib_cgroup": true,
+    "clock_or_build_resource_limits_not_raised": true
+  },
+  "production_activation": false
+}

@@ -1,0 +1,61 @@
+{
+  "schema": "pon-blocker-component-comparison-plan-v1",
+  "registered_utc": "2026-11-03T12:47:40.767442+00:00",
+  "parent_source": "1b0d60d574c4b3e2172f314cd2655644373b0a27",
+  "purpose": "Normal local component comparisons and deadline regressions; no public campaign or input-generation workflow.",
+  "comparison": {
+    "rounds": 16,
+    "order": [
+      "reference",
+      "candidate",
+      "candidate",
+      "reference"
+    ],
+    "per_round_ratio": "sum(candidate thread CPU) / sum(reference thread CPU)",
+    "median_maximum": 0.95,
+    "empirical_p95_maximum": 1.05,
+    "p95_definition": "ascending round ratios, nearest rank ceil(0.95*n), n=16; no confidence or population-tail claim",
+    "required_outcomes": "Every planned call must complete with the same legitimate result and original progress/read denominator; missing CPU clock, failed call or missing sample prevents qualification.",
+    "decision": "Retain a development component only if both fixed timing conditions and all applicable semantic controls pass; otherwise retain the patch and raw negative evidence and restore the prior production implementation."
+  },
+  "host_component": {
+    "selector": "host_kernel_parent::kernel_parent::tests::prepared_paths_and_current_limit_bytes_keep_abba_component_observations",
+    "calls_per_sample": 256,
+    "fresh_files_per_call": 7,
+    "inputs": "Two current procfs texts and five valid temporary limit files; original whole-file helpers and error semantics.",
+    "reference": "Parent source File::open paths and original numeric parser",
+    "candidate": "Prepared immutable CStr names with fresh opens and current-byte exact comparison/fallback",
+    "setup_excluded": true,
+    "parent_metadata_excluded": true,
+    "complete_host_authority_check_excluded": true
+  },
+  "account_graph_component": {
+    "selector": "account_archive_prototype::native_store::node_reader::tests::native_node_reader_paired_graph_cost_observation",
+    "graphs_per_sample": 16,
+    "accounts_per_graph": 512,
+    "actual_nodes_and_progress_calls_per_graph": 1023,
+    "database": "in-memory SQLite, actual current rows",
+    "decode_cache": "separately warmed per arm",
+    "reference": "Frozen parent prepared-single reader; the older per-node Vec oracle is correctness evidence only",
+    "candidate": "One sibling-pair query per fork, all current rows and original progress checks retained"
+  },
+  "build": {
+    "rust_toolchain": "1.95.0",
+    "cargo_lock": "trillionnium/Cargo.lock",
+    "profile": "release",
+    "all_features": true,
+    "test_threads": 1,
+    "retained_binary_identities_required": true,
+    "same_executable_component_comparison": true,
+    "independent_build_comparison": false
+  },
+  "scope_limits": [
+    "These are component observations, not an independently built whole-node comparison.",
+    "They cannot close the original four-second service gate, resource-isolation qualification, public participation, or W1 cost/hardness gates.",
+    "No resource, absolute deadline, target, required-work or confirmation threshold changes.",
+    "No throughput, causal end-to-end speedup, GPU/ASIC competitiveness, storage lifetime or model efficacy inference."
+  ],
+  "public_readiness": false,
+  "production_activation": false,
+  "selectors_finalized_before_comparison_utc": "2026-11-03T12:52:45.556231+00:00"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "provider",
+  "argv": [
+    "python3",
+    "scripts/ci/test_pq_provider_ci.py"
+  ],
+  "cwd": "/workspace/scratch/56818e4fba76/chain-recovered",
+  "started_utc": "2026-10-28T03:37:09.824003+00:00",
+  "wall_seconds": 0.24311337700055446,
+  "returncode": 0,
+  "real_cryptographic_success_test": false
+}

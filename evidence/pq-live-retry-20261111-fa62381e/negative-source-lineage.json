@@ -1,0 +1,132 @@
+{
+  "artifact_sha256": {
+    "negative-bundle-verify.log": "4085ff1aa626ca6b09d94a41787479cec47a1daa1c9a64476c05dd676c71614e",
+    "negative-bundle.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "negative-checkout.log": "5cc70b6dc5757fb07087a035621b3540472db57ba597f086c46d28604efac856",
+    "negative-commit.log": "50dd2248c8a0521c03a450f7f68997bc03d15a0405b5cb98ccb4a76d9e481e43",
+    "negative-diff-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "negative-fetch-frozen-source.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "negative-post-formatting-preflight.log": "d18f01e1287ef27cc3ab421e4f2b799fe682b11a2d575331e276984740458c5b",
+    "negative-precommit-preflight.log": "d18f01e1287ef27cc3ab421e4f2b799fe682b11a2d575331e276984740458c5b",
+    "negative-preflight.log": "d18f01e1287ef27cc3ab421e4f2b799fe682b11a2d575331e276984740458c5b",
+    "negative-source.bundle": "7f627c69e41605846760bc23929e1f8b06ce6d8437610426b102ed735c4fb3b6",
+    "negative-source.diff": "6a6a013a39a23bac2e16ba08760a315ed8b13bcd696ff0b08e1290fc88f2a01b",
+    "positive-preflight.log": "d5666f8590d5a99a8682e93f336df428b274db3309e398b3431864870158a26b"
+  },
+  "base_behavior_source": "6c35f94d9387fac41c1547f05742d70150320b2e",
+  "changed_paths": [
+    "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs"
+  ],
+  "failure_expectations": [
+    {
+      "markers": [
+        "called `Result::unwrap_err()` on an `Ok` value"
+      ],
+      "panic_line": 73,
+      "source_file": "trillionnium/crates/trnm-pon-node/src/ingress/account_scope_tests.rs",
+      "test": "ingress::account_scope_tests::invalid_account_scope_refuses_classical_session_and_signed_request"
+    },
+    {
+      "markers": [
+        "called `Result::unwrap_err()` on an `Ok` value"
+      ],
+      "panic_line": 90,
+      "source_file": "trillionnium/crates/trnm-pon-node/src/ingress/account_scope_tests.rs",
+      "test": "ingress::account_scope_tests::current_local_scope_refuses_previously_valid_classical_request"
+    },
+    {
+      "markers": [
+        "authenticated production_activation-wrong, protected=false",
+        "left: 1",
+        "right: 0"
+      ],
+      "panic_line": 154,
+      "source_file": "trillionnium/crates/trnm-pon-node/src/ingress/account_scope_tests.rs",
+      "test": "ingress::account_scope_tests::invalid_account_scope_never_connects_or_advances_classical_clients"
+    },
+    {
+      "markers": [
+        "called `Result::unwrap_err()` on an `Ok` value"
+      ],
+      "panic_line": 812,
+      "source_file": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs",
+      "test": "pq_rollback_witness::tests::live_retry_refuses_changed_durable_predecessor_at_the_same_head"
+    },
+    {
+      "markers": [
+        "called `Result::unwrap_err()` on an `Ok` value"
+      ],
+      "panic_line": 860,
+      "source_file": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs",
+      "test": "pq_rollback_witness::tests::cold_reopen_refuses_database_retry_history_and_accepts_new_successors"
+    }
+  ],
+  "metadata_correction": {
+    "initial_exit_code": 1,
+    "initial_job": "1a1cb325383-2564-a57",
+    "reason": "pre-formatting account assertion line constants; no source or native test failure",
+    "source_unchanged_by_metadata_completion": true
+  },
+  "native_tests_executed": false,
+  "negative_source": "f7c51532cc6657360b97226d9f396158253cea78",
+  "negative_source_identity": {
+    "base": null,
+    "candidate": "f7c51532cc6657360b97226d9f396158253cea78",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "f7c51532cc6657360b97226d9f396158253cea78",
+    "tested_tree": "628f0d54ad9127471cc3902b50b915c4df2dcad7",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2567445089,
+    "tracked_entries": 28284,
+    "tracked_worktree_verified": true
+  },
+  "negative_tree": "628f0d54ad9127471cc3902b50b915c4df2dcad7",
+  "positive_source": "454ae116159867ff6cddd91b964523df7f7e16f0",
+  "positive_source_after": {
+    "base": null,
+    "candidate": "454ae116159867ff6cddd91b964523df7f7e16f0",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "454ae116159867ff6cddd91b964523df7f7e16f0",
+    "tested_tree": "3117250c4db0f2ae681d51ed6ee5e6a2fa7555a9",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2567446061,
+    "tracked_entries": 28284,
+    "tracked_worktree_verified": true
+  },
+  "positive_source_before": {
+    "base": null,
+    "candidate": "454ae116159867ff6cddd91b964523df7f7e16f0",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "454ae116159867ff6cddd91b964523df7f7e16f0",
+    "tested_tree": "3117250c4db0f2ae681d51ed6ee5e6a2fa7555a9",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2567446061,
+    "tracked_entries": 28284,
+    "tracked_worktree_verified": true
+  },
+  "production_activation": false,
+  "qualification_scope": "isolated intentionally regressed source for seven named controls only",
+  "schema": "trnm-isolated-pq-negative-source-v1",
+  "source_files_sha256": {
+    "config/pon/pq-system-required-tests-v1.json": "31960141da6e571eaa373ac6374a956e1458b4eaf5beb622aa11bb145b89f3bc",
+    "config/pon/pq-system-supplemental-tests-v1.json": "cf1d4b9002868b961935eaf85dc6a0dbbd9800c362c39c2f4e01cc30c15fa514",
+    "scripts/ci/ci_observation.py": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+    "scripts/ci/pinned_native_process.py": "2f46137a7b74c8930e83114fc9844f540e81b3e4f95919f2a12c5256d76ab462",
+    "scripts/ci/record_pq_native_command.py": "6f117f6c324828ead80b3110993767bc06abdc435e1d3d452877fbc03a275711",
+    "scripts/ci/verify_ci_source.py": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+    "tests/fuzz/Cargo.lock": "73f420c130c830c9f471e0cd416360b42992db94fba8d56ca267d691d831043b",
+    "trillionnium/Cargo.lock": "53c4eab0fb3d2951894348de2b765e0a573e49acb5dbfe1fe805719ec868a136",
+    "trillionnium/crates/trnm-pon-node/src/ingress.rs": "dcce991be638e9d0e560088b85e1443663654496b7ea11046fe4d7befcbab12c",
+    "trillionnium/crates/trnm-pon-node/src/ingress/account_scope_tests.rs": "7da5594a8b7e9a61ce147426272ec4b74e167f2b9a55c8fe5c525269082e610d",
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": "090c13700baf9ed945a4aa86519f1d4df85105ef1064addd73de2acb025d9a45",
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs": "f99f8f41e51354e3ca59d67b01ae1f3ea3714b216a7dbfdeb70de074e430451a"
+  },
+  "whole_chain_quantum_security_qualified": false
+}

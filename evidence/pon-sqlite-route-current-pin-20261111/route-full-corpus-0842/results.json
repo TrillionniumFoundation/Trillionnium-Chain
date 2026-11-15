@@ -1,0 +1,262 @@
+[
+  {
+    "name": "preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "expected_outcome_observed": true,
+    "stdout_bytes": 165,
+    "stdout_sha256": "29b61c42040e1e669ec5c9a06b9fb2ed17888dc79bee5d627119da1c1b921e53",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "ci",
+    "argv": [
+      "python3",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "expected_outcome_observed": true,
+    "stdout_bytes": 431,
+    "stdout_sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "repository",
+    "argv": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "expected_outcome_observed": true,
+    "stdout_bytes": 307,
+    "stdout_sha256": "636456f6a6f5c87ec490463ac5f7ef19961f12edef6b28625ed2bd22092c7641",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "source43",
+    "argv": [
+      "python3",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "expected_outcome_observed": true,
+    "stdout_bytes": 808,
+    "stdout_sha256": "e28de41a5714f0fcb9d4c81a38263fef65a35114660bbbec35309db44780cc9b",
+    "stderr_bytes": 6414,
+    "stderr_sha256": "1e6dd0c1c46d5fb0651043fe443b533086c15696315e59b0e9bced9cee3a479a"
+  },
+  {
+    "name": "route28",
+    "argv": [
+      "python3",
+      "scripts/ci/test_w1_stark_route_audit.py"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "expected_outcome_observed": true,
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_bytes": 127,
+    "stderr_sha256": "eee538bd1a26d3fd7c847fd57951d2353795fc7fb9f78176557a528edb53ab5d"
+  },
+  {
+    "name": "route-report",
+    "argv": [
+      "python3",
+      "scripts/w1_stark_route_audit.py"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "expected_outcome_observed": true,
+    "stdout_bytes": 23202,
+    "stdout_sha256": "cee750f42950209b169cbec51344c31865e372f7355f0c4daecaf441b808faa2",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "corpus",
+    "argv": [
+      "python3",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "expected_outcome_observed": true,
+    "stdout_bytes": 557,
+    "stdout_sha256": "d75e1b60b139627ea99eb59c463d68c28816b5a81a4fe70dc77519373e52de0d",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "corpus-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_research_integration.py"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "expected_outcome_observed": true,
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_bytes": 157,
+    "stderr_sha256": "c871347f6e4945e6262aaeeeb61e3e1cfe49f98512d583e295e5149e3e2a7c1e"
+  },
+  {
+    "name": "ci-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_ci_contract.py"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "expected_outcome_observed": true,
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_bytes": 29233,
+    "stderr_sha256": "1b735a27e245ce8fc550e2613a9c45d09e6c846955162122994a567f97512b16"
+  },
+  {
+    "name": "inventory",
+    "argv": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "expected_outcome_observed": true,
+    "stdout_bytes": 35,
+    "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "workspace-graph",
+    "argv": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "expected_outcome_observed": true,
+    "stdout_bytes": 855542,
+    "stdout_sha256": "b3c8f80c84a52ad6dd9df46c25e6ea724901fe6c4e53f826a094d7fc88af6197",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "fuzz-graph",
+    "argv": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "tests/fuzz/Cargo.toml",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "expected_outcome_observed": true,
+    "stdout_bytes": 728637,
+    "stdout_sha256": "1c94c1ee072087d38fd6f38efa932ffbfac5db2f80965b596287fa190f4fa4fd",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "workspace-check",
+    "argv": [
+      "cargo",
+      "check",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--locked",
+      "--offline"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "expected_outcome_observed": true,
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_bytes": 188,
+    "stderr_sha256": "78a2e0d0b4bd71ce0da41011f70285db4a38a39db4b016ccc7f1c85b0bf74568"
+  },
+  {
+    "name": "workspace-fmt",
+    "argv": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--check"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "expected_outcome_observed": true,
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "workspace-clippy",
+    "argv": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "expected_outcome_observed": true,
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_bytes": 188,
+    "stderr_sha256": "a232938e1440a0b05ef19de7fc71005b39237a1fd904d1071c77d736c5cbd471"
+  },
+  {
+    "name": "original-policy",
+    "argv": [
+      "python3",
+      "scripts/ci/run_supply_chain.py"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "expected_outcome_observed": true,
+    "stdout_bytes": 137,
+    "stdout_sha256": "d2264f26f2cb21bff22e28ebb51c0f4e1a9a6dd683549880ec332428dbabf6e3",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

@@ -1,0 +1,425 @@
+{
+  "scope": "Only the three baseline phases of the original three30s campaigns. No new workload or native execution. Individual client body digests are matched to unique receiver connections; imported packet IDs are matched to original Submit ACK blocks. Observer-local timestamps are not directly merged with phase timestamps. Host CPU sums each invoking thread, while import CPU is caller-only; native stage totals and phase/Host intervals overlap.",
+  "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "readback_sha256": "57ce0956d1927578cd5b4f1364ca38689a0256bbdba85c981358eb3c3c26e492",
+  "conclusion": "All three baseline second rounds run out of the original window during independent client commit after accepted W1/M06 and successful History response. The first round already consumed~23.8-23.9s, including~5.48-5.50s complete-page activation; the original sequential loop delays round2. Receiver ACK progress is separate from independent confirmation.",
+  "runs": [
+    {
+      "run": 1,
+      "round1": {
+        "started_ns": 1000338073,
+        "ended_ns": 23903664311
+      },
+      "round2": {
+        "started_ns": 23903711101,
+        "ended_ns": 30001699267
+      },
+      "round2_last_submit_ack_ns": 25918559280,
+      "round2_history": [
+        {
+          "index": 7,
+          "started_ns": 25918751525,
+          "ended_ns": 25930703225,
+          "packet_id": "cb491d5dd5071dbec06dfe4f018c7340e130051c4c701054973a035fa39be709",
+          "matched_submit": {
+            "submission_index": 7,
+            "packet_index": 7,
+            "height": 12,
+            "receiver_connection_id": 15
+          },
+          "public_request_body_digest": "5e4f8dd9ae9f855479dc220ace6473f453003fc779e02c5b63f0234612181b18",
+          "receiver_connection_id": 22,
+          "client_import": {
+            "started_ns": 25930724937,
+            "ended_ns": 28120247896,
+            "wall_ns": 2189522959,
+            "thread_cpu_ns": 505457141,
+            "thread_cpu_observation_available": true,
+            "succeeded": true,
+            "error": null
+          }
+        },
+        {
+          "index": 8,
+          "started_ns": 28120369206,
+          "ended_ns": 28196450820,
+          "packet_id": "a289dc56eaa4e3184243be726458b1e85596c199d7c184f39b3ed86c5004a192",
+          "matched_submit": {
+            "submission_index": 8,
+            "packet_index": 8,
+            "height": 13,
+            "receiver_connection_id": 16
+          },
+          "public_request_body_digest": "3acba3f4098aa7311e8e2840c86ac9720715b2b87a237b2b7d0799281daf2b1a",
+          "receiver_connection_id": 23,
+          "client_import": {
+            "started_ns": 28196483418,
+            "ended_ns": 30001588383,
+            "wall_ns": 1805104955,
+            "thread_cpu_ns": 420291587,
+            "thread_cpu_observation_available": true,
+            "succeeded": false,
+            "error": "PUBLIC_REQUEST_DEADLINE"
+          }
+        }
+      ],
+      "round1_complete_page_import": {
+        "started_ns": 16141280173,
+        "ended_ns": 23709048657,
+        "wall_ns": 7567768473,
+        "thread_cpu_ns": 1743752286,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null
+      },
+      "round1_complete_page_activation": {
+        "accepted": true,
+        "completed": true,
+        "ended_ns": 7567281083,
+        "error_code": null,
+        "parent_phase": null,
+        "phase": "submit_result",
+        "started": true,
+        "started_ns": 2074934564,
+        "thread_cpu_ns": 1257045603,
+        "wall_ns": 5492346519
+      },
+      "round1_complete_page_host_checkpoints": {
+        "calls_accepted": 29928,
+        "calls_completed": 29928,
+        "calls_rejected": 0,
+        "calls_started": 29928,
+        "calls_unfinished": 0,
+        "cpu_clock_unknown_calls": 0,
+        "first_started_ns": 205144,
+        "last_ended_ns": 7567278419,
+        "last_error_code": null,
+        "phase": "checkpoint",
+        "thread_cpu_ns": 1422129691,
+        "wall_clock_unknown_calls": 0,
+        "wall_ns": 1730259814
+      },
+      "last_failed_commit": {
+        "accepted": false,
+        "completed": true,
+        "ended_ns": 1804295607,
+        "error_code": "PUBLIC_REQUEST_DEADLINE",
+        "parent_phase": "admission",
+        "phase": "commit",
+        "started": true,
+        "started_ns": 715296412,
+        "thread_cpu_ns": 244147278,
+        "wall_ns": 1088999195
+      },
+      "wall_timing_partitions": [
+        {
+          "round": 0,
+          "start_ns": 1000338073,
+          "end_ns": 23903664311,
+          "actual_round_wall_ns": 22903326238,
+          "disjoint_outer_interval_ns": {
+            "submit_network": 1915304362,
+            "history_network": 150338910,
+            "client_import": 20638934483,
+            "client_confirmation": 194524810
+          },
+          "uncovered_control_and_inter_call_gap_ns": 4223673,
+          "all_intervals_disjoint_and_inside_round": true,
+          "scope": "Partition of actual same-client outer timestamp intervals; no nested phases, medians, receiver times or CPU are added."
+        },
+        {
+          "round": 1,
+          "start_ns": 23903711101,
+          "end_ns": 30001699267,
+          "actual_round_wall_ns": 6097988166,
+          "disjoint_outer_interval_ns": {
+            "submit_network": 2011664900,
+            "history_network": 88033314,
+            "client_import": 3994627924
+          },
+          "uncovered_control_and_inter_call_gap_ns": 3662028,
+          "all_intervals_disjoint_and_inside_round": true,
+          "scope": "Partition of actual same-client outer timestamp intervals; no nested phases, medians, receiver times or CPU are added."
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "round1": {
+        "started_ns": 1000435425,
+        "ended_ns": 23906728520
+      },
+      "round2": {
+        "started_ns": 23906778995,
+        "ended_ns": 30001770550
+      },
+      "round2_last_submit_ack_ns": 26005524182,
+      "round2_history": [
+        {
+          "index": 7,
+          "started_ns": 26005716176,
+          "ended_ns": 26017634197,
+          "packet_id": "cb491d5dd5071dbec06dfe4f018c7340e130051c4c701054973a035fa39be709",
+          "matched_submit": {
+            "submission_index": 7,
+            "packet_index": 7,
+            "height": 12,
+            "receiver_connection_id": 15
+          },
+          "public_request_body_digest": "5e4f8dd9ae9f855479dc220ace6473f453003fc779e02c5b63f0234612181b18",
+          "receiver_connection_id": 22,
+          "client_import": {
+            "started_ns": 26017657381,
+            "ended_ns": 28299623879,
+            "wall_ns": 2281966488,
+            "thread_cpu_ns": 528781581,
+            "thread_cpu_observation_available": true,
+            "succeeded": true,
+            "error": null
+          }
+        },
+        {
+          "index": 8,
+          "started_ns": 28299796514,
+          "ended_ns": 28311370165,
+          "packet_id": "a289dc56eaa4e3184243be726458b1e85596c199d7c184f39b3ed86c5004a192",
+          "matched_submit": {
+            "submission_index": 8,
+            "packet_index": 8,
+            "height": 13,
+            "receiver_connection_id": 16
+          },
+          "public_request_body_digest": "3acba3f4098aa7311e8e2840c86ac9720715b2b87a237b2b7d0799281daf2b1a",
+          "receiver_connection_id": 23,
+          "client_import": {
+            "started_ns": 28311402553,
+            "ended_ns": 30001658534,
+            "wall_ns": 1690255971,
+            "thread_cpu_ns": 396250759,
+            "thread_cpu_observation_available": true,
+            "succeeded": false,
+            "error": "PUBLIC_REQUEST_DEADLINE"
+          }
+        }
+      ],
+      "round1_complete_page_import": {
+        "started_ns": 16136512189,
+        "ended_ns": 23710890459,
+        "wall_ns": 7574378270,
+        "thread_cpu_ns": 1745852215,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null
+      },
+      "round1_complete_page_activation": {
+        "accepted": true,
+        "completed": true,
+        "ended_ns": 7573873383,
+        "error_code": null,
+        "parent_phase": null,
+        "phase": "submit_result",
+        "started": true,
+        "started_ns": 2078243906,
+        "thread_cpu_ns": 1257437312,
+        "wall_ns": 5495629477
+      },
+      "round1_complete_page_host_checkpoints": {
+        "calls_accepted": 29928,
+        "calls_completed": 29928,
+        "calls_rejected": 0,
+        "calls_started": 29928,
+        "calls_unfinished": 0,
+        "cpu_clock_unknown_calls": 0,
+        "first_started_ns": 195368,
+        "last_ended_ns": 7573870849,
+        "last_error_code": null,
+        "phase": "checkpoint",
+        "thread_cpu_ns": 1421790997,
+        "wall_clock_unknown_calls": 0,
+        "wall_ns": 1652390575
+      },
+      "last_failed_commit": {
+        "accepted": false,
+        "completed": true,
+        "ended_ns": 1689339904,
+        "error_code": "PUBLIC_REQUEST_DEADLINE",
+        "parent_phase": "admission",
+        "phase": "commit",
+        "started": true,
+        "started_ns": 789200468,
+        "thread_cpu_ns": 210938261,
+        "wall_ns": 900139436
+      },
+      "wall_timing_partitions": [
+        {
+          "round": 0,
+          "start_ns": 1000435425,
+          "end_ns": 23906728520,
+          "actual_round_wall_ns": 22906293095,
+          "disjoint_outer_interval_ns": {
+            "submit_network": 2002756453,
+            "history_network": 225877541,
+            "client_import": 20477609775,
+            "client_confirmation": 195742930
+          },
+          "uncovered_control_and_inter_call_gap_ns": 4306396,
+          "all_intervals_disjoint_and_inside_round": true,
+          "scope": "Partition of actual same-client outer timestamp intervals; no nested phases, medians, receiver times or CPU are added."
+        },
+        {
+          "round": 1,
+          "start_ns": 23906778995,
+          "end_ns": 30001770550,
+          "actual_round_wall_ns": 6094991555,
+          "disjoint_outer_interval_ns": {
+            "submit_network": 2095615876,
+            "history_network": 23491672,
+            "client_import": 3972222479
+          },
+          "uncovered_control_and_inter_call_gap_ns": 3661528,
+          "all_intervals_disjoint_and_inside_round": true,
+          "scope": "Partition of actual same-client outer timestamp intervals; no nested phases, medians, receiver times or CPU are added."
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "round1": {
+        "started_ns": 1000766038,
+        "ended_ns": 23814735057
+      },
+      "round2": {
+        "started_ns": 23814780915,
+        "ended_ns": 30001583115
+      },
+      "round2_last_submit_ack_ns": 25903674198,
+      "round2_history": [
+        {
+          "index": 7,
+          "started_ns": 25903864580,
+          "ended_ns": 25915749785,
+          "packet_id": "cb491d5dd5071dbec06dfe4f018c7340e130051c4c701054973a035fa39be709",
+          "matched_submit": {
+            "submission_index": 7,
+            "packet_index": 7,
+            "height": 12,
+            "receiver_connection_id": 15
+          },
+          "public_request_body_digest": "5e4f8dd9ae9f855479dc220ace6473f453003fc779e02c5b63f0234612181b18",
+          "receiver_connection_id": 22,
+          "client_import": {
+            "started_ns": 25915771778,
+            "ended_ns": 28107926785,
+            "wall_ns": 2192154987,
+            "thread_cpu_ns": 508553622,
+            "thread_cpu_observation_available": true,
+            "succeeded": true,
+            "error": null
+          }
+        },
+        {
+          "index": 8,
+          "started_ns": 28108049496,
+          "ended_ns": 28119893451,
+          "packet_id": "a289dc56eaa4e3184243be726458b1e85596c199d7c184f39b3ed86c5004a192",
+          "matched_submit": {
+            "submission_index": 8,
+            "packet_index": 8,
+            "height": 13,
+            "receiver_connection_id": 16
+          },
+          "public_request_body_digest": "3acba3f4098aa7311e8e2840c86ac9720715b2b87a237b2b7d0799281daf2b1a",
+          "receiver_connection_id": 23,
+          "client_import": {
+            "started_ns": 28119914282,
+            "ended_ns": 30001470928,
+            "wall_ns": 1881556657,
+            "thread_cpu_ns": 429964485,
+            "thread_cpu_observation_available": true,
+            "succeeded": false,
+            "error": "PUBLIC_REQUEST_DEADLINE"
+          }
+        }
+      ],
+      "round1_complete_page_import": {
+        "started_ns": 16135985646,
+        "ended_ns": 23697038719,
+        "wall_ns": 7561053083,
+        "thread_cpu_ns": 1740148025,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null
+      },
+      "round1_complete_page_activation": {
+        "accepted": true,
+        "completed": true,
+        "ended_ns": 7560193510,
+        "error_code": null,
+        "parent_phase": null,
+        "phase": "submit_result",
+        "started": true,
+        "started_ns": 2080566037,
+        "thread_cpu_ns": 1249896483,
+        "wall_ns": 5479627473
+      },
+      "round1_complete_page_host_checkpoints": {
+        "calls_accepted": 29928,
+        "calls_completed": 29928,
+        "calls_rejected": 0,
+        "calls_started": 29928,
+        "calls_unfinished": 0,
+        "cpu_clock_unknown_calls": 0,
+        "first_started_ns": 184633,
+        "last_ended_ns": 7560190296,
+        "last_error_code": null,
+        "phase": "checkpoint",
+        "thread_cpu_ns": 1418853502,
+        "wall_clock_unknown_calls": 0,
+        "wall_ns": 1647645546
+      },
+      "last_failed_commit": {
+        "accepted": false,
+        "completed": true,
+        "ended_ns": 1880860706,
+        "error_code": "PUBLIC_REQUEST_DEADLINE",
+        "parent_phase": "admission",
+        "phase": "commit",
+        "started": true,
+        "started_ns": 778767496,
+        "thread_cpu_ns": 255290631,
+        "wall_ns": 1102093210
+      },
+      "wall_timing_partitions": [
+        {
+          "round": 0,
+          "start_ns": 1000766038,
+          "end_ns": 23814735057,
+          "actual_round_wall_ns": 22813969019,
+          "disjoint_outer_interval_ns": {
+            "submit_network": 1913709857,
+            "history_network": 150815718,
+            "client_import": 20627786110,
+            "client_confirmation": 117586996
+          },
+          "uncovered_control_and_inter_call_gap_ns": 4070338,
+          "all_intervals_disjoint_and_inside_round": true,
+          "scope": "Partition of actual same-client outer timestamp intervals; no nested phases, medians, receiver times or CPU are added."
+        },
+        {
+          "round": 1,
+          "start_ns": 23814780915,
+          "end_ns": 30001583115,
+          "actual_round_wall_ns": 6186802200,
+          "disjoint_outer_interval_ns": {
+            "submit_network": 2085788315,
+            "history_network": 23729160,
+            "client_import": 4073711653
+          },
+          "uncovered_control_and_inter_call_gap_ns": 3573072,
+          "all_intervals_disjoint_and_inside_round": true,
+          "scope": "Partition of actual same-client outer timestamp intervals; no nested phases, medians, receiver times or CPU are added."
+        }
+      ]
+    }
+  ]
+}

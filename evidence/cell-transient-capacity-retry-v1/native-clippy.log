@@ -1,0 +1,5 @@
+    Checking linux-raw-sys v0.12.1
+    Checking trnm-data-availability v0.1.0 (/workspace/scratch/56818e4fba76/chain-cell-model/trillionnium/crates/trnm-data-availability)
+    Checking rustix v1.1.4
+    Checking tempfile v3.27.0
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.56s

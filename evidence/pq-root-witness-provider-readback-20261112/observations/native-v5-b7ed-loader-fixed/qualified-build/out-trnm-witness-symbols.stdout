@@ -1,0 +1,6 @@
+
+db3b6bfb95261072-unix_layout_witness.o:
+0000000000000000 T trnm_io_witness_compileoption
+0000000000000000 T trnm_io_witness_layout
+0000000000000000 T trnm_io_witness_source_id
+0000000000000000 T trnm_io_witness_version

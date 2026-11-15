@@ -1,0 +1,11 @@
+test_exact_factors_match_dense_math_without_charging_dense_macs (test_grouped_low_rank_v0.GroupedLowRankTests.test_exact_factors_match_dense_math_without_charging_dense_macs) ... ok
+test_existing_admission_is_reused_and_normalization_is_separate (test_grouped_low_rank_v0.GroupedLowRankTests.test_existing_admission_is_reused_and_normalization_is_separate) ... ok
+test_existing_admission_still_rejects_illegal_dense_update (test_grouped_low_rank_v0.GroupedLowRankTests.test_existing_admission_still_rejects_illegal_dense_update) ... ok
+test_existing_rank_four_through_eight_are_legal_but_not_claimed_cheaper (test_grouped_low_rank_v0.GroupedLowRankTests.test_existing_rank_four_through_eight_are_legal_but_not_claimed_cheaper) ... ok
+test_identity_binds_factorization_even_with_equal_dense_function (test_grouped_low_rank_v0.GroupedLowRankTests.test_identity_binds_factorization_even_with_equal_dense_function) ... ok
+test_invalid_shapes_ranges_types_and_work_cap_refuse (test_grouped_low_rank_v0.GroupedLowRankTests.test_invalid_shapes_ranges_types_and_work_cap_refuse) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.015s
+
+OK

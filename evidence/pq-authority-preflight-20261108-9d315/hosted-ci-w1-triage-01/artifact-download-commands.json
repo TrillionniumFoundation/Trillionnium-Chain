@@ -1,0 +1,36 @@
+[
+  {
+    "artifact_id": 13611186306,
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13611186306/zip"
+    ],
+    "exit_code": 0,
+    "started": 1794128065.9778376,
+    "finished": 1794128077.9083524,
+    "bytes": 5410062,
+    "sha256": "13be4b66332c1df0de5a0b86feb76be978626304bb2907a4fe64c8bd39547d49",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "artifact_id": 13611420775,
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13611420775/zip"
+    ],
+    "exit_code": 0,
+    "started": 1794128077.9469604,
+    "finished": 1794128088.409669,
+    "bytes": 5411938,
+    "sha256": "516bea823891107ed04caad2c5c6a089a69830e8194e109fefac1bf625d9e6ec",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

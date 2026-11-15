@@ -1,0 +1,19 @@
+source 93c0f02f2d1e8672a4a6c6204c5eecec3f08df25
+MAKING_HEIGHT 1
+ADMITTED 1 2128c033ff95f12565da34457374d56c3a7e514e3c46d20be273867eb1164e36
+MAKING_HEIGHT 2
+ADMITTED 2 2e90bae3f69d55c6ff7388eec2e9de96348123e5d559c6769316684fed125ef6
+MAKING_HEIGHT 3
+Traceback (most recent call last):
+  File "<stdin>", line 13, in <module>
+  File "/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/formal/pon-nakamoto-v1/ledger.py", line 394, in make
+    state,receipts=self.execute_application(self.state_at(parent),txs,height,miner,parent)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/formal/pon-nakamoto-v1/ledger.py", line 325, in execute_application
+    state,receipts,_=self.native_session.execute(parent_state,transactions,height,miner,parent_id,
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/formal/pon-nakamoto-v1/native_session.py", line 248, in execute
+    require(isinstance(result['receipts'], list)
+  File "/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/formal/pon-nakamoto-v1/native_session.py", line 34, in require
+    raise ValueError(code)
+ValueError: SESSION_RECEIPTS

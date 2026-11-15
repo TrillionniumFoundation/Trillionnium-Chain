@@ -1,0 +1,20 @@
+
+running 2 tests
+test ingress::public_v3::output_reservation_tests::full_output_pool_closes_without_signed_response_and_recovers_after_release ... 
+thread 'ingress::public_v3::output_reservation_tests::full_output_pool_closes_without_signed_response_and_recovers_after_release' (4069233) panicked at crates/trnm-pon-node/src/ingress/public_v3/output_reservation_tests.rs:187:9:
+FRAME_EOF
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+test ingress::public_v3::output_reservation_tests::refusal_borrows_only_bounded_original_headroom_and_preserves_control_service ... 
+thread 'ingress::public_v3::output_reservation_tests::refusal_borrows_only_bounded_original_headroom_and_preserves_control_service' (4069238) panicked at crates/trnm-pon-node/src/ingress/public_v3/output_reservation_tests.rs:262:9:
+FRAME_EOF
+FAILED
+
+failures:
+
+failures:
+    ingress::public_v3::output_reservation_tests::full_output_pool_closes_without_signed_response_and_recovers_after_release
+    ingress::public_v3::output_reservation_tests::refusal_borrows_only_bounded_original_headroom_and_preserves_control_service
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 1424 filtered out; finished in 0.05s
+

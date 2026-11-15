@@ -1,0 +1,111 @@
+[
+  {
+    "source": "hepta-learning-artifacts/src/learning_iteration_tests.rs",
+    "module": "learning_iteration::tests",
+    "names": [
+      "completes_only_after_next_task_and_replays_every_durable_boundary",
+      "failed_validation_never_advances_checkpoint",
+      "over_budget_dataset_and_cross_dataset_training_are_rejected",
+      "no_update_keeps_baseline_and_replays_selection_and_actual_next_use",
+      "no_update_cannot_skip_selection_or_substitute_a_no_admissible_proposal",
+      "replay_rejects_missing_receipts_changed_budget_and_false_next_use",
+      "owner_independence_is_checked_before_any_stage"
+    ],
+    "count": 7
+  },
+  {
+    "source": "hepta-learning-artifacts/src/learning_iteration_retained_tests.rs",
+    "module": "learning_iteration::retained_tests",
+    "names": [
+      "retained_task_and_model_cutover_are_not_interchangeable",
+      "retained_use_rejects_wrong_partition_selection_and_missing_owner_receipts",
+      "existing_cutover_signing_bytes_are_preserved_and_retained_use_has_its_own_tag"
+    ],
+    "count": 3
+  },
+  {
+    "source": "hepta-learning-artifacts/src/learning_iteration_profile_tests.rs",
+    "module": "learning_iteration::profile_tests",
+    "names": [
+      "frozen_profile_is_required_and_committed_before_any_owner_work",
+      "trainer_and_evaluator_cannot_replace_the_frozen_profile"
+    ],
+    "count": 2
+  },
+  {
+    "source": "hepta-agentd/src/learning_iteration_checkpoint_tests.rs",
+    "module": "learning_iteration_checkpoint::tests",
+    "names": [
+      "maximum_legal_snapshots_roundtrip_all_decisions_inside_original_root_bound",
+      "malformed_counts_strings_tags_and_truncated_checkpoints_are_rejected",
+      "each_checkpoint_reopens_and_exact_retry_performs_no_second_cas",
+      "foreign_owner_request_skipped_stage_and_divergent_successor_leave_current_unchanged",
+      "valid_json_with_corrupt_protected_record_metadata_is_never_restored",
+      "write_failure_and_lost_ack_reconcile_original_record_without_reexecution"
+    ],
+    "count": 6
+  },
+  {
+    "source": "hepta-agentd/src/learning_iteration_checkpoint_profile_tests.rs",
+    "module": "learning_iteration_checkpoint::profile_tests",
+    "names": [
+      "changed_frozen_profile_cannot_restore_or_replace_the_original_checkpoint",
+      "previous_codec_version_is_refused_without_repair_or_append",
+      "both_no_update_paths_keep_the_frozen_profile_and_full_parent_after_cold_reopen"
+    ],
+    "count": 3
+  },
+  {
+    "source": "hepta-agentd/src/learning_iteration_runtime_tests.rs",
+    "module": "plasticity_runtime::lifetime_tests::learning_iteration_tests",
+    "names": [
+      "coordinator_uses_native_proposal_owner_and_reconciles_lost_ack",
+      "invalid_signature_prevents_dataset_training_and_checkpoint_progress",
+      "evaluated_no_update_waits_for_selection_and_cannot_resume_after_expiry",
+      "scope_and_generation_readiness_refuse_before_owner_work",
+      "separate_keys_under_one_controller_cannot_self_evaluate",
+      "no_update_next_use_checks_actual_selection_stage_and_controller"
+    ],
+    "count": 6
+  },
+  {
+    "source": "hepta-agentd/src/learning_iteration_recovery_tests.rs",
+    "module": "plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests",
+    "names": [
+      "completed_recovery_reauthenticates_all_signed_stages_without_reproposing_or_checkpointing",
+      "completed_recovery_rejects_each_invalid_retained_signature_before_work",
+      "completed_recovery_checks_current_revocation_controller_and_signature_expiry",
+      "partial_and_completed_recovery_preserve_deadlines_and_only_resume_after_authentication",
+      "completed_recovery_checks_ready_and_clock_after_awaiting_owner_attestation",
+      "fresh_receipt_wait_rechecks_time_and_ready_before_checkpointing"
+    ],
+    "count": 6
+  },
+  {
+    "source": "hepta-agentd/src/learning_iteration_profile_tests.rs",
+    "module": "plasticity_runtime::lifetime_tests::learning_iteration_tests::profile_tests",
+    "names": [
+      "signed_training_profile_drift_stops_before_evaluator_and_cannot_rebind_restore"
+    ],
+    "count": 1
+  },
+  {
+    "source": "hepta-agentd/src/neuron_generation_learning_runtime_tests.rs",
+    "module": "neuron_generation_runtime::tests::update::learning",
+    "names": [
+      "ordinary_actor_reads_actual_use_and_cold_recovery_without_reexecution",
+      "running_actor_refuses_current_withdrawal_and_revocation",
+      "unpublished_actor_refuses_learning_readback_and_keeps_transport_errors"
+    ],
+    "count": 3
+  },
+  {
+    "source": "hepta-agentd/src/neuron_generation_adopted_learning_tests.rs",
+    "module": "neuron_generation_runtime::tests::update::adopted_learning",
+    "names": [
+      "updated_candidate_uses_original_actor_and_recovers_without_another_reset",
+      "updated_actor_rechecks_current_withdrawal_and_revocation"
+    ],
+    "count": 2
+  }
+]

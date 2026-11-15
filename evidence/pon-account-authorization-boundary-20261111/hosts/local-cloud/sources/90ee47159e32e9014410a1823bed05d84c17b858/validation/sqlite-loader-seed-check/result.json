@@ -1,0 +1,28 @@
+{
+  "id": "sqlite-loader-seed-check",
+  "argv": [
+    "env",
+    "LD_LIBRARY_PATH=/workspace/scratch/5778f0ffb5d4/toolchain/installed/lib",
+    "CARGO_BUILD_JOBS=1",
+    "cargo",
+    "check",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-sqlite-io-boundary",
+    "-vv"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 20.29316171500068,
+  "finished_utc": "2026-11-11T01:28:47.351485+00:00",
+  "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_status_after": "",
+  "stdout_sha256": "7f059c285ba6c11bcc68c2f8206e762595938e72effd6130df42959f29261a9d",
+  "stderr_sha256": "b74484645ddc68fe27fb60d4e92a1961e50b6f41241e14638f32e77742df32f1",
+  "pass": true,
+  "qualification_granted": false
+}

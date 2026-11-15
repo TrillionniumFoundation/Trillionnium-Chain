@@ -1,0 +1,113 @@
+{
+  "artifacts": [
+    {
+      "bytes": 0,
+      "path": "catalog-generate.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 666,
+      "path": "catalog-generate.stdout",
+      "sha256": "ebf1ce07ad9dfd19fc4e99e42b4a4e4c1a291959ef9469bb22232ed352ca0044"
+    },
+    {
+      "bytes": 0,
+      "path": "catalog-replay.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 666,
+      "path": "catalog-replay.stdout",
+      "sha256": "7c7a0132ebf09f7150f65bfd8d16f6c18e55b2a1538db0416221ed6303958ced"
+    },
+    {
+      "bytes": 2453487,
+      "path": "catalog.json",
+      "sha256": "835ce53e15b8b3be17730ab8b6823a727f717747761d695d4ea8342d315d01f3"
+    },
+    {
+      "bytes": 2447939,
+      "path": "catalog.json.partial.jsonl",
+      "sha256": "061695fadb9b5352aa61dd45768458de5a433cd3cda65c37cda92e3e895876c4"
+    },
+    {
+      "bytes": 779,
+      "path": "contract-after.json",
+      "sha256": "d08631ed93753e17bac0d457573107bebd34ddba2ae5736531f3f7e3b2a0e8b8"
+    },
+    {
+      "bytes": 779,
+      "path": "contract-before.json",
+      "sha256": "d08631ed93753e17bac0d457573107bebd34ddba2ae5736531f3f7e3b2a0e8b8"
+    },
+    {
+      "bytes": 4607,
+      "path": "cost-envelope-counterexample.json",
+      "sha256": "578f61de20ebe3f330349964b8ef8b51c8898ac7b72f07693926530c87055799"
+    },
+    {
+      "bytes": 4008,
+      "path": "cost-envelope-current-hold.json",
+      "sha256": "6dfd09f543cee38ab12d840dd21d3cf5b16b60e8197b8f2c40786d0bf9b7b854"
+    },
+    {
+      "bytes": 42810,
+      "path": "named-controls.json",
+      "sha256": "9a1bed620686e17d21c4cd7e1cb6a5d4249e156efb0344b06efdfd1ee48130f2"
+    },
+    {
+      "bytes": 18215,
+      "path": "tests.log",
+      "sha256": "6872e70e158279d07879449688ef42bc2e6f2029ca994f7a32be2e0e4060b4b0"
+    }
+  ],
+  "head_at_execution": "2141962ea7b9a1498acbd99acfdfe123335f613c",
+  "head_tree_at_execution": "a7e3ae9d9a4f6efa5950de6763be20ba5f3b19b5",
+  "passed_research_controls": true,
+  "qualification": {
+    "all_legal_algorithm_cost_lower_bound": false,
+    "joint_cp_cq_cg_proof": false,
+    "lifetime_security_bound": null,
+    "native_time_daa_upgrade": false,
+    "production_activation": false,
+    "real_hepta_product_loop": false,
+    "same_iteration_deployment": false,
+    "variable_u_native_relation": false
+  },
+  "schema": "pon-work-time-execution-v1",
+  "stage_results": [
+    {
+      "passed": true,
+      "stage": "frozen-contract-before"
+    },
+    {
+      "passed": true,
+      "stage": "named-controls"
+    },
+    {
+      "arithmetic_status": "HOLD_MISSING_BOUNDS",
+      "passed": true,
+      "stage": "cost-envelope-current-hold"
+    },
+    {
+      "arithmetic_status": "INFEASIBLE",
+      "passed": true,
+      "stage": "cost-envelope-counterexample"
+    },
+    {
+      "exit_code": 0,
+      "passed": true,
+      "stage": "catalog-generate"
+    },
+    {
+      "exit_code": 0,
+      "passed": true,
+      "stage": "catalog-replay"
+    },
+    {
+      "passed": true,
+      "stage": "frozen-contract-after"
+    }
+  ],
+  "status": "HOLD_NO_GO"
+}

@@ -1,0 +1,37 @@
+   Compiling libc v0.2.184
+   Compiling crypto-common v0.2.2
+   Compiling typenum v1.20.1
+   Compiling generic-array v0.14.7
+   Compiling digest v0.11.3
+   Compiling rusqlite v0.41.0
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling shake v0.1.0
+   Compiling signature v3.0.0
+   Compiling openssl-sys v0.9.117
+   Compiling ml-dsa v0.1.1
+   Compiling openssl v0.10.81
+   Compiling digest v0.10.7
+   Compiling rustix v1.1.4
+   Compiling sha2 v0.10.9
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/a4188f5c86b5/chain-pq-profile-boundary/trillionnium/crates/trnm-crypto-primitives)
+   Compiling linux-raw-sys v0.12.1
+   Compiling getrandom v0.4.2
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/a4188f5c86b5/chain-pq-profile-boundary/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling nix v0.30.1
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=["/workspace/scratch/5778f0ffb5d4/toolchain/installed/lib"]; observed=["/workspace/scratch/5778f0ffb5d4/toolchain/installed/lib/rustlib/x86_64-unknown-linux-gnu/lib", "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug", "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps"]; allowed=["/workspace/scratch/5778f0ffb5d4/toolchain/installed/lib", "/workspace/scratch/5778f0ffb5d4/toolchain/installed/lib/rustlib/x86_64-unknown-linux-gnu/lib", "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug", "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps"]
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/a4188f5c86b5/chain-pq-profile-boundary/trillionnium/crates/trnm-task-kernel)
+   Compiling getrandom v0.2.17
+   Compiling fs2 v0.4.3
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/a4188f5c86b5/chain-pq-profile-boundary/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/a4188f5c86b5/chain-pq-profile-boundary/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/a4188f5c86b5/chain-pq-profile-boundary/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-release-bundle v0.1.0 (/workspace/scratch/a4188f5c86b5/chain-pq-profile-boundary/trillionnium/crates/trnm-release-bundle)
+   Compiling trnm-mempool v0.1.0 (/workspace/scratch/a4188f5c86b5/chain-pq-profile-boundary/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/workspace/scratch/a4188f5c86b5/chain-pq-profile-boundary/trillionnium/crates/trnm-transport)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/a4188f5c86b5/chain-pq-profile-boundary/trillionnium/crates/trnm-pon-node)
+error: could not compile `trnm-pon-node` (lib test)
+
+Caused by:
+  process didn't exit successfully: `/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustc --crate-name trnm_pon_node --edition=2021 crates/trnm-pon-node/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,link -C opt-level=3 -C embed-bitcode=no -C debuginfo=2 -C debug-assertions=on --test --cfg 'feature="default"' --cfg 'feature="pq-native-openssl"' --cfg 'feature="pq-root-v3"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "pq-native-openssl", "pq-root-v3"))' -C metadata=eb625f005d2fb1f5 -C extra-filename=-2cfc25289c60243c --out-dir /workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps -L dependency=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps --extern fs2=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libfs2-9cb6e884d92e2e11.rlib --extern hex=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libhex-1558f6adc06e3fa8.rlib --extern libc=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/liblibc-8a30b4e392f7c92e.rlib --extern nix=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libnix-db1978108b63981f.rlib --extern openssl=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libopenssl-c8864449e135a562.rlib --extern rusqlite=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/librusqlite-e7bc30ad09c7666b.rlib --extern rustix=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/librustix-2ddee526af794e19.rlib --extern serde=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libserde-3bd1ca99d837caa4.rlib --extern serde_json=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libserde_json-f0d4891802ba697c.rlib --extern sha2=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libsha2-fafdf068c84600ef.rlib --extern tempfile=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtempfile-cd84dcd16baa0017.rlib --extern trnm_crypto_primitives=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_crypto_primitives-5e295247336dbb60.rlib --extern trnm_data_availability=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_data_availability-6c58396037a144f4.rlib --extern trnm_mempool=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_mempool-6b692f2ffb93df30.rlib --extern trnm_mvcc_fee=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_mvcc_fee-7df429b76db18745.rlib --extern trnm_protocol=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_protocol-10a9b461ad55d750.rlib --extern trnm_release_bundle=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_release_bundle-a8ae2dfafcbd02b0.rlib --extern trnm_service_settlement=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_service_settlement-699aecc755010478.rlib --extern trnm_sqlite_io_boundary=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_sqlite_io_boundary-6775c2de9c2b6d24.rlib --extern trnm_transport=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_transport-a3ce364ac5999f75.rlib --extern zeroize=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libzeroize-9917054cf4892abb.rlib -L native=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/build/libsqlite3-sys-10fe53ba697a87a6/out -L native=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/lib` (signal: 9, SIGKILL: kill)

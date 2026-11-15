@@ -1,0 +1,98 @@
+{
+  "schema": "trnm-M4-original-lane-readonly-failure-extract-v1",
+  "observed_at": "2026-11-14T08:36:17.968894+00:00",
+  "files": [
+    {
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-1a7afc-v1/summary.json",
+      "bytes": 21435,
+      "sha256": "61322d80d4bb3439f2115d62b50ff3c0be42e9b10bf17f82193d5d01935a71e6",
+      "total_lines": 455,
+      "windows": []
+    },
+    {
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-1a7afc-v1/repository-truth.stdout",
+      "bytes": 357530,
+      "sha256": "103863fcecd7456ed019a94de45fc5bc6e4e15a178db37e624a7f755b204daad",
+      "total_lines": 6143,
+      "windows": [
+        {
+          "first_line": 6122,
+          "lines": [
+            "test_actual_internal_popen_status_and_external_sibling_are_preserved (__main__.CollectorControls.test_actual_internal_popen_status_and_external_sibling_are_preserved) ... ok",
+            "test_actual_original_timeout_reaps_after_root_has_exited (__main__.CollectorControls.test_actual_original_timeout_reaps_after_root_has_exited) ... ok",
+            "test_actual_output_limit_is_bounded_and_fails_without_losing_root_status (__main__.CollectorControls.test_actual_output_limit_is_bounded_and_fails_without_losing_root_status) ... ok",
+            "test_actual_owner_lost_is_cleaned_without_treating_successful_root_as_success (__main__.CollectorControls.test_actual_owner_lost_is_cleaned_without_treating_successful_root_as_success) ... ok",
+            "test_actual_post_fork_identity_failure_reaps_gated_root_without_exec (__main__.CollectorControls.test_actual_post_fork_identity_failure_reaps_gated_root_without_exec) ... FAIL",
+            "test_actual_root_signal_is_not_translated_to_success (__main__.CollectorControls.test_actual_root_signal_is_not_translated_to_success) ... ok",
+            "test_original_clock_gate_and_nonlinux_never_execute_payload (__main__.CollectorControls.test_original_clock_gate_and_nonlinux_never_execute_payload) ... ok",
+            "test_reader_strict_types_identity_clock_and_actual_terminal_binding (__main__.CollectorControls.test_reader_strict_types_identity_clock_and_actual_terminal_binding) ... ok",
+            "test_real_pidfd_rejects_wrong_birth_and_fifo_reads_do_not_block (__main__.CollectorControls.test_real_pidfd_rejects_wrong_birth_and_fifo_reads_do_not_block) ... ok",
+            "",
+            "======================================================================",
+            "FAIL: test_actual_post_fork_identity_failure_reaps_gated_root_without_exec (__main__.CollectorControls.test_actual_post_fork_identity_failure_reaps_gated_root_without_exec)",
+            "----------------------------------------------------------------------",
+            "Traceback (most recent call last):"
+          ]
+        },
+        {
+          "first_line": 6129,
+          "lines": [
+            "test_reader_strict_types_identity_clock_and_actual_terminal_binding (__main__.CollectorControls.test_reader_strict_types_identity_clock_and_actual_terminal_binding) ... ok",
+            "test_real_pidfd_rejects_wrong_birth_and_fifo_reads_do_not_block (__main__.CollectorControls.test_real_pidfd_rejects_wrong_birth_and_fifo_reads_do_not_block) ... ok",
+            "",
+            "======================================================================",
+            "FAIL: test_actual_post_fork_identity_failure_reaps_gated_root_without_exec (__main__.CollectorControls.test_actual_post_fork_identity_failure_reaps_gated_root_without_exec)",
+            "----------------------------------------------------------------------",
+            "Traceback (most recent call last):",
+            "  File \"/home/qian-qi/chain-final-consolidation-20261114-root/source/scripts/test_w1_owned_process_collector_v1.py\", line 304, in test_actual_post_fork_identity_failure_reaps_gated_root_without_exec",
+            "    self.assertEqual(result[\"result\"][\"root_returncode\"], 125)",
+            "AssertionError: -15 != 125",
+            "",
+            "----------------------------------------------------------------------",
+            "Ran 14 tests in 2.796s",
+            ""
+          ]
+        },
+        {
+          "first_line": 6132,
+          "lines": [
+            "======================================================================",
+            "FAIL: test_actual_post_fork_identity_failure_reaps_gated_root_without_exec (__main__.CollectorControls.test_actual_post_fork_identity_failure_reaps_gated_root_without_exec)",
+            "----------------------------------------------------------------------",
+            "Traceback (most recent call last):",
+            "  File \"/home/qian-qi/chain-final-consolidation-20261114-root/source/scripts/test_w1_owned_process_collector_v1.py\", line 304, in test_actual_post_fork_identity_failure_reaps_gated_root_without_exec",
+            "    self.assertEqual(result[\"result\"][\"root_returncode\"], 125)",
+            "AssertionError: -15 != 125",
+            "",
+            "----------------------------------------------------------------------",
+            "Ran 14 tests in 2.796s",
+            "",
+            "FAILED (failures=1)"
+          ]
+        },
+        {
+          "first_line": 6134,
+          "lines": [
+            "----------------------------------------------------------------------",
+            "Traceback (most recent call last):",
+            "  File \"/home/qian-qi/chain-final-consolidation-20261114-root/source/scripts/test_w1_owned_process_collector_v1.py\", line 304, in test_actual_post_fork_identity_failure_reaps_gated_root_without_exec",
+            "    self.assertEqual(result[\"result\"][\"root_returncode\"], 125)",
+            "AssertionError: -15 != 125",
+            "",
+            "----------------------------------------------------------------------",
+            "Ran 14 tests in 2.796s",
+            "",
+            "FAILED (failures=1)"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-1a7afc-v1/repository-truth.stderr",
+      "bytes": 313662,
+      "sha256": "8b7647848e125604935e9cdd7659e4c81cd7ad519cba149c0ce4cf2d4fc72edf",
+      "total_lines": 2361,
+      "windows": []
+    }
+  ]
+}

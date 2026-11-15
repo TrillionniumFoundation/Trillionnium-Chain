@@ -1,0 +1,164 @@
+{
+  "bytecode_files_written": false,
+  "candidate_sources_modified": false,
+  "files": [
+    {
+      "bytes": 10601,
+      "bytes_unchanged_during_check": true,
+      "path": "formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py",
+      "sha256": "3ac9a625421addd573aba827da1830ab6579af17fff82cf24dcf35222d1208a9",
+      "syntax_exit_code": 0,
+      "syntax_method": "ast.parse plus in-memory compile(AST, mode=exec, dont_inherit=True); no pyc path or bytecode file",
+      "syntax_status": "PASS",
+      "unchanged_since_before_test_run": true,
+      "whitespace_command": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        "/workspace/scratch/89df848c3501/candidate/formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py"
+      ],
+      "whitespace_exit_interpretation": "git diff --no-index exit 1 denotes differences; no diagnostics means no whitespace errors.",
+      "whitespace_output": "",
+      "whitespace_raw_exit_code": 1,
+      "whitespace_status": "PASS"
+    },
+    {
+      "bytes": 22380,
+      "bytes_unchanged_during_check": true,
+      "path": "formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py",
+      "sha256": "eeec2e1cc1fa5b269635d3dfa1fcf800325b5d3a6ebe5dba2c935638d4bf3773",
+      "syntax_exit_code": 0,
+      "syntax_method": "ast.parse plus in-memory compile(AST, mode=exec, dont_inherit=True); no pyc path or bytecode file",
+      "syntax_status": "PASS",
+      "unchanged_since_before_test_run": true,
+      "whitespace_command": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/workspace/scratch/89df848c3501/evidence/final-local-validation/baseline-5afrvw1v/baseline-1.py",
+        "/workspace/scratch/89df848c3501/candidate/formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py"
+      ],
+      "whitespace_exit_interpretation": "git diff --no-index exit 1 denotes differences; no diagnostics means no whitespace errors.",
+      "whitespace_output": "",
+      "whitespace_raw_exit_code": 1,
+      "whitespace_status": "PASS"
+    },
+    {
+      "bytes": 30519,
+      "bytes_unchanged_during_check": true,
+      "path": "formal/pon-nakamoto-v1/grouped_work_profile_v1.py",
+      "sha256": "8e63a160cc639ea77a3b122f982bc5a885ba1c926bb92531270897fd80164b66",
+      "syntax_exit_code": 0,
+      "syntax_method": "ast.parse plus in-memory compile(AST, mode=exec, dont_inherit=True); no pyc path or bytecode file",
+      "syntax_status": "PASS",
+      "unchanged_since_before_test_run": true,
+      "whitespace_command": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        "/workspace/scratch/89df848c3501/candidate/formal/pon-nakamoto-v1/grouped_work_profile_v1.py"
+      ],
+      "whitespace_exit_interpretation": "git diff --no-index exit 1 denotes differences; no diagnostics means no whitespace errors.",
+      "whitespace_output": "",
+      "whitespace_raw_exit_code": 1,
+      "whitespace_status": "PASS"
+    },
+    {
+      "bytes": 16031,
+      "bytes_unchanged_during_check": true,
+      "path": "formal/pon-nakamoto-v1/test_grouped_fanout_reanalysis_v1.py",
+      "sha256": "03f24af7ba0db3d05ef87220803b6511fbb678df108b96677f00950c0576ca56",
+      "syntax_exit_code": 0,
+      "syntax_method": "ast.parse plus in-memory compile(AST, mode=exec, dont_inherit=True); no pyc path or bytecode file",
+      "syntax_status": "PASS",
+      "unchanged_since_before_test_run": true,
+      "whitespace_command": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        "/workspace/scratch/89df848c3501/candidate/formal/pon-nakamoto-v1/test_grouped_fanout_reanalysis_v1.py"
+      ],
+      "whitespace_exit_interpretation": "git diff --no-index exit 1 denotes differences; no diagnostics means no whitespace errors.",
+      "whitespace_output": "",
+      "whitespace_raw_exit_code": 1,
+      "whitespace_status": "PASS"
+    },
+    {
+      "bytes": 28876,
+      "bytes_unchanged_during_check": true,
+      "path": "formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py",
+      "sha256": "9ce117792b57c2ee6656f2141094404b2eb829d0272910fe3481980b89c90dab",
+      "syntax_exit_code": 0,
+      "syntax_method": "ast.parse plus in-memory compile(AST, mode=exec, dont_inherit=True); no pyc path or bytecode file",
+      "syntax_status": "PASS",
+      "unchanged_since_before_test_run": true,
+      "whitespace_command": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/workspace/scratch/89df848c3501/evidence/final-local-validation/baseline-5afrvw1v/baseline-4.py",
+        "/workspace/scratch/89df848c3501/candidate/formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py"
+      ],
+      "whitespace_exit_interpretation": "git diff --no-index exit 1 denotes differences; no diagnostics means no whitespace errors.",
+      "whitespace_output": "",
+      "whitespace_raw_exit_code": 1,
+      "whitespace_status": "PASS"
+    },
+    {
+      "bytes": 29045,
+      "bytes_unchanged_during_check": true,
+      "path": "formal/pon-nakamoto-v1/test_grouped_work_profile_v1.py",
+      "sha256": "c54730920ff28a77f3125333314b88e0bfdf8fbbce04fd9ad3e8e799d4c82120",
+      "syntax_exit_code": 0,
+      "syntax_method": "ast.parse plus in-memory compile(AST, mode=exec, dont_inherit=True); no pyc path or bytecode file",
+      "syntax_status": "PASS",
+      "unchanged_since_before_test_run": true,
+      "whitespace_command": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        "/workspace/scratch/89df848c3501/candidate/formal/pon-nakamoto-v1/test_grouped_work_profile_v1.py"
+      ],
+      "whitespace_exit_interpretation": "git diff --no-index exit 1 denotes differences; no diagnostics means no whitespace errors.",
+      "whitespace_output": "",
+      "whitespace_raw_exit_code": 1,
+      "whitespace_status": "PASS"
+    },
+    {
+      "bytes": 8758,
+      "bytes_unchanged_during_check": true,
+      "path": "evidence/pon-security-work-metering-20261107/replay_retained_query_trace.py",
+      "sha256": "71b6c30bfe78b910b075126279e30165d021ae4df47b44455f05d47ce8625c3e",
+      "syntax_exit_code": 0,
+      "syntax_method": "ast.parse plus in-memory compile(AST, mode=exec, dont_inherit=True); no pyc path or bytecode file",
+      "syntax_status": "PASS",
+      "unchanged_since_before_test_run": null,
+      "whitespace_command": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        "/workspace/scratch/89df848c3501/candidate/evidence/pon-security-work-metering-20261107/replay_retained_query_trace.py"
+      ],
+      "whitespace_exit_interpretation": "git diff --no-index exit 1 denotes differences; no diagnostics means no whitespace errors.",
+      "whitespace_output": "",
+      "whitespace_raw_exit_code": 1,
+      "whitespace_status": "PASS"
+    }
+  ],
+  "files_checked": 7,
+  "schema": "grouped-final-local-syntax-whitespace-v1",
+  "scope": "Seven changed Python files only, including retained-trace replay; AST and in-memory compiler used instead of py_compile to avoid pyc writes.",
+  "status": "PASS"
+}

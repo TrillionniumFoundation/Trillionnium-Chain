@@ -1,0 +1,107 @@
+{
+  "changed_from": "6ee529046d295e3175f09112492abee373f1f54c",
+  "files": [
+    {
+      "bytes": 90778,
+      "matches_integrated_worktree": false,
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "sha256": "c85cea3ddf4b07c5d94435d2de0e54e80bebd503c3a9e7b6049b570b578b0baa"
+    },
+    {
+      "bytes": 521382,
+      "matches_integrated_worktree": false,
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha256": "9ef06fed766cbea1e62c978e96564669def5bc227fe94e6d07a86cbefbb5a865"
+    },
+    {
+      "bytes": 8253,
+      "matches_integrated_worktree": true,
+      "path": "docs/development/specs/pon/SHARED_CELL_COST_V2.md",
+      "sha256": "02e7e53b8793ea98a28d544dff1c1100cf07462edc272582b38d31fe4dc71011"
+    },
+    {
+      "bytes": 50193,
+      "matches_integrated_worktree": true,
+      "path": "formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py",
+      "sha256": "5c2c6d900c6a6898a5d5eb8b28d48a44217159b0efe11fb84d8f0f58277dbaf6"
+    },
+    {
+      "bytes": 19492,
+      "matches_integrated_worktree": true,
+      "path": "formal/pon-nakamoto-v1/test_shared_cell_operator_v1.py",
+      "sha256": "7bb394e131762f94546e9dc5e230f8e14f111e122f2137e87a1918a029218817"
+    },
+    {
+      "bytes": 60827,
+      "matches_integrated_worktree": true,
+      "path": "scripts/ci/check_ci_contract.py",
+      "sha256": "e7617921f6e02ecb1a9a994ebf08f1c561a99b08d931d582ff3bee70887435cd"
+    },
+    {
+      "bytes": 23845,
+      "matches_integrated_worktree": true,
+      "path": "scripts/ci/ci_job.sh",
+      "sha256": "9d4f7964dc33ebdbd73147ad3208851f754715fb044250fbffc73c0299ad4110"
+    },
+    {
+      "bytes": 10850,
+      "matches_integrated_worktree": true,
+      "path": "scripts/ci/run_shared_material_campaign_v2.py",
+      "sha256": "38cfc034a1f2e87c17e2c22dc27eb8f9081a7e5e973383c36bdb9b56f1913299"
+    },
+    {
+      "bytes": 26873,
+      "matches_integrated_worktree": true,
+      "path": "scripts/ci/run_shared_material_security_v1.py",
+      "sha256": "a88239b9c8e1324f36a0814b5037e8bc9081c7f00c1bcad43a17a3ee3ed579f1"
+    },
+    {
+      "bytes": 38752,
+      "matches_integrated_worktree": true,
+      "path": "scripts/ci/shared_material_cost_v2.py",
+      "sha256": "8410c2d1e01aeb814174273cdf0bc15f407f9efb4a08c54365001220e7ce3fcc"
+    },
+    {
+      "bytes": 2741,
+      "matches_integrated_worktree": true,
+      "path": "scripts/ci/test_shared_material_campaign_v2.py",
+      "sha256": "56c788163242223016b537d1cae59a718219f2982725c7f8c7842c5567d5af78"
+    },
+    {
+      "bytes": 38356,
+      "matches_integrated_worktree": true,
+      "path": "scripts/ci/test_shared_material_cost_v2.py",
+      "sha256": "5738f8ca35fc2b3ac1d7d1dac5ac8f93e895dbc79dfab535271b77d8cc346b86"
+    },
+    {
+      "bytes": 23505,
+      "matches_integrated_worktree": true,
+      "path": "scripts/ci/test_shared_material_security_v1.py",
+      "sha256": "89f3a0cfb9505c08ae9a3b7fa1843f397c74e836abb2b99eb8026ddec30f55f6"
+    },
+    {
+      "bytes": 50152,
+      "matches_integrated_worktree": true,
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_shared_material_v1.rs",
+      "sha256": "313f7b83dfb36d3eb0b0061bc87001057d9cb05ce4dfea24b9e95b9350d3106c"
+    },
+    {
+      "bytes": 23002,
+      "matches_integrated_worktree": true,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs",
+      "sha256": "732f85082c7125d4c3ef6299a5ce3b5b657399df95f88b5498aa338abfa3c655"
+    }
+  ],
+  "legitimate_integration_differences": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "config/pon/pq-cross-branch-corpus-v1.json"
+  ],
+  "measured_commit": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+  "measured_tree": "5487be5fe9075298429c0a8cad60e33cf330f8bf",
+  "native_binary": {
+    "bytes": 843432,
+    "sha256": "5e9ad2da5319b645dc6325d4466c4e822cf7ebc07ab116cdc04c18d3c14fcf7f"
+  },
+  "no_merged_source_benchmark_claim": true,
+  "schema": "pon-shared-material-source-files-v2"
+}

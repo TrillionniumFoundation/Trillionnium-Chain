@@ -1,0 +1,198 @@
+{
+  "scope": "standalone full helper, validation/allocation/drop included; not packet decode or service throughput",
+  "same_original_grammar": true,
+  "all_observations_retained": true,
+  "rows": [
+    {
+      "bytes": 128,
+      "repetitions": 10000,
+      "pair": 0,
+      "original_ns": 8303587,
+      "candidate_ns": 2457317
+    },
+    {
+      "bytes": 128,
+      "repetitions": 10000,
+      "pair": 1,
+      "original_ns": 7346627,
+      "candidate_ns": 2824530
+    },
+    {
+      "bytes": 128,
+      "repetitions": 10000,
+      "pair": 2,
+      "original_ns": 7580111,
+      "candidate_ns": 2147097
+    },
+    {
+      "bytes": 128,
+      "repetitions": 10000,
+      "pair": 3,
+      "original_ns": 8838898,
+      "candidate_ns": 2697232
+    },
+    {
+      "bytes": 128,
+      "repetitions": 10000,
+      "pair": 4,
+      "original_ns": 8626740,
+      "candidate_ns": 2461830
+    },
+    {
+      "bytes": 128,
+      "repetitions": 10000,
+      "pair": 5,
+      "original_ns": 8763627,
+      "candidate_ns": 3038842
+    },
+    {
+      "bytes": 128,
+      "repetitions": 10000,
+      "pair": 6,
+      "original_ns": 7970993,
+      "candidate_ns": 2210847
+    },
+    {
+      "bytes": 128,
+      "repetitions": 10000,
+      "pair": 7,
+      "original_ns": 7087610,
+      "candidate_ns": 2395759
+    },
+    {
+      "bytes": 4096,
+      "repetitions": 500,
+      "pair": 0,
+      "original_ns": 29512409,
+      "candidate_ns": 7632443
+    },
+    {
+      "bytes": 4096,
+      "repetitions": 500,
+      "pair": 1,
+      "original_ns": 15656942,
+      "candidate_ns": 4812193
+    },
+    {
+      "bytes": 4096,
+      "repetitions": 500,
+      "pair": 2,
+      "original_ns": 25522890,
+      "candidate_ns": 4061757
+    },
+    {
+      "bytes": 4096,
+      "repetitions": 500,
+      "pair": 3,
+      "original_ns": 12454611,
+      "candidate_ns": 2687944
+    },
+    {
+      "bytes": 4096,
+      "repetitions": 500,
+      "pair": 4,
+      "original_ns": 10540073,
+      "candidate_ns": 4138557
+    },
+    {
+      "bytes": 4096,
+      "repetitions": 500,
+      "pair": 5,
+      "original_ns": 10675653,
+      "candidate_ns": 3514000
+    },
+    {
+      "bytes": 4096,
+      "repetitions": 500,
+      "pair": 6,
+      "original_ns": 9756432,
+      "candidate_ns": 5729518
+    },
+    {
+      "bytes": 4096,
+      "repetitions": 500,
+      "pair": 7,
+      "original_ns": 21911640,
+      "candidate_ns": 3333897
+    },
+    {
+      "bytes": 1048576,
+      "repetitions": 8,
+      "pair": 0,
+      "original_ns": 89489983,
+      "candidate_ns": 16255393
+    },
+    {
+      "bytes": 1048576,
+      "repetitions": 8,
+      "pair": 1,
+      "original_ns": 47040753,
+      "candidate_ns": 148506386
+    },
+    {
+      "bytes": 1048576,
+      "repetitions": 8,
+      "pair": 2,
+      "original_ns": 57950900,
+      "candidate_ns": 16900835
+    },
+    {
+      "bytes": 1048576,
+      "repetitions": 8,
+      "pair": 3,
+      "original_ns": 43890631,
+      "candidate_ns": 15366919
+    },
+    {
+      "bytes": 1048576,
+      "repetitions": 8,
+      "pair": 4,
+      "original_ns": 46946557,
+      "candidate_ns": 13051645
+    },
+    {
+      "bytes": 1048576,
+      "repetitions": 8,
+      "pair": 5,
+      "original_ns": 51079820,
+      "candidate_ns": 12238016
+    },
+    {
+      "bytes": 1048576,
+      "repetitions": 8,
+      "pair": 6,
+      "original_ns": 66859738,
+      "candidate_ns": 123464230
+    },
+    {
+      "bytes": 1048576,
+      "repetitions": 8,
+      "pair": 7,
+      "original_ns": 47443471,
+      "candidate_ns": 19448919
+    }
+  ],
+  "summary": [
+    {
+      "decoded_bytes": 128,
+      "pairs": 8,
+      "candidate_slower_pairs": [],
+      "median_paired_fraction_saved": 0.6994554107744592
+    },
+    {
+      "decoded_bytes": 4096,
+      "pairs": 8,
+      "candidate_slower_pairs": [],
+      "median_paired_fraction_saved": 0.7170149344452215
+    },
+    {
+      "decoded_bytes": 1048576,
+      "pairs": 8,
+      "candidate_slower_pairs": [
+        1,
+        6
+      ],
+      "median_paired_fraction_saved": 0.6791204850473092
+    }
+  ]
+}

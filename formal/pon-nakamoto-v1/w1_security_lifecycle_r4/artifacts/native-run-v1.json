@@ -1,0 +1,38 @@
+{
+  "base": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+  "source_sha256": "d0fcb79f5f5ef2178bfa00e223fb37fe21f05c8e44e50f3a53443ea21e260857",
+  "binary_sha256": "bd0f0192df0c1b0e936567d87983f711f01945ca78f96090e95a3da61937381d",
+  "rayon_threads": 1,
+  "runs": [
+    {
+      "component": "sha",
+      "args": [
+        "/home/qian-qi/work/w1-security-r4-target-f16ac/release/examples/r4_lifecycle_probe",
+        "sha",
+        "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-02/statement.bin",
+        "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin",
+        "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin",
+        "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-02/sha.proof.bin",
+        "/home/qian-qi/work/w1-security-r4-evidence-f16ac/sha-v1"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e8cf55190f2d9dafdcbf85bdf17acaf0db983750577d7b7091c638d1111a7980",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "component": "packed",
+      "args": [
+        "/home/qian-qi/work/w1-security-r4-target-f16ac/release/examples/r4_lifecycle_probe",
+        "packed",
+        "/home/qian-qi/work/chain-w1-packed-carry-measurements-20261108-f16ac/01-B/prepared/statement.bin",
+        "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin",
+        "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin",
+        "/home/qian-qi/work/chain-w1-packed-carry-measurements-20261108-f16ac/01-B/proof/arith.proof.bin",
+        "/home/qian-qi/work/w1-security-r4-evidence-f16ac/packed-v1"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "7bae0db27fdbb0211a633f87286351c2d43be83ede158127b02b4f82136a68be",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

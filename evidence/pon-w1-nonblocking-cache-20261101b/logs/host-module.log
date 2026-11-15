@@ -1,0 +1,105 @@
+     Locking 49 packages to latest compatible versions
+      Adding rusqlite v0.39.0 (available: v0.40.2)
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.45
+   Compiling libc v0.2.186
+   Compiling serde_core v1.0.229
+   Compiling libsqlite3-sys v0.37.0
+   Compiling getrandom v0.4.3
+   Compiling rustix v1.1.4
+   Compiling bitflags v2.13.2
+   Compiling foldhash v0.2.0
+   Compiling hashbrown v0.16.1
+   Compiling syn v3.0.9
+   Compiling serde_json v1.0.151
+   Compiling linux-raw-sys v0.12.1
+   Compiling serde v1.0.229
+   Compiling serde_derive v1.0.229
+   Compiling hashlink v0.11.1
+   Compiling fallible-iterator v0.3.0
+   Compiling smallvec v1.15.1
+   Compiling memchr v2.8.1
+   Compiling once_cell v1.21.4
+   Compiling fastrand v2.3.0
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling rusqlite v0.39.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-transport v0.1.0 (/workspace/scratch/41dfa6d31b4e/pon-security/trillionnium/crates/trnm-transport)
+   Compiling pon-host-exact-module-check v0.0.0 (/workspace/scratch/41dfa6d31b4e/host-check)
+warning: associated function `public_history_budget` is never used
+   --> /workspace/scratch/41dfa6d31b4e/pon-security/trillionnium/crates/trnm-pon-node/src/error.rs:264:19
+    |
+206 | impl Error {
+    | ---------- associated function in this implementation
+...
+264 |     pub(crate) fn public_history_budget() -> Self {
+    |                   ^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `pon-host-exact-module-check` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 26.86s
+     Running unittests src/lib.rs (/tmp/trnm-pon-security-target/debug/deps/pon_host_exact_module_check-5f219cda1bdd0cd8)
+
+running 19 tests
+test host_kernel_parent::kernel_parent::tests::canonical_systemd_slice_name_maps_to_the_actual_root_cgroup ... ok
+test host_kernel_parent::kernel_parent::tests::cpu_limit_requires_exactly_two_ascii_whitespace_tokens ... FAILED
+test host_kernel_parent::kernel_parent::tests::exactly_one_fixed_system_parent_name_is_eligible ... ok
+test host_kernel_parent::kernel_parent::tests::fake_root_or_wrong_parent_never_counts_as_root_kernel_budget ... ok
+test host_kernel_parent::kernel_parent::tests::finite_cpu_memory_process_limits_and_burst_required ... ok
+test host_kernel_parent::kernel_parent::tests::fixed_parent_constant_is_exactly_the_canonical_directory_and_name ... ok
+test host_kernel_parent::kernel_parent::tests::kernel_resource_counters_require_complete_bounded_real_format ... ok
+test host_kernel_parent::kernel_parent::tests::limit_reader_checks_complete_utf8_after_fragmented_reads ... ok
+test host_kernel_parent::kernel_parent::tests::limit_reader_keeps_all_five_reads_before_validation_and_observes_changes ... ok
+test host_kernel_parent::kernel_parent::tests::limit_reader_keeps_exact_128_byte_bound_and_rejects_long_prefixes ... ok
+test host_kernel_parent::kernel_parent::tests::limit_reader_never_accepts_a_valid_prefix_before_a_read_error ... ok
+test host_kernel_parent::kernel_parent::tests::limit_reader_reopens_the_current_path_and_propagates_open_failure ... ok
+test host_kernel_parent::kernel_parent::tests::limit_reader_waits_for_real_eof_after_short_reads_and_interruptions ... ok
+test host_kernel_parent::kernel_parent::tests::membership_requires_exact_parent_or_slash_delimited_descendant ... ok
+test host_kernel_parent::kernel_parent::tests::no_public_nonloopback_without_root_owned_kernel_parent ... ok
+test host_kernel_parent::kernel_parent::tests::read_kernel_membership_from_current_os_thread_not_process_leader ... ok
+test host_kernel_parent::kernel_parent::tests::real_linux_cgroup_v2_cpu_stat_is_parsed_without_claiming_a_quota ... ok
+test host_kernel_parent::kernel_parent::tests::shipped_systemd_slice_is_the_one_fixed_finite_kernel_parent ... ok
+test host_kernel_parent::kernel_parent::tests::two_aggregate_samples_never_accept_cpu_counter_rewind_or_mem_task_delta ... ok
+
+successes:
+
+---- host_kernel_parent::kernel_parent::tests::real_linux_cgroup_v2_cpu_stat_is_parsed_without_claiming_a_quota stdout ----
+ACTUAL_KERNEL_CPU_STAT_PARSE_OK real_cpu_usage_positive=true quota_qualified=false
+
+
+successes:
+    host_kernel_parent::kernel_parent::tests::canonical_systemd_slice_name_maps_to_the_actual_root_cgroup
+    host_kernel_parent::kernel_parent::tests::exactly_one_fixed_system_parent_name_is_eligible
+    host_kernel_parent::kernel_parent::tests::fake_root_or_wrong_parent_never_counts_as_root_kernel_budget
+    host_kernel_parent::kernel_parent::tests::finite_cpu_memory_process_limits_and_burst_required
+    host_kernel_parent::kernel_parent::tests::fixed_parent_constant_is_exactly_the_canonical_directory_and_name
+    host_kernel_parent::kernel_parent::tests::kernel_resource_counters_require_complete_bounded_real_format
+    host_kernel_parent::kernel_parent::tests::limit_reader_checks_complete_utf8_after_fragmented_reads
+    host_kernel_parent::kernel_parent::tests::limit_reader_keeps_all_five_reads_before_validation_and_observes_changes
+    host_kernel_parent::kernel_parent::tests::limit_reader_keeps_exact_128_byte_bound_and_rejects_long_prefixes
+    host_kernel_parent::kernel_parent::tests::limit_reader_never_accepts_a_valid_prefix_before_a_read_error
+    host_kernel_parent::kernel_parent::tests::limit_reader_reopens_the_current_path_and_propagates_open_failure
+    host_kernel_parent::kernel_parent::tests::limit_reader_waits_for_real_eof_after_short_reads_and_interruptions
+    host_kernel_parent::kernel_parent::tests::membership_requires_exact_parent_or_slash_delimited_descendant
+    host_kernel_parent::kernel_parent::tests::no_public_nonloopback_without_root_owned_kernel_parent
+    host_kernel_parent::kernel_parent::tests::read_kernel_membership_from_current_os_thread_not_process_leader
+    host_kernel_parent::kernel_parent::tests::real_linux_cgroup_v2_cpu_stat_is_parsed_without_claiming_a_quota
+    host_kernel_parent::kernel_parent::tests::shipped_systemd_slice_is_the_one_fixed_finite_kernel_parent
+    host_kernel_parent::kernel_parent::tests::two_aggregate_samples_never_accept_cpu_counter_rewind_or_mem_task_delta
+
+failures:
+
+---- host_kernel_parent::kernel_parent::tests::cpu_limit_requires_exactly_two_ascii_whitespace_tokens stdout ----
+
+thread 'host_kernel_parent::kernel_parent::tests::cpu_limit_requires_exactly_two_ascii_whitespace_tokens' (733) panicked at /workspace/scratch/41dfa6d31b4e/pon-security/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs:803:26:
+called `Result::unwrap_err()` on an `Ok` value: Limits { cpu_quota_us: 25000, cpu_period_us: 100000, memory_bytes: 268435456, tasks: 32 }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    host_kernel_parent::kernel_parent::tests::cpu_limit_requires_exactly_two_ascii_whitespace_tokens
+
+test result: FAILED. 18 passed; 1 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--lib`

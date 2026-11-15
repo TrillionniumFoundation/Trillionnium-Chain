@@ -1,0 +1,5 @@
+wall_seconds=33.26
+user_cpu_seconds=1.49
+system_cpu_seconds=0.44
+peak_rss_kib=13504
+exit_code=0

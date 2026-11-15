@@ -1,0 +1,10 @@
+{
+  "file": "117-ai395-native.tar.gz",
+  "bytes": 2787512,
+  "sha256": "178eae32c13c8fc4cd4cd14eadc45498094a2d07eb2ae206de2299eebe172293",
+  "file_count": 478,
+  "manifest_listed_files": 477,
+  "manifest_sha256": "3586aec5ad2a76ee8b40ea5a4b77ca9b735e873a25658d21cd4f7faf9831c357",
+  "uncompressed_bytes_excluding_manifest": 16081768,
+  "raw_archive_preserved": true
+}

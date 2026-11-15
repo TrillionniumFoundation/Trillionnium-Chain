@@ -1,0 +1,570 @@
+{
+  "schema": "history-actual-original-controls-summary-v1",
+  "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+  "group_denominators": [
+    {
+      "group": "phase-protocol-controls",
+      "result": [
+        {
+          "outcome": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "elapsed_seconds": 0.007807877998857293,
+      "timed_out": false
+    },
+    {
+      "group": "history-original",
+      "result": [
+        {
+          "outcome": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 1
+        }
+      ],
+      "elapsed_seconds": 6.937566339998739,
+      "timed_out": false
+    },
+    {
+      "group": "scalar-original",
+      "result": [
+        {
+          "outcome": "ok",
+          "passed": 57,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "elapsed_seconds": 2.874302550997527,
+      "timed_out": false
+    },
+    {
+      "group": "poison-original",
+      "result": [
+        {
+          "outcome": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "elapsed_seconds": 0.0036326879999251105,
+      "timed_out": false
+    },
+    {
+      "group": "inactive-original",
+      "result": [
+        {
+          "outcome": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "elapsed_seconds": 2.5335761009991984,
+      "timed_out": false
+    },
+    {
+      "group": "detached-original-integrity",
+      "result": [
+        {
+          "outcome": "ok",
+          "passed": 12,
+          "failed": 0,
+          "ignored": 1
+        }
+      ],
+      "elapsed_seconds": 0.5152825670011225,
+      "timed_out": false
+    },
+    {
+      "group": "large-original",
+      "result": [
+        {
+          "outcome": "FAILED",
+          "passed": 0,
+          "failed": 1,
+          "ignored": 0
+        }
+      ],
+      "elapsed_seconds": 26.752375412004767,
+      "timed_out": false
+    },
+    {
+      "group": "large-authenticated-independent",
+      "result": [
+        {
+          "outcome": "FAILED",
+          "passed": 0,
+          "failed": 1,
+          "ignored": 0
+        }
+      ],
+      "elapsed_seconds": 65.33130051600165,
+      "timed_out": false
+    },
+    {
+      "group": "actual-w1-depletion",
+      "result": [
+        {
+          "outcome": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "elapsed_seconds": 1.017889754002681,
+      "timed_out": false
+    },
+    {
+      "group": "withheld-original-explicit",
+      "result": [
+        {
+          "outcome": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "elapsed_seconds": 10.095125756000925,
+      "timed_out": false
+    }
+  ],
+  "raw_observations": {
+    "history-original": [
+      {
+        "cut": "epoch",
+        "cut_active_tip": "16df56eef0ce43d2a647e1af1d8662855e4650ba4ab76b8a7b3db7be6a337d8b",
+        "debt_reconciliation_complete": false,
+        "durable_epoch_marker": "active-v1",
+        "new_cpu_account_available": false,
+        "observed_signal": 9,
+        "physical_power_loss": false,
+        "reopened_active_tip": "16df56eef0ce43d2a647e1af1d8662855e4650ba4ab76b8a7b3db7be6a337d8b",
+        "schema": "native-history-real-kill-cut-v1",
+        "stored_block_after_reopen": false
+      },
+      {
+        "cut": "w1",
+        "cut_active_tip": "16df56eef0ce43d2a647e1af1d8662855e4650ba4ab76b8a7b3db7be6a337d8b",
+        "debt_reconciliation_complete": false,
+        "durable_epoch_marker": "active-v1",
+        "new_cpu_account_available": false,
+        "observed_signal": 9,
+        "physical_power_loss": false,
+        "reopened_active_tip": "16df56eef0ce43d2a647e1af1d8662855e4650ba4ab76b8a7b3db7be6a337d8b",
+        "schema": "native-history-real-kill-cut-v1",
+        "stored_block_after_reopen": false
+      },
+      {
+        "cut": "m06",
+        "cut_active_tip": "16df56eef0ce43d2a647e1af1d8662855e4650ba4ab76b8a7b3db7be6a337d8b",
+        "debt_reconciliation_complete": false,
+        "durable_epoch_marker": "active-v1",
+        "new_cpu_account_available": false,
+        "observed_signal": 9,
+        "physical_power_loss": false,
+        "reopened_active_tip": "16df56eef0ce43d2a647e1af1d8662855e4650ba4ab76b8a7b3db7be6a337d8b",
+        "schema": "native-history-real-kill-cut-v1",
+        "stored_block_after_reopen": false
+      },
+      {
+        "cut": "admitted",
+        "cut_active_tip": "11237ef8d01151fcb85f9981b4b801a84d0241369c67f6bb016122a5907e02e0",
+        "debt_reconciliation_complete": false,
+        "durable_epoch_marker": "active-v1",
+        "new_cpu_account_available": false,
+        "observed_signal": 9,
+        "physical_power_loss": false,
+        "reopened_active_tip": "2488233978094deb49d6bb099fa1f6d824121bc6b990a7902c09fc992f27f994",
+        "schema": "native-history-real-kill-cut-v1",
+        "stored_block_after_reopen": true
+      },
+      {
+        "cut": "activated",
+        "cut_active_tip": "2488233978094deb49d6bb099fa1f6d824121bc6b990a7902c09fc992f27f994",
+        "debt_reconciliation_complete": false,
+        "durable_epoch_marker": "active-v1",
+        "new_cpu_account_available": false,
+        "observed_signal": 9,
+        "physical_power_loss": false,
+        "reopened_active_tip": "2488233978094deb49d6bb099fa1f6d824121bc6b990a7902c09fc992f27f994",
+        "schema": "native-history-real-kill-cut-v1",
+        "stored_block_after_reopen": true
+      }
+    ],
+    "inactive-original": [
+      {
+        "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+        "cpu_flow": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 112652013,
+          "discarded_refill_ns": 0,
+          "initial_credit_ns": 0,
+          "live_debited_cpu_ns": 44797113,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 44799666,
+          "remaining_paid_credit_ns": 67852347,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 44799666,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 2553,
+          "stored_credit_ns": 67852347,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "elapsed_ns": 451385548,
+        "original_page_budget_seconds": 30,
+        "request_index": 0,
+        "requested_packets": 1,
+        "result": {
+          "Ok": "41a331516e463560383cceff9671ba86767ef42efce272b56c32b0e79853f3f8"
+        },
+        "schema": "history-original-honest-page-observation-v1"
+      },
+      {
+        "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+        "cpu_flow": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 155906556,
+          "discarded_refill_ns": 0,
+          "initial_credit_ns": 0,
+          "live_debited_cpu_ns": 85227962,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 85232107,
+          "remaining_paid_credit_ns": 70674449,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 85232107,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 4145,
+          "stored_credit_ns": 70674449,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "elapsed_ns": 171927406,
+        "original_page_budget_seconds": 30,
+        "request_index": 1,
+        "requested_packets": 1,
+        "result": {
+          "Ok": "3d7c5034a6bf09688bcfd0f0f50788bb6ad4ca9dc22d4a1d497448c134713ef2"
+        },
+        "schema": "history-original-honest-page-observation-v1"
+      },
+      {
+        "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+        "cpu_flow": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 196042977,
+          "discarded_refill_ns": 0,
+          "initial_credit_ns": 0,
+          "live_debited_cpu_ns": 120577059,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 120583137,
+          "remaining_paid_credit_ns": 75459840,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 120583137,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 6078,
+          "stored_credit_ns": 75459840,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "elapsed_ns": 159740720,
+        "original_page_budget_seconds": 30,
+        "request_index": 2,
+        "requested_packets": 1,
+        "result": {
+          "Ok": "1081c954a8508b0a005990b0188ce72c8b05438df15f4c02c77c1b110dca8238"
+        },
+        "schema": "history-original-honest-page-observation-v1"
+      },
+      {
+        "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+        "cpu_flow": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 231479677,
+          "discarded_refill_ns": 0,
+          "initial_credit_ns": 0,
+          "live_debited_cpu_ns": 159696179,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 159703909,
+          "remaining_paid_credit_ns": 71775768,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 159703909,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 7730,
+          "stored_credit_ns": 71775768,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "elapsed_ns": 140780555,
+        "original_page_budget_seconds": 30,
+        "request_index": 3,
+        "requested_packets": 1,
+        "result": {
+          "Ok": "30f52a4139909cc0968bc7bcf185baaeb5e90e52506a04a3cf478dfc10531932"
+        },
+        "schema": "history-original-honest-page-observation-v1"
+      },
+      {
+        "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+        "cpu_flow": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 271307356,
+          "discarded_refill_ns": 0,
+          "initial_credit_ns": 0,
+          "live_debited_cpu_ns": 201835865,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 201845488,
+          "remaining_paid_credit_ns": 69461868,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 201845488,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 9623,
+          "stored_credit_ns": 69461868,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "elapsed_ns": 158469345,
+        "original_page_budget_seconds": 30,
+        "request_index": 4,
+        "requested_packets": 1,
+        "result": {
+          "Ok": "21e524263c10674ff33a1e5fa2c6a3def34e49ca4adf6625643f99dc63ac7a59"
+        },
+        "schema": "history-original-honest-page-observation-v1"
+      },
+      {
+        "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+        "cpu_flow": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 312373337,
+          "discarded_refill_ns": 0,
+          "initial_credit_ns": 0,
+          "live_debited_cpu_ns": 240266125,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 240277602,
+          "remaining_paid_credit_ns": 72095735,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 240277602,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 11477,
+          "stored_credit_ns": 72095735,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "elapsed_ns": 163385446,
+        "original_page_budget_seconds": 30,
+        "request_index": 5,
+        "requested_packets": 1,
+        "result": {
+          "Ok": "045c48490fad3c22e0db74621b9f5d4d206cc2736a160a45244e03f3259666bc"
+        },
+        "schema": "history-original-honest-page-observation-v1"
+      },
+      {
+        "active_tip": "f22489cecd7347edb4e33367dfe9f2f77e0872a3b24598ad1598f832086b9b05",
+        "cpu_flow": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 430404331,
+          "discarded_refill_ns": 0,
+          "initial_credit_ns": 0,
+          "live_debited_cpu_ns": 405024539,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 405037187,
+          "remaining_paid_credit_ns": 25367144,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 405037187,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 12648,
+          "stored_credit_ns": 25367144,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "elapsed_ns": 471089152,
+        "original_page_budget_seconds": 30,
+        "request_index": 6,
+        "requested_packets": 1,
+        "result": {
+          "Ok": "f22489cecd7347edb4e33367dfe9f2f77e0872a3b24598ad1598f832086b9b05"
+        },
+        "schema": "history-original-honest-page-observation-v1"
+      }
+    ],
+    "large-original": [
+      {
+        "admitted_parent": "0d8bc316c037050a8ae9a58ba53c84970c48792f8bf471999ee5644672b1c6a2",
+        "all_honest_service_qualified": false,
+        "authenticated_backend": false,
+        "budget_depletion_demonstrated": false,
+        "complete_key_utf8_and_canonical_value_bytes": 8625548,
+        "early_capacity_observed_lower_bound_bytes": 8391103,
+        "genesis": "46f490f617a7aae11650bf20b790943699528de11341fd730b06b2017e24283a",
+        "genesis_fixture": "2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth",
+        "genesis_state_root": "afd8ca7ce215c51c620ca9d5823e9d7b3e4ccc47231ada4ef102366c15e66159",
+        "host_qualified": false,
+        "native_result": {
+          "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+        },
+        "original_cpu_receipt": {
+          "accounting_unavailable": false,
+          "finished_workers": 2,
+          "known_workers": 2,
+          "live_paid_cpu_ns": 2772418353,
+          "live_refused": true,
+          "owner_cpu_ns": 2772142825,
+          "residual_cpu_ns": 2624,
+          "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+          "scoped_worker_cpu_ns": 278152,
+          "spawned_workers": 2,
+          "started_workers": 2,
+          "total_cpu_ns": 2772420977
+        },
+        "schema": "native-large-parent-schedule-parity-v1"
+      }
+    ],
+    "large-authenticated-independent": [
+      {
+        "admitted_parent": "0d8bc316c037050a8ae9a58ba53c84970c48792f8bf471999ee5644672b1c6a2",
+        "all_honest_service_qualified": false,
+        "authenticated_backend": true,
+        "budget_depletion_demonstrated": false,
+        "complete_key_utf8_and_canonical_value_bytes": 8625548,
+        "early_capacity_observed_lower_bound_bytes": 8391103,
+        "genesis": "46f490f617a7aae11650bf20b790943699528de11341fd730b06b2017e24283a",
+        "genesis_fixture": "2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth",
+        "genesis_state_root": "afd8ca7ce215c51c620ca9d5823e9d7b3e4ccc47231ada4ef102366c15e66159",
+        "host_qualified": false,
+        "native_result": {
+          "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+        },
+        "original_cpu_receipt": {
+          "accounting_unavailable": false,
+          "finished_workers": 2,
+          "known_workers": 2,
+          "live_paid_cpu_ns": 3580789851,
+          "live_refused": true,
+          "owner_cpu_ns": 3580507641,
+          "residual_cpu_ns": 2221,
+          "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+          "scoped_worker_cpu_ns": 284431,
+          "spawned_workers": 2,
+          "started_workers": 2,
+          "total_cpu_ns": 3580792072
+        },
+        "schema": "native-large-parent-schedule-parity-v1"
+      }
+    ],
+    "actual-w1-depletion": [
+      {
+        "cpu_refusals": 1,
+        "honest_read_and_native_submit_recovered": true,
+        "independently_verified_state": true,
+        "meter_after_real_depletion_ns": -2885,
+        "original_cpu_meter_start_ns": 0,
+        "paid_thread_cpu_ns": 133389821,
+        "production_activation": false,
+        "replayed_actual_W1_invalid_proofs": 179,
+        "schema": "original-W1-paid-CPU-real-depletion-lab-v1",
+        "wan_and_sybil_qualified": false
+      }
+    ],
+    "withheld-original-explicit": [
+      {
+        "request_identity": "e0cf1b9e7b205d8aa9b8965e0583ba1e9d027d712d9feb683233d9d348fb5939",
+        "request_scheduled": true,
+        "schema": "native-reorg-socket-request-v1"
+      },
+      {
+        "request_identity": "e0cf1b9e7b205d8aa9b8965e0583ba1e9d027d712d9feb683233d9d348fb5939",
+        "scheduled_to_observed_ns": 10013317416,
+        "schema": "native-reorg-socket-response-v1"
+      },
+      {
+        "actual_original_request_timeout_seconds": 10,
+        "observed_wall_ns": 10014550887,
+        "ok": false,
+        "request_deadline_not_renewed": true,
+        "schema": "native-actual-legacy-request-deadline-v1",
+        "terminal": false,
+        "typed_error_was_not_injected": true,
+        "value": {
+          "error": "REQUEST_DEADLINE"
+        }
+      },
+      {
+        "request_identity": "636ab91bc429c9a400f07ecbda79334393c2033d35a8f65ef05e6a93b8865cf1",
+        "request_scheduled": true,
+        "schema": "native-reorg-socket-request-v1"
+      },
+      {
+        "request_identity": "636ab91bc429c9a400f07ecbda79334393c2033d35a8f65ef05e6a93b8865cf1",
+        "scheduled_to_observed_ns": 24118499,
+        "schema": "native-reorg-socket-response-v1"
+      },
+      {
+        "after": {
+          "active": "a41db80268275f6f19f11579c5fa60f53c50dd62ad6281bbc5c4ff1d614e09af",
+          "audit_rows": 2,
+          "highest_ack": 0,
+          "lifecycle": [
+            [
+              1,
+              2,
+              0,
+              "REQUEST_DEADLINE"
+            ]
+          ],
+          "pending_nonce": 1,
+          "reorg_done": 2,
+          "target": "aafe79ec39823ac6799c928a1d39b840b9690667595c2eeca9fc1b30d98ffb91"
+        },
+        "all_honest_service_target_met": true,
+        "before": {
+          "active": "a42484f787d32f82d537db9b8da4735ed76a55bb92769f33bbcce5097da1fa9a",
+          "audit_rows": 1,
+          "highest_ack": 0,
+          "lifecycle": [
+            [
+              1,
+              2,
+              0,
+              "REQUEST_DEADLINE"
+            ]
+          ],
+          "pending_nonce": 1,
+          "reorg_done": 2,
+          "target": "aafe79ec39823ac6799c928a1d39b840b9690667595c2eeca9fc1b30d98ffb91"
+        },
+        "different_honest_clients": 1,
+        "elapsed_ns": 30317718,
+        "honest_mutation_attempts": 1,
+        "honest_mutations_succeeded": 1,
+        "honest_result": {
+          "active": "a41db80268275f6f19f11579c5fa60f53c50dd62ad6281bbc5c4ff1d614e09af",
+          "block": "a41db80268275f6f19f11579c5fa60f53c50dd62ad6281bbc5c4ff1d614e09af",
+          "generation": 2,
+          "physical_execution": false
+        },
+        "new_cpu_domains_created_for_recovery": 0,
+        "original_requester_replayed": false,
+        "production_activation": false,
+        "registered_scalar_cpu_domain": false,
+        "schema": "native-withheld-frame-liveness-termination-v2",
+        "scope": "same actual legacy authenticated sockets, original ten-second deadline and exact original intent cut; same-owner metadata-only termination, unchanged active State, separate paid-resource gate still required",
+        "work_verifications": 2
+      }
+    ]
+  },
+  "WP2B_passed": false,
+  "why_not_passed": [
+    "Both original allowed >8MiB honest State backends still refuse original CPU budget",
+    "Fixed-public-phase hosted process layout remains unexecuted",
+    "Five SIGKILL cuts preserve fail-closed credit but debt reconciliation is explicitly incomplete",
+    "Cold-zero real depletion measures subsequent recovery, not honest success under continuing attack",
+    "No independent multi-day WAN acceptance"
+  ]
+}

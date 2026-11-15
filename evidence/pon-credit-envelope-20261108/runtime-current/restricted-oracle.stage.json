@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "test_w1_quantum_restricted_oracle.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+  "elapsed_seconds": 20.366068,
+  "exception": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-08T12:58:20.451998+00:00",
+  "passed": true,
+  "stage": "restricted-oracle",
+  "started_utc": "2026-11-08T12:58:00.085936+00:00",
+  "stderr": "restricted-oracle.stderr.log",
+  "stderr_sha256": "85525184c86fd4ee563ca9f9f73a5a369b6609d7b44f09e0434ffd36ab3209a1",
+  "stdout": "restricted-oracle.stdout.log",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_methods": 12,
+  "unittest_terminal_receipt_valid": true
+}

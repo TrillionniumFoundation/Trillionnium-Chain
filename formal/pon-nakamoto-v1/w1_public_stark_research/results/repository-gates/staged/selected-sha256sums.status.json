@@ -1,0 +1,12 @@
+{
+  "label": "selected-sha256sums",
+  "command": [
+    "/usr/bin/sha256sum",
+    "-c",
+    "SHA256SUMS"
+  ],
+  "exit_code": 0,
+  "outer_wall_seconds": 0.0531238061375916,
+  "stdout_sha256": "1120abc7a572aec574aaf369bafdfc9d2fdf2bec6d6f1595b13438cf047d5302",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,1 @@
+{"executed_tests": 1, "result": "PASS", "scope": "named-libtest-execution-only", "test": "either_cache_alone_preserves_original_cold_cpu_budget_and_profile"}

@@ -1,0 +1,103 @@
+{
+  "observed_at_unix": 1793853160.2481008,
+  "memory": {
+    "host_available": 4887863296,
+    "cgroup_limit": "8589934592",
+    "cgroup_current": 8586862592,
+    "events": "low 0\nhigh 0\nmax 4327368\noom 3\noom_kill 3\noom_group_kill 0\n",
+    "event_counters": {
+      "low": 0,
+      "high": 0,
+      "max": 4327368,
+      "oom": 3,
+      "oom_kill": 3,
+      "oom_group_kill": 0
+    },
+    "effective_available": 1304436736,
+    "hard_cgroup_headroom": 3072000,
+    "reclaimable_inactive_file_estimate": 1301364736,
+    "memory_stat_inputs": {
+      "file": 2788298752,
+      "shmem": 147456,
+      "file_dirty": 17002496,
+      "file_writeback": 0,
+      "inactive_file": 1301364736
+    }
+  },
+  "rust_processes": [
+    {
+      "pid": 127174,
+      "program": "cargo",
+      "rss": "28672 kB",
+      "state": "S (sleeping)"
+    },
+    {
+      "pid": 130795,
+      "program": "rustc",
+      "rss": "1787652 kB",
+      "state": "S (sleeping)",
+      "--out-dir": "/workspace/scratch/48266f5bd43f/chain-target/debug/deps",
+      "--crate-name": "trnm_pon_node"
+    },
+    {
+      "pid": 150307,
+      "program": "cargo",
+      "rss": "26792 kB",
+      "state": "S (sleeping)"
+    },
+    {
+      "pid": 162843,
+      "program": "cargo",
+      "rss": "62132 kB",
+      "state": "S (sleeping)"
+    },
+    {
+      "pid": 164365,
+      "program": "cargo",
+      "rss": "29904 kB",
+      "state": "S (sleeping)"
+    },
+    {
+      "pid": 172667,
+      "program": "rustc",
+      "rss": "1570752 kB",
+      "state": "S (sleeping)",
+      "--out-dir": "/workspace/scratch/3042e909dc8c/target-integrated/debug/deps",
+      "--crate-name": "trnm_pon_node"
+    },
+    {
+      "pid": 173745,
+      "program": "cargo",
+      "rss": "51220 kB",
+      "state": "S (sleeping)"
+    },
+    {
+      "pid": 177022,
+      "program": "cargo",
+      "rss": "45560 kB",
+      "state": "S (sleeping)"
+    },
+    {
+      "pid": 177076,
+      "program": "rustc",
+      "rss": "248320 kB",
+      "state": "S (sleeping)",
+      "--out-dir": "/workspace/scratch/7318042bb6cb/target/debug/deps",
+      "--crate-name": "trnm_crypto_primitives"
+    },
+    {
+      "pid": 179002,
+      "program": "cargo",
+      "rss": "44448 kB",
+      "state": "S (sleeping)"
+    },
+    {
+      "pid": 179005,
+      "program": "rustc",
+      "rss": "174064 kB",
+      "state": "S (sleeping)",
+      "--out-dir": "/workspace/scratch/0c2d131ac5a9/target/debug/deps",
+      "--crate-name": "trnm_service_settlement"
+    }
+  ]
+}

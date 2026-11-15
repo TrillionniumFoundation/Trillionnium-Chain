@@ -1,0 +1,22 @@
+{
+  "bytecode_writes_disabled": true,
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "test_fresh_work_query_floor_v0.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/89df848c3501/candidate",
+  "elapsed_seconds": 0.13026822899973922,
+  "exit_code": 0,
+  "finished_utc": "2026-11-07T17:31:40.606936+00:00",
+  "label": "fresh-query-floor",
+  "log": "/workspace/scratch/89df848c3501/evidence/final-local-validation/fresh-query-floor.log",
+  "started_utc": "2026-11-07T17:31:40.476588+00:00"
+}

@@ -1,0 +1,1904 @@
+{
+  "schema": "trnm-native-liveness-local-controls-v2",
+  "generated_at_utc": "2026-11-04T13:45:37.083460+00:00",
+  "status": "sealed-local-observations-host-unaccepted",
+  "source_base": "03163dcb849a15cd267fcaf704a533a88cd54131",
+  "source": {
+    "source_base": "03163dcb849a15cd267fcaf704a533a88cd54131",
+    "observed_head": "03163dcb849a15cd267fcaf704a533a88cd54131",
+    "worktree_status": [
+      "M .github/workflows/pon-recent-batch-acceptance.yml",
+      " M config/pon/pq-cross-branch-corpus-v1.json",
+      "M  docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "M  trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs",
+      "M  trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs",
+      "M  trillionnium/crates/trnm-mvcc-fee/src/model_evolution_v5.rs",
+      "M  trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "M  trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs",
+      "M  trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "M  trillionnium/crates/trnm-pon-node/src/ingress/authenticated_recovery_tests.rs",
+      "M  trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "M  trillionnium/crates/trnm-pon-node/src/store.rs",
+      "M  trillionnium/crates/trnm-pon-node/src/store/growth/observation.rs",
+      "M  trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+      "?? evidence/native-liveness-20261104/"
+    ],
+    "changed_rust_files": {
+      "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs": {
+        "bytes": 21172,
+        "sha256": "11c771e02e4ae446dfdbb5026b2317f4fc75ea0f98f66505b1619494d794b676",
+        "sha1_raw_file": "64656aa9a381a97c4469d39a6b071d89d783e477",
+        "git_blob_sha1": "ccd4d4a7a7ede5cb935e0d48c82d74920c15c1aa"
+      },
+      "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs": {
+        "bytes": 24084,
+        "sha256": "9055bba1820b307ca3450953370504ee661ff4020151f67f468ce43dc215ad2f",
+        "sha1_raw_file": "cba2887ade9a41834fd177cf87a4a68b20b9cae5",
+        "git_blob_sha1": "c496d0ee1cd5d04e5a7b0cef8b3fe20206de39bf"
+      },
+      "trillionnium/crates/trnm-mvcc-fee/src/model_evolution_v5.rs": {
+        "bytes": 11529,
+        "sha256": "d49801ca533604279c7666ce13173cd839f59e3df6f460962cf17ad12c942549",
+        "sha1_raw_file": "359630a6754d262b75e22eecde9558f719dbcd35",
+        "git_blob_sha1": "7bebea6cb8890313168832c66129b8286908a546"
+      },
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": {
+        "bytes": 148997,
+        "sha256": "226b7defeb77952aac6f84dcbc5acf1de617bce5e5014a8448d2f786eb2fa399",
+        "sha1_raw_file": "0759365227cc60b4cdd871f972e68e73cf08ccce",
+        "git_blob_sha1": "950a9320636e8c68207ca01b0b67f6450bdcd304"
+      },
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs": {
+        "bytes": 28840,
+        "sha256": "24d627cd00fcf52ab5481ca5ec7eba7daadaf873f7ac33b6b81ff6fcc287049a",
+        "sha1_raw_file": "3087e6f9201b630f9231e9c7a21d884e2631834b",
+        "git_blob_sha1": "cfd44e53cae61728bf58c5315fa1e76f1965aef8"
+      },
+      "trillionnium/crates/trnm-pon-node/src/ingress.rs": {
+        "bytes": 208677,
+        "sha256": "f7ede6b415e662063a08dcfe05935da88d5ebc617e176c6fa4bcf4a19a092e73",
+        "sha1_raw_file": "289273481f1b0d039335a4d6db178f17ac9e097b",
+        "git_blob_sha1": "ae73ee11346ca1ba4ebf22310f9162befc32409c"
+      },
+      "trillionnium/crates/trnm-pon-node/src/ingress/authenticated_recovery_tests.rs": {
+        "bytes": 24039,
+        "sha256": "6ae451a6df72f14451fd590b90387611007716491ee7a052025a4f0ad9d0294d",
+        "sha1_raw_file": "c685894437eee7bcaf0eef67cda8ce76da24f192",
+        "git_blob_sha1": "efac53fdbb15bc7a56b56c8c5b3534cf76ac73f7"
+      },
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
+        "bytes": 340326,
+        "sha256": "7dcff10964f18b5c9a34d3e3a88a92fc6421e24efb4200da3806e16d0f495a7b",
+        "sha1_raw_file": "4e1d7f87587719b1e7a77003ee12d9a3626b12b7",
+        "git_blob_sha1": "b9463c0b37630251e847964138effb7acce7ce6d"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store.rs": {
+        "bytes": 336964,
+        "sha256": "a0166d713d033e16beb3a22e403ec26df544d19b9fd078599b8d4b32b26ac081",
+        "sha1_raw_file": "773a59df4168814d8ca5a01a93102db62d30df3a",
+        "git_blob_sha1": "0e30e12fbcc2cd951ceff2ea6d89006073a27ad3"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store/growth/observation.rs": {
+        "bytes": 11412,
+        "sha256": "07862d8682dcca7b79e1305f1853bd2f118aaf66f9b47ba150ff8d9a96358cfe",
+        "sha1_raw_file": "269174b3fdac4f8073e3d89de6587e30b8f1fda7",
+        "git_blob_sha1": "88a1cdd1429ce748e07d19e30dcda880a8aa4e99"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs": {
+        "bytes": 84662,
+        "sha256": "752a5d4356451d65a1fd1a2f1b70e6c2afbf1ecad102d4b3d5f508eba527f424",
+        "sha1_raw_file": "3f0b95fb0cab2e44092878d050bdc04931020a62",
+        "git_blob_sha1": "c2cae5fd6b81d0819be56730948dcfcd9e1c5b39"
+      }
+    },
+    "cargo_and_configuration_inputs": {
+      ".github/workflows/pon-recent-batch-acceptance.yml": {
+        "bytes": 31731,
+        "sha256": "38e22dbcab8dc9865b31db050912e949cfb4ba48294367185e8701ded5d9129f"
+      },
+      "config/pon/pq-cross-branch-corpus-v1.json": {
+        "bytes": 76096,
+        "sha256": "d5ae17c31f18e0f23675f41d4ba8bd235ece0275d434f8cf565c6150b46aff9d"
+      },
+      "config/portability-inventory-v1.json": {
+        "bytes": 30218,
+        "sha256": "e766e17c0b85a79066f09ba609beca4439e91bc66b3039fa7b10f3b00fa0b390"
+      },
+      "rust-toolchain.toml": {
+        "bytes": 86,
+        "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+      },
+      "trillionnium/Cargo.lock": {
+        "bytes": 40033,
+        "sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+        "sha1_raw_file": "47f83f4e7df701f3d2a4a5390016157af94674f5",
+        "git_blob_sha1": "17e1155502ae7a15a9eea151a045dd24df2aae50"
+      },
+      "trillionnium/Cargo.toml": {
+        "bytes": 2204,
+        "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+      },
+      "trillionnium/crates/trnm-audit-events/Cargo.toml": {
+        "bytes": 273,
+        "sha256": "3b3ea395d825949d15125b2de9ebb3f3a1f737ea2fba1f6655123bfe0bc94b81"
+      },
+      "trillionnium/crates/trnm-bench/Cargo.toml": {
+        "bytes": 325,
+        "sha256": "6659a2800bf7ab244b4ed07f5a6c01eb3d4110686912f591898432a712b4b64a"
+      },
+      "trillionnium/crates/trnm-checkpoint-store/Cargo.toml": {
+        "bytes": 1057,
+        "sha256": "fdae031e687aaccd0a8b22bdd4ba916ee6c77cd61a90ee5d54d1a5533b416ab1"
+      },
+      "trillionnium/crates/trnm-checkpoint-types/Cargo.toml": {
+        "bytes": 331,
+        "sha256": "fb881e814d9837952b0e291edbbb3bcfa498b8281e139321c556420cf313df15"
+      },
+      "trillionnium/crates/trnm-control-plane/Cargo.toml": {
+        "bytes": 333,
+        "sha256": "680461e37dc91dfac8c9eff9a3e713922fc117f88e0291f0e7fdf4cc735a9adf"
+      },
+      "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": {
+        "bytes": 836,
+        "sha256": "49cd28093512c08ae123a5e1f2bb7e766d51ae9b06580f4bb21cb2f36604804f"
+      },
+      "trillionnium/crates/trnm-data-availability/Cargo.toml": {
+        "bytes": 1179,
+        "sha256": "81f73d9ffb4091abc54962fe22cf8ecd448fa748efd0c19cba5f3e8db93501a1"
+      },
+      "trillionnium/crates/trnm-escrow-vault/Cargo.toml": {
+        "bytes": 347,
+        "sha256": "d7d15fe56bffccf5035e99702fbff36f19cde68adb978cddcb99cc81c909283e"
+      },
+      "trillionnium/crates/trnm-executor/Cargo.toml": {
+        "bytes": 168,
+        "sha256": "a5e4d8f26d975149bd33019d28dabd650066370e8126aad11913c4c87d2a7899"
+      },
+      "trillionnium/crates/trnm-governance-guard/Cargo.toml": {
+        "bytes": 351,
+        "sha256": "0beb309f98afc7188026936d9c670be343acc969371cfa552eeb6f3444f1a7bf"
+      },
+      "trillionnium/crates/trnm-mempool/Cargo.toml": {
+        "bytes": 141,
+        "sha256": "b0fcd75b13e78b66d0b20e3a2176c9c0962dfbe1ca5e0670274198c963756c85"
+      },
+      "trillionnium/crates/trnm-mvcc-fee/Cargo.toml": {
+        "bytes": 998,
+        "sha256": "9aa41333719fd478a784a57ffb2bf5afdae18359af815f30db03217440c36fff"
+      },
+      "trillionnium/crates/trnm-oracle/Cargo.toml": {
+        "bytes": 235,
+        "sha256": "74d413acf566aac890f01a5062f0dc828c2220edde665aeb7500bf71bf08e759"
+      },
+      "trillionnium/crates/trnm-peer-lease/Cargo.toml": {
+        "bytes": 2011,
+        "sha256": "d330e720fdadff49d3a4566f0f6408e1fbbf914117ff89d6bd0ae4321e33b658"
+      },
+      "trillionnium/crates/trnm-pon-node/Cargo.toml": {
+        "bytes": 1559,
+        "sha256": "caaf3a4a3247e84d0c2f8b2a86c83545a54df70dfdf88b07ea7c7a9eee2d71f3"
+      },
+      "trillionnium/crates/trnm-protocol/Cargo.toml": {
+        "bytes": 684,
+        "sha256": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc"
+      },
+      "trillionnium/crates/trnm-release-bundle/Cargo.toml": {
+        "bytes": 523,
+        "sha256": "e047dcd8e97697fa2d90462b3a1c92d92151f14799c860ff11ee381c0204218b"
+      },
+      "trillionnium/crates/trnm-research-protocol/Cargo.toml": {
+        "bytes": 426,
+        "sha256": "450a250fa7f4d1bcc57fcd691475d53fc11b0df5f5c4d2ec8ed06582d43b6aed"
+      },
+      "trillionnium/crates/trnm-service-settlement/Cargo.toml": {
+        "bytes": 630,
+        "sha256": "ef6d0d6b16ca5600808bbbed76b902f2004d427a29ebe4f5b5d6c78360cc517d"
+      },
+      "trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml": {
+        "bytes": 594,
+        "sha256": "91f0c5dee1d02ff6ee62b276e11429c0f616eae7d7a8bd00d1315ac777c987e9"
+      },
+      "trillionnium/crates/trnm-state-import/Cargo.toml": {
+        "bytes": 408,
+        "sha256": "fab1897088c6a5f81ef52c33de2cfae63854cd3ed435b3e70ce8054acfba0d9b"
+      },
+      "trillionnium/crates/trnm-task-kernel/Cargo.toml": {
+        "bytes": 563,
+        "sha256": "d87cc43b8dbe3ba163886d25f1587c32ae3c562603102a5bf0645abcedef0063"
+      },
+      "trillionnium/crates/trnm-transport/Cargo.toml": {
+        "bytes": 395,
+        "sha256": "720d1ac4ca279d52da65eb63ecbbea94d9b880f2befc1d873ab2a9b654a71ed7"
+      },
+      "trillionnium/crates/trnm-types/Cargo.toml": {
+        "bytes": 238,
+        "sha256": "ff83cf759d5233c0cbb5b642f81f7e43fb4578716de5f76ff9128810148e9814"
+      },
+      "trillionnium/crates/trnm-verification-profiles/Cargo.toml": {
+        "bytes": 336,
+        "sha256": "a834c59008c5f2ff6c131cba6ed73d7c7ef61ead7ad9eeb154eedae31dc21155"
+      },
+      "trillionnium/crates/trnm-worker-agent/Cargo.toml": {
+        "bytes": 561,
+        "sha256": "04bfc738e6b161237988e77304b0bf660d31583b3708e8499566b4b717ca9554"
+      }
+    },
+    "native_source_trees": {
+      "trnm-mvcc-fee": {
+        "files": 46,
+        "inventory_sha256": "b1d61d52515dabd9514ea2298eac84d58083360cf91e39d34c560a084e03c250",
+        "inventory_encoding": "sha256(compact sorted JSON mapping repo-relative path to file sha256)"
+      },
+      "trnm-pon-node": {
+        "files": 189,
+        "inventory_sha256": "6c08c7bbe41494646498fa4c3b64180e30a11093c679501690636bee96ba56e8",
+        "inventory_encoding": "sha256(compact sorted JSON mapping repo-relative path to file sha256)"
+      }
+    },
+    "binding_limit": "Hashes describe files at receipt generation; compiler-time binding exists only where execution metadata records it.",
+    "m06_prior_run_source": {
+      "runner_reported_base": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+      "runner_reported_overlay": "same final M06 patch including all three cleanup changes",
+      "upstream_m06_changes_to_source_base": [],
+      "upstream_m06_crate_identical": true
+    },
+    "upstream_node_changes_since_m06_run_base": [
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs"
+    ],
+    "committed_manifest_test_profile": {
+      "package": {
+        "curve25519-dalek": {
+          "opt-level": 3
+        },
+        "ed25519-dalek": {
+          "opt-level": 3
+        },
+        "sha2": {
+          "opt-level": 3,
+          "debug-assertions": true,
+          "overflow-checks": true
+        },
+        "trnm-protocol": {
+          "opt-level": 3,
+          "debug-assertions": true,
+          "overflow-checks": true
+        },
+        "trnm-mvcc-fee": {
+          "opt-level": 1,
+          "debug-assertions": true,
+          "overflow-checks": true
+        },
+        "trnm-crypto-primitives": {
+          "opt-level": 3,
+          "debug-assertions": true,
+          "overflow-checks": true
+        },
+        "trnm-pon-node": {
+          "opt-level": 3,
+          "debug-assertions": true,
+          "overflow-checks": true
+        }
+      }
+    }
+  },
+  "generator": {
+    "bytes": 32186,
+    "sha256": "bc7baeb2fe3bd18fd5adb7371e8dc403dc2eea70b90aa1b04bacb2ea937b5d88",
+    "sha1_raw_file": "9eda6fcb41415f66977429e5b932225e5d4302f6",
+    "git_blob_sha1": "357693f5be8e25e541dde31c8f32ff8af343ae45"
+  },
+  "execution_metadata": {
+    "bytes": 7406,
+    "sha256": "e11ea3356f4f632bbbcc22cc7e5adc688e78adbd32145e8dda0f4070e80fdfde"
+  },
+  "local_functional_build_profile": {
+    "scope": "low-memory functional build only; no latency or throughput qualification",
+    "runner_reported_overrides": {
+      "profile.test.debug": 0,
+      "profile.test.package.trnm-pon-node.opt-level": 0,
+      "profile.test.package.trnm-pon-node.debug": 0,
+      "profile.test.package.trnm-pon-node.codegen-units": 16,
+      "profile.test.package.trnm-mvcc-fee.opt-level": 1,
+      "profile.test.package.trnm-mvcc-fee.debug": 0,
+      "CARGO_BUILD_JOBS": 1
+    },
+    "other_crypto_and_protocol_package_optimization": "committed manifest settings retained",
+    "performance_equivalent_to_original_host": false
+  },
+  "final_local_checks": {
+    "m06-full-final": {
+      "log": "m06-full-final.log",
+      "status": "pass",
+      "execution": {
+        "argv": [
+          "cargo",
+          "--config",
+          "profile.test.package.trnm-mvcc-fee.debug=0",
+          "test",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-mvcc-fee",
+          "--all-features",
+          "--lib",
+          "--",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "source_base": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+        "source_binding_note": "The successful M06 run includes the final cleanup overlay. No later upstream M06 source changes were introduced; compare M06 crate paths, independently of Node changes.",
+        "cwd": "/workspace/scratch/e7ee7840f31c/chain",
+        "environment_wrapper": {
+          "path": "/workspace/scratch/dd6e880c7c92/run-native.sh",
+          "sha256": "df499a33e9f804168a7f9c088246829e086c0542321ffda1cd9c2b9250f228d6",
+          "overrides": {
+            "CARGO_TARGET_DIR": "/workspace/scratch/e7ee7840f31c/validation/native-cache",
+            "CARGO_BUILD_JOBS": "1"
+          }
+        },
+        "log_sha256": "b7c586f8b199d301613644a8170f0a5360bb78b8f910f6d0186ed75d697a9909",
+        "command_status": "operator_recorded_actual_command"
+      },
+      "tests": {
+        "kind": "rust",
+        "status": "pass",
+        "summaries": [
+          {
+            "passed": 119,
+            "failed": 0,
+            "ignored": 7,
+            "measured": 0,
+            "filtered_out": 0,
+            "result": "ok",
+            "elapsed_seconds": 36.86
+          }
+        ],
+        "counts": {
+          "passed": 119,
+          "failed": 0,
+          "ignored": 7,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        "executed": 119,
+        "names": [
+          "checkpoint_tile_material_v1::tests::all_finite_bf16_patterns_match_independent_exact_f64_powers_and_even_rounding",
+          "checkpoint_tile_material_v1::tests::ieee_integer_rounding_zero_subnormal_ties_clips_and_nonfinite",
+          "deterministic_parallel_v1::tests::canonical_indices_and_unique_transaction_ids_are_required",
+          "deterministic_parallel_v1::tests::fee_limit_and_worker_bounds_fail_closed",
+          "deterministic_parallel_v1::tests::reverted_and_out_of_resource_never_write",
+          "deterministic_parallel_v1::tests::undeclared_access_and_noncanonical_sets_fail_closed",
+          "deterministic_parallel_v1::tests::worker_count_does_not_change_roots_or_receipts",
+          "growth_profile_v2::tests::growth_reference_codec_matches_independent_vector",
+          "growth_profile_v2::tests::growth_reference_independent_full_vectors_and_field_mutations",
+          "growth_profile_v2::tests::growth_reference_keeps_zero_nonce_history_and_working_bound",
+          "growth_profile_v2::tests::growth_reference_root_is_context_bound_and_conserved",
+          "model_composition_v4::oracle_observations::native_arithmetic_observations_for_independent_python",
+          "model_composition_v4::tests::a_rank_three_sum_has_no_rank_three_ilf2_witness_escape",
+          "model_composition_v4::tests::exact_sum_and_ablation_count_a_nonzero_parent_once",
+          "model_composition_v4::tests::exact_zero_subset_is_refused_even_when_full_bundle_is_nonzero",
+          "model_composition_v4::tests::wide_sum_preserves_cancellation_but_checks_every_ablation_range",
+          "pon_commitment::bounded_encoding_tests::bounded_encoder_discards_full_payload_map_but_keeps_exact_old_charges",
+          "pon_commitment::bounded_encoding_tests::bounded_fallback_matches_old_full_map_for_forks_removals_and_every_budget",
+          "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges",
+          "pon_commitment::bounded_encoding_tests::discarded_cache_never_hides_late_canonical_or_wire_errors_or_invalid_limits",
+          "pon_commitment::bounded_encoding_tests::payload_and_workspace_exact_edges_preserve_old_selection_and_root",
+          "pon_commitment::bounded_encoding_tests::reused_encoders_preserve_shrinking_values_deletions_and_late_errors",
+          "pon_commitment::checked_binding_tests::checked_binding_actual_eight_mib_payload_fallback_keeps_all_bytes",
+          "pon_commitment::checked_binding_tests::checked_binding_matches_two_steps_for_cold_warm_and_every_budget_fallback",
+          "pon_commitment::checked_binding_tests::checked_binding_preserves_wrong_roots_late_errors_and_invalid_limits",
+          "pon_commitment::checked_binding_tests::checked_binding_rechecks_actual_values_and_repairs_only_derived_material",
+          "pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks",
+          "pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback",
+          "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root",
+          "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order",
+          "pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot",
+          "pon_commitment::tests::cancelled_panicked_and_partially_started_workers_all_finish_and_join",
+          "pon_commitment::tests::cancelled_prepare_apply_and_staged_root_never_publish_output_or_change_parent",
+          "pon_commitment::tests::checked_binding_signed_execution_errors_and_cancellation_match_two_steps",
+          "pon_commitment::tests::controlled_cancellation_joins_every_started_scoped_worker_before_return",
+          "pon_commitment::tests::controlled_previews_preserve_full_state_receipts_and_canonical_errors_for_all_workers",
+          "pon_commitment::tests::disjoint_delta_exact_and_overflow_preserve_full_state_and_allocation_order",
+          "pon_commitment::tests::immutable_parent_corrupt_tree_fallback_matches_full_execution",
+          "pon_commitment::tests::immutable_parent_previews_match_full_execution_including_failures_and_rebind",
+          "pon_commitment::tests::internal_tree_mismatch_uses_complete_root_without_mutating_snapshot",
+          "pon_commitment::tests::late_canonical_error_precedes_cache_choice_and_all_change_clones",
+          "pon_commitment::tests::resource_fallback_finishes_full_root_before_required_change_clones",
+          "pon_commitment::tests::scoped_accounting_preserves_all_workers_state_receipts_and_late_error_parity",
+          "pon_commitment::tests::warm_parent_binding_cancellation_preserves_shared_bytes_and_successful_retry",
+          "pon_commitment::tests::warm_parent_binding_preserves_late_canonical_limits_and_context_error_order",
+          "pon_commitment::tests::warm_parent_binding_shares_only_after_complete_actual_comparison",
+          "pon_commitment::unchanged_snapshot_tests::unchanged_candidate_early_miss_retains_complete_late_validation",
+          "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_empty_delta_still_checks_the_original_tree_root",
+          "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_keeps_late_canonical_errors_before_wire_and_cache_limits",
+          "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_misleading_root_and_changed_bytes_take_original_repair_path",
+          "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_retains_exact_capacity_charges_and_all_budget_boundaries",
+          "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_shares_only_after_full_actual_bytes_match",
+          "pon_executor::pq_accounts_v2::application_v6_tests::actual_pq_evaluation_release_and_mature_claim_use_original_economic_owner",
+          "pon_executor::pq_accounts_v2::application_v6_tests::application_v6_tasks_use_both_current_keys_and_exact_selected_domains",
+          "pon_executor::pq_accounts_v2::application_v6_tests::historical_equivocation_survives_rotation_and_retains_bounded_verified_chunks",
+          "pon_executor::pq_accounts_v2::application_v6_tests::invalid_signature_retry_cannot_refill_prefix_verification_capacity",
+          "pon_executor::pq_accounts_v2::application_v6_tests::resource_preflight_counts_inner_proofs_and_underpriced_commands_do_no_crypto",
+          "pon_executor::pq_accounts_v2::application_v6_tests::scope_tests::late_round_conflict_blocks_unexecuted_adoption_without_rewriting_closure",
+          "pon_executor::pq_accounts_v2::application_v6_tests::scope_tests::pq_quorum_ignores_cross_round_bans_but_keeps_its_frozen_denominator",
+          "pon_executor::pq_accounts_v2::application_v6_tests::scope_tests::retired_key_newly_signed_old_evidence_cannot_poison_new_generation_round",
+          "pon_executor::pq_accounts_v2::application_v6_tests::scope_tests::same_generation_other_round_is_live_but_conflicted_round_cannot_vote",
+          "pon_executor::pq_accounts_v2::tasks_v4_tests::prepared_pq4_task_rechecks_actual_lease_and_both_authorities_before_any_fee_patch",
+          "pon_executor::pq_accounts_v2::tasks_v5_tests::prepared_pq5_atomic_renewal_rechecks_revision_prior_source_and_requester_before_fee_patch",
+          "pon_executor::pq_accounts_v2::tests::anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once",
+          "pon_executor::pq_accounts_v2::tests::dual_rotation_keeps_stable_task_permissions_and_actual_key_reads",
+          "pon_executor::pq_accounts_v2::tests::migration_refuses_omissions_ambiguous_ids_untranslated_liabilities_and_unbound_roots",
+          "pon_executor::pq_accounts_v2::tests::real_pq_positive_funding_registration_state_resolved_transfer_and_zero_credit",
+          "pon_executor::prefix_scan_tests::empty_and_nested_prefix_snapshots_revalidate_the_complete_observed_sets",
+          "pon_executor::prefix_scan_tests::mandatory_ranges_keep_expiry_priority_maturity_future_rows_and_unrelated_accounts",
+          "pon_executor::prefix_scan_tests::mandatory_ranges_keep_new_public_archives_and_remove_only_orphan_records",
+          "pon_executor::prefix_scan_tests::mandatory_ranges_preserve_global_cleanup_error_and_credit_failure_order",
+          "pon_executor::prefix_scan_tests::model_cleanup_ranges::disabled_profiles_ignore_missing_parameters_and_malformed_rows",
+          "pon_executor::prefix_scan_tests::model_cleanup_ranges::original_first_errors_and_partial_cleanup_states_are_preserved",
+          "pon_executor::prefix_scan_tests::model_cleanup_ranges::original_results_match_all_profiles_rounds_and_unrelated_accounts",
+          "pon_executor::prefix_scan_tests::prefix_rows_preserve_original_filter_order_values_and_all_string_boundaries",
+          "pon_executor::prefix_scan_tests::prefix_scan_does_not_replace_point_read_or_write_conflict_checks",
+          "pon_executor::prefix_scan_tests::prefix_scan_overlays_writes_and_retains_the_original_snapshot",
+          "pon_executor::prefix_scan_tests::prefix_scan_revalidation_keeps_insert_delete_and_value_conflicts",
+          "pon_executor::repeated_sender_tests::repeated_sender_cancel_and_partial_worker_start_join_all_actual_workers",
+          "pon_executor::repeated_sender_tests::repeated_sender_complete_failures_preserve_canonical_first_error_and_parent",
+          "pon_executor::repeated_sender_tests::repeated_sender_complete_signed_batches_keep_state_receipts_root_and_every_signature",
+          "pon_executor::repeated_sender_tests::repeated_sender_tag11_and_cross_sender_funding_keep_complete_canonical_relation",
+          "pon_executor::root_arithmetic_tests::arithmetic_root_ascii_encoding_matches_independent_serde_reference",
+          "pon_executor::root_arithmetic_tests::arithmetic_root_distinguishes_exact_numeric_values_and_full_non_account_views",
+          "pon_executor::root_arithmetic_tests::arithmetic_root_preserves_complete_grammar_before_all_wire_limits",
+          "pon_executor::root_arithmetic_tests::borrowed_non_account_partition_keeps_actual_rows_changes_and_original_roots",
+          "pon_executor::root_arithmetic_tests::borrowed_non_account_partition_keeps_full_grammar_before_count_and_wire_limits",
+          "pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors",
+          "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
+          "pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched",
+          "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
+          "pon_executor::root_arithmetic_tests::exact_string_root_hits_keep_complete_current_grammar_and_original_miss_encoding",
+          "pon_executor::root_arithmetic_tests::shared_string_storage_keeps_cold_encoding_counts_and_full_current_validation",
+          "pon_executor::session_tests::invalid_context_transaction_and_sequence_never_publish_session_state",
+          "pon_executor::session_tests::session_state_and_receipts_equal_existing_complete_builder",
+          "pon_executor::streaming_root_tests::streamed_m06_root_keeps_complete_canonical_value_errors_before_wire_limits",
+          "pon_executor::streaming_root_tests::streamed_m06_root_matches_original_values_removals_and_branch_edits",
+          "store::object_delta_tests::object_delta_detects_committed_parent_drift_before_first_write_v1",
+          "store::object_delta_tests::object_delta_empty_initialization_and_noop_have_exact_write_counts_v1",
+          "store::object_delta_tests::object_delta_insert_update_delete_matches_complete_target_v1",
+          "store::object_delta_tests::object_delta_parent_drift_under_write_lock_rejects_and_rolls_back_v1",
+          "store::object_delta_tests::object_delta_sqlite_full_after_partial_writes_rolls_back_exactly_v1",
+          "store::object_delta_tests::object_delta_unexpected_parent_row_is_not_erased_v1",
+          "tests::committed_sparse_block_writes_only_changed_objects_and_replays_exactly_v1",
+          "tests::conflicts_outcomes_resources_and_fee_reduction_are_deterministic",
+          "tests::crash_outcomes_reopen_to_exact_source_target_or_fence",
+          "tests::exact_replay_and_parent_identity_are_fail_closed",
+          "tests::execution_preview_executes_full_fee_path_without_advancing_the_store",
+          "tests::open_existing_requires_precreated_regular_nonsymlink_store",
+          "tests::parallel_execution_tests::hotspot_revert_and_resource_exhaustion_match_sequential_journal_oracle",
+          "tests::parallel_execution_tests::multiple_speculative_failures_report_the_canonical_transaction_error",
+          "tests::parallel_execution_tests::speculative_insufficient_funds_is_retried_after_predecessor_funds_payer_or_source",
+          "tests::parallel_execution_tests::stale_speculative_success_cannot_publish_when_canonical_payer_is_exhausted",
+          "tests::parallel_execution_tests::workers_compute_program_meter_fees_and_successors_on_immutable_parent",
+          "tests::persistent_parallel_worker_count_bounds_fail_closed",
+          "tests::persistent_parallel_worker_counts_reopen_to_identical_canonical_results",
+          "tests::schema_sidecar_and_self_consistent_row_tamper_fail_closed",
+          "tests::static_access_fee_and_arithmetic_mutants_fail_before_commit",
+          "tests::vector_inventory_matches_executable_candidate_assertions"
+        ]
+      },
+      "terminal_evidence": "operator_recorded_exit_code",
+      "scope": "M06 full library, functional only"
+    },
+    "repository-check-complete-final": {
+      "log": "repository-check-complete-final.log",
+      "status": "pass",
+      "execution": {
+        "argv": [
+          "python3",
+          "scripts/ci/check_repository.py"
+        ],
+        "cwd": "/workspace/scratch/e7ee7840f31c/chain",
+        "exit_code": 0,
+        "source_base": "03163dcb849a15cd267fcaf704a533a88cd54131",
+        "log_sha256": "4d7ec698303eb3be44e4d1a65396994a029b57e577ac6f2e0776569decf45b15",
+        "env": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "command_status": "operator_recorded_actual_command"
+      },
+      "structured_observation": {
+        "activation": false,
+        "head": "03163dcb849a15cd267fcaf704a533a88cd54131",
+        "local_links": 2359,
+        "normal_dependency_edges": 25,
+        "result": "PASS",
+        "runtime_implemented": false,
+        "rust_files": 1102,
+        "source_state": "dirty-candidate",
+        "tree": "8f54d5101e3cf46be2f8ca882e882517d5493332",
+        "workspace_packages": 26
+      },
+      "terminal_evidence": "operator_recorded_exit_code",
+      "scope": "repository graph and linked-source check"
+    },
+    "repository-negative-final": {
+      "log": "repository-negative-final.log",
+      "status": "pass",
+      "execution": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_repository.py"
+        ],
+        "cwd": "/workspace/scratch/e7ee7840f31c/chain",
+        "exit_code": 0,
+        "source_base": "03163dcb849a15cd267fcaf704a533a88cd54131",
+        "log_sha256": "dd0b7981135f1410b696d68059b1444b84e7186853e69c574ad70b1616f4f6ef",
+        "env": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "command_status": "operator_recorded_actual_command"
+      },
+      "tests": {
+        "kind": "python",
+        "status": "pass",
+        "counts": {
+          "total": 50,
+          "passed": 50,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "executed": 50,
+        "elapsed_seconds": 76.788,
+        "terminal": "OK"
+      },
+      "terminal_evidence": "operator_recorded_exit_code",
+      "scope": "repository negative controls"
+    },
+    "negative-source-final": {
+      "log": "negative-source-final.log",
+      "status": "pass",
+      "execution": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_pq_research_integration.py"
+        ],
+        "cwd": "/workspace/scratch/e7ee7840f31c/chain",
+        "exit_code": 0,
+        "source_base": "03163dcb849a15cd267fcaf704a533a88cd54131",
+        "log_sha256": "d5effeb328fcfc77a132517c1230064f9475978779d576237ddceee18baf13bf",
+        "env": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "command_status": "operator_recorded_actual_command"
+      },
+      "tests": {
+        "kind": "python",
+        "status": "pass",
+        "counts": {
+          "total": 35,
+          "passed": 35,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "executed": 35,
+        "elapsed_seconds": 19.756,
+        "terminal": "OK"
+      },
+      "terminal_evidence": "operator_recorded_exit_code",
+      "scope": "PQ source negative controls"
+    },
+    "negative-integrity-final": {
+      "log": "negative-integrity-final.log",
+      "status": "pass",
+      "execution": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "cwd": "/workspace/scratch/e7ee7840f31c/chain",
+        "exit_code": 0,
+        "source_base": "03163dcb849a15cd267fcaf704a533a88cd54131",
+        "log_sha256": "44fbc7d3b693bb3cf5bd4666d1d6a742f7ddba480421aec8e1acfb4d978d670e",
+        "env": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "command_status": "operator_recorded_actual_command"
+      },
+      "tests": {
+        "kind": "python",
+        "status": "pass",
+        "counts": {
+          "total": 34,
+          "passed": 34,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "executed": 34,
+        "elapsed_seconds": 2.795,
+        "terminal": "OK"
+      },
+      "terminal_evidence": "operator_recorded_exit_code",
+      "scope": "CI source-integrity negative controls"
+    },
+    "acceptance-from-zero-final": {
+      "log": "acceptance-from-zero-final.log",
+      "status": "pass",
+      "execution": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_run_from_zero_native.py"
+        ],
+        "cwd": "/workspace/scratch/e7ee7840f31c/chain",
+        "exit_code": 0,
+        "source_base": "03163dcb849a15cd267fcaf704a533a88cd54131",
+        "log_sha256": "2f0b8eafc901dd3c867ae8f3a4a67a3333871db14b7571f3674b3ee1451d3553",
+        "env": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "command_status": "operator_recorded_actual_command"
+      },
+      "tests": {
+        "kind": "python",
+        "status": "pass",
+        "counts": {
+          "total": 109,
+          "passed": 109,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "executed": 109,
+        "elapsed_seconds": 16.121,
+        "terminal": "OK"
+      },
+      "terminal_evidence": "operator_recorded_exit_code",
+      "scope": "from-zero reader unit tests, not a live campaign"
+    },
+    "acceptance-host-final": {
+      "log": "acceptance-host-final.log",
+      "status": "pass",
+      "execution": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_from_zero_host_ci.py"
+        ],
+        "cwd": "/workspace/scratch/e7ee7840f31c/chain",
+        "exit_code": 0,
+        "source_base": "03163dcb849a15cd267fcaf704a533a88cd54131",
+        "log_sha256": "f69bad99a06301f3cea79362d764b744a62dac1625ab99a0b9e0189e1ddb5e89",
+        "env": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "command_status": "operator_recorded_actual_command"
+      },
+      "tests": {
+        "kind": "python",
+        "status": "pass",
+        "counts": {
+          "total": 78,
+          "passed": 78,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "executed": 78,
+        "elapsed_seconds": 1.627,
+        "terminal": "OK"
+      },
+      "terminal_evidence": "operator_recorded_exit_code",
+      "scope": "Host reader unit tests, not a Host execution"
+    },
+    "pq-source-sealed": {
+      "log": "pq-source-sealed.log",
+      "status": "pass",
+      "execution": {
+        "argv": [
+          "python3",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "cwd": "/workspace/scratch/e7ee7840f31c/chain",
+        "exit_code": 0,
+        "source_base": "03163dcb849a15cd267fcaf704a533a88cd54131",
+        "log_sha256": "5f13af3bf7212b6f6eff4588f4f377c15f3f17e390a413893894339939571bd0",
+        "env": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "command_status": "operator_recorded_actual_command"
+      },
+      "structured_observation": {
+        "canonical_default_provider_contract_checked": true,
+        "canonical_pnq2_contract_checked": true,
+        "continuous_npq6_combination_accepted": false,
+        "cryptographic_acceptance": false,
+        "exact_source_blobs": 411,
+        "legacy_qtx1_optional_adapter_contract_checked": true,
+        "native_transfer_account_contract_checked": true,
+        "native_transport_contract_checked": true,
+        "node_activated": false,
+        "production_confidentiality_accepted": false,
+        "schema": "trnm-pq-cross-branch-check-v1",
+        "status": "HOLD_NO_GO",
+        "upstream_heads": 6,
+        "whole_native_authorization_migrated": false
+      },
+      "terminal_evidence": "operator_recorded_exit_code",
+      "scope": "PQ source contracts, HOLD_NO_GO remains in force"
+    },
+    "clippy-final": {
+      "log": "clippy-final.log",
+      "status": "pass",
+      "execution": {
+        "argv": [
+          "cargo",
+          "clippy",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/workspace/scratch/e7ee7840f31c/chain",
+        "exit_code": 0,
+        "source_base": "03163dcb849a15cd267fcaf704a533a88cd54131",
+        "log_sha256": "928f2b32c252ed4f78a65dd4742033710670df639b81ca0bcf6e9eeb70753908",
+        "environment_wrapper": {
+          "path": "/workspace/scratch/dd6e880c7c92/run-native.sh",
+          "sha256": "df499a33e9f804168a7f9c088246829e086c0542321ffda1cd9c2b9250f228d6",
+          "overrides": {
+            "CARGO_TARGET_DIR": "/workspace/scratch/e7ee7840f31c/validation/native-cache",
+            "CARGO_BUILD_JOBS": "1"
+          }
+        },
+        "command_status": "operator_recorded_actual_command"
+      },
+      "terminal_evidence": "operator_recorded_exit_code",
+      "scope": "standard all-workspace strict Clippy"
+    },
+    "fmt-sealed": {
+      "log": "fmt-sealed.log",
+      "status": "pass",
+      "execution": {
+        "argv": [
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/workspace/scratch/e7ee7840f31c/chain",
+        "exit_code": 0,
+        "source_base": "03163dcb849a15cd267fcaf704a533a88cd54131",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "environment_wrapper": {
+          "path": "/workspace/scratch/dd6e880c7c92/run-native.sh",
+          "sha256": "df499a33e9f804168a7f9c088246829e086c0542321ffda1cd9c2b9250f228d6",
+          "overrides": {
+            "CARGO_TARGET_DIR": "/workspace/scratch/e7ee7840f31c/validation/native-cache",
+            "CARGO_BUILD_JOBS": "1"
+          }
+        },
+        "command_status": "operator_recorded_actual_command"
+      },
+      "terminal_evidence": "operator_recorded_exit_code",
+      "scope": "standard all-workspace formatting check"
+    }
+  },
+  "native": {
+    "terminal": "build-failed",
+    "functional_controls_passed": false,
+    "last_build_source_base": "8e3df70c1e57a45bb5bbcd6092665dee116695ea",
+    "last_build_source_provenance": "execution metadata or operator-reported 8e3 low-memory build",
+    "final_candidate_build_attempted": false,
+    "planned_selectors": 14,
+    "planned_tests": 19,
+    "planned_counts_are_not_results": true,
+    "selector_status_denominator": {
+      "not-run": 14
+    },
+    "observed_test_counts": {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    "executed_tests": 0,
+    "final_candidate_runtime_tests_executed": 0,
+    "planned_tests_without_execution": 19,
+    "controls": [
+      {
+        "log": "control-00.log",
+        "status": "not-run",
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "selector": "completion_deadline_tests::"
+      },
+      {
+        "log": "control-01.log",
+        "status": "not-run",
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "selector": "authenticated_dispatch_retry_is_confined_to_local_queue_and_cancellation"
+      },
+      {
+        "log": "control-02.log",
+        "status": "not-run",
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "selector": "signed_socket_local_queue_busy_keeps_exact_nonce_for_retry_and_invalid_work_terminal"
+      },
+      {
+        "log": "control-03.log",
+        "status": "not-run",
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "selector": "native_growth_v2_nonce_batch_"
+      },
+      {
+        "log": "control-04.log",
+        "status": "not-run",
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "selector": "queue_backpressure_preserves_deadline_and_releases_permits_on_drop"
+      },
+      {
+        "log": "control-05.log",
+        "status": "not-run",
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "selector": "disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work"
+      },
+      {
+        "log": "control-06.log",
+        "status": "not-run",
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "selector": "reservations_survive_queues_and_release_on_disconnect_and_dropped_output"
+      },
+      {
+        "log": "control-07.log",
+        "status": "not-run",
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "selector": "failed_output_closes_only_that_connection_and_later_honest_request_succeeds"
+      },
+      {
+        "log": "control-08.log",
+        "status": "not-run",
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "selector": "live_cpu_cancels_real_scoped_preparation_and_joins_all_started_threads"
+      },
+      {
+        "log": "control-09.log",
+        "status": "not-run",
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "selector": "cancellation_during_refill_wait_never_returns_or_refunds_a_permit"
+      },
+      {
+        "log": "control-10.log",
+        "status": "not-run",
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "selector": "signed_socket_exact_pending_frame_resumes_only_its_original_committed_intent"
+      },
+      {
+        "log": "control-11.log",
+        "status": "not-run",
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "selector": "cancellation_after_admission_preserves_fact_and_exact_retry_controls_activation"
+      },
+      {
+        "log": "control-12.log",
+        "status": "not-run",
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "selector": "native_growth_v2_signed_branches_nonce_obligations_and_cold_reopen"
+      },
+      {
+        "log": "control-13.log",
+        "status": "not-run",
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "selector": "native_growth_v2_cancelled_writes_and_activation_are_atomic"
+      }
+    ],
+    "compiler_artifact": null,
+    "results_source_base": null,
+    "binary_sha256": null,
+    "all_build_attempts": [
+      {
+        "log": "baseline-build.log",
+        "compiler_jsonl": "baseline-build.jsonl",
+        "status": "failed",
+        "build_finished": false,
+        "sigkill": false,
+        "compiler_executables": [],
+        "malformed_jsonl_lines": 0,
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "error_excerpts": [
+          "error: could not compile `trnm-pon-node` (lib test) due to 1 previous error",
+          "error: couldn't read `crates/trnm-pon-node/src/../../../../formal/pon-nakamoto-v1/vectors/consensus-arithmetic-v1.json`: No such file or directory (os error 2)"
+        ]
+      },
+      {
+        "log": "baseline-build-complete.log",
+        "compiler_jsonl": "baseline-build-complete.jsonl",
+        "status": "failed",
+        "build_finished": false,
+        "sigkill": true,
+        "compiler_executables": [],
+        "malformed_jsonl_lines": 0,
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "error_excerpts": [
+          "(signal: 9, SIGKILL: kill)",
+          "error: could not compile `trnm-pon-node` (lib test)"
+        ]
+      },
+      {
+        "log": "node-candidate-build.log",
+        "compiler_jsonl": "node-candidate-build.jsonl",
+        "status": "failed",
+        "build_finished": false,
+        "sigkill": true,
+        "compiler_executables": [],
+        "malformed_jsonl_lines": 0,
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "error_excerpts": [
+          "(signal: 9, SIGKILL: kill)",
+          "error: could not compile `trnm-pon-node` (lib test)"
+        ]
+      },
+      {
+        "log": "node-functional-build.log",
+        "compiler_jsonl": "node-functional-build.jsonl",
+        "status": "compiled",
+        "build_finished": true,
+        "sigkill": false,
+        "compiler_executables": [
+          "/workspace/scratch/e7ee7840f31c/target/debug/deps/trnm_pon_node-296fb8c109f03650"
+        ],
+        "malformed_jsonl_lines": 0,
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "error_excerpts": []
+      },
+      {
+        "log": "node-functional-rebuild.log",
+        "compiler_jsonl": "node-functional-rebuild.jsonl",
+        "status": "failed",
+        "build_finished": false,
+        "sigkill": true,
+        "compiler_executables": [],
+        "malformed_jsonl_lines": 0,
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "error_excerpts": [
+          "(signal: 9, SIGKILL: kill)",
+          "error: could not compile `trnm-pon-node` (lib test)"
+        ]
+      },
+      {
+        "log": "node-functional-final.log",
+        "compiler_jsonl": "node-functional-final.jsonl",
+        "status": "failed",
+        "build_finished": false,
+        "sigkill": true,
+        "compiler_executables": [],
+        "malformed_jsonl_lines": 0,
+        "execution": {
+          "command_status": "command_not_retained_with_log"
+        },
+        "error_excerpts": [
+          "(signal: 9, SIGKILL: kill)",
+          "error: could not compile `trnm-pon-node` (lib test)"
+        ]
+      },
+      {
+        "log": "node-functional-low-memory.log",
+        "compiler_jsonl": "node-functional-low-memory.jsonl",
+        "status": "failed",
+        "build_finished": false,
+        "sigkill": true,
+        "compiler_executables": [],
+        "malformed_jsonl_lines": 0,
+        "execution": {
+          "argv": [
+            "cargo",
+            "--config",
+            "profile.test.debug=0",
+            "--config",
+            "profile.test.package.trnm-pon-node.debug=0",
+            "--config",
+            "profile.test.package.trnm-pon-node.opt-level=0",
+            "--config",
+            "profile.test.package.trnm-pon-node.codegen-units=16",
+            "--config",
+            "profile.test.package.trnm-mvcc-fee.debug=0",
+            "test",
+            "--offline",
+            "--locked",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--all-features",
+            "--lib",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 101,
+          "source_base": "8e3df70c1e57a45bb5bbcd6092665dee116695ea",
+          "cwd": "/workspace/scratch/e7ee7840f31c/chain",
+          "environment_wrapper": {
+            "path": "/workspace/scratch/dd6e880c7c92/run-native.sh",
+            "sha256": "df499a33e9f804168a7f9c088246829e086c0542321ffda1cd9c2b9250f228d6",
+            "overrides": {
+              "CARGO_TARGET_DIR": "/workspace/scratch/e7ee7840f31c/validation/native-cache",
+              "CARGO_BUILD_JOBS": "1"
+            }
+          },
+          "log_sha256": "805930ee747c20f9f64aa75d6d4a888fd723c82855b15968f6e489e661711cc1",
+          "command_status": "operator_recorded_actual_command"
+        },
+        "error_excerpts": [
+          "(signal: 9, SIGKILL: kill)",
+          "error: could not compile `trnm-pon-node` (lib test)"
+        ]
+      }
+    ],
+    "build_attempt_denominator": {
+      "failed": 6,
+      "compiled": 1
+    },
+    "sigkill_build_attempts": 5,
+    "original_behavior_deadline_negative_control": {
+      "status": "not-run",
+      "description": "Prepared helper-based old-behavior counterexample; not exact untouched baseline and not acceptance evidence."
+    }
+  },
+  "historical_observations": {
+    "m06-mandatory-local": {
+      "log": "m06-mandatory-local.log",
+      "status": "fail",
+      "execution": {
+        "command_status": "command_not_retained_with_log"
+      },
+      "tests": {
+        "kind": "rust",
+        "status": "fail",
+        "summaries": [
+          {
+            "passed": 2,
+            "failed": 1,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 120,
+            "result": "FAILED",
+            "elapsed_seconds": 0.1
+          }
+        ],
+        "counts": {
+          "passed": 2,
+          "failed": 1,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 120
+        },
+        "executed": 3,
+        "names": [
+          "pon_executor::prefix_scan_tests::mandatory_ranges_keep_expiry_priority_maturity_future_rows_and_unrelated_accounts",
+          "pon_executor::prefix_scan_tests::mandatory_ranges_preserve_global_cleanup_error_and_credit_failure_order"
+        ]
+      },
+      "terminal_evidence": "log_terminal_summary_only_exit_code_not_retained",
+      "error_excerpts": [
+        "called `Result::unwrap()` on an `Err` value: \"PUBLIC_EVAL_STATE\"",
+        "error: test failed, to rerun pass `-p trnm-mvcc-fee --lib`"
+      ],
+      "note": "Initial 2-pass/1-fail fixture called compact twice; fixture corrected before the final full M06 run. The failed observation is retained."
+    },
+    "m06-mandatory": {
+      "log": "m06-mandatory.log",
+      "status": "interrupted",
+      "execution": {
+        "exit_code": 130,
+        "source_base": "not-retained",
+        "operator_note": "Interrupted by the root after resource contention; no test outcome.",
+        "cwd": "/workspace/scratch/e7ee7840f31c/chain",
+        "log_sha256": "bf4c50a92285c9d9f5b14392d58524de7e436059d736f3376c8d839e5df0fb5b",
+        "command_status": "command_not_retained_with_log"
+      },
+      "terminal_evidence": "operator_recorded_exit_code",
+      "runner_reported_exit_code": 130,
+      "note": "Optimized M06 build was deliberately interrupted; exit 130 is runner-reported, not a parsed log marker."
+    },
+    "clippy-initial": {
+      "log": "clippy-initial.log",
+      "status": "pass",
+      "execution": {
+        "command_status": "command_not_retained_with_log"
+      },
+      "terminal_evidence": "log_terminal_summary_only_exit_code_not_retained"
+    },
+    "acceptance-from-zero": {
+      "log": "acceptance-from-zero.log",
+      "status": "incomplete",
+      "execution": {
+        "command_status": "command_not_retained_with_log"
+      },
+      "error_excerpts": [
+        "ModuleNotFoundError: No module named 'contract_wire'"
+      ]
+    },
+    "acceptance-host": {
+      "log": "acceptance-host.log",
+      "status": "incomplete",
+      "execution": {
+        "command_status": "command_not_retained_with_log"
+      },
+      "error_excerpts": [
+        "ModuleNotFoundError: No module named 'contract_wire'"
+      ]
+    },
+    "acceptance-service-campaign": {
+      "log": "acceptance-service-campaign.log",
+      "status": "incomplete",
+      "execution": {
+        "command_status": "command_not_retained_with_log"
+      },
+      "error_excerpts": [
+        "ModuleNotFoundError: No module named 'contract_wire'"
+      ]
+    },
+    "acceptance-from-zero-complete-source": {
+      "log": "acceptance-from-zero-complete-source.log",
+      "status": "pass",
+      "execution": {
+        "command_status": "command_not_retained_with_log"
+      },
+      "tests": {
+        "kind": "python",
+        "status": "pass",
+        "counts": {
+          "total": 109,
+          "passed": 109,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "executed": 109,
+        "elapsed_seconds": 16.774,
+        "terminal": "OK"
+      },
+      "terminal_evidence": "log_terminal_summary_only_exit_code_not_retained"
+    },
+    "acceptance-host-complete-source": {
+      "log": "acceptance-host-complete-source.log",
+      "status": "pass",
+      "execution": {
+        "command_status": "command_not_retained_with_log"
+      },
+      "tests": {
+        "kind": "python",
+        "status": "pass",
+        "counts": {
+          "total": 78,
+          "passed": 78,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "executed": 78,
+        "elapsed_seconds": 2.685,
+        "terminal": "OK"
+      },
+      "terminal_evidence": "log_terminal_summary_only_exit_code_not_retained"
+    },
+    "acceptance-service-campaign-complete-source": {
+      "log": "acceptance-service-campaign-complete-source.log",
+      "status": "incomplete",
+      "execution": {
+        "command_status": "command_not_retained_with_log"
+      },
+      "error_excerpts": [
+        "test_public_v3_service_campaign.py: error: the following arguments are required: --report"
+      ]
+    },
+    "acceptance-service-campaign-historical-control": {
+      "log": "acceptance-service-campaign-historical-control.log",
+      "status": "pass",
+      "execution": {
+        "command_status": "command_not_retained_with_log"
+      },
+      "tests": {
+        "kind": "python",
+        "status": "pass",
+        "counts": {
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "executed": 6,
+        "elapsed_seconds": 0.337,
+        "terminal": "OK"
+      },
+      "terminal_evidence": "log_terminal_summary_only_exit_code_not_retained"
+    },
+    "source-integration-negatives": {
+      "log": "source-integration-negatives.log",
+      "status": "pass",
+      "execution": {
+        "command_status": "command_not_retained_with_log"
+      },
+      "tests": {
+        "kind": "python",
+        "status": "pass",
+        "counts": {
+          "total": 34,
+          "passed": 34,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "executed": 34,
+        "elapsed_seconds": 30.251,
+        "terminal": "OK"
+      },
+      "terminal_evidence": "log_terminal_summary_only_exit_code_not_retained"
+    },
+    "source-integrity-negatives": {
+      "log": "source-integrity-negatives.log",
+      "status": "pass",
+      "execution": {
+        "command_status": "command_not_retained_with_log"
+      },
+      "tests": {
+        "kind": "python",
+        "status": "pass",
+        "counts": {
+          "total": 34,
+          "passed": 34,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "executed": 34,
+        "elapsed_seconds": 2.796,
+        "terminal": "OK"
+      },
+      "terminal_evidence": "log_terminal_summary_only_exit_code_not_retained"
+    },
+    "node-functional-build-execution": {
+      "status": "not-run",
+      "observed_compile_success": true,
+      "runner_reported_reason": "The compiler-produced ELF disappeared before control 00 could execute.",
+      "log": "prior-missing-binary-control-00.log",
+      "native_tests_executed": 0
+    },
+    "repository_check_attempts": [
+      {
+        "attempt": 0,
+        "exit_code": 2,
+        "output": "Repository check failed: broken link docs/README.md -> ../evidence/pon-v1/README.md\n"
+      },
+      {
+        "attempt": 1,
+        "exit_code": 2,
+        "output": "Repository check failed: missing evidence evidence/pon-v3/manifest.json\n"
+      },
+      {
+        "attempt": 2,
+        "exit_code": 2,
+        "output": "Repository check failed: missing evidence evidence/pon-v4/manifest.json\n"
+      },
+      {
+        "attempt": 3,
+        "exit_code": 2,
+        "output": "Repository check failed: missing evidence evidence/pon-native-session-v1/manifest.json\n"
+      },
+      {
+        "attempt": 4,
+        "exit_code": 2,
+        "output": "Repository check failed: missing evidence evidence/pon-native-node-v1/manifest.json\n"
+      },
+      {
+        "attempt": 5,
+        "exit_code": 0,
+        "output": "{\"activation\": false, \"head\": \"03163dcb849a15cd267fcaf704a533a88cd54131\", \"local_links\": 2359, \"normal_dependency_edges\": 25, \"result\": \"PASS\", \"runtime_implemented\": false, \"rust_files\": 1102, \"source_state\": \"dirty-candidate\", \"tree\": \"8f54d5101e3cf46be2f8ca882e882517d5493332\", \"workspace_packages\": 26}\n"
+      }
+    ]
+  },
+  "historical_service_reader_fixture": {
+    "report_sha256": "4921b6c1186353f8e152e9f522082faa0fb2852a7f92e4a2123cf352ceb85002",
+    "attempts": 130,
+    "provenance": "operator-reported historical reader fixture",
+    "current_candidate_service_data": false,
+    "reader_run": "acceptance-service-campaign-historical-control"
+  },
+  "local_check_summary": {
+    "all_listed_source_and_m06_checks_passed": true,
+    "all_selected_native_controls_passed": false
+  },
+  "acceptance": {
+    "issue_639_closed": false,
+    "original_4s_16_host_accepted": false,
+    "attack_free_full_business_baseline_accepted": false,
+    "end_to_end_touched_state_cost_accepted": false,
+    "complete_lifecycle_budget_accepted": false,
+    "sybil_resistant_liveness_accepted": false,
+    "complete_six_scenario_matrix_accepted": false,
+    "performance_qualified": false,
+    "whole_pq_accepted": false,
+    "production_ready": false,
+    "activation_authorized": false
+  },
+  "original_host_gate": {
+    "status": "not-run-locally",
+    "deadline_ms": 4000,
+    "hostile_w1_producers": 16,
+    "calls_per_producer": 1024,
+    "aggregate_cpu_cores": 0.25,
+    "aggregate_memory_bytes": 2147483648,
+    "aggregate_tasks": 256,
+    "budgets_unchanged": true,
+    "reason": "This shared execution environment cannot provision the required fixed root-owned Host slice and is not original-budget performance evidence.",
+    "required_semantics": [
+      "real signed transactions",
+      "full W1",
+      "independent replay",
+      "six-deep confirmation",
+      "all failures/cancellations/timeouts/pending requests in the denominator"
+    ],
+    "required_scenarios": [
+      "attack-free full business",
+      "hostile traffic from zero",
+      "already-running system then hostile traffic",
+      "cold start/history/reorg/recovery",
+      "concurrent Cell download and normal authorization",
+      "valid/invalid signatures under new crypto configuration"
+    ],
+    "reproduction_recipe_not_a_local_execution": "python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\""
+  },
+  "remaining_gaps": {
+    "5.1": [
+      "No fresh attack-free full-business Host baseline has been executed here.",
+      "GrowthV2 batch nonce API is not yet wired through real Growth CLI/business callers.",
+      "M06 prefix selection removes these unrelated-map scans, but whole-state clone/root/schema and bounded working-partition costs are not eliminated or given end-to-end touched-state complexity."
+    ],
+    "5.2": [
+      "No universal operation identity and budget covers every parser allocation, nested verification, state I/O, retry, recovery, output and cleanup.",
+      "Deadline completion no longer revives expired work; worker-owned reservations remain charged until the worker actually exits. Uninterruptible crypto/state/I/O tails do not have an immediate-release guarantee.",
+      "Busy exact-frame retries preserve nonce semantics; they do not establish one persistent CPU budget across every network retry.",
+      "This change does not complete a full verification-cache key/context/authorization audit."
+    ],
+    "5.3": [
+      "Existing shared Node admission/CPU caps limit identity multiplication; two public lanes and separate Cell limits do not implement four reserved, cost-aware global service classes.",
+      "No global estimated-cost scheduler with measured-cost feedback and a proved opportunity for every legitimate public candidate is established.",
+      "Existing recovery accepts matching pre-existing local operation capabilities; this patch introduces no remotely self-selected recovery priority, identity preference or paid consensus voting power.",
+      "Local queue Busy is retryable and remains distinct from protocol invalidity; bounded hardware/arrival-rate liveness is still unproven."
+    ],
+    "5.4": [
+      "Original 4,000 ms / 16 hostile W1 producer Host campaign was not run locally; supplementary 30 s / 24 producers cannot replace it.",
+      "All six workload scenarios still require current-source Host observations with failed, cancelled, timed-out and unresolved operations included.",
+      "Node selected Rust controls did not execute after the final compiler failure; Python readers and historical 130-attempt fixtures are not live service evidence."
+    ]
+  },
+  "sealing_blockers": [],
+  "logs_and_auxiliary_files": {
+    "baseline-build.log": {
+      "exists": true,
+      "bytes": 4010,
+      "sha256": "43c82d81457fad14be191848b095830efb2807056f23b3e0bd866bca6e6a9a4f",
+      "error_excerpts": [
+        "error: could not compile `trnm-pon-node` (lib test) due to 1 previous error"
+      ]
+    },
+    "baseline-build.jsonl": {
+      "exists": true,
+      "bytes": 113974,
+      "sha256": "387d7f44ad3529cf6d588a5f108997afd86803f687b62688162dcc23bbd2f584"
+    },
+    "baseline-build-complete.log": {
+      "exists": true,
+      "bytes": 3479,
+      "sha256": "1ca8b666950bbf48e876cb97c5dafd6b9c2372eee015ea077ade4a4644d0055b",
+      "error_excerpts": [
+        "(signal: 9, SIGKILL: kill)",
+        "error: could not compile `trnm-pon-node` (lib test)"
+      ]
+    },
+    "baseline-build-complete.jsonl": {
+      "exists": true,
+      "bytes": 111037,
+      "sha256": "6b22e16282adeacd4505a40b8d8dbd8b9b316a37e80bae741c85d734d61a0493"
+    },
+    "node-candidate-build.log": {
+      "exists": true,
+      "bytes": 3572,
+      "sha256": "ecb19fb79a63ff365aa741d8f246e23dcdd8583e3b7300841bb3045421e263cd",
+      "error_excerpts": [
+        "(signal: 9, SIGKILL: kill)",
+        "error: could not compile `trnm-pon-node` (lib test)"
+      ]
+    },
+    "node-candidate-build.jsonl": {
+      "exists": true,
+      "bytes": 111038,
+      "sha256": "fbc20c411358a705526ea0413bdb0570623adaaa7a111d762781d4d9db4aee0e"
+    },
+    "node-functional-build.log": {
+      "exists": true,
+      "bytes": 182,
+      "sha256": "d68841b511ae4783107fb96e9e48e8878cda9783fd7e110abc8de2ac2eeba5dc"
+    },
+    "node-functional-build.jsonl": {
+      "exists": true,
+      "bytes": 111846,
+      "sha256": "7159f933b110f45aafcfdc0e3729404b5656313656ae20a41c69c7e4ffe0761c"
+    },
+    "node-functional-rebuild.log": {
+      "exists": true,
+      "bytes": 7677,
+      "sha256": "92d422d7fe5614fd30797ee565d48db4773762093745a8f7b629747e8addbbb9",
+      "error_excerpts": [
+        "(signal: 9, SIGKILL: kill)",
+        "error: could not compile `trnm-pon-node` (lib test)"
+      ]
+    },
+    "node-functional-rebuild.jsonl": {
+      "exists": true,
+      "bytes": 115290,
+      "sha256": "a890ea3db4fe33e0487f9688b5683404c2cb95da253c41ffffc2f9f821d34a3f"
+    },
+    "node-functional-final.log": {
+      "exists": true,
+      "bytes": 3959,
+      "sha256": "d8ef2eca0220a3ff02f52f2795743eb624b90d9b45e63e7677449539104dfb97",
+      "error_excerpts": [
+        "(signal: 9, SIGKILL: kill)",
+        "error: could not compile `trnm-pon-node` (lib test)"
+      ]
+    },
+    "node-functional-final.jsonl": {
+      "exists": true,
+      "bytes": 115169,
+      "sha256": "eb5ca5c8fd6d270ffdc174d6d6d7335dd49e1bb828c76c59684db6b497c44f3e"
+    },
+    "node-functional-low-memory.log": {
+      "exists": true,
+      "bytes": 7716,
+      "sha256": "805930ee747c20f9f64aa75d6d4a888fd723c82855b15968f6e489e661711cc1",
+      "error_excerpts": [
+        "(signal: 9, SIGKILL: kill)",
+        "error: could not compile `trnm-pon-node` (lib test)"
+      ]
+    },
+    "node-functional-low-memory.jsonl": {
+      "exists": true,
+      "bytes": 115290,
+      "sha256": "7ca65e2db0ba3dec60cf0b273c0fa12a2e436fe7192fdfe3cd47188423918d78"
+    },
+    "m06-full-final.log": {
+      "exists": true,
+      "bytes": 15768,
+      "sha256": "b7c586f8b199d301613644a8170f0a5360bb78b8f910f6d0186ed75d697a9909"
+    },
+    "repository-check-complete-final.log": {
+      "exists": true,
+      "bytes": 307,
+      "sha256": "4d7ec698303eb3be44e4d1a65396994a029b57e577ac6f2e0776569decf45b15"
+    },
+    "repository-negative-final.log": {
+      "exists": true,
+      "bytes": 5344,
+      "sha256": "dd0b7981135f1410b696d68059b1444b84e7186853e69c574ad70b1616f4f6ef"
+    },
+    "negative-source-final.log": {
+      "exists": true,
+      "bytes": 135,
+      "sha256": "d5effeb328fcfc77a132517c1230064f9475978779d576237ddceee18baf13bf"
+    },
+    "negative-integrity-final.log": {
+      "exists": true,
+      "bytes": 5509,
+      "sha256": "44fbc7d3b693bb3cf5bd4666d1d6a742f7ddba480421aec8e1acfb4d978d670e"
+    },
+    "acceptance-from-zero-final.log": {
+      "exists": true,
+      "bytes": 17008,
+      "sha256": "2f0b8eafc901dd3c867ae8f3a4a67a3333871db14b7571f3674b3ee1451d3553"
+    },
+    "acceptance-host-final.log": {
+      "exists": true,
+      "bytes": 177,
+      "sha256": "f69bad99a06301f3cea79362d764b744a62dac1625ab99a0b9e0189e1ddb5e89"
+    },
+    "pq-source-sealed.log": {
+      "exists": true,
+      "bytes": 557,
+      "sha256": "5f13af3bf7212b6f6eff4588f4f377c15f3f17e390a413893894339939571bd0"
+    },
+    "clippy-final.log": {
+      "exists": true,
+      "bytes": 289,
+      "sha256": "928f2b32c252ed4f78a65dd4742033710670df639b81ca0bcf6e9eeb70753908"
+    },
+    "fmt-sealed.log": {
+      "exists": true,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "m06-mandatory-local.log": {
+      "exists": true,
+      "bytes": 1318,
+      "sha256": "29c8d37d3b4602d07215cdeac1d18e5d316335e3e396b3f0e92d8eaa6285c376",
+      "error_excerpts": [
+        "called `Result::unwrap()` on an `Err` value: \"PUBLIC_EVAL_STATE\"",
+        "error: test failed, to rerun pass `-p trnm-mvcc-fee --lib`"
+      ]
+    },
+    "m06-mandatory.log": {
+      "exists": true,
+      "bytes": 439,
+      "sha256": "bf4c50a92285c9d9f5b14392d58524de7e436059d736f3376c8d839e5df0fb5b"
+    },
+    "clippy-initial.log": {
+      "exists": true,
+      "bytes": 5505,
+      "sha256": "6840ee2b4c6fe8bc15133a674ea1d6810b0d1b146f0ee4583716ea93ed81ff57"
+    },
+    "acceptance-from-zero.log": {
+      "exists": true,
+      "bytes": 401,
+      "sha256": "412076c214756283875d6d43ee2cd05d66dc7120a1772e49dd597d82761542b9",
+      "error_excerpts": [
+        "ModuleNotFoundError: No module named 'contract_wire'"
+      ]
+    },
+    "acceptance-host.log": {
+      "exists": true,
+      "bytes": 538,
+      "sha256": "c5665169ec6895fd6f229da449dcab00943ceb3c0c17f3d8dbbfd1ece5452541",
+      "error_excerpts": [
+        "ModuleNotFoundError: No module named 'contract_wire'"
+      ]
+    },
+    "acceptance-service-campaign.log": {
+      "exists": true,
+      "bytes": 441,
+      "sha256": "ba9e4b07ed1f1c0bc96460c46a472bbeb69dd94069e01386444b44dddc2c8190",
+      "error_excerpts": [
+        "ModuleNotFoundError: No module named 'contract_wire'"
+      ]
+    },
+    "acceptance-from-zero-complete-source.log": {
+      "exists": true,
+      "bytes": 17008,
+      "sha256": "800eccf0eac53e96302ad6db55fb16f297c41bc0a7cd5820daeb07b23d1b7b50"
+    },
+    "acceptance-host-complete-source.log": {
+      "exists": true,
+      "bytes": 177,
+      "sha256": "0788f855aebe49691d6af07e7f45461546f6a840116fdd10a6bc3c55cc6fb630"
+    },
+    "acceptance-service-campaign-complete-source.log": {
+      "exists": true,
+      "bytes": 153,
+      "sha256": "77d48e7ca584d7ac5cffee402a53ce197e50b69c32924a05b5af58f8e9e4dd2d",
+      "error_excerpts": [
+        "test_public_v3_service_campaign.py: error: the following arguments are required: --report"
+      ]
+    },
+    "acceptance-service-campaign-historical-control.log": {
+      "exists": true,
+      "bytes": 104,
+      "sha256": "fe82ba8b3f0f5d9364fb1204958f3d59a387a029f68973c2de767bfd913ee1e3"
+    },
+    "source-integration-negatives.log": {
+      "exists": true,
+      "bytes": 134,
+      "sha256": "21d54a993de0a6a60111e217897d472fecba6601f1ca5cba7915e2c6811d439c"
+    },
+    "source-integrity-negatives.log": {
+      "exists": true,
+      "bytes": 5509,
+      "sha256": "db7313ed68732f720ede799a2abd19bfe373e06b9cf4e1528c0c5410f3287b6f"
+    },
+    "prior-missing-binary-control-00.log": {
+      "exists": true,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "repository-check-attempts.json": {
+      "exists": true,
+      "bytes": 1127,
+      "sha256": "9ac626a83dc9550d93dc04571351fd54b3079978ac520f9e78954d0a2a565649"
+    },
+    "native-controls.json": {
+      "exists": false
+    },
+    "native-compiler-artifact.json": {
+      "exists": false
+    },
+    "run-controls.py": {
+      "exists": true,
+      "bytes": 2585,
+      "sha256": "f7940f8655d77e347434fef18c1392455a41e6dec15844a54518f7529ea6921d"
+    },
+    "control-00.log": {
+      "exists": false
+    },
+    "control-01.log": {
+      "exists": false
+    },
+    "control-02.log": {
+      "exists": false
+    },
+    "control-03.log": {
+      "exists": false
+    },
+    "control-04.log": {
+      "exists": false
+    },
+    "control-05.log": {
+      "exists": false
+    },
+    "control-06.log": {
+      "exists": false
+    },
+    "control-07.log": {
+      "exists": false
+    },
+    "control-08.log": {
+      "exists": false
+    },
+    "control-09.log": {
+      "exists": false
+    },
+    "control-10.log": {
+      "exists": false
+    },
+    "control-11.log": {
+      "exists": false
+    },
+    "control-12.log": {
+      "exists": false
+    },
+    "control-13.log": {
+      "exists": false
+    },
+    "budget-completion-red-manifest.json": {
+      "exists": true,
+      "bytes": 1176,
+      "sha256": "0785101eb7643afa717b85ef19a67b42d4fbe696a243de0eb734ac9657adbd6a"
+    },
+    "budget-completion-old-behavior-red.patch": {
+      "exists": true,
+      "bytes": 1687,
+      "sha256": "32faabf5ec3e70776924a3be3317d828e3e9d9a0b0bd5e182bd3bbe2d762e50a"
+    },
+    "clippy-final-on-8e3.log": {
+      "exists": true,
+      "bytes": 6341,
+      "sha256": "ef50bcdd939e28c730cd4cda9daa8f285eb6173cfb130e96c06a47a1f7d03fb2"
+    },
+    "fmt-final.log": {
+      "exists": true,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fmt-first.log": {
+      "exists": true,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fmt-sealed-on-8e3.log": {
+      "exists": true,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pq-source-final.log": {
+      "exists": true,
+      "bytes": 557,
+      "sha256": "f0e1625c633c783b165f5b60cd87beeccce62d28bb880901fe65ffa9f9cf30ca"
+    },
+    "repository-check-complete-final-on-8e3.log": {
+      "exists": true,
+      "bytes": 307,
+      "sha256": "0c6149dbe7803e1b60775f2dfbb859b1a2c6abe80f2d007f1041d64f9e0fa0da"
+    },
+    "repository-check-evidence-complete.log": {
+      "exists": true,
+      "bytes": 87,
+      "sha256": "9c71081b58465566d905c912533ff675e3813807d92822d42784a8e4d985db70",
+      "error_excerpts": [
+        "Repository check failed: missing evidence evidence/pon-native-session-v1/manifest.json"
+      ]
+    },
+    "repository-check-final.log": {
+      "exists": true,
+      "bytes": 72,
+      "sha256": "e731734418d3ba8faa82cbdd529fc1f66c16558d04a15dd23f194a59d9be4dc3",
+      "error_excerpts": [
+        "Repository check failed: missing evidence evidence/pon-v4/manifest.json"
+      ]
+    },
+    "repository-check-initial.log": {
+      "exists": true,
+      "bytes": 84,
+      "sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361",
+      "error_excerpts": [
+        "Repository check failed: broken link docs/README.md -> ../evidence/pon-v1/README.md"
+      ]
+    },
+    "repository-check-materialized.log": {
+      "exists": true,
+      "bytes": 268,
+      "sha256": "b353dd9e031210af8f303e74046765bc676f085ad40f494ca8a172ba8cc9208d",
+      "error_excerpts": [
+        "Repository check failed: CI contract: inline source pin differs: .github/workflows/pon-recent-batch-acceptance.yml:69: trillionnium/crates/trnm-pon-node/src/store.rs: expected 4056ebb4146c711e8c62588bf8e0a7881900c02b, observed 0e30e12fbcc2cd951ceff2ea6d89006073a27ad3"
+      ]
+    },
+    "repository-check-updated-pins.log": {
+      "exists": true,
+      "bytes": 72,
+      "sha256": "2eaf28b7a210c6d05210e15c5db0379540891fb259dd8291597ed1a12713e46b",
+      "error_excerpts": [
+        "Repository check failed: missing evidence evidence/pon-v3/manifest.json"
+      ]
+    },
+    "repository-complete-attempt-00-on-8e3.log": {
+      "exists": true,
+      "bytes": 84,
+      "sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361",
+      "error_excerpts": [
+        "Repository check failed: broken link docs/README.md -> ../evidence/pon-v1/README.md"
+      ]
+    },
+    "repository-complete-attempt-00.log": {
+      "exists": true,
+      "bytes": 84,
+      "sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361",
+      "error_excerpts": [
+        "Repository check failed: broken link docs/README.md -> ../evidence/pon-v1/README.md"
+      ]
+    },
+    "repository-complete-attempt-01-on-8e3.log": {
+      "exists": true,
+      "bytes": 72,
+      "sha256": "2eaf28b7a210c6d05210e15c5db0379540891fb259dd8291597ed1a12713e46b",
+      "error_excerpts": [
+        "Repository check failed: missing evidence evidence/pon-v3/manifest.json"
+      ]
+    },
+    "repository-complete-attempt-01.log": {
+      "exists": true,
+      "bytes": 72,
+      "sha256": "2eaf28b7a210c6d05210e15c5db0379540891fb259dd8291597ed1a12713e46b",
+      "error_excerpts": [
+        "Repository check failed: missing evidence evidence/pon-v3/manifest.json"
+      ]
+    },
+    "repository-complete-attempt-02-on-8e3.log": {
+      "exists": true,
+      "bytes": 72,
+      "sha256": "e731734418d3ba8faa82cbdd529fc1f66c16558d04a15dd23f194a59d9be4dc3",
+      "error_excerpts": [
+        "Repository check failed: missing evidence evidence/pon-v4/manifest.json"
+      ]
+    },
+    "repository-complete-attempt-02.log": {
+      "exists": true,
+      "bytes": 72,
+      "sha256": "e731734418d3ba8faa82cbdd529fc1f66c16558d04a15dd23f194a59d9be4dc3",
+      "error_excerpts": [
+        "Repository check failed: missing evidence evidence/pon-v4/manifest.json"
+      ]
+    },
+    "repository-complete-attempt-03-on-8e3.log": {
+      "exists": true,
+      "bytes": 87,
+      "sha256": "9c71081b58465566d905c912533ff675e3813807d92822d42784a8e4d985db70",
+      "error_excerpts": [
+        "Repository check failed: missing evidence evidence/pon-native-session-v1/manifest.json"
+      ]
+    },
+    "repository-complete-attempt-03.log": {
+      "exists": true,
+      "bytes": 87,
+      "sha256": "9c71081b58465566d905c912533ff675e3813807d92822d42784a8e4d985db70",
+      "error_excerpts": [
+        "Repository check failed: missing evidence evidence/pon-native-session-v1/manifest.json"
+      ]
+    },
+    "repository-complete-attempt-04-on-8e3.log": {
+      "exists": true,
+      "bytes": 84,
+      "sha256": "6b30a92ffb59aa94f0ecf476f4d955ec602b560e18f20a2ce6274e5073e72fd3",
+      "error_excerpts": [
+        "Repository check failed: missing evidence evidence/pon-native-node-v1/manifest.json"
+      ]
+    },
+    "repository-complete-attempt-04.log": {
+      "exists": true,
+      "bytes": 84,
+      "sha256": "6b30a92ffb59aa94f0ecf476f4d955ec602b560e18f20a2ce6274e5073e72fd3",
+      "error_excerpts": [
+        "Repository check failed: missing evidence evidence/pon-native-node-v1/manifest.json"
+      ]
+    },
+    "repository-complete-attempt-05-on-8e3.log": {
+      "exists": true,
+      "bytes": 307,
+      "sha256": "0c6149dbe7803e1b60775f2dfbb859b1a2c6abe80f2d007f1041d64f9e0fa0da"
+    },
+    "repository-complete-attempt-05.log": {
+      "exists": true,
+      "bytes": 307,
+      "sha256": "4d7ec698303eb3be44e4d1a65396994a029b57e577ac6f2e0776569decf45b15"
+    },
+    "repository-negative-final-on-8e3.log": {
+      "exists": true,
+      "bytes": 5345,
+      "sha256": "4065efd885bdd1339a10b6b9e8a212318a5477dc35b21e99c6903581679f080c"
+    }
+  }
+}

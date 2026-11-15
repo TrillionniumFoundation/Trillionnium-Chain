@@ -1,0 +1,756 @@
+{
+  "scope": "First/last sampled per-PID CPU tick deltas, not complete process accounting; sample monotonic time precedes proc scan and unix time follows it. No hardware contention cause is independently established.",
+  "ticks_per_second": 100,
+  "processes": [
+    {
+      "pid": 4232,
+      "kernel_start_ticks": 682421,
+      "samples": 2,
+      "observed_unix_span_seconds": 1.005373008,
+      "observed_monotonic_span_seconds": 1.006703430000016,
+      "observed_cpu_seconds": 1.0,
+      "average_cpu_cores_over_observed_unix_span": 0.9946557069294225,
+      "max_sample_rss_bytes": 16691200
+    },
+    {
+      "pid": 4285,
+      "kernel_start_ticks": 683036,
+      "samples": 37,
+      "observed_unix_span_seconds": 36.519700341,
+      "observed_monotonic_span_seconds": 36.51547258899973,
+      "observed_cpu_seconds": 210.2,
+      "average_cpu_cores_over_observed_unix_span": 5.755797502095391,
+      "max_sample_rss_bytes": 1457651712
+    },
+    {
+      "pid": 4304,
+      "kernel_start_ticks": 686828,
+      "samples": 45,
+      "observed_unix_span_seconds": 45.854070138,
+      "observed_monotonic_span_seconds": 45.854605251000066,
+      "observed_cpu_seconds": 295.02,
+      "average_cpu_cores_over_observed_unix_span": 6.433889055259943,
+      "max_sample_rss_bytes": 1481113600
+    },
+    {
+      "pid": 4323,
+      "kernel_start_ticks": 691456,
+      "samples": 39,
+      "observed_unix_span_seconds": 38.829559909,
+      "observed_monotonic_span_seconds": 38.83164849500008,
+      "observed_cpu_seconds": 252.79,
+      "average_cpu_cores_over_observed_unix_span": 6.510246332753511,
+      "max_sample_rss_bytes": 1509421056
+    },
+    {
+      "pid": 4342,
+      "kernel_start_ticks": 695457,
+      "samples": 31,
+      "observed_unix_span_seconds": 30.84127452,
+      "observed_monotonic_span_seconds": 30.841114539000046,
+      "observed_cpu_seconds": 222.07,
+      "average_cpu_cores_over_observed_unix_span": 7.200415788783038,
+      "max_sample_rss_bytes": 1481125888
+    },
+    {
+      "pid": 4361,
+      "kernel_start_ticks": 698641,
+      "samples": 38,
+      "observed_unix_span_seconds": 37.81072785,
+      "observed_monotonic_span_seconds": 37.81079537599999,
+      "observed_cpu_seconds": 249.77,
+      "average_cpu_cores_over_observed_unix_span": 6.605797195728937,
+      "max_sample_rss_bytes": 1509412864
+    },
+    {
+      "pid": 4380,
+      "kernel_start_ticks": 702509,
+      "samples": 27,
+      "observed_unix_span_seconds": 26.260492841,
+      "observed_monotonic_span_seconds": 26.26068558299994,
+      "observed_cpu_seconds": 190.42,
+      "average_cpu_cores_over_observed_unix_span": 7.251196736974445,
+      "max_sample_rss_bytes": 1480966144
+    },
+    {
+      "pid": 4399,
+      "kernel_start_ticks": 705226,
+      "samples": 38,
+      "observed_unix_span_seconds": 38.046518545,
+      "observed_monotonic_span_seconds": 38.04677786399952,
+      "observed_cpu_seconds": 265.23,
+      "average_cpu_cores_over_observed_unix_span": 6.97120288907107,
+      "max_sample_rss_bytes": 1467211776
+    },
+    {
+      "pid": 4418,
+      "kernel_start_ticks": 709210,
+      "samples": 31,
+      "observed_unix_span_seconds": 30.404930638,
+      "observed_monotonic_span_seconds": 30.41022763700039,
+      "observed_cpu_seconds": 213.34,
+      "average_cpu_cores_over_observed_unix_span": 7.016625117156763,
+      "max_sample_rss_bytes": 1456017408
+    },
+    {
+      "pid": 4437,
+      "kernel_start_ticks": 712312,
+      "samples": 47,
+      "observed_unix_span_seconds": 47.069970804,
+      "observed_monotonic_span_seconds": 47.05978050200065,
+      "observed_cpu_seconds": 279.42,
+      "average_cpu_cores_over_observed_unix_span": 5.936268819105682,
+      "max_sample_rss_bytes": 1509482496
+    },
+    {
+      "pid": 4456,
+      "kernel_start_ticks": 717085,
+      "samples": 57,
+      "observed_unix_span_seconds": 58.123140209,
+      "observed_monotonic_span_seconds": 58.14024365300065,
+      "observed_cpu_seconds": 361.72,
+      "average_cpu_cores_over_observed_unix_span": 6.223338909414085,
+      "max_sample_rss_bytes": 1481007104
+    },
+    {
+      "pid": 4475,
+      "kernel_start_ticks": 723039,
+      "samples": 33,
+      "observed_unix_span_seconds": 32.654181028,
+      "observed_monotonic_span_seconds": 32.65355752800042,
+      "observed_cpu_seconds": 222.83,
+      "average_cpu_cores_over_observed_unix_span": 6.823934730101785,
+      "max_sample_rss_bytes": 1509101568
+    },
+    {
+      "pid": 4494,
+      "kernel_start_ticks": 726406,
+      "samples": 29,
+      "observed_unix_span_seconds": 28.395768263,
+      "observed_monotonic_span_seconds": 28.38572714899965,
+      "observed_cpu_seconds": 197.34,
+      "average_cpu_cores_over_observed_unix_span": 6.949627077254895,
+      "max_sample_rss_bytes": 1481310208
+    },
+    {
+      "pid": 4513,
+      "kernel_start_ticks": 729353,
+      "samples": 29,
+      "observed_unix_span_seconds": 28.32800766,
+      "observed_monotonic_span_seconds": 28.329440144999353,
+      "observed_cpu_seconds": 196.91,
+      "average_cpu_cores_over_observed_unix_span": 6.9510712635835255,
+      "max_sample_rss_bytes": 1509187584
+    },
+    {
+      "pid": 4532,
+      "kernel_start_ticks": 732266,
+      "samples": 29,
+      "observed_unix_span_seconds": 28.447201274,
+      "observed_monotonic_span_seconds": 28.447648175000722,
+      "observed_cpu_seconds": 206.71,
+      "average_cpu_cores_over_observed_unix_span": 7.266444175263299,
+      "max_sample_rss_bytes": 1455669248
+    },
+    {
+      "pid": 4551,
+      "kernel_start_ticks": 735243,
+      "samples": 32,
+      "observed_unix_span_seconds": 32.423606894,
+      "observed_monotonic_span_seconds": 32.42358213699936,
+      "observed_cpu_seconds": 222.21,
+      "average_cpu_cores_over_observed_unix_span": 6.8533399361290686,
+      "max_sample_rss_bytes": 1492365312
+    },
+    {
+      "pid": 4570,
+      "kernel_start_ticks": 738570,
+      "samples": 24,
+      "observed_unix_span_seconds": 23.222048349,
+      "observed_monotonic_span_seconds": 23.22253257399916,
+      "observed_cpu_seconds": 171.06,
+      "average_cpu_cores_over_observed_unix_span": 7.366275249675219,
+      "max_sample_rss_bytes": 1430609920
+    },
+    {
+      "pid": 4589,
+      "kernel_start_ticks": 740945,
+      "samples": 25,
+      "observed_unix_span_seconds": 24.198568712,
+      "observed_monotonic_span_seconds": 24.198495184999956,
+      "observed_cpu_seconds": 176.92,
+      "average_cpu_cores_over_observed_unix_span": 7.311176214825709,
+      "max_sample_rss_bytes": 1509429248
+    },
+    {
+      "pid": 4608,
+      "kernel_start_ticks": 743507,
+      "samples": 24,
+      "observed_unix_span_seconds": 23.209573722,
+      "observed_monotonic_span_seconds": 23.210254417000215,
+      "observed_cpu_seconds": 172.2,
+      "average_cpu_cores_over_observed_unix_span": 7.419352120059588,
+      "max_sample_rss_bytes": 1456103424
+    },
+    {
+      "pid": 4627,
+      "kernel_start_ticks": 745940,
+      "samples": 28,
+      "observed_unix_span_seconds": 27.183591827,
+      "observed_monotonic_span_seconds": 27.18364918000043,
+      "observed_cpu_seconds": 186.26,
+      "average_cpu_cores_over_observed_unix_span": 6.851927485719453,
+      "max_sample_rss_bytes": 1492389888
+    },
+    {
+      "pid": 4646,
+      "kernel_start_ticks": 748755,
+      "samples": 28,
+      "observed_unix_span_seconds": 27.430778693,
+      "observed_monotonic_span_seconds": 27.43136460200003,
+      "observed_cpu_seconds": 191.26,
+      "average_cpu_cores_over_observed_unix_span": 6.972459737309871,
+      "max_sample_rss_bytes": 1456173056
+    },
+    {
+      "pid": 4665,
+      "kernel_start_ticks": 751547,
+      "samples": 25,
+      "observed_unix_span_seconds": 24.297897903,
+      "observed_monotonic_span_seconds": 24.29829108500053,
+      "observed_cpu_seconds": 179.03,
+      "average_cpu_cores_over_observed_unix_span": 7.368127099500884,
+      "max_sample_rss_bytes": 1492246528
+    },
+    {
+      "pid": 4684,
+      "kernel_start_ticks": 754132,
+      "samples": 30,
+      "observed_unix_span_seconds": 29.477732506,
+      "observed_monotonic_span_seconds": 29.474606783000127,
+      "observed_cpu_seconds": 206.02,
+      "average_cpu_cores_over_observed_unix_span": 6.9890043258268255,
+      "max_sample_rss_bytes": 1455788032
+    },
+    {
+      "pid": 4703,
+      "kernel_start_ticks": 757127,
+      "samples": 33,
+      "observed_unix_span_seconds": 32.812970973,
+      "observed_monotonic_span_seconds": 32.830407552,
+      "observed_cpu_seconds": 222.82,
+      "average_cpu_cores_over_observed_unix_span": 6.790607293175202,
+      "max_sample_rss_bytes": 1467285504
+    },
+    {
+      "pid": 4722,
+      "kernel_start_ticks": 760512,
+      "samples": 26,
+      "observed_unix_span_seconds": 25.443156493,
+      "observed_monotonic_span_seconds": 25.407572842000263,
+      "observed_cpu_seconds": 177.6,
+      "average_cpu_cores_over_observed_unix_span": 6.980265992109189,
+      "max_sample_rss_bytes": 1474871296
+    },
+    {
+      "pid": 4741,
+      "kernel_start_ticks": 763238,
+      "samples": 32,
+      "observed_unix_span_seconds": 31.849292037,
+      "observed_monotonic_span_seconds": 31.848783639999965,
+      "observed_cpu_seconds": 203.64,
+      "average_cpu_cores_over_observed_unix_span": 6.393862688169867,
+      "max_sample_rss_bytes": 1492525056
+    },
+    {
+      "pid": 4760,
+      "kernel_start_ticks": 766461,
+      "samples": 32,
+      "observed_unix_span_seconds": 31.907207965,
+      "observed_monotonic_span_seconds": 31.94473629699951,
+      "observed_cpu_seconds": 216.07,
+      "average_cpu_cores_over_observed_unix_span": 6.77182410435328,
+      "max_sample_rss_bytes": 1455480832
+    },
+    {
+      "pid": 4779,
+      "kernel_start_ticks": 769810,
+      "samples": 25,
+      "observed_unix_span_seconds": 24.232929367,
+      "observed_monotonic_span_seconds": 24.233219253000243,
+      "observed_cpu_seconds": 173.21,
+      "average_cpu_cores_over_observed_unix_span": 7.147711998693583,
+      "max_sample_rss_bytes": 1509236736
+    },
+    {
+      "pid": 4798,
+      "kernel_start_ticks": 772311,
+      "samples": 33,
+      "observed_unix_span_seconds": 32.286161486,
+      "observed_monotonic_span_seconds": 32.287266510000336,
+      "observed_cpu_seconds": 198.21,
+      "average_cpu_cores_over_observed_unix_span": 6.139162752002845,
+      "max_sample_rss_bytes": 1430724608
+    },
+    {
+      "pid": 4817,
+      "kernel_start_ticks": 775609,
+      "samples": 38,
+      "observed_unix_span_seconds": 37.478564095,
+      "observed_monotonic_span_seconds": 37.47738650700012,
+      "observed_cpu_seconds": 228.0,
+      "average_cpu_cores_over_observed_unix_span": 6.083477462532172,
+      "max_sample_rss_bytes": 1492328448
+    },
+    {
+      "pid": 4836,
+      "kernel_start_ticks": 779454,
+      "samples": 37,
+      "observed_unix_span_seconds": 36.55237059,
+      "observed_monotonic_span_seconds": 36.55290486800004,
+      "observed_cpu_seconds": 238.49,
+      "average_cpu_cores_over_observed_unix_span": 6.524611021131585,
+      "max_sample_rss_bytes": 1430761472
+    },
+    {
+      "pid": 4855,
+      "kernel_start_ticks": 783220,
+      "samples": 25,
+      "observed_unix_span_seconds": 24.172720114,
+      "observed_monotonic_span_seconds": 24.17247014700024,
+      "observed_cpu_seconds": 177.71,
+      "average_cpu_cores_over_observed_unix_span": 7.351675738680172,
+      "max_sample_rss_bytes": 1509335040
+    },
+    {
+      "pid": 4874,
+      "kernel_start_ticks": 785740,
+      "samples": 43,
+      "observed_unix_span_seconds": 42.307482025,
+      "observed_monotonic_span_seconds": 42.307695999000316,
+      "observed_cpu_seconds": 228.06,
+      "average_cpu_cores_over_observed_unix_span": 5.390535883587603,
+      "max_sample_rss_bytes": 1480826880
+    },
+    {
+      "pid": 4893,
+      "kernel_start_ticks": 790087,
+      "samples": 41,
+      "observed_unix_span_seconds": 40.919518763,
+      "observed_monotonic_span_seconds": 40.91593925899997,
+      "observed_cpu_seconds": 279.31,
+      "average_cpu_cores_over_observed_unix_span": 6.825837850579905,
+      "max_sample_rss_bytes": 1492549632
+    },
+    {
+      "pid": 4912,
+      "kernel_start_ticks": 794352,
+      "samples": 29,
+      "observed_unix_span_seconds": 28.209975902,
+      "observed_monotonic_span_seconds": 28.268900005999967,
+      "observed_cpu_seconds": 196.13,
+      "average_cpu_cores_over_observed_unix_span": 6.952505052870144,
+      "max_sample_rss_bytes": 1455599616
+    },
+    {
+      "pid": 4931,
+      "kernel_start_ticks": 797342,
+      "samples": 26,
+      "observed_unix_span_seconds": 25.24701878,
+      "observed_monotonic_span_seconds": 25.246304137000152,
+      "observed_cpu_seconds": 179.89,
+      "average_cpu_cores_over_observed_unix_span": 7.125197694331496,
+      "max_sample_rss_bytes": 1492578304
+    },
+    {
+      "pid": 4950,
+      "kernel_start_ticks": 799992,
+      "samples": 29,
+      "observed_unix_span_seconds": 28.475336695,
+      "observed_monotonic_span_seconds": 28.468270067999583,
+      "observed_cpu_seconds": 198.99,
+      "average_cpu_cores_over_observed_unix_span": 6.988152664580812,
+      "max_sample_rss_bytes": 1480880128
+    },
+    {
+      "pid": 4969,
+      "kernel_start_ticks": 802902,
+      "samples": 60,
+      "observed_unix_span_seconds": 60.219610148,
+      "observed_monotonic_span_seconds": 60.20969146600055,
+      "observed_cpu_seconds": 305.33,
+      "average_cpu_cores_over_observed_unix_span": 5.070275268298802,
+      "max_sample_rss_bytes": 1509474304
+    },
+    {
+      "pid": 4988,
+      "kernel_start_ticks": 809052,
+      "samples": 45,
+      "observed_unix_span_seconds": 45.021818272,
+      "observed_monotonic_span_seconds": 45.0221723730001,
+      "observed_cpu_seconds": 249.05,
+      "average_cpu_cores_over_observed_unix_span": 5.531762366756506,
+      "max_sample_rss_bytes": 1480986624
+    },
+    {
+      "pid": 5007,
+      "kernel_start_ticks": 813641,
+      "samples": 40,
+      "observed_unix_span_seconds": 40.330068657,
+      "observed_monotonic_span_seconds": 40.33128467400002,
+      "observed_cpu_seconds": 256.63,
+      "average_cpu_cores_over_observed_unix_span": 6.36324232875952,
+      "max_sample_rss_bytes": 1509253120
+    },
+    {
+      "pid": 5026,
+      "kernel_start_ticks": 817756,
+      "samples": 41,
+      "observed_unix_span_seconds": 40.760665667,
+      "observed_monotonic_span_seconds": 40.76172625900017,
+      "observed_cpu_seconds": 248.34,
+      "average_cpu_cores_over_observed_unix_span": 6.092638477223327,
+      "max_sample_rss_bytes": 1479208960
+    },
+    {
+      "pid": 5045,
+      "kernel_start_ticks": 821950,
+      "samples": 38,
+      "observed_unix_span_seconds": 37.713275994,
+      "observed_monotonic_span_seconds": 37.712761725000746,
+      "observed_cpu_seconds": 240.83,
+      "average_cpu_cores_over_observed_unix_span": 6.38581490609076,
+      "max_sample_rss_bytes": 1509015552
+    },
+    {
+      "pid": 5064,
+      "kernel_start_ticks": 825785,
+      "samples": 49,
+      "observed_unix_span_seconds": 49.383521667,
+      "observed_monotonic_span_seconds": 49.383529966000424,
+      "observed_cpu_seconds": 308.36,
+      "average_cpu_cores_over_observed_unix_span": 6.244188133833684,
+      "max_sample_rss_bytes": 1455841280
+    },
+    {
+      "pid": 5083,
+      "kernel_start_ticks": 830812,
+      "samples": 52,
+      "observed_unix_span_seconds": 52.160442149,
+      "observed_monotonic_span_seconds": 52.161201907998475,
+      "observed_cpu_seconds": 310.67,
+      "average_cpu_cores_over_observed_unix_span": 5.956046137656371,
+      "max_sample_rss_bytes": 1492426752
+    },
+    {
+      "pid": 5102,
+      "kernel_start_ticks": 836221,
+      "samples": 45,
+      "observed_unix_span_seconds": 44.599988146,
+      "observed_monotonic_span_seconds": 44.60020429799988,
+      "observed_cpu_seconds": 275.46,
+      "average_cpu_cores_over_observed_unix_span": 6.176234825405551,
+      "max_sample_rss_bytes": 1476870144
+    },
+    {
+      "pid": 5121,
+      "kernel_start_ticks": 840770,
+      "samples": 47,
+      "observed_unix_span_seconds": 46.767890327,
+      "observed_monotonic_span_seconds": 46.768163225000535,
+      "observed_cpu_seconds": 281.72,
+      "average_cpu_cores_over_observed_unix_span": 6.02379106755127,
+      "max_sample_rss_bytes": 1509306368
+    },
+    {
+      "pid": 5140,
+      "kernel_start_ticks": 845541,
+      "samples": 46,
+      "observed_unix_span_seconds": 45.553204416,
+      "observed_monotonic_span_seconds": 45.5529796539995,
+      "observed_cpu_seconds": 282.65,
+      "average_cpu_cores_over_observed_unix_span": 6.204832428884469,
+      "max_sample_rss_bytes": 1455865856
+    },
+    {
+      "pid": 5159,
+      "kernel_start_ticks": 850200,
+      "samples": 42,
+      "observed_unix_span_seconds": 41.661704465,
+      "observed_monotonic_span_seconds": 41.662723997000285,
+      "observed_cpu_seconds": 263.13,
+      "average_cpu_cores_over_observed_unix_span": 6.315872175154416,
+      "max_sample_rss_bytes": 1492328448
+    },
+    {
+      "pid": 5178,
+      "kernel_start_ticks": 854485,
+      "samples": 38,
+      "observed_unix_span_seconds": 37.457187965,
+      "observed_monotonic_span_seconds": 37.45904843799872,
+      "observed_cpu_seconds": 267.29,
+      "average_cpu_cores_over_observed_unix_span": 7.135880041228824,
+      "max_sample_rss_bytes": 1481146368
+    },
+    {
+      "pid": 5197,
+      "kernel_start_ticks": 858263,
+      "samples": 33,
+      "observed_unix_span_seconds": 32.771594564,
+      "observed_monotonic_span_seconds": 32.771439472000566,
+      "observed_cpu_seconds": 214.71,
+      "average_cpu_cores_over_observed_unix_span": 6.5517104936926565,
+      "max_sample_rss_bytes": 1492406272
+    },
+    {
+      "pid": 5216,
+      "kernel_start_ticks": 861704,
+      "samples": 29,
+      "observed_unix_span_seconds": 28.282138107,
+      "observed_monotonic_span_seconds": 28.282206887999564,
+      "observed_cpu_seconds": 203.87,
+      "average_cpu_cores_over_observed_unix_span": 7.208436619208112,
+      "max_sample_rss_bytes": 1479131136
+    },
+    {
+      "pid": 5235,
+      "kernel_start_ticks": 864564,
+      "samples": 31,
+      "observed_unix_span_seconds": 30.30469474,
+      "observed_monotonic_span_seconds": 30.30478155700075,
+      "observed_cpu_seconds": 190.68,
+      "average_cpu_cores_over_observed_unix_span": 6.292094397780429,
+      "max_sample_rss_bytes": 1492455424
+    },
+    {
+      "pid": 5254,
+      "kernel_start_ticks": 867759,
+      "samples": 27,
+      "observed_unix_span_seconds": 26.24001443,
+      "observed_monotonic_span_seconds": 26.239754160000302,
+      "observed_cpu_seconds": 186.64,
+      "average_cpu_cores_over_observed_unix_span": 7.112800966550383,
+      "max_sample_rss_bytes": 1455976448
+    },
+    {
+      "pid": 5273,
+      "kernel_start_ticks": 870467,
+      "samples": 34,
+      "observed_unix_span_seconds": 34.26962253,
+      "observed_monotonic_span_seconds": 34.26979076599855,
+      "observed_cpu_seconds": 233.73,
+      "average_cpu_cores_over_observed_unix_span": 6.82032607144681,
+      "max_sample_rss_bytes": 1492631552
+    },
+    {
+      "pid": 5292,
+      "kernel_start_ticks": 874030,
+      "samples": 59,
+      "observed_unix_span_seconds": 59.680511102,
+      "observed_monotonic_span_seconds": 59.677701524999065,
+      "observed_cpu_seconds": 371.36,
+      "average_cpu_cores_over_observed_unix_span": 6.222466817774205,
+      "max_sample_rss_bytes": 1481273344
+    },
+    {
+      "pid": 5311,
+      "kernel_start_ticks": 880145,
+      "samples": 70,
+      "observed_unix_span_seconds": 77.650665123,
+      "observed_monotonic_span_seconds": 77.65345885900024,
+      "observed_cpu_seconds": 427.85,
+      "average_cpu_cores_over_observed_unix_span": 5.509933486368445,
+      "max_sample_rss_bytes": 1509421056
+    },
+    {
+      "pid": 5330,
+      "kernel_start_ticks": 887992,
+      "samples": 46,
+      "observed_unix_span_seconds": 45.561831856,
+      "observed_monotonic_span_seconds": 45.56205805799982,
+      "observed_cpu_seconds": 280.85,
+      "average_cpu_cores_over_observed_unix_span": 6.164150749856541,
+      "max_sample_rss_bytes": 1456058368
+    },
+    {
+      "pid": 5349,
+      "kernel_start_ticks": 892710,
+      "samples": 30,
+      "observed_unix_span_seconds": 29.43718228,
+      "observed_monotonic_span_seconds": 29.437170583998522,
+      "observed_cpu_seconds": 201.01,
+      "average_cpu_cores_over_observed_unix_span": 6.828438880054385,
+      "max_sample_rss_bytes": 1509220352
+    },
+    {
+      "pid": 5368,
+      "kernel_start_ticks": 895714,
+      "samples": 26,
+      "observed_unix_span_seconds": 25.345966788,
+      "observed_monotonic_span_seconds": 25.346603902000425,
+      "observed_cpu_seconds": 180.43,
+      "average_cpu_cores_over_observed_unix_span": 7.118686831288056,
+      "max_sample_rss_bytes": 1430966272
+    },
+    {
+      "pid": 5387,
+      "kernel_start_ticks": 898388,
+      "samples": 51,
+      "observed_unix_span_seconds": 57.629564777,
+      "observed_monotonic_span_seconds": 57.62830231699991,
+      "observed_cpu_seconds": 301.97,
+      "average_cpu_cores_over_observed_unix_span": 5.239845228199893,
+      "max_sample_rss_bytes": 1507389440
+    },
+    {
+      "pid": 5406,
+      "kernel_start_ticks": 904247,
+      "samples": 43,
+      "observed_unix_span_seconds": 43.007762304,
+      "observed_monotonic_span_seconds": 43.0077027440002,
+      "observed_cpu_seconds": 269.7,
+      "average_cpu_cores_over_observed_unix_span": 6.270960997543369,
+      "max_sample_rss_bytes": 1476866048
+    },
+    {
+      "pid": 5425,
+      "kernel_start_ticks": 908628,
+      "samples": 34,
+      "observed_unix_span_seconds": 33.263855444,
+      "observed_monotonic_span_seconds": 33.264079751999816,
+      "observed_cpu_seconds": 228.07,
+      "average_cpu_cores_over_observed_unix_span": 6.8563910273106465,
+      "max_sample_rss_bytes": 1492721664
+    },
+    {
+      "pid": 5444,
+      "kernel_start_ticks": 912078,
+      "samples": 25,
+      "observed_unix_span_seconds": 24.251168419,
+      "observed_monotonic_span_seconds": 24.25081772500016,
+      "observed_cpu_seconds": 174.05,
+      "average_cpu_cores_over_observed_unix_span": 7.176973785050188,
+      "max_sample_rss_bytes": 1481166848
+    },
+    {
+      "pid": 5463,
+      "kernel_start_ticks": 914543,
+      "samples": 43,
+      "observed_unix_span_seconds": 42.978261636,
+      "observed_monotonic_span_seconds": 42.97825767300128,
+      "observed_cpu_seconds": 240.95,
+      "average_cpu_cores_over_observed_unix_span": 5.606322611200551,
+      "max_sample_rss_bytes": 1509310464
+    },
+    {
+      "pid": 5482,
+      "kernel_start_ticks": 918955,
+      "samples": 31,
+      "observed_unix_span_seconds": 30.394788913,
+      "observed_monotonic_span_seconds": 30.401596747999065,
+      "observed_cpu_seconds": 201.76,
+      "average_cpu_cores_over_observed_unix_span": 6.63797997010291,
+      "max_sample_rss_bytes": 1481072640
+    },
+    {
+      "pid": 5501,
+      "kernel_start_ticks": 922091,
+      "samples": 110,
+      "observed_unix_span_seconds": 256.051957552,
+      "observed_monotonic_span_seconds": 256.02317547799976,
+      "observed_cpu_seconds": 685.01,
+      "average_cpu_cores_over_observed_unix_span": 2.6752773403846586,
+      "max_sample_rss_bytes": 1508945920
+    },
+    {
+      "pid": 5520,
+      "kernel_start_ticks": 947779,
+      "samples": 54,
+      "observed_unix_span_seconds": 53.833881552,
+      "observed_monotonic_span_seconds": 53.83879613699901,
+      "observed_cpu_seconds": 277.67,
+      "average_cpu_cores_over_observed_unix_span": 5.157904130167337,
+      "max_sample_rss_bytes": 1455763456
+    },
+    {
+      "pid": 5539,
+      "kernel_start_ticks": 953339,
+      "samples": 94,
+      "observed_unix_span_seconds": 128.188310382,
+      "observed_monotonic_span_seconds": 128.18711454899858,
+      "observed_cpu_seconds": 542.04,
+      "average_cpu_cores_over_observed_unix_span": 4.228466686117679,
+      "max_sample_rss_bytes": 1508995072
+    },
+    {
+      "pid": 5558,
+      "kernel_start_ticks": 966221,
+      "samples": 38,
+      "observed_unix_span_seconds": 40.49012774,
+      "observed_monotonic_span_seconds": 40.49141035200046,
+      "observed_cpu_seconds": 251.76,
+      "average_cpu_cores_over_observed_unix_span": 6.2178119470659885,
+      "max_sample_rss_bytes": 1455693824
+    },
+    {
+      "pid": 5577,
+      "kernel_start_ticks": 970335,
+      "samples": 44,
+      "observed_unix_span_seconds": 43.542833723,
+      "observed_monotonic_span_seconds": 43.543385650000346,
+      "observed_cpu_seconds": 279.12,
+      "average_cpu_cores_over_observed_unix_span": 6.4102396682686384,
+      "max_sample_rss_bytes": 1492512768
+    },
+    {
+      "pid": 5596,
+      "kernel_start_ticks": 974894,
+      "samples": 41,
+      "observed_unix_span_seconds": 40.712208651,
+      "observed_monotonic_span_seconds": 40.712710208001226,
+      "observed_cpu_seconds": 260.09,
+      "average_cpu_cores_over_observed_unix_span": 6.388501351758804,
+      "max_sample_rss_bytes": 1480937472
+    },
+    {
+      "pid": 5615,
+      "kernel_start_ticks": 979141,
+      "samples": 50,
+      "observed_unix_span_seconds": 50.073897515,
+      "observed_monotonic_span_seconds": 50.06944547999956,
+      "observed_cpu_seconds": 301.96,
+      "average_cpu_cores_over_observed_unix_span": 6.030287534728961,
+      "max_sample_rss_bytes": 1509113856
+    },
+    {
+      "pid": 5634,
+      "kernel_start_ticks": 984274,
+      "samples": 46,
+      "observed_unix_span_seconds": 45.566877618,
+      "observed_monotonic_span_seconds": 45.56936874300118,
+      "observed_cpu_seconds": 280.92,
+      "average_cpu_cores_over_observed_unix_span": 6.165004377851642,
+      "max_sample_rss_bytes": 1455656960
+    },
+    {
+      "pid": 5653,
+      "kernel_start_ticks": 988933,
+      "samples": 41,
+      "observed_unix_span_seconds": 40.576308537,
+      "observed_monotonic_span_seconds": 40.57653426900106,
+      "observed_cpu_seconds": 253.04,
+      "average_cpu_cores_over_observed_unix_span": 6.236151318922035,
+      "max_sample_rss_bytes": 1467031552
+    },
+    {
+      "pid": 5672,
+      "kernel_start_ticks": 992999,
+      "samples": 25,
+      "observed_unix_span_seconds": 24.479220259,
+      "observed_monotonic_span_seconds": 24.481950961999246,
+      "observed_cpu_seconds": 182.07,
+      "average_cpu_cores_over_observed_unix_span": 7.437736908023464,
+      "max_sample_rss_bytes": 1296355328
+    }
+  ]
+}

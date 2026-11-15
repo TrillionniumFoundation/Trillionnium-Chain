@@ -1,0 +1,12 @@
+{
+  "actual_complete_receipt_used": true,
+  "errors": 0,
+  "failures": 0,
+  "fresh_proof_generations": 0,
+  "receipt_sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+  "result": "PASS",
+  "schema": "TRNM-W1-REAL-RECEIVER-CONTROLS1",
+  "skipped": 0,
+  "tests_run": 7,
+  "verifier_sha256": "582b53d8607cca6ec228c18de8047e1d6564f0fd9cd3cdeafa06c66f460ad3d5"
+}

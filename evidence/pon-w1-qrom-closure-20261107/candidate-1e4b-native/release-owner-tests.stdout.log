@@ -1,0 +1,61 @@
+
+running 42 tests
+test release_owner::clock_contract::tests::boot_namespace_backwards_elapsed_overflow_and_budget_refuse ... ok
+test release_owner::clock_contract::tests::clock_contract_has_no_default_and_requires_both_direction_and_rate_bounds ... ok
+test release_owner::clock_contract::tests::quantization_upper_boundary_rate_rounding_and_persisted_lower_are_distinct ... ok
+test release_owner::files_tests::child_names_are_exact_single_components_before_any_filesystem_mutation ... ok
+test release_owner::files_tests::exact_size_is_accepted_but_growth_after_the_held_read_is_rejected ... ok
+test release_owner::files_tests::held_directory_and_lock_replacement_prevent_read_and_write ... ok
+test release_owner::files_tests::in_place_rewrite_and_private_mode_drift_are_rejected_after_the_read ... ok
+test release_owner::files_tests::same_bytes_at_a_new_named_inode_do_not_pass_the_held_read ... ok
+test release_owner::files_tests::symlink_fifo_directory_hardlink_and_nonprivate_modes_are_rejected ... ok
+test release_owner::native_consumer_tests::isolated_fixed_root_static_node_claim_refresh_and_revocation ... ignored, requires reviewed static Node/test artifacts and a fresh rootless user/mount/PID namespace
+test release_owner::root_separation_tests::all_three_service_keys_are_excluded_from_offline_root_and_every_online_role ... ok
+test release_owner::root_separation_tests::canonical_root_roles_round_trip_through_publication_and_record ... ok
+test release_owner::root_separation_tests::decoded_root_role_keys_do_not_bypass_complete_root_validation ... ok
+test release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay ... ok
+test release_owner::root_separation_tests::expired_root_recovery_requires_both_real_quorums_and_a_fresh_successor ... ok
+test release_owner::root_separation_tests::tagged_root_roles_reject_noncanonical_duplicate_and_out_of_range_keys ... ok
+test release_owner::root_separation_tests::valid_dual_quorum_successor_cannot_reuse_an_independent_service_key ... ok
+test release_owner::sealed_tests::inherited_fifo_without_writer_is_refused_before_any_blocking_open ... ok
+test release_owner::sealed_tests::native_elf_profile_rejects_interpreter_dependencies_search_paths_and_wrong_machine ... ok
+test release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement ... ok
+test release_owner::sealed_tests::sealed_ctime_only_change_refuses_all_held_uses ... ok
+test release_owner::sealed_tests::sealed_kernel_rejects_payload_extent_and_exec_mutations ... ok
+test release_owner::sealed_tests::sealed_mtime_and_nonexec_mode_changes_refuse_all_held_uses ... ok
+test release_owner::sealed_tests::source_rewrite_or_path_exchange_during_sealing_refuses_authentication ... ok
+test release_owner::sealed_tests::unsealed_regular_input_and_a_different_sealed_descriptor_are_rejected ... ok
+test release_owner::service_tests::actual_signed_clock_wrong_request_nonce_namespace_or_backward_floor_fences ... ok
+test release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch ... FAILED
+test release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas ... ok
+test release_owner::service_tests::durable_preparation_then_real_elapsed_expiry_refuses_without_cas ... ok
+test release_owner::service_tests::last_clock_callback_lock_row_or_provisioning_drift_refuses_and_retains_fault ... ok
+test release_owner::service_tests::prepared_failure_keeps_canonical_row_and_temp_is_not_admission ... ok
+test release_owner::service_tests::signed_cas_uses_exact_old_once_and_returns_only_the_observed_lower_floor ... ok
+test release_owner::service_tests::wrong_signature_domain_binding_namespace_and_nonce_cannot_mutate_or_fence ... ok
+test release_owner::transaction_tests::actual_fsync_cuts_preserve_unknown_and_only_cleanup_an_exact_external_winner ... ok
+test release_owner::transaction_tests::cas_error_and_reply_loss_never_cause_an_automatic_cold_retry ... ok
+test release_owner::transaction_tests::final_clock_cannot_admit_an_action_after_local_lock_or_index_replacement ... ok
+test release_owner::transaction_tests::final_external_load_cannot_move_the_lock_before_cas ... ok
+test release_owner::transaction_tests::first_verification_cannot_overwrite_a_new_pending_record_or_return_idempotent_success ... ok
+test release_owner::transaction_tests::known_external_winner_cannot_tombstone_a_different_retained_local_record ... ok
+test release_owner::transaction_tests::rollback_after_index_fsync_keeps_the_attempt_for_completed_only_cold_recovery ... ok
+test release_owner::transaction_tests::second_verification_cannot_cas_after_lock_proposal_attempt_or_index_replacement ... ok
+test release_owner::transaction_tests::whole_local_slot_rollback_is_rejected_against_the_retained_external_frontier ... ok
+
+failures:
+
+---- release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch stdout ----
+
+thread 'release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch' (437887) panicked at crates/trnm-pon-node/src/release_owner/service_tests.rs:120:9:
+assertion `left == right` failed
+  left: "M15 conservative trusted time interval is outside the exact window"
+ right: "lost after durable completion"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch
+
+test result: FAILED. 40 passed; 1 failed; 1 ignored; 0 measured; 1165 filtered out; finished in 43.21s
+

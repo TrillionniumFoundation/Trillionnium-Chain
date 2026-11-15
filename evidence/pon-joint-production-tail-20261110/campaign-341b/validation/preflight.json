@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "exit_code": 0,
+  "base_head": "b50d40a7839f108fe5baeb57080f449aaa3acf3d",
+  "scope": "evidence-only validation; no archived workloads executed"
+}

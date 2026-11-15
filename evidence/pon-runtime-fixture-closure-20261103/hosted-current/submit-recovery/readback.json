@@ -1,0 +1,1629 @@
+{
+  "all_original_raw_bytes_roundtrip_verified": true,
+  "all_original_stages": [
+    {
+      "actual_compiler_profile_rows": [],
+      "fixture_sha256": "a3b25beed3c39d304de96a735dc6efd888e85643fd72d539789b9deca49dc96a",
+      "invocation": {
+        "command": [
+          "cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--test",
+          "public_submit_recovery",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "env_file_sha256": "0dd5e54905d17b9573be15ee0445bde9c69c05efbb81277061cf453a46c1f1e7",
+        "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "started_utc": "2026-11-03T23:41:43.512013+00:00",
+        "status": "?? evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-growth-protected/.progress.json.xOw39N\n?? evidence/pon-public-readiness-v1/pipeline-disjoint4-protected/.summary.json.Fjrdoe\n"
+      },
+      "name": "baseline-v1",
+      "native_summary": null,
+      "observed_completed_harness_cases": [
+        {
+          "name": "actual_absolute_epoch_call_cap_and_current_clock_fail_closed",
+          "result": "ok"
+        },
+        {
+          "name": "actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack",
+          "result": "FAILED"
+        },
+        {
+          "name": "actual_budget_absence_with_two_call_cap_stops_without_another_submit",
+          "result": "FAILED"
+        },
+        {
+          "name": "actual_caps_context_and_mutated_same_id_refuse_without_relabeling_duplicates",
+          "result": "FAILED"
+        },
+        {
+          "name": "actual_cli_bad_combinations_and_limits_precede_store_creation",
+          "result": "ok"
+        },
+        {
+          "name": "actual_cli_default_reply_is_unchanged_and_opt_in_reports_duplicate_membership",
+          "result": "ok"
+        },
+        {
+          "name": "actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership",
+          "result": "ok"
+        },
+        {
+          "name": "actual_eof_before_admission_keeps_same_packet_and_all_failed_attempts",
+          "result": "ok"
+        },
+        {
+          "name": "actual_eof_recovery_keeps_short_pause_instead_of_budget_wait_schedule",
+          "result": "ok"
+        }
+      ],
+      "production_sha256": "8920f6a9742c63245b4f2560b7bccd41e22fdd5c617b24e1197b716e68bb0a9f",
+      "result": {
+        "finished_utc": "2026-11-03T23:41:51.541339+00:00",
+        "returncode": 101,
+        "source_unchanged": true,
+        "stderr_bytes": 14213,
+        "stderr_sha256": "2fb49e4267714a841768d369eb2d10d5666553bba851046daeadb86390f0900f",
+        "stdout_bytes": 873,
+        "stdout_sha256": "1fed610c97d9ff1998975000cd0d8e988766394291cdf0146702ad65430b1841",
+        "wall_ns": 8007697737
+      },
+      "sigabrt_observed": true,
+      "source_after_sha256": "a822aa3ec148aaf05314d810fa03dc323299a1fcf66f90cebdc2cf4995a5a81e",
+      "source_before_after_equal": true,
+      "source_before_sha256": "a822aa3ec148aaf05314d810fa03dc323299a1fcf66f90cebdc2cf4995a5a81e",
+      "source_path_count": 1342,
+      "stderr_sha256": "2fb49e4267714a841768d369eb2d10d5666553bba851046daeadb86390f0900f",
+      "stdout_sha256": "1fed610c97d9ff1998975000cd0d8e988766394291cdf0146702ad65430b1841"
+    },
+    {
+      "actual_compiler_profile_rows": [],
+      "fixture_sha256": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+      "invocation": {
+        "command": [
+          "cargo",
+          "clippy",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "env_file_sha256": "0dd5e54905d17b9573be15ee0445bde9c69c05efbb81277061cf453a46c1f1e7",
+        "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "started_utc": "2026-11-03T23:51:50.337681+00:00",
+        "status": " M docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md\n M docs/protocol/pon-nakamoto-v1/details/PUBLIC_SUBMIT_RECOVERY_V1.md\n M trillionnium/crates/trnm-pon-node/src/public_submit.rs\n M trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs\n?? evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-growth-protected/.progress.json.xOw39N\n?? evidence/pon-public-readiness-v1/pipeline-disjoint4-protected/.summary.json.Fjrdoe\n"
+      },
+      "name": "clippy-v1",
+      "native_summary": null,
+      "observed_completed_harness_cases": [],
+      "production_sha256": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+      "result": {
+        "finished_utc": "2026-11-03T23:52:48.248566+00:00",
+        "returncode": 0,
+        "source_unchanged": true,
+        "stderr_bytes": 190,
+        "stderr_sha256": "ce491103559a63339ef07b86c1716ecc7ff64b64511747f73a2e5beb305e2bf3",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "wall_ns": 57890510405
+      },
+      "sigabrt_observed": false,
+      "source_after_sha256": "9bd9d30c1cd4fbd63c4a8975564ff04103902b300280ac96f70a9cae046ceb2f",
+      "source_before_after_equal": true,
+      "source_before_sha256": "9bd9d30c1cd4fbd63c4a8975564ff04103902b300280ac96f70a9cae046ceb2f",
+      "source_path_count": 1342,
+      "stderr_sha256": "ce491103559a63339ef07b86c1716ecc7ff64b64511747f73a2e5beb305e2bf3",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "actual_compiler_profile_rows": [
+        {
+          "executable": null,
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "fresh": true,
+          "package_id": "path+file:///workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": false
+          },
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "trnm_mvcc_fee",
+            "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
+            "test": true
+          }
+        },
+        {
+          "executable": null,
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "fresh": false,
+          "package_id": "path+file:///workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": false
+          },
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "trnm_pon_node",
+            "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/src/lib.rs",
+            "test": true
+          }
+        },
+        {
+          "executable": "/workspace/scratch/b5a148b09b11/target/debug/trnm-pon-node",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "fresh": false,
+          "package_id": "path+file:///workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": false
+          },
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": true,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "bin"
+            ],
+            "name": "trnm-pon-node",
+            "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/src/main.rs",
+            "test": true
+          }
+        },
+        {
+          "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/public_submit_recovery-4839bae310a9bf03",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "fresh": false,
+          "package_id": "path+file:///workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": true
+          },
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "test"
+            ],
+            "name": "public_submit_recovery",
+            "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs",
+            "test": true
+          }
+        }
+      ],
+      "fixture_sha256": "9a8258eee3c7cfed16192a3004354d906cd96d33eb9c619a2d8aff08240c9ef4",
+      "invocation": {
+        "command": [
+          "cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--test",
+          "public_submit_recovery",
+          "--message-format=json",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "env_file_sha256": "0dd5e54905d17b9573be15ee0445bde9c69c05efbb81277061cf453a46c1f1e7",
+        "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "started_utc": "2026-11-03T23:45:26.738745+00:00",
+        "status": " M trillionnium/crates/trnm-pon-node/src/public_submit.rs\n M trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs\n?? evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-growth-protected/.progress.json.xOw39N\n?? evidence/pon-public-readiness-v1/pipeline-disjoint4-protected/.summary.json.Fjrdoe\n"
+      },
+      "name": "corrected-v1",
+      "native_summary": {
+        "elapsed_seconds": "15.93",
+        "failed": 3,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 21,
+        "status": "FAILED"
+      },
+      "observed_completed_harness_cases": [
+        {
+          "name": "actual_absolute_epoch_call_cap_and_current_clock_fail_closed",
+          "result": "ok"
+        },
+        {
+          "name": "actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack",
+          "result": "ok"
+        },
+        {
+          "name": "actual_budget_absence_with_two_call_cap_stops_without_another_submit",
+          "result": "ok"
+        },
+        {
+          "name": "actual_caps_context_and_mutated_same_id_refuse_without_relabeling_duplicates",
+          "result": "ok"
+        },
+        {
+          "name": "actual_cli_bad_combinations_and_limits_precede_store_creation",
+          "result": "ok"
+        },
+        {
+          "name": "actual_cli_default_reply_is_unchanged_and_opt_in_reports_duplicate_membership",
+          "result": "ok"
+        },
+        {
+          "name": "actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership",
+          "result": "ok"
+        },
+        {
+          "name": "actual_eof_before_admission_keeps_same_packet_and_all_failed_attempts",
+          "result": "ok"
+        },
+        {
+          "name": "actual_eof_recovery_keeps_short_pause_instead_of_budget_wait_schedule",
+          "result": "ok"
+        },
+        {
+          "name": "actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies",
+          "result": "FAILED"
+        },
+        {
+          "name": "actual_lost_native_ack_is_resolved_by_full_membership_without_fabricated_ack",
+          "result": "ok"
+        },
+        {
+          "name": "actual_membership_readiness_does_not_replace_installed_confirmation",
+          "result": "ok"
+        },
+        {
+          "name": "actual_missing_parent_is_restored_before_child_and_reopens_byte_exact",
+          "result": "ok"
+        },
+        {
+          "name": "actual_native_admission_without_response_at_deadline_is_uncertain_and_not_retried",
+          "result": "ok"
+        },
+        {
+          "name": "actual_nonpreemptive_local_full_root_late_return_is_not_reported_on_time",
+          "result": "ok"
+        },
+        {
+          "name": "actual_repeated_exact_eof_stops_after_three_identical_submits",
+          "result": "ok"
+        },
+        {
+          "name": "actual_signed_cpu_budget_absent_membership_retries_same_bytes_within_original_limits",
+          "result": "ok"
+        },
+        {
+          "name": "actual_signed_cpu_budget_different_branch_and_changed_generation_do_not_advance",
+          "result": "FAILED"
+        },
+        {
+          "name": "actual_signed_cpu_budget_inactive_equal_work_and_forged_history_do_not_advance",
+          "result": "FAILED"
+        },
+        {
+          "name": "actual_signed_cpu_budget_read_and_retry_obey_original_call_cap_and_epoch",
+          "result": "ok"
+        },
+        {
+          "name": "actual_signed_cpu_budget_refusal_resolves_known_membership_without_an_ack",
+          "result": "ok"
+        },
+        {
+          "name": "actual_signed_cpu_budget_without_membership_retains_all_three_refusals",
+          "result": "ok"
+        },
+        {
+          "name": "actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity",
+          "result": "ok"
+        },
+        {
+          "name": "actual_two_signed_budget_absences_spread_attempts_and_keep_real_final_ack",
+          "result": "ok"
+        }
+      ],
+      "production_sha256": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+      "result": {
+        "finished_utc": "2026-11-03T23:49:14.562136+00:00",
+        "returncode": 101,
+        "source_unchanged": true,
+        "stderr_bytes": 1480,
+        "stderr_sha256": "c197af5434d8f35629fc7f96524b16923c50ae32880ccce019b9596005ccf2bb",
+        "stdout_bytes": 114219,
+        "stdout_sha256": "2c2f2378fa6cb1d0939407b83421bd628df8f53b51ad2860c2a0275a30e1461a",
+        "wall_ns": 227804644478
+      },
+      "sigabrt_observed": false,
+      "source_after_sha256": "ee152c6dc2ad138baa984bf1720dce821c8b182b2ea8b408e01c9b555a6b803d",
+      "source_before_after_equal": true,
+      "source_before_sha256": "ee152c6dc2ad138baa984bf1720dce821c8b182b2ea8b408e01c9b555a6b803d",
+      "source_path_count": 1342,
+      "stderr_sha256": "c197af5434d8f35629fc7f96524b16923c50ae32880ccce019b9596005ccf2bb",
+      "stdout_sha256": "2c2f2378fa6cb1d0939407b83421bd628df8f53b51ad2860c2a0275a30e1461a"
+    },
+    {
+      "actual_compiler_profile_rows": [
+        {
+          "executable": null,
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "fresh": true,
+          "package_id": "path+file:///workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": false
+          },
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "trnm_mvcc_fee",
+            "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
+            "test": true
+          }
+        },
+        {
+          "executable": null,
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "fresh": true,
+          "package_id": "path+file:///workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": false
+          },
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "trnm_pon_node",
+            "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/src/lib.rs",
+            "test": true
+          }
+        },
+        {
+          "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/public_submit_recovery-4839bae310a9bf03",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "fresh": false,
+          "package_id": "path+file:///workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": true
+          },
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "test"
+            ],
+            "name": "public_submit_recovery",
+            "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs",
+            "test": true
+          }
+        },
+        {
+          "executable": "/workspace/scratch/b5a148b09b11/target/debug/trnm-pon-node",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "fresh": true,
+          "package_id": "path+file:///workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": false
+          },
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": true,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "bin"
+            ],
+            "name": "trnm-pon-node",
+            "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/src/main.rs",
+            "test": true
+          }
+        }
+      ],
+      "fixture_sha256": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+      "invocation": {
+        "command": [
+          "cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--test",
+          "public_submit_recovery",
+          "--message-format=json",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "env_file_sha256": "0dd5e54905d17b9573be15ee0445bde9c69c05efbb81277061cf453a46c1f1e7",
+        "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "started_utc": "2026-11-03T23:50:35.770957+00:00",
+        "status": " M docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md\n M docs/protocol/pon-nakamoto-v1/details/PUBLIC_SUBMIT_RECOVERY_V1.md\n M trillionnium/crates/trnm-pon-node/src/public_submit.rs\n M trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs\n?? evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-growth-protected/.progress.json.xOw39N\n?? evidence/pon-public-readiness-v1/pipeline-disjoint4-protected/.summary.json.Fjrdoe\n"
+      },
+      "name": "corrected-v2",
+      "native_summary": {
+        "elapsed_seconds": "16.21",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 24,
+        "status": "ok"
+      },
+      "observed_completed_harness_cases": [
+        {
+          "name": "actual_absolute_epoch_call_cap_and_current_clock_fail_closed",
+          "result": "ok"
+        },
+        {
+          "name": "actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack",
+          "result": "ok"
+        },
+        {
+          "name": "actual_budget_absence_with_two_call_cap_stops_without_another_submit",
+          "result": "ok"
+        },
+        {
+          "name": "actual_caps_context_and_mutated_same_id_refuse_without_relabeling_duplicates",
+          "result": "ok"
+        },
+        {
+          "name": "actual_cli_bad_combinations_and_limits_precede_store_creation",
+          "result": "ok"
+        },
+        {
+          "name": "actual_cli_default_reply_is_unchanged_and_opt_in_reports_duplicate_membership",
+          "result": "ok"
+        },
+        {
+          "name": "actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership",
+          "result": "ok"
+        },
+        {
+          "name": "actual_eof_before_admission_keeps_same_packet_and_all_failed_attempts",
+          "result": "ok"
+        },
+        {
+          "name": "actual_eof_recovery_keeps_short_pause_instead_of_budget_wait_schedule",
+          "result": "ok"
+        },
+        {
+          "name": "actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies",
+          "result": "ok"
+        },
+        {
+          "name": "actual_lost_native_ack_is_resolved_by_full_membership_without_fabricated_ack",
+          "result": "ok"
+        },
+        {
+          "name": "actual_membership_readiness_does_not_replace_installed_confirmation",
+          "result": "ok"
+        },
+        {
+          "name": "actual_missing_parent_is_restored_before_child_and_reopens_byte_exact",
+          "result": "ok"
+        },
+        {
+          "name": "actual_native_admission_without_response_at_deadline_is_uncertain_and_not_retried",
+          "result": "ok"
+        },
+        {
+          "name": "actual_nonpreemptive_local_full_root_late_return_is_not_reported_on_time",
+          "result": "ok"
+        },
+        {
+          "name": "actual_repeated_exact_eof_stops_after_three_identical_submits",
+          "result": "ok"
+        },
+        {
+          "name": "actual_signed_cpu_budget_absent_membership_retries_same_bytes_within_original_limits",
+          "result": "ok"
+        },
+        {
+          "name": "actual_signed_cpu_budget_different_branch_and_changed_generation_do_not_advance",
+          "result": "ok"
+        },
+        {
+          "name": "actual_signed_cpu_budget_inactive_equal_work_and_forged_history_do_not_advance",
+          "result": "ok"
+        },
+        {
+          "name": "actual_signed_cpu_budget_read_and_retry_obey_original_call_cap_and_epoch",
+          "result": "ok"
+        },
+        {
+          "name": "actual_signed_cpu_budget_refusal_resolves_known_membership_without_an_ack",
+          "result": "ok"
+        },
+        {
+          "name": "actual_signed_cpu_budget_without_membership_retains_all_three_refusals",
+          "result": "ok"
+        },
+        {
+          "name": "actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity",
+          "result": "ok"
+        },
+        {
+          "name": "actual_two_signed_budget_absences_spread_attempts_and_keep_real_final_ack",
+          "result": "ok"
+        }
+      ],
+      "production_sha256": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+      "result": {
+        "finished_utc": "2026-11-03T23:51:01.225387+00:00",
+        "returncode": 0,
+        "source_unchanged": true,
+        "stderr_bytes": 327,
+        "stderr_sha256": "580df23b7eef99e7f25594a655706fe0db323e945d915e2d6ebf7c839d434b4b",
+        "stdout_bytes": 113931,
+        "stdout_sha256": "642f68e3a4beef6481a74ae26e775b39c243f6c10435642c11ed1e20b3ab4138",
+        "wall_ns": 25433691061
+      },
+      "sigabrt_observed": false,
+      "source_after_sha256": "9bd9d30c1cd4fbd63c4a8975564ff04103902b300280ac96f70a9cae046ceb2f",
+      "source_before_after_equal": true,
+      "source_before_sha256": "9bd9d30c1cd4fbd63c4a8975564ff04103902b300280ac96f70a9cae046ceb2f",
+      "source_path_count": 1342,
+      "stderr_sha256": "580df23b7eef99e7f25594a655706fe0db323e945d915e2d6ebf7c839d434b4b",
+      "stdout_sha256": "642f68e3a4beef6481a74ae26e775b39c243f6c10435642c11ed1e20b3ab4138"
+    },
+    {
+      "actual_compiler_profile_rows": [
+        {
+          "executable": null,
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "fresh": true,
+          "package_id": "path+file:///workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": false
+          },
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "trnm_mvcc_fee",
+            "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
+            "test": true
+          }
+        },
+        {
+          "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "fresh": true,
+          "package_id": "path+file:///workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": true
+          },
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "trnm_pon_node",
+            "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/src/lib.rs",
+            "test": true
+          }
+        }
+      ],
+      "fixture_sha256": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+      "invocation": {
+        "command": [
+          "cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "--message-format=json",
+          "public_submit::tests::",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "env_file_sha256": "0dd5e54905d17b9573be15ee0445bde9c69c05efbb81277061cf453a46c1f1e7",
+        "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "started_utc": "2026-11-04T00:01:30.241084+00:00",
+        "status": " M docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md\n M docs/protocol/pon-nakamoto-v1/details/PUBLIC_SUBMIT_RECOVERY_V1.md\n M trillionnium/crates/trnm-pon-node/src/public_submit.rs\n M trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs\n?? evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-growth-protected/.progress.json.xOw39N\n?? evidence/pon-public-readiness-v1/pipeline-disjoint4-protected/.summary.json.Fjrdoe\n?? evidence/pon-runtime-fixture-closure-20261103/hosted-current/\n"
+      },
+      "name": "eof-boundary-v1",
+      "native_summary": {
+        "elapsed_seconds": "0.00",
+        "failed": 0,
+        "filtered_out": 973,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1,
+        "status": "ok"
+      },
+      "observed_completed_harness_cases": [
+        {
+          "name": "public_submit::tests::retry_requires_local_frame_eof_at_one_of_the_existing_response_stages",
+          "result": "ok"
+        }
+      ],
+      "production_sha256": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+      "result": {
+        "finished_utc": "2026-11-04T00:01:30.664092+00:00",
+        "returncode": 0,
+        "source_unchanged": true,
+        "stderr_bytes": 190,
+        "stderr_sha256": "dcd925c82d57983a668ab00fe65a8f63c7808fab8be57bdd797ec56bc0ebb836",
+        "stdout_bytes": 110266,
+        "stdout_sha256": "6c54ab061027cc4afc2db1d46afcd45b8a4169f57bd5c99eb2fcb57a2a914816",
+        "wall_ns": 386965237
+      },
+      "sigabrt_observed": false,
+      "source_after_sha256": "9bd9d30c1cd4fbd63c4a8975564ff04103902b300280ac96f70a9cae046ceb2f",
+      "source_before_after_equal": true,
+      "source_before_sha256": "9bd9d30c1cd4fbd63c4a8975564ff04103902b300280ac96f70a9cae046ceb2f",
+      "source_path_count": 1342,
+      "stderr_sha256": "dcd925c82d57983a668ab00fe65a8f63c7808fab8be57bdd797ec56bc0ebb836",
+      "stdout_sha256": "6c54ab061027cc4afc2db1d46afcd45b8a4169f57bd5c99eb2fcb57a2a914816"
+    },
+    {
+      "actual_compiler_profile_rows": [
+        {
+          "executable": null,
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "fresh": true,
+          "package_id": "path+file:///workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": false
+          },
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "trnm_mvcc_fee",
+            "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
+            "test": true
+          }
+        },
+        {
+          "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "fresh": false,
+          "package_id": "path+file:///workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": true
+          },
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "trnm_pon_node",
+            "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/src/lib.rs",
+            "test": true
+          }
+        }
+      ],
+      "fixture_sha256": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+      "invocation": {
+        "command": [
+          "cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "--message-format=json",
+          "error::tests::",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "env_file_sha256": "0dd5e54905d17b9573be15ee0445bde9c69c05efbb81277061cf453a46c1f1e7",
+        "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "started_utc": "2026-11-03T23:52:48.328407+00:00",
+        "status": " M docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md\n M docs/protocol/pon-nakamoto-v1/details/PUBLIC_SUBMIT_RECOVERY_V1.md\n M trillionnium/crates/trnm-pon-node/src/public_submit.rs\n M trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs\n?? evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-growth-protected/.progress.json.xOw39N\n?? evidence/pon-public-readiness-v1/pipeline-disjoint4-protected/.summary.json.Fjrdoe\n"
+      },
+      "name": "error-boundaries-v1",
+      "native_summary": {
+        "elapsed_seconds": "0.00",
+        "failed": 0,
+        "filtered_out": 964,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 10,
+        "status": "ok"
+      },
+      "observed_completed_harness_cases": [
+        {
+          "name": "error::tests::authenticated_reply_terminality_controls_remote_retry_identity",
+          "result": "ok"
+        },
+        {
+          "name": "error::tests::continuous_history_without_a_durable_claim_is_a_local_owner_stop",
+          "result": "ok"
+        },
+        {
+          "name": "error::tests::display_changes_cannot_change_typed_retry_or_owner_stop_identity",
+          "result": "ok"
+        },
+        {
+          "name": "error::tests::legacy_request_controls_keep_original_wire_and_typed_local_cancellation",
+          "result": "ok"
+        },
+        {
+          "name": "error::tests::local_integrity_origin_preserves_diagnostic_code_and_typed_cause",
+          "result": "ok"
+        },
+        {
+          "name": "error::tests::pq_control_codes_require_explicit_local_origin",
+          "result": "ok"
+        },
+        {
+          "name": "error::tests::prefix_lookalikes_and_remote_failures_cannot_stop_local_owner",
+          "result": "ok"
+        },
+        {
+          "name": "error::tests::replay_boundary_identity_and_retained_origin_do_not_depend_on_source_words",
+          "result": "ok"
+        },
+        {
+          "name": "error::tests::typed_causes_preserve_source_and_display_without_parsing_source_text",
+          "result": "ok"
+        },
+        {
+          "name": "error::tests::unavailable_original_cpu_owner_is_fatal_but_budget_and_remote_refusals_are_not",
+          "result": "ok"
+        }
+      ],
+      "production_sha256": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+      "result": {
+        "finished_utc": "2026-11-04T00:01:30.150956+00:00",
+        "returncode": 0,
+        "source_unchanged": true,
+        "stderr_bytes": 308,
+        "stderr_sha256": "85e412bb12f0b0d38f4660f575d5716a35928714ea830f4ad1aa6ce2e2e2cd5c",
+        "stdout_bytes": 111088,
+        "stdout_sha256": "404405944bb9e4849fc30568165c1c1dd62459913d5b48540fabd2623aa0c7ed",
+        "wall_ns": 521805345155
+      },
+      "sigabrt_observed": false,
+      "source_after_sha256": "9bd9d30c1cd4fbd63c4a8975564ff04103902b300280ac96f70a9cae046ceb2f",
+      "source_before_after_equal": true,
+      "source_before_sha256": "9bd9d30c1cd4fbd63c4a8975564ff04103902b300280ac96f70a9cae046ceb2f",
+      "source_path_count": 1342,
+      "stderr_sha256": "85e412bb12f0b0d38f4660f575d5716a35928714ea830f4ad1aa6ce2e2e2cd5c",
+      "stdout_sha256": "404405944bb9e4849fc30568165c1c1dd62459913d5b48540fabd2623aa0c7ed"
+    },
+    {
+      "actual_compiler_profile_rows": [],
+      "fixture_sha256": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+      "invocation": {
+        "command": [
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "env_file_sha256": "0dd5e54905d17b9573be15ee0445bde9c69c05efbb81277061cf453a46c1f1e7",
+        "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "started_utc": "2026-11-03T23:51:39.408911+00:00",
+        "status": " M docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md\n M docs/protocol/pon-nakamoto-v1/details/PUBLIC_SUBMIT_RECOVERY_V1.md\n M trillionnium/crates/trnm-pon-node/src/public_submit.rs\n M trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs\n?? evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-growth-protected/.progress.json.xOw39N\n?? evidence/pon-public-readiness-v1/pipeline-disjoint4-protected/.summary.json.Fjrdoe\n"
+      },
+      "name": "fmt-v1",
+      "native_summary": null,
+      "observed_completed_harness_cases": [],
+      "production_sha256": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+      "result": {
+        "finished_utc": "2026-11-03T23:51:50.241206+00:00",
+        "returncode": 0,
+        "source_unchanged": true,
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "wall_ns": 10810815940
+      },
+      "sigabrt_observed": false,
+      "source_after_sha256": "9bd9d30c1cd4fbd63c4a8975564ff04103902b300280ac96f70a9cae046ceb2f",
+      "source_before_after_equal": true,
+      "source_before_sha256": "9bd9d30c1cd4fbd63c4a8975564ff04103902b300280ac96f70a9cae046ceb2f",
+      "source_path_count": 1342,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "actual_compiler_profile_rows": [],
+      "fixture_sha256": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+      "invocation": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+          "--list",
+          "--format",
+          "terse"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "env_file_sha256": "0dd5e54905d17b9573be15ee0445bde9c69c05efbb81277061cf453a46c1f1e7",
+        "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "started_utc": "2026-11-04T00:04:35.106625+00:00",
+        "status": " M docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\n M docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md\n M docs/protocol/pon-nakamoto-v1/details/PUBLIC_SUBMIT_RECOVERY_V1.md\n M trillionnium/crates/trnm-pon-node/src/public_submit.rs\n M trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs\n?? evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-growth-protected/.progress.json.xOw39N\n?? evidence/pon-public-readiness-v1/pipeline-disjoint4-protected/.summary.json.Fjrdoe\n?? evidence/pon-runtime-fixture-closure-20261103/hosted-current/\n"
+      },
+      "name": "registry-v1",
+      "native_summary": null,
+      "observed_completed_harness_cases": [],
+      "production_sha256": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+      "result": {
+        "finished_utc": "2026-11-04T00:04:35.185128+00:00",
+        "returncode": 0,
+        "source_unchanged": true,
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 108971,
+        "stdout_sha256": "c4ef91a8f3c358688bc1ba65ea8ea31edb39c230da00b97ffb795d8a5c135a8e",
+        "wall_ns": 55807062
+      },
+      "sigabrt_observed": false,
+      "source_after_sha256": "9bd9d30c1cd4fbd63c4a8975564ff04103902b300280ac96f70a9cae046ceb2f",
+      "source_before_after_equal": true,
+      "source_before_sha256": "9bd9d30c1cd4fbd63c4a8975564ff04103902b300280ac96f70a9cae046ceb2f",
+      "source_path_count": 1342,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c4ef91a8f3c358688bc1ba65ea8ea31edb39c230da00b97ffb795d8a5c135a8e"
+    },
+    {
+      "actual_compiler_profile_rows": [],
+      "fixture_sha256": "9a8258eee3c7cfed16192a3004354d906cd96d33eb9c619a2d8aff08240c9ef4",
+      "invocation": {
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "scripts.ci.test_pq_research_integration",
+          "scripts.ci.test_ci_source_integrity"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "env_file_sha256": "0dd5e54905d17b9573be15ee0445bde9c69c05efbb81277061cf453a46c1f1e7",
+        "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "started_utc": "2026-11-03T23:49:23.990364+00:00",
+        "status": " M docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md\n M docs/protocol/pon-nakamoto-v1/details/PUBLIC_SUBMIT_RECOVERY_V1.md\n M trillionnium/crates/trnm-pon-node/src/public_submit.rs\n M trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs\n?? evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-growth-protected/.progress.json.xOw39N\n?? evidence/pon-public-readiness-v1/pipeline-disjoint4-protected/.summary.json.Fjrdoe\n"
+      },
+      "name": "source-negative-v1",
+      "native_summary": null,
+      "observed_completed_harness_cases": [],
+      "production_sha256": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+      "result": {
+        "finished_utc": "2026-11-03T23:49:37.530828+00:00",
+        "returncode": 0,
+        "source_unchanged": true,
+        "stderr_bytes": 168,
+        "stderr_sha256": "54b17793ad099a556876b1de3b0a18db7a70667023fd2274a3104a691382bf60",
+        "stdout_bytes": 484,
+        "stdout_sha256": "d23054e6ba9c21c6381bff512187f6ea42af7c91afd15d080b0acf48934ea0d4",
+        "wall_ns": 13468377805
+      },
+      "sigabrt_observed": false,
+      "source_after_sha256": "ee152c6dc2ad138baa984bf1720dce821c8b182b2ea8b408e01c9b555a6b803d",
+      "source_before_after_equal": true,
+      "source_before_sha256": "ee152c6dc2ad138baa984bf1720dce821c8b182b2ea8b408e01c9b555a6b803d",
+      "source_path_count": 1342,
+      "stderr_sha256": "54b17793ad099a556876b1de3b0a18db7a70667023fd2274a3104a691382bf60",
+      "stdout_sha256": "d23054e6ba9c21c6381bff512187f6ea42af7c91afd15d080b0acf48934ea0d4"
+    },
+    {
+      "actual_compiler_profile_rows": [],
+      "fixture_sha256": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+      "invocation": {
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "scripts.ci.test_pq_research_integration",
+          "scripts.ci.test_ci_source_integrity"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "env_file_sha256": "0dd5e54905d17b9573be15ee0445bde9c69c05efbb81277061cf453a46c1f1e7",
+        "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "started_utc": "2026-11-03T23:56:28.519027+00:00",
+        "status": " M docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md\n M docs/protocol/pon-nakamoto-v1/details/PUBLIC_SUBMIT_RECOVERY_V1.md\n M trillionnium/crates/trnm-pon-node/src/public_submit.rs\n M trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs\n?? evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-growth-protected/.progress.json.xOw39N\n?? evidence/pon-public-readiness-v1/pipeline-disjoint4-protected/.summary.json.Fjrdoe\n"
+      },
+      "name": "source-negative-v2",
+      "native_summary": null,
+      "observed_completed_harness_cases": [],
+      "production_sha256": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+      "result": {
+        "finished_utc": "2026-11-03T23:56:42.487407+00:00",
+        "returncode": 0,
+        "source_unchanged": true,
+        "stderr_bytes": 168,
+        "stderr_sha256": "57701fe283859934b792dffa9d016b5a1b8a4ecdf218ba3750a9831d0f0affee",
+        "stdout_bytes": 484,
+        "stdout_sha256": "02b0335757fa4144e321ac674f30abdd416a2eb473ba887c6e7e2103cda38355",
+        "wall_ns": 13916376185
+      },
+      "sigabrt_observed": false,
+      "source_after_sha256": "9bd9d30c1cd4fbd63c4a8975564ff04103902b300280ac96f70a9cae046ceb2f",
+      "source_before_after_equal": true,
+      "source_before_sha256": "9bd9d30c1cd4fbd63c4a8975564ff04103902b300280ac96f70a9cae046ceb2f",
+      "source_path_count": 1342,
+      "stderr_sha256": "57701fe283859934b792dffa9d016b5a1b8a4ecdf218ba3750a9831d0f0affee",
+      "stdout_sha256": "02b0335757fa4144e321ac674f30abdd416a2eb473ba887c6e7e2103cda38355"
+    }
+  ],
+  "base_head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+  "base_source_blob_count_verified": 1190,
+  "baseline_scope": "Original retained 24-test fixture aborted with signal 6/SIGABRT; no complete test summary. Preserve the three earlier cap/label failures and the actual worker/proxy panic and secondary connection-refused assertion.",
+  "c1_hosted_runtime_result_inherited": false,
+  "c2_hosted_results_inherited": false,
+  "c3_hosted_runtime_qualified": false,
+  "changed_native_paths_vs_c2": {
+    "trillionnium/crates/trnm-pon-node/src/public_submit.rs": {
+      "after": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+      "before": "8920f6a9742c63245b4f2560b7bccd41e22fdd5c617b24e1197b716e68bb0a9f"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs": {
+      "after": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+      "before": "a3b25beed3c39d304de96a735dc6efd888e85643fd72d539789b9deca49dc96a"
+    }
+  },
+  "complete_974_current_source_run": false,
+  "confirmation_target_qualified": false,
+  "corrected_fixture_sha256": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+  "corrected_production_sha256": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+  "current_node_registry": {
+    "exact_original_names_and_order_match": true,
+    "full_suite_pass_inherited": false,
+    "identity_record_sha256": "fe3ee158ca012d7fb9c2634279176bf16cdb6909a5fb42a18731fbf3f31aebaf",
+    "names": 974,
+    "original_registry_sha256": "c85222711cb8ef0a65c11a828d8471cfc6f7faa7bd9b9a6228f745530171e27d",
+    "stdout_sha256": "c4ef91a8f3c358688bc1ba65ea8ea31edb39c230da00b97ffb795d8a5c135a8e",
+    "tests_executed_by_listing": false
+  },
+  "distinct_byte_blobs": 84,
+  "distinct_original_bytes": 2176655,
+  "failure_observations_preserved": true,
+  "final_fixture_fix_scope": "Fixture setup and fork interventions use the existing original paid CPU domain and metered ingress after pinned Head readiness; preserve original packet/state/generation/nonce/epoch/call assertions. No CPU credit, policy or service limit increases.",
+  "final_local_executables": [
+    {
+      "bytes": 193178696,
+      "executable_bytes_copied": false,
+      "independently_rehashed_at_packaging": true,
+      "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/public_submit_recovery-4839bae310a9bf03",
+      "root_receipt_file": "native/executables.json",
+      "root_receipt_sha256": "4b0abfbd660a37546e8a92ad3417bd0ba99e0d2e6d593cfeca7bd580132973eb",
+      "sha256": "e20402b7b585c778d0b524acdbf539bfcf04f91e65bed9c759a5cdd0cb4a0c4c"
+    },
+    {
+      "bytes": 200393032,
+      "executable_bytes_copied": false,
+      "independently_rehashed_at_packaging": true,
+      "path": "/workspace/scratch/b5a148b09b11/target/debug/trnm-pon-node",
+      "root_receipt_file": "native/executables.json",
+      "root_receipt_sha256": "4b0abfbd660a37546e8a92ad3417bd0ba99e0d2e6d593cfeca7bd580132973eb",
+      "sha256": "08c51b5cb34634e117ad319d29f957a942a8e882e3fb23a709cb38d83ebf64b0"
+    },
+    {
+      "bytes": 364075040,
+      "executable_bytes_copied": false,
+      "independently_rehashed_at_packaging": true,
+      "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+      "root_receipt_file": "native/executables.json",
+      "root_receipt_sha256": "4b0abfbd660a37546e8a92ad3417bd0ba99e0d2e6d593cfeca7bd580132973eb",
+      "sha256": "3b362ab33622e6c9c34a0ee585aaf0a64c8d4ff4e7f272c9a343bfc625901289"
+    }
+  ],
+  "final_source_path_count": 1190,
+  "final_source_readback_verified": true,
+  "final_source_snapshot_sha256": "aab2fa9de01f64a8739fbf941287d06c80a0ec2e16719845aaf5717e4f14b9df",
+  "first_corrected_scope": "Actual 21 PASS/3 FAIL. Newly added fixture assertion physical_execution == !existing was wrong; this field is not a full-W1/native-execution flag. Its corrected false assertion preserves original behavior, original 24 test identities and original 194 assertion sequence per independent fixture review.",
+  "nested_original_archives_verified": [
+    {
+      "file": "remote-boundary-review/inspected-source.json.gz",
+      "verified_inner_records": 7
+    }
+  ],
+  "no_duplicate_cpu_stage_v2_records": true,
+  "observed_utc": "2026-11-04T00:11:55.631750+00:00",
+  "original_directory_file_counts": {
+    "fixture-review": 14,
+    "native": 71,
+    "remote-boundary-review": 13
+  },
+  "original_record_bytes": 5612601,
+  "original_record_count": 111,
+  "original_records": {
+    "bytes": 842652,
+    "file": "submit-recovery/original-records.json.gz",
+    "sha256": "5d033bc9a7f16efda9450869027604c7ea1d9f06a58a138271cbc9df29f08584"
+  },
+  "packaging_reran_native": false,
+  "packaging_reran_source_gates": false,
+  "production_activation": false,
+  "production_fix_scope": "Only two complete authenticated Submit refusal labels select existing bounded recovery actions; Error::remote remains untyped, local EOF/fatal authority remains separate.",
+  "profiles_scope": "Use actual package compiler-artifact profiles retained per stage. Generic Cargo test-profile unoptimized banner is not evidence that trnm-pon-node is opt0. No full workspace native pass is inferred.",
+  "public_host_qualified": false,
+  "release_qualified": false,
+  "root_terminal_pass_names_independently_reparsed_and_equal": true,
+  "root_terminal_summary_sha256": "200dc213e4a9bd6039314b6b56151dbf7fa9411b03de9e8c86388f4bbe09cd08",
+  "schema": "trnm-submit-recovery-local-native-evidence-v1",
+  "source_manifest_scope_comparison": {
+    "final_manifest_paths": 1190,
+    "final_only_paths": [
+      "config/consensus-mainline.json",
+      "config/finality-profile-v1.json",
+      "config/pon-nakamoto-v1.json",
+      "config/pon/applicability-v1.json",
+      "config/pon/binary-diverse60-training-v3.json",
+      "config/pon/checkpoint-tile-task-v1.json",
+      "config/pon/continuity-v1.json",
+      "config/pon/devnet-v1.json",
+      "config/pon/evaluation-round-v1.json",
+      "config/pon/growth-reference-v2.json",
+      "config/pon/integer-factor-candidate-v2.json",
+      "config/pon/invariants-v2.json",
+      "config/pon/ledger-v1.json",
+      "config/pon/model-composition-v4.json",
+      "config/pon/model-evidence-v3.json",
+      "config/pon/model-evolution-v5.json",
+      "config/pon/model-family-evolution-v3.json",
+      "config/pon/model-family-integer-factor-v2.json",
+      "config/pon/model-family-smollm2-135m-v1.json",
+      "config/pon/model-family-v1.json",
+      "config/pon/module-contracts-v1.json",
+      "config/pon/module-maturity-v1.json",
+      "config/pon/operator-actors-dev-v1.json",
+      "config/pon/operator-checkpoint-tile-v1.json",
+      "config/pon/performance-six-axis-v1.json",
+      "config/pon/post-quantum-transition-v1.json",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "config/pon/pq-system-required-tests-v1.json",
+      "config/pon/public-evaluation-model-evolution-v5.json",
+      "config/pon/public-evaluation-native-v1.json",
+      "config/pon/public-evaluation-quorum-v2.json",
+      "config/pon/public-resource-profile-vectors-v1.json",
+      "config/pon/qualified-task-lifecycle-v2.json",
+      "config/pon/qualified-task-lifecycle-v3.json",
+      "config/pon/qualified-task-lifecycle-v4.json",
+      "config/pon/qualified-work-task-v1.json",
+      "config/pon/work-profile-v1.json",
+      "config/pon/work-security-acceptance-v1.json",
+      "config/portability-inventory-v1.json",
+      "config/release-finality-v2.json",
+      "config/repository-policy-v1.json",
+      "config/systemd/trnmponpublic.slice"
+    ],
+    "identical_manifest_scope": false,
+    "run_recorded_only_paths": [
+      ".github/workflows/codeql-analysis-export.yml",
+      ".github/workflows/pon-baseline-diagnostic-readback.yml",
+      ".github/workflows/pon-branch-encoding-acceptance.yml",
+      ".github/workflows/pon-cloud-build-inputs.yml",
+      ".github/workflows/pon-fixed-host-root-f0.yml",
+      ".github/workflows/pon-model-parent-acceptance.yml",
+      ".github/workflows/pon-native-campaign-qualification.yml",
+      ".github/workflows/pon-original-large-state-cpu.yml",
+      ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      ".github/workflows/pon-owned-process-cleanup.yml",
+      ".github/workflows/pon-pq-system-continuation.yml",
+      ".github/workflows/pon-priority-acceptance.yml",
+      ".github/workflows/pon-recent-batch-acceptance.yml",
+      ".github/workflows/pon-w1-work-security.yml",
+      ".github/workflows/release-finality-reference.yml",
+      ".github/workflows/trnm-required-baseline.yml",
+      "scripts/ci/analyze_zero_paired_cost.py",
+      "scripts/ci/check_applicability.py",
+      "scripts/ci/check_canonical_development_plan.sh",
+      "scripts/ci/check_ci_contract.py",
+      "scripts/ci/check_client_confirmation_evidence.py",
+      "scripts/ci/check_completion_evidence.py",
+      "scripts/ci/check_cross_arch_cost.py",
+      "scripts/ci/check_detailed_contracts.py",
+      "scripts/ci/check_evaluation_bundle_evidence.py",
+      "scripts/ci/check_four_priority_evidence.py",
+      "scripts/ci/check_growth_scale_observation.py",
+      "scripts/ci/check_invariant_evidence.py",
+      "scripts/ci/check_invariants.py",
+      "scripts/ci/check_maintenance_cost.py",
+      "scripts/ci/check_native_node_supplements.py",
+      "scripts/ci/check_one_zero_locality_cost.py",
+      "scripts/ci/check_pon_evidence.py",
+      "scripts/ci/check_pq_research_integration.py",
+      "scripts/ci/check_public_readiness_evidence.py",
+      "scripts/ci/check_public_v3_service_campaign.py",
+      "scripts/ci/check_repository.py",
+      "scripts/ci/check_required_native_test.py",
+      "scripts/ci/check_zero_locality_cost.py",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/ci_observation.py",
+      "scripts/ci/finalize_fixed_root_f0.py",
+      "scripts/ci/fixed_root_f0_ownership.py",
+      "scripts/ci/fixed_root_f0_resources.py",
+      "scripts/ci/fixtures/fixed_root_f0_legacy_resource_counterexample.json",
+      "scripts/ci/historical_evidence.py",
+      "scripts/ci/install_ci_tools.sh",
+      "scripts/ci/model-runtime-cpu-requirements.txt",
+      "scripts/ci/pq_authority_surface_scan.py",
+      "scripts/ci/pq_chain_claim_guard.py",
+      "scripts/ci/pq_external_rollback_oracle.py",
+      "scripts/ci/pq_quantum_daa_scenarios.py",
+      "scripts/ci/prepare_evidence_sources.py",
+      "scripts/ci/prepare_pq_provider.sh",
+      "scripts/ci/project_boundary.py",
+      "scripts/ci/public_fixture_host_lease.py",
+      "scripts/ci/public_host_ci_observation.py",
+      "scripts/ci/read_native_cache_observation.py",
+      "scripts/ci/record_pq_native_command.py",
+      "scripts/ci/replay_pinned_native.py",
+      "scripts/ci/report_current_implementation.py",
+      "scripts/ci/report_module_evidence.py",
+      "scripts/ci/run_account_archive_conformance.py",
+      "scripts/ci/run_account_execution_conformance.py",
+      "scripts/ci/run_cross_arch_cost.py",
+      "scripts/ci/run_fixed_root_phase_host.py",
+      "scripts/ci/run_from_zero_host.py",
+      "scripts/ci/run_from_zero_native.py",
+      "scripts/ci/run_fuzz_smoke.py",
+      "scripts/ci/run_history_native.py",
+      "scripts/ci/run_llm_cell_installed_host_controls.sh",
+      "scripts/ci/run_native_phase_host.py",
+      "scripts/ci/run_public_fixture_native.py",
+      "scripts/ci/run_supply_chain.py",
+      "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "scripts/ci/run_w1_fresh_service_v1.py",
+      "scripts/ci/run_w1_reused_cost_v3.py",
+      "scripts/ci/rust_baseline_shards.py",
+      "scripts/ci/test_account_archive_conformance.py",
+      "scripts/ci/test_applicability.py",
+      "scripts/ci/test_architecture_host_ci.py",
+      "scripts/ci/test_ci_contract.py",
+      "scripts/ci/test_ci_execution.py",
+      "scripts/ci/test_ci_observation_process.py",
+      "scripts/ci/test_ci_source_integrity.py",
+      "scripts/ci/test_client_confirmation_evidence.py",
+      "scripts/ci/test_completion_evidence.py",
+      "scripts/ci/test_cross_arch_cost.py",
+      "scripts/ci/test_evaluation_bundle_evidence.py",
+      "scripts/ci/test_evidence_sources.py",
+      "scripts/ci/test_finality_profile.py",
+      "scripts/ci/test_fixed_root_f0.py",
+      "scripts/ci/test_fixed_root_phase_host.py",
+      "scripts/ci/test_fixed_root_preflight.py",
+      "scripts/ci/test_fixed_root_resources.py",
+      "scripts/ci/test_four_priority_evidence.py",
+      "scripts/ci/test_from_zero_host_ci.py",
+      "scripts/ci/test_growth_scale_observation.py",
+      "scripts/ci/test_invariant_evidence.py",
+      "scripts/ci/test_invariants_registry.py",
+      "scripts/ci/test_llm_cell_handoff_deadline.py",
+      "scripts/ci/test_llm_cell_host_handoff.py",
+      "scripts/ci/test_llm_cell_installed_host.py",
+      "scripts/ci/test_maintenance_cost.py",
+      "scripts/ci/test_native_node_supplements.py",
+      "scripts/ci/test_native_phase_host.py",
+      "scripts/ci/test_native_session_evidence.py",
+      "scripts/ci/test_one_zero_locality_cost.py",
+      "scripts/ci/test_pon_accepted_block.py",
+      "scripts/ci/test_pon_daa_schedule_reader.py",
+      "scripts/ci/test_pon_evidence.py",
+      "scripts/ci/test_pon_public_v3_phase_read.py",
+      "scripts/ci/test_pon_public_v3_policy_read.py",
+      "scripts/ci/test_pon_v3_cookie_cpu_study.py",
+      "scripts/ci/test_pon_w1_budget_readers.py",
+      "scripts/ci/test_pon_w1_cost_matrix_reader.py",
+      "scripts/ci/test_pon_w1_false_trace_reuse_reader_v1.py",
+      "scripts/ci/test_pon_w1_legal_strategy_reader_v1.py",
+      "scripts/ci/test_pon_w1_legal_strategy_reader_v2.py",
+      "scripts/ci/test_pon_w1_legal_strategy_reader_v3.py",
+      "scripts/ci/test_pon_w1_reused_cost_reader_v3.py",
+      "scripts/ci/test_pon_wan_evidence.py",
+      "scripts/ci/test_pq_authority_surface_scan.py",
+      "scripts/ci/test_pq_chain_claim_guard.py",
+      "scripts/ci/test_pq_external_rollback_oracle.py",
+      "scripts/ci/test_pq_provider_ci.py",
+      "scripts/ci/test_pq_quantum_daa_scenarios.py",
+      "scripts/ci/test_pq_research_integration.py",
+      "scripts/ci/test_project_boundary.py",
+      "scripts/ci/test_public_fixture_lease.py",
+      "scripts/ci/test_public_fixture_process.py",
+      "scripts/ci/test_public_readiness_evidence.py",
+      "scripts/ci/test_public_v3_service_campaign.py",
+      "scripts/ci/test_read_native_cache_observation.py",
+      "scripts/ci/test_read_original_native_campaign.py",
+      "scripts/ci/test_record_pq_native_command.py",
+      "scripts/ci/test_replay_pinned_native.py",
+      "scripts/ci/test_repository.py",
+      "scripts/ci/test_responsibility_evidence.py",
+      "scripts/ci/test_run_account_execution_conformance.py",
+      "scripts/ci/test_run_from_zero_native.py",
+      "scripts/ci/test_run_pon_root_supplement.py",
+      "scripts/ci/test_run_pon_w1_native_campaign.py",
+      "scripts/ci/test_run_w1_false_trace_reuse_v1.py",
+      "scripts/ci/test_run_w1_fresh_service_v1.py",
+      "scripts/ci/test_run_w1_reused_cost_v3.py",
+      "scripts/ci/test_rust_baseline_shards.py",
+      "scripts/ci/test_work_cost_report.py",
+      "scripts/ci/test_work_rejection_report.py",
+      "scripts/ci/test_zero_locality_cost.py",
+      "scripts/ci/test_zero_paired_cost.py",
+      "scripts/ci/tool-versions.env",
+      "scripts/ci/verify_ci_source.py",
+      "tests/fuzz/Cargo.lock",
+      "tests/fuzz/Cargo.toml",
+      "tests/fuzz/README.md",
+      "tests/fuzz/fuzz_targets/authenticated_state.rs",
+      "tests/fuzz/fuzz_targets/canonical_wire.rs",
+      "tests/fuzz/fuzz_targets/support/work_certificate.rs",
+      "tests/fuzz/fuzz_targets/work_certificate.rs",
+      "tests/fuzz/seeds/authenticated_state/aggregate",
+      "tests/fuzz/seeds/authenticated_state/cancel",
+      "tests/fuzz/seeds/authenticated_state/codec",
+      "tests/fuzz/seeds/authenticated_state/compact-account",
+      "tests/fuzz/seeds/authenticated_state/compact-aggregate",
+      "tests/fuzz/seeds/authenticated_state/compact-cancel",
+      "tests/fuzz/seeds/authenticated_state/compact-codec",
+      "tests/fuzz/seeds/authenticated_state/compact-duplicate",
+      "tests/fuzz/seeds/authenticated_state/compact-missing",
+      "tests/fuzz/seeds/authenticated_state/compact-valid",
+      "tests/fuzz/seeds/authenticated_state/context",
+      "tests/fuzz/seeds/authenticated_state/duplicate",
+      "tests/fuzz/seeds/authenticated_state/missing",
+      "tests/fuzz/seeds/authenticated_state/ordering",
+      "tests/fuzz/seeds/authenticated_state/parent",
+      "tests/fuzz/seeds/authenticated_state/partition",
+      "tests/fuzz/seeds/authenticated_state/proof",
+      "tests/fuzz/seeds/authenticated_state/range-cancel",
+      "tests/fuzz/seeds/authenticated_state/range-checkpoint",
+      "tests/fuzz/seeds/authenticated_state/range-codec",
+      "tests/fuzz/seeds/authenticated_state/range-commitment",
+      "tests/fuzz/seeds/authenticated_state/range-count",
+      "tests/fuzz/seeds/authenticated_state/range-decoder",
+      "tests/fuzz/seeds/authenticated_state/range-duplicate",
+      "tests/fuzz/seeds/authenticated_state/range-frontier",
+      "tests/fuzz/seeds/authenticated_state/range-frontier-order",
+      "tests/fuzz/seeds/authenticated_state/range-key",
+      "tests/fuzz/seeds/authenticated_state/range-missing",
+      "tests/fuzz/seeds/authenticated_state/range-order",
+      "tests/fuzz/seeds/authenticated_state/range-parent",
+      "tests/fuzz/seeds/authenticated_state/range-rank",
+      "tests/fuzz/seeds/authenticated_state/range-valid",
+      "tests/fuzz/seeds/authenticated_state/range-value",
+      "tests/fuzz/seeds/authenticated_state/valid"
+    ],
+    "run_recorded_snapshot_paths": 1342,
+    "shared_hashes_equal": true,
+    "shared_paths": 1148
+  },
+  "source_phase": "C3 local corrected working tree on C2; actual invocation HEAD remains C2 with recorded tracked modifications",
+  "successful_local_fixture": {
+    "elapsed_seconds": "16.21",
+    "failed": 0,
+    "filtered_out": 0,
+    "ignored": 0,
+    "measured": 0,
+    "passed": 24
+  },
+  "terminal_name_correction_is_native_failure": false,
+  "terminal_name_metadata_correction": {
+    "corrected_collector_sha256": "f97001049d500e0ba5ebaa932b9d1df97bfde1e2aa222542c74a507021029828",
+    "corrected_utc": "2026-11-04T00:06:05.489726+00:00",
+    "corrections": {
+      "corrected-v1": {
+        "corrected": [
+          "actual_absolute_epoch_call_cap_and_current_clock_fail_closed",
+          "actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack",
+          "actual_budget_absence_with_two_call_cap_stops_without_another_submit",
+          "actual_caps_context_and_mutated_same_id_refuse_without_relabeling_duplicates",
+          "actual_cli_bad_combinations_and_limits_precede_store_creation",
+          "actual_cli_default_reply_is_unchanged_and_opt_in_reports_duplicate_membership",
+          "actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership",
+          "actual_eof_before_admission_keeps_same_packet_and_all_failed_attempts",
+          "actual_eof_recovery_keeps_short_pause_instead_of_budget_wait_schedule",
+          "actual_lost_native_ack_is_resolved_by_full_membership_without_fabricated_ack",
+          "actual_membership_readiness_does_not_replace_installed_confirmation",
+          "actual_missing_parent_is_restored_before_child_and_reopens_byte_exact",
+          "actual_native_admission_without_response_at_deadline_is_uncertain_and_not_retried",
+          "actual_nonpreemptive_local_full_root_late_return_is_not_reported_on_time",
+          "actual_repeated_exact_eof_stops_after_three_identical_submits",
+          "actual_signed_cpu_budget_absent_membership_retries_same_bytes_within_original_limits",
+          "actual_signed_cpu_budget_read_and_retry_obey_original_call_cap_and_epoch",
+          "actual_signed_cpu_budget_refusal_resolves_known_membership_without_an_ack",
+          "actual_signed_cpu_budget_without_membership_retains_all_three_refusals",
+          "actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity",
+          "actual_two_signed_budget_absences_spread_attempts_and_keep_real_final_ack"
+        ],
+        "old": [
+          "actual_absolute_epoch_call_cap_and_current_clock_fail_closed .",
+          "actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack .",
+          "actual_budget_absence_with_two_call_cap_stops_without_another_submit .",
+          "actual_caps_context_and_mutated_same_id_refuse_without_relabeling_duplicates .",
+          "actual_cli_bad_combinations_and_limits_precede_store_creation .",
+          "actual_cli_default_reply_is_unchanged_and_opt_in_reports_duplicate_membership .",
+          "actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership .",
+          "actual_eof_before_admission_keeps_same_packet_and_all_failed_attempts .",
+          "actual_eof_recovery_keeps_short_pause_instead_of_budget_wait_schedule .",
+          "actual_lost_native_ack_is_resolved_by_full_membership_without_fabricated_ack .",
+          "actual_membership_readiness_does_not_replace_installed_confirmation .",
+          "actual_missing_parent_is_restored_before_child_and_reopens_byte_exact .",
+          "actual_native_admission_without_response_at_deadline_is_uncertain_and_not_retried .",
+          "actual_nonpreemptive_local_full_root_late_return_is_not_reported_on_time .",
+          "actual_repeated_exact_eof_stops_after_three_identical_submits .",
+          "actual_signed_cpu_budget_absent_membership_retries_same_bytes_within_original_limits .",
+          "actual_signed_cpu_budget_read_and_retry_obey_original_call_cap_and_epoch .",
+          "actual_signed_cpu_budget_refusal_resolves_known_membership_without_an_ack .",
+          "actual_signed_cpu_budget_without_membership_retains_all_three_refusals .",
+          "actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity .",
+          "actual_two_signed_budget_absences_spread_attempts_and_keep_real_final_ack ."
+        ]
+      },
+      "corrected-v2": {
+        "corrected": [
+          "actual_absolute_epoch_call_cap_and_current_clock_fail_closed",
+          "actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack",
+          "actual_budget_absence_with_two_call_cap_stops_without_another_submit",
+          "actual_caps_context_and_mutated_same_id_refuse_without_relabeling_duplicates",
+          "actual_cli_bad_combinations_and_limits_precede_store_creation",
+          "actual_cli_default_reply_is_unchanged_and_opt_in_reports_duplicate_membership",
+          "actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership",
+          "actual_eof_before_admission_keeps_same_packet_and_all_failed_attempts",
+          "actual_eof_recovery_keeps_short_pause_instead_of_budget_wait_schedule",
+          "actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies",
+          "actual_lost_native_ack_is_resolved_by_full_membership_without_fabricated_ack",
+          "actual_membership_readiness_does_not_replace_installed_confirmation",
+          "actual_missing_parent_is_restored_before_child_and_reopens_byte_exact",
+          "actual_native_admission_without_response_at_deadline_is_uncertain_and_not_retried",
+          "actual_nonpreemptive_local_full_root_late_return_is_not_reported_on_time",
+          "actual_repeated_exact_eof_stops_after_three_identical_submits",
+          "actual_signed_cpu_budget_absent_membership_retries_same_bytes_within_original_limits",
+          "actual_signed_cpu_budget_different_branch_and_changed_generation_do_not_advance",
+          "actual_signed_cpu_budget_inactive_equal_work_and_forged_history_do_not_advance",
+          "actual_signed_cpu_budget_read_and_retry_obey_original_call_cap_and_epoch",
+          "actual_signed_cpu_budget_refusal_resolves_known_membership_without_an_ack",
+          "actual_signed_cpu_budget_without_membership_retains_all_three_refusals",
+          "actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity",
+          "actual_two_signed_budget_absences_spread_attempts_and_keep_real_final_ack"
+        ],
+        "old": [
+          "actual_absolute_epoch_call_cap_and_current_clock_fail_closed .",
+          "actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack .",
+          "actual_budget_absence_with_two_call_cap_stops_without_another_submit .",
+          "actual_caps_context_and_mutated_same_id_refuse_without_relabeling_duplicates .",
+          "actual_cli_bad_combinations_and_limits_precede_store_creation .",
+          "actual_cli_default_reply_is_unchanged_and_opt_in_reports_duplicate_membership .",
+          "actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership .",
+          "actual_eof_before_admission_keeps_same_packet_and_all_failed_attempts .",
+          "actual_eof_recovery_keeps_short_pause_instead_of_budget_wait_schedule .",
+          "actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies .",
+          "actual_lost_native_ack_is_resolved_by_full_membership_without_fabricated_ack .",
+          "actual_membership_readiness_does_not_replace_installed_confirmation .",
+          "actual_missing_parent_is_restored_before_child_and_reopens_byte_exact .",
+          "actual_native_admission_without_response_at_deadline_is_uncertain_and_not_retried .",
+          "actual_nonpreemptive_local_full_root_late_return_is_not_reported_on_time .",
+          "actual_repeated_exact_eof_stops_after_three_identical_submits .",
+          "actual_signed_cpu_budget_absent_membership_retries_same_bytes_within_original_limits .",
+          "actual_signed_cpu_budget_different_branch_and_changed_generation_do_not_advance .",
+          "actual_signed_cpu_budget_inactive_equal_work_and_forged_history_do_not_advance .",
+          "actual_signed_cpu_budget_read_and_retry_obey_original_call_cap_and_epoch .",
+          "actual_signed_cpu_budget_refusal_resolves_known_membership_without_an_ack .",
+          "actual_signed_cpu_budget_without_membership_retains_all_three_refusals .",
+          "actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity .",
+          "actual_two_signed_budget_absences_spread_attempts_and_keep_real_final_ack ."
+        ]
+      },
+      "eof-boundary-v1": {
+        "corrected": [
+          "public_submit::tests::retry_requires_local_frame_eof_at_one_of_the_existing_response_stages"
+        ],
+        "old": [
+          "public_submit::tests::retry_requires_local_frame_eof_at_one_of_the_existing_response_stages ."
+        ]
+      },
+      "error-boundaries-v1": {
+        "corrected": [
+          "error::tests::authenticated_reply_terminality_controls_remote_retry_identity",
+          "error::tests::continuous_history_without_a_durable_claim_is_a_local_owner_stop",
+          "error::tests::display_changes_cannot_change_typed_retry_or_owner_stop_identity",
+          "error::tests::legacy_request_controls_keep_original_wire_and_typed_local_cancellation",
+          "error::tests::local_integrity_origin_preserves_diagnostic_code_and_typed_cause",
+          "error::tests::pq_control_codes_require_explicit_local_origin",
+          "error::tests::prefix_lookalikes_and_remote_failures_cannot_stop_local_owner",
+          "error::tests::replay_boundary_identity_and_retained_origin_do_not_depend_on_source_words",
+          "error::tests::typed_causes_preserve_source_and_display_without_parsing_source_text",
+          "error::tests::unavailable_original_cpu_owner_is_fatal_but_budget_and_remote_refusals_are_not"
+        ],
+        "old": [
+          "error::tests::authenticated_reply_terminality_controls_remote_retry_identity .",
+          "error::tests::continuous_history_without_a_durable_claim_is_a_local_owner_stop .",
+          "error::tests::display_changes_cannot_change_typed_retry_or_owner_stop_identity .",
+          "error::tests::legacy_request_controls_keep_original_wire_and_typed_local_cancellation .",
+          "error::tests::local_integrity_origin_preserves_diagnostic_code_and_typed_cause .",
+          "error::tests::pq_control_codes_require_explicit_local_origin .",
+          "error::tests::prefix_lookalikes_and_remote_failures_cannot_stop_local_owner .",
+          "error::tests::replay_boundary_identity_and_retained_origin_do_not_depend_on_source_words .",
+          "error::tests::typed_causes_preserve_source_and_display_without_parsing_source_text .",
+          "error::tests::unavailable_original_cpu_owner_is_fatal_but_budget_and_remote_refusals_are_not ."
+        ]
+      }
+    },
+    "original_collector_sha256": "fc20897d78991fbeefb2d1baadc0219085c83d1fcb0d7d2f8d35d1e2c503a84a",
+    "original_summary": {
+      "bytes": 23929,
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/public-submit-fixture-repair/terminal-summary.json",
+      "sha256": "4bcdd9873b7030cb0d8c3a218f9beacf3c6aeef0a3f737fb2f944d9835e8a3d6"
+    },
+    "schema": "trnm-terminal-pass-name-collector-correction-v1",
+    "scope": "The first summarizer stripped five characters instead of the seven-character libtest suffix and appended a spurious space/dot to pass names. Names are now re-read from original stdout; counts, native outcomes, durations, source and executable hashes are unchanged. No native rerun or failed native result is invented."
+  },
+  "throughput_qualified": false
+}

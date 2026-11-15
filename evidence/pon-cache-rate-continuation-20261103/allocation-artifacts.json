@@ -1,0 +1,148 @@
+{
+  "baseline": {
+    "source_baseline": "e1a41026a1b93a6cd3926a60e8af3d97f713ebb6",
+    "source_state": "clean-baseline",
+    "artifact": {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///workspace/scratch/76b6e0e6eb14/pon-cache-baseline/trillionnium/crates/trnm-crypto-primitives#0.1.0",
+      "manifest_path": "/workspace/scratch/76b6e0e6eb14/pon-cache-baseline/trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "trnm_crypto_primitives",
+        "src_path": "/workspace/scratch/76b6e0e6eb14/pon-cache-baseline/trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+        "edition": "2021",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "default"
+      ],
+      "filenames": [
+        "/workspace/scratch/76b6e0e6eb14/baseline-observer-target/release/libtrnm_crypto_primitives.rlib",
+        "/workspace/scratch/76b6e0e6eb14/baseline-observer-target/release/deps/libtrnm_crypto_primitives-255ab5653fb2b5e1.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    "library_sha256": "8365a20cae83f5f6fa240e91f624e91ba906e359c9db22f47910773c6a492831",
+    "observer_sha256": "3991645b8b432c50876285f4a2b983d8694206b3ebb462c03fcbd647a8415098",
+    "cargo_lock_sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+    "rustc_version": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "source_sha256": {
+      "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "a89e4ff18ac26a6b53d53dac5838ef034ea9a319c1769e192ad865654cf8ffc2",
+      "trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs": "cb2b365c7f9428cc0adca1deb38e3e627859fab3a8b45816d77370546fb2645d",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs": "2c9e2729840963054f47185d22381f8c3ab66a8948c57e2eae0b7087d5964322",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/full_limb_controls.rs": "d64e6f573a53b9c87174fe422f5181d0b43b55b1af68bcddfdc6210f98cc5ecf",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs": "f93b72aa1b5dec2b991de6586214f274a7797f8a347d0444125101f0e52cee2f",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs": "e7d060f44e95c57415f3507f69462086719b4df8fb0eecf3f2628931dd575481",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs": "0c9c4ddb772292efd0cf92dc174e8b2353b1e0f16f36df484a5e16b280316a0f",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs": "f4588488ad2c96b9143f1383ad67a54f9022b7aeab6a3434fa91d8d0b8e6d481",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs": "996c3bf296b5116612ef4906241eb24aa0cfdbb992951aebc6703246eb9eab1b",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "95944c121362223f43f5d1cea61972ce65330a65ae36903255d8b3fdead58727",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs": "3aeaeee096e6bca9a195b70c9440734275b828e5783f33c1a28d8ab6df3f8f2d",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "da3c6d28be39effcdb0d792e858d11aabbe83cafaaff326c45c9133cb4b818c7",
+      "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tests.rs": "3b28edf202a2b7c7b42b12f2e07884d5e25593036fc74d2372900e294b73ee4c",
+      "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "2ed59c0c6adeda7c27b503d7465680bc08b02139d2d19ec9f5d4f44c1e02477b",
+      "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/lifecycle_v2.rs": "00e0c3ec2a9e51add5393a9b4ce6e6eb58de9d709fb63cd61d2a6b1681ef0a3e",
+      "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v4.rs": "e4162c548d62787437564e19a9dbfbf1df8af310b40464db52942742cdfec2a0",
+      "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v5.rs": "9a78f1a2e4c3343e2c4885a95d9ab99eb1c25394f56fc9589cddf0fd9ebc936f",
+      "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task.rs": "d2e08fc8bbd5527a67467ef39bdb7fc80dc17443242e240f3704d1d2f12b4c86"
+    },
+    "binary_sha256": "15cbaca8e8752f63edec0c9566c9f4a5a878f6989f866a7bd21cd5fac3628b62"
+  },
+  "candidate": {
+    "source_baseline": "e1a41026a1b93a6cd3926a60e8af3d97f713ebb6",
+    "source_state": "candidate-working-tree",
+    "artifact": {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///workspace/scratch/76b6e0e6eb14/pon-consensus/trillionnium/crates/trnm-crypto-primitives#0.1.0",
+      "manifest_path": "/workspace/scratch/76b6e0e6eb14/pon-consensus/trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "trnm_crypto_primitives",
+        "src_path": "/workspace/scratch/76b6e0e6eb14/pon-consensus/trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+        "edition": "2021",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "default"
+      ],
+      "filenames": [
+        "/workspace/scratch/76b6e0e6eb14/candidate-observer-target/release/libtrnm_crypto_primitives.rlib",
+        "/workspace/scratch/76b6e0e6eb14/candidate-observer-target/release/deps/libtrnm_crypto_primitives-255ab5653fb2b5e1.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    "library_sha256": "fdca834b8fb42cb9ca77fc0804126c65e0a9b8f249d886fcea34fae85a6abd98",
+    "observer_sha256": "3991645b8b432c50876285f4a2b983d8694206b3ebb462c03fcbd647a8415098",
+    "cargo_lock_sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+    "rustc_version": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "source_sha256": {
+      "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "a89e4ff18ac26a6b53d53dac5838ef034ea9a319c1769e192ad865654cf8ffc2",
+      "trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs": "cb2b365c7f9428cc0adca1deb38e3e627859fab3a8b45816d77370546fb2645d",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs": "a0c1fce0c06a533f0d43b4cc781eb45dcae16d93ee2250d51ee1f1b8d815a676",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/full_limb_controls.rs": "b418bcbac9261335b0296f46fed8644f2cdc11d3df368bee9b39f7909a357905",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs": "f93b72aa1b5dec2b991de6586214f274a7797f8a347d0444125101f0e52cee2f",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs": "6e0d265ac5f451d306ce0499359346d006c920f708993947fd608a4d289992bc",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs": "0c9c4ddb772292efd0cf92dc174e8b2353b1e0f16f36df484a5e16b280316a0f",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs": "956e330f4a149726f47b5c5744bbfd5e4b9648d0b4aeb76f382b699d943c22c9",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs": "8d203b6dab7da9b340d603f278b3564431d68d345c7fd46c355b2647e438ceef",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "95944c121362223f43f5d1cea61972ce65330a65ae36903255d8b3fdead58727",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs": "3aeaeee096e6bca9a195b70c9440734275b828e5783f33c1a28d8ab6df3f8f2d",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "e6eb2c0dddc4a59add47cb295c8c66397956cd94bff729a7472d52653a427b5f",
+      "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tests.rs": "3b28edf202a2b7c7b42b12f2e07884d5e25593036fc74d2372900e294b73ee4c",
+      "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "2ed59c0c6adeda7c27b503d7465680bc08b02139d2d19ec9f5d4f44c1e02477b",
+      "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/lifecycle_v2.rs": "00e0c3ec2a9e51add5393a9b4ce6e6eb58de9d709fb63cd61d2a6b1681ef0a3e",
+      "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v4.rs": "e4162c548d62787437564e19a9dbfbf1df8af310b40464db52942742cdfec2a0",
+      "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v5.rs": "9a78f1a2e4c3343e2c4885a95d9ab99eb1c25394f56fc9589cddf0fd9ebc936f",
+      "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task.rs": "d2e08fc8bbd5527a67467ef39bdb7fc80dc17443242e240f3704d1d2f12b4c86"
+    },
+    "binary_sha256": "2fb1c544eba8cefc5381e71ae27b93624254eddaf7ce10a87eebcb8bd801655e"
+  }
+}

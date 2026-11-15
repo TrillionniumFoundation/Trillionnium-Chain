@@ -1,0 +1,86 @@
+{
+  "base_sha": "bbc511c7942de24b75054d1b4c3e5d0e4f4a5ab3",
+  "source_test_blob_before": "b159e6119b5369cea9f049a0d6922d68188314ce",
+  "source_test_blob_after": "1dd6324423751f5cc95db6c751af59ad4828d250",
+  "semantic_transfer_amount": 7,
+  "old_wire_interpreted_by_existing_m06_little_endian": 504403158265495552,
+  "corrected_wire_interpreted_by_existing_m06_little_endian": 7,
+  "unchanged_genesis_balance_each": 100000000,
+  "old_readback_error": "no such column: id",
+  "corrected_readback_exact": true,
+  "sqlite_ddl_source": "trillionnium/crates/trnm-pon-node/src/store.rs",
+  "source_integrity_negative_tests": {
+    "passed": 32,
+    "failed": 0
+  },
+  "rustfmt_check": "PASS",
+  "project_preflight": "PASS (25 packages)",
+  "native_runtime_status": "PASS: final bounded-window startup 7/0, same-executable archive 8/0, two unchanged original capacity tests 2/0; original 1/6 and intermediate 5/2 failures retained",
+  "cryptographic_acceptance": false,
+  "whole_chain_qualification": false,
+  "ci_before": {
+    "run_id": 41063116512,
+    "job_id": 124087549718,
+    "node_passed": 780,
+    "node_failed": 8,
+    "node_ignored": 21,
+    "startup_failures": 6,
+    "excerpt_sha256": "6c951b1f9c84f6311b312e8693198ac84a56673e3a691ca1755b09046b8e92dc"
+  },
+  "native_original_result": "original-native.json",
+  "source_contract_blobs_after_archive_guard": 226,
+  "intermediate_source_pin_refusal": {
+    "result": "HOLD_NO_GO",
+    "reason": "changed source: scripts/ci/check_pq_research_integration.py",
+    "resolution": "reviewed two newly mandatory archive paths and explicitly refreshed checker blob; acceptance flags unchanged"
+  },
+  "intermediate_native_startup": {
+    "passed": 5,
+    "failed": 2,
+    "evidence": "candidate-startup-native.json",
+    "failures": "cold reopen reused original budget but issued allocation expiry beyond original delegation"
+  },
+  "archive_native": {
+    "passed": 8,
+    "failed": 0,
+    "evidence": "candidate-archive-native.json"
+  },
+  "whole_workspace_format": "FAIL: four unmodified bbc baseline files; see full-workspace-format.json",
+  "new_window_assertions": "each view and allocation expiry must be <= original signed delegation expiry; revoked cold restart must specifically report PQ5_TASK",
+  "final_native_startup": {
+    "passed": 7,
+    "failed": 0,
+    "ignored": 0,
+    "exit_code": 0,
+    "evidence": "candidate-bounded-reopen-native-restored.json"
+  },
+  "final_native_archive": {
+    "passed": 8,
+    "failed": 0,
+    "ignored": 0,
+    "exit_code": 0,
+    "evidence": "final-archive-native.json"
+  },
+  "incomplete_bounded_reopen_attempt": "candidate-bounded-reopen-incomplete-observation.json",
+  "cache_restore_retry_failure": "candidate-bounded-reopen-native-retry.json",
+  "final_native_executable_sha256": "ceab53aff05d196bcc1036cd6b38f2020d006a91448836620fb70618208da8bd",
+  "final_original_capacity_tests": {
+    "passed": 2,
+    "failed": 0,
+    "ignored": 0,
+    "executable_sha256": "ceab53aff05d196bcc1036cd6b38f2020d006a91448836620fb70618208da8bd",
+    "summary": "final-capacity-observation-summary.json",
+    "inputs_budgets_assertions_unchanged": true
+  },
+  "raw_final_log_whitespace": {
+    "result": "git diff --cached --check reports original trailing blank line at EOF in four raw test logs",
+    "source_patch_whitespace": "PASS",
+    "raw_logs_normalized": false,
+    "files": [
+      "candidate-bounded-reopen-native-restored.log",
+      "final-archive-native.log",
+      "final-capacity-authenticated-native.log",
+      "final-capacity-paired-native.log"
+    ]
+  }
+}

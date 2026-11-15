@@ -1,0 +1,82 @@
+{
+  "scope": "prepublication controls, not exact committed-head execution",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "rustc": null,
+  "cargo": null,
+  "commands": [
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "started_at": "2026-11-08T12:11:40.786872+00:00",
+      "wall_ns": 50458894,
+      "exit_code": 0,
+      "stdout_sha256": "82b97d7b340e60484b8c4902fb5cdaa223ef2e6bd3ecefe72e90db48d2500bc4",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "distributed-inventory",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "started_at": "2026-11-08T12:11:40.837424+00:00",
+      "wall_ns": 56060554,
+      "exit_code": 0,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "ci-contract",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "started_at": "2026-11-08T12:11:40.893559+00:00",
+      "wall_ns": 97664582,
+      "exit_code": 0,
+      "stdout_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "project-boundary-controls",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/ci/test_project_boundary.py"
+      ],
+      "started_at": "2026-11-08T12:11:40.991292+00:00",
+      "wall_ns": 3216419893,
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "312c3851190f9f89f5ca335de288357655aaa9fefa9077afa4769ff4193610bd"
+    },
+    {
+      "name": "source-integrity-controls",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "started_at": "2026-11-08T12:11:44.207793+00:00",
+      "wall_ns": 2875751675,
+      "exit_code": 0,
+      "stdout_sha256": "b9de08bb01dc81a96c7816d44c2ff6da38f2e95f32eb21b9a71fa732c4da0213",
+      "stderr_sha256": "c8aaae686f7acd61f425e9daf066a6c4a751051fe610820751f9609d06f1ee50"
+    },
+    {
+      "name": "repository-full-check",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/ci/check_repository.py"
+      ],
+      "started_at": "2026-11-08T12:11:47.083624+00:00",
+      "wall_ns": 524517237,
+      "exit_code": 2,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361"
+    }
+  ],
+  "native_test_execution": false
+}

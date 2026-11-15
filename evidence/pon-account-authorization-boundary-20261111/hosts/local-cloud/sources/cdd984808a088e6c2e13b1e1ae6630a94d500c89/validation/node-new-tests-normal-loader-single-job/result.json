@@ -1,0 +1,35 @@
+{
+  "id": "node-new-tests-normal-loader-single-job",
+  "argv": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--all-features",
+    "--lib",
+    "store::account_profile_scope_tests::",
+    "--",
+    "--test-threads=1"
+  ],
+  "returncode": 101,
+  "launch_error": null,
+  "elapsed_seconds": 125.22100881799997,
+  "finished_utc": "2026-11-11T01:37:12.296089+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "6dfdd20b93cffe8f57d9d808cf90704d2ca21935b1bf970dba800acc4c413a52",
+  "pass": false,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 104.950408,
+    "system_cpu_seconds": 14.354808,
+    "maximum_rss_kib": 3292324,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

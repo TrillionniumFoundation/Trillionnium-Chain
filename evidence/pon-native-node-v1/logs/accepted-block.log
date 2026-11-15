@@ -1,0 +1,9 @@
+test_actual_application_accepts_exact_block_and_state (__main__.AcceptedBlockTests.test_actual_application_accepts_exact_block_and_state) ... ok
+test_genesis_and_post_state_match_native_sparse_root (__main__.AcceptedBlockTests.test_genesis_and_post_state_match_native_sparse_root) ... ok
+test_header_transaction_and_work_validate_natively (__main__.AcceptedBlockTests.test_header_transaction_and_work_validate_natively) ... ok
+test_mutated_body_cannot_commit (__main__.AcceptedBlockTests.test_mutated_body_cannot_commit) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.494s
+
+OK

@@ -1,0 +1,466 @@
+{
+  "schema": "trnm-admission-fence-source-integration-v1",
+  "state": "reviewed_source_applied_pending_docs_and_frozen_validation",
+  "root": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+  "baseline": "819309fd312298e099642e1253b1d4ba07113e98",
+  "baseline_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+  "commands": [
+    {
+      "label": "baseline-head",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 41,
+      "stdout_sha256": "db126331f08a713105fc1ebf9e8019875606f49c45784b719efa2020d9668ab3",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "baseline-tree",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 41,
+      "stdout_sha256": "2b72118ee6172f696f8335c1d3949bf3ab420ca0e6025422dafc316bebf810a8",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "baseline-status",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "worktree-root",
+      "argv": [
+        "git",
+        "rev-parse",
+        "--show-toplevel"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 89,
+      "stdout_sha256": "1ed92b5b796647301d73de77278066e34b3642a2237ffe59868afdee47ef3bd2",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "git-name",
+      "argv": [
+        "git",
+        "config",
+        "--local",
+        "--get",
+        "user.name"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 10,
+      "stdout_sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "git-email",
+      "argv": [
+        "git",
+        "config",
+        "--local",
+        "--get",
+        "user.email"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 45,
+      "stdout_sha256": "387dc856abb6d1865a0367575d7923b5cdf795e94bf2a603c36dbced6bf47210",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "github-identity",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "user",
+        "--jq",
+        "{login:.login,id:.id}"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 37,
+      "stdout_sha256": "7c6b9fd1c2f7309eb6bceb64a63c52c1bbfd7fdf0925f4bfc6e15c106f58b2f7",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 171,
+      "stdout_sha256": "b9b4fc9fa721067b07b18744eda9f748c5ce9b84d4349950179d9386357db2b0",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "apply-check",
+      "argv": [
+        "git",
+        "apply",
+        "--check",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/proposal/production-v1.patch",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/proposal/regression-v1.patch"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "apply-reviewed",
+      "argv": [
+        "git",
+        "apply",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/proposal/production-v1.patch",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/proposal/regression-v1.patch"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "format-source",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "refresh-inventory",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/refresh_distributed_source_inventory.py"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 35,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "format-generated",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "changed-before-pins",
+      "argv": [
+        "git",
+        "diff",
+        "--name-only"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 201,
+      "stdout_sha256": "c85b1c19aa083a3118e5abc09dae9ac399b8080300af4652ce4719f49e0cfe6b",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "untracked-before-pins",
+      "argv": [
+        "git",
+        "ls-files",
+        "--others",
+        "--exclude-standard"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 75,
+      "stdout_sha256": "03c4a6ba5e3b7641f48557daa1c4e3a3eba23be4f680824b5ece219a55dfb629",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "source-blob-0",
+      "argv": [
+        "git",
+        "hash-object",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 41,
+      "stdout_sha256": "c8276c0072ed86718db3833a6c5de9600d84377aa7e18c7eb4ffaa95be80c1d0",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "source-blob-1",
+      "argv": [
+        "git",
+        "hash-object",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 41,
+      "stdout_sha256": "78ecb7bd051829a369f69c175a1bf16f50fb454c290313cdb35883281a0b3131",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "source-blob-2",
+      "argv": [
+        "git",
+        "hash-object",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_root_tests.rs"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 41,
+      "stdout_sha256": "b3b2d993f53266866b15b2b6256f5dc15e614e2f03ca37b9051a36a50dc6cd55",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "source-blob-3",
+      "argv": [
+        "git",
+        "hash-object",
+        "--",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 41,
+      "stdout_sha256": "4c551235929eededa4b2e2297de78ce0047ddae49da8e382f2863ea2448cff0a",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "diff-whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "inventory-check",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 35,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "format-check",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "source-diff",
+      "argv": [
+        "git",
+        "diff",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        ".github/workflows/pon-recent-batch-acceptance.yml"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 14865,
+      "stdout_sha256": "0d48a318f75d41fb8a724de31309e2e978bb1ff6d40a00d979d7d3d1fe062c89",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "final-status",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1"
+      ],
+      "state": "completed",
+      "exit": 0,
+      "timed_out": false,
+      "stdout_present": true,
+      "stdout_bytes": 386,
+      "stdout_sha256": "82da0ff205540489a0fdfb5f584e2fac6ee548e71460aaa3f4d5c6d7c67b688b",
+      "stderr_present": true,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "native_test_execution": false,
+  "commit_or_push": false,
+  "identity": {
+    "id": 102159240,
+    "login": "ProfHepta"
+  },
+  "source_blobs": {
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "7d6d5bd7bb49d0d9465df3322b485fd6a41549f8",
+    "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs": "86ddedea0b03e0016707b5b0a0fbc940d2472ab2",
+    "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_root_tests.rs": "5a04c88b1c7d6db76ccb0c773931730b7e82c565",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "bde7875080ff6c8a0dca4d6aa0a8909c6ca82a8f"
+  },
+  "final_status": " M .github/workflows/pon-recent-batch-acceptance.yml\n M config/pon/pq-cross-branch-corpus-v1.json\n M trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\n M trillionnium/crates/trnm-pon-node/src/store.rs\n M trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/legacy_admission_root_tests.rs\n",
+  "source_sha256": {
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "a6895b183fd00bb41019d6ade9f7cdaf1ef1c9a0f287dcfee870ae1bb3807aff",
+    "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs": "c38d076d57631d773176c6ae6ab7504bfb97aff635cde5c27753109d848c2f4b",
+    "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_root_tests.rs": "b3c88d1838f9fb091c4cf2f87220bf2366646ff752cd44748256277d44ad5e19",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "ea72aa070ebcb1af952fb44402222a7ea3b0728807a55c04c34b59171cd9e4de",
+    "config/pon/pq-cross-branch-corpus-v1.json": "041389f42e527ff818b475803f5ae817f832c2d1a0ba4dfc8757fe95786b8a5d",
+    ".github/workflows/pon-recent-batch-acceptance.yml": "42ce9274b00f7c27fc206ae0155a5f2e8cfdb17adb9a861758a96f5b42c4b8e0"
+  }
+}

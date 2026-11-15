@@ -1,0 +1,10 @@
+{
+  "schema": "trnm-source-integration-runner-preparation-v2",
+  "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/integration/run-reviewed-source-v2.py",
+  "bytes": 7979,
+  "sha256": "414df1fd34bd9e4dd9d0bfb73d05cc860ba426dc42ba35525fb17a8444435304",
+  "original_v1_sha256": "f3e428c5e518da9286057013f1b20fe9a3351c265f27bbe4f456eef32e57c960",
+  "change": "Record command attempt before launch and stream durable stdout/stderr; preserve timeout/launch/interruption state with unknown exit. Command list and 600 second bounds unchanged.",
+  "syntax_compiled_only": true,
+  "executed": false
+}

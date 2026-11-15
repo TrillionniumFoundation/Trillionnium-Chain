@@ -1,0 +1,541 @@
+{
+  "schema": "w1-recovered-runner-independent-source-review-v2",
+  "qualification": "HOLD_NO_GO",
+  "scope": "New source review and observed generic/native/full-W1 execution; each measured source snapshot remains separate from the pending final lint-only revision.",
+  "current_source_sha256": {
+    "round2_w1_stark/src/arith_air.rs": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363",
+    "round2_w1_stark/src/lib.rs": "5ee3aa7d673d3dd046e42b9467f2d4a3c7a97007ad67d6eb1b274fa7e4033607",
+    "round2_w1_stark/src/main.rs": "cf3100186faa24c7a1163d2eb45e353389f75be3dcbe09363a1d2ce176288f95",
+    "round2_w1_stark/src/proof_config.rs": "f27541c4a456841e4a391327a907a6758f428947e3bc8792d7c164bdb29954a1",
+    "round2_w1_stark/src/public.rs": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29",
+    "round2_w1_stark/src/sha_air.rs": "ccf2f7b52b0ad2a8de95289a1c4f6c3d56b497cd1da9141eb121f0c6bea5a2a5",
+    "round2_w1_stark/src/sha_plan.rs": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3",
+    "round2_w1_stark/tests/proof_smoke.rs": "3f114828a246a9cf4d97a1c983fdd6675e6eea20aafc68bf0091b32669d8b51b",
+    "round2_w1_stark/Cargo.toml": "e4abafba6867bf145ddd3f5b8f669ce039a93973d80f7eb3096dd3a7ce1c184c",
+    "round2_w1_stark/Cargo.lock": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1",
+    "round2_w1_stark/run_campaign.py": "3ee33ef097d3b1f63c368726ff02beacb5333729d061e8be5801f0694141c39d"
+  },
+  "source_review_outcome": "NO_STATEMENT_OR_VK_BYPASS_FOUND_IN_REVIEWED_PATH",
+  "new_config_and_smoke_compilation": "PASS_GENERIC_RELEASE_ACTUAL_0_8_0",
+  "full_w1_proof_run": "RUN_01_COMPLETE_PROOFS_AND_3_FRESH_VERIFICATIONS_OBSERVED",
+  "corrections_confirmed_in_source": [
+    "actual commitment digest mutation preserves first cap length",
+    "negative controls require expected error prefixes",
+    "late arithmetic rejection requires SHA/arith phases",
+    "failed verifier phases are timed before errors propagate",
+    "security metadata has an explicit timed phase"
+  ],
+  "remaining_limits": [
+    "complete concrete noninteractive bound unresolved",
+    "PaddingFreeSponge requires fixed hash input lengths; 128-bit collision level is an assumption",
+    "wire caps and panic containment are not worst-case memory/time bounds",
+    "sampled negative costs do not establish a global latest-rejection bound"
+  ],
+  "previous_preformat_source_review": {
+    "path": "round2_backend_contract/runner_review.preformat.json",
+    "sha256": "81c1a698e2b5768bcb594eb99e162c1d82484d97d5eb1dbaab79f776d3c6c515",
+    "preserved_without_modification": true
+  },
+  "generic_execution_evidence": {
+    "job_id": "1a1b8516541-12894-e47",
+    "state": "succeeded",
+    "exit_code": 0,
+    "output_complete": true,
+    "output_durable": true,
+    "rust_toolchain": "1.95.0",
+    "rustflags": "not set in task environment",
+    "rayon_num_threads": 8,
+    "cargo_build_jobs": 2,
+    "fmt_check_exit_code": 1,
+    "format_result_note": "The first fmt --check failed on style differences. Its output is retained. A later coordinated canonical formatting pass produced the current source snapshot.",
+    "check_release_all_targets": "PASS",
+    "test_release_lib": {
+      "passed": 18,
+      "failed": 0
+    },
+    "test_release_proof_smoke": {
+      "passed": 3,
+      "failed": 0,
+      "elapsed_seconds": 0.72
+    },
+    "full_w1_trace_built": false,
+    "full_w1_proof_run": false,
+    "log_sha256": {
+      "round2_runtime/generic_first_attempt.stdout.log": "b9c743abb14decc1b82cbfc450a697d58199996a933f04a7890f045efc2d7632",
+      "round2_runtime/generic_first_attempt.stderr.log": "a70106744dc722e8d2a6f455e3d7ea99e4426f41831cb6f2d5e6fc4af1b71d01",
+      "round2_runtime/generic_first_attempt.status.json": "94776b668e3c5598c97e7bacd94d47482d8d535f2cbe7328eea13ad06397c769"
+    },
+    "source_snapshot_authority": "round2_runtime/generic_first_attempt.status.json:source_snapshot",
+    "lock_before_sha256": "9e28bf0b3912ca692b0f80842a3f20323b212b2a1c5bbaa85d7503654c069c2e",
+    "lock_after_sha256": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1",
+    "lock_update_scope": "offline direct p3-security dependency added to root package dependency list; no package version changed",
+    "independent_review": "Read structured job status, command start/end records, lock diff, test names/results and error stream."
+  },
+  "canonical_native_execution": "PASS_LOGS_INDEPENDENTLY_REVIEWED",
+  "canonical_native_execution_evidence": {
+    "job_id": "1a1b8567762-12894-e78",
+    "job_status_source": "round2_runtime/native_final_validation.status.json; independently read",
+    "rust_toolchain": "1.95.0",
+    "rustflags": "-C target-cpu=native",
+    "rayon_num_threads": 8,
+    "cargo_build_jobs": 2,
+    "all_command_exit_codes": 0,
+    "fmt_check": "PASS",
+    "check_release_all_targets": "PASS",
+    "build_release": "PASS",
+    "test_release_lib": {
+      "passed": 18,
+      "failed": 0
+    },
+    "test_release_proof_smoke": {
+      "passed": 3,
+      "failed": 0,
+      "elapsed_seconds": 0.72
+    },
+    "binary_sha256": "e438893d1620ebad45b8cfd2be0698fe1105c270b2c722263f27af9420adf3f3",
+    "binary_bytes": 2202912,
+    "full_w1_trace_built_in_this_job": false,
+    "full_w1_proof_run_in_this_job": false,
+    "canonical_format_source_hashes_after": {
+      "src/proof_config.rs": "f27541c4a456841e4a391327a907a6758f428947e3bc8792d7c164bdb29954a1",
+      "src/arith_air.rs": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363",
+      "src/main.rs": "cf3100186faa24c7a1163d2eb45e353389f75be3dcbe09363a1d2ce176288f95",
+      "src/lib.rs": "5ee3aa7d673d3dd046e42b9467f2d4a3c7a97007ad67d6eb1b274fa7e4033607",
+      "src/sha_plan.rs": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3",
+      "src/sha_air.rs": "ccf2f7b52b0ad2a8de95289a1c4f6c3d56b497cd1da9141eb121f0c6bea5a2a5",
+      "src/public.rs": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29",
+      "tests/proof_smoke.rs": "3f114828a246a9cf4d97a1c983fdd6675e6eea20aafc68bf0091b32669d8b51b"
+    },
+    "current_local_source_matches_entire_canonical_rust_snapshot": true,
+    "log_sha256": {
+      "round2_runtime/native_final_validation.stdout.log": "6c5866233bacaa0bf269662da3eff2f1b28e403fcd0d724dd5d674edd37b1995",
+      "round2_runtime/native_final_validation.stderr.log": "cb65f00827c6cdbda5b502118a43977758d102b733d2c594c0bd2bc014bc3a08",
+      "round2_runtime/native_final_validation.status.json": "3d645b9f6722d58e30a85464e902da62096ef43e8f6ac68259763219dc8f6897"
+    },
+    "independent_review": "Command end records, canonical-format hashes, test names/results and final binary record were read and cross-checked against current local source.",
+    "state": "succeeded",
+    "exit_code": 0,
+    "output_complete": true,
+    "output_durable": true
+  },
+  "full_w1_runs": [
+    {
+      "run_identifier": "retained-native-01",
+      "scope": "One complete full W1 proof pair; three independent fresh-process full verifications; first eleven negative controls.",
+      "source_snapshot": {
+        "Cargo.toml": {
+          "bytes": 780,
+          "sha256": "e4abafba6867bf145ddd3f5b8f669ce039a93973d80f7eb3096dd3a7ce1c184c"
+        },
+        "Cargo.lock": {
+          "bytes": 17799,
+          "sha256": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1"
+        },
+        "run_campaign.py": {
+          "bytes": 11224,
+          "sha256": "3ee33ef097d3b1f63c368726ff02beacb5333729d061e8be5801f0694141c39d"
+        },
+        "src/arith_air.rs": {
+          "bytes": 8516,
+          "sha256": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363"
+        },
+        "src/lib.rs": {
+          "bytes": 252,
+          "sha256": "5ee3aa7d673d3dd046e42b9467f2d4a3c7a97007ad67d6eb1b274fa7e4033607"
+        },
+        "src/main.rs": {
+          "bytes": 13113,
+          "sha256": "cf3100186faa24c7a1163d2eb45e353389f75be3dcbe09363a1d2ce176288f95"
+        },
+        "src/proof_config.rs": {
+          "bytes": 9547,
+          "sha256": "f27541c4a456841e4a391327a907a6758f428947e3bc8792d7c164bdb29954a1"
+        },
+        "src/public.rs": {
+          "bytes": 14959,
+          "sha256": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29"
+        },
+        "src/sha_air.rs": {
+          "bytes": 12176,
+          "sha256": "ccf2f7b52b0ad2a8de95289a1c4f6c3d56b497cd1da9141eb121f0c6bea5a2a5"
+        },
+        "src/sha_plan.rs": {
+          "bytes": 13300,
+          "sha256": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3"
+        },
+        "tests/proof_smoke.rs": {
+          "bytes": 7384,
+          "sha256": "3f114828a246a9cf4d97a1c983fdd6675e6eea20aafc68bf0091b32669d8b51b"
+        }
+      },
+      "binary_sha256": "e438893d1620ebad45b8cfd2be0698fe1105c270b2c722263f27af9420adf3f3",
+      "source_identity_note": "SHA source used by this run is preserved as prelint_sha_air.rs.txt. Other source files match the current local copies at this review.",
+      "evidence_path_identifiers": {
+        "round2_results/provenance.json": "893696e5d5b2d9142f34526d0705a38cf65bfe1d9fdfeca183a63b8d1f4996eb",
+        "round2_results/prover_report.json": "c15d0812e67f1dae61a2e88fbcefd3cb6acd3368df451e6363e533b6192f8824",
+        "round2_results/verification-campaign/summary.json": "bb3677f75c7d42bc201facf880f60ccc34747988c6875edd652a3b4e15376a06",
+        "round2_results/prove.time.txt": "54ff2b5049897c29da918f01fb1f5d55c95f0c71a54b1e9fe35212c4843c674c",
+        "round2_results/prepare.time.txt": "5fd5d9eff6405200de3a35c81d00da32dee433589472df668099838a43122bbf"
+      },
+      "full_trace_and_proof_generation": "PASS",
+      "statement_sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+      "public_bytes": 377290,
+      "sha_proof_bytes": 4356101,
+      "sha_proof_sha256": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+      "arith_proof_bytes": 530885,
+      "arith_proof_sha256": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204",
+      "proof_identity_basis": "Prover report and all three fresh verifier reports independently read; all observed hashes and sizes agree.",
+      "positive_count": 3,
+      "negative_count": 11,
+      "positive_outer_seconds": [
+        1.0417574250604957,
+        0.9694615069311112,
+        0.994025677908212
+      ],
+      "positive_phase_events": [
+        [
+          {
+            "elapsed_ms": 44.503889,
+            "phase": "bounded_read_decode_and_proof_shape"
+          },
+          {
+            "elapsed_ms": 9.652951999999999,
+            "phase": "canonical_plans_and_public_only_sha_air"
+          },
+          {
+            "elapsed_ms": 49.084115,
+            "phase": "sha_verifier_independent_preprocessing_setup"
+          },
+          {
+            "elapsed_ms": 291.21864899999997,
+            "phase": "sha_stark_verify"
+          },
+          {
+            "elapsed_ms": 567.831669,
+            "phase": "arith_verifier_independent_preprocessing_setup"
+          },
+          {
+            "elapsed_ms": 37.519463,
+            "phase": "arith_stark_verify"
+          }
+        ],
+        [
+          {
+            "elapsed_ms": 16.754291000000002,
+            "phase": "bounded_read_decode_and_proof_shape"
+          },
+          {
+            "elapsed_ms": 8.407411,
+            "phase": "canonical_plans_and_public_only_sha_air"
+          },
+          {
+            "elapsed_ms": 52.712429,
+            "phase": "sha_verifier_independent_preprocessing_setup"
+          },
+          {
+            "elapsed_ms": 285.73534900000004,
+            "phase": "sha_stark_verify"
+          },
+          {
+            "elapsed_ms": 535.254961,
+            "phase": "arith_verifier_independent_preprocessing_setup"
+          },
+          {
+            "elapsed_ms": 30.557648999999998,
+            "phase": "arith_stark_verify"
+          }
+        ],
+        [
+          {
+            "elapsed_ms": 16.62793,
+            "phase": "bounded_read_decode_and_proof_shape"
+          },
+          {
+            "elapsed_ms": 8.349606000000001,
+            "phase": "canonical_plans_and_public_only_sha_air"
+          },
+          {
+            "elapsed_ms": 49.06752,
+            "phase": "sha_verifier_independent_preprocessing_setup"
+          },
+          {
+            "elapsed_ms": 299.189044,
+            "phase": "sha_stark_verify"
+          },
+          {
+            "elapsed_ms": 549.034185,
+            "phase": "arith_verifier_independent_preprocessing_setup"
+          },
+          {
+            "elapsed_ms": 30.700340999999998,
+            "phase": "arith_stark_verify"
+          }
+        ]
+      ],
+      "negative_controls": [
+        {
+          "label": "public-extra-byte",
+          "error": "bounded file length /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/verification-campaign/public-extra-byte/statement.bin: 377291",
+          "outer_seconds": 0.004609775962308049,
+          "phase_events": [],
+          "matched_rejection_stage": true
+        },
+        {
+          "label": "sha-proof-truncated",
+          "error": "proof decoding: io error: unexpected end of file",
+          "outer_seconds": 0.02171015413478017,
+          "phase_events": [],
+          "matched_rejection_stage": true
+        },
+        {
+          "label": "sha-proof-trailing-byte",
+          "error": "proof decoding: Slice had bytes remaining after deserialization",
+          "outer_seconds": 0.01960749295540154,
+          "phase_events": [],
+          "matched_rejection_stage": true
+        },
+        {
+          "label": "sha-commitment-changed",
+          "error": "sha proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 536, got: 513 })))",
+          "outer_seconds": 0.1633347871247679,
+          "phase_events": [
+            {
+              "elapsed_ms": 17.858427,
+              "phase": "bounded_read_decode_and_proof_shape"
+            },
+            {
+              "elapsed_ms": 8.320621000000001,
+              "phase": "canonical_plans_and_public_only_sha_air"
+            },
+            {
+              "elapsed_ms": 49.805993,
+              "phase": "sha_verifier_independent_preprocessing_setup"
+            },
+            {
+              "elapsed_ms": 77.94489899999999,
+              "phase": "sha_stark_verify"
+            }
+          ],
+          "matched_rejection_stage": true
+        },
+        {
+          "label": "arith-commitment-changed",
+          "error": "arithmetic proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 771, got: 778 })))",
+          "outer_seconds": 0.9317745149601251,
+          "phase_events": [
+            {
+              "elapsed_ms": 17.685923,
+              "phase": "bounded_read_decode_and_proof_shape"
+            },
+            {
+              "elapsed_ms": 8.438149000000001,
+              "phase": "canonical_plans_and_public_only_sha_air"
+            },
+            {
+              "elapsed_ms": 48.5209,
+              "phase": "sha_verifier_independent_preprocessing_setup"
+            },
+            {
+              "elapsed_ms": 280.41214199999996,
+              "phase": "sha_stark_verify"
+            },
+            {
+              "elapsed_ms": 562.395488,
+              "phase": "arith_verifier_independent_preprocessing_setup"
+            },
+            {
+              "elapsed_ms": 2.515594,
+              "phase": "arith_stark_verify"
+            }
+          ],
+          "matched_rejection_stage": true
+        },
+        {
+          "label": "last-C-changed",
+          "error": "arithmetic proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 788, got: 778 })))",
+          "outer_seconds": 0.9295133689884096,
+          "phase_events": [
+            {
+              "elapsed_ms": 15.249743,
+              "phase": "bounded_read_decode_and_proof_shape"
+            },
+            {
+              "elapsed_ms": 8.972518,
+              "phase": "canonical_plans_and_public_only_sha_air"
+            },
+            {
+              "elapsed_ms": 49.581308,
+              "phase": "sha_verifier_independent_preprocessing_setup"
+            },
+            {
+              "elapsed_ms": 275.052668,
+              "phase": "sha_stark_verify"
+            },
+            {
+              "elapsed_ms": 570.235473,
+              "phase": "arith_verifier_independent_preprocessing_setup"
+            },
+            {
+              "elapsed_ms": 1.320422,
+              "phase": "arith_stark_verify"
+            }
+          ],
+          "matched_rejection_stage": true
+        },
+        {
+          "label": "last-prefix-changed",
+          "error": "sha proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 522, got: 513 })))",
+          "outer_seconds": 0.160903510870412,
+          "phase_events": [
+            {
+              "elapsed_ms": 16.596333,
+              "phase": "bounded_read_decode_and_proof_shape"
+            },
+            {
+              "elapsed_ms": 8.236957,
+              "phase": "canonical_plans_and_public_only_sha_air"
+            },
+            {
+              "elapsed_ms": 49.562267,
+              "phase": "sha_verifier_independent_preprocessing_setup"
+            },
+            {
+              "elapsed_ms": 77.461501,
+              "phase": "sha_stark_verify"
+            }
+          ],
+          "matched_rejection_stage": true
+        },
+        {
+          "label": "last-AB-intermediate-changed",
+          "error": "arithmetic proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 770, got: 778 })))",
+          "outer_seconds": 0.9474843279458582,
+          "phase_events": [
+            {
+              "elapsed_ms": 23.458479,
+              "phase": "bounded_read_decode_and_proof_shape"
+            },
+            {
+              "elapsed_ms": 9.273247999999999,
+              "phase": "canonical_plans_and_public_only_sha_air"
+            },
+            {
+              "elapsed_ms": 51.94927,
+              "phase": "sha_verifier_independent_preprocessing_setup"
+            },
+            {
+              "elapsed_ms": 290.343088,
+              "phase": "sha_stark_verify"
+            },
+            {
+              "elapsed_ms": 557.006205,
+              "phase": "arith_verifier_independent_preprocessing_setup"
+            },
+            {
+              "elapsed_ms": 2.881621,
+              "phase": "arith_stark_verify"
+            }
+          ],
+          "matched_rejection_stage": true
+        },
+        {
+          "label": "unused-noise-tail-changed",
+          "error": "sha proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 541, got: 513 })))",
+          "outer_seconds": 0.17178078298456967,
+          "phase_events": [
+            {
+              "elapsed_ms": 16.993825,
+              "phase": "bounded_read_decode_and_proof_shape"
+            },
+            {
+              "elapsed_ms": 8.34131,
+              "phase": "canonical_plans_and_public_only_sha_air"
+            },
+            {
+              "elapsed_ms": 57.86707,
+              "phase": "sha_verifier_independent_preprocessing_setup"
+            },
+            {
+              "elapsed_ms": 78.179497,
+              "phase": "sha_stark_verify"
+            }
+          ],
+          "matched_rejection_stage": true
+        },
+        {
+          "label": "wrong-independent-artifacts",
+          "error": "sha proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 529, got: 513 })))",
+          "outer_seconds": 0.16464962786994874,
+          "phase_events": [
+            {
+              "elapsed_ms": 17.866848,
+              "phase": "bounded_read_decode_and_proof_shape"
+            },
+            {
+              "elapsed_ms": 8.23915,
+              "phase": "canonical_plans_and_public_only_sha_air"
+            },
+            {
+              "elapsed_ms": 50.83124,
+              "phase": "sha_verifier_independent_preprocessing_setup"
+            },
+            {
+              "elapsed_ms": 78.97604299999999,
+              "phase": "sha_stark_verify"
+            }
+          ],
+          "matched_rejection_stage": true
+        },
+        {
+          "label": "wrong-independent-header",
+          "error": "IndependentHeader",
+          "outer_seconds": 0.025906007969751954,
+          "phase_events": [
+            {
+              "elapsed_ms": 19.347088,
+              "phase": "bounded_read_decode_and_proof_shape"
+            }
+          ],
+          "matched_rejection_stage": true
+        }
+      ],
+      "sampled_negative_max_outer_seconds": 0.9474843279458582,
+      "first_campaign_rejection_depth_note": "Changing commitments or public data changed transcript-derived indices; the seven proof-component negatives rejected at input multiproof SiblingCountMismatch, before late FRI checks.",
+      "late_control_count_pending": 4,
+      "conditional_rbr_metadata": {
+        "sha": {
+          "num_constraints": 8152,
+          "num_batched_functions": 15487,
+          "conditional_rbr_estimate_bits": 63.95384529640614,
+          "conjectured_estimate_bits_separate": 98,
+          "is_complete_noninteractive_bound": false,
+          "is_quantum_security_bound": false
+        },
+        "arithmetic": {
+          "num_constraints": 525,
+          "num_batched_functions": 536,
+          "conditional_rbr_estimate_bits": 63.95384529640614,
+          "conjectured_estimate_bits_separate": 98,
+          "is_complete_noninteractive_bound": false,
+          "is_quantum_security_bound": false
+        }
+      },
+      "qualification": "HOLD_NO_GO"
+    }
+  ],
+  "lint_only_revision": {
+    "path": "round2_w1_stark/src/sha_air.rs",
+    "old_sha256": "ccf2f7b52b0ad2a8de95289a1c4f6c3d56b497cd1da9141eb121f0c6bea5a2a5",
+    "new_sha256": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa",
+    "preserved_source": "prelint_sha_air.rs.txt",
+    "change": "Fixed 0..16 indexing loop rewritten as preprocessed[..16].iter().enumerate(); identical ordered assertions, fixed 16 elements and short-slice panic retained.",
+    "execution_status": "FINAL_GATE_AND_FULL_RUN_02_PENDING"
+  },
+  "path_semantics": {
+    "audit_source_prefix": "round2_w1_stark/",
+    "delivery_source_mapping": "Drop audit_source_prefix to obtain the path relative to the delivered crate root.",
+    "review_directory": "This directory may be installed as review/ or evidence/backend_review; its Python calculation is runnable from its own directory.",
+    "audit_result_identifiers": "round2_results/ and round2_runtime/ identify retained local audit records; the final delivery manifest supplies their package locations.",
+    "upstream_sources": "AUDIT_SOURCE_LOCATORS.json provides official pinned source URLs and full SHA-256 identities."
+  }
+}

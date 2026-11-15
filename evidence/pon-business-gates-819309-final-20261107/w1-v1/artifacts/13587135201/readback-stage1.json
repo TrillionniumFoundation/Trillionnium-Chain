@@ -1,0 +1,59 @@
+{
+  "artifact_id": 13587135201,
+  "metadata": {
+    "id": 13587135201,
+    "name": "w1-legal-factorial-prospective-merge-arm64-28df21f965e0348690836c9c854dab645827a03d-1",
+    "size_in_bytes": 174174768,
+    "digest": "sha256:1de9c9d431f305557f6fb32bb7e1db9744d4f80a4394d289dd9c4a0ec6cbb302",
+    "expired": false,
+    "created_at": "2026-11-07T19:03:25Z",
+    "updated_at": "2026-11-07T19:03:25Z",
+    "workflow_run": {
+      "id": 42402618462,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+    }
+  },
+  "errors": [
+    "ValueError: GitHub ZIP digest/size mismatch"
+  ],
+  "warnings": [],
+  "archive_authenticated": false,
+  "source_bound": false,
+  "manifest_hashes_complete": false,
+  "pure_read_status": "NOT_RUN",
+  "business_qualification": false,
+  "family": "factorial",
+  "arch": "arm64",
+  "source_kind": "prospective-merge",
+  "tested_commit": "28df21f965e0348690836c9c854dab645827a03d",
+  "job": {
+    "id": 128493695730,
+    "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+    "family": "factorial",
+    "arch": "arm64",
+    "source": "prospective-merge",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "download": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13587135201/zip"
+    ],
+    "exit_code": null,
+    "timed_out": true,
+    "error": "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13587135201/zip']' timed out after 239.9999831249006 seconds",
+    "bytes": 29900800,
+    "sha256": "0791d98b8bcddd503a5bf6d4ac11579d930d76d6835c84f7f03d5f0ac4574c5b"
+  },
+  "coverage_status": "UNKNOWN",
+  "finished_utc": "2026-11-07T20:14:32.578503+00:00"
+}

@@ -1,0 +1,17 @@
+running 14 tests
+test pon_work::legal_attempt::low_rank::tests::both_inputs_are_fully_validated_before_zero_or_high_rank_shortcuts ... ok
+test pon_work::legal_attempt::low_rank::tests::bounded_factorization_reconstructs_exact_full_field_rank_and_pivot_orders ... ok
+test pon_work::legal_attempt::low_rank::tests::exact_rank_limit_chooses_left_then_right_and_explicit_paid_dense_fallback ... ok
+test pon_work::legal_attempt::low_rank::tests::low_rank_complete_proofs_equal_both_original_kernels_and_verifiers ... ok
+test pon_work::legal_attempt::low_rank::tests::misses_still_replay_all_tiles_and_cancelled_retries_preserve_the_same_task ... ok
+test pon_work::legal_attempt::tests::boundary_target_is_inclusive_and_zero_target_refuses_before_work ... ok
+test pon_work::legal_attempt::tests::changed_challenge_and_task_never_gain_acceptance_from_cached_product ... ok
+test pon_work::legal_attempt::tests::every_stage_cancellation_returns_no_attempt_and_does_not_poison_retry ... ok
+test pon_work::legal_attempt::tests::factorial_kernels_match_independent_reference_for_full_and_structured_fields ... ok
+test pon_work::legal_attempt::tests::losing_attempt_still_replays_every_transcript_tile_without_lazy_serialization ... ok
+test pon_work::legal_attempt::tests::preparation_never_reduces_noncanonical_fields_or_wrong_shapes ... ok
+test pon_work::legal_attempt::tests::sparse_preparation_matches_dense_and_independent_full_field_proofs ... ok
+test pon_work::legal_attempt::tests::sparse_preparation_rejects_hidden_noncanonical_words_and_wrong_lengths ... ok
+test pon_work::legal_attempt::tests::sparse_setup_keeps_complete_misses_callbacks_and_cancelled_retry ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 182 filtered out; finished in 0.29s

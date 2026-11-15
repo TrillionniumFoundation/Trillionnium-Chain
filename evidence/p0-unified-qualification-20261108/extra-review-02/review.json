@@ -1,0 +1,49 @@
+{
+  "schema": "extra-native-independent-review-v2",
+  "review_status": "REPORTED_REGRESSIONS_RESOLVED",
+  "snapshot": {
+    "run-extra-native.py": {
+      "sha256": "d9ac98937cb23992e554bbd6b0bf5748de4e7e575cddb5fa26541445a7e0d731",
+      "bytes": 36996,
+      "source_path": "integration-patch/evidence/p0-unified-qualification-20261108/run-extra-native.py"
+    },
+    "test_run_extra_native.py": {
+      "sha256": "7a805710365608762386ec3607ddc817a6ff2e970beceab68eb98e1cda25cb0c",
+      "bytes": 20668,
+      "source_path": "integration-patch/evidence/p0-unified-qualification-20261108/test_run_extra_native.py"
+    },
+    "EXTRA_NATIVE_RUNNER.md": {
+      "sha256": "ee3b38945cf44d694179702a188c16b3ac9c2cf2882aef75bae1e84a479c9a73",
+      "bytes": 8471,
+      "source_path": "integration-patch/evidence/p0-unified-qualification-20261108/EXTRA_NATIVE_RUNNER.md"
+    }
+  },
+  "original_helper_sha256": "d81437a1cef461666b9103cc3f9e8f8ab0c67a90903b5802f582d2c52cd82710",
+  "native_campaign_executed": false,
+  "controls": {
+    "tests": 34,
+    "passed": 34,
+    "exit_code": 0,
+    "receipt": "parser-controls.receipt.json"
+  },
+  "original_probes": {
+    "unchanged_reproducer": "b0c112ce784671f341218b5466e4837a95e936e4ee050001886b1f3903e7272a",
+    "cases": 7,
+    "refused": 7,
+    "output": "independent-parser-probes.json"
+  },
+  "fixes_verified": [
+    "Unique well-formed OK Python terminal; explicit FAILED/error/unexpected-success counts cannot pass or be discarded by a later OK.",
+    "All-stream running/name/summary conservation and unattributed trailing markers make incomplete extra harness output ambiguous.",
+    "workspace_harness_inventory_covered no longer claims all members have nonzero execution; per-member counts/status expose NO_TESTS and IGNORED.",
+    "Explicit binary identity scope is CARGO_DISPATCH_AND_POST_RUN_FILE_HASH; OS loaded identity is NOT_OBSERVED."
+  ],
+  "unchanged_boundaries": [
+    "Original32 helper remains exact d81437a1cef461666b9103cc3f9e8f8ab0c67a90903b5802f582d2c52cd82710.",
+    "Fresh export/raw reader bindings and source-before/after failure behavior are unchanged by the fix.",
+    "Native/production/PQ/resource/WAN/throughput qualification is not conferred by these parser controls.",
+    "Final overall report must retain original32 failures separately; extra17 does not consume or replace that result."
+  ],
+  "prior_snapshot_red_evidence": "../extra-native-collector-review-01/review.json",
+  "candidate_modified_by_reviewer": false
+}

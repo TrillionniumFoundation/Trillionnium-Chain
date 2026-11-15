@@ -1,0 +1,29 @@
+   Compiling libc v0.2.184
+   Compiling typenum v1.20.1
+   Compiling serde_json v1.0.149
+   Compiling generic-array v0.14.7
+    Checking rusqlite v0.39.0
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.4
+   Compiling cpufeatures v0.2.17
+   Compiling rustix v1.1.4
+   Compiling sha2 v0.10.9
+    Checking trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling nix v0.30.1
+    Checking getrandom v0.4.2
+    Checking trnm-task-kernel v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-task-kernel)
+    Checking getrandom v0.2.17
+    Checking fs2 v0.4.3
+    Checking trnm-verification-profiles v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-verification-profiles)
+    Checking tempfile v3.27.0
+    Checking trnm-mvcc-fee v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-service-settlement v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-service-settlement)
+    Checking trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-data-availability)
+    Checking trnm-release-bundle v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-release-bundle)
+    Checking trnm-mempool v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-mempool)
+    Checking trnm-transport v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-transport)
+    Checking trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-pon-node)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 32.42s

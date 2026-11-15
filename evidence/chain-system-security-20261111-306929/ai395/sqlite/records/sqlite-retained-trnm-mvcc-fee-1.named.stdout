@@ -1,0 +1,1 @@
+{"executed_tests": 1, "result": "PASS", "scope": "named-libtest-execution-only", "test": "tests::schema_sidecar_and_self_consistent_row_tamper_fail_closed"}

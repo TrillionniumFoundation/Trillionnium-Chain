@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "python3",
+    "/workspace/scratch/7318d5f890d1/chain-throughput/scripts/ci/check_required_native_test.py",
+    "/workspace/scratch/7318d5f890d1/throughput-readback/final-69d2-workspace-nine/test-8.stdout",
+    "--test",
+    "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes"
+  ],
+  "child_system_seconds": 0.007315000000000016,
+  "child_user_seconds": 0.02274700000000074,
+  "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+  "exit_code": 0,
+  "finished_at": "2026-11-04T09:01:04.053107+00:00",
+  "label": "test-8-reader",
+  "max_child_rss_kib": 97124,
+  "started_at": "2026-11-04T09:01:04.022521+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "1b6fcb9e6aefd618948223a17d6baec0700b4c331a76226b2b93304c7fe7e7e7",
+  "wall_ns": 30619892
+}

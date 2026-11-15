@@ -1,0 +1,81 @@
+{
+  "actual_model_execution": false,
+  "capture_validation": "../native-readbacks/capture-validation.json",
+  "failed_attempts_index": "../failed-attempts/index.json",
+  "files": [
+    {
+      "bytes": 13800,
+      "file": "native-v3-start.json",
+      "raw_bytes_unchanged": true,
+      "role": "Original successful native-v3 start record",
+      "sha256": "cebc9f8057dc04083b5b83d548772da9ba5d20fc93c1d074bbb6f3707e9f3fa0",
+      "source_relative_path": "native-v3/start.json"
+    },
+    {
+      "bytes": 12573,
+      "file": "run_frozen_profile_controls.py",
+      "matches_original_result_runner_sha256": true,
+      "native_attempt": "native-v1",
+      "raw_bytes_unchanged": true,
+      "role": "Exact native-v1 failed-attempt runner",
+      "sha256": "6ee47881b144c371e9e00da556365fe603a8cfd117bc84bc87cbfe09dc258346",
+      "source_commit": "f6247df765bb82d18247ed7d492635d09d2bb403",
+      "source_relative_path": "run_frozen_profile_controls.py"
+    },
+    {
+      "bytes": 12428,
+      "file": "run_frozen_profile_retry.py",
+      "matches_original_result_runner_sha256": true,
+      "native_attempt": "native-v2",
+      "raw_bytes_unchanged": true,
+      "role": "Exact native-v2 failed-attempt runner",
+      "sha256": "ed82d92d0bcab793c1249820ed311a4473090b9b8b2dd0e390f6a0f4b8c7433d",
+      "source_commit": "f6247df765bb82d18247ed7d492635d09d2bb403",
+      "source_relative_path": "run_frozen_profile_retry.py"
+    },
+    {
+      "bytes": 12548,
+      "file": "run_frozen_profile_candidate_v3.py",
+      "matches_original_result_runner_sha256": true,
+      "native_attempt": "native-v3",
+      "raw_bytes_unchanged": true,
+      "role": "Exact native-v3 successful primary runner",
+      "sha256": "9d972b409baa35ccf35236541ee684dead429f40ff249a4fa83c64cf4f6e992d",
+      "source_commit": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+      "source_relative_path": "run_frozen_profile_candidate_v3.py"
+    },
+    {
+      "bytes": 3348,
+      "file": "independent-registry-audit.json",
+      "raw_bytes_unchanged": true,
+      "role": "Original f6247 source-name registry audit; no native test result implied",
+      "sha256": "a6a49943dc1e5a5fac793c49828411d5a486192b8649ffef46f3e7ff44f8a13f",
+      "source_relative_path": "independent-registry-audit.json"
+    },
+    {
+      "bytes": 4874,
+      "file": "test-selection-source-map.json",
+      "raw_bytes_unchanged": true,
+      "role": "Original frozen39 source-name selection map",
+      "sha256": "3c7bf4271ce2fae00a367fb509415f09aa45a0292f7ef3e02fdfe7d3e44a4b51",
+      "source_relative_path": "test-selection-source-map.json"
+    },
+    {
+      "bytes": 4763,
+      "file": "exact-test-names.json",
+      "raw_bytes_unchanged": true,
+      "role": "Original frozen39 test-name registry",
+      "sha256": "70c73f29515e30588203a1fba9d78741ba8f27f376a78537485a42d5216c8855",
+      "source_relative_path": "exact-test-names.json"
+    }
+  ],
+  "native_result": "../native-readbacks/native-result.json",
+  "original_files_reserialized": false,
+  "primary_native_source_commit": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+  "production_final_use_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "registry_audit_scope": "Frozen name selection at f6247; successor4a93 actual39 JUnit names and exact source are separately verified by native-readbacks/capture-validation.json.",
+  "registry_source_audit_revision": "f6247df765bb82d18247ed7d492635d09d2bb403",
+  "schema": "trnm-cell-learning-native-provenance-files-v1",
+  "scope": "engineering-runner-and-frozen-test-selection-provenance"
+}

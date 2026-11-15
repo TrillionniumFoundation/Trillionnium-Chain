@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "--version"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+  "end_utc": "2026-11-07T18:06:51.265779+00:00",
+  "exit_code": 0,
+  "log": "logs/cargo-version.log",
+  "log_bytes": 36,
+  "log_sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+  "name": "cargo-version",
+  "pid": 1251330,
+  "start_utc": "2026-11-07T18:06:51.244330+00:00",
+  "supervisor_timeout_seconds": 600,
+  "timed_out": false,
+  "wall_ns": 21460158
+}

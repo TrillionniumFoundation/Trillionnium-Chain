@@ -1,0 +1,172 @@
+[
+  {
+    "name": "preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/red-source",
+    "timeout_seconds": 30,
+    "exit_code": 0,
+    "elapsed_seconds": 0.16498259687796235,
+    "stdout": {
+      "bytes": 176,
+      "sha256": "3fc1a9ec379575f886ffe79bc9d37f1c7b7d8df3b51d9f5f0ce573c4b5d117c9"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "stage",
+    "argv": [
+      "git",
+      "add",
+      "--",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/red-source",
+    "timeout_seconds": 30,
+    "exit_code": 0,
+    "elapsed_seconds": 0.06516413483768702,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "commit",
+    "argv": [
+      "git",
+      "commit",
+      "-m",
+      "test(pon): freeze failing full-relation priority controls"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/red-source",
+    "timeout_seconds": 60,
+    "exit_code": 0,
+    "elapsed_seconds": 0.11553383595310152,
+    "stdout": {
+      "bytes": 267,
+      "sha256": "0f206b97a678c84a5f84bdab27718076d4881b0630b2b12d2f5bda07c46e7b82"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "source-before",
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "b01c08ee0b06984d59a8f50758a3ae718611c7c9",
+      "--output",
+      "/data/chain-abg-70ae-20261108/evidence/red-native-formatted/source-before.json"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/red-source",
+    "timeout_seconds": 180,
+    "exit_code": 0,
+    "elapsed_seconds": 14.302725570974872,
+    "stdout": {
+      "bytes": 423,
+      "sha256": "afe1f6021f360ba0cd32d50bd216eb64d7eea3cf3debf54b8c3bba3791760ae3"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "fmt-check",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/red-source",
+    "timeout_seconds": 90,
+    "exit_code": 0,
+    "elapsed_seconds": 19.46539621707052,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "red-six-native-controls",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "ingress::public_v3::scalar_cpu::native_completion_tests::",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/red-source",
+    "timeout_seconds": 1500,
+    "exit_code": 101,
+    "elapsed_seconds": 314.0155034440104,
+    "stdout": {
+      "bytes": 3026,
+      "sha256": "06a1387d53111912267f1411202820f59958ab608d21bdbbb255b59c81612586"
+    },
+    "stderr": {
+      "bytes": 2034,
+      "sha256": "8983bd62a097c93b087a2a4c68de7059ee78362af34abea2a46dcb5522619ef7"
+    }
+  },
+  {
+    "name": "source-after",
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "b01c08ee0b06984d59a8f50758a3ae718611c7c9",
+      "--output",
+      "/data/chain-abg-70ae-20261108/evidence/red-native-formatted/source-after.json"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/red-source",
+    "timeout_seconds": 180,
+    "exit_code": 0,
+    "elapsed_seconds": 20.569965007016435,
+    "stdout": {
+      "bytes": 423,
+      "sha256": "afe1f6021f360ba0cd32d50bd216eb64d7eea3cf3debf54b8c3bba3791760ae3"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

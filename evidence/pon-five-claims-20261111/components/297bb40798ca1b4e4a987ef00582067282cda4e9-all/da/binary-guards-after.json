@@ -1,0 +1,122 @@
+{
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_adoption_cli-54ea48ddfb060810": {
+    "expected_sha256": "01739abbe981980d367499ea37765233c0425679b1682c09212a41190d7300d9",
+    "retained_sha256": "01739abbe981980d367499ea37765233c0425679b1682c09212a41190d7300d9",
+    "sha256": "01739abbe981980d367499ea37765233c0425679b1682c09212a41190d7300d9"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_cache_wal_cli-c447e0fb4604698c": {
+    "expected_sha256": "d6d3f484151f2e06e58da73d7e73f55366ad4ece3a1f5f3582627a5c464011c9",
+    "retained_sha256": "d6d3f484151f2e06e58da73d7e73f55366ad4ece3a1f5f3582627a5c464011c9",
+    "sha256": "d6d3f484151f2e06e58da73d7e73f55366ad4ece3a1f5f3582627a5c464011c9"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_closure_cli-710e4425e4aaadbe": {
+    "expected_sha256": "e691257d3e8fba486d5b913f8e7e2432324cf2c57cad8942eae06f195c9ab48a",
+    "retained_sha256": "e691257d3e8fba486d5b913f8e7e2432324cf2c57cad8942eae06f195c9ab48a",
+    "sha256": "e691257d3e8fba486d5b913f8e7e2432324cf2c57cad8942eae06f195c9ab48a"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_discovery_cli-b0001582b550d769": {
+    "expected_sha256": "a77f3d4a91b7990682be4955445425c91db4d6089b619cc15ad711d20a9e354c",
+    "retained_sha256": "a77f3d4a91b7990682be4955445425c91db4d6089b619cc15ad711d20a9e354c",
+    "sha256": "a77f3d4a91b7990682be4955445425c91db4d6089b619cc15ad711d20a9e354c"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_fetch_deadline_cli-20d46916f99e2ec2": {
+    "expected_sha256": "ffce99b168eafc9b8f05dc5114cec779593b5e2c1d5c012057636c0d2a241442",
+    "retained_sha256": "ffce99b168eafc9b8f05dc5114cec779593b5e2c1d5c012057636c0d2a241442",
+    "sha256": "ffce99b168eafc9b8f05dc5114cec779593b5e2c1d5c012057636c0d2a241442"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_persistent_cli-e7959ba45649113d": {
+    "expected_sha256": "cba6d86d421fac1f9c190d4235f02726876fa2c54058da6e3e12472b38969146",
+    "retained_sha256": "cba6d86d421fac1f9c190d4235f02726876fa2c54058da6e3e12472b38969146",
+    "sha256": "cba6d86d421fac1f9c190d4235f02726876fa2c54058da6e3e12472b38969146"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_provider_ready_cli-6a234193b4ce88f5": {
+    "expected_sha256": "5e24ad09c0e93b04c1467f8c4220d30c95743e2adcbf1bb2eb9e16797abd4f46",
+    "retained_sha256": "5e24ad09c0e93b04c1467f8c4220d30c95743e2adcbf1bb2eb9e16797abd4f46",
+    "sha256": "5e24ad09c0e93b04c1467f8c4220d30c95743e2adcbf1bb2eb9e16797abd4f46"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_release_cli-976da714a129e38f": {
+    "expected_sha256": "de85093e1333721b9c889adbb366cdb15e28f45e99ffe38fad5676c883b71a32",
+    "retained_sha256": "de85093e1333721b9c889adbb366cdb15e28f45e99ffe38fad5676c883b71a32",
+    "sha256": "de85093e1333721b9c889adbb366cdb15e28f45e99ffe38fad5676c883b71a32"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_tensor_cli-01c0ff6c929d5bb4": {
+    "expected_sha256": "d933b5a39319d7d7042ea58f635e45e8590294faafd136094cbc09da097982cd",
+    "retained_sha256": "d933b5a39319d7d7042ea58f635e45e8590294faafd136094cbc09da097982cd",
+    "sha256": "d933b5a39319d7d7042ea58f635e45e8590294faafd136094cbc09da097982cd"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/pq_cell_cli-5acecb2a0ba1b894": {
+    "expected_sha256": "d922bbe7bf0f57583b889a61a6ebd66c32653060fc7b55a3c4883568e49d565d",
+    "retained_sha256": "d922bbe7bf0f57583b889a61a6ebd66c32653060fc7b55a3c4883568e49d565d",
+    "sha256": "d922bbe7bf0f57583b889a61a6ebd66c32653060fc7b55a3c4883568e49d565d"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell-082545a3bcb4bee9": {
+    "expected_sha256": "15274830ac477a532b00e1787db88e9f2af0d694182af43b1882de27f8958ae6",
+    "retained_sha256": "15274830ac477a532b00e1787db88e9f2af0d694182af43b1882de27f8958ae6",
+    "sha256": "15274830ac477a532b00e1787db88e9f2af0d694182af43b1882de27f8958ae6"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell_adoption-a735a1ef19763c97": {
+    "expected_sha256": "4c25781df45a67d163985eae6b555a46b94cced5a4bc9128ed54d8711d0cb81e",
+    "retained_sha256": "4c25781df45a67d163985eae6b555a46b94cced5a4bc9128ed54d8711d0cb81e",
+    "sha256": "4c25781df45a67d163985eae6b555a46b94cced5a4bc9128ed54d8711d0cb81e"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell_discovery-886084e361c47f39": {
+    "expected_sha256": "ab564447b6ae157faf1fbe17fded801c0c897264c2441f0aa877f79ab220e8da",
+    "retained_sha256": "ab564447b6ae157faf1fbe17fded801c0c897264c2441f0aa877f79ab220e8da",
+    "sha256": "ab564447b6ae157faf1fbe17fded801c0c897264c2441f0aa877f79ab220e8da"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_data_availability-64b25e344716c90a": {
+    "expected_sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f",
+    "retained_sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f",
+    "sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_bep52_cost_v1-e4ddc15a419a0fb9": {
+    "expected_sha256": "be087b6e7c42027ff7ad1ec4f35c0b764cd8ed6093e369ab16880770c0b9c4bb",
+    "retained_sha256": "be087b6e7c42027ff7ad1ec4f35c0b764cd8ed6093e369ab16880770c0b9c4bb",
+    "sha256": "be087b6e7c42027ff7ad1ec4f35c0b764cd8ed6093e369ab16880770c0b9c4bb"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_delta_workload_observer-48263eefa9ec4b8a": {
+    "expected_sha256": "8746eccde4d95c59d0a2d3168852c0723c6d15d69425384fa748b96917084228",
+    "retained_sha256": "8746eccde4d95c59d0a2d3168852c0723c6d15d69425384fa748b96917084228",
+    "sha256": "8746eccde4d95c59d0a2d3168852c0723c6d15d69425384fa748b96917084228"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_residency_observer-19e1f794a45f3e63": {
+    "expected_sha256": "20bfdd6a80035327afb525945203223a4cca8ad33820e89e2699b28b6b49d0b6",
+    "retained_sha256": "20bfdd6a80035327afb525945203223a4cca8ad33820e89e2699b28b6b49d0b6",
+    "sha256": "20bfdd6a80035327afb525945203223a4cca8ad33820e89e2699b28b6b49d0b6"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_rs46_cost_v1-7e1e5075247796c9": {
+    "expected_sha256": "51c72b2dc077bb5987091ad994388fc32fd20cb9e70d776589eb0515b7360b9d",
+    "retained_sha256": "51c72b2dc077bb5987091ad994388fc32fd20cb9e70d776589eb0515b7360b9d",
+    "sha256": "51c72b2dc077bb5987091ad994388fc32fd20cb9e70d776589eb0515b7360b9d"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_sealed_research_next_use_v1-94b490bc9dfb3d94": {
+    "expected_sha256": "7826142b586f9f4f05985b30eb6b4e0c6a6c98ae44c43c1ba87ade94d150fc9c",
+    "retained_sha256": "7826142b586f9f4f05985b30eb6b4e0c6a6c98ae44c43c1ba87ade94d150fc9c",
+    "sha256": "7826142b586f9f4f05985b30eb6b4e0c6a6c98ae44c43c1ba87ade94d150fc9c"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_serving_ab_observer-41a3406802792dbe": {
+    "expected_sha256": "c5e8163d58fa5ff415e82dc4ff4611e942894999cc25c0777695d6833320bffc",
+    "retained_sha256": "c5e8163d58fa5ff415e82dc4ff4611e942894999cc25c0777695d6833320bffc",
+    "sha256": "c5e8163d58fa5ff415e82dc4ff4611e942894999cc25c0777695d6833320bffc"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_signed_sealed_pipeline_v1-eca69481293cb510": {
+    "expected_sha256": "0d5cd5fc0ae1caa819566863eeeb14235acfedb61e83d64917678667416b61ec",
+    "retained_sha256": "0d5cd5fc0ae1caa819566863eeeb14235acfedb61e83d64917678667416b61ec",
+    "sha256": "0d5cd5fc0ae1caa819566863eeeb14235acfedb61e83d64917678667416b61ec"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/trnm-cell": {
+    "expected_sha256": "6a2c8d92b1e23124820ac0b6866fda21dd923910bb69bc3c6560b88086ab888d",
+    "retained_sha256": "6a2c8d92b1e23124820ac0b6866fda21dd923910bb69bc3c6560b88086ab888d",
+    "sha256": "6a2c8d92b1e23124820ac0b6866fda21dd923910bb69bc3c6560b88086ab888d"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/trnm-cell-adoption": {
+    "expected_sha256": "8569f0d3a5bfc95e9bcb2b420f0d1ab48292029a76bf7bbc802837adc6ab6d9e",
+    "retained_sha256": "8569f0d3a5bfc95e9bcb2b420f0d1ab48292029a76bf7bbc802837adc6ab6d9e",
+    "sha256": "8569f0d3a5bfc95e9bcb2b420f0d1ab48292029a76bf7bbc802837adc6ab6d9e"
+  },
+  "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/trnm-cell-discovery": {
+    "expected_sha256": "9cb4d529b8fa18e5bb900466d3b5791df6f28632690cbc222c67f5cd406a13d0",
+    "retained_sha256": "9cb4d529b8fa18e5bb900466d3b5791df6f28632690cbc222c67f5cd406a13d0",
+    "sha256": "9cb4d529b8fa18e5bb900466d3b5791df6f28632690cbc222c67f5cd406a13d0"
+  }
+}

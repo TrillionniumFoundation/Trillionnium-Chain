@@ -1,0 +1,17 @@
+{
+  "all": [
+    "cli_delivers_real_uncached_bytes_with_seconds_and_subtwo_second_milliseconds",
+    "cli_manifest_reads_persisted_caps_and_cannot_create_a_missing_cache",
+    "cli_preserves_original_request_minimum_and_overall_must_cover_request",
+    "cli_requires_each_persistent_quota_before_creating_a_writer_cache",
+    "cli_requires_exactly_one_deadline_unit_and_a_positive_bounded_duration"
+  ],
+  "filter": null,
+  "selected": [
+    "cli_delivers_real_uncached_bytes_with_seconds_and_subtwo_second_milliseconds",
+    "cli_manifest_reads_persisted_caps_and_cannot_create_a_missing_cache",
+    "cli_preserves_original_request_minimum_and_overall_must_cover_request",
+    "cli_requires_each_persistent_quota_before_creating_a_writer_cache",
+    "cli_requires_exactly_one_deadline_unit_and_a_positive_bounded_duration"
+  ]
+}

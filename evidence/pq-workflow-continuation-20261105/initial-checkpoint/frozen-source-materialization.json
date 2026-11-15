@@ -1,0 +1,12 @@
+{
+  "recorded_utc": "2026-11-05T03:58:04Z",
+  "parent": "30b09171cadf5a6f4d868f5d2a8df8b3316f7114",
+  "commit": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+  "tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+  "staged_tree_exactly_matches_published_tree": true,
+  "status_before": "M  config/pon/pq-cross-branch-corpus-v1.json\nA  evidence/pon-growth-persistence-control-20261105/run-bounded.py\nA  evidence/pon-growth-persistence-control-20261105/test_memory_estimate.py\nA  evidence/pon-quantum-exact-resource-budget-20261105/README.md\nA  evidence/pon-quantum-exact-resource-budget-20261105/before-fix.json\nA  evidence/pon-quantum-exact-resource-budget-20261105/exact-budget.patch\nA  evidence/pon-quantum-exact-resource-budget-20261105/format-presentation-result.json\nA  evidence/pon-quantum-exact-resource-budget-20261105/green-result.json\nA  evidence/pon-quantum-exact-resource-budget-20261105/manifest.json\nA  evidence/pon-quantum-exact-resource-budget-20261105/red-result.json\nA  evidence/pon-w1-statement-v2-20261105/continuation/checkpoint-observation-20261105.json\nA  evidence/pon-w1-statement-v2-20261105/continuation/remote-source-projection-20261105.json\nM  formal/pon-nakamoto-v1/quantum_oracle_resources.py\nM  formal/pon-nakamoto-v1/test_quantum_oracle_resources.py\nM  trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\nM  trillionnium/crates/trnm-pon-node/src/store/growth.rs\nM  trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs\nA  trillionnium/crates/trnm-pon-node/tests/growth_persistence_cancellation.rs",
+  "status_after": "",
+  "source_files": 22,
+  "initial_materialization_attempt": "git add refused four .log paths ignored by repository; no ref was moved. Exact already-published paths then explicitly staged with -f after SHA256 verification.",
+  "local_ref_transition": "compare-and-swap only after exact staged tree validation; no force reset or source replacement"
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "pon-native-c1-observation-readback-v1",
+  "source_head": "c2d67c5cf1ebb4caac525802362d5746b8fd957d",
+  "source_tree": "40796fa1aac9fa78b5a69647ea952cdb4f67663c",
+  "all_21_original_commands_exit_zero": true,
+  "native_test_counts": {
+    "adoption-library": 25,
+    "adoption-cli": 13,
+    "outcome-role-separation": 1
+  },
+  "source_before_equals_after": true,
+  "original_command_unqualified_diagnostics": false,
+  "later_target_units": [
+    {
+      "file": "later-target-trnm-sqlite-io-boundary-d67ff94a357995c9.stdout",
+      "sha256": "2b2d49f4dc6b4f06d3b7dc0c26ef0bf88a0f1c9d3f7aee5413409284bd128cae",
+      "qualified_witness_present": false,
+      "unqualified_diagnostic_present": true
+    },
+    {
+      "file": "later-target-trnm-sqlite-io-boundary-ff1375e9f7008b9d.stdout",
+      "sha256": "b669400a8411cc7cf0890dbf7cc487b9147459254f0262696b8410a6a7cc878c",
+      "qualified_witness_present": true,
+      "unqualified_diagnostic_present": false
+    }
+  ],
+  "later_target_units_do_not_bind_original_build": true,
+  "archive_attempt1_exit": 1,
+  "archive_attempt1_reason": "Rejected a later unqualified build unit while scanning a shared target after the separate direct-Cargo run. This was an archive qualification failure, not a failure of the 39 executed native tests.",
+  "strict_clippy_scope": "DA library, adoption CLI and CLI integration; Node role integration",
+  "full_workspace_clippy_claimed": false,
+  "final_exact_source_and_build_unit_qualification_required": true,
+  "model_efficacy_certified": false,
+  "production_activation": false
+}

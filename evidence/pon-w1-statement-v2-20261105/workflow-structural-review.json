@@ -1,0 +1,25 @@
+{
+  "schema": "TRNM-W1-V2-WORKFLOW-STRUCTURAL-REVIEW1",
+  "path": ".github/workflows/pon-w1-transparent-profile.yml",
+  "source_sha256": "2954f96dc14828be02479fa41a7a2c8cf4a8291fb1d8bf67b0351f2e8a9aabbb",
+  "base_commit": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+  "retained_steps_unchanged": 15,
+  "added_steps": [
+    "staged_tests",
+    "budget_tests",
+    "verifier_v2",
+    "component_budget"
+  ],
+  "retained_paths_preserved": true,
+  "permissions_unchanged": true,
+  "source_matrix_unchanged": true,
+  "all_shell_bodies_bash_n_passed": true,
+  "hosted_ci_executed": false,
+  "guest_build_requested": false,
+  "new_proofs_generated": 0,
+  "added_test_minima": {
+    "staged_observer": 16,
+    "security_budget": 21,
+    "independent_v2_verifier": 2
+  }
+}

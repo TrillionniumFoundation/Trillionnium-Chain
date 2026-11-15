@@ -1,0 +1,57 @@
+{
+  "archive": {
+    "bytes": 842652,
+    "file": "submit-recovery/original-records.json.gz",
+    "sha256": "5d033bc9a7f16efda9450869027604c7ea1d9f06a58a138271cbc9df29f08584"
+  },
+  "base_head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+  "corrected_fixture_sha256": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+  "corrected_production_sha256": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+  "files": [
+    {
+      "bytes": 842652,
+      "path": "submit-recovery/original-records.json.gz",
+      "sha256": "5d033bc9a7f16efda9450869027604c7ea1d9f06a58a138271cbc9df29f08584"
+    },
+    {
+      "bytes": 28721,
+      "path": "submit-recovery/package-submit-recovery-v3.py",
+      "sha256": "fa9148f32aa2dee34e0b6ea0dbaddef88eab9a9d85998cfd04e1c9539685d127"
+    },
+    {
+      "bytes": 74880,
+      "path": "submit-recovery/readback.json",
+      "sha256": "39e4b184dbdbaa50fd17cbbebe1e6633b10d2291f13907decf00f774f570e547"
+    },
+    {
+      "bytes": 19476,
+      "path": "submit-recovery/record-index.json",
+      "sha256": "f3b48165372d70384f5aa7c820832c50660ee4b4d9120f1423c3d2488f11e845"
+    },
+    {
+      "bytes": 9878,
+      "path": "submit-recovery/summary.json",
+      "sha256": "9c4fa4ae06c9be419627aee15c9266ae65d8ce2adb31819bb07eb4a8661f744d"
+    }
+  ],
+  "frozen": true,
+  "index": {
+    "bytes": 19476,
+    "file": "submit-recovery/record-index.json",
+    "sha256": "f3b48165372d70384f5aa7c820832c50660ee4b4d9120f1423c3d2488f11e845"
+  },
+  "native_executed_by_packager": false,
+  "readback": {
+    "bytes": 74880,
+    "file": "submit-recovery/readback.json",
+    "sha256": "39e4b184dbdbaa50fd17cbbebe1e6633b10d2291f13907decf00f774f570e547"
+  },
+  "repository_source_or_ref_mutated": false,
+  "schema": "trnm-submit-recovery-stage-v3-handoff-v1",
+  "summary": {
+    "bytes": 9878,
+    "file": "submit-recovery/summary.json",
+    "sha256": "9c4fa4ae06c9be419627aee15c9266ae65d8ce2adb31819bb07eb4a8661f744d"
+  },
+  "target_repository_prefix": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/"
+}

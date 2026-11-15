@@ -1,0 +1,132 @@
+[
+  {
+    "name": "chain-combined-preflight",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0,
+    "seconds": 0.11486255598720163,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/chain-combined-preflight.log",
+    "log_sha256": "61a4688389ad7efa35429b831a470881b04665a5497a46b65d76d43fba1332c5"
+  },
+  {
+    "name": "chain-combined-growth-rehearsal",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "growth_rehearsal_",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 312.2136009330861,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/chain-combined-growth-rehearsal.log",
+    "log_sha256": "51defa4f3d0f7e2bc7d9409412bbd12d7a8052cf9e317a4d6e84c57823b34156"
+  },
+  {
+    "name": "chain-combined-root-rejection-cache",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "root_rejection_cache_tests",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 1.1677890210412443,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/chain-combined-root-rejection-cache.log",
+    "log_sha256": "19b2b531ddd5798c5821e7831125c773e5824aca47197c1272307303b36b4ba8"
+  },
+  {
+    "name": "chain-combined-growth-observation",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "native_growth_v2_",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 24.883629865013063,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/chain-combined-growth-observation.log",
+    "log_sha256": "1d6dec921f247584fd34193b70979eccf3e0db056dee9e4c91ef30d3652f9917"
+  },
+  {
+    "name": "chain-combined-growth-cli",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_growth_cli",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 182.10897500405554,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/chain-combined-growth-cli.log",
+    "log_sha256": "54103ebdb1eea3f917099b3e4373c5b8593d19d3b8fbeedfbc177c9defc407ea"
+  },
+  {
+    "name": "chain-combined-native-payment",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "native_payment_bridge_task_exact_signed_transition_net_balance_and_reorg",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 4.376482059014961,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/chain-combined-native-payment.log",
+    "log_sha256": "0eb854cf68474ce969ceb2ee7b08a5557c6f5ab8c61bbf44c20ef6bfda6723ee"
+  },
+  {
+    "name": "chain-combined-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 101,
+    "seconds": 37.51444772700779,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/chain-combined-clippy.log",
+    "log_sha256": "cf80eb3572a834e086f022f6e7d32ebd1d97a5beb33a2ed89bd4b0a88c0c29e9"
+  }
+]

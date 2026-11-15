@@ -1,0 +1,1270 @@
+{
+  "schema": "history-changed-markdown-target-check-v1",
+  "scope": "All local link target files in four changed Markdown documents; external URL liveness and fragment anchors are not executed checks",
+  "checked_files": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+    "evidence/pon-history-owner-next-20261027/README.md",
+    "evidence/pon-history-owner-next-20261027/HOST_BUDGET_APPLICABILITY.md"
+  ],
+  "local_targets": 209,
+  "external_links_not_fetched": 37,
+  "passed": true,
+  "errors": [],
+  "rows": [
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../config/consensus-mainline.json",
+      "resolved": "config/consensus-mainline.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../config/pon-nakamoto-v1.json",
+      "resolved": "config/pon-nakamoto-v1.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/README.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../modules/README.md",
+      "resolved": "docs/modules/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "module-registry-v1.toml",
+      "resolved": "docs/development/module-registry-v1.toml",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../config/portability-inventory-v1.json",
+      "resolved": "config/portability-inventory-v1.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "release-train-v1.toml",
+      "resolved": "docs/development/release-train-v1.toml",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "plan-manifest-v1.toml",
+      "resolved": "docs/development/plan-manifest-v1.toml",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "CURRENT_SNAPSHOT_V1.json",
+      "resolved": "docs/development/CURRENT_SNAPSHOT_V1.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "resolved": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-history-owner-next-20261027/README.md",
+      "resolved": "evidence/pon-history-owner-next-20261027/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-history-owner-next-20261027/HOST_BUDGET_APPLICABILITY.md",
+      "resolved": "evidence/pon-history-owner-next-20261027/HOST_BUDGET_APPLICABILITY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/PURE_PON_WORK_SECURITY_MODEL_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/PURE_PON_WORK_SECURITY_MODEL_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-pure-workpackages-20261027/README.md",
+      "resolved": "evidence/pon-pure-workpackages-20261027/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/HEPTA_HANDOFF.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/HEPTA_HANDOFF.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-upgrade-implementation-20261018/native-rounds/pn-convergence-20261023/SCOPE.md",
+      "resolved": "evidence/pon-upgrade-implementation-20261018/native-rounds/pn-convergence-20261023/SCOPE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md#fixed-seed-root-rejection-component-cost",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md#fixed-seed-root-supplemental-cohort",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md#optional-bounded-final-root-rejection-component",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md#fixed-seed-root-supplemental-cohort",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/source-42424a-followup/readback.json",
+      "resolved": "evidence/pon-six-gate-closure-20261022/source-42424a-followup/readback.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/source-42424a-followup/raw-evidence.gzip.json",
+      "resolved": "evidence/pon-six-gate-closure-20261022/source-42424a-followup/raw-evidence.gzip.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/source-42424a-followup/security-terminal.gzip.json",
+      "resolved": "evidence/pon-six-gate-closure-20261022/source-42424a-followup/security-terminal.gzip.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../scripts/llm_runtime_README.md",
+      "resolved": "scripts/llm_runtime_README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-upgrade-implementation-20261018/native-rounds/aggregate-charge-wait-20261023/SCOPE.md",
+      "resolved": "evidence/pon-upgrade-implementation-20261018/native-rounds/aggregate-charge-wait-20261023/SCOPE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../scripts/run_llm_cell_native_handoff.py",
+      "resolved": "scripts/run_llm_cell_native_handoff.py",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/ci-security-before.json",
+      "resolved": "evidence/pon-six-gate-closure-20261022/ci-security-before.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/codeql-current-readback.json",
+      "resolved": "evidence/pon-six-gate-closure-20261022/codeql-current-readback.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "specs/pon/REWARD_BUDGETS_V1.md",
+      "resolved": "docs/development/specs/pon/REWARD_BUDGETS_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/current-871269-ci/branch-encoding-original-failures.json",
+      "resolved": "evidence/pon-six-gate-closure-20261022/current-871269-ci/branch-encoding-original-failures.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/current-871269-ci/security-export-exact-source.json",
+      "resolved": "evidence/pon-six-gate-closure-20261022/current-871269-ci/security-export-exact-source.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/current-871269-ci/campaign-full-artifact-readback.json",
+      "resolved": "evidence/pon-six-gate-closure-20261022/current-871269-ci/campaign-full-artifact-readback.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/current-871269-ci/native-growth-failure-summary.json",
+      "resolved": "evidence/pon-six-gate-closure-20261022/current-871269-ci/native-growth-failure-summary.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/ARCHITECTURE_COMPARISON_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/ARCHITECTURE_COMPARISON_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../config/pon/applicability-v1.json",
+      "resolved": "config/pon/applicability-v1.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md#current-applicability-and-evidence-classes",
+      "resolved": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../architecture/CURRENT_IMPLEMENTATION.md",
+      "resolved": "docs/architecture/CURRENT_IMPLEMENTATION.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/NATIVE_EVALUATION_QUORUM_V2.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/NATIVE_EVALUATION_QUORUM_V2.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "specs/pon/MODEL_EVOLUTION_V5.md",
+      "resolved": "docs/development/specs/pon/MODEL_EVOLUTION_V5.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "specs/pon/MODEL_TASK_WINDOWS_V1.md",
+      "resolved": "docs/development/specs/pon/MODEL_TASK_WINDOWS_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "specs/pon/CELL_PROVIDER_DISCOVERY_DEV_V1.md",
+      "resolved": "docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_DEV_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "specs/pon/CELL_RETENTION_V1.md",
+      "resolved": "docs/development/specs/pon/CELL_RETENTION_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/MONETARY_OBLIGATION_RANGES_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/MONETARY_OBLIGATION_RANGES_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md#same-block-incremental-m06-prefix",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md#explicit-continuation-across-reported-evaluation-windows",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md#explicit-pre-disclosure-exposure-continuation-v2",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../architecture/CI_EXECUTION_CONTRACT.md",
+      "resolved": "docs/architecture/CI_EXECUTION_CONTRACT.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../config/pon/work-security-acceptance-v1.json",
+      "resolved": "config/pon/work-security-acceptance-v1.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/WORK_PROFILE.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/WORK_PROFILE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/SYNC_EVALUATION_OBSERVATION_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/SYNC_EVALUATION_OBSERVATION_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-four-priority-audit-v1/README.md",
+      "resolved": "evidence/pon-four-priority-audit-v1/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_CACHE_V2.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_CACHE_V2.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../modules/M06_EXECUTION_TECHNICAL_SPEC_V1.md",
+      "resolved": "docs/modules/M06_EXECUTION_TECHNICAL_SPEC_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/NATIVE_ANCESTRY_INDEX.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/NATIVE_ANCESTRY_INDEX.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/PINNED_PEER_POLLING.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/PINNED_PEER_POLLING.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/release_finality.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/release_finality.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/NEURAL_WORK.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/NEURAL_WORK.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "specs/pon/PERMANENT_ACCOUNT_STORAGE_BOUNDARY.md",
+      "resolved": "docs/development/specs/pon/PERMANENT_ACCOUNT_STORAGE_BOUNDARY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/HEPTA_HANDOFF.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/HEPTA_HANDOFF.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/NATIVE_ACCOUNT_GROWTH_V2.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/NATIVE_ACCOUNT_GROWTH_V2.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md#explicit-historical-account-query-pins",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-upgrade-implementation-20261018/native-rounds/cell-tcl4-release-three-host-20261024/SCOPE.md",
+      "resolved": "evidence/pon-upgrade-implementation-20261018/native-rounds/cell-tcl4-release-three-host-20261024/SCOPE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../scripts/llm_runtime_host_scope.py",
+      "resolved": "scripts/llm_runtime_host_scope.py",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../scripts/llm_runtime_host_scope_io.py",
+      "resolved": "scripts/llm_runtime_host_scope_io.py",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-upgrade-implementation-20261018/native-rounds/host-namespace-pristine-failure-20261023/SCOPE.md",
+      "resolved": "evidence/pon-upgrade-implementation-20261018/native-rounds/host-namespace-pristine-failure-20261023/SCOPE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-upgrade-implementation-20261018/native-rounds/host-memcg-phase-boundary-20261023/SCOPE.md",
+      "resolved": "evidence/pon-upgrade-implementation-20261018/native-rounds/host-memcg-phase-boundary-20261023/SCOPE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-upgrade-implementation-20261018/native-rounds/host-child-groups-preparation-20261024/SCOPE.md",
+      "resolved": "evidence/pon-upgrade-implementation-20261018/native-rounds/host-child-groups-preparation-20261024/SCOPE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/SCOPE.md",
+      "resolved": "evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/SCOPE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/integrated-b27-original-native.json",
+      "resolved": "evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/integrated-b27-original-native.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/NATIVE_ACCOUNT_GROWTH_V2.md#observed-development-runs--2026-10-22",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/NATIVE_ACCOUNT_GROWTH_V2.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/EVALUATION_BUNDLE.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/EVALUATION_BUNDLE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../modules/README.md#responsibility-and-evidence",
+      "resolved": "docs/modules/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-evaluation-bundle-v1/README.md",
+      "resolved": "evidence/pon-evaluation-bundle-v1/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-client-confirmation-v1/README.md",
+      "resolved": "evidence/pon-client-confirmation-v1/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-native-session-v1/README.md",
+      "resolved": "evidence/pon-native-session-v1/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-native-session-v1/work-cost/README.md",
+      "resolved": "evidence/pon-native-session-v1/work-cost/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-native-session-v1/publication-failures/README.md",
+      "resolved": "evidence/pon-native-session-v1/publication-failures/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-native-node-v1/README.md",
+      "resolved": "evidence/pon-native-node-v1/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-closed-round-v1/README.md",
+      "resolved": "evidence/pon-closed-round-v1/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/PUBLIC_READINESS.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_READINESS.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../scripts/llm_runtime_README.md#native-negative-bridge-input-and-public-output",
+      "resolved": "scripts/llm_runtime_README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-public-readiness-v1/README.md",
+      "resolved": "evidence/pon-public-readiness-v1/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/OPERATOR_ACTORS_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/OPERATOR_ACTORS_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/PUBLIC_INTAKE_V2.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_INTAKE_V2.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/PUBLIC_SUBMIT_RECOVERY_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_SUBMIT_RECOVERY_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../modules/M10_AGENT_MARKET_TECHNICAL_SPEC_V1.md",
+      "resolved": "docs/modules/M10_AGENT_MARKET_TECHNICAL_SPEC_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/EVALUATION_CONFIRMED_OBSERVATION_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/EVALUATION_CONFIRMED_OBSERVATION_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/EVALUATION_CONFIRMED_ROUND_OBSERVATION_V2.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/EVALUATION_CONFIRMED_ROUND_OBSERVATION_V2.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_MATERIAL_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_MATERIAL_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_TASK_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_TASK_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/SYNC_EVALUATION_OBSERVATION_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/SYNC_EVALUATION_OBSERVATION_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/RESTRICTED_MINING_CPU_DOMAIN_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/RESTRICTED_MINING_CPU_DOMAIN_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_FINITE_MINING_MODE3.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_FINITE_MINING_MODE3.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_CONTINUOUS_MODE4.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_CONTINUOUS_MODE4.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_CONTINUOUS_MODE5.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_CONTINUOUS_MODE5.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "specs/pon/ACCOUNT_SEQUENCE_TEST_HELPERS.md",
+      "resolved": "docs/development/specs/pon/ACCOUNT_SEQUENCE_TEST_HELPERS.md",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../config/pon/applicability-v1.json",
+      "resolved": "config/pon/applicability-v1.json",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../config/pon/public-evaluation-native-v1.json",
+      "resolved": "config/pon/public-evaluation-native-v1.json",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/PUBLIC_EVALUATION_LIFECYCLE.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_EVALUATION_LIFECYCLE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/main.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../config/pon/qualified-task-lifecycle-v2.json",
+      "resolved": "config/pon/qualified-task-lifecycle-v2.json",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V2.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V2.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/main.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../config/pon/qualified-task-lifecycle-v3.json",
+      "resolved": "config/pon/qualified-task-lifecycle-v3.json",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/main.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../config/pon/qualified-task-lifecycle-v4.json",
+      "resolved": "config/pon/qualified-task-lifecycle-v4.json",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/main.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../config/pon/checkpoint-tile-task-v1.json",
+      "resolved": "config/pon/checkpoint-tile-task-v1.json",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_TASK_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_TASK_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/main.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/store/mempool.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/store/mempool.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../config/pon/integer-factor-candidate-v2.json",
+      "resolved": "config/pon/integer-factor-candidate-v2.json",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/main.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../config/pon/continuity-v1.json",
+      "resolved": "config/pon/continuity-v1.json",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/main.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../config/pon/model-evidence-v3.json",
+      "resolved": "config/pon/model-evidence-v3.json",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/main.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../config/pon/model-composition-v4.json",
+      "resolved": "config/pon/model-composition-v4.json",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/main.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../config/pon/public-evaluation-quorum-v2.json",
+      "resolved": "config/pon/public-evaluation-quorum-v2.json",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/NATIVE_EVALUATION_QUORUM_V2.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/NATIVE_EVALUATION_QUORUM_V2.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/main.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "resolved": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/store.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/error.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/error.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../formal/pon-nakamoto-v1/model_window_history.py",
+      "resolved": "formal/pon-nakamoto-v1/model_window_history.py",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/store.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../config/pon/model-evolution-v5.json",
+      "resolved": "config/pon/model-evolution-v5.json",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/development/specs/pon/MODEL_EVOLUTION_V5.md",
+      "resolved": "docs/development/specs/pon/MODEL_EVOLUTION_V5.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/main.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../config/pon/model-evolution-v5.json",
+      "resolved": "config/pon/model-evolution-v5.json",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/development/specs/pon/MODEL_TASK_WINDOWS_V1.md",
+      "resolved": "docs/development/specs/pon/MODEL_TASK_WINDOWS_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/main.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+      "resolved": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../config/pon/growth-reference-v2.json",
+      "resolved": "config/pon/growth-reference-v2.json",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/development/specs/pon/PERMANENT_ACCOUNT_STORAGE_BOUNDARY.md",
+      "resolved": "docs/development/specs/pon/PERMANENT_ACCOUNT_STORAGE_BOUNDARY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/store/growth_reference.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/store/growth_reference.rs",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../docs/development/specs/pon/REWARD_BUDGETS_V1.md",
+      "resolved": "docs/development/specs/pon/REWARD_BUDGETS_V1.md",
+      "exists": true
+    },
+    {
+      "source": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/store/native_budget.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/src/store/native_budget.rs",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-history-owner-next-20261027/README.md",
+      "target": "source-reconstruction-delta.json",
+      "resolved": "evidence/pon-history-owner-next-20261027/source-reconstruction-delta.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-history-owner-next-20261027/README.md",
+      "target": "narrow-inactive-history/receipt.json",
+      "resolved": "evidence/pon-history-owner-next-20261027/narrow-inactive-history/receipt.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-history-owner-next-20261027/README.md",
+      "target": "narrow-large-state/receipt.json",
+      "resolved": "evidence/pon-history-owner-next-20261027/narrow-large-state/receipt.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-history-owner-next-20261027/README.md",
+      "target": "narrow-source-manifest.json",
+      "resolved": "evidence/pon-history-owner-next-20261027/narrow-source-manifest.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-history-owner-next-20261027/README.md",
+      "target": "poison-followup/build.json",
+      "resolved": "evidence/pon-history-owner-next-20261027/poison-followup/build.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-history-owner-next-20261027/README.md",
+      "target": "phase-qualified/native-controls.json",
+      "resolved": "evidence/pon-history-owner-next-20261027/phase-qualified/native-controls.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-history-owner-next-20261027/README.md",
+      "target": "phase-qualified/artifact-manifest.json",
+      "resolved": "evidence/pon-history-owner-next-20261027/phase-qualified/artifact-manifest.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-history-owner-next-20261027/README.md",
+      "target": "phase-qualified/actual-controls-summary.json",
+      "resolved": "evidence/pon-history-owner-next-20261027/phase-qualified/actual-controls-summary.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-history-owner-next-20261027/README.md",
+      "target": "HOST_BUDGET_APPLICABILITY.md",
+      "resolved": "evidence/pon-history-owner-next-20261027/HOST_BUDGET_APPLICABILITY.md",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-history-owner-next-20261027/README.md",
+      "target": "phase-qualified/deadline-correction/native-artifacts.json",
+      "resolved": "evidence/pon-history-owner-next-20261027/phase-qualified/deadline-correction/native-artifacts.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-history-owner-next-20261027/README.md",
+      "target": "phase-qualified/deadline-correction/source-binding.json",
+      "resolved": "evidence/pon-history-owner-next-20261027/phase-qualified/deadline-correction/source-binding.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-history-owner-next-20261027/README.md",
+      "target": "phase-qualified/deadline-correction/commands.json",
+      "resolved": "evidence/pon-history-owner-next-20261027/phase-qualified/deadline-correction/commands.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-history-owner-next-20261027/README.md",
+      "target": "phase-qualified/fc23-readback-applicability.json",
+      "resolved": "evidence/pon-history-owner-next-20261027/phase-qualified/fc23-readback-applicability.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-history-owner-next-20261027/HOST_BUDGET_APPLICABILITY.md",
+      "target": "phase-qualified/fc23-readback-applicability.json",
+      "resolved": "evidence/pon-history-owner-next-20261027/phase-qualified/fc23-readback-applicability.json",
+      "exists": true
+    }
+  ]
+}

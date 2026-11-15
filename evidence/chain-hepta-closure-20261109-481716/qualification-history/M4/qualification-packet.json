@@ -1,0 +1,8 @@
+{
+  "effects": [],
+  "identity_observation": null,
+  "learning": null,
+  "plan_sha256": "d22f583a8463141b167d32fb19b78d5c41067c9fe03ab521a402e333e2d33f0d",
+  "records": [],
+  "schema": "trnm-chain-hepta-qualification-packet-v1"
+}

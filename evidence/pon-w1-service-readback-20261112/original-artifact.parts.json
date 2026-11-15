@@ -1,0 +1,33 @@
+{
+  "artifact_id": 13918630109,
+  "commit": "229b14c2d366a257f51f287d502a550df2332338",
+  "job_id": 130949245394,
+  "max_part_bytes": 4194304,
+  "native_rerun": false,
+  "original_name": "w1-fresh-service-head-229b14c2d366a257f51f287d502a550df2332338-1",
+  "original_zip_bytes": 5953185,
+  "original_zip_git_blob": "608198d47a2ee319c9e48cefb6bc519b0b7a8746",
+  "original_zip_sha256": "454d78fbb47f518af1347cbbad787a23b7f7e9755a988dd2cd9d80af92be2d70",
+  "parts": [
+    {
+      "bytes": 4194304,
+      "git_blob": "2aba4e1f12e2ef4172a20095a511d384697cb5db",
+      "offset": 0,
+      "path": "original-artifact.zip.part-000",
+      "sha256": "bb3534c57e5ba72eaa2ff63c994ba67d4be7f205aca60069410660056720b1af"
+    },
+    {
+      "bytes": 1758881,
+      "git_blob": "41c5fbca55c2502b9ba4cb5a8f60e8b09d4db90b",
+      "offset": 4194304,
+      "path": "original-artifact.zip.part-001",
+      "sha256": "debee3b920f0dfd564f6e802e3639f1171293d6718293fdf49caec9c65b5b7d6"
+    }
+  ],
+  "production_activation": false,
+  "reconstruction_verified": true,
+  "run_id": 43147686753,
+  "schema": "w1-original-artifact-ordered-raw-parts-v1",
+  "scope": "lossless storage of the original failed native service artifact; no new execution or qualification",
+  "tree": "b386c32458589f81944ddd69c04a56c28c55e284"
+}

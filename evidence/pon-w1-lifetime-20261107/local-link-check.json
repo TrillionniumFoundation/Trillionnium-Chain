@@ -1,0 +1,143 @@
+{
+  "checked": 34,
+  "links": [
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "W1_QROM_IMPLEMENTATION_MAP_20261107.md"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../scripts/w1_lifetime_ledger.py"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../scripts/ci/test_w1_lifetime_ledger.py"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../evidence/pon-w1-lifetime-20261107/project-report.json"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../scripts/w1_fri_transcript_audit.py"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../trillionnium/crates/trnm-protocol/src/pq_frame.rs"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "W1_QROM_IMPLEMENTATION_MAP_20261107.md"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../trillionnium/Cargo.lock"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../evidence/pon-w1-lifetime-20261107/counterexamples.json"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../formal/pon-nakamoto-v1/w1_quantum_oracle.py"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../formal/pon-nakamoto-v1/w1_quantum_restricted_oracle.py"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../formal/pon-nakamoto-v1/quantum_oracle_resources.py"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../formal/pon-nakamoto-v1/quantum_resource_clock.py"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/consensus.rs"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../formal/pon-nakamoto-v1/work_query_bound.py"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../config/pon/devnet-v1.json"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../formal/pon-nakamoto-v1/quantum_daa_model.py"
+    },
+    {
+      "document": "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+      "target": "../../evidence/pon-w1-lifetime-20261107/observation.json"
+    },
+    {
+      "document": "evidence/pon-w1-lifetime-20261107/README.md",
+      "target": "project-input.json"
+    },
+    {
+      "document": "evidence/pon-w1-lifetime-20261107/README.md",
+      "target": "project-report.json"
+    },
+    {
+      "document": "evidence/pon-w1-lifetime-20261107/README.md",
+      "target": "counterexamples.json"
+    },
+    {
+      "document": "evidence/pon-w1-lifetime-20261107/README.md",
+      "target": "observation.json"
+    },
+    {
+      "document": "evidence/pon-w1-lifetime-20261107/README.md",
+      "target": "unit-tests.stderr.log"
+    },
+    {
+      "document": "evidence/pon-w1-lifetime-20261107/README.md",
+      "target": "../../docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md"
+    }
+  ],
+  "scope": "relative file destinations in the two new documents",
+  "status": "PASS"
+}

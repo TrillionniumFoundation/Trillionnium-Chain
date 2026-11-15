@@ -1,0 +1,20 @@
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/29755d2a47ef/chain-hex-current/trillionnium/crates/trnm-protocol)
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/29755d2a47ef/chain-hex-current/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/29755d2a47ef/chain-hex-current/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/29755d2a47ef/chain-hex-current/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/workspace/scratch/29755d2a47ef/chain-hex-current/trillionnium/crates/trnm-verification-profiles)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/29755d2a47ef/chain-hex-current/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/29755d2a47ef/chain-hex-current/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/29755d2a47ef/chain-hex-current/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-mempool v0.1.0 (/workspace/scratch/29755d2a47ef/chain-hex-current/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/workspace/scratch/29755d2a47ef/chain-hex-current/trillionnium/crates/trnm-transport)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/29755d2a47ef/chain-hex-current/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 17m 50s
+     Running unittests src/lib.rs (/workspace/shared/chain-confirmation-target/debug/deps/trnm_pon_node-2aaee31106a4dfcc)
+
+running 3 tests
+test ingress::tests::packet_hex_decoder_preserves_real_packet_and_codec_error_order ... ok
+test ingress::tests::packet_hex_decoder_calls_current_codec_once_only_after_complete_validation ... ok
+test ingress::tests::packet_hex_decoder_matches_retained_canonical_domain ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 1103 filtered out; finished in 0.09s

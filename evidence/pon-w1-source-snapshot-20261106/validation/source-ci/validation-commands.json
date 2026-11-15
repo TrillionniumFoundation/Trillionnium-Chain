@@ -1,0 +1,187 @@
+{
+  "base_head": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+  "consensus_admission": false,
+  "cryptographic_verifier_executed_by_report_gate": false,
+  "execution_was_uncommitted_worktree": true,
+  "new_proofs_generated": 0,
+  "observations": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "combined_stdout_stderr": "evidence/pon-w1-source-snapshot-20261106/validation/source-ci/preflight.log",
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "name": "preflight"
+    },
+    {
+      "argv": [
+        "python3",
+        "evidence/pon-w1-source-snapshot-20261106/validation/source-ci/check_workflow_contract.py",
+        "--repo",
+        "/workspace/scratch/006e9a6c46c6/chain",
+        "--mapper-log",
+        "/workspace/scratch/006e9a6c46c6/chain/evidence/pon-w1-source-snapshot-20261106/validation/source-ci/mapper-tests.log",
+        "--gate-log",
+        "/workspace/scratch/006e9a6c46c6/chain/evidence/pon-w1-source-snapshot-20261106/validation/source-ci/v2-gate-tests.log",
+        "--out",
+        "/workspace/scratch/006e9a6c46c6/chain/evidence/pon-w1-source-snapshot-20261106/validation/source-ci/workflow-contract.json"
+      ],
+      "combined_stdout_stderr": "evidence/pon-w1-source-snapshot-20261106/validation/source-ci/workflow-contract.log",
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "name": "workflow-contract"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "combined_stdout_stderr": "evidence/pon-w1-source-snapshot-20261106/validation/source-ci/diff-check.log",
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "name": "diff-check"
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_w1*py",
+        "-v"
+      ],
+      "combined_stdout_stderr": "evidence/pon-w1-source-snapshot-20261106/validation/source-ci/all-w1-python-tests.log",
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "log_preservation": "Exact combined log copied from the completed executor command; no historical fields rewritten.",
+      "name": "all-w1-python-tests",
+      "test_count": 128
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_w1_v2_controls_gate.py",
+        "-v"
+      ],
+      "combined_stdout_stderr": "evidence/pon-w1-source-snapshot-20261106/validation/source-ci/v2-gate-tests.log",
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "log_preservation": "Exact combined log copied from the completed executor command; no historical fields rewritten.",
+      "name": "v2-gate-tests",
+      "test_count": 23
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_w1_profile_source_map.py",
+        "-v"
+      ],
+      "combined_stdout_stderr": "evidence/pon-w1-source-snapshot-20261106/validation/source-ci/mapper-tests.log",
+      "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+      "exit_code": 0,
+      "log_preservation": "Exact combined log copied from the completed executor command; no historical fields rewritten.",
+      "name": "mapper-tests",
+      "test_count": 15
+    }
+  ],
+  "production_activation": false,
+  "quantum_security_qualified": false,
+  "retained_outputs": {
+    "evidence/pon-w1-source-snapshot-20261106/validation/source-ci/all-w1-python-tests.log": {
+      "bytes": 20686,
+      "git_blob": "63162ddd8b3d37c6c12edd49d96e590074e17a48",
+      "sha256": "ab4ee01329e91bada1214df408160d6c47f58104cfec6957c64c5076b86b9f5f"
+    },
+    "evidence/pon-w1-source-snapshot-20261106/validation/source-ci/check_workflow_contract.py": {
+      "bytes": 6235,
+      "git_blob": "fd8793852fc020348ef96cb2a5eaf41d4a42ff42",
+      "sha256": "5dbb9ce647c93f5efdb18eb5519aaa7057017ca39fe61fac6fbc1882ccefa4b0"
+    },
+    "evidence/pon-w1-source-snapshot-20261106/validation/source-ci/diff-check.log": {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/pon-w1-source-snapshot-20261106/validation/source-ci/mapper-tests.log": {
+      "bytes": 2430,
+      "git_blob": "24f6f348be768646acf8c21d049c753ff1f54d83",
+      "sha256": "696b8c2d5dc490823a8b81bdf33bf63e6cd03df83601d74abc7768d9b4a2ed03"
+    },
+    "evidence/pon-w1-source-snapshot-20261106/validation/source-ci/preflight.log": {
+      "bytes": 166,
+      "git_blob": "cdcdecc9f2c7652b339fe00afd9232a5cce72b15",
+      "sha256": "b442b01107bec1d9f3201e6998cc16802694df2f9f3a348a4eef8ac30efd91cd"
+    },
+    "evidence/pon-w1-source-snapshot-20261106/validation/source-ci/v2-gate-tests.log": {
+      "bytes": 3299,
+      "git_blob": "d8b8ed0012035f1ac7981ac87af8d6ba6d5289f0",
+      "sha256": "36a6e3537a74f7fb84ddb91dbdd9fb7b7f69f88342b1ee152b80d244f1fe4343"
+    },
+    "evidence/pon-w1-source-snapshot-20261106/validation/source-ci/workflow-contract.json": {
+      "bytes": 3834,
+      "git_blob": "3bd0bfdea67aa7e28277ffe0cdcc690cdf383f35",
+      "sha256": "358231cc9b6d0dd4bd79e59bd2943bd0885de67f42f70c92bfa739d62ca64e51"
+    },
+    "evidence/pon-w1-source-snapshot-20261106/validation/source-ci/workflow-contract.log": {
+      "bytes": 109,
+      "git_blob": "06a4bd56a5c22ad601c5d86e74e98f7bd5d5698d",
+      "sha256": "5beed43ae901ab5580fb9822566081f723aacddfe344fd2c304c59a96d18f3bb"
+    }
+  },
+  "schema": "TRNM-W1-SOURCE-CI-VALIDATION1",
+  "source_files": {
+    ".github/workflows/pon-w1-transparent-profile.yml": {
+      "bytes": 30317,
+      "git_blob": "576ce233210de95844a4be5a496c7f296afa27cf",
+      "sha256": "d4ee22ca97d6881570baa4cb4c74ba1f46a00a5912b114228e732f2bc8888679"
+    },
+    "evidence/pon-w1-source-snapshot-20261106/validation/source-ci/check_workflow_contract.py": {
+      "bytes": 6235,
+      "git_blob": "fd8793852fc020348ef96cb2a5eaf41d4a42ff42",
+      "sha256": "5dbb9ce647c93f5efdb18eb5519aaa7057017ca39fe61fac6fbc1882ccefa4b0"
+    },
+    "scripts/ci/test_w1_profile_source_map.py": {
+      "bytes": 13007,
+      "git_blob": "d7ca0d83ed3030b8327a65655f38498356a0b563",
+      "sha256": "032b0be0389528c37f70ffe844ae9cc50345e0df8f9f8ed702aa0b5270a2f744"
+    },
+    "scripts/ci/test_w1_v2_controls_gate.py": {
+      "bytes": 11156,
+      "git_blob": "954cb0f8766a3d95cbd88d6bd8b5d40c9f00b5bf",
+      "sha256": "7bcc0ae8816e3156d354b467b003d90ed131b31aba1653003c0fae2bdddb750f"
+    },
+    "scripts/ci/w1_v2_controls_gate.py": {
+      "bytes": 9835,
+      "git_blob": "83a496e55231ca1774ec0051facd99eae47f6715",
+      "sha256": "49ef8c18ac19a3cce763d24aa3743ea11586b0cce3bd36ffd9390d450a7b175a"
+    },
+    "scripts/w1_profile_source_map.py": {
+      "bytes": 33723,
+      "git_blob": "ddf8b839a8429f97204feadd5ffc4829345e5e40",
+      "sha256": "324dc1726fc5bfcfd79e5d78d890737bfdd3c5877d74e417d2ed8018254523b0"
+    },
+    "scripts/w1_v2_receipt_controls.py": {
+      "bytes": 23014,
+      "git_blob": "6c0369081013550e861c48d9d906b0c72fc815d8",
+      "sha256": "ef68fc78226d0eee314d7457a4f2b54235be0fadf3786f79493b974c8f5569c3"
+    }
+  }
+}

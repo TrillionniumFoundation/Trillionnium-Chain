@@ -1,0 +1,31 @@
+{
+  "schema": "native-integer-model-source-composition-v6",
+  "profile": "linear-factor-source-composition-dev-v6",
+  "consensus_revision": 18,
+  "empirical_material": "model-evidence-v3.json",
+  "component_min": 2,
+  "component_max": 4,
+  "source_min": 2,
+  "source_max": 4,
+  "aggregation": "complete-parent-relative-update-before-source-omission-and-allocation",
+  "subset_rule": "reject-any-subset-of-two-or-more-known-sources-with-exact-zero-full-parent-relative-sum",
+  "evaluation": "complete-native-source-aggregate-and-leave-source-out-no-error-to-zero",
+  "bundle_gate": "strictly-better-than-parent-frozen-controls-and-every-source-aggregate",
+  "source_weight": "floor-positive-leave-source-out-correct-count-gain-times-scale-over-task-count",
+  "score_scale": 1000000,
+  "allocation": "one-positive-leaf-at-smallest-contribution-id-owned-by-authorized-source-payee-all-other-leaves-zero",
+  "payout": "one-floor-per-source-budget-times-source-weight-over-total-source-weight",
+  "dust": "original-release-deadline-refund",
+  "source_budget": "original-installed-source-round-intake-and-actual-payout-caps",
+  "source_payees": [
+    {"source":"2d15f82cbd5a13fb2fa0a02486170349e262259d740d0ac810c47172a2e80c87","payee":"79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9"},
+    {"source":"53b46f5e3b2e83ccb1d61fce3c9f62c6fe62581a8690dd38e7307e30582488e2","payee":"79ff17be1447f408a50b56fa5816a80d8db8377ae7188f89efc0225303f1ef21"},
+    {"source":"fd0ae9af1c64f47251b4b36f42d6c88d45da6fd41d1b0a5b08f86d0d696368fd","payee":"bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"}
+  ],
+  "production_activation": false,
+  "prospective_accepted": false,
+  "independent_accepted": false,
+  "unknown_common_control_discovered": false,
+  "public_reward_eligible": false,
+  "shapley_fairness_accepted": false
+}

@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "test_cost_envelope_contract_v1.py",
+    "-v"
+  ],
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "env_overrides": {
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_TERMINAL_PROMPT": "0",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONHASHSEED": "0"
+  },
+  "expected_source_commit": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+  "expected_source_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+  "started_utc": "2026-11-09T04:03:04.948001+00:00",
+  "timeout_seconds": 180
+}

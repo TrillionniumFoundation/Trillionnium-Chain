@@ -1,0 +1,15 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "scripts/test_cell_learning_iteration_join.py",
+    "-v"
+  ],
+  "elapsed_seconds": 0.5156047700002091,
+  "exit_code": 0,
+  "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/learning-iteration.log",
+  "log_sha256": "4238dd733aa6eb3dddd341b084b7de0861626e55a787e06daaa558bb1b88bfa9",
+  "name": "learning-iteration",
+  "started_utc": "2026-11-11T01:28:25.579067+00:00",
+  "tests": 25
+}

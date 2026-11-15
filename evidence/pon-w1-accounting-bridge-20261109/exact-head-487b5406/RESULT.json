@@ -1,0 +1,64 @@
+{
+  "all_algorithm_cost_bound": null,
+  "count_scope": "successful runs across two executions on identical source; not one all-green campaign; CI doubles are synthetic",
+  "files": [
+    {
+      "bytes": 3705,
+      "path": "evidence/pon-w1-accounting-bridge-20261109/exact-head-487b5406/fixed-head-487b5406.json",
+      "sha256": "029dc5af60978581bb5339953fa67e28a5f2246032f4fb12161d472ad528583e"
+    },
+    {
+      "bytes": 161601,
+      "path": "evidence/pon-w1-accounting-bridge-20261109/exact-head-487b5406/fixed-head-487b5406.log",
+      "sha256": "6f81035676aed536bf64321607251bcf3e2e04f425536904a67b6f446aa8187a"
+    },
+    {
+      "bytes": 2780,
+      "path": "evidence/pon-w1-accounting-bridge-20261109/exact-head-487b5406/fixed-head-487b5406-private-tmp.json",
+      "sha256": "81d7df44a03031777df9ed4fbedce52e0cef1099269bae39da8d1107c6e63cd2"
+    },
+    {
+      "bytes": 42438,
+      "path": "evidence/pon-w1-accounting-bridge-20261109/exact-head-487b5406/fixed-head-487b5406-private-tmp.log",
+      "sha256": "43fe24ad7c0ab2ed354fc3c6ddfa1d08876c9fdda7fe3f8bccab89f869a2e1ef"
+    },
+    {
+      "bytes": 9189,
+      "path": "evidence/pon-w1-accounting-bridge-20261109/exact-head-487b5406/ci-snapshot.json",
+      "sha256": "d351dc40ffe1fa32c4553ed38de9fd10a6e0330c4d8f44b0de9977629f3820b7"
+    }
+  ],
+  "first_run": "command_failed_preserved_ENOSPC",
+  "hosted_qualification": "MIXED_NOT_ALL_PASS",
+  "native_rust_execution": "NOT_RUN",
+  "private_tmp_retry": "command_succeeded",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "schema": "pon-w1-accounting-head-validation-v1",
+  "source_identity": {
+    "base": null,
+    "candidate": "487b5406b20b487c1a372d19a103f29dcea110b9",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "487b5406b20b487c1a372d19a103f29dcea110b9",
+    "tested_tree": "7eb19399c2fabeab81441d06fb6e2d8762effb24",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2502238895,
+    "tracked_entries": 26211,
+    "tracked_worktree_verified": true
+  },
+  "static_checks": 4,
+  "successful_method_total": 314,
+  "successful_suite_methods": [
+    17,
+    21,
+    29,
+    15,
+    23,
+    166,
+    43
+  ],
+  "tested_commit": "487b5406b20b487c1a372d19a103f29dcea110b9",
+  "vector_replays": 2
+}

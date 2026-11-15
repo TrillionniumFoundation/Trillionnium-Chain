@@ -1,0 +1,40 @@
+[
+  {
+    "identity": [
+      "trnm-data-availability",
+      "0.1.0",
+      ""
+    ],
+    "before": {
+      "name": "trnm-data-availability",
+      "version": "0.1.0",
+      "dependencies": [
+        "borsh",
+        "ed25519-dalek",
+        "fs2",
+        "libc",
+        "rusqlite",
+        "sha2",
+        "trnm-crypto-primitives",
+        "trnm-protocol",
+        "zeroize"
+      ]
+    },
+    "after": {
+      "name": "trnm-data-availability",
+      "version": "0.1.0",
+      "dependencies": [
+        "borsh",
+        "ed25519-dalek",
+        "fs2",
+        "libc",
+        "rusqlite",
+        "rustix",
+        "sha2",
+        "trnm-crypto-primitives",
+        "trnm-protocol",
+        "zeroize"
+      ]
+    }
+  }
+]

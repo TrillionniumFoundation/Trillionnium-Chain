@@ -1,0 +1,16 @@
+{
+  "schema": "cell-preliminary-preparation-evidence-gap-v1",
+  "observation": "Cloud preparation compile ENOSPC observed; raw stdout/stderr and exact argv unavailable.",
+  "evidence_basis": "Earlier exec output summarized in this conversation; bounded task-file audits did not recover a persistent raw log.",
+  "preparation_head": "b66e66d2465258d808c0f56ff851123306d4bdb4",
+  "overlay_source": "0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a source blobs plus uncommitted V3 edits",
+  "exact_frozen_source_execution": false,
+  "original_stdout_available": false,
+  "original_stderr_available": false,
+  "exact_argv": null,
+  "test_selector": null,
+  "native_test_counts": null,
+  "target": "/workspace/scratch/f2568c76b48f/cell-native-target",
+  "cleanup_report": "Only the stopped task-owned target was removed, approximately 229 MB, according to the retained conversation summary.",
+  "qualification": "Excluded from native/runtime acceptance; not an execution of exact 0dc, C2 or C3. Later green runs do not reconstruct this missing evidence."
+}

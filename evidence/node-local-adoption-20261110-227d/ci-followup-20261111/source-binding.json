@@ -1,0 +1,47 @@
+{
+  "source": "eb32162449eab623f69bbd7016b694600cb382c5",
+  "tree": "c15f37e3f64456c9817019e8aec5d723a29549f0",
+  "native_runtime_source": "b9a38fd6d245e20849c7edd848dbbe18298cad7e",
+  "code_config_inventory_count": 2103,
+  "unchanged_code_config_objects": 2101,
+  "changed_objects": [
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "before": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "9781fc7225c50b3a8710ce10a1adba332c2617df"
+      },
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "d6fd70fdeadab55c40289d62b628f543a0e83ebf"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "before": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "4fe60f533f051cd1a68c4358e96d210d8f7d32c0"
+      },
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "6bd0c0456e6cfe07abd9b0547720e006bcc15f08"
+      }
+    }
+  ],
+  "da_and_workspace_inputs_identical_to_b9": true,
+  "da_tree": "edb975b936aebf92bd4ad00f4b402834bb4b0c75",
+  "da_and_workspace_worktree_files_verified": 175,
+  "cargo_lock_sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+  "metadata_byte_identical_to_retained_95a2": true,
+  "metadata_sha256": "81bb7691688e2d2ea4e36009b9136e6183a04b494ef8db3927f5b9c4be05e6f7",
+  "workspace_packages": 26,
+  "resolved_packages": 177,
+  "resolve_nodes": 177,
+  "fresh_native_or_clippy_executed": false,
+  "note": "Original b9 DA test/Clippy outcomes remain source-bound to unchanged DA/graph inputs; refreshing example inventory and PQ pins is not a new native test run.",
+  "inventory_source": "Original 2,103-entry code-path-hashes.json.gz (includes all .github entries, not only workflows)."
+}

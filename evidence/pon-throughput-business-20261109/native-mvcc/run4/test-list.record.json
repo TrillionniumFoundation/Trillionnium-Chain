@@ -1,0 +1,43 @@
+{
+  "argv": [
+    "/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/trnm_mvcc_fee-15769a7ae1c1421f",
+    "--list"
+  ],
+  "cwd": "/workspace/scratch/a0d4983b1065/chain-throughput",
+  "disk_after": {
+    "free_bytes": 811810816,
+    "total_bytes": 67586535424,
+    "used_bytes": 63321976832
+  },
+  "disk_before": {
+    "free_bytes": 811831296,
+    "total_bytes": 67586535424,
+    "used_bytes": 63321956352
+  },
+  "exit_code": 0,
+  "extra_env": {},
+  "name": "test-list",
+  "rusage": {
+    "ru_idrss": 0,
+    "ru_inblock": 0,
+    "ru_isrss": 0,
+    "ru_ixrss": 0,
+    "ru_majflt": 0,
+    "ru_maxrss": 18012,
+    "ru_minflt": 349,
+    "ru_msgrcv": 0,
+    "ru_msgsnd": 0,
+    "ru_nivcsw": 1,
+    "ru_nsignals": 0,
+    "ru_nswap": 0,
+    "ru_nvcsw": 1,
+    "ru_oublock": 40,
+    "ru_stime": 0.014643999999999999,
+    "ru_utime": 0.014142
+  },
+  "rusage_maxrss_unit": "KiB (Linux)",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "da27cd5c3fe14a51771c970561fa5655a6c4820d3c09329d446181814ade484e",
+  "waited_pid": 141,
+  "wall_ns": 29546015
+}

@@ -1,0 +1,37 @@
+{
+  "schema": "collector-local-shape-refusal-v1",
+  "observed_utc": "2026-11-03T22:59:37.260563+00:00",
+  "operation": "C2 F0 readback generation",
+  "failure": "Reader incorrectly required derived execution/finalization round records to equal the native report object shape",
+  "output_written": false,
+  "actual_execution_and_finalization_rounds_equal": true,
+  "native_first_round": {
+    "actual_ended_ns": 22304593197,
+    "actual_started_ns": 1000084461,
+    "confirmed_inside_original_window": true,
+    "elapsed_from_scheduled_ns": 21304593197,
+    "end_lateness_from_four_second_deadline_ns": 17304593197,
+    "four_second_slo_met": false,
+    "observed_exactly_once": true,
+    "old_root_code_already_enforced_four_second_slo": false,
+    "phase": "baseline",
+    "round": 0,
+    "scheduled_offset_ns": 1000000000,
+    "start_lateness_from_schedule_ns": 84461
+  },
+  "derived_first_round": {
+    "actual_ended_ns": 22304593197,
+    "actual_started_ns": 1000084461,
+    "confirmed_inside_original_window": true,
+    "elapsed_from_scheduled_ns": 21304593197,
+    "end_lateness_from_four_second_deadline_ns": 17304593197,
+    "four_second_slo_met": false,
+    "observed_exactly_once": true,
+    "phase": "baseline",
+    "round": 0,
+    "scheduled_offset_ns": 1000000000,
+    "start_lateness_from_schedule_ns": 84461
+  },
+  "native_verdict_unchanged": true,
+  "next": "Compare exact matching factual fields and independently recompute derived schedule fields; preserve original records"
+}

@@ -1,0 +1,426 @@
+{
+  "batch_workers": 4,
+  "cheapest_strategy_proven": false,
+  "clock_authenticated": false,
+  "command_timeout_seconds": 300,
+  "created_utc": "2026-11-12T05:11:24.681745+00:00",
+  "cross_architecture_qualified": false,
+  "feature_provenance_verified": false,
+  "grid": [
+    [
+      "zero",
+      0,
+      1
+    ],
+    [
+      "zero",
+      0,
+      8
+    ],
+    [
+      "zero",
+      1,
+      1
+    ],
+    [
+      "zero",
+      1,
+      8
+    ],
+    [
+      "zero",
+      2,
+      1
+    ],
+    [
+      "zero",
+      3,
+      1
+    ],
+    [
+      "rank-one",
+      0,
+      1
+    ],
+    [
+      "rank-one",
+      0,
+      8
+    ],
+    [
+      "rank-one",
+      1,
+      1
+    ],
+    [
+      "rank-one",
+      1,
+      8
+    ],
+    [
+      "rank-one",
+      2,
+      1
+    ],
+    [
+      "rank-one",
+      3,
+      1
+    ],
+    [
+      "rank-two-left",
+      0,
+      1
+    ],
+    [
+      "rank-two-left",
+      0,
+      8
+    ],
+    [
+      "rank-two-left",
+      1,
+      1
+    ],
+    [
+      "rank-two-left",
+      1,
+      8
+    ],
+    [
+      "rank-two-left",
+      2,
+      1
+    ],
+    [
+      "rank-two-left",
+      3,
+      1
+    ],
+    [
+      "rank-four-left",
+      0,
+      1
+    ],
+    [
+      "rank-four-left",
+      0,
+      8
+    ],
+    [
+      "rank-four-left",
+      1,
+      1
+    ],
+    [
+      "rank-four-left",
+      1,
+      8
+    ],
+    [
+      "rank-four-left",
+      2,
+      1
+    ],
+    [
+      "rank-four-left",
+      3,
+      1
+    ],
+    [
+      "rank-eight-left",
+      0,
+      1
+    ],
+    [
+      "rank-eight-left",
+      0,
+      8
+    ],
+    [
+      "rank-eight-left",
+      1,
+      1
+    ],
+    [
+      "rank-eight-left",
+      1,
+      8
+    ],
+    [
+      "rank-eight-left",
+      2,
+      1
+    ],
+    [
+      "rank-eight-left",
+      3,
+      1
+    ],
+    [
+      "rank-four-right",
+      0,
+      1
+    ],
+    [
+      "rank-four-right",
+      0,
+      8
+    ],
+    [
+      "rank-four-right",
+      1,
+      1
+    ],
+    [
+      "rank-four-right",
+      1,
+      8
+    ],
+    [
+      "rank-four-right",
+      2,
+      1
+    ],
+    [
+      "rank-four-right",
+      3,
+      1
+    ],
+    [
+      "rank-nine-left",
+      0,
+      1
+    ],
+    [
+      "rank-nine-left",
+      0,
+      8
+    ],
+    [
+      "rank-nine-left",
+      1,
+      1
+    ],
+    [
+      "rank-nine-left",
+      1,
+      8
+    ],
+    [
+      "rank-nine-left",
+      2,
+      1
+    ],
+    [
+      "rank-nine-left",
+      3,
+      1
+    ],
+    [
+      "full-rank-field",
+      0,
+      1
+    ],
+    [
+      "full-rank-field",
+      0,
+      8
+    ],
+    [
+      "full-rank-field",
+      1,
+      1
+    ],
+    [
+      "full-rank-field",
+      1,
+      8
+    ],
+    [
+      "full-rank-field",
+      2,
+      1
+    ],
+    [
+      "full-rank-field",
+      3,
+      1
+    ],
+    [
+      "sparse-diagonal",
+      0,
+      1
+    ],
+    [
+      "sparse-diagonal",
+      0,
+      8
+    ],
+    [
+      "sparse-diagonal",
+      1,
+      1
+    ],
+    [
+      "sparse-diagonal",
+      1,
+      8
+    ],
+    [
+      "sparse-diagonal",
+      2,
+      1
+    ],
+    [
+      "sparse-diagonal",
+      3,
+      1
+    ],
+    [
+      "one-zero-rank-one",
+      0,
+      1
+    ],
+    [
+      "one-zero-rank-one",
+      0,
+      8
+    ],
+    [
+      "one-zero-rank-one",
+      1,
+      1
+    ],
+    [
+      "one-zero-rank-one",
+      1,
+      8
+    ],
+    [
+      "one-zero-rank-one",
+      2,
+      1
+    ],
+    [
+      "one-zero-rank-one",
+      3,
+      1
+    ],
+    [
+      "continuity-maintenance-v1",
+      0,
+      1
+    ],
+    [
+      "continuity-maintenance-v1",
+      0,
+      8
+    ],
+    [
+      "continuity-maintenance-v1",
+      1,
+      1
+    ],
+    [
+      "continuity-maintenance-v1",
+      1,
+      8
+    ],
+    [
+      "continuity-maintenance-v1",
+      2,
+      1
+    ],
+    [
+      "continuity-maintenance-v1",
+      3,
+      1
+    ]
+  ],
+  "horizons_correlated": true,
+  "host": {
+    "allowed_cpus": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "cgroup": {
+      "cpu.max": {
+        "unavailable": "FileNotFoundError"
+      },
+      "cpuset.cpus.effective": "0-3",
+      "memory.max": {
+        "unavailable": "FileNotFoundError"
+      },
+      "memory.swap.max": {
+        "unavailable": "FileNotFoundError"
+      },
+      "pids.max": {
+        "unavailable": "FileNotFoundError"
+      }
+    },
+    "logical_cpus": 4,
+    "machine": "aarch64",
+    "system": "Linux",
+    "uname": [
+      "Linux",
+      "runnervmkb2gk",
+      "7.0.0-1017-azure",
+      "#17~24.04.1-Ubuntu SMP PREEMPT Thu Sep 24 19:06:39 UTC 2026",
+      "aarch64",
+      "aarch64"
+    ]
+  },
+  "independent_w1_replay": false,
+  "limit": 4096,
+  "no_retry_or_result_selection": true,
+  "production_activation": false,
+  "public_service_qualified": false,
+  "rank_bound": 8,
+  "samples": 8,
+  "schema": "pon-w1-rank-batch-declaration-v5",
+  "source": {
+    "commit": "229b14c2d366a257f51f287d502a550df2332338",
+    "source_state": "committed-clean",
+    "tracked_bytes": 2583659022,
+    "tracked_entries": 28344,
+    "tracked_worktree_verified": true,
+    "tree": "b386c32458589f81944ddd69c04a56c28c55e284"
+  },
+  "source_execution_authenticated": false,
+  "strategies": [
+    "full-limb-dense-lazy",
+    "full-limb-sparse-lazy",
+    "full-limb-rank8-lazy",
+    "full-limb-rank8-batch4-lazy",
+    "scalar-original",
+    "prepared-generic",
+    "prepared-structured",
+    "tiled-classical",
+    "tiled-strassen-one-level",
+    "paired-product",
+    "blocked-zero",
+    "blocked-zero-integer-paired",
+    "blocked-one-zero-rank-one",
+    "maintenance-periodic",
+    "maintenance-integer-paired",
+    "maintenance-prefix",
+    "maintenance-limb"
+  ],
+  "termination_grace_seconds": 5,
+  "toolchain": {
+    "cargo": {
+      "launcher_sha256": "a9c168dbea81a84671c6b7a5c1795cb0eb699020110d107ddfca427bd797e697",
+      "path": "/home/runner/.cargo/bin/cargo",
+      "resolved_launcher": "/home/runner/.cargo/bin/rustup"
+    },
+    "rustc": {
+      "launcher_sha256": "a9c168dbea81a84671c6b7a5c1795cb0eb699020110d107ddfca427bd797e697",
+      "path": "/home/runner/.cargo/bin/rustc",
+      "resolved_launcher": "/home/runner/.cargo/bin/rustup"
+    }
+  },
+  "work_profile_qualified": false
+}

@@ -1,0 +1,1 @@
+{"executed_tests": 1, "result": "PASS", "scope": "named-libtest-execution-only", "test": "store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire"}

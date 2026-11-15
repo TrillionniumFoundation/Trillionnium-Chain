@@ -1,0 +1,46 @@
+{
+  "consensus_changed": false,
+  "frozen_main": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+  "independent_accepted": false,
+  "not_run": [
+    "full stacked checkout checker",
+    "Rust Cargo",
+    "full-node native PQ",
+    "live ML-KEM WAN",
+    "independent antirollback",
+    "quantum W1 hardness",
+    "independent security review"
+  ],
+  "observations": {
+    "after_combined_patch": {
+      "errors": 0,
+      "failures": 0,
+      "test_methods": 19
+    },
+    "after_fixture_before_ancestry_guard": {
+      "negative_subtest_failures": 3,
+      "test_methods": 19
+    },
+    "before_fixture_correction": {
+      "errors": 2,
+      "failures": 17,
+      "test_methods": 16
+    },
+    "python": "3.13.5",
+    "test_scope": "isolated exact two-file Python research fixture"
+  },
+  "original_exact_blobs": {
+    "checker": "ab7aa05706d06959c6c727a6c61e212faabc59de",
+    "test": "9c69007966b7a0dc02361c1913fbf16f65ddeb77"
+  },
+  "parent_pql10b": "668c41cead73ebef83212094d0c077ee788f1570",
+  "parent_pql11": "7d9a8550c684c8a7324b7811929cbf4ee95efe53",
+  "production_activation": false,
+  "resulting_exact_blobs": {
+    "docs/security/PQ_PQL11B_FIXTURE_AND_MODULE_PATH_V1.md": "1ebee07a90adf88b21e26f2c25fbc22f2286b04c",
+    "scripts/ci/check_pq_research_integration.py": "fb61d25a8e20b8f1322b096f84ee2496c3929e35",
+    "scripts/ci/test_pq_research_integration.py": "2b0195e9b3fda391fc65de830fa61819fbe5a22d"
+  },
+  "schema": "trnm-pq-pql11b-frozen-source-local-fixture-v1",
+  "status": "HOLD_NO_GO"
+}

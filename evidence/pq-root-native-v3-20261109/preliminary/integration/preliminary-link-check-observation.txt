@@ -1,0 +1,5 @@
+Observed before the dependency manifest was created; development worktree, not final committed-source validation.
+Command: python3 scripts/ci/check_repository.py
+Exit code: 2
+Tool-returned output:
+Repository check failed: broken link docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md -> ../../config/pon/pq-root-dependency-register-v3.json

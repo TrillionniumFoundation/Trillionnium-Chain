@@ -1,0 +1,12 @@
+{
+  "name": "ci-contract",
+  "command": [
+    "python3",
+    "scripts/ci/test_ci_contract.py"
+  ],
+  "exit_code": 0,
+  "started_unix_ns": 1793524915860083175,
+  "ended_unix_ns": 1793524920574895112,
+  "stdout_bytes": 0,
+  "stderr_bytes": 15864
+}

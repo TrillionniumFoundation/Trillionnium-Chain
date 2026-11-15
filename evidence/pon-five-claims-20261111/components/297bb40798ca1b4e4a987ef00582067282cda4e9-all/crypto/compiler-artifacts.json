@@ -1,0 +1,36 @@
+[
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_crypto_primitives-ec09512dfb6081aa",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_crypto_primitives-ec09512dfb6081aa"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-crypto-primitives#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "lib"
+      ],
+      "doc": true,
+      "doctest": true,
+      "edition": "2021",
+      "kind": [
+        "lib"
+      ],
+      "name": "trnm_crypto_primitives",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+      "test": true
+    }
+  }
+]

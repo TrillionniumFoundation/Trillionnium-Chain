@@ -1,0 +1,15 @@
+test_all_signed_qtx1_body_mutations_reject (test_pq_native_qtx1.NativeQtx1Tests.test_all_signed_qtx1_body_mutations_reject) ... ok
+test_all_tpq1_statement_mutations_reject (test_pq_native_qtx1.NativeQtx1Tests.test_all_tpq1_statement_mutations_reject) ... ok
+test_bad_signature_key_and_classical_downgrade_reject (test_pq_native_qtx1.NativeQtx1Tests.test_bad_signature_key_and_classical_downgrade_reject) ... ok
+test_cross_purpose_signature_is_not_transaction (test_pq_native_qtx1.NativeQtx1Tests.test_cross_purpose_signature_is_not_transaction) ... ok
+test_exact_512_byte_memo_and_large_fee (test_pq_native_qtx1.NativeQtx1Tests.test_exact_512_byte_memo_and_large_fee) ... ok
+test_exact_wire_sizes_reject_length_memo_and_spki_confusion (test_pq_native_qtx1.NativeQtx1Tests.test_exact_wire_sizes_reject_length_memo_and_spki_confusion) ... ok
+test_real_ml_dsa_signature_matches_python_oracle_and_pinned_id (test_pq_native_qtx1.NativeQtx1Tests.test_real_ml_dsa_signature_matches_python_oracle_and_pinned_id) ... ok
+test_repeated_signature_has_stable_identity_not_signature_bytes (test_pq_native_qtx1.NativeQtx1Tests.test_repeated_signature_has_stable_identity_not_signature_bytes) ... ok
+test_replay_domain_and_caller_owned_state (test_pq_native_qtx1.NativeQtx1Tests.test_replay_domain_and_caller_owned_state) ... ok
+test_structurally_valid_resigned_but_mismatched_owner_reject (test_pq_native_qtx1.NativeQtx1Tests.test_structurally_valid_resigned_but_mismatched_owner_reject) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 16.140s
+
+OK

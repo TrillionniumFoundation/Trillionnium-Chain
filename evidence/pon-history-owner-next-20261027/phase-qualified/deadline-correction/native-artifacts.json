@@ -1,0 +1,32 @@
+[
+  {
+    "name": "public_v3_multiprocess",
+    "artifact": "/tmp/target-history-56818e4fba76/debug/deps/public_v3_multiprocess-b925461c415cbaf8",
+    "retained": "/tmp/history-phase-qualified-20261028/deadline-correction/public_v3_multiprocess",
+    "bytes": 75283280,
+    "sha256": "5cb30a8ebad891bf7181c9ae0eed72abd811e137741789010ff31da76670087d",
+    "identical_to_measured_48aa_elf": false,
+    "compiler_artifact_profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": true
+    }
+  },
+  {
+    "name": "trnm_pon_node",
+    "artifact": "/tmp/target-history-56818e4fba76/debug/deps/trnm_pon_node-9e86f7cb7a9d0a67",
+    "retained": "/tmp/history-phase-qualified-20261028/trnm_pon_node",
+    "bytes": 126556056,
+    "sha256": "0f82f1a43c785ac6610789df27379c3bba166036bb39b5589d75b92ef6fdc927",
+    "identical_to_measured_48aa_elf": true,
+    "compiler_artifact_profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": true
+    }
+  }
+]

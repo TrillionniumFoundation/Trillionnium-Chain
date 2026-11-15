@@ -1,0 +1,54 @@
+{
+  "args": [
+    "/home/qian-qi/work/chain-w1-carry-backend-20261108-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research",
+    "verify",
+    "/home/qian-qi/work/chain-w1-packed-carry-measurements-20261108-f16ac/04-A/prepared/statement.bin",
+    "/home/qian-qi/work/chain-w1-carry-backend-20261108-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin",
+    "/home/qian-qi/work/chain-w1-carry-backend-20261108-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin",
+    "/home/qian-qi/work/chain-w1-packed-carry-measurements-20261108-f16ac/04-A/proof"
+  ],
+  "utc_start": "2026-11-08T03:30:48.829424+00:00",
+  "exit_code": 0,
+  "outer_wall_s": 0.91886484,
+  "peak_rss_kib": 132992,
+  "report": {
+    "arith_proof_bytes": 530885,
+    "arith_proof_sha256": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204",
+    "preprocessing_source": "canonical public statement plus independent expected inputs; rebuilt in this process",
+    "process_wall_ms": 912.433834,
+    "public_bytes": 377290,
+    "qualification": "HOLD_NO_GO",
+    "schema": "trnm-w1-complete-public-stark-run-v1",
+    "security_claim": "research execution only; no concrete noninteractive security qualification",
+    "sha_proof_bytes": 4356101,
+    "sha_proof_sha256": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+    "statement_sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+    "status": "VERIFIED_COMPLETE_W1_RESEARCH_ONLY",
+    "timings": [
+      {
+        "elapsed_ms": 15.153863999999999,
+        "phase": "bounded_read_decode_and_proof_shape"
+      },
+      {
+        "elapsed_ms": 7.592630000000001,
+        "phase": "canonical_plans_and_public_only_sha_air"
+      },
+      {
+        "elapsed_ms": 44.062126,
+        "phase": "sha_verifier_independent_preprocessing_setup"
+      },
+      {
+        "elapsed_ms": 243.673867,
+        "phase": "sha_stark_verify"
+      },
+      {
+        "elapsed_ms": 537.270096,
+        "phase": "arith_verifier_independent_preprocessing_setup"
+      },
+      {
+        "elapsed_ms": 31.385308000000002,
+        "phase": "arith_stark_verify"
+      }
+    ]
+  }
+}

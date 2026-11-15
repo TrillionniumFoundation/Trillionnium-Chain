@@ -1,0 +1,26 @@
+[
+  {
+    "label": "preflight-audit",
+    "exit": 0,
+    "seconds": 0.05,
+    "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+  },
+  {
+    "label": "merge-bindings",
+    "exit": 0,
+    "seconds": 0.137,
+    "sha256": "47e0c3adea37fcb6b2b8c244526bb512eb9ea20e111bd988566da1c94c4ac29d"
+  },
+  {
+    "label": "diff-check",
+    "exit": 0,
+    "seconds": 0.018,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "distributed-inventory-check",
+    "exit": 1,
+    "seconds": 0.046,
+    "sha256": "3060c11e06f46d1cbf92fbb40b0ecf6bfd5482816a73a13c7267e2efa34b28fb"
+  }
+]

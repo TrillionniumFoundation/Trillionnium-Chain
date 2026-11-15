@@ -1,0 +1,153 @@
+{
+  "head": "b16bae2824e6c8236ef2011fc93a74df3ac7f039",
+  "tree": "a7e3ae9d9a4f6efa5950de6763be20ba5f3b19b5",
+  "entries": [
+    {
+      "path": ".github/workflows/pon-work-time-contract-v1.yml",
+      "mode": "100644",
+      "sha": "e21f9c903e7b915d11d1ef0194b140c051b6b06b",
+      "bytes": 2935,
+      "sha256": "5f2fc1eb5272da1869c76dae36363491314e44bb0887b5a744b02edfd8840aa9"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "mode": "100644",
+      "sha": "307a7f68df8e93ea83e5ef6390efdbf006cf090a",
+      "bytes": 602935,
+      "sha256": "a020c632d070a02acaec6a8fe13dcaada0f73b8efd08795b2d13fc1bc3312e89"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/BRANCH_TIME_DAA_V1.md",
+      "mode": "100644",
+      "sha": "377932be5b9305f1c22ee08b714fb4ff97bc3e96",
+      "bytes": 13412,
+      "sha256": "02a61cb4a3b84470e7f65273c666412fc9e7aa2f66dbd728dfe9b3bad523348b"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/COST_ENVELOPE_CONTRACT_V1.md",
+      "mode": "100644",
+      "sha": "ba536f328edb1e18bbfa078e5521fd856b685f9f",
+      "bytes": 21326,
+      "sha256": "44a44feaad8fc6c757a84cc881a84d0b4c017b67cd022202ead0484e831963ab"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/LEGAL_OPTIMIZATION_CATALOG_V1.md",
+      "mode": "100644",
+      "sha": "e7aa8e5211cde7810b6f97c43b54d92d7b367e1d",
+      "bytes": 9998,
+      "sha256": "9fb46e6a0f248ba77d224c3c46c4b3d8f19740c8090a378f6adc65d96f45fca1"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/WORK_COST_CONTRACT_V1.md",
+      "mode": "100644",
+      "sha": "02169a71bd7a50c3ced62debc98710e95e6b0968",
+      "bytes": 7335,
+      "sha256": "ca3b39a85405371da3ef60124900d965b542fe863c9973edfe9079c0c91fbc3b"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/WORK_TIME_COST_INTEGRATION_20261108.md",
+      "mode": "100644",
+      "sha": "208c68187986237a4e916cec938aeef4c44cf39e",
+      "bytes": 9521,
+      "sha256": "872aa04d5e7c92415b7a023e111401f441e2af95963fe87540f9675a347247f2"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/branch_time_daa_v1.py",
+      "mode": "100644",
+      "sha": "386e165d20c8e2fa6df1e4050884f935fddec643",
+      "bytes": 23794,
+      "sha256": "ec4810d8350fb131d0a000971354ee006a957094afa90b81137d0cba5c1be276"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/contracts/cost-envelope-counterexample-v1.json",
+      "mode": "100644",
+      "sha": "b94a33c042737d397cebf7ea6a827050ea32bb09",
+      "bytes": 6346,
+      "sha256": "0c21da7fb7614796f4b7ec8104f483869a3e5ea2922e480d50ccf8e5ea3df3bc"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/contracts/cost-envelope-current-hold-v1.json",
+      "mode": "100644",
+      "sha": "c149b1d2adb84c14788d21104f9af29f888491cd",
+      "bytes": 4275,
+      "sha256": "5baa95901b44e024cd239179642f5e1576b7d5ee24d4fe9adff89cf48f6fa223"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/contracts/legal-optimization-catalog-v1.json",
+      "mode": "100644",
+      "sha": "f74ff040b9cc47da31f360de0d2b68f25f526c98",
+      "bytes": 779,
+      "sha256": "67ae5b57f6d49438a1ccec8fd4a9567e8dce3486ddd4088652cb7498544a7a1b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/contracts/work-cost-contract-v1.json",
+      "mode": "100644",
+      "sha": "fe4ba9a88508e5a748ecd0333bbef50cfe1d6a91",
+      "bytes": 507048,
+      "sha256": "3c21ea1823c6193ad41039034693799bc7673777305a103f425df65fe8891c34"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/contracts/work-time-required-tests-v1.json",
+      "mode": "100644",
+      "sha": "ee6b77290385bf9cfa48d7901da94a6ee501e009",
+      "bytes": 12109,
+      "sha256": "28f1ef0c2e1bd63bc37ff06318aa30cc657266bfa8a7a363658f681f03b55ebc"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/cost_envelope_contract_v1.py",
+      "mode": "100644",
+      "sha": "e977a45f0fe9d58cd1aa411bd75ced1fbdd49e5c",
+      "bytes": 20787,
+      "sha256": "beca7a2b073716567f887d31f7e3c84fa6e30744bde23d92866d2ba14efa0971"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/legal_optimization_catalog_v1.py",
+      "mode": "100644",
+      "sha": "0fc1537a78b75b82ee5bb889216c846a8c82b25f",
+      "bytes": 31790,
+      "sha256": "5b61a79f9904404241e0b677d03cf43518bd42eebecee0a032e4d5de5e58936d"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_branch_time_daa_v1.py",
+      "mode": "100644",
+      "sha": "4c4854ed54bdedb57f20699fceebed653cec857b",
+      "bytes": 26038,
+      "sha256": "9459bdbbe7e25730be1b7098ebd0e684571432e9a2650339af4d9aa97ac1c8d4"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_cost_envelope_contract_v1.py",
+      "mode": "100644",
+      "sha": "c2c4b4b77c11ae0e0ffcee2b140a0b90a1951a4f",
+      "bytes": 22482,
+      "sha256": "8d9c2cf44cd9b2794981cc61ed27d69bcaa283117bbc48dcf1e9e20f898b0178"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_legal_optimization_catalog_v1.py",
+      "mode": "100644",
+      "sha": "c285d2d6e5163cc84a2eb78536885f84164bf3bb",
+      "bytes": 11865,
+      "sha256": "2b2610bae0e8183bffe380d305609c1bbb53371ace47e355b4e76f0ce98ce58c"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_work_profile_contract_v1.py",
+      "mode": "100644",
+      "sha": "e965d5895502946ebbc9acc8b5ac304d2fb7850e",
+      "bytes": 7191,
+      "sha256": "0f28a29dbcf8cd53311f02f6df6de34850a999c7984641383fca7ff0b1aee95d"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_profile_contract_v1.py",
+      "mode": "100644",
+      "sha": "f9f5784cb92399aaffd0463eec847c2800707d81",
+      "bytes": 13401,
+      "sha256": "9d26c123d594b22327f0ebcbb1fb6c2ed066aaff0afc3867898e999c4a8c71e1"
+    },
+    {
+      "path": "scripts/ci/run_work_time_contract_v1.py",
+      "mode": "100644",
+      "sha": "8e961fe1c4ea242aab7b008207bcc73bddb3da7a",
+      "bytes": 9806,
+      "sha256": "81bf574a822160736d5f1d5cc4ca8d719be20dd2d8984476f4c79bafeed7ffaa"
+    }
+  ]
+}

@@ -1,0 +1,754 @@
+{
+  "artifact_metadata_sha256": "907cfa6926a0dacd95d48170e4e2f6022e6cd3ee59bdff2b891c41b22cadd1dc",
+  "artifacts": [
+    {
+      "all_extracted_zip_members_match": true,
+      "artifact_id": 13081005037,
+      "artifact_name": "w1-legal-strategy-head-x64-8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47-1",
+      "captures": [
+        {
+          "actual_campaign_count": 30,
+          "actual_source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+          "actual_source_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+          "all_original_command_budgets_preserved": true,
+          "architecture": "x64",
+          "captured_cargo_configs_all_absent_before_and_after": true,
+          "cargo_graph_retained_for_this_job": false,
+          "cargo_locked_default_release_command_match": true,
+          "manifest_sha256": "eaf2d57a161188d0c0ee7b9dc8660230acfc90c01448fe059138bcd8251c3738",
+          "native_compiler_host_target_match": true,
+          "path": "13081005037/w1-legal-strategy-v1/manifest.json",
+          "reported_compiled_crate_count": 64,
+          "reported_compiled_crates_match_lock": true,
+          "runner_context": {
+            "GITHUB_EVENT_NAME": "pull_request",
+            "GITHUB_JOB": "legal-strategy",
+            "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_RUN_ID": "41298626837",
+            "ImageOS": "ubuntu24",
+            "ImageVersion": "20261026.354.1",
+            "RUNNER_ARCH": "X64",
+            "RUNNER_NAME": "GitHub Actions 1000312759",
+            "RUNNER_OS": "Linux",
+            "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04"
+          },
+          "target": "x86_64-unknown-linux-gnu"
+        }
+      ],
+      "cargo_graph": {
+        "retained": false
+      },
+      "github_digest_matches": true,
+      "original_zip_bytes": 35894037,
+      "original_zip_sha256": "f9f767dd9967f29e090a505a99745ee96c3eba0444fa3b3e14c8b341685c70b8",
+      "source_before_after_identical": true,
+      "source_identity": {
+        "base": null,
+        "candidate": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+        "tested_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792454268,
+        "tracked_entries": 6852,
+        "tracked_worktree_verified": true
+      },
+      "zip_file_member_count": 79
+    },
+    {
+      "all_extracted_zip_members_match": true,
+      "artifact_id": 13080975027,
+      "artifact_name": "w1-legal-strategy-prospective-merge-x64-a7169139ce2a24f0d582ac348be8f74d56d44f9f-1",
+      "captures": [
+        {
+          "actual_campaign_count": 30,
+          "actual_source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+          "actual_source_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+          "all_original_command_budgets_preserved": true,
+          "architecture": "x64",
+          "captured_cargo_configs_all_absent_before_and_after": true,
+          "cargo_graph_retained_for_this_job": false,
+          "cargo_locked_default_release_command_match": true,
+          "manifest_sha256": "6a8aa8a0fdce9c73dde028a20aa96dd5e83a2d2dae8c3fa563af814ea3c3fb74",
+          "native_compiler_host_target_match": true,
+          "path": "13080975027/w1-legal-strategy-v1/manifest.json",
+          "reported_compiled_crate_count": 64,
+          "reported_compiled_crates_match_lock": true,
+          "runner_context": {
+            "GITHUB_EVENT_NAME": "pull_request",
+            "GITHUB_JOB": "legal-strategy",
+            "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_RUN_ID": "41298626837",
+            "ImageOS": "ubuntu24",
+            "ImageVersion": "20261026.354.1",
+            "RUNNER_ARCH": "X64",
+            "RUNNER_NAME": "GitHub Actions 1000312756",
+            "RUNNER_OS": "Linux",
+            "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04"
+          },
+          "target": "x86_64-unknown-linux-gnu"
+        }
+      ],
+      "cargo_graph": {
+        "retained": false
+      },
+      "github_digest_matches": true,
+      "original_zip_bytes": 35900059,
+      "original_zip_sha256": "1b31f8c5bdf00e3915ca15ba63e43eb5052755fb962dfa394e298159196957ef",
+      "source_before_after_identical": true,
+      "source_identity": {
+        "base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+        "candidate": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+        "kind": "prospective-merge",
+        "prospective_merge": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+        "tested_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792454268,
+        "tracked_entries": 6852,
+        "tracked_worktree_verified": true
+      },
+      "zip_file_member_count": 79
+    },
+    {
+      "all_extracted_zip_members_match": true,
+      "artifact_id": 13080726688,
+      "artifact_name": "w1-legal-strategy-prospective-merge-arm64-a7169139ce2a24f0d582ac348be8f74d56d44f9f-1",
+      "captures": [
+        {
+          "actual_campaign_count": 30,
+          "actual_source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+          "actual_source_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+          "all_original_command_budgets_preserved": true,
+          "architecture": "arm64",
+          "captured_cargo_configs_all_absent_before_and_after": true,
+          "cargo_graph_retained_for_this_job": false,
+          "cargo_locked_default_release_command_match": true,
+          "manifest_sha256": "ea0a80537dba6f1d374492b961fc043fb9c8b100526ddc052f3ea2227a062c9b",
+          "native_compiler_host_target_match": true,
+          "path": "13080726688/w1-legal-strategy-v1/manifest.json",
+          "reported_compiled_crate_count": 65,
+          "reported_compiled_crates_match_lock": true,
+          "runner_context": {
+            "GITHUB_EVENT_NAME": "pull_request",
+            "GITHUB_JOB": "legal-strategy",
+            "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_RUN_ID": "41298626837",
+            "ImageOS": "ubuntu24-arm64",
+            "ImageVersion": "20261026.166.1",
+            "RUNNER_ARCH": "ARM64",
+            "RUNNER_NAME": "GitHub Actions 1000312773",
+            "RUNNER_OS": "Linux",
+            "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04-arm"
+          },
+          "target": "aarch64-unknown-linux-gnu"
+        }
+      ],
+      "cargo_graph": {
+        "retained": false
+      },
+      "github_digest_matches": true,
+      "original_zip_bytes": 35893899,
+      "original_zip_sha256": "2ac0cb7f3b786d411da572dd246dde2b6a8aa98cd16bb019f67008a7d138c49a",
+      "source_before_after_identical": true,
+      "source_identity": {
+        "base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+        "candidate": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+        "kind": "prospective-merge",
+        "prospective_merge": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+        "tested_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792454268,
+        "tracked_entries": 6852,
+        "tracked_worktree_verified": true
+      },
+      "zip_file_member_count": 79
+    },
+    {
+      "all_extracted_zip_members_match": true,
+      "artifact_id": 13080572291,
+      "artifact_name": "w1-legal-strategy-head-arm64-8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47-1",
+      "captures": [
+        {
+          "actual_campaign_count": 30,
+          "actual_source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+          "actual_source_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+          "all_original_command_budgets_preserved": true,
+          "architecture": "arm64",
+          "captured_cargo_configs_all_absent_before_and_after": true,
+          "cargo_graph_retained_for_this_job": false,
+          "cargo_locked_default_release_command_match": true,
+          "manifest_sha256": "0c851b4d894c8ff3f2834648d829fc552cd8b1348173d06db54c07e5df8c2871",
+          "native_compiler_host_target_match": true,
+          "path": "13080572291/w1-legal-strategy-v1/manifest.json",
+          "reported_compiled_crate_count": 65,
+          "reported_compiled_crates_match_lock": true,
+          "runner_context": {
+            "GITHUB_EVENT_NAME": "pull_request",
+            "GITHUB_JOB": "legal-strategy",
+            "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_RUN_ID": "41298626837",
+            "ImageOS": "ubuntu24-arm64",
+            "ImageVersion": "20261026.166.1",
+            "RUNNER_ARCH": "ARM64",
+            "RUNNER_NAME": "GitHub Actions 1000312774",
+            "RUNNER_OS": "Linux",
+            "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04-arm"
+          },
+          "target": "aarch64-unknown-linux-gnu"
+        }
+      ],
+      "cargo_graph": {
+        "retained": false
+      },
+      "github_digest_matches": true,
+      "original_zip_bytes": 35893210,
+      "original_zip_sha256": "0eecb75c3447088053b0d19dd866460f9a4695a40cbd7d67d452e8ad53ef5f44",
+      "source_before_after_identical": true,
+      "source_identity": {
+        "base": null,
+        "candidate": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+        "tested_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792454268,
+        "tracked_entries": 6852,
+        "tracked_worktree_verified": true
+      },
+      "zip_file_member_count": 79
+    },
+    {
+      "all_extracted_zip_members_match": true,
+      "artifact_id": 13080552293,
+      "artifact_name": "w1-false-trace-prospective-merge-x64-a7169139ce2a24f0d582ac348be8f74d56d44f9f-1",
+      "captures": [
+        {
+          "actual_campaign_count": 1,
+          "actual_source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+          "actual_source_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+          "all_original_command_budgets_preserved": true,
+          "architecture": "x64",
+          "captured_cargo_configs_all_absent_before_and_after": true,
+          "cargo_graph_retained_for_this_job": true,
+          "cargo_locked_default_release_command_match": true,
+          "manifest_sha256": "b083c568cb83031843739418b32ecd44ab31270bfa099f442cc7856d5e1b10f9",
+          "native_compiler_host_target_match": true,
+          "path": "13080552293/w1-false-trace-reuse-v1/manifest.json",
+          "reported_compiled_crate_count": 64,
+          "reported_compiled_crates_match_lock": true,
+          "runner_context": {
+            "GITHUB_EVENT_NAME": "pull_request",
+            "GITHUB_JOB": "false-trace-reuse",
+            "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_RUN_ID": "41298626837",
+            "ImageOS": "ubuntu24",
+            "ImageVersion": "20261026.354.1",
+            "RUNNER_ARCH": "X64",
+            "RUNNER_NAME": "GitHub Actions 1000312760",
+            "RUNNER_OS": "Linux",
+            "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04"
+          },
+          "target": "x86_64-unknown-linux-gnu"
+        },
+        {
+          "actual_campaign_count": 1,
+          "actual_source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+          "actual_source_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+          "all_original_command_budgets_preserved": true,
+          "architecture": "x64",
+          "captured_cargo_configs_all_absent_before_and_after": true,
+          "cargo_graph_retained_for_this_job": true,
+          "cargo_locked_default_release_command_match": true,
+          "manifest_sha256": "f76c4de3e4b5f29d483200edadbfba50a8118fbf9b71cf7410982ca9c9d174ba",
+          "native_compiler_host_target_match": true,
+          "path": "13080552293/w1-full-limb-reuse-v1/manifest.json",
+          "reported_compiled_crate_count": 0,
+          "reported_compiled_crates_match_lock": true,
+          "runner_context": {
+            "GITHUB_EVENT_NAME": "pull_request",
+            "GITHUB_JOB": "false-trace-reuse",
+            "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_RUN_ID": "41298626837",
+            "ImageOS": "ubuntu24",
+            "ImageVersion": "20261026.354.1",
+            "RUNNER_ARCH": "X64",
+            "RUNNER_NAME": "GitHub Actions 1000312760",
+            "RUNNER_OS": "Linux",
+            "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04"
+          },
+          "target": "x86_64-unknown-linux-gnu"
+        }
+      ],
+      "cargo_graph": {
+        "all_resolved_names_versions_sources_match_lock": true,
+        "dependency_references_closed": true,
+        "locked_but_not_in_metadata": [
+          [
+            "foreign-types",
+            "0.3.2",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ],
+          [
+            "foreign-types-shared",
+            "0.1.1",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ],
+          [
+            "openssl",
+            "0.10.81",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ],
+          [
+            "openssl-macros",
+            "0.1.1",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ],
+          [
+            "openssl-sys",
+            "0.9.117",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ]
+        ],
+        "package_count": 174,
+        "retained": true,
+        "sha256": "b85459ae3ab292c2f09cd55cb9b8c6bc88fbd9fe2798ce677e9c777d85ec9c36",
+        "workspace_member_count": 26,
+        "workspace_members_match_exact_source": true
+      },
+      "github_digest_matches": true,
+      "original_zip_bytes": 5567836,
+      "original_zip_sha256": "21403207d99dd827db1a8db8577e15f263e7cb32dec0e31564643b1c6c95cf37",
+      "source_before_after_identical": true,
+      "source_identity": {
+        "base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+        "candidate": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+        "kind": "prospective-merge",
+        "prospective_merge": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+        "tested_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792454268,
+        "tracked_entries": 6852,
+        "tracked_worktree_verified": true
+      },
+      "zip_file_member_count": 40
+    },
+    {
+      "all_extracted_zip_members_match": true,
+      "artifact_id": 13080377955,
+      "artifact_name": "w1-false-trace-head-arm64-8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47-1",
+      "captures": [
+        {
+          "actual_campaign_count": 1,
+          "actual_source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+          "actual_source_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+          "all_original_command_budgets_preserved": true,
+          "architecture": "arm64",
+          "captured_cargo_configs_all_absent_before_and_after": true,
+          "cargo_graph_retained_for_this_job": true,
+          "cargo_locked_default_release_command_match": true,
+          "manifest_sha256": "127b103fbf869a3fc7640c314c6e2dc241a86811829edc9071999d03c1133ca4",
+          "native_compiler_host_target_match": true,
+          "path": "13080377955/w1-false-trace-reuse-v1/manifest.json",
+          "reported_compiled_crate_count": 65,
+          "reported_compiled_crates_match_lock": true,
+          "runner_context": {
+            "GITHUB_EVENT_NAME": "pull_request",
+            "GITHUB_JOB": "false-trace-reuse",
+            "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_RUN_ID": "41298626837",
+            "ImageOS": "ubuntu24-arm64",
+            "ImageVersion": "20261026.166.1",
+            "RUNNER_ARCH": "ARM64",
+            "RUNNER_NAME": "GitHub Actions 1000312772",
+            "RUNNER_OS": "Linux",
+            "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04-arm"
+          },
+          "target": "aarch64-unknown-linux-gnu"
+        },
+        {
+          "actual_campaign_count": 1,
+          "actual_source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+          "actual_source_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+          "all_original_command_budgets_preserved": true,
+          "architecture": "arm64",
+          "captured_cargo_configs_all_absent_before_and_after": true,
+          "cargo_graph_retained_for_this_job": true,
+          "cargo_locked_default_release_command_match": true,
+          "manifest_sha256": "a91d4b0cb9e39a82abb2ad018c4f3d900907587889e6c92f315d2c0966c67c1d",
+          "native_compiler_host_target_match": true,
+          "path": "13080377955/w1-full-limb-reuse-v1/manifest.json",
+          "reported_compiled_crate_count": 0,
+          "reported_compiled_crates_match_lock": true,
+          "runner_context": {
+            "GITHUB_EVENT_NAME": "pull_request",
+            "GITHUB_JOB": "false-trace-reuse",
+            "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_RUN_ID": "41298626837",
+            "ImageOS": "ubuntu24-arm64",
+            "ImageVersion": "20261026.166.1",
+            "RUNNER_ARCH": "ARM64",
+            "RUNNER_NAME": "GitHub Actions 1000312772",
+            "RUNNER_OS": "Linux",
+            "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04-arm"
+          },
+          "target": "aarch64-unknown-linux-gnu"
+        }
+      ],
+      "cargo_graph": {
+        "all_resolved_names_versions_sources_match_lock": true,
+        "dependency_references_closed": true,
+        "locked_but_not_in_metadata": [
+          [
+            "foreign-types",
+            "0.3.2",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ],
+          [
+            "foreign-types-shared",
+            "0.1.1",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ],
+          [
+            "openssl",
+            "0.10.81",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ],
+          [
+            "openssl-macros",
+            "0.1.1",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ],
+          [
+            "openssl-sys",
+            "0.9.117",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ]
+        ],
+        "package_count": 174,
+        "retained": true,
+        "sha256": "b85459ae3ab292c2f09cd55cb9b8c6bc88fbd9fe2798ce677e9c777d85ec9c36",
+        "workspace_member_count": 26,
+        "workspace_members_match_exact_source": true
+      },
+      "github_digest_matches": true,
+      "original_zip_bytes": 5544694,
+      "original_zip_sha256": "d93b75bcf8e54e62afbe34b71f3db9eef58dff040d0bc343cde818fbc00e01dc",
+      "source_before_after_identical": true,
+      "source_identity": {
+        "base": null,
+        "candidate": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+        "tested_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792454268,
+        "tracked_entries": 6852,
+        "tracked_worktree_verified": true
+      },
+      "zip_file_member_count": 40
+    },
+    {
+      "all_extracted_zip_members_match": true,
+      "artifact_id": 13080333217,
+      "artifact_name": "w1-false-trace-prospective-merge-arm64-a7169139ce2a24f0d582ac348be8f74d56d44f9f-1",
+      "captures": [
+        {
+          "actual_campaign_count": 1,
+          "actual_source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+          "actual_source_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+          "all_original_command_budgets_preserved": true,
+          "architecture": "arm64",
+          "captured_cargo_configs_all_absent_before_and_after": true,
+          "cargo_graph_retained_for_this_job": true,
+          "cargo_locked_default_release_command_match": true,
+          "manifest_sha256": "98ce80450e8ef1960b2060a5c5ab29a8c0ee6c60e94daa3935935808852721f1",
+          "native_compiler_host_target_match": true,
+          "path": "13080333217/w1-false-trace-reuse-v1/manifest.json",
+          "reported_compiled_crate_count": 65,
+          "reported_compiled_crates_match_lock": true,
+          "runner_context": {
+            "GITHUB_EVENT_NAME": "pull_request",
+            "GITHUB_JOB": "false-trace-reuse",
+            "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_RUN_ID": "41298626837",
+            "ImageOS": "ubuntu24-arm64",
+            "ImageVersion": "20261026.166.1",
+            "RUNNER_ARCH": "ARM64",
+            "RUNNER_NAME": "GitHub Actions 1000312775",
+            "RUNNER_OS": "Linux",
+            "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04-arm"
+          },
+          "target": "aarch64-unknown-linux-gnu"
+        },
+        {
+          "actual_campaign_count": 1,
+          "actual_source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+          "actual_source_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+          "all_original_command_budgets_preserved": true,
+          "architecture": "arm64",
+          "captured_cargo_configs_all_absent_before_and_after": true,
+          "cargo_graph_retained_for_this_job": true,
+          "cargo_locked_default_release_command_match": true,
+          "manifest_sha256": "af5b34b3f9cf2066e418b07999bb1ed6ad1e452b62c665a0aa311305f5a78501",
+          "native_compiler_host_target_match": true,
+          "path": "13080333217/w1-full-limb-reuse-v1/manifest.json",
+          "reported_compiled_crate_count": 0,
+          "reported_compiled_crates_match_lock": true,
+          "runner_context": {
+            "GITHUB_EVENT_NAME": "pull_request",
+            "GITHUB_JOB": "false-trace-reuse",
+            "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_RUN_ID": "41298626837",
+            "ImageOS": "ubuntu24-arm64",
+            "ImageVersion": "20261026.166.1",
+            "RUNNER_ARCH": "ARM64",
+            "RUNNER_NAME": "GitHub Actions 1000312775",
+            "RUNNER_OS": "Linux",
+            "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04-arm"
+          },
+          "target": "aarch64-unknown-linux-gnu"
+        }
+      ],
+      "cargo_graph": {
+        "all_resolved_names_versions_sources_match_lock": true,
+        "dependency_references_closed": true,
+        "locked_but_not_in_metadata": [
+          [
+            "foreign-types",
+            "0.3.2",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ],
+          [
+            "foreign-types-shared",
+            "0.1.1",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ],
+          [
+            "openssl",
+            "0.10.81",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ],
+          [
+            "openssl-macros",
+            "0.1.1",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ],
+          [
+            "openssl-sys",
+            "0.9.117",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ]
+        ],
+        "package_count": 174,
+        "retained": true,
+        "sha256": "b85459ae3ab292c2f09cd55cb9b8c6bc88fbd9fe2798ce677e9c777d85ec9c36",
+        "workspace_member_count": 26,
+        "workspace_members_match_exact_source": true
+      },
+      "github_digest_matches": true,
+      "original_zip_bytes": 5544493,
+      "original_zip_sha256": "0e0059c1d74502e2920648ea2430fb83be8a5327b4b025aaf99d57d7a5c3bdba",
+      "source_before_after_identical": true,
+      "source_identity": {
+        "base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+        "candidate": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+        "kind": "prospective-merge",
+        "prospective_merge": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+        "tested_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792454268,
+        "tracked_entries": 6852,
+        "tracked_worktree_verified": true
+      },
+      "zip_file_member_count": 40
+    },
+    {
+      "all_extracted_zip_members_match": true,
+      "artifact_id": 13079739170,
+      "artifact_name": "w1-false-trace-head-x64-8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47-1",
+      "captures": [
+        {
+          "actual_campaign_count": 1,
+          "actual_source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+          "actual_source_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+          "all_original_command_budgets_preserved": true,
+          "architecture": "x64",
+          "captured_cargo_configs_all_absent_before_and_after": true,
+          "cargo_graph_retained_for_this_job": true,
+          "cargo_locked_default_release_command_match": true,
+          "manifest_sha256": "10d3b118461717095b04b8421fbf6e3d4114c1607ef054fd80e5d1b1ff936c98",
+          "native_compiler_host_target_match": true,
+          "path": "13079739170/w1-false-trace-reuse-v1/manifest.json",
+          "reported_compiled_crate_count": 64,
+          "reported_compiled_crates_match_lock": true,
+          "runner_context": {
+            "GITHUB_EVENT_NAME": "pull_request",
+            "GITHUB_JOB": "false-trace-reuse",
+            "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_RUN_ID": "41298626837",
+            "ImageOS": "ubuntu24",
+            "ImageVersion": "20261026.354.1",
+            "RUNNER_ARCH": "X64",
+            "RUNNER_NAME": "GitHub Actions 1000312758",
+            "RUNNER_OS": "Linux",
+            "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04"
+          },
+          "target": "x86_64-unknown-linux-gnu"
+        },
+        {
+          "actual_campaign_count": 1,
+          "actual_source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+          "actual_source_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+          "all_original_command_budgets_preserved": true,
+          "architecture": "x64",
+          "captured_cargo_configs_all_absent_before_and_after": true,
+          "cargo_graph_retained_for_this_job": true,
+          "cargo_locked_default_release_command_match": true,
+          "manifest_sha256": "f5f6c0ba8bf11f4d21c9b75f5c43a62a272304f815ec6078c128db783c4d9312",
+          "native_compiler_host_target_match": true,
+          "path": "13079739170/w1-full-limb-reuse-v1/manifest.json",
+          "reported_compiled_crate_count": 0,
+          "reported_compiled_crates_match_lock": true,
+          "runner_context": {
+            "GITHUB_EVENT_NAME": "pull_request",
+            "GITHUB_JOB": "false-trace-reuse",
+            "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_RUN_ID": "41298626837",
+            "ImageOS": "ubuntu24",
+            "ImageVersion": "20261026.354.1",
+            "RUNNER_ARCH": "X64",
+            "RUNNER_NAME": "GitHub Actions 1000312758",
+            "RUNNER_OS": "Linux",
+            "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04"
+          },
+          "target": "x86_64-unknown-linux-gnu"
+        }
+      ],
+      "cargo_graph": {
+        "all_resolved_names_versions_sources_match_lock": true,
+        "dependency_references_closed": true,
+        "locked_but_not_in_metadata": [
+          [
+            "foreign-types",
+            "0.3.2",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ],
+          [
+            "foreign-types-shared",
+            "0.1.1",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ],
+          [
+            "openssl",
+            "0.10.81",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ],
+          [
+            "openssl-macros",
+            "0.1.1",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ],
+          [
+            "openssl-sys",
+            "0.9.117",
+            "registry+https://github.com/rust-lang/crates.io-index"
+          ]
+        ],
+        "package_count": 174,
+        "retained": true,
+        "sha256": "b85459ae3ab292c2f09cd55cb9b8c6bc88fbd9fe2798ce677e9c777d85ec9c36",
+        "workspace_member_count": 26,
+        "workspace_members_match_exact_source": true
+      },
+      "github_digest_matches": true,
+      "original_zip_bytes": 5567475,
+      "original_zip_sha256": "c1c7e69d987b330fcba61ae1d4335c872ff08a9366edf9e875de75c93301c1ff",
+      "source_before_after_identical": true,
+      "source_identity": {
+        "base": null,
+        "candidate": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+        "tested_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792454268,
+        "tracked_entries": 6852,
+        "tracked_worktree_verified": true
+      },
+      "zip_file_member_count": 40
+    }
+  ],
+  "cargo_lock_sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+  "distinct_metadata_graph_sha256": [
+    "b85459ae3ab292c2f09cd55cb9b8c6bc88fbd9fe2798ce677e9c777d85ec9c36"
+  ],
+  "expected_head": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+  "expected_merge": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+  "limitations": [
+    "No native binary was executed by this readback.",
+    "Four false-trace job artifacts retain cargo metadata graphs; the four legal-strategy jobs do not retain separate metadata graphs. Their locked command, exact tree, configuration, compiler identity and reported build output are checked; missing graphs are not reconstructed as original evidence.",
+    "Cargo metadata resolved packages are checked against the exact lockfile, but this does not independently reproduce a native build or artifact provenance.",
+    "Source/binary/archive consistency is not attestation of hardware independence, runtime clocks, adversarial optimality, work hardness or public service acceptance."
+  ],
+  "merge_git_identity": {
+    "parents": [
+      "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+      "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47"
+    ],
+    "retrieval": "read-only GitHub git/commits GET",
+    "sha": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+    "tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/a7169139ce2a24f0d582ac348be8f74d56d44f9f"
+  },
+  "metadata_graph_count": 4,
+  "reader_source": {
+    "files_sha256": {
+      "config/pon/work-security-acceptance-v1.json": "4ca674c305112d51672efcab6c0f886e477a5397191addb806d209a08266165f",
+      "scripts/pon_w1_cost_matrix_reader.py": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa",
+      "scripts/pon_w1_false_trace_reuse_reader_v1.py": "7455227a2acfec76505c480e4513acbbb9764b59cc1e6a3d8bdaf70d2f9f409c",
+      "scripts/pon_w1_legal_strategy_reader_v1.py": "9864915b191d00d60ea89cc1651e07a5121878fd2965dddf037f0b1da1cfc2fa"
+    },
+    "git_blob_sha1": {
+      "config/pon/work-security-acceptance-v1.json": "fd29f1ee4d03b16b84c3ae445765955b9c1c2bab",
+      "scripts/pon_w1_cost_matrix_reader.py": "fe710e05048916145180cf1cf8870bc31a94dec8",
+      "scripts/pon_w1_false_trace_reuse_reader_v1.py": "eeacb22e5b57f423dfcab4bdb4d358c5f670ca05",
+      "scripts/pon_w1_legal_strategy_reader_v1.py": "6b997945b25ed897fbaaba3a3ee760f1f756ff81"
+    },
+    "retrieval": "git show of exact retained commit object",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "source_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a"
+  },
+  "result": "PASS_RETAINED_CONSISTENCY_CHECKS",
+  "run_id": 41298626837,
+  "same_source_tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+  "schema": "pon-w1-independent-ci-provenance-readback-v1",
+  "workspace_manifest_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+}

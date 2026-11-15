@@ -1,0 +1,74 @@
+{
+  "catalog": {
+    "accepted_candidates_are_repeated_across_matched_strategies": true,
+    "cohorts": 24,
+    "complete_relation_replays": 96,
+    "controlled_cancellations": 24,
+    "independent_mining_samples": false,
+    "local_bank_extractions": 24,
+    "minimum_legal_cost_proved": false,
+    "native_admitted_blocks": 0,
+    "no_hit_cohorts": 0,
+    "original_target_accepted_candidates": 57,
+    "original_target_refusals": 39,
+    "post_first_hit_complete_attempts": 57,
+    "qualification": "HOLD_NO_GO",
+    "result": "PASS",
+    "schema": "pon-legal-optimization-observation-v1-replay",
+    "separate_replay_timing": {
+      "cpu_ns": 8677982350,
+      "wall_ns": 8701646048
+    },
+    "withheld_hits": 33
+  },
+  "contract_digest": "6d71aced74e18bcb025653ba0f03efc8475d014de04ed4563f2ba3545b213ed7",
+  "cost_envelope": {
+    "current": "HOLD_MISSING_BOUNDS",
+    "minimum_expected_credit": {
+      "d": 2,
+      "n": 7
+    },
+    "missing_endpoints": 12,
+    "paid_batch_counterexample": "INFEASIBLE",
+    "permitted_credit": {
+      "d": 1,
+      "n": 3
+    }
+  },
+  "named_controls": {
+    "failed": 0,
+    "module_counts": {
+      "branch_time": 31,
+      "cost_envelope": 29,
+      "legal_optimization": 25,
+      "work_profile": 19
+    },
+    "passed": 104,
+    "skipped": 0
+  },
+  "native_tree": "bf84f89b235adfcffcb0d3540c22c120f4031e13",
+  "overall_status": "HOLD_NO_GO",
+  "qualification": {
+    "all_legal_algorithm_cost_lower_bound": false,
+    "joint_cp_cq_cg_proof": false,
+    "lifetime_security_bound": null,
+    "native_time_daa_upgrade": false,
+    "production_activation": false,
+    "real_hepta_product_loop": false,
+    "same_iteration_deployment": false,
+    "variable_u_native_relation": false
+  },
+  "retained_failures": [
+    {
+      "exit_code": 2,
+      "message": "Repository check failed: broken link docs/README.md -> ../evidence/pon-v1/README.md",
+      "native_execution": false,
+      "scope": "prepublication sparse whole-repository check"
+    }
+  ],
+  "schema": "pon-work-time-qualification-observation-v1",
+  "source_commit": "2141962ea7b9a1498acbd99acfdfe123335f613c",
+  "source_tree": "a7e3ae9d9a4f6efa5950de6763be20ba5f3b19b5",
+  "verified_baseline_bytes": 27613671,
+  "verified_baseline_entries": 1747
+}

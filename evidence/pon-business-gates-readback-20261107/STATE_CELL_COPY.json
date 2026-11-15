@@ -1,0 +1,1150 @@
+{
+  "schema": "trnm-state-cell-preserved-copy-v1",
+  "copied_utc": "2026-11-07T17:39:50Z",
+  "integration_head_before_after": "d116e8382d4f24047b73c894edf32d244fed1b2c",
+  "files": 156,
+  "bytes": 887995,
+  "roots": [
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107",
+      "destination": "state-564-failure",
+      "files": 27,
+      "bytes": 51002
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107",
+      "destination": "state-5fdf-native",
+      "files": 51,
+      "bytes": 87771
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107",
+      "destination": "state-5fdf-cost",
+      "files": 19,
+      "bytes": 239595
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107",
+      "destination": "state-integration",
+      "files": 11,
+      "bytes": 7143
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff",
+      "destination": "cell-formal-preparation",
+      "files": 48,
+      "bytes": 502484
+    }
+  ],
+  "omitted_executables": [
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/failed-node-test-binary",
+      "bytes": 77968816,
+      "sha256": "9d81a0e0dc45f48ea8e31af842ecd282346a175992f7e9be5eca71c16b5a92e3",
+      "reason": "Native executable retained on Desktop; binary identity included, executable omitted from review text archive."
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/candidate-node-test-binary",
+      "bytes": 77974880,
+      "sha256": "33f1377e8e703ab9d9a2376d6da39bc3e50d02d7f9a8fd43032954f6941e596a",
+      "reason": "Native executable retained on Desktop; binary identity included, executable omitted from review text archive."
+    }
+  ],
+  "entries": [
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/adoption-contract-v2.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/adoption-contract-v2.json",
+      "bytes": 1300,
+      "sha256": "270d029283f07152da8feff2ceba6f23208289e820c9eb5d77eb5a7fc819279c",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/commit-macro-fix.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/commit-macro-fix.log",
+      "bytes": 161,
+      "sha256": "9ff1779adf05541865e63b0933e72b2a9c92f31199287a164a23ff4c9171213d",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/corpus-check.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/corpus-check.log",
+      "bytes": 557,
+      "sha256": "bd2380956217c7b0b6fc86e59a936eccdfa10128c8f7cade2cd324e20ee3686f",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/cost-plan.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/cost-plan.json",
+      "bytes": 2447,
+      "sha256": "ac3a75b5fec4b1044e81f142e380054248834109cdf365b9b242ce4204ea4667",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/diff-check.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/final-diff-check.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/final-diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/format-check-corrected.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/format-check-corrected.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/format-check.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/format-check.log",
+      "bytes": 786,
+      "sha256": "ea7d34b3cb236f13a17fe0b0fcc3b117848c084a581f0dd3828f5891b99357c8",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/full-source-after.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/full-source-after.log",
+      "bytes": 423,
+      "sha256": "180eb26b12779750331d7190c6587ce02bfc330f225b6a12960cec2a94253b7f",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/full-source-before.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/full-source-before.log",
+      "bytes": 423,
+      "sha256": "180eb26b12779750331d7190c6587ce02bfc330f225b6a12960cec2a94253b7f",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/inventory-check.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/inventory-check.log",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/preflight-before-commit.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/preflight-before-commit.log",
+      "bytes": 166,
+      "sha256": "81734e4c77b0868eb81396d628fcac16a0e3d6b11ac0d1a71f3cbc977e9f9dce",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/preflight-build.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/preflight-build.log",
+      "bytes": 166,
+      "sha256": "81734e4c77b0868eb81396d628fcac16a0e3d6b11ac0d1a71f3cbc977e9f9dce",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/preflight-commit.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/preflight-commit.log",
+      "bytes": 166,
+      "sha256": "81734e4c77b0868eb81396d628fcac16a0e3d6b11ac0d1a71f3cbc977e9f9dce",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/preparation.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/preparation.json",
+      "bytes": 6448,
+      "sha256": "5ba4391ee613aa1e7e90ea5a0d3a3c7bc5048f99f664155dba2cd9f5dee8224d",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records/same-scan-errors.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/records/same-scan-errors.json",
+      "bytes": 2690,
+      "sha256": "429043e9c45889f8faeaf531aa6f237c9e7fbcc0cf8f6838526c434a883a6718",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records/same-scan-errors.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/records/same-scan-errors.log",
+      "bytes": 1085,
+      "sha256": "22839648545109286e15b36b32d31158976dd9503eb6425345e51074262b879a",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records/same-scan-values.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/records/same-scan-values.json",
+      "bytes": 2686,
+      "sha256": "7bd2dfb1d12cf94f65e8cd98aec81cc6949546d2621b3f4387e4b67cc4590e54",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records/same-scan-values.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/records/same-scan-values.log",
+      "bytes": 585,
+      "sha256": "126df2d9264705bfc2183e701cc0f07059cb918e63801ac7410bef7826f0cf66",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/run-native.py",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/run-native.py",
+      "bytes": 8550,
+      "sha256": "99a7cd740e80639caac624cefab50f9c2c39669ac6e35899afcba5a22c883fc4",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/same-scan-errors.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/same-scan-errors.log",
+      "bytes": 187,
+      "sha256": "52faa1e9dd103e7d210225427dae84f50aae1bd3eaea74066876e29d7d2783f5",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/same-scan-values-required.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/same-scan-values-required.log",
+      "bytes": 188,
+      "sha256": "32b054414ac043815027a01b55e2dc95b7ff71716accd98c84c8e291e14db0fb",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/same-scan-values.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/same-scan-values.log",
+      "bytes": 188,
+      "sha256": "416b6215daf4d251d941dd13159380b14c759be16442d63de8bb0c2898e22259",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/source-after.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/source-after.json",
+      "bytes": 423,
+      "sha256": "180eb26b12779750331d7190c6587ce02bfc330f225b6a12960cec2a94253b7f",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/source-before.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/source-before.json",
+      "bytes": 423,
+      "sha256": "180eb26b12779750331d7190c6587ce02bfc330f225b6a12960cec2a94253b7f",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/stage-macro-and-pin.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/stage-macro-and-pin.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/validation.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-564-failure/validation.json",
+      "bytes": 20919,
+      "sha256": "620669cd022a6a6178422b11a620df067576b7dfa9360597b91a7c2daa69e0cd",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/adoption-contract-v2.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/adoption-contract-v2.json",
+      "bytes": 1300,
+      "sha256": "270d029283f07152da8feff2ceba6f23208289e820c9eb5d77eb5a7fc819279c",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/commit-null-fixture.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/commit-null-fixture.log",
+      "bytes": 167,
+      "sha256": "d2e4b5811190591dd19b2f7490804633ed8ebfc1874acea65b04691e8d241220",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/corpus-check.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/corpus-check.log",
+      "bytes": 557,
+      "sha256": "bd2380956217c7b0b6fc86e59a936eccdfa10128c8f7cade2cd324e20ee3686f",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/cost-plan.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/cost-plan.json",
+      "bytes": 2624,
+      "sha256": "2c9d8d16a1941b890cc5113d06de5f5d66c97c5b51292ea27baa0c07137e0544",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/diff-check.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/format-changed-test.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/format-changed-test.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/format-check.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/format-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/full-source-after.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/full-source-after.log",
+      "bytes": 423,
+      "sha256": "852e9e9b510aa860b05ab0ac9b5f5eddade7ffca2f8c5fb020ca4a978d945f0a",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/full-source-before.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/full-source-before.log",
+      "bytes": 423,
+      "sha256": "852e9e9b510aa860b05ab0ac9b5f5eddade7ffca2f8c5fb020ca4a978d945f0a",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/inventory-check.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/inventory-check.log",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/original-cell-types-required.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/original-cell-types-required.log",
+      "bytes": 200,
+      "sha256": "41bf74cffe00a536f982566ebc72b0fb684363d943b29a05938dfd27cc303c5e",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/original-cell-types.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/original-cell-types.log",
+      "bytes": 198,
+      "sha256": "51f4c56794f76265d3bd3b0aa21fdd5bff328edbfd1662cbdb3c440d8a7bcad9",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/original-count-cancel-required.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/original-count-cancel-required.log",
+      "bytes": 191,
+      "sha256": "dc96e2f9bb34705c149c92a08786cd6143c59e372999c540090541ece10fdd2d",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/original-count-cancel.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/original-count-cancel.log",
+      "bytes": 200,
+      "sha256": "e37afee81b83ae966396373a89925abec511ffacda0b86a58165d874626e35c0",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/original-wire-edges-required.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/original-wire-edges-required.log",
+      "bytes": 191,
+      "sha256": "a01023ade9a172203cc55ad5baf71870c503b76d4498f3d977519a40273aa8e6",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/original-wire-edges.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/original-wire-edges.log",
+      "bytes": 198,
+      "sha256": "0035b0696a08445c975e021739d3f19180db9a8ed2723647d43271598bd5ee6e",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/preflight-before-commit.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/preflight-before-commit.log",
+      "bytes": 166,
+      "sha256": "81734e4c77b0868eb81396d628fcac16a0e3d6b11ac0d1a71f3cbc977e9f9dce",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/preflight-build.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/preflight-build.log",
+      "bytes": 166,
+      "sha256": "81734e4c77b0868eb81396d628fcac16a0e3d6b11ac0d1a71f3cbc977e9f9dce",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/preflight-commit.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/preflight-commit.log",
+      "bytes": 166,
+      "sha256": "81734e4c77b0868eb81396d628fcac16a0e3d6b11ac0d1a71f3cbc977e9f9dce",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/preparation.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/preparation.json",
+      "bytes": 7324,
+      "sha256": "5a5f5109522434230a9bda6659143c78cf66c007c15642affe246787c8609b08",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/records/original-cell-types.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/records/original-cell-types.json",
+      "bytes": 2699,
+      "sha256": "03d731af4814a8d098aaa1a4b46a54313b660063f6d5bc7040572841c835fc36",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/records/original-cell-types.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/records/original-cell-types.log",
+      "bytes": 454,
+      "sha256": "ae67794be55466be503162f9a940805f6e3caae993fc884314af5a0eaa56691a",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/records/original-count-cancel.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/records/original-count-cancel.json",
+      "bytes": 2692,
+      "sha256": "47c47adc88d1f2fa8ac31d811f66a9005e2727c3931bd6dacada536a91f5d92f",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/records/original-count-cancel.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/records/original-count-cancel.log",
+      "bytes": 445,
+      "sha256": "6ee0808fc2ac7ec2d4a9b4ecf453780c2e3e0aea55f0b64ee99644fc815e1932",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/records/original-wire-edges.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/records/original-wire-edges.json",
+      "bytes": 2690,
+      "sha256": "1e138d660463ba5bfcb60e9ac2afd55927dabda1b365bd9ea891b7cabc642d05",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/records/original-wire-edges.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/records/original-wire-edges.log",
+      "bytes": 445,
+      "sha256": "b568d8455623870509bb65c1df46f3ba1191211f4f6d8470342fdaaea2a8032c",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/records/same-scan-cancellation.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/records/same-scan-cancellation.json",
+      "bytes": 2696,
+      "sha256": "4ad977f06cbbe770028b52118514b941eafdb8f1c3be406d27b2c4f8ba168102",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/records/same-scan-cancellation.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/records/same-scan-cancellation.log",
+      "bytes": 447,
+      "sha256": "b3616102573cb0156c8bf8c664f7f53f867a2bdc24b98f7082c8a59087a07343",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/records/same-scan-errors.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/records/same-scan-errors.json",
+      "bytes": 2691,
+      "sha256": "0be740b1563cd9c3319d4cb072222e93f092371a6636b175374d7147c080cd45",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/records/same-scan-errors.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/records/same-scan-errors.log",
+      "bytes": 449,
+      "sha256": "47b09cd5d6c25616093baad92973cc2382e914ede42a2d5fdf0dad9bdb1e03bd",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/records/same-scan-order.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/records/same-scan-order.json",
+      "bytes": 2693,
+      "sha256": "1394ad4fd1783aed22fd0dd70fb8d00df98deb34a4bb496f7e9a5350dc3063af",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/records/same-scan-order.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/records/same-scan-order.log",
+      "bytes": 452,
+      "sha256": "d0204353fb918707d9cfe9d2d6ed2f04b12e5d61e130cebdc70bb71982d20c00",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/records/same-scan-values.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/records/same-scan-values.json",
+      "bytes": 2686,
+      "sha256": "59a5dfe12ac4aaddc3d41d5e3071fff96d7be34ea558ae8de8901e92398ed6ca",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/records/same-scan-values.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/records/same-scan-values.log",
+      "bytes": 585,
+      "sha256": "024b2f1f800d77dc4241bf4c30115f9f4bad5a276566ec14242dc9619693fe9c",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/records/workspace-clippy.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/records/workspace-clippy.json",
+      "bytes": 2548,
+      "sha256": "3d60c72e97b70ca5486e9e7826d799960140019d03d2865a7736529fc46719fe",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/records/workspace-clippy.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/records/workspace-clippy.log",
+      "bytes": 203,
+      "sha256": "1c7d0f2ec94c46c74b5254b98f3c4ba7e70a3450eb81ef757b4ca7e86cebd150",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/reviewable-diff.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/reviewable-diff.log",
+      "bytes": 3151,
+      "sha256": "77fee85da91f23b454a7712231669cd8683831ce67c7e04a8477c09854c28567",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/run-native.py",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/run-native.py",
+      "bytes": 8627,
+      "sha256": "200b8da0795c1f2955b8cd422dedc72751dab847a570d888a556d50ab8e410c2",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/same-scan-cancellation-required.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/same-scan-cancellation-required.log",
+      "bytes": 193,
+      "sha256": "281545b88506cd6691b02a84d82560c869ddba476bde622d002f86fa462d5bd7",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/same-scan-cancellation.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/same-scan-cancellation.log",
+      "bytes": 201,
+      "sha256": "7e6acd5c723889cb04a7c9aef0757fee9e0f453d1fc6d1c8c846602d45e817ba",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/same-scan-errors-required.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/same-scan-errors-required.log",
+      "bytes": 194,
+      "sha256": "e2d5b187a9065ba6bfb6cd74c2c5a70b03a7c96aad373cbd84cd1c50dcd4ec58",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/same-scan-errors.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/same-scan-errors.log",
+      "bytes": 195,
+      "sha256": "ec087b12284287fa3dbe51ae38a9b0f4814eb252f1f5192beb6b28dfa176ba20",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/same-scan-order-required.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/same-scan-order-required.log",
+      "bytes": 198,
+      "sha256": "1d2b30fde657aada9a19943d72d8e6bd05d09e31fe36befcea60d39f9c13aad7",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/same-scan-order.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/same-scan-order.log",
+      "bytes": 194,
+      "sha256": "0a57706b9d6b56fc58169f679882fe082420f514769d7e5fc6abdcdb57fa2560",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/same-scan-values-required.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/same-scan-values-required.log",
+      "bytes": 188,
+      "sha256": "32b054414ac043815027a01b55e2dc95b7ff71716accd98c84c8e291e14db0fb",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/same-scan-values.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/same-scan-values.log",
+      "bytes": 195,
+      "sha256": "d112b1f0414d9b1850a28b1783d1eeb2a6e90a3e9b9847249c44c851e4d512d3",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/source-after.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/source-after.json",
+      "bytes": 423,
+      "sha256": "852e9e9b510aa860b05ab0ac9b5f5eddade7ffca2f8c5fb020ca4a978d945f0a",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/source-before.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/source-before.json",
+      "bytes": 423,
+      "sha256": "852e9e9b510aa860b05ab0ac9b5f5eddade7ffca2f8c5fb020ca4a978d945f0a",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/stage-test-and-pin.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/stage-test-and-pin.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/validation.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/validation.json",
+      "bytes": 33990,
+      "sha256": "44f67e6ef45eda8e5d123cbca9ce36222fe9ec9686b07f36704f51d658299ef8",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-null-fixture-20261107/workspace-clippy.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-native/workspace-clippy.log",
+      "bytes": 195,
+      "sha256": "18587b0e4932da36a200026b872b8b81f8f1b6b9e10141493e0347924a8816d6",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/cost-analysis.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/cost-analysis.json",
+      "bytes": 12238,
+      "sha256": "937d2cea283463fdf457b80119f6ecf661aacf7b960033759215106eee2a86ee",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/cost-validation.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/cost-validation.json",
+      "bytes": 14257,
+      "sha256": "ef165f9b21225eb47ed8f5cefcd2bb8dc224065b95db300c0fa110e51fa4bba4",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/execution-binding.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/execution-binding.json",
+      "bytes": 5428,
+      "sha256": "6f4abbd59af4a64059bf2d4c49d27095a6478ce9b1a341a18aaeedfd1c634b07",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/original-large-parent.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/original-large-parent.log",
+      "bytes": 178,
+      "sha256": "0997247a7c49301c3a7bb009ab292139e98d0d3f4240b3f26fc8ba0946ee7c00",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/outcome-summary.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/outcome-summary.json",
+      "bytes": 23951,
+      "sha256": "a4c8f86db2603c902cbe59c61063920259c7e002ffb8c032f4387a9bdc9446fe",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/preflight-preparation.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/preflight-preparation.log",
+      "bytes": 166,
+      "sha256": "81734e4c77b0868eb81396d628fcac16a0e3d6b11ac0d1a71f3cbc977e9f9dce",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/preflight.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/preflight.log",
+      "bytes": 166,
+      "sha256": "81734e4c77b0868eb81396d628fcac16a0e3d6b11ac0d1a71f3cbc977e9f9dce",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/raw-samples.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/raw-samples.json",
+      "bytes": 67963,
+      "sha256": "bb42d2175efeeddec0fb0ce5e1438ac81a8426faafc786091979adb3e91c5843",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/records/original-large-parent.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/records/original-large-parent.json",
+      "bytes": 2711,
+      "sha256": "238d02a149e0ae7a39bf0dd599531f82dd9c6e1b4eccd2eebae7a14cb2df528e",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/records/original-large-parent.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/records/original-large-parent.log",
+      "bytes": 35163,
+      "sha256": "adec13140ad9f13db6e5ed57f3c73a51c34d021b230a1a85a4a57813b5918176",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/records/slot-scan-abba.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/records/slot-scan-abba.json",
+      "bytes": 2701,
+      "sha256": "c850beb57a0a84edbc0a889afad53d6a9217fb6d6f8d5328fad591bd0460c73b",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/records/slot-scan-abba.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/records/slot-scan-abba.log",
+      "bytes": 56214,
+      "sha256": "27b5e968d49fac71248d31705acb0ffcbbdb48eb356d089efd303421a3b42538",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/run-cost-once.py",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/run-cost-once.py",
+      "bytes": 16408,
+      "sha256": "ae393684f370c4837dd7ec2d966327fd706937740189324094213cd68613aca7",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/slot-scan-abba-required.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/slot-scan-abba-required.log",
+      "bytes": 187,
+      "sha256": "308c711906385d0acf5160120c85cf96b8199d7a6eb02c75919e8a156b5992b1",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/slot-scan-abba.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/slot-scan-abba.log",
+      "bytes": 172,
+      "sha256": "e9c102859781e0acce9b2e6b5b104f66995037b6923bceac78a9c1cfa3cfaa1b",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/source-after.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/source-after.json",
+      "bytes": 423,
+      "sha256": "852e9e9b510aa860b05ab0ac9b5f5eddade7ffca2f8c5fb020ca4a978d945f0a",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/source-after.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/source-after.log",
+      "bytes": 423,
+      "sha256": "852e9e9b510aa860b05ab0ac9b5f5eddade7ffca2f8c5fb020ca4a978d945f0a",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/source-before.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/source-before.json",
+      "bytes": 423,
+      "sha256": "852e9e9b510aa860b05ab0ac9b5f5eddade7ffca2f8c5fb020ca4a978d945f0a",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-cost-5fdf-20261107/source-before.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-5fdf-cost/source-before.log",
+      "bytes": 423,
+      "sha256": "852e9e9b510aa860b05ab0ac9b5f5eddade7ffca2f8c5fb020ca4a978d945f0a",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/ci-contract.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-integration/ci-contract.log",
+      "bytes": 180,
+      "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/commit.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-integration/commit.log",
+      "bytes": 124,
+      "sha256": "97a3d7107b3861157717d185629e0197c24edd97eb4f7c2c6af3627857111f0d",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/diff-check.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-integration/diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/format-check.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-integration/format-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/inventory-check.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-integration/inventory-check.log",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/inventory-refresh.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-integration/inventory-refresh.log",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/merge.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-integration/merge.log",
+      "bytes": 110,
+      "sha256": "aa4e130a984f1f124f99fc51014163bca6ec89e790c027b0db1b873518b952ee",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/preflight.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-integration/preflight.log",
+      "bytes": 170,
+      "sha256": "f877f84b261303fe763f6713410fa0220116d57de1d311e83f1e6ce4e5f8a59b",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/receipt.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-integration/receipt.json",
+      "bytes": 5932,
+      "sha256": "3ca22349b15390ba97417b9b429c329304076e72a4cbfe546fea97d59c447b91",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/source-corpus.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-integration/source-corpus.log",
+      "bytes": 557,
+      "sha256": "f94dc7085912c8d3a78af882de5bcff6c86cfc5bbe4a7bb4646cfaaa82dc61c2",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/stage-metadata.log",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/state-integration/stage-metadata.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/COPY_PLAN.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/COPY_PLAN.json",
+      "bytes": 13508,
+      "sha256": "f6abf573182b06fe3a2d75a3b3e71e024c2aba89b3504ab790004940c1b9e17f",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/PREPARATION_CORE.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/PREPARATION_CORE.json",
+      "bytes": 4230,
+      "sha256": "a217ada91136e23e38e1a32c55b13b4db713afeb740e109a391e654bce15725b",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/README.md",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/README.md",
+      "bytes": 2065,
+      "sha256": "bd7d1095ee9e285fa0481cbb08477b85016f9ab3210817aa9b53f07ba097418a",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/additive-import-commands.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/additive-import-commands.json",
+      "bytes": 34798,
+      "sha256": "8f81181fcfb15996e77c322cac40bfaacd0de43bf77cdb1eeb72301b96d2399a",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/commands.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/commands.json",
+      "bytes": 6277,
+      "sha256": "42ea00e16218a6bd94bd9d492d01cb927564b27df19858d590fea973a64a5ebe",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/historical-inventory-after.stderr",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/historical-inventory-after.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/historical-inventory-after.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/historical-inventory-after.stdout",
+      "bytes": 26365,
+      "sha256": "364f348fff4625e500ba5d1cd66ccdedeee72068e0a6d75209527c833d2799b9",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/historical-inventory.stderr",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/historical-inventory.stderr",
+      "bytes": 152,
+      "sha256": "32f9196f299b2e3b04de889673020dafa80bef4ee5b09e89b498e957101b206f",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/historical-inventory.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/historical-inventory.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/historical-names-after.stderr",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/historical-names-after.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/historical-names-after.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/historical-names-after.stdout",
+      "bytes": 71793,
+      "sha256": "e8b472d686373dcd3288c3b9c382baf3405299c11d957e602392b0413bf41160",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/import-head-after.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/import-head-after.stdout",
+      "bytes": 41,
+      "sha256": "bfdbb83ef2cb2cc2688db59b086905e3e6488d0c58a4cdd57c1ed4b5346306d6",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/import-head-before.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/import-head-before.stdout",
+      "bytes": 41,
+      "sha256": "bfdbb83ef2cb2cc2688db59b086905e3e6488d0c58a4cdd57c1ed4b5346306d6",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/import-refs-after.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/import-refs-after.stdout",
+      "bytes": 1013,
+      "sha256": "255a6cf51e86cb7e9882b769e5821312c8025758153412985202120bd5699141",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/import-refs-before.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/import-refs-before.stdout",
+      "bytes": 1013,
+      "sha256": "255a6cf51e86cb7e9882b769e5821312c8025758153412985202120bd5699141",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/import-tracked-status-after.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/import-tracked-status-after.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/import-tracked-status-before.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/import-tracked-status-before.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/imported-objects.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/imported-objects.json",
+      "bytes": 2957,
+      "sha256": "df8211dbc3743765464b17ddcdb9509d9338c8c12ebae2cef33a7b376e1f1a22",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/initial-inspection-core.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/initial-inspection-core.json",
+      "bytes": 3464,
+      "sha256": "7888b11a779ae24ec710ecc7db24b32020fb42e97dce6787dc9aa7cd7670f86c",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/inventory-from-retained-pack.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/inventory-from-retained-pack.stdout",
+      "bytes": 26365,
+      "sha256": "364f348fff4625e500ba5d1cd66ccdedeee72068e0a6d75209527c833d2799b9",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/isolated-index-pack.stderr",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/isolated-index-pack.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/isolated-index-pack.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/isolated-index-pack.stdout",
+      "bytes": 46,
+      "sha256": "bb8800e16b149439a747100da9ffbcc8ebc5d7254a7ff50b5bbe3b05183cbfb0",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/isolated-object-list.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/isolated-object-list.stdout",
+      "bytes": 13270,
+      "sha256": "7f039c56f10b3864a0f695ba2a8434113b100b9cbf321937373c8ea065eb18c3",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/model-contract-head.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/model-contract-head.stdout",
+      "bytes": 2416,
+      "sha256": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/observer/1a1b6f3699e-12894-821.status.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/observer/1a1b6f3699e-12894-821.status.json",
+      "bytes": 734,
+      "sha256": "37f43cab23c25a83b217022a97b2492fa5705753e26b07991b4b52f0b097252e",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/observer/1a1b6f4a695-12894-82c.status.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/observer/1a1b6f4a695-12894-82c.status.json",
+      "bytes": 732,
+      "sha256": "5ef9a10f2a5369079f069ce2a58fbf5bfceb2a3db70c7dc15bfd61c7575f5992",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/observer/1a1b6f72963-12894-842.status.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/observer/1a1b6f72963-12894-842.status.json",
+      "bytes": 727,
+      "sha256": "42e91ea2fe4dafb085e107b0875324a1619b045eaa089550492a5d6c054b68bb",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/observer/1a1b6f72963-12894-842.stderr",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/observer/1a1b6f72963-12894-842.stderr",
+      "bytes": 161,
+      "sha256": "155e62a3f1b27d9a4e8c83703ba48c9d4e0efa9c6852a2bd8d8afef2ee41ceb7",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/observer/1a1b6f72963-12894-842.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/observer/1a1b6f72963-12894-842.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/observer/1a1b6faeeaa-12894-85a.status.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/observer/1a1b6faeeaa-12894-85a.status.json",
+      "bytes": 732,
+      "sha256": "eb74cc4b4be304e0aa9b8436c0301b925c3754650e4758f3606ff770b1e39f95",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/observer/1a1b6faeeaa-12894-85a.stderr",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/observer/1a1b6faeeaa-12894-85a.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/observer/1a1b6faeeaa-12894-85a.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/observer/1a1b6faeeaa-12894-85a.stdout",
+      "bytes": 3883,
+      "sha256": "e6feeb78a06dd40ffba4d0d59bda28a318ba2b1f644565ef137aad5bec06f733",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/observer/PREPARATION_CORE.from-process.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/observer/PREPARATION_CORE.from-process.json",
+      "bytes": 4025,
+      "sha256": "f09fd62b9617655415ce4b4a7468e9169da71112eb5315a6ca5baa4a3c39be65",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/observer/additive_import.py",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/observer/additive_import.py",
+      "bytes": 12298,
+      "sha256": "e0c4e7f03406b3d04b821b10bf81cfe993ef837dd8823fbd272055ca34c54cca",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/observer/inspect.py",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/observer/inspect.py",
+      "bytes": 5392,
+      "sha256": "869615f53dca23ac8635c6f3941ce20368820fc96c6a2580e8fb4bc15d408ea5",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/observer/isolated_pack_inspection.py",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/observer/isolated_pack_inspection.py",
+      "bytes": 7596,
+      "sha256": "b524b10cc383d9bd963ec34b2d989ec85b5e411ce2bc4df4cbc6144a10daa506",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/pack-inspection-commands.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/pack-inspection-commands.json",
+      "bytes": 5758,
+      "sha256": "75d3cc29d8f9f15cc5d68fc999c345f67919f32625461244edef352c04e7109b",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/pre-import-project-preflight.stderr",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/pre-import-project-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/pre-import-project-preflight.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/pre-import-project-preflight.stdout",
+      "bytes": 170,
+      "sha256": "f877f84b261303fe763f6713410fa0220116d57de1d311e83f1e6ce4e5f8a59b",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/project-preflight.stderr",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/project-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/project-preflight.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/project-preflight.stdout",
+      "bytes": 170,
+      "sha256": "f877f84b261303fe763f6713410fa0220116d57de1d311e83f1e6ce4e5f8a59b",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/required-object-presence-before.stderr",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/required-object-presence-before.stderr",
+      "bytes": 152,
+      "sha256": "068e09253e2fbdca9434916e8d9c747a5107105c0915752183c8c8ad2e46534f",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/required-object-presence-before.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/required-object-presence-before.stdout",
+      "bytes": 1965,
+      "sha256": "ababd40f1c07f756bcedde6bd63b4443b89278e6f38fb44a6c609c67fb9befa7",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/required-object-presence-view-before.stderr",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/required-object-presence-view-before.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/required-object-presence-view-before.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/required-object-presence-view-before.stdout",
+      "bytes": 20907,
+      "sha256": "7a3c30de45e94bb0c0ab2017defdfae2b3c5c441cf13e6ecf289450221d4c031",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/required-objects-before.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/required-objects-before.json",
+      "bytes": 114010,
+      "sha256": "8382c94c6d5b4e45df972f1c57e1d0953cfb6540282e704be26c912f0ed930a9",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/selector-head.stdout",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/selector-head.stdout",
+      "bytes": 15358,
+      "sha256": "d29b4b426825afdd90b3db9e1fbe79f931a543c307b896853a249ae909412fd0",
+      "stored_verbatim": true
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff/verified-objects-after.json",
+      "repository_path": "evidence/pon-business-gates-readback-20261107/cell-formal-preparation/verified-objects-after.json",
+      "bytes": 97900,
+      "sha256": "57c3ee0d45c957169ce58cb53074311e40f6a1b20d0bcb06cc312248464ac75b",
+      "stored_verbatim": true
+    }
+  ],
+  "all_source_destination_sha256_equal": true,
+  "business_gate_pass_claimed": false,
+  "final_combined_tests_claimed": false
+}

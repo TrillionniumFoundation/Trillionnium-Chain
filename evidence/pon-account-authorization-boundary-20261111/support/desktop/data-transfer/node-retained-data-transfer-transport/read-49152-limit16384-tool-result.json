@@ -1,0 +1,22 @@
+{
+  "schema": "assistant-recorded-direct-h-binary-read-v1",
+  "tool_name": "mcp__codex_apps__h_binary_read",
+  "arguments": {
+    "host": "desktop",
+    "path": "/home/qian-qi/chain-pq-a418-final-ci-tools/desktop-node-retained-data-evidence-v1.tar.gz",
+    "offset": 49152,
+    "limit": 16384,
+    "expected_version": "2050:4328000:49417:1794378646407089732:1794378646412089579"
+  },
+  "call_tool_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"chunk_sha256\":\"64dfee953eb86df7353f9f074bb3bd30de94a31bcb4795f559a7a1c1da6e267e\",\"data_base64\":\"G4fxhqGUJbN+JG/tCVs/ku6ucWzkT2wdyltbuvuuyvUt7fYfylubfbcbSl1svWUsb63J7bss1xeHH7Asb6vUbB1LjdEGGEvl5Ko/SicF5FcjeBbI6v/++1JSOEv2Dh+2nQLAmCZq2DltWbLETwNgrLO7cX/0iYYR8pjSfnE4GgFXw6uHZcVIrSBdEY+p3wcmputBXOZZwzZ9A0zzw/PFDJaBZvlM0u5nYzyAh2k5WqhFCjlzdTH7dC8J8e2n/bSf9tN+2k/7aT/tp/20n/bTftpP+2k/7af9tJ/2037aT/tpP+2n/bSf9tN+2k/7aT/tp/20n/bTftpP+2k/X/nn/wPVaceEAIgEAA==\",\"eof\":true,\"next_offset\":49417,\"offset\":49152,\"path\":\"/home/qian-qi/chain-pq-a418-final-ci-tools/desktop-node-retained-data-evidence-v1.tar.gz\",\"size\":49417,\"version\":\"2050:4328000:49417:1794378646407089732:1794378646412089579\"}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "native_sdk_original_bytes_claimed": false
+}

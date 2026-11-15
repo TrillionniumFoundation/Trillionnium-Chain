@@ -1,0 +1,191 @@
+{
+  "schema": "native-final-text-archive-v1",
+  "source": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "tree": "1f42f41923d7761c02fc68b478df5b019c7d83e8",
+  "outer_finished": true,
+  "outer_success": true,
+  "ELF_included": false,
+  "scope": "actual frozen component driver, retained default node library, strict all-feature Clippy; no campaign/TPS/activation claim",
+  "files": [
+    {
+      "name": "actual-fixed-runner.process.json",
+      "bytes": 1028,
+      "sha256": "6a567aaa94bdf334a453ec8f495638ec6c79fd4d42913dcbded6dec18e1b8a85"
+    },
+    {
+      "name": "actual-fixed-runner.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "actual-fixed-runner.stdout",
+      "bytes": 301,
+      "sha256": "5ecdd92c33511a73311c344a87cf9c96d07a91dbb6f00e37c7be1b2cbbc923f0"
+    },
+    {
+      "name": "checkout-driver.stderr",
+      "bytes": 73,
+      "sha256": "7e66fd68798bfa24c01b9fd6e0e539a6946584e20825c2dca138a55669f56da2"
+    },
+    {
+      "name": "checkout-driver.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "checkout-subject.stderr",
+      "bytes": 74,
+      "sha256": "a40206a2798d8ca0f2a3905d376c1e186d7bcf05cc9a737cec8e13b96f6d2449"
+    },
+    {
+      "name": "checkout-subject.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "format.process.json",
+      "bytes": 749,
+      "sha256": "d36b132c036ae652da5d4ca8d2faac76e082b9baaad962312f2550090fbb3cf4"
+    },
+    {
+      "name": "format.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "format.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "init-driver.stderr",
+      "bytes": 472,
+      "sha256": "a503220a0961c2c95ba78f8cdb1a355dc4b80e53a4c3bf741f249c6e9f674422"
+    },
+    {
+      "name": "init-driver.stdout",
+      "bytes": 75,
+      "sha256": "f8a7b52bc3c1adb04e0a5caf513005e9104be6b2693ec541b8d7fa9657ba484a"
+    },
+    {
+      "name": "init-subject.stderr",
+      "bytes": 472,
+      "sha256": "a503220a0961c2c95ba78f8cdb1a355dc4b80e53a4c3bf741f249c6e9f674422"
+    },
+    {
+      "name": "init-subject.stdout",
+      "bytes": 76,
+      "sha256": "049d763860b6280bb79f6e6fcc513f5353cec978bd65c8b404c72c4de24b3ba1"
+    },
+    {
+      "name": "node-library.process.json",
+      "bytes": 734,
+      "sha256": "d3e336d25b1821b62f69fb1922528148ddbe3a3d8457356eec5905045feceec5"
+    },
+    {
+      "name": "node-library.stderr",
+      "bytes": 327120,
+      "sha256": "75a780c0591a5fe8fe3d5c188084b3adb8ad43bac9b35dcdbe54c15a3d20b964"
+    },
+    {
+      "name": "node-library.stdout",
+      "bytes": 2791993,
+      "sha256": "c7e31dae59da7094ced954793791c9e49e3bce8907609c35d4e4d2635a84d6ea"
+    },
+    {
+      "name": "object-tree.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "object-tree.stdout",
+      "bytes": 41,
+      "sha256": "93e695b1708084cf80a8308aac25b70e2ad48fdd440444ff3dfa53430b73f04c"
+    },
+    {
+      "name": "origin-driver.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "origin-driver.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "origin-subject.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "origin-subject.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "preflight-driver.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "preflight-driver.stdout",
+      "bytes": 176,
+      "sha256": "d8740b717f513c3ea0c079d6526576a7092177443a2e03604789d1b40d68e048"
+    },
+    {
+      "name": "preflight-seed.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "preflight-seed.stdout",
+      "bytes": 172,
+      "sha256": "cceffe05d5369228828a99b9aac2225d425ea204771d42dd5789b8a84672549f"
+    },
+    {
+      "name": "preflight-subject.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "preflight-subject.stdout",
+      "bytes": 177,
+      "sha256": "becc3418dba01dd30e7db3acb2027414d9e45f77454c2f535f5a9264efdf9702"
+    },
+    {
+      "name": "provider-version.process.json",
+      "bytes": 780,
+      "sha256": "52959ed8e1f033946ceb6616563cb6ff413637b7a44703883854af47efbfa4cc"
+    },
+    {
+      "name": "provider-version.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "provider-version.stdout",
+      "bytes": 891,
+      "sha256": "9ee8890a318f46bf1186a598a0652076ebacf9cd1da3d46cab176c4c5ccf2b60"
+    },
+    {
+      "name": "strict-clippy.process.json",
+      "bytes": 858,
+      "sha256": "f09c468ff1a8aa380f09ea1c74bafe4d20cf44dbb3da76f25fdfd41a27ca8247"
+    },
+    {
+      "name": "strict-clippy.stderr",
+      "bytes": 4226,
+      "sha256": "e5a9ee9908cff735d7b290cdd0cc33bf31ff6b933f403a96ea4ec21790f6cda3"
+    },
+    {
+      "name": "strict-clippy.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "summary.json",
+      "bytes": 25667,
+      "sha256": "ab05426922986387ed65bf3b90ef0179da5989506516f93ed5ff6e614d17dc34"
+    }
+  ]
+}

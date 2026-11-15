@@ -1,0 +1,57 @@
+{
+  "added_paths_since_base": [
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs"
+  ],
+  "base": "8d8f05566b2a1612a3bf4a6c6c71635df454d397",
+  "base_exactly_fresh": true,
+  "corpus_entries": {
+    "scripts/refresh_distributed_source_inventory.py": {
+      "pin": null,
+      "required": false
+    },
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": {
+      "pin": "dc4914b370d7bd179cf1aa07d9633a2e224dc7bd",
+      "required": true
+    }
+  },
+  "deleted_paths_since_base": [],
+  "extra_at_head": [],
+  "head": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+  "head_exactly_fresh": false,
+  "missing_at_head": [
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs"
+  ],
+  "output": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+  "output_base": {
+    "bytes": 380253,
+    "git_blob": "dc4914b370d7bd179cf1aa07d9633a2e224dc7bd",
+    "sha256": "f834d8c2b0f49811ff8930898e01c65b40801d8fbef550a8662457bbbdea02e8"
+  },
+  "output_head": {
+    "bytes": 380253,
+    "git_blob": "dc4914b370d7bd179cf1aa07d9633a2e224dc7bd",
+    "sha256": "f834d8c2b0f49811ff8930898e01c65b40801d8fbef550a8662457bbbdea02e8"
+  },
+  "patch": {
+    "bytes": 698,
+    "git_blob": "acfa402ab4fddcdf95011d12238646278d531617",
+    "sha256": "e08891f0bfaf8225fcfc87f3a74037587ae30b0944082d195122f05c2e8eef36"
+  },
+  "proposed": {
+    "bytes": 380547,
+    "git_blob": "280844d69a88b273df670a55011e0c1c753325a7",
+    "sha256": "36a8bb4a6d77a3b212c88de2f8af66cb1def7fac4a0db9638d1e64167b6e8c5b"
+  },
+  "script": {
+    "base": {
+      "bytes": 2735,
+      "git_blob": "5e86bf0b23c2d9d85560659eacf01189f984e807",
+      "sha256": "c83d9c0b84c21beec6917a86b2a3207c5f3bf6fd26cf432f2ef0990750e16a33"
+    },
+    "head": {
+      "bytes": 2735,
+      "git_blob": "5e86bf0b23c2d9d85560659eacf01189f984e807",
+      "sha256": "c83d9c0b84c21beec6917a86b2a3207c5f3bf6fd26cf432f2ef0990750e16a33"
+    }
+  }
+}

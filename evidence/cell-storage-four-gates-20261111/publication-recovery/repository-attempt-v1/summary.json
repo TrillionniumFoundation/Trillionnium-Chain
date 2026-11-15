@@ -1,0 +1,297 @@
+{
+  "archives": [
+    {
+      "bytes": 286100,
+      "label": "current",
+      "manifest_files_verified": 205,
+      "manifest_sha256": "2512a6d43341d7a95e0ab8cbb1a288e7e53090dffd913889267ca7b7e9f6e51e",
+      "members": 206,
+      "prefix": "remote-current-records/",
+      "raw_bytes_preserved": true,
+      "sha256": "38519564908a3bd7afbaed914c866f06331b4b421532dbce86b2ebef145b0954",
+      "source_path": "/home/qian-qi/work/chain-cell-four-gates-2bfb-recovered-original-current.tar.gz",
+      "streams_verified": 165
+    },
+    {
+      "bytes": 183220,
+      "label": "prior",
+      "manifest_files_verified": 176,
+      "manifest_sha256": "ed94260e8d5dcc476357244ce63bb72eb696bdae87afd0dcb4297bee96a643ee",
+      "members": 177,
+      "prefix": "",
+      "raw_bytes_preserved": true,
+      "sha256": "64c3d37283e682830f65cd9b9a90d39e806f3f029aa2af5e9c9f9457900b80cc",
+      "source_path": "/home/qian-qi/work/chain-cell-four-gates-2bfb-recovered-original-prior.tar.gz",
+      "streams_verified": 170
+    },
+    {
+      "bytes": 289899,
+      "label": "desktop",
+      "manifest_files_verified": 117,
+      "manifest_sha256": "912d69198f6ca15c0ecbcda05748f2ff72aab741f53d3825a05d5773e175d28c",
+      "members": 119,
+      "prefix": "desktop-publication-records/",
+      "raw_bytes_preserved": true,
+      "sha256": "2fd62f02a7472f854dd851aa91d665b22f86bf6f5ad1a2e56141303df0270e4f",
+      "source_path": "/home/qian-qi/work/desktop-publication-records-export-2bfb-v1/desktop-publication-records.tar.gz",
+      "streams_verified": 108
+    },
+    {
+      "bytes": 20705422,
+      "label": "native-codeql",
+      "manifest_files_verified": 534,
+      "manifest_sha256": "9f9ff7aa40a48146a83e36ec3ca47fe2196286c849959197f29381566dff3375",
+      "members": 534,
+      "prefix": "",
+      "raw_bytes_preserved": true,
+      "sha256": "e5cb5c7cffebf9c48ba0f414ac4b6e2c31af39ce403bdf2a99dbcaeffb459da0",
+      "source_path": "/home/qian-qi/work/chain-cell-four-gates-native-codeql-recovery-2bfb/recovered-native-codeql-selected-raw.tar.gz",
+      "streams_verified": 38
+    },
+    {
+      "bytes": 1530054,
+      "label": "next-work-qrom",
+      "manifest_files_verified": 185,
+      "manifest_sha256": "ab87e5187eb73978a9f20dfe527720589e53f5946dadb242fc297117b1b4c6c4",
+      "members": 186,
+      "prefix": "",
+      "raw_bytes_preserved": true,
+      "sha256": "7438a1a3b4206d305a93e2af9f23ad66e548e330f7d796ea04c9fa3f91f5a6d5",
+      "source_path": "/home/qian-qi/work/chain-cell-four-gates-discovery-ci-recovery-2bfb/recovered-ci-records.tar.gz",
+      "streams_verified": 42
+    }
+  ],
+  "assembly_completed": true,
+  "base_head": "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6",
+  "before_source": {
+    "c3_same_test_blob": true,
+    "changed_paths": [
+      "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+      "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_time_fairness_tests.rs"
+    ],
+    "head": "6985aca3803debe2945eebbc55e6c495598ae609",
+    "parent": "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6",
+    "test_blob": "6244859ea896ff0c729121129660e9d065d429a6",
+    "test_path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_time_fairness_tests.rs"
+  },
+  "commands": [
+    {
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "elapsed_seconds": 0.10002943803556263,
+      "exit_code": 0,
+      "name": "preflight",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 180,
+      "stdout_sha256": "64d4a324a23bd14342da6eb90d43634651470c35bb7978b645ef64e9df0b624c",
+      "timed_out": false
+    },
+    {
+      "args": [
+        "git",
+        "bundle",
+        "verify",
+        "/home/qian-qi/work/chain-cell-four-gates-2bfb-recovered-before-source.bundle"
+      ],
+      "elapsed_seconds": 0.004576341947540641,
+      "exit_code": 0,
+      "name": "before-bundle-verify",
+      "stderr_bytes": 87,
+      "stderr_sha256": "2938b8d53126e9184cd4ade246ca1cbfc07fea69a22255b9ed9fa1819a72a337",
+      "stdout_bytes": 258,
+      "stdout_sha256": "b46e97cd7a49fc80b9d1e18bbfcdcc22f4223e3db868699fbc43b3d6a6d0b15a",
+      "timed_out": false
+    },
+    {
+      "args": [
+        "git",
+        "bundle",
+        "unbundle",
+        "/home/qian-qi/work/chain-cell-four-gates-2bfb-recovered-before-source.bundle"
+      ],
+      "elapsed_seconds": 0.021430263994261622,
+      "exit_code": 0,
+      "name": "before-bundle-unbundle",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 97,
+      "stdout_sha256": "4bc6feee796a65dbab011dfc2540139747f5248f3cf489edc06ee17dc32a0e84",
+      "timed_out": false
+    },
+    {
+      "args": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_cell_storage_convergence_ci.py"
+      ],
+      "elapsed_seconds": 0.23918294999748468,
+      "executed_count_guard_passed": true,
+      "exit_code": 0,
+      "expected_tests": 19,
+      "name": "storage-controls",
+      "stderr_bytes": 118,
+      "stderr_sha256": "636d85d0b01661091a3d46b534cbb78bef8a454934e47ee42c1a3d0a7443005b",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "args": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_cell_discovery_v3_ci.py"
+      ],
+      "elapsed_seconds": 0.10733698913827538,
+      "executed_count_guard_passed": true,
+      "exit_code": 0,
+      "expected_tests": 5,
+      "name": "discovery-controls",
+      "stderr_bytes": 103,
+      "stderr_sha256": "2d014bb427120fb1a5014d7499096989061fd0fdf40acb471c2e2667de60e71e",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "args": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_codeql_retention.py"
+      ],
+      "elapsed_seconds": 3.4119057490024716,
+      "executed_count_guard_passed": true,
+      "exit_code": 0,
+      "expected_tests": 12,
+      "name": "codeql-retention-controls",
+      "stderr_bytes": 2142,
+      "stderr_sha256": "028f8e626ccbe30dd044f753d3335aa15173478ac0c1e196d52af181b185183a",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "args": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "elapsed_seconds": 0.17734088096767664,
+      "exit_code": 0,
+      "name": "inventory",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 35,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "timed_out": false
+    },
+    {
+      "args": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "elapsed_seconds": 1.46302509191446,
+      "exit_code": 0,
+      "name": "pq-bindings",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 557,
+      "stdout_sha256": "be8c32a5af43419155e594f8f11c5c1eb5892079027c59736737a43205125667",
+      "timed_out": false
+    },
+    {
+      "args": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "elapsed_seconds": 0.05433149798773229,
+      "exit_code": 0,
+      "name": "diff-check",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "elapsed_seconds": 0.27215682715177536,
+      "exit_code": 0,
+      "name": "index-preflight",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 180,
+      "stdout_sha256": "64d4a324a23bd14342da6eb90d43634651470c35bb7978b645ef64e9df0b624c",
+      "timed_out": false
+    },
+    {
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "elapsed_seconds": 0.10566193796694279,
+      "exit_code": 0,
+      "name": "index-v2-preflight",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 180,
+      "stdout_sha256": "64d4a324a23bd14342da6eb90d43634651470c35bb7978b645ef64e9df0b624c",
+      "timed_out": false
+    },
+    {
+      "args": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "elapsed_seconds": 5.465177328092977,
+      "exit_code": 2,
+      "name": "repository-precommit",
+      "stderr_bytes": 171,
+      "stderr_sha256": "645c324aba985f905b28427bcb4e27e3d55cef0edf2c6b8bd2d4c47e79c2c773",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    }
+  ],
+  "completed": false,
+  "github_write": false,
+  "index_error": "AssertionError(('repository-precommit', 2))",
+  "native_rerun": false,
+  "recovered_index_failures": [
+    {
+      "attempt": "index-v1",
+      "error": "AssertionError(('candidate', 2))",
+      "receipt": "evidence/cell-storage-four-gates-20261111/publication-recovery/index-attempt-v1/summary.json"
+    }
+  ],
+  "runtime_head": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "schema": "cell-four-gate-final-publication-v1",
+  "start_head": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "start_tree": "21e970bfdb11ab64403d2af5f3c56536a2961f80",
+  "status": "index_failed",
+  "tracked_source_scope": {
+    "changed_paths": [
+      ".github/workflows/codeql-real-exact-source.yml",
+      ".github/workflows/pon-next-architecture-security.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "docs/development/specs/pon/CELL_STORAGE_FOUR_GATE_CONTINUATION_V1.md",
+      "evidence/cell-storage-four-gates-20261111/precommit-maintenance/README.md",
+      "scripts/ci/test_cell_storage_convergence_ci.py"
+    ],
+    "native_model_runner_unchanged_from_c3": true,
+    "rust_cargo_examples_unchanged_from_c3": true
+  }
+}

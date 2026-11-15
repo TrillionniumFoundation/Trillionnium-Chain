@@ -1,0 +1,29 @@
+{
+  "bytes": 1250,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_run_pq_root_witness_v5.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/work/chain-root-operation-recovered-20261112-df05",
+  "elapsed_ns": 14074088896,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "log": "root-runner-controls.log",
+  "name": "root-runner-controls",
+  "process_exit_code": 0,
+  "sha256": "bea16befeb2735a5250759875f7e0a870cad67cc5cdbe7459674bb195c31cf79",
+  "source": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

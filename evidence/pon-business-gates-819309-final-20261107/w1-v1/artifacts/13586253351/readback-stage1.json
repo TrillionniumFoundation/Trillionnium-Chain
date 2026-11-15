@@ -1,0 +1,59 @@
+{
+  "artifact_id": 13586253351,
+  "metadata": {
+    "id": 13586253351,
+    "name": "w1-legal-strategy-v2-prospective-merge-arm64-28df21f965e0348690836c9c854dab645827a03d-1",
+    "size_in_bytes": 140620167,
+    "digest": "sha256:be29cf54d47cff4a05c50936b3bfa8512866992300d636689d0cbf45655c6dcf",
+    "expired": false,
+    "created_at": "2026-11-07T18:54:22Z",
+    "updated_at": "2026-11-07T18:54:22Z",
+    "workflow_run": {
+      "id": 42402618462,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+    }
+  },
+  "errors": [
+    "ValueError: GitHub ZIP digest/size mismatch"
+  ],
+  "warnings": [],
+  "archive_authenticated": false,
+  "source_bound": false,
+  "manifest_hashes_complete": false,
+  "pure_read_status": "NOT_RUN",
+  "business_qualification": false,
+  "family": "legal-v2",
+  "arch": "arm64",
+  "source_kind": "prospective-merge",
+  "tested_commit": "28df21f965e0348690836c9c854dab645827a03d",
+  "job": {
+    "id": 128493695771,
+    "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+    "family": "legal-v2",
+    "arch": "arm64",
+    "source": "prospective-merge",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "download": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586253351/zip"
+    ],
+    "exit_code": null,
+    "timed_out": true,
+    "error": "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586253351/zip']' timed out after 239.99998507695273 seconds",
+    "bytes": 57507840,
+    "sha256": "2390f432ace47331f613330d335e20b426409104655b157da5eb18f4bd29c71a"
+  },
+  "coverage_status": "UNKNOWN",
+  "finished_utc": "2026-11-07T20:10:32.358767+00:00"
+}

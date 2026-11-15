@@ -1,0 +1,47 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `release` profile [optimized] target(s) in 0.82s
+     Running unittests src/lib.rs (/workspace/scratch/10366560c781/target-effects/release/deps/trnm_pon_node-55ae308ca29f5ac1)
+
+running 37 tests
+test store::async_w1_generation_v2::tests::heavy::cancellation::tests::actual_native_receipt_refuses_new_owner_cancel_without_writing_intent ... ok
+test store::async_w1_generation_v2::tests::heavy::cancellation::tests::actual_owner_cancel_cold_reopen_and_reorg_preserve_veto_and_full_cap ... ok
+test store::async_w1_generation_v2::tests::heavy::cancellation::tests::actual_two_handle_same_reason_replay_never_claims_new_event ... ok
+test store::async_w1_generation_v2::tests::heavy::cancellation::tests::prepared_only_cold_reader_refuses_before_begin_without_mutation ... ok
+test store::async_w1_generation_v2::tests::heavy::cancellation::tests::provider_unknown_is_not_owner_cancel_and_no_resource_refund ... ok
+test store::async_w1_generation_v2::tests::heavy::cancellation::tests::requested_policy_too_late_and_plan_are_conservative ... ok
+test store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation ... ignored, explicit resource-heavy fresh full-W1 proof; requires clean frozen source and TRNM_W1_FUNDED_CONFIG
+test store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation_owner_cancel_after_segment_start ... ignored, explicit owner cancellation of a real expensive W1 worker; requires a new research Node and original operation
+test store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation_timeout_then_refund_and_reorg ... ignored, explicit new research operation; actual r0vm original deadline, principal refund and real fork/cold round trip
+test store::async_w1_generation_v2::tests::heavy::funded_w1_owner_cancellation_cold_reconcile ... ignored, read-only cold reconciliation of an existing owner-cancel attempt; never dispatches generation or cancellation
+test store::async_w1_generation_v2::tests::heavy::local_proof_plan_defaults_and_both_fresh_trial_argv_are_exact ... ok
+test store::async_w1_generation_v2::tests::heavy::local_proof_plan_refuses_nonintegers_missing_fields_and_resource_overcommit ... ok
+test store::async_w1_generation_v2::tests::heavy::shared_research_node_uses_declared_reserve_nonce_and_rejects_old_nonce_after_cold_open ... ok
+test store::async_w1_generation_v2::tests::real_native_payment_cold_reopen_reorg_and_duplicate_with_explicit_verifier_fixture ... ok
+test store::async_w1_generation_v2::tests::real_node_task_owner_assignment_survives_cold_reopen_and_refuses_another_generation_journal ... ok
+test store::async_w1_generation_v2::tests::real_owner_signed_wrong_subject_or_sender_never_creates_settlement_intent ... ok
+test store::async_w1_generation_v2::tests::real_receipt_closes_native_cancel_but_service_cancel_still_blocks_new_settlement_intent ... ok
+test store::async_w1_generation_v2::tests::real_reserved_task_cancel_and_owner_wire_negative_controls ... ok
+test store::async_w1_generation_v2::tests::recovery_v3::authenticated_cas_cannot_extend_original_generation_deadline ... ok
+test store::async_w1_generation_v2::tests::recovery_v3::error_after_actual_local_commit_quarantines_without_signing_that_successor ... ok
+test store::async_w1_generation_v2::tests::recovery_v3::full_local_backup_restore_refuses_dispatch_against_retained_signed_witness ... ok
+test store::async_w1_generation_v2::tests::recovery_v3::independent_pin_authority_generation_and_random_journal_cannot_be_rebound ... ok
+test store::async_w1_generation_v2::tests::recovery_v3::independent_service_reopen_pin_rejects_restored_witness_database ... ok
+test store::async_w1_generation_v2::tests::recovery_v3::local_commit_without_external_commit_remains_quarantined_on_cold_reopen ... ok
+test store::async_w1_generation_v2::tests::recovery_v3::lost_or_corrupt_cas_ack_recovers_same_operation_pending_without_redispatch ... ok
+test store::async_w1_generation_v2::tests::recovery_v3::lost_settlement_ack_retains_exact_wire_and_never_generates_a_replacement_operation ... ok
+test store::async_w1_generation_v2::tests::recovery_v3::record_limit_refuses_unbounded_journal_before_database_creation ... ok
+test store::async_w1_generation_v2::tests::recovery_v3::reorg_unknown_and_cancel_preserve_operation_cap_and_do_not_dispatch_or_pay ... ok
+test store::async_w1_generation_v2::tests::recovery_v3::restored_journal_count_and_blob_limits_refuse_before_witness_or_effect ... ok
+test store::async_w1_generation_v2::tests::recovery_v3::transaction_head_change_after_witness_read_is_not_promoted_to_a_signed_successor ... ok
+test store::async_w1_generation_v2::tests::recovery_v3::witness_unavailable_refuses_before_local_dispatch_and_missing_fence_has_no_fallback ... ok
+test store::async_w1_generation_v2::tests::success_shaped_verifier_response_with_wrong_sdk_cannot_produce_positive ... ok
+test store::async_w1_generation_v2::tests::terminal::qualified_terminal_cost_is_recorded_once_and_overruns_are_never_clipped ... ok
+test store::async_w1_generation_v2::tests::terminal::real_native_reorg_preserves_terminal_cost_and_local_owner_cancel_without_replay ... ok
+test store::async_w1_generation_v2::tests::terminal::terminal_reconciliation_rejects_job_source_clock_and_cancel_authority_changes ... ok
+test store::async_w1_generation_v2::tests::terminal::terminal_unknown_closes_dispatch_once_and_preserves_native_funding_and_cap ... ok
+test store::async_w1_generation_v2::tests::terminal::timeout_requires_original_deadline_and_retains_complete_identity_after_expiry ... ok
+
+test result: ok. 33 passed; 0 failed; 4 ignored; 0 measured; 1187 filtered out; finished in 2.77s
+

@@ -1,0 +1,119 @@
+[
+  {
+    "original": "job-129037172684.log",
+    "retained": "job-129037172684.log.gz",
+    "raw_bytes": 142790,
+    "raw_sha256": "13494418c1a4d934684c2ed2228ed7fff3aaa4837945acc06fbf61a62a57f0e4",
+    "retained_bytes": 22723,
+    "retained_sha256": "f1ac89acd1937ddc7781c12fe2fb984f48b59d9cf5be27c685c21c86f2625f82",
+    "encoding": "gzip"
+  },
+  {
+    "original": "job-129037172866.log",
+    "retained": "job-129037172866.log.gz",
+    "raw_bytes": 215356,
+    "raw_sha256": "0805af9d99fed6165658757b0036f5604ffdd12be7e7b9b86f4ee74305ad5529",
+    "retained_bytes": 35132,
+    "retained_sha256": "a398745d23a74db304da45891294bc3dfeab63d0b09896eb0095d5ad6674a9b8",
+    "encoding": "gzip"
+  },
+  {
+    "original": "job-129037173012.log",
+    "retained": "job-129037173012.log.gz",
+    "raw_bytes": 207983,
+    "raw_sha256": "d7d2c969a40471f6aac40fe45f9f9cb7b834d1979cc4f49cacd5da4a611a1270",
+    "retained_bytes": 37674,
+    "retained_sha256": "af44a84daafb90c5bfa71fa44e60fa758812902a2c76bd9d1819d98a40596fa8",
+    "encoding": "gzip"
+  },
+  {
+    "original": "job-129037173103.log",
+    "retained": "job-129037173103.log.gz",
+    "raw_bytes": 170284,
+    "raw_sha256": "6671fc84227c737f78f8ff9e5c7e51ba540d933e49d9ae3b46c7a6e8846dfe51",
+    "retained_bytes": 28601,
+    "retained_sha256": "6f0b57025dd16bef021d92f1c73cf2d35f7b8a178c2f59afc93b182af3a4d89d",
+    "encoding": "gzip"
+  },
+  {
+    "original": "job-129037173240.log",
+    "retained": "job-129037173240.log.gz",
+    "raw_bytes": 155320,
+    "raw_sha256": "2e52d36fccf79b2556e0394728222975de4902ce469c74f4bd09862b3e4f7f8e",
+    "retained_bytes": 25235,
+    "retained_sha256": "b50188fbe5bf095fda3b545087426c45ad2cf45e30ad7cfecbfadaadc4280038",
+    "encoding": "gzip"
+  },
+  {
+    "original": "native-campaign-result-db48af79.json",
+    "retained": "native-campaign-result-db48af79.json",
+    "raw_bytes": 8561,
+    "raw_sha256": "fbfad3e7cf5e9f80d9a294891a05c475504d77f067b70d53723b8d577c939ca2",
+    "retained_bytes": 8561,
+    "retained_sha256": "fbfad3e7cf5e9f80d9a294891a05c475504d77f067b70d53723b8d577c939ca2",
+    "encoding": "identity"
+  },
+  {
+    "original": "workspace-artifact-verification.json",
+    "retained": "workspace-artifact-verification.json",
+    "raw_bytes": 3448,
+    "raw_sha256": "e51802aadcf0aeae589abf5e40f396c136c6a1ea453b1d10990853c261bc3590",
+    "retained_bytes": 3448,
+    "retained_sha256": "e51802aadcf0aeae589abf5e40f396c136c6a1ea453b1d10990853c261bc3590",
+    "encoding": "identity"
+  },
+  {
+    "original": "workspace-build-artifact-check-exit.txt",
+    "retained": "workspace-build-artifact-check-exit.txt",
+    "raw_bytes": 2,
+    "raw_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "retained_bytes": 2,
+    "retained_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "encoding": "identity"
+  },
+  {
+    "original": "workspace-build-artifact-check-stderr.txt",
+    "retained": "workspace-build-artifact-check-stderr.txt",
+    "raw_bytes": 142,
+    "raw_sha256": "3761d78e01cb83ac846d581940192ac623db2cf296913f2ab0c970520bd664cf",
+    "retained_bytes": 142,
+    "retained_sha256": "3761d78e01cb83ac846d581940192ac623db2cf296913f2ab0c970520bd664cf",
+    "encoding": "identity"
+  },
+  {
+    "original": "workspace-build-command-json.txt",
+    "retained": "workspace-build-command-json.txt",
+    "raw_bytes": 2028,
+    "raw_sha256": "7036c20c2f1452d6af0267b75639ba74914c7a85aff099e04eac890437db5f86",
+    "retained_bytes": 2028,
+    "retained_sha256": "7036c20c2f1452d6af0267b75639ba74914c7a85aff099e04eac890437db5f86",
+    "encoding": "identity"
+  },
+  {
+    "original": "workspace-build-exit.txt",
+    "retained": "workspace-build-exit.txt",
+    "raw_bytes": 2,
+    "raw_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "retained_bytes": 2,
+    "retained_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "encoding": "identity"
+  },
+  {
+    "original": "workspace-build-stderr.txt",
+    "retained": "workspace-build-stderr.txt",
+    "raw_bytes": 10409,
+    "raw_sha256": "931d9456827fab419c76dc7d4f0e88db41529bdb4dafa999b34d30ead115e6e3",
+    "retained_bytes": 10409,
+    "retained_sha256": "931d9456827fab419c76dc7d4f0e88db41529bdb4dafa999b34d30ead115e6e3",
+    "encoding": "identity"
+  },
+  {
+    "original": "workspace-head-db48af79.zip",
+    "retained": "workspace-head-db48af79.zip",
+    "raw_bytes": 72858,
+    "raw_sha256": "248ae39a225e13b10921558df31a9462f92f5b3a85df9cad327bad347d99ed1e",
+    "retained_bytes": 72858,
+    "retained_sha256": "248ae39a225e13b10921558df31a9462f92f5b3a85df9cad327bad347d99ed1e",
+    "encoding": "identity"
+  }
+]

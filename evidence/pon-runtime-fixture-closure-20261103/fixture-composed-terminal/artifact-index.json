@@ -1,0 +1,62 @@
+{
+  "schema": "trnm-fixture-terminal-artifacts-v2",
+  "files": {
+    "README.addendum.md": {
+      "bytes": 3680,
+      "sha256": "e8037b1ed839039ec88ad542a0b05eb2935382a522ba724d6c6dd5b20627ffb5"
+    },
+    "native.log.gz": {
+      "bytes": 763134,
+      "sha256": "7b8f4eca199aa1aa59558ab1166a4b8fbc92fe724f61ee973baa02a8afeed73f"
+    },
+    "terminal-records.json.gz": {
+      "bytes": 208652,
+      "sha256": "06f3a6c5e4a44ae82d6d6c2ac4a31384809e889748c6e020c0135ac8cbbed48f"
+    },
+    "exact-commit-native-association.json": {
+      "bytes": 1111,
+      "sha256": "11e8d2cea046be74b5286b6293d645da5b25110cc9f8854b405143bb0264998d"
+    },
+    "independent-native-readback.json": {
+      "bytes": 110279,
+      "sha256": "bbffc7bf892cec332459a52fa25aa67df57b4888b6e2f44cab31435cdfbb7f8e"
+    },
+    "terminal-summary.json": {
+      "bytes": 3508,
+      "sha256": "5a7672e7df6c278660efcb559ce109f5fa3472808bbd20c0d66e59c5a1085f5b"
+    },
+    "prepare_terminal.py": {
+      "bytes": 19468,
+      "sha256": "77333380cd57e1bcbced5b19ac352ebd3686779d051ff0f893b3a39d39d31db1"
+    },
+    "verify_bundle.py": {
+      "bytes": 4717,
+      "sha256": "fed24e7352de35f26805abb5838f1769ff59189967ee4d66f8096b86eda0e67f"
+    },
+    "verification.json": {
+      "bytes": 1447,
+      "sha256": "31cefa170bed1716378155a67778a570c205bd2ce51373233d0a165288c2ca71"
+    },
+    "chronology-correction.json": {
+      "bytes": 1318,
+      "sha256": "c0947a6ed14f088f89a0edfbe9d5fc8704f92e7f76d9108b7a38b2e1be3b571c"
+    },
+    "chronology-draft-v1.json.gz": {
+      "bytes": 12596,
+      "sha256": "942276b0e85df69c5b5d024a3cee36e1afa7bc9cd42e13ddcddac9fd3c213236"
+    },
+    "reader-preparation-checks.json": {
+      "bytes": 2874,
+      "sha256": "7d274903ef469d45f4cecf7ce7d80d5256feafc7525b2473e49194d44dd64346"
+    },
+    "check_prepared_reader.py": {
+      "bytes": 4024,
+      "sha256": "4e71d3774f4c5d858b84233f342a3196fddde12d141b9a6ac9a6d4dc184cb171"
+    },
+    "preparation.json": {
+      "bytes": 1423,
+      "sha256": "87f0344e13e365a11ef483b3b1f5249627e2096df738535dc6a68a7522cdf2bf"
+    }
+  },
+  "scope": "Exact fixture native terminal; 950 PASS/1 actual failure/23 ignored; chronology corrected without rewriting raw receipts; original PENDING snapshot remains unchanged."
+}

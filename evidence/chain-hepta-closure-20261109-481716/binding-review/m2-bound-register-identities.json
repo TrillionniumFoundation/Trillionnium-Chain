@@ -1,0 +1,9 @@
+{
+  "source_commit": "44e96b1a841a50613d0b93484c5e576caec9f81f",
+  "authority_table_sha256": "7fe3e2c19f8d2c9e5371bf04b1a5543eb4c6c0417512608ec7e717d0924fa24e",
+  "root_snapshot_sha256": "64973799af0ff75049e27990f805dfbf8c39e4411ad5e2079884c3a684240cbf",
+  "w1_contract_sha256": "e2c5377ac02c0ed47e7f69125fbcabe61072d42597b3208264abaa5be2961c78",
+  "w1_contract_bytes": 40257,
+  "profile_binding_manifest_sha256": "9154595097a2abe460f23e53ab96b3de5712702b156ada71fc5d2d65c337e424",
+  "qualification_changed": false
+}

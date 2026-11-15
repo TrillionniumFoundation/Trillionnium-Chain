@@ -1,0 +1,48 @@
+{
+  "mode": "pool-scan-before",
+  "source": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+  "driver": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "ELF_included": false,
+  "files": [
+    {
+      "name": "driver-preflight.process.json",
+      "bytes": 700,
+      "sha256": "55acbf2e6cc13b9df8d977b2b681f3407be57caab29abdff988d2b9edde401f6"
+    },
+    {
+      "name": "driver-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "driver-preflight.stdout",
+      "bytes": 178,
+      "sha256": "0fbc5b00ad46e834971ab15e544ef7fe1712d9e4a1e90b451fa9303ca039f646"
+    },
+    {
+      "name": "driver-source-after.json",
+      "bytes": 423,
+      "sha256": "03bd6956b3711c85ef2505ab09ec990ac1ab8ccbeffe4fcf3cecc8173601e731"
+    },
+    {
+      "name": "driver-source-before.json",
+      "bytes": 423,
+      "sha256": "03bd6956b3711c85ef2505ab09ec990ac1ab8ccbeffe4fcf3cecc8173601e731"
+    },
+    {
+      "name": "report.json",
+      "bytes": 3050,
+      "sha256": "87b82d5651849dc40d71cf6f5f57db283b3330ed90bde6a62a9c2f54b8a2eef8"
+    },
+    {
+      "name": "subject-source-after-error.json",
+      "bytes": 227,
+      "sha256": "2639da5ab2f224d07c93db58de88c46a76fd40831adca15d56400f7c503b1708"
+    },
+    {
+      "name": "subject-source-before-error.json",
+      "bytes": 205,
+      "sha256": "a3d90edb5a9d61f7bebe6c9883cf1c43add88b8d6b2997bab82694317c30231d"
+    }
+  ]
+}

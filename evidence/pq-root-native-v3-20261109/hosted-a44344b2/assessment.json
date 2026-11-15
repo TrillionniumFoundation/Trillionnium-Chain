@@ -1,0 +1,20 @@
+{
+  "scope": "Read-only diagnosis of one existing hosted run; no workflow rerun/cancel or repository modification.",
+  "run_id": 42554940456,
+  "job_id": 128958438933,
+  "source_head": "a44344b25d12328fedd883a335585f03d059060b",
+  "failed_step": 7,
+  "failed_step_name": "Run three original campaigns under verified actual limits",
+  "direct_failure": "All three original release-profile separate_process_work_and_signed_confirmation_campaign tests returned 101 and failed their finite experiment criteria; wrapper returned ORIGINAL_THREE_RUN_CAMPAIGN_FAILED.",
+  "underlying_observations": "All nine phases report all_signed_rounds_confirmed_in_window=false and receiver_client_state_equal=false. All six attacker phases additionally report no genuine budget depletion. All three economics_complete flags are true; startup and report-validation failures are absent.",
+  "ci_wiring_assessment": "The retained original workflow and test/support/reader files selected in selected-source-comparison.json are byte-identical to base080c33c. The job invokes the original public_v3_multiprocess test directly, without the pq-root-v3 feature or the new V3 component runner. This failure is in the retained original gate, not a failed new V3 test invocation.",
+  "causality_limit": "This observation does not prove that V3 has no indirect performance impact, nor that host resource limits are the sole cause. No controlled base/head comparison on the same hosted machine was performed. Do not label the overall native campaign successful.",
+  "artifact": {
+    "id": 13647042350,
+    "bytes": 64519064,
+    "sha256": "0e2c392681014c7cf4b9d2a536079165a5f3769e23c6a02bf5882b86252f8f9f",
+    "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13647042350/zip",
+    "local_archive_verified": true
+  },
+  "predicate_excerpt_provenance": "phase-failure-summary.json is an explicitly derived bounded projection of each original run-N-raw/report.json. Each original report digest was checked against the uploaded run-N-result.json. Full reports remain in the verified archive; the projection is not a standalone proof of completeness."
+}

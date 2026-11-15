@@ -1,0 +1,297 @@
+{
+  "completed_utc": "2026-11-07T11:40:52.829576+00:00",
+  "full_final_publication_tree_id_recorded": false,
+  "git_diff_check": {
+    "after_exit_code": 0,
+    "argv": [
+      "git",
+      "--no-replace-objects",
+      "diff",
+      "--no-ext-diff",
+      "--no-textconv",
+      "--exit-code",
+      "a9efd4cba7546a8ef1e854ee0acdce9f5903ac2d",
+      "--",
+      "trillionnium",
+      "config",
+      "scripts"
+    ],
+    "before_exit_code": 0,
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "historical_codeql_lock": {
+    "all_prior_index_entries_and_non_files_fields_unchanged": true,
+    "all_six_historical_files_same_as_preparation_a9_and_e70": true,
+    "closure_recomputed_from_parent_lock": true,
+    "commands": {
+      "bytes": 1911,
+      "path": "evidence/pon-throughput-closure-20261107/codeql-lock/commands.json",
+      "sha256": "63e802d7ffcaf57c5c98bb92f9d13a66adf26ed31dd1d8124c909b7808db4e1f"
+    },
+    "historical_capture_reconstructed_or_reexecuted": false,
+    "index": {
+      "bytes": 11596,
+      "path": "evidence/pon-w1-work-security-20261101/INDEX.json",
+      "sha256": "85981c7bda43b49ad84579a6f20c414689d03a3e843f03254f82f5d09184b449"
+    },
+    "index_new_entry": {
+      "bytes": 2611,
+      "kind": "subsequent-codeql-scan-lock-preparation-20261107",
+      "original_capture_artifact": false,
+      "path": "matching-direct-deps/harness/crypto/Cargo.lock",
+      "sha256": "a5282de5bdb579a886a8ca579aa89a419280548a4ff93e04791dc670d9d4da60"
+    },
+    "new_lock": {
+      "bytes": 2611,
+      "path": "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/crypto/Cargo.lock",
+      "sha256": "a5282de5bdb579a886a8ca579aa89a419280548a4ff93e04791dc670d9d4da60"
+    },
+    "new_lock_is_original_capture_artifact": false,
+    "original_historical_files": [
+      {
+        "bytes": 7207,
+        "observed_sha256": "cb63cf4fc40a3a8ae05045abfd23e991728653bd2a694187a1f5aec2c84fbb21",
+        "path": "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/Cargo.lock",
+        "preparation_expected_sha256": "cb63cf4fc40a3a8ae05045abfd23e991728653bd2a694187a1f5aec2c84fbb21",
+        "same_as_a9": true,
+        "same_as_e70": true
+      },
+      {
+        "bytes": 644,
+        "observed_sha256": "a22fc89e5a26a1e5379fad4afde15a06efa2c48ed32fb5e453b1720c6c526fd5",
+        "path": "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/Cargo.toml",
+        "preparation_expected_sha256": "a22fc89e5a26a1e5379fad4afde15a06efa2c48ed32fb5e453b1720c6c526fd5",
+        "same_as_a9": true,
+        "same_as_e70": true
+      },
+      {
+        "bytes": 189,
+        "observed_sha256": "7c59607ea68664bec9245ee662e128a3af603a11e04b52033182cfc4dbfacf77",
+        "path": "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/crypto/Cargo.toml",
+        "preparation_expected_sha256": "7c59607ea68664bec9245ee662e128a3af603a11e04b52033182cfc4dbfacf77",
+        "same_as_a9": true,
+        "same_as_e70": true
+      },
+      {
+        "bytes": 79,
+        "observed_sha256": "e4d4d573fdcd69cca8ab2b1343973aa6410bbacbdff249ea20d82cb65d22e527",
+        "path": "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/crypto/src/lib.rs",
+        "preparation_expected_sha256": "e4d4d573fdcd69cca8ab2b1343973aa6410bbacbdff249ea20d82cb65d22e527",
+        "same_as_a9": true,
+        "same_as_e70": true
+      },
+      {
+        "bytes": 210,
+        "observed_sha256": "714b29344d26bc65a2193cb3628b6bd1b5f0cb0e478ebe6351ae9d36d8239132",
+        "path": "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/protocol/Cargo.toml",
+        "preparation_expected_sha256": "714b29344d26bc65a2193cb3628b6bd1b5f0cb0e478ebe6351ae9d36d8239132",
+        "same_as_a9": true,
+        "same_as_e70": true
+      },
+      {
+        "bytes": 31585,
+        "observed_sha256": "1d15d9a8b662e11164b9ad5a2e4a2e98e54b9ef1289ff1109793c20d7770c604",
+        "path": "evidence/pon-w1-work-security-20261101/matching-direct-deps/manifest.json",
+        "preparation_expected_sha256": "1d15d9a8b662e11164b9ad5a2e4a2e98e54b9ef1289ff1109793c20d7770c604",
+        "same_as_a9": true,
+        "same_as_e70": true
+      }
+    ],
+    "package_count": 12,
+    "package_edges": {
+      "block-buffer": [
+        "generic-array"
+      ],
+      "cfg-if": [],
+      "cpufeatures": [
+        "libc"
+      ],
+      "crypto-common": [
+        "generic-array",
+        "typenum"
+      ],
+      "digest": [
+        "block-buffer",
+        "crypto-common"
+      ],
+      "generic-array": [
+        "typenum",
+        "version_check"
+      ],
+      "hex": [],
+      "libc": [],
+      "sha2": [
+        "cfg-if",
+        "cpufeatures",
+        "digest"
+      ],
+      "trnm-w1-cost-primitive-validation": [
+        "hex",
+        "sha2"
+      ],
+      "typenum": [],
+      "version_check": []
+    },
+    "package_versions_checksums_sources_and_dependency_edges_exactly_match_parent_closure": true,
+    "parent_lock": {
+      "bytes": 7207,
+      "path": "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/Cargo.lock",
+      "sha256": "cb63cf4fc40a3a8ae05045abfd23e991728653bd2a694187a1f5aec2c84fbb21"
+    },
+    "preparation": {
+      "bytes": 6625,
+      "path": "evidence/pon-throughput-closure-20261107/codeql-lock/preparation.json",
+      "sha256": "438fe0932377d3c72d713a1d0e688ac89be2ef257cd42a8bd4996f935756774a"
+    },
+    "preparation_package_records_equal_actual_new_lock": true,
+    "retained_full_metadata_reads": [
+      {
+        "closure_package_versions_and_sources_match_lock": true,
+        "commands_rerun_for_this_review": false,
+        "full_metadata_packages": 12,
+        "ordinal": 1,
+        "recorded_exit_code": 0,
+        "recorded_locked_flag": false,
+        "resolve_dependency_edges_match_lock": true,
+        "resolve_nodes": 12,
+        "stderr": {
+          "bytes": 0,
+          "path": "evidence/pon-throughput-closure-20261107/codeql-lock/metadata-1.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 36359,
+          "path": "evidence/pon-throughput-closure-20261107/codeql-lock/metadata-1.json",
+          "sha256": "7b82fa65c0f48d05daea27782574022c8af341a563f74fe4cc107a43d7491387"
+        }
+      },
+      {
+        "closure_package_versions_and_sources_match_lock": true,
+        "commands_rerun_for_this_review": false,
+        "full_metadata_packages": 12,
+        "ordinal": 2,
+        "recorded_exit_code": 0,
+        "recorded_locked_flag": true,
+        "resolve_dependency_edges_match_lock": true,
+        "resolve_nodes": 12,
+        "stderr": {
+          "bytes": 0,
+          "path": "evidence/pon-throughput-closure-20261107/codeql-lock/metadata-2.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 36359,
+          "path": "evidence/pon-throughput-closure-20261107/codeql-lock/metadata-2.json",
+          "sha256": "7b82fa65c0f48d05daea27782574022c8af341a563f74fe4cc107a43d7491387"
+        }
+      },
+      {
+        "closure_package_versions_and_sources_match_lock": true,
+        "commands_rerun_for_this_review": false,
+        "full_metadata_packages": 12,
+        "ordinal": 3,
+        "recorded_exit_code": 0,
+        "recorded_locked_flag": true,
+        "resolve_dependency_edges_match_lock": true,
+        "resolve_nodes": 12,
+        "stderr": {
+          "bytes": 0,
+          "path": "evidence/pon-throughput-closure-20261107/codeql-lock/metadata-3.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 36359,
+          "path": "evidence/pon-throughput-closure-20261107/codeql-lock/metadata-3.json",
+          "sha256": "7b82fa65c0f48d05daea27782574022c8af341a563f74fe4cc107a43d7491387"
+        }
+      }
+    ],
+    "root_package": {
+      "name": "trnm-w1-cost-primitive-validation",
+      "version": "0.0.0"
+    }
+  },
+  "material_scope_limits": [
+    "The publication merge also changes workflow/documentation/evidence outside these three projected subtrees; this report does not declare the whole publication tree identical to a9.",
+    "The historical crypto lock is a separate new CodeQL scan input under evidence, not a production workspace lock update or a recreated historical native measurement.",
+    "The retained a9 full Node suite result remains 1150 passed, 3 failed, 31 ignored. Source equivalence does not waive the three AF_UNIX-blocked integration failures or turn the suite green.",
+    "Hosted CodeQL source-head/prospective-merge analyses and final publication checks still require their own exact-source results."
+  ],
+  "observed_publication_parent_head": "2b3ae9cd4774d0b07a8a2e7524887bb8d4ad5f2c",
+  "observed_uncommitted_merge_head": "3d1b6507671ec694ce58e86d4063a125c8deeb66",
+  "production_cargo_inputs": {
+    "all_tracked_crate_manifests_and_source_tests_identical": true,
+    "covered_by_identical_trillionnium_subtree": true,
+    "fresh_cargo_resolution_or_execution_performed": false,
+    "interpretation": "The complete tracked production Cargo inputs are byte-identical. This is source/input equivalence, not a new environment-specific graph resolution or native qualification.",
+    "workspace_lock": {
+      "bytes": 40044,
+      "path": "trillionnium/Cargo.lock",
+      "sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be"
+    },
+    "workspace_lock_matches_a9": true,
+    "workspace_manifest": {
+      "bytes": 2204,
+      "path": "trillionnium/Cargo.toml",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    }
+  },
+  "publication_head_and_merge_head_unchanged_during_check": true,
+  "qualification": {
+    "historical_native_execution_qualified": false,
+    "hosted_codeql_qualified": false,
+    "new_native_tests_passed": false,
+    "node_full_suite_passed": false,
+    "original_four_second_accepted": false,
+    "original_history_4105_accepted": false,
+    "production_activation": false,
+    "public_network_ready": false
+  },
+  "reference_native_source_commit": "a9efd4cba7546a8ef1e854ee0acdce9f5903ac2d",
+  "result": "SOURCE_PROJECTION_IDENTICAL; QUALIFICATION_UNCHANGED",
+  "schema": "pon-publication-native-source-projection-v1",
+  "scope": "Read-only comparison of an uncommitted publication merge against the native-tested source plus independent parsing/hashing of retained CodeQL lock preparation. No new Cargo, native test, build, Git index write, tree-object write or repository edit.",
+  "self_reference_avoided": "Only independent trillionnium/config/scripts subtree identities are recorded. This report is written outside the repository; no final whole-tree hash or later publication success is asserted.",
+  "started_utc": "2026-11-07T11:40:52.384212+00:00",
+  "subtrees": [
+    {
+      "actual_modes_and_blob_bytes_equal_reference": true,
+      "index_entries_equal_reference": true,
+      "index_subtree_git_oid_independently_recomputed": "28e241170e6435f4811d61e1f5165c490b0f4c11",
+      "path": "trillionnium",
+      "reference_commit": "a9efd4cba7546a8ef1e854ee0acdce9f5903ac2d",
+      "reference_subtree_git_oid": "28e241170e6435f4811d61e1f5165c490b0f4c11",
+      "tracked_bytes": 20038834,
+      "tracked_entries": 1239,
+      "untracked_nonignored_paths": [],
+      "worktree_subtree_git_oid_independently_recomputed": "28e241170e6435f4811d61e1f5165c490b0f4c11"
+    },
+    {
+      "actual_modes_and_blob_bytes_equal_reference": true,
+      "index_entries_equal_reference": true,
+      "index_subtree_git_oid_independently_recomputed": "3859c28bae718e10ec76ca61765da32bd2db71ab",
+      "path": "config",
+      "reference_commit": "a9efd4cba7546a8ef1e854ee0acdce9f5903ac2d",
+      "reference_subtree_git_oid": "3859c28bae718e10ec76ca61765da32bd2db71ab",
+      "tracked_bytes": 858705,
+      "tracked_entries": 43,
+      "untracked_nonignored_paths": [],
+      "worktree_subtree_git_oid_independently_recomputed": "3859c28bae718e10ec76ca61765da32bd2db71ab"
+    },
+    {
+      "actual_modes_and_blob_bytes_equal_reference": true,
+      "index_entries_equal_reference": true,
+      "index_subtree_git_oid_independently_recomputed": "3cf069b5ba3e85307f924826cb71f722a701fcc0",
+      "path": "scripts",
+      "reference_commit": "a9efd4cba7546a8ef1e854ee0acdce9f5903ac2d",
+      "reference_subtree_git_oid": "3cf069b5ba3e85307f924826cb71f722a701fcc0",
+      "tracked_bytes": 5786211,
+      "tracked_entries": 303,
+      "untracked_nonignored_paths": [],
+      "worktree_subtree_git_oid_independently_recomputed": "3cf069b5ba3e85307f924826cb71f722a701fcc0"
+    }
+  ]
+}

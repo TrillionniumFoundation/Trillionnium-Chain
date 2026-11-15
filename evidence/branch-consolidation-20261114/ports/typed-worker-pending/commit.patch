@@ -1,0 +1,2648 @@
+commit 898532d47f11c1a4cf92d769b7bb7264fb23ce36
+Author:     Qian QI <102159240+ProfHepta@users.noreply.github.com>
+AuthorDate: Sat Nov 14 12:40:47 2026 +0800
+Commit:     Qian QI <102159240+ProfHepta@users.noreply.github.com>
+CommitDate: Sat Nov 14 12:40:47 2026 +0800
+
+    Retain typed worker pending observations under original wait4 bounds
+    
+    Preserve the complete initial, binding and post-binding pending lineage with exact owner/pidfd/terminal-event evidence. Keep original absolute deadlines, sticky failures and wait4 resource closure. The production pilot and default profiles are unchanged.
+    
+    Retain all 36 original pending controls and 23 existing worker controls; adapt only two test fixture digests for the already selected pilot CLI. Linux selected-source validation passed all 59 with no skips. Add independent source and exact CI registration refusals. Preserve the initial driver instrumentation failure and old Diverse60 source-namespace refusal; no model or production qualification is granted.
+
+diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json
+index bc67866745010c9ed9ab0e08d8a25c43081e1843..49bf2cde90be3ebaae2e4afb19cf15e4ddc668fb 100644
+--- a/config/pon/pq-cross-branch-corpus-v1.json
++++ b/config/pon/pq-cross-branch-corpus-v1.json
+@@ -211,7 +211,7 @@
+     "config/systemd/trnmponpublic.slice": "8981b6aeed4c08c21679664940366b36a991444a",
+     "docs/development/INCENTIVE_LIABILITY_BOUNDARIES_20261112.md": "f35458d00efc7e373a395a0daadcd43fbee5394d",
+     "docs/development/SOURCE_INCENTIVE_RESEARCH_CONTRACT_20261112.md": "402c845c07991a5111fc714c4491da9211279e50",
+-    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "dcd02b37d3ea4e8d8508d754d6bd3194ca888b39",
++    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "59bb0699bca649be79831e8166886c7dc14c7696",
+     "docs/development/TRNM_PUBLIC_CALLER_GRANTS_R20_20261114.md": "eed255c9a0160788699087c4ddb92c67dd1d55f4",
+     "docs/development/specs/pon/CELL_BEP52_PEER_V1.md": "b83e92b8b31b217337ff3685668290a9e03d3a3b",
+     "docs/development/specs/pon/CELL_BRANCH_COMPOSITION_20261113.md": "7713e91ebd6613059fe5c768c3511fdf15611447",
+@@ -1708,14 +1708,14 @@
+     "scripts/ci/chain_system_security.py": "26c17514e862c74d4a40e69b524649c080940505",
+     "scripts/ci/check_cell_content_graph_vectors_v3.py": "195ed4e18fb8995bd73eb01098b6a15229e51dbd",
+     "scripts/ci/check_cell_current_api_readback.py": "63ee03b89b6eda6e331879444e06ed77dc2d3a63",
+-    "scripts/ci/check_ci_contract.py": "2feff603b72e16fd63ed4fb86c63247d7d706afa",
++    "scripts/ci/check_ci_contract.py": "e75142018feb742c902567579507c60609b6ccde",
+     "scripts/ci/check_consensus_roster.py": "5c60d9835ead82e7b095415e2dddb6e8936a78b1",
+     "scripts/ci/check_content_commitment_vectors.py": "6723f6fe073c0413921561c2ad1b8c8e2578349f",
+     "scripts/ci/check_cpq1_parameter_observation.py": "335f25c09eeac7123f58af53b60f2d0943fab3cc",
+     "scripts/ci/check_cross_repo_candidate.py": "aa0e0e9e1575e60fc9f5aa5e876a7832c6a68b3e",
+     "scripts/ci/check_growth_scale_observation.py": "0a239b85ffd00bc3ce5609f7dd190fc2562c00b8",
+     "scripts/ci/check_native_constants_roster.py": "22921da3bac06cde78319b5b9492a56751f4c6ae",
+-    "scripts/ci/check_pq_research_integration.py": "c92cc1b9cf8664816721f62cfcf04643e0f26b45",
++    "scripts/ci/check_pq_research_integration.py": "6092107bb1ef4d27b33a1125d334f1c98e83861c",
+     "scripts/ci/check_public_readiness_evidence.py": "d5919849d69b0d4adc89615b1005c1279140f79d",
+     "scripts/ci/check_sqlite_build_requalification.py": "568f4b9a00235a69f48d63a517a0fb2910fe9653",
+     "scripts/ci/check_w1_native_roster.py": "3dbbb1cd5475ef2f776848882eb069ea488d89d2",
+@@ -1771,7 +1771,7 @@
+     "scripts/ci/test_chain_hepta_command_binding.py": "2297f6afe201f503eb9e0de8dcb7fa1a4f840cfd",
+     "scripts/ci/test_chain_hepta_qualification.py": "a52c8e3f8b81525290867355f2f0a00a089bf5e9",
+     "scripts/ci/test_chain_system_security.py": "f919a47c0882bc1945e359e9525fc3fd0538b784",
+-    "scripts/ci/test_ci_contract.py": "af7ed6cf6c6749c6369ff61a02858e291c664b32",
++    "scripts/ci/test_ci_contract.py": "1dbd4fc286b720d950d9265be44b275296321163",
+     "scripts/ci/test_ci_observation_process.py": "83a132a161d1b93c569e7382f238046609a229fc",
+     "scripts/ci/test_codeql_retention.py": "719db201b9e08f649a8f243858088a0a4d65adac",
+     "scripts/ci/test_consensus_roster.py": "e089759af1811b13d1020fe57cbff8d74a73a76b",
+@@ -1810,7 +1810,7 @@
+     "scripts/ci/test_pq_lifetime_budget.py": "fde7fa3f388db9ab9f9760b9229f928a7b2f2767",
+     "scripts/ci/test_pq_lifetime_composition.py": "5350c9232e030d0de6d6e0102d9f9b5b64604f50",
+     "scripts/ci/test_pq_proof_profile_binding.py": "2a3992af77a06302b6beb8959cffe9fdc694245e",
+-    "scripts/ci/test_pq_research_integration.py": "df27b6995c41c10719c2b0d239fba7e74f3bb773",
++    "scripts/ci/test_pq_research_integration.py": "a1ff8e5c060541c0a431ef242e6558192d194848",
+     "scripts/ci/test_pq_root_campaign_readback.py": "0531ba2435fe03dd384f50cb97a8614653d1f274",
+     "scripts/ci/test_pq_root_custody_review_v1.py": "63d1dd99c10daa80705c4a1aa74f72b7e37294c9",
+     "scripts/ci/test_pq_root_custody_review_v2.py": "0c08ba2bd1c849f76bf8ca27260af63dc232d8e3",
+@@ -1897,7 +1897,7 @@
+     "scripts/llm_parent_material.py": "f8169dddce53778d08fc4c5ee4d2872890d4c62f",
+     "scripts/llm_python_runtime_contract.py": "94f4e0d5e3ca47444ed87f5d087189765f39d584",
+     "scripts/llm_runtime_candidate_observation_v1.py": "e55901e0dff3a58d587594a5244bbf95a0ac61d4",
+-    "scripts/llm_runtime_exit_worker_observation.py": "5469255e620ec9ef062b8ff3e37c19a464d231cc",
++    "scripts/llm_runtime_exit_worker_observation.py": "29a44edcc86580167e3c0db4e65cbfc1cb94eff4",
+     "scripts/llm_runtime_observed_execution_v1.py": "36108670cae70a9460a204b7a7eb7ea62770d2e3",
+     "scripts/llm_runtime_parent_step.py": "4798f2be0cdbe0f243ed9b298f5c28c9c9bfac75",
+     "scripts/llm_runtime_parent_step_task_v2.py": "c32382b23b691543d312ae307add178d474bc2ff",
+@@ -1953,10 +1953,14 @@
+     "scripts/test_llm_neural_read_worker.py": "4c6dc50e5bddb3630f5aa751a7c393cd8be82b9a",
+     "scripts/test_llm_python_runtime_contract.py": "45de8576c96f130787c4bd2444e634990e66bb13",
+     "scripts/test_llm_runtime_candidate_observation_v1.py": "e3d4f7ea3c5f77f5c223a9fde7520e3d9dd0bed0",
+-    "scripts/test_llm_runtime_exit_worker_observation.py": "cd63a2a52dc994dae34a5ed58d0dfffab7b856fc",
++    "scripts/test_llm_runtime_exit_binding_pending.py": "797fecc6919fadf594bca8a271b595e2dbc10d41",
++    "scripts/test_llm_runtime_exit_initial_pending.py": "d8b193743c0505e3d894eb0d8af617b5f257226b",
++    "scripts/test_llm_runtime_exit_post_binding_retirement.py": "46f46cb0f00f1bf8c2c3b61f40e90e804015402b",
++    "scripts/test_llm_runtime_exit_worker_observation.py": "50ce81d8375c42c48640c58a54c4e90db223f1b8",
+     "scripts/test_llm_runtime_observed_execution_v1.py": "1bca9b223bb05cf9feee56e17297046d806e78ae",
+     "scripts/test_llm_runtime_parent_step_task_v2.py": "d327f6324383e1f823b65522df6c37530b1c0c5d",
+     "scripts/test_llm_runtime_parent_step_v2.py": "96734604cf194c205c06af375bacfccb2e879d08",
++    "scripts/test_llm_runtime_pilot.py": "7d3c6699e5f536b1e7ff0ff562a721fd91ee2516",
+     "scripts/test_llm_runtime_release.py": "8990d012f485fd988e0b63a31c4bd0272d8661ee",
+     "scripts/test_llm_runtime_trial_ledger.py": "f8d72c2bcc77a7f5babd6fdda6b9f6eccaa07b48",
+     "scripts/test_m15_native_fixture_tools.py": "b61c09f7e7f1ff3669fb79d980f39fe0c71d4558",
+@@ -4478,10 +4482,14 @@
+     "scripts/test_llm_neural_read_worker.py",
+     "scripts/test_llm_python_runtime_contract.py",
+     "scripts/test_llm_runtime_candidate_observation_v1.py",
++    "scripts/test_llm_runtime_exit_binding_pending.py",
++    "scripts/test_llm_runtime_exit_initial_pending.py",
++    "scripts/test_llm_runtime_exit_post_binding_retirement.py",
+     "scripts/test_llm_runtime_exit_worker_observation.py",
+     "scripts/test_llm_runtime_observed_execution_v1.py",
+     "scripts/test_llm_runtime_parent_step_task_v2.py",
+     "scripts/test_llm_runtime_parent_step_v2.py",
++    "scripts/test_llm_runtime_pilot.py",
+     "scripts/test_llm_runtime_release.py",
+     "scripts/test_llm_runtime_trial_ledger.py",
+     "scripts/test_m15_native_fixture_tools.py",
+diff --git a/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md b/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+index dcd02b37d3ea4e8d8508d754d6bd3194ca888b39..59bb0699bca649be79831e8166886c7dc14c7696 100644
+--- a/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
++++ b/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+@@ -14992,3 +14992,42 @@ Selected the three independent 1d11f875 statement-boundary controls. They exerci
+ ### 2026-11-14 retained literal-aware Rust token reader
+ 
+ Preserved the pure token and explicit structural-token APIs and all five original controls from 29e1f194. The complete input string is the only observation source; the helper retains literal prefixes, joint operators, lifetime forms and nested-comment boundaries. These original closed-source lexical controls do not constitute a full Rust grammar parser, compiler result, runtime security qualification, or authority to replace the current PQ/History contracts. The current repository-truth lane invokes their original five controls exactly once, backed by an independent command-mutation list and literal source omission/byte-mutation refusals.
++
++### 2026-11-14 retained three-stage typed pending worker observations
++
++Selected the complete 147bae52, 91e4a5e9 and c1650714 lineage for the existing
++explicit worker-pidfd V4 observer. Initial incomplete task observation, held-task
++ENOENT during partial binding, and post-binding ESRCH retain distinct pending
++records. The last case requires every original worker binding, the same held
++worker pidfd with its exact terminal event, unchanged owner/namespace/birth
++identity, and one proved roster loss. Previously observed invalid fields, new or
++reappearing tasks, a second unproved loss and unknown reads remain sticky refusals.
++
++Pending records neither claim zero RSS nor complete/release/refill a reservation.
++The existing pilot lifecycle, default profile, source-pair and trial-reconcile
++behavior remain byte-identical. Completion still requires the original same-owner
++wait4 with valid resource usage within both the whole operation deadline and the
++original missing-sample-plus-100ms bound. No Host/model campaign is activated.
++
++The original fourteen initial, ten binding and twelve post-binding controls enter
++the existing protocol-contract pilot command once. Only the two whole-pilot test
++fixture digests bind the already reviewed consolidated CLI body; original V2/V3
++pins, old observer-profile refusals and all original control assertions remain.
++Independent literal source and registration mutations refuse omission or bypass.
++Linux child/pidfd/proc/wait4 observations and controlled proc field views are
++recorded separately; they grant no model, production or campaign qualification.
++
++The old Diverse60 recipe deliberately retains its aae68f92 observer pin. It now
++refuses the changed observer at DIVERSE_V3_CURRENT_OBSERVER; neither its historical
++source namespace nor its old experimental receipts are refreshed or qualified.
++
++The selected Linux run completed all 59 original methods: 36 pending controls
++and 23 existing worker controls, with zero failures, errors or skips. The actual
++pilot discovery registered each of the 36 once. Sixty-seven absolute project
++inputs and the actual loaded project modules were source-bound before/after;
++unresolved dir_fd-relative audit events are separately counted, without claiming
++complete file-access coverage. The first external driver misinterpreted relative
++proc paths and produced 240 subtest errors; that failed run and its once-guard
++refusal remain retained. Correcting only this driver produced the passing run.
++Six independent CI/source negative controls and the actual CI/corpus readers
++also passed. These observations preserve all qualification flags as false.
+diff --git a/scripts/ci/check_ci_contract.py b/scripts/ci/check_ci_contract.py
+index 2feff603b72e16fd63ed4fb86c63247d7d706afa..e75142018feb742c902567579507c60609b6ccde 100644
+--- a/scripts/ci/check_ci_contract.py
++++ b/scripts/ci/check_ci_contract.py
+@@ -2311,6 +2311,105 @@ def check_pq_system_required_controls(root: Path) -> dict:
+             'selected_meaningful_controls': 63, 'tests_executed': False}
+ 
+ 
++
++# Original typed-pending controls enter the existing pilot command once.
++# This checks registration, not execution or resource-owner qualification.
++LLM_TYPED_PENDING_TESTS = {
++    "test_llm_runtime_exit_initial_pending": {
++        "class": "InitialTerminalPendingTests",
++        "methods": [
++            "test_initial_task_set_shrink_keeps_pending_until_exact_wait4",
++            "test_initial_worker_stat_enoent_retains_validated_prefix_without_full_proof",
++            "test_constructor_refusal_is_retained_in_same_owner_slot_before_racing_terminal_wait4",
++            "test_pending_late_wait4_uses_both_original_deadlines",
++            "test_pending_requires_exact_wait4_and_valid_nonzero_resources",
++            "test_pending_full_owner_rejects_overcap_nonzero_exit_and_timeout_despite_final_exit0",
++            "test_observed_bad_status_or_stat_cannot_be_erased_by_later_enoent",
++            "test_successful_task_count_decrease_cannot_rebound_before_or_after_enoent",
++            "test_unknown_reads_malformed_fields_and_partial_constructor_fds_refuse",
++            "test_pending_new_tid_reappearance_changed_birth_and_reused_fd_are_sticky",
++            "test_actual_current_rss_failed_constructor_blocks_immediate_terminal_in_import_and_main",
++            "test_failed_slot_never_overwrites_an_earlier_result_or_foreign_owner",
++            "test_frozen_original_model_and_v2_v3_bytes_and_old_v4_profile_refusal",
++            "test_real_owned_wait4_closes_only_synthetic_initial_roster_gap"
++        ]
++    },
++    "test_llm_runtime_exit_binding_pending": {
++        "class": "BindingTerminalPendingTests",
++        "methods": [
++            "test_held_worker_enoent_in_each_acquisition_read_keeps_original_pending",
++            "test_successfully_read_bad_status_is_sticky_before_later_stat_enoent",
++            "test_other_task_read_errors_and_enoent_without_roster_loss_refuse",
++            "test_pidfd_open_or_fdinfo_failure_is_not_a_held_task_read",
++            "test_group_or_leader_read_failure_never_creates_binding_pending",
++            "test_real_supervise_and_owned_wait4_close_only_with_original_resource_rules",
++            "test_pending_unknown_wrong_wait_and_missing_receipts_cannot_close",
++            "test_original_whole_deadline_cannot_be_replaced_by_new_pending_window",
++            "test_constructor_failure_diagnostic_comes_from_actual_current_rss_call",
++            "test_legacy_sources_unchanged_and_previous_v4_source_receipt_refused"
++        ]
++    },
++    "test_llm_runtime_exit_post_binding_retirement": {
++        "class": "PostBindingRetirementTests",
++        "methods": [
++            "test_bound_esrch_in_each_postbinding_read_retains_only_pending",
++            "test_unbound_esrch_and_postbinding_other_errors_still_refuse",
++            "test_bound_esrch_requires_exact_original_worker_terminal_event",
++            "test_terminal_event_cannot_replace_original_binding_or_held_identity",
++            "test_event_does_not_qualify_live_reappearing_or_other_missing_worker",
++            "test_successful_bad_status_is_not_erased_by_later_bound_esrch",
++            "test_postbinding_leader_and_group_esrch_still_refuse",
++            "test_roster_change_after_first_retention_check_is_not_hidden",
++            "test_one_loss_from_three_threads_does_not_cover_a_later_other_loss",
++            "test_previous_v4_source_receipt_remains_closed",
++            "test_native_held_proc_read_esrch_and_pidfd_event_use_actual_owned_wait4",
++            "test_native_terminal_event_does_not_bypass_exit_rss_or_original_deadline"
++        ]
++    }
++}
++
++
++def check_typed_pending_worker_controls(root: Path) -> dict:
++    pilot_path = root / 'scripts/test_llm_runtime_pilot.py'
++    require(pilot_path.is_file() and not pilot_path.is_symlink(),
++            'typed pending controls require the regular pilot entry')
++    pilot = ast.parse(pilot_path.read_text())
++    counts = {}
++    for module_name, expected in LLM_TYPED_PENDING_TESTS.items():
++        imports = [node for node in ast.walk(pilot)
++                   if isinstance(node, ast.ImportFrom) and node.module == module_name]
++        require(len(imports) == 1 and imports[0] in pilot.body
++                and imports[0].level == 0
++                and [(alias.name, alias.asname) for alias in imports[0].names]
++                == [(expected['class'], None)],
++                'typed pending controls require one unconditional original class import: ' + module_name)
++        source = root / 'scripts' / (module_name + '.py')
++        require(source.is_file() and not source.is_symlink(),
++                'typed pending original control source missing: ' + module_name)
++        tree = ast.parse(source.read_text())
++        classes = [node for node in tree.body
++                   if isinstance(node, ast.ClassDef) and node.name == expected['class']]
++        require(len(classes) == 1 and not classes[0].decorator_list
++                and [ast.unparse(base) for base in classes[0].bases] == ['unittest.TestCase'],
++                'typed pending controls require their undecorated original TestCase: ' + module_name)
++        methods = [node for node in classes[0].body
++                   if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
++                   and node.name.startswith('test_')]
++        names = [node.name for node in methods]
++        require(len(names) == len(set(names)) == len(expected['methods'])
++                and set(names) == set(expected['methods'])
++                and all(isinstance(node, ast.FunctionDef) and not node.decorator_list
++                        and any(not isinstance(statement, ast.Pass)
++                                and not (isinstance(statement, ast.Expr)
++                                         and isinstance(statement.value, ast.Constant))
++                                for statement in node.body)
++                        for node in methods),
++                'typed pending controls must retain every original non-skipped method: ' + module_name)
++        counts[module_name] = len(methods)
++    return {'original_controls': counts, 'selected_original_controls': sum(counts.values()),
++            'tests_executed': False}
++
++
+ def validate(root: Path = ROOT) -> dict:
+     # Discovery can exit successfully with zero tests when a pattern disappears.
+     # These mandatory files are executed explicitly and must also exist at review.
+@@ -2326,6 +2425,7 @@ def validate(root: Path = ROOT) -> dict:
+         require(source.is_file() and not source.is_symlink(),
+                 'required useful Cell test source is missing: ' + name)
+     check_manual_research_workflows(root)
++    typed_pending_worker_controls = check_typed_pending_worker_controls(root)
+     inline_source_pins = check_inline_source_pins(root)
+     pq_release_authority_controls = check_pq_release_authority_controls(root)
+     pq_system_controls = check_pq_system_required_controls(root)
+@@ -2610,6 +2710,7 @@ def validate(root: Path = ROOT) -> dict:
+             'w1_actual_reuse_v3_cells': 4, 'inline_source_pins': inline_source_pins,
+             'pq_release_authority_controls': pq_release_authority_controls,
+             'pq_system_controls': pq_system_controls,
++            'typed_pending_worker_controls': typed_pending_worker_controls,
+             'tests_executed': False}
+ 
+ 
+diff --git a/scripts/ci/check_pq_research_integration.py b/scripts/ci/check_pq_research_integration.py
+index c92cc1b9cf8664816721f62cfcf04643e0f26b45..6092107bb1ef4d27b33a1125d334f1c98e83861c 100644
+--- a/scripts/ci/check_pq_research_integration.py
++++ b/scripts/ci/check_pq_research_integration.py
+@@ -1580,6 +1580,19 @@ NPQ6_PARALLEL_ORIGINAL_CONTROL_REQUIRED_PATHS = frozenset((
+ ))
+ NATIVE_REQUIRED_PATHS |= NPQ6_PARALLEL_ORIGINAL_CONTROL_REQUIRED_PATHS
+ 
++
++# Preserve the three partial-observation stages and their existing pilot entry.
++# Source identity never closes wait4, replenishes a hold, or qualifies a model.
++TYPED_PENDING_WORKER_REQUIRED_PATHS = frozenset((
++    "scripts/llm_runtime_exit_worker_observation.py",
++    "scripts/test_llm_runtime_exit_initial_pending.py",
++    "scripts/test_llm_runtime_exit_binding_pending.py",
++    "scripts/test_llm_runtime_exit_post_binding_retirement.py",
++    "scripts/test_llm_runtime_exit_worker_observation.py",
++    "scripts/test_llm_runtime_pilot.py",
++))
++NATIVE_REQUIRED_PATHS |= TYPED_PENDING_WORKER_REQUIRED_PATHS
++
+ # Selected read-only cost coverage includes its bounded, duplicate-refusing input reader.
+ # Exact source identity provides no execution authority or throughput qualification.
+ THROUGHPUT_COST_COVERAGE_REQUIRED_PATHS = frozenset((
+diff --git a/scripts/ci/test_ci_contract.py b/scripts/ci/test_ci_contract.py
+index af7ed6cf6c6749c6369ff61a02858e291c664b32..1dbd4fc286b720d950d9265be44b275296321163 100644
+--- a/scripts/ci/test_ci_contract.py
++++ b/scripts/ci/test_ci_contract.py
+@@ -39,6 +39,7 @@ from check_ci_contract import (check_pq_release_authority_controls, check_cell_c
+ from check_ci_contract import (check_pq_system_required_controls, PQ_SYSTEM_REQUIRED_MANIFEST,
+                                PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, PQ_SYSTEM_REQUIRED_STEP,
+                                PQ_SYSTEM_SUPPLEMENTAL_STEP, PQ_CHECKPOINT_OWNERSHIP_STEP)
++from check_ci_contract import check_typed_pending_worker_controls
+ from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
+                                    cost_job_budget_seconds, rejection_job_budget_seconds)
+ from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
+@@ -83,6 +84,93 @@ synthetic_growth_v2_native() {
+ '''
+ 
+ 
++
++class TypedPendingWorkerWiringTests(unittest.TestCase):
++    # Deliberately independent of the checker's reviewed module/method roster.
++    GROUPS = (
++        ('test_llm_runtime_exit_initial_pending', 'InitialTerminalPendingTests', 14),
++        ('test_llm_runtime_exit_binding_pending', 'BindingTerminalPendingTests', 10),
++        ('test_llm_runtime_exit_post_binding_retirement', 'PostBindingRetirementTests', 12),
++    )
++
++    def setUp(self):
++        temporary = tempfile.TemporaryDirectory(prefix='trnm-typed-pending-wiring-')
++        self.addCleanup(temporary.cleanup)
++        self.root = Path(temporary.name).resolve(strict=True)
++        (self.root / 'scripts').mkdir()
++        for path in ['scripts/test_llm_runtime_pilot.py'] + [
++                'scripts/' + module + '.py' for module, _, _ in self.GROUPS]:
++            (self.root / path).write_bytes((ROOT / path).read_bytes())
++
++    def test_actual_pilot_registers_all_36_original_controls_once(self):
++        result = check_typed_pending_worker_controls(self.root)
++        self.assertEqual(result['selected_original_controls'], 36)
++        self.assertEqual(result['original_controls'],
++                         {module: count for module, _, count in self.GROUPS})
++        self.assertIs(result['tests_executed'], False)
++
++    def test_each_original_import_must_be_present_unconditional_and_unique(self):
++        check_typed_pending_worker_controls(self.root)
++        target = self.root / 'scripts/test_llm_runtime_pilot.py'
++        original = target.read_text()
++        for module, class_name, _ in self.GROUPS:
++            line = 'from ' + module + ' import ' + class_name + '\n'
++            self.assertEqual(original.count(line), 1)
++            for label, replacement in (
++                    ('missing', ''), ('duplicate', line + line),
++                    ('conditional', 'if False:\n    ' + line),
++                    ('alias', 'from ' + module + ' import ' + class_name + ' as omitted\n')):
++                try:
++                    target.write_text(original.replace(line, replacement, 1))
++                    with self.subTest(module=module, mutation=label), self.assertRaises(ValueError):
++                        check_typed_pending_worker_controls(self.root)
++                finally:
++                    target.write_text(original)
++
++    def test_each_original_module_refuses_missing_renamed_duplicate_skipped_or_stubbed_controls(self):
++        check_typed_pending_worker_controls(self.root)
++        for module, class_name, _ in self.GROUPS:
++            target = self.root / 'scripts' / (module + '.py')
++            original = target.read_text()
++            tree = ast.parse(original)
++            cls = next(node for node in tree.body
++                       if isinstance(node, ast.ClassDef) and node.name == class_name)
++            method = next(node for node in cls.body
++                          if isinstance(node, ast.FunctionDef) and node.name.startswith('test_'))
++            lines = original.splitlines(keepends=True)
++            exact = ''.join(lines[method.lineno - 1:method.end_lineno])
++            for label, replacement in (
++                    ('missing', ''), ('duplicate', exact + exact),
++                    ('renamed', exact.replace(method.name, 'omitted_' + method.name, 1)),
++                    ('skipped', '    @unittest.skip("explicit negative fixture")\n' + exact),
++                    ('stubbed', '    def ' + method.name + '(self):\n        pass\n')):
++                try:
++                    changed = original.replace(exact, replacement, 1)
++                    self.assertNotEqual(changed, original)
++                    target.write_text(changed)
++                    with self.subTest(module=module, mutation=label), self.assertRaises(ValueError):
++                        check_typed_pending_worker_controls(self.root)
++                finally:
++                    target.write_text(original)
++
++    def test_existing_pilot_ci_command_cannot_be_removed_duplicated_hidden_or_moved(self):
++        script = (ROOT / 'scripts/ci/ci_job.sh').read_text()
++        required = {'repository-truth', 'protocol-contract', 'fuzz-smoke',
++                    'rust-baseline', 'external-evidence-contract'}
++        check_independent_conformance(script, required)
++        command = '    python3 scripts/test_llm_runtime_pilot.py\n'
++        self.assertEqual(script.count(command), 1)
++        for label, changed in (
++                ('missing', script.replace(command, '', 1)),
++                ('duplicate', script.replace(command, command + command, 1)),
++                ('commented', script.replace(command, '    # ' + command.strip() + '\n', 1)),
++                ('hidden', script.replace(command, '    if false; then\n' + command + '    fi\n', 1)),
++                ('moved', script.replace(command, '', 1).replace(
++                    '  repository-truth)\n', '  repository-truth)\n' + command, 1))):
++            with self.subTest(mutation=label), self.assertRaises(ValueError):
++                check_independent_conformance(changed, required)
++
++
+ class ManualResearchWorkflowTests(unittest.TestCase):
+     # Keep the two reviewed paths explicit and independent of the checker map.
+     WORKFLOWS = ('pon-native-campaign-qualification.yml',
+diff --git a/scripts/ci/test_pq_research_integration.py b/scripts/ci/test_pq_research_integration.py
+index df27b6995c41c10719c2b0d239fba7e74f3bb773..a1ff8e5c060541c0a431ef242e6558192d194848 100644
+--- a/scripts/ci/test_pq_research_integration.py
++++ b/scripts/ci/test_pq_research_integration.py
+@@ -163,6 +163,54 @@ class CorpusGateTests(unittest.TestCase):
+         q.parent.mkdir(parents=True, exist_ok=True)
+         q.write_text(json.dumps(self.manifest))
+ 
++    def test_typed_pending_worker_requires_each_path_and_pin(self):
++        # This reviewed scope is deliberately independent of the reader roster.
++        paths = (
++            "scripts/llm_runtime_exit_worker_observation.py",
++            "scripts/test_llm_runtime_exit_initial_pending.py",
++            "scripts/test_llm_runtime_exit_binding_pending.py",
++            "scripts/test_llm_runtime_exit_post_binding_retirement.py",
++            "scripts/test_llm_runtime_exit_worker_observation.py",
++            "scripts/test_llm_runtime_pilot.py",
++        )
++        original = copy.deepcopy(self.manifest)
++        for path in paths:
++            for omission in ("required", "pin", "required-and-pin"):
++                with self.subTest(path=path, omission=omission):
++                    self.manifest = copy.deepcopy(original)
++                    if omission in ("required", "required-and-pin"):
++                        self.manifest["required_paths"].remove(path)
++                    if omission in ("pin", "required-and-pin"):
++                        del self.manifest["pinned_blobs"][path]
++                    self.save()
++                    with self.assertRaises(IntegrityError):
++                        check(self.root)
++        self.manifest = original
++        self.save()
++
++    def test_typed_pending_worker_source_bytes_are_bound_without_qualification(self):
++        paths = (
++            "scripts/llm_runtime_exit_worker_observation.py",
++            "scripts/test_llm_runtime_exit_initial_pending.py",
++            "scripts/test_llm_runtime_exit_binding_pending.py",
++            "scripts/test_llm_runtime_exit_post_binding_retirement.py",
++            "scripts/test_llm_runtime_exit_worker_observation.py",
++            "scripts/test_llm_runtime_pilot.py",
++        )
++        for path in paths:
++            target = self.root / path
++            original = target.read_bytes()
++            try:
++                target.write_bytes(original + b"changed selected typed pending worker source")
++                with self.subTest(path=path), self.assertRaisesRegex(IntegrityError, "changed source"):
++                    check(self.root)
++            finally:
++                target.write_bytes(original)
++        result = check(self.root)
++        self.assertEqual(result["status"], "HOLD_NO_GO")
++        self.assertIs(result["cryptographic_acceptance"], False)
++        self.assertIs(result["node_activated"], False)
++
+     def test_throughput_cost_coverage_requires_each_path_and_pin(self):
+         # This reviewed scope is deliberately independent of the reader roster.
+         paths = (
+diff --git a/scripts/llm_runtime_exit_worker_observation.py b/scripts/llm_runtime_exit_worker_observation.py
+index 5469255e620ec9ef062b8ff3e37c19a464d231cc..29a44edcc86580167e3c0db4e65cbfc1cb94eff4 100644
+--- a/scripts/llm_runtime_exit_worker_observation.py
++++ b/scripts/llm_runtime_exit_worker_observation.py
+@@ -1,13 +1,21 @@
+ """V4 worker retirement needs a previously bound kernel thread-pidfd event.
+ 
+-The unchanged full V2 classification precedes binding. A worker disappearing
+-mid-frontier permits only bounded recapture of two complete remaining frontiers,
+-never zero RSS, resource release or success without the original owned wait4.
+-Linux v7.0 delays early-leader pidfd readiness; the leader always needs procfs.
++A separate source-bound initial-capture state may retain an owned reservation
++across disappearing tasks. It is not a complete exit-only classification: only
++the original timed wait4 and resource receipt may close it. Complete initial V2
++classification still precedes worker-pidfd binding and later retirement proof.
++If a proved original worker vanishes during binding, a separate pending state
++retains that complete prebinding proof and every partial capability. It still
++requires the original timed owned wait4; missing pidfd/leader reads never qualify.
++A held task read's ESRCH is eligible only after all original worker bindings,
++with that worker's retained pidfd terminal event and no other roster loss.
++No state measures zero RSS or physical release. The leader always needs procfs.
+ """
++import contextvars
+ import errno
+ import os
+ import select
++import sys
+ import time
+ 
+ import llm_runtime_exit_observation as base
+@@ -28,6 +36,31 @@ class _CountDecreased(Exception):
+         self.reported_threads = reported_threads
+ 
+ 
++class _InitialTerminalPending:
++    """Private acquisition state; no serialized record can construct authority."""
++    def __init__(self, names, count):
++        self.names = self.active_names = names
++        self.count = self.initial_count = count
++        self.pending = False
++        self.retired, self.statuses, self.validated = set(), {}, {}
++        self.interruptions = []
++
++
++class _BindingTaskMissing(Exception):
++    """Only a proved original task's held-directory read may raise this."""
++    def __init__(self, task, component, phase, error_errno, terminal_event=None):
++        self.task, self.component, self.phase = task, component, phase
++        self.error_errno = error_errno
++        self.terminal_event = terminal_event
++
++
++class _BindingTerminalPending:
++    """Incomplete acquisition; never group completion or resource evidence."""
++    def __init__(self, interruption, prebinding_record, terminal_event=None):
++        self.interruption, self.prebinding_record = interruption, prebinding_record
++        self.terminal_event = terminal_event
++
++
+ class WorkerPidfdObservation(base.ExitOnlyObservation):
+     def __init__(self, pid, held_pidfd, owner_token, initial_leader, missing_sample_ns):
+         self.baseline_qualified = self.failed = False
+@@ -35,7 +68,196 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
+         self.active_names, self.pending_retired = (), ()
+         self.retirements, self.baseline_starts = {}, {}
+         self.failure_context = None
+-        super().__init__(pid, held_pidfd, owner_token, initial_leader, missing_sample_ns)
++        self.initial_capture = None
++        self.prebinding_record = self.binding_pending = None
++        self.acquisition_phase = 'owner-context'
++        # Keep the original owner/acquisition predicates, but retain a typed
++        # pending result when a nonleader disappears before a complete baseline.
++        # V2/V3 and the model-bound pilot source remain byte-for-byte unchanged.
++        self.pid, self.held_pidfd, self.owner_token = pid, held_pidfd, owner_token
++        self.group_fd, self.tasks_fd, self.task_fds = None, None, {}
++        self.task_signatures, self.starts = {}, {}
++        self.closed, self.record = False, {}
++        self.sample_started_ns = missing_sample_ns
++        try:
++            base._require(type(pid) is int and pid > 0 and type(held_pidfd) is int and held_pidfd >= 0 and
++                owner_token is not None and type(missing_sample_ns) is int and
++                0 < missing_sample_ns <= time.monotonic_ns(), 'exit-owner-context')
++            self.held_signature = base._signature(held_pidfd)
++            self.identity = base._pidfd_identity(pid, held_pidfd)
++            self.visible, self.parent, self.namespace = self.identity
++            count = self._leader(initial_leader)
++            self._deadline()
++            self.acquisition_phase = 'group-directory-open'
++            self.group_fd = base._open_group(self.visible)
++            self.group_signature = base._signature(self.group_fd)
++            self.tasks_fd = os.open('task', os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
++                dir_fd=self.group_fd)
++            self.tasks_signature = base._signature(self.tasks_fd)
++            self.names = base._task_names(self.tasks_fd)
++            base._require(str(self.visible) in self.names, 'exit-leader-not-in-task-set')
++            base._require(len(self.names) <= count, 'exit-task-set')
++            self.initial_capture = _InitialTerminalPending(self.names, count)
++            if len(self.names) < count:
++                self._initial_interruption(None, 'initial-roster', count=count, names=self.names)
++            self.acquisition_phase = 'task-directory-open'
++            for name in self.names:
++                try:
++                    descriptor = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
++                        dir_fd=self.tasks_fd)
++                except OSError as error:
++                    self._initial_missing(name, 'open', error)
++                    continue
++                self.task_fds[name] = descriptor
++                self.task_signatures[name] = base._signature(descriptor)
++            self.recheck()
++        except BaseException as error:
++            self.failed = True
++            try:
++                self.close()
++            finally:
++                self._retain_constructor_refusal(error)
++            raise
++
++    def _retain_constructor_refusal(self, error):
++        # The existing supervisor rejects an exact typed failed result before
++        # its immediate-terminal race branch. Preserve that rejection even when
++        # current_rss catches the constructor exception. This slot only refuses;
++        # it cannot authorize execution. The pilot can run as __main__ or import.
++        expected = base.Path(__file__).with_name('llm_runtime_pilot.py').resolve()
++        for name in ('__main__', 'llm_runtime_pilot'):
++            module = sys.modules.get(name)
++            source = getattr(module, '__file__', None)
++            if type(source) is not str or base.Path(source).resolve() != expected:
++                continue
++            context = getattr(module, '_RSS_OWNER_CONTEXT', None)
++            selected = getattr(module, '_RSS_EXIT_CLASS', None)
++            output = getattr(module, '_RSS_EXIT_OBSERVATION', None)
++            if not all(type(value) is contextvars.ContextVar for value in (context, selected, output)):
++                continue
++            owner = context.get()
++            if (type(owner) is tuple and len(owner) == 3 and owner[0] == self.pid and
++                    owner[1] == self.held_pidfd and owner[2] is self.owner_token and
++                    selected.get() is type(self) is WorkerPidfdObservation and output.get() is None):
++                output.set(self)
++                trace = getattr(module, '_RSS_READ_TRACE', None)
++                if type(trace) is contextvars.ContextVar and type(trace.get()) is dict:
++                    # Fixed source frames from this original failing call, not
++                    # a later proc snapshot or a diagnostic grant of authority.
++                    frames, cursor, scanned = [], error.__traceback__, 0
++                    sources = {str(base.Path(__file__).resolve()),
++                               str(base.Path(base.__file__).resolve())}
++                    while cursor is not None and len(frames) < 16 and scanned < 32:
++                        scanned += 1
++                        code = cursor.tb_frame.f_code
++                        if str(base.Path(code.co_filename).resolve()) in sources:
++                            frames.append(dict(function=code.co_name, line=cursor.tb_lineno))
++                        cursor = cursor.tb_next
++                    trace.get().setdefault('same_sample_exit_acquisition_failure', dict(
++                        source='original-constructor-exception', phase=self.acquisition_phase,
++                        error_type=type(error).__name__, error_errno=getattr(error, 'errno', None),
++                        source_frames=frames, diagnostic_only=True))
++
++    def _initial_interruption(self, name, component, *, error_errno=None, count=None, names=None):
++        capture = self.initial_capture
++        capture.pending = True
++        if name is not None:
++            base._require(name in capture.names and int(name) != self.visible,
++                          'exit-worker-initial-leader-loss')
++            capture.retired.add(name)
++        base._require(len(capture.interruptions) < 2 * base.MAX_TASKS,
++                      'exit-worker-initial-capture-bound')
++        capture.interruptions.append(dict(task=name, component=component, error_errno=error_errno,
++            reported_threads=count, observed_tasks=list(names) if names is not None else None,
++            observed_ns=time.monotonic_ns()))
++
++    def _initial_missing(self, name, component, error):
++        if error.errno not in (errno.ENOENT, errno.ESRCH) or int(name) == self.visible:
++            raise error
++        self._initial_interruption(name, component, error_errno=error.errno)
++
++    def _initial_names(self):
++        capture = self.initial_capture
++        count = self._leader(base._status(base._read(self.group_fd, 'status')))
++        names = base._task_names(self.tasks_fd)
++        base._require(count <= capture.count and str(self.visible) in names and
++            set(names) <= set(capture.active_names) and not set(names) & capture.retired,
++            'exit-worker-initial-task-set')
++        if names != capture.active_names or count != capture.count or count != len(names):
++            self._initial_interruption(None, 'task-set', count=count, names=names)
++        capture.retired.update(set(capture.active_names) - set(names))
++        capture.active_names, capture.count = names, count
++        return names, count
++
++    def _initial_fields(self, name, count):
++        capture = self.initial_capture
++        descriptor = self.task_fds[name]
++        base._require(base._signature(descriptor) == self.task_signatures[name], 'exit-task-fd-reused')
++        try:
++            fields = base._status(base._read(descriptor, 'status'))
++        except OSError as error:
++            self._initial_missing(name, 'status', error)
++            return None
++        # Every successful status is checked before the next read can vanish.
++        namespace = tuple(base._namespace(fields, 'NSpid'))
++        base._require(base._one(fields, 'Pid') == int(name) and
++            base._one(fields, 'Tgid') == self.visible and base._one(fields, 'PPid') == self.parent and
++            tuple(base._namespace(fields, 'NStgid')) == self.namespace and
++            namespace[0] == int(name) and len(namespace) == len(self.namespace), 'exit-task-identity')
++        reported = base._one(fields, 'Threads')
++        base._require(reported <= min(count, capture.count), 'exit-task-identity')
++        base._require(len(fields['State'][0]) == 1 and fields['State'][0] in 'RSDTtXZPI' and
++            'VmRSS' not in fields, 'exit-task-not-exit-only')
++        if int(name) == self.visible:
++            base._require(fields['State'][0] == 'Z', 'exit-leader-state')
++        previous = capture.statuses.get(name)
++        base._require(previous is None or previous['namespace'] == namespace, 'exit-task-namespace')
++        capture.statuses[name] = dict(namespace=namespace, state=fields['State'][0], reported_threads=reported)
++        if reported < capture.count:
++            self._initial_interruption(None, 'task-status-count', count=reported)
++            capture.count = reported
++        try:
++            observed = base._stat(base._read(descriptor, 'stat'))
++        except OSError as error:
++            self._initial_missing(name, 'stat', error)
++            return None
++        base._require(observed['pid'] == int(name) and observed['ppid'] == self.parent and
++            observed['flags'] & base.PF_EXITING and not observed['flags'] & base.PF_KTHREAD and
++            observed['vsize'] == observed['rss'] == 0, 'exit-task-not-exit-only')
++        if int(name) == self.visible:
++            base._require(observed['state'] == 'Z', 'exit-leader-state')
++        previous = capture.validated.get(name)
++        base._require(previous is None or previous['starttime'] == observed['starttime'], 'exit-task-starttime')
++        capture.validated[name] = observed
++        return observed
++
++    def _initial_frontier(self):
++        self._owner()
++        self._deadline()
++        names, count = self._initial_names()
++        result = {}
++        for name in names:
++            observed = self._initial_fields(name, count)
++            if observed is not None:
++                result[name] = observed
++        self._initial_names()
++        self._owner()
++        self._deadline()
++        return result
++
++    def _initial_record(self):
++        capture = self.initial_capture
++        self.pending_retired = tuple(name for name in self.names if name in capture.retired)
++        self.record = dict(schema='llm-owned-initial-terminal-pending-v1', profile=PROFILE,
++            sample_started_ns=self.sample_started_ns, observed_ns=time.monotonic_ns(),
++            initial_threads=capture.initial_count, initial_tasks=list(self.names),
++            tasks=list(capture.active_names), pending_retired_tasks=list(self.pending_retired),
++            validated_statuses=dict(capture.statuses), validated_tasks=dict(capture.validated),
++            validated_tasks_scope='cumulative successful reads; not a complete same-call frontier',
++            interruptions=list(capture.interruptions), complete_initial_classification=False,
++            transition='initial-capture-pending-owned-wait4',
++            scope='reservation retained; only original timed owned wait4 and resource receipt can close; not zero RSS')
++        return self.record
+ 
+     def _held_capabilities(self):
+         base._require(not self.closed and
+@@ -61,11 +283,63 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
+         base._require(time.monotonic_ns() < self.sample_started_ns + MAX_DRAIN_NS,
+                       'exit-worker-deadline')
+ 
++    def _postbinding_terminal_event(self, name):
++        # Nomination by ESRCH grants nothing. Every original worker must already
++        # have completed its real binding; this one retained pidfd must now
++        # positively prove termination. The incomplete frontier stays pending.
++        expected = set(self.names) - {str(self.visible)}
++        base._require(not self.failed and not self.baseline_qualified and
++            self.prebinding_record is not None and not self.initial_capture.pending and
++            self.acquisition_phase in ('post-bind-double-frontier', 'worker-pidfd-recheck') and
++            name in expected and set(self.bindings) == set(self.thread_fds) ==
++            set(self.thread_signatures) == expected and
++            set(self.task_fds) == set(self.task_signatures) == set(self.names),
++            'exit-worker-retirement-ineligible')
++        for task in expected:
++            binding = self.bindings[task]
++            base._require(binding['namespace'] == self.initial_capture.statuses[task]['namespace'] and
++                binding['starttime'] == self.baseline_starts[task] ==
++                self.initial_capture.validated[task]['starttime'], 'exit-worker-pidfd-binding')
++        self._owner()
++        self._deadline()
++        descriptor = self.thread_fds[name]
++        poller = select.poll()
++        poller.register(descriptor, select.POLLIN)
++        events = poller.poll(0)
++        allowed = select.POLLIN | select.POLLHUP
++        base._require(len(events) == 1 and events[0][0] == descriptor and
++            events[0][1] & select.POLLIN and not events[0][1] & ~allowed,
++            'exit-worker-terminal-event-unavailable')
++        self._owner()
++        self._deadline()
++        return dict(task=name, terminal_observed_ns=time.monotonic_ns(), revents=events[0][1],
++            original_starttime=self.bindings[name]['starttime'],
++            original_namespace=list(self.bindings[name]['namespace']), read_errno=errno.ESRCH,
++            scope='this original bound worker terminal event; not a complete frontier, group exit or RSS release')
++
++    def _task_read(self, name, component):
++        acquiring = (self.prebinding_record is not None and not self.baseline_qualified and
++            self.acquisition_phase in ('worker-pidfd-bind', 'post-bind-double-frontier',
++                                       'worker-pidfd-recheck'))
++        if acquiring:
++            base._require(base._signature(self.task_fds[name]) == self.task_signatures[name],
++                          'exit-task-fd-reused')
++        try:
++            return base._read(self.task_fds[name], component)
++        except OSError as error:
++            if acquiring and error.errno == errno.ENOENT and int(name) != self.visible:
++                raise _BindingTaskMissing(name, component, self.acquisition_phase, error.errno) from error
++            if (acquiring and error.errno == errno.ESRCH and int(name) != self.visible and
++                    self.acquisition_phase in ('post-bind-double-frontier', 'worker-pidfd-recheck')):
++                event = self._postbinding_terminal_event(name)
++                raise _BindingTaskMissing(name, component, self.acquisition_phase, error.errno, event) from error
++            raise
++
+     def _fields(self, name, count, shrinking):
+         # Validate each successful read before a later read can disappear.
+         if self.failure_context is not None:
+             self.failure_context.update(reading_task=name, reading_component='status')
+-        fields = base._status(base._read(self.task_fds[name], 'status'))
++        fields = base._status(self._task_read(name, 'status'))
+         namespace = tuple(base._namespace(fields, 'NSpid'))
+         base._require(base._one(fields, 'Pid') == int(name) and
+             base._one(fields, 'Tgid') == self.visible and
+@@ -81,12 +355,15 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
+             'exit-task-not-exit-only')
+         if name in self.bindings:
+             base._require(namespace == self.bindings[name]['namespace'], 'exit-task-namespace')
++        if self.prebinding_record is not None and not self.baseline_qualified:
++            base._require(namespace == self.initial_capture.statuses[name]['namespace'],
++                          'exit-task-namespace')
+         if int(name) == self.visible or shrinking:
+             base._require(fields['State'][0] == 'Z', 'exit-worker-remaining-not-zombie')
+         if self.failure_context is not None:
+             self.failure_context['reading_component'] = 'stat'
+         try:
+-            raw_stat = base._read(self.task_fds[name], 'stat')
++            raw_stat = self._task_read(name, 'stat')
+         except OSError:
+             # A changed count needs the complete task read before recapture.
+             # A later ENOENT cannot erase an inconsistent reported count.
+@@ -105,6 +382,75 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
+             raise _CountDecreased(reported_threads)
+         return namespace, observed
+ 
++    def _frontier(self):
++        if self.prebinding_record is None or self.baseline_qualified:
++            return super()._frontier()
++        # Preserve the original complete roster/count, two-frontier and birth
++        # requirements. Validate each status BEFORE a later stat can vanish.
++        # The unchanged V2/V3 implementations never take this V4-only path.
++        count = self._leader(base._status(base._read(self.group_fd, 'status')))
++        base._require(base._task_names(self.tasks_fd) == self.names and
++                      count == len(self.names), 'exit-task-set')
++        result = {}
++        for name in self.names:
++            _, result[name] = self._fields(name, count, False)
++        base._require(base._task_names(self.tasks_fd) == self.names and
++            self._leader(base._status(base._read(self.group_fd, 'status'))) == count,
++            'exit-task-set')
++        return result
++
++    def _retain_binding_task_loss(self, error):
++        base._require(type(error) is _BindingTaskMissing and self.prebinding_record is not None and
++            not self.baseline_qualified and error.task in self.names and
++            int(error.task) != self.visible, 'exit-worker-pidfd-binding')
++        self._owner()
++        self._deadline()
++        names, _ = self._initial_names()
++        # ENOENT alone is insufficient: the same owned roster must now have
++        # actually lost this original nonleader, without additions or revival.
++        base._require(error.task not in names and error.task in self.initial_capture.retired,
++                      'exit-worker-frontier-change')
++        if error.terminal_event is not None:
++            self._postbinding_roster(error.task)
++        self._initial_interruption(error.task, 'binding-' + error.component,
++                                   error_errno=error.error_errno)
++        self._initial_frontier()
++        if error.terminal_event is not None:
++            self._postbinding_roster(error.task)
++        self.binding_pending = _BindingTerminalPending(dict(task=error.task,
++            component=error.component, phase=error.phase, error_errno=error.error_errno),
++            self.prebinding_record, error.terminal_event)
++        self.acquisition_phase = 'binding-terminal-pending'
++        return self._binding_pending_record()
++
++    def _postbinding_roster(self, task):
++        # This narrow transition proves only one newly missing worker, even if
++        # the original group had more. Other losses need their own evidence.
++        capture = self.initial_capture
++        expected = tuple(name for name in self.names if name != task)
++        base._require(capture.active_names == expected and capture.retired == {task} and
++                      capture.count == len(expected), 'exit-worker-frontier-change')
++
++    def _binding_pending_record(self):
++        base._require(type(self.binding_pending) is _BindingTerminalPending,
++                      'exit-worker-pidfd-binding')
++        record = self._initial_record()
++        record.update(schema='llm-owned-binding-terminal-pending-v1',
++            transition='binding-acquisition-pending-owned-wait4',
++            complete_prebinding_classification=True, complete_worker_pidfd_acquisition=False,
++            prebinding_classification=self.binding_pending.prebinding_record,
++            acquisition_interruption=dict(self.binding_pending.interruption),
++            complete_worker_bindings=self._binding_record(),
++            retained_thread_pidfds=len(self.thread_fds),
++            scope='incomplete V4 binding after a complete double frontier; reservation retained; '
++                  'not worker terminal-event proof, zero RSS or release; original timed owned wait4 required')
++        if self.binding_pending.terminal_event is not None:
++            record.update(schema='llm-owned-postbinding-terminal-pending-v1',
++                bound_worker_terminal_event=dict(self.binding_pending.terminal_event),
++                scope='one original bound worker terminal event; incomplete postbinding frontier; '
++                      'reservation retained; not group exit, zero RSS or release; original timed owned wait4 required')
++        return record
++
+     def _bind_workers(self):
+         base._require(callable(getattr(os, 'pidfd_open', None)), 'exit-worker-pidfd-unavailable')
+         parent = base._proc_fields(base.Path('/proc/self/status'))
+@@ -222,16 +568,40 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
+     def recheck(self):
+         base._require(not self.failed, 'exit-worker-sticky-failure')
+         try:
++            if self.initial_capture.pending:
++                self._initial_frontier()
++                if self.binding_pending is not None and self.binding_pending.terminal_event is not None:
++                    self._postbinding_roster(self.binding_pending.terminal_event['task'])
++                return (self._binding_pending_record() if self.binding_pending is not None
++                        else self._initial_record())
+             if not self.baseline_qualified:
+-                base.ExitOnlyObservation.recheck(self)
++                self.acquisition_phase = 'initial-double-frontier'
++                before, after = self._initial_frontier(), self._initial_frontier()
++                if self.initial_capture.pending:
++                    return self._initial_record()
++                starts = {name: value['starttime'] for name, value in before.items()}
++                base._require(starts == {name: value['starttime'] for name, value in after.items()} and
++                    set(starts) == set(self.names), 'exit-task-starttime')
++                self.starts = starts
++                self.record = dict(profile=base.PROFILE, sample_started_ns=self.sample_started_ns,
++                    classification_completed_ns=time.monotonic_ns(), tasks=list(self.names),
++                    frontier_before=before, frontier_after=after,
++                    scope='exit-only cleanup with no observable attached user-mm; not zero or physically released RSS')
+                 self.baseline_starts = dict(self.starts)
+                 self.active_names = self.names
+-                self._bind_workers()
+-                # Acquisition cannot erase even one task or change its qualification.
+-                base.ExitOnlyObservation.recheck(self)
+-                self._check_bindings()
++                self.prebinding_record = dict(self.record)
++                try:
++                    self.acquisition_phase = 'worker-pidfd-bind'
++                    self._bind_workers()
++                    self.acquisition_phase = 'post-bind-double-frontier'
++                    base.ExitOnlyObservation.recheck(self)
++                    self.acquisition_phase = 'worker-pidfd-recheck'
++                    self._check_bindings()
++                except _BindingTaskMissing as error:
++                    return self._retain_binding_task_loss(error)
+                 self._deadline()
+                 self.baseline_qualified = True
++                self.acquisition_phase = 'qualified'
+                 self.record.update(profile=PROFILE, initial_tasks=list(self.names),
+                     pending_retired_tasks=[], worker_bindings=self._binding_record(),
+                     transition='complete-initial-set-with-held-worker-pidfds')
+@@ -287,7 +657,8 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
+             for name, value in self.bindings.items()}
+ 
+     def belongs_to(self, pid, held_pidfd, owner_token):
+-        if not self.baseline_qualified or self.failed:
++        if self.failed or not (self.baseline_qualified or
++                self.initial_capture is not None and self.initial_capture.pending):
+             return False
+         try:
+             self._owner()
+@@ -302,7 +673,8 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
+         Reaped pidfd fdinfo says -1, so live namespace/proc checks cannot apply.
+         No caller-supplied terminal boolean or later identity can mint authority.
+         """
+-        if not self.baseline_qualified or self.failed:
++        if self.failed or not (self.baseline_qualified or
++                self.initial_capture is not None and self.initial_capture.pending):
+             return False
+         try:
+             self._held_capabilities()
+diff --git a/scripts/test_llm_runtime_exit_binding_pending.py b/scripts/test_llm_runtime_exit_binding_pending.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..797fecc6919fadf594bca8a271b595e2dbc10d41
+--- /dev/null
++++ b/scripts/test_llm_runtime_exit_binding_pending.py
+@@ -0,0 +1,476 @@
++"""A disappearing already-proved worker may retain, never release, its owner.
++
++Procfs/task-pidfd races below are explicit fixtures. These tests are not a
++reproduction of the historical model run's unidentified constructor substage.
++"""
++
++import contextlib
++import errno
++import hashlib
++import io
++import os
++from pathlib import Path
++import sys
++import tempfile
++import time
++from types import SimpleNamespace
++import unittest
++from unittest.mock import patch
++
++import llm_runtime_exit_observation as base
++import llm_runtime_exit_worker_observation as worker
++import llm_runtime_pilot as runtime
++import test_llm_runtime_exit_worker_observation as fixtures
++import test_llm_runtime_rss_owner as owner_fixtures
++
++
++class BindingTerminalPendingTests(unittest.TestCase):
++    def setUp(self):
++        self.fixture = fixtures.WorkerPidfdTests()
++
++    def capture(
++        self,
++        state,
++        ordinal,
++        component="stat",
++        *,
++        bad_status=None,
++        injected_errno=None,
++        remove=True,
++        pid=501,
++    ):
++        original = base._read
++        count = 0
++        triggered = False
++
++        def read(descriptor, field):
++            nonlocal count, triggered
++            path = os.readlink(f"/proc/self/fd/{descriptor}")
++            if path.endswith("/10002") and field == component:
++                count += 1
++                if count == ordinal:
++                    triggered = True
++                    raw = original(descriptor, field) if bad_status else None
++                    if remove:
++                        self.fixture.retire(state)
++                    if bad_status:
++                        return bad_status(raw)
++                    if injected_errno is not None:
++                        raise OSError(injected_errno, "explicit acquisition fixture")
++            return original(descriptor, field)
++
++        with patch.object(base, "_read", side_effect=read):
++            observed = worker.WorkerPidfdObservation(
++                pid,
++                state.held,
++                state.token,
++                base._status((state.root / "status").read_text()),
++                time.monotonic_ns(),
++            )
++        self.assertTrue(triggered)
++        return observed
++
++    def assert_pending(self, state, observed):
++        self.assertFalse(observed.baseline_qualified)
++        self.assertEqual(
++            observed.record["schema"], "llm-owned-binding-terminal-pending-v1"
++        )
++        self.assertEqual(
++            observed.record["transition"], "binding-acquisition-pending-owned-wait4"
++        )
++        self.assertTrue(observed.record["complete_prebinding_classification"])
++        self.assertFalse(observed.record["complete_worker_pidfd_acquisition"])
++        self.assertEqual(observed.record["pending_retired_tasks"], ["10002"])
++        self.assertNotIn("worker_terminal_events", observed.record)
++        self.assertNotIn("rss_bytes", observed.record)
++        self.assertNotIn("retirement_closed_by", observed.record)
++        self.assertTrue(observed.belongs_to(501, state.held, state.token))
++
++    def test_held_worker_enoent_in_each_acquisition_read_keeps_original_pending(self):
++        # Reads 1/2 are the complete prebinding double frontier. 3/4 are
++        # before/after pidfd_open, 5/6 the second complete frontier, 7 the
++        # final binding recheck. No pidfd_open/fdinfo failure is substituted.
++        for ordinal in range(3, 8):
++            for component in ("status", "stat"):
++                with (
++                    self.subTest(ordinal=ordinal, component=component),
++                    self.fixture.proc() as state,
++                ):
++                    observed = self.capture(state, ordinal, component)
++                    handles = [
++                        *observed.task_fds.values(),
++                        *observed.thread_fds.values(),
++                    ]
++                    try:
++                        self.assert_pending(state, observed)
++                        self.assertIsNotNone(observed.recheck())
++                        self.assert_pending(state, observed)
++                        for descriptor in handles:
++                            os.fstat(descriptor)
++                        child = SimpleNamespace(
++                            pid=501,
++                            termination_fd=state.held,
++                            observation_error=None,
++                            waited_peak_rss_bytes=8192,
++                            waited_cpu_ns=1500,
++                            reap=lambda: "terminal",
++                        )
++                        reason, record = runtime._drain_exit_cleanup(
++                            child,
++                            observed,
++                            state.token,
++                            time.monotonic_ns(),
++                            {"wall_seconds": 2},
++                            exit_observation=runtime.exit_observation_profile(
++                                worker.PROFILE
++                            ),
++                        )
++                        self.assertIsNone(reason)
++                        self.assertEqual(
++                            record["retirement_closed_by"],
++                            "exact-owned-child-terminal-wait4",
++                        )
++                    finally:
++                        observed.close()
++                    for descriptor in handles:
++                        with self.assertRaises(OSError):
++                            os.fstat(descriptor)
++                    os.fstat(state.held)
++
++    def test_successfully_read_bad_status_is_sticky_before_later_stat_enoent(self):
++        mutations = {
++            "pid": lambda raw: raw.replace("Pid:\t10002", "Pid:\t10009"),
++            "parent": lambda raw: raw.replace("PPid:\t10000", "PPid:\t10009"),
++            "tgid": lambda raw: raw.replace("Tgid:\t10001", "Tgid:\t10009"),
++            "namespace": lambda raw: raw.replace(
++                "NSpid:\t10002 502", "NSpid:\t10002 509"
++            ),
++            "group-namespace": lambda raw: raw.replace(
++                "NStgid:\t10001 501", "NStgid:\t10001 509"
++            ),
++            "rss": lambda raw: raw + "VmRSS:\t0 kB\n",
++            "count-decrease": lambda raw: raw.replace("Threads:\t2", "Threads:\t1"),
++            "count-increase": lambda raw: raw.replace("Threads:\t2", "Threads:\t3"),
++            "state": lambda raw: raw.replace("State:\tR", "State:\tQ"),
++        }
++        for ordinal in (3, 4, 5, 6, 7):
++            for label, change in mutations.items():
++                with (
++                    self.subTest(ordinal=ordinal, label=label),
++                    self.fixture.proc() as state,
++                ):
++                    with self.assertRaises(ValueError):
++                        self.capture(state, ordinal, "status", bad_status=change)
++                    for descriptor in state.identities:
++                        with self.assertRaises(OSError):
++                            os.fstat(descriptor)
++
++    def test_other_task_read_errors_and_enoent_without_roster_loss_refuse(self):
++        for number, remove in (
++            (errno.EACCES, True),
++            (errno.EIO, True),
++            (errno.ESRCH, True),
++            (errno.ENOENT, False),
++        ):
++            with (
++                self.subTest(number=number, remove=remove),
++                self.fixture.proc() as state,
++            ):
++                with self.assertRaises((OSError, ValueError)):
++                    self.capture(state, 3, injected_errno=number, remove=remove)
++                for descriptor in state.identities:
++                    with self.assertRaises(OSError):
++                        os.fstat(descriptor)
++
++    def test_pidfd_open_or_fdinfo_failure_is_not_a_held_task_read(self):
++        for mode in ("open", "fdinfo"):
++            with self.subTest(mode=mode), self.fixture.proc() as state:
++                original_open, original_fields = worker.os.pidfd_open, base._proc_fields
++
++                def opened(pid, flags):
++                    if mode == "open":
++                        raise ProcessLookupError(errno.ESRCH, "explicit pidfd fixture")
++                    return original_open(pid, flags)
++
++                def fields(path):
++                    if mode == "fdinfo" and str(path).startswith("/proc/self/fdinfo/"):
++                        raise FileNotFoundError(errno.ENOENT, "explicit fdinfo fixture")
++                    return original_fields(path)
++
++                with (
++                    patch.object(worker.os, "pidfd_open", side_effect=opened),
++                    patch.object(base, "_proc_fields", side_effect=fields),
++                    self.assertRaises(OSError),
++                ):
++                    self.fixture.observation(state)
++                for descriptor in state.identities:
++                    with self.assertRaises(OSError):
++                        os.fstat(descriptor)
++
++    def test_group_or_leader_read_failure_never_creates_binding_pending(self):
++        for kind in ("group", "leader"):
++            with self.subTest(kind=kind), self.fixture.proc() as state:
++                original = worker.WorkerPidfdObservation._bind_workers
++
++                def bind(observed):
++                    original(observed)
++                    path = (
++                        state.root / "status"
++                        if kind == "group"
++                        else state.root / "task/10001/status"
++                    )
++                    path.unlink()
++
++                with (
++                    patch.object(worker.WorkerPidfdObservation, "_bind_workers", bind),
++                    self.assertRaises(OSError),
++                ):
++                    self.fixture.observation(state)
++                for descriptor in state.identities:
++                    with self.assertRaises(OSError):
++                        os.fstat(descriptor)
++
++    def test_real_supervise_and_owned_wait4_close_only_with_original_resource_rules(
++        self,
++    ):
++        # Only proc/task-pidfd classification is synthetic. The original
++        # supervisor creates the real process and held pidfd, and executes its
++        # actual wait4, CPU/RSS receipt and finalizer; no terminal receipt mock.
++        original_child = runtime._Wait4Child
++        original_identity = base._pidfd_identity
++        for mode in ("valid", "nonzero", "overcap", "late"):
++            with (
++                self.subTest(mode=mode),
++                tempfile.TemporaryDirectory() as directory,
++                contextlib.ExitStack() as stack,
++            ):
++                directory = Path(directory)
++                ready, release = directory / "ready", directory / "release"
++                holder, observed_records = {}, []
++
++                def create(*args, **kwargs):
++                    child = original_child(*args, **kwargs)
++                    holder["child"] = child
++                    identity = original_identity(child.pid, child.termination_fd)
++                    self.assertEqual(identity[2][-1], child.pid)
++                    state = stack.enter_context(self.fixture.proc())
++                    state.held = child.termination_fd
++                    holder["state"] = state
++                    return child
++
++                def observe(pid):
++                    stop = time.monotonic() + 0.8
++                    while not ready.exists():
++                        self.assertLess(
++                            time.monotonic(), stop, "bounded real child setup"
++                        )
++                        time.sleep(0.001)
++                    state = holder["state"]
++                    owner = runtime._RSS_OWNER_CONTEXT.get()
++                    self.assertEqual((owner[0], owner[1]), (pid, state.held))
++                    state.token = owner[2]
++                    observed = self.capture(state, 4, pid=pid)
++                    self.assertFalse(observed.baseline_qualified)
++                    if mode == "late":
++                        observed.sample_started_ns -= worker.MAX_DRAIN_NS + 1
++                    observed_records.append(observed.record)
++                    runtime._RSS_EXIT_OBSERVATION.set(observed)
++                    release.write_text("complete this actual owned child\n")
++                    return None
++
++                command = [
++                    sys.executable,
++                    "-c",
++                    "from pathlib import Path; import sys,time; "
++                    "x=bytearray(16*1024*1024); Path(sys.argv[1]).write_text('ready'); "
++                    "exec('while not Path(sys.argv[2]).exists(): time.sleep(0.001)'); "
++                    "raise SystemExit(int(sys.argv[3]))",
++                    str(ready),
++                    str(release),
++                    "7" if mode == "nonzero" else "0",
++                ]
++                budget = dict(
++                    wall_seconds=2,
++                    rss_bytes=(1024**2 if mode == "overcap" else 128 * 1024**2),
++                )
++                try:
++                    with (
++                        patch.object(runtime, "_Wait4Child", side_effect=create),
++                        patch.object(runtime, "current_rss", side_effect=observe),
++                    ):
++                        result = runtime.supervise(
++                            command,
++                            directory / "run",
++                            budget,
++                            exit_observation=runtime.exit_observation_profile(
++                                worker.PROFILE
++                            ),
++                        )
++                finally:
++                    if "child" in holder:
++                        holder["child"].finish()
++                self.assertEqual(len(observed_records), 1)
++                self.assertEqual(
++                    result["outcome"], "success" if mode == "valid" else "failed"
++                )
++                self.assertTrue(result["waited_child_reaped"])
++                self.assertTrue(result["owned_child_reap_resolved"])
++                self.assertGreater(result["waited_child_peak_rss_bytes"], 0)
++                self.assertGreaterEqual(result["child_cpu_ns"], 0)
++                if mode == "valid":
++                    self.assertEqual(result["exit_code"], 0)
++                    self.assertEqual(
++                        result["exit_cleanup_observation"]["outcome"], "terminal-wait4"
++                    )
++                elif mode == "overcap":
++                    self.assertEqual(result["stop_reason"], "rss-budget-exceeded")
++                elif mode == "late":
++                    self.assertEqual(
++                        result["exit_cleanup_observation"]["outcome"], "failed"
++                    )
++                else:
++                    self.assertEqual(result["exit_code"], 7)
++
++    def test_pending_unknown_wrong_wait_and_missing_receipts_cannot_close(self):
++        for mode in (
++            "unknown",
++            "wrong-pid",
++            "error",
++            "missing-rss",
++            "missing-cpu",
++            "wrong-token",
++        ):
++            with self.subTest(mode=mode), self.fixture.proc() as state:
++                observed = self.capture(state, 4)
++                child = SimpleNamespace(
++                    pid=501,
++                    termination_fd=state.held,
++                    observation_error="wait4:conflict"
++                    if mode in ("wrong-pid", "error")
++                    else None,
++                    waited_peak_rss_bytes=None if mode == "missing-rss" else 8192,
++                    waited_cpu_ns=None if mode == "missing-cpu" else 1000,
++                    reap=lambda: (
++                        "unknown" if mode in ("unknown", "wrong-pid") else "terminal"
++                    ),
++                )
++                try:
++                    reason, result = runtime._drain_exit_cleanup(
++                        child,
++                        observed,
++                        object() if mode == "wrong-token" else state.token,
++                        time.monotonic_ns(),
++                        {"wall_seconds": 2},
++                        exit_observation=runtime.exit_observation_profile(
++                            worker.PROFILE
++                        ),
++                    )
++                    self.assertIsNotNone(reason)
++                    self.assertEqual(result["outcome"], "failed")
++                    self.assertNotIn("retirement_closed_by", result)
++                finally:
++                    observed.close()
++
++    def test_original_whole_deadline_cannot_be_replaced_by_new_pending_window(self):
++        with self.fixture.proc() as state:
++            observed = self.capture(state, 4)
++            child = SimpleNamespace(
++                pid=501,
++                termination_fd=state.held,
++                observation_error=None,
++                waited_peak_rss_bytes=8192,
++                waited_cpu_ns=1000,
++                reap=lambda: "terminal",
++            )
++            try:
++                reason, result = runtime._drain_exit_cleanup(
++                    child,
++                    observed,
++                    state.token,
++                    time.monotonic_ns() - 3_000_000_000,
++                    {"wall_seconds": 2},
++                    exit_observation=runtime.exit_observation_profile(worker.PROFILE),
++                )
++                self.assertIsNotNone(reason)
++                self.assertEqual(result["outcome"], "failed")
++            finally:
++                observed.close()
++
++    def test_constructor_failure_diagnostic_comes_from_actual_current_rss_call(self):
++        helper = owner_fixtures.RssSupervisionTests()
++        with self.fixture.proc() as state:
++            child = helper.child_control()
++            child.termination_fd = state.held
++            original_open, original_fields = Path.open, base._proc_fields
++            proc = {
++                "/proc/self/status": "Pid:\t10000\nNSpid:\t10000 500\n",
++                f"/proc/self/fdinfo/{state.held}": "Pid:\t10001\nNSpid:\t10001 501\n",
++                "/proc/10001/status": state.fixture.status(),
++            }
++
++            def open_path(path, *args, **kwargs):
++                return (
++                    io.StringIO(proc[str(path)])
++                    if str(path) in proc
++                    else original_open(path, *args, **kwargs)
++                )
++
++            def fields(path):
++                if str(path).startswith("/proc/self/fdinfo/"):
++                    raise FileNotFoundError(
++                        errno.ENOENT, "private message must not be copied"
++                    )
++                return original_fields(path)
++
++            with (
++                patch.object(runtime, "_Wait4Child", return_value=child),
++                patch.object(runtime.os, "getpid", return_value=500),
++                patch.object(
++                    runtime.os,
++                    "wait4",
++                    side_effect=[(0, 0, None), (501, 0, helper.usage())],
++                ),
++                patch.object(runtime.signal, "pidfd_send_signal"),
++                patch.object(Path, "open", open_path),
++                patch.object(base, "_proc_fields", side_effect=fields),
++            ):
++                result = runtime.supervise(
++                    ["real current_rss; synthetic fdinfo disappearance"],
++                    state.root / "run",
++                    helper.BUDGET,
++                    exit_observation=runtime.exit_observation_profile(worker.PROFILE),
++                )
++            self.assertEqual(result["outcome"], "failed")
++            self.assertEqual(result["exit_code"], 0)
++            detail = result["rss_gap_diagnostic"]["missing_sample_detail"]
++            failure = detail["same_sample_exit_acquisition_failure"]
++            self.assertEqual(failure["phase"], "worker-pidfd-bind")
++            self.assertEqual(failure["error_errno"], errno.ENOENT)
++            self.assertTrue(failure["diagnostic_only"])
++            self.assertLessEqual(len(failure["source_frames"]), 16)
++            self.assertNotIn("private message", str(failure))
++
++    def test_legacy_sources_unchanged_and_previous_v4_source_receipt_refused(self):
++        # The consolidated pilot retains the read-only trial-reconcile CLI.
++        # Its thirteen exit/default/owner lifecycle definitions are unchanged;
++        # bind that reviewed body while retaining the original V2/V3 pins.
++        hashes = {
++            "llm_runtime_pilot.py": "13e4c11d51931d902483372a9a05c7180333893202ecb1d663d57a83111eccc7",
++            "llm_runtime_exit_observation.py": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
++            "llm_runtime_exit_subset_observation.py": "c24af5385011acdf898a9b899f73f64c660c30dae0fadcda6e6957f80f501aff",
++        }
++        for name, expected in hashes.items():
++            self.assertEqual(
++                hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest(),
++                expected,
++            )
++        profile = runtime.exit_observation_profile(worker.PROFILE)
++        profile["observer_source_sha256"] = (
++            "880502d0be61ba5d8b9598e46eb13a0ef4621c5606251f2c45696f57a90fe57b"
++        )
++        with self.assertRaisesRegex(ValueError, "OBSERVER_BINDING"):
++            runtime.exit_observation_class(profile)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/scripts/test_llm_runtime_exit_initial_pending.py b/scripts/test_llm_runtime_exit_initial_pending.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..d8b193743c0505e3d894eb0d8af617b5f257226b
+--- /dev/null
++++ b/scripts/test_llm_runtime_exit_initial_pending.py
+@@ -0,0 +1,679 @@
++"""Initial-capture races are pending receipts, never measurements or model proof."""
++
++import errno
++import hashlib
++import io
++import os
++from pathlib import Path
++import select
++import subprocess
++import sys
++import time
++from types import ModuleType, SimpleNamespace
++import unittest
++from unittest.mock import patch
++
++import llm_runtime_exit_observation as base
++import llm_runtime_exit_worker_observation as worker
++import llm_runtime_pilot as runtime
++import test_llm_runtime_exit_worker_observation as worker_fixtures
++import test_llm_runtime_rss_owner as owner_fixtures
++
++
++class InitialTerminalPendingTests(unittest.TestCase):
++    def setUp(self):
++        self.fixture = worker_fixtures.WorkerPidfdTests()
++
++    def capture(self, state, mode):
++        self.fixture.additional_worker(state)
++        original_names, original_read = base._task_names, base._read
++        count = 0
++        triggered = False
++
++        def names(descriptor):
++            nonlocal count, triggered
++            count += 1
++            if mode == "task-set" and count == 2:
++                triggered = True
++                self.fixture.retire(state, "10003")
++            return original_names(descriptor)
++
++        def read(descriptor, component):
++            nonlocal triggered
++            path = os.readlink(f"/proc/self/fd/{descriptor}")
++            if (
++                mode == "enoent"
++                and path.endswith("/10003")
++                and component == "stat"
++                and not triggered
++            ):
++                triggered = True
++                self.fixture.retire(state, "10003")
++            return original_read(descriptor, component)
++
++        initial = base._status((state.root / "status").read_text())
++        with (
++            patch.object(base, "_task_names", side_effect=names),
++            patch.object(base, "_read", side_effect=read),
++        ):
++            observed = worker.WorkerPidfdObservation(
++                501, state.held, state.token, initial, time.monotonic_ns()
++            )
++        self.assertTrue(triggered)
++        return observed
++
++    def assert_pending(self, observed, state):
++        self.assertFalse(observed.baseline_qualified)
++        self.assertEqual(state.opened, [])
++        self.assertEqual(
++            observed.record["schema"], "llm-owned-initial-terminal-pending-v1"
++        )
++        self.assertEqual(
++            observed.record["transition"], "initial-capture-pending-owned-wait4"
++        )
++        self.assertFalse(observed.record["complete_initial_classification"])
++        self.assertNotIn("rss_bytes", observed.record)
++        self.assertNotIn("retirement_closed_by", observed.record)
++        self.assertTrue(observed.belongs_to(501, state.held, state.token))
++
++    def test_initial_task_set_shrink_keeps_pending_until_exact_wait4(self):
++        with self.fixture.proc() as state:
++            observed = self.capture(state, "task-set")
++            try:
++                self.assert_pending(observed, state)
++                calls = iter(("live", "terminal"))
++                child = SimpleNamespace(
++                    pid=501,
++                    termination_fd=state.held,
++                    observation_error=None,
++                    waited_peak_rss_bytes=8192,
++                    waited_cpu_ns=1500,
++                    reap=lambda: next(calls),
++                )
++                reason, result = runtime._drain_exit_cleanup(
++                    child,
++                    observed,
++                    state.token,
++                    time.monotonic_ns(),
++                    dict(wall_seconds=2),
++                    exit_observation=runtime.exit_observation_profile(worker.PROFILE),
++                )
++                self.assertIsNone(reason)
++                self.assertEqual(result["outcome"], "terminal-wait4")
++                self.assertEqual(
++                    result["retirement_closed_by"], "exact-owned-child-terminal-wait4"
++                )
++            finally:
++                observed.close()
++
++    def test_initial_worker_stat_enoent_retains_validated_prefix_without_full_proof(
++        self,
++    ):
++        with self.fixture.proc() as state:
++            observed = self.capture(state, "enoent")
++            try:
++                self.assert_pending(observed, state)
++                self.assertEqual(
++                    observed.record["interruptions"][0]["error_errno"], errno.ENOENT
++                )
++                self.assertEqual(
++                    observed.record["interruptions"][0]["component"], "stat"
++                )
++                self.assertIn("10002", observed.record["validated_tasks"])
++                self.assertEqual(
++                    observed.record["validated_tasks"]["10002"]["state"], "R"
++                )
++                self.assertEqual(
++                    observed.record["validated_tasks"]["10002"]["vsize"], 0
++                )
++                self.assertIsNotNone(observed.recheck())
++            finally:
++                observed.close()
++
++    def test_constructor_refusal_is_retained_in_same_owner_slot_before_racing_terminal_wait4(
++        self,
++    ):
++        with self.fixture.proc() as state:
++            (state.root / "task/10002/stat").write_text(
++                state.fixture.stat(10002, "R", flags=0)
++            )
++            context = runtime._RSS_OWNER_CONTEXT.set((501, state.held, state.token))
++            selected = runtime._RSS_EXIT_CLASS.set(worker.WorkerPidfdObservation)
++            output = runtime._RSS_EXIT_OBSERVATION.set(None)
++            try:
++                with self.assertRaises(ValueError):
++                    self.fixture.observation(state)
++                failed = runtime._RSS_EXIT_OBSERVATION.get()
++                self.assertIs(type(failed), worker.WorkerPidfdObservation)
++                self.assertFalse(failed.belongs_to(501, state.held, state.token))
++                self.assertFalse(
++                    failed.terminal_belongs_to(501, state.held, state.token)
++                )
++                self.assertTrue(failed.closed)
++                self.assertEqual(failed.task_fds, {})
++                os.fstat(state.held)
++            finally:
++                runtime._RSS_EXIT_OBSERVATION.reset(output)
++                runtime._RSS_EXIT_CLASS.reset(selected)
++                runtime._RSS_OWNER_CONTEXT.reset(context)
++
++    def test_pending_late_wait4_uses_both_original_deadlines(self):
++        for mode in ("sample", "whole"):
++            with self.subTest(mode=mode), self.fixture.proc() as state:
++                observed = self.capture(state, "task-set")
++                now = [observed.sample_started_ns + 10_000_000]
++                start = (
++                    observed.sample_started_ns
++                    if mode == "sample"
++                    else observed.sample_started_ns - 1_950_000_000
++                )
++                deadline = min(
++                    observed.sample_started_ns + worker.MAX_DRAIN_NS,
++                    start + 2_000_000_000,
++                )
++
++                def reap():
++                    now[0] = deadline + 1
++                    return "terminal"
++
++                child = SimpleNamespace(
++                    pid=501,
++                    termination_fd=state.held,
++                    observation_error=None,
++                    waited_peak_rss_bytes=8192,
++                    waited_cpu_ns=1500,
++                    reap=reap,
++                )
++                try:
++                    with patch.object(
++                        runtime.time, "monotonic_ns", side_effect=lambda: now[0]
++                    ):
++                        reason, record = runtime._drain_exit_cleanup(
++                            child,
++                            observed,
++                            state.token,
++                            start,
++                            dict(wall_seconds=2),
++                            exit_observation=runtime.exit_observation_profile(
++                                worker.PROFILE
++                            ),
++                        )
++                    self.assertIsNotNone(reason)
++                    self.assertEqual(record["outcome"], "failed")
++                finally:
++                    observed.close()
++
++    def test_pending_requires_exact_wait4_and_valid_nonzero_resources(self):
++        helper = owner_fixtures.RssSupervisionTests()
++        for mode in (
++            "wrong-pid",
++            "echild",
++            "missing-rusage",
++            "zero-rss",
++            "negative-cpu",
++        ):
++            with self.subTest(mode=mode), self.fixture.proc() as state:
++                observed = self.capture(state, "task-set")
++                child = helper.child_control()
++                child.termination_fd = state.held
++                receipt = (
++                    502 if mode == "wrong-pid" else 501,
++                    0,
++                    None
++                    if mode == "missing-rusage"
++                    else helper.usage(
++                        peak=0 if mode == "zero-rss" else 8192,
++                        user=-1 if mode == "negative-cpu" else 0.01,
++                    ),
++                )
++                fault = (
++                    ChildProcessError(errno.ECHILD, "explicit fixture")
++                    if mode == "echild"
++                    else None
++                )
++                try:
++                    with patch.object(
++                        runtime.os, "wait4", side_effect=fault, return_value=receipt
++                    ):
++                        reason, record = runtime._drain_exit_cleanup(
++                            child,
++                            observed,
++                            state.token,
++                            time.monotonic_ns(),
++                            dict(wall_seconds=2),
++                            exit_observation=runtime.exit_observation_profile(
++                                worker.PROFILE
++                            ),
++                        )
++                    self.assertIsNotNone(reason)
++                    self.assertEqual(record["outcome"], "failed")
++                    self.assertIsNotNone(child.observation_error)
++                finally:
++                    observed.close()
++
++    def test_pending_full_owner_rejects_overcap_nonzero_exit_and_timeout_despite_final_exit0(
++        self,
++    ):
++        helper = owner_fixtures.RssSupervisionTests()
++        for mode in ("valid", "overcap", "nonzero", "late"):
++            with self.subTest(mode=mode), self.fixture.proc() as state:
++                child = helper.child_control()
++                child.termination_fd = state.held
++
++                def observe(_):
++                    state.token = runtime._RSS_OWNER_CONTEXT.get()[2]
++                    observed = self.capture(state, "task-set")
++                    if mode == "late":
++                        observed.sample_started_ns -= worker.MAX_DRAIN_NS + 1
++                    runtime._RSS_EXIT_OBSERVATION.set(observed)
++                    return None
++
++                usage = helper.usage(peak=256 * 1024 if mode == "overcap" else 8192)
++                with (
++                    patch.object(runtime, "_Wait4Child", return_value=child),
++                    patch.object(
++                        runtime.os,
++                        "wait4",
++                        side_effect=[
++                            (0, 0, None),
++                            (501, 256 if mode == "nonzero" else 0, usage),
++                        ],
++                    ),
++                    patch.object(runtime, "current_rss", side_effect=observe),
++                    patch.object(runtime.signal, "pidfd_send_signal"),
++                ):
++                    result = runtime.supervise(
++                        ["synthetic initial capture; exact original wait4 owner"],
++                        state.root / "result",
++                        helper.BUDGET,
++                        exit_observation=runtime.exit_observation_profile(
++                            worker.PROFILE
++                        ),
++                    )
++                self.assertEqual(
++                    result["outcome"], "success" if mode == "valid" else "failed"
++                )
++                self.assertTrue(result["waited_child_reaped"])
++                if mode == "overcap":
++                    self.assertEqual(result["stop_reason"], "rss-budget-exceeded")
++                if mode == "late":
++                    self.assertEqual(result["exit_code"], 0)
++                    self.assertEqual(
++                        result["exit_cleanup_observation"]["outcome"], "failed"
++                    )
++
++    def test_observed_bad_status_or_stat_cannot_be_erased_by_later_enoent(self):
++        for mode in (
++            "pid",
++            "parent",
++            "namespace",
++            "rss",
++            "state",
++            "flags",
++            "kthread",
++            "vsize",
++            "pages",
++        ):
++            with self.subTest(mode=mode), self.fixture.proc() as state:
++                self.fixture.additional_worker(state)
++                original = base._read
++                component = (
++                    "stat"
++                    if mode in ("flags", "kthread", "vsize", "pages")
++                    else "status"
++                )
++
++                def read(descriptor, name):
++                    raw = original(descriptor, name)
++                    if (
++                        os.readlink(f"/proc/self/fd/{descriptor}").endswith("/10003")
++                        and name == component
++                    ):
++                        if name == "stat":
++                            raw = state.fixture.stat(
++                                10003,
++                                "Z",
++                                flags=0
++                                if mode == "flags"
++                                else 4 | base.PF_KTHREAD
++                                if mode == "kthread"
++                                else 4,
++                                vsize=4096 if mode == "vsize" else 0,
++                                rss=1 if mode == "pages" else 0,
++                            )
++                        else:
++                            changes = {
++                                "pid": ("Pid:\t10003", "Pid:\t10009"),
++                                "parent": ("PPid:\t10000", "PPid:\t10009"),
++                                "namespace": ("NSpid:\t10003 503", "NSpid:\t10009 503"),
++                                "state": ("State:\tZ", "State:\tQ"),
++                            }
++                            raw = (
++                                raw + "VmRSS:\t0 kB\n"
++                                if mode == "rss"
++                                else raw.replace(*changes[mode])
++                            )
++                        self.fixture.retire(state, "10003")
++                    return raw
++
++                with (
++                    patch.object(base, "_read", side_effect=read),
++                    self.assertRaises(ValueError),
++                ):
++                    self.fixture.observation(state)
++
++    def test_successful_task_count_decrease_cannot_rebound_before_or_after_enoent(self):
++        for mode in ("next-task", "next-leader", "then-enoent"):
++            with self.subTest(mode=mode), self.fixture.proc() as state:
++                self.fixture.additional_worker(state)
++                original = base._read
++                changed = False
++
++                def read(descriptor, component):
++                    nonlocal changed
++                    path = os.readlink(f"/proc/self/fd/{descriptor}")
++                    raw = original(descriptor, component)
++                    target = "10002" if mode == "next-task" else "10003"
++                    if (
++                        path.endswith("/" + target)
++                        and component == "status"
++                        and not changed
++                    ):
++                        changed = True
++                        if mode == "then-enoent":
++                            self.fixture.retire(state, target)
++                            leader = state.root / "status"
++                            leader.write_text(
++                                leader.read_text().replace("Threads:\t2", "Threads:\t3")
++                            )
++                        return raw.replace("Threads:\t3", "Threads:\t2")
++                    return raw
++
++                with (
++                    patch.object(base, "_read", side_effect=read),
++                    self.assertRaises(ValueError),
++                ):
++                    self.fixture.observation(state)
++                self.assertTrue(changed)
++
++    def test_unknown_reads_malformed_fields_and_partial_constructor_fds_refuse(self):
++        for mode in ("eacces", "eio", "malformed"):
++            with self.subTest(mode=mode), self.fixture.proc() as state:
++                original_read, original_open = base._read, worker.os.open
++                opened = []
++
++                def open_fd(*args, **kwargs):
++                    descriptor = original_open(*args, **kwargs)
++                    opened.append(descriptor)
++                    return descriptor
++
++                def read(descriptor, name):
++                    if (
++                        os.readlink(f"/proc/self/fd/{descriptor}").endswith("/10002")
++                        and name == "status"
++                    ):
++                        if mode == "malformed":
++                            return "malformed\n"
++                        raise OSError(
++                            errno.EACCES if mode == "eacces" else errno.EIO,
++                            "explicit fixture",
++                        )
++                    return original_read(descriptor, name)
++
++                with (
++                    patch.object(worker.os, "open", side_effect=open_fd),
++                    patch.object(base, "_read", side_effect=read),
++                    self.assertRaises((OSError, ValueError, KeyError)),
++                ):
++                    self.fixture.observation(state)
++                for descriptor in opened:
++                    with self.assertRaises(OSError):
++                        os.fstat(descriptor)
++                os.fstat(state.held)
++
++    def test_pending_new_tid_reappearance_changed_birth_and_reused_fd_are_sticky(self):
++        for mode in ("new-tid", "reappear", "birth", "task-fd", "owner-fd"):
++            with self.subTest(mode=mode), self.fixture.proc() as state:
++                observed = self.capture(state, "task-set")
++                if mode in ("new-tid", "reappear"):
++                    (
++                        state.root
++                        / "task"
++                        / ("10004" if mode == "new-tid" else "10003")
++                    ).mkdir()
++                elif mode == "birth":
++                    (state.root / "task/10002/stat").write_text(
++                        state.fixture.stat(10002, "R", start=999)
++                    )
++                else:
++                    replacement = os.open(state.root, os.O_RDONLY | os.O_DIRECTORY)
++                    try:
++                        os.dup2(
++                            replacement,
++                            state.held
++                            if mode == "owner-fd"
++                            else observed.task_fds["10002"],
++                        )
++                    finally:
++                        os.close(replacement)
++                try:
++                    with self.assertRaises(ValueError):
++                        observed.recheck()
++                    self.assertFalse(
++                        observed.terminal_belongs_to(501, state.held, state.token)
++                    )
++                    with self.assertRaisesRegex(ValueError, "sticky-failure"):
++                        observed.recheck()
++                finally:
++                    observed.close()
++
++    def test_actual_current_rss_failed_constructor_blocks_immediate_terminal_in_import_and_main(
++        self,
++    ):
++        # Execute the unchanged pilot definitions in a second, distinct module;
++        # its ContextVars must be used when the real entry point is __main__.
++        main = ModuleType("explicit_pilot_definitions_without_cli")
++        main.__file__ = runtime.__file__
++        exec(
++            compile(Path(runtime.__file__).read_bytes(), runtime.__file__, "exec"),
++            main.__dict__,
++        )
++        main.__name__ = "__main__"
++        helper = owner_fixtures.RssSupervisionTests()
++        for module in (runtime, main):
++            with self.subTest(module=module.__name__), self.fixture.proc() as state:
++                (state.root / "task/10002/stat").write_text(
++                    state.fixture.stat(10002, "R", flags=0)
++                )
++                child = helper.child_control()
++                child.termination_fd = state.held
++                original_open = Path.open
++                identity = "Pid:\t10001\nNSpid:\t10001 501\n"
++                proc = {
++                    "/proc/self/status": "Pid:\t10000\nNSpid:\t10000 500\n",
++                    f"/proc/self/fdinfo/{state.held}": identity,
++                    "/proc/10001/status": state.fixture.status(),
++                }
++
++                def open_path(path, *args, **kwargs):
++                    return (
++                        io.StringIO(proc[str(path)])
++                        if str(path) in proc
++                        else original_open(path, *args, **kwargs)
++                    )
++
++                profile = module.exit_observation_profile(worker.PROFILE)
++                with (
++                    patch.dict(sys.modules, {"__main__": main}),
++                    patch.object(module, "_Wait4Child", return_value=child),
++                    patch.object(module.os, "getpid", return_value=500),
++                    patch.object(
++                        module.os,
++                        "wait4",
++                        side_effect=[(0, 0, None), (501, 0, helper.usage())],
++                    ),
++                    patch.object(module.signal, "pidfd_send_signal"),
++                    patch.object(Path, "open", open_path),
++                ):
++                    result = module.supervise(
++                        ["real current_rss, synthetic proc and wait4"],
++                        state.root / "result",
++                        helper.BUDGET,
++                        exit_observation=profile,
++                    )
++                self.assertEqual(result["exit_code"], 0)
++                self.assertTrue(result["waited_child_reaped"])
++                self.assertEqual(result["outcome"], "failed")
++                self.assertEqual(
++                    result["stop_reason"], "rss-exit-cleanup-observation-unavailable"
++                )
++                self.assertEqual(
++                    result["rss_gap_diagnostic"]["missing_sample_detail"][
++                        "same_sample_exit_classification"
++                    ]["result"],
++                    "unavailable",
++                )
++
++    def test_failed_slot_never_overwrites_an_earlier_result_or_foreign_owner(self):
++        for mode in ("prior", "wrong-token", "wrong-pid", "wrong-fd", "wrong-class"):
++            with self.subTest(mode=mode), self.fixture.proc() as state:
++                (state.root / "task/10002/stat").write_text(
++                    state.fixture.stat(10002, "R", flags=0)
++                )
++                prior = object() if mode == "prior" else None
++                context = runtime._RSS_OWNER_CONTEXT.set(
++                    (
++                        502 if mode == "wrong-pid" else 501,
++                        state.held + 100 if mode == "wrong-fd" else state.held,
++                        object() if mode == "wrong-token" else state.token,
++                    )
++                )
++                selected = runtime._RSS_EXIT_CLASS.set(
++                    base.ExitOnlyObservation
++                    if mode == "wrong-class"
++                    else worker.WorkerPidfdObservation
++                )
++                output = runtime._RSS_EXIT_OBSERVATION.set(prior)
++                try:
++                    with self.assertRaises(ValueError):
++                        self.fixture.observation(state)
++                    self.assertIs(runtime._RSS_EXIT_OBSERVATION.get(), prior)
++                finally:
++                    runtime._RSS_EXIT_OBSERVATION.reset(output)
++                    runtime._RSS_EXIT_CLASS.reset(selected)
++                    runtime._RSS_OWNER_CONTEXT.reset(context)
++
++    def test_frozen_original_model_and_v2_v3_bytes_and_old_v4_profile_refusal(self):
++        # The consolidated pilot retains the read-only trial-reconcile CLI.
++        # Its thirteen exit/default/owner lifecycle definitions are unchanged;
++        # bind that reviewed body while retaining the original V2/V3 pins.
++        expected = {
++            "llm_runtime_pilot.py": "13e4c11d51931d902483372a9a05c7180333893202ecb1d663d57a83111eccc7",
++            "llm_runtime_exit_observation.py": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
++            "llm_runtime_exit_subset_observation.py": "c24af5385011acdf898a9b899f73f64c660c30dae0fadcda6e6957f80f501aff",
++        }
++        for name, digest in expected.items():
++            self.assertEqual(
++                hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest(),
++                digest,
++            )
++        profile = runtime.exit_observation_profile(worker.PROFILE)
++        profile["observer_source_sha256"] = (
++            "aae68f92393e5e88c5aaa02095b5990200c121834bec05d8b3a11cd3f09ffc50"
++        )
++        with self.assertRaisesRegex(ValueError, "OBSERVER_BINDING"):
++            runtime.exit_observation_class(profile)
++        self.assertNotIn(
++            "exit_observation", runtime.experiment_plan({"explicit": "fixture"})
++        )
++        with patch.object(
++            worker,
++            "_InitialTerminalPending",
++            side_effect=AssertionError("new path forbidden"),
++        ):
++            for name in runtime.EXIT_PROFILES[1:3]:
++                with self.fixture.proc() as state:
++                    observed = runtime.exit_observation_class(
++                        runtime.exit_observation_profile(name)
++                    )(
++                        501,
++                        state.held,
++                        state.token,
++                        base._status(state.fixture.status()),
++                        time.monotonic_ns(),
++                    )
++                    observed.close()
++
++    def test_real_owned_wait4_closes_only_synthetic_initial_roster_gap(self):
++        # Only the initial extra task/count is a race fixture. The child, proc
++        # identities, held pidfd, exclusive wait4 and resource receipt are real.
++        child = None
++        observed = None
++        start = time.monotonic_ns()
++        try:
++            child = runtime._Wait4Child(
++                [sys.executable, "-c", "x=bytearray(16*1024*1024);print(len(x))"],
++                stdout=subprocess.DEVNULL,
++                stderr=subprocess.DEVNULL,
++            )
++            poller = select.poll()
++            poller.register(child.termination_fd, select.POLLIN)
++            self.assertTrue(
++                poller.poll(1000),
++                "actual child must finish within the original two-second owner budget",
++            )
++            identity = base._pidfd_identity(child.pid, child.termination_fd)
++            leader = base._proc_fields(Path(f"/proc/{identity[0]}/status"))
++            self.assertEqual(leader["State"][0], "Z")
++            self.assertNotIn("VmRSS", leader)
++            leader["Threads"] = ["2"]  # Explicit synthetic initial count.
++            absent = "2147483647"
++            self.assertFalse(Path(f"/proc/{identity[0]}/task/{absent}").exists())
++            original = base._task_names
++            calls = 0
++
++            def names(descriptor):
++                nonlocal calls
++                calls += 1
++                actual = original(descriptor)
++                return (
++                    tuple(sorted((*actual, absent), key=int)) if calls == 1 else actual
++                )
++
++            owner = object()
++            with patch.object(base, "_task_names", side_effect=names):
++                observed = worker.WorkerPidfdObservation(
++                    child.pid, child.termination_fd, owner, leader, time.monotonic_ns()
++                )
++            reason, result = runtime._drain_exit_cleanup(
++                child,
++                observed,
++                owner,
++                start,
++                dict(wall_seconds=2),
++                exit_observation=runtime.exit_observation_profile(worker.PROFILE),
++            )
++            self.assertIsNone(reason)
++            self.assertEqual(result["outcome"], "terminal-wait4")
++            self.assertEqual(child.returncode, 0)
++            self.assertTrue(child.reaped)
++            self.assertGreater(child.waited_peak_rss_bytes, 0)
++            self.assertGreaterEqual(child.waited_cpu_ns, 0)
++            self.assertLessEqual(
++                result["completed_ns"], observed.sample_started_ns + worker.MAX_DRAIN_NS
++            )
++            self.assertEqual(
++                base._proc_fields(Path(f"/proc/self/fdinfo/{child.termination_fd}"))[
++                    "Pid"
++                ],
++                ["-1"],
++            )
++        finally:
++            if observed is not None:
++                observed.close()
++            if child is not None:
++                child.finish()
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/scripts/test_llm_runtime_exit_post_binding_retirement.py b/scripts/test_llm_runtime_exit_post_binding_retirement.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..46f46cb0f00f1bf8c2c3b61f40e90e804015402b
+--- /dev/null
++++ b/scripts/test_llm_runtime_exit_post_binding_retirement.py
+@@ -0,0 +1,466 @@
++"""Bound-worker ESRCH component controls, not a natural model qualification.
++
++The deterministic cases explicitly simulate procfs/pidfds. The native case uses
++the original held task directory/status FD, real PIDFD_THREAD/POLLIN, real roster
++removal and kernel read ESRCH. Only the exit-only State/PF_EXITING/no-mm field
++view is controlled to enter the short acquisition stage deterministically. PID,
++namespace, starttime, Threads and FD identities remain real. The first RSS
++sample and final wait4 high-water/CPU are real; the missing-RSS field view is
++controlled. Raw and transformed fields and the unchanged deadline are retained.
++"""
++
++import errno
++import hashlib
++import io
++import json
++import os
++from pathlib import Path
++import select
++import sys
++import tempfile
++import time
++import unittest
++from unittest.mock import patch
++
++import llm_runtime_exit_observation as base
++import llm_runtime_exit_worker_observation as worker
++import llm_runtime_pilot as runtime
++import test_llm_runtime_exit_binding_pending as pending_fixtures
++import test_llm_runtime_exit_worker_observation as fixtures
++
++
++class PostBindingRetirementTests(unittest.TestCase):
++    def setUp(self):
++        self.fixture = fixtures.WorkerPidfdTests()
++        self.capture_fixture = pending_fixtures.BindingTerminalPendingTests()
++        self.capture_fixture.setUp()
++
++    def capture(self, state, ordinal=5, component="status", **kwargs):
++        return self.capture_fixture.capture(
++            state, ordinal, component, injected_errno=errno.ESRCH, **kwargs
++        )
++
++    def assert_pending(self, observed, task="10002"):
++        record = observed.record
++        self.assertFalse(observed.baseline_qualified)
++        self.assertFalse(observed.failed)
++        self.assertEqual(record["schema"], "llm-owned-postbinding-terminal-pending-v1")
++        self.assertEqual(record["transition"], "binding-acquisition-pending-owned-wait4")
++        self.assertTrue(record["complete_prebinding_classification"])
++        self.assertFalse(record["complete_worker_pidfd_acquisition"])
++        event = record["bound_worker_terminal_event"]
++        self.assertEqual(event["task"], task)
++        self.assertEqual(event["read_errno"], errno.ESRCH)
++        self.assertTrue(event["revents"] & select.POLLIN)
++        self.assertEqual(event["original_starttime"], observed.baseline_starts[task])
++        self.assertEqual(event["original_namespace"], list(observed.bindings[task]["namespace"]))
++        self.assertNotIn("rss_bytes", record)
++        self.assertNotIn("retirement_closed_by", record)
++        self.assertNotIn("worker_terminal_events", record)
++        self.assertTrue(observed.initial_capture.pending)
++
++    def test_bound_esrch_in_each_postbinding_read_retains_only_pending(self):
++        for ordinal in (5, 6, 7):
++            for component in ("status", "stat"):
++                with self.subTest(ordinal=ordinal, component=component), self.fixture.proc() as state:
++                    observed = self.capture(state, ordinal, component)
++                    try:
++                        self.assert_pending(observed)
++                        interruption = observed.record["acquisition_interruption"]
++                        self.assertEqual(interruption["component"], component)
++                        self.assertEqual(interruption["phase"], "worker-pidfd-recheck" if ordinal == 7
++                                         else "post-bind-double-frontier")
++                        self.assertEqual(set(observed.prebinding_record["frontier_before"]), set(observed.names))
++                        self.assertIsNotNone(observed.recheck())
++                        self.assert_pending(observed)
++                        self.assertTrue(observed.belongs_to(501, state.held, state.token))
++                        for descriptor in (*observed.task_fds.values(), *observed.thread_fds.values()):
++                            os.fstat(descriptor)
++                    finally:
++                        observed.close()
++                    os.fstat(state.held)
++
++    def test_unbound_esrch_and_postbinding_other_errors_still_refuse(self):
++        for ordinal, number in ((3, errno.ESRCH), (4, errno.ESRCH),
++                                (5, errno.EACCES), (6, errno.EIO), (7, errno.EBADF)):
++            for component in ("status", "stat"):
++                with self.subTest(ordinal=ordinal, number=number, component=component), self.fixture.proc() as state:
++                    with self.assertRaises((OSError, ValueError)):
++                        self.capture_fixture.capture(state, ordinal, component, injected_errno=number)
++                    for descriptor in state.identities:
++                        with self.assertRaises(OSError):
++                            os.fstat(descriptor)
++
++    def test_bound_esrch_requires_exact_original_worker_terminal_event(self):
++        events = {
++            "absent": lambda fd: [],
++            "zero": lambda fd: [(fd, 0)],
++            "hup-only": lambda fd: [(fd, select.POLLHUP)],
++            "error": lambda fd: [(fd, select.POLLIN | select.POLLERR)],
++            "invalid": lambda fd: [(fd, select.POLLIN | select.POLLNVAL)],
++            "wrong-fd": lambda fd: [(fd + 1000, select.POLLIN)],
++            "duplicate": lambda fd: [(fd, select.POLLIN), (fd, select.POLLIN)],
++        }
++        for label, value in events.items():
++            with self.subTest(label=label), self.fixture.proc() as state:
++                state.events = value
++                with self.assertRaises((OSError, ValueError)):
++                    self.capture(state)
++
++    def test_terminal_event_cannot_replace_original_binding_or_held_identity(self):
++        changes = {
++            "binding-missing": lambda o: o.bindings.pop("10002"),
++            "birth-changed": lambda o: o.bindings["10002"].update(starttime=o.baseline_starts["10002"] + 1),
++            "namespace-changed": lambda o: o.bindings["10002"].update(namespace=(10002, 509)),
++            "task-fd-changed": lambda o: o.task_signatures.update({"10002": (0, 0, 0)}),
++            "pidfd-changed": lambda o: o.thread_signatures.update({"10002": (0, 0, 0)}),
++            "owner-changed": lambda o: setattr(o, "held_signature", (0, 0, 0)),
++            "late": lambda o: setattr(o, "sample_started_ns", time.monotonic_ns() - worker.MAX_DRAIN_NS - 1),
++        }
++        for label, change in changes.items():
++            with self.subTest(label=label), self.fixture.proc() as state:
++                holder = {}
++                original_bind = worker.WorkerPidfdObservation._bind_workers
++                original_retire = self.capture_fixture.fixture.retire
++
++                def bind(observed):
++                    original_bind(observed)
++                    holder["observation"] = observed
++
++                def retire(current):
++                    original_retire(current)
++                    change(holder["observation"])
++
++                with patch.object(worker.WorkerPidfdObservation, "_bind_workers", bind), \
++                        patch.object(self.capture_fixture.fixture, "retire", side_effect=retire):
++                    with self.assertRaises((OSError, ValueError)):
++                        self.capture(state)
++
++    def test_event_does_not_qualify_live_reappearing_or_other_missing_worker(self):
++        for mode in ("live", "reappearing", "other-missing", "new-task"):
++            with self.subTest(mode=mode), self.fixture.proc() as state:
++                original_retire = self.capture_fixture.fixture.retire
++                if mode == "other-missing":
++                    self.fixture.additional_worker(state)
++
++                def retire(current):
++                    if mode == "live":
++                        current.terminal.add("10002")
++                        return
++                    original_retire(current)
++                    if mode == "reappearing":
++                        (current.root / "retired-10002").rename(current.root / "task/10002")
++                    elif mode == "other-missing":
++                        self.fixture.retire(current, "10003")
++                    elif mode == "new-task":
++                        self.fixture.additional_worker(current)
++
++                with patch.object(self.capture_fixture.fixture, "retire", side_effect=retire):
++                    with self.assertRaises((OSError, ValueError)):
++                        self.capture(state)
++
++    def test_successful_bad_status_is_not_erased_by_later_bound_esrch(self):
++        for ordinal in (5, 6, 7):
++            for change in (lambda raw: raw + "VmRSS:\t0 kB\n",
++                           lambda raw: raw.replace("PPid:\t10000", "PPid:\t10009"),
++                           lambda raw: raw.replace("Threads:\t2", "Threads:\t1")):
++                with self.subTest(ordinal=ordinal, change=change), self.fixture.proc() as state:
++                    original = base._read
++                    count = 0
++
++                    def read(descriptor, component):
++                        nonlocal count
++                        raw = original(descriptor, component)
++                        if os.readlink(f"/proc/self/fd/{descriptor}").endswith("/10002") and component == "status":
++                            count += 1
++                            if count == ordinal:
++                                return change(raw)
++                        return raw
++
++                    with patch.object(base, "_read", side_effect=read), self.assertRaises(ValueError):
++                        self.capture(state, ordinal, "stat")
++
++    def test_postbinding_leader_and_group_esrch_still_refuse(self):
++        for kind in ("leader", "group"):
++            with self.subTest(kind=kind), self.fixture.proc() as state:
++                original_bind, original_read = worker.WorkerPidfdObservation._bind_workers, base._read
++                holder = {}
++
++                def bind(observed):
++                    original_bind(observed)
++                    holder["observation"] = observed
++
++                def read(descriptor, component):
++                    observed = holder.get("observation")
++                    if observed is not None and component == "status" and descriptor == (
++                            observed.group_fd if kind == "group" else observed.task_fds["10001"]):
++                        raise ProcessLookupError(errno.ESRCH, "explicit leader/group read fixture")
++                    return original_read(descriptor, component)
++
++                with patch.object(worker.WorkerPidfdObservation, "_bind_workers", bind), \
++                        patch.object(base, "_read", side_effect=read), self.assertRaises(OSError):
++                    self.fixture.observation(state)
++                self.assertTrue(holder["observation"].failed)
++
++    def test_roster_change_after_first_retention_check_is_not_hidden(self):
++        for mode in ("other-missing", "reappearing", "new-task"):
++            with self.subTest(mode=mode), self.fixture.proc() as state:
++                self.fixture.additional_worker(state)
++                original_names = worker.WorkerPidfdObservation._initial_names
++                changed = False
++
++                def names(observed):
++                    nonlocal changed
++                    result = original_names(observed)
++                    if "10002" in state.terminal and not changed:
++                        changed = True
++                        if mode == "other-missing":
++                            self.fixture.retire(state, "10003")
++                        elif mode == "reappearing":
++                            (state.root / "retired-10002").rename(state.root / "task/10002")
++                        else:
++                            (state.root / "task/10004").mkdir()
++                    return result
++
++                with patch.object(worker.WorkerPidfdObservation, "_initial_names", names), \
++                        self.assertRaisesRegex(ValueError, "frontier-change|initial-task-set"):
++                    self.capture(state)
++                self.assertTrue(changed)
++
++    def test_one_loss_from_three_threads_does_not_cover_a_later_other_loss(self):
++        with self.fixture.proc() as state:
++            self.fixture.additional_worker(state)
++            observed = self.capture(state)
++            try:
++                self.assert_pending(observed)
++                self.assertEqual(set(observed.bindings), {"10002", "10003"})
++                self.assertEqual(observed.record["tasks"], ["10001", "10003"])
++                self.assertIsNotNone(observed.recheck())
++                self.fixture.retire(state, "10003")
++                with self.assertRaisesRegex(ValueError, "exit-worker-frontier-change"):
++                    observed.recheck()
++                self.assertTrue(observed.failed)
++                self.assertFalse(observed.belongs_to(501, state.held, state.token))
++                with self.assertRaisesRegex(ValueError, "sticky-failure"):
++                    observed.recheck()
++            finally:
++                observed.close()
++
++    def test_previous_v4_source_receipt_remains_closed(self):
++        profile = runtime.exit_observation_profile(worker.PROFILE)
++        profile["observer_source_sha256"] = "b083f9e9271a286c78d819aca82e00506532ad1fc4da664a619a408b52fcfa10"
++        # On the unchanged baseline this is still its own valid receipt. This
++        # becomes a new-source refusal only after the proposed source changes.
++        current = hashlib.sha256(Path(worker.__file__).read_bytes()).hexdigest()
++        if current != profile["observer_source_sha256"]:
++            with self.assertRaisesRegex(ValueError, "OBSERVER_BINDING"):
++                runtime.exit_observation_class(profile)
++        else:
++            self.assertIs(runtime.exit_observation_class(profile), worker.WorkerPidfdObservation)
++        self.assertEqual(profile["maximum_drain_ns"], 100_000_000)
++
++    def _native_case(self, mode):
++        """Real kernel/wait4 mechanics, controlled exit-only field view only."""
++        with tempfile.TemporaryDirectory() as temporary:
++            directory = Path(temporary)
++            ready, allocate, allocated = [directory / name for name in ("ready", "allocate", "allocated")]
++            release_worker, joined, release_group = [directory / name for name in ("release-worker", "joined", "release-group")]
++            state = dict(classifying=False, samples=0, status_opens=0, field_views=[], kernel_errors=[],
++                         mode=mode, control_scope="State/PF_EXITING/missing-RSS view controlled; real PID/ns/starttime/Threads/FDs, first RSS, final wait4 high-water/CPU and time")
++            original_child, original_rss = runtime._Wait4Child, runtime.current_rss
++            original_open, original_read, original_path_open = os.open, base._read, Path.open
++            original_pidfd = os.pidfd_open
++
++            def wait_file(path, deadline):
++                while not path.exists():
++                    self.assertLess(time.monotonic_ns(), deadline, "bounded actual child scheduling hook")
++                    time.sleep(0.0002)
++
++            def create(*args, **kwargs):
++                child = original_child(*args, **kwargs)
++                state["child"] = child
++                state["identity"] = base._pidfd_identity(child.pid, child.termination_fd)
++                return child
++
++            def controlled(raw, component, source):
++                if component == "status":
++                    fields = base._status(raw)
++                    leader = base._one(fields, "Pid") == state["identity"][0]
++                    view = "".join(
++                        "State:\tZ (controlled fixture)\n" if leader and row.startswith("State:") else row
++                        for row in raw.splitlines(keepends=True) if not row.startswith("VmRSS:")
++                    )
++                else:
++                    prefix, suffix = raw.rsplit(") ", 1)
++                    values = suffix.split()
++                    if int(prefix.partition(" (")[0]) == state["identity"][0]:
++                        values[0] = "Z"
++                    values[6] = str(int(values[6]) | base.PF_EXITING)
++                    values[20] = values[21] = "0"
++                    view = prefix + ") " + " ".join(values) + "\n"
++                state["field_views"].append(dict(source=source, component=component, raw=raw, controlled=view))
++                return view
++
++            def path_open(path, *args, **kwargs):
++                handle = original_path_open(path, *args, **kwargs)
++                if state["classifying"] and str(path) == f"/proc/{state['identity'][0]}/status":
++                    with handle:
++                        return io.StringIO(controlled(handle.read(), "status", str(path)))
++                return handle
++
++            def pidfd_open(pid, flags=0):
++                descriptor = original_pidfd(pid, flags)
++                if flags == worker.PIDFD_THREAD:
++                    state["thread_fd"] = descriptor
++                    state["thread_signature"] = base._signature(descriptor)
++                    state["thread_fdinfo"] = base._proc_fields(Path(f"/proc/self/fdinfo/{descriptor}"))
++                    state["proc_tid"] = base._one(state["thread_fdinfo"], "Pid")
++                return descriptor
++
++            def opened(path, flags, mode_bits=0o777, *, dir_fd=None):
++                descriptor = original_open(path, flags, mode_bits, dir_fd=dir_fd)
++                if state["classifying"] and path == "status" and dir_fd is not None:
++                    held_path = os.readlink(f"/proc/self/fd/{dir_fd}")
++                    if held_path == f"/proc/{state['identity'][0]}/task/{state.get('proc_tid')}":
++                        state["status_opens"] += 1
++                        # Binding has read the same task four times already.
++                        # At this point open succeeded; the original _read's
++                        # next handle.read must produce the actual kernel error.
++                        if state["status_opens"] == 2:
++                            state["held_task_signature"] = base._signature(dir_fd)
++                            state["opened_status_signature"] = base._signature(descriptor)
++                            release_worker.write_text("release only this actual worker\n")
++                            deadline = time.monotonic_ns() + worker.MAX_DRAIN_NS
++                            poller = select.poll()
++                            poller.register(state["thread_fd"], select.POLLIN)
++                            events = []
++                            while not events and time.monotonic_ns() < deadline:
++                                events = poller.poll(1)
++                            self.assertTrue(events and events[0][0] == state["thread_fd"] and events[0][1] & select.POLLIN)
++                            wait_file(joined, deadline)
++                            state["kernel_events"] = events
++                            state["roster_after"] = os.listdir(f"/proc/{state['identity'][0]}/task")
++                            self.assertNotIn(str(state["proc_tid"]), state["roster_after"])
++                            self.assertEqual(base._signature(state["thread_fd"]), state["thread_signature"])
++                return descriptor
++
++            def read(descriptor, component):
++                source = os.readlink(f"/proc/self/fd/{descriptor}")
++                try:
++                    raw = original_read(descriptor, component)
++                except OSError as error:
++                    state["kernel_errors"].append(dict(source=source, component=component,
++                        error_type=type(error).__name__, error_errno=error.errno))
++                    raise
++                return controlled(raw, component, source) if state["classifying"] else raw
++
++            def observe(pid):
++                state["samples"] += 1
++                wait_file(ready, time.monotonic_ns() + 800_000_000)
++                if state["samples"] == 1:
++                    actual = original_rss(pid)
++                    self.assertIsInstance(actual, int)
++                    self.assertGreater(actual, 0)
++                    self.assertLess(actual, 32 * 1024**2)
++                    state["actual_first_rss"] = actual
++                    allocate.write_text("allocate before the controlled missing sample\n")
++                    return actual
++                wait_file(allocated, time.monotonic_ns() + 800_000_000)
++                state["classifying"] = True
++                actual = original_rss(pid)
++                observed = runtime._RSS_EXIT_OBSERVATION.get()
++                state["record"] = observed.record if observed is not None else None
++                state["baseline_qualified"] = getattr(observed, "baseline_qualified", None)
++                state["constructor_failed"] = getattr(observed, "failed", None)
++                if mode != "late":
++                    release_group.write_text("allow exact owned group wait4\n")
++                return actual
++
++            program = """
++from pathlib import Path
++import json,os,sys,threading,time
++root=Path(sys.argv[1])
++def wait(name):
++    while not (root/name).exists(): time.sleep(0.0002)
++t=threading.Thread(target=lambda:wait('release-worker')); t.start()
++(root/'ready').write_text(json.dumps([os.getpid(),t.native_id]))
++wait('allocate'); material=bytearray(64*1024*1024)
++(root/'allocated').write_text('actual allocation complete')
++t.join(); (root/'joined').write_text('actual worker joined')
++wait('release-group'); raise SystemExit(int(sys.argv[2]))
++"""
++            budget = dict(wall_seconds=2, rss_bytes=(32 if mode == "overcap" else 128) * 1024**2)
++            try:
++                with patch.object(runtime, "_Wait4Child", side_effect=create), \
++                        patch.object(runtime, "current_rss", side_effect=observe), \
++                        patch.object(Path, "open", path_open), patch.object(os, "open", side_effect=opened), \
++                        patch.object(os, "pidfd_open", side_effect=pidfd_open), \
++                        patch.object(base, "_read", side_effect=read):
++                    result = runtime.supervise([sys.executable, "-c", program, str(directory),
++                        "7" if mode == "nonzero" else "0"], directory / "run", budget,
++                        exit_observation=runtime.exit_observation_profile(worker.PROFILE))
++            finally:
++                if "child" in state:
++                    state["child"].finish()
++            state.pop("child", None)
++            state["result"] = result
++            state["kernel"] = os.uname().release
++            output = os.environ.get("TRNM_POSTBIND_EVIDENCE_DIR")
++            if output:
++                with (Path(output) / f"native-{mode}.json").open("x") as handle:
++                    json.dump(state, handle, indent=2)
++                    handle.write("\n")
++            print("postbinding native component", json.dumps(dict(mode=mode, kernel_errors=state["kernel_errors"],
++                events=state.get("kernel_events"), outcome=result["outcome"], stop_reason=result["stop_reason"],
++                exact_wait4=result["cleanup_method"], baseline_qualified=state["baseline_qualified"])))
++            self.assertEqual(state["samples"], 2)
++            self.assertEqual(len(state["kernel_errors"]), 1)
++            self.assertEqual(state["kernel_errors"][0]["error_errno"], errno.ESRCH)
++            self.assertEqual(state["kernel_errors"][0]["component"], "status")
++            self.assertTrue(result["waited_child_reaped"])
++            self.assertTrue(result["owned_child_reap_resolved"])
++            self.assertEqual(result["cleanup_method"], "wait4")
++            self.assertGreater(result["waited_child_peak_rss_bytes"], 64 * 1024**2)
++            self.assertGreaterEqual(result["child_cpu_ns"], 0)
++            self.assertEqual(result["sampled_peak_rss_bytes"], state["actual_first_rss"])
++            self.assertFalse(state["baseline_qualified"])
++            self.assertFalse(state["constructor_failed"])
++            self.assertEqual(state["record"]["schema"], "llm-owned-postbinding-terminal-pending-v1")
++            self.assertEqual(state["record"]["acquisition_interruption"]["phase"], "post-bind-double-frontier")
++            self.assertEqual(state["record"]["bound_worker_terminal_event"]["task"], str(state["proc_tid"]))
++            self.assertEqual(state["record"]["bound_worker_terminal_event"]["revents"], state["kernel_events"][0][1])
++            self.assertEqual(result["exit_observation_profile"]["maximum_drain_ns"], 100_000_000)
++            return result
++
++    def test_native_held_proc_read_esrch_and_pidfd_event_use_actual_owned_wait4(self):
++        result = self._native_case("valid")
++        self.assertEqual(result["outcome"], "success")
++        self.assertIsNone(result["stop_reason"])
++        self.assertEqual(result["exit_code"], 0)
++        record = result["exit_cleanup_observation"]
++        self.assertEqual(record["outcome"], "terminal-wait4")
++        self.assertEqual(record["retirement_closed_by"], "exact-owned-child-terminal-wait4")
++        self.assertLessEqual(record["completed_ns"] - record["missing_sample_ns"], 100_000_000)
++
++    def test_native_terminal_event_does_not_bypass_exit_rss_or_original_deadline(self):
++        for mode in ("nonzero", "overcap", "late"):
++            with self.subTest(mode=mode):
++                result = self._native_case(mode)
++                self.assertEqual(result["outcome"], "failed")
++                if mode == "nonzero":
++                    self.assertEqual(result["exit_code"], 7)
++                elif mode == "overcap":
++                    self.assertEqual(result["stop_reason"], "rss-budget-exceeded")
++                else:
++                    self.assertEqual(result["stop_reason"], "rss-exit-cleanup-observation-unavailable")
++                    record = result["exit_cleanup_observation"]
++                    self.assertGreaterEqual(record["completed_ns"] - record["missing_sample_ns"], 100_000_000)
++                    if record["error"] == "ExitObservationError":
++                        self.assertEqual(record["recheck_refusal"]["refusal_code"], "exit-worker-deadline")
++                    else:
++                        self.assertEqual(record["error"], "exit-cleanup-deadline")
++                    self.assertNotIn("retirement_closed_by", record)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/scripts/test_llm_runtime_exit_worker_observation.py b/scripts/test_llm_runtime_exit_worker_observation.py
+index cd63a2a52dc994dae34a5ed58d0dfffab7b856fc..50ce81d8375c42c48640c58a54c4e90db223f1b8 100644
+--- a/scripts/test_llm_runtime_exit_worker_observation.py
++++ b/scripts/test_llm_runtime_exit_worker_observation.py
+@@ -59,7 +59,7 @@ class WorkerPidfdTests(unittest.TestCase):
+ 
+     def observation(self, state):
+         return worker.WorkerPidfdObservation(501, state.held, state.token,
+-            base._status(state.fixture.status()), time.monotonic_ns())
++            base._status((state.root/'status').read_text()), time.monotonic_ns())
+ 
+     def retire(self, state, name='10002'):
+         state.terminal.add(name)
+@@ -354,8 +354,23 @@ class WorkerPidfdTests(unittest.TestCase):
+                     elif mode == 'starttime': (state.root/'task/10002/stat').write_text(state.fixture.stat(10002,'R',start=999))
+                     else: state.identities[descriptor] = '10003'
+                     return descriptor
+-                with patch.object(worker.os,'pidfd_open',side_effect=opened), self.assertRaises((OSError,ValueError)):
+-                    self.observation(state)
++                with patch.object(worker.os,'pidfd_open',side_effect=opened):
++                    if mode == 'missing':
++                        # Explicit new source semantics: this already-proved
++                        # worker may keep a bounded pending reservation. It
++                        # still cannot complete V4 binding or release resources.
++                        observed = self.observation(state)
++                        try:
++                            self.assertFalse(observed.baseline_qualified)
++                            self.assertFalse(observed.record['complete_worker_pidfd_acquisition'])
++                            self.assertEqual(observed.record['transition'],
++                                'binding-acquisition-pending-owned-wait4')
++                            self.assertNotIn('retirement_closed_by', observed.record)
++                            self.assertNotIn('worker_terminal_events', observed.record)
++                            self.assertNotIn('rss_bytes', observed.record)
++                        finally: observed.close()
++                    else:
++                        with self.assertRaises((OSError,ValueError)): self.observation(state)
+                 self.assertLessEqual(len(state.opened),1)
+ 
+     def test_original_unknown_task_is_not_qualified_by_retiring(self):
+@@ -509,7 +524,8 @@ class WorkerPidfdTests(unittest.TestCase):
+             result=runtime.supervise([sys.executable,'-c',program],Path(directory)/'owned-live-worker',
+                 dict(wall_seconds=2,rss_bytes=128*1024**2),
+                 exit_observation=runtime.exit_observation_profile(worker.PROFILE))
+-        self.assertEqual(result['stop_reason'],'rss-observation-unavailable')
++        self.assertEqual(result['stop_reason'],'rss-exit-cleanup-observation-unavailable')
++        self.assertEqual(result['outcome'],'failed')
+         self.assertEqual(result['rss_gap_diagnostic']['leader_state'],'Z')
+ 
+     def test_real_own_worker_pidfd_event_and_missing_proc_are_not_group_completion(self):
+diff --git a/scripts/test_llm_runtime_pilot.py b/scripts/test_llm_runtime_pilot.py
+index 704ec9ef76d45814aa4c6633677cfacc7ae32337..7d3c6699e5f536b1e7ff0ff562a721fd91ee2516 100644
+--- a/scripts/test_llm_runtime_pilot.py
++++ b/scripts/test_llm_runtime_pilot.py
+@@ -184,6 +184,9 @@ from test_llm_runtime_exit_subset_observation import TerminalSubsetTests
+ from test_llm_runtime_exit_worker_observation import WorkerPidfdTests
+ from test_llm_runtime_exit_worker_wait4 import WorkerWait4Tests
+ from test_llm_runtime_exit_worker_frontier import WorkerFrontierTests
++from test_llm_runtime_exit_initial_pending import InitialTerminalPendingTests
++from test_llm_runtime_exit_binding_pending import BindingTerminalPendingTests
++from test_llm_runtime_exit_post_binding_retirement import PostBindingRetirementTests
+ from test_llm_runtime_kernel_owned import KernelOwnedTests
+ from test_llm_runtime_kernel_close import KernelCloseTests, KernelAbiTests
+ from test_llm_runtime_kernel_aggregate import AggregateTests

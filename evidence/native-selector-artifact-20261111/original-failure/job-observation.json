@@ -1,0 +1,166 @@
+{
+  "schema": "trnm-artifact-name-original-hosted-failure-v1",
+  "run_id": 42934311467,
+  "source_commit": "ced03a7aa4a09af36825a6fa258fd6bd80c79fa7",
+  "source_tree": "ff1e6c252e273b45ed29a7150f7fd24dc5934b2c",
+  "workflow_blob": "27adab1aa9913d811d9bb1fb549589a0a95b6965",
+  "basis": "GitHub connector normalized job record and retained original job log",
+  "job": {
+    "id": 130240478504,
+    "name": "next architecture (ubuntu-24.04-arm, head)",
+    "status": "completed",
+    "conclusion": "failure",
+    "run_id": 42934311467,
+    "logs_url": null,
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1
+      },
+      {
+        "name": "Reserve isolated logs without changing source",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2
+      },
+      {
+        "name": "Checkout the immutable event source",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3
+      },
+      {
+        "name": "Verify exact source and ordered prospective merge",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4
+      },
+      {
+        "name": "Retain original project preflight",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5
+      },
+      {
+        "name": "Install pinned compiler and lint tools",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6
+      },
+      {
+        "name": "Preserve repository truth and source-integrity negative controls",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7
+      },
+      {
+        "name": "Run all next-architecture Python controls and retained exact fixture",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8
+      },
+      {
+        "name": "Verify locked graph and unchanged all-source formatting",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9
+      },
+      {
+        "name": "Run the complete default-feature P2P crate",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10
+      },
+      {
+        "name": "Run real sealed-input Python controls and verify every frozen case",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11
+      },
+      {
+        "name": "Run exact sealed-handoff and complete shard-capacity controls",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12
+      },
+      {
+        "name": "Run complete storage-owner module and exact new funding controls",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13
+      },
+      {
+        "name": "Run the new packet observer and retained native packet-status controls",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14
+      },
+      {
+        "name": "Verify original Hepta receivers and accepted-task binding",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15
+      },
+      {
+        "name": "Preserve existing growth packet and cold-observer controls",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 16
+      },
+      {
+        "name": "Require nonempty filtered native executions without freezing test counts",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17
+      },
+      {
+        "name": "Run strict default-feature lint for both affected crates and all targets",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18
+      },
+      {
+        "name": "Retain release Cell component observations",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19
+      },
+      {
+        "name": "Reverify the complete measured source after all attempts",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20
+      },
+      {
+        "name": "Retain stage outcomes and artifact digests",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 21
+      },
+      {
+        "name": "Retain logs and failed or partial observations",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 22
+      },
+      {
+        "name": "Post Checkout the immutable event source",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 44
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 45
+      }
+    ]
+  },
+  "log_sha256": "4a472550aa491168b83e81fee9d6829351e307a36f8f373bb321e74717f23cec",
+  "log_bytes": 400088,
+  "artifact_upload_succeeded": false,
+  "new_source_execution_claimed": false
+}

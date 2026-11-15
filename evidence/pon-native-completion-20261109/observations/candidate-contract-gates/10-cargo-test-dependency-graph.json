@@ -1,0 +1,53 @@
+{
+  "label": "cargo-test-dependency-graph",
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "tree",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-features",
+    "--edges",
+    "normal,build,dev"
+  ],
+  "command": "/home/qian-qi/.cargo/bin/cargo +1.95.0 tree --offline --locked --manifest-path trillionnium/Cargo.toml --workspace --all-features --edges normal,build,dev",
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "expected_head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+  "expected_tree": "46164cd85fff00e3a080acc29fef25a27751082b",
+  "before": {
+    "head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+    "tree": "46164cd85fff00e3a080acc29fef25a27751082b",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "started_utc": "2026-11-09T03:21:50.084755+00:00",
+  "timeout_seconds": 180,
+  "timeout_scope": "source/graph command wall-time supervisor only; no product deadline changed",
+  "stdout": "/data/chain-abg-70ae-20261108/evidence/candidate-contract-gates/10-cargo-test-dependency-graph.stdout",
+  "stderr": "/data/chain-abg-70ae-20261108/evidence/candidate-contract-gates/10-cargo-test-dependency-graph.stderr",
+  "expected_tests": null,
+  "tests_run": null,
+  "skipped": null,
+  "failures": null,
+  "errors": null,
+  "timed_out": false,
+  "exit_code": 0,
+  "passed": true,
+  "elapsed_seconds": 0.215524,
+  "after": {
+    "head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+    "tree": "46164cd85fff00e3a080acc29fef25a27751082b",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "finished_utc": "2026-11-09T03:21:50.405851+00:00",
+  "stdout_bytes": 16915,
+  "stderr_bytes": 0,
+  "stdout_sha256": "09bd8b5f47205d0b8f0439ea05e3b515daf5f64ba6db3491e434f5f692e0f969",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

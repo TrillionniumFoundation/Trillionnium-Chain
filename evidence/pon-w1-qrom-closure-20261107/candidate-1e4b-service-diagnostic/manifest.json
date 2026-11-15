@@ -1,0 +1,105 @@
+{
+  "files": [
+    {
+      "bytes": 15903,
+      "path": "base_helper.py",
+      "sha256": "bee8d87d76b98e9fbb3b33a60a11be1c8d7c4197d0e7ab1e37e8126f7c983fc4"
+    },
+    {
+      "bytes": 3757,
+      "path": "diagnostic-summary.json",
+      "sha256": "7776a1dea1ee55c48400de1e609b652eb20aec4eeb1aa8948906367d64e8e29f"
+    },
+    {
+      "bytes": 34607,
+      "path": "pinned_candidate_runner.py",
+      "sha256": "0de72bb06ab637ffb834a3f7d22a024f8f031dbadfd79bf53373f82823f764c7"
+    },
+    {
+      "bytes": 887,
+      "path": "preflight-audit.json",
+      "sha256": "71fb3097e2e8ec39f27575c63e6725ff526f8657a289eb77466b5ad44c73c18a"
+    },
+    {
+      "bytes": 0,
+      "path": "preflight-audit.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 178,
+      "path": "preflight-audit.stdout.log",
+      "sha256": "51a5abc2021052aea213b79dde0b32428dc5a763c2cc00d35986433f71cab67b"
+    },
+    {
+      "bytes": 5169,
+      "path": "run_diagnostic.py",
+      "sha256": "e174c42a689eaff097c3801c4b5bbf6a37ca45c607d616653ccf16758040b4d3"
+    },
+    {
+      "bytes": 1904576,
+      "path": "selected-source-after.json",
+      "sha256": "06d49cf298ee945b34d9b11481fc01e65800f750947975eee815a6ba007cbc45"
+    },
+    {
+      "bytes": 1904576,
+      "path": "selected-source-before.json",
+      "sha256": "06d49cf298ee945b34d9b11481fc01e65800f750947975eee815a6ba007cbc45"
+    },
+    {
+      "bytes": 1131,
+      "path": "service-exact-test.json",
+      "sha256": "924d9ada313f931ca5d6de8a98a160e5eaba34f3c0f14022129c9bf8d2617774"
+    },
+    {
+      "bytes": 0,
+      "path": "service-exact-test.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 239,
+      "path": "service-exact-test.stdout.log",
+      "sha256": "3f5cb75229475635bd5f2e16f44ef41792e819838eebe5c5b30db9d67670c677"
+    },
+    {
+      "bytes": 6444,
+      "path": "source-clock_contract.rs",
+      "sha256": "c3316e46b63ee47a2467dfe5a31d9ab934881d2d4dde0137b93a51f09b158b92"
+    },
+    {
+      "bytes": 5931,
+      "path": "source-frontier_service.rs",
+      "sha256": "ebce1d727a1e8c89327b53b345d7e4da9b3329dbeb955b1a7356214b541c3273"
+    },
+    {
+      "bytes": 1305,
+      "path": "source-identities.json",
+      "sha256": "bb912b3a458d55fb25b961b8196ccef65d323490216eab11cdda6a53d5a41eff"
+    },
+    {
+      "bytes": 3396,
+      "path": "source-service_clock.rs",
+      "sha256": "702f582374706400530529bce619acd86228222152eb1e5d34bb453b1e169e60"
+    },
+    {
+      "bytes": 8222,
+      "path": "source-service_store.rs",
+      "sha256": "b4a3a5c375db867241d3df56a78f0347af4853d785be285c77f92d0adfde89d8"
+    },
+    {
+      "bytes": 10775,
+      "path": "source-service_test_fixture.rs",
+      "sha256": "7c34a71f0180c740fd7a4cef9bcd196ff09ed5d479c3153899ddc4d7331b96d6"
+    },
+    {
+      "bytes": 11809,
+      "path": "source-service_tests.rs",
+      "sha256": "1b47a8384fa20bfd7c2a15c41f4a693eb8cede29c8100f45885d8ac80e66fee0"
+    },
+    {
+      "bytes": 2354,
+      "path": "stage-status.json",
+      "sha256": "1a6611cc1a4a8cb4675d28b3e286836f13a0fb0124004566f00b47f19dc7ff92"
+    }
+  ],
+  "head": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53"
+}

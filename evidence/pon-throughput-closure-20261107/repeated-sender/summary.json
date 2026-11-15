@@ -1,0 +1,127 @@
+{
+  "schema": "throughput-repeated-sender-summary-v1",
+  "raw_rows": 84,
+  "warmup_rows": 12,
+  "measured_rows": 72,
+  "cases": [
+    {
+      "senders": 2,
+      "pairs": 12,
+      "arms": {
+        "full-speculation-reference": {
+          "wall_ns_median": 8784538.5,
+          "reexecuted": [
+            255
+          ],
+          "speculative": [
+            256
+          ]
+        },
+        "repeated-sender-hint": {
+          "wall_ns_median": 8869534.0,
+          "reexecuted": [
+            1
+          ],
+          "speculative": [
+            2
+          ]
+        }
+      },
+      "candidate_over_reference_paired_median": 0.9746896843021737,
+      "paired_ratios": [
+        0.9802642319347377,
+        1.1228449970507306,
+        0.8570939097292269,
+        0.9835485721404491,
+        0.9691151366696099,
+        0.8137348533628351,
+        0.7550616465813612,
+        0.9502316984568875,
+        0.8128915373779355,
+        1.077751348651231,
+        1.0064257503495473,
+        1.0303734525763102
+      ]
+    },
+    {
+      "senders": 64,
+      "pairs": 12,
+      "arms": {
+        "full-speculation-reference": {
+          "wall_ns_median": 11789660.5,
+          "reexecuted": [
+            255
+          ],
+          "speculative": [
+            256
+          ]
+        },
+        "repeated-sender-hint": {
+          "wall_ns_median": 11615357.5,
+          "reexecuted": [
+            63
+          ],
+          "speculative": [
+            64
+          ]
+        }
+      },
+      "candidate_over_reference_paired_median": 0.9881310211610301,
+      "paired_ratios": [
+        0.9967102935669305,
+        0.9967586968277278,
+        0.9813608586955044,
+        0.9058934985584307,
+        0.9694529405958936,
+        0.9366780045869597,
+        1.0111322494750288,
+        1.1258113428377363,
+        0.951562902047334,
+        0.9449254703076236,
+        0.9949011836265558,
+        0.9979024555835434
+      ]
+    },
+    {
+      "senders": 256,
+      "pairs": 12,
+      "arms": {
+        "full-speculation-reference": {
+          "wall_ns_median": 22370567.0,
+          "reexecuted": [
+            255
+          ],
+          "speculative": [
+            256
+          ]
+        },
+        "repeated-sender-hint": {
+          "wall_ns_median": 23067948.5,
+          "reexecuted": [
+            255
+          ],
+          "speculative": [
+            256
+          ]
+        }
+      },
+      "candidate_over_reference_paired_median": 1.0112583570825922,
+      "paired_ratios": [
+        1.0601191858687522,
+        0.9220162296649639,
+        0.903549968337251,
+        1.046034596001365,
+        0.9933508410674056,
+        1.0291658730977786,
+        0.9290715074912834,
+        1.0676710128804623,
+        1.2246431738120749,
+        1.031598168261798,
+        0.9774402387994233,
+        0.8385929652901725
+      ]
+    }
+  ],
+  "confirmed_throughput_qualified": false,
+  "production_activation": false
+}

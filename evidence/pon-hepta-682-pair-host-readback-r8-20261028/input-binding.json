@@ -1,0 +1,402 @@
+[
+  {
+    "artifact_id": 12793540188,
+    "path": "/workspace/scratch/56818e4fba76/recovery/round8/hepta-682-pair-artifacts/hepta-682-pair-12793540188.zip",
+    "bytes": 5207845,
+    "sha256_from_verified_download": "00deb8d8f3b4914b864b8ba8e25de8d9b494dda862544bbdbe97ace7709b52fb",
+    "entire_archive_rehashed_by_this_reader": false,
+    "selected_members_crc_and_sha_checked": [
+      {
+        "member": "chain-from-zero-native/manifest.json",
+        "bytes": 20229,
+        "sha256": "35258c8e180a2e203b873cf9b4d54488c17032a2a2b989098ff3e59e81b9a833"
+      },
+      {
+        "member": "chain-from-zero-native-host/controller-result.json",
+        "bytes": 3971,
+        "sha256": "a030176f4ecbbbd20407135ca4a910087cb2ff3559cf236098c9ef3d612978c8"
+      },
+      {
+        "member": "chain-from-zero-native-host/child-result.json",
+        "bytes": 332,
+        "sha256": "cc5acaf914cf58ad98b8a2c7571912b49f4bde1ad738142ed5ff4a70220fbdd9"
+      },
+      {
+        "member": "chain-from-zero-native-host/inside-before.json",
+        "bytes": 1647,
+        "sha256": "5f2ec6357b450f811deae092eb91960a5bdd5072227a17d7dd9441f4db628173"
+      },
+      {
+        "member": "chain-from-zero-native-host/inside-after.json",
+        "bytes": 1661,
+        "sha256": "bee606eca35a1c670c171e4041db8d1fd3bc05523b4674d39c67d90b660e10dc"
+      },
+      {
+        "member": "chain-from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+        "bytes": 189,
+        "sha256": "bbcdd83622f55e12265e53022be573d06425f926c4a75ac0c58537a1456f6f7b"
+      },
+      {
+        "member": "chain-from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+        "bytes": 195,
+        "sha256": "53c2df9c125e6da2e7f8352e9064301f45cefceed3c95593783989ea190686a8"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+        "bytes": 3374,
+        "sha256": "bf934a8de847b77b009374dd8dfe96c5694039bf374fba1cdad6e06fc4278051"
+      },
+      {
+        "member": "chain-from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+        "bytes": 914,
+        "sha256": "c5235130b407e6dd6cf907c7e4ad3b23b12ce5dee4f386224b849b4513e404a1"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+        "bytes": 406,
+        "sha256": "112bc6167f269aa8d3f54acc07013d5eb91092ee070556383b464f001a25d212"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/native/report.json",
+        "bytes": 3476012,
+        "sha256": "09165f89807eea9ecfa8104a07bf88cc4704593b6d307f5fb97f29f7486c874a"
+      },
+      {
+        "member": "chain-from-zero-native/native/sustained/report.json",
+        "bytes": 7105891,
+        "sha256": "1238d3a269f171d7db76bc3b9514932b9df849afe90194538a249ce941dc49f0"
+      },
+      {
+        "member": "chain-from-zero-native/confirmation/report.json",
+        "bytes": 5312205,
+        "sha256": "e4efb0da57b8229941a7716735f0ba4633ab2fca8f559bac4ad0378b6ae2fe41"
+      }
+    ],
+    "embedded_native_binary_executed_or_extracted": false
+  },
+  {
+    "artifact_id": 12792744792,
+    "path": "/workspace/scratch/56818e4fba76/recovery/round8/hepta-682-pair-artifacts/hepta-682-pair-12792744792.zip",
+    "bytes": 5434672,
+    "sha256_from_verified_download": "beec791979f0c77272d0f64027e7910988ad3591da5c8b39283c55f4d996d675",
+    "entire_archive_rehashed_by_this_reader": false,
+    "selected_members_crc_and_sha_checked": [
+      {
+        "member": "chain-from-zero-native/manifest.json",
+        "bytes": 20235,
+        "sha256": "950a2c75818751e673bf767df9443631fb047455efdba3ded1e4a5f921bc27f4"
+      },
+      {
+        "member": "chain-from-zero-native-host/controller-result.json",
+        "bytes": 3972,
+        "sha256": "c5f29dd7f17532b8361588749d25dbb15af860dbde6336bd8ee48544892321f6"
+      },
+      {
+        "member": "chain-from-zero-native-host/child-result.json",
+        "bytes": 332,
+        "sha256": "cc5acaf914cf58ad98b8a2c7571912b49f4bde1ad738142ed5ff4a70220fbdd9"
+      },
+      {
+        "member": "chain-from-zero-native-host/inside-before.json",
+        "bytes": 1648,
+        "sha256": "dd141e58a7210405da95edd2280f8fcd08477f9af71d29e7a8b029367c3c6e78"
+      },
+      {
+        "member": "chain-from-zero-native-host/inside-after.json",
+        "bytes": 1661,
+        "sha256": "f6ebf79d0b1c8d7dbc5a4d089259380e30854720403e3085b2d41ab125db5c93"
+      },
+      {
+        "member": "chain-from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+        "bytes": 189,
+        "sha256": "bbcdd83622f55e12265e53022be573d06425f926c4a75ac0c58537a1456f6f7b"
+      },
+      {
+        "member": "chain-from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+        "bytes": 195,
+        "sha256": "53c2df9c125e6da2e7f8352e9064301f45cefceed3c95593783989ea190686a8"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+        "bytes": 3363,
+        "sha256": "1a83da8b963a7b7f15e6ccc51df93bf0b6cdaad5fa480380e69000946ce01a6c"
+      },
+      {
+        "member": "chain-from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+        "bytes": 914,
+        "sha256": "2df3b64d604dacec8fb2f55e7caa93cda63081a0c44a6ee6a394161d8eb6e9c1"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+        "bytes": 406,
+        "sha256": "8f291d72a97016ebcf08ba2efd5d4884dbaec1a0ac313868805ea1bc22594b87"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/native/report.json",
+        "bytes": 3472814,
+        "sha256": "546ff404cdbf4f0ad4701d5b5a4062ecbc980a0be86156a4d40156f1a4aa3394"
+      },
+      {
+        "member": "chain-from-zero-native/native/sustained/report.json",
+        "bytes": 7196303,
+        "sha256": "f5c3c002e9709c5a0f11787198964ad9b155506ea00314dad9441788a4686451"
+      },
+      {
+        "member": "chain-from-zero-native/confirmation/report.json",
+        "bytes": 5250205,
+        "sha256": "de86f2c6b07502995b68e3c7955b86ef98bf7af61a343868d16a87ed033fccc8"
+      }
+    ],
+    "embedded_native_binary_executed_or_extracted": false
+  },
+  {
+    "artifact_id": 12793306605,
+    "path": "/workspace/scratch/56818e4fba76/recovery/round8/hepta-682-pair-artifacts/hepta-682-pair-12793306605.zip",
+    "bytes": 5185189,
+    "sha256_from_verified_download": "a16ed8003b7c5b13527d58622ddcdbf04f5e0db5861cd2e0eac2c047c5b97638",
+    "entire_archive_rehashed_by_this_reader": false,
+    "selected_members_crc_and_sha_checked": [
+      {
+        "member": "chain-from-zero-native/manifest.json",
+        "bytes": 20242,
+        "sha256": "903d310dd393bedccbcdb80ebd12f04840b9ce3a1b91d3f57aff0313e09f6dc2"
+      },
+      {
+        "member": "chain-from-zero-native-host/controller-result.json",
+        "bytes": 3971,
+        "sha256": "4d9bfb46ac35d02d196077664e9cf3ce52d390ce505538b15dab2668227c0193"
+      },
+      {
+        "member": "chain-from-zero-native-host/child-result.json",
+        "bytes": 332,
+        "sha256": "cc5acaf914cf58ad98b8a2c7571912b49f4bde1ad738142ed5ff4a70220fbdd9"
+      },
+      {
+        "member": "chain-from-zero-native-host/inside-before.json",
+        "bytes": 1665,
+        "sha256": "56b916c3d435be1eec9511c29198ee93aad10a7b9719dd2143ac1951319376f3"
+      },
+      {
+        "member": "chain-from-zero-native-host/inside-after.json",
+        "bytes": 1679,
+        "sha256": "bb49b43b1c82f0f2dcb2dd6cf4c8f33f3a0ae4ebd561b248223dc7ef0ae7dac2"
+      },
+      {
+        "member": "chain-from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+        "bytes": 189,
+        "sha256": "bbcdd83622f55e12265e53022be573d06425f926c4a75ac0c58537a1456f6f7b"
+      },
+      {
+        "member": "chain-from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+        "bytes": 195,
+        "sha256": "c2028f2e5a779b04525dc0fb842d66a0bd49b96df717251c91b2d584734e01b3"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+        "bytes": 3379,
+        "sha256": "f227275ea62ae76d965c6affb46f9dfaeab55bcac3574f4abc4bffedab683931"
+      },
+      {
+        "member": "chain-from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+        "bytes": 914,
+        "sha256": "be19de85d40953f806433c302e97b34075fd5b0c594239a02bea9098aaab30c7"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+        "bytes": 406,
+        "sha256": "6e2721a5e2d589f55812bfd6630087a4ddfa858121265c2b264d638f9a547aa4"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/native/report.json",
+        "bytes": 3478029,
+        "sha256": "5d9de274f9bd2bf375ec7910d376464f50db94b63d2c53d08ad27438f0f89f04"
+      },
+      {
+        "member": "chain-from-zero-native/native/sustained/report.json",
+        "bytes": 6855766,
+        "sha256": "3484c8fb0dc426b4cb34d876b5824cb29f8d68d000d397eca0e3a9772ee72eaf"
+      },
+      {
+        "member": "chain-from-zero-native/confirmation/report.json",
+        "bytes": 5169012,
+        "sha256": "402789d2272fcc3d106d454a2bba9af8c989bd1b00348ce2bed8a3ccdf9ae015"
+      }
+    ],
+    "embedded_native_binary_executed_or_extracted": false
+  },
+  {
+    "artifact_id": 12793685376,
+    "path": "/workspace/scratch/56818e4fba76/recovery/round8/hepta-682-pair-artifacts/hepta-682-pair-12793685376.zip",
+    "bytes": 156056882,
+    "sha256_from_verified_download": "b52e746a133d68a43175d6425d6bbeaaa289ef2601cb88d19535abd38701ddf8",
+    "entire_archive_rehashed_by_this_reader": false,
+    "selected_members_crc_and_sha_checked": [
+      {
+        "member": "chain-from-zero-native/manifest.json",
+        "bytes": 20238,
+        "sha256": "62aaf0f5f281bbc77216d2f87593d1530e1e3fb33b0f8a0e26e742921a8a2640"
+      },
+      {
+        "member": "chain-from-zero-native-host/controller-result.json",
+        "bytes": 3972,
+        "sha256": "d670a0f2984eb7dfb8668e7cf63dbcb058e775e622e929d05ecde6a2dc39fbe8"
+      },
+      {
+        "member": "chain-from-zero-native-host/child-result.json",
+        "bytes": 332,
+        "sha256": "cc5acaf914cf58ad98b8a2c7571912b49f4bde1ad738142ed5ff4a70220fbdd9"
+      },
+      {
+        "member": "chain-from-zero-native-host/inside-before.json",
+        "bytes": 1648,
+        "sha256": "375e30644349e392287a9967670eff2956114b071efbd94621c3c2e59134d17a"
+      },
+      {
+        "member": "chain-from-zero-native-host/inside-after.json",
+        "bytes": 1661,
+        "sha256": "aa2c1b38974740c25428e0eabe1ca5292534e774bb24150c7e5b938fa54536dd"
+      },
+      {
+        "member": "chain-from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+        "bytes": 189,
+        "sha256": "bbcdd83622f55e12265e53022be573d06425f926c4a75ac0c58537a1456f6f7b"
+      },
+      {
+        "member": "chain-from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+        "bytes": 195,
+        "sha256": "53c2df9c125e6da2e7f8352e9064301f45cefceed3c95593783989ea190686a8"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+        "bytes": 3364,
+        "sha256": "c1ae3035a48a2724e165d34c548a7f7ed28cbf9a59e4bdc8c8e0e4ff133376a2"
+      },
+      {
+        "member": "chain-from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+        "bytes": 914,
+        "sha256": "1edc7fecfc69f482763c2ce086d1a8f2f33ecfdf5e796bda8cd929c6dea8a275"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+        "bytes": 406,
+        "sha256": "6e2721a5e2d589f55812bfd6630087a4ddfa858121265c2b264d638f9a547aa4"
+      },
+      {
+        "member": "chain-from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "member": "chain-from-zero-native/native/report.json",
+        "bytes": 3476826,
+        "sha256": "5780090341c3c5fad14bb5b825d958365648073691131dbc33ebdef0784ef551"
+      },
+      {
+        "member": "chain-from-zero-native/native/sustained/report.json",
+        "bytes": 6554535,
+        "sha256": "55f9825456cd551090a419a835373705d0666a7cea7f24ee30863a9eeca5ac16"
+      },
+      {
+        "member": "chain-from-zero-native/confirmation/report.json",
+        "bytes": 4857805,
+        "sha256": "098a0fa5d0da31d9c070ed8c7b3204584c49e837ea699b878b15fe99341e24f1"
+      }
+    ],
+    "embedded_native_binary_executed_or_extracted": false
+  }
+]

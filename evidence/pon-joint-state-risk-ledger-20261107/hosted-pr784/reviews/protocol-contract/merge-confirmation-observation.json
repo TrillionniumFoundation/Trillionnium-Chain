@@ -1,0 +1,119 @@
+{
+  "observed_phase_scalars": [
+    {
+      "index": 0,
+      "object_keys": [
+        "business",
+        "signed_submit_ack",
+        "history_response",
+        "independent_page_replay",
+        "head_response",
+        "service_totals",
+        "receiver_requests",
+        "resource_coverage",
+        "attacker_attempts",
+        "request_clock",
+        "product_metrics"
+      ],
+      "scalars": {
+        "mode": "attack-free-baseline",
+        "service_totals_scope": "whole service including shutdown; not per-request p99 or in-window proof/s",
+        "window_ns": 4000000000,
+        "workers": 0
+      }
+    },
+    {
+      "index": 1,
+      "object_keys": [
+        "business",
+        "signed_submit_ack",
+        "history_response",
+        "independent_page_replay",
+        "head_response",
+        "service_totals",
+        "receiver_requests",
+        "resource_coverage",
+        "attacker_attempts",
+        "request_clock",
+        "product_metrics"
+      ],
+      "scalars": {
+        "mode": "from-zero-pressure",
+        "service_totals_scope": "whole service including shutdown; not per-request p99 or in-window proof/s",
+        "window_ns": 4000000000,
+        "workers": 16
+      }
+    }
+  ],
+  "raw_report_sha256": "09b1add466e34bfb2292012837c9b88b991c3ad52d5d6eea064dcee56e4a914f",
+  "selected_raw_confirmation_fields": [
+    {
+      "path": "finite_target_met",
+      "value": false
+    },
+    {
+      "path": "phases[0].client_confirmed_before_original_window_end",
+      "value": true
+    },
+    {
+      "path": "phases[0].client_confirmed_transactions",
+      "value": 1
+    },
+    {
+      "path": "phases[0].independent_client_confirmation.confirmed",
+      "value": true
+    },
+    {
+      "path": "phases[0].mode",
+      "value": "attack-free-baseline"
+    },
+    {
+      "path": "phases[0].requested_window_ns",
+      "value": 4000000000
+    },
+    {
+      "path": "phases[1].client_confirmed_before_original_window_end",
+      "value": false
+    },
+    {
+      "path": "phases[1].client_confirmed_transactions",
+      "value": 0
+    },
+    {
+      "path": "phases[1].mode",
+      "value": "from-zero-pressure"
+    },
+    {
+      "path": "phases[1].requested_window_ns",
+      "value": 4000000000
+    },
+    {
+      "path": "same_packet_sequence_in_both_runs",
+      "value": true
+    }
+  ],
+  "top_level_scalars": {
+    "attacker_construction_cpu_ns": 7339051,
+    "attacker_construction_wall_ns": 7338516,
+    "finite_target_met": false,
+    "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+    "honest_chain_acquisition_wall_ns": 190321372,
+    "honest_chain_aggregate_cpu_ns": null,
+    "honest_chain_process_cpu_ns": 39198645,
+    "honest_chain_process_cpu_scope": "all threads of this test process during seven-block mining and durable acquisition, before service/traffic start; includes search/setup/execution/storage, not pure W1 cost or exclusive actor attribution",
+    "invariant_target_met": true,
+    "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+    "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+    "policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+    "production_activation": false,
+    "public_network_ready": false,
+    "same_packet_sequence_in_both_runs": true,
+    "schema": "public-v3-signed-confirmation-pressure-v1",
+    "scope": "same-source, task, target and signed business; attack-free versus independently driven loopback attack clients; shared controller, not independent operators or a saturated WAN benchmark",
+    "strongest_honest_producer_used": false,
+    "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+    "test_success_scope": "native protocol/accounting invariants; finite business target is a separately retained actual outcome and cannot be inferred from cargo exit zero",
+    "work_profile_qualified": false
+  }
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "reason": "build-script-executed",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-submit-probe-20261111-d6cb/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0",
+    "linked_libs": [
+      "static=trnm_sqlite_layout_witness"
+    ],
+    "linked_paths": [
+      "native=/home/qian-qi/work/chain-pon-submit-target-d6cb/release/build/trnm-sqlite-io-boundary-5f5ee9bbc590e0f2/out"
+    ],
+    "cfgs": [
+      "trnm_sqlite_layout_witness"
+    ],
+    "env": [
+      [
+        "TRNM_SQLITE3_BUILD_FENCE",
+        "sqlite-3.54.0-normal-native-linux-layout-v4"
+      ],
+      [
+        "TRNM_SQLITE3_AMALGAMATION_SHA256",
+        "2da161e310ef0aba3465f22a4d12b8a43723236f0942fa76e8aac523c3317243"
+      ]
+    ],
+    "out_dir": "/home/qian-qi/work/chain-pon-submit-target-d6cb/release/build/trnm-sqlite-io-boundary-5f5ee9bbc590e0f2/out"
+  }
+]

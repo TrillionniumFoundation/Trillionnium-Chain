@@ -1,0 +1,36 @@
+{
+  "schema": "pon-h-kernel-parent-prerequisite-observation-v1",
+  "unix_seconds": 1794066193.4527109,
+  "uid": 1000,
+  "fixed_parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+  "fixed_parent_exists": false,
+  "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem\n",
+  "actual_process_cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b6ad9539-12894-5d1.service\n",
+  "required_parent_mutated": false,
+  "kernel_guards_bypassed": false,
+  "commands": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "FIXED_PUBLIC_KERNEL_PARENT|require_host_kernel_budget|host-kernel",
+        "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "trillionnium/crates/trnm-pon-node/src/cli.rs",
+        "trillionnium/crates/trnm-pon-node/src/operator.rs"
+      ],
+      "exit_code": 2,
+      "stdout": "trillionnium/crates/trnm-pon-node/src/main.rs:705:        let owner = trnm_pon_node::host_kernel_parent::require_host_kernel_budget(\ntrillionnium/crates/trnm-pon-node/src/main.rs:707:            Some(trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),\ntrillionnium/crates/trnm-pon-node/src/main.rs:727:        polling_enabled.then_some(trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT)\ntrillionnium/crates/trnm-pon-node/src/main.rs:729:    let owner = host_public_guard::require_host_kernel_budget(listener, parent)?;\ntrillionnium/crates/trnm-pon-node/src/main.rs:740:    if args.contains_key(\"--host-kernel-parent\")\ntrillionnium/crates/trnm-pon-node/src/main.rs:1398:        \"serve\" => \"--listen --seconds --mining-seconds --pool-policy --mine --miner --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input --consensus-maintenance --peers --peer-poll-ms --peer-pages --request-observation-output --request-observation-capacity --host-kernel-parent --growth-namespace\",\ntrillionnium/crates/trnm-pon-node/src/main.rs:2354:                        args.get(\"--host-kernel-parent\").map(String::as_str),\ntrillionnium/crates/trnm-pon-node/src/main.rs:2545:                if args.contains_key(\"--host-kernel-parent\") {\ntrillionnium/crates/trnm-pon-node/src/main.rs:2719:            require_host_kernel_budget, FIXED_PUBLIC_KERNEL_PARENT,\ntrillionnium/crates/trnm-pon-node/src/main.rs:2725:        let original = require_host_kernel_budget(loopback, Some(FIXED_PUBLIC_KERNEL_PARENT));\ntrillionnium/crates/trnm-pon-node/src/main.rs:2767:        let original = host_public_guard::require_host_kernel_budget(\ntrillionnium/crates/trnm-pon-node/src/main.rs:2769:            Some(trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),\ntrillionnium/crates/trnm-pon-node/src/main.rs:2793:            \"--host-kernel-parent\".into(),\n",
+      "stderr": "rg: trillionnium/crates/trnm-pon-node/src/cli.rs: No such file or directory (os error 2)\nrg: trillionnium/crates/trnm-pon-node/src/operator.rs: No such file or directory (os error 2)\n"
+    }
+  ]
+}

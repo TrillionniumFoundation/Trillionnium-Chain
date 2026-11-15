@@ -1,0 +1,8 @@
+{
+  "full_tracked_identity_claimed": false,
+  "head": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "mismatches": [],
+  "reference_sha256": "80d4008183ffc58bf140e1aa838c8c30ea64a9374c6ec532307f43b9c40effde",
+  "selected_bytes_match_reference_and_HEAD": true,
+  "selected_count": 2462
+}

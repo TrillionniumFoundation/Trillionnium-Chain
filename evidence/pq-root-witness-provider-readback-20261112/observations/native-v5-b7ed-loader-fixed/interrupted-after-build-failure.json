@@ -1,0 +1,34 @@
+{
+  "schema": "trnm-root-witness-readback-interrupted-observation-v1",
+  "utc": "2026-11-12T00:17:51.326288+00:00",
+  "source": "b7ed54cdb7793ca0a22f85350fecc0162d089fba",
+  "result": "BUILD_SIGKILL_THEN_INTERRUPTED_BEFORE_REPEATED_BUILD",
+  "observed_runner_session_exit_code": 130,
+  "actual_completed_commands": "commands.json",
+  "actual_first_command_exit_code": 101,
+  "actual_compiler_termination": "Node and MVCC rustc each reported signal 9 / SIGKILL",
+  "underlying_kill_reason_verified": false,
+  "runner_timeout": false,
+  "source_before_verified": true,
+  "source_after_verified_by_interrupted_runner": false,
+  "native_test_execution_observed": false,
+  "native_tests_passed": 0,
+  "runner_summary_completed": false,
+  "interrupted_current_suite": "durable-witness compilation",
+  "next_environment_change": "CARGO_BUILD_JOBS 2 -> 1 only, to serialize heavy codegen while retaining exact original profiles/tests/budgets",
+  "raw_logs": [
+    {
+      "file": "durable-witness.log",
+      "bytes": 116,
+      "sha256": "5709f23eb10ea4a392684016733defb48960b49482df4ac4e0d69b11d73cd84d"
+    },
+    {
+      "file": "fresh-witness.log",
+      "bytes": 7200,
+      "sha256": "b089c59d7a8e2c5504bf1ad1ebeff7ca579fee183669418894aeee0950c95f78"
+    }
+  ],
+  "source_modified": false,
+  "qualification_policy_modified": false,
+  "production_activation": false
+}

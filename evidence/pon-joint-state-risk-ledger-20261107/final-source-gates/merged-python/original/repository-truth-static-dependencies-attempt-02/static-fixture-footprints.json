@@ -1,0 +1,525 @@
+[
+  {
+    "path_or_prefix": "evidence/pon-client-confirmation-v1/manifest.json",
+    "references": [
+      {
+        "path": "evidence/pon-client-confirmation-v1/manifest.json",
+        "reason": "validate_contract required manifest for client_confirmation",
+        "source": "config/pon/module-maturity-v1.json"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 7929,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 7929,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-client-confirmation-v1/qualification.json",
+    "references": [
+      {
+        "path": "evidence/pon-client-confirmation-v1/qualification.json",
+        "reason": "validate_contract required qualification for client_confirmation",
+        "source": "config/pon/module-maturity-v1.json"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 127917,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 127917,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-evaluation-bundle-v1/manifest.json",
+    "references": [
+      {
+        "path": "evidence/pon-evaluation-bundle-v1/manifest.json",
+        "reason": "validate_contract required manifest for e3",
+        "source": "config/pon/module-maturity-v1.json"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 12456,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 12456,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-evaluation-bundle-v1/qualification.json",
+    "references": [
+      {
+        "path": "evidence/pon-evaluation-bundle-v1/qualification.json",
+        "reason": "validate_contract required qualification for e3",
+        "source": "config/pon/module-maturity-v1.json"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 125965,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 125965,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-native-node-v1/manifest.json",
+    "references": [
+      {
+        "path": "evidence/pon-native-node-v1/manifest.json",
+        "reason": "validate_contract required manifest for native_node",
+        "source": "config/pon/module-maturity-v1.json"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 19020,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 19020,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-native-node-v1/qualification.json",
+    "references": [
+      {
+        "path": "evidence/pon-native-node-v1/qualification.json",
+        "reason": "validate_contract required qualification for native_node",
+        "source": "config/pon/module-maturity-v1.json"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 138401,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 138401,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-native-session-v1/manifest.json",
+    "references": [
+      {
+        "path": "evidence/pon-native-session-v1/manifest.json",
+        "reason": "validate_contract required manifest for native_session",
+        "source": "config/pon/module-maturity-v1.json"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 25244,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 25244,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-native-session-v1/qualification.json",
+    "references": [
+      {
+        "path": "evidence/pon-native-session-v1/qualification.json",
+        "reason": "validate_contract required qualification for native_session",
+        "source": "config/pon/module-maturity-v1.json"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 135370,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 135370,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-six-workpackages-20261106/ci",
+    "references": [
+      {
+        "line": 21,
+        "path": "evidence/pon-six-workpackages-20261106/ci",
+        "reason": "statically folded repo path",
+        "source": "scripts/ci/test_six_workpackage_native_rosters.py"
+      },
+      {
+        "line": 21,
+        "path": "evidence/pon-six-workpackages-20261106/ci",
+        "reason": "literal evidence path",
+        "source": "scripts/ci/test_six_workpackage_native_rosters.py"
+      },
+      {
+        "line": 48,
+        "path": "evidence/pon-six-workpackages-20261106/ci",
+        "reason": "statically folded repo path",
+        "source": "scripts/ci/test_six_workpackage_native_rosters.py"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 0,
+      "cached_blob_paths": 0,
+      "materialized_blob_paths": 0,
+      "materialized_bytes": 0,
+      "missing_worktree_blob_paths": 4,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 4,
+      "uncached_blob_paths_with_unknown_size": 4,
+      "unique_uncached_blob_oids": 4
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-six-workpackages-20261106/ci/workspace-head-original.zip",
+    "references": [
+      {
+        "line": 48,
+        "path": "evidence/pon-six-workpackages-20261106/ci/workspace-head-original.zip",
+        "reason": "statically folded repo path",
+        "source": "scripts/ci/test_six_workpackage_native_rosters.py"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 0,
+      "cached_blob_paths": 0,
+      "materialized_blob_paths": 0,
+      "materialized_bytes": 0,
+      "missing_worktree_blob_paths": 1,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 1,
+      "unique_uncached_blob_oids": 1
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-six-workpackages-20261106/next/service/run_reorg_abba.py",
+    "references": [
+      {
+        "line": 28,
+        "path": "evidence/pon-six-workpackages-20261106/next/service/run_reorg_abba.py",
+        "reason": "statically folded repo path",
+        "source": "scripts/ci/run_legacy_reorg_root_abba.py"
+      },
+      {
+        "line": 28,
+        "path": "evidence/pon-six-workpackages-20261106/next/service/run_reorg_abba.py",
+        "reason": "literal evidence path",
+        "source": "scripts/ci/run_legacy_reorg_root_abba.py"
+      },
+      {
+        "line": 29,
+        "path": "evidence/pon-six-workpackages-20261106/next/service/run_reorg_abba.py",
+        "reason": "statically folded repo path",
+        "source": "scripts/ci/run_legacy_reorg_root_abba.py"
+      },
+      {
+        "line": 92,
+        "path": "evidence/pon-six-workpackages-20261106/next/service/run_reorg_abba.py",
+        "reason": "statically folded repo path",
+        "source": "scripts/ci/run_legacy_reorg_root_abba.py"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 0,
+      "cached_blob_paths": 0,
+      "materialized_blob_paths": 0,
+      "materialized_bytes": 0,
+      "missing_worktree_blob_paths": 1,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 1,
+      "unique_uncached_blob_oids": 1
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/public-v3-multiprocess/report.json",
+    "references": [
+      {
+        "line": 819,
+        "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/public-v3-multiprocess/report.json",
+        "reason": "statically folded repo path",
+        "source": "scripts/ci/test_pon_public_v3_phase_read.py"
+      },
+      {
+        "line": 819,
+        "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/public-v3-multiprocess/report.json",
+        "reason": "literal evidence path",
+        "source": "scripts/ci/test_pon_public_v3_phase_read.py"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 0,
+      "cached_blob_paths": 0,
+      "materialized_blob_paths": 0,
+      "materialized_bytes": 0,
+      "missing_worktree_blob_paths": 1,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 1,
+      "unique_uncached_blob_oids": 1
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54",
+    "references": [
+      {
+        "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54",
+        "reason": "literal command-line fixture input",
+        "source": "scripts/ci/ci_job.sh"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 35,
+      "cached_blob_paths": 2,
+      "materialized_blob_paths": 0,
+      "materialized_bytes": 0,
+      "missing_worktree_blob_paths": 21,
+      "missing_worktree_known_cached_bytes": 35,
+      "tracked_blob_paths": 21,
+      "uncached_blob_paths_with_unknown_size": 19,
+      "unique_uncached_blob_oids": 19
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963",
+    "references": [
+      {
+        "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963",
+        "reason": "literal command-line fixture input",
+        "source": "scripts/ci/ci_job.sh"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 4627,
+      "cached_blob_paths": 2,
+      "materialized_blob_paths": 0,
+      "materialized_bytes": 0,
+      "missing_worktree_blob_paths": 54,
+      "missing_worktree_known_cached_bytes": 4627,
+      "tracked_blob_paths": 54,
+      "uncached_blob_paths_with_unknown_size": 52,
+      "unique_uncached_blob_oids": 43
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-v1/manifest.json",
+    "references": [
+      {
+        "path": "evidence/pon-v1/manifest.json",
+        "reason": "validate_contract required manifest for v1",
+        "source": "config/pon/module-maturity-v1.json"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 109837,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 109837,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-v3",
+    "references": [
+      {
+        "line": 39,
+        "path": "evidence/pon-v3",
+        "reason": "literal evidence path",
+        "source": "scripts/ci/check_invariant_evidence.py"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 137745,
+      "cached_blob_paths": 9,
+      "materialized_blob_paths": 2,
+      "materialized_bytes": 130820,
+      "missing_worktree_blob_paths": 75,
+      "missing_worktree_known_cached_bytes": 6925,
+      "tracked_blob_paths": 77,
+      "uncached_blob_paths_with_unknown_size": 68,
+      "unique_uncached_blob_oids": 68
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-v3/",
+    "references": [
+      {
+        "line": 149,
+        "path": "evidence/pon-v3/",
+        "reason": "literal evidence path",
+        "source": "scripts/ci/check_invariant_evidence.py"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 137745,
+      "cached_blob_paths": 9,
+      "materialized_blob_paths": 2,
+      "materialized_bytes": 130820,
+      "missing_worktree_blob_paths": 75,
+      "missing_worktree_known_cached_bytes": 6925,
+      "tracked_blob_paths": 77,
+      "uncached_blob_paths_with_unknown_size": 68,
+      "unique_uncached_blob_oids": 68
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-v3/manifest.json",
+    "references": [
+      {
+        "path": "evidence/pon-v3/manifest.json",
+        "reason": "validate_contract required manifest for v3",
+        "source": "config/pon/module-maturity-v1.json"
+      },
+      {
+        "line": 147,
+        "path": "evidence/pon-v3/manifest.json",
+        "reason": "statically folded repo path",
+        "source": "scripts/ci/check_invariant_evidence.py"
+      },
+      {
+        "line": 147,
+        "path": "evidence/pon-v3/manifest.json",
+        "reason": "literal evidence path",
+        "source": "scripts/ci/check_invariant_evidence.py"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 8008,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 8008,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-v3/qualification/report.json",
+    "references": [
+      {
+        "path": "evidence/pon-v3/qualification/report.json",
+        "reason": "validate_contract required qualification for v3",
+        "source": "config/pon/module-maturity-v1.json"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 122812,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 122812,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-v3/work/structured.json",
+    "references": [
+      {
+        "line": 108,
+        "path": "evidence/pon-v3/work/structured.json",
+        "reason": "statically folded repo path",
+        "source": "scripts/ci/test_work_cost_report.py"
+      },
+      {
+        "line": 108,
+        "path": "evidence/pon-v3/work/structured.json",
+        "reason": "literal evidence path",
+        "source": "scripts/ci/test_work_cost_report.py"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 0,
+      "cached_blob_paths": 0,
+      "materialized_blob_paths": 0,
+      "materialized_bytes": 0,
+      "missing_worktree_blob_paths": 1,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 1,
+      "unique_uncached_blob_oids": 1
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-v4/manifest.json",
+    "references": [
+      {
+        "path": "evidence/pon-v4/manifest.json",
+        "reason": "validate_contract required manifest for v4",
+        "source": "config/pon/module-maturity-v1.json"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 4902,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 4902,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "path_or_prefix": "evidence/pon-v4/qualification/report.json",
+    "references": [
+      {
+        "path": "evidence/pon-v4/qualification/report.json",
+        "reason": "validate_contract required qualification for v4",
+        "source": "config/pon/module-maturity-v1.json"
+      }
+    ],
+    "stats": {
+      "cached_blob_bytes_by_path": 127183,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 127183,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  }
+]

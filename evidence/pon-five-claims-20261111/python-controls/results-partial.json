@@ -1,0 +1,673 @@
+{
+  "results": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "preflight",
+      "reported_test_counts": [],
+      "seconds": 0.11608457565307617,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 172,
+      "stdout_sha256": "784eb6312d77d96e7bf1104b42b6fa980b5da12100befd8ba6c1606f49d165fc",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "inventory",
+      "reported_test_counts": [],
+      "seconds": 0.11532402038574219,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 35,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "ci-contract",
+      "reported_test_counts": [],
+      "seconds": 0.26532649993896484,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 431,
+      "stdout_sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "repository-links",
+      "reported_test_counts": [],
+      "seconds": 37.46683478355408,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 307,
+      "stdout_sha256": "8d81afe9bdff81097a6151308ed9ecfbad9b89ef87caf016456cd02427e18f5f",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "ci-contract-negatives",
+      "reported_test_counts": [
+        179
+      ],
+      "seconds": 78.61352109909058,
+      "stderr_bytes": 30670,
+      "stderr_sha256": "820278c147a1dfdfb5f0319f86efa471ff964ee4e3f66a81e942a0994655d9eb",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "ci-source-integrity-negatives",
+      "reported_test_counts": [
+        43
+      ],
+      "seconds": 4.978799104690552,
+      "stderr_bytes": 6414,
+      "stderr_sha256": "1daef63100a053b360437ed3b2e95699cf9666b9d0907a57cc869b91dc9054c0",
+      "stdout_bytes": 484,
+      "stdout_sha256": "57d484b9bf64b0b16d93017a6224b6ff9b8c5444bc9e9e8ab70824caa9fbb1cf",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/pq_authority_effect_register.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "authority-reader",
+      "reported_test_counts": [],
+      "seconds": 0.11551189422607422,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 13223,
+      "stdout_sha256": "a7f64c72322df0be15f25e4e78eeb7a2da77e391b9870bb4dd76ac59f4c0ed4b",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_authority_effect_register.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "authority-negatives",
+      "reported_test_counts": [
+        18
+      ],
+      "seconds": 1.269219160079956,
+      "stderr_bytes": 117,
+      "stderr_sha256": "c6723393abc1afc6ae47cc86018884c6214aa259d00841e43a4302b1e30f8518",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/pq_lifetime_budget.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "pq128-reader",
+      "reported_test_counts": [],
+      "seconds": 0.11585354804992676,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 12824,
+      "stdout_sha256": "50aeabfa9b9754a2e0e14ebf9ce7082e69d1e948d1f3e16a0149fe51e532e3f1",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_lifetime_budget.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "pq128-negatives",
+      "reported_test_counts": [
+        58
+      ],
+      "seconds": 0.4672820568084717,
+      "stderr_bytes": 157,
+      "stderr_sha256": "ed263ec7372e236a6a8d72f71b4bf3cac501ac78f59bd6b97addc9a2f67ad875",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/w1_lifetime_ledger.py",
+        "--input",
+        "evidence/pon-w1-lifetime-five-claims-20261111/project-input.json"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "lifetime-reader",
+      "reported_test_counts": [],
+      "seconds": 0.11493587493896484,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 31311,
+      "stdout_sha256": "40426a7683c733d90816e18c5e1f55f7c51a5a9b209373e138654e8afe4cdac4",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cmp",
+        "evidence/pon-w1-lifetime-five-claims-20261111/project-report.json",
+        ".git/pon-five-claims-bindings-d6cb-297bb40798ca/lifetime-reader.stdout.log"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "lifetime-fixture",
+      "reported_test_counts": [],
+      "seconds": 0.0053293704986572266,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "corpus-reader",
+      "reported_test_counts": [],
+      "seconds": 1.0174455642700195,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 558,
+      "stdout_sha256": "27c043ae3fcf0d9c83918bcdc985dc36e725aff0ff22553f55dd2e7781a04a61",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "corpus-negatives",
+      "reported_test_counts": [
+        59
+      ],
+      "seconds": 312.3684513568878,
+      "stderr_bytes": 160,
+      "stderr_sha256": "d99a74ffeea8273be12b96fd2d710cf19a0c67acfb9084dd9a49da25e9dd8225",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/w1_qrom_current_implementation_audit.py",
+        "--output",
+        ".git/pon-five-claims-bindings-d6cb-297bb40798ca/current-qrom-report.json"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "current-qrom-reader",
+      "reported_test_counts": [],
+      "seconds": 0.7167766094207764,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_w1_qrom_current_implementation_audit.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "current-qrom-negatives",
+      "reported_test_counts": [
+        14
+      ],
+      "seconds": 2.7228543758392334,
+      "stderr_bytes": 2179,
+      "stderr_sha256": "eeb393d61d225291999cd2ff9b2ed341e8905d9b665c916b2996b96f3edcfbcd",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/pq_proof_profile_binding.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "proof-profile-reader",
+      "reported_test_counts": [],
+      "seconds": 0.1657860279083252,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 8273,
+      "stdout_sha256": "12553db725e9d0cc0eb0613b38e9239ab9f3a291b64659d7637f60f91761eee2",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_proof_profile_binding.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "proof-profile-negatives",
+      "reported_test_counts": [
+        26
+      ],
+      "seconds": 0.7669744491577148,
+      "stderr_bytes": 125,
+      "stderr_sha256": "2fe2be373b6e3f4c46f77b070faecd7e2a69b980af7999b993e507c8d4189ade",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/w1_qrom_closure_controls.py",
+        "run",
+        "--roster-sha256",
+        "ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f",
+        "--output",
+        ".git/pon-five-claims-bindings-d6cb-297bb40798ca/qrom-closure"
+      ],
+      "exception": null,
+      "exit": 2,
+      "failure_tail": "\nQROM closure controls refused: reserve the output directory before running\n",
+      "name": "qrom-closure-roster",
+      "reported_test_counts": [],
+      "seconds": 0.11527085304260254,
+      "stderr_bytes": 75,
+      "stderr_sha256": "6aadafd0056348dada2cb22a6baf9691e10a473d0fd38302823c5a7996a481f3",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/w1_qrom_closure_controls.py",
+        "check",
+        "--roster-sha256",
+        "ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f",
+        "--output",
+        ".git/pon-five-claims-bindings-d6cb-297bb40798ca/qrom-closure"
+      ],
+      "exception": null,
+      "exit": 2,
+      "failure_tail": "\nQROM closure controls refused: [Errno 2] No such file or directory: '.git/pon-five-claims-bindings-d6cb-297bb40798ca/qrom-closure/named-controls.json'\n",
+      "name": "qrom-closure-completion",
+      "reported_test_counts": [],
+      "seconds": 0.11512970924377441,
+      "stderr_bytes": 151,
+      "stderr_sha256": "48862da1194424eb75d3ff337331ee42d538af6ae5636e300fa4a989ed724bf8",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/w1_qrom_semantics_audit.py",
+        "--out",
+        ".git/pon-five-claims-bindings-d6cb-297bb40798ca/semantics.json"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "qrom-semantics-reader",
+      "reported_test_counts": [],
+      "seconds": 4.527428150177002,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cmp",
+        "evidence/pon-w1-qrom-semantics-current-20261109/report.json",
+        ".git/pon-five-claims-bindings-d6cb-297bb40798ca/semantics.json"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "qrom-semantics-fixture",
+      "reported_test_counts": [],
+      "seconds": 0.0049593448638916016,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/w1_qrom_composition_budget.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "composition-unknown",
+      "reported_test_counts": [],
+      "seconds": 0.11535525321960449,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 6878,
+      "stdout_sha256": "e130e7ffb3ef74d9583b8b4ae7a74e50312a729e42688764dfaac157ba4e9041",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/w1_qrom_composition_budget.py",
+        "--example"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "composition-example",
+      "reported_test_counts": [],
+      "seconds": 0.11541032791137695,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 11101,
+      "stdout_sha256": "afa82237a9ad859193e53e0ebad83652c63c76ea0058c1213e61d81a04aa5457",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/w1_qrom_joint_oracle_diagnostic.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "joint-oracle-unknown",
+      "reported_test_counts": [],
+      "seconds": 0.06541681289672852,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 2833,
+      "stdout_sha256": "cac5fa1b09a64207bfde34931de1937894e31739912e9bcea70705b0fac899eb",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/w1_qrom_joint_oracle_diagnostic.py",
+        "--example",
+        "alias"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "joint-oracle-alias",
+      "reported_test_counts": [],
+      "seconds": 0.11502933502197266,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 3364,
+      "stdout_sha256": "1e427168ad06f93dee645982bd412e58b97ce825132559e7a07a47f2a6530522",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/w1_qrom_joint_oracle_diagnostic.py",
+        "--example",
+        "separated"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "joint-oracle-separated",
+      "reported_test_counts": [],
+      "seconds": 0.06532573699951172,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 3363,
+      "stdout_sha256": "0373ec119814b52efeecdff6f654dd1d3d8008908ef7a6eea3ec92b648928d17",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/test_four_propositions_v1.py",
+        "-v"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "four-propositions-v1",
+      "reported_test_counts": [
+        21
+      ],
+      "seconds": 1.4689691066741943,
+      "stderr_bytes": 3205,
+      "stderr_sha256": "4fef6420968aa685a562638affbc0a857cbf6416548565af72d94804f5a7b1e9",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/test_four_propositions_w1_v2.py",
+        "-v"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "four-propositions-w1-v2",
+      "reported_test_counts": [
+        17
+      ],
+      "seconds": 11.999751329421997,
+      "stderr_bytes": 2594,
+      "stderr_sha256": "5cb135fc03bc5fa98f0be158d73960bbf390542f74589ed2cf0b7e6f67db9191",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/test_demand_evidence.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "demand-evidence",
+      "reported_test_counts": [
+        29
+      ],
+      "seconds": 0.6674423217773438,
+      "stderr_bytes": 128,
+      "stderr_sha256": "f664f3d30ab3bf9694c174885d657583a999471831bf0850993ef39383051120",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/test_work_utility.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "work-utility",
+      "reported_test_counts": [
+        15
+      ],
+      "seconds": 0.26625752449035645,
+      "stderr_bytes": 114,
+      "stderr_sha256": "2fdf7a432a53fceb691486981be60fcb65192fbaa6b7627e6b3fe3a0c95917bf",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/test_upgrade_policy.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "upgrade-policy",
+      "reported_test_counts": [
+        23
+      ],
+      "seconds": 0.8173356056213379,
+      "stderr_bytes": 122,
+      "stderr_sha256": "a76a697fa30a11d997e017bd074f285556bb2945fb246ced960df11c94755423",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/test_cell_learning_scope_join.py"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "cell-learning-scope",
+      "reported_test_counts": [
+        13
+      ],
+      "seconds": 1.869624137878418,
+      "stderr_bytes": 112,
+      "stderr_sha256": "3c5551292a2c2958adde62fb2a453bed88db720360a9bdae7f203af5c1a83d2c",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cmp",
+        "evidence/pon-w1-qrom-formal-bridge-20261107/composition-unknown.json",
+        ".git/pon-five-claims-bindings-d6cb-297bb40798ca/composition-unknown.stdout.log"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "composition-unknown-fixture",
+      "reported_test_counts": [],
+      "seconds": 0.004464864730834961,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cmp",
+        "evidence/pon-w1-qrom-formal-bridge-20261107/composition-example.json",
+        ".git/pon-five-claims-bindings-d6cb-297bb40798ca/composition-example.stdout.log"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "composition-example-fixture",
+      "reported_test_counts": [],
+      "seconds": 0.0021588802337646484,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cmp",
+        "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-unknown.json",
+        ".git/pon-five-claims-bindings-d6cb-297bb40798ca/joint-oracle-unknown.stdout.log"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "joint-oracle-unknown-fixture",
+      "reported_test_counts": [],
+      "seconds": 0.0021626949310302734,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cmp",
+        "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-alias.json",
+        ".git/pon-five-claims-bindings-d6cb-297bb40798ca/joint-oracle-alias.stdout.log"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "joint-oracle-alias-fixture",
+      "reported_test_counts": [],
+      "seconds": 0.0021271705627441406,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cmp",
+        "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-separated.json",
+        ".git/pon-five-claims-bindings-d6cb-297bb40798ca/joint-oracle-separated.stdout.log"
+      ],
+      "exception": null,
+      "exit": 0,
+      "name": "joint-oracle-separated-fixture",
+      "reported_test_counts": [],
+      "seconds": 0.004495859146118164,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    }
+  ],
+  "source": "297bb40798ca1b4e4a987ef00582067282cda4e9"
+}

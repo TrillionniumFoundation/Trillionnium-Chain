@@ -1,0 +1,1389 @@
+{
+  "acceptance_granted": false,
+  "actual_cargo_running_headers": [
+    "     Running unittests src/lib.rs (/data/chain-pq-a418-node-retained-target-20261111/debug/deps/trnm_pon_node-2cfc25289c60243c)"
+  ],
+  "compiled_targets_treated_as_executed": false,
+  "created_utc": "2026-11-11T06:38:19.855494+00:00",
+  "declared_target_metadata": {
+    "bytes": 872501,
+    "kind_counts": {
+      "bin": 1,
+      "example": 27,
+      "lib": 1,
+      "test": 93
+    },
+    "package": "trnm-pon-node",
+    "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/workspace-graph/stdout.log",
+    "sha256": "1aaca3cef6a9487b66ce8e67be3d96752ce916973f7819c43cd167642c9e17ed",
+    "target_count": 122
+  },
+  "declared_targets_without_actual_cargo_running_header_after_library_failure": [
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "bin"
+      ],
+      "name": "trnm-pon-node",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/src/main.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "account_archive_vectors",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/account_archive_vectors.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "account_execution_vectors",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/account_execution_vectors.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "continuous_pipeline",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "distributed_pipeline",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/distributed_pipeline.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "grouped_fresh_admission_v0",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/grouped_fresh_admission_v0.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "grouped_verification_authority_v0",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/grouped_verification_authority_v0.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "hepta_task_fixture",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/hepta_task_fixture.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "history_state_cost",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/history_state_cost.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "lifecycle_atomic_continuity",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/lifecycle_atomic_continuity.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "lifecycle_continuity",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/lifecycle_continuity.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "llm_zero_gain_round",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/llm_zero_gain_round.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "native_fullpath_v1",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/native_fullpath_v1.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "native_owner_journal_v1",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/native_owner_journal_v1.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "native_owner_observation_v1",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/native_owner_observation_v1.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "native_reorg_query_cost",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/native_reorg_query_cost.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "native_risk_ledger_v1",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "operator_owned_finite_mining",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/operator_owned_finite_mining.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "operator_pool_fixture",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/operator_pool_fixture.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "pon_w1_budget_report",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/pon_w1_budget_report.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "pon_w1_cost_matrix_v2",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/pon_w1_cost_matrix_v2.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "pon_w1_false_trace_reuse_v1",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/pon_w1_false_trace_reuse_v1.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "pon_w1_legal_strategy_v1",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/pon_w1_legal_strategy_v1.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "pon_w1_legal_strategy_v3",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/pon_w1_legal_strategy_v3.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "pon_w1_lifecycle_cost_v4",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/pon_w1_lifecycle_cost_v4.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "pon_w1_preparation_strategy_v4",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/pon_w1_preparation_strategy_v4.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "pon_w1_reused_cost_v3",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/pon_w1_reused_cost_v3.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "example"
+      ],
+      "name": "public_pool_fixture",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/examples/public_pool_fixture.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "accepted_task_observation",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/accepted_task_observation.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "account_archive_execution",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "account_archive_projection",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/account_archive_projection.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "account_archive_prototype",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "account_obligation_ranges",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "ancestry_long_sync",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "architecture_delivery_compare",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "authenticated_storage_cli",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "cell_native_v1",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/cell_native_v1.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "checkpoint_tile_operator",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/checkpoint_tile_operator.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "cli_secret_canary",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/cli_secret_canary.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "continuity_authenticated",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/continuity_authenticated.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "continuity_cli",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/continuity_cli.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "daa_adversarial_schedule",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/daa_adversarial_schedule.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "daa_joint_consensus",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/daa_joint_consensus.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "derived_commitment",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/derived_commitment.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "distributed_roles",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/distributed_roles.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "evaluation_observation",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/evaluation_observation.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "evaluation_observation_cli",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/evaluation_observation_cli.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "evaluation_quorum_cli",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/evaluation_quorum_cli.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "evaluation_round_observation",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/evaluation_round_observation.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "evaluation_round_observation_cli",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/evaluation_round_observation_cli.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "evaluation_sync_observation",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "evolution_cli",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "funded_service_contract",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/funded_service_contract.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "grouped_fresh_admission_v0",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/grouped_fresh_admission_v0.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "grouped_verification_authority_v0",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/grouped_verification_authority_v0.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "growth_persistence_cancellation",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/growth_persistence_cancellation.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "history_stage_diagnostic",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "integer_factor_candidate_v2",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "local_mempool",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/local_mempool.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "maintenance_paired_conformance",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/maintenance_paired_conformance.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "mining_service_budget",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "model_composition_v4",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "model_evidence_v3",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "native_active_anchor",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/native_active_anchor.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "native_compact_execution",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/native_compact_execution.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "native_demand_evidence",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/native_demand_evidence.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "native_full_relation_context",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/native_full_relation_context.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "native_growth_cli",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/native_growth_cli.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "native_growth_public_cli",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/native_growth_public_cli.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "native_node",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/native_node.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "native_owner_journal",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "native_owner_observation",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/native_owner_observation.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "native_packet_observer",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/native_packet_observer.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "native_risk_ledger",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "native_task_operation_v2",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/native_task_operation_v2.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "no_gain_fees",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/no_gain_fees.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "nonce_speculation_cost",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/nonce_speculation_cost.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "one_zero_task_preparation_lifecycle",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/one_zero_task_preparation_lifecycle.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "operation_local_parent",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/operation_local_parent.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "operator_actors",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/operator_actors.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "pinned_peer_polling",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/pinned_peer_polling.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "pool_mining",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/pool_mining.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "pq_account_native",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "pq_application_local_cli",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "pq_application_local_feature_off",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/pq_application_local_feature_off.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "pq_application_migration_v6",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/pq_application_migration_v6.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "pq_migration_inventory",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/pq_migration_inventory.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "pq_parent_cli",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/pq_parent_cli.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "pq_parent_cli_feature_required",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/pq_parent_cli_feature_required.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "pq_parent_npq6_cli",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/pq_parent_npq6_cli.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "pq_tls_cli",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/pq_tls_cli.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "pq_tls_feature_gate",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/pq_tls_feature_gate.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "pq_tls_witness_cli",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "protected_ingress",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/protected_ingress.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "public_cache_modes",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/public_cache_modes.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "public_cli",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/public_cli.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "public_evaluation",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/public_evaluation.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "public_intake_v2",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "public_pool_cli",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "public_pool_v3",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/public_pool_v3.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "public_submit_recovery",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "public_v3_from_zero",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "public_v3_multiprocess",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "public_v3_observation_cli",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/public_v3_observation_cli.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "public_v3_observer",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/public_v3_observer.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "public_v3_request_accounting",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/public_v3_request_accounting.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "public_v3_service_campaign",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/public_v3_service_campaign.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "qualified_tasks",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "recovery_floor_v4_native",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "release_finality_v2",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/release_finality_v2.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "research_work_schedule",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/research_work_schedule.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "root_budget_v4_native",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/root_budget_v4_native.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "root_effect_readback_v4_native",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/root_effect_readback_v4_native.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "root_recovery_v3_native",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/root_recovery_v3_native.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "task_lifecycle",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/task_lifecycle.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "task_lifecycle_v3",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/task_lifecycle_v3.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "task_lifecycle_v4",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/task_lifecycle_v4.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "task_output_root_parity",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/task_output_root_parity.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "work_fuzz_semantics",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/work_fuzz_semantics.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "work_header_binding",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/work_header_binding.rs"
+    },
+    {
+      "crate_types": [
+        "bin"
+      ],
+      "kind": [
+        "test"
+      ],
+      "name": "zero_task_preparation_lifecycle",
+      "source_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs"
+    }
+  ],
+  "failed_test_names": [
+    "ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_lost_ack_and_cold_resume_reuse_exact_wire_without_history_consuming_sequence",
+    "ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_plain_parent_recovery_and_cold_membership_keep_one_original_campaign",
+    "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+    "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart"
+  ],
+  "host": "desktop",
+  "integration_target_execution_observed": false,
+  "nested_child_summaries": [
+    {
+      "failed": 0,
+      "filtered_out": 1401,
+      "ignored": 0,
+      "line": 662,
+      "measured": 0,
+      "outcome": "ok",
+      "passed": 1,
+      "seconds": 0.0,
+      "verbatim": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1401 filtered out; finished in 0.00s"
+    },
+    {
+      "failed": 0,
+      "filtered_out": 1401,
+      "ignored": 0,
+      "line": 888,
+      "measured": 0,
+      "outcome": "ok",
+      "passed": 1,
+      "seconds": 0.0,
+      "verbatim": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1401 filtered out; finished in 0.00s"
+    },
+    {
+      "failed": 0,
+      "filtered_out": 1401,
+      "ignored": 0,
+      "line": 894,
+      "measured": 0,
+      "outcome": "ok",
+      "passed": 1,
+      "seconds": 0.0,
+      "verbatim": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1401 filtered out; finished in 0.00s"
+    }
+  ],
+  "nested_summaries_added_to_outer_counts": false,
+  "origin_job_id": "1a1c8ba754b-135c4-1d3",
+  "original_full_rust_failure_replaced": false,
+  "original_incomplete_node_attempt_replaced": false,
+  "original_job_status": {
+    "at_unix_ms": 1794378430589,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 1,
+    "job_id": "1a1c8ba754b-135c4-1d3",
+    "launch_nonce": "ac4bd2b187be874aaa586410d2bef445",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 16704,
+        "stored": 16704
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "failed",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "original_job_status_tool_record": {
+    "bytes": 1229,
+    "native_sdk_original_bytes_claimed": false,
+    "path": "/workspace/scratch/a4188f5c86b5/coordination/data-node-fresh-status-20261111T0629.json",
+    "sha256": "2e137f1c6f6549ef105db33bcd3d3614ad6d4e96c9453a032559d58b2179f203"
+  },
+  "outer_library_summary": {
+    "failed": 4,
+    "filtered_out": 0,
+    "ignored": 39,
+    "line": 1477,
+    "measured": 0,
+    "outcome": "FAILED",
+    "passed": 1359,
+    "seconds": 7809.1,
+    "verbatim": "test result: FAILED. 1359 passed; 4 failed; 39 ignored; 0 measured; 0 filtered out; finished in 7809.10s"
+  },
+  "outer_suite_registered_tests": 1402,
+  "qualification_granted": false,
+  "raw_stderr": {
+    "bytes": 4667,
+    "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-all-targets/stderr.log",
+    "sha256": "31d06d28bf2c70fbd4a022b1690062e38fbf61f931fdfe2ed7488854098e2500"
+  },
+  "raw_stdout": {
+    "bytes": 209668,
+    "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-all-targets/stdout.log",
+    "sha256": "3591e3a47da4904328b0eff2382a0d3f434c3673b7a859c2a3d6d10171f97435"
+  },
+  "reason_no_later_target_execution": "Cargo emitted its library test failure and returned 101 after the sole actual Running header. The four terminal records preserve this unchanged.",
+  "record_id": "node-retained-data-all-targets",
+  "record_result": {
+    "argv": [
+      "env",
+      "CARGO_HOME=/home/qian-qi/chain-pq-a418-final-cargo-home",
+      "TRNM_CI_TOOL_ROOT=/home/qian-qi/chain-pq-a418-final-ci-tools",
+      "CARGO_TARGET_DIR=/data/chain-pq-a418-node-retained-target-20261111",
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "--test-threads=1"
+    ],
+    "child_resources": {
+      "maximum_rss_kib": 4309204,
+      "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+      "system_cpu_seconds": 250.34848,
+      "user_cpu_seconds": 7720.648627
+    },
+    "elapsed_seconds": 9327.54999621096,
+    "finished_utc": "2026-11-11T06:26:28.622222+00:00",
+    "id": "node-retained-data-all-targets",
+    "launch_error": null,
+    "pass": false,
+    "qualification_granted": false,
+    "returncode": 101,
+    "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+    "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+    "source_status_after": "",
+    "stderr_sha256": "31d06d28bf2c70fbd4a022b1690062e38fbf61f931fdfe2ed7488854098e2500",
+    "stdout_sha256": "3591e3a47da4904328b0eff2382a0d3f434c3673b7a859c2a3d6d10171f97435"
+  },
+  "schema": "node-data-final-execution-summary-v1",
+  "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec"
+}

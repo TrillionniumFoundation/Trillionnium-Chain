@@ -1,0 +1,18 @@
+{
+  "binary_sha256": "53bb65f632402701b4d2f8eb25e4e4fb090cc4d11dd01d86af1bbb82dd0483b6",
+  "complete_block_exit_code": 0,
+  "complete_block_records": 84,
+  "end_to_end_throughput": false,
+  "original_025_cpu_profile_qualified": false,
+  "per_arm_block_cpu_ns": null,
+  "root_exit_codes": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "root_records": 4,
+  "roots_equal": true,
+  "schema": "pon-native-mvcc-diagnostic-run-summary-v1",
+  "source_path_dependency_closure_unchanged": true
+}

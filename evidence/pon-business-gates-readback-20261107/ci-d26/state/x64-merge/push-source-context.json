@@ -1,0 +1,57 @@
+{
+  "context": {
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "base_ref": "refs/heads/main",
+    "event": {
+      "after": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "before": "96e1eede091153199894532c91430bfc0f8e4572",
+      "name": "push",
+      "payload_sha256": "1e34936a1701acc827d820836c76bd89f43ffa28090c0253823885f704abbce9",
+      "ref": "refs/heads/fix/chain-six-axis-performance-20261103",
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "repository_id": 1323087357,
+      "run_attempt": "1",
+      "run_id": "42383368690"
+    },
+    "git_version": "git version 2.56.0",
+    "head": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+    "is_github_pr_merge": false,
+    "merge": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+    "merge_format": "canonical-git-merge-tree-ordered-base-head-v1",
+    "merge_tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+    "production_activation": false,
+    "resolved_utc": "2026-11-07T14:49:51.916762+00:00",
+    "schema": "trnm-integration-push-source-v1",
+    "source_head": {
+      "base": null,
+      "candidate": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "tested_tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1031001045,
+      "tracked_entries": 11017,
+      "tracked_worktree_verified": true
+    }
+  },
+  "context_sha256": "7d51ed40d80fe781cabf331431ecde35908dc68aaeb545a3c19ab5758238b315",
+  "github_event_name": "push",
+  "github_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "is_github_pr_merge": false,
+  "schema": "trnm-integration-push-materialization-v1",
+  "source": {
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "candidate": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+    "kind": "prospective-merge",
+    "prospective_merge": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+    "tested_tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1031001045,
+    "tracked_entries": 11017,
+    "tracked_worktree_verified": true
+  }
+}

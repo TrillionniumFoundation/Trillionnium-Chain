@@ -1,0 +1,72 @@
+{
+  "schema": "pon-certificate-observability-independent-review-v1",
+  "starting_source_commit": "f8362822b406463ac3dfcc911a0c3eda1686e32d",
+  "source_manifest_sha256": {
+    "trillionnium/crates/trnm-pon-node/src/store/native_owner_observation.rs": "853b519842237bc7b174be2ff5d2dad0a0ab8fb0cdadccc7433823c5dbd1f83d",
+    "trillionnium/crates/trnm-pon-node/tests/native_owner_observation.rs": "8591000e60e490f5e729e7ef31f22f18361116f33e448dbcf5170a7451fd2b8d",
+    "formal/pon-nakamoto-v1/NATIVE_OWNER_OBSERVATION_V1.md": "83f7022d28e7ec5d62e4bee3f180dffc9e1dea4afdf7e64f2372359d0fbe0fd8",
+    "formal/pon-nakamoto-v1/native_owner_score_bridge.py": "a249eb26e1d6144e83d20a7fcc93a31af85da66d495102a04c26e251a79b7bb0",
+    "formal/pon-nakamoto-v1/work_lifecycle_help.py": "0347e577f7d581ef880525d6b2e484c9831ee0ce76859069a1325e15fbcb08f7",
+    "formal/pon-nakamoto-v1/work_lifecycle_certificate.py": "301ce5fb234b02332f60db1ed41c61302e54046a9d29753d76d2bf5ceb405d44",
+    "formal/pon-nakamoto-v1/WORK_LIFECYCLE_CERTIFICATE_V1.md": "065a19ba3e6d40159866d40ed29b765d73066c2da67a2d7b09c29df6e231f1b4",
+    "formal/pon-nakamoto-v1/CERTIFICATE_OBSERVABILITY_V1.md": "e5c96ca70fdbb3accfda0ca0ec011b56b724383d7d1fc2dd356249524c94b9b2"
+  },
+  "scope": "Independent read-only source and mathematical review; own exact model tests and native-export binding. No new native build, commit, push, or probability attestation.",
+  "resolved_material_findings": [
+    {
+      "finding": "Prior filtering SQLite VIEW could hide a retained fork when only schema_version stability was checked.",
+      "resolution": "Native census compares the entire sqlite_schema map to source-defined cold-open DDL inside the same read snapshot before enumeration and before output. Actual integration negative control renames blocks and creates a filtering view; it expects OWNER_CENSUS_SCHEMA.",
+      "function": "Node::native_owner_census_with_progress",
+      "test": "prior_filtering_sql_view_cannot_hide_an_admitted_fork_from_a_complete_census"
+    },
+    {
+      "finding": "Python bool equality could impersonate included/observed integer heights in exported confirmations.",
+      "resolution": "Native score bridge now applies strict uint checks; reader tests include the negative control.",
+      "function": "check_confirmation"
+    },
+    {
+      "finding": "A packet directory symlink could undermine a literal artifact-root assertion.",
+      "resolution": "Bridge refuses packet-directory and packet-file symlinks and checks the resolved parent.",
+      "function": "check_run"
+    }
+  ],
+  "native_source_conclusions": [
+    "Complete claim is only all currently present admitted rows of the supported local snapshot, not historical deletion coverage.",
+    "Budget/cancellation/profile refusal never yields a partial successful census.",
+    "Full supported W1/application replay, native target/work, parent-height, state/delta, timestamp ancestry and local maximum are rechecked.",
+    "Read transaction rolls back; output is fenced against epoch/state/generation changes. Epoch is not an audit of every external transaction.",
+    "Strict activation of one supplied candidate can leave an already retained eligible heavier candidate unselected; actual exported selection deficits are 2 and 6.",
+    "No global first-ready, remote/preprocessed inventory, process authenticity, authenticated physical clock or probabilistic qualification follows."
+  ],
+  "finite_help_review": {
+    "conditional_theorem": "P(E) <= min(1,D*B) from fixed complete transcript alphabet and uniform forced-transcript fresh-strategy bounds.",
+    "proof_review": "Expansion over classical receiver histories gives actual branch response weights at most the forced response branch weight. Sum over one prior global support; no conditioning of fresh oracle law on T=t.",
+    "necessary_premises_explicit": [
+      "All oracle-dependent external influence is through charged queries or the complete classical interface.",
+      "No uncounted joint initial oracle correlation, quantum side input or shared quantum steering.",
+      "Transcript alphabet is fixed across all oracles and executions, including payload lengths, source, order, visible timing, absence, errors and visible signature/proof encodings.",
+      "Every forced-transcript strategy obeys hard Q/M caps on all counterfactual paths."
+    ],
+    "cryptographic_scope": "ML-DSA verification plus external exact endpoint/key pins authenticates signed statements and complete declared fragments. Full W1/MU1 replay verifies retained artifact predicates. Neither authenticates whole-world mediation or recorder execution.",
+    "material_open_review_issue": null
+  },
+  "composition_review": {
+    "global_interval_packing": "One global unique-ready ledger and fixed probability threshold; no window independence or free query/initial-state reset.",
+    "risk_bank": "Computed conditional failure probabilities from a complete declared finite joint law; pathwise allowance spending is a sufficient interface, while a separately justified expectation budget would also suffice.",
+    "finite_advice": "Explicit truth-table advice gives the sharp binomial success tail and an independently enumerated joint recording-tail profile.",
+    "same_view_limit": "Actual stable local view projection is identical, but attempts and process clock intervals differ. Full-observation indistinguishability requires separate same-public-schedule noninterference coupling.",
+    "native_risk_bridge_established": false
+  },
+  "retained_observations": {
+    "exact_model_tests": "tests-final.json",
+    "native_binding": "binding-run-01.json",
+    "native_bound_results": "observability-run-01.json",
+    "negative_reader_controls": "reader-controls.json",
+    "initial_tests_preserved": "tests-initial.json",
+    "inspection_failure": {
+      "purpose": "Read actual native-run field names",
+      "error": "KeyError: 'native_calls'",
+      "correction": "Actual producer uses operations; inspection was repeated with actual keys. No source or native data was changed."
+    }
+  }
+}

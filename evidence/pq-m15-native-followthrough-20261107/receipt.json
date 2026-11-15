@@ -1,0 +1,160 @@
+{
+  "actual_elf": {
+    "bytes": 458139952,
+    "features": [
+      "default",
+      "pq-native-openssl"
+    ],
+    "ordinary_cli": false,
+    "sha256": "69fac051c35677c9acddbbf83df28d71f53fc6dfd0a4822d653bd89adf5ce295",
+    "source": "src/lib.rs",
+    "target_kind": "lib",
+    "test_opt_level": 3
+  },
+  "archives": [
+    {
+      "bytes": 1807629,
+      "path": "targeted-and-complete-native.tar.gz",
+      "sealed_files": 89,
+      "sha256": "ec94ac14f8617739994cbc69c2982fe6e2b45312fb2da93fa44751cd052a8d6a"
+    },
+    {
+      "bytes": 3677,
+      "path": "local-quality-and-failed-build.tar.gz",
+      "sealed_files": 10,
+      "sha256": "56a99d88c8ae212209b75315b6e2019b00ce0ed061c98493a12a7bea20feb3c1"
+    },
+    {
+      "bytes": 1259462,
+      "path": "original-continuation.tar.gz",
+      "sealed_files": 71,
+      "sha256": "0819b9efb519e687c3713fba53aa07fbb7ac72b16ffbe487c8eac14a886adc3a"
+    },
+    {
+      "bytes": 7113456,
+      "omitted_executable_bindings_retained": true,
+      "omitted_executable_copies": 13,
+      "path": "hosted-gate-failures.tar.gz",
+      "sealed_files": 400,
+      "sha256": "122759362de9d2f2967596b6315520392f54d94b94d53e93a204fde73a5e91cd"
+    },
+    {
+      "bytes": 92289,
+      "path": "migration-and-exporter-native.tar.gz",
+      "sealed_files": 61,
+      "sha256": "650c887f6f5a7cf8c718fe0171f932c6cb1018084006e65b0606f34e474b5e68"
+    }
+  ],
+  "complete": {
+    "aggregate": {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 33,
+      "measured": 0,
+      "passed": 1249
+    },
+    "elapsed_seconds": 991.36,
+    "log_sha256": "1a4a2f6919b3e7ccc00718304297fe97a21b35d6674749bf9da81e08e75f6d61",
+    "manifest_sha256": "23a62427d74d3bf2a74b04b5152beacb662b0553477f03ebf222b093189096fc",
+    "nested_summaries_counted_as_outer_tests": false,
+    "new_stricter_phase_seconds": 1500,
+    "original_outer_seconds": 14400,
+    "registry_count": 1282
+  },
+  "complete_lineage_dco_qualified": false,
+  "concurrent_history_preserved": true,
+  "concurrent_source_full_node_qualification_inferred": false,
+  "continuation": {
+    "command_count": 29,
+    "cost_cases": 4,
+    "cpq1": {
+      "cases": 32,
+      "measurement_rows": 352,
+      "native_execution_attested": false,
+      "raw_values_recomputed": 22528,
+      "reservations_are_mathematical_verifications": false,
+      "samples_per_measurement": 64
+    },
+    "manifest_sha256": "6e878e05f1c92b681f80df9942f9f2b2fff2124e394f354b0d685ee7c6d7d6b6",
+    "mvcc_ignored_cost_cases_separately_executed": 1,
+    "node_ignored_cost_cases_separately_executed": 3,
+    "result": "PASS"
+  },
+  "deployed_legacy_migration_qualified": false,
+  "evidence_only_successor_is_not_a_new_execution": true,
+  "exporter_build_only": {
+    "command_count": 6,
+    "fresh_material_generated": false,
+    "native_tests_executed": 0,
+    "original_expiry_seconds": 300,
+    "paired_consumer_executed": false,
+    "previous_source_and_idle_refusals_retained": true,
+    "tested_commit": "840522d0b65b4989f1a2a1d09c0ad51af1a1956d",
+    "tested_tree": "70377cc0a9c8d029907f6c49bbb8dee1435a6cd1"
+  },
+  "hosted_workflow": {
+    "event": "workflow_dispatch",
+    "full_acceptance": false,
+    "prospective_merge_qualified": false,
+    "run_id": 42323049446,
+    "source": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50"
+  },
+  "independent_custody_qualified": false,
+  "lineage_signoff_exception": {
+    "commit": "b1e7904bcec97688dcb21d681d79a27f728a5ee6",
+    "history_rewritten": false,
+    "observed_trailer": "Signed-off-by: Codex <codex@openai.com>",
+    "required_franksudoman_trailer_present": false
+  },
+  "local_baseline": {
+    "native_tests_executed": 0,
+    "oom_cause_proven": false,
+    "outcome": "rustc SIGKILL before test execution",
+    "source": "dfffc5b2447cbf81a8a656ec8e0cdd2e2af6a422"
+  },
+  "migration_integration": {
+    "actual_elf": {
+      "bytes": 204623560,
+      "sha256": "6505b61a0a252a599147cdbf120f63f5d0af7ac44477c39fd9558b02315efa55",
+      "source": "tests/pq_application_migration_v6.rs",
+      "target_kind": "test"
+    },
+    "actual_native_tests": 3,
+    "command_count": 13,
+    "execution_readers": 3,
+    "manifest_sha256": "5681eebc8aebf7dddd12b939c60e1bffb9c514d88c54468e37c1ce3526789fd2",
+    "registry": [
+      "admitted_legacy_checkpoint_cannot_drop_unhandled_work_state_for_migration",
+      "npq6_anchored_claim_preserves_obligations_rotates_and_cold_reopens",
+      "npq6_migration_requires_both_claim_signatures_and_the_selected_domain"
+    ],
+    "result": "PASS",
+    "selected_features": [
+      "default"
+    ],
+    "source_provider_original_inputs_before_after_equal": true,
+    "tested_commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+    "tested_tree": "cd446a4dc02d94f446134e9fd441bab04a672a2c"
+  },
+  "original_aggregate": {
+    "failed": 2,
+    "ignored": 33,
+    "passed": 1242
+  },
+  "original_failed_source": "840522d0b65b4989f1a2a1d09c0ad51af1a1956d",
+  "original_log_sha256": "66d40f5ffb12eae2530df53a8065020dd0ddab3927e8595bd73b8d5438eef85f",
+  "production_activation": false,
+  "public_wan_qualified": false,
+  "publication_parent": "83bb1c4eb072143e14ebe0e2a766b0ab706bd0db",
+  "schema": "pq-m15-native-followthrough-v1",
+  "targeted": {
+    "execution_readers": 14,
+    "manifest_sha256": "9cc43fbc4c22fec6b95cdb0af2f2a1c7292e4cccb420c38b82c1d1951884c6e3",
+    "native_tests": 14,
+    "registry_count": 1282
+  },
+  "tested_commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+  "tested_tree": "cd446a4dc02d94f446134e9fd441bab04a672a2c",
+  "whole_chain_quantum_security_qualified": false,
+  "whole_directory_rollback_qualified": false
+}

@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 101.24740721005946,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794130225.9215922,
+  "label": "repository-links",
+  "logs": {
+    "repository-links.stderr.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/inventory-source-01/repository-links.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "repository-links.stdout.log": {
+      "bytes": 307,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/inventory-source-01/repository-links.stdout.log",
+      "sha256": "73f448b4ac3d439ac5d9da4ca8501822ba651b87e534fc714ed97725a3fb4b4a"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "activation": false,
+    "head": "ca3c4f88afc70399000b18fc7d68cfa62e57fb2f",
+    "local_links": 3693,
+    "normal_dependency_edges": 27,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1286,
+    "source_state": "committed-clean",
+    "tree": "c06c28dbbb16bb30a4f568408913313ab533c47e",
+    "workspace_packages": 26
+  },
+  "started_unix_seconds": 1794130124.6741853
+}

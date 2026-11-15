@@ -1,0 +1,79 @@
+{
+  "collector": {
+    "bytes": 23639,
+    "git_blob_sha1": "421b10241820580efcdabc692ccb1f6dd27b6586",
+    "original_path": "formal/pon-native-fullpath-v1/collect_native.py",
+    "retained_data_path": "formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw",
+    "sha256": "f40c5d621454d0532141920724a3cfd57e240f4a3b061536162313daa676c254"
+  },
+  "git_object_content_addresses_verified": true,
+  "historical_context_rewritten": false,
+  "native_source": "e4abb172147e941b62483652b0ceabaae4317624",
+  "native_tree": "016ebf3deeac88d6d7a782edf563f2291ebe17f5",
+  "objects": [
+    {
+      "bytes": 303,
+      "oid": "e4abb172147e941b62483652b0ceabaae4317624",
+      "path": "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/historical-commit.raw",
+      "sha256": "a58b2d5e343f82326080912b4d48f6c18a5ccda98520349cbad4d4fb2112dcb9",
+      "type": "commit"
+    },
+    {
+      "bytes": 882,
+      "oid": "016ebf3deeac88d6d7a782edf563f2291ebe17f5",
+      "path": "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-0-016ebf3deeac88d6d7a782edf563f2291ebe17f5.raw",
+      "sha256": "94ea5f4c6381214b2491532cc4f3b43c2aa2c33f6a51b4584a72be59598142df",
+      "type": "tree"
+    },
+    {
+      "bytes": 230,
+      "oid": "bed92c9c2d2c71398a516ecbfea3ca272f703cec",
+      "path": "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-1-bed92c9c2d2c71398a516ecbfea3ca272f703cec.raw",
+      "sha256": "c2b3dff4d655057d608c9ae03400c82cc39264107ea03da21bed66fff6de3198",
+      "type": "tree"
+    },
+    {
+      "bytes": 476,
+      "oid": "520f3d47f1625e7894a8ce981739304308b47b46",
+      "path": "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-2-520f3d47f1625e7894a8ce981739304308b47b46.raw",
+      "sha256": "8771fdd6552e852861ccc5ae6614dc16131bf03cb309bffdc2e5227eb92947f9",
+      "type": "tree"
+    }
+  ],
+  "observed_at": "2026-11-14T07:50:56.773723+00:00",
+  "original_archive": {
+    "bytes": 129999,
+    "path": "evidence/pon-w1-oracle-scope-20261110/native-fullpath-e4abb172.zip",
+    "sha256": "d9ce3ead97f87759707829220525f50420126fa0347cbd64ec46aeb69bbd57c9"
+  },
+  "qualification": {
+    "native_binary_rebuilt_or_reauthenticated": false,
+    "production_activation": false,
+    "quantum_mining_qualified": false
+  },
+  "review_base": "7d8d4c59fcd01480a12e1c64835b202079091800",
+  "runtime_general_git_parser_added": false,
+  "runtime_import_compile_or_execution_performed": false,
+  "schema": "trnm-retained-native-collector-provenance-v1",
+  "scope": "Fixed source-content provenance only; no source-author authentication or native execution attestation.",
+  "tree_entry_links": [
+    {
+      "entry": "formal",
+      "mode": "40000",
+      "oid": "bed92c9c2d2c71398a516ecbfea3ca272f703cec",
+      "tree": "016ebf3deeac88d6d7a782edf563f2291ebe17f5"
+    },
+    {
+      "entry": "pon-native-fullpath-v1",
+      "mode": "40000",
+      "oid": "520f3d47f1625e7894a8ce981739304308b47b46",
+      "tree": "bed92c9c2d2c71398a516ecbfea3ca272f703cec"
+    },
+    {
+      "entry": "collect_native.py",
+      "mode": "100644",
+      "oid": "421b10241820580efcdabc692ccb1f6dd27b6586",
+      "tree": "520f3d47f1625e7894a8ce981739304308b47b46"
+    }
+  ]
+}

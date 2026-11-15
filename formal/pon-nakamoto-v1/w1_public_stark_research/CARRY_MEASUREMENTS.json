@@ -1,0 +1,702 @@
+{
+  "schema": "w1-carry-backend-qualification-ledger-v1",
+  "qualification": "HOLD_NO_GO",
+  "original_source_commit": "3bbd072e4983eceee4531d7576d329da5b0d0900",
+  "unpacked_source_commit": "ac4927c52266e7bd1fae547f92a1d0753f4f96d6",
+  "fresh_full_proofs_verified": {
+    "original_backend": 8,
+    "unpacked_carry": 4,
+    "packed_carry": 5,
+    "total": 17
+  },
+  "independent_input_tasks": 1,
+  "parameter_search_stopped_after": [
+    "unpacked-carry",
+    "five-lane-packed-carry"
+  ],
+  "guarded_wire_profile_in_this_revision": false,
+  "host_exclusive": false,
+  "unpacked_abba": {
+    "source_commit": "ac4927c52266e7bd1fae547f92a1d0753f4f96d6",
+    "source_archive_sha256": "52feb8dd3094eb7a1a53ed0b25d573ab7b00b9778ffa417b8e92c834d458fda8",
+    "runs": [
+      {
+        "index": 0,
+        "variant": "A",
+        "accepted": true,
+        "pipeline_s": 44.058102799,
+        "prepare_s": 0.041733204,
+        "prove_s": 43.01071998,
+        "verify_s": 1.005649615,
+        "rss_prove_kib": 2383652,
+        "bytes": 5264276
+      },
+      {
+        "index": 1,
+        "variant": "B",
+        "accepted": true,
+        "pipeline_s": 15.640798903,
+        "prepare_s": 0.103751225,
+        "prove_s": 14.292164052,
+        "verify_s": 1.244883626,
+        "rss_prove_kib": 2036092,
+        "bytes": 5039604
+      },
+      {
+        "index": 2,
+        "variant": "B",
+        "accepted": true,
+        "pipeline_s": 16.656072564,
+        "prepare_s": 0.021512165,
+        "prove_s": 15.169448628,
+        "verify_s": 1.465111771,
+        "rss_prove_kib": 2037168,
+        "bytes": 5039604
+      },
+      {
+        "index": 3,
+        "variant": "A",
+        "accepted": true,
+        "pipeline_s": 32.511755344,
+        "prepare_s": 0.07753952,
+        "prove_s": 29.810886462,
+        "verify_s": 2.623329362,
+        "rss_prove_kib": 2383828,
+        "bytes": 5264276
+      },
+      {
+        "index": 4,
+        "variant": "A",
+        "accepted": true,
+        "pipeline_s": 32.145081198,
+        "prepare_s": 0.043576366,
+        "prove_s": 31.171163965,
+        "verify_s": 0.930340867,
+        "rss_prove_kib": 2384056,
+        "bytes": 5264276
+      },
+      {
+        "index": 5,
+        "variant": "B",
+        "accepted": true,
+        "pipeline_s": 15.442370036,
+        "prepare_s": 0.0247315,
+        "prove_s": 14.159465125,
+        "verify_s": 1.258173411,
+        "rss_prove_kib": 2038620,
+        "bytes": 5039604
+      },
+      {
+        "index": 6,
+        "variant": "B",
+        "accepted": true,
+        "pipeline_s": 15.037993577,
+        "prepare_s": 0.031060382,
+        "prove_s": 13.803678571,
+        "verify_s": 1.203254624,
+        "rss_prove_kib": 2039136,
+        "bytes": 5039604
+      },
+      {
+        "index": 7,
+        "variant": "A",
+        "accepted": true,
+        "pipeline_s": 23.805702891,
+        "prepare_s": 0.020192734,
+        "prove_s": 22.862359626,
+        "verify_s": 0.923150531,
+        "rss_prove_kib": 2384436,
+        "bytes": 5264276
+      }
+    ],
+    "groups": {
+      "A": {
+        "pipeline_s": 32.328418271000004,
+        "prepare_s": 0.042654785,
+        "prove_s": 30.491025213500002,
+        "verify_s": 0.967995241,
+        "rss_prove_kib": 2383942.0,
+        "bytes": 5264276.0
+      },
+      "B": {
+        "pipeline_s": 15.5415844695,
+        "prepare_s": 0.027895941,
+        "prove_s": 14.2258145885,
+        "verify_s": 1.2515285185,
+        "rss_prove_kib": 2037894.0,
+        "bytes": 5039604.0
+      }
+    }
+  },
+  "packed_abba": {
+    "schema": "w1-packed-carry-abba-summary-v1",
+    "qualification": "HOLD_NO_GO",
+    "runs": [
+      {
+        "index": 0,
+        "variant": "A",
+        "accepted": true,
+        "pipeline_s": 24.009289222,
+        "prepare_s": 0.024626034,
+        "prove_s": 23.018832854,
+        "verify_s": 0.965830334,
+        "rss_prove_kib": 2382592,
+        "rss_verify_kib": 132988,
+        "bytes": 5264276,
+        "phase_ms": {
+          "prepare": {
+            "fixture_and_expected_read": 0.281069,
+            "honest_public_witness_and_encoding": 4.566337,
+            "canonical_relation_planning": 6.500900000000001
+          },
+          "prove": {
+            "read_decode_and_canonical_plans": 9.184090000000001,
+            "sha_air_and_chaining_witness": 4.543969,
+            "actual_air_security_metadata": 101.32116400000001,
+            "sha_prover_preprocessing_setup": 41.276731,
+            "sha_trace_generation": 54.226510999999995,
+            "sha_stark_prove": 10807.328618,
+            "sha_proof_serialize_and_persist": 490.0117,
+            "arith_prover_preprocessing_setup": 547.0874,
+            "arith_trace_generation": 478.995346,
+            "arith_stark_prove": 10417.063968,
+            "arith_proof_serialize_and_persist": 7.758322
+          },
+          "verify": {
+            "bounded_read_decode_and_proof_shape": 16.291089000000003,
+            "canonical_plans_and_public_only_sha_air": 9.173353,
+            "sha_verifier_independent_preprocessing_setup": 49.285733,
+            "sha_stark_verify": 294.093947,
+            "arith_verifier_independent_preprocessing_setup": 524.5592780000001,
+            "arith_stark_verify": 32.28834
+          }
+        }
+      },
+      {
+        "index": 1,
+        "variant": "B",
+        "accepted": true,
+        "pipeline_s": 13.348682195,
+        "prepare_s": 0.022682896,
+        "prove_s": 12.50538223,
+        "verify_s": 0.820617069,
+        "rss_prove_kib": 2029548,
+        "rss_verify_kib": 132296,
+        "bytes": 5187252,
+        "phase_ms": {
+          "prepare": {
+            "fixture_and_expected_read": 0.205451,
+            "honest_public_witness_and_encoding": 2.848462,
+            "canonical_relation_planning": 7.3630830000000005
+          },
+          "prove": {
+            "read_decode_and_canonical_plans": 14.099524,
+            "sha_air_and_chaining_witness": 3.4853050000000003,
+            "actual_air_security_metadata": 100.413129,
+            "sha_prover_preprocessing_setup": 41.732724,
+            "sha_trace_generation": 51.203575,
+            "sha_stark_prove": 10811.404279999999,
+            "sha_proof_serialize_and_persist": 25.846021,
+            "arith_prover_preprocessing_setup": 437.018131,
+            "arith_trace_generation": 42.481719,
+            "arith_stark_prove": 918.81181,
+            "arith_proof_serialize_and_persist": 6.836614
+          },
+          "verify": {
+            "bounded_read_decode_and_proof_shape": 14.266629,
+            "canonical_plans_and_public_only_sha_air": 12.549382,
+            "sha_verifier_independent_preprocessing_setup": 39.871294,
+            "sha_stark_verify": 250.65106199999997,
+            "arith_verifier_independent_preprocessing_setup": 447.003745,
+            "arith_stark_verify": 22.468328999999997
+          }
+        }
+      },
+      {
+        "index": 2,
+        "variant": "B",
+        "accepted": true,
+        "pipeline_s": 12.876979858,
+        "prepare_s": 0.018605595,
+        "prove_s": 11.978074694,
+        "verify_s": 0.880299569,
+        "rss_prove_kib": 2028416,
+        "rss_verify_kib": 132664,
+        "bytes": 5187252,
+        "phase_ms": {
+          "prepare": {
+            "fixture_and_expected_read": 0.178398,
+            "honest_public_witness_and_encoding": 2.596901,
+            "canonical_relation_planning": 5.046273
+          },
+          "prove": {
+            "read_decode_and_canonical_plans": 12.785682,
+            "sha_air_and_chaining_witness": 3.094684,
+            "actual_air_security_metadata": 87.07305,
+            "sha_prover_preprocessing_setup": 42.780119,
+            "sha_trace_generation": 53.6419,
+            "sha_stark_prove": 10283.600461,
+            "sha_proof_serialize_and_persist": 25.052099000000002,
+            "arith_prover_preprocessing_setup": 432.25260599999996,
+            "arith_trace_generation": 41.723266,
+            "arith_stark_prove": 936.9231070000001,
+            "arith_proof_serialize_and_persist": 7.278423
+          },
+          "verify": {
+            "bounded_read_decode_and_proof_shape": 15.317615,
+            "canonical_plans_and_public_only_sha_air": 13.419708,
+            "sha_verifier_independent_preprocessing_setup": 45.762919,
+            "sha_stark_verify": 267.21084499999995,
+            "arith_verifier_independent_preprocessing_setup": 476.204719,
+            "arith_stark_verify": 24.42282
+          }
+        }
+      },
+      {
+        "index": 3,
+        "variant": "A",
+        "accepted": true,
+        "pipeline_s": 23.102246280000003,
+        "prepare_s": 0.020492782,
+        "prove_s": 22.139799872,
+        "verify_s": 0.941953626,
+        "rss_prove_kib": 2383908,
+        "rss_verify_kib": 132296,
+        "bytes": 5264276,
+        "phase_ms": {
+          "prepare": {
+            "fixture_and_expected_read": 0.201254,
+            "honest_public_witness_and_encoding": 2.8431569999999997,
+            "canonical_relation_planning": 5.901692
+          },
+          "prove": {
+            "read_decode_and_canonical_plans": 7.076809,
+            "sha_air_and_chaining_witness": 4.234821,
+            "actual_air_security_metadata": 92.003164,
+            "sha_prover_preprocessing_setup": 40.852692000000005,
+            "sha_trace_generation": 49.209089,
+            "sha_stark_prove": 10770.695304,
+            "sha_proof_serialize_and_persist": 27.125076,
+            "arith_prover_preprocessing_setup": 468.006804,
+            "arith_trace_generation": 448.062883,
+            "arith_stark_prove": 10165.711884,
+            "arith_proof_serialize_and_persist": 7.3551079999999995
+          },
+          "verify": {
+            "bounded_read_decode_and_proof_shape": 16.15614,
+            "canonical_plans_and_public_only_sha_air": 7.614673,
+            "sha_verifier_independent_preprocessing_setup": 42.494445,
+            "sha_stark_verify": 269.524708,
+            "arith_verifier_independent_preprocessing_setup": 540.2274,
+            "arith_stark_verify": 29.035422
+          }
+        }
+      },
+      {
+        "index": 4,
+        "variant": "A",
+        "accepted": true,
+        "pipeline_s": 24.406064590000003,
+        "prepare_s": 0.14874859,
+        "prove_s": 23.33845116,
+        "verify_s": 0.91886484,
+        "rss_prove_kib": 2384296,
+        "rss_verify_kib": 132992,
+        "bytes": 5264276,
+        "phase_ms": {
+          "prepare": {
+            "fixture_and_expected_read": 0.21410200000000001,
+            "honest_public_witness_and_encoding": 3.182689,
+            "canonical_relation_planning": 8.209985
+          },
+          "prove": {
+            "read_decode_and_canonical_plans": 8.190062999999999,
+            "sha_air_and_chaining_witness": 4.396103,
+            "actual_air_security_metadata": 89.45012700000001,
+            "sha_prover_preprocessing_setup": 42.90352,
+            "sha_trace_generation": 54.342092,
+            "sha_stark_prove": 11086.625059,
+            "sha_proof_serialize_and_persist": 27.249694,
+            "arith_prover_preprocessing_setup": 539.461562,
+            "arith_trace_generation": 481.801329,
+            "arith_stark_prove": 10761.900956,
+            "arith_proof_serialize_and_persist": 119.599624
+          },
+          "verify": {
+            "bounded_read_decode_and_proof_shape": 15.153863999999999,
+            "canonical_plans_and_public_only_sha_air": 7.592630000000001,
+            "sha_verifier_independent_preprocessing_setup": 44.062126,
+            "sha_stark_verify": 243.673867,
+            "arith_verifier_independent_preprocessing_setup": 537.270096,
+            "arith_stark_verify": 31.385308000000002
+          }
+        }
+      },
+      {
+        "index": 5,
+        "variant": "B",
+        "accepted": true,
+        "pipeline_s": 13.49791935,
+        "prepare_s": 0.232953198,
+        "prove_s": 12.379181414,
+        "verify_s": 0.885784738,
+        "rss_prove_kib": 2028800,
+        "rss_verify_kib": 132344,
+        "bytes": 5187252,
+        "phase_ms": {
+          "prepare": {
+            "fixture_and_expected_read": 0.21753899999999998,
+            "honest_public_witness_and_encoding": 3.1654370000000003,
+            "canonical_relation_planning": 7.555703
+          },
+          "prove": {
+            "read_decode_and_canonical_plans": 14.753399,
+            "sha_air_and_chaining_witness": 3.6405909999999997,
+            "actual_air_security_metadata": 96.298282,
+            "sha_prover_preprocessing_setup": 41.644258,
+            "sha_trace_generation": 51.536474,
+            "sha_stark_prove": 10634.070766,
+            "sha_proof_serialize_and_persist": 25.655014,
+            "arith_prover_preprocessing_setup": 452.93775899999997,
+            "arith_trace_generation": 45.466228,
+            "arith_stark_prove": 947.8223099999999,
+            "arith_proof_serialize_and_persist": 6.6012129999999996
+          },
+          "verify": {
+            "bounded_read_decode_and_proof_shape": 18.220355,
+            "canonical_plans_and_public_only_sha_air": 13.146972,
+            "sha_verifier_independent_preprocessing_setup": 43.091474999999996,
+            "sha_stark_verify": 261.257154,
+            "arith_verifier_independent_preprocessing_setup": 487.181453,
+            "arith_stark_verify": 28.679289
+          }
+        }
+      },
+      {
+        "index": 6,
+        "variant": "B",
+        "accepted": true,
+        "pipeline_s": 13.26089215,
+        "prepare_s": 0.282541657,
+        "prove_s": 12.138131812,
+        "verify_s": 0.840218681,
+        "rss_prove_kib": 2029520,
+        "rss_verify_kib": 132452,
+        "bytes": 5187252,
+        "phase_ms": {
+          "prepare": {
+            "fixture_and_expected_read": 0.215005,
+            "honest_public_witness_and_encoding": 2.9793049999999996,
+            "canonical_relation_planning": 6.012694
+          },
+          "prove": {
+            "read_decode_and_canonical_plans": 15.082312,
+            "sha_air_and_chaining_witness": 3.647682,
+            "actual_air_security_metadata": 88.969472,
+            "sha_prover_preprocessing_setup": 39.261003,
+            "sha_trace_generation": 49.355568000000005,
+            "sha_stark_prove": 10458.408659,
+            "sha_proof_serialize_and_persist": 25.083368,
+            "arith_prover_preprocessing_setup": 426.102936,
+            "arith_trace_generation": 42.492872,
+            "arith_stark_prove": 932.3249460000001,
+            "arith_proof_serialize_and_persist": 6.950924
+          },
+          "verify": {
+            "bounded_read_decode_and_proof_shape": 22.400899,
+            "canonical_plans_and_public_only_sha_air": 15.262987,
+            "sha_verifier_independent_preprocessing_setup": 43.195318,
+            "sha_stark_verify": 239.478121,
+            "arith_verifier_independent_preprocessing_setup": 461.11870100000004,
+            "arith_stark_verify": 23.978434
+          }
+        }
+      },
+      {
+        "index": 7,
+        "variant": "A",
+        "accepted": true,
+        "pipeline_s": 22.818513953,
+        "prepare_s": 0.019486199,
+        "prove_s": 21.91503375,
+        "verify_s": 0.883994004,
+        "rss_prove_kib": 2383924,
+        "rss_verify_kib": 132944,
+        "bytes": 5264276,
+        "phase_ms": {
+          "prepare": {
+            "fixture_and_expected_read": 0.204328,
+            "honest_public_witness_and_encoding": 2.7205939999999997,
+            "canonical_relation_planning": 5.746865000000001
+          },
+          "prove": {
+            "read_decode_and_canonical_plans": 7.967188,
+            "sha_air_and_chaining_witness": 4.255668,
+            "actual_air_security_metadata": 81.067956,
+            "sha_prover_preprocessing_setup": 40.182626,
+            "sha_trace_generation": 48.443949,
+            "sha_stark_prove": 10247.452537,
+            "sha_proof_serialize_and_persist": 377.105316,
+            "arith_prover_preprocessing_setup": 479.50755699999996,
+            "arith_trace_generation": 454.21603700000003,
+            "arith_stark_prove": 10112.874010000001,
+            "arith_proof_serialize_and_persist": 6.626287
+          },
+          "verify": {
+            "bounded_read_decode_and_proof_shape": 14.302175,
+            "canonical_plans_and_public_only_sha_air": 7.437081,
+            "sha_verifier_independent_preprocessing_setup": 40.613111,
+            "sha_stark_verify": 234.932887,
+            "arith_verifier_independent_preprocessing_setup": 516.760972,
+            "arith_stark_verify": 30.225382
+          }
+        }
+      }
+    ],
+    "groups": {
+      "A": {
+        "pipeline_s": 23.555767751,
+        "prepare_s": 0.022559408000000003,
+        "prove_s": 22.579316363,
+        "verify_s": 0.930409233,
+        "rss_prove_kib": 2383916.0,
+        "rss_verify_kib": 132966.0,
+        "bytes": 5264276.0
+      },
+      "B": {
+        "pipeline_s": 13.3047871725,
+        "prepare_s": 0.127818047,
+        "prove_s": 12.258656613,
+        "verify_s": 0.860259125,
+        "rss_prove_kib": 2029160.0,
+        "rss_verify_kib": 132398.0,
+        "bytes": 5187252.0
+      }
+    },
+    "blocks": [
+      {
+        "index": 0,
+        "pipeline_s": {
+          "A_mean": 23.555767751,
+          "B_mean": 13.1128310265,
+          "B_over_A": 0.556671774196081
+        },
+        "prove_s": {
+          "A_mean": 22.579316363,
+          "B_mean": 12.241728462000001,
+          "B_over_A": 0.542165593731621
+        },
+        "verify_s": {
+          "A_mean": 0.95389198,
+          "B_mean": 0.8504583189999999,
+          "B_over_A": 0.8915666939562695
+        }
+      },
+      {
+        "index": 1,
+        "pipeline_s": {
+          "A_mean": 23.612289271500003,
+          "B_mean": 13.37940575,
+          "B_over_A": 0.5666289107405152
+        },
+        "prove_s": {
+          "A_mean": 22.626742455,
+          "B_mean": 12.258656613,
+          "B_over_A": 0.5417773520594041
+        },
+        "verify_s": {
+          "A_mean": 0.9014294220000001,
+          "B_mean": 0.8630017095,
+          "B_over_A": 0.9573702482278196
+        }
+      }
+    ],
+    "observed_cgroup_start": {
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b933ca11-12894-1286.service",
+      "cpu.max": "800000 100000",
+      "cpu.stat": "usage_usec 297478\nuser_usec 240578\nsystem_usec 56900\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 3\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "memory.max": "85899345920",
+      "memory.current": "19206144",
+      "memory.peak": "25444352",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "cpuset.cpus.effective": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b933ca11-12894-1286.service/cpuset.cpus.effective'"
+      }
+    },
+    "observed_cgroup_end": {
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b933ca11-12894-1286.service",
+      "cpu.max": "800000 100000",
+      "cpu.stat": "usage_usec 1080664120\nuser_usec 1056063033\nsystem_usec 24601087\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 1473\nnr_throttled 634\nthrottled_usec 431781\nnr_bursts 0\nburst_usec 0",
+      "memory.max": "85899345920",
+      "memory.current": "66695168",
+      "memory.peak": "2510729216",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "cpuset.cpus.effective": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b933ca11-12894-1286.service/cpuset.cpus.effective'"
+      }
+    },
+    "median_ratios_B_over_A": {
+      "pipeline_s": 0.5648207824572042,
+      "prepare_s": 5.665842250825021,
+      "prove_s": 0.5429153131087647,
+      "verify_s": 0.9246029537198284,
+      "rss_prove_kib": 0.8511877096340643,
+      "rss_verify_kib": 0.9957282312771686,
+      "bytes": 0.985368548305598
+    }
+  },
+  "memory2g_check": {
+    "accepted": true,
+    "binary_sha256": "0dc22a6392b15d1ec97baf3f60b38428b3593f20e233cc178741749804e457d7",
+    "memory_max_bytes": 2147483648,
+    "cgroup_peak_bytes": 2098737152,
+    "memory_events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "proof_peak_rss_kib": 2027636,
+    "prove_outer_s": 12.901455769,
+    "verify_outer_s": 0.910360378,
+    "input_tasks": 1,
+    "global_bound": false,
+    "production_qualification": false
+  },
+  "remaining_gates": {
+    "complete_concrete_noninteractive_PCS_hash_FS_lifecycle_bound": false,
+    "positive_end_to_end_benefit_versus_native_W1": false,
+    "global_malicious_rejection_bound_for_profiles_3_and_4": false,
+    "universal_physical_cost_bound_for_cheapest_legal_strategy": false,
+    "production_Node_integration_and_qualification": false
+  },
+  "native_candidate_bytes_reference": 49506,
+  "packed_payload_over_native_candidate_bytes": 104.78026905829596,
+  "warning": "Research executable comparison. Includes local prepare/prove/fsync/fresh verification but no production node or live network transport.",
+  "observed_platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+  "observed_process_cpu_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "observed_cgroup_controls": {
+    "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b933ca11-12894-1286.service",
+    "cpu.max": "800000 100000",
+    "cpu.stat": "usage_usec 297478\nuser_usec 240578\nsystem_usec 56900\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 3\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "memory.max": "85899345920",
+    "memory.current": "19206144",
+    "memory.peak": "25444352",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "cpuset.cpus.effective": {
+      "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b933ca11-12894-1286.service/cpuset.cpus.effective'"
+    }
+  },
+  "binary_hashes": {
+    "A": {
+      "path": "/home/qian-qi/work/chain-w1-carry-backend-20261108-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research",
+      "sha256": "d92772edb74a81ea30e7ddf630de8278704a0eedd0acc6920c6a01644855b592"
+    },
+    "B": {
+      "path": "/home/qian-qi/work/chain-w1-carry-backend-20261108-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/packed_carry_backend",
+      "sha256": "0dc22a6392b15d1ec97baf3f60b38428b3593f20e233cc178741749804e457d7"
+    }
+  },
+  "source_hashes": {
+    "examples/carry_backend.rs": "7d2e5bd4df088c76b8ede3cad18bd1e2669c2dd7b52296285703a0dd586c2cb2",
+    "examples/mutate_last_query.rs": "c0f7fd99615fb25442422e6986503143ad6a4a791e67202d338b78f2668fa4fc",
+    "examples/packed_carry_backend.rs": "35e01c56689273ce989bf80b4018bfd10476c40af36412cdd70960828fad2ddd",
+    "src/arith_air.rs": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363",
+    "src/arith_carry_air.rs": "6524719eaa69e1c24e67ff4e82f26676612dcfc9b45da8d4a8ce08885dc56ec1",
+    "src/lib.rs": "ea636ca2b37be3af04d1cc8dec9257bf54f61cee771f1181c3a9028e7f433b35",
+    "src/main.rs": "cf3100186faa24c7a1163d2eb45e353389f75be3dcbe09363a1d2ce176288f95",
+    "src/proof_config.rs": "255596c0a1bc226916f18a50f6c04b3b8c057c0bd15914d6dc79cfc990902283",
+    "src/public.rs": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29",
+    "src/sha_air.rs": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa",
+    "src/sha_plan.rs": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3",
+    "tests/carry_proof.rs": "96659e082dd50dacdc08856576e4cbb47ebabf32786bb3c44a2f24620f1b3639",
+    "tests/proof_smoke.rs": "3f114828a246a9cf4d97a1c983fdd6675e6eea20aafc68bf0091b32669d8b51b"
+  },
+  "cargo_lock_sha256": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1",
+  "profiles": [
+    {
+      "component": 3,
+      "magic": "W1P3ACR2",
+      "degree_bits": 17,
+      "main_width": 74,
+      "preprocessed_width": 36,
+      "main_next_row_columns": [],
+      "preprocessed_next_row_columns": [],
+      "num_quotient_chunks": 1
+    },
+    {
+      "component": 4,
+      "magic": "W1P3APC3",
+      "degree_bits": 14,
+      "main_width": 370,
+      "preprocessed_width": 180,
+      "main_next_row_columns": [],
+      "preprocessed_next_row_columns": [],
+      "num_quotient_chunks": 1
+    }
+  ],
+  "conditional_RBR_estimate_bits_each_arithmetic_profile": 63.95384529640614,
+  "conditional_RBR_is_NI_or_PQ128_qualification": false,
+  "build_checks_before_measurement": {
+    "Rust": "1.95.0",
+    "P3": "0.8.0",
+    "RUSTFLAGS": "-C target-cpu=native",
+    "offline_locked_release_tests": {
+      "unpacked": 28,
+      "packed": 30
+    },
+    "packed_strict_clippy": true,
+    "h_jobs": {
+      "unpacked_build": "1a1b9272150-12894-1232",
+      "unpacked_abba": "1a1b929aeca-12894-1249",
+      "packed_build": "1a1b92e75f2-12894-1261",
+      "packed_abba": "1a1b933ca11-12894-1286",
+      "memory2g": "1a1b938d0c9-12894-12b2"
+    }
+  },
+  "failed_or_regressed_observations": [
+    {
+      "type": "prelaunch_tool_argument_rejection",
+      "idempotency_key": "backend-gain-f16ac-upload-build-01",
+      "error": "executable `python3` must be an absolute path without parent traversal",
+      "child_submitted": false,
+      "resolution": "explicit /usr/bin/python3 with a new operation key"
+    },
+    {
+      "type": "unpacked_verifier_regression",
+      "A_median_s": 0.967995241,
+      "B_median_s": 1.2515285185,
+      "B_over_A": 1.292907718437843,
+      "retained": true
+    },
+    {
+      "type": "unpacked_baseline_variability",
+      "pipeline_s": [
+        44.058102799,
+        32.511755344,
+        32.145081198,
+        23.805702891
+      ],
+      "samples_discarded": 0,
+      "cause": "not established; shared host was not exclusive"
+    },
+    {
+      "type": "packed_payload_increase_relative_to_unpacked",
+      "unpacked_bytes": 5039604,
+      "packed_bytes": 5187252,
+      "delta_bytes": 147648
+    },
+    {
+      "type": "cgroup_cpuset_observation_unavailable",
+      "field": "cpuset.cpus.effective",
+      "fallback": "successful sched_setaffinity in harness plus fixed inherited process affinity",
+      "retained_error": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b933ca11-12894-1286.service/cpuset.cpus.effective'"
+      }
+    }
+  ]
+}

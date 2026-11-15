@@ -1,0 +1,67 @@
+{
+  "uid": 1000,
+  "euid": 1000,
+  "gid": 1000,
+  "egid": 1000,
+  "probes": [
+    {
+      "base": "/tmp",
+      "stage": "socket",
+      "path": "/tmp/loader-unix-probe-sq35jv99/clock.sock",
+      "directory_uid": 1000,
+      "directory_mode": "0o40700",
+      "filesystem_device": 39,
+      "result": "error",
+      "errno": 1,
+      "error": "[Errno 1] Operation not permitted"
+    },
+    {
+      "base": "/workspace/scratch/10366560c781",
+      "stage": "socket",
+      "path": "/workspace/scratch/10366560c781/loader-unix-probe-a32t2fr0/clock.sock",
+      "directory_uid": 1000,
+      "directory_mode": "0o40700",
+      "filesystem_device": 27,
+      "result": "error",
+      "errno": 1,
+      "error": "[Errno 1] Operation not permitted"
+    },
+    {
+      "base": "/dev/shm",
+      "stage": "socket",
+      "path": "/dev/shm/loader-unix-probe-sfpmld9h/clock.sock",
+      "directory_uid": 1000,
+      "directory_mode": "0o40700",
+      "filesystem_device": 38,
+      "result": "error",
+      "errno": 1,
+      "error": "[Errno 1] Operation not permitted"
+    },
+    {
+      "name": "abstract-unix",
+      "stage": "socket",
+      "result": "error",
+      "errno": 1,
+      "error": "[Errno 1] Operation not permitted"
+    },
+    {
+      "name": "loopback",
+      "stage": "listen",
+      "result": "ok"
+    }
+  ],
+  "namespace": {
+    "user": "user:[4026532353]",
+    "mnt": "mnt:[4026533080]",
+    "net": "net:[4026533224]",
+    "pid": "pid:[4026533223]"
+  },
+  "process_controls": [
+    "Uid:\t1000\t1000\t1000\t1000",
+    "Gid:\t1000\t1000\t1000\t1000",
+    "CapEff:\t0000000000000000",
+    "NoNewPrivs:\t1",
+    "Seccomp:\t2"
+  ],
+  "lsm": "kernel\u0000"
+}

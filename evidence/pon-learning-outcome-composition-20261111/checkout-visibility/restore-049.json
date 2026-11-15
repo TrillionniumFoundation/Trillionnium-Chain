@@ -1,0 +1,24 @@
+{
+  "actual_oid": "c2bc02fda34c2cc8bd0af3c3b060d79847640220",
+  "bytes": 6269719,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "c2bc02fda34c2cc8bd0af3c3b060d79847640220"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 6269719,
+  "expected_oid": "c2bc02fda34c2cc8bd0af3c3b060d79847640220",
+  "finished_at": "2026-11-12T01:41:54.992460+00:00",
+  "path": "evidence/pon-joint-state-risk-ledger-20261107/final-source-gates/merge-review/final-merge-audit-2d46.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLWpvaW50LXN0YXRlLXJpc2stbGVkZ2VyLTIwMjYxMTA3L2ZpbmFsLXNvdXJjZS1nYXRlcy9tZXJnZS1yZXZpZXcvZmluYWwtbWVyZ2UtYXVkaXQtMmQ0Ni50YXIuZ3o=",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "824b243b25579796382dc9da5b1873cfe1b03ea0009ea76c31b61e695652539d",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:54.870386+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

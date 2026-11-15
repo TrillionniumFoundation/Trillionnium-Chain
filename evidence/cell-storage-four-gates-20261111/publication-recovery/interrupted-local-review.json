@@ -1,0 +1,13 @@
+{
+  "ci_name_controls_attempt": "mkdir failed with ENOSPC before commands were executed",
+  "ci_name_patch_applied_locally": true,
+  "environment": "ccarenv_b64_Y2NhcmVudl82YWVjMjVlZmJiNGM4MTkxYmVjMWM3ZmYwNzdlNTE2Zg",
+  "migration_attempt": "Started copy/inventory operation to /dev/shm/chain-cell-storage-2bfb; no completion receipt. Do not assert completion or deletion.",
+  "native_execution_affected": false,
+  "platform_state": "unavailable",
+  "recovery_policy": "Continue from independently verified desktop C3 and recovered original retained evidence. Any newly assembled archive gets its own observed identity. No native rerun attribution.",
+  "source_head": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "subsequent_ai395_probe": "h_view ssh://ai395/home/qq/work returned SSH255; Connection closed by configured host",
+  "task_checkout": "/workspace/scratch/2bfb5c18e0f8/chain-cell-storage",
+  "tool_failure": "exec-server transport disconnected; failed to resume exec-server session: recovery timed out after 45s"
+}

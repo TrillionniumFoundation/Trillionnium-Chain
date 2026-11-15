@@ -1,0 +1,46 @@
+[
+  {
+    "name": "preflight",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "workspace",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--all-features",
+      "--format-version",
+      "1",
+      "--manifest-path",
+      "trillionnium/Cargo.toml"
+    ],
+    "exit_code": 0,
+    "packages": 180,
+    "workspace_members": 26,
+    "resolve_nodes": 180,
+    "sha256": "dd15972fb1f024fb76ab956f7dc7792dee9dd07e1b2f634bdfd75bc9752eb351"
+  },
+  {
+    "name": "fuzz",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--all-features",
+      "--format-version",
+      "1",
+      "--manifest-path",
+      "tests/fuzz/Cargo.toml"
+    ],
+    "exit_code": 0
+  }
+]

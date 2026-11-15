@@ -1,0 +1,17 @@
+{
+  "plan_both_appendices_retained": true,
+  "recent_inline_count": 16,
+  "inline_changes": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "before": "1c528e1bf2435331d91ae627fd5b1541da70c3a4",
+      "after": "74af81e2e181f6639dd1719a65d91c0ba5323c9b"
+    }
+  ],
+  "corpus_count": 375,
+  "pins_pending_final_rust_resolution": [
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs"
+  ],
+  "local_preparation_observation": "First merge helper assumed 19 recent-workflow inline pins; actual original count is 16 (20 across all workflows). It failed before writing workflow/config. Corrected assertion preserves actual existing per-file count; no pin removed."
+}

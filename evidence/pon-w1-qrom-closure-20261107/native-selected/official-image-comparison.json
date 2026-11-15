@@ -1,0 +1,30 @@
+{
+  "expected_fixed_words": [
+    1958252411,
+    3287394615,
+    1805488136,
+    1516578702,
+    78549041,
+    790278610,
+    301018785,
+    4279049364
+  ],
+  "guest_sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+  "matches": true,
+  "official_words": [
+    1958252411,
+    3287394615,
+    1805488136,
+    1516578702,
+    78549041,
+    790278610,
+    301018785,
+    4279049364
+  ],
+  "probe_binary_sha256": "4340d15477414abf383f1b8b213098c822f528db799aa1164bf9281d39cf8f8f",
+  "probe_source_sha256": "1131ae9f23883b09bd86a65640e5c9042ca7ee3c5fd55765fafd20a492d930f1",
+  "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "upstream_function": "risc0_zkvm::compute_image_id",
+  "upstream_rlib_sha256": "63d0b6785899969cdb3c390aaf06ccbe5c65ab2d66318d743c4cc7438d3bed04",
+  "whole_qrom_proof": false
+}

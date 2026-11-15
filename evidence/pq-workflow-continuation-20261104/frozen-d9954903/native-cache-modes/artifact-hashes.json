@@ -1,0 +1,81 @@
+{
+  "artifacts": {
+    "result.json": {
+      "path": "/dev/shm/frozen-d9954903-validation/native-cache-modes/result.json",
+      "bytes": 13021,
+      "sha256": "7efc60c231df0b02e4df681df79429c1a5c8e116f0e4929ad95d1d41f327cfe6"
+    },
+    "cargo.log": {
+      "path": "/dev/shm/frozen-d9954903-validation/native-cache-modes/cargo.log",
+      "bytes": 2031,
+      "sha256": "f5e004e28201cbae1e04a96e826aaaf6079e04e3debef9167d7a4f44709e658e"
+    },
+    "preflight.log": {
+      "path": "/dev/shm/frozen-d9954903-validation/native-cache-modes/preflight.log",
+      "bytes": 170,
+      "sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069"
+    },
+    "run-native-cache-modes.py": {
+      "path": "/dev/shm/frozen-d9954903-validation/native-cache-modes/run-native-cache-modes.py",
+      "bytes": 15324,
+      "sha256": "091542132400cb2241570258e0ed939e3263c8d389713f2f983883b56b4be95f"
+    },
+    "native-config-manifest-before.json": {
+      "path": "/dev/shm/frozen-d9954903-validation/native-cache-modes/native-config-manifest-before.json",
+      "bytes": 326078,
+      "sha256": "6cb5a6a54292eaebfd2487d79a0a0749b131bb5bcb1a1abf640a0bfcce30c7fe"
+    },
+    "native-config-manifest-after.json": {
+      "path": "/dev/shm/frozen-d9954903-validation/native-cache-modes/native-config-manifest-after.json",
+      "bytes": 326078,
+      "sha256": "6cb5a6a54292eaebfd2487d79a0a0749b131bb5bcb1a1abf640a0bfcce30c7fe"
+    },
+    "publication-source-files.json": {
+      "path": "/dev/shm/frozen-d9954903-validation/native-cache-modes/publication-source-files.json",
+      "bytes": 3859,
+      "sha256": "72f3de0ff538cc15d07c6f717234dab7836a83a30610ec1df56113c0bc639dd5"
+    },
+    "checkout-origin-repair.json": {
+      "path": "/dev/shm/frozen-d9954903-validation/native-cache-modes/checkout-origin-repair.json",
+      "bytes": 601,
+      "sha256": "a34b40ca5226bbcf94a37d71ae64a41116d65ce4e4ae2e7320090963eeb97ae6"
+    },
+    "checkout-branch-repair.json": {
+      "path": "/dev/shm/frozen-d9954903-validation/native-cache-modes/checkout-branch-repair.json",
+      "bytes": 444,
+      "sha256": "626a42e683630da6b6cb2baad57e552848f8d38079928162bf34cb73b9c9311d"
+    },
+    "initial-preflight-missing-origin/result.json": {
+      "path": "/dev/shm/frozen-d9954903-validation/native-cache-modes/initial-preflight-missing-origin/result.json",
+      "bytes": 8545,
+      "sha256": "e6dbde983ab37e4ccb19edfaf69f4e5ed45b4a1d2c1c32ba4e0d02eb23b42d1a"
+    },
+    "initial-preflight-missing-origin/preflight.log": {
+      "path": "/dev/shm/frozen-d9954903-validation/native-cache-modes/initial-preflight-missing-origin/preflight.log",
+      "bytes": 138,
+      "sha256": "3210ec6e44ef4c0b1dc994134a060cec6cf08af171c893b8ebe2b4eb7f1e00b6"
+    },
+    "second-preflight-branch-metadata/result.json": {
+      "path": "/dev/shm/frozen-d9954903-validation/native-cache-modes/second-preflight-branch-metadata/result.json",
+      "bytes": 8545,
+      "sha256": "f68556309e674adb222c30d54079690c7572cff295fdd4697206e4c7646f5044"
+    },
+    "second-preflight-branch-metadata/preflight.log": {
+      "path": "/dev/shm/frozen-d9954903-validation/native-cache-modes/second-preflight-branch-metadata/preflight.log",
+      "bytes": 59,
+      "sha256": "1e85d4622435cd769c79fc3bdd3ac3cef3c643c135889988e8479a1ffc4e893e"
+    }
+  },
+  "test_executable": {
+    "path": "/dev/shm/trnm-cache-modes-44ebe1a-822cc50e-target/debug/deps/public_cache_modes-4cc489d247634233",
+    "bytes": 3386296,
+    "sha256": "86298106099f7198fd224719cdec901e88004c98d5c1acb460b81711183836d1"
+  },
+  "previous_81da_receipt": {
+    "path": "/workspace/scratch/822cc50e24f0/frozen-81da33e-validation/native-cache-modes/result.json",
+    "bytes": 12012,
+    "sha256": "e11724ef8896088074d004e344d54586b552421f0c03fe0125188a8e551b53bc"
+  },
+  "git_status_after_artifacts": "",
+  "previous_81da_receipt_unchanged": true
+}

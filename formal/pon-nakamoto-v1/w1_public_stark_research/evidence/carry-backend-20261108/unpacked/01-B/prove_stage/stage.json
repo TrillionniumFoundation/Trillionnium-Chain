@@ -1,0 +1,290 @@
+{
+  "args": [
+    "/home/qian-qi/work/chain-w1-carry-backend-20261108-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/carry_backend",
+    "prove",
+    "/home/qian-qi/work/chain-w1-carry-measurements-20261108-f16ac/01-B/prepared/statement.bin",
+    "/home/qian-qi/work/chain-w1-carry-backend-20261108-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin",
+    "/home/qian-qi/work/chain-w1-carry-backend-20261108-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin",
+    "/home/qian-qi/work/chain-w1-carry-measurements-20261108-f16ac/01-B/proof"
+  ],
+  "exit_code": 0,
+  "outer_wall_s": 14.292164052,
+  "peak_rss_kib": 2036092,
+  "report": {
+    "arith_proof_bytes": 306213,
+    "arith_proof_sha256": "26a7d0848b436a547ea5add19cf882ffb5b5b4621993f5511b93542053d9ab68",
+    "arith_trace_height": 131072,
+    "process_wall_ms": 14282.891657,
+    "public_bytes": 377290,
+    "qualification": "HOLD_NO_GO",
+    "schema": "trnm-w1-complete-public-carry-stark-run-v2",
+    "security": {
+      "arithmetic": {
+        "air_max_constraint_degree": 2,
+        "component": 3,
+        "conditional_rbr_estimate_bits": 63.95384529640614,
+        "conditional_rbr_report": {
+          "ldr": {
+            "regime": {
+              "ListDecoding": {
+                "m": 1000
+              }
+            },
+            "terms": [
+              {
+                "bits": 109.76670800739936,
+                "label": "air-composition"
+              },
+              {
+                "bits": 97.44853571634098,
+                "label": "deep-ali"
+              },
+              {
+                "bits": 63.95384529640614,
+                "label": "low-degree-test"
+              },
+              {
+                "bits": 67.89101927172217,
+                "label": "batch-combination"
+              },
+              {
+                "bits": 128.0,
+                "label": "commitment-collision"
+              }
+            ]
+          },
+          "udr": {
+            "regime": "UniqueDecoding",
+            "terms": [
+              {
+                "bits": 120.7332134593051,
+                "label": "air-composition"
+              },
+              {
+                "bits": 108.41504116824673,
+                "label": "deep-ali"
+              },
+              {
+                "bits": 43.39646103912871,
+                "label": "low-degree-test"
+              },
+              {
+                "bits": 101.2055841336499,
+                "label": "batch-combination"
+              },
+              {
+                "bits": 128.0,
+                "label": "commitment-collision"
+              }
+            ]
+          }
+        },
+        "conjectured_estimate_bits_separate": 101,
+        "degree_bits": 17,
+        "hash_collision_bits_assumption": 128,
+        "is_complete_noninteractive_bound": false,
+        "is_quantum_security_bound": false,
+        "main_next_row_columns": [],
+        "main_width": 74,
+        "max_combo": 1,
+        "modulus_bits_conservative_lower_bound": 127,
+        "num_batched_functions": 112,
+        "num_constraints": 77,
+        "num_quotient_chunks": 1,
+        "preprocessed_next_row_columns": [],
+        "preprocessed_width": 36,
+        "trace_height": 131072
+      },
+      "challenge_extension": "X^2 - 7",
+      "challenge_field_cardinality": "340282366762482138490186164457219031041",
+      "commitment_and_challenger": "default Goldilocks Poseidon2 width 8",
+      "complete_noninteractive_bound": "UNRESOLVED: requires concrete transcript/sampling, PCS binding and ROM compilation analysis",
+      "component_domains": {
+        "arithmetic": 3,
+        "sha": 1
+      },
+      "compression": {
+        "digest_elements": 4,
+        "inputs": 2,
+        "width": 8
+      },
+      "estimator_modulus_bits": 127,
+      "estimator_modulus_bits_reason": "P^2 >= 2^127; using 128 as an exact denominator would round the field cardinality upward",
+      "field_modulus": "18446744069414584321",
+      "fri": {
+        "batch_pow_bits": 0,
+        "commit_pow_bits": 0,
+        "log_blowup": 2,
+        "log_final_poly_len": 0,
+        "lookup_pow_bits": 0,
+        "max_log_arity": 1,
+        "num_queries": 64,
+        "ood_pow_bits": 0,
+        "query_pow_bits": 0
+      },
+      "hash_strength_status": "128-bit collision resistance is an explicit model assumption, not independently certified here",
+      "mmcs": {
+        "arity": 2,
+        "cap_height": 0,
+        "digest_elements": 4
+      },
+      "native_relation_hash": "SHA-256, fully constrained by the SHA AIR",
+      "p3_version": "0.8.0",
+      "public_statement_is_succinct": false,
+      "qualification": "HOLD_NO_GO",
+      "research_domain_hex": "54524e4d2d57312d46554c4c2d5055424c49432d535441524b2d52455345415243482d50332d302e382e302d523100",
+      "schema": "w1-p3-0.8.0-conditional-rbr-carry-metadata-v2",
+      "sha": {
+        "air_max_constraint_degree": 3,
+        "component": 1,
+        "conditional_rbr_estimate_bits": 63.95384529640614,
+        "conditional_rbr_report": {
+          "ldr": {
+            "regime": {
+              "ListDecoding": {
+                "m": 1000
+              }
+            },
+            "terms": [
+              {
+                "bits": 103.04055621192845,
+                "label": "air-composition"
+              },
+              {
+                "bits": 101.03340649566414,
+                "label": "deep-ali"
+              },
+              {
+                "bits": 63.95384529640614,
+                "label": "low-degree-test"
+              },
+              {
+                "bits": 64.76659309720453,
+                "label": "batch-combination"
+              },
+              {
+                "bits": 128.0,
+                "label": "commitment-collision"
+              }
+            ]
+          },
+          "udr": {
+            "regime": "UniqueDecoding",
+            "terms": [
+              {
+                "bits": 114.00706166383418,
+                "label": "air-composition"
+              },
+              {
+                "bits": 111.99991194756987,
+                "label": "deep-ali"
+              },
+              {
+                "bits": 43.39209361527134,
+                "label": "low-degree-test"
+              },
+              {
+                "bits": 98.08132307318488,
+                "label": "batch-combination"
+              },
+              {
+                "bits": 128.0,
+                "label": "commitment-collision"
+              }
+            ]
+          }
+        },
+        "conjectured_estimate_bits_separate": 98,
+        "degree_bits": 13,
+        "hash_collision_bits_assumption": 128,
+        "is_complete_noninteractive_bound": false,
+        "is_quantum_security_bound": false,
+        "main_next_row_columns": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "main_width": 7728,
+        "max_combo": 2,
+        "modulus_bits_conservative_lower_bound": 127,
+        "num_batched_functions": 15487,
+        "num_constraints": 8152,
+        "num_quotient_chunks": 2,
+        "preprocessed_next_row_columns": [],
+        "preprocessed_width": 27,
+        "trace_height": 8192
+      },
+      "sponge": {
+        "output": 4,
+        "padding": "PaddingFreeSponge, fixed-shape MMCS inputs only",
+        "rate": 4,
+        "width": 8
+      },
+      "zero_knowledge": false
+    },
+    "sha_proof_bytes": 4356101,
+    "sha_proof_sha256": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+    "sha_trace_height": 8192,
+    "statement_sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+    "status": "TWO_REAL_STARK_PROOFS_GENERATED_NOT_YET_VERIFIED",
+    "timings": [
+      {
+        "elapsed_ms": 19.099203,
+        "phase": "read_decode_and_canonical_plans"
+      },
+      {
+        "elapsed_ms": 5.533951,
+        "phase": "sha_air_and_chaining_witness"
+      },
+      {
+        "elapsed_ms": 122.31001599999999,
+        "phase": "actual_air_security_metadata"
+      },
+      {
+        "elapsed_ms": 46.899413,
+        "phase": "sha_prover_preprocessing_setup"
+      },
+      {
+        "elapsed_ms": 58.948233,
+        "phase": "sha_trace_generation"
+      },
+      {
+        "elapsed_ms": 11139.847475999999,
+        "phase": "sha_stark_prove"
+      },
+      {
+        "elapsed_ms": 36.949503,
+        "phase": "sha_proof_serialize_and_persist"
+      },
+      {
+        "elapsed_ms": 778.0530279999999,
+        "phase": "arith_prover_preprocessing_setup"
+      },
+      {
+        "elapsed_ms": 61.120678,
+        "phase": "arith_trace_generation"
+      },
+      {
+        "elapsed_ms": 1944.363098,
+        "phase": "arith_stark_prove"
+      },
+      {
+        "elapsed_ms": 18.652561000000002,
+        "phase": "arith_proof_serialize_and_persist"
+      }
+    ]
+  }
+}

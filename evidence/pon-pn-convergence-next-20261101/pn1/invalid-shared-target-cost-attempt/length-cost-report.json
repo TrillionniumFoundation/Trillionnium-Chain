@@ -1,0 +1,162 @@
+{
+  "schema": "pn1-negative-cache-malformed-width-cost-v1",
+  "scope": "public Rust library API only; ordinary and PQ wire decoders already require exact width",
+  "measurements": "all calls at fixed repetitions; no timing pass threshold; not independent hardware qualification",
+  "allocation_and_cache_setup": "outside call timing and reported separately",
+  "stubs": false,
+  "no_work_hardness_or_public_service_qualification": true,
+  "runs": [
+    {
+      "label": "baseline",
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/workspace/scratch/295b0f1bca6b/pn1-w1-baseline-harness/Cargo.toml",
+        "--example",
+        "length_cost"
+      ],
+      "build_exit": 0,
+      "build_elapsed_seconds": 4.590323209762573,
+      "compiler": "rustc 1.95.0 (59807616e 2026-04-14)",
+      "profile": "default release; opt-level=3; no RUSTFLAGS added",
+      "cargo_build_jobs": 2,
+      "binary_sha256": "4137b14657e7016e5b547f0782436ad4eac9ca69285824d3322b6a410fa57978",
+      "binary_bytes": 487048,
+      "harness_manifest_sha256": "472340b3002afdd9ee4d08cc9329584847134ecf61001091c6aea221912c956c",
+      "harness_lock_sha256": "621078f5a423076fc568e94f2d0d88af115717fce48bf07dc4dc3e687f6e7932",
+      "source_manifest_sha256": "0b1cae26993a8a16772edfbfdb50316566c7754610952ecb20368273e4656f27",
+      "run_exit": 0,
+      "observations": [
+        {
+          "length": 3,
+          "repetitions": 256,
+          "length_errors": 256,
+          "progress_callbacks": 0,
+          "input_allocation_wall_ns": 130,
+          "cache_setup_wall_ns": 350,
+          "calls_cpu_ns": 66199,
+          "calls_wall_ns": 67149,
+          "allocation_and_cache_setup_in_calls_timing": false,
+          "clock_overhead_retained": true
+        },
+        {
+          "length": 49187,
+          "repetitions": 256,
+          "length_errors": 256,
+          "progress_callbacks": 0,
+          "input_allocation_wall_ns": 15172,
+          "cache_setup_wall_ns": 50,
+          "calls_cpu_ns": 7667249,
+          "calls_wall_ns": 7674569,
+          "allocation_and_cache_setup_in_calls_timing": false,
+          "clock_overhead_retained": true
+        },
+        {
+          "length": 1048576,
+          "repetitions": 256,
+          "length_errors": 256,
+          "progress_callbacks": 0,
+          "input_allocation_wall_ns": 324612,
+          "cache_setup_wall_ns": 330,
+          "calls_cpu_ns": 157524411,
+          "calls_wall_ns": 157697200,
+          "allocation_and_cache_setup_in_calls_timing": false,
+          "clock_overhead_retained": true
+        },
+        {
+          "length": 16777216,
+          "repetitions": 256,
+          "length_errors": 256,
+          "progress_callbacks": 0,
+          "input_allocation_wall_ns": 6415563,
+          "cache_setup_wall_ns": 2303,
+          "calls_cpu_ns": 2580625182,
+          "calls_wall_ns": 2596708227,
+          "allocation_and_cache_setup_in_calls_timing": false,
+          "clock_overhead_retained": true
+        }
+      ]
+    },
+    {
+      "label": "patched",
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/workspace/scratch/295b0f1bca6b/pn1-w1-harness/Cargo.toml",
+        "--example",
+        "length_cost"
+      ],
+      "build_exit": 0,
+      "build_elapsed_seconds": 0.05832695960998535,
+      "compiler": "rustc 1.95.0 (59807616e 2026-04-14)",
+      "profile": "default release; opt-level=3; no RUSTFLAGS added",
+      "cargo_build_jobs": 2,
+      "binary_sha256": "4137b14657e7016e5b547f0782436ad4eac9ca69285824d3322b6a410fa57978",
+      "binary_bytes": 487048,
+      "harness_manifest_sha256": "472340b3002afdd9ee4d08cc9329584847134ecf61001091c6aea221912c956c",
+      "harness_lock_sha256": "621078f5a423076fc568e94f2d0d88af115717fce48bf07dc4dc3e687f6e7932",
+      "source_manifest_sha256": "e999d277ab78d4a2466489762fa4447b0c3b0f37b1b82f96bd05b43f01042bc0",
+      "run_exit": 0,
+      "observations": [
+        {
+          "length": 3,
+          "repetitions": 256,
+          "length_errors": 256,
+          "progress_callbacks": 0,
+          "input_allocation_wall_ns": 141,
+          "cache_setup_wall_ns": 340,
+          "calls_cpu_ns": 60490,
+          "calls_wall_ns": 61311,
+          "allocation_and_cache_setup_in_calls_timing": false,
+          "clock_overhead_retained": true
+        },
+        {
+          "length": 49187,
+          "repetitions": 256,
+          "length_errors": 256,
+          "progress_callbacks": 0,
+          "input_allocation_wall_ns": 15233,
+          "cache_setup_wall_ns": 70,
+          "calls_cpu_ns": 7264461,
+          "calls_wall_ns": 8061914,
+          "allocation_and_cache_setup_in_calls_timing": false,
+          "clock_overhead_retained": true
+        },
+        {
+          "length": 1048576,
+          "repetitions": 256,
+          "length_errors": 256,
+          "progress_callbacks": 0,
+          "input_allocation_wall_ns": 337801,
+          "cache_setup_wall_ns": 320,
+          "calls_cpu_ns": 154333738,
+          "calls_wall_ns": 154875805,
+          "allocation_and_cache_setup_in_calls_timing": false,
+          "clock_overhead_retained": true
+        },
+        {
+          "length": 16777216,
+          "repetitions": 256,
+          "length_errors": 256,
+          "progress_callbacks": 0,
+          "input_allocation_wall_ns": 5269607,
+          "cache_setup_wall_ns": 1513,
+          "calls_cpu_ns": 2469905052,
+          "calls_wall_ns": 2485212166,
+          "allocation_and_cache_setup_in_calls_timing": false,
+          "clock_overhead_retained": true
+        }
+      ]
+    }
+  ],
+  "observation_qualification": "INVALID_SHARED_TARGET_REUSE",
+  "reason": "Same package identity and copied mtimes reused baseline artifact for patched build; binary SHA-256 identical. No patched cost inference permitted."
+}

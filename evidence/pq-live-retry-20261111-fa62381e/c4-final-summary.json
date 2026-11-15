@@ -1,0 +1,1306 @@
+{
+  "all_requested_gates_passed": false,
+  "build_owner_timeout_seconds": 3600,
+  "cache_policy": "existing completed S3 target; actual Cargo fresh field unmodified",
+  "clippy": {
+    "passed": true,
+    "status": "passed"
+  },
+  "elapsed_ns": 1802611746319,
+  "expected_tree": "15fd9e7a2f4121dce861e9e96b78d8196d3892fb",
+  "final_guards": {
+    "completed_command_evidence_unchanged": true,
+    "completed_source_receipts_revalidated": 23,
+    "historical_s3_evidence_unchanged": true,
+    "physical_source_unchanged": true,
+    "provider_bytes_unchanged": true,
+    "source_and_external_helpers_unchanged": true
+  },
+  "finished_utc": "2026-11-11T17:50:45.361653+00:00",
+  "fresh_target_claimed": false,
+  "native": {
+    "actual_cargo_fresh": false,
+    "artifact_identity": {
+      "bytes": 18534,
+      "sha256": "c7c5573c32ce849881076c443066d0691307f3ebdcd8ab038e9ad0c79a82b0dc"
+    },
+    "batch_executed": true,
+    "batch_summary_identity": {
+      "bytes": 8427,
+      "sha256": "8346f4629b38f08b46240ec40ecf15b2a25f9d6e0afa4a5ba5fb7fecb25de7cb"
+    },
+    "fresh_target_claimed": false,
+    "inventory_is_not_an_additional_named_control": true,
+    "named_tests_passed": 63,
+    "named_tests_required": 64,
+    "passed": false,
+    "status": "failed"
+  },
+  "observations": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "label": "preflight",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "preflight",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 20921185877,
+        "executed": true,
+        "exit_code": 0,
+        "log": "preflight.log",
+        "process_exit_code": 0,
+        "timed_out": false
+      },
+      "receipt_identity": {
+        "bytes": 2212,
+        "sha256": "34fadecfb6cd465d4e5ab6e681802002d65624d96adb29f635acc38af25c117c"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/preflight.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "rustc",
+        "+1.95.0",
+        "-Vv"
+      ],
+      "exit_code": 0,
+      "label": "compiler",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "compiler",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "rustc",
+          "+1.95.0",
+          "-Vv"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 12278619760,
+        "executed": true,
+        "exit_code": 0,
+        "log": "compiler.log",
+        "process_exit_code": 0,
+        "timed_out": false
+      },
+      "receipt_identity": {
+        "bytes": 2202,
+        "sha256": "1d19758f84e8eba914e74c3691727fc9070ba04e6a85e4298ff9f2d7a5dbf6d4"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/compiler.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "label": "inventory",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "inventory",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "python3",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 11972550710,
+        "executed": true,
+        "exit_code": 0,
+        "log": "inventory.log",
+        "log_identity": {
+          "bytes": 129,
+          "sha256": "e7c816ef10baa2c0cc303c97880f914362bb6295c44d828e0ef0b825c6a0fa89"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2248,
+        "sha256": "eb8a6187f9d3cf2302feb4f68507a28ecf362af4861bfbefdd558957903b1474"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/inventory.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "label": "repository",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "repository",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "python3",
+          "scripts/ci/check_repository.py"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 39009072661,
+        "executed": true,
+        "exit_code": 0,
+        "log": "repository.log",
+        "log_identity": {
+          "bytes": 130,
+          "sha256": "fb42894ea9f510594b0ba753005efd820b64164347414532b80dfa50fca21dcd"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2218,
+        "sha256": "3050729805c210c665f0e358f191c41d2380ae2f894ead5a01c0c692edac98ac"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/repository.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "label": "ci-source",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "ci-source",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "python3",
+          "scripts/ci/check_ci_contract.py"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 12415852920,
+        "executed": true,
+        "exit_code": 0,
+        "log": "ci-source.log",
+        "log_identity": {
+          "bytes": 129,
+          "sha256": "1c61dfced806a1296d900200bbac00bac17eab8557c97bc994c56d961d71707c"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2218,
+        "sha256": "4c609afb33e020fd5fb3359ed36687caf151b72700f9d4d391e870285e579b9b"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/ci-source.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 1,
+      "label": "corpus-source",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "corpus-source",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "python3",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 12393104462,
+        "executed": true,
+        "exit_code": 1,
+        "log": "corpus-source.log",
+        "log_identity": {
+          "bytes": 130,
+          "sha256": "c8b6b7f6685c3834a4c8ef87f73fc7663d5966c8bd9111e631b69bdca9d1416b"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 1,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2231,
+        "sha256": "fb3340d264a0bea66263c2a23437e6b49a507bd7c20b50abab29b74f2d74d442"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/corpus-source.json",
+      "status": "failed"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/pq_chain_claim_guard.py"
+      ],
+      "exit_code": 0,
+      "label": "claim-source",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "claim-source",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "python3",
+          "scripts/ci/pq_chain_claim_guard.py"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 12488184274,
+        "executed": true,
+        "exit_code": 0,
+        "log": "claim-source.log",
+        "log_identity": {
+          "bytes": 132,
+          "sha256": "83df77f7bb34bc0f9207c01c9af82a105e4f78994bdc6c73bfe9c9afddaa891a"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2225,
+        "sha256": "88501d4b4d5eabc937b8fa5ca353cd8b28199684a215d2506b678aabeb97c513"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/claim-source.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_ci_source_integrity.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "source-integrity-controls",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "source-integrity-controls",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/ci",
+          "-p",
+          "test_ci_source_integrity.py",
+          "-v"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 17462607234,
+        "executed": true,
+        "exit_code": 0,
+        "log": "source-integrity-controls.log",
+        "log_identity": {
+          "bytes": 145,
+          "sha256": "eed1ad565ab5366bbe8899e13656c1352dfd328acd53235e3d9b10d815620045"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2321,
+        "sha256": "497304a8dadaa9433b5d24e3883b28359f80dc36f576bf70d6ead3eab4ad90d8"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/source-integrity-controls.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_from_zero_host_ci.py"
+      ],
+      "exit_code": 0,
+      "label": "from-zero-host-controls",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "from-zero-host-controls",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "python3",
+          "scripts/ci/test_from_zero_host_ci.py"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 14647104439,
+        "executed": true,
+        "exit_code": 0,
+        "log": "from-zero-host-controls.log",
+        "log_identity": {
+          "bytes": 143,
+          "sha256": "8db6c94c404ccb1400b5a025e60f083a37bbe52efb5ce424d89215a52b92ebe2"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2237,
+        "sha256": "6b8918c84083013dfb30595dbabff6b5cd4f6a26381aec2394372e62e4c465ed"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/from-zero-host-controls.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "label": "workspace-metadata-default",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "workspace-metadata-default",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "cargo",
+          "+1.95.0",
+          "metadata",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--format-version",
+          "1"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 12477258476,
+        "executed": true,
+        "exit_code": 0,
+        "log": "workspace-metadata-default.log",
+        "log_identity": {
+          "bytes": 146,
+          "sha256": "5e33054a918611bb5a70e277c8fbb4add21a82f6bf09573c0a0dd829a50f5083"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2331,
+        "sha256": "18a95c07629f4a0f6e8833d4f67f4b78971a04bd3931a75c203eaed4047d4c01"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/workspace-metadata-default.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1",
+        "--all-features"
+      ],
+      "exit_code": 0,
+      "label": "workspace-metadata-all-features",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "workspace-metadata-all-features",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "cargo",
+          "+1.95.0",
+          "metadata",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--format-version",
+          "1",
+          "--all-features"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 12385182943,
+        "executed": true,
+        "exit_code": 0,
+        "log": "workspace-metadata-all-features.log",
+        "log_identity": {
+          "bytes": 151,
+          "sha256": "59364f6266513b101b0db0083d0bbd29389ed41407e876e8309cadcfa60752eb"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2358,
+        "sha256": "15a81bb3680fdd4e82ca4be65d77fa4fda8c770bb31c1cb0ac212b5ecf938a4a"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/workspace-metadata-all-features.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "label": "fuzz-metadata-default",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "fuzz-metadata-default",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "cargo",
+          "+1.95.0",
+          "metadata",
+          "--locked",
+          "--manifest-path",
+          "tests/fuzz/Cargo.toml",
+          "--format-version",
+          "1"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 12074096556,
+        "executed": true,
+        "exit_code": 0,
+        "log": "fuzz-metadata-default.log",
+        "log_identity": {
+          "bytes": 141,
+          "sha256": "76fd5d3272063e2f9239fd59d858f5e4bd3d096024faba0244934f53f37da99f"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2324,
+        "sha256": "70b32faf60a762c27e920969cecc6dd14035bc5a1dc79a3c55204d1b9a1c9249"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/fuzz-metadata-default.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--format-version",
+        "1",
+        "--all-features"
+      ],
+      "exit_code": 0,
+      "label": "fuzz-metadata-all-features",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "fuzz-metadata-all-features",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "cargo",
+          "+1.95.0",
+          "metadata",
+          "--locked",
+          "--manifest-path",
+          "tests/fuzz/Cargo.toml",
+          "--format-version",
+          "1",
+          "--all-features"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 11801157335,
+        "executed": true,
+        "exit_code": 0,
+        "log": "fuzz-metadata-all-features.log",
+        "log_identity": {
+          "bytes": 146,
+          "sha256": "02d97a83dc2b8ca9163b1db237d7acbec54cc52919e2bb5e032b30350444aff5"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2351,
+        "sha256": "066c0d9405c3d6c50a427bf0371d1c3dd2784cf52d33112f4b40d7e2dc117cba"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/fuzz-metadata-all-features.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "label": "workspace-fmt",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "workspace-fmt",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "cargo",
+          "+1.95.0",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 33554709670,
+        "executed": true,
+        "exit_code": 0,
+        "log": "workspace-fmt.log",
+        "log_identity": {
+          "bytes": 133,
+          "sha256": "ed63d5f85799ac91f6c2f77ec2b48bab65ed67941aefc83c5ede4bf228118bfa"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2297,
+        "sha256": "52c964304eb95ddc81ee0176a9413cd24a10b47f7f0ec9323912cca02bc25461"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/workspace-fmt.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "label": "fuzz-fmt",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "fuzz-fmt",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "cargo",
+          "+1.95.0",
+          "fmt",
+          "--manifest-path",
+          "tests/fuzz/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 33635500706,
+        "executed": true,
+        "exit_code": 0,
+        "log": "fuzz-fmt.log",
+        "log_identity": {
+          "bytes": 128,
+          "sha256": "ed2a0f5b42d8e3cbba2777e35c9a4f60ce0632b0d17b543c2384f9718701e730"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2290,
+        "sha256": "c88cf15fac1b535706eb84ee90d146770ecfb16e69e319641b2f26580a9d19d3"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/fuzz-fmt.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_root_dependency_register.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "root-register-controls",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "root-register-controls",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "python3",
+          "scripts/ci/test_pq_root_dependency_register.py",
+          "-v"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 12316672548,
+        "executed": true,
+        "exit_code": 0,
+        "log": "root-register-controls.log",
+        "log_identity": {
+          "bytes": 142,
+          "sha256": "81ce82ad7feef3b18cd196cf4a964fa1ea4ce06f352c52c36a963020afd24a8f"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2257,
+        "sha256": "cbaa2e9734550be75ae407bdb93a73a597f8c8e4ac8ac21dce854787ad646b58"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/root-register-controls.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/pq_root_dependency_register.py",
+        "--root",
+        "."
+      ],
+      "exit_code": 0,
+      "label": "root-register-reproduce",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "root-register-reproduce",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "python3",
+          "scripts/ci/pq_root_dependency_register.py",
+          "--root",
+          "."
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 12870196057,
+        "executed": true,
+        "exit_code": 0,
+        "log": "root-register-reproduce.log",
+        "log_identity": {
+          "bytes": 143,
+          "sha256": "140d8faf41fb621d8168fdabb415e3f7a70f8e463bfbfb3adc5c505b7fb6ab32"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2266,
+        "sha256": "a6318712f1764cc83e5d7326fa9858c2b550e58e71f70903391d8e597b42f01d"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/root-register-reproduce.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "cmp",
+        "--",
+        "evidence/pq-live-retry-20261111-fa62381e/root-dependency-register-current-report.json",
+        "/tmp/chain-pq-fa62381e-c4-final-validation/commands/root-register-reproduce.log"
+      ],
+      "exit_code": 0,
+      "label": "root-register-report-cmp",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "root-register-report-cmp",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "cmp",
+          "--",
+          "evidence/pq-live-retry-20261111-fa62381e/root-dependency-register-current-report.json",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands/root-register-reproduce.log"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 12007102910,
+        "executed": true,
+        "exit_code": 0,
+        "log": "root-register-report-cmp.log",
+        "log_identity": {
+          "bytes": 144,
+          "sha256": "3963c6496878c2c0fc1d48a230e2755324b61d114e3edc9a61dc190778e71bff"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2378,
+        "sha256": "288fd5096928c935290d8d017bc050ddae8cb10b55f33a2dabf8d9a0332c5c8f"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/root-register-report-cmp.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "label": "corpus-controls",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "corpus-controls",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "python3",
+          "scripts/ci/test_pq_research_integration.py"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 339110075652,
+        "executed": true,
+        "exit_code": 0,
+        "log": "corpus-controls.log",
+        "log_identity": {
+          "bytes": 135,
+          "sha256": "c5e6d26c5862cc977506af088e9454307be265d710722a7f907de117c3fc1b33"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2236,
+        "sha256": "586dfce4f7af5c2a73ad76cf3e3d779c12a9f231a7b6a0083ffc6d565a056728"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/corpus-controls.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_chain_claim_guard.py"
+      ],
+      "exit_code": 0,
+      "label": "claim-controls",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "claim-controls",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "python3",
+          "scripts/ci/test_pq_chain_claim_guard.py"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 13551199480,
+        "executed": true,
+        "exit_code": 0,
+        "log": "claim-controls.log",
+        "log_identity": {
+          "bytes": 134,
+          "sha256": "7243b09b68983b70396e781e3cbdf0abcd1b9df5321460bc63f7f8d891077be2"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2231,
+        "sha256": "54824adbde4f0e396819b46823197eebb3786e4569d632469f8d20ec71069b38"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/claim-controls.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "exit_code": 0,
+      "label": "node-lib-build",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "node-lib-build",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--all-features",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 642053183714,
+        "executed": true,
+        "exit_code": 0,
+        "log": "node-lib-build.log",
+        "process_exit_code": 0,
+        "timed_out": false
+      },
+      "receipt_identity": {
+        "bytes": 2394,
+        "sha256": "d68e79edd0c7eb1917ea4bae6f40c79b37bf1418827ee144374739e7f4ff3874"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/node-lib-build.json",
+      "status": "passed"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/chain-pq-fa62381e-validation-plan-batched64-barrier-v2.py",
+        "_native_batch",
+        "/tmp/chain-pq-fa62381e",
+        "/tmp/chain-pq-fa62381e-c4-final-validation/native-artifact.json",
+        "c7c5573c32ce849881076c443066d0691307f3ebdcd8ab038e9ad0c79a82b0dc",
+        "/tmp/chain-pq-fa62381e-c4-final-validation/batch",
+        "effa69e49141bc020bfd0b9861218a7da1729d4811ec7c6003a52c72513ff60b",
+        "900"
+      ],
+      "exit_code": 1,
+      "label": "focused-native-batch",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--tested",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--label",
+          "focused-native-batch",
+          "--output",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/commands",
+          "--",
+          "/usr/bin/python3",
+          "/tmp/chain-pq-fa62381e-validation-plan-batched64-barrier-v2.py",
+          "_native_batch",
+          "/tmp/chain-pq-fa62381e",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/native-artifact.json",
+          "c7c5573c32ce849881076c443066d0691307f3ebdcd8ab038e9ad0c79a82b0dc",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/batch",
+          "effa69e49141bc020bfd0b9861218a7da1729d4811ec7c6003a52c72513ff60b",
+          "900"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 403967448299,
+        "executed": true,
+        "exit_code": 1,
+        "log": "focused-native-batch.log",
+        "log_identity": {
+          "bytes": 137,
+          "sha256": "ef919da7e1a558a6cbe90ad9724ffd356082c23ff6d3adaf98acaf2f6bdcf6cf"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 1,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2601,
+        "sha256": "f249c8705225b16cfbdca418fa3dba028367ac290fecd4c6dc2b96c5e810855a"
+      },
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/commands/focused-native-batch.json",
+      "status": "failed"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/chain-pq-fa62381e-native-launcher.py",
+        "--mode",
+        "clippy",
+        "--source",
+        "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+        "--out",
+        "/tmp/chain-pq-fa62381e-c4-final-validation/strict-clippy",
+        "--target",
+        "/tmp/chain-pq-fa62381e-s3-positive-target"
+      ],
+      "exit_code": 0,
+      "label": "strict-clippy",
+      "launch_identity": {
+        "bytes": 2595,
+        "sha256": "3e458c65413b7eae90354e180a4f1453ef47396f196c3f6bdac5b248e83a6e85"
+      },
+      "launch_record": "/tmp/chain-pq-fa62381e-c4-final-validation/strict-clippy-launch/launch.json",
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/chain-pq-fa62381e-native-launcher.py",
+          "--mode",
+          "clippy",
+          "--source",
+          "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+          "--out",
+          "/tmp/chain-pq-fa62381e-c4-final-validation/strict-clippy",
+          "--target",
+          "/tmp/chain-pq-fa62381e-s3-positive-target"
+        ],
+        "cwd": "/tmp/chain-pq-fa62381e",
+        "elapsed_ns": 75346189561,
+        "executed": true,
+        "exit_code": 0,
+        "log": "strict-clippy-launcher.log",
+        "log_identity": {
+          "bytes": 441,
+          "sha256": "1f71f99e80ffadbb2173c5fe1de1404f2261355633a1b82bdf5738d0b7872a4b"
+        },
+        "owns_process_group": false,
+        "process_exit_code": 0,
+        "timed_out": false,
+        "timeout_scope": "durable job; original child owners retain their own caps"
+      },
+      "receipt_identity": {
+        "bytes": 2449,
+        "sha256": "49b712d9468eee3608b68fe9aa5ce32c3cd7ac91a1992d22ddbc0269b5a4f37e"
+      },
+      "recorded_command": [
+        "timeout",
+        "--signal=TERM",
+        "--kill-after=10",
+        "1800",
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "source_receipt": "/tmp/chain-pq-fa62381e-c4-final-validation/strict-clippy/strict-clippy.json",
+      "status": "passed"
+    }
+  ],
+  "original_business_budgets_changed": false,
+  "outer_durable_timeout_seconds": 7200,
+  "per_native_invocation_timeout_seconds": 900,
+  "previous_positive_source": "454ae116159867ff6cddd91b964523df7f7e16f0",
+  "production_activation": false,
+  "runner_sha256": "dd07c82c8ff28c6d4dfca49acb919d5009ea939ad81eb9a014cd9b0368545cad",
+  "schema": "trnm-committed-c4-original-gates-observation-v1",
+  "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+  "started_utc": "2026-11-11T17:20:42.749676+00:00",
+  "static_commands_individual_timeout_not_invented": true,
+  "static_gates_completed": true,
+  "status": "failed",
+  "strict_clippy_timeout_seconds": 1800,
+  "whole_chain_quantum_security_qualified": false
+}

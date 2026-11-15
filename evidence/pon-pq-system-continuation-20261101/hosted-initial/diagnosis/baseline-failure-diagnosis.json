@@ -1,0 +1,390 @@
+{
+  "schema": "pq-system-baseline-failure-diagnosis-v1",
+  "current_run": 41333398704,
+  "candidate": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+  "external_evidence": {
+    "job_id": 124928046649,
+    "first_failure": "ValueError: durable backend variants",
+    "file": "scripts/ci/check_public_readiness_evidence.py",
+    "line": 301,
+    "effect": "51 tests ended with 20 errors and 92 subtest failures",
+    "classification": "new witness StateBackend/NativeOwners source contract not synchronized; fixed in isolated two-file patch; 55 local Python controls pass; does not qualify PQ or widen dump scope"
+  },
+  "runtime_merge": {
+    "job_id": 124928046716,
+    "test": "pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks",
+    "first_failure": "assertion failed: arithmetic.0.try_lock().is_ok()",
+    "line": 331,
+    "secondary_failure": "WORKER_PANIC instead of Cancelled(cancel-original-checkpoint)",
+    "passed": 91,
+    "failed": 1,
+    "ignored": 6,
+    "source": "exact unmodified upstream 8a77/64cb file",
+    "diagnosis": "concurrent worker callback probes can contend with their own temporary MutexGuard; move existing trace serialization ahead of probe; source diagnosis, not yet fixed/tested by this report",
+    "node_suite_reached": false
+  },
+  "from_zero": [
+    {
+      "lane": "protocol-head",
+      "job_id": 124928046680,
+      "artifact_id": 13094770803,
+      "artifact_sha256": "66ed4c2cf8e8e5f701d81115c83e74f2d024a7031060998c23df9e2d3b17344d",
+      "source_before": {
+        "commit": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+        "tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+          "tested_tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+          "candidate": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 6808,
+          "tracked_bytes": 781547101,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "3a97f1eeb422577e83a9c2c1e9eb34a896b73fbd8582a1965d73aa35bfbeff78"
+      },
+      "source_after": {
+        "commit": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+        "tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+          "tested_tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+          "candidate": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 6808,
+          "tracked_bytes": 781547101,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "3a97f1eeb422577e83a9c2c1e9eb34a896b73fbd8582a1965d73aa35bfbeff78"
+      },
+      "all_named_tests_passed": true,
+      "native_selectors": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": true,
+          "exit_code": 0
+        }
+      ],
+      "reader_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "passed": false,
+      "confirmation_phases": [
+        {
+          "mode": "attack-free-baseline",
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 3401745147,
+          "finite_business_target_met": true,
+          "client_confirmed_before_original_window_end": true
+        },
+        {
+          "mode": "from-zero-pressure",
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "finite_business_target_met": false,
+          "client_confirmed_before_original_window_end": false
+        }
+      ]
+    },
+    {
+      "lane": "cost-x64",
+      "job_id": 124928046732,
+      "artifact_id": 13094680161,
+      "artifact_sha256": "92de57266c7d31b38cca92bd68a4f2c2f0632a1d1b8e70a7be6b2c1852765423",
+      "source_before": {
+        "commit": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+        "tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+          "tested_tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+          "candidate": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 6808,
+          "tracked_bytes": 781547101,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "3a97f1eeb422577e83a9c2c1e9eb34a896b73fbd8582a1965d73aa35bfbeff78"
+      },
+      "source_after": {
+        "commit": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+        "tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+          "tested_tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+          "candidate": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 6808,
+          "tracked_bytes": 781547101,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "3a97f1eeb422577e83a9c2c1e9eb34a896b73fbd8582a1965d73aa35bfbeff78"
+      },
+      "all_named_tests_passed": true,
+      "native_selectors": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": true,
+          "exit_code": 0
+        }
+      ],
+      "reader_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "passed": false,
+      "confirmation_phases": [
+        {
+          "mode": "attack-free-baseline",
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 2395907559,
+          "finite_business_target_met": true,
+          "client_confirmed_before_original_window_end": true
+        },
+        {
+          "mode": "from-zero-pressure",
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "finite_business_target_met": false,
+          "client_confirmed_before_original_window_end": false
+        }
+      ]
+    },
+    {
+      "lane": "cost-arm",
+      "job_id": 124928046633,
+      "artifact_id": 13094640417,
+      "artifact_sha256": "aaa6ae19eb4f6a0740d53bab0542f5b820407037ad0f76f056def6c2f79186fa",
+      "source_before": {
+        "commit": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+        "tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+          "tested_tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+          "candidate": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 6808,
+          "tracked_bytes": 781547101,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "3a97f1eeb422577e83a9c2c1e9eb34a896b73fbd8582a1965d73aa35bfbeff78"
+      },
+      "source_after": {
+        "commit": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+        "tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+          "tested_tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+          "candidate": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 6808,
+          "tracked_bytes": 781547101,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "3a97f1eeb422577e83a9c2c1e9eb34a896b73fbd8582a1965d73aa35bfbeff78"
+      },
+      "all_named_tests_passed": true,
+      "native_selectors": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": true,
+          "exit_code": 0
+        }
+      ],
+      "reader_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "passed": false,
+      "confirmation_phases": [
+        {
+          "mode": "attack-free-baseline",
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 2194912207,
+          "finite_business_target_met": true,
+          "client_confirmed_before_original_window_end": true
+        },
+        {
+          "mode": "from-zero-pressure",
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "finite_business_target_met": false,
+          "client_confirmed_before_original_window_end": false
+        }
+      ]
+    },
+    {
+      "lane": "pre-witness-protocol",
+      "job_id": 124810273570,
+      "artifact_id": 13079060614,
+      "artifact_sha256": "dbf8ccc15c31b1adb0fa6bb2693f2e3dc4c31c08468434f7a5aa0f5def9d492c",
+      "source_before": {
+        "commit": "b97f63254df260243186f14c6e177ab96fffdcd8",
+        "tree": "a61aa2029758386a6278bc6d58debc0f590e6d15",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "b97f63254df260243186f14c6e177ab96fffdcd8",
+          "tested_tree": "a61aa2029758386a6278bc6d58debc0f590e6d15",
+          "candidate": "b97f63254df260243186f14c6e177ab96fffdcd8",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 6771,
+          "tracked_bytes": 781023099,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "3a97f1eeb422577e83a9c2c1e9eb34a896b73fbd8582a1965d73aa35bfbeff78"
+      },
+      "source_after": {
+        "commit": "b97f63254df260243186f14c6e177ab96fffdcd8",
+        "tree": "a61aa2029758386a6278bc6d58debc0f590e6d15",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "b97f63254df260243186f14c6e177ab96fffdcd8",
+          "tested_tree": "a61aa2029758386a6278bc6d58debc0f590e6d15",
+          "candidate": "b97f63254df260243186f14c6e177ab96fffdcd8",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 6771,
+          "tracked_bytes": 781023099,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "3a97f1eeb422577e83a9c2c1e9eb34a896b73fbd8582a1965d73aa35bfbeff78"
+      },
+      "all_named_tests_passed": true,
+      "native_selectors": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": true,
+          "exit_code": 0
+        }
+      ],
+      "reader_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "passed": false,
+      "confirmation_phases": [
+        {
+          "mode": "attack-free-baseline",
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 2897804531,
+          "finite_business_target_met": true,
+          "client_confirmed_before_original_window_end": true
+        },
+        {
+          "mode": "from-zero-pressure",
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "finite_business_target_met": false,
+          "client_confirmed_before_original_window_end": false
+        }
+      ]
+    }
+  ],
+  "from_zero_classification": "known earlier b97 business-gate failure reproduced at d2; direct 64cb parent lane cancelled, so no claim of zero new performance effect",
+  "scope": "Evidence diagnosis only; no new native builds or bypassed acceptance gates"
+}

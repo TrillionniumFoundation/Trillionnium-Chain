@@ -1,0 +1,57 @@
+{
+  "backend_exported": true,
+  "build_directory": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S",
+  "cli_executable": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/bin/openssl",
+  "cli_sha256": "f98be2651b5c922e6f51cefa7d71389df3b3d87eae543de1be4fbbb34685980f",
+  "cli_version_output": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+  "elapsed_wall_seconds": 346,
+  "exit_code": 0,
+  "github_actions_reported": false,
+  "independent_cryptographic_implementation_claim": false,
+  "install_prefix": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install",
+  "last_stage": "complete",
+  "ml_dsa_65_sign_verify_and_wrong_message_rejection": true,
+  "native_backend_inputs": [
+    {
+      "bytes": 8985944,
+      "path": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/bin/openssl",
+      "sha256": "f98be2651b5c922e6f51cefa7d71389df3b3d87eae543de1be4fbbb34685980f"
+    },
+    {
+      "bytes": 3449,
+      "path": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/include/openssl/opensslv.h",
+      "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+    },
+    {
+      "bytes": 4729,
+      "path": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/include/openssl/configuration.h",
+      "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+    },
+    {
+      "bytes": 12442344,
+      "path": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/lib/libcrypto.a",
+      "sha256": "8bc23f678b85015007fe5259b1463df1b1c908373d4b364117a78c07788ec154"
+    },
+    {
+      "bytes": 2149026,
+      "path": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/lib/libssl.a",
+      "sha256": "d7cddef12614789118f792fb4b07748c9a413d241895c1501fe12e3998658d90"
+    }
+  ],
+  "native_rust_pq_tests_run_by_preparation": false,
+  "openssl_conf": "/dev/null",
+  "openssl_modules": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/lib/ossl-modules",
+  "preparation_script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+  "production_activation": false,
+  "result": "PREPARED_AND_SMOKE_VERIFIED",
+  "runner_environment_reported": null,
+  "schema": "trnm-ci-pq-provider-v3",
+  "source_archive_sha256_expected": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+  "source_digest_verified": true,
+  "source_transport": "download",
+  "source_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+  "static_build": true,
+  "upstream_full_tests_run": false,
+  "version": "3.5.9",
+  "whole_chain_quantum_security_qualified": false
+}

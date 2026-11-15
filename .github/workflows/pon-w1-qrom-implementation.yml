@@ -1,0 +1,1181 @@
+name: PoN W1 QROM implementation observations
+on:
+  pull_request:
+    paths:
+      - formal/pon-nakamoto-v1/**
+      - trillionnium/**
+      - scripts/w1_*.py
+      - scripts/ci/**
+      - scripts/project-preflight.sh
+      - evidence/pon-w1-*/**
+      - config/**
+      - .cargo/**
+      - rust-toolchain.toml
+      - AGENTS.md
+      - PROJECT_ID
+      - PROJECT_BOUNDARY.json
+      - .github/workflows/pon-w1-qrom-implementation.yml
+permissions:
+  contents: read
+concurrency:
+  group: pon-w1-qrom-implementation-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+env:
+  CI: "true"
+  PYTHONDONTWRITEBYTECODE: "1"
+jobs:
+  qrom-historical-implementation:
+    name: W1 QROM historical V1 (fixed 0c830e0, x64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      # V1 pins historical bytes. Its positive replay must execute that source;
+      # the current candidate and its V1 refusal are required in the companion job.
+      SOURCE_KIND: head
+      EXPECTED_SOURCE: 0c830e0be8939ce80c8443c9ad68021b87343a00
+      EXPECTED_HEAD: 0c830e0be8939ce80c8443c9ad68021b87343a00
+      EXPECTED_BASE: 1e4bffc371bcdc53aabc621b6b6cb2485ab36f53
+    steps:
+      - name: Reserve source-specific observations
+        id: observations
+        shell: bash
+        run: |
+          set -euo pipefail
+          w1_qrom_out="$RUNNER_TEMP/pon-w1-qrom-historical-v1-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$w1_qrom_out"
+          printf 'W1_QROM_OUT=%s\n' "$w1_qrom_out" >> "$GITHUB_ENV"
+          printf 'Fixed historical source 0c830e0be8939ce80c8443c9ad68021b87343a00 and original 81-name V1 roster only. This result does not validate the current candidate. Current V2 mapping and V1-on-current source drift are separate required jobs. No new proof verification, QROM instantiation, quantum-work qualification or consensus admission is established.\n' > "$w1_qrom_out/SCOPE.txt"
+          python3 --version > "$w1_qrom_out/python-version.txt" 2>&1
+      - name: Checkout immutable historical V1 source without persistent credentials
+        id: checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify ordered source identity before execution
+        id: source_before
+        if: always() && steps.observations.outcome == 'success' && steps.checkout.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_QROM_OUT/source-before.json" 2>&1 | tee "$W1_QROM_OUT/source-before.log"
+      - name: Audit the project boundary
+        id: preflight
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$W1_QROM_OUT/preflight.log"
+      - name: Execute every fixed named Python control exactly once
+        id: named_tests
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - "$W1_QROM_OUT" <<'PY' 2>&1 | tee "$W1_QROM_OUT/named-tests.log"
+          from collections import Counter
+          import hashlib
+          import json
+          from pathlib import Path
+          import re
+          import sys
+          import traceback
+          import unittest
+
+          out = Path(sys.argv[1])
+          roster_path = Path('config/pon/w1-qrom-required-tests-v1.json')
+          expected_digest = 'ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8'
+          required_modules = (
+              'test_w1_control_tree_audit',
+              'test_w1_qrom_conditional_budget',
+              'test_w1_qrom_implementation_audit',
+              'test_w1_fri_transcript_audit',
+              'test_w1_qrom_workflow_gate',
+          )
+          def strict_object(pairs):
+              result = {}
+              for key, value in pairs:
+                  if key in result:
+                      raise ValueError('duplicate JSON key: ' + key)
+                  result[key] = value
+              return result
+
+          def refuse_constant(value):
+              raise ValueError('nonfinite JSON number: ' + value)
+
+          raw = roster_path.read_bytes()
+          if hashlib.sha256(raw).hexdigest() != expected_digest:
+              raise SystemExit('required-test roster differs from its reviewed workflow pin')
+          manifest = json.loads(raw, object_pairs_hook=strict_object, parse_constant=refuse_constant)
+          false_fields = (
+              'post_quantum_soundness_qualified', 'complete_w1_soundness_qualified',
+              'quantum_work_qualified', 'pq_signature_qualification_inferred',
+              'production_qualified', 'consensus_admission',
+          )
+          if (type(manifest) is not dict
+                  or manifest.get('schema') != 'TRNM-W1-QROM-REQUIRED-TESTS1'
+                  or type(manifest.get('suites')) is not list
+                  or type(manifest.get('expected_tests')) is not int
+                  or manifest['expected_tests'] <= 0
+                  or any(manifest.get(key) is not False for key in false_fields)
+                  or 'unconditional_project_security_bits' not in manifest
+                  or manifest['unconditional_project_security_bits'] is not None):
+              raise SystemExit('required-test roster schema or scope invalid')
+          if tuple(row.get('module') for row in manifest['suites']) != required_modules:
+              raise SystemExit('all fixed module suites must be present in the original order')
+          total_required = []
+          for row in manifest['suites']:
+              module, count, names = row['module'], row.get('expected_tests'), row.get('tests')
+              if (set(row) != {'module', 'expected_tests', 'tests'}
+                      or type(count) is not int or count <= 0 or type(names) is not list
+                      or len(names) != count
+                      or any(type(name) is not str or re.fullmatch(
+                          re.escape(module) + r'\.[A-Za-z_][A-Za-z0-9_]*\.test_[A-Za-z0-9_]+', name) is None
+                          for name in names)
+                      or len(set(names)) != count or sorted(names) != names):
+                  raise SystemExit('missing, duplicate, unsorted or invalid required names: ' + module)
+              total_required.extend(names)
+          if (len(total_required) != manifest['expected_tests']
+                  or len(set(total_required)) != len(total_required)):
+              raise SystemExit('required-test total or global uniqueness differs')
+          with (out / 'required-tests.json').open('xb') as stream:
+              stream.write(raw)
+
+          def flatten(suite):
+              for item in suite:
+                  if isinstance(item, unittest.TestSuite):
+                      yield from flatten(item)
+                  else:
+                      yield item
+
+          class ObservedResult(unittest.TextTestResult):
+              def __init__(self, *args, **kwargs):
+                  super().__init__(*args, **kwargs)
+                  self.started_ids = []
+                  self.success_ids = []
+
+              def startTest(self, test):
+                  self.started_ids.append(test.id())
+                  super().startTest(test)
+
+              def addSuccess(self, test):
+                  self.success_ids.append(test.id())
+                  super().addSuccess(test)
+
+          records = []
+          for row in manifest['suites']:
+              module, expected = row['module'], row['tests']
+              record = {'module': module, 'expected_ids': expected, 'passed': False}
+              try:
+                  loader = unittest.TestLoader()
+                  suite = loader.discover('scripts/ci', pattern=module + '.py')
+                  registered = [test.id() for test in flatten(suite)]
+                  record['registered_ids'] = registered
+                  record['loader_errors'] = list(loader.errors)
+                  if loader.errors or Counter(registered) != Counter(expected):
+                      raise ValueError('actual complete module registry differs from the required named roster')
+                  runner = unittest.TextTestRunner(
+                      stream=sys.stderr, verbosity=2, descriptions=False, resultclass=ObservedResult)
+                  result = runner.run(suite)
+                  record.update({
+                      'tests_run': result.testsRun,
+                      'started_ids': result.started_ids,
+                      'success_ids': result.success_ids,
+                      'skipped': [(test.id(), reason) for test, reason in result.skipped],
+                      'failures': [(test.id(), reason) for test, reason in result.failures],
+                      'errors': [(test.id(), reason) for test, reason in result.errors],
+                      'expected_failures': [(test.id(), reason) for test, reason in result.expectedFailures],
+                      'unexpected_successes': [test.id() for test in result.unexpectedSuccesses],
+                  })
+                  record['passed'] = (
+                      result.testsRun == row['expected_tests']
+                      and Counter(result.started_ids) == Counter(expected)
+                      and Counter(result.success_ids) == Counter(expected)
+                      and result.wasSuccessful()
+                      and not result.skipped and not result.expectedFailures
+                      and not result.unexpectedSuccesses and not result.failures and not result.errors)
+              except (Exception, SystemExit) as error:
+                  record['exception'] = str(error)
+                  traceback.print_exc()
+              records.append(record)
+              with (out / (module + '.json')).open('x') as stream:
+                  json.dump(record, stream, indent=2, sort_keys=True, allow_nan=False)
+                  stream.write('\n')
+          report = {
+              'schema': 'TRNM-W1-QROM-NAMED-TEST-OBSERVATION1',
+              'roster_sha256': expected_digest,
+              'required_tests': manifest['expected_tests'],
+              'suites': records,
+              'all_named_controls_passed': len(records) == len(required_modules)
+                  and all(row['passed'] is True for row in records),
+              'post_quantum_soundness_qualified': False,
+              'unconditional_project_security_bits': None,
+          }
+          with (out / 'named-tests.json').open('x') as stream:
+              json.dump(report, stream, indent=2, sort_keys=True, allow_nan=False)
+              stream.write('\n')
+          if report['all_named_controls_passed'] is not True:
+              raise SystemExit('every fixed named test must execute exactly once with success and no skips')
+          print('All fixed named controls executed exactly once; security qualification remains false.')
+          PY
+      - name: Reproduce the fixed implementation and saved-fixture map
+        id: implementation
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/w1_qrom_implementation_audit.py --repo-root "$GITHUB_WORKSPACE" \
+            --output "$W1_QROM_OUT/implementation.json" 2>&1 | tee "$W1_QROM_OUT/implementation.log"
+      - name: Preserve all unknown project quantum inputs
+        id: budget_unknown
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/w1_qrom_conditional_budget.py > "$W1_QROM_OUT/budget-unknown.json" 2> "$W1_QROM_OUT/budget-unknown.log"
+      - name: Reproduce explicitly hypothetical component arithmetic
+        id: budget_hypothetical
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/w1_qrom_conditional_budget.py --example-input \
+            > "$W1_QROM_OUT/budget-hypothetical-input.json" 2> "$W1_QROM_OUT/budget-hypothetical-input.log"
+          python3 scripts/w1_qrom_conditional_budget.py --input "$W1_QROM_OUT/budget-hypothetical-input.json" \
+            > "$W1_QROM_OUT/budget-hypothetical.json" 2> "$W1_QROM_OUT/budget-hypothetical.log"
+      - name: Require every report to retain the unqualified security boundary
+        id: report_scopes
+        if: always() && steps.implementation.outcome == 'success' && steps.budget_unknown.outcome == 'success' && steps.budget_hypothetical.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - "$W1_QROM_OUT" <<'PY' 2>&1 | tee "$W1_QROM_OUT/report-scopes.log"
+          from fractions import Fraction
+          import json
+          from pathlib import Path
+          import re
+          import sys
+
+          out = Path(sys.argv[1])
+          def require(condition, message):
+              if not condition:
+                  raise ValueError(message)
+
+          def strict_object(pairs):
+              result = {}
+              for key, value in pairs:
+                  require(key not in result, 'duplicate JSON key: ' + key)
+                  result[key] = value
+              return result
+
+          def refuse_constant(value):
+              raise ValueError('nonfinite JSON number: ' + value)
+
+          def read(name):
+              return json.loads((out / name).read_bytes(), object_pairs_hook=strict_object,
+                                parse_constant=refuse_constant)
+
+          def fields(value, expected, label):
+              require(type(value) is dict and set(value) == set(expected), label + ': exact fields required')
+
+          def exact_qualification(observed, expected):
+              return (type(observed) is dict and set(observed) == set(expected)
+                      and all(observed[key] is value for key, value in expected.items()))
+
+          implementation = read('implementation.json')
+          expected_implementation = {
+              'post_quantum_soundness_qualified': False,
+              'complete_w1_soundness_qualified': False,
+              'quantum_work_qualified': False,
+              'pq_signature_qualification_inferred': False,
+              'production_qualified': False,
+              'consensus_admission': False,
+              'security_bits_quantum': None,
+          }
+          require(type(implementation) is dict
+                  and implementation.get('schema') == 'TRNM-W1-QROM-IMPLEMENTATION-AUDIT1'
+                  and implementation.get('result') == 'MAPPING_REPRODUCED_SECURITY_HOLD'
+                  and exact_qualification(implementation.get('qualification'), expected_implementation),
+                  'implementation observation widened its qualification scope')
+          expected_budget = {
+              'unconditional_project_security_bits': None,
+              'quantum_security_bits': None,
+              'full_recursive_security_bits': None,
+              'qrom_theorem_instantiated': False,
+              'post_quantum_soundness_qualified': False,
+              'whole_recursive_proof_soundness_qualified': False,
+              'complete_w1_attack_established': False,
+              'production_qualified': False,
+              'consensus_admission': False,
+          }
+          pqsr_fields = {'t', 'k', 'w', 'r_min', 'kappa_rrbr', 'target_error'}
+          merkle_fields = {'t', 'k', 'w_vc', 'sigma', 'ell_max', 'n', 'q_s', 'target_error'}
+          component_names = {
+              'commutativity', 'extraction_correctness',
+              'offline_extractability', 'online_indistinguishability',
+          }
+          pqsr_numbers = (
+              'rrbr_coefficient', 'finite_randomness_addend',
+              'rrbr_addend', 'conditional_upper_expression',
+          )
+          target_fields = {
+              'finite_randomness_addend_exceeds_target',
+              'some_nonnegative_rrbr_bound_can_meet_target_by_this_expression',
+              'kappa_rrbr_required_at_most',
+          }
+          budget_fields = {
+              'schema', 'status', 'source', 'inputs', 'pqsr_component', 'merkle_components',
+              'theorem_11_3_full_bound', 'theorem_10_6_composed_bound',
+              'qualification', 'unresolved_obligations',
+          }
+          def input_fields(inputs):
+              fields(inputs, {'schema', 'input_kind', 'pqsr', 'merkle'}, 'inputs')
+              require(inputs['schema'] == 'TRNM-W1-QROM-CONDITIONAL-INPUT1'
+                      and inputs['input_kind'] == 'hypothetical', 'hypothetical input schema required')
+              fields(inputs['pqsr'], pqsr_fields, 'inputs.pqsr')
+              fields(inputs['merkle'], merkle_fields, 'inputs.merkle')
+
+          def report_shape(report):
+              fields(report, budget_fields, 'component report')
+              require(report['schema'] == 'TRNM-W1-QROM-CONDITIONAL-COMPONENTS1'
+                      and report['status'] == 'hypothetical_component_arithmetic_only'
+                      and report['theorem_11_3_full_bound'] is None
+                      and report['theorem_10_6_composed_bound'] is None
+                      and exact_qualification(report['qualification'], expected_budget),
+                      'conditional component report widened its theorem or project scope')
+              source = report['source']
+              fields(source, {'paper', 'indexed_copy', 'indexed_manuscript_date',
+                             'latest_revision_date_observed_in_metadata',
+                             'latest_revision_full_text_equivalence_verified', 'scope'}, 'source')
+              require(source['indexed_manuscript_date'] == '2026-01-01'
+                      and source['latest_revision_full_text_equivalence_verified'] is False,
+                      'component arithmetic must retain the selected January statement boundary')
+              require(type(report['unresolved_obligations']) is list and report['unresolved_obligations']
+                      and all(type(item) is str and item for item in report['unresolved_obligations']),
+                      'unresolved obligations must remain explicit')
+              input_fields(report['inputs'])
+              pqsr = report['pqsr_component']
+              fields(pqsr, set(pqsr_numbers) | {'theorem', 'conditional_expression_meets_target',
+                     'target_analysis', 'unknown_inputs', 'boundary'}, 'pqsr_component')
+              require(pqsr['theorem'] == '2026-01-01 manuscript, Theorem 6.10, page 46'
+                      and type(pqsr['boundary']) is str and pqsr['boundary'], 'PQSR theorem boundary missing')
+              fields(pqsr['target_analysis'], target_fields, 'PQSR target analysis')
+              merkle = report['merkle_components']
+              fields(merkle, {'theorem', 'conditional_expressions', 'each_expression_meets_component_target',
+                              'unknown_inputs', 'boundary'}, 'merkle_components')
+              require(merkle['theorem'] == '2026-01-01 manuscript, Theorem 8.3, page 53'
+                      and type(merkle['boundary']) is str and merkle['boundary'], 'Merkle theorem boundary missing')
+              fields(merkle['conditional_expressions'], component_names, 'Merkle expressions')
+              fields(merkle['each_expression_meets_component_target'], component_names, 'Merkle comparisons')
+
+          unknown = read('budget-unknown.json')
+          example = read('budget-hypothetical.json')
+          for report in (unknown, example):
+              report_shape(report)
+          for group in ('pqsr', 'merkle'):
+              require(all(value is None for value in unknown['inputs'][group].values()),
+                      'unknown inputs must remain null with the complete field set')
+          unknown_pqsr = unknown['pqsr_component']
+          require(all(unknown_pqsr[key] is None for key in pqsr_numbers)
+                  and unknown_pqsr['conditional_expression_meets_target'] is None
+                  and all(value is None for value in unknown_pqsr['target_analysis'].values())
+                  and unknown_pqsr['unknown_inputs'] == sorted(pqsr_fields),
+                  'every unknown PQSR derived value, comparison and threshold must remain null')
+          unknown_merkle = unknown['merkle_components']
+          require(all(value is None for value in unknown_merkle['conditional_expressions'].values())
+                  and all(value is None for value in unknown_merkle['each_expression_meets_component_target'].values())
+                  and unknown_merkle['unknown_inputs'] == sorted(merkle_fields),
+                  'every unknown named Merkle expression and comparison must remain null')
+
+          # Independent stdlib Fraction arithmetic for the retained hypothetical input.
+          # Do not import or call the calculator to validate its own derived values.
+          def integer_text(value, label, minimum=0, maximum=None):
+              require(type(value) is str and len(value) <= 617
+                      and re.fullmatch(r'0|[1-9][0-9]*', value) is not None,
+                      label + ': canonical exact integer string required')
+              number = int(value)
+              require(number.bit_length() <= 2048 and number >= minimum
+                      and (maximum is None or number <= maximum), label + ': input outside evaluator bounds')
+              return number
+
+          def fraction_value(value, label, reported):
+              if not reported and type(value) is str:
+                  return Fraction(integer_text(value, label))
+              fields(value, {'numerator', 'denominator'}, label)
+              numerator = integer_text(value['numerator'], label + '.numerator')
+              denominator = integer_text(value['denominator'], label + '.denominator', 1)
+              number = Fraction(numerator, denominator)
+              require(value == {'numerator': str(number.numerator), 'denominator': str(number.denominator)},
+                      label + ': reduced exact fraction required')
+              return number
+
+          def parse_known_inputs(inputs, reported):
+              input_fields(inputs)
+              pqsr_raw, merkle_raw = inputs['pqsr'], inputs['merkle']
+              pqsr = {key: integer_text(pqsr_raw[key], 'pqsr.' + key, int(key != 't'),
+                                       4096 if key == 'r_min' else None)
+                      for key in ('t', 'k', 'r_min')}
+              pqsr.update({key: fraction_value(pqsr_raw[key], 'pqsr.' + key, reported)
+                           for key in ('w', 'kappa_rrbr', 'target_error')})
+              merkle = {key: integer_text(merkle_raw[key], 'merkle.' + key,
+                                         int(key in ('k', 'sigma', 'ell_max')),
+                                         4096 if key == 'sigma' else None)
+                        for key in ('t', 'k', 'sigma', 'ell_max', 'n', 'q_s')}
+              merkle.update({key: fraction_value(merkle_raw[key], 'merkle.' + key, reported)
+                             for key in ('w_vc', 'target_error')})
+              require(pqsr['w'] <= pqsr['t'] and pqsr['kappa_rrbr'] <= 1
+                      and 0 < pqsr['target_error'] <= 1, 'PQSR query mass or probability domain invalid')
+              length = merkle['ell_max']
+              require(merkle['w_vc'] <= merkle['t'] and 0 < merkle['target_error'] <= 1
+                      and length & (length - 1) == 0 and merkle['n'] <= merkle['k']
+                      and merkle['q_s'] <= merkle['k'] * length, 'Merkle lengths, query mass or probability domain invalid')
+              return pqsr, merkle
+
+          retained_input = read('budget-hypothetical-input.json')
+          pqsr, merkle = parse_known_inputs(retained_input, reported=False)
+          require(parse_known_inputs(example['inputs'], reported=True) == (pqsr, merkle),
+                  'hypothetical report must preserve every exact retained illustrative input')
+          def exact_fraction(observed, expected, label):
+              if expected is None:
+                  require(observed is None, label + ': expected an unavailable threshold')
+                  return
+              require(type(observed) is dict
+                      and set(observed) == {'numerator', 'denominator'}
+                      and all(type(value) is str for value in observed.values())
+                      and observed == {'numerator': str(expected.numerator), 'denominator': str(expected.denominator)},
+                      label + ': derived fraction differs from independent arithmetic')
+
+          t, k, w = pqsr['t'], pqsr['k'], pqsr['w']
+          coefficient = 80 * (t + k + 1) * (w + k)
+          finite = Fraction((t + k + 1) * k, 1 << pqsr['r_min'])
+          rrbr = coefficient * pqsr['kappa_rrbr']
+          upper = rrbr + finite
+          expected_pqsr = {
+              'rrbr_coefficient': coefficient,
+              'finite_randomness_addend': finite,
+              'rrbr_addend': rrbr,
+              'conditional_upper_expression': upper,
+          }
+          observed_pqsr = example['pqsr_component']
+          require(type(observed_pqsr['unknown_inputs']) is list and observed_pqsr['unknown_inputs'] == [],
+                  'fully specified hypothetical PQSR inputs cannot remain unknown')
+          for key, value in expected_pqsr.items():
+              exact_fraction(observed_pqsr[key], value, 'pqsr_component.' + key)
+          target = pqsr['target_error']
+          require(observed_pqsr['conditional_expression_meets_target'] is (upper <= target),
+                  'PQSR target comparison must be the exact boolean result')
+          analysis = observed_pqsr['target_analysis']
+          feasible = finite <= target
+          require(analysis['finite_randomness_addend_exceeds_target'] is (finite > target)
+                  and analysis['some_nonnegative_rrbr_bound_can_meet_target_by_this_expression'] is feasible,
+                  'PQSR finite-addend comparisons must be exact booleans')
+          required_rrbr = min(Fraction(1), (target - finite) / coefficient) if feasible else None
+          exact_fraction(analysis['kappa_rrbr_required_at_most'], required_rrbr, 'PQSR required RRBR threshold')
+
+          t, w_vc, length = merkle['t'], merkle['w_vc'], merkle['ell_max']
+          denominator = 1 << merkle['sigma']
+          expected_merkle = {
+              'commutativity': Fraction(240 * (t + 1), denominator),
+              'extraction_correctness': Fraction(8 * merkle['n'] * length, denominator),
+              'offline_extractability': (160 * w_vc * t * t
+                  + 16 * merkle['q_s'] * (length.bit_length() - 1)) / denominator,
+              'online_indistinguishability': 240 * w_vc * t * t / denominator,
+          }
+          observed_merkle = example['merkle_components']
+          require(type(observed_merkle['unknown_inputs']) is list and observed_merkle['unknown_inputs'] == [],
+                  'fully specified hypothetical Merkle inputs cannot remain unknown')
+          for key, value in expected_merkle.items():
+              exact_fraction(observed_merkle['conditional_expressions'][key], value, 'Merkle component ' + key)
+              require(observed_merkle['each_expression_meets_component_target'][key] is (value <= merkle['target_error']),
+                      'Merkle target comparison must be the exact boolean result: ' + key)
+          print('Complete unknown fields and independently recomputed hypothetical components verified; project qualification remains false.')
+          PY
+      - name: Verify ordered source identity after execution
+        id: source_after
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_QROM_OUT/source-after.json" 2>&1 | tee "$W1_QROM_OUT/source-after.log"
+      - name: Require every stage and retain failed or skipped status
+        id: status
+        if: always()
+        shell: bash
+        env:
+          W1_QROM_STEP_RESULTS: ${{ toJSON(steps) }}
+        run: |
+          set -euo pipefail
+          w1_qrom_out="$RUNNER_TEMP/pon-w1-qrom-historical-v1-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -p "$w1_qrom_out"
+          python3 - "$w1_qrom_out" <<'PY' 2>&1 | tee "$w1_qrom_out/ci-status.log"
+          from collections import Counter
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import sys
+
+          out = Path(sys.argv[1])
+          steps = json.loads(os.environ['W1_QROM_STEP_RESULTS'])
+          expected_digest = 'ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8'
+          required_modules = (
+              'test_w1_control_tree_audit',
+              'test_w1_qrom_conditional_budget',
+              'test_w1_qrom_implementation_audit',
+              'test_w1_fri_transcript_audit',
+              'test_w1_qrom_workflow_gate',
+          )
+          def strict_object(pairs):
+              result = {}
+              for key, value in pairs:
+                  if key in result:
+                      raise ValueError('duplicate JSON key: ' + key)
+                  result[key] = value
+              return result
+
+          def refuse_constant(value):
+              raise ValueError('nonfinite JSON number: ' + value)
+
+          def strict_json(raw):
+              return json.loads(raw, object_pairs_hook=strict_object, parse_constant=refuse_constant)
+
+          def check_named_completion():
+              roster_raw = (out / 'required-tests.json').read_bytes()
+              if (hashlib.sha256(roster_raw).hexdigest() != expected_digest
+                      or roster_raw != Path('config/pon/w1-qrom-required-tests-v1.json').read_bytes()):
+                  raise ValueError('retained named-test roster differs from the reviewed source pin')
+              manifest = strict_json(roster_raw)
+              if (type(manifest) is not dict
+                      or manifest.get('schema') != 'TRNM-W1-QROM-REQUIRED-TESTS1'
+                      or type(manifest.get('suites')) is not list
+                      or any(type(row) is not dict for row in manifest['suites'])
+                      or tuple(row.get('module') for row in manifest['suites']) != required_modules
+                      or type(manifest.get('expected_tests')) is not int):
+                  raise ValueError('fixed roster schema, suite order or total invalid')
+              completion_raw = (out / 'named-tests.json').read_bytes()
+              completion = strict_json(completion_raw)
+              expected_fields = {
+                  'schema', 'roster_sha256', 'required_tests', 'suites',
+                  'all_named_controls_passed', 'post_quantum_soundness_qualified',
+                  'unconditional_project_security_bits',
+              }
+              if (type(completion) is not dict or set(completion) != expected_fields
+                      or completion['schema'] != 'TRNM-W1-QROM-NAMED-TEST-OBSERVATION1'
+                      or completion['roster_sha256'] != expected_digest
+                      or type(completion['required_tests']) is not int
+                      or completion['required_tests'] != manifest['expected_tests']
+                      or completion['all_named_controls_passed'] is not True
+                      or completion['post_quantum_soundness_qualified'] is not False
+                      or completion['unconditional_project_security_bits'] is not None
+                      or type(completion['suites']) is not list
+                      or len(completion['suites']) != len(required_modules)):
+                  raise ValueError('named-test completion schema, total or scope invalid')
+              suite_fields = {
+                  'module', 'expected_ids', 'passed', 'registered_ids', 'loader_errors',
+                  'tests_run', 'started_ids', 'success_ids', 'skipped', 'failures', 'errors',
+                  'expected_failures', 'unexpected_successes',
+              }
+              total = 0
+              all_required = []
+              for required_suite, observed in zip(manifest['suites'], completion['suites']):
+                  names, count = required_suite.get('tests'), required_suite.get('expected_tests')
+                  if (type(names) is not list or any(type(name) is not str for name in names)
+                          or type(count) is not int or count <= 0
+                          or len(names) != count or len(set(names)) != count
+                          or type(observed) is not dict or set(observed) != suite_fields
+                          or observed['module'] != required_suite['module']
+                          or observed['passed'] is not True
+                          or type(observed['tests_run']) is not int or observed['tests_run'] != count):
+                      raise ValueError('named-test suite identity, fields or count invalid')
+                  for field in ('expected_ids', 'registered_ids', 'started_ids', 'success_ids'):
+                      actual = observed[field]
+                      if (type(actual) is not list or any(type(name) is not str for name in actual)
+                              or Counter(actual) != Counter(names)):
+                          raise ValueError('named-test completion lost exact identities: '
+                                           + required_suite['module'] + '.' + field)
+                  for field in ('loader_errors', 'skipped', 'failures', 'errors',
+                                'expected_failures', 'unexpected_successes'):
+                      if type(observed[field]) is not list or observed[field]:
+                          raise ValueError('named-test completion retained a non-success outcome: '
+                                           + required_suite['module'] + '.' + field)
+                  total += count
+                  all_required.extend(names)
+              if total != manifest['expected_tests'] or len(set(all_required)) != total:
+                  raise ValueError('named-test completion has an invalid total or duplicate required ID')
+              return hashlib.sha256(completion_raw).hexdigest()
+
+          named_completion_error = None
+          named_completion_sha256 = None
+          try:
+              named_completion_sha256 = check_named_completion()
+          except Exception as error:
+              named_completion_error = str(error)
+          required = (
+              'observations', 'checkout', 'source_before', 'preflight', 'named_tests',
+              'implementation', 'budget_unknown', 'budget_hypothetical',
+              'report_scopes', 'source_after',
+          )
+          incomplete = [name for name in required if
+                        steps.get(name, {}).get('outcome') != 'success'
+                        or steps.get(name, {}).get('conclusion') != 'success']
+          identity_error = None
+          if not incomplete:
+              try:
+                  before = json.loads((out / 'source-before.json').read_text())
+                  after = json.loads((out / 'source-after.json').read_text())
+                  if (before != after or before.get('schema') != 'trnm-ci-source-v1'
+                          or before.get('kind') != os.environ['SOURCE_KIND']
+                          or before.get('tested_commit') != os.environ['EXPECTED_SOURCE']
+                          or before.get('candidate') != os.environ['EXPECTED_HEAD']
+                          or before.get('tracked_worktree_verified') is not True):
+                      raise ValueError('source identities disagree or do not bind the requested source')
+              except (OSError, ValueError, TypeError) as error:
+                  identity_error = str(error)
+          report = {
+              'schema': 'TRNM-W1-QROM-CI-OBSERVATION1',
+              'source_kind': os.environ['SOURCE_KIND'],
+              'expected_source': os.environ['EXPECTED_SOURCE'],
+              'expected_candidate': os.environ['EXPECTED_HEAD'],
+              'expected_base': os.environ['EXPECTED_BASE'],
+              'steps': steps,
+              'required_stages': required,
+              'failed_or_skipped_stages': incomplete,
+              'source_identity_error': identity_error,
+              'named_test_completion_error': named_completion_error,
+              'named_test_completion_sha256': named_completion_sha256,
+              'named_test_completion_verified': named_completion_error is None,
+              'all_required_observations_passed': not incomplete and identity_error is None
+                  and named_completion_error is None,
+              'scope': 'Offline construction and saved-fixture mapping with conditional arithmetic. This workflow does not establish proof or quantum security.',
+              'post_quantum_soundness_qualified': False,
+              'complete_w1_soundness_qualified': False,
+              'quantum_work_qualified': False,
+              'pq_signature_qualification_inferred': False,
+              'production_qualified': False,
+              'consensus_admission': False,
+              'unconditional_project_security_bits': None,
+          }
+          with (out / 'ci-status.json').open('x') as stream:
+              json.dump(report, stream, indent=2, sort_keys=True, allow_nan=False)
+              stream.write('\n')
+          if report['all_required_observations_passed'] is not True:
+              raise SystemExit('required observations failed, were skipped or lost source identity: '
+                               + ', '.join(incomplete) + '; ' + str(identity_error)
+                               + '; named completion: ' + str(named_completion_error))
+          print('All required exact-source observations completed; project security remains unqualified.')
+          PY
+      - name: Retain source identities reports logs and every failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-qrom-historical-v1-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pon-w1-qrom-historical-v1-head-x64-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30
+
+  qrom-current-implementation:
+    name: W1 QROM current V2 (${{ matrix.source }}, x64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [head, prospective-merge]
+    env:
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Reserve current-source observations
+        id: observations
+        shell: bash
+        run: |
+          set -euo pipefail
+          w1_qrom_current_out="$RUNNER_TEMP/pon-w1-qrom-current-v2-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$w1_qrom_current_out"
+          mkdir "$w1_qrom_current_out/supplemental"
+          printf 'W1_QROM_SUPPLEMENTAL_OUT=%s\n' "$w1_qrom_current_out/supplemental" >> "$GITHUB_ENV"
+          printf 'W1_QROM_CURRENT_OUT=%s\n' "$w1_qrom_current_out" >> "$GITHUB_ENV"
+          printf 'Current V2 source mapping and original V1 source-pin refusal. Historical V1 positive replay is a separate fixed-source job. All cryptographic, native-execution and production qualifications remain false.\n' > "$w1_qrom_current_out/SCOPE.txt"
+          python3 --version > "$w1_qrom_current_out/python-version.txt" 2>&1
+      - name: Checkout exact current candidate without persistent credentials
+        id: checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify complete current source before observations
+        id: source_before
+        if: always() && steps.observations.outcome == 'success' && steps.checkout.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_QROM_CURRENT_OUT/source-before.json" 2>&1 | tee "$W1_QROM_CURRENT_OUT/source-before.log"
+      - name: Audit the current project boundary
+        id: preflight
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$W1_QROM_CURRENT_OUT/preflight.log"
+      - name: Execute all fixed current-source named controls
+        id: named_tests
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_qrom_current_ci.py named --repo-root "$GITHUB_WORKSPACE" --out "$W1_QROM_CURRENT_OUT" 2>&1 | tee "$W1_QROM_CURRENT_OUT/named-tests.log"
+      - name: Retain original V1 refusal and exact current source differences
+        id: historical_drift
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_qrom_current_ci.py drift --repo-root "$GITHUB_WORKSPACE" --out "$W1_QROM_CURRENT_OUT" 2>&1 | tee "$W1_QROM_CURRENT_OUT/historical-drift.log"
+      - name: Reproduce the explicit current V2 mapping
+        id: implementation
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/w1_qrom_current_implementation_audit.py --repo-root "$GITHUB_WORKSPACE" --output "$W1_QROM_CURRENT_OUT/implementation.json" 2>&1 | tee "$W1_QROM_CURRENT_OUT/implementation.log"
+      - name: Verify historical Git materialization and current refusal controls
+        id: supplemental_historical_controls
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_qrom_supplemental_controls.py --suite historical \
+            --repo-root "$GITHUB_WORKSPACE" --output-dir "$W1_QROM_SUPPLEMENTAL_OUT" \
+            2>&1 | tee "$W1_QROM_SUPPLEMENTAL_OUT/historical-controls.log"
+      - name: Reproduce the historical map and retain current-tree v1 refusal
+        id: supplemental_historical_mapping
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/w1_qrom_historical_fixture.py --repo-root "$GITHUB_WORKSPACE" \
+            --output-dir "$W1_QROM_SUPPLEMENTAL_OUT" 2>&1 | tee "$W1_QROM_SUPPLEMENTAL_OUT/implementation.log"
+      - name: Check the separately reviewed current-source mapping
+        id: supplemental_current_mapping
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_qrom_supplemental_controls.py --suite current \
+            --repo-root "$GITHUB_WORKSPACE" --output-dir "$W1_QROM_SUPPLEMENTAL_OUT" \
+            2>&1 | tee "$W1_QROM_SUPPLEMENTAL_OUT/current-controls.log"
+          python3 scripts/w1_qrom_current_implementation_audit.py --repo-root "$GITHUB_WORKSPACE" \
+            --output "$W1_QROM_SUPPLEMENTAL_OUT/implementation-current.json" 2>&1 | tee "$W1_QROM_SUPPLEMENTAL_OUT/implementation-current.log"
+      - name: Preserve all unknown project quantum inputs
+        id: supplemental_budget_unknown
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/w1_qrom_conditional_budget.py > "$W1_QROM_SUPPLEMENTAL_OUT/budget-unknown.json" 2> "$W1_QROM_SUPPLEMENTAL_OUT/budget-unknown.log"
+      - name: Reproduce explicitly hypothetical component arithmetic
+        id: supplemental_budget_hypothetical
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/w1_qrom_conditional_budget.py --example-input \
+            > "$W1_QROM_SUPPLEMENTAL_OUT/budget-hypothetical-input.json" 2> "$W1_QROM_SUPPLEMENTAL_OUT/budget-hypothetical-input.log"
+          python3 scripts/w1_qrom_conditional_budget.py --input "$W1_QROM_SUPPLEMENTAL_OUT/budget-hypothetical-input.json" \
+            > "$W1_QROM_SUPPLEMENTAL_OUT/budget-hypothetical.json" 2> "$W1_QROM_SUPPLEMENTAL_OUT/budget-hypothetical.log"
+      - name: Require every report to retain the unqualified security boundary
+        id: supplemental_report_scopes
+        if: always() && steps.supplemental_historical_mapping.outcome == 'success' && steps.supplemental_current_mapping.outcome == 'success' && steps.supplemental_budget_unknown.outcome == 'success' && steps.supplemental_budget_hypothetical.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - "$W1_QROM_SUPPLEMENTAL_OUT" <<'PY' 2>&1 | tee "$W1_QROM_SUPPLEMENTAL_OUT/report-scopes.log"
+          from fractions import Fraction
+          import json
+          from pathlib import Path
+          import re
+          import sys
+
+          # These generators re-read the reviewed source contracts and actual
+          # checkout. Reports cannot vouch for one another's source identities.
+          repo_root = Path.cwd()
+          sys.path.insert(0, str(repo_root / 'scripts'))
+          import w1_qrom_historical_fixture as historical_materializer
+          import w1_qrom_current_implementation_audit as current_mapper
+          import w1_qrom_supplemental_controls as supplemental_controls
+
+          out = Path(sys.argv[1])
+          supplemental_controls.verify_completions(repo_root, out)
+          def require(condition, message):
+              if not condition:
+                  raise ValueError(message)
+
+          def strict_object(pairs):
+              result = {}
+              for key, value in pairs:
+                  require(key not in result, 'duplicate JSON key: ' + key)
+                  result[key] = value
+              return result
+
+          def refuse_constant(value):
+              raise ValueError('nonfinite JSON number: ' + value)
+
+          def read(name):
+              return json.loads((out / name).read_bytes(), object_pairs_hook=strict_object,
+                                parse_constant=refuse_constant)
+
+          def fields(value, expected, label):
+              require(type(value) is dict and set(value) == set(expected), label + ': exact fields required')
+
+          def exact_qualification(observed, expected):
+              return (type(observed) is dict and set(observed) == set(expected)
+                      and all(observed[key] is value for key, value in expected.items()))
+
+          def exact_observation(observed, expected, label):
+              # Canonical JSON also distinguishes bool/int and int/float values;
+              # Python container equality alone would accept True == 1.
+              canonical = lambda value: json.dumps(value, sort_keys=True,
+                  separators=(',', ':'), allow_nan=False)
+              require(canonical(observed) == canonical(expected),
+                      label + ': differs from the actual reviewed-source observation')
+
+          implementation = read('implementation.json')
+          expected_implementation = {
+              'post_quantum_soundness_qualified': False,
+              'complete_w1_soundness_qualified': False,
+              'quantum_work_qualified': False,
+              'pq_signature_qualification_inferred': False,
+              'production_qualified': False,
+              'consensus_admission': False,
+              'security_bits_quantum': None,
+          }
+          require(type(implementation) is dict
+                  and implementation.get('schema') == 'TRNM-W1-QROM-IMPLEMENTATION-AUDIT1'
+                  and implementation.get('result') == 'MAPPING_REPRODUCED_SECURITY_HOLD'
+                  and exact_qualification(implementation.get('qualification'), expected_implementation),
+                  'implementation observation widened its qualification scope')
+          historical_revision = 'cb114b13bf848a77634e40a08b31b30c7c758e7b'
+          historical_contract = '7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22'
+          historical_reader = 'c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354'
+          refusal_reason = 'input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs'
+          require(implementation.get('source_base_commit') == historical_revision
+                  and implementation.get('contract_sha256') == historical_contract,
+                  'historical mapping cannot be relabeled as current-source evidence')
+          historical = read('historical-source.json')
+          fields(historical, {
+              'schema', 'historical_source_commit', 'historical_contract_sha256',
+              'historical_reader_sha256', 'project_files', 'pinned_checkout_inputs', 'scope',
+              'historical_full_repository_checked', 'current_project_mapping',
+              'fresh_cryptographic_verification', 'qualification',
+          }, 'historical materialization')
+          require(historical['schema'] == 'TRNM-W1-QROM-HISTORICAL-MATERIALIZATION1'
+                  and historical['historical_source_commit'] == historical_revision
+                  and historical['historical_contract_sha256'] == historical_contract
+                  and historical['historical_reader_sha256'] == historical_reader
+                  and historical['scope'] == 'historical-declared-project-blobs-and-pinned-fixtures-only'
+                  and exact_qualification(historical['qualification'], expected_implementation)
+                  and historical['historical_full_repository_checked'] is False
+                  and historical['current_project_mapping'] is False
+                  and historical['fresh_cryptographic_verification'] is False,
+                  'historical materialization scope or identity differs')
+          rows = historical['project_files']
+          require(type(rows) is list and len(rows) == len(implementation['project_files'])
+                  and len(rows) > 0, 'historical source roster is incomplete')
+          for row, expected in zip(rows, implementation['project_files']):
+              fields(row, {'path', 'bytes', 'sha256', 'git_mode', 'git_blob_oid'}, 'historical Git source')
+              require({key: row[key] for key in ('path', 'bytes', 'sha256')} == expected
+                      and row['git_mode'] in ('100644', '100755')
+                      and type(row['git_blob_oid']) is str
+                      and re.fullmatch(r'[0-9a-f]{40}', row['git_blob_oid']) is not None,
+                      'historical Git source record differs')
+          expected_pinned = (implementation['helper_execution']['sources']
+                             + implementation['saved_fixture_files']
+                             + [implementation['upstream_snapshot']])
+          require(historical['pinned_checkout_inputs'] == expected_pinned,
+                  'historical helper and saved-fixture identities differ')
+          refusal = read('current-v1-refusal.json')
+          fields(refusal, {
+              'schema', 'result', 'reason', 'historical_source_commit',
+              'historical_contract_sha256', 'historical_reader_sha256', 'target',
+              'current_source_mapping_performed', 'qualification',
+          }, 'current-tree v1 refusal')
+          require(refusal['schema'] == 'TRNM-W1-QROM-HISTORICAL-CURRENT-REFUSAL1'
+                  and refusal['result'] == 'INPUT_REJECTED' and refusal['reason'] == refusal_reason
+                  and refusal['historical_source_commit'] == historical_revision
+                  and refusal['historical_contract_sha256'] == historical_contract
+                  and refusal['historical_reader_sha256'] == historical_reader
+                  and refusal['target'] == 'actual-current-worktree'
+                  and refusal['current_source_mapping_performed'] is False
+                  and exact_qualification(refusal['qualification'], expected_implementation),
+                  'current-tree refusal cannot become a historical or current mapping pass')
+          current = read('implementation-current.json')
+          require(type(current) is dict
+                  and current.get('schema') == 'TRNM-W1-QROM-CURRENT-IMPLEMENTATION-AUDIT2'
+                  and current.get('result') == 'CURRENT_MAPPING_REPRODUCED_SECURITY_HOLD'
+                  and current.get('source_base_commit') != historical_revision
+                  and exact_qualification(current.get('qualification'), expected_implementation),
+                  'separate current-source mapping is missing or widened its qualification')
+          old_refusal = current.get('historical_v1')
+          require(type(old_refusal) is dict
+                  and old_refusal.get('reader_sha256') == historical_reader
+                  and old_refusal.get('contract_sha256') == historical_contract
+                  and old_refusal.get('result') == 'INPUT_REJECTED'
+                  and old_refusal.get('reason') == refusal_reason
+                  and old_refusal.get('named_roster_completed') is False
+                  and old_refusal.get('workflow_passed') is False,
+                  'current mapping must preserve the original historical-reader refusal')
+          closure = current.get('local_path_closure')
+          require(type(closure) is dict and closure.get('source_before_after_equal') is True
+                  and type(closure.get('source_files_checked')) is int
+                  and type(closure.get('files')) is list
+                  and closure['source_files_checked'] == len(closure['files']) > 0,
+                  'current-source declared closure is incomplete or changed')
+          for flag in ('fresh_cryptographic_verification', 'native_binary_executed',
+                       'whole_repository_source_verified', 'third_party_source_closure_verified',
+                       'provider_build_identity_verified', 'git_commit_ancestry_verified'):
+              require(current.get(flag) is False, 'current-source mapping widened: ' + flag)
+          expected_historical, expected_materialization = historical_materializer.historical_mapping(repo_root)
+          exact_observation(implementation, expected_historical, 'historical mapping')
+          exact_observation(historical, expected_materialization, 'historical Git materialization')
+          exact_observation(refusal, historical_materializer.current_v1_refusal(repo_root),
+                            'current-tree historical refusal')
+          exact_observation(current, current_mapper.build_report(repo_root), 'current-source mapping')
+          expected_budget = {
+              'unconditional_project_security_bits': None,
+              'quantum_security_bits': None,
+              'full_recursive_security_bits': None,
+              'qrom_theorem_instantiated': False,
+              'post_quantum_soundness_qualified': False,
+              'whole_recursive_proof_soundness_qualified': False,
+              'complete_w1_attack_established': False,
+              'production_qualified': False,
+              'consensus_admission': False,
+          }
+          pqsr_fields = {'t', 'k', 'w', 'r_min', 'kappa_rrbr', 'target_error'}
+          merkle_fields = {'t', 'k', 'w_vc', 'sigma', 'ell_max', 'n', 'q_s', 'target_error'}
+          component_names = {
+              'commutativity', 'extraction_correctness',
+              'offline_extractability', 'online_indistinguishability',
+          }
+          pqsr_numbers = (
+              'rrbr_coefficient', 'finite_randomness_addend',
+              'rrbr_addend', 'conditional_upper_expression',
+          )
+          target_fields = {
+              'finite_randomness_addend_exceeds_target',
+              'some_nonnegative_rrbr_bound_can_meet_target_by_this_expression',
+              'kappa_rrbr_required_at_most',
+          }
+          budget_fields = {
+              'schema', 'status', 'source', 'inputs', 'pqsr_component', 'merkle_components',
+              'theorem_11_3_full_bound', 'theorem_10_6_composed_bound',
+              'qualification', 'unresolved_obligations',
+          }
+          def input_fields(inputs):
+              fields(inputs, {'schema', 'input_kind', 'pqsr', 'merkle'}, 'inputs')
+              require(inputs['schema'] == 'TRNM-W1-QROM-CONDITIONAL-INPUT1'
+                      and inputs['input_kind'] == 'hypothetical', 'hypothetical input schema required')
+              fields(inputs['pqsr'], pqsr_fields, 'inputs.pqsr')
+              fields(inputs['merkle'], merkle_fields, 'inputs.merkle')
+
+          def report_shape(report):
+              fields(report, budget_fields, 'component report')
+              require(report['schema'] == 'TRNM-W1-QROM-CONDITIONAL-COMPONENTS1'
+                      and report['status'] == 'hypothetical_component_arithmetic_only'
+                      and report['theorem_11_3_full_bound'] is None
+                      and report['theorem_10_6_composed_bound'] is None
+                      and exact_qualification(report['qualification'], expected_budget),
+                      'conditional component report widened its theorem or project scope')
+              source = report['source']
+              fields(source, {'paper', 'indexed_copy', 'indexed_manuscript_date',
+                             'latest_revision_date_observed_in_metadata',
+                             'latest_revision_full_text_equivalence_verified', 'scope'}, 'source')
+              require(source['indexed_manuscript_date'] == '2026-01-01'
+                      and source['latest_revision_full_text_equivalence_verified'] is False,
+                      'component arithmetic must retain the selected January statement boundary')
+              require(type(report['unresolved_obligations']) is list and report['unresolved_obligations']
+                      and all(type(item) is str and item for item in report['unresolved_obligations']),
+                      'unresolved obligations must remain explicit')
+              input_fields(report['inputs'])
+              pqsr = report['pqsr_component']
+              fields(pqsr, set(pqsr_numbers) | {'theorem', 'conditional_expression_meets_target',
+                     'target_analysis', 'unknown_inputs', 'boundary'}, 'pqsr_component')
+              require(pqsr['theorem'] == '2026-01-01 manuscript, Theorem 6.10, page 46'
+                      and type(pqsr['boundary']) is str and pqsr['boundary'], 'PQSR theorem boundary missing')
+              fields(pqsr['target_analysis'], target_fields, 'PQSR target analysis')
+              merkle = report['merkle_components']
+              fields(merkle, {'theorem', 'conditional_expressions', 'each_expression_meets_component_target',
+                              'unknown_inputs', 'boundary'}, 'merkle_components')
+              require(merkle['theorem'] == '2026-01-01 manuscript, Theorem 8.3, page 53'
+                      and type(merkle['boundary']) is str and merkle['boundary'], 'Merkle theorem boundary missing')
+              fields(merkle['conditional_expressions'], component_names, 'Merkle expressions')
+              fields(merkle['each_expression_meets_component_target'], component_names, 'Merkle comparisons')
+
+          unknown = read('budget-unknown.json')
+          example = read('budget-hypothetical.json')
+          for report in (unknown, example):
+              report_shape(report)
+          for group in ('pqsr', 'merkle'):
+              require(all(value is None for value in unknown['inputs'][group].values()),
+                      'unknown inputs must remain null with the complete field set')
+          unknown_pqsr = unknown['pqsr_component']
+          require(all(unknown_pqsr[key] is None for key in pqsr_numbers)
+                  and unknown_pqsr['conditional_expression_meets_target'] is None
+                  and all(value is None for value in unknown_pqsr['target_analysis'].values())
+                  and unknown_pqsr['unknown_inputs'] == sorted(pqsr_fields),
+                  'every unknown PQSR derived value, comparison and threshold must remain null')
+          unknown_merkle = unknown['merkle_components']
+          require(all(value is None for value in unknown_merkle['conditional_expressions'].values())
+                  and all(value is None for value in unknown_merkle['each_expression_meets_component_target'].values())
+                  and unknown_merkle['unknown_inputs'] == sorted(merkle_fields),
+                  'every unknown named Merkle expression and comparison must remain null')
+
+          # Independent stdlib Fraction arithmetic for the retained hypothetical input.
+          # Do not import or call the calculator to validate its own derived values.
+          def integer_text(value, label, minimum=0, maximum=None):
+              require(type(value) is str and len(value) <= 617
+                      and re.fullmatch(r'0|[1-9][0-9]*', value) is not None,
+                      label + ': canonical exact integer string required')
+              number = int(value)
+              require(number.bit_length() <= 2048 and number >= minimum
+                      and (maximum is None or number <= maximum), label + ': input outside evaluator bounds')
+              return number
+
+          def fraction_value(value, label, reported):
+              if not reported and type(value) is str:
+                  return Fraction(integer_text(value, label))
+              fields(value, {'numerator', 'denominator'}, label)
+              numerator = integer_text(value['numerator'], label + '.numerator')
+              denominator = integer_text(value['denominator'], label + '.denominator', 1)
+              number = Fraction(numerator, denominator)
+              require(value == {'numerator': str(number.numerator), 'denominator': str(number.denominator)},
+                      label + ': reduced exact fraction required')
+              return number
+
+          def parse_known_inputs(inputs, reported):
+              input_fields(inputs)
+              pqsr_raw, merkle_raw = inputs['pqsr'], inputs['merkle']
+              pqsr = {key: integer_text(pqsr_raw[key], 'pqsr.' + key, int(key != 't'),
+                                       4096 if key == 'r_min' else None)
+                      for key in ('t', 'k', 'r_min')}
+              pqsr.update({key: fraction_value(pqsr_raw[key], 'pqsr.' + key, reported)
+                           for key in ('w', 'kappa_rrbr', 'target_error')})
+              merkle = {key: integer_text(merkle_raw[key], 'merkle.' + key,
+                                         int(key in ('k', 'sigma', 'ell_max')),
+                                         4096 if key == 'sigma' else None)
+                        for key in ('t', 'k', 'sigma', 'ell_max', 'n', 'q_s')}
+              merkle.update({key: fraction_value(merkle_raw[key], 'merkle.' + key, reported)
+                             for key in ('w_vc', 'target_error')})
+              require(pqsr['w'] <= pqsr['t'] and pqsr['kappa_rrbr'] <= 1
+                      and 0 < pqsr['target_error'] <= 1, 'PQSR query mass or probability domain invalid')
+              length = merkle['ell_max']
+              require(merkle['w_vc'] <= merkle['t'] and 0 < merkle['target_error'] <= 1
+                      and length & (length - 1) == 0 and merkle['n'] <= merkle['k']
+                      and merkle['q_s'] <= merkle['k'] * length, 'Merkle lengths, query mass or probability domain invalid')
+              return pqsr, merkle
+
+          retained_input = read('budget-hypothetical-input.json')
+          pqsr, merkle = parse_known_inputs(retained_input, reported=False)
+          require(parse_known_inputs(example['inputs'], reported=True) == (pqsr, merkle),
+                  'hypothetical report must preserve every exact retained illustrative input')
+          def exact_fraction(observed, expected, label):
+              if expected is None:
+                  require(observed is None, label + ': expected an unavailable threshold')
+                  return
+              require(type(observed) is dict
+                      and set(observed) == {'numerator', 'denominator'}
+                      and all(type(value) is str for value in observed.values())
+                      and observed == {'numerator': str(expected.numerator), 'denominator': str(expected.denominator)},
+                      label + ': derived fraction differs from independent arithmetic')
+
+          t, k, w = pqsr['t'], pqsr['k'], pqsr['w']
+          coefficient = 80 * (t + k + 1) * (w + k)
+          finite = Fraction((t + k + 1) * k, 1 << pqsr['r_min'])
+          rrbr = coefficient * pqsr['kappa_rrbr']
+          upper = rrbr + finite
+          expected_pqsr = {
+              'rrbr_coefficient': coefficient,
+              'finite_randomness_addend': finite,
+              'rrbr_addend': rrbr,
+              'conditional_upper_expression': upper,
+          }
+          observed_pqsr = example['pqsr_component']
+          require(type(observed_pqsr['unknown_inputs']) is list and observed_pqsr['unknown_inputs'] == [],
+                  'fully specified hypothetical PQSR inputs cannot remain unknown')
+          for key, value in expected_pqsr.items():
+              exact_fraction(observed_pqsr[key], value, 'pqsr_component.' + key)
+          target = pqsr['target_error']
+          require(observed_pqsr['conditional_expression_meets_target'] is (upper <= target),
+                  'PQSR target comparison must be the exact boolean result')
+          analysis = observed_pqsr['target_analysis']
+          feasible = finite <= target
+          require(analysis['finite_randomness_addend_exceeds_target'] is (finite > target)
+                  and analysis['some_nonnegative_rrbr_bound_can_meet_target_by_this_expression'] is feasible,
+                  'PQSR finite-addend comparisons must be exact booleans')
+          required_rrbr = min(Fraction(1), (target - finite) / coefficient) if feasible else None
+          exact_fraction(analysis['kappa_rrbr_required_at_most'], required_rrbr, 'PQSR required RRBR threshold')
+
+          t, w_vc, length = merkle['t'], merkle['w_vc'], merkle['ell_max']
+          denominator = 1 << merkle['sigma']
+          expected_merkle = {
+              'commutativity': Fraction(240 * (t + 1), denominator),
+              'extraction_correctness': Fraction(8 * merkle['n'] * length, denominator),
+              'offline_extractability': (160 * w_vc * t * t
+                  + 16 * merkle['q_s'] * (length.bit_length() - 1)) / denominator,
+              'online_indistinguishability': 240 * w_vc * t * t / denominator,
+          }
+          observed_merkle = example['merkle_components']
+          require(type(observed_merkle['unknown_inputs']) is list and observed_merkle['unknown_inputs'] == [],
+                  'fully specified hypothetical Merkle inputs cannot remain unknown')
+          for key, value in expected_merkle.items():
+              exact_fraction(observed_merkle['conditional_expressions'][key], value, 'Merkle component ' + key)
+              require(observed_merkle['each_expression_meets_component_target'][key] is (value <= merkle['target_error']),
+                      'Merkle target comparison must be the exact boolean result: ' + key)
+          print('Complete unknown fields and independently recomputed hypothetical components verified; project qualification remains false.')
+          PY
+      - name: Verify complete current source after observations
+        id: source_after
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_QROM_CURRENT_OUT/source-after.json" 2>&1 | tee "$W1_QROM_CURRENT_OUT/source-after.log"
+      - name: Require all current stages and original historical rejection
+        id: status
+        if: always()
+        shell: bash
+        env:
+          W1_QROM_CURRENT_STEP_RESULTS: ${{ toJSON(steps) }}
+        run: |
+          set -euo pipefail
+          w1_qrom_current_out="$RUNNER_TEMP/pon-w1-qrom-current-v2-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -p "$w1_qrom_current_out"
+          python3 scripts/ci/w1_qrom_current_ci.py verify --repo-root "$GITHUB_WORKSPACE" --out "$w1_qrom_current_out" --kind "$SOURCE_KIND" --expected-source "$EXPECTED_SOURCE" --expected-head "$EXPECTED_HEAD" --expected-base "$EXPECTED_BASE" 2>&1 | tee "$w1_qrom_current_out/current-ci-status.log"
+      - name: Retain complete current-source observations and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-qrom-current-v2-${{ matrix.source }}-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pon-w1-qrom-current-v2-${{ matrix.source }}-x64-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30

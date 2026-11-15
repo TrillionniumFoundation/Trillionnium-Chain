@@ -1,0 +1,206 @@
+{
+  "actual_inspect_source_count": 31,
+  "actual_inspect_status": "HOLD_NO_GO",
+  "base_head": "7d8d4c59fcd01480a12e1c64835b202079091800",
+  "corpus_and_soleplan_pending_root_composition": true,
+  "finished_utc": "2026-11-14T07:33:38.109762+00:00",
+  "full_repository_truth_lane_run": false,
+  "native_or_hosted_tests_run": false,
+  "original_7d8_full_lane_failure_unchanged": true,
+  "original_ci_command_guard_methods": 1,
+  "original_ci_command_guard_test": "MergedQualificationLaneTests.test_hash_use_commands_cannot_change_position_multiplicity_or_failure_policy",
+  "original_hash_use_test_methods_changed": 0,
+  "original_hash_use_tests": 33,
+  "root_diagnostic_122_commands_rerun": false,
+  "schema": "hash-use-reviewed-current-map-validation-v1",
+  "source_before_after_equal": true,
+  "source_snapshot_unique_inputs": 37,
+  "started_utc": "2026-11-14T07:33:37.417599+00:00",
+  "status": "PASS",
+  "steps": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/private/tmp/chain-hash-use-current-binding-20261114",
+      "elapsed_seconds": 0.007,
+      "exit_code": 0,
+      "label": "head",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/validation-v1/head.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/validation-v1/head.stdout",
+        "sha256": "5570446a2dd1de14aa9666cf4cabbc07498b83d8c12c191a85823a46b6d43f6a"
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/private/tmp/chain-hash-use-current-binding-20261114",
+      "elapsed_seconds": 0.044,
+      "exit_code": 0,
+      "label": "preflight",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/validation-v1/preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 174,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/validation-v1/preflight.stdout",
+        "sha256": "683b360b345d585ed5359283cab702eb4859d1fd8ddfd420592d9dd913d2ef72"
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-c",
+        "import sys,json; print(json.dumps({'version':sys.version,'executable':sys.executable,'optimize':sys.flags.optimize}))"
+      ],
+      "cwd": "/private/tmp/chain-hash-use-current-binding-20261114",
+      "elapsed_seconds": 0.014,
+      "exit_code": 0,
+      "label": "python-version",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/validation-v1/python-version.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 163,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/validation-v1/python-version.stdout",
+        "sha256": "3e806ada2f3eef4d33639273e3c333241c5dce520a8e2dd9b6b8b4c3f6dfec93"
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "scripts/ci/test_hash_use_contract.py",
+        "-v"
+      ],
+      "cwd": "/private/tmp/chain-hash-use-current-binding-20261114",
+      "elapsed_seconds": 0.141,
+      "exit_code": 0,
+      "label": "original-33-controls",
+      "stderr": {
+        "bytes": 5406,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/validation-v1/original-33-controls.stderr",
+        "sha256": "8baa0dd41ba7e1074fb13c5536f17ab58ed8d76e4559439abe10ec232b5ce653"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/validation-v1/original-33-controls.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "scripts/ci/hash_use_contract.py"
+      ],
+      "cwd": "/private/tmp/chain-hash-use-current-binding-20261114",
+      "elapsed_seconds": 0.04,
+      "exit_code": 0,
+      "label": "actual-hash-use-inspection",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/validation-v1/actual-hash-use-inspection.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 6392,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/validation-v1/actual-hash-use-inspection.stdout",
+        "sha256": "824d39f5fa137b255e843deba228338e0330810a2667cd1af0910c6812d4b999"
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "scripts/ci/test_ci_contract.py",
+        "MergedQualificationLaneTests.test_hash_use_commands_cannot_change_position_multiplicity_or_failure_policy",
+        "-v"
+      ],
+      "cwd": "/private/tmp/chain-hash-use-current-binding-20261114",
+      "elapsed_seconds": 0.315,
+      "exit_code": 0,
+      "label": "original-hash-ci-command-refusals",
+      "stderr": {
+        "bytes": 298,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/validation-v1/original-hash-ci-command-refusals.stderr",
+        "sha256": "6b6bc13cbb4d64236f5dd7757a44bd7abc2e4a4410585e3481563474be9f9f90"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/validation-v1/original-hash-ci-command-refusals.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "cwd": "/private/tmp/chain-hash-use-current-binding-20261114",
+      "elapsed_seconds": 0.08,
+      "exit_code": 0,
+      "label": "actual-ci-contract",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/validation-v1/actual-ci-contract.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 852,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/validation-v1/actual-ci-contract.stdout",
+        "sha256": "04a27d4ea2af1ccbbf7ed70f56bad64b02ba958a2645254d6d547d8a28102c55"
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--check",
+        "--",
+        "config/pon/hash-use-contract-v1.json",
+        "scripts/ci/hash_use_contract.py",
+        "docs/security/HASH_USE_CONTRACT_V1.md"
+      ],
+      "cwd": "/private/tmp/chain-hash-use-current-binding-20261114",
+      "elapsed_seconds": 0.019,
+      "exit_code": 0,
+      "label": "changed-source-diff-check",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/validation-v1/changed-source-diff-check.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/validation-v1/changed-source-diff-check.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout_seconds": 120
+    }
+  ],
+  "working_source_changed_only_by_reviewed_patch": true
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "trnm-final819-core-evidence-seal-v1",
+  "finished_utc": "2026-11-07T19:59:43.817861+00:00",
+  "directory": "/home/qian-qi/throughput-final-ci-observation-20261107/core-14-package-v1",
+  "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+  "core_lane_count": 14,
+  "workflow_jobs": 37,
+  "native_lanes": 34,
+  "verdict": "HOLD",
+  "payload_files": 810,
+  "payload_bytes": 309875945,
+  "archives": 14,
+  "archive_bytes": 275505994,
+  "sha256sums_bytes": 108747,
+  "sha256sums_sha256": "755057ab2921548ad291f46dbb847918cf7d13157a474ffa814de87e6a3afd2d",
+  "gate_core_bytes": 14513,
+  "gate_core_sha256": "e138ce16a1531ce1232bf91a1e2f1ba1e7790db33d97639e1829e33d33639e6f",
+  "all_copies_hash_verified": true,
+  "sqlite_originals_unchanged": true
+}

@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_ci_contract.py"
+  ],
+  "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+  "elapsed_seconds": 41.423337,
+  "exception": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-08T12:24:28.692382+00:00",
+  "passed": true,
+  "stage": "ci-contract",
+  "started_utc": "2026-11-08T12:23:47.269060+00:00",
+  "stderr": "ci-contract.stderr.log",
+  "stderr_sha256": "aad8f8700aab111efca0c250a0d150e754ec64f239ba90e16d66895a258013d2",
+  "stdout": "ci-contract.stdout.log",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_methods": 107,
+  "unittest_terminal_receipt_valid": true
+}

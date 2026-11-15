@@ -1,0 +1,42 @@
+[
+  {
+    "name": "feature-controls",
+    "exit": 0,
+    "log": "/home/qq/trnm-v4-e12ecc-recovery/preparation/corrected-feature-controls.log"
+  },
+  {
+    "name": "ci-controls",
+    "exit": 0,
+    "log": "/home/qq/trnm-v4-e12ecc-recovery/preparation/corrected-ci-controls.log"
+  },
+  {
+    "name": "ci-contract",
+    "exit": 0,
+    "log": "/home/qq/trnm-v4-e12ecc-recovery/preparation/corrected-ci-contract.log"
+  },
+  {
+    "name": "dependency-controls",
+    "exit": 0,
+    "log": "/home/qq/trnm-v4-e12ecc-recovery/preparation/corrected-dependency-controls.log"
+  },
+  {
+    "name": "dependency-register",
+    "exit": 0,
+    "log": "/home/qq/trnm-v4-e12ecc-recovery/preparation/corrected-dependency-register.log"
+  },
+  {
+    "name": "source-corpus",
+    "exit": 0,
+    "log": "/home/qq/trnm-v4-e12ecc-recovery/preparation/corrected-source-corpus.log"
+  },
+  {
+    "name": "inventory",
+    "exit": 0,
+    "log": "/home/qq/trnm-v4-e12ecc-recovery/preparation/corrected-inventory.log"
+  },
+  {
+    "name": "diff",
+    "exit": 0,
+    "log": "/home/qq/trnm-v4-e12ecc-recovery/preparation/corrected-diff.log"
+  }
+]

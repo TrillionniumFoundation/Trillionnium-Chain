@@ -1,0 +1,241 @@
+{
+  "schema": "integration-push-workflow-independent-preservation-v1",
+  "head": "9ce78655b574a638c54a0ee9c88d58ffdec74df7",
+  "comparison": "Independent YAML tree comparison; permitted differences are frozen source expressions, checkout ref, priority artifact source-name substitution, W1 PR-number-or-ref concurrency key, added resolver and two source-context steps. All original commands, step conditions, order, matrices, budgets, runners, upload paths/retention and old-failure job compare unchanged.",
+  "earlier_comparator_refusals": [
+    "Initial comparator rejected the intended priority artifact name substitution. Exact literal replacement independently reviewed.",
+    "Second comparator rejected the intended W1 concurrency fallback. Original PR group and cancel-in-progress=false remain unchanged."
+  ],
+  "workflows": [
+    {
+      "path": ".github/workflows/pon-priority-acceptance.yml",
+      "head_blob_sha256": "609e7a909977354c22d7503b4031225fb7b51cfb02b853fb9d147a355b9e3053",
+      "reviewed_sha256": "6a7eeb14bc2fe1a005d0ee7403e1c6d2e5ba41e941c51892baf35002ecdd62fb",
+      "pull_request_trigger_unchanged": true,
+      "jobs": [
+        {
+          "job": "retained-pressure-failure",
+          "unchanged": true,
+          "original_run_steps": 1
+        },
+        {
+          "job": "native-priorities",
+          "original_run_steps": 19,
+          "original_steps": 21,
+          "matrix": {
+            "runner": [
+              "ubuntu-24.04",
+              "ubuntu-24.04-arm"
+            ],
+            "source": [
+              "head",
+              "prospective-merge"
+            ],
+            "campaign": [
+              "service-model",
+              "state",
+              "history"
+            ]
+          },
+          "expanded_matrix_rows": 12,
+          "runs_on": "${{ matrix.runner }}",
+          "timeout_minutes": "180",
+          "fail_fast": "false",
+          "changed_env_keys": [
+            "EXPECTED_BASE",
+            "EXPECTED_HEAD",
+            "EXPECTED_MERGE",
+            "TRNM_EXPECTED_SOURCE_SHA"
+          ],
+          "original_commands_conditions_and_retention_unchanged": true
+        }
+      ]
+    },
+    {
+      "path": ".github/workflows/pon-w1-work-security.yml",
+      "head_blob_sha256": "309e858e3cf18aa454052869b4cac57ac43e6c51fe0501e04d53997fd18a9bdf",
+      "reviewed_sha256": "739854d721f5be0f2055bf211a9ebf929b64e8a3a5047a777fea4ab4166b3490",
+      "pull_request_trigger_unchanged": true,
+      "jobs": [
+        {
+          "job": "false-trace-reuse",
+          "original_run_steps": 8,
+          "original_steps": 10,
+          "matrix": {
+            "arch": [
+              "x64",
+              "arm64"
+            ],
+            "source": [
+              "head",
+              "prospective-merge"
+            ],
+            "include": [
+              {
+                "arch": "x64",
+                "runner": "ubuntu-24.04"
+              },
+              {
+                "arch": "arm64",
+                "runner": "ubuntu-24.04-arm"
+              }
+            ]
+          },
+          "expanded_matrix_rows": 4,
+          "runs_on": "${{ matrix.runner }}",
+          "timeout_minutes": "55",
+          "fail_fast": "false",
+          "changed_env_keys": [
+            "EXPECTED_BASE",
+            "EXPECTED_HEAD",
+            "EXPECTED_MERGE",
+            "EXPECTED_SOURCE",
+            "TRNM_EXPECTED_SOURCE_SHA"
+          ],
+          "original_commands_conditions_and_retention_unchanged": true
+        },
+        {
+          "job": "legal-strategy",
+          "original_run_steps": 5,
+          "original_steps": 7,
+          "matrix": {
+            "arch": [
+              "x64",
+              "arm64"
+            ],
+            "source": [
+              "head",
+              "prospective-merge"
+            ],
+            "version": [
+              "v1",
+              "v2"
+            ],
+            "include": [
+              {
+                "arch": "x64",
+                "runner": "ubuntu-24.04"
+              },
+              {
+                "arch": "arm64",
+                "runner": "ubuntu-24.04-arm"
+              }
+            ]
+          },
+          "expanded_matrix_rows": 8,
+          "runs_on": "${{ matrix.runner }}",
+          "timeout_minutes": "180",
+          "fail_fast": "false",
+          "changed_env_keys": [
+            "EXPECTED_BASE",
+            "EXPECTED_HEAD",
+            "EXPECTED_MERGE",
+            "EXPECTED_SOURCE",
+            "TRNM_EXPECTED_SOURCE_SHA"
+          ],
+          "original_commands_conditions_and_retention_unchanged": true
+        },
+        {
+          "job": "legal-factorial",
+          "original_run_steps": 9,
+          "original_steps": 11,
+          "matrix": {
+            "arch": [
+              "x64",
+              "arm64"
+            ],
+            "source": [
+              "head",
+              "prospective-merge"
+            ],
+            "include": [
+              {
+                "arch": "x64",
+                "runner": "ubuntu-24.04"
+              },
+              {
+                "arch": "arm64",
+                "runner": "ubuntu-24.04-arm"
+              }
+            ]
+          },
+          "expanded_matrix_rows": 4,
+          "runs_on": "${{ matrix.runner }}",
+          "timeout_minutes": "180",
+          "fail_fast": "false",
+          "changed_env_keys": [
+            "EXPECTED_BASE",
+            "EXPECTED_HEAD",
+            "EXPECTED_MERGE",
+            "EXPECTED_SOURCE",
+            "TRNM_EXPECTED_SOURCE_SHA"
+          ],
+          "original_commands_conditions_and_retention_unchanged": true
+        },
+        {
+          "job": "fresh-challenge-service",
+          "original_run_steps": 5,
+          "original_steps": 7,
+          "matrix": {
+            "source": [
+              "head",
+              "prospective-merge"
+            ]
+          },
+          "expanded_matrix_rows": 2,
+          "runs_on": "ubuntu-24.04",
+          "timeout_minutes": "55",
+          "fail_fast": "false",
+          "changed_env_keys": [
+            "EXPECTED_BASE",
+            "EXPECTED_HEAD",
+            "EXPECTED_MERGE",
+            "EXPECTED_SOURCE",
+            "TRNM_EXPECTED_SOURCE_SHA"
+          ],
+          "original_commands_conditions_and_retention_unchanged": true
+        },
+        {
+          "job": "rank-batch-v5",
+          "original_run_steps": 7,
+          "original_steps": 9,
+          "matrix": {
+            "arch": [
+              "x64",
+              "arm64"
+            ],
+            "source": [
+              "head",
+              "prospective-merge"
+            ],
+            "include": [
+              {
+                "arch": "x64",
+                "runner": "ubuntu-24.04"
+              },
+              {
+                "arch": "arm64",
+                "runner": "ubuntu-24.04-arm"
+              }
+            ]
+          },
+          "expanded_matrix_rows": 4,
+          "runs_on": "${{ matrix.runner }}",
+          "timeout_minutes": "55",
+          "fail_fast": "false",
+          "changed_env_keys": [
+            "EXPECTED_BASE",
+            "EXPECTED_HEAD",
+            "EXPECTED_MERGE",
+            "EXPECTED_SOURCE"
+          ],
+          "original_commands_conditions_and_retention_unchanged": true
+        }
+      ]
+    }
+  ],
+  "original_run_steps_preserved": 54,
+  "original_matrix_rows_preserved": 34,
+  "github_actions_execution": false,
+  "native_execution": false
+}

@@ -1,0 +1,28 @@
+{
+  "actual_binding_execution_verified": false,
+  "findings": [
+    "The copy opens the source with O_NOFOLLOW|O_NONBLOCK|O_CLOEXEC, requires a regular 19752832-byte ELF, caps each block before writing, checks stable device/inode/mode/size/mtime/ctime and the independently fixed ef4d33be1574c27852187546f4393f301eb175b8246f647ce3d15a5d21fd2155 SHA256, writes a new destination exclusively, fsyncs and rehashes it.",
+    "The copied artifact is accepted only after the original receipt identifies frozen B/tree, release optimization 3, profile.test=false, bin/example target, default+pq-native-openssl features, and the original build stdout/stderr hashes. The new receipt retains the old Cargo artifact and states recompiled=false; this is a locator change, not a new build or a test-harness substitution.",
+    "The wrapper is reconstructed from independently pinned historical 120c70fb52909072eacf84251a44ff6c62f777479685db2cacf8cc1846a9e139 bytes. Exactly one REPO assignment changes, and the resulting 13622 bytes must hash to 46329982d1de9e3e7dac3bcbc9cb7fcf1455ab3ceb514637097cbad8e0b9d313. No runtime worker/import/source guard is changed.",
+    "The source retains 300 seconds, 536870912 max snapshot bytes, 8589934592 runtime RSS bytes and 4 Torch threads. This preparation does not execute the model and does not itself establish the outer model cgroup limits.",
+    "A successful full new-checkout preparation with original physical verification of 27686 tracked entries /2552660560 bytes is required before bindings are produced. Plain HEAD/tree/status identity checks do not replace the original physical-source gates before and after subsequent runtime/model execution.",
+    "New source/audit/operation/17-component path-map independent expectations are reviewed separately by discovery_fix. Actual readback of those bytes, the copied ELF and new full runtime admission remain pending at this source-review stage."
+  ],
+  "model_execution_verified": false,
+  "review_only": true,
+  "review_passed": true,
+  "review_scope": [
+    "normal ELF copy and provenance",
+    "caller source-byte identity and runtime locator",
+    "unchanged model resource bounds",
+    "full physical-source prerequisite boundary"
+  ],
+  "reviewer": "release_acceptance",
+  "schema": "trnm.independent-frozen02-bindings-copy-caller-review.v1",
+  "script": {
+    "bytes": 16174,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_prepare_frozen02_bindings_v1.py",
+    "sha256": "3e9014eae617eda8dc875b756ed4b2f7ae8cd9850f02fa555590a4f13d69a95b"
+  },
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+}

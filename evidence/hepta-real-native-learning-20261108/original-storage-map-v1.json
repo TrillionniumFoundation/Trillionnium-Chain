@@ -1,0 +1,12 @@
+{
+  "schema": "hepta-native-original-raw-storage-v1",
+  "export_manifest_sha256": "28523b53429d8094760ff67206e95139ae4b868dee1ed9ae80b923882027f351",
+  "mappings": [
+    {
+      "manifest_path": "v3/archive-list.stdout.json",
+      "stored_path": "v3/archive-list.stdout.json.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

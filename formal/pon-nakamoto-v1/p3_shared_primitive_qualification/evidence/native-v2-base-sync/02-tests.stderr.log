@@ -1,0 +1,10 @@
+   Compiling w1-full-public-stark-research v0.1.0 (/home/qian-qi/work/chain-p3-shared-profile-20261108-3acf89/formal/pon-nakamoto-v1/w1_public_stark_research)
+    Finished `release` profile [optimized] target(s) in 1m 14s
+     Running unittests src/lib.rs (/home/qian-qi/work/p3-shared-profile-target-3acf89/release/deps/w1_full_public_stark_research-da2872570fc98821)
+     Running unittests src/main.rs (/home/qian-qi/work/p3-shared-profile-target-3acf89/release/deps/w1_full_public_stark_research-71134fc2542b165a)
+     Running tests/carry_proof.rs (/home/qian-qi/work/p3-shared-profile-target-3acf89/release/deps/carry_proof-ac91e02e4ad5f807)
+     Running tests/proof_smoke.rs (/home/qian-qi/work/p3-shared-profile-target-3acf89/release/deps/proof_smoke-af01b948b08b0420)
+     Running tests/schedule_proof.rs (/home/qian-qi/work/p3-shared-profile-target-3acf89/release/deps/schedule_proof-7b816a4e1673c12b)
+     Running tests/tagged_sha3_profile.rs (/home/qian-qi/work/p3-shared-profile-target-3acf89/release/deps/tagged_sha3_profile-fe7b10562657ff69)
+     Running tests/wire_admission.rs (/home/qian-qi/work/p3-shared-profile-target-3acf89/release/deps/wire_admission-ce9b5c5b0028643a)
+   Doc-tests w1_full_public_stark_research

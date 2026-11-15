@@ -1,0 +1,48 @@
+formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py
+  SHA256 3ac9a625421addd573aba827da1830ab6579af17fff82cf24dcf35222d1208a9
+  AST/in-memory compile: PASS (exit 0)
+  Whitespace: PASS (raw git diff exit 1)
+  Source unchanged during check: True
+  Source unchanged since test inventory: True
+
+formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py
+  SHA256 eeec2e1cc1fa5b269635d3dfa1fcf800325b5d3a6ebe5dba2c935638d4bf3773
+  AST/in-memory compile: PASS (exit 0)
+  Whitespace: PASS (raw git diff exit 1)
+  Source unchanged during check: True
+  Source unchanged since test inventory: True
+
+formal/pon-nakamoto-v1/grouped_work_profile_v1.py
+  SHA256 8e63a160cc639ea77a3b122f982bc5a885ba1c926bb92531270897fd80164b66
+  AST/in-memory compile: PASS (exit 0)
+  Whitespace: PASS (raw git diff exit 1)
+  Source unchanged during check: True
+  Source unchanged since test inventory: True
+
+formal/pon-nakamoto-v1/test_grouped_fanout_reanalysis_v1.py
+  SHA256 03f24af7ba0db3d05ef87220803b6511fbb678df108b96677f00950c0576ca56
+  AST/in-memory compile: PASS (exit 0)
+  Whitespace: PASS (raw git diff exit 1)
+  Source unchanged during check: True
+  Source unchanged since test inventory: True
+
+formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py
+  SHA256 9ce117792b57c2ee6656f2141094404b2eb829d0272910fe3481980b89c90dab
+  AST/in-memory compile: PASS (exit 0)
+  Whitespace: PASS (raw git diff exit 1)
+  Source unchanged during check: True
+  Source unchanged since test inventory: True
+
+formal/pon-nakamoto-v1/test_grouped_work_profile_v1.py
+  SHA256 c54730920ff28a77f3125333314b88e0bfdf8fbbce04fd9ad3e8e799d4c82120
+  AST/in-memory compile: PASS (exit 0)
+  Whitespace: PASS (raw git diff exit 1)
+  Source unchanged during check: True
+  Source unchanged since test inventory: True
+
+evidence/pon-security-work-metering-20261107/replay_retained_query_trace.py
+  SHA256 71b6c30bfe78b910b075126279e30165d021ae4df47b44455f05d47ce8625c3e
+  AST/in-memory compile: PASS (exit 0)
+  Whitespace: PASS (raw git diff exit 1)
+  Source unchanged during check: True
+  Source unchanged since test inventory: None

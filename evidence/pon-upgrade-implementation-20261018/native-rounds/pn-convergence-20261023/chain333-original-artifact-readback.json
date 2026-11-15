@@ -1,0 +1,160 @@
+{
+  "scope": "read-only original retained artifact integrity and original failed-criteria readback; not execution reproduction or independent work qualification",
+  "workflow_run": 39863460333,
+  "artifact_id": 12473390436,
+  "zip_sha256": "156d5485058585a89f6ed3e97d4767e9ef314b818fefba7310e8b0172af01c8e",
+  "manifest_sha256": "9eb5c1e9a86d58b2cec27699705de86a4bad1d342aeee3c46e541ee1e5f0e7b2",
+  "manifest_files_verified": 913,
+  "manifest_total_bytes_verified": 356485760,
+  "zip_extra_members": [
+    "artifact-files.json"
+  ],
+  "expected_head": "03a46c1638b3460ada05fbd4ef79b7f024bc8a69",
+  "expected_tree": "e12211d1f449c4fab009b9583e0dd2345c6742b0",
+  "expected_public_policy_id": "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
+  "original_complete_success": false,
+  "runs": [
+    {
+      "run": 1,
+      "report_member": "run-1-raw/report.json",
+      "report_sha256": "8b12c2fd09bf86287708a1065ac5fcb97a6f0ca158a907a229084ed826fab1aa",
+      "original_finite_experiment_criteria_met": false,
+      "phases": [
+        {
+          "mode": "baseline",
+          "finite_phase_criteria_met": true,
+          "all_signed_rounds_confirmed_in_window": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "full_work_accepted": 21,
+          "full_work_failed": 0,
+          "submission_count": 21,
+          "confirmation_round_count": 3,
+          "actual_depletion_overlapping_rounds": 0
+        },
+        {
+          "mode": "from-zero",
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "full_work_accepted": 21,
+          "full_work_failed": 3819,
+          "submission_count": 21,
+          "confirmation_round_count": 3,
+          "actual_depletion_overlapping_rounds": 0
+        },
+        {
+          "mode": "late-product",
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "full_work_accepted": 21,
+          "full_work_failed": 3819,
+          "submission_count": 21,
+          "confirmation_round_count": 3,
+          "actual_depletion_overlapping_rounds": 0
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "report_member": "run-2-raw/report.json",
+      "report_sha256": "689f4f3157879260f95b03729f74e5d2110c0d03e93dff3a3c44529e84624ee2",
+      "original_finite_experiment_criteria_met": false,
+      "phases": [
+        {
+          "mode": "baseline",
+          "finite_phase_criteria_met": true,
+          "all_signed_rounds_confirmed_in_window": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "full_work_accepted": 21,
+          "full_work_failed": 0,
+          "submission_count": 21,
+          "confirmation_round_count": 3,
+          "actual_depletion_overlapping_rounds": 0
+        },
+        {
+          "mode": "from-zero",
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "full_work_accepted": 21,
+          "full_work_failed": 3819,
+          "submission_count": 21,
+          "confirmation_round_count": 3,
+          "actual_depletion_overlapping_rounds": 0
+        },
+        {
+          "mode": "late-product",
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "full_work_accepted": 21,
+          "full_work_failed": 3819,
+          "submission_count": 21,
+          "confirmation_round_count": 3,
+          "actual_depletion_overlapping_rounds": 0
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "report_member": "run-3-raw/report.json",
+      "report_sha256": "0cdf2e1729ed3faa7b3348fcb9b970c6992f65250943d299d625e3f1e290cd9c",
+      "original_finite_experiment_criteria_met": false,
+      "phases": [
+        {
+          "mode": "baseline",
+          "finite_phase_criteria_met": true,
+          "all_signed_rounds_confirmed_in_window": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "full_work_accepted": 21,
+          "full_work_failed": 0,
+          "submission_count": 21,
+          "confirmation_round_count": 3,
+          "actual_depletion_overlapping_rounds": 0
+        },
+        {
+          "mode": "from-zero",
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "full_work_accepted": 21,
+          "full_work_failed": 3819,
+          "submission_count": 21,
+          "confirmation_round_count": 3,
+          "actual_depletion_overlapping_rounds": 0
+        },
+        {
+          "mode": "late-product",
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "full_work_accepted": 21,
+          "full_work_failed": 3820,
+          "submission_count": 21,
+          "confirmation_round_count": 3,
+          "actual_depletion_overlapping_rounds": 0
+        }
+      ]
+    }
+  ],
+  "interpretation": "All observed signed confirmation rounds were timely. Original hostile depletion coverage was absent, so all original experiment failures remain failures. No original policy or success threshold was changed."
+}

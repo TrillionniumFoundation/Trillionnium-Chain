@@ -1,0 +1,1 @@
+{"request":{"id":"next-task","op":"probe","params":{"inputs":{"mode":"conditional_binary","prompt":"Answer with only yes or no. Is 8517 greater than 8516?","request_id":"chain-learning-d9fb-20261108-next-task"}},"session_id":"chain-learning-d9fb-20261108-worker-2"},"request_sha256":"5f776c921cc3175eaf79e50c1edd7658d29369cac336c7e565422f9723d3e0e4","started_at_ms":1794160214746}

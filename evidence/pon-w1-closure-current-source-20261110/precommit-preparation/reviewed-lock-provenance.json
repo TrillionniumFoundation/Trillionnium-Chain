@@ -1,0 +1,9 @@
+{
+  "schema": "TRNM-REVIEWED-LOCK-PROVENANCE2",
+  "historical_source": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+  "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+  "historical_retrieval": "GitHub connector UTF-8 contents read at the fixed original commit; exact final newline retained",
+  "historical_sha256": "af7ee60b8f9f95c200d3dddac41b70c037e2bb3395122fe67ab20885140f247f",
+  "current_sha256": "ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a",
+  "reviewed_difference": "Only local trnm-w1-zk-methods-v2 dependency list adds risc0-binfmt and sha2; package entries unchanged. This is not full build or compiler refinement."
+}

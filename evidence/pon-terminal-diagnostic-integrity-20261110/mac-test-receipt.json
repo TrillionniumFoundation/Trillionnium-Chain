@@ -1,0 +1,21 @@
+{
+  "parent": "bcc0d2369e81d85c001190ea4c8ee0b1778e178d",
+  "tests": [
+    {
+      "label": "mac-parent-controls",
+      "exit": 0,
+      "sha256": "bb00dc35dd33e711be2b9cce618f82bbe75dd7be2ca12c7f8875366ef1bde065"
+    },
+    {
+      "label": "mac-fixed-controls",
+      "exit": 0,
+      "sha256": "ae4c5a54a9d8ccf25a1346585ecaf06d50b65a95d727218f9bae914721276b4f"
+    },
+    {
+      "label": "mac-parent-new-controls",
+      "exit": 1,
+      "sha256": "a43788ee60a3b64e6cda54648a7f1e8ed618303ff49097959c46476db11cacc3"
+    }
+  ],
+  "scope": "Actual Mac Python on two hash-verified materialized Git blobs, not a full parent checkout, Cargo/Clippy/native service or campaign qualification"
+}

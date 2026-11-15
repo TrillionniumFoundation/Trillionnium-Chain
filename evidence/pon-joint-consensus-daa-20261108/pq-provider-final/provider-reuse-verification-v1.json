@@ -1,0 +1,82 @@
+{
+  "cargo_started": false,
+  "current_cli_version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+  "current_ml_dsa_65_algorithm_available": true,
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_DIR": "/home/qian-qi/work/chain-throughput-20261105-87309-pq-provider-v3/runner-temp/trnm-pq-provider-3.5.9.UUgi1jCA/install",
+    "OPENSSL_MODULES": "/home/qian-qi/work/chain-throughput-20261105-87309-pq-provider-v3/runner-temp/trnm-pq-provider-3.5.9.UUgi1jCA/install/lib/ossl-modules",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/home/qian-qi/work/chain-throughput-20261105-87309-pq-provider-v3/runner-temp/trnm-pq-provider-3.5.9.UUgi1jCA/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "1b22ceacafda4831aa7a7836a3619a4261394a9e4a09bf64580d43a6f214a562",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "environment_file": "/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-validation/pq-provider-final/github-env-v1",
+  "environment_file_sha256": "42c5d27b05564d5622c995cfaeebbce920dc88d3f278d72a9ae7a363b274bd80",
+  "historical_failed_provider_receipt": {
+    "last_stage": "download",
+    "path": "/home/qian-qi/work/chain-throughput-20261105-87309-receipts/clippy-pinned-provider-v2/pq-provider/provider.json",
+    "result": "FAILED",
+    "sha256": "3a9d234a649738fe0d97e0ac0cd2c7df19822287925dba5498d2aeb2144c5aef",
+    "source_digest_verified": false
+  },
+  "historical_sign_verify_and_wrong_message_rejection": true,
+  "host": "desktop",
+  "installed_backend_inputs": [
+    {
+      "bytes": 8933408,
+      "path": "/home/qian-qi/work/chain-throughput-20261105-87309-pq-provider-v3/runner-temp/trnm-pq-provider-3.5.9.UUgi1jCA/install/bin/openssl",
+      "sha256": "1b22ceacafda4831aa7a7836a3619a4261394a9e4a09bf64580d43a6f214a562"
+    },
+    {
+      "bytes": 3449,
+      "path": "/home/qian-qi/work/chain-throughput-20261105-87309-pq-provider-v3/runner-temp/trnm-pq-provider-3.5.9.UUgi1jCA/install/include/openssl/opensslv.h",
+      "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+    },
+    {
+      "bytes": 4729,
+      "path": "/home/qian-qi/work/chain-throughput-20261105-87309-pq-provider-v3/runner-temp/trnm-pq-provider-3.5.9.UUgi1jCA/install/include/openssl/configuration.h",
+      "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+    },
+    {
+      "bytes": 12381688,
+      "path": "/home/qian-qi/work/chain-throughput-20261105-87309-pq-provider-v3/runner-temp/trnm-pq-provider-3.5.9.UUgi1jCA/install/lib/libcrypto.a",
+      "sha256": "d23943f2e455cf797bca53b1f0bd9728aafbc74dfd0416beb68545f469976212"
+    },
+    {
+      "bytes": 2123138,
+      "path": "/home/qian-qi/work/chain-throughput-20261105-87309-pq-provider-v3/runner-temp/trnm-pq-provider-3.5.9.UUgi1jCA/install/lib/libssl.a",
+      "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727"
+    }
+  ],
+  "new_ml_dsa_sign_verify_smoke_run": false,
+  "new_private_key_generated": false,
+  "new_provider_build_performed": false,
+  "preflight": {
+    "exit_code": 0,
+    "stderr": "",
+    "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-joint-consensus-daa-20261108\", \"remote_policy_mutated\": false}\n"
+  },
+  "preparation_script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+  "preserved_failed_discovery": {
+    "job_id": "1a1b9e4119d-12894-1778",
+    "reason": "bounded rg search timed out after 60 seconds; no files modified",
+    "state": "failed"
+  },
+  "private_keys_copied_to_receipts": false,
+  "production_activation": false,
+  "read_only_reuse": true,
+  "result": "VERIFIED_REUSE_READY",
+  "schema": "trnm-pq-provider-readonly-reuse-v1",
+  "source_archive": {
+    "bytes": 53279637,
+    "path": "/home/qian-qi/work/chain-throughput-20261105-87309-pq-provider-v3/runner-temp/trnm-pq-provider-3.5.9.UUgi1jCA/openssl-3.5.9.tar.gz",
+    "sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a"
+  },
+  "source_or_provider_qualification_claim": false,
+  "source_provider_receipt": "/home/qian-qi/work/chain-throughput-20261105-87309-receipts/clippy-pinned-provider-v3/pq-provider/provider.json",
+  "source_provider_receipt_sha256": "3719f973337dc8fed5054665ba981d6b3c67be552dbe16dad9ad9073d5ac40a3",
+  "source_provider_result": "PREPARED_AND_SMOKE_VERIFIED",
+  "whole_chain_quantum_security_qualified": false
+}

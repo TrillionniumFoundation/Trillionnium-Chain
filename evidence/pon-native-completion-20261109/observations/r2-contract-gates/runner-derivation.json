@@ -1,0 +1,11 @@
+{
+  "original_runner": "/data/chain-abg-70ae-20261108/evidence/candidate-contract-gates/runner.py",
+  "original_runner_sha256": "c4a0c9f4d723d1ae38498cb368ace7bd5a5f95aeb1d83e8937e3f81663f887b2",
+  "changes": [
+    "output_directory",
+    "expected_head",
+    "expected_tree",
+    "replace R1-only launch observation with this derivation"
+  ],
+  "gate_argv_count_and_timeout_policy_unchanged": true
+}

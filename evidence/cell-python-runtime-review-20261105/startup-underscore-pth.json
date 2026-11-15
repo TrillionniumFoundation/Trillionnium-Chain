@@ -1,0 +1,11 @@
+{
+  "after_exit": 1,
+  "before_exit": 0,
+  "canary_executed": true,
+  "canary_trace": true,
+  "declared_inventory_unchanged": true,
+  "helper_sha256": "650927fe80d3d9b07689261a861b06878cf76488ad4b6571be25dfb5ecebe855",
+  "scope": "actual CPython startup _pth source canary only; no native guard invocation/model admission",
+  "sidecar_under_declared_prefix_or_stdlib": false,
+  "stderr_tail": "Traceback (most recent call last):\n  File \"<CHAIN>/scripts/llm_neural_read_worker.py\", line 15, in <module>\n    import hashlib\n  File \"<TEMP>/modules/hashlib.py\", line 2, in <module>\n    raise RuntimeError(\"UNADMITTED_UNDERSCORE_PTH_CANARY\")\nRuntimeError: UNADMITTED_UNDERSCORE_PTH_CANARY\n"
+}

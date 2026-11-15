@@ -1,0 +1,137 @@
+{
+  "authoritative_h_terminal_status_observed_by_this_review": false,
+  "conclusion": "The actual retained summary and reviewed helper support successful independent full-checkout preparation and the unchanged source gate on frozen B, with the old desktop scene preserved. This is not itself an authoritative h process exit receipt, a claim that every remote raw stream has been locally rehashed, or any publication/merge/production authorization.",
+  "findings": [],
+  "git_or_other_side_effects": {
+    "branch_pushed": false,
+    "github_write_performed": false,
+    "h_called_by_this_review": false,
+    "old_scene_changed": false,
+    "source_guard_modified": false
+  },
+  "helper": {
+    "bytes": 19864,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/desktop_prepare_publication02_source_v1.py",
+    "sha256": "f7903f66beac8c8f671a947306d3981062f57c3420c730f672a32e3cdaf3f605"
+  },
+  "job_id_reported_by_root": "1a1cf58e486-2564-19f9",
+  "new_checkout": {
+    "canonical_fetch_and_single_push_url_sha_verified": true,
+    "checkout_argv": [
+      "/usr/bin/git",
+      "checkout",
+      "fix/chain-bt-owner-convergence-20261112-4a0b"
+    ],
+    "clean_status_reported_after": true,
+    "clone_argv": [
+      "/usr/bin/git",
+      "clone",
+      "--no-local",
+      "--no-hardlinks",
+      "--no-checkout",
+      "--single-branch",
+      "--no-tags",
+      "--branch",
+      "fix/chain-bt-owner-convergence-20261112-4a0b",
+      "--config",
+      "core.ignoreStat=false",
+      "--config",
+      "core.sparseCheckout=false",
+      "--config",
+      "core.sparseCheckoutCone=false",
+      "--config",
+      "index.sparse=false",
+      "--config",
+      "core.splitIndex=false",
+      "--config",
+      "core.fsmonitor=false",
+      "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+      "/home/qian-qi/work/chain-bt-4a0b-publication02"
+    ],
+    "disk_admission": {
+      "estimate": "full checkout plus two source-object storage copies plus 1GiB reserve",
+      "expected_checkout_bytes": 2552660560,
+      "free_bytes": 15001387008,
+      "old_files_deleted": false,
+      "old_object_storage_bytes": 1139474432,
+      "required_free_bytes": 5905351248,
+      "target_parent": "/home/qian-qi/work"
+    },
+    "full_source_stdout_recorded": {
+      "bytes": 423,
+      "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/full-physical-source.stdout",
+      "sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902",
+      "stat": {
+        "st_ctime_ns": 1794480152161333779,
+        "st_dev": 2050,
+        "st_ino": 16165870,
+        "st_mode": 33152,
+        "st_mtime_ns": 1794480152161333779,
+        "st_size": 423
+      }
+    },
+    "head": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "new_local_config": {
+      "core.fsmonitor": "false",
+      "core.ignoreStat": "false",
+      "core.sparseCheckout": "false",
+      "core.sparseCheckoutCone": "false",
+      "core.splitIndex": "false",
+      "index.sparse": "false"
+    },
+    "path": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+    "preflight_exit_zero": true,
+    "shared_index_reports_empty_before_and_after": true,
+    "source_check": {
+      "base": null,
+      "candidate": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+      "tested_tree": "a897ba4c74897a05ceb364f098b1bfe32c850213",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2552660560,
+      "tracked_entries": 27686,
+      "tracked_worktree_verified": true
+    },
+    "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+  },
+  "old_scene": {
+    "cause_or_writer_identified": false,
+    "distinct_from_ai395_102_entry_observation": true,
+    "five_previous_failure_original_and_copy_pins_match": true,
+    "hidden_entries_reported": 104,
+    "hidden_observations_before_after_bytes": 61542,
+    "hidden_observations_before_after_sha256": "ef640c79201cc63ea1a73a03dae279ef5704b7abc5364cc016c3ca4b5b178f53",
+    "index_before_after_full_metadata_equal": true,
+    "index_bytes": 4668177,
+    "index_sha256": "84c7967135da00a1661596cd5337609aa31a3eb4efd8d93e51f11d40e506c90f",
+    "missing_entries_reported": 104,
+    "path": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+    "present_hidden_entries_reported": 0,
+    "prior_failure_local_originals_rehashed": [
+      "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/desktop-publication/prestage-source-01/report.json",
+      "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/desktop-publication/prestage-source-01/full-physical-source.stderr"
+    ],
+    "raw_hidden_arrays_locally_reviewed": false,
+    "refs_and_flags_before_after_pins_equal": true
+  },
+  "recorded_helper_outcome": {
+    "any_timeout": false,
+    "commands": 37,
+    "commands_exit_zero": 36,
+    "completed": true,
+    "expected_config_no_matches_exit_one": 1,
+    "passed": true
+  },
+  "reviewed_at_utc": "2026-11-12T10:52:10.097759+00:00",
+  "reviewer": "release_acceptance",
+  "schema": "release_acceptance_desktop_publication02_source_result_review_v1",
+  "scope": "Independent full local summary read, exact helper binding and recorded-command/identity consistency checks. Remote command raw files and hidden-entry arrays are not relabeled as locally retrieved.",
+  "summary": {
+    "bytes": 61020,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/desktop-publication/publication02-source-01/summary.json",
+    "sha256": "55144152a53f63a11badbb1c55003acd753e69b0311c03d8a5bb4b7c92b1af85"
+  }
+}

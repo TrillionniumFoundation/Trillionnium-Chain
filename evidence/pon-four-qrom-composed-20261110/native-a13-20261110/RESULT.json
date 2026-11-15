@@ -1,0 +1,66 @@
+{
+  "all_algorithm_cost_bound": null,
+  "failed": 0,
+  "files": {
+    "a13-native-1125-0.stdout": {
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    "a13-native-1125-1.stdout": {
+      "bytes": 36,
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    "a13-native-1125-2.stdout": {
+      "bytes": 834834,
+      "sha256": "61447f3ed3d8ef25e8a167b7196d7ed1d133382d744bb8cb5bbe6d3610ffec6d"
+    },
+    "a13-native-1125-3.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "a13-native-1125-4.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "a13-native-1130-0.stdout": {
+      "bytes": 722204,
+      "sha256": "4cfdfbe9320eb840cec65a2f1cbdfe092667cf39a44b1b052f96344edf2164a9"
+    },
+    "a13-native-graphs-format-1125.json": {
+      "bytes": 3047,
+      "sha256": "575fbc172dbe2fe1d2ca9a51410be865af6b46a1b16153679c694a7ec918f9cd"
+    },
+    "a13-native-graphs-format-1125.log": {
+      "bytes": 1387,
+      "sha256": "e681f216af471999f613ae0ccf891d4a691a4a8de095b597ead33c1526958032"
+    },
+    "a13-native-original-commands-1130.json": {
+      "bytes": 3733,
+      "sha256": "1177363c7230eb31c4014ae55bbd8e7dfe9382f12d1114c56e299ad05cdadb43"
+    },
+    "a13-native-original-commands-1130.log": {
+      "bytes": 49394,
+      "sha256": "7fc6d0143b6cdaad164a71032dc677aeb3fe725a3cf024770ca704ce2bd8a1b0"
+    }
+  },
+  "filtered": 0,
+  "first_driver_wrong_fuzz_manifest_failure_preserved": true,
+  "four_proven": {
+    "computation": false,
+    "demand": false,
+    "sybil": false,
+    "utility": false
+  },
+  "full_workspace_tests_claimed": false,
+  "harnesses": 34,
+  "ignored": 0,
+  "locked_offline_workspace_and_fuzz_graphs": true,
+  "native_campaign_pass_claimed": false,
+  "passed_selected_crate_methods": 298,
+  "production_activation": false,
+  "source": "a13c56ca050af1d6b98571c4ae41ade5e78dbec9",
+  "toolchain": "Rust/Cargo 1.95.0",
+  "tree": "ec3dcf4e85ae1413df572328744729bc56b99aea",
+  "workspace_format": true,
+  "workspace_strict_clippy": true
+}

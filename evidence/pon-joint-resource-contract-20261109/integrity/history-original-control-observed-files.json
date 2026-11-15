@@ -1,0 +1,81 @@
+{
+  "archive_sha256": "58d76e8d058d5684a11327000b726947710c58766697bc9532df1daa770d7b14",
+  "files": [
+    {
+      "bytes": 690,
+      "path": "history-deadline-evidence/initial-branch-preflight-observation.json",
+      "sha256": "9dac75c34878079196c2e00098e014fcc433186d5e2b841772826ed27cb64dfb"
+    },
+    {
+      "bytes": 904,
+      "path": "history-deadline-evidence/red-case-analysis.json",
+      "sha256": "21de78c04899072aaa0ba76f52fddf57cb17720dbec53d48541eceb5343391e4"
+    },
+    {
+      "bytes": 1332,
+      "path": "history-deadline-evidence/red-command.json",
+      "sha256": "a225d5f3394a7db1440b59eaec052a58e71e368b9d3e46dca03f56f3e81b657a"
+    },
+    {
+      "bytes": 17164,
+      "path": "history-deadline-evidence/red-exact-deadline-tests.rs",
+      "sha256": "452dcd5b3fe49a0233039483efcd6e43dfc805bcaa6ed5f610eeb7e11a52ad8d"
+    },
+    {
+      "bytes": 411,
+      "path": "history-deadline-evidence/red-native-executable-identity.json",
+      "sha256": "d30ca7c4552fabf3fe06ba209deeeb15578a539a6a97f2ef541a5e80889d40f5"
+    },
+    {
+      "bytes": 0,
+      "path": "history-deadline-evidence/red-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 172,
+      "path": "history-deadline-evidence/red-preflight.stdout",
+      "sha256": "dd631153876a839ea21670016e08d6db3a31d736b96e4e65fcde0ab60fe00825"
+    },
+    {
+      "bytes": 10127995,
+      "path": "history-deadline-evidence/red-source-after.json",
+      "sha256": "dddd66f6baee9bd3e0ce131a6e41f8997d8edfcd2fb7c525a2d47b5954d6c6cb"
+    },
+    {
+      "bytes": 10127995,
+      "path": "history-deadline-evidence/red-source-before.json",
+      "sha256": "dddd66f6baee9bd3e0ce131a6e41f8997d8edfcd2fb7c525a2d47b5954d6c6cb"
+    },
+    {
+      "bytes": 339,
+      "path": "history-deadline-evidence/red-summary.json",
+      "sha256": "b7a87ff7e27d9e3c08cb827dc2e2ae52ecbc78022894553a0a90e1ad2965ebb3"
+    },
+    {
+      "bytes": 5331,
+      "path": "history-deadline-evidence/red-tests-only.patch",
+      "sha256": "96d6a53f9e3998b555ede045cf4e2ddf7ba7638a66bad86acde6276e1d498740"
+    },
+    {
+      "bytes": 6736,
+      "path": "history-deadline-evidence/red.stderr",
+      "sha256": "18b7dcf603eb7c2b09e0c070a49d34bdcce7cd0b0bcaa3ada25480d076603ab7"
+    },
+    {
+      "bytes": 1651,
+      "path": "history-deadline-evidence/red.stdout",
+      "sha256": "0fca4a57a64dabcb42372bf76a1c952a9b58ca17fe922cccca1b225bfb4b60e1"
+    },
+    {
+      "bytes": 4860,
+      "path": "history-deadline-evidence/run-red-qualified.py",
+      "sha256": "cdc52883cdac7cd4dfa547b63e9b71b136cbcc23e29204a38a5d914213c6028e"
+    },
+    {
+      "bytes": 3939,
+      "path": "history-deadline-evidence/run-red.py",
+      "sha256": "1e3dd22ed476f88891f6d53b409d24b396aa190eebb1582e2f8ebb1f2301992d"
+    }
+  ],
+  "schema": "independent-archive-member-hashes-v1"
+}

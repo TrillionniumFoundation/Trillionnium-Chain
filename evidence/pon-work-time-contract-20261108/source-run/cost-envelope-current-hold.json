@@ -1,0 +1,145 @@
+{
+  "schema": "pon-cost-envelope-observation-v1",
+  "baseline_profile_path": "config/pon/work-profile-v1.json",
+  "baseline_profile_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+  "baseline_profile_bytes_verified": true,
+  "scope": "identity join and declared finite-model arithmetic; variable-u native relation absent",
+  "result": {
+    "schema": "pon.cost-envelope.result.v1",
+    "contract_sha256": "2a0663558bbd18b080bba74034c5aceae5037c076919a06209092e018b9bb042",
+    "profile_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+    "arithmetic_status": "HOLD_MISSING_BOUNDS",
+    "evidence_scope": "CONDITIONAL_HYPOTHESES",
+    "production_gate": "HOLD_NO_GO",
+    "all_legal_algorithms_lower_bound": null,
+    "mixed_consensus_proof": null,
+    "profile_identity_verified": false,
+    "p0_is_input_hypothesis": true,
+    "missing_bounds": [
+      {
+        "class": "classical",
+        "u": 1,
+        "bound": "lower"
+      },
+      {
+        "class": "classical",
+        "u": 1,
+        "bound": "upper"
+      },
+      {
+        "class": "quantum",
+        "u": 1,
+        "bound": "lower"
+      },
+      {
+        "class": "quantum",
+        "u": 1,
+        "bound": "upper"
+      },
+      {
+        "class": "classical",
+        "u": 4,
+        "bound": "lower"
+      },
+      {
+        "class": "classical",
+        "u": 4,
+        "bound": "upper"
+      },
+      {
+        "class": "quantum",
+        "u": 4,
+        "bound": "lower"
+      },
+      {
+        "class": "quantum",
+        "u": 4,
+        "bound": "upper"
+      },
+      {
+        "class": "classical",
+        "u": 16,
+        "bound": "lower"
+      },
+      {
+        "class": "classical",
+        "u": 16,
+        "bound": "upper"
+      },
+      {
+        "class": "quantum",
+        "u": 16,
+        "bound": "lower"
+      },
+      {
+        "class": "quantum",
+        "u": 16,
+        "bound": "upper"
+      }
+    ],
+    "unqualified_envelopes": [],
+    "success_contract": {
+      "standard": "total_cost_for_fixed_success_probability_by_deadline",
+      "probability_scope": "declared_model_not_statistical_confidence",
+      "success_probability_target": {
+        "n": 1,
+        "d": 2
+      },
+      "deadline_ms": 120000,
+      "horizon_rounds": 1
+    },
+    "evidence": [
+      {
+        "class": "classical",
+        "u": 1,
+        "kind": "hypothesis",
+        "certificate_sha256": "4b44d107a1ad48a6e02a68c1fca40432544a8717522276b002feb2d00f3f8ae0",
+        "finite_model_minimum": null,
+        "qualifying_strategy_ids": []
+      },
+      {
+        "class": "classical",
+        "u": 4,
+        "kind": "hypothesis",
+        "certificate_sha256": "4b44d107a1ad48a6e02a68c1fca40432544a8717522276b002feb2d00f3f8ae0",
+        "finite_model_minimum": null,
+        "qualifying_strategy_ids": []
+      },
+      {
+        "class": "classical",
+        "u": 16,
+        "kind": "hypothesis",
+        "certificate_sha256": "4b44d107a1ad48a6e02a68c1fca40432544a8717522276b002feb2d00f3f8ae0",
+        "finite_model_minimum": null,
+        "qualifying_strategy_ids": []
+      },
+      {
+        "class": "quantum",
+        "u": 1,
+        "kind": "hypothesis",
+        "certificate_sha256": "4b44d107a1ad48a6e02a68c1fca40432544a8717522276b002feb2d00f3f8ae0",
+        "finite_model_minimum": null,
+        "qualifying_strategy_ids": []
+      },
+      {
+        "class": "quantum",
+        "u": 4,
+        "kind": "hypothesis",
+        "certificate_sha256": "4b44d107a1ad48a6e02a68c1fca40432544a8717522276b002feb2d00f3f8ae0",
+        "finite_model_minimum": null,
+        "qualifying_strategy_ids": []
+      },
+      {
+        "class": "quantum",
+        "u": 16,
+        "kind": "hypothesis",
+        "certificate_sha256": "4b44d107a1ad48a6e02a68c1fca40432544a8717522276b002feb2d00f3f8ae0",
+        "finite_model_minimum": null,
+        "qualifying_strategy_ids": []
+      }
+    ],
+    "credit_witness": [],
+    "violations": [],
+    "failure_budget": null
+  }
+}

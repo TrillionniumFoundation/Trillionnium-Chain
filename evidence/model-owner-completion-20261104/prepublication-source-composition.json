@@ -1,0 +1,61 @@
+{
+  "schema": "model-owner-prepublication-source-composition-v1",
+  "previous_source": "c917ef415e21939be1bb8c1d26019042187a2ff1",
+  "previous_unpublished_intent": "db757e7f76257a78e58cf1157269593e9ffba851",
+  "remote_before": "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+  "concurrent_remote": "38543c96cabb0d63a4a99d149a30a270d0c2c107",
+  "draft_sha256": "3e72cb73b9e4968eede19675ad95ad42e0353c5b09d516b277c3e78debe67ad8",
+  "draft_status": "never published to a remote ref; never executed; retained before composing newer source",
+  "same_policy_id": "9096c33705a1c4695b695b2c8ebf047c57fa373a32cb54ada663214dd1ec827e",
+  "same_trial_id": "009805004f8e3b37bd2c92173a786a70a1c0b9014dd4b1a45190e5deff149604",
+  "same_initial_checkpoint": "ee5da5c59d8ecff0352c4222a7d748e32d8bd771b0d9a5b081ad4ba3a96f0925",
+  "max_attempts": 1,
+  "ledger_bytes_unchanged": true,
+  "model_attempts_spent": 0,
+  "model_started": false,
+  "remote_ref_updates_by_this_continuation": 0,
+  "model_source_sha256_unchanged": {
+    "scripts/ci/check_pq_research_integration.py": "825f15ad3047f0ae3b90e3ecf36b8dd15ceeea0bb1456bde3984a72cc5231fc2",
+    "scripts/ci/ci_job.sh": "851301316c46047547c5a71f4d4f1ed660fa0f33d155f5792f0a387db48b32ec",
+    "scripts/ci/llm_hosted_once.py": "8025eba157477e42d3efa9ba6276296b47f1e7a692d6fc44f870c853f39b3906",
+    "scripts/ci/test_llm_hosted_once.py": "9ab052552df9f2adc295ad847fc6dbd998818b705a794b06e6245a9aea3dd58e",
+    "scripts/llm_base_material.py": "10d4c21419dd297dcdee6bd128c7cc1fdc1d343e1a62017da61bc1787fde113b",
+    "scripts/llm_cell_host_handoff.py": "3721be33cd7ccd6b6b31f040c9dc707790cc80ff34c25e90ac52e820f0c04f57",
+    "scripts/llm_cell_release.py": "77b61ea2e4a135eab5fa20ed3f26439295f6a9a76f10f04720aae11ee4225216",
+    "scripts/llm_inherited_runtime.py": "069ad93e4adde21761a3e5343a181128b36fe7697e881d2d41c5a6fbc06f155b",
+    "scripts/llm_initial_trainable_setup_v2.py": "f5efaed18989631d4453357e36d839e8f5adc64dfd7d7121d1e6921a5473de79",
+    "scripts/llm_runtime_assessment.py": "10045ea089335c96d351dcdc710f47f3f7b31fbe49c0ca91675b92ae3526149c",
+    "scripts/llm_runtime_parent_step.py": "e5034a325645e73df977305eb0286a1d3319d52d13d3690ad79d68f171dd0c31",
+    "scripts/llm_runtime_pilot.py": "83c02578857447ff9a8366d3fe29cd00a57ce436ff6f94c37e5a21d42623301b",
+    "scripts/llm_runtime_trial_ledger.py": "fc61ecbfba09a3bccd7c1ba1c8862ff684e24a866cd6f8bf4e0e14b87ff7806f",
+    "scripts/test_llm_base_material.py": "eb66c8cd0f0ba2d33a4d1ba7d37f0ad1f0691352b542fd7ac6afd1c8a0bff5e9",
+    "scripts/test_llm_base_material_torch.py": "7740f63d1346a21f915a53152f3b873bb3a6f6a3e2375d994c3b9290bef08d5d",
+    "scripts/test_llm_base_source_closure.py": "253bb9b4343f30c6da3e913a574fd30749bb8ee1243e759ad14be7369c7fe57c",
+    "scripts/test_llm_runtime_assessment.py": "4114a838513dbcb5cc78c477cfb6fae804157b5e0844e501d54c75d36ff1f4d5",
+    "scripts/test_llm_runtime_exit_worker_frontier.py": "40b2cc957177874535a5f8718e5f89f1cf32884678a269bb57677c46694b505f",
+    "scripts/test_llm_runtime_parent_step.py": "9d2cb839665253c218c2e3049c8a555c6518683f3febd9abffa70a5c7e6e6c16",
+    "scripts/test_llm_runtime_pilot.py": "aad1114afd858c9129e54d184d8b2431c2c695397883de2285644496eaf885f7",
+    "scripts/test_llm_runtime_rss_owner.py": "af8980e604fda8d1796c5fcbe19fd5ebaec6175ca889b62a6cdbd2b7f1a8c173",
+    "scripts/test_llm_runtime_trial_replay.py": "8db662e19f9ecc0fafef2077d83dcacf82a449fd7030df517ede9a7d97505ecb"
+  },
+  "refreshed_concurrent_pins": [
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "previous": "103a7a6d3a0ca6c2a79071e3b54b89b9c701338f",
+      "current": "2d9657048f016b49924c3270bb21c4d62132ddf8"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "previous": "7e6fa33cbaa50d76f1a8fd0146a44ca3623345b3",
+      "current": "ce1608248d2ee67ed8f5d82a2c5f15942689139b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "previous": "e21b8873c8fc4ee4b9dacc24a1107dfe76f09901",
+      "current": "cda95433f7bdd6d1c013e506891154c9722ff967"
+    }
+  ],
+  "native_crypto_build_inputs_changed": true,
+  "native_revalidation": "pending on the committed composed source",
+  "qualification": false
+}

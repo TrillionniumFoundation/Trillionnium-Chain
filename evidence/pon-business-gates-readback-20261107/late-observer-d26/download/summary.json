@@ -1,0 +1,3225 @@
+{
+  "schema": "trnm-independent-w1-component-artifact-get-retry-v2",
+  "head": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "expected_artifacts": 9,
+  "original_component_denominator": 20,
+  "observed_artifacts": 9,
+  "reader_failures": 6,
+  "results": [
+    {
+      "artifact_id": 13579071557,
+      "metadata": {
+        "id": 13579071557,
+        "node_id": "MDg6QXJ0aWZhY3QxMzU3OTA3MTU1Nw==",
+        "name": "w1-legal-strategy-v2-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+        "size_in_bytes": 140617119,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip",
+        "expired": false,
+        "digest": "sha256:878bb7120c04dd9e10c0159df975c92995187c88940322c02e24917654cf4fbd",
+        "created_at": "2026-11-07T14:57:31Z",
+        "updated_at": "2026-11-07T14:57:31Z",
+        "expires_at": "2026-12-07T14:57:22Z",
+        "workflow_run": {
+          "id": 42383368504,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+        }
+      },
+      "started_utc": "2026-11-07T16:10:31.117385+00:00",
+      "errors": [
+        "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip']' timed out after 599.9999658360612 seconds"
+      ],
+      "native_gate_validated": false,
+      "download_argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip"
+      ],
+      "finished_utc": "2026-11-07T16:20:31.124175+00:00"
+    },
+    {
+      "artifact_id": 13579025854,
+      "metadata": {
+        "id": 13579025854,
+        "node_id": "MDg6QXJ0aWZhY3QxMzU3OTAyNTg1NA==",
+        "name": "w1-rank-batch-v5-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+        "size_in_bytes": 45021233,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579025854",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579025854/zip",
+        "expired": false,
+        "digest": "sha256:1e875ea6579e1eeadcfa36916c200057de84ace18e816fa41a889fc517af5b24",
+        "created_at": "2026-11-07T14:55:34Z",
+        "updated_at": "2026-11-07T14:55:34Z",
+        "expires_at": "2026-12-07T14:55:32Z",
+        "workflow_run": {
+          "id": 42383368504,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+        }
+      },
+      "started_utc": "2026-11-07T16:10:31.118162+00:00",
+      "errors": [],
+      "native_gate_validated": false,
+      "download_argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579025854/zip"
+      ],
+      "download_exit": 0,
+      "zip_bytes": 45021233,
+      "zip_sha256": "1e875ea6579e1eeadcfa36916c200057de84ace18e816fa41a889fc517af5b24",
+      "archive_inventory": [
+        {
+          "path": "batch-tests.log",
+          "bytes": 1297,
+          "compressed_bytes": 621
+        },
+        {
+          "path": "campaign/build.stderr",
+          "bytes": 1501,
+          "compressed_bytes": 520
+        },
+        {
+          "path": "campaign/build.stdout",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-00.json",
+          "bytes": 28021,
+          "compressed_bytes": 3513
+        },
+        {
+          "path": "campaign/campaign-00.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-00.stdout",
+          "bytes": 489763,
+          "compressed_bytes": 27218
+        },
+        {
+          "path": "campaign/campaign-01.json",
+          "bytes": 84066,
+          "compressed_bytes": 7774
+        },
+        {
+          "path": "campaign/campaign-01.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-01.stdout",
+          "bytes": 2899124,
+          "compressed_bytes": 221526
+        },
+        {
+          "path": "campaign/campaign-02.json",
+          "bytes": 28109,
+          "compressed_bytes": 3547
+        },
+        {
+          "path": "campaign/campaign-02.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-02.stdout",
+          "bytes": 1727786,
+          "compressed_bytes": 102921
+        },
+        {
+          "path": "campaign/campaign-03.json",
+          "bytes": 84142,
+          "compressed_bytes": 7809
+        },
+        {
+          "path": "campaign/campaign-03.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-03.stdout",
+          "bytes": 13075513,
+          "compressed_bytes": 4346727
+        },
+        {
+          "path": "campaign/campaign-04.json",
+          "bytes": 27036,
+          "compressed_bytes": 3264
+        },
+        {
+          "path": "campaign/campaign-04.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-04.stdout",
+          "bytes": 336087,
+          "compressed_bytes": 16090
+        },
+        {
+          "path": "campaign/campaign-05.json",
+          "bytes": 28014,
+          "compressed_bytes": 3515
+        },
+        {
+          "path": "campaign/campaign-05.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-05.stdout",
+          "bytes": 450297,
+          "compressed_bytes": 24815
+        },
+        {
+          "path": "campaign/campaign-06.json",
+          "bytes": 26304,
+          "compressed_bytes": 3394
+        },
+        {
+          "path": "campaign/campaign-06.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-06.stdout",
+          "bytes": 426503,
+          "compressed_bytes": 45124
+        },
+        {
+          "path": "campaign/campaign-07.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-07.json",
+          "bytes": 72917,
+          "compressed_bytes": 7339
+        },
+        {
+          "path": "campaign/campaign-07.stdout",
+          "bytes": 2358014,
+          "compressed_bytes": 183447
+        },
+        {
+          "path": "campaign/campaign-08.json",
+          "bytes": 26360,
+          "compressed_bytes": 3426
+        },
+        {
+          "path": "campaign/campaign-08.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-08.stdout",
+          "bytes": 988044,
+          "compressed_bytes": 72065
+        },
+        {
+          "path": "campaign/campaign-09.json",
+          "bytes": 72979,
+          "compressed_bytes": 7337
+        },
+        {
+          "path": "campaign/campaign-09.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-09.stdout",
+          "bytes": 9158670,
+          "compressed_bytes": 2978392
+        },
+        {
+          "path": "campaign/campaign-10.json",
+          "bytes": 25484,
+          "compressed_bytes": 3160
+        },
+        {
+          "path": "campaign/campaign-10.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-10.stdout",
+          "bytes": 306051,
+          "compressed_bytes": 35422
+        },
+        {
+          "path": "campaign/campaign-11.json",
+          "bytes": 26296,
+          "compressed_bytes": 3371
+        },
+        {
+          "path": "campaign/campaign-11.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-11.stdout",
+          "bytes": 404727,
+          "compressed_bytes": 42664
+        },
+        {
+          "path": "campaign/campaign-12.json",
+          "bytes": 25456,
+          "compressed_bytes": 3334
+        },
+        {
+          "path": "campaign/campaign-12.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-12.stdout",
+          "bytes": 414285,
+          "compressed_bytes": 76230
+        },
+        {
+          "path": "campaign/campaign-13.json",
+          "bytes": 67408,
+          "compressed_bytes": 7118
+        },
+        {
+          "path": "campaign/campaign-13.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-13.stdout",
+          "bytes": 2199877,
+          "compressed_bytes": 214787
+        },
+        {
+          "path": "campaign/campaign-14.json",
+          "bytes": 25530,
+          "compressed_bytes": 3378
+        },
+        {
+          "path": "campaign/campaign-14.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-14.stdout",
+          "bytes": 1527166,
+          "compressed_bytes": 404714
+        },
+        {
+          "path": "campaign/campaign-15.json",
+          "bytes": 67467,
+          "compressed_bytes": 7158
+        },
+        {
+          "path": "campaign/campaign-15.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-15.stdout",
+          "bytes": 9171701,
+          "compressed_bytes": 3062655
+        },
+        {
+          "path": "campaign/campaign-16.json",
+          "bytes": 24722,
+          "compressed_bytes": 3134
+        },
+        {
+          "path": "campaign/campaign-16.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-16.stdout",
+          "bytes": 290955,
+          "compressed_bytes": 66501
+        },
+        {
+          "path": "campaign/campaign-17.json",
+          "bytes": 25447,
+          "compressed_bytes": 3345
+        },
+        {
+          "path": "campaign/campaign-17.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-17.stdout",
+          "bytes": 381655,
+          "compressed_bytes": 71852
+        },
+        {
+          "path": "campaign/campaign-18.json",
+          "bytes": 25457,
+          "compressed_bytes": 3343
+        },
+        {
+          "path": "campaign/campaign-18.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-18.stdout",
+          "bytes": 414292,
+          "compressed_bytes": 76122
+        },
+        {
+          "path": "campaign/campaign-19.json",
+          "bytes": 67412,
+          "compressed_bytes": 7126
+        },
+        {
+          "path": "campaign/campaign-19.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-19.stdout",
+          "bytes": 2245900,
+          "compressed_bytes": 223219
+        },
+        {
+          "path": "campaign/campaign-20.json",
+          "bytes": 25516,
+          "compressed_bytes": 3374
+        },
+        {
+          "path": "campaign/campaign-20.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-20.stdout",
+          "bytes": 997554,
+          "compressed_bytes": 108253
+        },
+        {
+          "path": "campaign/campaign-21.json",
+          "bytes": 67469,
+          "compressed_bytes": 7131
+        },
+        {
+          "path": "campaign/campaign-21.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-21.stdout",
+          "bytes": 7897554,
+          "compressed_bytes": 2568893
+        },
+        {
+          "path": "campaign/campaign-22.json",
+          "bytes": 24721,
+          "compressed_bytes": 3148
+        },
+        {
+          "path": "campaign/campaign-22.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-22.stdout",
+          "bytes": 290941,
+          "compressed_bytes": 66346
+        },
+        {
+          "path": "campaign/campaign-23.json",
+          "bytes": 25452,
+          "compressed_bytes": 3347
+        },
+        {
+          "path": "campaign/campaign-23.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-23.stdout",
+          "bytes": 381651,
+          "compressed_bytes": 71791
+        },
+        {
+          "path": "campaign/campaign-24.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-24.json",
+          "bytes": 25463,
+          "compressed_bytes": 3355
+        },
+        {
+          "path": "campaign/campaign-24.stdout",
+          "bytes": 416656,
+          "compressed_bytes": 75318
+        },
+        {
+          "path": "campaign/campaign-25.json",
+          "bytes": 67412,
+          "compressed_bytes": 7112
+        },
+        {
+          "path": "campaign/campaign-25.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-25.stdout",
+          "bytes": 2133447,
+          "compressed_bytes": 205512
+        },
+        {
+          "path": "campaign/campaign-26.json",
+          "bytes": 25574,
+          "compressed_bytes": 3377
+        },
+        {
+          "path": "campaign/campaign-26.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-26.stdout",
+          "bytes": 2020959,
+          "compressed_bytes": 599081
+        },
+        {
+          "path": "campaign/campaign-27.json",
+          "bytes": 67475,
+          "compressed_bytes": 7142
+        },
+        {
+          "path": "campaign/campaign-27.stdout",
+          "bytes": 10217145,
+          "compressed_bytes": 3454823
+        },
+        {
+          "path": "campaign/campaign-27.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-28.json",
+          "bytes": 24722,
+          "compressed_bytes": 3130
+        },
+        {
+          "path": "campaign/campaign-28.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-28.stdout",
+          "bytes": 290948,
+          "compressed_bytes": 65674
+        },
+        {
+          "path": "campaign/campaign-29.json",
+          "bytes": 25455,
+          "compressed_bytes": 3368
+        },
+        {
+          "path": "campaign/campaign-29.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-29.stdout",
+          "bytes": 381667,
+          "compressed_bytes": 71176
+        },
+        {
+          "path": "campaign/campaign-30.json",
+          "bytes": 25538,
+          "compressed_bytes": 3372
+        },
+        {
+          "path": "campaign/campaign-30.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-30.stdout",
+          "bytes": 441850,
+          "compressed_bytes": 78148
+        },
+        {
+          "path": "campaign/campaign-31.json",
+          "bytes": 67486,
+          "compressed_bytes": 7133
+        },
+        {
+          "path": "campaign/campaign-31.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-31.stdout",
+          "bytes": 2196545,
+          "compressed_bytes": 216368
+        },
+        {
+          "path": "campaign/campaign-32.json",
+          "bytes": 25592,
+          "compressed_bytes": 3391
+        },
+        {
+          "path": "campaign/campaign-32.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-32.stdout",
+          "bytes": 1133416,
+          "compressed_bytes": 115622
+        },
+        {
+          "path": "campaign/campaign-33.json",
+          "bytes": 67545,
+          "compressed_bytes": 7179
+        },
+        {
+          "path": "campaign/campaign-33.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-34.json",
+          "bytes": 24800,
+          "compressed_bytes": 3135
+        },
+        {
+          "path": "campaign/campaign-33.stdout",
+          "bytes": 9438703,
+          "compressed_bytes": 3154146
+        },
+        {
+          "path": "campaign/campaign-34.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-34.stdout",
+          "bytes": 291345,
+          "compressed_bytes": 66436
+        },
+        {
+          "path": "campaign/campaign-35.json",
+          "bytes": 25527,
+          "compressed_bytes": 3351
+        },
+        {
+          "path": "campaign/campaign-35.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-35.stdout",
+          "bytes": 382052,
+          "compressed_bytes": 71963
+        },
+        {
+          "path": "campaign/campaign-36.json",
+          "bytes": 25530,
+          "compressed_bytes": 3364
+        },
+        {
+          "path": "campaign/campaign-36.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-36.stdout",
+          "bytes": 411926,
+          "compressed_bytes": 74808
+        },
+        {
+          "path": "campaign/campaign-37.json",
+          "bytes": 67483,
+          "compressed_bytes": 7135
+        },
+        {
+          "path": "campaign/campaign-37.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-37.stdout",
+          "bytes": 2187032,
+          "compressed_bytes": 212775
+        },
+        {
+          "path": "campaign/campaign-38.json",
+          "bytes": 25604,
+          "compressed_bytes": 3383
+        },
+        {
+          "path": "campaign/campaign-38.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-38.stdout",
+          "bytes": 1531067,
+          "compressed_bytes": 445015
+        },
+        {
+          "path": "campaign/campaign-39.json",
+          "bytes": 67539,
+          "compressed_bytes": 7148
+        },
+        {
+          "path": "campaign/campaign-39.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-39.stdout",
+          "bytes": 8858794,
+          "compressed_bytes": 2945878
+        },
+        {
+          "path": "campaign/campaign-40.json",
+          "bytes": 24797,
+          "compressed_bytes": 3144
+        },
+        {
+          "path": "campaign/campaign-40.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-40.stdout",
+          "bytes": 291519,
+          "compressed_bytes": 65770
+        },
+        {
+          "path": "campaign/campaign-41.json",
+          "bytes": 25524,
+          "compressed_bytes": 3365
+        },
+        {
+          "path": "campaign/campaign-41.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-41.stdout",
+          "bytes": 382273,
+          "compressed_bytes": 71432
+        },
+        {
+          "path": "campaign/campaign-42.json",
+          "bytes": 25534,
+          "compressed_bytes": 3362
+        },
+        {
+          "path": "campaign/campaign-42.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-42.stdout",
+          "bytes": 426918,
+          "compressed_bytes": 77948
+        },
+        {
+          "path": "campaign/campaign-43.json",
+          "bytes": 67486,
+          "compressed_bytes": 7122
+        },
+        {
+          "path": "campaign/campaign-43.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-43.stdout",
+          "bytes": 2207416,
+          "compressed_bytes": 220131
+        },
+        {
+          "path": "campaign/campaign-44.json",
+          "bytes": 25594,
+          "compressed_bytes": 3392
+        },
+        {
+          "path": "campaign/campaign-44.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-44.stdout",
+          "bytes": 1210186,
+          "compressed_bytes": 228362
+        },
+        {
+          "path": "campaign/campaign-45.json",
+          "bytes": 67548,
+          "compressed_bytes": 7168
+        },
+        {
+          "path": "campaign/campaign-45.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-45.stdout",
+          "bytes": 9932937,
+          "compressed_bytes": 3357918
+        },
+        {
+          "path": "campaign/campaign-46.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-46.json",
+          "bytes": 24800,
+          "compressed_bytes": 3152
+        },
+        {
+          "path": "campaign/campaign-46.stdout",
+          "bytes": 291655,
+          "compressed_bytes": 67990
+        },
+        {
+          "path": "campaign/campaign-47.json",
+          "bytes": 25527,
+          "compressed_bytes": 3366
+        },
+        {
+          "path": "campaign/campaign-47.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-47.stdout",
+          "bytes": 382507,
+          "compressed_bytes": 73590
+        },
+        {
+          "path": "campaign/campaign-48.json",
+          "bytes": 26392,
+          "compressed_bytes": 3387
+        },
+        {
+          "path": "campaign/campaign-48.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-48.stdout",
+          "bytes": 448867,
+          "compressed_bytes": 26428
+        },
+        {
+          "path": "campaign/campaign-49.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-49.stdout",
+          "bytes": 2435672,
+          "compressed_bytes": 182085
+        },
+        {
+          "path": "campaign/campaign-49.json",
+          "bytes": 73006,
+          "compressed_bytes": 7358
+        },
+        {
+          "path": "campaign/campaign-50.json",
+          "bytes": 26459,
+          "compressed_bytes": 3457
+        },
+        {
+          "path": "campaign/campaign-50.stdout",
+          "bytes": 1308823,
+          "compressed_bytes": 69924
+        },
+        {
+          "path": "campaign/campaign-50.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-51.json",
+          "bytes": 73070,
+          "compressed_bytes": 7363
+        },
+        {
+          "path": "campaign/campaign-51.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-51.stdout",
+          "bytes": 10577502,
+          "compressed_bytes": 3503797
+        },
+        {
+          "path": "campaign/campaign-52.json",
+          "bytes": 25577,
+          "compressed_bytes": 3193
+        },
+        {
+          "path": "campaign/campaign-52.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-53.json",
+          "bytes": 26386,
+          "compressed_bytes": 3407
+        },
+        {
+          "path": "campaign/campaign-53.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-52.stdout",
+          "bytes": 306528,
+          "compressed_bytes": 15881
+        },
+        {
+          "path": "campaign/campaign-53.stdout",
+          "bytes": 405138,
+          "compressed_bytes": 23161
+        },
+        {
+          "path": "campaign/campaign-54.json",
+          "bytes": 27194,
+          "compressed_bytes": 3491
+        },
+        {
+          "path": "campaign/campaign-54.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-54.stdout",
+          "bytes": 454013,
+          "compressed_bytes": 41811
+        },
+        {
+          "path": "campaign/campaign-55.json",
+          "bytes": 78525,
+          "compressed_bytes": 7682
+        },
+        {
+          "path": "campaign/campaign-55.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-55.stdout",
+          "bytes": 2557495,
+          "compressed_bytes": 186952
+        },
+        {
+          "path": "campaign/campaign-56.json",
+          "bytes": 27295,
+          "compressed_bytes": 3516
+        },
+        {
+          "path": "campaign/campaign-56.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-56.stdout",
+          "bytes": 1876908,
+          "compressed_bytes": 275045
+        },
+        {
+          "path": "campaign/campaign-57.json",
+          "bytes": 78599,
+          "compressed_bytes": 7720
+        },
+        {
+          "path": "campaign/campaign-57.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-57.stdout",
+          "bytes": 11921531,
+          "compressed_bytes": 3976309
+        },
+        {
+          "path": "campaign/campaign-58.json",
+          "bytes": 26297,
+          "compressed_bytes": 3243
+        },
+        {
+          "path": "campaign/campaign-58.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-58.stdout",
+          "bytes": 321043,
+          "compressed_bytes": 31361
+        },
+        {
+          "path": "campaign/campaign-59.json",
+          "bytes": 27191,
+          "compressed_bytes": 3475
+        },
+        {
+          "path": "campaign/campaign-59.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-59.stdout",
+          "bytes": 427298,
+          "compressed_bytes": 39548
+        },
+        {
+          "path": "campaign/campaign-60.json",
+          "bytes": 29050,
+          "compressed_bytes": 3632
+        },
+        {
+          "path": "campaign/campaign-60.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-61.json",
+          "bytes": 89866,
+          "compressed_bytes": 8193
+        },
+        {
+          "path": "campaign/campaign-60.stdout",
+          "bytes": 516572,
+          "compressed_bytes": 44029
+        },
+        {
+          "path": "campaign/campaign-61.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-61.stdout",
+          "bytes": 3081450,
+          "compressed_bytes": 214442
+        },
+        {
+          "path": "campaign/campaign-62.json",
+          "bytes": 29115,
+          "compressed_bytes": 3647
+        },
+        {
+          "path": "campaign/campaign-62.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-62.stdout",
+          "bytes": 939442,
+          "compressed_bytes": 61550
+        },
+        {
+          "path": "campaign/campaign-63.json",
+          "bytes": 89946,
+          "compressed_bytes": 8224
+        },
+        {
+          "path": "campaign/campaign-63.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-63.stdout",
+          "bytes": 11707204,
+          "compressed_bytes": 3819169
+        },
+        {
+          "path": "campaign/campaign-64.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-64.stdout",
+          "bytes": 351859,
+          "compressed_bytes": 32363
+        },
+        {
+          "path": "campaign/campaign-64.json",
+          "bytes": 27993,
+          "compressed_bytes": 3344
+        },
+        {
+          "path": "campaign/campaign-65.json",
+          "bytes": 29042,
+          "compressed_bytes": 3619
+        },
+        {
+          "path": "campaign/campaign-65.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/campaign-65.stdout",
+          "bytes": 473804,
+          "compressed_bytes": 41637
+        },
+        {
+          "path": "campaign/cargo.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/cargo.stdout",
+          "bytes": 36,
+          "compressed_bytes": 38
+        },
+        {
+          "path": "campaign/commands.jsonl",
+          "bytes": 78886,
+          "compressed_bytes": 6597
+        },
+        {
+          "path": "campaign/cpuinfo.txt",
+          "bytes": 5952,
+          "compressed_bytes": 942
+        },
+        {
+          "path": "campaign/declaration.json",
+          "bytes": 6160,
+          "compressed_bytes": 1351
+        },
+        {
+          "path": "campaign/manifest.json",
+          "bytes": 6064536,
+          "compressed_bytes": 479086
+        },
+        {
+          "path": "campaign/meminfo.txt",
+          "bytes": 1671,
+          "compressed_bytes": 584
+        },
+        {
+          "path": "campaign/pon_w1_rank_batch_v5",
+          "bytes": 986240,
+          "compressed_bytes": 409178
+        },
+        {
+          "path": "campaign/rustc.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "campaign/rustc.stdout",
+          "bytes": 196,
+          "compressed_bytes": 151
+        },
+        {
+          "path": "cargo-graph.json",
+          "bytes": 842485,
+          "compressed_bytes": 67135
+        },
+        {
+          "path": "clippy.log",
+          "bytes": 1957,
+          "compressed_bytes": 679
+        },
+        {
+          "path": "format.log",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "kernel-tests.log",
+          "bytes": 3846,
+          "compressed_bytes": 1320
+        },
+        {
+          "path": "preflight.log",
+          "bytes": 133,
+          "compressed_bytes": 114
+        },
+        {
+          "path": "push-source-context.json",
+          "bytes": 2356,
+          "compressed_bytes": 830
+        },
+        {
+          "path": "runner-controls.log",
+          "bytes": 104,
+          "compressed_bytes": 36
+        },
+        {
+          "path": "reader-controls.log",
+          "bytes": 111,
+          "compressed_bytes": 37
+        },
+        {
+          "path": "source-after.json",
+          "bytes": 512,
+          "compressed_bytes": 288
+        },
+        {
+          "path": "source-before.json",
+          "bytes": 512,
+          "compressed_bytes": 288
+        }
+      ],
+      "selected_files": {
+        "campaign/manifest.json": {
+          "bytes": 6064536,
+          "sha256": "ba5d0e04f15c5aeb760ab26b0a452fcda6d913693b9b622bc0a936eb0e7cf5c8"
+        },
+        "push-source-context.json": {
+          "bytes": 2356,
+          "sha256": "7e805c926925d02947058011fae4c7fb41ace40fbd6cc2241653922000c755b8"
+        },
+        "source-after.json": {
+          "bytes": 512,
+          "sha256": "c8e153632d905fd608093cc8b787ccd0d8dcd0a2026601288d585cbf5e9de18c"
+        },
+        "source-before.json": {
+          "bytes": 512,
+          "sha256": "c8e153632d905fd608093cc8b787ccd0d8dcd0a2026601288d585cbf5e9de18c"
+        }
+      },
+      "manifests": [
+        {
+          "schema": "pon-w1-rank-batch-execution-v5",
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null,
+          "final_check_error": null,
+          "expected_source_commit": null,
+          "expected_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+          "execution_context": "local-component-research",
+          "architecture": "x64",
+          "source_changed": null,
+          "binary_sha256_before": "93c3c0e69a7de36f8e7ffa5a69d4750b22c98c19a238e8c79aab7eaab0a58345",
+          "binary_sha256_after": "93c3c0e69a7de36f8e7ffa5a69d4750b22c98c19a238e8c79aab7eaab0a58345",
+          "retained_binary_sha256_before": "93c3c0e69a7de36f8e7ffa5a69d4750b22c98c19a238e8c79aab7eaab0a58345",
+          "retained_binary_sha256_after": "93c3c0e69a7de36f8e7ffa5a69d4750b22c98c19a238e8c79aab7eaab0a58345",
+          "failed_commands": 0,
+          "commands_without_wait4_usage": 0,
+          "production_activation": false,
+          "public_network_ready": null,
+          "work_profile_qualified": false,
+          "resource_fairness_qualified": null,
+          "path": "campaign/manifest.json",
+          "source_before_after_equal": true,
+          "source_before": {
+            "commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+            "source_state": "committed-clean",
+            "tracked_bytes": 1031001045,
+            "tracked_entries": 11017,
+            "tracked_worktree_verified": true,
+            "tree": "cef3563653b982a8043326ad4b53a4b93ab63906"
+          },
+          "runner_context": null,
+          "observation_denominator": 69,
+          "nonzero_or_timedout_observations": [],
+          "shards": [
+            {
+              "configuration": {
+                "class": "zero",
+                "horizon": 1,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "zero",
+                "horizon": 8,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "zero",
+                "horizon": 1,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "zero",
+                "horizon": 8,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "zero",
+                "horizon": 1,
+                "target_index": 2
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "zero",
+                "horizon": 1,
+                "target_index": 3
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-one",
+                "horizon": 1,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-one",
+                "horizon": 8,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-one",
+                "horizon": 1,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-one",
+                "horizon": 8,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-one",
+                "horizon": 1,
+                "target_index": 2
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-one",
+                "horizon": 1,
+                "target_index": 3
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-two-left",
+                "horizon": 1,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-two-left",
+                "horizon": 8,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-two-left",
+                "horizon": 1,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-two-left",
+                "horizon": 8,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-two-left",
+                "horizon": 1,
+                "target_index": 2
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-two-left",
+                "horizon": 1,
+                "target_index": 3
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-four-left",
+                "horizon": 1,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-four-left",
+                "horizon": 8,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-four-left",
+                "horizon": 1,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-four-left",
+                "horizon": 8,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-four-left",
+                "horizon": 1,
+                "target_index": 2
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-four-left",
+                "horizon": 1,
+                "target_index": 3
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-eight-left",
+                "horizon": 1,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-eight-left",
+                "horizon": 8,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-eight-left",
+                "horizon": 1,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-eight-left",
+                "horizon": 8,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-eight-left",
+                "horizon": 1,
+                "target_index": 2
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-eight-left",
+                "horizon": 1,
+                "target_index": 3
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-four-right",
+                "horizon": 1,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-four-right",
+                "horizon": 8,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-four-right",
+                "horizon": 1,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-four-right",
+                "horizon": 8,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-four-right",
+                "horizon": 1,
+                "target_index": 2
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-four-right",
+                "horizon": 1,
+                "target_index": 3
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-nine-left",
+                "horizon": 1,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-nine-left",
+                "horizon": 8,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-nine-left",
+                "horizon": 1,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-nine-left",
+                "horizon": 8,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-nine-left",
+                "horizon": 1,
+                "target_index": 2
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "rank-nine-left",
+                "horizon": 1,
+                "target_index": 3
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "full-rank-field",
+                "horizon": 1,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "full-rank-field",
+                "horizon": 8,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "full-rank-field",
+                "horizon": 1,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "full-rank-field",
+                "horizon": 8,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "full-rank-field",
+                "horizon": 1,
+                "target_index": 2
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "full-rank-field",
+                "horizon": 1,
+                "target_index": 3
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "sparse-diagonal",
+                "horizon": 1,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "sparse-diagonal",
+                "horizon": 8,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "sparse-diagonal",
+                "horizon": 1,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "sparse-diagonal",
+                "horizon": 8,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "sparse-diagonal",
+                "horizon": 1,
+                "target_index": 2
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "sparse-diagonal",
+                "horizon": 1,
+                "target_index": 3
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-rank-one",
+                "horizon": 1,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-rank-one",
+                "horizon": 8,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-rank-one",
+                "horizon": 1,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-rank-one",
+                "horizon": 8,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-rank-one",
+                "horizon": 1,
+                "target_index": 2
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-rank-one",
+                "horizon": 1,
+                "target_index": 3
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "continuity-maintenance-v1",
+                "horizon": 1,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "continuity-maintenance-v1",
+                "horizon": 8,
+                "target_index": 0
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "continuity-maintenance-v1",
+                "horizon": 1,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "continuity-maintenance-v1",
+                "horizon": 8,
+                "target_index": 1
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "continuity-maintenance-v1",
+                "horizon": 1,
+                "target_index": 2
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "continuity-maintenance-v1",
+                "horizon": 1,
+                "target_index": 3
+              },
+              "result": "COMPLETE_COMPONENT_OBSERVATION",
+              "error": null
+            }
+          ],
+          "artifact_file_hashes_verified": 209
+        }
+      ],
+      "source_binding": {
+        "kind": "prospective-merge",
+        "tested_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true
+      },
+      "finished_utc": "2026-11-07T16:19:55.306813+00:00"
+    },
+    {
+      "artifact_id": 13578947026,
+      "metadata": {
+        "id": 13578947026,
+        "node_id": "MDg6QXJ0aWZhY3QxMzU3ODk0NzAyNg==",
+        "name": "w1-false-trace-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+        "size_in_bytes": 5571168,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578947026",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578947026/zip",
+        "expired": false,
+        "digest": "sha256:95017dffd112b5cb0c7fdc282e132831e6f286b7a59e470db8a18f80ed7c18a1",
+        "created_at": "2026-11-07T14:56:23Z",
+        "updated_at": "2026-11-07T14:56:23Z",
+        "expires_at": "2026-12-07T14:56:22Z",
+        "workflow_run": {
+          "id": 42383368504,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+        }
+      },
+      "started_utc": "2026-11-07T16:19:55.313676+00:00",
+      "errors": [],
+      "native_gate_validated": false,
+      "download_argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578947026/zip"
+      ],
+      "download_exit": 0,
+      "zip_bytes": 5571168,
+      "zip_sha256": "95017dffd112b5cb0c7fdc282e132831e6f286b7a59e470db8a18f80ed7c18a1",
+      "archive_inventory": [
+        {
+          "path": "cargo-graph.json",
+          "bytes": 840935,
+          "compressed_bytes": 67114
+        },
+        {
+          "path": "format.log",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "preflight.log",
+          "bytes": 133,
+          "compressed_bytes": 114
+        },
+        {
+          "path": "push-source-context.json",
+          "bytes": 2267,
+          "compressed_bytes": 821
+        },
+        {
+          "path": "query-work-controls.log",
+          "bytes": 3080,
+          "compressed_bytes": 710
+        },
+        {
+          "path": "reader-controls.log",
+          "bytes": 118,
+          "compressed_bytes": 37
+        },
+        {
+          "path": "retained-rejection-clippy.log",
+          "bytes": 216,
+          "compressed_bytes": 145
+        },
+        {
+          "path": "retained-rejection-reader-controls.log",
+          "bytes": 192,
+          "compressed_bytes": 39
+        },
+        {
+          "path": "retained-rejection-tests.log",
+          "bytes": 729,
+          "compressed_bytes": 398
+        },
+        {
+          "path": "runner-controls.log",
+          "bytes": 148,
+          "compressed_bytes": 38
+        },
+        {
+          "path": "source-after.json",
+          "bytes": 423,
+          "compressed_bytes": 240
+        },
+        {
+          "path": "source-before.json",
+          "bytes": 423,
+          "compressed_bytes": 240
+        },
+        {
+          "path": "w1-clippy.log",
+          "bytes": 1958,
+          "compressed_bytes": 672
+        },
+        {
+          "path": "w1-false-trace-reuse-v1/build.stdout",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-false-trace-reuse-v1/build.stderr",
+          "bytes": 3738,
+          "compressed_bytes": 985
+        },
+        {
+          "path": "w1-false-trace-reuse-v1/campaign.stdout",
+          "bytes": 30021456,
+          "compressed_bytes": 2433042
+        },
+        {
+          "path": "w1-false-trace-reuse-v1/campaign.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-false-trace-reuse-v1/cargo.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-false-trace-reuse-v1/cargo.stdout",
+          "bytes": 36,
+          "compressed_bytes": 38
+        },
+        {
+          "path": "w1-false-trace-reuse-v1/cpuinfo.txt",
+          "bytes": 5952,
+          "compressed_bytes": 938
+        },
+        {
+          "path": "w1-false-trace-reuse-v1/manifest.json",
+          "bytes": 24088,
+          "compressed_bytes": 4250
+        },
+        {
+          "path": "w1-false-trace-reuse-v1/pon_w1_false_trace_reuse_v1",
+          "bytes": 715040,
+          "compressed_bytes": 302601
+        },
+        {
+          "path": "w1-false-trace-reuse-v1/uname.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-false-trace-reuse-v1/rustc.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-false-trace-reuse-v1/uname.stdout",
+          "bytes": 128,
+          "compressed_bytes": 115
+        },
+        {
+          "path": "w1-false-trace-reuse-v1/rustc.stdout",
+          "bytes": 196,
+          "compressed_bytes": 151
+        },
+        {
+          "path": "w1-full-limb-reuse-v1/build.stderr",
+          "bytes": 606,
+          "compressed_bytes": 282
+        },
+        {
+          "path": "w1-full-limb-reuse-v1/build.stdout",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-full-limb-reuse-v1/campaign.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-full-limb-reuse-v1/campaign.stdout",
+          "bytes": 30174155,
+          "compressed_bytes": 2438101
+        },
+        {
+          "path": "w1-full-limb-reuse-v1/cargo.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-full-limb-reuse-v1/cargo.stdout",
+          "bytes": 36,
+          "compressed_bytes": 38
+        },
+        {
+          "path": "w1-full-limb-reuse-v1/cpuinfo.txt",
+          "bytes": 5952,
+          "compressed_bytes": 941
+        },
+        {
+          "path": "w1-full-limb-reuse-v1/manifest.json",
+          "bytes": 26425,
+          "compressed_bytes": 4517
+        },
+        {
+          "path": "w1-full-limb-reuse-v1/pon_w1_false_trace_reuse_v1",
+          "bytes": 715040,
+          "compressed_bytes": 302601
+        },
+        {
+          "path": "w1-full-limb-reuse-v1/rustc.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-full-limb-reuse-v1/rustc.stdout",
+          "bytes": 196,
+          "compressed_bytes": 151
+        },
+        {
+          "path": "w1-full-limb-reuse-v1/uname.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-full-limb-reuse-v1/uname.stdout",
+          "bytes": 128,
+          "compressed_bytes": 115
+        },
+        {
+          "path": "w1-fuzz-semantics.log",
+          "bytes": 3664,
+          "compressed_bytes": 1068
+        },
+        {
+          "path": "w1-tests.log",
+          "bytes": 16932,
+          "compressed_bytes": 4346
+        }
+      ],
+      "selected_files": {
+        "push-source-context.json": {
+          "bytes": 2267,
+          "sha256": "d14f01c3f77b6e73b043f77bd26f933e4d47ea71142651574cad78aa5139af72"
+        },
+        "source-after.json": {
+          "bytes": 423,
+          "sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa"
+        },
+        "source-before.json": {
+          "bytes": 423,
+          "sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa"
+        },
+        "w1-false-trace-reuse-v1/manifest.json": {
+          "bytes": 24088,
+          "sha256": "edc6acddc535e2e707d004ad5cccef72ae9f7d3ee5c20843058c76b9c1f8b359"
+        },
+        "w1-full-limb-reuse-v1/manifest.json": {
+          "bytes": 26425,
+          "sha256": "8a9180f89178d842ef33aa073722cfef8b51c8a3862bbbe1d1d1cdd228cc8021"
+        }
+      },
+      "manifests": [
+        {
+          "schema": "trnm-w1-false-trace-reuse-execution-v1",
+          "result": "PASS",
+          "error": null,
+          "final_check_error": null,
+          "expected_source_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+          "expected_commit": null,
+          "execution_context": "github-hosted",
+          "architecture": "x64",
+          "source_changed": false,
+          "binary_sha256_before": "6710c4e478105a15144e9f64d28387feab28871e6a62888352516e074b6b9ceb",
+          "binary_sha256_after": "6710c4e478105a15144e9f64d28387feab28871e6a62888352516e074b6b9ceb",
+          "retained_binary_sha256_before": "6710c4e478105a15144e9f64d28387feab28871e6a62888352516e074b6b9ceb",
+          "retained_binary_sha256_after": "6710c4e478105a15144e9f64d28387feab28871e6a62888352516e074b6b9ceb",
+          "failed_commands": null,
+          "commands_without_wait4_usage": null,
+          "production_activation": false,
+          "public_network_ready": false,
+          "work_profile_qualified": false,
+          "resource_fairness_qualified": false,
+          "path": "w1-false-trace-reuse-v1/manifest.json",
+          "source_before_after_equal": true,
+          "source_before": {
+            "commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+            "source_state": "committed-clean",
+            "tracked_bytes": 1031001045,
+            "tracked_entries": 11017,
+            "tracked_worktree_verified": true,
+            "tree": "cef3563653b982a8043326ad4b53a4b93ab63906"
+          },
+          "runner_context": {
+            "GITHUB_EVENT_NAME": "push",
+            "GITHUB_JOB": "false-trace-reuse",
+            "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_RUN_ID": "42383368504",
+            "ImageOS": "ubuntu24",
+            "ImageVersion": "20261101.360.1",
+            "RUNNER_ARCH": "X64",
+            "RUNNER_NAME": "GitHub Actions 1000040698",
+            "RUNNER_OS": "Linux",
+            "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04"
+          },
+          "observation_denominator": 5,
+          "nonzero_or_timedout_observations": [],
+          "shards": [],
+          "artifact_file_hashes_verified": 12
+        },
+        {
+          "schema": "trnm-w1-full-limb-reuse-execution-v1",
+          "result": "PASS",
+          "error": null,
+          "final_check_error": null,
+          "expected_source_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+          "expected_commit": null,
+          "execution_context": "github-hosted",
+          "architecture": "x64",
+          "source_changed": false,
+          "binary_sha256_before": "6710c4e478105a15144e9f64d28387feab28871e6a62888352516e074b6b9ceb",
+          "binary_sha256_after": "6710c4e478105a15144e9f64d28387feab28871e6a62888352516e074b6b9ceb",
+          "retained_binary_sha256_before": "6710c4e478105a15144e9f64d28387feab28871e6a62888352516e074b6b9ceb",
+          "retained_binary_sha256_after": "6710c4e478105a15144e9f64d28387feab28871e6a62888352516e074b6b9ceb",
+          "failed_commands": null,
+          "commands_without_wait4_usage": null,
+          "production_activation": false,
+          "public_network_ready": false,
+          "work_profile_qualified": false,
+          "resource_fairness_qualified": false,
+          "path": "w1-full-limb-reuse-v1/manifest.json",
+          "source_before_after_equal": true,
+          "source_before": {
+            "commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+            "source_state": "committed-clean",
+            "tracked_bytes": 1031001045,
+            "tracked_entries": 11017,
+            "tracked_worktree_verified": true,
+            "tree": "cef3563653b982a8043326ad4b53a4b93ab63906"
+          },
+          "runner_context": {
+            "GITHUB_EVENT_NAME": "push",
+            "GITHUB_JOB": "false-trace-reuse",
+            "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_RUN_ID": "42383368504",
+            "ImageOS": "ubuntu24",
+            "ImageVersion": "20261101.360.1",
+            "RUNNER_ARCH": "X64",
+            "RUNNER_NAME": "GitHub Actions 1000040698",
+            "RUNNER_OS": "Linux",
+            "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04"
+          },
+          "observation_denominator": 5,
+          "nonzero_or_timedout_observations": [],
+          "shards": [],
+          "artifact_file_hashes_verified": 12
+        }
+      ],
+      "source_binding": {
+        "kind": "head",
+        "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true
+      },
+      "finished_utc": "2026-11-07T16:21:18.087247+00:00"
+    },
+    {
+      "artifact_id": 13578922475,
+      "metadata": {
+        "id": 13578922475,
+        "node_id": "MDg6QXJ0aWZhY3QxMzU3ODkyMjQ3NQ==",
+        "name": "w1-legal-strategy-prospective-merge-arm64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+        "size_in_bytes": 35956683,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578922475",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578922475/zip",
+        "expired": false,
+        "digest": "sha256:bddfba898cbb65140c16d3e906788d78dd0aa7b9c93b76039b23d1fa6553c097",
+        "created_at": "2026-11-07T14:58:02Z",
+        "updated_at": "2026-11-07T14:58:02Z",
+        "expires_at": "2026-12-07T14:57:59Z",
+        "workflow_run": {
+          "id": 42383368504,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+        }
+      },
+      "started_utc": "2026-11-07T16:20:31.124905+00:00",
+      "errors": [
+        "ValueError: ZIP metadata digest mismatch"
+      ],
+      "native_gate_validated": false,
+      "download_argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578922475/zip"
+      ],
+      "download_exit": 1,
+      "zip_bytes": 5079040,
+      "zip_sha256": "5372e0e0ed92f0efdcf905a55b16d2f17bbb4ca1e2568aaaa8cd42ca0ea4ed36",
+      "finished_utc": "2026-11-07T16:22:01.204036+00:00"
+    },
+    {
+      "artifact_id": 13578842636,
+      "metadata": {
+        "id": 13578842636,
+        "node_id": "MDg6QXJ0aWZhY3QxMzU3ODg0MjYzNg==",
+        "name": "w1-legal-strategy-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+        "size_in_bytes": 35964573,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578842636",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578842636/zip",
+        "expired": false,
+        "digest": "sha256:1e9c0632c92ae029f509ff6b6385a527a884e2abaa07b746f21468f55d0b2b09",
+        "created_at": "2026-11-07T14:58:14Z",
+        "updated_at": "2026-11-07T14:58:14Z",
+        "expires_at": "2026-12-07T14:58:10Z",
+        "workflow_run": {
+          "id": 42383368504,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+        }
+      },
+      "started_utc": "2026-11-07T16:21:18.088239+00:00",
+      "errors": [],
+      "native_gate_validated": false,
+      "download_argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578842636/zip"
+      ],
+      "download_exit": 0,
+      "zip_bytes": 35964573,
+      "zip_sha256": "1e9c0632c92ae029f509ff6b6385a527a884e2abaa07b746f21468f55d0b2b09",
+      "archive_inventory": [
+        {
+          "path": "cargo-graph.json",
+          "bytes": 838610,
+          "compressed_bytes": 67075
+        },
+        {
+          "path": "format.log",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "legal-clippy.log",
+          "bytes": 4031,
+          "compressed_bytes": 1072
+        },
+        {
+          "path": "legal-native-controls.log",
+          "bytes": 5001,
+          "compressed_bytes": 1482
+        },
+        {
+          "path": "legal-reader-controls.log",
+          "bytes": 111,
+          "compressed_bytes": 37
+        },
+        {
+          "path": "preflight.log",
+          "bytes": 133,
+          "compressed_bytes": 114
+        },
+        {
+          "path": "legal-reader-v2-controls.log",
+          "bytes": 111,
+          "compressed_bytes": 38
+        },
+        {
+          "path": "push-source-context.json",
+          "bytes": 2267,
+          "compressed_bytes": 821
+        },
+        {
+          "path": "runner-controls.log",
+          "bytes": 148,
+          "compressed_bytes": 38
+        },
+        {
+          "path": "source-after.json",
+          "bytes": 423,
+          "compressed_bytes": 240
+        },
+        {
+          "path": "source-before.json",
+          "bytes": 423,
+          "compressed_bytes": 240
+        },
+        {
+          "path": "w1-legal-strategy-v1/build.stderr",
+          "bytes": 3729,
+          "compressed_bytes": 979
+        },
+        {
+          "path": "w1-legal-strategy-v1/build.stdout",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-00.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-00.stdout",
+          "bytes": 283451,
+          "compressed_bytes": 146555
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-01.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-01.stdout",
+          "bytes": 1794875,
+          "compressed_bytes": 918158
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-02.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-02.stdout",
+          "bytes": 13911820,
+          "compressed_bytes": 7092839
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-03.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-03.stdout",
+          "bytes": 306827,
+          "compressed_bytes": 157350
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-04.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-04.stdout",
+          "bytes": 1995625,
+          "compressed_bytes": 1008626
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-05.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-05.stdout",
+          "bytes": 16379396,
+          "compressed_bytes": 8206178
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-06.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-06.stdout",
+          "bytes": 283277,
+          "compressed_bytes": 4225
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-07.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-07.stdout",
+          "bytes": 1798323,
+          "compressed_bytes": 31841
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-08.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-08.stdout",
+          "bytes": 13888546,
+          "compressed_bytes": 226847
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-09.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-09.stdout",
+          "bytes": 305275,
+          "compressed_bytes": 14622
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-10.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-10.stdout",
+          "bytes": 2137382,
+          "compressed_bytes": 186812
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-11.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-11.stdout",
+          "bytes": 16490570,
+          "compressed_bytes": 1419270
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-12.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-12.stdout",
+          "bytes": 285343,
+          "compressed_bytes": 38871
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-13.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-13.stdout",
+          "bytes": 1801347,
+          "compressed_bytes": 288500
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-14.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-14.stdout",
+          "bytes": 13916468,
+          "compressed_bytes": 2268116
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-15.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-15.stdout",
+          "bytes": 347259,
+          "compressed_bytes": 67830
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-16.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-16.stdout",
+          "bytes": 2105337,
+          "compressed_bytes": 429699
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-17.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-17.stdout",
+          "bytes": 16963197,
+          "compressed_bytes": 3683435
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-18.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-18.stdout",
+          "bytes": 284053,
+          "compressed_bytes": 29718
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-19.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-19.stdout",
+          "bytes": 1796339,
+          "compressed_bytes": 172866
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-20.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-20.stdout",
+          "bytes": 13882450,
+          "compressed_bytes": 1300728
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-21.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-21.stdout",
+          "bytes": 493519,
+          "compressed_bytes": 126170
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-22.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-23.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-22.stdout",
+          "bytes": 2386157,
+          "compressed_bytes": 447770
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-23.stdout",
+          "bytes": 16605744,
+          "compressed_bytes": 2585040
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-24.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-24.stdout",
+          "bytes": 286807,
+          "compressed_bytes": 31218
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-25.stdout",
+          "bytes": 1805281,
+          "compressed_bytes": 178099
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-26.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-25.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-26.stdout",
+          "bytes": 13903064,
+          "compressed_bytes": 1312946
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-27.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-27.stdout",
+          "bytes": 290929,
+          "compressed_bytes": 33474
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-28.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-28.stdout",
+          "bytes": 2028773,
+          "compressed_bytes": 283544
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-29.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/campaign-29.stdout",
+          "bytes": 16250396,
+          "compressed_bytes": 2422587
+        },
+        {
+          "path": "w1-legal-strategy-v1/cargo.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/cargo.stdout",
+          "bytes": 36,
+          "compressed_bytes": 38
+        },
+        {
+          "path": "w1-legal-strategy-v1/cpuinfo.txt",
+          "bytes": 6272,
+          "compressed_bytes": 1000
+        },
+        {
+          "path": "w1-legal-strategy-v1/manifest.json",
+          "bytes": 1670476,
+          "compressed_bytes": 389171
+        },
+        {
+          "path": "w1-legal-strategy-v1/pon_w1_legal_strategy_v1",
+          "bytes": 896272,
+          "compressed_bytes": 374540
+        },
+        {
+          "path": "w1-legal-strategy-v1/rustc.stdout",
+          "bytes": 196,
+          "compressed_bytes": 151
+        },
+        {
+          "path": "w1-legal-strategy-v1/rustc.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/uname.stderr",
+          "bytes": 0,
+          "compressed_bytes": 2
+        },
+        {
+          "path": "w1-legal-strategy-v1/uname.stdout",
+          "bytes": 128,
+          "compressed_bytes": 115
+        }
+      ],
+      "selected_files": {
+        "push-source-context.json": {
+          "bytes": 2267,
+          "sha256": "d14f01c3f77b6e73b043f77bd26f933e4d47ea71142651574cad78aa5139af72"
+        },
+        "source-after.json": {
+          "bytes": 423,
+          "sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa"
+        },
+        "source-before.json": {
+          "bytes": 423,
+          "sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa"
+        },
+        "w1-legal-strategy-v1/manifest.json": {
+          "bytes": 1670476,
+          "sha256": "3d140bac2dce3e5d661baa01b9dfb6644855dff008bc521cda0b0a1af9d6afab"
+        }
+      },
+      "manifests": [
+        {
+          "schema": "trnm-w1-legal-strategy-execution-v1",
+          "result": "PASS",
+          "error": null,
+          "final_check_error": null,
+          "expected_source_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+          "expected_commit": null,
+          "execution_context": "github-hosted",
+          "architecture": "x64",
+          "source_changed": false,
+          "binary_sha256_before": "f43764e0936ebe407eb6e11e8f36e993a5f6ebce153ecfe6260390b60d6f3999",
+          "binary_sha256_after": "f43764e0936ebe407eb6e11e8f36e993a5f6ebce153ecfe6260390b60d6f3999",
+          "retained_binary_sha256_before": "f43764e0936ebe407eb6e11e8f36e993a5f6ebce153ecfe6260390b60d6f3999",
+          "retained_binary_sha256_after": "f43764e0936ebe407eb6e11e8f36e993a5f6ebce153ecfe6260390b60d6f3999",
+          "failed_commands": null,
+          "commands_without_wait4_usage": null,
+          "production_activation": false,
+          "public_network_ready": false,
+          "work_profile_qualified": false,
+          "resource_fairness_qualified": false,
+          "path": "w1-legal-strategy-v1/manifest.json",
+          "source_before_after_equal": true,
+          "source_before": {
+            "commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+            "source_state": "committed-clean",
+            "tracked_bytes": 1031001045,
+            "tracked_entries": 11017,
+            "tracked_worktree_verified": true,
+            "tree": "cef3563653b982a8043326ad4b53a4b93ab63906"
+          },
+          "runner_context": {
+            "GITHUB_EVENT_NAME": "push",
+            "GITHUB_JOB": "legal-strategy",
+            "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_RUN_ID": "42383368504",
+            "ImageOS": "ubuntu24",
+            "ImageVersion": "20261101.360.1",
+            "RUNNER_ARCH": "X64",
+            "RUNNER_NAME": "GitHub Actions 1000040703",
+            "RUNNER_OS": "Linux",
+            "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04"
+          },
+          "observation_denominator": 34,
+          "nonzero_or_timedout_observations": [],
+          "shards": [
+            {
+              "configuration": {
+                "class": "full-rank-field",
+                "reuse_winners": 1,
+                "target_index": 0
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "full-rank-field",
+                "reuse_winners": 8,
+                "target_index": 0
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "full-rank-field",
+                "reuse_winners": 64,
+                "target_index": 0
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "full-rank-field",
+                "reuse_winners": 1,
+                "target_index": 1
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "full-rank-field",
+                "reuse_winners": 8,
+                "target_index": 1
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "full-rank-field",
+                "reuse_winners": 64,
+                "target_index": 1
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "zero",
+                "reuse_winners": 1,
+                "target_index": 0
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "zero",
+                "reuse_winners": 8,
+                "target_index": 0
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "zero",
+                "reuse_winners": 64,
+                "target_index": 0
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "zero",
+                "reuse_winners": 1,
+                "target_index": 1
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "zero",
+                "reuse_winners": 8,
+                "target_index": 1
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "zero",
+                "reuse_winners": 64,
+                "target_index": 1
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "continuity-maintenance-v1",
+                "reuse_winners": 1,
+                "target_index": 0
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "continuity-maintenance-v1",
+                "reuse_winners": 8,
+                "target_index": 0
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "continuity-maintenance-v1",
+                "reuse_winners": 64,
+                "target_index": 0
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "continuity-maintenance-v1",
+                "reuse_winners": 1,
+                "target_index": 1
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "continuity-maintenance-v1",
+                "reuse_winners": 8,
+                "target_index": 1
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "continuity-maintenance-v1",
+                "reuse_winners": 64,
+                "target_index": 1
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-left-rank-one",
+                "reuse_winners": 1,
+                "target_index": 0
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-left-rank-one",
+                "reuse_winners": 8,
+                "target_index": 0
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-left-rank-one",
+                "reuse_winners": 64,
+                "target_index": 0
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-left-rank-one",
+                "reuse_winners": 1,
+                "target_index": 1
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-left-rank-one",
+                "reuse_winners": 8,
+                "target_index": 1
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-left-rank-one",
+                "reuse_winners": 64,
+                "target_index": 1
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-right-rank-one",
+                "reuse_winners": 1,
+                "target_index": 0
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-right-rank-one",
+                "reuse_winners": 8,
+                "target_index": 0
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-right-rank-one",
+                "reuse_winners": 64,
+                "target_index": 0
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-right-rank-one",
+                "reuse_winners": 1,
+                "target_index": 1
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-right-rank-one",
+                "reuse_winners": 8,
+                "target_index": 1
+              },
+              "result": "PASS",
+              "error": null
+            },
+            {
+              "configuration": {
+                "class": "one-zero-right-rank-one",
+                "reuse_winners": 64,
+                "target_index": 1
+              },
+              "result": "PASS",
+              "error": null
+            }
+          ],
+          "artifact_file_hashes_verified": 70
+        }
+      ],
+      "source_binding": {
+        "kind": "head",
+        "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true
+      },
+      "finished_utc": "2026-11-07T16:24:16.361159+00:00"
+    },
+    {
+      "artifact_id": 13578807518,
+      "metadata": {
+        "id": 13578807518,
+        "node_id": "MDg6QXJ0aWZhY3QxMzU3ODgwNzUxOA==",
+        "name": "w1-rank-batch-v5-prospective-merge-arm64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+        "size_in_bytes": 45040010,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578807518",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578807518/zip",
+        "expired": false,
+        "digest": "sha256:e18888d094dd08928d146253b4485877fbd6ad2010049aaada5d0a0d8cb59dda",
+        "created_at": "2026-11-07T14:57:31Z",
+        "updated_at": "2026-11-07T14:57:31Z",
+        "expires_at": "2026-12-07T14:57:28Z",
+        "workflow_run": {
+          "id": 42383368504,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+        }
+      },
+      "started_utc": "2026-11-07T16:22:01.204835+00:00",
+      "errors": [
+        "ValueError: ZIP metadata digest mismatch"
+      ],
+      "native_gate_validated": false,
+      "download_argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578807518/zip"
+      ],
+      "download_exit": 1,
+      "zip_bytes": 0,
+      "zip_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finished_utc": "2026-11-07T16:22:16.856738+00:00"
+    },
+    {
+      "artifact_id": 13578752856,
+      "metadata": {
+        "id": 13578752856,
+        "node_id": "MDg6QXJ0aWZhY3QxMzU3ODc1Mjg1Ng==",
+        "name": "w1-legal-strategy-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+        "size_in_bytes": 35971082,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578752856",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578752856/zip",
+        "expired": false,
+        "digest": "sha256:9896425d35413be1479c95a10efed59531ff895fdb181da21ca7516d3093977d",
+        "created_at": "2026-11-07T14:58:22Z",
+        "updated_at": "2026-11-07T14:58:22Z",
+        "expires_at": "2026-12-07T14:58:18Z",
+        "workflow_run": {
+          "id": 42383368504,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+        }
+      },
+      "started_utc": "2026-11-07T16:22:16.857664+00:00",
+      "errors": [
+        "ValueError: ZIP metadata digest mismatch"
+      ],
+      "native_gate_validated": false,
+      "download_argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578752856/zip"
+      ],
+      "download_exit": 1,
+      "zip_bytes": 0,
+      "zip_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finished_utc": "2026-11-07T16:22:56.916808+00:00"
+    },
+    {
+      "artifact_id": 13578719689,
+      "metadata": {
+        "id": 13578719689,
+        "node_id": "MDg6QXJ0aWZhY3QxMzU3ODcxOTY4OQ==",
+        "name": "w1-legal-factorial-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+        "size_in_bytes": 174302954,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578719689",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578719689/zip",
+        "expired": false,
+        "digest": "sha256:bf1491af933216e66db32afc786139e76989907cdb6ee465482ac9632d60a4c2",
+        "created_at": "2026-11-07T15:10:01Z",
+        "updated_at": "2026-11-07T15:10:01Z",
+        "expires_at": "2026-12-07T15:09:45Z",
+        "workflow_run": {
+          "id": 42383368504,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+        }
+      },
+      "started_utc": "2026-11-07T16:22:56.917423+00:00",
+      "errors": [
+        "ValueError: ZIP metadata digest mismatch"
+      ],
+      "native_gate_validated": false,
+      "download_argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578719689/zip"
+      ],
+      "download_exit": 1,
+      "zip_bytes": 588725,
+      "zip_sha256": "2a22103154f9728c3a76813858307ef0336a1e55e16edeab077044f3e4cac576",
+      "finished_utc": "2026-11-07T16:28:36.866978+00:00"
+    },
+    {
+      "artifact_id": 13578524978,
+      "metadata": {
+        "id": 13578524978,
+        "node_id": "MDg6QXJ0aWZhY3QxMzU3ODUyNDk3OA==",
+        "name": "w1-legal-factorial-head-arm64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+        "size_in_bytes": 174186741,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578524978",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578524978/zip",
+        "expired": false,
+        "digest": "sha256:ce9a5390df8aadc7c4d08e2584f27bdac7b1574dc3c184cc7d7e7ed26ca79e29",
+        "created_at": "2026-11-07T15:09:33Z",
+        "updated_at": "2026-11-07T15:09:33Z",
+        "expires_at": "2026-12-07T15:09:20Z",
+        "workflow_run": {
+          "id": 42383368504,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+        }
+      },
+      "started_utc": "2026-11-07T16:24:16.363679+00:00",
+      "errors": [
+        "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578524978/zip']' timed out after 599.9999851579778 seconds"
+      ],
+      "native_gate_validated": false,
+      "download_argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578524978/zip"
+      ],
+      "finished_utc": "2026-11-07T16:34:16.369027+00:00"
+    }
+  ],
+  "native_gate_validated": false
+}

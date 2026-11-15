@@ -1,0 +1,9 @@
+{
+  "economic_sustainability_qualified": false,
+  "measurement_passed": true,
+  "original_host_contract_executed": false,
+  "qualification": "HOLD_NO_GO",
+  "real_models_loaded": false,
+  "source_before_after_identical": true,
+  "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49"
+}

@@ -1,0 +1,84 @@
+{
+  "actual_observation_bytes_transport_verified": true,
+  "actual_observation_file_version": "66306:48807035:2354:1794479462641028048:1794479462651664403",
+  "capability_benchmark_qualified": false,
+  "correct_among_these_two_recorded_actions": 1,
+  "derivation": "For each original observation, choose the action_id at the unique maximum recorded scores_q32 entry. This is an offline interpretation of existing single-token action scores, not a transcript of newly generated tokens. Mathematical answers compare the literal integers in the two original prompts.",
+  "historical_103_second_run_performance_comparison_qualified": false,
+  "incorrect_among_these_two_recorded_actions": 1,
+  "model_efficacy_improvement_demonstrated": false,
+  "native_result_source": {
+    "bytes": 82443,
+    "path": "validation/durable-current-remote/model-native-result-readback/native-result.json",
+    "sha256": "7e69ad30d35e984cf8e7d871bce91f7ec50f5e7c530a29c584454eab79c262a0"
+  },
+  "new_model_inference_executed": false,
+  "new_tokens_generated": false,
+  "notes": [
+    "The original operation passed byte recovery, typed selection, paired sealed loading and the two-forward receipt requirements. Those requirements did not require both arithmetic decisions to be correct.",
+    "The second recorded action remains yes for 8517 > 8518; the mathematically correct answer is no.",
+    "The environment metadata/version and normal release profile differ from historical observations; no speedup is inferred."
+  ],
+  "observations_source": {
+    "bytes": 2354,
+    "path": "validation/durable-current-remote/model-forward-observations-readback/next-use-observations.json",
+    "sha256": "5cc5bf2bdd55158d6636689de9f72840b88cbc072a21dfd0ea70eb9a5768a097"
+  },
+  "operation": "bf34a669dc4b3617d97bee356f1cadf3504f3c5993999c5136ce1d6b0cd6f9c2",
+  "original_observation_authority_all_false": true,
+  "original_reports_modified": false,
+  "request_count": 2,
+  "request_text_source": {
+    "bytes": 9984,
+    "path": "validation/discovery-reviewer/frozen02-independent-expectations/source-inputs.native-v2-env2.expected.json",
+    "role": "Previously independently reconstructed expected source bytes; SHA matches actual native source_input_sha256 and each request canonical SHA matches the actual observation.",
+    "sha256": "3d4b4bbd30f1c37dc9986a5e512d13ae4d93a330a00fde904bd9b3fcf381083e"
+  },
+  "requests": [
+    {
+      "derived_action_is_correct": true,
+      "derived_unique_argmax_action": "yes",
+      "input_sha256": "fa02475d145785b5a890da77ae33906453ac1f4268e181137b5d875d1e9974ed",
+      "mathematically_correct_answer": "yes",
+      "prompt": "Answer with only yes or no. Is 8517 greater than 8516?",
+      "recorded_action_ids": [
+        "no",
+        "yes"
+      ],
+      "recorded_execution_ns": 71103460,
+      "recorded_input_tokens": 51,
+      "recorded_logits_sha256": "29730e6c15d3147b0641d772b6d7d6121f61ed17b81bf0926163a05a9c7afa14",
+      "recorded_scores_q32": [
+        116005421056,
+        124107309056
+      ],
+      "request_id": "chain-capacity-dc0357-v2-fad809b14a2e-1"
+    },
+    {
+      "derived_action_is_correct": false,
+      "derived_unique_argmax_action": "yes",
+      "input_sha256": "f500cab06315f2e2f345b54e40656524a8e3a52543d07f1b509504179bf02515",
+      "mathematically_correct_answer": "no",
+      "prompt": "Answer with only yes or no. Is 8517 greater than 8518?",
+      "recorded_action_ids": [
+        "no",
+        "yes"
+      ],
+      "recorded_execution_ns": 67700023,
+      "recorded_input_tokens": 51,
+      "recorded_logits_sha256": "90d35f1c7ee4cb95c9bce20969b19818fefe5ac0268dde664cc4fd9c72b0de42",
+      "recorded_scores_q32": [
+        115107659776,
+        122971414528
+      ],
+      "request_id": "chain-capacity-dc0357-v2-fad809b14a2e-2"
+    }
+  ],
+  "schema": "trnm.bt-model-two-forward-score-interpretation.v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "transport_response_source": {
+    "bytes": 3641,
+    "path": "validation/durable-current-remote/model-forward-observations-readback/read.response.json",
+    "sha256": "2ea15fe24f13e5ba14695b65f0a2b162b1f44a17da60a6474f210b0cd974ddf4"
+  }
+}

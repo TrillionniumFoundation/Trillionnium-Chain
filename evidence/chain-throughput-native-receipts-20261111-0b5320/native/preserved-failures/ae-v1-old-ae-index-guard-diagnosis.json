@@ -1,0 +1,61 @@
+{
+  "utc": "2026-11-11T05:35:27Z",
+  "source": "/tmp/chain-throughput-before-ae-0b5320",
+  "head": {
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "stdout": "ae657e262278ae4a058220f66a6a0495721eb9ad\n",
+    "stderr": ""
+  },
+  "index_listing": {
+    "command": [
+      "git",
+      "ls-files",
+      "-v",
+      "-z"
+    ],
+    "exit_code": 0,
+    "stderr": "",
+    "all_entries": 27987,
+    "hidden_entries": [
+      "S evidence/chain-six-full-20261108/archives/github-native-campaign-original-text-f3.tar.xz",
+      "S evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587313298.zip",
+      "S evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587353281.zip",
+      "S evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587604654.zip",
+      "S evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13588091577.zip",
+      "S evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/native-campaign-artifact-13610289272/original-artifact-13610289272.zip"
+    ],
+    "listing_sha256": "e051d7462b541fb5dfd744f94aa60ec723f9953bfa0414618ee229d8cda3ea20"
+  },
+  "checker": {
+    "path": "/tmp/chain-throughput-before-ae-0b5320/scripts/ci/verify_ci_source.py",
+    "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+    "blob": {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD:scripts/ci/verify_ci_source.py"
+      ],
+      "exit_code": 0,
+      "stdout": "c775290c138c3b41a32e654f56ed5cbe9acec3ee\n",
+      "stderr": ""
+    },
+    "contains_hidden_index_rejection": true
+  },
+  "sparse_config": {
+    "command": [
+      "git",
+      "config",
+      "--get",
+      "core.sparseCheckout"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": ""
+  },
+  "scope": "read-only old ae repository index metadata and its own source checker; no index modifications or wider filesystem scan"
+}

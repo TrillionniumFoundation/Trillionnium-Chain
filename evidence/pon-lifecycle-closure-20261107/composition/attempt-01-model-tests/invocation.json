@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "formal/pon-nakamoto-v1/certificate_composition_tests.py",
+    "-v"
+  ],
+  "returncode": 0,
+  "source_sha256": {
+    "certificate_composition.py": "a05d4d21b54acf634c24c8a946ab5ab063817934fa50dad0cb368ea26a670d71",
+    "certificate_composition_tests.py": "f0a37fccef766a89afccce0ea2057b6350cca59fb92959c195423db2266e03b4",
+    "lifecycle_query_bound.py": "b99a575938a1f1dd74ee421aeab6abf14bd4b116f5709ea89f5568474373ad75",
+    "mandatory_units_query.py": "8127186bf3355ab749d753494caeeb14adbb875e13c7edf629df213f04e4ce0e",
+    "mandatory_units_relation.py": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834",
+    "work_lifecycle_certificate.py": "301ce5fb234b02332f60db1ed41c61302e54046a9d29753d76d2bf5ceb405d44",
+    "work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+  },
+  "native_producer_invoked_by_this_command": false,
+  "actual_native_journal_join_tested_by_this_command": false,
+  "physical_risk_bound_established": false
+}

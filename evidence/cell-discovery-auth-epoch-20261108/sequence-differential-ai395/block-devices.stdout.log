@@ -1,0 +1,204 @@
+{
+   "blockdevices": [
+      {
+         "name": "loop0",
+         "path": "/dev/loop0",
+         "type": "loop",
+         "size": "74M",
+         "rota": false,
+         "tran": null,
+         "model": null,
+         "mountpoints": [
+             "/snap/core22/2955"
+         ]
+      },{
+         "name": "loop1",
+         "path": "/dev/loop1",
+         "type": "loop",
+         "size": "4K",
+         "rota": false,
+         "tran": null,
+         "model": null,
+         "mountpoints": [
+             "/snap/bare/5"
+         ]
+      },{
+         "name": "loop2",
+         "path": "/dev/loop2",
+         "type": "loop",
+         "size": "66.8M",
+         "rota": false,
+         "tran": null,
+         "model": null,
+         "mountpoints": [
+             "/snap/core24/2124"
+         ]
+      },{
+         "name": "loop3",
+         "path": "/dev/loop3",
+         "type": "loop",
+         "size": "14.2M",
+         "rota": false,
+         "tran": null,
+         "model": null,
+         "mountpoints": [
+             "/snap/desktop-security-center/206"
+         ]
+      },{
+         "name": "loop4",
+         "path": "/dev/loop4",
+         "type": "loop",
+         "size": "283.8M",
+         "rota": false,
+         "tran": null,
+         "model": null,
+         "mountpoints": [
+             "/snap/firefox/9057"
+         ]
+      },{
+         "name": "loop5",
+         "path": "/dev/loop5",
+         "type": "loop",
+         "size": "12.7M",
+         "rota": false,
+         "tran": null,
+         "model": null,
+         "mountpoints": [
+             "/snap/firmware-updater/262"
+         ]
+      },{
+         "name": "loop6",
+         "path": "/dev/loop6",
+         "type": "loop",
+         "size": "531.5M",
+         "rota": false,
+         "tran": null,
+         "model": null,
+         "mountpoints": [
+             "/snap/gnome-42-2204/263"
+         ]
+      },{
+         "name": "loop7",
+         "path": "/dev/loop7",
+         "type": "loop",
+         "size": "615.3M",
+         "rota": false,
+         "tran": null,
+         "model": null,
+         "mountpoints": [
+             "/snap/gnome-46-2404/168"
+         ]
+      },{
+         "name": "loop8",
+         "path": "/dev/loop8",
+         "type": "loop",
+         "size": "91.7M",
+         "rota": false,
+         "tran": null,
+         "model": null,
+         "mountpoints": [
+             "/snap/gtk-common-themes/1535"
+         ]
+      },{
+         "name": "loop9",
+         "path": "/dev/loop9",
+         "type": "loop",
+         "size": "402M",
+         "rota": false,
+         "tran": null,
+         "model": null,
+         "mountpoints": [
+             "/snap/mesa-2404/1839"
+         ]
+      },{
+         "name": "loop10",
+         "path": "/dev/loop10",
+         "type": "loop",
+         "size": "18.4M",
+         "rota": false,
+         "tran": null,
+         "model": null,
+         "mountpoints": [
+             "/snap/prompting-client/228"
+         ]
+      },{
+         "name": "loop11",
+         "path": "/dev/loop11",
+         "type": "loop",
+         "size": "32.5M",
+         "rota": false,
+         "tran": null,
+         "model": null,
+         "mountpoints": [
+             "/snap/snapd/28332"
+         ]
+      },{
+         "name": "loop12",
+         "path": "/dev/loop12",
+         "type": "loop",
+         "size": "11.6M",
+         "rota": false,
+         "tran": null,
+         "model": null,
+         "mountpoints": [
+             "/snap/snap-store/1468"
+         ]
+      },{
+         "name": "loop13",
+         "path": "/dev/loop13",
+         "type": "loop",
+         "size": "828K",
+         "rota": false,
+         "tran": null,
+         "model": null,
+         "mountpoints": [
+             "/snap/snapd-desktop-integration/391"
+         ]
+      },{
+         "name": "loop14",
+         "path": "/dev/loop14",
+         "type": "loop",
+         "size": "44.7M",
+         "rota": false,
+         "tran": null,
+         "model": null,
+         "mountpoints": [
+             "/snap/snapd/28254"
+         ]
+      },{
+         "name": "nvme0n1",
+         "path": "/dev/nvme0n1",
+         "type": "disk",
+         "size": "1.8T",
+         "rota": false,
+         "tran": "nvme",
+         "model": "CT2000P310SSD8",
+         "mountpoints": [],
+         "children": [
+            {
+               "name": "nvme0n1p1",
+               "path": "/dev/nvme0n1p1",
+               "type": "part",
+               "size": "1G",
+               "rota": false,
+               "tran": "nvme",
+               "model": null,
+               "mountpoints": [
+                   "/boot/efi"
+               ]
+            },{
+               "name": "nvme0n1p2",
+               "path": "/dev/nvme0n1p2",
+               "type": "part",
+               "size": "1.8T",
+               "rota": false,
+               "tran": "nvme",
+               "model": null,
+               "mountpoints": [
+                   "/"
+               ]
+            }
+         ]
+      }
+   ]
+}

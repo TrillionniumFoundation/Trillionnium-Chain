@@ -1,0 +1,3 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-time-credit-20261108-qf01/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.85s
+     Running tests/growth_persistence_cancellation.rs (/home/qian-qi/work/chain-time-credit-20261108-qf01-target/debug/deps/growth_persistence_cancellation-be9ce75e28f2d4e9)

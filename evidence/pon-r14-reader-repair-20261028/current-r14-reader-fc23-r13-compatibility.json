@@ -1,0 +1,51 @@
+{
+  "current_revision": "r14",
+  "historical_compatibility_passed": true,
+  "runs": [
+    {
+      "confirmed_rounds": 0,
+      "current_reader_identified_revision": "r13",
+      "exact_retained_derivation_equal": true,
+      "historical_policy_id": "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
+      "number": 1,
+      "original_failed_verdict_preserved": true,
+      "original_raw_input_bytes_and_hash_match": true,
+      "report_sha256": "833cdd5a3065a739bbcc0dde6cf80328469e476a8420b3f7d0a4b3324214e934",
+      "scheduled_rounds": 9
+    },
+    {
+      "confirmed_rounds": 0,
+      "current_reader_identified_revision": "r13",
+      "exact_retained_derivation_equal": true,
+      "historical_policy_id": "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
+      "number": 2,
+      "original_failed_verdict_preserved": true,
+      "original_raw_input_bytes_and_hash_match": true,
+      "report_sha256": "9ec34b2342758525f0d56ef57b184cdc8c17a69bee00367543cfb03e3bf24003",
+      "scheduled_rounds": 9
+    },
+    {
+      "confirmed_rounds": 0,
+      "current_reader_identified_revision": "r13",
+      "exact_retained_derivation_equal": true,
+      "historical_policy_id": "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
+      "number": 3,
+      "original_failed_verdict_preserved": true,
+      "original_raw_input_bytes_and_hash_match": true,
+      "report_sha256": "2ca31715a2def8a08f93381250e55664477451b5f8a7115c713b3ac7ba8e5dbd",
+      "scheduled_rounds": 9
+    }
+  ],
+  "scope": "only reinterpret original reports and compare exact retained derivation, no native execution",
+  "source_hashes_after": {
+    "config/pon/public-resource-profile-vectors-v1.json": "807037076b2e2c39d044e07ed2bac231b0862355fe623d7975167ae5d7cfa1da",
+    "scripts/pon_public_v3_phase_read.py": "26774427c956090510bcfe6fa871a62763d256c23b91f3dc9fa3ef9d0b37d66c",
+    "scripts/pon_public_v3_policy_read.py": "c7e4bc5450ac1c721cdc9dc5975d2c102bcf4ab5c58fe3b2dc52bcd65b4e6a7b"
+  },
+  "source_hashes_before": {
+    "config/pon/public-resource-profile-vectors-v1.json": "807037076b2e2c39d044e07ed2bac231b0862355fe623d7975167ae5d7cfa1da",
+    "scripts/pon_public_v3_phase_read.py": "26774427c956090510bcfe6fa871a62763d256c23b91f3dc9fa3ef9d0b37d66c",
+    "scripts/pon_public_v3_policy_read.py": "c7e4bc5450ac1c721cdc9dc5975d2c102bcf4ab5c58fe3b2dc52bcd65b4e6a7b"
+  },
+  "source_unchanged_during_readback": true
+}

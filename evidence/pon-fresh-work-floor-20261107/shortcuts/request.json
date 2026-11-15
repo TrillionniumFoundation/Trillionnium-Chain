@@ -1,0 +1,10 @@
+{
+  "bundle_hash": "485d1ddac3f10b859599297ede15c5703517952d3f507cdc3efea7f14214429e",
+  "evaluation_bundle": "/workspace/scratch/10a9f8f2cba0/chain-fairness/evidence/pon-native-node-v1/model-current/model/evaluation-bundle.json",
+  "model": "/workspace/scratch/10a9f8f2cba0/chain-fairness/evidence/pon-native-node-v1/model-current/model/model.json",
+  "out": "/workspace/scratch/10a9f8f2cba0/evidence-staging/pon-fresh-work-floor-20261107/shortcuts/final-source-followup",
+  "replay_source": true,
+  "rounds": 16,
+  "source_sha": "1e0eba75f4f4a4e24e17cbd0f263f915c1493ac7",
+  "tasks": "/workspace/scratch/10a9f8f2cba0/chain-fairness/evidence/pon-native-node-v1/model-current/model/consumer.json"
+}

@@ -1,0 +1,69 @@
+{
+  "rows": [
+    {
+      "failed_calls": 8384,
+      "failed_cpu_ns": 367418579,
+      "mode": "baseline",
+      "run": 1
+    },
+    {
+      "failed_calls": 10450,
+      "failed_cpu_ns": 478791217,
+      "mode": "from-zero",
+      "run": 1
+    },
+    {
+      "failed_calls": 8475,
+      "failed_cpu_ns": 403402885,
+      "mode": "late-product",
+      "run": 1
+    },
+    {
+      "failed_calls": 2345,
+      "failed_cpu_ns": 100125152,
+      "mode": "baseline",
+      "run": 2
+    },
+    {
+      "failed_calls": 13792,
+      "failed_cpu_ns": 618960750,
+      "mode": "from-zero",
+      "run": 2
+    },
+    {
+      "failed_calls": 10283,
+      "failed_cpu_ns": 488644445,
+      "mode": "late-product",
+      "run": 2
+    },
+    {
+      "failed_calls": 1204,
+      "failed_cpu_ns": 51030027,
+      "mode": "baseline",
+      "run": 3
+    },
+    {
+      "failed_calls": 11314,
+      "failed_cpu_ns": 533593082,
+      "mode": "from-zero",
+      "run": 3
+    },
+    {
+      "failed_calls": 8399,
+      "failed_cpu_ns": 394276642,
+      "mode": "late-product",
+      "run": 3
+    }
+  ],
+  "source_head": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+  "status": "HOLD_NO_GO",
+  "totals": {
+    "all_calls": 740286,
+    "all_cpu_ns": 33269827505,
+    "failed_calls": 74646,
+    "failed_cpu_ns": 3436242779,
+    "successful_calls": 665640,
+    "successful_cpu_ns": 29833584726
+  },
+  "zip_sha256": "7996763ffc628f025f2d8e47bf3a6f184805a4b5b24dd13b273ee508903b1f78"
+}

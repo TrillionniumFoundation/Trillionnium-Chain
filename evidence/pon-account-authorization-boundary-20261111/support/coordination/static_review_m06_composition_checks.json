@@ -1,0 +1,266 @@
+{
+  "reviewed_at_utc": "2026-11-11T00:51:41.533643+00:00",
+  "temporary_composition_directory": "/workspace/scratch/a4188f5c86b5/coordination/static-review-m06-8et6ba0s",
+  "all_checks_passed": true,
+  "checks": [
+    {
+      "label": "M06 baseline Git blob identity",
+      "passed": true,
+      "expected": "a52e20fe46fe409bf3aac5b63c4b9d01438bb705",
+      "actual": "a52e20fe46fe409bf3aac5b63c4b9d01438bb705"
+    },
+    {
+      "label": "Node baseline Git blob identity",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+      "expected": "5d4c26c962a390fb3b5162d60c52db6c4a53b84b",
+      "actual": "5d4c26c962a390fb3b5162d60c52db6c4a53b84b"
+    },
+    {
+      "label": "Node baseline Git blob identity",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "expected": "44acbb5d854a8e0a7c4979b4715bd9949b656cd5",
+      "actual": "44acbb5d854a8e0a7c4979b4715bd9949b656cd5"
+    },
+    {
+      "label": "Node baseline Git blob identity",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "expected": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+      "actual": "a8bd7b9c8d9b02617060bea955b3bb21d905129f"
+    },
+    {
+      "label": "m06.patch: git apply check",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "m06.patch: git apply apply",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "Applied M06 matches intended after bytes",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
+    },
+    {
+      "label": "M06 output manifest SHA256",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "expected": "30c367d0a8e9c7339f26b00606d9cd8bf3e34dd801ff23875c4c0b9ae5c24c2c",
+      "actual": "30c367d0a8e9c7339f26b00606d9cd8bf3e34dd801ff23875c4c0b9ae5c24c2c"
+    },
+    {
+      "label": "Applied M06 matches intended after bytes",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs"
+    },
+    {
+      "label": "M06 output manifest SHA256",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs",
+      "expected": "9028a974376dd5a3b220e03f4ed97bf7eb41ead8be01868f87fdb4ce29f2a0b6",
+      "actual": "9028a974376dd5a3b220e03f4ed97bf7eb41ead8be01868f87fdb4ce29f2a0b6"
+    },
+    {
+      "label": "node-account-profile.patch: git apply check",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "node-account-profile.patch: git apply apply",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "Applied Node primary matches work bytes",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs"
+    },
+    {
+      "label": "Node primary output manifest SHA256 and Git blob",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs",
+      "sha256": "11f49763363c45f1bf6cd13d5095b0900f360238974663d2e0328ef517838cf3",
+      "git_blob": "81d6658b258afc22394098786066ab04f344e29c"
+    },
+    {
+      "label": "Applied Node primary matches work bytes",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs"
+    },
+    {
+      "label": "Node primary output manifest SHA256 and Git blob",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+      "sha256": "59398375101f36e234001dbd5bb15cd767a7b8537f457ccb104c41b110dfef4a",
+      "git_blob": "d94f27a764a2788e90352881b52fc9017a32ab67"
+    },
+    {
+      "label": "Applied Node primary matches work bytes",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs"
+    },
+    {
+      "label": "Node primary output manifest SHA256 and Git blob",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "sha256": "860f056313689e43cb03a941507e4c61e70892723d046bf7ac151e220984b447",
+      "git_blob": "ec3a2be0530eb23ea596474ba057ed172759f777"
+    },
+    {
+      "label": "Applied Node primary matches work bytes",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "label": "Node primary output manifest SHA256 and Git blob",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "869b7311d1b1124ef5e5c45130a6341049bf229100810ea5f65f04b752925398",
+      "git_blob": "792289bd4848e3626783c4b33d0916df54e8f29e"
+    },
+    {
+      "label": "node-warm-integrity.patch: git apply check",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "node-warm-integrity.patch: git apply apply",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "Applied warm followup matches after bytes",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs"
+    },
+    {
+      "label": "Warm followup output manifest SHA256",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs",
+      "expected": "ff6024a3ba68ebe25a5720dd68ad427ce5f76b0ee9aae768e2bed80d0423387e",
+      "actual": "ff6024a3ba68ebe25a5720dd68ad427ce5f76b0ee9aae768e2bed80d0423387e"
+    },
+    {
+      "label": "Applied warm followup matches after bytes",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "label": "Warm followup output manifest SHA256",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "expected": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca",
+      "actual": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca"
+    },
+    {
+      "label": "node-growth-scope-tests.patch: git apply check",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "node-growth-scope-tests.patch: git apply apply",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "Applied growth test followup matches after bytes",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs"
+    },
+    {
+      "label": "Growth test output manifest SHA256",
+      "passed": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs",
+      "expected": "c3eb664735f0977f86eb08157f209d1fc6a4af7ada0037976b0204fd9acc290d",
+      "actual": "c3eb664735f0977f86eb08157f209d1fc6a4af7ada0037976b0204fd9acc290d"
+    },
+    {
+      "label": "Growth patch manifest SHA256",
+      "passed": true
+    },
+    {
+      "label": "M06 patch manifest SHA256",
+      "passed": true
+    }
+  ],
+  "patches": [
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/m06-patch/m06.patch",
+      "sha256": "43c890ff75d1ddbc98ed2d4c4ec5e6e46a1412252f524ccf420bc474723f4130",
+      "bytes": 16067
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/node-patch/node-account-profile.patch",
+      "sha256": "3f9ac418cfab506cec16ae59fe540993fab38e229b7fbd00f193c3fda8dacc1c",
+      "bytes": 11053
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/node-patch/node-warm-integrity.patch",
+      "sha256": "23e4982a6b6a75806ed28536cbf64e795d5ac55c487e039ee00fc4470b1464db",
+      "bytes": 3894
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/node-patch/node-growth-scope-tests.patch",
+      "sha256": "e9c60bc4ba76791d98ba75f3278e28726a0043c01635ec725d42d7cf2d66e0c0",
+      "bytes": 5302
+    }
+  ],
+  "composed_files": [
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "sha256": "30c367d0a8e9c7339f26b00606d9cd8bf3e34dd801ff23875c4c0b9ae5c24c2c",
+      "git_blob": "5d2ccbcac24abc55f3598fad0a22da4cd8c8d0d2",
+      "bytes": 151436
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs",
+      "sha256": "9028a974376dd5a3b220e03f4ed97bf7eb41ead8be01868f87fdb4ce29f2a0b6",
+      "git_blob": "bc92ac0e8e56c608546f2f9c21b4ed46fceb8158",
+      "bytes": 12433
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs",
+      "sha256": "c3eb664735f0977f86eb08157f209d1fc6a4af7ada0037976b0204fd9acc290d",
+      "git_blob": "fd51290590520b4d988d87170edbfd1446d421d8",
+      "bytes": 9844
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+      "sha256": "59398375101f36e234001dbd5bb15cd767a7b8537f457ccb104c41b110dfef4a",
+      "git_blob": "d94f27a764a2788e90352881b52fc9017a32ab67",
+      "bytes": 120278
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "sha256": "860f056313689e43cb03a941507e4c61e70892723d046bf7ac151e220984b447",
+      "git_blob": "ec3a2be0530eb23ea596474ba057ed172759f777",
+      "bytes": 58175
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca",
+      "git_blob": "a766d083bc1955041bf2fc537cb2731e2d4eb6c4",
+      "bytes": 383977
+    }
+  ]
+}

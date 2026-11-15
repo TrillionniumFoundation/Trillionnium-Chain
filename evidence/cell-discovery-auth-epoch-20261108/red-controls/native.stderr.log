@@ -1,0 +1,6 @@
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/work/chain-cell-discovery-red-f2568-20261108/trillionnium/crates/trnm-protocol)
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-cell-discovery-red-f2568-20261108/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/work/chain-cell-discovery-red-f2568-20261108/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 49.96s
+     Running unittests src/lib.rs (/home/qian-qi/work/chain-cell-storage-discovery-f2568-target/debug/deps/trnm_data_availability-860e4d3b2378d360)
+error: test failed, to rerun pass `-p trnm-data-availability --lib`

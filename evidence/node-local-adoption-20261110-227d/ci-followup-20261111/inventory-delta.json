@@ -1,0 +1,94 @@
+{
+  "before_source": "2bb2c89dc2dd8cd530ff00eff878bf75c510431a",
+  "after_source": "eb32162449eab623f69bbd7016b694600cb382c5",
+  "generator": "python3 -B scripts/refresh_distributed_source_inventory.py",
+  "before_count": 1572,
+  "after_count": 1582,
+  "added": [
+    "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-adoption.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/adoption.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/adoption/files.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/adoption/store.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/adoption/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/adoption/types.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/adoption_boundary.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/adoption_boundary/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/residency/selected_version_tests.rs",
+    "trillionnium/crates/trnm-data-availability/tests/cell_adoption_cli.rs"
+  ],
+  "removed": [],
+  "new_file_pq_coverage_rule_readback": [
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-adoption.rs",
+      "pq_scanner_directory": [
+        "trillionnium/crates/trnm-data-availability/src"
+      ],
+      "required_as_new_pq_pin_by_unchanged_scanner": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/adoption.rs",
+      "pq_scanner_directory": [
+        "trillionnium/crates/trnm-data-availability/src"
+      ],
+      "required_as_new_pq_pin_by_unchanged_scanner": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/adoption/files.rs",
+      "pq_scanner_directory": [
+        "trillionnium/crates/trnm-data-availability/src"
+      ],
+      "required_as_new_pq_pin_by_unchanged_scanner": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/adoption/store.rs",
+      "pq_scanner_directory": [
+        "trillionnium/crates/trnm-data-availability/src"
+      ],
+      "required_as_new_pq_pin_by_unchanged_scanner": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/adoption/tests.rs",
+      "pq_scanner_directory": [
+        "trillionnium/crates/trnm-data-availability/src"
+      ],
+      "required_as_new_pq_pin_by_unchanged_scanner": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/adoption/types.rs",
+      "pq_scanner_directory": [
+        "trillionnium/crates/trnm-data-availability/src"
+      ],
+      "required_as_new_pq_pin_by_unchanged_scanner": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/adoption_boundary.rs",
+      "pq_scanner_directory": [
+        "trillionnium/crates/trnm-data-availability/src"
+      ],
+      "required_as_new_pq_pin_by_unchanged_scanner": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/adoption_boundary/tests.rs",
+      "pq_scanner_directory": [
+        "trillionnium/crates/trnm-data-availability/src"
+      ],
+      "required_as_new_pq_pin_by_unchanged_scanner": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/residency/selected_version_tests.rs",
+      "pq_scanner_directory": [
+        "trillionnium/crates/trnm-data-availability/src"
+      ],
+      "required_as_new_pq_pin_by_unchanged_scanner": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/tests/cell_adoption_cli.rs",
+      "pq_scanner_directory": [
+        "trillionnium/crates/trnm-data-availability/tests"
+      ],
+      "required_as_new_pq_pin_by_unchanged_scanner": false
+    }
+  ],
+  "checker_changed": false,
+  "required_paths_changed": false
+}

@@ -1,0 +1,10 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running unittests src/lib.rs (/workspace/scratch/0c2d131ac5a9/target/debug/deps/trnm_mvcc_fee-ced44c332612cadc)
+
+running 3 tests
+test pon_executor::growth::range_tests::borrowed_working_ranges_preserve_all_nonaccount_keys_and_pointer_identity ... ok
+test pon_executor::growth::range_tests::proved_account_aggregation_keeps_malformed_suffix_rows_overflow_and_error_order ... ok
+test pon_executor::growth::range_tests::mandatory_owner_ranges_keep_shared_future_zero_and_lexical_capacity_errors ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 143 filtered out; finished in 0.01s
+

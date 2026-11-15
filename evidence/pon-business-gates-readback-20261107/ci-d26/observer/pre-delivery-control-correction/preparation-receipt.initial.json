@@ -1,0 +1,110 @@
+{
+  "directory": "/home/qian-qi/throughput-ci-observation-20261107/light-evidence-d26-v2",
+  "copy_plan": {
+    "path": "/home/qian-qi/throughput-ci-observation-20261107/light-evidence-d26-v2/COPY_PLAN.json",
+    "bytes": 626031,
+    "sha256": "e41ed658f60f23e072902612515e335b4902bd40d61d30a67d1c1672d624534e"
+  },
+  "gate_core": {
+    "path": "GATE_CORE.json",
+    "bytes": 12793,
+    "sha256": "7c5cf188aea5a6c77105528e68fb01e160cdbd578395871f6d3300053f4506b9"
+  },
+  "payload_file_count": 610,
+  "package_file_count": 613,
+  "original_payload_bytes": 1998173600,
+  "prepared_payload_bytes": 201731891,
+  "total_package_file_bytes": 202373060,
+  "sqlite_original_bytes": 1745207296,
+  "sqlite_compressed_bytes": 176597049,
+  "sqlite": [
+    {
+      "lane": "x64-merge",
+      "artifact_id": 13579429780,
+      "archive_member": "history-native/long-history/confirmer/native.sqlite",
+      "raw_bytes": 210350080,
+      "raw_sha256": "dd25d69ac85aa8351b2ed7083d5121a96e97f47580cf62fadfc200ca2da36acd",
+      "portable_path": "history/x64-merge/history-native/long-history/confirmer/native.sqlite.gz",
+      "compressed_bytes": 21159512,
+      "compressed_sha256": "0507b61e0f5575e485697a1dd09ff70113b53b20a4f5b18370a7dd4499832230"
+    },
+    {
+      "lane": "x64-merge",
+      "artifact_id": 13579429780,
+      "archive_member": "history-native/long-history/validator/native.sqlite",
+      "raw_bytes": 220729344,
+      "raw_sha256": "ca049e888d0aa5c22dfd6f107fc9dcd6459000186f8bb2fbed5a521cf74059d6",
+      "portable_path": "history/x64-merge/history-native/long-history/validator/native.sqlite.gz",
+      "compressed_bytes": 22390593,
+      "compressed_sha256": "bbfe55020bc6c196084ed3f0318ef775686c6314bcd4472cfa05405f16b781d4"
+    },
+    {
+      "lane": "arm64-merge",
+      "artifact_id": 13579459911,
+      "archive_member": "history-native/long-history/confirmer/native.sqlite",
+      "raw_bytes": 220868608,
+      "raw_sha256": "eef495f99f99f24e53d614b8f478037de5372bb97e0f6abcf00bda049ee5728d",
+      "portable_path": "history/arm64-merge/history-native/long-history/confirmer/native.sqlite.gz",
+      "compressed_bytes": 22372352,
+      "compressed_sha256": "f15bf9ccc956a61546bbfd58327a9bd84f47818165bb1c4b1bba30828992919a"
+    },
+    {
+      "lane": "arm64-merge",
+      "artifact_id": 13579459911,
+      "archive_member": "history-native/long-history/validator/native.sqlite",
+      "raw_bytes": 220721152,
+      "raw_sha256": "a5cf1fd914eb0d623af5bc3b12534095ee595d1987c2e0d9636e6c9fbc00e306",
+      "portable_path": "history/arm64-merge/history-native/long-history/validator/native.sqlite.gz",
+      "compressed_bytes": 22377472,
+      "compressed_sha256": "aff8007bd0cd1f8651b368a46e6cd65ef819207ab3d56954d46a4096fcd85739"
+    },
+    {
+      "lane": "arm64-head",
+      "artifact_id": 13579533384,
+      "archive_member": "history-native/long-history/confirmer/native.sqlite",
+      "raw_bytes": 220876800,
+      "raw_sha256": "ac36f55a2e4cb3c45f5697d02c6141921deff9f26ca9c702734c667387eeaf84",
+      "portable_path": "history/arm64-head/history-native/long-history/confirmer/native.sqlite.gz",
+      "compressed_bytes": 22385347,
+      "compressed_sha256": "9dfe56c46dccd18dbb1f3f309935b3d2148a9ae5caebc75989ac4072e132311e"
+    },
+    {
+      "lane": "arm64-head",
+      "artifact_id": 13579533384,
+      "archive_member": "history-native/long-history/validator/native.sqlite",
+      "raw_bytes": 220733440,
+      "raw_sha256": "eae0d3eff8287ee589ae0cfcec03a1dc5998af4e2f68462c75171964917a1209",
+      "portable_path": "history/arm64-head/history-native/long-history/validator/native.sqlite.gz",
+      "compressed_bytes": 22393525,
+      "compressed_sha256": "ce4848d75f1c46b1ca563275922f7050f2e2201058f0a8cb23063e05416cd47d"
+    },
+    {
+      "lane": "x64-head",
+      "artifact_id": 13580221274,
+      "archive_member": "history-native/long-history/confirmer/native.sqlite",
+      "raw_bytes": 210292736,
+      "raw_sha256": "2507b4c34f8a62e92720b472f645013411bf82e5f973051bbddd8789132f03c7",
+      "portable_path": "history/x64-head/history-native/long-history/confirmer/native.sqlite.gz",
+      "compressed_bytes": 21147039,
+      "compressed_sha256": "a9db42a4e939d86d454550152287550491a2609c703d52cba970f89c0dabd0d8"
+    },
+    {
+      "lane": "x64-head",
+      "artifact_id": 13580221274,
+      "archive_member": "history-native/long-history/validator/native.sqlite",
+      "raw_bytes": 220635136,
+      "raw_sha256": "8becf0de73fdfda9231ddeb41a059d9c6ea6349ce39c16f0b6243851aacfcb00",
+      "portable_path": "history/x64-head/history-native/long-history/validator/native.sqlite.gz",
+      "compressed_bytes": 22371209,
+      "compressed_sha256": "462c8f9fb782063f1884dfab3db2f9451e0a33a163787a08f5fbd6d7e249946c"
+    }
+  ],
+  "w1_component_capture": {
+    "verified": 14,
+    "unknown": 6,
+    "expected": 20
+  },
+  "sealed": true,
+  "status": "HOLD",
+  "native_gate_validated": false
+}

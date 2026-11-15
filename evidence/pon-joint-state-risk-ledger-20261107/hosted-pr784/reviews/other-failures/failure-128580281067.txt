@@ -1,0 +1,9 @@
+1098: 2026-11-08T01:05:15.4783105Z Waiting for exact-source CodeQL analyses/checks (poll 37)
+1099: 2026-11-08T01:05:46.5285562Z Waiting for exact-source CodeQL analyses/checks (poll 38)
+1100: 2026-11-08T01:06:17.6444759Z CodeQL analysis export failed: CodeQL analyses/checks did not complete and stabilize before the deadline
+1101: 2026-11-08T01:06:17.6761389Z ##[error]Process completed with exit code 1.
+1102: 2026-11-08T01:06:17.6819713Z ##[group]Run set -euo pipefail
+1103: 2026-11-08T01:06:17.6820071Z [36;1mset -euo pipefail[0m
+1104: 2026-11-08T01:06:17.6820727Z [36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPORTER_HEAD" --output "$OUT/exporter-source-after.json"[0m
+1105: 2026-11-08T01:06:17.6842036Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+1106: 2026-11-08T01:06:17.6842438Z env:

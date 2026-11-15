@@ -1,0 +1,40 @@
+{
+  "cargo_entry": "/home/qian-qi/.cargo/bin/cargo",
+  "head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "labels": [
+    "project-boundary-before",
+    "source-before",
+    "locate-rustc",
+    "locate-rustdoc",
+    "toolchain",
+    "cargo-version",
+    "locked-metadata",
+    "format",
+    "source-integrity-negatives",
+    "project-boundary-negatives",
+    "repository-and-links",
+    "reader-cell_adoption_readback",
+    "reader-cell_learning_scope_join",
+    "reader-cell_learning_completion_join",
+    "reader-cell_learning_iteration_join",
+    "reader-cell_learning_local_decision_join",
+    "reader-cell_learning_local_use_join",
+    "adoption-library",
+    "adoption-cli",
+    "outcome-role-separation",
+    "crypto-fixed-product-meter",
+    "node-single-output-owner",
+    "crypto-fresh-challenge-refusal",
+    "workspace-strict-clippy",
+    "source-after"
+  ],
+  "native_test_total": 42,
+  "reader_suites": [
+    "test_cell_adoption_readback.py",
+    "test_cell_learning_scope_join.py",
+    "test_cell_learning_completion_join.py",
+    "test_cell_learning_iteration_join.py",
+    "test_cell_learning_local_decision_join.py",
+    "test_cell_learning_local_use_join.py"
+  ]
+}

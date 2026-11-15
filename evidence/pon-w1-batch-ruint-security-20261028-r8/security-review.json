@@ -1,0 +1,368 @@
+{
+  "schema": "TRNM-W1-BATCH-RUINT-SECURITY-REVIEW1",
+  "status": "SECURITY_HOLD_NO_BUILD",
+  "candidate_commit_rejected_for_execution": "3a3191748f79675f18670163afe6c50e8fe43858",
+  "attempt4": "NOT_STARTED_NOT_AUTHORIZED",
+  "advisories": [
+    {
+      "id": "RUSTSEC-2025-0137",
+      "url": "https://rustsec.org/advisories/RUSTSEC-2025-0137.html",
+      "patched": ">=1.17.1",
+      "affected_function_label": "<1.17.0",
+      "candidate_ruint_1_15_0_in_patched_range": false,
+      "mechanism": "Release-mode omission of a debug assertion permits an invalid reciprocal input to reach unchecked table indexing."
+    },
+    {
+      "id": "RUSTSEC-2026-0220",
+      "url": "https://rustsec.org/advisories/RUSTSEC-2026-0220.html",
+      "patched": ">=1.20.0",
+      "candidate_ruint_1_15_0_in_patched_range": false,
+      "mechanism": "Shift overflow flags and wide shift-amount conversion are incorrect for documented cases; dependent checked/saturating arithmetic and some formatting paths are affected."
+    }
+  ],
+  "actual_guest_ruint_features": [
+    "alloc",
+    "borsh",
+    "serde"
+  ],
+  "features_observation_receipt": "feature-tree-receipt.json",
+  "selected_source_readback": [
+    {
+      "path": "/tmp/pure-pon-cargo-20261027/registry/src/index.crates.io-1949cf8c6b5b557f/risc0-binfmt-3.0.5/src/povw.rs",
+      "sha256": "477b25bc359d23fce5961aa2858b05a69c1459cceeb3b1bf492b66e43d905d03",
+      "selected_lines": [
+        {
+          "line": 22,
+          "text": "use ruint::aliases::{U160, U256, U64};"
+        },
+        {
+          "line": 38,
+          "text": "pub type PovwLogId = U160;"
+        },
+        {
+          "line": 57,
+          "text": "pub struct PovwJobId {"
+        },
+        {
+          "line": 59,
+          "text": "    pub log: PovwLogId,"
+        },
+        {
+          "line": 64,
+          "text": "impl PovwJobId {"
+        },
+        {
+          "line": 66,
+          "text": "    pub fn nonce(self, segment_index: u32) -> PovwNonce {"
+        },
+        {
+          "line": 67,
+          "text": "        PovwNonce {"
+        },
+        {
+          "line": 94,
+          "text": "impl From<(PovwLogId, u64)> for PovwJobId {"
+        },
+        {
+          "line": 95,
+          "text": "    fn from((log, job): (PovwLogId, u64)) -> Self {"
+        },
+        {
+          "line": 100,
+          "text": "impl TryFrom<&[u8]> for PovwJobId {"
+        },
+        {
+          "line": 109,
+          "text": "impl Distribution<PovwJobId> for StandardUniform {"
+        },
+        {
+          "line": 110,
+          "text": "    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> PovwJobId {"
+        },
+        {
+          "line": 111,
+          "text": "        PovwJobId {"
+        },
+        {
+          "line": 135,
+          "text": "pub struct PovwNonce {"
+        },
+        {
+          "line": 137,
+          "text": "    pub log: PovwLogId,"
+        },
+        {
+          "line": 144,
+          "text": "impl PovwNonce {"
+        },
+        {
+          "line": 147,
+          "text": "        log: PovwLogId::ZERO,"
+        },
+        {
+          "line": 164,
+          "text": "        (self.log.to::<U256>() << 96) | (U256::from(self.job) << 32) | U256::from(self.segment)"
+        },
+        {
+          "line": 219,
+          "text": "impl From<PovwNonce> for U256 {"
+        },
+        {
+          "line": 220,
+          "text": "    /// Convert a [PovwNonce] to its [U256] representation."
+        },
+        {
+          "line": 221,
+          "text": "    fn from(value: PovwNonce) -> Self {"
+        },
+        {
+          "line": 226,
+          "text": "impl From<U256> for PovwNonce {"
+        },
+        {
+          "line": 227,
+          "text": "    /// Convert a [U256] to a [PovwNonce]."
+        },
+        {
+          "line": 232,
+          "text": "            log: (value >> 96usize).to(),"
+        },
+        {
+          "line": 233,
+          "text": "            job: ((value >> 32usize) & U256::from(u64::MAX)).to(),"
+        },
+        {
+          "line": 239,
+          "text": "impl TryFrom<&[u8]> for PovwNonce {"
+        },
+        {
+          "line": 247,
+          "text": "impl TryFrom<Vec<u8>> for PovwNonce {"
+        },
+        {
+          "line": 256,
+          "text": "impl Distribution<PovwNonce> for StandardUniform {"
+        },
+        {
+          "line": 257,
+          "text": "    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> PovwNonce {"
+        },
+        {
+          "line": 258,
+          "text": "        PovwNonce {"
+        },
+        {
+          "line": 268,
+          "text": "    use super::{PovwJobId, PovwNonce};"
+        },
+        {
+          "line": 271,
+          "text": "    fn test_povw_job_id_round_trip() {"
+        },
+        {
+          "line": 272,
+          "text": "        let original: PovwJobId = rand::random();"
+        },
+        {
+          "line": 274,
+          "text": "        let reconstructed = PovwJobId::from_bytes(bytes);"
+        },
+        {
+          "line": 279,
+          "text": "    fn test_povw_nonce_bytes_round_trip() {"
+        },
+        {
+          "line": 280,
+          "text": "        let original: PovwNonce = rand::random();"
+        },
+        {
+          "line": 282,
+          "text": "        let reconstructed = PovwNonce::from_bytes(bytes);"
+        },
+        {
+          "line": 287,
+          "text": "    fn test_povw_nonce_u16s_round_trip() {"
+        },
+        {
+          "line": 288,
+          "text": "        let original: PovwNonce = rand::random();"
+        },
+        {
+          "line": 290,
+          "text": "        let reconstructed = PovwNonce::from_u16s(u16s);"
+        }
+      ]
+    },
+    {
+      "path": "/tmp/pure-pon-cargo-20261027/registry/src/index.crates.io-1949cf8c6b5b557f/risc0-binfmt-3.0.5/src/lib.rs",
+      "sha256": "69cfa912365e0707f2ab885f7cec3a71a3f4c27eb0327dbbb7850adcb382c1c6",
+      "selected_lines": [
+        {
+          "line": 27,
+          "text": "mod povw;"
+        },
+        {
+          "line": 40,
+          "text": "    povw::{PovwJobId, PovwLogId, PovwNonce},"
+        }
+      ]
+    },
+    {
+      "path": "/tmp/pure-pon-cargo-20261027/registry/src/index.crates.io-1949cf8c6b5b557f/risc0-zkvm-3.0.6/src/guest/env/verify.rs",
+      "sha256": "29417f6f65e9419671dace8113644f1621ad8834d41c7bacdb7fed157f88f0c4",
+      "selected_lines": [
+        {
+          "line": 42,
+          "text": "/// env::verify(HELLO_WORLD_ID, b\"hello world\".as_slice()).unwrap();"
+        },
+        {
+          "line": 48,
+          "text": "    let assumption_claim = ReceiptClaim::ok(image_id, MaybePruned::Pruned(journal_digest));"
+        }
+      ]
+    },
+    {
+      "path": "/tmp/pure-pon-cargo-20261027/registry/src/index.crates.io-1949cf8c6b5b557f/ruint-1.15.0/src/algorithms/div/reciprocal.rs",
+      "sha256": "52944e7727c58afebf0be84d3b5b9faaffc8de046d32ebfb310e3e8f7619fe9c",
+      "selected_lines": [
+        {
+          "line": 11,
+          "text": "pub use self::{reciprocal_2_mg10 as reciprocal_2, reciprocal_mg10 as reciprocal};"
+        },
+        {
+          "line": 20,
+          "text": "    debug_assert!(d >= (1 << 63));"
+        },
+        {
+          "line": 52,
+          "text": "pub fn reciprocal_mg10(d: u64) -> u64 {"
+        },
+        {
+          "line": 78,
+          "text": "    debug_assert!(d >= (1 << 63));"
+        },
+        {
+          "line": 86,
+          "text": "    let v0 = Wrapping(*unsafe { TABLE.get_unchecked((d9.0 - 256) as usize) } as u64);"
+        },
+        {
+          "line": 107,
+          "text": "    debug_assert!(d >= (1 << 127));"
+        },
+        {
+          "line": 166,
+          "text": "            let actual = reciprocal_mg10(n);"
+        }
+      ]
+    },
+    {
+      "path": "/tmp/pure-pon-cargo-20261027/registry/src/index.crates.io-1949cf8c6b5b557f/ruint-1.15.0/src/bits.rs",
+      "sha256": "d55b1f61ea251c75196a064e96729a5c9c265376b49874518a24584920d37880",
+      "selected_lines": [
+        {
+          "line": 46,
+          "text": "    /// # use ruint::uint;"
+        },
+        {
+          "line": 64,
+          "text": "    /// # use ruint::uint;"
+        },
+        {
+          "line": 90,
+          "text": "    /// # use ruint::uint;"
+        },
+        {
+          "line": 308,
+          "text": "    pub const fn overflowing_shl(self, rhs: usize) -> (Self, bool) {"
+        },
+        {
+          "line": 373,
+          "text": "    pub const fn overflowing_shr(self, rhs: usize) -> (Self, bool) {"
+        },
+        {
+          "line": 644,
+          "text": "                self.wrapping_shl(rhs as usize)"
+        },
+        {
+          "line": 654,
+          "text": "                self.wrapping_shr(rhs as usize)"
+        }
+      ]
+    },
+    {
+      "path": "/tmp/pure-pon-cargo-20261027/registry/src/index.crates.io-1949cf8c6b5b557f/risc0-build-3.0.6/src/lib.rs",
+      "sha256": "30a523d2474299139a0616de729a0b034527bf018aaf3b490e72d900b79b88ea",
+      "selected_lines": [
+        {
+          "line": 373,
+          "text": "fn rust_toolchain() -> PathBuf {"
+        },
+        {
+          "line": 376,
+          "text": "        .get_default_version(&rzup::Component::RustToolchain)"
+        },
+        {
+          "line": 443,
+          "text": "fn get_rust_toolchain_version() -> semver::Version {"
+        },
+        {
+          "line": 446,
+          "text": "        .get_default_version(&rzup::Component::RustToolchain)"
+        }
+      ]
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/chain-w1-next/formal/pon-nakamoto-v1/w1_batch/methods/guest/src/main.rs",
+      "sha256": "5b7e65a3f1173604951a2fe23fc76ad31d63e5b57e9cdc1cede6ce55fd26f80b",
+      "selected_lines": [
+        {
+          "line": 32,
+          "text": "        env::verify(FROZEN_LEAF_IMAGE_ID, leaf.journal).expect(\"full W1 proof assumption\");"
+        }
+      ]
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/chain-w1-next/formal/pon-nakamoto-v1/w1_batch/statement/src/lib.rs",
+      "sha256": "308f61f9496d9fd34c953bff8f6573f53b1136e8a5b356fe2da83e507ea288a6",
+      "selected_lines": [
+        {
+          "line": 7,
+          "text": "//! calls env::verify for every leaf; host verification requires an unconditional"
+        }
+      ]
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/chain-w1-next/formal/pon-nakamoto-v1/w1_zkvm/methods/guest/src/main.rs",
+      "sha256": "7a453d4e3eb39f2fb62792f7d6635706c6960890096356076e821eb7ca1e8b7e",
+      "selected_lines": []
+    }
+  ],
+  "reachability_findings": {
+    "direct_batch_or_original_guest_ruint_calls_found": false,
+    "risc0_binfmt_direct_ruint_use": "PoVW identifier/nonce code, including U160/U256 byte conversion, serde/borsh and constant 32/96-bit shifts. Library PoVW is not a Trillionnium consensus mode.",
+    "no_alloc_formatting_DoS_condition_in_selected_features": false,
+    "untrusted_dynamic_shift_in_reviewed_binfmt_direct_call_sites_found": false,
+    "reciprocal_unsafe_precondition_missing_in_candidate_source": true,
+    "whole_program_reachability_or_non_exploitability_proven": false,
+    "not_a_reason_to_ignore_advisories": true,
+    "original_leaf_proof_rebuilt_or_invalidated_by_this_review": false
+  },
+  "upgrade_findings": {
+    "ruint_patched_minimum": "1.20.0",
+    "patched_version_declared_msrv": "1.90",
+    "cached_fixed_version": "1.21.1",
+    "official_supported_archives_available": [
+      "r0.1.91.1",
+      "r0.1.94.1",
+      "r0.1.97.0"
+    ],
+    "official_release_metadata_receipt": "official-risc0-rust-releases/result.json",
+    "recommended_candidate": "Parent selected minimum official supported MSRV upgrade r0.1.91.1; exact original guest lock restored with ruint1.21.1; SDK3.0.6 and leaf image unchanged. Ordinary checks and real build/verification remain required.",
+    "compiler_downloaded_or_executed": false,
+    "old_compiler_reclaimed": true,
+    "local_backport_selected": false,
+    "old_compiler_reclaim_receipt": "reclaim-own-restored-188/result.json"
+  },
+  "gate": "Do not start attempt4 from the vulnerable lock. Require a fresh source/lock/compiler identity, exact archive digest, disk budget, and separate explicit build authorization. One-leaf pilot remains unapproved.",
+  "fixed_lock_restoration_receipt": "restore-fixed-lock/result.json"
+}

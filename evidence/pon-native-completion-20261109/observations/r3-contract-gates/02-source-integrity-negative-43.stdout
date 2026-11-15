@@ -1,0 +1,6 @@
+{"receipt": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/tmp/trnm-ci-raw-source-xv59p2ld/.git/receipt", "result": "FAIL"}
+{"receipt": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/tmp/trnm-ci-raw-source-pu299wk1/.git/receipt", "result": "FAIL"}
+{"receipt": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/tmp/trnm-ci-raw-source-h3iw6gwf/.git/receipt", "result": "FAIL"}
+{"receipt": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/tmp/trnm-ci-raw-source-mps6yv0v/.git/receipt", "result": "FAIL"}
+{"receipt": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/tmp/trnm-ci-raw-source-jp2lhu32/.git/receipt-PASS", "result": "PASS"}
+{"receipt": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/tmp/trnm-ci-raw-source-jp2lhu32/.git/receipt-FAIL", "result": "FAIL"}

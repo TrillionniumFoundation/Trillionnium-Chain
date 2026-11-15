@@ -1,0 +1,298 @@
+{
+  "actual_probability_law_authenticated": false,
+  "bank_checkpoint": {
+    "bank_id": "496c6a1eced16d68cd3464913eb23a2842399b6eac10b8de349519c34aeaf921",
+    "record_hash": "79284e7501348cb71e39cfaa89a152124986ddfce3f6a2dbd18c593146c4347f",
+    "sequence": 22
+  },
+  "bank_directory": "bank",
+  "before_children": {
+    "actual_probability_law_authenticated": false,
+    "bank_operation_blocked": false,
+    "blocked": false,
+    "budget_units": 40,
+    "checkpoint": {
+      "bank_id": "496c6a1eced16d68cd3464913eb23a2842399b6eac10b8de349519c34aeaf921",
+      "record_hash": "1d20770e1fd1e3d1d37220ca627d076d05adb014182356149d18a6a9b6f1f472",
+      "sequence": 9
+    },
+    "epoch": 1,
+    "global_failure_probability": null,
+    "law_scope_sha256": "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a",
+    "native_checkpoint": {
+      "journal_id": "465b5c556dd1610e3d019e848e7b3773055b068a502f64b4f8cee06549dc1ee7",
+      "record_hash": "7cd308be93f44ca4c62a56f670ae383b8f02b93c5ab1f3108bdc53dfe6e19332",
+      "sequence": 77
+    },
+    "native_conditional_risk_certified": false,
+    "native_owner_blocked": false,
+    "outcomes_recorded": 4,
+    "physical_pre_registration_independently_attested": false,
+    "remaining_units": 30,
+    "schema": "pon-native-risk-ledger-status-v1",
+    "spent_units": 10,
+    "starts_registered": 4,
+    "trusted_history_anchor": false,
+    "unit_denominator": 1000,
+    "unresolved_starts": []
+  },
+  "children": [
+    {
+      "after_native": false,
+      "exit_code": 31,
+      "stderr": "",
+      "stdout": "{\"native_confirmation_invoked\":false,\"registration_sequence\":12,\"risk_outcome_written\":false,\"start_durable\":true}\n"
+    },
+    {
+      "after_native": true,
+      "exit_code": 32,
+      "stderr": "",
+      "stdout": "{\"native_confirmation_returned_success\":true,\"registration_sequence\":18,\"risk_outcome_written\":false,\"start_durable\":true}\n"
+    }
+  ],
+  "confirmed": {
+    "active_generation": 7,
+    "confirmed": true,
+    "depth": 6,
+    "execution_authority": false,
+    "finalized": false,
+    "genesis": "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6",
+    "included_block": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+    "included_height": 1,
+    "network": "a567a600cd8730adc5dba6c29846aa6f16cbdf8e986999a7a528b3c29c8580b2",
+    "observed_height": 7,
+    "observed_now": 100,
+    "observed_tip": "9d78eb57342d078a5a6f2e9217c396fadd465f5531353365295b4539f2af0502",
+    "parameters": "55550d1449accdacacbcdde75db1982de6448fff3f864bcf6b61aa9a7e5d4095",
+    "policy": "installed-depth-and-required-work",
+    "reorged": false,
+    "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+    "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711",
+    "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c"
+  },
+  "early": {
+    "active_generation": 1,
+    "confirmed": false,
+    "depth": 0,
+    "execution_authority": false,
+    "finalized": false,
+    "genesis": "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6",
+    "included_block": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+    "included_height": 1,
+    "network": "a567a600cd8730adc5dba6c29846aa6f16cbdf8e986999a7a528b3c29c8580b2",
+    "observed_height": 1,
+    "observed_now": 100,
+    "observed_tip": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+    "parameters": "55550d1449accdacacbcdde75db1982de6448fff3f864bcf6b61aa9a7e5d4095",
+    "policy": "installed-depth-and-required-work",
+    "reorged": false,
+    "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+    "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711",
+    "work_delta": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "final_status": {
+    "actual_probability_law_authenticated": false,
+    "bank_operation_blocked": false,
+    "blocked": false,
+    "budget_units": 40,
+    "checkpoint": {
+      "bank_id": "496c6a1eced16d68cd3464913eb23a2842399b6eac10b8de349519c34aeaf921",
+      "record_hash": "9984f66a1b34cd966b2652d1dfd068a8da889e9db647f36ff36f06c279e4f47b",
+      "sequence": 21
+    },
+    "epoch": 5,
+    "global_failure_probability": null,
+    "law_scope_sha256": "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a",
+    "native_checkpoint": {
+      "journal_id": "465b5c556dd1610e3d019e848e7b3773055b068a502f64b4f8cee06549dc1ee7",
+      "record_hash": "af494fc55ca689ec8faab2014f0c4ca9e429598f0f9134ae59267f55ac068b77",
+      "sequence": 96
+    },
+    "native_conditional_risk_certified": false,
+    "native_owner_blocked": false,
+    "outcomes_recorded": 6,
+    "physical_pre_registration_independently_attested": false,
+    "remaining_units": 4,
+    "schema": "pon-native-risk-ledger-status-v1",
+    "spent_units": 36,
+    "starts_registered": 8,
+    "trusted_history_anchor": false,
+    "unit_denominator": 1000,
+    "unresolved_starts": [
+      12,
+      18
+    ]
+  },
+  "foreign_native_directory": "foreign-native",
+  "global_failure_probability": null,
+  "included": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+  "native_checkpoint": {
+    "journal_id": "465b5c556dd1610e3d019e848e7b3773055b068a502f64b4f8cee06549dc1ee7",
+    "record_hash": "826ace6924d8c7abb5aba8381cf557dc056804aa7f8b10556ab505cdff12f16e",
+    "sequence": 97
+  },
+  "native_conditional_risk_certified": false,
+  "native_directory": "native",
+  "native_membership_error": "MEMBERSHIP",
+  "old_bank_directory": "old-bank",
+  "old_native_directory": "old-native",
+  "recoveries": [
+    {
+      "after": {
+        "actual_probability_law_authenticated": false,
+        "bank_operation_blocked": false,
+        "blocked": false,
+        "budget_units": 40,
+        "checkpoint": {
+          "bank_id": "496c6a1eced16d68cd3464913eb23a2842399b6eac10b8de349519c34aeaf921",
+          "record_hash": "a0af83842b91f2b52d0e0b02848bcd24f60f79130d737344d69292940c99bf8f",
+          "sequence": 15
+        },
+        "epoch": 3,
+        "global_failure_probability": null,
+        "law_scope_sha256": "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a",
+        "native_checkpoint": {
+          "journal_id": "465b5c556dd1610e3d019e848e7b3773055b068a502f64b4f8cee06549dc1ee7",
+          "record_hash": "d048de693b8515bdc214593d0320920a8c4ee4ca2e18ad497d7d5246bbdef197",
+          "sequence": 85
+        },
+        "native_conditional_risk_certified": false,
+        "native_owner_blocked": false,
+        "outcomes_recorded": 5,
+        "physical_pre_registration_independently_attested": false,
+        "remaining_units": 19,
+        "schema": "pon-native-risk-ledger-status-v1",
+        "spent_units": 21,
+        "starts_registered": 6,
+        "trusted_history_anchor": false,
+        "unit_denominator": 1000,
+        "unresolved_starts": [
+          12
+        ]
+      },
+      "before": {
+        "actual_probability_law_authenticated": false,
+        "bank_operation_blocked": false,
+        "blocked": false,
+        "budget_units": 40,
+        "checkpoint": {
+          "bank_id": "496c6a1eced16d68cd3464913eb23a2842399b6eac10b8de349519c34aeaf921",
+          "record_hash": "9a1e9770ec8ff13b2d975155c444c2f7127579addc7108c0189de671746f91ec",
+          "sequence": 13
+        },
+        "epoch": 3,
+        "global_failure_probability": null,
+        "law_scope_sha256": "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a",
+        "native_checkpoint": {
+          "journal_id": "465b5c556dd1610e3d019e848e7b3773055b068a502f64b4f8cee06549dc1ee7",
+          "record_hash": "788b62d7b008cd2aa8c3095fcd1b107942f1269e2c19ef4b31df0a1edec28e1c",
+          "sequence": 82
+        },
+        "native_conditional_risk_certified": false,
+        "native_owner_blocked": false,
+        "outcomes_recorded": 4,
+        "physical_pre_registration_independently_attested": false,
+        "remaining_units": 25,
+        "schema": "pon-native-risk-ledger-status-v1",
+        "spent_units": 15,
+        "starts_registered": 5,
+        "trusted_history_anchor": false,
+        "unit_denominator": 1000,
+        "unresolved_starts": [
+          12
+        ]
+      }
+    },
+    {
+      "after": {
+        "actual_probability_law_authenticated": false,
+        "bank_operation_blocked": false,
+        "blocked": false,
+        "budget_units": 40,
+        "checkpoint": {
+          "bank_id": "496c6a1eced16d68cd3464913eb23a2842399b6eac10b8de349519c34aeaf921",
+          "record_hash": "9984f66a1b34cd966b2652d1dfd068a8da889e9db647f36ff36f06c279e4f47b",
+          "sequence": 21
+        },
+        "epoch": 5,
+        "global_failure_probability": null,
+        "law_scope_sha256": "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a",
+        "native_checkpoint": {
+          "journal_id": "465b5c556dd1610e3d019e848e7b3773055b068a502f64b4f8cee06549dc1ee7",
+          "record_hash": "af494fc55ca689ec8faab2014f0c4ca9e429598f0f9134ae59267f55ac068b77",
+          "sequence": 96
+        },
+        "native_conditional_risk_certified": false,
+        "native_owner_blocked": false,
+        "outcomes_recorded": 6,
+        "physical_pre_registration_independently_attested": false,
+        "remaining_units": 4,
+        "schema": "pon-native-risk-ledger-status-v1",
+        "spent_units": 36,
+        "starts_registered": 8,
+        "trusted_history_anchor": false,
+        "unit_denominator": 1000,
+        "unresolved_starts": [
+          12,
+          18
+        ]
+      },
+      "before": {
+        "actual_probability_law_authenticated": false,
+        "bank_operation_blocked": false,
+        "blocked": false,
+        "budget_units": 40,
+        "checkpoint": {
+          "bank_id": "496c6a1eced16d68cd3464913eb23a2842399b6eac10b8de349519c34aeaf921",
+          "record_hash": "92465184b0eacf4f0f29c98016dca3430ebb7fbf0d7a035c618a105bc9e73e98",
+          "sequence": 19
+        },
+        "epoch": 5,
+        "global_failure_probability": null,
+        "law_scope_sha256": "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a",
+        "native_checkpoint": {
+          "journal_id": "465b5c556dd1610e3d019e848e7b3773055b068a502f64b4f8cee06549dc1ee7",
+          "record_hash": "fb270aa8b0abf9e8cf95532f69ad53485980ad56e9458ff3dff8a57876857722",
+          "sequence": 93
+        },
+        "native_conditional_risk_certified": false,
+        "native_owner_blocked": false,
+        "outcomes_recorded": 5,
+        "physical_pre_registration_independently_attested": false,
+        "remaining_units": 12,
+        "schema": "pon-native-risk-ledger-status-v1",
+        "spent_units": 28,
+        "starts_registered": 7,
+        "trusted_history_anchor": false,
+        "unit_denominator": 1000,
+        "unresolved_starts": [
+          12,
+          18
+        ]
+      }
+    }
+  ],
+  "repeated": {
+    "active_generation": 7,
+    "confirmed": true,
+    "depth": 6,
+    "execution_authority": false,
+    "finalized": false,
+    "genesis": "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6",
+    "included_block": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+    "included_height": 1,
+    "network": "a567a600cd8730adc5dba6c29846aa6f16cbdf8e986999a7a528b3c29c8580b2",
+    "observed_height": 7,
+    "observed_now": 100,
+    "observed_tip": "9d78eb57342d078a5a6f2e9217c396fadd465f5531353365295b4539f2af0502",
+    "parameters": "55550d1449accdacacbcdde75db1982de6448fff3f864bcf6b61aa9a7e5d4095",
+    "policy": "installed-depth-and-required-work",
+    "reorged": false,
+    "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+    "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711",
+    "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c"
+  },
+  "schema": "pon-native-risk-ledger-run-v1",
+  "stale_bank_refusal": "RISK_LEDGER_CHECKPOINT",
+  "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711"
+}

@@ -1,0 +1,280 @@
+{
+  "schema": "trnm-local-profhepta-candidate-publication-v1",
+  "started_unix": 1794062904.1023948,
+  "head": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+  "expected_prior": "96e1eede091153199894532c91430bfc0f8e4572",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "destination_ref": "refs/heads/fix/chain-six-axis-performance-20261103",
+  "identity_required": {
+    "login": "ProfHepta",
+    "id": 102159240
+  },
+  "force": false,
+  "main_update_requested": false,
+  "native_validation_state_at_publication": "still running; not claimed passed",
+  "native_driver": "1a1b654d4f0-12894-3ab",
+  "business_qualification": false,
+  "steps": [
+    {
+      "name": "identity",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "user",
+        "--jq",
+        "{login,id}"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107",
+      "started_unix": 1794062904.1028032,
+      "elapsed_seconds": 2.4716501235961914,
+      "exit_code": 0,
+      "stdout": "{\"id\":102159240,\"login\":\"ProfHepta\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "repository",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain",
+        "--jq",
+        "{full_name,id,default_branch,permissions}"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107",
+      "started_unix": 1794062906.575011,
+      "elapsed_seconds": 8.501252889633179,
+      "exit_code": 0,
+      "stdout": "{\"default_branch\":\"main\",\"full_name\":\"TrillionniumFoundation/Trillionnium-Chain\",\"id\":1323087357,\"permissions\":{\"admin\":true,\"maintain\":true,\"pull\":true,\"push\":true,\"triage\":true}}\n",
+      "stderr": ""
+    },
+    {
+      "name": "preflight",
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794062915.0780284,
+      "elapsed_seconds": 0.10480594635009766,
+      "exit_code": 0,
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-native-9ce-validation\", \"remote_policy_mutated\": false}\n",
+      "stderr": ""
+    },
+    {
+      "name": "source-before-push",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/publication-d26-20261107/source-before-push.json"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794062915.183855,
+      "elapsed_seconds": 10.830127716064453,
+      "exit_code": 0,
+      "stdout": "{\n  \"base\": null,\n  \"candidate\": \"d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89\",\n  \"tested_tree\": \"cef3563653b982a8043326ad4b53a4b93ab63906\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 1031001045,\n  \"tracked_entries\": 11017,\n  \"tracked_worktree_verified\": true\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "candidate-tree",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/repo.git",
+        "-c",
+        "credential.helper=!/usr/bin/gh auth git-credential",
+        "-c",
+        "http.version=HTTP/1.1",
+        "rev-parse",
+        "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89^{tree}"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107",
+      "started_unix": 1794062926.0150745,
+      "elapsed_seconds": 0.004663944244384766,
+      "exit_code": 0,
+      "stdout": "cef3563653b982a8043326ad4b53a4b93ab63906\n",
+      "stderr": ""
+    },
+    {
+      "name": "remote-before",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/repo.git",
+        "-c",
+        "credential.helper=!/usr/bin/gh auth git-credential",
+        "-c",
+        "http.version=HTTP/1.1",
+        "ls-remote",
+        "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+        "refs/heads/fix/chain-six-axis-performance-20261103",
+        "refs/heads/main"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107",
+      "started_unix": 1794062926.0204275,
+      "elapsed_seconds": 14.127447128295898,
+      "exit_code": 0,
+      "stdout": "96e1eede091153199894532c91430bfc0f8e4572\trefs/heads/fix/chain-six-axis-performance-20261103\ndd6e1c3cbeacbdc532b0679297835b3a0aac78f0\trefs/heads/main\n",
+      "stderr": ""
+    },
+    {
+      "name": "candidate-ancestry",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/repo.git",
+        "-c",
+        "credential.helper=!/usr/bin/gh auth git-credential",
+        "-c",
+        "http.version=HTTP/1.1",
+        "merge-base",
+        "--is-ancestor",
+        "96e1eede091153199894532c91430bfc0f8e4572",
+        "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107",
+      "started_unix": 1794062940.148951,
+      "elapsed_seconds": 0.007439374923706055,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "canonical-merge-preview",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/repo.git",
+        "-c",
+        "credential.helper=!/usr/bin/gh auth git-credential",
+        "-c",
+        "http.version=HTTP/1.1",
+        "merge-tree",
+        "--write-tree",
+        "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107",
+      "started_unix": 1794062940.1601143,
+      "elapsed_seconds": 0.09581112861633301,
+      "exit_code": 0,
+      "stdout": "cef3563653b982a8043326ad4b53a4b93ab63906\n",
+      "stderr": ""
+    },
+    {
+      "name": "non-force-push",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/repo.git",
+        "-c",
+        "credential.helper=!/usr/bin/gh auth git-credential",
+        "-c",
+        "http.version=HTTP/1.1",
+        "push",
+        "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+        "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89:refs/heads/fix/chain-six-axis-performance-20261103"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107",
+      "started_unix": 1794062940.2639225,
+      "elapsed_seconds": 7.076177597045898,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "remote: \nremote: GitHub found 7 vulnerabilities on TrillionniumFoundation/Trillionnium-Chain's default branch (4 high, 2 moderate, 1 low). To find out more, visit:        \nremote:      https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot        \nremote: \nTo https://github.com/TrillionniumFoundation/Trillionnium-Chain.git\n   96e1eede0..d26e047de  d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89 -> fix/chain-six-axis-performance-20261103\n"
+    },
+    {
+      "name": "remote-after",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/repo.git",
+        "-c",
+        "credential.helper=!/usr/bin/gh auth git-credential",
+        "-c",
+        "http.version=HTTP/1.1",
+        "ls-remote",
+        "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+        "refs/heads/fix/chain-six-axis-performance-20261103",
+        "refs/heads/main"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107",
+      "started_unix": 1794062947.3413372,
+      "elapsed_seconds": 3.754441261291504,
+      "exit_code": 0,
+      "stdout": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89\trefs/heads/fix/chain-six-axis-performance-20261103\ndd6e1c3cbeacbdc532b0679297835b3a0aac78f0\trefs/heads/main\n",
+      "stderr": ""
+    },
+    {
+      "name": "github-commit-readback",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "--jq",
+        "{sha,tree:.tree.sha,parents:[.parents[].sha]}"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107",
+      "started_unix": 1794062951.0967126,
+      "elapsed_seconds": 2.296065330505371,
+      "exit_code": 0,
+      "stdout": "{\"parents\":[\"d7952489ceaa5ae191a7bbcd96a3d3cc8350f785\"],\"sha\":\"d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89\",\"tree\":\"cef3563653b982a8043326ad4b53a4b93ab63906\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "identity-after",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "user",
+        "--jq",
+        "{login,id}"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107",
+      "started_unix": 1794062953.3941498,
+      "elapsed_seconds": 1.4093341827392578,
+      "exit_code": 0,
+      "stdout": "{\"id\":102159240,\"login\":\"ProfHepta\"}\n",
+      "stderr": ""
+    }
+  ],
+  "state": "published_and_read_back",
+  "verified_identity": {
+    "id": 102159240,
+    "login": "ProfHepta"
+  },
+  "verified_repository": {
+    "default_branch": "main",
+    "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+    "id": 1323087357,
+    "permissions": {
+      "admin": true,
+      "maintain": true,
+      "pull": true,
+      "push": true,
+      "triage": true
+    }
+  },
+  "refs_before": {
+    "refs/heads/fix/chain-six-axis-performance-20261103": "96e1eede091153199894532c91430bfc0f8e4572",
+    "refs/heads/main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+  },
+  "canonical_merge_tree_at_observed_base": "cef3563653b982a8043326ad4b53a4b93ab63906",
+  "refs_after": {
+    "refs/heads/fix/chain-six-axis-performance-20261103": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+    "refs/heads/main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+  },
+  "main_unchanged_across_publication": true,
+  "published_object": {
+    "parents": [
+      "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785"
+    ],
+    "sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+    "tree": "cef3563653b982a8043326ad4b53a4b93ab63906"
+  },
+  "finished_unix": 1794062954.8048747
+}

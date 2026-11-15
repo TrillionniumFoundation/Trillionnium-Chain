@@ -1,0 +1,14 @@
+{
+  "label": "run02-verify",
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "run_campaign.py",
+    "verify",
+    "results/retained-native-02"
+  ],
+  "exit_code": 0,
+  "outer_wall_seconds": 8.520532349823043,
+  "stdout_sha256": "af83bbffc5b05bac3383576326ca33dd5ab229707495b2b4c43e45f02c2ebdca",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

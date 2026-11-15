@@ -1,0 +1,2 @@
+[test/chain-verification-counterfactual-v4-20261112-33ceda 570801af999] test: retain pre-fix dispatch and output behavior for adversarial comparison
+ 2 files changed, 11 insertions(+), 92 deletions(-)

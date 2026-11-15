@@ -1,0 +1,23 @@
+test_asert_failures_retained_and_longer_model_budgets_can_catch_up (__main__.ConditionalScheduleTests.test_asert_failures_retained_and_longer_model_budgets_can_catch_up) ... ok
+test_fixed_probability_is_conditional_on_linear_winner_cost (__main__.ConditionalScheduleTests.test_fixed_probability_is_conditional_on_linear_winner_cost) ... ok
+test_periodic_classical_control_and_quantum_hypothesis_diverge (__main__.ConditionalScheduleTests.test_periodic_classical_control_and_quantum_hypothesis_diverge) ... ok
+test_proof_delay_is_charged_and_budget_failure_is_preserved (__main__.ConditionalScheduleTests.test_proof_delay_is_charged_and_budget_failure_is_preserved) ... ok
+test_separate_integer_readback_all_rows_and_no_quantum_claim (__main__.ConditionalScheduleTests.test_separate_integer_readback_all_rows_and_no_quantum_claim) ... ok
+test_separate_readback_rejects_chainwork_and_timestamp_mutations (__main__.ConditionalScheduleTests.test_separate_readback_rejects_chainwork_and_timestamp_mutations) ... ok
+test_asert_rejects_noninteger_and_out_of_range_parameters (__main__.IntegerRulesTests.test_asert_rejects_noninteger_and_out_of_range_parameters) ... ok
+test_cost_ratio_assumptions_have_the_required_counterexample (__main__.IntegerRulesTests.test_cost_ratio_assumptions_have_the_required_counterexample) ... ok
+test_fixed_probability_budget_clamps_ceilings_and_minimum (__main__.IntegerRulesTests.test_fixed_probability_budget_clamps_ceilings_and_minimum) ... ok
+test_future_timestamp_wait_is_charged_not_assumed_away (__main__.IntegerRulesTests.test_future_timestamp_wait_is_charged_not_assumed_away) ... ok
+test_modeled_constants_match_frozen_development_profile (__main__.IntegerRulesTests.test_modeled_constants_match_frozen_development_profile) ... ok
+test_pinned_bchn_calculate_asert_vectors (__main__.IntegerRulesTests.test_pinned_bchn_calculate_asert_vectors) ... ok
+test_scenario_bounds_and_no_cost_policy_substitution (__main__.IntegerRulesTests.test_scenario_bounds_and_no_cost_policy_substitution) ... ok
+test_signed_division_rounding_and_extreme_target_clamps (__main__.IntegerRulesTests.test_signed_division_rounding_and_extreme_target_clamps) ... ok
+test_steady_honest_control_identical_across_clock_variants (__main__.IntegerRulesTests.test_steady_honest_control_identical_across_clock_variants) ... ok
+test_uniform_ticket_probability_keeps_inclusive_target (__main__.IntegerRulesTests.test_uniform_ticket_probability_keeps_inclusive_target) ... ok
+test_duplicate_json_keys_are_not_silently_accepted (__main__.ReceiptIntegrityTests.test_duplicate_json_keys_are_not_silently_accepted) ... ok
+test_full_campaign_roundtrip_and_artifact_source_scope_mutations (__main__.ReceiptIntegrityTests.test_full_campaign_roundtrip_and_artifact_source_scope_mutations) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 8.802s
+
+OK

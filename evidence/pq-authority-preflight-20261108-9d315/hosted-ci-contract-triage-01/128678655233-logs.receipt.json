@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678655233/logs"
+  ],
+  "exit_code": 0,
+  "label": "128678655233-logs",
+  "observed_utc": "2026-11-08T08:52:59.973789+00:00",
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 169647,
+    "sha256": "9019d1db1d53fe62185d982e65eccd4593e29bcc2ecf75d25b4d3f19d80c8aca"
+  }
+}

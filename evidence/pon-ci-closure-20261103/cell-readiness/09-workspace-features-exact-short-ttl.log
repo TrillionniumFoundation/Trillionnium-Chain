@@ -1,0 +1,17 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.17s
+     Running unittests src/lib.rs (/workspace/scratch/abae1861b451/cell-ready-target/debug/deps/trnm_data_availability-7742eea0df373791)
+
+running 1 test
+test cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication ... cell_sequence phase=startup role=peer setup_elapsed_ns=19216537 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=expiry_proxy setup_elapsed_ns=19601527 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=24806526 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=29258089 outcome=Ok(Ok(()))
+cell_sequence phase=setup_complete elapsed_ns=44736649
+cell_sequence phase=announce ordinal=0 started_wall=Some(1793721078.092619265s) completed_wall=Some(1793721078.095919291s) elapsed_ns=3300487 expiry_seconds=1793721378 failure=None
+cell_sequence phase=announce ordinal=1 started_wall=Some(1793721078.095943548s) completed_wall=Some(1793721078.101062311s) elapsed_ns=5118994 expiry_seconds=1793721080 failure=None
+cell_sequence phase=discovery ordinal=0 started_wall=Some(1793721078.101087259s) completed_wall=Some(1793721080.006935978s) elapsed_ns=1905849139 expiry_seconds=1793721080 failure=Some(Failure { class: "io", kind: Some(WouldBlock), errno: None })
+cell_sequence phase=expiry_proxy worker_phase=accept_after_reply connections=1 connected=Some(1793721078.144251423s) request_arrived=Some(1793721078.144257572s) backend_frame_ready=Some(1793721078.144650815s)
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 171 filtered out; finished in 2.01s
+

@@ -1,0 +1,56 @@
+{
+  "name": "complete",
+  "head": "11791e2da79b69322271be2cffe03725165151d1",
+  "argv": [
+    "/workspace/scratch/pon-joint-58fd59-build/target/release/examples/pon_w1_lifecycle_cost_v4",
+    "--actual-lifecycle-v4"
+  ],
+  "started_utc": "2026-11-09T02:57:32.368822+00:00",
+  "public_resource_contract_measured": false,
+  "source_binary_resource_identity_authenticated_by_reader": false,
+  "signal_inside_specific_native_instruction_observed": false,
+  "consensus_credit_added": 0,
+  "production_qualified": false,
+  "binary_before": {
+    "path": "/workspace/scratch/pon-joint-58fd59-build/target/release/examples/pon_w1_lifecycle_cost_v4",
+    "bytes": 903328,
+    "sha256": "bd74dea5a8b1ddc57e86f1d181c3cdb287321dc0b9651e03b6f21adfcfe2f45a"
+  },
+  "deadline_seconds": 600,
+  "signal_request": null,
+  "pid": 1290,
+  "loaded_executable": {
+    "path": "/workspace/scratch/pon-joint-58fd59-build/target/release/examples/pon_w1_lifecycle_cost_v4",
+    "sha256": "bd74dea5a8b1ddc57e86f1d181c3cdb287321dc0b9651e03b6f21adfcfe2f45a"
+  },
+  "process_stat_observed": "1290 (pon_w1_lifecycl) R 1236 1 1 0 -1 4194560 214 0 0 0 0 0 0 0 20 0 1 0 333111 3518464 240 18446744073709551615 94292913263040 94292913811664 140722312867824 0 0 0 0 4096 0 0 0 0 17 2 0 0 0 0 0 94292913836480 94292913838976 94293316210688 140722312874037 140722312874150 140722312874150 140722312880029 0\n",
+  "exit_code": 0,
+  "wall_ns": 4378646923,
+  "serial_child_rusage_delta": {
+    "user_seconds": 4.3137870000000005,
+    "system_seconds": 0.04698800000000003,
+    "scope": "one serial native child; source verifier/reader outside interval"
+  },
+  "binary_after": {
+    "bytes": 903328,
+    "sha256": "bd74dea5a8b1ddc57e86f1d181c3cdb287321dc0b9651e03b6f21adfcfe2f45a"
+  },
+  "raw": {
+    "file": "complete.jsonl",
+    "bytes": 40704359,
+    "sha256": "2ae1c73382b3d4bede8412c9ff725d6e51bf37ea50ff6810a84617c4c8ec6f04"
+  },
+  "stderr": {
+    "file": "complete.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "reader_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "/workspace/scratch/pon-joint-58fd59-build/chain/scripts/pon_w1_lifecycle_cost_v4.py",
+    "/workspace/scratch/pon-joint-58fd59-build/final-native/v4-observation/complete.jsonl",
+    "--process-exit-code",
+    "0"
+  ],
+  "reader_exit_code": 0
+}

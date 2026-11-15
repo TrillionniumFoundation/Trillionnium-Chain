@@ -1,0 +1,4711 @@
+{
+  "binary_before_equals_after": true,
+  "manifest_sha256": "a25fefc6441121ae56126a4b13aa2045860620b193fa2517b7e49c964078d0a1",
+  "observations": {
+    "fresh": {
+      "construction_coverage": {
+        "accounting_scope": "construction intervals are nested in joined attacker worker CPU; never add them twice; shared public material setup is separate",
+        "all_context_bindings_and_challenges_unique": true,
+        "all_nested_cpu_measurements_known": true,
+        "constructed": 236,
+        "exhausted": 0,
+        "full_transcript_rejections": 220,
+        "nested_from_zero_construction_cpu_ns": 106697928,
+        "submitted": 236,
+        "unique_challenges": 236,
+        "unique_packet_indices": 236
+      },
+      "finite_target_met": false,
+      "honest_chain_acquisition_wall_ns": 186507754,
+      "honest_chain_process_cpu_ns": 37751201,
+      "invariant_target_met": null,
+      "phases": [
+        {
+          "accounting_closed": true,
+          "attacks": {
+            "calls": 0,
+            "error_counts": {},
+            "status_counts": {}
+          },
+          "business_started_ns": 126849,
+          "client_confirmation_latency_ns": 1797712234,
+          "client_confirmed_before_original_window_end": true,
+          "client_confirmed_transactions": 1,
+          "confirmation_ended_ns": 1797839083,
+          "finite_business_target_met": true,
+          "honest_head_successes_in_window": 70,
+          "honest_history": [
+            {
+              "elapsed_wall_ns": 12158517,
+              "ended_ns": 232544679,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 220386678,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 12037675,
+              "ended_ns": 707847909,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 695810936,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 12131839,
+              "ended_ns": 902508185,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 890377085,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 12477778,
+              "ended_ns": 1095612125,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 1083135104,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 11816279,
+              "ended_ns": 1211508723,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 1199693216,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 12204960,
+              "ended_ns": 1404220666,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 1392016481,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 11359940,
+              "ended_ns": 1598029708,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 1586670432,
+              "status": "ok"
+            }
+          ],
+          "honest_submissions": [
+            {
+              "elapsed_wall_ns": 17230454,
+              "ended_ns": 17791438,
+              "error": null,
+              "height": 1,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 562144,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 68317523,
+              "ended_ns": 86633977,
+              "error": null,
+              "height": 2,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 18317540,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 16785791,
+              "ended_ns": 103958793,
+              "error": null,
+              "height": 3,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 87174177,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 17761414,
+              "ended_ns": 122332702,
+              "error": null,
+              "height": 4,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 104572423,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 60531466,
+              "ended_ns": 183436563,
+              "error": null,
+              "height": 5,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 122906333,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 17765558,
+              "ended_ns": 201810335,
+              "error": null,
+              "height": 6,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 184045615,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 17744936,
+              "ended_ns": 220144488,
+              "error": null,
+              "height": 7,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 202400447,
+              "status": "ok"
+            }
+          ],
+          "independent_final_confirmation_stage": {
+            "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+            "confirmation_ended_ns": 1797836523,
+            "confirmation_started_ns": 1796894657,
+            "confirmation_thread_cpu_ns": 942906,
+            "confirmation_wall_ns": 941866,
+            "observation_returned": true
+          },
+          "independent_history_page_replay": [
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1356,
+                  "calls_completed": 1356,
+                  "calls_rejected": 0,
+                  "calls_started": 1356,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 171401,
+                  "last_ended_ns": 461570791,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 35462314,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 35509901
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 232544679,
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 457929179,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 403523207,
+                  "thread_cpu_ns": 28997151,
+                  "wall_ns": 54405972
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": 392985541,
+                  "last_reserve_deadline_remaining_ns": 3366540321,
+                  "last_sleep_deadline_remaining_ns": 3368628624,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1999999880,
+                  "original_deadline_remaining_at_entry_ns": 3766471847,
+                  "original_deadline_remaining_at_exit_ns": 3366536076,
+                  "requested_sleep_ns": 382000000,
+                  "reserve_attempts": 192,
+                  "reserve_budget_refusals": 191,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 192,
+                  "sleep_calls_completed": 191,
+                  "sleep_calls_started": 191,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 400880401,
+                    "error_code": null,
+                    "started_ns": 944630,
+                    "thread_cpu_ns": 7863999,
+                    "unwound": false,
+                    "wall_ns": 399935771
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 309636,
+                    "error_code": null,
+                    "started_ns": 254528,
+                    "thread_cpu_ns": 55209,
+                    "unwound": false,
+                    "wall_ns": 55108
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 940217,
+                    "error_code": null,
+                    "started_ns": 310188,
+                    "thread_cpu_ns": 173674,
+                    "unwound": false,
+                    "wall_ns": 630029
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 237532,
+                  "wall_ns": 237550
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 56430,
+                  "wall_ns": 56284
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 7866012,
+                  "wall_ns": 399937705
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 257011,
+                  "wall_ns": 713959
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 183388,
+                  "wall_ns": 522617
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 41928971,
+                  "wall_ns": 462894693
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 3221,
+                  "wall_ns": 3482
+                }
+              ],
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "replay_accepted": true,
+              "replay_ended_ns": 695715987,
+              "replay_error": null,
+              "replay_started_ns": 232582738,
+              "replay_thread_cpu_ns": 42167593,
+              "replay_wall_ns": 463133249,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1195,
+                  "calls_completed": 1195,
+                  "calls_rejected": 0,
+                  "calls_started": 1195,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 133267,
+                  "last_ended_ns": 180738096,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 29894392,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 29859159
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 707847909,
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 176502133,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 60313610,
+                  "thread_cpu_ns": 28890162,
+                  "wall_ns": 116188523
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": 57630527,
+                  "last_reserve_deadline_remaining_ns": 3232650874,
+                  "last_sleep_deadline_remaining_ns": 3234714031,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1999999880,
+                  "original_deadline_remaining_at_entry_ns": 3291269655,
+                  "original_deadline_remaining_at_exit_ns": 3232648393,
+                  "requested_sleep_ns": 56000000,
+                  "reserve_attempts": 29,
+                  "reserve_budget_refusals": 28,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 29,
+                  "sleep_calls_completed": 28,
+                  "sleep_calls_started": 28,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 59481002,
+                    "error_code": null,
+                    "started_ns": 859740,
+                    "thread_cpu_ns": 1117750,
+                    "unwound": false,
+                    "wall_ns": 58621262
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 201213,
+                    "error_code": null,
+                    "started_ns": 200111,
+                    "thread_cpu_ns": 1164,
+                    "unwound": false,
+                    "wall_ns": 1102
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 857063,
+                    "error_code": null,
+                    "started_ns": 201655,
+                    "thread_cpu_ns": 190361,
+                    "unwound": false,
+                    "wall_ns": 655408
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 187650,
+                  "wall_ns": 187800
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 41399,
+                  "wall_ns": 41318
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 1119290,
+                  "wall_ns": 58622820
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 218112,
+                  "wall_ns": 683319
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 169084,
+                  "wall_ns": 525970
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 35965099,
+                  "wall_ns": 182196270
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 32135,
+                  "wall_ns": 32162
+                }
+              ],
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "replay_accepted": true,
+              "replay_ended_ns": 890277165,
+              "replay_error": null,
+              "replay_started_ns": 707869881,
+              "replay_thread_cpu_ns": 36176177,
+              "replay_wall_ns": 182407284,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1181,
+                  "calls_completed": 1181,
+                  "calls_rejected": 0,
+                  "calls_started": 1181,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 172362,
+                  "last_ended_ns": 102505778,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 28909780,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 28873279
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 902508185,
+              "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 97949841,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 3755015,
+                  "thread_cpu_ns": 28379868,
+                  "wall_ns": 94194826
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": 2061061,
+                  "last_reserve_deadline_remaining_ns": 3094431687,
+                  "last_sleep_deadline_remaining_ns": 3096532926,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1999999833,
+                  "original_deadline_remaining_at_entry_ns": 3096580461,
+                  "original_deadline_remaining_at_exit_ns": 3094429436,
+                  "requested_sleep_ns": 2000000,
+                  "reserve_attempts": 2,
+                  "reserve_budget_refusals": 1,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 2,
+                  "sleep_calls_completed": 1,
+                  "sleep_calls_started": 1,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 3039059,
+                    "error_code": null,
+                    "started_ns": 888034,
+                    "thread_cpu_ns": 96549,
+                    "unwound": false,
+                    "wall_ns": 2151025
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 242865,
+                    "error_code": null,
+                    "started_ns": 241999,
+                    "thread_cpu_ns": 835,
+                    "unwound": false,
+                    "wall_ns": 866
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 884825,
+                    "error_code": null,
+                    "started_ns": 243326,
+                    "thread_cpu_ns": 238349,
+                    "unwound": false,
+                    "wall_ns": 641499
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 191419,
+                  "wall_ns": 191414
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 42911,
+                  "wall_ns": 42817
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 97742,
+                  "wall_ns": 2152467
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 267179,
+                  "wall_ns": 670712
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 277497,
+                  "wall_ns": 706271
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 34796487,
+                  "wall_ns": 180228348
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 3060,
+                  "wall_ns": 3155
+                }
+              ],
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "replay_accepted": true,
+              "replay_ended_ns": 1083029259,
+              "replay_error": null,
+              "replay_started_ns": 902530820,
+              "replay_thread_cpu_ns": 35066945,
+              "replay_wall_ns": 180498439,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1193,
+                  "calls_completed": 1193,
+                  "calls_rejected": 0,
+                  "calls_started": 1193,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 153534,
+                  "last_ended_ns": 102257154,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 29075732,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 29023425
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 3,
+              "history_request_ended_ns": 1095612125,
+              "next_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 97425555,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 1691414,
+                  "thread_cpu_ns": 28339866,
+                  "wall_ns": 95734141
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": null,
+                  "last_reserve_deadline_remaining_ns": 2903431164,
+                  "last_sleep_deadline_remaining_ns": null,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1999999849,
+                  "original_deadline_remaining_at_entry_ns": 2903494436,
+                  "original_deadline_remaining_at_exit_ns": 2903424949,
+                  "requested_sleep_ns": null,
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 1,
+                  "sleep_calls_completed": 0,
+                  "sleep_calls_started": 0,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 938992,
+                    "error_code": null,
+                    "started_ns": 869505,
+                    "thread_cpu_ns": 69543,
+                    "unwound": false,
+                    "wall_ns": 69487
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 231633,
+                    "error_code": null,
+                    "started_ns": 230531,
+                    "thread_cpu_ns": 1149,
+                    "unwound": false,
+                    "wall_ns": 1102
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 866230,
+                    "error_code": null,
+                    "started_ns": 232088,
+                    "thread_cpu_ns": 225155,
+                    "unwound": false,
+                    "wall_ns": 634142
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 184056,
+                  "wall_ns": 184278
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 42698,
+                  "wall_ns": 42596
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 70665,
+                  "wall_ns": 70711
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 261857,
+                  "wall_ns": 671392
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 142890,
+                  "wall_ns": 582629
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 34834830,
+                  "wall_ns": 103732439
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 2666,
+                  "wall_ns": 2772
+                }
+              ],
+              "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "replay_accepted": true,
+              "replay_ended_ns": 1199603001,
+              "replay_error": null,
+              "replay_started_ns": 1095635278,
+              "replay_thread_cpu_ns": 35070315,
+              "replay_wall_ns": 103967723,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1206,
+                  "calls_completed": 1206,
+                  "calls_rejected": 0,
+                  "calls_started": 1206,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 167975,
+                  "last_ended_ns": 178881127,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 29507264,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 29480135
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 4,
+              "history_request_ended_ns": 1211508723,
+              "next_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 173646234,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 1651560,
+                  "thread_cpu_ns": 28458360,
+                  "wall_ns": 171994674
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": null,
+                  "last_reserve_deadline_remaining_ns": 2787589654,
+                  "last_sleep_deadline_remaining_ns": null,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1999999814,
+                  "original_deadline_remaining_at_entry_ns": 2787623164,
+                  "original_deadline_remaining_at_exit_ns": 2787587418,
+                  "requested_sleep_ns": null,
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 1,
+                  "sleep_calls_completed": 0,
+                  "sleep_calls_started": 0,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 880171,
+                    "error_code": null,
+                    "started_ns": 844425,
+                    "thread_cpu_ns": 35784,
+                    "unwound": false,
+                    "wall_ns": 35746
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 236576,
+                    "error_code": null,
+                    "started_ns": 235780,
+                    "thread_cpu_ns": 990,
+                    "unwound": false,
+                    "wall_ns": 796
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 841814,
+                    "error_code": null,
+                    "started_ns": 237168,
+                    "thread_cpu_ns": 186037,
+                    "unwound": false,
+                    "wall_ns": 604646
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 199231,
+                  "wall_ns": 199199
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 41990,
+                  "wall_ns": 41925
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 36852,
+                  "wall_ns": 36970
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 213929,
+                  "wall_ns": 632772
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 112325,
+                  "wall_ns": 445864
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 35298852,
+                  "wall_ns": 180145445
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 2571,
+                  "wall_ns": 2613
+                }
+              ],
+              "prior_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "replay_accepted": true,
+              "replay_ended_ns": 1391922279,
+              "replay_error": null,
+              "replay_started_ns": 1211531439,
+              "replay_thread_cpu_ns": 35544281,
+              "replay_wall_ns": 180390840,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1219,
+                  "calls_completed": 1219,
+                  "calls_rejected": 0,
+                  "calls_started": 1219,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 159577,
+                  "last_ended_ns": 180793126,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 30408699,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 108354184
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 5,
+              "history_request_ended_ns": 1404220666,
+              "next_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 96481324,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 1835878,
+                  "thread_cpu_ns": 28736775,
+                  "wall_ns": 94645446
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": null,
+                  "last_reserve_deadline_remaining_ns": 2594788195,
+                  "last_sleep_deadline_remaining_ns": null,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1999999875,
+                  "original_deadline_remaining_at_entry_ns": 2594829006,
+                  "original_deadline_remaining_at_exit_ns": 2594785513,
+                  "requested_sleep_ns": null,
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 1,
+                  "sleep_calls_completed": 0,
+                  "sleep_calls_started": 0,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 968677,
+                    "error_code": null,
+                    "started_ns": 925184,
+                    "thread_cpu_ns": 43567,
+                    "unwound": false,
+                    "wall_ns": 43493
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 245588,
+                    "error_code": null,
+                    "started_ns": 244594,
+                    "thread_cpu_ns": 1002,
+                    "unwound": false,
+                    "wall_ns": 994
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 922305,
+                    "error_code": null,
+                    "started_ns": 246088,
+                    "thread_cpu_ns": 251849,
+                    "unwound": false,
+                    "wall_ns": 676217
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 212174,
+                  "wall_ns": 212138
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 57960,
+                  "wall_ns": 57894
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 44600,
+                  "wall_ns": 44736
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 280990,
+                  "wall_ns": 705744
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 141912,
+                  "wall_ns": 464370
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 36868338,
+                  "wall_ns": 182075607
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 2881,
+                  "wall_ns": 3018
+                }
+              ],
+              "prior_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "replay_accepted": true,
+              "replay_ended_ns": 1586575093,
+              "replay_error": null,
+              "replay_started_ns": 1404245022,
+              "replay_thread_cpu_ns": 37122838,
+              "replay_wall_ns": 182330071,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1417,
+                  "calls_completed": 1417,
+                  "calls_rejected": 0,
+                  "calls_started": 1417,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 142992,
+                  "last_ended_ns": 198238329,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 35690636,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 112203828
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 6,
+              "history_request_ended_ns": 1598029708,
+              "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 98582953,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 1815335,
+                  "thread_cpu_ns": 28918531,
+                  "wall_ns": 96767618
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": null,
+                  "last_reserve_deadline_remaining_ns": 2401000363,
+                  "last_sleep_deadline_remaining_ns": null,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1999999850,
+                  "original_deadline_remaining_at_entry_ns": 2401038674,
+                  "original_deadline_remaining_at_exit_ns": 2400997769,
+                  "requested_sleep_ns": null,
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 1,
+                  "sleep_calls_completed": 0,
+                  "sleep_calls_started": 0,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 950282,
+                    "error_code": null,
+                    "started_ns": 909377,
+                    "thread_cpu_ns": 40932,
+                    "unwound": false,
+                    "wall_ns": 40905
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 210990,
+                    "error_code": null,
+                    "started_ns": 210020,
+                    "thread_cpu_ns": 1010,
+                    "unwound": false,
+                    "wall_ns": 970
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 906329,
+                    "error_code": null,
+                    "started_ns": 211429,
+                    "thread_cpu_ns": 235654,
+                    "unwound": false,
+                    "wall_ns": 694900
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 185462,
+                  "wall_ns": 185491
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 41272,
+                  "wall_ns": 41184
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 42001,
+                  "wall_ns": 42204
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 263709,
+                  "wall_ns": 723232
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 132601,
+                  "wall_ns": 442654
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 49494857,
+                  "wall_ns": 198567763
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 2484,
+                  "wall_ns": 2487
+                }
+              ],
+              "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "replay_accepted": true,
+              "replay_ended_ns": 1796804899,
+              "replay_error": null,
+              "replay_started_ns": 1598051267,
+              "replay_thread_cpu_ns": 49680827,
+              "replay_wall_ns": 198753632,
+              "supplied_packets": 1
+            }
+          ],
+          "invariant_target_met": true,
+          "maximum_honest_head_gap_ns": 103095120,
+          "mode": "attack-free-baseline",
+          "overlap_demonstrated": true,
+          "receiver_matches_valid_honest_prefix": true,
+          "service_error": null,
+          "service_metrics": {
+            "abandoned_tasks": 0,
+            "accepted_connections": 84,
+            "body_bytes_received": 695761,
+            "capacity_refusals": 0,
+            "challenge_budget_refusals": 0,
+            "cleanup_scans": 184,
+            "completed_pool_status": 0,
+            "completed_pool_submit": 0,
+            "completed_read": 77,
+            "completed_submit": 7,
+            "connections_closed_on_shutdown": 0,
+            "delivered_response_frames": 84,
+            "disconnected_await_requests": 0,
+            "disconnected_before_enqueue": 0,
+            "enqueued_after_backpressure": 0,
+            "executor_refusals": 0,
+            "expired_connections": 0,
+            "expired_phase_counts": {},
+            "issued_challenges": 84,
+            "lane_capacity_refusals": 0,
+            "mutating_grants_after_shutdown": 0,
+            "mutation_body_decode_cpu_ns": 1123608,
+            "mutation_cpu_charged_ns": 36386039,
+            "mutation_cpu_clock_failures": 0,
+            "mutation_cpu_credit_ns_after_shutdown": 1995354775,
+            "mutation_cpu_debt_ns_after_shutdown": 0,
+            "mutation_cpu_in_flight_after_shutdown": 0,
+            "mutation_cpu_refusals": 0,
+            "mutation_cpu_reservations": 7,
+            "mutation_cpu_unavailable_after_shutdown": false,
+            "mutation_dispatch_excluding_work_cpu_ns": 28815531,
+            "mutation_full_work_cpu_ns": 7570508,
+            "mutation_response_cpu_ns": 353370,
+            "output_reserved_bytes_after_shutdown": 0,
+            "output_serialization_failures": 0,
+            "paid_body_capacity_refusals": 0,
+            "paid_body_reserved_bytes_after_shutdown": 0,
+            "parse_refusals": 0,
+            "peak_connections": 2,
+            "peak_mutating_grants": 1,
+            "peak_output_reserved_bytes": 8404992,
+            "peak_paid_body_bytes": 298374,
+            "peak_pending_challenge": 2,
+            "peak_pending_enqueue": 1,
+            "peak_pending_grant": 2,
+            "peak_read_grants": 2,
+            "peak_spent": 44,
+            "pending_challenge_closed": 0,
+            "pending_challenge_entered": 84,
+            "pending_challenge_granted": 84,
+            "pending_challenge_wait_ns": 94276163,
+            "pending_grant_closed": 0,
+            "pending_grant_entered": 84,
+            "pending_grant_granted": 84,
+            "pending_grant_wait_ns": 90028670,
+            "pool_submit_failed": 0,
+            "pool_submit_finished": 0,
+            "pool_submit_ns": 0,
+            "pool_submit_started": 0,
+            "pq_authentication_attempts": 0,
+            "pq_authentication_bytes": 0,
+            "pq_authentication_thread_cpu_ns": 0,
+            "pq_authentication_unavailable": false,
+            "preface_refusals": 0,
+            "queue_backpressure_events": 0,
+            "queue_refusals": 0,
+            "queue_wait_ns": 140588637,
+            "read_grants_after_shutdown": 0,
+            "replay_refusals": 0,
+            "response_bytes_written": 810329,
+            "response_write_failures": 0,
+            "retained_phase_errors": {},
+            "signature_refusals": 0,
+            "spent_capacity_refusals": 0,
+            "spent_reservations": 84,
+            "tasks_dequeued": 84,
+            "tasks_enqueued": 84,
+            "tasks_skipped_before_dispatch": 0,
+            "ticket_refusals": 0,
+            "unknown_caller_durable_rows": 0,
+            "unpaid_pressure_cancel_requests": 0,
+            "unpaid_pressure_connections_closed": 0,
+            "work_failed": 0,
+            "work_finished": 7,
+            "work_ns": 7570633,
+            "work_started": 7
+          },
+          "verification_errors": []
+        },
+        {
+          "accounting_closed": true,
+          "attacks": {
+            "calls": 236,
+            "error_counts": {
+              "FRAME_DEADLINE": 1,
+              "IO: Resource temporarily unavailable (os error 11)": 15,
+              "None": 220
+            },
+            "status_counts": {
+              "error": 16,
+              "refused": 220
+            }
+          },
+          "business_started_ns": 101486345,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_before_original_window_end": false,
+          "client_confirmed_transactions": 0,
+          "confirmation_ended_ns": null,
+          "finite_business_target_met": false,
+          "honest_head_successes_in_window": 18,
+          "honest_history": [
+            {
+              "elapsed_wall_ns": 93174390,
+              "ended_ns": 2102048739,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 2008875015,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 198692956,
+              "ended_ns": 3199744919,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 3001053000,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 191158150,
+              "ended_ns": 3799999251,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 3608841796,
+              "status": "ok"
+            }
+          ],
+          "honest_submissions": [
+            {
+              "elapsed_wall_ns": 299513598,
+              "ended_ns": 401365957,
+              "error": null,
+              "height": 1,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 101854268,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 299028294,
+              "ended_ns": 700926056,
+              "error": null,
+              "height": 2,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 401898578,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 207192738,
+              "ended_ns": 908740738,
+              "error": null,
+              "height": 3,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 701549047,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 296904775,
+              "ended_ns": 1206253171,
+              "error": null,
+              "height": 4,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 909349192,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 296479665,
+              "ended_ns": 1503260252,
+              "error": null,
+              "height": 5,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 1206781843,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 297696655,
+              "ended_ns": 1801542854,
+              "error": null,
+              "height": 6,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 1503847032,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 206475301,
+              "ended_ns": 2008660220,
+              "error": null,
+              "height": 7,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 1802185992,
+              "status": "ok"
+            }
+          ],
+          "independent_final_confirmation_stage": null,
+          "independent_history_page_replay": [
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1234,
+                  "calls_completed": 1234,
+                  "calls_rejected": 0,
+                  "calls_started": 1234,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 229572,
+                  "last_ended_ns": 897420375,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 37635960,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 37619976
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 2102048739,
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 803709197,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 403315016,
+                  "thread_cpu_ns": 35100790,
+                  "wall_ns": 400394181
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": 318432534,
+                  "last_reserve_deadline_remaining_ns": 1497344191,
+                  "last_sleep_deadline_remaining_ns": 1499478532,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1895562745,
+                  "original_deadline_remaining_at_entry_ns": 1895562745,
+                  "original_deadline_remaining_at_exit_ns": 1497341898,
+                  "requested_sleep_ns": 138000000,
+                  "reserve_attempts": 70,
+                  "reserve_budget_refusals": 69,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 70,
+                  "sleep_calls_completed": 69,
+                  "sleep_calls_started": 69,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 400585141,
+                    "error_code": null,
+                    "started_ns": 2364294,
+                    "thread_cpu_ns": 3391494,
+                    "unwound": false,
+                    "wall_ns": 398220847
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 396963,
+                    "error_code": null,
+                    "started_ns": 329189,
+                    "thread_cpu_ns": 67975,
+                    "unwound": false,
+                    "wall_ns": 67774
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 2360238,
+                    "error_code": null,
+                    "started_ns": 397820,
+                    "thread_cpu_ns": 307382,
+                    "unwound": false,
+                    "wall_ns": 1962418
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 227605,
+                  "wall_ns": 227548
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 62960,
+                  "wall_ns": 62808
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 3393168,
+                  "wall_ns": 398222384
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 413669,
+                  "wall_ns": 2069102
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 210591,
+                  "wall_ns": 519375
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 43825970,
+                  "wall_ns": 898545809
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 3240,
+                  "wall_ns": 3395
+                }
+              ],
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "replay_accepted": true,
+              "replay_ended_ns": 3000927516,
+              "replay_error": null,
+              "replay_started_ns": 2102072164,
+              "replay_thread_cpu_ns": 44135536,
+              "replay_wall_ns": 898855352,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1167,
+                  "calls_completed": 1167,
+                  "calls_rejected": 0,
+                  "calls_started": 1167,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 203536,
+                  "last_ended_ns": 407349973,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 34440124,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 34963462
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 3199744919,
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 403275377,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 4737338,
+                  "thread_cpu_ns": 34499454,
+                  "wall_ns": 398538039
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": null,
+                  "last_reserve_deadline_remaining_ns": 796529413,
+                  "last_sleep_deadline_remaining_ns": null,
+                  "local_wait_ceiling_remaining_at_entry_ns": 796604806,
+                  "original_deadline_remaining_at_entry_ns": 796604806,
+                  "original_deadline_remaining_at_exit_ns": 796527179,
+                  "requested_sleep_ns": null,
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 1,
+                  "sleep_calls_completed": 0,
+                  "sleep_calls_started": 0,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 3697675,
+                    "error_code": null,
+                    "started_ns": 3620048,
+                    "thread_cpu_ns": 77745,
+                    "unwound": false,
+                    "wall_ns": 77627
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 301012,
+                    "error_code": null,
+                    "started_ns": 299885,
+                    "thread_cpu_ns": 1223,
+                    "unwound": false,
+                    "wall_ns": 1127
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 3615544,
+                    "error_code": null,
+                    "started_ns": 301635,
+                    "thread_cpu_ns": 352730,
+                    "unwound": false,
+                    "wall_ns": 3313909
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 311848,
+                  "wall_ns": 311830
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 59921,
+                  "wall_ns": 59784
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 79220,
+                  "wall_ns": 79334
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 392012,
+                  "wall_ns": 3353814
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 175787,
+                  "wall_ns": 532068
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 40725931,
+                  "wall_ns": 408695601
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 3429,
+                  "wall_ns": 3565
+                }
+              ],
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "replay_accepted": true,
+              "replay_ended_ns": 3608748426,
+              "replay_error": null,
+              "replay_started_ns": 3199774211,
+              "replay_thread_cpu_ns": 41004514,
+              "replay_wall_ns": 408974215,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 514,
+                  "calls_completed": 514,
+                  "calls_rejected": 0,
+                  "calls_started": 514,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 246807,
+                  "last_ended_ns": 199976655,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 15991811,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 15970274
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 3799999251,
+              "next_after": null,
+              "packet_work_phases": [
+                {
+                  "accepted": false,
+                  "completed": true,
+                  "ended_ns": 199982626,
+                  "error_code": "PUBLIC_REQUEST_DEADLINE",
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 2213903,
+                  "thread_cpu_ns": 16482621,
+                  "wall_ns": 197768723
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": null,
+                  "last_reserve_deadline_remaining_ns": 198580021,
+                  "last_sleep_deadline_remaining_ns": null,
+                  "local_wait_ceiling_remaining_at_entry_ns": 198640538,
+                  "original_deadline_remaining_at_entry_ns": 198640538,
+                  "original_deadline_remaining_at_exit_ns": 198578004,
+                  "requested_sleep_ns": null,
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 1,
+                  "sleep_calls_completed": 0,
+                  "sleep_calls_started": 0,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 1392743,
+                    "error_code": null,
+                    "started_ns": 1330209,
+                    "thread_cpu_ns": 62589,
+                    "unwound": false,
+                    "wall_ns": 62534
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 354043,
+                    "error_code": null,
+                    "started_ns": 352427,
+                    "thread_cpu_ns": 1568,
+                    "unwound": false,
+                    "wall_ns": 1616
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 1326294,
+                    "error_code": null,
+                    "started_ns": 354712,
+                    "thread_cpu_ns": 317638,
+                    "unwound": false,
+                    "wall_ns": 971582
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 207639,
+                  "wall_ns": 207604
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 66160,
+                  "wall_ns": 66074
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 63576,
+                  "wall_ns": 63680
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 360359,
+                  "wall_ns": 1014886
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 317807,
+                  "wall_ns": 853103
+                },
+                {
+                  "accepted": false,
+                  "completed": true,
+                  "error_code": "PUBLIC_REQUEST_DEADLINE",
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 18149144,
+                  "wall_ns": 200626163
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 2616,
+                  "wall_ns": 2725
+                }
+              ],
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "replay_accepted": false,
+              "replay_ended_ns": 4000987683,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE",
+              "replay_started_ns": 3800028410,
+              "replay_thread_cpu_ns": 18482465,
+              "replay_wall_ns": 200959273,
+              "supplied_packets": 1
+            }
+          ],
+          "invariant_target_met": true,
+          "maximum_honest_head_gap_ns": 302475827,
+          "mode": "from-zero-pressure",
+          "overlap_demonstrated": false,
+          "receiver_matches_valid_honest_prefix": true,
+          "service_error": null,
+          "service_metrics": {
+            "abandoned_tasks": 4,
+            "accepted_connections": 265,
+            "body_bytes_received": 23276246,
+            "capacity_refusals": 0,
+            "challenge_budget_refusals": 0,
+            "cleanup_scans": 58,
+            "completed_pool_status": 0,
+            "completed_pool_submit": 0,
+            "completed_read": 22,
+            "completed_submit": 7,
+            "connections_closed_on_shutdown": 0,
+            "delivered_response_frames": 250,
+            "disconnected_await_requests": 7,
+            "disconnected_before_enqueue": 3,
+            "enqueued_after_backpressure": 59,
+            "executor_refusals": 225,
+            "expired_connections": 0,
+            "expired_phase_counts": {},
+            "issued_challenges": 264,
+            "lane_capacity_refusals": 0,
+            "mutating_grants_after_shutdown": 0,
+            "mutation_body_decode_cpu_ns": 42890646,
+            "mutation_cpu_charged_ns": 395192580,
+            "mutation_cpu_clock_failures": 0,
+            "mutation_cpu_credit_ns_after_shutdown": 1997425591,
+            "mutation_cpu_debt_ns_after_shutdown": 0,
+            "mutation_cpu_in_flight_after_shutdown": 0,
+            "mutation_cpu_refusals": 0,
+            "mutation_cpu_reservations": 232,
+            "mutation_cpu_unavailable_after_shutdown": false,
+            "mutation_dispatch_excluding_work_cpu_ns": 143759763,
+            "mutation_full_work_cpu_ns": 251432817,
+            "mutation_response_cpu_ns": 10895814,
+            "output_reserved_bytes_after_shutdown": 0,
+            "output_serialization_failures": 0,
+            "paid_body_capacity_refusals": 0,
+            "paid_body_reserved_bytes_after_shutdown": 0,
+            "parse_refusals": 0,
+            "peak_connections": 18,
+            "peak_mutating_grants": 8,
+            "peak_output_reserved_bytes": 8601600,
+            "peak_paid_body_bytes": 2378277,
+            "peak_pending_challenge": 9,
+            "peak_pending_enqueue": 5,
+            "peak_pending_grant": 10,
+            "peak_read_grants": 2,
+            "peak_spent": 154,
+            "pending_challenge_closed": 1,
+            "pending_challenge_entered": 265,
+            "pending_challenge_granted": 264,
+            "pending_challenge_wait_ns": 5855379607,
+            "pending_grant_closed": 6,
+            "pending_grant_entered": 263,
+            "pending_grant_granted": 257,
+            "pending_grant_wait_ns": 15879294427,
+            "pool_submit_failed": 0,
+            "pool_submit_finished": 0,
+            "pool_submit_ns": 0,
+            "pool_submit_started": 0,
+            "pq_authentication_attempts": 0,
+            "pq_authentication_bytes": 0,
+            "pq_authentication_thread_cpu_ns": 0,
+            "pq_authentication_unavailable": false,
+            "preface_refusals": 1,
+            "queue_backpressure_events": 484,
+            "queue_refusals": 0,
+            "queue_wait_ns": 3497023857,
+            "read_grants_after_shutdown": 0,
+            "replay_refusals": 0,
+            "response_bytes_written": 509808,
+            "response_write_failures": 0,
+            "retained_phase_errors": {
+              "hello": 1,
+              "queue": 3,
+              "solution": 7,
+              "work": 4
+            },
+            "signature_refusals": 0,
+            "spent_capacity_refusals": 0,
+            "spent_reservations": 263,
+            "tasks_dequeued": 254,
+            "tasks_enqueued": 254,
+            "tasks_skipped_before_dispatch": 0,
+            "ticket_refusals": 0,
+            "unknown_caller_durable_rows": 0,
+            "unpaid_pressure_cancel_requests": 0,
+            "unpaid_pressure_connections_closed": 0,
+            "work_failed": 224,
+            "work_finished": 231,
+            "work_ns": 2976496703,
+            "work_started": 231
+          },
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ],
+      "report_bytes": 7738487,
+      "report_sha256": "4724c776430f88434edfcc7d7024475c839554d08c1890fa54cf7c5f252228d5",
+      "requested_window_ns": 4000000000,
+      "schema": "public-v3-fresh-challenge-confirmation-pressure-v1"
+    },
+    "original": {
+      "construction_coverage": null,
+      "finite_target_met": false,
+      "honest_chain_acquisition_wall_ns": 185680124,
+      "honest_chain_process_cpu_ns": 37662338,
+      "invariant_target_met": true,
+      "phases": [
+        {
+          "accounting_closed": true,
+          "attacks": {
+            "calls": 0,
+            "error_counts": {},
+            "status_counts": {}
+          },
+          "business_started_ns": 137131,
+          "client_confirmation_latency_ns": 1787982368,
+          "client_confirmed_before_original_window_end": true,
+          "client_confirmed_transactions": 1,
+          "confirmation_ended_ns": 1788119499,
+          "finite_business_target_met": true,
+          "honest_head_successes_in_window": 69,
+          "honest_history": [
+            {
+              "elapsed_wall_ns": 12141455,
+              "ended_ns": 230047249,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 217906347,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 11395049,
+              "ended_ns": 705672453,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 694282427,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 11756695,
+              "ended_ns": 897945809,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 886189870,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 79406247,
+              "ended_ns": 1080535694,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 1001130430,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 11746561,
+              "ended_ns": 1205231542,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 1193485750,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 11559181,
+              "ended_ns": 1397601636,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 1386043321,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 80259414,
+              "ended_ns": 1582879283,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 1502620767,
+              "status": "ok"
+            }
+          ],
+          "honest_submissions": [
+            {
+              "elapsed_wall_ns": 17126218,
+              "ended_ns": 17682672,
+              "error": null,
+              "height": 1,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 557719,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 66383017,
+              "ended_ns": 84589041,
+              "error": null,
+              "height": 2,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 18207044,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 16706294,
+              "ended_ns": 101865027,
+              "error": null,
+              "height": 3,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 85159401,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 17663178,
+              "ended_ns": 120102861,
+              "error": null,
+              "height": 4,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 102440475,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 63659356,
+              "ended_ns": 184324418,
+              "error": null,
+              "height": 5,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 120666115,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 15645893,
+              "ended_ns": 200506119,
+              "error": null,
+              "height": 6,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 184861215,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 16601054,
+              "ended_ns": 217666141,
+              "error": null,
+              "height": 7,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 201065921,
+              "status": "ok"
+            }
+          ],
+          "independent_final_confirmation_stage": {
+            "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+            "confirmation_ended_ns": 1788116740,
+            "confirmation_started_ns": 1787122347,
+            "confirmation_thread_cpu_ns": 995494,
+            "confirmation_wall_ns": 994393,
+            "observation_returned": true
+          },
+          "independent_history_page_replay": [
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1354,
+                  "calls_completed": 1354,
+                  "calls_rejected": 0,
+                  "calls_started": 1354,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 171784,
+                  "last_ended_ns": 462259241,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 34686842,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 34690858
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 230047249,
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 458713016,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 403098867,
+                  "thread_cpu_ns": 28731039,
+                  "wall_ns": 55614149
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": 393108305,
+                  "last_reserve_deadline_remaining_ns": 3369533141,
+                  "last_sleep_deadline_remaining_ns": 3371619402,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1999999926,
+                  "original_deadline_remaining_at_entry_ns": 3769021243,
+                  "original_deadline_remaining_at_exit_ns": 3369529448,
+                  "requested_sleep_ns": 378000000,
+                  "reserve_attempts": 190,
+                  "reserve_budget_refusals": 189,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 190,
+                  "sleep_calls_completed": 189,
+                  "sleep_calls_started": 189,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 400400428,
+                    "error_code": null,
+                    "started_ns": 908633,
+                    "thread_cpu_ns": 7383805,
+                    "unwound": false,
+                    "wall_ns": 399491795
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 327491,
+                    "error_code": null,
+                    "started_ns": 259912,
+                    "thread_cpu_ns": 67731,
+                    "unwound": false,
+                    "wall_ns": 67579
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 905339,
+                    "error_code": null,
+                    "started_ns": 328062,
+                    "thread_cpu_ns": 172789,
+                    "unwound": false,
+                    "wall_ns": 577277
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 288780,
+                  "wall_ns": 288797
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 62279,
+                  "wall_ns": 62186
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 7385655,
+                  "wall_ns": 399493418
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 267912,
+                  "wall_ns": 672700
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 129896,
+                  "wall_ns": 617882
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 41118233,
+                  "wall_ns": 463863375
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 3231,
+                  "wall_ns": 3482
+                }
+              ],
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "replay_accepted": true,
+              "replay_ended_ns": 694169570,
+              "replay_error": null,
+              "replay_started_ns": 230069413,
+              "replay_thread_cpu_ns": 41355151,
+              "replay_wall_ns": 464100157,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1195,
+                  "calls_completed": 1195,
+                  "calls_rejected": 0,
+                  "calls_started": 1195,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 129550,
+                  "last_ended_ns": 178691102,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 28558348,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 28532329
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 705672453,
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 174503965,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 60347901,
+                  "thread_cpu_ns": 27463193,
+                  "wall_ns": 114156064
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": 57648235,
+                  "last_reserve_deadline_remaining_ns": 3234779415,
+                  "last_sleep_deadline_remaining_ns": 3236872595,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1999999912,
+                  "original_deadline_remaining_at_entry_ns": 3293439944,
+                  "original_deadline_remaining_at_exit_ns": 3234776506,
+                  "requested_sleep_ns": 56000000,
+                  "reserve_attempts": 29,
+                  "reserve_budget_refusals": 28,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 29,
+                  "sleep_calls_completed": 28,
+                  "sleep_calls_started": 28,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 59529455,
+                    "error_code": null,
+                    "started_ns": 866017,
+                    "thread_cpu_ns": 1166196,
+                    "unwound": false,
+                    "wall_ns": 58663438
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 198149,
+                    "error_code": null,
+                    "started_ns": 197189,
+                    "thread_cpu_ns": 1017,
+                    "unwound": false,
+                    "wall_ns": 960
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 861814,
+                    "error_code": null,
+                    "started_ns": 198638,
+                    "thread_cpu_ns": 203785,
+                    "unwound": false,
+                    "wall_ns": 663176
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 208456,
+                  "wall_ns": 208455
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 42080,
+                  "wall_ns": 41970
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 1168048,
+                  "wall_ns": 58665441
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 231867,
+                  "wall_ns": 691859
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 118005,
+                  "wall_ns": 587644
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 34475473,
+                  "wall_ns": 180192606
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 3283,
+                  "wall_ns": 3513
+                }
+              ],
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "replay_accepted": true,
+              "replay_ended_ns": 886092878,
+              "replay_error": null,
+              "replay_started_ns": 705693269,
+              "replay_thread_cpu_ns": 34682678,
+              "replay_wall_ns": 180399609,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1180,
+                  "calls_completed": 1180,
+                  "calls_rejected": 0,
+                  "calls_started": 1180,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 144120,
+                  "last_ended_ns": 101398255,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 29093684,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 29059263
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 897945809,
+              "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 96959757,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 1650128,
+                  "thread_cpu_ns": 28720645,
+                  "wall_ns": 95309629
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": null,
+                  "last_reserve_deadline_remaining_ns": 3101096797,
+                  "last_sleep_deadline_remaining_ns": null,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1999999847,
+                  "original_deadline_remaining_at_entry_ns": 3101138407,
+                  "original_deadline_remaining_at_exit_ns": 3101094428,
+                  "requested_sleep_ns": null,
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 1,
+                  "sleep_calls_completed": 0,
+                  "sleep_calls_started": 0,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 937968,
+                    "error_code": null,
+                    "started_ns": 893989,
+                    "thread_cpu_ns": 44014,
+                    "unwound": false,
+                    "wall_ns": 43979
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 222805,
+                    "error_code": null,
+                    "started_ns": 221596,
+                    "thread_cpu_ns": 1218,
+                    "unwound": false,
+                    "wall_ns": 1209
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 891019,
+                    "error_code": null,
+                    "started_ns": 223232,
+                    "thread_cpu_ns": 232213,
+                    "unwound": false,
+                    "wall_ns": 667787
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 180667,
+                  "wall_ns": 180641
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 52016,
+                  "wall_ns": 51981
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 45067,
+                  "wall_ns": 45231
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 260118,
+                  "wall_ns": 695882
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 124831,
+                  "wall_ns": 493076
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 34772884,
+                  "wall_ns": 102858753
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 2738,
+                  "wall_ns": 2761
+                }
+              ],
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "replay_accepted": true,
+              "replay_ended_ns": 1001032678,
+              "replay_error": null,
+              "replay_started_ns": 897966738,
+              "replay_thread_cpu_ns": 34980060,
+              "replay_wall_ns": 103065940,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1193,
+                  "calls_completed": 1193,
+                  "calls_rejected": 0,
+                  "calls_started": 1193,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 171700,
+                  "last_ended_ns": 110960463,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 28549546,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 28493533
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 3,
+              "history_request_ended_ns": 1080535694,
+              "next_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 106182790,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 1939962,
+                  "thread_cpu_ns": 27788457,
+                  "wall_ns": 104242828
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": null,
+                  "last_reserve_deadline_remaining_ns": 2918288755,
+                  "last_sleep_deadline_remaining_ns": null,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1999999911,
+                  "original_deadline_remaining_at_entry_ns": 2918336901,
+                  "original_deadline_remaining_at_exit_ns": 2918285945,
+                  "requested_sleep_ns": null,
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 1,
+                  "sleep_calls_completed": 0,
+                  "sleep_calls_started": 0,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 1150393,
+                    "error_code": null,
+                    "started_ns": 1099437,
+                    "thread_cpu_ns": 50922,
+                    "unwound": false,
+                    "wall_ns": 50956
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 241117,
+                    "error_code": null,
+                    "started_ns": 239951,
+                    "thread_cpu_ns": 1370,
+                    "unwound": false,
+                    "wall_ns": 1166
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 1096187,
+                    "error_code": null,
+                    "started_ns": 241692,
+                    "thread_cpu_ns": 289424,
+                    "unwound": false,
+                    "wall_ns": 854495
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 189773,
+                  "wall_ns": 189768
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 42780,
+                  "wall_ns": 42689
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 51985,
+                  "wall_ns": 52139
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 317494,
+                  "wall_ns": 883053
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 141378,
+                  "wall_ns": 614258
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 34288608,
+                  "wall_ns": 112590705
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 3281,
+                  "wall_ns": 3392
+                }
+              ],
+              "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "replay_accepted": true,
+              "replay_ended_ns": 1193395377,
+              "replay_error": null,
+              "replay_started_ns": 1080562513,
+              "replay_thread_cpu_ns": 34530718,
+              "replay_wall_ns": 112832864,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1206,
+                  "calls_completed": 1206,
+                  "calls_rejected": 0,
+                  "calls_started": 1206,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 139174,
+                  "last_ended_ns": 179103878,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 29596582,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 29569294
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 4,
+              "history_request_ended_ns": 1205231542,
+              "next_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 96107037,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 1617770,
+                  "thread_cpu_ns": 28351261,
+                  "wall_ns": 94489267
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": null,
+                  "last_reserve_deadline_remaining_ns": 2793863133,
+                  "last_sleep_deadline_remaining_ns": null,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1999999898,
+                  "original_deadline_remaining_at_entry_ns": 2793901627,
+                  "original_deadline_remaining_at_exit_ns": 2793860810,
+                  "requested_sleep_ns": null,
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 1,
+                  "sleep_calls_completed": 0,
+                  "sleep_calls_started": 0,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 858228,
+                    "error_code": null,
+                    "started_ns": 817411,
+                    "thread_cpu_ns": 40854,
+                    "unwound": false,
+                    "wall_ns": 40817
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 204322,
+                    "error_code": null,
+                    "started_ns": 203450,
+                    "thread_cpu_ns": 899,
+                    "unwound": false,
+                    "wall_ns": 872
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 814559,
+                    "error_code": null,
+                    "started_ns": 204761,
+                    "thread_cpu_ns": 174195,
+                    "unwound": false,
+                    "wall_ns": 609798
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 197410,
+                  "wall_ns": 197374
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 39717,
+                  "wall_ns": 39637
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 41847,
+                  "wall_ns": 42066
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 200994,
+                  "wall_ns": 636734
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 117896,
+                  "wall_ns": 485202
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 35566569,
+                  "wall_ns": 180453880
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 2570,
+                  "wall_ns": 2592
+                }
+              ],
+              "prior_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "replay_accepted": true,
+              "replay_ended_ns": 1385950237,
+              "replay_error": null,
+              "replay_started_ns": 1205267425,
+              "replay_thread_cpu_ns": 35795608,
+              "replay_wall_ns": 180682812,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1219,
+                  "calls_completed": 1219,
+                  "calls_rejected": 0,
+                  "calls_started": 1219,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 139521,
+                  "last_ended_ns": 102944590,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 29359581,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 29311405
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 5,
+              "history_request_ended_ns": 1397601636,
+              "next_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 97099883,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 1712440,
+                  "thread_cpu_ns": 27948429,
+                  "wall_ns": 95387443
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": null,
+                  "last_reserve_deadline_remaining_ns": 2601473367,
+                  "last_sleep_deadline_remaining_ns": null,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1999999890,
+                  "original_deadline_remaining_at_entry_ns": 2601516273,
+                  "original_deadline_remaining_at_exit_ns": 2601470635,
+                  "requested_sleep_ns": null,
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 1,
+                  "sleep_calls_completed": 0,
+                  "sleep_calls_started": 0,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 904714,
+                    "error_code": null,
+                    "started_ns": 859076,
+                    "thread_cpu_ns": 45679,
+                    "unwound": false,
+                    "wall_ns": 45638
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 213215,
+                    "error_code": null,
+                    "started_ns": 212314,
+                    "thread_cpu_ns": 956,
+                    "unwound": false,
+                    "wall_ns": 901
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 856489,
+                    "error_code": null,
+                    "started_ns": 213640,
+                    "thread_cpu_ns": 202455,
+                    "unwound": false,
+                    "wall_ns": 642849
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 179417,
+                  "wall_ns": 179417
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 47513,
+                  "wall_ns": 47411
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 46686,
+                  "wall_ns": 46766
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 229665,
+                  "wall_ns": 670286
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 121364,
+                  "wall_ns": 686577
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 35428440,
+                  "wall_ns": 104646065
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 2538,
+                  "wall_ns": 2534
+                }
+              ],
+              "prior_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "replay_accepted": true,
+              "replay_ended_ns": 1502483128,
+              "replay_error": null,
+              "replay_started_ns": 1397623837,
+              "replay_thread_cpu_ns": 35641739,
+              "replay_wall_ns": 104859291,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1417,
+                  "calls_completed": 1417,
+                  "calls_rejected": 0,
+                  "calls_started": 1417,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 162005,
+                  "last_ended_ns": 203559777,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 34875060,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 34847683
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 6,
+              "history_request_ended_ns": 1582879283,
+              "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 105363709,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 2136700,
+                  "thread_cpu_ns": 28131157,
+                  "wall_ns": 103227009
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": null,
+                  "last_reserve_deadline_remaining_ns": 2415896382,
+                  "last_sleep_deadline_remaining_ns": null,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1999999897,
+                  "original_deadline_remaining_at_entry_ns": 2415966058,
+                  "original_deadline_remaining_at_exit_ns": 2415893281,
+                  "requested_sleep_ns": null,
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 1,
+                  "sleep_calls_completed": 0,
+                  "sleep_calls_started": 0,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 1201091,
+                    "error_code": null,
+                    "started_ns": 1128314,
+                    "thread_cpu_ns": 72809,
+                    "unwound": false,
+                    "wall_ns": 72777
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 257595,
+                    "error_code": null,
+                    "started_ns": 256373,
+                    "thread_cpu_ns": 1274,
+                    "unwound": false,
+                    "wall_ns": 1222
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 1123057,
+                    "error_code": null,
+                    "started_ns": 258012,
+                    "thread_cpu_ns": 326921,
+                    "unwound": false,
+                    "wall_ns": 865045
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 213386,
+                  "wall_ns": 213366
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 67589,
+                  "wall_ns": 67418
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 73967,
+                  "wall_ns": 74115
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 356850,
+                  "wall_ns": 896365
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 103098,
+                  "wall_ns": 484029
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 48984808,
+                  "wall_ns": 203911442
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 2749,
+                  "wall_ns": 2877
+                }
+              ],
+              "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "replay_accepted": true,
+              "replay_ended_ns": 1787026021,
+              "replay_error": null,
+              "replay_started_ns": 1582904589,
+              "replay_thread_cpu_ns": 49194951,
+              "replay_wall_ns": 204121432,
+              "supplied_packets": 1
+            }
+          ],
+          "invariant_target_met": true,
+          "maximum_honest_head_gap_ns": 109220709,
+          "mode": "attack-free-baseline",
+          "overlap_demonstrated": true,
+          "receiver_matches_valid_honest_prefix": true,
+          "service_error": null,
+          "service_metrics": {
+            "abandoned_tasks": 0,
+            "accepted_connections": 83,
+            "body_bytes_received": 695748,
+            "capacity_refusals": 0,
+            "challenge_budget_refusals": 0,
+            "cleanup_scans": 177,
+            "completed_pool_status": 0,
+            "completed_pool_submit": 0,
+            "completed_read": 76,
+            "completed_submit": 7,
+            "connections_closed_on_shutdown": 0,
+            "delivered_response_frames": 83,
+            "disconnected_await_requests": 0,
+            "disconnected_before_enqueue": 0,
+            "enqueued_after_backpressure": 0,
+            "executor_refusals": 0,
+            "expired_connections": 0,
+            "expired_phase_counts": {},
+            "issued_challenges": 83,
+            "lane_capacity_refusals": 0,
+            "mutating_grants_after_shutdown": 0,
+            "mutation_body_decode_cpu_ns": 1147215,
+            "mutation_cpu_charged_ns": 36151086,
+            "mutation_cpu_clock_failures": 0,
+            "mutation_cpu_credit_ns_after_shutdown": 1995059805,
+            "mutation_cpu_debt_ns_after_shutdown": 0,
+            "mutation_cpu_in_flight_after_shutdown": 0,
+            "mutation_cpu_refusals": 0,
+            "mutation_cpu_reservations": 7,
+            "mutation_cpu_unavailable_after_shutdown": false,
+            "mutation_dispatch_excluding_work_cpu_ns": 28635956,
+            "mutation_full_work_cpu_ns": 7515130,
+            "mutation_response_cpu_ns": 331429,
+            "output_reserved_bytes_after_shutdown": 0,
+            "output_serialization_failures": 0,
+            "paid_body_capacity_refusals": 0,
+            "paid_body_reserved_bytes_after_shutdown": 0,
+            "parse_refusals": 0,
+            "peak_connections": 2,
+            "peak_mutating_grants": 1,
+            "peak_output_reserved_bytes": 8404992,
+            "peak_paid_body_bytes": 298374,
+            "peak_pending_challenge": 2,
+            "peak_pending_enqueue": 1,
+            "peak_pending_grant": 2,
+            "peak_read_grants": 2,
+            "peak_spent": 43,
+            "pending_challenge_closed": 0,
+            "pending_challenge_entered": 83,
+            "pending_challenge_granted": 83,
+            "pending_challenge_wait_ns": 141543567,
+            "pending_grant_closed": 0,
+            "pending_grant_entered": 83,
+            "pending_grant_granted": 83,
+            "pending_grant_wait_ns": 88926773,
+            "pool_submit_failed": 0,
+            "pool_submit_finished": 0,
+            "pool_submit_ns": 0,
+            "pool_submit_started": 0,
+            "pq_authentication_attempts": 0,
+            "pq_authentication_bytes": 0,
+            "pq_authentication_thread_cpu_ns": 0,
+            "pq_authentication_unavailable": false,
+            "preface_refusals": 0,
+            "queue_backpressure_events": 0,
+            "queue_refusals": 0,
+            "queue_wait_ns": 88418921,
+            "read_grants_after_shutdown": 0,
+            "replay_refusals": 0,
+            "response_bytes_written": 808884,
+            "response_write_failures": 0,
+            "retained_phase_errors": {},
+            "signature_refusals": 0,
+            "spent_capacity_refusals": 0,
+            "spent_reservations": 83,
+            "tasks_dequeued": 83,
+            "tasks_enqueued": 83,
+            "tasks_skipped_before_dispatch": 0,
+            "ticket_refusals": 0,
+            "unknown_caller_durable_rows": 0,
+            "unpaid_pressure_cancel_requests": 0,
+            "unpaid_pressure_connections_closed": 0,
+            "work_failed": 0,
+            "work_finished": 7,
+            "work_ns": 58120525,
+            "work_started": 7
+          },
+          "verification_errors": []
+        },
+        {
+          "accounting_closed": true,
+          "attacks": {
+            "calls": 367,
+            "error_counts": {
+              "FRAME_DEADLINE": 4,
+              "IO: Resource temporarily unavailable (os error 11)": 11,
+              "None": 351,
+              "PUBLIC_CLIENT_DEADLINE": 1
+            },
+            "status_counts": {
+              "error": 16,
+              "refused": 351
+            }
+          },
+          "business_started_ns": 15494853,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_before_original_window_end": false,
+          "client_confirmed_transactions": 0,
+          "confirmation_ended_ns": null,
+          "finite_business_target_met": false,
+          "honest_head_successes_in_window": 28,
+          "honest_history": [
+            {
+              "elapsed_wall_ns": 184714305,
+              "ended_ns": 1396820291,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 1212106423,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 188849343,
+              "ended_ns": 2297469846,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 2108621208,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 192360916,
+              "ended_ns": 2896741790,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 2704381624,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 102733548,
+              "ended_ns": 3309583442,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 3206850783,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 106048874,
+              "ended_ns": 3906293552,
+              "error": null,
+              "height": null,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 3800245643,
+              "status": "ok"
+            }
+          ],
+          "honest_submissions": [
+            {
+              "elapsed_wall_ns": 283304878,
+              "ended_ns": 299137797,
+              "error": null,
+              "height": 1,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 15834194,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 107503297,
+              "ended_ns": 407134604,
+              "error": null,
+              "height": 2,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 299632038,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 189416062,
+              "ended_ns": 597179008,
+              "error": null,
+              "height": 3,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 407764196,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 113871571,
+              "ended_ns": 711593442,
+              "error": null,
+              "height": 4,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 597722916,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 192608618,
+              "ended_ns": 904869998,
+              "error": null,
+              "height": 5,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 712262907,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 195728786,
+              "ended_ns": 1101111161,
+              "error": null,
+              "height": 6,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 905383203,
+              "status": "ok"
+            },
+            {
+              "elapsed_wall_ns": 110236687,
+              "ended_ns": 1211857594,
+              "error": null,
+              "height": 7,
+              "returned_after_deadline": false,
+              "returned_after_window": false,
+              "started_ns": 1101621723,
+              "status": "ok"
+            }
+          ],
+          "independent_final_confirmation_stage": null,
+          "independent_history_page_replay": [
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1213,
+                  "calls_completed": 1213,
+                  "calls_rejected": 0,
+                  "calls_started": 1213,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 195275,
+                  "last_ended_ns": 709851411,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 37202150,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 92426706
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 1396820291,
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 706177712,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 402694301,
+                  "thread_cpu_ns": 34780187,
+                  "wall_ns": 303483411
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": 342906649,
+                  "last_reserve_deadline_remaining_ns": 2201045708,
+                  "last_sleep_deadline_remaining_ns": 2203208420,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1999999915,
+                  "original_deadline_remaining_at_entry_ns": 2601909049,
+                  "original_deadline_remaining_at_exit_ns": 2201043253,
+                  "requested_sleep_ns": 98000000,
+                  "reserve_attempts": 50,
+                  "reserve_budget_refusals": 49,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 50,
+                  "sleep_calls_completed": 49,
+                  "sleep_calls_started": 49,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 402090356,
+                    "error_code": null,
+                    "started_ns": 1224560,
+                    "thread_cpu_ns": 3045964,
+                    "unwound": false,
+                    "wall_ns": 400865796
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 374164,
+                    "error_code": null,
+                    "started_ns": 294346,
+                    "thread_cpu_ns": 79860,
+                    "unwound": false,
+                    "wall_ns": 79818
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 1205553,
+                    "error_code": null,
+                    "started_ns": 374697,
+                    "thread_cpu_ns": 256985,
+                    "unwound": false,
+                    "wall_ns": 830856
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 288175,
+                  "wall_ns": 288359
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 71990,
+                  "wall_ns": 71879
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 3048230,
+                  "wall_ns": 400867738
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 380652,
+                  "wall_ns": 955009
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 144656,
+                  "wall_ns": 561838
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 43042486,
+                  "wall_ns": 711403535
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 2503,
+                  "wall_ns": 2639
+                }
+              ],
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "replay_accepted": true,
+              "replay_ended_ns": 2108532337,
+              "replay_error": null,
+              "replay_started_ns": 1396864809,
+              "replay_thread_cpu_ns": 43306070,
+              "replay_wall_ns": 711667528,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1167,
+                  "calls_completed": 1167,
+                  "calls_rejected": 0,
+                  "calls_started": 1167,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 174477,
+                  "last_ended_ns": 404613647,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 35325230,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 35595917
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 2297469846,
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 399922468,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 2743438,
+                  "thread_cpu_ns": 35212379,
+                  "wall_ns": 397179030
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": null,
+                  "last_reserve_deadline_remaining_ns": 1700630389,
+                  "last_sleep_deadline_remaining_ns": null,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1700718064,
+                  "original_deadline_remaining_at_entry_ns": 1700718064,
+                  "original_deadline_remaining_at_exit_ns": 1700627479,
+                  "requested_sleep_ns": null,
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 1,
+                  "sleep_calls_completed": 0,
+                  "sleep_calls_started": 0,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 1878141,
+                    "error_code": null,
+                    "started_ns": 1787556,
+                    "thread_cpu_ns": 90680,
+                    "unwound": false,
+                    "wall_ns": 90585
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 246856,
+                    "error_code": null,
+                    "started_ns": 245668,
+                    "thread_cpu_ns": 1173,
+                    "unwound": false,
+                    "wall_ns": 1188
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 1783218,
+                    "error_code": null,
+                    "started_ns": 247290,
+                    "thread_cpu_ns": 347931,
+                    "unwound": false,
+                    "wall_ns": 1535928
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 238549,
+                  "wall_ns": 238590
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 45313,
+                  "wall_ns": 45217
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 92106,
+                  "wall_ns": 92187
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 376810,
+                  "wall_ns": 1565224
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 153972,
+                  "wall_ns": 746045
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 41844136,
+                  "wall_ns": 406494089
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 2329,
+                  "wall_ns": 2530
+                }
+              ],
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "replay_accepted": true,
+              "replay_ended_ns": 2704258845,
+              "replay_error": null,
+              "replay_started_ns": 2297493541,
+              "replay_thread_cpu_ns": 42115472,
+              "replay_wall_ns": 406765304,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1180,
+                  "calls_completed": 1180,
+                  "calls_rejected": 0,
+                  "calls_started": 1180,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 230358,
+                  "last_ended_ns": 308221269,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 34203793,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 123849941
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 2896741790,
+              "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 303551477,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 2325250,
+                  "thread_cpu_ns": 33926855,
+                  "wall_ns": 301226227
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": null,
+                  "last_reserve_deadline_remaining_ns": 1101817521,
+                  "last_sleep_deadline_remaining_ns": null,
+                  "local_wait_ceiling_remaining_at_entry_ns": 1101894875,
+                  "original_deadline_remaining_at_entry_ns": 1101894875,
+                  "original_deadline_remaining_at_exit_ns": 1101815109,
+                  "requested_sleep_ns": null,
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 1,
+                  "sleep_calls_completed": 0,
+                  "sleep_calls_started": 0,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 1389767,
+                    "error_code": null,
+                    "started_ns": 1310001,
+                    "thread_cpu_ns": 79834,
+                    "unwound": false,
+                    "wall_ns": 79766
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 359863,
+                    "error_code": null,
+                    "started_ns": 358121,
+                    "thread_cpu_ns": 1803,
+                    "unwound": false,
+                    "wall_ns": 1742
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 1306126,
+                    "error_code": null,
+                    "started_ns": 360460,
+                    "thread_cpu_ns": 419179,
+                    "unwound": false,
+                    "wall_ns": 945666
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 333238,
+                  "wall_ns": 333278
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 88892,
+                  "wall_ns": 88814
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 81383,
+                  "wall_ns": 81448
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 461573,
+                  "wall_ns": 988321
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 128303,
+                  "wall_ns": 609598
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 40717453,
+                  "wall_ns": 309664711
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 2863,
+                  "wall_ns": 3016
+                }
+              ],
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "replay_accepted": true,
+              "replay_ended_ns": 3206756619,
+              "replay_error": null,
+              "replay_started_ns": 2896793758,
+              "replay_thread_cpu_ns": 41015494,
+              "replay_wall_ns": 309962861,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 1193,
+                  "calls_completed": 1193,
+                  "calls_rejected": 0,
+                  "calls_started": 1193,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 160203,
+                  "last_ended_ns": 487802448,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 33941628,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 126105534
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 3,
+              "history_request_ended_ns": 3309583442,
+              "next_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "packet_work_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "ended_ns": 391596529,
+                  "error_code": null,
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 88699903,
+                  "thread_cpu_ns": 32730758,
+                  "wall_ns": 302896626
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": null,
+                  "last_reserve_deadline_remaining_ns": 689221598,
+                  "last_sleep_deadline_remaining_ns": null,
+                  "local_wait_ceiling_remaining_at_entry_ns": 689300696,
+                  "original_deadline_remaining_at_entry_ns": 689300696,
+                  "original_deadline_remaining_at_exit_ns": 689219294,
+                  "requested_sleep_ns": null,
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 1,
+                  "sleep_calls_completed": 0,
+                  "sleep_calls_started": 0,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 1175463,
+                    "error_code": null,
+                    "started_ns": 1094061,
+                    "thread_cpu_ns": 81463,
+                    "unwound": false,
+                    "wall_ns": 81402
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 230633,
+                    "error_code": null,
+                    "started_ns": 229406,
+                    "thread_cpu_ns": 1201,
+                    "unwound": false,
+                    "wall_ns": 1227
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 1087007,
+                    "error_code": null,
+                    "started_ns": 231198,
+                    "thread_cpu_ns": 339809,
+                    "unwound": false,
+                    "wall_ns": 855809
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 426522,
+                  "wall_ns": 86816907
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 43381,
+                  "wall_ns": 43298
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 83146,
+                  "wall_ns": 85750
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 368737,
+                  "wall_ns": 885015
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 190813,
+                  "wall_ns": 689794
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 41256195,
+                  "wall_ns": 490209474
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 4125,
+                  "wall_ns": 4310
+                }
+              ],
+              "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "replay_accepted": true,
+              "replay_ended_ns": 3800108237,
+              "replay_error": null,
+              "replay_started_ns": 3309604545,
+              "replay_thread_cpu_ns": 41550528,
+              "replay_wall_ns": 490503692,
+              "supplied_packets": 1
+            },
+            {
+              "checkpoint_host_checks": [
+                {
+                  "calls_accepted": 236,
+                  "calls_completed": 236,
+                  "calls_rejected": 0,
+                  "calls_started": 236,
+                  "calls_unfinished": 0,
+                  "cpu_clock_unknown_calls": 0,
+                  "first_started_ns": 187649,
+                  "last_ended_ns": 93674730,
+                  "last_error_code": null,
+                  "phase": "checkpoint",
+                  "thread_cpu_ns": 6539343,
+                  "wall_clock_unknown_calls": 0,
+                  "wall_ns": 6535771
+                }
+              ],
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 4,
+              "history_request_ended_ns": 3906293552,
+              "next_after": null,
+              "packet_work_phases": [
+                {
+                  "accepted": false,
+                  "completed": true,
+                  "ended_ns": 93678852,
+                  "error_code": "PUBLIC_REQUEST_DEADLINE",
+                  "parent_phase": null,
+                  "phase": "work",
+                  "started": true,
+                  "started_ns": 2064537,
+                  "thread_cpu_ns": 6406959,
+                  "wall_ns": 91614315
+                }
+              ],
+              "page_cpu_waits": [
+                {
+                  "actual_sleep_wall_ns": null,
+                  "last_reserve_deadline_remaining_ns": 92463613,
+                  "last_sleep_deadline_remaining_ns": null,
+                  "local_wait_ceiling_remaining_at_entry_ns": 92539123,
+                  "original_deadline_remaining_at_entry_ns": 92539123,
+                  "original_deadline_remaining_at_exit_ns": 92461509,
+                  "requested_sleep_ns": null,
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "reserve_granted": 1,
+                  "reserve_other_refusals": 0,
+                  "reserve_returns": 1,
+                  "sleep_calls_completed": 0,
+                  "sleep_calls_started": 0,
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 1213483,
+                    "error_code": null,
+                    "started_ns": 1135869,
+                    "thread_cpu_ns": 77674,
+                    "unwound": false,
+                    "wall_ns": 77614
+                  }
+                }
+              ],
+              "page_epoch_substeps": [
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 301800,
+                    "error_code": null,
+                    "started_ns": 300445,
+                    "thread_cpu_ns": 1428,
+                    "unwound": false,
+                    "wall_ns": 1355
+                  },
+                  "substep": "domain_lookup"
+                },
+                {
+                  "span": {
+                    "accepted": true,
+                    "completed": true,
+                    "ended_ns": 1132012,
+                    "error_code": null,
+                    "started_ns": 302425,
+                    "thread_cpu_ns": 330974,
+                    "unwound": false,
+                    "wall_ns": 829587
+                  },
+                  "substep": "durable_begin"
+                }
+              ],
+              "page_phases": [
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "decode",
+                  "started": true,
+                  "thread_cpu_ns": 191506,
+                  "wall_ns": 191503
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "context",
+                  "started": true,
+                  "thread_cpu_ns": 67387,
+                  "wall_ns": 67318
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_wait",
+                  "started": true,
+                  "thread_cpu_ns": 78828,
+                  "wall_ns": 79135
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_open",
+                  "started": true,
+                  "thread_cpu_ns": 379024,
+                  "wall_ns": 878143
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "history_epoch_close",
+                  "started": true,
+                  "thread_cpu_ns": 341219,
+                  "wall_ns": 973265
+                },
+                {
+                  "accepted": false,
+                  "completed": true,
+                  "error_code": "PUBLIC_REQUEST_DEADLINE",
+                  "phase": "history_import",
+                  "started": true,
+                  "thread_cpu_ns": 8163225,
+                  "wall_ns": 94502528
+                },
+                {
+                  "accepted": true,
+                  "completed": true,
+                  "error_code": null,
+                  "phase": "cpu_settle",
+                  "started": true,
+                  "thread_cpu_ns": 2852,
+                  "wall_ns": 2851
+                }
+              ],
+              "prior_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "replay_accepted": false,
+              "replay_ended_ns": 4001116728,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE",
+              "replay_started_ns": 3906324324,
+              "replay_thread_cpu_ns": 8453340,
+              "replay_wall_ns": 94792404,
+              "supplied_packets": 1
+            }
+          ],
+          "invariant_target_met": true,
+          "maximum_honest_head_gap_ns": 203934242,
+          "mode": "from-zero-pressure",
+          "overlap_demonstrated": false,
+          "receiver_matches_valid_honest_prefix": true,
+          "service_error": null,
+          "service_metrics": {
+            "abandoned_tasks": 1,
+            "accepted_connections": 407,
+            "body_bytes_received": 36053238,
+            "capacity_refusals": 0,
+            "challenge_budget_refusals": 0,
+            "cleanup_scans": 51,
+            "completed_pool_status": 0,
+            "completed_pool_submit": 0,
+            "completed_read": 33,
+            "completed_submit": 7,
+            "connections_closed_on_shutdown": 0,
+            "delivered_response_frames": 393,
+            "disconnected_await_requests": 4,
+            "disconnected_before_enqueue": 3,
+            "enqueued_after_backpressure": 38,
+            "executor_refusals": 354,
+            "expired_connections": 0,
+            "expired_phase_counts": {},
+            "issued_challenges": 404,
+            "lane_capacity_refusals": 0,
+            "mutating_grants_after_shutdown": 0,
+            "mutation_body_decode_cpu_ns": 68565990,
+            "mutation_cpu_charged_ns": 276713824,
+            "mutation_cpu_clock_failures": 0,
+            "mutation_cpu_credit_ns_after_shutdown": 1998496308,
+            "mutation_cpu_debt_ns_after_shutdown": 0,
+            "mutation_cpu_in_flight_after_shutdown": 0,
+            "mutation_cpu_refusals": 0,
+            "mutation_cpu_reservations": 361,
+            "mutation_cpu_unavailable_after_shutdown": false,
+            "mutation_dispatch_excluding_work_cpu_ns": 198402381,
+            "mutation_full_work_cpu_ns": 78311443,
+            "mutation_response_cpu_ns": 15332253,
+            "output_reserved_bytes_after_shutdown": 0,
+            "output_serialization_failures": 0,
+            "paid_body_capacity_refusals": 0,
+            "paid_body_reserved_bytes_after_shutdown": 0,
+            "parse_refusals": 1,
+            "peak_connections": 18,
+            "peak_mutating_grants": 8,
+            "peak_output_reserved_bytes": 8667136,
+            "peak_paid_body_bytes": 2378238,
+            "peak_pending_challenge": 14,
+            "peak_pending_enqueue": 5,
+            "peak_pending_grant": 9,
+            "peak_read_grants": 2,
+            "peak_spent": 234,
+            "pending_challenge_closed": 3,
+            "pending_challenge_entered": 407,
+            "pending_challenge_granted": 404,
+            "pending_challenge_wait_ns": 8175800745,
+            "pending_grant_closed": 4,
+            "pending_grant_entered": 402,
+            "pending_grant_granted": 398,
+            "pending_grant_wait_ns": 16718034435,
+            "pool_submit_failed": 0,
+            "pool_submit_finished": 0,
+            "pool_submit_ns": 0,
+            "pool_submit_started": 0,
+            "pq_authentication_attempts": 0,
+            "pq_authentication_bytes": 0,
+            "pq_authentication_thread_cpu_ns": 0,
+            "pq_authentication_unavailable": false,
+            "preface_refusals": 3,
+            "queue_backpressure_events": 466,
+            "queue_refusals": 0,
+            "queue_wait_ns": 4339329057,
+            "read_grants_after_shutdown": 0,
+            "replay_refusals": 0,
+            "response_bytes_written": 827559,
+            "response_write_failures": 0,
+            "retained_phase_errors": {
+              "body": 1,
+              "hello": 3,
+              "queue": 3,
+              "solution": 6,
+              "work": 1
+            },
+            "signature_refusals": 0,
+            "spent_capacity_refusals": 0,
+            "spent_reservations": 402,
+            "tasks_dequeued": 394,
+            "tasks_enqueued": 394,
+            "tasks_skipped_before_dispatch": 0,
+            "ticket_refusals": 0,
+            "unknown_caller_durable_rows": 0,
+            "unpaid_pressure_cancel_requests": 0,
+            "unpaid_pressure_connections_closed": 0,
+            "work_failed": 354,
+            "work_finished": 361,
+            "work_ns": 864846111,
+            "work_started": 361
+          },
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ],
+      "report_bytes": 11109248,
+      "report_sha256": "11a150380cb5b638c355f1dab1874dabeb31b02fcda43599fa9a85a4e0bd2d21",
+      "requested_window_ns": null,
+      "schema": "public-v3-signed-confirmation-pressure-v1"
+    }
+  },
+  "schema": "w1-service-independent-readback-v1",
+  "source_before_equals_after": true,
+  "source_commit": "229b14c2d366a257f51f287d502a550df2332338",
+  "tree": "b386c32458589f81944ddd69c04a56c28c55e284"
+}

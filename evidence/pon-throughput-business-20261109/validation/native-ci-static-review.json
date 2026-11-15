@@ -1,0 +1,89 @@
+{
+  "changes": [
+    {
+      "change": "prepare existing pinned OpenSSL 3.5.9 provider after compiler installation and before all-features Clippy; retain provider records under TRNM_COMPONENT_RECEIPTS",
+      "path": ".github/workflows/pon-throughput-evidence.yml"
+    },
+    {
+      "change": "add scripts/ci/prepare_pq_provider.sh to pull_request path triggers",
+      "path": ".github/workflows/pon-throughput-evidence.yml"
+    }
+  ],
+  "checkout_head_metadata": "f2d14f9ebd25e054fe17c880331ae0d0c7df46e3",
+  "compiled_inventory_execution": "NOT_RUN",
+  "confirmed_business_tps": null,
+  "current_lightweight_checks": {
+    "bash_n_blocks": [
+      "Bind source and allocate separate component paths",
+      "Install the pinned compiler and retain its identity",
+      "Prepare pinned OpenSSL 3.5.9 PQ provider",
+      "Check locked graphs, formatting and strict component Clippy",
+      "Build both real libtest executables",
+      "Retain every planned component observation and failure",
+      "Verify source after the component attempt"
+    ],
+    "inline_python_ast_blocks": 1,
+    "runner_python_ast": "valid",
+    "workflow_yaml": "valid"
+  },
+  "earlier_review_observations": [
+    {
+      "check": "original project preflight",
+      "result": "PASS",
+      "source": "tool output only; raw stdout not separately archived by reviewer"
+    },
+    {
+      "check": "five new cancellation unit source functions and block/root/TCP source functions",
+      "result": "each source function found exactly once; compiled inventory not executed"
+    },
+    {
+      "check": "whole-block selector compatibility",
+      "result": "reader TEST_NAME has pon_executor prefix; runner suffix inventory lookup matches"
+    },
+    {
+      "check": "GITHUB_ENV newline encoding",
+      "result": "four source occurrences use correct single-backslash newline escapes; no correction required"
+    },
+    {
+      "check": "planned native process census",
+      "result": "1 block + 4 root + 1 complete observer module + 1 TCP = 7; five new controls counted within the one module"
+    },
+    {
+      "check": "scope and evidence",
+      "result": "binary endpoint hashes and process receipt hashes retained; whole-process rusage not per-arm CPU; original 4-second Host and 30-second campaign remain NOT_RUN/HOLD"
+    }
+  ],
+  "file_bytes_unchanged_during_current_static_capture": true,
+  "files": [
+    {
+      "bytes": 21297,
+      "path": "formal/throughput-v1/run_component_observations.py",
+      "sha256": "7f55bef2abc7cfebc78413ce68648ec42f693d227f80ca79f5f7fdf4fb46a15e"
+    },
+    {
+      "bytes": 8891,
+      "path": ".github/workflows/pon-throughput-evidence.yml",
+      "sha256": "075b02f3306ad2221835b466b915941c1a7de8beff94dcdca9b091109a233128"
+    }
+  ],
+  "native_execution_performed_by_this_review": false,
+  "original_campaign_30s": "NOT_RUN",
+  "original_host_4s": "NOT_RUN",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "reader_constants_modified_by_this_review": false,
+  "record_kind": "retained summary of tool observations; not an original raw command log",
+  "recorded_utc": "2026-11-09T14:10:47.639351+00:00",
+  "retained_failed_probe": {
+    "actual_definition_path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+    "attempted_path": "trillionnium/crates/trnm-mvcc-fee/src/streaming_root_tests.rs",
+    "corrected_static_probe": "completed",
+    "error_type": "FileNotFoundError",
+    "kind": "static source-locator assumption",
+    "native_failure_claim": false,
+    "raw_log_saved_by_reviewer": false
+  },
+  "runner_modified_by_this_review": false,
+  "rust_compilation_performed_by_this_review": false,
+  "schema": "trnm-native-ci-static-review-summary-v1"
+}

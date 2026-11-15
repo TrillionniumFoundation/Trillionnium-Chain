@@ -1,0 +1,60 @@
+{
+  "baseline_commit": "5a7b8e24ab638f443695880e475b35cb40706af4",
+  "files": [
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/Cargo.lock",
+      "sha256": "32953cbb86bb56186137507ee9e9bf59827bd8325c6e28c12b40d5c166fbfa4d",
+      "bytes": 67876
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/Cargo.toml",
+      "sha256": "c15cabe3c3e3ab00a34b3c9ddee47713a661fdf1501c6046f0f1fd36f5e17dce",
+      "bytes": 297
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/Cargo.toml",
+      "sha256": "85337345d2cc451c56ca36d5faca64fb8a5bb1b179920390658d663ac7a6401b",
+      "bytes": 225
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/build.rs",
+      "sha256": "ba4fd35cbf2fe1df1887f667d0d727efaba0ab2cc194d969bd123073252226fa",
+      "bytes": 222
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.lock",
+      "sha256": "018423c898d09d0be7a7fbe207e4a1672c5b6f36202dda765a81da852c044d18",
+      "bytes": 37525
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.toml",
+      "sha256": "19b7da62cddb1516974e63541f44c3f56f5f8333f292c8f1f1de9865803fc3ec",
+      "bytes": 423
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/guest/src/main.rs",
+      "sha256": "5b7e65a3f1173604951a2fe23fc76ad31d63e5b57e9cdc1cede6ce55fd26f80b",
+      "bytes": 1593
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/src/lib.rs",
+      "sha256": "902d56d952004dd42e65c148a4b537710f869054556528b25ed3e67d050bb255",
+      "bytes": 51
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/statement/Cargo.toml",
+      "sha256": "d2b446bb7b111178d40dc1bedaf36c308bfc16b9c7d50025a80aa3e1644905ac",
+      "bytes": 180
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/statement/src/lib.rs",
+      "sha256": "308f61f9496d9fd34c953bff8f6573f53b1136e8a5b356fe2da83e507ea288a6",
+      "bytes": 12674
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/host/Cargo.toml",
+      "sha256": "779f89393d90366e44544da865df32ff0481c91e1ada63a2052a1a916688bfd2",
+      "bytes": 473
+    }
+  ]
+}

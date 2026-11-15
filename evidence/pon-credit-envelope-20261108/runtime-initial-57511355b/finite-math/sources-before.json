@@ -1,0 +1,9 @@
+{
+  "formal/pon-nakamoto-v1/CREDIT_ENVELOPE_CONTRACT_V1.md": "e6644ec5d759a15a825487dd8fe50ffb02a8daf1dd521030e62c7857b6063af9",
+  "formal/pon-nakamoto-v1/credit_envelope_contract.py": "1a6277134855202f9c8144519e47eb01ab70485ce9db54b4b43932f418155fb9",
+  "formal/pon-nakamoto-v1/credit_envelope_test_roster_v1.json": "77a70d974e8342d3a16517557ab2d7b9212988672b48190186a8dc24d2bd5551",
+  "formal/pon-nakamoto-v1/normalized_search_cost.py": "1f77753abbfddeee9a7bd0911ce2a882e5f689c8d3181c7dfe122de3c7ba5424",
+  "formal/pon-nakamoto-v1/test_credit_envelope_contract.py": "5560f9f04126685819e02149a312bfaa4091a2288e7526c2466c5e75da867eef",
+  "formal/pon-nakamoto-v1/test_normalized_search_cost.py": "31d47507ba4780fa9d28208898f2760ddf9af23443aa2317af5bc8683630015c",
+  "scripts/ci/run_credit_envelope_checks.py": "63c2a114a0cb2cd748da715d55326e809d9fe78436b263a805a922fad5aa818b"
+}

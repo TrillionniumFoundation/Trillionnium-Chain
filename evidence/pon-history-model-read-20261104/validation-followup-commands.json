@@ -1,0 +1,86 @@
+[
+  {
+    "name": "followup-source-pins",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "returncode": 0,
+    "wall_ns": 164831964,
+    "log": "followup-source-pins.log",
+    "log_bytes": 557,
+    "log_sha256": "35974fdfa262be15cf1e2c5e5b1ebe93434943172f973663ee186746fc0691fa"
+  },
+  {
+    "name": "followup-repository",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/check_repository.py"
+    ],
+    "returncode": 0,
+    "wall_ns": 43153158396,
+    "log": "followup-repository.log",
+    "log_bytes": 307,
+    "log_sha256": "6481d23cc8b35d1c5dd3c8aab239c6763dec3b808594683c5df30f75dc848db1"
+  },
+  {
+    "name": "followup-inventory",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "returncode": 0,
+    "wall_ns": 115038150,
+    "log": "followup-inventory.log",
+    "log_bytes": 35,
+    "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+  },
+  {
+    "name": "followup-source-integrity-controls",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "returncode": 0,
+    "wall_ns": 2421606755,
+    "log": "followup-source-integrity-controls.log",
+    "log_bytes": 5509,
+    "log_sha256": "b662cb22b1d89f8a006cc24805aeddb7c1388fc8b38c3de0a71cc72f8e4944a4"
+  },
+  {
+    "name": "followup-applicability-controls",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/test_applicability.py"
+    ],
+    "returncode": 0,
+    "wall_ns": 515096170346,
+    "log": "followup-applicability-controls.log",
+    "log_bytes": 5748,
+    "log_sha256": "97bce9a40f6f16b6804462ec3eff78216f77dbff14a3421d13e598d3d507bfe6"
+  },
+  {
+    "name": "followup-locked-workspace-graph",
+    "command": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all-features",
+      "--format-version",
+      "1"
+    ],
+    "returncode": 0,
+    "wall_ns": 5882894512,
+    "log": "followup-locked-workspace-graph.log",
+    "log_bytes": 838913,
+    "log_sha256": "0d61f486a1eb0247f7e44674b1b1fd68cab311675de559356da5c8b80504b65d"
+  }
+]

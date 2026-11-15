@@ -1,0 +1,86 @@
+{
+  "all_required_current_observations_passed": true,
+  "expected_base": "eb272801e18112e90506fe5016e4dfc4660ad736",
+  "expected_candidate": "784274926d97207e9ee94cf76eef22e1006d84e1",
+  "expected_source": "784274926d97207e9ee94cf76eef22e1006d84e1",
+  "failed_or_skipped_stages": [],
+  "historical_replay_commit": "0c830e0be8939ce80c8443c9ad68021b87343a00",
+  "historical_v1_on_current_passed": false,
+  "identities": {
+    "candidate_source": {
+      "base": null,
+      "candidate": "784274926d97207e9ee94cf76eef22e1006d84e1",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "784274926d97207e9ee94cf76eef22e1006d84e1",
+      "tested_tree": "ebe84c04a79dd6bedf75d8b2ba852a87dbfd749f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2538052787,
+      "tracked_entries": 26399,
+      "tracked_worktree_verified": true
+    },
+    "historical_drift_sha256": "62800de352f7211004f73cd6cc9ed2a42aad68d662a806609f90870e12742b44",
+    "historical_job_sha256": "f88c5e041b943ea39be2de6665e9621b0b6a0c056c44dcae2a6215615eb6b130",
+    "implementation_sha256": "2f2720785a1e1f81011eaf3aa741e67ae0e17d6c5390328256198cee491b48c9",
+    "named_tests_sha256": "5e7c907a777f46b2a16dea30c21f30084cad39f8f31f04e23f07c679c33cdc9f",
+    "required_named_controls": 75
+  },
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "post_quantum_soundness_qualified": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false,
+    "security_bits_quantum": null
+  },
+  "required_stages": [
+    "observations",
+    "checkout",
+    "source_before",
+    "preflight",
+    "named_tests",
+    "historical_drift",
+    "implementation",
+    "source_after"
+  ],
+  "schema": "TRNM-W1-QROM-CURRENT-CI-OBSERVATION1",
+  "scope": "Exact candidate current V2 mapping and original V1 source-pin rejection. The separate fixed historical V1 replay is not a current-source or cryptographic qualification.",
+  "source_kind": "head",
+  "steps": {
+    "checkout": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "historical_drift": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "implementation": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "named_tests": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "observations": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "preflight": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "source_after": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "source_before": {
+      "conclusion": "success",
+      "outcome": "success"
+    }
+  },
+  "validation_errors": []
+}

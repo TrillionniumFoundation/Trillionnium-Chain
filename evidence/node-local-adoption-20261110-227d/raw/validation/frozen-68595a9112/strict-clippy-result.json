@@ -1,0 +1,23 @@
+{
+  "command": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-data-availability",
+    "--all-targets",
+    "--all-features",
+    "-j1",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "exit_code": 101,
+  "elapsed_seconds": 178.709,
+  "source_commit": "68595a91127e14fd598b17215d7c2c3e4f8f2d62",
+  "profile_overrides": {},
+  "log_sha256": "c4190a4da5d6e981be524b398ab253acec558f4db8f5494c881d56a7f93a3c6a"
+}

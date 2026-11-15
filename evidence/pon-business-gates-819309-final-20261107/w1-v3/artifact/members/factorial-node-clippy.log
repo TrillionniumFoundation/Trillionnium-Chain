@@ -1,0 +1,69 @@
+ Downloading crates ...
+  Downloaded foreign-types v0.3.2
+  Downloaded openssl-macros v0.1.1
+  Downloaded foreign-types-shared v0.1.1
+  Downloaded openssl-sys v0.9.117
+  Downloaded openssl v0.10.81
+   Compiling libc v0.2.184
+   Compiling pkg-config v0.3.32
+   Compiling vcpkg v0.2.15
+   Compiling syn v2.0.117
+   Compiling libsqlite3-sys v0.37.0
+    Checking cpufeatures v0.2.17
+   Compiling equivalent v1.0.2
+   Compiling winnow v1.0.4
+   Compiling hashbrown v0.16.1
+   Compiling indexmap v2.13.1
+   Compiling toml_parser v1.1.3+spec-1.1.0
+    Checking sha2 v0.10.9
+    Checking foldhash v0.2.0
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling typenum v1.20.1
+   Compiling generic-array v0.14.7
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling openssl-sys v0.9.117
+   Compiling cfg_aliases v0.2.2
+   Compiling borsh v1.8.0
+    Checking hashlink v0.11.1
+   Compiling proc-macro-crate v3.5.0
+   Compiling serde_derive v1.0.228
+    Checking cpufeatures v0.3.1
+   Compiling once_cell v1.21.4
+    Checking fallible-iterator v0.3.0
+    Checking fallible-streaming-iterator v0.1.9
+    Checking smallvec v1.15.1
+   Compiling borsh-derive v1.8.0
+    Checking rusqlite v0.39.0
+    Checking keccak v0.2.2
+    Checking serde v1.0.228
+    Checking ed25519-dalek v2.2.0
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling thiserror-impl v1.0.69
+   Compiling openssl v0.10.81
+    Checking foreign-types-shared v0.1.1
+    Checking foreign-types v0.3.2
+    Checking shake v0.1.0
+   Compiling digest v0.10.7
+    Checking thiserror v1.0.69
+   Compiling openssl-macros v0.1.1
+   Compiling cfg-if v1.0.4
+   Compiling rustix v1.1.4
+    Checking trnm-protocol v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol)
+    Checking ml-dsa v0.1.1
+   Compiling getrandom v0.4.2
+    Checking linux-raw-sys v0.12.1
+    Checking trnm-crypto-primitives v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary)
+    Checking trnm-task-kernel v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel)
+    Checking trnm-verification-profiles v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles)
+    Checking fs2 v0.4.3
+    Checking fastrand v2.3.0
+    Checking trnm-service-settlement v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement)
+    Checking tempfile v3.27.0
+    Checking trnm-data-availability v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability)
+    Checking trnm-mvcc-fee v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-transport v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport)
+    Checking trnm-mempool v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mempool)
+    Checking trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 50.65s

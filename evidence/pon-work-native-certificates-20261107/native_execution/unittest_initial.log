@@ -1,0 +1,59 @@
+test_censored_deadline_is_explicit_not_a_success (test_native_execution_certificate.EnvironmentAndQualificationTests.test_censored_deadline_is_explicit_not_a_success) ... ok
+test_cli_native_requirement_and_overwrite_fail_closed (test_native_execution_certificate.EnvironmentAndQualificationTests.test_cli_native_requirement_and_overwrite_fail_closed) ... ok
+test_complete_model_publication_and_retention_check_with_paid_pacer (test_native_execution_certificate.EnvironmentAndQualificationTests.test_complete_model_publication_and_retention_check_with_paid_pacer) ... FAIL
+test_data_delivery_at_boundary_does_not_rewrite_earlier_comparison_cut (test_native_execution_certificate.EnvironmentAndQualificationTests.test_data_delivery_at_boundary_does_not_rewrite_earlier_comparison_cut) ... ok
+test_deadline_not_vacuously_successful_without_later_event (test_native_execution_certificate.EnvironmentAndQualificationTests.test_deadline_not_vacuously_successful_without_later_event) ... ok
+test_false_origin_role_pair_is_not_accepted (test_native_execution_certificate.EnvironmentAndQualificationTests.test_false_origin_role_pair_is_not_accepted) ... ok
+test_retention_loss_and_score_lag_have_explicit_failure_codes (test_native_execution_certificate.EnvironmentAndQualificationTests.test_retention_loss_and_score_lag_have_explicit_failure_codes) ... ok
+test_self_declared_native_clock_owners_and_hashes_never_authenticate_runtime (test_native_execution_certificate.EnvironmentAndQualificationTests.test_self_declared_native_clock_owners_and_hashes_never_authenticate_runtime) ... ok
+test_source_bound_evidence_recomputed_and_report_or_source_mutation_refused (test_native_execution_certificate.EnvironmentAndQualificationTests.test_source_bound_evidence_recomputed_and_report_or_source_mutation_refused) ... ok
+test_bools_unknown_fields_duplicate_keys_and_nonfinite_are_rejected (test_native_execution_certificate.EventRecordTests.test_bools_unknown_fields_duplicate_keys_and_nonfinite_are_rejected) ... ok
+test_clock_order_and_gap_are_not_replaced_by_header_time (test_native_execution_certificate.EventRecordTests.test_clock_order_and_gap_are_not_replaced_by_header_time) ... ok
+test_declared_complete_model_cannot_omit_catalogued_outputs (test_native_execution_certificate.EventRecordTests.test_declared_complete_model_cannot_omit_catalogued_outputs) ... ok
+test_eligible_data_loss_is_not_erasure_of_ready_history (test_native_execution_certificate.EventRecordTests.test_eligible_data_loss_is_not_erasure_of_ready_history) ... ok
+test_header_is_not_full_available_candidate (test_native_execution_certificate.EventRecordTests.test_header_is_not_full_available_candidate) ... ok
+test_honest_ready_requires_final_parent_binding (test_native_execution_certificate.EventRecordTests.test_honest_ready_requires_final_parent_binding) ... ok
+test_initial_inventory_must_be_prefix_closed (test_native_execution_certificate.EventRecordTests.test_initial_inventory_must_be_prefix_closed) ... ok
+test_missing_initial_clock_owner_and_coverage_fields_are_refused (test_native_execution_certificate.EventRecordTests.test_missing_initial_clock_owner_and_coverage_fields_are_refused) ... ok
+test_owner_configuration_and_generation_bindings_fail_closed (test_native_execution_certificate.EventRecordTests.test_owner_configuration_and_generation_bindings_fail_closed) ... ok
+test_partial_window_is_explicit_and_never_qualified (test_native_execution_certificate.EventRecordTests.test_partial_window_is_explicit_and_never_qualified) ... ok
+test_ready_credit_never_reissued_for_publication (test_native_execution_certificate.EventRecordTests.test_ready_credit_never_reissued_for_publication) ... ok
+test_ready_needs_body_proof_application_and_complete_ancestors (test_native_execution_certificate.EventRecordTests.test_ready_needs_body_proof_application_and_complete_ancestors) ... ok
+test_resource_dimensions_remain_separate_and_do_not_certify_cost (test_native_execution_certificate.EventRecordTests.test_resource_dimensions_remain_separate_and_do_not_certify_cost) ... ok
+test_strict_tie_keeps_incumbent (test_native_execution_certificate.EventRecordTests.test_strict_tie_keeps_incumbent) ... ok
+test_all_eight_models_have_nine_deterministic_pair_witnesses (test_native_execution_certificate.PaidDeficitMathematicsTests.test_all_eight_models_have_nine_deterministic_pair_witnesses) ... ok
+test_all_honest_burst_with_finite_eight_tick_delivery_bound (test_native_execution_certificate.PaidDeficitMathematicsTests.test_all_honest_burst_with_finite_eight_tick_delivery_bound) ... ok
+test_cross_view_without_b_is_all_availability_loss (test_native_execution_certificate.PaidDeficitMathematicsTests.test_cross_view_without_b_is_all_availability_loss) ... ok
+test_early_partial_delivery_has_positive_gap_without_full_anchor (test_native_execution_certificate.PaidDeficitMathematicsTests.test_early_partial_delivery_has_positive_gap_without_full_anchor) ... ok
+test_exact_capped_split_exhaustive_2601_score_triples (test_native_execution_certificate.PaidDeficitMathematicsTests.test_exact_capped_split_exhaustive_2601_score_triples) ... ok
+test_no_maximum_from_selected_tip_or_missing_candidate (test_native_execution_certificate.PaidDeficitMathematicsTests.test_no_maximum_from_selected_tip_or_missing_candidate) ... ok
+test_old_honest_parent_can_complete_long_after_confirmation (test_native_execution_certificate.PaidDeficitMathematicsTests.test_old_honest_parent_can_complete_long_after_confirmation) ... ok
+test_ready_inventory_is_not_new_attack_resource (test_native_execution_certificate.PaidDeficitMathematicsTests.test_ready_inventory_is_not_new_attack_resource) ... ok
+test_same_timestamp_future_completion_not_in_earlier_causal_cut (test_native_execution_certificate.PaidDeficitMathematicsTests.test_same_timestamp_future_completion_not_in_earlier_causal_cut) ... ok
+test_six_successors_and_work_are_separate_and_inclusion_makes_seven (test_native_execution_certificate.PaidDeficitMathematicsTests.test_six_successors_and_work_are_separate_and_inclusion_makes_seven) ... ok
+test_strict_single_target_activation_can_leave_known_100_chain_unselected (test_native_execution_certificate.PaidDeficitMathematicsTests.test_strict_single_target_activation_can_leave_known_100_chain_unselected) ... ok
+test_unit_weight_cap_does_not_cap_batch_or_short_time_score_jump (test_native_execution_certificate.PaidDeficitMathematicsTests.test_unit_weight_cap_does_not_cap_batch_or_short_time_score_jump) ... ok
+
+======================================================================
+FAIL: test_complete_model_publication_and_retention_check_with_paid_pacer (test_native_execution_certificate.EnvironmentAndQualificationTests.test_complete_model_publication_and_retention_check_with_paid_pacer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/b9454e263603/chain_obligations/formal/pon-nakamoto-v1/test_native_execution_certificate.py", line 326, in test_complete_model_publication_and_retention_check_with_paid_pacer
+    self.assertEqual(result["pacers"], [{"block": "p1", "seq": 40, "time": 13,
+AssertionError: Lists differ: [{'block': 'p1', 'seq': 39, 'time': 13, 'weight': 3, 'paid_progress': 2}] != [{'block': 'p1', 'seq': 40, 'time': 13, 'weight': 3, 'paid_progress': 2}]
+
+First differing element 0:
+{'block': 'p1', 'seq': 39, 'time': 13, 'weight': 3, 'paid_progress': 2}
+{'block': 'p1', 'seq': 40, 'time': 13, 'weight': 3, 'paid_progress': 2}
+
+- [{'block': 'p1', 'paid_progress': 2, 'seq': 39, 'time': 13, 'weight': 3}]
+?                                             ^^
+
++ [{'block': 'p1', 'paid_progress': 2, 'seq': 40, 'time': 13, 'weight': 3}]
+?                                             ^^
+
+
+----------------------------------------------------------------------
+Ran 35 tests in 0.252s
+
+FAILED (failures=1)

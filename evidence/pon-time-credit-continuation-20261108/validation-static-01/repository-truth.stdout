@@ -1,0 +1,578 @@
+{"result": "PASS", "mode": "--audit", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-time-credit-20261108-qf01", "remote_policy_mutated": false}
+{"reviewed_roles_mapped":22,"schema":"trnm-pq-rust-source-authority-inventory-v1","scope":"All Rust files beneath trillionnium/crates, including build scripts, examples, tests and nonstandard directories; no reachability or runtime-effect proof","source_files_read":1202,"status":"HOLD_INCOMPLETE_AUTHORITY_TRACING","unreviewed_indicator_files":86,"whole_chain_pq_qualified":false}
+{
+  "binding_validation": "PASS",
+  "contract_sha256": "9902cf90df81ef5e4ffbf7f30c64abc3286bb4e3b3785c2f0a227f12d969cc05",
+  "finite_model_certificate_is_actual_w1_lower_bound": false,
+  "full_execution_identity_verified": false,
+  "ideal_probability": {
+    "denominator": 16,
+    "numerator": 1
+  },
+  "native_admission_policy_changed": false,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "relation_parameters": "0d25474289a0149ed7c12824f8c06ee703c0c3bf1bc734c4cf765d70ceb732b1",
+  "relation_profile": "pon-mandatory-w1-64-research-v1",
+  "research_credit_range": [
+    16,
+    128
+  ],
+  "schema": "pon-fixed-probability-cost-audit-result-v1",
+  "source_binding_scope": "four_relation_source_files_only",
+  "subset_controls": {
+    "classically_dearer_quantum_cheaper": {
+      "actual_w1_quantum_attack_implemented": false,
+      "classical_comparison": "dearer",
+      "classical_winner_cost_ratio": {
+        "denominator": 5,
+        "numerator": 8
+      },
+      "model": "ideal-search-scaling-only",
+      "normalized_probability": {
+        "denominator": 64,
+        "numerator": 1
+      },
+      "normalized_probability_ratio": {
+        "denominator": 4,
+        "numerator": 1
+      },
+      "quantum_comparison": "cheaper",
+      "quantum_winner_cost_ratio_squared": {
+        "denominator": 25,
+        "numerator": 16
+      },
+      "ratio_semantics": "assumed-inverse-p-and-inverse-sqrt-p-cost-laws;not-finite-grover-or-fixed-success-exact-runtime",
+      "setup_and_post_win_tail_included": false
+    },
+    "quarter_domain_quarter_winners_keeps_density": {
+      "actual_w1_quantum_attack_implemented": false,
+      "classical_comparison": "equal",
+      "classical_winner_cost_ratio": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "model": "ideal-search-scaling-only",
+      "normalized_probability": {
+        "denominator": 16,
+        "numerator": 1
+      },
+      "normalized_probability_ratio": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "quantum_comparison": "equal",
+      "quantum_winner_cost_ratio_squared": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "ratio_semantics": "assumed-inverse-p-and-inverse-sqrt-p-cost-laws;not-finite-grover-or-fixed-success-exact-runtime",
+      "setup_and_post_win_tail_included": false
+    }
+  },
+  "unclosed_obligations": [
+    "complete-legal-strategy-simulation",
+    "classical-amortized-cost-lower-bound",
+    "quantum-amortized-cost-lower-bound",
+    "bounded-initial-classical-and-quantum-potential",
+    "cross-scale-and-cross-fork-composition",
+    "actual-hash-to-search-model-reduction",
+    "resource-to-physical-time-and-network-model",
+    "mixed-miner-common-prefix-chain-quality-chain-growth",
+    "native-work-identity-and-weight-bridge",
+    "real-cell-quality-and-owner-adoption"
+  ],
+  "unknown_cost_points": [
+    {
+      "class": "classical",
+      "units": 1
+    },
+    {
+      "class": "classical",
+      "units": 2
+    },
+    {
+      "class": "classical",
+      "units": 3
+    },
+    {
+      "class": "classical",
+      "units": 4
+    },
+    {
+      "class": "classical",
+      "units": 5
+    },
+    {
+      "class": "classical",
+      "units": 6
+    },
+    {
+      "class": "classical",
+      "units": 7
+    },
+    {
+      "class": "classical",
+      "units": 8
+    },
+    {
+      "class": "quantum",
+      "units": 1
+    },
+    {
+      "class": "quantum",
+      "units": 2
+    },
+    {
+      "class": "quantum",
+      "units": 3
+    },
+    {
+      "class": "quantum",
+      "units": 4
+    },
+    {
+      "class": "quantum",
+      "units": 5
+    },
+    {
+      "class": "quantum",
+      "units": 6
+    },
+    {
+      "class": "quantum",
+      "units": 7
+    },
+    {
+      "class": "quantum",
+      "units": 8
+    }
+  ]
+}
+{
+  "all_algorithm_cost_qualified": false,
+  "artifact_manifest": {
+    "hybrid-nonce26.pmh1": {
+      "bytes": 432,
+      "sha256": "c5773dd3bb3b58630330dc646a72fff4de90d4919b984c1afbf4408f4f73ed9c"
+    },
+    "hybrid-nonce26.pmu1": {
+      "bytes": 98882,
+      "sha256": "04d5b00f0e2b73c88a8a5674041077014c322a4021ba9083d43d6f1377256443"
+    },
+    "original-nonce24.pmh1": {
+      "bytes": 432,
+      "sha256": "290a8724dee47e23a9ae258157361cedc8e19b0a7e6b6a0701be1e05d2bc0403"
+    },
+    "original-nonce24.pmu1": {
+      "bytes": 98882,
+      "sha256": "711643c498353dc1a2cdd450ff5b2fdb37e998617ec752418035e382654b4647"
+    }
+  },
+  "attack_profitability_established": false,
+  "checks": {
+    "both_unit_challenges_changed": true,
+    "complete_MU1_rejected_at_transcript": true,
+    "counter_credit_before_hybrid_32": true,
+    "counter_credit_did_not_increase": true,
+    "counter_rejected_at_transcript": true,
+    "first_admission_credit_32": true,
+    "fixed_context_duplicate_credit_zero": true,
+    "fixed_context_last_proof_byte_identical": true,
+    "fixed_context_packet_byte_identical": true,
+    "fixed_context_ticket_and_identity_unchanged": true,
+    "hybrid_keeps_unit_0_byte_for_byte": true,
+    "hybrid_outer_target_passes": true,
+    "hybrid_reproduces_recorded_bytes": true,
+    "hybrid_unit_1_complete_scalar_verification": true,
+    "hybrid_unit_1_matches_constructed_full_proof": true,
+    "independent_context_pin_matches": true,
+    "new_unit_trace_changed": true,
+    "original_complete_scalar_verification": true,
+    "original_packet_pin_matches": true,
+    "prepared_AB_prefix_actually_reused": true,
+    "stale_unit_rejected_at_transcript": true
+  },
+  "fixture_provenance": {
+    "context_path": "evidence/pon-work-native-certificates-20261107/mandatory_units/run-02-final/dense-repeat-u2.pmh1",
+    "context_sha256": "290a8724dee47e23a9ae258157361cedc8e19b0a7e6b6a0701be1e05d2bc0403",
+    "expected_context_origin": "separate pinned PMH1 fixture, not untrusted packet metadata",
+    "packet_path": "evidence/pon-work-native-certificates-20261107/mandatory_units/run-02-final/dense-repeat-u2.pmu1",
+    "packet_sha256": "711643c498353dc1a2cdd450ff5b2fdb37e998617ec752418035e382654b4647",
+    "pin_scope": "previously recorded fixture identity; full scalar verification reruns here"
+  },
+  "hybrid": {
+    "complete_rejection": "W1_TRANSCRIPT",
+    "counter_credit_after_rejection": 32,
+    "counter_rejection": "W1_TRANSCRIPT",
+    "identity": "0c23253b9f4b542ea374b2d1aaf27f77ca60e57ab31eb23dae2d6946daa7bd1c",
+    "nonce": 26,
+    "nonce_selection": "fixed reproducible control; actual outer predicate must pass",
+    "outputs_root": "d98d25e13c4e6dcb1daf0e3fdda6eb784694d4c971d9e671521a4f0daeaca356",
+    "packet_sha256": "04d5b00f0e2b73c88a8a5674041077014c322a4021ba9083d43d6f1377256443",
+    "stale_unit_rejection": "TRANSCRIPT",
+    "ticket": "0946f73e649645045f05b35dd3f84d58cbd54bc4d6e07d59b0caa986a1d05015",
+    "unit_0_source_nonce": 24,
+    "unit_1_source_nonce": 26
+  },
+  "interpretation": {
+    "hash_binding": "assumed for generalization; not proved by fixture checks",
+    "legal_prepared_AB_reuse": "observed and permitted",
+    "native_backend": "not executed; this probe explicitly uses the complete scalar MU1 verifier",
+    "observed": "same-context regeneration is identical; changing the global nonce invalidates the retained full unit proof",
+    "other_preprocessing_batching_or_quantum_costs": "open; no minimum-cost conclusion",
+    "synthetic_MDP_mapping": "none claimed",
+    "whole_context_nonce_bank": "prior preparation for each different context must remain in lifecycle accounting"
+  },
+  "native_consensus_qualified": false,
+  "original": {
+    "credit": 32,
+    "duplicate_added_credit": 0,
+    "identity": "3fd902c5ca3b1b44fe4c147bc0ce6b961a0bd7bcb7d18bec412df4e290750c12",
+    "nonce": 24,
+    "ticket": "097fc5263801e80a4db6ebab4deeba8804f2364eadd3cb1c1590b23d0ca2ebed",
+    "units": 2
+  },
+  "production_qualified": false,
+  "profile": "pon-mandatory-w1-64-research-v1",
+  "quantum_cost_qualified": false,
+  "relation_parameters": "0d25474289a0149ed7c12824f8c06ee703c0c3bf1bc734c4cf765d70ceb732b1",
+  "result": "PASS",
+  "schema": "pon-fixed-probability-reuse-probe-v1",
+  "source_sha256": {
+    "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py": "675f61035c56e3c95c8b6cfa74c597a41ab7da6b135f784f91d8eb1c24686414",
+    "formal/pon-nakamoto-v1/mandatory_units_relation.py": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834",
+    "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+  },
+  "tail_qualified": false
+}
+{
+  "adaptive_policy_checks": {
+    "cases": 6156,
+    "max_probability_over_bound": {
+      "denominator": 1,
+      "numerator": 1
+    },
+    "strict_cases": 5220
+  },
+  "claim_flags": {
+    "actual_w1_quantum_transition_certificate": false,
+    "actual_w1_resource_tail": false,
+    "cheapest_legal_work_lower_bound": false,
+    "native_consensus_failure_mapping": false,
+    "physical_time_bound": false,
+    "production_qualification": false,
+    "six_successor_risk_bound": false
+  },
+  "erased_potential_failures": [
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "state": "stash_1",
+      "valid": false
+    },
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "state": "stash_2",
+      "valid": false
+    },
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "state": "stash_3",
+      "valid": false
+    }
+  ],
+  "independent_binomial_checks": {
+    "all_equal": true,
+    "cases": 324
+  },
+  "invalid_certificate_refused": true,
+  "law": {
+    "capacity": 3,
+    "gamma": {
+      "denominator": 4,
+      "numerator": 5
+    },
+    "p": {
+      "denominator": 4,
+      "numerator": 1
+    },
+    "potential": {
+      "stash_0": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "stash_1": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "stash_2": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "stash_3": {
+        "denominator": 1,
+        "numerator": 8
+      }
+    },
+    "z": {
+      "denominator": 1,
+      "numerator": 2
+    }
+  },
+  "schema": "stateful-tail-finite-toy-v1",
+  "status": "ABSTRACT_CERTIFICATE_ONLY_HOLD_FOR_W1",
+  "transition_checks": [
+    {
+      "action": "generate",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "state": "stash_0",
+      "valid": true
+    },
+    {
+      "action": "generate",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "state": "stash_1",
+      "valid": true
+    },
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "state": "stash_1",
+      "valid": true
+    },
+    {
+      "action": "generate",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "state": "stash_2",
+      "valid": true
+    },
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "state": "stash_2",
+      "valid": true
+    },
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 8
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 8
+      },
+      "state": "stash_3",
+      "valid": true
+    }
+  ],
+  "zero_new_resource_counterexample": {
+    "actual_probability": {
+      "denominator": 1,
+      "numerator": 1
+    },
+    "budget": 0,
+    "certified_bound_with_potential": {
+      "denominator": 1,
+      "numerator": 1
+    },
+    "horizon": 1,
+    "initial_stash": 1,
+    "invalid_bound_after_reset_to_one": {
+      "denominator": 2,
+      "numerator": 1
+    },
+    "threshold": 1
+  }
+}
+{
+  "schema": "pon-exact-residual-grover-countermodel-v1",
+  "scope": "Four-address oracle model only; no W1 or physical-resource claim",
+  "grover_cases": [
+    {
+      "marked": 0,
+      "initial_amplitudes": [
+        "1/2",
+        "1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_query_amplitudes": [
+        "-1/2",
+        "1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_diffusion_amplitudes": [
+        "1",
+        "0",
+        "0",
+        "0"
+      ],
+      "success_on_measurement": "1"
+    },
+    {
+      "marked": 1,
+      "initial_amplitudes": [
+        "1/2",
+        "1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_query_amplitudes": [
+        "1/2",
+        "-1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_diffusion_amplitudes": [
+        "0",
+        "1",
+        "0",
+        "0"
+      ],
+      "success_on_measurement": "1"
+    },
+    {
+      "marked": 2,
+      "initial_amplitudes": [
+        "1/2",
+        "1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_query_amplitudes": [
+        "1/2",
+        "1/2",
+        "-1/2",
+        "1/2"
+      ],
+      "post_diffusion_amplitudes": [
+        "0",
+        "0",
+        "1",
+        "0"
+      ],
+      "success_on_measurement": "1"
+    },
+    {
+      "marked": 3,
+      "initial_amplitudes": [
+        "1/2",
+        "1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_query_amplitudes": [
+        "1/2",
+        "1/2",
+        "1/2",
+        "-1/2"
+      ],
+      "post_diffusion_amplitudes": [
+        "0",
+        "0",
+        "0",
+        "1"
+      ],
+      "success_on_measurement": "1"
+    }
+  ],
+  "cut": {
+    "position": "after one Grover iterate, before measurement",
+    "new_oracle_queries": 0,
+    "measured_winner_records": 0,
+    "winner_probability": "1"
+  },
+  "same_private_marginal": {
+    "diagonal": [
+      "1/4",
+      "1/4",
+      "1/4",
+      "1/4"
+    ],
+    "correlated_success": "1",
+    "independent_success": "1/4",
+    "conclusion": "Private marginal alone omits oracle correlation"
+  },
+  "checks": {
+    "exact_grover_cases": 4,
+    "norm_checks": 4,
+    "joint_state_counterexample": true
+  },
+  "claims": {
+    "actual_W1_attack": false,
+    "quantum_hardware_executed": false,
+    "actual_W1_resource_tail_proved": false
+  }
+}
+{"gates": {"authorization": {"source_paths": ["trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs", "trillionnium/crates/trnm-pon-node/src/ingress.rs", "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs", "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs", "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs", "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs", "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs", "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs", "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs", "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs", "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs", "trillionnium/crates/trnm-data-availability/src/cell/closure.rs", "trillionnium/crates/trnm-data-availability/src/cell/release.rs", "trillionnium/crates/trnm-pon-node/src/store/funding.rs", "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs", "scripts/ci/pq_authority_surface_scan.py", "scripts/ci/test_pq_authority_surface_scan.py", "docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md"], "status": "UNQUALIFIED"}, "capacity_and_invalid_input": {"source_paths": ["trillionnium/crates/trnm-protocol/src/pq_frame.rs", "config/pon/post-quantum-transition-v1.json"], "status": "UNQUALIFIED"}, "independent_end_to_end": {"source_paths": ["docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md", "config/pon/pq-cross-branch-corpus-v1.json"], "status": "UNQUALIFIED"}, "migration_and_rollback": {"source_paths": ["trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs", "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs", "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs", "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs", "trillionnium/crates/trnm-service-settlement/src/native_budget.rs", "trillionnium/crates/trnm-data-availability/src/cell/retention.rs", "scripts/ci/pq_external_rollback_oracle.py", "scripts/ci/test_pq_external_rollback_oracle.py", "docs/security/PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md", "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs", "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs", "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs", "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs", "docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md"], "status": "UNQUALIFIED"}, "proof_pq128": {"source_paths": ["trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs", "docs/security/POST_QUANTUM_TRANSITION_V1.md"], "status": "UNQUALIFIED"}, "quantum_mining_fork_choice": {"source_paths": ["config/pon/devnet-v1.json", "docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md", "scripts/ci/pq_quantum_daa_scenarios.py", "scripts/ci/test_pq_quantum_daa_scenarios.py", "docs/security/PQ_QUANTUM_DAA_SENSITIVITY_20261031.md"], "status": "UNQUALIFIED"}}, "note": "Source/flag refusal only; no independent crypto, quantum cost, WAN, rollback or production evidence.", "pq_128_qualified": false, "production_activation": false, "schema": "trnm-whole-chain-pq-claim-guard-v1", "status": "HOLD", "whole_chain_pq_qualified": false}
+{"activation": false, "head": "bd696c35f8b838823fad7ccf2868582554f33559", "local_links": 4383, "normal_dependency_edges": 25, "result": "PASS", "runtime_implemented": false, "rust_files": 1202, "source_state": "committed-clean", "tree": "7e049475b90c89ec7910ea28da9a406398f71584", "workspace_packages": 26}
+distributed source inventory: PASS
+{"receipt": "/tmp/trnm-ci-raw-source-6erfr7mv/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-aybkkbxo/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-z0sto02x/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-yyvfy0gq/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-reix9nop/.git/receipt-PASS", "result": "PASS"}
+{"receipt": "/tmp/trnm-ci-raw-source-reix9nop/.git/receipt-FAIL", "result": "FAIL"}
+current implementation/profile summary matches the existing registries

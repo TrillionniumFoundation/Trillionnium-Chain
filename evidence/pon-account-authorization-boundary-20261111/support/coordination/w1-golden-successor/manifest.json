@@ -1,0 +1,124 @@
+{
+  "base_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "selected_source_commit": "077ac4f33206de00a178553d9a0c729a20685088",
+  "created_utc": "2026-11-11T01:24:47.738677+00:00",
+  "repo_edited": false,
+  "native_tests_run": false,
+  "new_python_test_source_executed": false,
+  "historical_report_path": "evidence/pon-w1-lifetime-current-20261109/project-report.json",
+  "historical_report_sha256": "8ee20462d669a0e21b0fe964585f85fa2a49e7e58273459ab2501b4a2e39dfc0",
+  "historical_report_bytes_preserved": true,
+  "new_fixture_exactly_matches_retained_y_owner_stdout": true,
+  "differences": [
+    {
+      "path": "/selected_source_survey/base_commit",
+      "before": "189b9b5959d836ef6ae96e14fb285948e4920aa9",
+      "after": "077ac4f33206de00a178553d9a0c729a20685088"
+    },
+    {
+      "path": "/selected_source_survey/observations/cumulative_weight/anchor_line",
+      "before": "5142",
+      "after": "5157"
+    },
+    {
+      "path": "/selected_source_survey/observations/cumulative_weight/sha256",
+      "before": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554",
+      "after": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca"
+    },
+    {
+      "path": "/selected_source_survey/observations/native_work_verifier/anchor_line",
+      "before": "1122",
+      "after": "1124"
+    },
+    {
+      "path": "/selected_source_survey/observations/native_work_verifier/sha256",
+      "before": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554",
+      "after": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca"
+    },
+    {
+      "path": "/selected_source_survey/sources/7/bytes",
+      "before": "382866",
+      "after": "383977"
+    },
+    {
+      "path": "/selected_source_survey/sources/7/sha256",
+      "before": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554",
+      "after": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca"
+    }
+  ],
+  "unchanged_named_test_count": 19,
+  "unchanged_test_names": [
+    "test_bound_domain_cannot_be_extrapolated_to_larger_lifetime_queries",
+    "test_cli_rejects_malformed_input_without_emitting_a_report",
+    "test_complete_relation_event_count_cannot_drop_failed_attempts",
+    "test_conditional_union_is_exact_and_does_not_require_independence",
+    "test_exact_lottery_rounding_and_weight_cost_counterexample",
+    "test_lifetime_reset_and_per_event_target_counterexamples",
+    "test_marginal_or_accepted_only_error_bound_is_refused",
+    "test_mass_and_reduction_overheads_are_independent_inputs",
+    "test_missing_phase_group_or_unknown_field_is_not_a_free_zero",
+    "test_native_permutation_count_cannot_be_the_query_unit",
+    "test_nonexact_numbers_duplicate_json_and_qualification_injection_are_refused",
+    "test_numeric_inputs_need_explicit_unverified_references",
+    "test_offline_adaptive_delegated_and_unclassified_queries_accumulate",
+    "test_processors_failed_roots_and_recursive_nodes_are_all_charged",
+    "test_project_unknowns_do_not_produce_a_target_or_qualification",
+    "test_scope_cannot_reset_by_identity_upgrade_or_reorganization",
+    "test_source_lines_remain_independent_of_existing_qualification_labels",
+    "test_source_mutation_missing_source_and_symlink_are_refused",
+    "test_unknown_factor_survives_known_zero"
+  ],
+  "new_history_revision_dependency": false,
+  "historical_source_negative_reuses_existing_revision": "7ddfe2bfa480d1ebd91c07d03d56a963fff038c5",
+  "workflow_fetch_depth": 0,
+  "patch_path": "/workspace/scratch/a4188f5c86b5/coordination/w1-golden-successor/w1-lifetime-account-boundary-successor.patch",
+  "patch_sha256": "e1833727420d776e1d3d7d5dd5bf6dd2ad7ad829db57460cbb54be1420fc9b17",
+  "files": [
+    {
+      "path": ".github/workflows/pon-w1-qrom-closure.yml",
+      "before_sha256": "f25dcf2021a1f8e4770f5df88299d1bd13b57686a10eff6242dc46018837620e",
+      "after_sha256": "7a4867dd0fdc7655356ad4713ef9b2b12e489ceeb9cfc303385e499050aa1638",
+      "after_git_blob": "17c56310afa7dfa3e864db7c678c351af5259895",
+      "bytes": 10006
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "before_sha256": "1eb331245458a3eb228e72830c9d788b2534934c2c86658fa8fc5cc2285e29fe",
+      "after_sha256": "a1fa8406c59dd53ea517757364f757615948ac6752010eab15f0984959c865c1",
+      "after_git_blob": "d687beb58902321b1d0546603eadafa38539ef49",
+      "bytes": 198276
+    },
+    {
+      "path": "evidence/pon-w1-lifetime-account-boundary-20261110/README.md",
+      "before_sha256": null,
+      "after_sha256": "a0ceb540999d5f2afe2698476c0e2016a3382cacac6241117af49b48593d26cd",
+      "after_git_blob": "9dd38c86a9af06ba3b119d818a6bd172726bbf02",
+      "bytes": 4680
+    },
+    {
+      "path": "evidence/pon-w1-lifetime-account-boundary-20261110/project-input.json",
+      "before_sha256": null,
+      "after_sha256": "a6e43a5c55e71154592a3489f566995e7961b91611e15d40a18a948a495f9f89",
+      "after_git_blob": "ddcc9d4bbb7cdee3dd7e114bd4467dcf21a6cf73",
+      "bytes": 6107
+    },
+    {
+      "path": "evidence/pon-w1-lifetime-account-boundary-20261110/project-report.json",
+      "before_sha256": null,
+      "after_sha256": "b050b861ec172305d708ba7c01ca47d547b1646cc3daee1d6aec9877d2cf3390",
+      "after_git_blob": "68e751c69aa6701f0d9220faac0e6bea40a8794a",
+      "bytes": 31311
+    },
+    {
+      "path": "scripts/ci/test_w1_lifetime_ledger.py",
+      "before_sha256": "6be1706c1ded1a8efa02ee5c3ca04352fa989dbcf728d6f041192200921a5fa6",
+      "after_sha256": "07166d8f1d5e9ba68f8ccc1b2792690f40ee4686318e795cd45605ea799e8840",
+      "after_git_blob": "8b23d599faa9203aa57d9d1d85e7fd6a59bd8218",
+      "bytes": 21140
+    }
+  ],
+  "complete_seven_literal_projection_assertion_added": true,
+  "git_apply_check_passed": true,
+  "python_syntax_ast_parsed": true,
+  "post_patch_python_tests_executed": false
+}

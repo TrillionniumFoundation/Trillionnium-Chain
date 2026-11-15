@@ -1,0 +1,49 @@
+{
+  "argv": [
+    "/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/trnm_mvcc_fee-15769a7ae1c1421f",
+    "pon_executor::streaming_root_tests::complete_root_encoding_cost",
+    "--ignored",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "cwd": "/workspace/scratch/a0d4983b1065/chain-throughput",
+  "disk_after": {
+    "free_bytes": 804925440,
+    "total_bytes": 67586535424,
+    "used_bytes": 63328862208
+  },
+  "disk_before": {
+    "free_bytes": 809324544,
+    "total_bytes": 67586535424,
+    "used_bytes": 63324463104
+  },
+  "exit_code": 0,
+  "extra_env": {
+    "TRNM_ROOT_ENCODING_IMPLEMENTATION": "original"
+  },
+  "name": "complete-root-0-original",
+  "rusage": {
+    "ru_idrss": 0,
+    "ru_inblock": 0,
+    "ru_isrss": 0,
+    "ru_ixrss": 0,
+    "ru_majflt": 0,
+    "ru_maxrss": 205720,
+    "ru_minflt": 51164,
+    "ru_msgrcv": 0,
+    "ru_msgsnd": 0,
+    "ru_nivcsw": 47,
+    "ru_nsignals": 0,
+    "ru_nswap": 0,
+    "ru_nvcsw": 2,
+    "ru_oublock": 8,
+    "ru_stime": 0.138343,
+    "ru_utime": 0.949464
+  },
+  "rusage_maxrss_unit": "KiB (Linux)",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "173db48c94b7d30d46ab0b84fbe04bbdfd81e8ba57adccffb7ad00896d25e0de",
+  "waited_pid": 480,
+  "wall_ns": 1092238207
+}

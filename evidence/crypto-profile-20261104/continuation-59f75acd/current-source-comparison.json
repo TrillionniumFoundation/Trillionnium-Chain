@@ -1,0 +1,2590 @@
+{
+  "schema": "trnm-crypto-profile-current-source-comparison-v1",
+  "kind": "bounded-read-only-source-audit",
+  "assembled_utc": "2026-11-05T00:19:48.485808+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "base_commit": "885b6e82a1470f6a35b55fa8d3c95af44d2afea8",
+  "base_tree": "f81eafd69e890d81b919ddb92a66fed149ad7aef",
+  "current_commit": "59f75acd1d4261972b8aaa45e0c36259fcafd45c",
+  "current_tree": "c0dc8282e5b2618ffb35061f108bb2fa96e9b348",
+  "pr_698_observed_base_commit": "c156c2310346d1367b8f9b1111171f412b5ffce2",
+  "method": {
+    "source_reads": "Previously inspected GitHub plugin pinned compare/contents plus read-only local current files and Git tree objects. No Cargo or native execution is claimed by this report.",
+    "git_read_environment": {
+      "GIT_NO_LAZY_FETCH": "1",
+      "GIT_OPTIONAL_LOCKS": "0",
+      "no_replace_objects": true
+    },
+    "github_comparison": {
+      "status": "ahead",
+      "ahead_by": 21,
+      "behind_by": 0,
+      "merge_base": "885b6e82a1470f6a35b55fa8d3c95af44d2afea8",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/compare/885b6e82a1470f6a35b55fa8d3c95af44d2afea8...59f75acd1d4261972b8aaa45e0c36259fcafd45c"
+    },
+    "scope": "The 32 listed delivery/evidence/configuration/dependency paths, the additional inspected files, and the explicit hash functions below. Tree-delta enumeration is identity data, not semantic review of every changed path."
+  },
+  "source_paths": [
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "base_blob": "a51c82eb52709ebc80474ca1386384202a611b6f",
+      "current_blob": "75718738865cd1a2bb0f1f743188e99aef3830a8",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": false,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/config/pon/pq-cross-branch-corpus-v1.json"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "base_blob": "1915f796a335fd508d718ebf8838bf5c5130d3cc",
+      "current_blob": "41c3eb88a043970ab2e694d1e358b3d507997314",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": false,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    },
+    {
+      "path": "docs/security/CRYPTO_PROFILE_V1_20261104.md",
+      "base_blob": "11f3668904f6fe460b9f15866c3090be55a3e486",
+      "current_blob": "11f3668904f6fe460b9f15866c3090be55a3e486",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/docs/security/CRYPTO_PROFILE_V1_20261104.md"
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/README.md",
+      "base_blob": "deebbbef900d714c30e36a0ecfa0eb9557938f7b",
+      "current_blob": "deebbbef900d714c30e36a0ecfa0eb9557938f7b",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/crypto-profile-20261104/README.md"
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/recompute_benchmark.py",
+      "base_blob": "e9a873baa73d60f578b9723a9cf11cdf84a44c15",
+      "current_blob": "e9a873baa73d60f578b9723a9cf11cdf84a44c15",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/crypto-profile-20261104/recompute_benchmark.py"
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/recompute_profile_ids.py",
+      "base_blob": "ca5334fba301046c9f89132b62a4e10872c8d5cd",
+      "current_blob": "ca5334fba301046c9f89132b62a4e10872c8d5cd",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/crypto-profile-20261104/recompute_profile_ids.py"
+    },
+    {
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "base_blob": "226f170a164d1c7ff7dcd3385767ba78d95dfeb8",
+      "current_blob": "bdc82bfcfc292e690947575df310d15508b59d6d",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": false,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/scripts/ci/check_pq_research_integration.py"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_parameter_bench.rs",
+      "base_blob": "3d3c56ce1b8db9122b51ffba4cadd36028dc5b2c",
+      "current_blob": "3d3c56ce1b8db9122b51ffba4cadd36028dc5b2c",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-crypto-primitives/examples/pq_parameter_bench.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+      "base_blob": "f87ba7c313f3bed616b1b3514ef5e9035095dfec",
+      "current_blob": "f87ba7c313f3bed616b1b3514ef5e9035095dfec",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+      "base_blob": "3a38da1061df615b98e46b0d2fd56133f493b4cd",
+      "current_blob": "3a38da1061df615b98e46b0d2fd56133f493b4cd",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+      "base_blob": "a5c8c6ba0ecedee4922137ebaa106ddf91fe4c75",
+      "current_blob": "a5c8c6ba0ecedee4922137ebaa106ddf91fe4c75",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+      "base_blob": "9ab0df1e3c69b38e290cc5f2113983f56ec23862",
+      "current_blob": "9ab0df1e3c69b38e290cc5f2113983f56ec23862",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+      "base_blob": "e195858e5a642ed88ab21c9d233edb38749933a5",
+      "current_blob": "e195858e5a642ed88ab21c9d233edb38749933a5",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "base_blob": "58ff467f2d4bf62047e676bb3aed787a2cab6938",
+      "current_blob": "f9bb1b209e708eb9a5fafe72901bbd0399ac2946",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": false,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "base_blob": "49435a5e4dd69853a5ab5099f21963ef47899ade",
+      "current_blob": "49435a5e4dd69853a5ab5099f21963ef47899ade",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+      "base_blob": "2882767d02ed8be8ceacfb974e2626ee248e623a",
+      "current_blob": "2882767d02ed8be8ceacfb974e2626ee248e623a",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "base_blob": "d258b3250f1a84eab4661e5df7a81351cac0e277",
+      "current_blob": "d258b3250f1a84eab4661e5df7a81351cac0e277",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-pon-node/src/store/pq_network.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+      "base_blob": "eb2a3e7a159398625a389d390156845401ff6dab",
+      "current_blob": "eb2a3e7a159398625a389d390156845401ff6dab",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",
+      "base_blob": "62181b32dc37eeb38ecd2cd72374126d78c31af2",
+      "current_blob": "62181b32dc37eeb38ecd2cd72374126d78c31af2",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/lib.rs",
+      "base_blob": "daae244780e8d777a5505113e85a6c125d8d8029",
+      "current_blob": "daae244780e8d777a5505113e85a6c125d8d8029",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/lib.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+      "base_blob": "07537462b6a2a57f8b29b2bb59c16862b770aa91",
+      "current_blob": "07537462b6a2a57f8b29b2bb59c16862b770aa91",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/pq_frame.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs",
+      "base_blob": "fd42e648e19fe792e6f392f411181c1c49f37a59",
+      "current_blob": "fd42e648e19fe792e6f392f411181c1c49f37a59",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs",
+      "base_blob": "0b9109e5b1028dbcba96b44bd61b4f711a940542",
+      "current_blob": "0b9109e5b1028dbcba96b44bd61b4f711a940542",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs"
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/reproduction.json",
+      "base_blob": "199332d125ec5cc3b00e03396f22b947b379c29e",
+      "current_blob": "199332d125ec5cc3b00e03396f22b947b379c29e",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/crypto-profile-20261104/reproduction.json"
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/raw-observations.tar.gz",
+      "base_blob": "dabded05de2852e251a36e9fc85d67d6a4af63fc",
+      "current_blob": "dabded05de2852e251a36e9fc85d67d6a4af63fc",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/crypto-profile-20261104/raw-observations.tar.gz"
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/parameter-observations.jsonl",
+      "base_blob": "c96012fb8d50422b0924e46f2454201df60f74aa",
+      "current_blob": "c96012fb8d50422b0924e46f2454201df60f74aa",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/crypto-profile-20261104/parameter-observations.jsonl"
+    },
+    {
+      "path": "config/pon/pq-system-required-tests-v1.json",
+      "base_blob": "1f1b4098ac5a90238b1e56b9bb0b3d5a9daa9fe8",
+      "current_blob": "1f1b4098ac5a90238b1e56b9bb0b3d5a9daa9fe8",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/config/pon/pq-system-required-tests-v1.json"
+    },
+    {
+      "path": "config/pon/work-profile-v1.json",
+      "base_blob": "54e43139d3691b62f76f9e8976e1d2a974e8524b",
+      "current_blob": "54e43139d3691b62f76f9e8976e1d2a974e8524b",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/config/pon/work-profile-v1.json"
+    },
+    {
+      "path": "trillionnium/Cargo.toml",
+      "base_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "current_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/Cargo.toml"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/Cargo.toml",
+      "base_blob": "ed83f028c9b961cf356d7a8fb96c8c916fe768a5",
+      "current_blob": "ed83f028c9b961cf356d7a8fb96c8c916fe768a5",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/Cargo.toml"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+      "base_blob": "cb0fa7b3a837b63b47e8dd5925656fe4f50ae43b",
+      "current_blob": "cb0fa7b3a837b63b47e8dd5925656fe4f50ae43b",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-crypto-primitives/Cargo.toml"
+    },
+    {
+      "path": "docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md",
+      "base_blob": "5e99d0151f3b5c122b82de8900f20519030f9436",
+      "current_blob": "5e99d0151f3b5c122b82de8900f20519030f9436",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md"
+    }
+  ],
+  "source_path_summary": {
+    "reviewed_paths": 32,
+    "identical_blobs": 28,
+    "changed_blobs": 4,
+    "original_delivery_paths": 23,
+    "original_delivery_identical": 19,
+    "original_delivery_changed": 4,
+    "unchanged_rust_implementation_test_benchmark_files_in_original_delivery": 15
+  },
+  "additional_source_paths": [
+    {
+      "path": "trillionnium/Cargo.lock",
+      "base_blob": "fe1e6a3aee8771dd025c7e3607061c020542d852",
+      "current_blob": "17e1155502ae7a15a9eea151a045dd24df2aae50",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": false,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/Cargo.lock"
+    },
+    {
+      "path": "tests/fuzz/Cargo.lock",
+      "base_blob": "671f7bb35cc7c116eca833c14a3536a411770bd9",
+      "current_blob": "8f74aff08cea03902cbc629671a07ff2cc745725",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": false,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/tests/fuzz/Cargo.lock"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+      "base_blob": "3e553781cf89fcd4dc9e7b04e9ac236d722673fd",
+      "current_blob": "d248078e438dfc89562f15bb41ac927c18559d43",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": false,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/Cargo.toml"
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/Cargo.toml",
+      "base_blob": "dc31859c23015b5c06de63201149e4deb28fdece",
+      "current_blob": "201c768b20e3afb44779bd6bc5da501def4241f5",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": false,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-release-bundle/Cargo.toml"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "base_blob": "7e6fa33cbaa50d76f1a8fd0146a44ca3623345b3",
+      "current_blob": "7e6fa33cbaa50d76f1a8fd0146a44ca3623345b3",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "base_blob": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+      "current_blob": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tuf.rs",
+      "base_blob": "3bb34ab8ff2b44eadc86a40829fb1e84543c941c",
+      "current_blob": "3bb34ab8ff2b44eadc86a40829fb1e84543c941c",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tuf.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/sha2_backend_tests.rs",
+      "base_blob": "61f22aeb0a93ae5c2fe69869592efd67891bab71",
+      "current_blob": "61f22aeb0a93ae5c2fe69869592efd67891bab71",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": true,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/sha2_backend_tests.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+      "base_blob": null,
+      "current_blob": "a1ca50f68a023ce1c8d9cf62f06604900c521ca0",
+      "base_mode": null,
+      "current_mode": "100644",
+      "unchanged": false,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-release-bundle/src/pq_release.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+      "base_blob": "8c0ae5ad7e4afc69fb2b798819090eac03e34965",
+      "current_blob": "dd4e83155a2b1533c6d516908026ce159f84a5c9",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": false,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-release-bundle/src/lib.rs"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+      "base_blob": "7bbbca74ed485e37fa6e51b418e97d634fa8216b",
+      "current_blob": "73cf2a28ca16d5d1046c012c559959d831276907",
+      "base_mode": "100644",
+      "current_mode": "100644",
+      "unchanged": false,
+      "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs"
+    }
+  ],
+  "all_tree_changed_inputs": {
+    "count": 156,
+    "paths": [
+      {
+        "path": ".github/workflows/pon-legacy-reorg-cost-20261104.yml",
+        "base_blob": null,
+        "current_blob": "822a4ab34e0b88dd7fae0f136ef4a1368f8ccd49",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/.github/workflows/pon-legacy-reorg-cost-20261104.yml",
+        "status": "A"
+      },
+      {
+        "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "base_blob": "d915bcab943663e9283e1a57dd3a5ae3de226322",
+        "current_blob": "b1008dd47c5067ae4e264e048ccf0067db84f7f1",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/.github/workflows/pon-recent-batch-acceptance.yml",
+        "status": "M"
+      },
+      {
+        "path": ".github/workflows/pon-w1-transparent-profile.yml",
+        "base_blob": null,
+        "current_blob": "e135d8df0172e154d50d6dccc1f57da5a12c7266",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/.github/workflows/pon-w1-transparent-profile.yml",
+        "status": "A"
+      },
+      {
+        "path": "config/pon/pq-cross-branch-corpus-v1.json",
+        "base_blob": "a51c82eb52709ebc80474ca1386384202a611b6f",
+        "current_blob": "75718738865cd1a2bb0f1f743188e99aef3830a8",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/config/pon/pq-cross-branch-corpus-v1.json",
+        "status": "M"
+      },
+      {
+        "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "base_blob": "1915f796a335fd508d718ebf8838bf5c5130d3cc",
+        "current_blob": "41c3eb88a043970ab2e694d1e358b3d507997314",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "status": "M"
+      },
+      {
+        "path": "docs/development/specs/pon/CELL_MODEL_STORAGE_V1.md",
+        "base_blob": null,
+        "current_blob": "aa0feba9114f7f3f5866d38495c05dcbbee507d9",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/docs/development/specs/pon/CELL_MODEL_STORAGE_V1.md",
+        "status": "A"
+      },
+      {
+        "path": "docs/development/specs/pon/CELL_RETENTION_V1.md",
+        "base_blob": "c8ff6407aa440a9b104374ecc30333b22e5345df",
+        "current_blob": "b8d0734114db83ecff7407cb6f0c03d07416e91b",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/docs/development/specs/pon/CELL_RETENTION_V1.md",
+        "status": "M"
+      },
+      {
+        "path": "docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+        "base_blob": "b8ae7f292ef09de5904e0e78952d9bec9ba7ad22",
+        "current_blob": "efa3c6ca5cc7792a2491f20a11ec2a3095647266",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+        "status": "M"
+      },
+      {
+        "path": "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
+        "base_blob": null,
+        "current_blob": "ca064e50bd89b63bd656ce340ed2efd2940569fb",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
+        "status": "A"
+      },
+      {
+        "path": "docs/security/PQ_RELEASE_CURRENT_AUTHORITY_AND_TAP21_V1.md",
+        "base_blob": "48b4fc9c4c8108386490bda32258ae5fb01dbda5",
+        "current_blob": "e653efd73f7050514468809c4da3c26df9c8b195",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/docs/security/PQ_RELEASE_CURRENT_AUTHORITY_AND_TAP21_V1.md",
+        "status": "M"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/README.md",
+        "base_blob": null,
+        "current_blob": "6ef955345f36f4fca7ce901250b2abfaf911eb7e",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/README.md",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/baseline-m09-lib.log",
+        "base_blob": null,
+        "current_blob": "d39b5ce3f6fc19596efd58d9d65c974fa109ddc6",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/baseline-m09-lib.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/composition/cell-storage-composition-exact-source.json",
+        "base_blob": null,
+        "current_blob": "518a589e5a48c3fefc53602ee26a3a408cb42d03",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/composition/cell-storage-composition-exact-source.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/composition/cell-storage-composition-exact-source.log",
+        "base_blob": null,
+        "current_blob": "93c107d845452b8c3c03cc7be343e92e0127d075",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/composition/cell-storage-composition-exact-source.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/composition/cell-storage-composition-owner-doc-controls.json",
+        "base_blob": null,
+        "current_blob": "31c8be77dce41c086c20aa76d5472bfb068d7e22",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/composition/cell-storage-composition-owner-doc-controls.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/composition/cell-storage-composition-owner-doc-controls.log",
+        "base_blob": null,
+        "current_blob": "d20966d074892b57609185518aa68346ed89429a",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/composition/cell-storage-composition-owner-doc-controls.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/composition/results.json",
+        "base_blob": null,
+        "current_blob": "c2d603f11f80425121d51baef86f5943fe980327",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/composition/results.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/composition/retained-test-coverage.json",
+        "base_blob": null,
+        "current_blob": "a2f48ed76d210747ff7258ffb1a1730c7691029e",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/composition/retained-test-coverage.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/composition/source-composition-audit.json",
+        "base_blob": null,
+        "current_blob": "666af8a69a93c62bf964152601edaf6897752f9a",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/composition/source-composition-audit.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/exact-source/cell-storage-exact-source.json",
+        "base_blob": null,
+        "current_blob": "fdded9cfafdc8f895689d842643361a77c9ff3e0",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/exact-source/cell-storage-exact-source.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/exact-source/cell-storage-exact-source.log",
+        "base_blob": null,
+        "current_blob": "da2493021ae6f54dfbdd6c8ad9634636952991ee",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/exact-source/cell-storage-exact-source.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/exact-source/native-paid-storage-exact-source.json",
+        "base_blob": null,
+        "current_blob": "49e341f0c9b68f9cba2df3bf0669439e8968c42a",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/exact-source/native-paid-storage-exact-source.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/exact-source/native-paid-storage-exact-source.log",
+        "base_blob": null,
+        "current_blob": "b10e60b41cd83692316eb07cd9e968e4483f0dc2",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/exact-source/native-paid-storage-exact-source.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/final-composition/final-integrated-source-controls.json",
+        "base_blob": null,
+        "current_blob": "d3bedac058b56e8f2c3abdfae0685053f8a71b84",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/final-composition/final-integrated-source-controls.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/final-composition/final-integrated-source-controls.log",
+        "base_blob": null,
+        "current_blob": "75ff227a374408723163884b934bfc94b6de0357",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/final-composition/final-integrated-source-controls.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/final-composition/results.json",
+        "base_blob": null,
+        "current_blob": "49c53cfa1f2ec4f8abd6c040661016e0ae68c697",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/final-composition/results.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/final-composition/source-c156-composition-audit.json",
+        "base_blob": null,
+        "current_blob": "12dc0e8a67e6c37cac5443906ffda50e7c629203",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/final-composition/source-c156-composition-audit.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/final-composition/source-composition-audit.json",
+        "base_blob": null,
+        "current_blob": "2e0d2b23febf8f5410df295c52c59e7097b5cf0e",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/final-composition/source-composition-audit.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/final-composition/source-w1-composition-audit.json",
+        "base_blob": null,
+        "current_blob": "b2ccbf9bc78d08092fae5ccf2c6cdbd12e1a8b96",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/final-composition/source-w1-composition-audit.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/initial-compile-diagnostic.log",
+        "base_blob": null,
+        "current_blob": "7f540d4cbc3bacbb25452ca09d5b827cfdd9cb22",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/initial-compile-diagnostic.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/intermediate-m09-lib.log",
+        "base_blob": null,
+        "current_blob": "4299dcb5637358bc1534fe108a6f56f324bf01ed",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/intermediate-m09-lib.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/intermediate-m09-tests.log",
+        "base_blob": null,
+        "current_blob": "be71522edfbf75a54c5f8719d52f48c478fa83b8",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/intermediate-m09-tests.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/late-node-composition/initial-compile-resource-observation.json",
+        "base_blob": null,
+        "current_blob": "0363b48a989878da21f3fa76d7dee15880e4b410",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/late-node-composition/initial-compile-resource-observation.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/late-node-composition/late-node-composition-static.json",
+        "base_blob": null,
+        "current_blob": "cf0449fb7f6f1cf62835c82a604225ac0e618df4",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/late-node-composition/late-node-composition-static.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/late-node-composition/late-node-composition-static.log",
+        "base_blob": null,
+        "current_blob": "d5b0496219122dfe63e02f17b4e09b7f4c15d1cd",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/late-node-composition/late-node-composition-static.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/late-node-composition/late-node-selected-native.json",
+        "base_blob": null,
+        "current_blob": "4b8f0acca2e01d3690f4975647634929f4c62280",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/late-node-composition/late-node-selected-native.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/late-node-composition/late-node-selected-native.log",
+        "base_blob": null,
+        "current_blob": "a88cc4ec7ab2473f9d3438e03b233483628f8773",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/late-node-composition/late-node-selected-native.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/late-node-composition/results.json",
+        "base_blob": null,
+        "current_blob": "47f53c4dd8746be676c44aff201a7927e85d9d71",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/late-node-composition/results.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/late-node-composition/retry-resource-window-final.json",
+        "base_blob": null,
+        "current_blob": "46c17972f50707ae422b43330b9b9a2cba1608a9",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/late-node-composition/retry-resource-window-final.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/late-node-composition/source-composition-audit.json",
+        "base_blob": null,
+        "current_blob": "930432d33f6b9aa093bb83af680467cd6877f292",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/late-node-composition/source-composition-audit.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/node-initial-sigkill.log",
+        "base_blob": null,
+        "current_blob": "ecacaacc0221ab63beaf76710d477f28e9e087ae",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/node-initial-sigkill.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/node-single-job-retry.log",
+        "base_blob": null,
+        "current_blob": "5a1a51fbd0a306a5534a32866a76e28f91894aa9",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/node-single-job-retry.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/persistent-clippy-diagnostic.log",
+        "base_blob": null,
+        "current_blob": "404b2c117045c5c2e651e0c2b3863f62f3dfa927",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/persistent-clippy-diagnostic.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/release-cli-compile-diagnostic.log",
+        "base_blob": null,
+        "current_blob": "a9923c38df15935a70d7b663074e710f52af41f5",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/release-cli-compile-diagnostic.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/results.json",
+        "base_blob": null,
+        "current_blob": "8c0bfdb34a0413952f511210d5fd9cc9957607d1",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/results.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/retained-test-coverage.json",
+        "base_blob": null,
+        "current_blob": "1a6eb1056d586ecd789222b1218144eea7fba09d",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/retained-test-coverage.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/retention-red-empty-selector.log",
+        "base_blob": null,
+        "current_blob": "3452ef7522a855093caeed5272184c04da783bf7",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/retention-red-empty-selector.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/retention-red-exact.log",
+        "base_blob": null,
+        "current_blob": "bd0caa3d1929bdfe5f05edfa4ee9eaa32216736e",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/retention-red-exact.log",
+        "status": "A"
+      },
+      {
+        "path": "evidence/cell-storage-continuation-20261104/source-provenance.json",
+        "base_blob": null,
+        "current_blob": "a94b11366a1d4fd3d46a11e6637e4667f05c868b",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/cell-storage-continuation-20261104/source-provenance.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/joint-source-closure-20261104/README.md",
+        "base_blob": null,
+        "current_blob": "abc4ab2662a631ada12b296e7ffb1d40398bd3ca",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/joint-source-closure-20261104/README.md",
+        "status": "A"
+      },
+      {
+        "path": "evidence/joint-source-closure-20261104/measure_snapshot_payload.py",
+        "base_blob": null,
+        "current_blob": "a64af65d81d245947749f8bd0a7f1e784d58ac1f",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/joint-source-closure-20261104/measure_snapshot_payload.py",
+        "status": "A"
+      },
+      {
+        "path": "evidence/joint-source-closure-20261104/summary.json",
+        "base_blob": null,
+        "current_blob": "ee620897aeaed230d562ae07209241f89c34c96d",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/joint-source-closure-20261104/summary.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pon-quantum-event-resources-20261104/README.md",
+        "base_blob": null,
+        "current_blob": "92f6a69a3e801722e2e1958767c45b79c4643686",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pon-quantum-event-resources-20261104/README.md",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pon-quantum-event-resources-20261104/reproduction.json",
+        "base_blob": null,
+        "current_blob": "95d02fe06e8fb3cda0a3aa909b287fbbc92197b2",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pon-quantum-event-resources-20261104/reproduction.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pon-retained-runtime-readback-20261104/93e-legacy-reorg-profiling-candidate-handoff-v2.json",
+        "base_blob": null,
+        "current_blob": "f6fba73b5ad843f07d86eb943a3bb258b5a2efe7",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pon-retained-runtime-readback-20261104/93e-legacy-reorg-profiling-candidate-handoff-v2.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pon-w1-transparent-profile-20261104/README.md",
+        "base_blob": null,
+        "current_blob": "d209d9da2c0690bbe1ff5319aa4acab713d0fb20",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pon-w1-transparent-profile-20261104/README.md",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pon-w1-transparent-profile-20261104/comparison-declaration.json",
+        "base_blob": null,
+        "current_blob": "72ab3308f8ebf3794025a77cd065ad5b5d785803",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pon-w1-transparent-profile-20261104/comparison-declaration.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pon-w1-transparent-profile-20261104/comparison.json",
+        "base_blob": null,
+        "current_blob": "6f9eacdd39ba2250010cbd06a35e78ef3d907d87",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pon-w1-transparent-profile-20261104/comparison.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pon-w1-transparent-profile-20261104/controls.json",
+        "base_blob": null,
+        "current_blob": "be001963d039420b28c15b932969f99a3d664dd2",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pon-w1-transparent-profile-20261104/controls.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pon-w1-transparent-profile-20261104/native.json",
+        "base_blob": null,
+        "current_blob": "bde61e4346fe851cd68ef85cce08595067421580",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pon-w1-transparent-profile-20261104/native.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pon-w1-transparent-profile-20261104/profile.json",
+        "base_blob": null,
+        "current_blob": "9e96ee8bc4bd8676b3179d4caf379d33aa4d29ea",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pon-w1-transparent-profile-20261104/profile.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pon-w1-transparent-profile-20261104/regressions.json",
+        "base_blob": null,
+        "current_blob": "9c5c857cd2d6488375527d317b801b7169261bb5",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pon-w1-transparent-profile-20261104/regressions.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pon-w1-transparent-profile-20261104/reproduction.json",
+        "base_blob": null,
+        "current_blob": "22c2fe5341d92fbcb0156bdd9d79ee190eb01f58",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pon-w1-transparent-profile-20261104/reproduction.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pon-w1-transparent-profile-20261104/security-map.json",
+        "base_blob": null,
+        "current_blob": "0888ef42a6d71a40fc58dc67f99dae1cd501c31c",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pon-w1-transparent-profile-20261104/security-map.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pon-w1-transparent-profile-20261104/transparent.json",
+        "base_blob": null,
+        "current_blob": "edc54d3ce8c4c5c0f647d9ed8798fbbb38ef042b",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pon-w1-transparent-profile-20261104/transparent.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pon-w1-transparent-profile-20261104/validation.json",
+        "base_blob": null,
+        "current_blob": "24092128a9bb46aa456fd91f0ce7b804f4c697f7",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pon-w1-transparent-profile-20261104/validation.json",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pq-recovery-release-transport-20261104/REPRODUCE.md",
+        "base_blob": null,
+        "current_blob": "5c4a3066dbacda1249725562a605399442ee5bd6",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pq-recovery-release-transport-20261104/REPRODUCE.md",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pq-recovery-release-transport-20261104/baseline_cold_recovery.rs",
+        "base_blob": null,
+        "current_blob": "df8e35f686ac3131284b7abc65dfaac7b837277d",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pq-recovery-release-transport-20261104/baseline_cold_recovery.rs",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pq-recovery-release-transport-20261104/before_empty_head_fix.patch",
+        "base_blob": null,
+        "current_blob": "260fb86d5273b18712c6f5af16d56eec7f5365d7",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pq-recovery-release-transport-20261104/before_empty_head_fix.patch",
+        "status": "A"
+      },
+      {
+        "path": "evidence/pq-recovery-release-transport-20261104/observations.json",
+        "base_blob": null,
+        "current_blob": "d529b4b07f94a1b0cd9d0157c261a244c5471ec8",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/evidence/pq-recovery-release-transport-20261104/observations.json",
+        "status": "A"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md",
+        "base_blob": "b9a6d22205b1610d25d3d6b536b0f5e15f520715",
+        "current_blob": "3d035eb3389f677cf1c44ca0d8d860064c277e75",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md",
+        "status": "M"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/REVERSIBLE_COMPONENTS.md",
+        "base_blob": "068b2bf253470e44a668ad4232414b89bb846179",
+        "current_blob": "d05f47534804a6240c5f1f920716210f80c2caa1",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/REVERSIBLE_COMPONENTS.md",
+        "status": "M"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py",
+        "base_blob": null,
+        "current_blob": "4a91decd9ca9480be94e97a5968dd2cd036ca116",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py",
+        "status": "A"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/model_release_root.py",
+        "base_blob": null,
+        "current_blob": "1b4b4bcfff078c1ab9aa2099e7836112970dbf86",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/model_release_root.py",
+        "status": "A"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/pq_mtls_probe.c",
+        "base_blob": "2c80e77764b1ef66d2e39ed6fc062f0c69e1412d",
+        "current_blob": "20783c634dd9b52addbe4e0ecb1b7d55130f969c",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/pq_mtls_probe.c",
+        "status": "M"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/quantum_network_sim.py",
+        "base_blob": null,
+        "current_blob": "85ff6e5e4f8ae956ccd671f145357e98e705c470",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/quantum_network_sim.py",
+        "status": "A"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/quantum_oracle_resources.py",
+        "base_blob": null,
+        "current_blob": "c923cd5e5d2b3bf5aa704fec8dec7f9409297568",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/quantum_oracle_resources.py",
+        "status": "A"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/reversible_components.py",
+        "base_blob": "044d239b143a86809f1659392150698f83293171",
+        "current_blob": "721f7efbbf9a7626b7f2971bcd3e8985da79a31c",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/reversible_components.py",
+        "status": "M"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_model_release_root.py",
+        "base_blob": null,
+        "current_blob": "8e42e810e40f195175edfcb0953b1410d08cc009",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/test_model_release_root.py",
+        "status": "A"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_pq_mtls_probe.py",
+        "base_blob": "4c1ad5ac980ccaa8e08d7dd6b279ee4f82295685",
+        "current_blob": "3d02f8f0f5806273dce54cc1b4bf8e306f53c4c0",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/test_pq_mtls_probe.py",
+        "status": "M"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_pq_tls.py",
+        "base_blob": "35b3e876d0ad53c87c9f423e2941127cb7f285d4",
+        "current_blob": "791277b4694939aba4174ced87f5cb7fffc780a0",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/test_pq_tls.py",
+        "status": "M"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_quantum_network_sim.py",
+        "base_blob": null,
+        "current_blob": "5e619af46cf62501816a204f58e84d6fee8706ed",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/test_quantum_network_sim.py",
+        "status": "A"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_quantum_oracle_resources.py",
+        "base_blob": null,
+        "current_blob": "4880a5f3d04f620559a7f2fa90cde73f1a47e4ed",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/test_quantum_oracle_resources.py",
+        "status": "A"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_reversible_components.py",
+        "base_blob": "aa72e11d8453512ae4adcb2353e8dca8c65e79c2",
+        "current_blob": "4c6803d96db2eef9751e707aba044ae2f619c96b",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/test_reversible_components.py",
+        "status": "M"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/vectors/cell-model-root-v1.json",
+        "base_blob": null,
+        "current_blob": "cbabc0747dacd024fd771feb409157ae63f3c50a",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/vectors/cell-model-root-v1.json",
+        "status": "A"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/README.md",
+        "base_blob": "340837e6feea08389bf823d160f818d64c50fb4f",
+        "current_blob": "9550d89c6a0e8b65ab483efd4f39f2c16e127d5b",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/w1_hardened_verifier/README.md",
+        "status": "M"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs",
+        "base_blob": "a1886b5a52a719a945a1fd97089186f6bfed930a",
+        "current_blob": "404b9357d6c5fc0782fa15f3a28a871e73a9eb9c",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs",
+        "status": "M"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs",
+        "base_blob": null,
+        "current_blob": "8d2308d33151da6641c8798381904e95256ea55e",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs",
+        "status": "A"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock",
+        "base_blob": null,
+        "current_blob": "8e24d9743a340996ddccea81fa1a555e0daa1ac1",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock",
+        "status": "A"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml",
+        "base_blob": null,
+        "current_blob": "50443c0fbc0169c400b9106ec3a22fa069d70b3b",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml",
+        "status": "A"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-native-cost.rs",
+        "base_blob": "9c1c7228179d794de6210801d7b345feb8a97efa",
+        "current_blob": "e4a6a605fc49b4d65673643593f802091f3d75a2",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-native-cost.rs",
+        "status": "M"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+        "base_blob": "7bbbca74ed485e37fa6e51b418e97d634fa8216b",
+        "current_blob": "73cf2a28ca16d5d1046c012c559959d831276907",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+        "status": "M"
+      },
+      {
+        "path": "scripts/ci/check_pq_research_integration.py",
+        "base_blob": "226f170a164d1c7ff7dcd3385767ba78d95dfeb8",
+        "current_blob": "bdc82bfcfc292e690947575df310d15508b59d6d",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/scripts/ci/check_pq_research_integration.py",
+        "status": "M"
+      },
+      {
+        "path": "scripts/ci/ci_job.sh",
+        "base_blob": "3aa25ccde7db9fedad8b4b29c5600ef01fc38e56",
+        "current_blob": "6399f8c644395d273689ededa2c1ed99e4ae1364",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/scripts/ci/ci_job.sh",
+        "status": "M"
+      },
+      {
+        "path": "scripts/ci/test_ci_contract.py",
+        "base_blob": "359be6893f6036123d04fec33c4ecd927a9fc44c",
+        "current_blob": "3d170c8d52c17666c5a130a1f7c567711d83d6d7",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/scripts/ci/test_ci_contract.py",
+        "status": "M"
+      },
+      {
+        "path": "scripts/ci/test_pq_research_integration.py",
+        "base_blob": "746e16b06c1675305642f9ac5ce2819fafd411bd",
+        "current_blob": "9297c05140aaff653bc7ab538d245b47057d86f6",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/scripts/ci/test_pq_research_integration.py",
+        "status": "M"
+      },
+      {
+        "path": "scripts/ci/test_w1_profile_source_map.py",
+        "base_blob": null,
+        "current_blob": "8862fa5593df1097173e7e3314e66058c8b6c60b",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/scripts/ci/test_w1_profile_source_map.py",
+        "status": "A"
+      },
+      {
+        "path": "scripts/ci/test_w1_transparent_compare.py",
+        "base_blob": null,
+        "current_blob": "1006eac64bde9903fa06704fe38779e356b29ed4",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/scripts/ci/test_w1_transparent_compare.py",
+        "status": "A"
+      },
+      {
+        "path": "scripts/w1_profile_source_map.py",
+        "base_blob": null,
+        "current_blob": "bbcbd8322e2008d8dd7786ce319d0c0e2f1908f6",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/scripts/w1_profile_source_map.py",
+        "status": "A"
+      },
+      {
+        "path": "scripts/w1_transparent_compare.py",
+        "base_blob": null,
+        "current_blob": "5f8cc2291a11465c537ad7b52efccad46e9baed7",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/scripts/w1_transparent_compare.py",
+        "status": "A"
+      },
+      {
+        "path": "tests/fuzz/Cargo.lock",
+        "base_blob": "671f7bb35cc7c116eca833c14a3536a411770bd9",
+        "current_blob": "8f74aff08cea03902cbc629671a07ff2cc745725",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/tests/fuzz/Cargo.lock",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/Cargo.lock",
+        "base_blob": "fe1e6a3aee8771dd025c7e3607061c020542d852",
+        "current_blob": "17e1155502ae7a15a9eea151a045dd24df2aae50",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/Cargo.lock",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-checkpoint-store/README.md",
+        "base_blob": "8d6f95bf7070c529eb9703a299ab521114060d61",
+        "current_blob": "971c9ceb4192bffd2f1f23b89f1c520517fbebd3",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-checkpoint-store/README.md",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-checkpoint-store/src/journal_checkpoint_v1.rs",
+        "base_blob": null,
+        "current_blob": "85e768c20161ecc32064e3e253b73f2070f30583",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-checkpoint-store/src/journal_checkpoint_v1.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+        "base_blob": "7403d4b2ded74146d0a197625ff2495bce85ed69",
+        "current_blob": "8c49ef4c79b0edba265b586acf7a1a1c33ba3570",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-checkpoint-store/src/main.rs",
+        "base_blob": "160130e0346ce3e6057310e8860454cfe6d91911",
+        "current_blob": "d7d098f7249a1fc80ab84c34eb309e4f094de889",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-checkpoint-store/src/main.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs",
+        "base_blob": null,
+        "current_blob": "718adc13e4a7cf610c14cb295f4c240d0187cfe3",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-checkpoint-store/tests/cross_process.rs",
+        "base_blob": "d3fcdd9f42931b130f14638059439a3ab7183bc9",
+        "current_blob": "979f18cd43bee5480ad9b540130fd09abadd49fa",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-checkpoint-store/tests/cross_process.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+        "base_blob": "3e553781cf89fcd4dc9e7b04e9ac236d722673fd",
+        "current_blob": "d248078e438dfc89562f15bb41ac927c18559d43",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/Cargo.toml",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/bin/cell_closure/mod.rs",
+        "base_blob": "054bac05c3ef64c231e426f1c017285673a559a1",
+        "current_blob": "08036b25da06ff5cb3d2be56407b2909f3cdfee8",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/bin/cell_closure/mod.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/bin/cell_model/mod.rs",
+        "base_blob": null,
+        "current_blob": "1d02495ea2458e5b86deefdc13ed3bd104f2f447",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/bin/cell_model/mod.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+        "base_blob": "a5d1126f3a03e886543754fc3e48f5a34cd828f0",
+        "current_blob": "16f087a25f544b6ceabd6473d09cde9cf1c78520",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell.rs",
+        "base_blob": "c6e84955de66e9c47aec0fe501328bdc3323c2e1",
+        "current_blob": "cb8221affcb875b8ceaf35a438e76be0b8530eca",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/archive.rs",
+        "base_blob": null,
+        "current_blob": "e98c69245b358a8b4664776e51f6a13ec99dd6b8",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/archive.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/archive_tests.rs",
+        "base_blob": null,
+        "current_blob": "047692281ad6a3cb2d6a4e32f3bd234cbc826645",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/archive_tests.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/delta.rs",
+        "base_blob": null,
+        "current_blob": "2fcd118c33a5077aea96d1f9256db23ebec46431",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/delta.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/delta_network_tests.rs",
+        "base_blob": null,
+        "current_blob": "4aebd6c0c9191e159e0c407ee567158e633a9374",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/delta_network_tests.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/delta_tests.rs",
+        "base_blob": null,
+        "current_blob": "8ad6efcc39ecd9e328f662d9af1444738ae6a918",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/delta_tests.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+        "base_blob": "c19e1a7ab2f92d7731e97f9c8ea97b7c3afc2893",
+        "current_blob": "8924a90c99f76043ac6eed0b19b976c87f36f38a",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/diversity_tests.rs",
+        "base_blob": null,
+        "current_blob": "e34f9fcffae119300f70886a4b407e0781563673",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/discovery/diversity_tests.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs",
+        "base_blob": "af33375a9a0b126e74fb99909225f561f1404dc0",
+        "current_blob": "25a6466bb319e246968600b918f085f301514721",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/transport.rs",
+        "base_blob": "6c37cdf063f6b601bc1578445429dc10d8dc6b4f",
+        "current_blob": "890768ee9d9b1983970a44d96252bcbada8aedee",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/transport.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/selection.rs",
+        "base_blob": null,
+        "current_blob": "73bba8a4392bb666812ec14afd6e3a6f5e22c1ee",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/discovery/selection.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+        "base_blob": "d01fe3075e5e7008ec293819781c78f61abcc99a",
+        "current_blob": "79919dee6d2f19cb1a180b44d5cff0cc670ed0c6",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs",
+        "base_blob": null,
+        "current_blob": "e073b728532e695cc6d0a31d115cba15b0d8d7bd",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/model_root.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/model_root_tests.rs",
+        "base_blob": null,
+        "current_blob": "665987c07869391c8d03ed7a855925ad1834e4a5",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/model_root_tests.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+        "base_blob": "ba1e16aa810b036eb4014ad5d72973fc07ce47fb",
+        "current_blob": "801b48359d2616dba32aa16fbb6e8e12d45709b3",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/network/availability.rs",
+        "base_blob": null,
+        "current_blob": "5e432fbf30776dd562c291831b80a5d484a5505b",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/network/availability.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/network/availability/tests.rs",
+        "base_blob": null,
+        "current_blob": "84ef85a4f4dcb996e114fea79034c609252e86bf",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/network/availability/tests.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/network/dedup_tests.rs",
+        "base_blob": null,
+        "current_blob": "0dcfa296f8b6f3ef0a5f5aba4f5732aee0b1686e",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/network/dedup_tests.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/network/persistent.rs",
+        "base_blob": null,
+        "current_blob": "6ca122e4a5fbae422497caacaad229f5139d5334",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/network/persistent.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/tests.rs",
+        "base_blob": null,
+        "current_blob": "0deedf1dd4b785c089aa03516d58c05f72c4ffc6",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/network/persistent/tests.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs",
+        "base_blob": "a6c5871b68f7be4875c11017e3ccea0564923af4",
+        "current_blob": "13a85015d1627cfd5ab0c76bc01299e12ed7b53e",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/release.rs",
+        "base_blob": "2f5ef833afdec28ca669ce092aab011f7d87fa68",
+        "current_blob": "50471d017772956fbdb9e79f2fba0d72799820f8",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/release.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests.rs",
+        "base_blob": null,
+        "current_blob": "b834554444add478b11cfcb4ee0a78d1748bbb5e",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+        "base_blob": "59ef8a0d9bd4cc864d20550e7ae9e7e27bdc7888",
+        "current_blob": "2c80aac64dc33fc07edfd95a599730be7de10054",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs",
+        "base_blob": "6008644fa27a840af5aeda005481ac807b2d473b",
+        "current_blob": "6334cd9f09f82bb179832a2c8d3d09d17a754408",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+        "base_blob": "3dad5633231a5c708d0546d3e368c3cb5b348331",
+        "current_blob": "79cf35a3b999bc70aaac026dd8c3ec2a395b882d",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/tensor.rs",
+        "base_blob": null,
+        "current_blob": "dd475c8185170b1102d5a1f2350239c96317caf7",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/tensor.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/tensor_reader.rs",
+        "base_blob": null,
+        "current_blob": "80a303b71f572a5a871bcc8f65496137ba7df076",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/tensor_reader.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/tensor_tests.rs",
+        "base_blob": null,
+        "current_blob": "c2ef032912407e6a734da9f6b4b941ab3c9e568a",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/src/cell/tensor_tests.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/tests/cell_closure_cli.rs",
+        "base_blob": "45414e9c40bb4321362d05eaa84e1f9dc54a5838",
+        "current_blob": "c2af2e54dd107aafde1962feb14856e0a80e542c",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/tests/cell_closure_cli.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli.rs",
+        "base_blob": null,
+        "current_blob": "f62c57e5acd8db9482415d376e50bbc670aeaca5",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/tests/cell_tensor_cli.rs",
+        "base_blob": null,
+        "current_blob": "de57780fbed15448cbd44350661f87374eaebc3b",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-data-availability/tests/cell_tensor_cli.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "base_blob": "58ff467f2d4bf62047e676bb3aed787a2cab6938",
+        "current_blob": "f9bb1b209e708eb9a5fafe72901bbd0399ac2946",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "base_blob": "a7035222bc51cfe7f60e891398230c3179accc82",
+        "current_blob": "4056ebb4146c711e8c62588bf8e0a7881900c02b",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-pon-node/src/store.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+        "base_blob": "696455635f39f87190093920b2b5a38f4db52934",
+        "current_blob": "f33fecef7776e0f8ee98176a19e5e31d45489a83",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+        "base_blob": "a6fd9c8e4f514d19ca58295272cde7968b9b5abd",
+        "current_blob": "02673f72fac1d5d919a9604be876d4e93efd7cfe",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs",
+        "base_blob": null,
+        "current_blob": "d50f5e607f5aed311174808b980f50e95cac929f",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+        "base_blob": "ba1ebbe9e2b8f8b4d38c0d03037647d35f8b9b3b",
+        "current_blob": "6540d88dc33064ab504607bfa9b7340d42a3c585",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+        "base_blob": "435d0b6a113b42660fc6a2365fbf12881a56e022",
+        "current_blob": "4dd89831914b44a2f58c270c9726abd539620ec5",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+        "base_blob": "e4c01b37441886f1359c016efb30f190eda98aa0",
+        "current_blob": "e04a6c60dab06388aae7ee7c95c68424d90628f9",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/Cargo.toml",
+        "base_blob": "dc31859c23015b5c06de63201149e4deb28fdece",
+        "current_blob": "201c768b20e3afb44779bd6bc5da501def4241f5",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-release-bundle/Cargo.toml",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+        "base_blob": "8c0ae5ad7e4afc69fb2b798819090eac03e34965",
+        "current_blob": "dd4e83155a2b1533c6d516908026ce159f84a5c9",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-release-bundle/src/lib.rs",
+        "status": "M"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+        "base_blob": null,
+        "current_blob": "a1ca50f68a023ce1c8d9cf62f06604900c521ca0",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+        "status": "A"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "base_blob": null,
+        "current_blob": "16da9022ef7f6946f6b5ae42767d4aa0398623e7",
+        "base_mode": null,
+        "current_mode": "100644",
+        "unchanged": false,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "status": "A"
+      }
+    ],
+    "semantic_review_complete": false
+  },
+  "changed_selected_inputs": [
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "effect": "Pin set and required input closure expanded; no old pins or required paths removed in inspected JSON comparison."
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "effect": "Concurrent development-plan changes; not native execution or activation evidence."
+    },
+    {
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "effect": "Expanded ownership/source checks include entire release-bundle and checkpoint-store, Cell storage/membership/readers/transport/negative controls and recovery/release paths; retained profile paths and qualification restrictions."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "effect": "Generated distributed source inventory changed with the widened source closure; not evidence that original 885 runtime observations transfer."
+    }
+  ],
+  "profile_contract": {
+    "baseline": "LegacyMlDsa65V1, ML-DSA-65; existing TPQ1/NPQ2..6/PNQ2 bytes retained",
+    "candidates": [
+      "CandidateMlDsa65V1",
+      "CandidateMlDsa87V1"
+    ],
+    "candidate_current_effects_allowed": false,
+    "selection": "CryptoProfilePolicy receives owner-supplied trusted state. Received claims only compare against independently selected profile. This module cannot authenticate the supplied state.",
+    "historical_current_type_split": {
+      "current": "CurrentCryptoProfile",
+      "historical": "HistoricalCryptoProfile",
+      "historical_accepted_by_recheck_current": false,
+      "recheck": "Checks state_generation and current ID, then current activation selection; owner still rechecks roles/revocation/nonce/balance/FinalUse."
+    },
+    "candidate_limits": {
+      "signed_message_bytes": 65536,
+      "wire_bytes": 131072,
+      "signers": 8,
+      "cumulative_verifications": 64,
+      "cumulative_wire_bytes": 8388608
+    },
+    "candidate_budget_behavior": "CandidateVerificationBudget::reserve accumulates and latches exhaustion; the existing verifier reserves before candidate parsing/hash/signature verification and does not refund failures. This source review is not a runtime DoS benchmark.",
+    "source_refs": [
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+        "git_blob": "eb2a3e7a159398625a389d390156845401ff6dab",
+        "symbols": [
+          "CryptoProfilePolicy::from_trusted_state",
+          "CryptoProfilePolicy::select_current",
+          "CryptoProfilePolicy::select_historical",
+          "CryptoProfilePolicy::recheck_current",
+          "CandidateVerificationBudget::reserve"
+        ],
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+        "git_blob": "9ab0df1e3c69b38e290cc5f2113983f56ec23862",
+        "symbols": [
+          "CandidateProfileVerifier"
+        ],
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs"
+      }
+    ]
+  },
+  "required_roster": {
+    "path": "config/pon/pq-system-required-tests-v1.json",
+    "git_blob": "1f1b4098ac5a90238b1e56b9bb0b3d5a9daa9fe8",
+    "bytes": 5668,
+    "sha256": "e01f5dd331a160d926d029f85a24714ae5c9ccaf3067819692544c115f1a6ebb",
+    "byte_identical": true,
+    "expected_meaningful_controls": 49,
+    "unique_selectors": 49,
+    "child_process_harnesses_not_counted": [
+      "store::pq_rollback_witness::combined_tests::independent_witness_process_child"
+    ],
+    "execution_evidence_in_this_report": false
+  },
+  "source_pin_roster": {
+    "base_pinned_blobs": 410,
+    "current_pinned_blobs": 462,
+    "base_required_paths": 322,
+    "current_required_paths": 379,
+    "removed_previous_pins": [],
+    "removed_previous_required_paths": [],
+    "removal_check_method": "Prior exact JSON object/list comparison of both pinned revisions through GitHub plugin; retained here without reinterpreting as execution.",
+    "current_status": "research-only-hold-no-go",
+    "current_assertions": {
+      "production_activation": false,
+      "independent_accepted": false,
+      "native_pq_node_integrated": false,
+      "quantum_pon_hardness_qualified": false,
+      "physical_rollback_resistant": false,
+      "hepta_final_use_integrated": false,
+      "public_wan_accepted": false,
+      "allow_legacy_fallback": false
+    }
+  },
+  "dependency_changes": {
+    "workspace_manifest_unchanged": true,
+    "protocol_manifest_unchanged": true,
+    "crypto_manifest_unchanged": true,
+    "sha2_backend": "Unchanged trnm-protocol Cargo.toml: sha2 = 0.10; asm feature selected on Linux x86_64/aarch64. Actual CPU/backend execution and timing are not measured by this review.",
+    "lockfiles": [
+      {
+        "path": "trillionnium/Cargo.lock",
+        "base_package_table_entries": 180,
+        "current_package_table_entries": 180,
+        "package_name_version_source_checksum_tuples_identical": true,
+        "dependency_edges_added": {
+          "trnm-release-bundle": [
+            "trnm-crypto-primitives",
+            "trnm-protocol",
+            "zeroize"
+          ]
+        }
+      },
+      {
+        "path": "tests/fuzz/Cargo.lock",
+        "base_package_table_entries": 147,
+        "current_package_table_entries": 147,
+        "package_name_version_source_checksum_tuples_identical": true,
+        "dependency_edges_added": {
+          "trnm-data-availability": [
+            "serde",
+            "serde_json"
+          ]
+        }
+      }
+    ],
+    "manifests": [
+      {
+        "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+        "change": "serde and serde_json become normal dependencies; serde_json arbitrary_precision dev feature retained."
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/Cargo.toml",
+        "change": "Adds normal path trnm-crypto-primitives =0.1.0; dev trnm-protocol path and zeroize =1.8.2."
+      }
+    ],
+    "counts_are_cargo_metadata": false,
+    "comparison_basis": "Previously read both exact lockfiles and TOML manifests. Package-table counts do not substitute for current locked Cargo graph/build evidence."
+  },
+  "work_relation": {
+    "native_paths_unchanged": true,
+    "native_paths": [
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "base_blob": "7e6fa33cbaa50d76f1a8fd0146a44ca3623345b3",
+        "current_blob": "7e6fa33cbaa50d76f1a8fd0146a44ca3623345b3",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": true,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "base_blob": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+        "current_blob": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": true,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+      },
+      {
+        "path": "config/pon/work-profile-v1.json",
+        "base_blob": "54e43139d3691b62f76f9e8976e1d2a974e8524b",
+        "current_blob": "54e43139d3691b62f76f9e8976e1d2a974e8524b",
+        "base_mode": "100644",
+        "current_mode": "100644",
+        "unchanged": true,
+        "current_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/config/pon/work-profile-v1.json"
+      }
+    ],
+    "formal_relation": {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+      "base_blob": "7bbbca74ed485e37fa6e51b418e97d634fa8216b",
+      "current_blob": "73cf2a28ca16d5d1046c012c559959d831276907",
+      "production_prefix_before_cfg_test_unchanged": true,
+      "added_tests": [
+        "boundary_products_and_journals_agree_with_full_scalar_replay",
+        "every_noncanonical_u32_is_rejected_in_all_three_matrices",
+        "canonical_task_product_and_transcript_forgeries_match_scalar_rejection"
+      ]
+    },
+    "optional_hardened_verifier_unchanged_claim": false,
+    "runtime_execution_or_work_security_qualification": false
+  },
+  "hash_role_review": [
+    {
+      "role": "registry.crypto_profile_id",
+      "algorithm": "SHA-512",
+      "output_bytes": 64,
+      "inputs_or_encoding": "SHA512(canonical_configuration), beginning with TRNM/CryptoProfile/Configuration/v1\\0; complete descriptor and network/genesis/parameters/scope/version/activation binding",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+          "git_blob": "eb2a3e7a159398625a389d390156845401ff6dab",
+          "symbols": [
+            "CryptoProfile::bind",
+            "BoundCryptoProfile::canonical_configuration"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+        }
+      ],
+      "scope_limit": "Configuration identity, not proof that supplied protocol state is trusted or an authorization capability."
+    },
+    {
+      "role": "candidate.key_identity",
+      "algorithm": "SHA-512",
+      "output_bytes": 64,
+      "inputs_or_encoding": "SHA512(TRNM/CryptoProfile/Commitment/v1\\0 || profile_id64 || U8(hash-purpose) || BE64(byte-length) || bytes); input <= 65536 bytes",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+          "git_blob": "eb2a3e7a159398625a389d390156845401ff6dab",
+          "symbols": [
+            "CryptoProfile::hash_rule",
+            "BoundCryptoProfile::commitment",
+            "BoundCryptoProfile::candidate_wire",
+            "BoundCryptoProfile::check_candidate_wire"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+        },
+        {
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+          "git_blob": "9ab0df1e3c69b38e290cc5f2113983f56ec23862",
+          "symbols": [
+            "CandidateProfileVerifier::from_pinned_keys"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs"
+        }
+      ],
+      "scope_limit": "Actual CPQ1 key-identity helper use. Both candidate profiles remain disallowed for current effects."
+    },
+    {
+      "role": "candidate.payload",
+      "algorithm": "SHA-512",
+      "output_bytes": 64,
+      "inputs_or_encoding": "SHA512(TRNM/CryptoProfile/Commitment/v1\\0 || profile_id64 || U8(hash-purpose) || BE64(byte-length) || bytes); input <= 65536 bytes; purpose=2",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+          "git_blob": "eb2a3e7a159398625a389d390156845401ff6dab",
+          "symbols": [
+            "CryptoProfile::hash_rule",
+            "BoundCryptoProfile::commitment"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+        }
+      ],
+      "scope_limit": "Implemented candidate helper/rule only; this review does not establish production subsystem or existing commitment migration to this helper."
+    },
+    {
+      "role": "candidate.state_commitment",
+      "algorithm": "SHA-512",
+      "output_bytes": 64,
+      "inputs_or_encoding": "SHA512(TRNM/CryptoProfile/Commitment/v1\\0 || profile_id64 || U8(hash-purpose) || BE64(byte-length) || bytes); input <= 65536 bytes; purpose=3",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+          "git_blob": "eb2a3e7a159398625a389d390156845401ff6dab",
+          "symbols": [
+            "CryptoProfile::hash_rule",
+            "BoundCryptoProfile::commitment"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+        }
+      ],
+      "scope_limit": "Implemented candidate helper/rule only; this review does not establish production subsystem or existing commitment migration to this helper."
+    },
+    {
+      "role": "candidate.release_commitment",
+      "algorithm": "SHA-512",
+      "output_bytes": 64,
+      "inputs_or_encoding": "SHA512(TRNM/CryptoProfile/Commitment/v1\\0 || profile_id64 || U8(hash-purpose) || BE64(byte-length) || bytes); input <= 65536 bytes; purpose=4",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+          "git_blob": "eb2a3e7a159398625a389d390156845401ff6dab",
+          "symbols": [
+            "CryptoProfile::hash_rule",
+            "BoundCryptoProfile::commitment"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+        }
+      ],
+      "scope_limit": "Implemented candidate helper/rule only; this review does not establish production subsystem or existing commitment migration to this helper."
+    },
+    {
+      "role": "candidate.proof_commitment",
+      "algorithm": "SHA-512",
+      "output_bytes": 64,
+      "inputs_or_encoding": "SHA512(TRNM/CryptoProfile/Commitment/v1\\0 || profile_id64 || U8(hash-purpose) || BE64(byte-length) || bytes); input <= 65536 bytes; purpose=5",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+          "git_blob": "eb2a3e7a159398625a389d390156845401ff6dab",
+          "symbols": [
+            "CryptoProfile::hash_rule",
+            "BoundCryptoProfile::commitment"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+        }
+      ],
+      "scope_limit": "Implemented candidate helper/rule only; this review does not establish production subsystem or existing commitment migration to this helper."
+    },
+    {
+      "role": "candidate.address",
+      "algorithm": "SHA-512",
+      "output_bytes": 64,
+      "inputs_or_encoding": "SHA512(TRNM/CryptoProfile/Commitment/v1\\0 || profile_id64 || U8(hash-purpose) || BE64(byte-length) || bytes); input <= 65536 bytes; purpose=6",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+          "git_blob": "eb2a3e7a159398625a389d390156845401ff6dab",
+          "symbols": [
+            "CryptoProfile::hash_rule",
+            "BoundCryptoProfile::commitment"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+        }
+      ],
+      "scope_limit": "Implemented candidate helper/rule only; this review does not establish production subsystem or existing commitment migration to this helper."
+    },
+    {
+      "role": "candidate.merkle_node",
+      "algorithm": "SHA-512",
+      "output_bytes": 64,
+      "inputs_or_encoding": "SHA512(TRNM/CryptoProfile/Commitment/v1\\0 || profile_id64 || U8(hash-purpose) || BE64(byte-length) || bytes); input <= 65536 bytes; purpose=7",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+          "git_blob": "eb2a3e7a159398625a389d390156845401ff6dab",
+          "symbols": [
+            "CryptoProfile::hash_rule",
+            "BoundCryptoProfile::commitment"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+        }
+      ],
+      "scope_limit": "Implemented candidate helper/rule only; this review does not establish production subsystem or existing commitment migration to this helper."
+    },
+    {
+      "role": "candidate.proof_transcript",
+      "algorithm": "SHA-512",
+      "output_bytes": 64,
+      "inputs_or_encoding": "SHA512(TRNM/CryptoProfile/Commitment/v1\\0 || profile_id64 || U8(hash-purpose) || BE64(byte-length) || bytes); input <= 65536 bytes; purpose=8",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+          "git_blob": "eb2a3e7a159398625a389d390156845401ff6dab",
+          "symbols": [
+            "CryptoProfile::hash_rule",
+            "BoundCryptoProfile::commitment"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+        }
+      ],
+      "scope_limit": "Implemented candidate helper/rule only; this review does not establish production subsystem or existing commitment migration to this helper."
+    },
+    {
+      "role": "legacy.ml_dsa_65_key_identity",
+      "algorithm": "SHA-256",
+      "output_bytes": 32,
+      "inputs_or_encoding": "SHA256(TRNM/PoN/PQKey/v1\\0 || exact 1974-byte DER SPKI); strict length and algorithm-prefix checked first",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+          "git_blob": "07537462b6a2a57f8b29b2bb59c16862b770aa91",
+          "symbols": [
+            "ml_dsa_65_key_id_from_spki"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/pq_frame.rs"
+        }
+      ],
+      "scope_limit": "DER framing is not cryptographic key validation. Existing legacy hash is unchanged."
+    },
+    {
+      "role": "legacy.payload_commitment",
+      "algorithm": "SHA-384",
+      "output_bytes": 48,
+      "inputs_or_encoding": "SHA384(TRNM/PoN/PQAuth/ML-DSA-65/v1\\0 || payload\\0 || BE64(payload-length) || payload); payload <= 64 MiB",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+          "git_blob": "07537462b6a2a57f8b29b2bb59c16862b770aa91",
+          "symbols": [
+            "payload_commitment"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/pq_frame.rs"
+        }
+      ],
+      "scope_limit": "Existing TPQ1 rule, separate from candidate commitment helper."
+    },
+    {
+      "role": "pnq.policy_digest",
+      "algorithm": "SHA-256",
+      "output_bytes": 32,
+      "inputs_or_encoding": "pon_wire::hash(POLICY_DOMAIN, [serde_json::to_vec(PolicyRecord)]); native hash uses TRNM-PON1\\0, LE16 tag length, LE32 part lengths",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+          "git_blob": "49435a5e4dd69853a5ab5099f21963ef47899ade",
+          "symbols": [
+            "PqNetworkPolicy::new",
+            "PqNetworkPolicy::id",
+            "PqNetworkPolicy::crypto_profile_id"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs"
+        },
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+          "git_blob": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+          "symbols": [
+            "hash"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+        }
+      ],
+      "scope_limit": "Existing 32-byte policy digest remains separate from the new 64-byte crypto_profile_id descriptor."
+    },
+    {
+      "role": "m15.root_signing_digest",
+      "algorithm": "SHA-512",
+      "output_bytes": 64,
+      "inputs_or_encoding": "SHA512(complete bounded uniquely encoded root); signed application message = RELEASE_PQ_PROFILE_V1 || U8(0) || digest64",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+          "git_blob": "a1ca50f68a023ce1c8d9cf62f06604900c521ca0",
+          "symbols": [
+            "PqReleaseRootV1::signing_message"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-release-bundle/src/pq_release.rs"
+        }
+      ],
+      "scope_limit": "Project-specific message construction for pure ML-DSA-65, not HashML-DSA. M15 has not integrated crypto_profile_id."
+    },
+    {
+      "role": "m15.root_identity",
+      "algorithm": "SHA-256",
+      "output_bytes": 32,
+      "inputs_or_encoding": "SHA256(PqReleaseRootV1::signing_message()?)",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+          "git_blob": "a1ca50f68a023ce1c8d9cf62f06604900c521ca0",
+          "symbols": [
+            "PqReleaseRootV1::digest",
+            "PqReleaseRootV1::signing_message"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-release-bundle/src/pq_release.rs"
+        }
+      ],
+      "scope_limit": "ReleaseDigestV1 remains [u8;32]; candidate release SHA512 helper does not replace this identity."
+    },
+    {
+      "role": "m15.checkpoint",
+      "algorithm": "SHA-256",
+      "output_bytes": 32,
+      "inputs_or_encoding": "SHA256(TRNM/Release/PQ/Checkpoint/v1\\0 || previous32 || BE64(observed_at) || BE64(message-length) || message)",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+          "git_blob": "a1ca50f68a023ce1c8d9cf62f06604900c521ca0",
+          "symbols": [
+            "next_checkpoint"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-release-bundle/src/pq_release.rs"
+        }
+      ],
+      "scope_limit": "Durable freshness and independent recovery checkpoint remain caller responsibilities; not whole-disk rollback resistance or FinalUse."
+    },
+    {
+      "role": "m15.metadata_content",
+      "algorithm": "opaque externally supplied digest value",
+      "output_bytes": 32,
+      "inputs_or_encoding": "Nonzero 32-byte metadata.content is signed; accept() does not itself derive every role content digest",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+          "git_blob": "a1ca50f68a023ce1c8d9cf62f06604900c521ca0",
+          "symbols": [
+            "PqReleaseMetadataV1::signing_message",
+            "PqReleaseAuthorityV1::accept"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-release-bundle/src/pq_release.rs"
+        }
+      ],
+      "scope_limit": "Cannot infer one content-hash algorithm for every role from this field width or M15 source alone."
+    },
+    {
+      "role": "m15.node_software_bundle_content",
+      "algorithm": "SHA-256",
+      "output_bytes": 32,
+      "inputs_or_encoding": "accept_bundle requires metadata.content == bundle.bundle_digest.0; V0 canonical_digest uses Digest32V0::hash(b\"trnm.release.bundle.v0\", parts); domain and parts framed by BE64 lengths",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+          "git_blob": "a1ca50f68a023ce1c8d9cf62f06604900c521ca0",
+          "symbols": [
+            "PqReleaseAuthorityV1::accept_bundle",
+            "BoundPqBundleVerifierV1::verify_release_signature"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-release-bundle/src/pq_release.rs"
+        },
+        {
+          "path": "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+          "git_blob": "dd4e83155a2b1533c6d516908026ce159f84a5c9",
+          "symbols": [
+            "Digest32V0::hash",
+            "ReleaseBundleV0::canonical_digest"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-release-bundle/src/lib.rs"
+        }
+      ],
+      "scope_limit": "Only the inspected NodeSoftware bundle acceptance path establishes this V0 SHA256 content binding; other role content algorithms are not established here."
+    },
+    {
+      "role": "native_w1.challenge",
+      "algorithm": "SHA-256",
+      "output_bytes": 32,
+      "inputs_or_encoding": "pon_wire::hash(b\"challenge\", [Header::encode()]); TRNM-PON1\\0 || LE16(tag-length) || tag || repeated LE32(part-length) || part",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+          "git_blob": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+          "symbols": [
+            "hash",
+            "Header::challenge"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+        }
+      ],
+      "scope_limit": "Unchanged native consensus work input; no SHA512 challenge migration."
+    },
+    {
+      "role": "native_w1.ticket",
+      "algorithm": "SHA-256",
+      "output_bytes": 32,
+      "inputs_or_encoding": "pon_work::hash(b\"ticket\", [challenge32, trace_claim32]), with native TRNM-PON1\\0 length framing",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+          "git_blob": "7e6fa33cbaa50d76f1a8fd0146a44ca3623345b3",
+          "symbols": [
+            "hash",
+            "precheck_proof_statement",
+            "checked_proof_statement",
+            "checked_proof_inputs"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+        }
+      ],
+      "scope_limit": "Ticket admission alone never constructs VerifiedWork; complete arithmetic/transcript verification remains required. Native source unchanged."
+    },
+    {
+      "role": "registry.external_work_configuration_reference",
+      "algorithm": "SHA-512",
+      "output_bytes": 64,
+      "inputs_or_encoding": "SHA512(TRNM/CryptoProfile/ExternalWork/v1\\0 || BE64(exact configuration byte length) || exact work-profile-v1.json bytes)",
+      "source_functions": [
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+          "git_blob": "eb2a3e7a159398625a389d390156845401ff6dab",
+          "symbols": [
+            "native_work_configuration_digest",
+            "BoundCryptoProfile::commitment"
+          ],
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/59f75acd1d4261972b8aaa45e0c36259fcafd45c/trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+        }
+      ],
+      "scope_limit": "References the unchanged external work configuration. WorkChallenge/WorkTicket return WorkProfileBoundary from candidate commitment API; this is not a new work relation."
+    }
+  ],
+  "security_observation": {
+    "new_concrete_authorization_encoding_or_budget_bug_demonstrated": false,
+    "meaning": "No new such defect was established in this bounded static comparison; the core profile implementation blobs were unchanged. This is not absence-of-bugs assurance.",
+    "integration_gap": "New M15 uses a separate fixed ML-DSA-65 release suite and 32-byte SHA256 root/checkpoint identities; it is not integrated into crypto_profile_id. Generic candidate SHA512 helpers do not cover it.",
+    "all_chain_authorization_or_recovery_complete": false
+  },
+  "evidence_boundary": {
+    "retained_ad081_source": "ad081dac8d2c1bccdf463bad82b9db7bd92477d3",
+    "retained_ad081_tree": "4a552f0cf554718fae8bddd7cf1344999cb4fd29",
+    "durable_evidence_files_unchanged": true,
+    "lost_unarchived_885_logs_reconstructed": false,
+    "old_test_results_transferred_to_current": false,
+    "current_runtime_results": "Not contained in this source-comparison artifact; use separate current-validation command receipts."
+  },
+  "limitations": [
+    "This is an explicitly bounded source comparison; it is not a full repository cryptographic inventory, audit, native test result or deployment qualification.",
+    "No Cargo/native/source-gate execution is asserted by this report. Separate current-validation receipts must be read for newly executed commands.",
+    "Source identity and unchanged packages do not transfer historical binary, dependency-graph, runtime, performance, resource-consumption or physical-recovery evidence to 59f.",
+    "Candidate SHA512 rules/commitment functions for state, release, proof, address, Merkle and transcript do not establish those production consumers have migrated.",
+    "M15 metadata.content is an opaque 32-byte value for general roles. Only the inspected NodeSoftware bundle path establishes V0 SHA256 content hashing.",
+    "Caller-supplied trusted-state authenticity, durable freshness, roles, CURRENT, FinalUse, software install/activation and physical rollback resistance remain outside these helper assurances.",
+    "No uniform whole-chain quantum-security-bit claim, ML-DSA-87 production activation, independent acceptance, WAN qualification or new W1 work-security qualification is made."
+  ]
+}

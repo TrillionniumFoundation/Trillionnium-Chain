@@ -1,0 +1,20 @@
+{
+  "scope": "full-package-locked-offline-attempt",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-crypto-primitives",
+    "--lib",
+    "pon_work::rejection_cache::tests"
+  ],
+  "exit_code": 101,
+  "elapsed_seconds": 0.0916597843170166,
+  "workspace_or_pq_qualified": false,
+  "source_revision": "cea95fb44d8152a0eb1138727619fcced056f496 plus rejection-cache width patch",
+  "lockfile_changed": false
+}

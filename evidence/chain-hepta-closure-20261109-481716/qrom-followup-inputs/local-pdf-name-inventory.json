@@ -1,0 +1,21 @@
+{
+  "scope": "filename-only search; no unrelated file contents opened",
+  "command": [
+    "rg",
+    "--files",
+    "/workspace/scratch",
+    "-g",
+    "*2166*.pdf",
+    "-g",
+    "*qrom*.pdf",
+    "-g",
+    "*cdhz*.pdf",
+    "-g",
+    "*january*.pdf",
+    "-g",
+    "*march*.pdf"
+  ],
+  "returncode": 1,
+  "matches": [],
+  "stderr": ""
+}

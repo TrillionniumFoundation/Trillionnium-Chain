@@ -1,0 +1,8 @@
+tree 71953d88ccf81bab48996e4f5128f620a448fc56
+parent 225ab38e1e5f7e0852a28372bd8dd769eec1084b
+author Codex <codex@openai.com> 1794440799 -0500
+committer Codex <codex@openai.com> 1794440799 -0500
+
+chore(root): bind witnessed readback to the reviewed source snapshot
+
+Signed-off-by: Codex <codex@openai.com>

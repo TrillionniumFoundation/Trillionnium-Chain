@@ -1,0 +1,16 @@
+test_one_real_process_init_all_shapes_full_scalar_and_numpy_differential (__main__.GroupedNativeIntegrationTests.test_one_real_process_init_all_shapes_full_scalar_and_numpy_differential) ... ok
+test_real_process_hostile_frames_reject_without_success_fallback (__main__.GroupedNativeIntegrationTests.test_real_process_hostile_frames_reject_without_success_fallback) ... ok
+test_comparison_retains_ordinary_and_packed_negative_without_cross_scope_ratio (__main__.GroupedResultCheckerTests.test_comparison_retains_ordinary_and_packed_negative_without_cross_scope_ratio) ... ok
+test_context_request_order_scope_deadline_and_input_are_bound (__main__.GroupedResultCheckerTests.test_context_request_order_scope_deadline_and_input_are_bound) ... ok
+test_native_order_and_selected_readiness_metadata_cannot_be_fabricated_or_omitted (__main__.GroupedResultCheckerTests.test_native_order_and_selected_readiness_metadata_cannot_be_fabricated_or_omitted) ... ok
+test_output_duplicate_keys_missing_frames_and_unknown_schema_refuse (__main__.GroupedResultCheckerTests.test_output_duplicate_keys_missing_frames_and_unknown_schema_refuse) ... ok
+test_qualifications_sample_counts_and_numeric_aliases_refuse (__main__.GroupedResultCheckerTests.test_qualifications_sample_counts_and_numeric_aliases_refuse) ... ok
+test_rehashed_wrong_routes_groups_logits_accounting_are_rejected (__main__.GroupedResultCheckerTests.test_rehashed_wrong_routes_groups_logits_accounting_are_rejected) ... ok
+test_selected_statement_and_full_cost_scope_are_independently_checked (__main__.GroupedResultCheckerTests.test_selected_statement_and_full_cost_scope_are_independently_checked) ... ok
+test_ties_and_empty_groups_use_lowest_index_without_fake_work (__main__.GroupedResultCheckerTests.test_ties_and_empty_groups_use_lowest_index_without_fake_work) ... ok
+test_unit_claim_matches_full_independent_checks (__main__.GroupedResultCheckerTests.test_unit_claim_matches_full_independent_checks) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.283s
+
+OK

@@ -1,0 +1,22 @@
+{
+  "accepted_candidates_are_repeated_across_matched_strategies": true,
+  "cohorts": 24,
+  "complete_relation_replays": 96,
+  "controlled_cancellations": 24,
+  "independent_mining_samples": false,
+  "local_bank_extractions": 24,
+  "minimum_legal_cost_proved": false,
+  "native_admitted_blocks": 0,
+  "no_hit_cohorts": 0,
+  "original_target_accepted_candidates": 57,
+  "original_target_refusals": 39,
+  "post_first_hit_complete_attempts": 57,
+  "qualification": "HOLD_NO_GO",
+  "result": "PASS",
+  "schema": "pon-legal-optimization-observation-v1-replay",
+  "separate_replay_timing": {
+    "cpu_ns": 8677982350,
+    "wall_ns": 8701646048
+  },
+  "withheld_hits": 33
+}

@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+    "scripts/ci/test_ci_contract.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+  "elapsed_seconds": 92.5011487591546,
+  "exit_code": 0,
+  "name": "ci-contract-negative",
+  "started_at_utc": "2026-11-08T00:11:20.933350+00:00",
+  "streams": {
+    "stderr": {
+      "bytes": 18071,
+      "file": "ci-contract-negative.stderr.log",
+      "sha256": "bcf0afa52609fa06670822499e7a02e01a7fc644393da1d9e7461144b210f7ce"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "ci-contract-negative.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "test_summary_lines": [
+    "Ran 108 tests in 92.245s",
+    "OK"
+  ]
+}

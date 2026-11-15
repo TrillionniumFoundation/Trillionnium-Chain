@@ -1,0 +1,33 @@
+
+running 28 tests
+test archive::tests::bounded_archive_planner_handles_hard_batch_scale_deterministically ... ok
+test archive::tests::direct_batch_and_proof_admission_enforce_inclusive_retention ... ok
+test archive::tests::duplicate_task_id_at_distinct_heights_is_rejected_with_a_matching_root ... ok
+test archive::tests::inclusion_proof_survives_pruning_and_rejects_mutation ... ok
+test archive::tests::legal_holds_and_prepaid_extensions_fail_closed_under_pressure ... ok
+test archive::tests::maximum_prepaid_height_never_wraps_into_archive_eligibility ... ok
+test archive::tests::no_archive_batch_is_created_without_capacity_pressure ... ok
+test archive::tests::oldest_eligible_records_are_selected_deterministically ... ok
+test archive::tests::underfunded_retention_charge_is_rejected ... ok
+test archive_store::tests::archive_delete_moves_rows_and_reopen_preserves_proof ... ok
+test archive_store::tests::archive_sequence_gap_is_rejected_before_mutation ... ok
+test archive_store::tests::durable_hold_blocks_delete_before_any_archive_mutation ... ok
+test archive_store::tests::initialization_handles_long_final_names_and_concurrent_publishers ... ok
+test archive_store::tests::schema_and_archive_row_tamper_fail_closed_before_reopen_or_retry ... ok
+test archive_verifier::tests::public_batch_verifier_rejects_a_valid_root_before_retention_expires ... ok
+test archive_verifier::tests::public_inclusion_verifier_rejects_early_archive_height ... ok
+test archive_verifier::tests::public_verifiers_accept_a_planner_generated_batch ... ok
+test tests::authorization_signature_context_nonce_scope_and_budget_fail_closed ... ok
+test tests::capability_session_and_parallel_nonce_lanes_are_persistent ... ok
+test tests::committed_block_journal_covers_empty_same_block_and_tamper_boundaries ... ok
+test tests::committed_execution_height_advances_monotonically_and_resets_rate_window ... ok
+test tests::crash_outcomes_are_exact_and_third_state_is_permanently_fenced ... ok
+test tests::execution_preview_reuses_authority_and_leaves_every_logical_row_unchanged ... ok
+test tests::open_existing_requires_precreated_regular_nonsymlink_store ... ok
+test tests::schema_sidecar_row_and_journal_tamper_fail_closed_without_migration ... ok
+test tests::stale_versions_expiry_double_consumption_and_conservation_reject ... ok
+test tests::task_funded_escrow_bid_lease_and_provider_accept_are_atomic ... ok
+test tests::vector_inventory_matches_executable_negative_assertions ... ok
+
+test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.20s
+

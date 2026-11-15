@@ -1,0 +1,117 @@
+{
+  "boundaries": [
+    "Git publication permanently spends this cooperating campaign opportunity, including setup failure, abort, cancellation or missing artifact.",
+    "No job initializes, repairs, refunds or resumes a trial authority; only the precreated exact SQLite bytes are used.",
+    "All locally fetched heads/tags and their full reachable history are checked; deleted/force-erased unreachable history and GitHub pull-only refs are not proven absent.",
+    "Malicious administrators and duplicate platform delivery are outside this cooperative guard; no global identity, independent antirollback or custody claim.",
+    "Whole-job interruption may prevent collection/upload; missing terminal and cleanup observations stay unknown.",
+    "No release, CURRENT/FinalUse, independent administration, Hepta integration, adoption or reward is certified."
+  ],
+  "command": "python -I -S -B scripts/ci/test_llm_hosted_once.py",
+  "coverage": [
+    "Valid closed registration, original manifest and exact empty immutable-read SQLite authority on detached checkout",
+    "First push attempt, repository/ref/workflow/event SHA, created/deleted/forced and false-like values",
+    "Single-parent intent with one added JSON; before ancestor of source; atomic publication of unpublished source plus intent allowed",
+    "Full fetched heads/tags history rejects same-blob deletion/readdition, renamed and malformed prior markers, and reachable sibling markers",
+    "Duplicate/unknown fields, base64/size/hash drift, source closure omission/extra paths and untrusted fields rejected before imports or setup effects",
+    "Exact CPU/four-thread/ten-step strict-v1 plan and unchanged caps; numeric 4.0 does not alias integer 4",
+    "Nonempty or larger authority, wrong checkpoint, WAL/custom schema, hot registration sidecar refuse without replacement or recovery",
+    "Ignored/untracked/modified import shadows, skip-worktree/assume-unchanged, shallow/grafts/replace/alternate/partial histories and executable Git config refuse",
+    "Setup failure keeps create-only marker; second execution never reaches setup or pilot",
+    "Real bounded parent/grandchild reproduces old parent-only timeout orphan; original pilot now receives timeout=None and keeps its original phase owner",
+    "Actual nonzero child-log and exit observations retained; missing/unobserved exit or SQLite sidecar stays UNKNOWN without live recovery",
+    "Allowlisted process.log/wrapped-adapter metadata; empty logs retained; symlinks, large payloads, vanished files and malformed event preserve explicit omissions/errors",
+    "Pinned actions, read-only contents, no secret use, fixed 300-minute job bound, always collection/upload"
+  ],
+  "execution_profile": {
+    "backend": "cpu",
+    "campaign": "model-owner-completion-20261104-once-v1",
+    "dependency_lock": {
+      "path": "scripts/ci/model-runtime-cpu-requirements.txt",
+      "sha256": "178b2fe89a7bf58f2d127b195d82e4fa9b5c19d93cb3526d8789edf3df901017",
+      "size": 4678
+    },
+    "exit_observation_profile": "strict-v1",
+    "inference_budget": {
+      "rss_bytes": 8589934592,
+      "wall_seconds": 600
+    },
+    "lock_scope": "Reuses the unchanged small-control dependency closure; the lock itself is not pretrained execution evidence.",
+    "max_attempts": 1,
+    "original_pilot_subprocess_timeout": null,
+    "threads": 4,
+    "training_budget": {
+      "rss_bytes": 17179869184,
+      "wall_seconds": 1800
+    },
+    "training_steps": 10,
+    "workflow_timeout_minutes": 300
+  },
+  "frozen_source": {
+    ".github/workflows/pon-smollm-hosted-once.yml": {
+      "sha256": "694433c2b5d05eb3b0a3cc838433704a34bf88ec4700b31f5b02fc56433d5b24",
+      "size": 1985
+    },
+    "scripts/ci/llm_hosted_once.py": {
+      "sha256": "8025eba157477e42d3efa9ba6276296b47f1e7a692d6fc44f870c853f39b3906",
+      "size": 35865
+    },
+    "scripts/ci/test_llm_hosted_once.py": {
+      "sha256": "9ab052552df9f2adc295ad847fc6dbd998818b705a794b06e6245a9aea3dd58e",
+      "size": 30875
+    }
+  },
+  "observations": [
+    {
+      "errors": 0,
+      "exit_code": 0,
+      "failures": 0,
+      "log": {
+        "name": "hosted-once-tests-first.log",
+        "sha256": "2aa72d0d1571579b6ae9bcabef690fecbbcc546d939f685ed173e4d76a94434d",
+        "size": 3854
+      },
+      "name": "initial_controls",
+      "passed": 26,
+      "seconds": "50.662",
+      "skipped": 0,
+      "source_status": "historical development run; review amendments overlapped this run; not asserted as final-source verification",
+      "tests": 26
+    },
+    {
+      "errors": 0,
+      "exit_code": 0,
+      "failures": 0,
+      "log": {
+        "name": "hosted-once-tests-final.log",
+        "sha256": "3f1789cc6f9a7a5b11bc2b7f884c5abdedd9bd111c23dd0eb200357b72324d04",
+        "size": 4974
+      },
+      "name": "final_controls",
+      "passed": 33,
+      "seconds": "34.672",
+      "skipped": 0,
+      "source_status": "frozen source above",
+      "tests": 33
+    }
+  ],
+  "qualifications": {
+    "authenticated_inference_accepted": false,
+    "independent_accepted": false,
+    "prospective_accepted": false,
+    "public_network_ready": false,
+    "public_reward_eligible": false
+  },
+  "recorded_utc_ns": 1793840053894355919,
+  "schema": "trnm-hosted-once-source-controls-v1",
+  "scope": "read-only source review and disposable synthetic Git/SQLite/process controls; not hosted execution or independent custody",
+  "source_binding": "Final 33-control invocation ran after the last source edit; exclusive owner made no subsequent source edits. Exact hashes were read back after completion. Source-commit validation remains with the parent integration task.",
+  "this_validation_execution": {
+    "commit_created_in_target_repository": false,
+    "pretrained_model_run": false,
+    "production_authority_initialized": false,
+    "production_registration_created": false,
+    "pushed": false,
+    "workflow_dispatched": false
+  }
+}

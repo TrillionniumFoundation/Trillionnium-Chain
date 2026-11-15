@@ -1,0 +1,24 @@
+{
+  "actual_oid": "3f1784288462b7a308022a1f86eda25c8bd213ad",
+  "bytes": 1614210,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "3f1784288462b7a308022a1f86eda25c8bd213ad"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1614210,
+  "expected_oid": "3f1784288462b7a308022a1f86eda25c8bd213ad",
+  "finished_at": "2026-11-12T01:55:19.793316+00:00",
+  "path": "evidence/pon-w1-fresh-runtime-20261107/fresh-full/fresh-full-public-raw.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXcxLWZyZXNoLXJ1bnRpbWUtMjAyNjExMDcvZnJlc2gtZnVsbC9mcmVzaC1mdWxsLXB1YmxpYy1yYXcudGFyLmd6",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "5af276828a6674661d8e543b7f07488324f16391f94c03d2665f0515958cc0c7",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:19.762798+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

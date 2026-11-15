@@ -1,0 +1,7 @@
+{
+  "address": "127.0.0.1:39403",
+  "pid": 145788,
+  "returncode": -15,
+  "stopped": true,
+  "store": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/replica.sqlite"
+}

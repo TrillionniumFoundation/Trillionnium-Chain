@@ -1,0 +1,135 @@
+{
+  "artifacts": [
+    {
+      "bytes": 3742,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/private-runtime02-plan.json",
+      "sha256": "7815143286363d39eefa85dd882bac11b733351e2dcf1e2352c38bf3817db9f2"
+    },
+    {
+      "bytes": 19219,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_project_private_runtime_v2.py",
+      "sha256": "5b4f4d4f7a0dcde9bcba6221fc4c8fd7b92f1be05c1fd706fa0545b496c2caba"
+    },
+    {
+      "bytes": 6232,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_private_runtime_probe_v1.py",
+      "sha256": "b36333de24d3128eb619baa0cfb1417901d2b483f0e29b922cf5609d8b68bbef"
+    },
+    {
+      "bytes": 2265,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_start_private_runtime_projection_v2.py",
+      "sha256": "8e8228b6cd9d73d88d7dc7a8c5e8898707e1478f3e8ea28413d70feab35c5010"
+    },
+    {
+      "bytes": 29291,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote-private-runtime-projection02-request.json",
+      "sha256": "16dad49a3d04bebbd41b2dab67bb9f252f812e97cbd1fc7a5033bb55b161fc47"
+    },
+    {
+      "bytes": 19553,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/private-runtime02-inspection/inspection-parsed.json",
+      "sha256": "df24ed3343c2c04d84d5d0cf30d206b53f60db9111f8e34ae74ba79f4ac73f0e"
+    }
+  ],
+  "copy_and_probe_boundaries": {
+    "all_native_libraries_claimed_loaded": false,
+    "clean_child_environment_keys": [
+      "LANG",
+      "LC_ALL",
+      "TMPDIR"
+    ],
+    "copy_growth_bound_enforced": true,
+    "create_only_new_root_and_outputs": true,
+    "full_sealed_worker_import_admission_performed": false,
+    "new_payload_and_chunks_computed_from_actual_encoded_snapshot": true,
+    "no_padding_or_roster_mutation": true,
+    "observed_module_origins_and_executable_mappings_checked": true,
+    "old_and_new_members_reverified_before_and_after_probe": true,
+    "old_six_extra_files_reverified_before_and_after": true,
+    "original_contract_configure_and_verify_files_called_unchanged": true,
+    "probe_executes_held_sha_verified_raw_source": true,
+    "probe_flags": [
+      "-I",
+      "-S",
+      "-B",
+      "-X",
+      "pycache_prefix=<fresh absolute absent path>",
+      "-c",
+      "<held probe bytes>"
+    ],
+    "probe_interpreter": "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+    "probe_python_sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5",
+    "probe_timeout_seconds": 180,
+    "source_same_fd_metadata_and_digest_checked": true,
+    "unchanged_29_payload_bytes": 272530091,
+    "unchanged_29_payload_members_rehashed": true
+  },
+  "decision": "No blocking finding for the root-authorized preparation operation. This is not final runtime or model admission.",
+  "launch_payload": {
+    "cpu_quota_percent": 400,
+    "launcher_exactly_equal_to_request_code": true,
+    "nice": 10,
+    "outer_timeout_does_not_change_original_model_deadline": true,
+    "outer_timeout_seconds": 1020,
+    "preparation_timeout_seconds": 900,
+    "two_embedded_files_exactly_equal_to_reviewed_files": true
+  },
+  "projection": {
+    "all_digests_preserved_by_inverse_mapping": true,
+    "all_other_values_preserved": true,
+    "expected_map_and_snapshot_digest_fixed_before_copy": true,
+    "external_original_members_retained_as_shared_local_dependencies": 13,
+    "file_digest_count": 22435,
+    "historical_probe_map_count": 45,
+    "historical_probe_metadata_explicitly_not_a_new_observation": true,
+    "managed_inventory_count": 22421,
+    "original_extra_pyc_files_excluded_from_new_inventory_and_left_unchanged": 6,
+    "original_snapshot_sha256": "e87a3658675836c130ba2a97a805bc6d86cc435135e72f4b6e40747e9271b9eb",
+    "original_source_sha256": "fb6fe559317f7c3cd6ef504581b89e7d8229a7c700d3c71b61099a32d443cec9",
+    "original_symlinks_preserved_or_rebased": 3,
+    "path_allowlist": [
+      "prefix",
+      "stdlib_root",
+      "python.executable",
+      "files.keys",
+      "managed_inventory.items",
+      "preflight_import_probe_mapped_files.keys"
+    ],
+    "top_level_field_count": 16
+  },
+  "publication_helper_followup": {
+    "commit_or_push_present": false,
+    "coverage_and_model_raw_byte_bindings_enforced": true,
+    "file": {
+      "bytes": 17924,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/desktop_stage_publication_v1.py",
+      "sha256": "8154756bf270656d3c512e608de89fcc5036c8e3e07ef3e4849ca67fdb93d23a"
+    },
+    "fixed_old_prefix_bytes": 863,
+    "fixed_old_prefix_sha256": "a108265560d803537aac54948664f48df83ace03f9798a75aeb0c09dd0c516b6",
+    "historical_suffix_anchor_enforced": true,
+    "only_metadata_docs_and_evidence_index_staging": true,
+    "previous_prefix_boundary_finding_resolved": true,
+    "publication_executed_by_reviewer": false
+  },
+  "qualification": {
+    "all_four_gates_passed": false,
+    "full_runtime_admission_claimed": false,
+    "hepta_final_use": false,
+    "native_model_run_claimed": false,
+    "original_failures_reclassified": false,
+    "production_activation": false,
+    "projection_success_observed_in_this_record": false
+  },
+  "review_mode": "read-only static source and exact launch-payload review; no projection or model executed by reviewer",
+  "schema": "trnm.independent-private-runtime-projection-implementation-review.v1",
+  "source_commit": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "still_required_for_final_model": [
+    "Actual projection result and original/new snapshot evidence",
+    "Original source-v1 preparer actual command and output, new v2 source, fresh operation and audit",
+    "31 independent actual input pins with only declared snapshot payload changed",
+    "Actual separate full sealed runtime prepare/import/verify admission for the new input",
+    "Actual normal release ELF metadata and full tail receipts",
+    "Root-reviewed final model config bound to new inputs and all actual prerequisite hashes"
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "scope": "default-feature original release profile, selected crate unit controls only; not full suite or original confirmation campaign",
+  "source_sha256_before": {
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "9b8abe32fa33e4144b4330e146877518d410941f0c8ba333516245e46a09733a",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet.rs": "2c028480d5d4cacc51c5200779e58243c81db5c41681daabfd88c2768902f0a5",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet/tests.rs": "62162467bed8e4d89b4691dc453d1d1333b55d8ed3cc080b467b16e7c10774ec"
+  },
+  "commands": [
+    {
+      "label": "canonical-packet-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/workspace/scratch/b333277443cf/Trillionnium-Chain",
+      "started_unix": 1794729059.6870172,
+      "exit_code": 0,
+      "timed_out": false,
+      "finished_unix": 1794729059.802075,
+      "log_bytes": 180,
+      "log_sha256": "9e9d4144463e544ae14797fbc46c29aec41551f7019ee04bfd56fd0a461ed3ce"
+    },
+    {
+      "label": "canonical-packet",
+      "argv": [
+        "/home/agent/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--jobs",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::canonical_packet::tests::",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/b333277443cf/Trillionnium-Chain",
+      "started_unix": 1794729059.802419,
+      "exit_code": 101,
+      "timed_out": false,
+      "finished_unix": 1794729401.1354012,
+      "log_bytes": 7841,
+      "log_sha256": "acdc6d8e9a6f1eaab3b1ba9bf7163ac04f2e19a879ddc3f5e2635aef3145c918"
+    }
+  ],
+  "complete": false,
+  "source_sha256_after": {
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "9b8abe32fa33e4144b4330e146877518d410941f0c8ba333516245e46a09733a",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet.rs": "2c028480d5d4cacc51c5200779e58243c81db5c41681daabfd88c2768902f0a5",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet/tests.rs": "62162467bed8e4d89b4691dc453d1d1333b55d8ed3cc080b467b16e7c10774ec"
+  },
+  "source_unchanged": true,
+  "terminal": "stopped after sole original-release default-feature node lib-test rustc SIGKILL; no unit test binary and no unit tests executed",
+  "unexecuted_controls": [
+    "canonical_packet tests",
+    "input_decode_tests",
+    "pool_body_guard",
+    "canonical_streaming"
+  ],
+  "subsequent_retry": false
+}

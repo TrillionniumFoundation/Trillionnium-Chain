@@ -1,0 +1,52 @@
+{
+  "initial_diff_check_exit_code": 2,
+  "initial_log_raw_bytes": 6384,
+  "initial_log_raw_sha256": "bce8edd914ce7d8882905f39153818470142739d241c25e6df7bdaec42af3145",
+  "initial_log_stored_sha256": "1cd9674e97305136fc93ef2ea02c3873bf6d1b44839c6671e0382351cc150894",
+  "compressed_without_changing_raw_bytes": {
+    "attempt-1f7ff410/native-v3/root-owner.log": "attempt-1f7ff410/native-v3/root-owner.log.gz",
+    "attempt-1f7ff410/retained-crypto-default.log": "attempt-1f7ff410/retained-crypto-default.log.gz",
+    "attempt-1f7ff410/retained-release-default.log": "attempt-1f7ff410/retained-release-default.log.gz",
+    "attempt-a44344b2/native-v3/crypto-native.log": "attempt-a44344b2/native-v3/crypto-native.log.gz",
+    "attempt-a44344b2/native-v3/crypto-structure.log": "attempt-a44344b2/native-v3/crypto-structure.log.gz",
+    "attempt-a44344b2/native-v3/root-kernel.log": "attempt-a44344b2/native-v3/root-kernel.log.gz",
+    "attempt-a44344b2/native-v3/root-owner.log": "attempt-a44344b2/native-v3/root-owner.log.gz",
+    "attempt-a44344b2/retained-crypto-default.log": "attempt-a44344b2/retained-crypto-default.log.gz",
+    "attempt-a44344b2/retained-release-default.log": "attempt-a44344b2/retained-release-default.log.gz",
+    "authority-root-v3-continuation.patch": "authority-root-v3-continuation.patch.gz",
+    "cancellation-regression.log": "cancellation-regression.log.gz",
+    "hosted-a44344b2/selected-raw/run-1.stdout.log": "hosted-a44344b2/selected-raw/run-1.stdout.log.gz",
+    "hosted-a44344b2/selected-raw/run-2.stdout.log": "hosted-a44344b2/selected-raw/run-2.stdout.log.gz",
+    "hosted-a44344b2/selected-raw/run-3.stdout.log": "hosted-a44344b2/selected-raw/run-3.stdout.log.gz",
+    "preliminary/crypto-kernel/root-rust-v3-initial.log": "preliminary/crypto-kernel/root-rust-v3-initial.log.gz",
+    "preliminary/crypto-kernel/root-rust-v3-kernel-budget-regression-final.log": "preliminary/crypto-kernel/root-rust-v3-kernel-budget-regression-final.log.gz",
+    "preliminary/crypto-kernel/root-rust-v3-native.log": "preliminary/crypto-kernel/root-rust-v3-native.log.gz",
+    "preliminary/crypto-kernel/root-rust-v3-quorum-extra-final.log": "preliminary/crypto-kernel/root-rust-v3-quorum-extra-final.log.gz",
+    "preliminary/crypto-kernel/root-rust-v3-structural-final.log": "preliminary/crypto-kernel/root-rust-v3-structural-final.log.gz",
+    "preliminary/crypto-kernel/root-rust-v3-structural-stable.log": "preliminary/crypto-kernel/root-rust-v3-structural-stable.log.gz",
+    "preliminary/crypto-kernel/root-rust-v3-structural.log": "preliminary/crypto-kernel/root-rust-v3-structural.log.gz",
+    "preliminary/integration/preliminary-kernel-01.log": "preliminary/integration/preliminary-kernel-01.log.gz",
+    "preliminary/owner/integration-tests-v3.log": "preliminary/owner/integration-tests-v3.log.gz"
+  },
+  "auxiliary_files": [
+    {
+      "original_name": "authority-root-v3-continuation.patch",
+      "stored_path": "authority-root-v3-continuation.patch.gz",
+      "raw_bytes": 21050,
+      "raw_sha256": "9d8892d4de96edfb7ff8851b6c9a07805d147a49f652311460aba65f2fb71cd3",
+      "stored_bytes": 7418,
+      "stored_sha256": "334725d20bfb2523ebc329d85fa990eeca0ff1d5a661b566f3182f638ab2ca81",
+      "compressed": true
+    },
+    {
+      "original_name": "cancellation-regression.log",
+      "stored_path": "cancellation-regression.log.gz",
+      "raw_bytes": 533,
+      "raw_sha256": "0552168e2e3599a6047ac79ecf6ea736f8d00fdbcbb9acfb8f5eba78eba74d45",
+      "stored_bytes": 340,
+      "stored_sha256": "a80320f5bd4faf84b76994f894372920420d7d1e4259358cd2b9cd3afee4d486",
+      "compressed": true
+    }
+  ],
+  "runtime_source_changed": false
+}

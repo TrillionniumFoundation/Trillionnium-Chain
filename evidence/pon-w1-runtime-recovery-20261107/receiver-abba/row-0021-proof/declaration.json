@@ -1,0 +1,30 @@
+{
+  "cancellation_schema": "TRNM-W1-CANCELLATION-HANDOFF1",
+  "command": [
+    "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/target-native/release/w1-verify-v2",
+    "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/evidence/pon-w1-full-v2-20261105/succinct.bin",
+    "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/evidence/pon-w1-full-v2-20261105/header.bin",
+    "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin"
+  ],
+  "cwd": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo",
+  "effective_deadline_monotonic": 1150563.858641758,
+  "effective_remaining_seconds": 588.7635608920828,
+  "environment": {
+    "RAYON_NUM_THREADS": "2",
+    "RISC0_HOME": null,
+    "RUST_LOG": null
+  },
+  "explicit_environment_override_names": [],
+  "max_bytes_per_output_log": 4194304,
+  "observer_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "proc_clock_ticks_per_second": 100,
+  "proc_scope": "sampled members of the owned new session; missed short-lived or escaped-session descendants remain unmeasured; PID plus birth ticks identifies samples",
+  "resource_scope": "wait4 direct child including descendants it reaped; killed-stage CPU can be a lower bound; maxrss is largest single process, not aggregate peak",
+  "result_is_pre_handoff_snapshot": true,
+  "schema": "TRNM-W1-STAGE-MEASUREMENT3",
+  "shared_cgroup": {},
+  "started_monotonic": 1149975.095080866,
+  "started_unix_ns": 1794072309102798870,
+  "termination_grace_seconds": 5,
+  "wall_limit_seconds": 588.7639447781257
+}

@@ -407,13 +407,14 @@ fn encode_token(output: &mut Vec<u8>, token: PeerLeaseTokenV1) {
 }
 
 fn decode_token(cursor: &mut Cursor<'_>) -> Result<PeerLeaseTokenV1, PeerLeaseErrorV1> {
-    Ok(PeerLeaseTokenV1::new(
+    PeerLeaseTokenV1::from_parts(
         decode_scope(cursor)?,
         cursor.take_array()?,
         cursor.take_u64()?,
         cursor.take_u64()?,
         cursor.take_array()?,
-    ))
+    )
+    .map_err(|_| PeerLeaseErrorV1::Protocol("invalid peer-lease token"))
 }
 
 fn encode_scope(output: &mut Vec<u8>, scope: PeerLeaseScopeV1) {
@@ -563,5 +564,21 @@ mod tests {
             decode_response(&response).unwrap(),
             LeaseResponseV1::Rejected(LeaseRejectCodeV1::UnauthorizedPeer)
         );
+    }
+
+    #[test]
+    fn decoded_tokens_reuse_validated_reconstruction() {
+        for (session, generation, record_hash) in [
+            ([0; 32], 8, [5; 32]),
+            ([4; 32], 0, [5; 32]),
+            ([4; 32], 8, [0; 32]),
+        ] {
+            let token = PeerLeaseTokenV1::new(scope(), session, generation, 10_007, record_hash);
+            let response = encode_response(LeaseResponseV1::Token(token));
+            assert!(matches!(
+                decode_response(&response),
+                Err(PeerLeaseErrorV1::Protocol("invalid peer-lease token"))
+            ));
+        }
     }
 }

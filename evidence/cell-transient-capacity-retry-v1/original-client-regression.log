@@ -1,0 +1,28 @@
+
+running 2 tests
+test cell::network::serving::tests::transient_chunk_capacity_refusal_uses_one_bounded_retry ... FAILED
+test cell::network::serving::tests::transient_manifest_capacity_refusal_uses_one_bounded_retry ... FAILED
+
+failures:
+
+---- cell::network::serving::tests::transient_chunk_capacity_refusal_uses_one_bounded_retry stdout ----
+
+thread 'cell::network::serving::tests::transient_chunk_capacity_refusal_uses_one_bounded_retry' (130083) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:191:36:
+one transient refusal must allow one bounded retry: Io(Custom { kind: ConnectionReset, error: "cell request peer=127.0.0.1:42625 kind=2 phase=response-header elapsed_ms=3 os=Some(104): Connection reset by peer (os error 104)" })
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- cell::network::serving::tests::transient_manifest_capacity_refusal_uses_one_bounded_retry stdout ----
+
+thread 'cell::network::serving::tests::transient_manifest_capacity_refusal_uses_one_bounded_retry' (130089) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:191:36:
+one transient refusal must allow one bounded retry: Io(Custom { kind: ConnectionReset, error: "cell request peer=127.0.0.1:43107 kind=1 phase=response-header elapsed_ms=2 os=Some(104): Connection reset by peer (os error 104)" })
+
+
+failures:
+    cell::network::serving::tests::transient_chunk_capacity_refusal_uses_one_bounded_retry
+    cell::network::serving::tests::transient_manifest_capacity_refusal_uses_one_bounded_retry
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 135 filtered out; finished in 0.07s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (/workspace/scratch/56818e4fba76/chain-pq-target/debug/deps/trnm_data_availability-8887f2b81723546f)
+error: test failed, to rerun pass `-p trnm-data-availability --lib`

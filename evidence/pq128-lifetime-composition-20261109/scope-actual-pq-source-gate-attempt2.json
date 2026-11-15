@@ -1,0 +1,21 @@
+{
+  "label": "scope-actual-pq-source-gate-attempt2",
+  "command": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "cwd": "/workspace/scratch/678905e225be/chain-lifetime",
+  "head_before": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+  "index_diff_sha256_before": "63b13f3bcc64e81084ff393be2d04f179860773eb55129f5bdde51791bb60f5d",
+  "started_utc": "2026-11-09T13:47:44.894179+00:00",
+  "state": "completed",
+  "returncode": 0,
+  "elapsed_seconds": 0.775904594000167,
+  "finished_utc": "2026-11-09T13:47:45.670342+00:00",
+  "head_after": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+  "index_diff_sha256_after": "63b13f3bcc64e81084ff393be2d04f179860773eb55129f5bdde51791bb60f5d",
+  "stdout_bytes": 557,
+  "stdout_sha256": "15bc9cf21d11aaae5db79776671abe053525a7aa60026a98b856062ecc1d984a",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

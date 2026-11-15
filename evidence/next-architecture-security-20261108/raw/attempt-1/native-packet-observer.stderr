@@ -1,0 +1,36 @@
+   Compiling generic-array v0.14.7
+   Compiling typenum v1.20.1
+   Compiling serde_json v1.0.149
+   Compiling rusqlite v0.39.0
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.4
+   Compiling cpufeatures v0.2.17
+   Compiling rustix v1.1.4
+   Compiling sha2 v0.10.9
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/work/chain-next-architecture-security-20261108-8720/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/work/chain-next-architecture-security-20261108-8720/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/work/chain-next-architecture-security-20261108-8720/trillionnium/crates/trnm-verification-profiles)
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/chain-next-architecture-security-20261108-8720/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/work/chain-next-architecture-security-20261108-8720/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/work/chain-next-architecture-security-20261108-8720/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/work/chain-next-architecture-security-20261108-8720/trillionnium/crates/trnm-transport)
+   Compiling trnm-mempool v0.1.0 (/home/qian-qi/work/chain-next-architecture-security-20261108-8720/trillionnium/crates/trnm-mempool)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-next-architecture-security-20261108-8720/trillionnium/crates/trnm-pon-node)
+error[E0603]: constant `DEFAULT_SNAPSHOT_BYTE_LIMIT` is private
+  --> crates/trnm-pon-node/src/store/packet_observation.rs:18:15
+   |
+18 |     observer::DEFAULT_SNAPSHOT_BYTE_LIMIT;
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^ private constant
+   |
+note: the constant `DEFAULT_SNAPSHOT_BYTE_LIMIT` is defined here
+  --> crates/trnm-pon-node/src/store/growth/observer.rs:12:1
+   |
+12 | pub(super) const DEFAULT_SNAPSHOT_BYTE_LIMIT: u64 = 8 * 1024 * 1024 * 1024;
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For more information about this error, try `rustc --explain E0603`.
+error: could not compile `trnm-pon-node` (lib) due to 1 previous error

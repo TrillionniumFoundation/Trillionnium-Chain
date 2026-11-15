@@ -1,0 +1,662 @@
+{
+  "candidate": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+  "collection_complete": true,
+  "finished_utc": "2026-11-07T14:13:00.657775+00:00",
+  "runs": [
+    {
+      "artifacts": [
+        {
+          "api_digest": "sha256:19b66c295d087facb6b8f2adda92f14bee0cea1ee10718f8a2ec7cf5cbb0e5eb",
+          "bytes": 51243,
+          "entries": [
+            {
+              "bytes": 92,
+              "compressed_bytes": 81,
+              "path": "completion.log"
+            },
+            {
+              "bytes": 11101,
+              "compressed_bytes": 2594,
+              "path": "composition-example.json"
+            },
+            {
+              "bytes": 247,
+              "compressed_bytes": 179,
+              "path": "SCOPE.txt"
+            },
+            {
+              "bytes": 1726,
+              "compressed_bytes": 553,
+              "path": "ci-status.json"
+            },
+            {
+              "bytes": 6878,
+              "compressed_bytes": 1666,
+              "path": "composition-unknown.json"
+            },
+            {
+              "bytes": 3363,
+              "compressed_bytes": 1203,
+              "path": "joint-oracle-separated.json"
+            },
+            {
+              "bytes": 3364,
+              "compressed_bytes": 1213,
+              "path": "joint-oracle-alias.json"
+            },
+            {
+              "bytes": 2833,
+              "compressed_bytes": 1126,
+              "path": "joint-oracle-unknown.json"
+            },
+            {
+              "bytes": 31311,
+              "compressed_bytes": 7165,
+              "path": "lifetime.json"
+            },
+            {
+              "bytes": 349,
+              "compressed_bytes": 180,
+              "path": "named-controls-check.log"
+            },
+            {
+              "bytes": 41811,
+              "compressed_bytes": 3496,
+              "path": "named-controls.json"
+            },
+            {
+              "bytes": 20027,
+              "compressed_bytes": 3401,
+              "path": "named-controls.log"
+            },
+            {
+              "bytes": 133,
+              "compressed_bytes": 114,
+              "path": "preflight.log"
+            },
+            {
+              "bytes": 76729,
+              "compressed_bytes": 24788,
+              "path": "semantics.json"
+            },
+            {
+              "bytes": 512,
+              "compressed_bytes": 287,
+              "path": "source-after.json"
+            },
+            {
+              "bytes": 512,
+              "compressed_bytes": 287,
+              "path": "source-after.log"
+            },
+            {
+              "bytes": 512,
+              "compressed_bytes": 287,
+              "path": "source-before.json"
+            },
+            {
+              "bytes": 512,
+              "compressed_bytes": 287,
+              "path": "source-before.log"
+            }
+          ],
+          "id": 13576628790,
+          "name": "w1-qrom-closure-prospective-merge-x64-f14298a2728b22fda625267e2e4844b70f829b37-1",
+          "sha256": "19b66c295d087facb6b8f2adda92f14bee0cea1ee10718f8a2ec7cf5cbb0e5eb",
+          "zip_path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/hosted-qrom-1a14-20261107-v1/closure-artifact-13576628790.zip"
+        },
+        {
+          "api_digest": "sha256:3844129a1d26de6c957924e0f51e37c6fbb399edabd743d9f97cc7b2874c84c6",
+          "bytes": 50999,
+          "entries": [
+            {
+              "bytes": 247,
+              "compressed_bytes": 179,
+              "path": "SCOPE.txt"
+            },
+            {
+              "bytes": 1713,
+              "compressed_bytes": 514,
+              "path": "ci-status.json"
+            },
+            {
+              "bytes": 92,
+              "compressed_bytes": 81,
+              "path": "completion.log"
+            },
+            {
+              "bytes": 11101,
+              "compressed_bytes": 2594,
+              "path": "composition-example.json"
+            },
+            {
+              "bytes": 6878,
+              "compressed_bytes": 1666,
+              "path": "composition-unknown.json"
+            },
+            {
+              "bytes": 3364,
+              "compressed_bytes": 1213,
+              "path": "joint-oracle-alias.json"
+            },
+            {
+              "bytes": 3363,
+              "compressed_bytes": 1203,
+              "path": "joint-oracle-separated.json"
+            },
+            {
+              "bytes": 2833,
+              "compressed_bytes": 1126,
+              "path": "joint-oracle-unknown.json"
+            },
+            {
+              "bytes": 31311,
+              "compressed_bytes": 7165,
+              "path": "lifetime.json"
+            },
+            {
+              "bytes": 349,
+              "compressed_bytes": 180,
+              "path": "named-controls-check.log"
+            },
+            {
+              "bytes": 41811,
+              "compressed_bytes": 3496,
+              "path": "named-controls.json"
+            },
+            {
+              "bytes": 20027,
+              "compressed_bytes": 3400,
+              "path": "named-controls.log"
+            },
+            {
+              "bytes": 133,
+              "compressed_bytes": 114,
+              "path": "preflight.log"
+            },
+            {
+              "bytes": 76729,
+              "compressed_bytes": 24788,
+              "path": "semantics.json"
+            },
+            {
+              "bytes": 423,
+              "compressed_bytes": 236,
+              "path": "source-after.json"
+            },
+            {
+              "bytes": 423,
+              "compressed_bytes": 236,
+              "path": "source-after.log"
+            },
+            {
+              "bytes": 423,
+              "compressed_bytes": 236,
+              "path": "source-before.json"
+            },
+            {
+              "bytes": 423,
+              "compressed_bytes": 236,
+              "path": "source-before.log"
+            }
+          ],
+          "id": 13576264915,
+          "name": "w1-qrom-closure-head-x64-1a14f7d4826363daefac9ec10131c66d7e70ece7-1",
+          "sha256": "3844129a1d26de6c957924e0f51e37c6fbb399edabd743d9f97cc7b2874c84c6",
+          "zip_path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/hosted-qrom-1a14-20261107-v1/closure-artifact-13576264915.zip"
+        }
+      ],
+      "conclusion": "success",
+      "head_sha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "id": 128422919879,
+          "name": "W1 QROM closure (head, x64)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919996,
+          "name": "W1 QROM closure (prospective-merge, x64)",
+          "status": "completed"
+        }
+      ],
+      "label": "closure",
+      "run_id": 42379162582,
+      "status": "completed",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162582"
+    },
+    {
+      "artifacts": [
+        {
+          "api_digest": "sha256:c6655d2d8bac4d6dd03f7274f928c5cc0cac02cf22ae01ffe3a74fd58db499ff",
+          "bytes": 35647,
+          "entries": [
+            {
+              "bytes": 213,
+              "compressed_bytes": 150,
+              "path": "SCOPE.txt"
+            },
+            {
+              "bytes": 0,
+              "compressed_bytes": 2,
+              "path": "budget-hypothetical-input.log"
+            },
+            {
+              "bytes": 783,
+              "compressed_bytes": 329,
+              "path": "budget-hypothetical-input.json"
+            },
+            {
+              "bytes": 5947,
+              "compressed_bytes": 2312,
+              "path": "budget-hypothetical.json"
+            },
+            {
+              "bytes": 0,
+              "compressed_bytes": 2,
+              "path": "budget-hypothetical.log"
+            },
+            {
+              "bytes": 3947,
+              "compressed_bytes": 1483,
+              "path": "budget-unknown.json"
+            },
+            {
+              "bytes": 0,
+              "compressed_bytes": 2,
+              "path": "budget-unknown.log"
+            },
+            {
+              "bytes": 2430,
+              "compressed_bytes": 750,
+              "path": "ci-status.json"
+            },
+            {
+              "bytes": 88,
+              "compressed_bytes": 77,
+              "path": "ci-status.log"
+            },
+            {
+              "bytes": 69290,
+              "compressed_bytes": 15079,
+              "path": "implementation.json"
+            },
+            {
+              "bytes": 0,
+              "compressed_bytes": 2,
+              "path": "implementation.log"
+            },
+            {
+              "bytes": 40632,
+              "compressed_bytes": 2712,
+              "path": "named-tests.json"
+            },
+            {
+              "bytes": 14506,
+              "compressed_bytes": 2422,
+              "path": "named-tests.log"
+            },
+            {
+              "bytes": 133,
+              "compressed_bytes": 114,
+              "path": "preflight.log"
+            },
+            {
+              "bytes": 14,
+              "compressed_bytes": 16,
+              "path": "python-version.txt"
+            },
+            {
+              "bytes": 124,
+              "compressed_bytes": 98,
+              "path": "report-scopes.log"
+            },
+            {
+              "bytes": 10677,
+              "compressed_bytes": 2261,
+              "path": "required-tests.json"
+            },
+            {
+              "bytes": 512,
+              "compressed_bytes": 287,
+              "path": "source-after.json"
+            },
+            {
+              "bytes": 512,
+              "compressed_bytes": 287,
+              "path": "source-after.log"
+            },
+            {
+              "bytes": 512,
+              "compressed_bytes": 287,
+              "path": "source-before.json"
+            },
+            {
+              "bytes": 512,
+              "compressed_bytes": 287,
+              "path": "source-before.log"
+            },
+            {
+              "bytes": 12245,
+              "compressed_bytes": 868,
+              "path": "test_w1_control_tree_audit.json"
+            },
+            {
+              "bytes": 3750,
+              "compressed_bytes": 426,
+              "path": "test_w1_fri_transcript_audit.json"
+            },
+            {
+              "bytes": 6742,
+              "compressed_bytes": 620,
+              "path": "test_w1_qrom_conditional_budget.json"
+            },
+            {
+              "bytes": 9276,
+              "compressed_bytes": 689,
+              "path": "test_w1_qrom_implementation_audit.json"
+            },
+            {
+              "bytes": 6625,
+              "compressed_bytes": 569,
+              "path": "test_w1_qrom_workflow_gate.json"
+            }
+          ],
+          "id": 13577200111,
+          "name": "w1-qrom-implementation-prospective-merge-x64-f14298a2728b22fda625267e2e4844b70f829b37-1",
+          "sha256": "c6655d2d8bac4d6dd03f7274f928c5cc0cac02cf22ae01ffe3a74fd58db499ff",
+          "zip_path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/hosted-qrom-1a14-20261107-v1/implementation-artifact-13577200111.zip"
+        },
+        {
+          "api_digest": "sha256:65eae425778fc7f453781a8dc2183187dae3499efc323ed35c37ed6ce9a439b0",
+          "bytes": 35406,
+          "entries": [
+            {
+              "bytes": 213,
+              "compressed_bytes": 150,
+              "path": "SCOPE.txt"
+            },
+            {
+              "bytes": 783,
+              "compressed_bytes": 329,
+              "path": "budget-hypothetical-input.json"
+            },
+            {
+              "bytes": 0,
+              "compressed_bytes": 2,
+              "path": "budget-hypothetical-input.log"
+            },
+            {
+              "bytes": 5947,
+              "compressed_bytes": 2312,
+              "path": "budget-hypothetical.json"
+            },
+            {
+              "bytes": 0,
+              "compressed_bytes": 2,
+              "path": "budget-hypothetical.log"
+            },
+            {
+              "bytes": 3947,
+              "compressed_bytes": 1483,
+              "path": "budget-unknown.json"
+            },
+            {
+              "bytes": 0,
+              "compressed_bytes": 2,
+              "path": "budget-unknown.log"
+            },
+            {
+              "bytes": 2417,
+              "compressed_bytes": 714,
+              "path": "ci-status.json"
+            },
+            {
+              "bytes": 88,
+              "compressed_bytes": 77,
+              "path": "ci-status.log"
+            },
+            {
+              "bytes": 69290,
+              "compressed_bytes": 15079,
+              "path": "implementation.json"
+            },
+            {
+              "bytes": 0,
+              "compressed_bytes": 2,
+              "path": "implementation.log"
+            },
+            {
+              "bytes": 40632,
+              "compressed_bytes": 2712,
+              "path": "named-tests.json"
+            },
+            {
+              "bytes": 14506,
+              "compressed_bytes": 2421,
+              "path": "named-tests.log"
+            },
+            {
+              "bytes": 133,
+              "compressed_bytes": 114,
+              "path": "preflight.log"
+            },
+            {
+              "bytes": 14,
+              "compressed_bytes": 16,
+              "path": "python-version.txt"
+            },
+            {
+              "bytes": 124,
+              "compressed_bytes": 98,
+              "path": "report-scopes.log"
+            },
+            {
+              "bytes": 10677,
+              "compressed_bytes": 2261,
+              "path": "required-tests.json"
+            },
+            {
+              "bytes": 423,
+              "compressed_bytes": 236,
+              "path": "source-after.json"
+            },
+            {
+              "bytes": 423,
+              "compressed_bytes": 236,
+              "path": "source-after.log"
+            },
+            {
+              "bytes": 423,
+              "compressed_bytes": 236,
+              "path": "source-before.json"
+            },
+            {
+              "bytes": 423,
+              "compressed_bytes": 236,
+              "path": "source-before.log"
+            },
+            {
+              "bytes": 12245,
+              "compressed_bytes": 868,
+              "path": "test_w1_control_tree_audit.json"
+            },
+            {
+              "bytes": 3750,
+              "compressed_bytes": 426,
+              "path": "test_w1_fri_transcript_audit.json"
+            },
+            {
+              "bytes": 6742,
+              "compressed_bytes": 620,
+              "path": "test_w1_qrom_conditional_budget.json"
+            },
+            {
+              "bytes": 9276,
+              "compressed_bytes": 689,
+              "path": "test_w1_qrom_implementation_audit.json"
+            },
+            {
+              "bytes": 6625,
+              "compressed_bytes": 569,
+              "path": "test_w1_qrom_workflow_gate.json"
+            }
+          ],
+          "id": 13576214983,
+          "name": "w1-qrom-implementation-head-x64-1a14f7d4826363daefac9ec10131c66d7e70ece7-1",
+          "sha256": "65eae425778fc7f453781a8dc2183187dae3499efc323ed35c37ed6ce9a439b0",
+          "zip_path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/hosted-qrom-1a14-20261107-v1/implementation-artifact-13576214983.zip"
+        }
+      ],
+      "conclusion": "success",
+      "head_sha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "id": 128422918978,
+          "name": "W1 QROM implementation (head, x64)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919084,
+          "name": "W1 QROM implementation (prospective-merge, x64)",
+          "status": "completed"
+        }
+      ],
+      "label": "implementation",
+      "run_id": 42379162380,
+      "status": "completed",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162380"
+    },
+    {
+      "artifacts": [],
+      "conclusion": null,
+      "head_sha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "id": 128422919456,
+          "name": "protocol-contract",
+          "status": "completed"
+        },
+        {
+          "conclusion": null,
+          "id": 128422919644,
+          "name": "rust-baseline shard (runtime)",
+          "status": "in_progress"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919648,
+          "name": "W1 actual reuse V3 (x64, head)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919664,
+          "name": "prospective Rust shard (quality)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919672,
+          "name": "repository-truth",
+          "status": "completed"
+        },
+        {
+          "conclusion": null,
+          "id": 128422919683,
+          "name": "prospective Rust shard (runtime)",
+          "status": "in_progress"
+        },
+        {
+          "conclusion": "failure",
+          "id": 128422919693,
+          "name": "cross-arch-cost (x64)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919741,
+          "name": "fuzz-smoke",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919744,
+          "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "id": 128422919765,
+          "name": "external-evidence-contract",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919768,
+          "name": "W1 actual reuse V3 (arm64, head)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "id": 128422919834,
+          "name": "prospective-merge (protocol-contract)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "id": 128422919836,
+          "name": "cross-arch-cost (arm64)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919844,
+          "name": "rust-baseline shard (quality)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919848,
+          "name": "prospective-merge (fuzz-smoke)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "id": 128422919867,
+          "name": "prospective-merge (external-evidence-contract)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919898,
+          "name": "W1 actual reuse V3 (x64, prospective-merge)",
+          "status": "completed"
+        },
+        {
+          "conclusion": null,
+          "id": 128422919976,
+          "name": "prospective-merge (repository-truth)",
+          "status": "in_progress"
+        },
+        {
+          "conclusion": "success",
+          "id": 128424500636,
+          "name": "cross-arch-cost-consistency",
+          "status": "completed"
+        }
+      ],
+      "label": "required-baseline",
+      "run_id": 42379162489,
+      "status": "in_progress",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162489"
+    }
+  ],
+  "schema": "TRNM-W1-QROM-HOSTED-COLLECTION1",
+  "started_utc": "2026-11-07T14:12:10.319769+00:00"
+}

@@ -1,0 +1,125 @@
+{
+  "schema": "b5bb-f0-growth-test-coverage-v1",
+  "head": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+  "run_id": 41964674522,
+  "job_id": 127038806677,
+  "artifact_id": 13386124417,
+  "artifact_zip_sha256": "c39004a545404871bc04a58edd769d339319a8ec41ee1e806f3507e54317832d",
+  "overall_job_conclusion": "failure",
+  "build_command": [
+    "/home/runner/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--offline",
+    "--locked",
+    "--release",
+    "--jobs",
+    "2",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--test",
+    "public_v3_multiprocess",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "build_returncode": 0,
+  "build_complete_success": true,
+  "source_controls": [
+    {
+      "file": "source-control-0.step.json",
+      "sha256": "ba17eb7b7984a47b962256e7b4fff1e2e1d88a69ec9346805f27c1383bd0fbb5",
+      "command": [
+        "/home/runner/work/_temp/pon-fixed-host-root-f0-41964674522-1/prepared/public_v3_multiprocess.bin",
+        "--exact",
+        "phase_host::separate_broker_scope_clears_on_unwind_and_refuses_missing_actors",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 0,
+      "complete_success": true
+    },
+    {
+      "file": "source-control-1.step.json",
+      "sha256": "bcdc2d9e5b2fa179da8f22c6819614a0419b8b1237f6687a1a2a5c6a65208e98",
+      "command": [
+        "/home/runner/work/_temp/pon-fixed-host-root-f0-41964674522-1/prepared/public_v3_multiprocess.bin",
+        "--exact",
+        "root_phase_host::fixed_root_denominators_retain_all_missing_failed_and_duplicate_rounds",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 0,
+      "complete_success": true
+    },
+    {
+      "file": "source-control-2.step.json",
+      "sha256": "4cb5d5dac4344baecd3f4359a13bcdab91754ba4887692761d77190d271cee2c",
+      "command": [
+        "/home/runner/work/_temp/pon-fixed-host-root-f0-41964674522-1/prepared/public_v3_multiprocess.bin",
+        "--exact",
+        "root_phase_host::fixed_root_proc_identity_requires_exact_pid_and_start_despite_command_parentheses",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 0,
+      "complete_success": true
+    },
+    {
+      "file": "source-control-3.step.json",
+      "sha256": "db18b1dfa4d3237efe9eae23e169983c68fd1b735bd019153dcd640b22b410fd",
+      "command": [
+        "/home/runner/work/_temp/pon-fixed-host-root-f0-41964674522-1/prepared/public_v3_multiprocess.bin",
+        "--exact",
+        "root_phase_host::fixed_root_four_second_slo_cannot_remove_queue_or_prior_round_delay",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 0,
+      "complete_success": true
+    },
+    {
+      "file": "source-control-4.step.json",
+      "sha256": "2a2e3d65a9a91b2d01540bae2ea6538bd91ecbd6b0dcf680ed668427f1efdb03",
+      "command": [
+        "/home/runner/work/_temp/pon-fixed-host-root-f0-41964674522-1/prepared/public_v3_multiprocess.bin",
+        "--exact",
+        "root_phase_host::fixed_root_job_requires_its_exact_profile_and_complete_workload",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 0,
+      "complete_success": true
+    },
+    {
+      "file": "source-control-5.step.json",
+      "sha256": "9448f8fe8ef2c5ee23aee8cc89c6e5b5f65bf054fbf2e6f6af2646b8e49d24cc",
+      "command": [
+        "/home/runner/work/_temp/pon-fixed-host-root-f0-41964674522-1/prepared/public_v3_multiprocess.bin",
+        "--exact",
+        "root_phase_host::controller_resources::fixed_root_controller_resource_parser_rejects_missing_duplicate_and_unknown_counters",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 0,
+      "complete_success": true
+    },
+    {
+      "file": "source-control-6.step.json",
+      "sha256": "55b5b1196ccd0fc0edd69b4d06c039bdf415224a9af45583b342ed072aeb4460",
+      "command": [
+        "/home/runner/work/_temp/pon-fixed-host-root-f0-41964674522-1/prepared/public_v3_multiprocess.bin",
+        "--exact",
+        "root_phase_host::controller_resources::fixed_root_controller_resource_interval_rejects_rewind_and_lifetime_peak_as_delta",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 0,
+      "complete_success": true
+    }
+  ],
+  "new_growth_persistence_test_coverage": false,
+  "b1_account_prefix_test_coverage": false,
+  "scope": "The seven existing public_v3_multiprocess source-control selectors are not the new Growth persistence integration tests or the account-prefix library test. Actual release test-binary build is observed; no new-test PASS, Host gate closure or rollout qualification is inferred."
+}

@@ -1,0 +1,174 @@
+{
+  "ancestor_execution_transferred": false,
+  "archival_conversion": {
+    "change": "archive paths refer to checkpoint root; full job logs stored as reversible gzip with decoded-byte hashes; evidence values unchanged",
+    "original_readback_json_bytes": 5472,
+    "original_readback_json_sha256": "0f68811f6fd574eaf8a1a789da558466b74ca393e8d87c151cdb81227e999bcc"
+  },
+  "authority": "DENY_ALL",
+  "business": {
+    "all_command_output_bytes_verified": true,
+    "artifact": {
+      "bytes": 41847,
+      "id": 13822594314,
+      "path": "artifacts/cell-learning-business-readback-9d4.zip",
+      "sha256": "fddefc1fbd3005342c98b9c17fbebda5d64b0c2522a136134255380e4057de3c"
+    },
+    "conclusion": "success",
+    "controls": 144,
+    "job_id": 130267834428,
+    "original_material_readbacks": 2,
+    "raw_log": {
+      "bytes": 25503,
+      "decoded_bytes": 159403,
+      "decoded_path": "job-130267834428.log",
+      "decoded_sha256": "90315415193cc6d4fd39acdbe5c8318a1c14fb335dbe17df4b163339d7027945",
+      "encoding": "gzip",
+      "path": "logs/job-130267834428.log.gz",
+      "sha256": "22301b80892a40b562ecd8a894a0404c423ea3e81ec9afb0487b5e4f1f3c08af",
+      "source_id": "github-job-log-130267834428"
+    },
+    "readback_results": [
+      {
+        "authority": "DENY_ALL",
+        "hepta_final_use_accepted": false,
+        "independent_consumer_verified": false,
+        "label": "original-adopt-v1",
+        "next_use_provenance": "SAME_ORIGINAL_ACTOR_DISTINCT_RUN_ONLY",
+        "qualification": "HOLD_NO_GO",
+        "source_execution_authenticated": false
+      },
+      {
+        "authority": "DENY_ALL",
+        "hepta_final_use_accepted": false,
+        "independent_consumer_verified": false,
+        "label": "original-no-update-v9",
+        "next_use_provenance": "SAME_ORIGINAL_ACTOR_DISTINCT_RUN_ONLY",
+        "qualification": "HOLD_NO_GO",
+        "source_execution_authenticated": false
+      }
+    ],
+    "run_id": 42941133593,
+    "source_before_after": [
+      {
+        "base": null,
+        "candidate": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2552886421,
+        "tracked_entries": 27994,
+        "tracked_worktree_verified": true
+      },
+      {
+        "base": null,
+        "candidate": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2552886421,
+        "tracked_entries": 27994,
+        "tracked_worktree_verified": true
+      }
+    ]
+  },
+  "checkpoint_path_base": "evidence/nextuse-final-9d4-20261111",
+  "final_native_selector_artifact_upload_success_not_yet_observed": true,
+  "head": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+  "qualification": "HOLD_NO_GO",
+  "schema": "trnm-pr892-final-business-corpus-observation-v1",
+  "throughput_source_controls": {
+    "artifact": {
+      "bytes": 146047,
+      "id": 13823292116,
+      "path": "artifacts/throughput-evidence-9d4.zip",
+      "sha256": "df430fa0d28359e45bf1387872a0535c4ef38e62a24b513557c64d2ca15cefbb"
+    },
+    "conclusion": "success",
+    "controls": [
+      109,
+      26,
+      32,
+      3,
+      8,
+      43,
+      79
+    ],
+    "inspector_original_stdout": {
+      "canonical_default_provider_contract_checked": true,
+      "canonical_pnq2_contract_checked": true,
+      "continuous_npq6_combination_accepted": false,
+      "cryptographic_acceptance": false,
+      "exact_source_blobs": 1079,
+      "legacy_qtx1_optional_adapter_contract_checked": true,
+      "native_transfer_account_contract_checked": true,
+      "native_transport_contract_checked": true,
+      "node_activated": false,
+      "production_confidentiality_accepted": false,
+      "schema": "trnm-pq-cross-branch-check-v1",
+      "status": "HOLD_NO_GO",
+      "upstream_heads": 6,
+      "whole_native_authorization_migrated": false
+    },
+    "job_id": 130267871370,
+    "raw_log": {
+      "bytes": 37067,
+      "decoded_bytes": 222961,
+      "decoded_path": "job-130267871370.log",
+      "decoded_sha256": "5059bcb80a9c941a0a0c4151c11aecf3ff2a42be0da92c014b704e07327b1fd5",
+      "encoding": "gzip",
+      "path": "logs/job-130267871370.log.gz",
+      "sha256": "3d9da4f27befaf7a2f9454ebb0e32cbd3158304b4ec16a2c60aff1224ad225fe",
+      "source_id": "github-job-log-130267871370"
+    },
+    "reproducer_summary": {
+      "fresh_native_executions_by_reproducer": 0,
+      "historical_record_readbacks": 3,
+      "new_native_record_readbacks": 1,
+      "original_pressure_gate": "NOT_RUN",
+      "production_activation": false,
+      "qualification": "HOLD_NO_GO",
+      "qualified_confirmed_tps": null,
+      "qualified_wan_tps": null,
+      "reports_match_retained_bytes": true,
+      "reproductions": 4,
+      "schema": "trnm-throughput-reproduction-v1"
+    },
+    "run_id": 42941133277,
+    "source_before_after": [
+      {
+        "base": null,
+        "candidate": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2552886421,
+        "tracked_entries": 27994,
+        "tracked_worktree_verified": true
+      },
+      {
+        "base": null,
+        "candidate": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2552886421,
+        "tracked_entries": 27994,
+        "tracked_worktree_verified": true
+      }
+    ]
+  },
+  "tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0"
+}

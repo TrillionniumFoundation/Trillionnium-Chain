@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/home/qian-qi/chain-pq-a418-final-ci-tools/deny-0.20.2/bin/cargo-deny",
+    "--version"
+  ],
+  "cargo_net_offline": "true",
+  "elapsed_seconds": 0.004577534971758723,
+  "id": "cargo-deny-version",
+  "returncode": 0,
+  "stderr": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/cargo-deny-version.stderr",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/cargo-deny-version.stdout",
+  "stdout_sha256": "1758f5ea93d8ad3585079f05c19358b7bb969cce1bf6c7bdab6659a8cd1ef6b8"
+}

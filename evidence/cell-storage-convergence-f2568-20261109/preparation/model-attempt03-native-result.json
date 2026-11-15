@@ -1,0 +1,211 @@
+{
+  "actual_next_use": {
+    "authority": {
+      "hepta_final_use": false,
+      "independent_accepted": false,
+      "installation_authorized": false,
+      "prospective_accepted": false,
+      "public_reward_eligible": false,
+      "selection_authorized": false
+    },
+    "connector_complete": true,
+    "content": "3deeea3c7faef43274e2fb36cec77b3f84efcf9f550382dc8984ea6860f1007b6a3e80c29a51e8e280bb5962420773062aa1272a0974f77e7ee9524a588cad98",
+    "descriptor": "d5f37179922db42ca15a6a25321b3f3b3c25a2ec519deb631b7cb64a69c87bf1f8a6e67768193c7d964ba65bdbccf94dc438e60e3c3f7734a5e1f6a4d9455ddf",
+    "failures": [],
+    "interpreter_and_native_dependencies": "original independently pinned host snapshot; not sealed transport",
+    "observations": 2,
+    "schema": "trnm.cell-sealed-research-next-use.v1",
+    "supervisor": {
+      "budget": {
+        "rss_bytes": 8589934592,
+        "wall_seconds": 290
+      },
+      "child_cpu_ns": 8828710000,
+      "child_spawned": true,
+      "cleanup_method": "wait4",
+      "cpu_scope": "Exact owned-child Linux wait4 user-plus-system CPU; includes inherited waited-descendant accounting",
+      "exit_code": 0,
+      "memory_scope": "sampled_peak_rss_bytes is direct-child 50ms RSS; waited_child_peak_rss_bytes is exact owned-child Linux wait4 ru_maxrss in KiB times 1024, a maximum single-process high-water with inherited waited-descendant accounting; neither is simultaneous process-tree RSS",
+      "observed_wall_ns": 7894867610,
+      "observer_cpu_ns": 64760133,
+      "outcome": "success",
+      "owned_child_echild_observed": false,
+      "owned_child_exit_observed": true,
+      "owned_child_reap_resolved": true,
+      "rss_observation_gaps": [
+        {
+          "after": {
+            "error": "pidfd-coordinate-unavailable",
+            "owned_pid": 2500269,
+            "parent_nspid": [
+              2500260
+            ],
+            "pidfd_nspid": [
+              -1
+            ],
+            "pidfd_ready": true,
+            "pidfd_visible_pid": -1
+          },
+          "at_wall_ns": 7862899796,
+          "before": {
+            "child": {
+              "NSpid": "2500269",
+              "PPid": "2500260",
+              "Pid": "2500269",
+              "State": "Z (zombie)",
+              "Threads": "2",
+              "VmRSS": null,
+              "VmSize": null
+            },
+            "exit_cleanup_proof": {
+              "kernel_release": "7.0.0-38-generic",
+              "observed_at_monotonic_ns": 1235430524035838,
+              "owned_pid": 2500269,
+              "pidfd_nspid": [
+                2500269
+              ],
+              "pidfd_visible_pid": 2500269,
+              "rss_sample_produced": false,
+              "schema": "linux-owned-thread-group-exit-cleanup-v1",
+              "threads": [
+                {
+                  "flags": 4227084,
+                  "start_time_ticks": 123542266,
+                  "state": "Z",
+                  "tid": 2500269
+                },
+                {
+                  "flags": 4195404,
+                  "start_time_ticks": 123542941,
+                  "state": "R",
+                  "tid": 2500362
+                }
+              ]
+            },
+            "owned_pid": 2500269,
+            "owned_threads": [
+              {
+                "NSpid": "2500269",
+                "NStgid": "2500269",
+                "PPid": "2500260",
+                "Pid": "2500269",
+                "State": "Z (zombie)",
+                "Tgid": "2500269",
+                "VmRSS": null,
+                "VmSize": null
+              },
+              {
+                "NSpid": "2500362",
+                "NStgid": "2500269",
+                "PPid": "2500260",
+                "Pid": "2500362",
+                "State": "R (running)",
+                "Tgid": "2500269",
+                "VmRSS": null,
+                "VmSize": null
+              }
+            ],
+            "parent_nspid": [
+              2500260
+            ],
+            "pidfd_identity_changed_during_read": false,
+            "pidfd_nspid": [
+              2500269
+            ],
+            "pidfd_ready": false,
+            "pidfd_visible_pid": 2500269
+          },
+          "reconciliation": {
+            "absolute_wall_deadline_ns": 1235712660485856,
+            "elapsed_ns": 31103427,
+            "exit_cleanup_proof": {
+              "kernel_release": "7.0.0-38-generic",
+              "observed_at_monotonic_ns": 1235430524214191,
+              "owned_pid": 2500269,
+              "pidfd_nspid": [
+                2500269
+              ],
+              "pidfd_visible_pid": 2500269,
+              "rss_sample_produced": false,
+              "schema": "linux-owned-thread-group-exit-cleanup-v1",
+              "threads": [
+                {
+                  "flags": 4227084,
+                  "start_time_ticks": 123542266,
+                  "state": "Z",
+                  "tid": 2500269
+                },
+                {
+                  "flags": 4195404,
+                  "start_time_ticks": 123542941,
+                  "state": "R",
+                  "tid": 2500362
+                }
+              ]
+            },
+            "initial_reap": "live",
+            "mode": "kernel-exit-cleanup",
+            "pidfd_ready_after_wait": true,
+            "terminal_reap": "terminal",
+            "wait_deadline_ns": 1235712660485856,
+            "wait_polls": 1
+          }
+        }
+      ],
+      "sample_interval_ms": 50,
+      "sampled_peak_rss_bytes": 1415892992,
+      "stop_reason": null,
+      "terminal_reconciliation_profile": "linux-held-pidfd-irreversible-exit-v1",
+      "waited_child_observation_error": null,
+      "waited_child_peak_rss_bytes": 1468784640,
+      "waited_child_reaped": true
+    }
+  },
+  "cold_restore": {
+    "actual_target_readback": true,
+    "anchored_reopen": true,
+    "consumer_chunks": 95,
+    "m12_funding_admitted": false,
+    "retention_heights_are_research_terms": true,
+    "source_cache_absent": true
+  },
+  "handoff": {
+    "descriptor": "d5f37179922db42ca15a6a25321b3f3b3c25a2ec519deb631b7cb64a69c87bf1f8a6e67768193c7d964ba65bdbccf94dc438e60e3c3f7734a5e1f6a4d9455ddf",
+    "environment_bytes": 8079612,
+    "kernel_descriptors": 30,
+    "model_bytes": 272189990,
+    "signer_key_id": "d6b10badb453b1e7633e8f690497b2a67252906c3569db46446af91c79c588ca",
+    "single_operator_research_key": true,
+    "worker_sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+  },
+  "hepta_final_use": false,
+  "independent_operators": false,
+  "input": {
+    "independent_input_pins": true,
+    "manifest_count": 30,
+    "payload_bytes": 280269602,
+    "tcv1": "ad3fc8aa214b267d51e5da55f2480024142bfe16450e839d37ecfacde8844ff5ce7097a167ef96453b997b6f7ab7166bd57d8ea8e0bf33139388d29d7effabe2",
+    "tcv2": "3deeea3c7faef43274e2fb36cec77b3f84efcf9f550382dc8984ea6860f1007b6a3e80c29a51e8e280bb5962420773062aa1272a0974f77e7ee9524a588cad98"
+  },
+  "installation_authorized": false,
+  "m12_funding_admitted": false,
+  "original_hepta_owner_used": false,
+  "passed": true,
+  "process": {
+    "elapsed_ms": 17520,
+    "exit_code": 0,
+    "original_seconds": 300,
+    "sealed_bundles_held_until_supervisor_exit": true,
+    "termination_error": null,
+    "termination_requested": false
+  },
+  "production_activation": false,
+  "schema": "trnm.cell-sealed-research-native.v1",
+  "sealed_cache_independence": {
+    "consumer_cache_absent": true,
+    "original_source_materials_preserved": true,
+    "publisher_cache_absent": true
+  },
+  "source_input_sha256": "e509695eb9ad60320ea1ed75efa35b28d254bcd9ca868153bd5f8869fb269280",
+  "stage": "complete research next-use"
+}

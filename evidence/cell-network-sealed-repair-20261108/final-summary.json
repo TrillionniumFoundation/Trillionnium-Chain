@@ -1,0 +1,330 @@
+{
+  "actual_payment_accepted": false,
+  "all_four_raw_source_receipts_byte_identical": true,
+  "base_candidate_commit": "0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a",
+  "base_pull_request": 807,
+  "evidence_only_delivery_does_not_relabel_runtime_source": true,
+  "final_use_granted": false,
+  "initial_run": {
+    "commands": 24,
+    "exit_zero": 22,
+    "failed_commands": [
+      "canonical-plan",
+      "ci-contract-negative-controls"
+    ],
+    "result": "FAIL",
+    "summary": "first-run-summary.json"
+  },
+  "lockfile_sha256": {
+    "tests/fuzz/Cargo.lock": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1",
+    "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be"
+  },
+  "lockfiles_unchanged": true,
+  "measured_source": {
+    "base": null,
+    "candidate": "09b584bea2e1a265a7e4be10c7aa98cf8e34629b",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "09b584bea2e1a265a7e4be10c7aa98cf8e34629b",
+    "tested_tree": "cef7243e5738a01465ce3930b2dd68f78c553dbe",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1735221104,
+    "tracked_entries": 16812,
+    "tracked_worktree_verified": true
+  },
+  "native_tests": {
+    "cli_integration": 34,
+    "compile_fail_doctests": 12,
+    "failed": 0,
+    "filtered": 0,
+    "ignored": 0,
+    "library": 505,
+    "retention_audit": "retained-test-roster.json",
+    "total_runtime": 539
+  },
+  "operational_qualification": {
+    "bep52_public_network_interoperability": "HOLD_NO_GO",
+    "physical_nvme_vram_ordinary_hepta_final_use": "HOLD_NO_GO",
+    "public_long_term_custody_capacity": "HOLD_NO_GO",
+    "rs46_independent_paid_wan_repair": "HOLD_NO_GO",
+    "tcm_cas_sustained_availability_and_full_deployed_pq": "HOLD_NO_GO",
+    "version_actual_ordinary_loader_closure": "HOLD_NO_GO"
+  },
+  "ordinary_hepta_started": false,
+  "pipeline": {
+    "chunks": 4,
+    "elapsed_wall_ns": 8326189,
+    "example_source_sha256": "9c26d9b2f686c50c9e41b9c1cd78691ebc366bf421eccceddcce703b3385dfb4",
+    "observation": "pipeline.json",
+    "payload_bytes": 32930,
+    "same_strongly_verified_sealed_objects": true,
+    "scope": "native component wiring with synthetic F32 tensor and environment JSON",
+    "status": "PASS_COMPONENT_PIPELINE",
+    "tcp_connections": 2,
+    "timing_is_sla_or_benchmark": false
+  },
+  "pipeline_component_fingerprint_paths": {
+    "cpv4": "src/cell/pq/content.rs",
+    "sealed_loader": "src/cell/residency/sealed_loader.rs",
+    "strict_tensor_reader": "src/cell/tensor.rs",
+    "tcp_peer": "src/cell/bep52_peer.rs",
+    "tcv2": "src/cell/version_content.rs"
+  },
+  "production_activation": false,
+  "provider": {
+    "five_inputs_match_original_preparation_and_are_unchanged": true,
+    "mode": "reused existing OpenSSL 3.5.9 build read-only",
+    "new_provider_build_claimed": false,
+    "upstream_full_tests_claimed": false
+  },
+  "public_independent_custody_accepted": false,
+  "python_control_counts": {
+    "ci_contract": 108,
+    "pon_reference": 29,
+    "pq_source_integrity": 37,
+    "repository_mutants": 50,
+    "source_integrity": 43
+  },
+  "raw_archive": "raw-observations.tar.gz",
+  "raw_manifest": "raw-manifest.json",
+  "release_binaries": [
+    {
+      "binary_in_archive": false,
+      "bytes": 3140640,
+      "name": "cell_bep52_cost_v1",
+      "sha256": "5378321fd21742f579f10b8f886104af0c7a7d4164637d611f919d23be8b5af5"
+    },
+    {
+      "binary_in_archive": false,
+      "bytes": 3160752,
+      "name": "cell_rs46_cost_v1",
+      "sha256": "714df5e04205852a59c144f95c37611035718d347386a217f3dafd1c2b055b65"
+    },
+    {
+      "binary_in_archive": false,
+      "bytes": 3995080,
+      "name": "cell_signed_sealed_pipeline_v1",
+      "sha256": "6850af2d4d0de75a5a570c03a9e272251bce22c54890c607edef795a0bdc81b4"
+    }
+  ],
+  "result": "PASS_LOCAL_COMPONENT_GATES_WITH_RETAINED_INFRASTRUCTURE_FAILURES",
+  "retry": {
+    "only_environment_change": "private TMPDIR instead of shared /tmp",
+    "result": "PASS_SAME_SOURCE_FAILED_CONTROLS",
+    "runtime_repeated": false,
+    "same_assertions_commands_and_timeouts": true,
+    "summary": "retry-summary.json"
+  },
+  "schema": "trnm-cell-six-followthrough-final-local-evidence-v1",
+  "selected_gates": [
+    {
+      "initial_exit_code": 0,
+      "name": "source-before",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/source-before.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "preflight",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/preflight.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "rustc-identity",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/rustc-identity.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "cargo-identity",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/cargo-identity.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "provider-version",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/provider-version.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "repository-and-links",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/repository-and-links.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 1,
+      "name": "canonical-plan",
+      "original_failure_retained": true,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-02/canonical-plan.command.json",
+      "selected_run": "final-02"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "pq-source-pins",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/pq-source-pins.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "source-negative-controls",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/source-negative-controls.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "pq-source-negative-controls",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/pq-source-negative-controls.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 1,
+      "name": "ci-contract-negative-controls",
+      "original_failure_retained": true,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-02/ci-contract-negative-controls.command.json",
+      "selected_run": "final-02"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "distributed-source-inventory",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/distributed-source-inventory.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "complete-version-vector",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/complete-version-vector.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "complete-content-vector",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/complete-content-vector.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "locked-default-graph",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/locked-default-graph.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "locked-all-features-graph",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/locked-all-features-graph.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "locked-fuzz-graph",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/locked-fuzz-graph.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "all-source-format",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/all-source-format.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "complete-da-native-and-doc-tests",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/complete-da-native-and-doc-tests.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "strict-workspace-all-features-clippy",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/strict-workspace-all-features-clippy.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "cell_bep52_cost_v1",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/cell_bep52_cost_v1.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "cell_rs46_cost_v1",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/cell_rs46_cost_v1.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "cell_signed_sealed_pipeline_v1",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/cell_signed_sealed_pipeline_v1.command.json",
+      "selected_run": "final-01"
+    },
+    {
+      "initial_exit_code": 0,
+      "name": "source-after",
+      "original_failure_retained": false,
+      "result": "PASS",
+      "selected_command_receipt": "validation/final-01/source-after.command.json",
+      "selected_run": "final-01"
+    }
+  ],
+  "source_pinned_blobs": 609,
+  "strict_clippy": {
+    "all_features": true,
+    "all_targets": true,
+    "exit_code": 0,
+    "runtime_tests_in_optional_feature_graph_claimed": false,
+    "warnings_denied": true,
+    "workspace_packages": 26
+  },
+  "three_locked_offline_dependency_graphs": [
+    "workspace-default",
+    "workspace-all-features",
+    "fuzz"
+  ],
+  "wan_sla_observed": false,
+  "whole_chain_pq_qualified": false
+}

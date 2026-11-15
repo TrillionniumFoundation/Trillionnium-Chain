@@ -1,0 +1,34 @@
+Traceback (most recent call last):
+  File "<string>", line 102, in <module>
+  File "/cell-sealed/scripts/llm_cell_sealed_worker_v1.py", line 763, in entry
+  File "/cell-sealed/scripts/llm_cell_sealed_worker_v1.py", line 536, in worker
+  File "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-01/sealed-source-names/scripts/llm_runtime_pilot.py", line 489, in stage
+  File "/cell-sealed/scripts/llm_cell_sealed_worker_v1.py", line 536, in <lambda>
+  File "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-01/sealed-source-names/scripts/llm_runtime_pilot.py", line 507, in runtime_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-01/sealed-source-names/scripts/llm_python_runtime_contract.py", line 368, in exec_module
+  File "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/lib/python3.12/site-packages/torch/__init__.py", line 2696, in <module>
+    from torch import compiler as compiler
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-01/sealed-source-names/scripts/llm_python_runtime_contract.py", line 368, in exec_module
+  File "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/lib/python3.12/site-packages/torch/compiler/__init__.py", line 8, in <module>
+    from . import config
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-01/sealed-source-names/scripts/llm_python_runtime_contract.py", line 368, in exec_module
+  File "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/lib/python3.12/site-packages/torch/compiler/config.py", line 124, in <module>
+    install_config_module(sys.modules[__name__])
+  File "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/lib/python3.12/site-packages/torch/utils/_config_module.py", line 227, in install_config_module
+    visit(module, module, "")
+  File "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/lib/python3.12/site-packages/torch/utils/_config_module.py", line 207, in visit
+    config[name] = _ConfigEntry(value)
+                   ^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/lib/python3.12/site-packages/torch/utils/_config_module.py", line 331, in __init__
+    assert self.value_type in (
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError: envvar configs only support (optional) booleans or strings, Optional[str] is neither

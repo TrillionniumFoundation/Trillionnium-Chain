@@ -1,0 +1,8 @@
+{
+  "clean": true,
+  "commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+  "expected_identity": true,
+  "status_bytes": 0,
+  "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e"
+}

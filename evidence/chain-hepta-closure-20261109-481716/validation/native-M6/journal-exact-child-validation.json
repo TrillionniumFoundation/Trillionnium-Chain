@@ -1,0 +1,23 @@
+{
+  "body_complete_marker_observed": true,
+  "captured_section_heading_observed": true,
+  "child_counts_added_to_top_level": false,
+  "exact_child_success_summary": [
+    {
+      "elapsed": "0.07s",
+      "failed": 0,
+      "filtered_out": 1397,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 1,
+      "raw_line": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1397 filtered out; finished in 0.07s",
+      "status": "ok"
+    }
+  ],
+  "exact_child_success_summary_count": 1,
+  "original_M5_EAGAIN_cause": "unestablished",
+  "parent_success_status_observed": true,
+  "running_one_test_observed": true,
+  "source_controls_enforce_full_body_then_marker_and_success": true,
+  "test": "public_submit::pq::journal::tests::journal_unknown_publication_is_sticky_and_cold_replay_does_not_refund_attempt"
+}

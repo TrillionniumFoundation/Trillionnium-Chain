@@ -1,0 +1,6 @@
+{
+  "old_sha256": "f50a4a32695ea82336227512694283a177220c225465656936ab78002c5bc11e",
+  "new_sha256": "7da5f8146c63e29961dfe7e48a58670da2483cf83a983c6a8dd4c8262a732d68",
+  "change": "Required completion roster now includes both retained real_receiver_controls and new receipt_controls_v2; no skipped old receiver can yield complete status.",
+  "all_original_budgets_preserved": true
+}

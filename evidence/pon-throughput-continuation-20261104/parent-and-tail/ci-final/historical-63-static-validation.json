@@ -1,0 +1,585 @@
+{
+  "checked_at": "2026-11-04T08:14:43.231237+00:00",
+  "base": "b8116f65789a85148254f870c678a44f895316de",
+  "scope": "Static YAML (duplicate-key rejection), bash -n, Python AST and exact b811-diff verification only; no native tests, no registry execution, no throughput qualification. Native source retirement and M06 decision are concurrent and not certified here.",
+  "workflow_sha256": {
+    ".github/workflows/pon-original-workspace-large-state-cpu.yml": "03567169c93b9d40fde3a42c7f69733d7df9862f8c5bd26e515c4951fbe23bb0",
+    ".github/workflows/pon-recent-batch-acceptance.yml": "ee11630e5ae6620fae85ead7a23c022413557bad34f4893e9598447c37a534d4",
+    ".github/workflows/pon-pq-system-continuation.yml": "37b199ce666ce281c0347b1cda803b6f575313e34289840d5d60a230cc8cfa72"
+  },
+  "syntax": [
+    {
+      "file": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      "yaml_unique_keys": "PASS",
+      "bash_run_blocks": 10,
+      "embedded_python_blocks": 3,
+      "checks": [
+        {
+          "job": "original-workspace-state-and-exit",
+          "step": "Verify unchanged source and original project boundary",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "original-workspace-state-and-exit",
+          "step": "Install the source-pinned native toolchain",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "original-workspace-state-and-exit",
+          "step": "Prepare the original pinned OpenSSL 3.5.9 PQ provider",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "original-workspace-state-and-exit",
+          "step": "Build the original complete workspace in the unchanged test profile",
+          "bash_syntax_exit": 0,
+          "embedded_python": [
+            {
+              "marker": "PYENV",
+              "line": 8,
+              "lines": 42
+            },
+            {
+              "marker": "PYART",
+              "line": 68,
+              "lines": 69
+            }
+          ]
+        },
+        {
+          "job": "original-workspace-state-and-exit",
+          "step": "Execute both original test-profile CPU selectors and reactor-exit controls",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "original-workspace-state-and-exit",
+          "step": "Execute selected arithmetic canonical and reorg semantic controls",
+          "bash_syntax_exit": 0,
+          "embedded_python": [
+            {
+              "marker": "PYREGISTRY",
+              "line": 46,
+              "lines": 79
+            }
+          ]
+        },
+        {
+          "job": "original-workspace-state-and-exit",
+          "step": "Observe fixed touched owners across actual account and history growth",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "original-workspace-state-and-exit",
+          "step": "Recheck the same test ELF after success or failure",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "original-workspace-state-and-exit",
+          "step": "Recheck the same M06 test ELF after success or failure",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "original-workspace-state-and-exit",
+          "step": "Reverify exact source after every outcome",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        }
+      ]
+    },
+    {
+      "file": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "yaml_unique_keys": "PASS",
+      "bash_run_blocks": 24,
+      "embedded_python_blocks": 3,
+      "checks": [
+        {
+          "job": "recent",
+          "step": "Verify exact source, ordered actual main merge and full repository boundary",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Execute conditional query accounting and anytime-bound counterexamples",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Reject incomplete, ambiguous or incorrectly bound cache observations",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Install original pinned native compiler and lint tools",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Check committed formatting without rewriting source",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Require bounded ordinary record copies and complete history controls",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Execute complete original error-boundary suite and all new controls",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Execute all original authenticated owner controls and five snapshot regressions",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Retain authenticated record, ancestry and cold recovery coverage",
+          "bash_syntax_exit": 0,
+          "embedded_python": [
+            {
+              "marker": "PYLOG",
+              "line": 13,
+              "lines": 18
+            }
+          ]
+        },
+        {
+          "job": "recent",
+          "step": "Require all five statement-reuse controls and complete-call observations separately",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Require every cached block, parent, commitment and snapshot owner control",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Require live public owner mutation, admission rollback and cold reopen controls",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Require fixed-BLOB allocation bounds with original errors and rollback semantics",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Reject empty nullable BLOB corruption through original native owners",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Preserve original source-preserving migration coverage",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Preserve pending confirmation ownership and joined shutdown on failures",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Execute real pipeline boundaries without claiming saturation throughput",
+          "bash_syntax_exit": 0,
+          "embedded_python": [
+            {
+              "marker": "PYTHON",
+              "line": 6,
+              "lines": 28
+            }
+          ]
+        },
+        {
+          "job": "recent",
+          "step": "Require non-committing proof reads and actual nonce snapshot callers",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Execute public TCP business confirmation under rotating false work",
+          "bash_syntax_exit": 0,
+          "embedded_python": [
+            {
+              "marker": "PYNETWORK",
+              "line": 8,
+              "lines": 15
+            }
+          ]
+        },
+        {
+          "job": "recent",
+          "step": "Check complete native target lint",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Retain reproducible source and native replay executable",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Recheck unchanged exact source and hash all native logs",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "recent",
+          "step": "Bind complete native cache observations to the unchanged tested source",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        }
+      ]
+    },
+    {
+      "file": ".github/workflows/pon-pq-system-continuation.yml",
+      "yaml_unique_keys": "PASS",
+      "bash_run_blocks": 10,
+      "embedded_python_blocks": 1,
+      "checks": [
+        {
+          "job": "native",
+          "step": "Prepare exact-source command records",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "native",
+          "step": "Require retained source and claim controls",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "native",
+          "step": "Install the original pinned compiler",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "native",
+          "step": "Prepare the independently pinned OpenSSL provider",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "native",
+          "step": "Record compiler, exact locked graph and formatting",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "native",
+          "step": "Execute every required native effect and rejection control",
+          "bash_syntax_exit": 0,
+          "embedded_python": [
+            {
+              "marker": "PY",
+              "line": 2,
+              "lines": 11
+            }
+          ]
+        },
+        {
+          "job": "native",
+          "step": "Require actual transaction scopes and canonical prefix continuation controls",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "native",
+          "step": "Preserve the complete original Node library regression suite",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "native",
+          "step": "Check strict Clippy without rewriting source",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        },
+        {
+          "job": "native",
+          "step": "Observe complete component costs with unchanged native budgets",
+          "bash_syntax_exit": 0,
+          "embedded_python": []
+        }
+      ]
+    }
+  ],
+  "preservation": {
+    "workspace_removing_only_three_added_groups_equals_b811": true,
+    "pq_removing_only_new_scope_and_m06_step_equals_b811": true,
+    "recent_equals_b811_except_store_literal_pin": true,
+    "all_original_runner_budget_steps_commands_and_readers_preserved": true,
+    "git_diff_check_exit": 0
+  },
+  "declared_workspace_groups": [
+    {
+      "crate": "m06",
+      "group": "full-root-arithmetic",
+      "prefix": "pon_commitment::full_root_arithmetic_tests::",
+      "declared_count": 5
+    },
+    {
+      "crate": "m06",
+      "group": "unchanged-canonical-map",
+      "selectors": [
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_shares_only_after_full_actual_bytes_match",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_retains_exact_capacity_charges_and_all_budget_boundaries",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_misleading_root_and_changed_bytes_take_original_repair_path",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_keeps_late_canonical_errors_before_wire_and_cache_limits",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_candidate_early_miss_retains_complete_late_validation",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_empty_delta_still_checks_the_original_tree_root"
+      ],
+      "declared_count": 6
+    },
+    {
+      "crate": "m06",
+      "group": "canonical-comparison",
+      "selectors": [
+        "pon_executor::canonical_comparison_tests::canonical_comparison_matches_independent_serde_bytes_and_every_json_kind",
+        "pon_executor::canonical_comparison_tests::canonical_comparison_keeps_complete_value_error_order_before_byte_mismatch",
+        "pon_executor::canonical_comparison_tests::canonical_comparison_distinguishes_number_spellings_under_the_actual_serde_features"
+      ],
+      "declared_count": 3
+    },
+    {
+      "crate": "m06",
+      "group": "compared-prefix-continuation",
+      "selectors": [
+        "pon_commitment::unchanged_snapshot_tests::compared_prefix_continuation_keeps_exact_original_capacities_roots_and_budgets",
+        "pon_commitment::unchanged_snapshot_tests::compared_nonempty_prefix_cannot_hide_late_canonical_wire_or_cache_errors"
+      ],
+      "declared_count": 2
+    },
+    {
+      "crate": "node",
+      "group": "account-root-digest",
+      "selectors": [
+        "account_archive_prototype::native_root_digest::tests::native_root_digest_matches_record_and_sparse_references_after_exact_input_changes",
+        "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_original_traversal_cancellation_and_collision_order",
+        "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_fork_shape_and_all_lift_input_relations"
+      ],
+      "declared_count": 3
+    },
+    {
+      "crate": "node",
+      "group": "growth-return-observations",
+      "selectors": [
+        "store::growth::tests::scale_observation::native_growth_scale_retains_rejected_and_cancelled_admission_returns",
+        "store::growth::tests::scale_observation::native_growth_scale_retains_admission_when_activation_returns_error"
+      ],
+      "declared_count": 2
+    },
+    {
+      "crate": "m06",
+      "group": "canonical-ascii",
+      "selectors": [
+        "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors",
+        "pon_executor::root_arithmetic_tests::arithmetic_root_ascii_encoding_matches_independent_serde_reference",
+        "pon_executor::root_arithmetic_tests::arithmetic_root_preserves_complete_grammar_before_all_wire_limits",
+        "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges"
+      ],
+      "declared_count": 7
+    },
+    {
+      "crate": "node",
+      "group": "reorg-tail",
+      "prefix": "store::reorg_readback_tests::",
+      "declared_count": 6
+    },
+    {
+      "crate": "node",
+      "group": "direct-append-readback",
+      "selectors": [
+        "store::append_readback_tests::direct_append_keeps_complete_rows_events_state_and_cold_reopen",
+        "store::append_readback_tests::direct_append_cancellation_at_each_callback_leaves_no_partial_publication"
+      ],
+      "declared_count": 2
+    },
+    {
+      "crate": "node",
+      "group": "current-sql-root",
+      "selectors": [
+        "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints"
+      ],
+      "declared_count": 1
+    },
+    {
+      "crate": "node",
+      "group": "prepared-current-history",
+      "selectors": [
+        "store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback",
+        "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+        "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures"
+      ],
+      "declared_count": 3
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "prefix": "store::native_authenticated::post_write_readback::tests::",
+      "declared_count": 23
+    }
+  ],
+  "declared_workspace_selected_count": 63,
+  "pq_original_required_count": 49,
+  "pq_added_original_scope_selectors": [
+    "transaction_scope::tests::token_controls_cover_sqlite_space_comments_bom_aliases_and_identifier_boundaries",
+    "transaction_scope::tests::actual_readonly_aba_is_not_an_autocommit_changes_or_schema_identity",
+    "transaction_scope::tests::already_prepared_cached_end_is_observed_at_execution_and_reuse",
+    "transaction_scope::tests::savepoint_release_and_rollback_to_are_conservatively_refused",
+    "transaction_scope::tests::nested_scopes_share_epoch_and_other_connections_do_not_invalidate_reads",
+    "transaction_scope::tests::explain_does_not_execute_a_transaction_control",
+    "transaction_scope::tests::replacing_trace_is_detected_by_actual_execution_probe_without_resetting_epoch",
+    "transaction_scope::tests::overflow_wrong_pid_and_wrong_handle_are_sticky_refusals",
+    "transaction_scope::tests::dropping_scopes_does_not_drop_or_reinstall_the_connection_observer",
+    "transaction_scope::tests::actual_write_snapshot_requires_same_live_main_writer",
+    "transaction_scope::tests::executed_write_epoch_catches_no_row_failed_and_reversed_schema_writes",
+    "transaction_scope::tests::prepared_write_execution_is_counted_but_explain_is_not_a_write",
+    "transaction_scope::tests::write_snapshot_rejects_savepoint_aba_and_sticky_observer_failures"
+  ],
+  "pq_added_provisional_m06_selectors": [
+    "pon_executor::canonical_comparison_tests::canonical_comparison_matches_independent_serde_bytes_and_every_json_kind",
+    "pon_executor::canonical_comparison_tests::canonical_comparison_keeps_complete_value_error_order_before_byte_mismatch",
+    "pon_executor::canonical_comparison_tests::canonical_comparison_distinguishes_number_spellings_under_the_actual_serde_features",
+    "pon_commitment::unchanged_snapshot_tests::compared_prefix_continuation_keeps_exact_original_capacities_roots_and_budgets",
+    "pon_commitment::unchanged_snapshot_tests::compared_nonempty_prefix_cannot_hide_late_canonical_wire_or_cache_errors"
+  ],
+  "recent_native_declared_count": 91,
+  "recent_postwrite_declared_count": 23,
+  "live_pins_observed": [
+    {
+      "file": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "pinned_git_blob": "a7035222bc51cfe7f60e891398230c3179accc82",
+      "current_git_blob": "a7035222bc51cfe7f60e891398230c3179accc82",
+      "currently_matches": true
+    },
+    {
+      "file": "trillionnium/crates/trnm-pon-node/src/store/history_page.rs",
+      "pinned_git_blob": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9",
+      "current_git_blob": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9",
+      "currently_matches": true
+    },
+    {
+      "file": "trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs",
+      "pinned_git_blob": "aa6c50f60f631574b341632be63d6cf20f40a8d1",
+      "current_git_blob": "aa6c50f60f631574b341632be63d6cf20f40a8d1",
+      "currently_matches": true
+    },
+    {
+      "file": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "pinned_git_blob": "e99453b1abe6ce589f003be199b5553241cba398",
+      "current_git_blob": "5517d80793c7c9653c26e884a93f79d325b7470b",
+      "currently_matches": false
+    },
+    {
+      "file": "trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs",
+      "pinned_git_blob": "cecb8a984c02ffca7590e69c4392223ea748b40f",
+      "current_git_blob": "cecb8a984c02ffca7590e69c4392223ea748b40f",
+      "currently_matches": true
+    },
+    {
+      "file": "trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs",
+      "pinned_git_blob": "7301aeb3033913f080b23767bfca52a2bf76d45b",
+      "current_git_blob": "7301aeb3033913f080b23767bfca52a2bf76d45b",
+      "currently_matches": true
+    },
+    {
+      "file": "formal/pon-nakamoto-v1/work_query_bound.py",
+      "pinned_git_blob": "e3ec8bf4bdd510f3fe718e63a4df595d342c61c6",
+      "current_git_blob": "e3ec8bf4bdd510f3fe718e63a4df595d342c61c6",
+      "currently_matches": true
+    },
+    {
+      "file": "formal/pon-nakamoto-v1/test_work_query_bound.py",
+      "pinned_git_blob": "526f155f2215184aa607da6d453423ca6930ded2",
+      "current_git_blob": "526f155f2215184aa607da6d453423ca6930ded2",
+      "currently_matches": true
+    },
+    {
+      "file": "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
+      "pinned_git_blob": "c8567475a36cf449d9fd2b33363a545fbd4704ab",
+      "current_git_blob": "c8567475a36cf449d9fd2b33363a545fbd4704ab",
+      "currently_matches": true
+    },
+    {
+      "file": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "pinned_git_blob": "79a7c0ab6812d5a536f551241cee9a12ebdfb494",
+      "current_git_blob": "79a7c0ab6812d5a536f551241cee9a12ebdfb494",
+      "currently_matches": true
+    },
+    {
+      "file": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+      "pinned_git_blob": "3fcbc873fcc89de208922e6ffd74361442797bed",
+      "current_git_blob": "3fcbc873fcc89de208922e6ffd74361442797bed",
+      "currently_matches": true
+    },
+    {
+      "file": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "pinned_git_blob": "74af81e2e181f6639dd1719a65d91c0ba5323c9b",
+      "current_git_blob": "74af81e2e181f6639dd1719a65d91c0ba5323c9b",
+      "currently_matches": true
+    },
+    {
+      "file": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+      "pinned_git_blob": "0f611459c4c1c37488861ba36c82ba8302e40c4c",
+      "current_git_blob": "0f611459c4c1c37488861ba36c82ba8302e40c4c",
+      "currently_matches": true
+    },
+    {
+      "file": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "pinned_git_blob": "ba1ebbe9e2b8f8b4d38c0d03037647d35f8b9b3b",
+      "current_git_blob": "ba1ebbe9e2b8f8b4d38c0d03037647d35f8b9b3b",
+      "currently_matches": true
+    },
+    {
+      "file": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+      "pinned_git_blob": "27b6342619ee051c57944de88b4bbab33ff4627c",
+      "current_git_blob": "27b6342619ee051c57944de88b4bbab33ff4627c",
+      "currently_matches": true
+    },
+    {
+      "file": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "pinned_git_blob": "ec6420becaba837f22d45c917d15554a8e653275",
+      "current_git_blob": "ec6420becaba837f22d45c917d15554a8e653275",
+      "currently_matches": true
+    }
+  ],
+  "diff_sha256": "ef20cef733486b6d16210a741b512004184f3c2b5a633eac90f8676835b6a9cb"
+}

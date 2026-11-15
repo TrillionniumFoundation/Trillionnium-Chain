@@ -1,0 +1,7 @@
+{"elapsed_ms":22.943442,"phase":"bounded_read_decode_and_proof_shape"}
+{"elapsed_ms":24.957167,"phase":"canonical_plans_and_public_only_sha_air"}
+{"elapsed_ms":37.453770999999996,"phase":"sha_verifier_independent_preprocessing_setup"}
+{"elapsed_ms":117.766592,"phase":"sha_stark_verify"}
+{"elapsed_ms":262.648982,"phase":"arith_verifier_independent_preprocessing_setup"}
+{"elapsed_ms":0.74464,"phase":"arith_stark_verify"}
+{"error":"arithmetic proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 579, got: 587 })))","process_wall_ms":468.396512,"qualification":"HOLD_NO_GO","schema":"trnm-w1-complete-public-tagged-sha3-stark-run-v1","status":"REJECTED_OR_FAILED"}

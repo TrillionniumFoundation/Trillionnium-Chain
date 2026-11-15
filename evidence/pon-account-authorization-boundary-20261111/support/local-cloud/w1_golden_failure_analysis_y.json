@@ -1,0 +1,46 @@
+{
+  "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "observed_failure": "source-w1-lifetime-ledger-tests:19 tests,1 failure",
+  "scope": "pure selected-source and arithmetic observation; no native qualification",
+  "historical_report_sha256": "8ee20462d669a0e21b0fe964585f85fa2a49e7e58273459ab2501b4a2e39dfc0",
+  "difference_count": 7,
+  "differences": [
+    {
+      "path": "/selected_source_survey/base_commit",
+      "before": "189b9b5959d836ef6ae96e14fb285948e4920aa9",
+      "after": "077ac4f33206de00a178553d9a0c729a20685088"
+    },
+    {
+      "path": "/selected_source_survey/observations/cumulative_weight/anchor_line",
+      "before": "5142",
+      "after": "5157"
+    },
+    {
+      "path": "/selected_source_survey/observations/cumulative_weight/sha256",
+      "before": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554",
+      "after": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca"
+    },
+    {
+      "path": "/selected_source_survey/observations/native_work_verifier/anchor_line",
+      "before": "1122",
+      "after": "1124"
+    },
+    {
+      "path": "/selected_source_survey/observations/native_work_verifier/sha256",
+      "before": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554",
+      "after": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca"
+    },
+    {
+      "path": "/selected_source_survey/sources/7/bytes",
+      "before": "382866",
+      "after": "383977"
+    },
+    {
+      "path": "/selected_source_survey/sources/7/sha256",
+      "before": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554",
+      "after": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca"
+    }
+  ],
+  "proposed_patch": "/workspace/scratch/a4188f5c86b5/coordination/w1-golden-successor/w1-lifetime-account-boundary-successor.patch",
+  "repository_mutated": false
+}

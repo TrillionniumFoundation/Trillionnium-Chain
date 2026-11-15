@@ -1,0 +1,9 @@
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-protocol)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.97s
+   Doc-tests trnm_protocol
+
+running 1 test
+test crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs - pon_wire::state_root_arithmetic::StateRootInputBuilder (line 103) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+

@@ -1,0 +1,31 @@
+[
+  {
+    "name": "actor",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "pr",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/784"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "check-runs",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/commits/b5c655ebe9611b3d62cf739e61e6867decc053e3/check-runs?per_page=100"
+    ],
+    "returncode": 0
+  }
+]

@@ -1,0 +1,420 @@
+{
+  "ci-validation-A-failed": {
+    "archive_bytes": 15032,
+    "archive_sha256": "372c0692c9688b2ea7080089ec1632acae1c687a8e79a9b8bca1c90925af474a",
+    "members": [
+      {
+        "bytes": 1758,
+        "path": "ci-contract-current/record.json",
+        "sha256": "89254e751d0dea7ecdcc8223cd013ea30f408f0f9c699b97d0a41c57ddc1468b"
+      },
+      {
+        "bytes": 0,
+        "path": "ci-contract-current/stderr.raw",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 431,
+        "path": "ci-contract-current/stdout.raw",
+        "sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+      },
+      {
+        "bytes": 1199,
+        "path": "ci-contract-negatives/record.json",
+        "sha256": "e34ba0249c310426f8b347fd883efac01dfb083e422bde90bd9a1c8c31391d0e"
+      },
+      {
+        "bytes": 31555,
+        "path": "ci-contract-negatives/stderr.raw",
+        "sha256": "e72186175eab587f34d82286a66fd2a7433b02661a9a567432d25fcbd7197c2e"
+      },
+      {
+        "bytes": 0,
+        "path": "ci-contract-negatives/stdout.raw",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 1199,
+        "path": "distributed-source-inventory/record.json",
+        "sha256": "9084e6b7c83810a09069b96ecf71379d8dc686f0f0bd2b53798c01443a5dbb95"
+      },
+      {
+        "bytes": 0,
+        "path": "distributed-source-inventory/stderr.raw",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 35,
+        "path": "distributed-source-inventory/stdout.raw",
+        "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+      },
+      {
+        "bytes": 11457,
+        "path": "joint-qualification-current-hold/record.json",
+        "sha256": "9ae7c2e2ff171d69bd3622a6eb70bddc163b22338b2d3a8b4aeef6131774cf32"
+      },
+      {
+        "bytes": 0,
+        "path": "joint-qualification-current-hold/stderr.raw",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 9301,
+        "path": "joint-qualification-current-hold/stdout.raw",
+        "sha256": "d37d5e0121421363d399164ace713cbc899a3159ea1f32f6e5085ed9846f957e"
+      },
+      {
+        "bytes": 11549,
+        "path": "joint-unproved-qualification-refusal/record.json",
+        "sha256": "f2dc7ab03b4e91b65b2fa209e3544fdf2bf0c335abeca335bccd067f38fb1f64"
+      },
+      {
+        "bytes": 0,
+        "path": "joint-unproved-qualification-refusal/stderr.raw",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 9364,
+        "path": "joint-unproved-qualification-refusal/stdout.raw",
+        "sha256": "f55c8d1b7ebbe4b512a35af8ccd619a52b818e848167e77762ea023504592fc5"
+      },
+      {
+        "bytes": 5920,
+        "path": "manifest.json",
+        "sha256": "8a8eee950222b94373cbae958861654a9a01588b6c48960cbdd617a59ae1e3d1"
+      },
+      {
+        "bytes": 6113,
+        "path": "plan.json",
+        "sha256": "004711e5e6f03c730f9b6cce7b842510e85a0322b5ad317e3f5fd4ed9f80b743"
+      },
+      {
+        "bytes": 1832,
+        "path": "pq-corpus-current/record.json",
+        "sha256": "b30a64fc2af0cbaff6d3e200fb76abff0a4cd4358824506b6ef338a59819027f"
+      },
+      {
+        "bytes": 0,
+        "path": "pq-corpus-current/stderr.raw",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 557,
+        "path": "pq-corpus-current/stdout.raw",
+        "sha256": "75f23516231237f6a4d9a9ca9bfb9f666f2e0d9be02872bdd865a16e7d5d5ee1"
+      },
+      {
+        "bytes": 1222,
+        "path": "pq-corpus-negatives/record.json",
+        "sha256": "94ef81f09d9cc250185c4be67e6dc690b4a7d07df1cf9808f40a751f64c2938c"
+      },
+      {
+        "bytes": 8085,
+        "path": "pq-corpus-negatives/stderr.raw",
+        "sha256": "fc23deba51996c07ead19e484142442fef0b45b6a6259f406de0f23bd64b0415"
+      },
+      {
+        "bytes": 0,
+        "path": "pq-corpus-negatives/stdout.raw",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 1397,
+        "path": "preflight-audit/record.json",
+        "sha256": "3e891d709afb6b09015e8f2579cddef9ca85cb5e4f4b6042742bfe76ac5445ef"
+      },
+      {
+        "bytes": 0,
+        "path": "preflight-audit/stderr.raw",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 181,
+        "path": "preflight-audit/stdout.raw",
+        "sha256": "4eb6801ddaefb20cf728b9e141c6d19cbb3fd239d4d88020b425c6c455886897"
+      },
+      {
+        "bytes": 1564,
+        "path": "repository-and-markdown-links/record.json",
+        "sha256": "a33c5db7812360d90f3e0ce77876dca59eff87478bef782143b40f985ca88981"
+      },
+      {
+        "bytes": 0,
+        "path": "repository-and-markdown-links/stderr.raw",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 307,
+        "path": "repository-and-markdown-links/stdout.raw",
+        "sha256": "9b4e04def4dddc5742a98054256c925638ef31df2139739003952ec1e5a6d1c0"
+      },
+      {
+        "bytes": 1740,
+        "path": "source-after/record.json",
+        "sha256": "22648e1986d68564674089ee13c8f8006a95cf45d563f96a3e3c896ab747e50d"
+      },
+      {
+        "bytes": 0,
+        "path": "source-after/stderr.raw",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 423,
+        "path": "source-after/stdout.raw",
+        "sha256": "0806a79437cb91eb5a36682165a6ee1dba98969c38c1221cfb32f7f27ea7e210"
+      },
+      {
+        "bytes": 1739,
+        "path": "source-before/record.json",
+        "sha256": "0d7946892610b400a642d15b182481738a9608e4ccd7044be446b92980d0f190"
+      },
+      {
+        "bytes": 0,
+        "path": "source-before/stderr.raw",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 423,
+        "path": "source-before/stdout.raw",
+        "sha256": "0806a79437cb91eb5a36682165a6ee1dba98969c38c1221cfb32f7f27ea7e210"
+      },
+      {
+        "bytes": 1226,
+        "path": "source-integrity-negatives/record.json",
+        "sha256": "eee2f074056ca5db01faabe98142da5cd3b98f395b2e43dbfbe5a25e2b839d27"
+      },
+      {
+        "bytes": 6414,
+        "path": "source-integrity-negatives/stderr.raw",
+        "sha256": "6b587a349d7d8fa0521af27ab06eb47ccff365bcd81eff3123ffe832a2f7cc59"
+      },
+      {
+        "bytes": 484,
+        "path": "source-integrity-negatives/stdout.raw",
+        "sha256": "885826004ecf750f3d044455c822c8af9bbf739df5a1fca09fcde0fe1a7a8daa"
+      },
+      {
+        "bytes": 1122,
+        "path": "summary.json",
+        "sha256": "fffe3fae73115b1227a711148b3402f513bbb523abc06cc4481bfc5fd7e8e811"
+      }
+    ],
+    "original_root": "/home/qian-qi/work/chain-daa-ci-gates-600e/head-43e5c9d6b668276d03e1c7a76f467ec211e1d7dc"
+  },
+  "development-controls": {
+    "archive_bytes": 21104,
+    "archive_sha256": "7c955b54f537f0d76b11422e3cf7a86d6398d72e6fd9aa59e77a10760c805920",
+    "members": [
+      {
+        "bytes": 6854,
+        "path": "focused-tests.log",
+        "sha256": "b441738644aa79117a6b90acfa3e891c6c928422d365ffbc468ea90c4665cf68"
+      },
+      {
+        "bytes": 228,
+        "path": "materialization-before.json",
+        "sha256": "ddedd55bc8d3a20323368f45f2cbbea24c5d527d55608757e1bf2462a29522b6"
+      },
+      {
+        "bytes": 100055,
+        "path": "restored-blobs.json",
+        "sha256": "9c77f4524b2cf21c2614c7fb9ab831e92f592c2de9296ac2788043a527505ee5"
+      },
+      {
+        "bytes": 3394,
+        "path": "summary.json",
+        "sha256": "014b83cc775ca6a0d135a30e137261c4b04a35ee131d72c0573fc22fcd9caf3c"
+      }
+    ],
+    "original_root": "/home/qian-qi/work/chain-daa-pre-freeze-600e"
+  },
+  "formal-validation-A": {
+    "archive_bytes": 21284,
+    "archive_sha256": "189072f51496aaf8e21c5254d662cb2ecf53d3399e24fedaa11ab6e4716917d2",
+    "members": [
+      {
+        "bytes": 742,
+        "path": "00-preflight.receipt.json",
+        "sha256": "252159c718e9ff0808d04a41e9d0b0fa99710415b9887e3355350c5c5781e863"
+      },
+      {
+        "bytes": 403,
+        "path": "00-preflight.started.json",
+        "sha256": "1f07c861a9c8debb89d03a85735fd68bda6ad14059e1b3bfaa54f396ba493543"
+      },
+      {
+        "bytes": 0,
+        "path": "00-preflight.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 179,
+        "path": "00-preflight.stdout.log",
+        "sha256": "b1ddc0b630de7b591067fd83466528a15acf198976c6acb391c6737d88c277bc"
+      },
+      {
+        "bytes": 978,
+        "path": "01-source-before.receipt.json",
+        "sha256": "59fe270df7e84eec1abe36f700b6331403e3a55e760236d42765231782c4273e"
+      },
+      {
+        "bytes": 641,
+        "path": "01-source-before.started.json",
+        "sha256": "15cde54972785a4d5fc6572db1e04e8867361648cf1b2038cd7fbda052be26b2"
+      },
+      {
+        "bytes": 0,
+        "path": "01-source-before.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 423,
+        "path": "01-source-before.stdout.log",
+        "sha256": "0806a79437cb91eb5a36682165a6ee1dba98969c38c1221cfb32f7f27ea7e210"
+      },
+      {
+        "bytes": 1199,
+        "path": "02-formal-tests.receipt.json",
+        "sha256": "842b4a9a8033c25af1ebdbc444e3a637ca5e2053ea8f82dcd65a4aab45bf7cf4"
+      },
+      {
+        "bytes": 859,
+        "path": "02-formal-tests.started.json",
+        "sha256": "f4f5b0e4ac354d3005678f74fa4f46e553aa438be59933becc1547556ba1d154"
+      },
+      {
+        "bytes": 41758,
+        "path": "02-formal-tests.stderr.log",
+        "sha256": "0f45b90e7e83cc345bab6f90d50b105df7d32a9ce14df4611489884f018283cd"
+      },
+      {
+        "bytes": 0,
+        "path": "02-formal-tests.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 898,
+        "path": "03-campaign.receipt.json",
+        "sha256": "4fadbc53c11df79c71efc7fe412f728f6c40a4643cc24467179c0b7ea1181aea"
+      },
+      {
+        "bytes": 560,
+        "path": "03-campaign.started.json",
+        "sha256": "ebe5a6b7713e2626146a2869b2aec54db12ff7f0d7e5c64ca029bf3bbdb25dc1"
+      },
+      {
+        "bytes": 0,
+        "path": "03-campaign.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 750,
+        "path": "03-campaign.stdout.log",
+        "sha256": "9826c82bfaaf3d191cd45d8bd9620d68f43ff0941fe3169c5facdead374e337b"
+      },
+      {
+        "bytes": 894,
+        "path": "04-replay.receipt.json",
+        "sha256": "d139067898b0bebfaaabeb3868d69a8a8cbf0f486f144c31d7484616901a9b07"
+      },
+      {
+        "bytes": 557,
+        "path": "04-replay.started.json",
+        "sha256": "816fd5cf33b1c672d2e33f899259ab6027158698453d1bc613f0ccf77b6b7e45"
+      },
+      {
+        "bytes": 0,
+        "path": "04-replay.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 221,
+        "path": "04-replay.stdout.log",
+        "sha256": "46c8ebbcd704ec21f18b050903ac2dd7e2c54c882b9dece1f8991aee62806053"
+      },
+      {
+        "bytes": 975,
+        "path": "05-source-after.receipt.json",
+        "sha256": "fdeef3e40cea3824a61c94d388151a7b877466e009abf2554f1f12fbc3f2adbe"
+      },
+      {
+        "bytes": 637,
+        "path": "05-source-after.started.json",
+        "sha256": "e9bc7163711314a9a35a8c2481abbf4b94faa72e0c80265865793d2da91fab1d"
+      },
+      {
+        "bytes": 0,
+        "path": "05-source-after.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 423,
+        "path": "05-source-after.stdout.log",
+        "sha256": "0806a79437cb91eb5a36682165a6ee1dba98969c38c1221cfb32f7f27ea7e210"
+      },
+      {
+        "bytes": 4337,
+        "path": "command-plan.json",
+        "sha256": "03cdab38fe9c886104700e53874a8761bba05a340826e50dbc11672d29e083ad"
+      },
+      {
+        "bytes": 50236,
+        "path": "execution-manifest.json",
+        "sha256": "a03eac69035ede5e20847dace3176754c9ab9885f9cd716a6ce222f45349d418"
+      },
+      {
+        "bytes": 6816,
+        "path": "execution-summary.json",
+        "sha256": "cdbc237bbad5e0ad9eead69b00fce17f715d1491501d57fb2b4e2e2a947666d9"
+      },
+      {
+        "bytes": 423,
+        "path": "source-after.json",
+        "sha256": "0806a79437cb91eb5a36682165a6ee1dba98969c38c1221cfb32f7f27ea7e210"
+      },
+      {
+        "bytes": 423,
+        "path": "source-before.json",
+        "sha256": "0806a79437cb91eb5a36682165a6ee1dba98969c38c1221cfb32f7f27ea7e210"
+      }
+    ],
+    "original_root": "/home/qian-qi/work/chain-daa-resource-formal-20261112-600e-43e5c9d6b668"
+  },
+  "source-freeze": {
+    "archive_bytes": 1419356,
+    "archive_sha256": "8c683b3f4363adff61bccf5c4079af24604a5bbc9cc38cf32ac21746493fde38",
+    "members": [
+      {
+        "bytes": 458,
+        "path": "commit.log",
+        "sha256": "d409c2bfb7c11f3b4aa617d44932cfa042d3364dff34bb38ab3eb001b7440d03"
+      },
+      {
+        "bytes": 841,
+        "path": "freeze.json",
+        "sha256": "9f8d50b50de62ae367178cc31c55b8ff83d182a284d3364b1218529c57d4bfa3"
+      },
+      {
+        "bytes": 1011,
+        "path": "precommit-names.json",
+        "sha256": "c71e8e89ec27c97fea4cc0bae9f3d9917098047099f7ec855b9a44ea7787e0c7"
+      },
+      {
+        "bytes": 1117,
+        "path": "precommit-stat.txt",
+        "sha256": "d05df43cea48aaaad9cf65d232e9372d984b563c2aa2e19dd053ea6d2b14f98a"
+      },
+      {
+        "bytes": 93910,
+        "path": "precommit.patch",
+        "sha256": "5fd55d3b4a98fc4c61f77358923aaba10309670637cfd0ce3868043d6b42474d"
+      },
+      {
+        "bytes": 7167130,
+        "path": "source-precommit.json",
+        "sha256": "10e15e75d753a2871319e84a7d4ea1e20038260d829db142f5e68dd60cdaef05"
+      }
+    ],
+    "original_root": "/home/qian-qi/work/chain-daa-freeze-600e"
+  }
+}

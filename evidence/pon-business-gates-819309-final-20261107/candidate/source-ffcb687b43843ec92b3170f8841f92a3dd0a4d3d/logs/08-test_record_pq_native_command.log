@@ -1,0 +1,13 @@
+test_exact_source_and_log_are_recorded_without_an_acceptance_claim (__main__.CommandRecords.test_exact_source_and_log_are_recorded_without_an_acceptance_claim) ... ok
+test_existing_receipt_is_not_replaced_by_a_later_success (__main__.CommandRecords.test_existing_receipt_is_not_replaced_by_a_later_success) ... ok
+test_real_child_failure_and_stderr_are_preserved (__main__.CommandRecords.test_real_child_failure_and_stderr_are_preserved) ... ok
+test_successful_child_that_changes_raw_source_cannot_pass (__main__.CommandRecords.test_successful_child_that_changes_raw_source_cannot_pass) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.534s
+
+OK
+{"exit_code": 0, "receipt": "/tmp/trnm-pq-command-control-tmu35gin/records/control.json", "status": "command_succeeded"}
+{"exit_code": 3, "receipt": "/tmp/trnm-pq-command-control-j_intpw0/records/control.json", "status": "command_failed"}
+{"exit_code": 7, "receipt": "/tmp/trnm-pq-command-control-_m8sggph/records/control.json", "status": "command_failed"}
+{"exit_code": 0, "receipt": "/tmp/trnm-pq-command-control-1s5d3716/records/control.json", "status": "record_failed"}

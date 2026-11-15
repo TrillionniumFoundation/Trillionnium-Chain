@@ -1,0 +1,215 @@
+{
+  "artifact_analysis_blob": "ab774d5bb8b532dcd08dc069c23e8e877c6d0a00",
+  "artifact_manifest_blob": "fbd7e8f73017c7804f90cb54b8c5864bb45c91f1",
+  "backend": "AuthenticatedV1",
+  "checkpoint_path": [
+    "fixture observed public importer",
+    "Control.resource -> observed kernel.verify",
+    "admit_packet check -> history_checkpoint",
+    "ExecutionControl progress / activation progress",
+    "state_at / publication / active-state checks",
+    "verify_state_with_readback",
+    "ordinary or scoped graph progress per actually visited node",
+    "history_checkpoint -> observe_with_control -> Control.check -> kernel.verify"
+  ],
+  "conclusion": "The actual hot-path trace explains why repeated account-graph traversal invokes expensive fresh Host checks. No substantial low-risk deletion has been proved by this read-only review. Preserve the exact checks/intervals; do not introduce an unvalidated cross-call cache to obtain a nominal pass. A tiny deterministic receipt-root duplication is identified separately, without performance or qualification claims.",
+  "growth_v2_coverage": false,
+  "head": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+  "measured_host_checkpoint_sums": {
+    "baseline": {
+      "calls_accepted": 166743,
+      "calls_completed": 166743,
+      "calls_rejected": 0,
+      "calls_started": 166743,
+      "calls_unfinished": 0,
+      "cpu_clock_unknown_calls": 0,
+      "thread_cpu_ns": 4038066182,
+      "wall_clock_unknown_calls": 0,
+      "wall_ns": 6612842651
+    },
+    "valid-work-root": {
+      "calls_accepted": 43310,
+      "calls_completed": 43310,
+      "calls_rejected": 0,
+      "calls_started": 43310,
+      "calls_unfinished": 0,
+      "cpu_clock_unknown_calls": 0,
+      "thread_cpu_ns": 1236897535,
+      "wall_clock_unknown_calls": 0,
+      "wall_ns": 3296422510
+    }
+  },
+  "measurement_limits": [
+    "The graph stage and Host spans are nested, not additive.",
+    "The Host counter sums cover all importer checkpoints, including graph nodes, W1, other native progress and actual refill waits; they are not a count of account nodes alone.",
+    "No per-statement profiler or comparative native rerun was performed."
+  ],
+  "native_tests_executed": false,
+  "redundancy_review": [
+    {
+      "candidate": "Adjacent explicit control.check before history_checkpoint",
+      "location": "src/ingress/history_import.rs:303-308",
+      "reason": "The existing code explicitly uses history_checkpoint(control.check) once rather than repeating an adjacent standalone Host read. No new removal remains here.",
+      "status": "already addressed in b5bb"
+    },
+    {
+      "candidate": "Full State clones in account graph reader",
+      "reason": "Graph verification borrows State/CurrentAccounts; NodeReader borrows row Blob and retains a statement, not row contents. Remaining node/record clones are small structured values, not cloned complete States.",
+      "status": "not found on the traced graph path"
+    },
+    {
+      "candidate": "Repeated parent or root verification across admission/publication/readback",
+      "reason": "Current checks are separated by work, callbacks, SQL writes, triggers or different current records. Existing same-owner/epoch and post-write scope reuse already handles its qualified subset. A larger cache or skipped fresh graph would change the validation contract.",
+      "status": "not proven safely removable"
+    },
+    {
+      "candidate": "Held-path receipts sequence-root recomputation",
+      "location": "src/store.rs:4305 and 4360",
+      "reason": "On the successful held-owner path the same owned output.receipts is hashed before constructing AdmissionPersistence and again on entering persist_admission_execution, with no mutation between. The helper also serves detached execution, so removing its guard globally is unsound without checking that route.",
+      "safe_refactor_prerequisites": [
+        "Keep the early ROOT mismatch/rejection-cache behavior and error order.",
+        "Retain a private immutable hash binding to exactly those owned receipt bytes across the two calls, and establish the same binding on every detached constructor.",
+        "Keep packet/state/SQL readback, cancellation, Host boundaries and all independent checks unchanged.",
+        "Run meaningful native receipt-mismatch/detached-admission controls and the unchanged business gate before claiming any benefit."
+      ],
+      "scope_limit": "Receipt-root time is not isolated in the artifact and cannot be presented as the main account-graph/Host cost or a credible 4-second closure.",
+      "status": "static duplication only; no patch or measured impact"
+    }
+  ],
+  "remote_refs_mutated": false,
+  "schema": "f0-b5bb-authenticated-import-source-trace-v1",
+  "scope": "Read-only static trace at exact b5bb, tied to the completed GitHub F0 artifact. No source changes, Cargo/native/model execution, performance rerun or threshold change.",
+  "source_mutated": false,
+  "trace": [
+    {
+      "git_blob": "452a7c10265ecc337943832589e71ce80d0eff14",
+      "id": "fixture",
+      "observation": "fixed_phase chooses AuthenticatedV1/RawR14 and creates receiver plus independent verifier through that backend; client history response is decoded then passed to receive_public_page_from_before_observed with the original import_deadline.",
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs",
+      "review_locations": "415-443, 651-685",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs"
+    },
+    {
+      "git_blob": "ec6420becaba837f22d45c917d15554a8e653275",
+      "id": "backend",
+      "observation": "StateBackendChoice has only LegacyV2/AuthenticatedV1. AuthenticatedV1 routes to Node::open_with_authenticated_state.",
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "review_locations": "135-169",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs"
+    },
+    {
+      "git_blob": "8619f003694361afe4e10c7eb4e7aa7df41a0dbe",
+      "id": "public_entry",
+      "observation": "The observed public importer resolves the fixed administrator Host parent, checks it initially, constructs Control.resource as observe_host(Checkpoint, kernel.verify), then passes Owner::Exclusive(node) into receive_observed. The original final Host observation remains.",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "review_locations": "2561-2602",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/src/ingress.rs"
+    },
+    {
+      "git_blob": "bd89990d6e1d7bda56f0be69a526815d87edbc29",
+      "id": "import_control",
+      "observation": "Control.check checks the original absolute deadline before invoking resource. admit_packet uses a checkpoint handle whose history_checkpoint resource closure is control.check; both admission ExecutionControl and final activation use that same original operation. No new budget is minted.",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "review_locations": "19-34, 288-422, 438-541",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs"
+    },
+    {
+      "git_blob": "20d040f84c0d33f71a035f730265aea6722a5c82",
+      "id": "meter_control",
+      "observation": "Both checkpoint wrappers call LiveRequestCpu.observe_with_control. Every loop iteration calls resource before observe_sample; actual refill waits perform another resource observation before request.check/sleep, then recheck on the next iteration. Shared owners cannot wait while holding their Node mutex.",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "review_locations": "685-717, 1061-1069, 1163-1171",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs"
+    },
+    {
+      "git_blob": "cda95433f7bdd6d1c013e506891154c9722ff967",
+      "id": "admission",
+      "observation": "Ordinary public context precheck is header-only unless an owner/continuous/mining policy requires task-before-work. Final admission reconstructs and validates the current parent via check_admission_parent/state_at_with_progress. The existing AdmissionStateEpoch condition already reuses a prepared parent only within the same unchanged owner/epoch.",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "review_locations": "3474-3490, 3644-3678, 4177-4292",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "git_blob": "cda95433f7bdd6d1c013e506891154c9722ff967",
+      "id": "state_replay",
+      "observation": "state_at chooses read_active for the active tip or independently decodes/checks a snapshot and applies current SQL deltas. Authenticated branches call verify_state_with_readback, and maintain the original progress callbacks.",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "review_locations": "2881-2936, 3230-3344",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "git_blob": "e99453b1abe6ce589f003be199b5553241cba398",
+      "id": "graph_binding",
+      "observation": "verify_state_with_readback loads the current record, verifies packet/delta/parent bindings, computes or exact-input-reuses the complete current State commitment and compares it. Only then may a same-transaction PostWriteReadback graph match apply. Otherwise it invokes scoped_readback::verify or full verify_with_current_accounts/verify_with_lifts with the original progress callback.",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "review_locations": "674-794",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs"
+    },
+    {
+      "git_blob": "6bd1deafeedef4955202a3fb76e87225b6989a75",
+      "id": "full_graph",
+      "observation": "verify_account_values traverses every required SQL node and invokes progress once for each popped node, then checks duplicates, child path/depth/hash, leaf data, count and balance against the actual complete State. Its reference contract explicitly remains linear in account count.",
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "review_locations": "430-573",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs"
+    },
+    {
+      "git_blob": "2a15589ffae6e585d2c675d6388eb75a34a0a109",
+      "id": "scoped_graph",
+      "observation": "Scoped traversal likewise invokes progress for every actually visited node. Only the existing sealed, bounded same-writer frontier can replace already certified descendants; it does not add synthetic per-node callbacks or a process-wide state verdict.",
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs",
+      "review_locations": "185-272",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs"
+    },
+    {
+      "git_blob": "b4e9974f6ef99cb7b8aa88a509d3afd56e1bd4a8",
+      "id": "node_reader",
+      "observation": "Already uses one lazily prepared SQL statement for a traversal and borrows Blob bytes during query_row. Every node still executes the bounded query; cursor reset occurs before the next progress callback. There is no full-state clone here.",
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_reader.rs",
+      "review_locations": "1-68",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_reader.rs"
+    },
+    {
+      "git_blob": "7089e961965af9209f2d588061c8526c5acba161",
+      "id": "host_verify",
+      "observation": "KernelBudget.verify delegates to check. Each check freshly reads boot identity, symlink metadata/inode/owner/mode, calling-thread cgroup membership and all five current resource limits. Immutable path names are already retained; limit/context reads already use bounded stack buffers with complete-read/error preservation. No previous Host verdict or file descriptor is reused.",
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "review_locations": "132-241, 325-423",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs"
+    },
+    {
+      "git_blob": "e99453b1abe6ce589f003be199b5553241cba398",
+      "id": "publication",
+      "observation": "publish_with_readback verifies the parent before mutating account storage, applies actual deltas, writes the current commitment, then starts the post-write readback epoch and verifies current child/history. The before-write and after-write graph checks cannot be treated as one immutable observation.",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "review_locations": "918-986",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs"
+    },
+    {
+      "git_blob": "ed9c2000d253d7421ec899287012f2602f6f7fc5",
+      "id": "readback_fences",
+      "observation": "Existing reuse is limited to four nominated records, context, original connection/transaction, schema and no-write epoch, after the complete current State check. Repeated records may share only identical full account Root. Writes disable reuse; partial results cannot mint a new frontier. Broadening to retained Node/global cache would introduce a new security contract.",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "review_locations": "83-195, 221-338",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs"
+    },
+    {
+      "git_blob": "cda95433f7bdd6d1c013e506891154c9722ff967",
+      "id": "final_sql_fences",
+      "observation": "After publication, actual deltas/packet bytes, reconstructed parent and child, ancestry insertion, and active state/history are reread before COMMIT. These checks catch suppressed writes, trigger corruption and owner changes, even if an earlier in-memory execution passed.",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "review_locations": "4473-4558",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "git_blob": "5a881abe6b660933f31f4c16b66e1f1f42daf5cd",
+      "id": "shared_helper",
+      "observation": "persist_admission_execution is also reached from detached execution; its existing root/receipt guard is not exclusively a duplicate of the held-owner caller.",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+      "review_locations": "435, 537",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs"
+    }
+  ],
+  "tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+  "work_profile": "RawR14"
+}

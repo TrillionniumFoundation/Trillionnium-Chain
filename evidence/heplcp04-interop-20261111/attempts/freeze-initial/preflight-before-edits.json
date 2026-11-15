@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+  "elapsed_seconds": 0.031788310036063194,
+  "explicit_environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "returncode": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "f9ceb2e281f6c13617d7d0e20b4af06f62759d3b5898d367160daeca0e53c8d2"
+}

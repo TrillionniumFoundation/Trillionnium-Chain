@@ -1,0 +1,96 @@
+   Compiling find-msvc-tools v0.1.9
+   Compiling shlex v1.3.0
+   Compiling cc v1.2.59
+   Compiling version_check v0.9.5
+   Compiling generic-array v0.14.7
+   Compiling cfg-if v1.0.4
+   Compiling proc-macro2 v1.0.106
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+   Compiling vcpkg v0.2.15
+   Compiling syn v2.0.117
+   Compiling pkg-config v0.3.32
+   Compiling cpufeatures v0.2.17
+   Compiling zeroize v1.9.1
+   Compiling libc v0.2.184
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling sha2-asm v0.6.4
+   Compiling bitflags v2.11.0
+   Compiling cmov v0.5.4
+   Compiling ctutils v0.4.6
+   Compiling digest v0.10.7
+   Compiling serde_core v1.0.228
+   Compiling semver v1.0.27
+   Compiling rustc_version v0.4.1
+   Compiling hybrid-array v0.4.15
+   Compiling cfg_aliases v0.2.2
+   Compiling sha2 v0.10.9
+   Compiling curve25519-dalek v4.1.3
+   Compiling libsqlite3-sys v0.39.0
+   Compiling autocfg v1.5.1
+   Compiling equivalent v1.0.2
+   Compiling hashbrown v0.16.1
+   Compiling winnow v1.0.4
+   Compiling zmij v1.0.21
+   Compiling indexmap v2.13.1
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling num-traits v0.2.19
+   Compiling crypto-common v0.2.2
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling openssl-sys v0.9.117
+   Compiling foldhash v0.2.0
+   Compiling serde v1.0.228
+   Compiling subtle v2.6.1
+   Compiling signature v2.2.0
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling serde_json v1.0.149
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling ed25519 v2.2.3
+   Compiling hashbrown v0.17.1
+   Compiling digest v0.11.3
+   Compiling serde_derive v1.0.228
+   Compiling itoa v1.0.18
+   Compiling thiserror v1.0.69
+   Compiling memchr v2.8.0
+   Compiling hashlink v0.12.2
+   Compiling ed25519-dalek v2.2.0
+   Compiling proc-macro-crate v3.5.0
+   Compiling borsh v1.8.0
+   Compiling thiserror-impl v1.0.69
+   Compiling keccak v0.2.2
+   Compiling openssl v0.10.81
+   Compiling fallible-iterator v0.3.0
+   Compiling foreign-types-shared v0.1.1
+   Compiling anyhow v1.0.103
+   Compiling sponge-cursor v0.1.0
+   Compiling once_cell v1.21.4
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling smallvec v1.15.1
+   Compiling rusqlite v0.41.0
+   Compiling borsh-derive v1.8.0
+   Compiling shake v0.1.0
+   Compiling foreign-types v0.3.2
+   Compiling module-lattice v0.2.3
+   Compiling signature v3.0.0
+   Compiling openssl-macros v0.1.1
+   Compiling hex v0.4.3
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/3069292387f3/root-readback/trillionnium/crates/trnm-protocol)
+   Compiling ml-dsa v0.1.1
+   Compiling rustix v1.1.6
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/3069292387f3/root-readback/trillionnium/crates/trnm-crypto-primitives)
+   Compiling getrandom v0.4.2
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/3069292387f3/root-readback/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling nix v0.30.1
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=["/workspace/scratch/747d27b1ca86/build-setup/rust195/lib"]; observed=["/workspace/scratch/3069292387f3/root-target/debug", "/workspace/scratch/3069292387f3/root-target/debug/deps", "/workspace/scratch/747d27b1ca86/build-setup/rust195/lib/rustlib/x86_64-unknown-linux-gnu/lib"]; allowed=["/workspace/scratch/3069292387f3/root-target/debug", "/workspace/scratch/3069292387f3/root-target/debug/deps", "/workspace/scratch/747d27b1ca86/build-setup/rust195/lib", "/workspace/scratch/747d27b1ca86/build-setup/rust195/lib/rustlib/x86_64-unknown-linux-gnu/lib"]
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/3069292387f3/root-readback/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/workspace/scratch/3069292387f3/root-readback/trillionnium/crates/trnm-verification-profiles)
+   Compiling getrandom v0.2.17
+   Compiling fs2 v0.4.3
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/3069292387f3/root-readback/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/3069292387f3/root-readback/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/3069292387f3/root-readback/trillionnium/crates/trnm-service-settlement)

@@ -1,0 +1,224 @@
+{
+  "schema": "trnm-fd-probe-independent-static-review-v1",
+  "recorded_at_utc": "2026-11-09T15:50:01.517406+00:00",
+  "reviewer": "pon_pq independent child review",
+  "review_mode": "static source and diff review only",
+  "repo_base_m4": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+  "repo_head_at_recording": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+  "future_source_m5_commit": null,
+  "future_evidence_child_label": "M6",
+  "m5_identity_status": "NOT_FROZEN_AT_REVIEW",
+  "result": "NO_STATIC_BLOCKER_TO_FREEZING_TEST_ORACLE_CHANGE_FOR_RERUN",
+  "production_or_security_qualification": false,
+  "compilation_performed_by_this_review": false,
+  "native_tests_executed_by_this_review": false,
+  "repository_modified_by_this_review": false,
+  "reviewed_files": [
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/residency/sealed_loader/tests.rs",
+      "current_bytes": 20679,
+      "current_sha256": "4e100a4b194d253231d722491061dc869f0d64d00d1a990cc27c02492ec2b127",
+      "current_git_blob": "a3d07422e7894ee0203f050ca6d09b602e1d6d5e",
+      "m4_bytes": 19644,
+      "m4_sha256": "f9a696f9300cefe4e5b600fbda1a0e178da585774b2040608f0a35da09a949bd",
+      "m4_git_blob": "35c1cc5f5ab54e2e6c80287beef04c42357a9119",
+      "current_equals_m4_bytes": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/residency/sealed_loader.rs",
+      "current_bytes": 13057,
+      "current_sha256": "5aa3eb47e0f1e380a89e785b6e4f42745a4f3e55d0f7618c52735d47d410889d",
+      "current_git_blob": "c29be516d2b0256b7e423a24618703c13155c7e3",
+      "m4_bytes": 13057,
+      "m4_sha256": "5aa3eb47e0f1e380a89e785b6e4f42745a4f3e55d0f7618c52735d47d410889d",
+      "m4_git_blob": "c29be516d2b0256b7e423a24618703c13155c7e3",
+      "current_equals_m4_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/residency.rs",
+      "current_bytes": 22323,
+      "current_sha256": "746538676ca9cef0e1e50161c6c8a8bcbd21aa9b842d49a84d128a9a91aa4655",
+      "current_git_blob": "b4efd8c78a16edbb0cbd799316eb76163dab1afb",
+      "m4_bytes": 22323,
+      "m4_sha256": "746538676ca9cef0e1e50161c6c8a8bcbd21aa9b842d49a84d128a9a91aa4655",
+      "m4_git_blob": "b4efd8c78a16edbb0cbd799316eb76163dab1afb",
+      "current_equals_m4_bytes": true
+    }
+  ],
+  "reviewed_diff": {
+    "base_commit": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+    "path": "trillionnium/crates/trnm-data-availability/src/cell/residency/sealed_loader/tests.rs",
+    "bytes": 3688,
+    "sha256": "74fcb4d3d8285c0252ad791060aa270d4f0874d631bec09b59067aa86c6c44b9"
+  },
+  "findings": [
+    {
+      "id": "FD_IDENTITY_CAPTURE",
+      "finding": "observe_fd reads metadata from the borrowed live File and records fd plus device/inode; no descriptor ownership is copied into the observation."
+    },
+    {
+      "id": "ORIGINAL_SLOT_REJECTION",
+      "finding": "assert_closed rejects the original observed slot when it still resolves to the original device/inode pair; only NotFound or a different pair is accepted; all other I/O errors fail."
+    },
+    {
+      "id": "NEGATIVE_CONTROL",
+      "name": "closure_probe_rejects_a_live_original_descriptor",
+      "annotation": "#[should_panic(expected = \"original loader descriptor is still open\")]",
+      "finding": "The original tempfile remains owned in scope during the probe. Unrelated creation/metadata/proc errors do not carry the expected assertion message and cannot stand in for the intended rejection."
+    },
+    {
+      "id": "CFG_IMPORTS",
+      "finding": "residency.rs gates sealed_loader with cfg(target_os = \"linux\"); tests are nested under cfg(test). MetadataExt is compatible with that Linux scope; File and io remain available through the existing super::* import."
+    },
+    {
+      "id": "RAII_ERROR_PATH",
+      "finding": "The unpublished memfd is owned by a local File, transferred into Vec<SealedMember> only after verification, and the bundle is returned only after the complete loop. The reviewed ? exits drop the current local File and all earlier Vec entries. No production source bytes changed."
+    },
+    {
+      "id": "PRIOR_ASSERTIONS_PRESERVED",
+      "finding": "The three existing corruption/cancellation/deadline tests change only their descriptor capture calls. Their existing error, complete-hash, usage, selection, and observed-count assertions are preserved."
+    }
+  ],
+  "boundaries": [
+    "The reported M4 failure does not establish a production descriptor leak or prove that reuse was its actual cause; the old integer-slot oracle cannot distinguish those cases.",
+    "The revised check observes the original integer slot and device/inode identity. It is not a proof of reclaiming all duplicated descriptors, mmap references, or downstream owners.",
+    "The production documentation already excludes certification of every downstream reference or refund authority from bundle Drop.",
+    "Device/inode equality is filesystem-object identity, not proof of a unique open-file-description. A later same-object reference may conservatively fail the probe.",
+    "No compiler result, native rerun, daemon execution, FinalUse, or service acceptance is inferred from this static review.",
+    "Non-membership in the curated authority/Root/W1 maps does not establish absence of whole-program or runtime dependencies."
+  ],
+  "binding_membership_review": [
+    {
+      "manifest": {
+        "path": "config/pon/pq-authority-effects-v1.json",
+        "current_bytes": 14196,
+        "current_sha256": "f3f0cdc69b353f47fc6bc36b305d8819685d9ecbf247cc6694c5b37453d4d5bd",
+        "current_git_blob": "b07a77d355e1e8560b0309e781a181dade9a31d4",
+        "m4_bytes": 14196,
+        "m4_sha256": "f3f0cdc69b353f47fc6bc36b305d8819685d9ecbf247cc6694c5b37453d4d5bd",
+        "m4_git_blob": "b07a77d355e1e8560b0309e781a181dade9a31d4",
+        "current_equals_m4_bytes": true
+      },
+      "checker": {
+        "path": "scripts/ci/pq_authority_effect_register.py",
+        "current_bytes": 11132,
+        "current_sha256": "99c7ae4ddcdce1bac481d96923f04dcb16f344c24c093f09e07bc410bbd65976",
+        "current_git_blob": "010eac30375062eec9a3c5242aaf978a96f1f851",
+        "m4_bytes": 11132,
+        "m4_sha256": "99c7ae4ddcdce1bac481d96923f04dcb16f344c24c093f09e07bc410bbd65976",
+        "m4_git_blob": "010eac30375062eec9a3c5242aaf978a96f1f851",
+        "current_equals_m4_bytes": true
+      },
+      "binding_json_path": "$.source_files_sha256",
+      "bound_path_count": 44,
+      "target_present": false,
+      "rebind_required_for_this_test_only_change": false
+    },
+    {
+      "manifest": {
+        "path": "config/pon/pq-root-dependency-register-v3.json",
+        "current_bytes": 38842,
+        "current_sha256": "a53c902e4af3e3faba1c058915ae963b9fb171b0199d317d2daff2cf99748f21",
+        "current_git_blob": "253a628e0ae757aa2cb2d319750239a25f378815",
+        "m4_bytes": 38842,
+        "m4_sha256": "a53c902e4af3e3faba1c058915ae963b9fb171b0199d317d2daff2cf99748f21",
+        "m4_git_blob": "253a628e0ae757aa2cb2d319750239a25f378815",
+        "current_equals_m4_bytes": true
+      },
+      "checker": {
+        "path": "scripts/ci/pq_root_dependency_register.py",
+        "current_bytes": 20574,
+        "current_sha256": "653971fc7fed059e3fc1b53978ac8697773600be0719d8475be93dc4612a3a17",
+        "current_git_blob": "92fdca9d62f701728910d26ccc341e274f4f3b8f",
+        "m4_bytes": 20574,
+        "m4_sha256": "653971fc7fed059e3fc1b53978ac8697773600be0719d8475be93dc4612a3a17",
+        "m4_git_blob": "92fdca9d62f701728910d26ccc341e274f4f3b8f",
+        "current_equals_m4_bytes": true
+      },
+      "binding_json_path": "$.source_files_sha256",
+      "bound_path_count": 37,
+      "target_present": false,
+      "rebind_required_for_this_test_only_change": false
+    },
+    {
+      "manifest": {
+        "path": "config/pon/w1-qrom-implementation-current-v2.json",
+        "current_bytes": 40257,
+        "current_sha256": "e2c5377ac02c0ed47e7f69125fbcabe61072d42597b3208264abaa5be2961c78",
+        "current_git_blob": "4a827d925f5152e6dc7d4262c176d215ee6ab3d6",
+        "m4_bytes": 40257,
+        "m4_sha256": "e2c5377ac02c0ed47e7f69125fbcabe61072d42597b3208264abaa5be2961c78",
+        "m4_git_blob": "4a827d925f5152e6dc7d4262c176d215ee6ab3d6",
+        "current_equals_m4_bytes": true
+      },
+      "checker": {
+        "path": "scripts/w1_qrom_current_implementation_audit.py",
+        "current_bytes": 17028,
+        "current_sha256": "27b9cadfc931763b94348a0489600d759bd068d786964a4a093f65d8aa45d242",
+        "current_git_blob": "88cf3757f5197803acd8256b77b6e808d1e497d1",
+        "m4_bytes": 17028,
+        "m4_sha256": "27b9cadfc931763b94348a0489600d759bd068d786964a4a093f65d8aa45d242",
+        "m4_git_blob": "88cf3757f5197803acd8256b77b6e808d1e497d1",
+        "current_equals_m4_bytes": true
+      },
+      "binding_json_path": "$.local_path_closure.files[*].path",
+      "bound_path_count": 137,
+      "target_present": false,
+      "selected_project_path_count": 16,
+      "target_in_selected_project_files": false,
+      "crate_roots": [
+        "formal/pon-nakamoto-v1/w1_hardened_verifier",
+        "formal/pon-nakamoto-v1/w1_v2_verifier",
+        "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2",
+        "formal/pon-nakamoto-v1/w1_zkvm/relation",
+        "trillionnium/crates/trnm-crypto-primitives",
+        "trillionnium/crates/trnm-protocol"
+      ],
+      "target_under_any_crate_root": false,
+      "rebind_required_for_this_test_only_change": false
+    }
+  ],
+  "required_manifest_updates_for_this_test_change": [
+    {
+      "manifest": "config/pon/pq-cross-branch-corpus-v1.json",
+      "json_path": "$.pinned_blobs[\"trillionnium/crates/trnm-data-availability/src/cell/residency/sealed_loader/tests.rs\"]",
+      "observed_pin": "a3d07422e7894ee0203f050ca6d09b602e1d6d5e",
+      "required_current_git_blob": "a3d07422e7894ee0203f050ca6d09b602e1d6d5e",
+      "required_path_already_present": true,
+      "required_path_array_index_at_review": 556,
+      "action_owner": "root",
+      "modified_by_this_review": false
+    }
+  ],
+  "unchanged_profile_manifest": {
+    "path": "config/pon/pq-proof-profile-binding-v1.json",
+    "current_bytes": 2378,
+    "current_sha256": "9154595097a2abe460f23e53ab96b3de5712702b156ada71fc5d2d65c337e424",
+    "current_git_blob": "0024bd4bc57273c60f6a8e6b0b4ad3243b3aeaf0",
+    "m4_bytes": 2378,
+    "m4_sha256": "9154595097a2abe460f23e53ab96b3de5712702b156ada71fc5d2d65c337e424",
+    "m4_git_blob": "0024bd4bc57273c60f6a8e6b0b4ad3243b3aeaf0",
+    "current_equals_m4_bytes": true
+  },
+  "not_required_for_this_test_only_change": [
+    "authority source_revision or reviewed source lock",
+    "Root review_base_revision or reviewed snapshot",
+    "W1 current-v2 local_path_closure or reader SOURCE",
+    "selected proof descriptor"
+  ],
+  "followup": "Root freezes M5 only after its corpus pin update, then binds real rerun inputs/results to M5; M4 failure evidence stays under M4, and M6 is the later evidence child.",
+  "discovery_attempts": [
+    {
+      "attempt": 1,
+      "result": "rg exit 2",
+      "reason": "initial read-only search named non-existent scripts/ci/w1_qrom_implementation.py",
+      "repository_mutation": false
+    },
+    {
+      "attempt": 2,
+      "result": "actual checker located",
+      "path": "scripts/w1_qrom_current_implementation_audit.py",
+      "repository_mutation": false
+    }
+  ]
+}

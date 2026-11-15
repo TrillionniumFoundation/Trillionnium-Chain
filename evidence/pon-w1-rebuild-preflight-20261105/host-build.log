@@ -1,0 +1,7 @@
+   Compiling trnm-w1-zk-methods-v2 v0.1.0 (/workspace/scratch/29755d2a47ef/chain-w1-proof/formal/pon-nakamoto-v1/w1_zkvm/methods-v2)
+   Compiling risc0-circuit-keccak v4.0.6
+   Compiling bincode v1.3.3
+   Compiling risc0-zkvm v3.0.3
+   Compiling trnm-w1-zk-relation v0.1.0 (/workspace/scratch/29755d2a47ef/chain-w1-proof/formal/pon-nakamoto-v1/w1_zkvm/relation)
+   Compiling trnm-w1-zk-host-v2 v0.1.0 (/workspace/scratch/29755d2a47ef/chain-w1-proof/formal/pon-nakamoto-v1/w1_zkvm/host-v2)
+    Finished `release` profile [optimized + debuginfo] target(s) in 6m 30s

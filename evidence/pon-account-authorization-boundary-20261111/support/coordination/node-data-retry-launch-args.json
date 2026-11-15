@@ -1,0 +1,10 @@
+{
+  "host": "desktop",
+  "executable": "/usr/bin/python3",
+  "args": [
+    "-"
+  ],
+  "stdin": "import json,os,subprocess,sys\nfrom pathlib import Path\nhead=\"cdd984808a088e6c2e13b1e1ae6630a94d500c89\"\nrecords=Path('/home/qian-qi/chain-pq-a418-final-records')\ntarget=Path(\"/data/chain-pq-a418-node-retained-target-20261111\")\nassert not target.exists()\ntarget.mkdir(mode=0o700)\nfree=os.statvfs(target)\nassert free.f_bavail*free.f_frsize>120*1024**3\nrunner=records/'run_validation.py'\nbase=['/usr/bin/python3',str(runner),'--head',head]\njobs=[\n ('node-retained-data-preflight',['bash','scripts/project-preflight.sh']),\n ('node-retained-data-source-before',['python3','scripts/ci/verify_ci_source.py','--kind','head','--expected-head',head,'--output',str(records/'node-retained-data-source-before.json')]),\n ('node-retained-data-all-targets',['env','CARGO_HOME=/home/qian-qi/chain-pq-a418-final-cargo-home','TRNM_CI_TOOL_ROOT=/home/qian-qi/chain-pq-a418-final-ci-tools','CARGO_TARGET_DIR='+str(target),'cargo','test','--locked','--offline','--manifest-path','trillionnium/Cargo.toml','-p','trnm-pon-node','--all-targets','--all-features','--','--test-threads=1']),\n ('node-retained-data-source-after',['python3','scripts/ci/verify_ci_source.py','--kind','head','--expected-head',head,'--output',str(records/'node-retained-data-source-after.json')])]\nbad=False\nfor idx,(name,argv) in enumerate(jobs):\n if idx==2 and bad:\n  print(json.dumps({'not_started':name,'reason':'precondition_failed'}),flush=True)\n  continue\n r=subprocess.run(base+['--id',name,'--']+argv)\n print(json.dumps({'completed':name,'returncode':r.returncode}),flush=True)\n bad=bad or r.returncode!=0\nsys.exit(1 if bad else 0)\n",
+  "cwd": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final",
+  "idempotency_key": "pq-a418-final-z-node-retained-data-volume-1"
+}

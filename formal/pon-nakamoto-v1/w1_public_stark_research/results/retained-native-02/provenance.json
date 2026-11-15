@@ -1,0 +1,85 @@
+{
+  "schema": "trnm-w1-stark-campaign-v1",
+  "qualification": "HOLD_NO_GO",
+  "machine": {
+    "system": "Linux",
+    "node": "qian-qi",
+    "release": "7.0.0-38-generic",
+    "version": "#38~24.04.4-Ubuntu SMP PREEMPT_DYNAMIC Mon Sep 14 16:37:11 UTC 2",
+    "machine": "x86_64",
+    "processor": "x86_64"
+  },
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "rayon_num_threads": "8",
+  "binary": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research",
+  "binary_sha256": "7700eff6ea4a3ff1f8f6551c323ac5b90b2bb5a96d1eaeca41e108bc54a7e3fc",
+  "sources": {
+    "Cargo.toml": {
+      "bytes": 780,
+      "sha256": "e4abafba6867bf145ddd3f5b8f669ce039a93973d80f7eb3096dd3a7ce1c184c"
+    },
+    "Cargo.lock": {
+      "bytes": 17799,
+      "sha256": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1"
+    },
+    "run_campaign.py": {
+      "bytes": 11224,
+      "sha256": "3ee33ef097d3b1f63c368726ff02beacb5333729d061e8be5801f0694141c39d"
+    },
+    "src/arith_air.rs": {
+      "bytes": 8516,
+      "sha256": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363"
+    },
+    "src/lib.rs": {
+      "bytes": 252,
+      "sha256": "5ee3aa7d673d3dd046e42b9467f2d4a3c7a97007ad67d6eb1b274fa7e4033607"
+    },
+    "src/main.rs": {
+      "bytes": 13113,
+      "sha256": "cf3100186faa24c7a1163d2eb45e353389f75be3dcbe09363a1d2ce176288f95"
+    },
+    "src/proof_config.rs": {
+      "bytes": 9547,
+      "sha256": "f27541c4a456841e4a391327a907a6758f428947e3bc8792d7c164bdb29954a1"
+    },
+    "src/public.rs": {
+      "bytes": 14959,
+      "sha256": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29"
+    },
+    "src/sha_air.rs": {
+      "bytes": 12219,
+      "sha256": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa"
+    },
+    "src/sha_plan.rs": {
+      "bytes": 13300,
+      "sha256": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3"
+    },
+    "tests/proof_smoke.rs": {
+      "bytes": 7384,
+      "sha256": "3f114828a246a9cf4d97a1c983fdd6675e6eea20aafc68bf0091b32669d8b51b"
+    }
+  },
+  "fixtures": {
+    "raw": {
+      "path": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.input.bin",
+      "bytes": 49506,
+      "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+    },
+    "prefix": {
+      "path": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.prefix.bin",
+      "bytes": 131072,
+      "sha256": "2d3876ae3aeaff654b373acf3ad71720428890fe4373a51ca93c9126b9fd5f96"
+    },
+    "header": {
+      "path": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin",
+      "bytes": 318,
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+    },
+    "artifacts": {
+      "path": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin",
+      "bytes": 64,
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+    }
+  },
+  "scope": "fixed original W1 fixture; public-witness preparation and actual proofs; no nonce-search estimate"
+}

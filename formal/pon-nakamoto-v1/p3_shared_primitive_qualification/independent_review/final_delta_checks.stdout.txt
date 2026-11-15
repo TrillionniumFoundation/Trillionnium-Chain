@@ -1,0 +1,32 @@
+{
+  "all_skipped_control_tests_executed": 0,
+  "current_runner_parser_controls": {
+    "all_passed": true,
+    "full_runner_executed": false,
+    "python_cases": 5,
+    "runner_sha256": "f5fed7839082b675014f676e3c3165c354c5dddb5b5d0b206be87a49d95604fb",
+    "rust_cases": 6,
+    "source_guard_expressions_evaluated_only": true
+  },
+  "delta_identity_checks": {
+    "profile_diff_exactly_descriptor_label_change": true,
+    "test_previous_snapshot_is_unchanged_prefix": true
+  },
+  "former_runner_accepts_all_skipped_control": true,
+  "native_rust_execution_by_reviewer": false,
+  "qualification": "HOLD_NO_GO",
+  "qualified": false,
+  "reference_case_coverage": {
+    "component_0_statement_context": 3,
+    "component_1_branch": 2,
+    "component_1_leaf": 5,
+    "component_1_transcript": 7,
+    "component_4_branch": 2,
+    "component_4_leaf": 5,
+    "component_4_transcript": 7
+  },
+  "reference_fixture_sha256": "c891c42cbd7751c920073c7701494d710016cbf56e933408893b0536996cc0a5",
+  "reference_vectors_recomputed": 31,
+  "regenerated_fixture_byte_identical": true,
+  "schema": "p3.tagged.sha3.final_delta.observations.v1"
+}

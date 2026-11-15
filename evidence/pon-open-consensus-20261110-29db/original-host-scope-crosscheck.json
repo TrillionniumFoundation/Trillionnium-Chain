@@ -1,0 +1,191 @@
+{
+  "all_hostile_full_work_rejections_matched_to_exact_original_bodies": 13781,
+  "archive_sha256": "715587a56f595588c4eca4b36ba6e0a326b78e69078a4240cc878959e1f02cfe",
+  "campaign_reexecuted": false,
+  "host_readiness_does_not_establish_service_success": true,
+  "host_readiness_passes": 9,
+  "phases": [
+    {
+      "actual_controller_limits": {
+        "cpu.max": "400000 100000",
+        "memory.max": "17179869184"
+      },
+      "actual_public_cpu_max": "25000 100000",
+      "actual_public_memory_max": "2147483648",
+      "distinct_hostile_body_digests": 0,
+      "host_readiness_passed": true,
+      "inner_phase_host_cpu_delta_usec": 8374797,
+      "inner_phase_interval_is_contained_in_outer_launcher_interval": true,
+      "mode": "baseline",
+      "nested_host_counters_must_not_be_added": true,
+      "outer_host_launcher_cpu_delta_usec": 8433628,
+      "receiver_full_work_accepts_matched_to_exact_hostile_bodies": 0,
+      "receiver_full_work_rejections_matched_to_exact_hostile_bodies": 0,
+      "resource_limits_are_ceilings_not_reservations": true,
+      "run": 1,
+      "service_or_depletion_criteria_met": false
+    },
+    {
+      "actual_controller_limits": {
+        "cpu.max": "400000 100000",
+        "memory.max": "17179869184"
+      },
+      "actual_public_cpu_max": "25000 100000",
+      "actual_public_memory_max": "2147483648",
+      "distinct_hostile_body_digests": 24,
+      "host_readiness_passed": true,
+      "inner_phase_host_cpu_delta_usec": 8882670,
+      "inner_phase_interval_is_contained_in_outer_launcher_interval": true,
+      "mode": "from-zero",
+      "nested_host_counters_must_not_be_added": true,
+      "outer_host_launcher_cpu_delta_usec": 9078598,
+      "receiver_full_work_accepts_matched_to_exact_hostile_bodies": 0,
+      "receiver_full_work_rejections_matched_to_exact_hostile_bodies": 2288,
+      "resource_limits_are_ceilings_not_reservations": true,
+      "run": 1,
+      "service_or_depletion_criteria_met": false
+    },
+    {
+      "actual_controller_limits": {
+        "cpu.max": "400000 100000",
+        "memory.max": "17179869184"
+      },
+      "actual_public_cpu_max": "25000 100000",
+      "actual_public_memory_max": "2147483648",
+      "distinct_hostile_body_digests": 24,
+      "host_readiness_passed": true,
+      "inner_phase_host_cpu_delta_usec": 8870395,
+      "inner_phase_interval_is_contained_in_outer_launcher_interval": true,
+      "mode": "late-product",
+      "nested_host_counters_must_not_be_added": true,
+      "outer_host_launcher_cpu_delta_usec": 9061701,
+      "receiver_full_work_accepts_matched_to_exact_hostile_bodies": 0,
+      "receiver_full_work_rejections_matched_to_exact_hostile_bodies": 2280,
+      "resource_limits_are_ceilings_not_reservations": true,
+      "run": 1,
+      "service_or_depletion_criteria_met": false
+    },
+    {
+      "actual_controller_limits": {
+        "cpu.max": "400000 100000",
+        "memory.max": "17179869184"
+      },
+      "actual_public_cpu_max": "25000 100000",
+      "actual_public_memory_max": "2147483648",
+      "distinct_hostile_body_digests": 0,
+      "host_readiness_passed": true,
+      "inner_phase_host_cpu_delta_usec": 8371349,
+      "inner_phase_interval_is_contained_in_outer_launcher_interval": true,
+      "mode": "baseline",
+      "nested_host_counters_must_not_be_added": true,
+      "outer_host_launcher_cpu_delta_usec": 8431879,
+      "receiver_full_work_accepts_matched_to_exact_hostile_bodies": 0,
+      "receiver_full_work_rejections_matched_to_exact_hostile_bodies": 0,
+      "resource_limits_are_ceilings_not_reservations": true,
+      "run": 2,
+      "service_or_depletion_criteria_met": false
+    },
+    {
+      "actual_controller_limits": {
+        "cpu.max": "400000 100000",
+        "memory.max": "17179869184"
+      },
+      "actual_public_cpu_max": "25000 100000",
+      "actual_public_memory_max": "2147483648",
+      "distinct_hostile_body_digests": 24,
+      "host_readiness_passed": true,
+      "inner_phase_host_cpu_delta_usec": 8875800,
+      "inner_phase_interval_is_contained_in_outer_launcher_interval": true,
+      "mode": "from-zero",
+      "nested_host_counters_must_not_be_added": true,
+      "outer_host_launcher_cpu_delta_usec": 9068240,
+      "receiver_full_work_accepts_matched_to_exact_hostile_bodies": 0,
+      "receiver_full_work_rejections_matched_to_exact_hostile_bodies": 2324,
+      "resource_limits_are_ceilings_not_reservations": true,
+      "run": 2,
+      "service_or_depletion_criteria_met": false
+    },
+    {
+      "actual_controller_limits": {
+        "cpu.max": "400000 100000",
+        "memory.max": "17179869184"
+      },
+      "actual_public_cpu_max": "25000 100000",
+      "actual_public_memory_max": "2147483648",
+      "distinct_hostile_body_digests": 24,
+      "host_readiness_passed": true,
+      "inner_phase_host_cpu_delta_usec": 8870130,
+      "inner_phase_interval_is_contained_in_outer_launcher_interval": true,
+      "mode": "late-product",
+      "nested_host_counters_must_not_be_added": true,
+      "outer_host_launcher_cpu_delta_usec": 9057614,
+      "receiver_full_work_accepts_matched_to_exact_hostile_bodies": 0,
+      "receiver_full_work_rejections_matched_to_exact_hostile_bodies": 2243,
+      "resource_limits_are_ceilings_not_reservations": true,
+      "run": 2,
+      "service_or_depletion_criteria_met": false
+    },
+    {
+      "actual_controller_limits": {
+        "cpu.max": "400000 100000",
+        "memory.max": "17179869184"
+      },
+      "actual_public_cpu_max": "25000 100000",
+      "actual_public_memory_max": "2147483648",
+      "distinct_hostile_body_digests": 0,
+      "host_readiness_passed": true,
+      "inner_phase_host_cpu_delta_usec": 8343107,
+      "inner_phase_interval_is_contained_in_outer_launcher_interval": true,
+      "mode": "baseline",
+      "nested_host_counters_must_not_be_added": true,
+      "outer_host_launcher_cpu_delta_usec": 8401488,
+      "receiver_full_work_accepts_matched_to_exact_hostile_bodies": 0,
+      "receiver_full_work_rejections_matched_to_exact_hostile_bodies": 0,
+      "resource_limits_are_ceilings_not_reservations": true,
+      "run": 3,
+      "service_or_depletion_criteria_met": false
+    },
+    {
+      "actual_controller_limits": {
+        "cpu.max": "400000 100000",
+        "memory.max": "17179869184"
+      },
+      "actual_public_cpu_max": "25000 100000",
+      "actual_public_memory_max": "2147483648",
+      "distinct_hostile_body_digests": 24,
+      "host_readiness_passed": true,
+      "inner_phase_host_cpu_delta_usec": 8872243,
+      "inner_phase_interval_is_contained_in_outer_launcher_interval": true,
+      "mode": "from-zero",
+      "nested_host_counters_must_not_be_added": true,
+      "outer_host_launcher_cpu_delta_usec": 9067632,
+      "receiver_full_work_accepts_matched_to_exact_hostile_bodies": 0,
+      "receiver_full_work_rejections_matched_to_exact_hostile_bodies": 2351,
+      "resource_limits_are_ceilings_not_reservations": true,
+      "run": 3,
+      "service_or_depletion_criteria_met": false
+    },
+    {
+      "actual_controller_limits": {
+        "cpu.max": "400000 100000",
+        "memory.max": "17179869184"
+      },
+      "actual_public_cpu_max": "25000 100000",
+      "actual_public_memory_max": "2147483648",
+      "distinct_hostile_body_digests": 24,
+      "host_readiness_passed": true,
+      "inner_phase_host_cpu_delta_usec": 8849058,
+      "inner_phase_interval_is_contained_in_outer_launcher_interval": true,
+      "mode": "late-product",
+      "nested_host_counters_must_not_be_added": true,
+      "outer_host_launcher_cpu_delta_usec": 9038058,
+      "receiver_full_work_accepts_matched_to_exact_hostile_bodies": 0,
+      "receiver_full_work_rejections_matched_to_exact_hostile_bodies": 2295,
+      "resource_limits_are_ceilings_not_reservations": true,
+      "run": 3,
+      "service_or_depletion_criteria_met": false
+    }
+  ],
+  "schema": "original-service-host-scope-crosscheck-v1",
+  "verdict": "PASS"
+}

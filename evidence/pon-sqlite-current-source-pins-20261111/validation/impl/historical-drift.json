@@ -1,0 +1,67 @@
+{
+  "classification": "HISTORICAL_SOURCE_PIN_DRIFT",
+  "current_contract_sha256": "3ce8a244eefa4e197a53047dd5a38b2497bdf5eb0e36f463005cd7b372c14fc8",
+  "historical_contract_sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22",
+  "historical_exit_code": 2,
+  "historical_replay_commit": "0c830e0be8939ce80c8443c9ad68021b87343a00",
+  "historical_result": {
+    "qualification": {
+      "complete_w1_soundness_qualified": false,
+      "consensus_admission": false,
+      "post_quantum_soundness_qualified": false,
+      "pq_signature_qualification_inferred": false,
+      "production_qualified": false,
+      "quantum_work_qualified": false,
+      "security_bits_quantum": null
+    },
+    "reason": "input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+    "result": "INPUT_REJECTED"
+  },
+  "historical_source_base_commit": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+  "historical_stderr_sha256": "cf0e8063b0192bcdd80c6db442548e8e6ef8ffa105a4f7b9c369f2f6d72a5858",
+  "historical_stdout_bytes": 0,
+  "historical_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "historical_v1_on_current_passed": false,
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "post_quantum_soundness_qualified": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false,
+    "security_bits_quantum": null
+  },
+  "schema": "TRNM-W1-QROM-HISTORICAL-CURRENT-DRIFT1",
+  "selected_source_differences": [
+    {
+      "current": {
+        "bytes": 11172,
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+        "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+      },
+      "historical": {
+        "bytes": 9233,
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+        "sha256": "07415e8e3bb53f3e81dd489e4ebda63368170efbe4a217ae6b0dd6cc0af14128"
+      },
+      "observed_bytes": 11172,
+      "observed_sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7",
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs"
+    },
+    {
+      "current": {
+        "bytes": 32654,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+      },
+      "historical": {
+        "bytes": 32354,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+      },
+      "observed_bytes": 32654,
+      "observed_sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b",
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    }
+  ]
+}

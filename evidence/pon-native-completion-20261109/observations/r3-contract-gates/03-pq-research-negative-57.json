@@ -1,0 +1,49 @@
+{
+  "label": "pq-research-negative-57",
+  "argv": [
+    "python3",
+    "scripts/ci/test_pq_research_integration.py",
+    "-v"
+  ],
+  "command": "python3 scripts/ci/test_pq_research_integration.py -v",
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "expected_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+  "expected_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+  "before": {
+    "head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "started_utc": "2026-11-09T03:59:45.209529+00:00",
+  "timeout_seconds": 600,
+  "timeout_scope": "source/graph command wall-time supervisor only; no product deadline changed",
+  "stdout": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/03-pq-research-negative-57.stdout",
+  "stderr": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/03-pq-research-negative-57.stderr",
+  "expected_tests": 57,
+  "tests_run": 57,
+  "skipped": 0,
+  "failures": 0,
+  "errors": 0,
+  "timed_out": false,
+  "exit_code": 0,
+  "passed": true,
+  "elapsed_seconds": 272.387922,
+  "after": {
+    "head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "harness_seconds": 272.18,
+  "unittest_status": "OK",
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "finished_utc": "2026-11-09T04:04:17.692271+00:00",
+  "stdout_bytes": 0,
+  "stderr_bytes": 8085,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "8dee388c8697e9688643eb2d08e7539c679617cf51442505275b9837baeede92"
+}

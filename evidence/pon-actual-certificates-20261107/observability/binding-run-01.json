@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "formal/pon-nakamoto-v1/certificate_observability_evidence.py",
+    "--native-owner-json",
+    "evidence/pon-actual-certificates-20261107/native_score_bridge/attempt-01/run/native.json",
+    "--out",
+    "evidence/pon-actual-certificates-20261107/observability/observability-run-01.json"
+  ],
+  "returncode": 0,
+  "new_native_process_invoked": false
+}

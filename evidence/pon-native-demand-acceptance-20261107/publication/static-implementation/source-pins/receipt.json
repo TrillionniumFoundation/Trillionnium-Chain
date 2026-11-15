@@ -1,0 +1,22 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "elapsed_seconds": 0.38486242294311523,
+  "exit_code": 0,
+  "head": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "independent_business_acceptance": false,
+  "label": "source-pins",
+  "schema": "pon-publication-static-gate-v1",
+  "started_unix_seconds": 1794067600.4003627,
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 557,
+    "sha256": "e5fedf04aea60464aafe2e63692a15234e6eb065d1ee3a874cdf185e51b1137f"
+  },
+  "unittest_summaries": []
+}

@@ -1,0 +1,202 @@
+{
+  "schema": "pon-raw-observation-archive-v1",
+  "source_head": "c2d67c5cf1ebb4caac525802362d5746b8fd957d",
+  "scope": "Three tests execute successfully; direct-Cargo loader omission leaves Node build unqualified",
+  "files": [
+    {
+      "file": "cargo-version.command.json",
+      "bytes": 882,
+      "sha256": "63f5524fd6783c09c288f274d74e787c9528cd30eac557b200645606c5c47233"
+    },
+    {
+      "file": "cargo-version.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "cargo-version.stdout",
+      "bytes": 336,
+      "sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e"
+    },
+    {
+      "file": "commands.json",
+      "bytes": 14898,
+      "sha256": "f7626cb5cf174100912f5662c9c68cb30ad40dbcae90de77d266e4b7c7b3e5d7"
+    },
+    {
+      "file": "crypto-fixed-product-meter.command.json",
+      "bytes": 1298,
+      "sha256": "a9186e74e7f51834e8d05b315928ffeac119d4284216ec2606f87127e638793d"
+    },
+    {
+      "file": "crypto-fixed-product-meter.stderr",
+      "bytes": 816,
+      "sha256": "125f2a24930ff59094a9b708313dd0e4f43947d0452cb0b971b8bd6e63e77a84"
+    },
+    {
+      "file": "crypto-fixed-product-meter.stdout",
+      "bytes": 211,
+      "sha256": "a999044bf1890a7a8982e4f5527d017a238563a3b95d10539578aad173b15e54"
+    },
+    {
+      "file": "crypto-fresh-challenge-refusal.command.json",
+      "bytes": 1296,
+      "sha256": "670c78a5e0dd7be136918d29028ee03a5eb6a2bc212b0a4d34047d7d6935f0ac"
+    },
+    {
+      "file": "crypto-fresh-challenge-refusal.stderr",
+      "bytes": 358,
+      "sha256": "fbebc0455482c708ce3e71167deb1725a3c907905b521b45ca65f9385e33e071"
+    },
+    {
+      "file": "crypto-fresh-challenge-refusal.stdout",
+      "bytes": 227,
+      "sha256": "72c1caa8f58457745f73bfa038a423cadee0e6e9347352db3d3a6e5af6137eea"
+    },
+    {
+      "file": "environment.json",
+      "bytes": 553,
+      "sha256": "5107603fac3bd7c3d561db4fa5b695a8d7c492ee64ade06f359640bf5efe404e"
+    },
+    {
+      "file": "locate-cargo.command.json",
+      "bytes": 858,
+      "sha256": "4aa31889067f6d812449e9df016a74ea4cbc3de69552b4e19ae12eff0cafee20"
+    },
+    {
+      "file": "locate-cargo.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "locate-cargo.stdout",
+      "bytes": 75,
+      "sha256": "11afed91402166acf1f6830d6c6bd8d6fb03e4103127636abc40b3191caf8a4b"
+    },
+    {
+      "file": "locate-rustc.command.json",
+      "bytes": 858,
+      "sha256": "9dd2cbe9eaaa0c52a4df39f0b2202e2f6f19bb775cb137aeecab0624a457d6be"
+    },
+    {
+      "file": "locate-rustc.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "locate-rustc.stdout",
+      "bytes": 75,
+      "sha256": "243513c3ce04d68278e450b9406ac8d65ffc73da605e77a745965cff5ca1d1a0"
+    },
+    {
+      "file": "locate-rustdoc.command.json",
+      "bytes": 867,
+      "sha256": "1dbc4a1f80e9d2337cfa12a69a9d92ba2fcbf7a26ec104bbf4a4248e573fe028"
+    },
+    {
+      "file": "locate-rustdoc.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "locate-rustdoc.stdout",
+      "bytes": 77,
+      "sha256": "357583c3bca396e13148de1905305ed9bf5365aed4e489f05b49781884fb2d21"
+    },
+    {
+      "file": "node-single-output-owner.command.json",
+      "bytes": 1271,
+      "sha256": "3dc97e6263b0ecdc38e3b96b5a4e1807df0df936a471b2503d1f7f9090a74bc9"
+    },
+    {
+      "file": "node-single-output-owner.stderr",
+      "bytes": 1275,
+      "sha256": "f3eeb77a7a590baef67e122c2ee8714ca219f90197a3fdfff0eb732f6deb2f9b"
+    },
+    {
+      "file": "node-single-output-owner.stdout",
+      "bytes": 202,
+      "sha256": "ec73186a19e221f5f7f4d195178fc57e240a899f5cf6ef2689c678e3f903b64b"
+    },
+    {
+      "file": "project-boundary-before.command.json",
+      "bytes": 867,
+      "sha256": "fb6f921042b177849a9e72ef238b9be33cfc3fbe36aaf254abfd24d1a668b977"
+    },
+    {
+      "file": "project-boundary-before.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "project-boundary-before.stdout",
+      "bytes": 187,
+      "sha256": "83dcff667b9e4be937ae5cc0a8df2bebd5dcd2a38c3c423e0e528ec58e8b2678"
+    },
+    {
+      "file": "runner.py",
+      "bytes": 11181,
+      "sha256": "585c2af4bad93a59f145a0d6199903043bda3861b673617feae6103940a1220c"
+    },
+    {
+      "file": "source-after.command.json",
+      "bytes": 1106,
+      "sha256": "6e03240d43d28aec9705e7af8066afe7f4b08cf30cc3dc89c18e5370dfe0cf7b"
+    },
+    {
+      "file": "source-after.json",
+      "bytes": 423,
+      "sha256": "70633ed61ecc9d567f520ec023c45662e2d6fded76dd03657586a2dd73bb601a"
+    },
+    {
+      "file": "source-after.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "source-after.stdout",
+      "bytes": 423,
+      "sha256": "70633ed61ecc9d567f520ec023c45662e2d6fded76dd03657586a2dd73bb601a"
+    },
+    {
+      "file": "source-before.command.json",
+      "bytes": 1110,
+      "sha256": "2d6bac237202a682b70e372b9c2eef5575436b3cd6aa1239455e125f06afcf4c"
+    },
+    {
+      "file": "source-before.json",
+      "bytes": 423,
+      "sha256": "70633ed61ecc9d567f520ec023c45662e2d6fded76dd03657586a2dd73bb601a"
+    },
+    {
+      "file": "source-before.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "source-before.stdout",
+      "bytes": 423,
+      "sha256": "70633ed61ecc9d567f520ec023c45662e2d6fded76dd03657586a2dd73bb601a"
+    },
+    {
+      "file": "summary.json",
+      "bytes": 233,
+      "sha256": "c70ea22273db49e5cbdd6491addb5de56b2cb07b4ecf4eb227f85ff4b237e290"
+    },
+    {
+      "file": "toolchain.command.json",
+      "bytes": 870,
+      "sha256": "6ca426bfb3c168b621eb0b372d7a7322479590db88762b1182163ac11093717a"
+    },
+    {
+      "file": "toolchain.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "toolchain.stdout",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    }
+  ]
+}

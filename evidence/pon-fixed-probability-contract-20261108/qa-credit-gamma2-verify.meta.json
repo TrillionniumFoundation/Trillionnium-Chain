@@ -1,0 +1,14 @@
+{
+  "label": "qa-credit-gamma2-verify",
+  "argv": [
+    "python3",
+    "formal/pon-nakamoto-v1/credit_feasibility.py",
+    "verify",
+    "formal/pon-nakamoto-v1/vectors/fixed-probability-credit/synthetic-linear-sqrt-gamma2.json",
+    "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/credit-gamma2-certificate.json"
+  ],
+  "exit": 0,
+  "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "duration_seconds": 0.10375458397902548,
+  "unittest_count": []
+}

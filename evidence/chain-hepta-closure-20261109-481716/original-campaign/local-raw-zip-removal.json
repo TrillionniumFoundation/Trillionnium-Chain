@@ -1,0 +1,38 @@
+{
+  "all_nine_reader_receipt_or_log_files_verified_before_removal": true,
+  "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13662172930/zip",
+  "authorization": "Parent explicitly authorized removing only this independently verified re-downloadable local ZIP cache after preservation checks.",
+  "bytes": 76441344,
+  "disk_free_bytes_after_removal": 1262092288,
+  "former_local_path": "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746.zip",
+  "local_raw_zip_removed_for_disk_pressure": true,
+  "other_files_removed": [],
+  "remote_artifact_id": 13662172930,
+  "remote_digest_matched_local_bytes": true,
+  "remote_expired_at_check": false,
+  "remote_expires_at": "2026-12-09T09:25:57Z",
+  "remote_run_id": 42591962205,
+  "removed_at_utc": "2026-11-09T14:12:36.311392+00:00",
+  "retained_compressed_originals_verified_before_removal": [
+    {
+      "bytes": 77115,
+      "path": "artifact-files.json.gz",
+      "sha256": "e60672ed9000139c0a8adba8da489f5577d57f3bd6c2d7bd13a1b1fd3e69f6f7",
+      "uncompressed_sha256": "9710a213553110e9347790a34775d92d9ba20d55a7f13a5e633e78ea0d63689b"
+    },
+    {
+      "bytes": 67972,
+      "path": "campaign0746-outcomes-v2.json.gz",
+      "sha256": "b61a17fa5ba42866deef4c01ede7f758271a1d93abf03a953ae67333897e0563",
+      "uncompressed_sha256": "1b95b9e8bee728922480a8e40eb9730e750fc64a4c50c0e5cefe2ced1b38585a"
+    },
+    {
+      "bytes": 4517,
+      "path": "history/campaign0746-outcomes-v1.json.gz",
+      "sha256": "f04a6056b65e09642d88071f3cbff446b97b2d45ff4efcc1c92a1639b27b0647",
+      "uncompressed_sha256": "0f88e649882f3c95f751b5e2ae5ab85cfe938c1d8fbd0c7534dcff47018f4cb7"
+    }
+  ],
+  "schema": "local-original-artifact-cache-removal-v1",
+  "sha256": "4e8a243caf2aadf4a195b4cb96dbb0229a0e001a830f0e9de2c4f853ee7dff5c"
+}

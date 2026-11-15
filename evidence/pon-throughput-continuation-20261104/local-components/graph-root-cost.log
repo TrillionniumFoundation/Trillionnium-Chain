@@ -1,0 +1,8 @@
+{"binary_sha256": "a140ff1f7feadb7352f27d73609533b44c6c3d9b394c3814393b945f9f5b6636", "boundary": "SQLite I/O build unqualified; component-only root mathematics, no SQL/runtime/business qualification", "command": ["/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1", "native_root_digest_paired_complete_root_cost_observation", "--ignored", "--test-threads=1", "--nocapture"], "kind": "command", "output": "/workspace/scratch/7318d5f890d1/throughput-validation/root-digest-cost.jsonl"}
+
+running 1 test
+test account_archive_prototype::native_root_digest::tests::native_root_digest_paired_complete_root_cost_observation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1009 filtered out; finished in 41.29s
+
+{"exit_code": 0, "elapsed_seconds": 41.580812906000574, "binary_unchanged": true, "binary_sha256_after": "a140ff1f7feadb7352f27d73609533b44c6c3d9b394c3814393b945f9f5b6636"}

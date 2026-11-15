@@ -1,0 +1,1722 @@
+{
+  "candidate_tree": "07add784b1e1be265ea0e4cc2fc4381a18c8e51f",
+  "restored_or_verified_paths": 213,
+  "restored_logical_bytes": 781622789,
+  "before": {
+    "bfree": 5621346304,
+    "bavail": 2168598528
+  },
+  "after": {
+    "bfree": 4785238016,
+    "bavail": 1332490240
+  },
+  "tracked_paths": 9816,
+  "missing_tracked_working_copies": 0,
+  "source_semantics_changed_by_restore": false,
+  "rows": [
+    {
+      "path": "evidence/pon-131f-native-and-pq-readback-20261028/chain-131f-native-readback-r7.json",
+      "git_blob": "8451faf677a434d92b7cebfd26b3e3b410f8ade6",
+      "bytes": 904347,
+      "sha256": "ad57114c6cc2de2074110fcec6b039fc60fb2091bfc810c1d837c35649b0e78b",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-131f-native-and-pq-readback-20261028/chain-131f-required-receipts-readback-r7.json",
+      "git_blob": "3b1ff4cae325b2264981c447ec4ab89c2044d527",
+      "bytes": 1091713,
+      "sha256": "71d23f02c54210037d11bc68c5b97df222d1aca47fe78b3086e12f03bccf0eb7",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-cache-rate-continuation-20261103/honest-rate-campaign.json",
+      "git_blob": "65d025da92f3e03136e69e082147773eb11e7f59",
+      "bytes": 513571,
+      "sha256": "4599b44e58a2a680b7d7e029a73f6e7c3cab89671d7085580a4a95af7782e1e5",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-cell-hepta-readback-20261028/hepta-original-cell-receipts-40607183163.zip",
+      "git_blob": "11ef9017eed7bfc1a6f8ea687d5f6e62d511aa88",
+      "bytes": 3169702,
+      "sha256": "dd0a56247fcb72a18873247540ce49bce04cde72dad1fad88f3639c570fb3306",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-ci-closure-20261103/bebb-hosted/bebb-original-service-outcomes.json",
+      "git_blob": "28fc91d016d166ae0a74b9702d3c40fd9312f461",
+      "bytes": 1109752,
+      "sha256": "a05a5e46beb60ae4fa8f3d70a925713b8123f4ba4f021f1fe9d98e3d9b25e8ec",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-ci-closure-20261103/combined-working-static/source-after-files.json.gz",
+      "git_blob": "57af983c3d8f9d6f8fa514ca231d391d69fb189f",
+      "bytes": 541552,
+      "sha256": "0b2cba29c8f126b41a30b7cd25fea18e1c230e435164dfca616ce2e442080e49",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-ci-closure-20261103/combined-working-static/source-before-files.json.gz",
+      "git_blob": "6168441f66ac6325b11f17c8abd78987533e2e60",
+      "bytes": 539234,
+      "sha256": "7e1e414f6d693bffb3c00a37867d5b2fd911cd5a4d8f6fd4e9494114cc3cef50",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-ci-closure-20261103/pq-diagnostics/pq-controls-phase-analysis.json",
+      "git_blob": "347b452a6f6fa81bd0773bc17a42bc15fa030bc5",
+      "bytes": 2970263,
+      "sha256": "59099a155bdb57a4921939ccabf6b63933c16273e072524d42e2af1b8a6057f1",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-closed-round-v1/comparison/requests.json",
+      "git_blob": "b31cf664398f78741ec66a620ee3e36b623b7a8d",
+      "bytes": 916263,
+      "sha256": "772a60d163d34f82f4faa611d866aeae6a1e02c004570b935ba03316287c0550",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-closed-round-v1/pipeline/hot-sender-packets.json",
+      "git_blob": "ab1afa054c9734c457215d42bd734c45cb68d576",
+      "bytes": 2207109,
+      "sha256": "969657e80efda5452ed19f6dbbc76cc927b94a90d56ef622c3662c50e2550146",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-closed-round-v1/pipeline/hot-sender-pages.json",
+      "git_blob": "4340bd44cc46bb24564a33a32a7be166088bdff6",
+      "bytes": 1481947,
+      "sha256": "b13266cf05daa0e3c31655386a4a5a30455cc6b688b188cfb4f89b482ad9554d",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-closed-round-v1/pipeline/independent-packets.json",
+      "git_blob": "1fe6ce4afd251f2000db48fb2c851682d8d298c3",
+      "bytes": 2207109,
+      "sha256": "3328517744a42877a02b195a990dab21b3655073f5568a114941e41344975c83",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-closed-round-v1/pipeline/independent-pages.json",
+      "git_blob": "7c0808ab03eb30f5a1d6add174f90b5b98c2545d",
+      "bytes": 1481947,
+      "sha256": "6df5a77f91305b8b6075bd5f691ccb7b8fab1f1375a319f64f27974f0bd15878",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-consensus-resource-v2-20261103/legal-rates/rates.json",
+      "git_blob": "15ac6aa553706a08f6a2c1ff1b551ec73fc07da7",
+      "bytes": 940833,
+      "sha256": "2eec65d74ca439b8d5331a3c066de91cf136fb731a9a3bdc331bada4a1384f74",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-evaluation-bundle-v1/model/train.json",
+      "git_blob": "ca1e24e035129e9677b2336f0ad70a2e19c5c931",
+      "bytes": 1071463,
+      "sha256": "bde4f99f3d1adc49ed06ee170a204f33057d93d0ddfce598148cc535c47b48fe",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-fc23-native-host-20261028/fc23-artifact-12782458035.zip",
+      "git_blob": "0debaa36aed20e3bbc0fb40172e4490e260546fe",
+      "bytes": 4631810,
+      "sha256": "56c3f4fc0fb454ca2352faae6d3466abc22c7de367745da68c59c719b8bfa463",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-fc23-native-host-20261028/fc23-artifact-12782961722.zip",
+      "git_blob": "89da3f2a9380d1eda36ea7390d72458809d14ad5",
+      "bytes": 6947366,
+      "sha256": "06f2702c5565878742a5ae22bc4c5a38039f129559ef6a448c3245ce42d15cc9",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-fc23-native-host-20261028/fc23-artifact-12783021727.zip",
+      "git_blob": "b8ffe24a326fbf31eb99de73cad0ad2551297f7a",
+      "bytes": 4771258,
+      "sha256": "28fd8eb823511681bb81e0111f4e0573e7fdd704965559b27f929aabb8b530be",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-fc23-native-host-20261028/fc23-artifact-12783296539.zip",
+      "git_blob": "b9acd1ec8e92da2eb0e863bcd2d0fab0b62a8c9a",
+      "bytes": 7168186,
+      "sha256": "8b25a31a9eaea8e4928037538c2ad116c227066c5c78473128307fb344572468",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-final-resource-completion-20261104/hosted-node-original/node-lib.log.gz",
+      "git_blob": "a255a240b456c27073e3f97b1a7074e2d79433ce",
+      "bytes": 763629,
+      "sha256": "4c9c7587303068b78aff6f46de5c3ab24571a23f199a8c7cd75ba3a7034eed5e",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-hepta-682-pair-host-readback-r8-20261028/all-client-calls.jsonl.gz",
+      "git_blob": "be885f8ea52412799dc840a70aa2a7a51ca9bc8e",
+      "bytes": 590259,
+      "sha256": "6e7d4eafbd0cdb1404558b647d55bc383d504ec61c54a7b45572fe6a4a00a4d3",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-hepta-682-pair-host-readback-r8-20261028/readback.json",
+      "git_blob": "d613fe9a72381ce49019f8fdf7e219dc48bbd3ef",
+      "bytes": 1206890,
+      "sha256": "a0483c9f7fc5cf36a8154fd74005e56ff227ac8248d201431fad87f52b0ceb67",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-history-checkpoint-r8-20261028/raw-observations.tar.gz",
+      "git_blob": "6933e9c627aa11c3fa26673d814fe99f187f7b5d",
+      "bytes": 2483660,
+      "sha256": "d9c0d724126b10b8b44263f69d8aca210d463ca0ba1351107de1e76878559697",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-history-model-read-20261104/final-validation-source-before.json",
+      "git_blob": "b71bfa9a4495ed4e4d38879dbcb6a2f817fec7f6",
+      "bytes": 1620777,
+      "sha256": "aaf7593149369184d2af56e7b1ed4ad8f4e1914108bd2b476e9155e41ef7d833",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-history-model-read-20261104/followup-locked-workspace-graph.log",
+      "git_blob": "2c424e115ce26daa05d96664b52d12cb8a7bf591",
+      "bytes": 838913,
+      "sha256": "0d61f486a1eb0247f7e44674b1b1fd68cab311675de559356da5c8b80504b65d",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-legacy-reader-pq-layout-r8-20261028/raw-observations.tar.gz",
+      "git_blob": "ecf765a3aedfe9db0bf0c5304f70511641bb3e09",
+      "bytes": 575345,
+      "sha256": "2a775e74624173056dcca8b0fbd33bd58192af643757a77cfc8a005760d9b4ac",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-history-deadline-20261027/observations.tar.gz",
+      "git_blob": "6cfdcad8e5a3e4e1acd4971b40f4cc7c7d9097c7",
+      "bytes": 4968319,
+      "sha256": "9e46c7ad94828e57af5e4f8b15422baefac94fd01cc205e6b0dcc07fe60883e3",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-liveness-20261104/composition-full-cargo-graph.log",
+      "git_blob": "b222c2f96409a0342ccd975e478d707285aa5cf6",
+      "bytes": 846068,
+      "sha256": "8f6094e1ec81226f4a8a061a0c56973b3a16f73f43c935660593e1e42f0ce5ee",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-liveness-20261104/final-source-history.bundle",
+      "git_blob": "9136e936bc49384ba03450d38f36ce8682861ac9",
+      "bytes": 766385,
+      "sha256": "15cbe76b8514f09c5623411018888a1f7e191e4c28e94c444688401b2ead8a41",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-liveness-20261104/original-confirmation-report.json.gz",
+      "git_blob": "631d82acbe803cf28922bd0c345cf91296ff0857",
+      "bytes": 548592,
+      "sha256": "80cbaa8f2b4ef9093aee5f8d8ab6493bb0d662a55a1fb128df5931f70ce6ad94",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-liveness-20261104/publication-source.bundle",
+      "git_blob": "7d18f4930e4a8fc4ddab809f36871f42c9b5145a",
+      "bytes": 786712,
+      "sha256": "254fd30fa8a3ca5d7ad3919c8d1ead1c0193eb3fff0fddaecd48e86f96b71a95",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-node-v1/comparison/requests.json",
+      "git_blob": "b31cf664398f78741ec66a620ee3e36b623b7a8d",
+      "bytes": 916263,
+      "sha256": "772a60d163d34f82f4faa611d866aeae6a1e02c004570b935ba03316287c0550",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-node-v1/model-current/model/train.json",
+      "git_blob": "e503981b227966aa98ac71655b5b6238eb82d104",
+      "bytes": 1071463,
+      "sha256": "6f969b6d4ae551bdccb77fa61de80f3e0344c71c96a66aed54dcea5fc3b85554",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-node-v1/native-batch-replay/report.json",
+      "git_blob": "922b20a02de5c5ff941a9a32687860c3a3f1334b",
+      "bytes": 962998,
+      "sha256": "3bbfc3bf230df7e2475933c56d9193090195d4d6150ac1a1f3b934f47ca87468",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-node-v1/pipeline/hot-sender-packets.json",
+      "git_blob": "ab1afa054c9734c457215d42bd734c45cb68d576",
+      "bytes": 2207109,
+      "sha256": "969657e80efda5452ed19f6dbbc76cc927b94a90d56ef622c3662c50e2550146",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-node-v1/pipeline/hot-sender-pages.json",
+      "git_blob": "4340bd44cc46bb24564a33a32a7be166088bdff6",
+      "bytes": 1481947,
+      "sha256": "b13266cf05daa0e3c31655386a4a5a30455cc6b688b188cfb4f89b482ad9554d",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-node-v1/pipeline/independent-packets.json",
+      "git_blob": "1fe6ce4afd251f2000db48fb2c851682d8d298c3",
+      "bytes": 2207109,
+      "sha256": "3328517744a42877a02b195a990dab21b3655073f5568a114941e41344975c83",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-node-v1/pipeline/independent-pages.json",
+      "git_blob": "7c0808ab03eb30f5a1d6add174f90b5b98c2545d",
+      "bytes": 1481947,
+      "sha256": "6df5a77f91305b8b6075bd5f691ccb7b8fab1f1375a319f64f27974f0bd15878",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-session-v1/comparison/requests.json",
+      "git_blob": "b31cf664398f78741ec66a620ee3e36b623b7a8d",
+      "bytes": 916263,
+      "sha256": "772a60d163d34f82f4faa611d866aeae6a1e02c004570b935ba03316287c0550",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-session-v1/failures/initial-candidate/selected-matrix/comparison/requests.json",
+      "git_blob": "b31cf664398f78741ec66a620ee3e36b623b7a8d",
+      "bytes": 916263,
+      "sha256": "772a60d163d34f82f4faa611d866aeae6a1e02c004570b935ba03316287c0550",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-session-v1/failures/initial-candidate/selected-matrix/pipeline/hot-sender-packets.json",
+      "git_blob": "ab1afa054c9734c457215d42bd734c45cb68d576",
+      "bytes": 2207109,
+      "sha256": "969657e80efda5452ed19f6dbbc76cc927b94a90d56ef622c3662c50e2550146",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-session-v1/failures/initial-candidate/selected-matrix/pipeline/hot-sender-pages.json",
+      "git_blob": "4340bd44cc46bb24564a33a32a7be166088bdff6",
+      "bytes": 1481947,
+      "sha256": "b13266cf05daa0e3c31655386a4a5a30455cc6b688b188cfb4f89b482ad9554d",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-session-v1/failures/initial-candidate/selected-matrix/pipeline/independent-packets.json",
+      "git_blob": "1fe6ce4afd251f2000db48fb2c851682d8d298c3",
+      "bytes": 2207109,
+      "sha256": "3328517744a42877a02b195a990dab21b3655073f5568a114941e41344975c83",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-session-v1/failures/initial-candidate/selected-matrix/pipeline/independent-pages.json",
+      "git_blob": "7c0808ab03eb30f5a1d6add174f90b5b98c2545d",
+      "bytes": 1481947,
+      "sha256": "6df5a77f91305b8b6075bd5f691ccb7b8fab1f1375a319f64f27974f0bd15878",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-session-v1/pipeline/hot-sender-packets.json",
+      "git_blob": "ab1afa054c9734c457215d42bd734c45cb68d576",
+      "bytes": 2207109,
+      "sha256": "969657e80efda5452ed19f6dbbc76cc927b94a90d56ef622c3662c50e2550146",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-session-v1/pipeline/hot-sender-pages.json",
+      "git_blob": "4340bd44cc46bb24564a33a32a7be166088bdff6",
+      "bytes": 1481947,
+      "sha256": "b13266cf05daa0e3c31655386a4a5a30455cc6b688b188cfb4f89b482ad9554d",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-session-v1/pipeline/independent-packets.json",
+      "git_blob": "1fe6ce4afd251f2000db48fb2c851682d8d298c3",
+      "bytes": 2207109,
+      "sha256": "3328517744a42877a02b195a990dab21b3655073f5568a114941e41344975c83",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-native-session-v1/pipeline/independent-pages.json",
+      "git_blob": "7c0808ab03eb30f5a1d6add174f90b5b98c2545d",
+      "bytes": 1481947,
+      "sha256": "6df5a77f91305b8b6075bd5f691ccb7b8fab1f1375a319f64f27974f0bd15878",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-pq-local-origin-runtime-20261028-r8/raw-native-records.zip",
+      "git_blob": "d6fafcd100224cb9c33e9d4b854b533a23baaacf",
+      "bytes": 1545993,
+      "sha256": "4ebe0c59fa64383172f4afae2ef7f2a76e61c8d80e34224d34956abaf5321cb7",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-pq-native-readback-20261028-r8/raw-native-records.zip",
+      "git_blob": "4937288bc9810d466e5a40092ccba510c3067390",
+      "bytes": 946433,
+      "sha256": "4a6e8a8fdf5a0235bf45ee7a6295a956e853fff9435f4e245ea3e34a5537d4de",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/baseline/comparison/requests.json",
+      "git_blob": "b31cf664398f78741ec66a620ee3e36b623b7a8d",
+      "bytes": 916263,
+      "sha256": "772a60d163d34f82f4faa611d866aeae6a1e02c004570b935ba03316287c0550",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/baseline/pipeline/hot-sender-packets.json",
+      "git_blob": "ab1afa054c9734c457215d42bd734c45cb68d576",
+      "bytes": 2207109,
+      "sha256": "969657e80efda5452ed19f6dbbc76cc927b94a90d56ef622c3662c50e2550146",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/baseline/pipeline/hot-sender-pages.json",
+      "git_blob": "4340bd44cc46bb24564a33a32a7be166088bdff6",
+      "bytes": 1481947,
+      "sha256": "b13266cf05daa0e3c31655386a4a5a30455cc6b688b188cfb4f89b482ad9554d",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/baseline/pipeline/independent-packets.json",
+      "git_blob": "1fe6ce4afd251f2000db48fb2c851682d8d298c3",
+      "bytes": 2207109,
+      "sha256": "3328517744a42877a02b195a990dab21b3655073f5568a114941e41344975c83",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/baseline/pipeline/independent-pages.json",
+      "git_blob": "7c0808ab03eb30f5a1d6add174f90b5b98c2545d",
+      "bytes": 1481947,
+      "sha256": "6df5a77f91305b8b6075bd5f691ccb7b8fab1f1375a319f64f27974f0bd15878",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/baseline/comparison/requests.json",
+      "git_blob": "b31cf664398f78741ec66a620ee3e36b623b7a8d",
+      "bytes": 916263,
+      "sha256": "772a60d163d34f82f4faa611d866aeae6a1e02c004570b935ba03316287c0550",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/baseline/pipeline/hot-sender-packets.json",
+      "git_blob": "ab1afa054c9734c457215d42bd734c45cb68d576",
+      "bytes": 2207109,
+      "sha256": "969657e80efda5452ed19f6dbbc76cc927b94a90d56ef622c3662c50e2550146",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/baseline/pipeline/hot-sender-pages.json",
+      "git_blob": "4340bd44cc46bb24564a33a32a7be166088bdff6",
+      "bytes": 1481947,
+      "sha256": "b13266cf05daa0e3c31655386a4a5a30455cc6b688b188cfb4f89b482ad9554d",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/baseline/pipeline/independent-packets.json",
+      "git_blob": "1fe6ce4afd251f2000db48fb2c851682d8d298c3",
+      "bytes": 2207109,
+      "sha256": "3328517744a42877a02b195a990dab21b3655073f5568a114941e41344975c83",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/baseline/pipeline/independent-pages.json",
+      "git_blob": "7c0808ab03eb30f5a1d6add174f90b5b98c2545d",
+      "bytes": 1481947,
+      "sha256": "6df5a77f91305b8b6075bd5f691ccb7b8fab1f1375a319f64f27974f0bd15878",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-disjoint4-protected/producer/native.sqlite",
+      "git_blob": "dd4ac6738b28a64a5d4e71c5257f6c838e80d600",
+      "bytes": 2519040,
+      "sha256": "3e7ae3669db32b8383612c06fe35634349173b2fb355abcf5899545622cfb16f",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-disjoint4-protected/progress.json",
+      "git_blob": "f1ccb490323e6b7e2320c7a22d4df1fd4effd814",
+      "bytes": 10306319,
+      "sha256": "2068220791d2d6632d2950d4506626ad1e3be20b2f4f271bb38bb2e8139f733c",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-disjoint4-protected/summary.json",
+      "git_blob": "dd4b20b8955c6d3c2a9953fa41dfdae111063932",
+      "bytes": 13123459,
+      "sha256": "e40314fde25b742a113b0ca15df9a557e1d5544ea6e6c5572abc48cb54d2968a",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-disjoint4-protected/validator/native.sqlite",
+      "git_blob": "dd4ac6738b28a64a5d4e71c5257f6c838e80d600",
+      "bytes": 2519040,
+      "sha256": "3e7ae3669db32b8383612c06fe35634349173b2fb355abcf5899545622cfb16f",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-growth-protected/producer/native.sqlite",
+      "git_blob": "06b8e0ed1955d01786b521db17dfc3f1ed08a79e",
+      "bytes": 4964352,
+      "sha256": "144bcc90d978e50f5b521b08604721f382cc73b7024f04e2d272cf4ae1a9d07e",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-growth-protected/progress.json",
+      "git_blob": "697b2b1601b55c6f5e19db0982b6866d07994191",
+      "bytes": 10306805,
+      "sha256": "6641dd0e0a121f7d653cb1adcd17548f16bb35cdc725112ef398cb04d7d8acc9",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-growth-protected/summary.json",
+      "git_blob": "f8aa70032e46eac28cd8fd943da53c50bfaeebd0",
+      "bytes": 13123954,
+      "sha256": "d9e6f31fed1666c8db32eebb47a54bb6911d0590d5d6094c76488338354399c9",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-growth-protected/validator/native.sqlite",
+      "git_blob": "06b8e0ed1955d01786b521db17dfc3f1ed08a79e",
+      "bytes": 4964352,
+      "sha256": "144bcc90d978e50f5b521b08604721f382cc73b7024f04e2d272cf4ae1a9d07e",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-hot-legacy/producer/native.sqlite",
+      "git_blob": "47d9d2fc421f6a958b6cb96cde34646b642e7e5a",
+      "bytes": 2482176,
+      "sha256": "309d822a53f90b46981683d33512b8db29fafd163cd6f23afa24964164c47365",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-hot-legacy/progress.json",
+      "git_blob": "973a784197711e984b78b48f3904e14314622262",
+      "bytes": 10306319,
+      "sha256": "a33150634d0c71b5987901abf417857d1568a803dd24758d1cd0cb83c81dd1d6",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-hot-legacy/summary.json",
+      "git_blob": "8b7d733e657bb3d76e64cdd2fde7afa6eae6b13b",
+      "bytes": 13123445,
+      "sha256": "2fc4aa164a228100f2b66d4535fe273c196cf480d2a99a4b49c8ac0d6b11afcd",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-hot-legacy/validator/native.sqlite",
+      "git_blob": "47d9d2fc421f6a958b6cb96cde34646b642e7e5a",
+      "bytes": 2482176,
+      "sha256": "309d822a53f90b46981683d33512b8db29fafd163cd6f23afa24964164c47365",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-hot-protected/producer/native.sqlite",
+      "git_blob": "4d43ab14ae0c2aefe6f811d2913e1f978cbed172",
+      "bytes": 2482176,
+      "sha256": "9c4362d14cefa5343fcedde8408c29961f43b58b983c0e882322b8972e2b03e1",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-hot-protected/progress.json",
+      "git_blob": "69a082e5b2f46a81f6d70b5230f480d463945a5c",
+      "bytes": 10306317,
+      "sha256": "a35a0cbdecced2d992a67f21e0ecb139bb0b29ba8b80b38318d8b0da651d3e8b",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-hot-protected/summary.json",
+      "git_blob": "9307f4e6d8983a1b2fef802b39522cf92c6b919a",
+      "bytes": 13123450,
+      "sha256": "8b4696e2ae18bf200f2a8fa6dd376fe7bccce995659c24a1fcc98ed24b667049",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-hot-protected/validator/native.sqlite",
+      "git_blob": "4d43ab14ae0c2aefe6f811d2913e1f978cbed172",
+      "bytes": 2482176,
+      "sha256": "9c4362d14cefa5343fcedde8408c29961f43b58b983c0e882322b8972e2b03e1",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/baseline/comparison/requests.json",
+      "git_blob": "b31cf664398f78741ec66a620ee3e36b623b7a8d",
+      "bytes": 916263,
+      "sha256": "772a60d163d34f82f4faa611d866aeae6a1e02c004570b935ba03316287c0550",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/baseline/pipeline/hot-sender-packets.json",
+      "git_blob": "ab1afa054c9734c457215d42bd734c45cb68d576",
+      "bytes": 2207109,
+      "sha256": "969657e80efda5452ed19f6dbbc76cc927b94a90d56ef622c3662c50e2550146",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/baseline/pipeline/hot-sender-pages.json",
+      "git_blob": "4340bd44cc46bb24564a33a32a7be166088bdff6",
+      "bytes": 1481947,
+      "sha256": "b13266cf05daa0e3c31655386a4a5a30455cc6b688b188cfb4f89b482ad9554d",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/baseline/pipeline/independent-packets.json",
+      "git_blob": "1fe6ce4afd251f2000db48fb2c851682d8d298c3",
+      "bytes": 2207109,
+      "sha256": "3328517744a42877a02b195a990dab21b3655073f5568a114941e41344975c83",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/baseline/pipeline/independent-pages.json",
+      "git_blob": "7c0808ab03eb30f5a1d6add174f90b5b98c2545d",
+      "bytes": 1481947,
+      "sha256": "6df5a77f91305b8b6075bd5f691ccb7b8fab1f1375a319f64f27974f0bd15878",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-disjoint4-protected/producer/native.sqlite",
+      "git_blob": "c8b48b0785d29ed69f94451e19409ed51ad6425f",
+      "bytes": 2519040,
+      "sha256": "b9e88168d440dd0500a5bf1bc09188a97f81b04a3900c7cf3a5e3c0b2b11130d",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-disjoint4-protected/progress.json",
+      "git_blob": "ccfcfddd86464d7404845a6059f10ed6efdd4549",
+      "bytes": 10306292,
+      "sha256": "63c7a1d23ef7b3249fae0f4abadcde7a744bd264591c78b10836568928dfa996",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-disjoint4-protected/summary.json",
+      "git_blob": "b07a99d568c7533898ed52274fcfcec51cfd82b9",
+      "bytes": 13123432,
+      "sha256": "2c5426e75e9a6c77b03c8f06378cb2f70f2c9207834843f858d0bbfc9f2cdf1f",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-disjoint4-protected/validator/native.sqlite",
+      "git_blob": "c8b48b0785d29ed69f94451e19409ed51ad6425f",
+      "bytes": 2519040,
+      "sha256": "b9e88168d440dd0500a5bf1bc09188a97f81b04a3900c7cf3a5e3c0b2b11130d",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-growth-protected/producer/native.sqlite",
+      "git_blob": "2b55f5ebb219d58a179fcf913fbc30288f5d451b",
+      "bytes": 4972544,
+      "sha256": "aa262c35630a345c8095e1ae3dcfca692185f4051d5d1bf2b169b317baaf3e4a",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-growth-protected/progress.json",
+      "git_blob": "be2d021744faed3a92857cd75f186a0cd0d09058",
+      "bytes": 10306625,
+      "sha256": "85b80d538b18c520ed74bf2a001841a6530a173cf9a6fd8df3c83a536a052c12",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-growth-protected/summary.json",
+      "git_blob": "133155e5c407f705808f5f4f6079f5d0b13d26b2",
+      "bytes": 13123768,
+      "sha256": "a1b2b4ee58546976f2e312d4762655acb71b41974999e54d187a4a270ab84251",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-growth-protected/validator/native.sqlite",
+      "git_blob": "2b55f5ebb219d58a179fcf913fbc30288f5d451b",
+      "bytes": 4972544,
+      "sha256": "aa262c35630a345c8095e1ae3dcfca692185f4051d5d1bf2b169b317baaf3e4a",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-hot-legacy/producer/native.sqlite",
+      "git_blob": "cacc06a03e62faa7c7412b3d77579c6140fb793e",
+      "bytes": 2482176,
+      "sha256": "cb4543d761bbf999c6b108f395a6a026b5df7e0514a5bdb40ded4b8260e32ce4",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-hot-legacy/progress.json",
+      "git_blob": "ab28209acdedf5baccf74a87b33ebaaf0b166e6f",
+      "bytes": 10306278,
+      "sha256": "aea43cea3e4025c65ffbd5570fa074397b223ce4e7cf1a518118d4a33a9f934f",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-hot-legacy/summary.json",
+      "git_blob": "44609e4acefe9799b5d0df49ccc0dc777bf68135",
+      "bytes": 13123403,
+      "sha256": "4f3d59ff611bb76644f22e93562368120ce54d58bd3471bc90edc4af2ddf1f98",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-hot-legacy/validator/native.sqlite",
+      "git_blob": "cacc06a03e62faa7c7412b3d77579c6140fb793e",
+      "bytes": 2482176,
+      "sha256": "cb4543d761bbf999c6b108f395a6a026b5df7e0514a5bdb40ded4b8260e32ce4",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-hot-protected/producer/native.sqlite",
+      "git_blob": "427070af07b4506c46f515a186f3f0a295f9c7db",
+      "bytes": 2482176,
+      "sha256": "7e0aeb21ddcb2283d4982637b25df1d54945eca50dd7f075fb4ac8936c49a19a",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-hot-protected/progress.json",
+      "git_blob": "74ab9b4950f0a66e856bb94c29aea1312d75440e",
+      "bytes": 10306283,
+      "sha256": "30347731fe4cc4ed9687b68d17a070e2f95daf4b30c539dda2ef42cec08b0119",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-hot-protected/summary.json",
+      "git_blob": "adcb8c4ed8928549e50c38a07d1b9b87ec13f993",
+      "bytes": 13123417,
+      "sha256": "8c0f826f377113b8f439d7944a9aea8485ef8e40a705442c7ebe2810cbcee9ed",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-c/pipeline-hot-protected/validator/native.sqlite",
+      "git_blob": "427070af07b4506c46f515a186f3f0a295f9c7db",
+      "bytes": 2482176,
+      "sha256": "7e0aeb21ddcb2283d4982637b25df1d54945eca50dd7f075fb4ac8936c49a19a",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/baseline/comparison/requests.json",
+      "git_blob": "b31cf664398f78741ec66a620ee3e36b623b7a8d",
+      "bytes": 916263,
+      "sha256": "772a60d163d34f82f4faa611d866aeae6a1e02c004570b935ba03316287c0550",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/baseline/pipeline/hot-sender-packets.json",
+      "git_blob": "ab1afa054c9734c457215d42bd734c45cb68d576",
+      "bytes": 2207109,
+      "sha256": "969657e80efda5452ed19f6dbbc76cc927b94a90d56ef622c3662c50e2550146",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/baseline/pipeline/hot-sender-pages.json",
+      "git_blob": "4340bd44cc46bb24564a33a32a7be166088bdff6",
+      "bytes": 1481947,
+      "sha256": "b13266cf05daa0e3c31655386a4a5a30455cc6b688b188cfb4f89b482ad9554d",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/baseline/pipeline/independent-packets.json",
+      "git_blob": "1fe6ce4afd251f2000db48fb2c851682d8d298c3",
+      "bytes": 2207109,
+      "sha256": "3328517744a42877a02b195a990dab21b3655073f5568a114941e41344975c83",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/baseline/pipeline/independent-pages.json",
+      "git_blob": "7c0808ab03eb30f5a1d6add174f90b5b98c2545d",
+      "bytes": 1481947,
+      "sha256": "6df5a77f91305b8b6075bd5f691ccb7b8fab1f1375a319f64f27974f0bd15878",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-disjoint4-protected/producer/native.sqlite",
+      "git_blob": "9f2cbe6b779ef41f3dfffc96503a4d020c3a6d67",
+      "bytes": 2519040,
+      "sha256": "c7f8ad2017c4b9f8300ceda8ca844f7ef84b36d3e1761a6e322686abe1901e00",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-disjoint4-protected/progress.json",
+      "git_blob": "65f59543e064962c601d2aaf3c3b9eba8a5bdead",
+      "bytes": 10306294,
+      "sha256": "f79ddf71373a2365aef7ddca1841247bd85bfbb48cc82dd0e05c537de8df4858",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-disjoint4-protected/summary.json",
+      "git_blob": "7ea153b832033332a9f61c479f2f28ceb84063f7",
+      "bytes": 13123433,
+      "sha256": "0580df5b353016cf525c6ea6c0bf7a5e37c9dfe9c8862d8d86de68c8f4e8b393",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-disjoint4-protected/validator/native.sqlite",
+      "git_blob": "9f2cbe6b779ef41f3dfffc96503a4d020c3a6d67",
+      "bytes": 2519040,
+      "sha256": "c7f8ad2017c4b9f8300ceda8ca844f7ef84b36d3e1761a6e322686abe1901e00",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-growth-protected/producer/native.sqlite",
+      "git_blob": "4353b8306d85e5688d553c69447371ade66202b4",
+      "bytes": 4972544,
+      "sha256": "e35c2c0f4403e53ee29147ed88e7bb0261a9320ba8cf28794c48eed74a1a338c",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-growth-protected/progress.json",
+      "git_blob": "e2782f10f028d3c59f0a26c159d4298a85d99c3c",
+      "bytes": 10306624,
+      "sha256": "4b718f0e64f7c746372b7f5fd5536acebc1637ac07a6926ac6892aeb78d4f77a",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-growth-protected/summary.json",
+      "git_blob": "d19b1955757a06fcfeeab9a3221ea1dfb1dde9a5",
+      "bytes": 13123767,
+      "sha256": "1681edc25f6277268738401a3b62c4490517b82a18fad5235286da366bc66777",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-growth-protected/validator/native.sqlite",
+      "git_blob": "4353b8306d85e5688d553c69447371ade66202b4",
+      "bytes": 4972544,
+      "sha256": "e35c2c0f4403e53ee29147ed88e7bb0261a9320ba8cf28794c48eed74a1a338c",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-hot-legacy/producer/native.sqlite",
+      "git_blob": "160918b447665076b182974c327ba74b7932850e",
+      "bytes": 2482176,
+      "sha256": "89a5635b114ead9635c9a3adee92403f73d6c1c39c891514477d0a27ab46ca3a",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-hot-legacy/progress.json",
+      "git_blob": "5641adbe1c13937f7c74167a98775e824b042510",
+      "bytes": 10306278,
+      "sha256": "4e9339e94f5e4e6b2f51af7101cc9007728b206440964b04923c92ec7d214b92",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-hot-legacy/summary.json",
+      "git_blob": "146bd2efc2e591c5514c9bbfe0f2bf4d24749057",
+      "bytes": 13123403,
+      "sha256": "6046e218a5b23ff00c61ab08b78c797813d98d42e221d42ad60f4a390a3d18b1",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-hot-legacy/validator/native.sqlite",
+      "git_blob": "160918b447665076b182974c327ba74b7932850e",
+      "bytes": 2482176,
+      "sha256": "89a5635b114ead9635c9a3adee92403f73d6c1c39c891514477d0a27ab46ca3a",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-hot-protected/producer/native.sqlite",
+      "git_blob": "fae9730a3628f101ae40dabbabfbfc87fd5768d1",
+      "bytes": 2482176,
+      "sha256": "dc59b08cddd9da25a61e498830763485c976d0951a5d464c8883b8446c53a56b",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-hot-protected/progress.json",
+      "git_blob": "02b9a3b78f7feb2557ce91567e2298c99aa60604",
+      "bytes": 10306281,
+      "sha256": "2497d9b7a7d9713164cc8128d30dac748348ac5ae8f65f2bd73153a4e9c04c2f",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-hot-protected/summary.json",
+      "git_blob": "5918084d7ff59cf7f9163795e2c949127e3d1d24",
+      "bytes": 13123414,
+      "sha256": "dd2cbef47e7aa6f27c4b1d1854c45cc1d42876a523f5f652494b7a50d1462056",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-hot-protected/validator/native.sqlite",
+      "git_blob": "fae9730a3628f101ae40dabbabfbfc87fd5768d1",
+      "bytes": 2482176,
+      "sha256": "dc59b08cddd9da25a61e498830763485c976d0951a5d464c8883b8446c53a56b",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/pipeline-disjoint4-protected/producer/native.sqlite",
+      "git_blob": "6abcfeab2018cc5daca38b21279180a27c8c0473",
+      "bytes": 2514944,
+      "sha256": "35f27846508ab360f6ceb05e16e32346ed5f73fd377030594fa0f892dc8c2e11",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/pipeline-disjoint4-protected/progress.json",
+      "git_blob": "7af2f904f1c9aa6b2c7c4d1f6ddaef12fe911ef5",
+      "bytes": 10306290,
+      "sha256": "9708ed4c4dd25687c48814cc4c49de53847ba1eb4a5e32b9e2d1839f0dfb6e6a",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/pipeline-disjoint4-protected/summary.json",
+      "git_blob": "45a69f8c2e896de663e00e4813ee9d69c045e087",
+      "bytes": 13123429,
+      "sha256": "c8e5dcb91809c9cc79a2f33f8a61c60594a6414d5c2f03c124a7c212dd4b6065",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/pipeline-disjoint4-protected/validator/native.sqlite",
+      "git_blob": "6abcfeab2018cc5daca38b21279180a27c8c0473",
+      "bytes": 2514944,
+      "sha256": "35f27846508ab360f6ceb05e16e32346ed5f73fd377030594fa0f892dc8c2e11",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/pipeline-growth-protected/producer/native.sqlite",
+      "git_blob": "59fe2cbc3685b97beb6b58df577bc7ec88b6eded",
+      "bytes": 4960256,
+      "sha256": "755d5d1c58404025fa3c145bd5af067d826cd083234924795e3439140dc30acd",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/pipeline-growth-protected/progress.json",
+      "git_blob": "5bca247f89ec82ed90287c57dbde586a92d54a4f",
+      "bytes": 10306631,
+      "sha256": "d7503e68b4fb6ea47253b1343c1aa775684882cb5404fe403577b58b2ad3161e",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/pipeline-growth-protected/summary.json",
+      "git_blob": "5b6166f3659e1a76e93b9556b448968167ce92ae",
+      "bytes": 13123776,
+      "sha256": "3f6a37e3316413ed97e34372d324b3d4c8eecf9dd80c15bf94893da9763a18c6",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/pipeline-growth-protected/validator/native.sqlite",
+      "git_blob": "59fe2cbc3685b97beb6b58df577bc7ec88b6eded",
+      "bytes": 4960256,
+      "sha256": "755d5d1c58404025fa3c145bd5af067d826cd083234924795e3439140dc30acd",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/pipeline-hot-legacy/producer/native.sqlite",
+      "git_blob": "9509fff5bd28a892c06b0264852bb9dd3fa0d485",
+      "bytes": 2482176,
+      "sha256": "1b5765222fbf5478146682e989ba62e56be9f460b673fd00327e46e5b35e74fa",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/pipeline-hot-legacy/progress.json",
+      "git_blob": "f2db31a4b9c1a19a2141d78e547547b10dc4efa9",
+      "bytes": 10306277,
+      "sha256": "35a2b568b35f85434adc44777070d57c9d04db6453f01814d7793dfa2d19cbec",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/pipeline-hot-legacy/summary.json",
+      "git_blob": "41238a0c60af57d776f67125874d6c0611dc32c6",
+      "bytes": 13123400,
+      "sha256": "27b2a492a530f73fc3181772644c75b90fe599002c0451b7e11760369a7d6f4b",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/pipeline-hot-legacy/validator/native.sqlite",
+      "git_blob": "9509fff5bd28a892c06b0264852bb9dd3fa0d485",
+      "bytes": 2482176,
+      "sha256": "1b5765222fbf5478146682e989ba62e56be9f460b673fd00327e46e5b35e74fa",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/pipeline-hot-protected/producer/native.sqlite",
+      "git_blob": "7589e0f9954566200c4b56cb481f9d61f2116344",
+      "bytes": 2482176,
+      "sha256": "ebf8e0ee3b7f9f7cb7130b312805e6e2a592ef80c42f4a1c701d71a27909bdf8",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/pipeline-hot-protected/progress.json",
+      "git_blob": "0bb95bbb8c0aad118c4f4bf1d0631c66dc24e75f",
+      "bytes": 10306292,
+      "sha256": "8cd9f4225d71aade95b92f5563f35420b2da6c471c559a131f5c8e4add2b1861",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/pipeline-hot-protected/summary.json",
+      "git_blob": "065b5cc89a6c06bf634f41b4664e4e2ec4323bc0",
+      "bytes": 13123422,
+      "sha256": "6248e91e828f01d6973eb358bafd750e0511d8de8722f46547cd26ad8ae5bcee",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-public-readiness-v1/pipeline-hot-protected/validator/native.sqlite",
+      "git_blob": "7589e0f9954566200c4b56cb481f9d61f2116344",
+      "bytes": 2482176,
+      "sha256": "ebf8e0ee3b7f9f7cb7130b312805e6e2a592ef80c42f4a1c701d71a27909bdf8",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-quantum-daa-research-20261027/campaign/periodic_quantum_proof_latency_extended.jsonl.gz",
+      "git_blob": "1b3438ad934ef4643e7bfa7aa8aaf72e31fa8571",
+      "bytes": 556129,
+      "sha256": "fb75443507a2f85cc46d5699f4f21f14d0ae95c39823eeccf4e46cee0fb7dd06",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-reversible-components-20261028/exact-observation.tar.gz",
+      "git_blob": "35bb28ba459cb8257d1d5e10e9921d314541e561",
+      "bytes": 1727386,
+      "sha256": "c30cb922a55fc0bbd483228b9c54fe58a7f83b79744f0600a7cc7a1b121bbc65",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/b280-full-node-native.log.gz",
+      "git_blob": "a5f8c85b77f9eddc4b197a9937e97973a5c1ea93",
+      "bytes": 763353,
+      "sha256": "f619b5a72cc81a2801f5edd16dfe4bc51abf0230f5c651b6850ac74111c7091f",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/diagnostics-full-node-native.log.gz",
+      "git_blob": "34dedafd6fe27f7d801bed390b43134ed82380bd",
+      "bytes": 762990,
+      "sha256": "59f3052c470639d8e6984fb19df9ef20e8a70bc1a7bf8f852ddf2e34155ad4ed",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/fixture-composed-terminal/native.log.gz",
+      "git_blob": "8056a5085194735ad0e5018b58a278701cdf04f4",
+      "bytes": 763134,
+      "sha256": "7b8f4eca199aa1aa59558ab1166a4b8fbc92fe724f61ee973baa02a8afeed73f",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/b4bdf/f0-selected-original-records.json.gz",
+      "git_blob": "8cca7b59bc88ffeb9c41b2f55aa8c6bbd29f23d3",
+      "bytes": 1862302,
+      "sha256": "565fba925680ceafaaff48a8d5207a3e20b4e7fca52b7ce49e5bfd57a06ee135",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/b4bdf/original-three-campaign-selected-records.json.gz",
+      "git_blob": "d1b9788bf1cd2ec9f8450aafb9c10fd41f0ae96c",
+      "bytes": 6035838,
+      "sha256": "c12419f067220378b1e285fbe49e27bc5387c47c4df1ae4c8449c0b87e67056e",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/b4bdf/pq-node-arm64-head-13279503756-original-records.json.gz",
+      "git_blob": "3957d33d72e7c11b689f48ac5ee3c6be58fb5a0a",
+      "bytes": 938038,
+      "sha256": "f6a795090fa864ee7cf317cac2286cae4a6f2943e34d256c170ffaa5a5861ad5",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/b4bdf/pq-node-arm64-merge-13279562975-original-records.json.gz",
+      "git_blob": "2ae81fb237282c41967026438fa3e088fa4053d8",
+      "bytes": 955427,
+      "sha256": "78adc431d8b940c37558179cfbcfa3b52013fecf109f222f14156a9f78e90c9d",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/b4bdf/pq-node-x64-head-13279576440-original-records.json.gz",
+      "git_blob": "0bdd210f811ab6099a170ecfe56a7632a8718089",
+      "bytes": 956347,
+      "sha256": "889635fe9d54a4eb035704e8429e68bfa791031b2756a417e343a1c3ca47c02c",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/b4bdf/pq-node-x64-merge-13280436185-original-records.json.gz",
+      "git_blob": "20cb2adddf08a8e1a6a72236114fd85d63f38315",
+      "bytes": 957398,
+      "sha256": "2b68488ca0dc40cc95a7ff40ec5b769aa1a3c1398c59c2d379a474460a5970b7",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/b4bdf/w1-fresh-head-selected-original-records.json.gz",
+      "git_blob": "f9d254595c14234f3c3c4f55d3bce9513dd85243",
+      "bytes": 586184,
+      "sha256": "6a0e7b09ad2fa5d934d1be3bea582715cab37d4723d30212a383a4c7307ef97b",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/b4bdf/w1-fresh-merge-selected-original-records.json.gz",
+      "git_blob": "5ba02407149f56e79d3f8aef4072c7ac1f93d7a4",
+      "bytes": 585192,
+      "sha256": "675b6f08c059e9d1e0275ce0fe8c31124b98a821ebaa4cb1ee10203db7cb967e",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/cost-arm64-fromzero-original-records.json.gz",
+      "git_blob": "258df18244be92b5d7829357b92af1fabf053ef0",
+      "bytes": 776787,
+      "sha256": "1832c212ca2f60c1813fc846a07d9a2e3547cf8433cffd0d6405483597c3bcf9",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/cost-x64-fromzero-original-records.json.gz",
+      "git_blob": "14bf7d5d9d6c81f6325346d187b439cf3c202812",
+      "bytes": 767226,
+      "sha256": "1e23545944c52d745311e422d5d1b7cfbb5b428f1ef88a5ad8edba89638482b6",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/f0-selected-original-records.json.gz",
+      "git_blob": "1ebb25f2f4ce7bef053e50e2b3d8d731b8df3a08",
+      "bytes": 1835912,
+      "sha256": "9d8f0cb98c8b66fee9f60277c011bd69f4ce06af9754035b43d46ef22adcefd9",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/original-three-campaign-selected-records.json.gz",
+      "git_blob": "b3053d71cb75b0082c93664da2f5bbddd98799c7",
+      "bytes": 6069186,
+      "sha256": "009de88d176c549718e4d89bd67f0a2ff2fee358f5c4df8c28ceeb8c38e89182",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/pq-node-arm64-head-13277434557-original-records.json.gz",
+      "git_blob": "02061b01b02cc54d30ed5482d92098fbcabd0509",
+      "bytes": 953366,
+      "sha256": "343ec5e56195ebf6dae672f4ad9290ef63a0a5a164616b3b1107b7d92b84553d",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/pq-node-arm64-merge-13280090271-original-records.json.gz",
+      "git_blob": "3263c7bdaa22d3899dcd00c922de9fc043d6dc9c",
+      "bytes": 955308,
+      "sha256": "0975a80368bcfbe2a78d611a23058fc13faa06c17919c0db8037a8179eacce07",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/pq-node-x64-head-13277997507-original-records.json.gz",
+      "git_blob": "bb4e6fd52fda0ccde92527c5497c07312347bf53",
+      "bytes": 956062,
+      "sha256": "3a0d2471046cdc2bb389538eafb681ec4366ec6c32d47ce4353ae8e887cbb9fe",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/pq-node-x64-merge-13277323560-original-records.json.gz",
+      "git_blob": "b6290dda0773c23144f0f190e75627a4ee2c4e60",
+      "bytes": 957673,
+      "sha256": "984601525c9c9c92e7937c9c5745abd514be195b4be34ce76cbb9d3ea58bf0c1",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/protocol-head-fromzero-original-records.json.gz",
+      "git_blob": "9c8da96b7914e10ece93e223d37c782b77bb63cc",
+      "bytes": 1024873,
+      "sha256": "4a69ce849e1c8aaec37e9921e9cc321ddb22fb4d991a3bbf25cda455a72cb0a2",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/protocol-merge-selected-original-records.json.gz",
+      "git_blob": "3de1b11399cd7c908b1234f28e4ff20d5b544301",
+      "bytes": 876521,
+      "sha256": "c2965e0d0fc2e15b0cbb9367545c57a6d639679535de5ef12817a865c7425438",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/runtime-actual-merge-13280868776-original-records.json.gz",
+      "git_blob": "0f5a6299428c0de20b0da12be8a688a049fef9e2",
+      "bytes": 948051,
+      "sha256": "e821a0ee43a4710896b05091832893b4d8876e9387f83ffe6e56618c344b8b24",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/runtime-head-13280768301-original-records.json.gz",
+      "git_blob": "95b4feb31ecf58c121b0d1d78cdd7e4fec0fa1df",
+      "bytes": 947729,
+      "sha256": "1046e355c96dc116963bfa37344a4f1a831257131964499889606f31ceaf13e3",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/diagnostics/draft-v1/readback.json",
+      "git_blob": "8f44aeefeb2c8f9d9a8ee0d5ba89d02e6f286112",
+      "bytes": 827183,
+      "sha256": "02eb0a3920690084cc38554f57f9752d2ae6f041ff6cad564b6a9dcfd3492e8e",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/diagnostics/readback.json",
+      "git_blob": "6c1f59d5aee77798c6e829987488cd48bf77b6ea",
+      "bytes": 966118,
+      "sha256": "72deb9444572e8d48f73d657ec1ee263d48fa3c0a9d79471596dfb44095f201d",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/service-path/c5dd-baseline-critical-path/critical-path-readback.json",
+      "git_blob": "fabdddc987e47ecfe26771c697a066c71eeb83cb",
+      "bytes": 806894,
+      "sha256": "57ce0956d1927578cd5b4f1364ca38689a0256bbdba85c981358eb3c3c26e492",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/submit-recovery/original-records.json.gz",
+      "git_blob": "322e795742d50700038f2c11d3f756d09df9b097",
+      "bytes": 842652,
+      "sha256": "5d033bc9a7f16efda9450869027604c7ea1d9f06a58a138271cbc9df29f08584",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-six-axis-continuation-20261104/retained-throughput-readback.jsonl",
+      "git_blob": "12d184e237758d148ed09883c55e8045c3e9d3b8",
+      "bytes": 779112,
+      "sha256": "bebf9ddd818ab389155543406138df77b88b7b5f5ce85722b7ab162734125126",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-six-gate-closure-20261022/codeql-1131-annotations-and-flows.json",
+      "git_blob": "44e6c91453a2a4d0da1818b9c133a35700c63ec1",
+      "bytes": 1132388,
+      "sha256": "0e37c7d2370dc92eede6b7e847c2bb366555a2b392013d0c1b112f41c85fb99c",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-six-gate-closure-20261022/source-42424a-followup/raw-evidence.gzip.json",
+      "git_blob": "66d68b1b6d6aebf2d76de8bfa7aa776b58414dfb",
+      "bytes": 627085,
+      "sha256": "71c2b007d0a81da1717cf08f693fae1a5c353644de6255f371f7783d3307ab05",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-six-gate-closure-20261022/source-42424a-followup/security-terminal.gzip.json",
+      "git_blob": "0280956addd9a06dac5b367f249550b7aa88f740",
+      "bytes": 875353,
+      "sha256": "251ccc9bcd3c609c3b12921770d434bf7accc6577f909fa2dab83ba215181b4f",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-measured-followup/continuous-growth-protocol-pace/progress.json",
+      "git_blob": "7fb814a7e1542933cf836f96e020c6d698f0f598",
+      "bytes": 1716126,
+      "sha256": "75669318aae7376d178bb22a19ac885ace063e5f77d6f180d3b67516b0cf5e99",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-measured-followup/continuous-growth-protocol-pace/summary.json",
+      "git_blob": "6fc0c76e7293dfe15c77e933ccd435b6f4a2f4ea",
+      "bytes": 2193599,
+      "sha256": "83fdfd337aeaf10f5cd0e82eaa5884da4fb71cd7671083322ea824b4e848751a",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-measured-followup/receipts/network-only-business/report.json",
+      "git_blob": "a0221b04f84b2ad20ab73ff5c5558b25c5646091",
+      "bytes": 1196053,
+      "sha256": "017a34958668f9a4556b7264c9fd98faecf6d4f2b8c45cae12d61e90c87324ee",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-native/shared64-pressure.log",
+      "git_blob": "1e153581925865afbd6407c3a52063d1b4b7d892",
+      "bytes": 714255,
+      "sha256": "c06986e2bd6e5390e96c56d3625b01c24f97b6e4f71fc56b85c5c8758ab08e35",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-native/unpaid-pressure.json",
+      "git_blob": "e81ef22d648289e919479ab34726bfb90adeb5cb",
+      "bytes": 720548,
+      "sha256": "d44fdb9dfbb99aa0571182312587acad80a5dc3d2d35b7db58914ae20f1d913c",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/continuous-growth/progress.json",
+      "git_blob": "872579437db971508b777ba98b9615807deb3a6a",
+      "bytes": 1422417,
+      "sha256": "598dfa37b21659b74fabeb0adfa44d0c6a7582ccfa6f570ac40ea6936c95e9d8",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/continuous-growth/summary.json",
+      "git_blob": "94ae403db4d197560fa8438edcec0bf40f6e8682",
+      "bytes": 1819226,
+      "sha256": "46dbec1d776ff4453d3d5c5c998aea54241054cdce37e67cf1f7d1c182908d15",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/public-v3-mixed/report.json",
+      "git_blob": "9dedfd77909e8b66054de8c603350939834bdac9",
+      "bytes": 2532820,
+      "sha256": "4921b6c1186353f8e152e9f522082faa0fb2852a7f92e4a2123cf352ceb85002",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/public-v3-multiprocess/baseline.json",
+      "git_blob": "3046e97280e37496754cb98f62b61bac0bb04060",
+      "bytes": 1025396,
+      "sha256": "900889024ff85ba7717cd4821acc18f7f81e3d55a6142bb7fdac2995d96dbe84",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/public-v3-multiprocess/from-zero.json",
+      "git_blob": "9e5e894d6c17fe479a6e4a698ef4e69f7beabf76",
+      "bytes": 3029296,
+      "sha256": "8d2f68e8eedac1affcdb4932edb85cecae38705872b540a5019a51c81090ce76",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/public-v3-multiprocess/late-product.json",
+      "git_blob": "7cd831a23bd9766186f07569e78665132f3bd215",
+      "bytes": 2974178,
+      "sha256": "61ee230c2210bd5cd4de9225dd4d6cd9262acf90e11715d26dd89c3680d64be6",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/public-v3-multiprocess/report.json",
+      "git_blob": "28ec03da588b3e2bee3206e2c90c0af281842a3f",
+      "bytes": 7483114,
+      "sha256": "c662cf7d71adec835eb22e60058e3eccb7dc3faa88a31e262ec1bd4bdc069233",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-494-final-native/observations.tar.gz",
+      "git_blob": "cd764fab940091a450bea244683d7bc96cff7b8b",
+      "bytes": 8861501,
+      "sha256": "aa5869a304be8dd4e3bb873df4e88a785642e65526160d7ef130b652e9524925",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54/w1-receiver-budget.jsonl",
+      "git_blob": "6ae151d549d3ba8efc4393e7df80da971a302e30",
+      "bytes": 7545247,
+      "sha256": "0f497ed2b74793a244eef7ee8b95c732f8bfc88e7fe7dda41f697f03a2e87600",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963/run-1-report.json.gz",
+      "git_blob": "7f8548ea959145b566ca9a53f72bb362744486f4",
+      "bytes": 2633344,
+      "sha256": "a5a7a39866ab2d9dd0deb40e9f29173af8cbeb70d9c3bcc4d78aaee17c5c43b4",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963/run-2-report.json.gz",
+      "git_blob": "137ff4c45912214cd1894959b9b012d07c7c81dc",
+      "bytes": 2579570,
+      "sha256": "05cddb92e6f6645c325dc35c2ca97fb0778c4f9d09f45621fb0927677309bfe4",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963/run-3-report.json.gz",
+      "git_blob": "357cf930c240c2cfa1fa9bb71bcff8d2add40294",
+      "bytes": 2592028,
+      "sha256": "bee4ff00c33015e7c760716010667f2131dc1f3473489eea156abb47f59e3db1",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/pn-convergence-20261023/closure-receipts/chain-final-scale-export/settings.json.gz",
+      "git_blob": "a7cfb1dfeb38f62214a58ca20047acaf76cd748b",
+      "bytes": 2504907,
+      "sha256": "f79223c35cab31ef3c4a0193d415a6974b0743e42c01e0b45f8d2a3c836e86c1",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/pn-convergence-20261023/closure-receipts/pn1-root-final-execute/raw/preparation.json.gz",
+      "git_blob": "808cfd54c8647161f1d95ff53b4dbb290606986d",
+      "bytes": 581974,
+      "sha256": "7f7a2df2f704631dd54598ac5657782875675745404e19c39d695752d7b0c91a",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/pn-convergence-20261023/closure-receipts/pn1-root-final-execute/raw/report.json.gz",
+      "git_blob": "b3c7fa058c1b5d081bcda13b908e4222471d8ca4",
+      "bytes": 1258676,
+      "sha256": "dd53e14763318c520ad604d394fea6e3384eda7d3d2ce331e4f5e1404ffb22fa",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-batch-build-20261028-r8/attempt5/compiled-host.gz",
+      "git_blob": "07289d1c0906f82e0831ac1abf9525ff9f6dd7cc",
+      "bytes": 11496239,
+      "sha256": "fcdb5ccfbeea25b55bb1ba2a4dbb72f55872385d03c34706cabeaa417971da38",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-complete-succinct-20261028/runtime-records.zip",
+      "git_blob": "5289d131bddd8a05120b6a39ed3f355c10590c62",
+      "bytes": 956616,
+      "sha256": "ebc8608217edfdb358f185199b16357594fe9d41f730f2bedb6f5309bd3ef260",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/analysis/completed/independent-reader-readback.json",
+      "git_blob": "a1b9e37ddfa5f318559ef1e9c6f359f5590c89cb",
+      "bytes": 2883956,
+      "sha256": "57d7372dcf032c9c42908c1b7dc0c904a47366f55e27d0f9ca1cc2619f397f35",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/failed-d78-full-observation.tar.zst.part-00",
+      "git_blob": "9f8991460fd7a793612dc94f40c0de3b2cff18d2",
+      "bytes": 4194304,
+      "sha256": "4f394ffbc731f8b6fac587d2a35686352903568757015600d457320d1f0859c0",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/failed-d78-full-observation.tar.zst.part-01",
+      "git_blob": "f33b3a00943570f77398f15f1571c340245caefb",
+      "bytes": 4194304,
+      "sha256": "06d6a66b5375d7dace259e6134c2109b1d09f65972816f9e896497c8c016c2da",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/failed-d78-full-observation.tar.zst.part-02",
+      "git_blob": "4284b5b7610e4a6b620868922930976a85b33efc",
+      "bytes": 4194304,
+      "sha256": "ab4d727bdcb89a06302e1e435c17a6d1714056333f1f616405d2d647a7e8ba72",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/failed-d78-full-observation.tar.zst.part-03",
+      "git_blob": "f3ede15c3037394b4b2d4c657ba6f0bce02f9dd1",
+      "bytes": 4194304,
+      "sha256": "f432f1f0c1edaf74f033228fb9d04f7e2d4afdcb9194ef1257ad2e49aa5bd684",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/failed-d78-full-observation.tar.zst.part-04",
+      "git_blob": "31d6162edacf15a107efc0e8b6863ab945e08c18",
+      "bytes": 1308891,
+      "sha256": "0a34eba64ee5d2501f6b42f0db8e42857ac0ddad82e64d6b2150e4340d28d3d4",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/failed-d78-manifest.json",
+      "git_blob": "64c28540d0ff2f0309736f131176dd9ee2a0f555",
+      "bytes": 1879406,
+      "sha256": "91333482096caae0d8e9c155dcb1663767c2a4cab7dfe4aac3bd70a9cb45c28d",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/legal-execution-manifest.json",
+      "git_blob": "c15b728a1e68c05922d6e4cb21453013f87ec688",
+      "bytes": 6120797,
+      "sha256": "97b38a97c978959417d435692f2b7ef4ef7c399c5c1a371a263ad6afcd6f49fc",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/successful-2b250859-observations.tar.zst.part-00",
+      "git_blob": "e6a1f97499c1f981ae89e21dd0304fb4fafa1c32",
+      "bytes": 4194304,
+      "sha256": "0d67bf3193aca4517e13103d90fb8d7a458f4edeecaceac0eb2e5570c22b9edf",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/successful-2b250859-observations.tar.zst.part-01",
+      "git_blob": "7edbc7c4a2d192b54e0be218ff9cac1570e4b40e",
+      "bytes": 4194304,
+      "sha256": "24cfde2090ab176fbd1d39c595c5b051fc610f62ada35183a03e5a1808f6c285",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/successful-2b250859-observations.tar.zst.part-02",
+      "git_blob": "65a78db13e7d2d9f79104e21720d2db2aea38413",
+      "bytes": 4194304,
+      "sha256": "f07865fcdd5c313d43de7517a8a6cfa7a426ebcfb8c00e50a667a0db63c0aba5",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/successful-2b250859-observations.tar.zst.part-03",
+      "git_blob": "e5fcb222a281522aaf84a139230615347dd0f955",
+      "bytes": 4194304,
+      "sha256": "5c0845f2d5d179b0dcd300d5d9586bf49e3483d77b76f8cf8bb35da3eac078a8",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/successful-2b250859-observations.tar.zst.part-04",
+      "git_blob": "b496e4503c4b6de5b8b953983d0a6aa5cf870ab9",
+      "bytes": 4194304,
+      "sha256": "1d8bd8635aefb72467d458110c0633547e7593b3d890d958dd7d006a0a92ed74",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/successful-2b250859-observations.tar.zst.part-05",
+      "git_blob": "ff524881400c283e876344b8a282b201a4fdf7bb",
+      "bytes": 4194304,
+      "sha256": "3db3b5c80275888b1bf00b9e014c95a611ac9be14b8b145dab770399be1655e6",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/successful-2b250859-observations.tar.zst.part-06",
+      "git_blob": "71f61d0493f8f81e134fcc0f5ddca7de9f594f9e",
+      "bytes": 4194304,
+      "sha256": "f2d61c2031a3d80eef3b698b227c54c13873bd7fb2041f19e2a1360d62826e3b",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/successful-2b250859-observations.tar.zst.part-07",
+      "git_blob": "25cfb226e290b1fbff7b1e49fb13fc8045753164",
+      "bytes": 1350970,
+      "sha256": "2fbebc515127e6c644ca60909bea41fc2f6c8fa00ddb51b8046ce5c4c93ca239",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/validation/native-initial/cargo-metadata.log",
+      "git_blob": "a5a347721c074dc22e4c1faa4fac596532c11518",
+      "bytes": 813756,
+      "sha256": "d4a1bd7b5079a328f0dfb10a4f53f692dd6b3d990f16176ed5d064f2bc9958e0",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/validation/native-jobs-one/cargo-metadata.log",
+      "git_blob": "a5a347721c074dc22e4c1faa4fac596532c11518",
+      "bytes": 813756,
+      "sha256": "d4a1bd7b5079a328f0dfb10a4f53f692dd6b3d990f16176ed5d064f2bc9958e0",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-factorial-v3-20261102/validation/pre-freeze/cargo-metadata.json",
+      "git_blob": "0df912aae240c9363965f3927d7208d3a9b45f5d",
+      "bytes": 813438,
+      "sha256": "3d9414118112d07ab296cf2b10404be17e0f4c1fc3f722733eef47e58f12d562",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-source-closure-20261028/public-feature-compare.json",
+      "git_blob": "c0bb3fda0d656003a9cdf80b9143076f8e42a685",
+      "bytes": 1304276,
+      "sha256": "f0692dcd8bfadc498868db10660aeea54aace6789b0c0889e65aae9665d9fd40",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-work-security-ci-followup-20261101/initial-ci/service-head.zip",
+      "git_blob": "56351d34b7bf4894d7e69ac08d9fc23eb78dfb84",
+      "bytes": 4955682,
+      "sha256": "6805eb3194b9a706c66d4a98f95d7b60253c7c0798654f7728b413ab7f184c00",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pon-w1-work-security-ci-followup-20261101/initial-ci/service-prospective-merge.zip",
+      "git_blob": "e7055254a1067742ee0daf9100203bde8b3e4982",
+      "bytes": 4957587,
+      "sha256": "8e7e3c44de4a92348b5025ecc42948a73725d43ce6650522ed6a7ccb6df9bae9",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pq-component-validation-20261103/hosted-41691371037/chain-pq-ci-run-41691371037-full-members.tar.xz",
+      "git_blob": "20ea701251692f23fc6e298aa138542bcacf058b",
+      "bytes": 705720,
+      "sha256": "4f218c1f30760e81ab06740c3a7db02a0667d510385bdca8fa58cdba3f9157f6",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    },
+    {
+      "path": "evidence/pq-component-validation-20261103/x230-8a74a9e4/locked-linux.log",
+      "git_blob": "9763494e7f5c33ba37d05bfade4f497f34c8e95f",
+      "bytes": 639484,
+      "sha256": "8a884a92502b0221d8747625e8ffae679ea289f98d81dee4cdffa3245b71bbb9",
+      "created_working_copy": true,
+      "original_reclamation_blob_matches": true
+    }
+  ]
+}

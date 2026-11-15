@@ -1,0 +1,60 @@
+{
+  "schema": "chain-cell-retained-archive-verification-v1",
+  "created_at_utc": "2026-11-07T12:37:07.556845+00:00",
+  "archive": "retained-runs.tar.gz",
+  "archive_bytes": 1928181,
+  "archive_sha256": "d49d7e8e2e4d2d5bf87beb172fab61bfb5a91decaf3697435f0987c32ae3e0c1",
+  "format": "ustar+gzip; normalized modes/owners/mtime; gzip mtime=0",
+  "payload_files": 264,
+  "payload_bytes": 17153945,
+  "index_files": 4,
+  "index_bytes": 193799,
+  "archive_members": 268,
+  "all_member_names_relative_canonical": true,
+  "all_members_regular_files": true,
+  "no_duplicate_names": true,
+  "every_member_size_and_sha256_verified_after_compression": true,
+  "source_commit": "837ab80d2b0454a3b226d13ac270f9496f8d7f96",
+  "source_tree": "46a355fd6117093bc1d0deb9f3dfb81270a0b8cb",
+  "strict_clippy": "exit 0 with reused pinned OpenSSL 3.5.9; previous exit-101 attempts retained",
+  "strict_clippy_attempt_returncodes": [
+    101,
+    101,
+    0
+  ],
+  "sqlite_io_qualified": false,
+  "native_runtime_pq_tests_executed": false,
+  "new_provider_build": false,
+  "whole_chain_production_qualified": false,
+  "source_after_all_gates_full_fence_verified": true,
+  "publication": "GitHub 403; no remote ref update or remote commit created by this work",
+  "previous_archive": {
+    "file": "retained-runs-before-clippy.tar.gz",
+    "sha256": "15990f45f3e7ab27bae190443a579b227299e1b7b3942f7b200b4af5b1399e90",
+    "bytes": 1908556,
+    "receipt": "ARCHIVE-before-clippy.json"
+  },
+  "indices": {
+    "MANIFEST.json": {
+      "bytes": 128738,
+      "sha256": "a42ff05dbd6180fbce428192d21a58cbd764f3c3d743b7945dbd0120c31d9a75",
+      "kind": "index"
+    },
+    "PACKAGE.sha256": {
+      "bytes": 33721,
+      "sha256": "4f483c330047d7ab39867324c8a5c113405e068e156e54406a5f0b0b91a8fbda",
+      "kind": "index"
+    },
+    "README.md": {
+      "bytes": 15940,
+      "sha256": "1a6c4c312090317b1965a76c06fe91b7dfd34e10cf01f209ea0903e3db96cd1e",
+      "kind": "index"
+    },
+    "REVIEW.json": {
+      "bytes": 15400,
+      "sha256": "bde7477b0ea840c3fc00597f11b89cbe8e01c09b71b24de14c5c93b7e5f05494",
+      "kind": "index"
+    }
+  },
+  "manifest_payload_sha256": "4f483c330047d7ab39867324c8a5c113405e068e156e54406a5f0b0b91a8fbda"
+}

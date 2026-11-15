@@ -1,0 +1,29 @@
+{
+  "bytes": 8862,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_pq_root_dependency_register.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/work/chain-root-operation-recovered-20261112-df05",
+  "elapsed_ns": 14269420225,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "log": "root-gate-controls.log",
+  "name": "root-gate-controls",
+  "process_exit_code": 0,
+  "sha256": "d8e98d8ec859b3146f653ecb0e8b83528b5392357e9033fcea8a821e26fb0645",
+  "source": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

@@ -1,0 +1,7 @@
+{
+  "input_kind": "hypothetical",
+  "left_encoded_input_hex": "0001020304",
+  "range_cardinality": "16",
+  "right_encoded_input_hex": "0101020304",
+  "schema": "TRNM-W1-JOINT-ORACLE-TOY-INPUT1"
+}

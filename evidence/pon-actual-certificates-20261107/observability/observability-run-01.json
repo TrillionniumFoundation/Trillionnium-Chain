@@ -1,0 +1,588 @@
+{
+  "actual_native_counterpair_binding": {
+    "after_owner_attempt": 3,
+    "after_process_interval_ns": [
+      421606120,
+      497504040
+    ],
+    "after_snapshot": "alice_after_hidden_branch",
+    "before_owner_attempt": 2,
+    "before_process_interval_ns": [
+      71664005,
+      140947104
+    ],
+    "before_snapshot": "alice_before_hidden_branch",
+    "entire_os_timing_observation_identical": false,
+    "equal_retained_rows_checked": true,
+    "global_hidden_inventory_upper_bound": null,
+    "hidden_owner_snapshot": "bob_hidden_b8",
+    "initial_confirmed_depth": 6,
+    "initial_native_required_work_delta": 12,
+    "initial_selected_score": 14,
+    "native_confirmation_then_reorg_predicates_in_export_checked": true,
+    "physical_first_ready_times_authenticated": false,
+    "post_reorg_eligible_max_score": 18,
+    "post_reorg_selected_score": 16,
+    "post_reorg_selection_deficit": 2,
+    "post_reorg_snapshot": "alice_after_strict_reorg_b8",
+    "probability_of_this_native_failure_estimated": false,
+    "same_local_view_projection_commitment": "42946fcc136903cf7c2d07669f10e0f3a1a9a9895b973837d3e07427e45377fc",
+    "strict_score_inequality_checked": true,
+    "target_block": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+    "theorem_same_public_schedule_coupling_established_by_this_run": false,
+    "unseen_competing_non_genesis_rows": 8,
+    "unseen_competing_score": 16
+  },
+  "base_commit_contains_new_files_claimed": false,
+  "claim_boundary": {
+    "actual_conditional_restart_law_attested": false,
+    "actual_joint_initial_state_attested": false,
+    "all_ever_admitted_history_complete": false,
+    "global_resource_coverage_attested": false,
+    "local_current_admitted_view_predicates_checked": true,
+    "mu1_credit_equals_native_required_work": false,
+    "native_executable_or_os_attested": false,
+    "native_six_successor_failure_probability": null,
+    "physical_resource_tail_proved": false,
+    "unadmitted_or_remote_inventory_complete": false
+  },
+  "exact_models": {
+    "all_results_are_declared_exact_models": true,
+    "finite_full_table_advice_counterexample": {
+      "actual_w1_residual_profile_attested": false,
+      "classical_advice_bits": 64,
+      "conditional_arithmetic_bound": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "distinct_successes": 1,
+      "domain_size": 64,
+      "finite_state_space_implies_small_risk": false,
+      "joint_initial_squared_tail": [
+        {
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "denominator": 726838724295606890549323807888004534353641360687318060281490199180639288113397923326191050713763565560762521606266177933534601628614656,
+          "numerator": 726589253114643860498475260208456425022885044536408357344079794254361512456424459415886193758770808634755961030469901818431236984144895
+        }
+      ],
+      "joint_record_bit_probability": {
+        "denominator": 128,
+        "numerator": 15
+      },
+      "model": "finite Bernoulli oracle with coherent classical truth-table advice",
+      "new_queries": 0,
+      "profile_derived_for_this_explicit_model": true,
+      "sharp_worst_case_success_with_unrestricted_finite_advice": {
+        "denominator": 115792089237316195423570985008687907853269984665640564039457584007913129639936,
+        "numerator": 113930685508521461208103574403932205033146620460566751412224019154244916749311
+      }
+    },
+    "model_values_are_actual_native_risk": false,
+    "one_global_mu1_tail_for_any_checked_witness": {
+      "actual_physical_budget_attested": false,
+      "event": "exists valid shared-lifetime window witness above fixed threshold",
+      "fixed_event_threshold": {
+        "denominator": 1,
+        "numerator": 4096
+      },
+      "fresh_global_bound": {
+        "actual_sha_qrom_reduction_proved": false,
+        "attacker_only_online_query_budget": false,
+        "bound": {
+          "denominator": 2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576,
+          "numerator": 140454045173069371481143492358807086428419762188630077033390956101290961603360424107510831797633
+        },
+        "cauchy_saturated": {
+          "denominator": 2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576,
+          "numerator": 140454045173069371481143492358807086428419762188630077033390956101290961603360424107510831797633
+        },
+        "complete_outputs_M": 32,
+        "credit_threshold": 4096,
+        "full_value_queries_Q": 1,
+        "mandatory_u_minimum_gate_cost_proved": false,
+        "maximum_identity_credit": 128,
+        "model": "mu1-ideal-terminal-oracle-global-budget-v1",
+        "native_confirmation_risk": false,
+        "p": {
+          "denominator": 16,
+          "numerator": 1
+        },
+        "physical_resource_bound": false,
+        "required_distinct_successes_k": 32,
+        "simulated_bit_queries_N": 34,
+        "triangle_rational": {
+          "denominator": 1,
+          "numerator": 1
+        }
+      },
+      "independence_between_windows_required": false,
+      "native_confirmation_risk_qualified": false,
+      "post_selection_conditional_probability": false,
+      "window_count_union_factor": 1
+    },
+    "overlapping_window_witness": {
+      "actual_global_ready_coverage_attested": false,
+      "coverage_includes_unobserved_cuts": true,
+      "coverage_segments": [
+        {
+          "coverage": {
+            "denominator": 1,
+            "numerator": 1
+          },
+          "from_cut": 1
+        },
+        {
+          "coverage": {
+            "denominator": 1,
+            "numerator": 0
+          },
+          "from_cut": 33
+        }
+      ],
+      "duplicate_deliveries_add_zero": 0,
+      "fixed_event_threshold": {
+        "denominator": 1,
+        "numerator": 4096
+      },
+      "global_credit_margin": {
+        "denominator": 1,
+        "numerator": 4096
+      },
+      "global_unique_credit": 4096,
+      "maximum_point_coverage": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "native_work_identity_and_weight_attested": false,
+      "pathwise_event_inclusion_checked": true,
+      "weighted_actual_credit": {
+        "denominator": 1,
+        "numerator": 4096
+      },
+      "window_new_credits": [
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096,
+        4096
+      ]
+    },
+    "postselected_restart_counterexample": {
+      "actual_physical_or_native_risk_estimate": false,
+      "conditional_success_at_every_selected_start": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "even_unconditional_reset_claim_violated": true,
+      "global_lifetime_query_bound": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "known_winner_joint_squared_tail": [
+        {
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "denominator": 16,
+          "numerator": 15
+        }
+      ],
+      "model": "exact finite stopped Bernoulli search, not native SHA sampling",
+      "online_queries_after_selected_start": 0,
+      "preprocessing_query_cap": 16,
+      "probability_a_start_exists": {
+        "denominator": 18446744073709551616,
+        "numerator": 11878335717996660991
+      },
+      "proper_conditional_residual_bound": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "risk_bank_refusal": "INVALID_CONDITIONAL_RISK_AT_START",
+      "unpaid_fresh_restart_bound": {
+        "denominator": 1024,
+        "numerator": 529
+      }
+    },
+    "predictable_risk_bank": {
+      "actual_conditional_residual_potential_attested": false,
+      "actual_probability_law_authenticated": false,
+      "all_declared_history_cells_checked": true,
+      "conditional_checks": [
+        {
+          "allowance": {
+            "denominator": 200,
+            "numerator": 3
+          },
+          "attempt": "root",
+          "conditional_failure_probability": {
+            "denominator": 200,
+            "numerator": 3
+          },
+          "start_mass": {
+            "denominator": 1,
+            "numerator": 1
+          }
+        },
+        {
+          "allowance": {
+            "denominator": 50,
+            "numerator": 1
+          },
+          "attempt": "after_left",
+          "conditional_failure_probability": {
+            "denominator": 50,
+            "numerator": 1
+          },
+          "start_mass": {
+            "denominator": 2,
+            "numerator": 1
+          }
+        },
+        {
+          "allowance": {
+            "denominator": 100,
+            "numerator": 1
+          },
+          "attempt": "after_right",
+          "conditional_failure_probability": {
+            "denominator": 100,
+            "numerator": 1
+          },
+          "start_mass": {
+            "denominator": 2,
+            "numerator": 1
+          }
+        }
+      ],
+      "expected_allowance_spent": {
+        "denominator": 100,
+        "numerator": 3
+      },
+      "failure_union_probability": {
+        "denominator": 200,
+        "numerator": 3
+      },
+      "independence_between_attempts_required": false,
+      "maximum_path_allowance_spent": {
+        "denominator": 200,
+        "numerator": 7
+      },
+      "native_confirmation_risk_qualified": false,
+      "total_allowance": {
+        "denominator": 200,
+        "numerator": 7
+      }
+    },
+    "two_world_impossibility_model": {
+      "balanced_world_guessing_success_at_most": {
+        "denominator": 2,
+        "numerator": 1
+      },
+      "common_local_state": {
+        "active": "a7",
+        "admitted": [
+          {
+            "id": "g",
+            "parent": null,
+            "score": 0
+          },
+          {
+            "id": "a1",
+            "parent": "g",
+            "score": 1
+          },
+          {
+            "id": "a2",
+            "parent": "a1",
+            "score": 2
+          },
+          {
+            "id": "a3",
+            "parent": "a2",
+            "score": 3
+          },
+          {
+            "id": "a4",
+            "parent": "a3",
+            "score": 4
+          },
+          {
+            "id": "a5",
+            "parent": "a4",
+            "score": 5
+          },
+          {
+            "id": "a6",
+            "parent": "a5",
+            "score": 6
+          },
+          {
+            "id": "a7",
+            "parent": "a6",
+            "score": 7
+          }
+        ],
+        "generation": 7,
+        "observed_now": 100,
+        "owner": "same-local-owner",
+        "target": "a1"
+      },
+      "common_local_state_sha256": "bc53af7bb9247b4237a959f5f168b3aef1c342f61f5fb9c6bfd7b6eee3f639eb",
+      "model": "declared positive additive score tree; not native work replay",
+      "native_failure_probability_estimated": false,
+      "native_validation_performed_by_this_model": false,
+      "world_with_private_chain": {
+        "failure_probability_under_this_dirac_law": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "future_selected": "b8",
+        "hidden_chain": [
+          {
+            "id": "b1",
+            "parent": "g",
+            "score": 1
+          },
+          {
+            "id": "b2",
+            "parent": "b1",
+            "score": 2
+          },
+          {
+            "id": "b3",
+            "parent": "b2",
+            "score": 3
+          },
+          {
+            "id": "b4",
+            "parent": "b3",
+            "score": 4
+          },
+          {
+            "id": "b5",
+            "parent": "b4",
+            "score": 5
+          },
+          {
+            "id": "b6",
+            "parent": "b5",
+            "score": 6
+          },
+          {
+            "id": "b7",
+            "parent": "b6",
+            "score": 7
+          },
+          {
+            "id": "b8",
+            "parent": "b7",
+            "score": 8
+          }
+        ],
+        "local_projection_sha256": "bc53af7bb9247b4237a959f5f168b3aef1c342f61f5fb9c6bfd7b6eee3f639eb",
+        "private_ready_weight": 8
+      },
+      "world_without_private_chain": {
+        "failure_probability_under_this_dirac_law": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "future_selected": "a7",
+        "local_projection_sha256": "bc53af7bb9247b4237a959f5f168b3aef1c342f61f5fb9c6bfd7b6eee3f639eb",
+        "private_ready_weight": 0
+      },
+      "worst_case_sound_local_risk_upper_bound": {
+        "denominator": 1,
+        "numerator": 1
+      }
+    }
+  },
+  "exact_source_manifest_sha256": {
+    "formal/pon-nakamoto-v1/CERTIFICATE_OBSERVABILITY_V1.md": "e5c96ca70fdbb3accfda0ca0ec011b56b724383d7d1fc2dd356249524c94b9b2",
+    "formal/pon-nakamoto-v1/certificate_observability_evidence.py": "406375a5674a752c907e6e2cdb9130ebf9c4262a6a73d52e8fb79ab730955393",
+    "formal/pon-nakamoto-v1/certificate_observability_models.py": "deb60afe6cc20155ebb28a89a237410fcbcc525c1ecfde41b6cbd5fde55f9372",
+    "formal/pon-nakamoto-v1/certificate_observability_tests.py": "b71308cc10ce39f07b8697f113777dbf30563cea0f6069fbcc01a402043cf375",
+    "formal/pon-nakamoto-v1/mandatory_units_query.py": "8127186bf3355ab749d753494caeeb14adbb875e13c7edf629df213f04e4ce0e",
+    "formal/pon-nakamoto-v1/native_owner_score_bridge.py": "a249eb26e1d6144e83d20a7fcc93a31af85da66d495102a04c26e251a79b7bb0",
+    "trillionnium/crates/trnm-pon-node/examples/support/native_owner_scenario.rs": "a2b3c707da26441cfc2033430fdd2ad0db5a67ddb38d015d9a18a7e32acf9ba9",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "4ee068a792c6750d82d117f4dac370e5927d250a9b333ff3e8913019dee2ffdd",
+    "trillionnium/crates/trnm-pon-node/src/store/native_owner_observation.rs": "853b519842237bc7b174be2ff5d2dad0a0ab8fb0cdadccc7433823c5dbd1f83d"
+  },
+  "native_input_path": "/workspace/scratch/b9454e263603/chain_obligations/evidence/pon-actual-certificates-20261107/native_score_bridge/attempt-01/run/native.json",
+  "native_input_sha256": "0f5cfd9af78818ace0d9c0ddd36d9a0be7582f4e3e4d4d4abd5d6f569c72a98d",
+  "native_packet_artifacts_checked": true,
+  "native_score_bridge": {
+    "actual_resource_lower_bound_established": false,
+    "comparisons": [
+      {
+        "availability_score_deficit": 14,
+        "eligible_view_maximum": 0,
+        "fork_score_witness_holds": true,
+        "global_failure_probability_bound": null,
+        "initial_confirmation": {
+          "confirmed": true,
+          "depth": 6,
+          "included": true,
+          "inclusive_K": 14,
+          "membership_rechecked_by_reader": false,
+          "required_work_delta": 12,
+          "six_successor_profile": true,
+          "work_delta": 12
+        },
+        "initial_world_inventory": null,
+        "known_b_chain_witness": null,
+        "last_common_ancestor": "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6",
+        "name": "early_unseen_target",
+        "new_adversarial_work_lower_bound": null,
+        "raw_selection_score_deficit": 0,
+        "reference_score": 14,
+        "reference_suffix_weight": 14,
+        "reference_tip": "9d78eb57342d078a5a6f2e9217c396fadd465f5531353365295b4539f2af0502",
+        "selected_score": 0,
+        "selected_tip": "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6",
+        "selection_score_deficit": 0,
+        "total_comparison_score_deficit": 14,
+        "whole_competing_suffix_weight": 0
+      },
+      {
+        "availability_score_deficit": 0,
+        "eligible_view_maximum": 18,
+        "fork_score_witness_holds": true,
+        "global_failure_probability_bound": null,
+        "initial_confirmation": {
+          "confirmed": true,
+          "depth": 6,
+          "included": true,
+          "inclusive_K": 14,
+          "membership_rechecked_by_reader": false,
+          "required_work_delta": 12,
+          "six_successor_profile": true,
+          "work_delta": 12
+        },
+        "initial_world_inventory": null,
+        "known_b_chain_witness": {
+          "best_known_eligible_b_tip": "07831eff35e5533aa75dc8fbe8fd5885ed155d60ff98c74a06fb261825e705e7",
+          "g": 18,
+          "g_minus_q": 16,
+          "known_competing_suffix_lower_bound": 16,
+          "raw_selection_deficit_q": 2
+        },
+        "last_common_ancestor": "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6",
+        "name": "strict_reorg_with_known_heavier_b_chain",
+        "new_adversarial_work_lower_bound": null,
+        "raw_selection_score_deficit": 2,
+        "reference_score": 14,
+        "reference_suffix_weight": 14,
+        "reference_tip": "9d78eb57342d078a5a6f2e9217c396fadd465f5531353365295b4539f2af0502",
+        "selected_score": 16,
+        "selected_tip": "88dcf691d0af78f2a9204d4eb164946ca68211e024294d643c1d344ceeaf1c11",
+        "selection_score_deficit": 0,
+        "total_comparison_score_deficit": 0,
+        "whole_competing_suffix_weight": 16
+      },
+      {
+        "availability_score_deficit": 0,
+        "eligible_view_maximum": 22,
+        "fork_score_witness_holds": true,
+        "global_failure_probability_bound": null,
+        "initial_confirmation": {
+          "confirmed": true,
+          "depth": 6,
+          "included": true,
+          "inclusive_K": 14,
+          "membership_rechecked_by_reader": false,
+          "required_work_delta": 12,
+          "six_successor_profile": true,
+          "work_delta": 12
+        },
+        "initial_world_inventory": null,
+        "known_b_chain_witness": {
+          "best_known_eligible_b_tip": "2666c16905e88baf1c5ef3a515736bd46353a1b44abe911b4eae31943ad5b062",
+          "g": 22,
+          "g_minus_q": 16,
+          "known_competing_suffix_lower_bound": 16,
+          "raw_selection_deficit_q": 6
+        },
+        "last_common_ancestor": "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6",
+        "name": "mature_b_chain_not_yet_selected",
+        "new_adversarial_work_lower_bound": null,
+        "raw_selection_score_deficit": 6,
+        "reference_score": 14,
+        "reference_suffix_weight": 14,
+        "reference_tip": "9d78eb57342d078a5a6f2e9217c396fadd465f5531353365295b4539f2af0502",
+        "selected_score": 16,
+        "selected_tip": "88dcf691d0af78f2a9204d4eb164946ca68211e024294d643c1d344ceeaf1c11",
+        "selection_score_deficit": 0,
+        "total_comparison_score_deficit": 0,
+        "whole_competing_suffix_weight": 16
+      }
+    ],
+    "exported_arithmetic_and_local_witnesses_checked": true,
+    "failure_probability": null,
+    "global_ready_attested": false,
+    "native_execution_independently_attested": false,
+    "observations": [
+      {
+        "confirmed": true,
+        "depth": 6,
+        "included": true,
+        "inclusive_K": 14,
+        "membership_rechecked_by_reader": false,
+        "required_work_delta": 12,
+        "six_successor_profile": true,
+        "work_delta": 12
+      },
+      {
+        "confirmed": false,
+        "depth": null,
+        "included": false,
+        "inclusive_K": null,
+        "membership_rechecked_by_reader": false,
+        "required_work_delta": 12,
+        "six_successor_profile": true,
+        "work_delta": null
+      }
+    ],
+    "owner_count": 2,
+    "packet_artifact_count": 20,
+    "physical_clock_authenticated": false,
+    "schema": "pon-native-owner-score-bridge-v1",
+    "six_successor_risk_qualified": false,
+    "snapshot_count": 11,
+    "world_coverage_attested": false
+  },
+  "schema": "pon-certificate-observability-evidence-v1",
+  "starting_source_commit": "f8362822b406463ac3dfcc911a0c3eda1686e32d"
+}

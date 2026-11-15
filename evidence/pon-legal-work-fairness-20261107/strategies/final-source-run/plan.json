@@ -1,0 +1,2287 @@
+{
+  "adaptive_selection": false,
+  "chainwork_awarded": 0,
+  "observations": [
+    {
+      "arm": "direct_original",
+      "case": "retained_consumer",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-000",
+      "planned_rounds": 3,
+      "rank": null,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "retained_consumer",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-001",
+      "planned_rounds": 3,
+      "rank": null,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "retained_consumer",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-002",
+      "planned_rounds": 3,
+      "rank": null,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "retained_consumer",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-003",
+      "planned_rounds": 3,
+      "rank": null,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "retained_consumer",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-004",
+      "planned_rounds": 3,
+      "rank": null,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-005",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-006",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-007",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-008",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-009",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-010",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-011",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-012",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-013",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-014",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-015",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-016",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-017",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-018",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-019",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-020",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-021",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-022",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-023",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-024",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-025",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-026",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-027",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-028",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-029",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-030",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-031",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-032",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-033",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-034",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-035",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-036",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-037",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-038",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-039",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-040",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-041",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-042",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-043",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-044",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-045",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-046",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-047",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-048",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-049",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-050",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-051",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-052",
+      "planned_rounds": 3,
+      "rank": 1,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-053",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-054",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-055",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-056",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-057",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-058",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-059",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-060",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-061",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-062",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-063",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-064",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-065",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-066",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-067",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-068",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-069",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-070",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-071",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-072",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-073",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-074",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-075",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-076",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-077",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-078",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-079",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-080",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-081",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-082",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-083",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-084",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-085",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-086",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-087",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-088",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-089",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-090",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-091",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-092",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-093",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-094",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-095",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-096",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-097",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-098",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-099",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-100",
+      "planned_rounds": 3,
+      "rank": 3,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-101",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-102",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-103",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-104",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-105",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "dense_unique",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-106",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-107",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-108",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-109",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-110",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-111",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "bias_only",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-112",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-113",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-114",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-115",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-116",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-117",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "sparse_single_coordinate",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-118",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-119",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-120",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-121",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-122",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-123",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "repeated_input",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-124",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-125",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-126",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-127",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-128",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-129",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "rank_at_most_two_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-130",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-131",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-132",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-133",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-134",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-135",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "repeated_columns",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-136",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-137",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-138",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-139",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-140",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-141",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "extreme_inputs",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-142",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_original",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-143",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-144",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "grouped_cached_merged",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-145",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "sparse_cached_merged",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-146",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "repeated_cached_merged",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-147",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "factor_selected",
+      "case": "repeated_input_separate_scopes",
+      "expected_error": null,
+      "expected_status": "verified",
+      "observation_id": "observation-148",
+      "planned_rounds": 3,
+      "rank": 8,
+      "requests_per_round": 16,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "invalid_zero_bias",
+      "expected_error": "INPUT_BIAS",
+      "expected_status": "rejected",
+      "observation_id": "observation-149",
+      "planned_rounds": 3,
+      "rank": null,
+      "requests_per_round": 1,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "direct_cached_merged",
+      "case": "invalid_feature_range",
+      "expected_error": "INPUT_RANGE",
+      "expected_status": "rejected",
+      "observation_id": "observation-150",
+      "planned_rounds": 3,
+      "rank": null,
+      "requests_per_round": 1,
+      "round_indices": [
+        0,
+        1,
+        2
+      ]
+    }
+  ],
+  "planned_observations": 151,
+  "planned_rounds": 453,
+  "pow_qualified": false,
+  "profile": "pon-routed-int257-grouped-research-v0",
+  "rounds_are_fixed_request_replays": true,
+  "schema": "pon-grouped-legal-strategy-plan-v0",
+  "selection": {
+    "batch_size": 16,
+    "bundle_hash": "485d1ddac3f10b859599297ede15c5703517952d3f507cdc3efea7f14214429e",
+    "evaluation_bundle": "/workspace/scratch/10a9f8f2cba0/chain-fairness/evidence/pon-native-node-v1/model-current/model/evaluation-bundle.json",
+    "model": "/workspace/scratch/10a9f8f2cba0/chain-fairness/evidence/pon-native-node-v1/model-current/model/model.json",
+    "offset": 0,
+    "partition": "consumer",
+    "replay_source": true,
+    "tasks": "/workspace/scratch/10a9f8f2cba0/chain-fairness/evidence/pon-native-node-v1/model-current/model/consumer.json"
+  }
+}

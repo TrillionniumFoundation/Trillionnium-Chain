@@ -1,0 +1,3188 @@
+{
+  "created_unix_ns": 1794167555964061967,
+  "files": [
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v3/archive-list.stdout.json",
+      "path": "v3/archive-list.stdout.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 527,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v3/archive-list-command.json",
+      "path": "v3/archive-list-command.json",
+      "sha256": "d69441095f2b49202a23265620c153bc5f4fb0ce15fd24d1d50438e280af8a36"
+    },
+    {
+      "bytes": 752,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v3/execution-result.json",
+      "path": "v3/execution-result.json",
+      "sha256": "601656c0db0cfed79ad6b6887af97d9bc28bfd370dd0ef02843ee383b91a1a65"
+    },
+    {
+      "bytes": 294,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v3/archive-list.stderr.log",
+      "path": "v3/archive-list.stderr.log",
+      "sha256": "b68f1255c34c39f0c698ef26fc77742351fb42d3e58a6e61b104420fc0ace871"
+    },
+    {
+      "bytes": 46305,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/original-refusal.json",
+      "path": "v4/original-refusal.json",
+      "sha256": "87f7e0ff61a2d7487662818ffecc0056cc064ac5c4d1fd6fb1250b1b1e3f08b2"
+    },
+    {
+      "bytes": 1432,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/archive-list.stdout.json",
+      "path": "v4/archive-list.stdout.json",
+      "sha256": "2f5aa3529f0019d4b6b6719d8b2e6a04cb657e40567dbf9898e5a58563b80bdf"
+    },
+    {
+      "bytes": 529,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/archive-list-command.json",
+      "path": "v4/archive-list-command.json",
+      "sha256": "56f2858e8238c4813da02187fbe28ab9239e97b9eae68d931d30114fb7407c46"
+    },
+    {
+      "bytes": 880,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/execution-result.json",
+      "path": "v4/execution-result.json",
+      "sha256": "883303bdeb2b218c290f390625d42041553fb54db723859d99d954338e2c269d"
+    },
+    {
+      "bytes": 3503,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/compiled-runtime.json",
+      "path": "v4/compiled-runtime.json",
+      "sha256": "765ea086ee5b43991acdaed093595a0f416b0b9c0b6c7f342a0b4736fe5baecc"
+    },
+    {
+      "bytes": 2634,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/test-admission.json",
+      "path": "v4/test-admission.json",
+      "sha256": "f3b006e8196d2deca7343722876e811f99fd060dc53b79a475b4ed14ef2669e8"
+    },
+    {
+      "bytes": 211,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/archive-list.stderr.log",
+      "path": "v4/archive-list.stderr.log",
+      "sha256": "202acc1b71a1257ded9046ca29d9154a3cdfc0fd0a78605131d86f62e694238c"
+    },
+    {
+      "bytes": 762,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/original-junit.xml",
+      "path": "v4/original-junit.xml",
+      "sha256": "d1cdfeaf3e826b359e320f3c2c8a7ba918bc913506bba5edfef254f7c851dbbe"
+    },
+    {
+      "bytes": 1839,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/test.log",
+      "path": "v4/test.log",
+      "sha256": "5bba35cd9151b83ab51e164a6100d439737c188bc9e0e7359f1ad889bdb0e8b5"
+    },
+    {
+      "bytes": 337,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model-config.json",
+      "path": "v4/model-config.json",
+      "sha256": "792f6f86cf02a240f9a7bfd2eba5f537c9c6abb7d78a6d38a18161e4cadab7df"
+    },
+    {
+      "bytes": 146,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/dataset.json",
+      "path": "v4/evidence/dataset.json",
+      "sha256": "7d94144fac8766d5e51377eaf1d3acb3b6a0a922f9078effddc07f928a1722e8"
+    },
+    {
+      "bytes": 258,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/experience.json",
+      "path": "v4/evidence/experience.json",
+      "sha256": "a732b2c0d2afb26da432213a00f09e6f6bb60c98537fa1d9416f249b48a39876"
+    },
+    {
+      "bytes": 246,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/isolated-owner-paths.json",
+      "path": "v4/evidence/isolated-owner-paths.json",
+      "sha256": "7b93bdf52a50bd889cf1bab7a3c27b01eb6454f6d881d1b0c84005b094ef1fcd"
+    },
+    {
+      "bytes": 1701,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/native-before-training.json",
+      "path": "v4/evidence/native-before-training.json",
+      "sha256": "15437392d05dc7eb7e7a9c75f8331c43aae3ac427d136eaa4fe04e3adbc16aa7"
+    },
+    {
+      "bytes": 1831,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/native-checkpoint-0-owner.json",
+      "path": "v4/evidence/native-checkpoint-0-owner.json",
+      "sha256": "ff7a5a551125bd05b718be66a8c96ad967d8a3d3d13b8474621eddf4215fe6cb"
+    },
+    {
+      "bytes": 2090,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/native-checkpoint-1-owner.json",
+      "path": "v4/evidence/native-checkpoint-1-owner.json",
+      "sha256": "f24a461fe4d75296a9b8b9aa5238ca6da4e0ac05372a94832994af9014ce12ea"
+    },
+    {
+      "bytes": 2407,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/native-checkpoint-2-owner.json",
+      "path": "v4/evidence/native-checkpoint-2-owner.json",
+      "sha256": "d7d4c817bc9b1c2e6a4b2f8878b7345b35cebf478c83e47e257d40a9d13bdad5"
+    },
+    {
+      "bytes": 3395,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/native-checkpoint-3-owner.json",
+      "path": "v4/evidence/native-checkpoint-3-owner.json",
+      "sha256": "f71038ee5b3d0c42713da506755bdec1e6d5c0eeed9871bb01288bbf5cb7ff40"
+    },
+    {
+      "bytes": 3656,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/native-checkpoint-4-owner.json",
+      "path": "v4/evidence/native-checkpoint-4-owner.json",
+      "sha256": "d7be94dc6be262431180feb1029c63b7b375ad73a7ea5e7c0db90d866dd394c8"
+    },
+    {
+      "bytes": 139,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/process-00-prepare.exit.json",
+      "path": "v4/evidence/process-00-prepare.exit.json",
+      "sha256": "6c739f2b3fc9fa472fbcd2265af0433dcfef844520a74cc59c632f7b89459eb8"
+    },
+    {
+      "bytes": 156,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/process-00-prepare.request.json",
+      "path": "v4/evidence/process-00-prepare.request.json",
+      "sha256": "821a562a37d2af752bd9baf36e37eb8649e07ee39e797e5a0a651790ea16eaac"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/process-00-prepare.stderr",
+      "path": "v4/evidence/process-00-prepare.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3825,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/process-00-prepare.stdout",
+      "path": "v4/evidence/process-00-prepare.stdout",
+      "sha256": "5c849af0909e0cf402697812a9edd349d26dfbef185da0beea9d6857788e5efc"
+    },
+    {
+      "bytes": 148,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/process-01-probe.exit.json",
+      "path": "v4/evidence/process-01-probe.exit.json",
+      "sha256": "3fd37316bf4c28370a76cea6d295fc76910f1a99836f7064b73aa6d32a606e26"
+    },
+    {
+      "bytes": 551,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/process-01-probe.request.json",
+      "path": "v4/evidence/process-01-probe.request.json",
+      "sha256": "3f49a8c2d934a64c60a7273a5c806c74682e77ff4b7222f33ea2c9c53011331c"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/process-01-probe.stderr",
+      "path": "v4/evidence/process-01-probe.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3417,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/process-01-probe.stdout",
+      "path": "v4/evidence/process-01-probe.stdout",
+      "sha256": "7e81c55a2b82c0779533cd0a33abdfa1b1a5b7a90972e0508181de818ec06866"
+    },
+    {
+      "bytes": 139,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/process-02-train.exit.json",
+      "path": "v4/evidence/process-02-train.exit.json",
+      "sha256": "a43a4fc836bba8529a7006b52665245affe980da2809eb077747b6327d1fa0ea"
+    },
+    {
+      "bytes": 400,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/process-02-train.request.json",
+      "path": "v4/evidence/process-02-train.request.json",
+      "sha256": "a54b0a362bc852d9b6be449163efec157e9fc1afa9fde80c0318213fd59ef834"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/process-02-train.stderr",
+      "path": "v4/evidence/process-02-train.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1483,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/process-02-train.stdout",
+      "path": "v4/evidence/process-02-train.stdout",
+      "sha256": "3d7a0367dc5c7f554180e06bdbaf85254172b83c5699ec06e98364c884724db7"
+    },
+    {
+      "bytes": 139,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/process-03-evaluate.exit.json",
+      "path": "v4/evidence/process-03-evaluate.exit.json",
+      "sha256": "06d3ba241f7c0c779bd03f49b4cb8cca01120ffe8b29cc9e139001d95b439edc"
+    },
+    {
+      "bytes": 221,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/process-03-evaluate.request.json",
+      "path": "v4/evidence/process-03-evaluate.request.json",
+      "sha256": "0bd3c9736ae00cbf43f66349337c51b8ce6725c86da47543f69756fc2c23a92a"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/process-03-evaluate.stderr",
+      "path": "v4/evidence/process-03-evaluate.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 17493,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/process-03-evaluate.stdout",
+      "path": "v4/evidence/process-03-evaluate.stdout",
+      "sha256": "f73e0801242a0f6fb4482b8afbe67c09e30c270b84649488085fdadb1dfcaf60"
+    },
+    {
+      "bytes": 1482,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/source-task-receipt.json",
+      "path": "v4/evidence/source-task-receipt.json",
+      "sha256": "a87442f217eccaa9474c5f64a7c34240a714fd960ccd4fd52e0e24c2ffd931b4"
+    },
+    {
+      "bytes": 2781,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/evidence/source-use-delivered.json",
+      "path": "v4/evidence/source-use-delivered.json",
+      "sha256": "b3fc8ebe4015241f63c500ca35065ac48f34c5dfaa4c55604552acfba0c18dfe"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/candidate-eval-exit.json",
+      "path": "v4/model/candidate-eval-exit.json",
+      "sha256": "a92758f1a9ddf620e9371114054174e2948e92ef2a7fb7083942bf79dd0fdbc4"
+    },
+    {
+      "bytes": 25232,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/candidate-eval.jsonl",
+      "path": "v4/model/candidate-eval.jsonl",
+      "sha256": "ebd748dc2e4224365f99adf8bcc482948a4d7cca26a9b225f236980840b42b9a"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/candidate-eval.stderr.log",
+      "path": "v4/model/candidate-eval.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 16129,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/evaluate-result.json",
+      "path": "v4/model/evaluate-result.json",
+      "sha256": "03c8d97dbe8842b8f705c630b61a04da4e8633742ac5b8a36c9c0f929a1f00a9"
+    },
+    {
+      "bytes": 11774,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/frozen.json",
+      "path": "v4/model/frozen.json",
+      "sha256": "7e872dc2ed24f90c0eb04831f0826ac332958d6f1887713767bedddc37f0d54c"
+    },
+    {
+      "bytes": 401,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/native-training-admission.json",
+      "path": "v4/model/native-training-admission.json",
+      "sha256": "23e1d54f8dac670432624c64c01af60ee8b1f0ad71e21a20bb54d53b724181a5"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/parent-eval-exit.json",
+      "path": "v4/model/parent-eval-exit.json",
+      "sha256": "de3ebc6fa9c6aae55d709dc9dc701e2534dfad31ac81e55450da4f57a231b7f7"
+    },
+    {
+      "bytes": 25102,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/parent-eval.jsonl",
+      "path": "v4/model/parent-eval.jsonl",
+      "sha256": "064e96bc062129943f537fffe1930d11977599c934052d8a177d830d5b1b6107"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/parent-eval.stderr.log",
+      "path": "v4/model/parent-eval.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3252,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/prepare-result.json",
+      "path": "v4/model/prepare-result.json",
+      "sha256": "f106ab2195e8aaf1fcda94f74e37cf06e944bd679c110445ec897d8c848e3ed1"
+    },
+    {
+      "bytes": 1277,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/probe-ddb2bf5b12f3c5d285b6-hot-counters.json",
+      "path": "v4/model/probe-ddb2bf5b12f3c5d285b6-hot-counters.json",
+      "sha256": "e48a1679387d56a20f4831a111941bcc773e190e80f4c6c284ffe7b285991582"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/probe-ddb2bf5b12f3c5d285b6-hot-exit.json",
+      "path": "v4/model/probe-ddb2bf5b12f3c5d285b6-hot-exit.json",
+      "sha256": "b7731decf02442a571b9c5c6550566c8d75ecef0e983e340a7ed76659b99f7d4"
+    },
+    {
+      "bytes": 15475,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/probe-ddb2bf5b12f3c5d285b6-hot.jsonl",
+      "path": "v4/model/probe-ddb2bf5b12f3c5d285b6-hot.jsonl",
+      "sha256": "65686657683d1f1cb1bb559d8887e163670084bcfba2e9dc8fde1758944217c0"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/probe-ddb2bf5b12f3c5d285b6-hot.stderr.log",
+      "path": "v4/model/probe-ddb2bf5b12f3c5d285b6-hot.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3335,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/probe-ddb2bf5b12f3c5d285b6-response.json",
+      "path": "v4/model/probe-ddb2bf5b12f3c5d285b6-response.json",
+      "sha256": "110909c15449e41281eba344110441a81cbddd1190cdcfc3f4bad6403d91b50e"
+    },
+    {
+      "bytes": 2782,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/probe-ddb2bf5b12f3c5d285b6-result.json",
+      "path": "v4/model/probe-ddb2bf5b12f3c5d285b6-result.json",
+      "sha256": "9030f1a5339bb42a0108318d21da72cb9ce705fd6736f57a71c4dc08dc8f70c6"
+    },
+    {
+      "bytes": 971,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/train-result.json",
+      "path": "v4/model/train-result.json",
+      "sha256": "94207c51cbb59a6a76937e90459899f9bcb63dcc5b0bf83bc6cb693f5ff8df37"
+    },
+    {
+      "bytes": 4130,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/training/worker/actual-receipt.json",
+      "path": "v4/model/training/worker/actual-receipt.json",
+      "sha256": "af40b809bebfbb673aa82465a2343f3b64a160099cd4b3a0a79e9ed2aa21b603"
+    },
+    {
+      "bytes": 1812,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/training/worker/cost-events.jsonl",
+      "path": "v4/model/training/worker/cost-events.jsonl",
+      "sha256": "a66150e02bca3184021d27dc135079e5e5d052c05bd192deacc6de298886c3c2"
+    },
+    {
+      "bytes": 442,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/training/worker/parent-material.json",
+      "path": "v4/model/training/worker/parent-material.json",
+      "sha256": "4d6614c02613d1d97c8ace9a7e723c726950ce44493ad9c62260266d9c37e4b4"
+    },
+    {
+      "bytes": 2812,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/training/worker/supervisor.json",
+      "path": "v4/model/training/worker/supervisor.json",
+      "sha256": "d7ceec82388089a1d75938a7d5bf0f04c3250b6ca63e2e1feaff4559f27b3ff9"
+    },
+    {
+      "bytes": 809,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/training-command.json",
+      "path": "v4/model/training-command.json",
+      "sha256": "aed62c1432f8691f8d936f8f16b01600f6c6dd5436a6335aaa586116cd4453e6"
+    },
+    {
+      "bytes": 489,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/training.log",
+      "path": "v4/model/training.log",
+      "sha256": "a40b1b568755f8341109f06256f30470451b8c84e575f255e329b3cf4d29a5b0"
+    },
+    {
+      "bytes": 3773,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/tmp/.tmpk79xFj/current.json",
+      "path": "v4/owner-originals/current.json",
+      "sha256": "b254110591b0c0fb7379b7acfe71944a93d4ffd5de7ee6197fc8c27170bbb373"
+    },
+    {
+      "bytes": 23743,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/tmp/.tmpk79xFj/old-journal",
+      "path": "v4/owner-originals/old-journal",
+      "sha256": "1d0cbde00693d54e5aafa2368039ae243e049547ef8d03ff7dce08dc38e7481a"
+    },
+    {
+      "bytes": 672,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/tmp/.tmpk79xFj/old-witness",
+      "path": "v4/owner-originals/old-witness",
+      "sha256": "9f8a0677706054d2e76ff55d90362c40482bc678aa6a8a4c83ca77c58cabb4a2"
+    },
+    {
+      "bytes": 40,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/tmp/.tmpk79xFj/target-journal",
+      "path": "v4/owner-originals/target-journal",
+      "sha256": "701667d5ae61b0838f2651703488426804eb6a1cccb2034ea38bf86bf81da360"
+    },
+    {
+      "bytes": 112,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/tmp/.tmpk79xFj/target-witness",
+      "path": "v4/owner-originals/target-witness",
+      "sha256": "be4cca13088e2445c842c49b08de01ba34e85521dbf1c49084dff6f6eae72e00"
+    },
+    {
+      "bytes": 3656,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/tmp/.tmpk79xFj/learning-checkpoint",
+      "path": "v4/owner-originals/learning-checkpoint",
+      "sha256": "d7be94dc6be262431180feb1029c63b7b375ad73a7ea5e7c0db90d866dd394c8"
+    },
+    {
+      "bytes": 178,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/tmp/.tmpk79xFj/final-use-frontier.json",
+      "path": "v4/owner-originals/final-use-frontier.json",
+      "sha256": "abbb069b8eb7e3e9a1845e5b54dfc1cbe10f96d0c2f88748a357998a7b6e38eb"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/tmp/.tmpk79xFj/final-use/authority.claims",
+      "path": "v4/owner-originals/final-use/authority.claims",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1698,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/original-refusal.json",
+      "path": "v5/original-refusal.json",
+      "sha256": "2eec9068d7fd68ed5a1a31ac65057eed49f62cc0ff1ffa625292a3e9ec5419bd"
+    },
+    {
+      "bytes": 1432,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/archive-list.stdout.json",
+      "path": "v5/archive-list.stdout.json",
+      "sha256": "2f5aa3529f0019d4b6b6719d8b2e6a04cb657e40567dbf9898e5a58563b80bdf"
+    },
+    {
+      "bytes": 526,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/archive-list-command.json",
+      "path": "v5/archive-list-command.json",
+      "sha256": "3d5f8d665180c78db07825619fd5b548f6d58f67dad2ce68c4c672a6f82977bc"
+    },
+    {
+      "bytes": 1764,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/execution-result.json",
+      "path": "v5/execution-result.json",
+      "sha256": "d37cffde886a5b8db8f2812fb2db2469d85e4d7d981bd519dbcf1ae600791a1c"
+    },
+    {
+      "bytes": 3500,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/compiled-runtime.json",
+      "path": "v5/compiled-runtime.json",
+      "sha256": "ddd2adda39c36d83be32fdaf0728ccc0532bd7d0702b7b3570b920893e5deeca"
+    },
+    {
+      "bytes": 2631,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/test-admission.json",
+      "path": "v5/test-admission.json",
+      "sha256": "ed4dd8b6c14058b95db6841d525d3ce29e17dcce8b56d8df2f5d3fc5a06819f0"
+    },
+    {
+      "bytes": 205,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/archive-list.stderr.log",
+      "path": "v5/archive-list.stderr.log",
+      "sha256": "108f60f03cd48085e4239549b95039b2359e1f4e73e0792f70b4ef9412c3681e"
+    },
+    {
+      "bytes": 762,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/original-junit.xml",
+      "path": "v5/original-junit.xml",
+      "sha256": "18eb392ef4be20aa1125871e3924ce2fdfcb5e20f334bfc9a84c8ed80f9c4119"
+    },
+    {
+      "bytes": 1948,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/test.log",
+      "path": "v5/test.log",
+      "sha256": "d16b53f6a31b1f0db644384dc5da5ebe9b0c06501dbf38bf9afdb904b4d45040"
+    },
+    {
+      "bytes": 337,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model-config.json",
+      "path": "v5/model-config.json",
+      "sha256": "f22ad71a1ea6fa95f0be67655b87b2fad04b417212c0e2d4eff30a60100e57e3"
+    },
+    {
+      "bytes": 146,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/dataset.json",
+      "path": "v5/evidence/dataset.json",
+      "sha256": "7d94144fac8766d5e51377eaf1d3acb3b6a0a922f9078effddc07f928a1722e8"
+    },
+    {
+      "bytes": 258,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/experience.json",
+      "path": "v5/evidence/experience.json",
+      "sha256": "62d1b723e1bb794be70ec32f22db9ff153eefda42778db9bafc6bba7629583ae"
+    },
+    {
+      "bytes": 246,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/isolated-owner-paths.json",
+      "path": "v5/evidence/isolated-owner-paths.json",
+      "sha256": "dfffea06d6706891b9a339aac9b1ea212ab23f35adf1c32f436dff5bc7e6c9e6"
+    },
+    {
+      "bytes": 1706,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/native-before-training.json",
+      "path": "v5/evidence/native-before-training.json",
+      "sha256": "2b9797d14929682b9de94573b9da3790682f35c4f46e193cf75b849281e1ed96"
+    },
+    {
+      "bytes": 1831,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/native-checkpoint-0-owner.json",
+      "path": "v5/evidence/native-checkpoint-0-owner.json",
+      "sha256": "aa9aa7e6072a41e0b8d19b34f04167c81cc2719429db5c742cfce176fcf3207e"
+    },
+    {
+      "bytes": 2090,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/native-checkpoint-1-owner.json",
+      "path": "v5/evidence/native-checkpoint-1-owner.json",
+      "sha256": "4d5386c14cc00ed9bbe0e59a1c3bec8736cbf62e90ff56122c250d28ce3c475a"
+    },
+    {
+      "bytes": 2407,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/native-checkpoint-2-owner.json",
+      "path": "v5/evidence/native-checkpoint-2-owner.json",
+      "sha256": "12a3667a7a01ff0a9dc04ba3003aabbb96c24b91875f2f39fa12d790308110a9"
+    },
+    {
+      "bytes": 3395,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/native-checkpoint-3-owner.json",
+      "path": "v5/evidence/native-checkpoint-3-owner.json",
+      "sha256": "c3d61cd492f73606c4ef60dcabf767f654bd6518f831600a955eb4a44a5f97b6"
+    },
+    {
+      "bytes": 3656,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/native-checkpoint-4-owner.json",
+      "path": "v5/evidence/native-checkpoint-4-owner.json",
+      "sha256": "fb7bffc2ea44124a86065585ad7369821c06e40835b57fef9bcdded5afc1e3b9"
+    },
+    {
+      "bytes": 3915,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/native-checkpoint-5-owner.json",
+      "path": "v5/evidence/native-checkpoint-5-owner.json",
+      "sha256": "71c17686b0e4249696c899335928f46b435fff5f3b4fff838ba33db2e6f2a496"
+    },
+    {
+      "bytes": 2779,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/next-use-delivered.json",
+      "path": "v5/evidence/next-use-delivered.json",
+      "sha256": "c840aad3d70c0cf1ef141cb080cfdc909bc31758c5f8f47383b9f4675546a226"
+    },
+    {
+      "bytes": 34040,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/next-use-pending.json",
+      "path": "v5/evidence/next-use-pending.json",
+      "sha256": "22b7f98596f3e3a3700592d261d47c4afa43a26da1b0b70693bda56cb6b34c8b"
+    },
+    {
+      "bytes": 139,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-00-prepare.exit.json",
+      "path": "v5/evidence/process-00-prepare.exit.json",
+      "sha256": "d76132474c88a4d4273b56ccbea07be4016038c9c8cbb4ded3270501b08adfc8"
+    },
+    {
+      "bytes": 156,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-00-prepare.request.json",
+      "path": "v5/evidence/process-00-prepare.request.json",
+      "sha256": "c2e82535f5a6dbaaaf83bfa837129cefcacda917f32bfaacc42cc5d1da6da688"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-00-prepare.stderr",
+      "path": "v5/evidence/process-00-prepare.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3825,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-00-prepare.stdout",
+      "path": "v5/evidence/process-00-prepare.stdout",
+      "sha256": "8db780ab2cb7725b236a2c9e98ad63fa3ac7660b74495a173da54aeb76117178"
+    },
+    {
+      "bytes": 148,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-01-probe.exit.json",
+      "path": "v5/evidence/process-01-probe.exit.json",
+      "sha256": "43bc100b594e66b741cd72af382599c9978796378f4589fd57f6b7527e5a3635"
+    },
+    {
+      "bytes": 551,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-01-probe.request.json",
+      "path": "v5/evidence/process-01-probe.request.json",
+      "sha256": "56070f68310c57e77ba1769676ded4fd32373533ab19f53a3fcf96f957b84fb5"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-01-probe.stderr",
+      "path": "v5/evidence/process-01-probe.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3417,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-01-probe.stdout",
+      "path": "v5/evidence/process-01-probe.stdout",
+      "sha256": "674745ae28d4000fec33b82e416d51a457c87777ea4fc88e46c664b04c97cd55"
+    },
+    {
+      "bytes": 139,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-02-train.exit.json",
+      "path": "v5/evidence/process-02-train.exit.json",
+      "sha256": "00bd7188a49bec38c8376b9d0f1241145cd3c33d38f9d56bf299ddda3c1663f0"
+    },
+    {
+      "bytes": 400,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-02-train.request.json",
+      "path": "v5/evidence/process-02-train.request.json",
+      "sha256": "a9e6d834216412ad7a8ceae58219311e194f5540329f02354cd183b773723cc3"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-02-train.stderr",
+      "path": "v5/evidence/process-02-train.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1483,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-02-train.stdout",
+      "path": "v5/evidence/process-02-train.stdout",
+      "sha256": "ccdc23eec7ff2d3984713f01677b9dc45f1640051ad252c18fad9acfe98a5ca2"
+    },
+    {
+      "bytes": 139,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-03-evaluate.exit.json",
+      "path": "v5/evidence/process-03-evaluate.exit.json",
+      "sha256": "dba7deb96fff458e57ad42159afa993e3c57c27e8f109608edc6472de2d65235"
+    },
+    {
+      "bytes": 221,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-03-evaluate.request.json",
+      "path": "v5/evidence/process-03-evaluate.request.json",
+      "sha256": "f0d85336fb260b0d023969e54f3dcd2badd0bd1b42e630f348565be126cd1e30"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-03-evaluate.stderr",
+      "path": "v5/evidence/process-03-evaluate.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 17493,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-03-evaluate.stdout",
+      "path": "v5/evidence/process-03-evaluate.stdout",
+      "sha256": "b202b1e4f27637062b3da8f7b05fd7213a1479d89279b6a30230e1f5ec5e171d"
+    },
+    {
+      "bytes": 148,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-04-probe.exit.json",
+      "path": "v5/evidence/process-04-probe.exit.json",
+      "sha256": "ea2423d73801242188b4a43a248dc70221be7a21cbe27b1963cc5b474d3aef84"
+    },
+    {
+      "bytes": 549,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-04-probe.request.json",
+      "path": "v5/evidence/process-04-probe.request.json",
+      "sha256": "a76c895e650f471d668f09e25df6942d1b04022115bc3a2280407d6db6a817bb"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-04-probe.stderr",
+      "path": "v5/evidence/process-04-probe.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3415,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/process-04-probe.stdout",
+      "path": "v5/evidence/process-04-probe.stdout",
+      "sha256": "eceda4fb4a28c23b15f561fb528c369e88e171745f9f4dbac1863a9f1e717ebe"
+    },
+    {
+      "bytes": 6766,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/selection-owner.json",
+      "path": "v5/evidence/selection-owner.json",
+      "sha256": "c55d68df08254c032e207a485e39dc7960a61b9342f427e94a4de002e3ea9979"
+    },
+    {
+      "bytes": 1470,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/source-task-receipt.json",
+      "path": "v5/evidence/source-task-receipt.json",
+      "sha256": "4557206b7fdb8cf2965ec659d49b577f3f2a981cefd829011490c50004e4fe92"
+    },
+    {
+      "bytes": 2781,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/evidence/source-use-delivered.json",
+      "path": "v5/evidence/source-use-delivered.json",
+      "sha256": "2ee215b99cbf7b35511aaa4bede22b8dfae25c965f5b898eeec2afe4c1b4ae5e"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/candidate-eval-exit.json",
+      "path": "v5/model/candidate-eval-exit.json",
+      "sha256": "ec6d22d9704f53f81f9e466bf809eb934656b3e93af5b41732296456d23bbbc1"
+    },
+    {
+      "bytes": 25233,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/candidate-eval.jsonl",
+      "path": "v5/model/candidate-eval.jsonl",
+      "sha256": "8f3b491d5717776f3c40421c021619463ad8394022bf088fad375152da649689"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/candidate-eval.stderr.log",
+      "path": "v5/model/candidate-eval.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 16129,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/evaluate-result.json",
+      "path": "v5/model/evaluate-result.json",
+      "sha256": "a4994a755e55cc58c51bc54e5361432cf600c11f445f3888ed54a5a3432f0406"
+    },
+    {
+      "bytes": 11774,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/frozen.json",
+      "path": "v5/model/frozen.json",
+      "sha256": "a08dd4704f5c0fab0c6021a7c0cabaceb521686e832a34c51dcc9b899df3384d"
+    },
+    {
+      "bytes": 401,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/native-training-admission.json",
+      "path": "v5/model/native-training-admission.json",
+      "sha256": "9303b28bd2aa1c0f015ab34e63ce0db3e16ab519092092d30f2c93f17b8dd13f"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/parent-eval-exit.json",
+      "path": "v5/model/parent-eval-exit.json",
+      "sha256": "510911b7bae121c599422ddced43342ba91da0d4e16b5d8d3a94705514710cd9"
+    },
+    {
+      "bytes": 25108,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/parent-eval.jsonl",
+      "path": "v5/model/parent-eval.jsonl",
+      "sha256": "8677dc2f9081ad596ec3295e33fc1f51b84c1e17a5444ff09cb7dc7735742a74"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/parent-eval.stderr.log",
+      "path": "v5/model/parent-eval.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3252,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/prepare-result.json",
+      "path": "v5/model/prepare-result.json",
+      "sha256": "5cb1fdd45eec5dbcadf840cbbeed0e8884408c2bce1f7543236bf6983efb4960"
+    },
+    {
+      "bytes": 1277,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/probe-3ad7eaee2f3724398f8f-hot-counters.json",
+      "path": "v5/model/probe-3ad7eaee2f3724398f8f-hot-counters.json",
+      "sha256": "a83b2f08df3af7a0aafb4e914892dfde250999f555c11eed8203dd1a887a8437"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/probe-3ad7eaee2f3724398f8f-hot-exit.json",
+      "path": "v5/model/probe-3ad7eaee2f3724398f8f-hot-exit.json",
+      "sha256": "6cc624cae38633bb33658e5f0de69e06d7eca67ba457ad77f85ea8398e016fb9"
+    },
+    {
+      "bytes": 15475,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/probe-3ad7eaee2f3724398f8f-hot.jsonl",
+      "path": "v5/model/probe-3ad7eaee2f3724398f8f-hot.jsonl",
+      "sha256": "7c3740950e930516ca51288ddd99fdb4a33dec0f490729654dc757dc45411658"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/probe-3ad7eaee2f3724398f8f-hot.stderr.log",
+      "path": "v5/model/probe-3ad7eaee2f3724398f8f-hot.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3335,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/probe-3ad7eaee2f3724398f8f-response.json",
+      "path": "v5/model/probe-3ad7eaee2f3724398f8f-response.json",
+      "sha256": "65c6b1066f8d47fd63b6a3243605f578faa3ef5046bac5f6897de2fe74ad3cfb"
+    },
+    {
+      "bytes": 2782,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/probe-3ad7eaee2f3724398f8f-result.json",
+      "path": "v5/model/probe-3ad7eaee2f3724398f8f-result.json",
+      "sha256": "45b79115bd0978453d760229073b94b0ad145afb6beeb7a878d2735c9d30442c"
+    },
+    {
+      "bytes": 1276,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/probe-b7f05e681ae02b07cfcd-hot-counters.json",
+      "path": "v5/model/probe-b7f05e681ae02b07cfcd-hot-counters.json",
+      "sha256": "6bd828dce8a5281e978c0bc3c7bb77cb1499a5ab16c37b98133919ce7d76999b"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/probe-b7f05e681ae02b07cfcd-hot-exit.json",
+      "path": "v5/model/probe-b7f05e681ae02b07cfcd-hot-exit.json",
+      "sha256": "1cda92c791f4753f0ed595bfdccae1e8c815c4ee163d038c38634bd50b2c1db6"
+    },
+    {
+      "bytes": 15478,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/probe-b7f05e681ae02b07cfcd-hot.jsonl",
+      "path": "v5/model/probe-b7f05e681ae02b07cfcd-hot.jsonl",
+      "sha256": "89ce709b569a4e833d5365ccff32665302ebea848c930b831810c1408241a6f4"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/probe-b7f05e681ae02b07cfcd-hot.stderr.log",
+      "path": "v5/model/probe-b7f05e681ae02b07cfcd-hot.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3333,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/probe-b7f05e681ae02b07cfcd-response.json",
+      "path": "v5/model/probe-b7f05e681ae02b07cfcd-response.json",
+      "sha256": "26bf745c1d35e014f18e9647a9c96981b807ecf0c5723b832b48b1af46baf996"
+    },
+    {
+      "bytes": 2780,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/probe-b7f05e681ae02b07cfcd-result.json",
+      "path": "v5/model/probe-b7f05e681ae02b07cfcd-result.json",
+      "sha256": "f3e47f68aae195a57c2ddf55b7a03077802d4cae51ae10c1c6043500b6a8fa10"
+    },
+    {
+      "bytes": 971,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/train-result.json",
+      "path": "v5/model/train-result.json",
+      "sha256": "b35550ddb7fa21d40cd705a0e2ed0ff79755353b3bab73d0d4b77f3400723f55"
+    },
+    {
+      "bytes": 4130,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/training/worker/actual-receipt.json",
+      "path": "v5/model/training/worker/actual-receipt.json",
+      "sha256": "c3c95b6ed5903ccc74a7fa4ee5c6ea729ac1fce04b1f28b25fa9bab9ae57f5a5"
+    },
+    {
+      "bytes": 1812,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/training/worker/cost-events.jsonl",
+      "path": "v5/model/training/worker/cost-events.jsonl",
+      "sha256": "4be88ee51070350b794b640a193086495119391df17aaf669420046c4c50b364"
+    },
+    {
+      "bytes": 442,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/training/worker/parent-material.json",
+      "path": "v5/model/training/worker/parent-material.json",
+      "sha256": "beedb75c2b2f2b0db73d93b3a6e2c8eb0cd8278277abe6e36ad1867d143a8d6a"
+    },
+    {
+      "bytes": 2812,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/training/worker/supervisor.json",
+      "path": "v5/model/training/worker/supervisor.json",
+      "sha256": "a896f50124ca7a42837c186feb32e37a4031f545d3932d154a5b5eb686286e3d"
+    },
+    {
+      "bytes": 809,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/training-command.json",
+      "path": "v5/model/training-command.json",
+      "sha256": "9ee7aabf58cc52ab106f23727add6edf3dcb7f6624f48b0f6535f8a812c45798"
+    },
+    {
+      "bytes": 489,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/model/training.log",
+      "path": "v5/model/training.log",
+      "sha256": "235b72ac687b8bf795943fb82a958639303aec920ae147f57a57444b9725aca2"
+    },
+    {
+      "bytes": 5510,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/tmp/.tmpJRgF5f/current.json",
+      "path": "v5/owner-originals/current.json",
+      "sha256": "2fbbf4799c664bfe8c7aae26c28c77e965fa50f3565a0ba0e297173136edbba6"
+    },
+    {
+      "bytes": 23792,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/tmp/.tmpJRgF5f/old-journal",
+      "path": "v5/owner-originals/old-journal",
+      "sha256": "00703835617c53e3b3ee9f100f3227783c650fe8d88aa0a28f009c4bd0e81fe4"
+    },
+    {
+      "bytes": 672,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/tmp/.tmpJRgF5f/old-witness",
+      "path": "v5/owner-originals/old-witness",
+      "sha256": "d8c0808554a5aa62d720a56703d0aaae2a1afb930a7d2dfacb245995c7952242"
+    },
+    {
+      "bytes": 23744,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/tmp/.tmpJRgF5f/target-journal",
+      "path": "v5/owner-originals/target-journal",
+      "sha256": "3bcf57a075e16d6ab78cdad88b03c85a07e3b0d749e08b573ca19779bf43853d"
+    },
+    {
+      "bytes": 672,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/tmp/.tmpJRgF5f/target-witness",
+      "path": "v5/owner-originals/target-witness",
+      "sha256": "c89cdb0712731880364aa978299384e77881c714d52797d5201ebc906c13cfe8"
+    },
+    {
+      "bytes": 3915,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/tmp/.tmpJRgF5f/learning-checkpoint",
+      "path": "v5/owner-originals/learning-checkpoint",
+      "sha256": "71c17686b0e4249696c899335928f46b435fff5f3b4fff838ba33db2e6f2a496"
+    },
+    {
+      "bytes": 173,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/tmp/.tmpJRgF5f/final-use-frontier.json",
+      "path": "v5/owner-originals/final-use-frontier.json",
+      "sha256": "c8055a030f94d7866225ca876caa38a0baf02dc56e89d5e8572205e28967c96e"
+    },
+    {
+      "bytes": 40,
+      "original": "/home/qq/hepta-learning-native-1571b5c-d9fb-20261108/native-v5/tmp/.tmpJRgF5f/final-use/authority.claims",
+      "path": "v5/owner-originals/final-use/authority.claims",
+      "sha256": "0bf6806f5fc47cdd594727bdb10dbe2be54704f8d0e93a7194103869349c93a5"
+    },
+    {
+      "bytes": 1432,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/archive-list.stdout.json",
+      "path": "v6/archive-list.stdout.json",
+      "sha256": "2f5aa3529f0019d4b6b6719d8b2e6a04cb657e40567dbf9898e5a58563b80bdf"
+    },
+    {
+      "bytes": 526,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/archive-list-command.json",
+      "path": "v6/archive-list-command.json",
+      "sha256": "c0bf65c5424c2116cc325e0657b507080a2b561b78ef8463d6307cc8657e9f8e"
+    },
+    {
+      "bytes": 1765,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/execution-result.json",
+      "path": "v6/execution-result.json",
+      "sha256": "2326cc799e43840dc01508209f080d1803a79ae519938238804b82ae4db734b5"
+    },
+    {
+      "bytes": 3500,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/compiled-runtime.json",
+      "path": "v6/compiled-runtime.json",
+      "sha256": "847976f3139fc4a73c7bba1a5471431f4dfc3047f9080af0afadf90a0f5a1746"
+    },
+    {
+      "bytes": 2631,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/test-admission.json",
+      "path": "v6/test-admission.json",
+      "sha256": "9b89074205be1d7fb137380d13b429e754e5cb70911281cc5f260ba9ff2ebb02"
+    },
+    {
+      "bytes": 205,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/archive-list.stderr.log",
+      "path": "v6/archive-list.stderr.log",
+      "sha256": "ea367ac276d985ce605dbed5d757dcdd2da8ae6e9ef7912235b09830ce0ba0eb"
+    },
+    {
+      "bytes": 762,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/original-junit.xml",
+      "path": "v6/original-junit.xml",
+      "sha256": "02700dd2bc247acc9bc804f3b18b3f520af155067a1f02fcc634ace8c4d97f8a"
+    },
+    {
+      "bytes": 1889,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/test.log",
+      "path": "v6/test.log",
+      "sha256": "f0b01ac396c7e1f380e6c0aaeb5ec44d1411092b807b2688df54244e8aa1f464"
+    },
+    {
+      "bytes": 337,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model-config.json",
+      "path": "v6/model-config.json",
+      "sha256": "13853c638f032cdf9bcbdafb1b38418f56a6dc69f3014fc911cc9642e0506c2a"
+    },
+    {
+      "bytes": 146,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/dataset.json",
+      "path": "v6/evidence/dataset.json",
+      "sha256": "7d94144fac8766d5e51377eaf1d3acb3b6a0a922f9078effddc07f928a1722e8"
+    },
+    {
+      "bytes": 258,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/experience.json",
+      "path": "v6/evidence/experience.json",
+      "sha256": "0a657c3e3cf6984a7e71b1d0a04c61e577d0f85a1e772f1e2336ed7533847170"
+    },
+    {
+      "bytes": 246,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/isolated-owner-paths.json",
+      "path": "v6/evidence/isolated-owner-paths.json",
+      "sha256": "be11f543dd5e938028cf23b0164409103df599febb5e38e87dab5f56f418d113"
+    },
+    {
+      "bytes": 1691,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/native-before-training.json",
+      "path": "v6/evidence/native-before-training.json",
+      "sha256": "88a45ea475e6d3ccb2b7dfaf393d7f3431a440f233d564ff4bd47ad616de3874"
+    },
+    {
+      "bytes": 1831,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/native-checkpoint-0-owner.json",
+      "path": "v6/evidence/native-checkpoint-0-owner.json",
+      "sha256": "ee78a7a7c1ecf0bcca038edd9aa157d82e74db9eeff160e698763484cc4c47af"
+    },
+    {
+      "bytes": 2090,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/native-checkpoint-1-owner.json",
+      "path": "v6/evidence/native-checkpoint-1-owner.json",
+      "sha256": "a421fc7dc9626a729cfaed1aea524a4c1ee1cd5c3f9dc2350772f1c5762b7ee5"
+    },
+    {
+      "bytes": 2407,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/native-checkpoint-2-owner.json",
+      "path": "v6/evidence/native-checkpoint-2-owner.json",
+      "sha256": "27141ee982a909f828f123e24e68270c4d8cd531a83f536a949749b6e1e188ca"
+    },
+    {
+      "bytes": 3395,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/native-checkpoint-3-owner.json",
+      "path": "v6/evidence/native-checkpoint-3-owner.json",
+      "sha256": "f68ee758add184960587bf9d715daf267f0c2eb9f7e58ab6ac86d6287d374dad"
+    },
+    {
+      "bytes": 3656,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/native-checkpoint-4-owner.json",
+      "path": "v6/evidence/native-checkpoint-4-owner.json",
+      "sha256": "a1f46a200dd57a2ee80c3e72e01096624d9d83116911966f22360dc4e2c3cc6f"
+    },
+    {
+      "bytes": 3915,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/native-checkpoint-5-owner.json",
+      "path": "v6/evidence/native-checkpoint-5-owner.json",
+      "sha256": "fb10b17a0ec513bf44d297497d2015654b5c98e1499005c6c7133e1e7a41d448"
+    },
+    {
+      "bytes": 24392,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/next-use-acked.json",
+      "path": "v6/evidence/next-use-acked.json",
+      "sha256": "2b8bcb471e16f7e679c7a6573b9e414d13134f1cc141d5cdd802ae3ffad1aeda"
+    },
+    {
+      "bytes": 2779,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/next-use-delivered.json",
+      "path": "v6/evidence/next-use-delivered.json",
+      "sha256": "efb717a5ddd4b89cdd25e5482fa4617e99a34fb034afbd9a76a17a27fd8a2b17"
+    },
+    {
+      "bytes": 34110,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/next-use-pending.json",
+      "path": "v6/evidence/next-use-pending.json",
+      "sha256": "c1782d2232d1dcf6147477230ac6c457b24c2df713179e4db0ecce9060e4f7ea"
+    },
+    {
+      "bytes": 139,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-00-prepare.exit.json",
+      "path": "v6/evidence/process-00-prepare.exit.json",
+      "sha256": "da5f16c7d86ac1c0e152b898ae116982d897cdb9582aa8acd3a266723ad987de"
+    },
+    {
+      "bytes": 156,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-00-prepare.request.json",
+      "path": "v6/evidence/process-00-prepare.request.json",
+      "sha256": "ec2acde48b4f843ef32e28fc7eece8edb554713ef8eb7dabf2e70a65e82d52df"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-00-prepare.stderr",
+      "path": "v6/evidence/process-00-prepare.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3825,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-00-prepare.stdout",
+      "path": "v6/evidence/process-00-prepare.stdout",
+      "sha256": "9d9069eaae79572890fc247746ebf4a86e1aabe433f5da573b52c9a29d3e0e27"
+    },
+    {
+      "bytes": 148,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-01-probe.exit.json",
+      "path": "v6/evidence/process-01-probe.exit.json",
+      "sha256": "d8cadceb6ba272d8ef2a5617484e4590e8f973bafaa587bd4ae454cab6f9e4c5"
+    },
+    {
+      "bytes": 551,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-01-probe.request.json",
+      "path": "v6/evidence/process-01-probe.request.json",
+      "sha256": "35c69bd465236a744c353a77718252d8f597f16b4ef004581185e10a2ce4cafb"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-01-probe.stderr",
+      "path": "v6/evidence/process-01-probe.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3417,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-01-probe.stdout",
+      "path": "v6/evidence/process-01-probe.stdout",
+      "sha256": "cb18a33308c3eb6cb9c3bd394bcb453102f3b4e59619886bf05994dde43f7b74"
+    },
+    {
+      "bytes": 139,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-02-train.exit.json",
+      "path": "v6/evidence/process-02-train.exit.json",
+      "sha256": "a440550770cebd0dc5a24423c66d22e5576ea470e99fa8d35a13a708d5b04f08"
+    },
+    {
+      "bytes": 400,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-02-train.request.json",
+      "path": "v6/evidence/process-02-train.request.json",
+      "sha256": "c3edcccb348edb5b12ff7bd604eb6a88f8496cf3727d80d294cf9e60e4880662"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-02-train.stderr",
+      "path": "v6/evidence/process-02-train.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1483,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-02-train.stdout",
+      "path": "v6/evidence/process-02-train.stdout",
+      "sha256": "0c0fec6d4f89b171fa61973b2fd718383d7173182444c8cbed69720093240840"
+    },
+    {
+      "bytes": 139,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-03-evaluate.exit.json",
+      "path": "v6/evidence/process-03-evaluate.exit.json",
+      "sha256": "9ff5f23f4084930114213faf5652818ea00b0195a1acbf03d02afea939eeef74"
+    },
+    {
+      "bytes": 221,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-03-evaluate.request.json",
+      "path": "v6/evidence/process-03-evaluate.request.json",
+      "sha256": "8655a80075ac8dd05972834994a1bc153641fdf2379134e17f76416b5cae6d84"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-03-evaluate.stderr",
+      "path": "v6/evidence/process-03-evaluate.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 17493,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-03-evaluate.stdout",
+      "path": "v6/evidence/process-03-evaluate.stdout",
+      "sha256": "0e712e2b4b91c39db59d88abdd3386d2727127607e8a37af878541132d6ece18"
+    },
+    {
+      "bytes": 148,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-04-probe.exit.json",
+      "path": "v6/evidence/process-04-probe.exit.json",
+      "sha256": "9d386d8c491066f4bef1ef379214069074030cbeb33d0ad4af86ccbbf65a6ee1"
+    },
+    {
+      "bytes": 549,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-04-probe.request.json",
+      "path": "v6/evidence/process-04-probe.request.json",
+      "sha256": "7517d95baa5bba3c47374921e32921e4327af251f21f0efb63ccf115cd3d07f5"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-04-probe.stderr",
+      "path": "v6/evidence/process-04-probe.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3415,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/process-04-probe.stdout",
+      "path": "v6/evidence/process-04-probe.stdout",
+      "sha256": "84b1120f8a9ebcbbea9a8b07b5a945d4cdf4f192df769db663815d4a2b622719"
+    },
+    {
+      "bytes": 6780,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/selection-owner.json",
+      "path": "v6/evidence/selection-owner.json",
+      "sha256": "115884ed54002e9f78bd63c44129f836064a6d74ea50d676e46393e7d13a941d"
+    },
+    {
+      "bytes": 1477,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/source-task-receipt.json",
+      "path": "v6/evidence/source-task-receipt.json",
+      "sha256": "25ccc7417ce3f5827d20caab867155122190edcdb57a0dbeed6113b71229be25"
+    },
+    {
+      "bytes": 2781,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/evidence/source-use-delivered.json",
+      "path": "v6/evidence/source-use-delivered.json",
+      "sha256": "4b9d5610e207ffc8a385e471545d3abf7a1d5532354c144d31f10cb1df0d8e44"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/candidate-eval-exit.json",
+      "path": "v6/model/candidate-eval-exit.json",
+      "sha256": "d6130fe3436e11b02c4293d66dc7ea3bdce1075e44d4d7da85724d9744bad142"
+    },
+    {
+      "bytes": 25225,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/candidate-eval.jsonl",
+      "path": "v6/model/candidate-eval.jsonl",
+      "sha256": "f0ff5067fdca676399b9cf9c4ae9d6c92fb363ddb2998cdb1ab1432758bbced2"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/candidate-eval.stderr.log",
+      "path": "v6/model/candidate-eval.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 16129,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/evaluate-result.json",
+      "path": "v6/model/evaluate-result.json",
+      "sha256": "7a9c7ef45dad48dce9318b1fc6bf38f064ec2e074e6ae58b7cf42e79acced18f"
+    },
+    {
+      "bytes": 11774,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/frozen.json",
+      "path": "v6/model/frozen.json",
+      "sha256": "4e7f93f39d0d57d758888c227e8eda8678b44ac41573769d9bdec1acd2f4505b"
+    },
+    {
+      "bytes": 401,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/native-training-admission.json",
+      "path": "v6/model/native-training-admission.json",
+      "sha256": "11b508074a7897181679194d0247fe67f9a0999c881283743befc949c2666329"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/parent-eval-exit.json",
+      "path": "v6/model/parent-eval-exit.json",
+      "sha256": "0d2d257be58754228e6afbec55012e6708ae8e27bba07e7a580444147de0dcad"
+    },
+    {
+      "bytes": 25104,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/parent-eval.jsonl",
+      "path": "v6/model/parent-eval.jsonl",
+      "sha256": "f4417010bf2d3d4ddb59482270b694b9d57358e5e3a74ce186f3cf4847e3ad09"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/parent-eval.stderr.log",
+      "path": "v6/model/parent-eval.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3252,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/prepare-result.json",
+      "path": "v6/model/prepare-result.json",
+      "sha256": "2e70364b0ca1e55fb25b5fe1b3f36bbee71d0b2dff12f8d9b03ac27b3d5676d3"
+    },
+    {
+      "bytes": 1276,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/probe-092f9cd084c11919dc16-hot-counters.json",
+      "path": "v6/model/probe-092f9cd084c11919dc16-hot-counters.json",
+      "sha256": "850491538221a855bcbe0689b6440e40fa576f0ef30d038698e6ddfaf5d060c7"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/probe-092f9cd084c11919dc16-hot-exit.json",
+      "path": "v6/model/probe-092f9cd084c11919dc16-hot-exit.json",
+      "sha256": "905c9b00e98f47efa6f7dd8681b63529c41bfd30fe82d19ccc9b1218c0eb5fa6"
+    },
+    {
+      "bytes": 15474,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/probe-092f9cd084c11919dc16-hot.jsonl",
+      "path": "v6/model/probe-092f9cd084c11919dc16-hot.jsonl",
+      "sha256": "46b013c6bfbca698048da73759ac95842b38380270ca59078bab3df33423a1e7"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/probe-092f9cd084c11919dc16-hot.stderr.log",
+      "path": "v6/model/probe-092f9cd084c11919dc16-hot.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3335,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/probe-092f9cd084c11919dc16-response.json",
+      "path": "v6/model/probe-092f9cd084c11919dc16-response.json",
+      "sha256": "abedc40f316f7f976e1612450f2a7b7566b3f842790a5ff00a4e56e76fb6c2a1"
+    },
+    {
+      "bytes": 2782,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/probe-092f9cd084c11919dc16-result.json",
+      "path": "v6/model/probe-092f9cd084c11919dc16-result.json",
+      "sha256": "15677b1f89b4e41b95ab85c72ac989e6619df8ae1572cd320c2d196e4deb8b03"
+    },
+    {
+      "bytes": 1276,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/probe-b0f5fd44197d6e472db3-hot-counters.json",
+      "path": "v6/model/probe-b0f5fd44197d6e472db3-hot-counters.json",
+      "sha256": "b6f3f5c002a2705f7a9b15f8ee66155d6288e4739cf9ada73fc88f692972fa0e"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/probe-b0f5fd44197d6e472db3-hot-exit.json",
+      "path": "v6/model/probe-b0f5fd44197d6e472db3-hot-exit.json",
+      "sha256": "ab7d95fca810dd45d582351c736baf4542dfe544d9886acd65b051febc966280"
+    },
+    {
+      "bytes": 15471,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/probe-b0f5fd44197d6e472db3-hot.jsonl",
+      "path": "v6/model/probe-b0f5fd44197d6e472db3-hot.jsonl",
+      "sha256": "796e063e1356a67f80fda6f2ff733f88971a4d6777dd7f4cd6e23ffc29c5331e"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/probe-b0f5fd44197d6e472db3-hot.stderr.log",
+      "path": "v6/model/probe-b0f5fd44197d6e472db3-hot.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3333,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/probe-b0f5fd44197d6e472db3-response.json",
+      "path": "v6/model/probe-b0f5fd44197d6e472db3-response.json",
+      "sha256": "14556f3e25c56bc56b0c190812e4c29c87f1a20efd1a5accd2bef9760fe94699"
+    },
+    {
+      "bytes": 2780,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/probe-b0f5fd44197d6e472db3-result.json",
+      "path": "v6/model/probe-b0f5fd44197d6e472db3-result.json",
+      "sha256": "f6399d3a66e6c590b0bc9e8ee339d38f61749348ccef5fb12d72d004b5663419"
+    },
+    {
+      "bytes": 971,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/train-result.json",
+      "path": "v6/model/train-result.json",
+      "sha256": "b75df88b6868c2013bcde264a1198e2f5f2df394ff7c2d8b9d0ae2c526f0f615"
+    },
+    {
+      "bytes": 4130,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/training/worker/actual-receipt.json",
+      "path": "v6/model/training/worker/actual-receipt.json",
+      "sha256": "ffea5e326f1f568938adf0526a4051717fcced9677695ed4d5fb4aab794ca45f"
+    },
+    {
+      "bytes": 1812,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/training/worker/cost-events.jsonl",
+      "path": "v6/model/training/worker/cost-events.jsonl",
+      "sha256": "cc1d58a38f20c96d85a386c9098723b2d0dbcd3c58c3a68e5f548ceb0a04ddf6"
+    },
+    {
+      "bytes": 442,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/training/worker/parent-material.json",
+      "path": "v6/model/training/worker/parent-material.json",
+      "sha256": "2fe1a54620f21c0b57281c85ef14fe86c8523f37315b64c1ff0e2ec33f1d3752"
+    },
+    {
+      "bytes": 2812,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/training/worker/supervisor.json",
+      "path": "v6/model/training/worker/supervisor.json",
+      "sha256": "c75497bdb6a8f0335bc6a92e30460cd1da84afa91bc6ac7241bfc9f82ea9832f"
+    },
+    {
+      "bytes": 809,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/training-command.json",
+      "path": "v6/model/training-command.json",
+      "sha256": "cf659b79942bb0621194bca981f72473eecc4308616dc939214e4fdd61fd55a3"
+    },
+    {
+      "bytes": 489,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/model/training.log",
+      "path": "v6/model/training.log",
+      "sha256": "80ffa61134dfe7f4ecbd8ad926247f20b6eec0f76f415ec2aeffc3a8dfba7f2e"
+    },
+    {
+      "bytes": 5524,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/tmp/.tmp6wjQpz/current.json",
+      "path": "v6/owner-originals/current.json",
+      "sha256": "be7d5d03cbdc37ae35750020eb588130b1825174743b6384e50275ac0d02d31c"
+    },
+    {
+      "bytes": 23760,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/tmp/.tmp6wjQpz/old-journal",
+      "path": "v6/owner-originals/old-journal",
+      "sha256": "57eb1524d5d31df7f6d71863a5f8e59fd6f3d37df8b9184d83f923ad58fc4f39"
+    },
+    {
+      "bytes": 672,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/tmp/.tmp6wjQpz/old-witness",
+      "path": "v6/owner-originals/old-witness",
+      "sha256": "1051bac73fc6eb9f664b53651a9b50334145cf28dd34db474313f3af1e79e3f8"
+    },
+    {
+      "bytes": 23736,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/tmp/.tmp6wjQpz/target-journal",
+      "path": "v6/owner-originals/target-journal",
+      "sha256": "d1cdaa539732411d047813195dbdf0082eb5aec900a6f64ac5e8af529fb7f89e"
+    },
+    {
+      "bytes": 672,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/tmp/.tmp6wjQpz/target-witness",
+      "path": "v6/owner-originals/target-witness",
+      "sha256": "b7738d9f548b2fab81ec7ab71e2a64d220173b691f2d8ab7bcc5fe5368830fc5"
+    },
+    {
+      "bytes": 3915,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/tmp/.tmp6wjQpz/learning-checkpoint",
+      "path": "v6/owner-originals/learning-checkpoint",
+      "sha256": "fb10b17a0ec513bf44d297497d2015654b5c98e1499005c6c7133e1e7a41d448"
+    },
+    {
+      "bytes": 183,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/tmp/.tmp6wjQpz/final-use-frontier.json",
+      "path": "v6/owner-originals/final-use-frontier.json",
+      "sha256": "fa6383aa5dbe7f7ce840ad2602380c38c12076c23152ce99a6a33c223417e7c4"
+    },
+    {
+      "bytes": 40,
+      "original": "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/native-v6/tmp/.tmp6wjQpz/final-use/authority.claims",
+      "path": "v6/owner-originals/final-use/authority.claims",
+      "sha256": "18b45d278c5f1b3fc4ae9d8a5da26b0c4a6a6665a8e3eef1cad5f348c657c2e6"
+    },
+    {
+      "bytes": 1432,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/archive-list.stdout.json",
+      "path": "v7/archive-list.stdout.json",
+      "sha256": "2f5aa3529f0019d4b6b6719d8b2e6a04cb657e40567dbf9898e5a58563b80bdf"
+    },
+    {
+      "bytes": 526,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/archive-list-command.json",
+      "path": "v7/archive-list-command.json",
+      "sha256": "1fc5f6a2c307a0bb6bdff5b155814630417b05e4f4f0976ce7112871ea0b83a3"
+    },
+    {
+      "bytes": 1765,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/execution-result.json",
+      "path": "v7/execution-result.json",
+      "sha256": "5f67af2bd1c6c03c260824b2cb65e2b3845060a55ebc9536d582de1efffac846"
+    },
+    {
+      "bytes": 3500,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/compiled-runtime.json",
+      "path": "v7/compiled-runtime.json",
+      "sha256": "c67b4cfc9f5c772272ba890c8ac5082946fc4d727b003be2bc5a58db7715743f"
+    },
+    {
+      "bytes": 2631,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/test-admission.json",
+      "path": "v7/test-admission.json",
+      "sha256": "ad7eb74e8812b2b7970571315f9d5eac7e17246f3ab1c7841473ba31acfabd5a"
+    },
+    {
+      "bytes": 205,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/archive-list.stderr.log",
+      "path": "v7/archive-list.stderr.log",
+      "sha256": "1bc449b529778e030fb7f664b6ac40c060834c6c069a0c64f5ba3efb84157ad5"
+    },
+    {
+      "bytes": 762,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/original-junit.xml",
+      "path": "v7/original-junit.xml",
+      "sha256": "f8fdffca12c659a12e62668aed03819f5f68906575c05e74360f955f191c82c7"
+    },
+    {
+      "bytes": 2147,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/test.log",
+      "path": "v7/test.log",
+      "sha256": "c481f4e923a125336135d544385b91a9a66df1ab783701ba803c722409aafb92"
+    },
+    {
+      "bytes": 337,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model-config.json",
+      "path": "v7/model-config.json",
+      "sha256": "d283d994ce300d658dbff48c033a88b378ecf36ca9a5469c30421a06b1454d2d"
+    },
+    {
+      "bytes": 146,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/dataset.json",
+      "path": "v7/evidence/dataset.json",
+      "sha256": "7d94144fac8766d5e51377eaf1d3acb3b6a0a922f9078effddc07f928a1722e8"
+    },
+    {
+      "bytes": 258,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/experience.json",
+      "path": "v7/evidence/experience.json",
+      "sha256": "17c328ff03f69a0f374c3d877b7a8267e3d1a6e5d7bfaced05202a2b5cf7fc20"
+    },
+    {
+      "bytes": 246,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/isolated-owner-paths.json",
+      "path": "v7/evidence/isolated-owner-paths.json",
+      "sha256": "d44fa0b56beac4465229df14561f0e8e1c2779c3152a4986ae3a60fe8b90b64e"
+    },
+    {
+      "bytes": 1696,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/native-before-training.json",
+      "path": "v7/evidence/native-before-training.json",
+      "sha256": "154bb163e7e8121aa86c24523082710e96d0895f09e76d882b4176328c61f5b0"
+    },
+    {
+      "bytes": 1831,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/native-checkpoint-0-owner.json",
+      "path": "v7/evidence/native-checkpoint-0-owner.json",
+      "sha256": "11903c34538ecf685bf4a399ada8f34dc990bd36e0abf74800dedff988fa32ee"
+    },
+    {
+      "bytes": 2090,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/native-checkpoint-1-owner.json",
+      "path": "v7/evidence/native-checkpoint-1-owner.json",
+      "sha256": "f8d71a147f80d1d968f35f7654881b0cdaa0ff40b54e34ea6c258c03e9ede757"
+    },
+    {
+      "bytes": 2407,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/native-checkpoint-2-owner.json",
+      "path": "v7/evidence/native-checkpoint-2-owner.json",
+      "sha256": "048179a9ebb2f51e069ff37c2fc6582ff02349bb39dd4e0b48df3c45ef269b13"
+    },
+    {
+      "bytes": 3395,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/native-checkpoint-3-owner.json",
+      "path": "v7/evidence/native-checkpoint-3-owner.json",
+      "sha256": "073dea27928bd3f18d572371c8a688cd4744bb1c5b8f4ee38a87a366954774ed"
+    },
+    {
+      "bytes": 3656,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/native-checkpoint-4-owner.json",
+      "path": "v7/evidence/native-checkpoint-4-owner.json",
+      "sha256": "5f198f4218fa46c69502423b98bae4186bc1721044554b59b8f886475bf01ed3"
+    },
+    {
+      "bytes": 3915,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/native-checkpoint-5-owner.json",
+      "path": "v7/evidence/native-checkpoint-5-owner.json",
+      "sha256": "cce2f6ec84bbe007cf7c0e12067c840ea074c693e310cf507f6ac28c912cefd4"
+    },
+    {
+      "bytes": 4515,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/native-checkpoint-6-owner.json",
+      "path": "v7/evidence/native-checkpoint-6-owner.json",
+      "sha256": "ae460445b038b785d984ddf66ab4c03fcdb07189d8051325dedfe06a054ade2c"
+    },
+    {
+      "bytes": 24265,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/next-use-acked.json",
+      "path": "v7/evidence/next-use-acked.json",
+      "sha256": "d850a7ba0f433164933b12d52e2a8d212f687f146f1a25f285c1881f06d5195f"
+    },
+    {
+      "bytes": 2779,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/next-use-delivered.json",
+      "path": "v7/evidence/next-use-delivered.json",
+      "sha256": "a0a1273756e063667db7a63286be2a39dc25ba28e21f560b720f5109a8825a89"
+    },
+    {
+      "bytes": 27213,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/next-use-owner.json",
+      "path": "v7/evidence/next-use-owner.json",
+      "sha256": "3aeccb11efda1cbaf75448cbf171ecad752286e90e75ba4cd023ab4cf9c7913c"
+    },
+    {
+      "bytes": 33975,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/next-use-pending.json",
+      "path": "v7/evidence/next-use-pending.json",
+      "sha256": "936fe8c581a763efcc89cba6ea3f234ce70785d80bc4da5a57cfbad18a976a87"
+    },
+    {
+      "bytes": 139,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-00-prepare.exit.json",
+      "path": "v7/evidence/process-00-prepare.exit.json",
+      "sha256": "8ab9430ba165a74e033651ac4a08576523c4d4f20e745437541ce14a54c6d737"
+    },
+    {
+      "bytes": 156,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-00-prepare.request.json",
+      "path": "v7/evidence/process-00-prepare.request.json",
+      "sha256": "73e6f8ee77bdcfa6e934ebdd4e21c57c5434c1a48293f17a4ae2e65b9e9764fc"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-00-prepare.stderr",
+      "path": "v7/evidence/process-00-prepare.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3825,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-00-prepare.stdout",
+      "path": "v7/evidence/process-00-prepare.stdout",
+      "sha256": "73b0f2c97684cb106e44235bf4459741f159dae64746bc40a98855d9ecac197d"
+    },
+    {
+      "bytes": 148,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-01-probe.exit.json",
+      "path": "v7/evidence/process-01-probe.exit.json",
+      "sha256": "dc22023343b109dd5c791953e25efa63f35d26b35e484eaed610eff663b38233"
+    },
+    {
+      "bytes": 551,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-01-probe.request.json",
+      "path": "v7/evidence/process-01-probe.request.json",
+      "sha256": "8bdd2862dd1b070e127f5a6d80347704da2c28269737dfafa45ba5befce8b908"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-01-probe.stderr",
+      "path": "v7/evidence/process-01-probe.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3417,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-01-probe.stdout",
+      "path": "v7/evidence/process-01-probe.stdout",
+      "sha256": "caa9039651b20ecc2dcf0a3b48d0401f9e5dc62fdca03b8fdbb268e0a45833a9"
+    },
+    {
+      "bytes": 139,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-02-train.exit.json",
+      "path": "v7/evidence/process-02-train.exit.json",
+      "sha256": "a3b0623bb2ede0827e4f0cdb2ecf34b4fd3225fe2fbdde58badebcc3381b4cb1"
+    },
+    {
+      "bytes": 400,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-02-train.request.json",
+      "path": "v7/evidence/process-02-train.request.json",
+      "sha256": "7c46af1bc7ee5b0ede134b51afc901c1de0c83701afad70f2c7c46c2c7921cde"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-02-train.stderr",
+      "path": "v7/evidence/process-02-train.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1483,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-02-train.stdout",
+      "path": "v7/evidence/process-02-train.stdout",
+      "sha256": "52e4a0becc4a8cf1998b7f7b24cc5124cda307c4271f5049eb4f280fc9daebcc"
+    },
+    {
+      "bytes": 139,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-03-evaluate.exit.json",
+      "path": "v7/evidence/process-03-evaluate.exit.json",
+      "sha256": "4ae06a8c505449122d9389e619cf10b48afc02b3a2d04e6e39138dc7de685be5"
+    },
+    {
+      "bytes": 221,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-03-evaluate.request.json",
+      "path": "v7/evidence/process-03-evaluate.request.json",
+      "sha256": "394578c077f75207be86186bdfb26d3e7456d08bcc8a4697b21a56ecbd0bb9c9"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-03-evaluate.stderr",
+      "path": "v7/evidence/process-03-evaluate.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 17493,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-03-evaluate.stdout",
+      "path": "v7/evidence/process-03-evaluate.stdout",
+      "sha256": "d050e6ec527bd9a4588e7312a660d1caa50d4344d8c105d53ed9fab1677e6005"
+    },
+    {
+      "bytes": 148,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-04-probe.exit.json",
+      "path": "v7/evidence/process-04-probe.exit.json",
+      "sha256": "1abe17c9ec0a03171ecf2b1178abbe8e15879f056398e35e9aebaca5cdf1f0d4"
+    },
+    {
+      "bytes": 549,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-04-probe.request.json",
+      "path": "v7/evidence/process-04-probe.request.json",
+      "sha256": "03628b4494b6f517f929f1b94c71bc857c4c12b486b2628197c9b07eabe5655e"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-04-probe.stderr",
+      "path": "v7/evidence/process-04-probe.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3415,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/process-04-probe.stdout",
+      "path": "v7/evidence/process-04-probe.stdout",
+      "sha256": "db820f68a2e9559162cc2b6393a48eaf6323a1c423be4cf357f9c2a6ee8fc534"
+    },
+    {
+      "bytes": 6718,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/selection-owner.json",
+      "path": "v7/evidence/selection-owner.json",
+      "sha256": "0e7c95686c1c1715d1406aaa358499ca869620b7ace4ceb84955adcc9362b083"
+    },
+    {
+      "bytes": 1465,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/source-task-receipt.json",
+      "path": "v7/evidence/source-task-receipt.json",
+      "sha256": "4bc015c34f383f1008fa952bdf18eecc39882b1777031ccc0ee92f9bd83d8e54"
+    },
+    {
+      "bytes": 2781,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/evidence/source-use-delivered.json",
+      "path": "v7/evidence/source-use-delivered.json",
+      "sha256": "0608d01e8c321446922c5121ff046f6183cead30efbca4d9c2f60cf15b8517c3"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/candidate-eval-exit.json",
+      "path": "v7/model/candidate-eval-exit.json",
+      "sha256": "ae944ba10b8b63fb285db3985cbda9608d9c7f942fe23007eff47f4dd0e33a0b"
+    },
+    {
+      "bytes": 25224,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/candidate-eval.jsonl",
+      "path": "v7/model/candidate-eval.jsonl",
+      "sha256": "2fd7558bfc3ae54f73601ad8786b6d6ed08507262b2254b91f70dbc1be6ad3d0"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/candidate-eval.stderr.log",
+      "path": "v7/model/candidate-eval.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 16129,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/evaluate-result.json",
+      "path": "v7/model/evaluate-result.json",
+      "sha256": "553e9f1a0367716696ad96630c188de26dfc37eccb592045b429397fe0f0be88"
+    },
+    {
+      "bytes": 11774,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/frozen.json",
+      "path": "v7/model/frozen.json",
+      "sha256": "55c431aa359340498556b48064075c379d3e79c08925b487405ed1c712ada1cb"
+    },
+    {
+      "bytes": 401,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/native-training-admission.json",
+      "path": "v7/model/native-training-admission.json",
+      "sha256": "75d76e798087d8d78f499512d4375b6be74962ff08aa7f167125131b0c25aa55"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/parent-eval-exit.json",
+      "path": "v7/model/parent-eval-exit.json",
+      "sha256": "2cc9b1648d64bf7ec0064e608fb95df3655e86637b18a9d4ff54629178c73331"
+    },
+    {
+      "bytes": 25093,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/parent-eval.jsonl",
+      "path": "v7/model/parent-eval.jsonl",
+      "sha256": "51fc609dec8ea9718ef61d85020ecb88a49cb244c8ef87f50d4fbb037bdedf9a"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/parent-eval.stderr.log",
+      "path": "v7/model/parent-eval.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3252,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/prepare-result.json",
+      "path": "v7/model/prepare-result.json",
+      "sha256": "2800c2d298de241bdb0c849c7217a421f75824a24afc0113a6bc480d75c11b3e"
+    },
+    {
+      "bytes": 1277,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/probe-3b6e3c68e5abf0063cb5-hot-counters.json",
+      "path": "v7/model/probe-3b6e3c68e5abf0063cb5-hot-counters.json",
+      "sha256": "053f518e4a544e62959f008f59daeafbf9c4dbc6047d2fad56d42660b5637845"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/probe-3b6e3c68e5abf0063cb5-hot-exit.json",
+      "path": "v7/model/probe-3b6e3c68e5abf0063cb5-hot-exit.json",
+      "sha256": "f9212930bf9c52b047ff7df36e5b15ba1239f271cd25abff0d1528ef6f40bda0"
+    },
+    {
+      "bytes": 15470,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/probe-3b6e3c68e5abf0063cb5-hot.jsonl",
+      "path": "v7/model/probe-3b6e3c68e5abf0063cb5-hot.jsonl",
+      "sha256": "1661418949c8053e665b204cdf191a766cd451fad4623ad9ae63bc878e66723e"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/probe-3b6e3c68e5abf0063cb5-hot.stderr.log",
+      "path": "v7/model/probe-3b6e3c68e5abf0063cb5-hot.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3332,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/probe-3b6e3c68e5abf0063cb5-response.json",
+      "path": "v7/model/probe-3b6e3c68e5abf0063cb5-response.json",
+      "sha256": "f3bba7847e14df78aef80ddc9469020f9070c6817cd4167d0dcf6d039e9f2e1e"
+    },
+    {
+      "bytes": 2780,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/probe-3b6e3c68e5abf0063cb5-result.json",
+      "path": "v7/model/probe-3b6e3c68e5abf0063cb5-result.json",
+      "sha256": "5e400a79ef1219fbb0f78d7b449aa584027842f4f0c394b4e9684505969c81a4"
+    },
+    {
+      "bytes": 1277,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/probe-569887db00bb3e2fa0c7-hot-counters.json",
+      "path": "v7/model/probe-569887db00bb3e2fa0c7-hot-counters.json",
+      "sha256": "63951c96cc3ba933cdbaddcf86bbea10c6175a44a12e4bfa55ffaccb5c3ad365"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/probe-569887db00bb3e2fa0c7-hot-exit.json",
+      "path": "v7/model/probe-569887db00bb3e2fa0c7-hot-exit.json",
+      "sha256": "f6570420c2227563c1302a17421111f42f1485a3189d34d611ea56885ec8c34d"
+    },
+    {
+      "bytes": 15479,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/probe-569887db00bb3e2fa0c7-hot.jsonl",
+      "path": "v7/model/probe-569887db00bb3e2fa0c7-hot.jsonl",
+      "sha256": "d1d0b48b811d3350ac5e51f68fd91fc71bdcc2c1b2e297be00e32bcd94e5a6c9"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/probe-569887db00bb3e2fa0c7-hot.stderr.log",
+      "path": "v7/model/probe-569887db00bb3e2fa0c7-hot.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3333,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/probe-569887db00bb3e2fa0c7-response.json",
+      "path": "v7/model/probe-569887db00bb3e2fa0c7-response.json",
+      "sha256": "940a0920ae3c4782e6938a237936342faf340ff158d0e3e7b6f363e110038262"
+    },
+    {
+      "bytes": 2782,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/probe-569887db00bb3e2fa0c7-result.json",
+      "path": "v7/model/probe-569887db00bb3e2fa0c7-result.json",
+      "sha256": "ccf155aa4a794550d05151077933a9a71efd61217298d33b8456a3693f6c353d"
+    },
+    {
+      "bytes": 971,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/train-result.json",
+      "path": "v7/model/train-result.json",
+      "sha256": "8c9c4851ef286d6b851be52847cc7cbb045f49d75235480d93cd421c6ef51a47"
+    },
+    {
+      "bytes": 4130,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/training/worker/actual-receipt.json",
+      "path": "v7/model/training/worker/actual-receipt.json",
+      "sha256": "10a1e17352cb6c9e10c66c32a7957cb85dd71f5d441126c7d917a65b27e612a4"
+    },
+    {
+      "bytes": 1812,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/training/worker/cost-events.jsonl",
+      "path": "v7/model/training/worker/cost-events.jsonl",
+      "sha256": "dc8f90c166367de1f470ba4217e5642001f7edf6db1ec11f36d85a9beece950b"
+    },
+    {
+      "bytes": 442,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/training/worker/parent-material.json",
+      "path": "v7/model/training/worker/parent-material.json",
+      "sha256": "45dc89c3c8aae922152033254d26d208ff064e9a2f4dbb677cedc51f95468220"
+    },
+    {
+      "bytes": 2812,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/training/worker/supervisor.json",
+      "path": "v7/model/training/worker/supervisor.json",
+      "sha256": "e0f966cb54449689bdb8bec735c550dfd759bf2d52d448d7b71391d3555b394b"
+    },
+    {
+      "bytes": 809,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/training-command.json",
+      "path": "v7/model/training-command.json",
+      "sha256": "5df8023f95b00f5be00716f8545efedd921c0d9ef4150c3866632b63994df279"
+    },
+    {
+      "bytes": 489,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/model/training.log",
+      "path": "v7/model/training.log",
+      "sha256": "b55ad96bfc30b0c4323caab3f0d07379c03428c2d48d38ca5d684659663e4d63"
+    },
+    {
+      "bytes": 5479,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/tmp/.tmpdKDQRY/current.json",
+      "path": "v7/owner-originals/current.json",
+      "sha256": "63b3b3bfaa24cbac9f5cb37f88f8dd9ca7cf782e4c8528917bc62f1cd0f20551"
+    },
+    {
+      "bytes": 23739,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/tmp/.tmpdKDQRY/old-journal",
+      "path": "v7/owner-originals/old-journal",
+      "sha256": "e4deb1ca91236ea301ce2a3ea3771b544c20f12c6a251a76e8b92bd66f965967"
+    },
+    {
+      "bytes": 672,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/tmp/.tmpdKDQRY/old-witness",
+      "path": "v7/owner-originals/old-witness",
+      "sha256": "47e63c8af32ebd64c1e170d0fdce39858059da9761eb1705a0710b3be0f236ff"
+    },
+    {
+      "bytes": 23698,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/tmp/.tmpdKDQRY/target-journal",
+      "path": "v7/owner-originals/target-journal",
+      "sha256": "0c4df5e0644ad6864b35ab3042056c70980957234b923eb62cbf93717ee95a8f"
+    },
+    {
+      "bytes": 672,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/tmp/.tmpdKDQRY/target-witness",
+      "path": "v7/owner-originals/target-witness",
+      "sha256": "fedf60f7705148fb657feaecf744fac90940553379fbc6be28d9517c41a812b6"
+    },
+    {
+      "bytes": 4515,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/tmp/.tmpdKDQRY/learning-checkpoint",
+      "path": "v7/owner-originals/learning-checkpoint",
+      "sha256": "ae460445b038b785d984ddf66ab4c03fcdb07189d8051325dedfe06a054ade2c"
+    },
+    {
+      "bytes": 179,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/tmp/.tmpdKDQRY/final-use-frontier.json",
+      "path": "v7/owner-originals/final-use-frontier.json",
+      "sha256": "d7fd4887a6df2f73815032dc83357bd5513c59519b4f1bf88dd4405a302df98f"
+    },
+    {
+      "bytes": 40,
+      "original": "/home/qq/hepta-learning-native-681642e-d9fb-20261108/native-v7/tmp/.tmpdKDQRY/final-use/authority.claims",
+      "path": "v7/owner-originals/final-use/authority.claims",
+      "sha256": "249f2015db3f04393fb6bb085a86cb9f992abe6d61685fbc9314cf04804acd03"
+    },
+    {
+      "bytes": 1432,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/archive-list.stdout.json",
+      "path": "v8/archive-list.stdout.json",
+      "sha256": "2f5aa3529f0019d4b6b6719d8b2e6a04cb657e40567dbf9898e5a58563b80bdf"
+    },
+    {
+      "bytes": 526,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/archive-list-command.json",
+      "path": "v8/archive-list-command.json",
+      "sha256": "04b3929c0a6453e21f5a4a004a96996377ad1105cc5a60267061a2f541779bc3"
+    },
+    {
+      "bytes": 2808,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/execution-result.json",
+      "path": "v8/execution-result.json",
+      "sha256": "bc346edf32a4b7ce07aa197cee887cc62c871cd8b13bb11b9cee483f2fcca1f1"
+    },
+    {
+      "bytes": 3500,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/compiled-runtime.json",
+      "path": "v8/compiled-runtime.json",
+      "sha256": "696f8b1e0455fde046ce8aee89da6d8a0fff2600f77983e0ad6c72eded6de5cb"
+    },
+    {
+      "bytes": 2631,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/test-admission.json",
+      "path": "v8/test-admission.json",
+      "sha256": "fab57250525d6546abb09c18d4bf5a29425b36ba8b50499929e9d08b25cf3576"
+    },
+    {
+      "bytes": 205,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/archive-list.stderr.log",
+      "path": "v8/archive-list.stderr.log",
+      "sha256": "6c446c49ed8b0c94d1c95c1a380048797ca4069c8ecff22b626b101839948791"
+    },
+    {
+      "bytes": 582,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/original-junit.xml",
+      "path": "v8/original-junit.xml",
+      "sha256": "8bdbf28e9413ca9547f15fc872de37109ef77b24cb95923a1f65b2be631b9f19"
+    },
+    {
+      "bytes": 2763,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/test.log",
+      "path": "v8/test.log",
+      "sha256": "55c6641347c629a11da702eb8a45cf6d6945faeabccf1af5413edc23874aa15e"
+    },
+    {
+      "bytes": 337,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model-config.json",
+      "path": "v8/model-config.json",
+      "sha256": "f9168954f22ae265306c911b5c6470559d54c77a1e050bc45f9b81db2b425afe"
+    },
+    {
+      "bytes": 146,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/dataset.json",
+      "path": "v8/evidence/dataset.json",
+      "sha256": "7d94144fac8766d5e51377eaf1d3acb3b6a0a922f9078effddc07f928a1722e8"
+    },
+    {
+      "bytes": 258,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/experience.json",
+      "path": "v8/evidence/experience.json",
+      "sha256": "bc33ccf01bafb6bdc84151f7e10aaf974de0bdf688dc5790a23a9c7e4ab5dc85"
+    },
+    {
+      "bytes": 246,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/isolated-owner-paths.json",
+      "path": "v8/evidence/isolated-owner-paths.json",
+      "sha256": "1180fd9e4e878c79c29cd1284b9b5ec5eb4db3d9514459740c1fd1eb99639091"
+    },
+    {
+      "bytes": 1698,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/native-before-training.json",
+      "path": "v8/evidence/native-before-training.json",
+      "sha256": "e056888001f78dc174623d7c0a160a93d3c2a9cc030f51586b2f0a7af6c69c7f"
+    },
+    {
+      "bytes": 1831,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/native-checkpoint-0-owner.json",
+      "path": "v8/evidence/native-checkpoint-0-owner.json",
+      "sha256": "ed93bbebe02cf1047becd85aa51403957c4d109409257bc6a680263d97c494aa"
+    },
+    {
+      "bytes": 2090,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/native-checkpoint-1-owner.json",
+      "path": "v8/evidence/native-checkpoint-1-owner.json",
+      "sha256": "a664406fdabb364e6f44da63916f02ab5128c7e5c55fec9f98714a03c23bab31"
+    },
+    {
+      "bytes": 2407,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/native-checkpoint-2-owner.json",
+      "path": "v8/evidence/native-checkpoint-2-owner.json",
+      "sha256": "b194cd58050d2017295c2c07e26261fa9f3ffb60ab125ef06052d2d473aa787b"
+    },
+    {
+      "bytes": 3395,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/native-checkpoint-3-owner.json",
+      "path": "v8/evidence/native-checkpoint-3-owner.json",
+      "sha256": "abf75b9748bd60a557581040da77c4dd5e7492230a32eb3f80fd135512ac243c"
+    },
+    {
+      "bytes": 3656,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/native-checkpoint-4-owner.json",
+      "path": "v8/evidence/native-checkpoint-4-owner.json",
+      "sha256": "47f09f003eabc4622d2dd5450d4fb8467c74fd83662e203cc077e450d2e1b2b9"
+    },
+    {
+      "bytes": 3915,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/native-checkpoint-5-owner.json",
+      "path": "v8/evidence/native-checkpoint-5-owner.json",
+      "sha256": "8ad7b89052f5ea0f8eb493f7448b9af09a80c05f6b8a0b8e4bd535f908dbae6d"
+    },
+    {
+      "bytes": 4515,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/native-checkpoint-6-owner.json",
+      "path": "v8/evidence/native-checkpoint-6-owner.json",
+      "sha256": "f45a1d7904efd203b83a25443df4f01f4fdc17ca310a1450231d71e5a0827fec"
+    },
+    {
+      "bytes": 4515,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/native-completed-checkpoint-owner.json",
+      "path": "v8/evidence/native-completed-checkpoint-owner.json",
+      "sha256": "f45a1d7904efd203b83a25443df4f01f4fdc17ca310a1450231d71e5a0827fec"
+    },
+    {
+      "bytes": 3248,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/native-completed-checkpoint.bin",
+      "path": "v8/evidence/native-completed-checkpoint.bin",
+      "sha256": "f615357c44d865317a33a07ee1bc538468407f223e4f009df999cfe20e574263"
+    },
+    {
+      "bytes": 24325,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/native-completed-use-readback.json",
+      "path": "v8/evidence/native-completed-use-readback.json",
+      "sha256": "662a5e0163701c7dccfc35dbc4ae559cc2e896b67aef0bac4c4afce36cd385ef"
+    },
+    {
+      "bytes": 1401,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/native-result.json",
+      "path": "v8/evidence/native-result.json",
+      "sha256": "b90548a0d553ea685ae6510a5bc3e99ea8140205a0aef59787f4fe2d6b3e35c9"
+    },
+    {
+      "bytes": 24325,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/next-use-acked.json",
+      "path": "v8/evidence/next-use-acked.json",
+      "sha256": "662a5e0163701c7dccfc35dbc4ae559cc2e896b67aef0bac4c4afce36cd385ef"
+    },
+    {
+      "bytes": 30654,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/next-use-cold-owner.json",
+      "path": "v8/evidence/next-use-cold-owner.json",
+      "sha256": "512c4b857b7471778fefd560af53eb307a0d6109e184b5475338d586e3feacf2"
+    },
+    {
+      "bytes": 2779,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/next-use-delivered.json",
+      "path": "v8/evidence/next-use-delivered.json",
+      "sha256": "d9e3f66898a8ac416ed136bd8c729d3559fe9a1c09088c5be1f6b1650bc9fc9f"
+    },
+    {
+      "bytes": 27292,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/next-use-owner.json",
+      "path": "v8/evidence/next-use-owner.json",
+      "sha256": "d82433bdb26d1d5aec724527932ff60d0b4a5efa0d6cbfa203ec9eb4f2420cb2"
+    },
+    {
+      "bytes": 34052,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/next-use-pending.json",
+      "path": "v8/evidence/next-use-pending.json",
+      "sha256": "cb3848c30cfe574fc12fa0be30e3efb6e733c63ab16e3d8a577b4ae600e935db"
+    },
+    {
+      "bytes": 139,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-00-prepare.exit.json",
+      "path": "v8/evidence/process-00-prepare.exit.json",
+      "sha256": "543e8d1a58dc4be17082da087f4b2f1272db32365b4cf1847cba9ba49a78c022"
+    },
+    {
+      "bytes": 156,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-00-prepare.request.json",
+      "path": "v8/evidence/process-00-prepare.request.json",
+      "sha256": "122941eedffcaa7fb58dca6ff347906257b9ae348a130465a9b20c7bda38cfa8"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-00-prepare.stderr",
+      "path": "v8/evidence/process-00-prepare.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3825,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-00-prepare.stdout",
+      "path": "v8/evidence/process-00-prepare.stdout",
+      "sha256": "ca9ccb7a726854b9b3d78567afeb005da59defdd55aed9b06ddda46b9d423466"
+    },
+    {
+      "bytes": 148,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-01-probe.exit.json",
+      "path": "v8/evidence/process-01-probe.exit.json",
+      "sha256": "8c6a4ad10bd53776f43a42966d381734e70c0fb0e85c957627f5bc654785aaa8"
+    },
+    {
+      "bytes": 551,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-01-probe.request.json",
+      "path": "v8/evidence/process-01-probe.request.json",
+      "sha256": "4511c42e4fb6cdf5045fb0f3dda7b747eb231841448296af0a6dc1b6185c2cd5"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-01-probe.stderr",
+      "path": "v8/evidence/process-01-probe.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3417,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-01-probe.stdout",
+      "path": "v8/evidence/process-01-probe.stdout",
+      "sha256": "7493a41844a4539df0b816d571221a380f18e4f6294209c1822a6c2c15a078b9"
+    },
+    {
+      "bytes": 139,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-02-train.exit.json",
+      "path": "v8/evidence/process-02-train.exit.json",
+      "sha256": "cd4a0c7f3084e819a44e3259d624a96165f1eb27686398e1f3aa5d1261f5189a"
+    },
+    {
+      "bytes": 400,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-02-train.request.json",
+      "path": "v8/evidence/process-02-train.request.json",
+      "sha256": "cac19e6d091c8ab85cf92c29de9821b17e30fb30c38f106611f9032facb26102"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-02-train.stderr",
+      "path": "v8/evidence/process-02-train.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1483,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-02-train.stdout",
+      "path": "v8/evidence/process-02-train.stdout",
+      "sha256": "10f370b3722b003e40ec1fd075e78ef0c8c70ff9fa3bfc4ff9c427a4a43dfc08"
+    },
+    {
+      "bytes": 139,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-03-evaluate.exit.json",
+      "path": "v8/evidence/process-03-evaluate.exit.json",
+      "sha256": "7c65a711442365e3e04bfaa01895b9d0c1450ad30565d6d0fcd34d9e25190eb5"
+    },
+    {
+      "bytes": 221,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-03-evaluate.request.json",
+      "path": "v8/evidence/process-03-evaluate.request.json",
+      "sha256": "f6b7b810e99f7ecabb8172664e26af585ee8e05440f3475af37c92b39d160363"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-03-evaluate.stderr",
+      "path": "v8/evidence/process-03-evaluate.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 17493,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-03-evaluate.stdout",
+      "path": "v8/evidence/process-03-evaluate.stdout",
+      "sha256": "8334593762d03c9162cded8db12ffa70f23f2ad08e4a0e65a4fd219b4fd78f2a"
+    },
+    {
+      "bytes": 148,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-04-probe.exit.json",
+      "path": "v8/evidence/process-04-probe.exit.json",
+      "sha256": "3ead94365c60142f068c9ee35a44b105583eaf4e15235c98a2c58039f3cb862e"
+    },
+    {
+      "bytes": 549,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-04-probe.request.json",
+      "path": "v8/evidence/process-04-probe.request.json",
+      "sha256": "02bd4b3730cb864bf61cf005bf19206f286120e44b29a93dea9b465d5581526e"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-04-probe.stderr",
+      "path": "v8/evidence/process-04-probe.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3415,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-04-probe.stdout",
+      "path": "v8/evidence/process-04-probe.stdout",
+      "sha256": "6f8a6b56f116fad5e33157daa79a9801881b5426f880cec4020c60d236e79a80"
+    },
+    {
+      "bytes": 139,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-05-probe_recover.exit.json",
+      "path": "v8/evidence/process-05-probe_recover.exit.json",
+      "sha256": "63c840b8ae14b06ac59e5c668c769ab78535fe3563dc15b3ac283d056f7bf057"
+    },
+    {
+      "bytes": 557,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-05-probe_recover.request.json",
+      "path": "v8/evidence/process-05-probe_recover.request.json",
+      "sha256": "c1117a2d5d5091e3b722932cb27db532be5f99b26c0fe34a14fe2244e4f521fd"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-05-probe_recover.stderr",
+      "path": "v8/evidence/process-05-probe_recover.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3433,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/process-05-probe_recover.stdout",
+      "path": "v8/evidence/process-05-probe_recover.stdout",
+      "sha256": "160b7ab5a357be87728ad2c5d1e3a1fde6e9b3078e56413e2d8e8fda411e5222"
+    },
+    {
+      "bytes": 6753,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/selection-owner.json",
+      "path": "v8/evidence/selection-owner.json",
+      "sha256": "d24cd5aa100c7ef6ebce162b969a3ff93984bac52687ce4fedfcfa7151f14009"
+    },
+    {
+      "bytes": 1463,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/source-task-receipt.json",
+      "path": "v8/evidence/source-task-receipt.json",
+      "sha256": "fc62199e5e64e37a6d1da6ef9c724f27a60008609250013b3328fd0312c19689"
+    },
+    {
+      "bytes": 2781,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/evidence/source-use-delivered.json",
+      "path": "v8/evidence/source-use-delivered.json",
+      "sha256": "997612ae5a39521aeb3f8a4bbdfd0e5660dc510afd8ca238ab99d1e94ec651ab"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-exit.json",
+      "path": "v8/model/candidate-eval-exit.json",
+      "sha256": "a6a46e65e3eb21893803e6e642c7e6147a5326fb5324719b0097a4c8d3ade71f"
+    },
+    {
+      "bytes": 886,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/0839d010bcb2a3b4b5b074bfa6470d3f139c0333269922d555fc4ea2d6096e6a.ref.json",
+      "path": "v8/model/candidate-eval-store/0839d010bcb2a3b4b5b074bfa6470d3f139c0333269922d555fc4ea2d6096e6a.ref.json",
+      "sha256": "dd6159d3cd245d9007b14da51e1eaf4a1c589c0bd5441654d6909c4ed9dfe293"
+    },
+    {
+      "bytes": 3411,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/099e8a86986cb265c2f515f275db218f3898330f1abb39b001d11e3f2082c0f2.json",
+      "path": "v8/model/candidate-eval-store/099e8a86986cb265c2f515f275db218f3898330f1abb39b001d11e3f2082c0f2.json",
+      "sha256": "099e8a86986cb265c2f515f275db218f3898330f1abb39b001d11e3f2082c0f2"
+    },
+    {
+      "bytes": 376,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/0cf2972c24db77cf295f9c705ca24abe2e08d54114e2637de96127964cbf4d14.ref.json",
+      "path": "v8/model/candidate-eval-store/0cf2972c24db77cf295f9c705ca24abe2e08d54114e2637de96127964cbf4d14.ref.json",
+      "sha256": "c78f814ebb4199207a2e55236a294e207b2393abc95db99ea2e95194e62a33de"
+    },
+    {
+      "bytes": 197579,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/12db989d58552c8d34c88c7807059992b5e0cd8695ecbc0a1aeb67c425e29715.safetensors",
+      "path": "v8/model/candidate-eval-store/12db989d58552c8d34c88c7807059992b5e0cd8695ecbc0a1aeb67c425e29715.safetensors",
+      "sha256": "12db989d58552c8d34c88c7807059992b5e0cd8695ecbc0a1aeb67c425e29715"
+    },
+    {
+      "bytes": 376,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/2efef56d3aa48425a70fff13af95a7f370cabc7515c7cacabe8c5fe81ab00313.ref.json",
+      "path": "v8/model/candidate-eval-store/2efef56d3aa48425a70fff13af95a7f370cabc7515c7cacabe8c5fe81ab00313.ref.json",
+      "sha256": "2d70f4061a2dc021125aafacc755c6ca305b88d27a6047f9e84ff83eb68650b0"
+    },
+    {
+      "bytes": 3410,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/34a5478a9c854df089be816fbe3f8f4f78c0c072fccb8dc91534bc968a51f4f0.json",
+      "path": "v8/model/candidate-eval-store/34a5478a9c854df089be816fbe3f8f4f78c0c072fccb8dc91534bc968a51f4f0.json",
+      "sha256": "34a5478a9c854df089be816fbe3f8f4f78c0c072fccb8dc91534bc968a51f4f0"
+    },
+    {
+      "bytes": 376,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/47a98d5634165b2f5f8a356bdb0c61d572e5ba29130324842e93c18279dd9ae6.ref.json",
+      "path": "v8/model/candidate-eval-store/47a98d5634165b2f5f8a356bdb0c61d572e5ba29130324842e93c18279dd9ae6.ref.json",
+      "sha256": "7a420ec5e1ca76d815f7f1af24ed83ca48952a169ed1fb730842eed48aec5bdf"
+    },
+    {
+      "bytes": 197579,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/48c20b3109eca5b8a990ed7d997593f258a679a7c7574a2d19656f02a50b2836.safetensors",
+      "path": "v8/model/candidate-eval-store/48c20b3109eca5b8a990ed7d997593f258a679a7c7574a2d19656f02a50b2836.safetensors",
+      "sha256": "48c20b3109eca5b8a990ed7d997593f258a679a7c7574a2d19656f02a50b2836"
+    },
+    {
+      "bytes": 886,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/64513a0f95e9b0846b4d7827e9125e7a152a4f989dd53fb1e39de109c3acd420.ref.json",
+      "path": "v8/model/candidate-eval-store/64513a0f95e9b0846b4d7827e9125e7a152a4f989dd53fb1e39de109c3acd420.ref.json",
+      "sha256": "ba58b838e5fc46e2bae5e56bb1fe225148b407848855e39b5adb58a2054b1da9"
+    },
+    {
+      "bytes": 886,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/771236c5452422930a57d8555b9f16478b8cbf978fd75c9b8345ae7e9e104da8.ref.json",
+      "path": "v8/model/candidate-eval-store/771236c5452422930a57d8555b9f16478b8cbf978fd75c9b8345ae7e9e104da8.ref.json",
+      "sha256": "7c533ec261bf4c1c93d3ce1e30883c57881617ad6cda15c07c1d65a8a09c088a"
+    },
+    {
+      "bytes": 376,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/7f172d58f3e64671f26520b3f0dbddba104eb3cbaaaefb99f97530f7c3f0e3a2.ref.json",
+      "path": "v8/model/candidate-eval-store/7f172d58f3e64671f26520b3f0dbddba104eb3cbaaaefb99f97530f7c3f0e3a2.ref.json",
+      "sha256": "1eea4d37d43e72cf301eda3739af9462bc963982723c5152aae65b02893d3d25"
+    },
+    {
+      "bytes": 197579,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/89c91685c43d1a1b5b841d64a199a5d7dc0a09686fdec46ab93731dfe3a5c59e.safetensors",
+      "path": "v8/model/candidate-eval-store/89c91685c43d1a1b5b841d64a199a5d7dc0a09686fdec46ab93731dfe3a5c59e.safetensors",
+      "sha256": "89c91685c43d1a1b5b841d64a199a5d7dc0a09686fdec46ab93731dfe3a5c59e"
+    },
+    {
+      "bytes": 886,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/cac42dd8fe8aa3e84ea396da8b19d8630e3eefb4ef13a2be85784231ea39dae2.ref.json",
+      "path": "v8/model/candidate-eval-store/cac42dd8fe8aa3e84ea396da8b19d8630e3eefb4ef13a2be85784231ea39dae2.ref.json",
+      "sha256": "ef44138b9eb1533f3cab3133fa573780c6b0b1f9b22fd6b64a2adfe8b37d8515"
+    },
+    {
+      "bytes": 3411,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/d867bac62202a4da1bae76718204ad16e5ae58f9efcf521a1d2127330ef1f3f5.json",
+      "path": "v8/model/candidate-eval-store/d867bac62202a4da1bae76718204ad16e5ae58f9efcf521a1d2127330ef1f3f5.json",
+      "sha256": "d867bac62202a4da1bae76718204ad16e5ae58f9efcf521a1d2127330ef1f3f5"
+    },
+    {
+      "bytes": 197579,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/e9bcff13483cb851787c0e3b622d19fb2cae568f8226cd43d0cf180a752886c9.safetensors",
+      "path": "v8/model/candidate-eval-store/e9bcff13483cb851787c0e3b622d19fb2cae568f8226cd43d0cf180a752886c9.safetensors",
+      "sha256": "e9bcff13483cb851787c0e3b622d19fb2cae568f8226cd43d0cf180a752886c9"
+    },
+    {
+      "bytes": 3411,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/ed12dc86f50a3b655ee9360e5a3eaa9fff0e33f9f31ee0d1b601ad4349b7d04b.json",
+      "path": "v8/model/candidate-eval-store/ed12dc86f50a3b655ee9360e5a3eaa9fff0e33f9f31ee0d1b601ad4349b7d04b.json",
+      "sha256": "ed12dc86f50a3b655ee9360e5a3eaa9fff0e33f9f31ee0d1b601ad4349b7d04b"
+    },
+    {
+      "bytes": 3477,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/requests/0d7747c147a11c599baec1d1ff76814df290f6a1a2a3b240c7ab3dbdc10f86e6.done.json",
+      "path": "v8/model/candidate-eval-store/requests/0d7747c147a11c599baec1d1ff76814df290f6a1a2a3b240c7ab3dbdc10f86e6.done.json",
+      "sha256": "48600afd2ecb1990fa58f0da26d394a7de90e8a2870b83b6baea78f21334de82"
+    },
+    {
+      "bytes": 377,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/requests/0d7747c147a11c599baec1d1ff76814df290f6a1a2a3b240c7ab3dbdc10f86e6.pending.json",
+      "path": "v8/model/candidate-eval-store/requests/0d7747c147a11c599baec1d1ff76814df290f6a1a2a3b240c7ab3dbdc10f86e6.pending.json",
+      "sha256": "0e86c2c944f08211288bea5797f7cc3874fbfef3b77bb44d111333c8a74456a6"
+    },
+    {
+      "bytes": 3470,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/requests/1093af64dae0ae7d4aad533b1d438825edf8897912f6c465d0bdc58a03cede3a.done.json",
+      "path": "v8/model/candidate-eval-store/requests/1093af64dae0ae7d4aad533b1d438825edf8897912f6c465d0bdc58a03cede3a.done.json",
+      "sha256": "9343a27bba83f4344b60aea58f6ea33d9f6a9cfa6643528f245d5dab2763533d"
+    },
+    {
+      "bytes": 377,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/requests/1093af64dae0ae7d4aad533b1d438825edf8897912f6c465d0bdc58a03cede3a.pending.json",
+      "path": "v8/model/candidate-eval-store/requests/1093af64dae0ae7d4aad533b1d438825edf8897912f6c465d0bdc58a03cede3a.pending.json",
+      "sha256": "43bc5c1d4ac7fb1a55e401d21d3a6353a47f33a12179c8161c6a43352846f425"
+    },
+    {
+      "bytes": 7872,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.done.json",
+      "path": "v8/model/candidate-eval-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.done.json",
+      "sha256": "d335dd0448ecfc86d153b9db18d71a0d540625183388adb55eed020d44edd43a"
+    },
+    {
+      "bytes": 2674,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.pending.json",
+      "path": "v8/model/candidate-eval-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.pending.json",
+      "sha256": "4b858c8c6c1cd4e846e635eb1b7cfa4a9510edc55a13f488e56b98429a44e217"
+    },
+    {
+      "bytes": 3478,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/requests/4fc39a4b1f8b4a3842560d927d47eabdaefa02e140b20e2f16016884d124b1f4.done.json",
+      "path": "v8/model/candidate-eval-store/requests/4fc39a4b1f8b4a3842560d927d47eabdaefa02e140b20e2f16016884d124b1f4.done.json",
+      "sha256": "178d768301f8b7f53fb333be5e02c36ef620e739b6e14541b8386a61ed8b948a"
+    },
+    {
+      "bytes": 377,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/requests/4fc39a4b1f8b4a3842560d927d47eabdaefa02e140b20e2f16016884d124b1f4.pending.json",
+      "path": "v8/model/candidate-eval-store/requests/4fc39a4b1f8b4a3842560d927d47eabdaefa02e140b20e2f16016884d124b1f4.pending.json",
+      "sha256": "1024016a6cc3719da9285ba3b2178c2f34d15407731bfee3f99e9e6e068bcd7c"
+    },
+    {
+      "bytes": 502,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/requests/97959247360c5f0b8faf336aea5eba322af7be295958302fdb8a3fe8c6eb8ab8.done.json",
+      "path": "v8/model/candidate-eval-store/requests/97959247360c5f0b8faf336aea5eba322af7be295958302fdb8a3fe8c6eb8ab8.done.json",
+      "sha256": "6d21bda51cf473198f15e14b36d7800b7e37e4b386dfd8e2850ce5b6930af451"
+    },
+    {
+      "bytes": 220,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/requests/97959247360c5f0b8faf336aea5eba322af7be295958302fdb8a3fe8c6eb8ab8.pending.json",
+      "path": "v8/model/candidate-eval-store/requests/97959247360c5f0b8faf336aea5eba322af7be295958302fdb8a3fe8c6eb8ab8.pending.json",
+      "sha256": "9befb13738a447b61cd111836314185e3b56e5a1a93bd35356a10cdb548ec419"
+    },
+    {
+      "bytes": 3478,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/requests/a715c72baa3eb0628e7f44a6c5aba00a279be37c68f718ad391a53c5617b33a5.done.json",
+      "path": "v8/model/candidate-eval-store/requests/a715c72baa3eb0628e7f44a6c5aba00a279be37c68f718ad391a53c5617b33a5.done.json",
+      "sha256": "709fb4108675aba405b4b36500279b09c5fd4566c56f5f939b3535f4d9ca5800"
+    },
+    {
+      "bytes": 377,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/requests/a715c72baa3eb0628e7f44a6c5aba00a279be37c68f718ad391a53c5617b33a5.pending.json",
+      "path": "v8/model/candidate-eval-store/requests/a715c72baa3eb0628e7f44a6c5aba00a279be37c68f718ad391a53c5617b33a5.pending.json",
+      "sha256": "443074559d82a317c74e0b240d0dac7dae1eae802bee2869864ca6589e5ff491"
+    },
+    {
+      "bytes": 619,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval-store/session.json",
+      "path": "v8/model/candidate-eval-store/session.json",
+      "sha256": "b71e813b878119fb6858e76ca5ac9a1d7b082153ba39d30f9ff3087c2002bebf"
+    },
+    {
+      "bytes": 25221,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval.jsonl",
+      "path": "v8/model/candidate-eval.jsonl",
+      "sha256": "351fbd3c2fa2c79e19e503a524bd021fe2bef785112af06ce96eacf4eca26c8b"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/candidate-eval.stderr.log",
+      "path": "v8/model/candidate-eval.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 16129,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/evaluate-result.json",
+      "path": "v8/model/evaluate-result.json",
+      "sha256": "813217d4903b2656711fdcdc1c8176cd7da2b31c5fb73bb456e08c3aeb7ea10c"
+    },
+    {
+      "bytes": 11774,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/frozen.json",
+      "path": "v8/model/frozen.json",
+      "sha256": "0c23c05e31a285edaca57ea0fad02545fcd3c1326bb8b413ccc2353085960e31"
+    },
+    {
+      "bytes": 401,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/native-training-admission.json",
+      "path": "v8/model/native-training-admission.json",
+      "sha256": "1c24608f9576564132137f6bb0cba9d58bf30a1c62119f01410bedf8ce7ac72d"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-exit.json",
+      "path": "v8/model/parent-eval-exit.json",
+      "sha256": "b30d9afd36f34d93bbf13be037c021128361fa363292901d855960d218013767"
+    },
+    {
+      "bytes": 197579,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/039626386868aea52022131445657e632bf27165d38113a34f91094804263335.safetensors",
+      "path": "v8/model/parent-eval-store/039626386868aea52022131445657e632bf27165d38113a34f91094804263335.safetensors",
+      "sha256": "039626386868aea52022131445657e632bf27165d38113a34f91094804263335"
+    },
+    {
+      "bytes": 3405,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/084e60bdb1f3bbece87522d8814b6f35a7a1265be13af73d8f493fddd7fb0e80.json",
+      "path": "v8/model/parent-eval-store/084e60bdb1f3bbece87522d8814b6f35a7a1265be13af73d8f493fddd7fb0e80.json",
+      "sha256": "084e60bdb1f3bbece87522d8814b6f35a7a1265be13af73d8f493fddd7fb0e80"
+    },
+    {
+      "bytes": 197579,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/14ada8949d9e442290e588cf7ec1bee4789ac34072d024742458e1353852cf02.safetensors",
+      "path": "v8/model/parent-eval-store/14ada8949d9e442290e588cf7ec1bee4789ac34072d024742458e1353852cf02.safetensors",
+      "sha256": "14ada8949d9e442290e588cf7ec1bee4789ac34072d024742458e1353852cf02"
+    },
+    {
+      "bytes": 3405,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/59b44591bc63a47de36e7ea65f4f69d40af2bdce9fd3fdc7b2692a5071c8cec8.json",
+      "path": "v8/model/parent-eval-store/59b44591bc63a47de36e7ea65f4f69d40af2bdce9fd3fdc7b2692a5071c8cec8.json",
+      "sha256": "59b44591bc63a47de36e7ea65f4f69d40af2bdce9fd3fdc7b2692a5071c8cec8"
+    },
+    {
+      "bytes": 883,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/6153a34c224ecc57af41b706ed5b7e1fccae6b59dcee9da5e684ff6a82a76d1a.ref.json",
+      "path": "v8/model/parent-eval-store/6153a34c224ecc57af41b706ed5b7e1fccae6b59dcee9da5e684ff6a82a76d1a.ref.json",
+      "sha256": "f32ce8562adb990f58ad327e90d2e1922b5056e088c63b403e5d9fd02db3fa8c"
+    },
+    {
+      "bytes": 373,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/76727f359baeb7a425aa99209a6e640171cc3ab3faedd8a34a77e581bfa41276.ref.json",
+      "path": "v8/model/parent-eval-store/76727f359baeb7a425aa99209a6e640171cc3ab3faedd8a34a77e581bfa41276.ref.json",
+      "sha256": "8815130955ba2f1a7e1cff2af4b12dd220d5aa6d5373c421e968d98672f1f78d"
+    },
+    {
+      "bytes": 373,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/84f4bd68e49a5358cc693411f7265895c90dc21322be5ce916a1bdb4ff3a1b24.ref.json",
+      "path": "v8/model/parent-eval-store/84f4bd68e49a5358cc693411f7265895c90dc21322be5ce916a1bdb4ff3a1b24.ref.json",
+      "sha256": "7087848b93803add65bff2b9f7f78ad98ca079bbc1636cd9427a8f863b8de6f8"
+    },
+    {
+      "bytes": 373,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/85b22578b8b16331b0d75fd6d6f2c7a9da7970ed29cb5879438666b612cb926f.ref.json",
+      "path": "v8/model/parent-eval-store/85b22578b8b16331b0d75fd6d6f2c7a9da7970ed29cb5879438666b612cb926f.ref.json",
+      "sha256": "8cffd5e1f6c40552bec1fd038062d9ca08decb6c8e7595c97feaec10155b8c8b"
+    },
+    {
+      "bytes": 3403,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/87119e6634888449e3387bfe6db5e0ab6c8e00179bc575141ad576a2f6432413.json",
+      "path": "v8/model/parent-eval-store/87119e6634888449e3387bfe6db5e0ab6c8e00179bc575141ad576a2f6432413.json",
+      "sha256": "87119e6634888449e3387bfe6db5e0ab6c8e00179bc575141ad576a2f6432413"
+    },
+    {
+      "bytes": 883,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/887594c911114e4f9362e08359fe537fbfa42318bde2ed888717e2936874d1f9.ref.json",
+      "path": "v8/model/parent-eval-store/887594c911114e4f9362e08359fe537fbfa42318bde2ed888717e2936874d1f9.ref.json",
+      "sha256": "67cfa2ed9c055be31c8d76b9c9626ee70ddd34d5ff606ddd0060d0827286d53a"
+    },
+    {
+      "bytes": 373,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/a43568db9ec3201fd0019ccbbc98801e7a869118aa17ad270efe1e7a2a47aa5f.ref.json",
+      "path": "v8/model/parent-eval-store/a43568db9ec3201fd0019ccbbc98801e7a869118aa17ad270efe1e7a2a47aa5f.ref.json",
+      "sha256": "59c13750cab9b19e0e113e3f177e1a0715d5ec99f5f56953ba1ad1d9252cf403"
+    },
+    {
+      "bytes": 883,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/a7aba5089c5bd89e2abffeabf5af714303996cdc2d031759314de7f6ec4efed2.ref.json",
+      "path": "v8/model/parent-eval-store/a7aba5089c5bd89e2abffeabf5af714303996cdc2d031759314de7f6ec4efed2.ref.json",
+      "sha256": "264d185f2ae2b496e35abda6eced71675d013218f97949ce3c97c8404dab2a7c"
+    },
+    {
+      "bytes": 197579,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/c37a0ee1b76766ea0894843e89bd19a7ee82cbd619f60f26f85c481693379b54.safetensors",
+      "path": "v8/model/parent-eval-store/c37a0ee1b76766ea0894843e89bd19a7ee82cbd619f60f26f85c481693379b54.safetensors",
+      "sha256": "c37a0ee1b76766ea0894843e89bd19a7ee82cbd619f60f26f85c481693379b54"
+    },
+    {
+      "bytes": 197579,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/c3c40861d14e0f72bc088b3662139287deaafc90aa773e54bda29c362b690c4f.safetensors",
+      "path": "v8/model/parent-eval-store/c3c40861d14e0f72bc088b3662139287deaafc90aa773e54bda29c362b690c4f.safetensors",
+      "sha256": "c3c40861d14e0f72bc088b3662139287deaafc90aa773e54bda29c362b690c4f"
+    },
+    {
+      "bytes": 3405,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/e947ab029640b42a4dc4e5b1949401b0e8f6e7ac83c2a2738da2bd1d58266cfa.json",
+      "path": "v8/model/parent-eval-store/e947ab029640b42a4dc4e5b1949401b0e8f6e7ac83c2a2738da2bd1d58266cfa.json",
+      "sha256": "e947ab029640b42a4dc4e5b1949401b0e8f6e7ac83c2a2738da2bd1d58266cfa"
+    },
+    {
+      "bytes": 883,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/f5ce335c39b9864e21d13a00b1ab6c7ede073ddfc5d15e0ca580ca7ced64e409.ref.json",
+      "path": "v8/model/parent-eval-store/f5ce335c39b9864e21d13a00b1ab6c7ede073ddfc5d15e0ca580ca7ced64e409.ref.json",
+      "sha256": "21f85ea0d91b9e40d71cd74f52e90aac3170974ef01ec6b4413d326ed3c1199e"
+    },
+    {
+      "bytes": 3469,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/requests/0d7747c147a11c599baec1d1ff76814df290f6a1a2a3b240c7ab3dbdc10f86e6.done.json",
+      "path": "v8/model/parent-eval-store/requests/0d7747c147a11c599baec1d1ff76814df290f6a1a2a3b240c7ab3dbdc10f86e6.done.json",
+      "sha256": "fdc6a72173fd6c5fcacd1e75d8e3eeda97eeec21aa2bffe6e2fd09c7ec45cf14"
+    },
+    {
+      "bytes": 374,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/requests/0d7747c147a11c599baec1d1ff76814df290f6a1a2a3b240c7ab3dbdc10f86e6.pending.json",
+      "path": "v8/model/parent-eval-store/requests/0d7747c147a11c599baec1d1ff76814df290f6a1a2a3b240c7ab3dbdc10f86e6.pending.json",
+      "sha256": "00bf6c7c7455fb7264f43ebcaead39c6f79a392b7cc0ebb03055f11e57c9bfed"
+    },
+    {
+      "bytes": 3468,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/requests/1093af64dae0ae7d4aad533b1d438825edf8897912f6c465d0bdc58a03cede3a.done.json",
+      "path": "v8/model/parent-eval-store/requests/1093af64dae0ae7d4aad533b1d438825edf8897912f6c465d0bdc58a03cede3a.done.json",
+      "sha256": "bd6254f3088cd95eec0fb589007ba4b0aa990489a901a324c18b8d812055305a"
+    },
+    {
+      "bytes": 374,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/requests/1093af64dae0ae7d4aad533b1d438825edf8897912f6c465d0bdc58a03cede3a.pending.json",
+      "path": "v8/model/parent-eval-store/requests/1093af64dae0ae7d4aad533b1d438825edf8897912f6c465d0bdc58a03cede3a.pending.json",
+      "sha256": "78fec1793deec7a406c9a6b4c6b3b9b8277c330f4ef6fad8f4dc1a30f6977b63"
+    },
+    {
+      "bytes": 7872,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.done.json",
+      "path": "v8/model/parent-eval-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.done.json",
+      "sha256": "f6047d7020b61582817a75647d3b101e19f2e9ebfc253b3bce529e909079fa17"
+    },
+    {
+      "bytes": 2614,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.pending.json",
+      "path": "v8/model/parent-eval-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.pending.json",
+      "sha256": "3ff2a5695cd3bc874fe1df079ca93d0d1fbe63f7eb82a5c8a24d920fed2cd719"
+    },
+    {
+      "bytes": 3469,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/requests/4fc39a4b1f8b4a3842560d927d47eabdaefa02e140b20e2f16016884d124b1f4.done.json",
+      "path": "v8/model/parent-eval-store/requests/4fc39a4b1f8b4a3842560d927d47eabdaefa02e140b20e2f16016884d124b1f4.done.json",
+      "sha256": "f37093f4e4edf9cd7a384a5ea7beb7feb397917639ce269790204f0e3227d947"
+    },
+    {
+      "bytes": 374,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/requests/4fc39a4b1f8b4a3842560d927d47eabdaefa02e140b20e2f16016884d124b1f4.pending.json",
+      "path": "v8/model/parent-eval-store/requests/4fc39a4b1f8b4a3842560d927d47eabdaefa02e140b20e2f16016884d124b1f4.pending.json",
+      "sha256": "08f56b27bccb67c57fac28f950f39b527772ba24c273a80d0d40af5996e64e3f"
+    },
+    {
+      "bytes": 498,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/requests/97959247360c5f0b8faf336aea5eba322af7be295958302fdb8a3fe8c6eb8ab8.done.json",
+      "path": "v8/model/parent-eval-store/requests/97959247360c5f0b8faf336aea5eba322af7be295958302fdb8a3fe8c6eb8ab8.done.json",
+      "sha256": "f8bfc8676395489b8f0318a72e8c8721a1090166e3c81c068141d89341a750d7"
+    },
+    {
+      "bytes": 217,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/requests/97959247360c5f0b8faf336aea5eba322af7be295958302fdb8a3fe8c6eb8ab8.pending.json",
+      "path": "v8/model/parent-eval-store/requests/97959247360c5f0b8faf336aea5eba322af7be295958302fdb8a3fe8c6eb8ab8.pending.json",
+      "sha256": "3ad5ab81ab9af1babb22f46fcb9538110b7f73c1b49993a10e66b6195dfd799e"
+    },
+    {
+      "bytes": 3467,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/requests/a715c72baa3eb0628e7f44a6c5aba00a279be37c68f718ad391a53c5617b33a5.done.json",
+      "path": "v8/model/parent-eval-store/requests/a715c72baa3eb0628e7f44a6c5aba00a279be37c68f718ad391a53c5617b33a5.done.json",
+      "sha256": "02f4fae18cbf1f4fcd85195191f64b17f2d9b636dafe483601a6bee9b909c0c4"
+    },
+    {
+      "bytes": 374,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/requests/a715c72baa3eb0628e7f44a6c5aba00a279be37c68f718ad391a53c5617b33a5.pending.json",
+      "path": "v8/model/parent-eval-store/requests/a715c72baa3eb0628e7f44a6c5aba00a279be37c68f718ad391a53c5617b33a5.pending.json",
+      "sha256": "49ec2efd572e306f93abf83bf5734886e975d4d2ff2e443885f636eabae298e0"
+    },
+    {
+      "bytes": 616,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval-store/session.json",
+      "path": "v8/model/parent-eval-store/session.json",
+      "sha256": "692d506f0dbd8515880e3d449e424e223da23bc9ec44f3ca13a8f87a9a753aea"
+    },
+    {
+      "bytes": 25112,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval.jsonl",
+      "path": "v8/model/parent-eval.jsonl",
+      "sha256": "38c2e8b45ed6e58c5b6114757bbc513c5d10a5f605bad3ba8b423ace02b19d5d"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/parent-eval.stderr.log",
+      "path": "v8/model/parent-eval.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3252,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/prepare-result.json",
+      "path": "v8/model/prepare-result.json",
+      "sha256": "a472348e885cc464a70c521764015d68bf3ce923c0e2757f8da8351ec4fd4d61"
+    },
+    {
+      "bytes": 1278,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-cold-counters.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-cold-counters.json",
+      "sha256": "f0c7ad8895de191dd4bb9f0a3ad75e1b87df7b57600016ab4197f6d5e6d93fd6"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-cold-exit.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-cold-exit.json",
+      "sha256": "56844ffe9e44c980b56cf7278ba71bf261e7537b00f183a8b3d6bd0b7fab8a1c"
+    },
+    {
+      "bytes": 17193,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-cold.jsonl",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-cold.jsonl",
+      "sha256": "78dae1de8064d57e365dc9fc7f062d82080084a77a583237025eeee185bcc322"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-cold.stderr.log",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-cold.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1275,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-hot-counters.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-hot-counters.json",
+      "sha256": "22b141a0a650d99b35a7da5f2a5b57d2778368e20958fb09d30f34dff7de7510"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-hot-exit.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-hot-exit.json",
+      "sha256": "301af06b3229aab87b64bc48e9e0d6db2c2b50582abaa031692c7523fa7e8fdc"
+    },
+    {
+      "bytes": 15470,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-hot.jsonl",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-hot.jsonl",
+      "sha256": "bba2c3eae34478a2537e291e6c1b129585fc273243aa83ca5a445d5dd1654ebb"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-hot.stderr.log",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-hot.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 887,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-recovery-controls.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-recovery-controls.json",
+      "sha256": "c96268eebbf317e9c58093adc31f3c0c70d0aade85d3a5fdbf8371d4a4ac5010"
+    },
+    {
+      "bytes": 3334,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-response.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-response.json",
+      "sha256": "54a76ee54e81e480acb305db03dc3c3d84f5d1bb99e08161a354bce23edf465a"
+    },
+    {
+      "bytes": 2780,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-result.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-result.json",
+      "sha256": "00fe70d2878249789582903dc2228975110acd2bf80dc3967d1a19c38edf5493"
+    },
+    {
+      "bytes": 3441,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/3b2fea7938d5a7940b2979c0f90400f504e3510eb3576e9e5da2c41f07f6d66a.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/3b2fea7938d5a7940b2979c0f90400f504e3510eb3576e9e5da2c41f07f6d66a.json",
+      "sha256": "3b2fea7938d5a7940b2979c0f90400f504e3510eb3576e9e5da2c41f07f6d66a"
+    },
+    {
+      "bytes": 388,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/445391de6a1e305fed09cf8f113542cad852eb12faad6bd92cc30e8327815914.ref.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/445391de6a1e305fed09cf8f113542cad852eb12faad6bd92cc30e8327815914.ref.json",
+      "sha256": "8c2b13f4e61905b55171a7567e86a93f06d472cfc9e37b36091fdfc7474d854f"
+    },
+    {
+      "bytes": 898,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/477814de7cbf33bafe6997411b30c8b3396e1eb1a18d14b222b44ad7104bfaae.ref.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/477814de7cbf33bafe6997411b30c8b3396e1eb1a18d14b222b44ad7104bfaae.ref.json",
+      "sha256": "27e1890ea713cdee32c8afc21ec7c760d77160f8bd3e10f852b015e89871e15e"
+    },
+    {
+      "bytes": 197579,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/5b803dad6abdaaf5e732496b85f3c1d90440bf06975375513b0350a16d11ff22.safetensors",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/5b803dad6abdaaf5e732496b85f3c1d90440bf06975375513b0350a16d11ff22.safetensors",
+      "sha256": "5b803dad6abdaaf5e732496b85f3c1d90440bf06975375513b0350a16d11ff22"
+    },
+    {
+      "bytes": 710,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/requests/252530498f6251c7ac26e7768ce05f3151a44093d20ac874e4aaa3d825149352.done.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/requests/252530498f6251c7ac26e7768ce05f3151a44093d20ac874e4aaa3d825149352.done.json",
+      "sha256": "714af0496867e3efcd564ce4ffea2054c5abc2815324eec9b1bc08319cda2d4b"
+    },
+    {
+      "bytes": 291,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/requests/252530498f6251c7ac26e7768ce05f3151a44093d20ac874e4aaa3d825149352.pending.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/requests/252530498f6251c7ac26e7768ce05f3151a44093d20ac874e4aaa3d825149352.pending.json",
+      "sha256": "c964543992b5ac4266112ca8e39cb9e08d10703d220413399354cbd738a8dbad"
+    },
+    {
+      "bytes": 7895,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.done.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.done.json",
+      "sha256": "0aa5f1f1cb41e8eda75b7b320dc43d4847307273230122bc1bb6f6cdbfc20932"
+    },
+    {
+      "bytes": 2644,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.pending.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.pending.json",
+      "sha256": "1ccdf848cdcc2d45ee9331884697c2b98868438c4c742f7c562495d8aa5f4d95"
+    },
+    {
+      "bytes": 727,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/requests/39845cd7753010c70a56dc715a1c8b1396e75ae77ff0ca4d0f9694f7fa91a53b.done.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/requests/39845cd7753010c70a56dc715a1c8b1396e75ae77ff0ca4d0f9694f7fa91a53b.done.json",
+      "sha256": "36d20563f69f1c13729dc646fe9ce454b3d24788b03de1781e0703776ce9a994"
+    },
+    {
+      "bytes": 308,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/requests/39845cd7753010c70a56dc715a1c8b1396e75ae77ff0ca4d0f9694f7fa91a53b.pending.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/requests/39845cd7753010c70a56dc715a1c8b1396e75ae77ff0ca4d0f9694f7fa91a53b.pending.json",
+      "sha256": "fe6e52ce5d9ca47862f26bc59ffd3e3ca5fe85b38053c81b5fbe54c0e88e4473"
+    },
+    {
+      "bytes": 710,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/requests/707f66a5742d424d899d6529a1a92dd780201bae01020f63bd40acd481921237.done.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/requests/707f66a5742d424d899d6529a1a92dd780201bae01020f63bd40acd481921237.done.json",
+      "sha256": "8ee8fbe297d6a9c03c110b73e0f66677a2a2e2a9a6a4d2765ac4815d9293a112"
+    },
+    {
+      "bytes": 290,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/requests/707f66a5742d424d899d6529a1a92dd780201bae01020f63bd40acd481921237.pending.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/requests/707f66a5742d424d899d6529a1a92dd780201bae01020f63bd40acd481921237.pending.json",
+      "sha256": "2957abfbb0bcd12b73fea5ff9131e51db904d8750a2f9166e82f336f5df6337c"
+    },
+    {
+      "bytes": 708,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/requests/8e5cc607bda37dd05a77c5a812fad8e6f657fd6f0598b9207b33dd6c22b8408f.done.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/requests/8e5cc607bda37dd05a77c5a812fad8e6f657fd6f0598b9207b33dd6c22b8408f.done.json",
+      "sha256": "1b2a175a54a9a17a32ba3e5ea4ef7273facd233f16b1bb956120769e0a52c6ec"
+    },
+    {
+      "bytes": 289,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/requests/8e5cc607bda37dd05a77c5a812fad8e6f657fd6f0598b9207b33dd6c22b8408f.pending.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/requests/8e5cc607bda37dd05a77c5a812fad8e6f657fd6f0598b9207b33dd6c22b8408f.pending.json",
+      "sha256": "81ccc9ac266d57835eed9b64ac10f960fb1b36d82517780c5f1a0c6bf322815a"
+    },
+    {
+      "bytes": 709,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/requests/e25d7518d92606cc1bba93906e62caa12e1a9626416f11e210453bf4c35f6ea2.done.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/requests/e25d7518d92606cc1bba93906e62caa12e1a9626416f11e210453bf4c35f6ea2.done.json",
+      "sha256": "7f8fb8dc8b8c6a7c2628d2be4777d9d269abcd6258bc385df33c55c802fd8d50"
+    },
+    {
+      "bytes": 290,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/requests/e25d7518d92606cc1bba93906e62caa12e1a9626416f11e210453bf4c35f6ea2.pending.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/requests/e25d7518d92606cc1bba93906e62caa12e1a9626416f11e210453bf4c35f6ea2.pending.json",
+      "sha256": "e113817560576063ab905be3f6c1017500ac38e5e51d341865bd25ad556dc19e"
+    },
+    {
+      "bytes": 3516,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/requests/e513914ee0862a00c733c730c820443f0cfeecb1993d79d1b594dcc3bb6d3179.done.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/requests/e513914ee0862a00c733c730c820443f0cfeecb1993d79d1b594dcc3bb6d3179.done.json",
+      "sha256": "9b401936e8607504bf0b27ebf794fd63d8dec1aa7968041ef451a9828b33df04"
+    },
+    {
+      "bytes": 391,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/requests/e513914ee0862a00c733c730c820443f0cfeecb1993d79d1b594dcc3bb6d3179.pending.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/requests/e513914ee0862a00c733c730c820443f0cfeecb1993d79d1b594dcc3bb6d3179.pending.json",
+      "sha256": "4fcae17ecc407a8e0f814202ff5cf27f394d6d36d9d4a63fa1bf0f008de67fd8"
+    },
+    {
+      "bytes": 300,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/requests/ed1bf81af2770769b227f9147587bb5a7ea38ce575b13bc3da416e1a544cefd9.done.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/requests/ed1bf81af2770769b227f9147587bb5a7ea38ce575b13bc3da416e1a544cefd9.done.json",
+      "sha256": "61d1648873766a92c74fba523510fe8433294720806f7b471c839c66ba9cebb9"
+    },
+    {
+      "bytes": 391,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/requests/ed1bf81af2770769b227f9147587bb5a7ea38ce575b13bc3da416e1a544cefd9.pending.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/requests/ed1bf81af2770769b227f9147587bb5a7ea38ce575b13bc3da416e1a544cefd9.pending.json",
+      "sha256": "000e065a79a665174ec4f5aced625af51b3616a2dc1f6a8fa14f0aaaeb8c8725"
+    },
+    {
+      "bytes": 631,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-18cbfb249570f999d2b8-store/session.json",
+      "path": "v8/model/probe-18cbfb249570f999d2b8-store/session.json",
+      "sha256": "87e5d8139567a7b8c4013f5fdd1a328dd391abc00aa905043d9baaa8fee9b157"
+    },
+    {
+      "bytes": 1275,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-hot-counters.json",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-hot-counters.json",
+      "sha256": "0c5ff19971280c9d3b9b253e553de16771860110a98bdcf4f0ce93f421d4c295"
+    },
+    {
+      "bytes": 68,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-hot-exit.json",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-hot-exit.json",
+      "sha256": "ecbc80ceb9005899265e3a5f6d1aae5ceb2d11608c81fff1d5ede59533db846b"
+    },
+    {
+      "bytes": 15481,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-hot.jsonl",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-hot.jsonl",
+      "sha256": "bfa74965cb3e9b9b7d99bca41d769299a3c717d9fb3c67985bbfd8fec459a22f"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-hot.stderr.log",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-hot.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3335,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-response.json",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-response.json",
+      "sha256": "730136bf6b3c80ec3d69420b5b42a5c31a5eb51a7883493148a4afb3a1f636c9"
+    },
+    {
+      "bytes": 2782,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-result.json",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-result.json",
+      "sha256": "1e4947371642c7affd8b991237c835c7dcae5d7778f9343c65ae289156b8a609"
+    },
+    {
+      "bytes": 197579,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-store/5b803dad6abdaaf5e732496b85f3c1d90440bf06975375513b0350a16d11ff22.safetensors",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-store/5b803dad6abdaaf5e732496b85f3c1d90440bf06975375513b0350a16d11ff22.safetensors",
+      "sha256": "5b803dad6abdaaf5e732496b85f3c1d90440bf06975375513b0350a16d11ff22"
+    },
+    {
+      "bytes": 898,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-store/7a71025710f8da7f7f41413fcb7c99dbbafb5d11ac8e96e78a050977b40453e8.ref.json",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-store/7a71025710f8da7f7f41413fcb7c99dbbafb5d11ac8e96e78a050977b40453e8.ref.json",
+      "sha256": "2f8b53e15a81e86f1e3d47c935f56afea3070a59660392038e71498b5f2cfdf7"
+    },
+    {
+      "bytes": 388,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-store/9910d0c0e84e390dd7d19d2b5c5d9f84705cfad7eec2defa0efbb013ed3ebab1.ref.json",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-store/9910d0c0e84e390dd7d19d2b5c5d9f84705cfad7eec2defa0efbb013ed3ebab1.ref.json",
+      "sha256": "f62c92dc146f8f236af2c6141f1c5abaa35a8fb943438875d71f26cc373ced56"
+    },
+    {
+      "bytes": 3445,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-store/ae6d40ef77de3be99beab3fe043f5889f2b5e7fd2118f9b870928f104410a083.json",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-store/ae6d40ef77de3be99beab3fe043f5889f2b5e7fd2118f9b870928f104410a083.json",
+      "sha256": "ae6d40ef77de3be99beab3fe043f5889f2b5e7fd2118f9b870928f104410a083"
+    },
+    {
+      "bytes": 7903,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.done.json",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.done.json",
+      "sha256": "b578771a1f51b342e9cef29344a81d32e19fcbdc61de1bd05df1614bc2dec842"
+    },
+    {
+      "bytes": 2644,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.pending.json",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.pending.json",
+      "sha256": "bf040b2ce7fe6acebf10dd56830a5a4d8e29961fea7527c8835f6d59322b26fc"
+    },
+    {
+      "bytes": 708,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-store/requests/8e5cc607bda37dd05a77c5a812fad8e6f657fd6f0598b9207b33dd6c22b8408f.done.json",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-store/requests/8e5cc607bda37dd05a77c5a812fad8e6f657fd6f0598b9207b33dd6c22b8408f.done.json",
+      "sha256": "f92b26fe70251d9610bc1f466eee33fe8850a983f90ca8a8cc492ab57b7dc6e6"
+    },
+    {
+      "bytes": 289,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-store/requests/8e5cc607bda37dd05a77c5a812fad8e6f657fd6f0598b9207b33dd6c22b8408f.pending.json",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-store/requests/8e5cc607bda37dd05a77c5a812fad8e6f657fd6f0598b9207b33dd6c22b8408f.pending.json",
+      "sha256": "0ccfeffa611f0a8b2b6e9141ce3ea65b7f5bcf2585e7e427d9ea590d98e844e2"
+    },
+    {
+      "bytes": 709,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-store/requests/e25d7518d92606cc1bba93906e62caa12e1a9626416f11e210453bf4c35f6ea2.done.json",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-store/requests/e25d7518d92606cc1bba93906e62caa12e1a9626416f11e210453bf4c35f6ea2.done.json",
+      "sha256": "baf6335a1332add90d8e5f3f80e9c1616673cc721502ca68483b65dab6b884d6"
+    },
+    {
+      "bytes": 290,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-store/requests/e25d7518d92606cc1bba93906e62caa12e1a9626416f11e210453bf4c35f6ea2.pending.json",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-store/requests/e25d7518d92606cc1bba93906e62caa12e1a9626416f11e210453bf4c35f6ea2.pending.json",
+      "sha256": "788f3bc1412e6efc72c20ce69e05d74a55a08a0fd89c146d608753946368c349"
+    },
+    {
+      "bytes": 3517,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-store/requests/e513914ee0862a00c733c730c820443f0cfeecb1993d79d1b594dcc3bb6d3179.done.json",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-store/requests/e513914ee0862a00c733c730c820443f0cfeecb1993d79d1b594dcc3bb6d3179.done.json",
+      "sha256": "77681b25cd5817631dcc962492cfbd21ccdf75dda484b9d2eb70743a8fb20f30"
+    },
+    {
+      "bytes": 393,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-store/requests/e513914ee0862a00c733c730c820443f0cfeecb1993d79d1b594dcc3bb6d3179.pending.json",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-store/requests/e513914ee0862a00c733c730c820443f0cfeecb1993d79d1b594dcc3bb6d3179.pending.json",
+      "sha256": "aed1ab9886b46e661d82e41e9791adc6fef9f01f78942dcb4d136a1808093a97"
+    },
+    {
+      "bytes": 631,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe-a286791eb5fbd4d4c5ec-store/session.json",
+      "path": "v8/model/probe-a286791eb5fbd4d4c5ec-store/session.json",
+      "sha256": "1ceb30c312b0c5e71081cfe6933a5eec1fce14bc1f365fa13c0ca673a9243729"
+    },
+    {
+      "bytes": 2782,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/probe_recover-18cbfb249570f999d2b8-result.json",
+      "path": "v8/model/probe_recover-18cbfb249570f999d2b8-result.json",
+      "sha256": "45d91adc357bb8ec303833ee025716b5f955681ff07c695204e7ab6bb47fd52d"
+    },
+    {
+      "bytes": 971,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/train-result.json",
+      "path": "v8/model/train-result.json",
+      "sha256": "cd0e8ffb0ac8cd97295075494103f9eaff302216e2e9b2360555fbd5856a0df0"
+    },
+    {
+      "bytes": 5174,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/training/execution-plan.json",
+      "path": "v8/model/training/execution-plan.json",
+      "sha256": "ea8bbc6f9b9f1d1f938edee6504b9e76bd57b1c28e93f6b9adf2df86c9d5539a"
+    },
+    {
+      "bytes": 2812,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/training/supervisor.json",
+      "path": "v8/model/training/supervisor.json",
+      "sha256": "f4ceba2b06f3fe5cb4a22671b92066c087d35c7821f424fed7cf2caadb030cdd"
+    },
+    {
+      "bytes": 4130,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/training/worker/actual-receipt.json",
+      "path": "v8/model/training/worker/actual-receipt.json",
+      "sha256": "01c46e190e01171c3ff0883b90da1fe0cf37af9a952426952387d30a1ffedad4"
+    },
+    {
+      "bytes": 933544,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/training/worker/artifact.safetensors",
+      "path": "v8/model/training/worker/artifact.safetensors",
+      "sha256": "9ed906784ad969209386762f514ba2d209899c7180076d52306c268b7587e64d"
+    },
+    {
+      "bytes": 1812,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/training/worker/cost-events.jsonl",
+      "path": "v8/model/training/worker/cost-events.jsonl",
+      "sha256": "f040e939b3b880efaa2f1e2cf32aed153a4532dde3dc200bc33904de9e66f11d"
+    },
+    {
+      "bytes": 442,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/training/worker/parent-material.json",
+      "path": "v8/model/training/worker/parent-material.json",
+      "sha256": "ac2e2bae800ae786fafc0b20356eafbadffefcdfeee669437ebfde09ef740aa0"
+    },
+    {
+      "bytes": 0,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/training/worker/process.log",
+      "path": "v8/model/training/worker/process.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2812,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/training/worker/supervisor.json",
+      "path": "v8/model/training/worker/supervisor.json",
+      "sha256": "f4ceba2b06f3fe5cb4a22671b92066c087d35c7821f424fed7cf2caadb030cdd"
+    },
+    {
+      "bytes": 56809,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/training/worker/target-contract.json",
+      "path": "v8/model/training/worker/target-contract.json",
+      "sha256": "69832b9f6230b6a08ee03b8f829b76ec539956f6214ef693f3b35b01c8ba8d76"
+    },
+    {
+      "bytes": 20962,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/training/worker/wrapped-adapter.json",
+      "path": "v8/model/training/worker/wrapped-adapter.json",
+      "sha256": "b2e9a2411ad67e6823d79f3c981d7724ebda2def41cfb10d20b7ed89f60edcf2"
+    },
+    {
+      "bytes": 809,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/training-command.json",
+      "path": "v8/model/training-command.json",
+      "sha256": "7299b5e47b6efa4c658a2fdf7185d7d38dfb44b6ffe12de1857e19866a29032d"
+    },
+    {
+      "bytes": 489,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/model/training.log",
+      "path": "v8/model/training.log",
+      "sha256": "04189556a1fc61a932ac4031f42c5f7dec2622650995b0f7d671355bf3b946df"
+    },
+    {
+      "bytes": 5501,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/tmp/.tmpMh8jdX/current.json",
+      "path": "v8/owner-originals/current.json",
+      "sha256": "0b7696762734cda9d8a49cd24c24f87936111c2cdca65396b10dd8e1988df638"
+    },
+    {
+      "bytes": 23761,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/tmp/.tmpMh8jdX/old-journal",
+      "path": "v8/owner-originals/old-journal",
+      "sha256": "b921c6bf4c4c591f37ec6bfbad514913f8b57c326cd6f219ded0f532ea14770f"
+    },
+    {
+      "bytes": 672,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/tmp/.tmpMh8jdX/old-witness",
+      "path": "v8/owner-originals/old-witness",
+      "sha256": "7f88b896ea996f0f92f70e0ac3fd9ed58ef50b21f0d9992cce6f9542361b4022"
+    },
+    {
+      "bytes": 23709,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/tmp/.tmpMh8jdX/target-journal",
+      "path": "v8/owner-originals/target-journal",
+      "sha256": "b518dd5b6669af44e976fa41ae24169474e80688e564c7e111e20cc6416f0e82"
+    },
+    {
+      "bytes": 672,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/tmp/.tmpMh8jdX/target-witness",
+      "path": "v8/owner-originals/target-witness",
+      "sha256": "c4724a710190823a5991c55e6192a1c48b1f4e561bc02e6d129915d01c674295"
+    },
+    {
+      "bytes": 4515,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/tmp/.tmpMh8jdX/learning-checkpoint",
+      "path": "v8/owner-originals/learning-checkpoint",
+      "sha256": "f45a1d7904efd203b83a25443df4f01f4fdc17ca310a1450231d71e5a0827fec"
+    },
+    {
+      "bytes": 181,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/tmp/.tmpMh8jdX/final-use-frontier.json",
+      "path": "v8/owner-originals/final-use-frontier.json",
+      "sha256": "c2c0320f568d9efbe25dd82161bb528c7ffb39e06f8450eaaefce7b7f02cf018"
+    },
+    {
+      "bytes": 40,
+      "original": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/native-v8/tmp/.tmpMh8jdX/final-use/authority.claims",
+      "path": "v8/owner-originals/final-use/authority.claims",
+      "sha256": "c456895f0522b22e5e47babc667d2a6da8424d52ea0f5e6f7179aabd7f65a804"
+    }
+  ],
+  "private_source_exported": false,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "runs": [
+    {
+      "execution_result": "FAIL",
+      "generation_owner_not_created": true,
+      "job": "1a1bc8d9dff-138b0-333",
+      "model_test_started": false,
+      "operation": "learning-d9fb-native-v3",
+      "post_run_observation_unix_ns": 1794167555964104776,
+      "run": "v3",
+      "source": "4f559bfe1ff226251f42f2d2f1fbc87f615bcb11"
+    },
+    {
+      "claim_bytes": 0,
+      "current_prepared": true,
+      "current_published": false,
+      "current_sha256": "b254110591b0c0fb7379b7acfe71944a93d4ffd5de7ee6197fc8c27170bbb373",
+      "execution_result": "FAIL",
+      "job": "1a1bc8ebbdd-138b0-33c",
+      "model_test_started": true,
+      "operation": "learning-d9fb-native-v4",
+      "post_run_observation_unix_ns": 1794167555964420714,
+      "run": "v4",
+      "source": "4f559bfe1ff226251f42f2d2f1fbc87f615bcb11"
+    },
+    {
+      "claim_bytes": 40,
+      "current_prepared": false,
+      "current_published": true,
+      "current_sha256": "2fbbf4799c664bfe8c7aae26c28c77e965fa50f3565a0ba0e297173136edbba6",
+      "execution_result": "FAIL",
+      "job": "1a1bc96b75d-138b0-36e",
+      "model_test_started": true,
+      "operation": "learning-d9fb-native-v5",
+      "post_run_observation_unix_ns": 1794167555968818865,
+      "run": "v5",
+      "source": "1571b5c8ac809958af41a67008c32e481e7efc4e"
+    },
+    {
+      "claim_bytes": 40,
+      "current_prepared": false,
+      "current_published": true,
+      "current_sha256": "be7d5d03cbdc37ae35750020eb588130b1825174743b6384e50275ac0d02d31c",
+      "execution_result": "FAIL",
+      "job": "1a1bca10fe4-138b0-3ae",
+      "model_test_started": true,
+      "operation": "learning-d9fb-native-v6",
+      "post_run_observation_unix_ns": 1794167555973458087,
+      "run": "v6",
+      "source": "b3ed9533aa4018fc05c9eed5bfe98a8a7e64644b"
+    },
+    {
+      "claim_bytes": 40,
+      "current_prepared": false,
+      "current_published": true,
+      "current_sha256": "63b3b3bfaa24cbac9f5cb37f88f8dd9ca7cf782e4c8528917bc62f1cd0f20551",
+      "execution_result": "FAIL",
+      "job": "1a1bcaa0ec4-138b0-3e3",
+      "model_test_started": true,
+      "operation": "learning-d9fb-native-v7",
+      "post_run_observation_unix_ns": 1794167555978383919,
+      "run": "v7",
+      "source": "681642eb9bb724d775d122b2fe6013d66b29fa1b"
+    },
+    {
+      "claim_bytes": 40,
+      "current_prepared": false,
+      "current_published": true,
+      "current_sha256": "0b7696762734cda9d8a49cd24c24f87936111c2cdca65396b10dd8e1988df638",
+      "execution_result": "PASS_ACTUAL_NATIVE_MODEL_ITERATION",
+      "job": "1a1bcaf717a-138b0-409",
+      "model_test_started": true,
+      "operation": "learning-d9fb-native-v8",
+      "post_run_observation_unix_ns": 1794167555983044310,
+      "run": "v8",
+      "source": "27849cbdcfc0d4afc69764d6c1742af22c41c293"
+    }
+  ],
+  "schema": "hepta-real-native-originals-export-v1"
+}

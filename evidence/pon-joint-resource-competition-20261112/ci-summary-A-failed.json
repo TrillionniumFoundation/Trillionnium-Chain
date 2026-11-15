@@ -1,0 +1,31 @@
+{
+  "all_expected_outcomes_observed": false,
+  "complete": true,
+  "controller_error": null,
+  "controller_sha256": "c7e211a71620ce161ce53a29f468a3b9796eb58ef18714192ee31ffcd9a0612c",
+  "ended_utc": "2026-11-12T07:58:59.110027+00:00",
+  "expected_head": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "not_observed": [],
+  "observed_commands": 12,
+  "planned_commands": 12,
+  "qualification": "HOLD_NO_GO",
+  "records": [
+    "source-before/record.json",
+    "preflight-audit/record.json",
+    "ci-contract-negatives/record.json",
+    "source-integrity-negatives/record.json",
+    "pq-corpus-negatives/record.json",
+    "ci-contract-current/record.json",
+    "pq-corpus-current/record.json",
+    "repository-and-markdown-links/record.json",
+    "distributed-source-inventory/record.json",
+    "joint-qualification-current-hold/record.json",
+    "joint-unproved-qualification-refusal/record.json",
+    "source-after/record.json"
+  ],
+  "release_ready": false,
+  "schema": "trnm-daa-external-ci-summary-v1",
+  "source_after_passed": true,
+  "source_before_passed": true,
+  "started_utc": "2026-11-12T07:52:54.835846+00:00"
+}

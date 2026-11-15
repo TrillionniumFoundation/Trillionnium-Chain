@@ -1,0 +1,148 @@
+{
+  "command_count": 27,
+  "disk_free_bytes_after": 21773021184,
+  "elapsed_wall_seconds": 1093.893,
+  "environment_overrides": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_HOME": "/home/qian-qi/work/chain-daa-native-support-600e/cargo-home",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-daa-native-support-600e/target",
+    "CARGO_TERM_COLOR": "never",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_DIR": "/home/qian-qi/work/chain-daa-native-support-600e/runner-temp/trnm-pq-provider-3.5.9.82anCZAZ/install",
+    "OPENSSL_MODULES": "/home/qian-qi/work/chain-daa-native-support-600e/runner-temp/trnm-pq-provider-3.5.9.82anCZAZ/install/lib/ossl-modules",
+    "OPENSSL_STATIC": "1",
+    "PATH": "/home/qian-qi/.cargo/bin:/home/qian-qi/.elan/bin:/home/qian-qi/.local/bin:/home/qian-qi/.elan/bin:/home/qian-qi/.local/bin:/home/qian-qi/.elan/bin:/home/qian-qi/.cargo/bin:/home/qian-qi/.local/bin:/opt/gradle/current/bin:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:/opt/android-sdk/build-tools/35.0.1:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "RUSTUP_TOOLCHAIN": "1.95.0",
+    "RUST_TEST_THREADS": "1",
+    "TRNM_PQ_OPENSSL": "/home/qian-qi/work/chain-daa-native-support-600e/runner-temp/trnm-pq-provider-3.5.9.82anCZAZ/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "b9333d43ccbc8db68965d6c4540b3a6240a5d74f124194a3bc6add7e75eabb77",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "evidence_directory": "/home/qian-qi/work/chain-daa-A-43e5c9d6-native-600e",
+  "finished_unix": 1794471612.808366,
+  "gates": {
+    "format": true,
+    "four_full_readers_and_controls": true,
+    "locked_offline_metadata": true,
+    "native_four_tests": true,
+    "pinned_provider": true,
+    "strict_clippy": true
+  },
+  "lockfiles_after": [
+    {
+      "bytes": 40332,
+      "path": "/home/qian-qi/work/chain-daa-resource-competition-20261112-600e/trillionnium/Cargo.lock",
+      "sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c"
+    },
+    {
+      "bytes": 34066,
+      "path": "/home/qian-qi/work/chain-daa-resource-competition-20261112-600e/tests/fuzz/Cargo.lock",
+      "sha256": "93cdc50ae55389e4f90f919ab7c29d3c4c3a7ed5567e80a8436b9a7c2c4357ab"
+    }
+  ],
+  "lockfiles_before": [
+    {
+      "bytes": 40332,
+      "path": "/home/qian-qi/work/chain-daa-resource-competition-20261112-600e/trillionnium/Cargo.lock",
+      "sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c"
+    },
+    {
+      "bytes": 34066,
+      "path": "/home/qian-qi/work/chain-daa-resource-competition-20261112-600e/tests/fuzz/Cargo.lock",
+      "sha256": "93cdc50ae55389e4f90f919ab7c29d3c4c3a7ed5567e80a8436b9a7c2c4357ab"
+    }
+  ],
+  "lockfiles_unchanged": true,
+  "metadata_final": [
+    {
+      "exit_code": 0,
+      "name": "metadata-default-qualified"
+    },
+    {
+      "exit_code": 0,
+      "name": "metadata-all-features-initial"
+    },
+    {
+      "exit_code": 0,
+      "name": "metadata-fuzz-initial"
+    }
+  ],
+  "nonzero_observations": [
+    {
+      "exit_code": 101,
+      "name": "metadata-default-initial"
+    }
+  ],
+  "physical_or_quantum_attack_qualification": false,
+  "production_activation": false,
+  "provider_inputs_unchanged": true,
+  "qualification_commands_locked_offline": true,
+  "reader_final": [
+    {
+      "exit_code": 0,
+      "name": "joint-daa-pnh1-authenticated-reader"
+    },
+    {
+      "exit_code": 0,
+      "name": "joint-daa-pnh1-authenticated-reader-controls"
+    },
+    {
+      "exit_code": 0,
+      "name": "joint-daa-pgh2-growth-reader"
+    },
+    {
+      "exit_code": 0,
+      "name": "joint-daa-pgh2-growth-reader-controls"
+    },
+    {
+      "exit_code": 0,
+      "name": "monotone-daa-pnh1-authenticated-reader"
+    },
+    {
+      "exit_code": 0,
+      "name": "monotone-daa-pnh1-authenticated-reader-controls"
+    },
+    {
+      "exit_code": 0,
+      "name": "monotone-daa-pgh2-growth-reader"
+    },
+    {
+      "exit_code": 0,
+      "name": "monotone-daa-pgh2-growth-reader-controls"
+    }
+  ],
+  "reports": [
+    {
+      "bytes": 272897,
+      "path": "/home/qian-qi/work/chain-daa-A-43e5c9d6-native-600e/joint-daa/pnh1-authenticated/joint-daa.json",
+      "sha256": "664ef8549b32794aac16ea884860f1d447e59cae779c0f33dc370ffde13f175c"
+    },
+    {
+      "bytes": 281600,
+      "path": "/home/qian-qi/work/chain-daa-A-43e5c9d6-native-600e/joint-daa/pgh2-growth/joint-daa.json",
+      "sha256": "d0e548d0a685a6da9e022a6d94576168d959a45c70e45d3c8590d71eca674dda"
+    },
+    {
+      "bytes": 272898,
+      "path": "/home/qian-qi/work/chain-daa-A-43e5c9d6-native-600e/monotone-daa/pnh1-authenticated/monotone-daa.json",
+      "sha256": "714d98b9635b1b1bf86526ce910576cc6e7df9a68d2a6f682b962ffe7120754a"
+    },
+    {
+      "bytes": 281589,
+      "path": "/home/qian-qi/work/chain-daa-A-43e5c9d6-native-600e/monotone-daa/pgh2-growth/monotone-daa.json",
+      "sha256": "9ab95847387344f5158c9f1545dfd6bd9ab74ab07b37f50b4ae418df53bb2497"
+    }
+  ],
+  "result": "PASS",
+  "root": "/home/qian-qi/work/chain-daa-resource-competition-20261112-600e",
+  "schema": "trnm-native-daa-validation-v1",
+  "source_after_verified": true,
+  "source_commit": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "source_mutations_allowed": false,
+  "source_tree": "beac87c2431d149dbd6d2de4a2e1eaf0617520cc",
+  "started_unix": 1794470518.915231,
+  "support_directory": "/home/qian-qi/work/chain-daa-native-support-600e"
+}

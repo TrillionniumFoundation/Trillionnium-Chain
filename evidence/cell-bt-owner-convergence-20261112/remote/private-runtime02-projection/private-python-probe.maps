@@ -1,0 +1,60 @@
+001ff000-00200000 rw-p 00000000 103:02 48413563                          /home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12
+00200000-007c7000 r--p 00001000 103:02 48413563                          /home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12
+007c8000-011d2000 r-xp 005c8000 103:02 48413563                          /home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12
+011d2000-01253000 r--p 00fd1000 103:02 48413563                          /home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12
+01253000-013d9000 rw-p 01051000 103:02 48413563                          /home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12
+013d9000-013e4000 rw-p 00000000 00:00 0 
+01400000-01ce3000 r-xp 011d7000 103:02 48413563                          /home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12
+21ac3000-22bd3000 rw-p 00000000 00:00 0                                  [heap]
+75f6efd76000-75f6efe76000 rw-p 00000000 00:00 0 
+75f6f0276000-75f6f0a76000 rw-p 00000000 00:00 0 
+75f6f0b00000-75f6f1c00000 rw-p 00000000 00:00 0 
+75f6f1c00000-75f6f2177000 r--p 00000000 103:02 82184256                  /usr/lib/locale/locale-archive
+75f6f2200000-75f6f2228000 r--p 00000000 103:02 82184768                  /usr/lib/x86_64-linux-gnu/libc.so.6
+75f6f2228000-75f6f23c0000 r-xp 00028000 103:02 82184768                  /usr/lib/x86_64-linux-gnu/libc.so.6
+75f6f23c0000-75f6f240e000 r--p 001c0000 103:02 82184768                  /usr/lib/x86_64-linux-gnu/libc.so.6
+75f6f240e000-75f6f2412000 r--p 0020e000 103:02 82184768                  /usr/lib/x86_64-linux-gnu/libc.so.6
+75f6f2412000-75f6f2414000 rw-p 00212000 103:02 82184768                  /usr/lib/x86_64-linux-gnu/libc.so.6
+75f6f2414000-75f6f2421000 rw-p 00000000 00:00 0 
+75f6f248a000-75f6f24ec000 rw-p 00000000 00:00 0 
+75f6f24ec000-75f6f2547000 r--p 00000000 103:02 82187375                  /usr/lib/locale/C.utf8/LC_CTYPE
+75f6f2547000-75f6f254c000 rw-p 00000000 00:00 0 
+75f6f254c000-75f6f254d000 r--p 00000000 103:02 82184843                  /usr/lib/x86_64-linux-gnu/librt.so.1
+75f6f254d000-75f6f254e000 r-xp 00001000 103:02 82184843                  /usr/lib/x86_64-linux-gnu/librt.so.1
+75f6f254e000-75f6f254f000 r--p 00002000 103:02 82184843                  /usr/lib/x86_64-linux-gnu/librt.so.1
+75f6f254f000-75f6f2550000 r--p 00002000 103:02 82184843                  /usr/lib/x86_64-linux-gnu/librt.so.1
+75f6f2550000-75f6f2551000 rw-p 00003000 103:02 82184843                  /usr/lib/x86_64-linux-gnu/librt.so.1
+75f6f2551000-75f6f2563000 r--p 00000000 103:02 82184832                  /usr/lib/x86_64-linux-gnu/libm.so.6
+75f6f2563000-75f6f2603000 r-xp 00012000 103:02 82184832                  /usr/lib/x86_64-linux-gnu/libm.so.6
+75f6f2603000-75f6f2675000 r--p 000b2000 103:02 82184832                  /usr/lib/x86_64-linux-gnu/libm.so.6
+75f6f2675000-75f6f2676000 r--p 00123000 103:02 82184832                  /usr/lib/x86_64-linux-gnu/libm.so.6
+75f6f2676000-75f6f2677000 rw-p 00124000 103:02 82184832                  /usr/lib/x86_64-linux-gnu/libm.so.6
+75f6f2677000-75f6f2678000 r--p 00000000 103:02 82185176                  /usr/lib/x86_64-linux-gnu/libutil.so.1
+75f6f2678000-75f6f2679000 r-xp 00001000 103:02 82185176                  /usr/lib/x86_64-linux-gnu/libutil.so.1
+75f6f2679000-75f6f267a000 r--p 00002000 103:02 82185176                  /usr/lib/x86_64-linux-gnu/libutil.so.1
+75f6f267a000-75f6f267b000 r--p 00002000 103:02 82185176                  /usr/lib/x86_64-linux-gnu/libutil.so.1
+75f6f267b000-75f6f267c000 rw-p 00003000 103:02 82185176                  /usr/lib/x86_64-linux-gnu/libutil.so.1
+75f6f267c000-75f6f267d000 r--p 00000000 103:02 82184831                  /usr/lib/x86_64-linux-gnu/libdl.so.2
+75f6f267d000-75f6f267e000 r-xp 00001000 103:02 82184831                  /usr/lib/x86_64-linux-gnu/libdl.so.2
+75f6f267e000-75f6f267f000 r--p 00002000 103:02 82184831                  /usr/lib/x86_64-linux-gnu/libdl.so.2
+75f6f267f000-75f6f2680000 r--p 00002000 103:02 82184831                  /usr/lib/x86_64-linux-gnu/libdl.so.2
+75f6f2680000-75f6f2681000 rw-p 00003000 103:02 82184831                  /usr/lib/x86_64-linux-gnu/libdl.so.2
+75f6f2681000-75f6f2682000 r--p 00000000 103:02 82184841                  /usr/lib/x86_64-linux-gnu/libpthread.so.0
+75f6f2682000-75f6f2683000 r-xp 00001000 103:02 82184841                  /usr/lib/x86_64-linux-gnu/libpthread.so.0
+75f6f2683000-75f6f2684000 r--p 00002000 103:02 82184841                  /usr/lib/x86_64-linux-gnu/libpthread.so.0
+75f6f2684000-75f6f2685000 r--p 00002000 103:02 82184841                  /usr/lib/x86_64-linux-gnu/libpthread.so.0
+75f6f2685000-75f6f2686000 rw-p 00003000 103:02 82184841                  /usr/lib/x86_64-linux-gnu/libpthread.so.0
+75f6f268d000-75f6f2691000 rw-p 00000000 00:00 0 
+75f6f2691000-75f6f2698000 r--s 00000000 103:02 82184755                  /usr/lib/x86_64-linux-gnu/gconv/gconv-modules.cache
+75f6f2698000-75f6f269a000 rw-p 00000000 00:00 0 
+75f6f269a000-75f6f269e000 r--p 00000000 00:00 0                          [vvar]
+75f6f269e000-75f6f26a0000 r--p 00000000 00:00 0                          [vvar_vclock]
+75f6f26a0000-75f6f26a2000 r-xp 00000000 00:00 0                          [vdso]
+75f6f26a2000-75f6f26a3000 r--p 00000000 103:02 82184756                  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+75f6f26a3000-75f6f26d2000 r-xp 00001000 103:02 82184756                  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+75f6f26d2000-75f6f26dd000 r--p 00030000 103:02 82184756                  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+75f6f26dd000-75f6f26df000 r--p 0003b000 103:02 82184756                  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+75f6f26df000-75f6f26e0000 rw-p 0003d000 103:02 82184756                  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+75f6f26e0000-75f6f26e1000 rw-p 00000000 00:00 0 
+7fff93e56000-7fff93e78000 rw-p 00000000 00:00 0                          [stack]
+ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]

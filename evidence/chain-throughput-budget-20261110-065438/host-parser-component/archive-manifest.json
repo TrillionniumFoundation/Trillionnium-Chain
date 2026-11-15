@@ -1,0 +1,113 @@
+{
+  "archive": "component-packet.tar.xz",
+  "sha256": "0ce3b1ae27c3b50f45189db872c2786862665b5bef32a893dbd7e031a250b7d0",
+  "members": [
+    {
+      "path": "README.md",
+      "bytes": 9025,
+      "sha256": "95b07e3a4e0c06dfafc3770d19fbfe1b2853a64153a5992a87d7b726015967fd"
+    },
+    {
+      "path": "SHA256SUMS",
+      "bytes": 1691,
+      "sha256": "27141f9f83308850c6f2c8a9d37c77972f84ab81cebaeb654d05e4cf4abc93c0"
+    },
+    {
+      "path": "binary-retention.json",
+      "bytes": 496,
+      "sha256": "553ed4ce0681463e6073bbe4fc9ad76f883d424c0c2cf420ac1ee267778e4cc0"
+    },
+    {
+      "path": "compile.process.json",
+      "bytes": 700,
+      "sha256": "8cf74411c3cddbee498f415045439ea63caeb05227dabb1f9228751536d6a299"
+    },
+    {
+      "path": "compile.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "compile.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "component.rs",
+      "bytes": 6112,
+      "sha256": "6b20b99f2f5030ba3ad20a30becfda113a863b360676fba0e2ff6ee4c912c3b9"
+    },
+    {
+      "path": "component.xz",
+      "bytes": 763072,
+      "sha256": "07cf928e885a3a519d3e05f439582ff9adf41ae4de296fc7f5a1861a562aac20"
+    },
+    {
+      "path": "equivalence-variants.json",
+      "bytes": 3181,
+      "sha256": "86a1889da2261469e531ff71943dd6ba7db4be338c95f2631538c4f5cddc9f1d"
+    },
+    {
+      "path": "measure-original.py",
+      "bytes": 9344,
+      "sha256": "cec43eb7c8748254370b3e6cea6022cb8e63bae956e865d19427b2dbe3b1e7d8"
+    },
+    {
+      "path": "original-observation-excerpt.json",
+      "bytes": 94422,
+      "sha256": "b0e8f76f0078a8c2a5f8454a78bd06b2867fc9538b02cef67608bfa0921adfd9"
+    },
+    {
+      "path": "report.json",
+      "bytes": 3648,
+      "sha256": "24a1e471af674738106a388380c8c0ba726f7d78018619e85f45200ea097eb6b"
+    },
+    {
+      "path": "reproduce.py",
+      "bytes": 1590,
+      "sha256": "8fec3f7c22b8a1f5f0c1c8b22b070ddf791eac9625b58e549aec3b7d8dd374cf"
+    },
+    {
+      "path": "run.process.json",
+      "bytes": 333,
+      "sha256": "4bb1afc9cd90ff2b56ce7b80b78c106dd8153c324be418bc89c63a2e31a9fc58"
+    },
+    {
+      "path": "run.stderr",
+      "bytes": 89,
+      "sha256": "14af5524d756e6413575dcb17be2d2f0848d0fcf25d44fe58624cd627ca32d1d"
+    },
+    {
+      "path": "run.stdout",
+      "bytes": 3630,
+      "sha256": "0d387bad2721c2d71aab4573d4ca54e38e980e626a44d5690052058ce92fe2d6"
+    },
+    {
+      "path": "rustc-version.process.json",
+      "bytes": 315,
+      "sha256": "4b2d11c2918e665f29125853cf50eb92058f7189b6000538c5283a85e0fcb81f"
+    },
+    {
+      "path": "rustc-version.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "rustc-version.stdout",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "path": "source/host_kernel_parent.rs",
+      "bytes": 53670,
+      "sha256": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d"
+    },
+    {
+      "path": "source-binding.json",
+      "bytes": 749,
+      "sha256": "039bd36c2770392d6e8fdf0f41668368ff20107b618059e836ce55d5e8c94234"
+    }
+  ],
+  "roundtrip_all_members_verified": true,
+  "native_execution_performed_by_packaging": false
+}

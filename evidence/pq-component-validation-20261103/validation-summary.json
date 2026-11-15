@@ -1,0 +1,58 @@
+{
+  "schema": "trnm-pq-component-validation-summary-v1",
+  "date": "2026-11-03",
+  "production_change": "45962558a7133375b16c0ac2600f2edb4a115585",
+  "proof_scope_change": "1c18878c42727e5261c7706d996fbfb672a8dc3c",
+  "tested_commit": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+  "tested_tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+  "tracked_entries": 7536,
+  "tracked_bytes": 872317779,
+  "final_job_id": "1a1a2e9ee80-96a-7564",
+  "final_job_exit_code": 0,
+  "final_job_timed_out": false,
+  "final_job_cancelled": false,
+  "final_job_output_complete": true,
+  "final_witness_scope": {
+    "passed": 45,
+    "failed": 0,
+    "ignored": 0,
+    "filtered_out": 922,
+    "child_harness_entries": 1,
+    "passed_excluding_child_harness": 44,
+    "original_required_controls_present": 38,
+    "added_controls_passed": 2,
+    "full_node_library": false,
+    "full_hosted_matrix": false
+  },
+  "strict_clippy_exit_code": 0,
+  "proof_scope_checks": {
+    "claim_guard_tests": 22,
+    "source_corpus_tests": 34,
+    "qualification_guard_result": "HOLD / UNQUALIFIED"
+  },
+  "retained_original_hosted_run": {
+    "id": 41691371037,
+    "lanes": 4,
+    "overall": "failure",
+    "per_lane": {
+      "control_passed": 42,
+      "control_failed": 1,
+      "node_passed": 940,
+      "node_failed": 1,
+      "node_ignored": 23,
+      "build_exit_code": 0,
+      "strict_clippy_exit_code": 0
+    }
+  },
+  "original_business_budgets_changed": false,
+  "whole_chain_quantum_security_qualified": false,
+  "pq128_qualified": false,
+  "production_activation": false,
+  "evidence_publication_parent": "af570eaef44870ba3ec1f3d5be2cbdde2981931d",
+  "later_preserved_commits": [
+    "b28098c092dca72165c0d26054fce95a8636d777",
+    "af570eaef44870ba3ec1f3d5be2cbdde2981931d"
+  ],
+  "final_native_result_applies_to_later_parent": false,
+  "publication_parent_preflight_exit_code": 0
+}

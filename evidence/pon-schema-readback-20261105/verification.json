@@ -1,0 +1,43 @@
+{
+  "source_base": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+  "inputs_sha256": {
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs": "8e76975d35f8b11ba0d803d6675894f5fdc429255b4d398fce151158709bc160",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs": "23a20d804d95432338b660255121ce886753b24986f5e690c6ab7dfadc32fe3c",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "config/pon/pq-cross-branch-corpus-v1.json": "05d75cd68c4cfec9fd010fcc4021ac4fec5627f2fcd7c04c97132d0db43d8d44"
+  },
+  "native_features": [],
+  "native_profile": "unchanged Cargo test per-package profiles, rustc 1.95.0",
+  "readback": {
+    "passed": 25,
+    "failed": 0,
+    "ignored": 0,
+    "included_in_authenticated": true
+  },
+  "authenticated": {
+    "passed": 113,
+    "failed": 0,
+    "ignored": 2
+  },
+  "public_v3": {
+    "passed": 202,
+    "failed": 0,
+    "ignored": 1
+  },
+  "distinct_native_passes": 315,
+  "clippy": "cargo clippy --manifest-path trillionnium/Cargo.toml --locked --workspace --all-targets --all-features -- -D warnings: PASS",
+  "clippy_openssl": "3.5.7; typecheck only, no pinned PQ runtime qualification",
+  "source_negative_tests": 43,
+  "source_negative_result": "PASS",
+  "cargo_graph": {
+    "workspace_members": 26,
+    "resolved_packages": 180,
+    "locked": true,
+    "all_features": true
+  },
+  "format": "PASS",
+  "source_pins": 487,
+  "original_business_gate_closed": false,
+  "production_qualified": false
+}

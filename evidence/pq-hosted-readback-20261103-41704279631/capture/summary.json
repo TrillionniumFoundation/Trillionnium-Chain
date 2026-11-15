@@ -1,0 +1,219 @@
+[
+  {
+    "artifact_id": 13267292698,
+    "bytes": 286963,
+    "sha256": "29fd8c8d770c6cf7b6dc2742a9c0c118ffc6479714e3a16bcd220c33c5a7d13d",
+    "controls": {
+      "total": 43,
+      "passed": 42,
+      "failed": 1,
+      "all_source_and_log_hashes_verified": true,
+      "failures": [
+        {
+          "record": "native-11.json",
+          "argv": [
+            "cargo",
+            "+1.95.0",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "--all-features",
+            "store::pq_rollback_witness::tests::guarded_charge_pending_revocation_survive_service_cold_restart",
+            "--",
+            "--exact",
+            "--show-output",
+            "--test-threads=1"
+          ],
+          "exit_code": 101,
+          "error_lines": [
+            "test store::pq_rollback_witness::tests::guarded_charge_pending_revocation_survive_service_cold_restart ... FAILED",
+            "thread 'store::pq_rollback_witness::tests::guarded_charge_pending_revocation_survive_service_cold_restart' (18414) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs:225:14:",
+            "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PQ_WITNESS_DEADLINE\", source: None, request_history_budget: false }",
+            "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 966 filtered out; finished in 0.90s"
+          ],
+          "source": {
+            "base": null,
+            "candidate": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+            "tested_tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 872317779,
+            "tracked_entries": 7536,
+            "tracked_worktree_verified": true
+          }
+        }
+      ]
+    },
+    "full_records": {
+      "build.json": {
+        "exit_code": 0,
+        "source": {
+          "base": null,
+          "candidate": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+          "tested_tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 872317779,
+          "tracked_entries": 7536,
+          "tracked_worktree_verified": true
+        },
+        "summaries": [],
+        "failed_tests": []
+      }
+    }
+  },
+  {
+    "artifact_id": 13270005067,
+    "bytes": 1051309,
+    "sha256": "c5a29e38f1888d20355a03ec2f82d75ae7f0bf437ecedf8a063b838207cb13c2",
+    "controls": {
+      "total": 43,
+      "passed": 43,
+      "failed": 0,
+      "all_source_and_log_hashes_verified": true,
+      "failures": []
+    },
+    "full_records": {
+      "build.json": {
+        "exit_code": 0,
+        "source": {
+          "base": null,
+          "candidate": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+          "tested_tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 872317779,
+          "tracked_entries": 7536,
+          "tracked_worktree_verified": true
+        },
+        "summaries": [],
+        "failed_tests": []
+      },
+      "clippy.json": {
+        "exit_code": 0,
+        "source": {
+          "base": null,
+          "candidate": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+          "tested_tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 872317779,
+          "tracked_entries": 7536,
+          "tracked_worktree_verified": true
+        },
+        "summaries": [],
+        "failed_tests": []
+      },
+      "node-lib.json": {
+        "exit_code": 0,
+        "source": {
+          "base": null,
+          "candidate": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+          "tested_tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 872317779,
+          "tracked_entries": 7536,
+          "tracked_worktree_verified": true
+        },
+        "summaries": [
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 966 filtered out; finished in 0.00s",
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 966 filtered out; finished in 0.00s",
+          "test result: ok. 944 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1181.45s"
+        ],
+        "failed_tests": []
+      }
+    }
+  },
+  {
+    "artifact_id": 13267419961,
+    "bytes": 1055769,
+    "sha256": "588f8c1897c29146ce7410b3140c457c13c3f33197a3eac639ff53aebb36b4c8",
+    "controls": {
+      "total": 43,
+      "passed": 43,
+      "failed": 0,
+      "all_source_and_log_hashes_verified": true,
+      "failures": []
+    },
+    "full_records": {
+      "build.json": {
+        "exit_code": 0,
+        "source": {
+          "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "candidate": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+          "kind": "prospective-merge",
+          "prospective_merge": "6ab5906347c148ca2def1c0bb02a187ece51c77f",
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "6ab5906347c148ca2def1c0bb02a187ece51c77f",
+          "tested_tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 872317779,
+          "tracked_entries": 7536,
+          "tracked_worktree_verified": true
+        },
+        "summaries": [],
+        "failed_tests": []
+      },
+      "clippy.json": {
+        "exit_code": 0,
+        "source": {
+          "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "candidate": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+          "kind": "prospective-merge",
+          "prospective_merge": "6ab5906347c148ca2def1c0bb02a187ece51c77f",
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "6ab5906347c148ca2def1c0bb02a187ece51c77f",
+          "tested_tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 872317779,
+          "tracked_entries": 7536,
+          "tracked_worktree_verified": true
+        },
+        "summaries": [],
+        "failed_tests": []
+      },
+      "node-lib.json": {
+        "exit_code": 0,
+        "source": {
+          "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "candidate": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+          "kind": "prospective-merge",
+          "prospective_merge": "6ab5906347c148ca2def1c0bb02a187ece51c77f",
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "6ab5906347c148ca2def1c0bb02a187ece51c77f",
+          "tested_tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 872317779,
+          "tracked_entries": 7536,
+          "tracked_worktree_verified": true
+        },
+        "summaries": [
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 966 filtered out; finished in 0.00s",
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 966 filtered out; finished in 0.00s",
+          "test result: ok. 944 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1245.98s"
+        ],
+        "failed_tests": []
+      }
+    }
+  }
+]

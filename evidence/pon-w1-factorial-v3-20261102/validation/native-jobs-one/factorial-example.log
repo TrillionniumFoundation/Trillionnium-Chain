@@ -1,0 +1,15 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: unknown or duplicate Cargo loader directory: observed="/workspace/scratch/e08750459604/pon-v3-target-682/release"; derived_normal={"/tmp/trnm-original-budget-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib", "/tmp/trnm-original-budget-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib", "/workspace/scratch/e08750459604/pon-v3-target-682/x86_64-unknown-linux-gnu/release", "/workspace/scratch/e08750459604/pon-v3-target-682/x86_64-unknown-linux-gnu/release/deps"}
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 2.07s
+     Running unittests examples/pon_w1_legal_strategy_v3.rs (/workspace/scratch/e08750459604/pon-v3-target-682/x86_64-unknown-linux-gnu/release/examples/pon_w1_legal_strategy_v3-91bb4b400efbc77a)
+
+running 6 tests
+test tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments ... ok
+test tests::factorial_search_keeps_every_miss_and_identical_complete_winners ... ok
+test tests::last_product_mutation_wraps_canonically_and_changes_only_that_word ... ok
+test tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity ... ok
+test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok
+test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+

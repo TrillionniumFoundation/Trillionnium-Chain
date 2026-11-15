@@ -1,0 +1,6 @@
+risc0-zkvm v3.0.6
+├── risc0-zkvm feature "disable-dev-mode"
+│   └── trnm-w1-hardened-verifier v0.1.0 (/tmp/w1-hardened-verifier-20261028)
+│       └── trnm-w1-hardened-verifier feature "default" (command-line)
+└── risc0-zkvm feature "std"
+    └── trnm-w1-hardened-verifier v0.1.0 (/tmp/w1-hardened-verifier-20261028) (*)

@@ -1,0 +1,1 @@
+{"complete_w1_claim":false,"consensus_admission":false,"control_id":"e7934a23ddce1423b425cf32aa23be29f48cd40e0b6ff9376dce6f3bf9d0bc35","elapsed_ns":24608893,"receipt_bytes":223154,"receipt_sha256":"d2b06a1feca2d15e8dc5741b43f481a82c32d7d3dab01e413d357012467093d3","result":{"outcome":"ACCEPT"},"schema":"TRNM-W1-RECURSION-ONLY-VERIFY1","sdk":"3.0.6"}

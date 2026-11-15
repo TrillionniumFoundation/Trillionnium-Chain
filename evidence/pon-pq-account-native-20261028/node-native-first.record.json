@@ -1,0 +1,39 @@
+{
+  "schema": "pq-native-exact-source-run-v1",
+  "argv": [
+    "/tmp/chain-pq-target-56818e4fba76/debug/deps/pq_account_native-33bf2758c6c9297d",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "build_record": "node-build-first.record.json",
+  "source_manifest_sha256": "1107b633df15b5fe2f14dc3b21de4ac0ac6e60fb9f9a63ce17dd813b287c25ef",
+  "executable": {
+    "target": "pq_account_native",
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 2,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": true
+    },
+    "path": "/tmp/chain-pq-target-56818e4fba76/debug/deps/pq_account_native-33bf2758c6c9297d",
+    "bytes": 171675824,
+    "sha256": "4fdc25f2e6559df48bfd0671e1fc05ced631d75db49a39530b5e0c72511a619c"
+  },
+  "started_utc": "2026-10-28T00:30:05.322214+00:00",
+  "timeout_seconds": 120,
+  "timeout": false,
+  "exit_code": 101,
+  "elapsed_seconds": 0.875791359001596,
+  "completed_utc": "2026-10-28T00:30:06.197990+00:00",
+  "source_unchanged": true,
+  "executable_unchanged": true,
+  "stdout": {
+    "bytes": 996,
+    "sha256": "3052e02af7b0c047c8a2b7bf2147ed2041134599ea5b3b58e88d7766de6b1e97"
+  },
+  "stderr": {
+    "bytes": 764,
+    "sha256": "39cfc295c1cf02c58cf18a7014047959cd88a79d8491b5638d9029d835ea04b4"
+  }
+}

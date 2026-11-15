@@ -1,0 +1,20 @@
+   Compiling libc v0.2.184
+   Compiling openssl-macros v0.1.1
+   Compiling openssl-sys v0.9.117
+   Compiling openssl v0.10.81
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-root-operation-recovered-20261112-df05/trillionnium/crates/trnm-crypto-primitives)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 24.72s
+     Running tests/pq_root_v3_native.rs (/data/chain-root-operation-v6-df05-target-v2/debug/deps/pq_root_v3_native-8856d42dd5fb5052)
+
+running 8 tests
+test all_nine_quorum_pairs_verify_one_operation_identity ... ok
+test complete_intent_and_domain_mutations_invalidate_real_current_signatures ... ok
+test complete_maximum_statement_and_all_six_successor_possessions_verify ... ok
+test each_family_corruption_and_one_family_only_fail_without_or_fallback ... ok
+test every_successor_proof_is_mandatory_and_cannot_move_between_roles_or_intents ... ok
+test exact_oid_native_generation_and_cross_backend_ml87_verification_work ... ok
+test genuine_shake_key_is_rejected_despite_identical_key_and_signature_sizes ... ok
+test malformed_and_cancelled_attempts_use_the_original_budget_before_crypto ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 49.05s
+

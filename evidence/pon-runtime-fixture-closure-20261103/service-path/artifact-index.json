@@ -1,0 +1,36 @@
+{
+  "schema": "trnm-service-path-static-evidence-index-v1",
+  "source_scope": "b280 original service measurements and unchanged relevant source; not-applied append candidate never compiled or benchmarked",
+  "files": [
+    {
+      "path": "final-service-readback.json",
+      "sha256": "cba5e8e22c0e7c68603a5dffa0f2154a9784fbccf55d63899ab18e8142a3a430",
+      "bytes": 20250
+    },
+    {
+      "path": "f0-small-owner-readback.json",
+      "sha256": "f3777e4958b4b470e3a7ce25050e4d84dc12e6c8285aded7083c989382119383",
+      "bytes": 10232
+    },
+    {
+      "path": "f0-stage-deltas.json",
+      "sha256": "fd5c9893f6e69bc09ec20c1534d60c6b2d822695c91f58ef62a913fab9029e5a",
+      "bytes": 54543
+    },
+    {
+      "path": "not-applied-append-candidate.patch",
+      "sha256": "7663ff4a2685fe6035fdf6a615800dac0c308d591779ea4c8ec45d5d2b6277fe",
+      "bytes": 3690
+    },
+    {
+      "path": "not-applied-append-candidate-manifest.json",
+      "sha256": "cbd3dc7f08c5ab58d5b0b7a983bc4bce1c23484db4a064a27dea9eda39982f85",
+      "bytes": 1165
+    },
+    {
+      "path": "not-applied-append-independent-review.json",
+      "sha256": "f2ef1ba567a6dbabd422e7a0af80da759085eeec3bd96c2051904e4bc274b25f",
+      "bytes": 15228
+    }
+  ]
+}

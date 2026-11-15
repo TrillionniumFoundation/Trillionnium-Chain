@@ -1,0 +1,51 @@
+{
+  "schema": "pon-monotone-daa-preliminary-terminal-observations-v1",
+  "scope": "agent-recorded terminal observations; not retained full stdout and not frozen-source qualification",
+  "repository": "/workspace/scratch/7f73fe002713/chain-daa",
+  "original_head": "249f772cc2a2ace5e363fd5fbfec4241a26f4d4d",
+  "working_tree_was_dirty": true,
+  "full_stdout_retained_as_file": false,
+  "final_files_sha256": {
+    "scripts/pon_monotone_daa_reader.py": "ab097f24464eb439686f1c18c156ecfdb7b576044bdf28a863379577161d3a25",
+    "scripts/ci/test_pon_monotone_daa_reader.py": "d8190db675cd52b7085d54e1f0a09f614bbe51a64429a43ac541732f991a37e1",
+    "scripts/ci/ci_job.sh": "e4522dfa03edfce703bc817d31b187c9b1c1b3e0d284ebd455a8e5eff9e877d9",
+    "scripts/ci/check_ci_contract.py": "33a17efa57766e268de7cdedbdf7f656facc3d5eb0d50bceb28546d829edbb0b",
+    "scripts/ci/test_ci_contract.py": "4efb041abd6870de1e09616b58461e8dd280926db8e720ec9454093dd9b031ef"
+  },
+  "full_suite": {
+    "command": "python3 scripts/ci/test_ci_contract.py -v",
+    "observed_exit_code": 0,
+    "observed_tests": 168,
+    "observed_seconds": "468.823",
+    "observed_terminal_summary": "Ran 168 tests in 468.823s\n\nOK",
+    "source_scope": "ci_job.sh and check_ci_contract.py were final; test_ci_contract.py was loaded before the later five-line selector-leak test addition",
+    "matches_entire_final_test_source": false
+  },
+  "final_source_delta_suite": {
+    "command": "python3 scripts/ci/test_ci_contract.py EvaluationQuorumLaneTests.test_native_joint_daa_requires_both_fresh_profiles_and_current_report_digests EvaluationQuorumLaneTests.test_native_monotone_daa_requires_both_fresh_profiles_and_current_report_digests -v",
+    "observed_exit_code": 0,
+    "observed_tests": 2,
+    "observed_seconds": "8.322",
+    "observed_terminal_summary": "Ran 2 tests in 8.322s\n\nOK",
+    "source_scope": "final versions of both DAA methods, including cross-lane selector export/unset leak cases"
+  },
+  "additional_terminal_checks": {
+    "bash_n_ci_job": "PASS",
+    "check_ci_contract": {
+      "result": "PASS",
+      "head_jobs": 5,
+      "merge_lanes": 5,
+      "inline_source_pins": 26,
+      "tests_executed": false
+    },
+    "five_file_diff_check": "PASS",
+    "new_reader_ast_parse": "PASS",
+    "new_counterexample_tests_discovered": 26,
+    "old_reader_and_old_reader_tests_equal_original_head": true
+  },
+  "fresh_native_export_replay_performed": false,
+  "native_admission_or_cold_reopen_observed_by_this_receipt": false,
+  "public_network_qualification": false,
+  "production_activation": false,
+  "followup": "Frozen-source complete applicable gates and fresh native exports must be logged independently; this preliminary receipt does not replace them."
+}

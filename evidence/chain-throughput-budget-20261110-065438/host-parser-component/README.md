@@ -1,0 +1,7 @@
+# Host parser component: optimization rejected
+
+The retained experiment uses the original Host parser bytes, exact Rust 1.95 and isolated in-memory parsing. Sixteen ABBA rounds, 64 samples per arm per round and 250,000 parses per sample produced a paired median saving of 71.438187 ns (range 49.580684–84.291254 ns). Every measured return value was compared with the original parser across 15 input variants. The original median was 91.754438 ns and the canonical-comparison/fallback median was 21.346030 ns.
+
+Applying that isolated difference to the separate observed 3,568 Host checkpoints gives approximately 0.255 ms only as a cross-host order-of-magnitude illustration. It is neither an observed service saving nor an upper bound. Fresh I/O, identity/membership observation and all other Host costs are outside this component measurement. The original three pressure pages spent 185.562777 ms of their measured 206.615550 ms page CPU in Host observations. No parser fast path was applied to production.
+
+`component-packet.tar.xz` retains the complete original packet, including the measured source, reproduction scripts, compiler and process records, original source binding, raw measurements and losslessly compressed actual binary. Extract it into an empty directory before following its original README. `archive-manifest.json` binds every original file and records the successful roundtrip verification. The original measurement retains its own source/time identity; it is not relabeled as a measurement of the subsequent implementation.

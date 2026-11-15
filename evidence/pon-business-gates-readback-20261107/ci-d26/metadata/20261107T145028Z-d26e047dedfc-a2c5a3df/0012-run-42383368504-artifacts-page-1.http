@@ -1,0 +1,29 @@
+HTTP/2.0 200 OK
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+Cache-Control: private, max-age=60, s-maxage=60
+Content-Security-Policy: default-src 'none'
+Content-Type: application/json; charset=utf-8
+Date: Sat, 07 Nov 2026 14:51:04 GMT
+Etag: W/"887e50dc4ead569805b662082bd694fd7f442d6f0c1f9ec751b3b091de0e7554"
+Referrer-Policy: origin-when-cross-origin, strict-origin-when-cross-origin
+Server: github.com
+Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
+Vary: Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With
+X-Accepted-Oauth-Scopes: 
+X-Content-Type-Options: nosniff
+X-Frame-Options: deny
+X-Github-Api-Version-Selected: 2022-11-28
+X-Github-Edge-Region: westus3
+X-Github-Media-Type: github.v3; format=json
+X-Github-Request-Id: 4283:27785E:60833D:6AB72B:6AEF3AD7
+X-Oauth-Client-Id: 178c6fc778ccc68e1d6a
+X-Oauth-Scopes: delete_repo, gist, read:org, repo, workflow
+X-Ratelimit-Limit: 5000
+X-Ratelimit-Remaining: 4926
+X-Ratelimit-Reset: 1794066317
+X-Ratelimit-Resource: core
+X-Ratelimit-Used: 74
+X-Xss-Protection: 0
+
+{"total_count":1,"artifacts":[{"id":13578437522,"node_id":"MDg6QXJ0aWZhY3QxMzU3ODQzNzUyMg==","name":"integration-push-source-42383368504-1","size_in_bytes":1362,"url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578437522","archive_download_url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578437522/zip","expired":false,"digest":"sha256:1b9a6dcaa65a5b849b8be457684658eaaac78630f47ff25e7249150b23bff17f","created_at":"2026-11-07T14:49:42Z","updated_at":"2026-11-07T14:49:42Z","expires_at":"2026-12-07T14:49:41Z","workflow_run":{"id":42383368504,"repository_id":1323087357,"head_repository_id":1323087357,"head_branch":"fix/chain-six-axis-performance-20261103","head_sha":"d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"}}]}

@@ -1,0 +1,124 @@
+diff --git a/scripts/ci/ci_job.sh b/scripts/ci/ci_job.sh
+index d8803b26fd4c8a3f6726863ed77970acbb973ada..40ab97508fbb9afdf5ddf9022ab82e98253707eb
+--- a/scripts/ci/ci_job.sh
++++ b/scripts/ci/ci_job.sh
+@@ -4,6 +4,8 @@
+ case "${1:?required job}" in
+   repository-truth)
+     bash scripts/project-preflight.sh --audit
++    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v
++    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v
+     python3 scripts/ci/test_project_boundary.py
+     # A passing HOLD check does not certify whole-chain PQ or PQ-128.
+     python3 scripts/ci/test_pq_chain_claim_guard.py
+diff --git a/scripts/ci/check_ci_contract.py b/scripts/ci/check_ci_contract.py
+index 82d45ae3136971ef1872868144480c40eda6ee2d..af90f6fb11710043d5034c4a6a6b64600199a603
+--- a/scripts/ci/check_ci_contract.py
++++ b/scripts/ci/check_ci_contract.py
+@@ -130,6 +130,18 @@
+ CONTINUITY_TRANSITIONS = '    TRNM_CONTINUITY_TRANSITIONS_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_transition_vectors")" python3 formal/pon-nakamoto-v1/test_continuity_transitions.py -v\n'
+ PAIRED_WORK_ORACLE = '    TRNM_PAIRED_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_paired_io")" TRNM_PAIRED_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/paired-work" python3 formal/pon-nakamoto-v1/test_paired_work.py -v\n'
+ ZERO_WORK_ORACLE = '    TRNM_ZERO_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io")" TRNM_ZERO_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/zero-work" python3 formal/pon-nakamoto-v1/test_zero_work.py -v\n'
++# Anchor these controls at the start of the lane. Presence/count alone accepts
++# a false branch or an if-condition that suppresses Bash's errexit behavior.
++# The outer lane dispatch is checked independently below.
++CREDIT_MODEL_COMMANDS = (
++    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v",
++    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v",
++)
++CREDIT_MODEL_PREFIX = (
++    "    bash scripts/project-preflight.sh --audit\n"
++    "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v\n"
++    "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v\n"
++)
+ MODEL_WINDOW_ORACLE = '    python3 formal/pon-nakamoto-v1/test_model_window_history.py -v\n'
+ EVALUATION_QUORUM_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_native_evaluation_quorum_oracle.py -v\n'
+                           '    python3 formal/pon-nakamoto-v1/native_evaluation_quorum_oracle.py\n')
+@@ -434,6 +446,14 @@
+                 'native observation selectors must remain inside the single test/oracle subshell')
+     require(script.count(NATIVE_RELEASE_BLOCK) == 1,
+             'full-capacity, reference-growth, bounded-growth and account-verification release controls must execute once sequentially')
++    for command in CREDIT_MODEL_COMMANDS:
++        require(code_lines(lanes['repository-truth']).count(command) == 1
++                and code_lines(script).count(command) == 1,
++                'credit model controls must execute exactly once in repository-truth')
++    # Preserve the preceding specific refusal diagnostics when an unrelated
++    # required command is moved into this prefix.
++    require(code_lines(lanes['repository-truth'])[:3] == code_lines(CREDIT_MODEL_PREFIX),
++            'credit model prefix must execute immediately after preflight without shell control flow')
+     require(code_lines(lanes['protocol-contract']) == code_lines(PROTOCOL_CONTRACT_BLOCK),
+             'protocol-contract must retain its complete straight-line command sequence without shell control flow that skips tests or swallows failures')
+     dispatch_prefix = ('#!/usr/bin/env bash\nset -euo pipefail\n'
+diff --git a/scripts/ci/test_ci_contract.py b/scripts/ci/test_ci_contract.py
+index f5b37eed463b4058e573e85d1550f2b0d72de164..5fa3206ea55e1dca099b20eabfe44a21e5c6cbdb
+--- a/scripts/ci/test_ci_contract.py
++++ b/scripts/ci/test_ci_contract.py
+@@ -18,6 +18,7 @@
+                                ONE_ZERO_COMPARE_STEP, MAINTENANCE_RUN_STEP,
+                                MAINTENANCE_COMPARE_STEP, REJECTION_RUN_STEP, REJECTION_COMPARE_STEP,
+                                PAIRED_WORK_ORACLE, ZERO_WORK_ORACLE, MODEL_WINDOW_ORACLE,
++                               CREDIT_MODEL_COMMANDS, CREDIT_MODEL_PREFIX,
+                                EVALUATION_QUORUM_ORACLE, check_independent_conformance,
+                                MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS,
+                                ORIGINAL_CAMPAIGN_READER,
+@@ -131,6 +132,60 @@
+ 
+     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
+         check_independent_conformance(self.script, self.lanes)
++
++    def test_credit_model_commands_cannot_be_omitted_duplicated_or_moved(self):
++        for command in CREDIT_MODEL_COMMANDS:
++            line = '    ' + command + '\n'
++            variants = [self.script.replace(line, ''),
++                        self.script.replace(line, '    true # omitted credit model\n'),
++                        self.script.replace(line, line * 2),
++                        self.script.replace(line, '').replace('  protocol-contract)\n',
++                                                              '  protocol-contract)\n' + line)]
++            for script in variants:
++                with self.subTest(command=command, script=script), self.assertRaises(ValueError):
++                    check_independent_conformance(script, self.lanes)
++
++    def test_credit_model_commands_cannot_be_skipped_by_false_shell_branch(self):
++        for command in CREDIT_MODEL_COMMANDS:
++            line = '    ' + command + '\n'
++            skipped = '    if false; then\n' + line + '    fi\n'
++            with self.subTest(command=command):
++                with self.assertRaisesRegex(ValueError, 'credit model prefix'):
++                    check_independent_conformance(self.script.replace(line, skipped), self.lanes)
++                # This reproduces the shell failure mode without executing any
++                # actual model/native command or changing the source checkout.
++                prelude = 'set -euo pipefail\npython3() { return 19; }\n'
++                normal = subprocess.run(['bash', '-c', prelude + line],
++                                        capture_output=True, text=True, timeout=5)
++                bypass = subprocess.run(['bash', '-c', prelude + skipped],
++                                        capture_output=True, text=True, timeout=5)
++                self.assertEqual(normal.returncode, 19, normal.stderr)
++                self.assertEqual(bypass.returncode, 0, bypass.stderr)
++
++    def test_credit_model_failures_cannot_be_swallowed_by_shell_condition(self):
++        for command in CREDIT_MODEL_COMMANDS:
++            line = '    ' + command + '\n'
++            conditional = '    if\n' + line + '    then\n      :\n    fi\n'
++            with self.subTest(command=command):
++                with self.assertRaisesRegex(ValueError, 'credit model prefix'):
++                    check_independent_conformance(self.script.replace(line, conditional), self.lanes)
++                prelude = 'set -euo pipefail\npython3() { return 19; }\n'
++                normal = subprocess.run(['bash', '-c', prelude + line],
++                                        capture_output=True, text=True, timeout=5)
++                bypass = subprocess.run(['bash', '-c', prelude + conditional],
++                                        capture_output=True, text=True, timeout=5)
++                self.assertEqual(normal.returncode, 19, normal.stderr)
++                self.assertEqual(bypass.returncode, 0, bypass.stderr)
++
++    def test_entire_credit_model_prefix_cannot_be_wrapped_or_preceded(self):
++        self.assertIn(CREDIT_MODEL_PREFIX, self.script)
++        for replacement in ('    if false; then\n' + CREDIT_MODEL_PREFIX + '    fi\n',
++                            '    if\n' + CREDIT_MODEL_PREFIX + '    then\n      :\n    fi\n',
++                            '    :\n' + CREDIT_MODEL_PREFIX):
++            with self.subTest(replacement=replacement):
++                with self.assertRaisesRegex(ValueError, 'credit model prefix'):
++                    check_independent_conformance(
++                        self.script.replace(CREDIT_MODEL_PREFIX, replacement), self.lanes)
+ 
+     def test_cell_host_native_handoff_cannot_skip_build_or_use_an_unbound_binary(self):
+         commands = (

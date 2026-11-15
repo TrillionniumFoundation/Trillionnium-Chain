@@ -1,0 +1,48 @@
+
+running 18 tests
+test account_archive_prototype::native_store::batch_tests::batched_paths_cancel_and_sql_refusal_roll_back_partial_writes_and_reopen ... ok
+test account_archive_prototype::native_store::batch_tests::batched_paths_keep_original_parent_nonce_and_no_deletion_checks ... ok
+test account_archive_prototype::native_store::batch_tests::batched_paths_match_serial_versions_and_keep_every_insert_reachable ... ok
+test account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover ... ignored, explicit release full-capacity gate in both head and prospective-merge CI
+test account_archive_prototype::native_store::node_decode::tests::native_decode_exact_bytes_and_borrow_conflicts_use_original_errors ... ok
+test account_archive_prototype::native_store::node_decode::tests::native_decode_fixed_slots_collisions_and_charge_are_bounded ... ok
+test account_archive_prototype::native_store::node_reader::tests::native_node_reader_observes_foreign_unread_leaf_and_schema_changes_inside_progress ... ok
+test account_archive_prototype::native_store::node_reader::tests::native_node_reader_paired_graph_cost_observation ... ignored, explicit paired SQL reader observation; not the public service acceptance gate
+test account_archive_prototype::native_store::node_reader::tests::native_node_reader_preserves_cancel_precedence_and_empty_root_without_sql ... ok
+test account_archive_prototype::native_store::node_reader::tests::native_node_reader_preserves_typed_blob_errors_and_rollback_after_warm_reads ... ok
+test account_archive_prototype::native_store::tests::native_account_delta_credit_before_debit_preserves_maximum_aggregate ... ok
+test account_archive_prototype::native_store::tests::native_complete_account_root_arithmetic_cache_matches_uncached_growth_and_removal ... ok
+test account_archive_prototype::native_store::tests::native_empty_constants_match_wire_and_keep_owned_copy_isolation ... ok
+test account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation ... ignored, explicit constant-table observation; not full-node performance
+test account_archive_prototype::native_store::tests::native_empty_constants_parallel_callers_keep_independent_values ... ok
+test account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity ... ok
+test account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement ... ok
+test account_archive_prototype::native_store::tests::native_lift_cache_complete_graph_cost_observation ... ignored, explicit bounded-cache complete-graph diagnostic; not a business SLO
+
+successes:
+
+---- account_archive_prototype::native_store::batch_tests::batched_paths_match_serial_versions_and_keep_every_insert_reachable stdout ----
+native batch component: persisted_nodes=3847, serial_reference_nodes=8822, prior_versions_deleted=0, new_unreachable_nodes=0; synthetic storage states, not admitted blocks
+
+---- account_archive_prototype::native_store::node_decode::tests::native_decode_fixed_slots_collisions_and_charge_are_bounded stdout ----
+pon_native_decode_retained_charge {"charge_is_process_rss_bound":false,"counters":{"borrow_conflicts":0,"bounded_probe_refusals":2,"calls":18,"exact_hits":8,"original_decodes":10,"retained":8},"excluded":"allocator metadata, SQLite, temporary row buffers, stacks and other caches","hard_software_charge_ceiling_bytes":4194304,"has_consensus_authority":false,"probe_limit":8,"record_byte_limit":163,"retained":{"allocated_slot_bytes":3342336,"allocated_slots":8192,"occupied_slots":8,"retained_record_bytes":392,"retained_software_charge_bytes":3342408},"retained_software_charge_limit_bytes":3342408,"schema":"pon-native-account-node-decode-arithmetic-v1","scope":"exact current SQL blob and expected ID only; every row and full graph relation is checked again","slot_limit":8192,"slot_size_bytes":408}
+
+
+successes:
+    account_archive_prototype::native_store::batch_tests::batched_paths_cancel_and_sql_refusal_roll_back_partial_writes_and_reopen
+    account_archive_prototype::native_store::batch_tests::batched_paths_keep_original_parent_nonce_and_no_deletion_checks
+    account_archive_prototype::native_store::batch_tests::batched_paths_match_serial_versions_and_keep_every_insert_reachable
+    account_archive_prototype::native_store::node_decode::tests::native_decode_exact_bytes_and_borrow_conflicts_use_original_errors
+    account_archive_prototype::native_store::node_decode::tests::native_decode_fixed_slots_collisions_and_charge_are_bounded
+    account_archive_prototype::native_store::node_reader::tests::native_node_reader_observes_foreign_unread_leaf_and_schema_changes_inside_progress
+    account_archive_prototype::native_store::node_reader::tests::native_node_reader_preserves_cancel_precedence_and_empty_root_without_sql
+    account_archive_prototype::native_store::node_reader::tests::native_node_reader_preserves_typed_blob_errors_and_rollback_after_warm_reads
+    account_archive_prototype::native_store::tests::native_account_delta_credit_before_debit_preserves_maximum_aggregate
+    account_archive_prototype::native_store::tests::native_complete_account_root_arithmetic_cache_matches_uncached_growth_and_removal
+    account_archive_prototype::native_store::tests::native_empty_constants_match_wire_and_keep_owned_copy_isolation
+    account_archive_prototype::native_store::tests::native_empty_constants_parallel_callers_keep_independent_values
+    account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity
+    account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement
+
+test result: ok. 14 passed; 0 failed; 4 ignored; 0 measured; 1001 filtered out; finished in 6.80s
+

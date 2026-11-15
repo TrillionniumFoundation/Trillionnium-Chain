@@ -1,0 +1,154 @@
+{
+  "schema": "trnm-state-cell-static-preparation-v1",
+  "started_unix": 1794067831.3500092,
+  "base": "6193489c2fb2a1bdab1128ebed2296f19176401b",
+  "first_draft_correction": "Moved the new test module after the existing inner module doc; detected by source review before any compiler/native invocation.",
+  "native_tests_run": false,
+  "performance_claimed": false,
+  "steps": [
+    {
+      "name": "preflight",
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.19712615013122559,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-static-preparation-20261107/preflight.log",
+      "bytes": 166,
+      "sha256": "81734e4c77b0868eb81396d628fcac16a0e3d6b11ac0d1a71f3cbc977e9f9dce"
+    },
+    {
+      "name": "format",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all"
+      ],
+      "exit_code": 0,
+      "seconds": 42.372249126434326,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-static-preparation-20261107/format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "inventory-refresh",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/refresh_distributed_source_inventory.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.2868075370788574,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-static-preparation-20261107/inventory-refresh.log",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "name": "source-corpus",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5110530853271484,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-static-preparation-20261107/source-corpus.log",
+      "bytes": 557,
+      "sha256": "bd2380956217c7b0b6fc86e59a936eccdfa10128c8f7cade2cd324e20ee3686f"
+    },
+    {
+      "name": "ci-contract",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.18293404579162598,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-static-preparation-20261107/ci-contract.log",
+      "bytes": 180,
+      "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+    },
+    {
+      "name": "inventory-check",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.10287976264953613,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-static-preparation-20261107/inventory-check.log",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "name": "format-check",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 19.369486808776855,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-static-preparation-20261107/format-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "diff-check",
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.025658369064331055,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-static-preparation-20261107/diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "status",
+      "argv": [
+        "/usr/bin/git",
+        "status",
+        "--porcelain"
+      ],
+      "exit_code": 0,
+      "seconds": 0.04149341583251953,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-static-preparation-20261107/status.log",
+      "bytes": 310,
+      "sha256": "f724fa2dfc6a971b5350f08939060ec4fc272e3a9ea45c83b96d30b310b9757a"
+    }
+  ],
+  "pin_updates": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "before": "fadc3f931c1ae4ac75a49596c08904a3fb8a9871",
+      "after": "6769b89e1544d82fb41d418adf11d6b26ef01cc3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs",
+      "before": null,
+      "after": "472dad372cd982302bec2a78c6ca000619ca5de7"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "before": "134c7e2673114befb189e205dddebd94501121dd",
+      "after": "cb6fb0948cbbeb9c6a20fe9c24c884a92ab9e920"
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "before": "8820f2175dc76c41f29677a50a0dd9f65af86d16",
+      "after": "c7cef34077a54258d936d505451fc1483e13149f"
+    }
+  ],
+  "finished_unix": 1794067894.5388696
+}

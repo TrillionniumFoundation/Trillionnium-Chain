@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/workspace/scratch/8a53368149fe/pq-reproducer/fixed-native-tests",
+    "pq_rollback_witness::tests::cold_reopen_requires_exact_independently_retained_checkpoint",
+    "--exact",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+  "returncode": 0,
+  "failure": null,
+  "elapsed_ns": 3744512033,
+  "timeout_seconds": 1800,
+  "files": {
+    "stdout.log": {
+      "bytes": 16030,
+      "sha256": "98b80a0efc7af45b4e8730fc5cb39fdefb165de247432abc13dacc9b1a9977b9"
+    },
+    "stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "profile_overrides": false,
+  "acceptance_granted": false
+}

@@ -1,0 +1,56 @@
+{
+  "all_copies_byte_identical": true,
+  "files": [
+    {
+      "bytes": 1224,
+      "destination": "state-prefix-canonical.log",
+      "destination_sha256": "9e647ce54fadab90c369ea57facf7e56f1929d1d32f4173a534561494fc4fd0b",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/state-prefix-canonical.log",
+      "source_sha256": "9e647ce54fadab90c369ea57facf7e56f1929d1d32f4173a534561494fc4fd0b"
+    },
+    {
+      "bytes": 22796,
+      "destination": "state-prefix-canonical.run.json",
+      "destination_sha256": "6d1869c816a49cd6b468556f7a984cc86fc566deefe095e7157da2f64e41003b",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/state-prefix-canonical.run.json",
+      "source_sha256": "6d1869c816a49cd6b468556f7a984cc86fc566deefe095e7157da2f64e41003b"
+    },
+    {
+      "bytes": 11654,
+      "destination": "state-prefix-commitment.log",
+      "destination_sha256": "4d4930448303c8228c205ed97ceded2c5db4fee73e2f169c481e3836474d7bdd",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/state-prefix-commitment.log",
+      "source_sha256": "4d4930448303c8228c205ed97ceded2c5db4fee73e2f169c481e3836474d7bdd"
+    },
+    {
+      "bytes": 22788,
+      "destination": "state-prefix-commitment.run.json",
+      "destination_sha256": "2942dbd941ea5f63709787dfe531f734a7eac644934fb6887a77f87d8f80232d",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/state-prefix-commitment.run.json",
+      "source_sha256": "2942dbd941ea5f63709787dfe531f734a7eac644934fb6887a77f87d8f80232d"
+    },
+    {
+      "bytes": 8566,
+      "destination": "state-prefix-binding-cost.log",
+      "destination_sha256": "f72fde0680a2321ee423c822c9f270dafd03ed7c1326be52b91eee420f579db8",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/state-prefix-binding-cost.log",
+      "source_sha256": "f72fde0680a2321ee423c822c9f270dafd03ed7c1326be52b91eee420f579db8"
+    },
+    {
+      "bytes": 22883,
+      "destination": "state-prefix-binding-cost.run.json",
+      "destination_sha256": "5f6f234e827783b1091bbb605bf8b5096eb1467b642474da8af0351fe6c14650",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/state-prefix-binding-cost.run.json",
+      "source_sha256": "5f6f234e827783b1091bbb605bf8b5096eb1467b642474da8af0351fe6c14650"
+    },
+    {
+      "bytes": 15718,
+      "destination": "state-prefix-binding-cost-summary.json",
+      "destination_sha256": "7693ac62b6348bf1e0a5de9eb6f9adbf414c3745df4053ebedbd0195dd2d8df4",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/state-prefix-binding-cost-summary.json",
+      "source_sha256": "7693ac62b6348bf1e0a5de9eb6f9adbf414c3745df4053ebedbd0195dd2d8df4"
+    }
+  ],
+  "schema": "trnm-byte-identical-evidence-copy-v1",
+  "scope": "byte-copy integrity only; no native compilation, test execution or measurement performed by this copy"
+}

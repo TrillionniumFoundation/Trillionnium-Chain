@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "6ea3bf3fe13d66333bba3a8c7b97e14b4319b39f"
+  ],
+  "commit": "6ea3bf3fe13d66333bba3a8c7b97e14b4319b39f",
+  "cwd": "/home/qq/work/chain-cell-capacity-dc0357-20261109",
+  "started_at_utc": "2026-11-09T14:58:07.384666+00:00",
+  "tree": "6c4401a94defeecb9696c2da1442dcbd27b56352"
+}

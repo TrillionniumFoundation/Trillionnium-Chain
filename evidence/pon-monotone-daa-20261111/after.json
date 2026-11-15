@@ -1,0 +1,188 @@
+{
+  "before_reader_sha256": "cb18be8a6642b6981c28797928c58a45152ae7b39c11b162a1afea1fc4c3dfce",
+  "cases": [
+    {
+      "field": "confirmed",
+      "mutant_bank_sha256": "167298edf0c35a0d633044da6f4c5d8bd1b99a4f9df962c1d0cf607951fd0ad0",
+      "mutant_type": "int",
+      "name": "false_to_int_zero",
+      "new_value": 0,
+      "old_value": false,
+      "original_type": "bool",
+      "python_equal": true,
+      "typed_canonical_equal": false,
+      "with_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_CHECKPOINT_MISMATCH"
+      },
+      "without_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_NATIVE_OUTCOME_BINDING"
+      }
+    },
+    {
+      "field": "confirmed",
+      "mutant_bank_sha256": "e48ca7412faf1ca74934c690cc72f5640f2231665b95bab998dda837754f2629",
+      "mutant_type": "float",
+      "name": "false_to_float_zero",
+      "new_value": 0.0,
+      "old_value": false,
+      "original_type": "bool",
+      "python_equal": true,
+      "typed_canonical_equal": false,
+      "with_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_CHECKPOINT_MISMATCH"
+      },
+      "without_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_NATIVE_OUTCOME_BINDING"
+      }
+    },
+    {
+      "field": "confirmed",
+      "mutant_bank_sha256": "e3aafcc84bf9997edcde843e525b721fcf376a1341bd279846a6ae54106423d5",
+      "mutant_type": "float",
+      "name": "false_to_negative_float_zero",
+      "new_value": -0.0,
+      "old_value": false,
+      "original_type": "bool",
+      "python_equal": true,
+      "typed_canonical_equal": false,
+      "with_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_CHECKPOINT_MISMATCH"
+      },
+      "without_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_NATIVE_OUTCOME_BINDING"
+      }
+    },
+    {
+      "field": "confirmed",
+      "mutant_bank_sha256": "eb291941df8629b8750ee5097efb102081bea91290a97955bf04581e31b50680",
+      "mutant_type": "int",
+      "name": "true_to_int_one",
+      "new_value": 1,
+      "old_value": true,
+      "original_type": "bool",
+      "python_equal": true,
+      "typed_canonical_equal": false,
+      "with_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_CHECKPOINT_MISMATCH"
+      },
+      "without_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_NATIVE_OUTCOME_BINDING"
+      }
+    },
+    {
+      "field": "confirmed",
+      "mutant_bank_sha256": "599b51ba65b10fed8a9919c3c67108e4307ba1eed40ea24394564e7c69cf6d80",
+      "mutant_type": "float",
+      "name": "true_to_float_one",
+      "new_value": 1.0,
+      "old_value": true,
+      "original_type": "bool",
+      "python_equal": true,
+      "typed_canonical_equal": false,
+      "with_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_CHECKPOINT_MISMATCH"
+      },
+      "without_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_NATIVE_OUTCOME_BINDING"
+      }
+    },
+    {
+      "field": "included_height",
+      "mutant_bank_sha256": "787b2795ff866f6189b80e2a02701d432c8c328b45d0e5e7b1020990f9234400",
+      "mutant_type": "float",
+      "name": "included_height_to_float",
+      "new_value": 1.0,
+      "old_value": 1,
+      "original_type": "int",
+      "python_equal": true,
+      "typed_canonical_equal": false,
+      "with_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_CHECKPOINT_MISMATCH"
+      },
+      "without_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_NATIVE_OUTCOME_BINDING"
+      }
+    },
+    {
+      "field": "included_height",
+      "mutant_bank_sha256": "73059e87594a774fbafbb02a1b0b71d89d902d38152c6587cab7e4eff7ae3059",
+      "mutant_type": "bool",
+      "name": "included_height_to_true",
+      "new_value": true,
+      "old_value": 1,
+      "original_type": "int",
+      "python_equal": true,
+      "typed_canonical_equal": false,
+      "with_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_CHECKPOINT_MISMATCH"
+      },
+      "without_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_NATIVE_OUTCOME_BINDING"
+      }
+    },
+    {
+      "field": "observed_now",
+      "mutant_bank_sha256": "3dad5c17ee3465858bf38832d7d1b741316cf140f18b47f2c9da7fbbad8ea395",
+      "mutant_type": "float",
+      "name": "observed_now_to_float",
+      "new_value": 100.0,
+      "old_value": 100,
+      "original_type": "int",
+      "python_equal": true,
+      "typed_canonical_equal": false,
+      "with_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_CHECKPOINT_MISMATCH"
+      },
+      "without_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_NATIVE_OUTCOME_BINDING"
+      }
+    },
+    {
+      "field": "typed_binding_shadow",
+      "mutant_bank_sha256": "614529cdb0f41a189e4ffcad060e59526494edc3e9b299da6b41c933ccce48ad",
+      "mutant_type": "bool",
+      "name": "extra_value_field",
+      "new_value": false,
+      "old_value": null,
+      "original_type": "NoneType",
+      "python_equal": false,
+      "typed_canonical_equal": false,
+      "with_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_CHECKPOINT_MISMATCH"
+      },
+      "without_original_bank_pin": {
+        "accepted": false,
+        "refusal": "R_NATIVE_OUTCOME_BINDING"
+      }
+    }
+  ],
+  "fixture": "evidence/pon-joint-state-risk-ledger-20261107/final-source-gates/merged-native/original/attempt-02/fresh-native-risk",
+  "fixture_bank_sha256": "d6aaeae63cd5d20e43cf83903a0b8477b758a09c1e51e800bbe0c8276202fc31",
+  "fixture_native_journal_sha256": "610bade0cf8353bb03ecd03501822c946e1aa89a7ca5eabfd078e29a3b4d6e73",
+  "new_native_execution": false,
+  "original_spent_units": 36,
+  "original_starts_registered": 8,
+  "quantum_attack_executed": false,
+  "reader_sha256": "2444750cf32a584b48b1a8f6c9afc1849d643b9ca1dadbd2a48076f68ae4bd4d",
+  "schema": "pon-risk-wrapper-typed-binding-regression-v1",
+  "scope": "mutated_local_bank_copies_against_unchanged_retained_native_journal",
+  "security_probability_calibrated": false,
+  "stage": "after_fix"
+}

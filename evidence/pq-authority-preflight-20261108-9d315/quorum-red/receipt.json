@@ -1,0 +1,44 @@
+{
+  "exit_code": 101,
+  "expected_control_failure": true,
+  "elapsed_seconds": 46.73286784184165,
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-release-bundle",
+    "--all-targets",
+    "--all-features",
+    "quorum_preflight_tests"
+  ],
+  "phase": "red control; not a passing gate",
+  "source_sha256": {
+    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": "093a791afdc25617411d9da7ce83042a9fcc45e29316a176a326ea7363882d82",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs": "d07034b3a674a687135aa344e23ab8644dacefd9e1e587fbe76c07150ab0df6e",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs": "25424c1550148823b5d93b96019e0bb1048ed0ded6145ed37ec686a5d6a66dac"
+  },
+  "kernel_unchanged": true,
+  "lock_sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+  "logs": {
+    "stdout.log": {
+      "bytes": 4607,
+      "sha256": "e2ec4a996c5a8fef8b792dd249af62eadaa569d32c0f6adc94e04d694c8634dd"
+    },
+    "preflight.stdout.log": {
+      "bytes": 178,
+      "sha256": "3e9e970d160b66960d5566a0f7e262756d1bd8d7873459da8c146b0d8ee8a6d9"
+    },
+    "stderr.log": {
+      "bytes": 423,
+      "sha256": "badbfcad6b3bcf174bc8ff3a54e11d905dd8924e677ea32e936ead3b317bfe5e"
+    },
+    "preflight.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

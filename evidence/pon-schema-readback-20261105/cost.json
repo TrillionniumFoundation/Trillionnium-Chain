@@ -1,0 +1,102 @@
+{
+  "schema": "local-schema-select-cost-v1",
+  "source_base": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+  "scope": "standalone exact reader function with synthetic in-memory 20-table catalog; not Node, fixed Host or business throughput",
+  "samples": [
+    {
+      "round": 0,
+      "cached": false,
+      "wall_ns": 269493714
+    },
+    {
+      "round": 0,
+      "cached": true,
+      "wall_ns": 237988594
+    },
+    {
+      "round": 1,
+      "cached": true,
+      "wall_ns": 233895046
+    },
+    {
+      "round": 1,
+      "cached": false,
+      "wall_ns": 271985573
+    },
+    {
+      "round": 2,
+      "cached": false,
+      "wall_ns": 253490098
+    },
+    {
+      "round": 2,
+      "cached": true,
+      "wall_ns": 215157737
+    },
+    {
+      "round": 3,
+      "cached": true,
+      "wall_ns": 221603841
+    },
+    {
+      "round": 3,
+      "cached": false,
+      "wall_ns": 251094715
+    },
+    {
+      "round": 4,
+      "cached": false,
+      "wall_ns": 281536852
+    },
+    {
+      "round": 4,
+      "cached": true,
+      "wall_ns": 235532519
+    },
+    {
+      "round": 5,
+      "cached": true,
+      "wall_ns": 228783126
+    },
+    {
+      "round": 5,
+      "cached": false,
+      "wall_ns": 255349128
+    },
+    {
+      "round": 6,
+      "cached": false,
+      "wall_ns": 261898634
+    },
+    {
+      "round": 6,
+      "cached": true,
+      "wall_ns": 220858674
+    },
+    {
+      "round": 7,
+      "cached": true,
+      "wall_ns": 231070411
+    },
+    {
+      "round": 7,
+      "cached": false,
+      "wall_ns": 248972986
+    }
+  ],
+  "iterations_per_batch": 2000,
+  "paired_fraction_saved": [
+    0.11690484179530802,
+    0.14004613031441926,
+    0.15121837619077338,
+    0.1174492023856416,
+    0.16340430275181173,
+    0.10403795857098053,
+    0.15670169551170698,
+    0.07190569261196877
+  ],
+  "median_paired_fraction_saved": 0.12874766635003043,
+  "rusqlite_rlib_sha256": "91b24439ecdf60449b8b23c4ba85a362636990e2599b59a3973136e8e07986e1",
+  "production_qualified": false,
+  "standalone_source_sha256": "8d8895fdb89344b4fe986eda61c94566dd649b40f36548ab713ea4637b5a9255"
+}

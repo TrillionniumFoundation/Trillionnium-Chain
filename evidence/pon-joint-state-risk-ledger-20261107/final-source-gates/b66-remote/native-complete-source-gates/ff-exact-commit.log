@@ -1,0 +1,848 @@
+更新 6615ffa..b66e66d
+Fast-forward
+ .../TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md  |    34 +
+ .../pon-joint-state-risk-ledger-20261107/README.md |   130 +
+ .../event-coverage/unittest.log                    |    26 +
+ .../joint-state/evidence-run-01.stderr.log         |     0
+ .../joint-state/evidence-run-02.stderr.log         |     0
+ .../joint-state/test-attempt-01/tests.log          |    38 +
+ .../joint-state/test-attempt-02/tests.log          |    39 +
+ .../native-risk/README.md                          |   150 +
+ .../native-risk/artifact-sha256.json               |   668 +
+ .../native-risk/attempt-01.tar.gz                  |   Bin 0 -> 219293 bytes
+ .../attempt-01/actual-native-scenario.log          |     1 +
+ .../native-risk/attempt-01/build-example.log       |    14 +
+ .../native-risk/attempt-01/checked.json            |   455 +
+ .../native-risk/attempt-01/git-head.log            |     1 +
+ .../native-risk/attempt-01/git-status.log          |    25 +
+ .../native-risk/attempt-01/independent-reader.log  |     0
+ .../attempt-01/native-run/bank/bank.lock           |     0
+ .../attempt-01/native-run/bank/risk.pnrl1          |   Bin 0 -> 18546 bytes
+ .../attempt-01/native-run/child-1-plan.json        |    83 +
+ .../attempt-01/native-run/child-2-plan.json        |    83 +
+ .../native-run/foreign-native/journal.pnoj1        |   Bin 0 -> 8611 bytes
+ .../native-run/foreign-native/owner.lock           |     0
+ .../native-run/foreign-store/native.sqlite         |   Bin 0 -> 147456 bytes
+ .../attempt-01/native-run/foreign-store/owner.lock |     0
+ .../attempt-01/native-run/native/journal.pnoj1     |   Bin 0 -> 598426 bytes
+ .../attempt-01/native-run/native/owner.lock        |     0
+ ...8de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1 |   Bin 0 -> 49508 bytes
+ ...921478703b12adea793a7077f7ab280628e23ef29d.pnp1 |   Bin 0 -> 49508 bytes
+ ...86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1 |   Bin 0 -> 49709 bytes
+ ...952038dc045e8603683aed6ecd1859e1f067633e54.pnp1 |   Bin 0 -> 49508 bytes
+ ...e4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1 |   Bin 0 -> 49508 bytes
+ ...c533465e75809eb151a61ba5297d378614e8277e63.pnp1 |   Bin 0 -> 49508 bytes
+ ...54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1 |   Bin 0 -> 49508 bytes
+ .../attempt-01/native-run/old-bank/bank.lock       |     0
+ .../attempt-01/native-run/old-bank/risk.pnrl1      |   Bin 0 -> 9887 bytes
+ .../attempt-01/native-run/old-native/journal.pnoj1 |   Bin 0 -> 448263 bytes
+ .../attempt-01/native-run/old-native/owner.lock    |     0
+ ...8de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1 |   Bin 0 -> 49508 bytes
+ ...921478703b12adea793a7077f7ab280628e23ef29d.pnp1 |   Bin 0 -> 49508 bytes
+ ...86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1 |   Bin 0 -> 49709 bytes
+ ...952038dc045e8603683aed6ecd1859e1f067633e54.pnp1 |   Bin 0 -> 49508 bytes
+ ...e4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1 |   Bin 0 -> 49508 bytes
+ ...c533465e75809eb151a61ba5297d378614e8277e63.pnp1 |   Bin 0 -> 49508 bytes
+ ...54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1 |   Bin 0 -> 49508 bytes
+ .../native-risk/attempt-01/native-run/run.json     |   298 +
+ .../attempt-01/native-run/store/native.sqlite      |   Bin 0 -> 499712 bytes
+ .../attempt-01/native-run/store/owner.lock         |     0
+ .../native-risk/attempt-01/native-tests.log        |   109 +
+ .../native-risk/attempt-01/preflight.log           |     1 +
+ .../native-risk/attempt-01/reader-tests.log        |    31 +
+ .../attempt-01/retained-source-paths.json          |    71 +
+ .../native-risk/attempt-01/rustfmt.log             |     0
+ .../native-risk/attempt-01/source-sha256.json      |    15 +
+ .../NATIVE_RISK_LEDGER_V1.md.source                |   274 +
+ .../formal/pon-nakamoto-v1/native_owner_journal.py |   606 +
+ .../formal/pon-nakamoto-v1/native_risk_ledger.py   |   316 +
+ .../pon-nakamoto-v1/test_native_risk_ledger.py     |   271 +
+ .../attempt-01/sources/trillionnium/Cargo.lock     |  1690 ++
+ .../attempt-01/sources/trillionnium/Cargo.toml     |    78 +
+ .../trillionnium/crates/trnm-pon-node/Cargo.toml   |    46 +
+ .../examples/native_risk_ledger_v1.rs              |    30 +
+ .../examples/support/native_risk_scenario.rs       |   304 +
+ .../trillionnium/crates/trnm-pon-node/src/lib.rs   |   828 +
+ .../trnm-pon-node/src/native_owner_journal.rs      |  1156 ++
+ .../crates/trnm-pon-node/src/native_risk_ledger.rs |  1009 ++
+ .../trnm-pon-node/tests/native_risk_ledger.rs      |   377 +
+ .../native-risk/attempt-01/stages.json             |   121 +
+ .../native-risk/attempt-02.tar.gz                  |   Bin 0 -> 219979 bytes
+ .../attempt-02/actual-native-scenario.log          |     1 +
+ .../native-risk/attempt-02/build-example.log       |     2 +
+ .../native-risk/attempt-02/checked.json            |   455 +
+ .../environment-qualification-inputs.json          |     7 +
+ .../native-risk/attempt-02/independent-reader.log  |     0
+ .../attempt-02/native-run/bank/bank.lock           |     0
+ .../attempt-02/native-run/bank/risk.pnrl1          |   Bin 0 -> 18546 bytes
+ .../attempt-02/native-run/child-1-plan.json        |    83 +
+ .../attempt-02/native-run/child-2-plan.json        |    83 +
+ .../native-run/foreign-native/journal.pnoj1        |   Bin 0 -> 8611 bytes
+ .../native-run/foreign-native/owner.lock           |     0
+ .../native-run/foreign-store/native.sqlite         |   Bin 0 -> 147456 bytes
+ .../attempt-02/native-run/foreign-store/owner.lock |     0
+ .../attempt-02/native-run/native/journal.pnoj1     |   Bin 0 -> 598238 bytes
+ .../attempt-02/native-run/native/owner.lock        |     0
+ ...8de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1 |   Bin 0 -> 49508 bytes
+ ...921478703b12adea793a7077f7ab280628e23ef29d.pnp1 |   Bin 0 -> 49508 bytes
+ ...86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1 |   Bin 0 -> 49709 bytes
+ ...952038dc045e8603683aed6ecd1859e1f067633e54.pnp1 |   Bin 0 -> 49508 bytes
+ ...e4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1 |   Bin 0 -> 49508 bytes
+ ...c533465e75809eb151a61ba5297d378614e8277e63.pnp1 |   Bin 0 -> 49508 bytes
+ ...54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1 |   Bin 0 -> 49508 bytes
+ .../attempt-02/native-run/old-bank/bank.lock       |     0
+ .../attempt-02/native-run/old-bank/risk.pnrl1      |   Bin 0 -> 9887 bytes
+ .../attempt-02/native-run/old-native/journal.pnoj1 |   Bin 0 -> 448079 bytes
+ .../attempt-02/native-run/old-native/owner.lock    |     0
+ ...8de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1 |   Bin 0 -> 49508 bytes
+ ...921478703b12adea793a7077f7ab280628e23ef29d.pnp1 |   Bin 0 -> 49508 bytes
+ ...86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1 |   Bin 0 -> 49709 bytes
+ ...952038dc045e8603683aed6ecd1859e1f067633e54.pnp1 |   Bin 0 -> 49508 bytes
+ ...e4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1 |   Bin 0 -> 49508 bytes
+ ...c533465e75809eb151a61ba5297d378614e8277e63.pnp1 |   Bin 0 -> 49508 bytes
+ ...54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1 |   Bin 0 -> 49508 bytes
+ .../native-risk/attempt-02/native-run/run.json     |   298 +
+ .../attempt-02/native-run/store/native.sqlite      |   Bin 0 -> 499712 bytes
+ .../attempt-02/native-run/store/owner.lock         |     0
+ .../native-risk/attempt-02/native-tests.log        |    20 +
+ .../native-risk/attempt-02/preflight.log           |     1 +
+ .../attempt-02/reader-tests-earlier-actual-run.log |    27 +
+ .../native-risk/attempt-02/reader-tests.log        |    27 +
+ .../attempt-02/retained-source-paths.json          |    71 +
+ .../native-risk/attempt-02/rustfmt-check.log       |     0
+ .../native-risk/attempt-02/source-sha256.json      |    15 +
+ .../NATIVE_RISK_LEDGER_V1.md.source                |   287 +
+ .../formal/pon-nakamoto-v1/native_owner_journal.py |   606 +
+ .../formal/pon-nakamoto-v1/native_risk_ledger.py   |   316 +
+ .../pon-nakamoto-v1/test_native_risk_ledger.py     |   302 +
+ .../attempt-02/sources/trillionnium/Cargo.lock     |  1690 ++
+ .../attempt-02/sources/trillionnium/Cargo.toml     |    78 +
+ .../trillionnium/crates/trnm-pon-node/Cargo.toml   |    46 +
+ .../examples/native_risk_ledger_v1.rs              |    30 +
+ .../examples/support/native_risk_scenario.rs       |   304 +
+ .../trillionnium/crates/trnm-pon-node/src/lib.rs   |   828 +
+ .../trnm-pon-node/src/native_owner_journal.rs      |  1156 ++
+ .../crates/trnm-pon-node/src/native_risk_ledger.rs |  1009 ++
+ .../trnm-pon-node/tests/native_risk_ledger.rs      |   377 +
+ .../native-risk/attempt-02/stages.json             |   146 +
+ .../native-risk/attempt-02/strict-clippy.log       |    66 +
+ .../native-risk/attempt-03.tar.gz                  |   Bin 0 -> 76183 bytes
+ .../native-risk/attempt-03/after-repro.json        |     5 +
+ .../attempt-03/before-execution-summary.json       |    72 +
+ .../native-risk/attempt-03/before-repro.json       |    19 +
+ .../attempt-03/before-source-sha256.json           |    22 +
+ .../NATIVE_RISK_LEDGER_V1.md.source                |   287 +
+ .../formal/pon-nakamoto-v1/native_risk_ledger.py   |   316 +
+ .../pon-nakamoto-v1/test_native_risk_ledger.py     |   302 +
+ .../crates/trnm-pon-node/src/native_risk_ledger.rs |  1009 ++
+ .../trnm-pon-node/tests/native_risk_ledger.rs      |   377 +
+ .../native-risk/attempt-03/local-checked.json      |   455 +
+ .../attempt-03/local-independent-reader.log        |     0
+ .../native-risk/attempt-03/local-reader-tests.log  |    30 +
+ .../native-risk/attempt-03/local-stages.json       |    18 +
+ .../negative-after-native-lease-end/risk.pnrl1     |   Bin 0 -> 18968 bytes
+ .../native-risk/attempt-03/remote/checked.json     |   455 +
+ .../remote/environment-qualification-inputs.json   |     8 +
+ .../attempt-03/remote/independent-reader.log       |     0
+ .../native-risk/attempt-03/remote/native-tests.log |    20 +
+ .../native-risk/attempt-03/remote/preflight.log    |     1 +
+ .../native-risk/attempt-03/remote/reader-tests.log |    30 +
+ .../attempt-03/remote/retained-source-paths.json   |    71 +
+ .../native-risk/attempt-03/remote/rustfmt.log      |     0
+ .../attempt-03/remote/source-sha256.json           |    15 +
+ .../NATIVE_RISK_LEDGER_V1.md.source                |   297 +
+ .../formal/pon-nakamoto-v1/native_owner_journal.py |   606 +
+ .../formal/pon-nakamoto-v1/native_risk_ledger.py   |   327 +
+ .../pon-nakamoto-v1/test_native_risk_ledger.py     |   372 +
+ .../remote/sources/trillionnium/Cargo.lock         |  1690 ++
+ .../remote/sources/trillionnium/Cargo.toml         |    78 +
+ .../trillionnium/crates/trnm-pon-node/Cargo.toml   |    46 +
+ .../examples/native_risk_ledger_v1.rs              |    30 +
+ .../examples/support/native_risk_scenario.rs       |   304 +
+ .../trillionnium/crates/trnm-pon-node/src/lib.rs   |   828 +
+ .../trnm-pon-node/src/native_owner_journal.rs      |  1156 ++
+ .../crates/trnm-pon-node/src/native_risk_ledger.rs |  1024 ++
+ .../trnm-pon-node/tests/native_risk_ledger.rs      |   464 +
+ .../native-risk/attempt-03/remote/stages.json      |    97 +
+ .../attempt-03/remote/strict-clippy.log            |     2 +
+ .../native-risk/attempt-03/runtime-job-status.json |    37 +
+ .../native-risk/execution-summary.json             |    90 +
+ .../native-risk/local-checked.json                 |   455 +
+ .../native-risk/local-reader-tests.log             |    27 +
+ .../native-risk/progress.json                      |    41 +
+ .../native-risk/runtime-jobs.json                  |   203 +
+ .../sqlite-build-qualification-job-status.json     |    37 +
+ .../sqlite-build-qualification-output.json         |    20 +
+ .../recovered-source-gates/README.md               |   310 +
+ .../1-8527ec98-ci-contract.stderr                  |     0
+ .../1-8527ec98-ci-contract.stdout                  |     1 +
+ .../1-8527ec98-finite-state.stderr                 |    38 +
+ .../1-8527ec98-finite-state.stdout                 |     0
+ .../model-publications/1-8527ec98-merge.stderr     |     0
+ .../model-publications/1-8527ec98-merge.stdout     |    51 +
+ .../model-publications/1-8527ec98-preflight.stderr |     0
+ .../model-publications/1-8527ec98-preflight.stdout |     1 +
+ .../model-publications/1-8527ec98-push.stderr      |     6 +
+ .../model-publications/1-8527ec98-push.stdout      |     1 +
+ .../1-8527ec98-remote-readback.stderr              |     0
+ .../1-8527ec98-remote-readback.stdout              |     1 +
+ .../1-8527ec98-source-clean.stderr                 |     0
+ .../1-8527ec98-source-clean.stdout                 |     0
+ .../2-628ec7f3-ci-contract.stderr                  |     0
+ .../2-628ec7f3-ci-contract.stdout                  |     1 +
+ .../2-628ec7f3-event-coverage.stderr               |    26 +
+ .../2-628ec7f3-event-coverage.stdout               |     0
+ .../2-628ec7f3-finite-state.stderr                 |    38 +
+ .../2-628ec7f3-finite-state.stdout                 |     0
+ .../model-publications/2-628ec7f3-merge.stderr     |     0
+ .../model-publications/2-628ec7f3-merge.stdout     |    18 +
+ .../model-publications/2-628ec7f3-preflight.stderr |     0
+ .../model-publications/2-628ec7f3-preflight.stdout |     1 +
+ .../model-publications/2-628ec7f3-push.stderr      |     6 +
+ .../model-publications/2-628ec7f3-push.stdout      |     1 +
+ .../2-628ec7f3-remote-readback.stderr              |     0
+ .../2-628ec7f3-remote-readback.stdout              |     1 +
+ .../2-628ec7f3-source-clean.stderr                 |     0
+ .../2-628ec7f3-source-clean.stdout                 |     0
+ .../3-6615ffa3-ci-contract.stderr                  |     0
+ .../3-6615ffa3-ci-contract.stdout                  |     1 +
+ .../3-6615ffa3-ci-negative-tests.stderr            |   110 +
+ .../3-6615ffa3-ci-negative-tests.stdout            |     0
+ .../3-6615ffa3-event-coverage.stderr               |    26 +
+ .../3-6615ffa3-event-coverage.stdout               |     0
+ .../3-6615ffa3-finite-state.stderr                 |    39 +
+ .../3-6615ffa3-finite-state.stdout                 |     0
+ .../model-publications/3-6615ffa3-merge.stderr     |     0
+ .../model-publications/3-6615ffa3-merge.stdout     |    50 +
+ .../model-publications/3-6615ffa3-preflight.stderr |     0
+ .../model-publications/3-6615ffa3-preflight.stdout |     1 +
+ .../model-publications/3-6615ffa3-push.stderr      |     6 +
+ .../model-publications/3-6615ffa3-push.stdout      |     1 +
+ .../3-6615ffa3-remote-readback.stderr              |     0
+ .../3-6615ffa3-remote-readback.stdout              |     1 +
+ .../3-6615ffa3-source-clean.stderr                 |     0
+ .../3-6615ffa3-source-clean.stdout                 |     0
+ .../checkout-evidence-path.stderr                  |     0
+ .../checkout-evidence-path.stdout                  |     0
+ .../model-publications/checks.json                 |   325 +
+ .../model-publications/fetch-model-bundle.stderr   |     2 +
+ .../model-publications/fetch-model-bundle.stdout   |     0
+ .../recovered-exact-source-02/cargo-graph.stderr   |     0
+ .../recovered-exact-source-02/cargo-graph.stdout   |     1 +
+ .../checkout-recovered.stderr                      |     0
+ .../checkout-recovered.stdout                      |     1 +
+ .../recovered-exact-source-02/checks.json          |   363 +
+ .../ci-execution-contract.stderr                   |    82 +
+ .../ci-execution-contract.stdout                   |     6 +
+ .../ci-source-contract.stderr                      |   110 +
+ .../ci-source-contract.stdout                      |     0
+ .../composition-models.stderr                      |    21 +
+ .../composition-models.stdout                      |     0
+ .../composition/attempt.json                       |    15 +
+ .../composition/exact_model_counterexamples.json   |   520 +
+ .../composition/exact_packet_join.json             |    92 +
+ .../native_composition_negative_controls.json      |   164 +
+ ...7c796a88b2c7901aa3d23816490efe19ce4b0c7b3c5.bin |   Bin 0 -> 49508 bytes
+ ...ed868145f70c54fd0a11f5c3f1f2fc58af6f785260e.bin |   Bin 0 -> 49508 bytes
+ .../public_expected_pins.json                      |    14 +
+ .../signed_observations.json                       |    72 +
+ .../composition/native_reader_results.json         |  3935 +++++
+ .../producer_attribution_counterexample.json       |    85 +
+ ...b3c56c520dcd40147e2dbccb686e5f6569355821820.bin |   Bin 0 -> 49188 bytes
+ ...4c8996fb92427ae41e4649b934ca495991b7852b855.bin |     0
+ ...853150866e0393ed57c8518cdc2a05fd30ddaa81e1b.bin |   Bin 0 -> 32800 bytes
+ .../public_expected_pins.json                      |    14 +
+ .../signed_observations.json                       |    76 +
+ .../composition/source_manifest_before.json        |    20 +
+ .../composition/summary.json                       |    52 +
+ .../exact-certificate-composition.stderr           |     0
+ .../exact-certificate-composition.stdout           |     1 +
+ .../recovered-exact-source-02/fetch-bundle.stderr  |     2 +
+ .../recovered-exact-source-02/fetch-bundle.stdout  |     0
+ .../fresh-native-scenario.stderr                   |     0
+ .../fresh-native-scenario.stdout                   |     1 +
+ .../recovered-exact-source-02/hook-config.stderr   |     0
+ .../recovered-exact-source-02/hook-config.stdout   |     0
+ .../independent-native-reader-tests.stderr         |    26 +
+ .../independent-native-reader-tests.stdout         |     0
+ .../native-journal-build.stderr                    |     3 +
+ .../native-journal-build.stdout                    |     0
+ .../alice-before-restart-checkpoint.json           |     5 +
+ .../alice-journal/journal.pnoj1                    |   Bin 0 -> 1565731 bytes
+ .../native-owner-journal/alice-journal/owner.lock  |     0
+ ...8de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1 |   Bin 0 -> 49508 bytes
+ ...f07aabee48fbf8036d6a1437e95c4a691ee3dc8f09.pnp1 |   Bin 0 -> 49508 bytes
+ ...921478703b12adea793a7077f7ab280628e23ef29d.pnp1 |   Bin 0 -> 49508 bytes
+ ...86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1 |   Bin 0 -> 49709 bytes
+ ...2824738d2b2becf69384dc046e14dbc29fe7ea8f6e.pnp1 |   Bin 0 -> 49508 bytes
+ ...952038dc045e8603683aed6ecd1859e1f067633e54.pnp1 |   Bin 0 -> 49508 bytes
+ ...d2b59523e23d50493779b7cf2d00b725c85fb185bd.pnp1 |   Bin 0 -> 49508 bytes
+ ...f050b6d62a91257dc3777f36be0fe62d6dd3b907b7.pnp1 |   Bin 0 -> 49508 bytes
+ ...ec99f40d200816fc558ca2c05ae423268d1a1f4e78.pnp1 |   Bin 0 -> 49508 bytes
+ ...c796a88b2c7901aa3d23816490efe19ce4b0c7b3c5.pnp1 |   Bin 0 -> 49508 bytes
+ ...43de4220d2b5fe324e8a640cca48dbb7f04bde3e14.pnp1 |   Bin 0 -> 49508 bytes
+ ...8eafc72250763b315cdde2457398f6b796c6656cb7.pnp1 |   Bin 0 -> 49508 bytes
+ ...5750f75ae846b3bc15c61dd882b446df5aa3e2c691.pnp1 |   Bin 0 -> 49508 bytes
+ ...e4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1 |   Bin 0 -> 49508 bytes
+ ...414a7ca9a635f94e144d8c97b97407406b81fe53e0.pnp1 |   Bin 0 -> 49508 bytes
+ ...c533465e75809eb151a61ba5297d378614e8277e63.pnp1 |   Bin 0 -> 49508 bytes
+ ...7011370d167ecdfbdb32041ec9a19ca6fafe33cd06.pnp1 |   Bin 0 -> 49508 bytes
+ ...f5184a657730e7b1c846f99dcccdd4ac0063f0f9ee.pnp1 |   Bin 0 -> 49508 bytes
+ ...54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1 |   Bin 0 -> 49508 bytes
+ ...d868145f70c54fd0a11f5c3f1f2fc58af6f785260e.pnp1 |   Bin 0 -> 49508 bytes
+ .../native-owner-journal/alice-store/native.sqlite |   Bin 0 -> 1118208 bytes
+ .../native-owner-journal/alice-store/owner.lock    |     0
+ .../native-owner-journal/bob-journal/journal.pnoj1 |   Bin 0 -> 440626 bytes
+ .../native-owner-journal/bob-journal/owner.lock    |     0
+ ...2824738d2b2becf69384dc046e14dbc29fe7ea8f6e.pnp1 |   Bin 0 -> 49508 bytes
+ ...d2b59523e23d50493779b7cf2d00b725c85fb185bd.pnp1 |   Bin 0 -> 49508 bytes
+ ...ec99f40d200816fc558ca2c05ae423268d1a1f4e78.pnp1 |   Bin 0 -> 49508 bytes
+ ...c796a88b2c7901aa3d23816490efe19ce4b0c7b3c5.pnp1 |   Bin 0 -> 49508 bytes
+ ...43de4220d2b5fe324e8a640cca48dbb7f04bde3e14.pnp1 |   Bin 0 -> 49508 bytes
+ ...8eafc72250763b315cdde2457398f6b796c6656cb7.pnp1 |   Bin 0 -> 49508 bytes
+ ...7011370d167ecdfbdb32041ec9a19ca6fafe33cd06.pnp1 |   Bin 0 -> 49508 bytes
+ ...f5184a657730e7b1c846f99dcccdd4ac0063f0f9ee.pnp1 |   Bin 0 -> 49508 bytes
+ .../native-owner-journal/bob-store/native.sqlite   |   Bin 0 -> 548864 bytes
+ .../native-owner-journal/bob-store/owner.lock      |     0
+ .../crash-journal/journal.pnoj1                    |   Bin 0 -> 301066 bytes
+ .../native-owner-journal/crash-journal/owner.lock  |     0
+ ...8de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1 |   Bin 0 -> 49508 bytes
+ ...921478703b12adea793a7077f7ab280628e23ef29d.pnp1 |   Bin 0 -> 49508 bytes
+ ...86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1 |   Bin 0 -> 49709 bytes
+ ...952038dc045e8603683aed6ecd1859e1f067633e54.pnp1 |   Bin 0 -> 49508 bytes
+ ...e4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1 |   Bin 0 -> 49508 bytes
+ ...c533465e75809eb151a61ba5297d378614e8277e63.pnp1 |   Bin 0 -> 49508 bytes
+ ...54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1 |   Bin 0 -> 49508 bytes
+ .../native-owner-journal/crash-plan.json           |    53 +
+ .../crash-recovered-checkpoint.json                |     5 +
+ .../native-owner-journal/crash-store/native.sqlite |   Bin 0 -> 499712 bytes
+ .../native-owner-journal/crash-store/owner.lock    |     0
+ .../old-crash-journal/journal.pnoj1                |   Bin 0 -> 276715 bytes
+ .../old-crash-journal/owner.lock                   |     0
+ ...8de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1 |   Bin 0 -> 49508 bytes
+ ...921478703b12adea793a7077f7ab280628e23ef29d.pnp1 |   Bin 0 -> 49508 bytes
+ ...86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1 |   Bin 0 -> 49709 bytes
+ ...952038dc045e8603683aed6ecd1859e1f067633e54.pnp1 |   Bin 0 -> 49508 bytes
+ ...e4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1 |   Bin 0 -> 49508 bytes
+ ...c533465e75809eb151a61ba5297d378614e8277e63.pnp1 |   Bin 0 -> 49508 bytes
+ ...54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1 |   Bin 0 -> 49508 bytes
+ .../old-crash-store/native.sqlite                  |   Bin 0 -> 499712 bytes
+ .../old-crash-store/owner.lock                     |     0
+ .../orphan-journal/journal.pnoj1                   |   Bin 0 -> 27413 bytes
+ .../native-owner-journal/orphan-journal/owner.lock |     0
+ ...38c5ab39d63ce271fc46085cd935f4d41292b81a46.pnp1 |   Bin 0 -> 49508 bytes
+ .../orphan-store/native.sqlite                     |   Bin 0 -> 196608 bytes
+ .../native-owner-journal/orphan-store/owner.lock   |     0
+ .../recovered-crash-journal/journal.pnoj1          |   Bin 0 -> 672634 bytes
+ .../recovered-crash-journal/owner.lock             |     0
+ ...8de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1 |   Bin 0 -> 49508 bytes
+ ...921478703b12adea793a7077f7ab280628e23ef29d.pnp1 |   Bin 0 -> 49508 bytes
+ ...86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1 |   Bin 0 -> 49709 bytes
+ ...2824738d2b2becf69384dc046e14dbc29fe7ea8f6e.pnp1 |   Bin 0 -> 49508 bytes
+ ...952038dc045e8603683aed6ecd1859e1f067633e54.pnp1 |   Bin 0 -> 49508 bytes
+ ...d2b59523e23d50493779b7cf2d00b725c85fb185bd.pnp1 |   Bin 0 -> 49508 bytes
+ ...ec99f40d200816fc558ca2c05ae423268d1a1f4e78.pnp1 |   Bin 0 -> 49508 bytes
+ ...c796a88b2c7901aa3d23816490efe19ce4b0c7b3c5.pnp1 |   Bin 0 -> 49508 bytes
+ ...43de4220d2b5fe324e8a640cca48dbb7f04bde3e14.pnp1 |   Bin 0 -> 49508 bytes
+ ...8eafc72250763b315cdde2457398f6b796c6656cb7.pnp1 |   Bin 0 -> 49508 bytes
+ ...e4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1 |   Bin 0 -> 49508 bytes
+ ...c533465e75809eb151a61ba5297d378614e8277e63.pnp1 |   Bin 0 -> 49508 bytes
+ ...7011370d167ecdfbdb32041ec9a19ca6fafe33cd06.pnp1 |   Bin 0 -> 49508 bytes
+ ...f5184a657730e7b1c846f99dcccdd4ac0063f0f9ee.pnp1 |   Bin 0 -> 49508 bytes
+ ...54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1 |   Bin 0 -> 49508 bytes
+ .../recovered-crash-store/native.sqlite            |   Bin 0 -> 913408 bytes
+ .../recovered-crash-store/owner.lock               |     0
+ .../native-owner-journal/run.json                  |  4364 +++++
+ .../native-owner-tests.stderr                      |    69 +
+ .../native-owner-tests.stdout                      |    31 +
+ .../new-publish-worktree.stderr                    |     1 +
+ .../new-publish-worktree.stdout                    |     0
+ .../pre-push-preflight.stderr                      |     0
+ .../pre-push-preflight.stdout                      |     1 +
+ .../recovered-exact-source-02/preflight.stderr     |     0
+ .../recovered-exact-source-02/preflight.stdout     |     1 +
+ .../preserve-mirror-branch.stderr                  |     0
+ .../preserve-mirror-branch.stdout                  |     0
+ .../publish-recovered.stderr                       |     9 +
+ .../publish-recovered.stdout                       |     2 +
+ .../recovered-exact-source-02/query-models.stderr  |    31 +
+ .../recovered-exact-source-02/query-models.stdout  |     0
+ .../remote-readback.stderr                         |     0
+ .../remote-readback.stdout                         |     1 +
+ .../recovered-exact-source-02/rust-format.stderr   |     0
+ .../recovered-exact-source-02/rust-format.stdout   |     0
+ .../source-inventory.stderr                        |     0
+ .../source-inventory.stdout                        |     1 +
+ .../recovered-exact-source-02/sparse-init.stderr   |     0
+ .../recovered-exact-source-02/sparse-init.stdout   |     0
+ .../recovered-exact-source-02/sparse-select.stderr |     0
+ .../recovered-exact-source-02/sparse-select.stdout |     0
+ .../strict-owner-clippy.stderr                     |    92 +
+ .../strict-owner-clippy.stdout                     |     0
+ .../recovered-exact-source/checks.json             |    19 +
+ .../recovered-exact-source/fetch-bundle.stderr     |     1 +
+ .../recovered-exact-source/fetch-bundle.stdout     |     0
+ .../remote-copy-manifest.json                      |  1085 ++
+ .../transport/checks-summary.json                  |   531 +
+ .../recovered-source-gates/transport/chunks.jsonl  |    14 +
+ .../transport/download-receipt.json                |    99 +
+ .../transport/metadata-write-attempt-01.stderr     |     3 +
+ .../transport/preflight-and-inventory.log          |     2 +
+ ...overed-source-gates-20261107-transfer-v1.tar.gz |   Bin 0 -> 854280 bytes
+ .../transport/verification-command.json            |     8 +
+ .../transport/verification.json                    |    20 +
+ .../transport/verification.stderr                  |     0
+ .../transport/verify-transfer.py                   |   139 +
+ .../ci-source-execution-attempt-01/README.md       |    27 +
+ .../ci-execution.command.json                      |    24 +
+ .../ci-execution.stderr.log                        |    82 +
+ .../ci-execution.stdout.log                        |     6 +
+ .../environment.json                               |     9 +
+ .../gate-source-stability.json                     |  1193 ++
+ .../preflight.command.json                         |    23 +
+ .../preflight.stderr.log                           |     0
+ .../preflight.stdout.log                           |     1 +
+ .../source-after.json                              | 16644 +++++++++++++++++++
+ .../source-before.json                             | 16644 +++++++++++++++++++
+ .../source-integrity.command.json                  |    24 +
+ .../source-integrity.stderr.log                    |    48 +
+ .../source-integrity.stdout.log                    |     6 +
+ .../ci-source-execution-attempt-01/summary.json    |   128 +
+ .../transfer-verification.command.json             |    23 +
+ .../transfer-verification.stderr.log               |     0
+ .../transfer-verification.stdout.log               |    20 +
+ .../root-checks/markdown-attempt-01.json           |    14 +
+ .../root-checks/markdown-attempt-02.json           |    23 +
+ formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md    |   297 +
+ formal/pon-nakamoto-v1/README.md                   |    28 +
+ formal/pon-nakamoto-v1/native_risk_ledger.py       |   327 +
+ formal/pon-nakamoto-v1/test_native_risk_ledger.py  |   372 +
+ scripts/ci/check_ci_contract.py                    |     8 +-
+ scripts/ci/ci_job.sh                               |     4 +
+ scripts/ci/test_ci_contract.py                     |    25 +-
+ .../examples/native_risk_ledger_v1.rs              |    30 +
+ .../support/distributed_source_inventory.rs        |    28 +
+ .../examples/support/native_risk_scenario.rs       |   304 +
+ trillionnium/crates/trnm-pon-node/src/lib.rs       |     2 +
+ .../crates/trnm-pon-node/src/native_risk_ledger.rs |  1024 ++
+ .../trnm-pon-node/tests/native_risk_ledger.rs      |   464 +
+ 426 files changed, 80628 insertions(+), 2 deletions(-)
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/README.md
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/event-coverage/unittest.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/joint-state/evidence-run-01.stderr.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/joint-state/evidence-run-02.stderr.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/joint-state/test-attempt-01/tests.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/joint-state/test-attempt-02/tests.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/README.md
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/artifact-sha256.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01.tar.gz
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/actual-native-scenario.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/build-example.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/checked.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/git-head.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/git-status.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/independent-reader.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/bank/bank.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/bank/risk.pnrl1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/child-1-plan.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/child-2-plan.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/foreign-native/journal.pnoj1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/foreign-native/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/foreign-store/native.sqlite
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/foreign-store/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/native/journal.pnoj1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/native/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/native/packets/0911acca8ac8c87868b5f08de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/native/packets/23a22bc54331b6c4f6f291921478703b12adea793a7077f7ab280628e23ef29d.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/native/packets/2d4868329e2a4ef4a76bfd86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/native/packets/412c750326721e6ec5d9e5952038dc045e8603683aed6ecd1859e1f067633e54.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/native/packets/a2e0494fa79cc78255f5dbe4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/native/packets/a87e881dea297719ff996dc533465e75809eb151a61ba5297d378614e8277e63.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/native/packets/c66a1aed9fe347af0b812c54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/old-bank/bank.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/old-bank/risk.pnrl1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/old-native/journal.pnoj1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/old-native/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/old-native/packets/0911acca8ac8c87868b5f08de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/old-native/packets/23a22bc54331b6c4f6f291921478703b12adea793a7077f7ab280628e23ef29d.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/old-native/packets/2d4868329e2a4ef4a76bfd86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/old-native/packets/412c750326721e6ec5d9e5952038dc045e8603683aed6ecd1859e1f067633e54.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/old-native/packets/a2e0494fa79cc78255f5dbe4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/old-native/packets/a87e881dea297719ff996dc533465e75809eb151a61ba5297d378614e8277e63.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/old-native/packets/c66a1aed9fe347af0b812c54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/run.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/store/native.sqlite
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-run/store/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-tests.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/preflight.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/reader-tests.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/retained-source-paths.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/rustfmt.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/source-sha256.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/sources/formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md.source
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/sources/formal/pon-nakamoto-v1/native_owner_journal.py
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/sources/formal/pon-nakamoto-v1/native_risk_ledger.py
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/sources/formal/pon-nakamoto-v1/test_native_risk_ledger.py
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/sources/trillionnium/Cargo.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/sources/trillionnium/Cargo.toml
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/sources/trillionnium/crates/trnm-pon-node/Cargo.toml
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/sources/trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/sources/trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/sources/trillionnium/crates/trnm-pon-node/src/lib.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/sources/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/sources/trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/sources/trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/stages.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02.tar.gz
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/actual-native-scenario.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/build-example.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/checked.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/environment-qualification-inputs.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/independent-reader.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/bank/bank.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/bank/risk.pnrl1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/child-1-plan.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/child-2-plan.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/foreign-native/journal.pnoj1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/foreign-native/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/foreign-store/native.sqlite
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/foreign-store/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/native/journal.pnoj1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/native/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/native/packets/0911acca8ac8c87868b5f08de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/native/packets/23a22bc54331b6c4f6f291921478703b12adea793a7077f7ab280628e23ef29d.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/native/packets/2d4868329e2a4ef4a76bfd86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/native/packets/412c750326721e6ec5d9e5952038dc045e8603683aed6ecd1859e1f067633e54.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/native/packets/a2e0494fa79cc78255f5dbe4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/native/packets/a87e881dea297719ff996dc533465e75809eb151a61ba5297d378614e8277e63.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/native/packets/c66a1aed9fe347af0b812c54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/old-bank/bank.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/old-bank/risk.pnrl1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/old-native/journal.pnoj1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/old-native/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/old-native/packets/0911acca8ac8c87868b5f08de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/old-native/packets/23a22bc54331b6c4f6f291921478703b12adea793a7077f7ab280628e23ef29d.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/old-native/packets/2d4868329e2a4ef4a76bfd86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/old-native/packets/412c750326721e6ec5d9e5952038dc045e8603683aed6ecd1859e1f067633e54.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/old-native/packets/a2e0494fa79cc78255f5dbe4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/old-native/packets/a87e881dea297719ff996dc533465e75809eb151a61ba5297d378614e8277e63.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/old-native/packets/c66a1aed9fe347af0b812c54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/run.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/store/native.sqlite
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-run/store/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-tests.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/preflight.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/reader-tests-earlier-actual-run.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/reader-tests.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/retained-source-paths.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/rustfmt-check.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/source-sha256.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/sources/formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md.source
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/sources/formal/pon-nakamoto-v1/native_owner_journal.py
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/sources/formal/pon-nakamoto-v1/native_risk_ledger.py
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/sources/formal/pon-nakamoto-v1/test_native_risk_ledger.py
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/sources/trillionnium/Cargo.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/sources/trillionnium/Cargo.toml
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/sources/trillionnium/crates/trnm-pon-node/Cargo.toml
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/sources/trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/sources/trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/sources/trillionnium/crates/trnm-pon-node/src/lib.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/sources/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/sources/trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/sources/trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/stages.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/strict-clippy.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03.tar.gz
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/after-repro.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/before-execution-summary.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/before-repro.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/before-source-sha256.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/before-sources/formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md.source
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/before-sources/formal/pon-nakamoto-v1/native_risk_ledger.py
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/before-sources/formal/pon-nakamoto-v1/test_native_risk_ledger.py
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/before-sources/trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/before-sources/trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/local-checked.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/local-independent-reader.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/local-reader-tests.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/local-stages.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/negative-after-native-lease-end/risk.pnrl1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/checked.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/environment-qualification-inputs.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/independent-reader.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/native-tests.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/preflight.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/reader-tests.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/retained-source-paths.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/rustfmt.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/source-sha256.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/sources/formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md.source
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/sources/formal/pon-nakamoto-v1/native_owner_journal.py
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/sources/formal/pon-nakamoto-v1/native_risk_ledger.py
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/sources/formal/pon-nakamoto-v1/test_native_risk_ledger.py
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/sources/trillionnium/Cargo.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/sources/trillionnium/Cargo.toml
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/sources/trillionnium/crates/trnm-pon-node/Cargo.toml
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/sources/trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/sources/trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/sources/trillionnium/crates/trnm-pon-node/src/lib.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/sources/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/sources/trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/sources/trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/stages.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/strict-clippy.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/runtime-job-status.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/execution-summary.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/local-checked.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/local-reader-tests.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/progress.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/runtime-jobs.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/sqlite-build-qualification-job-status.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/native-risk/sqlite-build-qualification-output.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/README.md
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-ci-contract.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-ci-contract.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-finite-state.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-finite-state.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-merge.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-merge.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-preflight.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-preflight.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-push.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-push.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-remote-readback.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-remote-readback.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-source-clean.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-source-clean.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-ci-contract.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-ci-contract.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-event-coverage.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-event-coverage.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-finite-state.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-finite-state.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-merge.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-merge.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-preflight.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-preflight.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-push.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-push.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-remote-readback.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-remote-readback.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-source-clean.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-source-clean.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-ci-contract.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-ci-contract.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-ci-negative-tests.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-ci-negative-tests.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-event-coverage.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-event-coverage.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-finite-state.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-finite-state.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-merge.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-merge.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-preflight.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-preflight.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-push.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-push.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-remote-readback.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-remote-readback.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-source-clean.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-source-clean.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/checkout-evidence-path.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/checkout-evidence-path.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/checks.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/fetch-model-bundle.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/fetch-model-bundle.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/cargo-graph.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/cargo-graph.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/checkout-recovered.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/checkout-recovered.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/checks.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/ci-execution-contract.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/ci-execution-contract.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/ci-source-contract.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/ci-source-contract.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition-models.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition-models.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/attempt.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/exact_model_counterexamples.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/exact_packet_join.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/native_composition_negative_controls.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/native_packet_publications/artifacts/776dc990e3543a9c4e9957c796a88b2c7901aa3d23816490efe19ce4b0c7b3c5.bin
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/native_packet_publications/artifacts/d42cd500b7cf949fc2075ed868145f70c54fd0a11f5c3f1f2fc58af6f785260e.bin
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/native_packet_publications/public_expected_pins.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/native_packet_publications/signed_observations.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/native_reader_results.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/producer_attribution_counterexample.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/signed_false_producer_statement/artifacts/d94942f385a1a9b037494b3c56c520dcd40147e2dbccb686e5f6569355821820.bin
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/signed_false_producer_statement/artifacts/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.bin
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/signed_false_producer_statement/artifacts/e7ada67c55f95759095b5853150866e0393ed57c8518cdc2a05fd30ddaa81e1b.bin
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/signed_false_producer_statement/public_expected_pins.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/signed_false_producer_statement/signed_observations.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/source_manifest_before.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/composition/summary.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/exact-certificate-composition.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/exact-certificate-composition.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/fetch-bundle.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/fetch-bundle.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/fresh-native-scenario.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/fresh-native-scenario.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/hook-config.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/hook-config.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/independent-native-reader-tests.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/independent-native-reader-tests.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-journal-build.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-journal-build.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-before-restart-checkpoint.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/journal.pnoj1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/0911acca8ac8c87868b5f08de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/16b76c3f1e567abed89066f07aabee48fbf8036d6a1437e95c4a691ee3dc8f09.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/23a22bc54331b6c4f6f291921478703b12adea793a7077f7ab280628e23ef29d.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/2d4868329e2a4ef4a76bfd86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/2fb14f1b46b51aa45fe54f2824738d2b2becf69384dc046e14dbc29fe7ea8f6e.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/412c750326721e6ec5d9e5952038dc045e8603683aed6ecd1859e1f067633e54.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/4376d1102a405753673dbcd2b59523e23d50493779b7cf2d00b725c85fb185bd.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/4a978ab260bf253182e098f050b6d62a91257dc3777f36be0fe62d6dd3b907b7.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/4b2a10c6cb264552378c8fec99f40d200816fc558ca2c05ae423268d1a1f4e78.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/776dc990e3543a9c4e9957c796a88b2c7901aa3d23816490efe19ce4b0c7b3c5.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/83e5904ac17b2c3f58cd8243de4220d2b5fe324e8a640cca48dbb7f04bde3e14.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/89ec206947d46e4280541b8eafc72250763b315cdde2457398f6b796c6656cb7.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/8c54fa5ba8958229d49a6c5750f75ae846b3bc15c61dd882b446df5aa3e2c691.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/a2e0494fa79cc78255f5dbe4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/a5cb39f8bfb11d03d960c7414a7ca9a635f94e144d8c97b97407406b81fe53e0.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/a87e881dea297719ff996dc533465e75809eb151a61ba5297d378614e8277e63.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/ae71245e9159ae093183ff7011370d167ecdfbdb32041ec9a19ca6fafe33cd06.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/bf2ec604f1eb1d6b326074f5184a657730e7b1c846f99dcccdd4ac0063f0f9ee.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/c66a1aed9fe347af0b812c54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-journal/packets/d42cd500b7cf949fc2075ed868145f70c54fd0a11f5c3f1f2fc58af6f785260e.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-store/native.sqlite
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/alice-store/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/bob-journal/journal.pnoj1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/bob-journal/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/bob-journal/packets/2fb14f1b46b51aa45fe54f2824738d2b2becf69384dc046e14dbc29fe7ea8f6e.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/bob-journal/packets/4376d1102a405753673dbcd2b59523e23d50493779b7cf2d00b725c85fb185bd.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/bob-journal/packets/4b2a10c6cb264552378c8fec99f40d200816fc558ca2c05ae423268d1a1f4e78.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/bob-journal/packets/776dc990e3543a9c4e9957c796a88b2c7901aa3d23816490efe19ce4b0c7b3c5.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/bob-journal/packets/83e5904ac17b2c3f58cd8243de4220d2b5fe324e8a640cca48dbb7f04bde3e14.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/bob-journal/packets/89ec206947d46e4280541b8eafc72250763b315cdde2457398f6b796c6656cb7.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/bob-journal/packets/ae71245e9159ae093183ff7011370d167ecdfbdb32041ec9a19ca6fafe33cd06.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/bob-journal/packets/bf2ec604f1eb1d6b326074f5184a657730e7b1c846f99dcccdd4ac0063f0f9ee.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/bob-store/native.sqlite
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/bob-store/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/crash-journal/journal.pnoj1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/crash-journal/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/crash-journal/packets/0911acca8ac8c87868b5f08de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/crash-journal/packets/23a22bc54331b6c4f6f291921478703b12adea793a7077f7ab280628e23ef29d.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/crash-journal/packets/2d4868329e2a4ef4a76bfd86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/crash-journal/packets/412c750326721e6ec5d9e5952038dc045e8603683aed6ecd1859e1f067633e54.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/crash-journal/packets/a2e0494fa79cc78255f5dbe4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/crash-journal/packets/a87e881dea297719ff996dc533465e75809eb151a61ba5297d378614e8277e63.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/crash-journal/packets/c66a1aed9fe347af0b812c54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/crash-plan.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/crash-recovered-checkpoint.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/crash-store/native.sqlite
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/crash-store/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/old-crash-journal/journal.pnoj1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/old-crash-journal/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/old-crash-journal/packets/0911acca8ac8c87868b5f08de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/old-crash-journal/packets/23a22bc54331b6c4f6f291921478703b12adea793a7077f7ab280628e23ef29d.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/old-crash-journal/packets/2d4868329e2a4ef4a76bfd86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/old-crash-journal/packets/412c750326721e6ec5d9e5952038dc045e8603683aed6ecd1859e1f067633e54.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/old-crash-journal/packets/a2e0494fa79cc78255f5dbe4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/old-crash-journal/packets/a87e881dea297719ff996dc533465e75809eb151a61ba5297d378614e8277e63.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/old-crash-journal/packets/c66a1aed9fe347af0b812c54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/old-crash-store/native.sqlite
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/old-crash-store/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/orphan-journal/journal.pnoj1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/orphan-journal/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/orphan-journal/packets/ad267759cf349338a0f9f238c5ab39d63ce271fc46085cd935f4d41292b81a46.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/orphan-store/native.sqlite
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/orphan-store/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/journal.pnoj1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/packets/0911acca8ac8c87868b5f08de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/packets/23a22bc54331b6c4f6f291921478703b12adea793a7077f7ab280628e23ef29d.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/packets/2d4868329e2a4ef4a76bfd86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/packets/2fb14f1b46b51aa45fe54f2824738d2b2becf69384dc046e14dbc29fe7ea8f6e.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/packets/412c750326721e6ec5d9e5952038dc045e8603683aed6ecd1859e1f067633e54.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/packets/4376d1102a405753673dbcd2b59523e23d50493779b7cf2d00b725c85fb185bd.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/packets/4b2a10c6cb264552378c8fec99f40d200816fc558ca2c05ae423268d1a1f4e78.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/packets/776dc990e3543a9c4e9957c796a88b2c7901aa3d23816490efe19ce4b0c7b3c5.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/packets/83e5904ac17b2c3f58cd8243de4220d2b5fe324e8a640cca48dbb7f04bde3e14.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/packets/89ec206947d46e4280541b8eafc72250763b315cdde2457398f6b796c6656cb7.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/packets/a2e0494fa79cc78255f5dbe4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/packets/a87e881dea297719ff996dc533465e75809eb151a61ba5297d378614e8277e63.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/packets/ae71245e9159ae093183ff7011370d167ecdfbdb32041ec9a19ca6fafe33cd06.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/packets/bf2ec604f1eb1d6b326074f5184a657730e7b1c846f99dcccdd4ac0063f0f9ee.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-journal/packets/c66a1aed9fe347af0b812c54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-store/native.sqlite
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/recovered-crash-store/owner.lock
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-journal/run.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-tests.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-tests.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/new-publish-worktree.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/new-publish-worktree.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/pre-push-preflight.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/pre-push-preflight.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/preflight.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/preflight.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/preserve-mirror-branch.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/preserve-mirror-branch.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/publish-recovered.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/publish-recovered.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/query-models.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/query-models.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/remote-readback.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/remote-readback.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/rust-format.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/rust-format.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/source-inventory.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/source-inventory.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/sparse-init.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/sparse-init.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/sparse-select.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/sparse-select.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/strict-owner-clippy.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/strict-owner-clippy.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source/checks.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source/fetch-bundle.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source/fetch-bundle.stdout
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/remote-copy-manifest.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/transport/checks-summary.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/transport/chunks.jsonl
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/transport/download-receipt.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/transport/metadata-write-attempt-01.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/transport/preflight-and-inventory.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/transport/recovered-source-gates-20261107-transfer-v1.tar.gz
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/transport/verification-command.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/transport/verification.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/transport/verification.stderr
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/transport/verify-transfer.py
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/README.md
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/ci-execution.command.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/ci-execution.stderr.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/ci-execution.stdout.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/environment.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/gate-source-stability.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/preflight.command.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/preflight.stderr.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/preflight.stdout.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/source-after.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/source-before.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/source-integrity.command.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/source-integrity.stderr.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/source-integrity.stdout.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/summary.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/transfer-verification.command.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/transfer-verification.stderr.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/ci-source-execution-attempt-01/transfer-verification.stdout.log
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/markdown-attempt-01.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/root-checks/markdown-attempt-02.json
+ create mode 100644 formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md
+ create mode 100644 formal/pon-nakamoto-v1/native_risk_ledger.py
+ create mode 100644 formal/pon-nakamoto-v1/test_native_risk_ledger.py
+ create mode 100644 trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs
+ create mode 100644 trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs
+ create mode 100644 trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs
+ create mode 100644 trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs

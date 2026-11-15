@@ -1,0 +1,91 @@
+{
+  "archive": "prior-github-publication.tar.gz",
+  "archive_bytes": 10588,
+  "archive_sha256": "c90741b2fb2e2b39ef7e0977de1e276f81933569f8c35584cc56451f83a9c4b5",
+  "container_metadata_normalized": true,
+  "member_bytes_unchanged": true,
+  "member_count": 13,
+  "members": [
+    {
+      "bytes": 2514,
+      "mode": "0o644",
+      "path": "prior-github-publication/MANIFEST.json",
+      "sha256": "fc4b438ea9a2476a1b4d1c75eae9b2bd5f8a25ff5759c2e19e468b7532b4036d"
+    },
+    {
+      "bytes": 3893,
+      "mode": "0o644",
+      "path": "prior-github-publication/bundle-import.json",
+      "sha256": "75c119ce4804a4bae66a76885c13abcad7a83c0da721604817520441680dbb43"
+    },
+    {
+      "bytes": 1356,
+      "mode": "0o644",
+      "path": "prior-github-publication/clone-failed-stderr.log",
+      "sha256": "26a33bf76de40406deeb2dc449b9b3c2100c04b4ad5e15d9d577d96cfb7f0c82"
+    },
+    {
+      "bytes": 3157,
+      "mode": "0o644",
+      "path": "prior-github-publication/github-readback-37c-public.json",
+      "sha256": "db4dbfb52775d9bb5597c92f3fbb2c518bf4e1c1d55b1af5ffa17da2b5a8b3c4"
+    },
+    {
+      "bytes": 6002,
+      "mode": "0o644",
+      "path": "prior-github-publication/independent-spec-theory-review.json",
+      "sha256": "c9dc1601546ed2c1cfabaf9423ab2fe6e348e9f6a06a91c9e80ef7c5c1ca9c6b"
+    },
+    {
+      "bytes": 458,
+      "mode": "0o644",
+      "path": "prior-github-publication/narrow-base-fetch.json",
+      "sha256": "2461017312239aca8286ddebae54d83cfa17bb27ace108de19247de684b16c1d"
+    },
+    {
+      "bytes": 730,
+      "mode": "0o644",
+      "path": "prior-github-publication/prior-publish-terminal-status.json",
+      "sha256": "0f5cd4bc821cc9c541e33dfb1c092eef4ee3d5faff96015f0c05789c5822a637"
+    },
+    {
+      "bytes": 732,
+      "mode": "0o644",
+      "path": "prior-github-publication/public-readback-terminal-status.json",
+      "sha256": "0a87f40e63da209d54b2f96e104894524e0e7262f2c50be6af01548db9b2af7b"
+    },
+    {
+      "bytes": 9931,
+      "mode": "0o644",
+      "path": "prior-github-publication/publication-history.json",
+      "sha256": "030e6f2964e7ab3e7569061f0d4a52b84f91599af7cde17df986c32478df1669"
+    },
+    {
+      "bytes": 7778,
+      "mode": "0o644",
+      "path": "prior-github-publication/publish-37c-git-readback-v3.json",
+      "sha256": "5b4fe41ba751716a5323bbbff48e74998f387e025d4ba7d34ae85e2b16f3cc17"
+    },
+    {
+      "bytes": 1713,
+      "mode": "0o644",
+      "path": "prior-github-publication/publish-37c-git-readback.json",
+      "sha256": "71f8ab5247a6a750308db413fd274413b1897e193abd17800e5d06a55af66578"
+    },
+    {
+      "bytes": 727,
+      "mode": "0o644",
+      "path": "prior-github-publication/publish-37c.json",
+      "sha256": "5ddf6bc8c3c14330af03c39ada6248deda8dd97802fbdbf655258e3d099fe5a2"
+    },
+    {
+      "bytes": 1682,
+      "mode": "0o644",
+      "path": "prior-github-publication/remote-file-readback-manifest.json",
+      "sha256": "a42d295438a22d9df6e23555a5a143db82325b0a0c11fe27c04f2b6c6e45ed4e"
+    }
+  ],
+  "payload_bytes": 40673,
+  "readback_verified": true,
+  "schema": "pon-evidence-archive-members-v0"
+}

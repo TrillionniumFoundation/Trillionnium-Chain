@@ -1,0 +1,113 @@
+{
+  "schema": "trnm-cell-formal-preparation-core-v1",
+  "status": "PREPARATION_COMPLETE",
+  "observed_utc": "2026-11-07T17:07:48.936938+00:00",
+  "historical_source": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+  "historical_root_tree": "af52e79d69de2224fa709309704ba6a971453579",
+  "working_head_before": "9b70db69b5a7a7cdd0b73b273f189211d507dfe2",
+  "working_head_after": "9b70db69b5a7a7cdd0b73b273f189211d507dfe2",
+  "root_refs_equal_before_after": true,
+  "tracked_status_equal_before_after": true,
+  "root_had_concurrent_untracked_evidence": true,
+  "full_tree_clean_claim": false,
+  "git_version": "git version 2.43.0",
+  "runtime": {
+    "executable": "/usr/bin/python3",
+    "version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "implementation": "cpython",
+    "optimize": 0,
+    "numpy": "1.26.4",
+    "cryptography": "41.0.7"
+  },
+  "classes": [
+    "M00",
+    "M04",
+    "M10"
+  ],
+  "selected_source_paths": 260,
+  "selected_per_module": {
+    "M00": 26,
+    "M04": 21,
+    "M10": 213
+  },
+  "required_unique_source_and_inventory_blobs": 261,
+  "required_tree_objects": 153,
+  "required_commit_objects": 1,
+  "required_unique_objects": 415,
+  "missing_before": 16,
+  "missing_after": 0,
+  "imported_blob_count": 16,
+  "imported_raw_bytes": 311117,
+  "all_required_objects_full_content_hash_verified_in_original_repository": true,
+  "no_lazy_fetch": "1",
+  "no_replace_objects": "1",
+  "source_replay_timeout_seconds_unchanged": 30,
+  "fixtures": [
+    {
+      "path": "evidence/pon-native-node-v1/model-current/model/model.json",
+      "actual_bytes": 14174,
+      "actual_sha256": "d07ae8ce412746b5cc7289f65be3a5fb0e417aa3ad747aa71c2e3d1fd2f3514e",
+      "expected_git_blob": "16894c31cefe5e5edda80e7b4b42ed60a23769f6",
+      "bytes_equal_HEAD": true
+    },
+    {
+      "path": "evidence/pon-native-node-v1/model-current/model/consumer.json",
+      "actual_bytes": 227036,
+      "actual_sha256": "f75d027312966d7316795629ba7ae0dfd82c2ccbaece417db30b8a28b4210051",
+      "expected_git_blob": "02ea421b7b14cd5198af6bc20d0a9188da2279cb",
+      "bytes_equal_HEAD": true
+    },
+    {
+      "path": "evidence/pon-native-node-v1/model-current/model/evaluation-bundle.json",
+      "actual_bytes": 80283,
+      "actual_sha256": "e2a67320971f6620dc4c67c4114eb9fcf3389d4b9925daedfbb471f9936b8570",
+      "expected_git_blob": "c2a1cc28844ec5f7e68f88fb481935b3489a6b30",
+      "bytes_equal_HEAD": true
+    }
+  ],
+  "selector": {
+    "path": "formal/pon-nakamoto-v1/experiments/model_loop.py",
+    "bytes": 15358,
+    "sha256": "d29b4b426825afdd90b3db9e1fbe79f931a543c307b896853a249ae909412fd0",
+    "equals_HEAD": true
+  },
+  "original_pack": {
+    "archive": "evidence/pon-cell-integration-v1-20261107/retained-runs.tar.gz",
+    "archive_bytes": 738021,
+    "archive_sha256": "89cce6db8fd01faecf6da7f4fccbd5edbd9c734a908a40fdbd0b42825edeaeb9",
+    "member": {
+      "path": "raw/remote-prior/original-source-blobs-9fed.pack",
+      "bytes": 381350,
+      "sha256": "3e047d47391e62c96c8ebec5bcd837a4c956eb5c7fd7de2558ef5ca1ad4d305c"
+    },
+    "isolated_strict_index_pack_exit": 0,
+    "pack_objects": 261
+  },
+  "preparation_failures_retained": [
+    {
+      "command": "historical-inventory",
+      "exit": 128,
+      "stderr": "historical-inventory.stderr"
+    },
+    {
+      "command": "required-object-presence-before",
+      "exit": 128,
+      "stderr": "required-object-presence-before.stderr",
+      "note": "Original promisor batch stops at first unavailable object; complete denominator was then read through an isolated no-remote object view."
+    }
+  ],
+  "mutations": {
+    "only_missing_git_blobs_written": true,
+    "source_files_changed": false,
+    "working_fixtures_changed": false,
+    "FETCH_HEAD_used_or_written": false,
+    "runtime_or_deadline_changed": false,
+    "global_Host_configuration_changed": false,
+    "ref_mutation_commands_used": false
+  },
+  "network_or_GitHub_used": false,
+  "formal_tests_executed": 0,
+  "native_or_benchmark_executed": false,
+  "formal_202_pass_claim": false,
+  "handoff_control_note": "Only the ambiguous initial refs_commands_used field was renamed to ref_mutation_commands_used; read-only for-each-ref observations were in fact performed and retained."
+}

@@ -1,0 +1,288 @@
+{
+  "schema": "public-cache-modes-native-attempt-v2",
+  "started_utc": "2026-11-05T01:54:25.856154+00:00",
+  "root": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+  "expected_head": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+  "expected_tree": "54442c70933c1ea37ebfe725628cbdd8685b746e",
+  "actual_head_before": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+  "actual_tree_before": "54442c70933c1ea37ebfe725628cbdd8685b746e",
+  "git_status_before": "",
+  "expected_public_v3_sha256": "c719d0bdd0c9e68a30707ccbe70c58e14082ff113c9554706b46404b006223ed",
+  "publication_manifest": {
+    "git_path": "evidence/pq-workflow-continuation-20261104/publication-source-files.json",
+    "sha256": "72f3de0ff538cc15d07c6f717234dab7836a83a30610ec1df56113c0bc639dd5",
+    "public_v3": {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "bytes": 379826,
+      "git_blob": "45a9167acf5b5671eac72a54ea3e687b63eae7d4",
+      "sha256": "c719d0bdd0c9e68a30707ccbe70c58e14082ff113c9554706b46404b006223ed"
+    },
+    "source_entries_match": {
+      "scripts/ci/verify_ci_source.py": true,
+      "scripts/ci/test_ci_source_integrity.py": true,
+      "scripts/ci/ci_job.sh": true,
+      "formal/pon-nakamoto-v1/quantum_network_sim.py": true,
+      "formal/pon-nakamoto-v1/test_quantum_candidate_check_clock.py": true,
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": true,
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs": true,
+      "trillionnium/crates/trnm-pon-node/tests/public_cache_modes.rs": true,
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": true,
+      "config/pon/pq-cross-branch-corpus-v1.json": true
+    },
+    "corrected_from": "81da33e609cb64b319e8cfcca7059e5c30d39044"
+  },
+  "bindings_before": {
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
+      "sha256": "c719d0bdd0c9e68a30707ccbe70c58e14082ff113c9554706b46404b006223ed",
+      "bytes": 379826,
+      "frozen_blob_sha256": "c719d0bdd0c9e68a30707ccbe70c58e14082ff113c9554706b46404b006223ed",
+      "matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs": {
+      "sha256": "0424c5063e8a8eadb5b32e09fc38b3c455e0ae9488f4a26288d9b58be59b6e1d",
+      "bytes": 7040,
+      "frozen_blob_sha256": "0424c5063e8a8eadb5b32e09fc38b3c455e0ae9488f4a26288d9b58be59b6e1d",
+      "matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/tests/public_cache_modes.rs": {
+      "sha256": "64722f31d663a63ef250b57bcdb160d0c636531c7033c72889107eb84de1775f",
+      "bytes": 2809,
+      "frozen_blob_sha256": "64722f31d663a63ef250b57bcdb160d0c636531c7033c72889107eb84de1775f",
+      "matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": {
+      "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "bytes": 104121,
+      "frozen_blob_sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "sha256": "e622114e8c03bfd35128eb6690e79793b1f7a6db351df1655d1461f562d5c4ed",
+      "bytes": 339626,
+      "frozen_blob_sha256": "e622114e8c03bfd35128eb6690e79793b1f7a6db351df1655d1461f562d5c4ed",
+      "matches_frozen_blob": true
+    },
+    "trillionnium/Cargo.toml": {
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "bytes": 2204,
+      "frozen_blob_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "matches_frozen_blob": true
+    },
+    "trillionnium/Cargo.lock": {
+      "sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+      "bytes": 40033,
+      "frozen_blob_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+      "matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/Cargo.toml": {
+      "sha256": "caaf3a4a3247e84d0c2f8b2a86c83545a54df70dfdf88b07ea7c7a9eee2d71f3",
+      "bytes": 1559,
+      "frozen_blob_sha256": "caaf3a4a3247e84d0c2f8b2a86c83545a54df70dfdf88b07ea7c7a9eee2d71f3",
+      "matches_frozen_blob": true
+    }
+  },
+  "native_inputs_before": {
+    "files": 1213,
+    "aggregate_sha256": "423419e59a31aa49f0083174ddba964416386cd0c31a2a7bc0dd9f3d15f0ff83",
+    "scope": "working-copy .rs/.toml/.lock/.json beneath trillionnium and config; registry governed by Cargo.lock"
+  },
+  "all_native_config_before": {
+    "files": 1245,
+    "aggregate_sha256": "2f96825a93f5db926dd310f0412e455f9b5c684ef43773f882ef29debdefaf75",
+    "all_match_frozen_commit": true,
+    "mismatches": [],
+    "scope": "every Git-tracked file under trillionnium and config; working bytes checked against immutable commit blobs"
+  },
+  "command": [
+    "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "--config",
+    "profile.test.debug=0",
+    "--config",
+    "profile.test.package.trnm-pon-node.debug=0",
+    "--config",
+    "profile.test.package.trnm-pon-node.opt-level=0",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--test",
+    "public_cache_modes",
+    "--",
+    "--test-threads=1"
+  ],
+  "environment_overrides": {
+    "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.cargo/bin:/root/.codex/tmp/arg0-linux/codex-arg0mQRkhx:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+    "CARGO_HOME": "/workspace/scratch/7181e37ea4bd/runtime-recovered/cargo",
+    "CARGO_TARGET_DIR": "/dev/shm/trnm-cache-modes-44ebe1a-822cc50e-target",
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_NET_OFFLINE": "true",
+    "RUSTUP_HOME": "/root/.rustup",
+    "RUSTUP_TOOLCHAIN": "1.95.0-x86_64-unknown-linux-gnu",
+    "RUST_TEST_THREADS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "TMPDIR": "/dev/shm/trnm-cache-modes-44ebe1a-822cc50e-target/tmp"
+  },
+  "environment_unset": [
+    "RUSTC",
+    "RUSTDOC",
+    "RUSTC_WRAPPER",
+    "RUSTC_WORKSPACE_WRAPPER",
+    "RUSTFLAGS"
+  ],
+  "preflight_exit_code": 0,
+  "preflight_log_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+  "cargo_version": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+  "rustc_version": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2",
+  "timeout_seconds": 600,
+  "available_memory_stop_bytes": 536870912,
+  "tmpfs_available_stop_bytes": 134217728,
+  "initial_tmpfs_available_bytes": 2527858688,
+  "initial_mem_available_bytes": 6090563584,
+  "expected_test_names": [
+    "arithmetic_profile_then_rejection_cache_is_refused",
+    "either_cache_alone_preserves_original_cold_cpu_budget_and_profile",
+    "rejection_cache_owner_cannot_be_replaced_by_repeated_setup",
+    "rejection_cache_then_arithmetic_profile_is_refused"
+  ],
+  "disk_before": {
+    "/dev/shm/trnm-frozen-source-81da-822cc50e": {
+      "total": 5225713664,
+      "used": 2697854976,
+      "free": 2527858688
+    },
+    "/dev/shm/trnm-cache-modes-44ebe1a-822cc50e-target": {
+      "total": 5225713664,
+      "used": 2697854976,
+      "free": 2527858688
+    }
+  },
+  "scope": "Four actual PublicServer constructor integration tests only; local debug/opt settings do not qualify original Host performance gates",
+  "production_activation": false,
+  "qualification": "HOLD",
+  "result": "PASS",
+  "exit_code": 0,
+  "timeout_observed": false,
+  "resource_abort_observed": false,
+  "storage_abort_observed": false,
+  "preflight_conditions": {
+    "preflight_passed": true,
+    "head_matches": true,
+    "tree_matches": true,
+    "working_tree_clean": true,
+    "all_eight_bindings_match_frozen_commit": true,
+    "all_native_config_matches": true,
+    "fresh_public_hash_matches": true,
+    "publication_public_hash_matches": true,
+    "all_fresh_publication_entries_match": true,
+    "existing_target_present": true,
+    "memory_above_floor": true,
+    "tmpfs_above_floor": true
+  },
+  "reused_existing_target": true,
+  "min_mem_available_bytes": 2826407936,
+  "min_tmpfs_available_bytes": 2524729344,
+  "cargo_pid": 44,
+  "elapsed_seconds": 98.183603,
+  "finished_utc": "2026-11-05T01:56:04.210907+00:00",
+  "actual_head_after": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+  "actual_tree_after": "54442c70933c1ea37ebfe725628cbdd8685b746e",
+  "git_status_after": "",
+  "bindings_after": {
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
+      "sha256": "c719d0bdd0c9e68a30707ccbe70c58e14082ff113c9554706b46404b006223ed",
+      "bytes": 379826,
+      "frozen_blob_sha256": "c719d0bdd0c9e68a30707ccbe70c58e14082ff113c9554706b46404b006223ed",
+      "matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs": {
+      "sha256": "0424c5063e8a8eadb5b32e09fc38b3c455e0ae9488f4a26288d9b58be59b6e1d",
+      "bytes": 7040,
+      "frozen_blob_sha256": "0424c5063e8a8eadb5b32e09fc38b3c455e0ae9488f4a26288d9b58be59b6e1d",
+      "matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/tests/public_cache_modes.rs": {
+      "sha256": "64722f31d663a63ef250b57bcdb160d0c636531c7033c72889107eb84de1775f",
+      "bytes": 2809,
+      "frozen_blob_sha256": "64722f31d663a63ef250b57bcdb160d0c636531c7033c72889107eb84de1775f",
+      "matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": {
+      "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "bytes": 104121,
+      "frozen_blob_sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "sha256": "e622114e8c03bfd35128eb6690e79793b1f7a6db351df1655d1461f562d5c4ed",
+      "bytes": 339626,
+      "frozen_blob_sha256": "e622114e8c03bfd35128eb6690e79793b1f7a6db351df1655d1461f562d5c4ed",
+      "matches_frozen_blob": true
+    },
+    "trillionnium/Cargo.toml": {
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "bytes": 2204,
+      "frozen_blob_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "matches_frozen_blob": true
+    },
+    "trillionnium/Cargo.lock": {
+      "sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+      "bytes": 40033,
+      "frozen_blob_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+      "matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/Cargo.toml": {
+      "sha256": "caaf3a4a3247e84d0c2f8b2a86c83545a54df70dfdf88b07ea7c7a9eee2d71f3",
+      "bytes": 1559,
+      "frozen_blob_sha256": "caaf3a4a3247e84d0c2f8b2a86c83545a54df70dfdf88b07ea7c7a9eee2d71f3",
+      "matches_frozen_blob": true
+    }
+  },
+  "native_inputs_after": {
+    "files": 1213,
+    "aggregate_sha256": "423419e59a31aa49f0083174ddba964416386cd0c31a2a7bc0dd9f3d15f0ff83",
+    "scope": "working-copy .rs/.toml/.lock/.json beneath trillionnium and config; registry governed by Cargo.lock"
+  },
+  "all_native_config_after": {
+    "files": 1245,
+    "aggregate_sha256": "2f96825a93f5db926dd310f0412e455f9b5c684ef43773f882ef29debdefaf75",
+    "all_match_frozen_commit": true,
+    "mismatches": [],
+    "scope": "every Git-tracked file under trillionnium and config; working bytes checked against immutable commit blobs"
+  },
+  "bindings_unchanged": true,
+  "native_inputs_unchanged": true,
+  "all_native_config_unchanged": true,
+  "head_unchanged": true,
+  "tree_unchanged": true,
+  "cargo_log_sha256": "f5e004e28201cbae1e04a96e826aaaf6079e04e3debef9167d7a4f44709e658e",
+  "cargo_log_bytes": 2031,
+  "test_result_lines": [
+    "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+  ],
+  "passed_test_names": [
+    "arithmetic_profile_then_rejection_cache_is_refused",
+    "either_cache_alone_preserves_original_cold_cpu_budget_and_profile",
+    "rejection_cache_owner_cannot_be_replaced_by_repeated_setup",
+    "rejection_cache_then_arithmetic_profile_is_refused"
+  ],
+  "exact_four_tests_passed": true,
+  "oom_log_evidence": false,
+  "sqlite_boundary_warning": true,
+  "disk_after": {
+    "/dev/shm/trnm-frozen-source-81da-822cc50e": {
+      "total": 5225713664,
+      "used": 2698178560,
+      "free": 2527535104
+    },
+    "/dev/shm/trnm-cache-modes-44ebe1a-822cc50e-target": {
+      "total": 5225713664,
+      "used": 2698178560,
+      "free": 2527535104
+    }
+  }
+}

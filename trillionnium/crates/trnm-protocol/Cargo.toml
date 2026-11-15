@@ -12,4 +12,11 @@ sha2 = "0.10"
 thiserror = "1"
 
 [dev-dependencies]
+ml-dsa = "=0.1.1"
 serde_json = "1"
+
+# The pinned backend checks the actual CPU and retains its software fallback.
+# SHA-2 bytes and every validation call stay identical. sha2-asm cannot build on
+# Windows; only these original native Linux targets select this implementation.
+[target.'cfg(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "aarch64")))'.dependencies]
+sha2 = { version = "0.10", features = ["asm"] }

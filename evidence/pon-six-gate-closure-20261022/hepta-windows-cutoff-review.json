@@ -1,0 +1,212 @@
+{
+  "schema": "readonly-windows-managed-cutoff-review-v1",
+  "captured_utc": "2026-10-22T07:02:20.017681+00:00",
+  "source": {
+    "head": "594a9ac5d8d2231e5472d53f78f196c8a61ee666",
+    "parent": "10d902199687c5860f4599814a305f650920c972",
+    "review_worktree_clean": true
+  },
+  "conclusion": {
+    "managed_child_launch_bypass_found": false,
+    "guard_always_returns_typed_unavailable": true,
+    "qualified_windows_isolation_proven": false,
+    "windows_runtime_or_clippy_pass_claimed": false,
+    "windows_managed_execution_available": false
+  },
+  "routes": [
+    {
+      "entrypoints": [
+        "run_windows_sandbox_capture",
+        "run_windows_sandbox_capture_with_filesystem_overrides",
+        "spawn_windows_sandbox_session_legacy"
+      ],
+      "path": "lib.rs:536 / unified_exec/backends/legacy.rs:321 -> spawn_prep.rs:132",
+      "guard_before": "prepare_spawn_context_common; environment rewrites, home/log directory creation, capabilities, ACL mutation, token and child creation"
+    },
+    {
+      "entrypoints": [
+        "spawn_windows_sandbox_session_for_level",
+        "spawn_windows_sandbox_session_elevated_for_permission_profile"
+      ],
+      "path": "unified_exec/mod.rs:88/148 -> unified_exec/backends/elevated.rs:144 -> spawn_prep.rs:380",
+      "guard_before": "environment rewrites, home/log creation, credential setup, capability/ACL work, runner transport and child creation",
+      "preceding_operations": "profile resolution and owned in-memory path/vector conversion only"
+    },
+    {
+      "entrypoints": [
+        "run_windows_sandbox_capture_for_permission_profile_elevated"
+      ],
+      "path": "elevated_impl.rs:100/103",
+      "guard_before": "request destructuring, normalization, home creation, credentials, ACL, runner and child creation"
+    },
+    {
+      "entrypoints": [
+        "codex-command-runner IPC child spawn"
+      ],
+      "path": "bin/command_runner/win.rs:242/243",
+      "guard_before": "hide_current_user_profile_dir, permission/token parsing, capabilities, ACL, desktop/ConPTY/pipe child creation",
+      "qualification": "main may open/read transport pipes and send a refusal frame; this is not a promise of zero IPC activity"
+    },
+    {
+      "entrypoints": [
+        "run_windows_sandbox_legacy_preflight"
+      ],
+      "path": "lib.rs:755",
+      "guard_before": "uses_write_capabilities and home/capability/ACL operations",
+      "qualification": "unsupported non-managed profiles retain existing no-op return; no child is created"
+    },
+    {
+      "entrypoints": [
+        "core execution adapter",
+        "sandboxing spawn adapter",
+        "Windows wrapper",
+        "debug sandbox CLI"
+      ],
+      "path": "core/src/exec.rs:652/674/700; sandboxing/src/spawn.rs:54; windows-sandbox-rs/src/wrapper.rs:183; cli/src/debug_sandbox.rs:484",
+      "finding": "delegate to guarded managed entrypoints; reviewed error path returns failure rather than silently spawning the requested command without isolation"
+    },
+    {
+      "entrypoints": [
+        "spawn_runner_transport"
+      ],
+      "path": "elevated/runner_client.rs:310",
+      "finding": "crate-private; managed callers reach only after the elevated preparation guard; standalone runner adds its own spawn guard"
+    }
+  ],
+  "raw_ffi_boundary": {
+    "public_raw_process_helpers": [
+      "create_process_as_user",
+      "spawn_process_with_pipes"
+    ],
+    "public_raw_token_helpers": [
+      "create_workspace_write_token_with_caps_and_user_from",
+      "create_readonly_token_with_caps_and_user_from"
+    ],
+    "admission_guard_added_to_raw_helpers": false,
+    "raw_helpers_do_not_verify_dedicated_identity_or_guarantee_isolation": true,
+    "source_docs_explicitly_state_no_isolation_guarantee": true,
+    "qualification": "Raw helpers and explicit administrative setup/provisioning APIs are not a qualified managed execution boundary. Their continued availability is intentional and must not be reported as token/ACL isolation passing."
+  },
+  "original_positive_tests": {
+    "legacy_spawn_env_applies_offline_network_rewrite_restored_byte_identical": true,
+    "restored_function_sha256": "917f4bb1f9a21471d04af179775523285b1b74939d2da061f45a2bc245792229",
+    "expected_current_behavior": "The restored original test still expects successful legacy preparation; the new unconditional guard returns Err, so this positive Windows regression cannot pass until functionality is restored under a qualified boundary. This is an open capability/acceptance blocker, not evidence of isolation success."
+  },
+  "native_gate_preservation": {
+    "changed_paths": [
+      "codex-rs/windows-sandbox-rs/src/bin/command_runner/win.rs",
+      "codex-rs/windows-sandbox-rs/src/bin/command_runner/win_boundary_tests.rs",
+      "codex-rs/windows-sandbox-rs/src/elevated_impl.rs",
+      "codex-rs/windows-sandbox-rs/src/legacy_boundary.rs",
+      "codex-rs/windows-sandbox-rs/src/legacy_boundary_tests.rs",
+      "codex-rs/windows-sandbox-rs/src/lib.rs",
+      "codex-rs/windows-sandbox-rs/src/process.rs",
+      "codex-rs/windows-sandbox-rs/src/spawn_prep.rs",
+      "codex-rs/windows-sandbox-rs/src/token.rs",
+      "codex-rs/windows-sandbox-rs/src/unified_exec/backend_selection_tests.rs",
+      "codex-rs/windows-sandbox-rs/src/unified_exec/mod.rs"
+    ],
+    "original_token_deletion_tests_unchanged": true,
+    "original_windows_boundary_workflow_unchanged": true
+  },
+  "minimal_objections": [
+    {
+      "severity": "acceptance-limitation",
+      "finding": "The safety cutoff disables managed Windows execution; it closes the immediate unsafe launch route only. Original positive environment preparation and native deletion boundary acceptance remain unqualified/failing, with no Windows target build or runtime result from this review."
+    }
+  ],
+  "source_records": {
+    "codex-rs/windows-sandbox-rs/src/lib.rs": {
+      "git_blob": "7fc20c4725e4b2b25c67da1b7a17ce96ab0a54cb",
+      "sha256": "670a882ff9bf6c457fda8cfbdd6aa96ac14222df1d06f26212c0448276824fd4",
+      "bytes": 30546,
+      "lines": 890
+    },
+    "codex-rs/windows-sandbox-rs/src/legacy_boundary.rs": {
+      "git_blob": "37f7b5797f590e8a3f9b0dd1ba1661fb36fb9a73",
+      "sha256": "1b06f85c09af6283cd1591f4d371d6e109598f7ca9236a42400bf42b34e3b2bc",
+      "bytes": 1750,
+      "lines": 41
+    },
+    "codex-rs/windows-sandbox-rs/src/spawn_prep.rs": {
+      "git_blob": "f87fc7f6dda73751f2d1db51d2fc00a2192f1cc4",
+      "sha256": "ab1942f0d5f585ae3d25f961020cf43852e928e83bc382f463fa0dc98474b928",
+      "bytes": 28430,
+      "lines": 769
+    },
+    "codex-rs/windows-sandbox-rs/src/elevated_impl.rs": {
+      "git_blob": "66919568dc85b1ee64cb7f9988fb89cb9edbd808",
+      "sha256": "58ab26a2c08bd451928531d9896eda480eef39b3403c04bdd6fe7b97236a2775",
+      "bytes": 12208,
+      "lines": 314
+    },
+    "codex-rs/windows-sandbox-rs/src/process.rs": {
+      "git_blob": "8ef452325f03933a8dfb7f3816242db38e5cfc33",
+      "sha256": "da3a4055cf4f39b678784f979a3e20de509a922b86ada82046140fdc5dda3f38",
+      "bytes": 12067,
+      "lines": 362
+    },
+    "codex-rs/windows-sandbox-rs/src/token.rs": {
+      "git_blob": "0fb934b5979efbd87e91fe6645b246f17751c005",
+      "sha256": "0d42364e75da6b3f1da323601822455a2fc78f8d84e784577ac9438c4aa7d5db",
+      "bytes": 19184,
+      "lines": 556
+    },
+    "codex-rs/windows-sandbox-rs/src/unified_exec/mod.rs": {
+      "git_blob": "d554113bce828edce75cba838e3b3517e330b4de",
+      "sha256": "7ef295e6e9e01ad5513298b277d95815a9efa193a867a8059ca76f5ea1504b22",
+      "bytes": 7249,
+      "lines": 202
+    },
+    "codex-rs/windows-sandbox-rs/src/unified_exec/backends/elevated.rs": {
+      "git_blob": "138b0be7904e691f931382de7237cca72beb2c0a",
+      "sha256": "dbaec663034a007063bf6967a10ae59e615a263378cf3f8bdb3a62a3ef660f00",
+      "bytes": 8164,
+      "lines": 243
+    },
+    "codex-rs/windows-sandbox-rs/src/unified_exec/backends/legacy.rs": {
+      "git_blob": "6fbf819c921a0097cd306e9de9ba9c965ecf0163",
+      "sha256": "121082fbb179ea82e808201e8478622c07c73ec90cecc9c25ce7b2f8b447f969",
+      "bytes": 15188,
+      "lines": 482
+    },
+    "codex-rs/windows-sandbox-rs/src/elevated/runner_client.rs": {
+      "git_blob": "90ad2dbc93ea7673fa4e4711877371dab6eec117",
+      "sha256": "8d22e6acb74148bf2d8f2b81bbeccc2fd0bdaf89310e772119f9c2f2fd9e7b0c",
+      "bytes": 20235,
+      "lines": 555
+    },
+    "codex-rs/windows-sandbox-rs/src/wrapper.rs": {
+      "git_blob": "9729db1b840ceecaa7de2a27be0a7f4fb9792313",
+      "sha256": "77cd9591ccc4049f9b6f7f315c64e9b3019eafb1454a940fd66d4a4b3bcd584d",
+      "bytes": 14205,
+      "lines": 345
+    },
+    "codex-rs/windows-sandbox-rs/src/bin/command_runner/win.rs": {
+      "git_blob": "146b634f875c4ca6ed0810967ec4896828fab893",
+      "sha256": "fdc8b9f07135790c9fff66e1a2d601413ae1cc5bf8d24e74a1f99c6f7e7ab6a8",
+      "bytes": 25827,
+      "lines": 732
+    },
+    "codex-rs/windows-sandbox-rs/src/legacy_boundary_tests.rs": {
+      "git_blob": "de791d45ea8b99ca74cbd378a0f6efc56d619702",
+      "sha256": "70e2ad69a75ae06a9e2ddb3ff20efaac2e864b3dbe9f0552456d23b653bf4b26",
+      "bytes": 11275,
+      "lines": 297
+    },
+    "codex-rs/windows-sandbox-rs/src/bin/command_runner/win_boundary_tests.rs": {
+      "git_blob": "e115dad8a91871fe1b39f5150aa8ba42c6333089",
+      "sha256": "6d6cae9e2bb92a73150bcbb508ea98a52c8e4d1bf25325840be61392ad01b77d",
+      "bytes": 2125,
+      "lines": 52
+    },
+    "codex-rs/windows-sandbox-rs/src/unified_exec/backend_selection_tests.rs": {
+      "git_blob": "15f83a354141f9fdeb68981f10799b24988467ab",
+      "sha256": "0185b215f5be5b784d38aa48a61373f0733e1f8bb263dc5478dcc027c11b4580",
+      "bytes": 6967,
+      "lines": 201
+    }
+  },
+  "source_edits_by_reviewer": false,
+  "tests_or_native_build_run_by_reviewer": false
+}

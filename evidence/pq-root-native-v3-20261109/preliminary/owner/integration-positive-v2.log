@@ -1,0 +1,25 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling trnm-release-bundle v0.1.0 (/workspace/scratch/5faaca703596/chain-root/trillionnium/crates/trnm-release-bundle)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/5faaca703596/chain-root/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.31s
+     Running tests/root_recovery_v3_native.rs (/workspace/scratch/5faaca703596/cargo-target/debug/deps/root_recovery_v3_native-e4ed7b6e40bb6e05)
+
+running 1 test
+test native_owner_v3_real_signed_append_reopen_and_exact_intent_observation ... FAILED
+
+failures:
+
+---- native_owner_v3_real_signed_append_reopen_and_exact_intent_observation stdout ----
+
+thread 'native_owner_v3_real_signed_append_reopen_and_exact_intent_observation' (626) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:333:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: Other, error: "unable to open database file: /proc/self/fd/3/root.sqlite" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    native_owner_v3_real_signed_append_reopen_and_exact_intent_observation
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 19 filtered out; finished in 0.55s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test root_recovery_v3_native`

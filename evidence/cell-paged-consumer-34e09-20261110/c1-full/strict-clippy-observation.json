@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "clippy",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "--all-targets",
+    "-p",
+    "trnm-data-availability",
+    "-p",
+    "trnm-pon-node",
+    "--features",
+    "trnm-pon-node/pq-native-openssl",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "completed_at_utc": "2026-11-10T07:01:50.079891+00:00",
+  "elapsed_seconds": 40.574756911955774,
+  "exit_code": 0,
+  "failure": null,
+  "log_sha256": "058f6d00f32bf5f873cc18da3f55d96bb0fb689f7dbea7c184e01b2dd669e6f0",
+  "name": "strict-clippy",
+  "started_at_utc": "2026-11-10T07:01:09.505145+00:00"
+}

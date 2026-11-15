@@ -1,0 +1,71 @@
+{
+  "schema": "trnm-pqn1-single-host-process-inclusive-cost-v1",
+  "test_profile": "C11/OpenSSL3.5 genuine ML-DSA-65 single-shot offline CLI",
+  "samples_per_case": 64,
+  "random_interleave_seed": 20261026,
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "python": "3.13.5",
+  "compiler": "cc (Debian 14.2.0-19) 14.2.0",
+  "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+  "normal_signed_bytes": 3649,
+  "maximum_memo_signed_bytes": 4143,
+  "maximum_256_tx_payload_bytes": 1060608,
+  "installed_max_block_bytes": 1048576,
+  "current_legacy_wire_accepts_pq": false,
+  "process_start_included": true,
+  "full_chain_throughput_measured": false,
+  "independent_security_qualification": false,
+  "production_activation": false,
+  "summary": {
+    "valid": {
+      "count": 64,
+      "return": "research-only-sig-valid",
+      "wall_p50_ns": 17436071,
+      "wall_p95_ns": 190544067,
+      "wall_p99_ns": 677737550,
+      "cpu_p50_ns": 16021000,
+      "cpu_p95_ns": 184535000,
+      "cpu_p99_ns": 613457000
+    },
+    "invalid_signature": {
+      "count": 64,
+      "return": "rejected",
+      "wall_p50_ns": 13448669,
+      "wall_p95_ns": 87540592,
+      "wall_p99_ns": 461542464,
+      "cpu_p50_ns": 13110000,
+      "cpu_p95_ns": 56132000,
+      "cpu_p99_ns": 443038000
+    },
+    "invalid_budget": {
+      "count": 64,
+      "return": "rejected",
+      "wall_p50_ns": 10728183,
+      "wall_p95_ns": 64692389,
+      "wall_p99_ns": 1452701688,
+      "cpu_p50_ns": 10107000,
+      "cpu_p95_ns": 60212000,
+      "cpu_p99_ns": 542181000
+    },
+    "invalid_magic": {
+      "count": 64,
+      "return": "rejected",
+      "wall_p50_ns": 7440789,
+      "wall_p95_ns": 17223388,
+      "wall_p99_ns": 24379895,
+      "cpu_p50_ns": 5895000,
+      "cpu_p95_ns": 15582000,
+      "cpu_p99_ns": 16573000
+    },
+    "valid_max_memo": {
+      "count": 64,
+      "return": "research-only-sig-valid",
+      "wall_p50_ns": 19499285,
+      "wall_p95_ns": 83743322,
+      "wall_p99_ns": 490995980,
+      "cpu_p50_ns": 18021000,
+      "cpu_p95_ns": 82465000,
+      "cpu_p99_ns": 488140000
+    }
+  }
+}

@@ -1,0 +1,39 @@
+test_complete_current_native_roster_passes (__main__.LegalGateTests.test_complete_current_native_roster_passes) ... FAIL
+test_every_retained_versioned_material_and_observer_control_executes_once (__main__.LegalGateTests.test_every_retained_versioned_material_and_observer_control_executes_once) ... ok
+test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused (__main__.LegalGateTests.test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused) ... 
+  test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused (__main__.LegalGateTests.test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused) (mutant='test tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments ... ok\ntest tests::versions_keep_exact_namespaces_and_eight_new_sample_streams ... ok\ntest tests::v2_final_sample_keeps_both_legal_producers_and_complete_negative_verification ... ok\ntest tests::public_dispatch_keeps_complete_bytes_and_all_misses ... ok\ntest tests::last_product_mutation_wraps_canonically_and_changes_only_that_word ... ok\ntest tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity ... ok\ntest w1_cost_producers::observed_search_tests::observer_begin_refusal_precedes_native_generation ... ok\ntest w1_cost_producers::observed_search_tests::native_failure_retains_completed_attempt_and_failed_begin ... ok\ntest w1_cost_producers::observed_search_tests::malformed_generated_proof_has_started_and_failed_record ... ok\ntest w1_cost_producers::observed_search_tests::completion_observer_failure_never_starts_another_attempt ... ok\ntest w1_cost_producers::observed_search_tests::complete_observed_stream_matches_retained_wrapper_byte_for_byte ... ok\ntest w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok\ntest w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok\ntest result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n') ... FAIL
+test_complete_roster_passes (__main__.NativeGateTests.test_complete_roster_passes) ... FAIL
+test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary (__main__.NativeGateTests.test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary) ... ok
+test_factorial_example_does_not_accept_filtered_or_measured_tests (__main__.NativeGateTests.test_factorial_example_does_not_accept_filtered_or_measured_tests) ... ok
+test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control (__main__.NativeGateTests.test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control) ... ok
+test_history_named_controls_remain_required_once (__main__.NativeGateTests.test_history_named_controls_remain_required_once) ... ok
+test_kernel_rejects_missing_duplicate_or_replaced_named_control (__main__.NativeGateTests.test_kernel_rejects_missing_duplicate_or_replaced_named_control) ... ok
+
+======================================================================
+FAIL: test_complete_current_native_roster_passes (__main__.LegalGateTests.test_complete_current_native_roster_passes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/pon-cost-replay-work-_xx02ntd/before-fix-overlay/scripts/ci/test_w1_factorial_native_gate.py", line 150, in test_complete_current_native_roster_passes
+    self.assertEqual(self.run_gate(), 0)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused (__main__.LegalGateTests.test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused) (mutant='test tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments ... ok\ntest tests::versions_keep_exact_namespaces_and_eight_new_sample_streams ... ok\ntest tests::v2_final_sample_keeps_both_legal_producers_and_complete_negative_verification ... ok\ntest tests::public_dispatch_keeps_complete_bytes_and_all_misses ... ok\ntest tests::last_product_mutation_wraps_canonically_and_changes_only_that_word ... ok\ntest tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity ... ok\ntest w1_cost_producers::observed_search_tests::observer_begin_refusal_precedes_native_generation ... ok\ntest w1_cost_producers::observed_search_tests::native_failure_retains_completed_attempt_and_failed_begin ... ok\ntest w1_cost_producers::observed_search_tests::malformed_generated_proof_has_started_and_failed_record ... ok\ntest w1_cost_producers::observed_search_tests::completion_observer_failure_never_starts_another_attempt ... ok\ntest w1_cost_producers::observed_search_tests::complete_observed_stream_matches_retained_wrapper_byte_for_byte ... ok\ntest w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok\ntest w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok\ntest result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/pon-cost-replay-work-_xx02ntd/before-fix-overlay/scripts/ci/test_w1_factorial_native_gate.py", line 177, in test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused
+    self.assertNotEqual(self.run_gate(), 0)
+AssertionError: 0 == 0
+
+======================================================================
+FAIL: test_complete_roster_passes (__main__.NativeGateTests.test_complete_roster_passes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/pon-cost-replay-work-_xx02ntd/before-fix-overlay/scripts/ci/test_w1_factorial_native_gate.py", line 75, in test_complete_roster_passes
+    self.assertEqual(self.run_gate(), 0)
+AssertionError: 1 != 0
+
+----------------------------------------------------------------------
+Ran 9 tests in 11.906s
+
+FAILED (failures=3)

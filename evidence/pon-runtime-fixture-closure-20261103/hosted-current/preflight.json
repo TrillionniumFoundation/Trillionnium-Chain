@@ -1,0 +1,14 @@
+{
+  "schema": "staging-preflight-readback-v1",
+  "command": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--audit"
+  ],
+  "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+  "exit_code": 0,
+  "stdout": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}\n",
+  "stderr": "",
+  "recorded_utc": "2026-11-03T23:14:53.510873+00:00",
+  "scope": "Observed real preflight result before staging writes; not native execution."
+}

@@ -1,0 +1,32 @@
+# Recovered original C3 hosted CI evidence
+
+This is a new archive created after the local execution environment became unavailable.
+It preserves the same four pinned GitHub Actions ZIPs, all 522 selected original
+artifact members, six complete native failure reports, all original native logs,
+phase/source/resource/runner records, and both complete CodeQL 39-poll captures.
+Four complete job logs are freshly read and compared to their earlier exact byte pins.
+The old 32-file local review attachment and old selected archive are not claimed restored.
+
+C3 CodeQL API export and exact #879 both fail after39 empty analyses/checks polls
+under the original1200-second deadline. Upstream API absence remains unconfirmed.
+The inherited local-SARIF trigger gap is separate: upload:never local retention
+does not satisfy Advanced Security API export qualification.
+
+C3 original native build succeeds, but all three campaigns and all nine phases
+fail the existing finite-experiment criteria. C3 phases report PUBLIC_REQUEST_DEADLINE,
+incomplete confirmations and unequal receiver/client state; attack phases observe
+no paid-credit depletion. The source-equivalent native predecessor also fails
+all three campaigns and nine phases. Its attack phases have the deadline error;
+its baseline error arrays are empty despite missing later confirmations.
+This is inherited unmet acceptance, not an infrastructure-only exclusion or proof
+of zero regression. These historical executions are not paired performance samples.
+
+Archive roots c3/native and ancestor/native contain run-{1,2,3}-raw/report.json
+in full, matching the original result report pins. c3/codeql/analysis and
+baseline/codeql/analysis contain all original API pages. actions-readback contains
+new GET metadata and complete logs. observations.json maps every finding to these
+original sources; local-interruption.json states the recovery boundary.
+
+Only stable artifact IDs, API paths and original hashes are published.
+No connector download transport object, temporary signed URL or authorization
+header is included. No workflow, source, service or remote configuration was changed.

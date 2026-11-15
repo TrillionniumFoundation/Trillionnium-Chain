@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/tmp/trnm-original-budget-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "metadata",
+    "--format-version",
+    "1",
+    "--offline"
+  ],
+  "cwd": "/tmp/pon-cache-benchmark-baseline",
+  "exit_code": 0,
+  "started_unix_ns": 1793552583685068510,
+  "finished_unix_ns": 1793552583725758939
+}

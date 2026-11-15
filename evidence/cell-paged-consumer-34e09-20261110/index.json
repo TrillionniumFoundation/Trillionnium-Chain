@@ -1,0 +1,165 @@
+{
+  "counts": {
+    "da-crate.log": {
+      "failed": 0,
+      "groups": [
+        [
+          773,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          5,
+          0,
+          0
+        ],
+        [
+          5,
+          0,
+          0
+        ],
+        [
+          5,
+          0,
+          0
+        ],
+        [
+          5,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0
+        ],
+        [
+          7,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0
+        ],
+        [
+          16,
+          0,
+          0
+        ]
+      ],
+      "ignored": 0,
+      "passed": 823
+    },
+    "new-restore-cases.log": {
+      "failed": 0,
+      "groups": [
+        [
+          11,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "ignored": 0,
+      "passed": 11
+    },
+    "node-storage.log": {
+      "failed": 0,
+      "groups": [
+        [
+          44,
+          0,
+          0
+        ]
+      ],
+      "ignored": 0,
+      "passed": 44
+    }
+  },
+  "independent_failure_domains_qualified": false,
+  "native_funding_granted": false,
+  "ordinary_final_use_qualified": false,
+  "passed": true,
+  "production_activation": false,
+  "qualification": "HOLD",
+  "real_model_paged_cycle_qualified": false,
+  "runtime_commit": "c8214f7e41f8c8f1d885bf990dba6b7ddf829ea2",
+  "runtime_job": "1a1c43a422a-cf39-1ad",
+  "runtime_tree": "4c09f0bfbd6933ce4d4f17194387141560038c00"
+}

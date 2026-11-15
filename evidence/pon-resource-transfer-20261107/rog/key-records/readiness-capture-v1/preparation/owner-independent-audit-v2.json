@@ -1,0 +1,1388 @@
+{
+  "all_historical_and_subsequent_assistance_requires_separate_accounting": true,
+  "all_keys_public_test_fixtures": true,
+  "audit_children_system_seconds": 0.007389,
+  "audit_children_user_seconds": 0.002098,
+  "audit_process_cpu_ns": 31867835,
+  "audit_script_sha256": "9dcb1f34775d63634c01a5efc4c5ae85cae382cbcc191764677f2eb78575a047",
+  "audit_timing_scope": "Measured from after Python/module imports through final validation-file identity checks; parent CPU and git-helper child CPU are separate; final JSON encoding/write and process exit excluded.",
+  "authority_build_unqualified_markers": [],
+  "campaign": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/owner-exact-rog",
+  "campaign_all_children_cpu_seconds": 0.8660389999999999,
+  "campaign_native_cpu_seconds_by_role": {
+    "owner": 0.061911999999999995,
+    "prepare": 0.013057,
+    "receiver": 0.014775
+  },
+  "campaign_native_cpu_seconds_total": 0.08974399999999999,
+  "chainwork_awarded": 0,
+  "checks": [
+    {
+      "check": "exact_source_campaign_pass",
+      "passed": true
+    },
+    {
+      "check": "source_commit",
+      "passed": true
+    },
+    {
+      "check": "tracked_tree_clean_before_after",
+      "passed": true
+    },
+    {
+      "check": "source_pin:config/pon/devnet-v1.json",
+      "passed": true
+    },
+    {
+      "check": "source_pin:config/pon/evaluation-round-v1.json",
+      "passed": true
+    },
+    {
+      "check": "source_pin:config/pon/ledger-v1.json",
+      "passed": true
+    },
+    {
+      "check": "source_pin:config/pon/model-family-v1.json",
+      "passed": true
+    },
+    {
+      "check": "source_pin:config/pon/work-profile-v1.json",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/bounded_process.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/contract_wire.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/evaluation.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/evaluation_bundle.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/experiments/grouped_cell_operator_v0.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/experiments/grouped_fresh_work_v0.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/experiments/grouped_legal_strategy_v0.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/experiments/grouped_verification_authority_v0.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/experiments/model_loop.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/fresh_work_query_floor_v0.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/grouped_fresh_admission_wire_v0.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/grouped_fresh_work_v0.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/grouped_legal_strategy_v0.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/grouped_work_lottery_v0.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/ledger.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/model_contract.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/strict_signature.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/test_fresh_work_query_floor_v0.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/test_grouped_fresh_admission_wire_v0.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/test_grouped_fresh_work_v0.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/test_grouped_legal_strategy_v0.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/work_backend.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:formal/pon-nakamoto-v1/work_oracle.py",
+      "passed": true
+    },
+    {
+      "check": "source_pin:trillionnium/Cargo.lock",
+      "passed": true
+    },
+    {
+      "check": "source_pin:trillionnium/Cargo.toml",
+      "passed": true
+    },
+    {
+      "check": "source_pin:trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+      "passed": true
+    },
+    {
+      "check": "source_pin:trillionnium/crates/trnm-crypto-primitives/src/pon_grouped_fresh_seal_v0.rs",
+      "passed": true
+    },
+    {
+      "check": "source_pin:trillionnium/crates/trnm-pon-node/examples/grouped_fresh_admission_v0.rs",
+      "passed": true
+    },
+    {
+      "check": "source_pin:trillionnium/crates/trnm-pon-node/examples/grouped_verification_authority_v0.rs",
+      "passed": true
+    },
+    {
+      "check": "source_pin:trillionnium/crates/trnm-pon-node/src/grouped_fresh_admission_v0.rs",
+      "passed": true
+    },
+    {
+      "check": "source_pin:trillionnium/crates/trnm-pon-node/src/grouped_verification_authority_v0.rs",
+      "passed": true
+    },
+    {
+      "check": "source_pin:trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "passed": true
+    },
+    {
+      "check": "source_pin:trillionnium/crates/trnm-pon-node/tests/grouped_fresh_admission_v0.rs",
+      "passed": true
+    },
+    {
+      "check": "source_pin:trillionnium/crates/trnm-pon-node/tests/grouped_verification_authority_v0.rs",
+      "passed": true
+    },
+    {
+      "check": "canonical_runner_path",
+      "passed": true
+    },
+    {
+      "check": "validation_exact_source",
+      "passed": true
+    },
+    {
+      "check": "validation_exact_tree",
+      "passed": true
+    },
+    {
+      "check": "validation_driver_exact_bytes",
+      "passed": true
+    },
+    {
+      "check": "validation_runner_binding_pass",
+      "passed": true
+    },
+    {
+      "check": "canonical_cargo_target_directory",
+      "passed": true
+    },
+    {
+      "check": "validation_authority_runner_path",
+      "passed": true
+    },
+    {
+      "check": "validation_runner_size_and_executable",
+      "passed": true
+    },
+    {
+      "check": "runner_bytes",
+      "passed": true
+    },
+    {
+      "check": "validation_successful_authority_build",
+      "passed": true
+    },
+    {
+      "check": "validation_build_log_relative_name",
+      "passed": true
+    },
+    {
+      "check": "validation_authority_build_log_bytes",
+      "passed": true
+    },
+    {
+      "check": "final_build_source:trillionnium/crates/trnm-pon-node/src/grouped_verification_authority_v0.rs",
+      "passed": true
+    },
+    {
+      "check": "final_build_source:trillionnium/crates/trnm-pon-node/examples/grouped_verification_authority_v0.rs",
+      "passed": true
+    },
+    {
+      "check": "final_build_source:trillionnium/crates/trnm-pon-node/tests/grouped_verification_authority_v0.rs",
+      "passed": true
+    },
+    {
+      "check": "final_build_source:formal/pon-nakamoto-v1/experiments/grouped_verification_authority_v0.py",
+      "passed": true
+    },
+    {
+      "check": "validation_summary_binding",
+      "passed": true
+    },
+    {
+      "check": "capsule_raw_body",
+      "passed": true
+    },
+    {
+      "check": "all_freeze_fields",
+      "passed": true
+    },
+    {
+      "check": "all_request_scopes",
+      "passed": true
+    },
+    {
+      "check": "independent_model_and_preinput_commitments",
+      "passed": true
+    },
+    {
+      "check": "registry_id_and_config_digest",
+      "passed": true
+    },
+    {
+      "check": "operation_id",
+      "passed": true
+    },
+    {
+      "check": "remaining_canonical_intent_fields",
+      "passed": true
+    },
+    {
+      "check": "fixture_capsule_key_1",
+      "passed": true
+    },
+    {
+      "check": "independent_capsule_signature_1",
+      "passed": true
+    },
+    {
+      "check": "fixture_capsule_key_2",
+      "passed": true
+    },
+    {
+      "check": "independent_capsule_signature_2",
+      "passed": true
+    },
+    {
+      "check": "admission_policy_id",
+      "passed": true
+    },
+    {
+      "check": "candidate_1",
+      "passed": true
+    },
+    {
+      "check": "full_reference_and_statement_1",
+      "passed": true
+    },
+    {
+      "check": "candidate_2",
+      "passed": true
+    },
+    {
+      "check": "full_reference_and_statement_2",
+      "passed": true
+    },
+    {
+      "check": "candidate_3",
+      "passed": true
+    },
+    {
+      "check": "full_reference_and_statement_3",
+      "passed": true
+    },
+    {
+      "check": "candidate_4",
+      "passed": true
+    },
+    {
+      "check": "full_reference_and_statement_4",
+      "passed": true
+    },
+    {
+      "check": "candidate_5",
+      "passed": true
+    },
+    {
+      "check": "full_reference_and_statement_5",
+      "passed": true
+    },
+    {
+      "check": "candidate_6",
+      "passed": true
+    },
+    {
+      "check": "full_reference_and_statement_6",
+      "passed": true
+    },
+    {
+      "check": "candidate_7",
+      "passed": true
+    },
+    {
+      "check": "full_reference_and_statement_7",
+      "passed": true
+    },
+    {
+      "check": "candidate_8",
+      "passed": true
+    },
+    {
+      "check": "full_reference_and_statement_8",
+      "passed": true
+    },
+    {
+      "check": "candidate_9",
+      "passed": true
+    },
+    {
+      "check": "full_reference_and_statement_9",
+      "passed": true
+    },
+    {
+      "check": "candidate_10",
+      "passed": true
+    },
+    {
+      "check": "full_reference_and_statement_10",
+      "passed": true
+    },
+    {
+      "check": "candidate_11",
+      "passed": true
+    },
+    {
+      "check": "full_reference_and_statement_11",
+      "passed": true
+    },
+    {
+      "check": "candidate_12",
+      "passed": true
+    },
+    {
+      "check": "full_reference_and_statement_12",
+      "passed": true
+    },
+    {
+      "check": "candidate_13",
+      "passed": true
+    },
+    {
+      "check": "full_reference_and_statement_13",
+      "passed": true
+    },
+    {
+      "check": "candidate_14",
+      "passed": true
+    },
+    {
+      "check": "full_reference_and_statement_14",
+      "passed": true
+    },
+    {
+      "check": "candidate_15",
+      "passed": true
+    },
+    {
+      "check": "full_reference_and_statement_15",
+      "passed": true
+    },
+    {
+      "check": "candidate_16",
+      "passed": true
+    },
+    {
+      "check": "full_reference_and_statement_16",
+      "passed": true
+    },
+    {
+      "check": "independent_owner_policy",
+      "passed": true
+    },
+    {
+      "check": "producer_trace_count",
+      "passed": true
+    },
+    {
+      "check": "all_producer_step_preimages_and_outputs",
+      "passed": true
+    },
+    {
+      "check": "endpoint_pin_1",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_1_1",
+      "passed": true
+    },
+    {
+      "check": "response_binding_1_1",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_1_1",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_1_1",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_1_1",
+      "passed": true
+    },
+    {
+      "check": "full_replay_counters_1_1",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_1_2",
+      "passed": true
+    },
+    {
+      "check": "response_binding_1_2",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_1_2",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_1_2",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_1_2",
+      "passed": true
+    },
+    {
+      "check": "full_replay_counters_1_2",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_1_3",
+      "passed": true
+    },
+    {
+      "check": "response_binding_1_3",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_1_3",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_1_3",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_1_3",
+      "passed": true
+    },
+    {
+      "check": "full_replay_counters_1_3",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_1_4",
+      "passed": true
+    },
+    {
+      "check": "response_binding_1_4",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_1_4",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_1_4",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_1_4",
+      "passed": true
+    },
+    {
+      "check": "full_replay_counters_1_4",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_1_5",
+      "passed": true
+    },
+    {
+      "check": "response_binding_1_5",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_1_5",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_1_6",
+      "passed": true
+    },
+    {
+      "check": "response_binding_1_6",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_1_6",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_1_7",
+      "passed": true
+    },
+    {
+      "check": "response_binding_1_7",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_1_7",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_1_7",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_1_7",
+      "passed": true
+    },
+    {
+      "check": "independent_target_1_7",
+      "passed": true
+    },
+    {
+      "check": "full_replay_counters_1_7",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_1_8",
+      "passed": true
+    },
+    {
+      "check": "response_binding_1_8",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_1_8",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_1_8",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_1_8",
+      "passed": true
+    },
+    {
+      "check": "independent_target_1_8",
+      "passed": true
+    },
+    {
+      "check": "full_replay_counters_1_8",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_1_9",
+      "passed": true
+    },
+    {
+      "check": "response_binding_1_9",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_1_9",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_1_9",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_1_9",
+      "passed": true
+    },
+    {
+      "check": "independent_target_1_9",
+      "passed": true
+    },
+    {
+      "check": "cached_cost_and_history_1_9",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_1_10",
+      "passed": true
+    },
+    {
+      "check": "response_binding_1_10",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_1_10",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_1_10",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_1_10",
+      "passed": true
+    },
+    {
+      "check": "independent_target_1_10",
+      "passed": true
+    },
+    {
+      "check": "cached_cost_and_history_1_10",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_1_11",
+      "passed": true
+    },
+    {
+      "check": "response_binding_1_11",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_1_11",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_1_12",
+      "passed": true
+    },
+    {
+      "check": "response_binding_1_12",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_1_12",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_1_73_0",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_1_73_1",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_1_73_2",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_1_73_3",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_1_73_4",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_1_73_5",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_1_74_0",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_1_74_1",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_1_74_2",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_1_74_3",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_1_74_4",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_1_74_5",
+      "passed": true
+    },
+    {
+      "check": "endpoint_pin_2",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_2_1",
+      "passed": true
+    },
+    {
+      "check": "response_binding_2_1",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_2_1",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_2_2",
+      "passed": true
+    },
+    {
+      "check": "response_binding_2_2",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_2_2",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_2_3",
+      "passed": true
+    },
+    {
+      "check": "response_binding_2_3",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_2_3",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_2_3",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_2_3",
+      "passed": true
+    },
+    {
+      "check": "independent_target_2_3",
+      "passed": true
+    },
+    {
+      "check": "cached_cost_and_history_2_3",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_2_4",
+      "passed": true
+    },
+    {
+      "check": "response_binding_2_4",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_2_4",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_2_4",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_2_4",
+      "passed": true
+    },
+    {
+      "check": "independent_target_2_4",
+      "passed": true
+    },
+    {
+      "check": "cached_cost_and_history_2_4",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_2_5",
+      "passed": true
+    },
+    {
+      "check": "response_binding_2_5",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_2_5",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_2_5",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_2_5",
+      "passed": true
+    },
+    {
+      "check": "full_replay_counters_2_5",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_2_6",
+      "passed": true
+    },
+    {
+      "check": "response_binding_2_6",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_2_6",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_2_6",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_2_6",
+      "passed": true
+    },
+    {
+      "check": "full_replay_counters_2_6",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_2_7",
+      "passed": true
+    },
+    {
+      "check": "response_binding_2_7",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_2_7",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_2_7",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_2_7",
+      "passed": true
+    },
+    {
+      "check": "full_replay_counters_2_7",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_2_8",
+      "passed": true
+    },
+    {
+      "check": "response_binding_2_8",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_2_8",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_2_8",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_2_8",
+      "passed": true
+    },
+    {
+      "check": "full_replay_counters_2_8",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_2_9",
+      "passed": true
+    },
+    {
+      "check": "response_binding_2_9",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_2_9",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_2_10",
+      "passed": true
+    },
+    {
+      "check": "response_binding_2_10",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_2_10",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_2_73_0",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_2_73_1",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_2_73_2",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_2_73_3",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_2_73_4",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_2_74_0",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_2_74_1",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_2_74_2",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_2_74_3",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_2_74_4",
+      "passed": true
+    },
+    {
+      "check": "endpoint_pin_3",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_3_1",
+      "passed": true
+    },
+    {
+      "check": "response_binding_3_1",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_3_1",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_3_2",
+      "passed": true
+    },
+    {
+      "check": "response_binding_3_2",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_3_2",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_3_3",
+      "passed": true
+    },
+    {
+      "check": "response_binding_3_3",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_3_3",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_3_4",
+      "passed": true
+    },
+    {
+      "check": "response_binding_3_4",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_3_4",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_3_5",
+      "passed": true
+    },
+    {
+      "check": "response_binding_3_5",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_3_5",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_3_5",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_3_5",
+      "passed": true
+    },
+    {
+      "check": "independent_target_3_5",
+      "passed": true
+    },
+    {
+      "check": "cached_cost_and_history_3_5",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_3_6",
+      "passed": true
+    },
+    {
+      "check": "response_binding_3_6",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_3_6",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_3_6",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_3_6",
+      "passed": true
+    },
+    {
+      "check": "independent_target_3_6",
+      "passed": true
+    },
+    {
+      "check": "cached_cost_and_history_3_6",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_3_73_0",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_3_73_1",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_3_73_2",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_3_74_0",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_3_74_1",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_3_74_2",
+      "passed": true
+    },
+    {
+      "check": "endpoint_pin_4",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_4_1",
+      "passed": true
+    },
+    {
+      "check": "response_binding_4_1",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_4_1",
+      "passed": true
+    },
+    {
+      "check": "receipt_full_request_binding_4_1",
+      "passed": true
+    },
+    {
+      "check": "independent_endpoint_relation_4_1",
+      "passed": true
+    },
+    {
+      "check": "independent_target_4_1",
+      "passed": true
+    },
+    {
+      "check": "full_replay_counters_4_1",
+      "passed": true
+    },
+    {
+      "check": "canonical_frames_4_2",
+      "passed": true
+    },
+    {
+      "check": "response_binding_4_2",
+      "passed": true
+    },
+    {
+      "check": "raw_frame_counters_4_2",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_4_73_0",
+      "passed": true
+    },
+    {
+      "check": "client_byte_counter_4_74_0",
+      "passed": true
+    },
+    {
+      "check": "all_30_client_owner_frame_pairs",
+      "passed": true
+    },
+    {
+      "check": "aggregate_callback_costs",
+      "passed": true
+    },
+    {
+      "check": "aggregate_input_frame_bytes",
+      "passed": true
+    },
+    {
+      "check": "aggregate_output_frame_bytes",
+      "passed": true
+    },
+    {
+      "check": "sql_context",
+      "passed": true
+    },
+    {
+      "check": "sql_sequences",
+      "passed": true
+    },
+    {
+      "check": "sql_dispositions",
+      "passed": true
+    },
+    {
+      "check": "sql_receipt_1",
+      "passed": true
+    },
+    {
+      "check": "sql_receipt_2",
+      "passed": true
+    },
+    {
+      "check": "sql_receipt_3",
+      "passed": true
+    },
+    {
+      "check": "sql_receipt_4",
+      "passed": true
+    },
+    {
+      "check": "sql_receipt_5",
+      "passed": true
+    },
+    {
+      "check": "sql_receipt_6",
+      "passed": true
+    },
+    {
+      "check": "sql_receipt_7",
+      "passed": true
+    },
+    {
+      "check": "sql_receipt_8",
+      "passed": true
+    },
+    {
+      "check": "sql_receipt_9",
+      "passed": true
+    },
+    {
+      "check": "sql_receipt_10",
+      "passed": true
+    },
+    {
+      "check": "sql_receipt_11",
+      "passed": true
+    },
+    {
+      "check": "sql_three_closed_candidates",
+      "passed": true
+    },
+    {
+      "check": "sql_closed_binding_5",
+      "passed": true
+    },
+    {
+      "check": "sql_closed_binding_6",
+      "passed": true
+    },
+    {
+      "check": "sql_closed_binding_11",
+      "passed": true
+    },
+    {
+      "check": "no_duplicate_first_record_or_credit",
+      "passed": true
+    },
+    {
+      "check": "all_13_processes_exited",
+      "passed": true
+    },
+    {
+      "check": "distinct_process_identities_in_campaign",
+      "passed": true
+    },
+    {
+      "check": "receiver_owner_process_denominators",
+      "passed": true
+    },
+    {
+      "check": "native_cpu_is_subset_of_all_children",
+      "passed": true
+    },
+    {
+      "check": "five_complete_startup_preparations",
+      "passed": true
+    },
+    {
+      "check": "cell_mac_intervals",
+      "passed": true
+    },
+    {
+      "check": "validation_identity_stable:runner-bindings.json",
+      "passed": true
+    },
+    {
+      "check": "validation_identity_stable:source-after.json",
+      "passed": true
+    },
+    {
+      "check": "validation_identity_stable:authority-native-build.result.json",
+      "passed": true
+    },
+    {
+      "check": "validation_identity_stable:authority-native-build.log",
+      "passed": true
+    },
+    {
+      "check": "validation_identity_stable:summary.json",
+      "passed": true
+    }
+  ],
+  "checks_passed": 325,
+  "final_complete": 11,
+  "final_reserved": 12,
+  "final_reserved_abandoned": 1,
+  "frames_each_direction": 30,
+  "frames_received_bytes": 53460,
+  "frames_sent_bytes": 34337,
+  "global_budget_proved": false,
+  "historical_fixture_challenges_previously_used": true,
+  "hits_are_schedule_observations_not_probability_estimate": true,
+  "independent_capsule_signatures": 2,
+  "independent_operators": false,
+  "independent_owner_response_signatures": 30,
+  "independent_receiver_signatures": 30,
+  "native_full_cell_calls": 11,
+  "native_owner_seeds": 11,
+  "native_owner_steps": 704,
+  "outcomes": {
+    "relation_rejected": 8,
+    "verified_hit": 2,
+    "verified_miss": 1
+  },
+  "physical_durability_proved": false,
+  "post_campaign_audit_chain_step_queries": 384,
+  "post_campaign_audit_cost_scope": "Additional independent audit, outside original campaign K and timing. Include in an expanded assistance/accounting horizon; endpoints are not exported by this report.",
+  "post_campaign_audit_reference_additions": 48,
+  "post_campaign_audit_reference_macs": 37008,
+  "post_campaign_audit_seed_queries": 6,
+  "producer_seeds": 3,
+  "producer_steps": 192,
+  "report_sha256": "bd9d20f15ea86aa7d948937bf32e8f1a884e37e9949396b8831312202825b8ab",
+  "reproducible_build_attestation": false,
+  "schema": "pon-grouped-owner-independent-audit-portable-v2",
+  "source_commit": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+  "source_runner_sha256": "895c08811f5ddfc99470915d4d6cd236dfea29afa4064daabe044fb9f58963ec",
+  "source_tree": "c815d3710d5f7feffc043aed1aa6e003e03d3a10",
+  "startup_direct_business_macs": 1973760,
+  "startup_merge_additions": 11565,
+  "status": "PASS",
+  "validation_commands_passed": 24,
+  "validation_commands_planned": 24,
+  "validation_directory": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/validation-canonical-v1",
+  "validation_identity_files": {
+    "authority-native-build.log": {
+      "bytes": 194,
+      "sha256": "afedb83890de89198738b2a953c060fd92df6f040ddc0fef119621447f1601e2"
+    },
+    "authority-native-build.result.json": {
+      "bytes": 1384,
+      "sha256": "b749b91873b906ef75f4afcb8b99a4c785b872aad8ea6c40c398fd07da05bf34"
+    },
+    "runner-bindings.json": {
+      "bytes": 1108,
+      "sha256": "2710471212a9572bb66fb79783ac229bfb1201d5c91c1e0f9f447d2620fc6bba"
+    },
+    "source-after.json": {
+      "bytes": 570,
+      "sha256": "c76b9ef7b99eb5cec9c2850fec860ebc9954ca206f8f5d49cf3a419c189af686"
+    },
+    "summary.json": {
+      "bytes": 2622,
+      "sha256": "5c655dbbcdfa8bcbbe3726329be934d363526a1a2ed5e6ba699207a553c5203c"
+    }
+  },
+  "validation_status": "PASS",
+  "verified_callback_macs": 407088,
+  "whole_before_audit_report_wall_ns": 42287063
+}

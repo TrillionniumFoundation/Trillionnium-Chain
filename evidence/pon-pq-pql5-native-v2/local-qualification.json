@@ -1,0 +1,46 @@
+{
+  "schema": "pon-pql5-native-symlink-followup-v2",
+  "exact_parent_pr": 463,
+  "inherited_pr": 458,
+  "inherited_sha": "192480f0c5e1fa6077c8c3bc2b9e1790a02c0552",
+  "reason": "v1 response-symlink test used a dangling target; v2 creates an otherwise valid genuinely ML-DSA-signed response target before verifying O_NOFOLLOW refusal",
+  "actual_executed_file_blobs": {
+    "formal/pon-nakamoto-v1/pq_pql5_native_verify.c": "d62c87865026dce960913906834650f7b92d2fee",
+    "formal/pon-nakamoto-v1/test_pq_pql5_native_verify.py": "4c348accc0141f3b08f9b63c1c0f861937e7001a",
+    "evidence/pon-pq-pql5-native-v2/local-unittest.log": "f112bc633a9b2ae14d277f16701ee62ebc13cf4e",
+    "evidence/pon-pq-pql5-native-v2/local-sanitizer.log": "4c530a1fc868864f70ceaf17ba187e3349316167"
+  },
+  "environment": {
+    "python": "3.13.5",
+    "openssl": "3.5.5",
+    "cc": "Debian 14.2.0-19",
+    "os": "Linux x86_64 isolated single-admin host"
+  },
+  "tests": [
+    {
+      "run": "normal",
+      "passed": 14,
+      "failed": 0,
+      "skipped": 1,
+      "elapsed_seconds": 2.861
+    },
+    {
+      "run": "ASan+UBSan",
+      "passed": 14,
+      "failed": 0,
+      "skipped": 1,
+      "elapsed_seconds": 7.689
+    }
+  ],
+  "inherited_cross_language_parity": "NOT_RUN - full PR #458 sources inaccessible from isolated test host",
+  "attack_model_negatives": {
+    "valid_signature_but_mutated_header": "REJECT",
+    "valid_symlink_target_in_response_file": "REJECT",
+    "classical_signature_algorithm": "REJECT",
+    "old_majority_frontier_against_newer_caller_pin": "REJECT",
+    "old_majority_frontier_with_rewound_caller_pin": "ACCEPTED - CRITICAL UNRESOLVED"
+  },
+  "production_activation": false,
+  "independent_accepted": false,
+  "whole_chain_pq_secure": false
+}

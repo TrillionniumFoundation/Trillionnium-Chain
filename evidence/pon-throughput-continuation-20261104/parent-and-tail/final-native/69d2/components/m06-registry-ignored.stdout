@@ -1,0 +1,7 @@
+pon_commitment::bounded_encoding_tests::actual_state_fallback_encoding_cost: test
+pon_commitment::bounded_encoding_tests::canonical_buffer_reuse_component_timing: test
+pon_commitment::checked_binding_tests::checked_binding_complete_cost_observation: test
+pon_commitment::tests::immutable_parent_preview_component_timing: test
+pon_commitment::tests::warm_parent_binding_component_timing: test
+pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost: test
+pon_executor::streaming_root_tests::complete_root_encoding_cost: test

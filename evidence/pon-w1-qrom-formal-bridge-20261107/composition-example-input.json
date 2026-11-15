@@ -1,0 +1,136 @@
+{
+  "input_kind": "hypothetical",
+  "instance_size_bound": "1024",
+  "intermediate_instance_size_bound": "32",
+  "left": {
+    "emulated_oracle": {
+      "extraction_oracle_specification_sha256": "75537106b2aa5138d12aa078c90c46e99dab5b77592f1dda2bfe14e92cfde178",
+      "init_specification_sha256": "9b466b38865ab3722723603419c30c4b25cc4ccb4f4512b50e2001ba5b8cf38f",
+      "ordinary_oracle_specification_sha256": "514e2c711c0e62a9b8260e4b946efa3a2d4ecbdbe34d8703201127fe9eb4d2d4"
+    },
+    "errors": {
+      "commutativity": {
+        "coefficients": [
+          {
+            "denominator": "79228162514264337593543950336",
+            "numerator": "1"
+          },
+          {
+            "denominator": "79228162514264337593543950336",
+            "numerator": "1"
+          }
+        ],
+        "instance_size_bound": "1024",
+        "kind": "assumed_nonnegative_polynomial",
+        "max_queries": "256",
+        "security_parameter": "128"
+      },
+      "extractability": {
+        "coefficients": [
+          "0",
+          "0",
+          {
+            "denominator": "18446744073709551616",
+            "numerator": "1"
+          }
+        ],
+        "instance_size_bound": "1024",
+        "kind": "assumed_nonnegative_polynomial",
+        "max_queries": "256",
+        "security_parameter": "128"
+      },
+      "simulation": {
+        "coefficients": [
+          "0"
+        ],
+        "instance_size_bound": "1024",
+        "kind": "assumed_nonnegative_polynomial",
+        "max_queries": "256",
+        "security_parameter": "128"
+      }
+    },
+    "input_relation": {
+      "relaxed_specification_sha256": "acb84cb73a5edbcea123760115621ac2b2fc49c7c6aa94a2c120373636ddb615",
+      "strict_specification_sha256": "b83e5cd987e388bb8dc957e32c93da76eafc8dd9ad6f957cdca6d9847b066b5a"
+    },
+    "output_relation": {
+      "relaxed_specification_sha256": "9567daecec47542557e226d69dfbcbd2c866bf3848e3a72900bf01bcaebb90bf",
+      "strict_specification_sha256": "bffb17429b467117b5b42a1c0e5493db65b12afd8c8894dca64e34c7fdfef56f"
+    }
+  },
+  "queries": {
+    "q_com": "11",
+    "q_e1": "7",
+    "q_e2": "4",
+    "q_r2": "1",
+    "q_r3": "6",
+    "q_sim": "7",
+    "q_v1": "2",
+    "q_v2": "3",
+    "t": "5"
+  },
+  "right": {
+    "emulated_oracle": {
+      "extraction_oracle_specification_sha256": "75537106b2aa5138d12aa078c90c46e99dab5b77592f1dda2bfe14e92cfde178",
+      "init_specification_sha256": "9b466b38865ab3722723603419c30c4b25cc4ccb4f4512b50e2001ba5b8cf38f",
+      "ordinary_oracle_specification_sha256": "514e2c711c0e62a9b8260e4b946efa3a2d4ecbdbe34d8703201127fe9eb4d2d4"
+    },
+    "errors": {
+      "commutativity": {
+        "coefficients": [
+          {
+            "denominator": "79228162514264337593543950336",
+            "numerator": "2"
+          },
+          {
+            "denominator": "79228162514264337593543950336",
+            "numerator": "2"
+          }
+        ],
+        "instance_size_bound": "1024",
+        "kind": "assumed_nonnegative_polynomial",
+        "max_queries": "256",
+        "security_parameter": "128"
+      },
+      "extractability": {
+        "coefficients": [
+          {
+            "denominator": "18446744073709551616",
+            "numerator": "1"
+          },
+          {
+            "denominator": "18446744073709551616",
+            "numerator": "1"
+          }
+        ],
+        "instance_size_bound": "1024",
+        "kind": "assumed_nonnegative_polynomial",
+        "max_queries": "256",
+        "security_parameter": "128"
+      },
+      "simulation": {
+        "coefficients": [
+          "0"
+        ],
+        "instance_size_bound": "1024",
+        "kind": "assumed_nonnegative_polynomial",
+        "max_queries": "256",
+        "security_parameter": "128"
+      }
+    },
+    "input_relation": {
+      "relaxed_specification_sha256": "9567daecec47542557e226d69dfbcbd2c866bf3848e3a72900bf01bcaebb90bf",
+      "strict_specification_sha256": "bffb17429b467117b5b42a1c0e5493db65b12afd8c8894dca64e34c7fdfef56f"
+    },
+    "output_relation": {
+      "relaxed_specification_sha256": "74a65eb2b5984b557eb95e24bc2468445c54789b2dcaf64b212fea0d734b3d6e",
+      "strict_specification_sha256": "55e27712da399e527d4d8f39cbfe203d4179eca9b8745a3d8b565d4e855176c5"
+    }
+  },
+  "schema": "TRNM-W1-CDHZ-JAN1-COMPOSITION-INPUT1",
+  "security_parameter": "128",
+  "target_error": {
+    "denominator": "4294967296",
+    "numerator": "1"
+  }
+}

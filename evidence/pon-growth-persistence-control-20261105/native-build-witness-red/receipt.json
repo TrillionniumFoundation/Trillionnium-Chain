@@ -1,0 +1,23 @@
+{
+  "schema": "growth-native-sqlite-build-output-v1",
+  "source_base": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+  "selected_rustc": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+  "rustc_sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+  "outputs": [
+    {
+      "source_path": "/workspace/scratch/822cc50e24f0/state-scheduling-restored/native-target-canonical/debug/build/trnm-sqlite-io-boundary-87cfac8f475548aa/output",
+      "artifact": "build-output-0.log",
+      "bytes": 4953,
+      "sha256": "0642efe503d0b41acb879326fd9e8b1774d48584a6e6037562af0652f10f731e",
+      "layout_witness_cfg_emitted": true,
+      "build_fence_lines": [
+        "cargo:rustc-env=TRNM_SQLITE3_BUILD_FENCE=sqlite-3.51.3-normal-native-linux-layout-v3"
+      ],
+      "amalgamation_sha256_lines": [
+        "cargo:rustc-env=TRNM_SQLITE3_AMALGAMATION_SHA256=9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5"
+      ],
+      "unqualified_lines": []
+    }
+  ],
+  "scope": "Actual build-script outputs only. The Growth control tests exercise SQL transaction rollback semantics, not the owned-VFS resource qualification gate. Canonical attempts have not reached a native test terminal result; production and original Host/4s/16 remain HOLD."
+}

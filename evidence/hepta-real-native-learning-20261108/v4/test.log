@@ -1,0 +1,27 @@
+RUST_MIN_STACK=8388608 NEXTEST_PROFILE=local python3 ../scripts/run-nextest.py "$@"
+  Extracting 1 binary and 9 linked paths to /home/qq/hepta-learning-native-4f559bf-d9fb-20261108/extracted-v4
+   Extracted 139 files to /home/qq/hepta-learning-native-4f559bf-d9fb-20261108/extracted-v4 in 0.86s
+────────────
+ Nextest run ID acc45327-605f-4097-828f-c22268008e8b with nextest profile: local
+    Starting 1 test across 1 binary (753 tests skipped)
+       START             codex-hepta-agentd neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback
+
+running 1 test
+        SLOW [> 30.000s] codex-hepta-agentd neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback
+actual research learning owner refused: InvalidGrant
+Error: OwnerUnavailable("actual-research-owner")
+test neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback ... FAILED
+
+failures:
+
+failures:
+    neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 753 filtered out; finished in 36.11s
+
+        FAIL [  36.120s] codex-hepta-agentd neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback
+────────────
+     Summary [  36.123s] 1 test run: 0 passed, 1 failed, 753 skipped
+        FAIL [  36.120s] codex-hepta-agentd neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback
+error: test run failed
+error: recipe `test` failed on line 89 with exit code 100

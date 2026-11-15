@@ -1,0 +1,88 @@
+{
+  "evidence_commit": "c2297ad53fef1d9b552e657cfd205d583c91980d",
+  "repository_path": "evidence/pon-joint-resource-contract-20261109/archives/117-local-validation.tar.xz",
+  "git_blob": "059549dfa206b04382322fb476db231ae49f1f55",
+  "archive_bytes": 976596,
+  "archive_sha256": "eeaa11ad8a6f565f989edf035d6cb5f59d45ed2956276c824b4daac7064ea8f6",
+  "published_sha256_index_checked": [
+    "README.md",
+    "archives/117-local-validation.tar.xz",
+    "artifacts.json",
+    "cost-native-summary.json",
+    "integrity/117-local-validation-observed-files.json",
+    "inventories/117-local-validation-archive.json",
+    "inventories/117-local-validation-files.json",
+    "v4-semantic-preservation.json"
+  ],
+  "complete_inventory_member_count": 105,
+  "complete_inventory_uncompressed_bytes": 43916967,
+  "all_members_match_published_inventory": true,
+  "selected_original_members": [
+    {
+      "path": "final-native/v4-observation/complete-readback.json",
+      "bytes": 903,
+      "sha256": "ee171af7e4d1cbb548c8ae9a36810d412722e5c552ed7043f1eeb4c009f4e0e6"
+    },
+    {
+      "path": "final-native/v4-observation/complete-readback.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "final-native/v4-observation/complete-receipt.json",
+      "bytes": 2390,
+      "sha256": "066899eacdef00ee8326ecfbf7ade1e1997459f56b1570d8df5db3a137d43ace"
+    },
+    {
+      "path": "final-native/v4-observation/complete.jsonl",
+      "bytes": 40704359,
+      "sha256": "2ae1c73382b3d4bede8412c9ff725d6e51bf37ea50ff6810a84617c4c8ec6f04"
+    },
+    {
+      "path": "final-native/v4-observation/complete.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "final-native/v4-observation/pon_w1_lifecycle_cost_v4.bin.gz",
+      "bytes": 373296,
+      "sha256": "f283ca3e275052ea5352946a06c403325904ae911833f5a9f58d70ee8977d541"
+    },
+    {
+      "path": "final-native/v4-observation/source-after.json",
+      "bytes": 423,
+      "sha256": "4c753951d66399d4c89c8126852524ff16a5f8f8b7e7b7aa9fe0fc3adff6d086"
+    },
+    {
+      "path": "final-native/v4-observation/source-before.json",
+      "bytes": 423,
+      "sha256": "4c753951d66399d4c89c8126852524ff16a5f8f8b7e7b7aa9fe0fc3adff6d086"
+    },
+    {
+      "path": "final-native/v4-observation/terminated-readback.json",
+      "bytes": 1459,
+      "sha256": "a2b39be706216e9e1a5b6fdf7fde33250e2aefc1bef1b0b90780b4f19e0c543a"
+    },
+    {
+      "path": "final-native/v4-observation/terminated-readback.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "final-native/v4-observation/terminated-receipt.json",
+      "bytes": 2505,
+      "sha256": "232c1d19960b0a8eb13fa3babdc8f367e3003701f7583ee3dd9c8238d0ba96ad"
+    },
+    {
+      "path": "final-native/v4-observation/terminated.jsonl",
+      "bytes": 69094,
+      "sha256": "aa2bf4bddff47a234c36941091409a34013243555f2a254854695dea92430073"
+    },
+    {
+      "path": "final-native/v4-observation/terminated.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "executed_native_binary": false
+}

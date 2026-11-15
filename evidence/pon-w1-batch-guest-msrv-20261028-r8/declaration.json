@@ -1,0 +1,52 @@
+{
+  "schema": "TRNM-W1-BATCH-GUEST-LOCK-REPAIR1",
+  "purpose": "Actual offline resolver exact transitive versions within existing upstream requirements; Rust MSRV checks remain enabled; SDK unchanged; no manual lock edits",
+  "source_commit_before": "1cd9fbc639b63518ce51702a91ba9371dab3154f",
+  "native_lock_sha256": "32953cbb86bb56186137507ee9e9bf59827bd8325c6e28c12b40d5c166fbfa4d",
+  "guest_lock_before_sha256": "018423c898d09d0be7a7fbe207e4a1672c5b6f36202dda765a81da852c044d18",
+  "source_hashes": {
+    "formal/pon-nakamoto-v1/w1_batch/static_review.py": "a1844e4220b6877772997c3a3ffb64a52c6c7fb4b57a395987afcafc86816363",
+    "formal/pon-nakamoto-v1/w1_batch/EXPERIMENT_CONTRACT.md": "d2a0b861138dfbaab0aa0489d8c1f4df26209e9eb2acde8ae5e97566868fcab3",
+    "formal/pon-nakamoto-v1/w1_batch/README.md": "61ebecf1a59db96461b5f9bcc09225d59b54b0495c5e426d5ffc0f06499374d2",
+    "formal/pon-nakamoto-v1/w1_batch/contract_controls.py": "070ed44c581bbd50db43fc5ada8464949e55ca7287095a62b2997c82da82f07b",
+    "formal/pon-nakamoto-v1/w1_batch/EXTERNAL_GATES_REVIEW.md": "e05c77443621a794a27eb9fca0c93151a5a084789746ae6fb7e873fabdda840d",
+    "formal/pon-nakamoto-v1/w1_batch/Cargo.toml": "c15cabe3c3e3ab00a34b3c9ddee47713a661fdf1501c6046f0f1fd36f5e17dce",
+    "formal/pon-nakamoto-v1/w1_batch/statement/Cargo.toml": "d2b446bb7b111178d40dc1bedaf36c308bfc16b9c7d50025a80aa3e1644905ac",
+    "formal/pon-nakamoto-v1/w1_batch/host/Cargo.toml": "779f89393d90366e44544da865df32ff0481c91e1ada63a2052a1a916688bfd2",
+    "formal/pon-nakamoto-v1/w1_batch/examples/one-leaf.json": "2d1abd1cac1a0f9db8178192cae5cb71b7c501dd3ddca1e73cff7eb84ef07c95",
+    "formal/pon-nakamoto-v1/w1_batch/methods/build.rs": "ba4fd35cbf2fe1df1887f667d0d727efaba0ab2cc194d969bd123073252226fa",
+    "formal/pon-nakamoto-v1/w1_batch/methods/Cargo.toml": "85337345d2cc451c56ca36d5faca64fb8a5bb1b179920390658d663ac7a6401b",
+    "formal/pon-nakamoto-v1/w1_batch/statement/src/lib.rs": "308f61f9496d9fd34c953bff8f6573f53b1136e8a5b356fe2da83e507ea288a6",
+    "formal/pon-nakamoto-v1/w1_batch/host/src/main.rs": "65ab554b1c817604938a0183e6292f634298aa6c24ad7afd06d866ea75687960",
+    "formal/pon-nakamoto-v1/w1_batch/methods/src/lib.rs": "902d56d952004dd42e65c148a4b537710f869054556528b25ed3e67d050bb255",
+    "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.toml": "19b7da62cddb1516974e63541f44c3f56f5f8333f292c8f1f1de9865803fc3ec",
+    "formal/pon-nakamoto-v1/w1_batch/methods/guest/src/main.rs": "5b7e65a3f1173604951a2fe23fc76ad31d63e5b57e9cdc1cede6ce55fd26f80b"
+  },
+  "legacy_complete_w1_source_hashes": {
+    "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock": "9483de86f0f887de7dc8c1625abbf69bfe8474bee5ac6197ecd4cd9aa30b03ac",
+    "formal/pon-nakamoto-v1/w1_zkvm/STAGED_PROVER.md": "a338e048b45f946188ce1b94ef1069794fb66e1ad66bcb043a7048141a819f51",
+    "formal/pon-nakamoto-v1/w1_zkvm/README.md": "c0c0c6b7b9e0cb623d56eb54b4e5456f02dd860804d2a4ee5c3a4192488c4ad3",
+    "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml": "66145e0dae46cdea99a0f7653065a99008b0210e01263d9be18a81db951eb379",
+    "formal/pon-nakamoto-v1/w1_zkvm/host/Cargo.toml": "83df55fb1be18e1cce5aac6d98a10283131bfa7024bbec9eb3afaac7c02a1405",
+    "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml": "98317da54f1b107b02486236f409f240c1910c948eaf31b5e093365147e2004f",
+    "formal/pon-nakamoto-v1/w1_zkvm/methods/build.rs": "b78bbf681585c01b2b87d6072c4f72d5f05214c76909dbcec470546414757011",
+    "formal/pon-nakamoto-v1/w1_zkvm/methods/Cargo.toml": "9f5d7be9a8a6fcf50bb6136170ae28beb41478ac7cd498d2f96612b95e873133",
+    "formal/pon-nakamoto-v1/w1_zkvm/host/src/main.rs": "fc4712e1dfd5fd06b10cc0474096515337624992117943b196782f5256d81368",
+    "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-staged-prover.rs": "b898abf9e77183cbdcb50842467463bef449585288a95999254b75404e5f683c",
+    "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-native-cost.rs": "942e113c6f427fc340af39be1807b0009fee7cae7798c98f0d52d48f4fe110de",
+    "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-execute-control.rs": "2ba1596e34c414fee00e8f040ff69c08b9dc5f757fb702a38064e331b84a0ad0",
+    "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs": "84282e040d9d613578e81125d7be37cfd3ca250f96bc82bdb2aa7b5918570d21",
+    "formal/pon-nakamoto-v1/w1_zkvm/methods/src/lib.rs": "902d56d952004dd42e65c148a4b537710f869054556528b25ed3e67d050bb255",
+    "formal/pon-nakamoto-v1/w1_zkvm/methods/guest/Cargo.lock": "517632d9380db3b9b034efa475063cd2c081ba1af14de580dd09f8648e472f76",
+    "formal/pon-nakamoto-v1/w1_zkvm/methods/guest/Cargo.toml": "4b009fdeaa378a9f99b3b59fe1a5ee297235b70e433f2e1b4013763d85e66ee4",
+    "formal/pon-nakamoto-v1/w1_zkvm/methods/guest/src/main.rs": "7a453d4e3eb39f2fb62792f7d6635706c6960890096356076e821eb7ca1e8b7e"
+  },
+  "environment": {
+    "CARGO_HOME": "/tmp/pure-pon-cargo-20261027",
+    "CARGO_NET_OFFLINE": "true",
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_INCREMENTAL": "0"
+  },
+  "native_or_guest_compilation_permitted": false,
+  "prover_permitted": false
+}

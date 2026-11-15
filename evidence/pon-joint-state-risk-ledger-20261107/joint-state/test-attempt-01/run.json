@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "formal/pon-nakamoto-v1/finite_joint_state_tests.py",
+    "-v"
+  ],
+  "elapsed_seconds": 0.6524350643157959,
+  "exit_code": 0,
+  "source_sha256": {
+    "formal/pon-nakamoto-v1/FINITE_JOINT_STATE_CERTIFICATE_V1.md": "1c70ae1ea8c7ba68107e7b385bb7ea7774cd871c740ef8f44b53d4d89f663d13",
+    "formal/pon-nakamoto-v1/finite_joint_state_certificate.py": "4b5cd35fbe5bbc48c6c7811b329c063c1adfb3b37c86b84f70462f0c219a74be",
+    "formal/pon-nakamoto-v1/finite_joint_state_tests.py": "574011fbf2f4ef87ca2f6eaa81de6cdbe8983379026ee3ba81a579bb27cf9565",
+    "formal/pon-nakamoto-v1/mandatory_units_query.py": "8127186bf3355ab749d753494caeeb14adbb875e13c7edf629df213f04e4ce0e"
+  }
+}

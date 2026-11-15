@@ -1,0 +1,1 @@
+{"executed_tests": 1, "result": "PASS", "scope": "named-libtest-execution-only", "test": "ingress::public_v3::input_decode_tests::initialized_socket_reads_retain_original_quantum_and_do_not_swallow_trailing_bytes"}

@@ -1,0 +1,23 @@
+{
+  "artifacts": [
+    {
+      "id": 13894656010,
+      "name": "pon-native-campaign-x64-head-release-53e1b98a7955898b9feff4778f7136c0fd0199c8-1",
+      "size_in_bytes": 71025468,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13894656010",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13894656010/zip",
+      "expired": false,
+      "created_at": "2026-11-11T21:47:39Z",
+      "expires_at": "2026-12-11T21:47:30Z",
+      "updated_at": "2026-11-11T21:47:39Z",
+      "digest": "sha256:9a2c2250205c6a5fe18524451addf56115aafbf951d9a5c2fd3f6056988e437e",
+      "workflow_run": {
+        "id": 43104547221,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "perf/pon-pq-packet-one-pass-20261110",
+        "head_sha": "53e1b98a7955898b9feff4778f7136c0fd0199c8"
+      }
+    }
+  ]
+}

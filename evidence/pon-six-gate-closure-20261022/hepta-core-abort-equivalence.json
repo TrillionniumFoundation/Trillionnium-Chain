@@ -1,0 +1,35 @@
+{
+  "schema": "hepta-abort-parameter-grouping-equivalence-v1",
+  "base": "097d97137a43aee84fb96be12e44135278776748",
+  "path": "codex-rs/core/src/tasks/mod.rs",
+  "before_sha256": "a07da7b7c701be808dbc7f9299bbdc59641d55bd4b4e9f64371aae5a27befbac",
+  "after_sha256": "9562454dafe52ee72e848b400437fd39d90c41df09f113807fa64c3a4ba31b02",
+  "exact_rewrite_count": 3,
+  "unaccounted_source_change": false,
+  "scope": "One declaration, one caller; adjacent turn_state/transition_identity evaluated in unchanged order and immediately destructured; all preexisting body bytes unchanged. No tests, gates, attributes or control flow changed.",
+  "runtime_validation": "Not run: full Core compilation exceeds current agreed resource scope. Existing source097 YAML job passed799 consumer tests and10 Core response/provider selectors before failing strict Clippy; those successes do not validate this new source.",
+  "format": {
+    "toolchain": "1.96.0",
+    "just_fmt": "exit0",
+    "just_fmt_check": "exit0"
+  },
+  "independent_review": {
+    "agent": "/root/reward_budgets/native_budget_review",
+    "result": "PASS: exact three rewrite proof; one definition and one true call; original7awaits, branch/return and Arc clone/order/count unchanged; no lint allow, literals, tests/gates or other source changes. Not a compile/CI pass."
+  },
+  "commit": "d876fc4cbbc1e8c98c2210e15b45d2af616cec86",
+  "tree": "aa21d45a169cd5661098408c79648575ce23e062",
+  "source_blob": "d0d59d13389f7ce0b826b67ee0b37059356c2d1e",
+  "validation_logs": [
+    {
+      "path": "core-abort-just-fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "core-abort-just-fmt-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  ]
+}

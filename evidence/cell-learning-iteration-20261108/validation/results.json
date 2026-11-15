@@ -1,0 +1,115 @@
+{
+  "actual_model_execution": false,
+  "all_selected_reader_tests_passed": true,
+  "base_legacy_test_blob_sha1": "e560f35de0d6896a0abc8d62506074cba7efddfb",
+  "base_legacy_tests_blob_unchanged": true,
+  "base_reader_blob_sha1": "9725defd643373019ae1c1cbc4574252e3a4f607",
+  "base_reader_semantic_prefix_unchanged": true,
+  "chain_base_commit": "e02126dabef04f13792dec45d96ac5d6916d0651",
+  "fixtures": {
+    "actor_fixture_cases": 2,
+    "hepta_source_commit": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+    "native_capture_validation_sha256": "27439d85b5f9dc1d5e5b8f48d16b1a997d3cbeef3a27a0eb1c3ee49809c3f60e",
+    "native_fixture_manifest_sha256": "597a20d27e48a91dd6b19dc3102952ed7048fc39946bc9d42e84c23a40fc3557",
+    "pins_are_fixture_derived": true,
+    "readback_phases": 4
+  },
+  "independent_evaluation_established": false,
+  "portable_current_permission": false,
+  "production_final_use_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "runs": [
+    {
+      "actual_test_count": 25,
+      "all_cases_passed_no_skips": true,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-m",
+        "unittest",
+        "-v",
+        "test_cell_learning_iteration_join"
+      ],
+      "environment": {
+        "PYTHONPATH": "/workspace/scratch/f5f617898615/chain-evolution/scripts"
+      },
+      "exit_code": 0,
+      "expected_test_count": 25,
+      "log": "join-tests.stdout",
+      "log_bytes": 5084,
+      "log_sha256": "b8d935e5d98fa1a40cfc41e67cd4fce94fb535c921de1aa959aee63fd98c8c36",
+      "module": "test_cell_learning_iteration_join",
+      "source_blobs": {
+        "scripts/cell_adoption_readback.py": {
+          "bytes": 29721,
+          "source_blob_sha1": "47c94dfbf1ea9752439a09b29f750f27a1e4e3b8",
+          "source_sha256": "4574c8ba129eeac23f8c217d2fe3c25d0a8c659f38ec3449b87186a33486d4dc"
+        },
+        "scripts/cell_learning_iteration_join.py": {
+          "bytes": 23114,
+          "source_blob_sha1": "58fe5b64c02758b646f16e8e4c0c47f67aee7e15",
+          "source_sha256": "b602e6217b9ec2bb143c141ea02e27ec666ef75ddf993eb794c23eb3ded5da7d"
+        },
+        "scripts/test_cell_adoption_readback.py": {
+          "bytes": 19436,
+          "source_blob_sha1": "e560f35de0d6896a0abc8d62506074cba7efddfb",
+          "source_sha256": "0cb9c8d37c924b54af2497ebf4571c1e3c63bfa00f7987206d1232a1b6e643f2"
+        },
+        "scripts/test_cell_learning_iteration_join.py": {
+          "bytes": 29021,
+          "source_blob_sha1": "da3b2e58901d00ff0ba33d22e1589eda904cc78e",
+          "source_sha256": "6bcb93909ecf036f727ae96b362565aecfe04103c500b810915a864ebc56290d"
+        }
+      },
+      "wall_seconds": 0.26442,
+      "working_directory": "/workspace/scratch/f5f617898615/chain-evolution"
+    },
+    {
+      "actual_test_count": 26,
+      "all_cases_passed_no_skips": true,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-m",
+        "unittest",
+        "-v",
+        "test_cell_adoption_readback"
+      ],
+      "environment": {
+        "PYTHONPATH": "/workspace/scratch/f5f617898615/chain-evolution/scripts"
+      },
+      "exit_code": 0,
+      "expected_test_count": 26,
+      "log": "legacy-readback-tests.stdout",
+      "log_bytes": 5219,
+      "log_sha256": "5125fa4b2283c4003021c72894c0a606fde0e9728bceb24de92056f553f34db2",
+      "module": "test_cell_adoption_readback",
+      "source_blobs": {
+        "scripts/cell_adoption_readback.py": {
+          "bytes": 29721,
+          "source_blob_sha1": "47c94dfbf1ea9752439a09b29f750f27a1e4e3b8",
+          "source_sha256": "4574c8ba129eeac23f8c217d2fe3c25d0a8c659f38ec3449b87186a33486d4dc"
+        },
+        "scripts/cell_learning_iteration_join.py": {
+          "bytes": 23114,
+          "source_blob_sha1": "58fe5b64c02758b646f16e8e4c0c47f67aee7e15",
+          "source_sha256": "b602e6217b9ec2bb143c141ea02e27ec666ef75ddf993eb794c23eb3ded5da7d"
+        },
+        "scripts/test_cell_adoption_readback.py": {
+          "bytes": 19436,
+          "source_blob_sha1": "e560f35de0d6896a0abc8d62506074cba7efddfb",
+          "source_sha256": "0cb9c8d37c924b54af2497ebf4571c1e3c63bfa00f7987206d1232a1b6e643f2"
+        },
+        "scripts/test_cell_learning_iteration_join.py": {
+          "bytes": 29021,
+          "source_blob_sha1": "da3b2e58901d00ff0ba33d22e1589eda904cc78e",
+          "source_sha256": "6bcb93909ecf036f727ae96b362565aecfe04103c500b810915a864ebc56290d"
+        }
+      },
+      "wall_seconds": 0.134802,
+      "working_directory": "/workspace/scratch/f5f617898615/chain-evolution"
+    }
+  ],
+  "schema": "trnm-cell-learning-local-reader-validation-v2",
+  "scope": "local-python-file-validation-against-verified-published-base-blobs",
+  "tested_source_files_unchanged": true,
+  "workspace_whole_git_head_not_used_as_exact_candidate_identity": true
+}

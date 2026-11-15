@@ -1,0 +1,211 @@
+{
+  "schema": "chain-pr909-v2-evidence-publication-bounded-independent-review.v1",
+  "status": "no-confirmed-publication-blocker-in-reviewed-scope",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "intended_evidence_parent": {
+    "commit": "e338c000f26e9357ed33213624da787a3a009ed9",
+    "tree": "876aa62d1ab49458d29e9168f4c69e7b47b8884b"
+  },
+  "reviewed_metadata": [
+    {
+      "kind": "index",
+      "git_blob": "695b6fd88c9f8cebd02368574d6b094c545c789c",
+      "bytes": 168654,
+      "sha256": "8004dfb0d8af39ed3f452e05bc6c95a1b11aabeb436f05e9c04bf268f5b983c4"
+    },
+    {
+      "kind": "readme",
+      "git_blob": "b7ceeb361a3664ee861a026cd2190405d15da06d",
+      "bytes": 6221,
+      "sha256": "9c4d9839401e43cd4a605aa06ebd65653c4eb313f13a9bfdff80cd12d762f245"
+    },
+    {
+      "kind": "tree",
+      "git_blob": "aeaaf38307e5139661b2860ee02cdc475710e88b",
+      "bytes": 18043,
+      "sha256": "d17d23eec22ccce279bfca5bdd1d9fbf7de6078dd912e83e9c2ab0f0b3d2f295"
+    }
+  ],
+  "additional_originals_read": [
+    {
+      "kind": "source_index",
+      "git_blob": "5075184f6a4ef9db4ac9f47547b16f00b76ae2b1",
+      "bytes": 125072,
+      "sha256": "81a687ebf188e0e16e3e189d5e1e8ec32930b408ad9eaa5aa2d668597319fa67"
+    },
+    {
+      "kind": "source_review",
+      "git_blob": "1f7433264e41581affbbd636e1e19b1da7fb1cdb",
+      "bytes": 7736,
+      "sha256": "87798b80939b109f15d8c86232fc41ff0fbe7503795539f3a21a35ae5928f7f5"
+    },
+    {
+      "kind": "head_original",
+      "git_blob": "05df2b600478afa7999c659347781c40a77dee96",
+      "bytes": 1473,
+      "sha256": "f911c98796fa7e1b798b5cecb8b749eb7c4389e0068d61a9f74725f767900a5a"
+    },
+    {
+      "kind": "merge_original",
+      "git_blob": "c0b21441c723d552461abc91c13ba602eb78cf1d",
+      "bytes": 2812,
+      "sha256": "ca589b4de3994d4d5bd4e025648afa86359d00ba3b53de79f4eb7aa12bd4cbfe"
+    }
+  ],
+  "method": {
+    "immutable_git_reads": true,
+    "pure_javascript_json_and_byte_checks": true,
+    "container_payloads_fetched": 0,
+    "container_payloads_decoded": 0,
+    "raw_job_logs_reread": 0,
+    "native_or_ci_execution": false,
+    "h_or_process_requests": false,
+    "refs_changed": false,
+    "pull_request_changed": false,
+    "note": "This review checks the proposed tree, V2 mapping, retained source index/review and original commit-response objects. It does not repeat the author's full 64-container decode/hash audit or three remote content samples."
+  },
+  "inventory_result": {
+    "checked_tree_entries": 81,
+    "unique_paths": 81,
+    "unique_git_blob_ids": 80,
+    "shared_blob_explanation": "The two retained unsupported-check-runs response paths intentionally share one unchanged content blob; paths are distinct and neither artifact is dropped.",
+    "required_prefix": "qualification/chain-pr909-final-ci-20261112/",
+    "all_paths_under_prefix": true,
+    "no_empty_dot_dotdot_components_or_backslashes": true,
+    "no_casefold_path_collisions": true,
+    "all_modes": "100644",
+    "all_types": "blob",
+    "all_shas": "40 lowercase hexadecimal characters",
+    "exact_entry_keys": [
+      "path",
+      "mode",
+      "type",
+      "sha"
+    ],
+    "raw_log_files": 0,
+    "exact_index_tree_correspondence": true,
+    "representation_counts": {
+      "containers": 64,
+      "unchanged_api_tool_artifacts": 13,
+      "unchanged_source_documents": 2,
+      "v2_index_readme": 2,
+      "total": 81
+    },
+    "own_tree_manifest_entry_excluded": true,
+    "self_entry_note": "TREE_ENTRIES.json intentionally omits itself, as README and INDEX explain. Adding its supplied blob as a separate evidence entry would produce 82 entries before any review or publication receipt is added; it must not be counted within the reviewed 81 payload entries."
+  },
+  "original_identity_and_range_checks": {
+    "original_source_artifacts": 55,
+    "original_source_unique_git_blobs": 54,
+    "original_source_bytes": 11432039,
+    "exact_path_role_length_sha256_git_agreement_with_source_index": true,
+    "unchanged_originals": 13,
+    "encoded_originals": 42,
+    "encoded_original_composition": "40 original logical job-log parts and 2 BOM-bearing serialized tool responses",
+    "referenced_containers": 64,
+    "each_container_index_referenced_once": true,
+    "segment_indexes_counts_and_metadata_ranges_contiguous": true,
+    "logical_part_and_whole_log_ranges_match_source_index": true,
+    "whole_job_log_metadata_objects": 18,
+    "serialized_error_complete_objects": 2,
+    "declared_container_bytes_sum": 14986901,
+    "declared_largest_container_bytes": 467889,
+    "declared_container_cap": 480000,
+    "source_index_and_review_bytes_hashes_verified": true,
+    "boundary": "Range/count/hash-field correspondence is independently checked here. Segment/body hashes themselves are not recomputed without fetching and decoding the containers."
+  },
+  "outcomes": [
+    {
+      "id": 43030977438,
+      "status": "completed",
+      "conclusion": "failure",
+      "jobs": 14,
+      "counts": {
+        "failure": 7,
+        "success": 6,
+        "skipped": 1
+      }
+    },
+    {
+      "id": 43030977601,
+      "status": "completed",
+      "conclusion": "failure",
+      "jobs": 21,
+      "counts": {
+        "success": 10,
+        "failure": 11
+      }
+    },
+    {
+      "id": 43030977513,
+      "status": "completed",
+      "conclusion": "failure",
+      "jobs": 8,
+      "counts": {
+        "success": 6,
+        "cancelled": 2
+      }
+    }
+  ],
+  "source_and_interpretation_review": {
+    "H": {
+      "commit": "e338c000f26e9357ed33213624da787a3a009ed9",
+      "tree": "876aa62d1ab49458d29e9168f4c69e7b47b8884b"
+    },
+    "M": {
+      "commit": "bfa5cf58953a67dd9b9a27ce52b63524933a029d",
+      "tree": "4b08c77fd511466c8f2e5bc46307e0d6fd629063",
+      "parents": [
+        "c84162378f34b9284e90587df4c466dfee3e193b",
+        "e338c000f26e9357ed33213624da787a3a009ed9"
+      ]
+    },
+    "original_commit_responses_and_source_index_agree": true,
+    "retained_failed_job_source_receipts": {
+      "H": [
+        130582694482,
+        130582694631,
+        130582694747,
+        130598327693,
+        130598327708,
+        130598327819,
+        130598327905,
+        130598327976,
+        130669194540
+      ],
+      "M": [
+        130582694472,
+        130582694530,
+        130582694539,
+        130598327796,
+        130598328085,
+        130598328088,
+        130598328213,
+        130649216164
+      ],
+      "no_observed_checkout": [
+        130582693678,
+        130557620566,
+        130557620949
+      ]
+    },
+    "conclusions": [
+      "All three workflow runs remain terminal failure. The tabulated numbers are job conclusions, not native test totals.",
+      "The runtime NPQ6 transport-reset failure is bound to M job 130598328213. H runtime job 130598327706 is described only as success in jobs metadata; its checkout/log was not reread. The M failure is not attributed to H, and H metadata does not erase M's failure.",
+      "From-zero/history child failures retain passed=false and systemd_run_exit=1 while child assertion/stderr and product/environment cause remain unknown. No timeout is invented.",
+      "The dependency-policy refusal does not assert a particular graph, advisory or vulnerability absent the retained details. The source/hash contract failure does not decide whether implementation or reviewed reference should change.",
+      "Repeated schema errors and downstream aggregation refusals are not multiplied into independent causes or combined test counts.",
+      "The historical artifact absence remains a retrieval failure with unknown reason. Cancelled macOS jobs retain no observed checkout/execution, unavailable logs and unknown cancellation cause; connector failures are not converted into native failures.",
+      "README explicitly makes SOURCE documents historical V1 records and supersedes storage advice only. Original logical .log paths do not authorize raw .log additions to the V2 tree.",
+      "The stated complete in-memory reconstruction and three formal remote samples are author verification claims. INDEX explicitly says not all containers received remote readback; README does not claim another CI/whitespace run.",
+      "No whole-repository green result, ordinary business closure, independent C adoption, ordinary NoUpdateRollback, or new native success is asserted."
+    ]
+  },
+  "confirmed_blockers": [],
+  "required_source_or_metadata_change": null,
+  "publication_boundary": [
+    "No refs, branch, PR body or source were modified by this review. The only possible write is this content-addressed review blob.",
+    "The reviewed proposal is confined to evidence paths. Publishing it must remain a separate evidence-branch action and preserve PR909's tested code head; a later PR-body edit is outside this review's execution.",
+    "This is not an independent re-execution or full remote verification of every evidence payload. Existing failures and unknown causes remain unchanged."
+  ]
+}

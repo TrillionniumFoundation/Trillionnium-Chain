@@ -1,0 +1,12 @@
+    Checking trnm-protocol v0.1.0 (/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-protocol)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-sqlite-io-boundary)
+    Checking trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-task-kernel v0.1.0 (/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-task-kernel)
+    Checking trnm-verification-profiles v0.1.0 (/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-verification-profiles)
+    Checking trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-service-settlement v0.1.0 (/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-service-settlement)
+    Checking trnm-data-availability v0.1.0 (/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-data-availability)
+    Checking trnm-transport v0.1.0 (/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-transport)
+    Checking trnm-mempool v0.1.0 (/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-mempool)
+    Checking trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 54.87s

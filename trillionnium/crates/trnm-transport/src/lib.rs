@@ -7,7 +7,8 @@
 
 use std::{error::Error, fmt};
 
-pub const MAX_CANDIDATE_PEER_FRAME_BYTES_V0: usize = 4 * 1024 * 1024;
+// M04 frame admission and the native network-client contract share 2 MiB.
+pub const MAX_CANDIDATE_PEER_FRAME_BYTES_V0: usize = 2 * 1024 * 1024;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct IoDigest32V0([u8; 32]);
@@ -620,6 +621,9 @@ mod tests {
 
     #[test]
     fn frame_and_session_bounds_are_closed() {
+        // Independent M04.ReadFrame contract: require 1..2097152 bytes.
+        assert!(AuthenticatedPeerFrameV0::new(session(1), 1, d(7), 2_097_152).is_ok());
+        assert!(AuthenticatedPeerFrameV0::new(session(1), 1, d(7), 2_097_153).is_err());
         assert_eq!(
             IoDigest32V0::new([0; 32]),
             Err(PeerAdmissionErrorV0::ZeroDigest)

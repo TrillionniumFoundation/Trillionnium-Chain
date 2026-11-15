@@ -1,0 +1,30 @@
+{
+  "all_three_reconstructions_passed": true,
+  "native_tests_run_during_packaging": false,
+  "patches": [
+    {
+      "label": "f56-owned-from-73ab",
+      "base_commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+      "files": 10,
+      "patch_path": "source/f56-owned-from-73ab.patch.gz",
+      "raw_patch_sha256": "f67901833a0ba01b21f0c10dbb16eef0e004a4913ddf970f03e45773888b4352",
+      "all_reconstructed_file_bytes_match": true
+    },
+    {
+      "label": "0e9d-owned-from-73ab",
+      "base_commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+      "files": 10,
+      "patch_path": "source/0e9d-owned-from-73ab.patch.gz",
+      "raw_patch_sha256": "f2aa13ee22ad2402c89f2d78929a3ed33c7ecde01f85044a8c445c1c0bbcb3f4",
+      "all_reconstructed_file_bytes_match": true
+    },
+    {
+      "label": "untested-composition-from-b811",
+      "base_commit": "b8116f65789a85148254f870c678a44f895316de",
+      "files": 10,
+      "patch_path": "source/untested-composition-from-b811.patch.gz",
+      "raw_patch_sha256": "52b99c2e92feb04df9a3fc22d0be106ddc8f4223ee301aec5cbc96f39e550dae",
+      "all_reconstructed_file_bytes_match": true
+    }
+  ]
+}

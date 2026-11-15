@@ -1,0 +1,10 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/check_ci_contract.py"
+  ],
+  "exit_code": 1,
+  "purpose": "preserve rejection of old whole-file source pin after adding native owner observation; guard must be refreshed only to reviewed actual source, never bypassed",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "22d5285e1324f1918b9f23f17db3838b552767f9a0b50401f4b735839d58931f"
+}

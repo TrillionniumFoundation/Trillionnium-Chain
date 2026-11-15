@@ -1,0 +1,23 @@
+ruint v1.15.0
+├── ruint feature "alloc"
+│   └── ruint feature "serde"
+│       └── risc0-binfmt v3.0.5
+│           ├── risc0-circuit-keccak v4.0.6
+│           │   └── risc0-zkvm v3.0.6
+│           │       ├── risc0-zkvm feature "disable-dev-mode"
+│           │       │   └── trnm-w1-batch-guest v0.1.0 (/workspace/scratch/56818e4fba76/chain-w1-next/formal/pon-nakamoto-v1/w1_batch/methods/guest)
+│           │       │       └── trnm-w1-batch-guest feature "default" (command-line)
+│           │       └── risc0-zkvm feature "std"
+│           │           └── trnm-w1-batch-guest v0.1.0 (/workspace/scratch/56818e4fba76/chain-w1-next/formal/pon-nakamoto-v1/w1_batch/methods/guest) (*)
+│           ├── risc0-circuit-rv32im v4.0.5
+│           │   └── risc0-zkvm v3.0.6 (*)
+│           ├── risc0-groth16 v3.0.5
+│           │   └── risc0-zkvm v3.0.6 (*)
+│           │   └── risc0-groth16 feature "std"
+│           │       └── risc0-zkvm feature "std" (*)
+│           └── risc0-zkvm v3.0.6 (*)
+│           └── risc0-binfmt feature "std"
+│               └── risc0-zkvm feature "std" (*)
+├── ruint feature "borsh"
+│   └── risc0-binfmt v3.0.5 (*)
+└── ruint feature "serde" (*)

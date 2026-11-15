@@ -1,0 +1,28 @@
+{
+  "bounded_reproduction": {
+    "descendant_completed_after_timeout": true,
+    "elapsed_ns": 1026076595,
+    "outer_timeout_observed": true,
+    "terminal_record_created": false
+  },
+  "command_source_sha256": "3ccbdae80101b541096965a87f08194a8b2d0729cdae5defc029f10a683f4c49",
+  "current_pilot_has_no_independent_timeout": true,
+  "current_pilot_timeout": null,
+  "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+  "first_independent_observation": {
+    "descendant_completed_after_timeout": true,
+    "note": "Preserved ad-hoc control observed before the original-pilot call was fixed.",
+    "outer_timeout_observed": true,
+    "source_sha256_captured": false,
+    "terminal_record_created": false
+  },
+  "former_pilot_timeout_seconds": 14400,
+  "model_executed": false,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "schema": "hosted-timeout-descendant-control-v1",
+  "scope": "synthetic-former-finite-timeout-mechanism-and-current-call-site-only",
+  "source_path": "/workspace/scratch/f4976366a32a/chain/scripts/ci/llm_hosted_once.py",
+  "source_sha256": "8025eba157477e42d3efa9ba6276296b47f1e7a692d6fc44f870c853f39b3906",
+  "synthetic_timeout_seconds": "0.2",
+  "trial_created": false
+}

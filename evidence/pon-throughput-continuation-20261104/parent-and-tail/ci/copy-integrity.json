@@ -1,0 +1,63 @@
+{
+  "all_copies_byte_identical": true,
+  "files": [
+    {
+      "bytes": 3085,
+      "destination": "workflow-wiring-static.json",
+      "destination_sha256": "46df864d7d614bed9832be0024ccee1b34cd3a312d69b696dd92b329c5ac6a29",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/workflow-wiring-static.json",
+      "source_sha256": "46df864d7d614bed9832be0024ccee1b34cd3a312d69b696dd92b329c5ac6a29"
+    },
+    {
+      "bytes": 9169,
+      "destination": "workflow-wiring-registry.json",
+      "destination_sha256": "9b8a37b954ec3562112404d3da54fc9de5b56578367c39ead1cd74d42f89c925",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/workflow-wiring-registry.json",
+      "source_sha256": "9b8a37b954ec3562112404d3da54fc9de5b56578367c39ead1cd74d42f89c925"
+    },
+    {
+      "bytes": 115755,
+      "destination": "workflow-node-registry-all.stdout",
+      "destination_sha256": "3731cc3ed6642cf273ba45fd712fb65e17a7063db4fa026bfbc7291bc4f94cf9",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/workflow-node-registry-all.stdout",
+      "source_sha256": "3731cc3ed6642cf273ba45fd712fb65e17a7063db4fa026bfbc7291bc4f94cf9"
+    },
+    {
+      "bytes": 0,
+      "destination": "workflow-node-registry-all.stderr",
+      "destination_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/workflow-node-registry-all.stderr",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2836,
+      "destination": "workflow-node-registry-ignored.stdout",
+      "destination_sha256": "2086b6225d5efc413bfcf2d024265e121faf016b8dfb7f5d0092895c85cb8c2b",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/workflow-node-registry-ignored.stdout",
+      "source_sha256": "2086b6225d5efc413bfcf2d024265e121faf016b8dfb7f5d0092895c85cb8c2b"
+    },
+    {
+      "bytes": 0,
+      "destination": "workflow-node-registry-ignored.stderr",
+      "destination_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/workflow-node-registry-ignored.stderr",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 12811,
+      "destination": "workflow_wiring_static.original.py",
+      "destination_sha256": "2f296d5e1518c5245039784189068f29e32f778d718ca9a3bf002e017c0ad32f",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/workflow_wiring_static.py",
+      "source_sha256": "2f296d5e1518c5245039784189068f29e32f778d718ca9a3bf002e017c0ad32f"
+    },
+    {
+      "bytes": 740,
+      "destination": "node-build-registry-counts.json",
+      "destination_sha256": "e1df4a92e2e51f53fe067f2b083502971b07843cb7f68abf01a20fa2a30686b5",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/tail-native-73ab-attempt-2/registry-counts.json",
+      "source_sha256": "e1df4a92e2e51f53fe067f2b083502971b07843cb7f68abf01a20fa2a30686b5"
+    }
+  ],
+  "schema": "trnm-byte-identical-evidence-copy-v1",
+  "scope": "byte-copy integrity only; no native compilation, test execution or measurement performed by this copy"
+}

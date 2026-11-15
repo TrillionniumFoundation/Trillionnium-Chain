@@ -1,0 +1,14 @@
+{
+  "schema": "read-only-scratch-analysis-command-receipt-v1",
+  "command": [
+    "python3",
+    "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-internal-review/read_internal_evidence.py"
+  ],
+  "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+  "exit_code": 0,
+  "reported_wall_seconds": 0.165832602,
+  "stdout": "{\"path\": \"/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-internal-review/raw-counters-and-state-shapes.json\", \"bytes\": 98104, \"sha256\": \"18814413f21bf6ab89a803b44290d8e4ab8b9659986158c3fdd8f175caaf534d\"}\n",
+  "stderr": "",
+  "native_executed": false,
+  "scope": "Python analysis of pre-existing original archive and git objects; not a native execution or timing qualification"
+}

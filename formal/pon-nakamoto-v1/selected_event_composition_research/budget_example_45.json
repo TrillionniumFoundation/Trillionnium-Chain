@@ -1,0 +1,37 @@
+{
+  "description": "Reconstructed illustrative assumed lifetime caps, not measured miner capabilities; at most 1024 verifier completions.",
+  "candidate_pair_cap_M": 4294967296,
+  "early_event_guesses_per_pair_cap_R": 65536,
+  "adversary_distinct_row_access_cap_H": 1440,
+  "target_hex": "03ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "adversary_query_caps": {
+    "leaf": 1048576,
+    "node": 1048576,
+    "task": 4294967296,
+    "context": 4294967296,
+    "noise-seed": 4294967296,
+    "selected-coordinate": 4294967296,
+    "noise-eight": 184320,
+    "event": 281474976710656,
+    "ticket": 281474976710656,
+    "other": 1048576
+  },
+  "setup_query_caps": {
+    "leaf": 128,
+    "node": 126,
+    "task": 1,
+    "context": 1
+  },
+  "completion_query_caps": {
+    "leaf": 2048,
+    "node": 12288,
+    "task": 1024,
+    "context": 1024,
+    "noise-seed": 1024,
+    "selected-coordinate": 1024,
+    "noise-eight": 4194304,
+    "event": 1024,
+    "ticket": 1024
+  },
+  "required_distinct_events": 1
+}

@@ -1,0 +1,16 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running unittests src/lib.rs (/workspace/scratch/abae1861b451/cell-ready-target/debug/deps/trnm_data_availability-760dc3a0a84bfcf7)
+
+running 1 test
+test cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint ... cell_sequence phase=startup role=peer setup_elapsed_ns=14999808 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=silent_trap setup_elapsed_ns=15173091 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=20602330 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=24227846 outcome=Ok(Ok(()))
+cell_sequence phase=setup_complete elapsed_ns=40339679
+cell_sequence phase=announce ordinal=0 started_wall=Some(1793720803.670839135s) completed_wall=Some(1793720803.673977623s) elapsed_ns=3138828 expiry_seconds=1793721103 failure=None
+cell_sequence phase=announce ordinal=1 started_wall=Some(1793720803.674000347s) completed_wall=Some(1793720803.677263874s) elapsed_ns=3263728 expiry_seconds=1793721103 failure=None
+cell_sequence phase=discovery ordinal=0 started_wall=Some(1793720803.677283895s) completed_wall=Some(1793720803.723333759s) elapsed_ns=46050525 expiry_seconds=1793721103 failure=None
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 171 filtered out; finished in 0.11s
+

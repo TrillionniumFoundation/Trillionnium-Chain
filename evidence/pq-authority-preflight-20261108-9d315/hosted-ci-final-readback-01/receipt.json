@@ -1,0 +1,396 @@
+{
+  "authenticated_user": "ProfHepta",
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "user"
+      ],
+      "exit_code": 0,
+      "label": "authenticated-user",
+      "logs": {
+        "authenticated-user.stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "authenticated-user.stdout.log": {
+          "bytes": 1221,
+          "sha256": "7c74c02d36c5bd329a2548622396a9ae72bce8c5e2295ed239eb1ce9308caf5f"
+        }
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/796"
+      ],
+      "exit_code": 0,
+      "label": "pull-796",
+      "logs": {
+        "pull-796.stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "pull-796.stdout.log": {
+          "bytes": 25733,
+          "sha256": "4a83ca9f0211cd3d6efda3663cd15a54469025627746bfd45eb16a6dbb3958af"
+        }
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/commits/527e2e58db6d7c1fd84ba88c3131289edea86b1d/check-runs?filter=latest&per_page=100&page=1"
+      ],
+      "exit_code": 0,
+      "label": "check-runs-page-1",
+      "logs": {
+        "check-runs-page-1.stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "check-runs-page-1.stdout.log": {
+          "bytes": 378160,
+          "sha256": "b1b4655c4bddb411c060aff9108f296a090cd90a1b461a1f6e8601711740e56d"
+        }
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/commits/527e2e58db6d7c1fd84ba88c3131289edea86b1d/check-runs?filter=latest&per_page=100&page=2"
+      ],
+      "exit_code": 0,
+      "label": "check-runs-page-2",
+      "logs": {
+        "check-runs-page-2.stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "check-runs-page-2.stdout.log": {
+          "bytes": 18927,
+          "sha256": "c67a9c72af8cd881424fb9881e009916c71b11da5c636ea9ff7c0a27bab48f48"
+        }
+      }
+    }
+  ],
+  "counts": {
+    "failure": 22,
+    "in_progress": 9,
+    "skipped": 1,
+    "success": 73
+  },
+  "finished_unix_seconds": 1794129839.0499246,
+  "hosted_ci_passed": false,
+  "native_validation_executed": false,
+  "non_success": [
+    {
+      "completed_at": "2026-11-08T08:45:41Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825234/job/128678655520",
+      "id": 128678655520,
+      "name": "cross-arch-cost (arm64)",
+      "started_at": "2026-11-08T08:39:06Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825234/job/128678655275",
+      "id": 128678655275,
+      "name": "prospective Rust shard (runtime)",
+      "started_at": "2026-11-08T08:39:04Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825234/job/128678655259",
+      "id": 128678655259,
+      "name": "rust-baseline shard (runtime)",
+      "started_at": "2026-11-08T08:39:03Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": "2026-11-08T08:45:27Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825234/job/128678655233",
+      "id": 128678655233,
+      "name": "prospective-merge (protocol-contract)",
+      "started_at": "2026-11-08T08:39:03Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:46:43Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825234/job/128678655202",
+      "id": 128678655202,
+      "name": "protocol-contract",
+      "started_at": "2026-11-08T08:39:03Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:43:01Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825234/job/128678655198",
+      "id": 128678655198,
+      "name": "prospective-merge (repository-truth)",
+      "started_at": "2026-11-08T08:39:04Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T09:01:28Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825143/job/128678655166",
+      "id": 128678655166,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+      "started_at": "2026-11-08T08:39:06Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825234/job/128678655145",
+      "id": 128678655145,
+      "name": "rust-baseline shard (quality)",
+      "started_at": "2026-11-08T08:39:04Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": "2026-11-08T08:46:20Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825234/job/128678655124",
+      "id": 128678655124,
+      "name": "cross-arch-cost (x64)",
+      "started_at": "2026-11-08T08:39:03Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825234/job/128678655081",
+      "id": 128678655081,
+      "name": "prospective Rust shard (quality)",
+      "started_at": "2026-11-08T08:39:04Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825143/job/128678655077",
+      "id": 128678655077,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+      "started_at": "2026-11-08T08:39:06Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825143/job/128678655045",
+      "id": 128678655045,
+      "name": "native priorities (ubuntu-24.04-arm, head, history)",
+      "started_at": "2026-11-08T08:39:06Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825143/job/128678655039",
+      "id": 128678655039,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+      "started_at": "2026-11-08T08:39:03Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": "2026-11-08T08:58:20Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825143/job/128678655031",
+      "id": 128678655031,
+      "name": "native priorities (ubuntu-24.04, head, service-model)",
+      "started_at": "2026-11-08T08:39:03Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T09:01:01Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825143/job/128678655028",
+      "id": 128678655028,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+      "started_at": "2026-11-08T08:39:04Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T09:00:27Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825143/job/128678654970",
+      "id": 128678654970,
+      "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+      "started_at": "2026-11-08T08:39:06Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:56:46Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825182/job/128678654928",
+      "id": 128678654928,
+      "name": "W1 factorial legal strategies v3 (arm64, head)",
+      "started_at": "2026-11-08T08:39:06Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825143/job/128678654896",
+      "id": 128678654896,
+      "name": "native priorities (ubuntu-24.04, head, history)",
+      "started_at": "2026-11-08T08:39:03Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": "2026-11-08T08:42:27Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825234/job/128678654882",
+      "id": 128678654882,
+      "name": "repository-truth",
+      "started_at": "2026-11-08T08:39:03Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825143/job/128678654872",
+      "id": 128678654872,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+      "started_at": "2026-11-08T08:39:04Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": "2026-11-08T08:56:53Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825182/job/128678654819",
+      "id": 128678654819,
+      "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+      "started_at": "2026-11-08T08:39:06Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:57:04Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825182/job/128678654810",
+      "id": 128678654810,
+      "name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+      "started_at": "2026-11-08T08:39:04Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:44:46Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825182/job/128678654805",
+      "id": 128678654805,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "started_at": "2026-11-08T08:39:03Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:42:46Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654780",
+      "id": 128678654780,
+      "name": "PQ network and witness (ubuntu-24.04, head)",
+      "started_at": "2026-11-08T08:39:04Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:39:07Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825143/job/128678654704",
+      "id": 128678654704,
+      "name": "retained-pressure-failure",
+      "started_at": "2026-11-08T08:39:04Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:47:55Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825169/job/128678654684",
+      "id": 128678654684,
+      "name": "original native campaign (x64, head, release)",
+      "started_at": "2026-11-08T08:39:03Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:42:12Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654658",
+      "id": 128678654658,
+      "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+      "started_at": "2026-11-08T08:39:06Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:59:23Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825151/job/128678654652",
+      "id": 128678654652,
+      "name": "export",
+      "started_at": "2026-11-08T08:39:04Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:44:47Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825182/job/128678654624",
+      "id": 128678654624,
+      "name": "W1 fresh challenge service (x64, head)",
+      "started_at": "2026-11-08T08:39:03Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:42:12Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654598",
+      "id": 128678654598,
+      "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+      "started_at": "2026-11-08T08:39:06Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:41:31Z",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654586",
+      "id": 128678654586,
+      "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+      "started_at": "2026-11-08T08:39:03Z",
+      "status": "completed"
+    }
+  ],
+  "observed_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+  "production_activation": false,
+  "pull": {
+    "base": "8d8f05566b2a1612a3bf4a6c6c71635df454d397",
+    "draft": true,
+    "head": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+    "number": 796,
+    "state": "open",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/796"
+  },
+  "result": "OBSERVED",
+  "schema": "trnm-hosted-ci-final-readback-v1",
+  "source_after": {
+    "head": "ca3c4f88afc70399000b18fc7d68cfa62e57fb2f",
+    "status": "",
+    "tree": "c06c28dbbb16bb30a4f568408913313ab533c47e"
+  },
+  "source_before": {
+    "head": "ca3c4f88afc70399000b18fc7d68cfa62e57fb2f",
+    "status": "",
+    "tree": "c06c28dbbb16bb30a4f568408913313ab533c47e"
+  },
+  "source_unchanged": true,
+  "started_unix_seconds": 1794129824.7565694,
+  "total_count": 105
+}

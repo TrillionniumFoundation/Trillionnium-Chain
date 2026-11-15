@@ -1,0 +1,188 @@
+{
+  "schema": "trnm-pq-root-native-components-v3",
+  "source": "a44344b25d12328fedd883a335585f03d059060b",
+  "component_execution_passed": true,
+  "commands": [
+    {
+      "name": "crypto-structure",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--lib",
+        "pq_root_v3::tests::",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source": "a44344b25d12328fedd883a335585f03d059060b",
+      "exit_code": 0,
+      "elapsed_seconds": 0.1648240429994985,
+      "log": "crypto-structure.log",
+      "bytes": 1274,
+      "sha256": "e11e028da127bd7f25ca39fa6555069b104385c774ac130f25ba010cfad8182d",
+      "observation": {
+        "tests": [
+          "pq_root_v3::tests::canonical_codec_roundtrips_and_rejects_all_truncations_and_trailing_bytes",
+          "pq_root_v3::tests::complete_statement_is_framed_and_maximum_payload_is_supported",
+          "pq_root_v3::tests::decoder_refuses_noncanonical_order_or_altered_policy_or_lengths",
+          "pq_root_v3::tests::entire_roster_is_exact_distinct_and_immutable_including_unused_keys",
+          "pq_root_v3::tests::exact_spki_lengths_and_suite_identity_are_bound",
+          "pq_root_v3::tests::failed_reservations_remain_charged_and_never_wrap_or_reset",
+          "pq_root_v3::tests::operation_identity_contains_intent_but_no_selected_quorum_or_signature_bytes",
+          "pq_root_v3::tests::same_length_shake_oid_and_weaker_mldsa_cannot_be_mislabeled",
+          "pq_root_v3::tests::shared_budget_has_one_absolute_deadline_and_irreversible_cancellation",
+          "pq_root_v3::tests::successor_possession_binds_full_roster_role_and_full_intent"
+        ],
+        "passed": 10,
+        "filtered_out": 165
+      },
+      "error": null
+    },
+    {
+      "name": "crypto-native",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--features",
+        "pq-native-openssl",
+        "--test",
+        "pq_root_v3_native",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source": "a44344b25d12328fedd883a335585f03d059060b",
+      "exit_code": 0,
+      "elapsed_seconds": 27.056257687000652,
+      "log": "crypto-native.log",
+      "bytes": 1126,
+      "sha256": "3dc132554ca7e7fb11f6b47e2ca23f1d06945396448cf5f498ada0cef2ad19f2",
+      "observation": {
+        "tests": [
+          "all_nine_quorum_pairs_verify_one_operation_identity",
+          "complete_intent_and_domain_mutations_invalidate_real_current_signatures",
+          "complete_maximum_statement_and_all_six_successor_possessions_verify",
+          "each_family_corruption_and_one_family_only_fail_without_or_fallback",
+          "every_successor_proof_is_mandatory_and_cannot_move_between_roles_or_intents",
+          "exact_oid_native_generation_and_cross_backend_ml87_verification_work",
+          "genuine_shake_key_is_rejected_despite_identical_key_and_signature_sizes",
+          "malformed_and_cancelled_attempts_use_the_original_budget_before_crypto"
+        ],
+        "passed": 8,
+        "filtered_out": 0
+      },
+      "error": null
+    },
+    {
+      "name": "root-kernel",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-release-bundle",
+        "--features",
+        "pq-root-v3",
+        "--lib",
+        "root_recovery_v3::tests::",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source": "a44344b25d12328fedd883a335585f03d059060b",
+      "exit_code": 0,
+      "elapsed_seconds": 56.50555538700064,
+      "log": "root-kernel.log",
+      "bytes": 1748,
+      "sha256": "53fe78c0332d30134e1a71b5641e41a2f484ae2be1fd9ba2e6d4c357ce53deae",
+      "observation": {
+        "tests": [
+          "root_recovery_v3::tests::native_v3_all_five_actions_require_real_fixed_dual_quorum",
+          "root_recovery_v3::tests::native_v3_bounded_intent_rejects_unbounded_material_before_hashing",
+          "root_recovery_v3::tests::native_v3_canonical_wire_rejects_aliases_truncation_and_unknown_action",
+          "root_recovery_v3::tests::native_v3_capacity_never_prunes_nonce_history",
+          "root_recovery_v3::tests::native_v3_current_intent_rechecks_rotation_revocation_and_expiry",
+          "root_recovery_v3::tests::native_v3_expired_recovery_keeps_both_current_quorums",
+          "root_recovery_v3::tests::native_v3_full_intent_scope_epoch_predecessor_and_time_are_bound",
+          "root_recovery_v3::tests::native_v3_nine_quorum_choices_share_semantic_operation",
+          "root_recovery_v3::tests::native_v3_nonce_and_revocations_survive_generation_change",
+          "root_recovery_v3::tests::native_v3_shared_budget_does_not_reset_between_old_and_successor",
+          "root_recovery_v3::tests::native_v3_successor_requires_every_separate_possession",
+          "root_recovery_v3::tests::native_v3_time_is_exclusive_unix_and_artifact_observations_are_exact"
+        ],
+        "passed": 12,
+        "filtered_out": 43
+      },
+      "error": null
+    },
+    {
+      "name": "root-owner",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-root-v3",
+        "--test",
+        "root_recovery_v3_native",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source": "a44344b25d12328fedd883a335585f03d059060b",
+      "exit_code": 0,
+      "elapsed_seconds": 206.3391388250002,
+      "log": "root-owner.log",
+      "bytes": 1989,
+      "sha256": "d1c313004761e3c3bf7028b9d847c041e2dc214d2479fe3751b4902192f79546",
+      "observation": {
+        "tests": [
+          "native_owner_v3_authenticated_response_still_must_bind_fresh_challenge",
+          "native_owner_v3_callback_cannot_replace_original_owner_budget",
+          "native_owner_v3_cancellation_after_external_commit_requires_reconciliation",
+          "native_owner_v3_changed_current_bytes_and_replaced_database_are_not_authority",
+          "native_owner_v3_co_restored_owner_and_anchor_counterexample_remains_accepted",
+          "native_owner_v3_corrupt_pending_state_cannot_promote_even_after_real_cas",
+          "native_owner_v3_domain_binds_each_independent_identity_without_zero_fallback",
+          "native_owner_v3_foreign_sqlite_namespace_is_refused_without_mutating_it",
+          "native_owner_v3_last_observation_rechecks_persisted_revocation_and_rotation",
+          "native_owner_v3_lost_successful_cas_reply_requires_explicit_exact_completion",
+          "native_owner_v3_real_signed_append_reopen_and_exact_intent_observation",
+          "native_owner_v3_reopen_reverifies_retained_signature_bytes",
+          "native_owner_v3_replay_preserves_nonce_and_refuses_second_exact_operation",
+          "native_owner_v3_retained_external_anchor_refuses_whole_local_rollback",
+          "native_owner_v3_same_budget_exhaustion_retains_pending_before_cas",
+          "native_owner_v3_storage_tamper_schema_alias_and_concurrent_open_fail_closed",
+          "native_owner_v3_successor_cannot_reuse_an_anchor_or_writer_key",
+          "native_owner_v3_unadvanced_anchor_cannot_clear_pending_or_retry",
+          "native_owner_v3_writer_signature_is_verified_before_transport",
+          "native_owner_v3_wrong_enrollment_scope_and_service_aliases_are_refused"
+        ],
+        "passed": 20,
+        "filtered_out": 0
+      },
+      "error": null
+    }
+  ],
+  "status": "HOLD",
+  "production_activation": false,
+  "actual_lifetime_failure_bound": null,
+  "whole_chain_pq_qualified": false,
+  "composition_coverage_proved": false
+}

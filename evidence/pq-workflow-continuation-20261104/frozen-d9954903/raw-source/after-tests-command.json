@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+    "--output",
+    "/dev/shm/frozen-d9954903-validation/raw-source/head-source-identity-after-tests.json"
+  ],
+  "exit_code": 0,
+  "wall_seconds": 1.290362,
+  "log": "head-source-identity-after-tests.log",
+  "log_sha256": "106416a1d5fa485e6f1b6d36c097de6956f97b05eb60de3584f5946066a99813"
+}

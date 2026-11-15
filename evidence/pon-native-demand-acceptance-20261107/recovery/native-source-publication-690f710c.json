@@ -1,0 +1,35 @@
+{
+  "base": "fix/chain-demand-evaluation-20261107",
+  "branch": "fix/chain-native-demand-acceptance-20261107",
+  "force_push": false,
+  "merge": false,
+  "production_activation": false,
+  "pull_request": {
+    "baseRefName": "fix/chain-demand-evaluation-20261107",
+    "headRefName": "fix/chain-native-demand-acceptance-20261107",
+    "headRefOid": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "isDraft": true,
+    "number": 779,
+    "state": "OPEN",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/779"
+  },
+  "push_command": [
+    "/usr/bin/git",
+    "-c",
+    "credential.helper=",
+    "-c",
+    "credential.helper=!/usr/bin/gh auth git-credential",
+    "--git-dir=chain.git",
+    "push",
+    "origin",
+    "690f710c1b6808787996e86aa4c36bd53e1f3939:refs/heads/fix/chain-native-demand-acceptance-20261107"
+  ],
+  "push_exit_code": 0,
+  "schema": "pon-native-hepta-github-publication-v1",
+  "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "stderr": "remote: \nremote: Create a pull request for 'fix/chain-native-demand-acceptance-20261107' on GitHub by visiting:        \nremote:      https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/new/fix/chain-native-demand-acceptance-20261107        \nremote: \nremote: GitHub found 7 vulnerabilities on TrillionniumFoundation/Trillionnium-Chain's default branch (4 high, 2 moderate, 1 low). To find out more, visit:        \nremote:      https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot        \nremote: \nTo https://github.com/TrillionniumFoundation/Trillionnium-Chain.git\n * [new branch]      690f710c1b6808787996e86aa4c36bd53e1f3939 -> fix/chain-native-demand-acceptance-20261107\n",
+  "stdout": "",
+  "tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+  "unix_seconds": 1794059924.950946,
+  "verified_remote_ref": "690f710c1b6808787996e86aa4c36bd53e1f3939\trefs/heads/fix/chain-native-demand-acceptance-20261107"
+}

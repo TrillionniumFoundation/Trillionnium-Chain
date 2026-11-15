@@ -1,0 +1,18 @@
+{
+  "schema": "pon-owned-validation-interruption-v1",
+  "utc": "2026-11-02T01:18:09.120376+00:00",
+  "pid": 633839,
+  "argv": [
+    "python3",
+    "/workspace/scratch/e08750459604/pon-native-682-validation.py"
+  ],
+  "reason": "Stop this exact owned validation driver after Node test compilation received SIGKILL; retry remaining controls with Cargo jobs=1. Preserve all failed observations. No timeout or service budget changes.",
+  "signal": "SIGINT",
+  "cgroup": {
+    "memory.current": "8341667840\n",
+    "memory.max": "8589934592\n",
+    "memory.events": "low 0\nhigh 0\nmax 7714545\noom 52\noom_kill 9\noom_group_kill 0\n"
+  },
+  "delivered_utc": "2026-11-02T01:18:34.866100+00:00",
+  "delivery": "SIGINT delivered to exact owned driver after PID/argv check; prior sandbox signal attempt could not address the process"
+}

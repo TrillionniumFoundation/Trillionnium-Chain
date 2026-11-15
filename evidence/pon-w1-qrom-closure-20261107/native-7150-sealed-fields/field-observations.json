@@ -1,0 +1,215 @@
+{
+  "changes": [
+    {
+      "changed_from_validated": {},
+      "stage": "validated"
+    },
+    {
+      "changed_from_validated": {
+        "ctime_nsec": {
+          "after": 815190742,
+          "before": 810190859
+        },
+        "mtime_nsec": {
+          "after": 815190742,
+          "before": 810190859
+        }
+      },
+      "stage": "after_write_at"
+    },
+    {
+      "changed_from_validated": {
+        "ctime_nsec": {
+          "after": 815190742,
+          "before": 810190859
+        },
+        "mtime_nsec": {
+          "after": 815190742,
+          "before": 810190859
+        }
+      },
+      "stage": "after_shrink"
+    },
+    {
+      "changed_from_validated": {
+        "ctime_nsec": {
+          "after": 815190742,
+          "before": 810190859
+        },
+        "mtime_nsec": {
+          "after": 815190742,
+          "before": 810190859
+        }
+      },
+      "stage": "after_grow"
+    },
+    {
+      "changed_from_validated": {
+        "ctime_nsec": {
+          "after": 815190742,
+          "before": 810190859
+        },
+        "mtime_nsec": {
+          "after": 815190742,
+          "before": 810190859
+        }
+      },
+      "stage": "after_chmod_add_exec"
+    }
+  ],
+  "kernel": "Linux 7.0.0-38-generic x86_64 GNU/Linux",
+  "linked_rustix": {
+    "features": "[\"alloc\", \"default\", \"event\", \"fs\", \"net\", \"process\", \"rand\", \"std\", \"time\"]",
+    "fingerprint": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/debug/.fingerprint/rustix-2ddee526af794e19/lib-rustix.json",
+    "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/debug/deps/librustix-2ddee526af794e19.rlib",
+    "sha256": "3958806e0a684fc0d03a27a744e237b5f86baf4525abda4e261fda8bdd3723ff"
+  },
+  "observations": [
+    {
+      "kind": "profile",
+      "memfd_flags": 11,
+      "pause_ms_between_operations": 5,
+      "required_seals": 47
+    },
+    {
+      "bytes_equal": true,
+      "ctime": 1794061309,
+      "ctime_nsec": 810190859,
+      "device": 1,
+      "gid": 1000,
+      "inode": 5754175,
+      "kind": "snapshot",
+      "mode": 33024,
+      "mtime": 1794061309,
+      "mtime_nsec": 810190859,
+      "seals": 47,
+      "size": 28,
+      "stage": "validated",
+      "uid": 1000
+    },
+    {
+      "errno": 1,
+      "kind": "operation",
+      "name": "write_at",
+      "ok": false
+    },
+    {
+      "bytes_equal": true,
+      "ctime": 1794061309,
+      "ctime_nsec": 815190742,
+      "device": 1,
+      "gid": 1000,
+      "inode": 5754175,
+      "kind": "snapshot",
+      "mode": 33024,
+      "mtime": 1794061309,
+      "mtime_nsec": 815190742,
+      "seals": 47,
+      "size": 28,
+      "stage": "after_write_at",
+      "uid": 1000
+    },
+    {
+      "errno": 1,
+      "kind": "operation",
+      "name": "shrink",
+      "ok": false
+    },
+    {
+      "bytes_equal": true,
+      "ctime": 1794061309,
+      "ctime_nsec": 815190742,
+      "device": 1,
+      "gid": 1000,
+      "inode": 5754175,
+      "kind": "snapshot",
+      "mode": 33024,
+      "mtime": 1794061309,
+      "mtime_nsec": 815190742,
+      "seals": 47,
+      "size": 28,
+      "stage": "after_shrink",
+      "uid": 1000
+    },
+    {
+      "errno": 1,
+      "kind": "operation",
+      "name": "grow",
+      "ok": false
+    },
+    {
+      "bytes_equal": true,
+      "ctime": 1794061309,
+      "ctime_nsec": 815190742,
+      "device": 1,
+      "gid": 1000,
+      "inode": 5754175,
+      "kind": "snapshot",
+      "mode": 33024,
+      "mtime": 1794061309,
+      "mtime_nsec": 815190742,
+      "seals": 47,
+      "size": 28,
+      "stage": "after_grow",
+      "uid": 1000
+    },
+    {
+      "errno": 1,
+      "kind": "operation",
+      "name": "chmod_add_exec",
+      "ok": false
+    },
+    {
+      "bytes_equal": true,
+      "ctime": 1794061309,
+      "ctime_nsec": 815190742,
+      "device": 1,
+      "gid": 1000,
+      "inode": 5754175,
+      "kind": "snapshot",
+      "mode": 33024,
+      "mtime": 1794061309,
+      "mtime_nsec": 815190742,
+      "seals": 47,
+      "size": 28,
+      "stage": "after_chmod_add_exec",
+      "uid": 1000
+    }
+  ],
+  "post_quantum_soundness_qualified": false,
+  "probe_binary_sha256": "034e42ccc1cfe8790d49d36dfdd3576657e9443f832d8bb9d84e76d6c7158444",
+  "records": [
+    {
+      "command": [
+        "rustc",
+        "--edition=2021",
+        "-D",
+        "warnings",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150-sealed-fields/field_probe.rs",
+        "--extern",
+        "rustix=/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/debug/deps/librustix-2ddee526af794e19.rlib",
+        "-L",
+        "dependency=/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/debug/deps",
+        "-o",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150-sealed-fields/field-probe"
+      ],
+      "elapsed_seconds": 0.31572215794585645,
+      "exit_code": 0,
+      "started_utc": "2026-11-07T14:21:49.492722+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150-sealed-fields/field-probe"
+      ],
+      "elapsed_seconds": 0.03250016109086573,
+      "exit_code": 0,
+      "started_utc": "2026-11-07T14:21:49.809062+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "316098fc6fd178ad0d1051f9821d8c1c5e030159fc2674febe0bf00858cd229c"
+    }
+  ],
+  "scope": "Temporary anonymous memfd syscall-sequence probe using the same pinned rustix library; no production code or guard modified.",
+  "source_sha256": "eb2d629a927fd3c379ecf810b1ef0460f2c826a0fabe0e435ca9c4a983c0eaaf"
+}

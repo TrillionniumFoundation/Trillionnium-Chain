@@ -1,0 +1,40 @@
+{
+  "accepted_candidate": "97aa8539aad3ee7f497136c6d2f64e420605c1fa",
+  "behavior_restored_from": "8970e2c81abbf48e2a4d3f0802d79624ab20fadd",
+  "derived_from": "97aa8539aad3ee7f497136c6d2f64e420605c1fa",
+  "physical_source": {
+    "base": null,
+    "candidate": "570801af9995a65f3f6c12a339bbca935e32282b",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "570801af9995a65f3f6c12a339bbca935e32282b",
+    "tested_tree": "1c55152a221697e8dd37385b5cb6c85c1f4d33d8",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2596999205,
+    "tracked_entries": 28775,
+    "tracked_worktree_verified": true
+  },
+  "restored_functions": [
+    {
+      "candidate_body_sha256": "00253589a566829bf3724b223780042717e8df2df63a90afa6b6718a5e572b73",
+      "function": "authenticated_dispatch_needs_retry",
+      "historical_body_sha256": "668b5df887452f9d1a949db2eddbece5c282c6c3b3ac6f3bd2e66708677ce4aa",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs"
+    },
+    {
+      "candidate_body_sha256": "9b401435a4c2b31f0b4dc3c49c6df6cd145281408ba0d5f2c71560efae5610d4",
+      "function": "apply_finished_connection",
+      "historical_body_sha256": "32a2f432186a7e67e18069493848e24f39e051168a3c27229ea6978f21734d2e",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+    },
+    {
+      "candidate_body_sha256": "933692aeee5235cf7844677b224b409c788474c8cecea56a5497e439da552fcb",
+      "function": "serve_public_protected_v3_inner",
+      "historical_body_sha256": "2d9a3781827900f77097d6051e71f499d8d6c1fe15d504c6649117629efc5918",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+    }
+  ],
+  "same_test_bytes_as_candidate_verified_by_preparation": true,
+  "source": "570801af9995a65f3f6c12a339bbca935e32282b"
+}

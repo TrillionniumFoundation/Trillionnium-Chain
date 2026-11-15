@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "scripts/ci/test_audit_native_campaign_outcomes.py",
+    "-v"
+  ],
+  "completed_at_utc": "2026-11-09T17:17:58.633821+00:00",
+  "elapsed_seconds": 0.5784886250003183,
+  "engineering_timeout_seconds": 240,
+  "exit_code": 0,
+  "expected_count_matched": true,
+  "expected_test_count": 23,
+  "label": "campaign-reader-controls",
+  "observed_test_counts": [
+    23
+  ],
+  "process_exit_after_timeout": null,
+  "raw_unittest_summary": [
+    "Ran 23 tests in 0.019s",
+    "OK"
+  ],
+  "started_at_utc": "2026-11-09T17:17:58.055348+00:00",
+  "status": "PASS",
+  "stderr": {
+    "bytes": 3529,
+    "path": "campaign-reader-controls.stderr.log",
+    "sha256": "c2b579c9dfd167a2e8bfd6241b0b268eb3946452eb345fa66830ef21802f6210"
+  },
+  "stdout": {
+    "bytes": 0,
+    "path": "campaign-reader-controls.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false
+}

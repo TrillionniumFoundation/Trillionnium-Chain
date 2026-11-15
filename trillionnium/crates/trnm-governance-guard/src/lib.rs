@@ -104,6 +104,7 @@ pub enum Error {
     CurrentValueMismatch,
     ParamVersionMismatch,
     PauseRestoreAlreadyScheduled,
+    CounterExhausted,
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -198,7 +199,10 @@ impl GovernanceGuard {
         now: u64,
     ) -> Result<ProposalId> {
         self.require_proposer(caller)?;
-        if eta < now.saturating_add(self.min_timelock_delay_secs) {
+        let earliest_eta = now
+            .checked_add(self.min_timelock_delay_secs)
+            .ok_or(Error::InvalidEta)?;
+        if eta < earliest_eta {
             return Err(Error::InvalidEta);
         }
 
@@ -207,7 +211,7 @@ impl GovernanceGuard {
             return Err(Error::InvalidParamKey);
         }
 
-        let id = self.next_id();
+        let id = self.next_id()?;
         let base_version = self
             .bridge
             .param_versions
@@ -323,10 +327,10 @@ impl GovernanceGuard {
             return Err(Error::CurrentValueMismatch);
         }
 
+        let next_version = version.checked_add(1).ok_or(Error::CounterExhausted)?;
         self.bridge
             .gov_params
             .insert(param_key.clone(), new_value.clone());
-        let next_version = version.saturating_add(1);
         self.bridge
             .param_versions
             .insert(param_key.clone(), next_version);
@@ -420,7 +424,10 @@ impl GovernanceGuard {
         if !self.bridge.emergency_paused {
             return Err(Error::PauseNotActive);
         }
-        if eta < now.saturating_add(self.min_timelock_delay_secs) {
+        let earliest_eta = now
+            .checked_add(self.min_timelock_delay_secs)
+            .ok_or(Error::InvalidEta)?;
+        if eta < earliest_eta {
             return Err(Error::InvalidEta);
         }
         if self.proposals.values().any(|proposal| {
@@ -433,7 +440,7 @@ impl GovernanceGuard {
             return Err(Error::PauseRestoreAlreadyScheduled);
         }
 
-        let id = self.next_id();
+        let id = self.next_id()?;
         let reason_hash = reason_hash.into();
         let proposal = Proposal {
             id,
@@ -723,10 +730,10 @@ impl GovernanceGuard {
         self.proposals.get_mut(&id).ok_or(Error::ProposalNotFound)
     }
 
-    fn next_id(&mut self) -> ProposalId {
+    fn next_id(&mut self) -> Result<ProposalId> {
         let id = self.nonce;
-        self.nonce = self.nonce.saturating_add(1);
-        id
+        self.nonce = self.nonce.checked_add(1).ok_or(Error::CounterExhausted)?;
+        Ok(id)
     }
 
     fn set_membership(set: &mut HashSet<String>, value: &str, enabled: bool) {
@@ -758,6 +765,144 @@ mod tests {
         gov.bridge
             .gov_params
             .insert("challenge_window_blocks".to_string(), value.to_string());
+    }
+
+    fn assert_unchanged(gov: &GovernanceGuard, before: &GovernanceGuard) {
+        assert_eq!(gov.nonce, before.nonce);
+        assert_eq!(gov.proposals, before.proposals);
+        assert_eq!(gov.bridge, before.bridge);
+        assert_eq!(gov.audit_log, before.audit_log);
+    }
+
+    #[test]
+    fn boundary_timelock_overflow_rejects_both_proposal_kinds_atomically() {
+        let mut gov = setup();
+        let before = gov.clone();
+        assert_eq!(
+            gov.propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "120",
+                u64::MAX,
+                "boundary",
+                u64::MAX - 59
+            ),
+            Err(Error::InvalidEta)
+        );
+        assert_unchanged(&gov, &before);
+        gov.emergency_pause("guardian", "boundary").unwrap();
+        let before = gov.clone();
+        assert_eq!(
+            gov.schedule_unpause("guardian", u64::MAX, "boundary", u64::MAX - 59),
+            Err(Error::InvalidEta)
+        );
+        assert_unchanged(&gov, &before);
+    }
+
+    #[test]
+    fn boundary_exact_timelock_remains_valid() {
+        let mut gov = setup();
+        let id = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "120",
+                u64::MAX,
+                "boundary",
+                u64::MAX - 60,
+            )
+            .unwrap();
+        gov.queue("alice", id).unwrap();
+        assert_eq!(gov.execute("exec", id, u64::MAX - 1), Err(Error::NotReady));
+        gov.execute("exec", id, u64::MAX).unwrap();
+        gov.emergency_pause("guardian", "boundary").unwrap();
+        let id = gov
+            .schedule_unpause("guardian", u64::MAX, "boundary", u64::MAX - 60)
+            .unwrap();
+        gov.execute_unpause("exec", id, u64::MAX).unwrap();
+    }
+
+    #[test]
+    fn boundary_exhausted_version_rejects_execution_atomically() {
+        let mut gov = setup();
+        // Seed an otherwise practically unreachable counter boundary.
+        gov.bridge
+            .param_versions
+            .insert("challenge_window_blocks".into(), u64::MAX - 1);
+        let final_valid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "110",
+                60,
+                "boundary",
+                0,
+            )
+            .unwrap();
+        gov.queue("alice", final_valid).unwrap();
+        gov.execute("exec", final_valid, 60).unwrap();
+        assert_eq!(
+            gov.bridge.param_versions["challenge_window_blocks"],
+            u64::MAX
+        );
+        let id = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "110",
+                "120",
+                60,
+                "boundary",
+                0,
+            )
+            .unwrap();
+        gov.queue("alice", id).unwrap();
+        let before = gov.clone();
+        assert_eq!(gov.execute("exec", id, 60), Err(Error::CounterExhausted));
+        assert_unchanged(&gov, &before);
+    }
+
+    #[test]
+    fn boundary_exhausted_nonce_rejects_both_proposal_kinds_atomically() {
+        let mut gov = setup();
+        // Seed exhaustion: normal operation cannot feasibly reach this count.
+        gov.nonce = u64::MAX - 1;
+        let id = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "120",
+                60,
+                "boundary",
+                0,
+            )
+            .unwrap();
+        assert_eq!(id, u64::MAX - 1);
+        let before = gov.clone();
+        assert_eq!(
+            gov.propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "130",
+                60,
+                "boundary",
+                0
+            ),
+            Err(Error::CounterExhausted)
+        );
+        assert_unchanged(&gov, &before);
+        gov.emergency_pause("guardian", "boundary").unwrap();
+        let before = gov.clone();
+        assert_eq!(
+            gov.schedule_unpause("guardian", 60, "boundary", 0),
+            Err(Error::CounterExhausted)
+        );
+        assert_unchanged(&gov, &before);
     }
 
     #[test]

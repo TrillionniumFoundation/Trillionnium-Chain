@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustc",
+    "--version"
+  ],
+  "elapsed_seconds": 0.43775231200015696,
+  "exit_code": 0,
+  "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-4668fd87f1/static/rustc-version.log",
+  "log_sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148",
+  "name": "rustc-version",
+  "started_utc": "2026-11-11T00:51:54.469040+00:00",
+  "tests": null
+}

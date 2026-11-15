@@ -1,0 +1,106 @@
+{
+  "capture_basis": "retrospective-research-readback",
+  "consumer": {
+    "agent_id": "018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12",
+    "cell_id": "learning-d9fb-native-adopt-v1-cell",
+    "principal_id": "c2b31c6a8228511e9891e1e809e574c452c7127ee7c798a2f0e8f96f98068ee1"
+  },
+  "economics": [],
+  "invocation_id": "archived-adopt-v1",
+  "learning": {
+    "baseline_bundle": "5b54d5d7afd40084d10da80f7af6f12e1eec8609436b62656bc67c3caffb5ca5",
+    "cost_source_digest": "df7570ba30d43ff3682935841046ecc2ae3c951e1838c3ae21592ce18a02272a",
+    "evaluation_profile": "48b5066c78b0372c2b4156136625f6364a7897422095cc59144c825724762441",
+    "initial_head": "566532c9e23ecfada2f51a616a5cfc521a22b656c0e98b3056136ad43c219373",
+    "next_input_digest": "0150fd64746b6e02d06f7d8d54a41bce566c44f82bfca6e85124d1df042e420f",
+    "next_run_id": "learning-d9fb-native-adopt-v1-next",
+    "next_task_digest": "b91abeec4de71ebc6c147ecc9b97dabedf26626bbdd4995f1dfc326f91c701ed",
+    "selected_bundle": "8c650b9ad74f5b8ec152d700ce184b30bf3cdf008a6b27b2eacbd0805d30f308",
+    "source_run_id": "learning-d9fb-native-adopt-v1-source"
+  },
+  "materials": {
+    "completed": {
+      "operation_id": "learning-d9fb-native-adopt-v1",
+      "sha256": "49687e0ece90dceb6409978616700c0b32ec342631a1941994ae3b7a886a7496",
+      "source_pair": {
+        "chain": {
+          "commit": "9129e65b3255439593e44a0ba39578f220c27087",
+          "tree": "3362f33fc1eb16bb1aa168f237065e4d15252bcc"
+        },
+        "hepta": {
+          "commit": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+          "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+        }
+      }
+    },
+    "expected": {
+      "operation_id": "learning-d9fb-native-adopt-v1",
+      "sha256": "1fdc83d8411fa1b9c4e95f1814ae4a32df07b977e754a8676a3ad5ccf351e810",
+      "source_pair": {
+        "chain": {
+          "commit": "9129e65b3255439593e44a0ba39578f220c27087",
+          "tree": "3362f33fc1eb16bb1aa168f237065e4d15252bcc"
+        },
+        "hepta": {
+          "commit": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+          "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+        }
+      }
+    },
+    "freeze": {
+      "operation_id": "learning-d9fb-native-adopt-v1",
+      "sha256": "00667a2e0a60f009702aeb589da642382b1a533ed0ad77f77a807bd3c472511d",
+      "source_pair": {
+        "chain": {
+          "commit": "9129e65b3255439593e44a0ba39578f220c27087",
+          "tree": "3362f33fc1eb16bb1aa168f237065e4d15252bcc"
+        },
+        "hepta": {
+          "commit": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+          "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+        }
+      }
+    },
+    "readback": {
+      "operation_id": "learning-d9fb-native-adopt-v1",
+      "sha256": "a11c43e68721199443ca265c35d5197f6883a732b04ae0f25e480cb9ce6adc5b",
+      "source_pair": {
+        "chain": {
+          "commit": "9129e65b3255439593e44a0ba39578f220c27087",
+          "tree": "3362f33fc1eb16bb1aa168f237065e4d15252bcc"
+        },
+        "hepta": {
+          "commit": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+          "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+        }
+      }
+    },
+    "selection": {
+      "operation_id": "learning-d9fb-native-adopt-v1",
+      "sha256": "3c4060363122831d1279133cedfefcdc9d795d4653ae56287bc962d7a7b67aa9",
+      "source_pair": {
+        "chain": {
+          "commit": "9129e65b3255439593e44a0ba39578f220c27087",
+          "tree": "3362f33fc1eb16bb1aa168f237065e4d15252bcc"
+        },
+        "hepta": {
+          "commit": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+          "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+        }
+      }
+    }
+  },
+  "operation_id": "learning-d9fb-native-adopt-v1",
+  "root_envelope_schema": null,
+  "schema": "trnm-cell-learning-business-bindings-v1",
+  "source_pair": {
+    "chain": {
+      "commit": "9129e65b3255439593e44a0ba39578f220c27087",
+      "tree": "3362f33fc1eb16bb1aa168f237065e4d15252bcc"
+    },
+    "hepta": {
+      "commit": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+      "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+    }
+  }
+}

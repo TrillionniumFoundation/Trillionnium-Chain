@@ -1,0 +1,126 @@
+{
+  "schema": "trnm.private-runtime-path-projection-review.v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "reviewer": "release_acceptance",
+  "status": "PLAN_REVIEW_ONLY_PENDING_CONCRETE_ADAPTER_AND_RUNTIME_OBSERVATION",
+  "reviewed_plan": {
+    "path": "validation/durable-current-remote/private-runtime02-plan.json",
+    "bytes": 3742,
+    "sha256": "7815143286363d39eefa85dd882bac11b733351e2dcf1e2352c38bf3817db9f2"
+  },
+  "frozen_source_reads": [
+    {
+      "path": "validation/discovery-reviewer/pinned-source/llm_python_runtime_contract.py.txt",
+      "bytes": 22751,
+      "sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc"
+    },
+    {
+      "path": "preparation/original-sealed-worker-040fb0cf.py",
+      "note": "prepare_runtime, runtime_module_origin, verify_runtime_ready were actually read; these unchanged admission functions remain mandatory."
+    }
+  ],
+  "evidence": {
+    "diagnostic_stdout": "validation/durable-current-remote/runtime-inventory-diagnostic-01/diagnostic.stdout",
+    "bytes": 4452,
+    "sha256": "bcddce663e3bff7dc301d8a1db2ee6456006497b80053ecac4d98f13aadc538e",
+    "original_snapshot_sha256": "e87a3658675836c130ba2a97a805bc6d86cc435135e72f4b6e40747e9271b9eb",
+    "verified_files": 22435,
+    "verified_file_bytes": 1112520241,
+    "expected_managed_files": 22421,
+    "observed_managed_files": 22427,
+    "extra_pyc": 6,
+    "changed_original_files": 0
+  },
+  "historical_capture": {
+    "recovered_source": false,
+    "searched_archives": [
+      "cloud-observations-b8ca4b885d89.tar.gz",
+      "remote-continuation-control-01.tar.gz",
+      "remote-continuation-control-02.tar.gz",
+      "publication-stage-recovered-local-v1.tar.gz"
+    ],
+    "available_only": "The cloud archive retains a different CPython 3.12.14 capture result and a manifest entry for tools/capture_runtime.py, not its source; no ai395 historical capture source was recovered.",
+    "cloud_helper_manifest_identity": {
+      "bytes": 6419,
+      "sha256": "be977ceb9e76d1ee25ab3fc1b4e5e316b5c26880defbcbe12364e120202ef3d1"
+    },
+    "source_v1_preparer_is_consumer": true,
+    "repository_search_scope": "Exact 040fb0cf scripts and scripts/ci directory listings plus pinned contract/consumer/worker reads; this is not a proof that no generator ever existed elsewhere.",
+    "approved_new_boundary": "Root authorized a clearly identified new validated-old-snapshot-to-private-path-projection helper; do not label it the historical generator or original capture implementation."
+  },
+  "projection_contract": [
+    "Retain the exact original schema and every non-path field. Copy the old object and change only explicitly reviewed path fields. Do not silently drop unknown metadata or globally replace strings.",
+    "Bind the exact old snapshot bytes and create a complete injective mapping over all original files before copying; preserve all 22435 original SHA values and the 1112520241-byte total under the original file_digest semantics.",
+    "Expected managed_inventory is the one-to-one path projection of the original sorted inventory; the six undeclared old pyc files remain untouched and are not admitted into the new tree.",
+    "Measure the new namespace with unchanged managed_inventory/file_digest and compare against the independently committed expected map. New measured hashes cannot replace expected hashes on mismatch.",
+    "System external dependency paths and hashes remain unchanged and must be reverified. Their presence in files is not a claim they all loaded.",
+    "Keep historical non-path metadata as historical projection input; record this run's helper identity, timestamp, paths, observations and new snapshot SHA in a separate fresh receipt.",
+    "New environment_generation=2, fresh source/audit/operation identity and actual chunk packing remain discovery review scope; original hard95 roster and deadlines/resources remain unchanged."
+  ],
+  "relocation_findings": [
+    {
+      "area": "pyvenv.cfg and script bytes",
+      "finding": "Original committed pyvenv.cfg, shebangs, activation files and pyc bytes must stay unchanged. Invoke the canonical new python/bin/python3.12 directly; do not activate or invoke stale env/bin launchers."
+    },
+    {
+      "area": "CPython startup",
+      "finding": "Upstream CPython v3.12.16 Modules/getpath.py reads nearby pyvenv.cfg home before site initialization; -S alone does not remove a stale home path. Actual new interpreter /proc/self/exe, sys.executable, sys.base_prefix, base_exec_prefix and initial module origins must be observed."
+    },
+    {
+      "area": "symlink mapping",
+      "finding": "Resolve each old file symlink target under the admitted old mapping, map the target, and validate the new link's resolved payload SHA. Relative cross-prefix targets also need verification or rebasing; merely replacing absolute targets is insufficient when directory layouts differ. Preserve original/new link text and resolved-target identity in the fresh receipt. Reject unsupported parent aliasing or unresolved/undeclared targets instead of flattening silently or falling back into old roots."
+    },
+    {
+      "area": "snapshot scope of symlinks",
+      "finding": "file_digest resolves a path and hashes the regular target via one FD. It does not hash symlink text, and the snapshot is not a complete filesystem-topology attestation. Explain changed link metadata separately from unchanged payload bytes."
+    },
+    {
+      "area": "sysconfig",
+      "finding": "The frozen contract queries SOABI, then assigns sys.prefix/sys.exec_prefix and the four allowed sys.path roots. It does not rewrite sysconfig source or pyvenv.cfg. Upstream v3.12.16 get_config_vars reinitializes when cached base differs from sys.prefix, but the actual packaged sysconfig.py must be hashed/observed; do not assume upstream identity or monkeypatch cached configuration."
+    },
+    {
+      "area": "sysconfig observations",
+      "finding": "Record actual sysconfig source and _sysconfigdata module origins, get_paths(), and relevant base/installed_base/platbase/installed_platbase/SOABI values before/after configure. Active import/native origins may not return to old roots. A historical build-path string is not itself evidence that bytes were loaded from that path."
+    },
+    {
+      "area": "ELF/native libs",
+      "finding": "Keep interpreter and native library bytes unchanged; no patchelf or RPATH rewriting. Record actual DT_RPATH/DT_RUNPATH where inspected, including whether a target is relative to the copied ELF or an absolute old prefix. The unchanged worker forbids LD_* and GLIBC_TUNABLES environment injection. Actual executable mappings in /proc/self/maps, verified against the projected file map, remain the decisive loaded-origin observation."
+    },
+    {
+      "area": "required runtime validation",
+      "finding": "Use the unchanged worker prepare_runtime -> runtime_import -> verify_runtime_ready under the original isolated/no-site/no-bytecode/private-unused-pycache flags, clean environment and 180-second preparation bound. Retain original generated-source guard. The new projection receipt is preparation, not a passed runtime guard, model execution, CHB1 admission or Hepta authorization."
+    }
+  ],
+  "official_reference_sources": [
+    {
+      "url": "https://docs.python.org/3.12/library/venv.html",
+      "web_ref": "turn0view0",
+      "use": "Absolute shebang paths make generic venv relocation unsupported; no claim that this custom contract is a general portable venv."
+    },
+    {
+      "url": "https://docs.python.org/3.12/library/sys_path_init.html",
+      "web_ref": "turn0view1",
+      "use": "Executable realpath and landmarks determine startup search roots; pyvenv.cfg home affects prefix detection."
+    },
+    {
+      "url": "https://github.com/python/cpython/blob/v3.12.16/Modules/getpath.py",
+      "retrieval": "GitHub plugin fetch_file",
+      "git_blob": "29a6b30018997d35eceb80cfa8a9d4a254b6a6dc",
+      "use": "Actual primary-source pyvenv.cfg parsing, lines335-396."
+    },
+    {
+      "url": "https://github.com/python/cpython/blob/v3.12.16/Lib/sysconfig.py",
+      "retrieval": "GitHub plugin fetch_file",
+      "git_blob": "acc8d4d1826b8adcaa15fcdef2666e717c3ee520",
+      "use": "Actual primary-source prefix capture and cache refresh, lines644-740; packaged file identity still requires observation."
+    }
+  ],
+  "execution": {
+    "h_called": false,
+    "old_runtime_changed": false,
+    "old_snapshot_changed": false,
+    "frozen_source_changed": false,
+    "model_started": false,
+    "new_runtime_guard_pass_claim": false
+  }
+}

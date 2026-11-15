@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_run_w1_fresh_service_v1.py"
+  ],
+  "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_ns": 4075426015,
+  "tests": 29,
+  "unittest_success": true,
+  "log": "/workspace/scratch/ae364bcbabfb/continuation-acceptance/retained-reader-controls/test_run_w1_fresh_service_v1.log",
+  "log_bytes": 128,
+  "log_sha256": "16433f8247dee2e495387b8fe5aa63f4c6e21128dd4e44c9b6bbacc06f629a1c",
+  "test_source_before": "4bcad9c87197e3334d912ecfe3257439959c4a04658ef7c762d98070d8334f62"
+}

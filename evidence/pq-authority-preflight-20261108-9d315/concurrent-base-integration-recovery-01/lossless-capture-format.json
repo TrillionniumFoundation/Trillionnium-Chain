@@ -1,0 +1,71 @@
+{
+  "compressed_files": {
+    "committed-source-01/five-package-all-targets.stdout.log.gz": {
+      "compressed_bytes": 14206,
+      "compressed_sha256": "acfcf9207c3d3c1594c86d32956105066a3fc394fff8b3ccb2bdfbc129517a32",
+      "uncompressed": {
+        "bytes": 89738,
+        "relative_path": "committed-source-01/five-package-all-targets.stdout.log",
+        "sha256": "cb495b4c2d975cd4515c4310dc4996221015a8bac7521c4c9c2b2d73aea3ec75"
+      }
+    },
+    "committed-source-01/node-release-owner.stdout.log.gz": {
+      "compressed_bytes": 1793,
+      "compressed_sha256": "3156d3e7e95cac2bcfa0b47c3a9afbad6e44fb5dc1e888e2a08048b03d5989cf",
+      "uncompressed": {
+        "bytes": 9193,
+        "relative_path": "committed-source-01/node-release-owner.stdout.log",
+        "sha256": "13489ba504c0cfcc38606cb3cdea77f6a7c881c5e3396f4edcff638dcbe8bee4"
+      }
+    },
+    "committed-source-01/release-all-targets.stdout.log.gz": {
+      "compressed_bytes": 1694,
+      "compressed_sha256": "e1c2bcc018123f87dcb52ec5da718041c0f640c7ebce96cba3d6721f281fd3f5",
+      "uncompressed": {
+        "bytes": 11508,
+        "relative_path": "committed-source-01/release-all-targets.stdout.log",
+        "sha256": "0e75f4ac521ab15ba77b14b72f80506adffcbf295117279883915fb3ee144263"
+      }
+    },
+    "committed-source-01/six-package-doc-tests.stdout.log.gz": {
+      "compressed_bytes": 1055,
+      "compressed_sha256": "5faec693e6a33edf1a78c2694288313e54e22728da6d8db0cb1ac6dac94d77ea",
+      "uncompressed": {
+        "bytes": 4235,
+        "relative_path": "committed-source-01/six-package-doc-tests.stdout.log",
+        "sha256": "63ec689b8338030cae43bd4dd344f38f1343e7769de7edb2528301a3979a45ad"
+      }
+    },
+    "fuzz-dependency-repair/lock.diff.gz": {
+      "compressed_bytes": 197,
+      "compressed_sha256": "dfeb1e9dcb1e329eff5b82b9e3a10d48ff5f66eb61d4697bb0ee36b200c45271",
+      "uncompressed": {
+        "bytes": 282,
+        "relative_path": "fuzz-dependency-repair/lock.diff",
+        "sha256": "bf6b39a5bfefde917554910197b0d958d41966889e9124461ff241620013fd4f"
+      }
+    },
+    "quorum-green/stdout.log.gz": {
+      "compressed_bytes": 332,
+      "compressed_sha256": "9bff96159f20675e2c25afc3e9311740ae6d761fe2426baac520089959a01efc",
+      "uncompressed": {
+        "bytes": 1201,
+        "relative_path": "quorum-green/stdout.log",
+        "sha256": "f3531b608295e2e4cff0a3248a8471e42821b0f88aa2f6093c76b139afb672b6"
+      }
+    },
+    "quorum-red/stdout.log.gz": {
+      "compressed_bytes": 707,
+      "compressed_sha256": "9b6911831c39e9c89a64f94a6336da2f3a2512361e337502a9dc70191c4b2804",
+      "uncompressed": {
+        "bytes": 4607,
+        "relative_path": "quorum-red/stdout.log",
+        "sha256": "e2ec4a996c5a8fef8b792dd249af62eadaa569d32c0f6adc94e04d694c8634dd"
+      }
+    }
+  },
+  "original_failure_directory": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/concurrent-base-integration-01",
+  "result": "PASS",
+  "source_bytes_trimmed": false,
+  "whitespace_policy_changed": false
+}

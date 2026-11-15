@@ -1,0 +1,10 @@
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.003s
+
+OK
+Traceback (most recent call last):
+  File "<string>", line 73, in <module>
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--cached', '--check']' returned non-zero exit status 2.

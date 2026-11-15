@@ -1,0 +1,44 @@
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/aea25ba345a8/chain-pq-agent/repo/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 54s
+     Running unittests src/lib.rs (/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/trnm_mvcc_fee-5f584199a960bb80)
+
+running 12 tests
+test pon_executor::pq_accounts_v2::migration_inventory_v1::tests::all_monetary_namespaces_and_zero_obligations_are_counted_without_netting ... ok
+test pon_executor::pq_accounts_v2::migration_inventory_v1::tests::empty_ledger_inventory_never_certifies_external_obligations_or_retirement ... ok
+test pon_executor::pq_accounts_v2::migration_inventory_v1::tests::inventory_counts_every_opaque_row_but_bounds_diagnostic_key_examples ... ok
+test pon_executor::pq_accounts_v2::migration_inventory_v1::tests::inventory_rejects_wrong_pins_changed_state_and_inconsistent_issued_supply ... ok
+test pon_executor::pq_accounts_v2::migration_inventory_v1::tests::malformed_account_is_not_relabelled_as_an_empty_ledger ... ok
+test pon_executor::pq_accounts_v2::migration_inventory_v1::tests::unknown_debt_revocation_execution_and_active_model_rows_block_empty_inference ... ok
+test pon_executor::pq_accounts_v2::migration_inventory_v1::tests::zero_accounts_and_nonce_floors_are_preserved_as_identity_obligations ... ok
+test pon_executor::pq_accounts_v2::tests::anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once ... ok
+test pon_executor::pq_accounts_v2::tests::migration_refuses_omissions_ambiguous_ids_untranslated_liabilities_and_unbound_roots ... ok
+test pon_executor::pq_accounts_v2::tests::migration_refuses_unprojected_nonmonetary_source_state ... 
+thread 'pon_executor::pq_accounts_v2::tests::migration_refuses_unprojected_nonmonetary_source_state' (144) panicked at crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs:677:9:
+assertion `left == right` failed: unprojected source record debt:legacy was silently omitted
+  left: None
+ right: Some("PQ2_UNSUPPORTED_SOURCE_STATE")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+test pon_executor::pq_accounts_v2::tests::migration_refuses_zero_value_quota_and_release_records ... 
+thread 'pon_executor::pq_accounts_v2::tests::migration_refuses_zero_value_quota_and_release_records' (145) panicked at crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs:699:9:
+assertion `left == right` failed: zero remaining value erased quota: lifecycle state
+  left: None
+ right: Some("PQ2_UNSUPPORTED_SOURCE_STATE")
+FAILED
+test pon_executor::pq_accounts_v2::tests::migration_requires_the_explicit_empty_current_model_sentinel ... 
+thread 'pon_executor::pq_accounts_v2::tests::migration_requires_the_explicit_empty_current_model_sentinel' (146) panicked at crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs:722:9:
+assertion `left == right` failed: source current-model state was reset to an empty destination
+  left: None
+ right: Some("PQ2_UNSUPPORTED_SOURCE_STATE")
+FAILED
+
+failures:
+
+failures:
+    pon_executor::pq_accounts_v2::tests::migration_refuses_unprojected_nonmonetary_source_state
+    pon_executor::pq_accounts_v2::tests::migration_refuses_zero_value_quota_and_release_records
+    pon_executor::pq_accounts_v2::tests::migration_requires_the_explicit_empty_current_model_sentinel
+
+test result: FAILED. 9 passed; 3 failed; 0 ignored; 0 measured; 124 filtered out; finished in 1.42s
+
+error: test failed, to rerun pass `-p trnm-mvcc-fee --lib`

@@ -1,0 +1,204 @@
+{
+  "C1_original_group_passed": false,
+  "C1_readback_subset_complete": true,
+  "C1_to_C2_byte_delta": 1880,
+  "C1_witness_v5_subset_complete": true,
+  "actual_named_ok_including_partial_targets": 8,
+  "all_selected_commands_passed": true,
+  "archive_sha256": "5883dad77151ce4632caac4e442e6be1d959bf8fb442a9c41a7fa09dfd0ad804",
+  "clean_build_claimed": false,
+  "commands_recorded": 14,
+  "complete": true,
+  "exact_C1_to_C2_changed_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "scripts/ci/check_public_readiness_evidence.py",
+    "scripts/ci/test_public_readiness_evidence.py"
+  ],
+  "failed_commands": [],
+  "host_or_execution_attestation_claimed": false,
+  "independent_security_property_count": null,
+  "native_run_is_not_hosted_ci": true,
+  "native_targets": [
+    {
+      "completed_ok_names": [
+        "store::account_profile_scope_tests::cold_open_rechecks_account_scope_without_rewriting_existing_storage",
+        "store::account_profile_scope_tests::growth_owner_rechecks_scope_before_open_recovery_and_noop_activation",
+        "store::account_profile_scope_tests::invalid_account_scope_never_creates_legacy_or_authenticated_namespace",
+        "store::account_profile_scope_tests::warm_owner_rechecks_current_account_scope_before_reads_recovery_and_activation"
+      ],
+      "exit_code": 0,
+      "expected": 4,
+      "projection": {
+        "filtered_out": 1410,
+        "passed": 4,
+        "tests": [
+          "store::account_profile_scope_tests::cold_open_rechecks_account_scope_without_rewriting_existing_storage",
+          "store::account_profile_scope_tests::growth_owner_rechecks_scope_before_open_recovery_and_noop_activation",
+          "store::account_profile_scope_tests::invalid_account_scope_never_creates_legacy_or_authenticated_namespace",
+          "store::account_profile_scope_tests::warm_owner_rechecks_current_account_scope_before_reads_recovery_and_activation"
+        ]
+      },
+      "remaining_without_ok": [],
+      "target": "node-account-scope",
+      "target_passed": true,
+      "terminal_summaries": [
+        [
+          "ok",
+          "4",
+          "0",
+          "0",
+          "0",
+          "1410"
+        ]
+      ],
+      "timed_out": false,
+      "timeout_seconds": 1800,
+      "valid": true
+    },
+    {
+      "completed_ok_names": [
+        "store::task_observation::tests::every_native_profile_observes_real_settlement_with_its_exact_wire_id"
+      ],
+      "exit_code": 0,
+      "expected": 1,
+      "projection": {
+        "filtered_out": 1413,
+        "passed": 1,
+        "tests": [
+          "store::task_observation::tests::every_native_profile_observes_real_settlement_with_its_exact_wire_id"
+        ]
+      },
+      "remaining_without_ok": [],
+      "target": "node-all-pq-profile-settlement",
+      "target_passed": true,
+      "terminal_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0",
+          "0",
+          "1413"
+        ]
+      ],
+      "timed_out": false,
+      "timeout_seconds": 1200,
+      "valid": true
+    },
+    {
+      "completed_ok_names": [
+        "ingress::pq_network::canonical_tests::pq_client_requires_complete_key_pin_after_identity_lookup"
+      ],
+      "exit_code": 0,
+      "expected": 1,
+      "projection": {
+        "filtered_out": 1413,
+        "passed": 1,
+        "tests": [
+          "ingress::pq_network::canonical_tests::pq_client_requires_complete_key_pin_after_identity_lookup"
+        ]
+      },
+      "remaining_without_ok": [],
+      "target": "tls-full-spki-1",
+      "target_passed": true,
+      "terminal_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0",
+          "0",
+          "1413"
+        ]
+      ],
+      "timed_out": false,
+      "timeout_seconds": 1200,
+      "valid": true
+    },
+    {
+      "completed_ok_names": [
+        "ingress::pq_network::tls::tests::tls_local_identity_requires_complete_key_pin_for_both_roles"
+      ],
+      "exit_code": 0,
+      "expected": 1,
+      "projection": {
+        "filtered_out": 1413,
+        "passed": 1,
+        "tests": [
+          "ingress::pq_network::tls::tests::tls_local_identity_requires_complete_key_pin_for_both_roles"
+        ]
+      },
+      "remaining_without_ok": [],
+      "target": "tls-full-spki-2",
+      "target_passed": true,
+      "terminal_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0",
+          "0",
+          "1413"
+        ]
+      ],
+      "timed_out": false,
+      "timeout_seconds": 1200,
+      "valid": true
+    },
+    {
+      "completed_ok_names": [
+        "ingress::pq_network::tls::tests::actual_tls_peer_identity_alias_refuses_before_application_dispatch_in_both_directions"
+      ],
+      "exit_code": 0,
+      "expected": 1,
+      "projection": {
+        "filtered_out": 1413,
+        "passed": 1,
+        "tests": [
+          "ingress::pq_network::tls::tests::actual_tls_peer_identity_alias_refuses_before_application_dispatch_in_both_directions"
+        ]
+      },
+      "remaining_without_ok": [],
+      "target": "tls-full-spki-3",
+      "target_passed": true,
+      "terminal_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0",
+          "0",
+          "1413"
+        ]
+      ],
+      "timed_out": false,
+      "timeout_seconds": 1200,
+      "valid": true
+    }
+  ],
+  "not_started": [],
+  "original_C1_archive_sha256": "6d22e3ca7dcd98a75da46f6717f122f2293fa0d870a5aa2807e7f8252aee6acd",
+  "original_C1_full_Git_blob_verification": null,
+  "partial_ok_is_not_a_target_pass": true,
+  "passed_complete_target_executions": 8,
+  "planned_commands": 14,
+  "planned_native_executions": 8,
+  "private_target_reused_from_closed_C1_group": true,
+  "production_activation": false,
+  "readback_subset_archive_sha256": "878e1c55747030ef3629edea182a39ae508cdf4362cdce89078251199e57844f",
+  "schema": "TRNM-C2-DESKTOP-EVIDENCE-VERIFICATION1",
+  "source": {
+    "branch": "fix/chain-pq-closure-20261111-d4d2",
+    "commit": "0e554f36ffdde3053a5eb1756eb5e526b1935032",
+    "status": "",
+    "tree": "753cdbad6714f00d8ccb9ddbb47f0fd71280ee62"
+  },
+  "source_bytes": 2554108569,
+  "source_entries": 27912,
+  "source_rows_bound_to_original_snapshot_and_three_fixed_Git_deltas": true,
+  "strict_clippy_passed": true,
+  "verified": true,
+  "whole_chain_pq_qualified": false,
+  "witness_v5_subset_archive_sha256": "6c43489d81a1d809a4a85d04bd1cc7381466509606468930049fb83124328d12",
+  "workloads_rerun": false
+}

@@ -1,0 +1,26 @@
+test_adaptive_target_chosen_before_second_query (__main__.TicketBoundTests.test_adaptive_target_chosen_before_second_query) ... ok
+test_adaptive_tree_fixed_horizon_tail (__main__.TicketBoundTests.test_adaptive_tree_fixed_horizon_tail) ... ok
+test_already_credit_adjusted_advantage_must_not_count_efficiency_twice (__main__.TicketBoundTests.test_already_credit_adjusted_advantage_must_not_count_efficiency_twice) ... ok
+test_anytime_stopping_first_crossing_is_not_endpoint_only (__main__.TicketBoundTests.test_anytime_stopping_first_crossing_is_not_endpoint_only) ... ok
+test_current_pow_limit_has_nearly_three_halves_efficiency_ratio (__main__.TicketBoundTests.test_current_pow_limit_has_nearly_three_halves_efficiency_ratio) ... ok
+test_delegation_is_not_free_in_the_accounting (__main__.TicketBoundTests.test_delegation_is_not_free_in_the_accounting) ... ok
+test_distinct_target_example_is_not_a_fifty_percent_resource_test (__main__.TicketBoundTests.test_distinct_target_example_is_not_a_fifty_percent_resource_test) ... ok
+test_equal_target_rate_model_recovers_existing_formula (__main__.TicketBoundTests.test_equal_target_rate_model_recovers_existing_formula) ... ok
+test_exhaustive_small_oracles_match_expected_credit (__main__.TicketBoundTests.test_exhaustive_small_oracles_match_expected_credit) ... ok
+test_exponential_envelope_all_small_targets (__main__.TicketBoundTests.test_exponential_envelope_all_small_targets) ... ok
+test_fixed_target_first_success_and_optional_stop (__main__.TicketBoundTests.test_fixed_target_first_success_and_optional_stop) ... ok
+test_full_width_off_by_one_and_no_floating_point (__main__.TicketBoundTests.test_full_width_off_by_one_and_no_floating_point) ... ok
+test_full_width_target_with_bounded_weight (__main__.TicketBoundTests.test_full_width_target_with_bounded_weight) ... ok
+test_identity_splitting_does_not_change_total_query_budget (__main__.TicketBoundTests.test_identity_splitting_does_not_change_total_query_budget) ... ok
+test_invalid_parameters_rejected (__main__.TicketBoundTests.test_invalid_parameters_rejected) ... ok
+test_invalid_tail_inputs_do_not_return_a_confidence_claim (__main__.TicketBoundTests.test_invalid_tail_inputs_do_not_return_a_confidence_claim) ... ok
+test_posthoc_target_counterexample_is_not_certified (__main__.TicketBoundTests.test_posthoc_target_counterexample_is_not_certified) ... ok
+test_rounding_rate_model_rejects_nonexact_and_invalid_inputs (__main__.TicketBoundTests.test_rounding_rate_model_rejects_nonexact_and_invalid_inputs) ... ok
+test_strict_rounding_bound_exhausts_every_small_legal_target_and_limit (__main__.TicketBoundTests.test_strict_rounding_bound_exhausts_every_small_legal_target_and_limit) ... ok
+test_sufficient_mean_work_bound_is_not_a_necessary_condition (__main__.TicketBoundTests.test_sufficient_mean_work_bound_is_not_a_necessary_condition) ... ok
+test_tail_bound_saturation_and_zero_queries (__main__.TicketBoundTests.test_tail_bound_saturation_and_zero_queries) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.230s
+
+OK

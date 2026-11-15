@@ -1,0 +1,11 @@
+
+running 6 tests
+test store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit ... ok
+test store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source ... ok
+test store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen ... ok
+test store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit ... ok
+test store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence ... ok
+test store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 1187 filtered out; finished in 11.64s
+

@@ -1,0 +1,177 @@
+name: Pure PoN admission and DAA evidence
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-pure-admission-daa-v2.yml
+      - scripts/ci/**
+      - scripts/run_pon_w1_native_campaign.py
+      - scripts/pon_identity_outer_owner.py
+      - scripts/refresh_distributed_source_inventory.py
+      - scripts/project-preflight.sh
+      - PROJECT_BOUNDARY.json
+      - PROJECT_ID
+      - config/**
+      - formal/pon-nakamoto-v1/pon_risk_model_v1.py
+      - formal/pon-nakamoto-v1/bounded_process.py
+      - formal/pon-nakamoto-v1/test_pon_risk_model_v1.py
+      - formal/pon-nakamoto-v1/requirements.txt
+      - formal/pon-nakamoto-v1/vectors/pon-risk-*.json
+      - trillionnium/**
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pon-pure-admission-daa-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  native:
+    name: pure PoN finite admission and conditional risk (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: x64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Checkout exact source without persistent credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_HEAD }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Isolate original evidence and target paths
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/pure-admission-daa-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.arch }}"
+          mkdir "$out"
+          echo "OUT=$out" >> "$GITHUB_ENV"
+          echo "CARGO_HOME=$RUNNER_TEMP/pure-admission-cargo" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/pure-admission-target" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$out/source-checkout.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Provision and probe the pinned independent caller-reader interpreter
+        run: |
+          set -euo pipefail
+          reader_env="$RUNNER_TEMP/pure-admission-reader-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.arch }}"
+          python3 -m venv "$reader_env"
+          "$reader_env/bin/python" -m pip install --isolated --disable-pip-version-check \
+            --only-binary=:all: --report "$OUT/reader-environment-install.json" \
+            -r formal/pon-nakamoto-v1/requirements.txt 2>&1 | tee "$OUT/reader-environment-install.log"
+          "$reader_env/bin/python" -B scripts/ci/check_pure_pon_fresh_caller_v1.py \
+            --check-environment --output "$OUT/reader-environment-probe.json"
+          echo "PURE_READER_PYTHON=$reader_env/bin/python" >> "$GITHUB_ENV"
+      - name: Install exact compiler and fetch locked dependencies
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy 2>&1 | tee "$OUT/toolchain.log"
+          cargo +1.95.0 fetch --locked --manifest-path trillionnium/Cargo.toml 2>&1 | tee "$OUT/fetch.log"
+      - name: Require read-only collected-unit absence controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/test_collected_unit_empty_v1.py -v 2>&1 | tee "$OUT/collected-unit-empty-controls.log"
+          grep -E '^Ran 21 tests in ' "$OUT/collected-unit-empty-controls.log"
+          grep -x OK "$OUT/collected-unit-empty-controls.log"
+      - name: Probe and provision the original fixed Host for the explicitly isolated client
+        run: |
+          set -euo pipefail
+          test "$(git hash-object config/systemd/trnmponpublic.slice)" = 8981b6aeed4c08c21679664940366b36a991444a
+          test -d /run/systemd/system
+          test -f /sys/fs/cgroup/cgroup.controllers
+          probe_unit="trnm-pure-client-parent-probe-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT.service"
+          sudo -n systemd-run --unit="$probe_unit" --wait --pipe --collect \
+            --service-type=exec --expand-environment=no --uid=0 --gid=0 \
+            --working-directory="$GITHUB_WORKSPACE" \
+            --property=CPUAccounting=yes --property=MemoryAccounting=yes \
+            --property=CPUQuota=400% --property=CPUQuotaPeriodSec=100ms \
+            --property=MemoryMax=17179869184 --property=Nice=10 \
+            --property=KillMode=control-group --property=TimeoutStopSec=20s \
+            --property=RuntimeMaxSec=120s --setenv=PYTHONDONTWRITEBYTECODE=1 \
+            /usr/bin/python3 "$GITHUB_WORKSPACE/scripts/ci/history_fixed_parent_v2.py" probe \
+            --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" \
+            --source "$GITHUB_WORKSPACE/config/systemd/trnmponpublic.slice" \
+            > "$OUT/client-parent-real-probe.json" 2> "$OUT/client-parent-real-probe-systemd.log"
+          sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py provision \
+            --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" \
+            --source "$GITHUB_WORKSPACE/config/systemd/trnmponpublic.slice" \
+            > "$OUT/client-parent-provision.json" 2> "$OUT/client-parent-provision.log"
+          sudo -n systemctl show trnmponpublic.slice > "$OUT/client-parent-systemd-show.txt"
+      - name: Run one complete source-bound observation under the original experimental envelope
+        run: |
+          set -euo pipefail
+          test -d /run/systemd/system
+          test -f /sys/fs/cgroup/cgroup.controllers
+          cargo_path="$(command -v cargo)"
+          rustup_home="$(rustup show home)"
+          unit="trnm-pure-admission-daa-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.arch }}.service"
+          cleanup() {
+            original_status=$?
+            trap - EXIT INT TERM
+            set +e
+            # systemd owns termination/collection. A failed create may be a foreign name.
+            # Observe only; a live or unreadable unit remains a cleanup failure.
+            /usr/bin/python3 -B "$GITHUB_WORKSPACE/scripts/ci/check_collected_unit_empty_v1.py" \
+              --unit "$unit" > "$OUT/unit-cleanup.json" 2>> "$OUT/unit-cleanup.log"
+            cleanup_status=$?
+            printf 'original_exit=%s\ncleanup_exit=%s\n' "$original_status" "$cleanup_status" >> "$OUT/unit-cleanup.log"
+            if test "$original_status" -eq 0 && test "$cleanup_status" -ne 0; then
+              exit "$cleanup_status"
+            fi
+            exit "$original_status"
+          }
+          trap cleanup EXIT
+          trap 'exit 130' INT
+          trap 'exit 143' TERM
+          # A unique ephemeral experiment unit, never the fixed public-service
+          # parent. No existing service, receiver limit or original campaign changes.
+          sudo -n systemd-run --unit="$unit" --wait --pipe --collect \
+            --service-type=exec --expand-environment=no \
+            --uid="$(id -u)" --gid="$(id -g)" \
+            --working-directory="$GITHUB_WORKSPACE" \
+            --property=CPUAccounting=yes --property=MemoryAccounting=yes \
+            --property=CPUQuota=400% --property=CPUQuotaPeriodSec=100ms \
+            --property=MemoryMax=17179869184 --property=Nice=10 \
+            --property=KillMode=control-group --property=TimeoutStopSec=20s \
+            --property=RuntimeMaxSec=4800s \
+            --setenv="PATH=$PATH" --setenv="CARGO_HOME=$CARGO_HOME" \
+            --setenv="RUSTUP_HOME=$rustup_home" --setenv=PYTHONDONTWRITEBYTECODE=1 \
+            "$PURE_READER_PYTHON" scripts/ci/run_pure_pon_admission_daa_v2.py \
+            --output "$OUT/campaign" --target "$CARGO_TARGET_DIR" \
+            --cargo "$cargo_path" --expected-head "$EXPECTED_HEAD" \
+            --client-execution-profile pure-pon-fixed-host-client-v1 \
+            --fresh-caller-supplement 2>&1 | tee "$OUT/native.log"
+      - name: After the driver terminates close only this run's actually owned fixed parents
+        if: always()
+        run: |
+          set -uo pipefail
+          set +e
+          sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py cleanup-probe \
+            --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" \
+            > "$OUT/client-parent-probe-cleanup.json" 2> "$OUT/client-parent-probe-cleanup.log"
+          probe_status=$?
+          sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py cleanup \
+            --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" \
+            > "$OUT/client-parent-cleanup.json" 2> "$OUT/client-parent-cleanup.log"
+          parent_status=$?
+          test "$probe_status" -eq 0 && test "$parent_status" -eq 0
+      - name: Recheck source even when native evidence failed
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$OUT/source-final.json"
+      - name: Preserve all original terminals, failures, raw actor data and receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pure-admission-daa-${{ matrix.arch }}-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: ${{ env.OUT }}/
+          if-no-files-found: error
+          retention-days: 30

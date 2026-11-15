@@ -1,0 +1,22 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "composition-owner-controls",
+  "command": [
+    "python3",
+    "-c",
+    "import sys,unittest; sys.path.insert(0,\"scripts/ci\"); suite=unittest.defaultTestLoader.loadTestsFromNames([\"test_repository\",\"test_project_boundary\"]); result=unittest.TextTestRunner(verbosity=1).run(suite); sys.exit(not result.wasSuccessful())"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+  "tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T14:09:33.901357+00:00",
+  "returncode": 1,
+  "completed": true,
+  "wall_ns": 4007039384,
+  "finished_at": "2026-11-04T14:09:37.908664+00:00",
+  "log_bytes": 4131,
+  "log_sha256": "87e6e5de3e82c5a24f64f45d39e194977db84ea005cc3ff76234693ddda08bbf",
+  "final_head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+  "final_dirty_paths": []
+}

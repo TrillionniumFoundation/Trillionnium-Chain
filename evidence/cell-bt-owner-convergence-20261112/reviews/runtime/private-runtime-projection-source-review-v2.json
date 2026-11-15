@@ -1,0 +1,58 @@
+{
+  "code_identities": [
+    {
+      "bytes": 18896,
+      "path": "validation/durable-current-remote/remote_project_private_runtime_v1.py",
+      "sha256": "fc23a7bc14129930faec73c8a660e4e48ee50e3c8b1c84a51844171d2c7b45c0"
+    },
+    {
+      "bytes": 19219,
+      "path": "validation/durable-current-remote/remote_project_private_runtime_v2.py",
+      "sha256": "5b4f4d4f7a0dcde9bcba6221fc4c8fd7b92f1be05c1fd706fa0545b496c2caba"
+    },
+    {
+      "bytes": 6232,
+      "path": "validation/durable-current-remote/remote_private_runtime_probe_v1.py",
+      "sha256": "b36333de24d3128eb619baa0cfb1417901d2b483f0e29b922cf5609d8b68bbef"
+    }
+  ],
+  "execution_observed": false,
+  "explicit_boundary": "This is a new validated historical-snapshot path-projection preparation helper, not a recovered historical capture CLI or immutable filesystem namespace proof. Same-host external dependencies remain shared.",
+  "h_called_by_reviewer": false,
+  "old_runtime_or_source_changed_by_reviewer": false,
+  "other_reviewed_correction": "historical_non_path_metadata_preserved starts false and becomes true only after successful projected() verification.",
+  "review_findings_closed": [
+    {
+      "finding": "copy_regular lacked a bound while reading a growing source",
+      "resolution": "v2 checks regular type and 0<=initial size<=16GiB, increments count and refuses count>initial size before writing each block; original same-FD identity/size/hash checks remain."
+    },
+    {
+      "finding": "spec and probe were reread after their initial digest check",
+      "resolution": "v2 holds source_raw and probe_raw read once and checks fixed hashes; json.loads and executed -c text consume those same bytes. Finally still rereads files to detect subsequent changes."
+    }
+  ],
+  "reviewer": "release_acceptance",
+  "schema": "trnm.private-runtime-projection-source-review.v2",
+  "semantic_review": [
+    "The exact original 16 top-level keys and four python keys are required. copy.deepcopy preserves all non-path metadata; only the six declared path categories change.",
+    "Both path-key dictionaries preserve cardinality; complete file inverse mapping, inventory inverse mapping and historical probe-map inverse mapping must equal the old snapshot. Every original digest remains unchanged.",
+    "Original snapshot SHA, 22435 files, 22421 managed entries, 1112520241 logical bytes, complete old inventory and six exact extra-pyc hashes are checked before copying.",
+    "The expected map and projected snapshot bytes are published before creating/copying the new runtime. New observed hashes cannot replace expected hashes.",
+    "Parent aliasing is refused. File symlinks map resolved targets, handling the actual cpython-3.12 alias; the two relative python links are preserved when valid in the new tree, otherwise relative text is recomputed. All new resolved targets and payload hashes are checked.",
+    "Regular source bytes are copied through a stable FD to create-only files; original permission bits are retained without changing source file contents. The old runtime and six extras are never written or deleted.",
+    "The source preserves 13 external original paths and hashes. Their verification does not claim they were all executable library mappings.",
+    "The new canonical interpreter is called with -I -S -B -X private-unused-pycache and a clean LANG/LC_ALL/TMPDIR environment; unchanged contract load/configure/verify_files run in the already reviewed physical probe.",
+    "Probe exit zero and matching passed/snapshot JSON are both required. Afterwards complete new and old members, inventories and extra-pyc bytes are reverified before the projection can pass.",
+    "Original repository commit/tree/clean status and source/probe/snapshot identities are rechecked at the end. Failures preserve their partial fresh output and report passed=false; no rollback or rewriting of earlier failed observations is performed.",
+    "The helper measures 29 unchanged model/environment members and reports actual prospective payload bytes/chunks. It does not hardcode/pad95 or modify the later native roster gate.",
+    "Full sealed import admission and model execution remain false. The unchanged original runtime_import/verify_runtime_ready and complete release operation are separate subsequent gates."
+  ],
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "static_checks": [
+    "Exact v1/v2/probe byte counts and SHA256 checked.",
+    "Full v1 source read; every v1-to-v2 changed hunk reviewed.",
+    "Python AST parse passed for all three reviewed files; no behavioral execution was performed."
+  ],
+  "status": "SOURCE_REVIEW_PASSED_EXECUTION_PENDING",
+  "v1_was_executed": false
+}

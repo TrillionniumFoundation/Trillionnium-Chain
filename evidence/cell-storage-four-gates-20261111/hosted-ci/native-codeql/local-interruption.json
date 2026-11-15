@@ -1,0 +1,21 @@
+{
+  "local_environment_unavailable": true,
+  "not_claimed_recovered": [
+    "old 32-file review-only attachment",
+    "old exact rebuild recipe",
+    "old20,717,541-byte selected archive",
+    "old282,249-byte rebuild kit"
+  ],
+  "preserved_from_original_actions": "522 unchanged selected members including six complete native reports; all original artifact pins and report pins verified",
+  "preserved_job_logs": "Four complete logs independently re-read and matched to earlier byte/SHA pins",
+  "prior_successful_local_rebuilds": {
+    "expected_archive_sha256": "5b8217aad2620fbc7197e94e1fb2241d5a8e3ade46d3bbb310bdb7ac3e1a6094",
+    "status": "previously observed; not used as current recovered identity",
+    "zlib_versions": [
+      "1.3.2",
+      "1.3.1"
+    ]
+  },
+  "remote_scope": "owned directory only; no repository writes, no workflow reruns, no production or remote configuration mutation",
+  "schema": "local-interruption-evidence-boundary-v1"
+}

@@ -1,0 +1,83 @@
+
+running 59 tests
+test ingress::public_v3::tests::abandoned_public_work_preserves_cancel_then_deadline_order_without_admission ... ok
+test ingress::public_v3::tests::accepted_setup_error_closes_socket_before_releasing_slot_and_observation ... ok
+test ingress::public_v3::tests::aggregate_scoped_cpu_charges_real_parallel_intervals_once_and_preserves_state ... ok
+test ingress::public_v3::tests::canonical_streaming_rejects_escaped_packets_and_extra_fields ... ok
+test ingress::public_v3::tests::client_stage_identity_preserves_observation_labels_and_exact_failed_phase_accounting ... ok
+test ingress::public_v3::tests::completed_input_boundary_rejects_tail_without_consuming_pending_frame ... ok
+test ingress::public_v3::tests::connection_is_not_observed_closed_before_its_original_slot_releases ... ok
+test ingress::public_v3::tests::cookie_binds_every_authority_and_resource_field_and_restart_epoch ... ok
+test ingress::public_v3::tests::cpu_budget_missing_measurement_or_dropped_permit_disables_future_starts ... ok
+test ingress::public_v3::tests::cpu_budget_missing_start_clock_refuses_before_full_verification ... ok
+test ingress::public_v3::tests::cpu_budget_reserves_two_starts_and_carries_actual_debt_before_refill ... ok
+test ingress::public_v3::tests::cpu_budget_signed_native_success_survives_clock_failure_and_reads_survive_debt ... r5 postclockfailure=false metrics={"mutation_cpu_reservations":1,"mutation_cpu_refusals":3,"mutation_cpu_clock_failures":0,"mutation_cpu_charged_ns":3513552,"mutation_full_work_cpu_ns":638810,"mutation_dispatch_excluding_work_cpu_ns":2874742,"mutation_body_decode_cpu_ns":108340,"mutation_response_cpu_ns":31090,"mutation_cpu_in_flight_after_shutdown":0,"mutation_cpu_credit_ns_after_shutdown":0,"mutation_cpu_debt_ns_after_shutdown":9992212603,"mutation_cpu_unavailable_after_shutdown":false,"accepted_connections":6,"capacity_refusals":0,"unpaid_pressure_cancel_requests":0,"unpaid_pressure_connections_closed":0,"preface_refusals":0,"challenge_budget_refusals":0,"pending_challenge_entered":6,"pending_challenge_granted":6,"pending_challenge_closed":0,"pending_challenge_wait_ns":6515615,"peak_pending_challenge":1,"issued_challenges":6,"ticket_refusals":0,"signature_refusals":0,"pq_authentication_attempts":0,"pq_authentication_bytes":0,"pq_authentication_thread_cpu_ns":0,"pq_authentication_unavailable":false,"spent_capacity_refusals":0,"paid_body_capacity_refusals":0,"lane_capacity_refusals":0,"pending_grant_entered":6,"pending_grant_granted":6,"pending_grant_closed":0,"pending_grant_wait_ns":6349691,"peak_pending_grant":1,"disconnected_await_requests":0,"tasks_skipped_before_dispatch":0,"abandoned_tasks":0,"tasks_enqueued":6,"tasks_dequeued":6,"replay_refusals":0,"queue_refusals":0,"queue_backpressure_events":0,"enqueued_after_backpressure":0,"queue_wait_ns":6326962,"peak_pending_enqueue":1,"disconnected_before_enqueue":0,"parse_refusals":0,"work_started":1,"work_finished":1,"work_failed":0,"work_ns":638857,"executor_refusals":3,"completed_submit":1,"completed_pool_submit":0,"completed_pool_status":0,"pool_submit_started":0,"pool_submit_finished":0,"pool_submit_failed":0,"pool_submit_ns":0,"completed_read":2,"expired_connections":0,"expired_phase_counts":{},"connections_closed_on_shutdown":0,"response_write_failures":0,"output_serialization_failures":0,"output_admission_refusals":0,"output_refusal_reservations":0,"peak_connections":1,"peak_paid_body_bytes":297129,"peak_mutating_grants":1,"peak_read_grants":1,"peak_spent":6,"spent_reservations":6,"peak_output_reserved_bytes":8404992,"delivered_response_frames":6,"retained_phase_errors":{},"body_bytes_received":396349,"response_bytes_written":105098,"cleanup_scans":3,"unknown_caller_durable_rows":0,"paid_body_reserved_bytes_after_shutdown":0,"output_reserved_bytes_after_shutdown":0,"mutating_grants_after_shutdown":0,"read_grants_after_shutdown":0}
+r5 postclockfailure=true metrics={"mutation_cpu_reservations":1,"mutation_cpu_refusals":3,"mutation_cpu_clock_failures":1,"mutation_cpu_charged_ns":0,"mutation_full_work_cpu_ns":0,"mutation_dispatch_excluding_work_cpu_ns":0,"mutation_body_decode_cpu_ns":0,"mutation_response_cpu_ns":0,"mutation_cpu_in_flight_after_shutdown":0,"mutation_cpu_credit_ns_after_shutdown":1905336365,"mutation_cpu_debt_ns_after_shutdown":0,"mutation_cpu_unavailable_after_shutdown":true,"accepted_connections":6,"capacity_refusals":0,"unpaid_pressure_cancel_requests":0,"unpaid_pressure_connections_closed":0,"preface_refusals":0,"challenge_budget_refusals":0,"pending_challenge_entered":6,"pending_challenge_granted":6,"pending_challenge_closed":0,"pending_challenge_wait_ns":6634501,"peak_pending_challenge":1,"issued_challenges":6,"ticket_refusals":0,"signature_refusals":0,"pq_authentication_attempts":0,"pq_authentication_bytes":0,"pq_authentication_thread_cpu_ns":0,"pq_authentication_unavailable":false,"spent_capacity_refusals":0,"paid_body_capacity_refusals":0,"lane_capacity_refusals":0,"pending_grant_entered":6,"pending_grant_granted":6,"pending_grant_closed":0,"pending_grant_wait_ns":6365520,"peak_pending_grant":1,"disconnected_await_requests":0,"tasks_skipped_before_dispatch":0,"abandoned_tasks":0,"tasks_enqueued":6,"tasks_dequeued":6,"replay_refusals":0,"queue_refusals":0,"queue_backpressure_events":0,"enqueued_after_backpressure":0,"queue_wait_ns":6359282,"peak_pending_enqueue":1,"disconnected_before_enqueue":0,"parse_refusals":0,"work_started":1,"work_finished":1,"work_failed":0,"work_ns":613338,"executor_refusals":3,"completed_submit":1,"completed_pool_submit":0,"completed_pool_status":0,"pool_submit_started":0,"pool_submit_finished":0,"pool_submit_failed":0,"pool_submit_ns":0,"completed_read":2,"expired_connections":0,"expired_phase_counts":{},"connections_closed_on_shutdown":0,"response_write_failures":0,"output_serialization_failures":0,"output_admission_refusals":0,"output_refusal_reservations":0,"peak_connections":1,"peak_paid_body_bytes":297129,"peak_mutating_grants":1,"peak_read_grants":1,"peak_spent":6,"spent_reservations":6,"peak_output_reserved_bytes":8404992,"delivered_response_frames":6,"retained_phase_errors":{},"body_bytes_received":396349,"response_bytes_written":105113,"cleanup_scans":3,"unknown_caller_durable_rows":0,"paid_body_reserved_bytes_after_shutdown":0,"output_reserved_bytes_after_shutdown":0,"mutating_grants_after_shutdown":0,"read_grants_after_shutdown":0}
+r5 postclockfailure=false metrics={"mutation_cpu_reservations":1,"mutation_cpu_refusals":3,"mutation_cpu_clock_failures":1,"mutation_cpu_charged_ns":0,"mutation_full_work_cpu_ns":0,"mutation_dispatch_excluding_work_cpu_ns":0,"mutation_body_decode_cpu_ns":0,"mutation_response_cpu_ns":0,"mutation_cpu_in_flight_after_shutdown":0,"mutation_cpu_credit_ns_after_shutdown":1905493312,"mutation_cpu_debt_ns_after_shutdown":0,"mutation_cpu_unavailable_after_shutdown":true,"accepted_connections":6,"capacity_refusals":0,"unpaid_pressure_cancel_requests":0,"unpaid_pressure_connections_closed":0,"preface_refusals":0,"challenge_budget_refusals":0,"pending_challenge_entered":6,"pending_challenge_granted":6,"pending_challenge_closed":0,"pending_challenge_wait_ns":6504486,"peak_pending_challenge":1,"issued_challenges":6,"ticket_refusals":0,"signature_refusals":0,"pq_authentication_attempts":0,"pq_authentication_bytes":0,"pq_authentication_thread_cpu_ns":0,"pq_authentication_unavailable":false,"spent_capacity_refusals":0,"paid_body_capacity_refusals":0,"lane_capacity_refusals":0,"pending_grant_entered":6,"pending_grant_granted":6,"pending_grant_closed":0,"pending_grant_wait_ns":6346181,"peak_pending_grant":1,"disconnected_await_requests":0,"tasks_skipped_before_dispatch":0,"abandoned_tasks":0,"tasks_enqueued":6,"tasks_dequeued":6,"replay_refusals":0,"queue_refusals":0,"queue_backpressure_events":0,"enqueued_after_backpressure":0,"queue_wait_ns":6280383,"peak_pending_enqueue":1,"disconnected_before_enqueue":0,"parse_refusals":0,"work_started":1,"work_finished":1,"work_failed":0,"work_ns":603819,"executor_refusals":3,"completed_submit":1,"completed_pool_submit":0,"completed_pool_status":0,"pool_submit_started":0,"pool_submit_finished":0,"pool_submit_failed":0,"pool_submit_ns":0,"completed_read":2,"expired_connections":0,"expired_phase_counts":{},"connections_closed_on_shutdown":0,"response_write_failures":0,"output_serialization_failures":0,"output_admission_refusals":0,"output_refusal_reservations":0,"peak_connections":1,"peak_paid_body_bytes":297129,"peak_mutating_grants":1,"peak_read_grants":1,"peak_spent":6,"spent_reservations":6,"peak_output_reserved_bytes":8404992,"delivered_response_frames":6,"retained_phase_errors":{},"body_bytes_received":396349,"response_bytes_written":105113,"cleanup_scans":3,"unknown_caller_durable_rows":0,"paid_body_reserved_bytes_after_shutdown":0,"output_reserved_bytes_after_shutdown":0,"mutating_grants_after_shutdown":0,"read_grants_after_shutdown":0}
+ok
+test ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work ... ok
+test ingress::public_v3::tests::dropped_queue_task_is_not_observed_closed_before_its_last_grant_releases ... ok
+test ingress::public_v3::tests::early_complete_body_waiting_for_ready_preserves_signed_native_submission ... ok
+test ingress::public_v3::tests::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline ... ok
+test ingress::public_v3::tests::failed_output_closes_only_that_connection_and_later_honest_request_succeeds ... ok
+test ingress::public_v3::tests::failed_scoped_previews_and_parallel_requests_keep_separate_complete_cpu ... 
+thread 'pon-exec-0' (4168201) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:6638:41:
+genuine test worker unwind
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+ok
+test ingress::public_v3::tests::finished_queue_and_failed_send_keep_output_owned_until_request_closes ... ok
+test ingress::public_v3::tests::fixed_preface_checks_all_bounds_before_paid_body_allocation ... ok
+test ingress::public_v3::tests::hmac_sha256_matches_rfc4231_and_fixed_32_byte_oracle_vectors ... ok
+test ingress::public_v3::tests::honest_fragmented_small_frames_and_body_100_to_300_ms_need_no_retry ... ok
+test ingress::public_v3::tests::live_cpu_cancels_real_scoped_preparation_and_joins_all_started_threads ... ok
+test ingress::public_v3::tests::live_cpu_partial_debits_and_residual_settlement_do_not_charge_twice ... ok
+test ingress::public_v3::tests::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock ... 
+thread '<unnamed>' (4168593) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:5934:13:
+controlled request registry poison
+ok
+test ingress::public_v3::tests::live_cpu_unknown_sample_and_overflow_disable_future_without_zero_refund ... ok
+test ingress::public_v3::tests::live_owner_cpu_is_observed_before_finish_and_full_interval_remains_authority ... ok
+test ingress::public_v3::tests::live_pool_budget_cancellation_does_not_classify_or_commit_abandoned_bundle ... ok
+test ingress::public_v3::tests::paid_envelope_malformed_body_is_accounted_before_signed_refusal ... ok
+test ingress::public_v3::tests::paid_envelope_resource_profile_has_fresh_exact_signed_commitment ... ok
+test ingress::public_v3::tests::paid_mutation_body_budget_preserves_signed_read_service_with_rotating_callers ... ok
+test ingress::public_v3::tests::paid_mutation_grants_are_global_across_identity_rotation_and_release_on_eof ... ok
+test ingress::public_v3::tests::paid_wrong_product_is_fully_rejected_and_the_preserved_valid_packet_is_activated ... ok
+test ingress::public_v3::tests::pool_body_guard_checks_shape_before_vector_allocation_and_closed_metadata ... ok
+test ingress::public_v3::tests::public_submit_and_pool_paths_keep_thread_observer_scope_and_refuse_precommit_child_clock_failure ... ok
+test ingress::public_v3::tests::queue_backpressure_preserves_deadline_and_releases_permits_on_drop ... ok
+test ingress::public_v3::tests::r4_challenge_burst_waits_with_existing_read_reserve_and_actual_shutdown ... ok
+test ingress::public_v3::tests::r4_cookie_time_refusal_counts_expiry_only_after_original_deadline ... ok
+test ingress::public_v3::tests::r4_correctly_signed_old_and_new_challenges_are_incompatible_both_directions ... ok
+test ingress::public_v3::tests::r4_paid_pending_eof_original_expiry_and_shutdown_never_create_body_or_work ... ok
+test ingress::public_v3::tests::r4_pending_early_stop_eof_and_cancelled_errors_are_not_expiry ... ok
+test ingress::public_v3::tests::r4_pending_heads_use_validated_readiness_and_original_expiry_boundaries ... ok
+test ingress::public_v3::tests::r4_pending_stage_deadline_error_counts_expiry_once_and_releases_connection ... ok
+test ingress::public_v3::tests::r4_real_paid_fifo_read_service_and_native_admission_after_holder_release ... ok
+test ingress::public_v3::tests::r4_typed_full_and_poison_keep_lane_body_reservations_atomic ... 
+thread '<unnamed>' (4169209) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:7150:13:
+controlled poison
+ok
+test ingress::public_v3::tests::r4_unrelated_eof_after_deadline_keeps_its_original_error_class ... ok
+test ingress::public_v3::tests::request_observer_matches_independent_client_received_signed_frame_lengths ... ok
+test ingress::public_v3::tests::request_observer_records_actual_partial_read_eof_and_quantum_writes ... ok
+test ingress::public_v3::tests::request_observer_retains_partial_output_bytes_after_actual_write_error ... ok
+test ingress::public_v3::tests::reservations_survive_queues_and_release_on_disconnect_and_dropped_output ... ok
+test ingress::public_v3::tests::resource_revision_r14_rejects_signed_old_cookies_and_preserves_control_output_reserve ... ok
+test ingress::public_v3::tests::shutdown_joins_all_workers_and_releases_queued_permits_before_returning_first_error ... 
+thread '<unnamed>' (4169222) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:5529:29:
+later scoped worker failure
+
+thread '<unnamed>' (4169224) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:5522:29:
+first scoped worker failure
+ok
+test ingress::public_v3::tests::slow_initial_frames_cannot_occupy_read_worker_or_renew_absolute_deadline ... ok
+test ingress::public_v3::tests::spent_cache_never_evicts_live_tokens_when_full ... ok
+test ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work ... ok
+test ingress::public_v3::tests::v2_magic_profile_and_signature_domains_are_rejected_exactly ... ok
+test ingress::public_v3::tests::w1_negative_cache_explicit_settings_are_bounded_before_service_startup ... ok
+test ingress::public_v3::tests::worker_clock_unknown_and_incomplete_or_overflowed_intervals_disable_new_starts ... ok
+test ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work ... ok
+
+test result: ok. 59 passed; 0 failed; 0 ignored; 0 measured; 1367 filtered out; finished in 14.16s
+

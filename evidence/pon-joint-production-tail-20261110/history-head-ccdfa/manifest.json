@@ -1,0 +1,10 @@
+{
+  "schema": "trnm-joint-history-readback-delivery-v1",
+  "readback_zip_bytes": 262600,
+  "readback_zip_sha256": "b171d53bb09f64f34c0538b7c44c6143b2d334e10427ac00c84736c0f6780d86",
+  "original_artifact_id": 13800576703,
+  "original_source": "ccdfa205880399d8a281a09914df0ab9f16f580d",
+  "original_tree": "9053ea46b29109240f0ce207c814fa783e99a0ea",
+  "original_native_result": "FAILED_EXIT_101",
+  "qualification": "HOLD_NO_GO"
+}

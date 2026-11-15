@@ -1,0 +1,120 @@
+{
+  "component_readback_valid": true,
+  "original_025_cpu_profile_qualified": false,
+  "per_arm_block_cpu_ns": null,
+  "qualification": "HOLD_NO_GO",
+  "qualified_confirmed_tps": null,
+  "reader_sha256": "bfb080d22d3d6765f210730e6f0bb46e5c0d198864c6710796777bd319283a52",
+  "root_arm_medians_two_processes_each": {
+    "original": {
+      "process_peak_rss_kib": 205704.0,
+      "process_total_cpu_seconds": 1.1553879999999999,
+      "process_wall_ns": 1162697223.5,
+      "root_wall_ns": 1090858571.0
+    },
+    "streamed": {
+      "process_peak_rss_kib": 72416.0,
+      "process_total_cpu_seconds": 1.1533164999999999,
+      "process_wall_ns": 1178383646.0,
+      "root_wall_ns": 1079421904.0
+    }
+  },
+  "root_candidate_change_percent": {
+    "process_peak_rss_kib": -64.79601757865672,
+    "process_total_cpu_seconds": -0.1792904201878498,
+    "process_wall_ns": 1.3491407894464569,
+    "root_wall_ns": -1.0484096934322062
+  },
+  "root_cpu_scope": "whole process including state construction and teardown; not root hashing CPU",
+  "root_runs": [
+    {
+      "i": 0,
+      "implementation": "original",
+      "process_peak_rss_kib": 205720,
+      "process_system_cpu_seconds": 0.138343,
+      "process_total_cpu_seconds": 1.087807,
+      "process_user_cpu_seconds": 0.949464,
+      "process_wall_ns": 1092238207,
+      "root": "0a2398d9d2b2862a6eccbb96b4e1127c028c4bc0958af7053b251a8bab8c38e3",
+      "root_wall_ns": 1027088644,
+      "stdout_sha256": "173db48c94b7d30d46ab0b84fbe04bbdfd81e8ba57adccffb7ad00896d25e0de"
+    },
+    {
+      "i": 1,
+      "implementation": "streamed",
+      "process_peak_rss_kib": 72200,
+      "process_system_cpu_seconds": 0.07607499999999999,
+      "process_total_cpu_seconds": 1.1430339999999999,
+      "process_user_cpu_seconds": 1.066959,
+      "process_wall_ns": 1175825838,
+      "root": "0a2398d9d2b2862a6eccbb96b4e1127c028c4bc0958af7053b251a8bab8c38e3",
+      "root_wall_ns": 1056086601,
+      "stdout_sha256": "fc8151500ebd7ba2d511ede69015d8c30bb2851a0b5e92add821b76729299528"
+    },
+    {
+      "i": 2,
+      "implementation": "streamed",
+      "process_peak_rss_kib": 72632,
+      "process_system_cpu_seconds": 0.060791,
+      "process_total_cpu_seconds": 1.163599,
+      "process_user_cpu_seconds": 1.102808,
+      "process_wall_ns": 1180941454,
+      "root": "0a2398d9d2b2862a6eccbb96b4e1127c028c4bc0958af7053b251a8bab8c38e3",
+      "root_wall_ns": 1102757207,
+      "stdout_sha256": "042c9aed49c267288071eb9663f6c3395135b7d16401b80d2f4403e5ff2d7476"
+    },
+    {
+      "i": 3,
+      "implementation": "original",
+      "process_peak_rss_kib": 205688,
+      "process_system_cpu_seconds": 0.18745399999999998,
+      "process_total_cpu_seconds": 1.222969,
+      "process_user_cpu_seconds": 1.035515,
+      "process_wall_ns": 1233156240,
+      "root": "0a2398d9d2b2862a6eccbb96b4e1127c028c4bc0958af7053b251a8bab8c38e3",
+      "root_wall_ns": 1154628498,
+      "stdout_sha256": "7c91be94a98221a6969502414ab41b0b5758114d076d2baa7c2486b1f305d064"
+    }
+  ],
+  "schema": "trnm-independent-mvcc-readback-v1",
+  "small_sample_not_general_performance_estimate": true,
+  "source_native_execution_count": 1,
+  "whole_block_cohorts": [
+    {
+      "candidate_faster_pairs": 7,
+      "candidate_wall_median_ns": 19240576.0,
+      "paired_wall_ratio_median": 0.9619508330098095,
+      "ratio_of_wall_medians": 0.8877167441573124,
+      "reference_wall_median_ns": 21674229.0,
+      "senders": 2,
+      "slower_pairs": 5,
+      "tied_pairs": 0,
+      "verified": true,
+      "wall_reduction_percent_from_medians": 11.228325584268761
+    },
+    {
+      "candidate_faster_pairs": 5,
+      "candidate_wall_median_ns": 19150352.5,
+      "paired_wall_ratio_median": 1.0631188633208946,
+      "ratio_of_wall_medians": 1.018945709629815,
+      "reference_wall_median_ns": 18794281.5,
+      "senders": 64,
+      "slower_pairs": 7,
+      "tied_pairs": 0,
+      "verified": true,
+      "wall_reduction_percent_from_medians": -1.89457096298149
+    },
+    {
+      "candidate_faster_pairs": 4,
+      "candidate_wall_median_ns": 27420415.5,
+      "paired_wall_ratio_median": 1.1312770812410997,
+      "ratio_of_wall_medians": 1.0817520116751702,
+      "reference_wall_median_ns": 25348153.0,
+      "senders": 256,
+      "slower_pairs": 8,
+      "tied_pairs": 0,
+      "verified": true,
+      "wall_reduction_percent_from_medians": -8.17520116751702
+    }
+  ]
+}

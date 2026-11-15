@@ -1,0 +1,571 @@
+{
+  "artifact_retention_note": "These are derived readbacks with original ZIP/member digests. Complete downloaded ZIPs were inspected in the task workspace; they are not duplicated in this evidence directory. The remote Actions artifacts remain subject to their original retention.",
+  "artifacts": [
+    {
+      "digest": "sha256:be1afef80eab1f5d1912d32dacbea60b9b167b14d6fd6b913160113935687b89",
+      "id": 14144670747,
+      "name": "rust-shard-prospective-merge-83035e235946bdcf505f64318bf1f2a1b7733c94-1-quality",
+      "size": 1632
+    },
+    {
+      "digest": "sha256:1fb53b63bc72488c009f39ee9bae2e53c837c584fa03f7ca4ebabd675114b829",
+      "id": 14144366712,
+      "name": "rust-observations-prospective-merge-83035e235946bdcf505f64318bf1f2a1b7733c94-1-quality",
+      "size": 183460669
+    },
+    {
+      "digest": "sha256:5a4344fc7cd31d8304306e84adbd2dfc5064fb0232938417a9a229e6628347a9",
+      "id": 14144126133,
+      "name": "rust-fanin-head-c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636-1",
+      "size": 798
+    },
+    {
+      "digest": "sha256:ceea2670e03a1b3ea3256ab50a2995975fe89f5f8eb4b48def8f5d171a21f2ac",
+      "id": 14143776715,
+      "name": "rust-observations-head-c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636-1-runtime",
+      "size": 15656599
+    },
+    {
+      "digest": "sha256:49cf13ba1fe845159a1b7844a8d23443faf5c19f9181c5ab253c450fa2a023d4",
+      "id": 14143761803,
+      "name": "rust-shard-head-c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636-1-runtime",
+      "size": 2257
+    },
+    {
+      "digest": "sha256:669644d59f18fd3b6f19329c489aa8db030393c36969d747571a8d0266d38ee0",
+      "id": 14143739982,
+      "name": "rust-fanin-prospective-merge-83035e235946bdcf505f64318bf1f2a1b7733c94-1",
+      "size": 625
+    },
+    {
+      "digest": "sha256:258a2ca3fe70913f32728ff412e5f782f54727ff9a4549ef85cf4fe441e7c820",
+      "id": 14143129184,
+      "name": "rust-shard-head-c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636-1-quality",
+      "size": 1581
+    },
+    {
+      "digest": "sha256:020a074337f0aee35c033c1411bf2127615e0b85878ea31d7383770950b6bf2d",
+      "id": 14142984478,
+      "name": "rust-observations-head-c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636-1-quality",
+      "size": 183460549
+    },
+    {
+      "digest": "sha256:a7b263981216c05b23548e777e5a2e4a4e7b90b1a2f3c8f827cb52448a1f414e",
+      "id": 14141897994,
+      "name": "head-protocol-contract-c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636-1",
+      "size": 7293069
+    },
+    {
+      "digest": "sha256:9b16217c325ae8d42982bf0db00a3c62a32c271f46803ec4c1ac26959a501a3b",
+      "id": 14141798166,
+      "name": "merge-protocol-contract-83035e235946bdcf505f64318bf1f2a1b7733c94-1",
+      "size": 7327127
+    },
+    {
+      "digest": "sha256:85f83cd506abd0a1646029cedf22e97050609bdedafa350fcf937f5cfa9d3b09",
+      "id": 14141251072,
+      "name": "rust-observations-prospective-merge-83035e235946bdcf505f64318bf1f2a1b7733c94-1-runtime",
+      "size": 538731
+    },
+    {
+      "digest": "sha256:5734cfe29e6623388dc2209caa8266440de9954e86f3c3366e719cc7e08b503a",
+      "id": 14140902387,
+      "name": "head-fuzz-smoke-c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636-1",
+      "size": 232195
+    },
+    {
+      "digest": "sha256:65c2efab878c89c2775b4bcf1ff2a503272166801c854127c14265021c5c8bb6",
+      "id": 14140862039,
+      "name": "merge-repository-truth-83035e235946bdcf505f64318bf1f2a1b7733c94-1",
+      "size": 10974
+    },
+    {
+      "digest": "sha256:fd621b33cc78c44816d8bbd2c563b3aa4cd55bad885f62a4beb40e1869dcc3d9",
+      "id": 14140857028,
+      "name": "head-repository-truth-c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636-1",
+      "size": 10924
+    },
+    {
+      "digest": "sha256:618dc1ab798b37d9c235374460c885cfd4f181b3821a40943031323dab981559",
+      "id": 14140795544,
+      "name": "cost-x64-c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636-1",
+      "size": 10321806
+    },
+    {
+      "digest": "sha256:70c52db3dc102c3b03930fd890c89967f1391d4746fc8297d3c65894961d235d",
+      "id": 14140715428,
+      "name": "w1-reuse-v3-prospective-merge-x64-83035e235946bdcf505f64318bf1f2a1b7733c94-1",
+      "size": 4412896
+    },
+    {
+      "digest": "sha256:246d6d07faa660fed9d0261b8c714591b49890fd86dac14ff0ddc47c1a1dccba",
+      "id": 14140697620,
+      "name": "merge-fuzz-smoke-83035e235946bdcf505f64318bf1f2a1b7733c94-1",
+      "size": 256387
+    },
+    {
+      "digest": "sha256:f082d045d8277c32363c4918aa5aabff883ec4a4c308de567983ff96aef99d6d",
+      "id": 14140501321,
+      "name": "w1-reuse-v3-head-arm64-c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636-1",
+      "size": 4413906
+    },
+    {
+      "digest": "sha256:b5345b0bec1ff91bda924c2f9dbb75f33dda1a2f6fe44ac0ff601f3d89062b82",
+      "id": 14140489615,
+      "name": "rust-shard-prospective-merge-83035e235946bdcf505f64318bf1f2a1b7733c94-1-runtime",
+      "size": 2309
+    },
+    {
+      "digest": "sha256:85408ec61b7d2779c44dd007d96d37225228be4378fb072ec6c9f3d8c302c2f0",
+      "id": 14140481329,
+      "name": "w1-reuse-v3-prospective-merge-arm64-83035e235946bdcf505f64318bf1f2a1b7733c94-1",
+      "size": 4414151
+    },
+    {
+      "digest": "sha256:54b63a137d9962ea5dac99fee41960ee71c8091ed0a8ea593dc7cad22691a7eb",
+      "id": 14140461996,
+      "name": "merge-external-evidence-contract-83035e235946bdcf505f64318bf1f2a1b7733c94-1",
+      "size": 426
+    },
+    {
+      "digest": "sha256:5f3da18376365c1fbae7e9e851bf5ed7e8cc7a0fcf34b9872969cf0c3af0fb6d",
+      "id": 14140167751,
+      "name": "head-external-evidence-contract-c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636-1",
+      "size": 376
+    },
+    {
+      "digest": "sha256:df73c199cc0ced54965bb767826555db88a24e5657efab8c98c0dfd68ac6fec7",
+      "id": 14140058127,
+      "name": "cost-arm64-c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636-1",
+      "size": 9921541
+    },
+    {
+      "digest": "sha256:d1502bc9fb155971723c4d7507c50eb056d5d16186caba47bfe9c83bb817acc6",
+      "id": 14140004024,
+      "name": "w1-reuse-v3-head-x64-c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636-1",
+      "size": 4413959
+    },
+    {
+      "digest": "sha256:a40707d0648755e685045cb6c943fdd398ab958b2bde39090c069671bcb25473",
+      "id": 14139808808,
+      "name": "cost-consistency-c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636-1",
+      "size": 26806
+    }
+  ],
+  "candidate": "c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636",
+  "ci_run_id": 43658725402,
+  "jobs": [
+    {
+      "completed_at": "2026-11-15T03:14:02Z",
+      "conclusion": "success",
+      "id": 132650636053,
+      "name": "prospective Rust shard (quality)",
+      "started_at": "2026-11-15T01:02:58Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T01:11:47Z",
+      "conclusion": "failure",
+      "id": 132650636231,
+      "name": "cross-arch-cost (arm64)",
+      "started_at": "2026-11-15T01:03:00Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T01:20:11Z",
+      "conclusion": "success",
+      "id": 132650636238,
+      "name": "prospective-merge (repository-truth)",
+      "started_at": "2026-11-15T01:02:58Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T02:55:48Z",
+      "conclusion": "success",
+      "id": 132650636249,
+      "name": "rust-baseline shard (quality)",
+      "started_at": "2026-11-15T01:02:59Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T01:07:05Z",
+      "conclusion": "success",
+      "id": 132650636254,
+      "name": "W1 actual reuse V3 (x64, prospective-merge)",
+      "started_at": "2026-11-15T01:02:59Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T01:23:33Z",
+      "conclusion": "success",
+      "id": 132650636264,
+      "name": "fuzz-smoke",
+      "started_at": "2026-11-15T01:02:59Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T01:07:19Z",
+      "conclusion": "success",
+      "id": 132650636276,
+      "name": "W1 actual reuse V3 (x64, head)",
+      "started_at": "2026-11-15T01:02:58Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T01:09:35Z",
+      "conclusion": "failure",
+      "id": 132650636277,
+      "name": "cross-arch-cost (x64)",
+      "started_at": "2026-11-15T01:02:59Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T01:08:25Z",
+      "conclusion": "success",
+      "id": 132650636287,
+      "name": "W1 actual reuse V3 (arm64, head)",
+      "started_at": "2026-11-15T01:03:01Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T01:20:01Z",
+      "conclusion": "success",
+      "id": 132650636290,
+      "name": "repository-truth",
+      "started_at": "2026-11-15T01:02:58Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T01:20:52Z",
+      "conclusion": "success",
+      "id": 132650636293,
+      "name": "prospective-merge (fuzz-smoke)",
+      "started_at": "2026-11-15T01:02:58Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T01:29:46Z",
+      "conclusion": "failure",
+      "id": 132650636305,
+      "name": "prospective Rust shard (runtime)",
+      "started_at": "2026-11-15T01:02:58Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T01:58:06Z",
+      "conclusion": "failure",
+      "id": 132650636310,
+      "name": "prospective-merge (protocol-contract)",
+      "started_at": "2026-11-15T01:02:57Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T01:11:32Z",
+      "conclusion": "success",
+      "id": 132650636334,
+      "name": "external-evidence-contract",
+      "started_at": "2026-11-15T01:02:59Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T01:58:18Z",
+      "conclusion": "failure",
+      "id": 132650636344,
+      "name": "protocol-contract",
+      "started_at": "2026-11-15T01:02:58Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T01:11:19Z",
+      "conclusion": "success",
+      "id": 132650636367,
+      "name": "prospective-merge (external-evidence-contract)",
+      "started_at": "2026-11-15T01:02:59Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T02:53:40Z",
+      "conclusion": "success",
+      "id": 132650636393,
+      "name": "rust-baseline shard (runtime)",
+      "started_at": "2026-11-15T01:02:58Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T01:08:13Z",
+      "conclusion": "success",
+      "id": 132650636413,
+      "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+      "started_at": "2026-11-15T01:03:01Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T01:13:30Z",
+      "conclusion": "success",
+      "id": 132652896243,
+      "name": "cross-arch-cost-consistency",
+      "started_at": "2026-11-15T01:11:50Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T02:57:20Z",
+      "conclusion": "success",
+      "id": 132677784493,
+      "name": "rust-baseline",
+      "started_at": "2026-11-15T02:55:51Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-15T03:15:08Z",
+      "conclusion": "failure",
+      "id": 132682083309,
+      "name": "prospective-merge (rust-baseline)",
+      "started_at": "2026-11-15T03:14:04Z",
+      "status": "completed"
+    }
+  ],
+  "main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "observed_at_utc": "2026-11-15T07:32:01.012Z",
+  "original_confirmation_artifacts": [
+    {
+      "artifact_id": 14141897994,
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43658725402/artifacts/14141897994",
+      "finite_target_met": false,
+      "invariant_target_met": true,
+      "matches_github_digest": true,
+      "phases": [
+        {
+          "attacker_workers_cpu_ns": 0,
+          "client_confirmation_latency_ns": 2786422019,
+          "client_confirmed_before_original_window_end": true,
+          "client_confirmed_transactions": 1,
+          "completed_false_calls_at_confirmation": 0,
+          "finite_business_target_met": true,
+          "full_native_state_equal": true,
+          "honest_submission_count": 7,
+          "independent_history_page_count": 7,
+          "independent_replay_and_confirmation_cpu_ns": 494350320,
+          "independent_replay_and_confirmation_wall_ns": 2585630817,
+          "invariant_target_met": true,
+          "mode": "attack-free-baseline",
+          "no_attack_accepted": true,
+          "production_activation": false,
+          "requested_window_ns": 4000000000,
+          "verification_errors": [],
+          "work_profile_qualified": false,
+          "workers": 0
+        },
+        {
+          "attacker_workers_cpu_ns": 333676837,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_before_original_window_end": false,
+          "client_confirmed_transactions": 0,
+          "completed_false_calls_at_confirmation": 385,
+          "finite_business_target_met": false,
+          "full_native_state_equal": false,
+          "honest_submission_count": 7,
+          "independent_history_page_count": 2,
+          "independent_replay_and_confirmation_cpu_ns": 145474805,
+          "independent_replay_and_confirmation_wall_ns": 2600453142,
+          "invariant_target_met": true,
+          "mode": "from-zero-pressure",
+          "no_attack_accepted": true,
+          "production_activation": false,
+          "requested_window_ns": 4000000000,
+          "verification_errors": [],
+          "work_profile_qualified": false,
+          "workers": 16
+        }
+      ],
+      "report_member": "from-zero-native/confirmation/report.json",
+      "report_sha256": "e3a3cb3863ab57a3969d66ac3ff3f29ed0c0e355712fa4ee3766b4a2ef2f5f0a",
+      "zip_bytes": 7293069,
+      "zip_name": "chain-c3-head-protocol.zip",
+      "zip_sha256": "a7b263981216c05b23548e777e5a2e4a4e7b90b1a2f3c8f827cb52448a1f414e"
+    },
+    {
+      "artifact_id": 14141798166,
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43658725402/artifacts/14141798166",
+      "finite_target_met": false,
+      "invariant_target_met": true,
+      "matches_github_digest": true,
+      "phases": [
+        {
+          "attacker_workers_cpu_ns": 0,
+          "client_confirmation_latency_ns": 2795955477,
+          "client_confirmed_before_original_window_end": true,
+          "client_confirmed_transactions": 1,
+          "completed_false_calls_at_confirmation": 0,
+          "finite_business_target_met": true,
+          "full_native_state_equal": true,
+          "honest_submission_count": 7,
+          "independent_history_page_count": 7,
+          "independent_replay_and_confirmation_cpu_ns": 494105316,
+          "independent_replay_and_confirmation_wall_ns": 2523189122,
+          "invariant_target_met": true,
+          "mode": "attack-free-baseline",
+          "no_attack_accepted": true,
+          "production_activation": false,
+          "requested_window_ns": 4000000000,
+          "verification_errors": [],
+          "work_profile_qualified": false,
+          "workers": 0
+        },
+        {
+          "attacker_workers_cpu_ns": 349844313,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_before_original_window_end": false,
+          "client_confirmed_transactions": 0,
+          "completed_false_calls_at_confirmation": 401,
+          "finite_business_target_met": false,
+          "full_native_state_equal": false,
+          "honest_submission_count": 7,
+          "independent_history_page_count": 2,
+          "independent_replay_and_confirmation_cpu_ns": 128661552,
+          "independent_replay_and_confirmation_wall_ns": 2595942399,
+          "invariant_target_met": true,
+          "mode": "from-zero-pressure",
+          "no_attack_accepted": true,
+          "production_activation": false,
+          "requested_window_ns": 4000000000,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "work_profile_qualified": false,
+          "workers": 16
+        }
+      ],
+      "report_member": "from-zero-native/confirmation/report.json",
+      "report_sha256": "16009b2e73316ad7de7515111fc60b47d18720e5707c7925cc7ebebd76e35ef1",
+      "zip_bytes": 7327127,
+      "zip_name": "chain-c3-merge-protocol.zip",
+      "zip_sha256": "9b16217c325ae8d42982bf0db00a3c62a32c271f46803ec4c1ac26959a501a3b"
+    },
+    {
+      "artifact_id": 14140058127,
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43658725402/artifacts/14140058127",
+      "finite_target_met": false,
+      "invariant_target_met": true,
+      "matches_github_digest": true,
+      "phases": [
+        {
+          "attacker_workers_cpu_ns": 0,
+          "client_confirmation_latency_ns": 1882221468,
+          "client_confirmed_before_original_window_end": true,
+          "client_confirmed_transactions": 1,
+          "completed_false_calls_at_confirmation": 0,
+          "finite_business_target_met": true,
+          "full_native_state_equal": true,
+          "honest_submission_count": 7,
+          "independent_history_page_count": 7,
+          "independent_replay_and_confirmation_cpu_ns": 294041672,
+          "independent_replay_and_confirmation_wall_ns": 1679520178,
+          "invariant_target_met": true,
+          "mode": "attack-free-baseline",
+          "no_attack_accepted": true,
+          "production_activation": false,
+          "requested_window_ns": 4000000000,
+          "verification_errors": [],
+          "work_profile_qualified": false,
+          "workers": 0
+        },
+        {
+          "attacker_workers_cpu_ns": 343168960,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_before_original_window_end": false,
+          "client_confirmed_transactions": 0,
+          "completed_false_calls_at_confirmation": 466,
+          "finite_business_target_met": false,
+          "full_native_state_equal": false,
+          "honest_submission_count": 7,
+          "independent_history_page_count": 5,
+          "independent_replay_and_confirmation_cpu_ns": 165529536,
+          "independent_replay_and_confirmation_wall_ns": 3096304318,
+          "invariant_target_met": true,
+          "mode": "from-zero-pressure",
+          "no_attack_accepted": true,
+          "production_activation": false,
+          "requested_window_ns": 4000000000,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "work_profile_qualified": false,
+          "workers": 16
+        }
+      ],
+      "report_member": "from-zero-native/confirmation/report.json",
+      "report_sha256": "c05132a0157a97e05b088e934363a383568c914a20a37efa187b420e084c8f0f",
+      "zip_bytes": 9921541,
+      "zip_name": "chain-c3-arm64-cost.zip",
+      "zip_sha256": "df73c199cc0ced54965bb767826555db88a24e5657efab8c98c0dfd68ac6fec7"
+    },
+    {
+      "artifact_id": 14140795544,
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43658725402/artifacts/14140795544",
+      "finite_target_met": false,
+      "invariant_target_met": true,
+      "matches_github_digest": true,
+      "phases": [
+        {
+          "attacker_workers_cpu_ns": 0,
+          "client_confirmation_latency_ns": 2401158954,
+          "client_confirmed_before_original_window_end": true,
+          "client_confirmed_transactions": 1,
+          "completed_false_calls_at_confirmation": 0,
+          "finite_business_target_met": true,
+          "full_native_state_equal": true,
+          "honest_submission_count": 7,
+          "independent_history_page_count": 7,
+          "independent_replay_and_confirmation_cpu_ns": 437935378,
+          "independent_replay_and_confirmation_wall_ns": 2286576305,
+          "invariant_target_met": true,
+          "mode": "attack-free-baseline",
+          "no_attack_accepted": true,
+          "production_activation": false,
+          "requested_window_ns": 4000000000,
+          "verification_errors": [],
+          "work_profile_qualified": false,
+          "workers": 0
+        },
+        {
+          "attacker_workers_cpu_ns": 286754105,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_before_original_window_end": false,
+          "client_confirmed_transactions": 0,
+          "completed_false_calls_at_confirmation": 484,
+          "finite_business_target_met": false,
+          "full_native_state_equal": false,
+          "honest_submission_count": 7,
+          "independent_history_page_count": 4,
+          "independent_replay_and_confirmation_cpu_ns": 240061541,
+          "independent_replay_and_confirmation_wall_ns": 3098990250,
+          "invariant_target_met": true,
+          "mode": "from-zero-pressure",
+          "no_attack_accepted": true,
+          "production_activation": false,
+          "requested_window_ns": 4000000000,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "work_profile_qualified": false,
+          "workers": 16
+        }
+      ],
+      "report_member": "from-zero-native/confirmation/report.json",
+      "report_sha256": "c902732409278496101011f2c6ed27d42c5c9890028885a40d86ed0b484b9bd7",
+      "zip_bytes": 10321806,
+      "zip_name": "chain-c3-x64-cost.zip",
+      "zip_sha256": "618dc1ab798b37d9c235374460c885cfd4f181b3821a40943031323dab981559"
+    }
+  ],
+  "qualification": {
+    "all_required_checks_passed": false,
+    "branches_deleted": false,
+    "new_source_tested_by_original_run": false,
+    "protected_main_merged": false
+  },
+  "repo": "TrillionniumFoundation/Trillionnium-Chain",
+  "review_threads": {
+    "review_threads": []
+  }
+}

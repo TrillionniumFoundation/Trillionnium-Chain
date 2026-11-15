@@ -1,0 +1,268 @@
+{
+  "source_commit": "e40564bc32d311cb95a284c2bf3cc2a50de551d9",
+  "source_tree": "5ccbbe82933533522d0ca91febf690c20bef9cd1",
+  "library_results": [
+    {
+      "package": "trnm-audit-events",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-checkpoint-store",
+      "passed": 10,
+      "failed": 1,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-checkpoint-types",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-control-plane",
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-crypto-primitives",
+      "passed": 150,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-data-availability",
+      "passed": 337,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-escrow-vault",
+      "passed": 33,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-executor",
+      "passed": 262,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-governance-guard",
+      "passed": 41,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-mempool",
+      "passed": 153,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-mvcc-fee",
+      "passed": 141,
+      "failed": 0,
+      "ignored": 8
+    },
+    {
+      "package": "trnm-oracle",
+      "passed": 118,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-peer-lease",
+      "passed": 83,
+      "failed": 5,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-protocol",
+      "passed": 60,
+      "failed": 0,
+      "ignored": 2
+    },
+    {
+      "package": "trnm-release-bundle",
+      "passed": 18,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-research-protocol",
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-service-settlement",
+      "passed": 46,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-sqlite-io-boundary",
+      "passed": 13,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-state-import",
+      "passed": 17,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-task-kernel",
+      "passed": 28,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-transport",
+      "passed": 12,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-types",
+      "passed": 206,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-verification-profiles",
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "binary_results": [
+    {
+      "package": "trnm-bench",
+      "passed": 11,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "package": "trnm-worker-agent",
+      "passed": 335,
+      "failed": 36,
+      "ignored": 0
+    }
+  ],
+  "environment": {
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_BUILD_JOBS": "1"
+  },
+  "full_workspace_command_passed": false,
+  "release_gate_accepted": false,
+  "worker_cleanup_failure_diagnosis": "Stable live tasks lack /proc/self/task/<tid>/children. Task stat and waitid work, but a complete child ownership snapshot is unavailable. The original cleanup deadline refuses success. No source change or fallback.",
+  "logs": [
+    {
+      "path": "remaining-workspace-libraries.txt.gz",
+      "uncompressed_sha256": "a63ba8ba07f8697aff4a947c56c86ab9827da57f281328dd663cc3db63d6eb70"
+    },
+    {
+      "path": "remaining-workspace-libraries-continuation.txt.gz",
+      "uncompressed_sha256": "462c6c4e911d6292b3053a82683ea79a87c8975714aea9f88931ef4323038e45"
+    },
+    {
+      "path": "binary-only-package-tests.txt.gz",
+      "uncompressed_sha256": "322d83a4440c596a87a3fd0cd9518cff173bb473f36376f6079d5afc91aff5f2"
+    },
+    {
+      "path": "mixed-package-binary-tests.txt.gz",
+      "uncompressed_sha256": "1cbec4c44cbce7bd4db2f8ec971e5c231654746765acc475b9a7a3b76a27b36b"
+    },
+    {
+      "path": "workspace-all-targets-clippy.txt.gz",
+      "uncompressed_sha256": "a9557cdb72d1fa5e482cce1d0a0bfc40283bcaf5a1aef4ae46d5d5272067a858"
+    },
+    {
+      "path": "peer-lease-gated-clippy.txt.gz",
+      "uncompressed_sha256": "8f696d5f5947d79df261ac5857f0585879ee9daa338ec1f3d65b95cf56d61d14"
+    },
+    {
+      "path": "worker-cleanup-baseline.txt.gz",
+      "uncompressed_sha256": "9ae9208cae751f322543c23094d1bd0c98988970608cb191e2a8ae1f7c8a1703"
+    }
+  ],
+  "strict_workspace_all_targets_clippy": {
+    "status": "PASS",
+    "exit_code": 0,
+    "scope": "default-feature eligible targets; not a single all-features workspace run"
+  },
+  "candidate_recovery_socket_clippy": {
+    "status": "PASS",
+    "exit_code": 0,
+    "runtime_tests_executed": false
+  },
+  "workspace_format": {
+    "status": "PASS",
+    "exit_code": 0
+  },
+  "mixed_binary_results": [
+    {
+      "target": "trnm-external-node-checkpoint-v2",
+      "passed": 15,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "trnm-cell",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "trnm-cell-discovery",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "trnm-mempool",
+      "passed": 46,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "trnm-payload-replay-recovery-v1",
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "trnm-peer-lease-daemon",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "trnm-peer-lease-daemon-v1",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "trnm-pon-node",
+      "passed": 13,
+      "failed": 1,
+      "ignored": 0
+    }
+  ],
+  "unexecuted_runtime_scope": [
+    "integration-test targets",
+    "example targets",
+    "doc tests",
+    "candidate-recovery-socket gated binary and integration test",
+    "all original ignored release/cost campaigns"
+  ],
+  "source_unchanged_after_execution": true
+}

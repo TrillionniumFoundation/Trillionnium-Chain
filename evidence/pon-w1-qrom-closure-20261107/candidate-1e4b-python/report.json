@@ -1,0 +1,197 @@
+{
+  "all_executed_checks_passed": true,
+  "all_requested_checks_passed": false,
+  "all_three_python_groups_passed": true,
+  "candidate": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+  "driver_sha256": "9d7cbb1eb45bce72ba774c667423957644afd44351c57eec56a7c450899e30c5",
+  "finished_utc": "2026-11-07T15:13:40.252017+00:00",
+  "post_quantum_soundness_qualified": false,
+  "production_qualified": false,
+  "records": [
+    {
+      "args": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_w1_*.py",
+        "-v"
+      ],
+      "command_passed": true,
+      "exit_code": 0,
+      "expected_tests": 314,
+      "final_plain_OK": true,
+      "label": "w1-314",
+      "non_ok_verbose_lines": [],
+      "reported_counts": [
+        314
+      ],
+      "seconds": 54.35821815789677,
+      "stderr_bytes": 53599,
+      "stderr_sha256": "b64e20f12569dfe9730c8693752972e280d9ac7838fe805d72a03dca7d88c153",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "successful_verbose_test_lines": 314,
+      "timed_out": false,
+      "timeout_seconds": 600,
+      "verbose_test_line_count": 314
+    },
+    {
+      "args": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_ci_contract",
+        "test_ci_source_integrity"
+      ],
+      "command_passed": true,
+      "exit_code": 0,
+      "expected_tests": 147,
+      "final_plain_OK": true,
+      "label": "ci-contract-source-147",
+      "non_ok_verbose_lines": [],
+      "reported_counts": [
+        147
+      ],
+      "seconds": 22.072453716071323,
+      "stderr_bytes": 25174,
+      "stderr_sha256": "a43671617680ec9bbc9d366f6bc90a5e884360efcc9f62dab9f752f48b3afb30",
+      "stdout_bytes": 484,
+      "stdout_sha256": "609e2768bafa3d535e2c6a155beb96f01d65a283cfc4868c6182860c72c8fe5c",
+      "successful_verbose_test_lines": 147,
+      "timed_out": false,
+      "timeout_seconds": 300,
+      "verbose_test_line_count": 147
+    },
+    {
+      "args": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_pq_research_integration"
+      ],
+      "command_passed": true,
+      "exit_code": 0,
+      "expected_tests": 38,
+      "final_plain_OK": true,
+      "label": "pq-research-38",
+      "non_ok_verbose_lines": [],
+      "reported_counts": [
+        38
+      ],
+      "seconds": 109.13920947210863,
+      "stderr_bytes": 6259,
+      "stderr_sha256": "35b550beecbf0df75c20f62b709571d3a5b00899fa0d030c1415b6ba0bb36d51",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "successful_verbose_test_lines": 38,
+      "timed_out": false,
+      "timeout_seconds": 300,
+      "verbose_test_line_count": 38
+    },
+    {
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "command_passed": true,
+      "exit_code": 0,
+      "expected_tests": null,
+      "final_plain_OK": false,
+      "label": "preflight-dev",
+      "non_ok_verbose_lines": [],
+      "reported_counts": [],
+      "seconds": 0.11507066199555993,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 176,
+      "stdout_sha256": "c7c16fa4063ae662f66ad87360110011edd94c2df0a2066a261de290db051c78",
+      "successful_verbose_test_lines": 0,
+      "timed_out": false,
+      "timeout_seconds": 120,
+      "verbose_test_line_count": 0
+    },
+    {
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "command_passed": true,
+      "exit_code": 0,
+      "expected_tests": null,
+      "final_plain_OK": false,
+      "label": "preflight-audit",
+      "non_ok_verbose_lines": [],
+      "reported_counts": [],
+      "seconds": 0.11472465586848557,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 178,
+      "stdout_sha256": "51a5abc2021052aea213b79dde0b32428dc5a763c2cc00d35986433f71cab67b",
+      "successful_verbose_test_lines": 0,
+      "timed_out": false,
+      "timeout_seconds": 120,
+      "verbose_test_line_count": 0
+    },
+    {
+      "args": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "command_passed": true,
+      "exit_code": 0,
+      "expected_tests": null,
+      "final_plain_OK": false,
+      "label": "source-pin-check",
+      "non_ok_verbose_lines": [],
+      "reported_counts": [],
+      "seconds": 0.9170361731667072,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 557,
+      "stdout_sha256": "2b026ff2da40cb1d0c0c9ef9f79a5bf2f6121966780ccf027bccd5e45eca3603",
+      "successful_verbose_test_lines": 0,
+      "timed_out": false,
+      "timeout_seconds": 300,
+      "verbose_test_line_count": 0
+    },
+    {
+      "args": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "command_passed": true,
+      "exit_code": 0,
+      "expected_tests": null,
+      "final_plain_OK": false,
+      "label": "inventory-check",
+      "non_ok_verbose_lines": [],
+      "reported_counts": [],
+      "seconds": 0.11558723310008645,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 35,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "successful_verbose_test_lines": 0,
+      "timed_out": false,
+      "timeout_seconds": 300,
+      "verbose_test_line_count": 0
+    }
+  ],
+  "repository_link_check_pending": true,
+  "repository_link_checker_candidates": [],
+  "schema": "TRNM-W1-A-DESKTOP-PYTHON-4991",
+  "selected_source_and_fixture_before_after_identical": true,
+  "selected_source_bytes": 52119220,
+  "selected_source_count": 2830,
+  "tree": "23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0",
+  "whole_source_qualified": false
+}

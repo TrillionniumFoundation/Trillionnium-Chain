@@ -1,0 +1,46 @@
+{
+  "observed_at": "2026-11-08T01:03:09.088830+00:00",
+  "status": "actual_native_confirmation_target_not_met",
+  "all_native_test_invocations_exit_zero": null,
+  "manifest_passed": false,
+  "execution_finished": false,
+  "confirmation_report_sha256": "a766e09416e0924c175e99abb04bdd5576f0beafd639654dd82b46db761467ac",
+  "confirmation_report_summary": {
+    "attacker_construction_cpu_ns": 5270680,
+    "attacker_construction_wall_ns": 5270072,
+    "finite_target_met": false,
+    "from_zero_construction": {
+      "array_length": 16
+    },
+    "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+    "honest_chain_acquisition_wall_ns": 184211961,
+    "honest_chain_aggregate_cpu_ns": null,
+    "honest_chain_process_cpu_ns": 30569624,
+    "honest_chain_process_cpu_scope": "all threads of this test process during seven-block mining and durable acquisition, before service/traffic start; includes search/setup/execution/storage, not pure W1 cost or exclusive actor attribution",
+    "invariant_target_met": true,
+    "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+    "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+    "phases": {
+      "array_length": 2
+    },
+    "policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+    "production_activation": false,
+    "public_network_ready": false,
+    "same_packet_sequence_in_both_runs": true,
+    "schema": "public-v3-signed-confirmation-pressure-v1",
+    "scope": "same-source, task, target and signed business; attack-free versus independently driven loopback attack clients; shared controller, not independent operators or a saturated WAN benchmark",
+    "signed_honest_packets": {
+      "array_length": 7
+    },
+    "strongest_honest_producer_used": false,
+    "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+    "test_success_scope": "native protocol/accounting invariants; finite business target is a separately retained actual outcome and cannot be inferred from cargo exit zero",
+    "work_profile_qualified": false
+  },
+  "driver_source_excerpt": "149:         require(isinstance(doc.get(key), str) and re.fullmatch('[0-9a-f]{64}', doc[key]) is not None,\n150:                 'NATIVE_SERVICE_CONTEXT')\n151:     for key in ('reopen_state_equal', 'cpu_domain_retained_across_owner_reopen',\n152:                 'all_requested_reads_required_on_time', 'finite_target_met'):\n153:         require(doc.get(key) is True, 'NATIVE_SERVICE_TARGET')\n154:     for key in ('budget_depletion_demonstrated', 'public_network_ready', 'independent_accepted',\n155:                 'work_profile_qualified', 'resource_fairness_qualified',\n167:                 and phase['phase'] == index, 'NATIVE_SERVICE_PHASES')\n168:         for key in ('complete_denominators', 'attacker_and_client_cpu_known',\n169:                     'no_attack_accepted', 'cpu_measurements_known',\n170:                     'all_started_work_finished', 'full_native_state_equal', 'finite_target_met'):\n171:             require(phase.get(key) is True, 'NATIVE_SERVICE_PHASE_TARGET')\n172:         attacks, reads = phase.get('from_zero'), phase.get('honest_reads')\n173:         require(isinstance(attacks, list) and isinstance(reads, list)\n423:     @staticmethod\n424:     def flags(value, yes=(), no=()):\n425:         require(isinstance(value, dict), 'CONFIRMATION_OBJECT')\n426:         require(all(value.get(key) is True for key in yes), 'CONFIRMATION_TARGET')\n427:         require(all(value.get(key) is False for key in no), 'CONFIRMATION_SCOPE_PROMOTION')\n428: \n429:     @staticmethod\n757:     call = ConfirmationReportChecks.call\n758:     compact_request = ConfirmationReportChecks.compact_request\n759: \n760:     flags(doc, yes=('finite_target_met', 'invariant_target_met', 'same_packet_sequence_in_both_runs'),\n761:           no=('public_network_ready', 'work_profile_qualified', 'production_activation',\n762:               'strongest_honest_producer_used'))\n763:     context = {key: hexadecimal(doc.get(key), 32) for key in (\n834: \n835:     observations = validate_confirmation_phases(doc, context, packets, metadata, resolve_attack)\n836:     result = {'sha256': digest(raw), 'schema': doc['schema'], 'phases': observations,\n837:               'finite_target_met': True, 'scope': 'bounded native report consistency; no independent work/state oracle, WAN, fairness or scientific acceptance'}\n838:     if 'honest_chain_process_cpu_ns' in doc:\n839:         result['honest_chain_process_cpu_ns'] = doc['honest_chain_process_cpu_ns']\n840:         result['honest_chain_process_cpu_scope'] = doc['honest_chain_process_cpu_scope']",
+  "direct_driver_test_source_diff_stat": "",
+  "not_a_compiler_failure": true,
+  "not_reclassified_as_success": true,
+  "full_baseline_pass_claimed": false
+}

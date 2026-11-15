@@ -1,0 +1,121 @@
+   Compiling typenum v1.20.1
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.45
+   Compiling shlex v1.3.0
+   Compiling find-msvc-tools v0.1.9
+   Compiling syn v2.0.117
+   Compiling cc v1.2.59
+   Compiling version_check v0.9.5
+   Compiling cfg-if v1.0.4
+   Compiling generic-array v0.14.7
+   Compiling zeroize v1.8.2
+   Compiling cmov v0.5.4
+   Compiling ctutils v0.4.6
+   Compiling hybrid-array v0.4.15
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling sha2-asm v0.6.4
+   Compiling serde_core v1.0.228
+   Compiling libc v0.2.184
+   Compiling autocfg v1.5.1
+   Compiling semver v1.0.27
+   Compiling num-traits v0.2.19
+   Compiling rustc_version v0.4.1
+   Compiling digest v0.10.7
+   Compiling crypto-common v0.2.2
+   Compiling cpufeatures v0.2.17
+   Compiling hashbrown v0.16.1
+   Compiling winnow v1.0.4
+   Compiling equivalent v1.0.2
+   Compiling indexmap v2.13.1
+   Compiling digest v0.11.3
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling curve25519-dalek v4.1.3
+   Compiling vcpkg v0.2.15
+   Compiling serde v1.0.228
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling pkg-config v0.3.32
+   Compiling thiserror v1.0.69
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling libsqlite3-sys v0.37.0
+   Compiling sha2 v0.10.9
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling thiserror-impl v1.0.69
+   Compiling serde_derive v1.0.228
+   Compiling keccak v0.2.2
+   Compiling subtle v2.6.1
+   Compiling zmij v1.0.21
+   Compiling sponge-cursor v0.1.0
+   Compiling signature v2.2.0
+   Compiling anyhow v1.0.103
+   Compiling cfg_aliases v0.2.2
+   Compiling rustix v1.1.4
+   Compiling bitflags v2.11.0
+   Compiling foldhash v0.2.0
+   Compiling getrandom v0.4.2
+   Compiling borsh v1.8.0
+   Compiling ed25519 v2.2.3
+   Compiling shake v0.1.0
+   Compiling module-lattice v0.2.3
+   Compiling proc-macro-crate v3.5.0
+   Compiling signature v3.0.0
+   Compiling once_cell v1.21.4
+   Compiling serde_json v1.0.149
+   Compiling linux-raw-sys v0.12.1
+   Compiling hex v0.4.3
+   Compiling trnm-protocol v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-protocol)
+   Compiling borsh-derive v1.8.0
+   Compiling ml-dsa v0.1.1
+   Compiling ed25519-dalek v2.2.0
+   Compiling hashlink v0.11.1
+   Compiling memchr v2.8.0
+   Compiling fallible-iterator v0.3.0
+   Compiling itoa v1.0.18
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling fastrand v2.3.0
+   Compiling smallvec v1.15.1
+   Compiling rusqlite v0.39.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-crypto-primitives)
+   Compiling getrandom v0.2.17
+   Compiling fs2 v0.4.3
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 26.96s
+     Running unittests src/lib.rs (/home/qq/work/chain-cell-storage-discovery-f2568-target/debug/deps/trnm_data_availability-2640c265b42f8e43)
+cell_sequence phase=startup role=silent_trap setup_elapsed_ns=315989 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=361898519 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=361947667 outcome=Ok(())
+cell_sequence phase=setup_complete elapsed_ns=362013925
+cell_sequence phase=announce ordinal=0 started_wall=Some(1794165166.586476371s) completed_wall=Some(1794165166.594200397s) elapsed_ns=7724576 expiry_seconds=1794165466 failure=None
+cell_sequence phase=startup role=silent_trap setup_elapsed_ns=11281305 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=peer setup_elapsed_ns=13941874 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=17274930 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=17288499 outcome=Ok(())
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=20375494 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=20384484 outcome=Ok(())
+cell_sequence phase=setup_complete elapsed_ns=28436638
+cell_sequence phase=announce ordinal=0 started_wall=Some(1794165166.6321334s) completed_wall=Some(1794165166.638557131s) elapsed_ns=6424061 expiry_seconds=1794165466 failure=None
+cell_sequence phase=announce ordinal=1 started_wall=Some(1794165166.63857112s) completed_wall=Some(1794165166.641828879s) elapsed_ns=3257879 expiry_seconds=1794165466 failure=None
+cell_sequence phase=discovery ordinal=0 started_wall=Some(1794165166.641838779s) completed_wall=Some(1794165166.68480989s) elapsed_ns=42971321 expiry_seconds=1794165466 failure=Some(Failure { class: "invalid", kind: None, errno: None })
+cell_sequence phase=startup role=peer setup_elapsed_ns=12773754 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=expiry_proxy setup_elapsed_ns=12826742 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=15902987 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=15914627 outcome=Ok(())
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=18872605 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=18882345 outcome=Ok(())
+cell_sequence phase=setup_complete elapsed_ns=26835753
+cell_sequence phase=announce ordinal=0 started_wall=Some(1794165166.724997736s) completed_wall=Some(1794165166.731942678s) elapsed_ns=6945372 expiry_seconds=1794165466 failure=None
+cell_sequence phase=announce ordinal=1 started_wall=Some(1794165166.732022186s) completed_wall=Some(1794165166.734507941s) elapsed_ns=2486045 expiry_seconds=1794165168 failure=None
+cell_sequence phase=discovery ordinal=0 started_wall=Some(1794165166.73452233s) completed_wall=Some(1794165168.02514023s) elapsed_ns=1290618300 expiry_seconds=1794165168 failure=Some(Failure { class: "io", kind: Some(TimedOut), errno: None })
+cell_sequence phase=expiry_proxy worker_phase=accept_after_reply connections=1 connected=Some(1794165166.766574255s) request_arrived=Some(1794165166.766577284s) backend_frame_ready=Some(1794165166.771613122s)
+cell_sequence phase=startup role=peer setup_elapsed_ns=10742483 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=silent_trap setup_elapsed_ns=10815020 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=13841827 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=13854386 outcome=Ok(())
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=16292083 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=16302323 outcome=Ok(())
+cell_sequence phase=setup_complete elapsed_ns=22416254
+cell_sequence phase=announce ordinal=0 started_wall=Some(1794165168.067730214s) completed_wall=Some(1794165168.071044261s) elapsed_ns=3314337 expiry_seconds=1794165468 failure=None
+cell_sequence phase=announce ordinal=1 started_wall=Some(1794165168.071056911s) completed_wall=Some(1794165168.073516587s) elapsed_ns=2459906 expiry_seconds=1794165468 failure=None
+cell_sequence phase=discovery ordinal=0 started_wall=Some(1794165168.073527696s) completed_wall=Some(1794165168.105208613s) elapsed_ns=31681137 expiry_seconds=1794165468 failure=None

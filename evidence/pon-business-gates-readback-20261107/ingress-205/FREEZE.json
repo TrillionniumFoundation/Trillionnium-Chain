@@ -1,0 +1,18 @@
+{
+  "schema": "ingress-canonical-artifact-freeze-v1",
+  "frozen_at_utc": "2026-11-07T17:01:07.328401+00:00",
+  "source_head": "205ae38ff01bbf968f3fc2ef0297bee986224684",
+  "source_tree": "0f4b77d3db7ed718195a212b7d805f9334aab2f5",
+  "source_status": "",
+  "native_tests": 22,
+  "exact_native_denominator_checks": 22,
+  "strict_workspace_clippy_exit_code": 0,
+  "component_invocations": 1,
+  "component_trials": 768,
+  "component_expected_errors_retained": 384,
+  "component_predeclared_criteria_passed": true,
+  "original_business_accepted": false,
+  "failure_attempts_and_driver_versions_retained": true,
+  "checksum_scope": "Every regular file recursively; exclude only this directory's top-level SHA256SUMS from its own digest list",
+  "no_more_native_benchmark_or_source_mutation_planned": true
+}

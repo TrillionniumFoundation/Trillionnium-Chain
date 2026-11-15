@@ -1,0 +1,30 @@
+test_distance_budget_uses_exact_failure_not_rounded_equality (test_quantum_oracle_resources.ResourceAccounting.test_distance_budget_uses_exact_failure_not_rounded_equality) ... FAIL
+test_exact_total_failure_budget_equality_remains_accepted (test_quantum_oracle_resources.ResourceAccounting.test_exact_total_failure_budget_equality_remains_accepted) ... ok
+test_magic_budget_does_not_round_away_positive_headroom (test_quantum_oracle_resources.ResourceAccounting.test_magic_budget_does_not_round_away_positive_headroom) ... FAIL
+
+======================================================================
+FAIL: test_distance_budget_uses_exact_failure_not_rounded_equality (test_quantum_oracle_resources.ResourceAccounting.test_distance_budget_uses_exact_failure_not_rounded_equality)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/dev/shm/w1-decimal-boundary-822cc50e/test_quantum_oracle_resources.py", line 182, in test_distance_budget_uses_exact_failure_not_rounded_equality
+    self.assertEqual(rejected["status"], "NO_DISTANCE_IN_DECLARED_RANGE")
+AssertionError: 'CONDITIONAL_ESTIMATE' != 'NO_DISTANCE_IN_DECLARED_RANGE'
+- CONDITIONAL_ESTIMATE
++ NO_DISTANCE_IN_DECLARED_RANGE
+
+
+======================================================================
+FAIL: test_magic_budget_does_not_round_away_positive_headroom (test_quantum_oracle_resources.ResourceAccounting.test_magic_budget_does_not_round_away_positive_headroom)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/dev/shm/w1-decimal-boundary-822cc50e/test_quantum_oracle_resources.py", line 223, in test_magic_budget_does_not_round_away_positive_headroom
+    self.assertEqual(report["status"], "CONDITIONAL_ESTIMATE")
+AssertionError: 'UNSATISFIED_MAGIC_STATE_ERROR_BUDGET' != 'CONDITIONAL_ESTIMATE'
+- UNSATISFIED_MAGIC_STATE_ERROR_BUDGET
++ CONDITIONAL_ESTIMATE
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+FAILED (failures=2)

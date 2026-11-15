@@ -1,0 +1,55 @@
+{
+  "cargo_input_count": 55,
+  "cargo_inputs_unchanged": true,
+  "native_tests": null,
+  "receipts_and_raw_hashes_verified": true,
+  "recorded_at_utc": "2026-11-09T14:13:50.140428+00:00",
+  "rows": [
+    {
+      "exit_code": 0,
+      "name": "preflight",
+      "stderr_bytes": 0,
+      "stdout_sha256": "7c3b3d25cf803875bebf9e15c8560f068e4a56c395c7b59236f00b92cf17e95c",
+      "wall_ns": 123535118
+    },
+    {
+      "exit_code": 0,
+      "name": "fmt",
+      "stderr_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_ns": 24417278870
+    },
+    {
+      "exit_code": 0,
+      "name": "graph-default",
+      "packages": 175,
+      "resolve_nodes": 175,
+      "stderr_bytes": 0,
+      "stdout_sha256": "a7e1e394603a427d82c071ab513b4580293de6751fc55e770d1b0b3b9fb3ebd3",
+      "wall_ns": 268681504,
+      "workspace_members": 26
+    },
+    {
+      "exit_code": 0,
+      "name": "graph-all-features",
+      "packages": 180,
+      "resolve_nodes": 180,
+      "stderr_bytes": 0,
+      "stdout_sha256": "58a8dd1618d5022e1b1a0789d9897c1f7b6484834060312447d6c853277b1734",
+      "wall_ns": 222547617,
+      "workspace_members": 26
+    },
+    {
+      "exit_code": 0,
+      "name": "graph-fuzz",
+      "packages": 147,
+      "resolve_nodes": 147,
+      "stderr_bytes": 149,
+      "stdout_sha256": "e0bbe9a6cdf65a3fb2d4e2755ef013c94e4fbe6dda6ceea00d29b65e0546237c",
+      "wall_ns": 10935845978,
+      "workspace_members": 1
+    }
+  ],
+  "schema": "trnm-cargo-checks-independent-readback-v1",
+  "strict_clippy": null
+}

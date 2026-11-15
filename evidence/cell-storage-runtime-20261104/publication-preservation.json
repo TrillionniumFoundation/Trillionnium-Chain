@@ -1,0 +1,448 @@
+{
+  "schema": "trnm-cell-evidence-publication-preservation-v1",
+  "publication_base_commit": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+  "publication_base_tree": "ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855",
+  "native_validation_source": "fc86ed8e927a8eb4e048b160437126a6c0b96c0d",
+  "native_outcomes_inherited_to_later_source": false,
+  "evidence_only_update_prefix": "evidence/cell-storage-runtime-20261104/",
+  "all_other_index_entries": {
+    "entries": 9800,
+    "sha256": "d82575d2a2bc42fe6c46bc7efd379164a9997d9590d479abe744429c02781e8a",
+    "format": "Git index order; mode SP blob-sha TAB path NUL; excluding evidence/cell-storage-runtime-20261104/"
+  },
+  "parallel_changes_since_native_source": [
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "status": "M",
+      "old_blob": "ee7bd0ff8f61483d3e7a7cb53184bd20507bc55a",
+      "new_blob": "7391dca78235e2a241142184b22d9cacd7612d53"
+    },
+    {
+      "path": "config/pon/pq-system-required-tests-v1.json",
+      "status": "M",
+      "old_blob": "1f1b4098ac5a90238b1e56b9bb0b3d5a9daa9fe8",
+      "new_blob": "497baa84651939bf73d826801086d43f03c29e0e"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "status": "M",
+      "old_blob": "f0536ef46afce77761194f1d9bee4ff4b621ffa2",
+      "new_blob": "8380ed1dfabacadbad5e8078356f6b0ced0a4324"
+    },
+    {
+      "path": "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
+      "status": "M",
+      "old_blob": "ca064e50bd89b63bd656ce340ed2efd2940569fb",
+      "new_blob": "3af8fad60ff4aa2072ded820552c954dffc902d8"
+    },
+    {
+      "path": "evidence/pon-shared-material-v1-20261105/README.md",
+      "status": "M",
+      "old_blob": "419086f6a4d9a8f4657e47a8b90765067da4e49c",
+      "new_blob": "cd4ae3b2cbbff15ad2c6a3ef5655d3d99c89ad41"
+    },
+    {
+      "path": "evidence/pon-shared-material-v1-20261105/archive.json",
+      "status": "M",
+      "old_blob": "20bc849e7641b33c6d4d4232b7d8d7ea64a48d9f",
+      "new_blob": "d34aaec7ca9900b262c7adea884af864af945c6f"
+    },
+    {
+      "path": "evidence/pon-shared-material-v1-20261105/summary.json",
+      "status": "M",
+      "old_blob": "e4257e66a36bc678231c3954f3b207d0719de6f1",
+      "new_blob": "40b2ac2f59fbe2f39e17734fe831f16c7d63df76"
+    },
+    {
+      "path": "evidence/pon-shared-material-v1-20261105/v2-setup-followup.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "329e5ff45559db4a06b504901b72110168fd3631"
+    },
+    {
+      "path": "evidence/pq-current-root-integration-20261104/README.md",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "be160cec7cd66cf8780a24cfc7ed80aa921c6617"
+    },
+    {
+      "path": "evidence/pq-current-root-integration-20261104/reproduction.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "99770d5c467260bd2ae940d41419abcfa33b8dcf"
+    },
+    {
+      "path": "evidence/pq-current-root-integration-20261104/source-delta.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "c02a9c41b3f5c29c591c9d07d8354d019e96adce"
+    },
+    {
+      "path": "evidence/pq-current-root-integration-20261104/verification-records.tar.gz",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "00771a13ff4b00f19c26cd2b5a76642263ea10de"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/README.md",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "215ede18e03673a918649a79b97c995ad662eee3"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/baseline-pair.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "f39abdafa3fb747f4c8b964d006117cfca825e0e"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/migration-handoff-original.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "41a88ca0f6fdd1f51d1947d96b9cd15d5cc7f336"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/cache-cleanup-36f.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "4c23a886c90846a8ea308d3cba89dd8ad3ef92e1"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-clippy.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "82ab21ea4695d2553c2b492dc2945a6ed9fe763d"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-clippy.log",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "39b69e1fba68dbb4756b00ff385d0b361d1ef345"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-format.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "19faba0d5177e6bb938ce88109e0944e557feef7"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-format.log",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-green.patch",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "a40b7e83b3b58c6a87a7967e309e0837fb9b8a29"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-native-artifacts.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "c47d7dfb618424ace1b8bfbf33adc56ff3dffd4b"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-package-build-missing-quorum-vector.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "9f1c944a21a9946f38711027d4fca88e674de102"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-package-build-missing-quorum-vector.log",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "f0f5d6c2b57b2cc6ee8269c672be49a5c0df798a"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-package-green.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "257d7d2df1fd87a4800b04b28bf8a23f99233bb2"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-package-green.log",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "e767a8b9a8fdd23185b09e068e2d13b2ddb4389c"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-red-build-missing-vector.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "f2e312f4dde4ca167f59074f4107229b7d414aba"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-red-build-missing-vector.log",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "29d23e9485b388e0684b2627f3f50b7bce1c3f8b"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-red-tests.patch",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "05436cdb216d6eb908ae52e490088ce503323bd9"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-red.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "fec6d01b2a13ebc115994e17f646d1da38826ebc"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-red.log",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "9528eaa48fbcd39d2e689b7d0aa3bc8b3c4c0df1"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-source-scope.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "bb9786140f4ce45f406d91dcc8a93e29acb2e99e"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/native-env.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "7c9ca7a050999d31782ca9314d862542919c10c7"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/run-native.py",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "26d345389e3b5076fb7346e5040ac4b40f3ef0ae"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/source-commit.txt",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "427e30b84133af2913f91e986ab1d5898dbfa9ad"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/toolchain-provider.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "271f17de966dcd527dd72bfc2e12a2c6fc4238b6"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/cache-cleanup-14f.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "5870d3c70019f0fb6e37b5f14e0b795d401e539c"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/cache-cleanup-final-build.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "a1e3f0c76f7f9ee52ae6058810043d8e683679cc"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-format.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "80425799c085fb5bc3f183e4ca9389a1c807d5f3"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-format.log",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-clippy.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "ecc39c125d14a14599ea53c7e240e8dc8fedebda"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-clippy.log",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "e6ee382e02e26753b0b964f26f17084ab74601fb"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-lib-artifact.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "ff99d049c04ed0768ffd5186024cb71c036d1d8a"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-lib.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "6c9ff825435b923bc7e363ccec8505402e1f9d30"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-lib.log",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "902483f75b726e6b494ae6c32a3d8b8db1633aea"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-native-artifacts.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "33f09db4dfef7002e5c67dd021b9a2b0de81f805"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-package.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "73459d16b11c740d86d9ab4864711ae704d3597f"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-package.log",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "414a3f294e37ccc656a5ed1cea3db9487b952075"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-materialization.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "24027f4b69fb987423af70ab10fede7069ec7e12"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/native-profile-scope.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "7f6a67a2e92d1b55f321c25c659b853fc940c3cb"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/research-component-numerical-recheck.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "c547109a06f726a216dd38dbea4adc9ab2520cc6"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/research-original-runner.py",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "726dfc869d4757a640b2f4e507ca84af9e676ebe"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/research-reproduce.py",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "12c46fe34a893c447579701d9ae0d73055134978"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/research-result.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "c5acfe374e2c90fca2e9ccaf0aad6909748889b5"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/research-runner-provenance.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "ebef8a01deae30ee1c1780789c9e2381cf2d064b"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/research-source-equivalence.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "bd00f7e1ab6eaa357533e9294bd859fbf7e70104"
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/source-checks.json",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "e0a8f98e13b49bd76443d1d6d76ecf22ce4fb9e2"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/quantum_daa_campaign.py",
+      "status": "M",
+      "old_blob": "6d17b4a4888d31efca7c80f4fb3c11f811ff4ec8",
+      "new_blob": "42b3f7822f6eb5de05214085826304a8a5f50b83"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_quantum_daa_model.py",
+      "status": "M",
+      "old_blob": "7eb237821dade4be41ef6872624a539ea716255f",
+      "new_blob": "a7525c159f52c169abfb5c0361e5a414965e2b75"
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+      "status": "M",
+      "old_blob": "8c49ef4c79b0edba265b586acf7a1a1c33ba3570",
+      "new_blob": "7c1812d9e71c65e36c827adfcfdf3714ba5d575b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/src/live_journal_v2.rs",
+      "status": "A",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "566c2a94f11ea4949cace063f8b2e6dab57e0397"
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs",
+      "status": "M",
+      "old_blob": "718adc13e4a7cf610c14cb295f4c240d0187cfe3",
+      "new_blob": "b236ce047843a68cf371e02d6bb480fea6fc71ff"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+      "status": "M",
+      "old_blob": "e99237f490655753533a2a1ea258ff99edf5e35f",
+      "new_blob": "f26f6be07d3855ba1fd9363805b6ba3c4621b80c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
+      "status": "M",
+      "old_blob": "bf773ce44f40f8a7facb43a09297267e041f490a",
+      "new_blob": "716646e95bc507e2e901fd5320a982e47766f482"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/pq/tests.rs",
+      "status": "M",
+      "old_blob": "7ed1b2a9af072cada29d5369bf1bc48a3e0ad4e8",
+      "new_blob": "79c7f6cd9fae5016465370f306ecc1ebe28ab907"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
+      "status": "M",
+      "old_blob": "3ba50971df114f888373c833b787c5a97cdaa290",
+      "new_blob": "f4af2dc570e705c80c11c1dca880f2e249fe7a12"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs",
+      "status": "M",
+      "old_blob": "0f2701da52c1756722fbabd7e996ca68824d402a",
+      "new_blob": "046297918ece4753cfa595ca88885bbb44d1a660"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "status": "M",
+      "old_blob": "866d5fc87a0dafe920e8c4e4427e062547c74553",
+      "new_blob": "546e73cca27e5c4f85c60b2e885e0e792d68845e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "status": "M",
+      "old_blob": "470636bba983f12bcf00c7553ee715447c104756",
+      "new_blob": "c9410261c9c489d051388e8e092f561488e1fa06"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs",
+      "status": "M",
+      "old_blob": "9c6a0787a5c9e975fbba0d97cc52476508da3cb2",
+      "new_blob": "777859ab686a91e6a30353bc00f2f0f0b53034fe"
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+      "status": "M",
+      "old_blob": "a1ca50f68a023ce1c8d9cf62f06604900c521ca0",
+      "new_blob": "c6e3c62219e6f10030cee3dad4df2f2045acd9cd"
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+      "status": "M",
+      "old_blob": "16da9022ef7f6946f6b5ae42767d4aa0398623e7",
+      "new_blob": "ca3706440a070818173a6209ffc350bb94bf6199"
+    }
+  ],
+  "parallel_change_count": 72
+}

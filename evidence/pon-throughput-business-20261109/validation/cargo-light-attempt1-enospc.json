@@ -1,0 +1,23 @@
+{
+  "cargo_commands_started": false,
+  "command": [
+    "python3",
+    "/workspace/scratch/a0d4983b1065/validation/run_cargo_light_checks.py"
+  ],
+  "cwd": "/workspace/scratch/a0d4983b1065/chain-throughput",
+  "disk_available_at_recording_bytes": 1187405824,
+  "errno": 28,
+  "error_text": "OSError: [Errno 28] No space left on device: '/workspace/scratch/a0d4983b1065/validation/cargo-light-20261109'",
+  "evidence_origin": "prior exec_command tool result, retained observation; not a process receipt written during the failed attempt",
+  "fmt_status": "NOT_RUN",
+  "locked_all_features_metadata_status": "NOT_RUN",
+  "locked_default_metadata_status": "NOT_RUN",
+  "locked_fuzz_metadata_status": "NOT_RUN",
+  "observed_failure_time_utc": null,
+  "operation_failed": "OUT.mkdir(parents=True, exist_ok=False)",
+  "raw_output_directory_created": false,
+  "recorded_at_utc": "2026-11-09T14:12:29.184830+00:00",
+  "retry_reason": "root removed only this task reproducible target cache; a distinct resource condition now has headroom",
+  "schema": "trnm-tool-observed-check-not-run-v1",
+  "wrapper_exit_code": 1
+}

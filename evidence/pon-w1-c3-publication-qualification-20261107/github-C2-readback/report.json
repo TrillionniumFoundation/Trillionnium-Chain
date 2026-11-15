@@ -1,0 +1,599 @@
+{
+  "boundaries": {
+    "no_archive_elf_sqlite_or_private_dump_publication": true,
+    "no_budget_or_assertion_relaxation": true,
+    "no_common_cause_inferred": true,
+    "no_global_terminal_claim": true,
+    "no_regression_claim": true,
+    "no_source_or_ref_changes": true,
+    "no_workflow_rerun_or_cancellation": true,
+    "prospective_merge_tested_source_not_requalified_here": true
+  },
+  "candidate_source_commit": "cc4dd8bdd89309c635831db30b508af2f89419d7",
+  "candidate_source_tree": "161d3a4e8ab8c865869352339ec8c66f6609449a",
+  "copy_policy": "Exact selected UTF-8 bytes; copied source manifests may enumerate excluded files and do not claim this public packet includes all raw evidence.",
+  "diagnoses": {
+    "cross-arch-cost-arm64": {
+      "actual_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "confirmation_observation": {
+        "original_gate_validated": false,
+        "original_gate_validation_error": "CONFIRMATION_TARGET",
+        "phases": [
+          {
+            "business": {
+              "business_start_delay_ns": 164263,
+              "business_started_before_original_window_end": true,
+              "independent_confirmed_transactions_per_window_second": 0.25,
+              "lower_bound_reaches_original_window_end": null,
+              "observed_success_latency_ns": 1794255963,
+              "original_window_remaining_at_business_start_ns": 3999835737,
+              "pre_business_window_overrun_ns": 0,
+              "reported_finite_business_target_met": true,
+              "reported_independently_confirmed_in_window": 1,
+              "required_signed_transactions": 1,
+              "successful_latency": {
+                "max_ns": 1794255963,
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "min_ns": 1794255963,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "missing_samples": 0,
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null,
+                "samples": 1
+              },
+              "unconfirmed": 0,
+              "unconfirmed_latency_lower_bound_ns": null,
+              "unknown": 0
+            },
+            "mode": "attack-free-baseline",
+            "request_clock": {
+              "business_receive_observation": {
+                "body_or_sender_authenticated_by_clock": false,
+                "clock_translation_overflowed": false,
+                "confirmation_observed_in_original_window": true,
+                "earliest_matched_claim_received_ns": 1210929,
+                "epochs_correlated": true,
+                "exact_claim_cohort_covered": true,
+                "final_observation_in_observer_ns": 1794640253,
+                "has_control_authority": false,
+                "matched_claim_records": 1,
+                "matching_claims_without_receive_clock": 0,
+                "observed_matched_claim_to_confirmation_ns": 1793429324,
+                "observed_matched_claim_to_final_observation_ns": 1793429324,
+                "records_without_complete_identity_binding": 0,
+                "records_without_lifecycle": 0,
+                "records_without_receive_clock": 0,
+                "request_binding_stage": "hello-claimed-body-digest",
+                "retained_records": 83,
+                "schema": "public-v3-business-receive-clock-v1",
+                "scope": "same-process receive time for the peer-claimed first business packet, including failed retries; an Ok final observation is not necessarily confirmation; no full-body validation, sender or operator independence is inferred; unknown bindings or lost records prevent an exact earliest-claim latency",
+                "traffic_epoch_in_observer_ns": 220027
+              },
+              "business_start_to_independent_confirmation_ns": 1794255963,
+              "business_started_ns": 164263,
+              "clock_scope": "client phase-local monotonic epoch; original pressure window begins at zero",
+              "original_window_to_independent_confirmation_ns": 1794420226,
+              "receiver_and_client_epochs_correlated": true,
+              "receiver_to_independent_confirmation_ns": 1793429324,
+              "reported_final_observation_ended_ns": 1794420226,
+              "scope": "original client window and optional same-process receiver epoch; exact receive latency is for a completely observed Hello-claim cohort, not authenticated sender/body attribution; failed, late or unconfirmed returns never receive successful-confirmation credit"
+            },
+            "signed_submit_ack": {
+              "acknowledgements_per_window_second": 1.75,
+              "attempts": 7,
+              "calling_thread_cpu": {
+                "max_ns": 823208,
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "min_ns": 678240,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "missing_samples": 0,
+                "p50_ns": 713384,
+                "p95_ns": null,
+                "p99_ns": null,
+                "samples": 7
+              },
+              "failed_or_late": 0,
+              "failed_or_late_terminal_duration": {
+                "max_ns": null,
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "min_ns": null,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "missing_samples": 0,
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null,
+                "samples": 0
+              },
+              "outcome_detail": {
+                "diagnostic_text_is_typed_error": false,
+                "raw_client_error_counts": {},
+                "raw_refusal_error_counts": {},
+                "returned_after_call_deadline": 0,
+                "returned_after_original_window": 0,
+                "scope": "observed client returns only; retries and polls are not unique business transactions; late flags overlap status counts; missing calls cannot be reconstructed",
+                "status_counts": {
+                  "ok": 7
+                },
+                "status_missing": 0,
+                "unobserved_attempts": null
+              },
+              "successful_in_original_window": 7,
+              "successful_latency": {
+                "max_ns": 81333077,
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "min_ns": 15830475,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "missing_samples": 0,
+                "p50_ns": 16019415,
+                "p95_ns": null,
+                "p99_ns": null,
+                "samples": 7
+              }
+            },
+            "verification_errors": [],
+            "window_ns": 4000000000,
+            "workers": 0
+          },
+          {
+            "business": {
+              "business_start_delay_ns": 55504443,
+              "business_started_before_original_window_end": true,
+              "independent_confirmed_transactions_per_window_second": 0.0,
+              "lower_bound_reaches_original_window_end": true,
+              "observed_success_latency_ns": null,
+              "original_window_remaining_at_business_start_ns": 3944495557,
+              "pre_business_window_overrun_ns": 0,
+              "reported_finite_business_target_met": false,
+              "reported_independently_confirmed_in_window": 0,
+              "required_signed_transactions": 1,
+              "successful_latency": {
+                "max_ns": null,
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "min_ns": null,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "missing_samples": 0,
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null,
+                "samples": 0
+              },
+              "unconfirmed": 1,
+              "unconfirmed_latency_lower_bound_ns": 3944495557,
+              "unknown": 0
+            },
+            "mode": "from-zero-pressure",
+            "request_clock": {
+              "business_receive_observation": {
+                "body_or_sender_authenticated_by_clock": false,
+                "clock_translation_overflowed": false,
+                "confirmation_observed_in_original_window": false,
+                "earliest_matched_claim_received_ns": 56200138,
+                "epochs_correlated": true,
+                "exact_claim_cohort_covered": true,
+                "final_observation_in_observer_ns": null,
+                "has_control_authority": false,
+                "matched_claim_records": 1,
+                "matching_claims_without_receive_clock": 0,
+                "observed_matched_claim_to_confirmation_ns": null,
+                "observed_matched_claim_to_final_observation_ns": null,
+                "records_without_complete_identity_binding": 0,
+                "records_without_lifecycle": 0,
+                "records_without_receive_clock": 0,
+                "request_binding_stage": "hello-claimed-body-digest",
+                "retained_records": 481,
+                "schema": "public-v3-business-receive-clock-v1",
+                "scope": "same-process receive time for the peer-claimed first business packet, including failed retries; an Ok final observation is not necessarily confirmation; no full-body validation, sender or operator independence is inferred; unknown bindings or lost records prevent an exact earliest-claim latency",
+                "traffic_epoch_in_observer_ns": 114569
+              },
+              "business_start_to_independent_confirmation_ns": null,
+              "business_started_ns": 55504443,
+              "clock_scope": "client phase-local monotonic epoch; original pressure window begins at zero",
+              "original_window_to_independent_confirmation_ns": null,
+              "receiver_and_client_epochs_correlated": true,
+              "receiver_to_independent_confirmation_ns": null,
+              "reported_final_observation_ended_ns": null,
+              "scope": "original client window and optional same-process receiver epoch; exact receive latency is for a completely observed Hello-claim cohort, not authenticated sender/body attribution; failed, late or unconfirmed returns never receive successful-confirmation credit"
+            },
+            "signed_submit_ack": {
+              "acknowledgements_per_window_second": 1.75,
+              "attempts": 7,
+              "calling_thread_cpu": {
+                "max_ns": 721352,
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "min_ns": 598072,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "missing_samples": 0,
+                "p50_ns": 649232,
+                "p95_ns": null,
+                "p99_ns": null,
+                "samples": 7
+              },
+              "failed_or_late": 0,
+              "failed_or_late_terminal_duration": {
+                "max_ns": null,
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "min_ns": null,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "missing_samples": 0,
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null,
+                "samples": 0
+              },
+              "outcome_detail": {
+                "diagnostic_text_is_typed_error": false,
+                "raw_client_error_counts": {},
+                "raw_refusal_error_counts": {},
+                "returned_after_call_deadline": 0,
+                "returned_after_original_window": 0,
+                "scope": "observed client returns only; retries and polls are not unique business transactions; late flags overlap status counts; missing calls cannot be reconstructed",
+                "status_counts": {
+                  "ok": 7
+                },
+                "status_missing": 0,
+                "unobserved_attempts": null
+              },
+              "successful_in_original_window": 7,
+              "successful_latency": {
+                "max_ns": 192287573,
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "min_ns": 104924577,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "missing_samples": 0,
+                "p50_ns": 110027471,
+                "p95_ns": null,
+                "p99_ns": null,
+                "samples": 7
+              }
+            },
+            "verification_errors": [],
+            "window_ns": 4000000000,
+            "workers": 16
+          }
+        ],
+        "schema": "trnm-original-confirmation-observation-v2",
+        "simulated_control": false
+      },
+      "execution_finished": false,
+      "gate_passed": false,
+      "job_id": "128555111621",
+      "named_native_cases": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "named_execution": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct"
+          },
+          "process_exit": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "named_execution": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection"
+          },
+          "process_exit": 0,
+          "timed_out": false
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "named_execution": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged"
+          },
+          "process_exit": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "named_execution": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner"
+          },
+          "process_exit": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "named_execution": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+          },
+          "process_exit": 0,
+          "timed_out": false
+        }
+      ],
+      "no_independent_inner_test_reexecution": true,
+      "run_id": "42422952141"
+    },
+    "cross-arch-cost-x64": {
+      "inner_cause": "NOT_INDEPENDENTLY_ATTRIBUTED",
+      "job_id": "128555111508",
+      "run_id": "42422952141"
+    },
+    "fresh-service-head": {
+      "assertion_path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs:244",
+      "baseline_confirmed": 1,
+      "baseline_latency_ns": 2894233678,
+      "diagnosis": "Four-second/six-depth target unmet; baseline succeeded, pressure independent replay hit PUBLIC_REQUEST_DEADLINE.",
+      "fresh_wrapper_failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+      "job_id": "128555111370",
+      "native_exit": 101,
+      "no_post_window_credit": true,
+      "original_test_exit": 0,
+      "original_test_finite_target_met": false,
+      "original_wrapper_failure": "CONFIRMATION_TARGET",
+      "pressure_confirmed": 0,
+      "pressure_final_replay_end_ns": 4085282455,
+      "run_id": "42422952132",
+      "window_ns": 4000000000,
+      "workers": 16
+    },
+    "fresh-service-prospective-merge": {
+      "inner_cause": "NOT_INDEPENDENTLY_ATTRIBUTED",
+      "job_id": "128555111413",
+      "run_id": "42422952132"
+    },
+    "original-native-campaign-head": {
+      "actual_result_extraction": {
+        "json_payload_sha256": "155b7fc4c6a8d9e5ef19ea6d7c66546dd0d7fb1d1e20442db8681f511ed7c78c",
+        "line": 1541,
+        "path": "derived/original-campaign-results-from-log.json",
+        "source": "raw/github-original-campaign-triage-01/03-job-log.stdout",
+        "source_sha256": "5b2d98263a3b9c996c783204b11c225a09285d7956dc16db852aebbaf74612e0"
+      },
+      "attempts": [
+        {
+          "native_returncode": 101,
+          "number": 1,
+          "original_criteria_met": false,
+          "phase_startup_errors": [],
+          "report_validation_failure": null
+        },
+        {
+          "native_returncode": 101,
+          "number": 2,
+          "original_criteria_met": false,
+          "phase_startup_errors": [],
+          "report_validation_failure": null
+        },
+        {
+          "native_returncode": 101,
+          "number": 3,
+          "original_criteria_met": false,
+          "phase_startup_errors": [],
+          "report_validation_failure": null
+        }
+      ],
+      "build_returncode": 0,
+      "exact_inner_panic_and_failed_business_predicates": "NOT_INDEPENDENTLY_ATTRIBUTED",
+      "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+      "job_id": "128555111595",
+      "run_id": "42422952277"
+    },
+    "protocol-contract-head": {
+      "inner_cause": "NOT_INDEPENDENTLY_ATTRIBUTED",
+      "job_id": "128555111762",
+      "observed_boundary": "Original from-zero command/outer service exit 1 after successful build/source/OpenSSL preparation.",
+      "run_id": "42422952141"
+    },
+    "protocol-contract-prospective-merge": {
+      "inner_cause": "NOT_INDEPENDENTLY_ATTRIBUTED",
+      "job_id": "128555111637",
+      "run_id": "42422952141"
+    },
+    "retained-pressure-failure": {
+      "artifact_http_status": 404,
+      "cause_expired_or_deleted": "UNKNOWN",
+      "disposition": "FAIL/HOLD; original fixed archive remains unavailable; no substitute",
+      "fixed_artifact_id": "11531476198",
+      "fixed_historical_run_id": "37730166589",
+      "historical_run_artifacts": 0,
+      "job_id": "128555111456",
+      "run_id": "42422952238",
+      "same_identity_current_artifacts_control": 12
+    }
+  },
+  "excluded": [
+    "all ZIP archives",
+    "all executable binaries",
+    "all SQLite databases",
+    "full fresh/ARM64 native report dumps",
+    "full private analyses/dumps",
+    "unselected artifact members"
+  ],
+  "local_qualification": {
+    "local_pass_implies_GitHub_green": false,
+    "separately_reported_passing_test_methods": 770,
+    "tests_rerun_for_this_packet": 0
+  },
+  "packet_prepared_unix_ns": "1794094470660292892",
+  "retained_helper_limits": {
+    "arm64_helper": {
+      "error": "KeyError: cases; actual manifest uses runs; no summary written and originals unchanged",
+      "exit_code": 1,
+      "job_id": "1a1b8523d1f-12894-e4d"
+    },
+    "direct_ssh_capacity_refusal": "raw/github-w1-service-triage-01/final-evidence-01/connector-receipts/w1_fresh_triage_initial_read-0.txt",
+    "helpers_are_diagnostics_not_experiments": true
+  },
+  "schema": "TRNM-C2-GITHUB-READBACK-PUBLIC1",
+  "scope": "Two retained GitHub time slices and bounded diagnoses; no new GitHub query or execution, not a final all-checks verdict.",
+  "selected_originals_unchanged_after_copy": true,
+  "selected_raw_bytes": 1194536,
+  "selected_raw_file_count": 72,
+  "snapshots": [
+    {
+      "check_count": 103,
+      "conclusion_counts": {
+        "FAILURE": 1,
+        "SKIPPED": 3,
+        "SUCCESS": 13,
+        "UNSET": 86
+      },
+      "failure_rows": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-11-07T22:56:57Z",
+          "conclusion": "FAILURE",
+          "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42422952238/job/128555111456",
+          "name": "retained-pressure-failure",
+          "startedAt": "2026-11-07T22:56:53Z",
+          "status": "COMPLETED",
+          "workflowName": "PoN priority acceptance"
+        }
+      ],
+      "is_global_terminal_snapshot": false,
+      "raw_path": "raw/publication-github-final-readback-01/pr.stdout.json",
+      "raw_sha256": "f8643e9a59e4f9b0fc4e04f74870c5a47543d149f7f131b96a43780c75dbcf7d",
+      "status_counts": {
+        "COMPLETED": 17,
+        "IN_PROGRESS": 86
+      }
+    },
+    {
+      "check_count": 104,
+      "conclusion_counts": {
+        "FAILURE": 8,
+        "SKIPPED": 3,
+        "SUCCESS": 60,
+        "UNSET": 33
+      },
+      "failure_rows": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-11-07T23:06:39Z",
+          "conclusion": "FAILURE",
+          "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42422952277/job/128555111595",
+          "name": "original native campaign (x64, head, release)",
+          "startedAt": "2026-11-07T22:56:54Z",
+          "status": "COMPLETED",
+          "workflowName": "PoN original native campaign"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-11-07T22:56:57Z",
+          "conclusion": "FAILURE",
+          "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42422952238/job/128555111456",
+          "name": "retained-pressure-failure",
+          "startedAt": "2026-11-07T22:56:53Z",
+          "status": "COMPLETED",
+          "workflowName": "PoN priority acceptance"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-11-07T23:04:04Z",
+          "conclusion": "FAILURE",
+          "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42422952141/job/128555111508",
+          "name": "cross-arch-cost (x64)",
+          "startedAt": "2026-11-07T22:56:53Z",
+          "status": "COMPLETED",
+          "workflowName": "trnm-required-baseline"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-11-07T23:03:36Z",
+          "conclusion": "FAILURE",
+          "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42422952141/job/128555111621",
+          "name": "cross-arch-cost (arm64)",
+          "startedAt": "2026-11-07T22:56:56Z",
+          "status": "COMPLETED",
+          "workflowName": "trnm-required-baseline"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-11-07T23:04:22Z",
+          "conclusion": "FAILURE",
+          "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42422952141/job/128555111762",
+          "name": "protocol-contract",
+          "startedAt": "2026-11-07T22:56:54Z",
+          "status": "COMPLETED",
+          "workflowName": "trnm-required-baseline"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-11-07T23:01:53Z",
+          "conclusion": "FAILURE",
+          "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42422952132/job/128555111370",
+          "name": "W1 fresh challenge service (x64, head)",
+          "startedAt": "2026-11-07T22:56:53Z",
+          "status": "COMPLETED",
+          "workflowName": "PoN W1 work security observations"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-11-07T23:02:01Z",
+          "conclusion": "FAILURE",
+          "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42422952132/job/128555111413",
+          "name": "W1 fresh challenge service (x64, prospective-merge)",
+          "startedAt": "2026-11-07T22:56:54Z",
+          "status": "COMPLETED",
+          "workflowName": "PoN W1 work security observations"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-11-07T23:04:16Z",
+          "conclusion": "FAILURE",
+          "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42422952141/job/128555111637",
+          "name": "prospective-merge (protocol-contract)",
+          "startedAt": "2026-11-07T22:56:53Z",
+          "status": "COMPLETED",
+          "workflowName": "trnm-required-baseline"
+        }
+      ],
+      "is_global_terminal_snapshot": false,
+      "raw_path": "raw/github-cross-arch-triage-04/07-pr-current.stdout",
+      "raw_sha256": "e3f5a583ad20c1aaff22cb348e6cdfd83e3ab33db4385550564102d9c5fe196c",
+      "status_counts": {
+        "COMPLETED": 71,
+        "IN_PROGRESS": 33
+      }
+    }
+  ]
+}

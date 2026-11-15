@@ -1,0 +1,502 @@
+{
+  "actual_exit_status": "UNKNOWN",
+  "current_failure": {
+    "driver_phase": "ADMIT_ONCE",
+    "error_type": "KernelBudgetError",
+    "message": "host-operation-not-pristine"
+  },
+  "first_failure": {
+    "driver_phase": "ADMIT_ONCE",
+    "error_type": "KernelBudgetError",
+    "message": "host-operation-not-pristine"
+  },
+  "money_return": false,
+  "no_retry": true,
+  "original_owner_diagnostic": {
+    "capability_authority": false,
+    "fields": {
+      "_failed": {
+        "value": true
+      },
+      "_invocation": {
+        "value": [
+          124,
+          162,
+          238,
+          166,
+          223,
+          126,
+          78,
+          76,
+          177,
+          1,
+          252,
+          44,
+          79,
+          106,
+          77,
+          99
+        ]
+      },
+      "_job": {
+        "value": "/org/freedesktop/systemd1/job/15749381"
+      },
+      "_operation_name": {
+        "value": "operation-c5764bb5789b4818b7b35b8bba282a89"
+      },
+      "_original_membership": {
+        "value": "0::/user.slice/user-1000.slice/session-100718.scope\n"
+      },
+      "_pid": {
+        "value": 1233522
+      },
+      "_ready": {
+        "value": false
+      },
+      "_start": {
+        "value": 89891805
+      },
+      "_started": {
+        "value": true
+      },
+      "_unit": {
+        "value": "trnm-host-44c90b775ee441b99bae043a8157a6a2.scope"
+      },
+      "_unit_path": {
+        "value": "/org/freedesktop/systemd1/unit/trnm_2dhost_2d44c90b775ee441b99bae043a8157a6a2_2escope"
+      }
+    },
+    "group_count_known": 6,
+    "groups": [
+      {
+        "fd": {
+          "value": 14
+        },
+        "name": {
+          "value": "/user.slice/user-1000.slice/user@1000.service/app.slice/trnm-host-44c90b775ee441b99bae043a8157a6a2.scope"
+        },
+        "parent_fd": {
+          "value": null
+        },
+        "role": {
+          "value": "scope"
+        },
+        "stored_identity": {
+          "value": [
+            31,
+            33233389,
+            16877
+          ]
+        }
+      },
+      {
+        "fd": {
+          "value": 15
+        },
+        "name": {
+          "value": "host"
+        },
+        "parent_fd": {
+          "value": 14
+        },
+        "role": {
+          "value": "host"
+        },
+        "stored_identity": {
+          "value": [
+            31,
+            33233440,
+            16893
+          ]
+        }
+      },
+      {
+        "fd": {
+          "value": 16
+        },
+        "name": {
+          "value": "observer"
+        },
+        "parent_fd": {
+          "value": 15
+        },
+        "role": {
+          "value": "observer"
+        },
+        "stored_identity": {
+          "value": [
+            31,
+            33233491,
+            16893
+          ]
+        }
+      },
+      {
+        "fd": {
+          "value": 17
+        },
+        "name": {
+          "value": "operation-c5764bb5789b4818b7b35b8bba282a89"
+        },
+        "parent_fd": {
+          "value": 15
+        },
+        "role": {
+          "value": "operation"
+        },
+        "stored_identity": {
+          "value": [
+            31,
+            33233542,
+            16893
+          ]
+        }
+      },
+      {
+        "fd": {
+          "value": 18
+        },
+        "name": {
+          "value": "controller"
+        },
+        "parent_fd": {
+          "value": 17
+        },
+        "role": {
+          "value": "controller"
+        },
+        "stored_identity": {
+          "value": [
+            31,
+            33233593,
+            16893
+          ]
+        }
+      },
+      {
+        "fd": {
+          "value": 19
+        },
+        "name": {
+          "value": "aggregate"
+        },
+        "parent_fd": {
+          "value": 17
+        },
+        "role": {
+          "value": "aggregate"
+        },
+        "stored_identity": {
+          "value": [
+            31,
+            33233644,
+            16893
+          ]
+        }
+      }
+    ],
+    "groups_truncated": false,
+    "new_kernel_or_manager_reads": false,
+    "owned_fd_count_known": 16,
+    "owned_fd_slots": [
+      {
+        "index": 0,
+        "slot": {
+          "value": [
+            0,
+            4,
+            -1,
+            -1
+          ]
+        },
+        "stored_signature": {
+          "value": [
+            26,
+            1231191306,
+            16749
+          ]
+        }
+      },
+      {
+        "index": 1,
+        "slot": {
+          "value": [
+            0,
+            5,
+            -1,
+            -1
+          ]
+        },
+        "stored_signature": {
+          "value": [
+            5,
+            4026531832,
+            33060
+          ]
+        }
+      },
+      {
+        "index": 2,
+        "slot": {
+          "value": [
+            0,
+            6,
+            -1,
+            -1
+          ]
+        },
+        "stored_signature": {
+          "value": [
+            5,
+            4026531835,
+            33060
+          ]
+        }
+      },
+      {
+        "index": 3,
+        "slot": {
+          "value": [
+            0,
+            7,
+            -1,
+            -1
+          ]
+        },
+        "stored_signature": {
+          "value": [
+            5,
+            4026531836,
+            33060
+          ]
+        }
+      },
+      {
+        "index": 4,
+        "slot": {
+          "value": [
+            0,
+            8,
+            -1,
+            -1
+          ]
+        },
+        "stored_signature": {
+          "value": [
+            5,
+            4026531837,
+            33060
+          ]
+        }
+      },
+      {
+        "index": 5,
+        "slot": {
+          "value": [
+            0,
+            9,
+            -1,
+            -1
+          ]
+        },
+        "stored_signature": {
+          "value": [
+            31,
+            1,
+            16749
+          ]
+        }
+      },
+      {
+        "index": 6,
+        "slot": {
+          "value": [
+            0,
+            10,
+            -1,
+            -1
+          ]
+        },
+        "stored_signature": {
+          "value": [
+            31,
+            527,
+            16877
+          ]
+        }
+      },
+      {
+        "index": 7,
+        "slot": {
+          "value": [
+            0,
+            11,
+            -1,
+            -1
+          ]
+        },
+        "stored_signature": {
+          "value": [
+            31,
+            7610,
+            16877
+          ]
+        }
+      },
+      {
+        "index": 8,
+        "slot": {
+          "value": [
+            0,
+            12,
+            -1,
+            -1
+          ]
+        },
+        "stored_signature": {
+          "value": [
+            31,
+            9244,
+            16877
+          ]
+        }
+      },
+      {
+        "index": 9,
+        "slot": {
+          "value": [
+            0,
+            13,
+            -1,
+            -1
+          ]
+        },
+        "stored_signature": {
+          "value": [
+            31,
+            9470,
+            16877
+          ]
+        }
+      },
+      {
+        "index": 10,
+        "slot": {
+          "value": [
+            0,
+            14,
+            -1,
+            -1
+          ]
+        },
+        "stored_signature": {
+          "value": [
+            31,
+            33233389,
+            16877
+          ]
+        }
+      },
+      {
+        "index": 11,
+        "slot": {
+          "value": [
+            0,
+            15,
+            -1,
+            -1
+          ]
+        },
+        "stored_signature": {
+          "value": [
+            31,
+            33233440,
+            16893
+          ]
+        }
+      },
+      {
+        "index": 12,
+        "slot": {
+          "value": [
+            0,
+            16,
+            -1,
+            -1
+          ]
+        },
+        "stored_signature": {
+          "value": [
+            31,
+            33233491,
+            16893
+          ]
+        }
+      },
+      {
+        "index": 13,
+        "slot": {
+          "value": [
+            0,
+            17,
+            -1,
+            -1
+          ]
+        },
+        "stored_signature": {
+          "value": [
+            31,
+            33233542,
+            16893
+          ]
+        }
+      },
+      {
+        "index": 14,
+        "slot": {
+          "value": [
+            0,
+            18,
+            -1,
+            -1
+          ]
+        },
+        "stored_signature": {
+          "value": [
+            31,
+            33233593,
+            16893
+          ]
+        }
+      },
+      {
+        "index": 15,
+        "slot": {
+          "value": [
+            0,
+            19,
+            -1,
+            -1
+          ]
+        },
+        "stored_signature": {
+          "value": [
+            31,
+            33233644,
+            16893
+          ]
+        }
+      }
+    ],
+    "owned_fd_slots_truncated": false,
+    "same_global_owner": true,
+    "stored_values_only": true
+  },
+  "pid": 1233522,
+  "probe_completed_successfully": false,
+  "record_role": "FAILURE_DOMINATES_ANY_PROVISIONAL_OBSERVATION",
+  "resource_return_proven": false,
+  "source": "37808e86dc1ae753b02f11658e9e2fd6c365e083",
+  "status": "UNKNOWN_RETAINED",
+  "whole_u_terminal": false
+}

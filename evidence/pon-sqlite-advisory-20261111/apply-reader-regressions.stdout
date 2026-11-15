@@ -1,0 +1,14 @@
+
+running 9 tests
+test account_archive_prototype::native_store::apply_reader_tests::native_apply_reader_cached_valid_bytes_keep_side_prefix_depth_and_edge_hash_checks ... ok
+test account_archive_prototype::native_store::apply_reader_tests::native_apply_reader_cancellation_at_every_original_checkpoint_keeps_partial_writes ... ok
+test account_archive_prototype::native_store::apply_reader_tests::native_apply_reader_cold_warm_and_fallback_match_original_batch_bytes_and_sql_order ... ok
+test account_archive_prototype::native_store::apply_reader_tests::native_apply_reader_keeps_insert_refusal_collision_rollback_and_cold_reopen ... ok
+test account_archive_prototype::native_store::apply_reader_tests::native_apply_reader_paired_complete_apply_cost_observation ... ignored, fixed 12-pair complete-apply observation; not the original fixed-Host gate
+test account_archive_prototype::native_store::apply_reader_tests::native_apply_reader_pinned_statement_does_not_hide_foreign_wal_commit ... ok
+test account_archive_prototype::native_store::apply_reader_tests::native_apply_reader_preserves_nonce_deletion_duplicate_and_growth_limits ... ok
+test account_archive_prototype::native_store::apply_reader_tests::native_apply_reader_warm_cache_observes_current_child_mutation_and_missing_rows ... ok
+test account_archive_prototype::native_store::apply_reader_tests::native_apply_reader_warm_root_read_and_root_binding_precede_progress ... ok
+
+test result: ok. 8 passed; 0 failed; 1 ignored; 0 measured; 1384 filtered out; finished in 0.43s
+

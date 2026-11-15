@@ -1,0 +1,31 @@
+{
+  "authority": {
+    "changed_paths": [
+      "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "trillionnium/crates/trnm-pon-node/src/store.rs"
+    ],
+    "current_bytes_sha256": "912197c8986bb0b0020588540fd937c58b0a6f39cd29f8d811cca04b2e5e0990",
+    "prior_bytes_sha256": "0ad405804f94c508fa671ab6b1262a489658ce775037bd56cc31a13ce4df8da6"
+  },
+  "inline_pins": [
+    {
+      "current_blob": "d162fe28c0abf6bc1f5a2d59dd9dbbfff18f2b7c",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "prior_blob": "4d2de868f0632532267dcbc2ecef4c018d8c2804",
+      "source_revision": "85a905b9e47cea0d76144253abb4a483b58bc2be",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    }
+  ],
+  "lifetime": {
+    "changed_paths": [
+      "trillionnium/crates/trnm-pon-node/src/store.rs"
+    ],
+    "current_bytes_sha256": "d5b88bf7872fafd5f80f5d849d0e4ce5241af6fc25b78b98e8d5446d2fb621d3",
+    "prior_bytes_sha256": "af0ceb6ae756031305b9b73f1b6695664c830558fed7a13b6c2e7ff255592f92"
+  },
+  "lifetime_manifest_only_revision_changed": true,
+  "qualification_fields_unchanged": true,
+  "reviewed_authority_canonical_sha256": "632bffd261fe937c56b6438434b6b2ab47888f5caa0d4da03c0e79ae4166315d",
+  "source_revision": "85a905b9e47cea0d76144253abb4a483b58bc2be",
+  "source_tree": "e0741c360ea6890b1a729b1b4fad4fa6fc35a990"
+}

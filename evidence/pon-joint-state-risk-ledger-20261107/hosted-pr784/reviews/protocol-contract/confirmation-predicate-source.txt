@@ -1,0 +1,17 @@
+418:     @staticmethod
+419:     def number(value):
+420:         require(type(value) is int and 0 <= value < 1 << 64, 'CONFIRMATION_NUMBER')
+421:         return value
+422: 
+423:     @staticmethod
+424:     def flags(value, yes=(), no=()):
+425:         require(isinstance(value, dict), 'CONFIRMATION_OBJECT')
+426:         require(all(value.get(key) is True for key in yes), 'CONFIRMATION_TARGET')
+427:         require(all(value.get(key) is False for key in no), 'CONFIRMATION_SCOPE_PROMOTION')
+428: 
+429:     @staticmethod
+430:     def hexadecimal(value, width=None):
+431:         require(isinstance(value, str) and len(value) % 2 == 0
+432:                 and (width is None or len(value) == width * 2)
+433:                 and re.fullmatch('[0-9a-f]+', value) is not None, 'CONFIRMATION_HEX')
+434:         return bytes.fromhex(value)

@@ -1,0 +1,87 @@
+{
+  "overall_pass": true,
+  "data_quality_pass": true,
+  "data_quality_issue_count": 0,
+  "timing_rules": [
+    {
+      "case": "repeated",
+      "api": "root",
+      "phase": "warm",
+      "median_paired_ratio": 0.14636171106908608,
+      "threshold": 0.85,
+      "pass": true
+    },
+    {
+      "case": "repeated",
+      "api": "commitment",
+      "phase": "warm",
+      "median_paired_ratio": 0.6210364715728104,
+      "threshold": 0.95,
+      "pass": true
+    },
+    {
+      "case": "unique",
+      "api": "root",
+      "phase": "cold",
+      "median_paired_ratio": 1.0160844717500397,
+      "threshold": 1.05,
+      "pass": true
+    },
+    {
+      "case": "unique",
+      "api": "root",
+      "phase": "warm",
+      "median_paired_ratio": 1.0067268459731458,
+      "threshold": 1.05,
+      "pass": true
+    },
+    {
+      "case": "unique",
+      "api": "commitment",
+      "phase": "cold",
+      "median_paired_ratio": 0.9987898300493756,
+      "threshold": 1.05,
+      "pass": true
+    },
+    {
+      "case": "unique",
+      "api": "commitment",
+      "phase": "warm",
+      "median_paired_ratio": 0.9738570764813976,
+      "threshold": 1.05,
+      "pass": true
+    },
+    {
+      "case": "collision",
+      "api": "root",
+      "phase": "cold",
+      "median_paired_ratio": 0.9485411575564809,
+      "threshold": 1.05,
+      "pass": true
+    },
+    {
+      "case": "collision",
+      "api": "root",
+      "phase": "warm",
+      "median_paired_ratio": 1.0497152883751915,
+      "threshold": 1.05,
+      "pass": true
+    },
+    {
+      "case": "collision",
+      "api": "commitment",
+      "phase": "cold",
+      "median_paired_ratio": 0.9827370660195555,
+      "threshold": 1.05,
+      "pass": true
+    },
+    {
+      "case": "collision",
+      "api": "commitment",
+      "phase": "warm",
+      "median_paired_ratio": 0.9863909681285343,
+      "threshold": 1.05,
+      "pass": true
+    }
+  ]
+}

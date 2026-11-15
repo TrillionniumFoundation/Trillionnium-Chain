@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "build",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-data-availability",
+    "--example",
+    "cell_sealed_research_next_use_v2"
+  ],
+  "completed_at_utc": "2026-11-09T15:15:43.351885+00:00",
+  "cwd": "/home/qq/work/chain-cell-capacity-dc0357-20261109/trillionnium",
+  "elapsed_seconds": 7.661865015979856,
+  "exit_code": 0,
+  "log_sha256": "969bbe5ff2b0dfcba1a89b1088c25bfdba9a85e1b589a4e5d7bcb322a24e0ab3",
+  "name": "binary-build",
+  "started_at_utc": "2026-11-09T15:15:35.690052+00:00"
+}

@@ -1,0 +1,16 @@
+{
+  "head": "06233be630f8eff6cea59cd5111e5941135a4aa5",
+  "staged_paths": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/development/specs/pon/CELL_STORAGE_CAPACITY_V2.md",
+    "trillionnium/crates/trnm-data-availability/src/cell.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs"
+  ],
+  "validation_attempt_present": false,
+  "git_user_name_configured": false,
+  "git_user_email_configured": false
+}

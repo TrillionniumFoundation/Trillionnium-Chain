@@ -1,0 +1,185 @@
+[
+  {
+    "argv": [
+      "cargo",
+      "metadata",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:28:31.171647+00:00",
+    "elapsed_seconds": 14.43336031900003,
+    "exit_code": 0,
+    "log": "rust-00.log",
+    "bytes": 849929,
+    "sha256": "3cd711972f7cea5df7ced25f87dd90dcf5b124f929aa87bf89aa5e09a1488b59",
+    "python_test_counts": [],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "cargo",
+      "metadata",
+      "--offline",
+      "--locked",
+      "--all-features",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:28:45.619789+00:00",
+    "elapsed_seconds": 0.43493764400000146,
+    "exit_code": 0,
+    "log": "rust-01.log",
+    "bytes": 865079,
+    "sha256": "acf88563f7968b0d4f11e607bc43c3005d03ce87a33567e4197278bf4fe83913",
+    "python_test_counts": [],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "cargo",
+      "fetch",
+      "--locked",
+      "--manifest-path",
+      "tests/fuzz/Cargo.toml"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:28:46.057462+00:00",
+    "elapsed_seconds": 9.048623755000108,
+    "exit_code": 0,
+    "log": "rust-02.log",
+    "bytes": 149,
+    "sha256": "08ea8a2d41ce1af28117f7315273884295d0c8f16717dcb4959e16b90b010572",
+    "python_test_counts": [],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "cargo",
+      "metadata",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "tests/fuzz/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:28:55.106417+00:00",
+    "elapsed_seconds": 0.16553321500009588,
+    "exit_code": 0,
+    "log": "rust-03.log",
+    "bytes": 734788,
+    "sha256": "28b108f24b3a553938a6889aab44289e7b49593edd4937bf947cb628844dbd26",
+    "python_test_counts": [],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:28:55.274390+00:00",
+    "elapsed_seconds": 14.493463677000136,
+    "exit_code": 0,
+    "log": "rust-04.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "python_test_counts": [],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:29:09.768192+00:00",
+    "elapsed_seconds": 0.7751207349999731,
+    "exit_code": 101,
+    "log": "rust-05.log",
+    "bytes": 5855,
+    "sha256": "6f2942ea4b4216afcf23d939cb85adc4e722a1a766cf3934b4fbe700785e021e",
+    "python_test_counts": [],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-crypto-primitives",
+      "--lib"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:29:10.543913+00:00",
+    "elapsed_seconds": 61.29279360700002,
+    "exit_code": 0,
+    "log": "rust-06.log",
+    "bytes": 19400,
+    "sha256": "fdd7f2f2ca17d99c38d9fe543e4f0a6ea81a87880f125c485d249302ba6a0e1b",
+    "python_test_counts": [],
+    "rust_test_results": [
+      "test result: ok. 165 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.70s"
+    ]
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-release-bundle",
+      "--lib"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:30:11.837302+00:00",
+    "elapsed_seconds": 56.773999440000125,
+    "exit_code": 0,
+    "log": "rust-07.log",
+    "bytes": 5380,
+    "sha256": "90ffffb6bfbc5adb470f9337d21bcebff70c1562bd02bf601ea9f4b82c000b85",
+    "python_test_counts": [],
+    "rust_test_results": [
+      "test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 44.94s"
+    ]
+  }
+]

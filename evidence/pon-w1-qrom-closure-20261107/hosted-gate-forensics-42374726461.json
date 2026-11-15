@@ -1,0 +1,384 @@
+{
+  "acquisition": {
+    "new_jobs": [
+      {
+        "calls": [
+          {
+            "command": [
+              "gh",
+              "api",
+              "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128409876693"
+            ],
+            "exit": 0,
+            "kind": "job",
+            "stderr_bytes": 0,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_bytes": 3140,
+            "stdout_sha256": "9f2454de2993c81bbbdb7fbc673578da6cb9be2b66425b6216dc0b7e9fe44776"
+          },
+          {
+            "command": [
+              "gh",
+              "api",
+              "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128409876693/logs"
+            ],
+            "exit": 0,
+            "kind": "logs",
+            "stderr_bytes": 0,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_bytes": 153620,
+            "stdout_sha256": "47b90add771235c239cefe61775dac4830207b4eba24c2430c58cb0739f1d4da"
+          }
+        ],
+        "job_id": 128409876693,
+        "name": "protocol-contract-128409876693",
+        "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/semantics-zkr/hosted-gate-forensics-42374726461-v1/protocol-contract-128409876693"
+      },
+      {
+        "calls": [
+          {
+            "command": [
+              "gh",
+              "api",
+              "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128409876821"
+            ],
+            "exit": 0,
+            "kind": "job",
+            "stderr_bytes": 0,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_bytes": 2775,
+            "stdout_sha256": "07b1214778583c8d02e96201fa9a9cc076aee825e5cd95d5c403a51f2463bfbc"
+          },
+          {
+            "command": [
+              "gh",
+              "api",
+              "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128409876821/logs"
+            ],
+            "exit": 0,
+            "kind": "logs",
+            "stderr_bytes": 0,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_bytes": 312344,
+            "stdout_sha256": "cbf95d7e3be8747041f90839f48edb3209d6f569270bb1c3db0c86058003fcf1"
+          }
+        ],
+        "job_id": 128409876821,
+        "name": "external-evidence-contract-128409876821",
+        "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/semantics-zkr/hosted-gate-forensics-42374726461-v1/external-evidence-contract-128409876821"
+      }
+    ],
+    "original_repository_truth": {
+      "bytes": 219060,
+      "compressed_bytes": 38233,
+      "compressed_path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/semantics-zkr/hosted-gate-forensics-42374726461-v1/repository-truth-128409876811.log.gz",
+      "compressed_sha256": "9f651420727a80911491bab9b359dfba46453fc494f8b9fb34b1e108ecdcdeb7",
+      "job_id": 128409876811,
+      "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/semantics-zkr/hosted-repository-truth-128409876811/logs.stdout",
+      "roundtrip_verified": true,
+      "sha256": "b6fe718918bdec0b54b33104fecfe0a89efa1a4d99aca196c623735f86903ab8"
+    },
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "run_id": 42374726461,
+    "schema": "w1-hosted-gate-forensics-v1"
+  },
+  "artifact": {
+    "bytes": 5718843,
+    "id": 13575116844,
+    "large_elf_and_sqlite_not_copied_to_repository": true,
+    "retained_selected_member_count": 30,
+    "sha256": "4abda7e741bf1a15c3cfd941e1c2b6a794fe8ea0757c7e82ebd2fcf39869d280",
+    "sha256_matches_original_uploaded_artifact_log": true
+  },
+  "base_sha": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+  "external_evidence_contract": {
+    "both_commit_source_probes_reproduced_exact_error": true,
+    "cause": "The unchanged source reader requires the direct ddl/schema_id binding inside Node::open_selected, while unchanged store.rs delegates open_selected to open_selected_mode, where that binding now lives.",
+    "exact_log_excerpt": [
+      "2026-11-07T13:05:03.9583832Z ERROR: test_authenticated_domain_cannot_relabel_legacy_tables (__main__.DurableStoreTests.test_authenticated_domain_cannot_relabel_legacy_tables)",
+      "2026-11-07T13:05:03.9585127Z ----------------------------------------------------------------------",
+      "2026-11-07T13:05:03.9585669Z Traceback (most recent call last):",
+      "2026-11-07T13:05:03.9586566Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/test_public_readiness_evidence.py\", line 538, in setUp",
+      "2026-11-07T13:05:03.9587915Z     ddl, self.schema_domain = check.native_durable_schema(check.ROOT)",
+      "2026-11-07T13:05:03.9589008Z                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "2026-11-07T13:05:03.9590124Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/check_public_readiness_evidence.py\", line 409, in native_durable_schema",
+      "2026-11-07T13:05:03.9591469Z     require(len(bindings) == 1 and direct(selected,bindings[0].start()),",
+      "2026-11-07T13:05:03.9592721Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/check_public_readiness_evidence.py\", line 36, in require",
+      "2026-11-07T13:05:03.9593771Z     raise ValueError(message)",
+      "2026-11-07T13:05:03.9594244Z ValueError: durable backend selected schema"
+    ],
+    "first_error": "ValueError: durable backend selected schema",
+    "first_error_test": "DurableStoreTests.test_authenticated_domain_cannot_relabel_legacy_tables",
+    "first_failing_command": "python3 scripts/ci/test_public_readiness_evidence.py",
+    "job_id": 128409876821,
+    "same_inventory_cause": false,
+    "source_logic_changed_by_7150": false,
+    "suite_summary": "Ran 68 tests; FAILED (failures=65, errors=22), including subtest failures",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876821"
+  },
+  "head_sha": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "log_files": [
+    {
+      "compressed_bytes": 38233,
+      "compressed_sha256": "9f651420727a80911491bab9b359dfba46453fc494f8b9fb34b1e108ecdcdeb7",
+      "path": "hosted-repository-truth-128409876811.log.gz",
+      "raw_bytes": 219060,
+      "raw_sha256": "b6fe718918bdec0b54b33104fecfe0a89efa1a4d99aca196c623735f86903ab8",
+      "roundtrip_verified": true
+    },
+    {
+      "compressed_bytes": 25871,
+      "compressed_sha256": "5db5e0c3afec988b9be09fbd258dca73b3ccd11d9152ea5ea7fffd07c84f143c",
+      "path": "hosted-protocol-contract-128409876693.log.gz",
+      "raw_bytes": 153620,
+      "raw_sha256": "47b90add771235c239cefe61775dac4830207b4eba24c2430c58cb0739f1d4da",
+      "roundtrip_verified": true
+    },
+    {
+      "compressed_bytes": 40940,
+      "compressed_sha256": "0db89d3bf8606ad4592c1fa00a972ea4b4e4a8756100bfbec7ff4f01d4da7f34",
+      "path": "hosted-external-evidence-contract-128409876821.log.gz",
+      "raw_bytes": 312344,
+      "raw_sha256": "cbf95d7e3be8747041f90839f48edb3209d6f569270bb1c3db0c86058003fcf1",
+      "roundtrip_verified": true
+    },
+    {
+      "compressed_bytes": 17619,
+      "compressed_sha256": "5d9a5b7e15157740fa00f8e4c2207eadba81a9e7c95b5134470b3aeb46d3d3e7",
+      "path": "hosted-protocol-contract-128409876693-selected-raw-records.json.gz",
+      "raw_bytes": 115669,
+      "raw_sha256": "1ceb5d3e146ea060581f3094953a460c08c75b916f11615a1cc30be7a837ff15",
+      "roundtrip_verified": true
+    }
+  ],
+  "protocol_contract": {
+    "all_named_tests_passed": true,
+    "baseline_native_pressure_experiment_replayed": false,
+    "build_exit_code": 0,
+    "confirmation_phases": [
+      {
+        "business": {
+          "business_start_delay_ns": 174115,
+          "lower_bound_reaches_original_window_end": null,
+          "observed_success_latency_ns": 1796421454,
+          "reported_finite_business_target_met": true,
+          "reported_independently_confirmed_in_window": 1,
+          "required_signed_transactions": 1,
+          "unconfirmed": 0,
+          "unconfirmed_latency_lower_bound_ns": null,
+          "unknown": 0
+        },
+        "mode": "attack-free-baseline",
+        "verification_errors": [],
+        "window_ns": 4000000000,
+        "workers": 0
+      },
+      {
+        "business": {
+          "business_start_delay_ns": 58261534,
+          "lower_bound_reaches_original_window_end": true,
+          "observed_success_latency_ns": null,
+          "reported_finite_business_target_met": false,
+          "reported_independently_confirmed_in_window": 0,
+          "required_signed_transactions": 1,
+          "unconfirmed": 1,
+          "unconfirmed_latency_lower_bound_ns": 3941738466,
+          "unknown": 0
+        },
+        "mode": "from-zero-pressure",
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_ns": 4000000000,
+        "workers": 16
+      }
+    ],
+    "failures": [
+      "CONFIRMATION_TARGET"
+    ],
+    "first_failing_acceptance_stage": "confirmation_report",
+    "first_failing_command": "python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\"",
+    "format_passed": true,
+    "inference": "Existing finite confirmation target failed in this hosted pressure window. The affected runner and Rust sources are unchanged from cb114; this record does not infer a universal performance claim or prove the scheduling cause.",
+    "job_id": 128409876693,
+    "native_invocations": [
+      {
+        "exit_code": 0,
+        "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+        "status": "returned",
+        "timed_out": false
+      },
+      {
+        "exit_code": 0,
+        "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+        "status": "returned",
+        "timed_out": false
+      },
+      {
+        "exit_code": 0,
+        "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+        "status": "returned",
+        "timed_out": false
+      },
+      {
+        "exit_code": 0,
+        "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+        "status": "returned",
+        "timed_out": false
+      },
+      {
+        "exit_code": 0,
+        "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+        "status": "returned",
+        "timed_out": false
+      }
+    ],
+    "same_inventory_cause": false,
+    "source_logic_changed_by_7150": false,
+    "terminal": {
+      "acceptance_passed": false,
+      "acceptance_stages": {
+        "confirmation_report": {
+          "before_validation": {
+            "bytes": 8783384,
+            "sha256": "388b1934d6b6eb876c09e30781dfde201122de1aa7dc887db4e2eb30d6c7a3c3",
+            "state": "present"
+          },
+          "error": "CONFIRMATION_TARGET",
+          "path": "confirmation/report.json",
+          "retained_matches_before_validation": true,
+          "retained_report": {
+            "bytes": 8783384,
+            "sha256": "388b1934d6b6eb876c09e30781dfde201122de1aa7dc887db4e2eb30d6c7a3c3",
+            "state": "present"
+          },
+          "status": "failed"
+        },
+        "service_report": {
+          "before_validation": {
+            "bytes": 3474036,
+            "sha256": "135a26bf8d381b3374d2736bd9f29cb9d1ec0801b0ceeee1bcb9a0a8d8ee26b4",
+            "state": "present"
+          },
+          "error": null,
+          "path": "native/report.json",
+          "retained_matches_before_validation": true,
+          "retained_report": {
+            "bytes": 3474036,
+            "sha256": "135a26bf8d381b3374d2736bd9f29cb9d1ec0801b0ceeee1bcb9a0a8d8ee26b4",
+            "state": "present"
+          },
+          "status": "passed"
+        },
+        "sustained_report": {
+          "before_validation": {
+            "bytes": 13120277,
+            "sha256": "7db3fc8e6d1640d0ff75606e061be0e51e2f8033b60f5c075f5234cb6e7ceccc",
+            "state": "present"
+          },
+          "error": null,
+          "path": "native/sustained/report.json",
+          "retained_matches_before_validation": true,
+          "retained_report": {
+            "bytes": 13120277,
+            "sha256": "7db3fc8e6d1640d0ff75606e061be0e51e2f8033b60f5c075f5234cb6e7ceccc",
+            "state": "present"
+          },
+          "status": "passed"
+        }
+      },
+      "finalization_completed": true,
+      "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+      "native_execution_completed": true,
+      "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+      "native_invocations": [
+        {
+          "exit_code": 0,
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "status": "returned",
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "status": "returned",
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "status": "returned",
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "status": "returned",
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "status": "returned",
+          "timed_out": false
+        }
+      ],
+      "schema": "trnm-from-zero-native-terminal-v1",
+      "scope": "child process terminals and original sequential report acceptance; diagnostic readback grants no acceptance or subsequent CI execution",
+      "subsequent_ci_steps_observed": false,
+      "unexecuted_acceptance_stages": [],
+      "unexecuted_native_tests": []
+    },
+    "timing_causality_proved": false,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876693"
+  },
+  "qualification": {
+    "ci_gate_bypassed": false,
+    "complete_pq_proof": false,
+    "failure_erased": false,
+    "native_baseline_rerun_performed": false,
+    "source_modified_by_diagnosis": false
+  },
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "repository_truth": {
+    "branch_introduced_inventory_delta": [
+      "config/pon/w1-qrom-implementation-v1.json",
+      "config/pon/w1-qrom-required-tests-v1.json"
+    ],
+    "first_failure": "distributed native source inventory differs; refresh before freezing source",
+    "fix_replayed_in_this_diagnostic": false,
+    "job_id": 128409876811,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876811"
+  },
+  "run_id": 42374726461,
+  "schema": "trnm-w1-hosted-gate-forensics-v1",
+  "scope": "read-only diagnosis of the three original failed 7150 hosted jobs; no gate target/schema/source changes and no rerun qualification",
+  "source_comparison": {
+    "all_compared_files_byte_equal": true,
+    "bytes": 3908,
+    "path": "hosted-gate-source-comparison-42374726461.json",
+    "schema_probe": [
+      {
+        "commit": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+        "exception": "ValueError",
+        "message": "durable backend selected schema",
+        "returned": false
+      },
+      {
+        "commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "exception": "ValueError",
+        "message": "durable backend selected schema",
+        "returned": false
+      }
+    ],
+    "sha256": "171965508806e8676de3a2098c9819ef6f9c9c494e1b37094bbb6a18eb6d7be5"
+  },
+  "transfer_observations": [
+    {
+      "error": "exec-server rejected request: Argument list too long (os error 7)",
+      "executed": false,
+      "phase": "initial batched local decode command",
+      "recovery": "Three independent bounded create-only transfers, each verified by compressed SHA, decompression, raw SHA and byte lengths."
+    }
+  ]
+}

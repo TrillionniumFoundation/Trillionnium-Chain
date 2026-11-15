@@ -1,0 +1,96 @@
+Diff in /data/chain-abg-70ae-20261108/red-source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:122:
+             assert_eq!(result.unwrap()["block"], hex::encode(id));
+             assert_eq!(node.lock().unwrap().active().unwrap().0, id);
+         }
+-        assert_eq!(domain.observe_completion_work().unwrap().live_completions, 0);
++        assert_eq!(
++            domain.observe_completion_work().unwrap().live_completions,
++            0
++        );
+     }
+     let flow = domain.observe_actual_flow().unwrap().unwrap();
+     let registry = domain.observe_completion_work().unwrap();
+Diff in /data/chain-abg-70ae-20261108/red-source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:201:
+         )
+         .unwrap();
+     let task = prepared(&original.proof);
+-    let original_identity = GrowthWorkCheckedPacket::verify_with_progress(original.clone(), &|_| Ok(()))
+-        .unwrap()
+-        .completion_identity()
+-        .unwrap();
++    let original_identity =
++        GrowthWorkCheckedPacket::verify_with_progress(original.clone(), &|_| Ok(()))
++            .unwrap()
++            .completion_identity()
++            .unwrap();
+     let mut candidates: Vec<GrowthPacket> = Vec::new();
+     let mut identities = Vec::new();
+     for state_mismatch in [true, false] {
+Diff in /data/chain-abg-70ae-20261108/red-source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:228:
+                 break;
+             }
+         }
+-        let identity = GrowthWorkCheckedPacket::verify_with_progress(candidate.clone(), &|_| Ok(()))
+-            .unwrap()
+-            .completion_identity()
+-            .unwrap();
++        let identity =
++            GrowthWorkCheckedPacket::verify_with_progress(candidate.clone(), &|_| Ok(()))
++                .unwrap()
++                .completion_identity()
++                .unwrap();
+         assert_ne!(identity, original_identity);
+         identities.push(identity);
+         candidates.push(candidate);
+Diff in /data/chain-abg-70ae-20261108/red-source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:249:
+             )
+         })
+         .collect();
+-    let receiver = Node::open_with_permanent_account_growth_v2(
+-        &directory.path().join("receiver"),
+-        settings,
+-    )
+-    .unwrap();
++    let receiver =
++        Node::open_with_permanent_account_growth_v2(&directory.path().join("receiver"), settings)
++            .unwrap();
+     let server = PublicServer::new(
+         DevelopmentIdentity::from_secret_hex(&hex::encode([74; 32])).unwrap(),
+         PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+Diff in /data/chain-abg-70ae-20261108/red-source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:283:
+     let (directory, settings, original) = ordinary_fixture();
+     let mut receiver = Node::open(&directory.path().join("receiver"), settings.clone(), 1).unwrap();
+     let domain = receiver.remote_history_cpu_domain().unwrap();
+-    assert_eq!(domain.observe_actual_flow().unwrap().unwrap().initial_credit_ns, 0);
++    assert_eq!(
++        domain
++            .observe_actual_flow()
++            .unwrap()
++            .unwrap()
++            .initial_credit_ns,
++        0
++    );
+     let shared_receiver = Mutex::new(receiver);
+     let before = shared_receiver.lock().unwrap().active().unwrap();
+     let mut retained = Vec::new();
+Diff in /data/chain-abg-70ae-20261108/red-source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:319:
+         let result = if shared {
+             receive(history_import::Owner::Shared(&shared_receiver))
+         } else {
+-            receive(history_import::Owner::Exclusive(&mut shared_receiver.lock().unwrap()))
++            receive(history_import::Owner::Exclusive(
++                &mut shared_receiver.lock().unwrap(),
++            ))
+         };
+         let registry = domain.observe_completion_work().unwrap();
+         retained.push(registry.retained_identities);
+Diff in /data/chain-abg-70ae-20261108/red-source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:360:
+ #[test]
+ fn native_completion_priority_cold_history_honest_original_deadline_control() {
+     let (directory, settings, original) = ordinary_fixture();
+-    let mut receiver = Node::open(&directory.path().join("cold-receiver"), settings.clone(), 1).unwrap();
++    let mut receiver =
++        Node::open(&directory.path().join("cold-receiver"), settings.clone(), 1).unwrap();
+     let domain = receiver.remote_history_cpu_domain().unwrap();
+     let start = Instant::now();
+     let result = history_import::receive(

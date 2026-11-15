@@ -1,0 +1,1197 @@
+{
+  "schema": "trnm-followup-additional-frozen-copy-v1",
+  "files": [
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/BENCH_CORE.json",
+      "path": "ingress-205/BENCH_CORE.json",
+      "bytes": 13852,
+      "sha256": "81d2db579e21d9d10e8fd6cac12df313d83d93bc3fc6606739e96a74119dd180"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/BENCH_RESULT.md",
+      "path": "ingress-205/BENCH_RESULT.md",
+      "bytes": 4528,
+      "sha256": "f8a57bc14ce3fae86c5269f554c409fe600c05432046de1d21f6ff05b0250210"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/FREEZE.json",
+      "path": "ingress-205/FREEZE.json",
+      "bytes": 801,
+      "sha256": "f5fa41973b0915e2bbbc76d9377f3c4a864464e5089048797f53e91c710bd4b8"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/NATIVE_VALIDATION.md",
+      "path": "ingress-205/NATIVE_VALIDATION.md",
+      "bytes": 9092,
+      "sha256": "b9c75dc25fbdeb353580dd2f0c5be6d5730af9f0e0c5493cf2949b63c716dfdf"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/SHA256SUMS",
+      "path": "ingress-205/SHA256SUMS",
+      "bytes": 16393,
+      "sha256": "60ff492bee6b25377fd286febce19611035d157dac0206ded23f8439f410b6cb"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/canonical_packet.rs",
+      "path": "ingress-205/canonical_packet.rs",
+      "bytes": 2445,
+      "sha256": "58e50e5014daa332547f8787f55be33bc2845af967445b34e3597e3800255cce"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/ci-contract-619.log",
+      "path": "ingress-205/ci-contract-619.log",
+      "bytes": 180,
+      "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/actual-test-binary.json",
+      "path": "ingress-205/component-205ae38/actual-test-binary.json",
+      "bytes": 389,
+      "sha256": "a310c29386d11e85c0ffaf2f2d3a056f7cea325278f71690928b88d2c0b15c0d"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/analysis.json",
+      "path": "ingress-205/component-205ae38/analysis.json",
+      "bytes": 25640,
+      "sha256": "0520ccd505e26aafe90ffa0e743c56a16a182c984a33710fc87418a329262bc3"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/binary-identity.json",
+      "path": "ingress-205/component-205ae38/binary-identity.json",
+      "bytes": 411,
+      "sha256": "443f17ac9f52e35d6766e145a9c721785cf7ee75885ee8899c52974c5dd7e949"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/component-abba.json",
+      "path": "ingress-205/component-205ae38/component-abba.json",
+      "bytes": 793,
+      "sha256": "3c498022fdcbdadb65f01423661299c01034074d465ce6115d7b2ba99271c34b"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/component-abba.log",
+      "path": "ingress-205/component-205ae38/component-abba.log",
+      "bytes": 282402,
+      "sha256": "a765a65ba449b7c356d4763a96fc471b9f902ab32dd88064b0d5720b894392b3"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/component-exact-denominator.json",
+      "path": "ingress-205/component-205ae38/component-exact-denominator.json",
+      "bytes": 715,
+      "sha256": "e2ecd3a8fc0d3f346d566150db4590ddde5eea6326b6c7db58d1ee88f7cdeda6"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/component-exact-denominator.log",
+      "path": "ingress-205/component-205ae38/component-exact-denominator.log",
+      "bytes": 191,
+      "sha256": "b671cf3b3d4e9b8554a913835cb1f54a64bd2086311ae3131419dbb6d6d9e788"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/component-records.jsonl",
+      "path": "ingress-205/component-205ae38/component-records.jsonl",
+      "bytes": 307348,
+      "sha256": "111b5d689340c9c3a8d05ac1bce23b456362ae0c24b2bae1c89e08a9fc8cc1ee"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/environment.json",
+      "path": "ingress-205/component-205ae38/environment.json",
+      "bytes": 1377,
+      "sha256": "fb5c7a8ee631e687a0ffe64579da255644d7f0d06e23df9bbbe48ebd5093ac44"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/predeclared-plan.json",
+      "path": "ingress-205/component-205ae38/predeclared-plan.json",
+      "bytes": 4095,
+      "sha256": "82f087389dd27519cb4e1fe2568ba2e1988f200d187d7fd9e922a18d7e63e820"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/preflight.json",
+      "path": "ingress-205/component-205ae38/preflight.json",
+      "bytes": 419,
+      "sha256": "bcdc3868f6b1d82657449097d575f3af0a4439138ced5ca742824bb4b8107cd3"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/preflight.log",
+      "path": "ingress-205/component-205ae38/preflight.log",
+      "bytes": 173,
+      "sha256": "5b7f93acd60822d8dd80aefe71ae927306835ec4fa601e7e0072e7dc5ef29327"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/process-sample-after.json",
+      "path": "ingress-205/component-205ae38/process-sample-after.json",
+      "bytes": 483,
+      "sha256": "f3a8778418917e8727f0d22c091b7039680d051771381b578662e1d6de8339e0"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/process-sample-after.log",
+      "path": "ingress-205/component-205ae38/process-sample-after.log",
+      "bytes": 44850,
+      "sha256": "bec7fbee88a50206a9842dc0613497616a6aa6c5131522d6a7e053e42bb98e51"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/process-sample-before.json",
+      "path": "ingress-205/component-205ae38/process-sample-before.json",
+      "bytes": 485,
+      "sha256": "fc2fbec9691092415a69a4c209b223a4f74b7080d4f449597f3d3502313ec40f"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/process-sample-before.log",
+      "path": "ingress-205/component-205ae38/process-sample-before.log",
+      "bytes": 44900,
+      "sha256": "8cc0e739216324a8d253436e14fc74f90738343a98abf830fbe937ae6ddc6787"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/source-after.json",
+      "path": "ingress-205/component-205ae38/source-after.json",
+      "bytes": 3345481,
+      "sha256": "57b81d43099e9fc60e5d673599a55e7103cf9c897ca73b191070874eb186e16f"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/source-before.json",
+      "path": "ingress-205/component-205ae38/source-before.json",
+      "bytes": 3345481,
+      "sha256": "57b81d43099e9fc60e5d673599a55e7103cf9c897ca73b191070874eb186e16f"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/summary.json",
+      "path": "ingress-205/component-205ae38/summary.json",
+      "bytes": 3674,
+      "sha256": "8a8a465798897b7ab04cbd3a44e648af3cc4855ad6b604d24f3b7ba33841c0a6"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/terminal-receipt.json",
+      "path": "ingress-205/component-205ae38/terminal-receipt.json",
+      "bytes": 732,
+      "sha256": "6a92e6a50318676c33d1d87d1ad445ead8374ee92a91df09f248bf9592a8df4a"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-adoption-plan-205ae38.json",
+      "path": "ingress-205/component-adoption-plan-205ae38.json",
+      "bytes": 4095,
+      "sha256": "82f087389dd27519cb4e1fe2568ba2e1988f200d187d7fd9e922a18d7e63e820"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/decoder-context-review.txt",
+      "path": "ingress-205/decoder-context-review.txt",
+      "bytes": 3607,
+      "sha256": "abe59080ed561fc7d58e202901c4ac77a7cfcc591ec7d861b6b21819d62629a7"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/diff-check-619.log",
+      "path": "ingress-205/diff-check-619.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/ff-619.log",
+      "path": "ingress-205/ff-619.log",
+      "bytes": 233,
+      "sha256": "8dc214e69ab2cbe9d2c0218f812a6165a725f0bc1bb971758deeff0e34f22eec"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/full-review-619.patch",
+      "path": "ingress-205/full-review-619.patch",
+      "bytes": 59968,
+      "sha256": "e211097a4dcbe1da12bef64413b27ca1664ac1d35ac4d155d596a82fbf015735"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/full-review.patch",
+      "path": "ingress-205/full-review.patch",
+      "bytes": 48080,
+      "sha256": "185f9530d098fc35b18d0d1d01401456d7ccfe31644ee8a42994df70dc164c39"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/local-commit.json",
+      "path": "ingress-205/local-commit.json",
+      "bytes": 372,
+      "sha256": "28dec5d87a9087f7200d74c4b54096cbbe8b38ce7341c65a3011fa575767e40a"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/local-commit.log",
+      "path": "ingress-205/local-commit.log",
+      "bytes": 356,
+      "sha256": "a1d29324c3383458385c3d905b4ef4061f52a859fbb333743a508c7a0ca88abd"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38/runner-start-failure-actual-read.json",
+      "path": "ingress-205/native-205ae38/runner-start-failure-actual-read.json",
+      "bytes": 1523,
+      "sha256": "8d8c9452ed7198cdf53a2bc9b7435a7852bdce4a11ce9ae3e98173d622ce2506"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v2/build-environment.json",
+      "path": "ingress-205/native-205ae38-v2/build-environment.json",
+      "bytes": 498,
+      "sha256": "a5d855caced1deea0b24c7fa9f8c91b0d6f9ca15406ce05a4a5036e321ad7756"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v2/preflight.json",
+      "path": "ingress-205/native-205ae38-v2/preflight.json",
+      "bytes": 419,
+      "sha256": "b229ae7263a0202f4f0ab1c90b7903784a97b55cdd1580075b98c83c8d4f3e02"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v2/preflight.log",
+      "path": "ingress-205/native-205ae38-v2/preflight.log",
+      "bytes": 173,
+      "sha256": "5b7f93acd60822d8dd80aefe71ae927306835ec4fa601e7e0072e7dc5ef29327"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v2/requested-tests.json",
+      "path": "ingress-205/native-205ae38-v2/requested-tests.json",
+      "bytes": 4176,
+      "sha256": "7b60d0e22c96c0dc455907e6256fe1c5e05b95b304f8482c063d85c028f3daad"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v2/rustc-version.json",
+      "path": "ingress-205/native-205ae38-v2/rustc-version.json",
+      "bytes": 466,
+      "sha256": "3ee28d10aaf9dbe5ffa5bf623155a2465a1a8ac57eb02fa051e8f8f2bb893b7d"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v2/rustc-version.log",
+      "path": "ingress-205/native-205ae38-v2/rustc-version.log",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v2/source-after.json",
+      "path": "ingress-205/native-205ae38-v2/source-after.json",
+      "bytes": 3345481,
+      "sha256": "57b81d43099e9fc60e5d673599a55e7103cf9c897ca73b191070874eb186e16f"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v2/source-before.json",
+      "path": "ingress-205/native-205ae38-v2/source-before.json",
+      "bytes": 3345481,
+      "sha256": "57b81d43099e9fc60e5d673599a55e7103cf9c897ca73b191070874eb186e16f"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v2/summary.json",
+      "path": "ingress-205/native-205ae38-v2/summary.json",
+      "bytes": 3160,
+      "sha256": "b702995816d94ebfc778c62cf82ad89fcd0224d5ee45a9175c307210ea180a1a"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v2/test-01-denominator.json",
+      "path": "ingress-205/native-205ae38-v2/test-01-denominator.json",
+      "bytes": 717,
+      "sha256": "25d677a38bb5229b02ab36c0381c76d00e09ab95fc6c0e011aa3c4dc9ded7a98"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v2/test-01-denominator.log",
+      "path": "ingress-205/native-205ae38-v2/test-01-denominator.log",
+      "bytes": 54,
+      "sha256": "834ae99dd06177897f22165046e71ac729a2e0e968ce90da7bbbd2fd2c0f8437"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v2/test-01.json",
+      "path": "ingress-205/native-205ae38-v2/test-01.json",
+      "bytes": 788,
+      "sha256": "2ba1baec1cd91c9f1ebca5df540f1bebc75e68601d4b61fd571fe2f377132981"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v2/test-01.log",
+      "path": "ingress-205/native-205ae38-v2/test-01.log",
+      "bytes": 6709,
+      "sha256": "285b699fcf67b3793180dea3c56001a149f958e8c72c6fc4050996dc405f32d9"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/build-environment.json",
+      "path": "ingress-205/native-205ae38-v3/build-environment.json",
+      "bytes": 1281,
+      "sha256": "033eeb04a44a4107982565d3b87cdb3218569205983679348ad48ce7efc25d1b"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/core.json",
+      "path": "ingress-205/native-205ae38-v3/core.json",
+      "bytes": 3537,
+      "sha256": "a69fdef11904ed5f2320e8e07bb9c3ce1e094c76b1102e972f71e703a6822ad9"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/preflight.json",
+      "path": "ingress-205/native-205ae38-v3/preflight.json",
+      "bytes": 419,
+      "sha256": "72e0c39694cc33b242b525047fa175d343df2c8408601662d531e303d091c07e"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/preflight.log",
+      "path": "ingress-205/native-205ae38-v3/preflight.log",
+      "bytes": 173,
+      "sha256": "5b7f93acd60822d8dd80aefe71ae927306835ec4fa601e7e0072e7dc5ef29327"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/provider-version.json",
+      "path": "ingress-205/native-205ae38-v3/provider-version.json",
+      "bytes": 547,
+      "sha256": "c8af2b97960f5237be6b649c61c5915c801b680476bb91c6c2f8e42ae5bd0cf4"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/provider-version.log",
+      "path": "ingress-205/native-205ae38-v3/provider-version.log",
+      "bytes": 870,
+      "sha256": "3931f03911aa6957b4265e8fd148beffaf5858e10a5b2c8910f43990f4c21583"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/requested-tests.json",
+      "path": "ingress-205/native-205ae38-v3/requested-tests.json",
+      "bytes": 4176,
+      "sha256": "7b60d0e22c96c0dc455907e6256fe1c5e05b95b304f8482c063d85c028f3daad"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/rustc-version.json",
+      "path": "ingress-205/native-205ae38-v3/rustc-version.json",
+      "bytes": 466,
+      "sha256": "3886618ce08a2fdb96ac0daa5e96b36a0d288e584cf353520d196f5c26182496"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/rustc-version.log",
+      "path": "ingress-205/native-205ae38-v3/rustc-version.log",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/source-after.json",
+      "path": "ingress-205/native-205ae38-v3/source-after.json",
+      "bytes": 3345481,
+      "sha256": "57b81d43099e9fc60e5d673599a55e7103cf9c897ca73b191070874eb186e16f"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/source-before.json",
+      "path": "ingress-205/native-205ae38-v3/source-before.json",
+      "bytes": 3345481,
+      "sha256": "57b81d43099e9fc60e5d673599a55e7103cf9c897ca73b191070874eb186e16f"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/strict-workspace-clippy.json",
+      "path": "ingress-205/native-205ae38-v3/strict-workspace-clippy.json",
+      "bytes": 652,
+      "sha256": "3c18d0438df5a4b53f8ce56b7ff2adc73a7f67a2f4da9143d7d83ea760cf20cf"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/strict-workspace-clippy.log",
+      "path": "ingress-205/native-205ae38-v3/strict-workspace-clippy.log",
+      "bytes": 1236,
+      "sha256": "93b448e7e3e7f30453daf584986e00c5547c708d74d8d40e22f6415f1fd34f54"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/summary.json",
+      "path": "ingress-205/native-205ae38-v3/summary.json",
+      "bytes": 38882,
+      "sha256": "f509befb92c145d15db14a8f051f99edafcc69572c758c75590a1376ea73b5dd"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-01-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-01-denominator.json",
+      "bytes": 718,
+      "sha256": "db0dad10b5b817897aea14a82e2f57de10567ad4ca89e752ba42685f4abd1d9c"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-01-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-01-denominator.log",
+      "bytes": 217,
+      "sha256": "51a2f60e8e18f858b5078c2c473846673fd33ba9e50134df888ac4bcd69160a1"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-01.json",
+      "path": "ingress-205/native-205ae38-v3/test-01.json",
+      "bytes": 786,
+      "sha256": "1a1e2a4119bf0ae5e10c8af624bb2c106b519a8fa5893cd462bc1bac033be714"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-01.log",
+      "path": "ingress-205/native-205ae38-v3/test-01.log",
+      "bytes": 1159,
+      "sha256": "ef50d5f74fc33c074c7b1ab52e56e2ea0b83b6ed5dab67eba8cf0b2c315a3176"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-02-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-02-denominator.json",
+      "bytes": 709,
+      "sha256": "576d19e221c29342adff66a66185aa24e7ef8cce88c1ed8f4141ee3d1b4427d5"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-02-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-02-denominator.log",
+      "bytes": 208,
+      "sha256": "456bf5425cc859e2500c9bacc7de80625cca9c6cc37fd367c087a517a37f9a4c"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-02.json",
+      "path": "ingress-205/native-205ae38-v3/test-02.json",
+      "bytes": 776,
+      "sha256": "f7dad44a1379477b4c7b9820f0414874b4973c5ea4464b784193c79ec7ece21f"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-02.log",
+      "path": "ingress-205/native-205ae38-v3/test-02.log",
+      "bytes": 453,
+      "sha256": "ea0fc449478d0f4f1a521d75c4718f8c216508b51ff0a478653ef4c6c600bd22"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-03-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-03-denominator.json",
+      "bytes": 720,
+      "sha256": "f0c93ed9404f143039ebba54bc2b20440cf34c4e4c3a503356b4616f68bdecf2"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-03-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-03-denominator.log",
+      "bytes": 219,
+      "sha256": "843a706aa10c4f1f8b20e6093e4f42b7e036d5c1c4e0acbcbf213b0c89038c16"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-03.json",
+      "path": "ingress-205/native-205ae38-v3/test-03.json",
+      "bytes": 787,
+      "sha256": "d886b0f7a64fa625fd02baf0610f9fb9d9055bc4e9a434cb64ccb49b44d2b6e7"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-03.log",
+      "path": "ingress-205/native-205ae38-v3/test-03.log",
+      "bytes": 464,
+      "sha256": "71404195f6053ded63ead47522be441b3835d48702a4752205337d75ae221798"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-04-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-04-denominator.json",
+      "bytes": 708,
+      "sha256": "f4f90a7b8bf584512682b708ff5b2fd32da243862d669b8c317886b61a370b10"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-04-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-04-denominator.log",
+      "bytes": 207,
+      "sha256": "03928dc83189ae83a39ab3c7ac9bc8e001519121e5bf1e0a58b5288f6c7f479f"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-04.json",
+      "path": "ingress-205/native-205ae38-v3/test-04.json",
+      "bytes": 775,
+      "sha256": "780a7ddaaf8cdc7df2896945780d70f882e6aa7f3b55b2cdc8636b5511180a1d"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-04.log",
+      "path": "ingress-205/native-205ae38-v3/test-04.log",
+      "bytes": 452,
+      "sha256": "f287b205aaf912833ba029ad92e9a7b31b0bda0fdfc71e193ba3cf30f80e962a"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-05-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-05-denominator.json",
+      "bytes": 699,
+      "sha256": "bdf349526899be21b2b002f374f43f42efb832f31a5287c5ba8fe1a042ffb7c7"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-05-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-05-denominator.log",
+      "bytes": 198,
+      "sha256": "252c0cca416be0f7a26192b0bc9cc745bd1ed24358241739d49772d7fdb0b8f8"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-05.json",
+      "path": "ingress-205/native-205ae38-v3/test-05.json",
+      "bytes": 766,
+      "sha256": "c7364446058e6e0111707ccff5d59f4f590cb3ad29c66ae8081030ed658bb802"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-05.log",
+      "path": "ingress-205/native-205ae38-v3/test-05.log",
+      "bytes": 443,
+      "sha256": "9a84d95bc7f00feb2f55710f5603e4e00a043ae3dec14b7a247187ed793ba681"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-06-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-06-denominator.json",
+      "bytes": 711,
+      "sha256": "9b76bb87a9fb6adac142740914a4980798abc099d6b4d9d0849e5388e90d650b"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-06-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-06-denominator.log",
+      "bytes": 210,
+      "sha256": "a5fed7ad1cb647ae3dbcbe1b882210491f395f6fb585fcea7a8711d88a2086f3"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-06.json",
+      "path": "ingress-205/native-205ae38-v3/test-06.json",
+      "bytes": 778,
+      "sha256": "37bc290e3fa5b760cd4551eb45f978e749684a700ee2673992adade4dc5c5f1a"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-06.log",
+      "path": "ingress-205/native-205ae38-v3/test-06.log",
+      "bytes": 455,
+      "sha256": "2b168c828cc03529c20ddff4ddf7b719a92cbd6e7283774ea5e30f57286b5e76"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-07-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-07-denominator.json",
+      "bytes": 716,
+      "sha256": "37b845ed4d25c4b6d30c895ddf318e77803a39c1a9dd9da10b2331dcb9ba29fc"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-07-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-07-denominator.log",
+      "bytes": 215,
+      "sha256": "4cbbe9510a746cbc23331efc145c6af6c8bcee2da03f3e6d64469464ea5e9037"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-07.json",
+      "path": "ingress-205/native-205ae38-v3/test-07.json",
+      "bytes": 783,
+      "sha256": "d9993b9a28631655933e94e128a63dcad7ab9fe90d656a3037e9191d6bae5e42"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-07.log",
+      "path": "ingress-205/native-205ae38-v3/test-07.log",
+      "bytes": 460,
+      "sha256": "c9f73a054f21c5f00a39e967c5daf8c4349344533f53becd26788cf34fa5a46b"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-08-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-08-denominator.json",
+      "bytes": 710,
+      "sha256": "b31a6738ccd31cc6bd9793b8f1d5177dc5bd37ddd85f0dd6bf404ef6035e678d"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-08-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-08-denominator.log",
+      "bytes": 209,
+      "sha256": "b3c9d84f8b59a41735be13887ee384836ea17e4e31b66afabad86a48e9e9876f"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-08.json",
+      "path": "ingress-205/native-205ae38-v3/test-08.json",
+      "bytes": 777,
+      "sha256": "7e5c56e9552539d4240b4aafad8dac197d31a3f946811866691f2b5add00a419"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-08.log",
+      "path": "ingress-205/native-205ae38-v3/test-08.log",
+      "bytes": 454,
+      "sha256": "ad2f51a028ea76998d5b820c65b5a5e2c04414bab762d7749d87c458690180c9"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-09-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-09-denominator.json",
+      "bytes": 712,
+      "sha256": "345be871a5dd149bd675721939261a877dd502d964b86eafbd0d12d11675a68c"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-09-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-09-denominator.log",
+      "bytes": 211,
+      "sha256": "a10baeb009f711187f3caf2b5c45731a81c6dd6aac8e337a602cd545d34208b6"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-09.json",
+      "path": "ingress-205/native-205ae38-v3/test-09.json",
+      "bytes": 779,
+      "sha256": "528d3e9707de67170bb26653e7f6abd0eee993cd878094e0d9e38393196c764a"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-09.log",
+      "path": "ingress-205/native-205ae38-v3/test-09.log",
+      "bytes": 456,
+      "sha256": "6efd9a5d3867f0b46f84d3feb09bb05f961a301c02cac035e1c8d600ffdf0402"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-10-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-10-denominator.json",
+      "bytes": 707,
+      "sha256": "dc2a3cab1ae8a296ffe5033815c3fe460c251fb8e9eccbbc7885b53251151d34"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-10-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-10-denominator.log",
+      "bytes": 206,
+      "sha256": "3a3a4dd310013f2e77c94898cd983ddfbf19d2ad0003d1c0b77dc721fafc8018"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-10.json",
+      "path": "ingress-205/native-205ae38-v3/test-10.json",
+      "bytes": 774,
+      "sha256": "ef9f98326dbc1178f1437ffa230252cf2d2f555607bf91b451ff83a06dc93315"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-10.log",
+      "path": "ingress-205/native-205ae38-v3/test-10.log",
+      "bytes": 451,
+      "sha256": "e087bc4617947dbc9a001352c4ce8399cab3ccf38cc63e0aacfdb0beca2d3856"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-11-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-11-denominator.json",
+      "bytes": 704,
+      "sha256": "88946f71062c22dd42c343a96224b30862ebe06f44a77dbb03752c88d0a65d47"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-11-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-11-denominator.log",
+      "bytes": 203,
+      "sha256": "086bc4f7d2ccc379319124525e62dc118d335aa11724f31d6a231f8ef0051393"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-11.json",
+      "path": "ingress-205/native-205ae38-v3/test-11.json",
+      "bytes": 771,
+      "sha256": "67032516d392c8aaa8f7ab433236fe4d5241c541d56b77e72265a426fac871c7"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-11.log",
+      "path": "ingress-205/native-205ae38-v3/test-11.log",
+      "bytes": 448,
+      "sha256": "79f41b6460cd9e51a7db8a185571a70dceb521cc429ec9f4e62509c0f1a608ff"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-12-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-12-denominator.json",
+      "bytes": 718,
+      "sha256": "463de8f8a88d6f4e3a580b887d8ccc5b75cd6535cf277e72eb37489a73025dcf"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-12-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-12-denominator.log",
+      "bytes": 217,
+      "sha256": "488523e781100a6d38c0a063156ee82c4fd5e25a6a68a96536749875d5037e69"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-12.json",
+      "path": "ingress-205/native-205ae38-v3/test-12.json",
+      "bytes": 785,
+      "sha256": "40941d6ecc2ca6a91a08f1b096d571c896d8a36969508fe8265670c33cce8c54"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-12.log",
+      "path": "ingress-205/native-205ae38-v3/test-12.log",
+      "bytes": 462,
+      "sha256": "a0cae088077326a1a462557cc265bbc628d19047eb6327c06d7c346edbffd697"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-13-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-13-denominator.json",
+      "bytes": 715,
+      "sha256": "720c60bd804b036962f067c631fa511e337b742195820773695ef0c63fbf0ba1"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-13-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-13-denominator.log",
+      "bytes": 214,
+      "sha256": "911bdf6396c8866ff8c6b2df92c302444fb4a214405af821d1df42daa60cd802"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-13.json",
+      "path": "ingress-205/native-205ae38-v3/test-13.json",
+      "bytes": 782,
+      "sha256": "4496dad2149b27065a4ead0a0afc7d0748d6b48901dd20ca1ddcd2db0227e704"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-13.log",
+      "path": "ingress-205/native-205ae38-v3/test-13.log",
+      "bytes": 459,
+      "sha256": "dc5bde5a647009f17f7c20efa29030e72a09acaac0729998925387405395742c"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-14-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-14-denominator.json",
+      "bytes": 727,
+      "sha256": "d7922a19343211bea830a65f926780f47e3de60c9b7880fbefe26cb1a23a518f"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-14-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-14-denominator.log",
+      "bytes": 226,
+      "sha256": "c52a53889467384e460adbd17aa6bb702ee5e9cc5e8d29b67a1aeafc0d119004"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-14.json",
+      "path": "ingress-205/native-205ae38-v3/test-14.json",
+      "bytes": 794,
+      "sha256": "5805fad93b43508bc84c34d0916202e2f17b822c150f3fb8c422f22dd59c733c"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-14.log",
+      "path": "ingress-205/native-205ae38-v3/test-14.log",
+      "bytes": 471,
+      "sha256": "de6566a50e82b573ccae8b0e40be2502670b33e84d379de836f1a9fd9f856a5c"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-15-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-15-denominator.json",
+      "bytes": 716,
+      "sha256": "97d7bf29d169c8ffd381926de53d697318c87fe625b4d7945d017e79e029e8db"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-15-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-15-denominator.log",
+      "bytes": 215,
+      "sha256": "c960add85c6e61b2971ccea3eed912bf1db703be3d45c7966aa1e1c2299721b1"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-15.json",
+      "path": "ingress-205/native-205ae38-v3/test-15.json",
+      "bytes": 783,
+      "sha256": "7b8560e238761cb548bdde715baca9135293bfbf266a5802681d806509f9fc19"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-15.log",
+      "path": "ingress-205/native-205ae38-v3/test-15.log",
+      "bytes": 460,
+      "sha256": "e70b6126558210c9648f5c4698656935bff66312eb8b614d6f58c604ca8d7178"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-16-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-16-denominator.json",
+      "bytes": 717,
+      "sha256": "c301b94e1673a78cf570c51354d1c6af9e9ccfd34c8240f4818bfc3415cff8c9"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-16-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-16-denominator.log",
+      "bytes": 216,
+      "sha256": "809c91f75f22c5bb6ee01b7e4f66b3a86f8ca3da76b9d8086c4b14097aa82609"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-16.json",
+      "path": "ingress-205/native-205ae38-v3/test-16.json",
+      "bytes": 784,
+      "sha256": "3d65d6cc44db50a4e448abb2357f85f15d3fdac939183bba788712f445be7b99"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-16.log",
+      "path": "ingress-205/native-205ae38-v3/test-16.log",
+      "bytes": 461,
+      "sha256": "ee36b9ed5b4a51a243fb9e224e7613ead9bcc333c7c1b3aceffc820751e8f91a"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-17-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-17-denominator.json",
+      "bytes": 701,
+      "sha256": "3f6769cb68ba75dbed4d318a27f33e6e9b22d31925acb4e7aac78f7b14e1d579"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-17-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-17-denominator.log",
+      "bytes": 200,
+      "sha256": "942375a549f2f4761eb3317516a5433113505a2dfe0064595cdb2ea6f453d950"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-17.json",
+      "path": "ingress-205/native-205ae38-v3/test-17.json",
+      "bytes": 768,
+      "sha256": "d4632f7b88bfeac7221c266a27d4e58e529606f3f37b1d30236e9dc7adf671f8"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-17.log",
+      "path": "ingress-205/native-205ae38-v3/test-17.log",
+      "bytes": 445,
+      "sha256": "87dacbe2bd62a190d8827cc27f2df8e949cef3d2b8063c606377d58dd0267b48"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-18-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-18-denominator.json",
+      "bytes": 684,
+      "sha256": "d155581f589fd781feaa89b32d11ec65a5d6a0ca88e00a511ea39620f50e5e0d"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-18-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-18-denominator.log",
+      "bytes": 183,
+      "sha256": "961079670814a324eb477f275ec8825000103e54054bf26036538309758b0d95"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-18.json",
+      "path": "ingress-205/native-205ae38-v3/test-18.json",
+      "bytes": 751,
+      "sha256": "615b652315666d741dcddd1b547bb3d38316506c224a91ec164ea1add5fdac09"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-18.log",
+      "path": "ingress-205/native-205ae38-v3/test-18.log",
+      "bytes": 428,
+      "sha256": "6bcb61892b9c2ef512f0c9c62f125a77391ecf35a788ad6dd016e3e1140a1e3d"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-19-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-19-denominator.json",
+      "bytes": 644,
+      "sha256": "eecf245d920cb2965b182ac8d391800b3ee267f30e87228338c5751b38fd3b51"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-19-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-19-denominator.log",
+      "bytes": 143,
+      "sha256": "98e7eafb1412ddc29dbf0173c96d81483f7f388e9de37fe6e25e4fac8dcaa484"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-19.json",
+      "path": "ingress-205/native-205ae38-v3/test-19.json",
+      "bytes": 738,
+      "sha256": "38b9ab346b475357f496caaa2ee8c304b30cd8015eb7b4aa3484f41381caac89"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-19.log",
+      "path": "ingress-205/native-205ae38-v3/test-19.log",
+      "bytes": 547,
+      "sha256": "4553733203ace322c2900767694edd630eb62fd273f1cbaaec0d74fd0a85eacb"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-20-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-20-denominator.json",
+      "bytes": 644,
+      "sha256": "cc3db92198d3e6028df472bb9630a94e5854116fe68852a87c1c20672184e031"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-20-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-20-denominator.log",
+      "bytes": 143,
+      "sha256": "0456beb96bf46cea2ffb6f9c7183f1c6a802f4877aabfdf9f0190b4cae8fa7d9"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-20.json",
+      "path": "ingress-205/native-205ae38-v3/test-20.json",
+      "bytes": 738,
+      "sha256": "b901eb1f48c5e291128cd07b55edb75196ad076a04a8a873054be6dd4dc13244"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-20.log",
+      "path": "ingress-205/native-205ae38-v3/test-20.log",
+      "bytes": 397,
+      "sha256": "e19f9489ab605c6ca6c72cb08efdf4c878c5e6f1e442e29a60c5c0e3663848a6"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-21-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-21-denominator.json",
+      "bytes": 652,
+      "sha256": "a8249b87df6f6634a3770f1c9bc2e72b854a126edc06483d6fbf4b08e47a51ef"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-21-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-21-denominator.log",
+      "bytes": 151,
+      "sha256": "44bc1930f7bcf6da2ae34cad0d5973fb0fa4f30ae2dc6a6f0a55718e03865f3b"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-21.json",
+      "path": "ingress-205/native-205ae38-v3/test-21.json",
+      "bytes": 746,
+      "sha256": "2b8e13f9bbb909365d54676dcd6f66a6600be652ecce3d29e02c1ecd5bc9b45a"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-21.log",
+      "path": "ingress-205/native-205ae38-v3/test-21.log",
+      "bytes": 405,
+      "sha256": "572cbd47b173892101331ae8ef15ea3299d211e24d0f0a2169a2c98917d921c9"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-22-denominator.json",
+      "path": "ingress-205/native-205ae38-v3/test-22-denominator.json",
+      "bytes": 659,
+      "sha256": "be7b2252b19082f70700e890b5d337c1c589efd84c97d5d8a2e2e6bb24c5fd58"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-22-denominator.log",
+      "path": "ingress-205/native-205ae38-v3/test-22-denominator.log",
+      "bytes": 158,
+      "sha256": "2cf0d480f0cbc9bcc32f81ca051dbe63b0aac4b04ebb7bf1d8e86200b2fa9943"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-22.json",
+      "path": "ingress-205/native-205ae38-v3/test-22.json",
+      "bytes": 753,
+      "sha256": "eca5a6e48a64864c1c09d16fb819dbc3d286f2173bc56784a741619efa309bf8"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-22.log",
+      "path": "ingress-205/native-205ae38-v3/test-22.log",
+      "bytes": 412,
+      "sha256": "a1bd37ce4f2f1f4b082f7b25195123b4337a10df3c85ab0f521877d7c488d80e"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-process-terminal-receipts.json",
+      "path": "ingress-205/native-process-terminal-receipts.json",
+      "bytes": 2418,
+      "sha256": "cd7896b0500bb51096c82ab3640878d6514db3aa3dee8b0d730ea5bea11b197f"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/pq-source-619.log",
+      "path": "ingress-205/pq-source-619.log",
+      "bytes": 557,
+      "sha256": "9d23b8b65ce9efcf3a2c8688c13357e544cf7dce2dc6b1f7942889f3da56e581"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/preflight-before-619.log",
+      "path": "ingress-205/preflight-before-619.log",
+      "bytes": 173,
+      "sha256": "5b7f93acd60822d8dd80aefe71ae927306835ec4fa601e7e0072e7dc5ef29327"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/preflight-before-local-commit.log",
+      "path": "ingress-205/preflight-before-local-commit.log",
+      "bytes": 173,
+      "sha256": "5b7f93acd60822d8dd80aefe71ae927306835ec4fa601e7e0072e7dc5ef29327"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/production-review.patch",
+      "path": "ingress-205/production-review.patch",
+      "bytes": 29770,
+      "sha256": "e06319fc78f1c977760732881ce7e906190e49034de33799e543f82c8834ed16"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/run-component-205ae38-v2.py",
+      "path": "ingress-205/run-component-205ae38-v2.py",
+      "bytes": 13343,
+      "sha256": "b64c2d548af187d7c3f0c36fe39e76e0aabe1b271556e85aebded02d36f38e5e"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/run-component-205ae38.py",
+      "path": "ingress-205/run-component-205ae38.py",
+      "bytes": 12657,
+      "sha256": "5e8aa0bef587f88f0205b62b146b3567b84ff8b2c2fc050dc267b45b4100bb6e"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/run-native-205ae38-v2.py",
+      "path": "ingress-205/run-native-205ae38-v2.py",
+      "bytes": 6688,
+      "sha256": "6efe5314f2544eeb351f14575268acac7ad57a9a4079b327d4f50cfedb569a98"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/run-native-205ae38-v3.py",
+      "path": "ingress-205/run-native-205ae38-v3.py",
+      "bytes": 7451,
+      "sha256": "651efc2bc16b90e0c0d793a82faa6df13c299b62b0e5cf1dda9fee2e7244ee51"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/run-native-205ae38.py",
+      "path": "ingress-205/run-native-205ae38.py",
+      "bytes": 6679,
+      "sha256": "46c5937ef3a7a064093c06a2ba031809253e78877722c98fa8b6a4aa130fb54f"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/source-619.json",
+      "path": "ingress-205/source-619.json",
+      "bytes": 1394,
+      "sha256": "fb11a122f89a6da43c79bec587c22e69a476ea8bc17fc6b767452f587d4c4076"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/source.json",
+      "path": "ingress-205/source.json",
+      "bytes": 1216,
+      "sha256": "98cd053ceffeb7c59845619abfcdb61e5a1175db94506daca8958fd9d4fa44b4"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/tests-review-619.patch",
+      "path": "ingress-205/tests-review-619.patch",
+      "bytes": 26602,
+      "sha256": "36b8b9ef345ee5e663f58a4e951c42f2c4edf291a117b9a153f8fb98f5eb9486"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/COPY_PLAN.json",
+      "path": "late-observer-d26/COPY_PLAN.json",
+      "bytes": 8273,
+      "sha256": "0bb78443f765b5bc577f8bda0805f44db5731245b4164b1f69e2523d9154390e"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/README.md",
+      "path": "late-observer-d26/README.md",
+      "bytes": 494,
+      "sha256": "4ed851943b61f652b2d18c714ae87fb00010e780f229f5edfa6220791432ce2b"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/SUMMARY.json",
+      "path": "late-observer-d26/SUMMARY.json",
+      "bytes": 10635,
+      "sha256": "6c5fb40e692d041340f6bc364ed7f9ca68b40b5d7eb8b088af6e67954b440164"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13578524978/download.stderr",
+      "path": "late-observer-d26/download/13578524978/download.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13578524978/readback.json",
+      "path": "late-observer-d26/download/13578524978/readback.json",
+      "bytes": 1585,
+      "sha256": "e711e8c50a74e7cd0c38c7c15ed3e7d89220b2be70b97957ce63f5f1d68e09d1"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13578719689/download.stderr",
+      "path": "late-observer-d26/download/13578719689/download.stderr",
+      "bytes": 72,
+      "sha256": "b9595dc9d1ae5a59d5a33ca36bfb7dd8e036696b058c9b1e099cd0df0adcf93b"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13578719689/readback.json",
+      "path": "late-observer-d26/download/13578719689/readback.json",
+      "bytes": 1530,
+      "sha256": "a67df86fe3656d9f4873a86213974e09260a4d10fb0d8a4a823c21c769a210ba"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13578752856/download.stderr",
+      "path": "late-observer-d26/download/13578752856/download.stderr",
+      "bytes": 772,
+      "sha256": "d681a26d1f5a50974785339a7bb654725e5d0c08021a2aa0be1a2321c00f1d1c"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13578752856/readback.json",
+      "path": "late-observer-d26/download/13578752856/readback.json",
+      "bytes": 1536,
+      "sha256": "2408ad9bd8ec8101aa739338e69c45a02aaec6976f3db21b32232a140ec2b6d4"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13578807518/download.stderr",
+      "path": "late-observer-d26/download/13578807518/download.stderr",
+      "bytes": 144,
+      "sha256": "96ad2f8e984867e846f4ca8df75475a59ef480b64823b4cb00f305bcfa1c5430"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13578807518/readback.json",
+      "path": "late-observer-d26/download/13578807518/readback.json",
+      "bytes": 1537,
+      "sha256": "a057bd3d22418b6d7543c5c3f3ccd6f3251b370f618ba48b4d168588b2aee5ba"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13578842636/download.stderr",
+      "path": "late-observer-d26/download/13578842636/download.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13578842636/readback.json",
+      "path": "late-observer-d26/download/13578842636/readback.json",
+      "bytes": 20682,
+      "sha256": "1a7a146535704584fc91c5918163c81df6f2a3f352dfb3772eeae60d41847ba5"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13578922475/download.stderr",
+      "path": "late-observer-d26/download/13578922475/download.stderr",
+      "bytes": 75,
+      "sha256": "7bc985fdb43083d3c35a030f767d54f83103c33042cb5b509ef0e3a0c7a189de"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13578922475/readback.json",
+      "path": "late-observer-d26/download/13578922475/readback.json",
+      "bytes": 1544,
+      "sha256": "b243ac3483052ede3a07d3623386bba60f707fcc2334368c2e6798daeb8fa468"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13578947026/download.stderr",
+      "path": "late-observer-d26/download/13578947026/download.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13578947026/readback.json",
+      "path": "late-observer-d26/download/13578947026/readback.json",
+      "bytes": 11194,
+      "sha256": "4cfee1c4f957c5c6456b640bfaabf19036f093a771d0e1f022ed44767b1c657b"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13579025854/download.stderr",
+      "path": "late-observer-d26/download/13579025854/download.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13579025854/readback.json",
+      "path": "late-observer-d26/download/13579025854/readback.json",
+      "bytes": 43468,
+      "sha256": "1d8fc434854c3a79eb15c98c408655365a09c8517199f344410b395ffa6bd2b6"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13579071557/download.stderr",
+      "path": "late-observer-d26/download/13579071557/download.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/13579071557/readback.json",
+      "path": "late-observer-d26/download/13579071557/readback.json",
+      "bytes": 1598,
+      "sha256": "a87b6cc147d3146e383a384898e1d7b08f1341a7e12cc1e1c4253f0d5952ec5a"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/process-status.json",
+      "path": "late-observer-d26/download/process-status.json",
+      "bytes": 732,
+      "sha256": "ee2c973a1ddd1057039cfb66a6dd07764162afd3b01780e66ecad2d90c0ae5db"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/process.stderr",
+      "path": "late-observer-d26/download/process.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/process.stdout",
+      "path": "late-observer-d26/download/process.stdout",
+      "bytes": 4075,
+      "sha256": "e7f2c9a0438559a32e3c26147834d5be397238aa3a6a1e35075d2fdcfbc1e737"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/download/summary.json",
+      "path": "late-observer-d26/download/summary.json",
+      "bytes": 97834,
+      "sha256": "dfdfdbe6de5883e2a894d915850d272a25924844c4e3a0c4dab2a4769ad88be4"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/range/process-status.json",
+      "path": "late-observer-d26/range/process-status.json",
+      "bytes": 732,
+      "sha256": "63e147c0c370ee82694ce3e2dfccf060f986635a9f63d9308dd1a2b221c44438"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/range/process.stderr",
+      "path": "late-observer-d26/range/process.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/range/process.stdout",
+      "path": "late-observer-d26/range/process.stdout",
+      "bytes": 1357,
+      "sha256": "5a74385725f43794c78004046402704d9b02634229cf455e4296e68c4937bf61"
+    },
+    {
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/late-observer-d26-v1/range/range-recovery-receipt.json",
+      "path": "late-observer-d26/range/range-recovery-receipt.json",
+      "bytes": 7761,
+      "sha256": "47c16df80ee9872fb51a07ca421f0ebd6db3848852e79eecc99d22aff145a111"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-ingress-205-20261107/commit.log",
+      "path": "ingress-integration/commit.log",
+      "bytes": 122,
+      "sha256": "dc965ea32946d135d4d8dd9fbb26c50c984b6ab94249ff5c0c11a9de6299f1e2"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-ingress-205-20261107/diff-check.log",
+      "path": "ingress-integration/diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-ingress-205-20261107/merge.log",
+      "path": "ingress-integration/merge.log",
+      "bytes": 55,
+      "sha256": "b0a553d20817e5980c564f1485d89ea0f776bc5f8ebf0f34a0a4010e2bcb9099"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-ingress-205-20261107/preflight.log",
+      "path": "ingress-integration/preflight.log",
+      "bytes": 170,
+      "sha256": "f877f84b261303fe763f6713410fa0220116d57de1d311e83f1e6ce4e5f8a59b"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-ingress-205-20261107/receipt.json",
+      "path": "ingress-integration/receipt.json",
+      "bytes": 1178,
+      "sha256": "6b4111eeb064e58ecc253d34cd4d403d1d2e3227129d30e9eb6bf1ff9cfc1eb9"
+    }
+  ],
+  "transformations": "none; exact directory bytes and relative links retained",
+  "original_business_qualification": false,
+  "file_count": 198,
+  "total_bytes": 21402931
+}

@@ -1,0 +1,31 @@
+test_acknowledged_output_does_not_invent_model_stop_or_episode_end (__main__.CompletedNativeLearningTests.test_acknowledged_output_does_not_invent_model_stop_or_episode_end) ... ok
+test_another_distinct_next_run_is_not_the_observed_original_run (__main__.CompletedNativeLearningTests.test_another_distinct_next_run_is_not_the_observed_original_run) ... ok
+test_capture_refuses_missing_or_duplicate_native_completion (__main__.CompletedNativeLearningTests.test_capture_refuses_missing_or_duplicate_native_completion) ... ok
+test_changed_prior_evidence_is_refused_after_attacker_rehashes_every_receipt (__main__.CompletedNativeLearningTests.test_changed_prior_evidence_is_refused_after_attacker_rehashes_every_receipt) ... ok
+test_cli_requires_all_five_materials_and_their_separate_pins (__main__.CompletedNativeLearningTests.test_cli_requires_all_five_materials_and_their_separate_pins) ... ok
+test_completed_bytes_require_exact_pin_and_bounded_original_codec (__main__.CompletedNativeLearningTests.test_completed_bytes_require_exact_pin_and_bounded_original_codec) ... ok
+test_extra_rehashed_next_use_cannot_complete_twice (__main__.CompletedNativeLearningTests.test_extra_rehashed_next_use_cannot_complete_twice) ... ok
+test_final_journal_and_use_fields_must_match_original_actor_after_rehash (__main__.CompletedNativeLearningTests.test_final_journal_and_use_fields_must_match_original_actor_after_rehash) ... ok
+test_final_stage_still_requires_original_actor_predecessor_and_time (__main__.CompletedNativeLearningTests.test_final_stage_still_requires_original_actor_predecessor_and_time) ... ok
+test_foreign_original_completed_checkpoint_is_refused (__main__.CompletedNativeLearningTests.test_foreign_original_completed_checkpoint_is_refused) ... FAIL
+test_original_native_terminal_bytes_bind_retained_and_adopted_use (__main__.CompletedNativeLearningTests.test_original_native_terminal_bytes_bind_retained_and_adopted_use) ... ok
+test_original_pending_output_is_refused_even_with_completed_checkpoint (__main__.CompletedNativeLearningTests.test_original_pending_output_is_refused_even_with_completed_checkpoint) ... ok
+test_selection_cut_cannot_stand_in_for_final_receipt (__main__.CompletedNativeLearningTests.test_selection_cut_cannot_stand_in_for_final_receipt) ... ok
+
+======================================================================
+FAIL: test_foreign_original_completed_checkpoint_is_refused (__main__.CompletedNativeLearningTests.test_foreign_original_completed_checkpoint_is_refused)
+----------------------------------------------------------------------
+cell_adoption_readback.ReadbackRefusal: COMPLETION_EXACT_RECEIPT_PREFIX
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/tmp/chain-learning-d9fb/scripts/test_cell_learning_completion_join.py", line 107, in test_foreign_original_completed_checkpoint_is_refused
+    with self.assertRaisesRegex(native.ReadbackRefusal, "COMPLETION_ORIGINAL_ITERATION"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "COMPLETION_ORIGINAL_ITERATION" does not match "COMPLETION_EXACT_RECEIPT_PREFIX"
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.298s
+
+FAILED (failures=1)

@@ -1,0 +1,24 @@
+{
+  "schema": "pon-pql7-local-integration-check-v1",
+  "source_commit": "c4b4d6d03bbc508a754fe60573fb49602f04533a",
+  "source_files": {
+    "scripts/ci/check_pq_research_integration.py": "ef5fc1e2e68ed2622ae839023995ec16fd3f3d44",
+    "scripts/ci/test_pq_research_integration.py": "1dc4250cb288a536002d73dbb5edd87ffba3af35"
+  },
+  "source_equivalence": "Both local Python source files were recreated verbatim from authored GitHub tree objects; git hash-object matched these committed blob IDs before tests.",
+  "method": "python3 -m unittest -v /mnt/data/pq_integration_local/scripts/ci/test_pq_research_integration.py",
+  "local_python_version": "Python 3.13",
+  "test_cases": 10,
+  "passed": 10,
+  "failed": 0,
+  "independent_cryptographic_test": false,
+  "exact_combined_checkout_test": false,
+  "github_tree_manifest_pins_checked": 84,
+  "github_tree_manifest_pin_mismatches": 0,
+  "touched_research_files_imported_or_replaced": 38,
+  "data_source": "Research component branches are separate historical runs; their earlier results are not certified for the combined tree.",
+  "release_gate": "HOLD_NO_GO",
+  "production_activation": false,
+  "quantum_effective_work_accepted": false,
+  "note": "Isolated fixture tests and source-object comparison only; the full checked-out integration suite, Rust node, ML-DSA/PQ hybrid WAN handshakes, physical rollback and independent cryptanalysis remain unexecuted."
+}

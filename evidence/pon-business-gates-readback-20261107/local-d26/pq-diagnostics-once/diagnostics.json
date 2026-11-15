@@ -1,0 +1,155 @@
+{
+  "schema": "frozen-original-binary-pq-diagnostics-once-v1",
+  "commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+  "started_unix": 1794066914.1088097,
+  "binary": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/failed-node-test-binary",
+  "binary_sha256": "b8e65265f02c784f0ee54cf4becdf9d379cdb86b0b9d270e7c8ea057aa2810bf",
+  "original_full_result": "FAILED",
+  "original_full_summary": "test result: FAILED. 1161 passed; 3 failed; 31 ignored; 0 measured; 0 filtered out; finished in 5290.07s",
+  "original_full_record": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/records/node-lib-allfeatures.json",
+  "original_full_record_sha256": "e6a0f2b05f893a5c1669cb5cc452fdcb3cb050b3c7397a677caebeb772b85ad0",
+  "purpose": "one fresh process per original failed selector solely to recover existing bounded Scope diagnostics after original process log budget refusal",
+  "one_attempt_per_selector": true,
+  "native_source_changed": false,
+  "business_limits_or_test_deadlines_changed": false,
+  "perf_or_sampler_used": false,
+  "original_global_deadline_unix": 1794074775.28,
+  "steps": [
+    {
+      "label": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "started_unix": 1794066914.4093215,
+      "state": "passed",
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/pq-diagnostics-once/preflight-driver.log",
+      "exit_code": 0,
+      "finished_unix": 1794066914.8275213,
+      "elapsed_seconds": 0.4182007312774658,
+      "log_sha256": "f17d39e260ff2e037df9d916ad7fc05301ab443190c6f5bbcb60425c7e71a10a"
+    },
+    {
+      "label": "npq6-exact-replay",
+      "argv": [
+        "python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "--tested",
+        "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "--label",
+        "npq6-exact-replay",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/pq-diagnostics-once/records",
+        "--",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/failed-node-test-binary",
+        "--exact",
+        "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "started_unix": 1794066915.100262,
+      "state": "passed",
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/pq-diagnostics-once/npq6-exact-replay-driver.log",
+      "exit_code": 0,
+      "finished_unix": 1794066941.886577,
+      "elapsed_seconds": 26.786315441131592,
+      "log_sha256": "d84f95cb968a34dda818519cc7f43b7cd9e162c86fd02dd9a227cdf10b250877",
+      "command_record": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/pq-diagnostics-once/records/npq6-exact-replay.json",
+        "sha256": "9e51ebe4fc0f384ef2253705855adb92c968e23e80ce13bfda52533e858c76ee",
+        "status": "command_succeeded",
+        "exit_code": 0,
+        "raw_log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/pq-diagnostics-once/records/npq6-exact-replay.log",
+        "raw_log_sha256": "1ee48131a2a0701bffd4fa6cd9330b8ef91faf5ad7cd66d7ec02dac4b4c63f09",
+        "summary_lines": [
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1194 filtered out; finished in 6.46s"
+        ],
+        "phase_diagnostic_lines": 3,
+        "process_log_limit_reached": false
+      }
+    },
+    {
+      "label": "cached-permission-head",
+      "argv": [
+        "python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "--tested",
+        "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "--label",
+        "cached-permission-head",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/pq-diagnostics-once/records",
+        "--",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/failed-node-test-binary",
+        "--exact",
+        "store::pq_rollback_witness::tests::cached_permission_is_rechecked_after_actual_native_tcp_success",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "started_unix": 1794066942.422796,
+      "state": "passed",
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/pq-diagnostics-once/cached-permission-head-driver.log",
+      "exit_code": 0,
+      "finished_unix": 1794066949.7697413,
+      "elapsed_seconds": 7.3469460010528564,
+      "log_sha256": "45eeed9d5648c023993b5fec0b6839da2f5bfa4a5d33a2efe9e6e26b5e1a5b73",
+      "command_record": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/pq-diagnostics-once/records/cached-permission-head.json",
+        "sha256": "8ee8464041ad6c512ba78029e1cfeb388f5073ee7f61e8ed30576f421a04c557",
+        "status": "command_succeeded",
+        "exit_code": 0,
+        "raw_log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/pq-diagnostics-once/records/cached-permission-head.log",
+        "raw_log_sha256": "9f074f9bed10756b710e0eeabde05b4dc797776aa2c2cb4e7beaac405c4e9d92",
+        "summary_lines": [
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1194 filtered out; finished in 2.22s"
+        ],
+        "phase_diagnostic_lines": 1,
+        "process_log_limit_reached": false
+      }
+    },
+    {
+      "label": "source-after",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/pq-diagnostics-once/source-after.json"
+      ],
+      "started_unix": 1794066950.0721354,
+      "state": "passed",
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/pq-diagnostics-once/source-after-driver.log",
+      "exit_code": 0,
+      "finished_unix": 1794066952.7084556,
+      "elapsed_seconds": 2.6363210678100586,
+      "log_sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa"
+    }
+  ],
+  "qualification": {
+    "original_history_business_gate": false,
+    "original_attack_pressure_gate": false,
+    "release": false,
+    "production_activation": false
+  },
+  "source_after_sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa",
+  "source_unchanged": true,
+  "diagnostic_exit_codes": [
+    0,
+    0
+  ],
+  "result": "DIAGNOSTIC_CASES_PASSED_ONCE_ORIGINAL_FULL_FAILURE_UNCHANGED",
+  "finished_unix": 1794066952.7100382,
+  "elapsed_seconds": 38.601229190826416
+}

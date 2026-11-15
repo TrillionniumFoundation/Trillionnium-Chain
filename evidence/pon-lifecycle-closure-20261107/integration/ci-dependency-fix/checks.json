@@ -1,0 +1,91 @@
+{
+  "all_native_ci_lanes_executed_by_this_fix": false,
+  "changed_paths": [
+    "scripts/ci/ci_job.sh",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/test_ci_contract.py"
+  ],
+  "new_negative_controls": [
+    "CC1 command omission",
+    "CC1 command duplication",
+    "CC1 true replacement",
+    "CC1 failure swallowed by || true",
+    "CC1 moved into repository-truth"
+  ],
+  "preflight": {
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "elapsed_ns": 49249052,
+    "returncode": 0
+  },
+  "reason": "CC1 contains real ML-DSA-65 tests; repository-truth does not install the pinned cryptography wheel. The full CC1 test command now executes exactly once in protocol-contract adjacent to the raw-journal composition evidence.",
+  "remaining_required_exact_committed_source_checks": [
+    "Cargo graph and lockfile",
+    "retained native tests",
+    "strict Clippy",
+    "Rust formatting",
+    "negative source-integrity tests",
+    "Markdown links"
+  ],
+  "retained_sequence_review": {
+    "baseline_ci_sha256": "c542132338da2e9bdd6fa036f980eb1e5a11f38d2b9a58b29761f94027c6054c",
+    "cargo_graph_lock_fmt_clippy_full_tests_are_preserved_requirements": true,
+    "cc1_tests_protocol_only": true,
+    "current_ci_sha256": "95be194ab855805856fd55747bf4bf820ceb7f036677b363f8372f5cc5dd2708",
+    "lanes": {
+      "external-evidence-contract": {
+        "all_previous_commands_retained_in_order": true,
+        "baseline_lines": 30,
+        "current_lines": 30
+      },
+      "fuzz-smoke": {
+        "all_previous_commands_retained_in_order": true,
+        "baseline_lines": 5,
+        "current_lines": 5
+      },
+      "protocol-contract": {
+        "all_previous_commands_retained_in_order": true,
+        "baseline_lines": 80,
+        "current_lines": 87
+      },
+      "repository-truth": {
+        "all_previous_commands_retained_in_order": true,
+        "baseline_lines": 69,
+        "current_lines": 70
+      },
+      "rust-baseline": {
+        "all_previous_commands_retained_in_order": true,
+        "baseline_lines": 89,
+        "current_lines": 89
+      }
+    },
+    "runtime_gates_executed_by_this_static_review": false,
+    "schema": "pon-ci-dependency-retained-sequence-review-v1",
+    "source_base_commit": "88bce414d7ba7f7f6a60dba03943ee20dc501ed7",
+    "workflow_unchanged": true
+  },
+  "schema": "pon-ci-dependency-fix-checks-v1",
+  "scientific_or_production_qualification": false,
+  "status": "PASS",
+  "tests": {
+    "test_ci_contract.py": {
+      "duration_seconds_reported": "8.659",
+      "invocation_file": "test_ci_contract.py.json",
+      "status": "PASS",
+      "stderr_sha256": "caf285a31ad281bd42cad167fa22c0b3e65f98ac82cd9d38e68f46779c8be963",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tests": 105
+    },
+    "test_ci_execution.py": {
+      "duration_seconds_reported": "23.817",
+      "invocation_file": "test_ci_execution.py.json",
+      "status": "PASS",
+      "stderr_sha256": "6dfa9f18941e0e152b2904bcb5869a891a592516a3e5f2337a92f5ae986cfe24",
+      "stdout_sha256": "8a65bfed3763a44f5b67745e6236c62493574335c37b3df6010e40a5673514d3",
+      "tests": 77
+    }
+  },
+  "workflow_modified": false
+}

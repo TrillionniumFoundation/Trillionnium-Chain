@@ -1,0 +1,15 @@
+Extractor exit code: 0
+test_branch_first_merge_all_positions_arbitrary_siblings (test_opening_collision_extractor.ExtractionTests.test_branch_first_merge_all_positions_arbitrary_siblings) ... ok
+test_canonical_leaf_encoding_and_role_framing (test_opening_collision_extractor.ExtractionTests.test_canonical_leaf_encoding_and_role_framing) ... ok
+test_late_branch_merge (test_opening_collision_extractor.ExtractionTests.test_late_branch_merge) ... ok
+test_leaf_collision_height_zero (test_opening_collision_extractor.ExtractionTests.test_leaf_collision_height_zero) ... ok
+test_output_truncation_and_nondeterminism_rejected (test_opening_collision_extractor.ExtractionTests.test_output_truncation_and_nondeterminism_rejected) ... ok
+test_sha3_control_valid_path_and_rejected_conflict (test_opening_collision_extractor.ExtractionTests.test_sha3_control_valid_path_and_rejected_conflict) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.001s
+
+OK
+
+Finite invariant checker exit code: 0
+{"conflicting_opening_pairs": 29624, "distinct_table_callset_cases": 108, "first_exposure_order_direction_cases": 12768, "permutations": 24, "structural_controls": 2}

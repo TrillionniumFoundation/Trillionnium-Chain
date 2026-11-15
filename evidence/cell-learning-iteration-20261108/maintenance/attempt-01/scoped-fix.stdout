@@ -1,0 +1,205 @@
+cargo clippy --fix --tests --allow-dirty {args}
+    Checking codex-utils-absolute-path v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/absolute-path)
+    Checking codex-utils-rustls-provider v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/rustls-provider)
+    Checking codex-http-client v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/http-client)
+    Checking codex-utils-home-dir v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/home-dir)
+    Checking codex-utils-cache v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/cache)
+    Checking codex-execpolicy v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/execpolicy)
+    Checking codex-network-proxy v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/network-proxy)
+    Checking codex-utils-image v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/image)
+    Checking codex-utils-path-uri v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/path-uri)
+    Checking codex-extension-items v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/items)
+    Checking codex-utils-redacted-string v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/redacted-string)
+    Checking codex-utils-string v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/string)
+    Checking codex-async-utils v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/async-utils)
+    Checking codex-utils-pty v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/pty)
+    Checking codex-websocket-client v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/websocket-client)
+    Checking codex-client v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/codex-client)
+    Checking codex-hepta-contracts v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-contracts)
+    Checking codex-protocol v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/protocol)
+    Checking codex-utils-path v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/path-utils)
+warning: hiding a lifetime that's elided elsewhere is confusing
+   --> third_party/i18n-config-0.4.8/src/lib.rs:144:9
+    |
+144 |         &self,
+    |         ^^^^^ the lifetime is elided here
+145 |     ) -> Result<Option<(&'_ Crate, &'_ I18nConfig)>, I18nConfigError> {
+    |                          ^^ ^^^^^   ^^ the same lifetime is elided here
+    |                          |  |
+    |                          |  the same lifetime is hidden here
+    |                          the same lifetime is elided here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+    = note: `#[warn(mismatched_lifetime_syntaxes)]` on by default
+help: use `'_` for type paths
+    |
+145 |     ) -> Result<Option<(&'_ Crate<'_>, &'_ I18nConfig)>, I18nConfigError> {
+    |                                  ++++
+
+warning: hiding a lifetime that's elided elsewhere is confusing
+   --> third_party/i18n-config-0.4.8/src/lib.rs:155:26
+    |
+155 |     pub fn active_config(&self) -> Result<Option<(&'_ Crate, &'_ I18nConfig)>, I18nConfigError> {
+    |                          ^^^^^                     ^^ ^^^^^   ^^ the same lifetime is elided here
+    |                          |                         |  |
+    |                          |                         |  the same lifetime is hidden here
+    |                          |                         the same lifetime is elided here
+    |                          the lifetime is elided here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+help: use `'_` for type paths
+    |
+155 |     pub fn active_config(&self) -> Result<Option<(&'_ Crate<'_>, &'_ I18nConfig)>, I18nConfigError> {
+    |                                                            ++++
+
+warning: `i18n-config` (lib) generated 2 warnings (run `cargo clippy --fix --lib -p i18n-config -- --no-deps` to apply 2 suggestions)
+    Checking secret-service v6.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/third_party/secret-service-6.0.0)
+   Compiling codex-windows-sandbox v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/windows-sandbox-rs)
+    Checking zbus-secret-service-keyring-store v1.0.1 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/third_party/zbus-secret-service-keyring-store-1.0.1)
+    Checking i18n-embed v0.15.4
+    Checking keyring v4.2.0
+    Checking age v0.11.5
+    Checking codex-keyring-store v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/keyring-store)
+    Checking codex-utils-template v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/template)
+    Checking codex-workload-identity v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/workload-identity)
+    Checking codex-terminal-detection v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/terminal-detection)
+    Checking codex-hepta-types v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-types)
+    Checking codex-install-context v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/install-context)
+    Checking aws-config v1.12.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/third_party/aws-config-1.12.0)
+   Compiling codex-code-mode-protocol v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/code-mode-protocol)
+    Checking codex-collaboration-mode-templates v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/collaboration-mode-templates)
+    Checking codex-aws-auth v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/aws-auth)
+    Checking codex-diagnostics v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/diagnostics)
+    Checking codex-file-search v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/file-search)
+    Checking codex-utils-cargo-bin v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/cargo-bin)
+   Compiling codex-experimental-api-macros v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/codex-experimental-api-macros)
+   Compiling codex-app-server-protocol-noop-macros v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/app-server-protocol-noop-macros)
+   Compiling codex-skills v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/skills)
+    Checking codex-utils-stream-parser v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/stream-parser)
+    Checking codex-hepta-cognitive-types v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-cognitive-types)
+    Checking codex-hepta-memory-retrieval v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-memory-retrieval)
+    Checking codex-hepta-prompt-registry v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-prompt-registry)
+    Checking codex-hepta-paths v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-paths)
+    Checking codex-hepta-kg v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-kg)
+    Checking codex-hepta-cognitive-read v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-cognitive-read)
+    Checking codex-backend-openapi-models v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/codex-backend-openapi-models)
+   Compiling codex-linux-sandbox v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/linux-sandbox)
+    Checking codex-hepta-memory-federation v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-memory-federation)
+    Checking codex-process-hardening v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/process-hardening)
+    Checking codex-file-system v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/file-system)
+    Checking codex-api v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/codex-api)
+    Checking codex-git-utils v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/git-utils)
+    Checking codex-shell-command v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/shell-command)
+    Checking codex-exec-server-protocol v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/exec-server-protocol)
+    Checking codex-otel v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/otel)
+    Checking codex-model-provider-info v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/model-provider-info)
+    Checking codex-secrets v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/secrets)
+    Checking codex-history v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/history)
+    Checking codex-features v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/features)
+    Checking codex-sandboxing v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/sandboxing)
+    Checking codex-state v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/state)
+    Checking codex-config v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/config)
+    Checking codex-agent-identity v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/agent-identity)
+    Checking codex-utils-output-truncation v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/output-truncation)
+    Checking codex-response-debug-context v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/response-debug-context)
+    Checking codex-code-mode v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/code-mode)
+    Checking codex-exec-server v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/exec-server)
+    Checking codex-login v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/login)
+    Checking codex-models-manager v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/models-manager)
+    Checking codex-feedback v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/feedback)
+    Checking codex-model-provider v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/model-provider)
+    Checking codex-context-fragments v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/context-fragments)
+    Checking codex-rollout v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/rollout)
+    Checking codex-utils-plugins v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/plugins)
+    Checking codex-plugin v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/plugin)
+    Checking codex-connectors v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/connectors)
+    Checking codex-exec-server-test-support v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/exec-server/tests/support)
+    Checking codex-rmcp-client v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/rmcp-client)
+    Checking codex-tools v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/tools)
+    Checking codex-app-server-protocol v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/app-server-protocol)
+    Checking codex-mcp v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/codex-mcp)
+    Checking codex-extension-api v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/extension-api)
+    Checking codex-hooks v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hooks)
+    Checking codex-apply-patch v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/apply-patch)
+    Checking codex-shell-escalation v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/shell-escalation)
+    Checking codex-prompts v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/prompts)
+    Checking codex-rollout-trace v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/rollout-trace)
+    Checking codex-agent-graph-store v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/agent-graph-store)
+    Checking codex-memories-read v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/memories/read)
+    Checking codex-utils-audio v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/audio)
+    Checking codex-hepta-operations v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-operations)
+    Checking codex-backend-client v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/backend-client)
+    Checking codex-hepta-memory v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-memory)
+    Checking codex-analytics v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/analytics)
+    Checking codex-core-plugins v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/core-plugins)
+    Checking codex-skills-extension v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/skills)
+    Checking codex-thread-store v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/thread-store)
+    Checking codex-hepta-intuition v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-intuition)
+    Checking codex-arg0 v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/arg0)
+    Checking codex-hepta-learning-ledger v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-learning-ledger)
+    Checking codex-home v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/codex-home)
+    Checking codex-hepta-authbus v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-authbus)
+    Checking codex-core v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/core)
+    Checking codex-uds v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/uds)
+    Checking codex-hepta-evidence v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-evidence)
+    Checking codex-connectors-extension v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/connectors)
+    Checking codex-utils-cli v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/cli)
+    Checking codex-hepta-governance v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/hepta-governance)
+    Checking codex-file-watcher v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/file-watcher)
+    Checking codex-hepta-memory-extension v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/hepta-memory)
+    Checking codex-git-attribution v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/git-attribution)
+    Checking codex-hepta-prompt-extension v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/hepta-prompt)
+    Checking codex-hepta-wire v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-wire)
+    Checking codex-hepta-ndu v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-ndu)
+    Checking codex-utils-json-to-toml v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/utils/json-to-toml)
+    Checking codex-hepta-intelligence-eval v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-intelligence-eval)
+    Checking codex-hepta-automation v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-automation)
+    Checking codex-hepta-fleet v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-fleet)
+    Checking codex-hepta-infer-core v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-infer-core)
+    Checking codex-hepta-neuron v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-neuron)
+    Checking codex-hepta-agent-protocol v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-agent-protocol)
+    Checking codex-hepta-control-plane v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-control-plane)
+    Checking codex-hepta-context-compiler v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-context-compiler)
+    Checking codex-hepta-prompt-optimizer v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-prompt-optimizer)
+    Checking codex-hepta-objective v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-objective)
+    Checking codex-hepta-plasticity v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-plasticity)
+    Checking codex-hepta-learning-artifacts v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-learning-artifacts)
+    Checking codex-hepta-matrix-protocol v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-matrix-protocol)
+    Checking codex-hepta-supervisor v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-supervisor)
+    Checking codex-hepta-intelligence v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-intelligence)
+    Checking codex-hepta-bellman-operator v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-bellman-operator)
+    Checking codex-hepta-cognitive-store v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-cognitive-store)
+    Checking codex-memories-write v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/memories/write)
+    Checking codex-agent-extension v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/agent)
+    Checking codex-memories-extension v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/memories)
+    Checking codex-queue-extension v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/queue)
+    Checking codex-external-agent-migration v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/external-agent-migration)
+    Checking codex-mcp-extension v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/mcp)
+    Checking codex-guardian-v2 v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/guardian-v2)
+    Checking codex-app-server-transport v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/app-server-transport)
+    Checking codex-web-search-extension v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/web-search)
+    Checking codex-history-notes-extension v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/history-notes)
+    Checking codex-chatgpt v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/chatgpt)
+    Checking codex-image-generation-extension v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/image-generation)
+    Checking codex-goal-extension v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/ext/goal)
+    Checking codex-cloud-config v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/cloud-config)
+    Checking core_test_support v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/core/tests/common)
+    Checking codex-app-server v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/app-server)
+    Checking app_test_support v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/app-server/tests/common)
+    Checking codex-app-server-client v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/app-server-client)
+    Checking codex-hepta-codex-adapter v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-codex-adapter)
+    Checking codex-hepta-agentd v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-agentd)
+    Checking codex-hepta-infer-worker-host v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-infer-worker-host)
+warning: file is loaded as a module multiple times: `hepta-agentd/src/learning_iteration_checkpoint_codec.rs`
+  |
+  = help: replace all but one `mod` item with `use` items
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.96.0/index.html#duplicate_mod
+  = note: `#[warn(clippy::duplicate_mod)]` on by default
+
+warning: file is loaded as a module multiple times: `hepta-agentd/src/learning_iteration_checkpoint_test_support.rs`
+  |
+  = help: replace all but one `mod` item with `use` items
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.96.0/index.html#duplicate_mod
+
+warning: `codex-hepta-agentd` (lib test) generated 2 warnings
+    Finished `dev` profile [unoptimized] target(s) in 1m 32s

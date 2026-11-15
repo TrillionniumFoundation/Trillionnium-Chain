@@ -1,0 +1,6 @@
+
+running 1 test
+test cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 784 filtered out; finished in 0.28s
+

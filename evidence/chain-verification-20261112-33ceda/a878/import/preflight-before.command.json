@@ -1,0 +1,7 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "exit_code": 0
+}

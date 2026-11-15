@@ -1,0 +1,174 @@
+{
+  "schema": "pon-hepta-accounting-convergence-observed-validation-v1",
+  "record_kind": "reconstruction_of_observed_tool_outputs",
+  "raw_local_validation_receipts_transferred": false,
+  "raw_local_validation_receipts_state": "Local workspace became unavailable before transfer; retained local paths are indexed separately. This summary is not an original command receipt.",
+  "candidate_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "candidate_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+  "parent_commit": "fd1cf356fcc557dbd2aee2318ffc524d17aa02f0",
+  "selective_source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+  "selective_source_is_ancestor": false,
+  "branch": "fix/chain-hepta-accounting-convergence-20261109-d9bb",
+  "diff": {
+    "files": 12,
+    "insertions": 863,
+    "deletions": 28,
+    "exact_source_files": 9
+  },
+  "source_manifest": {
+    "path": "evidence/pon-hepta-accounting-convergence-20261109/source-inputs.json",
+    "sha256": "bc53319e019624efec86e8f8a4228035dd231b229dd9c61613349bc3f4a0c7c6"
+  },
+  "implementation_scope": {
+    "native_rust_changed": false,
+    "toolchain_changed": false,
+    "lockfiles_changed": false,
+    "historical_evidence_changed": false,
+    "work_identity": "Fixed packet identity follows original producer slots across carrier and receiver layouts.",
+    "settlement": "Reference outcome/result/cost/fee paired pins survive monetary branch rewind; Unknown is nonterminal.",
+    "state_boundary": "The added reference metadata is in memory; this change does not establish a durable native effect authority.",
+    "service_fee": "Evaluated NoUpdate retains the qualified base service fee; improvement bonus remains separate.",
+    "consensus_credit": "Owner fences and zero-credit/HOLD remain. Model scores, quotes and votes do not add chainwork."
+  },
+  "observed_passes": {
+    "candidate_python": {
+      "total": 134,
+      "suites": [
+        {
+          "name": "grouped_fresh_deployment_cost_v0",
+          "passed": 50
+        },
+        {
+          "name": "grouped_fanout_reanalysis_v1",
+          "passed": 21
+        },
+        {
+          "name": "service_work_settlement_v1",
+          "passed": 38
+        },
+        {
+          "name": "legal strategy",
+          "passed": 19
+        },
+        {
+          "name": "low-rank",
+          "passed": 6
+        }
+      ]
+    },
+    "candidate_python_to_retained_native_cli": {
+      "passed": 14,
+      "skipped": 0
+    },
+    "retained_native_binary_reruns": {
+      "original_build_source_commit": "91dd3082633ea0b3a5ec9b0ed91f28603229be01",
+      "fresh_cargo_build": false,
+      "unchanged_native_tree": "1305c43ca8891f6a07fcec493c32f007679e2416",
+      "source_equality_check": "git diff 91dd3082633ea0b3a5ec9b0ed91f28603229be01 e8f81ca15634d0393e7bc6257193b4dbe88d9b2e -- trillionnium rust-toolchain.toml",
+      "source_equality_check_empty": true,
+      "total": 263,
+      "binaries": [
+        {
+          "name": "crypto lib",
+          "passed": 186,
+          "sha256": "2c65471c09b950b86b70bc03d81e9e70496224dfd2e5ebfb72a2e606cfa55918"
+        },
+        {
+          "name": "service settlement",
+          "passed": 71,
+          "sha256": "39c7dbe4c390d24cccdcc68273ef48e1741d82051678d4a7ae00396329d635bd"
+        },
+        {
+          "name": "Node task operation v2",
+          "passed": 4,
+          "sha256": "a89d34a4b73a235482c98d44edc60c14ce6ed0f64c93628e615adb982beb0ee3"
+        },
+        {
+          "name": "Node NoGain fee/reopen/reorg",
+          "passed": 2,
+          "sha256": "cb3ece326ba34891643d6eb3c0aad429e423497df1bd4e9b4d780d48f9413352"
+        }
+      ],
+      "grouped_example_sha256": "8479dc70f2b2db1245bfe21abb58ea5960bc469a86c3d50b9c3e78599e7b80ea",
+      "provider": {
+        "name": "OpenSSL",
+        "version": "3.5.9",
+        "sha256": "2b1c8c97c617f33f76bb38ca6aac088cd9ea41cf07244d755b4a41825d6af05b"
+      }
+    },
+    "locked_offline_default_graph": {
+      "workspace_packages": 26,
+      "total_packages": 176
+    },
+    "locked_offline_all_features_graph": {
+      "workspace_packages": 26,
+      "total_packages": 181
+    },
+    "formatting": {
+      "command": "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check",
+      "observed": "PASS"
+    },
+    "ci_contract": {
+      "command": "python3 -B scripts/ci/check_ci_contract.py",
+      "observed": "PASS"
+    },
+    "distributed_source_inventory": {
+      "command": "python3 -B scripts/refresh_distributed_source_inventory.py --check",
+      "observed": "PASS"
+    },
+    "preflight_dev": "PASS",
+    "preflight_staged": "PASS",
+    "git_diff_check": "PASS",
+    "nine_selective_source_files_match": "PASS",
+    "original_full_raw_source_verifier": {
+      "command": "python3 scripts/ci/verify_ci_source.py --kind head --expected-head e8f81ca15634d0393e7bc6257193b4dbe88d9b2e --output <local full-source-before.json>",
+      "observed_output": {
+        "base": null,
+        "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "tested_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2495315152,
+        "tracked_entries": 26132,
+        "tracked_worktree_verified": true
+      }
+    },
+    "preliminary_sparse_manifest": {
+      "entries": 4890,
+      "omitted_historical_evidence_entries": 21242,
+      "before_after_sha256": "a821396cf6ea35c928e6bf598ae4d016ada773688b67134f1305d3b59eb04ba4",
+      "scope": "Preliminary materialized-file equality only; full source was subsequently verified by the unmodified full raw-source verifier."
+    }
+  },
+  "unconfirmed_final_gate_runner": {
+    "session_id": 58416,
+    "terminal_observed": false,
+    "reason": "Local execution workspace unavailable before terminal gate output was observed.",
+    "checks": [
+      "source integrity negatives",
+      "CI contract negatives",
+      "corpus negatives",
+      "corpus identity",
+      "repository links",
+      "strict all-targets all-features clippy"
+    ],
+    "strict_clippy_command": "cargo +1.95.0 clippy --manifest-path trillionnium/Cargo.toml --locked --offline --workspace --all-targets --all-features -- -D warnings",
+    "passed": false
+  },
+  "remote_setup": {
+    "host": "ai395",
+    "checkout": "/home/qq/work/chain-hepta-accounting-d9bb-20261109",
+    "job_id": "1a1be7bb27b-5e21-110",
+    "exit_code": 0,
+    "output_complete": true,
+    "output_durable": true,
+    "scope": "Checkout/import/preflight preparation only; no remote native validation was launched."
+  },
+  "qualification": "HOLD_NO_GO",
+  "ready_for_merge": false,
+  "activation_authorized": false,
+  "evidence_child_commit_created": false
+}

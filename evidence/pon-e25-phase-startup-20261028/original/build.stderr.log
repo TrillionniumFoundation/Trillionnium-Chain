@@ -1,0 +1,78 @@
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+   Compiling cfg-if v1.0.4
+   Compiling typenum v1.19.0
+   Compiling generic-array v0.14.7
+   Compiling syn v2.0.117
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling zerocopy v0.8.48
+   Compiling semver v1.0.27
+   Compiling rustc_version v0.4.1
+   Compiling ahash v0.8.12
+   Compiling shlex v1.3.0
+   Compiling equivalent v1.0.2
+   Compiling find-msvc-tools v0.1.9
+   Compiling winnow v1.0.4
+   Compiling hashbrown v0.16.1
+   Compiling once_cell v1.21.4
+   Compiling indexmap v2.13.1
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling cc v1.2.59
+   Compiling curve25519-dalek v4.1.3
+   Compiling sha2 v0.10.9
+   Compiling serde_core v1.0.228
+   Compiling pkg-config v0.3.32
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling vcpkg v0.2.15
+   Compiling libsqlite3-sys v0.30.1
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling signature v2.2.0
+   Compiling cfg_aliases v0.2.2
+   Compiling zeroize v1.8.2
+   Compiling subtle v2.6.1
+   Compiling bitflags v2.11.0
+   Compiling borsh v1.8.0
+   Compiling proc-macro-crate v3.5.0
+   Compiling ed25519 v2.2.3
+   Compiling hashbrown v0.14.5
+   Compiling libc v0.2.184
+   Compiling borsh-derive v1.8.0
+   Compiling hashlink v0.9.1
+   Compiling ed25519-dalek v2.2.0
+   Compiling smallvec v1.15.1
+   Compiling thiserror v1.0.69
+   Compiling fallible-iterator v0.3.0
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling serde v1.0.228
+   Compiling zmij v1.0.21
+   Compiling serde_derive v1.0.228
+   Compiling thiserror-impl v1.0.69
+   Compiling anyhow v1.0.103
+   Compiling serde_json v1.0.149
+   Compiling getrandom v0.4.2
+   Compiling itoa v1.0.18
+   Compiling rustix v1.1.4
+   Compiling hex v0.4.3
+   Compiling memchr v2.8.0
+   Compiling trnm-protocol v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol)
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-crypto-primitives v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives)
+   Compiling fs2 v0.4.3
+   Compiling trnm-verification-profiles v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles)
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-mempool v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport)
+   Compiling rusqlite v0.32.1
+   Compiling trnm-task-kernel v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-data-availability v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 2m 10s

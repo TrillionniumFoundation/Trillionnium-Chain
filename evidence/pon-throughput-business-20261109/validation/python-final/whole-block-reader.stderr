@@ -1,0 +1,22 @@
+test_changed_work_signature_or_warmup_is_rejected (__main__.CompleteBlockReadbackTests.test_changed_work_signature_or_warmup_is_rejected) ... ok
+test_complete_census_keeps_warmups_but_not_in_wall_comparison (__main__.CompleteBlockReadbackTests.test_complete_census_keeps_warmups_but_not_in_wall_comparison) ... ok
+test_cpu_or_confirmation_claim_cannot_upgrade_v1 (__main__.CompleteBlockReadbackTests.test_cpu_or_confirmation_claim_cannot_upgrade_v1) ... ok
+test_different_canonical_root_is_not_comparable (__main__.CompleteBlockReadbackTests.test_different_canonical_root_is_not_comparable) ... ok
+test_duplicate_json_keys_are_not_silently_overridden (__main__.CompleteBlockReadbackTests.test_duplicate_json_keys_are_not_silently_overridden) ... ok
+test_duplicate_or_reordered_pair_cannot_cherry_pick (__main__.CompleteBlockReadbackTests.test_duplicate_or_reordered_pair_cannot_cherry_pick) ... ok
+test_exact_bytes_digest_is_checked (__main__.CompleteBlockReadbackTests.test_exact_bytes_digest_is_checked) ... ok
+test_extra_process_error_or_other_test_identity_is_not_silently_discarded (__main__.CompleteBlockReadbackTests.test_extra_process_error_or_other_test_identity_is_not_silently_discarded) ... ok
+test_failed_or_ignored_native_test_cannot_report_success (__main__.CompleteBlockReadbackTests.test_failed_or_ignored_native_test_cannot_report_success) ... ok
+test_impossible_rust_duration_and_oversized_logs_are_rejected (__main__.CompleteBlockReadbackTests.test_impossible_rust_duration_and_oversized_logs_are_rejected) ... ok
+test_missing_warmup_or_measurement_is_not_a_smaller_success (__main__.CompleteBlockReadbackTests.test_missing_warmup_or_measurement_is_not_a_smaller_success) ... ok
+test_nonrecord_in_the_fixed_roster_is_not_filtered_out (__main__.CompleteBlockReadbackTests.test_nonrecord_in_the_fixed_roster_is_not_filtered_out) ... ok
+test_process_failure_or_different_command_cannot_reuse_successful_stdout (__main__.CompleteBlockReadbackTests.test_process_failure_or_different_command_cannot_reuse_successful_stdout) ... ok
+test_process_receipt_and_both_raw_streams_require_independent_byte_binding (__main__.CompleteBlockReadbackTests.test_process_receipt_and_both_raw_streams_require_independent_byte_binding) ... ok
+test_stderr_error_and_nonfinite_whole_process_cpu_are_not_dropped (__main__.CompleteBlockReadbackTests.test_stderr_error_and_nonfinite_whole_process_cpu_are_not_dropped) ... ok
+test_truncated_footer_or_terminal_newline_cannot_close_the_observation (__main__.CompleteBlockReadbackTests.test_truncated_footer_or_terminal_newline_cannot_close_the_observation) ... ok
+test_zero_missing_boolean_or_negative_time_is_not_observed_time (__main__.CompleteBlockReadbackTests.test_zero_missing_boolean_or_negative_time_is_not_observed_time) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.064s
+
+OK

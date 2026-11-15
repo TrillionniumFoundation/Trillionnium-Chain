@@ -1,0 +1,53 @@
+{
+  "check_kind": "combined_git_apply_check_only",
+  "command": {
+    "argv": [
+      "git",
+      "apply",
+      "--check",
+      "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/proposal/production-v1.patch",
+      "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/proposal/regression-v1.patch"
+    ],
+    "exit_code": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  "compiled": false,
+  "native_tests_executed": false,
+  "patches": {
+    "production-v1.patch": {
+      "bytes": 8181,
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/proposal/production-v1.patch",
+      "sha256": "8e93c923fd0379e37cd79fe430fb2e686cafcf9fc6d461697e211cc165ecb9a8"
+    },
+    "regression-v1.patch": {
+      "bytes": 11057,
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/proposal/regression-v1.patch",
+      "sha256": "416a86230434742de34406220342a2eb56efbe9160262d39c5e9c02abc290a32"
+    }
+  },
+  "patches_applied": false,
+  "preflight_job_id": "1a1b769b449-12894-ab2",
+  "schema": "trnm-admission-fence-regression-static-check-v1",
+  "source_after": {
+    "head": "819309fd312298e099642e1253b1d4ba07113e98",
+    "new_test_exists": false,
+    "sources": {
+      "trillionnium/crates/trnm-pon-node/src/store.rs": "3d00e1e40f87947b2c0605dd3a3077c82a1dc92b130e7c89bb07eedf765b5a99",
+      "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs": "f9cd639ace2619dc46f40dd6b5475b3b280ff40935c04523d1d9d871c32516a7"
+    },
+    "status": "",
+    "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267"
+  },
+  "source_before": {
+    "head": "819309fd312298e099642e1253b1d4ba07113e98",
+    "new_test_exists": false,
+    "sources": {
+      "trillionnium/crates/trnm-pon-node/src/store.rs": "3d00e1e40f87947b2c0605dd3a3077c82a1dc92b130e7c89bb07eedf765b5a99",
+      "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs": "f9cd639ace2619dc46f40dd6b5475b3b280ff40935c04523d1d9d871c32516a7"
+    },
+    "status": "",
+    "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267"
+  },
+  "source_unchanged": true
+}

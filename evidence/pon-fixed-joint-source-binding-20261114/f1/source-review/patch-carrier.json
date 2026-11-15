@@ -1,0 +1,11 @@
+{
+  "archive": "f1/source-review/pon_work-2bb56596-to-7d8d4c59.patch.zip",
+  "archive_sha256": "c8a00a3760569a6a751e0f0ae273b9dd8895d1b0e7f694b96fd258ae4d13a33e",
+  "member": "pon_work-2bb56596-to-7d8d4c59.patch",
+  "original_bytes": 3663,
+  "original_failed_commit_created": false,
+  "original_sha256": "a9fc3195a51e2eb1e4859274f7ab1997f71ead9390492cc429c355969dbc5ca5",
+  "reason": "The original full-index Git patch contains a one-space context line. The outer staged diff check rejects that context as trailing whitespace; preserve the original bytes in a verified single-member ZIP rather than alter them.",
+  "schema": "fixed-joint-original-patch-carrier-v1",
+  "source_code_or_test_changed": false
+}

@@ -1,0 +1,17 @@
+{
+  "first_driver_created_commit": false,
+  "first_driver_exit": 1,
+  "first_driver_failure": "Flat-line verbose parser found 76 complete lines while the original test runner reported 77; the remaining test line contains ResourceWarnings followed by an actual standalone ok.",
+  "first_driver_session": "dpty-4864ae9cc567730db90fcf2ef8eef06d09d1647a01b153ef7dcc73d2915490f1",
+  "interleaved_records": [
+    {
+      "method": "__main__.DurableStoreTests.test_authenticated_domain_cannot_relabel_legacy_tables",
+      "reason": "Actual unittest ok appears after the original ResourceWarning lines.",
+      "text": "test_authenticated_domain_cannot_relabel_legacy_tables (__main__.DurableStoreTests.test_authenticated_domain_cannot_relabel_legacy_tables) ... <frozen importlib._bootstrap_external>:511: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1069c9c60>\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n<frozen importlib._bootstrap_external>:511: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1069c9d50>\nResourceWarning: Enable tracemalloc to get the object allocation traceback\nok\n"
+    }
+  ],
+  "original_test_stderr_sha256": "9a947fa06914b62b68de1230243ae4a18b22b6bbb3bda072778a2059b2239266",
+  "schema": "readiness-first-commit-parser-refusal-v1",
+  "test_or_source_code_changed_for_parser": false,
+  "tests_rerun": false
+}

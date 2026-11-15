@@ -1,0 +1,25 @@
+{
+  "label": "sha-trace-width-short-0-2-candidate",
+  "command": [
+    "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research",
+    "verify",
+    "/home/qian-qi/work/w1-r3-evidence-f16ac5/wire-benchmark-v1/sha-trace-width-short/statement.bin",
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin",
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin",
+    "/home/qian-qi/work/w1-r3-evidence-f16ac5/wire-benchmark-v1/sha-trace-width-short"
+  ],
+  "exit_code": 1,
+  "outer_wall_seconds": 0.008176637114956975,
+  "expected_success": false,
+  "matched_exit_expectation": true,
+  "final": {
+    "error": "proof decoding: wire admission at 97: fixed vector length",
+    "process_wall_ms": 4.905686,
+    "qualification": "HOLD_NO_GO",
+    "schema": "trnm-w1-complete-public-stark-run-v1",
+    "status": "REJECTED_OR_FAILED"
+  },
+  "phase_events": [],
+  "resource_text": "Command exited with non-zero status 1\n\tCommand being timed: \"/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research verify /home/qian-qi/work/w1-r3-evidence-f16ac5/wire-benchmark-v1/sha-trace-width-short/statement.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin /home/qian-qi/work/w1-r3-evidence-f16ac5/wire-benchmark-v1/sha-trace-width-short\"\n\tUser time (seconds): 0.00\n\tSystem time (seconds): 0.00\n\tPercent of CPU this job got: 100%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.00\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 7556\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 1506\n\tVoluntary context switches: 1\n\tInvoluntary context switches: 0\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 0\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 1\n",
+  "combined_log_sha256": "7027fedc75365dcbf79257b455c8a8894f395837c5fd5025577c2a54c1382c12"
+}

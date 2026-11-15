@@ -1,0 +1,9 @@
+{
+  "first_git_add_exit_code_separately_captured": false,
+  "followup": "Stage only the intended evidence paths with git add --sparse; preserve the source repair commit and keep full validation on the complete desktop worktree.",
+  "full_local_source_acceptance_claimed": false,
+  "observation": "A normal git add staged the two code/config files but reported that the two intended evidence paths were outside this worktree sparse-checkout definition. The repair commit contains only the two staged code/config files.",
+  "schema": "trnm-pq-source-preparation-followup-v1",
+  "source_repair_commit": "0ba4f41a23e27d05822140f4c3c80404774e3cc4",
+  "sparse_rules_changed": false
+}

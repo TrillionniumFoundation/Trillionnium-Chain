@@ -1,0 +1,110 @@
+{
+  "github_env_path": "/home/qian-qi/credit-envelope-f7e62-provider2/github.env",
+  "github_env_sha256": "5ad491cc7de66fd062cdd5f0af348fcd3fc8e70fca687879dd71a34a209a2f74",
+  "imported_environment": {
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_DIR": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install",
+    "OPENSSL_MODULES": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/lib/ossl-modules",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "41d5b79f937beed7f94d9623be504db72c5048fcd952965fc0e13305d2802a33",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "native_rust_pq_tests_claimed_by_this_proof": false,
+  "preparation_script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+  "private_smoke_key_read_or_copied": false,
+  "production_activation": false,
+  "provider_directory": "/home/qian-qi/credit-envelope-f7e62-provider2",
+  "receipt": {
+    "backend_exported": true,
+    "build_directory": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN",
+    "cli_executable": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/bin/openssl",
+    "cli_sha256": "41d5b79f937beed7f94d9623be504db72c5048fcd952965fc0e13305d2802a33",
+    "cli_version_output": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+    "elapsed_wall_seconds": 174,
+    "exit_code": 0,
+    "github_actions_reported": false,
+    "independent_cryptographic_implementation_claim": false,
+    "install_prefix": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install",
+    "last_stage": "complete",
+    "ml_dsa_65_sign_verify_and_wrong_message_rejection": true,
+    "native_backend_inputs": [
+      {
+        "bytes": 8933408,
+        "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/bin/openssl",
+        "sha256": "41d5b79f937beed7f94d9623be504db72c5048fcd952965fc0e13305d2802a33"
+      },
+      {
+        "bytes": 3449,
+        "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/include/openssl/opensslv.h",
+        "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+      },
+      {
+        "bytes": 4729,
+        "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/include/openssl/configuration.h",
+        "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+      },
+      {
+        "bytes": 12381424,
+        "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/lib/libcrypto.a",
+        "sha256": "005a0f7d9f6a073e6530cc556c90b3c415df7c6bc2475e333d29aa9bfa409bfb"
+      },
+      {
+        "bytes": 2123138,
+        "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/lib/libssl.a",
+        "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727"
+      }
+    ],
+    "native_rust_pq_tests_run_by_preparation": false,
+    "openssl_conf": "/dev/null",
+    "openssl_modules": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/lib/ossl-modules",
+    "preparation_script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+    "production_activation": false,
+    "result": "PREPARED_AND_SMOKE_VERIFIED",
+    "runner_environment_reported": null,
+    "schema": "trnm-ci-pq-provider-v3",
+    "source_archive_sha256_expected": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+    "source_digest_verified": true,
+    "source_transport": "explicit-local-archive",
+    "source_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "static_build": true,
+    "upstream_full_tests_run": false,
+    "version": "3.5.9",
+    "whole_chain_quantum_security_qualified": false
+  },
+  "receipt_path": "/home/qian-qi/credit-envelope-f7e62-provider2/observations/pq-provider/provider.json",
+  "receipt_sha256": "a32773f67914aaf9bf00544c0f5ad43134065e760c12218a87eb9cf05e70baf1",
+  "schema": "pon-credit-selected-provider-v1",
+  "source_archive": {
+    "bytes": 53279637,
+    "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/openssl-3.5.9.tar.gz",
+    "sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a"
+  },
+  "verified_native_inputs": [
+    {
+      "bytes": 8933408,
+      "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/bin/openssl",
+      "sha256": "41d5b79f937beed7f94d9623be504db72c5048fcd952965fc0e13305d2802a33"
+    },
+    {
+      "bytes": 3449,
+      "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/include/openssl/opensslv.h",
+      "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+    },
+    {
+      "bytes": 4729,
+      "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/include/openssl/configuration.h",
+      "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+    },
+    {
+      "bytes": 12381424,
+      "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/lib/libcrypto.a",
+      "sha256": "005a0f7d9f6a073e6530cc556c90b3c415df7c6bc2475e333d29aa9bfa409bfb"
+    },
+    {
+      "bytes": 2123138,
+      "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/lib/libssl.a",
+      "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727"
+    }
+  ]
+}

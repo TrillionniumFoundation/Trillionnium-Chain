@@ -1,0 +1,89 @@
+{
+  "changed_source_files": [],
+  "completed_at_utc": "2026-11-10T09:54:41.930060+00:00",
+  "gates": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "completed_at_utc": "2026-11-10T09:54:32.358672+00:00",
+      "elapsed_seconds": 0.03162174695171416,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "ff54581654e0f832cc74bee0c819644e1663993a00ca5bb835ce58462675886c",
+      "name": "preflight",
+      "started_at_utc": "2026-11-10T09:54:32.327047+00:00"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "34f16887fe9a9df8416c9f97ef5f3b765b105bbb"
+      ],
+      "completed_at_utc": "2026-11-10T09:54:33.912176+00:00",
+      "elapsed_seconds": 1.5257155920844525,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "bd109abb13ce01ff2162f75885c0a19a14064d823414ca7c53a478dbd8149c14",
+      "name": "exact-source",
+      "started_at_utc": "2026-11-10T09:54:32.386466+00:00"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--features",
+        "trnm-pon-node/pq-native-openssl"
+      ],
+      "completed_at_utc": "2026-11-10T09:54:34.006677+00:00",
+      "elapsed_seconds": 0.06402754480950534,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "3529ade41a3920ae62862909ebf56dd9a1d451b28c3d64fc177907155af9a8cd",
+      "name": "cargo-graph",
+      "started_at_utc": "2026-11-10T09:54:33.942669+00:00"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "-p",
+        "trnm-data-availability",
+        "--example",
+        "cell_sealed_research_next_use_v2",
+        "--",
+        "--test-threads=1"
+      ],
+      "completed_at_utc": "2026-11-10T09:54:41.811236+00:00",
+      "elapsed_seconds": 7.77179013681598,
+      "exit_code": 101,
+      "failure": null,
+      "log_sha256": "364b723e187347ad125a301c6db386b3b4ea1df7e7eb8ff4f43b492fccfa6572",
+      "name": "old-copy-entry",
+      "started_at_utc": "2026-11-10T09:54:34.039452+00:00"
+    }
+  ],
+  "identity": {
+    "commit": "34f16887fe9a9df8416c9f97ef5f3b765b105bbb",
+    "status": "",
+    "tree": "9ec1f69f463688521c867f857bfba1853380be5a"
+  },
+  "passed": false,
+  "phase": "cargo",
+  "source_end_manifest_sha256": "aedec2e45804eb0a4893d7edaf61c43e680998c6628181b164f1ccaee143470f",
+  "source_start_manifest_sha256": "aedec2e45804eb0a4893d7edaf61c43e680998c6628181b164f1ccaee143470f",
+  "sources_unchanged": true,
+  "started_at_utc": "2026-11-10T09:54:32.293757+00:00"
+}

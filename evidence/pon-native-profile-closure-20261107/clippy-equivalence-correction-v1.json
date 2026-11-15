@@ -1,0 +1,53 @@
+{
+  "after_sha256": "39f19d11a3001715b7a4e9696e195c9bd111385a591c28a288bb2bfc255206b4",
+  "before_sha256": "67bd329433a3ae9725e0a8d439e850d8d51a86f9010e60fad3a166b86013dc73",
+  "driver_changed": false,
+  "fixed_steps": 64,
+  "maximum_observations": 65,
+  "new_condition": "observations.len() > usize::from(seal::STEPS)",
+  "original_condition": "observations.len() >= usize::from(seal::STEPS) + 1",
+  "original_failure_retained": true,
+  "path": "trillionnium/crates/trnm-pon-node/examples/grouped_verification_authority_v0.rs",
+  "previous_process_status": {
+    "at_unix_ms": 1794096711555,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 1,
+    "job_id": "1a1b87b3448-12894-fb5",
+    "launch_nonce": "b05c6b8800db8297dbcedfac81d81197",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 36452,
+        "stored": 36452
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "failed",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "previous_source": "7e941e3c148008ab7264ecc7a3148153183fa6b5",
+  "resource_budget_changed": false,
+  "schema": "pon-native-profile-equivalent-limit-correction-v1",
+  "source_sha": "732b8ff5e8cae74bb0fb6490550d9984f2f5b0d6",
+  "tree": "12d3b00a6ce7f6395fb81492a7633ad955e71d95"
+}

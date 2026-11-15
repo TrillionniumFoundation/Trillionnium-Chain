@@ -1,0 +1,177 @@
+{
+  "schema": "chain-source-validation-summary-v1",
+  "created_utc": "2026-11-11T01:26:43.322165+00:00",
+  "reviewer": "/root/pq_profile_review",
+  "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_tree": "ee45502fb8ef1b7556751c58d8a3804c450f0962",
+  "status": "FAIL_RETAINED_CURRENT_GOLDEN_BINDING_REPAIR_PREPARED",
+  "executed_command_count": 6,
+  "passed_command_count": 5,
+  "failed_command_count": 1,
+  "repo_edited_by_reviewer": false,
+  "cargo_executed_by_reviewer": false,
+  "native_tests_executed_by_reviewer": false,
+  "all_recorded_heads_unchanged_and_clean": true,
+  "all_log_hashes_independently_verified": true,
+  "qualification_granted": false,
+  "records": [
+    {
+      "id": "source-pq-research-integration-check",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/source-pq-research-integration-check",
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "elapsed_seconds": 74.16762118999986,
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "stdout_sha256": "83e8ef0fcffe54c1a7b9ce8dc6f692a78a0f249712de0d09c767ab802feb6be7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_tree": "ee45502fb8ef1b7556751c58d8a3804c450f0962",
+      "clean_after": true,
+      "qualification_granted": false
+    },
+    {
+      "id": "source-pq-research-integration-tests",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/source-pq-research-integration-tests",
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "elapsed_seconds": 411.77582810800004,
+      "test_count": 59,
+      "test_elapsed_seconds": 404.916,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "499bb108756d1ccdccc14504a258eefd62818630f545111230e5b08108967ff7",
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_tree": "ee45502fb8ef1b7556751c58d8a3804c450f0962",
+      "clean_after": true,
+      "qualification_granted": false
+    },
+    {
+      "id": "source-repository-check",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/source-repository-check",
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "elapsed_seconds": 97.81877459600037,
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "stdout_sha256": "769072738a9bf1a9da694a7555375f643fbb5584042bc3b829f9ac7e22795660",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_tree": "ee45502fb8ef1b7556751c58d8a3804c450f0962",
+      "clean_after": true,
+      "qualification_granted": false
+    },
+    {
+      "id": "source-ci-integrity-tests",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/source-ci-integrity-tests",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "elapsed_seconds": 39.770918911999615,
+      "test_count": 43,
+      "test_elapsed_seconds": 33.287,
+      "stdout_sha256": "4cd538c782f9dca8969a0ace149cfcf3f053f483e6a836efbb81d329508ec074",
+      "stderr_sha256": "600b97037a236b64e7dbe384c046313a0edad4b8e25a8c68ed1bea200322a66c",
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_tree": "ee45502fb8ef1b7556751c58d8a3804c450f0962",
+      "clean_after": true,
+      "qualification_granted": false
+    },
+    {
+      "id": "source-w1-lifetime-ledger",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/source-w1-lifetime-ledger",
+      "argv": [
+        "python3",
+        "scripts/w1_lifetime_ledger.py"
+      ],
+      "returncode": 0,
+      "pass": true,
+      "elapsed_seconds": 29.73612639500061,
+      "test_count": null,
+      "test_elapsed_seconds": null,
+      "stdout_sha256": "b050b861ec172305d708ba7c01ca47d547b1646cc3daee1d6aec9877d2cf3390",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_tree": "ee45502fb8ef1b7556751c58d8a3804c450f0962",
+      "clean_after": true,
+      "qualification_granted": false
+    },
+    {
+      "id": "source-w1-lifetime-ledger-tests",
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/source-w1-lifetime-ledger-tests",
+      "argv": [
+        "python3",
+        "scripts/ci/test_w1_lifetime_ledger.py"
+      ],
+      "returncode": 1,
+      "pass": false,
+      "elapsed_seconds": 1.1367294510000647,
+      "test_count": 19,
+      "test_elapsed_seconds": 0.667,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "21be63299fc3ef865d15cdca17cecd35975f017955d6adf78526f9ce6273fefe",
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_tree": "ee45502fb8ef1b7556751c58d8a3804c450f0962",
+      "clean_after": true,
+      "qualification_granted": false
+    }
+  ],
+  "static_review": {
+    "path": "/workspace/scratch/a4188f5c86b5/coordination/static_review_source_binding_x_y.json",
+    "sha256": "aadfeb7451f5c6f4b64d9a240c6077627bde8a1fa1a58039040dcc26963a3342",
+    "scope": "Eight-file X..Y pin-rebinding semantics and exact Git-object comparisons; not a claim that every gate passes."
+  },
+  "skipped_duplicate": {
+    "command": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "reason": "Parent explicitly requested reuse of its same-source repository-truth step. No duplicate command was launched.",
+    "observed_parent_lane_context": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/repository-truth/context.json",
+    "observed_parent_lane_stdout": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/repository-truth/stdout.log",
+    "observed_line": "distributed source inventory: PASS",
+    "entire_parent_lane_completion_claimed": false
+  },
+  "failure": {
+    "id": "source-w1-lifetime-ledger-tests",
+    "test": "test_project_unknowns_do_not_produce_a_target_or_qualification",
+    "result": "19 tests executed; 1 failure; original result and logs retained unchanged.",
+    "cause": "The current owner report binds reviewed X/store bytes, but the complete-report expected fixture still selects the immutable M8 20261109 observation.",
+    "analysis_file": "/workspace/scratch/a4188f5c86b5/coordination/w1_golden_failure_analysis_y.json",
+    "workflow_also_affected": ".github/workflows/pon-w1-qrom-closure.yml still cmp-selects the old report."
+  },
+  "proposed_repair": {
+    "patch": "/workspace/scratch/a4188f5c86b5/coordination/w1-golden-successor/w1-lifetime-account-boundary-successor.patch",
+    "patch_sha256": "e1833727420d776e1d3d7d5dd5bf6dd2ad7ad829db57460cbb54be1420fc9b17",
+    "manifest": "/workspace/scratch/a4188f5c86b5/coordination/w1-golden-successor/manifest.json",
+    "source_base": "077ac4f33206de00a178553d9a0c729a20685088",
+    "scope": "Six files: three new successor observation files, current test fixture references and stronger source controls, closure workflow fixture selection, corpus pins.",
+    "historical_report_bytes_unchanged": true,
+    "literal_source_observation_field_changes": 7,
+    "retained_named_test_count": 19,
+    "complete_old_projection_and_current_report_byte_equality": true,
+    "git_apply_check_passed": true,
+    "applied_to_y": false,
+    "post_patch_tests_run": false
+  },
+  "retained_boundaries": [
+    "The actual failing Y run remains a failure; the prepared successor does not rewrite it.",
+    "Only selected-source survey and arithmetic are represented. No Rust/native/cohort/PQ/production qualification is granted.",
+    "Existing roster, full report comparison, source guards and historical cohort pins remain."
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "schema": "trnm-evidence-byte-parts-v1",
+  "scope": "Byte-preserving storage representation of the retained original S2 native campaign archive. This packaging operation records no new native execution or acceptance.",
+  "per_file_source_read_limit_bytes": 4194304,
+  "archive": {
+    "filename": "native-campaign-failure-evidence.tar.xz",
+    "bytes": 5906836,
+    "sha256": "6c8a6fa91659283a7d7ad85795a82dfc7ea8f3f64cfb39d5a0c2a20465a7757b",
+    "git_blob_sha1": "9b29a146004222acfc73404f69b7a66704e543cc",
+    "original_storage": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+      "tree": "15fd9e7a2f4121dce861e9e96b78d8196d3892fb",
+      "path": "evidence/pq-live-retry-20261111-fa62381e/native-campaign-failure-evidence.tar.xz",
+      "immutable_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8/evidence/pq-live-retry-20261111-fa62381e/native-campaign-failure-evidence.tar.xz"
+    },
+    "original_observation": {
+      "source_revision": "3c98e08e92094bb79ac811b682192d7252a7c325",
+      "workflow_run_id": 43026071397,
+      "job_id": 130540971588,
+      "artifact_id": 13858366171
+    }
+  },
+  "reconstruction": {
+    "operation": "Concatenate every part in the listed order; verify the complete archive byte count, SHA256 and original archive member manifest.",
+    "part_count": 2
+  },
+  "parts": [
+    {
+      "index": 0,
+      "path": "native-campaign-failure-evidence.tar.xz.part-000",
+      "offset_bytes": 0,
+      "bytes": 4194304,
+      "sha256": "f52587354338163d3e52046049bb4646cbecf4365c69735b866f7089644d54ab",
+      "git_blob_sha1": "6b082698b2af0b23410c02b80e4bfadfa445b18e"
+    },
+    {
+      "index": 1,
+      "path": "native-campaign-failure-evidence.tar.xz.part-001",
+      "offset_bytes": 4194304,
+      "bytes": 1712532,
+      "sha256": "8154c24e6ac7b57887c4f93bfa6016abb60d63cebbdeaa38f6cc0bd18542f638",
+      "git_blob_sha1": "abb8a9d3061d4a8e8bc8cb5f82e186f3284e88d8"
+    }
+  ],
+  "qualification": {
+    "new_native_execution": false,
+    "whole_chain_pq_qualified": false
+  }
+}

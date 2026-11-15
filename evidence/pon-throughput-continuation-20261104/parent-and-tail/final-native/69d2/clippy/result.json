@@ -1,0 +1,63 @@
+{
+  "action": "lint",
+  "all_commands_succeeded": true,
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "child_system_seconds": 0.0037709999999999996,
+      "child_user_seconds": 0.03956,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:54:07.144429+00:00",
+      "label": "preflight",
+      "max_child_rss_kib": 13696,
+      "started_at": "2026-11-04T08:54:07.100977+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+      "wall_ns": 43454182
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "cargo",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "-p",
+        "trnm-mvcc-fee",
+        "-p",
+        "trnm-sqlite-io-boundary",
+        "--lib",
+        "--tests",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "child_system_seconds": 0.860124,
+      "child_user_seconds": 26.59104,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:54:34.224791+00:00",
+      "label": "clippy",
+      "max_child_rss_kib": 1508176,
+      "started_at": "2026-11-04T08:54:07.144739+00:00",
+      "stderr_sha256": "b28009fd3b221bb03c1d3e55c85a2e4e50096cde651f0ee1dda77e1785ac300c",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_ns": 27080069777
+    }
+  ],
+  "component_artifacts": {},
+  "full_node_suite_executed": false,
+  "public_confirmation_measured": false,
+  "schema": "final-composed-local-native-observation-v1",
+  "source_manifest_sha256": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+  "source_unchanged": true
+}

@@ -1,0 +1,173 @@
+{
+  "hosted_ci_passed": false,
+  "jobs": [
+    {
+      "actual_tested_commit": "eb2454eeb57cfe0ab23d5f12ce37ea22a98b6ed5",
+      "actual_tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+      "baseline_executed": false,
+      "classification": "original from-zero native-control subprocess failed after successful preparation; no controller host error reported",
+      "conclusion": "failure",
+      "controller_command": [
+        "python3",
+        "scripts/ci/run_from_zero_native.py",
+        "--out",
+        "/home/runner/work/_temp/priority-observations/from-zero-native"
+      ],
+      "controller_failure": null,
+      "controller_log_line": 1214,
+      "controller_passed": false,
+      "controller_schema": "trnm-ci-original-public-host-controller-v2",
+      "failed_step": {
+        "completed_at": "2026-11-08T08:44:48Z",
+        "conclusion": "failure",
+        "name": "Execute original release from-zero controls",
+        "number": 6,
+        "started_at": "2026-11-08T08:40:07Z",
+        "status": "completed"
+      },
+      "final_host_errors": [],
+      "inner_native_failure_code": null,
+      "inner_native_failure_code_status": "not exposed by the retained job log; no native artifact downloaded in this bounded triage",
+      "job": 128678655166,
+      "libtest_failed_summary_in_job_log": false,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+      "preparation_completed": true,
+      "preparation_exit_code": 0,
+      "preparation_source_unchanged": true,
+      "raw_log": {
+        "bytes": 1869187,
+        "path": "128678655166-logs.stdout.raw",
+        "sha256": "abf7fce87f6c43def75df8021110e2bbdb169da581c2a32b60b884e4dab3bcf6"
+      },
+      "systemd_run_exit": 1
+    },
+    {
+      "actual_tested_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "actual_tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+      "baseline_executed": false,
+      "classification": "original from-zero native-control subprocess failed after successful preparation; no controller host error reported",
+      "conclusion": "failure",
+      "controller_command": [
+        "python3",
+        "scripts/ci/run_from_zero_native.py",
+        "--out",
+        "/home/runner/work/_temp/priority-observations/from-zero-native"
+      ],
+      "controller_failure": null,
+      "controller_log_line": 1217,
+      "controller_passed": false,
+      "controller_schema": "trnm-ci-original-public-host-controller-v2",
+      "failed_step": {
+        "completed_at": "2026-11-08T08:44:11Z",
+        "conclusion": "failure",
+        "name": "Execute original release from-zero controls",
+        "number": 6,
+        "started_at": "2026-11-08T08:40:06Z",
+        "status": "completed"
+      },
+      "final_host_errors": [],
+      "inner_native_failure_code": null,
+      "inner_native_failure_code_status": "not exposed by the retained job log; no native artifact downloaded in this bounded triage",
+      "job": 128678655031,
+      "libtest_failed_summary_in_job_log": false,
+      "name": "native priorities (ubuntu-24.04, head, service-model)",
+      "preparation_completed": true,
+      "preparation_exit_code": 0,
+      "preparation_source_unchanged": true,
+      "raw_log": {
+        "bytes": 1868462,
+        "path": "128678655031-logs.stdout.raw",
+        "sha256": "eec83a351ce72041d694d83fc41d6ac2e0c5cfed2fc1e668853bf1e7f9f9c01a"
+      },
+      "systemd_run_exit": 1
+    },
+    {
+      "actual_tested_commit": "eb2454eeb57cfe0ab23d5f12ce37ea22a98b6ed5",
+      "actual_tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+      "baseline_executed": false,
+      "classification": "original from-zero native-control subprocess failed after successful preparation; no controller host error reported",
+      "conclusion": "failure",
+      "controller_command": [
+        "python3",
+        "scripts/ci/run_from_zero_native.py",
+        "--out",
+        "/home/runner/work/_temp/priority-observations/from-zero-native"
+      ],
+      "controller_failure": null,
+      "controller_log_line": 1219,
+      "controller_passed": false,
+      "controller_schema": "trnm-ci-original-public-host-controller-v2",
+      "failed_step": {
+        "completed_at": "2026-11-08T08:45:17Z",
+        "conclusion": "failure",
+        "name": "Execute original release from-zero controls",
+        "number": 6,
+        "started_at": "2026-11-08T08:40:25Z",
+        "status": "completed"
+      },
+      "final_host_errors": [],
+      "inner_native_failure_code": null,
+      "inner_native_failure_code_status": "not exposed by the retained job log; no native artifact downloaded in this bounded triage",
+      "job": 128678655028,
+      "libtest_failed_summary_in_job_log": false,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+      "preparation_completed": true,
+      "preparation_exit_code": 0,
+      "preparation_source_unchanged": true,
+      "raw_log": {
+        "bytes": 1869495,
+        "path": "128678655028-logs.stdout.raw",
+        "sha256": "735d91040b384f5581ae5338851516e0a0f6b7b986d730f83fd2cac4981577b7"
+      },
+      "systemd_run_exit": 1
+    },
+    {
+      "actual_tested_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "actual_tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+      "baseline_executed": false,
+      "classification": "original from-zero native-control subprocess failed after successful preparation; no controller host error reported",
+      "conclusion": "failure",
+      "controller_command": [
+        "python3",
+        "scripts/ci/run_from_zero_native.py",
+        "--out",
+        "/home/runner/work/_temp/priority-observations/from-zero-native"
+      ],
+      "controller_failure": null,
+      "controller_log_line": 1212,
+      "controller_passed": false,
+      "controller_schema": "trnm-ci-original-public-host-controller-v2",
+      "failed_step": {
+        "completed_at": "2026-11-08T08:44:34Z",
+        "conclusion": "failure",
+        "name": "Execute original release from-zero controls",
+        "number": 6,
+        "started_at": "2026-11-08T08:40:04Z",
+        "status": "completed"
+      },
+      "final_host_errors": [],
+      "inner_native_failure_code": null,
+      "inner_native_failure_code_status": "not exposed by the retained job log; no native artifact downloaded in this bounded triage",
+      "job": 128678654970,
+      "libtest_failed_summary_in_job_log": false,
+      "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+      "preparation_completed": true,
+      "preparation_exit_code": 0,
+      "preparation_source_unchanged": true,
+      "raw_log": {
+        "bytes": 1868423,
+        "path": "128678654970-logs.stdout.raw",
+        "sha256": "f82c20c8b26bc1190023f2e52cc317bc78046c0b8cd7516b36fef7fe2c5fde94"
+      },
+      "systemd_run_exit": 1
+    }
+  ],
+  "native_tests_executed_by_this_triage": false,
+  "observed_head": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+  "ready_to_archive": true,
+  "result": "OBSERVED",
+  "run": 42463825143,
+  "schema": "trnm-pq-hosted-late-priority-final-classification-v1",
+  "scope": "four original job metadata, annotations and complete logs; no native artifacts, no reruns",
+  "source_edits": false
+}

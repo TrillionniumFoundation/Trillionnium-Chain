@@ -1,0 +1,469 @@
+{
+  "base_commit": "47b4a62463d8e1371a175c74196d52d99c5fccb8",
+  "base_tree": "c8f3b8e6f5a602edb380f89e1ad941b8d0d374fe",
+  "concurrent_parent": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+  "concurrent_paths": [
+    "evidence/pon-growth-persistence-control-20261105/canonical-rustc-preparation.json",
+    "evidence/pon-growth-persistence-control-20261105/checkpoint-before-green.json",
+    "evidence/pon-growth-persistence-control-20261105/dependency-cache-inspection.json",
+    "evidence/pon-growth-persistence-control-20261105/ffb-pristine-precheck/0.log",
+    "evidence/pon-growth-persistence-control-20261105/ffb-pristine-precheck/1.log",
+    "evidence/pon-growth-persistence-control-20261105/ffb-pristine-precheck/receipt.json",
+    "evidence/pon-growth-persistence-control-20261105/ffb-pristine-precheck/source.json",
+    "evidence/pon-growth-persistence-control-20261105/historical/run-bounded-before-canonical-rustc.py",
+    "evidence/pon-growth-persistence-control-20261105/inactive-target-read-cache-advice-skipped.json",
+    "evidence/pon-growth-persistence-control-20261105/inactive-target-read-cache-advice.json",
+    "evidence/pon-growth-persistence-control-20261105/memory-boundary-controls-final.log",
+    "evidence/pon-growth-persistence-control-20261105/memory-monitor-result.json",
+    "evidence/pon-growth-persistence-control-20261105/native-attempt-history.json",
+    "evidence/pon-growth-persistence-control-20261105/native-build-witness-red/build-output-0.log",
+    "evidence/pon-growth-persistence-control-20261105/native-build-witness-red/receipt.json",
+    "evidence/pon-growth-persistence-control-20261105/native-red-canonical-retry1/cargo.log",
+    "evidence/pon-growth-persistence-control-20261105/native-red-canonical-retry1/native-inputs-after.json",
+    "evidence/pon-growth-persistence-control-20261105/native-red-canonical-retry1/native-inputs-before.json",
+    "evidence/pon-growth-persistence-control-20261105/native-red-canonical-retry1/preflight.log",
+    "evidence/pon-growth-persistence-control-20261105/native-red-canonical-retry1/result.json",
+    "evidence/pon-growth-persistence-control-20261105/native-red-canonical/cargo.log",
+    "evidence/pon-growth-persistence-control-20261105/native-red-canonical/native-inputs-after.json",
+    "evidence/pon-growth-persistence-control-20261105/native-red-canonical/native-inputs-before.json",
+    "evidence/pon-growth-persistence-control-20261105/native-red-canonical/preflight.log",
+    "evidence/pon-growth-persistence-control-20261105/native-red-canonical/result.json",
+    "evidence/pon-growth-persistence-control-20261105/native-red-rustup/cargo.log",
+    "evidence/pon-growth-persistence-control-20261105/native-red-rustup/native-inputs-after.json",
+    "evidence/pon-growth-persistence-control-20261105/native-red-rustup/native-inputs-before.json",
+    "evidence/pon-growth-persistence-control-20261105/native-red-rustup/preflight.log",
+    "evidence/pon-growth-persistence-control-20261105/native-red-rustup/result.json",
+    "evidence/pon-growth-persistence-control-20261105/native-red/cargo.log",
+    "evidence/pon-growth-persistence-control-20261105/native-red/native-inputs-after.json",
+    "evidence/pon-growth-persistence-control-20261105/native-red/native-inputs-before.json",
+    "evidence/pon-growth-persistence-control-20261105/native-red/preflight.log",
+    "evidence/pon-growth-persistence-control-20261105/native-red/result.json",
+    "evidence/pon-growth-persistence-control-20261105/red-overlay.json",
+    "evidence/pon-growth-persistence-control-20261105/red-overlay/growth_persistence_cancellation.rs",
+    "evidence/pon-growth-persistence-control-20261105/red-overlay/recovery.rs",
+    "evidence/pon-growth-persistence-control-20261105/run-account-prefix-bounded.py",
+    "evidence/pon-growth-persistence-control-20261105/run-bounded.py",
+    "evidence/pon-growth-persistence-control-20261105/syntax-format-result.json",
+    "evidence/pon-prospective-source-b5bb-20261105/README.md",
+    "evidence/pon-prospective-source-b5bb-20261105/cache-advice-result.json",
+    "evidence/pon-prospective-source-b5bb-20261105/fetch-github-merge-result.json",
+    "evidence/pon-prospective-source-b5bb-20261105/fetch-history-result.json",
+    "evidence/pon-prospective-source-b5bb-20261105/first-history-verification-failure.json",
+    "evidence/pon-prospective-source-b5bb-20261105/github-prospective-merge.json",
+    "evidence/pon-prospective-source-b5bb-20261105/history-verification.json",
+    "evidence/pon-prospective-source-b5bb-20261105/manifest.json",
+    "evidence/pon-prospective-source-b5bb-20261105/materialization-manifest.json",
+    "evidence/pon-prospective-source-b5bb-20261105/materialization.stderr.log",
+    "evidence/pon-prospective-source-b5bb-20261105/materialization.stdout.log",
+    "evidence/pon-prospective-source-b5bb-20261105/prospective-source.json",
+    "evidence/pon-prospective-source-b5bb-20261105/prospective-source.stderr.log",
+    "evidence/pon-prospective-source-b5bb-20261105/prospective-source.stdout.log",
+    "evidence/pon-prospective-source-b5bb-20261105/verification-result.json",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/candidate-files.json",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/candidate-pin-refresh.json",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/evidence-read-cache-advice-after-static.json",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/evidence-read-cache-advice.json",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/fixed-pair.json",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/frozen-source-materialization.json",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/full-source-before.json",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/p0-callsite-profile-anchors-initial.json",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/quantum/checks.json",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/quantum/quantum-models.log",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/restored-resource-observation.json",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/run-scoped-checks-initial-pair.py",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/source-controls/authority-scan-controls.log",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/source-controls/checks.json",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/source-controls/pq-controls.log",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/source-controls/source-integrity.log",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/static/authority-inventory.log",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/static/cargo-graph-summary.json",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/static/checks.json",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/static/ci-contract.log",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/static/pq-corpus.log",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/static/repository-links.log",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/static/rust-format.log",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/static/shell-syntax.log",
+    "evidence/pq-workflow-continuation-20261105/initial-checkpoint/static/source-inventory.log",
+    "evidence/pq-workflow-continuation-20261105/runtime-29-to-d206-source-map.json"
+  ],
+  "donor_commit_for_eight_exact_files": "b525fbc6dc780343c78710c98a94616f7cff59e4",
+  "entries": [
+    {
+      "known_remote_blob": false,
+      "mode": "100644",
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "sha": "71bf616a292dcf4e86a3cffca52329d756ccfe21",
+      "size": 88042,
+      "type": "blob"
+    },
+    {
+      "known_remote_blob": false,
+      "mode": "100644",
+      "path": "config/pon/pq-system-required-tests-v1.json",
+      "sha": "497baa84651939bf73d826801086d43f03c29e0e",
+      "size": 6012,
+      "type": "blob"
+    },
+    {
+      "known_remote_blob": false,
+      "mode": "100644",
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha": "be98df36f74ec92c18e25e1417a4e40ff9671137",
+      "size": 510824,
+      "type": "blob"
+    },
+    {
+      "known_remote_blob": false,
+      "mode": "100644",
+      "path": "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
+      "sha": "3af8fad60ff4aa2072ded820552c954dffc902d8",
+      "size": 15044,
+      "type": "blob"
+    },
+    {
+      "known_remote_blob": false,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/experiments/quantum_daa_campaign.py",
+      "sha": "42b3f7822f6eb5de05214085826304a8a5f50b83",
+      "size": 12626,
+      "type": "blob"
+    },
+    {
+      "known_remote_blob": false,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/test_quantum_daa_model.py",
+      "sha": "a7525c159f52c169abfb5c0361e5a414965e2b75",
+      "size": 19502,
+      "type": "blob"
+    },
+    {
+      "known_remote_blob": true,
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+      "sha": "7c1812d9e71c65e36c827adfcfdf3714ba5d575b",
+      "size": 80214,
+      "type": "blob"
+    },
+    {
+      "known_remote_blob": true,
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-checkpoint-store/src/live_journal_v2.rs",
+      "sha": "566c2a94f11ea4949cace063f8b2e6dab57e0397",
+      "size": 4373,
+      "type": "blob"
+    },
+    {
+      "known_remote_blob": true,
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs",
+      "sha": "b236ce047843a68cf371e02d6bb480fea6fc71ff",
+      "size": 20594,
+      "type": "blob"
+    },
+    {
+      "known_remote_blob": true,
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+      "sha": "16f087a25f544b6ceabd6473d09cde9cf1c78520",
+      "size": 34689,
+      "type": "blob"
+    },
+    {
+      "known_remote_blob": true,
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
+      "sha": "716646e95bc507e2e901fd5320a982e47766f482",
+      "size": 14804,
+      "type": "blob"
+    },
+    {
+      "known_remote_blob": true,
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/pq/tests.rs",
+      "sha": "79c7f6cd9fae5016465370f306ecc1ebe28ab907",
+      "size": 7820,
+      "type": "blob"
+    },
+    {
+      "known_remote_blob": false,
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "sha": "f4430b09a806eba5985f86f3bf4d1520c319948e",
+      "size": 338307,
+      "type": "blob"
+    },
+    {
+      "known_remote_blob": false,
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "sha": "c9410261c9c489d051388e8e092f561488e1fa06",
+      "size": 28940,
+      "type": "blob"
+    },
+    {
+      "known_remote_blob": false,
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs",
+      "sha": "777859ab686a91e6a30353bc00f2f0f0b53034fe",
+      "size": 15551,
+      "type": "blob"
+    },
+    {
+      "known_remote_blob": true,
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+      "sha": "c6e3c62219e6f10030cee3dad4df2f2045acd9cd",
+      "size": 24778,
+      "type": "blob"
+    },
+    {
+      "known_remote_blob": true,
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+      "sha": "ca3706440a070818173a6209ffc350bb94bf6199",
+      "size": 29928,
+      "type": "blob"
+    }
+  ],
+  "final_joint_source": {
+    "commit": "78874ae144fe7ca1adc6805a646fdc433d33028e",
+    "native_e05_results_inherited_as_new_execution": false,
+    "non_evidence_difference_from_native_tested_e05": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1/capacity_range_tests.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs"
+    ],
+    "parents": [
+      "04be5f02c84cf5cb626a53f34bc03a5bd6ff5137",
+      "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0"
+    ],
+    "tree": "138f154b90666416ae4968009655b733209b9061"
+  },
+  "interpretation": "The evidence-only ef1 intermediate preserves e05 non-evidence inputs. The later 04be joint source has the eight explicit non-evidence changes listed below; e05 native execution is not inherited by that source.",
+  "joint_publication_delta": {
+    "additional_parent": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+    "base_tree": "d4f4a85c439982d8decec9265c1993408f3577cf",
+    "entries": [
+      {
+        "bytes": 88042,
+        "mode": "100644",
+        "path": "config/pon/pq-cross-branch-corpus-v1.json",
+        "sha": "d743e185c7ec9b8ac7252cd3c642123679b24a3e",
+        "type": "blob"
+      },
+      {
+        "bytes": 6012,
+        "mode": "100644",
+        "path": "config/pon/pq-system-required-tests-v1.json",
+        "sha": "497baa84651939bf73d826801086d43f03c29e0e",
+        "type": "blob"
+      },
+      {
+        "bytes": 510824,
+        "mode": "100644",
+        "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "sha": "be98df36f74ec92c18e25e1417a4e40ff9671137",
+        "type": "blob"
+      },
+      {
+        "bytes": 15044,
+        "mode": "100644",
+        "path": "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
+        "sha": "3af8fad60ff4aa2072ded820552c954dffc902d8",
+        "type": "blob"
+      },
+      {
+        "bytes": 12626,
+        "mode": "100644",
+        "path": "formal/pon-nakamoto-v1/experiments/quantum_daa_campaign.py",
+        "sha": "42b3f7822f6eb5de05214085826304a8a5f50b83",
+        "type": "blob"
+      },
+      {
+        "bytes": 19502,
+        "mode": "100644",
+        "path": "formal/pon-nakamoto-v1/test_quantum_daa_model.py",
+        "sha": "a7525c159f52c169abfb5c0361e5a414965e2b75",
+        "type": "blob"
+      },
+      {
+        "bytes": 80214,
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+        "sha": "7c1812d9e71c65e36c827adfcfdf3714ba5d575b",
+        "type": "blob"
+      },
+      {
+        "bytes": 4373,
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-checkpoint-store/src/live_journal_v2.rs",
+        "sha": "566c2a94f11ea4949cace063f8b2e6dab57e0397",
+        "type": "blob"
+      },
+      {
+        "bytes": 20594,
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs",
+        "sha": "b236ce047843a68cf371e02d6bb480fea6fc71ff",
+        "type": "blob"
+      },
+      {
+        "bytes": 34689,
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+        "sha": "16f087a25f544b6ceabd6473d09cde9cf1c78520",
+        "type": "blob"
+      },
+      {
+        "bytes": 14804,
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
+        "sha": "716646e95bc507e2e901fd5320a982e47766f482",
+        "type": "blob"
+      },
+      {
+        "bytes": 7820,
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/pq/tests.rs",
+        "sha": "79c7f6cd9fae5016465370f306ecc1ebe28ab907",
+        "type": "blob"
+      },
+      {
+        "bytes": 338591,
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "sha": "e252cd46beebfed52438ec2b5135619f12a50b57",
+        "type": "blob"
+      },
+      {
+        "bytes": 28940,
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+        "sha": "c9410261c9c489d051388e8e092f561488e1fa06",
+        "type": "blob"
+      },
+      {
+        "bytes": 15551,
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs",
+        "sha": "777859ab686a91e6a30353bc00f2f0f0b53034fe",
+        "type": "blob"
+      },
+      {
+        "bytes": 24778,
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+        "sha": "c6e3c62219e6f10030cee3dad4df2f2045acd9cd",
+        "type": "blob"
+      },
+      {
+        "bytes": 29928,
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "sha": "ca3706440a070818173a6209ffc350bb94bf6199",
+        "type": "blob"
+      }
+    ],
+    "first_parent": "04be5f02c84cf5cb626a53f34bc03a5bd6ff5137",
+    "new_blobs": [
+      {
+        "bytes": 88042,
+        "mode": "100644",
+        "path": "config/pon/pq-cross-branch-corpus-v1.json",
+        "sha": "d743e185c7ec9b8ac7252cd3c642123679b24a3e",
+        "type": "blob"
+      },
+      {
+        "bytes": 338591,
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "sha": "e252cd46beebfed52438ec2b5135619f12a50b57",
+        "type": "blob"
+      }
+    ],
+    "tree": "138f154b90666416ae4968009655b733209b9061"
+  },
+  "non_evidence_difference_from_tested_code": [],
+  "planned_merge_tree_before_new_evidence": "f2cd33c206974a807b25789aab7ef33a552afe8d",
+  "publishing_source_preservation": {
+    "checked_code_commit": "78874ae144fe7ca1adc6805a646fdc433d33028e",
+    "concurrent_parent": "2e7fbaeabc396d501d9d802adc63df963f1d288c",
+    "execution_receipts_reassigned": false,
+    "merge_base": "04be5f02c84cf5cb626a53f34bc03a5bd6ff5137",
+    "merged_tree_before_new_records": "30c8979e8c0116deb5b0a6687d03bef248d6b12b",
+    "runtime_configuration_or_build_paths_changed": [],
+    "schema": "trnm-pq-publishing-source-preservation-v1",
+    "source_difference_paths": [
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/README.md",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/analysis.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact-inventory.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/SCOPE.txt",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/predeclared.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/baseline-fixed-root-host-control/host/inside-after.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/baseline-fixed-root-host-control/host/inside-before.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/baseline-fixed-root-host-control/host/outside-after.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/baseline-fixed-root-host-control/host/outside-before.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/predeclared-denominators.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/valid-work-root-fixed-root-host-control/host/inside-after.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/valid-work-root-fixed-root-host-control/host/inside-before.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/valid-work-root-fixed-root-host-control/host/outside-after.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/valid-work-root-fixed-root-host-control/host/outside-before.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/results.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/supplement.stderr.log",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/supplement.stdout.log",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/finalization/result.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/prepared/build.step.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/prepared/hardware.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/prepared/prepared.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/source-after.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/source-before.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/systemd-run.stderr.log",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/systemd-run.stdout.log",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/workflow-outcomes.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/workflow-predeclared.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/client-import-summary.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/extract_analysis.py",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/issue-639-observation.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/manifest.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/phase-client-import-extracts.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/phase-performance-summary.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/source-trace.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/workflow-job-127038806677.log",
+      "evidence/pon-growth-persistence-control-20261105/b5bb-f0-backend-scope.json",
+      "evidence/pon-growth-persistence-control-20261105/b5bb-f0-growth-coverage.json",
+      "evidence/pon-growth-persistence-control-20261105/checkpoint-resource-wait.json",
+      "evidence/pon-growth-persistence-control-20261105/checkpoint-resource-waiter-retry2.json",
+      "evidence/pon-growth-persistence-control-20261105/frozen-b5bb-component-binding.json",
+      "evidence/pon-growth-persistence-control-20261105/post-runtime-idle-process-observation.json",
+      "evidence/pon-growth-persistence-control-20261105/resource-waiter-retry2-outcome.json",
+      "evidence/pon-growth-persistence-control-20261105/resource-waiter-retry2.json",
+      "evidence/pon-growth-persistence-control-20261105/resource-window-after-ef1fa4d.json",
+      "evidence/pon-growth-persistence-control-20261105/resource-window-followup.json",
+      "evidence/pon-growth-persistence-control-20261105/resource-window-latest.json",
+      "evidence/pon-growth-persistence-control-20261105/wait-canonical-red-retry2.py",
+      "evidence/pq-workflow-continuation-20261105/additional-checkpoint/cargo-graph-storage.json",
+      "evidence/pq-workflow-continuation-20261105/additional-checkpoint/run-strict-clippy.py",
+      "evidence/pq-workflow-continuation-20261105/additional-checkpoint/static/cargo-graph.log.gz",
+      "evidence/pq-workflow-continuation-20261105/additional-checkpoint/strict-clippy/cargo.log",
+      "evidence/pq-workflow-continuation-20261105/additional-checkpoint/strict-clippy/preflight.log",
+      "evidence/pq-workflow-continuation-20261105/additional-checkpoint/strict-clippy/result.json",
+      "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/README.md",
+      "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/fixed-pair.json",
+      "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/gate-ledger.json",
+      "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/late-integration.json",
+      "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/link-review.json",
+      "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/publication-inputs.json",
+      "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/review-state-scheduling.json",
+      "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/review-work-proofs.json"
+    ],
+    "whole_chain_qualified": false
+  },
+  "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+  "tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d"
+}

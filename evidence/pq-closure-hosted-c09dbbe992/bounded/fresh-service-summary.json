@@ -1,0 +1,692 @@
+{
+  "budgets_or_acceptance_changed": false,
+  "lanes": [
+    {
+      "all_zip_members_hashed": 57,
+      "artifact": {
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13829811088/zip",
+        "created_at": "2026-11-11T04:46:14Z",
+        "digest": "sha256:6bde179f6881accc9dead4c994c788ac31395ceaaede6cc70c46e0ab29ea4047",
+        "expired": false,
+        "expires_at": "2026-12-11T04:46:12Z",
+        "id": 13829811088,
+        "name": "w1-fresh-service-prospective-merge-61589dddd13e7495369aaecad9212668049417c1-1",
+        "node_id": "MDg6QXJ0aWZhY3QxMzgyOTgxMTA4OA==",
+        "size_in_bytes": 5943600,
+        "updated_at": "2026-11-11T04:46:14Z",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13829811088",
+        "workflow_run": {
+          "head_branch": "fix/chain-pq-closure-20261111-d4d2",
+          "head_repository_id": 1323087357,
+          "head_sha": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+          "id": 42955582893,
+          "repository_id": 1323087357
+        }
+      },
+      "classification": "actual original four-second/six-depth confirmation business failure; source/build/host succeeded",
+      "lane": "prospective-merge",
+      "manifest": {
+        "all_named_tests_passed": false,
+        "attack_workers": 16,
+        "binary_sha256_after": "85e8462fd05023b686a2214c35645c84887da444e6de2603a63f4ca4ba570b73",
+        "binary_sha256_before": "85e8462fd05023b686a2214c35645c84887da444e6de2603a63f4ca4ba570b73",
+        "build": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 22396557928,
+          "executed": true,
+          "exit_code": 0,
+          "expected_source": "61589dddd13e7495369aaecad9212668049417c1",
+          "log": "build.log",
+          "process_exit_code": 0,
+          "source_after_verified": true,
+          "source_before_verified": true,
+          "source_verified": true,
+          "timed_out": false
+        },
+        "execution_finished": true,
+        "failures": [
+          "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+          "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+        ],
+        "files": {
+          "build.log": "3dceaee746729ff1233ff8a239936fc7f33cb3cbc8a7414ad729260ae5848733",
+          "fresh.log": "4d2c2b5f92bb860ca14c5ff996891b9749e40475b8ff631d29677c98d1523ec5",
+          "fresh/baseline/independent-client/native.sqlite": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+          "fresh/baseline/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "fresh/baseline/receiver/native.sqlite": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+          "fresh/baseline/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "fresh/pressure/independent-client/native.sqlite": "a7731cf030f0db044ca3c0d72bf9682a7f00050cd75398999e17a98b39339fe6",
+          "fresh/pressure/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "fresh/pressure/receiver/native.sqlite": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+          "fresh/pressure/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "fresh/producer/native.sqlite": "2372f2898610a77f9aa8b42f208a29d5789d858c5067074e75ca57831db849d0",
+          "fresh/producer/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "fresh/report.json": "f6c5db1ecd978de53c0a6f38594868142854bf68a2a36cdc29f95584fa7890c6",
+          "original.log": "50b37b30bebe6034edc3100f514a1a6dbd93ad1f5b9d365a2ecb4a566b68f5a3",
+          "original/baseline/independent-client/native.sqlite": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+          "original/baseline/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "original/baseline/receiver/native.sqlite": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+          "original/baseline/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "original/pressure/independent-client/native.sqlite": "5d2917610bfa749457c7dbcd133aba90f894f72cc4d9a8e599cfe1a8d32f887b",
+          "original/pressure/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "original/pressure/receiver/native.sqlite": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+          "original/pressure/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "original/producer/native.sqlite": "2372f2898610a77f9aa8b42f208a29d5789d858c5067074e75ca57831db849d0",
+          "original/producer/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "original/report.json": "948caf0c3e43d9ad133b5f2ed5811812b6a82d907bc8e1fd3aa8052fe9fd548b",
+          "public_v3_from_zero": "85e8462fd05023b686a2214c35645c84887da444e6de2603a63f4ca4ba570b73"
+        },
+        "independent_wan_accepted": false,
+        "passed": false,
+        "production_activation": false,
+        "requested_window_ns": 4000000000,
+        "runs": [
+          {
+            "failure": "CONFIRMATION_TARGET",
+            "failure_diagnostic": {
+              "acceptance_authority": false,
+              "finite_target_met": false,
+              "last_history_replay": {
+                "history_call_index": 3,
+                "phase": "from-zero-pressure",
+                "replay_accepted": false,
+                "replay_error": "PUBLIC_REQUEST_DEADLINE"
+              },
+              "native_returncode": 0,
+              "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+            },
+            "log_sha256": "50b37b30bebe6034edc3100f514a1a6dbd93ad1f5b9d365a2ecb4a566b68f5a3",
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "passed": false,
+            "process": {
+              "command": [
+                "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-29386b5fc1c68c9c",
+                "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+                "--exact",
+                "--nocapture",
+                "--test-threads=1"
+              ],
+              "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+              "elapsed_ns": 30811360327,
+              "executed": true,
+              "exit_code": 0,
+              "expected_source": "61589dddd13e7495369aaecad9212668049417c1",
+              "log": "original.log",
+              "process_exit_code": 0,
+              "source_after_verified": true,
+              "source_before_verified": true,
+              "source_verified": true,
+              "timed_out": false
+            },
+            "report_path": "original/report.json"
+          },
+          {
+            "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+            "failure_diagnostic": {
+              "acceptance_authority": false,
+              "finite_target_met": false,
+              "last_history_replay": {
+                "history_call_index": 1,
+                "phase": "from-zero-pressure",
+                "replay_accepted": false,
+                "replay_error": "PUBLIC_REQUEST_DEADLINE"
+              },
+              "native_returncode": 101,
+              "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+            },
+            "log_sha256": "4d2c2b5f92bb860ca14c5ff996891b9749e40475b8ff631d29677c98d1523ec5",
+            "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+            "passed": false,
+            "process": {
+              "command": [
+                "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-29386b5fc1c68c9c",
+                "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+                "--exact",
+                "--nocapture",
+                "--test-threads=1",
+                "--ignored"
+              ],
+              "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+              "elapsed_ns": 30507323912,
+              "executed": true,
+              "exit_code": 101,
+              "expected_source": "61589dddd13e7495369aaecad9212668049417c1",
+              "log": "fresh.log",
+              "process_exit_code": 101,
+              "source_after_verified": true,
+              "source_before_verified": true,
+              "source_verified": true,
+              "timed_out": false
+            },
+            "report_path": "fresh/report.json"
+          }
+        ],
+        "schema": "trnm-w1-fresh-service-execution-v1",
+        "source_after": {
+          "commit": "61589dddd13e7495369aaecad9212668049417c1",
+          "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "61589dddd13e7495369aaecad9212668049417c1",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "61589dddd13e7495369aaecad9212668049417c1",
+            "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2554106689,
+            "tracked_entries": 27912,
+            "tracked_worktree_verified": true
+          },
+          "tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6"
+        },
+        "source_before": {
+          "commit": "61589dddd13e7495369aaecad9212668049417c1",
+          "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "61589dddd13e7495369aaecad9212668049417c1",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "61589dddd13e7495369aaecad9212668049417c1",
+            "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2554106689,
+            "tracked_entries": 27912,
+            "tracked_worktree_verified": true
+          },
+          "tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6"
+        },
+        "source_expected": "61589dddd13e7495369aaecad9212668049417c1",
+        "source_recompiled": true,
+        "work_hardness_accepted": false
+      },
+      "nested_manifest_complete_coverage": true,
+      "nested_manifest_files_verified": 26,
+      "reports": [
+        {
+          "finite_target_met": false,
+          "member": {
+            "bytes": 11112337,
+            "path": "fresh-service/original/report.json",
+            "sha256": "948caf0c3e43d9ad133b5f2ed5811812b6a82d907bc8e1fd3aa8052fe9fd548b"
+          },
+          "phases": [
+            {
+              "client_confirmed_before_original_window_end": true,
+              "client_confirmed_transactions": 1,
+              "finite_business_target_met": true,
+              "full_native_state_equal": true,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+                "history_call_index": 6,
+                "history_request_ended_ns": 2294536047,
+                "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+                "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+                "replay_accepted": true,
+                "replay_ended_ns": 2600527562,
+                "replay_error": null,
+                "replay_started_ns": 2294553093,
+                "replay_thread_cpu_ns": 79890098,
+                "replay_wall_ns": 305974469
+              },
+              "mode": "attack-free-baseline",
+              "requested_window_ns": 4000000000,
+              "verification_errors": [],
+              "workers": 0
+            },
+            {
+              "client_confirmed_before_original_window_end": false,
+              "client_confirmed_transactions": 0,
+              "finite_business_target_met": false,
+              "full_native_state_equal": false,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+                "history_call_index": 3,
+                "history_request_ended_ns": 3956793110,
+                "next_after": null,
+                "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+                "replay_accepted": false,
+                "replay_ended_ns": 4048734194,
+                "replay_error": "PUBLIC_REQUEST_DEADLINE",
+                "replay_started_ns": 3956812910,
+                "replay_thread_cpu_ns": 4629889,
+                "replay_wall_ns": 91921284
+              },
+              "mode": "from-zero-pressure",
+              "requested_window_ns": 4000000000,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ],
+              "workers": 16
+            }
+          ],
+          "variant": "original"
+        },
+        {
+          "finite_target_met": false,
+          "member": {
+            "bytes": 7572356,
+            "path": "fresh-service/fresh/report.json",
+            "sha256": "f6c5db1ecd978de53c0a6f38594868142854bf68a2a36cdc29f95584fa7890c6"
+          },
+          "phases": [
+            {
+              "client_confirmed_before_original_window_end": true,
+              "client_confirmed_transactions": 1,
+              "finite_business_target_met": true,
+              "full_native_state_equal": true,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+                "history_call_index": 6,
+                "history_request_ended_ns": 2306422139,
+                "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+                "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+                "replay_accepted": true,
+                "replay_ended_ns": 2693023890,
+                "replay_error": null,
+                "replay_started_ns": 2306438984,
+                "replay_thread_cpu_ns": 81472765,
+                "replay_wall_ns": 386584906
+              },
+              "mode": "attack-free-baseline",
+              "requested_window_ns": 4000000000,
+              "verification_errors": [],
+              "workers": 0
+            },
+            {
+              "client_confirmed_before_original_window_end": false,
+              "client_confirmed_transactions": 0,
+              "finite_business_target_met": false,
+              "full_native_state_equal": false,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+                "history_call_index": 1,
+                "history_request_ended_ns": 3455306565,
+                "next_after": null,
+                "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                "replay_accepted": false,
+                "replay_ended_ns": 4050964404,
+                "replay_error": "PUBLIC_REQUEST_DEADLINE",
+                "replay_started_ns": 3455321167,
+                "replay_thread_cpu_ns": 47464200,
+                "replay_wall_ns": 595643237
+              },
+              "mode": "from-zero-pressure",
+              "requested_window_ns": 4000000000,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ],
+              "workers": 16
+            }
+          ],
+          "variant": "fresh"
+        }
+      ]
+    },
+    {
+      "all_zip_members_hashed": 57,
+      "artifact": {
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13829775186/zip",
+        "created_at": "2026-11-11T04:43:55Z",
+        "digest": "sha256:0f879713897a80fc2446610e3ffbe7ef642e78aa64d5ae2766d6a312a63fb966",
+        "expired": false,
+        "expires_at": "2026-12-11T04:43:54Z",
+        "id": 13829775186,
+        "name": "w1-fresh-service-head-c09dbbe9921da12db8bf7240a8a95a0e9a789e50-1",
+        "node_id": "MDg6QXJ0aWZhY3QxMzgyOTc3NTE4Ng==",
+        "size_in_bytes": 5842178,
+        "updated_at": "2026-11-11T04:43:55Z",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13829775186",
+        "workflow_run": {
+          "head_branch": "fix/chain-pq-closure-20261111-d4d2",
+          "head_repository_id": 1323087357,
+          "head_sha": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+          "id": 42955582893,
+          "repository_id": 1323087357
+        }
+      },
+      "classification": "actual original four-second/six-depth confirmation business failure; source/build/host succeeded",
+      "lane": "head",
+      "manifest": {
+        "all_named_tests_passed": false,
+        "attack_workers": 16,
+        "binary_sha256_after": "85e8462fd05023b686a2214c35645c84887da444e6de2603a63f4ca4ba570b73",
+        "binary_sha256_before": "85e8462fd05023b686a2214c35645c84887da444e6de2603a63f4ca4ba570b73",
+        "build": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 26484231885,
+          "executed": true,
+          "exit_code": 0,
+          "expected_source": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+          "log": "build.log",
+          "process_exit_code": 0,
+          "source_after_verified": true,
+          "source_before_verified": true,
+          "source_verified": true,
+          "timed_out": false
+        },
+        "execution_finished": true,
+        "failures": [
+          "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+          "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+        ],
+        "files": {
+          "build.log": "bf0f0525c67ef81f254ada0bd27fbde264f71c65f8afaaea0ee4f4b284339294",
+          "fresh.log": "f68a7e7c031eea62a285cf0b93e6e963d8eb2cd89e57cbb3f75b7d88793d9391",
+          "fresh/baseline/independent-client/native.sqlite": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+          "fresh/baseline/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "fresh/baseline/receiver/native.sqlite": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+          "fresh/baseline/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "fresh/pressure/independent-client/native.sqlite": "353b9b187fb9798ef67a9aa51e54a0ee03079a518f8d8d708158038b890c4232",
+          "fresh/pressure/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "fresh/pressure/receiver/native.sqlite": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+          "fresh/pressure/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "fresh/producer/native.sqlite": "2372f2898610a77f9aa8b42f208a29d5789d858c5067074e75ca57831db849d0",
+          "fresh/producer/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "fresh/report.json": "9ece71b7f61f68dbf4572101b50f39795dac7a6488b61f446fa39c35df952a98",
+          "original.log": "c040e18eee969746d2c2364ad8523dc7209a13492a9fb2e7c0b8674d3eb725d3",
+          "original/baseline/independent-client/native.sqlite": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+          "original/baseline/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "original/baseline/receiver/native.sqlite": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+          "original/baseline/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "original/pressure/independent-client/native.sqlite": "80f38fd60b1adf4e727ba02d0df22b54ad2dce52e3ad5288b519494c9757b412",
+          "original/pressure/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "original/pressure/receiver/native.sqlite": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+          "original/pressure/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "original/producer/native.sqlite": "2372f2898610a77f9aa8b42f208a29d5789d858c5067074e75ca57831db849d0",
+          "original/producer/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "original/report.json": "42239b92de06dbe4ca9621d9cce5f2a41728d3faa36b445e11a3b78df1b86cb0",
+          "public_v3_from_zero": "85e8462fd05023b686a2214c35645c84887da444e6de2603a63f4ca4ba570b73"
+        },
+        "independent_wan_accepted": false,
+        "passed": false,
+        "production_activation": false,
+        "requested_window_ns": 4000000000,
+        "runs": [
+          {
+            "failure": "CONFIRMATION_TARGET",
+            "failure_diagnostic": {
+              "acceptance_authority": false,
+              "finite_target_met": false,
+              "last_history_replay": {
+                "history_call_index": 2,
+                "phase": "from-zero-pressure",
+                "replay_accepted": false,
+                "replay_error": "PUBLIC_REQUEST_DEADLINE"
+              },
+              "native_returncode": 0,
+              "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+            },
+            "log_sha256": "c040e18eee969746d2c2364ad8523dc7209a13492a9fb2e7c0b8674d3eb725d3",
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "passed": false,
+            "process": {
+              "command": [
+                "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-29386b5fc1c68c9c",
+                "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+                "--exact",
+                "--nocapture",
+                "--test-threads=1"
+              ],
+              "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+              "elapsed_ns": 35080062930,
+              "executed": true,
+              "exit_code": 0,
+              "expected_source": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+              "log": "original.log",
+              "process_exit_code": 0,
+              "source_after_verified": true,
+              "source_before_verified": true,
+              "source_verified": true,
+              "timed_out": false
+            },
+            "report_path": "original/report.json"
+          },
+          {
+            "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+            "failure_diagnostic": {
+              "acceptance_authority": false,
+              "finite_target_met": false,
+              "last_history_replay": {
+                "history_call_index": 0,
+                "phase": "from-zero-pressure",
+                "replay_accepted": false,
+                "replay_error": "PUBLIC_REQUEST_DEADLINE"
+              },
+              "native_returncode": 101,
+              "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+            },
+            "log_sha256": "f68a7e7c031eea62a285cf0b93e6e963d8eb2cd89e57cbb3f75b7d88793d9391",
+            "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+            "passed": false,
+            "process": {
+              "command": [
+                "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-29386b5fc1c68c9c",
+                "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+                "--exact",
+                "--nocapture",
+                "--test-threads=1",
+                "--ignored"
+              ],
+              "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+              "elapsed_ns": 34802384157,
+              "executed": true,
+              "exit_code": 101,
+              "expected_source": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+              "log": "fresh.log",
+              "process_exit_code": 101,
+              "source_after_verified": true,
+              "source_before_verified": true,
+              "source_verified": true,
+              "timed_out": false
+            },
+            "report_path": "fresh/report.json"
+          }
+        ],
+        "schema": "trnm-w1-fresh-service-execution-v1",
+        "source_after": {
+          "commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+          "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+            "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2554106689,
+            "tracked_entries": 27912,
+            "tracked_worktree_verified": true
+          },
+          "tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6"
+        },
+        "source_before": {
+          "commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+          "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+            "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2554106689,
+            "tracked_entries": 27912,
+            "tracked_worktree_verified": true
+          },
+          "tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6"
+        },
+        "source_expected": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+        "source_recompiled": true,
+        "work_hardness_accepted": false
+      },
+      "nested_manifest_complete_coverage": true,
+      "nested_manifest_files_verified": 26,
+      "reports": [
+        {
+          "finite_target_met": false,
+          "member": {
+            "bytes": 9821778,
+            "path": "fresh-service/original/report.json",
+            "sha256": "42239b92de06dbe4ca9621d9cce5f2a41728d3faa36b445e11a3b78df1b86cb0"
+          },
+          "phases": [
+            {
+              "client_confirmed_before_original_window_end": true,
+              "client_confirmed_transactions": 1,
+              "finite_business_target_met": true,
+              "full_native_state_equal": true,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+                "history_call_index": 6,
+                "history_request_ended_ns": 2703520265,
+                "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+                "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+                "replay_accepted": true,
+                "replay_ended_ns": 3105492079,
+                "replay_error": null,
+                "replay_started_ns": 2703538680,
+                "replay_thread_cpu_ns": 94106338,
+                "replay_wall_ns": 401953399
+              },
+              "mode": "attack-free-baseline",
+              "requested_window_ns": 4000000000,
+              "verification_errors": [],
+              "workers": 0
+            },
+            {
+              "client_confirmed_before_original_window_end": false,
+              "client_confirmed_transactions": 0,
+              "finite_business_target_met": false,
+              "full_native_state_equal": false,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+                "history_call_index": 2,
+                "history_request_ended_ns": 3807264805,
+                "next_after": null,
+                "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+                "replay_accepted": false,
+                "replay_ended_ns": 4000576561,
+                "replay_error": "PUBLIC_REQUEST_DEADLINE",
+                "replay_started_ns": 3807287087,
+                "replay_thread_cpu_ns": 15551599,
+                "replay_wall_ns": 193289474
+              },
+              "mode": "from-zero-pressure",
+              "requested_window_ns": 4000000000,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ],
+              "workers": 16
+            }
+          ],
+          "variant": "original"
+        },
+        {
+          "finite_target_met": false,
+          "member": {
+            "bytes": 6800086,
+            "path": "fresh-service/fresh/report.json",
+            "sha256": "9ece71b7f61f68dbf4572101b50f39795dac7a6488b61f446fa39c35df952a98"
+          },
+          "phases": [
+            {
+              "client_confirmed_before_original_window_end": true,
+              "client_confirmed_transactions": 1,
+              "finite_business_target_met": true,
+              "full_native_state_equal": true,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+                "history_call_index": 6,
+                "history_request_ended_ns": 2703452538,
+                "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+                "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+                "replay_accepted": true,
+                "replay_ended_ns": 3101732798,
+                "replay_error": null,
+                "replay_started_ns": 2703474088,
+                "replay_thread_cpu_ns": 93581387,
+                "replay_wall_ns": 398258710
+              },
+              "mode": "attack-free-baseline",
+              "requested_window_ns": 4000000000,
+              "verification_errors": [],
+              "workers": 0
+            },
+            {
+              "client_confirmed_before_original_window_end": false,
+              "client_confirmed_transactions": 0,
+              "finite_business_target_met": false,
+              "full_native_state_equal": false,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+                "history_call_index": 0,
+                "history_request_ended_ns": 2601948595,
+                "next_after": null,
+                "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                "replay_accepted": false,
+                "replay_ended_ns": 4001573117,
+                "replay_error": "PUBLIC_REQUEST_DEADLINE",
+                "replay_started_ns": 2601977709,
+                "replay_thread_cpu_ns": 71987398,
+                "replay_wall_ns": 1399595408
+              },
+              "mode": "from-zero-pressure",
+              "requested_window_ns": 4000000000,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ],
+              "workers": 16
+            }
+          ],
+          "variant": "fresh"
+        }
+      ]
+    }
+  ],
+  "native_tests_run_by_reader": 0,
+  "source_head": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+  "source_merge": "61589dddd13e7495369aaecad9212668049417c1"
+}

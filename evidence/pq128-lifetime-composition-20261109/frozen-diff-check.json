@@ -1,0 +1,18 @@
+{
+  "name": "frozen-diff-check",
+  "argv": [
+    "git",
+    "diff",
+    "--check"
+  ],
+  "cwd": "/workspace/scratch/678905e225be/chain-lifetime",
+  "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+  "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+  "started_utc": "2026-11-09T14:03:20.346952+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 0.06510338999942178,
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

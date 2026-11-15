@@ -1,0 +1,35 @@
+[
+  {
+    "archive": "campaign-894.zip",
+    "archive_sha256": "43a748dd6ed47f2e28f63e550028a65ed54895f5951ba94a01f81f4640b558e7",
+    "declared_sizes_verified": true,
+    "embedded_manifest": "artifact-files.json",
+    "embedded_manifest_declares_member_sizes": true,
+    "manifest_members_verified": 1765,
+    "manifest_sha256": "e801f9194f7c1ffe0580dfefa0f3ca719981759823c23760424c6b6d3bbefc0e",
+    "method": "Read and hash original archive members; no workload executed and archive not copied.",
+    "nonmanifest_members": [
+      "artifact-files.json"
+    ],
+    "sha256_verified_for_every_declared_member": true,
+    "uncompressed_bytes_verified": 586792104,
+    "zip_entry_sizes_verified": true
+  },
+  {
+    "archive": "codeql-894.zip",
+    "archive_sha256": "678f3257bac1c7c592210d60351f09d46831d9dc00c1628dda1c00d10e5752cb",
+    "declared_sizes_verified": null,
+    "embedded_manifest": "sha256.json",
+    "embedded_manifest_declares_member_sizes": false,
+    "manifest_members_verified": 198,
+    "manifest_sha256": "fecf73981530db87cea99490cb63a5e79d5272e1da300c31679f0e9b394f94ad",
+    "method": "Read and hash original archive members; no workload executed and archive not copied.",
+    "nonmanifest_members": [
+      "analysis/sha256.json",
+      "sha256.json"
+    ],
+    "sha256_verified_for_every_declared_member": true,
+    "uncompressed_bytes_verified": 917302,
+    "zip_entry_sizes_verified": true
+  }
+]

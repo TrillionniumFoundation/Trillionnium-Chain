@@ -1,0 +1,13 @@
+{
+  "singleNumerator": "13073",
+  "singleDenominator": "32768",
+  "jointNumerator": "2234219220017",
+  "jointDenominator": "35184372088832",
+  "printedA": "1786065",
+  "printedB": "461160",
+  "printedD": "67108864",
+  "positiveDelta": true,
+  "strictComparison": true,
+  "method": "Independent JavaScript BigInt binomial sum and strict integer-square comparison",
+  "scope": "Boolean Bernoulli oracle source audit; no W1 attack, physical quantum execution, or chain-tail qualification"
+}

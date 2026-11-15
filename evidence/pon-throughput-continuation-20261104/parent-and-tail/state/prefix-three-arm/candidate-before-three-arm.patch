@@ -1,0 +1,595 @@
+diff --git a/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs b/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs
+index c2b3a10ab5..49e234623f 100644
+--- a/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs
++++ b/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs
+@@ -303,6 +303,32 @@ fn encode(state: &State) -> Result<CanonicalValues> {
+     }
+     Ok(values)
+ }
++
++/// Borrowed bytes are only supplied after comparison with this operation's
++/// immutable actual input. Preserve their original canonical Vec capacity when
++/// materializing a map: Vec::clone would shrink it and alter budget decisions.
++enum CanonicalRow<'a> {
++    Compared(&'a Vec<u8>),
++    Fresh(Vec<u8>),
++}
++impl CanonicalRow<'_> {
++    fn bytes(&self) -> &Vec<u8> {
++        match self {
++            Self::Compared(bytes) => bytes,
++            Self::Fresh(bytes) => bytes,
++        }
++    }
++    fn into_owned(self) -> Vec<u8> {
++        match self {
++            Self::Compared(bytes) => {
++                let mut owned = Vec::with_capacity(bytes.capacity());
++                owned.extend_from_slice(bytes);
++                owned
++            }
++            Self::Fresh(bytes) => bytes,
++        }
++    }
++}
+ /// Retain encodings only while the selected cache can still fit. A rejected
+ /// cache is not a rejected State: finish the entire canonical pass and enforce
+ /// the original wire bounds before reporting limits or choosing the full root.
+@@ -311,23 +337,36 @@ fn encode_for_cache(
+     state: &State,
+     limits: CacheLimits,
+ ) -> Result<(Option<CanonicalValues>, Charges)> {
+-    let count = state.len();
++    encode_rows_for_cache(
++        state.len(),
++        limits,
++        state.iter().map(|(key, value)| {
++            pon_executor::canonical(value).map(|bytes| (key.as_bytes(), CanonicalRow::Fresh(bytes)))
++        }),
++    )
++}
++
++fn encode_rows_for_cache<'a>(
++    count: usize,
++    limits: CacheLimits,
++    rows: impl Iterator<Item = Result<(&'a [u8], CanonicalRow<'a>)>>,
++) -> Result<(Option<CanonicalValues>, Charges)> {
+     let nodes = count.saturating_mul(2).saturating_sub(1);
+     let mut retained = (count <= limits.max_keys && count <= 65_536).then(BTreeMap::new);
+     let mut payload = 0usize;
+     let mut capacities = 0usize;
+     let mut within_wire = count <= 65_536;
+-    for (key, value) in state {
+-        let encoded = pon_executor::canonical(value)?;
+-        within_wire &= key.len() <= 160 && encoded.len() <= 4096;
++    for row in rows {
++        let (key, encoded) = row?;
++        within_wire &= key.len() <= 160 && encoded.bytes().len() <= 4096;
+         // Saturation only chooses to discard a cache. No saturated charge is
+         // returned: valid wire input has a finite bound and is recomputed below.
+         payload = payload
+             .saturating_add(key.len())
+-            .saturating_add(encoded.len());
++            .saturating_add(encoded.bytes().len());
+         capacities = capacities
+             .saturating_add(key.len())
+-            .saturating_add(encoded.capacity());
++            .saturating_add(encoded.bytes().capacity());
+         let map = capacities.saturating_add(count.saturating_mul(MAP_ENTRY_CHARGE));
+         let tree = capacities
+             .saturating_add(nodes.saturating_mul(COMPRESSED_NODE_CHARGE))
+@@ -343,7 +382,7 @@ fn encode_for_cache(
+             retained = None;
+         }
+         if let Some(values) = &mut retained {
+-            values.insert(key.as_bytes().to_vec(), encoded);
++            values.insert(key.to_vec(), encoded.into_owned());
+         }
+     }
+     if !within_wire {
+@@ -454,6 +493,26 @@ fn prepare_state_with_arithmetic(
+     arithmetic: Option<&FullRootArithmetic>,
+ ) -> Result<PreparedCommitment> {
+     let (values, current) = encode_for_cache(state, limits)?;
++    prepare_encoded_state(
++        state,
++        prior,
++        actual_before,
++        limits,
++        arithmetic,
++        values,
++        current,
++    )
++}
++
++fn prepare_encoded_state(
++    state: &State,
++    prior: Option<&CheckedCommitment>,
++    actual_before: Option<&CanonicalValues>,
++    limits: CacheLimits,
++    arithmetic: Option<&FullRootArithmetic>,
++    values: Option<CanonicalValues>,
++    current: Charges,
++) -> Result<PreparedCommitment> {
+     limits.validate()?;
+     if let Some(values) = values {
+         return prepare_values(values, prior, actual_before, limits);
+@@ -781,12 +840,13 @@ fn checked_snapshot_with_optional_arithmetic(
+     // The freshly supplied root and key count select calculation material only.
+     // A hit still canonically compares EVERY actual key/value below. Historical
+     // transitions with a different root retain the original single encoding
+-    // pass; a misleading same-root hint takes that original path on mismatch.
++    // pass. A misleading hint continues from the first difference, retaining
++    // only the prefix already checked against this same immutable State.
+     let unchanged = prior
+         .filter(|previous| {
+             previous.root == expected_root && previous.values.len() == actual_state.len()
+         })
+-        .map(|previous| prepare_unchanged_snapshot(actual_state, previous, limits))
++        .map(|previous| prepare_unchanged_snapshot(actual_state, previous, limits, arithmetic))
+         .transpose()?
+         .flatten();
+     let prepared = match unchanged {
+@@ -809,6 +869,7 @@ fn prepare_unchanged_snapshot(
+     actual_state: &State,
+     previous: &CheckedCommitment,
+     limits: CacheLimits,
++    arithmetic: Option<&FullRootArithmetic>,
+ ) -> Result<Option<PreparedCommitment>> {
+     let Ok(current) = charges(&previous.values) else {
+         return Ok(None);
+@@ -821,13 +882,32 @@ fn prepare_unchanged_snapshot(
+     {
+         return Ok(None);
+     }
+-    if !matches_unchanged_candidate(actual_state, &previous.values)? {
+-        return Ok(None);
++    let compared = compare_unchanged_candidate(actual_state, &previous.values)?;
++    if !compared.complete() {
++        let (values, current) = compared.encode_remaining(limits)?;
++        return prepare_encoded_state(
++            actual_state,
++            Some(previous),
++            None,
++            limits,
++            arithmetic,
++            values,
++            current,
++        )
++        .map(Some);
+     }
++    prepare_shared_snapshot(previous, current, workspace).map(Some)
++}
++
++fn prepare_shared_snapshot(
++    previous: &CheckedCommitment,
++    current: Charges,
++    workspace: usize,
++) -> Result<PreparedCommitment> {
+     mark_stage("budget-selected");
+     let mut observation = CommitmentObservation {
+         method: CommitmentMethod::CheckedApply,
+-        actual_keys: actual_state.len(),
++        actual_keys: previous.keys(),
+         actual_payload_bytes: current.payload,
+         changed_keys: 0,
+         changed_payload_bytes: 0,
+@@ -843,16 +923,16 @@ fn prepare_unchanged_snapshot(
+             observation.method =
+                 CommitmentMethod::FullRoot(FullRootReason::InternalSnapshotMismatch);
+             observation.compressed_nodes = None;
+-            return Ok(Some(PreparedCommitment {
++            return Ok(PreparedCommitment {
+                 root: state_root(&previous.values).map_err(|_| "LIMIT")?,
+                 snapshot: None,
+                 changes,
+                 observation,
+-            }));
++            });
+         }
+     };
+     let root = tree.root();
+-    Ok(Some(PreparedCommitment {
++    Ok(PreparedCommitment {
+         root,
+         snapshot: Some(CheckedCommitment {
+             values: Arc::clone(&previous.values),
+@@ -862,38 +942,65 @@ fn prepare_unchanged_snapshot(
+         }),
+         changes,
+         observation,
+-    }))
++    })
+ }
+ 
+-/// A miss only declines this optional candidate: the caller then executes the
+-/// complete original preparation path. It is therefore safe to stop at the
+-/// first differing key/value; no rejection or checked State follows that miss.
+-/// Keep matches_encoded's separate full-pass contract for all its other users.
+-/// A successful candidate still checks every actual value and all wire bounds.
+-fn matches_unchanged_candidate(state: &State, expected: &CanonicalValues) -> Result<bool> {
+-    if state.len() != expected.len() {
+-        return Ok(false);
++/// Only this comparison constructs the prefix. Both references remain borrowed
++/// until continuation ends, so checked rows cannot change before their bytes
++/// are reused. A partial prefix is neither a State/root nor an acceptance fact.
++struct ComparedPrefix<'a> {
++    state: &'a State,
++    expected: &'a CanonicalValues,
++    matched: usize,
++}
++impl ComparedPrefix<'_> {
++    fn complete(&self) -> bool {
++        self.matched == self.state.len() && self.state.len() == self.expected.len()
++    }
++    fn encode_remaining(self, limits: CacheLimits) -> Result<(Option<CanonicalValues>, Charges)> {
++        let checked = self
++            .expected
++            .iter()
++            .take(self.matched)
++            .map(|(key, value)| Ok((key.as_slice(), CanonicalRow::Compared(value))));
++        let remaining = self.state.iter().skip(self.matched).map(|(key, value)| {
++            pon_executor::canonical(value).map(|bytes| (key.as_bytes(), CanonicalRow::Fresh(bytes)))
++        });
++        encode_rows_for_cache(self.state.len(), limits, checked.chain(remaining))
+     }
++}
++
++/// A miss ends only this comparison. Continuation reuses the proven prefix and
++/// checks every remaining actual row before any wire/cache/root decision. A
++/// complete hit still validates every actual value; no hints authorize bytes.
++fn compare_unchanged_candidate<'a>(
++    state: &'a State,
++    expected: &'a CanonicalValues,
++) -> Result<ComparedPrefix<'a>> {
++    let mut compared = ComparedPrefix {
++        state,
++        expected,
++        matched: 0,
++    };
+     let mut within_limits = state.len() <= 65_536;
+     let mut previous = expected.iter();
+-    let mut actual = Vec::new();
+     for (key, value) in state {
+         let Some((old_key, old_value)) = previous.next() else {
+-            return Ok(false);
++            return Ok(compared);
+         };
+         if key.as_bytes() != old_key {
+-            return Ok(false);
++            return Ok(compared);
+         }
+-        pon_executor::canonical_into(value, &mut actual)?;
+-        within_limits &= key.len() <= 160 && actual.len() <= 4096;
+-        if actual != *old_value {
+-            return Ok(false);
++        if !pon_executor::canonical_matches(value, old_value)? {
++            return Ok(compared);
+         }
++        within_limits &= key.len() <= 160 && old_value.len() <= 4096;
++        compared.matched += 1;
+     }
+     if !within_limits {
+         return Err("LIMIT");
+     }
+-    Ok(true)
++    Ok(compared)
+ }
+ /// Compute a successor commitment from complete actual state values. This is
+ /// only a calculation: an admitted context must use checked_snapshot or compare
+diff --git a/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs b/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs
+index 0c1e8cc5c1..05dd69c0bd 100644
+--- a/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs
++++ b/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs
+@@ -286,7 +286,9 @@ fn unchanged_candidate_early_miss_retains_complete_late_validation() {
+         // The candidate deliberately stops before reaching the late error.
+         // Its miss is not an acceptance/rejection decision: the public entry
+         // must still return the original complete preparation's final error.
+-        assert!(!matches_unchanged_candidate(actual, &seed.values).unwrap());
++        assert!(!compare_unchanged_candidate(actual, &seed.values)
++            .unwrap()
++            .complete());
+         assert_eq!(
+             compare(actual, root, Some(&seed), limits, None).unwrap_err(),
+             expected_error
+@@ -319,8 +321,8 @@ fn unchanged_candidate_early_miss_retains_complete_late_validation() {
+     let mut late_only = state.clone();
+     late_only.insert("unchanged:00003".into(), json!("非ASCII"));
+     assert_eq!(
+-        matches_unchanged_candidate(&late_only, &seed.values).unwrap_err(),
+-        "NONCANONICAL"
++        compare_unchanged_candidate(&late_only, &seed.values).err(),
++        Some("NONCANONICAL")
+     );
+     assert_eq!(
+         compare(&late_only, root, Some(&seed), limits, None).unwrap_err(),
+@@ -354,6 +356,131 @@ fn unchanged_snapshot_empty_delta_still_checks_the_original_tree_root() {
+     assert_eq!(observation.method, CommitmentMethod::CheckedApply);
+ }
+ 
++#[test]
++fn compared_prefix_continuation_keeps_exact_original_capacities_roots_and_budgets() {
++    let mut state: State = [0, 1, 126, 127, 128, 129, 4080, 4094]
++        .into_iter()
++        .enumerate()
++        .map(|(index, width)| (format!("prefix:{index:02}"), json!("x".repeat(width))))
++        .collect();
++    state.insert("prefix:08".into(), json!({"nested":[0,true,"\\n","\n"]}));
++    let limits = CacheLimits::default();
++    let root = pon_executor::root(&state).unwrap();
++    let seed = original(&state, root, None, limits, None)
++        .unwrap()
++        .snapshot
++        .unwrap();
++    for index in [0, 1, 4, 8] {
++        let mut actual = state.clone();
++        actual.insert(
++            format!("prefix:{index:02}"),
++            json!({"changed":index,"value":"quote\""}),
++        );
++        let current_values = encode(&actual).unwrap();
++        let current = charges(&current_values).unwrap();
++        let workspace = workspace_charge(current, current, 0).unwrap();
++        for key_budget in [0, actual.len() - 1, actual.len()] {
++            for payload in [0, current.payload - 1, current.payload] {
++                for bound in [0, workspace - 1, workspace] {
++                    let limits = CacheLimits {
++                        max_keys: key_budget,
++                        max_payload_bytes: payload,
++                        max_workspace_charge_bytes: bound,
++                    };
++                    let prefix = compare_unchanged_candidate(&actual, &seed.values).unwrap();
++                    assert_eq!(prefix.matched, index);
++                    assert!(std::ptr::eq(prefix.state, &actual));
++                    let (resumed, actual_charge) = prefix.encode_remaining(limits).unwrap();
++                    let (complete, expected_charge) = encode_for_cache(&actual, limits).unwrap();
++                    assert_eq!(resumed, complete);
++                    assert_eq!(
++                        (
++                            actual_charge.payload,
++                            actual_charge.map,
++                            actual_charge.tree,
++                            actual_charge.nodes
++                        ),
++                        (
++                            expected_charge.payload,
++                            expected_charge.map,
++                            expected_charge.tree,
++                            expected_charge.nodes
++                        )
++                    );
++                    if let (Some(resumed), Some(complete)) = (resumed, complete) {
++                        for ((actual_key, actual_value), (expected_key, expected_value)) in
++                            resumed.iter().zip(&complete)
++                        {
++                            assert_eq!(actual_key.capacity(), expected_key.capacity());
++                            assert_eq!(actual_value.capacity(), expected_value.capacity());
++                        }
++                    }
++                }
++            }
++        }
++        let changed_root = pon_executor::root(&actual).unwrap();
++        let resumed = prepare_unchanged_snapshot(&actual, &seed, limits, None)
++            .unwrap()
++            .unwrap();
++        equal(
++            &resumed,
++            &original(&actual, changed_root, Some(&seed), limits, None).unwrap(),
++        );
++        assert_eq!(
++            compare(&actual, root, Some(&seed), limits, None).unwrap_err(),
++            "COMMITMENT_ROOT"
++        );
++    }
++    assert_eq!(seed.values.as_ref(), &encode(&state).unwrap());
++}
++
++#[test]
++fn compared_nonempty_prefix_cannot_hide_late_canonical_wire_or_cache_errors() {
++    let state = fixture(9, 128);
++    let limits = CacheLimits::default();
++    let root = pon_executor::root(&state).unwrap();
++    let seed = original(&state, root, None, limits, None)
++        .unwrap()
++        .snapshot
++        .unwrap();
++    let mut actual = state.clone();
++    actual.insert("unchanged:00003".into(), json!("changed"));
++    for (late, error) in [
++        (json!("非ASCII"), "NONCANONICAL"),
++        (json!(1.5), "RANGE"),
++        (json!("x".repeat(4095)), "LIMIT"),
++    ] {
++        actual.insert("unchanged:00008".into(), late);
++        let prefix = compare_unchanged_candidate(&actual, &seed.values).unwrap();
++        assert_eq!(prefix.matched, 3);
++        assert_eq!(prefix.encode_remaining(limits).err(), Some(error));
++        assert_eq!(
++            compare(&actual, root, Some(&seed), limits, None).unwrap_err(),
++            error
++        );
++    }
++    actual.insert("unchanged:00007".into(), json!("x".repeat(4095)));
++    actual.insert("unchanged:00008".into(), json!("非ASCII"));
++    assert_eq!(
++        compare(&actual, root, Some(&seed), limits, None).unwrap_err(),
++        "NONCANONICAL"
++    );
++    actual.remove("unchanged:00008");
++    actual.insert("z".repeat(161), json!(1.5));
++    for limits in [
++        limits,
++        CacheLimits {
++            max_keys: MAX_CACHE_KEYS + 1,
++            ..limits
++        },
++    ] {
++        assert_eq!(
++            compare(&actual, root, Some(&seed), limits, None).unwrap_err(),
++            "RANGE"
++        );
++    }
++}
++
+ #[test]
+ #[ignore = "explicit paired component cost, including adversarial same-root hints; no throughput qualification"]
+ fn unchanged_snapshot_full_binding_cost() {
+@@ -411,7 +538,7 @@ fn unchanged_snapshot_full_binding_cost() {
+                     "order":"alternating paired arms", "equal_result":true,
+                     "complete_actual_state_compared":true, "expected_root_checked":true,
+                     "tree_empty_delta_check_retained":true,
+-                    "mismatch_path":"candidate stops at first mismatch; original full-map preparation rechecks all actual rows",
++                    "mismatch_path":"continue after the same-borrow verified prefix; every remaining actual row is checked before root or bounds",
+                     "scope":"full component binding and output destruction; unchanged cache limits",
+                     "public_tps_measured":false, "node_owner_measured":false,
+                     "physical_memory_bound":false
+diff --git a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs
+index 0d8ea0bf4b..bb256a7562 100644
+--- a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs
++++ b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs
+@@ -319,6 +319,44 @@ pub(crate) fn canonical_into(v: &Value, bytes: &mut Vec<u8>) -> Result<()> {
+     serde_json::to_writer(bytes, v).map_err(|_| "NONCANONICAL")
+ }
+ 
++/// Compare the actual canonical output without retaining another encoding.
++/// Validation still visits the complete value before any byte comparison. A
++/// mismatch is only a comparison result, never a canonical/wire acceptance.
++pub(crate) fn canonical_matches(v: &Value, expected: &[u8]) -> Result<bool> {
++    validate_canonical(v)?;
++    if let Some(value) = unescaped_string(v) {
++        return Ok(expected.first() == Some(&b'"')
++            && expected.last() == Some(&b'"')
++            && expected.get(1..expected.len().saturating_sub(1)) == Some(value.as_bytes()));
++    }
++    struct Compare<'a> {
++        expected: &'a [u8],
++        offset: usize,
++        equal: bool,
++    }
++    impl std::io::Write for Compare<'_> {
++        fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
++            let end = self.offset.saturating_add(bytes.len());
++            self.equal &= self.expected.get(self.offset..end) == Some(bytes);
++            self.offset = end;
++            Ok(bytes.len())
++        }
++        fn flush(&mut self) -> std::io::Result<()> {
++            Ok(())
++        }
++    }
++    let mut compared = Compare {
++        expected,
++        offset: 0,
++        equal: true,
++    };
++    serde_json::to_writer(&mut compared, v).map_err(|_| "NONCANONICAL")?;
++    Ok(compared.equal && compared.offset == expected.len())
++}
++
++#[cfg(test)]
++mod canonical_comparison_tests;
++
+ pub fn root(state: &State) -> Result<Hash> {
+     // Preserve the original complete grammar/error pass before wire limits.
+     // A late noncanonical value must not be hidden by an earlier oversized key
+diff --git a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/canonical_comparison_tests.rs b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/canonical_comparison_tests.rs
+new file mode 100644
+index 0000000000..6af80c1b2c
+--- /dev/null
++++ b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/canonical_comparison_tests.rs
+@@ -0,0 +1,94 @@
++use super::*;
++
++#[test]
++fn canonical_comparison_matches_independent_serde_bytes_and_every_json_kind() {
++    let mut values = vec![
++        Value::Null,
++        json!(false),
++        json!(true),
++        json!(0),
++        json!(u64::MAX),
++        json!(i64::MIN),
++        json!((0_u8..=127).map(char::from).collect::<String>()),
++        json!([null, true, -7, {"b":[0,1],"a":"quote\" slash\\ newline\n"}]),
++        json!({"z":[],"a":{"back\\slash":"\\n","line":"\n"}}),
++    ];
++    values.extend(
++        [0, 1, 126, 127, 128, 129, 4094, 4095, 8192]
++            .into_iter()
++            .map(|width| json!("x".repeat(width))),
++    );
++    for value in values {
++        let expected = serde_json::to_vec(&value).unwrap();
++        assert_eq!(canonical(&value).unwrap(), expected);
++        assert!(canonical_matches(&value, &expected).unwrap());
++        assert!(!canonical_matches(&value, &[]).unwrap());
++        for position in [0, expected.len() / 2, expected.len() - 1] {
++            let mut changed = expected.clone();
++            changed[position] ^= 1;
++            assert!(!canonical_matches(&value, &changed).unwrap());
++        }
++        let mut appended = expected.clone();
++        appended.push(b' ');
++        assert!(!canonical_matches(&value, &appended).unwrap());
++        assert!(!canonical_matches(&value, &expected[..expected.len() - 1]).unwrap());
++    }
++    // Literal backslash-n and an actual newline must never share an encoding.
++    let escaped = json!("\\n");
++    let newline = json!("\n");
++    assert!(!canonical_matches(&escaped, &serde_json::to_vec(&newline).unwrap()).unwrap());
++    assert!(!canonical_matches(&newline, &serde_json::to_vec(&escaped).unwrap()).unwrap());
++    assert!(!canonical_matches(&json!(""), b"\"").unwrap());
++}
++
++#[test]
++fn canonical_comparison_keeps_complete_value_error_order_before_byte_mismatch() {
++    for value in [
++        json!(1.5),
++        json!("非ASCII"),
++        json!(["first", {"late":1.5}]),
++        json!({"a":"changed","z":"非ASCII"}),
++        json!({"非ASCII":0}),
++        json!(["非ASCII", 1.5]),
++        json!([1.5, "非ASCII"]),
++    ] {
++        let expected = canonical(&value).unwrap_err();
++        for bytes in [
++            b"".as_slice(),
++            b"null".as_slice(),
++            b"totally-different".as_slice(),
++        ] {
++            assert_eq!(canonical_matches(&value, bytes).unwrap_err(), expected);
++        }
++    }
++}
++
++#[test]
++fn canonical_comparison_distinguishes_number_spellings_under_the_actual_serde_features() {
++    let values: Vec<Value> = [
++        "0",
++        "-0",
++        "1",
++        "1.0",
++        "1.00",
++        "1e0",
++        "-1",
++        "18446744073709551615",
++        "-9223372036854775808",
++    ]
++    .into_iter()
++    .map(|text| serde_json::from_str(text).unwrap())
++    .collect();
++    for actual in &values {
++        for expected in &values {
++            let bytes = serde_json::to_vec(expected).unwrap();
++            match canonical(actual) {
++                Ok(actual_bytes) => assert_eq!(
++                    canonical_matches(actual, &bytes).unwrap(),
++                    actual_bytes == bytes
++                ),
++                Err(error) => assert_eq!(canonical_matches(actual, &bytes).unwrap_err(), error),
++            }
++        }
++    }
++}

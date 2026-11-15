@@ -1,0 +1,50 @@
+{
+  "sha": "cbead1508ce8b6d9deb2a86b4bc3181da09694e7",
+  "node_id": "C_kwDOTty1_doAKGNiZWFkMTUwOGNlOGI2ZDlkZWIyYTg2YjRiYzMxODFkYTA5Njk0ZTc",
+  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/cbead1508ce8b6d9deb2a86b4bc3181da09694e7",
+  "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/cbead1508ce8b6d9deb2a86b4bc3181da09694e7",
+  "author": {
+    "name": "Tomasrgbsf",
+    "email": "273673612+Tomasrgbsf@users.noreply.github.com",
+    "date": "2026-11-05T10:07:53Z"
+  },
+  "committer": {
+    "name": "Tomasrgbsf",
+    "email": "273673612+Tomasrgbsf@users.noreply.github.com",
+    "date": "2026-11-05T10:07:53Z"
+  },
+  "tree": {
+    "sha": "624c8aad419ee05dc71a4aac507abea429018289",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/624c8aad419ee05dc71a4aac507abea429018289"
+  },
+  "message": "merge(cell): retain concurrent source-bound records and runtime controls\n\nPreserve all current evidence and both independently appended development-plan sections. Integrate bounded runtime admission, explicit owner/worker v2, original discovery deadlines and delta cancellation. Retain cfa57cd as immutable V11 source plus both source-checked integration objects. Frozen 378 native/doc and 220 Python results retain their exact source scope; full model, WAN, device and paid-custody acceptance remains HOLD.",
+  "parents": [
+    {
+      "sha": "2ae4c1d8be0a136df516dafa6aa80ce9d18b4b0d",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/2ae4c1d8be0a136df516dafa6aa80ce9d18b4b0d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/2ae4c1d8be0a136df516dafa6aa80ce9d18b4b0d"
+    },
+    {
+      "sha": "cfa57cd04751427451302b5c10539b3984d7f8db",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/cfa57cd04751427451302b5c10539b3984d7f8db",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/cfa57cd04751427451302b5c10539b3984d7f8db"
+    },
+    {
+      "sha": "5f0c4fdf8185fa9667769cbd3c8bf727dadda9ef",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/5f0c4fdf8185fa9667769cbd3c8bf727dadda9ef",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/5f0c4fdf8185fa9667769cbd3c8bf727dadda9ef"
+    },
+    {
+      "sha": "22ef7177e3c4e119911bf7d657af5c2d1a83ee03",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/22ef7177e3c4e119911bf7d657af5c2d1a83ee03",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/22ef7177e3c4e119911bf7d657af5c2d1a83ee03"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

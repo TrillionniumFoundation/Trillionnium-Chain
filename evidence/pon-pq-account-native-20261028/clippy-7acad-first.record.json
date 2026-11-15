@@ -1,0 +1,32 @@
+{
+  "schema": "pq-native-exact-source-run-v1",
+  "argv": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "source_commit": "7acad34a46f63208448b4dbdf0624548f64f6405",
+  "source_manifest_sha256": "9dba21da0d77ecbd9530a29cc9d4edf75068fc799e1e71327ed3c567f52f3e27",
+  "started_utc": "2026-10-28T00:36:04.156513+00:00",
+  "exit_code": 101,
+  "elapsed_seconds": 42.390305152999645,
+  "completed_utc": "2026-10-28T00:36:46.546584+00:00",
+  "source_unchanged": true,
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "bytes": 6233,
+    "sha256": "f0b9831babe7d02bcf0d77fd10498adb0826dc0e96394768006aee4bb35ef757"
+  }
+}

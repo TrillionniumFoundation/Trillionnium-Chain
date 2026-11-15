@@ -1,0 +1,107 @@
+[
+  {
+    "name": "diagnostic-lib-no-debug",
+    "command": [
+      "cargo",
+      "--config",
+      "profile.test.package.trnm-data-availability.debug=0",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-data-availability",
+      "--lib",
+      "--all-features",
+      "-j1",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 186.621,
+    "source_commit": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+    "source_unchanged": true,
+    "log_sha256": "a53595db884a208bfc38729a0032fa2a114fefebf22a42c031ca12d520da4d49",
+    "profile_overrides": {
+      "profile.test.package.trnm-data-availability.debug": 0
+    },
+    "scope": "diagnostic behavior; does not replace original-profile qualification"
+  },
+  {
+    "name": "original-cli",
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-data-availability",
+      "--test",
+      "cell_adoption_cli",
+      "-j1",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 6.204,
+    "source_commit": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+    "source_unchanged": true,
+    "log_sha256": "1dae0fae215bdd0692578686b74dd996dc61259643159d535c3588d5640dd04a",
+    "profile_overrides": {},
+    "scope": "targeted original-profile validation"
+  },
+  {
+    "name": "release-boundaries",
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-release-bundle",
+      "--all-targets",
+      "-j1",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 103.473,
+    "source_commit": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+    "source_unchanged": true,
+    "log_sha256": "8fd92dbf701a579d25bf1221e605dada159aa1c4f44ec362d04c89f6af0bedb1",
+    "profile_overrides": {},
+    "scope": "targeted original-profile validation"
+  },
+  {
+    "name": "production-strict-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-data-availability",
+      "--lib",
+      "--bins",
+      "--all-features",
+      "-j1",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 13.276,
+    "source_commit": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+    "source_unchanged": true,
+    "log_sha256": "c764eeefe48f19508f071d134f69ae4b8c882105941611b55dc0f9adbac1b8cc",
+    "profile_overrides": {},
+    "scope": "targeted original-profile validation"
+  }
+]

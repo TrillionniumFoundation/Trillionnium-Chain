@@ -1,0 +1,68 @@
+{
+  "schema": "pon-next-architecture-security-program-v1",
+  "program_id": "trnm-next-architecture-security-qualification",
+  "name": "Trillionnium-Chain Next Architecture & Security Qualification",
+  "authoritative_plan": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+  "qualification_contract": "docs/development/specs/pon/NEXT_ARCHITECTURE_SECURITY_QUALIFICATION_V1.md",
+  "integration_base_commit": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "status": "development-in-progress-hold",
+  "workstreams": [
+    {
+      "id": "consensus-research",
+      "modules": ["M01", "M02", "M17"],
+      "delivery": "exact finite counterexamples for candidate timed-resource weights; source-pinned PoN and hybrid comparison",
+      "exit": "complete work relation, calibrated cheapest-legal cost model, DAA and network security under the chosen profile",
+      "independent_accepted": false
+    },
+    {
+      "id": "native-runtime",
+      "modules": ["M02", "M07", "M08", "M14"],
+      "delivery": "repair existing native owner/query boundaries and verify recovery without observational side effects",
+      "exit": "independent node startup, admission, fork recovery, durable state and client behavior under the original resource contract",
+      "independent_accepted": false
+    },
+    {
+      "id": "p2p-cell-commons",
+      "modules": ["M04", "M09", "M14", "M15"],
+      "delivery": "versioned external BEP52 descriptor/magnet/Merkle mapping and fixed RS(6,4) erasure reconstruction of existing owner-pinned TCM1 chunks",
+      "exit": "bounded interoperable discovery, swarm retrieval, versioned erasure reconstruction, independent custody and original PN5 WAN qualification",
+      "independent_accepted": false
+    },
+    {
+      "id": "hepta-integration",
+      "modules": ["M10", "M11", "M12", "M14", "M15"],
+      "delivery": "preserve original Learning Artifact, Evaluation, kernel.operations and Runtime FinalUse owners; separate status readback from recovery and adoption",
+      "exit": "three actual lineage cycles, original installed-parent readback, independent frozen evaluation, complete costs, no-update and revocation/reorg recovery",
+      "independent_accepted": false
+    },
+    {
+      "id": "pq-security",
+      "modules": ["M00", "M01", "M04", "M07", "M08", "M17"],
+      "delivery": "separate RISC0 and Plonky3 proof profiles, retain all unresolved obligations, verify exact finite sampling counterexamples",
+      "exit": "complete profile-specific noninteractive proof, PCS/hash/Fiat-Shamir composition and authenticated global PQ128 lifetime budget",
+      "independent_accepted": false
+    },
+    {
+      "id": "performance-economics",
+      "modules": ["M09", "M12", "M14", "M17"],
+      "delivery": "native Cell binding and complete-byte erasure recovery observations, with complete-declared-denominator performance/economic accounting",
+      "exit": "original full-service throughput/rejection/load/resource cohorts and externally funded sustainable rewards with complete actual costs",
+      "independent_accepted": false
+    }
+  ],
+  "original_host_contract": {
+    "cpu_quota_ns_per_second": 250000000,
+    "memory_bytes": 2147483648,
+    "swap_bytes": 0,
+    "pids": 256,
+    "business_window_ns": 4000000000,
+    "hostile_workers": 16
+  },
+  "authority": "research-and-development-tracking-only",
+  "qualification": "HOLD_NO_GO",
+  "production_candidate": false,
+  "runtime_implemented": false,
+  "whole_chain_post_quantum_qualified": false,
+  "independent_economics_accepted": false,
+  "production_consensus_activation": false
+}

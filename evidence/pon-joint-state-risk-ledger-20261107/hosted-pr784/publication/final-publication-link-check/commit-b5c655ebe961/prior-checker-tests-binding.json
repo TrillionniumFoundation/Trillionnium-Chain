@@ -1,0 +1,8 @@
+{
+  "prior_test_count": 12,
+  "prior_test_log_sha256": "1ae1533e024722a0187f4a6c1b128f0560ab7ca4e4873d8e3571555c36a07c0e",
+  "prior_test_result": "PASS",
+  "prior_tests_path": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-merge-audit-2d46/verifier-tests.stderr",
+  "tests_reexecuted_in_publication_gate": false,
+  "verifier_sha256": "70d86546550555b3b3b17e6ed83798f493d7e3421ed6ea05f838bfca25d62eb3"
+}

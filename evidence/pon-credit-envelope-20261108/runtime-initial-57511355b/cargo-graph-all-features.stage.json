@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "cargo",
+    "+1.95.0",
+    "metadata",
+    "--offline",
+    "--locked",
+    "--all-features",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+  "elapsed_seconds": 0.315947,
+  "exception": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-08T12:31:50.117662+00:00",
+  "passed": true,
+  "stage": "cargo-graph-all-features",
+  "started_utc": "2026-11-08T12:31:49.801751+00:00",
+  "stderr": "cargo-graph-all-features.stderr.log",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "cargo-graph-all-features.stdout.log",
+  "stdout_sha256": "e9af5c91cd30f5eb99ec0e159c5498a92b53fcda85e68b4412cbde14fbeb2c35",
+  "workspace_members": 26
+}

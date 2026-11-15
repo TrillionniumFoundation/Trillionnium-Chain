@@ -1,0 +1,684 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "expected_tests": null,
+      "name": "preflight",
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "-Vv"
+      ],
+      "expected_tests": null,
+      "name": "rustc-version",
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "-V"
+      ],
+      "expected_tests": null,
+      "name": "cargo-version",
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/bin/openssl",
+        "version",
+        "-a"
+      ],
+      "expected_tests": null,
+      "name": "openssl-version",
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "expected_tests": null,
+      "name": "metadata-default",
+      "timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--all-features",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "expected_tests": null,
+      "name": "metadata-all-features",
+      "timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml"
+      ],
+      "expected_tests": null,
+      "name": "metadata-fuzz",
+      "timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "expected_tests": null,
+      "name": "fmt",
+      "timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "expected_tests": null,
+      "name": "repository-contract",
+      "timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "expected_tests": null,
+      "name": "distributed-source-inventory",
+      "timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "expected_tests": null,
+      "name": "pq-research-integration",
+      "timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--test",
+        "account_profile_boundary",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "expected_tests": [
+        "absent_selector_retains_real_classical_transfer_and_signature_refusal",
+        "present_qtx1_selector_cannot_reach_classical_transfer_or_empty_block_effects",
+        "present_qtx1_selector_cannot_install_a_classical_service_profile",
+        "present_npq_selector_still_requires_the_independent_native_owner"
+      ],
+      "name": "account-profile-boundary",
+      "timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--test",
+        "account_development_scope",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "expected_tests": [
+        "classical_development_keeps_signed_transfer_maturity_fee_subsidy_and_receipt_bytes",
+        "classical_development_empty_block_keeps_real_maturity_and_subsidy_effects",
+        "altered_missing_null_or_mistyped_development_scope_refuses_real_and_empty_blocks",
+        "partial_null_and_unknown_pq_selections_never_authorize_classical_effects",
+        "real_native_pq_genesis_and_owner_checks_survive_the_development_scope_guard"
+      ],
+      "name": "account-development-scope",
+      "timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-root-v3",
+        "--test",
+        "root_recovery_v3_native",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "expected_tests": [
+        "native_owner_v3_domain_binds_each_independent_identity_without_zero_fallback",
+        "native_owner_v3_real_signed_append_reopen_and_exact_intent_observation",
+        "native_owner_v3_replay_preserves_nonce_and_refuses_second_exact_operation",
+        "native_owner_v3_lost_successful_cas_reply_requires_explicit_exact_completion",
+        "native_owner_v3_unadvanced_anchor_cannot_clear_pending_or_retry",
+        "native_owner_v3_corrupt_pending_state_cannot_promote_even_after_real_cas",
+        "native_owner_v3_retained_external_anchor_refuses_whole_local_rollback",
+        "native_owner_v3_co_restored_owner_and_anchor_counterexample_remains_accepted",
+        "native_owner_v3_wrong_enrollment_scope_and_service_aliases_are_refused",
+        "native_owner_v3_successor_cannot_reuse_an_anchor_or_writer_key",
+        "native_owner_v3_last_observation_rechecks_persisted_revocation_and_rotation",
+        "native_owner_v3_authenticated_response_still_must_bind_fresh_challenge",
+        "native_owner_v3_writer_signature_is_verified_before_transport",
+        "native_owner_v3_callback_cannot_replace_original_owner_budget",
+        "native_owner_v3_same_budget_exhaustion_retains_pending_before_cas",
+        "native_owner_v3_cancellation_after_external_commit_requires_reconciliation",
+        "native_owner_v3_storage_tamper_schema_alias_and_concurrent_open_fail_closed",
+        "native_owner_v3_changed_current_bytes_and_replaced_database_are_not_authority",
+        "native_owner_v3_foreign_sqlite_namespace_is_refused_without_mutating_it",
+        "native_owner_v3_reopen_reverifies_retained_signature_bytes"
+      ],
+      "name": "root-recovery-v3-native",
+      "timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-root-v3",
+        "--test",
+        "recovery_floor_v4_native",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "expected_tests": [
+        "native_floor_v4_exact_signed_ancestor_survives_append_and_reopen",
+        "native_floor_v4_complete_enrollment_binding_precedes_storage_and_anchor",
+        "native_floor_v4_higher_counter_cannot_replace_exact_signed_ancestry",
+        "native_floor_v4_history_below_external_lower_bound_is_refused",
+        "native_floor_v4_pending_target_needs_signed_replay_and_explicit_completion",
+        "native_floor_v4_pending_bytes_do_not_become_authority_from_head_match",
+        "native_floor_v4_fresh_anchor_authentication_remains_required",
+        "native_floor_v4_common_restore_contrast_stale_pin_accepts_surviving_pin_rejects",
+        "native_floor_v4_invalid_pin_shapes_are_refused"
+      ],
+      "name": "recovery-floor-v4-native",
+      "timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-root-v3",
+        "--test",
+        "root_effect_readback_v4_native",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "expected_tests": [
+        "native_provider_v4_real_declaration_reopens_without_effect_authority",
+        "native_provider_v4_enrollment_requires_floor_complete_bytes_kind_and_attempt",
+        "native_provider_v4_lost_and_unknown_reads_keep_original_operation_pending",
+        "native_provider_v4_complete_request_and_both_signature_families_are_required",
+        "native_provider_v4_callback_cannot_replace_cancel_or_replenish_budget",
+        "native_provider_v4_orphan_epochs_require_explicit_same_epoch_reconciliation",
+        "native_provider_v4_unknown_does_not_erase_known_outcome_and_conflicts_refuse",
+        "native_provider_v4_replays_original_operation_after_authority_rotation",
+        "native_provider_v4_later_root_provider_alias_refuses_before_transport",
+        "native_provider_v4_foreign_replaced_linked_and_truncated_journals_refuse",
+        "native_provider_v4_unresolved_orphan_is_not_replaced_by_new_epoch",
+        "native_provider_v4_oversized_journal_refuses_before_lookup",
+        "native_provider_v4_live_session_refuses_complete_record_rollback",
+        "native_provider_v4_live_session_refuses_same_length_history_substitution"
+      ],
+      "name": "root-effect-readback-v4-native",
+      "timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-root-v3",
+        "--test",
+        "root_budget_v4_native",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "expected_tests": [
+        "native_budget_v4_writer_error_cannot_hide_budget_replacement",
+        "native_budget_v4_transport_error_cannot_hide_budget_replacement",
+        "native_budget_v4_writer_error_latches_observed_external_cancellation",
+        "native_budget_v4_transport_error_latches_observed_external_cancellation",
+        "native_budget_v4_unmodified_writer_error_is_preserved",
+        "native_budget_v4_unmodified_transport_error_is_preserved"
+      ],
+      "name": "root-budget-v4-native",
+      "timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-root-v3",
+        "--test",
+        "root_witness_v5_native",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "expected_tests": [
+        "native_witness_v5_complete_binding_and_role_separation_are_required",
+        "native_witness_v5_success_is_witnessed_before_pending_is_completed",
+        "native_witness_v5_surviving_witness_refuses_common_owner_anchor_restore",
+        "native_witness_v5_restoring_every_authority_remains_an_explicit_counterexample",
+        "native_witness_v5_unavailable_witness_has_no_static_floor_fallback",
+        "native_witness_v5_signed_response_must_bind_the_complete_fresh_request",
+        "native_witness_v5_wrong_signature_and_outcome_are_refused",
+        "native_witness_v5_another_recovery_epoch_cannot_use_the_same_service_pin",
+        "native_witness_v5_lost_ack_retains_pending_and_resumes_without_another_cas",
+        "native_witness_v5_pre_cas_disconnect_retries_only_the_verified_witness_transition",
+        "native_witness_v5_corrupt_pending_never_advances_the_witness",
+        "native_witness_v5_callback_budget_replacement_and_cancellation_remain_fenced",
+        "native_witness_v5_context_and_intent_recheck_live_witness_and_latch_failure",
+        "native_witness_v5_rotation_cannot_reuse_witness_keys",
+        "native_witness_v5_open_checks_retained_root_key_roles",
+        "native_witness_v5_unwitnessed_v3_commit_cannot_be_promoted_from_an_ancestor_floor",
+        "native_witness_v5_changed_signed_pending_and_anchor_cannot_bypass_role_snapshot"
+      ],
+      "name": "root-witness-v5-native",
+      "timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-root-v3",
+        "--test",
+        "root_witness_v5_durable_native",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "expected_tests": [
+        "native_durable_witness_v5_exact_cas_retry_and_cold_reopen_have_dual_family_receipts",
+        "native_durable_witness_v5_stale_database_requires_surviving_independent_reopen_pin",
+        "native_durable_witness_v5_wrong_predecessor_and_competing_successor_are_mismatches",
+        "native_durable_witness_v5_real_sqlite_commit_busy_fences_until_explicit_reopen",
+        "native_durable_witness_v5_signing_failure_and_wrong_quorum_preserve_committed_head",
+        "native_durable_witness_v5_budget_replacement_on_ok_or_err_and_cancellation_fence",
+        "native_durable_witness_v5_unauthenticated_requests_cannot_mutate_or_fence",
+        "native_durable_witness_v5_complete_policy_and_live_stored_binding_are_enforced",
+        "native_durable_witness_v5_exclusive_lock_and_named_inode_are_required",
+        "native_durable_witness_v5_foreign_namespace_and_extra_schema_are_refused",
+        "native_durable_witness_v5_signer_callback_cannot_replace_committed_row_before_ack",
+        "native_durable_witness_v5_root_lost_ack_cold_recovery_does_not_repeat_cas"
+      ],
+      "name": "root-witness-v5-durable-native",
+      "timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--lib",
+        "store::account_profile_scope_tests::",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "expected_tests": [
+        "store::account_profile_scope_tests::invalid_account_scope_never_creates_legacy_or_authenticated_namespace",
+        "store::account_profile_scope_tests::cold_open_rechecks_account_scope_without_rewriting_existing_storage",
+        "store::account_profile_scope_tests::warm_owner_rechecks_current_account_scope_before_reads_recovery_and_activation",
+        "store::account_profile_scope_tests::growth_owner_rechecks_scope_before_open_recovery_and_noop_activation"
+      ],
+      "name": "node-account-scope",
+      "timeout_seconds": 1800
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--lib",
+        "store::task_observation::tests::every_native_profile_observes_real_settlement_with_its_exact_wire_id",
+        "--",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "expected_tests": [
+        "store::task_observation::tests::every_native_profile_observes_real_settlement_with_its_exact_wire_id"
+      ],
+      "name": "node-all-pq-profile-settlement",
+      "timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--lib",
+        "ingress::pq_network::canonical_tests::pq_client_requires_complete_key_pin_after_identity_lookup",
+        "--",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "expected_tests": [
+        "ingress::pq_network::canonical_tests::pq_client_requires_complete_key_pin_after_identity_lookup"
+      ],
+      "name": "tls-full-spki-1",
+      "timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--lib",
+        "ingress::pq_network::tls::tests::tls_local_identity_requires_complete_key_pin_for_both_roles",
+        "--",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "expected_tests": [
+        "ingress::pq_network::tls::tests::tls_local_identity_requires_complete_key_pin_for_both_roles"
+      ],
+      "name": "tls-full-spki-2",
+      "timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--lib",
+        "ingress::pq_network::tls::tests::actual_tls_peer_identity_alias_refuses_before_application_dispatch_in_both_directions",
+        "--",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "expected_tests": [
+        "ingress::pq_network::tls::tests::actual_tls_peer_identity_alias_refuses_before_application_dispatch_in_both_directions"
+      ],
+      "name": "tls-full-spki-3",
+      "timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "pq_account_native",
+        "real_node_pq_account_packets_work_forks_reorg_and_cold_replay",
+        "--",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "expected_tests": [
+        "real_node_pq_account_packets_work_forks_reorg_and_cold_replay"
+      ],
+      "name": "node-qtx1-recovery",
+      "timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "public_v3_distinct_invalid_work",
+        "distinct_false_traces_and_cross_listener_retry_pay_one_shared_domain_without_effects",
+        "--",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "expected_tests": [
+        "distinct_false_traces_and_cross_listener_retry_pay_one_shared_domain_without_effects"
+      ],
+      "name": "distinct-invalid-work",
+      "timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "expected_tests": null,
+      "name": "strict-workspace-clippy",
+      "timeout_seconds": 3600
+    }
+  ],
+  "generation": "Fixed runner command_plan evaluated against nine original C1 Git blob files; no workload executed and no original runtime plan copied.",
+  "native_workload_executed": false,
+  "runner_sha256": "e5a378b43130e888d58b021ed58dc28f4c560c1075d8e08b7db79313765bc45e",
+  "schema": "TRNM-C1-EXPECTED-NATIVE-PLAN1",
+  "source": {
+    "commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+    "tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6"
+  },
+  "source_inputs": [
+    {
+      "bytes": 6085,
+      "git_blob": "f0b5a910becc6a84e2b51a4692a4c55ceb87a8e3",
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-mvcc-fee/tests/account_profile_boundary.rs",
+      "sha256": "71e22b50aceb98ffb35f11e04dfa9c20fbd07da102a2cd5eec0896d23a073d5c"
+    },
+    {
+      "bytes": 12753,
+      "git_blob": "181a8c9b32439b1a39ea0f67a8f85d0230f25c81",
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs",
+      "sha256": "fa1cc0cf0b096a05f62a0808fa883c1564abad5df5e1c68e374df9499619c6da"
+    },
+    {
+      "bytes": 18549,
+      "git_blob": "f500e5c1771d86ac3ba2b5a1844a29a104d1055f",
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-pon-node/tests/root_recovery_v3_native.rs",
+      "sha256": "3e0cc6d167ba846193a1fd06b079333c104168529fc20a611468a6ac8c2e8cea"
+    },
+    {
+      "bytes": 9402,
+      "git_blob": "8aafd512b6f4dab05478fa15a231a5089eefaebf",
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs",
+      "sha256": "3616d905976853c2a6a8d7b7b98db156b653d056f9f170f77454ce3b66602fe1"
+    },
+    {
+      "bytes": 24286,
+      "git_blob": "fb01c2a79c37481b8d311edc123a231e8ca11c6a",
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-pon-node/tests/root_effect_readback_v4_native.rs",
+      "sha256": "2a129af69dfc81e8e0a03973d0c4a76f151b4bb44c0be5e60a365c9680887ed9"
+    },
+    {
+      "bytes": 4583,
+      "git_blob": "aa20cbd2f8d54bfba39c0a05722f17c488677760",
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-pon-node/tests/root_budget_v4_native.rs",
+      "sha256": "adff3dee63a81b67256bf8d97ca92d8a470a0a741bb82a8b110206f2cdf0305a"
+    },
+    {
+      "bytes": 25357,
+      "git_blob": "9a7b79065fd4f92520a3587443c4703bbb4a57e1",
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_native.rs",
+      "sha256": "e22cc9e6c3dda598f3532ef3bf6ce41086cf8589e22bacb839ea3c141de53c05"
+    },
+    {
+      "bytes": 24223,
+      "git_blob": "af34191dc92046af7b39d1c902b98d4117258645",
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_durable_native.rs",
+      "sha256": "e937c0e8501e30bd775cdaffdf24e22b7efea73197185caa7c5f9be2b097febe"
+    },
+    {
+      "bytes": 9939,
+      "git_blob": "328acaefece20ab5deaabf83a539894bb70c5668",
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs",
+      "sha256": "2457ddfb30c4e4eb949feb375a0bb978ee0e07a594d03ddfb0885d01dfae6ed1"
+    }
+  ]
+}

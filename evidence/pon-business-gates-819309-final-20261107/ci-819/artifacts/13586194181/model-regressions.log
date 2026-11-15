@@ -1,0 +1,57 @@
+   Compiling trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 3.61s
+     Running tests/model_composition_v4.rs (/home/runner/work/_temp/target-priority/release/deps/model_composition_v4-75f771881909b083)
+
+running 4 tests
+test native_composition_rewards_reorg_reopen_and_continuity_cleanup ... v4 native height1: Capacity { actual_keys: 102, credit_account_reserve: 0, archive_reserve: 3, reward_queue_reserve: 19, required_keys: 124 }
+v4 native height48: Capacity { actual_keys: 138, credit_account_reserve: 0, archive_reserve: 0, reward_queue_reserve: 0, required_keys: 138 }
+v4 native height56: Capacity { actual_keys: 139, credit_account_reserve: 0, archive_reserve: 0, reward_queue_reserve: 0, required_keys: 139 }
+v4 native height76: Capacity { actual_keys: 124, credit_account_reserve: 0, archive_reserve: 0, reward_queue_reserve: 0, required_keys: 124 }
+v4 native fork77: release, claims and source reservation rolled back; reopened
+v4 native height78: Capacity { actual_keys: 124, credit_account_reserve: 0, archive_reserve: 0, reward_queue_reserve: 0, required_keys: 124 }
+v4 native height128: Capacity { actual_keys: 122, credit_account_reserve: 0, archive_reserve: 0, reward_queue_reserve: 0, required_keys: 122 }
+v4 native height305: Capacity { actual_keys: 84, credit_account_reserve: 0, archive_reserve: 0, reward_queue_reserve: 0, required_keys: 84 }
+v4 native height306: Capacity { actual_keys: 84, credit_account_reserve: 0, archive_reserve: 0, reward_queue_reserve: 0, required_keys: 84 }
+v4 lifecycle: native_packets=335, direct_expiry_transitions=770, peak_required_keys=139, full_capacity_fixture=false
+ok
+test quorum_profile_replays_two_composition_generations_and_zero_score_components ... ok
+test signed_executor_rejects_unrelated_weak_zero_marginal_and_precommitted_false_weights ... v4 signed M06 negative unrelated-accurate: MODEL_COMPOSITION_DERIVATION; rejected suffix preserves prior transfer
+v4 signed M06 negative exact-but-weaker: MODEL_COMPOSITION_GAIN; rejected suffix preserves prior transfer
+v4 signed M06 negative zero-marginals: MODEL_COMPOSITION_MARGINAL; rejected suffix preserves prior transfer
+v4 signed M06 negative precommitted-score-as-weight: MODEL_COMPOSITION_WEIGHT; rejected suffix preserves prior transfer
+v4 signed M06 negative exact-cancelling-subset: MODEL_COMPOSITION_REDUNDANT_SUBSET; rejected suffix preserves prior transfer
+ok
+test two_native_generations_use_the_actual_nonzero_parent_once ... v4 two-generation native height56: current="ebb83297f9627f3d899d098bef95df1aafaef0dbe445063581b487647e134d08"
+v4 two-generation native height76: current="ebb83297f9627f3d899d098bef95df1aafaef0dbe445063581b487647e134d08"
+v4 two-generation native height128: current="ebb83297f9627f3d899d098bef95df1aafaef0dbe445063581b487647e134d08"
+v4 two-generation native height129: current="ebb83297f9627f3d899d098bef95df1aafaef0dbe445063581b487647e134d08"
+v4 two-generation native height176: current="ebb83297f9627f3d899d098bef95df1aafaef0dbe445063581b487647e134d08"
+v4 two-generation native height184: current="9466049d17bde6c0fef3f65d1429b56be30f6a0046589b3ff1b13c1f569aaf86"
+v4 two-generation native height204: current="9466049d17bde6c0fef3f65d1429b56be30f6a0046589b3ff1b13c1f569aaf86"
+v4 two-generation fixture: first21+21→24; real parent24; zero-score children23+23−parent24→25; native_packets=204
+ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 30.17s
+
+     Running tests/model_evidence_v3.rs (/home/runner/work/_temp/target-priority/release/deps/model_evidence_v3-2d6d7e8e225d5572)
+
+running 6 tests
+test combined_continuity_and_model_evidence_complete_native_lifecycle_and_cleanup ... combined context: network=166da4ba846ccb7dc86417913c593430cf972fe9e2be56cfdcd8bd2b8935c579, parameters=731cb47ba1c3d55622010219dc8ab7717989b96e511a647b27766dd55cc5e2e1, genesis=43d8080b7f002fb370b4a07f432a9d95a86c9b44b8350eebb79b97831407b5a3
+combined height 1: Capacity { actual_keys: 102, credit_account_reserve: 0, archive_reserve: 3, reward_queue_reserve: 19, required_keys: 124 }
+combined height 48: Capacity { actual_keys: 138, credit_account_reserve: 0, archive_reserve: 0, reward_queue_reserve: 0, required_keys: 138 }
+combined height 56: Capacity { actual_keys: 139, credit_account_reserve: 0, archive_reserve: 0, reward_queue_reserve: 0, required_keys: 139 }
+combined height 76: Capacity { actual_keys: 124, credit_account_reserve: 0, archive_reserve: 0, reward_queue_reserve: 0, required_keys: 124 }
+combined height 128: Capacity { actual_keys: 122, credit_account_reserve: 0, archive_reserve: 0, reward_queue_reserve: 0, required_keys: 122 }
+combined height 256: Capacity { actual_keys: 122, credit_account_reserve: 0, archive_reserve: 0, reward_queue_reserve: 0, required_keys: 122 }
+combined height 305: Capacity { actual_keys: 84, credit_account_reserve: 0, archive_reserve: 0, reward_queue_reserve: 0, required_keys: 84 }
+combined height 306: Capacity { actual_keys: 84, credit_account_reserve: 0, archive_reserve: 0, reward_queue_reserve: 0, required_keys: 84 }
+combined lifecycle: native_packets=306, peak_required_keys=139, full_capacity_fixture=false
+ok
+test explicit_quorum_native_release_survives_one_absence_and_hash_appeal_with_durable_reorg ... ok
+test known_alias_intakes_share_one_limit_and_reorganization_restores_it ... ok
+test missing_corrupt_or_noncanonical_control_bytes_refuse_signed_admission ... ok
+test objective_release_shared_source_reward_reopen_and_review_fork_are_native ... ok
+test zero_gain_and_noop_cannot_become_positive_by_consistent_signatures ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 19.57s
+

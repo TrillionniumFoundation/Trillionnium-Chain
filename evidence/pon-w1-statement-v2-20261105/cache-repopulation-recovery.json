@@ -1,0 +1,23 @@
+{
+  "disposable_caches": [
+    {
+      "path": "continuation-runtime/cargo-risczero-v3.0.3.tgz",
+      "discarded_reproducible_bytes": 72795381
+    },
+    {
+      "path": "continuation-runtime/risc0-rust-1.88.0.tar.gz",
+      "discarded_reproducible_bytes": 490849318
+    },
+    {
+      "path": "continuation-runtime/target-relation",
+      "files": 710,
+      "discarded_reproducible_bytes": 233492726
+    },
+    {
+      "path": "chain/trillionnium/target",
+      "files": 1952,
+      "discarded_reproducible_bytes": 458654192
+    }
+  ],
+  "free_bytes_after": 0
+}

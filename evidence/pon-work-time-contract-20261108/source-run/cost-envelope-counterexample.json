@@ -1,0 +1,173 @@
+{
+  "schema": "pon-cost-envelope-observation-v1",
+  "baseline_profile_path": "config/pon/work-profile-v1.json",
+  "baseline_profile_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+  "baseline_profile_bytes_verified": true,
+  "scope": "identity join and declared finite-model arithmetic; variable-u native relation absent",
+  "result": {
+    "schema": "pon.cost-envelope.result.v1",
+    "contract_sha256": "3ca6d133b1745325097e4a75013f606f96e98f632f321c7aa7aa678fb8750fa2",
+    "profile_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+    "arithmetic_status": "INFEASIBLE",
+    "evidence_scope": "DECLARED_FINITE_MODEL_ONLY",
+    "production_gate": "HOLD_NO_GO",
+    "all_legal_algorithms_lower_bound": null,
+    "mixed_consensus_proof": null,
+    "profile_identity_verified": false,
+    "p0_is_input_hypothesis": true,
+    "missing_bounds": [],
+    "unqualified_envelopes": [],
+    "success_contract": {
+      "standard": "total_cost_for_fixed_success_probability_by_deadline",
+      "probability_scope": "declared_model_not_statistical_confidence",
+      "success_probability_target": {
+        "n": 1,
+        "d": 2
+      },
+      "deadline_ms": 120000,
+      "horizon_rounds": 1
+    },
+    "evidence": [
+      {
+        "class": "classical",
+        "u": 1,
+        "kind": "finite_catalog",
+        "certificate_sha256": "b9210a489b8d296b5f370ccbd13829532462be29bd7be4d4cb0ac6bc8eabe4d1",
+        "finite_model_minimum": {
+          "n": 2,
+          "d": 1
+        },
+        "qualifying_strategy_ids": [
+          "finite-preparation-1-plus-attempt-1"
+        ]
+      },
+      {
+        "class": "classical",
+        "u": 4,
+        "kind": "finite_catalog",
+        "certificate_sha256": "a43d8593e76db813917567a1400d55ee8781ee1816f32f55a93b721834b81d32",
+        "finite_model_minimum": {
+          "n": 5,
+          "d": 1
+        },
+        "qualifying_strategy_ids": [
+          "finite-preparation-1-plus-attempt-4"
+        ]
+      },
+      {
+        "class": "classical",
+        "u": 16,
+        "kind": "finite_catalog",
+        "certificate_sha256": "b3e0b4bfdffe98034a4d1d35a266cdb05d2aa5807a82654672e67eb9b51c6cd2",
+        "finite_model_minimum": {
+          "n": 17,
+          "d": 1
+        },
+        "qualifying_strategy_ids": [
+          "finite-preparation-1-plus-attempt-16"
+        ]
+      },
+      {
+        "class": "quantum",
+        "u": 1,
+        "kind": "finite_catalog",
+        "certificate_sha256": "b0e260eee8f6d8a242f84e9af86f1643ffac6991b72db056049bc66fd9da08a4",
+        "finite_model_minimum": {
+          "n": 14,
+          "d": 1
+        },
+        "qualifying_strategy_ids": [
+          "finite-preparation-1-plus-attempt-1"
+        ]
+      },
+      {
+        "class": "quantum",
+        "u": 4,
+        "kind": "finite_catalog",
+        "certificate_sha256": "a224e8373ff87b0a71f87836c4a3af655cbdfa5fee99fc2c8ac5753c9d4724f8",
+        "finite_model_minimum": {
+          "n": 35,
+          "d": 1
+        },
+        "qualifying_strategy_ids": [
+          "finite-preparation-1-plus-attempt-4"
+        ]
+      },
+      {
+        "class": "quantum",
+        "u": 16,
+        "kind": "finite_catalog",
+        "certificate_sha256": "43acaeace6a14de554b10843d7b5cc23271ae8c96c32b908dcd29cc5239ee113",
+        "finite_model_minimum": {
+          "n": 119,
+          "d": 1
+        },
+        "qualifying_strategy_ids": [
+          "finite-preparation-1-plus-attempt-16"
+        ]
+      }
+    ],
+    "violations": [
+      {
+        "kind": "JOINT_BATCH_CAP",
+        "batch_id": "paid-preparation-shared-two-work-levels",
+        "minimum_expected_credit": {
+          "n": 7,
+          "d": 2
+        },
+        "permitted_credit": {
+          "n": 3,
+          "d": 1
+        }
+      }
+    ],
+    "failure_budget": null,
+    "least_credit_candidate": [
+      {
+        "u": 1,
+        "interval_lower": {
+          "n": 2,
+          "d": 1
+        },
+        "interval_upper": {
+          "n": 2,
+          "d": 1
+        },
+        "credit": {
+          "n": 2,
+          "d": 1
+        }
+      },
+      {
+        "u": 4,
+        "interval_lower": {
+          "n": 5,
+          "d": 1
+        },
+        "interval_upper": {
+          "n": 5,
+          "d": 1
+        },
+        "credit": {
+          "n": 5,
+          "d": 1
+        }
+      },
+      {
+        "u": 16,
+        "interval_lower": {
+          "n": 17,
+          "d": 1
+        },
+        "interval_upper": {
+          "n": 17,
+          "d": 1
+        },
+        "credit": {
+          "n": 17,
+          "d": 1
+        }
+      }
+    ]
+  }
+}

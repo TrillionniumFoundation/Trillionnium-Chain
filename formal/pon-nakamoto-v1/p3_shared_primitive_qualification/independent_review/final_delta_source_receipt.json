@@ -1,0 +1,221 @@
+{
+  "closed_findings": [
+    {
+      "control_test_bodies_executed": 0,
+      "control_total_cases": 40,
+      "current_guard_rejects_control": true,
+      "current_runner_sha256": "f5fed7839082b675014f676e3c3165c354c5dddb5b5d0b206be87a49d95604fb",
+      "former_predicate": "Ran >= minimum plus substring \\nOK",
+      "id": "runner_all_skipped_python_coverage",
+      "reproduced_with_actual_unittest": true
+    }
+  ],
+  "external_cryptographic_audit": false,
+  "local_control": {
+    "argv": [
+      "python3",
+      "-B",
+      "/workspace/scratch/3acf892fe0ad/independent_review/verify_final_delta.py"
+    ],
+    "exit_code": 0,
+    "observations": {
+      "all_skipped_control_tests_executed": 0,
+      "current_runner_parser_controls": {
+        "all_passed": true,
+        "full_runner_executed": false,
+        "python_cases": 5,
+        "runner_sha256": "f5fed7839082b675014f676e3c3165c354c5dddb5b5d0b206be87a49d95604fb",
+        "rust_cases": 6,
+        "source_guard_expressions_evaluated_only": true
+      },
+      "delta_identity_checks": {
+        "profile_diff_exactly_descriptor_label_change": true,
+        "test_previous_snapshot_is_unchanged_prefix": true
+      },
+      "former_runner_accepts_all_skipped_control": true,
+      "native_rust_execution_by_reviewer": false,
+      "qualification": "HOLD_NO_GO",
+      "qualified": false,
+      "reference_case_coverage": {
+        "component_0_statement_context": 3,
+        "component_1_branch": 2,
+        "component_1_leaf": 5,
+        "component_1_transcript": 7,
+        "component_4_branch": 2,
+        "component_4_leaf": 5,
+        "component_4_transcript": 7
+      },
+      "reference_fixture_sha256": "c891c42cbd7751c920073c7701494d710016cbf56e933408893b0536996cc0a5",
+      "reference_vectors_recomputed": 31,
+      "regenerated_fixture_byte_identical": true,
+      "schema": "p3.tagged.sha3.final_delta.observations.v1"
+    },
+    "raw_outputs": [
+      {
+        "bytes": 1127,
+        "path": "/workspace/scratch/3acf892fe0ad/independent_review/final_delta_checks.stdout.txt",
+        "sha256": "361013ee443f3019d50e0bbb829b4f936bdefdd4c5805203d0c0c59ea6753cca"
+      },
+      {
+        "bytes": 0,
+        "path": "/workspace/scratch/3acf892fe0ad/independent_review/final_delta_checks.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 18970,
+        "path": "/workspace/scratch/3acf892fe0ad/independent_review/reference_regeneration.stdout.txt",
+        "sha256": "c891c42cbd7751c920073c7701494d710016cbf56e933408893b0536996cc0a5"
+      },
+      {
+        "bytes": 0,
+        "path": "/workspace/scratch/3acf892fe0ad/independent_review/reference_regeneration.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "path": "/workspace/scratch/3acf892fe0ad/independent_review/skipped_parser_control.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 4192,
+        "path": "/workspace/scratch/3acf892fe0ad/independent_review/skipped_parser_control.stderr.txt",
+        "sha256": "c660639f807b558591025256b71135eae1a11c14cf658ac6dcfec5576ce8377e"
+      }
+    ],
+    "reproduction_layout": "The program expects the recorded original local staging directory layout; it is not a repository CI test.",
+    "script": {
+      "bytes": 9542,
+      "path": "/workspace/scratch/3acf892fe0ad/independent_review/verify_final_delta.py",
+      "sha256": "ed5f75a65523b4049b7805cdaf18bee2ac4d15aab633cefc0dee8e51ed7b5c0d"
+    }
+  },
+  "native_tests_executed_by_this_reviewer": false,
+  "native_worktree_accessed_or_modified_by_this_reviewer": false,
+  "preceding_report": {
+    "bytes": 9498,
+    "path": "/workspace/scratch/3acf892fe0ad/independent_review/REVIEW.md",
+    "sha256": "9b3f41b0711686f8eb69cbc22caee0fe8254413574b49c7145f7cf787c3a0bd6"
+  },
+  "preceding_review_receipt": {
+    "bytes": 9660,
+    "path": "/workspace/scratch/3acf892fe0ad/independent_review/source_receipt.json",
+    "sha256": "ce5f31d4516866f653c94969c59ab8598009d1e77f60f157ac69712e39f2ddc3"
+  },
+  "pruned_multiopening_mapping_reviewed_or_extended": false,
+  "qualification": "HOLD_NO_GO",
+  "qualification_runner_executed_by_this_reviewer": false,
+  "qualified": false,
+  "remaining_evidence_external_to_this_review": [
+    "Exact final native commit, lockfile and binary/source binding",
+    "Native Rust test and complete W1 proof verification receipts",
+    "Actual structural mutation harness and ABBA execution receipts",
+    "Open cryptographic, pruned-multiopening, quantum/advice and production resource gates"
+  ],
+  "report": {
+    "bytes": 11031,
+    "path": "/workspace/scratch/3acf892fe0ad/independent_review/FINAL_DELTA_REVIEW.md",
+    "sha256": "a93375f127b16f480dab48f7645fbd4e29d0ea4ebc3a0f1dcdeaf3f2eb2aef6b"
+  },
+  "review_type": "model_assisted_source_delta_review_with_local_python_controls",
+  "reviewed_at_utc": "2026-11-08T06:26:29.337565+00:00",
+  "schema": "p3.tagged.sha3.final_source_delta_review.v1",
+  "subject": "local staging snapshots; no assertion of exact final native source identity",
+  "subject_files": [
+    {
+      "bytes": 11611,
+      "path": "/workspace/scratch/3acf892fe0ad/tagged_profile_impl/src/tagged_sha3.rs",
+      "previous_sha256": "e2068fa6d1cacb508bd3953761a88204b718b2cb842ecc16f078a081283cbac8",
+      "relative_to_staging_root": "tagged_profile_impl/src/tagged_sha3.rs",
+      "same_as_previous_review": false,
+      "sha256": "244d7fda0ef9c6270cd87053b818640e7a51e76fb257325cb570b114a3512346"
+    },
+    {
+      "bytes": 10446,
+      "path": "/workspace/scratch/3acf892fe0ad/tagged_profile_impl/src/tagged_sha3_wire.rs",
+      "previous_sha256": "e7dfd01addef0f996165d19241849822eb6f2a68caa4a832449151a7314b41fa",
+      "relative_to_staging_root": "tagged_profile_impl/src/tagged_sha3_wire.rs",
+      "same_as_previous_review": true,
+      "sha256": "e7dfd01addef0f996165d19241849822eb6f2a68caa4a832449151a7314b41fa"
+    },
+    {
+      "bytes": 14919,
+      "path": "/workspace/scratch/3acf892fe0ad/tagged_profile_impl/examples/tagged_sha3_backend.rs",
+      "previous_sha256": "9271bde2a3f1f6c496eaa9e113f52adfce32fdab6f50022ebf3c412594a24c37",
+      "relative_to_staging_root": "tagged_profile_impl/examples/tagged_sha3_backend.rs",
+      "same_as_previous_review": true,
+      "sha256": "9271bde2a3f1f6c496eaa9e113f52adfce32fdab6f50022ebf3c412594a24c37"
+    },
+    {
+      "bytes": 13627,
+      "path": "/workspace/scratch/3acf892fe0ad/tagged_profile_impl/tests/tagged_sha3_profile.rs",
+      "previous_sha256": "8ad652a3b13883282d7c97b543e93ab289de1be57daed4a5d67c7ae3919ea375",
+      "relative_to_staging_root": "tagged_profile_impl/tests/tagged_sha3_profile.rs",
+      "same_as_previous_review": false,
+      "sha256": "9bd212338379d527b6438d1539179a155f6fa5cb34f7a88cff8b57a87248ae70"
+    },
+    {
+      "bytes": 18970,
+      "path": "/workspace/scratch/3acf892fe0ad/tagged_profile_impl/tests/tagged_sha3_reference_vectors.json",
+      "previous_sha256": null,
+      "relative_to_staging_root": "tagged_profile_impl/tests/tagged_sha3_reference_vectors.json",
+      "same_as_previous_review": null,
+      "sha256": "c891c42cbd7751c920073c7701494d710016cbf56e933408893b0536996cc0a5"
+    },
+    {
+      "bytes": 9539,
+      "path": "/workspace/scratch/3acf892fe0ad/tagged_profile_impl/examples/tagged_sha3_wire_controls.rs",
+      "previous_sha256": null,
+      "relative_to_staging_root": "tagged_profile_impl/examples/tagged_sha3_wire_controls.rs",
+      "same_as_previous_review": null,
+      "sha256": "bb2ca06958d2b73b6a8fa6c8b88d5b46a6f2d8a6cce03e4ce0d55037937b27d5"
+    },
+    {
+      "bytes": 798,
+      "path": "/workspace/scratch/3acf892fe0ad/tagged_profile_impl/Cargo.toml",
+      "previous_sha256": "082425d937d0be1ea67f5c1f1c1df280ad803398b35199772123f680c22a82e7",
+      "relative_to_staging_root": "tagged_profile_impl/Cargo.toml",
+      "same_as_previous_review": true,
+      "sha256": "082425d937d0be1ea67f5c1f1c1df280ad803398b35199772123f680c22a82e7"
+    },
+    {
+      "bytes": 345,
+      "path": "/workspace/scratch/3acf892fe0ad/tagged_profile_impl/src/lib.rs",
+      "previous_sha256": "120b056b00d3be748c52cff23232b2ea871ce97d88b67b783bc999e7662dddc8",
+      "relative_to_staging_root": "tagged_profile_impl/src/lib.rs",
+      "same_as_previous_review": true,
+      "sha256": "120b056b00d3be748c52cff23232b2ea871ce97d88b67b783bc999e7662dddc8"
+    },
+    {
+      "bytes": 4448,
+      "path": "/workspace/scratch/3acf892fe0ad/root_docs/reference_vectors.py",
+      "previous_sha256": null,
+      "relative_to_staging_root": "root_docs/reference_vectors.py",
+      "same_as_previous_review": null,
+      "sha256": "3eac5a53878edf357d38eb8a3279f056b5c3103c60a5ebd0c309b9d58a1bfa41"
+    },
+    {
+      "bytes": 18970,
+      "path": "/workspace/scratch/3acf892fe0ad/root_docs/tagged_sha3_reference_vectors.json",
+      "previous_sha256": null,
+      "relative_to_staging_root": "root_docs/tagged_sha3_reference_vectors.json",
+      "same_as_previous_review": null,
+      "sha256": "c891c42cbd7751c920073c7701494d710016cbf56e933408893b0536996cc0a5"
+    },
+    {
+      "bytes": 8967,
+      "path": "/workspace/scratch/3acf892fe0ad/root_docs/run_qualification_checks.py",
+      "previous_sha256": null,
+      "relative_to_staging_root": "root_docs/run_qualification_checks.py",
+      "same_as_previous_review": null,
+      "sha256": "f5fed7839082b675014f676e3c3165c354c5dddb5b5d0b206be87a49d95604fb"
+    },
+    {
+      "bytes": 11351,
+      "path": "/workspace/scratch/3acf892fe0ad/root_docs/SECURITY_CONTRACT.md",
+      "previous_sha256": null,
+      "relative_to_staging_root": "root_docs/SECURITY_CONTRACT.md",
+      "same_as_previous_review": null,
+      "sha256": "2df9f775daf89e440549dd8ea91b1cf96941298a6fd537ed4d5acfdc37cf5c9a"
+    }
+  ]
+}

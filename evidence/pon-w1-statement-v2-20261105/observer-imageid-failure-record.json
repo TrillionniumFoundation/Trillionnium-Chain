@@ -1,0 +1,18 @@
+{
+  "schema": "TRNM-W1-OBSERVER-IMAGE-CONTROL-FAILURE1",
+  "capture_scope": "verbatim copy of tool-returned terminal output, not a direct file tee and not a rerun",
+  "test_session_id": 18569,
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 scripts/ci/test_w1_staged_observer.py",
+  "exit_code": 1,
+  "tests_run": 17,
+  "failures": 1,
+  "errors": 1,
+  "reason": "Actual disk guard stopped preparation before any stage: reported free overlay space 40 MiB, below unchanged 1 GiB floor.",
+  "source_sha256": {
+    "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py": "d2605dcdca2fe01b199dda2c97b1763f3deefc07050979d0901fb3ddb11a72c9",
+    "scripts/ci/test_w1_staged_observer.py": "a777d7cb26a235d712a2a24d5b61185d8f02fc4dee7240a4aae5add0bb22fec2"
+  },
+  "source_digest_scope": "read after the failed run; this agent made no intervening source edits",
+  "threshold_changed": false,
+  "actual_proof_started": false
+}

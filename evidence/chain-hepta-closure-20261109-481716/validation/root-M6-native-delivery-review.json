@@ -1,0 +1,64 @@
+{
+  "schema": "root-M6-native-delivery-byte-review-v1",
+  "observed_at_utc": "2026-11-09T17:40:53.549240+00:00",
+  "source_head": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+  "source_tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1",
+  "archive_sha256": "c59397c89f1ed4e50605dfe337b77d2b63d82309f339ea7fa29f8884c99c16f9",
+  "payload_members_verified": 180,
+  "top_level_counts_from_raw_stdout": {
+    "trnm-crypto-primitives": {
+      "passed": 196,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    "trnm-data-availability": {
+      "passed": 715,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    "trnm-pon-node": {
+      "passed": 1359,
+      "failed": 0,
+      "ignored": 39,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    "trnm-protocol": {
+      "passed": 113,
+      "failed": 0,
+      "ignored": 2,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    "trnm-release-bundle": {
+      "passed": 67,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    }
+  },
+  "total_top_level_counts": {
+    "passed": 2450,
+    "failed": 0,
+    "ignored": 41,
+    "measured": 0,
+    "filtered_out": 0
+  },
+  "nested_summary_counts": {
+    "trnm-crypto-primitives": 0,
+    "trnm-data-availability": 0,
+    "trnm-pon-node": 4,
+    "trnm-protocol": 0,
+    "trnm-release-bundle": 0
+  },
+  "artifact_direct_join_count": 5,
+  "source_provider_and_child_controls_verified": true,
+  "top_level_ignored_is_not_all_depth_unexecuted_count": true,
+  "M5_cause": "unestablished",
+  "service_qualification": false
+}

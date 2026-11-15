@@ -1,0 +1,11 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_w1_staged_observer.py"
+  ],
+  "exit_code": 1,
+  "elapsed_seconds": 4.774529008999707,
+  "capture_scope": "stdout and stderr redirected directly from the actual test process",
+  "expected_tests": 17,
+  "threshold_changed": false
+}

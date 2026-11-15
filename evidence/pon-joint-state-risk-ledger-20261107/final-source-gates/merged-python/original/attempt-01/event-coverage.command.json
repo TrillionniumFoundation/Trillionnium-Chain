@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+    "formal/pon-nakamoto-v1/certificate_event_coverage_tests.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+  "elapsed_seconds": 1.1587239280343056,
+  "exit_code": 0,
+  "name": "event-coverage",
+  "started_at_utc": "2026-11-08T00:11:18.921414+00:00",
+  "streams": {
+    "stderr": {
+      "bytes": 3905,
+      "file": "event-coverage.stderr.log",
+      "sha256": "453fc7845476b4792fe6544c2fc06450874680f83daf0e8de1aa0ef22978adf8"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "event-coverage.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "test_summary_lines": [
+    "Ran 21 tests in 0.973s",
+    "OK"
+  ]
+}

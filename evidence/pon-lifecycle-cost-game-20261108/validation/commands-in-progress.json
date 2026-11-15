@@ -1,0 +1,440 @@
+[
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+      "--output",
+      "/workspace/scratch/68dd104c2e6a/lifecycle-exact-2d71bd9-r1/source-before.json"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 4.264707803726196,
+    "exit_code": 0,
+    "log": "source-before.log",
+    "name": "source-before",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140156.5843642
+  },
+  {
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 0.059319257736206055,
+    "exit_code": 0,
+    "log": "preflight-audit.log",
+    "name": "preflight-audit",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140160.853288
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "formal/pon-nakamoto-v1/test_lifecycle_cost_v1.py",
+      "-v"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 1.5789856910705566,
+    "exit_code": 0,
+    "log": "test_lifecycle_cost_v1.log",
+    "name": "test_lifecycle_cost_v1",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140160.8529863
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "scripts/ci/test_ci_source_integrity.py",
+      "-v"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 3.2034854888916016,
+    "exit_code": 0,
+    "log": "test_ci_source_integrity.log",
+    "name": "test_ci_source_integrity",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140160.8524437
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "formal/pon-nakamoto-v1/test_cell_lottery_cost_audit_v1.py",
+      "-v"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 7.1680052280426025,
+    "exit_code": 0,
+    "log": "test_cell_lottery_cost_audit_v1.log",
+    "name": "test_cell_lottery_cost_audit_v1",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140162.432434
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "formal/pon-nakamoto-v1/test_service_work_settlement_v1.py",
+      "-v"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 5.178824186325073,
+    "exit_code": 0,
+    "log": "test_service_work_settlement_v1.log",
+    "name": "test_service_work_settlement_v1",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140169.600802
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "formal/pon-nakamoto-v1/test_reward_budget_oracle.py",
+      "-v"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 0.12393856048583984,
+    "exit_code": 0,
+    "log": "test_reward_budget_oracle.log",
+    "name": "test_reward_budget_oracle",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140174.7799444
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py",
+      "-v"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 0.19924116134643555,
+    "exit_code": 0,
+    "log": "test_useful_cell_numeric_v1.log",
+    "name": "test_useful_cell_numeric_v1",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140174.9042854
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "formal/pon-nakamoto-v1/test_grouped_cell_operator_v0.py",
+      "-v"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 0.3970322608947754,
+    "exit_code": 0,
+    "log": "test_grouped_cell_operator_v0.log",
+    "name": "test_grouped_cell_operator_v0",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140175.1040926
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "scripts/ci/test_ci_execution.py",
+      "-v"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 24.282384872436523,
+    "exit_code": 0,
+    "log": "test_ci_execution.log",
+    "name": "test_ci_execution",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140164.0562906
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py",
+      "-v"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 15.186976909637451,
+    "exit_code": 0,
+    "log": "test_useful_cell_relation_v1.log",
+    "name": "test_useful_cell_relation_v1",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140175.50149
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "formal/pon-nakamoto-v1/test_useful_cell_execution_v2.py",
+      "-v"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 1.1607000827789307,
+    "exit_code": 0,
+    "log": "test_useful_cell_execution_v2.log",
+    "name": "test_useful_cell_execution_v2",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140190.6889138
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "scripts/ci/test_ci_contract.py",
+      "-v"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 9.882253885269165,
+    "exit_code": 0,
+    "log": "test_ci_contract.log",
+    "name": "test_ci_contract",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140188.3390408
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "formal/pon-nakamoto-v1/test_useful_cell_relation_v2.py",
+      "-v"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 14.36656904220581,
+    "exit_code": 0,
+    "log": "test_useful_cell_relation_v2.log",
+    "name": "test_useful_cell_relation_v2",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140191.8500578
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 50.94752812385559,
+    "exit_code": 0,
+    "log": "repository.log",
+    "name": "repository",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140160.9129796
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 0.07026052474975586,
+    "exit_code": 0,
+    "log": "ci-contract-static.log",
+    "name": "ci-contract-static",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140211.8609438
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 0.05956554412841797,
+    "exit_code": 0,
+    "log": "distributed-source-inventory.log",
+    "name": "distributed-source-inventory",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140211.9316056
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "2d71bd943e88fb25d19c2d86feb09b86657a87d3^",
+      "2d71bd943e88fb25d19c2d86feb09b86657a87d3"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 0.02266669273376465,
+    "exit_code": 0,
+    "log": "diff-whitespace.log",
+    "name": "diff-whitespace",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140211.992015
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "formal/pon-nakamoto-v1/experiments/lifecycle_cost_game_v1.py",
+      "--output",
+      "/workspace/scratch/68dd104c2e6a/lifecycle-exact-2d71bd9-r1/reproduction"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 12.438883066177368,
+    "exit_code": 0,
+    "log": "reproduction.log",
+    "name": "reproduction",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140212.0151033
+  },
+  {
+    "command": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "cwd_relative_to_source": "trillionnium",
+    "duration_seconds": 0.22611594200134277,
+    "exit_code": 0,
+    "log": "cargo-metadata.log",
+    "name": "cargo-metadata",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140224.4544787
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "formal/pon-nakamoto-v1/test_useful_cell_relation_v2_adversarial.py",
+      "-v"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 23.19337034225464,
+    "exit_code": 0,
+    "log": "test_useful_cell_relation_v2_adversarial.log",
+    "name": "test_useful_cell_relation_v2_adversarial",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140206.2170155
+  },
+  {
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd_relative_to_source": "trillionnium",
+    "duration_seconds": 11.976901769638062,
+    "exit_code": 0,
+    "log": "cargo-format.log",
+    "name": "cargo-format",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140224.6810741
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py",
+      "-v"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 8.400491714477539,
+    "exit_code": 0,
+    "log": "test_useful_cell_source_guard_v2.log",
+    "name": "test_useful_cell_source_guard_v2",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140229.4112213
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "formal/pon-nakamoto-v1/test_useful_cell_multimodal_execution_v3.py",
+      "-v"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 0.41156911849975586,
+    "exit_code": 0,
+    "log": "test_useful_cell_multimodal_execution_v3.log",
+    "name": "test_useful_cell_multimodal_execution_v3",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140237.812149
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py",
+      "-v"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 29.302307844161987,
+    "exit_code": 0,
+    "log": "test_useful_cell_multimodal_relation_v3.log",
+    "name": "test_useful_cell_multimodal_relation_v3",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140238.2241883
+  },
+  {
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd_relative_to_source": "trillionnium",
+    "duration_seconds": 93.15888953208923,
+    "exit_code": 0,
+    "log": "cargo-clippy.log",
+    "name": "cargo-clippy",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140236.65888
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-crypto-primitives",
+      "--lib"
+    ],
+    "cwd_relative_to_source": "trillionnium",
+    "duration_seconds": 50.62282371520996,
+    "exit_code": 0,
+    "log": "crypto-native.log",
+    "name": "crypto-native",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140329.8183472
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "cell_native_v1"
+    ],
+    "cwd_relative_to_source": "trillionnium",
+    "duration_seconds": 123.60490083694458,
+    "exit_code": 0,
+    "log": "cell-native.log",
+    "name": "cell-native",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140380.4417174
+  },
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+      "--output",
+      "/workspace/scratch/68dd104c2e6a/lifecycle-exact-2d71bd9-r1/source-after.json"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 1.9270765781402588,
+    "exit_code": 0,
+    "log": "source-after.log",
+    "name": "source-after",
+    "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+    "started_unix_seconds": 1794140504.0481513
+  }
+]

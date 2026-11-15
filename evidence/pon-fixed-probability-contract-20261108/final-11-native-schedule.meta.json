@@ -1,0 +1,27 @@
+{
+  "label": "final-11-native-schedule",
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--test",
+    "research_work_schedule",
+    "--",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "exit": 0,
+  "duration_seconds": 2.435291500063613,
+  "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+  "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+  "native_passed_counts": [
+    12
+  ],
+  "unittest_counts": []
+}

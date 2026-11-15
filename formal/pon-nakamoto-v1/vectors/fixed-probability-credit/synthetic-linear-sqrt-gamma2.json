@@ -1,0 +1,137 @@
+{
+  "models": [
+    {
+      "family": "classical",
+      "gamma": "2",
+      "id": "classical",
+      "points": [
+        {
+          "lower": {
+            "basis": "assumption",
+            "reference": "Synthetic assumption on the finite grid {1,16}: costs are {1,16}. These are assumed complete-cost bounds for the declared success experiment, not measured or proved MU1 costs. u=16 is a synthetic comparison scale, not a claim that MU1 implements that work scale. No interpolation is asserted.",
+            "value": "1"
+          },
+          "resource_model": "synthetic-classical-lifecycle-cost-v1",
+          "scale_id": "u1",
+          "scope": {
+            "epoch_scope": "synthetic-single-lifecycle-with-carried-state-v1",
+            "profile_id": "synthetic-fixed-probability-credit-v1",
+            "relation_id": "synthetic-linear-sqrt-costs-v1",
+            "success_standard": {
+              "cost_accounting": "unconditional_including_failures",
+              "kind": "fixed_success_probability",
+              "probability": "1/2"
+            }
+          },
+          "upper": {
+            "basis": "assumption",
+            "reference": "Synthetic assumption on the finite grid {1,16}: costs are {1,16}. These are assumed complete-cost bounds for the declared success experiment, not measured or proved MU1 costs. u=16 is a synthetic comparison scale, not a claim that MU1 implements that work scale. No interpolation is asserted.",
+            "value": "1"
+          }
+        },
+        {
+          "lower": {
+            "basis": "assumption",
+            "reference": "Synthetic assumption on the finite grid {1,16}: costs are {1,16}. These are assumed complete-cost bounds for the declared success experiment, not measured or proved MU1 costs. u=16 is a synthetic comparison scale, not a claim that MU1 implements that work scale. No interpolation is asserted.",
+            "value": "16"
+          },
+          "resource_model": "synthetic-classical-lifecycle-cost-v1",
+          "scale_id": "u16",
+          "scope": {
+            "epoch_scope": "synthetic-single-lifecycle-with-carried-state-v1",
+            "profile_id": "synthetic-fixed-probability-credit-v1",
+            "relation_id": "synthetic-linear-sqrt-costs-v1",
+            "success_standard": {
+              "cost_accounting": "unconditional_including_failures",
+              "kind": "fixed_success_probability",
+              "probability": "1/2"
+            }
+          },
+          "upper": {
+            "basis": "assumption",
+            "reference": "Synthetic assumption on the finite grid {1,16}: costs are {1,16}. These are assumed complete-cost bounds for the declared success experiment, not measured or proved MU1 costs. u=16 is a synthetic comparison scale, not a claim that MU1 implements that work scale. No interpolation is asserted.",
+            "value": "16"
+          }
+        }
+      ],
+      "resource_model": "synthetic-classical-lifecycle-cost-v1"
+    },
+    {
+      "family": "quantum",
+      "gamma": "2",
+      "id": "quantum",
+      "points": [
+        {
+          "lower": {
+            "basis": "assumption",
+            "reference": "Synthetic assumption on the finite grid {1,16}: costs are {1,4}. These are assumed complete-cost bounds for the declared success experiment, not measured or proved MU1 or quantum costs. u=16 is a synthetic comparison scale, not a claim that MU1 implements that work scale. No interpolation is asserted.",
+            "value": "1"
+          },
+          "resource_model": "synthetic-quantum-lifecycle-cost-v1",
+          "scale_id": "u1",
+          "scope": {
+            "epoch_scope": "synthetic-single-lifecycle-with-carried-state-v1",
+            "profile_id": "synthetic-fixed-probability-credit-v1",
+            "relation_id": "synthetic-linear-sqrt-costs-v1",
+            "success_standard": {
+              "cost_accounting": "unconditional_including_failures",
+              "kind": "fixed_success_probability",
+              "probability": "1/2"
+            }
+          },
+          "upper": {
+            "basis": "assumption",
+            "reference": "Synthetic assumption on the finite grid {1,16}: costs are {1,4}. These are assumed complete-cost bounds for the declared success experiment, not measured or proved MU1 or quantum costs. u=16 is a synthetic comparison scale, not a claim that MU1 implements that work scale. No interpolation is asserted.",
+            "value": "1"
+          }
+        },
+        {
+          "lower": {
+            "basis": "assumption",
+            "reference": "Synthetic assumption on the finite grid {1,16}: costs are {1,4}. These are assumed complete-cost bounds for the declared success experiment, not measured or proved MU1 or quantum costs. u=16 is a synthetic comparison scale, not a claim that MU1 implements that work scale. No interpolation is asserted.",
+            "value": "4"
+          },
+          "resource_model": "synthetic-quantum-lifecycle-cost-v1",
+          "scale_id": "u16",
+          "scope": {
+            "epoch_scope": "synthetic-single-lifecycle-with-carried-state-v1",
+            "profile_id": "synthetic-fixed-probability-credit-v1",
+            "relation_id": "synthetic-linear-sqrt-costs-v1",
+            "success_standard": {
+              "cost_accounting": "unconditional_including_failures",
+              "kind": "fixed_success_probability",
+              "probability": "1/2"
+            }
+          },
+          "upper": {
+            "basis": "assumption",
+            "reference": "Synthetic assumption on the finite grid {1,16}: costs are {1,4}. These are assumed complete-cost bounds for the declared success experiment, not measured or proved MU1 or quantum costs. u=16 is a synthetic comparison scale, not a claim that MU1 implements that work scale. No interpolation is asserted.",
+            "value": "4"
+          }
+        }
+      ],
+      "resource_model": "synthetic-quantum-lifecycle-cost-v1"
+    }
+  ],
+  "scales": [
+    {
+      "id": "u1",
+      "units": 1
+    },
+    {
+      "id": "u16",
+      "units": 16
+    }
+  ],
+  "schema": "pon-credit-feasibility-v1",
+  "scope": {
+    "epoch_scope": "synthetic-single-lifecycle-with-carried-state-v1",
+    "profile_id": "synthetic-fixed-probability-credit-v1",
+    "relation_id": "synthetic-linear-sqrt-costs-v1",
+    "success_standard": {
+      "cost_accounting": "unconditional_including_failures",
+      "kind": "fixed_success_probability",
+      "probability": "1/2"
+    }
+  }
+}

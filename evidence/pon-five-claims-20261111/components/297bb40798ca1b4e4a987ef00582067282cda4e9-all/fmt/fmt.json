@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "fmt",
+    "--manifest-path",
+    "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "child_reaped": true,
+  "cwd": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb",
+  "elapsed_ns": 21333232659,
+  "exit_code": 0,
+  "label": "fmt",
+  "owned_pid": 106528,
+  "performance_measurement": false,
+  "started_unix_ns": 1794394775528854056,
+  "status": "command_succeeded",
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/fmt/fmt.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 0,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/fmt/fmt.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

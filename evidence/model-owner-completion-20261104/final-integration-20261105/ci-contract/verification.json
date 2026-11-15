@@ -1,0 +1,120 @@
+{
+  "after": {
+    "dirty": false,
+    "head": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1",
+    "observed_at_utc": "2026-11-05T02:58:59.276535+00:00",
+    "staged_diff": "",
+    "status_porcelain": "",
+    "tracked_diff": "",
+    "tree": "30309765887b6d2f54a5e37d58f8608dc60a2518"
+  },
+  "after_preflight": {
+    "dirty": false,
+    "head": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1",
+    "observed_at_utc": "2026-11-05T02:58:49.636591+00:00",
+    "staged_diff": "",
+    "status_porcelain": "",
+    "tracked_diff": "",
+    "tree": "30309765887b6d2f54a5e37d58f8608dc60a2518"
+  },
+  "after_suite_before_cleanup": {
+    "dirty": false,
+    "head": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1",
+    "observed_at_utc": "2026-11-05T02:58:59.227116+00:00",
+    "staged_diff": "",
+    "status_porcelain": "",
+    "tracked_diff": "",
+    "tree": "30309765887b6d2f54a5e37d58f8608dc60a2518"
+  },
+  "before": {
+    "dirty": false,
+    "head": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1",
+    "observed_at_utc": "2026-11-05T02:58:49.514978+00:00",
+    "staged_diff": "",
+    "status_porcelain": "",
+    "tracked_diff": "",
+    "tree": "30309765887b6d2f54a5e37d58f8608dc60a2518"
+  },
+  "cleanup": {
+    "completed": true,
+    "finished_at_utc": "2026-11-05T02:58:59.249356+00:00",
+    "only_this_run_tmpdir_contents": true,
+    "remaining_entries_after_cleanup": [],
+    "remaining_fixture_roots_before_cleanup": [],
+    "scope": "/dev/shm/trnm-model-owner-f4976366a32a-ci-contract-tmp",
+    "started_at_utc": "2026-11-05T02:58:59.249276+00:00"
+  },
+  "commands": {
+    "ci_contract": {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "cwd": "/workspace/scratch/f4976366a32a/chain",
+      "elapsed_seconds": 9.538255014000242,
+      "environment_overrides": {
+        "TMPDIR": "/dev/shm/trnm-model-owner-f4976366a32a-ci-contract-tmp"
+      },
+      "exit_code": 0,
+      "finished_at_utc": "2026-11-05T02:58:59.196537+00:00",
+      "log": {
+        "bytes": 16317,
+        "path": "/dev/shm/trnm-model-owner-f4976366a32a-observations/final-ci-contract/ci-contract.log",
+        "sha256": "bcccdedfda2ee3a5c7d801baaf4c5964c0d607b098c958db26382e5841460616"
+      },
+      "pid": 91,
+      "started_at_utc": "2026-11-05T02:58:49.658288+00:00",
+      "stdout_stderr_combined": true
+    },
+    "preflight": {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/workspace/scratch/f4976366a32a/chain",
+      "elapsed_seconds": 0.06815362000088498,
+      "environment_overrides": {
+        "TMPDIR": "/dev/shm/trnm-model-owner-f4976366a32a-ci-contract-tmp"
+      },
+      "exit_code": 0,
+      "finished_at_utc": "2026-11-05T02:58:49.603226+00:00",
+      "log": {
+        "bytes": 173,
+        "path": "/dev/shm/trnm-model-owner-f4976366a32a-observations/final-ci-contract/preflight.log",
+        "sha256": "5f1477c24871b1979737472b5460465ad951654049980d272902ce657a07e81a"
+      },
+      "pid": 45,
+      "started_at_utc": "2026-11-05T02:58:49.535089+00:00",
+      "stdout_stderr_combined": true
+    }
+  },
+  "counts": {
+    "errors": 0,
+    "expected_failures": 0,
+    "failures": 0,
+    "passed": 98,
+    "raw_run_summary": "Ran 98 tests in 9.443s",
+    "raw_terminal_summary": "OK",
+    "reported_seconds": 9.443,
+    "skipped": 0,
+    "total": 98,
+    "unexpected_successes": 0
+  },
+  "expected_head": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1",
+  "final_tmpfs_free_bytes": 1498271744,
+  "finished_at_utc": "2026-11-05T02:58:59.300095+00:00",
+  "initial_tmpfs_free_bytes": 1498296320,
+  "no_source_edits_requested": true,
+  "outcome": "PASS",
+  "schema": "exact-source-ci-contract-verification-v1",
+  "source_state_unchanged": true,
+  "started_at_utc": "2026-11-05T02:58:49.534882+00:00",
+  "suite_runs_authorized": 1,
+  "suite_runs_started": 1,
+  "temporary_root": "/dev/shm/trnm-model-owner-f4976366a32a-ci-contract-tmp",
+  "temporary_root_identity": {
+    "device": 26,
+    "inode": 103581
+  }
+}

@@ -1,0 +1,424 @@
+{
+  "artifacts": [
+    {
+      "archive_sha256": "f7ed4b59dc5c8f435fc475a43907f367766457ab92408d85179fc74cf2d3dfad",
+      "artifact_digest_verified": true,
+      "artifact_id": 13597676542,
+      "files": [
+        "fresh-service/build.log",
+        "fresh-service/fresh/baseline/independent-client/native.sqlite",
+        "fresh-service/fresh/baseline/independent-client/owner.lock",
+        "fresh-service/fresh/baseline/receiver/native.sqlite",
+        "fresh-service/fresh/baseline/receiver/owner.lock",
+        "fresh-service/fresh/pressure/independent-client/native.sqlite",
+        "fresh-service/fresh/pressure/independent-client/owner.lock",
+        "fresh-service/fresh/pressure/receiver/native.sqlite",
+        "fresh-service/fresh/pressure/receiver/owner.lock",
+        "fresh-service/fresh/producer/native.sqlite",
+        "fresh-service/fresh/producer/owner.lock",
+        "fresh-service/fresh/report.json",
+        "fresh-service/fresh.log",
+        "fresh-service/manifest.json",
+        "fresh-service/original/baseline/independent-client/native.sqlite",
+        "fresh-service/original/baseline/independent-client/owner.lock",
+        "fresh-service/original/baseline/receiver/native.sqlite",
+        "fresh-service/original/baseline/receiver/owner.lock",
+        "fresh-service/original/pressure/independent-client/native.sqlite",
+        "fresh-service/original/pressure/independent-client/owner.lock",
+        "fresh-service/original/pressure/receiver/native.sqlite",
+        "fresh-service/original/pressure/receiver/owner.lock",
+        "fresh-service/original/producer/native.sqlite",
+        "fresh-service/original/producer/owner.lock",
+        "fresh-service/original/report.json",
+        "fresh-service/original.log",
+        "fresh-service/public_v3_from_zero",
+        "fresh-service-controls.log",
+        "fresh-service-host/actual-systemd-parent-after.log",
+        "fresh-service-host/actual-systemd-parent.log",
+        "fresh-service-host/after-provision.json",
+        "fresh-service-host/before-provision.json",
+        "fresh-service-host/child-final-load-state.log",
+        "fresh-service-host/child-load-state.log",
+        "fresh-service-host/child-result.json",
+        "fresh-service-host/controller-result.json",
+        "fresh-service-host/inside-after.json",
+        "fresh-service-host/inside-before.json",
+        "fresh-service-host/install-reviewed-unit.log",
+        "fresh-service-host/outside-after.json",
+        "fresh-service-host/parent-properties.log",
+        "fresh-service-host/prepare-build/process.json",
+        "fresh-service-host/prepare-build/stderr",
+        "fresh-service-host/prepare-build/stdout",
+        "fresh-service-host/prepare-build.json",
+        "fresh-service-host/seal-parent-directory.log",
+        "fresh-service-host/seal-parent-receipt.log",
+        "fresh-service-host/start-fixed-parent.log",
+        "fresh-service-host/systemd-reload.log",
+        "fresh-service-host/systemd-run.log",
+        "fresh-service-host/unprovisioned-parent.json",
+        "original-host-controls.log",
+        "original-native-controls.log",
+        "preflight.log",
+        "public-fixture-parent.json",
+        "source-after.json",
+        "source.json"
+      ],
+      "job_id": 128580281914,
+      "json_statuses": [
+        {
+          "fields": {},
+          "path": "fresh-service/fresh/report.json",
+          "schema": "public-v3-fresh-challenge-confirmation-pressure-v1"
+        },
+        {
+          "fields": {
+            "all_named_tests_passed": false,
+            "failures": [
+              "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+              "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+            ],
+            "passed": false
+          },
+          "path": "fresh-service/manifest.json",
+          "schema": "trnm-w1-fresh-service-execution-v1"
+        },
+        {
+          "fields": {},
+          "path": "fresh-service/original/report.json",
+          "schema": "public-v3-signed-confirmation-pressure-v1"
+        },
+        {
+          "fields": {
+            "read_errors": {}
+          },
+          "path": "fresh-service-host/after-provision.json",
+          "schema": "trnm-ci-original-public-host-observation-v1"
+        },
+        {
+          "fields": {
+            "read_errors": {
+              "/run/systemd/system/trnmponpublic.slice": "[Errno 2] No such file or directory: '/run/systemd/system/trnmponpublic.slice'",
+              "/sys/fs/cgroup/trnmponpublic.slice": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice'",
+              "/sys/fs/cgroup/trnmponpublic.slice/cgroup.events": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cgroup.events'",
+              "/sys/fs/cgroup/trnmponpublic.slice/cpu.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.max'",
+              "/sys/fs/cgroup/trnmponpublic.slice/cpu.max.burst": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.max.burst'",
+              "/sys/fs/cgroup/trnmponpublic.slice/cpu.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.stat'",
+              "/sys/fs/cgroup/trnmponpublic.slice/memory.current": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.current'",
+              "/sys/fs/cgroup/trnmponpublic.slice/memory.events": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.events'",
+              "/sys/fs/cgroup/trnmponpublic.slice/memory.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.max'",
+              "/sys/fs/cgroup/trnmponpublic.slice/memory.swap.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.swap.max'",
+              "/sys/fs/cgroup/trnmponpublic.slice/pids.current": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/pids.current'",
+              "/sys/fs/cgroup/trnmponpublic.slice/pids.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/pids.max'"
+            }
+          },
+          "path": "fresh-service-host/before-provision.json",
+          "schema": "trnm-ci-original-public-host-observation-v1"
+        },
+        {
+          "fields": {
+            "host_errors": [],
+            "native_child_exit": 1
+          },
+          "path": "fresh-service-host/child-result.json",
+          "schema": "trnm-ci-original-public-host-child-v1"
+        },
+        {
+          "fields": {
+            "failure": null,
+            "final_host_errors": [],
+            "passed": false,
+            "systemd_run_exit": 1
+          },
+          "path": "fresh-service-host/controller-result.json",
+          "schema": "trnm-ci-original-public-host-controller-v2"
+        },
+        {
+          "fields": {
+            "read_errors": {}
+          },
+          "path": "fresh-service-host/inside-after.json",
+          "schema": "trnm-ci-original-public-host-observation-v1"
+        },
+        {
+          "fields": {
+            "read_errors": {}
+          },
+          "path": "fresh-service-host/inside-before.json",
+          "schema": "trnm-ci-original-public-host-observation-v1"
+        },
+        {
+          "fields": {
+            "read_errors": {}
+          },
+          "path": "fresh-service-host/outside-after.json",
+          "schema": "trnm-ci-original-public-host-observation-v1"
+        },
+        {
+          "fields": {
+            "exit_code": 0
+          },
+          "path": "fresh-service-host/prepare-build/process.json",
+          "schema": null
+        },
+        {
+          "fields": {
+            "failure_type": null,
+            "source_error": null
+          },
+          "path": "fresh-service-host/prepare-build.json",
+          "schema": "trnm-ci-original-native-build-preparation-v1"
+        },
+        {
+          "fields": {},
+          "path": "fresh-service-host/unprovisioned-parent.json",
+          "schema": null
+        },
+        {
+          "fields": {},
+          "path": "public-fixture-parent.json",
+          "schema": "trnm-ci-public-fixture-parent-lease-v1"
+        },
+        {
+          "fields": {},
+          "path": "source-after.json",
+          "schema": "trnm-ci-source-v1"
+        },
+        {
+          "fields": {},
+          "path": "source.json",
+          "schema": "trnm-ci-source-v1"
+        }
+      ],
+      "name": "w1-fresh-service-head-b5c655ebe9611b3d62cf739e61e6867decc053e3-1"
+    },
+    {
+      "archive_sha256": "4b87ab491989d30ace5b06c6d6e719ae33415cc942630eaf5bad111ede37b6fd",
+      "artifact_digest_verified": true,
+      "artifact_id": 13597946101,
+      "files": [
+        "fresh-service/build.log",
+        "fresh-service/fresh/baseline/independent-client/native.sqlite",
+        "fresh-service/fresh/baseline/independent-client/owner.lock",
+        "fresh-service/fresh/baseline/receiver/native.sqlite",
+        "fresh-service/fresh/baseline/receiver/owner.lock",
+        "fresh-service/fresh/pressure/independent-client/native.sqlite",
+        "fresh-service/fresh/pressure/independent-client/owner.lock",
+        "fresh-service/fresh/pressure/receiver/native.sqlite",
+        "fresh-service/fresh/pressure/receiver/owner.lock",
+        "fresh-service/fresh/producer/native.sqlite",
+        "fresh-service/fresh/producer/owner.lock",
+        "fresh-service/fresh/report.json",
+        "fresh-service/fresh.log",
+        "fresh-service/manifest.json",
+        "fresh-service/original/baseline/independent-client/native.sqlite",
+        "fresh-service/original/baseline/independent-client/owner.lock",
+        "fresh-service/original/baseline/receiver/native.sqlite",
+        "fresh-service/original/baseline/receiver/owner.lock",
+        "fresh-service/original/pressure/independent-client/native.sqlite",
+        "fresh-service/original/pressure/independent-client/owner.lock",
+        "fresh-service/original/pressure/receiver/native.sqlite",
+        "fresh-service/original/pressure/receiver/owner.lock",
+        "fresh-service/original/producer/native.sqlite",
+        "fresh-service/original/producer/owner.lock",
+        "fresh-service/original/report.json",
+        "fresh-service/original.log",
+        "fresh-service/public_v3_from_zero",
+        "fresh-service-controls.log",
+        "fresh-service-host/actual-systemd-parent-after.log",
+        "fresh-service-host/actual-systemd-parent.log",
+        "fresh-service-host/after-provision.json",
+        "fresh-service-host/before-provision.json",
+        "fresh-service-host/child-final-load-state.log",
+        "fresh-service-host/child-load-state.log",
+        "fresh-service-host/child-result.json",
+        "fresh-service-host/controller-result.json",
+        "fresh-service-host/inside-after.json",
+        "fresh-service-host/inside-before.json",
+        "fresh-service-host/install-reviewed-unit.log",
+        "fresh-service-host/outside-after.json",
+        "fresh-service-host/parent-properties.log",
+        "fresh-service-host/prepare-build/process.json",
+        "fresh-service-host/prepare-build/stderr",
+        "fresh-service-host/prepare-build/stdout",
+        "fresh-service-host/prepare-build.json",
+        "fresh-service-host/seal-parent-directory.log",
+        "fresh-service-host/seal-parent-receipt.log",
+        "fresh-service-host/start-fixed-parent.log",
+        "fresh-service-host/systemd-reload.log",
+        "fresh-service-host/systemd-run.log",
+        "fresh-service-host/unprovisioned-parent.json",
+        "original-host-controls.log",
+        "original-native-controls.log",
+        "preflight.log",
+        "public-fixture-parent.json",
+        "source-after.json",
+        "source.json"
+      ],
+      "job_id": 128580282001,
+      "json_statuses": [
+        {
+          "fields": {},
+          "path": "fresh-service/fresh/report.json",
+          "schema": "public-v3-fresh-challenge-confirmation-pressure-v1"
+        },
+        {
+          "fields": {
+            "all_named_tests_passed": false,
+            "failures": [
+              "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+              "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+            ],
+            "passed": false
+          },
+          "path": "fresh-service/manifest.json",
+          "schema": "trnm-w1-fresh-service-execution-v1"
+        },
+        {
+          "fields": {},
+          "path": "fresh-service/original/report.json",
+          "schema": "public-v3-signed-confirmation-pressure-v1"
+        },
+        {
+          "fields": {
+            "read_errors": {}
+          },
+          "path": "fresh-service-host/after-provision.json",
+          "schema": "trnm-ci-original-public-host-observation-v1"
+        },
+        {
+          "fields": {
+            "read_errors": {
+              "/run/systemd/system/trnmponpublic.slice": "[Errno 2] No such file or directory: '/run/systemd/system/trnmponpublic.slice'",
+              "/sys/fs/cgroup/trnmponpublic.slice": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice'",
+              "/sys/fs/cgroup/trnmponpublic.slice/cgroup.events": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cgroup.events'",
+              "/sys/fs/cgroup/trnmponpublic.slice/cpu.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.max'",
+              "/sys/fs/cgroup/trnmponpublic.slice/cpu.max.burst": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.max.burst'",
+              "/sys/fs/cgroup/trnmponpublic.slice/cpu.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.stat'",
+              "/sys/fs/cgroup/trnmponpublic.slice/memory.current": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.current'",
+              "/sys/fs/cgroup/trnmponpublic.slice/memory.events": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.events'",
+              "/sys/fs/cgroup/trnmponpublic.slice/memory.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.max'",
+              "/sys/fs/cgroup/trnmponpublic.slice/memory.swap.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.swap.max'",
+              "/sys/fs/cgroup/trnmponpublic.slice/pids.current": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/pids.current'",
+              "/sys/fs/cgroup/trnmponpublic.slice/pids.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/pids.max'"
+            }
+          },
+          "path": "fresh-service-host/before-provision.json",
+          "schema": "trnm-ci-original-public-host-observation-v1"
+        },
+        {
+          "fields": {
+            "host_errors": [],
+            "native_child_exit": 1
+          },
+          "path": "fresh-service-host/child-result.json",
+          "schema": "trnm-ci-original-public-host-child-v1"
+        },
+        {
+          "fields": {
+            "failure": null,
+            "final_host_errors": [],
+            "passed": false,
+            "systemd_run_exit": 1
+          },
+          "path": "fresh-service-host/controller-result.json",
+          "schema": "trnm-ci-original-public-host-controller-v2"
+        },
+        {
+          "fields": {
+            "read_errors": {}
+          },
+          "path": "fresh-service-host/inside-after.json",
+          "schema": "trnm-ci-original-public-host-observation-v1"
+        },
+        {
+          "fields": {
+            "read_errors": {}
+          },
+          "path": "fresh-service-host/inside-before.json",
+          "schema": "trnm-ci-original-public-host-observation-v1"
+        },
+        {
+          "fields": {
+            "read_errors": {}
+          },
+          "path": "fresh-service-host/outside-after.json",
+          "schema": "trnm-ci-original-public-host-observation-v1"
+        },
+        {
+          "fields": {
+            "exit_code": 0
+          },
+          "path": "fresh-service-host/prepare-build/process.json",
+          "schema": null
+        },
+        {
+          "fields": {
+            "failure_type": null,
+            "source_error": null
+          },
+          "path": "fresh-service-host/prepare-build.json",
+          "schema": "trnm-ci-original-native-build-preparation-v1"
+        },
+        {
+          "fields": {},
+          "path": "fresh-service-host/unprovisioned-parent.json",
+          "schema": null
+        },
+        {
+          "fields": {},
+          "path": "public-fixture-parent.json",
+          "schema": "trnm-ci-public-fixture-parent-lease-v1"
+        },
+        {
+          "fields": {},
+          "path": "source-after.json",
+          "schema": "trnm-ci-source-v1"
+        },
+        {
+          "fields": {},
+          "path": "source.json",
+          "schema": "trnm-ci-source-v1"
+        }
+      ],
+      "name": "w1-fresh-service-prospective-merge-b5adba8cfe5307675aac8482aa569312354bb3e4-1"
+    }
+  ],
+  "head": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "jobs": [
+    {
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T00:50:51Z",
+          "conclusion": "failure",
+          "name": "Execute original and fresh service with original Host resources",
+          "number": 7,
+          "started_at": "2026-11-08T00:46:42Z",
+          "status": "completed"
+        }
+      ],
+      "job_id": 128580281914,
+      "name": "W1 fresh challenge service (x64, head)"
+    },
+    {
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T00:51:42Z",
+          "conclusion": "failure",
+          "name": "Execute original and fresh service with original Host resources",
+          "number": 7,
+          "started_at": "2026-11-08T00:46:58Z",
+          "status": "completed"
+        }
+      ],
+      "job_id": 128580282001,
+      "name": "W1 fresh challenge service (x64, prospective-merge)"
+    }
+  ],
+  "source_differences": {
+    "host": false,
+    "native-test": false,
+    "runner": false
+  },
+  "workflow_bytes_equal_base": true,
+  "workflow_path": ".github/workflows/pon-w1-work-security.yml"
+}

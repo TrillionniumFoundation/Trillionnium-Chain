@@ -1,0 +1,31 @@
+{
+  "schema": "history-exact-source-native-build-v1",
+  "source_commit": "d5a4652d3b3fd3aa4015b747d865aae906933851",
+  "source_tree": "f3bc1bfa0136866fa5e4ba73cdd37da53a738452",
+  "source_manifest_sha256": "911a2e3bc445d40fad3fdcf3d0f3f02a324e9ede6fd96734cf92d2c281299e50",
+  "source_paths": 1034,
+  "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--no-run",
+    "--offline",
+    "--locked",
+    "--config",
+    "profile.test.package.trnm-pon-node.debug=0",
+    "--message-format=json"
+  ],
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "cargo_incremental": "0",
+  "jobs": 2,
+  "started_utc": "2026-10-28T00:05:12.459160+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 206.49188630799472,
+  "binary": "/tmp/target-history-56818e4fba76/owner-next-d5a4652d3b-trnm-pon-node",
+  "binary_bytes": 126550696,
+  "binary_sha256": "0b3227680593caa2bc51fdc29a1abe8e78511a7efe704f445f6f5bfbad30434d"
+}

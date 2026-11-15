@@ -1,0 +1,51 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell-082545a3bcb4bee9",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "child_reaped": true,
+  "cwd": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability",
+  "dispatch_object": {
+    "bytes": 1051240,
+    "device": 2050,
+    "inode": 52884537,
+    "sha256": "15274830ac477a532b00e1787db88e9f2af0d694182af43b1882de27f8958ae6"
+  },
+  "dispatch_object_after_sha256": "15274830ac477a532b00e1787db88e9f2af0d694182af43b1882de27f8958ae6",
+  "dispatch_object_stable": true,
+  "elapsed_ns": 15695239,
+  "exit_code": 0,
+  "label": "10-trnm-cell-native",
+  "native_observation": {
+    "bytes": 1051240,
+    "device": 2050,
+    "exe_link": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell-082545a3bcb4bee9",
+    "executable_opened_monotonic_ns": 1472178466625636,
+    "hash_finished_monotonic_ns": 1472178471494699,
+    "inode": 52884537,
+    "observation_started_monotonic_ns": 1472178466542889,
+    "process": {
+      "parent_pid": 68035,
+      "pid": 91825,
+      "start_ticks": 147217846
+    },
+    "process_binding_finished_monotonic_ns": 1472178466660883,
+    "sha256": "15274830ac477a532b00e1787db88e9f2af0d694182af43b1882de27f8958ae6",
+    "status": "OBSERVED"
+  },
+  "owned_pid": 91825,
+  "performance_measurement": false,
+  "started_unix_ns": 1794394512468409979,
+  "status": "command_succeeded",
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/10-trnm-cell-native.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 113,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/10-trnm-cell-native.stdout.log",
+    "sha256": "df166913f47ff1f04202cae9b31df67ed272d692d99a0023a8117dc3029100dd"
+  }
+}

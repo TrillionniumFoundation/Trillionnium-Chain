@@ -1,0 +1,48 @@
+{
+  "schema": "pon-work-native-setup-observations-v1",
+  "scope": "transcribed setup observations; not raw command logs or security evidence",
+  "base_commit": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+  "observations": [
+    {
+      "action": "preflight before asynchronous checkout had completed",
+      "exit_code": 127,
+      "result": "scripts/project-preflight.sh not yet present",
+      "resolution": "waited for the isolated checkout to complete"
+    },
+    {
+      "action": "preflight on local shared clone before origin configuration",
+      "exit_code": 2,
+      "result": "origin mismatch: clone still pointed to its local source",
+      "resolution": "set origin to the intended canonical GitHub repository, then preflight passed"
+    },
+    {
+      "action": "heptaruntime process start with a bare executable name",
+      "result": "INVALID_ARGUMENT: executable must be absolute",
+      "resolution": "used the configured host's absolute executable path"
+    },
+    {
+      "action": "existing GitHub CLI read of PR 774 on the configured desktop and main hosts",
+      "result": "404 Not Found",
+      "resolution": "no credential or policy mutation; used the existing authorized Git transport"
+    },
+    {
+      "action": "heptaruntime main Git ls-remote",
+      "result": "PASS",
+      "remote": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+      "refs": {
+        "refs/heads/fix/chain-pon-work-scale-contract-20261107": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+        "refs/pull/774/head": "2789e9d9999920d858c1b65d3bff29122079cb4e"
+      }
+    },
+    {
+      "action": "staged whitespace check",
+      "exit_code": 2,
+      "result": "one imported Markdown document and an unmodified raw Cargo stdout ended with an extra empty line",
+      "resolution": "removed only the document trailing empty line; stored the raw stdout losslessly as gzip and retained its original byte hash"
+    }
+  ],
+  "cloud_compute_jobs_submitted": false,
+  "compute_scope": "bounded local CPU/native execution; no additional Colab or Kaggle resource was needed",
+  "remote_policy_mutated": false,
+  "production_activation": false
+}

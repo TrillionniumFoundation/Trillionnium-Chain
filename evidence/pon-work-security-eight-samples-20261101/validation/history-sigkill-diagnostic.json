@@ -1,0 +1,115 @@
+{
+  "actions": {
+    "original_logs_modified": false,
+    "processes_killed": false,
+    "retry_executed": false,
+    "source_modified": false
+  },
+  "direct_observations": {
+    "cargo_exit_code": 101,
+    "failed_target": "trnm-pon-node (lib test)",
+    "history_test_result_lines_observed": false,
+    "running_tests_marker_observed": false,
+    "rust_type_or_syntax_diagnostic_observed": false,
+    "rustc_signal": 9,
+    "rustc_signal_name": "SIGKILL",
+    "rustc_signal_observed": true,
+    "wrapper_timed_out": false
+  },
+  "exact_oom_attribution_established": false,
+  "failure_time_resource_snapshot_available": false,
+  "history_tests_executed_in_this_attempt": false,
+  "interpretation": "The recorded rustc SIGKILL prevented completion of the Node lib-test build. Current cgroup memory pressure and cumulative OOM counters support a resource-pressure hypothesis, but no pre-failure snapshot or process-specific kernel OOM record identifies this SIGKILL with a particular OOM event. This is neither a proved History semantic regression nor a passing build/test result.",
+  "next_step": "Root may retry the same pinned History command once after existing builds finish, recording CARGO_BUILD_JOBS=1 as build-concurrency control while preserving default release, locked dependencies, rustc optimization settings and original runtime/test budgets.",
+  "original_log": {
+    "bytes": 3956,
+    "matches_receipt_digest": true,
+    "path": "/tmp/trnm-pon-validation-3bbc/history-original.log",
+    "sha256": "208324668b2de7a900a162c4fc02f283246d44b72fc68e98e6cf81ef7433261a"
+  },
+  "original_receipt": {
+    "command": [
+      "cargo",
+      "test",
+      "--release",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "ingress::history_import::tests",
+      "--",
+      "--test-threads=1"
+    ],
+    "cwd": "/tmp/trnm-pon-security-final/trillionnium",
+    "elapsed_ns": 231192847392,
+    "executed": true,
+    "exit_code": 101,
+    "expected_source": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+    "label": "history-original",
+    "log": "history-original.log",
+    "log_sha256": "208324668b2de7a900a162c4fc02f283246d44b72fc68e98e6cf81ef7433261a",
+    "process_exit_code": 101,
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "timed_out": false
+  },
+  "pre_failure_oom_counter_snapshot_available": false,
+  "resource_sample": {
+    "memory.current": {
+      "available": true,
+      "bytes": 7490019328,
+      "path": "/sys/fs/cgroup/memory.current",
+      "raw": "7490019328"
+    },
+    "memory.events": {
+      "available": true,
+      "counters": {
+        "high": 0,
+        "low": 0,
+        "max": 1570680,
+        "oom": 18,
+        "oom_group_kill": 0,
+        "oom_kill": 2
+      },
+      "path": "/sys/fs/cgroup/memory.events",
+      "raw": "low 0\nhigh 0\nmax 1570680\noom 18\noom_kill 2\noom_group_kill 0"
+    },
+    "memory.events.local": {
+      "available": true,
+      "counters": {
+        "high": 0,
+        "low": 0,
+        "max": 1570680,
+        "oom": 18,
+        "oom_group_kill": 0,
+        "oom_kill": 2
+      },
+      "path": "/sys/fs/cgroup/memory.events.local",
+      "raw": "low 0\nhigh 0\nmax 1570680\noom 18\noom_kill 2\noom_group_kill 0"
+    },
+    "memory.max": {
+      "available": true,
+      "bytes": 8589934592,
+      "path": "/sys/fs/cgroup/memory.max",
+      "raw": "8589934592"
+    },
+    "memory.peak": {
+      "available": true,
+      "bytes": 8592056320,
+      "path": "/sys/fs/cgroup/memory.peak",
+      "raw": "8592056320"
+    },
+    "memory.swap.max": {
+      "available": true,
+      "path": "/sys/fs/cgroup/memory.swap.max",
+      "raw": "max"
+    }
+  },
+  "sample_finished_utc": "2026-11-01T17:24:34.351091+00:00",
+  "sample_scope": "Current enclosing executor cgroup; values read sequentially, not an atomic snapshot or the fixed public service Host envelope.",
+  "sample_started_utc": "2026-11-01T17:24:34.350760+00:00",
+  "schema": "pon-history-build-sigkill-diagnostic-v1",
+  "target_source": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129"
+}

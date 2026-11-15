@@ -1,0 +1,471 @@
+{
+  "archive_or_readback_checks_are_native_test_results": false,
+  "candidate": "f85fea4e8da02404d513d074ceb35ad5292b017b",
+  "captured_utc": "2026-11-06T09:03:58.396546+00:00",
+  "categories": {
+    "archive-collector-history-not-native": {
+      "bytes": 2240,
+      "files": 2
+    },
+    "archive-method": {
+      "bytes": 57833,
+      "files": 3
+    },
+    "ci-target-56897-review": {
+      "bytes": 49250,
+      "files": 21
+    },
+    "combined-ci-contract-validation": {
+      "bytes": 25483,
+      "files": 14
+    },
+    "committed-lock-graphs-e702b917": {
+      "bytes": 4452037,
+      "files": 11
+    },
+    "exact-drivers-and-owner-records": {
+      "bytes": 149957,
+      "files": 10
+    },
+    "exact-final-source-five-graphs-and-material-tests-native-zero": {
+      "bytes": 4468861,
+      "files": 34
+    },
+    "final-authority-document-source-review": {
+      "bytes": 29331,
+      "files": 2
+    },
+    "final-code-ci-2e9deaf1": {
+      "bytes": 2316952,
+      "files": 11
+    },
+    "gha-0eac-evidence-bundle-20261106": {
+      "bytes": 15702007,
+      "files": 1235
+    },
+    "initial-ci-failures-curated-20261106": {
+      "bytes": 619135,
+      "files": 13
+    },
+    "lock-repair-0eac-20261106-v1": {
+      "bytes": 4797209,
+      "files": 69
+    },
+    "lock-repair-0eac-20261106-v2": {
+      "bytes": 2353427,
+      "files": 53
+    },
+    "original-stage-immutable-observations": {
+      "bytes": 4295246,
+      "files": 120
+    },
+    "packaging-scoped-repair": {
+      "bytes": 221122,
+      "files": 36
+    },
+    "prior-source-five-graphs-material-tests-and-json-command-recipe": {
+      "bytes": 4468706,
+      "files": 34
+    },
+    "provenance-and-independent-reviews": {
+      "bytes": 3295136,
+      "files": 24
+    },
+    "quantum-provider-desktop-observations": {
+      "bytes": 3622304,
+      "files": 131
+    },
+    "source-copy-identities-only-no-copied-checkout": {
+      "bytes": 6309,
+      "files": 1
+    },
+    "target-56897-composition": {
+      "bytes": 26483,
+      "files": 12
+    },
+    "workspace-registry-fix-20261106": {
+      "bytes": 65802,
+      "files": 8
+    }
+  },
+  "current_final_head_observations": {
+    "five_locked_offline_graphs_passed": true,
+    "full_source_before_after_equal": true,
+    "isolated_packaging26_3_material_tests_passed": 23,
+    "json_command_recipe": "final-source-validation-2e9deaf1/summary.json",
+    "json_command_recipe_sha256": "5ec6720344df8bf830950036e7dc4b17d4ecf2e2c55cd2b6a6ff4807d3fef491",
+    "native_rust_tests_executed": 0,
+    "outer_temporary_here_document_retained": false,
+    "raw_records": "final-source-validation-f85fea4e",
+    "recipe_scope": "The prior JSON supplied only argv; f85 replaced head/output paths and independently reran every recorded command. Its original argv/logs/source verifier are retained; the outer temporary here-document bytes were not saved.",
+    "summary_sha256": "c12373cd113b2ec9f33164d89c151047fc521c8ccbd007181e5fb298dbe486c7"
+  },
+  "excluded_payload_policy": [
+    "No ELF/archive-library/SQLite/venv/checkout/source-copy tree/__pycache__ in this package.",
+    "Original CI ZIP and duplicated desktop transport tarballs remain external; their identities are preserved in original indexes.",
+    "Small exact driver/analysis code and source-identity manifests are methods, not copied checkout trees."
+  ],
+  "excluded_selected_paths": [
+    {
+      "reason": "bytecode, original binary/archive or duplicate transport",
+      "source": "/workspace/scratch/8a6ecb667c1e/final-evidence-staging/quantum-readback-cad4c18f/__pycache__/quantum_oracle_resources.cpython-312.pyc"
+    },
+    {
+      "reason": "bytecode, original binary/archive or duplicate transport",
+      "source": "/workspace/scratch/8a6ecb667c1e/final-evidence-staging/quantum-readback-cad4c18f/__pycache__/test_quantum_oracle_resources.cpython-312.pyc"
+    },
+    {
+      "reason": "duplicate transport or still-active final-head binding",
+      "source": "/workspace/scratch/8a6ecb667c1e/quantum-readback-cad4c18f/desktop-green-2e9deaf1-cancelled-v1.tar.gz"
+    },
+    {
+      "reason": "duplicate transport or still-active final-head binding",
+      "source": "/workspace/scratch/8a6ecb667c1e/quantum-readback-cad4c18f/desktop-green-f85fea4e-initial-runtime-binding.json"
+    },
+    {
+      "reason": "duplicate transport or still-active final-head binding",
+      "source": "/workspace/scratch/8a6ecb667c1e/quantum-readback-cad4c18f/desktop-green-preparation-failures-2e9deaf1-v1.tar.gz"
+    },
+    {
+      "reason": "duplicate transport or still-active final-head binding",
+      "source": "/workspace/scratch/8a6ecb667c1e/quantum-readback-cad4c18f/desktop-red-7957-artifacts.tar.gz"
+    }
+  ],
+  "independently_reverified_original_indexes": [
+    {
+      "path": "/workspace/scratch/8a6ecb667c1e/integration-review/gha-0eac-evidence-bundle-20261106/raw-evidence-index.json",
+      "sha256": "3c1b1d3cd5916f097ded5ae4df0d62a0fec7cc7cd98da6b7c81564bb18e9e038",
+      "verified_files": 1230,
+      "verified_uncompressed_bytes": 169539855
+    },
+    {
+      "path": "/workspace/scratch/8a6ecb667c1e/integration-review/initial-ci-failures-curated-20261106/index.json",
+      "sha256": "fa97e3ec8f8ee9cd81deda9132a2c527141731e70784e2c52c46359ddb18a6dc",
+      "verified_files": 12,
+      "verified_uncompressed_bytes": 14341336
+    },
+    {
+      "path": "/workspace/scratch/8a6ecb667c1e/quantum-readback-cad4c18f/desktop-red-7957/archive-manifest-v1.json",
+      "sha256": "a47e077e801d544b2b27284b17fb38d763d0a0eaeea2e8ac750cd873fb0b0c45",
+      "verified_files": 36
+    },
+    {
+      "path": "/workspace/scratch/8a6ecb667c1e/quantum-readback-cad4c18f/desktop-green-2e9deaf1-cancelled-v1/cancelled-green-manifest.json",
+      "sha256": "0f83ff7dce609010541f39f064ea2c5e117bc08813d4c7b303c17fed0e63b842",
+      "verified_files": 39
+    },
+    {
+      "path": "/workspace/scratch/8a6ecb667c1e/quantum-readback-cad4c18f/desktop-green-preparation-failures-2e9deaf1-v1/preparation-manifest.json",
+      "sha256": "02c16b393d3682dddf77cee14825096d2ff518a46b7e52081ed52b83e00fcfd4",
+      "verified_files": 38
+    },
+    {
+      "path": "/workspace/scratch/8a6ecb667c1e/integration-review/packaging-fix-20261106/artifact-manifest.json",
+      "sha256": "912d3acb524c6eef98f36fe03dd6ee455aca016b8e0e01fd1eaf7deeeb470723",
+      "verified_files": 35
+    }
+  ],
+  "independently_reverified_receipt_log_pairs": [
+    {
+      "bytes": 164,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/cell-current-api-readback.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/cell-current-api-readback.json",
+      "sha256": "bd49d58636f387847e4bd117abc17f01f87bcdcd9ec5f59720bae0bfd2d2fd65"
+    },
+    {
+      "bytes": 96251,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/cell-current-api.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/cell-current-api.json",
+      "sha256": "1fadc159cadfd7b7465f022beff11329de52a28cd3ea2267f484f5422c2b3765"
+    },
+    {
+      "bytes": 113236,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/cell-current-authority.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/cell-current-authority.json",
+      "sha256": "d27b9dc7f13ea0094be3768e74c2eef3b4440de647d54def3a18fad121bc10fe"
+    },
+    {
+      "bytes": 3391,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/claim-guard.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/claim-guard.json",
+      "sha256": "3d55009eb129e8fd61348a3b2ea6460146bfb5c58efba9dfd6b20782f5943f51"
+    },
+    {
+      "bytes": 196,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/compiler.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/compiler.json",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "bytes": 0,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/format.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/format.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 35,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/inventory.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/inventory.json",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "bytes": 715894,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/locked-fuzz-graph.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/locked-fuzz-graph.json",
+      "sha256": "c8b2941cce5c4a75a835961f7aa6cf35e9999d59eb37dfe7a6ed18cd657f4154"
+    },
+    {
+      "bytes": 832496,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/locked-workspace-graph.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/locked-workspace-graph.json",
+      "sha256": "669dffeea54073bfaa5d4b7342e7b7e16af5dcd1e1f2d43d5b5f91aecfd72d92"
+    },
+    {
+      "bytes": 165,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/preflight.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/preflight.json",
+      "sha256": "b59a940493fb05a84d5537698687953551eab000921d2f58a5772b3a0fe21c61"
+    },
+    {
+      "bytes": 21227,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/quantum-controls.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/quantum-controls.json",
+      "sha256": "f5674b563bc324b19fdf2c923e9163cae72164ed26a10d2f48ac4e1bde3ecf7c"
+    },
+    {
+      "bytes": 92494,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/recovery-release-components.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/recovery-release-components.json",
+      "sha256": "b3217ab86fcefc6e428be54ed9b386fcc41dc788b6b5150cfd3e46aef3bda1a0"
+    },
+    {
+      "bytes": 307,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/repository.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/repository.json",
+      "sha256": "8694292ea0f89a2bd3473b9bbf439283e7367fb2d9b6fb78e34bda38102f9151"
+    },
+    {
+      "bytes": 398,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/source-phase-clippy.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/source-phase-clippy.json",
+      "sha256": "c5c38357364dda070f5eb7cff74fa8e4bacc816110f900218414d7ddb25b359b"
+    },
+    {
+      "bytes": 398,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/source-phase-components.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/source-phase-components.json",
+      "sha256": "c5c38357364dda070f5eb7cff74fa8e4bacc816110f900218414d7ddb25b359b"
+    },
+    {
+      "bytes": 398,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/source-phase-python.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/source-phase-python.json",
+      "sha256": "c5c38357364dda070f5eb7cff74fa8e4bacc816110f900218414d7ddb25b359b"
+    },
+    {
+      "bytes": 557,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/source-pins.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/source-pins.json",
+      "sha256": "f65bc5ea91172760781cb6ab7539abbedd86aff238055be21d3e011ce4c1c49c"
+    },
+    {
+      "bytes": 5748,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/strict-workspace-clippy.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/strict-workspace-clippy.json",
+      "sha256": "9183a90bab76deb320eb1fefcfb119648b421fdee93005623f99e4af23e21b78"
+    },
+    {
+      "bytes": 1066,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_authenticated_suite_count.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_authenticated_suite_count.json",
+      "sha256": "b69a9bd3873de6e899abf49a585ecec87a94d3ec4ce1b3b29b31c7e84d5379f9"
+    },
+    {
+      "bytes": 782,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_branch_migration_count.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_branch_migration_count.json",
+      "sha256": "ce7c449718af019fe6e2955bdfc800517b642c371c4d04d7c9d4d6f01db44bdf"
+    },
+    {
+      "bytes": 17473,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_ci_contract.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_ci_contract.json",
+      "sha256": "86a60ad17dd9523e4bdc4e7f09474bae68b5ac7e91f5078ad5032a5a4e89d7c1"
+    },
+    {
+      "bytes": 7586,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_ci_source_integrity.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_ci_source_integrity.json",
+      "sha256": "75c1e26841e5de38620d76019bad838614eac695d2755dc112495ea8297197f2"
+    },
+    {
+      "bytes": 109,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_llm_material_runtime_bridge.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_llm_material_runtime_bridge.json",
+      "sha256": "9333748147ebe53f9352cea5fc7ceadf2ab2eb16cbcbe96e535c263998500290"
+    },
+    {
+      "bytes": 107,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_llm_material_runtime_entry.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_llm_material_runtime_entry.json",
+      "sha256": "0e2999edeab2c62d40f7cf38e08be52547f59c1409c9ae4f18498a16d9491572"
+    },
+    {
+      "bytes": 109,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_llm_neural_read_worker.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_llm_neural_read_worker.json",
+      "sha256": "7acdc6f34c0c67f9ca6128fd1b75fcde2c1583d49cea2ab905681bc6dbf7e412"
+    },
+    {
+      "bytes": 116,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_llm_python_runtime_contract.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_llm_python_runtime_contract.json",
+      "sha256": "fa24c78627c18821b3bd2ae005bd7ba0c1dbb8cc993196ba7dbf1670e10cb493"
+    },
+    {
+      "bytes": 2784,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_pq_authority_surface_scan.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_pq_authority_surface_scan.json",
+      "sha256": "7408acc2a381e15a66b478dfee76d800241583864903f5e4ac262e2ab9e93c55"
+    },
+    {
+      "bytes": 3007,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_pq_chain_claim_guard.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_pq_chain_claim_guard.json",
+      "sha256": "2abe9c63280f74623f768ff9f2331d30fa9597918e54a1a32439d99246fb0822"
+    },
+    {
+      "bytes": 1611,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_pq_provider_ci.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_pq_provider_ci.json",
+      "sha256": "1667b9563162a8ee140516f983be5914d32967e176dba60c696b77183a2d822b"
+    },
+    {
+      "bytes": 6066,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_pq_research_integration.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_pq_research_integration.json",
+      "sha256": "400faacb131fe496320c099ca7cc5712749520b273d3d528948535c1cff2f2ae"
+    },
+    {
+      "bytes": 828,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_recent_batch_suite_count.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_recent_batch_suite_count.json",
+      "sha256": "cd89b0980801695e3c7f6f20dd46f4e8f02ac05c18f84761a41cddf9d57a8ad8"
+    },
+    {
+      "bytes": 1250,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_record_pq_native_command.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_record_pq_native_command.json",
+      "sha256": "da05641f3f18b651d28c63a130b65ae78ba50244349f18801a3faeb4c5c6d9af"
+    },
+    {
+      "bytes": 750,
+      "log": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_w1_factorial_native_gate.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/local-components-0eac6017-20261106/test_w1_factorial_native_gate.json",
+      "sha256": "a33e7a77a63aeeacd3ff4aeb4b2b29091ece6d7954567a41a62118195ba37d53"
+    },
+    {
+      "bytes": 7555,
+      "log": "/workspace/scratch/8a6ecb667c1e/native-red/local-library-baseline.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/native-red/local-library-baseline.json",
+      "sha256": "15c91a2e3c8161e1f5e37b9c858a63f9cf0cd9795167424691ef0003c262cba5"
+    },
+    {
+      "bytes": 7559,
+      "log": "/workspace/scratch/8a6ecb667c1e/native-red-low-memory/local-library-baseline.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/native-red-low-memory/local-library-baseline.json",
+      "sha256": "84af8addebb72da64de9cf4fbb0dc22c33592c4aa74ee4af05166178af975ec1"
+    },
+    {
+      "bytes": 122511,
+      "log": "/workspace/scratch/8a6ecb667c1e/quantum-readback-cad4c18f/desktop-red-7957/red-cli-local-certificate.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/quantum-readback-cad4c18f/desktop-red-7957/red-cli-local-certificate.json",
+      "sha256": "a6095db14e681459fca43efb373aead9bf8b1c7cf1604d60875165d7de73db47"
+    },
+    {
+      "bytes": 122511,
+      "log": "/workspace/scratch/8a6ecb667c1e/quantum-readback-cad4c18f/desktop-red-7957/red-cli-local-certificate.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/quantum-readback-cad4c18f/desktop-red-7957/red-cli-local-certificate.readback.json",
+      "sha256": "a6095db14e681459fca43efb373aead9bf8b1c7cf1604d60875165d7de73db47"
+    },
+    {
+      "bytes": 125614,
+      "log": "/workspace/scratch/8a6ecb667c1e/quantum-readback-cad4c18f/desktop-red-7957/red-lib-tls-local.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/quantum-readback-cad4c18f/desktop-red-7957/red-lib-tls-local.json",
+      "sha256": "e37e2bfa7db038c20f2a3774d72374623cbb3b1ee481dd306878522a92bcf3c3"
+    },
+    {
+      "bytes": 125614,
+      "log": "/workspace/scratch/8a6ecb667c1e/quantum-readback-cad4c18f/desktop-red-7957/red-lib-tls-local.log",
+      "receipt": "/workspace/scratch/8a6ecb667c1e/quantum-readback-cad4c18f/desktop-red-7957/red-lib-tls-local.readback.json",
+      "sha256": "e37e2bfa7db038c20f2a3774d72374623cbb3b1ee481dd306878522a92bcf3c3"
+    }
+  ],
+  "input_hash_recheck_complete": true,
+  "interpretation": [
+    "The real 7957 desktop red has library1pass2fail and CLI0pass1fail, Cargo101 each. Wrapper success is expected-red reproduction, never green.",
+    "Both local red attempts were rustc SIGKILL before test execution. DEBUG0 attempt changed build configuration; SIGKILL alone does not establish OOM.",
+    "Old0eac local components are 33 observations,32succeeded/1failed. Checkpoint lib10pass1fail, CLI unit15pass, cold_recovery15pass, cross_process3pass3fail; release37 and Cell5+1 passed. The batch remains failed.",
+    "Old0eac CI ledger snapshot08:14:21UTC has71success/20failure/9in_progress/1skipped. Its raw files remain historical; no conclusion transfers to2e9 or f85.",
+    "Fresh-service complete original/fresh reports and original host systemd log are retained. Original libtest success did not meet finite target; original4s/6depth/16worker qualification stays failed.",
+    "Five-lock proofs establish dependency graphs, not guest image/proof validity. v1 and v2 repair histories remain distinct.",
+    "Packaging and registry code repairs are published at2e9 and included in f85. Their original0eac failures remain preserved; final-head CI is pending.",
+    "Packaging24.2 reproduction does not identify the package version installed in the old CI job. Ambient/isolated and old-environment repetitions are not summed as unique tests.",
+    "2e9 preparationv1/v2 failures and the later source-update cancellation have native0. The v2 controller/proof collision and initial static-review miss remain preserved.",
+    "MCP raw runtime text is retained to preserve exact integer bytes; identity relies on exact job_id, request_digest and hashes, never a rounded convenience fingerprint.",
+    "The new driver retains208 old observations and adds63 observations;33 source-named controls comprise7 overlapping Node controls and26 additional exact executions. These are not an aggregate unique test total.",
+    "Only archive bytes/transport headers are normalized; original raw logs, receipts, error text, paths, timestamps and profiles are not rewritten."
+  ],
+  "native_tests_executed_by_collection": 0,
+  "package_state": "HISTORICAL_AND_SCOPED_FINAL_SOURCE_COMPLETE_FINAL_NATIVE_AND_CI_PENDING",
+  "parents": [
+    "2e9deaf1f1ee1a96e00c82d7f9b8c3fc8efe6452",
+    "56897f125df27994efa1dda935f2c62eceb36de9"
+  ],
+  "pending_final_inputs": [
+    {
+      "id": "f85-desktop-native",
+      "known_job_id": "1a1b010fbe6-fc05-6ddf",
+      "required": [
+        "complete original raw command/controller logs and receipts, including failures/timeouts",
+        "configuration/provider identity and actual Cargo-advertised ELF hashes",
+        "batch/phase/source-after raw proofs or explicit interruption absence",
+        "actual runtime terminal, process-group cleanup and source applicability readback"
+      ],
+      "source": "f85fea4e8da02404d513d074ceb35ad5292b017b",
+      "state": "PENDING_NOT_INCLUDED"
+    },
+    {
+      "id": "f85-github-ci",
+      "required": [
+        "timestamped final check/job ledger with tested head and prospective merge identities",
+        "complete logs and selected raw artifacts of relevant passing and failed qualification gates",
+        "all original failures and source/budget limitations; no reattribution of 0eac receipts"
+      ],
+      "source": "f85fea4e8da02404d513d074ceb35ad5292b017b",
+      "state": "PENDING_NOT_INCLUDED"
+    },
+    {
+      "id": "final-report-and-publication",
+      "required": [
+        "source-bound final report distinguishing repairs, observations, unfinished qualifications",
+        "append-only final outcome supplement; package and publication hashes"
+      ],
+      "state": "PENDING_ROOT"
+    }
+  ],
+  "schema": "trnm-curated-evidence-collection-v1",
+  "scope_limits": {
+    "independent_recovery_custody_accepted": false,
+    "pq_finality_accepted": false,
+    "private_task_transport_coverage_complete": false,
+    "production_activated": false,
+    "public_wan_accepted": false,
+    "quantum_work_economic_qualification_accepted": false,
+    "whole_chain_pq_qualified": false
+  },
+  "snapshot_bytes": 51024830,
+  "snapshot_files": 1844,
+  "source_publication_pairs_tree_verified": 7,
+  "tree": "0c1da9d2c13052b30af600e2a32a5eb286e985de"
+}

@@ -1,0 +1,2 @@
+    Finished `release` profile [optimized] target(s) in 0.11s
+     Running `/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/examples/pon_w1_budget_report --samples 3 --attempts 32 --receiver-replays 1 --target 7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff --seed 2`

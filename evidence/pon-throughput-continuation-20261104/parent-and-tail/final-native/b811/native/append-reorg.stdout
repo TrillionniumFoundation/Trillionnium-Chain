@@ -1,0 +1,25 @@
+
+running 8 tests
+test store::append_readback_tests::direct_append_cancellation_at_each_callback_leaves_no_partial_publication ... ok
+test store::append_readback_tests::direct_append_keeps_complete_rows_events_state_and_cold_reopen ... ok
+test store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit ... ok
+test store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source ... ok
+test store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen ... ok
+test store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit ... ok
+test store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence ... ok
+test store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen ... ok
+
+successes:
+
+successes:
+    store::append_readback_tests::direct_append_cancellation_at_each_callback_leaves_no_partial_publication
+    store::append_readback_tests::direct_append_keeps_complete_rows_events_state_and_cold_reopen
+    store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit
+    store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source
+    store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen
+    store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit
+    store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence
+    store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 1011 filtered out; finished in 4.82s
+

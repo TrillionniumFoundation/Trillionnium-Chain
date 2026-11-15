@@ -1,0 +1,74 @@
+{
+  "evidence_kind": "CONTROLLED_OBSERVATION",
+  "observation": {
+    "evidence_kind": "CONTROLLED_SETUP_OBSERVATION",
+    "existing_kernels_modified": false,
+    "global_profile_modified": false,
+    "outcome": "BLOCKED_OR_UNCERTAIN",
+    "provider_before": {
+      "account_identity_sha256": "73e2555a13ef0c08791b37180c1675c440782648c53a8ec07a431d5ac4f7cea6",
+      "assignment": {
+        "accelerator": "NONE",
+        "endpoint": "m-s-ase1a9-20dxgsojl5rhi",
+        "shape": "STANDARD",
+        "variant": "DEFAULT"
+      },
+      "kernels": [
+        {
+          "connections": 1,
+          "execution_state": "idle",
+          "id": "e5b396bb-f180-4fe1-97bc-4e639259415c",
+          "name": "python3"
+        }
+      ],
+      "session_count": 1
+    },
+    "recorded_at": 1794095872.7906294,
+    "records": [
+      {
+        "argv_redacted": [
+          "<HOST_HOME>/.local/share/hepta-colab/releases/20261107-d2d977949417/venv/bin/python",
+          "<HOST_HOME>/.local/share/hepta-colab/releases/20261107-d2d977949417/manage_colab.py",
+          "--state-dir",
+          "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/manage",
+          "--expected-email",
+          "73e2555a13ef0c08791b37180c1675c440782648c53a8ec07a431d5ac4f7cea6",
+          "create",
+          "--key",
+          "pon-profile-closure-89df-python-20261107-v1",
+          "--kind",
+          "cpu",
+          "--accelerator",
+          "NONE",
+          "--shape",
+          "standard"
+        ],
+        "elapsed_wall_seconds": 2.4293723106384277,
+        "exit_code": 3,
+        "operation": "create",
+        "result": {
+          "error_code": "AUTH_STATUS_PATH_UNSAFE",
+          "status": "authorization_required"
+        },
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "schema": "pon-profile-colab-dedicated-session-v1",
+    "task_key": "pon-profile-closure-89df-python-20261107-v1"
+  },
+  "original": {
+    "file_label": "dedicated-session-v1.json",
+    "sha256": "e1c117bed8fca002fa27e0189631f8cc2080ad20651ad18f3ad90f36010291f5",
+    "size_bytes": 1460
+  },
+  "projection": {
+    "not_original_bytes": true,
+    "omitted_fields": [],
+    "replacements": [
+      "Host home paths replaced by <HOST_HOME>",
+      "Task private state root replaced by <TASK_PRIVATE_STATE_ROOT>"
+    ]
+  },
+  "schema": "pon-cloud-public-projection-v1"
+}

@@ -1,0 +1,472 @@
+{
+  "schema": "pon-history-completion-execution-followup-v1",
+  "source": {
+    "first": "3898f6a6dc65105bd4e3b52c94cc7625102f66da",
+    "composed": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+    "first_tree": "9c5df9c0ec1d223ec0a189a61644b099d9a72b46",
+    "composed_tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+    "concurrent_change_paths": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs"
+    ],
+    "complete_before_after_identities": {
+      "published-source-before.json": {
+        "base": null,
+        "candidate": "3898f6a6dc65105bd4e3b52c94cc7625102f66da",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "3898f6a6dc65105bd4e3b52c94cc7625102f66da",
+        "tested_tree": "9c5df9c0ec1d223ec0a189a61644b099d9a72b46",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 872317492,
+        "tracked_entries": 7536,
+        "tracked_worktree_verified": true
+      },
+      "published-source-after.json": {
+        "base": null,
+        "candidate": "3898f6a6dc65105bd4e3b52c94cc7625102f66da",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "3898f6a6dc65105bd4e3b52c94cc7625102f66da",
+        "tested_tree": "9c5df9c0ec1d223ec0a189a61644b099d9a72b46",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 872317492,
+        "tracked_entries": 7536,
+        "tracked_worktree_verified": true
+      },
+      "composed-source-before.json": {
+        "base": null,
+        "candidate": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+        "tested_tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 872317779,
+        "tracked_entries": 7536,
+        "tracked_worktree_verified": true
+      },
+      "composed-source-after.json": {
+        "base": null,
+        "candidate": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+        "tested_tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 872317779,
+        "tracked_entries": 7536,
+        "tracked_worktree_verified": true
+      }
+    }
+  },
+  "native_functional_controls": [
+    {
+      "source": "3898f6a6dc65105bd4e3b52c94cc7625102f66da",
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0,
+      "profile": "unmodified repository release profile",
+      "scope": "selected bounded native functionality only",
+      "executions": [
+        {
+          "record": "20-release-deadline-controls.json",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "selectors": [
+            "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+            "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+            "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen"
+          ]
+        },
+        {
+          "record": "21-release-history-shared-refill.json",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "selectors": [
+            "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+          ]
+        },
+        {
+          "record": "22-release-history-observer.json",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "selectors": [
+            "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation"
+          ]
+        },
+        {
+          "record": "23-release-history-exact-completion.json",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "selectors": [
+            "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1"
+          ]
+        },
+        {
+          "record": "24-release-history-resource-restart.json",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "selectors": [
+            "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart"
+          ]
+        },
+        {
+          "record": "25-release-pq-local-cas.json",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "selectors": [
+            "pq_rollback_witness::tests::known_checkpoint_refuses_local_cas_conflicts_before_signing_or_transport"
+          ]
+        },
+        {
+          "record": "26-release-pq-exact-retry.json",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "selectors": [
+            "pq_rollback_witness::tests::known_checkpoint_preserves_exact_retry_and_unobserved_other_writer_progress"
+          ]
+        }
+      ]
+    },
+    {
+      "source": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+      "passed": 10,
+      "failed": 0,
+      "ignored": 0,
+      "profile": "unmodified repository release profile",
+      "scope": "selected bounded native functionality only",
+      "executions": [
+        {
+          "record": "50-composed-deadline-controls.json",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "selectors": [
+            "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+            "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+            "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen"
+          ]
+        },
+        {
+          "record": "51-composed-history-shared-refill.json",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "selectors": [
+            "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+          ]
+        },
+        {
+          "record": "52-composed-history-observer.json",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "selectors": [
+            "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation"
+          ]
+        },
+        {
+          "record": "53-composed-history-exact-completion.json",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "selectors": [
+            "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1"
+          ]
+        },
+        {
+          "record": "54-composed-history-resource-restart.json",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "selectors": [
+            "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart"
+          ]
+        },
+        {
+          "record": "55-composed-pq-local-cas.json",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "selectors": [
+            "pq_rollback_witness::tests::known_checkpoint_refuses_local_cas_conflicts_before_signing_or_transport"
+          ]
+        },
+        {
+          "record": "56-composed-pq-exact-retry.json",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "selectors": [
+            "pq_rollback_witness::tests::known_checkpoint_preserves_exact_retry_and_unobserved_other_writer_progress"
+          ]
+        },
+        {
+          "record": "57-composed-store-owner-cas.json",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "selectors": [
+            "store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse"
+          ]
+        }
+      ]
+    }
+  ],
+  "native_binaries": [
+    {
+      "schema": "pon-history-functional-test-binary-v1",
+      "source": {
+        "commit": "3898f6a6dc65105bd4e3b52c94cc7625102f66da",
+        "tree": "9c5df9c0ec1d223ec0a189a61644b099d9a72b46",
+        "status": "",
+        "lock_sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69"
+      },
+      "path": "/workspace/scratch/76b6e0e6eb14/history-original-target/release/deps/trnm_pon_node-48752e02a575b1b7",
+      "size": 81364568,
+      "sha256": "cf5a51d7a24e913576859b4821a61509c8bf28f5ea47f0d55dbe38168b729ed5",
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": true
+      },
+      "original_test_profile_qualification": false,
+      "service_or_work_security_acceptance": false
+    },
+    {
+      "schema": "pon-history-functional-test-binary-v1",
+      "source": {
+        "commit": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+        "tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+        "status": "",
+        "lock_sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69"
+      },
+      "path": "/workspace/scratch/76b6e0e6eb14/history-original-target/release/deps/trnm_pon_node-48752e02a575b1b7",
+      "size": 81374880,
+      "sha256": "8c2b4d00a6008848d044025887db9ad508020aa7d56358ebba08f254ac293cc9",
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": true
+      },
+      "compiler_artifact": {
+        "reason": "compiler-artifact",
+        "package_id": "path+file:///workspace/scratch/76b6e0e6eb14/pon-consensus/trillionnium/crates/trnm-pon-node#0.1.0",
+        "manifest_path": "/workspace/scratch/76b6e0e6eb14/pon-consensus/trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "target": {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "src_path": "/workspace/scratch/76b6e0e6eb14/pon-consensus/trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "edition": "2021",
+          "doc": true,
+          "doctest": true,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "filenames": [
+          "/workspace/scratch/76b6e0e6eb14/history-original-target/release/deps/trnm_pon_node-48752e02a575b1b7"
+        ],
+        "executable": "/workspace/scratch/76b6e0e6eb14/history-original-target/release/deps/trnm_pon_node-48752e02a575b1b7",
+        "fresh": false
+      },
+      "original_test_profile_qualification": false,
+      "service_or_work_security_acceptance": false
+    }
+  ],
+  "unique_native_controls": 10,
+  "repeated_controls_are_not_independent_experiments": true,
+  "original_test_profile_qualified": false,
+  "coverage_limits": [
+    "No separate timely-native-then-expiry-only-inside-cleanup execution",
+    "No newly injected cleanup-failure execution",
+    "No original signed-DAG Host fixture qualification",
+    "No original full workspace/ARM CPU or service-budget replacement"
+  ],
+  "retained_failures_and_unknowns": [
+    {
+      "record": "01-published-recovered-fmt.json",
+      "outcome": "formatter exit 1, later corrected"
+    },
+    {
+      "record": "03-loader-invocation-correction.json",
+      "outcome": "owned build interrupted, exit 130, no tests"
+    },
+    {
+      "record": "05-node-original-proxy-build.json",
+      "outcome": "rustc SIGKILL, Cargo exit 101, no tests"
+    },
+    {
+      "record": "10-interrupted-session-observation.json",
+      "outcome": "UNKNOWN, no terminal receipt or test ELF"
+    },
+    {
+      "record": "18-published-fuzz-locked-graph.json",
+      "outcome": "offline dependency absent, original locked resolution later passed"
+    },
+    {
+      "record": "retained-116a-honest-path.json",
+      "outcome": "historical CONFIRMATION_TARGET failure"
+    }
+  ],
+  "open_gates": [
+    "original_test_profile_and_required_runtime",
+    "original_public_service_confirmation",
+    "cheapest_legal_work_and_rejection_economics",
+    "heterogeneous_quantum_and_DAA_qualification",
+    "independent_operators_and_evaluators",
+    "prospective_model_benefit_and_safe_loading",
+    "long_term_custody_and_economic_obligations",
+    "durable_external_effects",
+    "whole_chain_PQ_and_release_review"
+  ],
+  "pq_claim_guard": {
+    "gates": {
+      "authorization": {
+        "source_paths": [
+          "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+          "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+          "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/closure.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/release.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/funding.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+          "scripts/ci/pq_authority_surface_scan.py",
+          "scripts/ci/test_pq_authority_surface_scan.py",
+          "docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "capacity_and_invalid_input": {
+        "source_paths": [
+          "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+          "config/pon/post-quantum-transition-v1.json"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "independent_end_to_end": {
+        "source_paths": [
+          "docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md",
+          "config/pon/pq-cross-branch-corpus-v1.json"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "migration_and_rollback": {
+        "source_paths": [
+          "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+          "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+          "scripts/ci/pq_external_rollback_oracle.py",
+          "scripts/ci/test_pq_external_rollback_oracle.py",
+          "docs/security/PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md",
+          "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+          "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+          "docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "proof_pq128": {
+        "source_paths": [
+          "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+          "docs/security/POST_QUANTUM_TRANSITION_V1.md"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "quantum_mining_fork_choice": {
+        "source_paths": [
+          "config/pon/devnet-v1.json",
+          "docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md",
+          "scripts/ci/pq_quantum_daa_scenarios.py",
+          "scripts/ci/test_pq_quantum_daa_scenarios.py",
+          "docs/security/PQ_QUANTUM_DAA_SENSITIVITY_20261031.md"
+        ],
+        "status": "UNQUALIFIED"
+      }
+    },
+    "note": "Source/flag refusal only; no independent crypto, quantum cost, WAN, rollback or production evidence.",
+    "pq_128_qualified": false,
+    "production_activation": false,
+    "schema": "trnm-whole-chain-pq-claim-guard-v1",
+    "status": "HOLD",
+    "whole_chain_pq_qualified": false
+  },
+  "all_blockers_closed": false,
+  "public_readiness": false,
+  "finalized": false,
+  "execution_authority": false,
+  "activation_authority": false,
+  "historical_CI_is_not_current_source_qualification": true,
+  "tested_8a74_source_checks": {
+    "strict_clippy": "PASS --workspace --all-targets --all-features -- -D warnings",
+    "original_formatter": "PASS",
+    "source_pin_controls": 34,
+    "negative_source_integrity_controls": 34,
+    "embedded_inventory": "PASS",
+    "source_pins": "PASS",
+    "repository": {
+      "activation": false,
+      "head": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+      "local_links": 1842,
+      "normal_dependency_edges": 24,
+      "result": "PASS",
+      "runtime_implemented": false,
+      "rust_files": 1079,
+      "source_state": "committed-clean",
+      "tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+      "workspace_packages": 26
+    },
+    "main_locked_linux_graph": {
+      "workspace_packages": 26,
+      "resolved_packages": 138
+    },
+    "fuzz_locked_linux_graph": {
+      "workspace_packages": 1,
+      "resolved_packages": 106
+    }
+  },
+  "newer_concurrent_source": "b28098c092dca72165c0d26054fce95a8636d777",
+  "newer_concurrent_source_is_not_qualified_by_this_record": true
+}

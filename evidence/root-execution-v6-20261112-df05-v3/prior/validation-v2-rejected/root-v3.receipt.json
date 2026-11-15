@@ -1,0 +1,24 @@
+{
+  "bytes": 6145,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/run_pq_root_native_v3.py",
+    "--out",
+    "/home/qian-qi/work/chain-root-validation-20261112-df05-v2/root-v3"
+  ],
+  "cwd": "/home/qian-qi/work/chain-root-operation-recovered-20261112-df05",
+  "elapsed_ns": 1141733447490,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "log": "root-v3.log",
+  "name": "root-v3",
+  "process_exit_code": 0,
+  "sha256": "e248b2fa38d69d502468646b27b994b7a51c6ac765dc6c3587b7113eaa46cb72",
+  "source": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

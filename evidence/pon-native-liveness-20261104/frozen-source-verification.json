@@ -1,0 +1,27 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "frozen-source-verification",
+  "command": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+    "--output",
+    "/workspace/scratch/e537ad232c79/frozen-source-receipt.json"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+  "tree": "72d12bd434055f67c5f6becf2ee480a9ec09b99e",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T13:13:19.529185+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 56073994063,
+  "finished_at": "2026-11-04T13:14:15.606271+00:00",
+  "log_bytes": 421,
+  "log_sha256": "9444c65256a6a399dd11e00b13f0e814b9bbf6a50adbd884eebea62ff8add251",
+  "final_head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+  "final_dirty_paths": []
+}

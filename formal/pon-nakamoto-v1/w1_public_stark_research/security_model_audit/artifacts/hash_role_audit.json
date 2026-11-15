@@ -1,0 +1,182 @@
+{
+  "schema": "trnm-p3-shared-permutation-audit-v1",
+  "qualification": "HOLD_NO_GO",
+  "claims": {
+    "official_known_answer_matched": true,
+    "reference_inverse_roundtrip_matched": true,
+    "arbitrary_input_compression_collision_constructed": true,
+    "independent_leaf_compressor_random_functions_model_refuted": true,
+    "fixed_role_h2_h4_inputs_overlap": true,
+    "merkle_binding_attack_demonstrated": false,
+    "false_w1_proof_constructed": false,
+    "complete_noninteractive_bound_established": false,
+    "qrom_or_pq128_established": false
+  },
+  "collision": {
+    "preimage_a": [
+      895525109234590730,
+      2513871637543481359,
+      6866580664439037727,
+      12213085372619991112,
+      5421210880553664044,
+      10404719342431952033,
+      758541627951963262,
+      6961099732014900331
+    ],
+    "preimage_b": [
+      18007219444761515550,
+      15576305404914934757,
+      6343815722533953670,
+      5593369638671632307,
+      524455038159463593,
+      15550145857063644192,
+      3791585759269295459,
+      6656745112379943842
+    ],
+    "full_output_a": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "full_output_b": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8
+    ],
+    "common_compression_digest": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "construction_cost": {
+      "inverse_permutations": 2,
+      "search_trials": 0
+    }
+  },
+  "h4_compression_overlap": {
+    "leaf": [
+      11,
+      22,
+      33,
+      44
+    ],
+    "left_child": [
+      11,
+      22,
+      33,
+      44
+    ],
+    "right_child": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "common_digest": [
+      2498895455050071425,
+      14732045805774730310,
+      10489624707904524498,
+      8346550446195805760
+    ],
+    "permutation_input": [
+      11,
+      22,
+      33,
+      44,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "h2_h4_overlap": {
+    "short_leaf": [
+      11,
+      22
+    ],
+    "long_leaf": [
+      11,
+      22,
+      0,
+      0
+    ],
+    "common_digest": [
+      14060240337387336135,
+      2328936029578056232,
+      6742761464079187629,
+      1300653439592473024
+    ],
+    "permutation_input": [
+      11,
+      22,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "fixed_width_last_call_relations": [
+    {
+      "base_field_width": 2,
+      "permutation_calls_per_leaf": 1,
+      "tail_elements": 2,
+      "leaf_equals_compression_of_last_state": true
+    },
+    {
+      "base_field_width": 4,
+      "permutation_calls_per_leaf": 1,
+      "tail_elements": 4,
+      "leaf_equals_compression_of_last_state": true
+    },
+    {
+      "base_field_width": 18,
+      "permutation_calls_per_leaf": 5,
+      "tail_elements": 2,
+      "leaf_equals_compression_of_last_state": true
+    },
+    {
+      "base_field_width": 27,
+      "permutation_calls_per_leaf": 7,
+      "tail_elements": 3,
+      "leaf_equals_compression_of_last_state": true
+    },
+    {
+      "base_field_width": 516,
+      "permutation_calls_per_leaf": 129,
+      "tail_elements": 4,
+      "leaf_equals_compression_of_last_state": true
+    },
+    {
+      "base_field_width": 7728,
+      "permutation_calls_per_leaf": 1932,
+      "tail_elements": 4,
+      "leaf_equals_compression_of_last_state": true
+    }
+  ],
+  "independent_ro_equality_probability": {
+    "numerator": "1",
+    "denominator": "115792089129476408817739443160502628952720274482139873392618675794070921543681"
+  },
+  "lifecycle_budget_effect": {
+    "shared_primitive": "default_goldilocks_poseidon2_8",
+    "merge_forward_and_inverse_access_across_roles": true,
+    "standalone_independent_oracle_role_bounds_applicable": false,
+    "union_bound_requires_independence": false,
+    "adversarial_offline_queries_bounded_by_verifier_count": false,
+    "numeric_lifetime_soundness_bound": null
+  },
+  "source_manifest_sha256": "d24b8998c893d20a19511d86dbefeea29d7b9281c3a8d9d9f0076f26efc013f6"
+}

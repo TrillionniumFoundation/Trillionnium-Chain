@@ -1,0 +1,79 @@
+{
+  "fresh_cache_path_independent_readback": {
+    "configuration": {
+      "lifetime_ms": 30000,
+      "lifetime_seconds": 30,
+      "lifetime_subsec_nanos": 0,
+      "retained_software_bytes": 14400,
+      "slots": 256
+    },
+    "enabled": true,
+    "phases": [
+      {
+        "cached_rejection_returned": 0,
+        "completed_cache_observations": 7,
+        "exact_fact_found": 0,
+        "full_replay_started": 7,
+        "incomplete_cache_observations": 0,
+        "key_hashed": 7,
+        "lookup_contended": 0,
+        "lookup_poisoned": 0,
+        "mode": "attack-free-baseline",
+        "native_verifier_returned": 7,
+        "native_verifier_started": 7,
+        "relation_attempts": 7
+      },
+      {
+        "cached_rejection_returned": 0,
+        "completed_cache_observations": 205,
+        "exact_fact_found": 0,
+        "full_replay_started": 205,
+        "incomplete_cache_observations": 0,
+        "key_hashed": 205,
+        "lookup_contended": 0,
+        "lookup_poisoned": 0,
+        "mode": "from-zero-pressure",
+        "native_verifier_returned": 205,
+        "native_verifier_started": 205,
+        "relation_attempts": 205
+      }
+    ],
+    "schema": "public-v3-fresh-negative-cache-readback-v1",
+    "scope": "actual relation-attempt path observations; native verifier entry is not full replay, started replay is not completion; path counters cover only completed observations, incomplete paths remain unknown; CPU remains nested"
+  },
+  "runs": [
+    {
+      "diagnostic": {
+        "acceptance_authority": false,
+        "finite_target_met": false,
+        "last_history_replay": {
+          "history_call_index": 2,
+          "phase": "from-zero-pressure",
+          "replay_accepted": false,
+          "replay_error": "PUBLIC_REQUEST_DEADLINE"
+        },
+        "native_returncode": 0,
+        "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+      },
+      "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+      "reproduced_reader_failure": "CONFIRMATION_TARGET"
+    },
+    {
+      "diagnostic": {
+        "acceptance_authority": false,
+        "finite_target_met": false,
+        "last_history_replay": {
+          "history_call_index": 0,
+          "phase": "from-zero-pressure",
+          "replay_accepted": false,
+          "replay_error": "PUBLIC_REQUEST_DEADLINE"
+        },
+        "native_returncode": 101,
+        "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+      },
+      "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+      "reproduced_reader_failure": "FRESH_NATIVE_PROCESS_REQUIRED"
+    }
+  ],
+  "source_commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab"
+}

@@ -1,0 +1,32 @@
+   Compiling trnm-w1-zk-methods-v2 v0.1.0 (/workspace/scratch/29755d2a47ef/chain-w1-proof/formal/pon-nakamoto-v1/w1_zkvm/methods-v2)
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/29755d2a47ef/chain-w1-proof/trillionnium/crates/trnm-crypto-primitives)
+error: failed to run custom build command for `trnm-w1-zk-methods-v2 v0.1.0 (/workspace/scratch/29755d2a47ef/chain-w1-proof/formal/pon-nakamoto-v1/w1_zkvm/methods-v2)`
+
+Caused by:
+  process didn't exit successfully: `/workspace/shared/w1-host-target/release/build/trnm-w1-zk-methods-v2-8d9015c849886a4a/build-script-build` (exit status: 101)
+  --- stdout
+  cargo:rerun-if-env-changed=RISC0_BUILD_DEBUG
+  Building guest package: trnm-w1-zk-methods-v2.trnm-w1-full-guest-v2
+  cargo:rerun-if-env-changed=RISC0_SKIP_BUILD
+  Using Rust toolchain version 1.88.0
+  Using rustc: /workspace/shared/w1-tools/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu/bin/rustc
+  cargo:rerun-if-env-changed=RISC0_BUILD_LOCKED
+  cargo:rerun-if-env-changed=RISC0_RUST_SRC
+  cargo:rerun-if-env-changed=CC_riscv32im_risc0_zkvm_elf
+  cargo:rerun-if-env-changed=CFLAGS_riscv32im_risc0_zkvm_elf
+  cargo:rerun-if-env-changed=RISC0_BUILD_DEBUG
+
+  --- stderr
+  trnm-w1-full-guest-v2: Starting build for riscv32im-risc0-zkvm-elf
+  trnm-w1-full-guest-v2:     Updating git repository `https://github.com/risc0/RustCrypto-hashes`
+  trnm-w1-full-guest-v2: error: failed to load source for dependency `sha2`
+  trnm-w1-full-guest-v2: 
+  trnm-w1-full-guest-v2: Caused by:
+  trnm-w1-full-guest-v2:   unable to update https://github.com/risc0/RustCrypto-hashes?rev=244dc3b08788f7a4ccce14c66896ae3b4f24c166#244dc3b0
+  trnm-w1-full-guest-v2: 
+  trnm-w1-full-guest-v2: Caused by:
+  trnm-w1-full-guest-v2:   failed to create directory `/home/agent/.cargo/git/db/rustcrypto-hashes-baa2d9049225a06b`
+  trnm-w1-full-guest-v2: 
+  trnm-w1-full-guest-v2: Caused by:
+  trnm-w1-full-guest-v2:   Read-only file system (os error 30)
+warning: build failed, waiting for other jobs to finish...

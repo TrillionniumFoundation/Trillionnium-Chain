@@ -1,0 +1,18 @@
+{
+  "command": [
+    "python3",
+    "evidence/pon-throughput-continuation-20261104/parent-and-tail/ci/workflow_wiring_static.py",
+    "--expected-pre-write-count",
+    "13",
+    "--output-dir",
+    "/workspace/scratch/7318d5f890d1/throughput-validation/workflow-catalog-fence-pinned-static"
+  ],
+  "exit_status": 0,
+  "retained_report": "catalog-fence-pinned-static.json",
+  "retained_sha256": "e97de76a4e981d72f5d8e7a6939ad0c1406339f26ebaf7bea2069e0a56b3e0d6",
+  "schema": "trnm-static-check-retention-v1",
+  "scope": "static workflow/reader/source-name checks and actual git blob pin equality only; new ELF registry and native execution are not asserted",
+  "script_sha256": "1e01c6e6f8ea44dc8305a1d44e209e2fdf83c354ec121efdba308e8585e9352d",
+  "source_report": "/workspace/scratch/7318d5f890d1/throughput-validation/workflow-catalog-fence-pinned-static/workflow-wiring-static.json",
+  "source_sha256": "e97de76a4e981d72f5d8e7a6939ad0c1406339f26ebaf7bea2069e0a56b3e0d6"
+}

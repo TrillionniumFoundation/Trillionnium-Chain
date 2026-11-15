@@ -1,0 +1,22 @@
+{
+  "records": [
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 135 greater than 134?"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 138 greater than 139?"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 173 greater than 172?"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 188 greater than 189?"
+    }
+  ],
+  "schema": "hepta-smollm-training-input-v1",
+  "scope": "public-smoke-fixtures"
+}

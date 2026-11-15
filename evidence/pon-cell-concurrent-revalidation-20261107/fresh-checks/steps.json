@@ -1,0 +1,129 @@
+[
+  {
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v3",
+    "exit_code": 0,
+    "name": "head-before",
+    "seconds": 0.0026495710480958223
+  },
+  {
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v3",
+    "exit_code": 0,
+    "name": "tree-before",
+    "seconds": 0.003614144865423441
+  },
+  {
+    "args": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v3",
+    "exit_code": 0,
+    "name": "status-before",
+    "seconds": 0.0880700689740479
+  },
+  {
+    "args": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v3",
+    "exit_code": 0,
+    "name": "source-audit-preflight",
+    "seconds": 0.09434631210751832
+  },
+  {
+    "args": [
+      "git",
+      "switch",
+      "-c",
+      "fix/chain-cell-evidence-recovery-20261107"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v3",
+    "exit_code": 0,
+    "name": "select-development-branch",
+    "seconds": 0.0050264750607311726
+  },
+  {
+    "args": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v3",
+    "exit_code": 0,
+    "name": "source-preflight",
+    "seconds": 0.08788167918100953
+  },
+  {
+    "args": [
+      "git",
+      "ls-tree",
+      "-r",
+      "-z",
+      "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v3",
+    "exit_code": 0,
+    "name": "target-tree",
+    "seconds": 0.021500909933820367
+  },
+  {
+    "args": [
+      "python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v3",
+    "exit_code": 0,
+    "name": "fresh-acc2-source-before",
+    "seconds": 2.5501508039887995
+  },
+  {
+    "args": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v3",
+    "exit_code": 0,
+    "name": "fresh-acc2-repository-links",
+    "seconds": 100.00315798609518
+  },
+  {
+    "args": [
+      "python3",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v3",
+    "exit_code": 0,
+    "name": "fresh-acc2-ci-contract",
+    "seconds": 0.16113521321676672
+  },
+  {
+    "args": [
+      "python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v3",
+    "exit_code": 0,
+    "name": "fresh-acc2-source-after",
+    "seconds": 2.604984821053222
+  }
+]

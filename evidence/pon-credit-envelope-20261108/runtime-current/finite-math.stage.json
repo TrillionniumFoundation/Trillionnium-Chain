@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/run_credit_envelope_checks.py",
+    "--output-dir",
+    "/home/qian-qi/credit-envelope-f7e62-run2/finite-math"
+  ],
+  "completion": {
+    "actual_w1_minimum_cost": "UNPROVED",
+    "complete_worktree_verified_here": false,
+    "distinct_named_tests_passed": 77,
+    "finite_math_checks": "PASS",
+    "mixed_consensus_bound": "UNPROVED",
+    "overall": "HOLD",
+    "production_activation": false,
+    "schema": "pon-credit-envelope-completion-v1",
+    "source_bytes_unchanged": true,
+    "stateful_portfolio_bound": "UNPROVED"
+  },
+  "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+  "elapsed_seconds": 0.867708,
+  "exception": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-08T12:57:59.918416+00:00",
+  "passed": true,
+  "stage": "finite-math",
+  "started_utc": "2026-11-08T12:57:59.050716+00:00",
+  "stderr": "finite-math.stderr.log",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "finite-math.stdout.log",
+  "stdout_sha256": "49eb112e8a05741322278937f3c3dd58f074f69663ff7e313c97765ae40a04ff"
+}

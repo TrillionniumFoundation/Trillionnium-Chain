@@ -1,0 +1,971 @@
+{
+  "after_identity": {
+    "head": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "status": "",
+    "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+  },
+  "all_original_files_unchanged": true,
+  "archive_scope": "Completed original tail, strict static gates, normal-main receipt, and new environment preparation",
+  "before_identity": {
+    "head": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "status": "",
+    "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+  },
+  "deferred_large_projection_files_are_not_in_this_archive": true,
+  "files": [
+    {
+      "archive_member": "validation/remaining-gates-02/summary.json",
+      "bytes": 50666,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/summary.json",
+      "retained_on_original_host": true,
+      "sha256": "19a503f6e4ebe3e4dd329a72eb07bb583a8c9ff8218ef0af97a64e0952e152f3"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/preflight.stdout",
+      "bytes": 177,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/preflight.stdout",
+      "retained_on_original_host": true,
+      "sha256": "5dd7bd6b3ece115afdc4220006fed84a5520177cd662d725ac96ca585765d252"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/preflight.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/preflight.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/source-before.stdout",
+      "bytes": 423,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/source-before.stdout",
+      "retained_on_original_host": true,
+      "sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/source-before.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/source-before.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/sealed-research-python-controls.stdout",
+      "bytes": 4701,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/sealed-research-python-controls.stdout",
+      "retained_on_original_host": true,
+      "sha256": "596e34f11cd23b5eb9f5063176413a3980897a39fcb8138bd57622cd4ff81063"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/sealed-research-python-controls.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/sealed-research-python-controls.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/sealed-research-python-readback.stdout",
+      "bytes": 1787,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/sealed-research-python-readback.stdout",
+      "retained_on_original_host": true,
+      "sha256": "bacf7286ca2fa0a95929dbe730e65fd7abc14221f4017e747760ac41243300ee"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/sealed-research-python-readback.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/sealed-research-python-readback.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/native-grouped-example-pq.stdout",
+      "bytes": 1582,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/native-grouped-example-pq.stdout",
+      "retained_on_original_host": true,
+      "sha256": "c08a7a5078dbab5267f899d9e5b2bf1a189b12e14fd3d9f8745d696162c45991"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/native-grouped-example-pq.stderr",
+      "bytes": 4588,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/native-grouped-example-pq.stderr",
+      "retained_on_original_host": true,
+      "sha256": "51475178dbc0409de7f737fd0ae6d95a6f1a9a4eb951754800f5837ea65c1065"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/native-complete-selection-pq.stdout",
+      "bytes": 238,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/native-complete-selection-pq.stdout",
+      "retained_on_original_host": true,
+      "sha256": "3d8349e07cf7253f9b3ccd5465cb579d7c0ea4071ae27bd47a2672be16a15fdb"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/native-complete-selection-pq.stderr",
+      "bytes": 273,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/native-complete-selection-pq.stderr",
+      "retained_on_original_host": true,
+      "sha256": "3ad04550b9066de72b9f8692ee10812d9f76f8be497a633f31d5862b8a7db1db"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/native-complete-selection-pq-readback.stdout",
+      "bytes": 205,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/native-complete-selection-pq-readback.stdout",
+      "retained_on_original_host": true,
+      "sha256": "94bfb9e12d144d8558b0f92910221482eb149b6edc8927ebf55cf281487a4bc1"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/native-complete-selection-pq-readback.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/native-complete-selection-pq-readback.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-storage-default.stdout",
+      "bytes": 8781,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-storage-default.stdout",
+      "retained_on_original_host": true,
+      "sha256": "1701faa36df3c93330b31ec41dc95d8300be0c8e11014ce826acb8aabf9ca114"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-storage-default.stderr",
+      "bytes": 878,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-storage-default.stderr",
+      "retained_on_original_host": true,
+      "sha256": "f0138544b817583810edd8f2fa7c3338922cbb49f2f759b1cf3521063d1b7f99"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-01.stdout",
+      "bytes": 253,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-01.stdout",
+      "retained_on_original_host": true,
+      "sha256": "f57e2b62644726f2062f9e01db51d6ebd402390c9de08be22ed7379551a79330"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-01.stderr",
+      "bytes": 204,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-01.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e60dc0b0c7b6cebc261d2d8727d8b3bbcaefd1605da1dc28cd9080cce9f5efc6"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-01-readback.stdout",
+      "bytes": 218,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-01-readback.stdout",
+      "retained_on_original_host": true,
+      "sha256": "a548544b2f9c2c89575145e7dcdc13b4c8898800a0544a98860f6d6cc3513dbe"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-01-readback.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-01-readback.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-02.stdout",
+      "bytes": 256,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-02.stdout",
+      "retained_on_original_host": true,
+      "sha256": "449e70802b4e5a557dfe3aa3c29c878663f27a1ea66716263ee022b808226b00"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-02.stderr",
+      "bytes": 204,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-02.stderr",
+      "retained_on_original_host": true,
+      "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-02-readback.stdout",
+      "bytes": 221,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-02-readback.stdout",
+      "retained_on_original_host": true,
+      "sha256": "714b28f5619508b1d97f4a8b278259c0e5b1b8d413a2d8fdf2a48a493a6a4d11"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-02-readback.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-02-readback.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-03.stdout",
+      "bytes": 242,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-03.stdout",
+      "retained_on_original_host": true,
+      "sha256": "d97bfdad5c4eceb064056edf28f5a4f39cb4f20eb218a7605f983001c80b1497"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-03.stderr",
+      "bytes": 204,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-03.stderr",
+      "retained_on_original_host": true,
+      "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-03-readback.stdout",
+      "bytes": 207,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-03-readback.stdout",
+      "retained_on_original_host": true,
+      "sha256": "413f01c133c6a3b5485c9b4b057bf4af4560349d5c6cf9cd78a70dc89b4fb8c4"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-03-readback.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-03-readback.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-04.stdout",
+      "bytes": 244,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-04.stdout",
+      "retained_on_original_host": true,
+      "sha256": "5c6cdaf34e16ea00166573c6c0e55ec7e3e1bdd92d2b1d8bee409562fe824f93"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-04.stderr",
+      "bytes": 204,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-04.stderr",
+      "retained_on_original_host": true,
+      "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-04-readback.stdout",
+      "bytes": 209,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-04-readback.stdout",
+      "retained_on_original_host": true,
+      "sha256": "fced046989210e115f71efd362824af4dead383742bbbfd2b2a174e3d476ea83"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-04-readback.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-04-readback.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-05.stdout",
+      "bytes": 233,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-05.stdout",
+      "retained_on_original_host": true,
+      "sha256": "7813e4188e56282122f8565d2daf0f054a5da25a63a4573b4bd66017e27cd34b"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-05.stderr",
+      "bytes": 204,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-05.stderr",
+      "retained_on_original_host": true,
+      "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-05-readback.stdout",
+      "bytes": 198,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-05-readback.stdout",
+      "retained_on_original_host": true,
+      "sha256": "3e97ded24981cc613b098615e76fa3f1db42b316744f659e9936a31e43c2d48e"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-05-readback.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-05-readback.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-06.stdout",
+      "bytes": 239,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-06.stdout",
+      "retained_on_original_host": true,
+      "sha256": "c4be04758094bc9b79e2292835e2f5028777d9a695583f56b1b4083b3b126cc4"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-06.stderr",
+      "bytes": 204,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-06.stderr",
+      "retained_on_original_host": true,
+      "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-06-readback.stdout",
+      "bytes": 204,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-06-readback.stdout",
+      "retained_on_original_host": true,
+      "sha256": "a1c74f74a73a8446e1758b528262abb67b00254bba29dad0f3c1fffd38958a9d"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-06-readback.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-06-readback.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-07.stdout",
+      "bytes": 242,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-07.stdout",
+      "retained_on_original_host": true,
+      "sha256": "65dc77fbf3ece766bab7a6472372133e6397025f6195f8f1bc8018a8b75fbe4c"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-07.stderr",
+      "bytes": 204,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-07.stderr",
+      "retained_on_original_host": true,
+      "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-07-readback.stdout",
+      "bytes": 207,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-07-readback.stdout",
+      "retained_on_original_host": true,
+      "sha256": "5fcccbfa4673241d941605f8e47d5e5828c0b61e3400118072154bdb03acf00a"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-07-readback.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-07-readback.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-08.stdout",
+      "bytes": 240,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-08.stdout",
+      "retained_on_original_host": true,
+      "sha256": "6694a43f1877d07cc4fb10bc98c1f6197e1dffa7ccd4d2d1d48c32f9beadfbc9"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-08.stderr",
+      "bytes": 204,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-08.stderr",
+      "retained_on_original_host": true,
+      "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-08-readback.stdout",
+      "bytes": 205,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-08-readback.stdout",
+      "retained_on_original_host": true,
+      "sha256": "449dc4e1875e3a7ee4f1924f07646d1f042f105ccf490f8cc49c6be4d98a5685"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-08-readback.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-08-readback.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-09.stdout",
+      "bytes": 270,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-09.stdout",
+      "retained_on_original_host": true,
+      "sha256": "455d5141d02d58d085483ebfc1e62f796720b4107ad2e22521ca19e4db3b37d1"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-09.stderr",
+      "bytes": 204,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-09.stderr",
+      "retained_on_original_host": true,
+      "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-09-readback.stdout",
+      "bytes": 235,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-09-readback.stdout",
+      "retained_on_original_host": true,
+      "sha256": "61db2fc0fde87096ebafdde208d47deecaeb57d13ee9121208d9cb203be8763e"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-09-readback.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-09-readback.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-10.stdout",
+      "bytes": 274,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-10.stdout",
+      "retained_on_original_host": true,
+      "sha256": "bd49041b46e8bedb4f208cc45d0652928003c4475e7ef5981ce17a3db03b96a8"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-10.stderr",
+      "bytes": 204,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-10.stderr",
+      "retained_on_original_host": true,
+      "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-10-readback.stdout",
+      "bytes": 239,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-10-readback.stdout",
+      "retained_on_original_host": true,
+      "sha256": "6f33f4d33ed724ed59b54dce9542695d4988850d7212032e544835e4fce04426"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-10-readback.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-10-readback.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-11.stdout",
+      "bytes": 287,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-11.stdout",
+      "retained_on_original_host": true,
+      "sha256": "2c1acfa732491a34910f539b38bcb1dee3711d1bdd74275e62b48c150e8f8951"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-11.stderr",
+      "bytes": 204,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-11.stderr",
+      "retained_on_original_host": true,
+      "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-11-readback.stdout",
+      "bytes": 252,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-11-readback.stdout",
+      "retained_on_original_host": true,
+      "sha256": "f62079ec7243b2897baae189174bac21dbec29cce7499f659cadca2874515ebd"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-11-readback.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-11-readback.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-12.stdout",
+      "bytes": 274,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-12.stdout",
+      "retained_on_original_host": true,
+      "sha256": "3f27c33dd29bcfc2ef7fa5d9284445f56aa9b9ae69468f4a210ae323374c6993"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-12.stderr",
+      "bytes": 204,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-12.stderr",
+      "retained_on_original_host": true,
+      "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-12-readback.stdout",
+      "bytes": 239,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-12-readback.stdout",
+      "retained_on_original_host": true,
+      "sha256": "735d7c3e87d404d56c88551364e164679b57b3320d5b691cb445a8396c62d271"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-12-readback.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-12-readback.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-13.stdout",
+      "bytes": 277,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-13.stdout",
+      "retained_on_original_host": true,
+      "sha256": "3241b563f23c68c97f71ce8348a7bbff01afe28e937bff766b6363f8088915da"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-13.stderr",
+      "bytes": 204,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-13.stderr",
+      "retained_on_original_host": true,
+      "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-13-readback.stdout",
+      "bytes": 242,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-13-readback.stdout",
+      "retained_on_original_host": true,
+      "sha256": "c1dafc4f2690e09a92e7c0a0e747ee9d680e2139455949899faabc5569ef0db2"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-required-13-readback.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-13-readback.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-storage.stdout",
+      "bytes": 8781,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-storage.stdout",
+      "retained_on_original_host": true,
+      "sha256": "c3211f3bf49f293655c68a00ea1642034b802ccb36e20df74db80af22307b73b"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/node-storage.stderr",
+      "bytes": 330,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-storage.stderr",
+      "retained_on_original_host": true,
+      "sha256": "6bfc13cdfc54cfc0029db2d9e81ab3e4b390efe22dd1befda0ba25cd328105d7"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/native-release-main-build.stdout",
+      "bytes": 118510,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/native-release-main-build.stdout",
+      "retained_on_original_host": true,
+      "sha256": "09eeeed16e3269fac49f199bcd435f66fbefca4d5066f007b6b5966e75047157"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/native-release-main-build.stderr",
+      "bytes": 187,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/native-release-main-build.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e7a16b137735c0bffe4371366acc7fc02194b309eca21609ed147942dda8081c"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/source-after.stdout",
+      "bytes": 423,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/source-after.stdout",
+      "retained_on_original_host": true,
+      "sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/source-after.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/source-after.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/static-recheck-01/summary.json",
+      "bytes": 17881,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/static-recheck-01/summary.json",
+      "retained_on_original_host": true,
+      "sha256": "0da7b83afa38549de5cd97f2df1e87e1ad23d07fd785fe9181c99cebcf5a9f9d"
+    },
+    {
+      "archive_member": "validation/static-recheck-01/preflight.stdout",
+      "bytes": 177,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/static-recheck-01/preflight.stdout",
+      "retained_on_original_host": true,
+      "sha256": "5dd7bd6b3ece115afdc4220006fed84a5520177cd662d725ac96ca585765d252"
+    },
+    {
+      "archive_member": "validation/static-recheck-01/preflight.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/static-recheck-01/preflight.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/static-recheck-01/source-before.stdout",
+      "bytes": 423,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/static-recheck-01/source-before.stdout",
+      "retained_on_original_host": true,
+      "sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902"
+    },
+    {
+      "archive_member": "validation/static-recheck-01/source-before.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/static-recheck-01/source-before.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/static-recheck-01/clippy-default-trnm-data-availability.stdout",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/static-recheck-01/clippy-default-trnm-data-availability.stdout",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/static-recheck-01/clippy-default-trnm-data-availability.stderr",
+      "bytes": 2979,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/static-recheck-01/clippy-default-trnm-data-availability.stderr",
+      "retained_on_original_host": true,
+      "sha256": "a2992231c311418ac5d38d43d0b6b13526bb17d8ea794283a95da34a6d45b564"
+    },
+    {
+      "archive_member": "validation/static-recheck-01/clippy-default-trnm-pon-node.stdout",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/static-recheck-01/clippy-default-trnm-pon-node.stdout",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/static-recheck-01/clippy-default-trnm-pon-node.stderr",
+      "bytes": 2071,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/static-recheck-01/clippy-default-trnm-pon-node.stderr",
+      "retained_on_original_host": true,
+      "sha256": "fc7671351bff8a8bd58b0cb80f25265334650c51f9549d86010d7b3522c8028c"
+    },
+    {
+      "archive_member": "validation/static-recheck-01/strict-clippy.stdout",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/static-recheck-01/strict-clippy.stdout",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/static-recheck-01/strict-clippy.stderr",
+      "bytes": 5993,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/static-recheck-01/strict-clippy.stderr",
+      "retained_on_original_host": true,
+      "sha256": "b61593f38c84ced1eff12c22dafa63fdf11d836bee3cd83681f2a73db100c9d0"
+    },
+    {
+      "archive_member": "validation/static-recheck-01/source-after.stdout",
+      "bytes": 423,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/static-recheck-01/source-after.stdout",
+      "retained_on_original_host": true,
+      "sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902"
+    },
+    {
+      "archive_member": "validation/static-recheck-01/source-after.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/static-recheck-01/source-after.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/remaining-gates-02/accepted-release-main.json",
+      "bytes": 2054,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/accepted-release-main.json",
+      "retained_on_original_host": true,
+      "sha256": "b13585218eaf08c051c593ea699aae380322ab19fb8e021b9609a51ff47b8b09"
+    },
+    {
+      "archive_member": "validation/private-runtime02-inputs/preparation-success.json",
+      "bytes": 7104,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/preparation-success.json",
+      "retained_on_original_host": true,
+      "sha256": "b8b2781739bf3623a0581e5ce5dd4036078f9477421e149afafe1c2e83ffd5f9"
+    },
+    {
+      "archive_member": "validation/private-runtime02-inputs/source-inputs.native-v2-env2.json",
+      "bytes": 10308,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/source-inputs.native-v2-env2.json",
+      "retained_on_original_host": true,
+      "sha256": "d2fb314ef4f8d2e4dfd05076ddd7d8e0465880d935cf8812e3b9b8785d1a6bae"
+    },
+    {
+      "archive_member": "validation/private-runtime02-inputs/source-inputs.native-v2-env2.verification.json",
+      "bytes": 14093,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/source-inputs.native-v2-env2.verification.json",
+      "retained_on_original_host": true,
+      "sha256": "61f300cf7dd7eb7e455fcec6ada78a1cb392431ac3f8df40a1b36e7aa4781e7c"
+    },
+    {
+      "archive_member": "validation/private-runtime02-inputs/prepared-source-v1.json",
+      "bytes": 7830,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/prepared-source-v1.json",
+      "retained_on_original_host": true,
+      "sha256": "4d30ec2cef6772f55f91166c754c9475bc6fa7b33714a03d44a79a33f617e69b"
+    },
+    {
+      "archive_member": "validation/private-runtime02-inputs/derived-parent-preparer-envelope.json",
+      "bytes": 461,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/derived-parent-preparer-envelope.json",
+      "retained_on_original_host": true,
+      "sha256": "4b287b627527e6b931566b2ef4c64e2df26d617144b7e1bdb81e331b020297ed"
+    },
+    {
+      "archive_member": "validation/private-runtime02-inputs/derived-original-requests.json",
+      "bytes": 285,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/derived-original-requests.json",
+      "retained_on_original_host": true,
+      "sha256": "8e5c5ee7affb78820b07bab99936f4f669aea26ea25b9441fb7448c5e11a9bf0"
+    },
+    {
+      "archive_member": "validation/private-runtime02-inputs/original-preparer.stdout",
+      "bytes": 571,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/original-preparer.stdout",
+      "retained_on_original_host": true,
+      "sha256": "1df7a83a68aa459a92ae96ca8e800c6e08ab4b11e9d38e9970b0c8d0c3fa638e"
+    },
+    {
+      "archive_member": "validation/private-runtime02-inputs/original-preparer.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/original-preparer.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/private-runtime02-inputs/actual-input-readback.json",
+      "bytes": 8895,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/actual-input-readback.json",
+      "retained_on_original_host": true,
+      "sha256": "73d18561932ae0bbe465b75899afd2cf0dc5aeb69dd778e436c6078d95d1a566"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/summary.json",
+      "bytes": 8338,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/summary.json",
+      "retained_on_original_host": true,
+      "sha256": "678b1bd68e857c4811bbf951330c7f6a00b1a5e337b8791eec04edb3780fed53"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/private-python-probe.json",
+      "bytes": 28197,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/private-python-probe.json",
+      "retained_on_original_host": true,
+      "sha256": "2f39466078a44753c590cf58958dfba55a78eda92add55b9e27736524ed7479a"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/private-python-probe.maps",
+      "bytes": 6031,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/private-python-probe.maps",
+      "retained_on_original_host": true,
+      "sha256": "6ee5d27fcfdf9ec0ebe61445e0655cdb9b59d2ee6221ba18c26e66e9fc0f5ac2"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/private-python-probe.stdout",
+      "bytes": 242,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/private-python-probe.stdout",
+      "retained_on_original_host": true,
+      "sha256": "2687f5be4c2b26f29bf7dffab4f6b16ba74b664416ce91a76d754113b06b806f"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/private-python-probe.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/private-python-probe.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/unchanged-payload-members.json",
+      "bytes": 8300,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/unchanged-payload-members.json",
+      "retained_on_original_host": true,
+      "sha256": "020f1d5f62988896e179c3ab50f83a5ed942110e235ac8280c6bb7a0d258101a"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/runtime-snapshot.projected.v2.json",
+      "bytes": 7097177,
+      "included": false,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/runtime-snapshot.projected.v2.json",
+      "retained_on_original_host": true,
+      "sha256": "1085538a9d5901bf8e724347c97166669d8dd1ac5815c3e8825cfaa1ba3dd11a"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/expected-projection.json",
+      "bytes": 7097177,
+      "included": false,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/expected-projection.json",
+      "retained_on_original_host": true,
+      "sha256": "1085538a9d5901bf8e724347c97166669d8dd1ac5815c3e8825cfaa1ba3dd11a"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/expected-byte-map.json",
+      "bytes": 9222443,
+      "included": false,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/expected-byte-map.json",
+      "retained_on_original_host": true,
+      "sha256": "d95d018f2a65b30a44b30f3120757dc8c1865efc6169a02bd571e7009252bba0"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/original-members-before.json",
+      "bytes": 5724871,
+      "included": false,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/original-members-before.json",
+      "retained_on_original_host": true,
+      "sha256": "5be81639ab3308928e4846572350b6575416be6d235e18a9bce21328c6460c8c"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/original-members-after.json",
+      "bytes": 5724871,
+      "included": false,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/original-members-after.json",
+      "retained_on_original_host": true,
+      "sha256": "5be81639ab3308928e4846572350b6575416be6d235e18a9bce21328c6460c8c"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/projected-members-before-probe.json",
+      "bytes": 5403955,
+      "included": false,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/projected-members-before-probe.json",
+      "retained_on_original_host": true,
+      "sha256": "842f0653dda8d4f98578cc2f4eab1d92b915825b00ff452e1659d81fff86711c"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/projected-members-after-probe.json",
+      "bytes": 5403955,
+      "included": false,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/projected-members-after-probe.json",
+      "retained_on_original_host": true,
+      "sha256": "842f0653dda8d4f98578cc2f4eab1d92b915825b00ff452e1659d81fff86711c"
+    },
+    {
+      "archive_member": "control/build-environment.json",
+      "bytes": 1313,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-control/build-environment.json",
+      "retained_on_original_host": true,
+      "sha256": "2002591f8581d17848b5cc45c4990f69daf37f7db1cd822b2fae0e1c516155a1"
+    },
+    {
+      "archive_member": "control/run_model.py",
+      "bytes": 13640,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-control/run_model.py",
+      "retained_on_original_host": true,
+      "sha256": "d6540d88b88341c94a2be72fc76b16261f0607e1fd9c2a98ed9096aa913435f4"
+    },
+    {
+      "archive_member": "control/validate-original-tail-v3.py",
+      "bytes": 14537,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-control/validate-original-tail-v3.py",
+      "retained_on_original_host": true,
+      "sha256": "c986525ef5a25f295f90fc80c452d97dba512e55fc3115a25cc88dd392597135"
+    },
+    {
+      "archive_member": "control/static-recheck-v3.py",
+      "bytes": 21641,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-control/static-recheck-v3.py",
+      "retained_on_original_host": true,
+      "sha256": "1ddf491df68abfa4e12c09dd47bd5808dcb3a2c7b42fd1e292932007c1bf797e"
+    },
+    {
+      "archive_member": "control/project-private-runtime-v2.py",
+      "bytes": 19219,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-control/project-private-runtime-v2.py",
+      "retained_on_original_host": true,
+      "sha256": "5b4f4d4f7a0dcde9bcba6221fc4c8fd7b92f1be05c1fd706fa0545b496c2caba"
+    },
+    {
+      "archive_member": "control/private-runtime-probe-v1.py",
+      "bytes": 6232,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-control/private-runtime-probe-v1.py",
+      "retained_on_original_host": true,
+      "sha256": "b36333de24d3128eb619baa0cfb1417901d2b483f0e29b922cf5609d8b68bbef"
+    },
+    {
+      "archive_member": "control/prepare-env2-inputs-v1.py",
+      "bytes": 16573,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-control/prepare-env2-inputs-v1.py",
+      "retained_on_original_host": true,
+      "sha256": "3ca9e59411bff4b0c7de8f7de124e6a88ec2c86e3b7332f73929bf67c39e3794"
+    }
+  ],
+  "hepta_final_use": false,
+  "model_executed": false,
+  "model_loaded": false,
+  "native_operation_started": false,
+  "observer_sha256": "df455e1d41635d48ea87bcc3daa59d0d6c8c36afd08abcea2d64143121ec64bd",
+  "original_hepta_owner_used": false,
+  "production_activation": false,
+  "schema": "trnm.bt-pre-model-evidence-checkpoint.v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+}

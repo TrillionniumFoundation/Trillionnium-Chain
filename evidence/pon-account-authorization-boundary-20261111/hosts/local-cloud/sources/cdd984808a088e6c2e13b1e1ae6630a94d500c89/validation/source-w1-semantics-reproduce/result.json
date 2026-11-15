@@ -1,0 +1,26 @@
+{
+  "id": "source-w1-semantics-reproduce",
+  "argv": [
+    "python3",
+    "scripts/w1_qrom_semantics_audit.py",
+    "--out",
+    "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-semantics-reproduce/report.json"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 5.868374550000226,
+  "finished_utc": "2026-11-11T01:35:42.363610+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "pass": true,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 5.217877,
+    "system_cpu_seconds": 0.22736499999999998,
+    "maximum_rss_kib": 49528,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

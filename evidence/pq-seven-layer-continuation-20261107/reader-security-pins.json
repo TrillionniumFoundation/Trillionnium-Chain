@@ -1,0 +1,41 @@
+{
+  "changes": [
+    {
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "before": "647a6d9f2bb15877987d293d7e6740c44d14fc9a",
+      "after": "4b2ab6ec59f92e5ae396ea80c0b36e3d00664337"
+    },
+    {
+      "path": "scripts/ci/pq_chain_claim_guard.py",
+      "before": "cfdeb87aeddae68d16b7ae1cc9755035ae373aba",
+      "after": "42b8f37db5933e89033cac40a2544e02f10ae7a8"
+    },
+    {
+      "path": "scripts/ci/test_pq_research_integration.py",
+      "before": "7d830e5a9aaa50e82c07034d6db8f7a951ecf6e6",
+      "after": "20f1aaa463598677ccb5ed0aec2497bac3910122"
+    },
+    {
+      "path": "scripts/ci/test_pq_chain_claim_guard.py",
+      "before": "5f3ddd5a569811b02c936e5c292acb7c2a61fb25",
+      "after": "3bead7aae5466045ab7530575847a5a3549d8367"
+    },
+    {
+      "path": "scripts/ci/pq_source_reader.py",
+      "before": null,
+      "after": "a35092e9d3d4457d8e9a9f30b73ca65a34359546"
+    },
+    {
+      "path": ".github/workflows/codeql-real-exact-source.yml",
+      "before": null,
+      "after": "f9343222886105db2b80c1e5d813f8379dc6ccb2"
+    },
+    {
+      "path": "scripts/ci/test_codeql_retention.py",
+      "before": null,
+      "after": "fbf7cf2986f832b43c18afde6fa690b8cd358d17"
+    }
+  ],
+  "pins": 713,
+  "required": 632
+}

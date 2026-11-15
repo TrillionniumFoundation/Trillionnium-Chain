@@ -1,0 +1,17 @@
+{
+  "batch_id": "92906638da1385100dc295fefaff707c01077e4ebcdbbfe24415d1647883c731",
+  "height": 1,
+  "model_commitment": "e365293070b00d2c3600ff38324b5e730c94bb4b8b07f61b7eac4e451cce64a4",
+  "network": "312c6139e1e552a90ba0a40613cf4ae615a52cdc24044cac89625ed73520fb29",
+  "nonce": 0,
+  "parameters": "4f04548e2c2b45da2473521e80893f1a9fb2d18907abadefe19c5894b0514cfb",
+  "parent": "39e5db9e36f7bbc4242e8ba2aa61074f88cc5858cda669b32da73a824fc74380",
+  "payee": "369e619d12988d8c9d384c7ef344a48d90958633fa979d8094fa617feb508530",
+  "prior_state_root": "600c92740f7c45e601e1c6f56bb9e09e6986a74300a1c50b0bba593e71ffe83c",
+  "profile": "pon-grouped-int257-lottery-audit-v0",
+  "request_precommitment": "bb88a820b3536ffae959f1518467f66de98d6231cc6d333effdee000e84bbf7b",
+  "target": "0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "task": "f90392b0a1fd95364eaa2cadfba522a926b7a520a204eb3e63511dafa855f799",
+  "timestamp_ms": 0,
+  "transactions_commitment": "70d22e80ffbcfcbd94908d7debc45ea9a240d80cdf68f605a0961da29072853b"
+}

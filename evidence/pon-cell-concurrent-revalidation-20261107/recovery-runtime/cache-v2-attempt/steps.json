@@ -1,0 +1,189 @@
+[
+  {
+    "args": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final",
+    "exit_code": 0,
+    "name": "source-preflight"
+  },
+  {
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final",
+    "exit_code": 0,
+    "name": "base-head",
+    "seconds": 0.0035292399115860462
+  },
+  {
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final",
+    "exit_code": 0,
+    "name": "base-tree",
+    "seconds": 0.004502221941947937
+  },
+  {
+    "args": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final",
+    "exit_code": 0,
+    "name": "base-status",
+    "seconds": 0.038577928906306624
+  },
+  {
+    "args": [
+      "git",
+      "remote",
+      "get-url",
+      "origin"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final",
+    "exit_code": 0,
+    "name": "cache-origin-0",
+    "seconds": 0.003788151079788804
+  },
+  {
+    "args": [
+      "git",
+      "rev-parse",
+      "--git-path",
+      "objects"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final",
+    "exit_code": 0,
+    "name": "cache-object-dir-0",
+    "seconds": 0.00315706804394722
+  },
+  {
+    "args": [
+      "git",
+      "remote",
+      "get-url",
+      "origin"
+    ],
+    "cwd": "/home/qian-qi/work/chain-pon-work-safety-20261103",
+    "exit_code": 0,
+    "name": "cache-origin-1",
+    "seconds": 0.003244925057515502
+  },
+  {
+    "args": [
+      "git",
+      "rev-parse",
+      "--git-path",
+      "objects"
+    ],
+    "cwd": "/home/qian-qi/work/chain-pon-work-safety-20261103",
+    "exit_code": 0,
+    "name": "cache-object-dir-1",
+    "seconds": 0.002432561945170164
+  },
+  {
+    "args": [
+      "git",
+      "-c",
+      "credential.helper=",
+      "-c",
+      "credential.helper=!gh auth git-credential",
+      "clone",
+      "--filter=blob:none",
+      "--no-checkout",
+      "--single-branch",
+      "--branch",
+      "fix/chain-six-axis-performance-20261103",
+      "--reference-if-able",
+      "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final",
+      "--reference-if-able",
+      "/home/qian-qi/work/chain-pon-work-safety-20261103",
+      "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+      "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v2"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107",
+    "exit_code": 0,
+    "name": "clone-cached-worktree",
+    "seconds": 4.804611569037661
+  },
+  {
+    "args": [
+      "git",
+      "ls-tree",
+      "-r",
+      "-z",
+      "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v2",
+    "exit_code": 0,
+    "name": "target-tree",
+    "seconds": 0.022544817067682743
+  },
+  {
+    "args": [
+      "git",
+      "-c",
+      "credential.helper=",
+      "-c",
+      "credential.helper=!gh auth git-credential",
+      "checkout",
+      "--detach",
+      "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v2",
+    "exit_code": 0,
+    "name": "select-acc2",
+    "seconds": 448.100070618093
+  },
+  {
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v2",
+    "exit_code": 0,
+    "name": "checkout-head",
+    "seconds": 0.0025890718679875135
+  },
+  {
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v2",
+    "exit_code": 0,
+    "name": "checkout-tree",
+    "seconds": 0.003595418995246291
+  },
+  {
+    "args": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v2",
+    "exit_code": 0,
+    "name": "checkout-status",
+    "seconds": 0.3036677651107311
+  },
+  {
+    "args": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v2",
+    "exit_code": 2,
+    "name": "checkout-preflight",
+    "seconds": 0.07612509606406093
+  }
+]

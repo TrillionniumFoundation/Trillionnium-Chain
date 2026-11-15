@@ -1,0 +1,373 @@
+{
+  "action": "selected",
+  "all_commands_succeeded": true,
+  "binary": "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+  "binary_after_sha256": "7cef941c2174339125cbc43d56ed6b79976466ec225388860e1b20415ff889c3",
+  "binary_bytes": 395050296,
+  "binary_sha256": "7cef941c2174339125cbc43d56ed6b79976466ec225388860e1b20415ff889c3",
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+        "--list",
+        "--format",
+        "terse"
+      ],
+      "child_system_seconds": 0.005213,
+      "child_user_seconds": 0.0,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:39:36.243266+00:00",
+      "label": "registry-all",
+      "max_child_rss_kib": 14572,
+      "started_at": "2026-11-04T08:39:36.237670+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e68e056d703230abd8928979a0b4e206b5ed34bef9aff8b7d873393bc8c6bddb",
+      "wall_ns": 5587673
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+        "--list",
+        "--ignored",
+        "--format",
+        "terse"
+      ],
+      "child_system_seconds": 0.0037229999999999997,
+      "child_user_seconds": 0.0,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:39:36.247580+00:00",
+      "label": "registry-ignored",
+      "max_child_rss_kib": 14572,
+      "started_at": "2026-11-04T08:39:36.243643+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "dda33d1617b05e9f47f63690fa7aa55a7eed9b5ba8a486e3a53dd2865d660b1d",
+      "wall_ns": 3939623
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+        "readback_tests::",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "child_system_seconds": 0.232596,
+      "child_user_seconds": 4.326549,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:39:41.070463+00:00",
+      "label": "append-reorg",
+      "max_child_rss_kib": 32460,
+      "started_at": "2026-11-04T08:39:36.247851+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "78698347ff268d592d59b7d21cbe9dfd06ccba43c0a7edbba96a168ae57ac447",
+      "wall_ns": 4822628280
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+        "store::native_authenticated::",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "child_system_seconds": 0.926732,
+      "child_user_seconds": 29.806933,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:40:12.428535+00:00",
+      "label": "authenticated",
+      "max_child_rss_kib": 90760,
+      "started_at": "2026-11-04T08:39:41.070795+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "0c2d21adec2db7e45f358cbc1e8290420a47ef46043545a7ea8df18406df58b7",
+      "wall_ns": 31357757156
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+        "account_archive_prototype::native_store::",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "child_system_seconds": 0.33994199999999997,
+      "child_user_seconds": 5.788643,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:40:19.231970+00:00",
+      "label": "archive-store",
+      "max_child_rss_kib": 90760,
+      "started_at": "2026-11-04T08:40:12.428949+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c23dc0960cf141581e5febe8db7ecce59e3f8dec0a28232b31efcf32eaa0fa4a",
+      "wall_ns": 6803035391
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+        "ingress::public_v3::tests::completed_input_boundary_rejects_tail_without_consuming_pending_frame",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "child_system_seconds": 0.0,
+      "child_user_seconds": 0.011104000000003111,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:40:19.244724+00:00",
+      "label": "tcp-1",
+      "max_child_rss_kib": 90760,
+      "started_at": "2026-11-04T08:40:19.232422+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "ffea1083a82888f7f5cc328280fee218afe2bc65919902775c089c48daaca235",
+      "wall_ns": 12312265
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_required_native_test.py",
+        "/workspace/scratch/7318d5f890d1/throughput-validation/final-b811-native/tcp-1.stdout",
+        "--test",
+        "ingress::public_v3::tests::completed_input_boundary_rejects_tail_without_consuming_pending_frame"
+      ],
+      "child_system_seconds": 0.0,
+      "child_user_seconds": 0.029268999999999323,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:40:19.274583+00:00",
+      "label": "tcp-1-reader",
+      "max_child_rss_kib": 90760,
+      "started_at": "2026-11-04T08:40:19.245024+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "d5e090dd42d8afeda7c70cd2fcb28d709365814950539ffa55335672d89eb2c7",
+      "wall_ns": 29619091
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+        "ingress::public_v3::tests::early_complete_body_waiting_for_ready_preserves_signed_native_submission",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "child_system_seconds": 0.008612999999999982,
+      "child_user_seconds": 0.03523399999999555,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:40:19.392595+00:00",
+      "label": "tcp-2",
+      "max_child_rss_kib": 90760,
+      "started_at": "2026-11-04T08:40:19.274932+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "1f4c9015a3019da6e64f3bcbdda304d8ee0c4c50384e8ed56313cd059e276926",
+      "wall_ns": 117681542
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_required_native_test.py",
+        "/workspace/scratch/7318d5f890d1/throughput-validation/final-b811-native/tcp-2.stdout",
+        "--test",
+        "ingress::public_v3::tests::early_complete_body_waiting_for_ready_preserves_signed_native_submission"
+      ],
+      "child_system_seconds": 0.004357000000000166,
+      "child_user_seconds": 0.022946000000004574,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:40:19.420572+00:00",
+      "label": "tcp-2-reader",
+      "max_child_rss_kib": 90760,
+      "started_at": "2026-11-04T08:40:19.392961+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "98229d3322725f7f42dd45754310fdf13810dd0ee318fb4b37847b59f8dc18e3",
+      "wall_ns": 27627703
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+        "ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "child_system_seconds": 0.02682999999999991,
+      "child_user_seconds": 0.05498199999999542,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:40:19.652943+00:00",
+      "label": "tcp-3",
+      "max_child_rss_kib": 90760,
+      "started_at": "2026-11-04T08:40:19.420936+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "2d7fc2415fdfdc8309859cfb72e35fbe78c5ee767b314f2d0c82631dc3be4868",
+      "wall_ns": 232023939
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_required_native_test.py",
+        "/workspace/scratch/7318d5f890d1/throughput-validation/final-b811-native/tcp-3.stdout",
+        "--test",
+        "ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work"
+      ],
+      "child_system_seconds": 0.003931000000000129,
+      "child_user_seconds": 0.024093000000000586,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:40:19.681628+00:00",
+      "label": "tcp-3-reader",
+      "max_child_rss_kib": 90760,
+      "started_at": "2026-11-04T08:40:19.653312+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "5126db646946f201bc08f6208937f70782b5559adb3c59d7fa352205151ce527",
+      "wall_ns": 28336663
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+        "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "child_system_seconds": 0.01446399999999981,
+      "child_user_seconds": 0.020977000000002022,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:40:19.764961+00:00",
+      "label": "tcp-4",
+      "max_child_rss_kib": 90760,
+      "started_at": "2026-11-04T08:40:19.682104+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "6885d58de7339d1cd88edfd095ae0b97c45cf5fa37c7b3c51f6f9c0af1039731",
+      "wall_ns": 82873446
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_required_native_test.py",
+        "/workspace/scratch/7318d5f890d1/throughput-validation/final-b811-native/tcp-4.stdout",
+        "--test",
+        "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+      ],
+      "child_system_seconds": 0.0041440000000001476,
+      "child_user_seconds": 0.03101000000000198,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:40:19.800934+00:00",
+      "label": "tcp-4-reader",
+      "max_child_rss_kib": 90760,
+      "started_at": "2026-11-04T08:40:19.765339+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e177bedb0d8b8e98e08b321572322d6d976bf5020dd497b08d76e23d2584fdb1",
+      "wall_ns": 35609017
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+        "ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "child_system_seconds": 0.013557999999999737,
+      "child_user_seconds": 0.029780999999999835,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:40:19.917171+00:00",
+      "label": "tcp-5",
+      "max_child_rss_kib": 90760,
+      "started_at": "2026-11-04T08:40:19.801305+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "676847a3e6e803bb81ad69585d773aa50f2f426a8846647fd972e250862aa2a7",
+      "wall_ns": 115883545
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_required_native_test.py",
+        "/workspace/scratch/7318d5f890d1/throughput-validation/final-b811-native/tcp-5.stdout",
+        "--test",
+        "ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work"
+      ],
+      "child_system_seconds": 0.008558000000000288,
+      "child_user_seconds": 0.016841999999996915,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:40:19.943177+00:00",
+      "label": "tcp-5-reader",
+      "max_child_rss_kib": 90760,
+      "started_at": "2026-11-04T08:40:19.917491+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "7a793f73ce3777fa31f5b16be337925fc9054e1624a30c3b9e4f7883c06e4c6d",
+      "wall_ns": 25702027
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+        "ingress::tests::cancellation_after_admission_preserves_fact_and_exact_retry_controls_activation",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "child_system_seconds": 0.0036449999999998983,
+      "child_user_seconds": 0.021183000000000618,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:40:19.976134+00:00",
+      "label": "tcp-6",
+      "max_child_rss_kib": 90760,
+      "started_at": "2026-11-04T08:40:19.943492+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "1fb2bea3e4be4e8cec59bd4c4dec4c12d369c3920b9852f8840c9028cfc9e925",
+      "wall_ns": 32663406
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_required_native_test.py",
+        "/workspace/scratch/7318d5f890d1/throughput-validation/final-b811-native/tcp-6.stdout",
+        "--test",
+        "ingress::tests::cancellation_after_admission_preserves_fact_and_exact_retry_controls_activation"
+      ],
+      "child_system_seconds": 0.004569999999999963,
+      "child_user_seconds": 0.026456000000003144,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:40:20.008025+00:00",
+      "label": "tcp-6-reader",
+      "max_child_rss_kib": 90760,
+      "started_at": "2026-11-04T08:40:19.976624+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "3a50db7f824bad10542c0c0fa765b2e4223a1beb22d20452fe927b35252ffd4e",
+      "wall_ns": 31415470
+    }
+  ],
+  "full_node_suite_executed": false,
+  "public_confirmation_measured": false,
+  "schema": "final-composed-local-native-observation-v1",
+  "source_manifest_sha256": "27920633e57be739926218c370ecfbdfea624df71d84b89c2f9e3fc6f48605d2",
+  "source_unchanged": true
+}

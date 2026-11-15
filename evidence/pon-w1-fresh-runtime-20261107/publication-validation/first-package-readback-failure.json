@@ -1,0 +1,48 @@
+{
+  "cause": "Root packaging verifier expected 59 payload members, but the existing archive correctly includes those 59 public files plus the separately pinned PUBLIC-ALLOWLIST.json. Exact inspection found no missing payload and one byte-identical allowlist self member. No source, experiment, database, proof or archive was changed.",
+  "inspection": {
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-fresh-runtime-01/finalize-01/archive-path-inspection.json",
+    "sha256": "ab1bd70f292837b393a429bf603a1731b993b0500f86143199fe50ae1dd0554c"
+  },
+  "launch_response_text": "{\n  \"audit_recorded\": true,\n  \"job\": {\n    \"args\": [\n      \"-B\",\n      \"-\"\n    ],\n    \"created_unix_ms\": 1794090438094,\n    \"cwd\": \"/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery\",\n    \"env_keys\": [],\n    \"executable\": \"/usr/bin/python3.12\",\n    \"execution_mode\": \"operator\",\n    \"host\": \"desktop\",\n    \"id\": \"1a1b81f8dce-12894-d4c\",\n    \"idempotency_key\": \"w1-finalize-fresh-runtime-publication-staging-01\",\n    \"launch_error\": null,\n    \"launch_state\": \"launched\",\n    \"remote_job_dir\": \"/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b81f8dce-12894-d4c\",\n    \"request_digest\": \"c74a3014b1650ca73b1cb88e9fdb8c8058f23ebc133edb10800ad68c513b9896\",\n    \"request_fingerprint\": 14360343227257916583,\n    \"ssh_target\": \"desktop-ts\",\n    \"system_jobctl\": false,\n    \"unit\": \"hepta-runtime-job-1a1b81f8dce-12894-d4c\"\n  },\n  \"launch\": {\n    \"backend\": \"systemd\",\n    \"launcher_pid\": null,\n    \"ok\": true,\n    \"unit\": \"hepta-runtime-job-1a1b81f8dce-12894-d4c\"\n  },\n  \"local_record_pending\": false,\n  \"reused\": false\n}",
+  "schema": "TRNM-W1-PUBLICATION-PACKAGE-CHECK-FAILURE1",
+  "source_or_experiment_changed": false,
+  "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 27, in <module>\nAssertionError\n",
+  "terminal_status": {
+    "at_unix_ms": 1794090440301,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 1,
+    "job_id": "1a1b81f8dce-12894-d4c",
+    "launch_nonce": "a59e3b02d22d88ea915913d8a24b67b6",
+    "log_bytes": {
+      "stderr": {
+        "seen": 89,
+        "stored": 89
+      },
+      "stdout": {
+        "seen": 0,
+        "stored": 0
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "failed",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  }
+}

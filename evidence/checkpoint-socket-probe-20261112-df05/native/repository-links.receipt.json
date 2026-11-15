@@ -1,0 +1,37 @@
+{
+  "bytes": 307,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+  "elapsed_ns": 57545438826,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "log": "repository-links.log",
+  "name": "repository-links",
+  "process_exit_code": 0,
+  "sha256": "200ab56c7cc5e95af55e57a835cf396ee049bb9bc3cb2367b55329f48d2863ec",
+  "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "target_after_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_before_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_identity_error": null,
+  "timed_out": false
+}

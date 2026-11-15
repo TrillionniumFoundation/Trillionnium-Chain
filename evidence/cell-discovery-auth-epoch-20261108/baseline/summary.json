@@ -1,0 +1,42 @@
+[
+  {
+    "cmd": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0,
+    "elapsed_s": 0.09144878387451172
+  },
+  {
+    "cmd": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "returncode": 0,
+    "elapsed_s": 0.6113829612731934
+  },
+  {
+    "cmd": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-data-availability",
+      "--lib",
+      "cell::discovery::",
+      "--",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "elapsed_s": 127.95718622207642
+  }
+]

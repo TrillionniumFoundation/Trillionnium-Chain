@@ -1,0 +1,53 @@
+{
+  "archive_index_sha256": "675e0d08c19b13e53f3175f33eb774d6780c0ae51e8a6859c01cb8eb0f9f07e7",
+  "archive_sha256": "78142ab292525bcd911029ee07177bbad1630d74b512c0152125afbf0f89ab0f",
+  "candidate": "f85fea4e8da02404d513d074ceb35ad5292b017b",
+  "files": [
+    {
+      "bytes": 2152,
+      "git_blob": "664dd4b50931576a2823ea54d68eefa53d813a45",
+      "origin": "/workspace/scratch/8a6ecb667c1e/integration-review/curated-packaging-v2-run.json",
+      "path": "curated-packaging-v2-run.json",
+      "sha256": "b1c6dc8d5dc690bf065428817dae1ed6ea1a7e67e256ad62256c60935fee113a"
+    },
+    {
+      "bytes": 847,
+      "git_blob": "04e6da0d54f55297566aa9d2af83ff70cc2eb4d0",
+      "origin": "/workspace/scratch/8a6ecb667c1e/integration-review/curated-packaging-v2-run.log",
+      "path": "curated-packaging-v2-run.log",
+      "sha256": "600ba2e97e43fa3357acda2efbe81cbf16734e0aeb1abaf10d53568609e82f96"
+    },
+    {
+      "bytes": 17206,
+      "git_blob": "e314d74e782a15f225ca3a628ce705b7bcf480fd",
+      "origin": "/workspace/scratch/8a6ecb667c1e/integration-review/curated-archive-v2-independent-review-release.json",
+      "path": "curated-archive-v2-independent-review-release.json",
+      "sha256": "cea245609bb6ef9487d4dc887c7a3c189d7ff6523a0eae6838f2722047a665f3"
+    },
+    {
+      "bytes": 2490,
+      "git_blob": "4326922bc8a85afda849dc47fe79e2b2f0f1b2a3",
+      "origin": "/workspace/scratch/8a6ecb667c1e/integration-review/curated-archive-v2-independent-roundtrip-release.json",
+      "path": "curated-archive-v2-independent-roundtrip-release.json",
+      "sha256": "66acbebee9be8cdadf4e0d9e8043b6b1fe91728fd9b05b2aa7518a4ade1e583d"
+    },
+    {
+      "bytes": 459,
+      "git_blob": "c74b94fce2654334630cd52146e018019764d2db",
+      "origin": "/workspace/scratch/8a6ecb667c1e/integration-review/curated-archive-v2-independent-roundtrip.stdout.log",
+      "path": "curated-archive-v2-independent-roundtrip.stdout.log",
+      "sha256": "86d5adec855be34a20586c12be553286f131d4220c350e87a1349e2167f4876d"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "origin": "/workspace/scratch/8a6ecb667c1e/integration-review/curated-archive-v2-independent-roundtrip.stderr.log",
+      "path": "curated-archive-v2-independent-roundtrip.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "final_native_and_ci_pending": true,
+  "manifest_excludes_itself": true,
+  "schema": "trnm-curated-evidence-review-supplement-v1",
+  "scope": "Post-package actual build and independent review receipts; archive content validation only, native0. This supplement does not alter the frozen archive."
+}

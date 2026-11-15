@@ -1,0 +1,193 @@
+{
+  "commands": [
+    {
+      "command": [
+        "just",
+        "fix",
+        "-p",
+        "codex-hepta-learning-artifacts",
+        "-p",
+        "codex-hepta-agentd",
+        "--lib",
+        "--locked"
+      ],
+      "diff": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-evidence/maintenance-v1/scoped-fix-source-diff.patch",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "log": {
+        "bytes": 22250,
+        "path": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-evidence/maintenance-v1/scoped-fix.log",
+        "sha256": "92ef48c3e2e02009b06656303ff5912b65edbee1753fa87e055cb0772751b4ef"
+      },
+      "name": "scoped-fix",
+      "resources": {
+        "CPUQuotaPerSecUSec": "2s",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-frozen-eval-4a93-f5f617-maintenance-v1.service",
+        "MemoryMax": "8589934592",
+        "Nice": "10",
+        "RuntimeMaxUSec": "1h 30min",
+        "cpu.max": "200000 100000",
+        "cpu.stat": "usage_usec 142117991\nuser_usec 128573472\nsystem_usec 13544518\nnice_usec 128515000\ncore_sched.force_idle_usec 0\nnr_periods 931\nnr_throttled 68\nthrottled_usec 125918\nnr_bursts 0\nburst_usec 0",
+        "memory.max": "8589934592",
+        "memory.peak": "2990895104",
+        "memory.swap.max": "max",
+        "memory.swap.peak": "0"
+      },
+      "source": {
+        "head": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+        "index_tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198",
+        "status": "",
+        "tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198"
+      },
+      "wall_seconds": 92.9954937149887
+    },
+    {
+      "command": [
+        "just",
+        "fmt"
+      ],
+      "diff": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-evidence/maintenance-v1/post-fmt-source-diff.patch",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "log": {
+        "bytes": 73,
+        "path": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-evidence/maintenance-v1/post-fmt.log",
+        "sha256": "b6a6d5ad920f48c9b49a3ca8c2308227b7849b9e0a498dc452f3a7bd2f7fb752"
+      },
+      "name": "post-fmt",
+      "resources": {
+        "CPUQuotaPerSecUSec": "2s",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-frozen-eval-4a93-f5f617-maintenance-v1.service",
+        "MemoryMax": "8589934592",
+        "Nice": "10",
+        "RuntimeMaxUSec": "1h 30min",
+        "cpu.max": "200000 100000",
+        "cpu.stat": "usage_usec 142247833\nuser_usec 128639013\nsystem_usec 13608819\nnice_usec 128573000\ncore_sched.force_idle_usec 0\nnr_periods 932\nnr_throttled 68\nthrottled_usec 125918\nnr_bursts 0\nburst_usec 0",
+        "memory.max": "8589934592",
+        "memory.peak": "2990895104",
+        "memory.swap.max": "max",
+        "memory.swap.peak": "0"
+      },
+      "source": {
+        "head": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+        "index_tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198",
+        "status": "",
+        "tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198"
+      },
+      "wall_seconds": 0.07303756399778649
+    },
+    {
+      "command": [
+        "just",
+        "clippy",
+        "-p",
+        "codex-hepta-learning-artifacts",
+        "-p",
+        "codex-hepta-agentd",
+        "--lib",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "diff": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-evidence/maintenance-v1/strict-clippy-source-diff.patch",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 101,
+      "log": {
+        "bytes": 21795,
+        "path": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-evidence/maintenance-v1/strict-clippy.log",
+        "sha256": "69d93c15e5d853c9203763d1ef94f9c25cd1f25c8a20f80abe95241b7c95dcaf"
+      },
+      "name": "strict-clippy",
+      "resources": {
+        "CPUQuotaPerSecUSec": "2s",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-frozen-eval-4a93-f5f617-maintenance-v1.service",
+        "MemoryMax": "8589934592",
+        "Nice": "10",
+        "RuntimeMaxUSec": "1h 30min",
+        "cpu.max": "200000 100000",
+        "cpu.stat": "usage_usec 323983895\nuser_usec 296243534\nsystem_usec 27740361\nnice_usec 296227000\ncore_sched.force_idle_usec 0\nnr_periods 2028\nnr_throttled 273\nthrottled_usec 410840\nnr_bursts 0\nburst_usec 0",
+        "memory.max": "8589934592",
+        "memory.peak": "3037560832",
+        "memory.swap.max": "max",
+        "memory.swap.peak": "0"
+      },
+      "source": {
+        "head": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+        "index_tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198",
+        "status": "",
+        "tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198"
+      },
+      "wall_seconds": 109.51197955501266
+    }
+  ],
+  "engineering_controls_only": true,
+  "error": {
+    "message": "maintenance command failed: strict-clippy",
+    "traceback": "Traceback (most recent call last):\n  File \"/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-evidence/run_frozen_profile_maintenance.py\", line 106, in main\n    raise RuntimeError(\"maintenance command failed: \" + name)\nRuntimeError: maintenance command failed: strict-clippy\n",
+    "type": "RuntimeError"
+  },
+  "exit_code": 101,
+  "production_final_use_qualified": false,
+  "resources_after": {
+    "CPUQuotaPerSecUSec": "2s",
+    "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-frozen-eval-4a93-f5f617-maintenance-v1.service",
+    "MemoryMax": "8589934592",
+    "Nice": "10",
+    "RuntimeMaxUSec": "1h 30min",
+    "cpu.max": "200000 100000",
+    "cpu.stat": "usage_usec 324013758\nuser_usec 296257809\nsystem_usec 27755949\nnice_usec 296235000\ncore_sched.force_idle_usec 0\nnr_periods 2028\nnr_throttled 273\nthrottled_usec 410840\nnr_bursts 0\nburst_usec 0",
+    "memory.max": "8589934592",
+    "memory.peak": "3037560832",
+    "memory.swap.max": "max",
+    "memory.swap.peak": "0"
+  },
+  "resources_before": {
+    "CPUQuotaPerSecUSec": "2s",
+    "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-frozen-eval-4a93-f5f617-maintenance-v1.service",
+    "MemoryMax": "8589934592",
+    "Nice": "10",
+    "RuntimeMaxUSec": "1h 30min",
+    "cpu.max": "200000 100000",
+    "cpu.stat": "usage_usec 65774\nuser_usec 31859\nsystem_usec 33914\nnice_usec 29000\ncore_sched.force_idle_usec 0\nnr_periods 1\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "memory.max": "8589934592",
+    "memory.peak": "20832256",
+    "memory.swap.max": "max",
+    "memory.swap.peak": "0"
+  },
+  "source_after": {
+    "head": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+    "index_tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198",
+    "status": "",
+    "tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198"
+  },
+  "source_before": {
+    "head": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+    "index_tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198",
+    "status": "",
+    "tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198"
+  },
+  "test_results": [
+    {
+      "bytes": 17517,
+      "path": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-evidence/native-v3/result.json",
+      "sha256": "7ed73680708e579af144d4c6b1b457bfc0cfc2f87905a70bb268826cc354a552"
+    },
+    {
+      "bytes": 8252,
+      "path": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-evidence/direct-v1/result.json",
+      "sha256": "0d97b795871f5478aba50dca46c7f8ea02eebd7ff0bae35ff170f2190f662696"
+    }
+  ],
+  "tested_candidate": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+  "tests_rerun_after_maintenance": false
+}

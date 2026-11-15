@@ -1,0 +1,10 @@
+{
+  "not_retrieved_cloud_raw": true,
+  "provider_sha256": "ceabed0dca2eb705ff1bd37222466c55bf1a7d3df32901075a1e2f2c5881230a",
+  "recorder_sha256": "89bcd6ff9ba6f573ca89191bc0d69e6b83a6ee41aa5f60c1bbc2edfd50f92366",
+  "schema": "pon-h-core-reexecution-provenance-v1",
+  "source_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+  "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "source_function_recorder_sha256": "049c64cf32927bcd16a82059707a468c91d6fc9be7d7abc9047bb3efcd2d8123",
+  "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+}

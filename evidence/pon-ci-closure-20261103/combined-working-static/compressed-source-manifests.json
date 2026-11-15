@@ -1,0 +1,23 @@
+{
+  "scope": "Byte-preserving gzip packaging of full original working-source manifests; decompress to each original filename for receipts. No native test or committed-source claim.",
+  "files": [
+    {
+      "path": "source-after-files.json.gz",
+      "encoding": "gzip",
+      "stored_bytes": 541552,
+      "stored_sha256": "0b2cba29c8f126b41a30b7cd25fea18e1c230e435164dfca616ce2e442080e49",
+      "uncompressed_filename": "source-after-files.json",
+      "uncompressed_bytes": 1881909,
+      "uncompressed_sha256": "004bb7b9f6677fdceeec805ea7760178dc771ec9775d3a1feaef8e4563b76e2c"
+    },
+    {
+      "path": "source-before-files.json.gz",
+      "encoding": "gzip",
+      "stored_bytes": 539234,
+      "stored_sha256": "7e1e414f6d693bffb3c00a37867d5b2fd911cd5a4d8f6fd4e9494114cc3cef50",
+      "uncompressed_filename": "source-before-files.json",
+      "uncompressed_bytes": 1874291,
+      "uncompressed_sha256": "0188cfae60b2f8719c26fcf71e69a85e38e165222f8af5f08691f128e3b6cd5e"
+    }
+  ]
+}

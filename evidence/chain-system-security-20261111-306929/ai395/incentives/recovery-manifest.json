@@ -1,0 +1,186 @@
+{
+  "cargo_invoked": false,
+  "files_excluding_this_manifest": [
+    {
+      "bytes": 10611,
+      "original_sha256": null,
+      "original_sha256_matched": false,
+      "path": "README.md",
+      "recovery_method": "new reconstruction after cloud disconnect; no prior README hash claimed",
+      "sha256": "6cb0c237b8fe63e7cb6a5e856cca14d358cd2e50ceae7937da0977ff39ab4223"
+    },
+    {
+      "bytes": 18947,
+      "original_sha256": null,
+      "original_sha256_matched": false,
+      "path": "archive-manifest.json",
+      "recovery_method": "exact member copy from original SHA-pinned archive; prior external-copy digest not retained",
+      "sha256": "e4c7309509a0f859fb5e54196c0734586d09d65533d8f096ab9423a57664237b"
+    },
+    {
+      "bytes": 1608,
+      "original_sha256": "82728ae7bc6b66f41cd410fc3f30aed14067bb17b199957082f64a8039046e1d",
+      "original_sha256_matched": true,
+      "path": "export-result.json",
+      "recovery_method": "exact retained version-pinned binary read",
+      "sha256": "82728ae7bc6b66f41cd410fc3f30aed14067bb17b199957082f64a8039046e1d"
+    },
+    {
+      "bytes": 1666,
+      "original_sha256": "82027ab7408d0e4ff8e8a69072c3f1e5aac880ff577a5a4d1671d97214d7a8ef",
+      "original_sha256_matched": true,
+      "path": "exporter-pty.log",
+      "recovery_method": "exact retained raw PTY bytes",
+      "sha256": "82027ab7408d0e4ff8e8a69072c3f1e5aac880ff577a5a4d1671d97214d7a8ef"
+    },
+    {
+      "bytes": 1882840,
+      "original_sha256": "3d543e24395320c860d342f396ad492baa76365128be1ee91a296ffc23ca09c9",
+      "original_sha256_matched": true,
+      "path": "incentive-bac6b7659bd7-raw-20261112.tar.xz",
+      "recovery_method": "direct byte copy of original AI395 archive; no regeneration",
+      "sha256": "3d543e24395320c860d342f396ad492baa76365128be1ee91a296ffc23ca09c9"
+    },
+    {
+      "bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_sha256_matched": true,
+      "path": "independent-verification-first.stdout.log",
+      "recovery_method": "empty original stdout with retained digest",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 11398,
+      "original_sha256": "941ef2ae5a34433b0ba72b0b8839ad16d2d414a997e27fae54fb712f731079a2",
+      "original_sha256_matched": true,
+      "path": "independent-verification.json",
+      "recovery_method": "deterministically reproduced by recovered exact reader; matches retained original report hash",
+      "sha256": "941ef2ae5a34433b0ba72b0b8839ad16d2d414a997e27fae54fb712f731079a2"
+    },
+    {
+      "bytes": 2104,
+      "original_sha256": null,
+      "original_sha256_matched": false,
+      "path": "manifest.json",
+      "recovery_method": "newly reconstructed outer manifest after cloud disconnect; no prior manifest SHA claimed",
+      "sha256": "ba61eb9eb491caabb0b24fe5a06400abbb004cfae4058e7ee0c3cda688f599e4"
+    },
+    {
+      "bytes": 4726,
+      "original_sha256": null,
+      "original_sha256_matched": false,
+      "path": "native-observations.json",
+      "recovery_method": "exact member copy from original SHA-pinned archive; prior external-copy digest not retained",
+      "sha256": "d9663ce02899f7dca1cf6bb614b9e2b32be6143decee79efcee43fc8f461aac3"
+    },
+    {
+      "bytes": 571,
+      "original_sha256": "fe2310fad47558c21a592b4c7ce561a488f8527f6fc8529c78b984f1cf577ffe",
+      "original_sha256_matched": true,
+      "path": "recovery-first-stage-result.json",
+      "recovery_method": "exact retained initial AI395 staging failure result",
+      "sha256": "fe2310fad47558c21a592b4c7ce561a488f8527f6fc8529c78b984f1cf577ffe"
+    },
+    {
+      "bytes": 836,
+      "original_sha256": null,
+      "original_sha256_matched": false,
+      "path": "recovery-first-stage.stderr.log",
+      "recovery_method": "exact initial AI395 staging traceback copied from original operation",
+      "sha256": "f5ed56fe53eed2be975f44ca9e7016ca0178e3deac127b1db3da30d2d7e5c2bc"
+    },
+    {
+      "bytes": 1339,
+      "original_sha256": null,
+      "original_sha256_matched": false,
+      "path": "recovery-recheck.receipt.json",
+      "recovery_method": "new actual AI395 archive-only recheck command receipt",
+      "sha256": "d61f3d30a28a79797886f45b7701f2975dfab175bdcf0423694760941e78982f"
+    },
+    {
+      "bytes": 41133,
+      "original_sha256": null,
+      "original_sha256_matched": false,
+      "path": "transfer-receipt.json",
+      "recovery_method": "reconstructed from preserved full structured controller payload; no original file SHA claimed",
+      "sha256": "e5747fe9a3ba3589fba0b877b3cd85c604cb2700bb60219dcb1eae5530c00ba2"
+    },
+    {
+      "bytes": 1069,
+      "original_sha256": null,
+      "original_sha256_matched": false,
+      "path": "verification-command.receipt.json",
+      "recovery_method": "reconstructed from all fields printed by original actual cloud tool return; original receipt file digest was not retained",
+      "sha256": "c4c9cef00aeb203ca66d1b84696dca7ab817563f8d396483ca2a308346d5b248"
+    },
+    {
+      "bytes": 1069,
+      "original_sha256": null,
+      "original_sha256_matched": false,
+      "path": "verification-first-command.receipt.json",
+      "recovery_method": "reconstructed from all fields printed by original actual cloud tool return; original receipt file digest was not retained",
+      "sha256": "29c5bdeeaf61af9481342578b18f06539860c9039148eeb9a627cd64f51a67cf"
+    },
+    {
+      "bytes": 566,
+      "original_sha256": "c7ec57fa353bf2ea166fb9109e863191480443210177d9767cbcacf1866b4c46",
+      "original_sha256_matched": true,
+      "path": "verification-first.stderr.log",
+      "recovery_method": "recovered actual tool-output traceback; matches prior stderr hash",
+      "sha256": "c7ec57fa353bf2ea166fb9109e863191480443210177d9767cbcacf1866b4c46"
+    },
+    {
+      "bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_sha256_matched": true,
+      "path": "verification.stderr.log",
+      "recovery_method": "empty original corrected-reader stderr with retained digest",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 16735,
+      "original_sha256": "c64eef24c59b8fdc06b2610175be8b294f90821ce197838816803f5cac99886e",
+      "original_sha256_matched": true,
+      "path": "verify_archive-first.py",
+      "recovery_method": "recovered complete tool input; matches prior actual failed source hash",
+      "sha256": "c64eef24c59b8fdc06b2610175be8b294f90821ce197838816803f5cac99886e"
+    },
+    {
+      "bytes": 17050,
+      "original_sha256": "8a026362dc8045eb7f528231fd4cecee5fb5e2a47390714136587e75fc728331",
+      "original_sha256_matched": true,
+      "path": "verify_archive.py",
+      "recovery_method": "recovered complete tool input; matches prior actual executed source hash",
+      "sha256": "8a026362dc8045eb7f528231fd4cecee5fb5e2a47390714136587e75fc728331"
+    }
+  ],
+  "initial_stage_result_sha256": "fe2310fad47558c21a592b4c7ce561a488f8527f6fc8529c78b984f1cf577ffe",
+  "native_tests_started": false,
+  "original_commit_confirmed": false,
+  "original_previous_receipt_git_object": {
+    "bytes": 199212,
+    "git_blob": "ba983b9c7b7e3975f0cff50c0fd9cf92c9e25461",
+    "method": "exact immutable Git blob read from parent-prepared independent bare repository; no reconstruction",
+    "path": "evidence/chain-incentive-counterexamples-20261112/node-genesis-split/native.json",
+    "sha256": "07c11a04880eab6303a66000d23082748a8f8568f8e1defe92d91c0a8b30db40",
+    "source_revision": "98cb32df65d11cf6124e47b5246ab4854f137bb1"
+  },
+  "python_scientific_methods_started": false,
+  "schema": "chain-incentive-recovery-file-provenance-v1",
+  "scope": "original hash-matched bytes, deterministic report reproduction, and explicitly reconstructed metadata",
+  "shared_repo_after": {
+    "head": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+    "status": ""
+  },
+  "shared_repo_before": {
+    "head": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+    "status": ""
+  },
+  "shared_repo_modified_by_this_operation": false,
+  "source_input": {
+    "bytes": 97018,
+    "path": "/home/qq/chain-incentive-evidence-recovery-input-20261112-306929.json",
+    "sha256": "87608cfd1a2dc60a582e3e4b59bc15a4b266de61627a6af44e3c65dd7a666c72"
+  },
+  "stage": "/home/qq/chain-incentive-evidence-stage-20261112-306929"
+}

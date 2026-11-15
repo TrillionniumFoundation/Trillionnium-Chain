@@ -1,0 +1,553 @@
+{
+  "schema": "chain-cell-public-evidence-review-v1",
+  "generated_at_utc": "2026-11-07T12:36:11.207152+00:00",
+  "local_source_commit": "837ab80d2b0454a3b226d13ac270f9496f8d7f96",
+  "local_source_tree": "46a355fd6117093bc1d0deb9f3dfb81270a0b8cb",
+  "published_commit": null,
+  "remote_ref_updated": false,
+  "publication_status": "Recorded GitHub 403 account suspension; no PR ref update or remote commit created by this work.",
+  "program_sha256": "5793725462241da591438a3322bfc818e197778b9454831edc7be6ae036dcec5",
+  "parameters_sha256": "d5cb070af92c18f354b72a2379cea5fadb83eb80e2665f615b8c3c69d6fb3549",
+  "focused": {
+    "tests": 143,
+    "returncode": 0,
+    "wall_ns": 60252503664,
+    "source_unchanged": true,
+    "log_hash_checked": true
+  },
+  "experiment": {
+    "returncode": 0,
+    "elapsed_ns": 42877128810,
+    "completed_cases": 7,
+    "cases": [
+      {
+        "case": "emit",
+        "files_checked": 11,
+        "input_rows": 64,
+        "cold_exit_code": 0,
+        "complete": true,
+        "actions": {
+          "emit": 64
+        },
+        "rng_before": 0,
+        "rng_after": 0,
+        "work_attempts": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "training": null,
+        "wall_ns": 7509320262
+      },
+      {
+        "case": "masked-sampling-training",
+        "files_checked": 11,
+        "input_rows": 64,
+        "cold_exit_code": 0,
+        "complete": true,
+        "actions": {
+          "emit": 64
+        },
+        "rng_before": 0,
+        "rng_after": 64,
+        "work_attempts": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "training": {
+          "active_rows": 64,
+          "loss": 24568995600,
+          "optimizer_step": 1,
+          "parameters_changed": true
+        },
+        "wall_ns": 6381317336
+      },
+      {
+        "case": "tool-proposal",
+        "files_checked": 11,
+        "input_rows": 64,
+        "cold_exit_code": 0,
+        "complete": true,
+        "actions": {
+          "propose_tool": 64
+        },
+        "rng_before": 0,
+        "rng_after": 0,
+        "work_attempts": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "training": null,
+        "wall_ns": 5756596666
+      },
+      {
+        "case": "abstain",
+        "files_checked": 11,
+        "input_rows": 64,
+        "cold_exit_code": 0,
+        "complete": true,
+        "actions": {
+          "abstain": 64
+        },
+        "rng_before": 0,
+        "rng_after": 0,
+        "work_attempts": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "training": null,
+        "wall_ns": 5663589384
+      },
+      {
+        "case": "stopped",
+        "files_checked": 11,
+        "input_rows": 64,
+        "cold_exit_code": 0,
+        "complete": true,
+        "actions": {
+          "stop": 64
+        },
+        "rng_before": 0,
+        "rng_after": 0,
+        "work_attempts": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "training": null,
+        "wall_ns": 5545378284
+      },
+      {
+        "case": "exhausted-prefix",
+        "files_checked": 11,
+        "input_rows": 64,
+        "cold_exit_code": 0,
+        "complete": true,
+        "actions": {
+          "emit": 1,
+          "stop": 63
+        },
+        "rng_before": 0,
+        "rng_after": 0,
+        "work_attempts": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "training": null,
+        "wall_ns": 5742610201
+      },
+      {
+        "case": "successor-model-task",
+        "files_checked": 11,
+        "input_rows": 64,
+        "cold_exit_code": 0,
+        "complete": true,
+        "actions": {
+          "emit": 64
+        },
+        "rng_before": 64,
+        "rng_after": 64,
+        "work_attempts": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "training": null,
+        "wall_ns": 5589039936
+      }
+    ],
+    "declared_payload_hashes_checked": 77,
+    "focused_program_file_intersection_checked": [
+      "formal/pon-nakamoto-v1/useful_cell_execution_v2.py",
+      "formal/pon-nakamoto-v1/useful_cell_relation_v2.py",
+      "formal/pon-nakamoto-v1/useful_cell_source_guard_v2.py"
+    ],
+    "successor_reference_model_used": true,
+    "successor_reference_inputs_disjoint": true,
+    "successor_reference_state_sequence": 2
+  },
+  "pre_fix_attack": {
+    "foreign_module": "__main__",
+    "identity_unchanged": true,
+    "correct_memory": [
+      3593,
+      -3602,
+      -3580
+    ],
+    "forged_memory": [
+      3594,
+      -3602,
+      -3580
+    ],
+    "accepted": true,
+    "complete_w1_transcripts": 5
+  },
+  "post_fix_attack": {
+    "script_sha256": "394ab0af1a4265f79c66f03dce766e8de672dd4b55b055330b33d7caa8c4a7af",
+    "expected_returncode": 1,
+    "returncode": 1,
+    "error": "V2_LOADED_BINDING_MISMATCH",
+    "stream_hashes_checked": true
+  },
+  "pre_fix_experiment": {
+    "complete": true,
+    "declared_payload_hashes_checked": 77,
+    "qualification": "superseded; never used as final qualification"
+  },
+  "full_tree_gates": "All listed focused/source/repository/CI/graph/format/strict-Clippy checks completed on recorded clean source. Clippy used an existing verified pinned provider and emitted an explicit SQLite I/O UNQUALIFIED build-script warning. No native full-system, runtime PQ, I/O, model-quality or production qualification is inferred.",
+  "scope": {
+    "research_only": true,
+    "ordinary_hepta_use_verified": false,
+    "native_node_admission": false,
+    "owner_authorization_verified": false,
+    "final_use_granted": false,
+    "request_consumed": false,
+    "checkpoint_committed": false,
+    "actual_model_use_verified": false,
+    "tools_executed": false,
+    "external_delivery_verified": false,
+    "work_security_qualified": false,
+    "production_qualified": false,
+    "sqlite_io_qualified": false,
+    "native_runtime_pq_tests_executed": false,
+    "new_provider_build": false,
+    "whole_chain_quantum_security_qualified": false
+  },
+  "package": {
+    "files": 264,
+    "bytes": 17153945,
+    "phases": {
+      "baseline-or-pre-fix": {
+        "files": 18,
+        "bytes": 135515,
+        "results": {
+          "success": 10,
+          "unknown": 1,
+          "failure": 7
+        }
+      },
+      "retained-v1-baseline": {
+        "files": 2,
+        "bytes": 12518,
+        "results": {
+          "success": 2
+        }
+      },
+      "current-final-light-gates": {
+        "files": 7,
+        "bytes": 26000,
+        "results": {
+          "success": 7
+        }
+      },
+      "intermediate": {
+        "files": 15,
+        "bytes": 837841,
+        "results": {
+          "success": 5,
+          "unknown": 6,
+          "failure": 4
+        }
+      },
+      "current-final-cargo-graph-fmt": {
+        "files": 7,
+        "bytes": 844869,
+        "results": {
+          "success": 7
+        }
+      },
+      "current-final-heavy-gates": {
+        "files": 3,
+        "bytes": 23111,
+        "results": {
+          "success": 3
+        }
+      },
+      "current-committed-focused": {
+        "files": 4,
+        "bytes": 28728,
+        "results": {
+          "success": 4
+        }
+      },
+      "current-final-experiment": {
+        "files": 91,
+        "bytes": 7563330,
+        "results": {
+          "success": 91
+        }
+      },
+      "current-final-focused": {
+        "files": 2,
+        "bytes": 28828,
+        "results": {
+          "success": 2
+        }
+      },
+      "superseded-pre-fix": {
+        "files": 95,
+        "bytes": 7614821,
+        "results": {
+          "success": 90,
+          "unknown": 3,
+          "failure": 2
+        }
+      },
+      "publication-blocked": {
+        "files": 1,
+        "bytes": 1098,
+        "results": {
+          "failure": 1
+        }
+      },
+      "current-provider-input-reuse": {
+        "files": 3,
+        "bytes": 3093,
+        "results": {
+          "success": 3
+        }
+      },
+      "retained-original-provider-reference": {
+        "files": 1,
+        "bytes": 2834,
+        "results": {
+          "success": 1
+        }
+      },
+      "current-final-source-fence": {
+        "files": 3,
+        "bytes": 812,
+        "results": {
+          "success": 3
+        }
+      },
+      "current-final-refusal": {
+        "files": 3,
+        "bytes": 1815,
+        "results": {
+          "success": 3
+        }
+      },
+      "failed-strict-clippy-attempts": {
+        "files": 6,
+        "bytes": 23064,
+        "results": {
+          "failure": 4,
+          "unknown": 2
+        }
+      },
+      "current-final-strict-clippy": {
+        "files": 3,
+        "bytes": 5668,
+        "results": {
+          "success": 2,
+          "unknown": 1
+        }
+      }
+    },
+    "excluded_duplicate_source_blob_bytes": 297201,
+    "excluded_storage_bookkeeping_bytes": 181,
+    "archive": "retained-runs.tar.gz",
+    "index_files": [
+      "MANIFEST.json",
+      "PACKAGE.sha256",
+      "README.md",
+      "REVIEW.json"
+    ]
+  },
+  "committed_focused": {
+    "complete": true,
+    "tests": 143,
+    "source_head": "837ab80d2b0454a3b226d13ac270f9496f8d7f96",
+    "source_tree": "46a355fd6117093bc1d0deb9f3dfb81270a0b8cb",
+    "source_before_after_equal": true,
+    "tracked_entries": 10692,
+    "tracked_bytes": 1026980219,
+    "all_three_log_hashes_checked": true,
+    "elapsed_ns": 57463577577
+  },
+  "final_light_gates": {
+    "source_head": "837ab80d2b0454a3b226d13ac270f9496f8d7f96",
+    "source_tree": "46a355fd6117093bc1d0deb9f3dfb81270a0b8cb",
+    "before_status": "",
+    "after_status": "",
+    "all_six_log_hashes_checked": true,
+    "repository": {
+      "activation": false,
+      "head": "837ab80d2b0454a3b226d13ac270f9496f8d7f96",
+      "local_links": 3467,
+      "normal_dependency_edges": 25,
+      "result": "PASS",
+      "runtime_implemented": false,
+      "rust_files": 1169,
+      "source_state": "committed-clean",
+      "tree": "46a355fd6117093bc1d0deb9f3dfb81270a0b8cb",
+      "workspace_packages": 26
+    },
+    "results": [
+      {
+        "name": "preflight-final",
+        "returncode": 0
+      },
+      {
+        "name": "repository-final",
+        "returncode": 0
+      },
+      {
+        "name": "inventory-final",
+        "returncode": 0
+      },
+      {
+        "name": "boundary-controls-final",
+        "returncode": 0
+      },
+      {
+        "name": "source-integrity-controls-final",
+        "returncode": 0
+      },
+      {
+        "name": "ci-execution-final",
+        "returncode": 0
+      }
+    ],
+    "tests": {
+      "boundary": 16,
+      "source_integrity": 43,
+      "ci_execution_including_source_integrity": 77
+    },
+    "do_not_sum_overlapping_tests": true
+  },
+  "final_heavy_gates": {
+    "source_head": "837ab80d2b0454a3b226d13ac270f9496f8d7f96",
+    "source_tree": "46a355fd6117093bc1d0deb9f3dfb81270a0b8cb",
+    "after_status": "",
+    "all_log_hashes_checked": true,
+    "results": {
+      "ci-contract-committed-final": {
+        "tests": 102,
+        "unittest_seconds": 6.917,
+        "elapsed_ns": 6986088244,
+        "returncode": 0
+      },
+      "repository-controls-committed-final": {
+        "tests": 50,
+        "unittest_seconds": 135.74,
+        "elapsed_ns": 135799625043,
+        "returncode": 0
+      }
+    }
+  },
+  "final_cargo_graph_fmt": {
+    "source_head": "837ab80d2b0454a3b226d13ac270f9496f8d7f96",
+    "after_status": "",
+    "all_six_stream_hashes_checked": true,
+    "rust_version": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "workspace_members": 26,
+    "resolved_nodes": 180,
+    "metadata_packages": 180,
+    "locked": true,
+    "offline": true,
+    "all_features": true,
+    "cargo_fmt_check_returncode": 0,
+    "strict_clippy": "passed in separate pinned-provider receipt; earlier two exit-101 attempts retained"
+  },
+  "publication": {
+    "receipt": "postfix-validation/publication-blocked.json",
+    "result": "blocked",
+    "http_status": 403,
+    "error": "account suspended",
+    "ref_update_called": false,
+    "remote_commit_created": false,
+    "last_observed_remote_head": "adebe0bd78e6e1bdb55a599179ffe2313997170e",
+    "earlier_unreferenced_tree_is_publication": false,
+    "claim_scope": "No PR ref was updated by this work; other concurrent writers are not covered by that claim."
+  },
+  "strict_clippy": {
+    "status": "passed-with-reused-pinned-provider",
+    "final_returncode": 0,
+    "final_elapsed_ns": 119185103351,
+    "all_attempts": [
+      {
+        "name": "strict-clippy-committed-final",
+        "returncode": 101,
+        "elapsed_ns": 25368125947,
+        "source_head": "837ab80d2b0454a3b226d13ac270f9496f8d7f96",
+        "source_tree": "46a355fd6117093bc1d0deb9f3dfb81270a0b8cb",
+        "after_status": "",
+        "log_sha256_checked": true,
+        "reason": "OpenSSL discovery failed because pkg-config executable was absent."
+      },
+      {
+        "name": "strict-clippy-openssl-paths-final",
+        "returncode": 101,
+        "elapsed_ns": 67358368730,
+        "source_head": "837ab80d2b0454a3b226d13ac270f9496f8d7f96",
+        "source_tree": "46a355fd6117093bc1d0deb9f3dfb81270a0b8cb",
+        "after_status": "",
+        "log_sha256_checked": true,
+        "reason": "System OpenSSL paths did not expose the PQ private_key_from_seed API; compile failed."
+      },
+      {
+        "name": "strict-clippy-pinned-provider-final",
+        "returncode": 0,
+        "elapsed_ns": 119185103351,
+        "source_head": "837ab80d2b0454a3b226d13ac270f9496f8d7f96",
+        "source_tree": "46a355fd6117093bc1d0deb9f3dfb81270a0b8cb",
+        "after_status": "",
+        "log_sha256_checked": true,
+        "reason": "Strict compile/lint passed using reused repository-pinned OpenSSL 3.5.9; not a runtime/PQ/I/O qualification."
+      }
+    ],
+    "all_workspace": true,
+    "all_targets": true,
+    "all_features": true,
+    "deny_rust_warnings": true,
+    "sqlite_build_script_warning": "trnm SQLite I/O boundary UNQUALIFIED: loader directory must be absolute",
+    "sqlite_io_qualified": false,
+    "native_runtime_pq_tests_executed": false,
+    "new_provider_build": false,
+    "whole_chain_production_qualification": false
+  },
+  "provider_reuse": {
+    "version": "3.5.9",
+    "original_receipt_sha256": "14a5a67884ff8eed4867e5ed4e2d5459eac09ca8087a62cc3846557727f76f57",
+    "original_receipt_hash_checked": true,
+    "recorded_input_checks": 5,
+    "input_digest_cross_matches_checked": true,
+    "preparation_script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+    "preparation_script_record_matches_original": true,
+    "version_stdout_sha256_checked": true,
+    "provider_binaries_read_or_rebuilt_by_this_collector": false,
+    "current_reuse_scope": "reuse verified existing pinned provider for strict all-features compilation; not a new provider build or native runtime PQ test",
+    "original_smoke_result_is_historical_not_new": true
+  },
+  "source_after_all_gates": {
+    "returncode": 0,
+    "both_stream_hashes_checked": true,
+    "equals_prior_source_fences": true,
+    "tested_commit": "837ab80d2b0454a3b226d13ac270f9496f8d7f96",
+    "tested_tree": "46a355fd6117093bc1d0deb9f3dfb81270a0b8cb",
+    "tracked_entries": 10692,
+    "tracked_bytes": 1026980219,
+    "tracked_worktree_verified": true,
+    "scope": "Source-clean status is established at the recorded gate times; no claim about later storage housekeeping or evidence commits."
+  }
+}

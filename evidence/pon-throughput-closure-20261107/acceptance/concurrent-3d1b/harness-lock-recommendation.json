@@ -1,0 +1,150 @@
+{
+  "schema": "trnm-independent-historical-harness-lock-readonly-review-v1",
+  "manifest_path": "/workspace/scratch/ae364bcbabfb/chain-throughput/evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/crypto/Cargo.toml",
+  "package_manifest": {
+    "package": {
+      "name": "trnm-w1-cost-primitive-validation",
+      "version": "0.0.0",
+      "edition": "2021",
+      "publish": false
+    },
+    "lib": {
+      "name": "trnm_crypto_primitives"
+    },
+    "dependencies": {
+      "sha2": "=0.10.9",
+      "hex": "=0.4.3"
+    }
+  },
+  "historical_harness_pins_unchanged": [
+    {
+      "path": "Cargo.lock",
+      "historical_sha256": "cb63cf4fc40a3a8ae05045abfd23e991728653bd2a694187a1f5aec2c84fbb21",
+      "observed_sha256": "cb63cf4fc40a3a8ae05045abfd23e991728653bd2a694187a1f5aec2c84fbb21"
+    },
+    {
+      "path": "Cargo.toml",
+      "historical_sha256": "a22fc89e5a26a1e5379fad4afde15a06efa2c48ed32fb5e453b1720c6c526fd5",
+      "observed_sha256": "a22fc89e5a26a1e5379fad4afde15a06efa2c48ed32fb5e453b1720c6c526fd5"
+    },
+    {
+      "path": "crypto/Cargo.toml",
+      "historical_sha256": "7c59607ea68664bec9245ee662e128a3af603a11e04b52033182cfc4dbfacf77",
+      "observed_sha256": "7c59607ea68664bec9245ee662e128a3af603a11e04b52033182cfc4dbfacf77"
+    },
+    {
+      "path": "crypto/src/lib.rs",
+      "historical_sha256": "e4d4d573fdcd69cca8ab2b1343973aa6410bbacbdff249ea20d82cb65d22e527",
+      "observed_sha256": "e4d4d573fdcd69cca8ab2b1343973aa6410bbacbdff249ea20d82cb65d22e527"
+    },
+    {
+      "path": "protocol/Cargo.toml",
+      "historical_sha256": "714b29344d26bc65a2193cb3628b6bd1b5f0cb0e478ebe6351ae9d36d8239132",
+      "observed_sha256": "714b29344d26bc65a2193cb3628b6bd1b5f0cb0e478ebe6351ae9d36d8239132"
+    }
+  ],
+  "parent_lock_dependency_closure": [
+    {
+      "name": "block-buffer",
+      "version": "0.10.4",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71",
+      "dependencies": [
+        "generic-array"
+      ]
+    },
+    {
+      "name": "cfg-if",
+      "version": "1.0.5",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
+    },
+    {
+      "name": "cpufeatures",
+      "version": "0.2.17",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280",
+      "dependencies": [
+        "libc"
+      ]
+    },
+    {
+      "name": "crypto-common",
+      "version": "0.1.7",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a",
+      "dependencies": [
+        "generic-array",
+        "typenum"
+      ]
+    },
+    {
+      "name": "digest",
+      "version": "0.10.7",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292",
+      "dependencies": [
+        "block-buffer",
+        "crypto-common"
+      ]
+    },
+    {
+      "name": "generic-array",
+      "version": "0.14.7",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a",
+      "dependencies": [
+        "typenum",
+        "version_check"
+      ]
+    },
+    {
+      "name": "hex",
+      "version": "0.4.3",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
+    },
+    {
+      "name": "libc",
+      "version": "0.2.191",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
+    },
+    {
+      "name": "sha2",
+      "version": "0.10.9",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283",
+      "dependencies": [
+        "cfg-if",
+        "cpufeatures",
+        "digest"
+      ]
+    },
+    {
+      "name": "trnm-w1-cost-primitive-validation",
+      "version": "0.0.0",
+      "dependencies": [
+        "hex",
+        "sha2"
+      ]
+    },
+    {
+      "name": "typenum",
+      "version": "1.20.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
+    },
+    {
+      "name": "version_check",
+      "version": "0.9.5",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+    }
+  ],
+  "recommended_action": "Generate and validate an additional independent crypto Cargo.lock for current CodeQL scanning; prefer retaining the frozen parent lock closure versions and checksums. Label as new post-capture scan preparation, never a reconstructed original capture. Preserve the original manifest, parent lock, hashes, qualification flags and complete source guard. Add a separately typed INDEX.json entry for the added material.",
+  "original_dependency_closure_count": 12,
+  "root_generates_and_validates": true,
+  "metadata_run_by_this_reader": false,
+  "native_execution_by_this_reader": false
+}

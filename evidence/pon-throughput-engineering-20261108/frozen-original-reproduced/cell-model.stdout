@@ -1,0 +1,504 @@
+{
+  "cell_distribution": {
+    "cohort": {
+      "cells": 11,
+      "chunks": 269,
+      "payload_bytes": 272190131,
+      "release": "d5f78d0a121aafb3bacc3b3714f27260fa653fda345a48a5ae490ab38ce10b56"
+    },
+    "cold_model_load_seconds": null,
+    "complete_consumer_member_readbacks": 11,
+    "complete_global_attempt_denominator": false,
+    "complete_pipeline_MB_per_second": null,
+    "controlled_refusals": 1,
+    "independent_version_recovery_rate": null,
+    "materialization_commands": [
+      {
+        "member": "base/README.md",
+        "reported_command_seconds": {
+          "denominator": 50000000000000000,
+          "numerator": 7104014400010783
+        }
+      },
+      {
+        "member": "base/config.json",
+        "reported_command_seconds": {
+          "denominator": 50000000000000000,
+          "numerator": 7414998900003411
+        }
+      },
+      {
+        "member": "base/generation_config.json",
+        "reported_command_seconds": {
+          "denominator": 50000000000000000,
+          "numerator": 7102291250021153
+        }
+      },
+      {
+        "member": "base/model.safetensors",
+        "reported_command_seconds": {
+          "denominator": 500000000000000,
+          "numerator": 14718315020999853
+        }
+      },
+      {
+        "member": "base/special_tokens_map.json",
+        "reported_command_seconds": {
+          "denominator": 100000000000000000,
+          "numerator": 14613052899949253
+        }
+      },
+      {
+        "member": "base/tokenizer.json",
+        "reported_command_seconds": {
+          "denominator": 10000000000000000,
+          "numerator": 3226680589996249
+        }
+      },
+      {
+        "member": "base/tokenizer_config.json",
+        "reported_command_seconds": {
+          "denominator": 80000000000000,
+          "numerator": 11178365520027
+        }
+      },
+      {
+        "member": "base/material-manifest.json",
+        "reported_command_seconds": {
+          "denominator": 50000000000000000,
+          "numerator": 6928656299987779
+        }
+      },
+      {
+        "member": "adapter/target-contract.json",
+        "reported_command_seconds": {
+          "denominator": 100000000000000000,
+          "numerator": 12355120899974281
+        }
+      },
+      {
+        "member": "adapter/wrapped-adapter.json",
+        "reported_command_seconds": {
+          "denominator": 25000000000000000,
+          "numerator": 2923860325017813
+        }
+      },
+      {
+        "member": "adapter/artifact.safetensors",
+        "reported_command_seconds": {
+          "denominator": 12500000000000000,
+          "numerator": 3023371874996883
+        }
+      }
+    ],
+    "native_bytes_rehashed_by_this_reader": false,
+    "observations": [
+      {
+        "command": "publisher-to-replica",
+        "decimal_MB_per_command_second": {
+          "denominator": 8697498562400051,
+          "numerator": 27219013100000000
+        },
+        "original_overall_budget_ms": 180000,
+        "outcome": "reported-complete-release",
+        "reported_command_seconds": {
+          "denominator": 100000000000000,
+          "numerator": 8697498562400051
+        },
+        "reported_response_bytes": 272204931,
+        "reported_useful_bytes": 272190131
+      },
+      {
+        "command": "offline-publisher-negative",
+        "decimal_MB_per_command_second": null,
+        "original_overall_budget_ms": 2000,
+        "outcome": "controlled-refusal",
+        "reported_command_seconds": {
+          "denominator": 1000000000000000000,
+          "numerator": 11567491999812773
+        },
+        "reported_response_bytes": null,
+        "reported_useful_bytes": 0
+      },
+      {
+        "command": "replica-to-consumer",
+        "decimal_MB_per_command_second": {
+          "denominator": 257194726583999,
+          "numerator": 1088760524000000
+        },
+        "original_overall_budget_ms": 180000,
+        "outcome": "reported-complete-release",
+        "reported_command_seconds": {
+          "denominator": 4000000000000,
+          "numerator": 257194726583999
+        },
+        "reported_response_bytes": 272204931,
+        "reported_useful_bytes": 272190131
+      }
+    ],
+    "original_35_second_cohort_retested": false,
+    "recorded_transfer_commands": 3,
+    "reported_complete_release_acquisitions": 2,
+    "topology": "one-host-loopback"
+  },
+  "earlier_failed_attempt": {
+    "outcome": "failed-optimized-transfer",
+    "profile": "release",
+    "recorded_native_binary_sha256": "63e8f3cb97ce5a0d14bc03c501d2f191ef7c717d2671606f4fb8d08198f9938f",
+    "reported_command_seconds": {
+      "denominator": 3906250000000,
+      "numerator": 8006644402343
+    },
+    "reported_completed_release": false,
+    "root_cause_qualified": false
+  },
+  "independent_provider_custody_qualified": false,
+  "model_adoption_qualified": false,
+  "model_compute": {
+    "accuracy_difference": {
+      "denominator": 1,
+      "numerator": 0
+    },
+    "actual_adoption_rate": null,
+    "end_to_end_tokens_per_second": null,
+    "independent_quality_gain_qualified": false,
+    "models": {
+      "baseline": {
+        "accuracy": {
+          "denominator": 2,
+          "numerator": 1
+        },
+        "correct": 16,
+        "cpu_ns": null,
+        "execution_latency_p50_nearest_rank_ns": 285575856,
+        "execution_latency_p95_nearest_rank_ns": 582412954,
+        "execution_latency_p99_nearest_rank_ns": null,
+        "first_response_from_cold_start_ns": null,
+        "forwards_per_reported_execution_second": {
+          "denominator": 515847939,
+          "numerator": 1600000000
+        },
+        "generated_tokens": null,
+        "generated_tokens_per_second": null,
+        "maximum_reported_process_rss_bytes": 1137000448,
+        "observed_forwards": 32,
+        "planned_requests": 32,
+        "population_tail_latency_qualified": false,
+        "reported_execution_ns_sum": 10316958780
+      },
+      "candidate": {
+        "accuracy": {
+          "denominator": 2,
+          "numerator": 1
+        },
+        "correct": 16,
+        "cpu_ns": null,
+        "execution_latency_p50_nearest_rank_ns": 713956898,
+        "execution_latency_p95_nearest_rank_ns": 1468500860,
+        "execution_latency_p99_nearest_rank_ns": null,
+        "first_response_from_cold_start_ns": null,
+        "forwards_per_reported_execution_second": {
+          "denominator": 13394473617,
+          "numerator": 16000000000
+        },
+        "generated_tokens": null,
+        "generated_tokens_per_second": null,
+        "maximum_reported_process_rss_bytes": 1137758208,
+        "observed_forwards": 32,
+        "planned_requests": 32,
+        "population_tail_latency_qualified": false,
+        "reported_execution_ns_sum": 26788947234
+      }
+    },
+    "profile": "hepta-smollm-single-token-action-score-v1",
+    "scope": "reported-request-execution-only-excludes-load-network-queue-and-training",
+    "selection_outcome": "no-update"
+  },
+  "native_origin_authenticated": false,
+  "production_activation": false,
+  "public_throughput_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "raw_file_count": 44,
+  "recorded_native_binary_sha256": "c5338d6779e5d5b28ea585e0b4f12880219aa8f8d26a2d09fab2e504e6d0117b",
+  "recorded_native_source_commit": "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251",
+  "records_retained_at_commit": "e02126dabef04f13792dec45d96ac5d6916d0651",
+  "schema": "trnm-cell-model-projection-report-v1",
+  "scope": "historical-smollm-replica-v1",
+  "source_execution_authenticated": false,
+  "training_and_loading": {
+    "complete_product_iteration_cost": null,
+    "recorded_training_rounds": 3,
+    "rounds": [
+      {
+        "complete_iteration_cost_minor": null,
+        "full_process_family_cpu_ns": null,
+        "generation": 1,
+        "operation_id": "cell-research-public-smoke-gen1",
+        "reported_outer_command_seconds": {
+          "denominator": 20000000000000,
+          "numerator": 917960186879991
+        },
+        "reported_process_peak_rss_bytes": 3064528896,
+        "reported_process_wall_ns": 40170046886,
+        "reported_training_steps": 10,
+        "stage_projection": {
+          "cold_load_to_first_response_ns": null,
+          "complete_model_loading_latency_ns": null,
+          "complete_original_stage_roster": true,
+          "gpu_transfer_ns": null,
+          "observed_stages": [
+            "material-verification",
+            "runtime-import",
+            "model-load",
+            "complete-backbone-tokenizer-verification",
+            "adapter-insertion",
+            "training",
+            "artifact-save"
+          ],
+          "stage_costs": {
+            "adapter-insertion": {
+              "bytes_read": 24576,
+              "bytes_written": 0,
+              "cpu_ns": 306342612,
+              "memory_peak_bytes": 1140592640,
+              "wall_ns": 307039656
+            },
+            "artifact-save": {
+              "bytes_read": 655360,
+              "bytes_written": 937984,
+              "cpu_ns": 5019254,
+              "memory_peak_bytes": 3064528896,
+              "wall_ns": 5733973
+            },
+            "complete-backbone-tokenizer-verification": {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "cpu_ns": 428071295,
+              "memory_peak_bytes": 1140592640,
+              "wall_ns": 428366864
+            },
+            "material-verification": {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "cpu_ns": 177109527,
+              "memory_peak_bytes": 19419136,
+              "wall_ns": 177128829
+            },
+            "model-load": {
+              "bytes_read": 13111296,
+              "bytes_written": 0,
+              "cpu_ns": 642527091,
+              "memory_peak_bytes": 1140592640,
+              "wall_ns": 408970763
+            },
+            "runtime-import": {
+              "bytes_read": 302374912,
+              "bytes_written": 49152,
+              "cpu_ns": 3539688050,
+              "memory_peak_bytes": 306974720,
+              "wall_ns": 3469721309
+            },
+            "training": {
+              "bytes_read": 7172096,
+              "bytes_written": 0,
+              "cpu_ns": 39279917852,
+              "memory_peak_bytes": 2979553280,
+              "wall_ns": 34570407706
+            }
+          }
+        }
+      },
+      {
+        "complete_iteration_cost_minor": null,
+        "full_process_family_cpu_ns": null,
+        "generation": 2,
+        "operation_id": "cell-research-public-smoke-gen2",
+        "reported_outer_command_seconds": {
+          "denominator": 50000000000000,
+          "numerator": 2152072419699971
+        },
+        "reported_process_peak_rss_bytes": 3069181952,
+        "reported_process_wall_ns": 37638732512,
+        "reported_training_steps": 10,
+        "stage_projection": {
+          "cold_load_to_first_response_ns": null,
+          "complete_model_loading_latency_ns": null,
+          "complete_original_stage_roster": true,
+          "gpu_transfer_ns": null,
+          "observed_stages": [
+            "material-verification",
+            "runtime-import",
+            "model-load",
+            "complete-backbone-tokenizer-verification",
+            "parent-material-verification",
+            "adapter-insertion",
+            "actual-parent-reload",
+            "training",
+            "artifact-save"
+          ],
+          "stage_costs": {
+            "actual-parent-reload": {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "cpu_ns": 72865435,
+              "memory_peak_bytes": 1140760576,
+              "wall_ns": 72870757
+            },
+            "adapter-insertion": {
+              "bytes_read": 385024,
+              "bytes_written": 0,
+              "cpu_ns": 300071083,
+              "memory_peak_bytes": 1140760576,
+              "wall_ns": 302217774
+            },
+            "artifact-save": {
+              "bytes_read": 0,
+              "bytes_written": 937984,
+              "cpu_ns": 3704337,
+              "memory_peak_bytes": 3069181952,
+              "wall_ns": 3709954
+            },
+            "complete-backbone-tokenizer-verification": {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "cpu_ns": 423331415,
+              "memory_peak_bytes": 1140760576,
+              "wall_ns": 423404538
+            },
+            "material-verification": {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "cpu_ns": 229216336,
+              "memory_peak_bytes": 20451328,
+              "wall_ns": 231784572
+            },
+            "model-load": {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "cpu_ns": 701680801,
+              "memory_peak_bytes": 1140760576,
+              "wall_ns": 453976646
+            },
+            "parent-material-verification": {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "cpu_ns": 86904797,
+              "memory_peak_bytes": 1140760576,
+              "wall_ns": 87152963
+            },
+            "runtime-import": {
+              "bytes_read": 98373632,
+              "bytes_written": 45056,
+              "cpu_ns": 4001763707,
+              "memory_peak_bytes": 306937856,
+              "wall_ns": 4674101261
+            },
+            "training": {
+              "bytes_read": 8192,
+              "bytes_written": 0,
+              "cpu_ns": 36207236862,
+              "memory_peak_bytes": 2984079360,
+              "wall_ns": 30858015871
+            }
+          }
+        }
+      },
+      {
+        "complete_iteration_cost_minor": null,
+        "full_process_family_cpu_ns": null,
+        "generation": 3,
+        "operation_id": "cell-research-public-smoke-gen3",
+        "reported_outer_command_seconds": {
+          "denominator": 25000000000000,
+          "numerator": 1147877640050001
+        },
+        "reported_process_peak_rss_bytes": 3069059072,
+        "reported_process_wall_ns": 39967182706,
+        "reported_training_steps": 10,
+        "stage_projection": {
+          "cold_load_to_first_response_ns": null,
+          "complete_model_loading_latency_ns": null,
+          "complete_original_stage_roster": true,
+          "gpu_transfer_ns": null,
+          "observed_stages": [
+            "material-verification",
+            "runtime-import",
+            "model-load",
+            "complete-backbone-tokenizer-verification",
+            "parent-material-verification",
+            "adapter-insertion",
+            "actual-parent-reload",
+            "training",
+            "artifact-save"
+          ],
+          "stage_costs": {
+            "actual-parent-reload": {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "cpu_ns": 65541988,
+              "memory_peak_bytes": 1140781056,
+              "wall_ns": 65557316
+            },
+            "adapter-insertion": {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "cpu_ns": 301098494,
+              "memory_peak_bytes": 1140781056,
+              "wall_ns": 301159640
+            },
+            "artifact-save": {
+              "bytes_read": 131072,
+              "bytes_written": 937984,
+              "cpu_ns": 5280201,
+              "memory_peak_bytes": 3069059072,
+              "wall_ns": 5696684
+            },
+            "complete-backbone-tokenizer-verification": {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "cpu_ns": 406743229,
+              "memory_peak_bytes": 1140781056,
+              "wall_ns": 407000445
+            },
+            "material-verification": {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "cpu_ns": 181628790,
+              "memory_peak_bytes": 20447232,
+              "wall_ns": 181642865
+            },
+            "model-load": {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "cpu_ns": 640340676,
+              "memory_peak_bytes": 1140781056,
+              "wall_ns": 407692441
+            },
+            "parent-material-verification": {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "cpu_ns": 61294106,
+              "memory_peak_bytes": 1140781056,
+              "wall_ns": 61299418
+            },
+            "runtime-import": {
+              "bytes_read": 0,
+              "bytes_written": 45056,
+              "cpu_ns": 3346841615,
+              "memory_peak_bytes": 306937856,
+              "wall_ns": 3060522163
+            },
+            "training": {
+              "bytes_read": 4096,
+              "bytes_written": 4096,
+              "cpu_ns": 38597265221,
+              "memory_peak_bytes": 2984022016,
+              "wall_ns": 34780741962
+            }
+          }
+        }
+      }
+    ],
+    "scope": "reported-CPU-worker-stages-exclude-complete-selection-installation-adoption-and-payment"
+  }
+}

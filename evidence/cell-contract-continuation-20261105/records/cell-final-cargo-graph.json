@@ -1,0 +1,62 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "f03be25066fefa1674b104f22cbc6aea09652a80",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "f03be25066fefa1674b104f22cbc6aea09652a80",
+    "tested_tree": "155213c2468edc411325f4f1853b471a6b25f355",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 963585205,
+    "tracked_entries": 10032,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,json,hashlib; from pathlib import Path; raw=subprocess.check_output([\"cargo\",\"metadata\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"--locked\",\"--offline\",\"--format-version\",\"1\"]); v=json.loads(raw); print(json.dumps({\"workspace_members\":len(v[\"workspace_members\"]),\"resolved_packages\":len(v[\"packages\"]),\"resolved_nodes\":len(v[\"resolve\"][\"nodes\"]),\"metadata_sha256\":hashlib.sha256(raw).hexdigest(),\"lock_sha256\":hashlib.sha256(Path(\"trillionnium/Cargo.lock\").read_bytes()).hexdigest(),\"cargo\":subprocess.check_output([\"cargo\",\"--version\"],text=True).strip(),\"rustc\":subprocess.check_output([\"rustc\",\"--version\"],text=True).strip()},sort_keys=True))"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "f03be25066fefa1674b104f22cbc6aea09652a80",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "f03be25066fefa1674b104f22cbc6aea09652a80",
+    "tested_tree": "155213c2468edc411325f4f1853b471a6b25f355",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 963585205,
+    "tracked_entries": 10032,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/workspace/scratch/42d46a663b73/chain",
+  "elapsed_ns": 17337051373,
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/workspace/scratch/42d46a663b73/target",
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 0,
+  "log_bytes": 341,
+  "log_file": "cell-final-cargo-graph.log",
+  "log_sha256": "efdd1f8fab11e9dd73bba82ecb0a1961a815ac8031d0df00db45ee0a76df5c1f",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-05T09:27:16.818526+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

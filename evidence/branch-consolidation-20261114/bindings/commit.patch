@@ -1,0 +1,1893 @@
+commit b84568a714e24070d9554008660f1382e2c1b1b5
+Author:     Qian QI <102159240+ProfHepta@users.noreply.github.com>
+AuthorDate: Sat Nov 14 13:19:49 2026 +0800
+Commit:     Qian QI <102159240+ProfHepta@users.noreply.github.com>
+CommitDate: Sat Nov 14 13:19:49 2026 +0800
+
+    Bind consolidated current sources while preserving historical proofs
+    
+    Rebind authority44, current lifetime20, the six-crate QROM145 inventory and
+    root-dependency46 to reviewed source 5c04c60e. Keep original historical source
+    pins, proof assets, unknown obligations, caps and withdrawn-profile refusal.
+    
+    Synchronize paired profile/route consumers and exact current named rosters.
+    Require the independent four-path drift set and ordering. Record only the
+    two reviewed current lock provenance changes in an explicit correspondence
+    namespace while freezing both preceding report bytes.
+    
+    Route retained workflow controls to the actual historical named runner or
+    current supplemental/status consumer, preserving all original methods and
+    negative-control goals. No Rust source or activation qualification changes.
+
+diff --git a/.github/workflows/chain-hepta-closure-candidate.yml b/.github/workflows/chain-hepta-closure-candidate.yml
+index a06f34caaa4f4a3ae673fa9b2d57a91e411936dd..15454b5322f118b52458adebf54cf00652107240 100644
+--- a/.github/workflows/chain-hepta-closure-candidate.yml
++++ b/.github/workflows/chain-hepta-closure-candidate.yml
+@@ -70,7 +70,7 @@ jobs:
+             proof-profile)
+               python3 scripts/ci/test_pq_proof_profile_binding.py -v
+               python3 scripts/ci/pq_proof_profile_binding.py \
+-                --expected-profile-descriptor-sha256 9e5766a7eb14cb972531e12aa0be6d21a1e545400d89add72656b63c0f6407ad
++                --expected-profile-descriptor-sha256 8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1
+               ;;
+             campaign-reader)
+               python3 scripts/ci/test_audit_native_campaign_outcomes.py -v
+diff --git a/config/pon/pq-authority-effects-v1.json b/config/pon/pq-authority-effects-v1.json
+index 150b3b7f0da5c2c5effc6fb3aff94f52351a4ac3..128fabbf8ccb038c26636f5689fe239a90ac663f 100644
+--- a/config/pon/pq-authority-effects-v1.json
++++ b/config/pon/pq-authority-effects-v1.json
+@@ -1,6 +1,6 @@
+ {
+   "schema": "trnm-pq-authority-effects-v1",
+-  "source_revision": "332d7f723d71707d88a2cffa52b3754579a46926",
++  "source_revision": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+   "purpose": "curated-source-consistency-only",
+   "coverage_complete": false,
+   "whole_chain_pq_qualified": false,
+@@ -198,27 +198,27 @@
+     "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/transport.rs": "2a304727c6f7bc81898d839579e2e7f5961d146cb75a372697f8f1b4b0262a05",
+     "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "db0152dc1bfd730fcb4e43e2b9e28456917fbd0dc5c69007ad84e0e2d46b54c3",
+     "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs": "ce9efc2dc6160bcd1fc47163167deffb5b1f51926e98405bba7f7344fbdf179e",
+-    "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "45b50bff63873c4897fca011fc009b229af618d5cc9e0cd8dcc14da5387d97db",
+-    "trillionnium/crates/trnm-data-availability/src/cell/store.rs": "bb95507ff80d5a0f01931098f91fc1d7d1a9985e72d49937354ec2b86a966486",
++    "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "dd82a7a03e3b64ec74929734d0a9cdc99af61da5e2d4cf2614a578c7b2374924",
++    "trillionnium/crates/trnm-data-availability/src/cell/store.rs": "70889e05e7df573c06d6d5387e31cace34220180e091c6a809e4b03589bce95a",
+     "trillionnium/crates/trnm-data-availability/src/types.rs": "9251274c47edc1ddc5fef34c0130f5341d6977681a4e07c2eab89a235c6d55f1",
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": "86365541647e8ded120c87c43959074578ad78c933baeab4e4b0b9387b2c5059",
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts.rs": "1254678a5f4db4b7b7e6aa7c97bc6c6baca74cb663b65acc1593f4786f7287c5",
+-    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d",
+-    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs": "c4b6248c8cee8d2ad31110fcc6e87e9d6306fdf34981c0a428341b5f9c3b6751",
++    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs": "782e4b4d3d442d192d7ae960cd64ba0727d49502464877f65f09f4a355ee2413",
++    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs": "15fd960618017d9aa1932ebc7ad5da15ba6423bff4497f334b47bea5b5298930",
+     "trillionnium/crates/trnm-mvcc-fee/tests/pq_account_owner.rs": "3d4381aba6850515fb947f44591fa1f543ddc1588c5f5668c1ac4d22493a6827",
+     "trillionnium/crates/trnm-pon-node/src/ingress.rs": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f",
+     "trillionnium/crates/trnm-pon-node/src/public_submit.rs": "11fb84b1c7c7ab4e0f31723c5f708d0d5042dc080712fe899a632b6edc573a5a",
+     "trillionnium/crates/trnm-pon-node/src/release_finality.rs": "5a70f3985c511a5bec6b107e9184ea5f5a6f533aa4be647b9ced23be0b7232df",
+-    "trillionnium/crates/trnm-pon-node/src/store.rs": "df2e303798678fe0b7437cf707bdc1d9cd6559ece47fcf2dd8c7ba8de0b29a17",
++    "trillionnium/crates/trnm-pon-node/src/store.rs": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
+     "trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs": "2b70c0c0aa2ff27ebd951590faf34125cb878b0e6d1a5e4c35fbcc59f855c10d",
+     "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs": "c38fd34412d955f04add458c91873a7fd7421171c3d64b5829ee5a3a4d51cdd6",
+     "trillionnium/crates/trnm-pon-node/tests/release_finality_v2.rs": "d34da033529f65c73ae687d8436f338963883f3139350429ac2b65d2b923fe1f",
+     "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b",
+     "trillionnium/crates/trnm-research-protocol/src/command.rs": "8eed90ea44f2c7c25f13c2ba81765e1e34fa8b0548c8abfedda8b107a1e9e973",
+     "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs": "921349f9d07f8c4a904ec7eb8bc9b091275a7c7d3da345d25e9e241e12155973",
+-    "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs": "06b4c988f921b03c6f20134bdc5130fbd7db18bec6f291bfd289de52c81087e6",
++    "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs": "68381031cf7b4bd11605648ea787223c155df44431045fd84f822abd37285fd0",
+     "trillionnium/crates/trnm-research-protocol/src/state.rs": "4d1afff30a8fcfaadb921c58433d72d3a36971ad7e15872a484f2553cfcbf9eb",
+-    "trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs": "6665ee6f7f8cd2f301ae16025b3dfb0ce90248e8bd8e4b2b5c1a5d2fbdbefacb",
++    "trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs": "b0174c8aca1555b2dc0af1f7c3e0ff64b70431d03a0bccd0382fadacda897338",
+     "trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs": "279c9b6787c2ee4a7cc31904aa73c9b860863867d5d4509d57bf5dad7ed5467a",
+     "trillionnium/crates/trnm-research-protocol/tests/protocol_v1/security_cases.rs": "6f2bde4430b55d9d79ecf9e0733599cbcd95c6411af59a7bb48daf830624d809",
+     "trillionnium/crates/trnm-service-settlement/src/engine.rs": "bbec1ec6d64e7eb5d4806634a43656e2510b34cd4ee278aef179a84ed6d666f6",
+diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json
+index 242c54ebf8de04e2b67839673ac88b5227463849..1ea24914584ee551d1729aae6b5e8d578813a50d 100644
+--- a/config/pon/pq-cross-branch-corpus-v1.json
++++ b/config/pon/pq-cross-branch-corpus-v1.json
+@@ -140,7 +140,7 @@
+   },
+   "parent_profile": "pon-nakamoto-v1",
+   "pinned_blobs": {
+-    ".github/workflows/chain-hepta-closure-candidate.yml": "a06f34caaa4f4a3ae673fa9b2d57a91e411936dd",
++    ".github/workflows/chain-hepta-closure-candidate.yml": "15454b5322f118b52458adebf54cf00652107240",
+     ".github/workflows/codeql-real-exact-source.yml": "9cea88c15ec764ed5627c70dcab73416e96d6b6d",
+     ".github/workflows/cpq1-full-content.yml": "d942705a245ed392e1dcb186bd2c1899f04b9d4f",
+     ".github/workflows/pon-branch-encoding-acceptance.yml": "45b9594701a408974303c0e4d135e1c7231f51d6",
+@@ -175,16 +175,16 @@
+     "config/pon/model-source-composition-v6.json": "3ad45577d94ab15db9c2fc52e79174ce4a14ca14",
+     "config/pon/performance-six-axis-v1.json": "a4a75e7a0dd5350522ce825a49643dad7f57aac7",
+     "config/pon/post-quantum-transition-v1.json": "b42b8ce2b02351b65351776bf83f848b556e8e57",
+-    "config/pon/pq-authority-effects-v1.json": "150b3b7f0da5c2c5effc6fb3aff94f52351a4ac3",
++    "config/pon/pq-authority-effects-v1.json": "128fabbf8ccb038c26636f5689fe239a90ac663f",
+     "config/pon/pq-initial-root-material-required-tests-v1.json": "0c14ebf5c70fb0f7ee823d324897e12fb41820c8",
+     "config/pon/pq-native-tls-endpoint-required-tests-v1.json": "ad5038e9b6a22e93ab90ef674476bae3e3855bef",
+     "config/pon/pq-native-tls-required-tests-v1.json": "78947c5cd2dbe5430a65e3380651c9e837add390",
+     "config/pon/pq-native-tls-witness-required-tests-v1.json": "474b5aaed9092dad8e12412313cee093e16b0b13",
+-    "config/pon/pq-proof-profile-binding-v1.json": "63553753715aebb0cff15cb589069bbcab55977c",
++    "config/pon/pq-proof-profile-binding-v1.json": "7714b037c3a752bdf11c7baf55723d27d90c8e8e",
+     "config/pon/pq-release-authority-required-tests-v2.json": "a00e4e04d42f80b206b714c88d5969e0078d3cb9",
+     "config/pon/pq-root-custody-review-v1.json": "466ee2f95d95989fecf04872182b19713bfdafb5",
+     "config/pon/pq-root-custody-review-v2.json": "d40b9f94dc6c58c502f5161fb8ccb463e074b710",
+-    "config/pon/pq-root-dependency-register-v3.json": "599963e9358e1269b7cd82e11af003a35d91d1e9",
++    "config/pon/pq-root-dependency-register-v3.json": "1e59559f598ed1935432b81eb00419f604341dba",
+     "config/pon/pq-root-migration-review-v1.json": "a5a6cc867cad4eb9f4e9cef0aafdc651a998f72a",
+     "config/pon/pq-system-required-tests-v1.json": "497baa84651939bf73d826801086d43f03c29e0e",
+     "config/pon/pq-system-supplemental-tests-v1.json": "5a35ea6ce7db1153c987a9939ffab04a4971b21e",
+@@ -195,24 +195,24 @@
+     "config/pon/public-evaluation-model-source-composition-v6.json": "843ef13f9eec42a042925b8f32610ab3f892cfbf",
+     "config/pon/public-evaluation-source-composition-v6.json": "eba2244a91f47d8db9d8ec93ac878de41d7df38b",
+     "config/pon/public-resource-profile-vectors-v1.json": "b19db99a0f6f90af7c1613a18b195281f0a45ec1",
+-    "config/pon/w1-lifetime-current-source-v2.json": "47db1efb70aac8fcd27a912b038e0809beb97287",
++    "config/pon/w1-lifetime-current-source-v2.json": "7424efa09f64f8359e0b144a99478b41ce7913d2",
+     "config/pon/w1-qrom-closure-current-required-tests-v2.json": "859bc8a918dc7b9676ce4e00f69f936af3d89021",
+     "config/pon/w1-qrom-closure-required-tests-v1.json": "866d3eed2cbe3ee6b47ef6a06f11dd7dcfed89b7",
+-    "config/pon/w1-qrom-current-required-tests-v1.json": "42a21a6fddd71e63039fdd025c5fa702e236f3e0",
++    "config/pon/w1-qrom-current-required-tests-v1.json": "04c4439af4dce19d87746beb6bb0a5f45e9d57bd",
+     "config/pon/w1-qrom-current-source-observation-v1.json": "beee95742c378a2ef19ea6ded59f58fb712f6b02",
+-    "config/pon/w1-qrom-implementation-current-v2.json": "7aaba8852368aea8900554b6d6fbda3c3c105e85",
++    "config/pon/w1-qrom-implementation-current-v2.json": "f7842c7a89cec7c34630ba8edd0a57ab59e8b369",
+     "config/pon/w1-qrom-implementation-v1.json": "b8fe1e3f00d171400f57426dc3aa04d7b6faa0ca",
+-    "config/pon/w1-qrom-supplemental-tests-v1.json": "c0e27c935d52bd18a4ae3dc49cd85c79df734858",
++    "config/pon/w1-qrom-supplemental-tests-v1.json": "a6391e1a1c17ecbf19673c0e3b57526f4e9a581d",
+     "config/pon/w1-retained-disposition-v1.json": "c124fa5b901b3c65745197b4c3be583694ab1666",
+     "config/pon/w1-stark-literature-evidence-v1.json": "b606df7d0403910def55d01cfb3a6e379c9e5258",
+-    "config/pon/w1-stark-route-registry-v1.json": "e2507ef4f4346010a0b87186e3bdc54ce62f2a47",
+-    "config/pon/w1-upstream-security-v1.json": "7dcc957d615c95f8e655ff5f2ff9bf9b1b97204c",
++    "config/pon/w1-stark-route-registry-v1.json": "00366cd6b07dcbec4de0d8151e29c19e4d1d70b2",
++    "config/pon/w1-upstream-security-v1.json": "2214bbab51f7c03ad80726d01857c4c8e2d4d9c2",
+     "config/pon/work-profile-v1.json": "54e43139d3691b62f76f9e8976e1d2a974e8524b",
+     "config/portability-inventory-v1.json": "94b92f2a4877036ea3929a83f90ba3bbe8ca2ae3",
+     "config/systemd/trnmponpublic.slice": "8981b6aeed4c08c21679664940366b36a991444a",
+     "docs/development/INCENTIVE_LIABILITY_BOUNDARIES_20261112.md": "f35458d00efc7e373a395a0daadcd43fbee5394d",
+     "docs/development/SOURCE_INCENTIVE_RESEARCH_CONTRACT_20261112.md": "402c845c07991a5111fc714c4491da9211279e50",
+-    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "391e1ba80487f3d6acc49d5c802ef3d14e8bc7bc",
++    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "029f5c4cadc8cdd7910b01457800b746a4a646af",
+     "docs/development/TRNM_PUBLIC_CALLER_GRANTS_R20_20261114.md": "eed255c9a0160788699087c4ddb92c67dd1d55f4",
+     "docs/development/specs/pon/CELL_BEP52_PEER_V1.md": "b83e92b8b31b217337ff3685668290a9e03d3a3b",
+     "docs/development/specs/pon/CELL_BRANCH_COMPOSITION_20261113.md": "7713e91ebd6613059fe5c768c3511fdf15611447",
+@@ -264,7 +264,7 @@
+     "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md": "ca055cb12a2db06dd19c3ef83d7682839baac1c3",
+     "docs/security/PQL5_WITNESS_LOCAL_ACK_FENCE_V1.md": "3205f41bd57632a1b256f836a87de3a4ffc85a42",
+     "docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md": "1905a75598844c3f86bd71111ee1cef8fbff1b51",
+-    "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md": "b33ded05b83bea76064eb82829bbddd1b87f9875",
++    "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md": "1b5ccd314220d3af5396cbd6f391380dc137f7ef",
+     "docs/security/PQ_AUTHORITY_PREFLIGHT_20261108.md": "5baf7ee33cce0274e7cf227d888232825100a9bb",
+     "docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md": "e67f9e3e5852c194818b0e99f592899cd0262358",
+     "docs/security/PQ_CELL_ACTIVATION_CURRENT_PUBLICATION_V1.md": "8f1f3e45aa372164630cc6132acb8a558a62d3cb",
+@@ -302,7 +302,7 @@
+     "docs/security/PQ_PQL5_NATIVE_QUORUM_RESEARCH_V1.md": "e4e077d226e9c3706b19176de1ddd1d70de1844c",
+     "docs/security/PQ_PQL6_EQUIVOCATION_RESEARCH_V1.md": "ff022dc055b6a9160293f4fd8e8091b8afa8315e",
+     "docs/security/PQ_PQS1_WHOLE_ROSTER_NATIVE_RESEARCH_V1.md": "830357e242bfa8c55b9091ef67ad5af83cae74c8",
+-    "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md": "7975090289abdfaae256bb9644c4bef9343c7f64",
++    "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md": "dc9ab3677b72dc0ce5fc25041aed3858f2121efe",
+     "docs/security/PQ_QTX1_COST_V1.md": "e0cc79991d60be69ae26bb1010572001a7e0df05",
+     "docs/security/PQ_QTX1_FORK_STATE_RESEARCH_V1.md": "b8f2d16127175981f68d0a830102cf651f72a841",
+     "docs/security/PQ_QTX1_NATIVE_CRYPTO_CONFORMANCE_V1.md": "8f2f1fe5d9dac7b5b897a1e818a20b104144a3e7",
+@@ -310,7 +310,7 @@
+     "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md": "cd042cffb0d8081ae44f4590cb003a45bc0b253f",
+     "docs/security/PQ_RELEASE_CURRENT_AUTHORITY_AND_TAP21_V1.md": "e653efd73f7050514468809c4da3c26df9c8b195",
+     "docs/security/PQ_ROOT_CUSTODY_REVIEW_V2.md": "06bfe9d83416158396df3b5ef6d016163f96563b",
+-    "docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md": "80fe5a70eada20f36118331bd525c4d14b4d34be",
++    "docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md": "bec280754766e6caeb8a5f20d4960fc4814b37a1",
+     "docs/security/PQ_ROOT_EFFECT_READBACK_NATIVE_V4.md": "fb8fd09a0e36e844f533d035038146b510ecf8e4",
+     "docs/security/PQ_ROOT_LIFETIME_GAPS_V2.md": "1746e8f15fa00422241a6462861dbc00a0519ef4",
+     "docs/security/PQ_ROOT_MIGRATION_REVIEW_V1.md": "4c761f5554030ab0dce3dd76a715a32b4089bdcd",
+@@ -333,9 +333,9 @@
+     "docs/security/SYSTEM_BOUNDARY_QUALIFICATION_20261109.md": "33ab4079dceeec32c5f69b1a4bf369bf3ab74ee9",
+     "docs/security/SYSTEM_SECURITY_BLOCKERS_V1.md": "47adc31986e646d592344d96139f7fea0c20ba71",
+     "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md": "1affbeb157142c81020854e11cdb68295680f2a5",
+-    "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md": "76275c784fa52d16494370d6d9dda094cc579946",
++    "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md": "bbf1200e2d410ff439dfb7367cee193902a91394",
+     "docs/security/W1_P3_SAMPLING_CONDITIONAL_ACCOUNTING.md": "9656ee69a01a78e39c8aad5e7776af691addb112",
+-    "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md": "8b88bac9032c7907c5f8158f233a93947871dfa2",
++    "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md": "d8641eb1cdc0edf01e6b155460de9173245432db",
+     "docs/security/W1_QROM_CURRENT_SOURCE_OBSERVATION_DESIGN_20261108.md": "5d9e036f8d409c7a0fad4099f4afb51ad15e37a9",
+     "docs/security/W1_RISC0_DEEP_NAMED_EVENTS.md": "8983dcf7a0aeb8477218729c30a65a9072d96218",
+     "docs/security/W1_STARK_ROUTE_INSTANCE_AUDIT_V1.md": "92ad60cfea69244e6f0fa81cee27d8d3b2d17c82",
+@@ -1735,7 +1735,7 @@
+     "scripts/ci/integration_push_source.py": "54d44ae6f63d1fb45be9495ca1cbbdd73b9939e7",
+     "scripts/ci/model-runtime-cpu-requirements.txt": "6796d0737af36e1521d89f6937df288fe67167a1",
+     "scripts/ci/pinned_native_process.py": "ea991c389e139c807e16fbc744177f5d00e5a595",
+-    "scripts/ci/pq_authority_effect_register.py": "ddf298a6a669b1b9be007972ba4990147f5a4821",
++    "scripts/ci/pq_authority_effect_register.py": "1c1b4dc0d4ef44f3c4e7a8bc5629058be09910b6",
+     "scripts/ci/pq_authority_surface_scan.py": "6df25bea817bbb491d5549364bbe7a7c486f7b9a",
+     "scripts/ci/pq_chain_claim_guard.py": "89d2b42488f11e7cef44b59453fb6aad8962bff6",
+     "scripts/ci/pq_content_chain_review.py": "2779f3e14e6425005c4b21a7891aff06ee7b9659",
+@@ -1746,7 +1746,7 @@
+     "scripts/ci/pq_root_campaign_readback.py": "4cf4f13d05580a49f065cc0407706e0b153d916c",
+     "scripts/ci/pq_root_custody_review_v1.py": "aceabcdcf2dfa9eba2fb284fc6c7b3a0ce33eea3",
+     "scripts/ci/pq_root_custody_review_v2.py": "4e75f1d2998cc2bd41cece38346ee47634e21567",
+-    "scripts/ci/pq_root_dependency_register.py": "bb2bfd1b1310155dd1350465462bcb80b863fe95",
++    "scripts/ci/pq_root_dependency_register.py": "34b793d911762e9564dfd58e417fc47de1f97f31",
+     "scripts/ci/pq_root_migration_review_v1.py": "71c2fff2f3c0dd9b7974efaf162e97c54f3bcb6e",
+     "scripts/ci/pq_source_reader.py": "a35092e9d3d4457d8e9a9f30b73ca65a34359546",
+     "scripts/ci/prepare_artifact_upload.py": "026d2e9a463b4c6c4c280ce8879f0b306088a77d",
+@@ -1814,19 +1814,19 @@
+     "scripts/ci/test_pon_w1_zero_paired_lazy_v1.py": "ae573ceac867b8d7455dc8b612907086233c6b9a",
+     "scripts/ci/test_pon_wan_control_domains.py": "d2d82bf3fbae926f4ccf3798be2aa2bf50244aed",
+     "scripts/ci/test_pon_wan_evidence.py": "136db0e99c1b0a0ef9a91d7f7131fa0590432488",
+-    "scripts/ci/test_pq_authority_effect_register.py": "c5d8ef1954917277e81dfc05f17430ef4d2ef8a2",
++    "scripts/ci/test_pq_authority_effect_register.py": "d6e3ae6e2fcb16ceec62924c9407307feb8cd75d",
+     "scripts/ci/test_pq_authority_surface_scan.py": "f9883291a2a844e7347d9cfd26d7c2f46288851b",
+     "scripts/ci/test_pq_chain_claim_guard.py": "72682391155dd65d0f54606324ec5a01465bb653",
+     "scripts/ci/test_pq_content_chain_review.py": "a8b4f397afac8db119207e610fb404ba992cd152",
+     "scripts/ci/test_pq_external_rollback_oracle.py": "f30aff9ca8bcd28ea972eac88eab42824ffc932b",
+     "scripts/ci/test_pq_lifetime_budget.py": "fde7fa3f388db9ab9f9760b9229f928a7b2f2767",
+     "scripts/ci/test_pq_lifetime_composition.py": "5350c9232e030d0de6d6e0102d9f9b5b64604f50",
+-    "scripts/ci/test_pq_proof_profile_binding.py": "2a3992af77a06302b6beb8959cffe9fdc694245e",
++    "scripts/ci/test_pq_proof_profile_binding.py": "5e7550720e94e80005612137b4270cf85ec71eb7",
+     "scripts/ci/test_pq_research_integration.py": "3fa462b482ee015e8c4a50ead42f3a8a5f221f2c",
+     "scripts/ci/test_pq_root_campaign_readback.py": "0531ba2435fe03dd384f50cb97a8614653d1f274",
+     "scripts/ci/test_pq_root_custody_review_v1.py": "63d1dd99c10daa80705c4a1aa74f72b7e37294c9",
+     "scripts/ci/test_pq_root_custody_review_v2.py": "0c08ba2bd1c849f76bf8ca27260af63dc232d8e3",
+-    "scripts/ci/test_pq_root_dependency_register.py": "8a5188e984b500299092ad9e51d266b8667d5b15",
++    "scripts/ci/test_pq_root_dependency_register.py": "928d33061719e3545a95f63d0bba3dddc2ce941d",
+     "scripts/ci/test_pq_root_migration_review_v1.py": "75ab950f41904c8137051d9fda6983b66df41965",
+     "scripts/ci/test_prepare_artifact_upload.py": "96a5f20b72c76762aa18025ea42ccfc9726b3b10",
+     "scripts/ci/test_public_readiness_evidence.py": "0edd345df10647db46403f789c72df1967ff9897",
+@@ -1860,20 +1860,20 @@
+     "scripts/ci/test_w1_kaggle_source_builder.py": "874690dd216142e3fd396c83d5575f9ef866ff14",
+     "scripts/ci/test_w1_kaggle_worker_contract.py": "994473ad61c88891788273d9245eb7aa3830c464",
+     "scripts/ci/test_w1_lifecycle_cost_v4.py": "424f99c2aaa52b589b41ea9f97df241b7c8ed757",
+-    "scripts/ci/test_w1_lifetime_current_observation.py": "18abdefc47eadcccb00a5e4bdc271b4b270e0790",
++    "scripts/ci/test_w1_lifetime_current_observation.py": "9e6989095794564623e9b56e58ab97af3cc42517",
+     "scripts/ci/test_w1_lifetime_ledger.py": "0ee624e18c8e5e698b2f6bb10507e805e509a2da",
+     "scripts/ci/test_w1_native_roster.py": "7cb510177ad2628a2cdb096334e14158777e79c4",
+     "scripts/ci/test_w1_p3_sampling_audit.py": "64b7759aa2b0af96f15e347d8811c9af2588e357",
+     "scripts/ci/test_w1_postwin_identity.py": "fd5c15900d7f3f098c6bbb69f7cadac94f540d9f",
+     "scripts/ci/test_w1_proof_latency_readback.py": "285c70225d9bc84e59068b25f8730f2a3bb4047a",
+     "scripts/ci/test_w1_qrom_closure_controls.py": "cc4df9f7ff564e34d51e61311fd99e12c049c677",
+-    "scripts/ci/test_w1_qrom_closure_current_controls.py": "816dc81feca4e7b2a37e465f7d761725f1a89572",
+-    "scripts/ci/test_w1_qrom_current_ci.py": "3ab5b3120a0d6ef508a051525e81140aa13d5f5a",
+-    "scripts/ci/test_w1_qrom_current_implementation_audit.py": "0b820a21179f478e57cf9764de8b4ecd636357a9",
++    "scripts/ci/test_w1_qrom_closure_current_controls.py": "79898f0dd2e44a433f6bd4e4a039893bab7cb819",
++    "scripts/ci/test_w1_qrom_current_ci.py": "ce9a6fd1bd05fea67ade25fdf5fa7c7eb6264e0f",
++    "scripts/ci/test_w1_qrom_current_implementation_audit.py": "78d9a03447febd05b4e5ee35a4a60dfdbe7b2cda",
+     "scripts/ci/test_w1_qrom_historical_fixture.py": "50178265d145e700d0cb374790f2d2d4bf482055",
+     "scripts/ci/test_w1_qrom_implementation_audit.py": "d93673dc175b2ec641197e7226752605c8c98f89",
+-    "scripts/ci/test_w1_qrom_semantics_audit.py": "663fefbd94382bd5b56c9af06ec2afcb000b4cf5",
+-    "scripts/ci/test_w1_qrom_workflow_gate.py": "96ef5939efc69a5d44bf3447d2509fec5372d67f",
++    "scripts/ci/test_w1_qrom_semantics_audit.py": "5339b28b50fae5c58f0d1de8f1111c6b8ad02af7",
++    "scripts/ci/test_w1_qrom_workflow_gate.py": "d514f92c03891828ee8ccd98304e7b4ae5c9d5a6",
+     "scripts/ci/test_w1_receiver_real.py": "a4e0a97a94da5cb376944a46b800e6185d1fbd6c",
+     "scripts/ci/test_w1_risc0_deep_event_audit.py": "80e05f1ada75521946225d7fd2e8260688074ee2",
+     "scripts/ci/test_w1_staged_observer.py": "7c08e82576ca5aea8f9afc2f7a1590158bb4a1d3",
+@@ -1886,9 +1886,9 @@
+     "scripts/ci/w1_native_controls.py": "de49010fd9fb08a0cce43b5ec003d7436033f163",
+     "scripts/ci/w1_native_rosters_v1.json": "3c43534e13ce0b65ee6bc1e7cffea42bfd38f1ed",
+     "scripts/ci/w1_qrom_closure_controls.py": "e50aff85289b7e6fa6ed1ccf45683d807e7ef9fd",
+-    "scripts/ci/w1_qrom_closure_current_controls.py": "bb47591f471b3b7554ce8997f487568d8de0f64d",
+-    "scripts/ci/w1_qrom_current_ci.py": "c7f6a7b72f861d3698bc0fa63447e30224758ac4",
+-    "scripts/ci/w1_qrom_supplemental_controls.py": "9ec7ed08cad550491940d4a9880cea2149ac450f",
++    "scripts/ci/w1_qrom_closure_current_controls.py": "3d2938a93e3ce52401dff1cd7b5a95a5b810bcbb",
++    "scripts/ci/w1_qrom_current_ci.py": "4b26cf53c7278145bb8ad134e99f24c0ea594b7a",
++    "scripts/ci/w1_qrom_supplemental_controls.py": "97b344e65dc5ec91b15b9a99289099e752dab2e8",
+     "scripts/ci/w1_upstream_security.py": "a28bc572dcf6af3d01af12b57f088784cd085509",
+     "scripts/ci/w1_v2_controls_gate.py": "c4fe91c7cbae9fa6fffce3cd608ce8d0ab906f38",
+     "scripts/experiments/read_source_incentive_native_v6.py": "b1faa7781c99e0d61e7c933d3282789f7ab0032a",
+@@ -1984,19 +1984,19 @@
+     "scripts/w1_fri_query_replay.py": "1a3eafeb4ffaa23907da5eda0ee4baabe943307d",
+     "scripts/w1_generation_target_v2.py": "f58c8ede6d6b4db073c7e71111c27cde70275f6f",
+     "scripts/w1_kaggle_worker_template.py": "c2a8d4ba5a26b209386de8300684d65ad0dd21fc",
+-    "scripts/w1_lifetime_current_observation.py": "937e9141fc7eab5ca5b04e41616cd22887ed0556",
++    "scripts/w1_lifetime_current_observation.py": "e98f81f5e7b057e39f6d7c534276c37fc9b9dbc0",
+     "scripts/w1_lifetime_ledger.py": "2945322e1c69d5edc528f1e610a66a998b9412f7",
+     "scripts/w1_owned_generation_runtime_v2.py": "db6b3690f68700a7b66f45ece57844bec0996dff",
+     "scripts/w1_owned_process_collector_v1.py": "eaa24403674c9b5448d49187f0d2d0ade6bc9127",
+     "scripts/w1_owner_cancellation_v1.py": "146703119bc581b5f7f60f266a829869533b33ec",
+     "scripts/w1_p3_sampling_audit.py": "874ee83653672a01915920be737fb3bf5f23d421",
+-    "scripts/w1_qrom_current_implementation_audit.py": "407910c28a10d16379d18505ca64f8810be18211",
++    "scripts/w1_qrom_current_implementation_audit.py": "88b619db34314c1d5a212dba99e6105d4bfca14e",
+     "scripts/w1_qrom_historical_fixture.py": "5b5776cae574907c9ce5d6b8cfd7369f21749935",
+     "scripts/w1_qrom_implementation_audit.py": "d345b2f2a397a254b44ab0a38c33083f507e206d",
+     "scripts/w1_qrom_semantics_audit.py": "9a59e5742d58cf2b160987030f9eb00ef181c4f0",
+     "scripts/w1_risc0_deep_event_audit.py": "f5e6ec1db1dc5f37c3cf7a8a67b870424ba3f4de",
+     "scripts/w1_stark_field_certificates.py": "f1084188dec8451ad2981ad24f8bcc9804e4c8b4",
+-    "scripts/w1_stark_route_audit.py": "a33bce5f52ef17f1d577fc35300d1a655cb59eaa",
++    "scripts/w1_stark_route_audit.py": "a567715c001cdca7aabe408a090e912cfa8834e7",
+     "scripts/w1_v2_receipt_controls.py": "6c0369081013550e861c48d9d906b0c72fc815d8",
+     "tests/fixtures/cell-content-graph-v3/vectors.json": "bfbfdff57e3ed7435e9ab3d910d2f9c85c3d6231",
+     "tests/fixtures/cpq1-content-v1/vectors.json": "b0efdbebad32de3b5081096a2b624a11605ff557",
+diff --git a/config/pon/pq-proof-profile-binding-v1.json b/config/pon/pq-proof-profile-binding-v1.json
+index 63553753715aebb0cff15cb589069bbcab55977c..7714b037c3a752bdf11c7baf55723d27d90c8e8e 100644
+--- a/config/pon/pq-proof-profile-binding-v1.json
++++ b/config/pon/pq-proof-profile-binding-v1.json
+@@ -4,8 +4,8 @@
+   "selected_profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+   "mapping_contract": {
+     "path": "config/pon/w1-qrom-implementation-current-v2.json",
+-    "bytes": 47790,
+-    "sha256": "5c53b9aba5255a163256bb9865448ea44e5b5f2f45079adf682ea4ace662a2fb"
++    "bytes": 50313,
++    "sha256": "77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5"
+   },
+   "system_lifetime_register": {
+     "path": "config/pon/pq128-lifetime-budget-v1.json",
+diff --git a/config/pon/pq-root-dependency-register-v3.json b/config/pon/pq-root-dependency-register-v3.json
+index 599963e9358e1269b7cd82e11af003a35d91d1e9..1e59559f598ed1935432b81eb00419f604341dba 100644
+--- a/config/pon/pq-root-dependency-register-v3.json
++++ b/config/pon/pq-root-dependency-register-v3.json
+@@ -795,7 +795,7 @@
+     "wire_equivalence_proved": false
+   },
+   "purpose": "declared-root-dependency-and-query-obligation-inventory",
+-  "review_base_revision": "975af9eb4a7f15b405de602552fa05021a176c11",
++  "review_base_revision": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+   "roles": {
+     "anchor-response": {
+       "action_coverage": [
+@@ -1347,14 +1347,15 @@
+     "scripts/ci/pq_source_reader.py": "b3eb3f23b42c012dc1a5a07daa479db5e2982b2a20006f047552c9f13e1a65cb",
+     "trillionnium/Cargo.lock": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
+     "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+-    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "ab2554b1c8ec1010735fa55ed1b16d45376f4936885dc3cc6f0121917250256d",
++    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "5ab0c24b08430a326f58c9ce3aa4a85eef538c4b11b2cb08287e5201b41892de",
++    "trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs": "2af82ca049a155882b8577c32f45d7867ad24adf04dd0d42b8d960d58ecbb1fb",
+     "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "83fe52804bfbc593e2768c3a88764b532539deb8c9e866ee7305286491e16115",
+     "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs": "2f775934937dc0997579ca43132c3a2aee262103ec66ca4a4be08d3b8f4f93f4",
+-    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs": "9b03c4f4a22175fe183e045bc1a2e25282232a4bb156281970f542e7277ebf1b",
+-    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs": "2b638555857b20c2d1e5888757c0b96612a00c6eec62ebc056acc35ed1659ba1",
+-    "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs": "3ae8818e5e805985dd9298ff5ba293c62f06211d5b98e94f679d4b60bc3abb3d",
++    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs": "59fd7fb334161fd869237cfe35765747a6b9f675f070e3e617a24d11de2fe2c7",
++    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs": "ddc79df2879c9ab011cbec1e6d3ad3945e5236dda69bee4f8b41a5343abb87f9",
++    "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs": "3826964229379674be933f963b0860332ee19fc545143cdc40c4e92393b1fac7",
+     "trillionnium/crates/trnm-pon-node/Cargo.toml": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012",
+-    "trillionnium/crates/trnm-pon-node/src/lib.rs": "dc673c063229c4a2ce66174199d07f885f28203167b34410d1d0463e2cf99910",
++    "trillionnium/crates/trnm-pon-node/src/lib.rs": "baafb16f125fda88b09d2342a0b6badb253497742c9a106921e8416e930f108d",
+     "trillionnium/crates/trnm-pon-node/src/release_owner.rs": "350702d2221a3f343c3968174e1ec5ae7b9179f0cf3e372db7d0614ee6784ab6",
+     "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs": "a304394e4f07cc5bee809ededc29852f9f68df84c926d58367ffa7f8f242939b",
+     "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/anchor.rs": "c3bee91ae17af6c5a67ee7d603e553e82dab38024cc07d230c0a6bf75865d7f2",
+diff --git a/config/pon/w1-lifetime-current-source-v2.json b/config/pon/w1-lifetime-current-source-v2.json
+index 47db1efb70aac8fcd27a912b038e0809beb97287..7424efa09f64f8359e0b144a99478b41ce7913d2 100644
+--- a/config/pon/w1-lifetime-current-source-v2.json
++++ b/config/pon/w1-lifetime-current-source-v2.json
+@@ -2,9 +2,11 @@
+   "changed_paths": [
+     "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+     "trillionnium/Cargo.lock",
++    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+     "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
+     "trillionnium/crates/trnm-pon-node/src/store.rs",
+     "trillionnium/crates/trnm-pon-node/src/consensus.rs",
++    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+     "formal/pon-nakamoto-v1/quantum_oracle_resources.py"
+   ],
+   "historical_reader": {
+@@ -22,11 +24,11 @@
+   },
+   "schema": "TRNM-W1-LIFETIME-CURRENT-SOURCE-CONTRACT2",
+   "selected_source_scope": "20_selected_paths_not_full_dependency_or_execution_closure",
+-  "source_base_commit": "332d7f723d71707d88a2cffa52b3754579a46926",
++  "source_base_commit": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+   "sources": [
+     {
+-      "bytes": 924,
+-      "current_sha256": "ab2554b1c8ec1010735fa55ed1b16d45376f4936885dc3cc6f0121917250256d",
++      "bytes": 1016,
++      "current_sha256": "5ab0c24b08430a326f58c9ce3aa4a85eef538c4b11b2cb08287e5201b41892de",
+       "historical_sha256": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3",
+       "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml"
+     },
+@@ -55,8 +57,8 @@
+       "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+     },
+     {
+-      "bytes": 41699,
+-      "current_sha256": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d",
++      "bytes": 42956,
++      "current_sha256": "782e4b4d3d442d192d7ae960cd64ba0727d49502464877f65f09f4a355ee2413",
+       "historical_sha256": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d",
+       "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs"
+     },
+@@ -67,8 +69,8 @@
+       "path": "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs"
+     },
+     {
+-      "bytes": 387798,
+-      "current_sha256": "df2e303798678fe0b7437cf707bdc1d9cd6559ece47fcf2dd8c7ba8de0b29a17",
++      "bytes": 391470,
++      "current_sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
+       "historical_sha256": "b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153",
+       "path": "trillionnium/crates/trnm-pon-node/src/store.rs"
+     },
+@@ -79,8 +81,8 @@
+       "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs"
+     },
+     {
+-      "bytes": 104121,
+-      "current_sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
++      "bytes": 106066,
++      "current_sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e",
+       "historical_sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+       "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+     },
+diff --git a/config/pon/w1-qrom-current-required-tests-v1.json b/config/pon/w1-qrom-current-required-tests-v1.json
+index 42a21a6fddd71e63039fdd025c5fa702e236f3e0..04c4439af4dce19d87746beb6bb0a5f45e9d57bd 100644
+--- a/config/pon/w1-qrom-current-required-tests-v1.json
++++ b/config/pon/w1-qrom-current-required-tests-v1.json
+@@ -1,5 +1,5 @@
+ {
+-  "expected_tests": 75,
++  "expected_tests": 77,
+   "qualification": {
+     "complete_w1_soundness_qualified": false,
+     "consensus_admission": false,
+@@ -65,14 +65,16 @@
+       ]
+     },
+     {
+-      "expected_tests": 14,
++      "expected_tests": 16,
+       "module": "test_w1_qrom_current_implementation_audit",
+       "tests": [
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_all_lifetime_and_cryptographic_obligations_remain_unknown",
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_all_six_local_crates_and_literal_inputs_are_bound",
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_cli_report_is_created_once_and_never_replaces_prior_evidence",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_consolidated_local_sources_have_independent_reviewed_pins",
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_contract_edit_cannot_relabel_unreviewed_source",
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_current_mapping_reaches_the_original_complete_saved_fixture",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_each_consolidated_source_refuses_omission_and_mutation",
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_fixed_parameters_and_fri_mapping_are_preserved",
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_historical_reader_bytes_are_preserved",
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_included_work_profile_change_requires_review",
+diff --git a/config/pon/w1-qrom-implementation-current-v2.json b/config/pon/w1-qrom-implementation-current-v2.json
+index 7aaba8852368aea8900554b6d6fbda3c3c105e85..f7842c7a89cec7c34630ba8edd0a57ab59e8b369 100644
+--- a/config/pon/w1-qrom-implementation-current-v2.json
++++ b/config/pon/w1-qrom-implementation-current-v2.json
+@@ -1,7 +1,7 @@
+ {
+   "schema": "TRNM-W1-QROM-IMPLEMENTATION-CONTRACT2",
+   "scope": "Offline research mapping only. Does not authorize consensus or production admission.",
+-  "source_base_commit": "d9e6aa1ec8d1cdf4f506238f2df452c8c6215b00",
++  "source_base_commit": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+   "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+   "project_source_scope": "Selected entry, relation, framing, native work and locked dependency files; not all transitive source or compiled feature semantics.",
+   "project_files": [
+@@ -72,8 +72,8 @@
+     },
+     {
+       "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+-      "bytes": 104121,
+-      "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
++      "bytes": 106066,
++      "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+     },
+     {
+       "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs",
+@@ -376,8 +376,8 @@
+       },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+-        "bytes": 924,
+-        "sha256": "ab2554b1c8ec1010735fa55ed1b16d45376f4936885dc3cc6f0121917250256d"
++        "bytes": 1016,
++        "sha256": "5ab0c24b08430a326f58c9ce3aa4a85eef538c4b11b2cb08287e5201b41892de"
+       },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_adversarial_cost.rs",
+@@ -456,8 +456,8 @@
+       },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_rank_batch_v5.rs",
+-        "bytes": 40529,
+-        "sha256": "a5bd50b96e51f6c63fdf4ee996d47bcdf4b177a046d632365ee24398cdd91e48"
++        "bytes": 40837,
++        "sha256": "b4906b6782e7bbe28e80f0837bf638bd9ddbeed66926dcc15478ec529eaa2b03"
+       },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_zero_paired_lazy_v1.rs",
+@@ -509,6 +509,11 @@
+         "bytes": 29053,
+         "sha256": "a4741b0179e52388dd4daeee30eaf82a1ef18b41a330b4806ab66102932a6a5a"
+       },
++      {
++        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs",
++        "bytes": 21222,
++        "sha256": "2af82ca049a155882b8577c32f45d7867ad24adf04dd0d42b8d960d58ecbb1fb"
++      },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs",
+         "bytes": 7114,
+@@ -536,8 +541,8 @@
+       },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+-        "bytes": 104121,
+-        "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
++        "bytes": 106066,
++        "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+       },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs",
+@@ -601,14 +606,19 @@
+       },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs",
+-        "bytes": 24418,
+-        "sha256": "e029837d050952046c9c4fa694a8191470a8733cd96a3dc81e98cc46af59a0a3"
++        "bytes": 40347,
++        "sha256": "bc4c29d40d5d80ea13167e8d1c8294a110875742e419ce040bfd3e9dc553de71"
+       },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs",
+         "bytes": 13599,
+         "sha256": "b167b51b07a6fbf186a1485c1f742de3df1007cb9794c364c7421d77e0afacb4"
+       },
++      {
++        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs",
++        "bytes": 13950,
++        "sha256": "83007c8d1395ba38328f4546cb88da89786c7aa5e1048f76a7568787d28732c5"
++      },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
+         "bytes": 20390,
+@@ -631,19 +641,34 @@
+       },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+-        "bytes": 27102,
+-        "sha256": "329fad8979b4ab8681aebe26edf6d3e65fcdbbc6de027262bffe697fb3ef31e2"
++        "bytes": 29477,
++        "sha256": "5aef4dc44007bb3a81af68769c72eba8a9398360903e057f883602cd0e915187"
+       },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache_tests.rs",
+-        "bytes": 8669,
+-        "sha256": "6ced986fd49f46c2e29df809488c50844ad8ae6f05e69d540abaca1638fd611c"
++        "bytes": 10004,
++        "sha256": "e85c9f8fc28d44fed0899c1167500c122b4e4703b46513bdac5385a59eaa4ce9"
++      },
++      {
++        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs",
++        "bytes": 5504,
++        "sha256": "4e03678b595de74ec6556c6b1db8c1ea2230dd0660d7c7a97a910c142bd1a496"
+       },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
+         "bytes": 22800,
+         "sha256": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c"
+       },
++      {
++        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts.rs",
++        "bytes": 9625,
++        "sha256": "3c5dd05a1f7fd2cd90f92f310b7e708963895dd0965946e0006fa2dd2d5d3870"
++      },
++      {
++        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts/tests.rs",
++        "bytes": 15147,
++        "sha256": "69a7a12a240f4a71983a815b00c34058dca938f4392ff918a8b84d638c61b97f"
++      },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+         "bytes": 12902,
+@@ -686,13 +711,13 @@
+       },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
+-        "bytes": 21524,
+-        "sha256": "9b03c4f4a22175fe183e045bc1a2e25282232a4bb156281970f542e7277ebf1b"
++        "bytes": 23689,
++        "sha256": "59fd7fb334161fd869237cfe35765747a6b9f675f070e3e617a24d11de2fe2c7"
+       },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs",
+-        "bytes": 11174,
+-        "sha256": "2b638555857b20c2d1e5888757c0b96612a00c6eec62ebc056acc35ed1659ba1"
++        "bytes": 17768,
++        "sha256": "ddc79df2879c9ab011cbec1e6d3ad3945e5236dda69bee4f8b41a5343abb87f9"
+       },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task.rs",
+@@ -736,8 +761,8 @@
+       },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs",
+-        "bytes": 12740,
+-        "sha256": "3ae8818e5e805985dd9298ff5ba293c62f06211d5b98e94f679d4b60bc3abb3d"
++        "bytes": 15400,
++        "sha256": "3826964229379674be933f963b0860332ee19fc545143cdc40c4e92393b1fac7"
+       },
+       {
+         "path": "trillionnium/crates/trnm-crypto-primitives/tests/qualified_task_lifecycle_v2.rs",
+@@ -957,6 +982,7 @@
+     "zero_paired_lazy_20261111": "Reviewed source 0eab349d7e6123b458cb98540f36fd273ee24f21 rebinds only trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs among the prior 138 local-closure inputs and adds examples/pon_w1_zero_paired_lazy_v1.rs to that crate, bringing the inventory to 139. The existing zero integer-paired transcript kernel and original producer APIs remain byte-identical; a target-aware unverified attempt API composes the same kernel with optional winner-only proof materialization. The native example compares five fixed producer arms over six preregistered target/reuse cells, retains failures and verifier controls, and grants no consensus credit. The other 137 closure inputs, all 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations retain their bytes. This mapping supplies no native execution, whole-chain proof, minimum adversarial cost, ideal-ticket independence or security qualification.",
+     "audited_branch_integration_20261113": "Reviewed source 975ab0937243949b73cdbea9f13902802bbd7d00 rebinds four of the prior 139 local-closure inputs: the workspace lock, crypto Cargo manifest, crypto lib.rs and protocol lib.rs. Their exact old blobs match the separately reviewed dependency and source changes: the resolved package graph, Ed25519 API migration with stricter weak-key/canonical decoding, and validated protocol deserialization. Add the ordinary ed25519_rfc8032.rs vector source found by complete crate-directory enumeration, producing 140 inputs. The other 135 prior closure records, all 16 selected project files, saved proof materials, historical reader/contract, audit helpers, six crate roots, eight literal includes, proof parameters and 15 unresolved obligations retain their bytes. Preserve the earlier exact source-pin and unlisted-Rust-source refusals. Source byte counts identify reviewed files; they are not larger protocol, compute or security budgets. This selected inventory does not enumerate external Rust #[path] imports or third-party implementations and establishes no native execution, new proof, current-use approval or security qualification.",
+     "operator_weak_key_error_contract_20261113": "Reviewed combination 80ee3a6ad326662074b329d4c9b7c04a5580b504 contains actor error-contract commit 1166b1661b389104b2209fc71dd9a81f263f17a1. Only crypto/lib.rs changes among the 140 local-closure inputs. The strict decode/canonical-encoding/point-parse/weak-key rejection order, display text and accepted key set remain unchanged. A typed WeakEd25519Key reason lets the separately reviewed operator preserve ACTOR_WEAK_KEY. New finite parser controls remain in the same source file. The mvcc caller is outside this selected six-crate closure. The other 139 inputs, 16 selected project files, saved proofs, historical reader/contract, helpers, eight literal includes, proof parameters and 15 unresolved obligations are unchanged. No business, CPU, protocol or security budget changes. This binding supplies no native execution, complete dependency proof, current-proof-use approval or security qualification.",
+-    "independent_locked_graph_repair_20261114": "Reviewed source d9e6aa1ec8d1cdf4f506238f2df452c8c6215b00 synchronizes the independent native and V2 verifier Cargo locks with the already selected shared crypto manifest. Only the V2 verifier lock changes among the 16 selected project inputs and 140 local-closure inputs: Ed25519 2.2 to 3.0 and Curve25519 4.1 to 5.0, their required Fiat/SHA2 edges, and removal of unused older edges. All unchanged-version registry checksums, RISC Zero 3.0.6 packages, relation source, saved proof, guest lock/image, historical reader/contract, helpers, eight literal includes and 15 unresolved obligations retain their identities. Complete locked offline Cargo graphs, original release tests, strict Clippy, formatting and release builds ran separately on Rust 1.95.0 macOS arm64. The mapping itself still performs no native execution or cryptographic verification. No upstream proof-use approval, security qualification, changed constraint or guest build is implied."
++    "independent_locked_graph_repair_20261114": "Reviewed source d9e6aa1ec8d1cdf4f506238f2df452c8c6215b00 synchronizes the independent native and V2 verifier Cargo locks with the already selected shared crypto manifest. Only the V2 verifier lock changes among the 16 selected project inputs and 140 local-closure inputs: Ed25519 2.2 to 3.0 and Curve25519 4.1 to 5.0, their required Fiat/SHA2 edges, and removal of unused older edges. All unchanged-version registry checksums, RISC Zero 3.0.6 packages, relation source, saved proof, guest lock/image, historical reader/contract, helpers, eight literal includes and 15 unresolved obligations retain their identities. Complete locked offline Cargo graphs, original release tests, strict Clippy, formatting and release builds ran separately on Rust 1.95.0 macOS arm64. The mapping itself still performs no native execution or cryptographic verification. No upstream proof-use approval, security qualification, changed constraint or guest build is implied.",
++    "all_branch_source_consolidation_20261114": "Reviewed source 5c04c60e463462d9df8884786e0d5bb32af08a64 changes nine of the prior 140 local-closure records and adds five crypto sources: the explicit root cost example, low_rank_prefix, statement_boundaries, task_product_facts and its tests. The nine changed inputs are the crypto manifest, rank-batch diagnostic, pon_work entry, legal_attempt, rejection_cache and its controls, and the pq_root_v3 implementation plus unit/native controls. The 131 other prior closure inputs, six Cargo-reachable crate roots, eight literal includes, saved proof materials, guest lock/image, historical reader/contract, audit helpers, proof parameters and 15 unresolved obligations retain their identities. The selected 16-path project map changes only pon_work.rs from the preceding current checkpoint; its historical-V1 difference set therefore contains four paths. Native product reuse, cheap-statement checks, cooperative task hashing and explicit structured producers are separately reviewed source capabilities. Immutable root-key expansion preserves each-call quorum verification and the original budget. This mapping adds no native execution, lower cost bound, current-profile approval, full Rust #[path] closure, external implementation proof or security qualification. The SP27 example belongs to trnm-research-protocol and is outside these six crates."
+   }
+ }
+diff --git a/config/pon/w1-qrom-supplemental-tests-v1.json b/config/pon/w1-qrom-supplemental-tests-v1.json
+index c0e27c935d52bd18a4ae3dc49cd85c79df734858..a6391e1a1c17ecbf19673c0e3b57526f4e9a581d 100644
+--- a/config/pon/w1-qrom-supplemental-tests-v1.json
++++ b/config/pon/w1-qrom-supplemental-tests-v1.json
+@@ -1,12 +1,21 @@
+ {
++  "expected_tests": 24,
++  "qualification": {
++    "complete_w1_soundness_qualified": false,
++    "consensus_admission": false,
++    "post_quantum_soundness_qualified": false,
++    "pq_signature_qualification_inferred": false,
++    "production_qualified": false,
++    "quantum_work_qualified": false,
++    "security_bits_quantum": null
++  },
+   "schema": "TRNM-W1-QROM-SUPPLEMENTAL-TESTS1",
+   "scope": "Separate exact named historical materialization and current-source mapping controls; no proof or quantum security qualification.",
+-  "expected_tests": 22,
+   "suites": [
+     {
+-      "suite": "historical",
+-      "module": "test_w1_qrom_historical_fixture",
+       "expected_tests": 8,
++      "module": "test_w1_qrom_historical_fixture",
++      "suite": "historical",
+       "tests": [
+         "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_cli_publishes_three_separate_scopes_and_never_overwrites",
+         "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_exact_real_historical_mapping_keeps_current_tree_unqualified",
+@@ -19,15 +28,17 @@
+       ]
+     },
+     {
+-      "suite": "current",
++      "expected_tests": 16,
+       "module": "test_w1_qrom_current_implementation_audit",
+-      "expected_tests": 14,
++      "suite": "current",
+       "tests": [
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_all_lifetime_and_cryptographic_obligations_remain_unknown",
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_all_six_local_crates_and_literal_inputs_are_bound",
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_cli_report_is_created_once_and_never_replaces_prior_evidence",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_consolidated_local_sources_have_independent_reviewed_pins",
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_contract_edit_cannot_relabel_unreviewed_source",
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_current_mapping_reaches_the_original_complete_saved_fixture",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_each_consolidated_source_refuses_omission_and_mutation",
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_fixed_parameters_and_fri_mapping_are_preserved",
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_historical_reader_bytes_are_preserved",
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_included_work_profile_change_requires_review",
+@@ -39,14 +50,5 @@
+         "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_unlisted_rust_file_is_not_silently_accepted"
+       ]
+     }
+-  ],
+-  "qualification": {
+-    "post_quantum_soundness_qualified": false,
+-    "complete_w1_soundness_qualified": false,
+-    "quantum_work_qualified": false,
+-    "pq_signature_qualification_inferred": false,
+-    "production_qualified": false,
+-    "consensus_admission": false,
+-    "security_bits_quantum": null
+-  }
++  ]
+ }
+diff --git a/config/pon/w1-stark-route-registry-v1.json b/config/pon/w1-stark-route-registry-v1.json
+index e2507ef4f4346010a0b87186e3bdc54ce62f2a47..00366cd6b07dcbec4de0d8151e29c19e4d1d70b2 100644
+--- a/config/pon/w1-stark-route-registry-v1.json
++++ b/config/pon/w1-stark-route-registry-v1.json
+@@ -509,9 +509,9 @@
+   "source_base_commit": "e2a02f9271b49f146e70806c8a66e161b5973971",
+   "source_inputs": [
+     {
+-      "bytes": 47790,
++      "bytes": 50313,
+       "path": "config/pon/w1-qrom-implementation-current-v2.json",
+-      "sha256": "5c53b9aba5255a163256bb9865448ea44e5b5f2f45079adf682ea4ace662a2fb"
++      "sha256": "77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5"
+     },
+     {
+       "bytes": 9445,
+diff --git a/config/pon/w1-upstream-security-v1.json b/config/pon/w1-upstream-security-v1.json
+index 7dcc957d615c95f8e655ff5f2ff9bf9b1b97204c..2214bbab51f7c03ad80726d01857c4c8e2d4d9c2 100644
+--- a/config/pon/w1-upstream-security-v1.json
++++ b/config/pon/w1-upstream-security-v1.json
+@@ -40,8 +40,8 @@
+   "selected_profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+   "mapping_contract": {
+     "path": "config/pon/w1-qrom-implementation-current-v2.json",
+-    "bytes": 47790,
+-    "sha256": "5c53b9aba5255a163256bb9865448ea44e5b5f2f45079adf682ea4ace662a2fb"
++    "bytes": 50313,
++    "sha256": "77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5"
+   },
+   "approved_current_profile_ids": []
+ }
+diff --git a/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md b/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+index 391e1ba80487f3d6acc49d5c802ef3d14e8bc7bc..029f5c4cadc8cdd7910b01457800b746a4a646af 100644
+--- a/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
++++ b/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+@@ -15111,3 +15111,19 @@ not claimed as verified project-file accesses. The original instrumentation
+ errors and the duplicate-start once-guard refusal remain evidence. Production
+ pilot/V2/V3 bytes, original 100ms limit, historical Diverse60 refusal and all
+ qualification flags remain unchanged. No hosted confirmation target is granted.
++
++### Final consolidated current source bindings — 2026-11-14
++
++Reviewed source 5c04c60e463462d9df8884786e0d5bb32af08a64 separately rebinds the existing authority44,
++current-lifetime20, six-crate QROM145 and root-dependency46 inventories.
++The selected source union contains 232 distinct paths; each fixed Git blob
++and physical source byte matched the preceding reviewed dba81d56 inputs.
++Current reader constants, paired profile/upstream/route descriptors, independent
++test expectations and corpus pins move together. Historical 7150/1f2b/0f9
++namespaces, original proofs and guest identity, all limits, prior refusal
++records and false/null qualification fields remain. No Rust source is changed.
++
++T03's original Linux 59-control run also has a separate post-merge readback:
++all 67 actually observed absolute project inputs match this checkpoint, with
++60 modules loaded before and 61 afterward. This selected-input comparison
++does not claim a complete checkout or resolve the 7,331 relative open events.
+diff --git a/docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md b/docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md
+index b33ded05b83bea76064eb82829bbddd1b87f9875..1b5ccd314220d3af5396cbd6f391380dc137f7ef 100644
+--- a/docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md
++++ b/docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md
+@@ -605,3 +605,19 @@ separate obligations; `native_tests_executed`, `call_graph_proved` and
+ The consolidation preserves commits e35cfb3cd85183a3b5beb47ad1287389cc4d1cd5, 493f7fce6e517211a8cabccc15ba099965ea7c2a, d98067e973e2d00ec577dfe0a9dc478b81e895e4 and 73d5a17b9b7fb5f67040554f22ff37d20725e548 as real merge ancestors. The first commit binds the same discovery readiness fixture to checkpoint c82c6eabe8f27e2b918de850d237f6b0b06444bb with canonical lock f2d96bf8495b1116c569fe24619f7e5973d1134291f2cbf3af03c13f3e72d95a. That retained checkpoint is not the final consolidated source identity. Its preceding-revision refusal remains present, and the stale c82 checkpoint is now also an explicit refusal.
+ 
+ The incoming sealed-material fixture contains three corrected fixed expected contract hashes for its exact source pair. The current combination additionally contains the reviewed read-only trial-ledger reconciliation command, changing llm_runtime_pilot.py to SHA-256 13e4c11d51931d902483372a9a05c7180333893202ecb1d663d57a83111eccc7. The first integration attempt refused this real producer difference before changing the repository. The final merge rebinds the neural reader and explicit research preparation entry to that exact current pilot and independently derived complete contract. Both original test suites retain their fixed positive identities and all refusal assertions; the prior pilot is an additional explicit refusal. Historical material plan, target and original runtime identities retain their bytes. Both standalone lock blobs already exactly match the reviewed root. Final combined source mappings remain pending; neither this rebind nor preserved historical executions confer native, model, installation or security qualification.
++
++## Consolidated current source review, 2026-11-14
++
++Current source checkpoint 5c04c60e463462d9df8884786e0d5bb32af08a64 keeps the same seven curated routes and 44
++selected paths. Seven selected files changed from the preceding 332d7f72
++review: Cell fetch ordering and controlled cache restoration, the per-call PQ
++account configuration and its controls, Node advisory/store integration, and
++the explicit THP2 fresh-time comparator plus its controls. Each full path and
++Git identity was compared before this new lock was formed.
++
++Canonical source-lock SHA-256: 3113f8e9cd6f8f72d190f55e84b97ab7b04da38cd3ddf86be9ab871fc4743528. The strict reader and independent
++test literals select this checkpoint explicitly. Prior revision and hash
++refusals, exact route fields, bounded regular-file reads and all false
++qualification flags remain. These 44 paths are a curated inventory; source
++consistency supplies no complete call graph, runtime reachability or whole-chain
++security result. Earlier dated review records retain their original identities.
+diff --git a/docs/security/PQ_PROOF_PROFILE_BINDING_V1.md b/docs/security/PQ_PROOF_PROFILE_BINDING_V1.md
+index 7975090289abdfaae256bb9644c4bef9343c7f64..dc9ab3677b72dc0ce5fc25041aed3858f2121efe 100644
+--- a/docs/security/PQ_PROOF_PROFILE_BINDING_V1.md
++++ b/docs/security/PQ_PROOF_PROFILE_BINDING_V1.md
+@@ -156,3 +156,19 @@ whole_chain_hash_query_scope_closed = false
+ whole_chain_pq_qualified = false
+ production_activation = false
+ ```
++
++## Consolidated current source review, 2026-11-14
++
++The explicit current mapping now binds source 5c04c60e463462d9df8884786e0d5bb32af08a64 and its 145-input local
++inventory. Its descriptor SHA-256 is 8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1. The mapping,
++profile descriptor, upstream-policy mapping pin and route-source pin are
++updated together; the candidate workflow and independent controls require the
++same descriptor. The preceding 9e5766a7 descriptor remains a rejected current
++identity.
++
++The selected SDK, guest image, control root, verifier parameters, fixed proof
++assets and all 15 open obligations retain their original identities. The
++upstream policy remains the dated 2026-11-11 observation, with an empty current
++approval list. No new upstream advisory check or reinstatement is claimed.
++The diagnostic status remains PROFILE_BOUND_UPSTREAM_REVOKED_HOLD and
++--require-current continues to refuse.
+diff --git a/docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md b/docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md
+index 80fe5a70eada20f36118331bd525c4d14b4d34be..bec280754766e6caeb8a5f20d4960fc4814b37a1 100644
+--- a/docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md
++++ b/docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md
+@@ -478,3 +478,23 @@ key does not establish an independently administered surviving authority.
+ ## Consolidation of immutable key expansion
+ 
+ The [signature cost component](PQ_ROOT_SIGNATURE_COST_V1.md) retains exactly three successful ML-DSA-87 public-key expansions inside each immutable roster. All signature verification, complete statements and original budget charges remain per operation. The declared source scope includes its bounded observation example. The final consolidation snapshot is reviewed separately from the historical register; no runtime regeneration, new domain bound or qualification is authorized by this source addition.
++
++## Consolidated current source review, 2026-11-14
++
++The declared current source snapshot now selects 5c04c60e463462d9df8884786e0d5bb32af08a64 with 46 explicit
++paths. Five prior inputs changed: the crypto Cargo manifest, immutable roster
++implementation, its unit/native controls, and Node module exports. The explicit
++pq_root_v3_cost_observation.rs example is the additional path already selected
++by the reader's source roster. Canonical snapshot SHA-256: c6366414d2ecc0bc598a2a4143be69ceb5091555a70dd50dfb94a04b35fb69ec.
++
++The roster cache retains only successful expansion of an immutable ML-DSA key.
++Each current message/signature still verifies after the original reservation
++and deadline checks. Both families, quorum sizes, caller trust, refusal caps,
++no-refund accounting and lifetime unknowns remain. The example retains bounded
++ABBA observations and false activation flags; source inclusion supplies no new
++performance result. The six role contracts, unwired effect-entry boundary and
++V5/V6 external ownership requirements are unchanged.
++
++Tests reconstruct the earlier 45-input 975af9eb snapshot and the original
++225ab38e declared snapshot with their original canonical digests, and reject both as
++current input. Earlier review records and all historical manifests remain.
+diff --git a/docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md b/docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md
+index 76275c784fa52d16494370d6d9dda094cc579946..bbf1200e2d410ff439dfb7367cee193902a91394 100644
+--- a/docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md
++++ b/docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md
+@@ -105,3 +105,18 @@ Source-before/after equality is not a native execution certificate. Concrete
+ quantum auxiliary-state hypotheses, a complete shared-oracle reduction,
+ recursive composition and complete lifetime event coverage still require their
+ own mathematical and operational evidence.
++
++## Consolidated current source review, 2026-11-14
++
++Current checkpoint 5c04c60e463462d9df8884786e0d5bb32af08a64 retains the exact ordered 20-path roster and all
++20 historical SHA-256 values from 7150d96a. Four current rows changed from
++332d7f72: the crypto Cargo manifest, pon_work.rs, pq_accounts_v2.rs and Node
++store.rs. The historical-versus-current difference list now has eight paths,
++including the two newly different pon_work.rs and pq_accounts_v2.rs.
++
++Current contract SHA-256: bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7. The current reader still calls the original
++byte-pinned survey function in a private copied context. The 7150 fixture,
++the separate 1f2b0187 ledger and the 0f9b3054 PQ128 source lock retain their
++bytes and identities. All source limits, arithmetic rules, missing/symlink
++refusals and unknown qualification outputs remain. Current observation does
++not reproduce a historical execution or establish a lifetime failure bound.
+diff --git a/docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md b/docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md
+index 8b88bac9032c7907c5f8158f233a93947871dfa2..d8641eb1cdc0edf01e6b155460de9173245432db 100644
+--- a/docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md
++++ b/docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md
+@@ -182,3 +182,62 @@ after a further ENOSPC refusal. This is not an independent executor. No native R
+ test or new native executable was produced by this continuation. Applying the
+ patch to another combined candidate requires checking all fixed inputs again;
+ another branch's passing record cannot substitute for that execution.
++
++## Consolidated current source review, 2026-11-14
++
++Current mapping checkpoint 5c04c60e463462d9df8884786e0d5bb32af08a64 enumerates 145 inputs across the same six
++Cargo-reachable crates. Nine prior inputs changed and five Rust files were
++added. The new paths are the explicit root cost example, low_rank_prefix.rs,
++the test-only statement_boundaries.rs, task_product_facts.rs and its tests.
++All 131 other prior closure inputs and the eight literal includes keep their
++bytes. The SP27 example is in trnm-research-protocol, outside this closure.
++
++Only pon_work.rs changes among the 16 selected project paths compared with
++the preceding current mapping. The historical-V1 difference set contains four
++paths. Saved proof assets, guest lock/image, historical reader and contract,
++helpers, proof parameters and all 15 unresolved obligations remain unchanged.
++The original historical refusal still names the V2 verifier src/main.rs
++byte bound. Current contract: 50313 bytes, SHA-256 77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5.
++
++The real Cargo edges and complete Rust directory inventory within these roots
++were enumerated from fixed Git bytes. External Rust #[path] imports and
++third-party implementations remain outside this selected inventory. Independent
++controls require every new source and reject missing or changed bytes. Source
++mapping performs no native verification and grants no current proof-use approval
++or security qualification.
++
++### Current CI consumer correspondence
++
++The current named roster retains its preceding 75 controls and adds the two
++independent consolidated-source controls, for 77 exact names. The supplemental
++roster retains the original eight historical names unchanged and carries the
++same 16 current mapping controls, for 24 names. Both runners still require the
++complete registered, started and successful identities with no skips.
++
++The historical-on-current diagnostic binds the four reviewed differences in
++project-file order: verifier source, verifier lock, current PoN work source, and
++protocol wire source. Missing, duplicate, substituted-digest and mutually edited
++map/report difference sets are refused. This updates current CI correspondence;
++the fixed historical job, original historical roster, saved reports and
++cryptographic qualification are unchanged.
++
++### Exact current semantics correspondence
++
++The frozen 2026-11-07 semantics report and the 2026-11-09 observation retain
++their original SHA-256 values and bytes. The current correspondence reader
++uses the explicit TRNM-W1-SEMANTICS-CURRENT-CORRESPONDENCE3 namespace. It
++checks the V2 verifier lock and the zkVM lock against independently reviewed
++current digests, then permits only provenance lock-check SHA fields 0 and 2
++to differ from the original historical report. Guest lock field 1, every other
++report property, and all qualification values must match exactly. This does
++not assert that the full dependency graphs are equivalent.
++
++The original named-runner controls select the fixed historical job by its
++exact boundaries and unchanged hash. Relocated report and budget mutations
++execute the actual current supplemental_report_scopes step; final-status
++controls call the current verifier CLI named by the exact workflow command.
++Its independent 14-stage roster, current receipt namespace, original drift
++stdout/stderr, and nested supplemental receipts are all checked. Reused step
++names cannot route current controls to a historical consumer that ignores them.
++The original Mac compiler refusal is retained; its eight native C controls
++subsequently pass with installed GCC 15 and the original OpenMP and warning flags.
+diff --git a/scripts/ci/pq_authority_effect_register.py b/scripts/ci/pq_authority_effect_register.py
+index ddf298a6a669b1b9be007972ba4990147f5a4821..1c1b4dc0d4ef44f3c4e7a8bc5629058be09910b6 100644
+--- a/scripts/ci/pq_authority_effect_register.py
++++ b/scripts/ci/pq_authority_effect_register.py
+@@ -22,12 +22,12 @@ RESULT_SCHEMA = 'trnm-pq-authority-effects-result-v1'
+ DEFAULT_MANIFEST = 'config/pon/pq-authority-effects-v1.json'
+ # The seven route definitions and 44 source paths retain their reviewed scope.
+ # Prior review lineages are documented in PQ_AUTHORITY_EFFECT_REGISTER_V1.md.
+-SOURCE_REVISION = '332d7f723d71707d88a2cffa52b3754579a46926'
++SOURCE_REVISION = '5c04c60e463462d9df8884786e0d5bb32af08a64'
+ PURPOSE = 'curated-source-consistency-only'
+ MAX_BYTES = 1024 * 1024
+ # SHA-256 of canonical {"source_revision": SOURCE_REVISION, "files": ...}.
+ # Generated from git show at the exact revision, not from current-tree hashes.
+-REVIEWED_SOURCE_LOCK_SHA256 = 'a4a74df247995dcfe7aa48bc0d7c8ff9969088c8acb665d0d8041310cce5dac4'
++REVIEWED_SOURCE_LOCK_SHA256 = '3113f8e9cd6f8f72d190f55e84b97ab7b04da38cd3ddf86be9ab871fc4743528'
+ 
+ CRATES = 'trillionnium/crates/'
+ TRANSFER = CRATES + 'trnm-types/src/transfer.rs'
+diff --git a/scripts/ci/pq_root_dependency_register.py b/scripts/ci/pq_root_dependency_register.py
+index bb2bfd1b1310155dd1350465462bcb80b863fe95..34b793d911762e9564dfd58e417fc47de1f97f31 100644
+--- a/scripts/ci/pq_root_dependency_register.py
++++ b/scripts/ci/pq_root_dependency_register.py
+@@ -23,10 +23,10 @@ from pq_source_reader import SourceReadError, read_regular
+ SCHEMA = "trnm-pq-root-dependency-register-v3"
+ RESULT_SCHEMA = "trnm-pq-root-dependency-register-result-v3"
+ DEFAULT_MANIFEST = "config/pon/pq-root-dependency-register-v3.json"
+-REVIEW_BASE = '975af9eb4a7f15b405de602552fa05021a176c11'
++REVIEW_BASE = '5c04c60e463462d9df8884786e0d5bb32af08a64'
+ MAX_BYTES = 1024 * 1024
+ # Frozen after review of all declared files. No runtime regeneration is allowed.
+-REVIEWED_SOURCE_SNAPSHOT_SHA256 = '8cfc6a3d9a0347cb8bd7e6c41f5286523d85bba48b3b392922ad8aae8c8d2435'
++REVIEWED_SOURCE_SNAPSHOT_SHA256 = 'c6366414d2ecc0bc598a2a4143be69ceb5091555a70dd50dfb94a04b35fb69ec'
+ 
+ PY = "formal/pon-nakamoto-v1/"
+ POLICY = PY + "pq_root_recovery_policy_v1.py"
+diff --git a/scripts/ci/test_pq_authority_effect_register.py b/scripts/ci/test_pq_authority_effect_register.py
+index c5d8ef1954917277e81dfc05f17430ef4d2ef8a2..d6e3ae6e2fcb16ceec62924c9407307feb8cd75d 100644
+--- a/scripts/ci/test_pq_authority_effect_register.py
++++ b/scripts/ci/test_pq_authority_effect_register.py
+@@ -67,10 +67,13 @@ class AuthorityEffectTests(unittest.TestCase):
+         self.assertEqual(result['status'], 'HOLD')
+         self.assertEqual(result['source_consistency'], 'PASS')
+         self.assertEqual(result['curated_routes_checked'], 7)
++        self.assertEqual(len(result['source_files_sha256']), 44)
++        self.assertEqual(result['reviewed_source_lock_sha256'],
++                         '3113f8e9cd6f8f72d190f55e84b97ab7b04da38cd3ddf86be9ab871fc4743528')
+         self.assertEqual({row['id']: row['effect_scope'] for row in result['routes']},
+                          EXPECTED_SCOPES)
+         self.assertEqual(result['source_revision'],
+-                         '332d7f723d71707d88a2cffa52b3754579a46926')
++                         '5c04c60e463462d9df8884786e0d5bb32af08a64')
+         self.assertEqual(result['source_files_sha256'], self.original['source_files_sha256'])
+         for name in ('coverage_complete', 'whole_chain_pq_qualified', 'production_activation',
+                      'provenance_authenticated', 'call_graph_proved',
+@@ -149,6 +152,7 @@ class AuthorityEffectTests(unittest.TestCase):
+ 
+     def test_source_revision_schema_purpose_and_route_context_drift_refuse(self):
+         for field, value in (('source_revision', '0' * 40),
++                             ('source_revision', '332d7f723d71707d88a2cffa52b3754579a46926'),
+                              ('source_revision', 'c82c6eabe8f27e2b918de850d237f6b0b06444bb'),
+                              ('source_revision', '57b069ae1e7ed32ff95e4f2a18a74d5eadcda550'),
+                              ('source_revision', '2bb56596e637908c44b5a2ef5984c9c37c7d3cc8'),
+diff --git a/scripts/ci/test_pq_proof_profile_binding.py b/scripts/ci/test_pq_proof_profile_binding.py
+index 2a3992af77a06302b6beb8959cffe9fdc694245e..5e7550720e94e80005612137b4270cf85ec71eb7 100644
+--- a/scripts/ci/test_pq_proof_profile_binding.py
++++ b/scripts/ci/test_pq_proof_profile_binding.py
+@@ -78,12 +78,12 @@ class ProofProfileBindingTests(unittest.TestCase):
+             self.assertIs(result[key], False)
+ 
+     def test_composed_current_mapping_has_one_fixed_identity_and_no_approval(self):
+-        # Fixed review values from the d9e6aa1e independent lock review, independent of
++        # Fixed review values from the 5c04c60e consolidated source review, independent of
+         # constants or pin values supplied by the implementation under test.
+         expected = {
+             'path': 'config/pon/w1-qrom-implementation-current-v2.json',
+-            'bytes': 47790,
+-            'sha256': '5c53b9aba5255a163256bb9865448ea44e5b5f2f45079adf682ea4ace662a2fb',
++            'bytes': 50313,
++            'sha256': '77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5',
+         }
+         security = json.loads((ROOT / binding.upstream.DEFAULT_MANIFEST).read_bytes())
+         self.assertEqual(self.contract['mapping_contract'], expected)
+@@ -160,7 +160,7 @@ class ProofProfileBindingTests(unittest.TestCase):
+ 
+     def test_declared_audit_helpers_are_observed_without_changing_profile_identity(self):
+         result = binding.inspect(ROOT, expected_profile_descriptor_sha256=
+-                                 '9e5766a7eb14cb972531e12aa0be6d21a1e545400d89add72656b63c0f6407ad')
++                                 '8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1')
+         for row in self.mapping['audit_helpers']:
+             self.assertEqual(result['source_files_sha256'][row['path']], row['sha256'])
+         self.assertEqual(result['selected_input_observation_count'], len(self.paths))
+@@ -375,6 +375,7 @@ class ProofProfileBindingTests(unittest.TestCase):
+ 
+     def test_wrong_candidate_profile_descriptor_is_refused(self):
+         for digest in ('0' * 64,
++                       '9e5766a7eb14cb972531e12aa0be6d21a1e545400d89add72656b63c0f6407ad',
+                        'da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c',
+                        '89e80683454b5b5e0152c0454602f0cf631e88ab1da62aaac18a350391fdaf69'):
+             with self.subTest(digest=digest), self.assertRaisesRegex(
+diff --git a/scripts/ci/test_pq_root_dependency_register.py b/scripts/ci/test_pq_root_dependency_register.py
+index 8a5188e984b500299092ad9e51d266b8667d5b15..928d33061719e3545a95f63d0bba3dddc2ce941d 100644
+--- a/scripts/ci/test_pq_root_dependency_register.py
++++ b/scripts/ci/test_pq_root_dependency_register.py
+@@ -27,6 +27,7 @@ EXPECTED_DOMAINS = {"signature", "commitment", "proof", "ledger", "transport",
+                     "recovery", "release", "application"}
+ NATIVE_CRYPTO = "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs"
+ NATIVE_OWNER = "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs"
++COST_EXAMPLE = "trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs"
+ 
+ 
+ PREVIOUS_REVIEW_BASE = "225ab38e1e5f7e0852a28372bd8dd769eec1084b"
+@@ -48,6 +49,27 @@ PREVIOUS_SOURCE_PINS = {
+         "0b7e076069645bdf502ff4521ea7c1d77b75a64e5137df3527b0cd6e7167c461",
+     "trillionnium/crates/trnm-protocol/src/lib.rs":
+         "b965065ca4915d57e61af480ef6cfb8f775465c8ad0e4dec0b2895e110946b86",
++    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs":
++        "9b03c4f4a22175fe183e045bc1a2e25282232a4bb156281970f542e7277ebf1b",
++    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs":
++        "2b638555857b20c2d1e5888757c0b96612a00c6eec62ebc056acc35ed1659ba1",
++    "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs":
++        "3ae8818e5e805985dd9298ff5ba293c62f06211d5b98e94f679d4b60bc3abb3d",
++}
++
++
++# Exact preceding 975af9eb values; preserve its 45-input canonical identity.
++PREVIOUS_CURRENT_SOURCE_PINS = {
++    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml":
++        "ab2554b1c8ec1010735fa55ed1b16d45376f4936885dc3cc6f0121917250256d",
++    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs":
++        "9b03c4f4a22175fe183e045bc1a2e25282232a4bb156281970f542e7277ebf1b",
++    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs":
++        "2b638555857b20c2d1e5888757c0b96612a00c6eec62ebc056acc35ed1659ba1",
++    "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs":
++        "3ae8818e5e805985dd9298ff5ba293c62f06211d5b98e94f679d4b60bc3abb3d",
++    "trillionnium/crates/trnm-pon-node/src/lib.rs":
++        "dc673c063229c4a2ce66174199d07f885f28203167b34410d1d0463e2cf99910",
+ }
+ 
+ 
+@@ -508,6 +530,10 @@ class ReviewedSourceTests(ContractCase):
+         self.assertEqual(report["source_binding_scope"], "declared-root-component-files-only")
+         self.assertEqual(report["source_files_sha256"], self.data["source_files_sha256"])
+         self.assertIn(NATIVE_CRYPTO, report["source_files_sha256"])
++        self.assertEqual(len(report["source_files_sha256"]), 46)
++        self.assertEqual(report["review_base_revision"], "5c04c60e463462d9df8884786e0d5bb32af08a64")
++        self.assertEqual(report["declared_source_snapshot_sha256"],
++                         "c6366414d2ecc0bc598a2a4143be69ceb5091555a70dd50dfb94a04b35fb69ec")
+         self.assertIn(NATIVE_OWNER, report["source_files_sha256"])
+         self.assertIn("formal/pon-nakamoto-v1/pq_root_effect_readback_v2.py", report["source_files_sha256"])
+         self.remains_unqualified(report)
+@@ -524,6 +550,41 @@ class ReviewedSourceTests(ContractCase):
+         self.write()
+         self.inspect_refuses("frozen reviewed snapshot")
+ 
++
++    def test_preceding_forty_five_input_snapshot_keeps_its_original_identity(self):
++        previous = deepcopy(self.data)
++        previous["review_base_revision"] = "975af9eb4a7f15b405de602552fa05021a176c11"
++        previous["source_files_sha256"].pop(COST_EXAMPLE)
++        previous["source_files_sha256"].update(PREVIOUS_CURRENT_SOURCE_PINS)
++        canonical = json.dumps({
++            "review_base_revision": previous["review_base_revision"],
++            "source_files_sha256": previous["source_files_sha256"],
++        }, sort_keys=True, separators=(",", ":")).encode()
++        self.assertEqual(len(previous["source_files_sha256"]), 45)
++        self.assertEqual(hashlib.sha256(canonical).hexdigest(),
++                         "8cfc6a3d9a0347cb8bd7e6c41f5286523d85bba48b3b392922ad8aae8c8d2435")
++        self.data = previous
++        self.write()
++        self.inspect_refuses("review_base_revision")
++
++    def test_cost_observation_source_is_required_and_cannot_repin_its_own_review(self):
++        path = self.root / COST_EXAMPLE
++        original = path.read_bytes()
++        self.assertEqual(len(original), 21222)
++        self.assertEqual(hashlib.sha256(original).hexdigest(),
++                         "2af82ca049a155882b8577c32f45d7867ad24adf04dd0d42b8d960d58ecbb1fb")
++        path.unlink()
++        self.inspect_refuses("missing source")
++        path.write_bytes(original + b"\n")
++        self.inspect_refuses("source hash mismatch")
++        self.data["source_files_sha256"][COST_EXAMPLE] = hashlib.sha256(path.read_bytes()).hexdigest()
++        self.write()
++        self.inspect_refuses("frozen reviewed snapshot")
++        path.write_bytes(original)
++        del self.data["source_files_sha256"][COST_EXAMPLE]
++        self.write()
++        self.inspect_refuses("source_files_sha256")
++
+     def test_reverted_lock_dependency_is_refused_even_with_rewritten_manifest_hash(self):
+         # Reproduce the dependency changed by this reviewed source continuation.
+         # A different resolvable package version is still different source.
+@@ -546,6 +607,8 @@ class ReviewedSourceTests(ContractCase):
+     def test_previous_review_identity_is_preserved_as_a_refused_input(self):
+         previous = deepcopy(self.data)
+         previous["review_base_revision"] = PREVIOUS_REVIEW_BASE
++        # The separately added cost example was absent from the original review.
++        previous["source_files_sha256"].pop(COST_EXAMPLE)
+         previous["source_files_sha256"].update(PREVIOUS_SOURCE_PINS)
+         canonical = json.dumps({
+             "review_base_revision": previous["review_base_revision"],
+diff --git a/scripts/ci/test_w1_lifetime_current_observation.py b/scripts/ci/test_w1_lifetime_current_observation.py
+index 18abdefc47eadcccb00a5e4bdc271b4b270e0790..9e6989095794564623e9b56e58ab97af3cc42517 100644
+--- a/scripts/ci/test_w1_lifetime_current_observation.py
++++ b/scripts/ci/test_w1_lifetime_current_observation.py
+@@ -67,16 +67,18 @@ class CurrentLifetimeObservationTests(unittest.TestCase):
+         self.assertFalse(report['historical_reader_or_pin_bytes_changed'])
+ 
+     def test_only_the_reviewed_store_source_delta_is_present(self):
+-        # Retain this frozen roster identity while checking the exact six reviewed deltas.
++        # Retain this frozen roster identity while checking the exact eight reviewed deltas.
+         changed = [row['path'] for row in self.contract['sources']
+                    if row['historical_sha256'] != row['current_sha256']]
+         self.assertEqual(changed, list(current.CHANGED))
+         self.assertEqual(changed, [
+             'trillionnium/crates/trnm-crypto-primitives/Cargo.toml',
+             'trillionnium/Cargo.lock',
++            'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs',
+             'trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs',
+             'trillionnium/crates/trnm-pon-node/src/store.rs',
+             'trillionnium/crates/trnm-pon-node/src/consensus.rs',
++            'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+             'formal/pon-nakamoto-v1/quantum_oracle_resources.py',
+         ])
+         self.assertEqual(len(self.sources), 20)
+@@ -85,7 +87,7 @@ class CurrentLifetimeObservationTests(unittest.TestCase):
+         self.assertEqual(lock['historical_sha256'], '05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c')
+         self.assertEqual(lock['current_sha256'], '86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e')
+         self.assertEqual(self.contract['sources'][7]['current_sha256'],
+-                         'df2e303798678fe0b7437cf707bdc1d9cd6559ece47fcf2dd8c7ba8de0b29a17')
++                         '5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c')
+         self.assertEqual(self.contract['sources'][7]['historical_sha256'],
+                          'b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153')
+ 
+@@ -95,7 +97,7 @@ class CurrentLifetimeObservationTests(unittest.TestCase):
+         self.assertEqual(oracle['current_sha256'],
+                          '3768567c5e2905c90ef766a9ff4e1ff625e14fd7614aede108ae81df000a6049')
+         self.assertEqual(self.contract['source_base_commit'],
+-                         '332d7f723d71707d88a2cffa52b3754579a46926')
++                         '5c04c60e463462d9df8884786e0d5bb32af08a64')
+ 
+     def test_historical_reader_and_contract_hashes_are_independently_frozen(self):
+         self.assertEqual(current.LEGACY, 'tests/fixtures/w1-lifetime-historical-7150/ledger.py')
+diff --git a/scripts/ci/test_w1_qrom_closure_current_controls.py b/scripts/ci/test_w1_qrom_closure_current_controls.py
+index 816dc81feca4e7b2a37e465f7d761725f1a89572..79898f0dd2e44a433f6bd4e4a039893bab7cb819 100644
+--- a/scripts/ci/test_w1_qrom_closure_current_controls.py
++++ b/scripts/ci/test_w1_qrom_closure_current_controls.py
+@@ -497,7 +497,8 @@ class CurrentSemanticsCorrespondenceTests(unittest.TestCase):
+         self.temporary = tempfile.TemporaryDirectory(prefix='semantics-correspondence-')
+         self.addCleanup(self.temporary.cleanup)
+         self.root = Path(self.temporary.name)
+-        for name in (gate.HISTORICAL_SEMANTICS, gate.REVIEWED_LOCK):
++        for name in (gate.HISTORICAL_SEMANTICS,
++                     *(row[1] for row in gate.REVIEWED_LOCK_CHANGES)):
+             path = self.root / name
+             path.parent.mkdir(parents=True, exist_ok=True)
+             path.write_bytes((self.repository / name).read_bytes())
+@@ -511,7 +512,15 @@ class CurrentSemanticsCorrespondenceTests(unittest.TestCase):
+     def test_actual_report_has_only_the_reviewed_lock_provenance_delta(self):
+         historical = (self.root / gate.HISTORICAL_SEMANTICS).read_bytes()
+         result = gate.check_semantics(self.root, self.current)
+-        self.assertEqual(result['only_changed_json_pointer'], '/provenance/lock_checks/2/sha256')
++        self.assertEqual(result['only_changed_json_pointers'], [
++            '/provenance/lock_checks/0/sha256', '/provenance/lock_checks/2/sha256'])
++        self.assertEqual([(row['path'], row['current_sha256'])
++                          for row in result['reviewed_lock_changes']], [
++            ('formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock',
++             '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b'),
++            ('formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock',
++             'ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a'),
++        ])
+         self.assertTrue(result['all_other_report_fields_identical'])
+         self.assertFalse(result['historical_report_bytes_rewritten'])
+         self.assertFalse(result['new_native_execution_or_dependency_equivalence_proved'])
+@@ -525,29 +534,39 @@ class CurrentSemanticsCorrespondenceTests(unittest.TestCase):
+         self.reject()
+ 
+     def test_missing_or_relabelled_reviewed_lock_entry_is_refused(self):
+-        value = json.loads(self.actual_bytes)
+-        value['provenance']['lock_checks'].pop(2)
+-        self.current.write_text(json.dumps(value))
+-        self.reject()
+-        value = json.loads(self.actual_bytes)
+-        value['provenance']['lock_checks'][2]['path'] = 'unrelated/Cargo.lock'
+-        self.current.write_text(json.dumps(value))
+-        self.reject()
++        for index in (0, 2):
++            with self.subTest(index=index):
++                value = json.loads(self.actual_bytes)
++                value['provenance']['lock_checks'].pop(index)
++                self.current.write_text(json.dumps(value))
++                self.reject()
++                value = json.loads(self.actual_bytes)
++                value['provenance']['lock_checks'][index]['path'] = 'unrelated/Cargo.lock'
++                self.current.write_text(json.dumps(value))
++                self.reject()
+ 
+     def test_changed_other_lock_sha_is_refused(self):
+-        value = json.loads(self.actual_bytes)
+-        value['provenance']['lock_checks'][0]['sha256'] = '0' * 64
+-        self.current.write_text(json.dumps(value))
+-        self.reject()
++        for index in (0, 1, 2):
++            with self.subTest(index=index):
++                value = json.loads(self.actual_bytes)
++                value['provenance']['lock_checks'][index]['sha256'] = '0' * 64
++                self.current.write_text(json.dumps(value))
++                self.reject()
+ 
+     def test_changed_current_lock_bytes_cannot_be_relabelled_in_report(self):
+-        path = self.root / gate.REVIEWED_LOCK
+-        changed = path.read_bytes() + b'\n'
+-        path.write_bytes(changed)
+-        value = json.loads(self.actual_bytes)
+-        value['provenance']['lock_checks'][2]['sha256'] = hashlib.sha256(changed).hexdigest()
+-        self.current.write_text(json.dumps(value))
+-        self.reject()
++        for index, name, _, _ in gate.REVIEWED_LOCK_CHANGES:
++            with self.subTest(index=index):
++                path = self.root / name
++                original = path.read_bytes()
++                changed = original + b'\n'
++                try:
++                    path.write_bytes(changed)
++                    value = json.loads(self.actual_bytes)
++                    value['provenance']['lock_checks'][index]['sha256'] = hashlib.sha256(changed).hexdigest()
++                    self.current.write_text(json.dumps(value))
++                    self.reject()
++                finally:
++                    path.write_bytes(original)
+ 
+     def test_historical_report_bytes_are_frozen_even_for_json_whitespace(self):
+         path = self.root / gate.HISTORICAL_SEMANTICS
+@@ -559,7 +578,7 @@ class CurrentSemanticsCorrespondenceTests(unittest.TestCase):
+                    'check-semantics', '--root', str(self.root), '--output', str(self.current)]
+         first = subprocess.run(command, capture_output=True, text=True, timeout=30, check=False)
+         self.assertEqual(first.returncode, 0, first.stderr)
+-        self.assertEqual(json.loads(first.stdout)['schema'], 'TRNM-W1-SEMANTICS-CURRENT-CORRESPONDENCE2')
++        self.assertEqual(json.loads(first.stdout)['schema'], 'TRNM-W1-SEMANTICS-CURRENT-CORRESPONDENCE3')
+         value = json.loads(self.actual_bytes)
+         value['unreviewed_extra_claim'] = True
+         self.current.write_text(json.dumps(value))
+diff --git a/scripts/ci/test_w1_qrom_current_ci.py b/scripts/ci/test_w1_qrom_current_ci.py
+index 3ab5b3120a0d6ef508a051525e81140aa13d5f5a..ce9a6fd1bd05fea67ade25fdf5fa7c7eb6264e0f 100644
+--- a/scripts/ci/test_w1_qrom_current_ci.py
++++ b/scripts/ci/test_w1_qrom_current_ci.py
+@@ -98,7 +98,7 @@ class CurrentCiTests(unittest.TestCase):
+                              ('historical-drift.json', self.drift)]:
+             ci.write_once(out / name, report)
+         # Isolated named cases create fixture receipts only; the real workflow
+-        # executes the original eight historical and fourteen current controls.
++        # executes the original eight historical and sixteen current controls.
+         supplemental_out = out / 'supplemental'
+         supplemental_out.mkdir()
+         manifest, retained = ci.supplemental.load_roster(ROOT)
+@@ -136,8 +136,14 @@ class CurrentCiTests(unittest.TestCase):
+         ci.validate_drift(self.drift, self.contract, self.legacy)
+         self.assertIs(self.mapping['historical_v1']['workflow_passed'], False)
+         self.assertEqual(self.drift['historical_exit_code'], 2)
++        self.assertEqual(ci.REVIEWED_DIFFERENCE_PATHS, (
++            'formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs',
++            'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock',
++            'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
++            'trillionnium/crates/trnm-protocol/src/pon_wire.rs',
++        ))
+         self.assertEqual([row['observed_bytes'] for row in self.drift['selected_source_differences']],
+-                         [11172, 32654])
++                         [11172, 46018, 106066, 32654])
+ 
+     def test_named_runner_records_every_real_start_and_success(self):
+         report, roster = self.execute_fixture()
+@@ -207,11 +213,53 @@ class CurrentCiTests(unittest.TestCase):
+         failed = json.loads((self.temp / 'historical-drift.json').read_bytes())
+         self.assertEqual(failed['classification'], 'UNCLASSIFIED_HISTORICAL_RESULT')
+         self.assertEqual((self.temp / 'historical-on-current.stderr.log').read_bytes(), fake.stderr)
+-        for mutation in ('missing', 'wrong_reason', 'exit_zero', 'old_source', 'scope'):
++        for mutation in ('missing', 'extra', 'wrong_digest', 'self_consistent_omission',
++                         'self_consistent_extra', 'self_consistent_substitution',
++                         'self_consistent_reorder', 'wrong_reason', 'exit_zero', 'old_source', 'scope'):
+             with self.subTest(mutation=mutation):
+                 report = deepcopy(self.drift)
++                contract = deepcopy(self.contract)
+                 if mutation == 'missing':
+                     report['selected_source_differences'].pop()
++                elif mutation == 'extra':
++                    report['selected_source_differences'].append(
++                        deepcopy(report['selected_source_differences'][0]))
++                elif mutation == 'wrong_digest':
++                    report['selected_source_differences'][2]['observed_sha256'] = '0' * 64
++                elif mutation == 'self_consistent_omission':
++                    removed = report['selected_source_differences'].pop(2)
++                    for row in contract['project_files']:
++                        if row['path'] == removed['path']:
++                            row.update(removed['historical'])
++                elif mutation == 'self_consistent_extra':
++                    old = {row['path']: row for row in self.legacy['project_files']}
++                    added = next(row for row in contract['project_files']
++                                 if row['path'] not in ci.REVIEWED_DIFFERENCE_PATHS)
++                    added['sha256'] = '0' * 64
++                    report['selected_source_differences'].append({
++                        'path': added['path'], 'historical': old[added['path']], 'current': added,
++                        'observed_bytes': added['bytes'], 'observed_sha256': added['sha256']})
++                    order = {row['path']: i for i, row in enumerate(contract['project_files'])}
++                    report['selected_source_differences'].sort(key=lambda row: order[row['path']])
++                elif mutation == 'self_consistent_substitution':
++                    removed = report['selected_source_differences'].pop(2)
++                    for row in contract['project_files']:
++                        if row['path'] == removed['path']:
++                            row.update(removed['historical'])
++                    old = {row['path']: row for row in self.legacy['project_files']}
++                    added = next(row for row in contract['project_files']
++                                 if row['path'] not in ci.REVIEWED_DIFFERENCE_PATHS)
++                    added['sha256'] = '0' * 64
++                    report['selected_source_differences'].append({
++                        'path': added['path'], 'historical': old[added['path']], 'current': added,
++                        'observed_bytes': added['bytes'], 'observed_sha256': added['sha256']})
++                    order = {row['path']: i for i, row in enumerate(contract['project_files'])}
++                    report['selected_source_differences'].sort(key=lambda row: order[row['path']])
++                    self.assertEqual(len(report['selected_source_differences']), 4)
++                elif mutation == 'self_consistent_reorder':
++                    contract['project_files'].reverse()
++                    report['selected_source_differences'].reverse()
++                    self.assertEqual(len(report['selected_source_differences']), 4)
+                 elif mutation == 'wrong_reason':
+                     report['historical_result']['reason'] = 'unrelated missing file'
+                 elif mutation == 'exit_zero':
+@@ -221,7 +269,7 @@ class CurrentCiTests(unittest.TestCase):
+                 else:
+                     report['historical_result']['qualification']['security_bits_quantum'] = 128
+                 with self.assertRaises(ci.ObservationError):
+-                    ci.validate_drift(report, self.contract, self.legacy)
++                    ci.validate_drift(report, contract, self.legacy)
+ 
+     def test_source_checks_keep_candidate_and_historical_identities_separate(self):
+         workflow = (ROOT / '.github/workflows/pon-w1-qrom-implementation.yml').read_text()
+diff --git a/scripts/ci/test_w1_qrom_current_implementation_audit.py b/scripts/ci/test_w1_qrom_current_implementation_audit.py
+index 0b820a21179f478e57cf9764de8b4ecd636357a9..78d9a03447febd05b4e5ee35a4a60dfdbe7b2cda 100644
+--- a/scripts/ci/test_w1_qrom_current_implementation_audit.py
++++ b/scripts/ci/test_w1_qrom_current_implementation_audit.py
+@@ -15,6 +15,21 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+ import w1_qrom_current_implementation_audit as current
+ 
+ 
++# Independently reviewed additions at the consolidated source checkpoint.
++CONSOLIDATED_LOCAL_SOURCE_PINS = {
++    'trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs':
++        (21222, '2af82ca049a155882b8577c32f45d7867ad24adf04dd0d42b8d960d58ecbb1fb'),
++    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs':
++        (13950, '83007c8d1395ba38328f4546cb88da89786c7aa5e1048f76a7568787d28732c5'),
++    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs':
++        (5504, '4e03678b595de74ec6556c6b1db8c1ea2230dd0660d7c7a97a910c142bd1a496'),
++    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts.rs':
++        (9625, '3c5dd05a1f7fd2cd90f92f310b7e708963895dd0965946e0006fa2dd2d5d3870'),
++    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts/tests.rs':
++        (15147, '69a7a12a240f4a71983a815b00c34058dca938f4392ff918a8b84d638c61b97f'),
++}
++
++
+ class CurrentImplementationTests(unittest.TestCase):
+     @classmethod
+     def setUpClass(cls):
+@@ -75,7 +90,7 @@ class CurrentImplementationTests(unittest.TestCase):
+ 
+     def test_all_six_local_crates_and_literal_inputs_are_bound(self):
+         result = self.report['local_path_closure']
+-        self.assertEqual(result['source_files_checked'], 140)
++        self.assertEqual(result['source_files_checked'], 145)
+         self.assertTrue(result['source_before_after_equal'])
+         manifests = set(self.contract['local_path_closure']['entry_manifests'])
+         manifests.update(row['target'] for row in result['path_edges'])
+@@ -152,16 +167,21 @@ class CurrentImplementationTests(unittest.TestCase):
+ 
+     def test_project_input_digests_are_the_reviewed_values(self):
+         # Independent review pins bind the new graph; no runtime-generated expectation.
+-        self.assertEqual(current.SOURCE, 'd9e6aa1ec8d1cdf4f506238f2df452c8c6215b00')
++        self.assertEqual(current.SOURCE, '5c04c60e463462d9df8884786e0d5bb32af08a64')
+         self.assertEqual(current.CHANGED, frozenset({
+             'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock',
+             'formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs',
++            'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+             'trillionnium/crates/trnm-protocol/src/pon_wire.rs',
+         }))
+         lock = next(row for row in self.contract['project_files']
+                     if row['path'] == 'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock')
+         self.assertEqual((lock['bytes'], lock['sha256']),
+                          (46018, '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b'))
++        pon_work = next(row for row in self.contract['project_files']
++                        if row['path'] == 'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs')
++        self.assertEqual((pon_work['bytes'], pon_work['sha256']),
++                         (106066, '7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e'))
+         old, _ = self.audit.load_contract(current.ROOT)
+         old_rows = {row['path']: row for row in old['project_files']}
+         new_rows = {row['path']: row for row in self.contract['project_files']}
+@@ -170,6 +190,30 @@ class CurrentImplementationTests(unittest.TestCase):
+             raw = (current.ROOT / name).read_bytes()
+             self.assertEqual(hashlib.sha256(raw).hexdigest(), new_rows[name]['sha256'])
+ 
++
++    def test_consolidated_local_sources_have_independent_reviewed_pins(self):
++        rows = {row["path"]: row for row in self.contract["local_path_closure"]["files"]}
++        for path, expected in CONSOLIDATED_LOCAL_SOURCE_PINS.items():
++            with self.subTest(path=path):
++                self.assertIn(path, rows)
++                self.assertEqual((rows[path]["bytes"], rows[path]["sha256"]), expected)
++        self.assertNotIn(
++            "trillionnium/crates/trnm-research-protocol/examples/sp27_03_authorization_adapter.rs",
++            rows)
++
++    def test_each_consolidated_source_refuses_omission_and_mutation(self):
++        for name in CONSOLIDATED_LOCAL_SOURCE_PINS:
++            for mode in ("missing", "changed"):
++                with self.subTest(path=name, mode=mode):
++                    self.copy_inputs()
++                    path = self.root / name
++                    if mode == "missing":
++                        path.unlink()
++                    else:
++                        path.write_bytes(path.read_bytes() + b"\n")
++                    with self.assertRaises((current.AuditError, OSError)):
++                        current.build_report(self.root)
++
+     def test_cli_report_is_created_once_and_never_replaces_prior_evidence(self):
+         target = self.root / 'report.json'
+         command = [sys.executable, str(current.ROOT / 'scripts/w1_qrom_current_implementation_audit.py'),
+diff --git a/scripts/ci/test_w1_qrom_semantics_audit.py b/scripts/ci/test_w1_qrom_semantics_audit.py
+index 663fefbd94382bd5b56c9af06ec2afcb000b4cf5..5339b28b50fae5c58f0d1de8f1111c6b8ad02af7 100644
+--- a/scripts/ci/test_w1_qrom_semantics_audit.py
++++ b/scripts/ci/test_w1_qrom_semantics_audit.py
+@@ -274,8 +274,8 @@ class W1SemanticsAuditTests(unittest.TestCase):
+         self.assertIs(qualification['valid_code_zero_control_digest_excluded'], False)
+         self.assertIs(qualification['fresh_receipt_cryptographically_verified'], False)
+         self.assertIs(self.report['kernel_release_match']['kernel_source_to_binary_rebuilt'], False)
+-        # A current lock observation has a separate fixture. Retain the old
+-        # report as an exact historical observation, not a passing current cmp.
++        # Both preceding source observations remain frozen. The present two-lock
++        # correspondence is explicit; neither saved report is rewritten as current.
+         current_path = 'evidence/pon-w1-qrom-semantics-current-20261109/report.json'
+         historical_path = 'evidence/pon-w1-qrom-semantics-20261107/report.json'
+         current_raw = (ROOT / current_path).read_bytes()
+@@ -285,14 +285,22 @@ class W1SemanticsAuditTests(unittest.TestCase):
+                          '129e7b8bc1b6d34ef55acc25bd12cae273bdc65bdeee9649b1b43e214a4e9ebe')
+         self.assertEqual(AUDIT.sha256(historical_raw),
+                          '66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221')
+-        self.assertEqual(encoded, current_raw)
++        self.assertNotEqual(encoded, current_raw)
+         self.assertNotEqual(encoded, historical_raw)
+         historical = json.loads(historical_raw)
+         self.assertEqual(historical['provenance']['lock_checks'][2]['sha256'],
+                          'af7ee60b8f9f95c200d3dddac41b70c037e2bb3395122fe67ab20885140f247f')
+         historical['provenance']['lock_checks'][2]['sha256'] = (
+             'ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a')
+-        # Compare JSON values; the audit's in-memory structures include tuples.
++        # Preserve the preceding one-lock observation under its original SHA.
++        self.assertEqual(historical, json.loads(current_raw))
++        self.assertEqual(historical['provenance']['lock_checks'][0]['path'],
++                         'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock')
++        self.assertEqual(historical['provenance']['lock_checks'][0]['sha256'],
++                         '9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef')
++        historical['provenance']['lock_checks'][0]['sha256'] = (
++            '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b')
++        # Compare all JSON values; the audit's in-memory structures include tuples.
+         self.assertEqual(historical, json.loads(encoded))
+         workflow = (ROOT / '.github/workflows/pon-w1-qrom-closure.yml').read_text()
+         # The two explicitly different source jobs have different consumers.
+diff --git a/scripts/ci/test_w1_qrom_workflow_gate.py b/scripts/ci/test_w1_qrom_workflow_gate.py
+index 96ef5939efc69a5d44bf3447d2509fec5372d67f..d514f92c03891828ee8ccd98304e7b4ae5c9d5a6 100644
+--- a/scripts/ci/test_w1_qrom_workflow_gate.py
++++ b/scripts/ci/test_w1_qrom_workflow_gate.py
+@@ -25,11 +25,13 @@ from unittest import mock
+ ROOT = Path(__file__).resolve().parents[2]
+ WORKFLOW = ROOT / '.github/workflows/pon-w1-qrom-implementation.yml'
+ ROSTER = 'config/pon/w1-qrom-required-tests-v1.json'
++# Independent current-job stage contract; the historical name runner stays separate.
+ REQUIRED_STAGES = (
+     'observations', 'checkout', 'source_before', 'preflight', 'named_tests',
+-    'historical_controls', 'implementation', 'current_implementation',
+-    'budget_unknown', 'budget_hypothetical',
+-    'report_scopes', 'source_after',
++    'historical_drift', 'implementation',
++    'supplemental_historical_controls', 'supplemental_historical_mapping',
++    'supplemental_current_mapping', 'supplemental_budget_unknown',
++    'supplemental_budget_hypothetical', 'supplemental_report_scopes', 'source_after',
+ )
+ HEAD = 'a' * 40
+ BASE = 'b' * 40
+@@ -40,6 +42,7 @@ import w1_qrom_implementation_audit as implementation
+ import w1_qrom_historical_fixture as historical
+ import w1_qrom_current_implementation_audit as current
+ import w1_qrom_supplemental_controls as supplemental
++import w1_qrom_current_ci as current_ci
+ 
+ 
+ def embedded_python(workflow: str, step_id: str) -> str:
+@@ -100,8 +103,36 @@ class WorkflowGateTests(unittest.TestCase):
+     @classmethod
+     def setUpClass(cls):
+         cls.workflow_text = WORKFLOW.read_text()
+-        cls.codes = {step: embedded_python(cls.workflow_text, step)
+-                     for step in ('named_tests', 'report_scopes', 'status')}
++        # The two source jobs deliberately reuse step IDs. Bind the original
++        # historical job before selecting its exact embedded gate boundaries.
++        current_ci.validate_historical_job(cls.workflow_text)
++        historical_job, current_job = cls.workflow_text.split(
++            '  qrom-historical-implementation:\n', 1)[1].split(
++            '  qrom-current-implementation:\n', 1)
++        # Original named-runner controls belong to the fixed historical job.
++        # Relocated mapping/budget controls belong to the current supplemental step.
++        cls.codes = {
++            'named_tests': embedded_python(historical_job, 'named_tests'),
++            'report_scopes': embedded_python(current_job, 'supplemental_report_scopes'),
++        }
++        if REQUIRED_STAGES != current_ci.REQUIRED_STAGES or any(
++                current_job.count('        id: ' + stage + '\n') != 1
++                for stage in REQUIRED_STAGES):
++            raise ValueError('independent current stage roster differs from the actual workflow')
++        verify_command = (
++            '          python3 scripts/ci/w1_qrom_current_ci.py verify '
++            '--repo-root "$GITHUB_WORKSPACE" --out "$w1_qrom_current_out" '
++            '--kind "$SOURCE_KIND" --expected-source "$EXPECTED_SOURCE" '
++            '--expected-head "$EXPECTED_HEAD" --expected-base "$EXPECTED_BASE" '
++            '2>&1 | tee "$w1_qrom_current_out/current-ci-status.log"\n')
++        if current_job.count(verify_command) != 1 or current_job.count(
++                '          W1_QROM_CURRENT_STEP_RESULTS: $' + '{{ toJSON(steps) }}\n') != 1:
++            raise ValueError('current final gate invocation differs')
++        cls.current_roster, cls.current_roster_bytes = current_ci.load_roster(ROOT)
++        with tempfile.TemporaryDirectory(prefix='current-workflow-drift-') as directory:
++            cls.current_drift = current_ci.observe_drift(ROOT, Path(directory))
++            cls.drift_stdout = (Path(directory) / 'historical-on-current.stdout.log').read_bytes()
++            cls.drift_stderr = (Path(directory) / 'historical-on-current.stderr.log').read_bytes()
+         cls.roster_bytes = (ROOT / ROSTER).read_bytes()
+         cls.roster = json.loads(cls.roster_bytes)
+         cls.supplemental_roster, cls.supplemental_roster_bytes = supplemental.load_roster(ROOT)
+@@ -164,19 +195,29 @@ class WorkflowGateTests(unittest.TestCase):
+             steps = {name: {'outcome': 'success', 'conclusion': 'success'}
+                      for name in REQUIRED_STAGES}
+         environment = {
+-            'W1_QROM_STEP_RESULTS': json.dumps(steps), 'SOURCE_KIND': 'head',
++            'W1_QROM_STEP_RESULTS': json.dumps(steps),
++            'W1_QROM_CURRENT_STEP_RESULTS': json.dumps(steps), 'SOURCE_KIND': 'head',
+             'EXPECTED_SOURCE': HEAD, 'EXPECTED_HEAD': HEAD, 'EXPECTED_BASE': BASE,
+         }
+         stdout, stderr = io.StringIO(), io.StringIO()
+         exit_code = 0
+         # The scope gate reconstructs observations from the actual checkout;
+         # only retained report files are replaced by each isolated mutation.
+-        source_root = ROOT if step == 'report_scopes' else root
++        source_root = ROOT if step in ('report_scopes', 'status') else root
+         with working_directory(source_root), mock.patch.object(sys, 'argv', ['gate', str(out)]), \
+                 mock.patch.dict(os.environ, environment), redirect_stdout(stdout), redirect_stderr(stderr):
+             try:
+-                exec(compile(self.codes[step], str(WORKFLOW) + ':' + step, 'exec'),
+-                     {'__name__': '__main__'})
++                if step == 'status':
++                    # Call the same production CLI selected by the exact workflow
++                    # command above; no test-side reconstruction of verify logic.
++                    argv = ['w1_qrom_current_ci.py', 'verify', '--repo-root', str(ROOT),
++                            '--out', str(out), '--kind', 'head', '--expected-source', HEAD,
++                            '--expected-head', HEAD, '--expected-base', BASE]
++                    with mock.patch.object(sys, 'argv', argv):
++                        exit_code = current_ci.main()
++                else:
++                    exec(compile(self.codes[step], str(WORKFLOW) + ':' + step, 'exec'),
++                         {'__name__': '__main__'})
+             except SystemExit as error:
+                 exit_code = error.code if type(error.code) is int else int(error.code is not None)
+                 if error.code is not None and not isinstance(error.code, int):
+@@ -222,10 +263,33 @@ class WorkflowGateTests(unittest.TestCase):
+             if cached is not None:
+                 sys.modules[first] = cached
+ 
+-    def completed_workspace(self):
++    def completed_workspace(self, *, status=False):
+         root, out = self.workspace()
+-        result = self.run_named(root, out)
+-        self.assertEqual(result[0], 0, result[2])
++        if status:
++            # The current final gate has its own receipt namespace and nested
++            # supplemental records. These inert named cases isolate completion
++            # validation; they are never reported as scientific test execution.
++            (out / 'required-tests.json').write_bytes(self.current_roster_bytes)
++            suites = {row['module']: row['tests'] for row in self.current_roster['suites']}
++            def isolated_discovery(loader, start_dir, pattern='test*.py', top_level_dir=None):
++                return unittest.TestSuite(named_fixture(name) for name in suites[Path(pattern).stem])
++            with mock.patch.object(unittest.TestLoader, 'discover', isolated_discovery):
++                named = current_ci.execute_named(ROOT, self.current_roster, io.StringIO())
++            current_ci.validate_named(named, self.current_roster)
++            write_json(out / 'named-tests.json', named)
++            write_json(out / 'implementation.json', self.reports['implementation-current.json'])
++            write_json(out / 'historical-drift.json', self.current_drift)
++            (out / 'historical-on-current.stdout.log').write_bytes(self.drift_stdout)
++            (out / 'historical-on-current.stderr.log').write_bytes(self.drift_stderr)
++            supplemental_out = out / 'supplemental'
++            supplemental_out.mkdir()
++            (supplemental_out / supplemental.RETAINED_ROSTER).write_bytes(
++                self.supplemental_roster_bytes)
++            for name in supplemental.OUTPUTS.values():
++                write_json(supplemental_out / name, self.reports[name])
++        else:
++            result = self.run_named(root, out)
++            self.assertEqual(result[0], 0, result[2])
+         self.assertIs(read_json(out / 'named-tests.json')['all_named_controls_passed'], True)
+         return root, out
+ 
+@@ -308,16 +372,17 @@ class WorkflowGateTests(unittest.TestCase):
+     def test_status_rejects_exit_zero_without_named_completion(self):
+         for name in ('named-tests.json', *supplemental.OUTPUTS.values()):
+             with self.subTest(completion=name):
+-                root, out = self.completed_workspace()
+-                (out / name).unlink()  # All other evidence and step successes remain.
++                root, out = self.completed_workspace(status=True)
++                target = out / name if name == 'named-tests.json' else out / 'supplemental' / name
++                target.unlink()  # All other evidence and step successes remain.
+                 result = self.execute('status', root, out)
+                 self.assertNotEqual(result[0], 0, 'successful steps cannot replace a completion record')
+-                self.assertIs(read_json(out / 'ci-status.json')['all_required_observations_passed'], False)
++                self.assertIs(read_json(out / 'current-ci-status.json')['all_required_current_observations_passed'], False)
+ 
+     def test_status_independently_rechecks_named_ids_and_boolean_scope(self):
+         for mutation in ('missing_success', 'duplicate_success', 'skip', 'scope_zero', 'passed_one'):
+             with self.subTest(mutation=mutation):
+-                root, out = self.completed_workspace()
++                root, out = self.completed_workspace(status=True)
+                 report = read_json(out / 'named-tests.json')
+                 first = report['suites'][0]
+                 if mutation == 'missing_success':
+@@ -327,41 +392,44 @@ class WorkflowGateTests(unittest.TestCase):
+                 elif mutation == 'skip':
+                     first['skipped'] = [[first['expected_ids'][0], 'retained skipped control']]
+                 elif mutation == 'scope_zero':
+-                    report['post_quantum_soundness_qualified'] = 0
++                    report['qualification']['post_quantum_soundness_qualified'] = 0
+                 else:
+                     report['all_named_controls_passed'] = 1
+                 write_json(out / 'named-tests.json', report)
+                 result = self.execute('status', root, out)
+                 self.assertNotEqual(result[0], 0)
+-                self.assertIs(read_json(out / 'ci-status.json')['all_required_observations_passed'], False)
++                self.assertIs(read_json(out / 'current-ci-status.json')['all_required_current_observations_passed'], False)
+         for suite in supplemental.OUTPUTS:
+             with self.subTest(supplemental=suite):
+-                root, out = self.completed_workspace()
+-                path = out / supplemental.OUTPUTS[suite]
++                root, out = self.completed_workspace(status=True)
++                path = out / 'supplemental' / supplemental.OUTPUTS[suite]
+                 report = read_json(path)
+                 report['success_ids'].pop()
+                 write_json(path, report)
+                 result = self.execute('status', root, out)
+                 self.assertNotEqual(result[0], 0)
+-                self.assertIs(read_json(out / 'ci-status.json')['supplemental_completion_verified'], False)
++                status_report = read_json(out / 'current-ci-status.json')
++                self.assertEqual(status_report['identities'], {})
++                self.assertTrue(any('supplemental' in reason
++                                    for reason in status_report['validation_errors']))
+ 
+     def test_status_requires_every_step_outcome_and_conclusion(self):
+-        root, out = self.completed_workspace()
++        root, out = self.completed_workspace(status=True)
+         positive = self.execute('status', root, out)
+         self.assertEqual(positive[0], 0, positive[2])
+-        self.assertIs(read_json(out / 'ci-status.json')['all_required_observations_passed'], True)
++        self.assertIs(read_json(out / 'current-ci-status.json')['all_required_current_observations_passed'], True)
+         for stage in REQUIRED_STAGES:
+             for field, value in (('outcome', 'failure'), ('conclusion', 'skipped')):
+                 with self.subTest(stage=stage, field=field):
+-                    root, out = self.completed_workspace()
++                    root, out = self.completed_workspace(status=True)
+                     steps = {name: {'outcome': 'success', 'conclusion': 'success'}
+                              for name in REQUIRED_STAGES}
+                     steps[stage][field] = value
+                     result = self.execute('status', root, out, steps=steps)
+                     self.assertNotEqual(result[0], 0)
+-                    status = read_json(out / 'ci-status.json')
++                    status = read_json(out / 'current-ci-status.json')
+                     self.assertIn(stage, status['failed_or_skipped_stages'])
+-                    self.assertIs(status['all_required_observations_passed'], False)
++                    self.assertIs(status['all_required_current_observations_passed'], False)
+ 
+     def test_actual_unknown_and_hypothetical_reports_pass_the_scope_gate(self):
+         root, out = self.workspace()
+diff --git a/scripts/ci/w1_qrom_closure_current_controls.py b/scripts/ci/w1_qrom_closure_current_controls.py
+index bb47591f471b3b7554ce8997f487568d8de0f64d..3d2938a93e3ce52401dff1cd7b5a95a5b810bcbb 100644
+--- a/scripts/ci/w1_qrom_closure_current_controls.py
++++ b/scripts/ci/w1_qrom_closure_current_controls.py
+@@ -191,9 +191,15 @@ def check(root, output, expected_digest):
+ 
+ HISTORICAL_SEMANTICS = 'evidence/pon-w1-qrom-semantics-20261107/report.json'
+ HISTORICAL_SEMANTICS_SHA256 = '66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221'
+-REVIEWED_LOCK = 'formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock'
+-HISTORICAL_LOCK_SHA256 = 'af7ee60b8f9f95c200d3dddac41b70c037e2bb3395122fe67ab20885140f247f'
+-CURRENT_LOCK_SHA256 = 'ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a'
++# Exact report index, source path, frozen historical SHA, and reviewed current SHA.
++REVIEWED_LOCK_CHANGES = (
++    (0, 'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock',
++     '9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef',
++     '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b'),
++    (2, 'formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock',
++     'af7ee60b8f9f95c200d3dddac41b70c037e2bb3395122fe67ab20885140f247f',
++     'ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a'),
++)
+ 
+ 
+ def bounded_regular(path):
+@@ -217,43 +223,52 @@ def bounded_regular(path):
+ 
+ 
+ def check_semantics(root, current_report):
+-    """Require exact report correspondence except one separately pinned lock SHA.
++    """Require exact report correspondence except two independently pinned lock SHAs.
+ 
+-    This preserves the complete historical report bytes. It is neither a new
+-    execution nor an equivalence theorem for the changed dependency graph.
++    Both saved historical observations retain their original bytes. This
++    current namespace is neither a new execution nor a dependency equivalence
++    theorem. The unchanged guest lock and every other report property must
++    still equal the frozen historical report.
+     """
+     original = bounded_regular(Path(root) / HISTORICAL_SEMANTICS)
+     require(hashlib.sha256(original).hexdigest() == HISTORICAL_SEMANTICS_SHA256,
+             'historical semantics report bytes changed')
+-    lock = bounded_regular(Path(root) / REVIEWED_LOCK)
+-    require(hashlib.sha256(lock).hexdigest() == CURRENT_LOCK_SHA256,
+-            'reviewed current lock bytes changed')
+     expected = strict_json(original)
+     actual = strict_json(bounded_regular(current_report))
+     historical_rows = expected['provenance']['lock_checks']
+-    require(type(historical_rows) is list and len(historical_rows) == 3
+-            and historical_rows[2]['path'] == REVIEWED_LOCK
+-            and historical_rows[2]['sha256'] == HISTORICAL_LOCK_SHA256,
+-            'historical lock provenance differs')
+     actual_rows = actual['provenance']['lock_checks']
+-    require(type(actual_rows) is list and len(actual_rows) == 3
+-            and actual_rows[2]['path'] == REVIEWED_LOCK
+-            and actual_rows[2]['sha256'] == CURRENT_LOCK_SHA256,
++    require(type(historical_rows) is list and len(historical_rows) == 3,
++            'historical lock provenance differs')
++    require(type(actual_rows) is list and len(actual_rows) == 3,
+             'current reviewed lock provenance differs')
+-    # Only this exact property may differ. Canonical JSON also refuses bool/int
+-    # or int/float aliases that ordinary Python dictionary equality accepts.
+-    historical_rows[2]['sha256'] = CURRENT_LOCK_SHA256
++    changes = []
++    for index, path, historical_sha, current_sha in REVIEWED_LOCK_CHANGES:
++        lock = bounded_regular(Path(root) / path)
++        require(hashlib.sha256(lock).hexdigest() == current_sha,
++                'reviewed current lock bytes changed: ' + path)
++        require(historical_rows[index]['path'] == path
++                and historical_rows[index]['sha256'] == historical_sha,
++                'historical lock provenance differs')
++        require(actual_rows[index]['path'] == path
++                and actual_rows[index]['sha256'] == current_sha,
++                'current reviewed lock provenance differs')
++        historical_rows[index]['sha256'] = current_sha
++        changes.append({
++            'json_pointer': '/provenance/lock_checks/' + str(index) + '/sha256',
++            'path': path, 'historical_sha256': historical_sha,
++            'current_sha256': current_sha,
++        })
++    # Only these two exact properties may differ. Canonical JSON also refuses
++    # bool/int or int/float aliases that ordinary dictionary equality accepts.
+     canonical = lambda value: json.dumps(value, sort_keys=True,
+                                         separators=(',', ':'), allow_nan=False)
+     require(canonical(actual) == canonical(expected),
+             'semantics report differs outside reviewed lock provenance')
+     return {
+-        'schema': 'TRNM-W1-SEMANTICS-CURRENT-CORRESPONDENCE2',
++        'schema': 'TRNM-W1-SEMANTICS-CURRENT-CORRESPONDENCE3',
+         'historical_report_sha256': HISTORICAL_SEMANTICS_SHA256,
+-        'reviewed_lock_path': REVIEWED_LOCK,
+-        'historical_lock_sha256': HISTORICAL_LOCK_SHA256,
+-        'current_lock_sha256': CURRENT_LOCK_SHA256,
+-        'only_changed_json_pointer': '/provenance/lock_checks/2/sha256',
++        'reviewed_lock_changes': changes,
++        'only_changed_json_pointers': [row['json_pointer'] for row in changes],
+         'all_other_report_fields_identical': True,
+         'historical_report_bytes_rewritten': False,
+         'new_native_execution_or_dependency_equivalence_proved': False,
+diff --git a/scripts/ci/w1_qrom_current_ci.py b/scripts/ci/w1_qrom_current_ci.py
+index c7f6a7b72f861d3698bc0fa63447e30224758ac4..4b26cf53c7278145bb8ad134e99f24c0ea594b7a 100644
+--- a/scripts/ci/w1_qrom_current_ci.py
++++ b/scripts/ci/w1_qrom_current_ci.py
+@@ -25,13 +25,20 @@ import w1_qrom_supplemental_controls as supplemental
+ 
+ ROOT = Path(__file__).resolve().parents[2]
+ ROSTER = 'config/pon/w1-qrom-current-required-tests-v1.json'
+-ROSTER_SHA256 = 'e48c23d4d6737d0143798a5c93a194310ebdf7ba1a0cb87bdf3a36af65b8f581'
++ROSTER_SHA256 = '88a96c11d81b5a5ea7f4d587564b09db0973b95a771068ec02ace8d6c51df363'
+ MODULES = ('test_w1_control_tree_audit', 'test_w1_qrom_conditional_budget',
+            'test_w1_qrom_current_implementation_audit', 'test_w1_fri_transcript_audit',
+            'test_w1_qrom_current_ci')
+ HISTORICAL_SOURCE = '0c830e0be8939ce80c8443c9ad68021b87343a00'
+ HISTORICAL_JOB_SHA256 = 'f88c5e041b943ea39be2de6665e9621b0b6a0c056c44dcae2a6215615eb6b130'
+ DRIFT_REASON = 'input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs'
++# Independent reviewed order: a jointly edited report/map cannot erase or add drift.
++REVIEWED_DIFFERENCE_PATHS = (
++    'formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs',
++    'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock',
++    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
++    'trillionnium/crates/trnm-protocol/src/pon_wire.rs',
++)
+ FALSE_FIELDS = (
+     'post_quantum_soundness_qualified', 'complete_w1_soundness_qualified',
+     'quantum_work_qualified', 'pq_signature_qualification_inferred',
+@@ -312,7 +319,8 @@ def validate_drift(report, current, legacy):
+     expected = [{'path': row['path'], 'historical': old[row['path']], 'current': row,
+         'observed_bytes': row['bytes'], 'observed_sha256': row['sha256']}
+         for row in current['project_files'] if row != old[row['path']]]
+-    require(report.get('selected_source_differences') == expected and len(expected) == 2,
++    require(report.get('selected_source_differences') == expected
++            and tuple(row['path'] for row in expected) == REVIEWED_DIFFERENCE_PATHS,
+             'historical/current selected-byte differences lost')
+ 
+ 
+diff --git a/scripts/ci/w1_qrom_supplemental_controls.py b/scripts/ci/w1_qrom_supplemental_controls.py
+index 9ec7ed08cad550491940d4a9880cea2149ac450f..97b344e65dc5ec91b15b9a99289099e752dab2e8 100644
+--- a/scripts/ci/w1_qrom_supplemental_controls.py
++++ b/scripts/ci/w1_qrom_supplemental_controls.py
+@@ -20,11 +20,11 @@ from pq_source_reader import read_regular
+ 
+ ROOT = Path(__file__).resolve().parents[2]
+ ROSTER = 'config/pon/w1-qrom-supplemental-tests-v1.json'
+-ROSTER_SHA256 = '33bdae599edc3ef8f54efd84245d24b90b0b4effdb2f71b2cdae52a71d4001c4'
++ROSTER_SHA256 = 'fa715038acf5fa4536acc5c1d4fd4186d54af3f8a12ec76a03b5c502a53e1307'
+ RETAINED_ROSTER = 'supplemental-required-tests.json'
+ SUITES = (
+     ('historical', 'test_w1_qrom_historical_fixture', 8),
+-    ('current', 'test_w1_qrom_current_implementation_audit', 14),
++    ('current', 'test_w1_qrom_current_implementation_audit', 16),
+ )
+ OUTPUTS = {'historical': 'historical-controls.json', 'current': 'current-controls.json'}
+ QUALIFICATION = {
+@@ -73,7 +73,7 @@ def load_roster(root):
+     require(type(manifest) is dict and set(manifest) == {
+                 'schema', 'scope', 'expected_tests', 'suites', 'qualification'}
+             and manifest['schema'] == 'TRNM-W1-QROM-SUPPLEMENTAL-TESTS1'
+-            and type(manifest['expected_tests']) is int and manifest['expected_tests'] == 22
++            and type(manifest['expected_tests']) is int and manifest['expected_tests'] == 24
+             and type(manifest['suites']) is list and len(manifest['suites']) == len(SUITES)
+             and unqualified(manifest['qualification']), 'supplemental roster schema or scope')
+     all_names = []
+diff --git a/scripts/w1_lifetime_current_observation.py b/scripts/w1_lifetime_current_observation.py
+index 937e9141fc7eab5ca5b04e41616cd22887ed0556..e98f81f5e7b057e39f6d7c534276c37fc9b9dbc0 100644
+--- a/scripts/w1_lifetime_current_observation.py
++++ b/scripts/w1_lifetime_current_observation.py
+@@ -19,19 +19,21 @@ from types import FunctionType, ModuleType
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+ CONTRACT = 'config/pon/w1-lifetime-current-source-v2.json'
+-CONTRACT_SHA256 = '66aaee2e08e666f32a106832274703d8c9c9fa6be9882ddc45017882c66be96b'
++CONTRACT_SHA256 = 'bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7'
+ # Exact offline evidence fixture from 1a14f7d4; its SOURCE_BASE stays 7150d96a.
+ # scripts/w1_lifetime_ledger.py is the separate current successor, left unchanged.
+ LEGACY = 'tests/fixtures/w1-lifetime-historical-7150/ledger.py'
+ LEGACY_SHA256 = '7e494ba406c63442dfbd17147d006b967cb07d7f6c886ce5779a0f2f05fceef6'
+-CURRENT = '332d7f723d71707d88a2cffa52b3754579a46926'
++CURRENT = '5c04c60e463462d9df8884786e0d5bb32af08a64'
+ HISTORICAL = '7150d96a2112875b4afcf3023361a5cef4a0e4b1'
+ CHANGED = (
+     'trillionnium/crates/trnm-crypto-primitives/Cargo.toml',
+     'trillionnium/Cargo.lock',
++    'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs',
+     'trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs',
+     'trillionnium/crates/trnm-pon-node/src/store.rs',
+     'trillionnium/crates/trnm-pon-node/src/consensus.rs',
++    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+     'formal/pon-nakamoto-v1/quantum_oracle_resources.py',
+ )
+ MAX_BYTES = 2 * 1024 * 1024
+diff --git a/scripts/w1_qrom_current_implementation_audit.py b/scripts/w1_qrom_current_implementation_audit.py
+index 407910c28a10d16379d18505ca64f8810be18211..88b619db34314c1d5a212dba99e6105d4bfca14e 100644
+--- a/scripts/w1_qrom_current_implementation_audit.py
++++ b/scripts/w1_qrom_current_implementation_audit.py
+@@ -20,14 +20,15 @@ from types import ModuleType
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+ CONTRACT = 'config/pon/w1-qrom-implementation-current-v2.json'
+-CONTRACT_SHA256 = '5c53b9aba5255a163256bb9865448ea44e5b5f2f45079adf682ea4ace662a2fb'
+-SOURCE = 'd9e6aa1ec8d1cdf4f506238f2df452c8c6215b00'
++CONTRACT_SHA256 = '77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5'
++SOURCE = '5c04c60e463462d9df8884786e0d5bb32af08a64'
+ LEGACY_READER = 'scripts/w1_qrom_implementation_audit.py'
+ LEGACY_READER_SHA256 = 'c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354'
+ MAX_BYTES = 2 * 1024 * 1024
+ CHANGED = frozenset({
+     'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock',
+     'formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs',
++    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+     'trillionnium/crates/trnm-protocol/src/pon_wire.rs',
+ })
+ 
+diff --git a/scripts/w1_stark_route_audit.py b/scripts/w1_stark_route_audit.py
+index a33bce5f52ef17f1d577fc35300d1a655cb59eaa..a567715c001cdca7aabe408a090e912cfa8834e7 100644
+--- a/scripts/w1_stark_route_audit.py
++++ b/scripts/w1_stark_route_audit.py
+@@ -38,10 +38,10 @@ MAX_REGISTRY_BYTES = 128 * 1024
+ MAX_SOURCE_BYTES = 2 * 1024 * 1024
+ # A source plus its JSON pin cannot be silently updated together. A different
+ # source roster requires a separately reviewed mapping update in this reader.
+-# Current QROM mapping and its V2 lock reviewed at d9e6aa1e (140 local inputs).
++# Current QROM mapping reviewed at 5c04c60e (145 local inputs); V2 lock retained.
+ # BASE_COMMIT remains the retained historical/literature baseline. Route
+ # parameters, literature identities and security qualification are unchanged.
+-FROZEN_SOURCE_SET_SHA256 = "827fbf688d4771c59934e25eb0d67b8ad67980c56e5e235ea76e7ccc7bf202c7"
++FROZEN_SOURCE_SET_SHA256 = "0ecde8d4e43ba120318c9777e78e317f3f2fdfc12bc65d7e2e893abaec8bcdd7"
+ SOURCE_SCOPE = "selected_route_inputs_not_full_repository_or_dependency_closure"
+ ROUTE_IDS = ("risc0_poseidon2_fixed_v2", "plonky3_poseidon2_w1_r1",
+              "plonky3_tagged_sha3_512_w1_r1")

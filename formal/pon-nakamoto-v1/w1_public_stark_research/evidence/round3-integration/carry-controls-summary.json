@@ -1,0 +1,35 @@
+{
+  "schema": "w1-carry-guarded-controls-summary-v1",
+  "qualification": "HOLD_NO_GO",
+  "control_campaign_status": "PASS",
+  "planned_counts": {
+    "positive": 2,
+    "ordinary": 22,
+    "late": 4,
+    "shape": 8
+  },
+  "observed_counts": {
+    "positive": 2,
+    "ordinary": 22,
+    "late": 4,
+    "shape": 8
+  },
+  "passed_counts": {
+    "positive": 2,
+    "ordinary": 22,
+    "late": 4,
+    "shape": 8
+  },
+  "verifier_processes": 36,
+  "mutator_processes": 12,
+  "mutant_envelopes_written": 12,
+  "new_proofs_generated": 0,
+  "independent_input_tasks": 1,
+  "source_before_after_equal": true,
+  "global_malicious_rejection_cost_bound": false,
+  "production_node_admission": false,
+  "complete_noninteractive_security_claim": false,
+  "PQ128_claim": false,
+  "warning": "Finite successor replays and observed resource costs; no latest-rejection maximum, global budget or qualification.",
+  "failures": []
+}

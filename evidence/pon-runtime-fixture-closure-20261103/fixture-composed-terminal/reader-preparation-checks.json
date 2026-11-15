@@ -1,0 +1,91 @@
+{
+  "schema": "trnm-fixture-terminal-reader-preparation-v1",
+  "prepared_utc": "2026-11-03T22:13:27.294319+00:00",
+  "reader_sha256": "4fb324acddd30eaf1f3c8e97ca2dd524564f43fc5964de5a7d51c834386145fb",
+  "passed_checks": 13,
+  "checks": [
+    {
+      "name": "final aggregate over nested child success",
+      "expected_acceptance": true,
+      "actual_acceptance": true,
+      "refusal": null
+    },
+    {
+      "name": "missing terminal",
+      "expected_acceptance": false,
+      "actual_acceptance": false,
+      "refusal": "Missing exact libtest terminal summary at EOF"
+    },
+    {
+      "name": "trailing nonterminal output",
+      "expected_acceptance": false,
+      "actual_acceptance": false,
+      "refusal": "Missing exact libtest terminal summary at EOF"
+    },
+    {
+      "name": "duplicate passed selector",
+      "expected_acceptance": false,
+      "actual_acceptance": false,
+      "refusal": "Duplicate passed selector"
+    },
+    {
+      "name": "overlapping result groups",
+      "expected_acceptance": false,
+      "actual_acceptance": false,
+      "refusal": "Overlapping status name sets"
+    },
+    {
+      "name": "missing original ignored record",
+      "expected_acceptance": false,
+      "actual_acceptance": false,
+      "refusal": "Final counts do not match actual named lists"
+    },
+    {
+      "name": "changed ignored identity",
+      "expected_acceptance": false,
+      "actual_acceptance": false,
+      "refusal": "Incomplete or extra registered selectors"
+    },
+    {
+      "name": "contradicting native exit",
+      "expected_acceptance": false,
+      "actual_acceptance": false,
+      "refusal": "Actual native exit contradicts terminal outcome"
+    },
+    {
+      "name": "missing registered selector",
+      "expected_acceptance": false,
+      "actual_acceptance": false,
+      "refusal": "Incomplete or extra registered selectors"
+    },
+    {
+      "name": "false summary count",
+      "expected_acceptance": false,
+      "actual_acceptance": false,
+      "refusal": "Final counts do not match actual named lists"
+    },
+    {
+      "name": "truncated successes list",
+      "expected_acceptance": false,
+      "actual_acceptance": false,
+      "refusal": "Final counts do not match actual named lists"
+    },
+    {
+      "name": "all-pass terminal remains supported",
+      "expected_acceptance": true,
+      "actual_acceptance": true,
+      "refusal": null
+    },
+    {
+      "name": "frozen b280 real-format parser control only",
+      "expected_acceptance": true,
+      "actual_acceptance": true,
+      "refusal": null
+    }
+  ],
+  "old_format_control_log_sha256": "1372b8e6d498e7571ef5db087a6cb653e1dd162c03ad9d07b090683360e4f78d",
+  "old_native_results_inherited": false,
+  "candidate_full_native_log_or_result_opened": false,
+  "native_or_cargo_executions": 0,
+  "status": "PREPARED_WAITING_FOR_EXPLICIT_ROOT_TERMINAL"
+}

@@ -1,0 +1,78 @@
+{
+  "actual_imported_packet_alphabet_is_vacuous": {
+    "M_for_every_forced_transcript_strategy": 64,
+    "Q_for_every_forced_transcript_strategy": 1,
+    "actual_sha_idealization_proved": false,
+    "bound": {
+      "decimal_approximation": 1.0,
+      "denominator": 1,
+      "numerator": 1
+    },
+    "complete_help_mediation_proved": false,
+    "credit_threshold": 8192,
+    "fixed_global_support_verified_by_this_function": false,
+    "fresh_uniform_bound": {
+      "decimal_approximation": 0.0004604111154269779,
+      "denominator": 4562440617622195218641171605700291324893228507248559930579192517899275167208677386505912811317371399778642309573594407310688704721375437998252661319722214188251994674360264950082874192246603776,
+      "numerator": 2100598373828784907227481185951823706829761835083741161428671770707555561660771291580849397397304191379789887085795814621804832688053294982726448000389905633402742303558476866715226742136065
+    },
+    "global_support_capped_at_threshold": 2172,
+    "global_support_description_bits_upper": 791075,
+    "help_policy": {
+      "schema": "pon-work-lifecycle-fixed-classical-help-v1",
+      "slots": [
+        {
+          "delivery_bins": 4,
+          "error_codes": 2,
+          "max_payload_bytes": 98882,
+          "sources": [
+            "public-helper"
+          ]
+        }
+      ]
+    },
+    "initial_oracle_independence_proved": false,
+    "model": "mu1-fixed-classical-help-query-reduction-v1",
+    "native_confirmation_risk": false,
+    "physical_resource_bound": false,
+    "support_saturation_threshold": 2172
+  },
+  "one_byte_finite_global_help_alphabet": {
+    "M_for_every_forced_transcript_strategy": 64,
+    "Q_for_every_forced_transcript_strategy": 1,
+    "actual_sha_idealization_proved": false,
+    "bound": {
+      "decimal_approximation": 0.1187860677801603,
+      "denominator": 2281220308811097609320585802850145662446614253624279965289596258949637583604338693252956405658685699889321154786797203655344352360687718999126330659861107094125997337180132475041437096123301888,
+      "numerator": 270977190223913253032345072987785258181039276725802609824298658421274667454239496613929572264252240687992895434067660086212823416758875052771711792050297826708953757159043515806264249735552385
+    },
+    "complete_help_mediation_proved": false,
+    "credit_threshold": 8192,
+    "fixed_global_support_verified_by_this_function": false,
+    "fresh_uniform_bound": {
+      "decimal_approximation": 0.0004604111154269779,
+      "denominator": 4562440617622195218641171605700291324893228507248559930579192517899275167208677386505912811317371399778642309573594407310688704721375437998252661319722214188251994674360264950082874192246603776,
+      "numerator": 2100598373828784907227481185951823706829761835083741161428671770707555561660771291580849397397304191379789887085795814621804832688053294982726448000389905633402742303558476866715226742136065
+    },
+    "global_support_capped_at_threshold": 258,
+    "global_support_description_bits_upper": 10,
+    "help_policy": {
+      "schema": "pon-work-lifecycle-fixed-classical-help-v1",
+      "slots": [
+        {
+          "delivery_bins": 1,
+          "error_codes": 0,
+          "max_payload_bytes": 1,
+          "sources": [
+            "fixed-source"
+          ]
+        }
+      ]
+    },
+    "initial_oracle_independence_proved": false,
+    "model": "mu1-fixed-classical-help-query-reduction-v1",
+    "native_confirmation_risk": false,
+    "physical_resource_bound": false,
+    "support_saturation_threshold": 2172
+  }
+}

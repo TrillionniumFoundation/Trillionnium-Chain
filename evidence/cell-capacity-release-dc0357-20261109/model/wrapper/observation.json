@@ -1,0 +1,421 @@
+{
+  "actual_native_started": true,
+  "artifacts": [
+    {
+      "bytes": 8854,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01-wrapper/inputs-end.json",
+      "sha256": "a5be4008434603dbbd57bb6e1a8fa8abe1f2ec1ba4c27f106aab19e7ecf59cee"
+    },
+    {
+      "bytes": 8854,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01-wrapper/inputs-start.json",
+      "sha256": "a5be4008434603dbbd57bb6e1a8fa8abe1f2ec1ba4c27f106aab19e7ecf59cee"
+    },
+    {
+      "bytes": 362,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01-wrapper/native-started.json",
+      "sha256": "7f8b8848813c430d4ecdeb961f5cd2e384e59141c45e39fc759bf91ab851b076"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01-wrapper/native.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 13804,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01-wrapper/native.stdout",
+      "sha256": "8e19bd339570fc6298fb29b5d446691bdca520317bfded3f2e48864a1d1e19d9"
+    },
+    {
+      "bytes": 293,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01-wrapper/one-shot-claim.json",
+      "sha256": "ceb66c1bbee5e06b4a75aec2629d1d0a7640c6ebcc08e76750b262f989121304"
+    },
+    {
+      "bytes": 178,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01-wrapper/preflight.log",
+      "sha256": "9fd3f0124aa0e7b3ea64e038fca295de8061d0548664a36d48df396e9b33bc55"
+    },
+    {
+      "bytes": 3309,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01-wrapper/start.json",
+      "sha256": "1ba19635057d904e1423af38ee56d91803b7bb974329a3df11b686884a275ed1"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0000-091387f48aa13a0dae4f19c4baabd8a98abfcf83af6748fbd0517ccb5b5bb058.cbm2",
+      "sha256": "d45d3637e1c087e549545ae7d27d9728719929e0fe8db4f9f50f56fbaafe6888"
+    },
+    {
+      "bytes": 116,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0001-0a5f2834077858bba5aa857bdc0eaa9b0c1d13a420043198ccf7c220026732ee.cbm2",
+      "sha256": "41d1934b5de2829e8bc51713db69e0ac1ab22a1cea639fe433aef1a1cacd88fb"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0002-25a6052a0ea91fbe1770a244f00553e2747ca99dd4d7efaab138c22d296f618e.cbm2",
+      "sha256": "2d6e0170e0d8a4f4f02af4f2e0bc7a2db7e8ae29bc0a4e26e89e686def7238fd"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0003-26790af07be2580ccbe3016f5749f0dba53f7557a71f4cf08f219bd6b79bed6f.cbm2",
+      "sha256": "2f34d03f8a1b130edc6cb012a93999096c61b45d44c803679c2f9af6fc85ddd7"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0004-28d43dc433fbf07d0d8e4f8a604382d6a277070f84f4053ec5d64bf6fe8b988f.cbm2",
+      "sha256": "113166ade80e5d923208623665dca96224d9b0b40d5834077cd3c487d2abcb54"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0005-294011cbca8e4cad47f15bd86d3bedfd1c6dd0e2941b73ed12fc8b68a238d9ea.cbm2",
+      "sha256": "777b6cf1c04ef0980a17343126a8cc9d5ad441a0e3459b9568b86da1f0c021b5"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0006-2c3e6a5099f50cabe4edf0a73a1b8417157ba033a19939cb25a31bf0afc228f0.cbm2",
+      "sha256": "e4b177054ad34d2c17901a30973d3e76409fdddb5f7bcb9be353798d92e39767"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0007-2d8790f7d0bd24e82896c6c2ee28282741e80b4e6200846b4686a42549a4cc51.cbm2",
+      "sha256": "bb0672d8e333494eee1c1b1c6c6da6454d5e06fe8ac51a2f39a25199f34765bd"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0008-2f24aa1cf8b40cc3a8d5c9f84f07b68d77fd6e63b731258f9551606aaccf1499.cbm2",
+      "sha256": "c444e90487aa9ab1e8caaab72bd12814c363d50fee8c1d21eaa150a7f35d3b7a"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0009-31206661aec1feb04301ea672a64c2a019c1cfba44b503502877e1695adf728a.cbm2",
+      "sha256": "08dc7321ca4de8c5d86c7815cb9337ed39eb9218594c73dd1f6b96a1eba164a5"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0010-355a628d64abe299107b47689e5a88e68fdae353817350ef7c85598a92d79bce.cbm2",
+      "sha256": "7c6e8e2eab4f7bff59746d4d072d7b2ff76d20f0b7437f049d14c44f1d0f8535"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0011-4378ec2596a5e7c4f199712ef0e1330fa4393f821891874635a4da71b78dd58e.cbm2",
+      "sha256": "e2e8302a22621d1f6d65bbf60a7ce4164324cbf417f830ab0c0c5b798f1e39ce"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0012-491d9c726e12027ee14489f5772bd5bcd5904bbe7346749f720906722fee03d1.cbm2",
+      "sha256": "8d89834eb041f6d0783e0f3c0b0c03c79008801a93c911daaaca7f02cdc09961"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0013-4a92aceadada919912d3d4716c2a8382d54443a53be1ba34e00740c9d46fdd7f.cbm2",
+      "sha256": "60de7b176067a7962fd3c14a84dd4fc032562012bb936e19fcb9b70ef34f8309"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0014-4cd6d68a13b16ed1241e78dcd21b3d5a3b32bb1903022debb8146fac55ef0ba7.cbm2",
+      "sha256": "fcb04e70428c5310582696bf98ef48623d96ef9b8f190f31dd2d62aeeeff2d7a"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0015-4e051b281a38456937dc86a6f98994d7df0c8ee55bba5e28e4c2c74226ec89fb.cbm2",
+      "sha256": "4c75a34f6572ca603561b8da75fbbabedbebee7252b5ac9ca8a99e102e6bef92"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0016-4ec8c783a332ee6805b02b5c923d63fad4667086a7d8a490784e43834e5917f3.cbm2",
+      "sha256": "94d2011cb744053b13055e8150ab7e26d98f581c6fab441f28df9cd2cf1b124f"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0017-5fa838f51011dd31ad75c74ffa40b35fa7e95544e8487412c326cc155681f47d.cbm2",
+      "sha256": "aec4fb909e635dededdcfe1837048344f70a1eed38d3f80197244f61019d839b"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0018-690700d936547e62905358eb91507703953c9f32f545107c3243acd03fdf4ec9.cbm2",
+      "sha256": "3658be063013919d09477a00b64911a79ea7ec177365c8dcaf3876e0334003a6"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0019-7b1f0d023485a807e1b00452cf0a3bb78a708f135d7ca6d5ce64e26b5ed32776.cbm2",
+      "sha256": "c1e899706879ef9f532eec15f1ff32eb5c0df33ed722e027dc3f469f8d0e9724"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0020-aae475d2bbdcdb7b3a40ab416d80604fddceeab52ee0c1190f4182d11b0412a7.cbm2",
+      "sha256": "3c400522a233f618a37c311a798c930a2e1e4b06a7563444014dc2e6edca7c97"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0021-b870fe53b30cd8a0e765bbbd3ccf90995507ae20d26339b5653a76981790a6be.cbm2",
+      "sha256": "077619d8c562c67c931ce2371fb665628c56c620f76440b3e79f38e643938e54"
+    },
+    {
+      "bytes": 2132,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0022-baf6ddc9229b7cca64afd26dfaa5e8a66b15bc4d471384a75dfc950a3dfe7205.cbm2",
+      "sha256": "f522ed30ff5906dca9ffadb94d34032b7678e09a40a6b862418cb38ae77522cb"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0023-c102e4118261e977c6d06296734d55f2aa6d4d825b0f8cd3ec1e43471939e2a9.cbm2",
+      "sha256": "c4e62ead1049b0477d6c88b7cc6e0b227e77acfc5f50773623b2238447ad41da"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0024-c464edbd210db63a41e77ae62352218791d6f4f9529a8428a6b0129e090a7432.cbm2",
+      "sha256": "a627c9ac89596458aa1ba3dd7ec8173e9b3af77c819e3ee2bf5406f89036b475"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0025-cc42f141703f88453c93a37bf6d198aa9c1f2f83c358ca3fe35f34167b7731a3.cbm2",
+      "sha256": "6c98de9d48bba0a275e51dca149c28d9f6817db978da01afe6547bb83b04b12d"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0026-dae07e5be9222335c673843cad7cec1877fb3286c161447fb292822dfcdca3a2.cbm2",
+      "sha256": "58ec54ec151463f1a2882bfc8082135d522e6d138558cd91def17647af68dc19"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0027-f4e7f401226427609005e7af8e1febd964ffa4824315e854542164b8a2aa3dfc.cbm2",
+      "sha256": "629588f1cf91ca49f5c78b53b89a3404c1ae1c0b3484034dbdced5777155a8b2"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0028-f511c48c1438f0dd309912f489cf2a107aa27e6a93341adde909c198eb95221d.cbm2",
+      "sha256": "328ff20052b7a2f58928975bbd6a8eaa3d61d4bc4099c7bdb9335ff2957ea48a"
+    },
+    {
+      "bytes": 84,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/0029-f9b47b4633df651ff208e6a7ab569c35d315ba22188112bda0826f17765fffd9.cbm2",
+      "sha256": "42f3dcf051abbd4f037b475020cb908d5ead6253f03cb9ab97596b795167476b"
+    },
+    {
+      "bytes": 14729,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/owner-plan.json",
+      "sha256": "945a93215cc95d26a8dc63cd2593d307df44c9bec0f58d7a0d689c85e6ed157e"
+    },
+    {
+      "bytes": 15389,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52/owner-version.tcv1",
+      "sha256": "922552873d62f3d8ea0e032bfafd4a7f73b2b4126f340c5d6450580b79de665a"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/bep52-received.sqlite-writer-lock-v4",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/consumer.sqlite-writer-lock-v4",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 44,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/independent-catalog-anchor.cva3",
+      "sha256": "34c6620d59d861eb4ad31b101e584214e561e56126899faa991f270f7f53844e"
+    },
+    {
+      "bytes": 3538,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/independent-execution-inputs.json",
+      "sha256": "f8814c99415b552c3664318dadb7dd1b692ea63e6171fa8ad9df5854872db00b"
+    },
+    {
+      "bytes": 18354,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/native-result.json",
+      "sha256": "b6f25ae1ee224ab9a619b7d7993635284495f43bc28f05f7c2b1bd8eacd4dc4b"
+    },
+    {
+      "bytes": 2354,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/next-use-observations.json",
+      "sha256": "8b3c438eea2d1199aa0d753c36e5d64506f042dd6984f9f819b02273d840e242"
+    },
+    {
+      "bytes": 1697,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/next-use-result.json",
+      "sha256": "a1d4948b0a904ac9d12da251222907c6cbe936f3b62fbf17a2412aa98043871a"
+    },
+    {
+      "bytes": 10219,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/original-source-inputs.json",
+      "sha256": "488b838dfdf05ab9768fff18ee81c0874b7bb471cbceeefdf15ab42c5dde6d48"
+    },
+    {
+      "bytes": 3573,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/owner-authorization.cpv4",
+      "sha256": "8900653ae98caad7f08cb6a91963fa6034acee76d498aa799ba9794d7b45754c"
+    },
+    {
+      "bytes": 24479,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/owner-content.tcv2",
+      "sha256": "2952d3371fdcc142e69d983f099b7999a68f622ebfcd5b4def9fe6114a4c01e6"
+    },
+    {
+      "bytes": 537,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/owner-handoff.chb1",
+      "sha256": "8c368f40aae4fa4f330aa6d0e6fe5150d01bba6d7a4fb2af72d7b917ad477daf"
+    },
+    {
+      "bytes": 39018,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/owner-release-snapshot.cts1",
+      "sha256": "43014f0ebd949852dee9f8667459083ff6e4f5b428c2a7350414f98a5f82e259"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/publisher.sqlite-writer-lock-v4",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 536870912,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/retained/objects/payload.arena",
+      "sha256": "359ea59296d20ede8ecbfdac0d03d19a9f80d504ed65915019ad5442f36acccd"
+    },
+    {
+      "bytes": 45056,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/retained/objects/retention.sqlite",
+      "sha256": "7b0f1180a33d793ae0182e898b0974f5d0e45cee680b8304007546a9086d012f"
+    },
+    {
+      "bytes": 122880,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/retained/versions.sqlite",
+      "sha256": "c89f24790b187468cfd947caae61d920b8fee32efac64aeeac668a3a72e94315"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/supervisor.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/supervisor.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1428,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/worker/cost-events.jsonl",
+      "sha256": "ad6099ea2575a68c5dd824aab25417005c321241304dc20154fe30dde1b70106"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/worker/process.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 4247,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/worker/ready.json",
+      "sha256": "cfd0380d9f66c025bbf0bd4da3d6a4d00594684e70c3ada5e163eae408b2911c"
+    },
+    {
+      "bytes": 997,
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01/worker/supervisor.json",
+      "sha256": "9fdd986aa63d14bcfe0e7975f71daa99bb816f1ccc53fdab7b0d3e4f655eb6ae"
+    }
+  ],
+  "binary": "/home/qq/work/chain-cell-capacity-dc0357-20261109-target/debug/examples/cell_sealed_research_next_use_v2",
+  "binary_sha256": "734d4e5f9fcd8b3c9c742cde9f770771219922bebee4343fcd163a3ef7de6a6a",
+  "binary_sha256_end": "734d4e5f9fcd8b3c9c742cde9f770771219922bebee4343fcd163a3ef7de6a6a",
+  "command": [
+    "/home/qq/work/chain-cell-capacity-dc0357-20261109-target/debug/examples/cell_sealed_research_next_use_v2",
+    "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/source-inputs.v2.json",
+    "488b838dfdf05ab9768fff18ee81c0874b7bb471cbceeefdf15ab42c5dde6d48"
+  ],
+  "completed_at_utc": "2026-11-09T15:22:39.134386+00:00",
+  "end_identity": {
+    "commit": "6ea3bf3fe13d66333bba3a8c7b97e14b4319b39f",
+    "status": "",
+    "tree": "6c4401a94defeecb9696c2da1442dcbd27b56352"
+  },
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_HOME": "/home/qq/.cargo",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qq/work/chain-cell-capacity-dc0357-20261109-target",
+    "LD_LIBRARY_PATH": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_DIR": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install",
+    "OPENSSL_MODULES": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/ossl-modules",
+    "OPENSSL_STATIC": "1",
+    "RUSTC": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+    "RUST_TEST_THREADS": "1",
+    "TMPDIR": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/tmp",
+    "TRNM_PQ_OPENSSL": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "error": null,
+  "example_gate_sha256": "168723e97a9e5725050f7345cf06e3b033cf1cbc846ce9c49facda3f9c735840",
+  "final_gate_sha256": "a33cc2c239d4e0c86a50edd4d1846b6a3852dbb7e0f672eca6c21db11fc9a0cf",
+  "input_count": 31,
+  "inputs_unchanged": true,
+  "max_snapshot_bytes": 536870912,
+  "memory_end": {
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "memory.max": "8589934592",
+    "memory.peak": "3539898368",
+    "scope": "Hepta systemd job cgroup, wrapper plus native process and descendants"
+  },
+  "memory_start": {
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "memory.max": "8589934592",
+    "memory.peak": "320028672",
+    "scope": "Hepta systemd job cgroup, wrapper plus native process and descendants"
+  },
+  "native_erasure_shard_recovery": false,
+  "native_pid": 3298316,
+  "native_process": {
+    "elapsed_seconds": 270.30788540188223,
+    "exit_code": 0,
+    "resource_scope": "Linux wait4 rusage for native Rust child, with OS child accounting; peak RSS is not a simultaneous process-tree RSS sum",
+    "ru_maxrss_kib": 1426264,
+    "system_cpu_seconds": 5.589708,
+    "user_cpu_seconds": 264.463374,
+    "watchdog_kill": false,
+    "watchdog_term": false
+  },
+  "native_summary": {
+    "actual_model_run": "observed_two_forwards",
+    "composition_worker_executed": true,
+    "error": null,
+    "passed": true,
+    "process": {
+      "elapsed_ms": 270246,
+      "exit_code": 0,
+      "original_seconds": 300,
+      "sealed_bundles_held_until_supervisor_exit": true,
+      "termination_error": null,
+      "termination_requested": false
+    },
+    "stage": "complete research next-use",
+    "typed_snapshot_admitted": true
+  },
+  "operation": "fad809b14a2ef0814d5cb125ac4c2713ca81d962797e038857416a838c0c5cc2",
+  "operation_pins": {
+    "bep52_plan": "fec516f77633a58dc1e60927ba7158103ca36c3f743efd05f0b566ad4317995b7b733d23031a173217533d82b049fce0eceb6ebf3d14b022941872ba475b4360",
+    "chb1": "c0e7fc1e1d94ad185895d17475ca009305725b31b1768299601c8fda3a354b53ba08a476c09f1b6b8a754ee6aa131e9028c65f5c1bc93a3661fb7396093617a9",
+    "cts1": "dd644852ec5bb6ec68048477838b97f10b4e3117cf49644505ffab737b0c7898d4bf915d73d2f013d43eafe860dff6beb500745e2cd0b7b66e62c7e8baf7552e",
+    "operation": "fad809b14a2ef0814d5cb125ac4c2713ca81d962797e038857416a838c0c5cc2",
+    "tcv1": "76e318b243995ff788bdfc4ef317395a525eeb1c3d751b549c0791a4da4e51deb4366338fcd0330b816252c9bcf5195b4de3247408afdad3386d94bf34e879dd",
+    "tcv2": "1ae64d141b4fcb979c18c846d0795237400eff1ad76abfd8d972c8a35196efee16448d1652e920ddb1fc3d58c32c4a52fb089195d7f51f1f72647f37814c43bb"
+  },
+  "original_seconds": 300,
+  "outer_timeout_seconds": 450,
+  "output": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01",
+  "passed": true,
+  "recovery_profile": "TCA3 complete-copy catalog anchored cold restore",
+  "runtime_rss_bytes": 8589934592,
+  "schema": "trnm.cell-sealed-research-real-v2-observation.v1",
+  "source": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/source-inputs.v2.json",
+  "source_sha256": "488b838dfdf05ab9768fff18ee81c0874b7bb471cbceeefdf15ab42c5dde6d48",
+  "source_sha256_end": "488b838dfdf05ab9768fff18ee81c0874b7bb471cbceeefdf15ab42c5dde6d48",
+  "start_identity": {
+    "commit": "6ea3bf3fe13d66333bba3a8c7b97e14b4319b39f",
+    "status": "",
+    "tree": "6c4401a94defeecb9696c2da1442dcbd27b56352"
+  },
+  "started_at_utc": "2026-11-09T15:18:07.951586+00:00",
+  "total_wrapper_elapsed_seconds": 271.18279225495644,
+  "worker_sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b",
+  "wrapper_sha256": "4858f75a39ea3d942d723587123f75b6f10f3e27045e628e9dd07284ce20a7ea"
+}

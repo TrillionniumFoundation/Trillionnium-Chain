@@ -1,0 +1,8 @@
+{
+  "label": "refs-before",
+  "started_at": "2026-11-14T04:48:42.667352+00:00",
+  "finished_at": "2026-11-14T04:48:49.022408+00:00",
+  "exit": 0,
+  "stdout_sha256": "280b990fb272abd7057b5af6930747085705a8bc2b074042ce0ebb280639f843",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

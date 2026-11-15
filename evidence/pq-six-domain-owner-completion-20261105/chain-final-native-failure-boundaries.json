@@ -1,0 +1,799 @@
+{
+  "actual_reader_sha256": "1ba10a71ec4e9596a84b18ff7e0ea1e6d16d4c8af82f9034894fac8ebae917a1",
+  "all_28_original_ignored_test_lines": [
+    {
+      "line": 10,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "account_archive_execution::state_witness::growth_v2_tests::growth_v2_crosses_legacy_total_key_cap_without_changing_old_profile",
+      "outcome_text": "ignored, explicit release-only 65,537 permanent-account growth relation; not native admission",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 17,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "account_archive_prototype::account_prefix_tests::prefix_range_component_cost_abba",
+      "outcome_text": "ignored, explicit paired parser wall observation; no Node/service performance gate",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 33,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "account_archive_prototype::native_primitive_tests::native_branch_single_buffer_cost_observation",
+      "outcome_text": "ignored, explicit release branch hashing observation; not Node or WAN throughput",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 38,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost",
+      "outcome_text": "ignored, explicit release account-verification comparison; no full Node cost claim",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 41,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "account_archive_prototype::native_primitive_tests::shared_branch_kernel_complete_call_cost",
+      "outcome_text": "ignored, explicit same-binary codegen observation; not Node or network throughput",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 47,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "account_archive_prototype::native_root_digest::tests::native_root_digest_paired_complete_root_cost_observation",
+      "outcome_text": "ignored, explicit paired complete-account-root cost; excludes current SQL/Host/business confirmation",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 51,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+      "outcome_text": "ignored, explicit release full-capacity gate in both head and prospective-merge CI",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 55,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "account_archive_prototype::native_store::node_reader::tests::native_node_reader_paired_graph_cost_observation",
+      "outcome_text": "ignored, explicit paired SQL reader observation; not the public service acceptance gate",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 62,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation",
+      "outcome_text": "ignored, explicit constant-table observation; not full-node performance",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 66,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "account_archive_prototype::native_store::tests::native_lift_cache_complete_graph_cost_observation",
+      "outcome_text": "ignored, explicit bounded-cache complete-graph diagnostic; not a business SLO",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 68,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "ancestry_index::cost_tests::retained_4105_actual_history_index_cost",
+      "outcome_text": "ignored, read-only retained #674 artifact: set TRNM_RETAINED_HISTORY_DIRECTORY; not original Host/cold-sync acceptance",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 145,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "ingress::history_import::tests::history_kill_cut_child",
+      "outcome_text": "ignored, subprocess fixture: parent selects a real SIGKILL cut",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 276,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "ingress::public_v3::pq_identity::verifier_cache::tests::pq_caller_authentication_complete_cost",
+      "outcome_text": "ignored, paired PQ authentication cost; requires a fresh output directory",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 424,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "ingress::tests::authenticated_activation_recovery::withheld_original_frame_must_not_stall_a_different_honest_signed_mutation",
+      "outcome_text": "ignored, actual original ten-second deadline and signed-socket honest-service gate; run explicitly",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 724,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::detached_admission::tests::detached_full_state_cost_uses_real_signed_history_and_reports_scope",
+      "outcome_text": "ignored, explicit actual 1024-signed-transfer full-State snapshot/execution/commit cost; not a saturation campaign",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 819,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen",
+      "outcome_text": "ignored, explicit release gate: actual signed native transition across 65,536 accounts, full work and cold replay",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 837,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
+      "outcome_text": "ignored, explicit native A/H observation: full State reference, real W1/signed admission, atomic cancellation and cold reopen",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 844,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::growth_reference::tests::native_growth_reference_65537_signed_accounts_and_cold_reopen",
+      "outcome_text": "ignored, explicit release native-growth ordinary-genesis 65,537 signed-account gate",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 859,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::history_page::tests::history_page_complete_call_cost",
+      "outcome_text": "ignored, finite paired native history cost; requires a new output directory",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 862,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::history_page::tests::inline_record_tests::history_inline_record_complete_call_cost",
+      "outcome_text": "ignored, paired complete native history call cost; run explicitly in release mode",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 865,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::history_page::tests::packet_reservation_history_complete_call_cost",
+      "outcome_text": "ignored, paired complete native read/response cost; needs a new output directory",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 872,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::mempool::binding_tests::normal_256_signed_raw_binding_component_timing",
+      "outcome_text": "ignored, explicit normal component timing, not a service or work-cost qualification",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 876,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::mempool::incremental_prefix_tests::normal_m05_signature_reuse_component_timing",
+      "outcome_text": "ignored, explicit M05/M06 component timing, not endpoint or public service acceptance",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 987,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::native_authenticated::stored_delta_stream_tests::retained_delta_stream_cost_preserves_all_paired_observations",
+      "outcome_text": "ignored, explicit release-only retained-delta cost observation; not a throughput gate",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 1019,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::native_budget::tests::native_budget_abrupt_exit_worker",
+      "outcome_text": "ignored, selected only by the abrupt-exit parent with a fresh test directory",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 1099,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::public_reader::tests::readonly_history_whole_operation_and_retained_growth_cost",
+      "outcome_text": "ignored, complete snapshot/public-history cost and retained long-history growth; saved output required",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 1100,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::reorg_cancellation::tests::actual_full_w1_depletion_terminates_intent_and_admits_an_independent_honest_mutation",
+      "outcome_text": "ignored, actual full W1 depletion; preserves all attempts and original account",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 1112,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::reorg_cancellation::tests::reorg_cancellation_kill_child",
+      "outcome_text": "ignored, subprocess fixture: only parent chooses a real SIGKILL cut",
+      "target": "unittests src/lib.rs"
+    }
+  ],
+  "all_four_failed_test_lines": [
+    {
+      "line": 1057,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+      "outcome_text": "FAILED",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 1058,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics",
+      "outcome_text": "FAILED",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 1059,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "name": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart",
+      "outcome_text": "FAILED",
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "line": 17,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-architecture-delivery.log",
+      "name": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+      "outcome_text": "FAILED",
+      "target": "tests/architecture_delivery_compare.rs"
+    }
+  ],
+  "architecture_announcement_only": {
+    "fields": {
+      "all_finite_business_targets_met": false,
+      "report_path": "/tmp/.tmpS8KSi2/architecture-comparison/report.json",
+      "samples": 18,
+      "schema": "native-signed-dag-delivery-comparison-v1"
+    },
+    "line": 22,
+    "raw_line_sha256": "7271abb329b5c1f273d036c2f69af427a7f472531937fef01162538beb1c3e64",
+    "raw_line_utf8": "{\"all_finite_business_targets_met\":false,\"report_path\":\"/tmp/.tmpS8KSi2/architecture-comparison/report.json\",\"samples\":18,\"schema\":\"native-signed-dag-delivery-comparison-v1\"}\n"
+  },
+  "architecture_bounded_failure_rows": [
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "serial-signed-batches",
+        "native_state_equal": false,
+        "position": 0,
+        "sample": 0,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 23,
+      "raw_line_sha256": "f677c08682ad96bd48ac180a1c9f85ebea85e6ff9ccf322c5e53b09f3d0d7f2b",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"serial-signed-batches\",\"native_state_equal\":false,\"position\":0,\"sample\":0,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "concurrent-proposer-batches",
+        "native_state_equal": false,
+        "position": 1,
+        "sample": 0,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 24,
+      "raw_line_sha256": "5621163e909114a9f04c71c36a5f5d341c9e9beb03fdfd21981f965ba84935ac",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"concurrent-proposer-batches\",\"native_state_equal\":false,\"position\":1,\"sample\":0,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "signed-reference-dag",
+        "native_state_equal": false,
+        "position": 2,
+        "sample": 0,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 25,
+      "raw_line_sha256": "8bca32f5ebc87a5e86f76b6ab38c649493c2cac23eab52e77639737c2460f40e",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"signed-reference-dag\",\"native_state_equal\":false,\"position\":2,\"sample\":0,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "concurrent-proposer-batches",
+        "native_state_equal": false,
+        "position": 0,
+        "sample": 1,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 26,
+      "raw_line_sha256": "f0c17d87aa2fb9bb8f9d12c94142208fd895703bc39c8aed235af1aa0d62dc85",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"concurrent-proposer-batches\",\"native_state_equal\":false,\"position\":0,\"sample\":1,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "signed-reference-dag",
+        "native_state_equal": false,
+        "position": 1,
+        "sample": 1,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 27,
+      "raw_line_sha256": "753e0d84a9fcd476e68bd370afac4eb632f5cd457e737b4aa24c85353bd274be",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"signed-reference-dag\",\"native_state_equal\":false,\"position\":1,\"sample\":1,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "serial-signed-batches",
+        "native_state_equal": false,
+        "position": 2,
+        "sample": 1,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 28,
+      "raw_line_sha256": "818384d453f799ab2ed36b8c1823e047af9274f0cd92fea424241c8966e57b85",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"serial-signed-batches\",\"native_state_equal\":false,\"position\":2,\"sample\":1,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "signed-reference-dag",
+        "native_state_equal": false,
+        "position": 0,
+        "sample": 2,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 29,
+      "raw_line_sha256": "9aef126280bbc9d77010722b6eab96f08dde28e7ed20964c0927f37d48b62524",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"signed-reference-dag\",\"native_state_equal\":false,\"position\":0,\"sample\":2,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "serial-signed-batches",
+        "native_state_equal": false,
+        "position": 1,
+        "sample": 2,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 30,
+      "raw_line_sha256": "740824396acbd83d55a0333240020b46fe3ddfe204b08d30de58ea0c6c3e29f6",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"serial-signed-batches\",\"native_state_equal\":false,\"position\":1,\"sample\":2,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "concurrent-proposer-batches",
+        "native_state_equal": false,
+        "position": 2,
+        "sample": 2,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 31,
+      "raw_line_sha256": "b7746bc6f03d6ce35a8ca82af189acbaea20e5ae3bb725885954795ebd82a328",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"concurrent-proposer-batches\",\"native_state_equal\":false,\"position\":2,\"sample\":2,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "serial-signed-batches",
+        "native_state_equal": false,
+        "position": 0,
+        "sample": 0,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 32,
+      "raw_line_sha256": "d505205ab8dc7d0e75a99f073819cb82fc77174be2fb6118383aa9954bb6aa44",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"serial-signed-batches\",\"native_state_equal\":false,\"position\":0,\"sample\":0,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "concurrent-proposer-batches",
+        "native_state_equal": false,
+        "position": 1,
+        "sample": 0,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 33,
+      "raw_line_sha256": "2201820240aa19b69a00c319b1df3621b446809a42a145690550713d1c355eff",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"concurrent-proposer-batches\",\"native_state_equal\":false,\"position\":1,\"sample\":0,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "signed-reference-dag",
+        "native_state_equal": false,
+        "position": 2,
+        "sample": 0,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 34,
+      "raw_line_sha256": "52f73ebb0623a8164201da2400eceae0b28727b2a465df231d350bdaad6b4fdf",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"signed-reference-dag\",\"native_state_equal\":false,\"position\":2,\"sample\":0,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "concurrent-proposer-batches",
+        "native_state_equal": false,
+        "position": 0,
+        "sample": 1,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 35,
+      "raw_line_sha256": "0114e6d90853dca385ed09e89700d40970a5813432db8d52b58b77f7eed1d5cc",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"concurrent-proposer-batches\",\"native_state_equal\":false,\"position\":0,\"sample\":1,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "signed-reference-dag",
+        "native_state_equal": false,
+        "position": 1,
+        "sample": 1,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 36,
+      "raw_line_sha256": "42485fe872b8ff857c0a04659d1b4fe75bf2fc39719fc5458963b0c7b606837b",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"signed-reference-dag\",\"native_state_equal\":false,\"position\":1,\"sample\":1,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "serial-signed-batches",
+        "native_state_equal": false,
+        "position": 2,
+        "sample": 1,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 37,
+      "raw_line_sha256": "41bb900d1860a3fdf9f6fc62efda201baa78bde2585c1572501af53893a989de",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"serial-signed-batches\",\"native_state_equal\":false,\"position\":2,\"sample\":1,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "signed-reference-dag",
+        "native_state_equal": false,
+        "position": 0,
+        "sample": 2,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 38,
+      "raw_line_sha256": "9fe70ab8bff9480432441b43186d69b14392829cd2f868da2f3de14ef04b4e6b",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"signed-reference-dag\",\"native_state_equal\":false,\"position\":0,\"sample\":2,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "serial-signed-batches",
+        "native_state_equal": false,
+        "position": 1,
+        "sample": 2,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 39,
+      "raw_line_sha256": "f1ca1bfd867a16c8f143ab8210871fe8fb33afdb817f79d0d0e5a4bf1e6c1899",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"serial-signed-batches\",\"native_state_equal\":false,\"position\":1,\"sample\":2,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    },
+    {
+      "bounded_fields": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "concurrent-proposer-batches",
+        "native_state_equal": false,
+        "position": 2,
+        "sample": 2,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      },
+      "line": 40,
+      "raw_line_sha256": "0983ec0fe7f83646b33a467d83faa9bd8e42ee80c75b4c1e0c17f70898bcf632",
+      "raw_line_utf8": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"concurrent-proposer-batches\",\"native_state_equal\":false,\"position\":2,\"sample\":2,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}\n"
+    }
+  ],
+  "build_only_executed_tests": 0,
+  "conditions_changed": false,
+  "full_architecture_report": {
+    "exists_at_post_observation": false,
+    "reason": "The original reported temporary report path no longer exists; source uses TempDir by default and copies a report only when TRNM_CI_RECEIPT_DIR is set. The command receipt does not record that variable.",
+    "reconstructed_from_console": false,
+    "reported_path": "/tmp/.tmpS8KSi2/architecture-comparison/report.json",
+    "rerun_to_recover_report": false,
+    "retained_by_this_execution_handoff": false,
+    "status": "NOT_RETAINED"
+  },
+  "independent_deployment_qualified": false,
+  "new_control_observed_passes": 37,
+  "new_control_total": 37,
+  "new_controls_are_subset_of_original_native_counts": true,
+  "observed_utc": "2026-11-05T11:37:57.961981+00:00",
+  "official_commands": [
+    {
+      "exit_code": 101,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "log_sha256": "5f30d2dd4db337c3b5d948ef005b07501be129b60a35defe21f2da94e094d223",
+      "receipt_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.json",
+      "receipt_sha256": "9295b8ac6a092180d6e224796308b4aeb15269a6479915b18f82aabecf145133"
+    },
+    {
+      "exit_code": 101,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-architecture-delivery.log",
+      "log_sha256": "f42afc0a08c95bb37370560b08a28ec204b3ba351ede9259adde02fffa11ae30",
+      "receipt_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-architecture-delivery.json",
+      "receipt_sha256": "e1aa6e85e3c100d0831b4d6eb2db573c9215cc2fcbd1698a8c872c90d8dc744b"
+    }
+  ],
+  "post_run_host_observation": {
+    "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+    "fixed_parent_exists": false,
+    "observer_environment": {
+      "CI": null,
+      "GITHUB_ACTIONS": null,
+      "TRNM_ARCHITECTURE_COMPARE_DIR": null,
+      "TRNM_CI_RECEIPT_DIR": null
+    },
+    "observer_process_cgroup": "0::/\n",
+    "scope": "post-run observer process; not an assertion that these keys were recorded in the original receipt"
+  },
+  "pre_post_all_three_executable_path_sha256_length_equal": true,
+  "primary_harness_summaries": [
+    {
+      "earlier_nested_or_intermediate_summary_count": 2,
+      "last_observed_summary": {
+        "line": 1200,
+        "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+        "parsed": {
+          "elapsed_seconds_text": "1640.98",
+          "failed": 3,
+          "filtered_out": 0,
+          "ignored": 28,
+          "measured": 0,
+          "passed": 1090,
+          "status": "FAILED"
+        },
+        "target": "unittests src/lib.rs",
+        "text": "test result: FAILED. 1090 passed; 3 failed; 28 ignored; 0 measured; 0 filtered out; finished in 1640.98s"
+      },
+      "last_summary_counts_match_primary_declaration": true,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "primary_declared_tests": 1121,
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "earlier_nested_or_intermediate_summary_count": 0,
+      "last_observed_summary": {
+        "line": 1217,
+        "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+        "parsed": {
+          "elapsed_seconds_text": "5.77",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 10,
+          "status": "ok"
+        },
+        "target": "tests/pool_mining.rs",
+        "text": "test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.77s"
+      },
+      "last_summary_counts_match_primary_declaration": true,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "primary_declared_tests": 10,
+      "target": "tests/pool_mining.rs"
+    },
+    {
+      "earlier_nested_or_intermediate_summary_count": 0,
+      "last_observed_summary": {
+        "line": 50,
+        "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-architecture-delivery.log",
+        "parsed": {
+          "elapsed_seconds_text": "10.29",
+          "failed": 1,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 12,
+          "status": "FAILED"
+        },
+        "target": "tests/architecture_delivery_compare.rs",
+        "text": "test result: FAILED. 12 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.29s"
+      },
+      "last_summary_counts_match_primary_declaration": true,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-architecture-delivery.log",
+      "primary_declared_tests": 13,
+      "target": "tests/architecture_delivery_compare.rs"
+    }
+  ],
+  "retries": 0,
+  "schema": "chain-final-native-failure-boundaries-v1",
+  "source_changed_to_make_failures_pass": false,
+  "source_commit": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+  "source_failure_path": {
+    "host": "host_kernel_parent.rs: Linux KernelBudget::open canonicalizes the absolute fixed parent; canonicalize failure maps to PUBLIC_HOST_KERNEL_PARENT before further kernel limit checks.",
+    "local_fixture": "current_elf_host returns false outside its original CI Host delegation, preserving the native refusal.",
+    "unix": "independent_witness_process_child unwraps UnixListener::bind(witness.sock) at combined_tests.rs:330; raw failures report EPERM."
+  },
+  "source_refs": [
+    {
+      "git_blob": "7089e961965af9209f2d588061c8526c5acba161",
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs"
+    },
+    {
+      "git_blob": "243f28fca0fb179927a0fabedc8f480bebfeffb8",
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/current_elf_host.rs"
+    },
+    {
+      "git_blob": "80431c483d76b827df22eb543e78575a73a58cd5",
+      "path": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs"
+    },
+    {
+      "git_blob": "13c61b99303639372f058de580f2da6de0f53f16",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs"
+    }
+  ],
+  "source_results_transferred_to_later_head": false,
+  "source_tree": "4a0314e72ebc45659986d03e7ca2f96cab9399ea",
+  "status": "HOLD_NATIVE_ORIGINAL_FAILURES_RETAINED",
+  "unix_witness_failure_sections": [
+    {
+      "first_line": 1161,
+      "lines": [
+        "---- store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart stdout ----",
+        "TRNM_PQ_PHASE_DIAGNOSTIC {\"budgets_unchanged\":true,\"cpu_is_calling_thread_only\":true,\"failure_checkpoint_saved\":false,\"has_open_operations\":false,\"has_open_records\":false,\"last_failure\":null,\"last_service_failure\":null,\"last_tcp_failure\":null,\"mark_order\":[\"transport_entered\",\"cas_commit_attempted\",\"cas_committed\",\"local_commit_attempted\",\"local_committed\",\"matching_cas_receipt\",\"fixture_delay_entered\"],\"measurement_failures\":0,\"nested_intervals_are_not_additive\":true,\"observation_has_authority\":false,\"operation_ids_are_process_local\":true,\"phase_totals\":[],\"process_id\":2117,\"record_capacity\":8,\"records\":[],\"records_closed\":0,\"records_completed\":0,\"records_overwritten\":0,\"records_started\":0,\"schema\":\"pon-pq-test-phase-observation-v1\",\"scope_snapshot_is_final\":true,\"snapshot_is_not_service_completion\":true}",
+        "",
+        "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart' (2115) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:211:21:",
+        "independent witness exited before ready (exit status: 101): ",
+        "thread 'store::pq_rollback_witness::combined_tests::independent_witness_process_child' (2118) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:330:71:",
+        "called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }",
+        "note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+        "",
+        "TRNM_PQ_PHASE_DIAGNOSTIC {\"budgets_unchanged\":true,\"cpu_is_calling_thread_only\":true,\"failure_checkpoint_saved\":false,\"has_open_operations\":false,\"has_open_records\":false,\"last_failure\":null,\"last_service_failure\":null,\"last_tcp_failure\":null,\"mark_order\":[\"transport_entered\",\"cas_commit_attempted\",\"cas_committed\",\"local_commit_attempted\",\"local_committed\",\"matching_cas_receipt\",\"fixture_delay_entered\"],\"measurement_failures\":0,\"nested_intervals_are_not_additive\":true,\"observation_has_authority\":false,\"operation_ids_are_process_local\":true,\"phase_totals\":[],\"process_id\":68,\"record_capacity\":8,\"records\":[],\"records_closed\":0,\"records_completed\":0,\"records_overwritten\":0,\"records_started\":0,\"schema\":\"pon-pq-test-phase-observation-v1\",\"scope_snapshot_is_final\":true,\"snapshot_is_not_service_completion\":true}",
+        ""
+      ]
+    },
+    {
+      "first_line": 1172,
+      "lines": [
+        "---- store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics stdout ----",
+        "TRNM_PQ_PHASE_DIAGNOSTIC {\"budgets_unchanged\":true,\"cpu_is_calling_thread_only\":true,\"failure_checkpoint_saved\":false,\"has_open_operations\":false,\"has_open_records\":false,\"last_failure\":null,\"last_service_failure\":null,\"last_tcp_failure\":null,\"mark_order\":[\"transport_entered\",\"cas_commit_attempted\",\"cas_committed\",\"local_commit_attempted\",\"local_committed\",\"matching_cas_receipt\",\"fixture_delay_entered\"],\"measurement_failures\":0,\"nested_intervals_are_not_additive\":true,\"observation_has_authority\":false,\"operation_ids_are_process_local\":true,\"phase_totals\":[],\"process_id\":2121,\"record_capacity\":8,\"records\":[],\"records_closed\":0,\"records_completed\":0,\"records_overwritten\":0,\"records_started\":0,\"schema\":\"pon-pq-test-phase-observation-v1\",\"scope_snapshot_is_final\":true,\"snapshot_is_not_service_completion\":true}",
+        "",
+        "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics' (2119) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:211:21:",
+        "independent witness exited before ready (exit status: 101): ",
+        "thread 'store::pq_rollback_witness::combined_tests::independent_witness_process_child' (2122) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:330:71:",
+        "called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }",
+        "note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+        "",
+        "TRNM_PQ_PHASE_DIAGNOSTIC {\"budgets_unchanged\":true,\"cpu_is_calling_thread_only\":true,\"failure_checkpoint_saved\":false,\"has_open_operations\":false,\"has_open_records\":false,\"last_failure\":null,\"last_service_failure\":null,\"last_tcp_failure\":null,\"mark_order\":[\"transport_entered\",\"cas_commit_attempted\",\"cas_committed\",\"local_commit_attempted\",\"local_committed\",\"matching_cas_receipt\",\"fixture_delay_entered\"],\"measurement_failures\":0,\"nested_intervals_are_not_additive\":true,\"observation_has_authority\":false,\"operation_ids_are_process_local\":true,\"phase_totals\":[],\"process_id\":68,\"record_capacity\":8,\"records\":[],\"records_closed\":0,\"records_completed\":0,\"records_overwritten\":0,\"records_started\":0,\"schema\":\"pon-pq-test-phase-observation-v1\",\"scope_snapshot_is_final\":true,\"snapshot_is_not_service_completion\":true}",
+        ""
+      ]
+    },
+    {
+      "first_line": 1183,
+      "lines": [
+        "---- store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart stdout ----",
+        "TRNM_PQ_PHASE_DIAGNOSTIC {\"budgets_unchanged\":true,\"cpu_is_calling_thread_only\":true,\"failure_checkpoint_saved\":false,\"has_open_operations\":false,\"has_open_records\":false,\"last_failure\":null,\"last_service_failure\":null,\"last_tcp_failure\":null,\"mark_order\":[\"transport_entered\",\"cas_commit_attempted\",\"cas_committed\",\"local_commit_attempted\",\"local_committed\",\"matching_cas_receipt\",\"fixture_delay_entered\"],\"measurement_failures\":0,\"nested_intervals_are_not_additive\":true,\"observation_has_authority\":false,\"operation_ids_are_process_local\":true,\"phase_totals\":[],\"process_id\":2125,\"record_capacity\":8,\"records\":[],\"records_closed\":0,\"records_completed\":0,\"records_overwritten\":0,\"records_started\":0,\"schema\":\"pon-pq-test-phase-observation-v1\",\"scope_snapshot_is_final\":true,\"snapshot_is_not_service_completion\":true}",
+        "",
+        "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart' (2123) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:211:21:",
+        "independent witness exited before ready (exit status: 101): ",
+        "thread 'store::pq_rollback_witness::combined_tests::independent_witness_process_child' (2126) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:330:71:",
+        "called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }",
+        "note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+        "",
+        "TRNM_PQ_PHASE_DIAGNOSTIC {\"budgets_unchanged\":true,\"cpu_is_calling_thread_only\":true,\"failure_checkpoint_saved\":false,\"has_open_operations\":false,\"has_open_records\":false,\"last_failure\":null,\"last_service_failure\":null,\"last_tcp_failure\":null,\"mark_order\":[\"transport_entered\",\"cas_commit_attempted\",\"cas_committed\",\"local_commit_attempted\",\"local_committed\",\"matching_cas_receipt\",\"fixture_delay_entered\"],\"measurement_failures\":0,\"nested_intervals_are_not_additive\":true,\"observation_has_authority\":false,\"operation_ids_are_process_local\":true,\"phase_totals\":[],\"process_id\":68,\"record_capacity\":8,\"records\":[],\"records_closed\":0,\"records_completed\":0,\"records_overwritten\":0,\"records_started\":0,\"schema\":\"pon-pq-test-phase-observation-v1\",\"scope_snapshot_is_final\":true,\"snapshot_is_not_service_completion\":true}",
+        "",
+        ""
+      ]
+    }
+  ],
+  "whole_chain_quantum_security_qualified": false
+}

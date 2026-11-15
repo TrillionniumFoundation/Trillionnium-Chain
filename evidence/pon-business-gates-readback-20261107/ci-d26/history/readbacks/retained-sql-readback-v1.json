@@ -1,0 +1,605 @@
+{
+  "schema": "trnm-d26-history-retained-sql-readback-v1",
+  "queries": {
+    "blocks": "select count(*) as rows_total, sum(height=0) as genesis_rows, sum(height>0) as non_genesis_rows, min(height) as min_height,max(height) as max_height,sum(packet is not null) as rows_with_packet from blocks",
+    "active": "select hex(a.tip) as tip_hex,b.height as tip_height,a.generation,a.state_slot from active a left join blocks b on b.id=a.tip where a.singleton=1",
+    "reorg": "select hex(old_tip) as old_tip_hex,hex(new_tip) as new_tip_hex,generation,cursor,done from reorg where singleton=1",
+    "steps": "select count(*) as rows_total,min(ordinal) as min_ordinal,max(ordinal) as max_ordinal from steps",
+    "lifecycle_counts": "select outcome,count(*) as rows_total from reorg_lifecycle_v1 group by outcome order by outcome",
+    "lifecycle_last": "select operation,hex(old_tip) as old_tip_hex,hex(new_tip) as new_tip_hex,generation,old_slot,outcome,cancelled_cursor,reason from reorg_lifecycle_v1 order by operation desc limit 3",
+    "snapshots": "select count(*) as rows_total from snapshots",
+    "slots": "select slot,count(*) as keys from kv group by slot order by slot"
+  },
+  "scope": "Read-only retained SQLite bytes; no Node open, recovery, activation, replay or native retry; row counts are not validation or successful import-return counts.",
+  "results": [
+    {
+      "artifact_id": 13579429780,
+      "name": "priority-ubuntu-24.04-prospective-merge-history-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "failure_location": {
+        "activation_cursor": null,
+        "advertised_page_complete": null,
+        "completed_import_calls": 3917,
+        "durable_committed_blocks": null,
+        "head_rpc_elapsed_ns": 6038379,
+        "last_history_rpc_elapsed_ns": 142945,
+        "last_import_call_expression_elapsed_ns": null,
+        "last_requested_after": "143304c446019039d0776e8301d468ed5784303801a0b3920bf6685289544713",
+        "last_successful_after": "143304c446019039d0776e8301d468ed5784303801a0b3920bf6685289544713",
+        "pinned_tip": "507bee9ee60722726e320d75f09adaba0c89c9e31bc8462b163a68b7ca893af1",
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-failure-location-v1",
+        "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+        "stage": "history-rpc"
+      },
+      "databases": [
+        {
+          "owner": "confirmer",
+          "path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T155220Z-d26e047dedfc-bb63e773/history-artifact-read-v1/13579429780/history-native/long-history/confirmer/native.sqlite",
+          "bytes": 210350080,
+          "sha256": "dd25d69ac85aa8351b2ed7083d5121a96e97f47580cf62fadfc200ca2da36acd",
+          "after_sha256": "dd25d69ac85aa8351b2ed7083d5121a96e97f47580cf62fadfc200ca2da36acd",
+          "read_only": true,
+          "no_wal_or_shm_in_archive": true,
+          "results": {
+            "blocks": [
+              {
+                "rows_total": 3918,
+                "genesis_rows": 1,
+                "non_genesis_rows": 3917,
+                "min_height": 0,
+                "max_height": 3917,
+                "rows_with_packet": 3917
+              }
+            ],
+            "active": [
+              {
+                "tip_hex": "ACF89ADD10B454DB55E0D4998F7429D7B5D73F9EE52962A7B8DE663A1216FD9C",
+                "tip_height": 0,
+                "generation": 0,
+                "state_slot": 0
+              }
+            ],
+            "reorg": [],
+            "steps": [
+              {
+                "rows_total": 0,
+                "min_ordinal": null,
+                "max_ordinal": null
+              }
+            ],
+            "lifecycle_counts": [],
+            "lifecycle_last": [],
+            "snapshots": [
+              {
+                "rows_total": 31
+              }
+            ],
+            "slots": [
+              {
+                "slot": 0,
+                "keys": 8
+              }
+            ],
+            "pinned_target": []
+          }
+        },
+        {
+          "owner": "validator",
+          "path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T155220Z-d26e047dedfc-bb63e773/history-artifact-read-v1/13579429780/history-native/long-history/validator/native.sqlite",
+          "bytes": 220729344,
+          "sha256": "ca049e888d0aa5c22dfd6f107fc9dcd6459000186f8bb2fbed5a521cf74059d6",
+          "after_sha256": "ca049e888d0aa5c22dfd6f107fc9dcd6459000186f8bb2fbed5a521cf74059d6",
+          "read_only": true,
+          "no_wal_or_shm_in_archive": true,
+          "results": {
+            "blocks": [
+              {
+                "rows_total": 4106,
+                "genesis_rows": 1,
+                "non_genesis_rows": 4105,
+                "min_height": 0,
+                "max_height": 4105,
+                "rows_with_packet": 4105
+              }
+            ],
+            "active": [
+              {
+                "tip_hex": "507BEE9EE60722726E320D75F09ADABA0C89C9E31BC8462B163A68B7CA893AF1",
+                "tip_height": 4105,
+                "generation": 4105,
+                "state_slot": 0
+              }
+            ],
+            "reorg": [],
+            "steps": [
+              {
+                "rows_total": 0,
+                "min_ordinal": null,
+                "max_ordinal": null
+              }
+            ],
+            "lifecycle_counts": [],
+            "lifecycle_last": [],
+            "snapshots": [
+              {
+                "rows_total": 33
+              }
+            ],
+            "slots": [
+              {
+                "slot": 0,
+                "keys": 28
+              }
+            ],
+            "pinned_target": [
+              {
+                "id_hex": "507BEE9EE60722726E320D75F09ADABA0C89C9E31BC8462B163A68B7CA893AF1",
+                "height": 4105,
+                "parent_hex": "D97D5685A948D4D2BE4BA0C1DF80AFF83C79BDB991609729C5F63A4F26E12EFE"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": 13579459911,
+      "name": "priority-ubuntu-24.04-arm-prospective-merge-history-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "failure_location": {
+        "activation_cursor": null,
+        "advertised_page_complete": true,
+        "completed_import_calls": 4104,
+        "durable_committed_blocks": null,
+        "head_rpc_elapsed_ns": 6044537,
+        "last_history_rpc_elapsed_ns": 7720526,
+        "last_import_call_expression_elapsed_ns": 30069279847,
+        "last_requested_after": "aa5064bd928af9dc7b82969518b1749b4c6623eee19a34499f44fa2a601e761f",
+        "last_successful_after": "aa5064bd928af9dc7b82969518b1749b4c6623eee19a34499f44fa2a601e761f",
+        "pinned_tip": "3ac9b4bc32dd56674c94256017e566426e1e2bf6310eea45ebf0b50c233e4bb4",
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-failure-location-v1",
+        "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+        "stage": "import-call-expression"
+      },
+      "databases": [
+        {
+          "owner": "confirmer",
+          "path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T155220Z-d26e047dedfc-bb63e773/history-artifact-read-v1/13579459911/history-native/long-history/confirmer/native.sqlite",
+          "bytes": 220868608,
+          "sha256": "eef495f99f99f24e53d614b8f478037de5372bb97e0f6abcf00bda049ee5728d",
+          "after_sha256": "eef495f99f99f24e53d614b8f478037de5372bb97e0f6abcf00bda049ee5728d",
+          "read_only": true,
+          "no_wal_or_shm_in_archive": true,
+          "results": {
+            "blocks": [
+              {
+                "rows_total": 4106,
+                "genesis_rows": 1,
+                "non_genesis_rows": 4105,
+                "min_height": 0,
+                "max_height": 4105,
+                "rows_with_packet": 4105
+              }
+            ],
+            "active": [
+              {
+                "tip_hex": "6AAC6D712F88FA0DC0F4937C478371AF4E15311EEE29DB6282D46DDEE7501DD6",
+                "tip_height": 0,
+                "generation": 0,
+                "state_slot": 0
+              }
+            ],
+            "reorg": [
+              {
+                "old_tip_hex": "6AAC6D712F88FA0DC0F4937C478371AF4E15311EEE29DB6282D46DDEE7501DD6",
+                "new_tip_hex": "3AC9B4BC32DD56674C94256017E566426E1E2BF6310EEA45EBF0B50C233E4BB4",
+                "generation": 1,
+                "cursor": 3923,
+                "done": 2
+              }
+            ],
+            "steps": [
+              {
+                "rows_total": 4105,
+                "min_ordinal": 0,
+                "max_ordinal": 4104
+              }
+            ],
+            "lifecycle_counts": [
+              {
+                "outcome": 2,
+                "rows_total": 1
+              }
+            ],
+            "lifecycle_last": [
+              {
+                "operation": 1,
+                "old_tip_hex": "6AAC6D712F88FA0DC0F4937C478371AF4E15311EEE29DB6282D46DDEE7501DD6",
+                "new_tip_hex": "3AC9B4BC32DD56674C94256017E566426E1E2BF6310EEA45EBF0B50C233E4BB4",
+                "generation": 1,
+                "old_slot": 0,
+                "outcome": 2,
+                "cancelled_cursor": 3923,
+                "reason": "PUBLIC_REQUEST_DEADLINE"
+              }
+            ],
+            "snapshots": [
+              {
+                "rows_total": 33
+              }
+            ],
+            "slots": [
+              {
+                "slot": 0,
+                "keys": 8
+              },
+              {
+                "slot": 1,
+                "keys": 28
+              }
+            ],
+            "pinned_target": [
+              {
+                "id_hex": "3AC9B4BC32DD56674C94256017E566426E1E2BF6310EEA45EBF0B50C233E4BB4",
+                "height": 4105,
+                "parent_hex": "AA5064BD928AF9DC7B82969518B1749B4C6623EEE19A34499F44FA2A601E761F"
+              }
+            ]
+          }
+        },
+        {
+          "owner": "validator",
+          "path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T155220Z-d26e047dedfc-bb63e773/history-artifact-read-v1/13579459911/history-native/long-history/validator/native.sqlite",
+          "bytes": 220721152,
+          "sha256": "a5cf1fd914eb0d623af5bc3b12534095ee595d1987c2e0d9636e6c9fbc00e306",
+          "after_sha256": "a5cf1fd914eb0d623af5bc3b12534095ee595d1987c2e0d9636e6c9fbc00e306",
+          "read_only": true,
+          "no_wal_or_shm_in_archive": true,
+          "results": {
+            "blocks": [
+              {
+                "rows_total": 4106,
+                "genesis_rows": 1,
+                "non_genesis_rows": 4105,
+                "min_height": 0,
+                "max_height": 4105,
+                "rows_with_packet": 4105
+              }
+            ],
+            "active": [
+              {
+                "tip_hex": "3AC9B4BC32DD56674C94256017E566426E1E2BF6310EEA45EBF0B50C233E4BB4",
+                "tip_height": 4105,
+                "generation": 4105,
+                "state_slot": 0
+              }
+            ],
+            "reorg": [],
+            "steps": [
+              {
+                "rows_total": 0,
+                "min_ordinal": null,
+                "max_ordinal": null
+              }
+            ],
+            "lifecycle_counts": [],
+            "lifecycle_last": [],
+            "snapshots": [
+              {
+                "rows_total": 33
+              }
+            ],
+            "slots": [
+              {
+                "slot": 0,
+                "keys": 28
+              }
+            ],
+            "pinned_target": [
+              {
+                "id_hex": "3AC9B4BC32DD56674C94256017E566426E1E2BF6310EEA45EBF0B50C233E4BB4",
+                "height": 4105,
+                "parent_hex": "AA5064BD928AF9DC7B82969518B1749B4C6623EEE19A34499F44FA2A601E761F"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": 13579533384,
+      "name": "priority-ubuntu-24.04-arm-head-history-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "failure_location": {
+        "activation_cursor": null,
+        "advertised_page_complete": true,
+        "completed_import_calls": 4104,
+        "durable_committed_blocks": null,
+        "head_rpc_elapsed_ns": 6513398,
+        "last_history_rpc_elapsed_ns": 8826377,
+        "last_import_call_expression_elapsed_ns": 30073836702,
+        "last_requested_after": "0aaf732b633a9d6bd22821bcd742b670c8c9cc45d597feb5e03e572a0f45296c",
+        "last_successful_after": "0aaf732b633a9d6bd22821bcd742b670c8c9cc45d597feb5e03e572a0f45296c",
+        "pinned_tip": "884e3eb932709de927382e5a1171a4a62377c7cbb88b99c9bf49bcb1f661419d",
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-failure-location-v1",
+        "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+        "stage": "import-call-expression"
+      },
+      "databases": [
+        {
+          "owner": "confirmer",
+          "path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T155220Z-d26e047dedfc-bb63e773/history-artifact-read-v1/13579533384/history-native/long-history/confirmer/native.sqlite",
+          "bytes": 220876800,
+          "sha256": "ac36f55a2e4cb3c45f5697d02c6141921deff9f26ca9c702734c667387eeaf84",
+          "after_sha256": "ac36f55a2e4cb3c45f5697d02c6141921deff9f26ca9c702734c667387eeaf84",
+          "read_only": true,
+          "no_wal_or_shm_in_archive": true,
+          "results": {
+            "blocks": [
+              {
+                "rows_total": 4106,
+                "genesis_rows": 1,
+                "non_genesis_rows": 4105,
+                "min_height": 0,
+                "max_height": 4105,
+                "rows_with_packet": 4105
+              }
+            ],
+            "active": [
+              {
+                "tip_hex": "F2D7D3D6EA6B01CFA852C6F2AF12C3F459DFE4C6C249693B9869CCA875E7656C",
+                "tip_height": 0,
+                "generation": 0,
+                "state_slot": 0
+              }
+            ],
+            "reorg": [
+              {
+                "old_tip_hex": "F2D7D3D6EA6B01CFA852C6F2AF12C3F459DFE4C6C249693B9869CCA875E7656C",
+                "new_tip_hex": "884E3EB932709DE927382E5A1171A4A62377C7CBB88B99C9BF49BCB1F661419D",
+                "generation": 1,
+                "cursor": 3916,
+                "done": 2
+              }
+            ],
+            "steps": [
+              {
+                "rows_total": 4105,
+                "min_ordinal": 0,
+                "max_ordinal": 4104
+              }
+            ],
+            "lifecycle_counts": [
+              {
+                "outcome": 2,
+                "rows_total": 1
+              }
+            ],
+            "lifecycle_last": [
+              {
+                "operation": 1,
+                "old_tip_hex": "F2D7D3D6EA6B01CFA852C6F2AF12C3F459DFE4C6C249693B9869CCA875E7656C",
+                "new_tip_hex": "884E3EB932709DE927382E5A1171A4A62377C7CBB88B99C9BF49BCB1F661419D",
+                "generation": 1,
+                "old_slot": 0,
+                "outcome": 2,
+                "cancelled_cursor": 3916,
+                "reason": "PUBLIC_REQUEST_DEADLINE"
+              }
+            ],
+            "snapshots": [
+              {
+                "rows_total": 33
+              }
+            ],
+            "slots": [
+              {
+                "slot": 0,
+                "keys": 8
+              },
+              {
+                "slot": 1,
+                "keys": 28
+              }
+            ],
+            "pinned_target": [
+              {
+                "id_hex": "884E3EB932709DE927382E5A1171A4A62377C7CBB88B99C9BF49BCB1F661419D",
+                "height": 4105,
+                "parent_hex": "0AAF732B633A9D6BD22821BCD742B670C8C9CC45D597FEB5E03E572A0F45296C"
+              }
+            ]
+          }
+        },
+        {
+          "owner": "validator",
+          "path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T155220Z-d26e047dedfc-bb63e773/history-artifact-read-v1/13579533384/history-native/long-history/validator/native.sqlite",
+          "bytes": 220733440,
+          "sha256": "eae0d3eff8287ee589ae0cfcec03a1dc5998af4e2f68462c75171964917a1209",
+          "after_sha256": "eae0d3eff8287ee589ae0cfcec03a1dc5998af4e2f68462c75171964917a1209",
+          "read_only": true,
+          "no_wal_or_shm_in_archive": true,
+          "results": {
+            "blocks": [
+              {
+                "rows_total": 4106,
+                "genesis_rows": 1,
+                "non_genesis_rows": 4105,
+                "min_height": 0,
+                "max_height": 4105,
+                "rows_with_packet": 4105
+              }
+            ],
+            "active": [
+              {
+                "tip_hex": "884E3EB932709DE927382E5A1171A4A62377C7CBB88B99C9BF49BCB1F661419D",
+                "tip_height": 4105,
+                "generation": 4105,
+                "state_slot": 0
+              }
+            ],
+            "reorg": [],
+            "steps": [
+              {
+                "rows_total": 0,
+                "min_ordinal": null,
+                "max_ordinal": null
+              }
+            ],
+            "lifecycle_counts": [],
+            "lifecycle_last": [],
+            "snapshots": [
+              {
+                "rows_total": 33
+              }
+            ],
+            "slots": [
+              {
+                "slot": 0,
+                "keys": 28
+              }
+            ],
+            "pinned_target": [
+              {
+                "id_hex": "884E3EB932709DE927382E5A1171A4A62377C7CBB88B99C9BF49BCB1F661419D",
+                "height": 4105,
+                "parent_hex": "0AAF732B633A9D6BD22821BCD742B670C8C9CC45D597FEB5E03E572A0F45296C"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": 13580221274,
+      "name": "priority-ubuntu-24.04-head-history-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "failure_location": {
+        "activation_cursor": null,
+        "advertised_page_complete": null,
+        "completed_import_calls": 3917,
+        "durable_committed_blocks": null,
+        "head_rpc_elapsed_ns": 6302768,
+        "last_history_rpc_elapsed_ns": 154804,
+        "last_import_call_expression_elapsed_ns": null,
+        "last_requested_after": "a5134b8be5af4481ed8c718be619f0d3e850a8c57267ded46aa5e71736fa86d8",
+        "last_successful_after": "a5134b8be5af4481ed8c718be619f0d3e850a8c57267ded46aa5e71736fa86d8",
+        "pinned_tip": "df93317b42cbd0e91662827d0a41bfa5beb8b2d7a4897a4e77d892aae15df4f4",
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-failure-location-v1",
+        "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+        "stage": "history-rpc"
+      },
+      "databases": [
+        {
+          "owner": "confirmer",
+          "path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T155220Z-d26e047dedfc-bb63e773/history-artifact-read-v1/13580221274/history-native/long-history/confirmer/native.sqlite",
+          "bytes": 210292736,
+          "sha256": "2507b4c34f8a62e92720b472f645013411bf82e5f973051bbddd8789132f03c7",
+          "after_sha256": "2507b4c34f8a62e92720b472f645013411bf82e5f973051bbddd8789132f03c7",
+          "read_only": true,
+          "no_wal_or_shm_in_archive": true,
+          "results": {
+            "blocks": [
+              {
+                "rows_total": 3918,
+                "genesis_rows": 1,
+                "non_genesis_rows": 3917,
+                "min_height": 0,
+                "max_height": 3917,
+                "rows_with_packet": 3917
+              }
+            ],
+            "active": [
+              {
+                "tip_hex": "E769B1E50F6148BFFB1B9D94592D2296500AB103EB1E3E7540FE52717E06B6D2",
+                "tip_height": 0,
+                "generation": 0,
+                "state_slot": 0
+              }
+            ],
+            "reorg": [],
+            "steps": [
+              {
+                "rows_total": 0,
+                "min_ordinal": null,
+                "max_ordinal": null
+              }
+            ],
+            "lifecycle_counts": [],
+            "lifecycle_last": [],
+            "snapshots": [
+              {
+                "rows_total": 31
+              }
+            ],
+            "slots": [
+              {
+                "slot": 0,
+                "keys": 8
+              }
+            ],
+            "pinned_target": []
+          }
+        },
+        {
+          "owner": "validator",
+          "path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T155220Z-d26e047dedfc-bb63e773/history-artifact-read-v1/13580221274/history-native/long-history/validator/native.sqlite",
+          "bytes": 220635136,
+          "sha256": "8becf0de73fdfda9231ddeb41a059d9c6ea6349ce39c16f0b6243851aacfcb00",
+          "after_sha256": "8becf0de73fdfda9231ddeb41a059d9c6ea6349ce39c16f0b6243851aacfcb00",
+          "read_only": true,
+          "no_wal_or_shm_in_archive": true,
+          "results": {
+            "blocks": [
+              {
+                "rows_total": 4106,
+                "genesis_rows": 1,
+                "non_genesis_rows": 4105,
+                "min_height": 0,
+                "max_height": 4105,
+                "rows_with_packet": 4105
+              }
+            ],
+            "active": [
+              {
+                "tip_hex": "DF93317B42CBD0E91662827D0A41BFA5BEB8B2D7A4897A4E77D892AAE15DF4F4",
+                "tip_height": 4105,
+                "generation": 4105,
+                "state_slot": 0
+              }
+            ],
+            "reorg": [],
+            "steps": [
+              {
+                "rows_total": 0,
+                "min_ordinal": null,
+                "max_ordinal": null
+              }
+            ],
+            "lifecycle_counts": [],
+            "lifecycle_last": [],
+            "snapshots": [
+              {
+                "rows_total": 33
+              }
+            ],
+            "slots": [
+              {
+                "slot": 0,
+                "keys": 28
+              }
+            ],
+            "pinned_target": [
+              {
+                "id_hex": "DF93317B42CBD0E91662827D0A41BFA5BEB8B2D7A4897A4E77D892AAE15DF4F4",
+                "height": 4105,
+                "parent_hex": "4C14B44CF3D059CDCD8536756C5B69C8BB581AD7F2D9DE824DB978B31FC25A0F"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "native_gate_validated": false
+}

@@ -1,0 +1,13 @@
+{
+  "RUSTUP_TOOLCHAIN": "1.95.0",
+  "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+  "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+  "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-pon-outcome-7612-qualified-target",
+  "CARGO_BUILD_JOBS": "2",
+  "CARGO_NET_OFFLINE": "true",
+  "RUSTFLAGS": null,
+  "CARGO_ENCODED_RUSTFLAGS": null,
+  "CC": null,
+  "CFLAGS": null,
+  "RUSTC_WRAPPER": null
+}

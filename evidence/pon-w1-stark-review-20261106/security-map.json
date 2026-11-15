@@ -1,0 +1,715 @@
+{
+  "schema": "TRNM-W1-PROFILE-SECURITY-NOTES1",
+  "profile_revision": "20261104",
+  "generator": {
+    "repo_path": "scripts/w1_profile_source_map.py",
+    "sha256": "624685e3b9915b7b560fc065b8e949179f22625c1c5687dab420d9baad0c0bed"
+  },
+  "scope": "Read-only extraction of exact cached verifier crate source, historical full receipt metadata and explicit security gaps. No fresh proving, cryptographic verification, consensus admission or quantum-bit qualification is claimed by this script.",
+  "decision": {
+    "consensus_admission": false,
+    "post_quantum_soundness_qualified": false,
+    "security_bits_quantum": null,
+    "production_qualified": false,
+    "full_dependency_semantic_audit_complete": false,
+    "selected_source_archive_integrity_checks_passed": true
+  },
+  "lockfile": {
+    "repo_path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock",
+    "sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865",
+    "package_scope": "Seven exact packages; the selected files are byte-equal to locked archive members. This does not claim an audit of all transitive source files or enabled build features."
+  },
+  "packages": [
+    {
+      "name": "risc0-zkp",
+      "version": "3.0.5",
+      "registry_source": "registry+https://github.com/rust-lang/crates.io-index",
+      "locked_archive_sha256": "21c0c921e5e2d44197940d387a45e29c6165e318b5a168fdfdbd50f50ba03678",
+      "observed_archive_sha256": "21c0c921e5e2d44197940d387a45e29c6165e318b5a168fdfdbd50f50ba03678",
+      "archive_matches_lock": true,
+      "crate_vcs": {
+        "git": {
+          "sha1": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9"
+        },
+        "path_in_vcs": "risc0/zkp"
+      },
+      "selected_source_files": [
+        {
+          "path": "src/lib.rs",
+          "bytes": 1762,
+          "sha256": "107521d2426442fbc9358b7b9ae5650be92d670ea85e9a34aec7b9e9cc27dc6d",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/adapter.rs",
+          "bytes": 12957,
+          "sha256": "1d1aca1dd7cc4c12477e0d887a3edfa0825b822efee671170ec667c7dd65ca1d",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/core/digest.rs",
+          "bytes": 8231,
+          "sha256": "15ea8c15627e5074eea6d0e71895bd006d28f0cfe9ddb2f2dd73de6cbcd22772",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/core/hash/mod.rs",
+          "bytes": 4275,
+          "sha256": "c4cb4bcd5077bf65c3bb8cc148bb26e41cb4ca317e05325156e8cd5a090d99d9",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/core/hash/poseidon2/mod.rs",
+          "bytes": 13790,
+          "sha256": "a2993a2e29fa33345a6a9ce0b4f192efe7412746b92b172b0eed8ce78ee8471f",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/core/hash/poseidon2/consts.rs",
+          "bytes": 14258,
+          "sha256": "5ee51bce046bce1306181a43136aa0731dcf976ab10e2e8d82db88711efdcc41",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/core/hash/poseidon2/rng.rs",
+          "bytes": 2509,
+          "sha256": "8c5868a8b258896835e2c3c93a84cfe01167f1a446e4d74a3b7be94ae1bf8017",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/core/hash/sha/mod.rs",
+          "bytes": 18818,
+          "sha256": "47ace16612d682d66f5c6e281b0d3a97688314566295692e06e4189015baf7ff",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/core/hash/sha/cpu.rs",
+          "bytes": 4766,
+          "sha256": "9e3e41ec2edf10f52a7315eb767674ca6f1adc891f96e3789ec88f904e2e51c4",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/core/hash/sha/rng.rs",
+          "bytes": 3379,
+          "sha256": "d2cae9f342e975e894b40c1d8862b507f504980f5b2288068e5def8ed141900c",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/prove/soundness.rs",
+          "bytes": 11127,
+          "sha256": "6d814ec839d0f4b33f275cdfa2d382f4ce455957b1ec7932d9bc717ccf732921",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/verify/mod.rs",
+          "bytes": 21753,
+          "sha256": "003a67af89a7cfaeac9ff23808225cdc4d81c41d64956f20243574531b166c4f",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/verify/fri.rs",
+          "bytes": 5802,
+          "sha256": "a601cfad5d01b294f934d697d6d832c57662e4778eac20ac549b1da53d11e377",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/verify/merkle.rs",
+          "bytes": 7173,
+          "sha256": "267ab31c38f7502d9d0d3feebe7eb2fc2cbed9d3af4db66fde349e2c3b61a478",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/verify/read_iop.rs",
+          "bytes": 3473,
+          "sha256": "40a7027486fbce5979bd045860e3014ebc1d40f242c4b71ce2adf5722b6d81bc",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": ".cargo_vcs_info.json",
+          "bytes": 103,
+          "sha256": "d34604fa2a032b1befcc902e4af782f5eba95df694eb70f3b31169cbe91542ea",
+          "matches_locked_archive_member": true
+        }
+      ]
+    },
+    {
+      "name": "risc0-zkvm",
+      "version": "3.0.6",
+      "registry_source": "registry+https://github.com/rust-lang/crates.io-index",
+      "locked_archive_sha256": "a5d4f24ec767f71a1663a4d24cf9d02b6bfee44c64647cae677227817051007a",
+      "observed_archive_sha256": "a5d4f24ec767f71a1663a4d24cf9d02b6bfee44c64647cae677227817051007a",
+      "archive_matches_lock": true,
+      "crate_vcs": {
+        "git": {
+          "sha1": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9"
+        },
+        "path_in_vcs": "risc0/zkvm"
+      },
+      "selected_source_files": [
+        {
+          "path": "src/receipt.rs",
+          "bytes": 45343,
+          "sha256": "ec445670befb0fad19bfe46eede73e551de03d9f91fa1fb81c9149dc04912fed",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/receipt/succinct.rs",
+          "bytes": 16709,
+          "sha256": "8e0165b3210e30e77074763d71d85fd0595e4190b96725182f33665b7df90d60",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/receipt/segment.rs",
+          "bytes": 8148,
+          "sha256": "be0e30e38e7bf665db12fa8d3267a987c957b1b30f5b7f2c601c00149bf36416",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/receipt/merkle.rs",
+          "bytes": 7725,
+          "sha256": "b3eeb7cc62bba1dfa9ba32a75b905510b4777b9f61004891163d8f43ee8072d6",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": ".cargo_vcs_info.json",
+          "bytes": 104,
+          "sha256": "767243f912a67d5228ffbe75acae84f7e6a36d86f64c38f01e1b82f189d32e00",
+          "matches_locked_archive_member": true
+        }
+      ]
+    },
+    {
+      "name": "risc0-core",
+      "version": "3.0.2",
+      "registry_source": "registry+https://github.com/rust-lang/crates.io-index",
+      "locked_archive_sha256": "d6eb2d2b2c6cac0e43cbb2202daacee1a2f24d0dfa03fd08887a11dc6defdcc1",
+      "observed_archive_sha256": "d6eb2d2b2c6cac0e43cbb2202daacee1a2f24d0dfa03fd08887a11dc6defdcc1",
+      "archive_matches_lock": true,
+      "crate_vcs": {
+        "git": {
+          "sha1": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9"
+        },
+        "path_in_vcs": "risc0/core"
+      },
+      "selected_source_files": [
+        {
+          "path": "src/field/baby_bear.rs",
+          "bytes": 28372,
+          "sha256": "df3e77d606dd74d78fb6b6f3dbbe72455c5ed5b091f7a74de8c049e85b857ff3",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": ".cargo_vcs_info.json",
+          "bytes": 104,
+          "sha256": "7ec12a3f64ec94e911b130546a882140781325285ed8cb690d35651056b14ebd",
+          "matches_locked_archive_member": true
+        }
+      ]
+    },
+    {
+      "name": "risc0-circuit-recursion",
+      "version": "4.0.5",
+      "registry_source": "registry+https://github.com/rust-lang/crates.io-index",
+      "locked_archive_sha256": "40dd640122abcc67d4d4e4f055c68cbc3ad2efb8589c65c2b23d354632971b60",
+      "observed_archive_sha256": "40dd640122abcc67d4d4e4f055c68cbc3ad2efb8589c65c2b23d354632971b60",
+      "archive_matches_lock": true,
+      "crate_vcs": {
+        "git": {
+          "sha1": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9"
+        },
+        "path_in_vcs": "risc0/circuit/recursion"
+      },
+      "selected_source_files": [
+        {
+          "path": "src/control_id.rs",
+          "bytes": 13225,
+          "sha256": "6fedf46fad3ca0ce3e537139be7873a43dd68fee5fc803d3e58604b4e9ae16cb",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/info.rs",
+          "bytes": 1815,
+          "sha256": "128c29a8ddf0560fb3a69c03fa1d959fab542d2fa09eae6794d28be871e345e9",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/poly_ext.rs",
+          "bytes": 922857,
+          "sha256": "176f99041c0d3867ecd100b7292adbeb29294a0abe7a8f1f0a05807278da43b3",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/taps.rs",
+          "bytes": 90720,
+          "sha256": "d32cbf5350d6f724cf3582ef92fb6c392f993b51ee89c5384f7ad79bab43ce83",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": ".cargo_vcs_info.json",
+          "bytes": 117,
+          "sha256": "266af9d93c3d230e47891935265a427327e906a0a6bf405f3908665c828e9c8a",
+          "matches_locked_archive_member": true
+        }
+      ]
+    },
+    {
+      "name": "risc0-circuit-rv32im",
+      "version": "4.0.5",
+      "registry_source": "registry+https://github.com/rust-lang/crates.io-index",
+      "locked_archive_sha256": "cb11231aa4b74bcc0c8d16597893fbd7ea6f6a9ebbc35e16bfd06b467c7ee104",
+      "observed_archive_sha256": "cb11231aa4b74bcc0c8d16597893fbd7ea6f6a9ebbc35e16bfd06b467c7ee104",
+      "archive_matches_lock": true,
+      "crate_vcs": {
+        "git": {
+          "sha1": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9"
+        },
+        "path_in_vcs": "risc0/circuit/rv32im"
+      },
+      "selected_source_files": [
+        {
+          "path": "src/zirgen/info.rs",
+          "bytes": 3411,
+          "sha256": "4d7b76bc2843e55a4a0429c52542b94a2cd30120e7f6ca4ecad10a16494ddb30",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": ".cargo_vcs_info.json",
+          "bytes": 114,
+          "sha256": "a6a99d0675d2a3bfef07f31e734c6e27e119bd8c3b3f5722e8ddc74febb42310",
+          "matches_locked_archive_member": true
+        }
+      ]
+    },
+    {
+      "name": "risc0-binfmt",
+      "version": "3.0.5",
+      "registry_source": "registry+https://github.com/rust-lang/crates.io-index",
+      "locked_archive_sha256": "d836c6ad82f4ced7c61d5feedf905a17780312e393aa681d29cc0bbc5131672b",
+      "observed_archive_sha256": "d836c6ad82f4ced7c61d5feedf905a17780312e393aa681d29cc0bbc5131672b",
+      "archive_matches_lock": true,
+      "crate_vcs": {
+        "git": {
+          "sha1": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9"
+        },
+        "path_in_vcs": "risc0/binfmt"
+      },
+      "selected_source_files": [
+        {
+          "path": "src/hash.rs",
+          "bytes": 5305,
+          "sha256": "dc1439d9def4fff1d97d442ada4da4848109dfd31631120e8fb956f3c643eaed",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": ".cargo_vcs_info.json",
+          "bytes": 106,
+          "sha256": "df94066e9564503920b1bb0cdae37ec4a226199b8407f577702c54de2bfbab05",
+          "matches_locked_archive_member": true
+        }
+      ]
+    },
+    {
+      "name": "sha2",
+      "version": "0.10.9",
+      "registry_source": "registry+https://github.com/rust-lang/crates.io-index",
+      "locked_archive_sha256": "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283",
+      "observed_archive_sha256": "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283",
+      "archive_matches_lock": true,
+      "crate_vcs": {
+        "git": {
+          "sha1": "82c36a428f8d6f05f3bfccdedb243e9d1f85359d"
+        },
+        "path_in_vcs": "sha2"
+      },
+      "selected_source_files": [
+        {
+          "path": "src/lib.rs",
+          "bytes": 3559,
+          "sha256": "b519427535b1855bbe8c3d0517b2f3d04a607cf0cb4327cc716cd5d90da5dbf1",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/sha256.rs",
+          "bytes": 1460,
+          "sha256": "6ced9112d4ceb4eff20b56d93a063f72ecef4c6ec3b215f08696a853b09083c3",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/sha256/soft.rs",
+          "bytes": 6370,
+          "sha256": "98e765a8e8dfa0af31f2b76570f212e6b3099522bf300e1554cbbd9fd5d02960",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": "src/consts.rs",
+          "bytes": 5641,
+          "sha256": "2f820349fa7cbf9fecc1d4aabbd1a721bb1badc3f32ef9e903826960b6f42523",
+          "matches_locked_archive_member": true
+        },
+        {
+          "path": ".cargo_vcs_info.json",
+          "bytes": 98,
+          "sha256": "f8d28575b5dbe21c96080e37a0bc29a64e7ed75928b4cb000a7da4a187069d7a",
+          "matches_locked_archive_member": true
+        }
+      ]
+    }
+  ],
+  "stark_parameters": {
+    "source": "risc0-zkp-3.0.5/src/lib.rs",
+    "queries": 50,
+    "inverse_rate": 4,
+    "rate_numerator": 1,
+    "rate_denominator": 4,
+    "fri_fold_po2": 4,
+    "fri_fold": 16,
+    "fri_min_degree": 256,
+    "supported_cycle_po2_min": 13,
+    "supported_cycle_po2_max": 24,
+    "component_security_comment": {
+      "model": "conjectured Toy Problem model, not a complete quantum theorem",
+      "target_bits_at_segment_po2_20": 97,
+      "comment_bits_at_segment_po2_24": 95,
+      "source": "risc0-zkp-3.0.5/src/prove/soundness.rs",
+      "measured_or_proved_full_w1_security_bits": null
+    }
+  },
+  "fields": {
+    "w1_modulus": 4294967291,
+    "stark_base_modulus": 2013265921,
+    "extension_degree": 4,
+    "extension_polynomial": "X^4 + 11",
+    "representation": "u32 reduced Montgomery field words; canonical-value conversion is distinct from raw digest words",
+    "source": "risc0-core-3.0.2/src/field/baby_bear.rs",
+    "relation_preservation": "The frozen zkVM proves the original integer instruction semantics using W1 modulus 4294967291. Direct AIR translation would require explicit range/carry/modular-reduction constraints; substituting the proof field would change the relation."
+  },
+  "hash_interfaces": {
+    "poseidon2": {
+      "source": "risc0-zkp-3.0.5/src/core/hash/poseidon2/mod.rs",
+      "state_elements": 24,
+      "rate_elements": 16,
+      "capacity_elements": 8,
+      "output_elements": 8,
+      "full_rounds_first": 4,
+      "full_rounds_last": 4,
+      "partial_rounds": 21,
+      "sbox_exponent": 7,
+      "round_constants": {
+        "elements": 696,
+        "all_canonical_baby_bear": true,
+        "normal_form_u32_le_sha256": "da91a11319d755a00d90e9522b2ad02307cc669f6be32cfc541eec4ae1d5a5c0",
+        "source": "risc0-zkp-3.0.5/src/core/hash/poseidon2/consts.rs",
+        "source_file_sha256": "5ee51bce046bce1306181a43136aa0731dcf976ab10e2e8d82db88711efdcc41"
+      },
+      "internal_matrix_diagonal": {
+        "elements": 24,
+        "all_canonical_baby_bear": true,
+        "normal_form_u32_le_sha256": "d3e9054a1e95e132e278d6d7974ec23cd6dee6ac522c4f9ea3d2b61c1aa0765a",
+        "source": "risc0-zkp-3.0.5/src/core/hash/poseidon2/consts.rs",
+        "source_file_sha256": "5ee51bce046bce1306181a43136aa0731dcf976ab10e2e8d82db88711efdcc41"
+      },
+      "reference_external_matrix": {
+        "elements": 576,
+        "all_canonical_baby_bear": true,
+        "normal_form_u32_le_sha256": "023712788da695120cd87463bbafcdd722651f4dafefda42eca09acac8aacda8",
+        "source": "risc0-zkp-3.0.5/src/core/hash/poseidon2/consts.rs",
+        "source_file_sha256": "5ee51bce046bce1306181a43136aa0731dcf976ab10e2e8d82db88711efdcc41"
+      },
+      "merkle_pair": "Two 8-word reduced Montgomery digests are passed as 16 BabyBear elements to unpadded_hash.",
+      "leaf": "Field elements, or flattened extension subelements, use unpadded_hash. The source explicitly limits its collision-resistance statement to equal-size vectors; variable input size requires separate binding.",
+      "encoding": "The first eight output elements become raw Montgomery u32 digest words.",
+      "fiat_shamir_source": "risc0-zkp-3.0.5/src/core/hash/poseidon2/rng.rs",
+      "fiat_shamir_notes": "Initial all-zero 24-element state; mix adds eight digest elements and permutes. random_bits draws four field elements, replaces a zero candidate, then masks low bits. This concrete transcript/sampling algorithm needs theorem mapping; it is not defined by an abstract hash name."
+    },
+    "sha256": {
+      "source": "risc0-zkp-3.0.5/src/core/hash/sha/mod.rs",
+      "native_cpu_implementation": "risc0-zkp-3.0.5/src/core/hash/sha/cpu.rs",
+      "rustcrypto_package": "sha2-0.10.9",
+      "standard_bytes_hash": "Sha256::hash_bytes uses padded FIPS 180-4 SHA-256.",
+      "merkle_pair": "Sha256::hash_pair is a single compression block with the standard IV, not padded SHA-256(A || B).",
+      "field_leaf": "hash_raw_data_slice zero-pads the final partial block but does not add the standard SHA-256 trailer.",
+      "claim_and_parameter_tags": "risc0-binfmt tagged_struct hashes a padded SHA-256 tag digest, child digests, little-endian data words and u16 child count, then padded SHA-256.",
+      "fiat_shamir_source": "risc0-zkp-3.0.5/src/core/hash/sha/rng.rs",
+      "fiat_shamir_notes": "Two pools are initialized with padded SHA-256 of Hello and World; mixing XORs into pool0 and performs ordered hash_pair updates. This alternative proof hash suite is in the SDK default map; the historical full receipt actually selects poseidon2."
+    }
+  },
+  "recursive_verifier_defaults": {
+    "source": "risc0-zkvm-3.0.6/src/receipt/succinct.rs",
+    "control_source": "risc0-circuit-recursion-4.0.5/src/control_id.rs",
+    "control_root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
+    "inner_control_root_option": null,
+    "effective_inner_control_root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
+    "default_max_cycle_po2": 22,
+    "minimum_lift_cycle_po2": 14,
+    "default_control_ids": [
+      {
+        "control_id": "0d79bc33b4760b4783cbb96fdc87724c7e0c463eb0ba1b2705d39f43c698bd2d",
+        "program": "identity.zkr"
+      },
+      {
+        "control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+        "program": "join.zkr"
+      },
+      {
+        "control_id": "96cdf605f755f175a5661812810f2d491507c05f2ea4a83e4c3cad693d26651e",
+        "program": "join_povw.zkr"
+      },
+      {
+        "control_id": "f74a894ff593584f65847630ead1a23af78c5f5fed2b61090866e01fa5767f12",
+        "program": "join_unwrap_povw.zkr"
+      },
+      {
+        "control_id": "411fa636f2d364648f035174d3778d6340d9ae1dd648fc35657c173f01e27e5f",
+        "program": "lift_rv32im_v2_14.zkr"
+      },
+      {
+        "control_id": "1ca3ca03030719064ba61b3125bdd326fc57f74e799ef860bdea6f3227381e16",
+        "program": "lift_rv32im_v2_15.zkr"
+      },
+      {
+        "control_id": "c32b3627d2b3d60c64adf523a98bd16c0ff607471f3d6630d1f26d5e9406d841",
+        "program": "lift_rv32im_v2_16.zkr"
+      },
+      {
+        "control_id": "c9b08054994f542a6310b00d9b6fc6528ed7bb6f4ca5476a686847127cdfdc5b",
+        "program": "lift_rv32im_v2_17.zkr"
+      },
+      {
+        "control_id": "e7934a23ddce1423b425cf32aa23be29f48cd40e0b6ff9376dce6f3bf9d0bc35",
+        "program": "lift_rv32im_v2_18.zkr"
+      },
+      {
+        "control_id": "8c2fdd36ede09a4b9d316a43c51f1160cbd8876659c5f35810c3a119c60d3843",
+        "program": "lift_rv32im_v2_19.zkr"
+      },
+      {
+        "control_id": "34530b42028fb631c90e1226bb0e750d4b9b593840d45216f75dca449dac7734",
+        "program": "lift_rv32im_v2_20.zkr"
+      },
+      {
+        "control_id": "fd84d83092a1e1244d423a26d89c892ab098b467c6d82229912deb26e37d2562",
+        "program": "lift_rv32im_v2_21.zkr"
+      },
+      {
+        "control_id": "9d9dbf33535ab11f52a93839dfd23b352b7626009e81d9459fd04e488898ec6a",
+        "program": "lift_rv32im_v2_22.zkr"
+      },
+      {
+        "control_id": "c6972402cc81bc6c1122e65aa7cf463f3ac3f477c7dd860582ca7420fc7b8b02",
+        "program": "lift_rv32im_v2_povw_14.zkr"
+      },
+      {
+        "control_id": "2f6ea1104bdd5955faa135611e8f803e7b4461703b937e704da70955ec115467",
+        "program": "lift_rv32im_v2_povw_15.zkr"
+      },
+      {
+        "control_id": "a7b55654228123448cd67c400d9bf80b4e54eb3997ee92103e900903b6578862",
+        "program": "lift_rv32im_v2_povw_16.zkr"
+      },
+      {
+        "control_id": "2adab2445391035b21f255606a1ba060a7d5a64db5cdf13d9fda7f22a2853270",
+        "program": "lift_rv32im_v2_povw_17.zkr"
+      },
+      {
+        "control_id": "58b27422240db834c08b8e6c12000c093efce8613263f05825c380009c41da48",
+        "program": "lift_rv32im_v2_povw_18.zkr"
+      },
+      {
+        "control_id": "26c84437d3e26875b259880d0f29da47ed5ca869133637701d33fb15a83dce4b",
+        "program": "lift_rv32im_v2_povw_19.zkr"
+      },
+      {
+        "control_id": "177fde1441dc735dbd6a58245d82b2036623ac41547dc345f1fd7c486ac51462",
+        "program": "lift_rv32im_v2_povw_20.zkr"
+      },
+      {
+        "control_id": "eac3fb487080a62e6ff85d331dd72a4706e50e55c9cb842dea48d71e3e119a04",
+        "program": "lift_rv32im_v2_povw_21.zkr"
+      },
+      {
+        "control_id": "0344cd54d62d2a1b6538b674d5aa141250ff4c5be08c6e3d16cb5e1de632252d",
+        "program": "lift_rv32im_v2_povw_22.zkr"
+      },
+      {
+        "control_id": "53a7b23d07f99e5d5685e85874f5181e8486aa267a0ae607ffe9ba47c8bdda4a",
+        "program": "resolve.zkr"
+      },
+      {
+        "control_id": "20ac6e29b1806a143b508414140e2e15e461f93e04e3830af39cca362b8f005d",
+        "program": "resolve_povw.zkr"
+      },
+      {
+        "control_id": "ba1d7275d5840e4f998e2c5120810c0eb197e90219696e2a64dec7662aa3cb06",
+        "program": "resolve_unwrap_povw.zkr"
+      },
+      {
+        "control_id": "7771415b778fea1923440e2eb22c4a1e1d7ada2d42cbe03d13402743c0988a31",
+        "program": "union.zkr"
+      },
+      {
+        "control_id": "1688f04cca489638862dba455c1d5c561513f975c885a3491f0fe12df761c847",
+        "program": "unwrap_povw.zkr"
+      }
+    ],
+    "control_merkle_depth": 8,
+    "control_tree_layout": "The sorted-name control list occupies initial leaves of a depth-eight binary Merkle tree, with zero digests for remaining leaves; tree pair hashing uses Poseidon2.",
+    "proof_system_info_ascii": "RISC0_STARK:v1__",
+    "recursion_circuit_info_ascii": "RECURSION:rev1v1",
+    "rv32im_circuit_info_ascii": "RV32IM:v2rev2___",
+    "parameter_digest_tag": "risc0.SuccinctReceiptVerifierParameters",
+    "parameter_digest_independently_recomputed_from_source": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
+    "parameter_digest_matches_sdk_stability_vector": true,
+    "default_hash_suite_names": [
+      "blake2b",
+      "poseidon2",
+      "sha-256"
+    ],
+    "must_not_silently_change_control_root_to_execution_segment_po2": true
+  },
+  "saved_full_receipt": {
+    "repo_path": "evidence/pon-w1-complete-succinct-20261028/full-proof/succinct.bin",
+    "sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b",
+    "bytes": 256886,
+    "wire_tag": 1,
+    "receipt_kind": "Succinct",
+    "seal_words": 55667,
+    "control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+    "control_program": "join.zkr",
+    "hash_function": "poseidon2",
+    "verifier_parameters_digest": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
+    "inner_control_root_from_seal_output": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
+    "metadata_observation_kind": "Partial direct wire parsing plus hash-bound historical verifier log; not fresh cryptographic verification by this script.",
+    "partial_wire_checks": {
+      "control_id_offset": 222680,
+      "hash_name_length_and_bytes_offset": 239711,
+      "parameter_digest_offset": 239728,
+      "log_receipt_hash_matches_actual_bytes": true,
+      "wire_control_id_matches_join_zkr_and_historical_log": true,
+      "wire_parameter_digest_matches_recomputed_default_and_historical_log": true,
+      "decoded_inner_control_root_matches_default": true
+    },
+    "historical_log": {
+      "repo_path": "evidence/pon-w1-complete-succinct-20261028/measurements/fresh-hardened-full-gate/stdout.log",
+      "sha256": "319c2e4b613ba986877123e71b76cda901b3befd1387746e0fe9aa59b6ee5cfe"
+    },
+    "frozen_manifest": {
+      "repo_path": "evidence/pon-w1-complete-succinct-20261028/full-proof/manifest.json",
+      "sha256": "3e066aec79c5ed08a977a1f149c228b18cd006101028b36681dc1b62df1d1549",
+      "prover_guest_source": "64be7c4ad51d432e7736ad135476262e23e968f5",
+      "guest_sha256": "6b58409420f2bd3f7a733de531ce20144580b259fde8ca9362b43d9728a8772c",
+      "r0vm_sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6",
+      "full_claim_digest": "deafd64bc422833babb6cbc7050f7f768c88ee92e941a8b383ad376b0a258afc",
+      "segments": 59,
+      "segment_limit_po2": 18
+    },
+    "same_work_rule": "Unchanged header+trace work ID; proof randomness, encoding, recursion and batching grant zero extra tickets."
+  },
+  "research_mapping": {
+    "qrom_framework": {
+      "url": "https://eprint.iacr.org/2025/2166",
+      "title": "How to Prove Post-Quantum Security for Succinct Non-Interactive Reductions",
+      "metadata_revision": "2026-03-02",
+      "venue": "EUROCRYPT 2026",
+      "manual_review_as_of": "2026-11-04",
+      "review_basis": "Manually reviewed publication metadata and abstract at the cited URL; this offline tool does not retrieve or reverify the publication.",
+      "full_text_review_available": false,
+      "known_conditions_from_abstract": [
+        "Extended BCS transformation for an IOR",
+        "Post-quantum state-restoration security of the IOR; classical round-by-round security is sufficient in the framework",
+        "Quantum extraction property of vector commitments; Merkle commitments are analyzed",
+        "Adaptive straightline quantum extraction in the QROM"
+      ],
+      "exact_theorem_ids": null,
+      "concrete_reduction_constants": null,
+      "full_parameter_instantiation_complete": false
+    },
+    "rs_counterexample": {
+      "url": "https://eprint.iacr.org/2025/2046",
+      "title": "On Reed-Solomon Proximity Gaps Conjectures",
+      "scope": "Refutes the stated up-to-capacity correlated-agreement / WHIR mutual-correlated-agreement / DEEP-FRI list-decodability conjectures; does not alone refute all FRI or proven decoding regimes."
+    },
+    "small_field_capacity_obstruction": {
+      "url": "https://cic.iacr.org/p/3/3/44",
+      "pdf_url": "https://cic.iacr.org/p/3/3/44/pdf",
+      "doi": "10.62056/akdkmpxqi",
+      "title": "Small-field hash-based SNARGs are less sound than conjectured",
+      "authors": [
+        "Giacomo Fenzi",
+        "Antonio Sanso"
+      ],
+      "published": "2026-10-26",
+      "manual_review_as_of": "2026-11-06",
+      "review_basis": "Manual full-text review of the published paper, especially Corollary 4, Remark 2 and Table 2; this offline tool does not fetch or authenticate the publication.",
+      "table2_parameter_tuple": {
+        "base_modulus": 2013265921,
+        "extension_degree": 4,
+        "rate_numerator": 1,
+        "rate_denominator": 4,
+        "queries": 50,
+        "paper_block_length": 2097152,
+        "conjectured_query_phase_bits_display": 100,
+        "negative_log2_attack_success_lower_bound_display": 92.5,
+        "source_location": "Table 2, PDF page 14; Corollary 4 and Remark 2, PDF page 12"
+      },
+      "scope": "Corollary 4 concerns Construction 1 with an extension code of a base-field linear code. It lower-bounds information-theoretic adversarial success; 92.5 is neither a security guarantee nor an assigned W1 or quantum security level.",
+      "fri_connection": "The Lemma 6 attack does not transfer verbatim to the ethSTARK toy protocol. The paper relates FRI-based systems through BSCH+26 Lemma 8.4 and the list-size bounds in Corollaries 2 and 3.",
+      "limits": "No polynomial-time compiled-SNARG attack or complete W1 attack is established by this review. Do not subtract the table loss from the official 96/99 estimates or replace the retained component equations with 92.5."
+    },
+    "prime_field_near_capacity": {
+      "url": "https://arxiv.org/abs/2604.09724",
+      "scope": "A specific family fails at radii O(1/log n) below capacity. No direct break of this concrete RISC0 profile has been established here."
+    },
+    "whir_comparison_only": {
+      "url": "https://github.com/worldfnd/whir/blob/main/README.md",
+      "readme_git_blob": "ef91b05da5b048b51399f1c2045813d974e85b26",
+      "upstream_state": "Academic prototype, explicitly not ready for production",
+      "default_security_level": 100,
+      "default_soundness_type": "ConjectureList",
+      "default_field": "Goldilocks2",
+      "default_merkle_hash": "Blake3",
+      "actual_dependency_of_saved_w1_candidate": false
+    }
+  },
+  "unresolved_obligations": [
+    {
+      "id": "whole_qrom_reduction",
+      "state": "UNRESOLVED",
+      "reason": "No complete instantiated reduction maps the exact AIR/IOR, Merkle construction, transcript RNG, recursive composition and concrete hashes to a quantum acceptance bound."
+    },
+    {
+      "id": "theorem_fulltext_and_constants",
+      "state": "UNRESOLVED",
+      "reason": "The QROM framework still has only a manual abstract review here, without full-text theorem mapping or concrete reduction losses. The separately identified small-field paper received a full-text review; neither annotation is a new network fetch or an instantiated W1 security theorem."
+    },
+    {
+      "id": "hash_instantiation",
+      "state": "UNRESOLVED",
+      "reason": "An ideal QROM theorem is not a proof for the implemented Poseidon2 sponge/RNG. W1 SHA-256, padded claim hashes, unpadded field-leaf hashes and one-block Merkle compression have distinct interfaces. Fixed message lengths/tree shape may justify uses, but every use must be mapped before applying an extraction theorem."
+    },
+    {
+      "id": "ior_state_restoration",
+      "state": "UNRESOLVED",
+      "reason": "Classical round-by-round or quantum state-restoration security has not been instantiated for each accepted recursion program, RV32IM circuit and SHA extension under these exact parameters."
+    },
+    {
+      "id": "conjectures_and_composition",
+      "state": "UNRESOLVED",
+      "reason": "The locked component calculator distinguishes conjectured and proven regimes; its 97-bit target comment is not a 59-segment, complete-recursion or quantum bound. Per-layer, adaptive/multi-proof, quantum-query and total composition terms remain unqualified."
+    },
+    {
+      "id": "known_capacity_model_obstructions",
+      "state": "UNRESOLVED",
+      "reason": "Up-to-capacity conjectures have known counterexamples. Fenzi-Sanso (2026), Table 2, also evaluates the matching BabyBear/degree-4/rate-1/4/50-query tuple in an information-theoretic toy model at n=2^21. Historical toy-formula reproduction is not an established acceptance bound; applicability to the complete W1 relation and recursion still requires a formal mapping."
+    },
+    {
+      "id": "accepted_control_set",
+      "state": "UNRESOLVED",
+      "reason": "The historical receipt binds a default root allowing 27 recursion programs up to po2=22, although this frozen execution used segment po2=18. Security must cover the actual accepted set; narrowing the root silently invalidates the original receipt and requires a new profile/proof."
+    },
+    {
+      "id": "prover_guest_graph",
+      "state": "PARTIAL",
+      "reason": "This audit validates selected exact local verifier crate bytes against locked .crate archives. The frozen 3.0.3 prover/r0vm and guest toolchain/SHA extension require their separate immutable-source and artifact mapping; this is not a full dependency graph or compiler proof."
+    }
+  ]
+}

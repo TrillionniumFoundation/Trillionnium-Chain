@@ -1,0 +1,41 @@
+{
+  "schema": "pon-pq-cell-release-v2-local-source-evidence",
+  "source_git_blob_sha1": {
+    "formal/pon-nakamoto-v1/pq_envelope.py": "27e40b04ac8eaa381ad4dc017f23f226f99f3f41",
+    "formal/pon-nakamoto-v1/pq_transaction.py": "c8ac18136ef447eaa958111392eee05f92819aac",
+    "formal/pon-nakamoto-v1/test_pq_transaction.py": "9b7a5a8e469db90f1ba8ce8c694b133521fb3fd2",
+    "formal/pon-nakamoto-v1/pq_cell_release.py": "6ac001369795b84c0cbad23daa0842225e617a3d",
+    "formal/pon-nakamoto-v1/test_pq_cell_release.py": "9b3df51ce6bb48ce07346a67223baa86277de1f3"
+  },
+  "environment": {
+    "python": "3.13.5",
+    "openssl": "OpenSSL 3.5.5 27 Jan 2026",
+    "os": "Linux",
+    "arch": "x86_64",
+    "full_checkout": false,
+    "rustc_available": false
+  },
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_pq_transaction.py",
+    "test_pq_cell_release.py"
+  ],
+  "result": {
+    "passed": 23,
+    "failed": 0,
+    "elapsed_seconds": 5.033,
+    "log": "combined-regression.log",
+    "log_blob_sha1": "fb54027eac17e9b44023d45cbfe8b72bfa341495"
+  },
+  "authority": {
+    "model_adoption_field_present": false,
+    "hepta_final_use": false,
+    "release_authority": false,
+    "live_consensus": false,
+    "independent_accepted": false,
+    "production_activation": false
+  }
+}

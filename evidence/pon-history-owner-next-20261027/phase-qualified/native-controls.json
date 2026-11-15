@@ -1,0 +1,343 @@
+[
+  {
+    "group": "phase-protocol-controls",
+    "schema": "history-frozen-native-control-v2",
+    "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "binary_sha256": "ab429f029fcef972187151167528697fd01668cb979ac823edec96b083950d1c",
+    "argv": [
+      "/tmp/history-phase-qualified-20261028/public_v3_multiprocess",
+      "phase_host::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "outer_observer_timeout_seconds": 30,
+    "started_utc": "2026-10-28T00:51:58.435858+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.007807877998857293,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 289,
+      "sha256": "47adf27ed10e2ef9862ca6f180d82728ea4187fb5b7cd69dab3bd646b95015bf"
+    },
+    "stderr.txt": {
+      "bytes": 842,
+      "sha256": "ba8e312c259c84e8d06c0d864cbac0b1f57eb662c1de23778e5c4e48eb773cdd"
+    },
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0
+      }
+    ]
+  },
+  {
+    "group": "history-original",
+    "schema": "history-frozen-native-control-v2",
+    "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "binary_sha256": "0f82f1a43c785ac6610789df27379c3bba166036bb39b5589d75b92ef6fdc927",
+    "argv": [
+      "/tmp/history-phase-qualified-20261028/trnm_pon_node",
+      "ingress::history_import::tests::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "outer_observer_timeout_seconds": 120,
+    "started_utc": "2026-10-28T00:51:58.583893+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 6.937566339998739,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 3342,
+      "sha256": "cb9f3ebae1b549af8aab795bac005704ffda2bc15466b8c6bcfc2994793f96fb"
+    },
+    "stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 9,
+        "failed": 0,
+        "ignored": 1
+      }
+    ]
+  },
+  {
+    "group": "scalar-original",
+    "schema": "history-frozen-native-control-v2",
+    "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "binary_sha256": "0f82f1a43c785ac6610789df27379c3bba166036bb39b5589d75b92ef6fdc927",
+    "argv": [
+      "/tmp/history-phase-qualified-20261028/trnm_pon_node",
+      "ingress::public_v3::scalar_cpu::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "outer_observer_timeout_seconds": 120,
+    "started_utc": "2026-10-28T00:52:05.688633+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.874302550997527,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 9269,
+      "sha256": "ef18086fc8cad6dc4a0eeb65ddd78a9c0a5385449a442e72e580831f197b6acc"
+    },
+    "stderr.txt": {
+      "bytes": 530,
+      "sha256": "6b767c053c5b1705a11a3fff384b7d278b78a9aebfab584498406fd9ba8f3203"
+    },
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 57,
+        "failed": 0,
+        "ignored": 0
+      }
+    ]
+  },
+  {
+    "group": "poison-original",
+    "schema": "history-frozen-native-control-v2",
+    "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "binary_sha256": "0f82f1a43c785ac6610789df27379c3bba166036bb39b5589d75b92ef6fdc927",
+    "argv": [
+      "/tmp/history-phase-qualified-20261028/trnm_pon_node",
+      "ingress::public_v3::tests::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "outer_observer_timeout_seconds": 30,
+    "started_utc": "2026-10-28T00:52:08.695726+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.0036326879999251105,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 228,
+      "sha256": "dd7262468e8555b072f75cef6df963f1be475bc7baee0ee4a76cb5a7d1aebbdf"
+    },
+    "stderr.txt": {
+      "bytes": 209,
+      "sha256": "f04ccd914002bec6b0926168268e482a166fc28bc961c1222df631c0561eb2a7"
+    },
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      }
+    ]
+  },
+  {
+    "group": "inactive-original",
+    "schema": "history-frozen-native-control-v2",
+    "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "binary_sha256": "0f82f1a43c785ac6610789df27379c3bba166036bb39b5589d75b92ef6fdc927",
+    "argv": [
+      "/tmp/history-phase-qualified-20261028/trnm_pon_node",
+      "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "outer_observer_timeout_seconds": 90,
+    "started_utc": "2026-10-28T00:52:08.829917+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.5335761009991984,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 5678,
+      "sha256": "5a4dd157d7b6901a988338b0562774b72def4b0da5eb5b2f625799935a627fe9"
+    },
+    "stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      }
+    ]
+  },
+  {
+    "group": "detached-original-integrity",
+    "schema": "history-frozen-native-control-v2",
+    "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "binary_sha256": "0f82f1a43c785ac6610789df27379c3bba166036bb39b5589d75b92ef6fdc927",
+    "argv": [
+      "/tmp/history-phase-qualified-20261028/trnm_pon_node",
+      "store::detached_admission::tests::",
+      "--nocapture",
+      "--test-threads=1",
+      "--skip",
+      "admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "--skip",
+      "authenticated_large_parent_original_schedule_supplementary_denominator"
+    ],
+    "outer_observer_timeout_seconds": 90,
+    "started_utc": "2026-10-28T00:52:11.493582+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.5152825670011225,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 1733,
+      "sha256": "e46c0daa59a256c752f3bb4b495d383eda9ed0fb35cbac31b3934e50608cf84f"
+    },
+    "stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 12,
+        "failed": 0,
+        "ignored": 1
+      }
+    ]
+  },
+  {
+    "group": "large-original",
+    "schema": "history-frozen-native-control-v2",
+    "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "binary_sha256": "0f82f1a43c785ac6610789df27379c3bba166036bb39b5589d75b92ef6fdc927",
+    "argv": [
+      "/tmp/history-phase-qualified-20261028/trnm_pon_node",
+      "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "outer_observer_timeout_seconds": 180,
+    "started_utc": "2026-10-28T00:52:12.135275+00:00",
+    "exit_code": 101,
+    "elapsed_seconds": 26.752375412004767,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 1496,
+      "sha256": "9957c4fca7cd749bd3fd4f1d94855f840a8702ba8a9233a00241f0a595174131"
+    },
+    "stderr.txt": {
+      "bytes": 483,
+      "sha256": "8798e7dd8472edb1ca2663c2d880221c58519fa49ee1e8cbcae49421e09472bf"
+    },
+    "harness_results": [
+      {
+        "outcome": "FAILED",
+        "passed": 0,
+        "failed": 1,
+        "ignored": 0
+      }
+    ]
+  },
+  {
+    "group": "large-authenticated-independent",
+    "schema": "history-frozen-native-control-v2",
+    "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "binary_sha256": "0f82f1a43c785ac6610789df27379c3bba166036bb39b5589d75b92ef6fdc927",
+    "argv": [
+      "/tmp/history-phase-qualified-20261028/trnm_pon_node",
+      "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "outer_observer_timeout_seconds": 180,
+    "started_utc": "2026-10-28T00:52:39.023358+00:00",
+    "exit_code": 101,
+    "elapsed_seconds": 65.33130051600165,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 1473,
+      "sha256": "34edb690c8476a2c7cdafbff866939cdc63701497228b9554fe7802257158273"
+    },
+    "stderr.txt": {
+      "bytes": 472,
+      "sha256": "91f5ee8275eb48f97c3eda7127b9ad489d66e47e4ff17d9121cdbbd023037b33"
+    },
+    "harness_results": [
+      {
+        "outcome": "FAILED",
+        "passed": 0,
+        "failed": 1,
+        "ignored": 0
+      }
+    ]
+  },
+  {
+    "group": "actual-w1-depletion",
+    "schema": "history-frozen-native-control-v2",
+    "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "binary_sha256": "0f82f1a43c785ac6610789df27379c3bba166036bb39b5589d75b92ef6fdc927",
+    "argv": [
+      "/tmp/history-phase-qualified-20261028/trnm_pon_node",
+      "ingress::public_v3::shared_cpu_domain_source_tests::process_cold_real_w1_cpu_depletion_preserves_read_and_recovers_honest_admission",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "outer_observer_timeout_seconds": 60,
+    "started_utc": "2026-10-28T00:53:44.501504+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.017889754002681,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 617,
+      "sha256": "2f79073c1065edf9e8057dd27e9d7596798b8a4ab1a6b52f5f04c9fced746d2e"
+    },
+    "stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      }
+    ]
+  },
+  {
+    "group": "withheld-original-explicit",
+    "schema": "history-frozen-native-control-v2",
+    "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "binary_sha256": "0f82f1a43c785ac6610789df27379c3bba166036bb39b5589d75b92ef6fdc927",
+    "argv": [
+      "/tmp/history-phase-qualified-20261028/trnm_pon_node",
+      "ingress::tests::authenticated_activation_recovery::withheld_original_frame_must_not_stall_a_different_honest_signed_mutation",
+      "--exact",
+      "--ignored",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "outer_observer_timeout_seconds": 90,
+    "started_utc": "2026-10-28T00:53:45.660521+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 10.095125756000925,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 405859,
+      "sha256": "b2ca12e2f747d091225657c069c12d0745e62ea2267c228334a53e5b680bf182"
+    },
+    "stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      }
+    ]
+  }
+]

@@ -1,0 +1,25 @@
+{
+  "id": "cargo-graph",
+  "argv": [
+    "cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--all-features",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 168.98492889499994,
+  "finished_utc": "2026-11-11T00:58:08.206745+00:00",
+  "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_status_after": "",
+  "stdout_sha256": "20f09091e2a935165eeb46fd16720238e63b50acb77ae4d1a487fc7c11d64843",
+  "stderr_sha256": "4c9eb667b06d15fae0587960059a48122a7acc60b10acd07c1b3eee2e2167a76",
+  "pass": true,
+  "qualification_granted": false
+}

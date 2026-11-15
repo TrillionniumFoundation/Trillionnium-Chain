@@ -1,0 +1,1 @@
+{"cryptographic_acceptance": false, "exact_source_blobs": 133, "native_transport_contract_checked": true, "node_activated": false, "schema": "trnm-pq-cross-branch-check-v1", "status": "HOLD_NO_GO", "upstream_heads": 6, "whole_native_authorization_migrated": false}

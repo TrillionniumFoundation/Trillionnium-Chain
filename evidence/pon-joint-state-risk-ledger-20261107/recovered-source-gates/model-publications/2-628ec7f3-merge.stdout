@@ -1,0 +1,18 @@
+更新 8527ec9..628ec7f
+Fast-forward
+ .../event-coverage/run-001/attempt.json            |   1 +
+ .../event-coverage/run-001/event-coverage.json     |   1 +
+ .../event-coverage/verification.json               |  17 +
+ .../CERTIFICATE_EVENT_COVERAGE_V1.md               | 293 ++++++++++
+ formal/pon-nakamoto-v1/README.md                   |  19 +
+ .../pon-nakamoto-v1/certificate_event_coverage.py  | 622 +++++++++++++++++++++
+ .../certificate_event_coverage_tests.py            | 284 ++++++++++
+ scripts/ci/check_ci_contract.py                    |   1 +
+ scripts/ci/ci_job.sh                               |   1 +
+ 9 files changed, 1239 insertions(+)
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/event-coverage/run-001/attempt.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/event-coverage/run-001/event-coverage.json
+ create mode 100644 evidence/pon-joint-state-risk-ledger-20261107/event-coverage/verification.json
+ create mode 100644 formal/pon-nakamoto-v1/CERTIFICATE_EVENT_COVERAGE_V1.md
+ create mode 100644 formal/pon-nakamoto-v1/certificate_event_coverage.py
+ create mode 100644 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py

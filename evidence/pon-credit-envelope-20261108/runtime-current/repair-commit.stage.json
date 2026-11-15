@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "user.name=Qian QI",
+    "-c",
+    "user.email=102159240+ProfHepta@users.noreply.github.com",
+    "commit",
+    "-m",
+    "fix(pon): refresh distributed native source inventory"
+  ],
+  "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+  "elapsed_seconds": 0.265412,
+  "exception": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-08T12:57:42.565592+00:00",
+  "passed": true,
+  "stage": "repair-commit",
+  "started_utc": "2026-11-08T12:57:42.300183+00:00",
+  "stderr": "repair-commit.stderr.log",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "repair-commit.stdout.log",
+  "stdout_sha256": "d484567faf1025232612540283e6974ae92fdc15a6be65282aebd4806820ddee"
+}

@@ -1,0 +1,909 @@
+{
+  "schema": "trnm-post-ci-integration-review-v1",
+  "reviewer": "/root/state_history_audit",
+  "scope": "Read-only source integration review of nine frozen Rust files plus workflow, source-pin and documentation changes over bebb; no build, performance run, commit, push or source edit by this reviewer.",
+  "base_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "base_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+  "conclusion": {
+    "source_semantic_blockers_found": [],
+    "source_integration": "No unresolved source-semantic blocker found in the reviewed composition.",
+    "source_guards": "Final 375 corpus pins and 20 inline workflow pins must match actual file bytes; verified below.",
+    "all_checks_passed": false,
+    "full_staged_whitespace_check": "Exit 2 is retained. Raw evidence patch context lines, raw stdout trailing blank lines and the evidence copy of the whitespace report remain unmodified; this is not relabelled as PASS.",
+    "exact_committed_candidate_tested": false,
+    "arm_executed_in_this_review": false,
+    "host_live_boundary_executed_in_this_review": false,
+    "original_pressure_executed_in_this_review": false,
+    "qualification_promoted": false
+  },
+  "preflight": {
+    "instructions_read": [
+      "AGENTS.md",
+      "scripts/project-preflight.sh",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md (relevant current continuation)"
+    ],
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--dev"
+    ],
+    "exit_code": 0,
+    "actual_stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-post-ci-20261103\", \"remote_policy_mutated\": false}\n"
+  },
+  "arc_pool_review": {
+    "source": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+    "production_scope": "The only non-test Rust behavior change in these nine files is private canonical-string allocation retention within the existing complete-root arithmetic pool.",
+    "publication": [
+      "The builder borrows its owner exclusively; prior material is read during input collection while current leaves, pending strings, prior-use flags and the lazy allocation index remain operation-local.",
+      "Producer error, remembered wire-limit error, abandoned builder and duplicate/key-hash collision return before prior material is taken. Existing successful material and observation remain intact for these normal rejection paths.",
+      "Full current hashes and the complete partition/root reduction precede ownership transfer. After the existing material.take boundary, the new code adds only infallible normal-return selection/accounting; no new callback, authorization, fallible Result or externally observable partial publication is introduced.",
+      "The existing tree-too-large successful fallback may clear optional retained material, unchanged from bebb. This review does not claim allocation-panic/OOM transactional recovery or a new unwind guarantee.",
+      "Old string ownership moves on success; no old value allocation is released or credited while a fallible input is still being collected. The transient index is dropped with the builder."
+    ],
+    "equality_and_hashes": [
+      "Private immutable PlainValue contains complete canonical bytes, including delimiters. Cheap ValueIndex(length, first/last bytes) is only a one-candidate lookup accelerator.",
+      "Occupied candidates share an Arc only after equality of every current encoded byte. A same-index different-value collision independently allocates/charges the new value and neither replaces nor expands the candidate bucket.",
+      "Each full key retains its own originally computed key/leaf hashes. Cold add_encoded computes original hashes before optional retention; key/value misses keep original encoding and hashing.",
+      "Warm try_plain_json_string and add_encoded require exact full-key and complete-value equality. No allocation pointer or cheap index is a mathematical or authorization cache key.",
+      "Original M06 complete grammar/count pass, wire limits, leaf collision check, complete State binding and full derive encode_for_cache remain outside this patch and byte-identical."
+    ],
+    "accounting": [
+      "The final retained set charges key bytes and ExactString descriptors per entry, PlainValue descriptor and boxed bytes once per actual selected allocation, a conservative four-usize Arc/alignment allowance, plus the string-array handle and cached charge field.",
+      "Arc::as_ptr is used solely for billing identity. A value enters paid_values only after its entry fits; selected entries keep those pointers alive until publication, preventing pointer reuse during accounting.",
+      "Equal contents in distinct allocations are charged separately. A pending new key borrowing a prior Arc pays that value in the final set when no prior key survives.",
+      "Tree arrays retain priority; the pending budget subtracts all still-live prior material and gives no premature replacement credit. The stored string_charge_bytes is set only for a completed immutable material.",
+      "The original two-MiB payload and sixteen-MiB retained-software-charge ceilings remain unchanged. Temporary leaves/index/Arc references and allocator peak RSS are not certified by the retained-material limit."
+    ],
+    "relevant_negative_controls": [
+      "Natural common-edge index collisions with full-byte inequality; later equal bytes in independent allocations.",
+      "Exact cap versus cap-minus-one charging; first shared entry rejected by tree-priority trimming.",
+      "New key as the sole surviving owner of an old value allocation.",
+      "Abandonment, Limit, duplicate/key collision and producer CANCELLED preserve old observation/material and release pending ownership.",
+      "Full M06 current grammar precedence and changed middle byte/renamed key; complete Node non-account string set includes model:current."
+    ],
+    "previous_review_reused": "Final five source files are independently rehashed against source-freeze.json, so previous detailed source review and the independently recomputed finite component campaign apply to those exact five file contents, not automatically to the combined runtime."
+  },
+  "native_refusal_readback_review": {
+    "source": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+    "cfg": "Parent detached_admission.rs includes this module only under cfg(test).",
+    "binding": "Unchanged dispatch_shared_with_metered_w1 obtains native first, then operation.finish settles its separate CPU receipt, then returns MeteredWorkFactOutcome. Settlement does not rewrite native.",
+    "trigger": "The diagnostic now runs on outer Err or outer Ok with inner native Err; both checks borrow the original Result.",
+    "timing": [
+      "dispatch_elapsed_ns, cpu_budget_after, cpu_flow_after and arithmetic_after are captured before the added refusal readback.",
+      "The added read_active occurs after the original operation/worker settlement and after the existing stage snapshots. It is excluded from those reported original intervals, not removed from an in-flight deadline or paid operation.",
+      "The diagnostic does not retry admission, mint credit, rewrite either Result, widen the existing ten-second checkpoint deadline or move the original strict attempt/native unwrap assertions.",
+      "Read failure retains null equality plus an error. Old bebb null readbacks remain unknown; they do not establish rollback, unchanged active state or absent durable publication.",
+      "The earlier arithmetic_after owner.lock().unwrap remains as before; the patch does not promise observation if an earlier panic or poisoned-lock unwrap prevents reaching the new readback."
+    ],
+    "observability_only": true
+  },
+  "cell_review": {
+    "source": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+    "cfg": "discovery.rs includes sequence_tests only under cfg(all(test, unix)).",
+    "readiness": [
+      "Each original worker has one capacity-one sync channel. Initialization result is sent once after serving-thread DB open where applicable, original bounds/address validation and successful nonblocking listener setup.",
+      "The receiver object is placed in its owning RAII fixture before waiting. A timeout/disconnect/initializer error fails the fixture; the channel cannot require a request or an unbounded send queue.",
+      "All receiver waits and setup.finish share one setup deadline created before fixture packing. Consumer DBs and listeners are prepared before TTL records are signed.",
+      "Ready confirms initialization only, not an accepted request, future availability or scheduler/deadline margin. The original production serve functions still process every request.",
+      "The ten-second setup acceptance cutoff cannot forcibly interrupt a synchronous DB call or Drop::join; it is not a process hard timeout. No stronger wall-clock guarantee is claimed."
+    ],
+    "preserved_limits": {
+      "ordinary_client_request_ms": 200,
+      "rendezvous_request_ms": 250,
+      "short_ttl_client_request_ms": 4000,
+      "client_and_peer_overall_ms": 10000,
+      "rendezvous_proxy_and_trap_lifetime_ms": 30000,
+      "short_signed_ttl_seconds": 2,
+      "long_signed_ttl_seconds": 300,
+      "connections": 64,
+      "response_budget_bytes": 4194304,
+      "workers": 2,
+      "real_proxy_release_after_expiry_ms": 25
+    },
+    "request_and_deadline_semantics": [
+      "No readiness TCP probe, replacement request, new retry, additional production sleep or fabricated successful response is added. Existing two announcements and one fetch per selector remain.",
+      "original_deadline is captured before observe executes, and the operation receives that same value. Diagnostic clock/log time is not reimbursed or used to renew the request.",
+      "The short-TTL test still requires real request arrival and an actual backend manifest before expiry, reply after expiry, completion before the original overall deadline, result Err and no output publication.",
+      "The original live manifest bytes and closed-client-socket handling are preserved. Original serving/connection limits continue to apply during later setup; readiness does not guarantee enough remaining service lifetime.",
+      "Static phase/kind/errno and numeric timing/count metadata are bounded by these three fixtures. New logs do not print arbitrary errors, request/signature/key or payload bytes."
+    ],
+    "retained_test_semantics": "All three original selector names and all 32 original assertion conditions remain; two new setup assertions are added. Only one old assertion's diagnostic result Debug suffix is removed.",
+    "qualification": "Local selected-package passes are read from existing receipts. They do not prove startup was the sole cause of old hosted errno 11 and are not complete runtime/ARM/Host acceptance."
+  },
+  "pq_invoke_review": {
+    "sources": [
+      "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+      "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs"
+    ],
+    "cfg": "Both the altered observe_operation macro definition and the test_observation module are cfg(test); the cfg(not(test)) macro body is byte-identical to bebb.",
+    "semantics": [
+      "invoke accepts FnOnce and calls it once, returning the exact crate::Result<T>. The action remains a closure, retaining its local question-mark and return boundary.",
+      "Normal Err finishes the same operation; unwind still exits via the existing guard/drop behavior. The change introduces no recovery, swallowed error or successful fallback.",
+      "No public API, dependency, wire/signed domain, crypto profile, self-verification, original 250/200ms deadlines, poison/late-CAS ordering or production macro is changed.",
+      "The two integrated files match the previously reviewed and Rust-1.95 tiny rustc/clippy harness-validated blobs. That tiny control was not a whole Node build.",
+      "The original 43 exact selector registry/workflow remain byte-identical, with all outcomes still required."
+    ]
+  },
+  "gate_review": {
+    "branch_wire_count": {
+      "before_passed": 22,
+      "after_passed": 27,
+      "ignored": 1,
+      "cause": "Five additional protocol arithmetic tests; no removed tests."
+    },
+    "recent_authenticated": {
+      "passed": 83,
+      "postwrite": 23,
+      "retained": 60,
+      "change": "No Node tests added or removed in this continuation; original strict counts preserved."
+    },
+    "pq": {
+      "required": 43,
+      "unique": 43,
+      "registry_unchanged": true,
+      "workflow_unchanged": true
+    },
+    "source_inventory": "Nine existing source paths remain owned by the original M00/M06/M09/M15 packages; no new production module, Cargo dependency or feature/profile change. Benchmark driver remains evidence-only.",
+    "manifest_semantics": "Only eleven pinned_blobs values change (nine Rust files and two workflows); all other corpus manifest fields and all pin keys remain equal to bebb.",
+    "initial_findings_resolved_by_root": [
+      "Two updated workflow pins initially still named bebb blobs; root updated them to actual branch fc154885213e4c4c0a7d562b392038c81af3dcdc and recent 3962e705b2c1fe8bb4ccfd3280e2efbd7310be95, then this reviewer verified all 375 again.",
+      "Evidence README initially called the action macro pq_phase!; root corrected it to the actual observe_operation! name."
+    ]
+  },
+  "documentation_review": {
+    "reviewed": [
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md continuation",
+      "docs/protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md changed arithmetic section",
+      "evidence/pon-ci-closure-20261103/README.md"
+    ],
+    "conclusions": [
+      "Published bebb, component candidate and combined working source outcomes are distinguished; old failures are not retroactively credited to a repair.",
+      "The original ARM CPU refusal, null readback uncertainty, original Cell failures and CodeQL warnings remain explicit.",
+      "Complete commitment measurement includes encode_for_cache; five paired process ratios are not represented as independent warm samples or p95/p99.",
+      "The common-edge root-warm median 1.049715288 and individual pair 1.222894 are retained, so no universal nonregression is asserted.",
+      "RPC thread/process CPU and inclusive Host/graph/import scopes remain distinct; 4s/F0/30s service deficits and the late native success remain open."
+    ],
+    "independent_peer_review": "/root/acceptance_audit independently reviewed both changed protocol/plan sections and reported no specific documentation blocker; static gates belong to its separately retained receipts."
+  },
+  "prior_finite_campaign_summary": {
+    "independently_recomputed": true,
+    "processes": 10,
+    "samples": 700,
+    "successes": 660,
+    "expected_errors": {
+      "RANGE": 20,
+      "LIMIT": 20
+    },
+    "repeated_root_warm_paired_median": 0.14636171106908608,
+    "repeated_complete_derive_warm_paired_median": 0.6210364715728104,
+    "common_edge_root_warm_paired_median": 1.0497152883751915,
+    "common_edge_root_warm_pair_ratios": [
+      0.8803989468050156,
+      1.0497152883751915,
+      1.049753542353996,
+      1.2228940717597419,
+      0.8688148274679605
+    ],
+    "preregistered_thresholds_passed": 10,
+    "limitations": [
+      "Eight warm calls are summed within each process, then five paired ratios are evaluated; calls are correlated.",
+      "Two independent original-profile x64 ELFs and same input/driver; no ARM, Host kernel boundary or real public-pressure workload was measured.",
+      "Retained-material accounting is not peak RSS. Optional retention on the unique/common-edge controls decreases from 445 to 438 entries.",
+      "No extra sample, rerun, exclusion or altered decision rule was introduced after observing results."
+    ]
+  },
+  "remaining_validation": [
+    "Exact committed-source full workspace runtime and required hosted HEAD/actual-main-merge gates.",
+    "Original ARM two large-state CPU selectors on the final composition, without changed budgets/profile.",
+    "Original live Host four-second/F0/thirty-second real pressure and confirmation denominators; local arithmetic improvement alone does not close them.",
+    "Full staged diff --check remains nonzero due to unmodified raw evidence; it must remain separately reported.",
+    "Independent operators/hardware/security qualification and other original acceptance owners remain outside this review."
+  ],
+  "reviewer_actions": {
+    "source_edits": 0,
+    "builds": 0,
+    "benchmark_or_stress_runs": 0,
+    "commits": 0,
+    "pushes": 0,
+    "output_files": [
+      "/workspace/scratch/abae1861b451/post-ci-integration-review.json"
+    ]
+  },
+  "recorded_at_utc": "2026-11-03T16:41:11.592533+00:00",
+  "worktree": "/workspace/scratch/abae1861b451/chain-post-ci",
+  "current_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "candidate_committed": false,
+  "rust_files": [
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+      "bytes": 34032,
+      "sha256": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+      "git_blob": "6a568982251c7b14727e4a55b6e4d843f8c89c56",
+      "inventory_owners": [
+        {
+          "package": "trnm-data-availability",
+          "module": "M09"
+        }
+      ],
+      "new_test_names": [],
+      "removed_test_names": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs",
+      "bytes": 15043,
+      "sha256": "64dd7e47ad7c9916884a581f1e9ad50c00fa3aa4393b3546c44dd628ba106585",
+      "git_blob": "40b58175be7ff7c617ee063dec37ed41922f959e",
+      "inventory_owners": [
+        {
+          "package": "trnm-mvcc-fee",
+          "module": "M06"
+        }
+      ],
+      "new_test_names": [
+        "shared_string_storage_keeps_cold_encoding_counts_and_full_current_validation"
+      ],
+      "removed_test_names": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+      "bytes": 34388,
+      "sha256": "bf32a18dc984dac8679efc0575ad0c0cc5356ab0fd414356c69e4e664410916e",
+      "git_blob": "241003ed34eff9a0a0ab4992acfa527ad38d702d",
+      "inventory_owners": [
+        {
+          "package": "trnm-pon-node",
+          "module": "M15"
+        }
+      ],
+      "new_test_names": [],
+      "removed_test_names": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs",
+      "bytes": 38049,
+      "sha256": "924e239fda06a4066a1271da045f1bbd62965d8db4c907897ca4a486d701877f",
+      "git_blob": "e0ac7c518715943c8ba1bd73f383beef8d7a7781",
+      "inventory_owners": [
+        {
+          "package": "trnm-pon-node",
+          "module": "M15"
+        }
+      ],
+      "new_test_names": [],
+      "removed_test_names": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+      "bytes": 39638,
+      "sha256": "cd8be69073987f500a5233f3233f7f19120621c5196c7c08c4c7b58a2a9945c4",
+      "git_blob": "a6fd9c8e4f514d19ca58295272cde7968b9b5abd",
+      "inventory_owners": [
+        {
+          "package": "trnm-pon-node",
+          "module": "M15"
+        }
+      ],
+      "new_test_names": [],
+      "removed_test_names": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs",
+      "bytes": 9981,
+      "sha256": "3d417c3ee8af2d66c9985c768a9088a88cd733d1b7a4e1d2f858fd470f1a5397",
+      "git_blob": "cb82771b6cf02518cccaa029c692cc05345e6ab6",
+      "inventory_owners": [
+        {
+          "package": "trnm-pon-node",
+          "module": "M15"
+        }
+      ],
+      "new_test_names": [],
+      "removed_test_names": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "bytes": 12457,
+      "sha256": "59b964d342a650c0f9b1b395034e113647841e939a6f5b30c1ed1f95c2995ca9",
+      "git_blob": "abd262b2ed92ce3ac720d17bbe0b61e8f082c675",
+      "inventory_owners": [
+        {
+          "package": "trnm-pon-node",
+          "module": "M15"
+        }
+      ],
+      "new_test_names": [],
+      "removed_test_names": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "bytes": 21244,
+      "sha256": "8b18f12347a32c4ad55dae7c8fd7400144e0505fdd26ee7407362beafee7f0bb",
+      "git_blob": "14b5cbf88ad07fcc76a15c109c6f58bf46b84465",
+      "inventory_owners": [
+        {
+          "package": "trnm-protocol",
+          "module": "M00"
+        }
+      ],
+      "new_test_names": [],
+      "removed_test_names": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs",
+      "bytes": 30536,
+      "sha256": "04d70da9048f5e85a6b580ccfdcf9bcd26576af802084af53bc37f70de71c647",
+      "git_blob": "321027f2a9677b9c20c09319e9a4c3b778718e79",
+      "inventory_owners": [
+        {
+          "package": "trnm-protocol",
+          "module": "M00"
+        }
+      ],
+      "new_test_names": [
+        "equal_value_bytes_in_distinct_allocations_are_never_charged_as_one",
+        "pending_shared_values_preserve_old_material_and_release_on_every_failed_finish",
+        "shared_value_index_collisions_and_unique_values_only_limit_optional_retention",
+        "shared_values_charge_only_selected_allocations_and_migrate_unused_old_values",
+        "shared_values_keep_every_key_and_its_original_hashes_in_the_same_small_pool"
+      ],
+      "removed_test_names": []
+    }
+  ],
+  "reviewed_rust_patch_sha256": "f0a6f0d21e05b9f60d0f940e54af83bfe8111a0cb95a191752a15a531220c244",
+  "workflow_config_doc_files": [
+    {
+      "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "bytes": 14100,
+      "sha256": "2b61b300078b022c51314cf3d39e87fa4963e747a665d9b499efa0bff64ab58c",
+      "git_blob": "fc154885213e4c4c0a7d562b392038c81af3dcdc"
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "bytes": 30191,
+      "sha256": "2e37602bb5cf02c56c311e03acae64c1e04ee836caaa7971135536638f17579b",
+      "git_blob": "3962e705b2c1fe8bb4ccfd3280e2efbd7310be95"
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "bytes": 68797,
+      "sha256": "e24ae0b5bb6c58813c71eee6cd0791a2a23e0332002f0a21cba2d4261b12b282",
+      "git_blob": "34ab15f7a78b04e3f955e649a0943c2f3b8abc28"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "bytes": 399915,
+      "sha256": "00683940451d470c5c9b691651f47e30ced36161da7d875bbce767dff13becb5",
+      "git_blob": "79eec868b01dc5f226d2ddc98436d26566bf978e"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md",
+      "bytes": 42690,
+      "sha256": "37dcd234c2e453f6f843218ea8050483ac586f503045cbdea1d765071e296461",
+      "git_blob": "7b6710ccf8bb1a9f7376b62b8b148899b360a013"
+    },
+    {
+      "path": "evidence/pon-ci-closure-20261103/README.md",
+      "bytes": 18735,
+      "sha256": "682cce27970fbb6712e5785a18dfaabf3d0776bd4065d649b2a4bba7bed18572",
+      "git_blob": "7190ac7103b6846f582c6eda656fb9767381fd6e"
+    }
+  ],
+  "five_file_freeze_comparison": {
+    "source_freeze_sha256": "b8f0ac38e239552acae1693f95b7c62109aedcd9178be632f1296285eab25e4b",
+    "files": [
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs",
+        "sha256_match": true,
+        "git_blob_match": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs",
+        "sha256_match": true,
+        "git_blob_match": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+        "sha256_match": true,
+        "git_blob_match": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+        "sha256_match": true,
+        "git_blob_match": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs",
+        "sha256_match": true,
+        "git_blob_match": true
+      }
+    ]
+  },
+  "cell_frozen_source_match": {
+    "sha256_match": true,
+    "git_blob_match": true
+  },
+  "pq_previously_reviewed_blobs_match": {
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": true,
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs": true
+  },
+  "corpus_pin_verification": {
+    "checked": 375,
+    "matched": 375,
+    "mismatches": [],
+    "all_other_fields_unchanged": true,
+    "added_or_removed_keys": false,
+    "changed_values": [
+      {
+        "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+        "before": "f27f3b7f389ecbbc98ab06d026dac0bd72812f9f",
+        "after": "fc154885213e4c4c0a7d562b392038c81af3dcdc"
+      },
+      {
+        "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "before": "7fe1dc1171695194e040d4b0d38674b8b5afc552",
+        "after": "3962e705b2c1fe8bb4ccfd3280e2efbd7310be95"
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+        "before": "71e7a36bc9ba448fd9383baa0f758c9c55836df0",
+        "after": "6a568982251c7b14727e4a55b6e4d843f8c89c56"
+      },
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs",
+        "before": "a1f2412d673bd4d3a628e33a9b83ad4f39b52c7f",
+        "after": "40b58175be7ff7c617ee063dec37ed41922f959e"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs",
+        "before": "fc02fbf611e1b853637114841be8b0202eb1c32e",
+        "after": "cb82771b6cf02518cccaa029c692cc05345e6ab6"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+        "before": "308ee4541d34682f82debb574eb523f23d1faad4",
+        "after": "abd262b2ed92ce3ac720d17bbe0b61e8f082c675"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+        "before": "827ba53a9ed39b06cbb5f39c5a25effd65ce5422",
+        "after": "14b5cbf88ad07fcc76a15c109c6f58bf46b84465"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs",
+        "before": "5a6e5b89cfec6ee1941b96ac5585cd5bc8d98d8d",
+        "after": "321027f2a9677b9c20c09319e9a4c3b778718e79"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+        "before": "2edb656a0e7795db5d8950596b3ee87458de2d8b",
+        "after": "241003ed34eff9a0a0ab4992acfa527ad38d702d"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+        "before": "89c338175a2f8eee9d6c7edb114524e522daaeb9",
+        "after": "a6fd9c8e4f514d19ca58295272cde7968b9b5abd"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs",
+        "before": "fb103ea998c8c9907b2276d6f3ec9703f5718609",
+        "after": "e0ac7c518715943c8ba1bd73f383beef8d7a7781"
+      }
+    ]
+  },
+  "inline_pin_verification": {
+    "checked": 20,
+    "matched": 20,
+    "entries": [
+      {
+        "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+        "expected": "5daaa4461859d2dbe1f0fc91c32b03e606e0dbbf",
+        "actual": "5daaa4461859d2dbe1f0fc91c32b03e606e0dbbf"
+      },
+      {
+        "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs",
+        "expected": "2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf",
+        "actual": "2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf"
+      },
+      {
+        "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+        "expected": "cb07d1606590b1979a64f8b662c6a8349738226b",
+        "actual": "cb07d1606590b1979a64f8b662c6a8349738226b"
+      },
+      {
+        "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml",
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "expected": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+        "actual": "9333ce92c6ba130dd182538bfd8f69ec289acc83"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "expected": "c7669f3107ec806ecc680ab5a56fc0883dedc999",
+        "actual": "c7669f3107ec806ecc680ab5a56fc0883dedc999"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/history_page.rs",
+        "expected": "c01ca1e0756ec8e041e628bcbdad933e338da772",
+        "actual": "c01ca1e0756ec8e041e628bcbdad933e338da772"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs",
+        "expected": "aa6c50f60f631574b341632be63d6cf20f40a8d1",
+        "actual": "aa6c50f60f631574b341632be63d6cf20f40a8d1"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+        "expected": "e250df3f9b6bbd792ba186e563677c36c8ba8959",
+        "actual": "e250df3f9b6bbd792ba186e563677c36c8ba8959"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs",
+        "expected": "cecb8a984c02ffca7590e69c4392223ea748b40f",
+        "actual": "cecb8a984c02ffca7590e69c4392223ea748b40f"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs",
+        "expected": "7301aeb3033913f080b23767bfca52a2bf76d45b",
+        "actual": "7301aeb3033913f080b23767bfca52a2bf76d45b"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "path": "formal/pon-nakamoto-v1/work_query_bound.py",
+        "expected": "e3ec8bf4bdd510f3fe718e63a4df595d342c61c6",
+        "actual": "e3ec8bf4bdd510f3fe718e63a4df595d342c61c6"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "path": "formal/pon-nakamoto-v1/test_work_query_bound.py",
+        "expected": "526f155f2215184aa607da6d453423ca6930ded2",
+        "actual": "526f155f2215184aa607da6d453423ca6930ded2"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
+        "expected": "c8567475a36cf449d9fd2b33363a545fbd4704ab",
+        "actual": "c8567475a36cf449d9fd2b33363a545fbd4704ab"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+        "expected": "b75d92560ba797854bc8e59be9a1f35efe1b8cc6",
+        "actual": "b75d92560ba797854bc8e59be9a1f35efe1b8cc6"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+        "expected": "ad8a51675dda63901e2223bcf7f6d7162243b9e3",
+        "actual": "ad8a51675dda63901e2223bcf7f6d7162243b9e3"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+        "expected": "abd262b2ed92ce3ac720d17bbe0b61e8f082c675",
+        "actual": "abd262b2ed92ce3ac720d17bbe0b61e8f082c675"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+        "expected": "5bbb4469977972020ae5c0f324239ee56dfaf888",
+        "actual": "5bbb4469977972020ae5c0f324239ee56dfaf888"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+        "expected": "ac0a694a02610bf494abdd5ee708a6f5c03adf49",
+        "actual": "ac0a694a02610bf494abdd5ee708a6f5c03adf49"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+        "expected": "13ecdb3e45ef78e5abcc34f4bf30af0312dd2f11",
+        "actual": "13ecdb3e45ef78e5abcc34f4bf30af0312dd2f11"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+        "expected": "ec6420becaba837f22d45c917d15554a8e653275",
+        "actual": "ec6420becaba837f22d45c917d15554a8e653275"
+      }
+    ]
+  },
+  "critical_unchanged_boundaries": [
+    {
+      "path": "config/pon/pq-system-required-tests-v1.json",
+      "bytes": 5032,
+      "sha256": "1061054781de305654bf391a6293b7158b835cfbd350a192888104740753bcdc",
+      "git_blob": "2980d9848b78cb8ecdf879b61f69ecf1d4f6dba6",
+      "unchanged_from_bebb": true
+    },
+    {
+      "path": "config/portability-inventory-v1.json",
+      "bytes": 30218,
+      "sha256": "e766e17c0b85a79066f09ba609beca4439e91bc66b3039fa7b10f3b00fa0b390",
+      "git_blob": "94b92f2a4877036ea3929a83f90ba3bbe8ca2ae3",
+      "unchanged_from_bebb": true
+    },
+    {
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "bytes": 7725,
+      "sha256": "d931e90315cef8054b25523e051376bb1c52ae43768aeb31a2251900ed2a7e97",
+      "git_blob": "229e5bfaa9fd619b0c21031a0d6fee26d6c6c715",
+      "unchanged_from_bebb": true
+    },
+    {
+      "path": "trillionnium/Cargo.toml",
+      "bytes": 2204,
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "git_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "unchanged_from_bebb": true
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "bytes": 39745,
+      "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+      "git_blob": "7a298d02ad14470a8c45094b4791c24109fc4519",
+      "unchanged_from_bebb": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "bytes": 32354,
+      "sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd",
+      "git_blob": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+      "unchanged_from_bebb": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+      "bytes": 106732,
+      "sha256": "18ed1e6582e34bdbf9b2a376171fccf27fc59eff8b6786bd44dfd525b25e5c01",
+      "git_blob": "aea70d3ee9b74aebbaba3d89896dd18509e54aad",
+      "unchanged_from_bebb": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "bytes": 144392,
+      "sha256": "14de4d7c5359b2b08c15b0a784efdfe5c20cbd103dd469d5e0a752c73d851a50",
+      "git_blob": "0a0ab45621a3c9f36097af42ee00347dd09c0bb9",
+      "unchanged_from_bebb": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+      "bytes": 15751,
+      "sha256": "767c0c5bcbcb40b04392d32bb60d7cb3850e161dd63551da54eaf4e5e3ab0200",
+      "git_blob": "ad8a51675dda63901e2223bcf7f6d7162243b9e3",
+      "unchanged_from_bebb": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+      "bytes": 52221,
+      "sha256": "361585c3d8571982187024b49e8b65abccc5cf42d011fb1347494c0fd4ef709b",
+      "git_blob": "ba1e16aa810b036eb4014ad5d72973fc07ce47fb",
+      "unchanged_from_bebb": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+      "bytes": 24190,
+      "sha256": "c0ef1562047339fc4d8c3d236a646abb104961e1218f7f6ec25529664629ea11",
+      "git_blob": "d01fe3075e5e7008ec293819781c78f61abcc99a",
+      "unchanged_from_bebb": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/metered_work_facts.rs",
+      "bytes": 5106,
+      "sha256": "d0ade11bcbc3a83e9500e2d92b4d7c0c70061ea89f57516b8cf4a32b3306d020",
+      "git_blob": "e50508731d30f2b2bb33f6dafac1a90d1176d5a3",
+      "unchanged_from_bebb": true
+    }
+  ],
+  "cell_assertion_and_callsite_comparison": {
+    "method": "Compare balanced assert macro invocations, ignoring whitespace and the one removed diagnostic Debug suffix; static token check, not a runtime proof.",
+    "original_assertions": 32,
+    "candidate_assertions": 34,
+    "missing_original": [],
+    "added_assertions": [
+      "assert!(matches!(result,Ok(Ok(()))),\"serverinitializationmustfinishbeforeuse\")",
+      "assert!(Instant::now()<self.deadline,\"boundedfixtureinitialization\")"
+    ],
+    "original_selectors": [
+      "tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint",
+      "tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication",
+      "tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial"
+    ],
+    "candidate_selectors": [
+      "tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint",
+      "tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication",
+      "tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial"
+    ],
+    "callsites": {
+      "announce_cell_provider": {
+        "before": 3,
+        "after": 3
+      },
+      "fetch_discovered_cell_to_file": {
+        "before": 3,
+        "after": 3
+      },
+      "TcpStream::connect_timeout": {
+        "before": 1,
+        "after": 1
+      },
+      "record": {
+        "before": 7,
+        "after": 7
+      }
+    }
+  },
+  "whitespace_checks": {
+    "code_workflow_config_docs": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "complete_staged": {
+      "exit_code": 2,
+      "stdout_bytes": 66108,
+      "stdout_sha256": "1e2518644f1a671d676f1322c7a9a9f565ddb2648b68e7a91b15e896a22ed9c4",
+      "affected_paths": [
+        "evidence/pon-ci-closure-20261103/bebb-hosted/bebb-quality-head-job125996626973.log",
+        "evidence/pon-ci-closure-20261103/bebb-hosted/bebb-quality-prospective-merge-job125996626500.log",
+        "evidence/pon-ci-closure-20261103/bebb-hosted/bebb-runtime-head-job125996626572.log",
+        "evidence/pon-ci-closure-20261103/bebb-hosted/bebb-runtime-prospective-merge-job125996626554.log",
+        "evidence/pon-ci-closure-20261103/cell-readiness/02-exact-superseded-endpoint.log",
+        "evidence/pon-ci-closure-20261103/cell-readiness/03-exact-short-ttl.log",
+        "evidence/pon-ci-closure-20261103/cell-readiness/04-original-sequence-controls.log",
+        "evidence/pon-ci-closure-20261103/cell-readiness/08-workspace-features-exact-superseded.log",
+        "evidence/pon-ci-closure-20261103/cell-readiness/09-workspace-features-exact-short-ttl.log",
+        "evidence/pon-ci-closure-20261103/cell-readiness/10-workspace-features-original-sequence-controls.log",
+        "evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch",
+        "evidence/pon-ci-closure-20261103/pq-diagnostics/analyze_controls.py",
+        "evidence/pon-ci-closure-20261103/raw-whitespace-observation/complete-staged.stdout",
+        "evidence/pon-ci-closure-20261103/value-pool/implementation-checkpoint.patch",
+        "evidence/pon-ci-closure-20261103/value-pool/m06-full-root-tests.log",
+        "evidence/pon-ci-closure-20261103/value-pool/m06-root-tests-v1.log",
+        "evidence/pon-ci-closure-20261103/value-pool/m06-root-tests.log",
+        "evidence/pon-ci-closure-20261103/value-pool/measurements/pair-00-baseline.stdout",
+        "evidence/pon-ci-closure-20261103/value-pool/measurements/pair-00-candidate.stdout",
+        "evidence/pon-ci-closure-20261103/value-pool/measurements/pair-01-baseline.stdout",
+        "evidence/pon-ci-closure-20261103/value-pool/measurements/pair-01-candidate.stdout",
+        "evidence/pon-ci-closure-20261103/value-pool/measurements/pair-02-baseline.stdout",
+        "evidence/pon-ci-closure-20261103/value-pool/measurements/pair-02-candidate.stdout",
+        "evidence/pon-ci-closure-20261103/value-pool/measurements/pair-03-baseline.stdout",
+        "evidence/pon-ci-closure-20261103/value-pool/measurements/pair-03-candidate.stdout",
+        "evidence/pon-ci-closure-20261103/value-pool/measurements/pair-04-baseline.stdout",
+        "evidence/pon-ci-closure-20261103/value-pool/measurements/pair-04-candidate.stdout",
+        "evidence/pon-ci-closure-20261103/value-pool/node-large-tests.log",
+        "evidence/pon-ci-closure-20261103/value-pool/node-root-tests.log",
+        "evidence/pon-ci-closure-20261103/value-pool/protocol-doctest.log",
+        "evidence/pon-ci-closure-20261103/value-pool/protocol-tests-v1.log",
+        "evidence/pon-ci-closure-20261103/value-pool/protocol-tests.log",
+        "evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch",
+        "evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch.before-count-fix"
+      ],
+      "stderr": "",
+      "interpretation": "The failed complete check is not weakened or overwritten by the passing scoped check; raw evidence bytes are preserved."
+    }
+  },
+  "existing_combined_working_receipts": [
+    {
+      "receipt": {
+        "path": "evidence/pon-ci-closure-20261103/combined-working-validation/strict-clippy.result.json",
+        "bytes": 1041,
+        "sha256": "820076e3f9b737e5080caf17b8e2fb885e61c49e4ae50f6e199eb50e3affecd3",
+        "git_blob": "4e3d9805c908d2f7bf80449315b88ee53eee33de"
+      },
+      "result": {
+        "name": "strict-clippy",
+        "command": [
+          "/root/.cargo/bin/cargo",
+          "+1.95.0",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "base_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "source_scope": "combined uncommitted candidate; original current source pins identify changed code; evidence/docs are not native coverage",
+        "working_tracked_patch_sha256": "1bd1e9376131d6f4f872360695916c29a09b6449ce9b0fd751e944e13bedc5c5",
+        "target": "/workspace/scratch/abae1861b451/post-ci-target",
+        "jobs": 2,
+        "incremental": 0,
+        "provider_env_sha256": "92886badc92051b5338ea482e4b8041c2a6434b26a37a1c2f5e17e0c1586485b",
+        "exit_code": 0,
+        "wall_seconds": 75.66087010899992,
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_bytes": 941,
+        "stderr_sha256": "2f553cef0bbcc91a09a07daf2bf4ab738657d9fad414e8518cd3665f9ab87108"
+      },
+      "raw_stream_hashes_match": {
+        "stdout": true,
+        "stderr": true
+      },
+      "executed_by_this_reviewer": false
+    },
+    {
+      "receipt": {
+        "path": "evidence/pon-ci-closure-20261103/combined-working-validation/format.result.json",
+        "bytes": 954,
+        "sha256": "2c50a17f5736df5502c1df5d7ba5228b98296182ac4726c1349b40c8b5ecde6a",
+        "git_blob": "42e6001c09d0860eab1a9d72401a9d80bbb849e1"
+      },
+      "result": {
+        "name": "format",
+        "command": [
+          "/root/.cargo/bin/cargo",
+          "+1.95.0",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "base_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "source_scope": "combined uncommitted candidate; original current source pins identify changed code; evidence/docs are not native coverage",
+        "working_tracked_patch_sha256": "1bd1e9376131d6f4f872360695916c29a09b6449ce9b0fd751e944e13bedc5c5",
+        "target": "/workspace/scratch/abae1861b451/post-ci-target",
+        "jobs": 2,
+        "incremental": 0,
+        "provider_env_sha256": "92886badc92051b5338ea482e4b8041c2a6434b26a37a1c2f5e17e0c1586485b",
+        "exit_code": 0,
+        "wall_seconds": 15.884575083000527,
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "raw_stream_hashes_match": {
+        "stdout": true,
+        "stderr": true
+      },
+      "executed_by_this_reviewer": false
+    }
+  ],
+  "referenced_existing_audits": [
+    {
+      "path": "evidence/pon-ci-closure-20261103/value-pool/value-pool-independent-benchmark-audit.json",
+      "bytes": 25094,
+      "sha256": "68b3674649214d6c654cadc60f812c23bb8367dcd60725df539d2b2400228a09",
+      "git_blob": "80633588144d806657dac94e4fb379515fcd3ec8"
+    },
+    {
+      "path": "evidence/pon-ci-closure-20261103/pq-diagnostics/pq-full-library-arm-failure-audit.json",
+      "bytes": 78617,
+      "sha256": "9e396e282da90edeaf1fd3b38f9f10bdc7c984dbd74dd1d728aa0c0f6cfca895",
+      "git_blob": "fde1b6a3ca85e409ff1d0006e21c563f4787a7dd"
+    },
+    {
+      "path": "evidence/pon-ci-closure-20261103/bebb-hosted/bebb-live-host-service-boundary-audit.json",
+      "bytes": 212828,
+      "sha256": "dbad73c8c032d788160b52160b7dd111340bdab3abf1694aa8e6f7ed8bac85b4",
+      "git_blob": "bd955b47317cbca8188dee98fd3e57d6fd0cc0d5"
+    },
+    {
+      "path": "evidence/pon-ci-closure-20261103/cell-readiness/cell-readiness-delivery.json",
+      "bytes": 25010,
+      "sha256": "13bab2c72eb92385c9021a65d8a5cd9f5963a2e6714a25e0f39bc870a7c2a110",
+      "git_blob": "56650ec4d8fc062314efaf305a26508146bbc18f"
+    },
+    {
+      "path": "evidence/pon-ci-closure-20261103/source-guard-update.json",
+      "bytes": 3182,
+      "sha256": "709530bb17a0412bff58e700a9f35e1326d36c6fb8cde4f8c32fc6b26beee79a",
+      "git_blob": "5be2bc60f39a48878d8234c11c20c3faa2797091"
+    }
+  ]
+}

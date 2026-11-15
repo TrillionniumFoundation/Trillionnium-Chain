@@ -1,0 +1,44 @@
+{
+  "original_source": "2bb2c89dc2dd8cd530ff00eff878bf75c510431a",
+  "updated_pin_count": 7,
+  "unchanged_pin_count": 1072,
+  "all_manifest_non_pin_fields_unchanged": true,
+  "no_pins_removed_or_added": true,
+  "changes": [
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "before": "a5ca681129a34363def3dcacf013ec05672e3b58",
+      "after": "21754908e307c098fae9c45333bcb915936cda6c"
+    },
+    {
+      "path": "scripts/test_cell_learning_scope_join.py",
+      "before": "603fbc4d67a794bed9e73102f0a5ad145102a6c6",
+      "after": "33b5d903f2ac7edcd5b21646f64940f7455ef647"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+      "before": "b4dfb124e0c586fde72aa51a65853b7d95a73cf8",
+      "after": "cf01af9a4596687bfa8999b4f05d643d521d9e1a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell.rs",
+      "before": "c3f35b7ceb152523f9f41114d6538fc90093e1f7",
+      "after": "4a9331d3535b2f7f35f7e68fc9d491d966a9cf7d"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/residency.rs",
+      "before": "b4efd8c78a16edbb0cbd799316eb76163dab1afb",
+      "after": "edb717998182deac2bd9b0319471ba759a091c04"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/residency/version.rs",
+      "before": "ae2f26742b27680f219e70cd6d10ccda4a7319b9",
+      "after": "54b8141dafe1c59c737497f13c339c406f593c37"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "before": "4fe60f533f051cd1a68c4358e96d210d8f7d32c0",
+      "after": "6bd0c0456e6cfe07abd9b0547720e006bcc15f08"
+    }
+  ]
+}

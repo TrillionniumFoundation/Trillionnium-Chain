@@ -1,0 +1,14 @@
+    Checking trnm-protocol v0.1.0 (/workspace/scratch/73305aff6ced/chain/trillionnium/crates/trnm-protocol)
+    Checking trnm-crypto-primitives v0.1.0 (/workspace/scratch/73305aff6ced/chain/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-data-availability v0.1.0 (/workspace/scratch/73305aff6ced/chain/trillionnium/crates/trnm-data-availability)
+error: unneeded unit expression
+   --> crates/trnm-data-availability/src/cell/network/persistent/tests.rs:465:17
+    |
+465 |                 ()
+    |                 ^^ help: remove the final `()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#unused_unit
+    = note: `-D clippy::unused-unit` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::unused_unit)]`
+
+error: could not compile `trnm-data-availability` (lib test) due to 1 previous error

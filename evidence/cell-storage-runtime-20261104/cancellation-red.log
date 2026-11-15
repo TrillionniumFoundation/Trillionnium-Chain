@@ -1,0 +1,23 @@
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/0c2d131ac5a9/cancellation-red/trillionnium/crates/trnm-protocol)
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/0c2d131ac5a9/cancellation-red/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/0c2d131ac5a9/cancellation-red/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 00s
+     Running unittests src/lib.rs (/workspace/scratch/0c2d131ac5a9/target/debug/deps/trnm_data_availability-860e4d3b2378d360)
+
+running 1 test
+
+thread 'cell::release::transport_tests::residency_prefetch_stops_payload_requests_when_original_owner_cancels' (588) panicked at crates/trnm-data-availability/src/cell/release/transport_tests.rs:579:5:
+assertion `left == right` failed: cancelled prefetch acquired another member
+  left: 2
+ right: 1
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test cell::release::transport_tests::residency_prefetch_stops_payload_requests_when_original_owner_cancels ... FAILED
+
+failures:
+
+failures:
+    cell::release::transport_tests::residency_prefetch_stops_payload_requests_when_original_owner_cancels
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 305 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `-p trnm-data-availability --lib`

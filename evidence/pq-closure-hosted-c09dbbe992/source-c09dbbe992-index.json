@@ -1,0 +1,25 @@
+{
+  "files": [
+    {
+      "bytes": 11911,
+      "git_blob": "ec3a691ad8f9e1ae4d61c6dc10a27762cabbcf2c",
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs",
+      "sha256": "2e21912f6c285e79e36ccaf995b451613313bfbc6993a510df4307fb2a47f0e9"
+    },
+    {
+      "bytes": 28537,
+      "git_blob": "e3f68e023a9f958cb5fbf43e4584377a86cbcd03",
+      "path": "scripts/ci/run_w1_fresh_service_v1.py",
+      "sha256": "143b0f26f914798fc6650afc08d2f73379bcf82b7fd84cc318ca2fb83299d324"
+    },
+    {
+      "bytes": 10514,
+      "git_blob": "6d76cdfea69d6c14660df3a88cd25cad4ad95d28",
+      "path": ".github/workflows/codeql-real-exact-source.yml",
+      "sha256": "3c675d8bff0cb5418b43697aa7f046be64086c5da795cfbe19f9bd03744dd888"
+    }
+  ],
+  "git_lazy_fetch_disabled": true,
+  "git_replace_disabled": true,
+  "head": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50"
+}

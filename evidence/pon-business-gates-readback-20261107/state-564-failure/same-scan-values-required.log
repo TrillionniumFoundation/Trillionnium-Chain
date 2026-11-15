@@ -1,0 +1,1 @@
+{"executed_tests": 1, "result": "PASS", "scope": "named-libtest-execution-only", "test": "store::canonical_row_reuse_tests::same_scan_values_match_original_and_never_outlive_actual_rows"}

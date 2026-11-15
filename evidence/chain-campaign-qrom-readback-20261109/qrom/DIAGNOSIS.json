@@ -1,0 +1,215 @@
+{
+  "changed_selected_project_inputs": [
+    {
+      "current": {
+        "bytes": 11172,
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+        "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+      },
+      "historical": {
+        "bytes": 9233,
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+        "sha256": "07415e8e3bb53f3e81dd489e4ebda63368170efbe4a217ae6b0dd6cc0af14128"
+      },
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs"
+    },
+    {
+      "current": {
+        "bytes": 32654,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+      },
+      "historical": {
+        "bytes": 32354,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+      },
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    }
+  ],
+  "classification": "HISTORICAL_SOURCE_PIN_DRIFT",
+  "cryptographic_soundness_break_observed": false,
+  "current_contract_sha256": "861201e73694970232de00c97366c156fb23035b98dd4a73422301130e08fd1b",
+  "diagnosis": "The reader bounds each project file by the exact reviewed historical byte count, then checks exact length and SHA-256. Current verifier source differs from that historical input. Increasing a generic size cap does not resolve the following exact identity check.",
+  "fresh_current_mapping_executed": false,
+  "historical_contract_sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22",
+  "historical_failures_preserved": true,
+  "historical_source_base_commit": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+  "lifetime_budget": {
+    "accepted_statements_lifetime": null,
+    "adaptive_composition_bound": null,
+    "concrete_hash_to_ideal_oracle_error": null,
+    "hash_output_sigma_bits": null,
+    "max_fs_rounds_per_reduction": null,
+    "max_recursive_nodes_per_statement": null,
+    "min_verifier_randomness_bits": null,
+    "policy_adopted": false,
+    "quantum_queries_lifetime": null,
+    "rrbr_knowledge_error": null,
+    "target_total_failure_probability": null
+  },
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "post_quantum_soundness_qualified": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false,
+    "security_bits_quantum": null
+  },
+  "run_id": 42575267240,
+  "runs": [
+    {
+      "artifact_id": 13654917681,
+      "artifact_sha256": "3c5fd60c9e812da7ccf02afe24deef37deba2ee9e220a7d34575cb321e07a5a6",
+      "artifact_zip_bytes": 22153,
+      "ci_passed": false,
+      "failed_or_skipped_stages": [
+        "named_tests",
+        "implementation",
+        "report_scopes"
+      ],
+      "full_source_before_after_equal": true,
+      "historical_reader_result": {
+        "qualification": {
+          "complete_w1_soundness_qualified": false,
+          "consensus_admission": false,
+          "post_quantum_soundness_qualified": false,
+          "pq_signature_qualification_inferred": false,
+          "production_qualified": false,
+          "quantum_work_qualified": false,
+          "security_bits_quantum": null
+        },
+        "reason": "input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+        "result": "INPUT_REJECTED"
+      },
+      "member_count": 24,
+      "named_required": 81,
+      "named_started": 67,
+      "named_successes": 63,
+      "source_identity_error": null,
+      "source_kind": "head",
+      "suites": [
+        {
+          "errored": 0,
+          "failed": 0,
+          "module": "test_w1_control_tree_audit",
+          "required": 28,
+          "started": 28,
+          "successful": 28
+        },
+        {
+          "errored": 0,
+          "failed": 0,
+          "module": "test_w1_qrom_conditional_budget",
+          "required": 13,
+          "started": 13,
+          "successful": 13
+        },
+        {
+          "errored": 2,
+          "failed": 2,
+          "module": "test_w1_qrom_implementation_audit",
+          "required": 19,
+          "started": 19,
+          "successful": 15
+        },
+        {
+          "errored": 0,
+          "failed": 0,
+          "module": "test_w1_fri_transcript_audit",
+          "required": 7,
+          "started": 7,
+          "successful": 7
+        },
+        {
+          "errored": 1,
+          "failed": 0,
+          "module": "test_w1_qrom_workflow_gate",
+          "required": 14,
+          "started": 0,
+          "successful": 0
+        }
+      ],
+      "tested_commit": "e2a02f9271b49f146e70806c8a66e161b5973971",
+      "tested_tree": "86d2014b560659106b3af6e6c19e1f82a290a60e"
+    },
+    {
+      "artifact_id": 13654499724,
+      "artifact_sha256": "4276c9be5f5dc75ae5d7a33c0d375fa39282db260960e9a03c0992809ec7798f",
+      "artifact_zip_bytes": 22388,
+      "ci_passed": false,
+      "failed_or_skipped_stages": [
+        "named_tests",
+        "implementation",
+        "report_scopes"
+      ],
+      "full_source_before_after_equal": true,
+      "historical_reader_result": {
+        "qualification": {
+          "complete_w1_soundness_qualified": false,
+          "consensus_admission": false,
+          "post_quantum_soundness_qualified": false,
+          "pq_signature_qualification_inferred": false,
+          "production_qualified": false,
+          "quantum_work_qualified": false,
+          "security_bits_quantum": null
+        },
+        "reason": "input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+        "result": "INPUT_REJECTED"
+      },
+      "member_count": 24,
+      "named_required": 81,
+      "named_started": 67,
+      "named_successes": 63,
+      "source_identity_error": null,
+      "source_kind": "prospective-merge",
+      "suites": [
+        {
+          "errored": 0,
+          "failed": 0,
+          "module": "test_w1_control_tree_audit",
+          "required": 28,
+          "started": 28,
+          "successful": 28
+        },
+        {
+          "errored": 0,
+          "failed": 0,
+          "module": "test_w1_qrom_conditional_budget",
+          "required": 13,
+          "started": 13,
+          "successful": 13
+        },
+        {
+          "errored": 2,
+          "failed": 2,
+          "module": "test_w1_qrom_implementation_audit",
+          "required": 19,
+          "started": 19,
+          "successful": 15
+        },
+        {
+          "errored": 0,
+          "failed": 0,
+          "module": "test_w1_fri_transcript_audit",
+          "required": 7,
+          "started": 7,
+          "successful": 7
+        },
+        {
+          "errored": 1,
+          "failed": 0,
+          "module": "test_w1_qrom_workflow_gate",
+          "required": 14,
+          "started": 0,
+          "successful": 0
+        }
+      ],
+      "tested_commit": "459eb070e8c631bb387b5d4ac362c3e43e945af1",
+      "tested_tree": "86d2014b560659106b3af6e6c19e1f82a290a60e"
+    }
+  ],
+  "schema": "TRNM-W1-QROM-HISTORICAL-CURRENT-READBACK1",
+  "scope": "Offline raw-archive, source-byte and workflow attribution. No native proof run or cryptographic theorem."
+}

@@ -1,0 +1,36 @@
+{
+  "adapter_version": "20261107-d2d977949417",
+  "installed_adapter_source_hashes": {
+    "authorize_colab.py": "7c4a297f1c781701dd5d1ac23e63111b9f3d2976ba77cfe88ae2e9774998f40b",
+    "hepta_colab.py": "55acb80ca2351b4aaafc16b04fb642100e52a9ddb021cb0551a6703513c068c2",
+    "manage_colab.py": "32ce56fd3b193e204fd691326e28290e0ccff98d6b0e2a5f0c17996de4914598",
+    "remote_runner.py": "56047c73774c5507ba150dca310aa87b432b344193d1c827310e56f689a43d68"
+  },
+  "installed_adapter_source_published": false,
+  "payload": {
+    "sha256": "0c0cef95c1d710138eccf20cd4a63734ace5b9f46e08b87f3279f433d6b2a7bf",
+    "size_bytes": 41865
+  },
+  "private_adapter_and_sdk_implementation_included": false,
+  "profile_config_credentials_included": false,
+  "schema": "pon-profile-colab-source-bindings-v1",
+  "sdk_version": "0.1.dev1+gd2d977949",
+  "source_files": {
+    "grouped_work_composition_v1.py": {
+      "sha256": "0210e710f83e9c8c58af7f362521b49024bca28917a7a2a3793d57669b19843b",
+      "size_bytes": 27772
+    },
+    "grouped_work_profile_v1.py": {
+      "sha256": "fbeae97349126a9dc805853e02b9c16a207e14e572fb5d0efe39ac9b25e4aca5",
+      "size_bytes": 31646
+    },
+    "test_grouped_work_composition_v1.py": {
+      "sha256": "560a0fbc0716dec003328604bcd54a796d5739b69c139e99b98d91c6b438021d",
+      "size_bytes": 24810
+    },
+    "test_grouped_work_profile_v1.py": {
+      "sha256": "3b3faa1aad2edf8a3f17574f29d177678ce44521486837521700bdec2848f639",
+      "size_bytes": 33259
+    }
+  }
+}

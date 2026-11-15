@@ -1,0 +1,18 @@
+
+running 13 tests
+test store::detached_admission::tests::completed_artifact_refuses_wrong_owner_reopen_and_late_owner_stop ... ok
+test store::detached_admission::tests::current_clock_target_and_unsupported_owner_are_rechecked_after_m06 ... ok
+test store::detached_admission::tests::detached_full_state_cost_uses_real_signed_history_and_reports_scope ... ignored, explicit actual 1024-signed-transfer full-State snapshot/execution/commit cost; not a saturation campaign
+test store::detached_admission::tests::detached_result_cannot_bypass_real_pending_reorganization ... ok
+test store::detached_admission::tests::final_sqlite_writer_fence_rejects_write_and_restore_after_last_context_check ... ok
+test store::detached_admission::tests::foreign_write_and_restore_cannot_reuse_original_database_epoch ... ok
+test store::detached_admission::tests::held_parent_continuation_checks_original_owner_epoch_and_current_clock ... ok
+test store::detached_admission::tests::legal_concurrent_append_revalidates_parent_and_preserves_competing_branch ... ok
+test store::detached_admission::tests::native_m06_runs_without_writer_and_matches_held_owner_on_both_backends ... ok
+test store::detached_admission::tests::one_original_snapshot_lease_is_bounded_and_cannot_move_to_another_node ... ok
+test store::detached_admission::tests::original_transaction_readback_rejects_trigger_corruption_and_rolls_back ... ok
+test store::detached_admission::tests::real_w1_wrong_root_and_original_m06_cancellation_create_no_commit ... ok
+test store::detached_admission::tests::snapshot_payload_capacity_is_a_private_schedule_hint_and_preserves_control_errors ... ok
+
+test result: ok. 12 passed; 0 failed; 1 ignored; 0 measured; 756 filtered out; finished in 0.51s
+

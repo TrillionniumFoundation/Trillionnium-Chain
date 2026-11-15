@@ -1,0 +1,22 @@
+{
+  "schema": "TRNM-W1-BATCH-PHASE0-ATTEMPT3-TERMINAL-READBACK1",
+  "result_sha256": "9d63f3070f7f83ed4f232623db016f37b705b8cbfd041edaad20a10b636655b4",
+  "status": "command_failed",
+  "wall_seconds": 2.567530654996517,
+  "wait4_cpu_seconds": 1.9205599999999998,
+  "sampled_peak_rss_bytes": 123351040,
+  "wait4_peak_process_rss_bytes": 76644352,
+  "target_growth_bytes": 0,
+  "remaining_same_host_pid_birth": [],
+  "locks": {
+    "formal/pon-nakamoto-v1/w1_batch/Cargo.lock": "32953cbb86bb56186137507ee9e9bf59827bd8325c6e28c12b40d5c166fbfa4d",
+    "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.lock": "018423c898d09d0be7a7fbe207e4a1672c5b6f36202dda765a81da852c044d18"
+  },
+  "worktree_porcelain": "",
+  "guest_executed": false,
+  "receipt_verified": false,
+  "proof_executed": false,
+  "new_image_produced": false,
+  "failure": "Locked transitive dependencies require Rust 1.89 or 1.90; restored official RISC0 guest rustc is 1.88.0-dev; compiler MSRV check correctly refused; no --ignore-rust-version or other bypass applied",
+  "automatic_retry": false
+}

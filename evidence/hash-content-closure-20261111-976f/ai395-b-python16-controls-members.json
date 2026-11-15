@@ -1,0 +1,265 @@
+{
+  "execution_host": "ai395",
+  "members": [
+    {
+      "bytes": 2035,
+      "path": "ai395-b-python16/records/b-authority-controls.json",
+      "sha256": "15eb0f4d6da27b58a5b1dfe012f42b16cfa1f91a34dfb578625b609228f703df"
+    },
+    {
+      "bytes": 117,
+      "path": "ai395-b-python16/records/b-authority-controls.log",
+      "sha256": "124ecf411b78f393f4f44526b78f9402986856df0cd7cbf4715a206ea06bbbf7"
+    },
+    {
+      "bytes": 144,
+      "path": "ai395-b-python16/records/b-authority-controls.driver.log",
+      "sha256": "5e4d1be548216b7c0b4beaaeda9e4291869293f51d662f221f451baeae6d1623"
+    },
+    {
+      "bytes": 2030,
+      "path": "ai395-b-python16/records/b-authority-source.json",
+      "sha256": "2aa0ce42d9dc1fc952b3eac3533fabf35eee3eb223cdfba8b8b2cde6d576abe1"
+    },
+    {
+      "bytes": 13223,
+      "path": "ai395-b-python16/records/b-authority-source.log",
+      "sha256": "b069a54645b419b95e3aec5d7bfe7654d0b5d6bb548bbeb17b9c8820531bc216"
+    },
+    {
+      "bytes": 142,
+      "path": "ai395-b-python16/records/b-authority-source.driver.log",
+      "sha256": "292d8ca734da041cb8405fc38fa6c9b680d5802755972b4706f696c7518ceab5"
+    },
+    {
+      "bytes": 2023,
+      "path": "ai395-b-python16/records/b-ci-contract-controls.json",
+      "sha256": "01f19c0a2e12009d506d564dc62f6447026cd11d7409628a1a2120ad78652f02"
+    },
+    {
+      "bytes": 32210,
+      "path": "ai395-b-python16/records/b-ci-contract-controls.log",
+      "sha256": "4b8ed625c14235a94281f1f61aca7b6966ccac6bc82dc5f7a18150812434c9af"
+    },
+    {
+      "bytes": 146,
+      "path": "ai395-b-python16/records/b-ci-contract-controls.driver.log",
+      "sha256": "733a1ce440eea22a5a9b3b94881b54c59e469cae461829ed1fb23f944fb9c8b8"
+    },
+    {
+      "bytes": 2019,
+      "path": "ai395-b-python16/records/b-ci-contract-source.json",
+      "sha256": "fc948bda815e779f1a2c4e5c8dc251ed10832a7a8eb07f8dfeb5e9a16e6e3d9a"
+    },
+    {
+      "bytes": 591,
+      "path": "ai395-b-python16/records/b-ci-contract-source.log",
+      "sha256": "caad3127cf0dc95694e206b48bcc4375faf908863ca60dcfeb3ea57d4f9b66fc"
+    },
+    {
+      "bytes": 144,
+      "path": "ai395-b-python16/records/b-ci-contract-source.driver.log",
+      "sha256": "54caab86d41d98593ee0ea692fcd186f85fef7f26af2aaa475104811df3321bb"
+    },
+    {
+      "bytes": 2029,
+      "path": "ai395-b-python16/records/b-corpus-controls.json",
+      "sha256": "f2b873cffb11f10798e123d011249e4cbcc34eb95727d664067d4860c75aada8"
+    },
+    {
+      "bytes": 161,
+      "path": "ai395-b-python16/records/b-corpus-controls.log",
+      "sha256": "04585aff82e7b5724f7b53f8cb195e50e773d714a579ce3a9e473b22a2c92ca4"
+    },
+    {
+      "bytes": 141,
+      "path": "ai395-b-python16/records/b-corpus-controls.driver.log",
+      "sha256": "a51d027569fadfae47b1c66e7d60c06a2ae91d22611224481c7c0425d9776ab2"
+    },
+    {
+      "bytes": 2026,
+      "path": "ai395-b-python16/records/b-corpus-source.json",
+      "sha256": "7f3dc8cb1fe024d5810820e63ede91c531d54cfc85bedaf77642e6ab5abe1a40"
+    },
+    {
+      "bytes": 558,
+      "path": "ai395-b-python16/records/b-corpus-source.log",
+      "sha256": "d02b9fb2d36580c34ffecf29ddc8cd3879d0f0b4211af5c8dbda73e6d330e733"
+    },
+    {
+      "bytes": 139,
+      "path": "ai395-b-python16/records/b-corpus-source.driver.log",
+      "sha256": "83c24f053de2db2c4c9f27f21c9accfdcb61c79363923dffca87fc3a0e59af04"
+    },
+    {
+      "bytes": 2039,
+      "path": "ai395-b-python16/records/b-current-qrom-source.json",
+      "sha256": "5cf7cb1f224e783ce9e4a4d9377a9e1c33899736a8ccfa8bf10d21ee9a22898f"
+    },
+    {
+      "bytes": 104746,
+      "path": "ai395-b-python16/records/b-current-qrom-source.log",
+      "sha256": "72d0f9750763b2088fa09a579d66c7c5deee7dbcd9266e95a1b572a2738b0740"
+    },
+    {
+      "bytes": 145,
+      "path": "ai395-b-python16/records/b-current-qrom-source.driver.log",
+      "sha256": "a632ddda259e7c9b0b440fa5caefaf781ffa3271575d4b3dcce03daf2c02e840"
+    },
+    {
+      "bytes": 2032,
+      "path": "ai395-b-python16/records/b-graph-vectors.json",
+      "sha256": "6983c08ef314d90249877845aecfa3da1305fc185adf6ae5a19d4dad20b00d96"
+    },
+    {
+      "bytes": 60,
+      "path": "ai395-b-python16/records/b-graph-vectors.log",
+      "sha256": "cfbc9bc6a7b5775ff9ae1a08834908d9560c4d1b953dddf815a9e7ff02e2592f"
+    },
+    {
+      "bytes": 139,
+      "path": "ai395-b-python16/records/b-graph-vectors.driver.log",
+      "sha256": "aa5de6e5e559f92814a3bf0374a7ee341574f9a34dd1aca8d84e19fb87154729"
+    },
+    {
+      "bytes": 2027,
+      "path": "ai395-b-python16/records/b-hash-purpose-controls.json",
+      "sha256": "0d114fb388dcd9d4f7ccc79b90b0a2e5ca194c09fd4d3108660e65282774a69e"
+    },
+    {
+      "bytes": 132,
+      "path": "ai395-b-python16/records/b-hash-purpose-controls.log",
+      "sha256": "23fcd4fccbb7d9518b4809443b3cba8cf518a7109fac66d28587295a889b556b"
+    },
+    {
+      "bytes": 147,
+      "path": "ai395-b-python16/records/b-hash-purpose-controls.driver.log",
+      "sha256": "50209c2417fbdde692c5e8012b1313b11ea06a014c0d3509beec5eb3a48e0d46"
+    },
+    {
+      "bytes": 2021,
+      "path": "ai395-b-python16/records/b-hash-purpose-source.json",
+      "sha256": "bef33ac1ac95974a8d84c2676ed87e9774a65e8f4f75deef38f0caa6f8788fb1"
+    },
+    {
+      "bytes": 6392,
+      "path": "ai395-b-python16/records/b-hash-purpose-source.log",
+      "sha256": "e32c10d6b7c4f3ad362f3631ef774a1cc199a1da69234579cbe69c5eb9b47111"
+    },
+    {
+      "bytes": 145,
+      "path": "ai395-b-python16/records/b-hash-purpose-source.driver.log",
+      "sha256": "a41d20cd49cd95971b21b73256eeaeefd2eecc1bd03a506e57f9adafe3141e2a"
+    },
+    {
+      "bytes": 2040,
+      "path": "ai395-b-python16/records/b-inventory.json",
+      "sha256": "eecf99493f8702f1e694ce15dbadf05b1f3b9bb64f3628220101268f327bc199"
+    },
+    {
+      "bytes": 35,
+      "path": "ai395-b-python16/records/b-inventory.log",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "bytes": 135,
+      "path": "ai395-b-python16/records/b-inventory.driver.log",
+      "sha256": "3d73b63af880d9bdc4320be27d2bbe36b611b6266dc83a4a317dff431030fa70"
+    },
+    {
+      "bytes": 2032,
+      "path": "ai395-b-python16/records/b-recorder-controls.json",
+      "sha256": "fe2317b3664252883461dd2f828a060012cb39ccfef43876978bdc725c1c8e1d"
+    },
+    {
+      "bytes": 1177,
+      "path": "ai395-b-python16/records/b-recorder-controls.log",
+      "sha256": "81e284d023c03d16fea73b7d9d1cfb538868e4820e3bf7a71afc69b727cce993"
+    },
+    {
+      "bytes": 143,
+      "path": "ai395-b-python16/records/b-recorder-controls.driver.log",
+      "sha256": "e71e2a2ceb0f770132a87f3aead64b68f092aff4eb7c65812bec4ba3d5f10602"
+    },
+    {
+      "bytes": 2011,
+      "path": "ai395-b-python16/records/b-repository.json",
+      "sha256": "ee565fb1c0879d9fbf28743a5654369d9fb492db2af844d7375152b8be618ef9"
+    },
+    {
+      "bytes": 307,
+      "path": "ai395-b-python16/records/b-repository.log",
+      "sha256": "496db2b45d1ec7b73b011e931aef748450e2bf3619d2a8556da9a84d06b64e23"
+    },
+    {
+      "bytes": 136,
+      "path": "ai395-b-python16/records/b-repository.driver.log",
+      "sha256": "4e4bedd701f882a3bdcd5a6b80bfd7d0ec3af72b5e64b05e40972afb8b19d7db"
+    },
+    {
+      "bytes": 2034,
+      "path": "ai395-b-python16/records/b-root-dependency-source.json",
+      "sha256": "94dc635fb077eb023d553a221192eb32d665eddd40c14506cea868140d370a82"
+    },
+    {
+      "bytes": 7896,
+      "path": "ai395-b-python16/records/b-root-dependency-source.log",
+      "sha256": "ba105760040e55b26e7c24c3074da6f274920a844d91c6c9606bb5415a6d0678"
+    },
+    {
+      "bytes": 148,
+      "path": "ai395-b-python16/records/b-root-dependency-source.driver.log",
+      "sha256": "e31ba03abb06cc9d5b25d77d2df50dedbfdbff89c6156e2f8a66440b04ff89fb"
+    },
+    {
+      "bytes": 2025,
+      "path": "ai395-b-python16/records/b-source-controls.json",
+      "sha256": "58d71dbabf487a520e4be98057730c4ab072ff0b61cf4e486e6b2d063375490f"
+    },
+    {
+      "bytes": 6898,
+      "path": "ai395-b-python16/records/b-source-controls.log",
+      "sha256": "e6bcafea4d9db16d88f4aba603b2a3197c5a92ee479404fa9113c92d6d4e2db5"
+    },
+    {
+      "bytes": 141,
+      "path": "ai395-b-python16/records/b-source-controls.driver.log",
+      "sha256": "026337788854a6939566b904e756974ef7ae7db80855dd57866b8fe23674b4e5"
+    },
+    {
+      "bytes": 2023,
+      "path": "ai395-b-python16/records/b-vectors.json",
+      "sha256": "84f26b5d7752996e9acb1222795056ccec9af3ce76659ebb3ee58f687bfe4dc4"
+    },
+    {
+      "bytes": 60,
+      "path": "ai395-b-python16/records/b-vectors.log",
+      "sha256": "d9cb09b51f623c4df7813050d2249e7711f95643fcc038d9993b4b14095b0743"
+    },
+    {
+      "bytes": 133,
+      "path": "ai395-b-python16/records/b-vectors.driver.log",
+      "sha256": "c77cda08a716702e56f4d06f97ef30a92c73251b7dd19f1674ffe8e1e03cc7b9"
+    },
+    {
+      "bytes": 46076,
+      "path": "ai395-b-python16/records/controls-python-summary.json",
+      "sha256": "c800cecb6ceb3e9ee98a0f70eea55ccb8d79e116612c0035b80aaa09f3d685c3"
+    },
+    {
+      "bytes": 10216,
+      "path": "ai395-b-python16/driver/chain-hash-controls-b-976f-20261112-phased.py",
+      "sha256": "d30dc80f4a33588aeffd54349fbe9a4e4d29679e106683b5c60ef97417557278"
+    },
+    {
+      "bytes": 4234,
+      "path": "ai395-b-python16/compact-summary.json",
+      "sha256": "7c5b5f3bbcd0ee43a7784dbbafa695183f950ba1c165dc805d881c5e76a5b308"
+    }
+  ],
+  "schema": "frozen-b-ai395-python-controls-archive-v1",
+  "scope": "Python controls only; no Cargo/runtime tests",
+  "source": "9fd6ee29a7a663cef547040d9d42cc36a371a17e",
+  "tree": "7351f83fa9ac5c0e7540fa64bce06ea6f328602f",
+  "whole_chain_quantum_security_qualified": false
+}

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/w1-batch-phase0-pipeline-20261028-r8.py", line 169, in <module>
+    main()
+  File "/tmp/w1-batch-phase0-pipeline-20261028-r8.py", line 132, in main
+    run(out, 'build', ['/tmp/pure-pon-toolchain-20261027/bin/cargo', 'build', '--locked', '--offline',
+  File "/tmp/w1-batch-phase0-pipeline-20261028-r8.py", line 62, in run
+    raise RuntimeError(f'{label} failed: {result.returncode}; no retry')
+RuntimeError: build failed: 101; no retry

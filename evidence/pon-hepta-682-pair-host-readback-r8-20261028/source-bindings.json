@@ -1,0 +1,78 @@
+{
+  "schema": "hepta-682-pair-native-source-binding-v1",
+  "hepta_source": "682a88a7f847e31ffb6cd5e0a630dd71dde4bfee",
+  "hepta_base_merge": "f9923f7809bf78de8e54885699b67f3816bf2be2",
+  "hepta_tree": "860d905d3ca40805f053dae7d09bc446dac5285f",
+  "chain_source": "131f673d9563e72aca7139f3239856957d118d49",
+  "chain_base_merge": "66634191298767b40691d6b2a298418ec19e3673",
+  "chain_tree": "b8bdd87dca3cd6288c38f63848b24b1a2df6a09d",
+  "analysis_packaging_head": "41087c1f4a8e6bab863dbbde9d93084d892035c0",
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "original_git_blob": "3cf1abe11d637902f1a1c46935c606ac71709abf",
+      "original_sha256": "d10a3871e19ae2479c9eb3420ddf0bc47e89a1ef72d34ac5be5b82fad99eb023",
+      "analysis_head_git_blob": "3cf1abe11d637902f1a1c46935c606ac71709abf",
+      "analysis_file_sha256": "d10a3871e19ae2479c9eb3420ddf0bc47e89a1ef72d34ac5be5b82fad99eb023",
+      "byte_identical": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs",
+      "original_git_blob": "940753e4962536de928ce855d67ff2a2d7a84148",
+      "original_sha256": "65a20cbd8ffdf5e4873b5c97768988dacc01369a0b584abd416c368709246b6a",
+      "analysis_head_git_blob": "940753e4962536de928ce855d67ff2a2d7a84148",
+      "analysis_file_sha256": "65a20cbd8ffdf5e4873b5c97768988dacc01369a0b584abd416c368709246b6a",
+      "byte_identical": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "original_git_blob": "59f51dcadb5a0a575eaa14734edbce74accade09",
+      "original_sha256": "488981844f2d3728c59785d43bdd8f7ea9defbda167c58490cc653421b9049a0",
+      "analysis_head_git_blob": "59f51dcadb5a0a575eaa14734edbce74accade09",
+      "analysis_file_sha256": "488981844f2d3728c59785d43bdd8f7ea9defbda167c58490cc653421b9049a0",
+      "byte_identical": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "original_git_blob": "e89df6a9150a2603f29e195a5e104f5dcb03a5d9",
+      "original_sha256": "65cd825bc5e1a8b4694c535ead9209d639a8f2095fba33120f07bb8b80b6efe2",
+      "analysis_head_git_blob": "20299f1b6d54d72ca8f1c1370117e2091f28b790",
+      "analysis_file_sha256": "4274d3c6417c1df6261701dfa9f1ecfd46a3b901125a47514778a1448c62a123",
+      "byte_identical": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "original_git_blob": "8843c980bf9c502b31f014dea26903160ce5bfd0",
+      "original_sha256": "b98a5beb32e9ba9f24efbf123692ffcfda83b18ff88f803e3ab03712cde599ea",
+      "analysis_head_git_blob": "8843c980bf9c502b31f014dea26903160ce5bfd0",
+      "analysis_file_sha256": "b98a5beb32e9ba9f24efbf123692ffcfda83b18ff88f803e3ab03712cde599ea",
+      "byte_identical": true
+    },
+    {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "original_git_blob": "9149433d76a08fdb5dc8e35949b8cbe9b5a31c31",
+      "original_sha256": "2d1d39e3a6c9fe69b50a6cad1ab78cb65f7b09a1835c5f5991fad05b0308d95b",
+      "analysis_head_git_blob": "9149433d76a08fdb5dc8e35949b8cbe9b5a31c31",
+      "analysis_file_sha256": "2d1d39e3a6c9fe69b50a6cad1ab78cb65f7b09a1835c5f5991fad05b0308d95b",
+      "byte_identical": true
+    },
+    {
+      "path": "scripts/ci/run_from_zero_host.py",
+      "original_git_blob": "87a07e2e6a082732ef2eec36f4b4e85a13c58d32",
+      "original_sha256": "289647724762a27dbe389f3843ada297e0ab8146f0696d671494c4bc9c7ade64",
+      "analysis_head_git_blob": "87a07e2e6a082732ef2eec36f4b4e85a13c58d32",
+      "analysis_file_sha256": "289647724762a27dbe389f3843ada297e0ab8146f0696d671494c4bc9c7ade64",
+      "byte_identical": true
+    },
+    {
+      "path": "scripts/ci/public_host_ci_observation.py",
+      "original_git_blob": "245b5b905e32446ed20f39398619553c4dccead0",
+      "original_sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de",
+      "analysis_head_git_blob": "245b5b905e32446ed20f39398619553c4dccead0",
+      "analysis_file_sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de",
+      "byte_identical": true
+    }
+  ],
+  "new_native_execution": false,
+  "original_source_equals_current_candidate_claimed": false
+}

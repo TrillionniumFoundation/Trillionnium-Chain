@@ -1,0 +1,25 @@
+{
+  "schema": "trnm-final819-range-v3-original-pure-reader",
+  "command": [
+    "/usr/bin/python3",
+    "/home/qian-qi/throughput-final-ci-observation-20261107/read_w1_pure_records_819_v2.py",
+    "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3/13586509176"
+  ],
+  "original_wrapper_sha256": "d6de643b9440731fc23272f3c5f81fccdcfa62f6d8d57e1729540b715fc8d2ca",
+  "observer_timeout_seconds": 240,
+  "source_or_ci_or_native_recreated": false,
+  "exit_code": 0,
+  "timed_out": false,
+  "complete_component_readback": true,
+  "native_campaign_commands": 30,
+  "errors": [],
+  "business_qualification": false,
+  "stdout": {
+    "bytes": 166,
+    "sha256": "46c5d7d3220114478c22d706e8efbe3ef1f67611bbca8517e4e387f5a5e0e01d"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

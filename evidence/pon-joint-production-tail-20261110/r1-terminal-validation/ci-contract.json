@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/check_ci_contract.py"
+  ],
+  "elapsed_seconds": 0.12985549200311652,
+  "exit_code": 0,
+  "native_gate_pass_claimed": false,
+  "scope": "exact committed evidence recovery, unchanged installed source",
+  "source_commit": "2a06d2933a466675b081bb3b004a732f676d8028",
+  "source_tree": "b1b73e10f3e8f4eb152d11bc0278a6a65fc47f9b",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+}

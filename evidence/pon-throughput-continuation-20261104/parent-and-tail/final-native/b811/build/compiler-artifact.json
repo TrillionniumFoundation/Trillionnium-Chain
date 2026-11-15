@@ -1,0 +1,35 @@
+{
+  "executable": "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+  "features": [
+    "default",
+    "pq-native-openssl"
+  ],
+  "filenames": [
+    "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1"
+  ],
+  "fresh": false,
+  "manifest_path": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node/Cargo.toml",
+  "package_id": "path+file:///workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node#0.1.0",
+  "profile": {
+    "debug_assertions": true,
+    "debuginfo": 2,
+    "opt_level": "3",
+    "overflow_checks": true,
+    "test": true
+  },
+  "reason": "compiler-artifact",
+  "target": {
+    "crate_types": [
+      "lib"
+    ],
+    "doc": true,
+    "doctest": true,
+    "edition": "2021",
+    "kind": [
+      "lib"
+    ],
+    "name": "trnm_pon_node",
+    "src_path": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node/src/lib.rs",
+    "test": true
+  }
+}

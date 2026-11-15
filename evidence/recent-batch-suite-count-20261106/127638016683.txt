@@ -1,0 +1,18 @@
+running 16 tests
+test store::error_boundary_tests::actual_replay_and_outbox_recovery_preserve_typed_local_sources ... ok
+test store::error_boundary_tests::durable_reorg_faults_stop_and_exact_repair_resumes_without_losing_hook_cancellation ... ok
+test store::error_boundary_tests::incoming_replay_payload_pending_and_ack_failures_keep_transport_enum_identity ... ok
+test store::error_boundary_tests::journal_transition_row_loss_is_local_and_rollback_preserves_exact_pending_frame ... ok
+test store::error_boundary_tests::mining_wall_time_reads_eleven_headers_and_checks_the_boundary_parent ... ok
+test store::error_boundary_tests::mining_wall_time_retains_current_parent_full_packet_validation ... ok
+test store::error_boundary_tests::mining_wall_time_retains_genesis_record_and_original_error_checks ... ok
+test store::error_boundary_tests::missing_caller_state_and_retired_replies_remain_nonfatal_stale_context ... ok
+test store::error_boundary_tests::persisted_state_bytes_and_root_are_local_but_progress_errors_keep_their_identity ... ok
+test store::error_boundary_tests::recent_batch_branch_reopen_and_callback_errors_preserve_context ... ok
+test store::error_boundary_tests::recent_batch_exact_window_and_complete_call_observation ... ok
+test store::error_boundary_tests::recent_batch_retained_corruption_and_read_boundary_match_original ... ok
+test store::error_boundary_tests::reservation_writes_cannot_report_success_without_complete_durable_state ... ok
+test store::error_boundary_tests::retained_completed_reply_shape_stops_and_exact_repair_restores_cached_replay ... ok
+test store::error_boundary_tests::retained_header_corruption_and_unknown_caller_locator_have_different_origins ... ok
+test store::error_boundary_tests::retained_history_cancellation_and_clock_deferral_never_become_storage_failure ... ok
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 1133 filtered out; finished in 2.65s

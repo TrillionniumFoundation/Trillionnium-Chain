@@ -1,0 +1,55 @@
+{
+  "observation": {
+    "ok": true,
+    "result": {
+      "account": {
+        "authenticated": true,
+        "method": "oauth",
+        "user_id": 20882562,
+        "username": "alexqipku",
+        "verification": "official_token_introspection"
+      },
+      "created_at": "2026-11-07T17:48:17.085476+00:00",
+      "event_count": 2,
+      "identity_verified": false,
+      "input_digest": "d102a65184cd57a5e3484fec092fe4c282284387645e4c3c19800b756470225f",
+      "intent": {
+        "accelerator": "nvidiaTeslaT4",
+        "competition_sources": [],
+        "dataset_sources": [],
+        "internet": true,
+        "is_private": true,
+        "kernel_sources": [],
+        "kernel_type": "script",
+        "language": "python",
+        "model_sources": [],
+        "source_sha256": "b0fd8b867aecb3f2e9917bf0db14f07e7df8a32704d012553391e145c9cffcfd",
+        "timeout_seconds": 3600
+      },
+      "kernel_id": null,
+      "kernel_session_id": null,
+      "last_error": {
+        "code": "NOTEBOOK_LIST_SCOPE",
+        "details": {},
+        "message": "Notebook listing did not confirm ownership of every returned reference."
+      },
+      "notebook_ref": "alexqipku/hepta-trnm-w1-7d418660-c-1d9bbc123e682639891e2435",
+      "notebook_version": null,
+      "observed_remote": false,
+      "remote_effect_unknown": false,
+      "remote_state": "UNKNOWN",
+      "remote_submission_state": "NOT_SENT",
+      "request_id": "trnm-w1-7d418660-cuda-build-01",
+      "schema": "hepta-kaggle-job-v1",
+      "submission_state": "REJECTED",
+      "updated_at": "2026-11-07T17:48:18.230011+00:00"
+    }
+  },
+  "omitted_account_metadata": [
+    "expires_unix",
+    "scope"
+  ],
+  "original_hepta_job_id": "1a1b7244f19-12894-95a",
+  "original_response_sha256": "11aaa8c6996124ed98fd585e13b5257830d387b1d8183495a99ef1847274f8b6",
+  "schema": "TRNM-W1-PROVIDER-RECONCILIATION1"
+}

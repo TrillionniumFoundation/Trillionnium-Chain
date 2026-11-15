@@ -1,0 +1,264 @@
+{
+  "archive": "raw-and-derived-records.tar.gz",
+  "archive_bytes": 6388358,
+  "archive_sha256": "6a814000b1b203373aad097b8cdba09d8768eca67f51012f35ed2d59fd7f975c",
+  "implementation_changed": false,
+  "member_count": 26,
+  "members": [
+    {
+      "bytes": 319639,
+      "member": "loader/artifact-files.json",
+      "sha256": "d214e10aea76214f7cff3fd96bc0227c07e79a8d5fdca32ca1ef1ee160f0cb1b"
+    },
+    {
+      "bytes": 1957,
+      "member": "loader/hardware.json",
+      "sha256": "c02866ef855b92c487d5de4a73205412ada148e7aaf6da024cd47c5fd0a82a30"
+    },
+    {
+      "bytes": 8560,
+      "member": "loader/results.json",
+      "sha256": "39c77193c04f7d694aa98b252e2264fde580d472f4f076241f65a603e428f381"
+    },
+    {
+      "bytes": 1634241,
+      "member": "loader/run-1-phase-readback.json",
+      "sha256": "1b842f755a6d84e1a86ce1fa67e142657d42101a9198bf9a756c6b6394326c95"
+    },
+    {
+      "bytes": 3685,
+      "member": "loader/run-1-predicate-readback.json",
+      "sha256": "14fab5b60616d17a3e231e2397f826ad7bbffcc7d010bad4e0766376c718ebd8"
+    },
+    {
+      "bytes": 26388453,
+      "member": "loader/run-1-raw-report.json",
+      "sha256": "674d230d5ad33b5d55df9ac4a483c77e7cd725cfdba08db70aabe91dc5bb68e7"
+    },
+    {
+      "bytes": 14171,
+      "member": "loader/run-1-timeout-readback.json",
+      "sha256": "37d6331f93b200941f5efabf8345e0cb07bd4c9fb080423c84784975f49978ab"
+    },
+    {
+      "bytes": 1615,
+      "member": "loader/run-1.stderr.log",
+      "sha256": "6c6dc50d77e96b2dfd80e9b561046129e6e4e6801b70f59db23f115d77b70b89"
+    },
+    {
+      "bytes": 1632278,
+      "member": "loader/run-2-phase-readback.json",
+      "sha256": "03238308e49a1221975afb916a5aeb785915d26df6f1b7424d00af689b28f7df"
+    },
+    {
+      "bytes": 1615,
+      "member": "loader/run-2.stderr.log",
+      "sha256": "ca38ae689eccec1f6340a1a57b97380cc9b4ca6a2988ae7a1ee358366903ed07"
+    },
+    {
+      "bytes": 1654999,
+      "member": "loader/run-3-phase-readback.json",
+      "sha256": "227ce9309991e0fc96c8047596cbbd3f759f53cde8d2d29e67fb4f59371271c1"
+    },
+    {
+      "bytes": 1615,
+      "member": "loader/run-3.stderr.log",
+      "sha256": "92456dd2f962bd0f2011d88774fde6907ca16eea765d747b40af30f6d3e47e51"
+    },
+    {
+      "bytes": 11686,
+      "member": "loader/run-native-campaign.py",
+      "sha256": "c1dfb715aaf8c0c86d66c9ebee6cf64c4a829b89fdf93767e2ce9f847b8534c0"
+    },
+    {
+      "bytes": 319639,
+      "member": "effects/artifact-files.json",
+      "sha256": "5095314cc9b24aac86fe9a70666f7b91e7baee75f79f3ed27d51d0511f7a2e2e"
+    },
+    {
+      "bytes": 1957,
+      "member": "effects/hardware.json",
+      "sha256": "774f682afca32f5152eef0477335ebcb5ed7848e2485fb860ca3b7c82b5a97c1"
+    },
+    {
+      "bytes": 8561,
+      "member": "effects/results.json",
+      "sha256": "9c35ad90d4e6c8c53a72b27b2f6c087a454ef128fa9e1607f7b24784ee65f887"
+    },
+    {
+      "bytes": 1803760,
+      "member": "effects/run-1-phase-readback.json",
+      "sha256": "5b7c62ae270487f12a0d6df2dd9fa42c369c099a0081a9758ce2bae95148a5ff"
+    },
+    {
+      "bytes": 3723,
+      "member": "effects/run-1-predicate-readback.json",
+      "sha256": "233b979bbe337a856c381647825c060e1bfbbedb9ce5606957a04e11ae81722e"
+    },
+    {
+      "bytes": 48646566,
+      "member": "effects/run-1-raw-report.json",
+      "sha256": "c634909a593ca8e513b492df6fe640e15d40af31c9ec9d13e1fc4e7391a486fb"
+    },
+    {
+      "bytes": 19860,
+      "member": "effects/run-1-timeout-readback.json",
+      "sha256": "d6f03527c4a128d56c57292a10af9fd43510c879e53830e92d4e68bbec4e9611"
+    },
+    {
+      "bytes": 1615,
+      "member": "effects/run-1.stderr.log",
+      "sha256": "cf6e3e6dc3b09cae47d31afbf00d0babfd77f45f1df080bb6163a865ad073f6c"
+    },
+    {
+      "bytes": 1778752,
+      "member": "effects/run-2-phase-readback.json",
+      "sha256": "366a13bf6bebeca219c2ad8d3e6a59f601a9ca324150af3cb7cd7665001a0964"
+    },
+    {
+      "bytes": 1615,
+      "member": "effects/run-2.stderr.log",
+      "sha256": "dd0c8d1e4634e33c7981336eb4e77bb6c1507e62733fb0f7bc68f9fc18a127a8"
+    },
+    {
+      "bytes": 1803497,
+      "member": "effects/run-3-phase-readback.json",
+      "sha256": "e0a6a3345d5891e44a98d14972b40b507928cf0c4354fd819e153db30dd0f7d1"
+    },
+    {
+      "bytes": 1615,
+      "member": "effects/run-3.stderr.log",
+      "sha256": "a2f57941dfdbb7d47793ce23b3893d0ce4b130a71322cc76a4654e10085942ce"
+    },
+    {
+      "bytes": 11686,
+      "member": "effects/run-native-campaign.py",
+      "sha256": "c1dfb715aaf8c0c86d66c9ebee6cf64c4a829b89fdf93767e2ce9f847b8534c0"
+    }
+  ],
+  "native_tests_rerun_for_publication": false,
+  "original_members_reverified": [
+    {
+      "bytes": 1615,
+      "lane": "loader",
+      "member": "run-1.stderr.log",
+      "sha256": "6c6dc50d77e96b2dfd80e9b561046129e6e4e6801b70f59db23f115d77b70b89"
+    },
+    {
+      "bytes": 1615,
+      "lane": "loader",
+      "member": "run-2.stderr.log",
+      "sha256": "ca38ae689eccec1f6340a1a57b97380cc9b4ca6a2988ae7a1ee358366903ed07"
+    },
+    {
+      "bytes": 1615,
+      "lane": "loader",
+      "member": "run-3.stderr.log",
+      "sha256": "92456dd2f962bd0f2011d88774fde6907ca16eea765d747b40af30f6d3e47e51"
+    },
+    {
+      "bytes": 1634241,
+      "lane": "loader",
+      "member": "run-1-phase-readback.json",
+      "sha256": "1b842f755a6d84e1a86ce1fa67e142657d42101a9198bf9a756c6b6394326c95"
+    },
+    {
+      "bytes": 1632278,
+      "lane": "loader",
+      "member": "run-2-phase-readback.json",
+      "sha256": "03238308e49a1221975afb916a5aeb785915d26df6f1b7424d00af689b28f7df"
+    },
+    {
+      "bytes": 1654999,
+      "lane": "loader",
+      "member": "run-3-phase-readback.json",
+      "sha256": "227ce9309991e0fc96c8047596cbbd3f759f53cde8d2d29e67fb4f59371271c1"
+    },
+    {
+      "bytes": 26388453,
+      "lane": "loader",
+      "member": "run-1-raw/report.json",
+      "sha256": "674d230d5ad33b5d55df9ac4a483c77e7cd725cfdba08db70aabe91dc5bb68e7"
+    },
+    {
+      "bytes": 8560,
+      "lane": "loader",
+      "member": "results.json",
+      "sha256": "39c77193c04f7d694aa98b252e2264fde580d472f4f076241f65a603e428f381"
+    },
+    {
+      "bytes": 11686,
+      "lane": "loader",
+      "member": "run-native-campaign.py",
+      "sha256": "c1dfb715aaf8c0c86d66c9ebee6cf64c4a829b89fdf93767e2ce9f847b8534c0"
+    },
+    {
+      "bytes": 1957,
+      "lane": "loader",
+      "member": "hardware.json",
+      "sha256": "c02866ef855b92c487d5de4a73205412ada148e7aaf6da024cd47c5fd0a82a30"
+    },
+    {
+      "bytes": 1615,
+      "lane": "effects",
+      "member": "run-1.stderr.log",
+      "sha256": "cf6e3e6dc3b09cae47d31afbf00d0babfd77f45f1df080bb6163a865ad073f6c"
+    },
+    {
+      "bytes": 1615,
+      "lane": "effects",
+      "member": "run-2.stderr.log",
+      "sha256": "dd0c8d1e4634e33c7981336eb4e77bb6c1507e62733fb0f7bc68f9fc18a127a8"
+    },
+    {
+      "bytes": 1615,
+      "lane": "effects",
+      "member": "run-3.stderr.log",
+      "sha256": "a2f57941dfdbb7d47793ce23b3893d0ce4b130a71322cc76a4654e10085942ce"
+    },
+    {
+      "bytes": 1803760,
+      "lane": "effects",
+      "member": "run-1-phase-readback.json",
+      "sha256": "5b7c62ae270487f12a0d6df2dd9fa42c369c099a0081a9758ce2bae95148a5ff"
+    },
+    {
+      "bytes": 1778752,
+      "lane": "effects",
+      "member": "run-2-phase-readback.json",
+      "sha256": "366a13bf6bebeca219c2ad8d3e6a59f601a9ca324150af3cb7cd7665001a0964"
+    },
+    {
+      "bytes": 1803497,
+      "lane": "effects",
+      "member": "run-3-phase-readback.json",
+      "sha256": "e0a6a3345d5891e44a98d14972b40b507928cf0c4354fd819e153db30dd0f7d1"
+    },
+    {
+      "bytes": 48646566,
+      "lane": "effects",
+      "member": "run-1-raw/report.json",
+      "sha256": "c634909a593ca8e513b492df6fe640e15d40af31c9ec9d13e1fc4e7391a486fb"
+    },
+    {
+      "bytes": 8561,
+      "lane": "effects",
+      "member": "results.json",
+      "sha256": "9c35ad90d4e6c8c53a72b27b2f6c087a454ef128fa9e1607f7b24784ee65f887"
+    },
+    {
+      "bytes": 11686,
+      "lane": "effects",
+      "member": "run-native-campaign.py",
+      "sha256": "c1dfb715aaf8c0c86d66c9ebee6cf64c4a829b89fdf93767e2ce9f847b8534c0"
+    },
+    {
+      "bytes": 1957,
+      "lane": "effects",
+      "member": "hardware.json",
+      "sha256": "774f682afca32f5152eef0477335ebcb5ed7848e2485fb860ca3b7c82b5a97c1"
+    }
+  ],
+  "original_whole_zip_downloaded_or_rehashed": false,
+  "schema": "pon-original-campaign-preservation-v1"
+}

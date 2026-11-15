@@ -1,0 +1,274 @@
+{
+  "schema": "query-frontier-hosted-ci-update-v1",
+  "observation_utc": "2026-11-09 13:50:59 UTC",
+  "source_commit": "51683089c7ec75cca3e0bcfb2201c08aa5dab654",
+  "source_tree": "c85745e3396723b07bda7c86a36618c7863e65a5",
+  "repository_truth": {
+    "head": {
+      "job_id": 129194709339,
+      "run_id": 42627428812,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42627428812/job/129194709339",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Verify immutable source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Set isolated Cargo paths after runner allocation",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Check PQ provider CI wiring and failure controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Check original public Host CI ownership and failure controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Install isolated runtime material verifier dependency",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Run actual repository-truth checks",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Verify source remained unchanged",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Retain source and execution observations",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Post Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21
+        }
+      ]
+    },
+    "prospective_merge_at_observation": {
+      "job_id": 129194710086,
+      "status": "in_progress",
+      "conclusion": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Checkout exact prospective merge",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Verify merge identity and exact ordered parents",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Set isolated Cargo paths after runner allocation",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Install pinned compiler and tools in isolated hosted runner",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5
+        },
+        {
+          "name": "Install isolated conformance and evidence Python environment",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6
+        },
+        {
+          "name": "Install pinned coverage-guided fuzz tools",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7
+        },
+        {
+          "name": "Install pinned dependency auditor",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8
+        },
+        {
+          "name": "Check PQ provider CI wiring and failure controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10
+        },
+        {
+          "name": "Install isolated runtime material verifier dependency",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Execute the same lane on the prospective merge",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 12
+        },
+        {
+          "name": "Verify merge source remained unchanged",
+          "status": "pending",
+          "conclusion": null,
+          "number": 13
+        },
+        {
+          "name": "Retain source and execution observations",
+          "status": "pending",
+          "conclusion": null,
+          "number": 14
+        },
+        {
+          "name": "Post Checkout exact prospective merge",
+          "status": "pending",
+          "conclusion": null,
+          "number": 28
+        }
+      ]
+    }
+  },
+  "hosted_tests": {
+    "query_frontier_methods": 20,
+    "retained_fixed_probability_methods": 16,
+    "retained_ci_contract_methods": 166,
+    "all_reported_pass": true,
+    "repeated_local_and_hosted_methods_not_added": true
+  },
+  "full_decoded_job_log": {
+    "file": "hosted-repository-truth-head.log",
+    "git_blob_sha": "64183e624e3210f007a5bdf8978c7f859bf7deec",
+    "utf8_bytes": 811927,
+    "line_count": 7443,
+    "transport": "GitHub decoded job log retained verbatim, including leading BOM"
+  },
+  "selected_log_excerpts": [
+    "2026-11-09T13:41:17.2193626Z test_actual_mu1_sources_bind_without_promoting_the_cost_gate (test_fixed_probability_contract.ContractTests.test_actual_mu1_sources_bind_without_promoting_the_cost_gate) ... ok",
+    "2026-11-09T13:41:17.2214516Z test_changed_actual_source_is_detected_even_with_unchanged_profile (test_fixed_probability_contract.ContractTests.test_changed_actual_source_is_detected_even_with_unchanged_profile) ... ok",
+    "2026-11-09T13:41:17.2220636Z test_contract_byte_limit_preserves_exact_boundary_and_refuses_extra_data (test_fixed_probability_contract.ContractTests.test_contract_byte_limit_preserves_exact_boundary_and_refuses_extra_data) ... ok",
+    "2026-11-09T13:41:17.2237989Z test_duplicate_nested_keys_and_float_tokens_are_rejected (test_fixed_probability_contract.ContractTests.test_duplicate_nested_keys_and_float_tokens_are_rejected) ... ok",
+    "2026-11-09T13:41:17.2248783Z test_lifecycle_reset_and_omitted_strategies_are_rejected (test_fixed_probability_contract.ContractTests.test_lifecycle_reset_and_omitted_strategies_are_rejected) ... ok",
+    "2026-11-09T13:41:17.2262823Z test_missing_scale_class_or_duplicate_scale_is_rejected (test_fixed_probability_contract.ContractTests.test_missing_scale_class_or_duplicate_scale_is_rejected) ... ok",
+    "2026-11-09T13:41:17.2275983Z test_no_unknown_cost_is_replaced_by_zero_or_observed_time (test_fixed_probability_contract.ContractTests.test_no_unknown_cost_is_replaced_by_zero_or_observed_time) ... ok",
+    "2026-11-09T13:41:17.2280734Z test_open_proof_obligation_cannot_be_deleted (test_fixed_probability_contract.ContractTests.test_open_proof_obligation_cannot_be_deleted) ... ok",
+    "2026-11-09T13:41:17.2290078Z test_scope_cannot_change_probability_credit_units_or_context_fields (test_fixed_probability_contract.ContractTests.test_scope_cannot_change_probability_credit_units_or_context_fields) ... ok",
+    "2026-11-09T13:41:17.2292397Z test_source_path_cannot_escape_the_exact_source_set (test_fixed_probability_contract.ContractTests.test_source_path_cannot_escape_the_exact_source_set) ... ok",
+    "2026-11-09T13:41:17.2293436Z test_classical_negative_screen_can_miss_quantum_advantage (test_fixed_probability_contract.SubsetTests.test_classical_negative_screen_can_miss_quantum_advantage) ... ok",
+    "2026-11-09T13:41:17.2354508Z test_eight_point_domain_subset_mass_feasibility_by_actual_enumeration (test_fixed_probability_contract.SubsetTests.test_eight_point_domain_subset_mass_feasibility_by_actual_enumeration) ... ok",
+    "2026-11-09T13:41:17.2355909Z test_exact_boundary_comparison_does_not_round_an_irrational_root (test_fixed_probability_contract.SubsetTests.test_exact_boundary_comparison_does_not_round_an_irrational_root) ... ok",
+    "2026-11-09T13:41:17.2357291Z test_impossible_inside_and_outside_winner_masses_rejected (test_fixed_probability_contract.SubsetTests.test_impossible_inside_and_outside_winner_masses_rejected) ... ok",
+    "2026-11-09T13:41:17.2358661Z test_non_rational_zero_and_boolean_inputs_rejected (test_fixed_probability_contract.SubsetTests.test_non_rational_zero_and_boolean_inputs_rejected) ... ok",
+    "2026-11-09T13:41:17.2360116Z test_quarter_winners_quarter_domain_does_not_quarter_density (test_fixed_probability_contract.SubsetTests.test_quarter_winners_quarter_domain_does_not_quarter_density) ... ok",
+    "2026-11-09T13:41:17.2360825Z ",
+    "2026-11-09T13:41:17.2360989Z ----------------------------------------------------------------------",
+    "2026-11-09T13:41:17.2361323Z Ran 16 tests in 0.017s",
+    "2026-11-09T13:41:17.2361458Z ",
+    "2026-11-09T13:41:17.2361550Z OK",
+    "2026-11-09T13:41:17.8923117Z test_all_tiny_deterministic_trees_and_randomized_convex_hulls (test_fixed_success_query_frontier.ExactFrontierTests.test_all_tiny_deterministic_trees_and_randomized_convex_hulls) ... ok",
+    "2026-11-09T13:41:17.8925803Z test_enough_final_guesses_have_zero_paid_query_optimum (test_fixed_success_query_frontier.ExactFrontierTests.test_enough_final_guesses_have_zero_paid_query_optimum) ... ok",
+    "2026-11-09T13:41:17.8933918Z test_exact_feasibility_boundary_has_no_float_tolerance (test_fixed_success_query_frontier.ExactFrontierTests.test_exact_feasibility_boundary_has_no_float_tolerance) ... ok",
+    "2026-11-09T13:41:17.8937338Z test_finite_domain_limits_success_even_when_query_cap_is_large (test_fixed_success_query_frontier.ExactFrontierTests.test_finite_domain_limits_success_even_when_query_cap_is_large) ... ok",
+    "2026-11-09T13:41:17.8943884Z test_fixed_half_success_distinguishes_expected_eight_and_cap_eleven (test_fixed_success_query_frontier.ExactFrontierTests.test_fixed_half_success_distinguishes_expected_eight_and_cap_eleven) ... ok",
+    "2026-11-09T13:41:17.8952430Z test_fixed_mark_count_is_a_different_probability_law (test_fixed_success_query_frontier.ExactFrontierTests.test_fixed_mark_count_is_a_different_probability_law) ... ok",
+    "2026-11-09T13:41:17.8955685Z test_free_outputs_reserve_only_addresses_that_really_exist (test_fixed_success_query_frontier.ExactFrontierTests.test_free_outputs_reserve_only_addresses_that_really_exist) ... ok",
+    "2026-11-09T13:41:17.8963364Z test_independent_verifier_does_not_call_frontier_constructor (test_fixed_success_query_frontier.ExactFrontierTests.test_independent_verifier_does_not_call_frontier_constructor) ... ok",
+    "2026-11-09T13:41:17.8966399Z test_one_final_guess_does_not_bill_a_virtual_check_to_the_producer (test_fixed_success_query_frontier.ExactFrontierTests.test_one_final_guess_does_not_bill_a_virtual_check_to_the_producer) ... ok",
+    "2026-11-09T13:41:17.8980069Z test_zero_and_one_probability_empty_domain_and_zero_target (test_fixed_success_query_frontier.ExactFrontierTests.test_zero_and_one_probability_empty_domain_and_zero_target) ... ok",
+    "2026-11-09T13:41:17.8985492Z test_changed_experiment_and_digest_are_rejected (test_fixed_success_query_frontier.ValidationTests.test_changed_experiment_and_digest_are_rejected) ... ok",
+    "2026-11-09T13:41:17.9587487Z test_cli_check_emits_exact_examples_and_retains_hold (test_fixed_success_query_frontier.ValidationTests.test_cli_check_emits_exact_examples_and_retains_hold) ... ok",
+    "2026-11-09T13:41:18.1239665Z test_cli_writes_once_and_verifies_the_same_fixed_experiment (test_fixed_success_query_frontier.ValidationTests.test_cli_writes_once_and_verifies_the_same_fixed_experiment) ... ok",
+    "2026-11-09T13:41:18.1251161Z test_cost_or_feasibility_cannot_be_upgraded (test_fixed_success_query_frontier.ValidationTests.test_cost_or_feasibility_cannot_be_upgraded) ... ok",
+    "2026-11-09T13:41:18.1254287Z test_implementation_size_limits_refuse_without_rounding (test_fixed_success_query_frontier.ValidationTests.test_implementation_size_limits_refuse_without_rounding) ... ok",
+    "2026-11-09T13:41:18.1290711Z test_json_duplicate_keys_floats_and_size_limit_rejected (test_fixed_success_query_frontier.ValidationTests.test_json_duplicate_keys_floats_and_size_limit_rejected) ... ok",
+    "2026-11-09T13:41:18.1302059Z test_noncanonical_rationals_booleans_and_extra_fields_rejected (test_fixed_success_query_frontier.ValidationTests.test_noncanonical_rationals_booleans_and_extra_fields_rejected) ... ok",
+    "2026-11-09T13:41:18.1305603Z test_nonexact_probability_and_invalid_budgets_are_rejected (test_fixed_success_query_frontier.ValidationTests.test_nonexact_probability_and_invalid_budgets_are_rejected) ... ok",
+    "2026-11-09T13:41:18.1323287Z test_policy_mutations_are_rejected (test_fixed_success_query_frontier.ValidationTests.test_policy_mutations_are_rejected) ... ok",
+    "2026-11-09T13:41:18.1334664Z test_scope_cannot_promote_query_arithmetic_or_change_billing (test_fixed_success_query_frontier.ValidationTests.test_scope_cannot_promote_query_arithmetic_or_change_billing) ... ok",
+    "2026-11-09T13:41:18.1335531Z ",
+    "2026-11-09T13:41:18.1335705Z ----------------------------------------------------------------------",
+    "2026-11-09T13:41:18.1336044Z Ran 20 tests in 0.808s",
+    "2026-11-09T13:41:18.1336194Z ",
+    "2026-11-09T13:41:18.1336282Z OK",
+    "2026-11-09T13:41:18.1968807Z {",
+    "2026-11-09T13:41:18.1969586Z   \"actual_classical_quantum_cost_points\": \"unproved\",",
+    "2026-11-09T13:41:18.1970854Z   \"actual_w1_lower_bound\": false,",
+    "2026-11-09T13:41:18.1971256Z   \"checked_examples\": 6,",
+    "2026-11-09T13:47:52.0804470Z test_v3_lane_is_additive_and_keeps_all_four_exact_source_cells (__main__.W1ReuseV3LaneTests.test_v3_lane_is_additive_and_keeps_all_four_exact_source_cells) ... ok",
+    "2026-11-09T13:47:52.0805514Z ",
+    "2026-11-09T13:47:52.0805778Z ----------------------------------------------------------------------",
+    "2026-11-09T13:47:52.0806312Z Ran 166 tests in 36.139s",
+    "2026-11-09T13:47:52.0806501Z ",
+    "2026-11-09T13:47:52.0806684Z OK",
+    "2026-11-09T13:47:53.4041533Z test_checked_timeout_retains_failure_and_stops_descendant_writer (__main__.ObservationTests.test_checked_timeout_retains_failure_and_stops_descendant_writer) ... ok",
+    "2026-11-09T13:40:56.3800887Z   \"tested_commit\": \"51683089c7ec75cca3e0bcfb2201c08aa5dab654\",",
+    "2026-11-09T13:40:56.3801402Z   \"tested_tree\": \"c85745e3396723b07bda7c86a36618c7863e65a5\",",
+    "2026-11-09T13:50:16.4780510Z   \"tested_commit\": \"51683089c7ec75cca3e0bcfb2201c08aa5dab654\",",
+    "2026-11-09T13:50:16.4781069Z   \"tested_tree\": \"c85745e3396723b07bda7c86a36618c7863e65a5\","
+  ],
+  "preceding_review": {
+    "file": "hosted-ci-review.md",
+    "sha256": "b93e8888e0d3583decaaed12c68a4b8db1bd6cbbcf9f19d678bf8103c98d3a79",
+    "observation_time_utc": "2026-11-09 13:45:30 UTC",
+    "superseded_only_for_repository_truth_head_completion": true
+  },
+  "local_failed_and_unlaunched_observations_preserved": true,
+  "inherited_qrom_implementation_and_closure_failures_still_open": true,
+  "complete_hosted_ci_pass": false,
+  "actual_w1_lower_bound": false,
+  "qualification": "HOLD_NO_GO"
+}

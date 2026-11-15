@@ -1,0 +1,11 @@
+{
+  "expected_entries": 29041,
+  "guard_sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+  "head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "matching_bytes": 2618950502,
+  "matching_entries": 29041,
+  "missing_skipped": [],
+  "original_function": "_tracked_blob(root_fd, path, mode, size)",
+  "refused": [],
+  "schema": "chain-original-physical-blob-scan-v1"
+}

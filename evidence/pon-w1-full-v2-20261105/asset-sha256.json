@@ -1,0 +1,54 @@
+{
+  "controls-3.tar.gz": {
+    "bytes": 1089,
+    "sha256": "fa9f84a3b7fa44e5b1e8ea2f8776a6e4b37adbca7d799c1c00a82b0516e40df5"
+  },
+  "controls-result.json": {
+    "bytes": 216585,
+    "sha256": "11c684ed2a1e3dd63a6076b85bd6a21417a02d882f097e411eb0959301726d44"
+  },
+  "executed-source.bundle": {
+    "bytes": 23795,
+    "sha256": "3fec57ad77fd68dc922d5aa24a7d4b9ffcac5b45b77992e598f8b39418ab08d5"
+  },
+  "expected-artifacts.bin": {
+    "bytes": 64,
+    "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+  },
+  "guest.bin": {
+    "bytes": 375928,
+    "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f"
+  },
+  "header.bin": {
+    "bytes": 318,
+    "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+  },
+  "input.bin": {
+    "bytes": 49506,
+    "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+  },
+  "observation-3.tar.gz": {
+    "bytes": 942985,
+    "sha256": "9d5a1bad69a6279c64986c690f1e23ac6a38eed1c9e16f52b33fae15d83a450a"
+  },
+  "original-controls-failure.log": {
+    "bytes": 145,
+    "sha256": "dc2186516e340c4f1bf95fbbdab3f462ebfc205703eb0b79117a6e7f631fabf0"
+  },
+  "proof-result.json": {
+    "bytes": 198014,
+    "sha256": "a2bbd9ed141b87823ea6d50322c0d65f706e32aca028d1b5ab19f1327c1194cc"
+  },
+  "raw-index.json": {
+    "bytes": 129365,
+    "sha256": "1dac23ede827023ef16156a91c8b46b0c1349170f1ead02577c89da310c0406d"
+  },
+  "succinct.bin": {
+    "bytes": 257014,
+    "sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"
+  },
+  "controls-3-repaired.tar.xz": {
+    "bytes": 269452,
+    "sha256": "0bdc390cd790f9e6493690db22658f12f40f4eb086c0499ba490623e8c16b1b1"
+  }
+}

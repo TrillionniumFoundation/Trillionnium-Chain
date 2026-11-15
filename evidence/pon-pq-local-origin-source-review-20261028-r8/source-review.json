@@ -1,0 +1,68 @@
+{
+  "schema": "pon-pq-local-origin-source-review-v1",
+  "reviewed_fix_commit": "7c324398041d05e14c80a7d3a973991de69fbabe",
+  "integrated_fix_commit": "ab058577d",
+  "baseline_runtime_source": "6762be6bad760d17c6cbb50ff7f8b1928c6284df",
+  "source_before_pin_commit": "a4a165b85b4522f06addee2e03ce17bdbe143d42",
+  "original_deadline_body_bytes": 9830,
+  "original_deadline_body_sha256": "f66792666493725d9a099bb315cc489a8b4a21be98c839bd7ee89d829fc20871",
+  "original_deadline_body_unchanged": true,
+  "original_138_error_parser_mappings_unchanged": true,
+  "first_static_review_attempt": "Refused before writes: parser split the macro grammar instead of its invocation. After anchoring to error_codes!, all 138 original mappings match exactly. No native execution occurred in this review.",
+  "changed_source_pins": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/error.rs",
+      "old_pinned_blob": null,
+      "new_pinned_blob": "c61b1df8d82ca63a08c652d3320112981967dd7f",
+      "bytes": 33545,
+      "sha256": "c645f245b52ad5008d047a1baf964364621c69048ac1a09af27cfb9d813c1904"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "old_pinned_blob": "142f0e012992e7fe6087c326d3b5fab2f30d91a5",
+      "new_pinned_blob": "cf50242bf3eb329180bad654f17a23ef207528d1",
+      "bytes": 19103,
+      "sha256": "7ae6eb96f0e1903a20249437b6e7f4caa398e9606766a1f96046916e00d9f4bb"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tests.rs",
+      "old_pinned_blob": "77379643243c50ffa8e6cc81923ad216332211e0",
+      "new_pinned_blob": "70787372bed32a4916210b85c1c7b114edccc4da",
+      "bytes": 25323,
+      "sha256": "b34ee482ef647b95144b19597ce96177b8f60a00de92f11436b2fd82e6b7588b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/post_intent_cancel_tests.rs",
+      "old_pinned_blob": null,
+      "new_pinned_blob": "24919bb419c8f9afa0c9ceb880392d6580e27d40",
+      "bytes": 24439,
+      "sha256": "478559371dc7876e31746fddcd6fdc03ab323eac57c08d232e2f046be358502e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/post_intent_expiry_tests.rs",
+      "old_pinned_blob": null,
+      "new_pinned_blob": "10d988e8b1dd93dfc701344baccf75fa6039d8b8",
+      "bytes": 11046,
+      "sha256": "b74946d7c542f2d0442df5a6f3df80559fab18ad46ecec430e3cbb771dbc3535"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/local_control_origin_tests.rs",
+      "old_pinned_blob": null,
+      "new_pinned_blob": "c59349103389655878bc9262cc9216d3a2edd987",
+      "bytes": 14486,
+      "sha256": "691a47f70f8a965a13d63e5fd3e43c47ecc6deef535b6ab711b18a80870a1c2e"
+    }
+  ],
+  "all_other_manifest_fields_unchanged": true,
+  "production_change": "Three existing deadline/expiry/revocation conditions construct local-only Cancelled codes. Generic diagnostic text cannot create those codes.",
+  "additional_controls": [
+    "real original signed expiry with unchanged ten-second request deadline",
+    "three actual ML-DSA remote refusals and three signature corruptions",
+    "fifteen explicit-origin durable-intent controls"
+  ],
+  "origin_fault_controls_are_real_deadlines_or_revocations": false,
+  "actual_parallel_post_intent_durable_revocation_reachable": false,
+  "native_candidate_execution": "NOT_RUN",
+  "public_paid_host_qualified": false,
+  "whole_chain_pq_accepted": false
+}

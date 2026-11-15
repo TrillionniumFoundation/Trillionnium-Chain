@@ -1,0 +1,36 @@
+{
+  "reviewer": "state_performance",
+  "scope": "History writer handoff production and five scalar controls; not the in-progress History pre-close/fence oracle or CI reader",
+  "result": "NO_REMAINING_STATIC_BLOCKER",
+  "source_sha256": {
+    "ingress.rs": "0bde112a70c964ef91a5417216269cfaf864e3aea46ea33ebefcaf38ef04df4c",
+    "ingress/history_import.rs": "e7a8e2fb7566f7e69b0faf19a13ccd029b4b7b34baf4309467afdb8f524bfde3",
+    "ingress/public_v3/scalar_cpu.rs": "6049a86df0fe9504b963256c06926b6b6c0cfb09b58c3945f1b0a4e74ab73fe1",
+    "ingress/public_v3/scalar_cpu_history_handoff_tests.rs": "df3ff12e8b1d1bdc8874125165b2187b285355d2bd3d8389b2adae7280c22092",
+    "ingress/history_import_tests.rs": "e5b85a9f3e3504e2a6c05b5c5bb0ccdf704c3e53a14f87018e051a3d60020149"
+  },
+  "resolved_finding": {
+    "issue": "Earlier version additionally refused unqualified/replayed work for negative stored free credit despite a successful original paid-reserve sampler verdict.",
+    "resolution": "ready = !state.verified_completion || budget.credit_ns >= 0; noneligible returns without wait or new refusal, while true deficits/refused/unknown remain sampler errors.",
+    "regression": "same negative-free successful purchased-allowance continuation, followed by real unsampled W1 depletion and original refusal; no fabricated credit or CPU"
+  },
+  "checked": [
+    "before_writer runs only after successful detached execution with Node guard dropped and scoped workers joined; held, capacity fallback and existing-packet branches do not call it",
+    "same operation uses observe_sample(false,true) for each new owner interval; no new reservation, settlement, reset, credit mint or worker-account change",
+    "request/global mutexes leave lexical scope before resource callback, request check and sleep; lock order remains request then global",
+    "same original request deadline and resource closure check every wait, five-millisecond waits clamp to original end, no deadline replacement",
+    "only original unique verified-completion promotion can wait; original completion identity/replay/capacity rules are unchanged",
+    "all current start and termination reserves remain deducted from stored free credit; eligible readiness at C>=0 does not promise commit success",
+    "preexisting refusal and unknown accounting cannot revive; thread/owner registry inconsistencies fail closed",
+    "held checks and commit fences remain active after reacquisition; another owner can consume headroom and cause legitimate refusal",
+    "two-live-owner test uses different actual OS threads, avoiding overlapping same-thread meter baselines; actual receipts and flow sum check double payment",
+    "five tests use actual valid W1 and actual thread CPU, cold original refill, original deadlines and real wait; unknown sampler failure is an explicit failure-injection control",
+    "consume_free_credit no longer demands extra replays when qualifying real work already reached the target"
+  ],
+  "limits": [
+    "No Cargo, compiler, native test, service campaign or throughput observation was run by this reviewer.",
+    "Real-CPU deficit fixtures require CPU consumption to outpace the original 250 ms/s refill before their five-second end; a heavily throttled environment can fail setup and must not be counted as a mechanism counterexample.",
+    "Component try_lock controls cover request/global mutexes; Node writer release is verified from production call structure and still needs the full native History controls.",
+    "C>=0 is a sampled readiness condition, not a reservation for future commit or a commit-cost upper bound."
+  ]
+}

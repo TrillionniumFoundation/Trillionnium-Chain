@@ -1,0 +1,76 @@
+{
+  "schema": "chain-outcome-composition-low-space-gates-v1",
+  "recorded_utc": "2026-11-12T00:09:23.097438+00:00",
+  "source": "c2d67c5cf1ebb4caac525802362d5746b8fd957d",
+  "complete_checkout": false,
+  "qualification": "No native Rust build or runtime success is claimed by these checks. Negative controls run isolated Git fixtures, not a complete checkout verification.",
+  "rust_tree_unchanged_from_head": true,
+  "git_status_after_gates": "M scripts/cell_learning_local_use_join.py\n?? .github/workflows/pon-learning-outcome-composition.yml\n?? scripts/capture_cell_learning_local_use.py\n?? scripts/test_cell_learning_local_use_join.py",
+  "lock_sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+  "checks": [
+    {
+      "label": "original-preflight",
+      "command": "bash scripts/project-preflight.sh",
+      "log": "/workspace/scratch/761295b7d149/c1-project-preflight-low-space.log",
+      "sha256": "83dcff667b9e4be937ae5cc0a8df2bebd5dcd2a38c3c423e0e528ec58e8b2678",
+      "exit_code": 0,
+      "result": "PASS",
+      "packages": 26
+    },
+    {
+      "label": "source-integrity-negative-controls",
+      "command": "python3 -B scripts/ci/test_ci_source_integrity.py",
+      "log": "/workspace/scratch/761295b7d149/c1-source-negative-controls.log",
+      "sha256": "b114a20bd5163edc342d394739bfdf54769cb73ea4bb3e6a80c274c4bd25ba58",
+      "exit_code": 0,
+      "result": "PASS",
+      "tests": 43
+    },
+    {
+      "label": "project-boundary-negative-controls",
+      "command": "python3 -B scripts/ci/test_project_boundary.py",
+      "log": "/workspace/scratch/761295b7d149/c1-boundary-negative-controls.log",
+      "sha256": "56dbc3c9399f5644987132ef479cff0754fe80ab1125e1500a96c96ea8da01cd",
+      "exit_code": 0,
+      "result": "PASS",
+      "tests": 16
+    },
+    {
+      "label": "workspace-rust-format",
+      "command": "cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check",
+      "log": "/workspace/scratch/761295b7d149/c1-workspace-fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    {
+      "label": "locked-offline-full-metadata",
+      "command": "cargo metadata --locked --offline --manifest-path trillionnium/Cargo.toml --format-version 1",
+      "log": "/workspace/scratch/761295b7d149/c1-cargo-metadata.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit_code": 0,
+      "result": "PASS",
+      "workspace_packages": 26,
+      "resolved_nodes": 177,
+      "graph": "/workspace/scratch/761295b7d149/c1-cargo-metadata.json",
+      "graph_sha256": "34c5311ab220c9d682a418523764b907c8355e6092ea298ce813a4a441b6d2ae"
+    },
+    {
+      "label": "repository-and-markdown-links",
+      "command": "python3 -B scripts/ci/check_repository.py",
+      "log": "/workspace/scratch/761295b7d149/c1-check-repository.log",
+      "sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361",
+      "exit_code": 2,
+      "result": "FAIL",
+      "reason": "broken link docs/README.md -> ../evidence/pon-v1/README.md",
+      "limitation": "Source-only sparse checkout omits historical evidence target. Original gate preserved unchanged; a full checkout must pass separately.",
+      "sparse_target_index": {
+        "path": "evidence/pon-v1/README.md",
+        "git_ls_files_flag": "S",
+        "mode": "100644",
+        "blob": "8ac809b6977e986b9d1f1324fa4715847911e314",
+        "stage": 0
+      }
+    }
+  ]
+}

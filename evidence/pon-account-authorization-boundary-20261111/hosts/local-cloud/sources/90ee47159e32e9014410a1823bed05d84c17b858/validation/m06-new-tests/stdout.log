@@ -1,0 +1,10 @@
+
+running 5 tests
+test altered_missing_null_or_mistyped_development_scope_refuses_real_and_empty_blocks ... ok
+test classical_development_empty_block_keeps_real_maturity_and_subsidy_effects ... ok
+test classical_development_keeps_signed_transfer_maturity_fee_subsidy_and_receipt_bytes ... ok
+test partial_null_and_unknown_pq_selections_never_authorize_classical_effects ... ok
+test real_native_pq_genesis_and_owner_checks_survive_the_development_scope_guard ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+

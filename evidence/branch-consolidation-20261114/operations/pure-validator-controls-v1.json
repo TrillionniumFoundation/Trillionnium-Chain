@@ -1,0 +1,221 @@
+{
+  "status": "passed",
+  "synthetic_predicate_controls": 34,
+  "results": [
+    {
+      "case": "valid-synthetic-receipt",
+      "passed": true,
+      "rejected": false,
+      "error": null
+    },
+    {
+      "case": "wrong-command",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate command/cwd/exit differs: preflight-audit"
+    },
+    {
+      "case": "wrong-cwd",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate command/cwd/exit differs: preflight-audit"
+    },
+    {
+      "case": "output-path-outside-evidence",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate output path differs: preflight-audit"
+    },
+    {
+      "case": "output-byte-mutation",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate output bytes differ: preflight-audit"
+    },
+    {
+      "case": "output-hash-mutation",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate output bytes differ: preflight-audit"
+    },
+    {
+      "case": "missing-command",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate must contain exactly the seven ordered original commands"
+    },
+    {
+      "case": "duplicate-command-label",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate must contain exactly the seven ordered original commands"
+    },
+    {
+      "case": "changed-command-order",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate must contain exactly the seven ordered original commands"
+    },
+    {
+      "case": "boolean-exit-is-not-zero",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate command/cwd/exit differs: preflight-audit"
+    },
+    {
+      "case": "failed-command",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate command/cwd/exit differs: preflight-audit"
+    },
+    {
+      "case": "wrong-source-commit",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: source receipt identity differs: tested_commit"
+    },
+    {
+      "case": "wrong-source-tree",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: source receipt identity differs: tested_tree"
+    },
+    {
+      "case": "non-head-source-kind",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: source receipt identity differs: kind"
+    },
+    {
+      "case": "non-null-base",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: source receipt identity differs: base"
+    },
+    {
+      "case": "unverified-tracked-bytes",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: source receipt identity differs: tracked_worktree_verified"
+    },
+    {
+      "case": "identity-cannot-claim-tests",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: source receipt identity differs: tests_executed_by_identity_check"
+    },
+    {
+      "case": "zero-tracked-entries",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: empty or invalid source count: tracked_entries"
+    },
+    {
+      "case": "boolean-tracked-bytes",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: empty or invalid source count: tracked_bytes"
+    },
+    {
+      "case": "unknown-source-field",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: source receipt field set differs"
+    },
+    {
+      "case": "different-before-after-counts",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: source before/after content differs"
+    },
+    {
+      "case": "stdout-sidecar-byte-disagreement",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: source stdout and sidecar differ: after"
+    },
+    {
+      "case": "producer-receipt-hash",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate producer differs"
+    },
+    {
+      "case": "producer-byte-mutation",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate producer differs"
+    },
+    {
+      "case": "sidecar-symlink",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: expected regular file: /private/tmp/chain-ci-publication-safety-review-20261114/validator-only-2vvdv4tu/synthetic-gates/source-before.json"
+    },
+    {
+      "case": "stdout-symlink",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: expected regular file: /private/tmp/chain-ci-publication-safety-review-20261114/validator-only-azp57t97/synthetic-gates/preflight-audit.stdout"
+    },
+    {
+      "case": "wrong-gate-head",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate identity/status differs"
+    },
+    {
+      "case": "failed-gate-status",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate identity/status differs"
+    },
+    {
+      "case": "changed-environment",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate environment/scope differs"
+    },
+    {
+      "case": "dirty-final-identity",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate HEAD/tree/status snapshots differ"
+    },
+    {
+      "case": "retained-error-cannot-pass",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate identity/status differs"
+    },
+    {
+      "case": "hosted-qualification-claim",
+      "passed": true,
+      "rejected": true,
+      "error": "ValueError: gate environment/scope differs"
+    },
+    {
+      "case": "reject-optimize-1",
+      "passed": true,
+      "rejected": true
+    },
+    {
+      "case": "reject-optimize-2",
+      "passed": true,
+      "rejected": true
+    }
+  ],
+  "source_sha256": "bff9447a43c07f31020110c5acdca6f76b7917ba69b06de1daa41c78c068375e",
+  "producer_sha256": "e7bc466fcf570a20745954c8627b8af9227582484b251dfcf7900e7942fa7496",
+  "static_checks": [
+    "shared gate/identity/read predicates AST equal",
+    "parent explicit optimize rejection first",
+    "embedded hook explicit optimize rejection first",
+    "heads and tags unconditional after push, both require_zero=false"
+  ],
+  "publication_script_or_producer_main_executed": false,
+  "original_gate_commands_executed": false,
+  "git_or_remote_commands_executed": false,
+  "real_repository_or_environment_changed": false,
+  "qualification_granted": false
+}

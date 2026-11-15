@@ -1,0 +1,474 @@
+{
+  "status": "E0F_CHECKOUT_READY",
+  "observed_at_utc": "2026-11-05T09:44:57.164989+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "base": "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb",
+  "head": "e0fc4df37bed96050db2a07d91d427829921e5fa",
+  "head_tree": "7f1b7af0351d87032950e01858ea767074c0d032",
+  "head_tree_reconstructed_from_exact_blob_hashes": true,
+  "head_tree_raw_sha1_verified": true,
+  "commits": [
+    {
+      "sha": "5642591d89f1e0938ade32a5e2abe57504cb63ca",
+      "tree": "b3fbdc280fb0df800e2126539bbcbf926cb0ebd3",
+      "parents": [
+        "6ee529046d295e3175f09112492abee373f1f54c"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "bbc940cbdbdd6092158f735565004812ee834281",
+      "tree": "591ebbaef4bde2344d2117bc87759a0ab85d0a25",
+      "parents": [
+        "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+        "5642591d89f1e0938ade32a5e2abe57504cb63ca"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "1697711a057bd1ecfea99965cca00919feaacd66",
+      "tree": "d86cf5e3a77cb9d308041fb31d01cf888badb9fe",
+      "parents": [
+        "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "4e42b620ed1ce306bca6e7d5da3819417aa0f397",
+      "tree": "ab3ab14e920f26684d1d8e2940f25b1ec4aac144",
+      "parents": [
+        "1697711a057bd1ecfea99965cca00919feaacd66"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "88f7981a9d05307883b452e80f5221c84b109339",
+      "tree": "30527f5d6984978190ec4838b50241e54c08f5fc",
+      "parents": [
+        "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb",
+        "bbc940cbdbdd6092158f735565004812ee834281"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+      "tree": "4a0314e72ebc45659986d03e7ca2f96cab9399ea",
+      "parents": [
+        "4e42b620ed1ce306bca6e7d5da3819417aa0f397",
+        "88f7981a9d05307883b452e80f5221c84b109339"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "abf7986fe338e09fef9729a1738b9b5127700d8f",
+      "tree": "80e609a20b17ace972ccdc4d9c92a10e3e7e71d3",
+      "parents": [
+        "4e42b620ed1ce306bca6e7d5da3819417aa0f397"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "e0fc4df37bed96050db2a07d91d427829921e5fa",
+      "tree": "7f1b7af0351d87032950e01858ea767074c0d032",
+      "parents": [
+        "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+        "abf7986fe338e09fef9729a1738b9b5127700d8f"
+      ],
+      "raw_sha1_verified": true
+    }
+  ],
+  "changed_blobs": [
+    {
+      "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "sha": "f0379174eb77ab39bf3e9f8fe5885067daf9b872",
+      "mode": "100644",
+      "bytes": 14592,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "sha": "3769333b15d4d80fa4f9ab6f915a8ecb31ecc3c2",
+      "mode": "100644",
+      "bytes": 31731,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "sha": "2be86418344a9a41a43a524f1f82f264b0f890db",
+      "mode": "100644",
+      "bytes": 93488,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha": "d08aa690f4e129b9d053965af2c9577af758f9c8",
+      "mode": "100644",
+      "bytes": 527215,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "docs/development/specs/pon/GROUPED_CELL_OPERATOR_V0.md",
+      "sha": "32bd8770a3d54e8877dda9a2dd4560f2dac51e49",
+      "mode": "100644",
+      "bytes": 12153,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "docs/development/specs/pon/SHARED_CELL_WORK_V1.md",
+      "sha": "d9f75ffefd7ca13ef6fad0dd0d0292557067baae",
+      "mode": "100644",
+      "bytes": 11888,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "docs/modules/M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md",
+      "sha": "fd13a6f936902b9712022f6629d9284260d51901",
+      "mode": "100644",
+      "bytes": 11407,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md",
+      "sha": "5fa24f6e166d4512cbf646a4ccbcd382a8df799c",
+      "mode": "100644",
+      "bytes": 15347,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/pon-architecture-continuation-20261105/LATEST_COMPOSITION.md",
+      "sha": "fd4b395599d1e90e838633951757eb5eb802a734",
+      "mode": "100644",
+      "bytes": 4206,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/pon-architecture-continuation-20261105/README.md",
+      "sha": "e3c32fd05375f0a7ad62cd4e69e0631188886bd5",
+      "mode": "100644",
+      "bytes": 11341,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/pon-architecture-continuation-20261105/latest-composition.json",
+      "sha": "f718fd646df2c430aea0dd7ce513500cccc134d6",
+      "mode": "100644",
+      "bytes": 18524,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/pon-architecture-continuation-20261105/latest-records-index.json",
+      "sha": "b7afc6aa120596bc0a636c7bd8bf4542d9072c8e",
+      "mode": "100644",
+      "bytes": 14658,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/pon-architecture-continuation-20261105/latest-records.tar.gz",
+      "sha": "ec517f7b8b8d6e1c74e5c761b8560b549005397d",
+      "mode": "100644",
+      "bytes": 592368,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/grouped_cell_operator_v0.py",
+      "sha": "8532a4ab3957bdec97103697aaa65b242bb1a9a5",
+      "mode": "100644",
+      "bytes": 31209,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/grouped_low_rank_v0.py",
+      "sha": "76dfac378233bfb9bac44bfdf438c8a653effbfa",
+      "mode": "100644",
+      "bytes": 5151,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/grouped_request_batch_v0.py",
+      "sha": "60f63a3935933bfadd5a534eb91184addca1d69e",
+      "mode": "100644",
+      "bytes": 10189,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_grouped_cell_operator_v0.py",
+      "sha": "057d8e4e4cb12afde97a15311896a930f2a35c41",
+      "mode": "100644",
+      "bytes": 15891,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_grouped_low_rank_v0.py",
+      "sha": "a99a11ba7e275ad96909b4fc09ec8f5939f23ce0",
+      "mode": "100644",
+      "bytes": 4990,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_grouped_request_batch_v0.py",
+      "sha": "63b91719861dca985d474c0a1262de3a2a8eefc7",
+      "mode": "100644",
+      "bytes": 9384,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "sha": "f021434c3bd5179a27ee390c2bc9fb0bef70c549",
+      "mode": "100644",
+      "bytes": 60794,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "sha": "5bc17c76b015eeb23f245b88b01b609531aeabd5",
+      "mode": "100644",
+      "bytes": 24150,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_routed_int257_grouped.rs",
+      "sha": "42f2bcf15929acbf02c55ff0e5c88a31b5b2bd60",
+      "mode": "100644",
+      "bytes": 29266,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+      "sha": "530d3097745eb2448300876aaaf34862b8a6aec0",
+      "mode": "100644",
+      "bytes": 7990,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_routed_int257_grouped.rs",
+      "sha": "7f82a73b41c6841b05cd2e54a4fb1fd750efb555",
+      "mode": "100644",
+      "bytes": 30403,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "sha": "4ffa8a5d2856603198b62ece74f83f2938a93598",
+      "mode": "100644",
+      "bytes": 342851,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/mining.rs",
+      "sha": "4615e6b0c7fa5d088266a378400fa459e9d09c19",
+      "mode": "100644",
+      "bytes": 42706,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha": "48674a83dde3f8ea6721e93cd5f52cab8a28fa63",
+      "mode": "100644",
+      "bytes": 346418,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+      "sha": "271d5e1ee6bb5acc2e3094786d5101cf183fca40",
+      "mode": "100644",
+      "bytes": 34610,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/difference_tests.rs",
+      "sha": "9edb08c63f08c39ae8acdefdb3c5f7608283193d",
+      "mode": "100644",
+      "bytes": 9930,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "sha": "b1a31ff670c9673556e2977d733b84e194872075",
+      "mode": "100644",
+      "bytes": 32239,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+      "sha": "1f4e1cff01cf905a5fa0a428404975fc8c4e5c9c",
+      "mode": "100644",
+      "bytes": 92464,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/materialization_control.rs",
+      "sha": "ad35cd5bdace1c974e915a6beeabdfde84d3d5db",
+      "mode": "100644",
+      "bytes": 5358,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/pool_mining.rs",
+      "sha": "b6a6ce07060b84a087e60f4fc951ddf14998c28f",
+      "mode": "100644",
+      "bytes": 28836,
+      "raw_sha1_verified": true
+    }
+  ],
+  "head_recursive_entries": 11181,
+  "head_unique_tree_blob_objects_available": 9959,
+  "isolated_index_entries": 10034,
+  "new_commit_graph": [
+    "e0fc4df37bed96050db2a07d91d427829921e5fa 1d6a9f9b5e8abd9e86457f45199a4922f9376360 abf7986fe338e09fef9729a1738b9b5127700d8f",
+    "abf7986fe338e09fef9729a1738b9b5127700d8f 4e42b620ed1ce306bca6e7d5da3819417aa0f397",
+    "1d6a9f9b5e8abd9e86457f45199a4922f9376360 4e42b620ed1ce306bca6e7d5da3819417aa0f397 88f7981a9d05307883b452e80f5221c84b109339",
+    "88f7981a9d05307883b452e80f5221c84b109339 cf8c88acc026bd36a00aedb40e09aa380ddbc0eb bbc940cbdbdd6092158f735565004812ee834281",
+    "4e42b620ed1ce306bca6e7d5da3819417aa0f397 1697711a057bd1ecfea99965cca00919feaacd66",
+    "1697711a057bd1ecfea99965cca00919feaacd66 cf8c88acc026bd36a00aedb40e09aa380ddbc0eb",
+    "bbc940cbdbdd6092158f735565004812ee834281 657bf2a462ff13a6101ebcb4fbe0fb91c515c972 5642591d89f1e0938ade32a5e2abe57504cb63ca",
+    "5642591d89f1e0938ade32a5e2abe57504cb63ca 6ee529046d295e3175f09112492abee373f1f54c"
+  ],
+  "objects_imported": [
+    {
+      "sha": "2be86418344a9a41a43a524f1f82f264b0f890db",
+      "type": "blob",
+      "bytes": 93488,
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "d08aa690f4e129b9d053965af2c9577af758f9c8",
+      "type": "blob",
+      "bytes": 527215,
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "32bd8770a3d54e8877dda9a2dd4560f2dac51e49",
+      "type": "blob",
+      "bytes": 12153,
+      "path": "docs/development/specs/pon/GROUPED_CELL_OPERATOR_V0.md",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "d9f75ffefd7ca13ef6fad0dd0d0292557067baae",
+      "type": "blob",
+      "bytes": 11888,
+      "path": "docs/development/specs/pon/SHARED_CELL_WORK_V1.md",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "fd13a6f936902b9712022f6629d9284260d51901",
+      "type": "blob",
+      "bytes": 11407,
+      "path": "docs/modules/M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "8532a4ab3957bdec97103697aaa65b242bb1a9a5",
+      "type": "blob",
+      "bytes": 31209,
+      "path": "formal/pon-nakamoto-v1/experiments/grouped_cell_operator_v0.py",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "76dfac378233bfb9bac44bfdf438c8a653effbfa",
+      "type": "blob",
+      "bytes": 5151,
+      "path": "formal/pon-nakamoto-v1/grouped_low_rank_v0.py",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "60f63a3935933bfadd5a534eb91184addca1d69e",
+      "type": "blob",
+      "bytes": 10189,
+      "path": "formal/pon-nakamoto-v1/grouped_request_batch_v0.py",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "057d8e4e4cb12afde97a15311896a930f2a35c41",
+      "type": "blob",
+      "bytes": 15891,
+      "path": "formal/pon-nakamoto-v1/test_grouped_cell_operator_v0.py",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "a99a11ba7e275ad96909b4fc09ec8f5939f23ce0",
+      "type": "blob",
+      "bytes": 4990,
+      "path": "formal/pon-nakamoto-v1/test_grouped_low_rank_v0.py",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "63b91719861dca985d474c0a1262de3a2a8eefc7",
+      "type": "blob",
+      "bytes": 9384,
+      "path": "formal/pon-nakamoto-v1/test_grouped_request_batch_v0.py",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "f021434c3bd5179a27ee390c2bc9fb0bef70c549",
+      "type": "blob",
+      "bytes": 60794,
+      "path": "scripts/ci/check_ci_contract.py",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "5bc17c76b015eeb23f245b88b01b609531aeabd5",
+      "type": "blob",
+      "bytes": 24150,
+      "path": "scripts/ci/ci_job.sh",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "42f2bcf15929acbf02c55ff0e5c88a31b5b2bd60",
+      "type": "blob",
+      "bytes": 29266,
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_routed_int257_grouped.rs",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "530d3097745eb2448300876aaaf34862b8a6aec0",
+      "type": "blob",
+      "bytes": 7990,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "7f82a73b41c6841b05cd2e54a4fb1fd750efb555",
+      "type": "blob",
+      "bytes": 30403,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_routed_int257_grouped.rs",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "4ffa8a5d2856603198b62ece74f83f2938a93598",
+      "type": "blob",
+      "bytes": 342851,
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "source": "GitHub exact blob API"
+    },
+    {
+      "sha": "abf7986fe338e09fef9729a1738b9b5127700d8f",
+      "type": "commit",
+      "bytes": 1091,
+      "source": "GitHub metadata reconstructed exactly; original author/committer -0500 offsets hash-verified"
+    },
+    {
+      "sha": "e0fc4df37bed96050db2a07d91d427829921e5fa",
+      "type": "commit",
+      "bytes": 665,
+      "source": "GitHub metadata reconstructed exactly; original author/committer -0500 offsets hash-verified"
+    }
+  ],
+  "additional_object_writes": "Missing directory tree objects reconstructed with isolated temporary index read-tree(base), update-index(exact modes/SHAs), write-tree. Final root hash verified against GitHub.",
+  "operations": {
+    "real_index_writes": false,
+    "head_or_ref_writes": false,
+    "working_tree_writes": false,
+    "git_network_fetch": false,
+    "other_workspace_writes": false,
+    "alternate_file_changes": false
+  },
+  "scope": "Current e0f exact target tree and all 33 changed blobs verified, including binary tar; 8 new commit objects and parent graph verified. Prior snapshot trees were not exhaustively checked. This receipt grants checkout readiness only and does not inherit any source/runtime/business acceptance from prior green results.",
+  "metadata_files": [
+    "concurrent-e0f-remote.json",
+    "concurrent-e0f-tree.json",
+    "concurrent-e0f-downloads.json"
+  ]
+}

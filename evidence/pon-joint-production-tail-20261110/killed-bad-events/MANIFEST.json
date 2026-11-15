@@ -1,0 +1,140 @@
+{
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 9293,
+      "sha256": "8096a029e5efd8da6dce5a2dc89f47d95c75aa00c2258d354839cac22bf3f69a"
+    },
+    {
+      "path": "check.py",
+      "bytes": 4738,
+      "sha256": "126992daa1a8fb7d1e63cdd6cac6b59cc03cd77c73334646e91def7e601177c6"
+    },
+    {
+      "path": "test_check.py",
+      "bytes": 3821,
+      "sha256": "d4c33f4d5c8c936c15b0e7111897db7cbfb3d5b72ddcde881b162b4065da3e7c"
+    },
+    {
+      "path": "validation/ci-contract.json",
+      "bytes": 490,
+      "sha256": "f3c1123999e4944d4e1ba1814bcacb8d4838f2d71a45ff7bb8d0788f2eec40c0"
+    },
+    {
+      "path": "validation/ci-contract.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "validation/ci-contract.stdout.log",
+      "bytes": 431,
+      "sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+    },
+    {
+      "path": "validation/ci-snapshot.json",
+      "bytes": 643246,
+      "sha256": "69848a968f6734f11b076aef93c51187e4389fba83b47d5c61cbb713f67de0bf"
+    },
+    {
+      "path": "validation/control.json",
+      "bytes": 530,
+      "sha256": "190a9232e28ae7de217a3e4ae20d5552959d28530b44f4443227e344befe8837"
+    },
+    {
+      "path": "validation/control.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "validation/control.stdout.log",
+      "bytes": 339,
+      "sha256": "fb64b3e5a2255950f9aabd20416f43bac836c67384976c3bc7a5abab0e16f2ed"
+    },
+    {
+      "path": "validation/promotion-refusal.json",
+      "bytes": 541,
+      "sha256": "87afe086519306625d1c867134849da336cfb6ca374e15f971d2b54f4da5e9f2"
+    },
+    {
+      "path": "validation/promotion-refusal.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "validation/promotion-refusal.stdout.log",
+      "bytes": 9364,
+      "sha256": "f55c8d1b7ebbe4b512a35af8ccd619a52b818e848167e77762ea023504592fc5"
+    },
+    {
+      "path": "validation/qualification-check.json",
+      "bytes": 529,
+      "sha256": "ac7a2b3852d238724910efca086e5f3b7a18340b094a87779af3b6dcb85eb593"
+    },
+    {
+      "path": "validation/qualification-check.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "validation/qualification-check.stdout.log",
+      "bytes": 9301,
+      "sha256": "d37d5e0121421363d399164ace713cbc899a3159ea1f32f6e5085ed9846f957e"
+    },
+    {
+      "path": "validation/repository.json",
+      "bytes": 488,
+      "sha256": "c069c6691a54a5d8a1ccbb1bf37b4167aa119b0b5fe15e1eb9c8b6ab0a6fcea7"
+    },
+    {
+      "path": "validation/repository.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "validation/repository.stdout.log",
+      "bytes": 307,
+      "sha256": "780c2b1bca4c070a604add4b888c84addd5e2b15f6fc5ebf669f2b5747ac981c"
+    },
+    {
+      "path": "validation/source.json",
+      "bytes": 680,
+      "sha256": "b1ac04b0ad549c5d477956767f99d1b9c999e475327c309bc6757ceebbbddd5c"
+    },
+    {
+      "path": "validation/source.report.json",
+      "bytes": 423,
+      "sha256": "89ef37a8a899668e808b70f23c489e3b658de4abf96a179b5a82098daa8dc12e"
+    },
+    {
+      "path": "validation/source.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "validation/source.stdout.log",
+      "bytes": 423,
+      "sha256": "89ef37a8a899668e808b70f23c489e3b658de4abf96a179b5a82098daa8dc12e"
+    },
+    {
+      "path": "validation/tests.json",
+      "bytes": 544,
+      "sha256": "f269c870079be4df088b4522f9c26da2cc074f864fd06bad057159b0e778e3cb"
+    },
+    {
+      "path": "validation/tests.stderr.log",
+      "bytes": 843,
+      "sha256": "d2270f7767410b86ef492a78731af740d098068339abaa2feb95ed3f35cd3495"
+    },
+    {
+      "path": "validation/tests.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "source": "85905b41943cd872fbaedbcfe19ea753839847ef",
+  "scope": "new conditional proof and finite helper only; no native qualification",
+  "documentation_followup": {
+    "parent_evidence_head": "8c45fbffaa5db835283fd0028a89812c20ea651c",
+    "scope": "README distinguishes unclipped pathwise spending from probability cap; executed helper/tests and original validation receipts unchanged"
+  }
+}

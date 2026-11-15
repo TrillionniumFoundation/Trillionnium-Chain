@@ -1,0 +1,9 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-state-cell-619/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 3m 07s
+     Running unittests src/lib.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/followup-target/debug/deps/trnm_pon_node-3d075b189916f208)
+
+running 1 test
+test store::canonical_row_reuse_tests::same_scan_values_match_original_and_never_outlive_actual_rows ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1199 filtered out; finished in 3.22s
+

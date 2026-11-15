@@ -1,0 +1,15 @@
+test_all_adoption_and_no_update_paths_use_the_actual_selected_parent (__main__.ParentBoundGenerationSequenceTests.test_all_adoption_and_no_update_paths_use_the_actual_selected_parent) ... ok
+test_changed_plan_cannot_reuse_old_context_signatures (__main__.ParentBoundGenerationSequenceTests.test_changed_plan_cannot_reuse_old_context_signatures) ... ok
+test_complete_signatures_parent_bindings_and_false_authority (__main__.ParentBoundGenerationSequenceTests.test_complete_signatures_parent_bindings_and_false_authority) ... ok
+test_every_receipt_and_context_role_signature_still_runs (__main__.ParentBoundGenerationSequenceTests.test_every_receipt_and_context_role_signature_still_runs) ... ok
+test_no_fallback_on_missing_plan_context_or_misreported_exposure (__main__.ParentBoundGenerationSequenceTests.test_no_fallback_on_missing_plan_context_or_misreported_exposure) ... ok
+test_no_gain_and_every_owner_hold_remain_non_authorizing (__main__.ParentBoundGenerationSequenceTests.test_no_gain_and_every_owner_hold_remain_non_authorizing) ... ok
+test_original_initial_pin_and_use_chronology_still_gate_v3 (__main__.ParentBoundGenerationSequenceTests.test_original_initial_pin_and_use_chronology_still_gate_v3) ... ok
+test_predecessor_in_wrong_control_slot_does_not_satisfy_parent (__main__.ParentBoundGenerationSequenceTests.test_predecessor_in_wrong_control_slot_does_not_satisfy_parent) ... ok
+test_resigned_unrelated_parent_passes_v2_but_not_v3 (__main__.ParentBoundGenerationSequenceTests.test_resigned_unrelated_parent_passes_v2_but_not_v3) ... ok
+test_stale_bootstrap_cannot_replace_a_later_adopted_parent (__main__.ParentBoundGenerationSequenceTests.test_stale_bootstrap_cannot_replace_a_later_adopted_parent) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.269s
+
+OK

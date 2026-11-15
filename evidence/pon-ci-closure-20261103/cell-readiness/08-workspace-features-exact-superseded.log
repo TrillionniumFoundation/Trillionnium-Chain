@@ -1,0 +1,33 @@
+   Compiling getrandom v0.4.2
+   Compiling rand_core v0.10.1
+   Compiling const-oid v0.10.2
+   Compiling crypto-common v0.2.2
+   Compiling digest v0.11.3
+   Compiling rustix v1.1.4
+   Compiling shake v0.1.0
+   Compiling signature v3.0.0
+   Compiling linux-raw-sys v0.12.1
+   Compiling der v0.8.3
+   Compiling spki v0.8.1
+   Compiling pkcs8 v0.11.0
+   Compiling ml-dsa v0.1.1
+   Compiling rusqlite v0.39.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/abae1861b451/chain-cell-ready/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/abae1861b451/chain-cell-ready/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.61s
+     Running unittests src/lib.rs (/workspace/scratch/abae1861b451/cell-ready-target/debug/deps/trnm_data_availability-7742eea0df373791)
+
+running 1 test
+test cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint ... cell_sequence phase=startup role=peer setup_elapsed_ns=12736474 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=silent_trap setup_elapsed_ns=12905779 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=16537076 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=20261468 outcome=Ok(Ok(()))
+cell_sequence phase=setup_complete elapsed_ns=30319159
+cell_sequence phase=announce ordinal=0 started_wall=Some(1793721042.767894892s) completed_wall=Some(1793721042.771607431s) elapsed_ns=3712769 expiry_seconds=1793721342 failure=None
+cell_sequence phase=announce ordinal=1 started_wall=Some(1793721042.771636235s) completed_wall=Some(1793721042.776330503s) elapsed_ns=4694478 expiry_seconds=1793721342 failure=None
+cell_sequence phase=discovery ordinal=0 started_wall=Some(1793721042.776360348s) completed_wall=Some(1793721042.816336237s) elapsed_ns=39976500 expiry_seconds=1793721342 failure=None
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 171 filtered out; finished in 0.10s
+

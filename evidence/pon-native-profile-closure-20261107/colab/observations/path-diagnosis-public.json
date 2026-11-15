@@ -1,0 +1,75 @@
+{
+  "evidence_kind": "CONTROLLED_OBSERVATION",
+  "observation": {
+    "ancestors": [
+      {
+        "is_dir": true,
+        "mode": "0o755",
+        "path": "/",
+        "symlink": false,
+        "uid": 0
+      },
+      {
+        "is_dir": true,
+        "mode": "0o755",
+        "path": "/home",
+        "symlink": false,
+        "uid": 0
+      },
+      {
+        "is_dir": true,
+        "mode": "0o755",
+        "path": "<HOST_HOME>",
+        "symlink": false,
+        "uid": 1000
+      },
+      {
+        "is_dir": true,
+        "mode": "0o775",
+        "path": "<HOST_HOME>/work",
+        "symlink": false,
+        "uid": 1000
+      },
+      {
+        "is_dir": true,
+        "mode": "0o700",
+        "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df",
+        "symlink": false,
+        "uid": 1000
+      },
+      {
+        "is_dir": true,
+        "mode": "0o700",
+        "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud",
+        "symlink": false,
+        "uid": 1000
+      },
+      {
+        "is_dir": true,
+        "mode": "0o700",
+        "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1",
+        "symlink": false,
+        "uid": 1000
+      },
+      {
+        "absent": true,
+        "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/manage"
+      }
+    ],
+    "uid": 1000
+  },
+  "original": {
+    "file_label": "path-diagnosis-v1.json",
+    "sha256": "86f6c51a5a1bc18113f5ef85f2827ac28094feed3b1ad59eef83eb10dbed8dfe",
+    "size_bytes": 993
+  },
+  "projection": {
+    "not_original_bytes": true,
+    "omitted_fields": [],
+    "replacements": [
+      "Host home paths replaced by <HOST_HOME>",
+      "Task private state root replaced by <TASK_PRIVATE_STATE_ROOT>"
+    ]
+  },
+  "schema": "pon-cloud-public-projection-v1"
+}

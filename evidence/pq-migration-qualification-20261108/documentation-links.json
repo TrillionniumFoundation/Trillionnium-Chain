@@ -1,0 +1,51 @@
+{
+  "status": "PASS",
+  "scope": "new Markdown documents and newly added link lines only; complete repository link check remains blocked",
+  "local_links_checked": 11,
+  "links": [
+    {
+      "source": "docs/security/PQ_SEED_RELATION_REVIEW_V1.md",
+      "target": "PQ_HISTORICAL_ACCOUNT_MIGRATION_V1.md"
+    },
+    {
+      "source": "docs/security/PQ_SEED_RELATION_REVIEW_V1.md",
+      "target": "../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    },
+    {
+      "source": "docs/security/PQ_SEED_RELATION_REVIEW_V1.md",
+      "target": "../../formal/pon-nakamoto-v1/pq_seed_relation_vectors_v1.py"
+    },
+    {
+      "source": "docs/security/PQ_SEED_RELATION_REVIEW_V1.md",
+      "target": "../../formal/pon-nakamoto-v1/test_pq_seed_relation_vectors_v1.py"
+    },
+    {
+      "source": "docs/security/PQ_SEED_RELATION_REVIEW_V1.md",
+      "target": "../../evidence/pq-migration-qualification-20261108/README.md"
+    },
+    {
+      "source": "evidence/pq-migration-qualification-20261108/README.md",
+      "target": "../../docs/security/PQ_SEED_RELATION_REVIEW_V1.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../security/PQ_SEED_RELATION_REVIEW_V1.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pq-migration-qualification-20261108/README.md"
+    },
+    {
+      "source": "docs/security/PQ_HISTORICAL_ACCOUNT_MIGRATION_V1.md",
+      "target": "PQ_MIGRATION_OWNED_JOURNAL_V1.md"
+    },
+    {
+      "source": "docs/security/PQ_HISTORICAL_ACCOUNT_MIGRATION_V1.md",
+      "target": "PQ_SEED_RELATION_REVIEW_V1.md"
+    },
+    {
+      "source": "docs/security/PQ_MIGRATION_OWNED_JOURNAL_V1.md",
+      "target": "../../evidence/pq-migration-qualification-20261108/README.md"
+    }
+  ]
+}

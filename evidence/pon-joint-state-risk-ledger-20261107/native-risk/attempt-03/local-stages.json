@@ -1,0 +1,18 @@
+[
+  {
+    "stage": "reader-tests-after-native-readiness-fix",
+    "args": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/pon-nakamoto-v1",
+      "-p",
+      "test_native_risk_ledger.py",
+      "-v"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.7595970959991973
+  }
+]

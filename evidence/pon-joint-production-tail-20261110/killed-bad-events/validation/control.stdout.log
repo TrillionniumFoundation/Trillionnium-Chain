@@ -1,0 +1,1 @@
+{"certified": true, "conditional_crossing_bound": "1/4", "exact_finite_worst_bad": "15/64", "exact_finite_worst_union": "1/4", "finite_hazard_budget": "1/4", "finite_union_bound": "1/2", "native_failure_bound": null, "production_activation": false, "rows": [{"action": 0, "bad_mass": "1/8", "good_subkernel_moment": "5/8", "state": "s"}]}

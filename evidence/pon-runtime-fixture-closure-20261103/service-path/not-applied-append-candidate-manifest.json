@@ -1,0 +1,20 @@
+{
+  "status": "NOT_APPLIED_NOT_COMPILED_NOT_QUALIFIED",
+  "scope": "Scratch-only reviewable candidate; no repository, target, native build/test, budget or current validation mutation",
+  "relative_path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+  "source_sha256": "a334ed1aca71058244cfbf42ca8c3b40ccd93cb6e62a063212fe2890828265db",
+  "candidate_sha256": "81b31cee8b4ead72b3c0c2eb6a629d0714f6e0e47a32565b21020b1635c5e5d9",
+  "patch_sha256": "7663ff4a2685fe6035fdf6a615800dac0c308d591779ea4c8ec45d5d2b6277fe",
+  "source_git_blob": "c7669f3107ec806ecc680ab5a56fc0883dedc999",
+  "identical_to_b280": true,
+  "exact_reconstruction_after_removing_helper_and_restoring_call": true,
+  "retained_original_atomic_with_progress": true,
+  "helper_lines_added": 65,
+  "changed_existing_lines": 1,
+  "first_complete_target_graph_retained": true,
+  "existing_four_role_and_sixteen_prefix_bounds_unchanged": true,
+  "new_native_tests_run": false,
+  "compile_run": false,
+  "performance_gain_claimed": false,
+  "approval_scope": "Static review only; runtime semantic controls and paired exact-source observations remain required before adopting any native-source change"
+}

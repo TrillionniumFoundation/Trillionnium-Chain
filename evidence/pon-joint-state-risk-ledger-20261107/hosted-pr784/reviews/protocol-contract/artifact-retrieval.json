@@ -1,0 +1,25 @@
+[
+  {
+    "label": "head",
+    "artifact_id": 13597399178,
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13597399178/zip",
+    "returncode": 1,
+    "bytes": 2177980,
+    "sha256": "4e428d751d7d58c4f0d35cea775012c259b43a749363a0f645dcb23a48a86a4d",
+    "expected_logged_sha256": "965cacdc613d27a1243d8619ce397f1de3bfc35ca0c431ec8c0977bcb148674d",
+    "matches_logged_sha256": false
+  },
+  {
+    "label": "merge",
+    "artifact_id": 13597751586,
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13597751586/zip",
+    "returncode": 0,
+    "bytes": 5892591,
+    "sha256": "b3c76968c20a93663304e958c2a1aa68e791aca204c7715908e7a203fe54dafa",
+    "expected_logged_sha256": "b3c76968c20a93663304e958c2a1aa68e791aca204c7715908e7a203fe54dafa",
+    "matches_logged_sha256": true,
+    "extracted_files": 78,
+    "uncompressed_bytes": 45527330,
+    "directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-protocol-contract-review/merge-artifact"
+  }
+]

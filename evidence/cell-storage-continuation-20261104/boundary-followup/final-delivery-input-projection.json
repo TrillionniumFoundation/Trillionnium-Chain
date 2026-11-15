@@ -1,0 +1,40 @@
+{
+  "schema": "trnm-storage-evidence-successor-input-projection-v1",
+  "completed_static_source": "d6be11987b44deb0028382bd9f791dc1c4efc37f",
+  "completed_static_tree": "4604138f131fed7a68e417c9c3e1a5f074638c23",
+  "baseline_incoming": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+  "successor_changes": "Evidence, raw receipts and the sole plan only; no source, runtime profile, selector, assertion or policy-gate changes.",
+  "source_subtrees": {
+    "trillionnium": {
+      "static_source": "a706490dda20cb6093cc27ab3c59b1486aafb5b4",
+      "incoming": "a706490dda20cb6093cc27ab3c59b1486aafb5b4",
+      "equal": true
+    },
+    "scripts": {
+      "static_source": "492d6b6e07a898739257aa8903765a7f4d7705e1",
+      "incoming": "492d6b6e07a898739257aa8903765a7f4d7705e1",
+      "equal": true
+    },
+    "config": {
+      "static_source": "336034cf62f8d3bb9973906bda437daad63b524d",
+      "incoming": "336034cf62f8d3bb9973906bda437daad63b524d",
+      "equal": true
+    },
+    "formal": {
+      "static_source": "54e4ef07b86251f6e0bcff2b866c49f6fe47a8d1",
+      "incoming": "54e4ef07b86251f6e0bcff2b866c49f6fe47a8d1",
+      "equal": true
+    },
+    ".github": {
+      "static_source": "dba2d8a9e7a57ee320dc042ffbfb0f8faf0a536c",
+      "incoming": "dba2d8a9e7a57ee320dc042ffbfb0f8faf0a536c",
+      "equal": true
+    }
+  },
+  "runtime_results_relabelled": false,
+  "native_tests_reexecuted": false,
+  "final_source_check_required_after_freeze": true,
+  "evidence_checkpoint_G": "d9681ca15570e71514b6445c190fa9fbdf50321f",
+  "evidence_checkpoint_tree_G": "5d65a31149984480be125214c2be25cbb646e257",
+  "scope_note": "This projection describes G relative to F/d995. The later 23a integration changes one Node test import and its corpus pin and has a separate late-publication-integration.json; no equality to F is claimed for that later whole native tree."
+}

@@ -1,0 +1,177 @@
+{
+  "schema": "pon-actual-certificates-component-checks-v1",
+  "head": "f8362822b406463ac3dfcc911a0c3eda1686e32d",
+  "tree": "bfb0fb6b7f3c555e871f4279f48bcac0ea9b3bb6",
+  "started_on_clean_commit": false,
+  "initial_status": "M .github/workflows/pon-recent-batch-acceptance.yml\n M docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\n M formal/pon-nakamoto-v1/README.md\n M scripts/ci/check_ci_contract.py\n M scripts/ci/ci_job.sh\n M scripts/ci/test_ci_contract.py\n M trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\n M trillionnium/crates/trnm-pon-node/src/lib.rs\n M trillionnium/crates/trnm-pon-node/src/store.rs\n M trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs\n?? evidence/pon-actual-certificates-20261107/\n?? formal/pon-nakamoto-v1/CERTIFICATE_OBSERVABILITY_V1.md\n?? formal/pon-nakamoto-v1/NATIVE_OWNER_OBSERVATION_V1.md\n?? formal/pon-nakamoto-v1/NATIVE_OWNER_SCORE_BRIDGE_V1.md\n?? formal/pon-nakamoto-v1/WORK_LIFECYCLE_CERTIFICATE_V1.md\n?? formal/pon-nakamoto-v1/certificate_observability_evidence.py\n?? formal/pon-nakamoto-v1/certificate_observability_models.py\n?? formal/pon-nakamoto-v1/certificate_observability_tests.py\n?? formal/pon-nakamoto-v1/native_owner_score_bridge.py\n?? formal/pon-nakamoto-v1/test_native_owner_score_bridge.py\n?? formal/pon-nakamoto-v1/work_lifecycle_certificate.py\n?? formal/pon-nakamoto-v1/work_lifecycle_help.py\n?? formal/pon-nakamoto-v1/work_lifecycle_observe.py\n?? formal/pon-nakamoto-v1/work_lifecycle_tests.py\n?? trillionnium/crates/trnm-pon-node/examples/native_owner_observation_v1.rs\n?? trillionnium/crates/trnm-pon-node/examples/support/native_owner_scenario.rs\n?? trillionnium/crates/trnm-pon-node/src/store/native_owner_observation.rs\n?? trillionnium/crates/trnm-pon-node/tests/native_owner_observation.rs",
+  "scope": "listed local component checks, not all remote CI, production capacity or physical security",
+  "rust_profile": "test; node opt-level=0; test debug=0; one build job; no incremental; not a service performance measurement",
+  "selected_start": "retained-work-header-binding",
+  "environment": {
+    "RUSTC": "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+    "LD_LIBRARY_PATH": "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+    "CARGO_HOME": "/workspace/scratch/b9454e263603/native_w1_cargo_home",
+    "CARGO_TARGET_DIR": "/workspace/scratch/b9454e263603/native_w1_target",
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_INCREMENTAL": "0",
+    "RUST_TEST_THREADS": "1"
+  },
+  "checks": [
+    {
+      "name": "retained-work-header-binding",
+      "argv": [
+        "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--profile",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "work_header_binding",
+        "--config",
+        "profile.test.package.trnm-pon-node.opt-level=0"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.4261412570012908,
+      "stdout": {
+        "archive": "retained-work-header-binding.stdout.gz",
+        "raw_bytes": 195,
+        "raw_sha256": "475afc2dbcf0e009c181acdb2b3f500bc72d06ee43998f69ba4b6d20165f8345"
+      },
+      "stderr": {
+        "archive": "retained-work-header-binding.stderr.gz",
+        "raw_bytes": 202,
+        "raw_sha256": "0ce40acfd4dc68a4023336ea68855787b1d7672e0a1f4359459adc6ff90ab80a"
+      }
+    },
+    {
+      "name": "native-owner-integration",
+      "argv": [
+        "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--profile",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "native_owner_observation",
+        "--config",
+        "profile.test.package.trnm-pon-node.opt-level=0"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.2329800480001722,
+      "stdout": {
+        "archive": "native-owner-integration.stdout.gz",
+        "raw_bytes": 997,
+        "raw_sha256": "26fbaad54197b69b8557811575adfd0c83416714f35ed3bd9ade81a531949716"
+      },
+      "stderr": {
+        "archive": "native-owner-integration.stderr.gz",
+        "raw_bytes": 212,
+        "raw_sha256": "4beea476c84ce0fdab1b56e8253818f3e283ee5ffc29c73dc8fb84f7a6ed7bf7"
+      }
+    },
+    {
+      "name": "strict-native-owner-clippy",
+      "argv": [
+        "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo-clippy",
+        "clippy",
+        "--profile",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--test",
+        "native_owner_observation",
+        "--example",
+        "native_owner_observation_v1",
+        "--config",
+        "profile.test.package.trnm-pon-node.opt-level=0",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.19267905399829033,
+      "stdout": {
+        "archive": "strict-native-owner-clippy.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "archive": "strict-native-owner-clippy.stderr.gz",
+        "raw_bytes": 61,
+        "raw_sha256": "694f02c1e8c2e10efa30a5e174201b825d9dd6a6b94b422c61c7f1e9f183a962"
+      }
+    },
+    {
+      "name": "workspace-format",
+      "argv": [
+        "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 14.568843580997054,
+      "stdout": {
+        "archive": "workspace-format.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "archive": "workspace-format.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "consensus-parameters-and-mu1-unchanged",
+      "argv": [
+        "git",
+        "diff",
+        "--exit-code",
+        "f8362822b406463ac3dfcc911a0c3eda1686e32d",
+        "--",
+        "config",
+        "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "formal/pon-nakamoto-v1/mandatory_units_relation.py",
+        "formal/pon-nakamoto-v1/mandatory_units_query.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.007847057000617497,
+      "stdout": {
+        "archive": "consensus-parameters-and-mu1-unchanged.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "archive": "consensus-parameters-and-mu1-unchanged.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "final_status": "M .github/workflows/pon-recent-batch-acceptance.yml\n M docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\n M formal/pon-nakamoto-v1/README.md\n M scripts/ci/check_ci_contract.py\n M scripts/ci/ci_job.sh\n M scripts/ci/test_ci_contract.py\n M trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\n M trillionnium/crates/trnm-pon-node/src/lib.rs\n M trillionnium/crates/trnm-pon-node/src/store.rs\n M trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs\n?? evidence/pon-actual-certificates-20261107/\n?? formal/pon-nakamoto-v1/CERTIFICATE_OBSERVABILITY_V1.md\n?? formal/pon-nakamoto-v1/NATIVE_OWNER_OBSERVATION_V1.md\n?? formal/pon-nakamoto-v1/NATIVE_OWNER_SCORE_BRIDGE_V1.md\n?? formal/pon-nakamoto-v1/WORK_LIFECYCLE_CERTIFICATE_V1.md\n?? formal/pon-nakamoto-v1/certificate_observability_evidence.py\n?? formal/pon-nakamoto-v1/certificate_observability_models.py\n?? formal/pon-nakamoto-v1/certificate_observability_tests.py\n?? formal/pon-nakamoto-v1/native_owner_score_bridge.py\n?? formal/pon-nakamoto-v1/test_native_owner_score_bridge.py\n?? formal/pon-nakamoto-v1/work_lifecycle_certificate.py\n?? formal/pon-nakamoto-v1/work_lifecycle_help.py\n?? formal/pon-nakamoto-v1/work_lifecycle_observe.py\n?? formal/pon-nakamoto-v1/work_lifecycle_tests.py\n?? trillionnium/crates/trnm-pon-node/examples/native_owner_observation_v1.rs\n?? trillionnium/crates/trnm-pon-node/examples/support/native_owner_scenario.rs\n?? trillionnium/crates/trnm-pon-node/src/store/native_owner_observation.rs\n?? trillionnium/crates/trnm-pon-node/tests/native_owner_observation.rs",
+  "all_listed_checks_passed": true,
+  "failed_checks": [],
+  "unchanged_committed_source": false
+}

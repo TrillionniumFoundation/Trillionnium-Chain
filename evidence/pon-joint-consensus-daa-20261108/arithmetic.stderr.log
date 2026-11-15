@@ -1,0 +1,17 @@
+test_ceiling_and_integer_recurrence_compose_across_six_epochs (__main__.ClampCompositionBoundaries.test_ceiling_and_integer_recurrence_compose_across_six_epochs) ... ok
+test_negative_zero_and_short_positive_spans_share_lower_clamp (__main__.ClampCompositionBoundaries.test_negative_zero_and_short_positive_spans_share_lower_clamp) ... ok
+test_path_rejects_invalid_exact_arithmetic_inputs (__main__.ClampCompositionBoundaries.test_path_rejects_invalid_exact_arithmetic_inputs) ... ok
+test_target_floor_stops_growth_and_inclusive_ratio_can_equal_four (__main__.ClampCompositionBoundaries.test_target_floor_stops_growth_and_inclusive_ratio_can_equal_four) ... ok
+test_quantum_relative_credit_amplification_is_exact_but_conditional (__main__.CostAndWeightCounterexamples.test_quantum_relative_credit_amplification_is_exact_but_conditional) ... ok
+test_rational_square_root_never_returns_an_approximation (__main__.CostAndWeightCounterexamples.test_rational_square_root_never_returns_an_approximation) ... ok
+test_sqrt_per_block_scoring_changes_classical_cost_order (__main__.CostAndWeightCounterexamples.test_sqrt_per_block_scoring_changes_classical_cost_order) ... ok
+test_floor_can_make_integer_block_credit_jump_more_than_four (__main__.ProbabilityAndCreditBoundaries.test_floor_can_make_integer_block_credit_jump_more_than_four) ... ok
+test_reduced_width_exhaustive_inclusive_and_floor_bounds (__main__.ProbabilityAndCreditBoundaries.test_reduced_width_exhaustive_inclusive_and_floor_bounds) ... ok
+test_uniform_cost_keeps_plus_one_and_valid_target_domain (__main__.ProbabilityAndCreditBoundaries.test_uniform_cost_keeps_plus_one_and_valid_target_domain) ... ok
+test_cli_report_is_exact_and_refuses_overwrite (__main__.ReportBoundaries.test_cli_report_is_exact_and_refuses_overwrite) ... ok
+test_scope_keeps_arithmetic_separate_from_native_w1_execution (__main__.ReportBoundaries.test_scope_keeps_arithmetic_separate_from_native_w1_execution) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.328s
+
+OK

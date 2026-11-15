@@ -1,0 +1,37 @@
+{
+  "bytes": 795,
+  "command": [
+    "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/bin/openssl",
+    "version",
+    "-a"
+  ],
+  "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+  "elapsed_ns": 12442523795,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "log": "openssl-version.log",
+  "name": "openssl-version",
+  "process_exit_code": 0,
+  "sha256": "6a5f30b4dc344636f86abaecceec752798a15d5b4c6ecd161bb4631538d5f00c",
+  "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "target_after_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_before_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_identity_error": null,
+  "timed_out": false
+}

@@ -1,0 +1,14 @@
+{
+  "observed_utc": "2026-11-05T00:17:09.669548+00:00",
+  "reason": "Stop only this task baseline Cargo after the unchanged SQLite loader fence explicitly marked the direct-Cargo environment unqualified; preserve observation and rerun through original rustup launcher.",
+  "matched_actions": [
+    {
+      "pid": 66222,
+      "parent": 66155,
+      "argv": "cargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::legacy_reorg_observation_tests::legacy_observation_opt_in_is_local_and_keeps_unentered_unknown -- --exact --nocapture",
+      "signal": "SIGINT",
+      "result": "[Errno 3] No such process"
+    }
+  ],
+  "other_processes_signaled": false
+}

@@ -1,0 +1,427 @@
+[
+  {
+    "group": "crypto",
+    "model_benefit_qualified": false,
+    "native_suites": [
+      {
+        "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_crypto_primitives-ec09512dfb6081aa",
+        "counts": {
+          "failed": 0,
+          "filtered_out": 61,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 135
+        },
+        "kernel_executable_observed": true,
+        "listed": 196,
+        "native_receipt": "00-trnm_crypto_primitives-native.json",
+        "selected": 135
+      }
+    ],
+    "package": "trnm-crypto-primitives",
+    "production_activation": false,
+    "source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "source_after": {
+      "base": null,
+      "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2615077043,
+      "tracked_entries": 28807,
+      "tracked_worktree_verified": true
+    },
+    "source_before": {
+      "base": null,
+      "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2615077043,
+      "tracked_entries": 28807,
+      "tracked_worktree_verified": true
+    },
+    "source_stable": true,
+    "status": "component_tests_passed",
+    "tests_passed": true,
+    "whole_chain_security_qualified": false
+  },
+  {
+    "error": "Traceback (most recent call last):\n  File \"/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/driver-4bfdd41d67ed420e8a70fa1983a5668c2080a9e1e6f640b0aa1b26940e85f662.py\", line 245, in main\n    raise ValueError('native result does not match the complete selected roster')\nValueError: native result does not match the complete selected roster\n",
+    "group": "da",
+    "model_benefit_qualified": false,
+    "native_suites": [
+      {
+        "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_adoption_cli-54ea48ddfb060810",
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 11
+        },
+        "kernel_executable_observed": true,
+        "listed": 11,
+        "native_receipt": "00-cell_adoption_cli-native.json",
+        "selected": 11
+      },
+      {
+        "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_cache_wal_cli-c447e0fb4604698c",
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1
+        },
+        "kernel_executable_observed": true,
+        "listed": 1,
+        "native_receipt": "01-cell_cache_wal_cli-native.json",
+        "selected": 1
+      },
+      {
+        "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_closure_cli-710e4425e4aaadbe",
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 5
+        },
+        "kernel_executable_observed": true,
+        "listed": 5,
+        "native_receipt": "02-cell_closure_cli-native.json",
+        "selected": 5
+      },
+      {
+        "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_discovery_cli-b0001582b550d769",
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 5
+        },
+        "kernel_executable_observed": true,
+        "listed": 5,
+        "native_receipt": "03-cell_discovery_cli-native.json",
+        "selected": 5
+      },
+      {
+        "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_fetch_deadline_cli-20d46916f99e2ec2",
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 5
+        },
+        "kernel_executable_observed": true,
+        "listed": 5,
+        "native_receipt": "04-cell_fetch_deadline_cli-native.json",
+        "selected": 5
+      },
+      {
+        "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_persistent_cli-e7959ba45649113d",
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 5
+        },
+        "kernel_executable_observed": true,
+        "listed": 5,
+        "native_receipt": "05-cell_persistent_cli-native.json",
+        "selected": 5
+      },
+      {
+        "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_provider_ready_cli-6a234193b4ce88f5",
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2
+        },
+        "kernel_executable_observed": true,
+        "listed": 2,
+        "native_receipt": "06-cell_provider_ready_cli-native.json",
+        "selected": 2
+      },
+      {
+        "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_release_cli-976da714a129e38f",
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2
+        },
+        "kernel_executable_observed": true,
+        "listed": 2,
+        "native_receipt": "07-cell_release_cli-native.json",
+        "selected": 2
+      },
+      {
+        "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_tensor_cli-01c0ff6c929d5bb4",
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 7
+        },
+        "kernel_executable_observed": true,
+        "listed": 7,
+        "native_receipt": "08-cell_tensor_cli-native.json",
+        "selected": 7
+      },
+      {
+        "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/pq_cell_cli-5acecb2a0ba1b894",
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2
+        },
+        "kernel_executable_observed": true,
+        "listed": 2,
+        "native_receipt": "09-pq_cell_cli-native.json",
+        "selected": 2
+      },
+      {
+        "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell-082545a3bcb4bee9",
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0
+        },
+        "kernel_executable_observed": true,
+        "listed": 0,
+        "native_receipt": "10-trnm-cell-native.json",
+        "selected": 0
+      },
+      {
+        "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell_adoption-a735a1ef19763c97",
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0
+        },
+        "kernel_executable_observed": true,
+        "listed": 0,
+        "native_receipt": "11-trnm-cell-adoption-native.json",
+        "selected": 0
+      },
+      {
+        "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell_discovery-886084e361c47f39",
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0
+        },
+        "kernel_executable_observed": true,
+        "listed": 0,
+        "native_receipt": "12-trnm-cell-discovery-native.json",
+        "selected": 0
+      },
+      {
+        "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_data_availability-64b25e344716c90a",
+        "counts": {
+          "failed": 1,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 740
+        },
+        "kernel_executable_observed": true,
+        "listed": 741,
+        "native_receipt": "13-trnm_data_availability-native.json",
+        "selected": 741
+      }
+    ],
+    "package": "trnm-data-availability",
+    "production_activation": false,
+    "source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "source_after": {
+      "base": null,
+      "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2615077043,
+      "tracked_entries": 28807,
+      "tracked_worktree_verified": true
+    },
+    "source_before": {
+      "base": null,
+      "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2615077043,
+      "tracked_entries": 28807,
+      "tracked_worktree_verified": true
+    },
+    "source_stable": true,
+    "status": "component_failed",
+    "tests_passed": false,
+    "whole_chain_security_qualified": false
+  },
+  {
+    "checks_passed": true,
+    "group": "fmt",
+    "production_activation": false,
+    "source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "source_after": {
+      "base": null,
+      "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2615077043,
+      "tracked_entries": 28807,
+      "tracked_worktree_verified": true
+    },
+    "source_before": {
+      "base": null,
+      "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2615077043,
+      "tracked_entries": 28807,
+      "tracked_worktree_verified": true
+    },
+    "source_stable": true,
+    "status": "check_passed"
+  },
+  {
+    "checks_passed": true,
+    "group": "workspace-metadata",
+    "production_activation": false,
+    "source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "source_after": {
+      "base": null,
+      "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2615077043,
+      "tracked_entries": 28807,
+      "tracked_worktree_verified": true
+    },
+    "source_before": {
+      "base": null,
+      "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2615077043,
+      "tracked_entries": 28807,
+      "tracked_worktree_verified": true
+    },
+    "source_stable": true,
+    "status": "check_passed"
+  },
+  {
+    "checks_passed": true,
+    "group": "fuzz-metadata",
+    "production_activation": false,
+    "source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "source_after": {
+      "base": null,
+      "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2615077043,
+      "tracked_entries": 28807,
+      "tracked_worktree_verified": true
+    },
+    "source_before": {
+      "base": null,
+      "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2615077043,
+      "tracked_entries": 28807,
+      "tracked_worktree_verified": true
+    },
+    "source_stable": true,
+    "status": "check_passed"
+  },
+  {
+    "checks_passed": true,
+    "group": "clippy",
+    "production_activation": false,
+    "source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "source_after": {
+      "base": null,
+      "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2615077043,
+      "tracked_entries": 28807,
+      "tracked_worktree_verified": true
+    },
+    "source_before": {
+      "base": null,
+      "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2615077043,
+      "tracked_entries": 28807,
+      "tracked_worktree_verified": true
+    },
+    "source_stable": true,
+    "status": "check_passed"
+  }
+]

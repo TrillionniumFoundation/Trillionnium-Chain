@@ -1,0 +1,27 @@
+{
+  "build_env": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_HOME": "/workspace/scratch/a6fe7c2e72c7/pq-validation/cargo",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/workspace/scratch/a0d4983b1065/validation/mvcc-target",
+    "RUSTUP_HOME": "/workspace/scratch/a6fe7c2e72c7/pq-validation/rustup"
+  },
+  "cargo_profile": "release; manifest/default opt-level, overflow checks and debug assertions unchanged",
+  "deadlines_changed": false,
+  "end_to_end_throughput": false,
+  "original_025_cpu_profile_qualified": false,
+  "original_cpu_limit": null,
+  "original_memory_limit": null,
+  "original_parent_cgroup_available": false,
+  "original_pid_limit": null,
+  "planned_node_tests": [
+    "complete original request_observation::tests:: module",
+    "exact original TCP queued/owner-wait cancellation test"
+  ],
+  "public_confirmation": false,
+  "resource_profile": "shared-cloud-development",
+  "rust_toolchain_bin": "/workspace/scratch/a6fe7c2e72c7/pq-validation/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin",
+  "schema": "trnm-node-cancellation-native-diagnostic-profile-v1",
+  "source_base_head": "f2d14f9ebd25e054fe17c880331ae0d0c7df46e3",
+  "source_base_head_is_not_new_implementation_identity": true
+}

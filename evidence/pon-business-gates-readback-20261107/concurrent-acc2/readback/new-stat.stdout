@@ -1,0 +1,60 @@
+ .../TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md  |   49 +-
+ .../specs/pon/USEFUL_CELL_MULTIMODAL_V3.md         |  124 +
+ .../development/specs/pon/USEFUL_CELL_NATIVE_V1.md |  107 +
+ .../specs/pon/USEFUL_CELL_RELATION_V2.md           |  287 ++
+ .../pon-cell-integration-v1-20261107/ARCHIVE.json  |    7 +
+ .../pon-cell-integration-v1-20261107/MANIFEST.json |  365 +++
+ .../PACKAGE.sha256                                 |    5 +
+ .../pon-cell-integration-v1-20261107/README.md     |   88 +
+ .../pon-cell-integration-v1-20261107/REVIEW.json   |   31 +
+ .../retained-runs.tar.gz                           |  Bin 0 -> 738021 bytes
+ evidence/pon-native-cell-v1-20261107/ARCHIVE.json  |   10 +
+ evidence/pon-native-cell-v1-20261107/FILES.json    | 1495 ++++++++++
+ .../pon-native-cell-v1-20261107/PACKAGE.sha256     |    8 +
+ evidence/pon-native-cell-v1-20261107/README.md     |   60 +
+ .../pon-native-cell-v1-20261107/REPRODUCTION.md    |   78 +
+ .../pon-native-cell-v1-20261107/cold_replay.py     |  114 +
+ .../final-source-fence.json                        |   18 +
+ .../retained-runs.tar.gz                           |  Bin 0 -> 422679 bytes
+ .../retained-validation.json                       | 1241 ++++++++
+ .../ARCHIVE.json                                   |    9 +
+ .../MANIFEST.json                                  | 1642 +++++++++++
+ .../PACKAGE.sha256                                 |    6 +
+ .../PROOFS.json                                    | 1560 +++++++++++
+ .../README.md                                      |   90 +
+ .../REVIEW.json                                    |   96 +
+ .../retained-runs.tar.gz                           |  Bin 0 -> 596257 bytes
+ .../ARCHIVE.json                                   |   60 +
+ .../MANIFEST.json                                  | 2957 ++++++++++++++++++++
+ .../PACKAGE.sha256                                 |  264 ++
+ .../pon-useful-cell-stateful-v2-20261107/README.md |  158 ++
+ .../REVIEW.json                                    |  553 ++++
+ .../late-historical-live-check.json                |   58 +
+ .../retained-runs.tar.gz                           |  Bin 0 -> 1928181 bytes
+ .../experiments/useful_cell_multimodal_v3.py       |  243 ++
+ .../experiments/useful_cell_relation_v2.py         |  229 ++
+ .../test_useful_cell_execution_v2.py               |  530 ++++
+ .../test_useful_cell_multimodal_execution_v3.py    |  463 +++
+ .../test_useful_cell_multimodal_relation_v3.py     |  389 +++
+ .../test_useful_cell_relation_v2.py                |  210 ++
+ .../test_useful_cell_relation_v2_adversarial.py    |  251 ++
+ .../test_useful_cell_source_guard_v2.py            |  252 ++
+ formal/pon-nakamoto-v1/useful_cell_execution_v2.py |  490 ++++
+ .../useful_cell_multimodal_execution_v3.py         |  730 +++++
+ .../useful_cell_multimodal_relation_v3.py          |  404 +++
+ formal/pon-nakamoto-v1/useful_cell_relation_v2.py  |  429 +++
+ .../pon-nakamoto-v1/useful_cell_source_guard_v2.py |  374 +++
+ scripts/ci/check_ci_contract.py                    |   22 +-
+ scripts/ci/ci_job.sh                               |   14 +-
+ scripts/ci/test_ci_contract.py                     |   46 +-
+ .../crates/trnm-pon-node/src/cell_native_cli.rs    |  130 +
+ .../crates/trnm-pon-node/src/cell_native_v1.rs     |  668 +++++
+ .../trnm-pon-node/src/cell_native_v1/execution.rs  |  436 +++
+ .../trnm-pon-node/src/cell_native_v1/source.rs     |  117 +
+ .../trnm-pon-node/src/cell_native_v1/work.rs       |  171 ++
+ trillionnium/crates/trnm-pon-node/src/lib.rs       |    2 +
+ trillionnium/crates/trnm-pon-node/src/main.rs      |   15 +
+ .../crates/trnm-pon-node/tests/cell_native_v1.rs   |  955 +++++++
+ .../trnm-pon-node/tests/cell_native_v1_fixture.py  |  180 ++
+ .../tests/data/cell_native_v1_oracle.json          |    1 +
+ 59 files changed, 19280 insertions(+), 11 deletions(-)

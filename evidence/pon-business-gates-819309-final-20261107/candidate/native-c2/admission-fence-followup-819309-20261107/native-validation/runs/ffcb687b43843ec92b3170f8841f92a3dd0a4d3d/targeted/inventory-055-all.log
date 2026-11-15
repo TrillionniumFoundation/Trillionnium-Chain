@@ -1,0 +1,2 @@
+external_read_only_observer_survives_shutdown_with_actual_paid_snapshot_counts: test
+refusal_retains_partial_challenge_cost_without_body_or_ticket_claim: test

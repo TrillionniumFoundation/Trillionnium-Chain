@@ -1,0 +1,98 @@
+{
+  "base_sha": "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+  "restored": [
+    {
+      "path": "evidence/pon-pq-account-native-20261028/README.md",
+      "bytes": 6743,
+      "blob": "2885a560883ff59e67411e8bec5813d2f132587a"
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/README.md",
+      "bytes": 1833,
+      "blob": "76b74547693d7ee09845776b440c24cd960417a8"
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/baseline-real-tcp.log",
+      "bytes": 1963,
+      "blob": "f8c5894587a4a239d7b83b36d8062682c4e4bb90"
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/fixed-python.log",
+      "bytes": 7409,
+      "blob": "b7223a755a4b6b588451e7da94393daaa4a6be4c"
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/local-qualification.json",
+      "bytes": 6618,
+      "blob": "7da5272cb6423fa6da8a65d02a77f511cba77632"
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/native-clippy.log",
+      "bytes": 72,
+      "blob": "8ab4f9d11c6ea18011ce29d32c20dbf2b8460341"
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/native-format.log",
+      "bytes": 0,
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/native-rust.log",
+      "bytes": 2110,
+      "blob": "703250081e72cbb28635d4d76e2eccf26b763e85"
+    },
+    {
+      "path": "evidence/pon-pq-pql10-pem-source-v1/combined-test.log",
+      "bytes": 1839,
+      "blob": "1d8cd4234d1ae143434d024c8629aaf81014c62a"
+    },
+    {
+      "path": "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json",
+      "bytes": 2348,
+      "blob": "596aa94783e6b029c73a05696fb8bdfc32b25c74"
+    },
+    {
+      "path": "evidence/pon-pq-pql10-pem-source-v1/normal-test.log",
+      "bytes": 1018,
+      "blob": "4768863acadbe03d793e615763cf2fe006a3332a"
+    },
+    {
+      "path": "evidence/pon-pq-pql10-pem-source-v1/sanitizer-test.log",
+      "bytes": 1018,
+      "blob": "2ada9806d35604801ab9a01d289d8a60867a0cac"
+    },
+    {
+      "path": "evidence/pon-pq-pql11b-source-guard-v1/local-qualification.json",
+      "bytes": 1507,
+      "blob": "afaf66bc3269ae2d09230e67253462252d5da4dc"
+    },
+    {
+      "path": "evidence/pon-pq-spki-v1/README.md",
+      "bytes": 1247,
+      "blob": "5d9e67e90cf335e5b0f8350577bed539e6fb1ad7"
+    },
+    {
+      "path": "evidence/pon-pq-tpq1-native-v1/README.md",
+      "bytes": 2239,
+      "blob": "29384ad0a2cfbfd987334d12de93a0a912837512"
+    },
+    {
+      "path": "evidence/pon-pq-tpq1-native-v1/native-sanitizer-test.log",
+      "bytes": 918,
+      "blob": "f7092477840b5139380251e6ec396c98b60a2143"
+    },
+    {
+      "path": "evidence/pon-pq-tpq1-native-v1/native-test.log",
+      "bytes": 918,
+      "blob": "08a3ee020dc978572c56c81b0ea1f834a6ebf4f7"
+    }
+  ],
+  "scope": "Materialize only missing pinned inputs from existing Git objects; not a complete checkout or raw-source qualification.",
+  "additional_readable_evidence": [
+    {
+      "path": "qualification/full-pq-r3/README.md",
+      "bytes": 4368,
+      "blob": "66d63977a072bc53b4843361163b528d822cc1a2"
+    }
+  ]
+}

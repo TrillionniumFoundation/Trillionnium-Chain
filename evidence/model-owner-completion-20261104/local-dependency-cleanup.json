@@ -1,0 +1,10 @@
+{
+  "schema": "model-owner-reproducible-dependency-cleanup-v1",
+  "utc_ns": 1793842385729196043,
+  "reason": "shared workspace disk exhaustion before source composition completed",
+  "removed": "/workspace/scratch/f4976366a32a/torch-env",
+  "scope": "generated local hash-locked dependency environment only; no source, model authority, evidence or other worktree removed",
+  "before_free": 0,
+  "after_free": 0,
+  "real_model_trial_started": false
+}

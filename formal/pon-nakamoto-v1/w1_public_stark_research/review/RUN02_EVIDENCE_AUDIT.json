@@ -1,0 +1,1461 @@
+{
+  "schema": "run02-independent-read-only-evidence-audit-v1",
+  "campaign": "retained-native-02 / run02",
+  "created_utc": "2026-11-08T00:10:18.475665+00:00",
+  "qualification": "HOLD_NO_GO",
+  "status": "NO_MISMATCH_FOUND",
+  "actions": {
+    "new_benchmarks": 0,
+    "new_prover_or_verifier_executions": 0,
+    "source_unit_tests_reexecuted": 0,
+    "new_attack_generation": 0,
+    "frozen_selected_files_modified": 0,
+    "remote_files_modified": 0
+  },
+  "audit_comparisons": {
+    "count": 132,
+    "mismatch_count": 0,
+    "mismatches": [],
+    "checks": [
+      {
+        "label": "measurement input SHA: results/retained-native-02/provenance.json",
+        "matches": true,
+        "actual": "887a3e288ebd50848ed7b3e102c7eeaec03f7978f8c0f8ce5822991d0b5645db",
+        "expected": "887a3e288ebd50848ed7b3e102c7eeaec03f7978f8c0f8ce5822991d0b5645db"
+      },
+      {
+        "label": "measurement input SHA: results/retained-native-02/generation.json",
+        "matches": true,
+        "actual": "3a9abe1914a0b85237c9a0b44b94ccbd8433c330f7cd4cff3c1abf06dfc0a2e2",
+        "expected": "3a9abe1914a0b85237c9a0b44b94ccbd8433c330f7cd4cff3c1abf06dfc0a2e2"
+      },
+      {
+        "label": "measurement input SHA: results/retained-native-02/prover_report.json",
+        "matches": true,
+        "actual": "6eab0921a09706de98373e7e7a24060811fc5ba160f4035f9b87e177fa383f3e",
+        "expected": "6eab0921a09706de98373e7e7a24060811fc5ba160f4035f9b87e177fa383f3e"
+      },
+      {
+        "label": "measurement input SHA: results/retained-native-02/verification-campaign/summary.json",
+        "matches": true,
+        "actual": "58238d84be864c71506bfa32bd79cd9a357957c6b7f18493974c246ed4166201",
+        "expected": "58238d84be864c71506bfa32bd79cd9a357957c6b7f18493974c246ed4166201"
+      },
+      {
+        "label": "measurement input SHA: results/retained-native-02/late-query-campaign/summary.json",
+        "matches": true,
+        "actual": "fac247c9a787cc8fb28a6412b7b0f9539ae4618e9e9e2915bb27c965d0eda110",
+        "expected": "fac247c9a787cc8fb28a6412b7b0f9539ae4618e9e9e2915bb27c965d0eda110"
+      },
+      {
+        "label": "measurement input SHA: results/native-baseline/native-summary.json",
+        "matches": true,
+        "actual": "59a1e8bf26e919304c5cadef9be5079eb51288498ed34f134c80236b8825c1f6",
+        "expected": "59a1e8bf26e919304c5cadef9be5079eb51288498ed34f134c80236b8825c1f6"
+      },
+      {
+        "label": "measurement input SHA: results/native-baseline/native-prefix-preparations.json",
+        "matches": true,
+        "actual": "d689557de53f28b9dc16b420bd4dbe33ccb0074324d3cb36a9d365f62bfe7aa0",
+        "expected": "d689557de53f28b9dc16b420bd4dbe33ccb0074324d3cb36a9d365f62bfe7aa0"
+      },
+      {
+        "label": "measurement input SHA: results/native-baseline/native-campaign.json",
+        "matches": true,
+        "actual": "ae1ab821b1c9f53dc11fecc70db7d44b43e77eb7fbf2b63bfcee748770436639",
+        "expected": "ae1ab821b1c9f53dc11fecc70db7d44b43e77eb7fbf2b63bfcee748770436639"
+      },
+      {
+        "label": "statement.bin run01 report SHA",
+        "matches": true,
+        "actual": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+        "expected": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c"
+      },
+      {
+        "label": "statement.bin generation SHA",
+        "matches": true,
+        "actual": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+        "expected": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c"
+      },
+      {
+        "label": "statement.bin generation bytes",
+        "matches": true,
+        "actual": 377290,
+        "expected": 377290
+      },
+      {
+        "label": "statement.bin MEASUREMENTS equality flag",
+        "matches": true,
+        "actual": true,
+        "expected": true
+      },
+      {
+        "label": "statement.bin valid-00 SHA",
+        "matches": true,
+        "actual": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+        "expected": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c"
+      },
+      {
+        "label": "statement.bin valid-00 bytes",
+        "matches": true,
+        "actual": 377290,
+        "expected": 377290
+      },
+      {
+        "label": "statement.bin valid-01 SHA",
+        "matches": true,
+        "actual": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+        "expected": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c"
+      },
+      {
+        "label": "statement.bin valid-01 bytes",
+        "matches": true,
+        "actual": 377290,
+        "expected": 377290
+      },
+      {
+        "label": "statement.bin valid-02 SHA",
+        "matches": true,
+        "actual": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+        "expected": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c"
+      },
+      {
+        "label": "statement.bin valid-02 bytes",
+        "matches": true,
+        "actual": 377290,
+        "expected": 377290
+      },
+      {
+        "label": "sha.proof.bin run01 report SHA",
+        "matches": true,
+        "actual": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+        "expected": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c"
+      },
+      {
+        "label": "sha.proof.bin generation SHA",
+        "matches": true,
+        "actual": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+        "expected": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c"
+      },
+      {
+        "label": "sha.proof.bin generation bytes",
+        "matches": true,
+        "actual": 4356101,
+        "expected": 4356101
+      },
+      {
+        "label": "sha.proof.bin MEASUREMENTS equality flag",
+        "matches": true,
+        "actual": true,
+        "expected": true
+      },
+      {
+        "label": "sha.proof.bin valid-00 SHA",
+        "matches": true,
+        "actual": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+        "expected": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c"
+      },
+      {
+        "label": "sha.proof.bin valid-00 bytes",
+        "matches": true,
+        "actual": 4356101,
+        "expected": 4356101
+      },
+      {
+        "label": "sha.proof.bin valid-01 SHA",
+        "matches": true,
+        "actual": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+        "expected": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c"
+      },
+      {
+        "label": "sha.proof.bin valid-01 bytes",
+        "matches": true,
+        "actual": 4356101,
+        "expected": 4356101
+      },
+      {
+        "label": "sha.proof.bin valid-02 SHA",
+        "matches": true,
+        "actual": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+        "expected": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c"
+      },
+      {
+        "label": "sha.proof.bin valid-02 bytes",
+        "matches": true,
+        "actual": 4356101,
+        "expected": 4356101
+      },
+      {
+        "label": "arith.proof.bin run01 report SHA",
+        "matches": true,
+        "actual": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204",
+        "expected": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204"
+      },
+      {
+        "label": "arith.proof.bin generation SHA",
+        "matches": true,
+        "actual": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204",
+        "expected": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204"
+      },
+      {
+        "label": "arith.proof.bin generation bytes",
+        "matches": true,
+        "actual": 530885,
+        "expected": 530885
+      },
+      {
+        "label": "arith.proof.bin MEASUREMENTS equality flag",
+        "matches": true,
+        "actual": true,
+        "expected": true
+      },
+      {
+        "label": "arith.proof.bin valid-00 SHA",
+        "matches": true,
+        "actual": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204",
+        "expected": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204"
+      },
+      {
+        "label": "arith.proof.bin valid-00 bytes",
+        "matches": true,
+        "actual": 530885,
+        "expected": 530885
+      },
+      {
+        "label": "arith.proof.bin valid-01 SHA",
+        "matches": true,
+        "actual": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204",
+        "expected": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204"
+      },
+      {
+        "label": "arith.proof.bin valid-01 bytes",
+        "matches": true,
+        "actual": 530885,
+        "expected": 530885
+      },
+      {
+        "label": "arith.proof.bin valid-02 SHA",
+        "matches": true,
+        "actual": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204",
+        "expected": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204"
+      },
+      {
+        "label": "arith.proof.bin valid-02 bytes",
+        "matches": true,
+        "actual": 530885,
+        "expected": 530885
+      },
+      {
+        "label": "prepare public statement SHA",
+        "matches": true,
+        "actual": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+        "expected": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c"
+      },
+      {
+        "label": "derived MEASUREMENTS: qualification",
+        "matches": true,
+        "actual": "HOLD_NO_GO",
+        "expected": "HOLD_NO_GO"
+      },
+      {
+        "label": "derived MEASUREMENTS: verifier_binary_sha256",
+        "matches": true,
+        "actual": "7700eff6ea4a3ff1f8f6551c323ac5b90b2bb5a96d1eaeca41e108bc54a7e3fc",
+        "expected": "7700eff6ea4a3ff1f8f6551c323ac5b90b2bb5a96d1eaeca41e108bc54a7e3fc"
+      },
+      {
+        "label": "derived MEASUREMENTS: sha_air_source_sha256",
+        "matches": true,
+        "actual": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa",
+        "expected": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa"
+      },
+      {
+        "label": "derived MEASUREMENTS: native_retained",
+        "matches": true,
+        "actual": {
+          "case": "retained",
+          "mode": "native_full_limb",
+          "count": 150,
+          "median_ns": 1913279.0,
+          "p95_observed_ns": 2630817,
+          "max_observed_ns": 2962699,
+          "min_observed_ns": 1850395,
+          "mean_ns": 2006813.8733333333
+        },
+        "expected": {
+          "case": "retained",
+          "mode": "native_full_limb",
+          "count": 150,
+          "median_ns": 1913279.0,
+          "p95_observed_ns": 2630817,
+          "max_observed_ns": 2962699,
+          "min_observed_ns": 1850395,
+          "mean_ns": 2006813.8733333333
+        }
+      },
+      {
+        "label": "derived MEASUREMENTS: stark_verify_outer_seconds",
+        "matches": true,
+        "actual": [
+          0.9492664039134979,
+          0.9364103279076517,
+          0.9482037830166519
+        ],
+        "expected": [
+          0.9492664039134979,
+          0.9364103279076517,
+          0.9482037830166519
+        ]
+      },
+      {
+        "label": "derived MEASUREMENTS: stark_verify_process_ms",
+        "matches": true,
+        "actual": [
+          941.3463250000001,
+          930.1139149999999,
+          940.9443170000001
+        ],
+        "expected": [
+          941.3463250000001,
+          930.1139149999999,
+          940.9443170000001
+        ]
+      },
+      {
+        "label": "derived MEASUREMENTS: stark_verify_phase_medians_ms",
+        "matches": true,
+        "actual": {
+          "bounded_read_decode_and_proof_shape": 17.505067999999998,
+          "canonical_plans_and_public_only_sha_air": 8.167715000000001,
+          "sha_verifier_independent_preprocessing_setup": 44.402285,
+          "sha_stark_verify": 269.416277,
+          "arith_verifier_independent_preprocessing_setup": 539.447565,
+          "arith_stark_verify": 30.476445000000002
+        },
+        "expected": {
+          "arith_stark_verify": 30.476445000000002,
+          "arith_verifier_independent_preprocessing_setup": 539.447565,
+          "bounded_read_decode_and_proof_shape": 17.505067999999998,
+          "canonical_plans_and_public_only_sha_air": 8.167715000000001,
+          "sha_stark_verify": 269.416277,
+          "sha_verifier_independent_preprocessing_setup": 44.402285
+        }
+      },
+      {
+        "label": "derived MEASUREMENTS: stark_verify_two_key_setup_median_ms",
+        "matches": true,
+        "actual": 582.9972630000001,
+        "expected": 582.9972630000001
+      },
+      {
+        "label": "derived MEASUREMENTS: stark_verify_two_proof_checks_median_ms",
+        "matches": true,
+        "actual": 299.892722,
+        "expected": 299.892722
+      },
+      {
+        "label": "derived MEASUREMENTS: stark_verify_outer_median_seconds",
+        "matches": true,
+        "actual": 0.9482037830166519,
+        "expected": 0.9482037830166519
+      },
+      {
+        "label": "derived MEASUREMENTS: stark_verify_process_median_ms",
+        "matches": true,
+        "actual": 940.9443170000001,
+        "expected": 940.9443170000001
+      },
+      {
+        "label": "derived MEASUREMENTS: observed_outer_to_native_warm_ratio",
+        "matches": true,
+        "actual": 495.5909634803141,
+        "expected": 495.5909634803141
+      },
+      {
+        "label": "derived MEASUREMENTS: observed_process_to_native_warm_ratio",
+        "matches": true,
+        "actual": 491.7967097323496,
+        "expected": 491.7967097323496
+      },
+      {
+        "label": "derived MEASUREMENTS: new_wire_bytes",
+        "matches": true,
+        "actual": 5264276,
+        "expected": 5264276
+      },
+      {
+        "label": "derived MEASUREMENTS: original_wire_bytes",
+        "matches": true,
+        "actual": 49506,
+        "expected": 49506
+      },
+      {
+        "label": "derived MEASUREMENTS: new_to_original_wire_ratio",
+        "matches": true,
+        "actual": 106.33612087423747,
+        "expected": 106.33612087423747
+      },
+      {
+        "label": "derived MEASUREMENTS: prepare_outer_seconds",
+        "matches": true,
+        "actual": 0.02544837398454547,
+        "expected": 0.02544837398454547
+      },
+      {
+        "label": "derived MEASUREMENTS: prove_outer_seconds",
+        "matches": true,
+        "actual": 21.196110212942585,
+        "expected": 21.196110212942585
+      },
+      {
+        "label": "derived MEASUREMENTS: prove_process_ms",
+        "matches": true,
+        "actual": 21180.277754,
+        "expected": 21180.277754
+      },
+      {
+        "label": "derived MEASUREMENTS: prove_max_rss_kib",
+        "matches": true,
+        "actual": 2381440,
+        "expected": 2381440
+      },
+      {
+        "label": "derived MEASUREMENTS: positive_verify_max_rss_kib",
+        "matches": true,
+        "actual": 132996,
+        "expected": 132996
+      },
+      {
+        "label": "derived MEASUREMENTS: synthetic_component_sum_seconds",
+        "matches": true,
+        "actual": 22.169762369943783,
+        "expected": 22.169762369943783
+      },
+      {
+        "label": "derived MEASUREMENTS: largest_ordinary_negative_outer_seconds",
+        "matches": true,
+        "actual": 2.2384327568579465,
+        "expected": 2.2384327568579465
+      },
+      {
+        "label": "derived MEASUREMENTS: largest_typed_late_outer_seconds",
+        "matches": true,
+        "actual": 1.0436571650207043,
+        "expected": 1.0436571650207043
+      },
+      {
+        "label": "positive status: valid-00",
+        "matches": true,
+        "actual": "VERIFIED_COMPLETE_W1_RESEARCH_ONLY",
+        "expected": "VERIFIED_COMPLETE_W1_RESEARCH_ONLY"
+      },
+      {
+        "label": "positive exit: valid-00",
+        "matches": true,
+        "actual": 0,
+        "expected": 0
+      },
+      {
+        "label": "positive status: valid-01",
+        "matches": true,
+        "actual": "VERIFIED_COMPLETE_W1_RESEARCH_ONLY",
+        "expected": "VERIFIED_COMPLETE_W1_RESEARCH_ONLY"
+      },
+      {
+        "label": "positive exit: valid-01",
+        "matches": true,
+        "actual": 0,
+        "expected": 0
+      },
+      {
+        "label": "positive status: valid-02",
+        "matches": true,
+        "actual": "VERIFIED_COMPLETE_W1_RESEARCH_ONLY",
+        "expected": "VERIFIED_COMPLETE_W1_RESEARCH_ONLY"
+      },
+      {
+        "label": "positive exit: valid-02",
+        "matches": true,
+        "actual": 0,
+        "expected": 0
+      },
+      {
+        "label": "ordinary negative stage: public-extra-byte",
+        "matches": true,
+        "actual": [
+          1,
+          true,
+          true
+        ],
+        "expected": [
+          1,
+          true,
+          true
+        ]
+      },
+      {
+        "label": "ordinary negative stage: sha-proof-truncated",
+        "matches": true,
+        "actual": [
+          1,
+          true,
+          true
+        ],
+        "expected": [
+          1,
+          true,
+          true
+        ]
+      },
+      {
+        "label": "ordinary negative stage: sha-proof-trailing-byte",
+        "matches": true,
+        "actual": [
+          1,
+          true,
+          true
+        ],
+        "expected": [
+          1,
+          true,
+          true
+        ]
+      },
+      {
+        "label": "ordinary negative stage: sha-commitment-changed",
+        "matches": true,
+        "actual": [
+          1,
+          true,
+          true
+        ],
+        "expected": [
+          1,
+          true,
+          true
+        ]
+      },
+      {
+        "label": "ordinary negative stage: arith-commitment-changed",
+        "matches": true,
+        "actual": [
+          1,
+          true,
+          true
+        ],
+        "expected": [
+          1,
+          true,
+          true
+        ]
+      },
+      {
+        "label": "ordinary negative stage: last-C-changed",
+        "matches": true,
+        "actual": [
+          1,
+          true,
+          true
+        ],
+        "expected": [
+          1,
+          true,
+          true
+        ]
+      },
+      {
+        "label": "ordinary negative stage: last-prefix-changed",
+        "matches": true,
+        "actual": [
+          1,
+          true,
+          true
+        ],
+        "expected": [
+          1,
+          true,
+          true
+        ]
+      },
+      {
+        "label": "ordinary negative stage: last-AB-intermediate-changed",
+        "matches": true,
+        "actual": [
+          1,
+          true,
+          true
+        ],
+        "expected": [
+          1,
+          true,
+          true
+        ]
+      },
+      {
+        "label": "ordinary negative stage: unused-noise-tail-changed",
+        "matches": true,
+        "actual": [
+          1,
+          true,
+          true
+        ],
+        "expected": [
+          1,
+          true,
+          true
+        ]
+      },
+      {
+        "label": "ordinary negative stage: wrong-independent-artifacts",
+        "matches": true,
+        "actual": [
+          1,
+          true,
+          true
+        ],
+        "expected": [
+          1,
+          true,
+          true
+        ]
+      },
+      {
+        "label": "ordinary negative stage: wrong-independent-header",
+        "matches": true,
+        "actual": [
+          1,
+          true,
+          true
+        ],
+        "expected": [
+          1,
+          true,
+          true
+        ]
+      },
+      {
+        "label": "typed late stage: sha-last-fold-query-value",
+        "matches": true,
+        "actual": [
+          1,
+          true,
+          true
+        ],
+        "expected": [
+          1,
+          true,
+          true
+        ]
+      },
+      {
+        "label": "typed late original statement: sha-last-fold-query-value",
+        "matches": true,
+        "actual": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+        "expected": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c"
+      },
+      {
+        "label": "typed late fixed transcript flag: sha-last-fold-query-value",
+        "matches": true,
+        "actual": true,
+        "expected": true
+      },
+      {
+        "label": "typed late original proof SHA: sha-last-fold-query-value",
+        "matches": true,
+        "actual": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+        "expected": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c"
+      },
+      {
+        "label": "typed late stage: sha-last-fold-auth-sibling",
+        "matches": true,
+        "actual": [
+          1,
+          true,
+          true
+        ],
+        "expected": [
+          1,
+          true,
+          true
+        ]
+      },
+      {
+        "label": "typed late original statement: sha-last-fold-auth-sibling",
+        "matches": true,
+        "actual": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+        "expected": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c"
+      },
+      {
+        "label": "typed late fixed transcript flag: sha-last-fold-auth-sibling",
+        "matches": true,
+        "actual": true,
+        "expected": true
+      },
+      {
+        "label": "typed late original proof SHA: sha-last-fold-auth-sibling",
+        "matches": true,
+        "actual": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+        "expected": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c"
+      },
+      {
+        "label": "typed late stage: arith-last-fold-query-value",
+        "matches": true,
+        "actual": [
+          1,
+          true,
+          true
+        ],
+        "expected": [
+          1,
+          true,
+          true
+        ]
+      },
+      {
+        "label": "typed late original statement: arith-last-fold-query-value",
+        "matches": true,
+        "actual": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+        "expected": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c"
+      },
+      {
+        "label": "typed late fixed transcript flag: arith-last-fold-query-value",
+        "matches": true,
+        "actual": true,
+        "expected": true
+      },
+      {
+        "label": "typed late original proof SHA: arith-last-fold-query-value",
+        "matches": true,
+        "actual": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204",
+        "expected": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204"
+      },
+      {
+        "label": "typed late stage: arith-last-fold-auth-sibling",
+        "matches": true,
+        "actual": [
+          1,
+          true,
+          true
+        ],
+        "expected": [
+          1,
+          true,
+          true
+        ]
+      },
+      {
+        "label": "typed late original statement: arith-last-fold-auth-sibling",
+        "matches": true,
+        "actual": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+        "expected": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c"
+      },
+      {
+        "label": "typed late fixed transcript flag: arith-last-fold-auth-sibling",
+        "matches": true,
+        "actual": true,
+        "expected": true
+      },
+      {
+        "label": "typed late original proof SHA: arith-last-fold-auth-sibling",
+        "matches": true,
+        "actual": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204",
+        "expected": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204"
+      },
+      {
+        "label": "ordinary summary maximum",
+        "matches": true,
+        "actual": 2.2384327568579465,
+        "expected": 2.2384327568579465
+      },
+      {
+        "label": "typed late summary maximum",
+        "matches": true,
+        "actual": 1.0436571650207043,
+        "expected": 1.0436571650207043
+      },
+      {
+        "label": "prefix extraction campaign SHA",
+        "matches": true,
+        "actual": "ae1ab821b1c9f53dc11fecc70db7d44b43e77eb7fbf2b63bfcee748770436639",
+        "expected": "ae1ab821b1c9f53dc11fecc70db7d44b43e77eb7fbf2b63bfcee748770436639"
+      },
+      {
+        "label": "prefix original raw SHA 0",
+        "matches": true,
+        "actual": "6a297f056f544ca77a76e9b1f7c847c7125fccc76d125d0b02643897ca451592",
+        "expected": "6a297f056f544ca77a76e9b1f7c847c7125fccc76d125d0b02643897ca451592"
+      },
+      {
+        "label": "prefix extraction asserted raw SHA 0",
+        "matches": true,
+        "actual": "6a297f056f544ca77a76e9b1f7c847c7125fccc76d125d0b02643897ca451592",
+        "expected": "6a297f056f544ca77a76e9b1f7c847c7125fccc76d125d0b02643897ca451592"
+      },
+      {
+        "label": "prefix original raw SHA 1",
+        "matches": true,
+        "actual": "67920fcf10385ae058079d5417d695f0df4998307c8b8d748227c11a5dc0571b",
+        "expected": "67920fcf10385ae058079d5417d695f0df4998307c8b8d748227c11a5dc0571b"
+      },
+      {
+        "label": "prefix extraction asserted raw SHA 1",
+        "matches": true,
+        "actual": "67920fcf10385ae058079d5417d695f0df4998307c8b8d748227c11a5dc0571b",
+        "expected": "67920fcf10385ae058079d5417d695f0df4998307c8b8d748227c11a5dc0571b"
+      },
+      {
+        "label": "prefix original raw SHA 2",
+        "matches": true,
+        "actual": "e714f40f9a2b62bbdf139cf28cf13fea43a6b8e3b2462e5e837ec0630004f586",
+        "expected": "e714f40f9a2b62bbdf139cf28cf13fea43a6b8e3b2462e5e837ec0630004f586"
+      },
+      {
+        "label": "prefix extraction asserted raw SHA 2",
+        "matches": true,
+        "actual": "e714f40f9a2b62bbdf139cf28cf13fea43a6b8e3b2462e5e837ec0630004f586",
+        "expected": "e714f40f9a2b62bbdf139cf28cf13fea43a6b8e3b2462e5e837ec0630004f586"
+      },
+      {
+        "label": "scope flag: synthetic_component_sum_is_paired_end_to_end_statistic",
+        "matches": true,
+        "actual": false,
+        "expected": false
+      },
+      {
+        "label": "scope flag: is_global_latest_rejection_bound",
+        "matches": true,
+        "actual": false,
+        "expected": false
+      },
+      {
+        "label": "scope flag: complete_noninteractive_security_established",
+        "matches": true,
+        "actual": false,
+        "expected": false
+      },
+      {
+        "label": "scope flag: economic_gain_established",
+        "matches": true,
+        "actual": false,
+        "expected": false
+      },
+      {
+        "label": "scope flag: cheapest_legal_physical_work_bound_established",
+        "matches": true,
+        "actual": false,
+        "expected": false
+      },
+      {
+        "label": "synthetic excludes original candidate and prefix",
+        "matches": true,
+        "actual": true,
+        "expected": true
+      },
+      {
+        "label": "report literal: ordinary maximum preserved",
+        "matches": true,
+        "actual": true,
+        "expected": true
+      },
+      {
+        "label": "report literal: typed maximum separately preserved",
+        "matches": true,
+        "actual": true,
+        "expected": true
+      },
+      {
+        "label": "report literal: synthetic sum displayed",
+        "matches": true,
+        "actual": true,
+        "expected": true
+      },
+      {
+        "label": "report literal: native same fixture median displayed",
+        "matches": true,
+        "actual": true,
+        "expected": true
+      },
+      {
+        "label": "report literal: outer verifier ratio displayed",
+        "matches": true,
+        "actual": true,
+        "expected": true
+      },
+      {
+        "label": "report literal: wire ratio displayed",
+        "matches": true,
+        "actual": true,
+        "expected": true
+      },
+      {
+        "label": "selected manifest unchanged",
+        "matches": true,
+        "actual": [],
+        "expected": []
+      },
+      {
+        "label": "original fixture SHA raw",
+        "matches": true,
+        "actual": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+        "expected": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+      },
+      {
+        "label": "original fixture bytes raw",
+        "matches": true,
+        "actual": 49506,
+        "expected": 49506
+      },
+      {
+        "label": "original fixture SHA prefix",
+        "matches": true,
+        "actual": "2d3876ae3aeaff654b373acf3ad71720428890fe4373a51ca93c9126b9fd5f96",
+        "expected": "2d3876ae3aeaff654b373acf3ad71720428890fe4373a51ca93c9126b9fd5f96"
+      },
+      {
+        "label": "original fixture bytes prefix",
+        "matches": true,
+        "actual": 131072,
+        "expected": 131072
+      },
+      {
+        "label": "original fixture SHA header",
+        "matches": true,
+        "actual": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+        "expected": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+      },
+      {
+        "label": "original fixture bytes header",
+        "matches": true,
+        "actual": 318,
+        "expected": 318
+      },
+      {
+        "label": "original fixture SHA artifacts",
+        "matches": true,
+        "actual": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+        "expected": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+      },
+      {
+        "label": "original fixture bytes artifacts",
+        "matches": true,
+        "actual": 64,
+        "expected": 64
+      },
+      {
+        "label": "baseline runner source identity",
+        "matches": true,
+        "actual": "9122ed7c533628656bcf93d7d67f02143e91e349dcf41cdfe6cc6f784355ffbc",
+        "expected": "9122ed7c533628656bcf93d7d67f02143e91e349dcf41cdfe6cc6f784355ffbc"
+      },
+      {
+        "label": "final frozen added measurement: native_retained_prefix_construction_samples_ns",
+        "matches": true,
+        "actual": [
+          2655389,
+          2375195,
+          2448736
+        ],
+        "expected": [
+          2655389,
+          2375195,
+          2448736
+        ]
+      },
+      {
+        "label": "final frozen added measurement: native_retained_prefix_construction_median_ns",
+        "matches": true,
+        "actual": 2448736,
+        "expected": 2448736
+      },
+      {
+        "label": "final frozen added measurement: synthetic_component_sum_with_prefix_reconstruction_seconds",
+        "matches": true,
+        "actual": 22.172211105943784,
+        "expected": 22.172211105943784
+      },
+      {
+        "label": "final frozen added measurement: largest_ordinary_negative_label",
+        "matches": true,
+        "actual": "arith-commitment-changed",
+        "expected": "arith-commitment-changed"
+      },
+      {
+        "label": "final frozen added measurement: largest_ordinary_negative_phase_events",
+        "matches": true,
+        "actual": [
+          {
+            "elapsed_ms": 965.89261,
+            "phase": "bounded_read_decode_and_proof_shape"
+          },
+          {
+            "elapsed_ms": 11.950134,
+            "phase": "canonical_plans_and_public_only_sha_air"
+          },
+          {
+            "elapsed_ms": 52.763665,
+            "phase": "sha_verifier_independent_preprocessing_setup"
+          },
+          {
+            "elapsed_ms": 299.11524099999997,
+            "phase": "sha_stark_verify"
+          },
+          {
+            "elapsed_ms": 556.279635,
+            "phase": "arith_verifier_independent_preprocessing_setup"
+          },
+          {
+            "elapsed_ms": 2.606757,
+            "phase": "arith_stark_verify"
+          }
+        ],
+        "expected": [
+          {
+            "elapsed_ms": 965.89261,
+            "phase": "bounded_read_decode_and_proof_shape"
+          },
+          {
+            "elapsed_ms": 11.950134,
+            "phase": "canonical_plans_and_public_only_sha_air"
+          },
+          {
+            "elapsed_ms": 52.763665,
+            "phase": "sha_verifier_independent_preprocessing_setup"
+          },
+          {
+            "elapsed_ms": 299.11524099999997,
+            "phase": "sha_stark_verify"
+          },
+          {
+            "elapsed_ms": 556.279635,
+            "phase": "arith_verifier_independent_preprocessing_setup"
+          },
+          {
+            "elapsed_ms": 2.606757,
+            "phase": "arith_stark_verify"
+          }
+        ]
+      }
+    ]
+  },
+  "input_snapshot_sha256": {
+    "round2_w1_stark/MEASUREMENTS.json": "2c7ce8171a72d41369b7ef391ec9326151edf20808378e193e881e497f6fd229",
+    "round2_w1_stark/ROUND_REPORT.md": "0957eebeb51244d5cbf01911e6e534a726730bb456f310fee070b06aef64084a",
+    "round2_results/retained-native-02/generation.json": "3a9abe1914a0b85237c9a0b44b94ccbd8433c330f7cd4cff3c1abf06dfc0a2e2",
+    "round2_results/retained-native-02/verification-campaign/summary.json": "58238d84be864c71506bfa32bd79cd9a357957c6b7f18493974c246ed4166201",
+    "round2_results/retained-native-02/late-query-campaign/summary.json": "fac247c9a787cc8fb28a6412b7b0f9539ae4618e9e9e2915bb27c965d0eda110",
+    "round2_results/retained-native-02/prover_report.json": "6eab0921a09706de98373e7e7a24060811fc5ba160f4035f9b87e177fa383f3e",
+    "round2_results/retained-native-02/provenance.json": "887a3e288ebd50848ed7b3e102c7eeaec03f7978f8c0f8ce5822991d0b5645db",
+    "round2_results/prover_report.json": "c15d0812e67f1dae61a2e88fbcefd3cb6acd3368df451e6363e533b6192f8824",
+    "round2_results/baseline/native-summary.json": "59a1e8bf26e919304c5cadef9be5079eb51288498ed34f134c80236b8825c1f6",
+    "round2_results/baseline/native-campaign.json": "ae1ab821b1c9f53dc11fecc70db7d44b43e77eb7fbf2b63bfcee748770436639",
+    "round2_results/baseline/native-prefix-preparations.json": "d689557de53f28b9dc16b420bd4dbe33ccb0074324d3cb36a9d365f62bfe7aa0",
+    "round2_selected_composition/SHA256SUMS": "a5680efbea9604706feb354d2c3e65dd21565ee668e1fe7b6708971f161f05c7",
+    "round2_selected_composition/PRICING.md": "24c3ebc61c4d1bf0f9b14768e12bcf7bf4402318515c7f381a00b2c94c111b46",
+    "round2_selected_composition/README.md": "77404ad56c1ccfae3684ca6b0bb8d92e4803509bd3350850774c9a77e65b9673",
+    "round2_selected_composition/RECOVERY.md": "8222347deb3bf551a17b62402349b9e4ed13c7fe63d74f1d5daeaf192fe1f827",
+    "round2_selected_composition/THEOREM.md": "8f6b90181200a30284f53f4e7d6575b5325712aa3a7e695b75e6403bb860d5b3",
+    "round2_selected_composition/budget-44.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "round2_selected_composition/budget-45.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "round2_selected_composition/budget-large_caps.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "round2_selected_composition/budget_example_44.json": "0818aafb0cbf58a7a49a7a4b767a19e4ea56301edd5cbfa9a5eed04b023e88f0",
+    "round2_selected_composition/budget_example_45.json": "b5bab0e462f4ff7c910425926677b4c17f2ba9f9e077f2e5b8ab1ee571f261e5",
+    "round2_selected_composition/budget_example_large_caps.json": "1bcf4efc25ef92b11435fb0e30d5b18018c07dd873dfa88d1d7939778a1da194",
+    "round2_selected_composition/budget_result_44.json": "60dcd3aef864e8d56dd3d9a841763a06eb81d7874eb9fe2c99cf2a9d57f029ee",
+    "round2_selected_composition/budget_result_45.json": "5253bb452dc18e19c10aaafccc37c9a5a5c8bd711b552c7870c7265e481a6193",
+    "round2_selected_composition/budget_result_large_caps.json": "ff9905cc32cd27d8d3cefc5b2f970f03718f8811182888926898b4252f99ab9a",
+    "round2_selected_composition/checks_summary.json": "288cda1c2ea73d0288b206dcaef6c7c74bb821c5b18742e4a67d55e945cea5f8",
+    "round2_selected_composition/composition_budget.py": "97205eed821237908fcc8a2cfc99ad2c0206ac40759ac4dc7c8b2b59ce931878",
+    "round2_selected_composition/exact-cost.log": "8091c6b203ab4bc250b3ee737bc676e50dc13bb9ab459bb2cbd8e1d2b64a8e6e",
+    "round2_selected_composition/exact_cost.py": "47380c811fe49d14daa13315b7ad03dc2e0f2e823e7070c2ceb74c54d4d62118",
+    "round2_selected_composition/exact_cost_results.json": "67c7f50ae1b4138e7f2683bc99e38abf31a1e9edd808f60421859be8dc235f06",
+    "round2_selected_composition/provenance.json": "b12f6949abeddd203a7df702c17ac67f1c12fb456ffc1dba563b42e92c3e0f53",
+    "round2_selected_composition/reference/false_noisy_product_0.expected.bin": "a1c73eaefdfdba467935c92a35bf38c71d9fd2d86ed354b68b5928ec28aadc78",
+    "round2_selected_composition/reference/false_noisy_product_0.witness.bin": "53f60b0be65e6f75788c07e585afad4c5811f19d7dd63e9f8f9ef5c966facf2f",
+    "round2_selected_composition/reference/false_useful_product_0.expected.bin": "a1c73eaefdfdba467935c92a35bf38c71d9fd2d86ed354b68b5928ec28aadc78",
+    "round2_selected_composition/reference/false_useful_product_0.witness.bin": "1cad18ccbbc980670d412e2f4b074dd04e9c883507b94dcff6f066646640de3b",
+    "round2_selected_composition/reference/fixture_manifest.json": "1f7e0c79de4005d872403b8a3dd67cc832fc13d99b1bc6ce897ab021dd35acd7",
+    "round2_selected_composition/reference/native_lib.rs": "4cf25237ed76dcd9bc0a10f4d4e3875f1ed2d6af32a7af1dbae83ee64f840f07",
+    "round2_selected_composition/reference/native_main.rs": "3f14876f7f706149823fd686d868c9919e4ed571365a466fa6357c6fc6561431",
+    "round2_selected_composition/reference/real_lottery_hit_p_1_64.expected.bin": "16eea862f5955a0cb8b52a3eb1c8299d595446863c476571186b1837145bf474",
+    "round2_selected_composition/reference/real_lottery_hit_p_1_64.witness.bin": "59f4a1c43f11b3e7245c699b59f4031ef6d458e4cc416168ec96392eae1fe318",
+    "round2_selected_composition/reference/selected_event_reference.py": "39575219c2adf0cf73bc58f58acf8ede934d073cbb0a02fc552d9dd4f5963357",
+    "round2_selected_composition/reference/structured-a.bin": "f3694144d1f5c261fd1e7ac798d58983c5eb5a89b4e3554f41f46ec615bc7787",
+    "round2_selected_composition/reference/structured-b.bin": "ad53173acd55b78366ee0fd4de3c5c38fd95889ae8846efe8b9d394d197721b5",
+    "round2_selected_composition/run_checks.py": "60dbcb6b01fc04e9fc94ec36aa02afd042757474de7de567b1366397e4b64424",
+    "round2_selected_composition/sha256_prefix.py": "9893fbfac7c96a6bec3f746a662408abdee08772ac8616a4ac8f9a39beae6776",
+    "round2_selected_composition/test_composition.py": "6e158c5f9c6949ff50b5fca5ff8a6e5417d83d8036a4e20749c013fb4ab3c501",
+    "round2_selected_composition/transcript_audit.py": "77c25b4811ab32f37b641dc8c5ddf2f7ca8c5682efceec40d924791a30c6b1a3",
+    "round2_selected_composition/unit-tests.log": "6d2fc5acd311937ebe38f186692e3fa27415e931f4f135420435622774fd3c73",
+    "recovery/round1/PoN_W1_Continuation_2026-11-07/full_w1_native/fixtures/retained.input.bin": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+    "recovery/round1/PoN_W1_Continuation_2026-11-07/full_w1_native/fixtures/retained.prefix.bin": "2d3876ae3aeaff654b373acf3ad71720428890fe4373a51ca93c9126b9fd5f96",
+    "recovery/round1/PoN_W1_Continuation_2026-11-07/full_w1_native/fixtures/retained.expected-header.bin": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+    "recovery/round1/PoN_W1_Continuation_2026-11-07/full_w1_native/fixtures/retained.artifacts.bin": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+    "recovery/round1/PoN_W1_Continuation_2026-11-07/full_w1_native/src/main.rs": "9122ed7c533628656bcf93d7d67f02143e91e349dcf41cdfe6cc6f784355ffbc"
+  },
+  "report_review_scope": "The exact final frozen ROUND_REPORT.md and MEASUREMENTS.json versions identified here were reviewed. This audit covers numeric/cost/selected-composition portions, including the added prefix and slow-ordinary-phase sections. Detailed security proof/code review and actual repository gate execution are separate workstreams.",
+  "artifact_identity": {
+    "files": [
+      {
+        "file": "statement.bin",
+        "bytes": 377290,
+        "sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+        "run01_receipt_sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+        "all_generation_prover_and_three_verifier_receipts_match": true,
+        "full_file_rehashed_by_this_local_audit": false
+      },
+      {
+        "file": "sha.proof.bin",
+        "bytes": 4356101,
+        "sha256": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+        "run01_receipt_sha256": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+        "all_generation_prover_and_three_verifier_receipts_match": true,
+        "full_file_rehashed_by_this_local_audit": false
+      },
+      {
+        "file": "arith.proof.bin",
+        "bytes": 530885,
+        "sha256": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204",
+        "run01_receipt_sha256": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204",
+        "all_generation_prover_and_three_verifier_receipts_match": true,
+        "full_file_rehashed_by_this_local_audit": false
+      }
+    ],
+    "scope": "SHA and size consistency across run01/run02 generation/prover/all three positive-verifier receipts; no full new statement/proof file exists in this local snapshot, so this audit did not independently hash those big binary files.",
+    "original_fixture_bytes_rehashed": [
+      {
+        "kind": "raw",
+        "bytes": 49506,
+        "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+      },
+      {
+        "kind": "prefix",
+        "bytes": 131072,
+        "sha256": "2d3876ae3aeaff654b373acf3ad71720428890fe4373a51ca93c9126b9fd5f96"
+      },
+      {
+        "kind": "header",
+        "bytes": 318,
+        "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+      },
+      {
+        "kind": "artifacts",
+        "bytes": 64,
+        "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+      }
+    ]
+  },
+  "independently_recomputed_measurements": {
+    "qualification": "HOLD_NO_GO",
+    "verifier_binary_sha256": "7700eff6ea4a3ff1f8f6551c323ac5b90b2bb5a96d1eaeca41e108bc54a7e3fc",
+    "sha_air_source_sha256": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa",
+    "native_retained": {
+      "case": "retained",
+      "mode": "native_full_limb",
+      "count": 150,
+      "median_ns": 1913279.0,
+      "p95_observed_ns": 2630817,
+      "max_observed_ns": 2962699,
+      "min_observed_ns": 1850395,
+      "mean_ns": 2006813.8733333333
+    },
+    "stark_verify_outer_seconds": [
+      0.9492664039134979,
+      0.9364103279076517,
+      0.9482037830166519
+    ],
+    "stark_verify_process_ms": [
+      941.3463250000001,
+      930.1139149999999,
+      940.9443170000001
+    ],
+    "stark_verify_phase_medians_ms": {
+      "bounded_read_decode_and_proof_shape": 17.505067999999998,
+      "canonical_plans_and_public_only_sha_air": 8.167715000000001,
+      "sha_verifier_independent_preprocessing_setup": 44.402285,
+      "sha_stark_verify": 269.416277,
+      "arith_verifier_independent_preprocessing_setup": 539.447565,
+      "arith_stark_verify": 30.476445000000002
+    },
+    "stark_verify_two_key_setup_median_ms": 582.9972630000001,
+    "stark_verify_two_proof_checks_median_ms": 299.892722,
+    "stark_verify_outer_median_seconds": 0.9482037830166519,
+    "stark_verify_process_median_ms": 940.9443170000001,
+    "observed_outer_to_native_warm_ratio": 495.5909634803141,
+    "observed_process_to_native_warm_ratio": 491.7967097323496,
+    "new_wire_bytes": 5264276,
+    "original_wire_bytes": 49506,
+    "new_to_original_wire_ratio": 106.33612087423747,
+    "prepare_outer_seconds": 0.02544837398454547,
+    "prove_outer_seconds": 21.196110212942585,
+    "prove_process_ms": 21180.277754,
+    "prove_max_rss_kib": 2381440,
+    "positive_verify_max_rss_kib": 132996,
+    "synthetic_component_sum_seconds": 22.169762369943783,
+    "largest_ordinary_negative_outer_seconds": 2.2384327568579465,
+    "largest_typed_late_outer_seconds": 1.0436571650207043,
+    "native_retained_prefix_construction_samples_ns": [
+      2655389,
+      2375195,
+      2448736
+    ],
+    "native_retained_prefix_construction_median_ns": 2448736,
+    "synthetic_component_sum_with_prefix_reconstruction_seconds": 22.172211105943784,
+    "largest_ordinary_negative_label": "arith-commitment-changed",
+    "largest_ordinary_negative_phase_events": [
+      {
+        "elapsed_ms": 965.89261,
+        "phase": "bounded_read_decode_and_proof_shape"
+      },
+      {
+        "elapsed_ms": 11.950134,
+        "phase": "canonical_plans_and_public_only_sha_air"
+      },
+      {
+        "elapsed_ms": 52.763665,
+        "phase": "sha_verifier_independent_preprocessing_setup"
+      },
+      {
+        "elapsed_ms": 299.11524099999997,
+        "phase": "sha_stark_verify"
+      },
+      {
+        "elapsed_ms": 556.279635,
+        "phase": "arith_verifier_independent_preprocessing_setup"
+      },
+      {
+        "elapsed_ms": 2.606757,
+        "phase": "arith_stark_verify"
+      }
+    ]
+  },
+  "positive_runs": [
+    {
+      "label": "valid-00",
+      "outer_seconds": 0.9492664039134979,
+      "process_ms": 941.3463250000001,
+      "sum_two_key_setup_ms": 588.446957,
+      "sum_two_proof_verify_ms": 294.527761,
+      "sum_recorded_phases_ms": 909.019299,
+      "peak_rss_kib": 131948
+    },
+    {
+      "label": "valid-01",
+      "outer_seconds": 0.9364103279076517,
+      "process_ms": 930.1139149999999,
+      "sum_two_key_setup_ms": 574.535614,
+      "sum_two_proof_verify_ms": 299.892722,
+      "sum_recorded_phases_ms": 899.2380939999999,
+      "peak_rss_kib": 132452
+    },
+    {
+      "label": "valid-02",
+      "outer_seconds": 0.9482037830166519,
+      "process_ms": 940.9443170000001,
+      "sum_two_key_setup_ms": 582.9972630000001,
+      "sum_two_proof_verify_ms": 301.21318,
+      "sum_recorded_phases_ms": 909.54457,
+      "peak_rss_kib": 132996
+    }
+  ],
+  "ordinary_negative_runs": [
+    {
+      "label": "public-extra-byte",
+      "outer_seconds": 0.003996534971520305,
+      "process_ms": 0.111055,
+      "error": "bounded file length /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-02/verification-campaign/public-extra-byte/statement.bin: 377291",
+      "peak_rss_kib": 2524
+    },
+    {
+      "label": "sha-proof-truncated",
+      "outer_seconds": 0.020249108085408807,
+      "process_ms": 16.854557,
+      "error": "proof decoding: io error: unexpected end of file",
+      "peak_rss_kib": 12476
+    },
+    {
+      "label": "sha-proof-trailing-byte",
+      "outer_seconds": 0.019716707058250904,
+      "process_ms": 15.780365000000002,
+      "error": "proof decoding: Slice had bytes remaining after deserialization",
+      "peak_rss_kib": 12924
+    },
+    {
+      "label": "sha-commitment-changed",
+      "outer_seconds": 0.45098938303999603,
+      "process_ms": 138.760208,
+      "error": "sha proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 536, got: 513 })))",
+      "peak_rss_kib": 38988
+    },
+    {
+      "label": "arith-commitment-changed",
+      "outer_seconds": 2.2384327568579465,
+      "process_ms": 1891.980432,
+      "error": "arithmetic proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 771, got: 778 })))",
+      "peak_rss_kib": 131664
+    },
+    {
+      "label": "last-C-changed",
+      "outer_seconds": 0.9512971991207451,
+      "process_ms": 942.111992,
+      "error": "arithmetic proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 788, got: 778 })))",
+      "peak_rss_kib": 132184
+    },
+    {
+      "label": "last-prefix-changed",
+      "outer_seconds": 0.15962161612696946,
+      "process_ms": 152.11535800000001,
+      "error": "sha proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 522, got: 513 })))",
+      "peak_rss_kib": 39972
+    },
+    {
+      "label": "last-AB-intermediate-changed",
+      "outer_seconds": 1.0523457690142095,
+      "process_ms": 929.273087,
+      "error": "arithmetic proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 770, got: 778 })))",
+      "peak_rss_kib": 132556
+    },
+    {
+      "label": "unused-noise-tail-changed",
+      "outer_seconds": 0.1723597119562328,
+      "process_ms": 163.836377,
+      "error": "sha proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 541, got: 513 })))",
+      "peak_rss_kib": 39900
+    },
+    {
+      "label": "wrong-independent-artifacts",
+      "outer_seconds": 0.34772730292752385,
+      "process_ms": 155.40456899999998,
+      "error": "sha proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 529, got: 513 })))",
+      "peak_rss_kib": 39516
+    },
+    {
+      "label": "wrong-independent-header",
+      "outer_seconds": 0.023306628922000527,
+      "process_ms": 18.823138999999998,
+      "error": "IndependentHeader",
+      "peak_rss_kib": 12844
+    }
+  ],
+  "typed_late_runs": [
+    {
+      "label": "sha-last-fold-query-value",
+      "outer_seconds": 0.42877326905727386,
+      "process_ms": 365.682608,
+      "error": "sha proof rejected: InvalidOpeningArgument(FinalPolyMismatch)",
+      "expected_subtype": "FinalPolyMismatch",
+      "changed_byte_count_recorded": 1,
+      "transcript_fields_sha256": "6fac6c36f1e0a4d7ad056e49a4d50714059d3a255c0ce8f1119a077c14c18cdf",
+      "transcript_fields_unchanged_recorded": true,
+      "mutation_scope": "one controlled path only; last nonempty multiproof round is not a global worst-case rejection bound"
+    },
+    {
+      "label": "sha-last-fold-auth-sibling",
+      "outer_seconds": 0.5982154139783233,
+      "process_ms": 356.949972,
+      "error": "sha proof rejected: InvalidOpeningArgument(CommitPhaseMmcsError(CapMismatch))",
+      "expected_subtype": "CommitPhaseMmcsError(CapMismatch)",
+      "changed_byte_count_recorded": 1,
+      "transcript_fields_sha256": "6fac6c36f1e0a4d7ad056e49a4d50714059d3a255c0ce8f1119a077c14c18cdf",
+      "transcript_fields_unchanged_recorded": true,
+      "mutation_scope": "one controlled path only; last nonempty multiproof round is not a global worst-case rejection bound"
+    },
+    {
+      "label": "arith-last-fold-query-value",
+      "outer_seconds": 0.9946349170058966,
+      "process_ms": 948.461568,
+      "error": "arithmetic proof rejected: InvalidOpeningArgument(FinalPolyMismatch)",
+      "expected_subtype": "FinalPolyMismatch",
+      "changed_byte_count_recorded": 1,
+      "transcript_fields_sha256": "163fff08f49807aa972db414ef91d9459d97d88e5da09b0c63fc24048e559821",
+      "transcript_fields_unchanged_recorded": true,
+      "mutation_scope": "one controlled path only; last nonempty multiproof round is not a global worst-case rejection bound"
+    },
+    {
+      "label": "arith-last-fold-auth-sibling",
+      "outer_seconds": 1.0436571650207043,
+      "process_ms": 955.257958,
+      "error": "arithmetic proof rejected: InvalidOpeningArgument(CommitPhaseMmcsError(CapMismatch))",
+      "expected_subtype": "CommitPhaseMmcsError(CapMismatch)",
+      "changed_byte_count_recorded": 1,
+      "transcript_fields_sha256": "163fff08f49807aa972db414ef91d9459d97d88e5da09b0c63fc24048e559821",
+      "transcript_fields_unchanged_recorded": true,
+      "mutation_scope": "one controlled path only; last nonempty multiproof round is not a global worst-case rejection bound"
+    }
+  ],
+  "max_negative_scope": "Ordinary maximum 2.2384327568579465 seconds from arith-commitment-changed is preserved. Typed late maximum1.0436571650207043 seconds is a separate subset. Neither run01 nor the lower typed-late number replaces the ordinary maximum. None is a global worst-case bound.",
+  "generation_scope": {
+    "prover_recorded_phase_sum_ms": 21130.52809,
+    "prover_internal_process_ms": 21180.277754,
+    "prover_outer_wall_seconds": 21.196110212942585,
+    "phase_sum_is_not_full_process": true,
+    "internal_and_outer_are_distinct": true,
+    "synthetic_component_sum_is_paired_median": false,
+    "synthetic_component_sum_is_task_to_winner_cost": false,
+    "original_candidate_generation_measured_here": false,
+    "nonce_search_measured_here": false
+  },
+  "existing_prefix_observations": {
+    "source": "Existing native raw preparations extracted without a new benchmark",
+    "extraction_sha256": "d689557de53f28b9dc16b420bd4dbe33ccb0074324d3cb36a9d365f62bfe7aa0",
+    "campaign_sha256_verified": true,
+    "samples": [
+      {
+        "index": 0,
+        "prefix_construction_wall_ns": 2655389,
+        "original_raw_sha256": "6a297f056f544ca77a76e9b1f7c847c7125fccc76d125d0b02643897ca451592",
+        "original_raw_bytes": 598875,
+        "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+      },
+      {
+        "index": 1,
+        "prefix_construction_wall_ns": 2375195,
+        "original_raw_sha256": "67920fcf10385ae058079d5417d695f0df4998307c8b8d748227c11a5dc0571b",
+        "original_raw_bytes": 598903,
+        "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+      },
+      {
+        "index": 2,
+        "prefix_construction_wall_ns": 2448736,
+        "original_raw_sha256": "e714f40f9a2b62bbdf139cf28cf13fea43a6b8e3b2462e5e837ec0630004f586",
+        "original_raw_bytes": 598856,
+        "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+      }
+    ],
+    "retained_median_ns": 2448736,
+    "retained_median_ms": 2.448736,
+    "synthetic_component_sum_plus_retained_prefix_median_seconds": 22.172211105943784,
+    "scope": "parse existing raw with independent expectations + full prefix reconstruction. Recomputes noise/factors/noisy prefixes; excludes loading original raw from disk, creating original raw candidate C/header/trace/ticket and lottery search. One sample per fresh baseline process. Adding this median still gives a synthetic sum, not a paired end-to-end statistic.",
+    "original_new_raw_files_independently_rehashed_by_this_local_audit": false,
+    "raw_hash_evidence": "Extraction repeats the three hashes already pinned by native-campaign; raw files themselves were not retrieved locally.",
+    "additional_benchmark_needed_to_get_prefix_number": false
+  },
+  "cost_conclusion_review": {
+    "equations": [
+      "native = G + N*Vn",
+      "research = G + P_prefix + W_statement + S_prove + N*Vs"
+    ],
+    "difference": "P_prefix + W_statement + S_prove + N*(Vs - Vn)",
+    "current_path_no_receiver_count_amortization": true,
+    "reason": "Using the explicitly measured per-receiver boundaries, Vs > Vn and added producer components are nonnegative, so the difference stays positive for N>=1 independently of shared G. This is an observation about this path, not an optimal-implementation theorem.",
+    "shared_costs": "Only genuinely identical common frontend work can cancel in an additive comparison; it cannot disappear from a ratio denominator.",
+    "prefix_reuse": "Existing-prefix cost can be zero at an already-supplied-input boundary, while its creation/retention is upstream. Fused producer reuse may avoid a separate reconstruction; neither unavoidable reconstruction nor zero upstream retention cost is proved.",
+    "not_established": [
+      "General economic gain or globally optimal backend",
+      "Matched task-to-winner production and network/resource cost",
+      "Cheapest legal physical work over all preprocessing/caching/structure/hardware",
+      "Universal rejection time or memory bound",
+      "Concrete noninteractive security, QROM, SHA instantiation, Node qualification"
+    ]
+  },
+  "selected_freeze": {
+    "manifest_entries": 36,
+    "manifest_mismatches": [],
+    "theorem_sha256": "8f6b90181200a30284f53f4e7d6575b5325712aa3a7e695b75e6403bb860d5b3",
+    "pricing_sha256": "24c3ebc61c4d1bf0f9b14768e12bcf7bf4402318515c7f381a00b2c94c111b46",
+    "sha256sums_sha256": "a5680efbea9604706feb354d2c3e65dd21565ee668e1fe7b6708971f161f05c7",
+    "earlier_run01_numeric_audit_reused_as_scope_not_as_new_test_run": true,
+    "report_summary_matches_frozen_formulas_and_table_scope": true
+  },
+  "final_frozen_parent_report_sha256": "0957eebeb51244d5cbf01911e6e534a726730bb456f310fee070b06aef64084a",
+  "final_frozen_parent_measurements_sha256": "2c7ce8171a72d41369b7ef391ec9326151edf20808378e193e881e497f6fd229"
+}

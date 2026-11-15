@@ -1,0 +1,24 @@
+{
+  "actual_oid": "03da878821c19d28d50ca5b3565d821cf292e63d",
+  "bytes": 10248840,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "03da878821c19d28d50ca5b3565d821cf292e63d"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 10248840,
+  "expected_oid": "03da878821c19d28d50ca5b3565d821cf292e63d",
+  "finished_at": "2026-11-12T01:55:19.762320+00:00",
+  "path": "evidence/pon-w1-four-gates-20261108/ci-c3/raw.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXcxLWZvdXItZ2F0ZXMtMjAyNjExMDgvY2ktYzMvcmF3LnRhci5neg==",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "4983a445568178aaf21379147773f959156a6aafc796b79ed52a647f75719e32",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:19.545252+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

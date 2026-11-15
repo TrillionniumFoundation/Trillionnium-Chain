@@ -1,0 +1,32 @@
+{
+  "commit": {
+    "content": [
+      {
+        "text": "{\"mode\":384,\"sha256\":\"6516e11d2906d5396b1cc0160b33afb003108b84ac53dd54306727f592b1c26b\",\"size\":10912,\"version\":\"2050:15929178:10912:1794480529275987022:1794480529289097227\",\"written\":10912}",
+        "type": "text"
+      }
+    ],
+    "isError": false,
+    "structuredContent": null
+  },
+  "publish": {
+    "content": [
+      {
+        "text": "{\"mode\":384,\"sha256\":\"e22b9b5169b6735c7a037677c8feb656f2e727ada29ce77ebb4c57be7e198771\",\"size\":14073,\"version\":\"2050:15929180:14073:1794480543375221666:1794480543397614463\",\"written\":14073}",
+        "type": "text"
+      }
+    ],
+    "isError": false,
+    "structuredContent": null
+  },
+  "stage": {
+    "content": [
+      {
+        "text": "{\"mode\":384,\"sha256\":\"c3ccb96600daab5f3c95f9e0f1bff0285fe2071cecab68665e86649c0c359b1e\",\"size\":18540,\"version\":\"2050:15929176:18540:1794480515355463113:1794480515360575243\",\"written\":18540}",
+        "type": "text"
+      }
+    ],
+    "isError": false,
+    "structuredContent": null
+  }
+}

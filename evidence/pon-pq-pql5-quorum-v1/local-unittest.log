@@ -1,0 +1,20 @@
+test_classical_key_roster_and_operator_substitution_reject (test_pq_pql5_quorum.PQL5ActualTests.test_classical_key_roster_and_operator_substitution_reject) ... ok
+test_cold_readback_and_foreign_ddl_refuse (test_pq_pql5_quorum.PQL5ActualTests.test_cold_readback_and_foreign_ddl_refuse) ... ok
+test_concurrent_eight_real_processes_one_append (test_pq_pql5_quorum.PQL5ActualTests.test_concurrent_eight_real_processes_one_append) ... ok
+test_empty_witnesses_do_not_grant_a_genesis_checkpoint (test_pq_pql5_quorum.PQL5ActualTests.test_empty_witnesses_do_not_grant_a_genesis_checkpoint) ... ok
+test_live_old_state_rejected_against_two_fresh_witnesses (test_pq_pql5_quorum.PQL5ActualTests.test_live_old_state_rejected_against_two_fresh_witnesses) ... ok
+test_no_trusted_prod_authority_from_local_quorum (test_pq_pql5_quorum.PQL5ActualTests.test_no_trusted_prod_authority_from_local_quorum) ... ok
+test_one_witness_offline_two_live_continue (test_pq_pql5_quorum.PQL5ActualTests.test_one_witness_offline_two_live_continue) ... ok
+test_one_witness_rolled_back_fresh_signed_majority_recovers (test_pq_pql5_quorum.PQL5ActualTests.test_one_witness_rolled_back_fresh_signed_majority_recovers) ... ok
+test_pql4_competing_signed_same_sequence_is_not_accepted_twice (test_pq_pql5_quorum.PQL5ActualTests.test_pql4_competing_signed_same_sequence_is_not_accepted_twice) ... ok
+test_pql4_false_signature_context_and_gap_refuse (test_pq_pql5_quorum.PQL5ActualTests.test_pql4_false_signature_context_and_gap_refuse) ... ok
+test_pql5_every_unsigned_byte_mutation_and_wrong_purpose (test_pq_pql5_quorum.PQL5ActualTests.test_pql5_every_unsigned_byte_mutation_and_wrong_purpose) ... ok
+test_real_pql4_and_fresh_quorum_2_of_3 (test_pq_pql5_quorum.PQL5ActualTests.test_real_pql4_and_fresh_quorum_2_of_3) ... ok
+test_symlink_and_empty_owned_db_refuse (test_pq_pql5_quorum.PQL5ActualTests.test_symlink_and_empty_owned_db_refuse) ... ok
+test_two_witness_clones_remain_a_real_unclosed_attack (test_pq_pql5_quorum.PQL5ActualTests.test_two_witness_clones_remain_a_real_unclosed_attack) ... ok
+test_wrong_challenge_expiry_duplicate_and_bad_signature (test_pq_pql5_quorum.PQL5ActualTests.test_wrong_challenge_expiry_duplicate_and_bad_signature) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 13.096s
+
+OK

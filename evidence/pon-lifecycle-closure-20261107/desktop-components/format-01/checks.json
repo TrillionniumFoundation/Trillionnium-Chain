@@ -1,0 +1,63 @@
+[
+  {
+    "name": "preflight",
+    "argv": [
+      "/bin/bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.11964155593886971
+  },
+  {
+    "name": "workspace-format-before",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit": 1,
+    "elapsed_seconds": 21.64681750605814
+  },
+  {
+    "name": "format-new-rust",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+      "--edition",
+      "2021",
+      "trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs",
+      "trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs",
+      "trillionnium/crates/trnm-pon-node/examples/native_owner_journal_v1.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.07073050900362432
+  },
+  {
+    "name": "refresh-source-inventory",
+    "argv": [
+      "/usr/bin/python3",
+      "scripts/refresh_distributed_source_inventory.py"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.1761967120692134
+  },
+  {
+    "name": "workspace-format-after",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 19.681385952048004
+  }
+]

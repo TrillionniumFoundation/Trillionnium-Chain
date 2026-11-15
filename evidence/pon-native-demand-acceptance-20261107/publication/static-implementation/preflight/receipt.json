@@ -1,0 +1,22 @@
+{
+  "command": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "elapsed_seconds": 0.0951995849609375,
+  "exit_code": 0,
+  "head": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "independent_business_acceptance": false,
+  "label": "preflight",
+  "schema": "pon-publication-static-gate-v1",
+  "started_unix_seconds": 1794067600.2174497,
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 174,
+    "sha256": "4e9b84761cc4c4b5f54dd88dab0830b34b194dd6bb0fa292ad833f9d844d1c55"
+  },
+  "unittest_summaries": []
+}

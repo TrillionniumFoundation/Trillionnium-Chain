@@ -1,0 +1,147 @@
+{
+  "job_id": 128435695055,
+  "name": "native priorities (ubuntu-24.04, head, history)",
+  "status": "completed",
+  "conclusion": "failure",
+  "errors": [],
+  "native_gate_validated": false,
+  "download": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128435695055/logs"
+    ],
+    "exit_code": 0,
+    "bytes": 156226,
+    "sha256": "082eb773222a09ad281c1f4f5e52fdfa3d43a653c8c7e4d09aee80304b789c24"
+  },
+  "source_readback": {
+    "observed_count": 2,
+    "before_after_equal": true,
+    "identities": [
+      {
+        "base": null,
+        "candidate": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "tested_tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1031001045,
+        "tracked_entries": 11017,
+        "tracked_worktree_verified": true
+      },
+      {
+        "base": null,
+        "candidate": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "tested_tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1031001045,
+        "tracked_entries": 11017,
+        "tracked_worktree_verified": true
+      }
+    ]
+  },
+  "relevant_steps": [
+    {
+      "name": "Reproduce the frozen integration-push source",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:50:26Z",
+      "completed_at": "2026-11-07T14:50:29Z"
+    },
+    {
+      "name": "Verify source and original project boundary",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:50:29Z",
+      "completed_at": "2026-11-07T14:50:30Z"
+    },
+    {
+      "name": "Install the source-pinned native toolchain",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:50:30Z",
+      "completed_at": "2026-11-07T14:50:38Z"
+    },
+    {
+      "name": "Execute original source-preserving migration tests",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-07T14:50:38Z",
+      "completed_at": "2026-11-07T14:50:38Z"
+    },
+    {
+      "name": "Execute 4105 real work blocks and paid public full sync",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T14:52:51Z",
+      "completed_at": "2026-11-07T15:40:08Z"
+    },
+    {
+      "name": "Reverify exact unchanged source",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T15:40:08Z",
+      "completed_at": "2026-11-07T15:40:09Z"
+    },
+    {
+      "name": "Preserve this lane's actual push source context",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T15:40:09Z",
+      "completed_at": "2026-11-07T15:40:09Z"
+    }
+  ],
+  "diagnostics": [
+    {
+      "line": 365,
+      "text": "2026-11-07T14:50:25.2376664Z  * [new branch]          fix/chain-experimental-activation-20261014 -> origin/fix/chain-experimental-activation-20261014"
+    },
+    {
+      "line": 938,
+      "text": "2026-11-07T14:50:26.8875867Z HEAD is now at d26e047de test(pon): retain original cold-open activation in history readback oracle"
+    },
+    {
+      "line": 967,
+      "text": "2026-11-07T14:50:27.0020792Z   PUSH_SOURCE_CONTEXT: {\"base\":\"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\"base_ref\":\"refs/heads/main\",\"event\":{\"after\":\"d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89\",\"before\":\"96e1eede091153199894532c91430bfc0f8e4572\",\"name\":\"push\",\"payload_sha256\":\"1e34936a1701acc827d820836c76bd89f43ffa28090c0253823885f704abbce9\",\"ref\":\"refs/heads/fix/chain-six-axis-performance-20261103\",\"repository\":\"TrillionniumFoundation/Trillionnium-Chain\",\"repository_id\":1323087357,\"run_attempt\":\"1\",\"run_id\":\"42383368690\"},\"git_version\":\"git version 2.56.0\",\"head\":\"d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89\",\"is_github_pr_merge\":false,\"merge\":\"7805f1445aec6a31152b50c3d28f5eb6db63305c\",\"merge_format\":\"canonical-git-merge-tree-ordered-base-head-v1\",\"merge_tree\":\"cef3563653b982a8043326ad4b53a4b93ab63906\",\"production_activation\":false,\"resolved_utc\":\"2026-11-07T14:49:51.916762+00:00\",\"schema\":\"trnm-integration-push-source-v1\",\"source_head\":{\"base\":null,\"candidate\":\"d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89\",\"kind\":\"head\",\"prospective_merge\":null,\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89\",\"tested_tree\":\"cef3563653b982a8043326ad4b53a4b93ab63906\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":1031001045,\"tracked_entries\":11017,\"tracked_worktree_verified\":true}}"
+    },
+    {
+      "line": 970,
+      "text": "2026-11-07T14:50:29.6299572Z {\"context\":{\"base\":\"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\"base_ref\":\"refs/heads/main\",\"event\":{\"after\":\"d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89\",\"before\":\"96e1eede091153199894532c91430bfc0f8e4572\",\"name\":\"push\",\"payload_sha256\":\"1e34936a1701acc827d820836c76bd89f43ffa28090c0253823885f704abbce9\",\"ref\":\"refs/heads/fix/chain-six-axis-performance-20261103\",\"repository\":\"TrillionniumFoundation/Trillionnium-Chain\",\"repository_id\":1323087357,\"run_attempt\":\"1\",\"run_id\":\"42383368690\"},\"git_version\":\"git version 2.56.0\",\"head\":\"d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89\",\"is_github_pr_merge\":false,\"merge\":\"7805f1445aec6a31152b50c3d28f5eb6db63305c\",\"merge_format\":\"canonical-git-merge-tree-ordered-base-head-v1\",\"merge_tree\":\"cef3563653b982a8043326ad4b53a4b93ab63906\",\"production_activation\":false,\"resolved_utc\":\"2026-11-07T14:49:51.916762+00:00\",\"schema\":\"trnm-integration-push-source-v1\",\"source_head\":{\"base\":null,\"candidate\":\"d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89\",\"kind\":\"head\",\"prospective_merge\":null,\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89\",\"tested_tree\":\"cef3563653b982a8043326ad4b53a4b93ab63906\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":1031001045,\"tracked_entries\":11017,\"tracked_worktree_verified\":true}},\"context_sha256\":\"7d51ed40d80fe781cabf331431ecde35908dc68aaeb545a3c19ab5758238b315\",\"github_event_name\":\"push\",\"github_sha\":\"d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89\",\"is_github_pr_merge\":false,\"schema\":\"trnm-integration-push-materialization-v1\",\"source\":{\"base\":null,\"candidate\":\"d26e04"
+    },
+    {
+      "line": 1035,
+      "text": "2026-11-07T14:50:38.8004806Z ##[group]Run python3 scripts/ci/run_history_native.py --prepare --out \"$TRNM_CI_RECEIPT_DIR/history-native\""
+    },
+    {
+      "line": 1036,
+      "text": "2026-11-07T14:50:38.8005237Z \u001b[36;1mpython3 scripts/ci/run_history_native.py --prepare --out \"$TRNM_CI_RECEIPT_DIR/history-native\"\u001b[0m"
+    },
+    {
+      "line": 1054,
+      "text": "2026-11-07T14:52:51.4555463Z ##[group]Run python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_history_native.py --out \"$TRNM_CI_RECEIPT_DIR/history-native\""
+    },
+    {
+      "line": 1055,
+      "text": "2026-11-07T14:52:51.4556556Z \u001b[36;1mpython3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_history_native.py --out \"$TRNM_CI_RECEIPT_DIR/history-native\"\u001b[0m"
+    },
+    {
+      "line": 1072,
+      "text": "2026-11-07T15:40:08.3516702Z {\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_history_native.py\", \"--out\", \"/home/runner/work/_temp/priority-observations/history-native\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-42383368690-1-native-priorities-4652.service\", \"current_service\": \"trnm-from-zero-42383368690-1-native-priorities-4652.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"b1655201-4c80-43c1-9f79-80cec3c9c938\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 6942, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794063173381933684, \"device\": 29, \"inode\": 1472, \"mtime_ns\": 1794063173381933684, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794063174541634531, \"device\": 29, \"inode\": 1518, \"mtime_ns\": 1794063174541634531, \"path\": \"/run/trnm-public-fixture-42383368690-1-native-priorities/parent.json\", \"sha256\": \"1b10406031f474a0290913"
+    },
+    {
+      "line": 1073,
+      "text": "2026-11-07T15:40:08.3609796Z ##[error]Process completed with exit code 1."
+    }
+  ]
+}

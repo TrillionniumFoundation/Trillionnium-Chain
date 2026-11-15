@@ -1,0 +1,53 @@
+{
+  "args": [
+    "/home/qian-qi/work/chain-w1-carry-backend-20261108-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/carry_backend",
+    "verify",
+    "/home/qian-qi/work/chain-w1-carry-measurements-20261108-f16ac/06-B/prepared/statement.bin",
+    "/home/qian-qi/work/chain-w1-carry-backend-20261108-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin",
+    "/home/qian-qi/work/chain-w1-carry-backend-20261108-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin",
+    "/home/qian-qi/work/chain-w1-carry-measurements-20261108-f16ac/06-B/proof"
+  ],
+  "exit_code": 0,
+  "outer_wall_s": 1.203254624,
+  "peak_rss_kib": 206416,
+  "report": {
+    "arith_proof_bytes": 306213,
+    "arith_proof_sha256": "26a7d0848b436a547ea5add19cf882ffb5b5b4621993f5511b93542053d9ab68",
+    "preprocessing_source": "canonical public statement plus independent expected inputs; rebuilt in this process",
+    "process_wall_ms": 1194.689982,
+    "public_bytes": 377290,
+    "qualification": "HOLD_NO_GO",
+    "schema": "trnm-w1-complete-public-carry-stark-run-v2",
+    "security_claim": "research execution only; no concrete noninteractive security qualification",
+    "sha_proof_bytes": 4356101,
+    "sha_proof_sha256": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+    "statement_sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+    "status": "VERIFIED_COMPLETE_W1_RESEARCH_ONLY",
+    "timings": [
+      {
+        "elapsed_ms": 14.429785,
+        "phase": "bounded_read_decode_and_proof_shape"
+      },
+      {
+        "elapsed_ms": 13.948528,
+        "phase": "canonical_plans_and_public_only_sha_air"
+      },
+      {
+        "elapsed_ms": 42.175661000000005,
+        "phase": "sha_verifier_independent_preprocessing_setup"
+      },
+      {
+        "elapsed_ms": 249.575598,
+        "phase": "sha_stark_verify"
+      },
+      {
+        "elapsed_ms": 830.361625,
+        "phase": "arith_verifier_independent_preprocessing_setup"
+      },
+      {
+        "elapsed_ms": 16.779519,
+        "phase": "arith_stark_verify"
+      }
+    ]
+  }
+}

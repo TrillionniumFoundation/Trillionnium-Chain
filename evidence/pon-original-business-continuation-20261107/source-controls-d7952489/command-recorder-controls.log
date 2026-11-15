@@ -1,0 +1,9 @@
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.337s
+
+OK
+{"exit_code": 0, "receipt": "/tmp/trnm-pq-command-control-1xu3hmwt/records/control.json", "status": "command_succeeded"}
+{"exit_code": 3, "receipt": "/tmp/trnm-pq-command-control-56a8abx3/records/control.json", "status": "command_failed"}
+{"exit_code": 7, "receipt": "/tmp/trnm-pq-command-control-owakgxpr/records/control.json", "status": "command_failed"}
+{"exit_code": 0, "receipt": "/tmp/trnm-pq-command-control-twg9e6ab/records/control.json", "status": "record_failed"}

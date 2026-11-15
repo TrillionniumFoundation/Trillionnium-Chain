@@ -1,0 +1,79 @@
+{
+  "retained": [
+    "bin/rustc",
+    "lib/librustc_driver-f3e8517e98b1ce90.so",
+    "both target sysroots",
+    "rust-lld"
+  ],
+  "discarded": [
+    {
+      "optional_utility": "bin/cargo",
+      "bytes_released": 43374224
+    },
+    {
+      "optional_utility": "bin/cargo-clippy",
+      "bytes_released": 2242160
+    },
+    {
+      "optional_utility": "bin/clippy-driver",
+      "bytes_released": 18226144
+    },
+    {
+      "optional_utility": "bin/rustfmt",
+      "bytes_released": 8546160
+    },
+    {
+      "optional_utility": "bin/rustdoc_tool_binary",
+      "bytes_released": 16090128
+    },
+    {
+      "optional_utility": "lib/rustlib/x86_64-unknown-linux-gnu/bin/opt",
+      "bytes_released": 145743544
+    },
+    {
+      "optional_utility": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llc",
+      "bytes_released": 142127112
+    },
+    {
+      "optional_utility": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-nm",
+      "bytes_released": 43640768
+    },
+    {
+      "optional_utility": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-ar",
+      "bytes_released": 42300952
+    },
+    {
+      "optional_utility": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-objdump",
+      "bytes_released": 40652728
+    },
+    {
+      "optional_utility": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-readobj",
+      "bytes_released": 9939648
+    },
+    {
+      "optional_utility": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-profdata",
+      "bytes_released": 8424792
+    },
+    {
+      "replication_temporary": "lib/.librustc_driver-f3e8517e98b1ce90.so.LFLJdM",
+      "bytes_released": 61341696
+    },
+    {
+      "replication_temporary": "lib/rustlib/x86_64-unknown-linux-gnu/bin/.opt.zmIRyH",
+      "bytes_released": 132907008
+    },
+    {
+      "replication_temporary": "lib/rustlib/x86_64-unknown-linux-gnu/bin/.llc.bddfII",
+      "bytes_released": 51380224
+    },
+    {
+      "replication_temporary": "lib/rustlib/x86_64-unknown-linux-gnu/bin/.llvm-nm.b7r6ja",
+      "bytes_released": 38010880
+    },
+    {
+      "replication_temporary": "lib/rustlib/x86_64-unknown-linux-gnu/lib/.librustc_driver-f3e8517e98b1ce90.so.G3035R",
+      "bytes_released": 115605504
+    }
+  ],
+  "free_disk_after": 2112462848
+}

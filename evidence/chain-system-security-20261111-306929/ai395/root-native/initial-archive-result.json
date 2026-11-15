@@ -1,0 +1,47 @@
+{
+  "all_members_regular_and_verified": true,
+  "archive": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-native-bac6b765-archive-20261112-306929/root-native-original-observations.tar.gz",
+  "binary_copies": [
+    {
+      "bytes": 258139216,
+      "post_execution_copy_not_live_inode_attestation": true,
+      "preserved_copy": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-native-bac6b765-archive-20261112-306929/preserved-native-binaries/root_effect_readback_v4_native-2310b7cf782b61a7",
+      "sha256": "03f30ef41f384bd72c92f468361c669b3e761556ace61524cdccd9f9be026b4e",
+      "source": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/root_effect_readback_v4_native-2310b7cf782b61a7"
+    },
+    {
+      "bytes": 258161304,
+      "post_execution_copy_not_live_inode_attestation": true,
+      "preserved_copy": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-native-bac6b765-archive-20261112-306929/preserved-native-binaries/root_witness_provider_v5_native-c4a5490af1bf168b",
+      "sha256": "445ba16fe344c50496e24a030315630e70ca1e425b3cbd502c25d7040fc74c36",
+      "source": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/root_witness_provider_v5_native-c4a5490af1bf168b"
+    },
+    {
+      "bytes": 258452736,
+      "post_execution_copy_not_live_inode_attestation": true,
+      "preserved_copy": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-native-bac6b765-archive-20261112-306929/preserved-native-binaries/root_witness_v5_durable_native-fee4c3aabeb42272",
+      "sha256": "514220f01c62f4d49e9eaf208279d611c1fe876e5c339fc0a4545e31c9cb0509",
+      "source": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/root_witness_v5_durable_native-fee4c3aabeb42272"
+    },
+    {
+      "bytes": 258145616,
+      "post_execution_copy_not_live_inode_attestation": true,
+      "preserved_copy": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-native-bac6b765-archive-20261112-306929/preserved-native-binaries/root_witness_v5_native-444c3cdab24a42e9",
+      "sha256": "14d71cafd0b6e79a12cbb0b54449fe903f9a31fc2e6d5818c0340e4b9c46da60",
+      "source": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/root_witness_v5_native-444c3cdab24a42e9"
+    }
+  ],
+  "binary_copy_count": 4,
+  "bytes": 17803,
+  "log_bindings_verified": 9,
+  "members": 41,
+  "original_bytes_unchanged": true,
+  "original_files": 39,
+  "reader_cap_4mib_respected": true,
+  "schema": "trnm-root-native-original-archive-result-v1",
+  "sha256": "7a9b68550e584ac4868e6682ce2269df9d6191e0ac92debb1f7363a56f6982d1",
+  "single_member_max_bytes": 11836,
+  "source": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+  "status": "HOLD",
+  "transport_parts": []
+}

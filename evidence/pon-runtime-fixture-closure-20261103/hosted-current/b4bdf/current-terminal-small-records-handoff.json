@@ -1,0 +1,73 @@
+{
+  "schema": "c2-current-terminal-small-records-handoff-v1",
+  "observed_utc": "2026-11-03T23:03:03.128622+00:00",
+  "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+  "actual_merge": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+  "tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+  "records": [
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/source-binding.json",
+      "bytes": 6561,
+      "sha256": "0ee84001eb8410e88cbb46a45e3c838ffc07509cbd1429e4cbc86ba2d7c7fb10"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-head-terminal-readback.json",
+      "bytes": 65475,
+      "sha256": "de81c882e8326fcde096379ea8447451291d30ef1c16423ad1775e607c1501a3"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-head-selected-original-records.json.gz",
+      "bytes": 586184,
+      "sha256": "6a0e7b09ad2fa5d934d1be3bea582715cab37d4723d30212a383a4c7307ef97b"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-merge-terminal-readback.json",
+      "bytes": 65603,
+      "sha256": "3e41bd1ed21c105971a9f898704bf5b2e409ae4494e57bf6a1f758ff4abe0a82"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-merge-selected-original-records.json.gz",
+      "bytes": 585192,
+      "sha256": "675b6f08c059e9d1e0275ce0fe8c31124b98a821ebaa4cb1ee10203db7cb967e"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/f0-two-phase-terminal-readback.json",
+      "bytes": 116400,
+      "sha256": "f343bdcacca720e13e962cc1a7ba30cf27cfe0c539eb20669ba20bf188ec1cfd"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/f0-selected-original-records.json.gz",
+      "bytes": 1862302,
+      "sha256": "565fba925680ceafaaff48a8d5207a3e20b4e7fca52b7ce49e5bfd57a06ee135"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/original-three-campaign-compact-terminal-readback.json",
+      "bytes": 39654,
+      "sha256": "d37120c9043672bb4d461adb24b439c7a190c32161a5a187abdf025a6c723a52"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/original-three-campaign-selected-records.json.gz",
+      "bytes": 6035838,
+      "sha256": "c12419f067220378b1e285fbe49e27bc5387c47c4df1ae4c8449c0b87e67056e"
+    }
+  ],
+  "scope": {
+    "W1_fresh": "The source receipt filename blocker was passed by actual Host and native execution on head and actual merge. Each original selector has 1 native PASS but CONFIRMATION_TARGET failure; each fresh selector has 0 PASS and 1 FAIL. Both original and fresh reports show baseline 1/1 and pressure 0/1 under the original 4-second, six-depth target.",
+    "F0": "Actual native result is 0 PASS and 1 FAIL. Original 30-second confirmations: baseline 1/3 (2 observed), ROOT 0/3 (1 observed), total 1/6. Scheduled 4-second SLO is 0/6 with all 42 planned packets retained. Actual Host resources and ownership-validated known-empty cleanup are verified.",
+    "campaign": "Three actual invocations each have 0 PASS and 1 FAIL. Each original 30-second baseline is 1/3 (2 observed), from-zero 0/3 (1 observed), and late-product 0/3 (1 observed). All nine Host checks are verified. The fixed three-round denominator is retained, and genuine budget depletion remains false.",
+    "not_observed": "At the latest metadata snapshot, C2 baseline was pending and its nine Host selectors were unexecuted; full Node 974 was not terminal. No results are inherited from C1, local native runs, or b280."
+  },
+  "reader_refusal_records": [
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/f0-reader-native-derived-shape-refusal.json",
+      "bytes": 1495,
+      "sha256": "3f888b67fddd33c35b59fc81d5298634cf6d71258c97543d2ec69922371e7da4"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/f0-controller-readback-refusal.json",
+      "bytes": 7735,
+      "sha256": "60f59e22c6c99ddcdb78410509555339b9182f788e706a6f0bfd19a83bdd9211"
+    }
+  ],
+  "reader_refusal_scope": "Offline strict reader first rejected a native-only scope field and the F0 structured cleanup representation. Raw objects were inspected and exact native/derived values, recomputed schedule fields and ownership-validated cleanup were verified; no native verdict or source changed."
+}

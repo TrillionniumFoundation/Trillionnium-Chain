@@ -1,0 +1,2002 @@
+{
+  "status": "LOCAL_PREREQUISITES_VERIFIED_READ_ONLY; no build, metadata resolution, tests or qualification performed",
+  "base": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+  "source_object_repository": "/workspace/scratch/4aa779cb4c85/chain-security",
+  "isolated_checkout": "/workspace/scratch/a4188f5c86b5/chain-pq-profile-boundary",
+  "git_object_observation": {
+    "requested_commit_present_in": [
+      "/workspace/scratch/4aa779cb4c85/chain-security",
+      "/workspace/scratch/349a1991e091/chain-cell-storage",
+      "/workspace/scratch/0654386882cd/chain-throughput"
+    ],
+    "full_tree_blob_scan": {
+      "command": "git --no-replace-objects -C /workspace/scratch/4aa779cb4c85/chain-security ls-tree -r -z df927b6ffaecff293b9e9428e3ba516f47cd101a; unique leaf object IDs passed through git cat-file --batch-check",
+      "tree_entries": 27856,
+      "unique_leaf_objects": 20738,
+      "exit_code": 0,
+      "missing_objects": 0,
+      "scope": "object existence; not native execution or an integrity proof of newly built binaries"
+    },
+    "source_alternate_chain": [
+      {
+        "objects": "/workspace/scratch/4aa779cb4c85/chain-security/.git/objects",
+        "alternates": [
+          "/workspace/scratch/0654386882cd/chain-throughput/.git/objects"
+        ],
+        "packs": [],
+        "partial_clone_fields": {
+          "remote \"origin\"": {}
+        }
+      },
+      {
+        "objects": "/workspace/scratch/0654386882cd/chain-throughput/.git/objects",
+        "alternates": [
+          "/workspace/scratch/76b21131c01b/chain-hash/.git/objects"
+        ],
+        "packs": [],
+        "partial_clone_fields": {
+          "remote \"origin\"": {}
+        }
+      },
+      {
+        "objects": "/workspace/scratch/76b21131c01b/chain-hash/.git/objects",
+        "alternates": [],
+        "packs": [
+          {
+            "file": "pack-518dba1cb11ed67ffa004a1473a34a970862ea14.idx",
+            "bytes": 453972
+          },
+          {
+            "file": "pack-5db9d520970140fad6bbae87e7e7d432e1fb11da.idx",
+            "bytes": 125504
+          },
+          {
+            "file": "pack-4315b173e4ba1f76205bdc27a8ef2e914c84e642.pack",
+            "bytes": 4532
+          },
+          {
+            "file": "pack-687008b8f915e40c1e2f109fb54b5a7e510c71b2.promisor",
+            "bytes": 0
+          },
+          {
+            "file": "pack-80dbbca9f2390a29436662da795596691f9e5475.idx",
+            "bytes": 10676
+          },
+          {
+            "file": "pack-f98c62accfebd48564b6f4475634e9a4a85482b9.pack",
+            "bytes": 7954228
+          },
+          {
+            "file": "pack-9ecb712465386199b130e6c507d4d09127d1b6ba.pack",
+            "bytes": 8487
+          },
+          {
+            "file": "pack-42392b8322039ea0a674231963c927295843b160.promisor",
+            "bytes": 82
+          },
+          {
+            "file": "pack-b11b53af418e22e0349423f296f118be5e1e9d13.promisor",
+            "bytes": 0
+          },
+          {
+            "file": "pack-b11b53af418e22e0349423f296f118be5e1e9d13.idx",
+            "bytes": 1100
+          },
+          {
+            "file": "pack-3885088edd1ef22338f9a04505e2b915b7c56fe7.idx",
+            "bytes": 84344
+          },
+          {
+            "file": "pack-6363a6cbc01710427ee212ca4069b656ac382ee8.promisor",
+            "bytes": 0
+          },
+          {
+            "file": "pack-d652e6ea198ba46cd0320282746ab5699fcc2e20.pack",
+            "bytes": 8769005
+          },
+          {
+            "file": "pack-9ecb712465386199b130e6c507d4d09127d1b6ba.promisor",
+            "bytes": 0
+          },
+          {
+            "file": "pack-4315b173e4ba1f76205bdc27a8ef2e914c84e642.promisor",
+            "bytes": 0
+          },
+          {
+            "file": "pack-65637af79e77238587f78a018deaa9b25991896d.idx",
+            "bytes": 1128
+          },
+          {
+            "file": "pack-882161950e94eb671d7772a1ab97f773e167dab3.promisor",
+            "bytes": 0
+          },
+          {
+            "file": "pack-518dba1cb11ed67ffa004a1473a34a970862ea14.pack",
+            "bytes": 1075515890
+          },
+          {
+            "file": "pack-32324e3f4f8bd33eba36e0210dcfdca0a73f6754.idx",
+            "bytes": 1100
+          },
+          {
+            "file": "pack-5db9d520970140fad6bbae87e7e7d432e1fb11da.promisor",
+            "bytes": 364408
+          },
+          {
+            "file": "pack-a08b2d7bed93cc79be1b1cabcd7939b30c8fd3b2.pack",
+            "bytes": 9270
+          },
+          {
+            "file": "pack-9ecb712465386199b130e6c507d4d09127d1b6ba.idx",
+            "bytes": 1100
+          },
+          {
+            "file": "pack-80dbbca9f2390a29436662da795596691f9e5475.pack",
+            "bytes": 578702
+          },
+          {
+            "file": "pack-65637af79e77238587f78a018deaa9b25991896d.pack",
+            "bytes": 1330
+          },
+          {
+            "file": "pack-42392b8322039ea0a674231963c927295843b160.pack",
+            "bytes": 8666119
+          },
+          {
+            "file": "pack-ad3b95bbc10a6bc1e01e5292c3a5d46bf0c8635b.pack",
+            "bytes": 7951310
+          },
+          {
+            "file": "pack-b581d0f8e93d3bd15b20527575697a6f0d045b45.promisor",
+            "bytes": 82
+          },
+          {
+            "file": "pack-334f5b138c1b7a99f09fb982497e37ad9691aa01.promisor",
+            "bytes": 9922
+          },
+          {
+            "file": "pack-687008b8f915e40c1e2f109fb54b5a7e510c71b2.pack",
+            "bytes": 25755
+          },
+          {
+            "file": "pack-2d54d00fada7ba81f74b898e11aaa76a00ea495c.pack",
+            "bytes": 7659
+          },
+          {
+            "file": "pack-a08b2d7bed93cc79be1b1cabcd7939b30c8fd3b2.idx",
+            "bytes": 1100
+          },
+          {
+            "file": "pack-687008b8f915e40c1e2f109fb54b5a7e510c71b2.idx",
+            "bytes": 1772
+          },
+          {
+            "file": "pack-534e7e61980888f98eedd9fcfbe6fd54e2d32d25.pack",
+            "bytes": 429198
+          },
+          {
+            "file": "pack-4315b173e4ba1f76205bdc27a8ef2e914c84e642.idx",
+            "bytes": 1100
+          },
+          {
+            "file": "pack-2d54d00fada7ba81f74b898e11aaa76a00ea495c.promisor",
+            "bytes": 0
+          },
+          {
+            "file": "pack-32324e3f4f8bd33eba36e0210dcfdca0a73f6754.promisor",
+            "bytes": 0
+          },
+          {
+            "file": "pack-df184fc4ccc28b14347fffaf7c7520e1d9064909.pack",
+            "bytes": 1169
+          },
+          {
+            "file": "pack-f98c62accfebd48564b6f4475634e9a4a85482b9.promisor",
+            "bytes": 82
+          },
+          {
+            "file": "pack-aede07c08827a7c7d834c147dd46480c0861041d.pack",
+            "bytes": 8785307
+          },
+          {
+            "file": "pack-6751b44750267a098568a8fd166cb84f7b180971.pack",
+            "bytes": 701576
+          },
+          {
+            "file": "pack-ad3b95bbc10a6bc1e01e5292c3a5d46bf0c8635b.idx",
+            "bytes": 2377096
+          },
+          {
+            "file": "pack-882161950e94eb671d7772a1ab97f773e167dab3.idx",
+            "bytes": 1352
+          },
+          {
+            "file": "pack-fe560bbc4fc9f2808b0082369d5da2bfea24ca83.promisor",
+            "bytes": 0
+          },
+          {
+            "file": "pack-80dbbca9f2390a29436662da795596691f9e5475.promisor",
+            "bytes": 28126
+          },
+          {
+            "file": "pack-3885088edd1ef22338f9a04505e2b915b7c56fe7.promisor",
+            "bytes": 96
+          },
+          {
+            "file": "pack-6751b44750267a098568a8fd166cb84f7b180971.idx",
+            "bytes": 2164
+          },
+          {
+            "file": "pack-882161950e94eb671d7772a1ab97f773e167dab3.pack",
+            "bytes": 72940
+          },
+          {
+            "file": "pack-a08b2d7bed93cc79be1b1cabcd7939b30c8fd3b2.promisor",
+            "bytes": 0
+          },
+          {
+            "file": "pack-d652e6ea198ba46cd0320282746ab5699fcc2e20.promisor",
+            "bytes": 82
+          },
+          {
+            "file": "pack-df184fc4ccc28b14347fffaf7c7520e1d9064909.idx",
+            "bytes": 1100
+          },
+          {
+            "file": "pack-334f5b138c1b7a99f09fb982497e37ad9691aa01.idx",
+            "bytes": 4460
+          },
+          {
+            "file": "pack-58de3a6aaac4331ea8d054848d4f6fd41947a644.idx",
+            "bytes": 5384
+          },
+          {
+            "file": "pack-3885088edd1ef22338f9a04505e2b915b7c56fe7.pack",
+            "bytes": 932372
+          },
+          {
+            "file": "pack-f98c62accfebd48564b6f4475634e9a4a85482b9.idx",
+            "bytes": 2376956
+          },
+          {
+            "file": "pack-58de3a6aaac4331ea8d054848d4f6fd41947a644.promisor",
+            "bytes": 12628
+          },
+          {
+            "file": "pack-2d54d00fada7ba81f74b898e11aaa76a00ea495c.idx",
+            "bytes": 1128
+          },
+          {
+            "file": "pack-b581d0f8e93d3bd15b20527575697a6f0d045b45.pack",
+            "bytes": 8709940
+          },
+          {
+            "file": "pack-5db9d520970140fad6bbae87e7e7d432e1fb11da.pack",
+            "bytes": 58105238
+          },
+          {
+            "file": "pack-fe560bbc4fc9f2808b0082369d5da2bfea24ca83.pack",
+            "bytes": 2807
+          },
+          {
+            "file": "pack-534e7e61980888f98eedd9fcfbe6fd54e2d32d25.promisor",
+            "bytes": 0
+          },
+          {
+            "file": "pack-42392b8322039ea0a674231963c927295843b160.idx",
+            "bytes": 2488956
+          },
+          {
+            "file": "pack-b581d0f8e93d3bd15b20527575697a6f0d045b45.idx",
+            "bytes": 2497860
+          },
+          {
+            "file": "pack-c04cba7ce1ef11692b89b08b88f7241ce4ea44c2.pack",
+            "bytes": 548731
+          },
+          {
+            "file": "pack-65637af79e77238587f78a018deaa9b25991896d.promisor",
+            "bytes": 0
+          },
+          {
+            "file": "pack-58de3a6aaac4331ea8d054848d4f6fd41947a644.pack",
+            "bytes": 18707193
+          },
+          {
+            "file": "pack-6751b44750267a098568a8fd166cb84f7b180971.promisor",
+            "bytes": 0
+          },
+          {
+            "file": "pack-334f5b138c1b7a99f09fb982497e37ad9691aa01.pack",
+            "bytes": 1148460
+          },
+          {
+            "file": "pack-029d08823bd8a8eab510ad6ac75c823cfd3ed31e.promisor",
+            "bytes": 0
+          },
+          {
+            "file": "pack-aede07c08827a7c7d834c147dd46480c0861041d.promisor",
+            "bytes": 82
+          },
+          {
+            "file": "pack-d652e6ea198ba46cd0320282746ab5699fcc2e20.idx",
+            "bytes": 2508220
+          },
+          {
+            "file": "pack-518dba1cb11ed67ffa004a1473a34a970862ea14.promisor",
+            "bytes": 1326350
+          },
+          {
+            "file": "pack-fe560bbc4fc9f2808b0082369d5da2bfea24ca83.idx",
+            "bytes": 1268
+          },
+          {
+            "file": "pack-c04cba7ce1ef11692b89b08b88f7241ce4ea44c2.promisor",
+            "bytes": 0
+          },
+          {
+            "file": "pack-029d08823bd8a8eab510ad6ac75c823cfd3ed31e.pack",
+            "bytes": 32
+          },
+          {
+            "file": "pack-029d08823bd8a8eab510ad6ac75c823cfd3ed31e.idx",
+            "bytes": 1072
+          },
+          {
+            "file": "pack-32324e3f4f8bd33eba36e0210dcfdca0a73f6754.pack",
+            "bytes": 6118
+          },
+          {
+            "file": "pack-534e7e61980888f98eedd9fcfbe6fd54e2d32d25.idx",
+            "bytes": 1212
+          },
+          {
+            "file": "pack-ad3b95bbc10a6bc1e01e5292c3a5d46bf0c8635b.promisor",
+            "bytes": 82
+          },
+          {
+            "file": "pack-b11b53af418e22e0349423f296f118be5e1e9d13.pack",
+            "bytes": 2470
+          },
+          {
+            "file": "pack-aede07c08827a7c7d834c147dd46480c0861041d.idx",
+            "bytes": 2511860
+          },
+          {
+            "file": "pack-6363a6cbc01710427ee212ca4069b656ac382ee8.pack",
+            "bytes": 36553
+          },
+          {
+            "file": "pack-6363a6cbc01710427ee212ca4069b656ac382ee8.idx",
+            "bytes": 2332
+          },
+          {
+            "file": "pack-c04cba7ce1ef11692b89b08b88f7241ce4ea44c2.idx",
+            "bytes": 2080
+          },
+          {
+            "file": "pack-df184fc4ccc28b14347fffaf7c7520e1d9064909.promisor",
+            "bytes": 0
+          }
+        ],
+        "partial_clone_fields": {
+          "remote \"origin\"": {
+            "promisor": "true",
+            "partialclonefilter": "blob:none"
+          },
+          "extensions": {}
+        }
+      }
+    ],
+    "explicit_network_or_download_command_issued": false,
+    "implicit_hydration_instrumented": false,
+    "underlying_partial_clone_note": "Final alternate chain-hash has promisor=true and blob:none with existing promisor packs. No Git configuration or source object directory was modified by the auditor."
+  },
+  "toolchain": {
+    "directory": "/workspace/scratch/5778f0ffb5d4/toolchain/installed",
+    "tools": [
+      {
+        "name": "rustc",
+        "path": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustc",
+        "regular_elf": true,
+        "executable": true
+      },
+      {
+        "name": "cargo",
+        "path": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/cargo",
+        "regular_elf": true,
+        "executable": true
+      },
+      {
+        "name": "rustdoc",
+        "path": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustdoc",
+        "regular_elf": true,
+        "executable": true
+      },
+      {
+        "name": "rustfmt",
+        "path": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustfmt",
+        "regular_elf": true,
+        "executable": true
+      },
+      {
+        "name": "cargo-fmt",
+        "path": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/cargo-fmt",
+        "regular_elf": true,
+        "executable": true
+      },
+      {
+        "name": "clippy-driver",
+        "path": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/clippy-driver",
+        "regular_elf": true,
+        "executable": true
+      },
+      {
+        "name": "cargo-clippy",
+        "path": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/cargo-clippy",
+        "regular_elf": true,
+        "executable": true
+      }
+    ],
+    "version_commands": [
+      "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustc --version --verbose",
+      "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/cargo --version",
+      "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustfmt --version",
+      "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/clippy-driver --version",
+      "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustdoc --version"
+    ],
+    "observed_versions": {
+      "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+      "rustc_commit": "59807616e1fa2540724bfbac14d7976d7e4a3860",
+      "llvm": "22.1.2",
+      "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+      "rustfmt": "rustfmt 1.9.0-stable (59807616e1 2026-04-14)",
+      "clippy": "clippy 0.1.95 (59807616e1 2026-04-14)",
+      "rustdoc": "rustdoc 1.95.0 (59807616e 2026-04-14)"
+    },
+    "version_exit_codes": {
+      "rustc": 0,
+      "cargo": 0,
+      "rustfmt": 0,
+      "clippy-driver": 0,
+      "rustdoc": 0
+    },
+    "note": "Use these real installed binaries through PATH/RUSTC/RUSTDOC. No evidence fixture tool was executed. The separate f7 toolchain is 1.96.0 and is unnecessary here. Direct Cargo is not a rustup proxy; do not add a fake wrapper for +toolchain syntax."
+  },
+  "provider": {
+    "directory": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install",
+    "observed_version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+    "version_command": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/bin/openssl version -a",
+    "version_exit": 0,
+    "build_time_reported": "Wed Nov 11 00:09:51 2026 UTC",
+    "five_files": [
+      {
+        "path": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/bin/openssl",
+        "relative_path": "bin/openssl",
+        "bytes": 8839432,
+        "sha256": "602358804a2befa2964a1095be46d0c0b8ec18178961ebc632ad72080e4f49ad"
+      },
+      {
+        "path": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/include/openssl/opensslv.h",
+        "relative_path": "include/openssl/opensslv.h",
+        "bytes": 3449,
+        "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+      },
+      {
+        "path": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/include/openssl/configuration.h",
+        "relative_path": "include/openssl/configuration.h",
+        "bytes": 4729,
+        "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+      },
+      {
+        "path": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/lib/libcrypto.a",
+        "relative_path": "lib/libcrypto.a",
+        "bytes": 12103400,
+        "sha256": "ec499d61988d09df156ed06032de58525c4cc89d19c6be9c05e672ec68b05000"
+      },
+      {
+        "path": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/lib/libssl.a",
+        "relative_path": "lib/libssl.a",
+        "bytes": 2073650,
+        "sha256": "ce766975e2748030cdcab09302cae4a2e774130dff9376e42e1bef4f9918a490"
+      }
+    ],
+    "pins_differ_from_desktop_build": true,
+    "note": "Use these actual local build pins, not the desktop provider pins or old native test results.",
+    "algorithm_queries": {
+      "commands": [
+        "OPENSSL_CONF=/dev/null /workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/bin/openssl list -signature-algorithms",
+        "OPENSSL_CONF=/dev/null /workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/bin/openssl list -kem-algorithms"
+      ],
+      "exit_codes": [
+        0,
+        0
+      ],
+      "observed_default_provider_algorithms": [
+        "ML-DSA-44",
+        "ML-DSA-65",
+        "ML-DSA-87",
+        "ML-KEM-512",
+        "ML-KEM-768",
+        "ML-KEM-1024",
+        "X25519MLKEM768"
+      ]
+    }
+  },
+  "dependency_cache": {
+    "recommended_cargo_home": "/workspace/scratch/5778f0ffb5d4/cargo-home",
+    "lock_sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+    "lock_bytes": 40597,
+    "registry_package_count": 156,
+    "archives_present": 156,
+    "archive_checksums_match": 156,
+    "source_directories_present": 156,
+    "sparse_index_entries_present": 156,
+    "missing_archives": [],
+    "bad_archive_checksums": [],
+    "source_file_bytes_individually_reverified": false,
+    "all_package_archive_records": [
+      {
+        "name": "anstream",
+        "version": "1.0.0",
+        "expected_sha256": "824a212faf96e9acacdbd09febd34438f8f711fb84e09a8916013cd7815ca28d",
+        "archive_sha256": "824a212faf96e9acacdbd09febd34438f8f711fb84e09a8916013cd7815ca28d",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "anstyle",
+        "version": "1.0.14",
+        "expected_sha256": "940b3a0ca603d1eade50a4846a2afffd5ef57a9feac2c0e2ec2e14f9ead76000",
+        "archive_sha256": "940b3a0ca603d1eade50a4846a2afffd5ef57a9feac2c0e2ec2e14f9ead76000",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "anstyle-parse",
+        "version": "1.0.0",
+        "expected_sha256": "52ce7f38b242319f7cabaa6813055467063ecdc9d355bbb4ce0c68908cd8130e",
+        "archive_sha256": "52ce7f38b242319f7cabaa6813055467063ecdc9d355bbb4ce0c68908cd8130e",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "anstyle-query",
+        "version": "1.1.5",
+        "expected_sha256": "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc",
+        "archive_sha256": "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "anstyle-wincon",
+        "version": "3.0.11",
+        "expected_sha256": "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d",
+        "archive_sha256": "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "anyhow",
+        "version": "1.0.103",
+        "expected_sha256": "2a4385e2e34eb35d6b3efe798b9eb88096925d87726c0798709bf56d9ed84af3",
+        "archive_sha256": "2a4385e2e34eb35d6b3efe798b9eb88096925d87726c0798709bf56d9ed84af3",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "autocfg",
+        "version": "1.5.1",
+        "expected_sha256": "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53",
+        "archive_sha256": "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "base64ct",
+        "version": "1.8.3",
+        "expected_sha256": "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06",
+        "archive_sha256": "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "bitflags",
+        "version": "2.11.0",
+        "expected_sha256": "843867be96c8daad0d758b57df9392b6d8d271134fce549de6ce169ff98a92af",
+        "archive_sha256": "843867be96c8daad0d758b57df9392b6d8d271134fce549de6ce169ff98a92af",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "block-buffer",
+        "version": "0.10.4",
+        "expected_sha256": "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71",
+        "archive_sha256": "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "borsh",
+        "version": "1.8.0",
+        "expected_sha256": "a88b7ea17d208c4193f2c1e6de3c35fe71f98c96982d5ced308bdcc749ff6e1f",
+        "archive_sha256": "a88b7ea17d208c4193f2c1e6de3c35fe71f98c96982d5ced308bdcc749ff6e1f",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "borsh-derive",
+        "version": "1.8.0",
+        "expected_sha256": "d8f347189c62a579b8cd5f80714efa178f52e461dc2e6d701d264f5ff22e566c",
+        "archive_sha256": "d8f347189c62a579b8cd5f80714efa178f52e461dc2e6d701d264f5ff22e566c",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "bumpalo",
+        "version": "3.20.3",
+        "expected_sha256": "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649",
+        "archive_sha256": "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "bytes",
+        "version": "1.12.1",
+        "expected_sha256": "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04",
+        "archive_sha256": "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "cc",
+        "version": "1.2.59",
+        "expected_sha256": "b7a4d3ec6524d28a329fc53654bbadc9bdd7b0431f5d65f1a56ffb28a1ee5283",
+        "archive_sha256": "b7a4d3ec6524d28a329fc53654bbadc9bdd7b0431f5d65f1a56ffb28a1ee5283",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "cfg-if",
+        "version": "1.0.4",
+        "expected_sha256": "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801",
+        "archive_sha256": "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "cfg_aliases",
+        "version": "0.2.2",
+        "expected_sha256": "f079e83a288787bcd14a6aea84cee5c87a67c5a3e660c30f557a3d24761b3527",
+        "archive_sha256": "f079e83a288787bcd14a6aea84cee5c87a67c5a3e660c30f557a3d24761b3527",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "clap",
+        "version": "4.6.0",
+        "expected_sha256": "b193af5b67834b676abd72466a96c1024e6a6ad978a1f484bd90b85c94041351",
+        "archive_sha256": "b193af5b67834b676abd72466a96c1024e6a6ad978a1f484bd90b85c94041351",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "clap_builder",
+        "version": "4.6.0",
+        "expected_sha256": "714a53001bf66416adb0e2ef5ac857140e7dc3a0c48fb28b2f10762fc4b5069f",
+        "archive_sha256": "714a53001bf66416adb0e2ef5ac857140e7dc3a0c48fb28b2f10762fc4b5069f",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "clap_derive",
+        "version": "4.6.0",
+        "expected_sha256": "1110bd8a634a1ab8cb04345d8d878267d57c3cf1b38d91b71af6686408bbca6a",
+        "archive_sha256": "1110bd8a634a1ab8cb04345d8d878267d57c3cf1b38d91b71af6686408bbca6a",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "clap_lex",
+        "version": "1.1.0",
+        "expected_sha256": "c8d4a3bb8b1e0c1050499d1815f5ab16d04f0959b233085fb31653fbfc9d98f9",
+        "archive_sha256": "c8d4a3bb8b1e0c1050499d1815f5ab16d04f0959b233085fb31653fbfc9d98f9",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "cmov",
+        "version": "0.5.4",
+        "expected_sha256": "0c9ea0ac24bc397ab3c98583a3c9ba74fa56b09a4449bbe172b9b1ddb016027a",
+        "archive_sha256": "0c9ea0ac24bc397ab3c98583a3c9ba74fa56b09a4449bbe172b9b1ddb016027a",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "colorchoice",
+        "version": "1.0.5",
+        "expected_sha256": "1d07550c9036bf2ae0c684c4297d503f838287c83c53686d05370d0e139ae570",
+        "archive_sha256": "1d07550c9036bf2ae0c684c4297d503f838287c83c53686d05370d0e139ae570",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "const-oid",
+        "version": "0.9.6",
+        "expected_sha256": "c2459377285ad874054d797f3ccebf984978aa39129f6eafde5cdc8315b612f8",
+        "archive_sha256": "c2459377285ad874054d797f3ccebf984978aa39129f6eafde5cdc8315b612f8",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "const-oid",
+        "version": "0.10.2",
+        "expected_sha256": "a6ef517f0926dd24a1582492c791b6a4818a4d94e789a334894aa15b0d12f55c",
+        "archive_sha256": "a6ef517f0926dd24a1582492c791b6a4818a4d94e789a334894aa15b0d12f55c",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "cpufeatures",
+        "version": "0.2.17",
+        "expected_sha256": "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280",
+        "archive_sha256": "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "cpufeatures",
+        "version": "0.3.1",
+        "expected_sha256": "5ca28b0ae3115b884660db4118d803791fd6756b6e88f39c0f3f7859060d7566",
+        "archive_sha256": "5ca28b0ae3115b884660db4118d803791fd6756b6e88f39c0f3f7859060d7566",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "crypto-common",
+        "version": "0.1.7",
+        "expected_sha256": "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a",
+        "archive_sha256": "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "crypto-common",
+        "version": "0.2.2",
+        "expected_sha256": "ce6e4c961d6cd6c9a86db418387425e8bdeaf05b3c8bc1411e6dca4c252f1453",
+        "archive_sha256": "ce6e4c961d6cd6c9a86db418387425e8bdeaf05b3c8bc1411e6dca4c252f1453",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "ctutils",
+        "version": "0.4.6",
+        "expected_sha256": "fe3e9d21d39e6f39ff46e03d5b621424f88ee23d8a1672c6bfc9ccc7f2da4f6a",
+        "archive_sha256": "fe3e9d21d39e6f39ff46e03d5b621424f88ee23d8a1672c6bfc9ccc7f2da4f6a",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "curve25519-dalek",
+        "version": "4.1.3",
+        "expected_sha256": "97fb8b7c4503de7d6ae7b42ab72a5a59857b4c937ec27a3d4539dba95b5ab2be",
+        "archive_sha256": "97fb8b7c4503de7d6ae7b42ab72a5a59857b4c937ec27a3d4539dba95b5ab2be",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "curve25519-dalek-derive",
+        "version": "0.1.1",
+        "expected_sha256": "f46882e17999c6cc590af592290432be3bce0428cb0d5f8b6715e4dc7b383eb3",
+        "archive_sha256": "f46882e17999c6cc590af592290432be3bce0428cb0d5f8b6715e4dc7b383eb3",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "der",
+        "version": "0.7.10",
+        "expected_sha256": "e7c1832837b905bbfb5101e07cc24c8deddf52f93225eee6ead5f4d63d53ddcb",
+        "archive_sha256": "e7c1832837b905bbfb5101e07cc24c8deddf52f93225eee6ead5f4d63d53ddcb",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "der",
+        "version": "0.8.3",
+        "expected_sha256": "6a996a108feb8b427a6e12fcf6af4aa83409b79d72c15337d7741368131ee004",
+        "archive_sha256": "6a996a108feb8b427a6e12fcf6af4aa83409b79d72c15337d7741368131ee004",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "digest",
+        "version": "0.10.7",
+        "expected_sha256": "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292",
+        "archive_sha256": "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "digest",
+        "version": "0.11.3",
+        "expected_sha256": "f1dd6dbb5841937940781866fa1281a1ff7bd3bf827091440879f9994983d5c2",
+        "archive_sha256": "f1dd6dbb5841937940781866fa1281a1ff7bd3bf827091440879f9994983d5c2",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "ed25519",
+        "version": "2.2.3",
+        "expected_sha256": "115531babc129696a58c64a4fef0a8bf9e9698629fb97e9e40767d235cfbcd53",
+        "archive_sha256": "115531babc129696a58c64a4fef0a8bf9e9698629fb97e9e40767d235cfbcd53",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "ed25519-dalek",
+        "version": "2.2.0",
+        "expected_sha256": "70e796c081cee67dc755e1a36a0a172b897fab85fc3f6bc48307991f64e4eca9",
+        "archive_sha256": "70e796c081cee67dc755e1a36a0a172b897fab85fc3f6bc48307991f64e4eca9",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "equivalent",
+        "version": "1.0.2",
+        "expected_sha256": "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f",
+        "archive_sha256": "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "errno",
+        "version": "0.3.14",
+        "expected_sha256": "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb",
+        "archive_sha256": "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "fallible-iterator",
+        "version": "0.3.0",
+        "expected_sha256": "2acce4a10f12dc2fb14a218589d4f1f62ef011b2d0cc4b3cb1bba8e94da14649",
+        "archive_sha256": "2acce4a10f12dc2fb14a218589d4f1f62ef011b2d0cc4b3cb1bba8e94da14649",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "fallible-streaming-iterator",
+        "version": "0.1.9",
+        "expected_sha256": "7360491ce676a36bf9bb3c56c1aa791658183a54d2744120f27285738d90465a",
+        "archive_sha256": "7360491ce676a36bf9bb3c56c1aa791658183a54d2744120f27285738d90465a",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "fastrand",
+        "version": "2.3.0",
+        "expected_sha256": "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be",
+        "archive_sha256": "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "fiat-crypto",
+        "version": "0.2.9",
+        "expected_sha256": "28dea519a9695b9977216879a3ebfddf92f1c08c05d984f8996aecd6ecdc811d",
+        "archive_sha256": "28dea519a9695b9977216879a3ebfddf92f1c08c05d984f8996aecd6ecdc811d",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "find-msvc-tools",
+        "version": "0.1.9",
+        "expected_sha256": "5baebc0774151f905a1a2cc41989300b1e6fbb29aff0ceffa1064fdd3088d582",
+        "archive_sha256": "5baebc0774151f905a1a2cc41989300b1e6fbb29aff0ceffa1064fdd3088d582",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "foldhash",
+        "version": "0.1.5",
+        "expected_sha256": "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2",
+        "archive_sha256": "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "foldhash",
+        "version": "0.2.0",
+        "expected_sha256": "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb",
+        "archive_sha256": "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "foreign-types",
+        "version": "0.3.2",
+        "expected_sha256": "f6f339eb8adc052cd2ca78910fda869aefa38d22d5cb648e6485e4d3fc06f3b1",
+        "archive_sha256": "f6f339eb8adc052cd2ca78910fda869aefa38d22d5cb648e6485e4d3fc06f3b1",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "foreign-types-shared",
+        "version": "0.1.1",
+        "expected_sha256": "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b",
+        "archive_sha256": "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "fs2",
+        "version": "0.4.3",
+        "expected_sha256": "9564fc758e15025b46aa6643b1b77d047d1a56a1aea6e01002ac0c7026876213",
+        "archive_sha256": "9564fc758e15025b46aa6643b1b77d047d1a56a1aea6e01002ac0c7026876213",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "generic-array",
+        "version": "0.14.7",
+        "expected_sha256": "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a",
+        "archive_sha256": "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "getrandom",
+        "version": "0.2.17",
+        "expected_sha256": "ff2abc00be7fca6ebc474524697ae276ad847ad0a6b3faa4bcb027e9a4614ad0",
+        "archive_sha256": "ff2abc00be7fca6ebc474524697ae276ad847ad0a6b3faa4bcb027e9a4614ad0",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "getrandom",
+        "version": "0.4.2",
+        "expected_sha256": "0de51e6874e94e7bf76d726fc5d13ba782deca734ff60d5bb2fb2607c7406555",
+        "archive_sha256": "0de51e6874e94e7bf76d726fc5d13ba782deca734ff60d5bb2fb2607c7406555",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "hashbrown",
+        "version": "0.15.5",
+        "expected_sha256": "9229cfe53dfd69f0609a49f65461bd93001ea1ef889cd5529dd176593f5338a1",
+        "archive_sha256": "9229cfe53dfd69f0609a49f65461bd93001ea1ef889cd5529dd176593f5338a1",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "hashbrown",
+        "version": "0.16.1",
+        "expected_sha256": "841d1cc9bed7f9236f321df977030373f4a4163ae1a7dbfe1a51a2c1a51d9100",
+        "archive_sha256": "841d1cc9bed7f9236f321df977030373f4a4163ae1a7dbfe1a51a2c1a51d9100",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "hashbrown",
+        "version": "0.17.1",
+        "expected_sha256": "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a",
+        "archive_sha256": "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "hashlink",
+        "version": "0.12.2",
+        "expected_sha256": "a596f1b20ed2cc5ecac41a164aaebc7258057060f06c0cf7a2ba3991ee7990fb",
+        "archive_sha256": "a596f1b20ed2cc5ecac41a164aaebc7258057060f06c0cf7a2ba3991ee7990fb",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "heck",
+        "version": "0.5.0",
+        "expected_sha256": "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea",
+        "archive_sha256": "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "hex",
+        "version": "0.4.3",
+        "expected_sha256": "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70",
+        "archive_sha256": "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "hybrid-array",
+        "version": "0.4.15",
+        "expected_sha256": "27f864f10dfb56725ce5ce5472bc52252c8f93a4ab86327122cebf62c5f59a17",
+        "archive_sha256": "27f864f10dfb56725ce5ce5472bc52252c8f93a4ab86327122cebf62c5f59a17",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "id-arena",
+        "version": "2.3.0",
+        "expected_sha256": "3d3067d79b975e8844ca9eb072e16b31c3c1c36928edf9c6789548c524d0d954",
+        "archive_sha256": "3d3067d79b975e8844ca9eb072e16b31c3c1c36928edf9c6789548c524d0d954",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "indexmap",
+        "version": "2.13.1",
+        "expected_sha256": "45a8a2b9cb3e0b0c1803dbb0758ffac5de2f425b23c28f518faabd9d805342ff",
+        "archive_sha256": "45a8a2b9cb3e0b0c1803dbb0758ffac5de2f425b23c28f518faabd9d805342ff",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "is_terminal_polyfill",
+        "version": "1.70.2",
+        "expected_sha256": "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695",
+        "archive_sha256": "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "itoa",
+        "version": "1.0.18",
+        "expected_sha256": "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682",
+        "archive_sha256": "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "js-sys",
+        "version": "0.3.106",
+        "expected_sha256": "7883d941dae510fb2d978fc3fe018c71c9e2892fd38854de3e8b92c2e5ad9cc5",
+        "archive_sha256": "7883d941dae510fb2d978fc3fe018c71c9e2892fd38854de3e8b92c2e5ad9cc5",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "keccak",
+        "version": "0.2.2",
+        "expected_sha256": "d8f198d1db720e4940b5a493201d199d9f24f568f8f746bd13706243a2f71598",
+        "archive_sha256": "d8f198d1db720e4940b5a493201d199d9f24f568f8f746bd13706243a2f71598",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "leb128fmt",
+        "version": "0.1.0",
+        "expected_sha256": "09edd9e8b54e49e587e4f6295a7d29c3ea94d469cb40ab8ca70b288248a81db2",
+        "archive_sha256": "09edd9e8b54e49e587e4f6295a7d29c3ea94d469cb40ab8ca70b288248a81db2",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "libc",
+        "version": "0.2.184",
+        "expected_sha256": "48f5d2a454e16a5ea0f4ced81bd44e4cfc7bd3a507b61887c99fd3538b28e4af",
+        "archive_sha256": "48f5d2a454e16a5ea0f4ced81bd44e4cfc7bd3a507b61887c99fd3538b28e4af",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "libsqlite3-sys",
+        "version": "0.39.0",
+        "expected_sha256": "b0e7f1cd558a82cc3af091ed13f0f03846f89851c60a10713ce5cfd484195494",
+        "archive_sha256": "b0e7f1cd558a82cc3af091ed13f0f03846f89851c60a10713ce5cfd484195494",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "linux-raw-sys",
+        "version": "0.12.1",
+        "expected_sha256": "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53",
+        "archive_sha256": "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "log",
+        "version": "0.4.29",
+        "expected_sha256": "5e5032e24019045c762d3c0f28f5b6b8bbf38563a65908389bf7978758920897",
+        "archive_sha256": "5e5032e24019045c762d3c0f28f5b6b8bbf38563a65908389bf7978758920897",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "memchr",
+        "version": "2.8.0",
+        "expected_sha256": "f8ca58f447f06ed17d5fc4043ce1b10dd205e060fb3ce5b979b8ed8e59ff3f79",
+        "archive_sha256": "f8ca58f447f06ed17d5fc4043ce1b10dd205e060fb3ce5b979b8ed8e59ff3f79",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "ml-dsa",
+        "version": "0.1.1",
+        "expected_sha256": "add6b9d92e496f16f4526d68ff29da1483aba4b119baeab8bed3b9e3544a6f3d",
+        "archive_sha256": "add6b9d92e496f16f4526d68ff29da1483aba4b119baeab8bed3b9e3544a6f3d",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "module-lattice",
+        "version": "0.2.3",
+        "expected_sha256": "0c61b87c9683ab7cb1c6871d261ad5479b6b10ceb52c4352aaca3b5d35a8febe",
+        "archive_sha256": "0c61b87c9683ab7cb1c6871d261ad5479b6b10ceb52c4352aaca3b5d35a8febe",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "nix",
+        "version": "0.30.1",
+        "expected_sha256": "74523f3a35e05aba87a1d978330aef40f67b0304ac79c1c00b294c9830543db6",
+        "archive_sha256": "74523f3a35e05aba87a1d978330aef40f67b0304ac79c1c00b294c9830543db6",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "num-traits",
+        "version": "0.2.19",
+        "expected_sha256": "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841",
+        "archive_sha256": "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "once_cell",
+        "version": "1.21.4",
+        "expected_sha256": "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50",
+        "archive_sha256": "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "once_cell_polyfill",
+        "version": "1.70.2",
+        "expected_sha256": "384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe",
+        "archive_sha256": "384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "openssl",
+        "version": "0.10.81",
+        "expected_sha256": "77823a27f0babb03091cb9ed9ef80af3b39dbc82f97e8fa530374b7dafd87a45",
+        "archive_sha256": "77823a27f0babb03091cb9ed9ef80af3b39dbc82f97e8fa530374b7dafd87a45",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "openssl-macros",
+        "version": "0.1.1",
+        "expected_sha256": "a948666b637a0f465e8564c73e89d4dde00d72d4d473cc972f390fc3dcee7d9c",
+        "archive_sha256": "a948666b637a0f465e8564c73e89d4dde00d72d4d473cc972f390fc3dcee7d9c",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "openssl-sys",
+        "version": "0.9.117",
+        "expected_sha256": "b47e7e6bb2c38cd930d25a23b40fa52e068c10e85f3e03a7f5ba5aaca5713695",
+        "archive_sha256": "b47e7e6bb2c38cd930d25a23b40fa52e068c10e85f3e03a7f5ba5aaca5713695",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "pkcs8",
+        "version": "0.10.2",
+        "expected_sha256": "f950b2377845cebe5cf8b5165cb3cc1a5e0fa5cfa3e1f7f55707d8fd82e0a7b7",
+        "archive_sha256": "f950b2377845cebe5cf8b5165cb3cc1a5e0fa5cfa3e1f7f55707d8fd82e0a7b7",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "pkcs8",
+        "version": "0.11.0",
+        "expected_sha256": "451913da69c775a56034ea8d9003d27ee8948e12443eae7c038ba100a4f21cb7",
+        "archive_sha256": "451913da69c775a56034ea8d9003d27ee8948e12443eae7c038ba100a4f21cb7",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "pkg-config",
+        "version": "0.3.32",
+        "expected_sha256": "7edddbd0b52d732b21ad9a5fab5c704c14cd949e5e9a1ec5929a24fded1b904c",
+        "archive_sha256": "7edddbd0b52d732b21ad9a5fab5c704c14cd949e5e9a1ec5929a24fded1b904c",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "prettyplease",
+        "version": "0.2.37",
+        "expected_sha256": "479ca8adacdd7ce8f1fb39ce9ecccbfe93a3f1344b3d0d97f20bc0196208f62b",
+        "archive_sha256": "479ca8adacdd7ce8f1fb39ce9ecccbfe93a3f1344b3d0d97f20bc0196208f62b",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "proc-macro-crate",
+        "version": "3.5.0",
+        "expected_sha256": "e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f",
+        "archive_sha256": "e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "proc-macro2",
+        "version": "1.0.106",
+        "expected_sha256": "8fd00f0bb2e90d81d1044c2b32617f68fcb9fa3bb7640c23e9c748e53fb30934",
+        "archive_sha256": "8fd00f0bb2e90d81d1044c2b32617f68fcb9fa3bb7640c23e9c748e53fb30934",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "quote",
+        "version": "1.0.45",
+        "expected_sha256": "41f2619966050689382d2b44f664f4bc593e129785a36d6ee376ddf37259b924",
+        "archive_sha256": "41f2619966050689382d2b44f664f4bc593e129785a36d6ee376ddf37259b924",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "r-efi",
+        "version": "6.0.0",
+        "expected_sha256": "f8dcc9c7d52a811697d2151c701e0d08956f92b0e24136cf4cf27b57a6a0d9bf",
+        "archive_sha256": "f8dcc9c7d52a811697d2151c701e0d08956f92b0e24136cf4cf27b57a6a0d9bf",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "rand_core",
+        "version": "0.6.4",
+        "expected_sha256": "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c",
+        "archive_sha256": "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "rand_core",
+        "version": "0.10.1",
+        "expected_sha256": "63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69",
+        "archive_sha256": "63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "rsqlite-vfs",
+        "version": "0.1.1",
+        "expected_sha256": "c51c9ae4df8a7fba42103df5c621fa3c37eccf3a3c650879e90fc48b11cc192c",
+        "archive_sha256": "c51c9ae4df8a7fba42103df5c621fa3c37eccf3a3c650879e90fc48b11cc192c",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "rusqlite",
+        "version": "0.41.0",
+        "expected_sha256": "9c026b4444579e8d754556c6c75d040d69c4a44283cdb648ab8a8d5965c2cfa8",
+        "archive_sha256": "9c026b4444579e8d754556c6c75d040d69c4a44283cdb648ab8a8d5965c2cfa8",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "rustc_version",
+        "version": "0.4.1",
+        "expected_sha256": "cfcb3a22ef46e85b45de6ee7e79d063319ebb6594faafcf1c225ea92ab6e9b92",
+        "archive_sha256": "cfcb3a22ef46e85b45de6ee7e79d063319ebb6594faafcf1c225ea92ab6e9b92",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "rustix",
+        "version": "1.1.4",
+        "expected_sha256": "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190",
+        "archive_sha256": "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "rustversion",
+        "version": "1.0.23",
+        "expected_sha256": "cf54715a573b99ac80df0bc206da022bcd442c974952c7b9720069370852e21f",
+        "archive_sha256": "cf54715a573b99ac80df0bc206da022bcd442c974952c7b9720069370852e21f",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "semver",
+        "version": "1.0.27",
+        "expected_sha256": "d767eb0aabc880b29956c35734170f26ed551a859dbd361d140cdbeca61ab1e2",
+        "archive_sha256": "d767eb0aabc880b29956c35734170f26ed551a859dbd361d140cdbeca61ab1e2",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "serde",
+        "version": "1.0.228",
+        "expected_sha256": "9a8e94ea7f378bd32cbbd37198a4a91436180c5bb472411e48b5ec2e2124ae9e",
+        "archive_sha256": "9a8e94ea7f378bd32cbbd37198a4a91436180c5bb472411e48b5ec2e2124ae9e",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "serde_core",
+        "version": "1.0.228",
+        "expected_sha256": "41d385c7d4ca58e59fc732af25c3983b67ac852c1a25000afe1175de458b67ad",
+        "archive_sha256": "41d385c7d4ca58e59fc732af25c3983b67ac852c1a25000afe1175de458b67ad",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "serde_derive",
+        "version": "1.0.228",
+        "expected_sha256": "d540f220d3187173da220f885ab66608367b6574e925011a9353e4badda91d79",
+        "archive_sha256": "d540f220d3187173da220f885ab66608367b6574e925011a9353e4badda91d79",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "serde_json",
+        "version": "1.0.149",
+        "expected_sha256": "83fc039473c5595ace860d8c4fafa220ff474b3fc6bfdb4293327f1a37e94d86",
+        "archive_sha256": "83fc039473c5595ace860d8c4fafa220ff474b3fc6bfdb4293327f1a37e94d86",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "sha2",
+        "version": "0.10.9",
+        "expected_sha256": "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283",
+        "archive_sha256": "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "sha2-asm",
+        "version": "0.6.4",
+        "expected_sha256": "b845214d6175804686b2bd482bcffe96651bb2d1200742b712003504a2dac1ab",
+        "archive_sha256": "b845214d6175804686b2bd482bcffe96651bb2d1200742b712003504a2dac1ab",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "shake",
+        "version": "0.1.0",
+        "expected_sha256": "09057cb2149ad4cbd2da1e26b351f9a4c354219421229c69c3063e6f61947c4a",
+        "archive_sha256": "09057cb2149ad4cbd2da1e26b351f9a4c354219421229c69c3063e6f61947c4a",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "shell-escape",
+        "version": "0.1.5",
+        "expected_sha256": "45bb67a18fa91266cc7807181f62f9178a6873bfad7dc788c42e6430db40184f",
+        "archive_sha256": "45bb67a18fa91266cc7807181f62f9178a6873bfad7dc788c42e6430db40184f",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "shlex",
+        "version": "1.3.0",
+        "expected_sha256": "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64",
+        "archive_sha256": "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "signature",
+        "version": "2.2.0",
+        "expected_sha256": "77549399552de45a898a580c1b41d445bf730df867cc44e6c0233bbc4b8329de",
+        "archive_sha256": "77549399552de45a898a580c1b41d445bf730df867cc44e6c0233bbc4b8329de",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "signature",
+        "version": "3.0.0",
+        "expected_sha256": "28d567dcbaf0049cb8ac2608a76cd95ff9e4412e1899d389ee400918ca7537f5",
+        "archive_sha256": "28d567dcbaf0049cb8ac2608a76cd95ff9e4412e1899d389ee400918ca7537f5",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "smallvec",
+        "version": "1.15.1",
+        "expected_sha256": "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03",
+        "archive_sha256": "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "spki",
+        "version": "0.7.3",
+        "expected_sha256": "d91ed6c858b01f942cd56b37a94b3e0a1798290327d1236e4d9cf4eaca44d29d",
+        "archive_sha256": "d91ed6c858b01f942cd56b37a94b3e0a1798290327d1236e4d9cf4eaca44d29d",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "spki",
+        "version": "0.8.1",
+        "expected_sha256": "7ef958a98b9d5da290cfc78946e9f3e61e1e62a18db0d92cac0b83cc161491a9",
+        "archive_sha256": "7ef958a98b9d5da290cfc78946e9f3e61e1e62a18db0d92cac0b83cc161491a9",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "sponge-cursor",
+        "version": "0.1.0",
+        "expected_sha256": "3a0219bd7d979d58245a4f41f695e1ac9f8befdffadd7f61f1bae9e39abc6620",
+        "archive_sha256": "3a0219bd7d979d58245a4f41f695e1ac9f8befdffadd7f61f1bae9e39abc6620",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "sqlite-wasm-rs",
+        "version": "0.5.5",
+        "expected_sha256": "dc3efc0da82635d7e1ced0053bbbfa8c7ab9645d0bf36ceb4f7127bb85315d75",
+        "archive_sha256": "dc3efc0da82635d7e1ced0053bbbfa8c7ab9645d0bf36ceb4f7127bb85315d75",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "strsim",
+        "version": "0.11.1",
+        "expected_sha256": "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f",
+        "archive_sha256": "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "subtle",
+        "version": "2.6.1",
+        "expected_sha256": "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292",
+        "archive_sha256": "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "syn",
+        "version": "2.0.117",
+        "expected_sha256": "e665b8803e7b1d2a727f4023456bbbbe74da67099c585258af0ad9c5013b9b99",
+        "archive_sha256": "e665b8803e7b1d2a727f4023456bbbbe74da67099c585258af0ad9c5013b9b99",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "syn",
+        "version": "3.0.9",
+        "expected_sha256": "d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b",
+        "archive_sha256": "d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "tempfile",
+        "version": "3.27.0",
+        "expected_sha256": "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd",
+        "archive_sha256": "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "thiserror",
+        "version": "1.0.69",
+        "expected_sha256": "b6aaf5339b578ea85b50e080feb250a3e8ae8cfcdff9a461c9ec2904bc923f52",
+        "archive_sha256": "b6aaf5339b578ea85b50e080feb250a3e8ae8cfcdff9a461c9ec2904bc923f52",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "thiserror",
+        "version": "2.0.21",
+        "expected_sha256": "09e52cb86a36cede5cb101bf8908837b3e4c6e5e59fe7fd85c23fb56200d189e",
+        "archive_sha256": "09e52cb86a36cede5cb101bf8908837b3e4c6e5e59fe7fd85c23fb56200d189e",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "thiserror-impl",
+        "version": "1.0.69",
+        "expected_sha256": "4fee6c4efc90059e10f81e6d42c60a18f76588c3d74cb83a0b242a2b6c7504c1",
+        "archive_sha256": "4fee6c4efc90059e10f81e6d42c60a18f76588c3d74cb83a0b242a2b6c7504c1",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "thiserror-impl",
+        "version": "2.0.21",
+        "expected_sha256": "fe5197923287db20a58125f0bc85c062f7f2c892de97b18c356f9efb14b28524",
+        "archive_sha256": "fe5197923287db20a58125f0bc85c062f7f2c892de97b18c356f9efb14b28524",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "toml_datetime",
+        "version": "1.1.1+spec-1.1.0",
+        "expected_sha256": "3165f65f62e28e0115a00b2ebdd37eb6f3b641855f9d636d3cd4103767159ad7",
+        "archive_sha256": "3165f65f62e28e0115a00b2ebdd37eb6f3b641855f9d636d3cd4103767159ad7",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "toml_edit",
+        "version": "0.25.13+spec-1.1.0",
+        "expected_sha256": "6975367e4d2ef766d86af01ffad14b622fecc8d4357a998fbc4deb6e9bacaf9b",
+        "archive_sha256": "6975367e4d2ef766d86af01ffad14b622fecc8d4357a998fbc4deb6e9bacaf9b",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "toml_parser",
+        "version": "1.1.3+spec-1.1.0",
+        "expected_sha256": "1d38ac1cf9b95face32296c0a3ede1fdc270627c9d9c02a7274dd6d960dc4d56",
+        "archive_sha256": "1d38ac1cf9b95face32296c0a3ede1fdc270627c9d9c02a7274dd6d960dc4d56",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "typenum",
+        "version": "1.20.1",
+        "expected_sha256": "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20",
+        "archive_sha256": "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "unicode-ident",
+        "version": "1.0.24",
+        "expected_sha256": "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75",
+        "archive_sha256": "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "unicode-xid",
+        "version": "0.2.6",
+        "expected_sha256": "ebc1c04c71510c7f702b52b7c350734c9ff1295c464a03335b00bb84fc54f853",
+        "archive_sha256": "ebc1c04c71510c7f702b52b7c350734c9ff1295c464a03335b00bb84fc54f853",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "utf8parse",
+        "version": "0.2.2",
+        "expected_sha256": "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821",
+        "archive_sha256": "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "vcpkg",
+        "version": "0.2.15",
+        "expected_sha256": "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426",
+        "archive_sha256": "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "version_check",
+        "version": "0.9.5",
+        "expected_sha256": "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a",
+        "archive_sha256": "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wait-timeout",
+        "version": "0.2.1",
+        "expected_sha256": "09ac3b126d3914f9849036f826e054cbabdc8519970b8998ddaf3b5bd3c65f11",
+        "archive_sha256": "09ac3b126d3914f9849036f826e054cbabdc8519970b8998ddaf3b5bd3c65f11",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wasi",
+        "version": "0.11.1+wasi-snapshot-preview1",
+        "expected_sha256": "ccf3ec651a847eb01de73ccad15eb7d99f80485de043efb2f370cd654f4ea44b",
+        "archive_sha256": "ccf3ec651a847eb01de73ccad15eb7d99f80485de043efb2f370cd654f4ea44b",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wasip2",
+        "version": "1.0.2+wasi-0.2.9",
+        "expected_sha256": "9517f9239f02c069db75e65f174b3da828fe5f5b945c4dd26bd25d89c03ebcf5",
+        "archive_sha256": "9517f9239f02c069db75e65f174b3da828fe5f5b945c4dd26bd25d89c03ebcf5",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wasip3",
+        "version": "0.4.0+wasi-0.3.0-rc-2026-01-06",
+        "expected_sha256": "5428f8bf88ea5ddc08faddef2ac4a67e390b88186c703ce6dbd955e1c145aca5",
+        "archive_sha256": "5428f8bf88ea5ddc08faddef2ac4a67e390b88186c703ce6dbd955e1c145aca5",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wasm-bindgen",
+        "version": "0.2.129",
+        "expected_sha256": "9bb54f33acc68fd454578d9820b0bde1a1a3d17aa17bb7b6595806d02886d409",
+        "archive_sha256": "9bb54f33acc68fd454578d9820b0bde1a1a3d17aa17bb7b6595806d02886d409",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wasm-bindgen-macro",
+        "version": "0.2.129",
+        "expected_sha256": "2e29d0c35b16e224a7eeb5cd2d25e3e1968fbd65604117b44d3b789d00ee8535",
+        "archive_sha256": "2e29d0c35b16e224a7eeb5cd2d25e3e1968fbd65604117b44d3b789d00ee8535",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wasm-bindgen-macro-support",
+        "version": "0.2.129",
+        "expected_sha256": "6f501a8bc3719dba86ef8ae4728879c08001bea749eb1333ac5b91e040e2a6b7",
+        "archive_sha256": "6f501a8bc3719dba86ef8ae4728879c08001bea749eb1333ac5b91e040e2a6b7",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wasm-bindgen-shared",
+        "version": "0.2.129",
+        "expected_sha256": "23f0c9c52aa7cd7d77769a4cfe2a9adb1b331f489a41d912ce14513d5ab995c6",
+        "archive_sha256": "23f0c9c52aa7cd7d77769a4cfe2a9adb1b331f489a41d912ce14513d5ab995c6",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wasm-encoder",
+        "version": "0.244.0",
+        "expected_sha256": "990065f2fe63003fe337b932cfb5e3b80e0b4d0f5ff650e6985b1048f62c8319",
+        "archive_sha256": "990065f2fe63003fe337b932cfb5e3b80e0b4d0f5ff650e6985b1048f62c8319",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wasm-metadata",
+        "version": "0.244.0",
+        "expected_sha256": "bb0e353e6a2fbdc176932bbaab493762eb1255a7900fe0fea1a2f96c296cc909",
+        "archive_sha256": "bb0e353e6a2fbdc176932bbaab493762eb1255a7900fe0fea1a2f96c296cc909",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wasmparser",
+        "version": "0.244.0",
+        "expected_sha256": "47b807c72e1bac69382b3a6fb3dbe8ea4c0ed87ff5629b8685ae6b9a611028fe",
+        "archive_sha256": "47b807c72e1bac69382b3a6fb3dbe8ea4c0ed87ff5629b8685ae6b9a611028fe",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "winapi",
+        "version": "0.3.9",
+        "expected_sha256": "5c839a674fcd7a98952e593242ea400abe93992746761e38641405d28b00f419",
+        "archive_sha256": "5c839a674fcd7a98952e593242ea400abe93992746761e38641405d28b00f419",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "winapi-i686-pc-windows-gnu",
+        "version": "0.4.0",
+        "expected_sha256": "ac3b87c63620426dd9b991e5ce0329eff545bccbbb34f3be09ff6fb6ab51b7b6",
+        "archive_sha256": "ac3b87c63620426dd9b991e5ce0329eff545bccbbb34f3be09ff6fb6ab51b7b6",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "winapi-x86_64-pc-windows-gnu",
+        "version": "0.4.0",
+        "expected_sha256": "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f",
+        "archive_sha256": "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "windows-link",
+        "version": "0.2.1",
+        "expected_sha256": "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5",
+        "archive_sha256": "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "windows-sys",
+        "version": "0.61.2",
+        "expected_sha256": "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc",
+        "archive_sha256": "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "winnow",
+        "version": "1.0.4",
+        "expected_sha256": "23b97319f7b8343df12cc98938e5c3eb436064524c8d2b4e30a1d3a36eecdf81",
+        "archive_sha256": "23b97319f7b8343df12cc98938e5c3eb436064524c8d2b4e30a1d3a36eecdf81",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wit-bindgen",
+        "version": "0.51.0",
+        "expected_sha256": "d7249219f66ced02969388cf2bb044a09756a083d0fab1e566056b04d9fbcaa5",
+        "archive_sha256": "d7249219f66ced02969388cf2bb044a09756a083d0fab1e566056b04d9fbcaa5",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wit-bindgen-core",
+        "version": "0.51.0",
+        "expected_sha256": "ea61de684c3ea68cb082b7a88508a8b27fcc8b797d738bfc99a82facf1d752dc",
+        "archive_sha256": "ea61de684c3ea68cb082b7a88508a8b27fcc8b797d738bfc99a82facf1d752dc",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wit-bindgen-rust",
+        "version": "0.51.0",
+        "expected_sha256": "b7c566e0f4b284dd6561c786d9cb0142da491f46a9fbed79ea69cdad5db17f21",
+        "archive_sha256": "b7c566e0f4b284dd6561c786d9cb0142da491f46a9fbed79ea69cdad5db17f21",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wit-bindgen-rust-macro",
+        "version": "0.51.0",
+        "expected_sha256": "0c0f9bfd77e6a48eccf51359e3ae77140a7f50b1e2ebfe62422d8afdaffab17a",
+        "archive_sha256": "0c0f9bfd77e6a48eccf51359e3ae77140a7f50b1e2ebfe62422d8afdaffab17a",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wit-component",
+        "version": "0.244.0",
+        "expected_sha256": "9d66ea20e9553b30172b5e831994e35fbde2d165325bec84fc43dbf6f4eb9cb2",
+        "archive_sha256": "9d66ea20e9553b30172b5e831994e35fbde2d165325bec84fc43dbf6f4eb9cb2",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "wit-parser",
+        "version": "0.244.0",
+        "expected_sha256": "ecc8ac4bc1dc3381b7f59c34f00b67e18f910c2c0f50015669dde7def656a736",
+        "archive_sha256": "ecc8ac4bc1dc3381b7f59c34f00b67e18f910c2c0f50015669dde7def656a736",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "zeroize",
+        "version": "1.9.1",
+        "expected_sha256": "e13084392c5e4bc371903e2935a5eaeed24905a7511356b883835e18a78f6879",
+        "archive_sha256": "e13084392c5e4bc371903e2935a5eaeed24905a7511356b883835e18a78f6879",
+        "source_directory_present": true,
+        "index_entry_present": true
+      },
+      {
+        "name": "zmij",
+        "version": "1.0.21",
+        "expected_sha256": "b8848ee67ecc8aedbaf3e4122217aff892639231befc6a1b58d29fff4c2cabaa",
+        "archive_sha256": "b8848ee67ecc8aedbaf3e4122217aff892639231befc6a1b58d29fff4c2cabaa",
+        "source_directory_present": true,
+        "index_entry_present": true
+      }
+    ],
+    "other_existing_caches_independently_checked": [
+      {
+        "path": "/workspace/scratch/349a1991e091/cargo-home",
+        "matching_archives": 156,
+        "source_dirs": 156,
+        "index_entries": 156
+      },
+      {
+        "path": "/home/agent/.cargo",
+        "matching_archives": 156,
+        "source_dirs": 156,
+        "index_entries": 156
+      }
+    ],
+    "validation_algorithm": "Parse exact-base Cargo.lock using tomllib; for every registry package hash cache/name-version.crate with hashlib.sha256 and compare to package.checksum, then check extracted source directory and the sparse-index name path. All operations were file reads.",
+    "fuzz_graph": {
+      "lock_sha256": "c6c47bf71d51a8f046874418c81097cd03697de09d1149f2ad7839d1713107ae",
+      "registry_packages": 137,
+      "5778_missing_archives": [
+        "arbitrary-1.4.2",
+        "jobserver-0.1.35",
+        "libfuzzer-sys-0.4.10"
+      ],
+      "349a_all_archives_checksum_match": 137,
+      "349a_extra_packages": [
+        {
+          "name": "arbitrary",
+          "version": "1.4.2",
+          "archive": "/workspace/scratch/349a1991e091/cargo-home/registry/cache/index.crates.io-1949cf8c6b5b557f/arbitrary-1.4.2.crate",
+          "expected_sha256": "c3d036a3c4ab069c7b410a2ce876bd74808d2d0888a82667669f8e783a898bf1",
+          "observed_sha256": "c3d036a3c4ab069c7b410a2ce876bd74808d2d0888a82667669f8e783a898bf1",
+          "source_unpacked": false,
+          "index_entry_present": false
+        },
+        {
+          "name": "jobserver",
+          "version": "0.1.35",
+          "archive": "/workspace/scratch/349a1991e091/cargo-home/registry/cache/index.crates.io-1949cf8c6b5b557f/jobserver-0.1.35.crate",
+          "expected_sha256": "1c00acbd29eabad4a2392fa0e921c874934dbbf4194312ad20f04a0ed67a3cb3",
+          "observed_sha256": "1c00acbd29eabad4a2392fa0e921c874934dbbf4194312ad20f04a0ed67a3cb3",
+          "source_unpacked": false,
+          "index_entry_present": false
+        },
+        {
+          "name": "libfuzzer-sys",
+          "version": "0.4.10",
+          "archive": "/workspace/scratch/349a1991e091/cargo-home/registry/cache/index.crates.io-1949cf8c6b5b557f/libfuzzer-sys-0.4.10.crate",
+          "expected_sha256": "5037190e1f70cbeef565bd267599242926f724d3b8a9f510fd7e0b540cfa4404",
+          "observed_sha256": "5037190e1f70cbeef565bd267599242926f724d3b8a9f510fd7e0b540cfa4404",
+          "source_unpacked": false,
+          "index_entry_present": false
+        }
+      ],
+      "agent_home_missing_archives": [
+        "arbitrary-1.4.2",
+        "libfuzzer-sys-0.4.10"
+      ],
+      "note": "All 137 fuzz archives are present with correct checksums in 349a, but the three extras lack unpacked sources and sparse-index entries there. No checked single Cargo home has all fuzz archive/source/index inputs. Main 156 is complete in all three. No index was manufactured and no Cargo resolution or unpack was run by this auditor.",
+      "per_home_extra_availability": {
+        "/home/agent/.cargo": {
+          "arbitrary-1.4.2": {
+            "archive": false,
+            "source": false,
+            "index_version": false
+          },
+          "jobserver-0.1.35": {
+            "archive": true,
+            "source": true,
+            "index_version": true
+          },
+          "libfuzzer-sys-0.4.10": {
+            "archive": false,
+            "source": false,
+            "index_version": false
+          }
+        },
+        "/workspace/scratch/5778f0ffb5d4/cargo-home": {
+          "arbitrary-1.4.2": {
+            "archive": false,
+            "source": false,
+            "index_version": false
+          },
+          "jobserver-0.1.35": {
+            "archive": false,
+            "source": false,
+            "index_version": false
+          },
+          "libfuzzer-sys-0.4.10": {
+            "archive": false,
+            "source": false,
+            "index_version": false
+          }
+        },
+        "/workspace/scratch/349a1991e091/cargo-home": {
+          "arbitrary-1.4.2": {
+            "archive": true,
+            "source": false,
+            "index_version": false
+          },
+          "jobserver-0.1.35": {
+            "archive": true,
+            "source": false,
+            "index_version": false
+          },
+          "libfuzzer-sys-0.4.10": {
+            "archive": true,
+            "source": false,
+            "index_version": false
+          }
+        }
+      },
+      "offline_resolution_established": false
+    },
+    "official_fuzz_index_metadata": {
+      "directory": "/workspace/scratch/a4188f5c86b5/coordination/official-fuzz-index-20261111",
+      "official_commit": "e01f438da0564e13f027e5d06b5e2688e05e13cf",
+      "provenance_file": "provenance.json",
+      "provenance_sha256": "107c7510134662ffd6389d82414f8a4d23e3c244ecb455f85bd23d93cd960176",
+      "source_blobs": {
+        "arbitrary": "313d7041fdd682935cb938e859a9d236db7aa131",
+        "libfuzzer-sys": "a901475a6ad33c12935115b73ff508d4192a7071"
+      },
+      "exact_versions_verified": [
+        "arbitrary 1.4.2",
+        "libfuzzer-sys 0.4.10"
+      ],
+      "official_archive_and_lock_checksums_match": true,
+      "registry_cache_updated_by_auditor": false,
+      "offline_graph_rerun_by_auditor": false
+    }
+  },
+  "environment": {
+    "PATH_prefix": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin",
+    "RUSTC": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustc",
+    "RUSTDOC": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustdoc",
+    "CARGO_HOME": "/workspace/scratch/5778f0ffb5d4/cargo-home",
+    "CARGO_TARGET_DIR": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_NET_OFFLINE": "true",
+    "CARGO_TERM_COLOR": "never",
+    "RUST_TEST_THREADS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "OPENSSL_DIR": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install",
+    "OPENSSL_LIB_DIR": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/lib",
+    "OPENSSL_INCLUDE_DIR": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/include",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "602358804a2befa2964a1095be46d0c0b8ec18178961ebc632ad72080e4f49ad",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/lib/ossl-modules"
+  },
+  "not_yet_executed": [
+    "cargo metadata --locked --offline --all-features --manifest-path trillionnium/Cargo.toml --format-version 1",
+    "cargo metadata --locked --offline --manifest-path tests/fuzz/Cargo.toml --format-version 1",
+    "any build/test/Clippy/fmt run on the local isolated source"
+  ],
+  "workspace_disk_free_bytes_at_report": 10135203840,
+  "preservation": "No source worktree, dependency cache, toolchain or provider file was modified by this audit. Only this coordination report is written.",
+  "supply_chain_prerequisites": {
+    "fixed_cargo_deny_version": "0.20.2",
+    "required_binary": "${TRNM_CI_TOOL_ROOT:-${RUNNER_TEMP:-/tmp}/trnm-ci-tools}/deny-0.20.2/bin/cargo-deny",
+    "binary_found_in_checked_locations": false,
+    "advisory_databases_in_all_three_existing_cargo_homes": 0,
+    "exact_recipe_order": [
+      "cargo-deny --version must equal cargo-deny 0.20.2",
+      "cargo fetch --locked --manifest-path trillionnium/Cargo.toml",
+      "cargo fetch --locked --manifest-path tests/fuzz/Cargo.toml",
+      "cargo-deny --manifest-path trillionnium/Cargo.toml --config deny.toml --locked fetch db",
+      "require exactly one clean advisory-dbs/*/.git with RustSec official origin; archive actual database commit/tree",
+      "for both graphs: cargo-deny --all-features --frozen --format json check advisories licenses bans sources"
+    ],
+    "script": "scripts/ci/run_supply_chain.py",
+    "constraints": [
+      "Source must be clean committed; pin_source refuses dirty source.",
+      "TRNM_CI_RECEIPT_DIR/supply-chain must be a fresh path outside the checkout.",
+      "CARGO_HOME must be explicitly set.",
+      "CARGO_NET_OFFLINE=true makes Cargo fetch use existing crates; it does not establish the explicit cargo-deny fetch db step can succeed without a tool/database/network.",
+      "Do not skip, replace or soften the supply-chain command; preserve a real failure independently of later native/Clippy results."
+    ],
+    "lane_not_executed": true,
+    "cargo_deny_source_archives_in_three_caches": [],
+    "cargo_deny_extracted_sources_in_three_caches": [],
+    "rustsec_crate_archives_in_three_caches": [],
+    "executable_scan": {
+      "command": "rg --files --hidden --no-ignore -g cargo-deny -g !**/evidence/** -g !**/tests/** /workspace/scratch /opt /usr/local /tmp /home/agent/.cargo/bin",
+      "matches": [],
+      "completed": true
+    }
+  },
+  "rust_baseline_python_prerequisites": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "python_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "entry_script_count": 19,
+    "resolved_local_module_count": 31,
+    "nonstdlib_imports": [
+      {
+        "package": "cryptography",
+        "version": "50.0.0",
+        "actual_import_succeeded": true,
+        "symbol_imported": "cryptography.hazmat.primitives.asymmetric.ed25519.Ed25519PublicKey"
+      }
+    ],
+    "method": "AST import closure over the original rust-baseline Python entry scripts; no lane/tests were run.",
+    "common_build_tools_present": [
+      "/usr/local/bin/git",
+      "/usr/bin/gcc",
+      "/usr/bin/cc",
+      "/usr/bin/ar",
+      "/usr/bin/make",
+      "/usr/bin/pkg-config"
+    ]
+  }
+}

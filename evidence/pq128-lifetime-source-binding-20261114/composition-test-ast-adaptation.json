@@ -1,0 +1,26 @@
+{
+  "schema": "original-composition-controls-adaptation-v1",
+  "original_test_count": 60,
+  "current_test_count": 60,
+  "method_names_identical": true,
+  "changed_methods": [
+    "SourceInspectionTests.test_real_inspection_binds_65_distinct_declared_sources_and_four_scopes",
+    "SourceInspectionTests.test_cli_inspection_returns_hold_and_null_not_a_security_pass"
+  ],
+  "unchanged_method_ast_count": 58,
+  "only_ast_changes": [
+    {
+      "old_integer": 45,
+      "new_integer": 46
+    },
+    {
+      "old_integer": 65,
+      "new_integer": 66
+    }
+  ],
+  "all_other_method_ast_identical": true,
+  "lifetime_58_test_bytes_sha256": "721ed07762d84cde999c16cdc519b4b796e407d8d3a224aa96956fd2c2d2115f",
+  "lifetime_reader_bytes_sha256": "eba31bee86b025a55c45cf8a86ad95bb85db1221af9c1ccd38799666e512555e",
+  "changed_assertion_lines": 3,
+  "changed_integer_literal_nodes": 4
+}

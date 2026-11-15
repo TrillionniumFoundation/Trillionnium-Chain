@@ -1,0 +1,27 @@
+{
+  "schema": "cell-ready-original-controls-v1",
+  "base_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "source_path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+  "original_blob": "71e7a36bc9ba448fd9383baa0f758c9c55836df0",
+  "candidate_source_sha256": "705e4c5190c889ed1930b86817d1209b1332934a39e442c0e2743aaec66f01d0",
+  "original_assertion_occurrences": 32,
+  "candidate_assertion_occurrences": 34,
+  "missing_original_assertions": {},
+  "added_assertions": {
+    "assert:matches!(result,Ok(Ok(())))": 1,
+    "assert:Instant::now()<self.deadline": 1
+  },
+  "original_tests": [
+    "tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint",
+    "tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication",
+    "tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial"
+  ],
+  "candidate_tests": [
+    "tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint",
+    "tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication",
+    "tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial"
+  ],
+  "tests_unchanged": true,
+  "result": "PASS",
+  "scope": "Compare original assert/assert_eq/assert_ne condition tokens (diagnostic messages excluded), with nested delimiters and quoted strings; not a runtime test or Rust semantic proof."
+}

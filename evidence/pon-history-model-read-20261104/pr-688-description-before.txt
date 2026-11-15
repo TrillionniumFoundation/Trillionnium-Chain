@@ -1,0 +1,477 @@
+<!-- history-recovery-3898f6a6-begin -->
+## 2026-11-04 continuation — implementation fixes and source-bound evidence; public acceptance HOLD
+
+Implementation: [c9f4e9af](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/c9f4e9aff6490fd6dcba1cdf6fe2e513243dbc8f), [39839288](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/39839288cd112930f1f334b31c8fcb10ded43e28), [0b2e9839](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/0b2e98399fbb0c52fa03c3eee39d179b64729710). Concurrent work through 00099642 is preserved. Evidence publication: [66e15a37](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/66e15a37d1cc993d501e7c6f2d4f5395b4fdc735); [complete records](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/66e15a37d1cc993d501e7c6f2d4f5395b4fdc735/evidence/pon-final-resource-completion-20261104/README.md).
+
+### Changes
+
+- Fence otherwise-successful History completion after its final original Host observation, preserving existing resource/native error priority, settled CPU and durable packet/activation facts.
+- Avoid the unused new-block wire allocation while retaining the same grammar checks, full duplicate comparison, W1, M06 and persistence encoding.
+- Keep driver acceptance unchanged; separately report observed child termination, report acceptance and unexecuted stages.
+- Preserve the original PQ fixture send error while observing actual worker join and owned Child exit under one cleanup deadline. Retain live owners, private directories and bounded captured output on incomplete cleanup.
+- Fix the independent oracle's rejection of the source-declared reorg_lifecycle_v1 table; retain exact schema equality and read/replay budgets. Add one ordinary real-DDL control, preserve all 28 original methods, and bind the new 29th method in both registries and the generated documentation table.
+
+### Exact implementation source 0b2e9839
+
+Tree: `cf311688d30689663cb3c2ef92c287c1a09d27fb`. Rust 1.95.0, repository original profiles, no compiler/profile overrides; source guards before and after every phase.
+
+- **15 selected ordinary native controls PASS**, zero failed/ignored. The **999-name** Node registry retains every original **974** name; the entire registry was not locally executed.
+- **One independent SQLite DDL control PASS**; complete 29-test oracle execution remains separate.
+- **134 source/driver/applicability controls PASS** (34 + 34 + 63 + 3); full applicability and maturity contracts pass.
+- Strict complete-workspace/all-target/all-feature Clippy, fmt, 384 corpus pins, links, inventory and three locked Cargo graphs pass; both lockfiles remain unchanged.
+
+Raw records preserve earlier source identities and the initial documentation-table drift failure. Two added legitimate-request PQ controls failed before Submit when this executor denied Unix socket binding; neither is counted as passed.
+
+### Original failures remain source-bound
+
+The old 362 x64 Node-head run remains **950/1/23**, with FRAME_EOF and a parent-side 250 ms witness deadline; missing child evidence prevents a complete root-cause claim. Later 362 ARM and runtime Node invocations are separately **951/0/23**. Both old runtime jobs still failed their subsequent 28-test Python oracle (15 failures, 9 errors). These outcomes do not qualify newer source.
+
+Historical F0 remains **2/6 on 362** and **1/6 on be0**, both **0/6** under the scheduled four-second SLO. Both retained campaigns remain **3/27**, preserving unobserved slots. Work hardness/rejection economics, original service capacity, heterogeneous/quantum/DAA assumptions, independent operators/evaluators, useful model evidence, custody, economics, irreversible external effects, whole-chain PQ and release/activation remain **HOLD**. The PR remains Draft.
+
+[01627151](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/01627151f3ab50750eac2adeb46d8883a601265f) corrects measured-source attribution. Its original-profile Node build, strict workspace Clippy, fmt and source/pin/link checks pass. Concurrent 2eb/000996 preserve exact History bindings and atomic test-marker publication; native acceptance remains separate.
+<!-- history-recovery-3898f6a6-end -->
+
+<!-- six-axis-bbcb3804 -->
+**[Six-axis evidence](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2eb7bc8c798c70901e7cb0a6b0f42534fa3c48f0/evidence/pon-six-axis-continuation-20261104/README.md):** frozen be0 W1/recent/PQ/growth matrices pass. F0: 1/6, four-second SLO: 0/6; campaign: 3/27. All failed/unobserved rounds retained. Later-source gates remain separate. Long-History x64 merge: [FAIL](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41753071579/job/126326315191), controller exit 1; inner reason not exposed. Other long lanes remained open at 02:18 UTC. **HOLD**.
+
+<!-- runtime-fixture-b28098c-begin -->
+## Source-bound recovery, retained failures and current blockers
+
+**Draft / HOLD.** C3 recovery [362fbebe](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/362fbebe5027d731f16c88f710bfef7e922cd230) and its [complete original record](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/362fbebe5027d731f16c88f710bfef7e922cd230/evidence/pon-runtime-fixture-closure-20261103/hosted-current/README.md) remain intact. Later sources require their own execution. Repeated lanes and nested child harnesses do not add unique tests.
+
+### C3 correction and retained local scope
+
+Production recovery recognizes only exact authenticated UNKNOWN_PARENT / PUBLIC_MUTATION_CPU_BUDGET fields after signature, request-context and deadline checks. Remote errors remain untyped; local EOF, owner-fatal policy, original retry caps, Head–History–Head membership, complete packet bytes and ACK facts remain. Fixture mutations use the original CPU-owner domain, real pinned Head startup, and unwind-safe joining. All original 24 TCP tests and 194 assertions remain; six signed lookalikes extend an existing negative matrix.
+
+C3 original-profile execution: TCP **24/0/0** in 16.21s; ten error-identity controls and original EOF/stage control pass. Formatter, complete-workspace/all-target/all-feature strict Clippy and 68 source-integrity controls pass. The 974-name listing is not a complete local suite. Preserve the original abort and intermediate 21/3 failure.
+
+### Original failures now read from complete retained archives
+
+The [bounded archival reader](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41758146867/job/126339061318) checks all seven original ZIP identities, exact lengths and SHA-256, then reads bounded data without executing archived code. Its [retained output](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41758146867/artifacts/13289071495) is 245,587,295 bytes, SHA-256 ae37c5587f84225da163694944538e2d96922046b2abc2fe7f299cf70214c026. Reader success is not native acceptance; the first reader failure is retained.
+
+- C3 x64 HEAD, run41746463373/job126300605830: **950 PASS / 1 FAIL / 23 ignored**, exit101, 1196.51s. The sole failed selector is `store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart`; its actual panic is FrameEof / Transport / FRAME_EOF. Do not infer the missing complete child cause or erase this result with another lane.
+- C3 runtime HEAD, run41746463238/job126307454181: full Node **951/0/23**, then independent Python storage oracle **28 tests, 15 failures, 9 errors**, including NATIVE_STORAGE_TABLE_NAME. Later 39839288 repairs the identifier grammar; 0b2e9839 repairs the new test's registrations. Their selected local controls are not the complete oracle run.
+- Both original C2 ARM 4105-history jobs, run41732369945/jobs126277462314 and126277462527: **0 PASS / 1 FAIL**; actual server logs say lifetime_expired at the unchanged 1800s limit, followed by IO111. Native durations are 3662.07/3711.55s. These are independently read ARM failures; last printed replay2500 is not final height.
+- C3 original three-run campaign remains **3/27**: each run baseline1/3, from-zero0/3, late-product0/3, with all three command exits101. C3 F0 attempt1 remains2/6, scheduled4s0/6; later attempts do not replace it.
+
+### Later source-bound native results
+
+Formatter correction [f35ee6dc](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/f35ee6dc61feaba7c68b16e1f9384b5c3794a976) changes only two test files and one existing corpus pin; all 384 pins and original test definitions remain. [Its four-lane PQ run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41752900431) executes the original 43 control commands and strict Clippy successfully in every lane. Full Node x64 HEAD, x64 merge and ARM merge each report **968/0/25**; ARM HEAD reports **967/1/25**, exit101. Its sole failure is `ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks`: ready marker read empty while expecting admitted. Epoch/W1/M06 cuts actually observed SIGKILL9; later admitted/activated assertions were not executed in that invocation.
+
+[be0d's four-lane PQ run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41753071537) subsequently reports **968/0/25 per lane**, with all 43 commands and strict Clippy exit0. Exact actual merge is d8c95604f6c73f0df5b8dfb23dc4061efa62f94b, same tree0042b3212d0960d10e31fdbe8a92a57c50dedd90. This neither erases f35's intermittent failure nor qualifies c9f/0b2/2eb or the pending marker correction.
+
+Concurrent final-resource completion, PQ fixture diagnostics, oracle/registration fixes and W1 History reader27/1 controls are preserved. Marker repair [00099642](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/00099642bb4d3d9bb7f0f428a65f401c1c1a2c47) follows2eb by normal fast-forward. Only the test helper and one existing pin change: same-directory pending-write/rename retains all five cuts, original20s/30s deadlines and every recovery assertion. Full readback:7,986files/929,288,390bytes;384pins. Exact parent-tree preflight passed. New-source native validation remains pending.
+
+### Complete service still fails
+
+Frozen be0d [F0 and three-run full-cost evidence](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2eb7bc8c798c70901e7cb0a6b0f42534fa3c48f0/evidence/pon-six-axis-continuation-20261104/README.md): F0 **1/6**, scheduled4s **0/6**; campaign **3/27** with12 observed and15 unobserved planned rounds. All51 client imports remain:42 accepted,9 deadline failures. Wide commit includes persistence, full readback and publication fences, not isolated SQL COMMIT/fsync. Nested Host/worker/import CPU intervals are not additive. Component speed observations do not qualify complete service.
+
+Original four-second hostile confirmation, F0/campaign, long-history, complete current-source native/oracle coverage and full-path performance remain open. Work-security/economics/quantum/PQ, independent hardware/operators/review/evaluation, model/custody/external-effect and release gates remain HOLD. The unavailable executor's incomplete local SQL-observer wiring remains unpublished. No main merge, activation or all-blocker closure is claimed.
+<!-- runtime-fixture-b28098c-end -->
+
+
+
+<!-- pq-native-proof-scope-1c18878c-begin -->
+## PQ proof scope — native W1 and future succinct backend
+
+Published source: [1c18878c42727e5261c7706d996fbfb672a8dc3c](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/1c18878c42727e5261c7706d996fbfb672a8dc3c), tree `43c72c7d10df6992bafc55f9fa77e2aa760f1837`, sole parent `9f04640877078204d367f753eba684d94e705a74`. The normal expected-head fast-forward preserves the concurrent History continuation and PQ witness implementation.
+
+The two existing qualification documents now state that actual Node acceptance uses the complete native PNW1 relation. The isolated RISC Zero experiment is not a Node backend. Native relation/verifier and per-purpose hash obligations remain; guest/compiler, FRI, Fiat–Shamir, recursive proof and final-verifier obligations are explicitly additional requirements before accepting a succinct backend. RISC Zero's component estimates do not assign a security-bit level to the current native Node.
+
+Exact change: **three files, +5/-5 lines**. Two documentation blobs and their two corpus pins change; all other **374 pins**, qualification fields and executable source remain identical to the parent. Both new relative source links resolve to tracked regular files.
+
+On the exact `9f046408` source plus this three-file overlay, the original project preflight (26 packages), claim guard, 376-blob corpus check and whitespace check pass. Original claim-guard tests: **22 passed**. Original corpus/integration tests: **34 passed**. Before/after overlay hashes match; published blobs were independently read back against the tested bytes. The claim guard still reports all six gates **UNQUALIFIED**, `whole_chain_pq_qualified=false`, `pq_128_qualified=false` and `production_activation=false`.
+
+**DRAFT / HOLD.** These are documentation and source-contract observations. Native witness validation remains bound to its frozen `45962558` source and is recorded separately below; this publication supplies no new native runtime or combined Chain/Hepta deployment result.
+<!-- pq-native-proof-scope-1c18878c-end -->
+
+<!-- history-close-deadline-9f046408-begin -->
+## History completion deadline — reviewed candidate, execution pending
+
+Current published head: [9f04640877078204d367f753eba684d94e705a74](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/9f04640877078204d367f753eba684d94e705a74); tree `e14998899cb4cc212b54fc3fc4bd3d6668b0e035`; sole parent `45962558a7133375b16c0ac2600f2edb4a115585`. The expected-head, non-forced fast-forward preserves the PQ witness pre-CAS continuation and the full earlier composition.
+
+The ordinary History wrappers now check the **original absolute deadline after mandatory CPU settlement and epoch closure**. Only an otherwise successful result can become a deadline error. Cleanup errors retain priority, then the original native error. The final check adds no Host observation, new budget or refund. A cleanly closed epoch stays closed; durable packet/activation facts remain available to the existing exact-identity reconciliation path.
+
+Three ordinary Linux controls are prepared for late-success refusal, native-error priority, paid accounting, clean cold reopen, real valid-packet COMMIT and exact retry without another W1 verification. **They are unexecuted.** They expire the deadline before native completion and then require cleanup; they do not separately measure expiry occurring only inside cleanup. This cooperative result check does not preempt a blocking native call or establish public-service timing.
+
+### Exact scope and verification
+
+- Full recursive tree readback confirms **only 8 declared file changes** relative to `45962558`, with every concurrent blob preserved: three History source/test files, embedded source inventory, corpus pins, sole-plan appendix and two evidence files.
+- The production diff is exactly the two final checks; the existing test-module diff is only the new include. A source-only renderer reproduces the unchanged parent's inventory exactly before adding the module: **1,157 embedded paths**.
+- The corpus has **376 pins / 288 required paths**. Exactly two existing History pins change and one module pin is added. All four concurrent PQ pin updates and every other qualification/configuration field remain.
+- Project preflight ran before the original local edits. **The execution environment failed before building or running this recovered combination.** Recovered-test formatting, exact-source preflight/graphs, strict Clippy, all three new controls and retained native regressions remain **PENDING**. No local combined checkout/import or fresh command result is claimed.
+- Earlier `116a3ca` CodeQL/export successes bind that earlier source only. Fresh workflows for this head have been created and were queued/pending at readback; no new acceptance result is claimed.
+
+[Candidate explanation](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9f04640877078204d367f753eba684d94e705a74/evidence/pon-history-close-deadline-20261103/README.md) · [Machine-readable status](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9f04640877078204d367f753eba684d94e705a74/evidence/pon-history-close-deadline-20261103/status.json) · [Original required baseline](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41693918071)
+
+**DRAFT / HOLD.** The signed-DAG Host fixture mismatch, original public-service gates, W1 rejection economics and cheapest-legal-work evidence, heterogeneous/quantum assumptions, independent operators/evaluators, model gain, custody, external-effect safety and whole-chain PQ remain open. All-blocker closure, public readiness and activation authority remain false. Prior failures and earlier source-scoped results below are retained.
+<!-- history-close-deadline-9f046408-end -->
+
+<!-- pq-precas-45962558-begin -->
+## PQ witness consistency — frozen 8a74 native pass, hosted ARM failure retained
+
+Implementation: [45962558](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/45962558a7133375b16c0ac2600f2edb4a115585). Regression repair: [8a74a9e4](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/8a74a9e42a9efbc52d83e861f64f03efd40f1406). [Complete immutable evidence at 12171edc](https://github.com/TrillionniumFoundation/Trillionnium-Chain/tree/12171edc890df1611bf68503038bfad3d66a5a88/evidence/pq-component-validation-20261103) adds 69 evidence files and changes no production file.
+
+The client rejects CAS arguments contradicted by its last authenticated checkpoint before signing or transport. Local refusal leaves it usable. Exact retry still reaches the real owner, and legitimate unobserved writer progress remains allowed. Wire/schema, three-table root and original 250 ms budget are preserved.
+
+The repaired original test retains exact retry, skip and wrap. It checks local `PQ_WITNESS_OBSERVATION_ROLLBACK`, client availability and unchanged head, then uses a fresh unobserved client sharing the same real owner to retain `PQ_WITNESS_CAS`. At the 8a74 repair, only that test and its one corpus pin changed from `3898f6a6`; the other 375 pins and all remaining corpus fields were unchanged.
+
+### Final source-bound native verification
+
+Exact source: `8a74a9e42a9efbc52d83e861f64f03efd40f1406`, tree `3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7`. Every command verified identical before/after source: **7,536 tracked entries / 872,317,779 bytes**.
+
+| Observation | Actual result |
+| --- | --- |
+| Preflight, compiler, locked Linux graph, original formatter, no-run build, postflight | All exit 0 |
+| Strict Node Clippy, all features, lib/tests, `-D warnings` | Exit 0 |
+| Complete `pq_rollback_witness` inventory and runtime selector | **45 passed / 0 failed / 0 ignored / 922 filtered out**, exit 0 |
+| Final durable job `1a1a2e9ee80-96a-7564` | Succeeded; exit 0; not cancelled/timed out; complete, untruncated output |
+
+The 45 entries include **one child-process harness**, leaving 44 entries after excluding that helper. All **38 original required witness controls**, both added controls and the repaired CAS regression are present and pass; these are overlapping counts, not additional tests. This is not a whole-Node or hosted-matrix pass.
+
+Validation retained Rust 1.95, the original Node test profile, one build job, a single test thread and the pinned OpenSSL 3.5.9 provider with reverified inputs. No assertion or business budget was relaxed. The final executable is separately identified by length and SHA-256 in the evidence; no binary is shipped.
+
+### Original observations retained
+
+- [Hosted run 41691371037](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41691371037): all four x64/ARM × HEAD/merge lanes retain **42/1** original controls and **940/1/23 ignored** full-Node results. Build/strict Clippy and both new tests passed, but all original full runs remain **FAILURE**. All eight ZIP identities and 652 full-artifact member bytes are preserved; 636 earlier control members are identical to their paired full artifacts.
+- Original separate X230 `45962558` build/strict Clippy/provider-smoke success is retained without claiming runtime tests there. Earlier missing sparse inputs, incomplete dependency caches and the executor-lost native build remain failed/UNKNOWN observations with their original scope.
+- The initial repair composition's History-format failure remains recorded. The exact later composition passed the original full formatter, guards and source pins.
+- Proof-scope documentation `1c18878c` passed **22** claim-guard tests and **34** source-corpus tests. Guard success keeps all six qualifications unqualified; it is not a cryptographic proof.
+
+Later `b28098c` committed-CAS/fixed-Host changes and `af570eae` History evidence are preserved as ancestors of the evidence commit. **The 45-entry result belongs to 8a74 and is not assigned to those later changes.** Exact `af570eae` project preflight passed without native tests. 
+
+### Separate 8a74 hosted readback — x64 passes, ARM failure retained
+
+[Immutable supplement at 8ebded73](https://github.com/TrillionniumFoundation/Trillionnium-Chain/tree/8ebded733d90bf74e7d8e3adbd2458ad8b572159/evidence/pq-hosted-readback-20261103-41704279631) adds 11 evidence files only. It preserves all 487 original members from three official artifacts, original ZIP identities and an unchanged summary, with independent archive/member readback. The earlier 69-file evidence and all original failures are unchanged.
+
+For [run 41704279631](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41704279631), both x64 HEAD and actual prospective merge `6ab5906347c148ca2def1c0bb02a187ece51c77f` (same tree `3d3ab7ff`) completed successfully: each **43 passed / 0 failed** original controls, **944 passed / 0 failed / 23 ignored** full-Node tests, and build/strict Clippy exit 0.
+
+**ARM64 HEAD retains 42 passed / 1 failed** original controls. `guarded_charge_pending_revocation_survive_service_cold_restart` failed at pending-request creation, before revocation/restart. Original observer records show an external CAS committed, then `service_final` returned `PQ_WITNESS_DEADLINE`; the client obtained no matching receipt and did not attempt local commit. The original command, complete log and exact source are retained. These observations do not establish storage/scheduling causation or justify a flaky label.
+
+At **20:48:38 UTC**, both ARM full regressions were still in progress. No complete ARM result is included in this capture. The later `b28098c` completed-CAS receipt change directly corresponds to this service-final path, but **this is not evidence of a same-configuration ARM pass on b28098c**. No source result is reassigned and no failure is waived.
+
+**DRAFT / HOLD.** No whole-state witness, complete authority migration, independent custody/recovery, original-capacity, WAN, quantum-work, production or whole-system PQ-128 qualification is supplied.
+<!-- pq-precas-45962558-end -->
+
+<!-- composed-116a-begin -->
+## Composed continuation — bounded root values and preserved concurrent controls
+
+Published head: **`116a3caf6046dd0db3caf1d0797e636c35c877b8`**, tree **`e07dee8cad7727845063ced35933c9408341945d`**. Ordered parents are the published concurrent `0443a5e` continuation and the separately validated `1c41b3b` candidate. Publication used a normal fast-forward with expected-head comparison; both histories and their failed observations remain.
+
+Repeated identical string values were retained and charged independently across root keys. The protocol now shares only immutable raw bytes after complete byte equality, keeps every key's original hash/canonical validation, and charges each actual retained allocation once. New-key hashing, the 2 MiB per-payload and 16 MiB retained-charge limits, error order, authorization and commit ownership remain in force. The temporary lookup is bounded by the existing retained/pending entries and discarded after the operation. It is not an authorization cache or a whole-state snapshot cache.
+
+This composition also preserves the concurrent PQ `FnOnce` operation helper and its four observation controls; keeps both parents' arithmetic tests; combines actual Cell serving-thread/database readiness, a shared bounded setup acceptance cutoff, bounded failure diagnostics, the real slow-start control and the original successor TTL timing; and adds the missing native inner-error readback after the original CPU/timing snapshots. No extra request retries or larger runtime budgets are introduced. The previously rejected borrowed-state experiment remains outside the default Node path, with its failed wall-time conditions retained.
+
+### Validation of this exact composed source
+
+- Clean committed-source fences, original preflight, locked main/fuzz graphs, formatting and complete-workspace `clippy --all-targets --all-features -- -D warnings`: **PASS**.
+- Original repository/inventory/source-pin/negative/CI-contract checks: **166 tests, 0 failed, 0 skipped**; 375 source pins, 1,838 local links, 1,078 Rust files.
+- Local `--workspace --lib --all-features` test-profile build: **exit 0**, 503.357 s; actual Node opt3 / M06 opt1 and assertions/overflow checks retained. This local library scope does **not** replace the original hosted complete `--all-targets` build, ARM lanes or service acceptance.
+- The planned local **52 native commands plus two readback controls completed**, with final source and all four ELF hashes unchanged. **50 native commands succeeded; two failed.** The original combined summary remains failed, including the initial DA parser failure.
+- Original CPU selectors plus reactor controls: **four separate native commands and four original execution readers PASS**.
+- Complete Protocol: **58 passed / 2 original ignored**; complete M06: **102 / 6**; complete DA: **173 / 0**. DA's initial strict reader rejected intentional child-process stdout; a separate source-bound reader correction validates the same unchanged raw log and all 173 names, without overwriting that first failure.
+- Complete Node: **938 passed / 1 failed / 23 original ignored**. The original 43 individually selected PQ commands: **42 passed / 1 failed**. Both failures are the preplanned independent executions of the combined witness-process test: `UnixListener::bind` returned OS `EPERM` before its first ready event. Parent and child diagnostics show zero entered transport/CAS operations. The actual failures remain; no path/permission/transport bypass or extra retry was added. The full library's two 65,536-account capacity/refund/reorg/cold-reopen controls passed.
+- Complete authenticated group: **86 passed / 0 failed / 0 ignored**; original **86 / 23 post-write** reader and all **32 retained-delta observations** passed. The original four cases, four pairs and two arms remain complete; this is test-profile integrity evidence, not release or public-service performance acceptance.
+- The retained opaque-builder compile-fail doctest: **one PASS** on clean unchanged `116a`.
+- Exact-head CodeQL Actions, Python and Rust analyses completed; GitHub Advanced Security check **126095733488** now reports **success / no new alerts in changed code**. The API-provided Rust SARIF subset still contains 500 hard-coded-value and six cleartext-logging warnings. Earlier neutral/missing-Rust state and the exporter's false/null qualification fields remain separate readbacks; no alert was dismissed and no independent security acceptance is inferred.
+- Original GitHub HEAD / actual-merge and x64 / ARM workflows continue. The first published **ARM actual-merge PQ selector artifact** has **43/43 native and original-reader successes**, independently bound to `4f10f1858ca9dbf6fdfb55e2abce569bca21acbe`; it does not replace the later whole-library or original-budget CPU gates.
+- A separate correction is being prepared for an original `0443` runtime failure: all 18 delivery samples reached the client's public import without the required real Host parent. Other nonignored public-import fixtures are being checked for the same setup omission. This pending correction is not included in `116a`, and the original 200 ms PQ deadline failure on `0443` remains unchanged.
+
+### Evidence and limits
+
+The [composition record](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/116a3caf6046dd0db3caf1d0797e636c35c877b8/evidence/pon-concurrent-composition-20261103/README.md) preserves exact source resolutions and the prior candidate's full-workspace validation package, including the original failed authenticated run and separate same-ELF correction. The [finite value-sharing campaign](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/116a3caf6046dd0db3caf1d0797e636c35c877b8/evidence/pon-ci-closure-20261103/README.md) retains all 700 planned observations (660 successes, 20 RANGE, 20 LIMIT) from five ordered A/B pairs. On that measured component candidate, the paired warm repeated-value root median ratio was 0.146362 and complete-commitment ratio 0.621036. Collision warm-root median 1.049715 was narrowly below the original 1.05 limit and an individual pair regressed to 1.222894; no universal/tail/ARM/service nonregression is claimed, and these measurements are not relabeled as a new composed-binary campaign.
+
+**DRAFT / HOLD remains.** Original four-second, F0 and thirty-second confirmation gates, original-budget ARM results, whole-chain PQ/security acceptance, independent WAN/fault/operator review and release governance still require their own evidence. No alert dismissal, self-approval, activation, protected-main change or acceptance waiver occurs.
+
+<!-- composed-116a-end -->
+
+## Current continuation — complete cost evidence and rejected state borrowing
+
+Published head: **`0443a5e2e68be9c5df68b87ebeb5fed3b96ec5d2`**, tree **`67e66486185c94c9813a8d83b7e2c77e50e1c24e`**. Code commit `751e75b8f11fecad612bb95c33ea3a2567dc131b` follows the complete prior `bebb1f3` tree; the final child changes six evidence files only. The normal fast-forward preserves the existing integration candidate and main base.
+
+Repeated non-account partition copies consume memory, but reducing allocation alone did not pass the fixed performance rule. This continuation keeps the safe observation/fixture corrections and retains the failed optimization as an explicit experiment.
+
+- **PQ observation:** replace the test-only immediate closure invocation with a typed operation boundary. Question-mark, explicit return, success and panic/drop controls remain correct; the production macro is unchanged.
+- **Cell fixture readiness:** await actual worker/database setup before the original request clock and short successor TTL. Original 200 ms request, 250 ms rendezvous request, two-second TTL, connection and byte bounds remain. A real TCP delayed-start control passes; removing only its readiness wait fails.
+- **Borrowed state candidate: HOLD.** One fixed campaign completed 512 standard-allocator wall samples and 32 separate allocation samples across eight cohorts. Requested bytes fell 19.61%–82.55%; the 2100-payload case removed 9,190,156 requested bytes/call. These are cumulative requests, not peak RSS or service CPU. Wall nonregression passed only 6/8: cold 64/64 p95 ratio 1.319470 exceeded 1.10, and cold 1024/64 paired median ratio 1.007682 exceeded 1.0. The separate five-percent wall improvement rule passed 3/8.
+- **Default runtime restored:** eleven original functions and the full native arithmetic-cache entry file are byte-identical to the parent. Four Node candidate helpers are `cfg(test)`; the M06 primitive remains available only through explicit callers. The old filtered candidate, instrumented timing limitation, exact measured A-arm adapter and both reconstruction patches remain visible. No cohort was rerun to obtain a pass.
+
+### Exact source validation
+
+The final committed clean checkout verified **7,351 entries / 863,089,339 bytes**, 1,803 local links and all 375 source pins. All 1,156 native source/config inputs match the tested code commit. Strict workspace/all-target/all-feature Clippy (`-D warnings`), formatting and the final Node no-run build passed again at this final head. That build produced the **same** tested Node binary SHA-256 `0172342ed1585e328ba75ded85fff52969a65d7de9f06e916e3d090e2983d7f6`.
+
+| Executed local controls | Result |
+| --- | --- |
+| Selected Node controls | **120 passed / 1 original CPU failure / 1 explicitly ignored** |
+| M06 library after clean package build | 101 passed / 0 failed / 6 original explicit cost experiments ignored |
+| DA library | 173 passed / 0 failed / 0 ignored |
+| CI contract / execution / PQ source / project-boundary controls, repeated at final head | 98 / 67 / 34 / 16 passed |
+| Offline locked all-feature Linux graph | 26 workspace packages / 138 resolve nodes; manifest and lock unchanged |
+
+The remaining Node failure is `authenticated_large_parent_original_schedule_supplementary_denominator` with `PUBLIC_MUTATION_CPU_BUDGET`. The first large-parent control passed on the final isolated source; prior baseline and candidate failures remain recorded. This does not claim a complete current Node-library run or original service acceptance.
+
+The first final build's stale M06 archive/link failure is preserved. Cleaning only the two affected package caches and rebuilding the same source/profile resolved it. Separate read-only machine-code inspection confirms that both actual measured executables use the Vec descriptor implementation; those measurements are not relabelled after the production restoration.
+
+### Evidence and remaining gates
+
+The [33-file evidence package](https://github.com/TrillionniumFoundation/Trillionnium-Chain/tree/0443a5e2e68be9c5df68b87ebeb5fed3b96ec5d2/evidence/pon-six-axis-measurement-20261103) is about 1 MB and includes raw samples, replay patches, source/binary identities, failed observations and [final validation](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/0443a5e2e68be9c5df68b87ebeb5fed3b96ec5d2/evidence/pon-six-axis-measurement-20261103/final-validation.json).
+
+Parent `bebb1f3` hosted results retain their original identity: pressure four-second confirmation **0/1**, F0 **1/6** in thirty seconds, and original native campaigns **3/27**. Its original 43 PQ selectors passed all four matrices; ARM CPU and the old observer lint failures remain historical observations. They do not qualify the new head or prospective merge.
+
+Ordinary complete-State / O(H) work, full-path failure/queue/drain accounting, independent WAN/fault acceptance, whole-chain PQ and activation remain **HOLD**. Admission persistence and final generation publication retain their separate atomic transactions. Mathematical cache results do not replace current authorization.
+
+---
+
+## Previous continuation — bounded account subtrees, exact root inputs and observable PQ failures
+
+Published head: **`bebb1f3289cd7050fefde89ea8f2cf33c6c37588`**, tree **`58c31e8a6220c6be20029b33cb060f3a2034d1a7`**, ordered parents `f66f7f741ac8c78b795ed0bc789ca8f7d23f3b8d` and selected main `dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`. The complete f66 tree is preserved except for the recorded overlays; all concurrent Cell retirement/W1 repairs and evidence remain.
+
+Repeated account-graph reads and complete-root encoding still consume the original public-service CPU budget. This continuation reduces redundant work while retaining the current State, actual SQL edges, full canonical validation, exact inputs and original publication owner:
+
+- **Account subtrees:** seal at most sixteen exact subtrees after the first complete current graph and final callback in the same writer. Different-root reuse loads every exposed edge, keeps original node/side/prefix/lift checks and accounts for covered descendants. A partial hit cannot mint a full-root receipt, nominate another role, survive writes or escape the transaction. The independent ordinary verifier is unchanged. First graphs, complete State and History retain their full-size costs.
+- **Complete-root math:** an opaque private builder can reuse a bounded subset of exact plain JSON strings after complete grammar/count validation. Keys and full raw values must match. Tree arrays retain priority in the original 2 MiB payload / 16 MiB retained-charge pool; no public prehash injection or authorization cache is added. Observation v3 separates inputs observed, actually hashed and encoding hits. Retained charge is not RSS or peak allocation.
+- **PQ diagnostics:** test-only, explicitly scoped fixed phase aggregates and failure classes retain wall/calling-thread CPU, unfinished/unwind state and bounded child-process snapshots. Nested outer errors preserve the last specific service/TCP failure. Panic/drop paths retain available diagnostics without recording requests, keys, signatures or arbitrary error strings. Sign spans explicitly include self-verification. Original 250 ms and shared 200 ms boundaries, self-verification, fail-closed behavior and the 43 exact controls remain unchanged; two observer controls join normal library execution.
+- **Fuzz lock:** add the single missing `trnm-data-availability → rustix` edge. All 146 package identities/versions/sources and 134 registry checksums remain unchanged. Complete offline `--locked` metadata and fetch pass after the original refusal is reproduced. Hosted fuzz targets and advisory results remain separately required.
+- **Source guards:** update the actual 83 authenticated / 23 post-write count, retain all 60 earlier authenticated tests, and update the broad protocol wire count from 18 to 22 after four added controls. All 375 source pins match the composed tree; the three new modules are in the generated inventory. Every staged tree was independently recomputed from verified Git objects; the final tree matches.
+- **Actual local execution scope:** the earlier uncommitted graph-only source passed **113 distinct selected native tests**; the math protocol source passed **9 arithmetic tests and 1 compile-fail doc control**. These are intermediate-source results. The final combined M06/Node/PQ source has **not** been built, linted or run locally because the shared filesystem exhausted its capacity. A sparse checkout and exact object identity do not replace full source/link gates or native execution. Fresh original HEAD/prospective-merge x64/ARM CI must supply those results.
+
+[Retained evidence and exact source scopes](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/bebb1f3289cd7050fefde89ea8f2cf33c6c37588/evidence/pon-scoped-root-continuation-20261103/README.md) include original 469 outcomes, separate f66 readback, setup failures, intermediate raw logs and the complete fuzz graph comparison.
+
+**Original gates remain open.** The 469 pressure cohorts retain four 0/1 results; its F0 remains 1/6 in thirty seconds and 0/6 in four seconds; three original campaigns retain 3/27 confirmations. These are prior-source outcomes. For f66, original CPU refusals and its separate x64 merge PQ full-library failures remain; its successful CodeQL producer/export retains 504 warnings and explicitly no authenticated PR gate verdict. No old cohort qualifies this new commit. The earlier 80.5% graph/import attribution is corrected because the snapshots cover different work.
+
+**DRAFT / HOLD.** This publication closes no original public-service, whole-chain PQ, independent review/operator, cheapest-work, heterogeneous/quantum, custody, model, economics or activation qualification. All deadlines, denominators and resource gates remain.
+
+---
+
+## Preserved f66 continuation — original retirement deadline and exact-source review
+
+Published head: **`f66f7f741ac8c78b795ed0bc789ca8f7d23f3b8d`**, tree **`c27b9918037068f697199d7b3398415a0dd3c543`**, parent `469c4d4bb36efb37045d968f35f83cb2c1771933`. All twenty concurrent incoming files and the prior account-graph work are preserved.
+
+- **Cell retirement:** the original absolute deadline now covers successor verification, SQLite writer contention, complete transaction readback, commit and final reconciliation. Writer/commit busy timeouts use the remaining original budget and restore the prior value. Pre-commit refusal rolls back the retirement update; an observed post-commit cancellation retains the durable retired identity for exact retry. The original duty, coverage and accounting checks remain.
+- **W1 failure diagnosis:** bounded metadata records the actual child exit, strictly typed finite-target result and last final-phase History outcome. It changes no acceptance function, selector, four-second budget, failure string, source/binary binding or qualification flag.
+- **Actual committed-source verification:** **52 selected native controls** (27 retention, 19 account readback, 6 reorg) and **81 Python controls** (13 static/mock W1 diagnosis, 34 source-integrity, 34 source-pin controls) pass on this exact clean commit. Full workspace/all-target/all-feature strict Clippy, formatting, the offline locked 26-package/138-node Linux graph, 372 source pins, inventory, 1,754 repository links, lossless archive restoration and baseline readback pass. Full source identity checks before and after execution agree on 7,176 tracked entries / 860,320,593 bytes. These are named component/static checks, not a complete-workspace runtime or public-service acceptance claim.
+- **Main target and CodeQL producer:** #688 now targets `main` through ordinary Draft PR metadata. Main's sole exclusive content change, the zero-byte README, is preserved and the exact-byte contract is aligned with it. The current actual prospective merge is `63cca8bafbe88be1a2882181a137beb8cfc38960`, parents `dd6e1c3cbeacbdc532b0679297835b3a0aac78f0` and this head, with the same tree `c27b991...`. [Default CodeQL producer 41647797019](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41647797019) was observed executing Python, Rust and Actions analyses for this head; at readback Actions had completed successfully and Python/Rust were still running. [Exact-source export 41647810634](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41647810634) is separate. Producer coverage is restored; a completed authenticated CodeQL verdict is still required. No protection, permission or scanning setting was changed.
+- **Rejected work is preserved:** the fixed 16-round Host component completed all 16,384 calls, but empirical p95 CPU ratio **1.417139** failed the declared 1.05 limit despite median **0.902946**. The ordered sibling query was rejected before runtime qualification because its SQLite execution order could change the original right-before-left verdict. Both production paths are restored, with unchanged candidate patches retained in the bounded archive.
+- **Original failures remain:** the exact-1b0 large F0 baseline retains all three planned rounds, including two missed rounds, and **0/3 confirmations**. This is different from the smaller W1 baselines. The approximately 20.73 historical primitive rejection-CPU ratio was not remeasured and is not a public-network amplification estimate. Initial packaging/link/README/patch-format failures and their resolutions remain disclosed.
+
+[Complete retained evidence](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/f66f7f741ac8c78b795ed0bc789ca8f7d23f3b8d/evidence/pon-blocker-continuation-20261103/README.md) contains source scopes, all 69 archived files, negative decisions and lossless original observations. The clean-commit receipt below is subsequent verification; it does not rewrite the earlier working-tree receipt identities.
+
+**HOLD:** all-blocker closure, original public service, cheapest legal work cost, heterogeneous/quantum qualification, independent operators/review, model gain, long-term custody, economics, whole-chain PQ and activation are not accepted. Fresh hosted outcomes must identify this head and its actual new main merge. The PR remains Draft and unmerged.
+
+<details>
+<summary>Exact committed-source verification receipt</summary>
+
+```json
+{
+  "schema": "pon-blocker-committed-verification-v1",
+  "head": "f66f7f741ac8c78b795ed0bc789ca8f7d23f3b8d",
+  "tree": "c27b9918037068f697199d7b3398415a0dd3c543",
+  "source_before_equals_after": true,
+  "tracked_entries": 7176,
+  "tracked_bytes": 860320593,
+  "passed_control_counts": {
+    "combined-retention-controls": 27,
+    "combined-readback-controls": 19,
+    "combined-reorg-controls": 6,
+    "final-w1-failure-diagnostic-controls": 13,
+    "final-source-integrity-controls": 34,
+    "final-source-pin-controls": 34
+  },
+  "repository_local_links": 1754,
+  "commands": [
+    {
+      "name": "archive-roundtrip",
+      "exit_code": 0,
+      "stdout_sha256": "127b18d9db5a151b457b95e7561b86176645fa86e6a2b6fd8cc1baaf34f12b64",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "combined-readback-controls",
+      "exit_code": 0,
+      "stdout_sha256": "26a4d9bedd7be35be27ed91b7d15ca9bcb36b12d061688e768848216968019ca",
+      "stderr_sha256": "11091c237536c9d3e82bed2ee441f08ad655372986e9172bdd0ba42d5aeb8c58"
+    },
+    {
+      "name": "combined-reorg-controls",
+      "exit_code": 0,
+      "stdout_sha256": "cd2c6c474ed5c8959e964395fd9950410d17446ed770c0f22fc293d9ad1672a2",
+      "stderr_sha256": "6ee1697bf758bbba0816040492b683565e8b3fb14ff5b085c9d4b1afa8e320a0"
+    },
+    {
+      "name": "combined-retention-controls",
+      "exit_code": 0,
+      "stdout_sha256": "0ee413c0ab2053ab3b2c5353bd7ea6a7fad55133d50d2adefc8de77e06f00ddf",
+      "stderr_sha256": "2abceac8e5cb90ea98d1d6d70cea164728791eb230d7be4331150b147295d017"
+    },
+    {
+      "name": "combined-strict-clippy",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "158a7e90d711f5b4ea7049bdc68524feafa9e57f0ea9359a375775ceb2ad0db2"
+    },
+    {
+      "name": "committed-diff-whitespace",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "exact-source-after",
+      "exit_code": 0,
+      "stdout_sha256": "614aed4641702070b13468e362679f8377fd445e34646a8ebcc7cf21bd38a5d2",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "exact-source-before",
+      "exit_code": 0,
+      "stdout_sha256": "614aed4641702070b13468e362679f8377fd445e34646a8ebcc7cf21bd38a5d2",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "final-baseline-readback",
+      "exit_code": 0,
+      "stdout_sha256": "5a18270c9177aebae53f89a18f2d0f1154a8b10aa5813d08734883df7ffed29f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "final-formatting",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "final-locked-graph",
+      "exit_code": 0,
+      "stdout_sha256": "bb5bf0e5fac707c56f12716b70cd9ab75ebffc2b99452c7b16bb7bcafee1960e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "final-source-integrity-controls",
+      "exit_code": 0,
+      "stdout_sha256": "9002b68fa8e4f9efd110a6ed9a12b8e19a8a348f3bf7db4339a83072f9703b13",
+      "stderr_sha256": "9b804b63256d0de0838ac456f8c720030aa2e43438246c93fc439d004ece70c2"
+    },
+    {
+      "name": "final-source-inventory",
+      "exit_code": 0,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "final-source-pin-controls",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "52429393723a0fc7e76937bac948d0be1a4a062c84d7d98054dbd719ba1e365f"
+    },
+    {
+      "name": "final-source-pins",
+      "exit_code": 0,
+      "stdout_sha256": "4e6e1bb4a6f3345863704dec8097347c85e71173a0edef162263a6d9e3db8fe5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "final-w1-failure-diagnostic-controls",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "006fe666523a39c90a9431d200fd8ea522d68e1f504b4115efa6d6207f67e487"
+    },
+    {
+      "name": "main-aligned-repository-check",
+      "exit_code": 0,
+      "stdout_sha256": "87147aaa0d2d646304c919a7cc3630e8d90dd5138ab9a93ddec8a59c709b56b6",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "all_blockers_closed": false,
+  "activation_authority": false
+}
+```
+
+</details>
+
+---
+
+## Preserved prior continuation — exact account-graph reuse inside one writer
+
+Published head: **`469c4d4bb36efb37045d968f35f83cb2c1771933`**, tree **`383a3cbc8a4a71f27e4f18d7df089b860f302439`**, parent `1b0d60d574c4b3e2172f314cd2655644373b0a27`. The concurrent W1 continuation and all prior Cell deadline repairs are preserved.
+
+- Current Record, block, delta and complete State are checked before sharing an identical **node/digest/count/balance** account Root among the original four nominated roles. No fifth-role nomination, cross-transaction receipt, authorization cache, weaker cancellation or relaxed publication fence is introduced.
+- Four new actual Node regressions cover real cross-Record reuse, nonce/existence/grammar/liability negatives, a forged SQL node pointer with unchanged digest/count/balance, and callback writes/cancellation. The old reorg no-hit fixture now uses a real signed transfer and explicitly distinct SQL account Roots; its exact two-graph assertion and all original write/refusal/rollback checks are preserved.
+- On local committed source `c329d603416cf4c2be3b74798722e5ccaf903f92` with the identical published tree: **117 distinct selected native tests pass** (79 authenticated module, 21 state, 6 reorg, 3 ancestry, 8 continuity/storage CLI), plus **98 CI-contract + 34 source-integrity + 34 PQ-integration controls**, full workspace/all-target/all-feature strict Clippy, formatting, 372 source pins, inventory and 1,738 repository links. Source identity is verified before/after execution. The explicitly invoked delta observer is a debug functional control, not a release-profile performance result or complete-workspace runtime claim.
+- [Retained evidence and initial failures](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/469c4d4bb36efb37045d968f35f83cb2c1771933/evidence/pon-account-readback-20261103/README.md) preserve c39 original four-second/F0/thirty-second failures, ARM original-profile CPU refusals, and both local setup/fixture failures before correction. New hosted outcomes must refer to this head and its actual prospective merge.
+
+The prior c39 attack-free four-second HEAD/merge observations confirmed in 2.394697/2.319276 seconds; pressure still confirmed **0/1** after seven ACKs. Its F0 pair confirmed **0/6**, and three original thirty-second runs confirmed **0/27**, retaining 189 planned packet exposures. Those are prior-source failures, not a verdict on the new candidate. Host/import CPU is nested; account-graph phase deltas also cover later confirmation and cannot supply an exact graph/import percentage.
+
+**DRAFT / HOLD.** Original deadlines, hostile counts, Host limits, full W1, nonce, liabilities, recovery and confirmation rules remain. No P0 issue, independent review, whole-chain PQ, WAN, work-hardness or activation gate is closed by this component change.
+
+---
+
+## Prior PoN work continuation — retain checks while avoiding redundant decoding
+
+Published head: **`1b0d60d574c4b3e2172f314cd2655644373b0a27`**, source tree **`afe7c0f29c224c7262755d38d69930bf5030b8a0`**, parent `c39c65b15cde72c30d69dec62ae630a7ebffa3da`. This fast-forward preserves all concurrent Cell deadline and CI repairs below.
+
+Existing fact reuse decoded a 32-KiB A/B buffer even when a checked current statement and a complete stored arithmetic fact were sufficient. This increment defers only that decoding until actual replay. Current field/task/ticket/target checks, complete claim verification, keys, cancellation, contention, publication and independent scalar verification remain required. A same-task proof for a different challenge still performs full replay. No cache configuration or consensus weight changes.
+
+- Separate clean-baseline and candidate release builds run the same bounded legal observer. Both variants complete 24 measured calls and agree with the scalar oracle. Both warm fact paths request **49,152 → 16,384 bytes** per call; work-fact cold and changed-challenge paths request **153,600 → 120,832 bytes**. Raw complete verification remains **15 requests / 104,448 bytes**. These are cumulative allocation requests, not RSS, CPU or service throughput.
+- Add a bounded honest-rate fluid model using the existing 16-block / 10-second / 11-timestamp development rules and both confirmation thresholds. It retains partial work, outages, unequal supply budgets and unfinished observations. It is neither a stochastic mining sample nor the expected trajectory of a nonlinear stochastic process. The new 12 controls run in the existing head/merge reference lane.
+- Executed validation: **118 W1 native tests**, **29 existing reference + 12 model + 34 source-integrity + 34 source-pin controls**; formatting; 372 source pins; locked Linux all-feature graph (26 packages / 138 nodes). After preserving the concurrent parent, full workspace/all-target/all-feature strict Clippy and the source/CI checks pass again. The final clean committed tree is independently read back: 7,148 tracked entries / 859,643,267 bytes. This identity check does not execute tests.
+
+[Complete code, allocation and model evidence](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/1b0d60d574c4b3e2172f314cd2655644373b0a27/evidence/pon-cache-rate-continuation-20261103/README.md) retains 84 raw command/log files and failed setup observations. The original approximately 20.73 rejection-CPU condition and failed four-second public-service outcome are **not remeasured or closed**. Full workspace native execution and fresh hosted head/merge qualification remain separate.
+
+**DRAFT / HOLD.** No work-hardness, independent hardware/operators, learning benefit, economic, public readiness, whole-chain PQ or production-activation flag is promoted.
+
+## Previous continuation — original Cell deadlines and executable performance gates
+
+Previous published head: **`c39c65b15cde72c30d69dec62ae630a7ebffa3da`**, source tree **`04525f5777c53736be56683358c413813022f49f`**, parent `e1a41026a1b93a6cd3926a60e8af3d97f713ebb6`.
+
+- Preserve each original absolute deadline through manifest/chunk persistence, corrupt-cache repair, writable serving and retention rehydration. Contention uses the earlier of the caller deadline and the original five-second allowance; observed pre-COMMIT expiry rolls back the cache transaction. Standalone APIs, wire, budgets and irreversible repair accounting retain their existing semantics.
+- A real TCP/writer-lock regression on unchanged production bytes plus the same test fails all three manifest/batch/repair paths: the 250 ms operation waits until the test releases its lock after roughly 2 seconds and changes cache state after expiry. The corrected source refuses all three at roughly 250.1 ms while the lock remains held, preserves cache state, and succeeds on a fresh retry. The original 2-second observations are stopped counterexamples, not full five-second measurements or throughput comparisons.
+- Restore the stale public-test blob pin, pipeline 13-test count and History 22-pass/1-ignored count. Check the 20 existing inline source pins and retain explicit zero-log inventories with the original failure exit. No native assertions, resource limit, W1 check or confirmation window is weakened.
+- Local validation on the identical tree (`71caf0437abd8f9c8469e45742ee506ea5af4fe9`): **170 package unit + 16 CLI tests**, **98 CI contract + 34 source integrity + 34 PQ composition tests**, whole-workspace/all-target/all-feature strict Clippy with `-D warnings`, formatting, 372 source pins, distributed inventory and 1,714 local Markdown links pass. This is not a complete workspace runtime or hosted-CI claim.
+- Current recent-batch run [41633244303](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244303) has passed the source guard on all four head/prospective-merge x64/ARM lanes and is executing its original preparation/native sequence. Other native service runs retain their own exact head/merge identities and outcomes.
+
+**Original F0/public confirmation remains HOLD.** Independent readback of the prior exact e1 F0 report finds 126,982 Host checkpoints, 5.331 s checkpoint CPU nested inside 5.968 s client-import CPU, with one censored failed import. The 4.900 s account-graph span overlaps those Host checks. Do not add nested timings or infer a speedup from different completed cohorts. Ordinary public state and History still contain O(A) and O(H) work; separate Growth V2 results do not qualify that path.
+
+The code and compact reproduction package were also preserved in [delivery object tree 1379377](https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/1379377e265a83244c74be07deb763e62149d88f). Its earlier publication-status field predates the now-completed branch update.
+
+---
+
+## Retained prior integration and measurements
+
+The original public confirmation failures cannot be resolved by timing W1 alone or pooling results from separate branches. This Draft composes the W1, state/History/PQ recovery and six-axis performance work while retaining their original service and security gates.
+
+Prior integrated candidate: **`e1a41026a1b93a6cd3926a60e8af3d97f713ebb6`**, tree `616c025d47f28f16ded6551700c18aba04429ec1`. It retains both concurrent implementation parents `713549d0e401a4ac249deed6c4eea1568bc694c9` and `56c15d803bb876b44c7a369d75d6396f27acc28b` through merge `3832fe9a53129a5867a74815ef06edfe325df0c6`, then closes the original 30-second campaign's missing History observer. Their common integrated baseline is `af064bf751ed92c82da0b113682a7dfff3225d97`, preserving exact #685 and #683 parents.
+
+## Changes in the user's six ordered axes
+
+1. **Complete cost:** bounded V4 request phases cover intake/queues/context/full W1/prepare/execution/root/commit/response, with failed, cancelled and unfinished observations. Optional History observations cover actual native admission/activation and four original Host-check aggregates. Both original 4-second and 30-second/1,024-account campaign importers retain the same observation on success or error. Calling-thread CPU, scoped workers, nested intervals and unknown clocks remain explicit. The new 30-second reader binds context/counts; it is not independent work or packet authentication.
+2. **Touched-state work:** ordered Growth V2 map traversal preserves canonical deltas, nonce, liabilities and exact error semantics. A fixed 64/1,024/16,384-account × 0/16/128-history native observation retains eight signed full-W1 admissions, one atomic cancellation and one cold reopen per cohort against a complete-State oracle. The existing full-workspace CPU workflow runs it after the original selectors, including after their failure. Short Host-context reads avoid common-case allocations but still reopen and fully read the current kernel sources every time.
+3. **Parallel preparation / single commit:** preserve existing 1/2/4/8-worker preparation, one publication owner and live nonce/supply/reward/generation fences. Worker cancellation observation now remains open through the original caller's actual joins.
+4. **Cache semantics:** no new authorization cache. Existing arithmetic reuse still requires complete inputs and current proof/context; generation, expiry, revocation and current Host checks retain their original owners.
+5. **Bounded batching:** retain the original default pending helper. Two complete 24-case × 16-ABBA compaction rounds exposed regressions and were rejected. New owned-obligation controls preserve later RPC failure, panic and retry behavior.
+6. **Cell data path:** retain existing bounded intake/workers/byte budgets/deadlines and join-all cleanup. Reject the measured fixed worker pool. Keep the independently measured Unix listener-readiness wait, capped by the original 5 ms and remaining absolute service deadline; non-Unix keeps its prior path. This is a configured-peer component change, not DHT/custody/model closure or physical Host isolation.
+
+The concurrent W1 increment transposes operation-owned B-prime in place and applies both full correction products to the private result. Complete transcript/product verification, the scalar oracle, callback order and cancellation boundaries remain required. Its legal-strategy reader retains complete finite production denominators and suppresses validity-derived rates across alerted shards.
+
+## Retained performance decisions
+
+| Component observation | Result | Decision |
+| --- | --- | --- |
+| Pending compaction, two full matrices | Small/retained batches regress; all functional outcomes retained | Original default retained |
+| Cell fixed worker pool, 64 complete trials | Paired median B/A 0.993467, below required 5% improvement | Rejected |
+| Cell readiness wait, 64 complete trials | Paired median B/A 0.403242; empirical p95 B/A 0.768732 | Development candidate retained |
+| Complete W1 default verification, contributor capture | 18→15 allocation requests; 153,600→104,448 cumulative requested bytes; loop thread CPU 28.50→26.20 s | Composed and revalidated; no peak-RSS or service-TPS claim |
+
+The Cell capture includes all background-load observations and the candidate's **3.199 s maximum versus baseline 0.889 s**. Its paired median/p95 pass does not establish a worst-case or p99 improvement. Both variants have identical complete request/byte denominators. The baseline includes the identical observer. Its separate source closure predates the composed W1 change; it is not a benchmark of the final combined binary.
+
+Detected shared Cargo-target reuse produced invalid source comparisons and was rejected before those A/B trials. Rebuilt comparison roots are separate and all invalid/intermediate/slower attempts remain retained. [W1 component evidence](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/56c15d803bb876b44c7a369d75d6396f27acc28b/evidence/pon-consensus-resource-v2-20261103/README.md) retains its own exact source and scope. The six-axis archive and current combined-source runtime receipts are being finalized in this Draft.
+
+## Validation and open original gates
+
+- Combined production source `3832fe9a...`: full workspace/all-target/all-feature strict Clippy passed with Rust 1.95.0 and pinned OpenSSL 3.5.9. The subsequent 30-second-driver reader controls pass **31 + 102** tests; formatting, repository links, 372 exact source pins and inventory checks pass. Fresh complete-workspace test artifact build and selected native regressions on `e1a41026...` are in progress.
+- Original integrated-baseline 4-second/16-hostile-worker pressure observations: **7 receiver ACKs, 0 independently confirmed transactions**. ACK is not confirmation.
+- Separate original 30-second/1,024-account observations also fail confirmation. Correction to the earlier attribution: account-graph phase snapshots include later confirmation/read-active work as well as imports, so the former 80.5% graph/import ratio is not valid. Retain the raw observations with their actual scopes; graph reads and per-node Host checks overlap and must not be added.
+- Original ARM full-workspace >8 MiB CPU selectors fail `PUBLIC_MUTATION_CPU_BUDGET`; the exact 43 PQ effect/rejection selectors pass in their own baseline runs. Baseline long-History lanes reach the original 1,800-second public-server lifetime and fail replay after connection refusal. These are retained failures, not threshold-change requests.
+- Exact current-head and prospective-merge hosted results remain separate. Prior-source observations do not qualify the combined source.
+
+**HOLD / NO-GO.** Preserve the original four-second window, 16 hostile workers, six-depth/required-work confirmation, Host 0.25 CPU and 2 GiB, absolute deadlines, complete W1, nonce, liabilities, reorganization and PQ witness checks. This Draft establishes no cheapest-work lower bound, independent hardware/operators, quantum participation model, model-learning benefit, permanent availability, public economics, whole-chain PQ qualification or production activation. No merge or activation is requested.

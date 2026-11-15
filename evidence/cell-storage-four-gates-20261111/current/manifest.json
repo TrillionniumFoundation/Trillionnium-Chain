@@ -1,0 +1,1259 @@
+{
+  "created_unix_ns": 1794446789977273873,
+  "exclusions": [
+    "tmp directories",
+    "payload arenas",
+    "model weights",
+    "original operation directories"
+  ],
+  "file_count": 205,
+  "files": [
+    {
+      "bytes": 0,
+      "path": "candidate/cargo-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/cargo-version.stderr"
+    },
+    {
+      "bytes": 36,
+      "path": "candidate/cargo-version.stdout",
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/cargo-version.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/cell_complete_version_vector.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/cell_complete_version_vector.stderr"
+    },
+    {
+      "bytes": 43,
+      "path": "candidate/cell_complete_version_vector.stdout",
+      "sha256": "a52fe4645753dc3f3f7bbb47038dee80d69e9c30465a2596fa1d1130d7be4f9d",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/cell_complete_version_vector.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/cell_discovery_epoch_v3_vector.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/cell_discovery_epoch_v3_vector.stderr"
+    },
+    {
+      "bytes": 73,
+      "path": "candidate/cell_discovery_epoch_v3_vector.stdout",
+      "sha256": "a6ca19954096c6a820b444e3179152046c13d8ab82d50dfc53d6dd225d1d2f19",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/cell_discovery_epoch_v3_vector.stdout"
+    },
+    {
+      "bytes": 250,
+      "path": "candidate/cell_sealed_research_next_use_v2-tests.stderr",
+      "sha256": "b064777922d381b55dfd30754bde7de9b554e65913ba42a69e65a53a504e5a3e",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/cell_sealed_research_next_use_v2-tests.stderr"
+    },
+    {
+      "bytes": 1186,
+      "path": "candidate/cell_sealed_research_next_use_v2-tests.stdout",
+      "sha256": "5098663aff60cbf1baba7f94d106ce3a5bf01291dca2c6222d3be5eaae01df17",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/cell_sealed_research_next_use_v2-tests.stdout"
+    },
+    {
+      "bytes": 262,
+      "path": "candidate/cell_sealed_research_paged_next_use_v1-tests.stderr",
+      "sha256": "f9b5f542d84f8bdb55c054ec5eee5457ab169ca555b7b70913a866fd299267bb",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/cell_sealed_research_paged_next_use_v1-tests.stderr"
+    },
+    {
+      "bytes": 1186,
+      "path": "candidate/cell_sealed_research_paged_next_use_v1-tests.stdout",
+      "sha256": "3dbf936b090610f1f9f86930076a3b1b498012656d2ee4eb9c8748167ea371f1",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/cell_sealed_research_paged_next_use_v1-tests.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/cell_storage_descriptor_reference.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/cell_storage_descriptor_reference.stderr"
+    },
+    {
+      "bytes": 56,
+      "path": "candidate/cell_storage_descriptor_reference.stdout",
+      "sha256": "90353ba0c059abdd0726859f829cb54cf36cf42cc6ad7c760708aa39996db779",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/cell_storage_descriptor_reference.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/cell_version_content_vector.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/cell_version_content_vector.stderr"
+    },
+    {
+      "bytes": 39,
+      "path": "candidate/cell_version_content_vector.stdout",
+      "sha256": "5b4677d887d5c61a5a0753fcf0dac8f61c81722511e7ac57e93611a903a5cd82",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/cell_version_content_vector.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/cell_version_retention_v3_vector.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/cell_version_retention_v3_vector.stderr"
+    },
+    {
+      "bytes": 29,
+      "path": "candidate/cell_version_retention_v3_vector.stdout",
+      "sha256": "aa65247be491ddce8016c901ffda8c25320f55ad68ca4e84549b549b6650e7c0",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/cell_version_retention_v3_vector.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/check_pq_research_integration.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/check_pq_research_integration.stderr"
+    },
+    {
+      "bytes": 557,
+      "path": "candidate/check_pq_research_integration.stdout",
+      "sha256": "be8c32a5af43419155e594f8f11c5c1eb5892079027c59736737a43205125667",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/check_pq_research_integration.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/check_repository.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/check_repository.stderr"
+    },
+    {
+      "bytes": 307,
+      "path": "candidate/check_repository.stdout",
+      "sha256": "17add4bd8fb279d2f6cdd8c505e19fb22d3df529d45f80516ede77960d117d03",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/check_repository.stdout"
+    },
+    {
+      "bytes": 210,
+      "path": "candidate/clippy-default-trnm-data-availability.stderr",
+      "sha256": "12259354307ccb740cf80545781d204c81beda499a7e60fd3ee677c66c54af87",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/clippy-default-trnm-data-availability.stderr"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/clippy-default-trnm-data-availability.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/clippy-default-trnm-data-availability.stdout"
+    },
+    {
+      "bytes": 193,
+      "path": "candidate/clippy-default-trnm-pon-node.stderr",
+      "sha256": "f2700de168476d52566d9612231f8b4404948e5ae3f0351cf2f73029c8969357",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/clippy-default-trnm-pon-node.stderr"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/clippy-default-trnm-pon-node.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/clippy-default-trnm-pon-node.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/counterexample-fixture.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/counterexample-fixture.stderr"
+    },
+    {
+      "bytes": 110,
+      "path": "candidate/counterexample-fixture.stdout",
+      "sha256": "7a941affd4a8bb4da8185cda32a027ecf7b4c9df67933bcf80657874b6af5f71",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/counterexample-fixture.stdout"
+    },
+    {
+      "bytes": 1952,
+      "path": "candidate/da-complete.stderr",
+      "sha256": "c0d357c40c50367f4d64d6e808303ebc6300f3fc78347efa972b6eb39f23d0bf",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-complete.stderr"
+    },
+    {
+      "bytes": 94039,
+      "path": "candidate/da-complete.stdout",
+      "sha256": "842cd16295d5f3a2fd90f1ba5b9b78ff6fee19bfe102567cc621f8142923b419",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-complete.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/da-required-01-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-01-readback.stderr"
+    },
+    {
+      "bytes": 213,
+      "path": "candidate/da-required-01-readback.stdout",
+      "sha256": "97c97bba7ec442e8c55da0b58508366d32b5f4fe9d19bc7e453630b3e203434c",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-01-readback.stdout"
+    },
+    {
+      "bytes": 202,
+      "path": "candidate/da-required-01.stderr",
+      "sha256": "ed8951681e6096108e6edee41f3b66d401f326164274beb6fd04e466a9f0e9b6",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-01.stderr"
+    },
+    {
+      "bytes": 247,
+      "path": "candidate/da-required-01.stdout",
+      "sha256": "f992a17d6a89074d48783af12128bfd462d63c44daacce62e67984ccabe7d145",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-01.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/da-required-02-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-02-readback.stderr"
+    },
+    {
+      "bytes": 218,
+      "path": "candidate/da-required-02-readback.stdout",
+      "sha256": "770aae2a1a822f84f29f61690377103c2d7f2f0e32e7993c13bc99ff56bb860e",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-02-readback.stdout"
+    },
+    {
+      "bytes": 202,
+      "path": "candidate/da-required-02.stderr",
+      "sha256": "ed8951681e6096108e6edee41f3b66d401f326164274beb6fd04e466a9f0e9b6",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-02.stderr"
+    },
+    {
+      "bytes": 252,
+      "path": "candidate/da-required-02.stdout",
+      "sha256": "cfb75abbd1b078ff2799bcbc5e5ec6d509f2c9328447e0fc81f49801c9ce25c5",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-02.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/da-required-03-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-03-readback.stderr"
+    },
+    {
+      "bytes": 229,
+      "path": "candidate/da-required-03-readback.stdout",
+      "sha256": "ebf6f51ff3d8f3996864f9b30982e297904880b8b8ab2358bafb2b5bad0b3305",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-03-readback.stdout"
+    },
+    {
+      "bytes": 202,
+      "path": "candidate/da-required-03.stderr",
+      "sha256": "ed8951681e6096108e6edee41f3b66d401f326164274beb6fd04e466a9f0e9b6",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-03.stderr"
+    },
+    {
+      "bytes": 263,
+      "path": "candidate/da-required-03.stdout",
+      "sha256": "cd2ad7dcb7ce191bfa0f7e46a948ad1444ab741190469d8fe49f438677e3e5ff",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-03.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/da-required-04-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-04-readback.stderr"
+    },
+    {
+      "bytes": 229,
+      "path": "candidate/da-required-04-readback.stdout",
+      "sha256": "ced6bc2f0a282e5ad9212e984d21766e185e024c48a478115ceb6d60bec03b9c",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-04-readback.stdout"
+    },
+    {
+      "bytes": 202,
+      "path": "candidate/da-required-04.stderr",
+      "sha256": "ed8951681e6096108e6edee41f3b66d401f326164274beb6fd04e466a9f0e9b6",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-04.stderr"
+    },
+    {
+      "bytes": 263,
+      "path": "candidate/da-required-04.stdout",
+      "sha256": "86b011e89f7e36d53a9cdfce1d56f391215ff168b9be253a094abcbff5ef0670",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-04.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/da-required-05-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-05-readback.stderr"
+    },
+    {
+      "bytes": 231,
+      "path": "candidate/da-required-05-readback.stdout",
+      "sha256": "802ca9a38f8f8cc20a35036f6f3d2bc222b249e18129c2b1ca9f5d7a591ebd62",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-05-readback.stdout"
+    },
+    {
+      "bytes": 202,
+      "path": "candidate/da-required-05.stderr",
+      "sha256": "fd07f0366df915734ccf08c0f8e7af1e832a5bfa9a2be70e1ef871fff9ee8ef4",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-05.stderr"
+    },
+    {
+      "bytes": 265,
+      "path": "candidate/da-required-05.stdout",
+      "sha256": "4c79156c7b71c3e29adfaaca4a0cfbe165a46836da7109adad30741855070a42",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/da-required-05.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/format.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/format.stderr"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/format.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/format.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/inventory.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/inventory.stderr"
+    },
+    {
+      "bytes": 35,
+      "path": "candidate/inventory.stdout",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/inventory.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/locked-all-feature-graph.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/locked-all-feature-graph.stderr"
+    },
+    {
+      "bytes": 852192,
+      "path": "candidate/locked-all-feature-graph.stdout",
+      "sha256": "5def5df5f5ab15f765ba026323f9acdcedfe636b29639d37c220dfd7a601e656",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/locked-all-feature-graph.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/locked-graph.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/locked-graph.stderr"
+    },
+    {
+      "bytes": 837458,
+      "path": "candidate/locked-graph.stdout",
+      "sha256": "e3099fda69a738bdf2c6c303f4c8756e6d5d9dd056c65fbb078fe817083ee139",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/locked-graph.stdout"
+    },
+    {
+      "bytes": 4997,
+      "path": "candidate/next-architecture-python.stderr",
+      "sha256": "c5865200a5466f37a84009956526f3272fa6d4b935eab34b0d26b482481cafde",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/next-architecture-python.stderr"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/next-architecture-python.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/next-architecture-python.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/node-required-01-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-01-readback.stderr"
+    },
+    {
+      "bytes": 218,
+      "path": "candidate/node-required-01-readback.stdout",
+      "sha256": "a548544b2f9c2c89575145e7dcdc13b4c8898800a0544a98860f6d6cc3513dbe",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-01-readback.stdout"
+    },
+    {
+      "bytes": 193,
+      "path": "candidate/node-required-01.stderr",
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-01.stderr"
+    },
+    {
+      "bytes": 253,
+      "path": "candidate/node-required-01.stdout",
+      "sha256": "3112f8ff9f7ae70c104a45ff63f0d5bcb2687b9288676e24b71db4f5a6deb69d",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-01.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/node-required-02-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-02-readback.stderr"
+    },
+    {
+      "bytes": 221,
+      "path": "candidate/node-required-02-readback.stdout",
+      "sha256": "714b28f5619508b1d97f4a8b278259c0e5b1b8d413a2d8fdf2a48a493a6a4d11",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-02-readback.stdout"
+    },
+    {
+      "bytes": 193,
+      "path": "candidate/node-required-02.stderr",
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-02.stderr"
+    },
+    {
+      "bytes": 256,
+      "path": "candidate/node-required-02.stdout",
+      "sha256": "1537af72ac2f2c86f870d7cd8f81449348144df90324ae7aa0bad829d705084e",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-02.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/node-required-03-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-03-readback.stderr"
+    },
+    {
+      "bytes": 207,
+      "path": "candidate/node-required-03-readback.stdout",
+      "sha256": "413f01c133c6a3b5485c9b4b057bf4af4560349d5c6cf9cd78a70dc89b4fb8c4",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-03-readback.stdout"
+    },
+    {
+      "bytes": 193,
+      "path": "candidate/node-required-03.stderr",
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-03.stderr"
+    },
+    {
+      "bytes": 242,
+      "path": "candidate/node-required-03.stdout",
+      "sha256": "7fda0f705f41ad0db6cbdba672b493f544482a67e27217a6c652e12644ee2241",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-03.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/node-required-04-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-04-readback.stderr"
+    },
+    {
+      "bytes": 209,
+      "path": "candidate/node-required-04-readback.stdout",
+      "sha256": "fced046989210e115f71efd362824af4dead383742bbbfd2b2a174e3d476ea83",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-04-readback.stdout"
+    },
+    {
+      "bytes": 193,
+      "path": "candidate/node-required-04.stderr",
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-04.stderr"
+    },
+    {
+      "bytes": 244,
+      "path": "candidate/node-required-04.stdout",
+      "sha256": "efd76c99c13e4c716eebc8821315f50f110f46ae0415119387aff1b8afc31913",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-04.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/node-required-05-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-05-readback.stderr"
+    },
+    {
+      "bytes": 198,
+      "path": "candidate/node-required-05-readback.stdout",
+      "sha256": "3e97ded24981cc613b098615e76fa3f1db42b316744f659e9936a31e43c2d48e",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-05-readback.stdout"
+    },
+    {
+      "bytes": 193,
+      "path": "candidate/node-required-05.stderr",
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-05.stderr"
+    },
+    {
+      "bytes": 233,
+      "path": "candidate/node-required-05.stdout",
+      "sha256": "482ad2dad70704647507901e24e72fd396aac06e5f5cf16cd4dcfdc20bd041be",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-05.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/node-required-06-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-06-readback.stderr"
+    },
+    {
+      "bytes": 204,
+      "path": "candidate/node-required-06-readback.stdout",
+      "sha256": "a1c74f74a73a8446e1758b528262abb67b00254bba29dad0f3c1fffd38958a9d",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-06-readback.stdout"
+    },
+    {
+      "bytes": 193,
+      "path": "candidate/node-required-06.stderr",
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-06.stderr"
+    },
+    {
+      "bytes": 239,
+      "path": "candidate/node-required-06.stdout",
+      "sha256": "4a0881ca82f81cd6feffd92b31d960ff650affb3de793074a9bb646387e33d91",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-06.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/node-required-07-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-07-readback.stderr"
+    },
+    {
+      "bytes": 207,
+      "path": "candidate/node-required-07-readback.stdout",
+      "sha256": "5fcccbfa4673241d941605f8e47d5e5828c0b61e3400118072154bdb03acf00a",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-07-readback.stdout"
+    },
+    {
+      "bytes": 193,
+      "path": "candidate/node-required-07.stderr",
+      "sha256": "f9544e65566406cd83df3f730cc5522eaa808c0c9b0161da25cbd5ee40683edb",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-07.stderr"
+    },
+    {
+      "bytes": 242,
+      "path": "candidate/node-required-07.stdout",
+      "sha256": "19b4f4b87e2c45e3e99835e6986ce6e18150de71adbd2fdd82964bcc2af3751a",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-07.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/node-required-08-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-08-readback.stderr"
+    },
+    {
+      "bytes": 205,
+      "path": "candidate/node-required-08-readback.stdout",
+      "sha256": "449dc4e1875e3a7ee4f1924f07646d1f042f105ccf490f8cc49c6be4d98a5685",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-08-readback.stdout"
+    },
+    {
+      "bytes": 193,
+      "path": "candidate/node-required-08.stderr",
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-08.stderr"
+    },
+    {
+      "bytes": 240,
+      "path": "candidate/node-required-08.stdout",
+      "sha256": "40903bc62d7f776e2af721b6218942364ecd00a818335866fde76cc9b2e152c1",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-08.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/node-required-09-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-09-readback.stderr"
+    },
+    {
+      "bytes": 235,
+      "path": "candidate/node-required-09-readback.stdout",
+      "sha256": "61db2fc0fde87096ebafdde208d47deecaeb57d13ee9121208d9cb203be8763e",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-09-readback.stdout"
+    },
+    {
+      "bytes": 193,
+      "path": "candidate/node-required-09.stderr",
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-09.stderr"
+    },
+    {
+      "bytes": 270,
+      "path": "candidate/node-required-09.stdout",
+      "sha256": "33799c6159e7993b498766ddebbc8c25e567cb3d5b8309fa77ca3aba3c4828de",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-09.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/node-required-10-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-10-readback.stderr"
+    },
+    {
+      "bytes": 239,
+      "path": "candidate/node-required-10-readback.stdout",
+      "sha256": "6f33f4d33ed724ed59b54dce9542695d4988850d7212032e544835e4fce04426",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-10-readback.stdout"
+    },
+    {
+      "bytes": 193,
+      "path": "candidate/node-required-10.stderr",
+      "sha256": "f9544e65566406cd83df3f730cc5522eaa808c0c9b0161da25cbd5ee40683edb",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-10.stderr"
+    },
+    {
+      "bytes": 274,
+      "path": "candidate/node-required-10.stdout",
+      "sha256": "40fbc11cc0daa5969d6d266a4d795c903bab87958e562121c1c67b60c040e323",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-10.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/node-required-11-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-11-readback.stderr"
+    },
+    {
+      "bytes": 252,
+      "path": "candidate/node-required-11-readback.stdout",
+      "sha256": "f62079ec7243b2897baae189174bac21dbec29cce7499f659cadca2874515ebd",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-11-readback.stdout"
+    },
+    {
+      "bytes": 193,
+      "path": "candidate/node-required-11.stderr",
+      "sha256": "f9544e65566406cd83df3f730cc5522eaa808c0c9b0161da25cbd5ee40683edb",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-11.stderr"
+    },
+    {
+      "bytes": 287,
+      "path": "candidate/node-required-11.stdout",
+      "sha256": "8ab7a6587be0f9fdd8b83f896e876d9ae5848b494b074a50fbc988568423a63a",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-11.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/node-required-12-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-12-readback.stderr"
+    },
+    {
+      "bytes": 239,
+      "path": "candidate/node-required-12-readback.stdout",
+      "sha256": "735d7c3e87d404d56c88551364e164679b57b3320d5b691cb445a8396c62d271",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-12-readback.stdout"
+    },
+    {
+      "bytes": 193,
+      "path": "candidate/node-required-12.stderr",
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-12.stderr"
+    },
+    {
+      "bytes": 274,
+      "path": "candidate/node-required-12.stdout",
+      "sha256": "cabfb76741c5fc39a93ea615874a990d1427cdbf3f7d0c4845742282374fa413",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-12.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/node-required-13-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-13-readback.stderr"
+    },
+    {
+      "bytes": 242,
+      "path": "candidate/node-required-13-readback.stdout",
+      "sha256": "c1dafc4f2690e09a92e7c0a0e747ee9d680e2139455949899faabc5569ef0db2",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-13-readback.stdout"
+    },
+    {
+      "bytes": 193,
+      "path": "candidate/node-required-13.stderr",
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-13.stderr"
+    },
+    {
+      "bytes": 277,
+      "path": "candidate/node-required-13.stdout",
+      "sha256": "aedddea6b20c5ebf6a5bf276bf22362ce78b45f22fb16685753e52f5fd864a6f",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-required-13.stdout"
+    },
+    {
+      "bytes": 314,
+      "path": "candidate/node-storage-default.stderr",
+      "sha256": "b0c80a853b944afa22820e4df1f4256f73fc3128997c8adb50c9a4fef2c239e5",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-storage-default.stderr"
+    },
+    {
+      "bytes": 6247,
+      "path": "candidate/node-storage-default.stdout",
+      "sha256": "0a2beae0534cfdf45c4f46e1d90a8f48477aa70237bb001ed01c4484766d0631",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-storage-default.stdout"
+    },
+    {
+      "bytes": 314,
+      "path": "candidate/node-storage.stderr",
+      "sha256": "badb2fad80050c20b20026cb15ffa283199d526d2d0de9eae601f402fe33f23c",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-storage.stderr"
+    },
+    {
+      "bytes": 6247,
+      "path": "candidate/node-storage.stdout",
+      "sha256": "4e3692901694f0358df924a68723dce21998fe832329b53220597263c37d4a5b",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/node-storage.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/preflight.stderr"
+    },
+    {
+      "bytes": 180,
+      "path": "candidate/preflight.stdout",
+      "sha256": "64d4a324a23bd14342da6eb90d43634651470c35bb7978b645ef64e9df0b624c",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/preflight.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/rustc-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/rustc-version.stderr"
+    },
+    {
+      "bytes": 196,
+      "path": "candidate/rustc-version.stdout",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/rustc-version.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/sealed-research-python-controls.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/sealed-research-python-controls.stderr"
+    },
+    {
+      "bytes": 4701,
+      "path": "candidate/sealed-research-python-controls.stdout",
+      "sha256": "1abedbab6374048cf11f1b76763aa91ce857545038e2c47339e6bf3fb7b1c6a4",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/sealed-research-python-controls.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/sealed-research-python-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/sealed-research-python-readback.stderr"
+    },
+    {
+      "bytes": 1787,
+      "path": "candidate/sealed-research-python-readback.stdout",
+      "sha256": "bacf7286ca2fa0a95929dbe730e65fd7abc14221f4017e747760ac41243300ee",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/sealed-research-python-readback.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/source-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/source-after.stderr"
+    },
+    {
+      "bytes": 423,
+      "path": "candidate/source-after.stdout",
+      "sha256": "48d910b14e2897b8e9720280bdff823544d2ccbc0c80698dff1a6d06b9a562f7",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/source-after.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/source-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/source-before.stderr"
+    },
+    {
+      "bytes": 423,
+      "path": "candidate/source-before.stdout",
+      "sha256": "48d910b14e2897b8e9720280bdff823544d2ccbc0c80698dff1a6d06b9a562f7",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/source-before.stdout"
+    },
+    {
+      "bytes": 1845,
+      "path": "candidate/strict-clippy.stderr",
+      "sha256": "aad7357d96db37a5cfaaed74d2a1fbafdb20997e45c3dfbd4e6184da8acdc20f",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/strict-clippy.stderr"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/strict-clippy.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/strict-clippy.stdout"
+    },
+    {
+      "bytes": 66994,
+      "path": "candidate/summary.json",
+      "sha256": "98e514c9f632d9919bf8f2615018ebc73a688fea393b848116a65d0adcabc75c",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/summary.json"
+    },
+    {
+      "bytes": 103,
+      "path": "candidate/test_cell_discovery_v3_ci.stderr",
+      "sha256": "6273232de4d3ef7acd4ecafa5c86beeeb974f56586b21089a2990b3f72facbe6",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/test_cell_discovery_v3_ci.stderr"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/test_cell_discovery_v3_ci.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/test_cell_discovery_v3_ci.stdout"
+    },
+    {
+      "bytes": 118,
+      "path": "candidate/test_cell_storage_convergence_ci.stderr",
+      "sha256": "fa5bca7ff4705c556b2baf4f190f5b3670750b8d3c9b5b86885486091f7d34f7",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/test_cell_storage_convergence_ci.stderr"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/test_cell_storage_convergence_ci.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/test_cell_storage_convergence_ci.stdout"
+    },
+    {
+      "bytes": 6414,
+      "path": "candidate/test_ci_source_integrity.stderr",
+      "sha256": "dc3962364b0a57fe462cea945a2e17feb019a6ee8bf1627e3738da56756bb1c8",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/test_ci_source_integrity.stderr"
+    },
+    {
+      "bytes": 808,
+      "path": "candidate/test_ci_source_integrity.stdout",
+      "sha256": "c70c728aad380f4be7765e63440be11536ae410f407f187a64e9612870df63cb",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/test_ci_source_integrity.stdout"
+    },
+    {
+      "bytes": 159,
+      "path": "candidate/test_pq_research_integration.stderr",
+      "sha256": "c93b976bb5f671d4d0ea9c68f2cdd2b97bb1b4e2f5856a025989a6885c6f2be0",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/test_pq_research_integration.stderr"
+    },
+    {
+      "bytes": 0,
+      "path": "candidate/test_pq_research_integration.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates/test_pq_research_integration.stdout"
+    },
+    {
+      "bytes": 14371,
+      "path": "controller/candidate-pty.log",
+      "sha256": "eb0e5558bdee1c8a5bb0a8d92681d4efc7bf6b061ff8b127457ab1a7358c3e0e",
+      "source_path": "/home/qq/.local/state/hepta-runtime-mac-worker/terminals/dpty-1847b2457efba33c20e15af16e74d304477b33202a694ecfc75c8ce07e44876b/output.log"
+    },
+    {
+      "bytes": 530,
+      "path": "controller/packaging-first-attempt.log",
+      "sha256": "92fbfca3ff4459737a12892912c4694ea954f5a2c9953ebd85abd1781696a830",
+      "source_path": "/home/qq/.local/state/hepta-runtime-mac-worker/terminals/dpty-cd44a4bf7d3a6912d5bf007eeb2d0e4b78fd256fc936ada3d5d2e1b6a7834ce3/output.log"
+    },
+    {
+      "bytes": 4484,
+      "path": "controller/phase-pty.log",
+      "sha256": "2254e9ace64fe1e954109a51af536237f025d3c4217d25d1b89bb30981016081",
+      "source_path": "/home/qq/.local/state/hepta-runtime-mac-worker/terminals/dpty-b4945b91ece9d5ffc3292afec03cb183087b9120626f916c9d0f29e252c5d4ac/output.log"
+    },
+    {
+      "bytes": 222,
+      "path": "controller/source-root-probe.log",
+      "sha256": "723ee4ff38ff78a0b811c489b4d7c1c9fa3bbd8f9ef8c8449e4d77a860beb3be",
+      "source_path": "/home/qq/.local/state/hepta-runtime-mac-worker/terminals/dpty-3d75193c5d07984624718da9a5cec489d03b62ca32f90b06a644f5a13179e91a/output.log"
+    },
+    {
+      "bytes": 11412,
+      "path": "model/admission.json",
+      "sha256": "068f40bba0edbfe79aa880ba4e35f1c44502520fbec89a3c6b83a5110920d4ca",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/admission.json"
+    },
+    {
+      "bytes": 66994,
+      "path": "model/candidate-gates.json",
+      "sha256": "98e514c9f632d9919bf8f2615018ebc73a688fea393b848116a65d0adcabc75c",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/candidate-gates.json"
+    },
+    {
+      "bytes": 709,
+      "path": "model/execution-result.json",
+      "sha256": "a11cd280d1685c5be1488e32cfe0ad90c89ca817d5ec03cb326a7bcfac96cfc9",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/execution-result.json"
+    },
+    {
+      "bytes": 753,
+      "path": "model/execution-start.json",
+      "sha256": "aa8481939a152510f27d819453ea041f64cae03d707efd1a22fef5abdc2b74aa",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/execution-start.json"
+    },
+    {
+      "bytes": 11638,
+      "path": "model/fresh-input.json",
+      "sha256": "cfeb462afd142ba0c2dd29f722216161346810038e19c0ac1815b12f4828d107",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/fresh-input.json"
+    },
+    {
+      "bytes": 21,
+      "path": "model/native-pid.json",
+      "sha256": "2a047c2203c7637ebb4f5a57e7306dc4d7d149b6e1fd4f0ee8e2b50cee3c78cf",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/native-pid.json"
+    },
+    {
+      "bytes": 0,
+      "path": "model/native.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/native.stderr"
+    },
+    {
+      "bytes": 20070,
+      "path": "model/native.stdout",
+      "sha256": "06e226c0e24d3d92a3cd9bfde03752c2fd13f5afcb491ce24bbafc52ce28e1f9",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/native.stdout"
+    },
+    {
+      "bytes": 7468,
+      "path": "model/observer-gates.json",
+      "sha256": "5f3f100dda83ba4689006367831f35916356eff6024cc002f234ae07388b7e40",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/observer-gates.json"
+    },
+    {
+      "bytes": 44,
+      "path": "model/operation-metadata/independent-catalog-anchor.cva3",
+      "sha256": "32a4f5699511dcfbd5cde286bca2b33772b19db95eada48956a51716fecf569c",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/independent-catalog-anchor.cva3"
+    },
+    {
+      "bytes": 3504,
+      "path": "model/operation-metadata/independent-execution-inputs.json",
+      "sha256": "d2ca855124411da012008f7edb85dad16512c34c449da82eb3b4f7710a588ea1",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/independent-execution-inputs.json"
+    },
+    {
+      "bytes": 27277,
+      "path": "model/operation-metadata/native-result.json",
+      "sha256": "f838b26ff6074852f6ddd72e516fb4d03706560d93799ef32ad9600e50b4706a",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/native-result.json"
+    },
+    {
+      "bytes": 2356,
+      "path": "model/operation-metadata/next-use-observations.json",
+      "sha256": "1fe2db29186331e9045939a727f2d0451143e8a46c71efe3bc8b4b321cff7a72",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/next-use-observations.json"
+    },
+    {
+      "bytes": 3539,
+      "path": "model/operation-metadata/next-use-result.json",
+      "sha256": "e775b76d0deb3477cec3351d88a1c1220809b92b7a80512b39ad7f5536c514eb",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/next-use-result.json"
+    },
+    {
+      "bytes": 11638,
+      "path": "model/operation-metadata/original-paged-source-inputs.json",
+      "sha256": "cfeb462afd142ba0c2dd29f722216161346810038e19c0ac1815b12f4828d107",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/original-paged-source-inputs.json"
+    },
+    {
+      "bytes": 3573,
+      "path": "model/operation-metadata/owner-authorization.cpv4",
+      "sha256": "f40e723ac039b7b226da6ed76f7cc6b9a0954a20a5ed11e594efac49b7dd0e66",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/owner-authorization.cpv4"
+    },
+    {
+      "bytes": 24479,
+      "path": "model/operation-metadata/owner-content.tcv2",
+      "sha256": "2952d3371fdcc142e69d983f099b7999a68f622ebfcd5b4def9fe6114a4c01e6",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/owner-content.tcv2"
+    },
+    {
+      "bytes": 537,
+      "path": "model/operation-metadata/owner-handoff.chb1",
+      "sha256": "213f3ea93558b8494c0c917fbeffe692e19bf522513a1f2ae6b80f39d14b0aa2",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/owner-handoff.chb1"
+    },
+    {
+      "bytes": 923,
+      "path": "model/operation-metadata/owner-paged-custody.json",
+      "sha256": "4df023d5c0a85fa85dcd5f2cd393740ca1745570b8a5ed807d5a1b351425f99d",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/owner-paged-custody.json"
+    },
+    {
+      "bytes": 39018,
+      "path": "model/operation-metadata/owner-release-snapshot.cts1",
+      "sha256": "43014f0ebd949852dee9f8667459083ff6e4f5b428c2a7350414f98a5f82e259",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/owner-release-snapshot.cts1"
+    },
+    {
+      "bytes": 0,
+      "path": "model/operation-metadata/supervisor.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/supervisor.stderr"
+    },
+    {
+      "bytes": 0,
+      "path": "model/operation-metadata/supervisor.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/supervisor.stdout"
+    },
+    {
+      "bytes": 1439,
+      "path": "model/operation-metadata/worker/cost-events.jsonl",
+      "sha256": "f3b2f2dd1e78fc47352adb053770f9258e25bee93ccda669baf2120c6a6eebab",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/worker/cost-events.jsonl"
+    },
+    {
+      "bytes": 0,
+      "path": "model/operation-metadata/worker/process.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/worker/process.log"
+    },
+    {
+      "bytes": 4247,
+      "path": "model/operation-metadata/worker/ready.json",
+      "sha256": "860d5ba77c931807477ac77bc71500ceaa284772e8cb851f6aaaa63b8096582a",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/worker/ready.json"
+    },
+    {
+      "bytes": 2839,
+      "path": "model/operation-metadata/worker/supervisor.json",
+      "sha256": "e34ee47ee44cfac0e50876af02ba51fa23bf683dee0e2bea13803e54f080e383",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/operation-metadata/worker/supervisor.json"
+    },
+    {
+      "bytes": 11644,
+      "path": "model/original-input.json",
+      "sha256": "f1a5f11fafda16ff865b1cc71fab4d64aa652e2ca7addb5a2a3ab9ce03deead6",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/original-input.json"
+    },
+    {
+      "bytes": 514,
+      "path": "model/preflight-result.json",
+      "sha256": "5b45af85918547c17eaa6950ba3a47af38bc5314670f4ef905f3d83b0a76c5f3",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/preflight-result.json"
+    },
+    {
+      "bytes": 251,
+      "path": "model/preflight-start.json",
+      "sha256": "685f678d4090002cb333ec807b37bd99ce09d2c28a98c2d2d1f6d499e30020d9",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/preflight-start.json"
+    },
+    {
+      "bytes": 0,
+      "path": "model/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/preflight.stderr"
+    },
+    {
+      "bytes": 180,
+      "path": "model/preflight.stdout",
+      "sha256": "64d4a324a23bd14342da6eb90d43634651470c35bb7978b645ef64e9df0b624c",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/preflight.stdout"
+    },
+    {
+      "bytes": 622,
+      "path": "model/source-after-result.json",
+      "sha256": "db8d10b6905d55298b1fa14aaef8c7962f2cf4cf15226f8be90fb098cc6f0c87",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/source-after-result.json"
+    },
+    {
+      "bytes": 357,
+      "path": "model/source-after-start.json",
+      "sha256": "f9cec17ab3547be1a3de099d76805f66a1799c553630bf96fb0778aed9ef054e",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/source-after-start.json"
+    },
+    {
+      "bytes": 0,
+      "path": "model/source-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/source-after.stderr"
+    },
+    {
+      "bytes": 423,
+      "path": "model/source-after.stdout",
+      "sha256": "48d910b14e2897b8e9720280bdff823544d2ccbc0c80698dff1a6d06b9a562f7",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/source-after.stdout"
+    },
+    {
+      "bytes": 622,
+      "path": "model/source-before-result.json",
+      "sha256": "465a2b6ccfb5a828a48acd4b61799f40214f000a8914d000bd0a9af942326288",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/source-before-result.json"
+    },
+    {
+      "bytes": 357,
+      "path": "model/source-before-start.json",
+      "sha256": "d5d0e49430cac38e0af344fd0466b39b46d38aa6a7c00fdc35fbae28c5fa1557",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/source-before-start.json"
+    },
+    {
+      "bytes": 0,
+      "path": "model/source-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/source-before.stderr"
+    },
+    {
+      "bytes": 423,
+      "path": "model/source-before.stdout",
+      "sha256": "48d910b14e2897b8e9720280bdff823544d2ccbc0c80698dff1a6d06b9a562f7",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/source-before.stdout"
+    },
+    {
+      "bytes": 5785,
+      "path": "model/summary.json",
+      "sha256": "f94d2090cd084d69863113c77f1011796574ffc0c8936ca783e324c20385bd3b",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01-evidence/summary.json"
+    },
+    {
+      "bytes": 0,
+      "path": "observers/cargo-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-observers/cargo-version.stderr"
+    },
+    {
+      "bytes": 36,
+      "path": "observers/cargo-version.stdout",
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-observers/cargo-version.stdout"
+    },
+    {
+      "bytes": 62,
+      "path": "observers/paged-model-build.stderr",
+      "sha256": "85c8dbac64ed6a362d668bf3988686e26e947620bb15cfdbe2e999a0ff8261b2",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-observers/paged-model-build.stderr"
+    },
+    {
+      "bytes": 0,
+      "path": "observers/paged-model-build.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-observers/paged-model-build.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "observers/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-observers/preflight.stderr"
+    },
+    {
+      "bytes": 180,
+      "path": "observers/preflight.stdout",
+      "sha256": "64d4a324a23bd14342da6eb90d43634651470c35bb7978b645ef64e9df0b624c",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-observers/preflight.stdout"
+    },
+    {
+      "bytes": 169,
+      "path": "observers/residency-observation.stderr",
+      "sha256": "8651b8f8ef399fafb4c72dbf176a353abff9b673d58dd262510d32eb50076b2a",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-observers/residency-observation.stderr"
+    },
+    {
+      "bytes": 9192,
+      "path": "observers/residency-observation.stdout",
+      "sha256": "dc0baf24ae0fba4cfb93dd235d3c789666171a7631bd4569e246c5c30039b97a",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-observers/residency-observation.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "observers/rustc-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-observers/rustc-version.stderr"
+    },
+    {
+      "bytes": 196,
+      "path": "observers/rustc-version.stdout",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-observers/rustc-version.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "observers/source-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-observers/source-after.stderr"
+    },
+    {
+      "bytes": 423,
+      "path": "observers/source-after.stdout",
+      "sha256": "48d910b14e2897b8e9720280bdff823544d2ccbc0c80698dff1a6d06b9a562f7",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-observers/source-after.stdout"
+    },
+    {
+      "bytes": 0,
+      "path": "observers/source-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-observers/source-before.stderr"
+    },
+    {
+      "bytes": 423,
+      "path": "observers/source-before.stdout",
+      "sha256": "48d910b14e2897b8e9720280bdff823544d2ccbc0c80698dff1a6d06b9a562f7",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-observers/source-before.stdout"
+    },
+    {
+      "bytes": 7468,
+      "path": "observers/summary.json",
+      "sha256": "5f3f100dda83ba4689006367831f35916356eff6024cc002f234ae07388b7e40",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-observers/summary.json"
+    },
+    {
+      "bytes": 11638,
+      "path": "originals/fresh-input.json",
+      "sha256": "cfeb462afd142ba0c2dd29f722216161346810038e19c0ac1815b12f4828d107",
+      "source_path": "/home/qq/work/cell-four-gates-paged-source-operation-01.json"
+    },
+    {
+      "bytes": 17381,
+      "path": "originals/gate-runner.py",
+      "sha256": "2ec4016fd414fb95ea9731f9157a9856fc2ee5b0c49e7457ebd908290c611c5e",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-gate-runner-from-git.py"
+    },
+    {
+      "bytes": 25557,
+      "path": "originals/model-runner.py",
+      "sha256": "b407dcfc881589388cbd0f2f0a29273647780184f745e2b1db04e193225b0481",
+      "source_path": "/home/qq/work/run_cell_four_gates_paged_operation_2bfb.py"
+    },
+    {
+      "bytes": 12058,
+      "path": "originals/original-gate-runner.py",
+      "sha256": "75bd521b38a8f6162307f6419692a527b36321fcf20a6b873db99f77f48d85ed",
+      "source_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/evidence/cell-paged-model-release-34e09-20261110/runner-release-v1.py"
+    },
+    {
+      "bytes": 11644,
+      "path": "originals/original-input.json",
+      "sha256": "f1a5f11fafda16ff865b1cc71fab4d64aa652e2ca7addb5a2a3ab9ce03deead6",
+      "source_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/evidence/cell-paged-model-release-34e09-20261110/paged-source-inputs.operation02.release.v1.json"
+    },
+    {
+      "bytes": 6760,
+      "path": "originals/original-model-launcher.py",
+      "sha256": "86b80ab795a306c7a31bd386e5d163d8636048cee9ae06629cd995f99d64d9de",
+      "source_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/evidence/cell-paged-model-release-34e09-20261110/run_paged_model_release_v1.py"
+    },
+    {
+      "bytes": 12933,
+      "path": "originals/phase-supervisor.py",
+      "sha256": "3ed241d1b189210b9612ed6f9001607e4d7046444869394a6fb648a37639277d",
+      "source_path": "/home/qq/work/run_cell_c3_remaining_phases_2bfb.py"
+    },
+    {
+      "bytes": 3090,
+      "path": "phase-supervisor/events.jsonl",
+      "sha256": "acdb900925346400f93bd02fc556b9c481a5daed790410288fe88c4e0a5de2ac",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-phase-supervisor/events.jsonl"
+    },
+    {
+      "bytes": 3996,
+      "path": "phase-supervisor/summary.json",
+      "sha256": "7c229407fef8837d576d750066ead890309d43f0e8138858230c68debbd91d98",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c3-phase-supervisor/summary.json"
+    }
+  ],
+  "model_run_passed": true,
+  "phase_passed": true,
+  "recovered_sources": {
+    "originals/gate-runner.py": {
+      "commit": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+      "git_blob": "6d6c55d908f313e059a456363b54a9e6f3bf8060",
+      "method": "Recovered from the immutable local C3 git blob; SHA256 exactly matches the executed candidate runner receipt",
+      "post_run_observation": "Exact source root absent during packaging probe; raw probe and failed packaging receipt retained. Cause is not established.",
+      "repository_path": "scripts/ci/run_cell_storage_four_gates_v1.py",
+      "tested_source_path": "/home/qq/work/chain-cell-four-gates-20261111-2bfb/scripts/ci/run_cell_storage_four_gates_v1.py"
+    }
+  },
+  "schema": "cell-four-gates-current-raw-records-v1",
+  "source": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "source_root_present_during_packaging": false,
+  "total_file_bytes": 2313088,
+  "tree": "21e970bfdb11ab64403d2af5f3c56536a2961f80"
+}

@@ -1,0 +1,84 @@
+{
+  "published_parent": "1c18878c42727e5261c7706d996fbfb672a8dc3c",
+  "test_blob": "9434a12dca6b66da00c0862a07ece1a2b26166ce",
+  "history_blob": "73e5d3d02611833848409254fc1b37452542e463",
+  "corpus_blob": "cffec940123200bd7a7e55ff4a22d6bf2ea0cf01",
+  "history_changes": "Two formatter-only assert_eq line wraps",
+  "commands": [
+    {
+      "name": "preflight-before",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.264690637588501
+    },
+    {
+      "name": "format-apply",
+      "argv": [
+        "/home/qian/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all"
+      ],
+      "exit_code": 0,
+      "seconds": 43.346667766571045
+    },
+    {
+      "name": "preflight-after",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.15803813934326172
+    },
+    {
+      "name": "source-corpus",
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.8889682292938232
+    },
+    {
+      "name": "claim-guard",
+      "argv": [
+        "python3",
+        "scripts/ci/pq_chain_claim_guard.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.1430044174194336
+    },
+    {
+      "name": "whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.054894447326660156
+    },
+    {
+      "name": "format-check",
+      "argv": [
+        "/home/qian/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 40.348891258239746
+    }
+  ],
+  "all_succeeded": true
+}

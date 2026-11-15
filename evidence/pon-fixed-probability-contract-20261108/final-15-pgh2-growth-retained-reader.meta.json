@@ -1,0 +1,17 @@
+{
+  "label": "final-15-pgh2-growth-retained-reader",
+  "argv": [
+    "python3",
+    "scripts/pon_joint_daa_reader.py",
+    "--raw-dir",
+    "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/retained-joint-native/pgh2-growth",
+    "--expected-report-sha256",
+    "d0e548d0a685a6da9e022a6d94576168d959a45c70e45d3c8590d71eca674dda"
+  ],
+  "exit": 0,
+  "duration_seconds": 20.605229596141726,
+  "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+  "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+  "native_passed_counts": [],
+  "unittest_counts": []
+}

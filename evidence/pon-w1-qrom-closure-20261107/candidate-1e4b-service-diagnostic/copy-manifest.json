@@ -1,0 +1,100 @@
+{
+  "cloud_copy_completed": false,
+  "copy_is_evidence_only_not_a_new_native_test_run": true,
+  "directory": "candidate-1e4b-service-diagnostic",
+  "files": [
+    {
+      "bytes": 561619,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-failure-diagnostic/observations.tar.gz",
+      "path": "observations.tar.gz",
+      "sha256": "413a6c7bf5a589b876cf05dd72855379b1643b9da2cbe19d64bacc3a5d5a9d09"
+    },
+    {
+      "bytes": 3757,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-failure-diagnostic/diagnostic-summary.json",
+      "path": "diagnostic-summary.json",
+      "sha256": "7776a1dea1ee55c48400de1e609b652eb20aec4eeb1aa8948906367d64e8e29f"
+    },
+    {
+      "bytes": 3249,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-failure-diagnostic/manifest.json",
+      "path": "manifest.json",
+      "sha256": "67cc0c4549a7eaeb6caaa49a9aaa5f5ce95d1ae3d69caee4cb54b81ba988446a"
+    },
+    {
+      "bytes": 401,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-failure-diagnostic/package-result.json",
+      "path": "package-result.json",
+      "sha256": "bebbc8ee583612096966efac10eb5a4f49b328c8ab2ba47520c62abe6d35d144"
+    },
+    {
+      "bytes": 5169,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-failure-diagnostic/run_diagnostic.py",
+      "path": "run_diagnostic.py",
+      "sha256": "e174c42a689eaff097c3801c4b5bbf6a37ca45c607d616653ccf16758040b4d3"
+    },
+    {
+      "bytes": 1131,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-failure-diagnostic/service-exact-test.json",
+      "path": "service-exact-test.json",
+      "sha256": "924d9ada313f931ca5d6de8a98a160e5eaba34f3c0f14022129c9bf8d2617774"
+    },
+    {
+      "bytes": 239,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-failure-diagnostic/service-exact-test.stdout.log",
+      "path": "service-exact-test.stdout.log",
+      "sha256": "3f5cb75229475635bd5f2e16f44ef41792e819838eebe5c5b30db9d67670c677"
+    },
+    {
+      "bytes": 0,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-failure-diagnostic/service-exact-test.stderr.log",
+      "path": "service-exact-test.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1305,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-failure-diagnostic/source-identities.json",
+      "path": "source-identities.json",
+      "sha256": "bb912b3a458d55fb25b961b8196ccef65d323490216eab11cdda6a53d5a41eff"
+    },
+    {
+      "bytes": 11809,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-failure-diagnostic/source-service_tests.rs",
+      "path": "source-service_tests.rs",
+      "sha256": "1b47a8384fa20bfd7c2a15c41f4a693eb8cede29c8100f45885d8ac80e66fee0"
+    },
+    {
+      "bytes": 10775,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-failure-diagnostic/source-service_test_fixture.rs",
+      "path": "source-service_test_fixture.rs",
+      "sha256": "7c34a71f0180c740fd7a4cef9bcd196ff09ed5d479c3153899ddc4d7331b96d6"
+    },
+    {
+      "bytes": 6444,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-failure-diagnostic/source-clock_contract.rs",
+      "path": "source-clock_contract.rs",
+      "sha256": "c3316e46b63ee47a2467dfe5a31d9ab934881d2d4dde0137b93a51f09b158b92"
+    },
+    {
+      "bytes": 3396,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-failure-diagnostic/source-service_clock.rs",
+      "path": "source-service_clock.rs",
+      "sha256": "702f582374706400530529bce619acd86228222152eb1e5d34bb453b1e169e60"
+    },
+    {
+      "bytes": 8222,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-failure-diagnostic/source-service_store.rs",
+      "path": "source-service_store.rs",
+      "sha256": "b4a3a5c375db867241d3df56a78f0347af4853d785be285c77f92d0adfde89d8"
+    },
+    {
+      "bytes": 5931,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-failure-diagnostic/source-frontier_service.rs",
+      "path": "source-frontier_service.rs",
+      "sha256": "ebce1d727a1e8c89327b53b345d7e4da9b3329dbeb955b1a7356214b541c3273"
+    }
+  ],
+  "head": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+  "narrow_candidate_gate_pass": false,
+  "schema": "TRNM-W1-A-NATIVE-COPY-DIRECTORY1"
+}

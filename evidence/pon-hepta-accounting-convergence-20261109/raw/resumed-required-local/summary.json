@@ -1,0 +1,202 @@
+{
+  "all_commands_executed": true,
+  "all_commands_passed": true,
+  "disk_after": {
+    "free": 1875750912,
+    "total": 67586535424,
+    "used": 62258036736
+  },
+  "ended_utc": "2026-11-09T04:43:42.939820+00:00",
+  "head_after": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "planned_labels": [
+    "source-negatives",
+    "ci-negatives",
+    "corpus-negatives",
+    "corpus-identity",
+    "repository-links"
+  ],
+  "qualification": "HOLD_NO_GO",
+  "results": [
+    {
+      "after": {
+        "base": null,
+        "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "tested_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2495315152,
+        "tracked_entries": 26132,
+        "tracked_worktree_verified": true
+      },
+      "before": {
+        "base": null,
+        "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "tested_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2495315152,
+        "tracked_entries": 26132,
+        "tracked_worktree_verified": true
+      },
+      "exit_code": 0,
+      "label": "source-negatives",
+      "log_bytes": 6898,
+      "log_sha256": "5264fe9aba0784a5cfa90e1c1825410255363f412e27420d2ffa46ab9fec7052",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "wall_seconds": 9.17080456199983
+    },
+    {
+      "after": {
+        "base": null,
+        "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "tested_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2495315152,
+        "tracked_entries": 26132,
+        "tracked_worktree_verified": true
+      },
+      "before": {
+        "base": null,
+        "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "tested_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2495315152,
+        "tracked_entries": 26132,
+        "tracked_worktree_verified": true
+      },
+      "exit_code": 0,
+      "label": "ci-negatives",
+      "log_bytes": 28147,
+      "log_sha256": "11637fac81390f157b102a3d410404d1703c09e04c8b0ddfbb1167482293dcde",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "wall_seconds": 44.20407782700022
+    },
+    {
+      "after": {
+        "base": null,
+        "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "tested_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2495315152,
+        "tracked_entries": 26132,
+        "tracked_worktree_verified": true
+      },
+      "before": {
+        "base": null,
+        "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "tested_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2495315152,
+        "tracked_entries": 26132,
+        "tracked_worktree_verified": true
+      },
+      "exit_code": 0,
+      "label": "corpus-negatives",
+      "log_bytes": 157,
+      "log_sha256": "f1e11d517a7931415a9a26f70801c7cf0419d53c046d8edd1280831214455dec",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "wall_seconds": 83.4686097949998
+    },
+    {
+      "after": {
+        "base": null,
+        "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "tested_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2495315152,
+        "tracked_entries": 26132,
+        "tracked_worktree_verified": true
+      },
+      "before": {
+        "base": null,
+        "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "tested_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2495315152,
+        "tracked_entries": 26132,
+        "tracked_worktree_verified": true
+      },
+      "exit_code": 0,
+      "label": "corpus-identity",
+      "log_bytes": 557,
+      "log_sha256": "049ea5dda28da5d075f30488ec5359d5e6a69dc1fbc81c3d62af17ad211911de",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "wall_seconds": 5.700524378000409
+    },
+    {
+      "after": {
+        "base": null,
+        "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "tested_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2495315152,
+        "tracked_entries": 26132,
+        "tracked_worktree_verified": true
+      },
+      "before": {
+        "base": null,
+        "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "tested_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2495315152,
+        "tracked_entries": 26132,
+        "tracked_worktree_verified": true
+      },
+      "exit_code": 0,
+      "label": "repository-links",
+      "log_bytes": 307,
+      "log_sha256": "51827eab02a908a4d427a50ef3db1142d72be4aa65cac1b4a2a9cf18c0032634",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "wall_seconds": 21.139267376000134
+    }
+  ],
+  "schema": "chain-c1-resumed-gates-summary-v1",
+  "source": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "started_utc": "2026-11-09T04:40:59.254721+00:00",
+  "status_after": "",
+  "tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+  "tree_after": "563992ef5bd3db98d95b7e249ea67cbbec2e2978"
+}

@@ -1,0 +1,104 @@
+{
+  "batches": [],
+  "class_scales": {
+    "classical": {
+      "d": 1,
+      "n": 1
+    },
+    "quantum": {
+      "d": 1,
+      "n": 1
+    }
+  },
+  "credit_quantum": {
+    "d": 1,
+    "n": 1
+  },
+  "deadline_ms": 120000,
+  "envelopes": [
+    {
+      "class": "classical",
+      "evidence": {
+        "kind": "hypothesis",
+        "reference": "Current W1 profile identity only. No certified full legal algorithm lower or upper bound for this uniform alpha=1/2 by 120000 ms, one-round research window. p0=1/16, u in {1,4,16}, scalar class scales and the research window are hypotheses; they are not current n=64/rank=8 work-profile parameters, a measured cost, a business deadline, or a quantum hardware capability. Lifetime failure bound unknown."
+      },
+      "lower": null,
+      "u": 1,
+      "upper": null
+    },
+    {
+      "class": "classical",
+      "evidence": {
+        "kind": "hypothesis",
+        "reference": "Current W1 profile identity only. No certified full legal algorithm lower or upper bound for this uniform alpha=1/2 by 120000 ms, one-round research window. p0=1/16, u in {1,4,16}, scalar class scales and the research window are hypotheses; they are not current n=64/rank=8 work-profile parameters, a measured cost, a business deadline, or a quantum hardware capability. Lifetime failure bound unknown."
+      },
+      "lower": null,
+      "u": 4,
+      "upper": null
+    },
+    {
+      "class": "classical",
+      "evidence": {
+        "kind": "hypothesis",
+        "reference": "Current W1 profile identity only. No certified full legal algorithm lower or upper bound for this uniform alpha=1/2 by 120000 ms, one-round research window. p0=1/16, u in {1,4,16}, scalar class scales and the research window are hypotheses; they are not current n=64/rank=8 work-profile parameters, a measured cost, a business deadline, or a quantum hardware capability. Lifetime failure bound unknown."
+      },
+      "lower": null,
+      "u": 16,
+      "upper": null
+    },
+    {
+      "class": "quantum",
+      "evidence": {
+        "kind": "hypothesis",
+        "reference": "Current W1 profile identity only. No certified full legal algorithm lower or upper bound for this uniform alpha=1/2 by 120000 ms, one-round research window. p0=1/16, u in {1,4,16}, scalar class scales and the research window are hypotheses; they are not current n=64/rank=8 work-profile parameters, a measured cost, a business deadline, or a quantum hardware capability. Lifetime failure bound unknown."
+      },
+      "lower": null,
+      "u": 1,
+      "upper": null
+    },
+    {
+      "class": "quantum",
+      "evidence": {
+        "kind": "hypothesis",
+        "reference": "Current W1 profile identity only. No certified full legal algorithm lower or upper bound for this uniform alpha=1/2 by 120000 ms, one-round research window. p0=1/16, u in {1,4,16}, scalar class scales and the research window are hypotheses; they are not current n=64/rank=8 work-profile parameters, a measured cost, a business deadline, or a quantum hardware capability. Lifetime failure bound unknown."
+      },
+      "lower": null,
+      "u": 4,
+      "upper": null
+    },
+    {
+      "class": "quantum",
+      "evidence": {
+        "kind": "hypothesis",
+        "reference": "Current W1 profile identity only. No certified full legal algorithm lower or upper bound for this uniform alpha=1/2 by 120000 ms, one-round research window. p0=1/16, u in {1,4,16}, scalar class scales and the research window are hypotheses; they are not current n=64/rank=8 work-profile parameters, a measured cost, a business deadline, or a quantum hardware capability. Lifetime failure bound unknown."
+      },
+      "lower": null,
+      "u": 16,
+      "upper": null
+    }
+  ],
+  "failure_budget": null,
+  "horizon_rounds": 1,
+  "max_distortion": {
+    "d": 1,
+    "n": 1
+  },
+  "nondecreasing": true,
+  "p0": {
+    "d": 16,
+    "n": 1
+  },
+  "probability_scope": "declared_model_not_statistical_confidence",
+  "profile_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+  "schema": "pon.cost-envelope.contract.v1",
+  "success_probability_target": {
+    "d": 2,
+    "n": 1
+  },
+  "success_standard": "total_cost_for_fixed_success_probability_by_deadline",
+  "work_levels": [
+    1,
+    4,
+    16
+  ]
+}

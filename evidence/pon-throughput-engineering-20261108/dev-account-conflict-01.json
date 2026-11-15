@@ -1,0 +1,17 @@
+{
+  "scope": "development check of dirty working source; not frozen source qualification",
+  "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-mvcc-fee",
+    "--lib",
+    "account_conflict"
+  ],
+  "exit_code": 101,
+  "elapsed_ns": 2141245416
+}

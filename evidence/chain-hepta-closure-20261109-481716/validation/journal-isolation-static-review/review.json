@@ -1,0 +1,266 @@
+{
+  "schema": "journal-cold-reopen-isolation-static-review-v2",
+  "reviewed_utc": "2026-11-09T17:13:04.722352+00:00",
+  "method": "read-only fixed M5 source, retained original result, and proposed test-only diff inspection; no repository edits, native execution, retry, reproduction, tracing, or network access",
+  "source": {
+    "commit": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+    "tree": "fbbb4dca143775bae75ea825ff502f368e122ebb",
+    "files": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/files.rs",
+        "bytes": 21649,
+        "sha256": "4f99124a24f033d60dd8a7066f6265f8ef714cd17d96184867603858ef333a67",
+        "git_blob": "bd63c64ebcf4be2bc5463f3254d4b202288ef344",
+        "local_bytes_equal_fixed_m5": true,
+        "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/public_submit/pq/files.rs"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal.rs",
+        "bytes": 27046,
+        "sha256": "f145ea1ef0dd09c5019d4d07ee440bfa5bb7c7870c817ea1c9d9879644d46d5b",
+        "git_blob": "722d3af41e4cca57681c5b8c4de0e0fb00005ed0",
+        "local_bytes_equal_fixed_m5": true,
+        "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal.rs"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+        "bytes": 31439,
+        "sha256": "6d348af6fdea45ac6acf3415a8cd60a1ccce5d2309ab3cf285106311aaa2b834",
+        "git_blob": "d6990c7a0a731f3ab1df07dd9bb9ca56a610a867",
+        "local_bytes_equal_fixed_m5": false,
+        "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/error.rs",
+        "bytes": 33859,
+        "sha256": "e2b758eeae1e25cff63a0fe57824df23bdcc88cfecf3258c3b59c586735e4a66",
+        "git_blob": "22a1be7f0603920ca1662ffe9c4363e6db763929",
+        "local_bytes_equal_fixed_m5": true,
+        "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/error.rs"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/operator_task_policy_file_tests.rs",
+        "bytes": 3272,
+        "sha256": "c808b482e69acd165f879f53d62d4881f2124c0ec9e0505da860ebe3e55d6cb0",
+        "git_blob": "6d8c88cbfeaea432e0a78e31e28b3c57acd4985c",
+        "local_bytes_equal_fixed_m5": true,
+        "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/operator_task_policy_file_tests.rs"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration_tests.rs",
+        "bytes": 74679,
+        "sha256": "0d0379865222c832d30c0877820b27335cd4992cb786ab7bfd0de3c435df7973",
+        "git_blob": "112b312e782e27f956d6839efa43253a8297bc5c",
+        "local_bytes_equal_fixed_m5": true,
+        "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/store/authenticated_migration_tests.rs"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs",
+        "bytes": 55792,
+        "sha256": "ae673ce5027eb5a1780ff85680d151a4a599ccd60a4c4bfdb184a59544c80f2e",
+        "git_blob": "c98c5333ab3609b30b11fd0a700917ce7f2a8999",
+        "local_bytes_equal_fixed_m5": true,
+        "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs"
+      }
+    ]
+  },
+  "original_evidence_files": [
+    {
+      "path": "verification/native-checks/rog-m5-native-01/extracted/m5/canonical359/direct-trnm-pon-node-01/summary.json",
+      "bytes": 2313,
+      "sha256": "77a7ae65dc8ec9c287a1e78d504bbb931661c90c1abf6a2dfc71e44ad18c2dd3"
+    },
+    {
+      "path": "verification/native-checks/rog-m5-native-01/extracted/m5/canonical359/direct-trnm-pon-node-01/command.json",
+      "bytes": 722,
+      "sha256": "40f40a08e830f9a5509f07867ee1f089633b73e69a948220422bd8486adca815"
+    },
+    {
+      "path": "verification/native-checks/rog-m5-native-01/extracted/m5/canonical359/direct-trnm-pon-node-01/test.stdout.log",
+      "bytes": 172293,
+      "sha256": "dfce0777d9282c7b308aa0843018a7a57fe3f21d2c2b411ac31b5d9484883092"
+    },
+    {
+      "path": "verification/native-checks/rog-m5-native-01/extracted/m5/canonical359/direct-trnm-pon-node-01/test.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/native-checks/rog-m5-native-01/extracted/m5/canonical359/direct-trnm-pon-node-01/test-elf-before.json",
+      "bytes": 360,
+      "sha256": "e04a8319271cbdf41300e083481c8c5b363a175804666f5f372e43977ad4da3a"
+    },
+    {
+      "path": "verification/native-checks/rog-m5-native-01/extracted/m5/canonical359/direct-trnm-pon-node-01/test-elf-after.json",
+      "bytes": 360,
+      "sha256": "e04a8319271cbdf41300e083481c8c5b363a175804666f5f372e43977ad4da3a"
+    },
+    {
+      "path": "verification/native-checks/rog-m5-native-01/extracted/m5/canonical359/direct-trnm-pon-node-01/source-before.json",
+      "bytes": 218,
+      "sha256": "0d60994cee245833d84bf594dd172ae440786da0ed8d1cea84ed303c582c3199"
+    },
+    {
+      "path": "verification/native-checks/rog-m5-native-01/extracted/m5/canonical359/direct-trnm-pon-node-01/source-after.json",
+      "bytes": 218,
+      "sha256": "0d60994cee245833d84bf594dd172ae440786da0ed8d1cea84ed303c582c3199"
+    },
+    {
+      "path": "verification/native-checks/rog-m5-native-01/extracted/m5/canonical359/direct-trnm-pon-node-01/provider-inputs-before.json",
+      "bytes": 1977,
+      "sha256": "6bcc0d8d69d4bec8fb17bb3475be1e5e43acc9f17b434a2f4a23e671db5dea8f"
+    },
+    {
+      "path": "verification/native-checks/rog-m5-native-01/extracted/m5/canonical359/direct-trnm-pon-node-01/provider-inputs-after.json",
+      "bytes": 1977,
+      "sha256": "6bcc0d8d69d4bec8fb17bb3475be1e5e43acc9f17b434a2f4a23e671db5dea8f"
+    }
+  ],
+  "historical_failure": {
+    "unchanged": true,
+    "test_name": "public_submit::pq::journal::tests::journal_unknown_publication_is_sticky_and_cold_replay_does_not_refund_attempt",
+    "location": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:230:63",
+    "observed_error": "Journal::open returned Transport IO WouldBlock / EAGAIN, OS error 11, after drop(journal)",
+    "top_level_result": [
+      {
+        "elapsed": "361.64s",
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 39,
+        "measured": 0,
+        "passed": 1358,
+        "raw_line": "test result: FAILED. 1358 passed; 1 failed; 39 ignored; 0 measured; 0 filtered out; finished in 361.64s",
+        "status": "FAILED"
+      }
+    ],
+    "main_roster_count": 1398,
+    "test_returncode": 101,
+    "provider_cohort": "canonical-static-openssl-3.5.9",
+    "source_before_after_equal": true,
+    "test_elf_before_after_equal": true,
+    "provider_inputs_before_after_equal": true,
+    "test_elf": {
+      "bytes": 576778400,
+      "cargo_profile": "test",
+      "cfg_test": true,
+      "ordinary_daemon_build_identity": null,
+      "ordinary_daemon_load_identity": null,
+      "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_pon_node-1b9e88419cc32a23",
+      "sha256": "00d50474c4409a5b89d14e5a75abbc7ca83cd41f6bdf0ae8a9605e49cb10deaf"
+    }
+  },
+  "observed_source_facts": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/files.rs",
+      "lines": "105-124;147-208",
+      "fact": "Files directly owns lock: File. The lock is opened with CLOEXEC and NONBLOCK and acquired by FileExt::try_lock_exclusive. No clone/try_clone, forget, into_raw, custom Drop or unlock was found in the reviewed Files and Journal modules."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal.rs",
+      "lines": "195-200;357-380;383-464",
+      "fact": "Journal directly owns Files. initialize/open acquire Files locally and move it into Journal. Opening audits retained record, request/reply/context and epoch. No separate task/Arc lock owner appears in these two modules."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/files.rs",
+      "lines": "577-630",
+      "fact": "Point::Published fault occurs after rename and root directory sync. The test cut clears its one-shot fail_at and returns an injected error; the selected test does not install the optional callback."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+      "lines": "34-85;217-234",
+      "fact": "The selected test uses a unique tempfile directory and creates a 60-second SubmitRecoveryPlan. It checks three sticky errors after the injected publication uncertainty, drops the Journal in process, then reopens in that same process and checks used_calls=1, attempts=1, and no prepared name."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration_tests.rs",
+      "lines": "846-886;1838-1845",
+      "fact": "Existing repository tests use current_exe plus the fully qualified exact test name and environment gating for an exec child."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_task_policy_file_tests.rs",
+      "lines": "17-57;60-92",
+      "fact": "Another repository child pattern checks both successful exit and an end-of-scenario completion marker. Its sleep/poll timeout implementation is not a recommendation for this change."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+      "lines": "528",
+      "fact": "Another test in this file starts an external mkfifo Command; the native harness also retains successful nested filtered child summaries. These establish the presence of subprocess tests, not overlap with this failure or a lock-holder identity."
+    }
+  ],
+  "decision": {
+    "status": "ACCEPT_REVIEWED_TEST_ISOLATION_PATCH_WITH_SCOPE_LIMITS",
+    "allowed_scope": "Move the entire original selected scenario into a fresh execed exact-test process while preserving its same-process drop-to-reopen assertion and all existing checks. This is a test-scheduling isolation change, not a production lock fix or causal diagnosis.",
+    "requirements": [
+      "Exec must occur before creating this scenario Fixture or Journal. The child creates all its own scenario state.",
+      "Use the same current_exe artifact and fully qualified --exact test selection; retain bounded existing runner behavior and fail on child spawn, signal, nonzero exit or timeout.",
+      "Prove that exactly the intended child test and all end assertions executed: validate a one-test exact result and/or a fresh scenario completion marker. Exit zero alone is insufficient because a mistyped filter may run zero tests.",
+      "Inside that one child, add a live-owner second-open negative control using the same path, client, target and sequence. Require the IO source error kind WouldBlock rather than accepting any error as proof of mutual exclusion.",
+      "Inside that same child, retain original prepare, Published fault, three sticky error checks, drop(journal), immediate Journal::open and all three final persistent-state assertions.",
+      "Retain the original 60-second plan and existing max_calls/max_parent_packets, expiry semantics, provider environment and production acquisition/revalidation behavior.",
+      "Do not add sleep, retry, alternate path, lock removal, explicit unlock, production lock change, ignored status or assertion weakening.",
+      "Preserve original M5 source/ELF/provider identity, error log and failed result; any changed test source and new ELF result must be a separately identified record."
+    ],
+    "why_drop_leak_remains_observable": "Because lock acquisition and the later drop/open remain in one child process, exec cannot close a Journal descriptor between those two operations. A surviving original lock handle within that child still prevents the required reopen.",
+    "forbidden_variant": "Initialize or fault in parent and reopen only after exec. CLOEXEC closure at the process transition would bypass the same-process drop/release contract.",
+    "diagnostic_precondition": "No proof of the original causal mechanism is required to make this explicitly scoped test-isolation change. A production fix or claim that fork inheritance caused the historical failure requires new causal evidence; isolated-test success alone is insufficient.",
+    "if_isolated_case_still_fails": "Preserve failure, do not retry/unlock or weaken assertions, and collect only the minimum same-attempt lock object/owner/process-lifecycle diagnostics needed to distinguish retained local ownership, other ownership and filesystem behavior."
+  },
+  "unresolved": {
+    "original_lock_holder_pid": null,
+    "original_lock_device_inode": null,
+    "original_fd_owner_snapshot": null,
+    "spawn_syscall_and_overlap_at_failure": null,
+    "fork_inheritance_confirmed": false,
+    "production_handle_leak_confirmed": false,
+    "scope_limit": "General fork/exec descriptor inheritance is a possible model, not an observed explanation. CLOEXEC does not by itself establish the actual spawn path or timing. This review does not close concurrent process-spawn interaction or arbitrary-filesystem locking behavior.",
+    "minimal_causal_evidence_if_needed": [
+      "same-failure lock path and dev/inode identity",
+      "the held descriptor identities before and after the intended drop",
+      "process/descriptor ownership and spawn/exec timing for that exact lock object, where available without weakening production semantics"
+    ]
+  },
+  "qualification": {
+    "new_native_result_observed_by_this_review": false,
+    "native_suite_pass": false,
+    "ordinary_daemon_identity_verified": false,
+    "host_four_second_service_pass": false,
+    "thirty_second_campaign_pass": false,
+    "independent_fault_domains_72h_pass": false,
+    "production_qualification_granted": false
+  },
+  "completed_utc": "2026-11-09T17:15:32.062176+00:00",
+  "proposed_patch_review": {
+    "path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+    "bytes": 33358,
+    "sha256": "4aeac967ab618226d2ea5d20e8c7fd7d681dd00962573b2425cec712609e4215",
+    "git_blob": "5882265bd8bfd7c982380270b0779803275e7be3",
+    "diff_base": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+    "diff_bytes": 3088,
+    "diff_sha256": "03e657cea440bfc44f0ecbd79eb14899a1377f6fe1beb7c11ac7fbded98fca81",
+    "result": "NO_SUBSTANTIVE_STATIC_BLOCKER_WITHIN_STATED_SCOPE",
+    "production_files": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/files.rs",
+        "sha256": "4f99124a24f033d60dd8a7066f6265f8ef714cd17d96184867603858ef333a67",
+        "bytes_equal_m5": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal.rs",
+        "sha256": "f145ea1ef0dd09c5019d4d07ee440bfa5bb7c7870c817ea1c9d9879644d46d5b",
+        "bytes_equal_m5": true
+      }
+    ],
+    "verified_features": [
+      "Parent branch is before Fixture::new, so this scenario does not create its lock before exec.",
+      "Child is current_exe with --exact original fully qualified test name, --nocapture, --test-threads=1 and --color=never.",
+      "A dedicated Command.env marker selects the child body without process-global environment mutation.",
+      "Parent requires successful exit, a running 1 test line, and a unique completion marker printed only after all original body assertions; it retains stdout and stderr.",
+      "The same child creates the live Journal, checks that a second open fails specifically with io::ErrorKind::WouldBlock, runs the unchanged publication-fault body, drops Journal, reopens it and verifies all original persistent-state assertions.",
+      "The live-owner error check uses the existing std::error::Error source and io::Error downcast; fully qualified names require no new import or cfg.",
+      "No added test entry or ignored attribute; original test name and original full harness roster count are unchanged by this diff.",
+      "No sleep, retry, explicit unlock, production code edit, 60-second plan change, or original assertion deletion occurs in the reviewed diff."
+    ],
+    "timeout_scope": "No separate child deadline is added. The existing full-library runner engineering timeout remains responsible for a stalled test; this is not a new 60-second execution bound or Host service measurement. Timeout must remain failure/incomplete.",
+    "unverified": "No Rust build or execution of this proposed patch was performed in this review. Parent will freeze a new source and any subsequent native result must bind its new ELF separately. The historical M5 EAGAIN holder/cause remains unknown.",
+    "local_source_observation": "The source identity table pins M5 Git objects. Its journal_tests.rs local_bytes_equal_fixed_m5=false records the parent-authorized patch arriving during review; the exact changed blob is separately pinned and reviewed here."
+  }
+}

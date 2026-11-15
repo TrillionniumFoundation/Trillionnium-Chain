@@ -1,0 +1,197 @@
+{
+  "binary": "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-target/release/examples/cell_bep52_cost_v1",
+  "binary_sha256_after": "eba37c1018f27321679cd8774e29e201f8c8d11bb39497d0484331a3c549c0b0",
+  "binary_sha256_before": "eba37c1018f27321679cd8774e29e201f8c8d11bb39497d0484331a3c549c0b0",
+  "command": [
+    "/usr/bin/time",
+    "-o",
+    "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-validation/cell-cost-observation/cell_bep52_cost_v1.gnu-time.txt",
+    "-f",
+    "wall_seconds=%e\nuser_cpu_seconds=%U\nsystem_cpu_seconds=%S\npeak_rss_kib=%M\nexit_code=%x",
+    "--",
+    "/usr/bin/timeout",
+    "--signal=TERM",
+    "--kill-after=5s",
+    "600",
+    "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-target/release/examples/cell_bep52_cost_v1"
+  ],
+  "command_invocations_planned": 1,
+  "command_invocations_started": 1,
+  "cpu_rss_complete_for_example": true,
+  "errors": [],
+  "example": "cell_bep52_cost_v1",
+  "exit_class": "success",
+  "exit_code": 0,
+  "gnu_time_enabled": true,
+  "raw_json_sha256": "c30db40f444ea27bd94762978f80735aed3fb13a55300e69a4ef5bddb3e11607",
+  "source_hashes": {
+    "binding_source_sha256": "c33ff4435a2227d1de962b40d3e7bb5cb913b6a13c2a442aed1399fe36732447",
+    "example_source_sha256": "b50cc1f84708221e922beebcda538825f642d68a2ff8557b6cdc9d1c4e0d97c2"
+  },
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "timeout_exit_reported": false,
+  "validation": {
+    "all_payload_and_chunk_checks_verified": true,
+    "expected_workloads": 15,
+    "statistical_unit": "one complete workload repeat; chunk metrics are SUMS over every chunk before three-repeat statistics",
+    "workload_summaries": [
+      {
+        "chunk_bytes": 16384,
+        "chunks_per_repeat": 1,
+        "payload_bytes": 3,
+        "phase_wall": {
+          "binding": {
+            "max_ns": 17877,
+            "median_ns": 17720,
+            "min_ns": 17543,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              17720,
+              17877,
+              17543
+            ]
+          },
+          "valid_check_all_chunks": {
+            "max_ns": 1768,
+            "median_ns": 1744,
+            "min_ns": 1617,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              1744,
+              1768,
+              1617
+            ]
+          }
+        }
+      },
+      {
+        "chunk_bytes": 16384,
+        "chunks_per_repeat": 1,
+        "payload_bytes": 16384,
+        "phase_wall": {
+          "binding": {
+            "max_ns": 17119,
+            "median_ns": 16862,
+            "min_ns": 16809,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              16809,
+              16862,
+              17119
+            ]
+          },
+          "valid_check_all_chunks": {
+            "max_ns": 226837,
+            "median_ns": 207776,
+            "min_ns": 203343,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              226837,
+              207776,
+              203343
+            ]
+          }
+        }
+      },
+      {
+        "chunk_bytes": 16384,
+        "chunks_per_repeat": 2,
+        "payload_bytes": 16385,
+        "phase_wall": {
+          "binding": {
+            "max_ns": 22053,
+            "median_ns": 21646,
+            "min_ns": 20573,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              20573,
+              22053,
+              21646
+            ]
+          },
+          "valid_check_all_chunks": {
+            "max_ns": 211849,
+            "median_ns": 211568,
+            "min_ns": 206357,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              206357,
+              211568,
+              211849
+            ]
+          }
+        }
+      },
+      {
+        "chunk_bytes": 16384,
+        "chunks_per_repeat": 64,
+        "payload_bytes": 1048576,
+        "phase_wall": {
+          "binding": {
+            "max_ns": 256744,
+            "median_ns": 182529,
+            "min_ns": 182385,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              182385,
+              256744,
+              182529
+            ]
+          },
+          "valid_check_all_chunks": {
+            "max_ns": 17971771,
+            "median_ns": 15729788,
+            "min_ns": 14332190,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              14332190,
+              17971771,
+              15729788
+            ]
+          }
+        }
+      },
+      {
+        "chunk_bytes": 16384,
+        "chunks_per_repeat": 65,
+        "payload_bytes": 1048577,
+        "phase_wall": {
+          "binding": {
+            "max_ns": 545372,
+            "median_ns": 329520,
+            "min_ns": 318729,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              318729,
+              329520,
+              545372
+            ]
+          },
+          "valid_check_all_chunks": {
+            "max_ns": 14963933,
+            "median_ns": 14804495,
+            "min_ns": 14554002,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              14554002,
+              14804495,
+              14963933
+            ]
+          }
+        }
+      }
+    ],
+    "workloads_verified": 15
+  },
+  "validation_passed": true,
+  "whole_run": {
+    "includes_supervisor_overhead": true,
+    "peak_rss_kib": 18356,
+    "rss_scope": "largest process in reaped child tree, not simultaneous summed RSS",
+    "rss_unit_bytes": 1024,
+    "system_cpu_seconds": 0.38509,
+    "usage_method": "Linux wait4 on this invocation's child; no global resource counter subtraction",
+    "user_cpu_seconds": 0.865868,
+    "wall_ns": 37811395984
+  }
+}

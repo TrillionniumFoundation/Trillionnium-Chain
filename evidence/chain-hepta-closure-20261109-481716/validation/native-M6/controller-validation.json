@@ -1,0 +1,12 @@
+{
+  "all_controller_archive_member_sha256_match": true,
+  "all_log_bytes_match_terminal_seen_and_stored": true,
+  "complete_streams": 18,
+  "controller_archive_bytes": 35137,
+  "controller_archive_sha256": "9f680d63593052233b06c71d70c18d4871d6e76898e59ad14017a33fa56d3172",
+  "controller_manifest_sha256": "218279dfda7822e734c70f8d8fe479392ad3603e3b49f4f4dc15773434e6237d",
+  "controller_original_file_count": 29,
+  "controller_tar_members": 30,
+  "schema": "m6-controller-packet-local-verification-v1",
+  "terminal_jobs": 9
+}

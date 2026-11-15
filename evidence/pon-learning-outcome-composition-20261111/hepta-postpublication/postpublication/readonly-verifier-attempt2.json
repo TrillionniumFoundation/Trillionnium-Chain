@@ -1,0 +1,28 @@
+{
+  "archive_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/terminals/dpty-b4f3b7f41d060d8496e99266eb384d08787449990055a1956fe127197ec1671b/output.log",
+  "available_end": 2788,
+  "chunk_sha256": "295ca002805b0fa9bef87b5a4b1a9a526f3695634f22dfd989e18f776b96813a",
+  "host": "desktop",
+  "next_offset": 2788,
+  "offset": 0,
+  "output_complete": true,
+  "persistent_across_runtime_restart": true,
+  "session_id": "dpty-b4f3b7f41d060d8496e99266eb384d08787449990055a1956fe127197ec1671b",
+  "status": {
+    "boot": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "bytes_seen": 2788,
+    "bytes_stored": 2788,
+    "capture_error": null,
+    "closed": false,
+    "created_unix_ms": 1794445941277,
+    "exit_code": 0,
+    "output_complete": true,
+    "owner_pid": 2786435,
+    "pid": 2786456,
+    "state": "exited"
+  },
+  "storage": "target_archive",
+  "text_is_lossy": false,
+  "truncated_before_offset": false,
+  "utf8_pending": false
+}

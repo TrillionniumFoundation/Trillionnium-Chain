@@ -1,0 +1,763 @@
+{
+  "schema": "trnm-six-stage-ci-readback-v1",
+  "scope": "Read-only current-source GitHub Actions and retained evidence inspection. No CI, policy, alert or remote source mutation.",
+  "chain": {
+    "head": "5eb30bdedba2bb4933f5c97211426fc2df21bb7c",
+    "merge": "f122f99dddffdf5015940667d0d5d97244a95800",
+    "pr": 323
+  },
+  "hepta": {
+    "head": "d66e0bf8e147efa7300dd4296f912121932b00a3",
+    "merge": "e298582d3f564a6332f8bacbe9d075ebaf2b3ccd",
+    "pr": 2559
+  },
+  "runs": [
+    {
+      "key": "chain_baseline",
+      "id": 39718009644,
+      "name": "trnm-required-baseline",
+      "head_sha": "5eb30bdedba2bb4933f5c97211426fc2df21bb7c",
+      "status": "queued",
+      "conclusion": null,
+      "event": "pull_request",
+      "created_at": "2026-10-22T03:39:09Z",
+      "updated_at": "2026-10-22T04:22:10Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39718009644",
+      "jobs": [
+        {
+          "id": 119637305169,
+          "name": "fuzz-smoke",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119637305370,
+          "name": "rust-baseline",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119637305392,
+          "name": "cross-arch-cost (arm64)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119637305441,
+          "name": "cross-arch-cost (x64)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119637305544,
+          "name": "prospective-merge (external-evidence-contract)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119637305570,
+          "name": "external-evidence-contract",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119637305573,
+          "name": "prospective-merge (repository-truth)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119637305605,
+          "name": "protocol-contract",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119637305615,
+          "name": "repository-truth",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119637305619,
+          "name": "prospective-merge (fuzz-smoke)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119637305677,
+          "name": "prospective-merge (rust-baseline)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119637305703,
+          "name": "prospective-merge (protocol-contract)",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "key": "chain_priority",
+      "id": 39718009469,
+      "name": "PoN priority acceptance",
+      "head_sha": "5eb30bdedba2bb4933f5c97211426fc2df21bb7c",
+      "status": "queued",
+      "conclusion": null,
+      "event": "pull_request",
+      "created_at": "2026-10-22T03:39:09Z",
+      "updated_at": "2026-10-22T04:44:05Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39718009469",
+      "jobs": [
+        {
+          "id": 119643707415,
+          "name": "retained-pressure-failure",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119643707634,
+          "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119643707686,
+          "name": "native priorities (ubuntu-24.04-arm, head, history)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119643707695,
+          "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119643707710,
+          "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119643707711,
+          "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119643707725,
+          "name": "native priorities (ubuntu-24.04-arm, head, state)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119643707779,
+          "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119643707798,
+          "name": "native priorities (ubuntu-24.04, head, state)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119643707808,
+          "name": "native priorities (ubuntu-24.04, head, history)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119643707811,
+          "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119643707830,
+          "name": "native priorities (ubuntu-24.04, head, service-model)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119643707846,
+          "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "key": "chain_codeql",
+      "id": 39718002294,
+      "name": "PR #323",
+      "head_sha": "5eb30bdedba2bb4933f5c97211426fc2df21bb7c",
+      "status": "completed",
+      "conclusion": "success",
+      "event": "dynamic",
+      "created_at": "2026-10-22T03:39:05Z",
+      "updated_at": "2026-10-22T04:07:14Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39718002294",
+      "jobs": [
+        {
+          "id": 119624659919,
+          "name": "Analyze (actions)",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119624660054,
+          "name": "Analyze (rust)",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119624660238,
+          "name": "Analyze (python)",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        }
+      ]
+    },
+    {
+      "key": "chain_export",
+      "id": 39718009504,
+      "name": "CodeQL exact-source analysis export",
+      "head_sha": "5eb30bdedba2bb4933f5c97211426fc2df21bb7c",
+      "status": "completed",
+      "conclusion": "success",
+      "event": "pull_request",
+      "created_at": "2026-10-22T03:39:09Z",
+      "updated_at": "2026-10-22T04:08:03Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39718009504",
+      "jobs": [
+        {
+          "id": 119624678624,
+          "name": "export",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        }
+      ]
+    },
+    {
+      "key": "hepta_pair",
+      "id": 39718257188,
+      "name": "Hepta native PoN pair",
+      "head_sha": "d66e0bf8e147efa7300dd4296f912121932b00a3",
+      "status": "queued",
+      "conclusion": null,
+      "event": "pull_request",
+      "created_at": "2026-10-22T03:41:51Z",
+      "updated_at": "2026-10-22T04:13:10Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/39718257188",
+      "jobs": [
+        {
+          "id": 119634608571,
+          "name": "pair (ubuntu-24.04, source-head)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119634608874,
+          "name": "Native Windows ledger (source-head)",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119634608907,
+          "name": "pair (ubuntu-24.04, base-merge)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119634608918,
+          "name": "Native Windows ledger (base-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119634609027,
+          "name": "pair (ubuntu-24.04-arm, source-head)",
+          "status": "in_progress",
+          "conclusion": null,
+          "failed_steps": [],
+          "active_step": "Prepare native prerequisites and verify both exact source tuples"
+        },
+        {
+          "id": 119634609353,
+          "name": "pair (ubuntu-24.04-arm, base-merge)",
+          "status": "in_progress",
+          "conclusion": null,
+          "failed_steps": [],
+          "active_step": "Prepare native prerequisites and verify both exact source tuples"
+        }
+      ]
+    },
+    {
+      "key": "hepta_full",
+      "id": 39718466779,
+      "name": "rust-ci-full",
+      "head_sha": "d66e0bf8e147efa7300dd4296f912121932b00a3",
+      "status": "queued",
+      "conclusion": null,
+      "event": "push",
+      "created_at": "2026-10-22T03:44:06Z",
+      "updated_at": "2026-10-22T03:44:06Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/39718466779",
+      "jobs": [
+        {
+          "id": 119626149347,
+          "name": "Format / etc",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119626149480,
+          "name": "Argument comment lint package",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119626149505,
+          "name": "cargo shear",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119626149521,
+          "name": "Tests — ubuntu-24.04 - x86_64-unknown-linux-gnu (remote) / Build nextest archive",
+          "status": "completed",
+          "conclusion": "failure",
+          "failed_steps": [],
+          "active_step": "Build nextest archive"
+        },
+        {
+          "id": 119626149576,
+          "name": "Argument comment lint - macOS",
+          "status": "in_progress",
+          "conclusion": null,
+          "failed_steps": [],
+          "active_step": "Run argument comment lint on codex-rs via Bazel"
+        },
+        {
+          "id": 119626149589,
+          "name": "Argument comment lint - Windows",
+          "status": "completed",
+          "conclusion": "failure",
+          "failed_steps": [
+            {
+              "name": "Run argument comment lint on codex-rs via Bazel",
+              "number": 6
+            }
+          ]
+        },
+        {
+          "id": 119626149640,
+          "name": "Lint/Build — ubuntu-24.04 - x86_64-unknown-linux-musl",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119626149641,
+          "name": "Lint/Build — ubuntu-24.04 - x86_64-unknown-linux-gnu",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119626149652,
+          "name": "Argument comment lint - Linux",
+          "status": "in_progress",
+          "conclusion": null,
+          "failed_steps": [],
+          "active_step": "Run argument comment lint on codex-rs via Bazel"
+        },
+        {
+          "id": 119626149685,
+          "name": "Tests — macos-15 - aarch64-apple-darwin / Build nextest archive",
+          "status": "in_progress",
+          "conclusion": null,
+          "failed_steps": [],
+          "active_step": "Build nextest archive"
+        },
+        {
+          "id": 119626149720,
+          "name": "Tests — windows-latest - x86_64-pc-windows-msvc / Build nextest archive",
+          "status": "in_progress",
+          "conclusion": null,
+          "failed_steps": [],
+          "active_step": "Build nextest archive"
+        },
+        {
+          "id": 119626149726,
+          "name": "Tests — ubuntu-24.04-arm - aarch64-unknown-linux-gnu / Build nextest archive",
+          "status": "completed",
+          "conclusion": "failure",
+          "failed_steps": [
+            {
+              "name": "Build nextest archive",
+              "number": 17
+            }
+          ]
+        },
+        {
+          "id": 119626149756,
+          "name": "Tests — windows-11-arm - aarch64-pc-windows-msvc / Build nextest archive",
+          "status": "in_progress",
+          "conclusion": null,
+          "failed_steps": [],
+          "active_step": "Build nextest archive"
+        },
+        {
+          "id": 119626149767,
+          "name": "Lint/Build — windows-11-arm - aarch64-pc-windows-msvc (release)",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119626149775,
+          "name": "Lint/Build — ubuntu-24.04-arm - aarch64-unknown-linux-gnu",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119626149803,
+          "name": "Lint/Build — macos-15 - aarch64-apple-darwin (release)",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119626149839,
+          "name": "Lint/Build — ubuntu-24.04-arm - aarch64-unknown-linux-musl (release)",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119626149851,
+          "name": "Lint/Build — ubuntu-24.04-arm - aarch64-unknown-linux-musl",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119626149862,
+          "name": "Lint/Build — windows-latest - x86_64-pc-windows-msvc",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119626149871,
+          "name": "Lint/Build — ubuntu-24.04 - x86_64-unknown-linux-musl (release)",
+          "status": "in_progress",
+          "conclusion": null,
+          "failed_steps": [],
+          "active_step": "Pre-warm dependency cache (cargo-chef)"
+        },
+        {
+          "id": 119626149878,
+          "name": "Lint/Build — macos-15 - aarch64-apple-darwin",
+          "status": "in_progress",
+          "conclusion": null,
+          "failed_steps": [],
+          "active_step": "cargo clippy"
+        },
+        {
+          "id": 119626149888,
+          "name": "Lint/Build — macos-15 - x86_64-apple-darwin",
+          "status": "in_progress",
+          "conclusion": null,
+          "failed_steps": [],
+          "active_step": "cargo clippy"
+        },
+        {
+          "id": 119626149919,
+          "name": "Lint/Build — windows-latest - x86_64-pc-windows-msvc (release)",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119626150003,
+          "name": "Lint/Build — windows-11-arm - aarch64-pc-windows-msvc",
+          "status": "completed",
+          "conclusion": "success",
+          "failed_steps": []
+        },
+        {
+          "id": 119636545767,
+          "name": "Tests — ubuntu-24.04-arm - aarch64-unknown-linux-gnu / Platform result",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119636547262,
+          "name": "Tests — ubuntu-24.04-arm - aarch64-unknown-linux-gnu / Tests shard ${{ matrix.shard }}/4",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "id": 119638315397,
+          "name": "Tests — ubuntu-24.04 - x86_64-unknown-linux-gnu (remote) / Platform result",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 119638316746,
+          "name": "Tests — ubuntu-24.04 - x86_64-unknown-linux-gnu (remote) / Tests shard ${{ matrix.shard }}/4",
+          "status": "completed",
+          "conclusion": "skipped"
+        }
+      ]
+    }
+  ],
+  "chain_security_check": {
+    "id": 119630322566,
+    "conclusion": "failure",
+    "annotations": 18,
+    "critical": 1,
+    "high": 17
+  },
+  "artifacts": [
+    {
+      "run_id": 39718009504,
+      "id": 12400668824,
+      "name": "codeql-analysis-export-39718009504-1",
+      "sha256": "bb9914a151baa8cc79d1594bb85de066d92e0ce5cb94a2c6b3103f0e0f848398"
+    },
+    {
+      "run_id": 39718009547,
+      "id": 12400174505,
+      "name": "pon-native-campaign-x64-head-release-5eb30bdedba2bb4933f5c97211426fc2df21bb7c-1",
+      "sha256": "d70ab60c482fc352cb9aa451794aba03fc72a5a7e46a69de11f60852f7297d0d"
+    }
+  ],
+  "hepta_failures": [
+    {
+      "job_id": 119626149521,
+      "kind": "archive-build-phase",
+      "cause": "unknown",
+      "log_retrieval": "404 BlobNotFound; no source/test conclusion inferred"
+    },
+    {
+      "job_id": 119626149726,
+      "kind": "runner-shutdown",
+      "return_code": 143,
+      "evidence": "The runner has received a shutdown signal. No source compilation error observed in retained job log."
+    },
+    {
+      "job_id": 119626149589,
+      "kind": "source-lint",
+      "cause": "uncommented-anonymous-literal-argument denied by unchanged Bazel lint",
+      "diagnostics": 209
+    }
+  ],
+  "runner_evidence": {
+    "chain_priority_requested_labels": [
+      "ubuntu-24.04",
+      "ubuntu-24.04-arm"
+    ],
+    "queued_jobs": 13,
+    "unassigned_runner_id": 0,
+    "hepta_actual_runner_group": "GitHub Actions",
+    "dedicated_project_terminal_established": false,
+    "queue_root_cause": "not provable from queue state alone; requested jobs are hosted labels, not a named private runner"
+  },
+  "remaining": [
+    "Full exact-source and prospective-merge CI completion",
+    "Security alert disposition with designated independent review",
+    "Native current paired integration completion"
+  ],
+  "observed_at_utc": "2026-10-22T04:52:44.630088+00:00",
+  "campaign_readback": [
+    {
+      "run": 1,
+      "mode": "baseline",
+      "finite_phase_criteria_met": true,
+      "all_signed_rounds_confirmed_in_window": true,
+      "genuine_budget_depletion_observed": false,
+      "observer_complete": true,
+      "receiver_client_state_equal": true,
+      "full_work_failed": 0,
+      "full_work_accepted": 21,
+      "issued_challenges": 42,
+      "mutation_cpu_charged_ns": 1413020183,
+      "elapsed_seconds": 30.808467505
+    },
+    {
+      "run": 1,
+      "mode": "from-zero",
+      "finite_phase_criteria_met": false,
+      "all_signed_rounds_confirmed_in_window": true,
+      "genuine_budget_depletion_observed": false,
+      "observer_complete": true,
+      "receiver_client_state_equal": true,
+      "full_work_failed": 3355,
+      "full_work_accepted": 21,
+      "issued_challenges": 3398,
+      "mutation_cpu_charged_ns": 5880853530,
+      "elapsed_seconds": 31.017272189
+    },
+    {
+      "run": 1,
+      "mode": "late-product",
+      "finite_phase_criteria_met": false,
+      "all_signed_rounds_confirmed_in_window": true,
+      "genuine_budget_depletion_observed": false,
+      "observer_complete": true,
+      "receiver_client_state_equal": true,
+      "full_work_failed": 3356,
+      "full_work_accepted": 21,
+      "issued_challenges": 3400,
+      "mutation_cpu_charged_ns": 6685705611,
+      "elapsed_seconds": 30.940643759
+    },
+    {
+      "run": 2,
+      "mode": "baseline",
+      "finite_phase_criteria_met": true,
+      "all_signed_rounds_confirmed_in_window": true,
+      "genuine_budget_depletion_observed": false,
+      "observer_complete": true,
+      "receiver_client_state_equal": true,
+      "full_work_failed": 0,
+      "full_work_accepted": 21,
+      "issued_challenges": 42,
+      "mutation_cpu_charged_ns": 1357729681,
+      "elapsed_seconds": 30.807304465
+    },
+    {
+      "run": 2,
+      "mode": "from-zero",
+      "finite_phase_criteria_met": false,
+      "all_signed_rounds_confirmed_in_window": true,
+      "genuine_budget_depletion_observed": false,
+      "observer_complete": true,
+      "receiver_client_state_equal": true,
+      "full_work_failed": 3352,
+      "full_work_accepted": 21,
+      "issued_challenges": 3397,
+      "mutation_cpu_charged_ns": 6071386290,
+      "elapsed_seconds": 30.996420455
+    },
+    {
+      "run": 2,
+      "mode": "late-product",
+      "finite_phase_criteria_met": false,
+      "all_signed_rounds_confirmed_in_window": true,
+      "genuine_budget_depletion_observed": false,
+      "observer_complete": true,
+      "receiver_client_state_equal": true,
+      "full_work_failed": 3358,
+      "full_work_accepted": 21,
+      "issued_challenges": 3402,
+      "mutation_cpu_charged_ns": 7094045654,
+      "elapsed_seconds": 30.979662071
+    },
+    {
+      "run": 3,
+      "mode": "baseline",
+      "finite_phase_criteria_met": true,
+      "all_signed_rounds_confirmed_in_window": true,
+      "genuine_budget_depletion_observed": false,
+      "observer_complete": true,
+      "receiver_client_state_equal": true,
+      "full_work_failed": 0,
+      "full_work_accepted": 21,
+      "issued_challenges": 42,
+      "mutation_cpu_charged_ns": 1470791071,
+      "elapsed_seconds": 30.871151245
+    },
+    {
+      "run": 3,
+      "mode": "from-zero",
+      "finite_phase_criteria_met": false,
+      "all_signed_rounds_confirmed_in_window": true,
+      "genuine_budget_depletion_observed": false,
+      "observer_complete": true,
+      "receiver_client_state_equal": true,
+      "full_work_failed": 3351,
+      "full_work_accepted": 21,
+      "issued_challenges": 3395,
+      "mutation_cpu_charged_ns": 6474617144,
+      "elapsed_seconds": 30.996413034
+    },
+    {
+      "run": 3,
+      "mode": "late-product",
+      "finite_phase_criteria_met": false,
+      "all_signed_rounds_confirmed_in_window": true,
+      "genuine_budget_depletion_observed": false,
+      "observer_complete": true,
+      "receiver_client_state_equal": true,
+      "full_work_failed": 3353,
+      "full_work_accepted": 21,
+      "issued_challenges": 3397,
+      "mutation_cpu_charged_ns": 7083495565,
+      "elapsed_seconds": 30.995798209
+    }
+  ],
+  "additional_exact_hepta_head_failures": [
+    {
+      "run_id": 39718257431,
+      "job_id": 119637766655,
+      "name": "Bazel test on macos-15-intel for x86_64-apple-darwin",
+      "failure_kind": "analysis",
+      "error": "Package codex-rs/third_party/i18n-config-0.4.8 considered deleted due to --deleted_packages; generated rules_rs++crate BUILD.bazel:8777 references it",
+      "source_candidate": ".bazelignore:7 ignores codex-rs/third_party, while Cargo path dependency and explicit BUILD target are present",
+      "log_excerpt": "/workspace/scratch/ff4dad3c0eb8/tmp/hepta_macos_intel_deleted_package_failure.log"
+    },
+    {
+      "run_id": 39718257214,
+      "job_ids": [
+        119631048863,
+        119631048454
+      ],
+      "name": "Native Windows deletion boundary source-head/base-merge",
+      "failure_kind": "native_private_state_probe",
+      "failing_tests": [
+        "private_state_native_probe::relative_open_and_rename_remain_bound_to_held_root",
+        "private_state_native_probe::file_and_directory_flush_results_are_distinct"
+      ],
+      "actual_error": {
+        "stage": "held_root_relative_rename",
+        "os_error": 87,
+        "message": "The parameter is incorrect."
+      },
+      "successful_controls": [
+        "file FlushFileBuffers before/after rename",
+        "directory FlushFileBuffers",
+        "NtFlushBuffersFileEx directory",
+        "sharing-denial controls",
+        "reparse/hardlink/name-denial controls"
+      ],
+      "implementation": "codex-rs/windows-sandbox-rs/src/private_state_native_probe_support.rs:297 rename_relative uses FILE_RENAME_INFO and SetFileInformationByHandle",
+      "log_excerpt": "/workspace/scratch/ff4dad3c0eb8/tmp/windows_private_state_current_failure.log"
+    }
+  ],
+  "literal_unique_diagnostics": 156,
+  "literal_unique_diagnostics_file": "/workspace/scratch/ff4dad3c0eb8/tmp/windows_literal_diagnostics_unique.json"
+}

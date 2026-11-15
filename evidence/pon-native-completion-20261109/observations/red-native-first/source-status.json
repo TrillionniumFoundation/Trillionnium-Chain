@@ -1,0 +1,8 @@
+{
+  "base_head": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "base_tree": "f77b6240b845425e0fc75e88abb09e6cfa3a71c0",
+  "porcelain": "M trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs\n?? trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs",
+  "identical_red_green_test_sha256": "5e7b1ba317a1c7315f55f7cf282ddee5856fd905f65d9382c759aadb5c870b46",
+  "fixed_host_contract": false,
+  "production_qualification": "HOLD_NO_GO"
+}

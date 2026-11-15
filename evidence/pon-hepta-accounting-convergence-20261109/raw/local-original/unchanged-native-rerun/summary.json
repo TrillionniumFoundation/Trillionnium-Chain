@@ -1,0 +1,110 @@
+{
+  "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "original_build_source": "91dd3082633ea0b3a5ec9b0ed91f28603229be01",
+  "fresh_cargo_build": false,
+  "method": "rerun retained original binaries after exact native Rust/toolchain source equality, alongside candidate Python integration",
+  "native_git_tree": "1305c43ca8891f6a07fcec493c32f007679e2416",
+  "provider_sha256": "2b1c8c97c617f33f76bb38ca6aac088cd9ea41cf07244d755b4a41825d6af05b",
+  "results": [
+    {
+      "label": "crypto",
+      "argv": [
+        "/workspace/scratch/ac851b3fedf0/target-chain-integrated/debug/deps/trnm_crypto_primitives-20c2b945985eeb99",
+        "--test-threads=1"
+      ],
+      "binary_sha256": "2c65471c09b950b86b70bc03d81e9e70496224dfd2e5ebfb72a2e606cfa55918",
+      "exit_code": 0,
+      "wall_seconds": 4.761319568000545,
+      "stdout_sha256": "bc759eeb1b80900e40de69c6ac5034af46f69ea38ee6426b9d6990f004add692",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "terminal": [
+        "test tests::strict_signatures_reject_small_order_and_noncanonical_points ... ok",
+        "",
+        "test result: ok. 186 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.76s",
+        ""
+      ]
+    },
+    {
+      "label": "settlement",
+      "argv": [
+        "/workspace/scratch/ac851b3fedf0/target-chain-integrated/debug/deps/trnm_service_settlement-b0d508d542df75ad",
+        "--test-threads=1"
+      ],
+      "binary_sha256": "39c7dbe4c390d24cccdcc68273ef48e1741d82051678d4a7ae00396329d635bd",
+      "exit_code": 0,
+      "wall_seconds": 0.6531392879996929,
+      "stdout_sha256": "3997b948e020bbc049e971c2969060d6eab17c9d2e906ce765c73cfcbb2b318d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "terminal": [
+        "test tests::vector_inventory_matches_candidate_assertions ... ok",
+        "",
+        "test result: ok. 71 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.65s",
+        ""
+      ]
+    },
+    {
+      "label": "native-v2",
+      "argv": [
+        "/workspace/scratch/ac851b3fedf0/target-chain-integrated/debug/deps/native_task_operation_v2-5bacc736621cbfc3",
+        "--test-threads=1"
+      ],
+      "binary_sha256": "a89d34a4b73a235482c98d44edc60c14ce6ed0f64c93628e615adb982beb0ee3",
+      "exit_code": 0,
+      "wall_seconds": 13.179323414000464,
+      "stdout_sha256": "28da4d76b2abfc00cc7f389bb91218102c78a181a44b1ff48224294d0761442e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "terminal": [
+        "test unknown_output_uses_native_once_fence_and_real_delivery_on_both_backends ... ok",
+        "",
+        "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.18s",
+        ""
+      ]
+    },
+    {
+      "label": "native-nogain",
+      "argv": [
+        "/workspace/scratch/ac851b3fedf0/target-chain-integrated/debug/deps/no_gain_fees-fa72482586859c5d",
+        "--test-threads=1"
+      ],
+      "binary_sha256": "cb3ece326ba34891643d6eb3c0aad429e423497df1bd4e9b4d780d48f9413352",
+      "exit_code": 0,
+      "wall_seconds": 1.4732465850001972,
+      "stdout_sha256": "cabe82d08769b624cedd070da9d79d1426a826d49b0d03797a78d7f59b01d0f0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "terminal": [
+        "test native_no_gain_training_task_fee_survives_reopen_and_reorg_without_double_payment ... ok",
+        "",
+        "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.47s",
+        ""
+      ]
+    },
+    {
+      "label": "cross-language",
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_grouped_cell_operator_v0.py",
+        "-v"
+      ],
+      "binary_sha256": "8479dc70f2b2db1245bfe21abb58ea5960bc469a86c3d50b9c3e78599e7b80ea",
+      "exit_code": 0,
+      "wall_seconds": 0.9273576269997648,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "7536d5f24cb7df1a3b953869b14d5e11aeadeae25f80b23b4aa925c9fce5ac33",
+      "terminal": [
+        "----------------------------------------------------------------------",
+        "Ran 14 tests in 0.666s",
+        "",
+        "OK"
+      ]
+    }
+  ],
+  "all_passed": true,
+  "qualification": "HOLD_NO_GO"
+}

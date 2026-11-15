@@ -1,0 +1,701 @@
+{
+  "schema": "trnm-concurrent-f34-legacy-activation-tail-independent-review-v1",
+  "reviewer": "audit_consensus",
+  "observed_utc": "2026-11-15T08:02:55.325145+00:00",
+  "base_commit": "c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636",
+  "candidate_commit": "f34f432c6c533c651ab74f69f4f43aef326eedcb",
+  "candidate_tree": "d2c34fb4474aba3c268163abe1ec94211b8e9c7f",
+  "candidate_parent": "c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636",
+  "result": "PASS_WITH_EXPLICIT_LIMITS",
+  "mode": "read-only Git-object source review and independent in-memory source/hash comparisons; no checkout, compilation, project test, daemon or network execution",
+  "conclusion": "No confirmed activation-control bypass or qualification promotion was found in the assigned Legacy activation-tail change. The existing owner-local opt-in enables bounded diagnostic accounting; original native SQL, checks, progress, cancellation and return expressions remain present in the same order after only the reviewed observer plumbing is removed.",
+  "checks": {
+    "candidate_parent_is_c3": true,
+    "all_requested_runtime_and_test_diffs_read": true,
+    "all_new_tail_runtime_and_tests_read_in_full": true,
+    "five_existing_files_match_base_after_exact_reviewed_observer_erasure": true,
+    "fixed_phase_count_16_and_15_ordered_transitions_reviewed": true,
+    "original_legacy_test_assertions_preserved": true,
+    "qualification_and_frozen_files_byte_identical": true,
+    "changed_config_json_is_identity_metadata_only": true,
+    "no_worktree_source_modifications_performed": true,
+    "no_compilation_or_test_execution_performed": true
+  },
+  "blocking_findings": [],
+  "findings": [
+    {
+      "id": "LEGACY-OPT-IN",
+      "classification": "preserved_boundary",
+      "detail": "Node enable_native_legacy_reorg_observation remains restricted to StateBackend::Legacy. The new accounting Arc is allocated only during this existing explicit opt-in; repeated calls do not reset it. Disabled origin/advance/complete paths do not invoke diagnostic Stamp::now or allocate diagnostic rows."
+    },
+    {
+      "id": "LEGACY-CONTROL",
+      "classification": "preserved_boundary",
+      "detail": "All original bytes of store.rs, reorg_cancellation.rs, native_authenticated.rs, history_arithmetic.rs and legacy_reorg_observation_tests.rs were reproduced by a separately performed, counted, exact observer-erasure comparison against c3. Original Host/progress/check/SQL order is not replaced by a cached verdict. This is a static control comparison, not a runtime result."
+    },
+    {
+      "id": "LEGACY-CANCEL",
+      "classification": "preserved_boundary",
+      "detail": "The existing same-operation CPU reservation, activation permits, durable lifecycle checks and finish_or_cancel_reorg remain in place. Cancellation continues to update only the authorized terminal metadata and return the original cancellation/CPU error. The observation guard exits before caller cancellation cleanup and has no Result or authority-returning interface."
+    },
+    {
+      "id": "LEGACY-ACCOUNTING",
+      "classification": "bounded_non_authoritative_diagnostics",
+      "detail": "The observer retains fixed arrays of 16 phases, cumulative totals and one latest exited segment. Runtime record/snapshot use try_lock; contention or poison marks observation_failed and suppresses measurement data instead of changing native results. CPU deltas require the same ThreadId; missing/reversed/cross-thread or overflowing measurements are null. No request contents, target IDs, SQL text or native error/panic payload is retained by the observer."
+    },
+    {
+      "id": "LEGACY-QUALIFICATION",
+      "classification": "no_promotion_observed",
+      "detail": "The new diagnostic snapshot explicitly has_consensus_authority=false. The six independently compared frozen/qualification files are byte-identical. All changed config JSON leaves are source digest/byte-count/corpus-required-path metadata, not qualification values."
+    }
+  ],
+  "limitations": [
+    "Enabled diagnostics add wall/thread-CPU clock reads, fixed in-memory bookkeeping and a nonblocking lock attempt on exit. This cannot establish zero timing or CPU perturbation under the original Host budget.",
+    "An activation origin begins before the first original progress callback, but a retained segment starts only after reading a nonterminal intent. Earlier history checks/RPC/import work, no-op/direct fast-append activations and cancellation cleanup are not complete activation-tail measurements.",
+    "The recovery resume_intent wrapper forwards None. Multiple observed resume segments may share one activation origin; live guards, process abort and process termination do not appear as completed snapshots.",
+    "A completed phase means the original next source boundary was reached. A post-publication hook error can coexist with a durable published target and a diagnostic segment marked incomplete; neither completed nor incomplete is a durable-activation verdict.",
+    "Nested Host, Legacy, SQL and importer observations overlap and must not be summed as disjoint work. Per-thread CPU is not complete process/worker CPU.",
+    "The new native comparison test covers six injected paths and compares SQL trace hashes, progress calls, hook traces, errors, active state, lifecycle and event counts. Typed deadline injections are not an observed expiry of a real original Host/request budget. This review read the test source only and ran none of those tests.",
+    "The full pre-existing 9514-line store and 2467-line native_authenticated modules were not independently re-audited line by line. All changed hunks and the affected control contexts were read; exact erasure compares the complete existing files. The report records exact semantic reading boundaries.",
+    "Other concurrent f34 changes, including the separate PQ/TLS witness regression lane, are outside this Legacy-specific semantic review.",
+    "This report compares immutable c3 and f34 Git objects only. It does not qualify the eventual merge with the current dirty worktree. Current correspondence must retain both the local public_v3 change and the incoming store.rs change when rebinding that combined tree."
+  ],
+  "read_coverage": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "candidate_blob": "7942a89b4395834183741df95a43872fa4db002c",
+      "candidate_sha256": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820",
+      "candidate_bytes": 394623,
+      "candidate_lines": 9514,
+      "base_blob": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+      "base_sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
+      "all_changed_hunks_read": true,
+      "mode": "all changed hunks plus complete affected activation/resume functions and opt-in/recovery context",
+      "candidate_line_ranges_read": [
+        [
+          8,
+          45
+        ],
+        [
+          3860,
+          3938
+        ],
+        [
+          6257,
+          6455
+        ],
+        [
+          6581,
+          6840
+        ]
+      ],
+      "full_file_semantic_read": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "candidate_blob": "babaade9c1b7d7e8fceac68655f99efc8bd78cc4",
+      "candidate_sha256": "48ef6eea4a08a8fd30c0391b8b6a4741e4fef30a3a1bd057f5b4ca3b56161397",
+      "candidate_bytes": 95067,
+      "candidate_lines": 2467,
+      "base_blob": "e99453b1abe6ce589f003be199b5553241cba398",
+      "base_sha256": "92bfaca74ad0b7e5f9c7559d05a13a5535420b7df536a474de4035191e7a838f",
+      "all_changed_hunks_read": true,
+      "mode": "all changed hunks; only private observer reexports change",
+      "candidate_line_ranges_read": [
+        [
+          6,
+          57
+        ]
+      ],
+      "full_file_semantic_read": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "candidate_blob": "7c84174e62b4611fe20e9d2622cf585b1b2ce087",
+      "candidate_sha256": "9e86eefcbb39e3682143d8d4314bbb147a4b7547f41e28f92617717999fc5546",
+      "candidate_bytes": 28542,
+      "candidate_lines": 805,
+      "base_blob": "6540d88dc33064ab504607bfa9b7340d42a3c585",
+      "base_sha256": "8de3fc5f217f38c87d37f0b41bda580b593b00b601af254e2e75b6326b8e1e18",
+      "all_changed_hunks_read": true,
+      "mode": "all changed hunks plus bounded-arithmetic/stage/SQL-commit/clock context",
+      "candidate_line_ranges_read": [
+        [
+          1,
+          400
+        ],
+        [
+          488,
+          620
+        ],
+        [
+          706,
+          805
+        ]
+      ],
+      "full_file_semantic_read": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail.rs",
+      "candidate_blob": "cefb2d325a22ec214ddead2bd0c6226dde0bb1a9",
+      "candidate_sha256": "fc8acee573c554dccbfa954d37d4aa051e77fd76180751374c94acfc4279ca8a",
+      "candidate_bytes": 10480,
+      "candidate_lines": 309,
+      "base_blob": null,
+      "base_sha256": null,
+      "all_changed_hunks_read": true,
+      "mode": "full new runtime module",
+      "candidate_line_ranges_read": [
+        [
+          1,
+          309
+        ]
+      ],
+      "full_file_semantic_read": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail/tests.rs",
+      "candidate_blob": "8b4e390d6d285897e7dd2a50eacaf1a1ee32ea21",
+      "candidate_sha256": "b418506e2f38398ded645918269d69d9a435a89c58bc910128e21b48080cb1ab",
+      "candidate_bytes": 5008,
+      "candidate_lines": 140,
+      "base_blob": null,
+      "base_sha256": null,
+      "all_changed_hunks_read": true,
+      "mode": "full new diagnostic unit tests",
+      "candidate_line_ranges_read": [
+        [
+          1,
+          140
+        ]
+      ],
+      "full_file_semantic_read": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/legacy_activation_tail_tests.rs",
+      "candidate_blob": "b3111917f71da79b12ea4287ff75a8d1259e5253",
+      "candidate_sha256": "20033ffca2b9f0a3be9f9a185cefe81df6c73525da32043d28628f6e19f29404",
+      "candidate_bytes": 6050,
+      "candidate_lines": 148,
+      "base_blob": null,
+      "base_sha256": null,
+      "all_changed_hunks_read": true,
+      "mode": "full new native control comparison test",
+      "candidate_line_ranges_read": [
+        [
+          1,
+          148
+        ]
+      ],
+      "full_file_semantic_read": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs",
+      "candidate_blob": "d9f4934ab6ef1083e062556b4fc276cbd10a051b",
+      "candidate_sha256": "ea0c69a18a7fbf5274a00c2ddfea9456b4e4996c411bd5f7a52587c0ab1e3f3f",
+      "candidate_bytes": 14986,
+      "candidate_lines": 384,
+      "base_blob": "d50f5e607f5aed311174808b980f50e95cac929f",
+      "base_sha256": "72f5be79c3c3621152c094daa7c5ebd355dd5775805ffe58919d07521ec22acf",
+      "all_changed_hunks_read": true,
+      "mode": "full existing fixture/tests and complete visibility-only diff",
+      "candidate_line_ranges_read": [
+        [
+          1,
+          384
+        ]
+      ],
+      "full_file_semantic_read": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "candidate_blob": "2f024505b5175526ad2f6f5d4c328ebaa0ac32b3",
+      "candidate_sha256": "e728928074fc586ea32e5b7e8933fa5dd668de3c8031405db2c170ac91917b1b",
+      "candidate_bytes": 19969,
+      "candidate_lines": 509,
+      "base_blob": "78708d020211fb478262d90823fa5e6906976713",
+      "base_sha256": "17fdbd32d06c4c4613267fc1ca236945cd34329a6796dfdf50f8b0c255fc8eeb",
+      "all_changed_hunks_read": true,
+      "mode": "full cancellation/reservation/cleanup module and complete forwarding-only diff",
+      "candidate_line_ranges_read": [
+        [
+          1,
+          509
+        ]
+      ],
+      "full_file_semantic_read": true
+    },
+    {
+      "path": "scripts/ci/test_legacy_activation_tail_diagnostic.py",
+      "candidate_blob": "6ef0ccba392e7eeb5065b6c8859ec9b834881b9f",
+      "candidate_sha256": "20ef209348d4148421eb64f12eb109ce93828c20ba919f4e95d475768079f81b",
+      "candidate_bytes": 7071,
+      "candidate_lines": 138,
+      "base_blob": null,
+      "base_sha256": null,
+      "all_changed_hunks_read": true,
+      "mode": "full new source-contract/negative-suite source, not executed",
+      "candidate_line_ranges_read": [
+        [
+          1,
+          138
+        ]
+      ],
+      "full_file_semantic_read": true
+    }
+  ],
+  "complete_existing_source_control_comparisons": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "base_sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
+      "candidate_sha256": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820",
+      "independently_observed_normalized_sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
+      "original_bytes_preserved_after_exact_observer_erasure": true,
+      "allowed_erasure_categories": [
+        "test-only module declaration",
+        "optional origin construction",
+        "private origin parameter/forwarding",
+        "optional observation construction",
+        "15 fixed ordered phase markers",
+        "diagnostic completion marker"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "base_sha256": "17fdbd32d06c4c4613267fc1ca236945cd34329a6796dfdf50f8b0c255fc8eeb",
+      "candidate_sha256": "e728928074fc586ea32e5b7e8933fa5dd668de3c8031405db2c170ac91917b1b",
+      "independently_observed_normalized_sha256": "17fdbd32d06c4c4613267fc1ca236945cd34329a6796dfdf50f8b0c255fc8eeb",
+      "original_bytes_preserved_after_exact_observer_erasure": true,
+      "allowed_erasure_categories": [
+        "private optional origin parameter",
+        "two origin forwarding arguments"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "base_sha256": "92bfaca74ad0b7e5f9c7559d05a13a5535420b7df536a474de4035191e7a838f",
+      "candidate_sha256": "48ef6eea4a08a8fd30c0391b8b6a4741e4fef30a3a1bd057f5b4ca3b56161397",
+      "independently_observed_normalized_sha256": "92bfaca74ad0b7e5f9c7559d05a13a5535420b7df536a474de4035191e7a838f",
+      "original_bytes_preserved_after_exact_observer_erasure": true,
+      "allowed_erasure_categories": [
+        "private observer module reexports"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "base_sha256": "8de3fc5f217f38c87d37f0b41bda580b593b00b601af254e2e75b6326b8e1e18",
+      "candidate_sha256": "9e86eefcbb39e3682143d8d4314bbb147a4b7547f41e28f92617717999fc5546",
+      "independently_observed_normalized_sha256": "8de3fc5f217f38c87d37f0b41bda580b593b00b601af254e2e75b6326b8e1e18",
+      "original_bytes_preserved_after_exact_observer_erasure": true,
+      "allowed_erasure_categories": [
+        "private observer module/reexports",
+        "optional accounting field",
+        "idempotent opt-in allocation",
+        "optional origin accessor",
+        "diagnostic snapshot field"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs",
+      "base_sha256": "72f5be79c3c3621152c094daa7c5ebd355dd5775805ffe58919d07521ec22acf",
+      "candidate_sha256": "ea0c69a18a7fbf5274a00c2ddfea9456b4e4996c411bd5f7a52587c0ab1e3f3f",
+      "independently_observed_normalized_sha256": "72f5be79c3c3621152c094daa7c5ebd355dd5775805ffe58919d07521ec22acf",
+      "original_bytes_preserved_after_exact_observer_erasure": true,
+      "allowed_erasure_categories": [
+        "pub(super) visibility for fork_pair",
+        "pub(super) visibility for lifecycle"
+      ]
+    }
+  ],
+  "qualification_config_deltas": [
+    {
+      "path": "config/pon/hash-use-contract-v1.json",
+      "base_sha256": "9d1e45dacc0717a9418360c0eb1d1652abc0ef7e761f730c978bab160b09c2d5",
+      "candidate_sha256": "d029ffc74b9eb2f9954d4fb4df47ec820e642cf5ef316c8cb0b50f578f943eb1",
+      "changed_leaf_count": 2,
+      "all_changes_are_source_identity_or_required_path_metadata": true,
+      "changes": [
+        {
+          "path": "/source_files/trillionnium/crates/trnm-pon-node/src/store.rs/bytes",
+          "before": 391470,
+          "after": 394623
+        },
+        {
+          "path": "/source_files/trillionnium/crates/trnm-pon-node/src/store.rs/sha256",
+          "before": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
+          "after": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820"
+        }
+      ]
+    },
+    {
+      "path": "config/pon/joint-consensus-qualification-v1.json",
+      "base_sha256": "ad4bcaf823f6c2fa2f262b821a93e4aa16c5d308e99bf52f9b6e19c5d721eda6",
+      "candidate_sha256": "433d1eae36ce71eb114cb92b4c7328581e78355fc5e7418aea481c30d815f146",
+      "changed_leaf_count": 1,
+      "all_changes_are_source_identity_or_required_path_metadata": true,
+      "changes": [
+        {
+          "path": "/source_sha256/trillionnium/crates/trnm-pon-node/src/store.rs",
+          "before": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
+          "after": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820"
+        }
+      ]
+    },
+    {
+      "path": "config/pon/pq-authority-effects-v1.json",
+      "base_sha256": "88c5dbdacee7c2193a05b7b7a974a62d95057c4f6baa122c9544523f01791eba",
+      "candidate_sha256": "f33bfb823182c44fb1342204a9f69a639a05d8dce191a2d6174e11e57914b98e",
+      "changed_leaf_count": 1,
+      "all_changes_are_source_identity_or_required_path_metadata": true,
+      "changes": [
+        {
+          "path": "/source_files_sha256/trillionnium/crates/trnm-pon-node/src/store.rs",
+          "before": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
+          "after": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820"
+        }
+      ]
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "base_sha256": "787e9aefcd2e12a3da96bec485541536f7a976bb1ccb3a9eae5fa16f1f1ad45c",
+      "candidate_sha256": "31b627f14c3150df2d33a8a6303ce42074f2d915e675c9160906c613b996932e",
+      "changed_leaf_count": 33,
+      "all_changes_are_source_identity_or_required_path_metadata": true,
+      "changes": [
+        {
+          "path": "/pinned_blobs/.github/workflows/pon-recent-batch-acceptance.yml",
+          "before": "d91b1bd75a91d33106df99a482b9b74b68592dd0",
+          "after": "7cb4357ceaae49a404640aac2647ddcc67d3e964"
+        },
+        {
+          "path": "/pinned_blobs/config/pon/hash-use-contract-v1.json",
+          "before": "986a94eaf6b1c44a11595cc98ac4f9925e7c943e",
+          "after": "950296d4029da526642116ddae8ab803aaafde45"
+        },
+        {
+          "path": "/pinned_blobs/config/pon/joint-consensus-qualification-v1.json",
+          "before": "b2ce9946df65598ea1068ee5d2fbdcac131de6c8",
+          "after": "96ce001f29a6f3028b8d50a3517c28c8346d2beb"
+        },
+        {
+          "path": "/pinned_blobs/config/pon/pq-authority-effects-v1.json",
+          "before": "128fabbf8ccb038c26636f5689fe239a90ac663f",
+          "after": "7a15b03cd5e8729ea048db0fc50c1c6b5d9ea5cc"
+        },
+        {
+          "path": "/pinned_blobs/config/pon/pq128-lifetime-composition-current-v3.json",
+          "before": "4b8428d47f34dfa4fe8e9bf81403dbdc993153e7",
+          "after": "da21b21575a9eb79821f4317262f21515d97114b"
+        },
+        {
+          "path": "/pinned_blobs/config/pon/pq128-source-correspondence-current-v2.json",
+          "before": "cb853338c5a37651c5550f51aca160f620c7c5ec",
+          "after": "cb00db8728ddaa1d66a1114b921acd49761b3eff"
+        },
+        {
+          "path": "/pinned_blobs/config/pon/w1-lifetime-current-source-v2.json",
+          "before": "7424efa09f64f8359e0b144a99478b41ce7913d2",
+          "after": "a99ff2b27da05f4abfcfa84998e6bd22cfd3bf14"
+        },
+        {
+          "path": "/pinned_blobs/formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+          "before": "675a93aef57d928cb7054778b64232e922ca57e4",
+          "after": "8c4526887aeb2d731ae76035b3fa13e380505b05"
+        },
+        {
+          "path": "/pinned_blobs/scripts/ci/check_ci_contract.py",
+          "before": "aa3971a204b45b00908b8798b75c3c3cb3462372",
+          "after": "d8fe8fca29a33e0c67c5450a00d5d9fefb4d10d2"
+        },
+        {
+          "path": "/pinned_blobs/scripts/ci/check_pq_research_integration.py",
+          "before": "88cc9f84b7c587c98c2746d4f9cfb6fd9092eb1d",
+          "after": "af9c246b57f363f79f8cb699060094a638fafc61"
+        },
+        {
+          "path": "/pinned_blobs/scripts/ci/ci_job.sh",
+          "before": "bbe1c63b258cb59042d1b389f598d54290cd5d9f",
+          "after": "5867dfea3f3fc61145902c3a09783926aff1c3bf"
+        },
+        {
+          "path": "/pinned_blobs/scripts/ci/hash_use_contract.py",
+          "before": "cf55d45678bfb27d9ad9fcf2863a05aa1bc0540b",
+          "after": "8ee29fc1a7db9ac3da0d28279ffaac258f8b64ac"
+        },
+        {
+          "path": "/pinned_blobs/scripts/ci/pq_authority_effect_register.py",
+          "before": "1c1b4dc0d4ef44f3c4e7a8bc5629058be09910b6",
+          "after": "692509a79b0cff6a0d1fa8b379e1d881ba255c01"
+        },
+        {
+          "path": "/pinned_blobs/scripts/ci/pq_lifetime_composition.py",
+          "before": "8899615a1bd9f227261316eae2e40cbe80fa0c29",
+          "after": "3029e7dad8e4d76f44189e8f807e92496cda6461"
+        },
+        {
+          "path": "/pinned_blobs/scripts/ci/pq_lifetime_current_v2.py",
+          "before": "3050aff234761167c1c84baa4aa0bc4bcacaf519",
+          "after": "268036a28396885cd6b00701156d66f990d0dbbb"
+        },
+        {
+          "path": "/pinned_blobs/scripts/ci/test_ci_contract.py",
+          "before": "0593d7870b0675d7e642085b1771ace2cce84656",
+          "after": "d183d7656d1febaaa6c4da17abd7e1a384378df2"
+        },
+        {
+          "path": "/pinned_blobs/scripts/ci/test_legacy_activation_tail_diagnostic.py",
+          "before": null,
+          "after": "6ef0ccba392e7eeb5065b6c8859ec9b834881b9f"
+        },
+        {
+          "path": "/pinned_blobs/scripts/ci/test_pq_authority_effect_register.py",
+          "before": "275538b69aeed4bd00fd8197336b866e4e076f7a",
+          "after": "7365f797f52d3c0745bdc2a5776ccc862940351e"
+        },
+        {
+          "path": "/pinned_blobs/scripts/ci/test_w1_lifetime_current_observation.py",
+          "before": "9e6989095794564623e9b56e58ab97af3cc42517",
+          "after": "3f465c161e90cf5793c5df4f5a7655e709fbc69c"
+        },
+        {
+          "path": "/pinned_blobs/scripts/w1_lifetime_current_observation.py",
+          "before": "e98f81f5e7b057e39f6d7c534276c37fc9b9dbc0",
+          "after": "b7f0125d9736b30d3c4d420780435845dc85ad11"
+        },
+        {
+          "path": "/pinned_blobs/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+          "before": "a13590cbefab86636e12a83f4eaf58b8d69aaf8e",
+          "after": "dfb8e9c571e98f45cd3547774fef3dfb02fc92ce"
+        },
+        {
+          "path": "/pinned_blobs/trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+          "before": "044ef318226d5f871815590e87dab6743de5ca95",
+          "after": "5334bae9a22bb47b8ad962632bdc33d35b650504"
+        },
+        {
+          "path": "/pinned_blobs/trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs",
+          "before": "655f0701562203f2e57c4e71591e08b301ac8b92",
+          "after": "d5f548866b818918811f5b7fd200c7e780207d86"
+        },
+        {
+          "path": "/pinned_blobs/trillionnium/crates/trnm-pon-node/src/store.rs",
+          "before": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+          "after": "7942a89b4395834183741df95a43872fa4db002c"
+        },
+        {
+          "path": "/pinned_blobs/trillionnium/crates/trnm-pon-node/src/store/legacy_activation_tail_tests.rs",
+          "before": null,
+          "after": "b3111917f71da79b12ea4287ff75a8d1259e5253"
+        },
+        {
+          "path": "/pinned_blobs/trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs",
+          "before": "d50f5e607f5aed311174808b980f50e95cac929f",
+          "after": "d9f4934ab6ef1083e062556b4fc276cbd10a051b"
+        },
+        {
+          "path": "/pinned_blobs/trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+          "before": "e99453b1abe6ce589f003be199b5553241cba398",
+          "after": "babaade9c1b7d7e8fceac68655f99efc8bd78cc4"
+        },
+        {
+          "path": "/pinned_blobs/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+          "before": "6540d88dc33064ab504607bfa9b7340d42a3c585",
+          "after": "7c84174e62b4611fe20e9d2622cf585b1b2ce087"
+        },
+        {
+          "path": "/pinned_blobs/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail.rs",
+          "before": null,
+          "after": "cefb2d325a22ec214ddead2bd0c6226dde0bb1a9"
+        },
+        {
+          "path": "/pinned_blobs/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail/tests.rs",
+          "before": null,
+          "after": "8b4e390d6d285897e7dd2a50eacaf1a1ee32ea21"
+        },
+        {
+          "path": "/pinned_blobs/trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+          "before": "13c61b99303639372f058de580f2da6de0f53f16",
+          "after": "17b55a5edc0c48e08d324be9fc69aa060b7bafc4"
+        },
+        {
+          "path": "/pinned_blobs/trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+          "before": "78708d020211fb478262d90823fa5e6906976713",
+          "after": "2f024505b5175526ad2f6f5d4c328ebaa0ac32b3"
+        },
+        {
+          "path": "/required_paths",
+          "before_count": 2510,
+          "after_count": 2514,
+          "before_canonical_sha256": "0d0664249d6423eb0c7556662ad463e8e7f14ba855f33bdcc7677cbcb3cda1b5",
+          "after_canonical_sha256": "053534517ce9a03490396b4012261eea1b79ea2c627398ad9471a11a884b384a",
+          "added_paths": [
+            "scripts/ci/test_legacy_activation_tail_diagnostic.py",
+            "trillionnium/crates/trnm-pon-node/src/store/legacy_activation_tail_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail/tests.rs"
+          ],
+          "removed_paths": []
+        }
+      ]
+    },
+    {
+      "path": "config/pon/pq128-lifetime-composition-current-v3.json",
+      "base_sha256": "36ed067f1779c4b8f79129841e8f6410590eead0751073533014b009fd67a816",
+      "candidate_sha256": "dc654b8b8de6268527e65ab870d39d25aa41e6258f5febd6ab185988fce7ba97",
+      "changed_leaf_count": 2,
+      "all_changes_are_source_identity_or_required_path_metadata": true,
+      "changes": [
+        {
+          "path": "/current_lifetime_correspondence/sha256",
+          "before": "c24b7cf2fe080b721362379ae5c6897fb324ec883a40b74bbf68d6a772ec4fd2",
+          "after": "1cf3e676835e89254fe1bef76ba94235f46a40951738f68d41c19b0ff77724db"
+        },
+        {
+          "path": "/current_lifetime_correspondence/source_snapshot_sha256",
+          "before": "acd0fb898af21099239e1de16bc370cb3abeab7274414883740a1250d5742a0f",
+          "after": "7e063b348b488351895c33f95f49be31f850500bc0f5b69f14deb302ab890bf6"
+        }
+      ]
+    },
+    {
+      "path": "config/pon/pq128-source-correspondence-current-v2.json",
+      "base_sha256": "c24b7cf2fe080b721362379ae5c6897fb324ec883a40b74bbf68d6a772ec4fd2",
+      "candidate_sha256": "1cf3e676835e89254fe1bef76ba94235f46a40951738f68d41c19b0ff77724db",
+      "changed_leaf_count": 2,
+      "all_changes_are_source_identity_or_required_path_metadata": true,
+      "changes": [
+        {
+          "path": "/current_source_files_sha256/trillionnium/crates/trnm-pon-node/src/store.rs",
+          "before": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
+          "after": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820"
+        },
+        {
+          "path": "/current_source_snapshot_sha256",
+          "before": "acd0fb898af21099239e1de16bc370cb3abeab7274414883740a1250d5742a0f",
+          "after": "7e063b348b488351895c33f95f49be31f850500bc0f5b69f14deb302ab890bf6"
+        }
+      ]
+    },
+    {
+      "path": "config/pon/w1-lifetime-current-source-v2.json",
+      "base_sha256": "bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7",
+      "candidate_sha256": "ea0f8e2a0c82a01c0601e627cf64d8df34682457904fb00a65639138a0be46fa",
+      "changed_leaf_count": 2,
+      "all_changes_are_source_identity_or_required_path_metadata": true,
+      "changes": [
+        {
+          "path": "/sources/7/bytes",
+          "before": 391470,
+          "after": 394623
+        },
+        {
+          "path": "/sources/7/current_sha256",
+          "before": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
+          "after": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820"
+        }
+      ]
+    }
+  ],
+  "frozen_and_qualification_identity_checks": [
+    {
+      "path": "config/consensus-mainline.json",
+      "byte_equal_base_and_candidate": true,
+      "candidate_sha256": "a3a703bd9fc1244f0c0190fee52b9cfae68c2a2c0008bbdf704bf0c0b03416f3"
+    },
+    {
+      "path": "config/pon/w1-stark-route-registry-v1.json",
+      "byte_equal_base_and_candidate": true,
+      "candidate_sha256": "0164cb7b3f6bfcf31e7efd29cc3264cab729249759ea3729cd132065d94a47fd"
+    },
+    {
+      "path": "config/pon/pq128-lifetime-budget-v1.json",
+      "byte_equal_base_and_candidate": true,
+      "candidate_sha256": "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd"
+    },
+    {
+      "path": "config/pon/pq128-source-lock-v1.json",
+      "byte_equal_base_and_candidate": true,
+      "candidate_sha256": "094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2"
+    },
+    {
+      "path": "config/pon/pq128-lifetime-composition-v2.json",
+      "byte_equal_base_and_candidate": true,
+      "candidate_sha256": "5b527fbd56885bf7a7cba7516a45f0f911479b0d2867d03ff5361ee3e7a8b052"
+    },
+    {
+      "path": "config/pon/pq-root-dependency-register-v3.json",
+      "byte_equal_base_and_candidate": true,
+      "candidate_sha256": "2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725"
+    }
+  ],
+  "test_source_review": {
+    "executed": false,
+    "new_diagnostic_unit_test_count": 6,
+    "new_native_comparison_test_count": 1,
+    "native_comparison_cuts": [
+      "None",
+      "BeforePublish",
+      "ExpectedSteps",
+      "Events",
+      "Published",
+      "Unwind"
+    ],
+    "new_python_source_contract_read_in_full": true,
+    "project_python_suite_executed": false
+  },
+  "all_changed_paths_in_commit": [
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    "config/pon/hash-use-contract-v1.json",
+    "config/pon/joint-consensus-qualification-v1.json",
+    "config/pon/pq-authority-effects-v1.json",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "config/pon/pq128-lifetime-composition-current-v3.json",
+    "config/pon/pq128-source-correspondence-current-v2.json",
+    "config/pon/w1-lifetime-current-source-v2.json",
+    "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/ci_job.sh",
+    "scripts/ci/hash_use_contract.py",
+    "scripts/ci/pq_authority_effect_register.py",
+    "scripts/ci/pq_lifetime_composition.py",
+    "scripts/ci/pq_lifetime_current_v2.py",
+    "scripts/ci/test_ci_contract.py",
+    "scripts/ci/test_legacy_activation_tail_diagnostic.py",
+    "scripts/ci/test_pq_authority_effect_register.py",
+    "scripts/ci/test_w1_lifetime_current_observation.py",
+    "scripts/w1_lifetime_current_observation.py",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs",
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/legacy_activation_tail_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs"
+  ],
+  "changed_paths_outside_this_semantic_review": [
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/ci_job.sh",
+    "scripts/ci/hash_use_contract.py",
+    "scripts/ci/pq_authority_effect_register.py",
+    "scripts/ci/pq_lifetime_composition.py",
+    "scripts/ci/pq_lifetime_current_v2.py",
+    "scripts/ci/test_ci_contract.py",
+    "scripts/ci/test_pq_authority_effect_register.py",
+    "scripts/ci/test_w1_lifetime_current_observation.py",
+    "scripts/w1_lifetime_current_observation.py",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs"
+  ],
+  "artifact_scope": "scratch review report only; no repository file was written"
+}

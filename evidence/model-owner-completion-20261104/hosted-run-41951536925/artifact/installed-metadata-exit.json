@@ -1,0 +1,1 @@
+{"command":["/home/runner/work/_temp/pon-smollm-hosted-once-v1/venv/bin/python","-I","-B","-c","import importlib.metadata,json; print(json.dumps(dict(sorted((d.metadata[\"Name\"],d.version) for d in importlib.metadata.distributions()))))"],"returncode":0}

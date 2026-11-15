@@ -1,0 +1,12 @@
+{
+  "label": "qa-07-potential-certificates",
+  "argv": [
+    "python3",
+    "formal/pon-nakamoto-v1/amortized_cost_potential.py",
+    "--compact"
+  ],
+  "exit": 0,
+  "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "duration_seconds": 0.5591796590015292,
+  "unittest_count": []
+}

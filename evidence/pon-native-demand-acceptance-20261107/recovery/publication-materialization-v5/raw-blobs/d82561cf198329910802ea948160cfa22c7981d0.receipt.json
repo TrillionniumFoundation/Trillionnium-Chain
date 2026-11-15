@@ -1,0 +1,22 @@
+{
+  "actual_bytes": 1572864,
+  "actual_git_blob_sha1": "d82561cf198329910802ea948160cfa22c7981d0",
+  "command": [
+    "/usr/bin/gh",
+    "api",
+    "-H",
+    "Accept: application/vnd.github.raw+json",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/d82561cf198329910802ea948160cfa22c7981d0"
+  ],
+  "elapsed_seconds": 7.856185674667358,
+  "exit_code": 0,
+  "expected_blob": "d82561cf198329910802ea948160cfa22c7981d0",
+  "expected_bytes": 1572864,
+  "import_exit_code": 0,
+  "import_stderr": "",
+  "import_stdout": "d82561cf198329910802ea948160cfa22c7981d0\n",
+  "imported": true,
+  "path": "evidence/pon-six-workpackages-20261106/strategy/raw-observations.tar.zst.part-004",
+  "raw_sha256": "8370ee996da06f4ca2d08158c9e876f09c8ee036b9c29210ac8a9a148ed8317d",
+  "timed_out": false
+}

@@ -1,0 +1,19 @@
+{
+  "scope": "static source review, not native execution",
+  "reviewed_chain_source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "reviewed_hepta_source": "afd2c91b3b9ef75ab9a174e3af772ad322118f7a",
+  "v1_transfer_sha256": "bc8b0234414244a5a82c0d8c99b857393f75fd46b284ad378a61fd3dc88291d9",
+  "v2_transfer_sha256": "5c70421957ca44b04ee307cdeaf0d56e9b7fd2a33b904c79cb4539836e9e3fd4",
+  "findings": [
+    {
+      "finding": "Generic ValueError assertions can hide removal of the intended guard.",
+      "resolution": "Specific error codes plus semantic rehashing added in v2."
+    },
+    {
+      "finding": "CI paths omitted transitive reader and project-boundary dependencies.",
+      "resolution": "Exact transitive paths added in v2."
+    }
+  ],
+  "static_review_tests_executed": false,
+  "authority_granted": false
+}

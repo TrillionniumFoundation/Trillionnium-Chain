@@ -1,0 +1,107 @@
+{
+  "source_commit": "44e96b1a841a50613d0b93484c5e576caec9f81f",
+  "recorded_at_utc": "2026-11-09T13:58:35.928753+00:00",
+  "native_tests_executed": false,
+  "commands": [
+    {
+      "name": "authority-m2-inspection",
+      "command": [
+        "python3",
+        "scripts/ci/pq_authority_effect_register.py"
+      ],
+      "returncode": 0,
+      "outputs": {
+        "stdout": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/authority-m2-inspection.stdout.log",
+          "bytes": 13223,
+          "sha256": "047b5d6dee767b4085d3e3bd16222c32d7cde2b4b8fda2697a7eb849aa726202"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/authority-m2-inspection.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "script_sha256": "99c7ae4ddcdce1bac481d96923f04dcb16f344c24c093f09e07bc410bbd65976",
+      "result_summary": {
+        "status": "HOLD",
+        "source_consistency": "PASS"
+      }
+    },
+    {
+      "name": "root-m2-inspection",
+      "command": [
+        "python3",
+        "scripts/ci/pq_root_dependency_register.py"
+      ],
+      "returncode": 0,
+      "outputs": {
+        "stdout": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/root-m2-inspection.stdout.log",
+          "bytes": 7023,
+          "sha256": "e780ef4ceddb78e6a2fa98df1dc51fa4efd7d201236d4c23037fb6205c2e81e6"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/root-m2-inspection.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "script_sha256": "653971fc7fed059e3fc1b53978ac8697773600be0719d8475be93dc4612a3a17",
+      "result_summary": {
+        "status": "HOLD",
+        "source_files_checked": true
+      }
+    },
+    {
+      "name": "w1-m2-inspection",
+      "command": [
+        "python3",
+        "scripts/w1_qrom_current_implementation_audit.py"
+      ],
+      "returncode": 0,
+      "outputs": {
+        "stdout": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/w1-m2-inspection.stdout.log",
+          "bytes": 101833,
+          "sha256": "4e35a5b044745264874ea068f0e934c3fffb3bd9b85cbc1f99ae41801040bc7c"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/w1-m2-inspection.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "script_sha256": "27b9cadfc931763b94348a0489600d759bd068d786964a4a093f65d8aa45d242",
+      "result_summary": {
+        "result": "CURRENT_MAPPING_REPRODUCED_SECURITY_HOLD"
+      }
+    },
+    {
+      "name": "profile-m2-inspection",
+      "command": [
+        "python3",
+        "scripts/ci/pq_proof_profile_binding.py"
+      ],
+      "returncode": 0,
+      "outputs": {
+        "stdout": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/profile-m2-inspection.stdout.log",
+          "bytes": 8273,
+          "sha256": "df7fc232632d95723f3c3879b9bb5ef0ac8866766130b5c2e800d6f8a5f97537"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/profile-m2-inspection.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "script_sha256": "9d2adebbf3043d7e8cfe664444e19b767142300bf8718899fe486c33e329d041",
+      "result_summary": {
+        "status": "PROFILE_BOUND_SECURITY_HOLD",
+        "selected_profile_descriptor_sha256": "da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c",
+        "candidate_profile_identity_matched": false
+      }
+    }
+  ]
+}

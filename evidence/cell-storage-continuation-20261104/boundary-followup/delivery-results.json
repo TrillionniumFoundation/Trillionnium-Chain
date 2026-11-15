@@ -1,0 +1,1392 @@
+{
+  "schema": "trnm.cell.storage-delivery-results.v1",
+  "draft": false,
+  "status": "N_VALIDATION_SNAPSHOT_NODE_NOT_RUN_BUILD_FAILED_RESOURCE_REMOTE_CI_UNRESOLVED",
+  "observed_utc": "2026-11-05T01:30:58.594106+00:00",
+  "published_commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+  "published_tree": "ea600542130341144d697776d92048988d44572b",
+  "published_ordered_parents": [
+    "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c",
+    "20cdab3b882c942f28c719a74b3fd22b1837f9fa"
+  ],
+  "implementation_commit": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+  "regression_commit": "8992e87ab14d6905303b9a813656a591621a49bd",
+  "new_test_commands_executed_by_this_preparation": false,
+  "component_C": {
+    "source_commit": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+    "source_tree": "a18dc9ffc20efe435ae8ebceecdca537b7013261",
+    "original_results_snapshot": {
+      "path": "/workspace/scratch/73305aff6ced/observations/final/implementation-results.json",
+      "sha256": "403f15e375b8acc96a881ad7fe41b1c4d48912607fe657546ce9d1264c40f8e5"
+    },
+    "completed_receipts": {
+      "storage_native": {
+        "receipt_path": "/workspace/scratch/73305aff6ced/observations/final/storage-native.json",
+        "receipt_sha256": "81f8e6ca55aa9685611cbcadb3f34de3e6d18d1ca3a950f02f4364ef4b117373",
+        "command_status": "command_succeeded",
+        "exit_code": 0,
+        "tested_commit": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+        "tested_tree": "a18dc9ffc20efe435ae8ebceecdca537b7013261",
+        "source_before_after_equal": true,
+        "tracked_worktree_verified_before_after": true,
+        "tracked_entries": 9024,
+        "tracked_bytes": 947687690,
+        "log_path": "/workspace/scratch/73305aff6ced/observations/final/storage-native.log",
+        "log_sha256": "36f359ca9aa6df7bf79aa6f608179981b2f5b1724476c97ae24af21079a293db",
+        "log_digest_verified": true,
+        "argv": [
+          "bash",
+          "-c",
+          "set -euo pipefail\ncargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --tests -- --nocapture 2>&1 | tee /workspace/scratch/73305aff6ced/observations/final/m09-tests.log\ncargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --doc 2>&1 | tee /workspace/scratch/73305aff6ced/observations/final/m09-doc.log"
+        ],
+        "cwd": "/workspace/scratch/73305aff6ced/validation-a9b860"
+      },
+      "corrected_source_controls": {
+        "receipt_path": "/workspace/scratch/73305aff6ced/observations/final/storage-source-controls-corrected.json",
+        "receipt_sha256": "5c35992ed5a94f56b471272708c70ce67e61788ba2adfeaef34d08b11342a5b9",
+        "command_status": "command_succeeded",
+        "exit_code": 0,
+        "tested_commit": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+        "tested_tree": "a18dc9ffc20efe435ae8ebceecdca537b7013261",
+        "source_before_after_equal": true,
+        "tracked_worktree_verified_before_after": true,
+        "tracked_entries": 9024,
+        "tracked_bytes": 947687690,
+        "log_path": "/workspace/scratch/73305aff6ced/observations/final/storage-source-controls-corrected.log",
+        "log_sha256": "94ddb30640393ab4f91854aa67131190c8af1b2e728a3bfa7d0072c54d2ce85b",
+        "log_digest_verified": true,
+        "argv": [
+          "bash",
+          "-c",
+          "set -euo pipefail\npython3 -m unittest discover -s scripts/ci -p test_ci_source_integrity.py\npython3 -m unittest discover -s scripts/ci -p test_pq_research_integration.py\npython3 -m unittest discover -s scripts/ci -p test_pq_chain_claim_guard.py\npython3 -m unittest discover -s scripts/ci -p test_pq_authority_surface_scan.py\npython3 -m unittest discover -s formal/pon-nakamoto-v1 -p test_model_release_root.py\ncargo metadata --locked --offline --manifest-path trillionnium/Cargo.toml --format-version 1 > /workspace/scratch/73305aff6ced/observations/final/cargo-metadata.json\ncargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check\npython3 scripts/refresh_distributed_source_inventory.py --check\npython3 scripts/ci/check_pq_research_integration.py\npython3 scripts/ci/check_ci_contract.py\npython3 scripts/ci/check_repository.py"
+        ],
+        "cwd": "/workspace/scratch/73305aff6ced/validation-a9b860"
+      },
+      "independent_model_root_oracle": {
+        "receipt_path": "/workspace/scratch/73305aff6ced/observations/final/model-root-oracle.json",
+        "receipt_sha256": "525017da7bc8847e8ea65c2b131e7f7646107582fcc66c5bf511cf5ab99fff3b",
+        "command_status": "command_succeeded",
+        "exit_code": 0,
+        "tested_commit": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+        "tested_tree": "a18dc9ffc20efe435ae8ebceecdca537b7013261",
+        "source_before_after_equal": true,
+        "tracked_worktree_verified_before_after": true,
+        "tracked_entries": 9024,
+        "tracked_bytes": 947687690,
+        "log_path": "/workspace/scratch/73305aff6ced/observations/final/model-root-oracle.log",
+        "log_sha256": "0ba4ee75a84173fbd53d917891318ce48fcaea665f7715e38bee39bb7439c788",
+        "log_digest_verified": true,
+        "argv": [
+          "python3",
+          "-c",
+          "import sys,unittest;sys.path.insert(0,\"formal/pon-nakamoto-v1\");import test_model_release_root;suite=unittest.defaultTestLoader.loadTestsFromModule(test_model_release_root);assert suite.countTestCases()==4;result=unittest.TextTestRunner(verbosity=2).run(suite);raise SystemExit(not result.wasSuccessful())"
+        ],
+        "cwd": "/workspace/scratch/73305aff6ced/chain"
+      }
+    },
+    "native_results": {
+      "m09_library": {
+        "status": "PASS",
+        "passed": 295,
+        "failed": 0,
+        "ignored": 0,
+        "distinct_names": 295,
+        "duplicated_process_child_output_counted_as_extra_tests": false
+      },
+      "m09_cli_integration": {
+        "status": "PASS",
+        "passed": 29,
+        "failed": 0,
+        "ignored": 0,
+        "distinct_names": 29
+      },
+      "m09_compile_fail_documentation": {
+        "status": "PASS",
+        "passed": 8,
+        "failed": 0,
+        "ignored": 0
+      },
+      "empty_unit_binary_harnesses": {
+        "count": 2,
+        "tests": 0,
+        "status": "EXPECTED_EMPTY"
+      },
+      "command_scope": "cargo test --tests plus cargo test --doc; no claim that example test targets were executed.",
+      "retained_coverage_path": "/workspace/scratch/73305aff6ced/observations/final/retained-test-coverage.json",
+      "retained_coverage_sha256": "fab703fb49039d83d1ec46c50e7461948e947ac16401328d45ceb3200a146841",
+      "retained_original_186": 186,
+      "retained_composition_281": 281,
+      "retained_candidate_base_288": 288,
+      "this_round_new_library_names": [
+        "cell::archive::tests::impossible_new_release_capacity_refuses_before_catalog_or_physical_reservation",
+        "cell::archive::tests::old_impossible_pending_intent_remains_readable_and_protected_without_migration",
+        "cell::archive::tests::terminal_physical_history_cannot_create_an_unfulfillable_new_root",
+        "cell::archive::tests::unmaterialized_pending_members_keep_their_funding_and_future_history_capacity",
+        "cell::network::persistent::tests::server_actual_egress_exhaustion_stops_intake_and_next_frame_without_shutdown",
+        "cell::network::persistent::tests::server_temporary_egress_reservation_refunds_before_real_tcp_response",
+        "cell::tensor_tests::tensor_entry_sequence_cannot_replace_required_named_object"
+      ],
+      "this_round_new_library_count": 7,
+      "prior_parallel_names_already_in_a9_count": 7
+    },
+    "python_results": {
+      "status": "PASS",
+      "distinct_tests": 106,
+      "failed": 0,
+      "suites": {
+        "ci_source_integrity": {
+          "path": "scripts/ci/test_ci_source_integrity.py",
+          "source_sha256": "8341e6186ea07caa97265481cb7b2f6e947ad528ce229dcab2babfdec4ba7b82",
+          "passed": 34,
+          "failed": 0,
+          "status": "PASS",
+          "declared_test_ids": [
+            "test_ci_source_integrity.TrackedSourceTests.test_actual_bytes_are_checked_even_if_status_reports_clean",
+            "test_ci_source_integrity.TrackedSourceTests.test_assume_unchanged_cannot_hide_modified_source",
+            "test_ci_source_integrity.TrackedSourceTests.test_executable_mode_checked_even_when_git_ignores_filemode",
+            "test_ci_source_integrity.TrackedSourceTests.test_graft_file_is_rejected",
+            "test_ci_source_integrity.TrackedSourceTests.test_hidden_index_flag_is_rejected_even_without_changes",
+            "test_ci_source_integrity.TrackedSourceTests.test_intermediate_directory_symlink_rejected",
+            "test_ci_source_integrity.TrackedSourceTests.test_new_native_c_bytes_are_verified_without_an_extension_allowlist",
+            "test_ci_source_integrity.TrackedSourceTests.test_nonregular_file_rejected_without_waiting_for_fifo",
+            "test_ci_source_integrity.TrackedSourceTests.test_receipt_reuses_raw_source_guard",
+            "test_ci_source_integrity.TrackedSourceTests.test_regular_file_symlink_substitution_rejected",
+            "test_ci_source_integrity.TrackedSourceTests.test_replacement_commit_cannot_relabel_different_source",
+            "test_ci_source_integrity.TrackedSourceTests.test_same_size_stat_cached_change_is_rejected",
+            "test_ci_source_integrity.TrackedSourceTests.test_skip_worktree_cannot_hide_modified_source",
+            "test_ci_source_integrity.TrackedSourceTests.test_source_fence_checked_retains_actual_failed_observation",
+            "test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_child_keeps_actual_success_and_bytes",
+            "test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected",
+            "test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_wrong_head_cannot_start_child",
+            "test_ci_source_integrity.TrackedSourceTests.test_source_fence_dirty_before_command_cannot_start_child",
+            "test_ci_source_integrity.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure",
+            "test_ci_source_integrity.TrackedSourceTests.test_source_fence_existing_fuzz_and_supply_callers_pin_every_command",
+            "test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass",
+            "test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass",
+            "test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_requires_initial_pin",
+            "test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure",
+            "test_ci_source_integrity.TrackedSourceTests.test_source_fence_index_hidden_child_mutation_still_refuses",
+            "test_ci_source_integrity.TrackedSourceTests.test_source_fence_keeps_nonzero_primary_error_and_drift",
+            "test_ci_source_integrity.TrackedSourceTests.test_source_fence_pin_is_clean_and_does_not_follow_later_changes",
+            "test_ci_source_integrity.TrackedSourceTests.test_source_fence_timeout_and_source_failure_preserve_both",
+            "test_ci_source_integrity.TrackedSourceTests.test_source_fence_zero_exit_with_real_dirty_source_is_not_success",
+            "test_ci_source_integrity.TrackedSourceTests.test_staged_change_is_rejected",
+            "test_ci_source_integrity.TrackedSourceTests.test_subdirectory_is_not_a_complete_source_root",
+            "test_ci_source_integrity.TrackedSourceTests.test_tracked_symlink_target_change_rejected",
+            "test_ci_source_integrity.TrackedSourceTests.test_untracked_configuration_cannot_hide_new_source",
+            "test_ci_source_integrity.TrackedSourceTests.test_valid_raw_files_modes_and_symlink"
+          ],
+          "evidence_receipt": "/workspace/scratch/73305aff6ced/observations/final/storage-source-controls-corrected.json"
+        },
+        "pq_source_integrity": {
+          "path": "scripts/ci/test_pq_research_integration.py",
+          "source_sha256": "64c680727dcecfece8cfde67a7ccf8051cb1ac8b837fc0cb264294c4f61476a6",
+          "passed": 35,
+          "failed": 0,
+          "status": "PASS",
+          "declared_test_ids": [
+            "test_pq_research_integration.CorpusGateTests.test_account_owner_or_report_cannot_be_omitted",
+            "test_pq_research_integration.CorpusGateTests.test_account_profile_cannot_claim_complete_authority_or_miner_roster",
+            "test_pq_research_integration.CorpusGateTests.test_all_global_acceptance_flags_stay_false",
+            "test_pq_research_integration.CorpusGateTests.test_canonical_provider_malformed_tables_and_feature_shapes_fail_closed",
+            "test_pq_research_integration.CorpusGateTests.test_canonical_provider_manifest_change_is_refused_even_if_repinned",
+            "test_pq_research_integration.CorpusGateTests.test_canonical_slice_forbids_fallback_refund_and_unaccepted_combinations",
+            "test_pq_research_integration.CorpusGateTests.test_changed_signature_or_source_refuses",
+            "test_pq_research_integration.CorpusGateTests.test_convergence_owner_source_changes_cannot_reuse_prior_pins",
+            "test_pq_research_integration.CorpusGateTests.test_default_chain_activation_refuses",
+            "test_pq_research_integration.CorpusGateTests.test_duplicate_json_field_refuses",
+            "test_pq_research_integration.CorpusGateTests.test_duplicate_required_pin_refuses_but_base_fixture_is_unique",
+            "test_pq_research_integration.CorpusGateTests.test_malformed_pq_gate_refuses",
+            "test_pq_research_integration.CorpusGateTests.test_missing_source_pin_refuses",
+            "test_pq_research_integration.CorpusGateTests.test_missing_source_refuses",
+            "test_pq_research_integration.CorpusGateTests.test_native_evidence_must_exist_but_never_grants_acceptance",
+            "test_pq_research_integration.CorpusGateTests.test_native_evidence_traversal_or_symlink_refuses",
+            "test_pq_research_integration.CorpusGateTests.test_native_owner_guards_and_cli_cannot_be_dropped_from_required_pins",
+            "test_pq_research_integration.CorpusGateTests.test_native_profile_is_mandatory_and_never_claims_whole_authorization",
+            "test_pq_research_integration.CorpusGateTests.test_native_wire_numeric_claims_refuse_bool_or_wrong_version",
+            "test_pq_research_integration.CorpusGateTests.test_nested_symlink_directory_refuses_even_without_named_pq_file",
+            "test_pq_research_integration.CorpusGateTests.test_new_canonical_sources_and_negative_vectors_keep_exact_blob_identity",
+            "test_pq_research_integration.CorpusGateTests.test_new_unpinned_pq_implementations_fail_closed",
+            "test_pq_research_integration.CorpusGateTests.test_non_pq_named_owner_dependencies_cannot_be_dropped_and_repinned",
+            "test_pq_research_integration.CorpusGateTests.test_pinned_nested_source_is_checked_by_byte_identity",
+            "test_pq_research_integration.CorpusGateTests.test_pinned_pq_named_module_keeps_original_byte_identity",
+            "test_pq_research_integration.CorpusGateTests.test_pnq1_cannot_replace_or_coexist_as_active_candidate",
+            "test_pq_research_integration.CorpusGateTests.test_pq_source_directory_symlink_is_not_trusted",
+            "test_pq_research_integration.CorpusGateTests.test_pqg_native_dual_signature_source_must_have_exact_blob_pin",
+            "test_pq_research_integration.CorpusGateTests.test_source_symlink_refuses",
+            "test_pq_research_integration.CorpusGateTests.test_traversal_budget_refuses_before_unbounded_tree_scan",
+            "test_pq_research_integration.CorpusGateTests.test_traversal_pin_refuses",
+            "test_pq_research_integration.CorpusGateTests.test_unpinned_plain_named_recovery_and_release_helpers_refuse",
+            "test_pq_research_integration.CorpusGateTests.test_unpinned_pq_named_nested_module_rejects_renamed_native_file",
+            "test_pq_research_integration.CorpusGateTests.test_unreviewed_overlay_refuses",
+            "test_pq_research_integration.CorpusGateTests.test_valid_offline_fixture_is_still_hold"
+          ],
+          "evidence_receipt": "/workspace/scratch/73305aff6ced/observations/final/storage-source-controls-corrected.json"
+        },
+        "claim_guard": {
+          "path": "scripts/ci/test_pq_chain_claim_guard.py",
+          "source_sha256": "de276d432cf99bfd6f9d93bb0eadba60749138def20f48e01131df1f6d2193db",
+          "passed": 22,
+          "failed": 0,
+          "status": "PASS",
+          "declared_test_ids": [
+            "test_pq_chain_claim_guard.TestClaimGuard.test_classical_fallback_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_corrupt_independent_qualification_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_duplicate_json_keys_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_hepta_final_use_claim_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_history_storage_and_rehearsal_owner_paths_cannot_disappear",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_hold_is_not_pq_success",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_missing_authority_surface_inventory_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_missing_external_rollback_oracle_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_missing_or_non_directory_checkout_root_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_missing_pq_hepta_verifier_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_missing_proof_relation_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_missing_quantum_daa_model_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_native_witness_and_live_admission_sources_cannot_disappear",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_nonfinite_and_nonstandard_json_numbers_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_pq_128_guest_promotion_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_production_activation_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_quantum_hardness_claim_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_rollback_claim_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_symlink_source_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_symlinked_checkout_ancestor_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_symlinked_checkout_root_refused",
+            "test_pq_chain_claim_guard.TestClaimGuard.test_unbounded_or_unaccepted_candidate_refused"
+          ],
+          "evidence_receipt": "/workspace/scratch/73305aff6ced/observations/final/storage-source-controls-corrected.json"
+        },
+        "authority_surface": {
+          "path": "scripts/ci/test_pq_authority_surface_scan.py",
+          "source_sha256": "7dbf571b55bb442d5bab4542d35a0e24b8a36efad5afe43123dbfd528f767884",
+          "passed": 11,
+          "failed": 0,
+          "status": "PASS",
+          "declared_test_ids": [
+            "test_pq_authority_surface_scan.TestPqAuthoritySurfaceScan.test_all_crate_rust_surfaces_and_classical_pq_aliases_visible",
+            "test_pq_authority_surface_scan.TestPqAuthoritySurfaceScan.test_checkout_ancestor_symlink_refuses_redirected_source_inventory",
+            "test_pq_authority_surface_scan.TestPqAuthoritySurfaceScan.test_crucial_file_removed_is_not_silent_success",
+            "test_pq_authority_surface_scan.TestPqAuthoritySurfaceScan.test_incomplete_holding_status_and_curated_roles",
+            "test_pq_authority_surface_scan.TestPqAuthoritySurfaceScan.test_non_crypto_owner_boundaries_are_visible_and_remain_unqualified",
+            "test_pq_authority_surface_scan.TestPqAuthoritySurfaceScan.test_non_src_symlink_and_invalid_source_fail_closed",
+            "test_pq_authority_surface_scan.TestPqAuthoritySurfaceScan.test_refuse_oversize_and_invalid_utf8",
+            "test_pq_authority_surface_scan.TestPqAuthoritySurfaceScan.test_refuse_source_symlink_and_directory_symlink",
+            "test_pq_authority_surface_scan.TestPqAuthoritySurfaceScan.test_symlinked_crate_ancestor_refuses_external_source_tree",
+            "test_pq_authority_surface_scan.TestPqAuthoritySurfaceScan.test_unknown_classic_and_pq_sources_remain_visible",
+            "test_pq_authority_surface_scan.TestPqAuthoritySurfaceScan.test_walk_error_refuses_unreadable_unknown_subdirectory"
+          ],
+          "evidence_receipt": "/workspace/scratch/73305aff6ced/observations/final/storage-source-controls-corrected.json"
+        },
+        "model_root_oracle": {
+          "path": "formal/pon-nakamoto-v1/test_model_release_root.py",
+          "source_sha256": "bb97f0681f2ac0d818136ca6a97edb3a44058abe03ff4615e036556ada8a5f2c",
+          "passed": 4,
+          "failed": 0,
+          "status": "PASS",
+          "declared_test_ids": [
+            "test_model_release_root.ModelRootTests.test_every_context_pin_and_loader_policy_changes_identity",
+            "test_model_release_root.ModelRootTests.test_independent_vector_reproduces",
+            "test_model_release_root.ModelRootTests.test_noncanonical_or_unbounded_lineage_is_refused",
+            "test_model_release_root.ModelRootTests.test_router_presence_and_parent_roots_have_explicit_commitments"
+          ],
+          "evidence_receipt": "/workspace/scratch/73305aff6ced/observations/final/storage-source-controls-corrected.json"
+        }
+      },
+      "separate_model_root_oracle_repetition": {
+        "passed": 4,
+        "counted_as_additional_unique_tests": false,
+        "receipt": "/workspace/scratch/73305aff6ced/observations/final/model-root-oracle.json"
+      },
+      "failed_initial_controls_repetition_counted_as_additional_unique_tests": false,
+      "printed_FAIL_fixture_receipts_are_expected_negative_test_observations": true
+    },
+    "source_controls": {
+      "corrected_invocation_status": "PASS",
+      "format_check": "PASS",
+      "distributed_source_inventory": "PASS",
+      "research_integration_observation": {
+        "canonical_default_provider_contract_checked": true,
+        "canonical_pnq2_contract_checked": true,
+        "continuous_npq6_combination_accepted": false,
+        "cryptographic_acceptance": false,
+        "exact_source_blobs": 452,
+        "legacy_qtx1_optional_adapter_contract_checked": true,
+        "native_transfer_account_contract_checked": true,
+        "native_transport_contract_checked": true,
+        "node_activated": false,
+        "production_confidentiality_accepted": false,
+        "schema": "trnm-pq-cross-branch-check-v1",
+        "status": "HOLD_NO_GO",
+        "upstream_heads": 6,
+        "whole_native_authorization_migrated": false
+      },
+      "ci_contract_observation": {
+        "artifact_comparison_jobs": 1,
+        "head_jobs": 5,
+        "inline_source_pins": 22,
+        "merge_lanes": 5,
+        "native_cost_architectures": 2,
+        "tests_executed": false,
+        "w1_actual_reuse_v3_cells": 4
+      },
+      "repository_check": {
+        "activation": false,
+        "head": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+        "local_links": 2633,
+        "normal_dependency_edges": 25,
+        "result": "PASS",
+        "runtime_implemented": false,
+        "rust_files": 1125,
+        "source_state": "committed-clean",
+        "tree": "a18dc9ffc20efe435ae8ebceecdca537b7013261",
+        "workspace_packages": 26
+      }
+    },
+    "cargo_metadata": {
+      "status": "VALID_JSON",
+      "path": "/workspace/scratch/73305aff6ced/observations/final/cargo-metadata.json",
+      "sha256": "c00ab78d1d6c0938cc344f06720cca85d8a568566031d1ac13180988209bc239",
+      "bytes": 836416,
+      "format_version": 1,
+      "generated_by_receipt": "/workspace/scratch/73305aff6ced/observations/final/storage-source-controls-corrected.json",
+      "workspace_root": "/workspace/scratch/73305aff6ced/validation-a9b860/trillionnium",
+      "workspace_members": 26,
+      "workspace_default_members": 26,
+      "package_records": 175,
+      "resolved_platform_packages": 175,
+      "workspace_member_package_names": [
+        "trnm-audit-events",
+        "trnm-bench",
+        "trnm-checkpoint-store",
+        "trnm-checkpoint-types",
+        "trnm-control-plane",
+        "trnm-crypto-primitives",
+        "trnm-data-availability",
+        "trnm-escrow-vault",
+        "trnm-executor",
+        "trnm-governance-guard",
+        "trnm-mempool",
+        "trnm-mvcc-fee",
+        "trnm-oracle",
+        "trnm-peer-lease",
+        "trnm-pon-node",
+        "trnm-protocol",
+        "trnm-release-bundle",
+        "trnm-research-protocol",
+        "trnm-service-settlement",
+        "trnm-sqlite-io-boundary",
+        "trnm-state-import",
+        "trnm-task-kernel",
+        "trnm-transport",
+        "trnm-types",
+        "trnm-verification-profiles",
+        "trnm-worker-agent"
+      ],
+      "lock_packages": 180,
+      "lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+      "lock_bytes": 40033,
+      "lock_unchanged_from_candidate_base": true
+    },
+    "native_runtime_execution_on_N_claimed": false,
+    "scope_note": "These native 295/29/8 and original Python 106 observations remain attached to C. N source preservation and compilation do not relocate their execution to N."
+  },
+  "preserved_original_failures": {
+    "wrong_oracle_selector": {
+      "receipt_path": "/workspace/scratch/73305aff6ced/observations/final/storage-source-controls.json",
+      "receipt_sha256": "881c41601c1b5764c2f9c7cd9ba667ffbcfbd659d19feac057fe42ea66bf0c9e",
+      "command_status": "command_failed",
+      "exit_code": 5,
+      "tested_commit": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+      "tested_tree": "a18dc9ffc20efe435ae8ebceecdca537b7013261",
+      "source_before_after_equal": true,
+      "tracked_worktree_verified_before_after": true,
+      "tracked_entries": 9024,
+      "tracked_bytes": 947687690,
+      "log_path": "/workspace/scratch/73305aff6ced/observations/final/storage-source-controls.log",
+      "log_sha256": "c8407c7f46b402c4f1c5d65db1808e820e8e261ac775665123f32eb62535c9e2",
+      "log_digest_verified": true,
+      "argv": [
+        "bash",
+        "-c",
+        "set -euo pipefail\ncargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check\npython3 scripts/refresh_distributed_source_inventory.py --check\npython3 scripts/ci/check_pq_research_integration.py\npython3 scripts/ci/check_ci_contract.py\npython3 scripts/ci/check_repository.py\npython3 -m unittest discover -s scripts/ci -p test_ci_source_integrity.py\npython3 -m unittest discover -s scripts/ci -p test_pq_research_integration.py\npython3 -m unittest discover -s scripts/ci -p test_pq_chain_claim_guard.py\npython3 -m unittest discover -s scripts/ci -p test_pq_authority_surface_scan.py\npython3 -m unittest discover -s formal/pon-nakamoto-v1 -p test_cell_model_release_v1.py\ncargo metadata --locked --offline --manifest-path trillionnium/Cargo.toml --format-version 1 > /workspace/scratch/73305aff6ced/observations/final/cargo-metadata.json"
+      ],
+      "cwd": "/workspace/scratch/73305aff6ced/chain",
+      "status": "COMMAND_FAILED",
+      "used_as_pass_evidence": false,
+      "wrong_pattern": "test_cell_model_release_v1.py",
+      "selected_oracle_tests": 0,
+      "observed_python_counts_before_failure": [
+        34,
+        35,
+        22,
+        11,
+        0
+      ],
+      "reason": "The wrong unittest discovery pattern selected zero tests, printed NO TESTS RAN and exited 5. This invocation is not a PASS; its later cargo metadata command was not reached.",
+      "corrected_by_receipt": "/workspace/scratch/73305aff6ced/observations/final/storage-source-controls-corrected.json"
+    },
+    "tensor_old_parser_regression": {
+      "receipt_path": "/workspace/scratch/73305aff6ced/observations/red/tensor-old-parser-red.json",
+      "receipt_sha256": "32e1a6cd2f1c3123b636b65f4020f99ed012142dc93b4d3d03df1db0d3ecb120",
+      "command_status": "command_failed",
+      "exit_code": 101,
+      "tested_commit": "8992e87ab14d6905303b9a813656a591621a49bd",
+      "tested_tree": "b0f6c1d4f57b9c434f01fcf983f1aa3abbc88530",
+      "source_before_after_equal": true,
+      "tracked_worktree_verified_before_after": true,
+      "tracked_entries": 9023,
+      "tracked_bytes": 947653662,
+      "log_path": "/workspace/scratch/73305aff6ced/observations/red/tensor-old-parser-red.log",
+      "log_sha256": "f613ed4c2447286e82d336794c223f75fa78ca42d50a930d75cd58c5b4edf14d",
+      "log_digest_verified": true,
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "cell::tensor_tests::tensor_entry_sequence_cannot_replace_required_named_object",
+        "--",
+        "--exact",
+        "--nocapture"
+      ],
+      "cwd": "/workspace/scratch/73305aff6ced/validation-a9b860",
+      "status": "EXPECTED_RUNTIME_REGRESSION_FAILURE",
+      "test_name": "cell::tensor_tests::tensor_entry_sequence_cannot_replace_required_named_object",
+      "passed": 0,
+      "failed": 1,
+      "ignored": 0,
+      "filtered_out": 288,
+      "failed_at_runtime_assertion": true,
+      "compiler_failure": false,
+      "used_as_pass_evidence": false,
+      "red_changed_paths_from_a9": [
+        "trillionnium/crates/trnm-data-availability/src/cell/tensor_tests.rs"
+      ],
+      "red_parser_equals_a9": true,
+      "red_parser_blob_sha1": "dd475c8185170b1102d5a1f2350239c96317caf7",
+      "final_parser_blob_sha1": "9f2fd2b9343326e6322bd723ec22f75d27baec9e",
+      "red_and_green_tests_byte_identical": true,
+      "red_and_green_test_blob_sha1": "7002b249e4eb94adaf0f28121ff1c5f20b6cd25b",
+      "paired_green_source": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+      "paired_green_test_name": "cell::tensor_tests::tensor_entry_sequence_cannot_replace_required_named_object",
+      "paired_green_test_passed": true
+    },
+    "initial_node_environment": {
+      "status": "INTERRUPTED_UNQUALIFIED_ENVIRONMENT",
+      "raw_recorder_status": "running",
+      "raw_recorder_exit_code": null,
+      "recorder_receipt_incomplete": true,
+      "terminal_tool_exit_code": 130,
+      "tests_executed": 0,
+      "used_as_pass_evidence": false,
+      "source_after_identity_claimed": false,
+      "receipt_path": "/workspace/scratch/73305aff6ced/observations/baseline/baseline-node-composition.json",
+      "receipt_sha256": "c3e646544907f2ec990d8395260b93f0a32d2118070eb9d5d2676ac1ff5f0179",
+      "log_path": "/workspace/scratch/73305aff6ced/observations/baseline/baseline-node-composition.log",
+      "observed_log_sha256": "a19e7f970c4408840117d48abac01c19203f569b0828aa3c2fe5b5fa6436a22c",
+      "interruption_record_path": "/workspace/scratch/73305aff6ced/observations/baseline/initial-runtime-interruption.json",
+      "interruption_record_sha256": "246c310dc0bbabcaffa4ea0bc3590742d7eb209113e0819f739e6e2e57d38f21",
+      "interruption_record_log_sha256": "a19e7f970c4408840117d48abac01c19203f569b0828aa3c2fe5b5fa6436a22c",
+      "observed_log_matches_interruption_record": true,
+      "diagnostic": "trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete",
+      "note": "The original recorder still says running because its after-check never completed. Preserve the incomplete receipt and the Ctrl-C diagnostic; neither is a qualified baseline PASS."
+    }
+  },
+  "environment_interruption": {
+    "record": {
+      "path": "/workspace/scratch/73305aff6ced/observations/environment-interruption.json",
+      "sha256": "00ac4ef7128ea7a90fe63672e5269379b839598031d05be54596a3f80a4fb1c5",
+      "bytes": 1499
+    },
+    "recorded_error": "exec-server transport disconnected; failed to resume exec-server session: recovery timed out after 45s",
+    "source_files_recovered": true,
+    "old_sessions_resumable": false,
+    "matching_old_commands_present": false,
+    "exit_codes_unknown": true,
+    "causal_oom_claimed": false,
+    "composition_ctrl_c_requested": true,
+    "composition_ctrl_c_acknowledged": false,
+    "interrupted_receipts": [
+      {
+        "intended_source_commit": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+        "original_exec_session": 20342,
+        "final_outcome": "INCOMPLETE_ENVIRONMENT_TRANSPORT_LOST",
+        "receipt": {
+          "path": "/workspace/scratch/73305aff6ced/observations/final/storage-workspace-clippy.json",
+          "sha256": "de7bc308f443c4f75f847795de5290630a92e88d1f1fa316c3ed02fcc9b4fde2",
+          "bytes": 1293
+        },
+        "log": {
+          "path": "/workspace/scratch/73305aff6ced/observations/final/storage-workspace-clippy.log",
+          "sha256": "1e70919654174b99f1a7e03bb55ba260234871b77df6547607ea61cf2bd91b69",
+          "bytes": 5099
+        },
+        "raw_status_preserved": "running",
+        "raw_exit_code_preserved": null,
+        "complete_before_after_available": false,
+        "exit_code_unknown": true,
+        "pass_claimed": false
+      },
+      {
+        "intended_source_commit": "20cdab3b882c942f28c719a74b3fd22b1837f9fa",
+        "original_exec_session": 88396,
+        "final_outcome": "INCOMPLETE_ENVIRONMENT_TRANSPORT_LOST",
+        "receipt": {
+          "path": "/workspace/scratch/73305aff6ced/observations/composition/composition-source-controls.json",
+          "sha256": "552d92ac37e8036fe96fc5fa4453d0d2cdec03ab995e2ea68fa188fcad248e1a",
+          "bytes": 2023
+        },
+        "log": {
+          "path": "/workspace/scratch/73305aff6ced/observations/composition/composition-source-controls.log",
+          "sha256": "7207ac1dfc48b070daffbc0096c859288a5fdc3ec95cc28bc803835ecdbf934c",
+          "bytes": 1712
+        },
+        "raw_status_preserved": "running",
+        "raw_exit_code_preserved": null,
+        "complete_before_after_available": false,
+        "exit_code_unknown": true,
+        "pass_claimed": false
+      }
+    ],
+    "raw_receipts_rewritten": false,
+    "note": "The raw running/null receipts remain intact. Their final observation is environment transport loss without complete source after-checks; neither is a PASS or a known compiler/test exit."
+  },
+  "publication_N": {
+    "saved_remote_readback": {
+      "path": "/workspace/scratch/73305aff6ced/observations/published-N-readback.json",
+      "sha256": "b4ac7e3aa2b33835fa1575362dc62de4831f746fd69acf6c4d59ec8f62a8697a",
+      "bytes": 8151
+    },
+    "readback_observed_utc": "2026-11-05T01:08:10.816Z",
+    "push_success_recorded": true,
+    "non_force_push_reported_by_task_owner": true,
+    "push_mode_claim_source": "Task-owner report; saved readback independently records push success and the exact PR head.",
+    "pr": {
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/688",
+      "head_sha": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+      "base_sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "draft": true,
+      "merged": false
+    },
+    "pr_head_matches_N": true,
+    "key_workflow_snapshots": [
+      {
+        "id": 41946194232,
+        "name": "PoN original workspace test-profile CPU acceptance",
+        "status": "pending",
+        "conclusion": null,
+        "run_number": 95,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194232/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194232/logs",
+        "workflow_id": 403747290
+      },
+      {
+        "id": 41946194214,
+        "name": "trnm-required-baseline",
+        "status": "pending",
+        "conclusion": null,
+        "run_number": 2606,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194214/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194214/logs",
+        "workflow_id": 345677268
+      }
+    ],
+    "remote_ci_success_claimed": false,
+    "merge_or_activation_claimed": false,
+    "scope": "Saved connector readback confirms publication to draft PR #688 at the recorded timestamp. Workflow snapshots are historical pending states; this preparation did not poll GitHub or claim remote CI completion."
+  },
+  "composition_preservation_N": {
+    "status": "PASS_STATIC_OBJECT_COMPOSITION",
+    "report": {
+      "path": "/workspace/scratch/73305aff6ced/observations/research-composition-preservation.json",
+      "sha256": "f6372f612a7cb8e5e3e36efaddd75eb8dbb1d8f323e50e137b570e9e03b747cf",
+      "bytes": 284006
+    },
+    "recorded_scope": "Read-only exact Git object composition and corpus-pin preservation; no runtime validation.",
+    "checks": [
+      {
+        "name": "N_exact_tree",
+        "passed": true
+      },
+      {
+        "name": "N_exact_ordered_parents",
+        "passed": true
+      },
+      {
+        "name": "HEAD_is_M_before_inspection",
+        "passed": true
+      },
+      {
+        "name": "entire_N_Rust_workspace_tree_equals_M",
+        "passed": true
+      },
+      {
+        "name": "incoming_delta_has_24_paths",
+        "passed": true
+      },
+      {
+        "name": "M_delta_has_14_paths",
+        "passed": true
+      },
+      {
+        "name": "only_plan_and_corpus_overlap",
+        "passed": true
+      },
+      {
+        "name": "N_changed_paths_are_exact_union",
+        "passed": true
+      },
+      {
+        "name": "N_vs_M_path_set_equals_incoming_delta",
+        "passed": true
+      },
+      {
+        "name": "N_vs_incoming_path_set_equals_M_delta",
+        "passed": true
+      },
+      {
+        "name": "incoming_nonexception_modes_types_and_blobs_preserved",
+        "passed": true
+      },
+      {
+        "name": "M_nonexception_modes_types_and_blobs_preserved",
+        "passed": true
+      },
+      {
+        "name": "incoming_plan_delta_contains_insertions_only",
+        "passed": true
+      },
+      {
+        "name": "incoming_complete_plan_line_sequence_preserved",
+        "passed": true
+      },
+      {
+        "name": "M_plan_delta_contains_insertions_only",
+        "passed": true
+      },
+      {
+        "name": "M_complete_plan_line_sequence_preserved",
+        "passed": true
+      },
+      {
+        "name": "plan_insertions_have_disjoint_base_positions",
+        "passed": true
+      },
+      {
+        "name": "N_plan_is_exact_union_of_both_original_insertions",
+        "passed": true
+      },
+      {
+        "name": "N_corpus_has_exactly_460_unique_pins",
+        "passed": true
+      },
+      {
+        "name": "all_parent_pin_key_sets_preserved",
+        "passed": true
+      },
+      {
+        "name": "corpus_nonpin_metadata_preserved",
+        "passed": true
+      },
+      {
+        "name": "no_conflicting_parent_pin_edits",
+        "passed": true
+      },
+      {
+        "name": "N_pin_map_is_exact_merge_of_parent_edits",
+        "passed": true
+      },
+      {
+        "name": "cat_file_batch_completed_without_error",
+        "passed": true
+      },
+      {
+        "name": "all_460_pins_match_N_tree_and_rehashed_actual_blob_bytes",
+        "passed": true
+      }
+    ],
+    "passed_checks": 25,
+    "failed_checks": 0,
+    "checks_are_new_runtime_tests": false,
+    "runtime_tests_executed_by_composition_audit": false,
+    "rust_compilation_executed_by_composition_audit": false,
+    "commit_metadata": {
+      "base": {
+        "commit": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "parents": [
+          "a9b8602706b66adba82655c3c2ce90bde88620a2",
+          "9d8193ee7b12ee38ab754d85a27b8dadc682b588"
+        ]
+      },
+      "incoming": {
+        "commit": "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c",
+        "tree": "82f2a5e3045cf65eb8b4dbfd2a055e5159265ce4",
+        "parents": [
+          "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+          "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c"
+        ]
+      },
+      "M": {
+        "commit": "20cdab3b882c942f28c719a74b3fd22b1837f9fa",
+        "tree": "c395733dbafc2e8ed875879cacb2e9512985ba8d",
+        "parents": [
+          "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+          "211e330fd1cfbdaf3e9ff552714df29c840ce675"
+        ]
+      },
+      "N": {
+        "commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+        "tree": "ea600542130341144d697776d92048988d44572b",
+        "parents": [
+          "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c",
+          "20cdab3b882c942f28c719a74b3fd22b1837f9fa"
+        ]
+      }
+    },
+    "incoming_nonexception_exact_paths": 22,
+    "M_nonexception_exact_paths": 12,
+    "source_pins_preserved_and_rehashed": 460,
+    "rust_workspace_subtree": {
+      "M": "81fbd17e50c6c62de7834c9cb7872dc4e89f5444",
+      "N": "81fbd17e50c6c62de7834c9cb7872dc4e89f5444",
+      "equal": true
+    },
+    "checks_revalidated_in_this_preparation": [
+      "25 distinct recorded checks are all true",
+      "N exact tree and ordered parents match Git",
+      "N/M entire trillionnium subtree identities match the recorded observation"
+    ],
+    "native_C_results_relabelled_as_N": false
+  },
+  "completed_on_N": {
+    "source_controls": {
+      "status": "PASS",
+      "receipt": {
+        "path": "/workspace/scratch/73305aff6ced/observations/composed-final/composed-source-controls.json",
+        "sha256": "d35d56e7d62cd68148882104f3475eaa2b515c7611be3f186386aab677cca1cb",
+        "bytes": 3171
+      },
+      "log": {
+        "path": "/workspace/scratch/73305aff6ced/observations/composed-final/composed-source-controls.log",
+        "sha256": "7a125ed339c9906b5fae98a08787cd30356eea8df955a1d5dd417919d46bd340",
+        "bytes": 2164
+      },
+      "tested_commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+      "tested_tree": "ea600542130341144d697776d92048988d44572b",
+      "source_before_after_equal": true,
+      "tracked_worktree_verified_before_after": true,
+      "tracked_entries": 9052,
+      "tracked_bytes": 948054408,
+      "exit_code": 0,
+      "argv": [
+        "bash",
+        "-c",
+        "set -euo pipefail\ncargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check\npython3 scripts/refresh_distributed_source_inventory.py --check\npython3 scripts/ci/check_pq_research_integration.py\npython3 scripts/ci/check_ci_contract.py\npython3 scripts/ci/check_repository.py\npython3 -m unittest discover -s scripts/ci -p test_ci_source_integrity.py\npython3 -m unittest discover -s scripts/ci -p test_pq_research_integration.py\npython3 -m unittest discover -s scripts/ci -p test_pq_chain_claim_guard.py\npython3 -m unittest discover -s scripts/ci -p test_pq_authority_surface_scan.py\npython3 -m unittest discover -s formal/pon-nakamoto-v1 -p test_model_release_root.py\ncargo metadata --locked --offline --manifest-path trillionnium/Cargo.toml --format-version 1 | gzip -n > /workspace/scratch/73305aff6ced/observations/composed-final/cargo-metadata.json.gz\n"
+      ],
+      "cwd": "/workspace/scratch/73305aff6ced/chain",
+      "owner_exec_session": 53103,
+      "python_counts": {
+        "ci_source_integrity": 34,
+        "pq_source_integrity": 35,
+        "claim_guard": 22,
+        "authority_surface": 11,
+        "model_root_oracle": 4
+      },
+      "python_distinct_tests": 106,
+      "python_failed": 0,
+      "counted_as_additional_unique_test_identities_over_C": false,
+      "format": "PASS",
+      "inventory": "PASS",
+      "research_integration_observation": {
+        "canonical_default_provider_contract_checked": true,
+        "canonical_pnq2_contract_checked": true,
+        "continuous_npq6_combination_accepted": false,
+        "cryptographic_acceptance": false,
+        "exact_source_blobs": 460,
+        "legacy_qtx1_optional_adapter_contract_checked": true,
+        "native_transfer_account_contract_checked": true,
+        "native_transport_contract_checked": true,
+        "node_activated": false,
+        "production_confidentiality_accepted": false,
+        "schema": "trnm-pq-cross-branch-check-v1",
+        "status": "HOLD_NO_GO",
+        "upstream_heads": 6,
+        "whole_native_authorization_migrated": false
+      },
+      "ci_contract_observation": {
+        "artifact_comparison_jobs": 1,
+        "head_jobs": 5,
+        "inline_source_pins": 22,
+        "merge_lanes": 5,
+        "native_cost_architectures": 2,
+        "tests_executed": false,
+        "w1_actual_reuse_v3_cells": 4
+      },
+      "repository_observation": {
+        "activation": false,
+        "head": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+        "local_links": 2658,
+        "normal_dependency_edges": 25,
+        "result": "PASS",
+        "runtime_implemented": false,
+        "rust_files": 1130,
+        "source_state": "committed-clean",
+        "tree": "ea600542130341144d697776d92048988d44572b",
+        "workspace_packages": 26
+      }
+    },
+    "strict_workspace_clippy": {
+      "status": "PASS",
+      "receipt": {
+        "path": "/workspace/scratch/73305aff6ced/observations/composed-final/composed-workspace-clippy.json",
+        "sha256": "239ef877682c89366988207e513764d205020908c020838d198df2a4eeccdd24",
+        "bytes": 2472
+      },
+      "log": {
+        "path": "/workspace/scratch/73305aff6ced/observations/composed-final/composed-workspace-clippy.log",
+        "sha256": "7563a34ee7298f872ca79233d24d5a2742eca450df549bee0a8c39968c0c6d8c",
+        "bytes": 2647
+      },
+      "tested_commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+      "tested_tree": "ea600542130341144d697776d92048988d44572b",
+      "source_before_after_equal": true,
+      "tracked_worktree_verified_before_after": true,
+      "tracked_entries": 9052,
+      "tracked_bytes": 948054408,
+      "exit_code": 0,
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/73305aff6ced/validation-a9b860",
+      "owner_exec_session": 24678,
+      "native_tests_executed_by_clippy": false
+    },
+    "cargo_metadata": {
+      "status": "VALID_GZIP_JSON",
+      "artifact": {
+        "path": "/workspace/scratch/73305aff6ced/observations/composed-final/cargo-metadata.json.gz",
+        "sha256": "026468d12f93d7258d29e1d53a15121f4edf6f53e0d89210fb6322edd3e69e1e",
+        "bytes": 67119
+      },
+      "uncompressed_sha256": "09a708ade4011ab980a70046c2fbbedeae8e49df2e890974a570af83022bbe6f",
+      "uncompressed_bytes": 829618,
+      "workspace_root": "/workspace/scratch/73305aff6ced/chain/trillionnium",
+      "workspace_members": 26,
+      "resolved_platform_packages": 175,
+      "lock_packages": 180,
+      "lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+      "lock_equal_to_C": true,
+      "generated_by_receipt": "/workspace/scratch/73305aff6ced/observations/composed-final/composed-source-controls.json"
+    }
+  },
+  "selected_node_on_N": {
+    "status": "NOT_RUN_BUILD_FAILED_RESOURCE",
+    "owner_exec_session": 24156,
+    "intended_source_commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+    "expected_selected_count": 12,
+    "selected_test_names": [
+      "store::legacy_reorg_observation_tests::legacy_observation_opt_in_is_local_and_keeps_unentered_unknown",
+      "store::legacy_reorg_observation_tests::legacy_observation_preserves_cancelled_and_failed_reorg_outcomes",
+      "store::legacy_reorg_observation_tests::legacy_observation_preserves_signed_reorg_state_and_progress",
+      "store::storage_service::tests::cache_quota::cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention",
+      "store::storage_service::tests::native_cell_expired_storage_request_creates_no_budget_or_physical_obligation",
+      "store::storage_service::tests::native_cell_failed_initial_copy_needs_a_separate_funded_repair_and_preserves_unknown_cost",
+      "store::storage_service::tests::native_cell_physical_writer_wait_spends_original_storage_deadline",
+      "store::storage_service::tests::native_cell_repair_cpu_owner_cannot_move_threads_or_resume_after_exhaustion",
+      "store::storage_service::tests::native_cell_retirement_cannot_release_a_pending_effect_before_reconciliation",
+      "store::storage_service::tests::native_cell_retirement_rejects_another_chain_and_reconciles_orphaned_funding",
+      "store::storage_service::tests::native_cell_storage_escrow_replay_and_reorg_keep_physical_obligation",
+      "store::storage_service::tests::native_cell_storage_subject_and_real_byte_block_capacity_are_required_before_effect"
+    ],
+    "static_name_presence": "PASS",
+    "static_names_present": 12,
+    "static_names_missing": [],
+    "module_wiring_verified": true,
+    "source_checks": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs",
+        "module_prefix": "store::storage_service::tests::",
+        "source_commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+        "git_blob_sha1": "dc23777a6840bdbec99c8253b8cbd576e9a2b67c",
+        "sha256": "5ccc96f8ab1e6735ab61f0d162dbce23fa2c79ea26a1459964f9c26034a10040",
+        "declared_test_names": [
+          "store::storage_service::tests::native_cell_expired_storage_request_creates_no_budget_or_physical_obligation",
+          "store::storage_service::tests::native_cell_failed_initial_copy_needs_a_separate_funded_repair_and_preserves_unknown_cost",
+          "store::storage_service::tests::native_cell_physical_writer_wait_spends_original_storage_deadline",
+          "store::storage_service::tests::native_cell_repair_cpu_owner_cannot_move_threads_or_resume_after_exhaustion",
+          "store::storage_service::tests::native_cell_retirement_cannot_release_a_pending_effect_before_reconciliation",
+          "store::storage_service::tests::native_cell_retirement_rejects_another_chain_and_reconciles_orphaned_funding",
+          "store::storage_service::tests::native_cell_storage_escrow_replay_and_reorg_keep_physical_obligation",
+          "store::storage_service::tests::native_cell_storage_subject_and_real_byte_block_capacity_are_required_before_effect"
+        ],
+        "byte_identical_to_C": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service/cache_quota_tests.rs",
+        "module_prefix": "store::storage_service::tests::cache_quota::",
+        "source_commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+        "git_blob_sha1": "472afecf9583170a31ecaece2af8e2692a0905b8",
+        "sha256": "2c135db9fbadf25fe330c62f05c4729c47741269ffec933b8042bd741e844bfb",
+        "declared_test_names": [
+          "store::storage_service::tests::cache_quota::cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention"
+        ],
+        "byte_identical_to_C": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs",
+        "module_prefix": "store::legacy_reorg_observation_tests::",
+        "source_commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+        "git_blob_sha1": "d50f5e607f5aed311174808b980f50e95cac929f",
+        "sha256": "72f5be79c3c3621152c094daa7c5ebd355dd5775805ffe58919d07521ec22acf",
+        "declared_test_names": [
+          "store::legacy_reorg_observation_tests::legacy_observation_opt_in_is_local_and_keeps_unentered_unknown",
+          "store::legacy_reorg_observation_tests::legacy_observation_preserves_cancelled_and_failed_reorg_outcomes",
+          "store::legacy_reorg_observation_tests::legacy_observation_preserves_signed_reorg_state_and_progress"
+        ],
+        "byte_identical_to_C": true
+      }
+    ],
+    "linux_only_selected_test": "store::storage_service::tests::native_cell_repair_cpu_owner_cannot_move_threads_or_resume_after_exhaustion",
+    "static_presence_is_runtime_pass": false,
+    "original_selection_record": {
+      "path": "/workspace/scratch/73305aff6ced/observations/node-selected-status.json",
+      "sha256": "7c0d101c91aa23256728373a72713d0a65d40651c049100647fa39a0e5e9ade3",
+      "bytes": 2450
+    },
+    "original_selection_record_reason_is_historical_resource_observation": true,
+    "passed": null,
+    "failed": null,
+    "ignored": null,
+    "pass_claimed": false,
+    "complete_before_after_available": true,
+    "whole_node_suite_run": false,
+    "tested_commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+    "tested_tree": "ea600542130341144d697776d92048988d44572b",
+    "selected_count": 12,
+    "original_selector_order": [
+      "store::storage_service::tests::cache_quota::cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention",
+      "store::storage_service::tests::native_cell_failed_initial_copy_needs_a_separate_funded_repair_and_preserves_unknown_cost",
+      "store::storage_service::tests::native_cell_repair_cpu_owner_cannot_move_threads_or_resume_after_exhaustion",
+      "store::storage_service::tests::native_cell_retirement_cannot_release_a_pending_effect_before_reconciliation",
+      "store::storage_service::tests::native_cell_retirement_rejects_another_chain_and_reconciles_orphaned_funding",
+      "store::storage_service::tests::native_cell_storage_escrow_replay_and_reorg_keep_physical_obligation",
+      "store::storage_service::tests::native_cell_storage_subject_and_real_byte_block_capacity_are_required_before_effect",
+      "store::legacy_reorg_observation_tests::legacy_observation_opt_in_is_local_and_keeps_unentered_unknown",
+      "store::legacy_reorg_observation_tests::legacy_observation_preserves_cancelled_and_failed_reorg_outcomes",
+      "store::legacy_reorg_observation_tests::legacy_observation_preserves_signed_reorg_state_and_progress",
+      "store::storage_service::tests::native_cell_expired_storage_request_creates_no_budget_or_physical_obligation",
+      "store::storage_service::tests::native_cell_physical_writer_wait_spends_original_storage_deadline"
+    ],
+    "selector_names_preserved_exactly": true,
+    "actual_tests_executed": 0,
+    "test_harnesses_started": 0,
+    "test_outcomes": "UNKNOWN_NOT_EXECUTED",
+    "compile_exit_code": 101,
+    "command_exit_code": 101,
+    "source_before": {
+      "base": null,
+      "candidate": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+      "tested_tree": "ea600542130341144d697776d92048988d44572b",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 948054408,
+      "tracked_entries": 9052,
+      "tracked_worktree_verified": true
+    },
+    "source_after": {
+      "base": null,
+      "candidate": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+      "tested_tree": "ea600542130341144d697776d92048988d44572b",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 948054408,
+      "tracked_entries": 9052,
+      "tracked_worktree_verified": true
+    },
+    "source_before_after_equal": true,
+    "tracked_worktree_verified_before_after": true,
+    "receipt": {
+      "path": "/workspace/scratch/73305aff6ced/observations/composed-final/composed-node-selected-qualified.json",
+      "sha256": "29bb31f28cf764f4139783c9d88fa8c8638392e92410b646b2e955a428f90050",
+      "bytes": 2385
+    },
+    "log": {
+      "path": "/workspace/scratch/73305aff6ced/observations/composed-final/composed-node-selected-qualified.log",
+      "sha256": "61bd1b872ad4413e369038fc0db9d4b4688d18b2493525c694224ea433e873fe",
+      "bytes": 3418
+    },
+    "raw_recorder_status": "command_failed",
+    "raw_recorder_exit_code": 101,
+    "log_digest_and_size_verified": true,
+    "failure_phase": "Node lib-test compilation, before the first selected test harness",
+    "diagnostic": "rustc-LLVM ERROR: IO failure on output stream: No space left on device",
+    "diagnostic_class": "compiler_output_storage_exhausted",
+    "compiler_termination_is_a_test_failure": false,
+    "observed_compiler_profile": {
+      "opt_level": 3,
+      "debuginfo": 2,
+      "lib_test_build": true,
+      "source": "Actual rustc command in the failure log"
+    },
+    "environment": {
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_TARGET_DIR": "/workspace/scratch/73305aff6ced/target",
+      "GITHUB_RUN_ATTEMPT": null,
+      "GITHUB_RUN_ID": null,
+      "OPENSSL_DIR": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install",
+      "OPENSSL_STATIC": "1",
+      "RUNNER_ARCH": null,
+      "RUSTC": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "RUSTC_WORKSPACE_WRAPPER": null,
+      "RUSTC_WRAPPER": null,
+      "RUSTFLAGS": null,
+      "RUST_TEST_THREADS": "1",
+      "TRNM_PQ_OPENSSL": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/bin/openssl",
+      "TRNM_PQ_OPENSSL_SHA256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+      "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+    },
+    "execution_marker_audit": {
+      "aggregate_log_matches": {
+        "cargo_harness_start": 0,
+        "libtest_running": 0,
+        "test_case_status": 0,
+        "test_result_summary": 0
+      },
+      "per_case_log_count": 1,
+      "per_case_log": {
+        "path": "/workspace/scratch/73305aff6ced/observations/composed-final/node-qualified/cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention.log",
+        "sha256": "61bd1b872ad4413e369038fc0db9d4b4688d18b2493525c694224ea433e873fe",
+        "bytes": 3418
+      },
+      "per_case_log_matches": {
+        "cargo_harness_start": 0,
+        "libtest_running": 0,
+        "test_case_status": 0,
+        "test_result_summary": 0
+      },
+      "aggregate_and_only_case_log_bytes_identical": true
+    },
+    "selector_invocations": {
+      "first_cargo_test_command_started_for": "store::storage_service::tests::cache_quota::cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention",
+      "first_test_case_body_executed": false,
+      "remaining_selector_commands_started": 0,
+      "basis": "The set -euo pipefail loop terminated on the first Cargo/tee pipeline exit 101; only the first case log exists."
+    },
+    "runner_projection": {
+      "record": {
+        "path": "/workspace/scratch/73305aff6ced/observations/node-qualified-runner-projection.json",
+        "sha256": "0677dad137068f72dcfb1721ff1cff67c2d3deb62bfec4a28cf42775adc862b5",
+        "bytes": 343
+      },
+      "original_script": {
+        "path": "/workspace/scratch/73305aff6ced/observations/run-node-selected.sh",
+        "sha256": "01ff6d57429110b578e60afc2e730f04bc2976e7f6a0abc2a1bb56d0e3d5bdbc",
+        "bytes": 1730
+      },
+      "qualified_N_script": {
+        "path": "/workspace/scratch/73305aff6ced/observations/run-node-selected-qualified-N.sh",
+        "sha256": "e955345f48fb3e382082138afca520c7bd45e424557b05bbdc9b2a4e0f58470c",
+        "bytes": 1778
+      },
+      "changed_directory_reference_count": 2,
+      "only_log_directory_references_changed": true,
+      "selectors_changed": false,
+      "profiles_changed": false,
+      "deadlines_changed": false,
+      "exact_replacement_recomputed": true
+    },
+    "prior_attempts": [
+      {
+        "owner_exec_session": 38603,
+        "status": "INTERRUPTED_UNQUALIFIED_CACHED_BUILD",
+        "intended_source_commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+        "interruption_record": {
+          "path": "/workspace/scratch/73305aff6ced/observations/node-unqualified-cache-interruption.json",
+          "sha256": "0050d10f594a6ab372d027fbdc1bb82b289a76fdb20f632e1fcae5554482a32f",
+          "bytes": 909
+        },
+        "receipt": {
+          "path": "/workspace/scratch/73305aff6ced/observations/composed-final/composed-node-selected.json",
+          "sha256": "cba141bcf6d810010915c353044aedf21ac388336b79e4280d1eea2ac9c883bc",
+          "bytes": 1224
+        },
+        "log": {
+          "path": "/workspace/scratch/73305aff6ced/observations/composed-final/composed-node-selected.log",
+          "sha256": "cc6a3a4d0fd95f1db174c889bf984cb658ac846cee2a2fcc8d206c6dfa486220",
+          "bytes": 1021
+        },
+        "raw_recorder_status": "running",
+        "raw_recorder_exit_code": null,
+        "terminal_tool_exit_code": 130,
+        "complete_before_after_available": false,
+        "actual_tests_executed": 0,
+        "test_harnesses_started": 0,
+        "test_outcomes": "UNKNOWN_NOT_EXECUTED",
+        "passed": null,
+        "failed": null,
+        "ignored": null,
+        "execution_marker_audit": {
+          "cargo_harness_start": 0,
+          "libtest_running": 0,
+          "test_case_status": 0,
+          "test_result_summary": 0
+        },
+        "pass_claimed": false,
+        "reason": "Observed test-profile SQLite boundary library reused the initial unqualified build-script fingerprint. Stop this own attempt, preserve it, invalidate only this package in own target and rerun original tests with the unchanged corrected Rustup launcher. No qualification guard or test condition is changed.",
+        "raw_receipt_rewritten": false
+      }
+    ],
+    "note": "All twelve original Linux-applicable selectors remain present in N and unchanged in the runner. The qualified retry failed while compiling the first selector; no harness or test case ran. The complete failure receipt binds this compiler observation to exact N. Individual test outcomes remain unknown."
+  },
+  "qualification_flags": {
+    "production_activation": false,
+    "public_wan_accepted": false,
+    "independent_acceptance": false,
+    "funded_automatic_renewal": false,
+    "new_expert_abi_accepted": false,
+    "current_or_final_use_granted": false,
+    "whole_chain_quantum_security_qualified": false,
+    "remote_ci_or_prospective_merge_success_claimed": false
+  },
+  "notes": [
+    "This final evidence snapshot supersedes the earlier running progress label without changing implementation-results.json, delivery-results-draft.json, or any raw receipt.",
+    "C native 295/29/8 results remain C-local. Original 186/281/a9-288 library sets were retained by the completed C run; only seven M09 test names are new in this continuation.",
+    "Old initial baseline, C Clippy and M source-controls observations remain incomplete or interrupted, with no fabricated after-check or PASS.",
+    "N source controls and strict Clippy are PASS only after complete source-before/source-after and bound log SHA256/length verification. Repeated Python runs and repeated model-root oracle executions do not add unique test identities.",
+    "Node attempt 38603 was interrupted with tool exit 130 after stale unqualified cached SQLite build output; its raw receipt remains running/null and incomplete.",
+    "The targeted SQLite package clean and fresh build-script fence/fingerprint restoration are separately evidenced. They do not establish Node runtime success.",
+    "Node qualified attempt 24156 ended with compile exit 101 and LLVM No space left on device, before any harness. All twelve selectors remain intact; actual executed tests are zero and their pass/fail outcomes are unknown.",
+    "The 25 N composition checks and 34 incoming-c57 checks are static preservation checks, not additional runtime tests. No C or N run is attributed to c57 or D.",
+    "The N remote-readback entry is a timestamped publication snapshot. This preparation did not query a later PR head or completed remote CI; historical pending workflow states are not current success claims."
+  ],
+  "cache_qualification_restoration": {
+    "status": "FRESH_QUALIFIED_SQLITE_BUILD_SCRIPT_OUTPUT_VERIFIED",
+    "source_commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+    "diagnosis": {
+      "path": "/workspace/scratch/73305aff6ced/observations/runtime-cache-diagnosis.json",
+      "sha256": "8db21bfb5735f9b72c33616655d34e208e6521f477804422faab95fb0cc760a2",
+      "bytes": 9760
+    },
+    "diagnosis_scope": {
+      "bad_run_fingerprint_hex": "b16234df3d442453",
+      "bad_run_fingerprint_little_endian_u64": 5990988436838048433,
+      "good_run_fingerprint_hex": "0e3fcd4c23ef0175",
+      "good_run_fingerprint_little_endian_u64": 8431282912305692430,
+      "node_library_build_script_dependency_u64": 5990988436838048433,
+      "node_library_depends_on_bad_cached_output": true,
+      "bad_run_environment_triggers": {
+        "DEP_SQLITE3_INCLUDE": null,
+        "HOST": null,
+        "TARGET": null
+      },
+      "good_run_ld_library_path_trigger": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+      "bad_warning": "trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete",
+      "good_fence": "sqlite-3.51.3-normal-native-linux-layout-v3",
+      "interpretation": "The current Node SQLite library fingerprint points exactly to the initial 00:15 failed-qualification build-script output. That early-return output did not register LD_LIBRARY_PATH, so correcting the launcher did not invalidate this build-script variant. Another variant reran at 00:37 and emitted the normal qualified layout witness and environment triggers."
+    },
+    "targeted_package_clean": {
+      "record": {
+        "path": "/workspace/scratch/73305aff6ced/observations/runtime-package-clean.json",
+        "sha256": "055e07e07a4ca3e4c4f2ed41267d2d0bc539a11320a0102876181c0108bd162b",
+        "bytes": 672
+      },
+      "log": {
+        "path": "/workspace/scratch/73305aff6ced/observations/runtime-package-clean.log",
+        "sha256": "3b186a3daebdded7902fce75f8d7b117821921654200ca345b1e17a4ca8794d3",
+        "bytes": 37
+      },
+      "argv": [
+        "bash",
+        "/workspace/scratch/73305aff6ced/runtime/run-storage-runtime.sh",
+        "cargo",
+        "clean",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-sqlite-io-boundary"
+      ],
+      "exit_code": 0,
+      "own_target_directory": "/workspace/scratch/73305aff6ced/target",
+      "removed_files": 61,
+      "removed_mebibytes": 28.9,
+      "source_changed": false,
+      "qualification_guard_changed": false,
+      "profiles_changed": false,
+      "selected_tests_changed": false
+    },
+    "requalification": {
+      "path": "/workspace/scratch/73305aff6ced/observations/runtime-cache-requalification.json",
+      "sha256": "d38f6affc12d02da6c77dc56ea0feed88a64ae5101640070aa6203dc704d4d3f",
+      "bytes": 6127
+    },
+    "build_script_observation": {
+      "output_sha256": "55d824dca2204c47df15884886655917852f7fd05875fc31a752d0537fb4a517",
+      "output_bytes": 5042,
+      "contains_unqualified_marker": false,
+      "layout_witness_cfg_emitted": true,
+      "fence": "sqlite-3.51.3-normal-native-linux-layout-v3",
+      "ld_library_path_rerun_trigger_emitted": true,
+      "recorded_ld_library_path": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+      "run_fingerprint_hex": "179755e1c1f21e29",
+      "run_fingerprint_little_endian_u64": 2963072519379457815,
+      "node_library_build_script_dependency_u64": 2963072519379457815,
+      "node_library_dependency_matches_fresh_qualified_run": true,
+      "differs_from_prior_unqualified_run_dependency": true,
+      "prior_unqualified_run_dependency_u64": 5990988436838048433
+    },
+    "preserved_artifact_verification": [
+      {
+        "record": {
+          "path": "/workspace/scratch/73305aff6ced/observations/runtime-cache-diagnosis.json",
+          "sha256": "8db21bfb5735f9b72c33616655d34e208e6521f477804422faab95fb0cc760a2",
+          "bytes": 9760
+        },
+        "preserved_artifact_count": 8,
+        "all_preserved_copy_sha256_and_sizes_verified": true
+      },
+      {
+        "record": {
+          "path": "/workspace/scratch/73305aff6ced/observations/runtime-cache-requalification.json",
+          "sha256": "d38f6affc12d02da6c77dc56ea0feed88a64ae5101640070aa6203dc704d4d3f",
+          "bytes": 6127
+        },
+        "preserved_artifact_count": 5,
+        "all_preserved_copy_sha256_and_sizes_verified": true
+      }
+    ],
+    "node_runtime_pass_claimed": false,
+    "whole_chain_qualification_claimed": false,
+    "scope": "Only the original SQLite boundary build-script fence and the current library fingerprint dependency are established. This is separate from the subsequent ENOSPC Node compiler failure and does not supply any Node test outcome."
+  },
+  "incoming_c57_evidence_preservation": {
+    "status": "PASS_STATIC_PRESERVATION_ONLY",
+    "report": {
+      "path": "/workspace/scratch/73305aff6ced/observations/incoming-c57-preservation.json",
+      "sha256": "37b6504d4117350c2459e777c7b02bb41921d48ecdc4f3296d67bb6b8bf731d2",
+      "bytes": 19824
+    },
+    "observed_at_utc": "2026-11-05T01:26:17.406044+00:00",
+    "commits": {
+      "N": {
+        "commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+        "tree": "ea600542130341144d697776d92048988d44572b",
+        "parents": [
+          "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c",
+          "20cdab3b882c942f28c719a74b3fd22b1837f9fa"
+        ]
+      },
+      "incoming": {
+        "commit": "c57c2432c47ca207d6dd84585dc06dede50a16d0",
+        "tree": "95a877919f9ed053aac6a06990a12c07afbed129",
+        "parents": [
+          "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771"
+        ]
+      }
+    },
+    "checks": 34,
+    "passed_checks": 34,
+    "failed_checks": [],
+    "checks_are_runtime_tests": false,
+    "scope": "Exact Git-object preservation relative to N; evidence scope and static fixture/include consumers only.",
+    "exact_changed_paths": [
+      "evidence/pon-quantum-domain-20261104/README.md",
+      "evidence/pon-quantum-domain-20261104/reproduction.json",
+      "evidence/pq-historical-migration-20261104/README.md",
+      "evidence/pq-historical-migration-20261104/reproduction.json"
+    ],
+    "source_subtrees": {
+      "trillionnium": {
+        "N_tree": "81fbd17e50c6c62de7834c9cb7872dc4e89f5444",
+        "incoming_tree": "81fbd17e50c6c62de7834c9cb7872dc4e89f5444",
+        "equal": true
+      },
+      "scripts": {
+        "N_tree": "de7608122fd3ee86b00e74380423bab4ce45d8d7",
+        "incoming_tree": "de7608122fd3ee86b00e74380423bab4ce45d8d7",
+        "equal": true
+      },
+      "config": {
+        "N_tree": "545c7a2de37654061e96e34b17edd6b43730270a",
+        "incoming_tree": "545c7a2de37654061e96e34b17edd6b43730270a",
+        "equal": true
+      },
+      "docs": {
+        "N_tree": "b4cd0d19db3ded3ed8d554faf5a8b963035eb644",
+        "incoming_tree": "b4cd0d19db3ded3ed8d554faf5a8b963035eb644",
+        "equal": true
+      },
+      "formal": {
+        "N_tree": "7f4bf053f974354afcc45d549162d8647e5a5548",
+        "incoming_tree": "7f4bf053f974354afcc45d549162d8647e5a5548",
+        "equal": true
+      },
+      ".github": {
+        "N_tree": "fb1b66eae9e56fc113832b1cfbffb12f74b4b2e6",
+        "incoming_tree": "fb1b66eae9e56fc113832b1cfbffb12f74b4b2e6",
+        "equal": true
+      }
+    },
+    "unchanged_pins": 460,
+    "all_checks_were_independently_rerun_by_this_preparation": false,
+    "checks_revalidated_in_this_preparation": [
+      "report digest, all recorded check outcomes, runtime/compilation flags",
+      "N and incoming commit trees and ordered parents",
+      "exact four-path diff",
+      "all six source subtree Git object identities"
+    ],
+    "runtime_tests_executed_by_preservation_report": false,
+    "rust_compilation_executed_by_preservation_report": false,
+    "C_or_N_results_relabelled_to_c57_or_D": false,
+    "assessment": "Evidence-only incoming. Native source and fixed regression inputs are preserved from N. Repository-wide JSON/Markdown/source-identity checks have changed bookkeeping inputs; no additional native rerun is justified solely by this four-file delta.",
+    "changed_generic_gate_inputs": "The repository-wide JSON and Markdown validators consume the four changed evidence files; native sources and fixed runtime fixtures are unchanged.",
+    "scope_note": "Completed native execution remains C-local; N source106 and strict Clippy remain N-local. This evidence-only object comparison does not claim any runtime execution on c57 or a later delivery commit D.",
+    "limits": [
+      "No native, Python runtime, Clippy or performance test was rerun. Newly appended external receipts are recorded as incoming evidence, not independently qualified by this observation.",
+      "The exact object comparison does not require either working tree to be clean and does not inspect or alter the root checkout untracked boundary evidence or frozen validation worktree."
+    ]
+  },
+  "superseded_progress_draft": {
+    "path": "/workspace/scratch/73305aff6ced/observations/final/delivery-results-draft.json",
+    "sha256": "355256a2f55b18e30ed5acc4424606ae37321587de9cdadd6094003291a12987",
+    "bytes": 54944
+  },
+  "repositories_modified_by_this_preparation": false,
+  "raw_receipts_modified_by_this_preparation": false,
+  "source_local_result_attribution": {
+    "C": "M09 295 library, 29 CLI and 8 compile-fail doc cases; completed C Python/static/oracle receipts retain C attribution.",
+    "R": "One real red regression failure on the old parser; no passed test.",
+    "N": "106 distinct Python test identities and strict workspace all-target Clippy completed. Selected Node compilation failed before test execution.",
+    "c57": "Static evidence-only preservation report; no C or N runtime result is relabelled.",
+    "D": "No source-local runtime execution claimed for a later delivery commit."
+  },
+  "immutable_reference_audit": {
+    "sha256_and_size_verified_file_count": 28,
+    "all_match": true,
+    "scope": "Every existing absolute artifact reference carrying a SHA256 and byte length in this consolidated record was read and checked; no referenced raw artifact was rewritten."
+  }
+}

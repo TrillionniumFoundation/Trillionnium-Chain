@@ -1,0 +1,101 @@
+{
+  "conditional_at_observed_hit": {
+    "actual_distinct_seen": 1,
+    "actual_marked_seen": 1,
+    "actual_sha_independent_uniform_tickets_proved": false,
+    "bound": {
+      "denominator": 1,
+      "numerator": 1
+    },
+    "complete_outputs_M": 1,
+    "credit_threshold": 128,
+    "domain_size": 13407807929942597099574024998205846127479365820592393377723561443721764030073546976801874298166903427690031858186486050853753882811946569946433649006084096,
+    "exact_relaxed_game_when_Q_zero": true,
+    "hidden_inventory_output_extraction_and_cap_attested": false,
+    "input_parameters_attest_complete_joint_initial_state": false,
+    "input_parameters_attest_full_lifetime_query_coverage": false,
+    "mandatory_u_minimum_gate_cost_proved": false,
+    "maximum_identity_credit": 128,
+    "model": "mu1-complete-classical-prefix-continuation-v1",
+    "native_identity_and_weight_bridge_proved": false,
+    "native_six_successor_risk_certified": false,
+    "p": {
+      "denominator": 16,
+      "numerator": 1
+    },
+    "physical_resource_tail_proved": false,
+    "post_prefix_Q": 0,
+    "probability_scope": "conditional_on_complete_coalition_prefix",
+    "production_qualified": false,
+    "required_distinct_successes": 1,
+    "required_unknown_successes": 0,
+    "unknown_output_slots": 0
+  },
+  "global_bound": {
+    "actual_sha_independent_uniform_tickets_proved": false,
+    "all_coherent_list_bound": {
+      "denominator": 1,
+      "numerator": 1
+    },
+    "bound": {
+      "denominator": 256,
+      "numerator": 31
+    },
+    "classical_prefix_cap_C": 1,
+    "complete_outputs_cap_M": 1,
+    "credit_threshold": 128,
+    "global_prefix_law_may_be_reused_at_observed_start": false,
+    "hidden_inventory_output_extraction_and_cap_attested": false,
+    "input_parameters_attest_complete_joint_initial_state": false,
+    "input_parameters_attest_full_lifetime_query_coverage": false,
+    "mandatory_u_minimum_gate_cost_proved": false,
+    "maximum_identity_credit": 128,
+    "model": "mu1-ideal-lifetime-prefix-list-v1",
+    "native_identity_and_weight_bridge_proved": false,
+    "native_six_successor_risk_certified": false,
+    "p": {
+      "denominator": 16,
+      "numerator": 1
+    },
+    "padded_distinct_prefix_C_effective": 1,
+    "physical_resource_tail_proved": false,
+    "post_prefix_cap_Q": 0,
+    "prefix_cases": [
+      {
+        "bound": {
+          "denominator": 16,
+          "numerator": 1
+        },
+        "exact_relaxed_game_when_Q_zero": true,
+        "global_prefix_probability": {
+          "denominator": 16,
+          "numerator": 15
+        },
+        "known_successes_s": 0,
+        "required_unknown_successes": 1,
+        "unknown_output_slots": 1
+      },
+      {
+        "bound": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "global_prefix_probability": {
+          "denominator": 16,
+          "numerator": 1
+        },
+        "known_successes_at_least": 1
+      }
+    ],
+    "prefix_convolution_bound": {
+      "denominator": 256,
+      "numerator": 31
+    },
+    "probability_scope": "global_unconditioned_from_independent_joint_initial_state",
+    "production_qualified": false,
+    "required_distinct_successes": 1,
+    "terminal_domain_size": 13407807929942597099574024998205846127479365820592393377723561443721764030073546976801874298166903427690031858186486050853753882811946569946433649006084096,
+    "virtual_output_queries_added": 0
+  },
+  "incorrect_global_bound_as_selected_start_risk_rejected": true
+}

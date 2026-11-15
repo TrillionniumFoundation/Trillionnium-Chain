@@ -1,0 +1,341 @@
+{
+  "base": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "commands": {
+    "frozen-preflight": {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.03190447110682726,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "556af111076e1becdecacc18b31a29236897b64d69007d3445653a92d52e840d"
+    },
+    "frozen-whitespace": {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.007908844854682684,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "legacy-completion": {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/test_cell_learning_completion_join.py",
+        "-v"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.3171939179301262,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 0,
+      "stderr_sha256": "35cd8a096e7950006c8080ae95bb13755e73a6d3a6018736490a0689cc583bc5",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "legacy-iteration": {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/test_cell_learning_iteration_join.py",
+        "-v"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.2146413759328425,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 0,
+      "stderr_sha256": "d4fa727b51c6079a977375b697ca5deffe275411632f3a5e4ea0850d1d7b8306",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "legacy-scope": {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/test_cell_learning_scope_join.py",
+        "-v"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.5676221598405391,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 0,
+      "stderr_sha256": "cfa439c09ed319e3d3ef575f25eccac91f33b854b4569bde5e5adc7fb0f8f38c",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-commit": {
+      "argv": [
+        "git",
+        "-c",
+        "user.name=HEPLCP04 local validation",
+        "-c",
+        "user.email=heplcp04-local@invalid",
+        "commit",
+        "-m",
+        "feat(chain): add HEPLCP04 local-decision structural readback"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.03179671405814588,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "ca0defd3144a3b84dd8eb0108dc3f52299cfdfdc61d0d658982d4a2aeffcac16"
+    },
+    "local-decision": {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/test_cell_learning_local_decision_join.py",
+        "-v"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.2656298619695008,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 0,
+      "stderr_sha256": "599c675ade3764e93e269817f171a114c9d72609ad35f67d0f38610ad70d6a8d",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preflight-before-edits": {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.03180761402472854,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "f9ceb2e281f6c13617d7d0e20b4af06f62759d3b5898d367160daeca0e53c8d2"
+    },
+    "preflight-staged": {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--staged"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.16375494585372508,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "df017b20abcdb5568403359e74225befdd9984a97d03edc2a3c56c83afc10eae"
+    },
+    "source-guard-after": {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "843934e3c377f7344a48b4b462a3672cf4b3f00d",
+        "--output",
+        "/home/qq/af52-chain-20261111/frozen-validation-3/full-source-after.json"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.11467156186699867,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 1,
+      "stderr_sha256": "9764d0f581000841ab24317b7f908bc688750ea5d1f75dc582c0af7c18f1f581",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source-guard-before": {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "843934e3c377f7344a48b4b462a3672cf4b3f00d",
+        "--output",
+        "/home/qq/af52-chain-20261111/frozen-validation-3/full-source-before.json"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.11459869495593011,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 1,
+      "stderr_sha256": "9764d0f581000841ab24317b7f908bc688750ea5d1f75dc582c0af7c18f1f581",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stage-owned-new-files-with-raw-logs": {
+      "argv": [
+        "git",
+        "add",
+        "--sparse",
+        "-f",
+        "--",
+        ".github/workflows/cell-learning-local-decision-readback.yml",
+        "docs/development/specs/pon/HEPLCP04_LOCAL_DECISION_INTEROP_V1.md",
+        "evidence/heplcp04-interop-20261111/BUILD_CONTEXT.json",
+        "evidence/heplcp04-interop-20261111/LEGACY_FIXTURE_INPUTS.json",
+        "evidence/heplcp04-interop-20261111/README.md",
+        "evidence/heplcp04-interop-20261111/SOURCE_MANIFEST.json",
+        "evidence/heplcp04-interop-20261111/STATIC_REVIEW.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/ERROR.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/local-commit.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/local-commit.stderr",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/local-commit.stdout",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/preflight-before-edits.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/preflight-before-edits.stderr",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/preflight-before-edits.stdout",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/preflight-staged.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/preflight-staged.stderr",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/preflight-staged.stdout",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/stage-owned-new-files.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/stage-owned-new-files.stderr",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/stage-owned-new-files.stdout",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/staged-whitespace.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/staged-whitespace.stderr",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/staged-whitespace.stdout",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-second/ERROR.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-second/preflight-before-edits.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-second/preflight-before-edits.stderr",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-second/preflight-before-edits.stdout",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-second/runtime-transfer-artifacts.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-second/stage-owned-new-files-with-raw-logs.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-second/stage-owned-new-files-with-raw-logs.stderr",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-second/stage-owned-new-files-with-raw-logs.stdout",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-second/staged-whitespace.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-second/staged-whitespace.stderr",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-second/staged-whitespace.stdout.raw.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-second/unstage-runtime-transfer-artifact.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-second/unstage-runtime-transfer-artifact.stderr",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-second/unstage-runtime-transfer-artifact.stdout",
+        "evidence/heplcp04-interop-20261111/attempts/preflight-allowed-branch.json",
+        "evidence/heplcp04-interop-20261111/attempts/preflight-allowed-branch.log",
+        "evidence/heplcp04-interop-20261111/attempts/preflight-initial.json",
+        "evidence/heplcp04-interop-20261111/attempts/preflight-initial.log",
+        "evidence/heplcp04-interop-20261111/attempts/reader-attempt1.json",
+        "evidence/heplcp04-interop-20261111/attempts/reader-attempt1.stderr.log.raw.json",
+        "evidence/heplcp04-interop-20261111/attempts/reader-attempt1.stdout.log",
+        "evidence/heplcp04-interop-20261111/attempts/reader-attempt2.json",
+        "evidence/heplcp04-interop-20261111/attempts/reader-attempt2.stderr.log",
+        "evidence/heplcp04-interop-20261111/attempts/reader-attempt2.stdout.log",
+        "evidence/heplcp04-interop-20261111/attempts/test-pin-change.json",
+        "evidence/heplcp04-interop-20261111/exporter-package.toml",
+        "evidence/heplcp04-interop-20261111/exporter.rs",
+        "evidence/heplcp04-interop-20261111/isolated-Cargo.lock",
+        "evidence/heplcp04-interop-20261111/isolated-workspace.toml",
+        "evidence/heplcp04-interop-20261111/native-export-attempt1.json",
+        "evidence/heplcp04-interop-20261111/native-export.attempt1.stderr.log",
+        "evidence/heplcp04-interop-20261111/native-fixture.attempt1.stdout",
+        "evidence/heplcp04-interop-20261111/native-fixture.json",
+        "evidence/heplcp04-interop-20261111/reproduce_native.py",
+        "evidence/heplcp04-interop-20261111/reproduction/RESULT.json",
+        "evidence/heplcp04-interop-20261111/reproduction/stderr.log",
+        "evidence/heplcp04-interop-20261111/reproduction/stdout.json",
+        "scripts/cell_learning_local_decision_join.py",
+        "scripts/test_cell_learning_local_decision_join.py"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.0315340431407094,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "staged-whitespace": {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.007425202056765556,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "unstage-log-for-lossless-container-0": {
+      "argv": [
+        "git",
+        "restore",
+        "--staged",
+        "--",
+        "evidence/heplcp04-interop-20261111/attempts/reader-attempt1.stderr.log"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.015541319968178868,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "commit": "843934e3c377f7344a48b4b462a3672cf4b3f00d",
+  "full_source_guard_note": "Original guard executed unchanged; sparse index rejection must remain a failed observation.",
+  "full_source_guard_pass": false,
+  "git_status": "",
+  "hepta_final_use_accepted": false,
+  "materialized_file_count": 2557,
+  "materialized_source_stable": true,
+  "missing_tracked_file_count": 26312,
+  "ordinary_complete_loops": 0,
+  "published": false,
+  "qualification": "HOLD_NO_GO",
+  "schema": "heplcp04-frozen-scoped-validation-v1",
+  "scoped_tests_pass": true,
+  "suites": {
+    "legacy-completion": {
+      "expected_tests": 13,
+      "returncode": 0,
+      "tests_run": 13
+    },
+    "legacy-iteration": {
+      "expected_tests": 25,
+      "returncode": 0,
+      "tests_run": 25
+    },
+    "legacy-scope": {
+      "expected_tests": 13,
+      "returncode": 0,
+      "tests_run": 13
+    },
+    "local-decision": {
+      "expected_tests": 14,
+      "returncode": 0,
+      "tests_run": 14
+    }
+  },
+  "tests_run": 65,
+  "tree": "6c004b08b87daa4a225a8728363b21f3fe08ab4a",
+  "utc": "2026-11-11T12:53:01.789782+00:00",
+  "whole_daemon_root_cold_restart_accepted": false
+}

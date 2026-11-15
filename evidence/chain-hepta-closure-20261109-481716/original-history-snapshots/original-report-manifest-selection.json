@@ -1,0 +1,21 @@
+{
+  "selected_files": [
+    {
+      "bytes": 48614177,
+      "path": "run-1-raw/report.json",
+      "sha256": "39c4098846dbbb802f962989a0774d09c95a80c0db3b04a69923adfce8b5c307"
+    },
+    {
+      "bytes": 48774711,
+      "path": "run-2-raw/report.json",
+      "sha256": "43c8fb8fa28c560522be595b58e98e483c62631a76766f42efa24f088e366822"
+    },
+    {
+      "bytes": 48449148,
+      "path": "run-3-raw/report.json",
+      "sha256": "5699de385790f39f3e5684140b97fb81ebba892036442295a3628591de9e0156"
+    }
+  ],
+  "source_manifest_path": "/workspace/scratch/481716a90d06/closure-evidence/original-campaign/artifact-files.json.gz",
+  "source_manifest_sha256": "e60672ed9000139c0a8adba8da489f5577d57f3bd6c2d7bd13a1b1fd3e69f6f7"
+}

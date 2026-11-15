@@ -1,0 +1,323 @@
+{
+  "schema": "hosted-terminal-stage-data-verification-v1",
+  "created_utc": "2026-11-03T23:14:56.998999+00:00",
+  "status": "COMPLETE_FOR_REQUESTED_FROZEN_SCOPE",
+  "scope": "File/data verification only; no native execution or new native PASS.",
+  "source_files": 86,
+  "source_bytes": 29736639,
+  "by_directory": {
+    "b4bdf": {
+      "files": 15,
+      "bytes": 9557881
+    },
+    "c5dd": {
+      "files": 30,
+      "bytes": 16923017
+    },
+    "diagnostics": {
+      "files": 18,
+      "bytes": 1961748
+    },
+    "service-path": {
+      "files": 23,
+      "bytes": 1293993
+    }
+  },
+  "source_and_copy_bytes_sha256_match": true,
+  "directory_index_checks": [
+    {
+      "source_directory": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback",
+      "destination_directory": "diagnostics",
+      "all_files": 18,
+      "complete_current_index_verified": true
+    },
+    {
+      "source_directory": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-baseline-critical-path",
+      "destination_directory": "service-path/c5dd-baseline-critical-path",
+      "all_files": 4,
+      "complete_current_index_verified": true
+    },
+    {
+      "source_directory": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-scope-review",
+      "destination_directory": "service-path/c5dd-graph-scope-review",
+      "all_files": 4,
+      "complete_current_index_verified": true
+    },
+    {
+      "source_directory": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-internal-review",
+      "destination_directory": "service-path/c5dd-graph-internal-review",
+      "all_files": 5,
+      "complete_current_index_verified": true
+    },
+    {
+      "source_directory": "/workspace/scratch/b5a148b09b11/next-validation/host-checkpoint-cost-review",
+      "destination_directory": "service-path/host-checkpoint-cost-review",
+      "all_files": 10,
+      "complete_current_index_verified": true
+    }
+  ],
+  "required_handoff_edges_resolved": 45,
+  "gzip_bundles": [
+    {
+      "relative_path": "b4bdf/f0-selected-original-records.json.gz",
+      "packed_sha256": "565fba925680ceafaaff48a8d5207a3e20b4e7fca52b7ce49e5bfd57a06ee135",
+      "uncompressed_bytes": 14980394,
+      "uncompressed_sha256": "3906b8d5727f57a1e923d31cb3cb8f422b38d1258b6169a620d8d347f4e56a87",
+      "gzip_mtime": 0,
+      "schema": "exact-candidate-artifact-selected-originals-v1",
+      "original_records": 65,
+      "original_bytes": 14316028,
+      "every_original_record_length_and_sha256_verified": true,
+      "complete_report_members": [
+        "execution/raw/report.json"
+      ]
+    },
+    {
+      "relative_path": "b4bdf/original-three-campaign-selected-records.json.gz",
+      "packed_sha256": "c12419f067220378b1e285fbe49e27bc5387c47c4df1ae4c8449c0b87e67056e",
+      "uncompressed_bytes": 88041129,
+      "uncompressed_sha256": "205f52e76601510cd1af3c04dc910fb53fa4b7b7352900226f34d7c92f4c8ffc",
+      "gzip_mtime": 0,
+      "schema": "b4bdf-original-three-campaign-selected-originals-v1",
+      "original_records": 94,
+      "original_bytes": 80804394,
+      "every_original_record_length_and_sha256_verified": true,
+      "complete_report_members": [
+        "run-1-raw/report.json",
+        "run-2-raw/report.json",
+        "run-3-raw/report.json"
+      ]
+    },
+    {
+      "relative_path": "b4bdf/w1-fresh-head-selected-original-records.json.gz",
+      "packed_sha256": "6a0e7b09ad2fa5d934d1be3bea582715cab37d4723d30212a383a4c7307ef97b",
+      "uncompressed_bytes": 14251396,
+      "uncompressed_sha256": "ef580eec2935fceacd72a52caa936b9ab4540f2fd823183729354b68887af325",
+      "gzip_mtime": 0,
+      "schema": "exact-candidate-artifact-selected-originals-v1",
+      "original_records": 36,
+      "original_bytes": 13517427,
+      "every_original_record_length_and_sha256_verified": true,
+      "complete_report_members": [
+        "fresh-service/fresh/report.json",
+        "fresh-service/original/report.json"
+      ],
+      "diagnostic_rows_relocated_in_complete_original_reports": 17
+    },
+    {
+      "relative_path": "b4bdf/w1-fresh-merge-selected-original-records.json.gz",
+      "packed_sha256": "675b6f08c059e9d1e0275ce0fe8c31124b98a821ebaa4cb1ee10203db7cb967e",
+      "uncompressed_bytes": 14243908,
+      "uncompressed_sha256": "8311f6b20c7415ec5f45f7d74a6f087ec8d54e398082bcad4618031996b87b27",
+      "gzip_mtime": 0,
+      "schema": "exact-candidate-artifact-selected-originals-v1",
+      "original_records": 36,
+      "original_bytes": 13510270,
+      "every_original_record_length_and_sha256_verified": true,
+      "complete_report_members": [
+        "fresh-service/fresh/report.json",
+        "fresh-service/original/report.json"
+      ],
+      "diagnostic_rows_relocated_in_complete_original_reports": 18
+    },
+    {
+      "relative_path": "b4bdf/w1-history-four-lane-original-job-logs.json.gz",
+      "packed_sha256": "9faab61fd3b7ebc114faca5edcea21067419ee988aeac9b85f2d4c1d177c825a",
+      "uncompressed_bytes": 892767,
+      "uncompressed_sha256": "3ccccaad967cfdac994cd5492ae49ae3d1c1792520466f0a4d8638bed326efc5",
+      "gzip_mtime": 0,
+      "schema": "b4bdf-w1-history-four-lane-original-job-logs-v1",
+      "complete_original_job_logs": 4,
+      "qualification_scope": "Copied existing complete decoded logs. No new job, native run, large grid ZIP verification or ELF qualification."
+    },
+    {
+      "relative_path": "c5dd/cost-arm64-fromzero-original-records.json.gz",
+      "packed_sha256": "1832c212ca2f60c1813fc846a07d9a2e3547cf8433cffd0d6405483597c3bcf9",
+      "uncompressed_bytes": 23913019,
+      "uncompressed_sha256": "c8a8a2bb99f07d11cd697376d82afb24d18cf986dea46b5d8161e86bf50589dc",
+      "gzip_mtime": 0,
+      "schema": "exact-candidate-artifact-selected-originals-v1",
+      "original_records": 57,
+      "original_bytes": 22822260,
+      "every_original_record_length_and_sha256_verified": true,
+      "complete_report_members": [
+        "from-zero-native/confirmation/report.json",
+        "from-zero-native/native/report.json",
+        "from-zero-native/native/sustained/report.json"
+      ]
+    },
+    {
+      "relative_path": "c5dd/cost-x64-fromzero-original-records.json.gz",
+      "packed_sha256": "1e23545944c52d745311e422d5d1b7cfbb5b428f1ef88a5ad8edba89638482b6",
+      "uncompressed_bytes": 23538276,
+      "uncompressed_sha256": "fa229556c01bc48d2203c5217cdc08bee33c025ec5c7edcf3f62a46f3fb2ad3d",
+      "gzip_mtime": 0,
+      "schema": "exact-candidate-artifact-selected-originals-v1",
+      "original_records": 57,
+      "original_bytes": 22468409,
+      "every_original_record_length_and_sha256_verified": true,
+      "complete_report_members": [
+        "from-zero-native/confirmation/report.json",
+        "from-zero-native/native/report.json",
+        "from-zero-native/native/sustained/report.json"
+      ]
+    },
+    {
+      "relative_path": "c5dd/f0-selected-original-records.json.gz",
+      "packed_sha256": "9d8f0cb98c8b66fee9f60277c011bd69f4ce06af9754035b43d46ef22adcefd9",
+      "uncompressed_bytes": 14683569,
+      "uncompressed_sha256": "8e614221cd8abebc5d2e07937a8b33cf6d669e524cfb50997fd61126916a64e7",
+      "gzip_mtime": 0,
+      "schema": "exact-candidate-artifact-selected-originals-v1",
+      "original_records": 65,
+      "original_bytes": 14032371,
+      "every_original_record_length_and_sha256_verified": true,
+      "complete_report_members": [
+        "execution/raw/report.json"
+      ],
+      "diagnostic_rows_relocated_in_complete_original_reports": 12
+    },
+    {
+      "relative_path": "c5dd/original-three-campaign-selected-records.json.gz",
+      "packed_sha256": "009de88d176c549718e4d89bd67f0a2ff2fee358f5c4df8c28ceeb8c38e89182",
+      "uncompressed_bytes": 88574249,
+      "uncompressed_sha256": "12daacf63517f4956228315c8b4ba9bda590c25daddf6bfaa844ccae0398cf0c",
+      "gzip_mtime": 0,
+      "schema": "c5dd7c-original-three-campaign-selected-originals-v1",
+      "original_records": 94,
+      "original_bytes": 81297866,
+      "every_original_record_length_and_sha256_verified": true,
+      "complete_report_members": [
+        "run-1-raw/report.json",
+        "run-2-raw/report.json",
+        "run-3-raw/report.json"
+      ],
+      "diagnostic_rows_relocated_in_complete_original_reports": 42
+    },
+    {
+      "relative_path": "c5dd/pq-node-arm64-head-13277434557-original-records.json.gz",
+      "packed_sha256": "343ec5e56195ebf6dae672f4ad9290ef63a0a5a164616b3b1107b7d92b84553d",
+      "uncompressed_bytes": 10486898,
+      "uncompressed_sha256": "dea094701c48b9defc09ec82496b1fe6c296a08c21eb68bdb67e790f0eedc42f",
+      "gzip_mtime": 0,
+      "schema": "exact-candidate-artifact-selected-originals-v1",
+      "original_records": 164,
+      "original_bytes": 10162456,
+      "every_original_record_length_and_sha256_verified": true,
+      "complete_report_members": []
+    },
+    {
+      "relative_path": "c5dd/pq-node-arm64-merge-13280090271-original-records.json.gz",
+      "packed_sha256": "0975a80368bcfbe2a78d611a23058fc13faa06c17919c0db8037a8179eacce07",
+      "uncompressed_bytes": 10498020,
+      "uncompressed_sha256": "a5b6ce3397a85c98c021b78768f4ca88e9d29a261cbfc8062c956758e9fd4e7e",
+      "gzip_mtime": 0,
+      "schema": "exact-candidate-artifact-selected-originals-v1",
+      "original_records": 164,
+      "original_bytes": 10173093,
+      "every_original_record_length_and_sha256_verified": true,
+      "complete_report_members": []
+    },
+    {
+      "relative_path": "c5dd/pq-node-x64-head-13277997507-original-records.json.gz",
+      "packed_sha256": "3a0d2471046cdc2bb389538eafb681ec4366ec6c32d47ce4353ae8e887cbb9fe",
+      "uncompressed_bytes": 10593667,
+      "uncompressed_sha256": "5607bf5668b6755e28d3ad9dc7b64af4795a32c2ef9bd9e02f47601655da3bbe",
+      "gzip_mtime": 0,
+      "schema": "exact-candidate-artifact-selected-originals-v1",
+      "original_records": 164,
+      "original_bytes": 10268892,
+      "every_original_record_length_and_sha256_verified": true,
+      "complete_report_members": []
+    },
+    {
+      "relative_path": "c5dd/pq-node-x64-merge-13277323560-original-records.json.gz",
+      "packed_sha256": "984601525c9c9c92e7937c9c5745abd514be195b4be34ce76cbb9d3ea58bf0c1",
+      "uncompressed_bytes": 10605072,
+      "uncompressed_sha256": "ab76c6413909bffb19c9a6b4b743b65fa1825439bcf6d08eb8c67be57e9f76ba",
+      "gzip_mtime": 0,
+      "schema": "exact-candidate-artifact-selected-originals-v1",
+      "original_records": 164,
+      "original_bytes": 10279812,
+      "every_original_record_length_and_sha256_verified": true,
+      "complete_report_members": []
+    },
+    {
+      "relative_path": "c5dd/protocol-head-fromzero-original-records.json.gz",
+      "packed_sha256": "4a69ce849e1c8aaec37e9921e9cc321ddb22fb4d991a3bbf25cda455a72cb0a2",
+      "uncompressed_bytes": 31113394,
+      "uncompressed_sha256": "98666ccfdea66c27fbd5b7fe02ed491e3066b3ac350ae0c5779d84bda9e6c62b",
+      "gzip_mtime": 0,
+      "schema": "exact-candidate-artifact-selected-originals-v1",
+      "original_records": 57,
+      "original_bytes": 29497949,
+      "every_original_record_length_and_sha256_verified": true,
+      "complete_report_members": [
+        "from-zero-native/confirmation/report.json",
+        "from-zero-native/native/report.json",
+        "from-zero-native/native/sustained/report.json"
+      ]
+    },
+    {
+      "relative_path": "c5dd/protocol-merge-selected-original-records.json.gz",
+      "packed_sha256": "c2965e0d0fc2e15b0cbb9367545c57a6d639679535de5ef12817a865c7425438",
+      "uncompressed_bytes": 26876231,
+      "uncompressed_sha256": "07a1a4bac5f025f67015cd99df16e69cd2df3a156556e219e4f83681bb222864",
+      "gzip_mtime": 0,
+      "schema": "exact-candidate-artifact-selected-originals-v1",
+      "original_records": 68,
+      "original_bytes": 25634863,
+      "every_original_record_length_and_sha256_verified": true,
+      "complete_report_members": [
+        "from-zero-native/confirmation/report.json",
+        "from-zero-native/native/report.json",
+        "from-zero-native/native/sustained/report.json"
+      ]
+    },
+    {
+      "relative_path": "c5dd/w1-history-four-lane-original-job-logs.json.gz",
+      "packed_sha256": "e80d46c15d6f8d24fe5d1f74d6e069490288be0e02bc4c61f8b6741843a794c7",
+      "uncompressed_bytes": 893781,
+      "uncompressed_sha256": "22c5504741dd99d27105caa4d296270b4e20bdafa2bbd487b1be5bbcab07a769",
+      "gzip_mtime": 0,
+      "schema": "c5dd7c-w1-history-four-lane-original-job-logs-v1",
+      "complete_original_job_logs": 4,
+      "qualification_scope": "Copied existing complete decoded logs. No new job, native run, large grid ZIP verification or ELF qualification."
+    },
+    {
+      "relative_path": "diagnostics/draft-v1/selected-original-rows.json.gz",
+      "packed_sha256": "49d99cc252aae00811ede5f606ca3bc195b0f1a33689a0569228a84e1f67ce19",
+      "uncompressed_bytes": 937211,
+      "uncompressed_sha256": "ef1a013e4d75b71bc4c6522445159c2e84e8ec56f14a60dc5237d0f2c7dd4c5a",
+      "gzip_mtime": 0,
+      "schema": "limited-original-diagnostic-row-examples-v1",
+      "diagnostic_examples": 89,
+      "complete_reports_provided_separately": true,
+      "examples_are_not_report_replacements": true
+    },
+    {
+      "relative_path": "diagnostics/selected-original-rows.json.gz",
+      "packed_sha256": "49d99cc252aae00811ede5f606ca3bc195b0f1a33689a0569228a84e1f67ce19",
+      "uncompressed_bytes": 937211,
+      "uncompressed_sha256": "ef1a013e4d75b71bc4c6522445159c2e84e8ec56f14a60dc5237d0f2c7dd4c5a",
+      "gzip_mtime": 0,
+      "schema": "limited-original-diagnostic-row-examples-v1",
+      "diagnostic_examples": 89,
+      "complete_reports_provided_separately": true,
+      "examples_are_not_report_replacements": true
+    }
+  ],
+  "embedded_original_records": 1293,
+  "diagnostic_samples_relocated_in_complete_reports": 89,
+  "four_original_diagnostic_source_gzip_files_each_staged_once": true,
+  "skipped_missing_changed_or_unfrozen": [],
+  "explicitly_not_in_this_snapshot": [
+    "Later runtime terminal evidence",
+    "Current independent dependency-proof source review",
+    "Large ZIP archives, SQLite databases and ELF binaries"
+  ],
+  "diagnostic_reader_scope": "Both retained formal reader attempts exited0. draft-v1 is an earlier successful wording/scope draft, not a refusal. An earlier tool-only exploratory IndexError has no fabricated file or hash.",
+  "native_executions": 0,
+  "native_tests_rerun": false,
+  "repository_sole_plan_or_PR_modified": false
+}

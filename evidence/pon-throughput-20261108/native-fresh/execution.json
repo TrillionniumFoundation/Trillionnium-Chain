@@ -1,0 +1,23 @@
+{
+  "all_non_evidence_tracked_source_bytes_match": true,
+  "binary_from_clean_base_checkout": true,
+  "binary_sha256": "0d673e96664f385d68b6e0c0b312b852d8bc5ce8288a423fda86c8b90f718cd3",
+  "build_profile": "release",
+  "collector_exit_code": 0,
+  "collector_transport": "same-host stdin pipe",
+  "fresh_compressed_proofs": 0,
+  "fresh_native_processes": 9,
+  "full_tracked_tree_verified": false,
+  "original_preregistration_sha256": "57c785320e087b796202de0f6e5ac96459ae44181bf478f75be85849b819140f",
+  "original_pressure_campaign_executed": false,
+  "process_observations_sha256": "b3ccb87445255f73706be7d2a5a12b8fcaf931423038a83191787bc137ae3147",
+  "production_activation": false,
+  "qualification": "HOLD",
+  "qualified_confirmed_tps": null,
+  "scheduled_original_starts": 4,
+  "selected_source_files": 2365,
+  "source_bytes_unchanged_before_after": true,
+  "source_commit": "812589d9bb189b6abbf33b916a424121199dee75",
+  "source_tree": "84c173e874ce4be6a62b0b05c9c1b4116acbf32c",
+  "sparse_omissions": "historical evidence only"
+}

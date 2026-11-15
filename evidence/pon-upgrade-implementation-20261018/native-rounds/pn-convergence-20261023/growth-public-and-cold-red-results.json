@@ -1,0 +1,66 @@
+[
+  {
+    "name": "growth-cold-observer-red",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "native_growth_v2_cold_observer_",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 101,
+    "seconds": 310.8853730619885,
+    "expected_returncode": 101,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/growth-cold-observer-red.log",
+    "log_sha256": "111afffd10cfa38480650a0a4ddad9270a0668184b6e9e89f1151d213d654d68",
+    "expected_original_failure_observed": true
+  },
+  {
+    "name": "growth-public-v1-listener",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "public_growth_v1",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 2.2274950550636277,
+    "expected_returncode": 0,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/growth-public-v1-listener.log",
+    "log_sha256": "1e0878f0caa0f85a3fbe0674d253740aba67068b5aa6c4c40656281291fd4bf3"
+  },
+  {
+    "name": "growth-public-v1-cli",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_growth_public_cli",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 163.4686140420381,
+    "expected_returncode": 0,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/growth-public-v1-cli.log",
+    "log_sha256": "110cce17d59f9a5dcfa01dde2652064540bb24e7580bf971c99c6d9ac78939a1"
+  }
+]

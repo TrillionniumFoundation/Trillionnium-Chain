@@ -1,0 +1,17 @@
+{
+  "schema": "TRNM-W1-OWN-RESTORED-COMPILER-RECLAIM-RESULT1",
+  "path": "/tmp/pure-pon-risc0-home-20261027/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu",
+  "outcome": "OWN_RECONSTRUCTIBLE_COPY_REMOVED",
+  "free_before_bytes": 1072054272,
+  "free_after_bytes": 2591051776,
+  "observed_free_delta_bytes": 1518997504,
+  "removed_regular_allocated_bytes": 1518985216,
+  "other_process_disk_activity_can_affect_free_delta": true,
+  "compiler_path_absent": true,
+  "original_archive_preserved": true,
+  "archive_sha256_verified_before": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+  "all_targets_cache_sources_proofs_evidence_untouched": true,
+  "new_compiler_downloaded": false,
+  "new_compiler_executed": false,
+  "wall_seconds": 0.6552617480047047
+}

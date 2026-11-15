@@ -1,0 +1,24 @@
+{
+  "name": "frozen-cargo-metadata-all-features",
+  "argv": [
+    "/home/agent/.cargo/bin/cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--all-features",
+    "--format-version",
+    "1"
+  ],
+  "cwd": "/workspace/scratch/678905e225be/chain-lifetime/trillionnium",
+  "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+  "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+  "started_utc": "2026-11-09T13:52:18.895186+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 0.7599268559988559,
+  "openssl_dir": "/workspace/scratch/a6fe7c2e72c7/pq-validation/provider-run/trnm-pq-provider-3.5.9.Uv4EkAot/install",
+  "cargo_build_jobs": 2,
+  "stdout_sha256": "bba3d8ca34f1b28c5e077bad0f44b4232f52f80477db3da36aa2e8d18dec7ff4",
+  "stdout_bytes": 846425,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_bytes": 0
+}

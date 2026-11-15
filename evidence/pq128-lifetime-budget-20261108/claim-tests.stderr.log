@@ -1,0 +1,51 @@
+test_checkout_ancestor_symlink_during_read_is_refused (__main__.ClaimReaderRaceTests.test_checkout_ancestor_symlink_during_read_is_refused) ... ok
+test_fifo_substitution_cannot_block_before_fstat (__main__.ClaimReaderRaceTests.test_fifo_substitution_cannot_block_before_fstat) ... ok
+test_growth_during_read_is_bounded (__main__.ClaimReaderRaceTests.test_growth_during_read_is_bounded) ... ok
+test_leaf_symlink_between_check_and_open_is_refused (__main__.ClaimReaderRaceTests.test_leaf_symlink_between_check_and_open_is_refused) ... ok
+test_leaf_symlink_during_read_is_refused (__main__.ClaimReaderRaceTests.test_leaf_symlink_during_read_is_refused) ... ok
+test_missing_after_check_is_wrapped_and_fds_close (__main__.ClaimReaderRaceTests.test_missing_after_check_is_wrapped_and_fds_close) ... ok
+test_parent_replacement_with_identical_leaf_is_refused (__main__.ClaimReaderRaceTests.test_parent_replacement_with_identical_leaf_is_refused) ... ok
+test_parent_symlink_to_same_leaf_during_read_is_refused (__main__.ClaimReaderRaceTests.test_parent_symlink_to_same_leaf_during_read_is_refused) ... ok
+test_regular_file_is_returned_unchanged (__main__.ClaimReaderRaceTests.test_regular_file_is_returned_unchanged) ... ok
+test_same_length_in_place_rewrite_is_refused (__main__.ClaimReaderRaceTests.test_same_length_in_place_rewrite_is_refused) ... ok
+test_same_length_leaf_replacement_before_open_is_refused (__main__.ClaimReaderRaceTests.test_same_length_leaf_replacement_before_open_is_refused) ... ok
+test_same_length_leaf_replacement_during_read_is_refused (__main__.ClaimReaderRaceTests.test_same_length_leaf_replacement_during_read_is_refused) ... ok
+test_same_length_mmap_rewrite_is_refused (__main__.ClaimReaderRaceTests.test_same_length_mmap_rewrite_is_refused) ... ok
+test_same_length_rewrite_with_restored_mtime_is_refused (__main__.ClaimReaderRaceTests.test_same_length_rewrite_with_restored_mtime_is_refused) ... ok
+test_added_numeric_whole_chain_probability_refused (__main__.TestClaimGuard.test_added_numeric_whole_chain_probability_refused) ... ok
+test_added_whole_chain_pq128_claim_refused (__main__.TestClaimGuard.test_added_whole_chain_pq128_claim_refused) ... ok
+test_budget_cannot_add_self_certification_switch (__main__.TestClaimGuard.test_budget_cannot_add_self_certification_switch) ... ok
+test_classical_fallback_refused (__main__.TestClaimGuard.test_classical_fallback_refused) ... ok
+test_corrupt_independent_qualification_refused (__main__.TestClaimGuard.test_corrupt_independent_qualification_refused) ... ok
+test_duplicate_json_keys_refused (__main__.TestClaimGuard.test_duplicate_json_keys_refused) ... ok
+test_example_cannot_replace_current_research_register (__main__.TestClaimGuard.test_example_cannot_replace_current_research_register) ... ok
+test_explicit_unknown_claims_keep_hold (__main__.TestClaimGuard.test_explicit_unknown_claims_keep_hold) ... ok
+test_false_flag_cannot_launder_numeric_bound (__main__.TestClaimGuard.test_false_flag_cannot_launder_numeric_bound) ... ok
+test_hepta_final_use_claim_refused (__main__.TestClaimGuard.test_hepta_final_use_claim_refused) ... ok
+test_history_storage_and_rehearsal_owner_paths_cannot_disappear (__main__.TestClaimGuard.test_history_storage_and_rehearsal_owner_paths_cannot_disappear) ... ok
+test_hold_is_not_pq_success (__main__.TestClaimGuard.test_hold_is_not_pq_success) ... ok
+test_missing_authority_surface_inventory_refused (__main__.TestClaimGuard.test_missing_authority_surface_inventory_refused) ... ok
+test_missing_budget_event_owner_source_refused (__main__.TestClaimGuard.test_missing_budget_event_owner_source_refused) ... ok
+test_missing_external_rollback_oracle_refused (__main__.TestClaimGuard.test_missing_external_rollback_oracle_refused) ... ok
+test_missing_lifetime_manifest_refused (__main__.TestClaimGuard.test_missing_lifetime_manifest_refused) ... ok
+test_missing_or_non_directory_checkout_root_refused (__main__.TestClaimGuard.test_missing_or_non_directory_checkout_root_refused) ... ok
+test_missing_pq_hepta_verifier_refused (__main__.TestClaimGuard.test_missing_pq_hepta_verifier_refused) ... ok
+test_missing_proof_relation_refused (__main__.TestClaimGuard.test_missing_proof_relation_refused) ... ok
+test_missing_quantum_daa_model_refused (__main__.TestClaimGuard.test_missing_quantum_daa_model_refused) ... ok
+test_native_witness_and_live_admission_sources_cannot_disappear (__main__.TestClaimGuard.test_native_witness_and_live_admission_sources_cannot_disappear) ... ok
+test_nested_lifetime_claim_refused (__main__.TestClaimGuard.test_nested_lifetime_claim_refused) ... ok
+test_nonfinite_and_nonstandard_json_numbers_refused (__main__.TestClaimGuard.test_nonfinite_and_nonstandard_json_numbers_refused) ... ok
+test_pq_128_guest_promotion_refused (__main__.TestClaimGuard.test_pq_128_guest_promotion_refused) ... ok
+test_production_activation_refused (__main__.TestClaimGuard.test_production_activation_refused) ... ok
+test_quantum_hardness_claim_refused (__main__.TestClaimGuard.test_quantum_hardness_claim_refused) ... ok
+test_rollback_claim_refused (__main__.TestClaimGuard.test_rollback_claim_refused) ... ok
+test_source_reader_helper_cannot_disappear (__main__.TestClaimGuard.test_source_reader_helper_cannot_disappear) ... ok
+test_symlink_source_refused (__main__.TestClaimGuard.test_symlink_source_refused) ... ok
+test_symlinked_checkout_ancestor_refused (__main__.TestClaimGuard.test_symlinked_checkout_ancestor_refused) ... ok
+test_symlinked_checkout_root_refused (__main__.TestClaimGuard.test_symlinked_checkout_root_refused) ... ok
+test_unbounded_or_unaccepted_candidate_refused (__main__.TestClaimGuard.test_unbounded_or_unaccepted_candidate_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 46 tests in 0.129s
+
+OK

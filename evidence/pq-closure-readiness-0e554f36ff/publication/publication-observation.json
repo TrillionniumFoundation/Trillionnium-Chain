@@ -1,0 +1,64 @@
+{
+  "frozen_sibling_packets": [
+    {
+      "changed_by_packaging": false,
+      "checksum_file": "CLOUD_SHA256SUMS",
+      "checksum_sha256": "f77183cef7ad05ea546de42ac62fed5cc864054fe570b58ac5f58d4a0bf2cc4e",
+      "directory": "cloud",
+      "entries_verified": 5
+    },
+    {
+      "changed_by_packaging": false,
+      "checksum_file": "DESKTOP_SHA256SUMS",
+      "checksum_sha256": "dc422d7006f0fc4f53bbdff33669bc6cd93d5ee6a0d957447476be3afe82c2cf",
+      "directory": "desktop",
+      "entries_verified": 7
+    }
+  ],
+  "new_tests_executed": 0,
+  "original_missing_summary_or_source_after_synthesized": false,
+  "packaging_scope": "Read-only original publication evidence collection; the sole new remote file is the byte-preserving archive; no controller re-execution, GitHub query/write, or publisher/source checkout read/write.",
+  "qualification_upgraded": false,
+  "schema": "TRNM-C2-PUBLICATION-PACKET-OBSERVATION1",
+  "verification": {
+    "actor": "ProfHepta",
+    "archive_bytes": 16680,
+    "archive_sha256": "2a1b7c7fd36c83add8a6a417a8c6019f3588b775648ea675455f62a000d86ceb",
+    "draft": true,
+    "exact_body_read_back": true,
+    "normal_push_count_in_retained_operations": 1,
+    "normal_push_exit_code": 0,
+    "original_commands": 8,
+    "original_failed_command": "update-pr-body",
+    "original_failed_command_exit_code": 1,
+    "original_source_after_absent": true,
+    "original_summary_absent": true,
+    "pr": 901,
+    "pre_push_hook_result": "PASS",
+    "production_activation": false,
+    "push_repeated": false,
+    "raw_bytes": 151064,
+    "raw_files": 62,
+    "read_back_head": "0e554f36ffdde3053a5eb1756eb5e526b1935032",
+    "rest_all_commands_exit_zero": true,
+    "rest_commands": 5,
+    "rest_summary_sha256": "3090779b55352e4608d651590ddf6a8189c6529b16a43bf5e07f6a5a0327b587",
+    "reviewed_body_bytes": 6679,
+    "reviewed_body_sha256": "859bd019bfad528e9269980eee5717d6f5d7de2a6ac8781b22a00ae070c7cb95",
+    "source_commit": "0e554f36ffdde3053a5eb1756eb5e526b1935032",
+    "source_tree": "753cdbad6714f00d8ccb9ddbb47f0fd71280ee62",
+    "verified": true,
+    "whole_chain_pq_qualified": false
+  },
+  "verification_command": [
+    "python3",
+    "-B",
+    "/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-readiness-0e554f36ff/publication/verify_publication.py"
+  ],
+  "verification_exit_code": 0,
+  "verification_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "verification_stderr_utf8": "",
+  "verification_stdout_sha256": "03199088ece31f87171467cfe1aa7216a14dd2d592a2596851a5e58008afb517",
+  "verification_stdout_utf8": "{\n  \"actor\": \"ProfHepta\",\n  \"archive_bytes\": 16680,\n  \"archive_sha256\": \"2a1b7c7fd36c83add8a6a417a8c6019f3588b775648ea675455f62a000d86ceb\",\n  \"draft\": true,\n  \"exact_body_read_back\": true,\n  \"normal_push_count_in_retained_operations\": 1,\n  \"normal_push_exit_code\": 0,\n  \"original_commands\": 8,\n  \"original_failed_command\": \"update-pr-body\",\n  \"original_failed_command_exit_code\": 1,\n  \"original_source_after_absent\": true,\n  \"original_summary_absent\": true,\n  \"pr\": 901,\n  \"pre_push_hook_result\": \"PASS\",\n  \"production_activation\": false,\n  \"push_repeated\": false,\n  \"raw_bytes\": 151064,\n  \"raw_files\": 62,\n  \"read_back_head\": \"0e554f36ffdde3053a5eb1756eb5e526b1935032\",\n  \"rest_all_commands_exit_zero\": true,\n  \"rest_commands\": 5,\n  \"rest_summary_sha256\": \"3090779b55352e4608d651590ddf6a8189c6529b16a43bf5e07f6a5a0327b587\",\n  \"reviewed_body_bytes\": 6679,\n  \"reviewed_body_sha256\": \"859bd019bfad528e9269980eee5717d6f5d7de2a6ac8781b22a00ae070c7cb95\",\n  \"source_commit\": \"0e554f36ffdde3053a5eb1756eb5e526b1935032\",\n  \"source_tree\": \"753cdbad6714f00d8ccb9ddbb47f0fd71280ee62\",\n  \"verified\": true,\n  \"whole_chain_pq_qualified\": false\n}\n",
+  "verified_at_utc": "2026-11-11T05:33:06.608768+00:00"
+}

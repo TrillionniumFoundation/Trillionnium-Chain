@@ -1,0 +1,8 @@
+{
+  "source": "a9909fe579dd938005b9d17074f7937c8fa8eb98",
+  "commands": 19,
+  "failed_commands": [],
+  "source_after_passed": true,
+  "git_after_clean_exact": true,
+  "result": "PASS"
+}

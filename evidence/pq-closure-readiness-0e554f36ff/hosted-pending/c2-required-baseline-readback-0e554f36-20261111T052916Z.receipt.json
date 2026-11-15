@@ -1,0 +1,8 @@
+{
+  "archive": "/workspace/scratch/d4d2da8133e2/c2-required-baseline-readback-0e554f36-20261111T052916Z.tar.xz",
+  "bytes": 11340,
+  "sha256": "c01aed08e22bd9449c417ee8031977ce710603ec7865c911f73bcdeba1f9dfeb",
+  "files": 17,
+  "raw_files": 16,
+  "scope": "One bounded C2 required-baseline pending observation; no C1 result reused."
+}

@@ -1,0 +1,804 @@
+{
+  "schema": "pon-six-axis-static-checks-final-v2",
+  "created_utc": "2026-11-05T03:36:42.117884+00:00",
+  "status": "PASS_CURRENT_SOURCE_CHECKS_AND_FINAL_DOCUMENTATION",
+  "current_composition": {
+    "schema": "pon-six-axis-ffb-static-checks-before-links-v1",
+    "created_utc": "2026-11-05T03:24:38.767976+00:00",
+    "status": "PASS_FIVE_CHECKS_AND_FINAL_REPOSITORY_LINKS",
+    "actual_checkout": "/dev/shm/fee7901564fd-final-integration",
+    "checkout_scope": "Complete real Git checkout used only for static/documentation integration. No native DB, Cargo/compiler, model-hosted execution or performance measurement was run or moved.",
+    "immutable_source_commit": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+    "immutable_source_tree": "acef282613e9f6d61ab4bfc5d27b3b1c55257018",
+    "native_scripts_config_roots": [
+      "trillionnium",
+      "scripts",
+      "config"
+    ],
+    "native_scripts_config_file_count": 1515,
+    "config_file_count": 42,
+    "native_scripts_config_sha256": "e9eff789643efe859ba1f0e165df5626bcad4ffe84381f488726051281d49864",
+    "full_validation_inputs_additional": [
+      ".github",
+      "rust-toolchain.toml",
+      "AGENTS.md"
+    ],
+    "full_validation_input_count": 1539,
+    "full_validation_input_sha256": "75e834a15c0b2c391b2fbb9acd14d39da07fff5ae1997fa3534e2c038debee4d",
+    "source_hash_algorithm": "sha256 of sorted UTF-8 path + NUL + lowercase file-content SHA256 + newline; core roots trillionnium/scripts/config; full inputs additionally include .github, rust-toolchain.toml, AGENTS.md.",
+    "additional_inputs_sha256": {
+      ".github/CODEOWNERS": "835e0a238e101cd69077aa36865b4532293a490d01c65b12c6c39006d7cc1173",
+      ".github/dependabot.yml": "ce721b8a195c7cb000a10681f9339119f489ca966d5580b483496cd54d89d5c3",
+      ".github/pull_request_template.md": "bfb6e1943c110a95cde7bcf9b64c2664829e572f8a21e00e9841806d43b36660",
+      ".github/workflows/codeql-analysis-export.yml": "b49236cd3dc667ea70598a4410b283186265403b6daf303242cfc6bee1e13136",
+      ".github/workflows/pon-baseline-diagnostic-readback.yml": "b4df34292121c03dad051571ad14d09f2e4e7ad6d2b54d45ca905d2c4a7c0bdf",
+      ".github/workflows/pon-branch-encoding-acceptance.yml": "b2acc0f6f5969e5bcb0061d510b9d44e43938448eb6975b389e10f4b44400e9a",
+      ".github/workflows/pon-cloud-build-inputs.yml": "71f7770ee8433aca8ac00f809a978d5813601e42ce128357377d9b58d6b9fc23",
+      ".github/workflows/pon-fixed-host-root-f0.yml": "89e5058056006cee4d24dcfe1afa52e991bd40959bfa19463878b0a7ad168093",
+      ".github/workflows/pon-legacy-reorg-cost-20261104.yml": "0bc8164028072eb1328965466de6a21302c228c40500f121282488e0b1ac588a",
+      ".github/workflows/pon-model-parent-acceptance.yml": "a2fb71f718810d4365df5c877fd84432553d2788f50f32762a90a08c571f6fea",
+      ".github/workflows/pon-native-campaign-qualification.yml": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a",
+      ".github/workflows/pon-original-large-state-cpu.yml": "dd24e5da7d165420e00806721486c80291d290e43ff98e7f38748d08a446ca08",
+      ".github/workflows/pon-original-workspace-large-state-cpu.yml": "28bdbe712b26e6e6f12ba67b5dc5d1fe43e5fbdf8a81b3d8a3d86c8a937642c9",
+      ".github/workflows/pon-owned-process-cleanup.yml": "bdfd78e107273525aa743ffb998510c0602c28366f091bd66f07accb4b2682b5",
+      ".github/workflows/pon-pq-system-continuation.yml": "bc083f658deb6c228723fb001b3ee2691b5ec2e6a186d8bef7343c5c61729bc2",
+      ".github/workflows/pon-priority-acceptance.yml": "609e7a909977354c22d7503b4031225fb7b51cfb02b853fb9d147a355b9e3053",
+      ".github/workflows/pon-recent-batch-acceptance.yml": "3a617b129d777ecb4f0f1c8da6546cc4284157e926d1c5bdfbf4684c0e3d7ce4",
+      ".github/workflows/pon-smollm-hosted-once.yml": "f9bd0275cfae5cd0e644b3a2142ba60b049f8da4ade1432c13f39890bb8215ff",
+      ".github/workflows/pon-w1-transparent-profile.yml": "0dd9bcc90b1a6056e183ec417825f5451591c5a9aa6725b872543c4e369c9827",
+      ".github/workflows/pon-w1-work-security.yml": "fa217ee369629c19431de4f5b9406d1b72f314cc4208864c428247d280d32633",
+      ".github/workflows/release-finality-reference.yml": "a833e4554eb61c9c3de5704d1af87fbc467a81106da0c5ea76c0d8f013d2c0b8",
+      ".github/workflows/trnm-required-baseline.yml": "8df781f1d5416aaa1426864aac2bd9f196b87b1283d81f630928872d763c479a",
+      "AGENTS.md": "3b856784057789dd600615f752364012d9ef8965d884352795b9590e0f121b91",
+      "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+    },
+    "all_checks_before_after_raw_files_match_immutable_ffb_git_blobs": true,
+    "direct_checks_passed": 4,
+    "pq_exact_source_blobs": 468,
+    "pq_status": "HOLD_NO_GO",
+    "source_integrity_fixture_suite": {
+      "passed": 43,
+      "failed": 0,
+      "returncode": 0,
+      "TMPDIR": "/dev/shm/fee7901564fd-ffb-static-fixtures",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "fixture_children_remaining": 0,
+      "scope": "Temporary synthetic repositories only; no native or model test execution."
+    },
+    "prior23_670_receipts_preserved": true,
+    "prior_test_counts_reused_or_added_as_current_unique_coverage": false,
+    "repository_links": {
+      "status": "PASS",
+      "passed": true,
+      "receipt_identity": {
+        "bytes": 4291,
+        "sha256": "8266e4250cf811dd54fe6b13173ffefe872dc9abfcabcd27a18f1444c9c6ea97",
+        "git_blob": "5e6702c4b1c7c2020bae98f68e44abe97fbec447"
+      },
+      "receipt": {
+        "schema": "recovered-exact-source-repository-check-v1",
+        "label": "ffb-recovered-final-repository-check",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_repository.py"
+        ],
+        "actual_checkout": "/workspace/scratch/fee7901564fd-recovered/chain",
+        "environment": {
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "GIT_NO_LAZY_FETCH": "1",
+          "GIT_OPTIONAL_LOCKS": "0"
+        },
+        "preflight": {
+          "returncode": 0,
+          "log_file": "preflight.log",
+          "log_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069"
+        },
+        "started_utc": "2026-11-05T03:34:42.442085+00:00",
+        "finished_utc": "2026-11-05T03:35:27.483849+00:00",
+        "duration_seconds": 44.84537368300005,
+        "returncode": 0,
+        "head_before": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+        "head_after": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+        "tree_before": "acef282613e9f6d61ab4bfc5d27b3b1c55257018",
+        "tree_after": "acef282613e9f6d61ab4bfc5d27b3b1c55257018",
+        "source_reference_commit": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+        "native_scripts_config_file_count": 1515,
+        "config_file_count": 42,
+        "native_scripts_config_sha256_before": "e9eff789643efe859ba1f0e165df5626bcad4ffe84381f488726051281d49864",
+        "native_scripts_config_sha256_after": "e9eff789643efe859ba1f0e165df5626bcad4ffe84381f488726051281d49864",
+        "full_validation_input_count": 1539,
+        "full_validation_input_sha256_before": "75e834a15c0b2c391b2fbb9acd14d39da07fff5ae1997fa3534e2c038debee4d",
+        "full_validation_input_sha256_after": "75e834a15c0b2c391b2fbb9acd14d39da07fff5ae1997fa3534e2c038debee4d",
+        "source_files_and_modes_exactly_match_ffb_before_and_after": true,
+        "source_inputs_unchanged": true,
+        "markdown_files": 445,
+        "markdown_aggregate_sha256_before": "9e45fd0f2762b33aaf9afcb2ffb83306bcc95531e375c6c2c0908fb73c108ab7",
+        "markdown_aggregate_sha256_after": "9e45fd0f2762b33aaf9afcb2ffb83306bcc95531e375c6c2c0908fb73c108ab7",
+        "all_markdown_bytes_and_modes_unchanged": true,
+        "six_axis_evidence_file_count": 17,
+        "six_axis_evidence_bytes_unchanged": true,
+        "own_README_sha256": "655399a6dad3149310ac6d8040a31f8eed929d848890d778ffdaa7005dcfeca6",
+        "merged_development_plan_sha256": "e9b7f6f18983b1b7811f66b5a14209f7ae236eb7cb580306dbe9aff706948b09",
+        "input_manifests": {
+          "before": {
+            "file": "repository-inputs-before.json",
+            "bytes": 621844,
+            "sha256": "b469bcd28d568e63e6bce2df0fb31f3342178588f31eb24dc9b66d8e13962251"
+          },
+          "after": {
+            "file": "repository-inputs-after.json",
+            "bytes": 621844,
+            "sha256": "b469bcd28d568e63e6bce2df0fb31f3342178588f31eb24dc9b66d8e13962251"
+          }
+        },
+        "untracked_paths_unchanged": true,
+        "unrelated_untracked_temp_files_modified_or_staged": false,
+        "output_json": {
+          "activation": false,
+          "head": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+          "local_links": 2913,
+          "normal_dependency_edges": 25,
+          "result": "PASS",
+          "runtime_implemented": false,
+          "rust_files": 1135,
+          "source_state": "dirty-candidate",
+          "tree": "acef282613e9f6d61ab4bfc5d27b3b1c55257018",
+          "workspace_packages": 26
+        },
+        "log_file": "ffb-recovered-repository.log",
+        "log_bytes": 307,
+        "log_sha256": "8347a856da24e0e709c0c15abf7270c5c68314fe112fa37ddb0f82bc5593f28d",
+        "log_base64": "eyJhY3RpdmF0aW9uIjogZmFsc2UsICJoZWFkIjogImZmYjQzMTEzYjJlMDA2NWU2YTgwNTNiZGIyNWZjNWE5ZDdjZjA2MzciLCAibG9jYWxfbGlua3MiOiAyOTEzLCAibm9ybWFsX2RlcGVuZGVuY3lfZWRnZXMiOiAyNSwgInJlc3VsdCI6ICJQQVNTIiwgInJ1bnRpbWVfaW1wbGVtZW50ZWQiOiBmYWxzZSwgInJ1c3RfZmlsZXMiOiAxMTM1LCAic291cmNlX3N0YXRlIjogImRpcnR5LWNhbmRpZGF0ZSIsICJ0cmVlIjogImFjZWYyODI2MTNlOWY2ZDYxYWI0YmZjNWQyN2IzYjFjNTUyNTcwMTgiLCAid29ya3NwYWNlX3BhY2thZ2VzIjogMjZ9Cg==",
+        "prior_check_receipts_modified": false,
+        "additional_source_suites_rerun": false,
+        "native_model_cargo_or_replay_executed": false,
+        "scope": "Actual repository graph and Markdown link check of the recovered full ffb checkout with frozen documentation candidate. Exact raw sources, modes, workflows, toolchain, AGENTS, all Markdown and local six-axis evidence identities are recorded before and after. No native/runtime/performance or activation qualification.",
+        "later_json_metadata_note": "A later JSON result/hash refresh is a distinct recorded input; source and Markdown equality can be established separately."
+      }
+    },
+    "cargo_or_rust_builds_run": false,
+    "native_test_execution": false,
+    "model_hosted_execute_run": false,
+    "performance_measurements_run": false,
+    "activation": false,
+    "checks": [
+      {
+        "label": "ffb-pq-source-check",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "returncode": 0,
+        "tests_run": null,
+        "duration_seconds": 0.17574169299950881,
+        "started_utc": "2026-11-05T03:23:36.226886+00:00",
+        "finished_utc": "2026-11-05T03:23:36.495881+00:00",
+        "receipt_file": "ffb-pq-source-check.json",
+        "receipt_sha256": "50b8c52b692eeaf710daf37ca8b7721e66dc0133f4242b0c97ca3ceb92dfb2e7",
+        "receipt_bytes": 9705,
+        "log_file": "ffb-pq-source-check.log",
+        "log_sha256": "04e5f162c704e1d4de4680cd91bcc3517ec31658dc1e9305ad280db5e21c9f9f",
+        "log_bytes": 557
+      },
+      {
+        "label": "ffb-inventory-check",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "returncode": 0,
+        "tests_run": null,
+        "duration_seconds": 0.05862451099892496,
+        "started_utc": "2026-11-05T03:23:36.256686+00:00",
+        "finished_utc": "2026-11-05T03:23:36.415075+00:00",
+        "receipt_file": "ffb-inventory-check.json",
+        "receipt_sha256": "8ec125edcc3a31c7490e94d57744ca484411cd348b29188c23c00b4dbb09d556",
+        "receipt_bytes": 8415,
+        "log_file": "ffb-inventory-check.log",
+        "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+        "log_bytes": 35
+      },
+      {
+        "label": "ffb-ci-contract-check",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_ci_contract.py"
+        ],
+        "returncode": 0,
+        "tests_run": null,
+        "duration_seconds": 0.10778944099911314,
+        "started_utc": "2026-11-05T03:23:36.255811+00:00",
+        "finished_utc": "2026-11-05T03:23:36.484357+00:00",
+        "receipt_file": "ffb-ci-contract-check.json",
+        "receipt_sha256": "8f2ea6e806165374b8eeaf35cbf2c4fe878b091c64eaf5ed54cd258185f91e13",
+        "receipt_bytes": 8788,
+        "log_file": "ffb-ci-contract-check.log",
+        "log_sha256": "9e1991fcbac915b303bd1a6b9db2ce04a4094fa15bb6f05e83d57504313bf975",
+        "log_bytes": 180
+      },
+      {
+        "label": "ffb-boundary-check",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/project_boundary.py",
+          "--dev"
+        ],
+        "returncode": 0,
+        "tests_run": null,
+        "duration_seconds": 0.04824865699993097,
+        "started_utc": "2026-11-05T03:23:36.226444+00:00",
+        "finished_utc": "2026-11-05T03:23:36.372459+00:00",
+        "receipt_file": "ffb-boundary-check.json",
+        "receipt_sha256": "a489ed74c8108bb9200448658cc25f525795ecc26711927563a65d95322a79f4",
+        "receipt_bytes": 8768,
+        "log_file": "ffb-boundary-check.log",
+        "log_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+        "log_bytes": 170
+      },
+      {
+        "label": "ffb-source-integrity-negatives",
+        "command": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/ci",
+          "-p",
+          "test_ci_source_integrity.py",
+          "-v"
+        ],
+        "returncode": 0,
+        "tests_run": 43,
+        "duration_seconds": 3.2175630460005777,
+        "started_utc": "2026-11-05T03:23:36.241219+00:00",
+        "finished_utc": "2026-11-05T03:23:39.545111+00:00",
+        "receipt_file": "ffb-source-integrity-negatives.json",
+        "receipt_sha256": "f12d5290895e62dcd3cef32ba302b0fa8cf35ff6b06d9e5ff2a847d75058a8a3",
+        "receipt_bytes": 18994,
+        "log_file": "ffb-source-integrity-negatives.log",
+        "log_sha256": "e67d80766f3ba36034aecb3deabe117f4a520b2d030b6c9246e4ab2e69d1d1fe",
+        "log_bytes": 7808
+      }
+    ],
+    "original_before_links_summary_identity": {
+      "file": "ffb-checks-before-links.json",
+      "bytes": 8747,
+      "sha256": "eca3abc546e193532468089691e5f3673d19714f4f1956b97f8ff91518045313",
+      "exact_raw_copy_in": "recovered-validation.json"
+    }
+  },
+  "historical_composition23_and670": {
+    "schema": "pon-six-axis-static-checks-final-v1",
+    "created_utc": "2026-11-05T02:50:57.668560+00:00",
+    "status": "PASS_SOURCE_CHECKS_AND_COMPOSED_DOCUMENTATION",
+    "immutable_source_commit": "23a56123e3112de06d7c684ef2057578759176ff",
+    "immutable_source_tree": "31121e474271432c2b038672fea514872e1f1166",
+    "source_roots": [
+      "trillionnium",
+      "scripts",
+      "config"
+    ],
+    "source_file_count": 1508,
+    "config_file_count": 42,
+    "source_aggregate_sha256": "1f4ac048b3c6300da7761471e959c0a6640f2785edcd1c42f6677a22fafc51b6",
+    "source_hash_algorithm": "sha256 of sorted UTF-8 path + NUL + lowercase file-content SHA256 + newline",
+    "all_checks_before_after_source_exactly_matches_immutable23": true,
+    "direct_checks_passed": 5,
+    "source_integrity_fixture_suite": {
+      "passed": 43,
+      "failed": 0,
+      "returncode": 0,
+      "TMPDIR": "/dev/shm/fee7901564fd-static-fixtures",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "fixture_children_remaining": 0,
+      "scope": "Only temporary synthetic repositories used by the pure Python suite; no native DB, measurement, Cargo target or checkout moved."
+    },
+    "prior_source_integrity34_result_reused_or_relabelled": false,
+    "prior183_fixture_total_reused_or_added_as_current_coverage": false,
+    "prior_results_preserved_at_original_source": true,
+    "repository_links": {
+      "status": "PASS",
+      "passed": true,
+      "returncode": 0,
+      "workspace_packages": 26,
+      "rust_files": 1135,
+      "local_links": 2775,
+      "normal_dependency_edges": 25,
+      "source_state": "dirty-candidate",
+      "document_input_identity": {
+        "markdown_files": 440,
+        "markdown_aggregate_sha256": "161ea40f2ba72dcc39a84c73de986e80efc448445e65ed87efc00d634cef8235",
+        "hash_algorithm": "sha256 of sorted UTF-8 relative path + NUL + lowercase file-content SHA256 + newline",
+        "six_axis_evidence_file_count": 15,
+        "before_after_identical": true
+      },
+      "scope": "Frozen documentation worktree and immutable23-equivalent native/scripts/config. Later JSON evidence/receipt hash updates are not this recorded input; Markdown/source equivalence should be noted separately."
+    },
+    "cargo_or_rust_builds_run": false,
+    "native_test_execution": false,
+    "measurements_run": false,
+    "performance_qualification": false,
+    "storage_observations": {
+      "first_snapshot_path": "/workspace/scratch/fee7901564fd/validation-static/merged23-source-snapshot.json",
+      "first_snapshot_bytes": 0,
+      "first_snapshot_write_failed_enospc": true,
+      "first_snapshot_failure_retained": true,
+      "checks_executed_after_failure_with_outputs_preserved_in_functions_store": true,
+      "current_output_directory": "/dev/shm/fee7901564fd-static-results",
+      "rootfs_copy_pending": true,
+      "all_receipt_and_log_files_created_exclusively": true,
+      "rootfs_copy_attempt1": {
+        "receipt_file": "rootfs-copy-attempt1.json",
+        "receipt_sha256": "606f86c5b8508b376f316658eb8c97676ee230cd117f0c8b33a432f5a1e6ad9d",
+        "complete": false,
+        "files_verified_copied": 0,
+        "failure": {
+          "type": "OSError",
+          "errno": 28,
+          "message": "[Errno 28] No space left on device",
+          "no_retry": true
+        }
+      },
+      "ram_artifacts_and_functions_store_preserved": true
+    },
+    "checks": [
+      {
+        "label": "merged23-pq-source-check",
+        "returncode": 0,
+        "tests_run": null,
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "started_utc": "2026-11-05T02:42:50.671588+00:00",
+        "finished_utc": "2026-11-05T02:42:50.986880+00:00",
+        "duration_seconds": 0.2231701479995536,
+        "receipt_file": "merged23-pq-source-check.json",
+        "receipt_sha256": "cfe529211bfccacd85a4072005e80db06e3a36cda80ccb93a44451b4c599bec9",
+        "receipt_bytes": 2175,
+        "log_file": "merged23-pq-source-check.log",
+        "log_sha256": "c8ad351bbabf07ca40661fe13cd14d2c191ae98d2b0fa4375c85282edd9b5db4",
+        "log_bytes": 557,
+        "source_unchanged": true,
+        "source_matches_immutable23_before_and_after": true
+      },
+      {
+        "label": "merged23-inventory-check",
+        "returncode": 0,
+        "tests_run": null,
+        "command": [
+          "python3",
+          "-B",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "started_utc": "2026-11-05T02:42:50.669486+00:00",
+        "finished_utc": "2026-11-05T02:42:50.834107+00:00",
+        "duration_seconds": 0.0662361199993029,
+        "receipt_file": "merged23-inventory-check.json",
+        "receipt_sha256": "76d7b452b6eba76ee5c70c754d7da2dd20411ab056ae8ab3f95913af6f14873e",
+        "receipt_bytes": 1497,
+        "log_file": "merged23-inventory-check.log",
+        "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+        "log_bytes": 35,
+        "source_unchanged": true,
+        "source_matches_immutable23_before_and_after": true
+      },
+      {
+        "label": "merged23-ci-contract-check",
+        "returncode": 0,
+        "tests_run": null,
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_ci_contract.py"
+        ],
+        "started_utc": "2026-11-05T02:42:50.670296+00:00",
+        "finished_utc": "2026-11-05T02:42:50.877403+00:00",
+        "duration_seconds": 0.10044695299984596,
+        "receipt_file": "merged23-ci-contract-check.json",
+        "receipt_sha256": "7797ecf54dda97f284dacf20811308579ea397f7c830f258c813a524a3a21fae",
+        "receipt_bytes": 1662,
+        "log_file": "merged23-ci-contract-check.log",
+        "log_sha256": "9e1991fcbac915b303bd1a6b9db2ce04a4094fa15bb6f05e83d57504313bf975",
+        "log_bytes": 180,
+        "source_unchanged": true,
+        "source_matches_immutable23_before_and_after": true
+      },
+      {
+        "label": "merged23-boundary-check",
+        "returncode": 0,
+        "tests_run": null,
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/project_boundary.py",
+          "--dev"
+        ],
+        "started_utc": "2026-11-05T02:42:50.673490+00:00",
+        "finished_utc": "2026-11-05T02:42:50.831123+00:00",
+        "duration_seconds": 0.05891251500179351,
+        "receipt_file": "merged23-boundary-check.json",
+        "receipt_sha256": "a79add607a981007709a9434d86f53fe4352ed808107c6a004bbbe1a762a4986",
+        "receipt_bytes": 1659,
+        "log_file": "merged23-boundary-check.log",
+        "log_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+        "log_bytes": 170,
+        "source_unchanged": true,
+        "source_matches_immutable23_before_and_after": true
+      },
+      {
+        "label": "merged23-source-integrity-negatives",
+        "returncode": 0,
+        "tests_run": 43,
+        "command": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/ci",
+          "-p",
+          "test_ci_source_integrity.py",
+          "-v"
+        ],
+        "started_utc": "2026-11-05T02:44:01.158821+00:00",
+        "finished_utc": "2026-11-05T02:44:05.246643+00:00",
+        "duration_seconds": 3.978250026000751,
+        "receipt_file": "merged23-source-integrity-negatives.json",
+        "receipt_sha256": "24065775019cd06a71df4df0777921533ed318cb8bfd9038ab8fbac1fc08b2e7",
+        "receipt_bytes": 12428,
+        "log_file": "merged23-source-integrity-negatives.log",
+        "log_sha256": "89ccd314e6d5954e98b526e868b4e0dc345e0b25b3e23f960067f73e62cf80b9",
+        "log_bytes": 7784,
+        "source_unchanged": true,
+        "source_matches_immutable23_before_and_after": true
+      },
+      {
+        "label": "merged23-repository-check",
+        "returncode": 0,
+        "tests_run": null,
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_repository.py"
+        ],
+        "started_utc": "2026-11-05T02:49:14.918870+00:00",
+        "finished_utc": "2026-11-05T02:50:06.516585+00:00",
+        "duration_seconds": 51.43899668999984,
+        "receipt_file": "merged23-repository-check.json",
+        "receipt_sha256": "1ee12bda63289afea02b83c4197f096611068d5cc98da32f9eba63c491eca9e4",
+        "receipt_bytes": 8668,
+        "log_file": "merged23-repository-check.log",
+        "log_sha256": "e15682748e2a8f78d96197dd9a35c8f74388004cd816ae884fb570201ad26760",
+        "log_bytes": 307,
+        "source_unchanged": true,
+        "source_matches_immutable23_before_and_after": true,
+        "documentation_unchanged": true,
+        "repository_result": {
+          "activation": false,
+          "head": "23a56123e3112de06d7c684ef2057578759176ff",
+          "local_links": 2775,
+          "normal_dependency_edges": 25,
+          "result": "PASS",
+          "runtime_implemented": false,
+          "rust_files": 1135,
+          "source_state": "dirty-candidate",
+          "tree": "31121e474271432c2b038672fea514872e1f1166",
+          "workspace_packages": 26
+        }
+      }
+    ],
+    "prior_before_links_summary": {
+      "file": "checks-before-links.json",
+      "sha256": "9172288080e9339660a4f336d05f32ec6ec7f18acda6d43e1fe101837021c482",
+      "bytes": 6276,
+      "preserved_unchanged": true
+    },
+    "no_new_rust_or_native_execution": true,
+    "no_existing_failures_relabelled_or_removed": true,
+    "format_check": {
+      "name": "final23-format-attempt1",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/workspace/scratch/fee7901564fd/chain",
+      "started_utc": "2026-11-05T02:38:53.725834+00:00",
+      "timeout_seconds": null,
+      "environment": {
+        "CARGO_HOME": "/workspace/scratch/fee7901564fd/cargo-cell",
+        "CARGO_TARGET_DIR": "/workspace/scratch/fee7901564fd/target-cell",
+        "CARGO_BUILD_JOBS": "1",
+        "OPENSSL_DIR": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install",
+        "OPENSSL_STATIC": "1",
+        "TRNM_PQ_OPENSSL": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+        "OPENSSL_CONF": "/dev/null",
+        "OPENSSL_MODULES": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/lib/ossl-modules"
+      },
+      "source_paths_sha256": "12dcc4d639010ae2ac8a835301e12177824bf9181e7c599c882f6a55dd60afa2",
+      "parent_commit": "23a56123e3112de06d7c684ef2057578759176ff",
+      "timed_out": false,
+      "returncode": 0,
+      "wall_seconds": 14.556653680001546,
+      "log_bytes": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log": "/workspace/scratch/fee7901564fd/validation-node/final23-format-attempt1.log"
+    },
+    "format_check_receipt_sha256": "7cd88b71e4f9f71d4d7b76b5f79d4c1cecad1bd2c53ae58ad7d9a5acf10429d4",
+    "helper_syntax_checks": [
+      {
+        "file": "parse_measurements.py",
+        "sha256": "1044cb7eb885dc0837b4008c97345f70b8234243ac5dba17a1e91472222a936d",
+        "result": "PASS",
+        "scope": "Python syntax only; no Rust, fixture or measurement executed"
+      },
+      {
+        "file": "observe_resources.py",
+        "sha256": "dc70719af44b12a3bc507cc21d0b91a8f141a8b39bf6c54cbf59591fae61dbb6",
+        "result": "PASS",
+        "scope": "Python syntax only; no Rust, fixture or measurement executed"
+      }
+    ],
+    "native_runtime_or_performance_qualification": false,
+    "documentation_scope_note": "The earlier23 check is retained at its original inputs. The separate composition670 check covers the final request-observation recipe and all concurrent documentation/evidence. Native source and toolchain bytes are unchanged from23.",
+    "composition670_repository_links": {
+      "status": "PASS",
+      "passed": true,
+      "delivery_parent_commit": "67097f5add069c49788fc5ba21c35d1db07167c4",
+      "native_inputs_equal_23": true,
+      "receipt_sha256": "29b4c39345e7e1bf25969d3591cdb46373fb9ccc0fba3093ac875ab8f65bb8d5",
+      "receipt": {
+        "schema": "exact-source-static-check-v1",
+        "label": "merged670-repository-check",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_repository.py"
+        ],
+        "cwd": "/workspace/scratch/fee7901564fd/chain",
+        "environment": {
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "GIT_NO_LAZY_FETCH": "1",
+          "GIT_OPTIONAL_LOCKS": "0"
+        },
+        "started_utc": "2026-11-05T03:08:26.413617+00:00",
+        "finished_utc": "2026-11-05T03:09:20.847666+00:00",
+        "duration_seconds": 54.21484469000097,
+        "returncode": 0,
+        "head_before": "67097f5add069c49788fc5ba21c35d1db07167c4",
+        "head_after": "67097f5add069c49788fc5ba21c35d1db07167c4",
+        "delivery_anchor_commit": "67097f5add069c49788fc5ba21c35d1db07167c4",
+        "delivery_anchor_tree": "3fdb49e094b12d21d2a79d2ec0de7568e6125712",
+        "native_source_reference_commit": "23a56123e3112de06d7c684ef2057578759176ff",
+        "source_roots": [
+          "trillionnium",
+          "scripts",
+          "config"
+        ],
+        "source_hash_algorithm": "sha256 of sorted UTF-8 path + NUL + lowercase file-content SHA256 + newline",
+        "source_file_count": 1508,
+        "config_file_count": 42,
+        "source_aggregate_before": "1f4ac048b3c6300da7761471e959c0a6640f2785edcd1c42f6677a22fafc51b6",
+        "source_aggregate_after": "1f4ac048b3c6300da7761471e959c0a6640f2785edcd1c42f6677a22fafc51b6",
+        "native_scripts_config_bytes_match_immutable23_before_and_after": true,
+        "source_unchanged": true,
+        "documentation_before": {
+          "markdown_files": 440,
+          "markdown_aggregate_sha256": "339aad3d680a6fa6952d9e89953dd3926ecb889a492fae8261a87cb8cbfcb3f5",
+          "algorithm": "sha256 of sorted UTF-8 relative path + NUL + lowercase file-content SHA256 + newline",
+          "six_axis_evidence_files": {
+            "evidence/pon-six-axis-execution-v1/README.md": {
+              "bytes": 15402,
+              "sha256": "e2611c2dccae5c7034ef26700fcb4f06d52ad110ef462ba35d05e80d7833b339"
+            },
+            "evidence/pon-six-axis-execution-v1/build-cache-preservation.json": {
+              "bytes": 4424,
+              "sha256": "8a2726da335bd61536eb0d85195a0f1ea0a3982a6b3ddcf422b7bb35aa7b3f62"
+            },
+            "evidence/pon-six-axis-execution-v1/check_legacy_reader.py": {
+              "bytes": 2962,
+              "sha256": "b29b0c03761efb4c8c83d85b383918029b6ed2f08e9e811b4c771ff13d8e2ca7"
+            },
+            "evidence/pon-six-axis-execution-v1/component-validation.json": {
+              "bytes": 20354,
+              "sha256": "18cbe4f9be8a90648d9289d5f32d9cfc2a29e0d289e7564f26f7deb7706c60d1"
+            },
+            "evidence/pon-six-axis-execution-v1/elf-preservation.json": {
+              "bytes": 8281,
+              "sha256": "8753fc2e04ecd2fa77569e388fea8adafee8c70584e9180599e5df93e3f5dff7"
+            },
+            "evidence/pon-six-axis-execution-v1/final-static-validation.json": {
+              "bytes": 11800,
+              "sha256": "68320358313684c18e5cf20de0f2eb3fb390b0dbe7043e0f9d349276d4af25bd"
+            },
+            "evidence/pon-six-axis-execution-v1/implementation-checkpoint-reproduction.json": {
+              "bytes": 37290,
+              "sha256": "46e1c299ae85a387eec1a7197c63f7bc780b1c68f124edc5cbcc4af926838064"
+            },
+            "evidence/pon-six-axis-execution-v1/measurement-execution-declaration-v1.json": {
+              "bytes": 1325,
+              "sha256": "8beed3fac2900f56a175223cd88e330a551df083722413d222341d611c198a7c"
+            },
+            "evidence/pon-six-axis-execution-v1/measurement-execution-declaration-v2.json": {
+              "bytes": 1652,
+              "sha256": "67c59d599530fc276b6e6a7983f25462766a1bd381e057cdfc15d3086d44043d"
+            },
+            "evidence/pon-six-axis-execution-v1/measurement-execution-declaration-v3.json": {
+              "bytes": 2482,
+              "sha256": "aa81a27a086d345f9626af0c1e0bc5fa1a4114c5045b97533570609108a86a52"
+            },
+            "evidence/pon-six-axis-execution-v1/measurement-plan.json": {
+              "bytes": 3075,
+              "sha256": "e2714a9b9976bfb83658af5e8aab7efa2d16017c7a726d68042ed1cc8342efeb"
+            },
+            "evidence/pon-six-axis-execution-v1/measurement-status.json": {
+              "bytes": 3144,
+              "sha256": "8e8f5c30fcd36c8eb0b6fe1a95c0769618e3ed2b0bb34eeb35c2aa3895c268a5"
+            },
+            "evidence/pon-six-axis-execution-v1/node-validation.json": {
+              "bytes": 34249,
+              "sha256": "9f6d81d7db7aa0ff3b84ad60bcaff112ab72c4f422e4af68e13107855b58c4f8"
+            },
+            "evidence/pon-six-axis-execution-v1/observe_resources.py": {
+              "bytes": 2627,
+              "sha256": "dc70719af44b12a3bc507cc21d0b91a8f141a8b39bf6c54cbf59591fae61dbb6"
+            },
+            "evidence/pon-six-axis-execution-v1/parse_measurements.py": {
+              "bytes": 32498,
+              "sha256": "1044cb7eb885dc0837b4008c97345f70b8234243ac5dba17a1e91472222a936d"
+            },
+            "evidence/pon-six-axis-execution-v1/reproduction.json": {
+              "bytes": 32304,
+              "sha256": "3ed044e0eed9595c05a248254a85af82f0367908376ea3b96a86e6c83656f7d6"
+            }
+          },
+          "toolchain_files": {
+            "rust-toolchain.toml": {
+              "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+              "bytes": 86,
+              "matches_reference23": true
+            }
+          }
+        },
+        "documentation_after": {
+          "markdown_files": 440,
+          "markdown_aggregate_sha256": "339aad3d680a6fa6952d9e89953dd3926ecb889a492fae8261a87cb8cbfcb3f5",
+          "algorithm": "sha256 of sorted UTF-8 relative path + NUL + lowercase file-content SHA256 + newline",
+          "six_axis_evidence_files": {
+            "evidence/pon-six-axis-execution-v1/README.md": {
+              "bytes": 15402,
+              "sha256": "e2611c2dccae5c7034ef26700fcb4f06d52ad110ef462ba35d05e80d7833b339"
+            },
+            "evidence/pon-six-axis-execution-v1/build-cache-preservation.json": {
+              "bytes": 4424,
+              "sha256": "8a2726da335bd61536eb0d85195a0f1ea0a3982a6b3ddcf422b7bb35aa7b3f62"
+            },
+            "evidence/pon-six-axis-execution-v1/check_legacy_reader.py": {
+              "bytes": 2962,
+              "sha256": "b29b0c03761efb4c8c83d85b383918029b6ed2f08e9e811b4c771ff13d8e2ca7"
+            },
+            "evidence/pon-six-axis-execution-v1/component-validation.json": {
+              "bytes": 20354,
+              "sha256": "18cbe4f9be8a90648d9289d5f32d9cfc2a29e0d289e7564f26f7deb7706c60d1"
+            },
+            "evidence/pon-six-axis-execution-v1/elf-preservation.json": {
+              "bytes": 8281,
+              "sha256": "8753fc2e04ecd2fa77569e388fea8adafee8c70584e9180599e5df93e3f5dff7"
+            },
+            "evidence/pon-six-axis-execution-v1/final-static-validation.json": {
+              "bytes": 11800,
+              "sha256": "68320358313684c18e5cf20de0f2eb3fb390b0dbe7043e0f9d349276d4af25bd"
+            },
+            "evidence/pon-six-axis-execution-v1/implementation-checkpoint-reproduction.json": {
+              "bytes": 37290,
+              "sha256": "46e1c299ae85a387eec1a7197c63f7bc780b1c68f124edc5cbcc4af926838064"
+            },
+            "evidence/pon-six-axis-execution-v1/measurement-execution-declaration-v1.json": {
+              "bytes": 1325,
+              "sha256": "8beed3fac2900f56a175223cd88e330a551df083722413d222341d611c198a7c"
+            },
+            "evidence/pon-six-axis-execution-v1/measurement-execution-declaration-v2.json": {
+              "bytes": 1652,
+              "sha256": "67c59d599530fc276b6e6a7983f25462766a1bd381e057cdfc15d3086d44043d"
+            },
+            "evidence/pon-six-axis-execution-v1/measurement-execution-declaration-v3.json": {
+              "bytes": 2482,
+              "sha256": "aa81a27a086d345f9626af0c1e0bc5fa1a4114c5045b97533570609108a86a52"
+            },
+            "evidence/pon-six-axis-execution-v1/measurement-plan.json": {
+              "bytes": 3075,
+              "sha256": "e2714a9b9976bfb83658af5e8aab7efa2d16017c7a726d68042ed1cc8342efeb"
+            },
+            "evidence/pon-six-axis-execution-v1/measurement-status.json": {
+              "bytes": 3144,
+              "sha256": "8e8f5c30fcd36c8eb0b6fe1a95c0769618e3ed2b0bb34eeb35c2aa3895c268a5"
+            },
+            "evidence/pon-six-axis-execution-v1/node-validation.json": {
+              "bytes": 34249,
+              "sha256": "9f6d81d7db7aa0ff3b84ad60bcaff112ab72c4f422e4af68e13107855b58c4f8"
+            },
+            "evidence/pon-six-axis-execution-v1/observe_resources.py": {
+              "bytes": 2627,
+              "sha256": "dc70719af44b12a3bc507cc21d0b91a8f141a8b39bf6c54cbf59591fae61dbb6"
+            },
+            "evidence/pon-six-axis-execution-v1/parse_measurements.py": {
+              "bytes": 32498,
+              "sha256": "1044cb7eb885dc0837b4008c97345f70b8234243ac5dba17a1e91472222a936d"
+            },
+            "evidence/pon-six-axis-execution-v1/reproduction.json": {
+              "bytes": 32304,
+              "sha256": "3ed044e0eed9595c05a248254a85af82f0367908376ea3b96a86e6c83656f7d6"
+            }
+          },
+          "toolchain_files": {
+            "rust-toolchain.toml": {
+              "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+              "bytes": 86,
+              "matches_reference23": true
+            }
+          }
+        },
+        "documentation_unchanged": true,
+        "output_json": {
+          "activation": false,
+          "head": "67097f5add069c49788fc5ba21c35d1db07167c4",
+          "local_links": 2831,
+          "normal_dependency_edges": 25,
+          "result": "PASS",
+          "runtime_implemented": false,
+          "rust_files": 1135,
+          "source_state": "dirty-candidate",
+          "tree": "3fdb49e094b12d21d2a79d2ec0de7568e6125712",
+          "workspace_packages": 26
+        },
+        "log_file": "merged670-repository-check.log",
+        "log_bytes": 307,
+        "log_sha256": "aeb0c67c0f2cde48ae77eff5123db5b54138c8026a8c2f35a57ccba0ce626c91",
+        "log_base64": "eyJhY3RpdmF0aW9uIjogZmFsc2UsICJoZWFkIjogIjY3MDk3ZjVhZGQwNjljNDk3ODhmYzViYTIxYzM1ZDFkYjA3MTY3YzQiLCAibG9jYWxfbGlua3MiOiAyODMxLCAibm9ybWFsX2RlcGVuZGVuY3lfZWRnZXMiOiAyNSwgInJlc3VsdCI6ICJQQVNTIiwgInJ1bnRpbWVfaW1wbGVtZW50ZWQiOiBmYWxzZSwgInJ1c3RfZmlsZXMiOiAxMTM1LCAic291cmNlX3N0YXRlIjogImRpcnR5LWNhbmRpZGF0ZSIsICJ0cmVlIjogIjNmZGI0OWUwOTRiMTJkMjFkMmE3OWQyZWMwZGU3NTY4ZTYxMjU3MTIiLCAid29ya3NwYWNlX3BhY2thZ2VzIjogMjZ9Cg==",
+        "prior23_check_preserved": true,
+        "other_checks_rerun": false,
+        "scope": "Only repository graph/Markdown link validation after670 documentation integration; frozen dirty documentation inputs and native/scripts/config bytes equal immutable23. No Cargo build, Rust tests, runtime measurement or activation qualification."
+      },
+      "scope": "Frozen final Markdown and native inputs. Subsequent changes only append this JSON receipt and refresh its reproduction-manifest hash; no Markdown or native input changed."
+    }
+  },
+  "historical_record_identity": {
+    "bytes": 22753,
+    "sha256": "8d1155de873c70e3a0b8a40d2b601d700cd906554f633dc6e422ab2af22bb2a5",
+    "git_blob": "8801823efa5d6e2fcb4c2911a0fcc613d006fd18"
+  },
+  "historical_record_commit": "ac4246dbd916f1a292dcc34fb76e715ab268c992",
+  "source_boundary": {
+    "complete_trillionnium_tree_equal_composition23": true,
+    "cargo_manifests_lock_and_root_toolchain_equal_composition23": true,
+    "scripts_config_workflows_equal_composition23": false,
+    "historical_checks_relabelled_as_current": false,
+    "new_current_checks_ran_independently": true,
+    "earlier_format_check_rerun": false,
+    "earlier_format_check_source_bytes_unchanged": true
+  },
+  "native_test_execution": false,
+  "model_hosted_execute_run": false,
+  "performance_measurements_run": false,
+  "native_runtime_or_performance_qualification": false,
+  "documentation_scope_note": "Earlier23 and670 receipts retain exact inputs. The five current ffb static checks ran before the environment reset and their exact small receipts/logs were recovered. A separate post-reset repository check passed on the full recovered checkout with frozen source/Markdown. Final JSON receipt/index/availability updates and the recovered-validation.json addition follow that checker; all source and Markdown bytes remain identical to its inputs. Evidence availability is recorded separately; no native/runtime/model/performance acceptance is inferred."
+}

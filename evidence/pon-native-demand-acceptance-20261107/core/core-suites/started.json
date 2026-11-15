@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-service-settlement",
+    "-p",
+    "trnm-protocol",
+    "-p",
+    "trnm-mvcc-fee",
+    "--all-targets",
+    "--all-features",
+    "--no-fail-fast",
+    "--",
+    "--test-threads=1"
+  ],
+  "source_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+  "started_unix_seconds": 1794065566.990274
+}

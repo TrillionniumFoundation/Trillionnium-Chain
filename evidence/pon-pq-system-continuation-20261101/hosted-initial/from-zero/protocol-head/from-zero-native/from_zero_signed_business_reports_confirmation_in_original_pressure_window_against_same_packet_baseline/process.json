@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/home/runner/work/_temp/target-protocol-contract/release/deps/public_v3_from_zero-6c91a9a89111eddb",
+    "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "wall_ns": 8591642244,
+  "user_cpu_ns": 1050257000,
+  "system_cpu_ns": 923303000,
+  "cpu_ns": 1973560000,
+  "max_rss_kib": 46660,
+  "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+  "minor_faults": 10844,
+  "major_faults": 0,
+  "voluntary_switches": 13799,
+  "involuntary_switches": 629,
+  "cpu_scope": "entire child, not apportioned to nested wall intervals",
+  "wait4_cpu_resolution_ns": 1000,
+  "stdout_sha256": "4c9bfc17ad457140e67757dfe806ced101ecb9637083d369d41f98cdd8e39313",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

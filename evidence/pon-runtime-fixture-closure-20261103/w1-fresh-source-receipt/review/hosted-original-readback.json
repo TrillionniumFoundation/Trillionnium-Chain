@@ -1,0 +1,116 @@
+{
+  "schema": "c5dd7c-w1-fresh-head-source-receipt-readiness-failure-v1",
+  "observed_utc": "2026-11-03T22:14:06.881023+00:00",
+  "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+  "run_id": 41728500666,
+  "job_id": 126239416973,
+  "lane": "head",
+  "source_before_after": {
+    "base": null,
+    "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 882506480,
+    "tracked_entries": 7723,
+    "tracked_worktree_verified": true
+  },
+  "source_before_after_equal": true,
+  "original_step": "Execute original and fresh service with original Host resources",
+  "original_command": "python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_w1_fresh_service_v1.py --out \"$OUT/fresh-service\"",
+  "actual_terminal": {
+    "passed": false,
+    "failure": "[Errno 2] No such file or directory: '/home/runner/work/_temp/w1-fresh-service-head-41728500666-1/source.json'",
+    "host_readiness_only": true
+  },
+  "actual_terminal_timestamp_line": "2026-11-03T22:12:04.4292787Z {\"passed\": false, \"failure\": \"[Errno 2] No such file or directory: '/home/runner/work/_temp/w1-fresh-service-head-41728500666-1/source.json'\", \"host_readiness_only\": true}",
+  "workflow_exit_code": 1,
+  "classification": "Host readiness source receipt filename missing; child native service did not start",
+  "original_control_logs": [
+    {
+      "file": "original-host-controls.log",
+      "terminal_summaries": [
+        [
+          "78",
+          "0.999s"
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "file": "original-native-controls.log",
+      "terminal_summaries": [
+        [
+          "104",
+          "12.019s"
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "file": "fresh-service-controls.log",
+      "terminal_summaries": [
+        [
+          "20",
+          "0.966s"
+        ]
+      ],
+      "ok": true
+    }
+  ],
+  "artifact_receipt": {
+    "schema": "artifact-download-digest-check-v1",
+    "observed_utc": "2026-11-03T22:13:35.715550+00:00",
+    "artifact_id": 13273693701,
+    "file_name": "c5dd7c-w1-fresh-head-13273693701.zip",
+    "file_id": "file_00000000fa9881f5bf5c0827e7199f24",
+    "actual_bytes": 4190,
+    "actual_sha256": "c463bd2ac6745b1436ab2a69f4c6fddbbed542d50cb316810a5c8a2634f81478",
+    "metadata": {
+      "id": 13273693701,
+      "name": "w1-fresh-service-head-c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1-1",
+      "size_in_bytes": 4190,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13273693701",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13273693701/zip",
+      "expired": false,
+      "created_at": "2026-11-03T22:12:06Z",
+      "expires_at": "2026-12-03T22:12:05Z",
+      "updated_at": "2026-11-03T22:12:06Z",
+      "digest": "sha256:c463bd2ac6745b1436ab2a69f4c6fddbbed542d50cb316810a5c8a2634f81478",
+      "workflow_run": {
+        "id": 41728500666,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1"
+      }
+    },
+    "matched": true,
+    "data_only": true,
+    "executed": false
+  },
+  "artifact_member_names": [
+    "fresh-service-controls.log",
+    "original-host-controls.log",
+    "original-native-controls.log",
+    "preflight.log",
+    "source-after.json",
+    "source-before.json"
+  ],
+  "artifact_has_host_report": false,
+  "artifact_has_native_manifest": false,
+  "artifact_has_native_elf": false,
+  "w1_history_25_1_execution_observed_by_this_job": false,
+  "scope": "Fresh service job only. The separate W1 factorial History lane is independently pending. No native service, nine-Host-runtime or performance verdict inferred.",
+  "raw_records": {
+    "file": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/w1-fresh-head-original-records.json.gz",
+    "bytes": 28657,
+    "sha256": "58e91ecf233a51df2f86c329ab043b211b2fb9fc68a2ee43a6cd8f01178104b6"
+  },
+  "workflow_source_file_sha256": "7434725504d9ea31e96226d027fbaa2cf2080d56c5a58f41c453685311dc79cf"
+}

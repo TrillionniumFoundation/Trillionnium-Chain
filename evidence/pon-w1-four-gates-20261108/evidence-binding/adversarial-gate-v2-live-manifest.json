@@ -1,0 +1,17 @@
+{
+  "files": [
+    {
+      "path": "scripts/run_w1_deployment_comparison.py",
+      "base_sha256": "9e40acb2b522845aab5b1354a61f1bfdc4f27e5cad6a033cb37c7183b3d44d1e",
+      "new_sha256": "9fa6b04517c392e77da4766dfd422a1df961b8a0d082206f0122e9b03ccf1e63"
+    },
+    {
+      "path": "scripts/run_w1_receiver.py",
+      "base_sha256": "20daa1cc843b18efe9ff25741f273fda9059effd240d6398ee934d2a55437765",
+      "new_sha256": "3dc98a97ea6de256c8cc567d9afc1650a22e2f54bc774fd45cb59460db3e0a46"
+    }
+  ],
+  "patch_sha256": "f41453edeb81dae3cda1708171dc622ff1f6c79271517227f3174433713f629f",
+  "pure_controls_passed": 9,
+  "real_control_test_methods_unchanged": 11
+}

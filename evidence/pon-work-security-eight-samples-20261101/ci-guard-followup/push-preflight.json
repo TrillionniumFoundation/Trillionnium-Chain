@@ -1,0 +1,8 @@
+{
+  "head": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+  "tree": "60a521c7299febfe26a8c7d38d3420d490d07cd8",
+  "input": "refs/heads/fix/chain-pon-binding-ci-20261101 9cd91ed69a0c69df42f8d7812d32d271df6e1998 refs/heads/fix/chain-pon-work-security-20261101 3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129\n",
+  "exit_code": 0,
+  "stdout": "{\"result\": \"PASS\", \"mode\": \"--push\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-pon-binding-ci-20261101\", \"remote_policy_mutated\": false}\n",
+  "stderr": ""
+}

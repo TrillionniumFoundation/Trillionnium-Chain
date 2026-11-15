@@ -1,0 +1,297 @@
+# PNRL1: persistent registration of native confirmation claims
+
+Status: **local registration and declared expenditure only; the native failure
+probability remains unknown**. This is an opt-in research wrapper. It does not
+change a production entry point, consensus weight, signature domain, original
+confirmation policy, PNOJ1 event vocabulary, or stored native database schema.
+
+The implementation is
+[`native_risk_ledger.rs`](../../trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs).
+It exclusively owns the existing
+[`JournaledNativeOwner`](../../trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs).
+The independent reader is [`native_risk_ledger.py`](native_risk_ledger.py).
+
+## 1. The missing operational link this component addresses
+
+The existing [finite conditional-risk bank](CERTIFICATE_OBSERVABILITY_V1.md)
+checks every start represented in a declared probability tree. The
+[persistent native owner journal](NATIVE_OWNER_JOURNAL_V1.md) records native
+confirmation calls, including failed calls and interrupted operations. A
+caller could nevertheless supply a convenient subset of confirmation claims,
+discard an unsuccessful trial, or start a new bank after a restart if these
+two interfaces were connected only by a selected list of reports.
+
+PNRL1 adds a separate persistent registration bank. Its source protocol is:
+
+1. Fix the transaction, included block, supplied validation time, statement
+   digest, common-law scope digest and positive integer allowance.
+2. Record the exact current PNOJ1 checkpoint and the expected next native
+   intent sequence. Increase cumulative expenditure and **fsync the complete
+   start before allowing native confirmation to execute**.
+3. Invoke the original `JournaledNativeOwner::confirmation`. Its PNOJ1
+   `intent`, `prepared` and `terminal` semantics are unchanged.
+4. Record the actual wrapper return and exact native checkpoint. The reader
+   binds a complete native terminal to that result. An error before a native
+   terminal remains an incomplete native observation.
+5. Keep the original charge, including when the result is unconfirmed, a
+   native error, a wrapper/storage error, or an interrupted call.
+
+Neither success nor failure causes a refund. The public API has no refund,
+allowance-edit, arbitrary outcome, direct inner-owner accessor, `Deref`,
+callback accepting the inner owner, or unregistered confirmation method.
+Other supported owner operations are forwarded to the existing journaled
+owner while the bank has no live unresolved operation.
+
+## 2. Units, scope and file identity
+
+`RiskLedgerOptions` fixes a common denominator `D`, positive capacity `B`,
+and declared `law_scope_sha256`, where `1 <= B <= D <= 10^18`. Every start
+spends a positive integer `a_i`; the recorded rational allowance is `a_i/D`.
+All arithmetic is checked integer arithmetic. The recorded cumulative sum
+must equal the sum of **every** registered start and remain at most `B`.
+Reopening cannot change the denominator, capacity or scope digest.
+
+The scope digest identifies a declaration supplied by the caller. Its equality
+does not prove that two statements have the same probability law, the same
+complete filtration, or any valid conditional risk bound. The statement digest
+is also a commitment, not an accepted proof of the statement.
+
+The bank directory is separate from both the native store and PNOJ1 directory.
+It contains `bank.lock`, held exclusively, and `risk.pnrl1`. New files are
+published and synced before use. The writer rejects final-component symlinks
+and multiple hard links for its bank/lock files, changed file identity/length,
+torn tails, and storage-limit overflow. It never truncates a damaged tail or
+silently returns a valid prefix as a complete bank.
+
+The independent wire namespace is:
+
+```text
+magic: PNRL1\0\0\0
+frame: u32 big-endian JSON length || exact UTF-8 JSON || 32-byte digest
+digest: SHA256("pon-native-risk-ledger-frame-v1\0" || exact JSON)
+JSON: {sequence, previous_hash, payload}
+schema: pon-native-risk-ledger-v1
+```
+
+Bounds are 4,096 frames, 64 KiB per frame and 16 MiB per bank, optionally
+reduced by the caller. These are observation/storage bounds, not physical
+resource limits or minimum-cost certificates. The native journal's own bounds
+continue to apply independently.
+
+The header binds the exact PNOJ1 journal ID, native header-frame hash and an
+initial native prefix checkpoint. A new bank requires that the **entire
+existing native journal has no earlier confirmation intent**. Creating a new
+bank beside a native journal containing previous confirmations is refused.
+This prevents a bank-only reset from silently giving the same retained native
+history with previous confirmation intents a new budget. A bank containing
+only starts that never entered native confirmation is not covered by that
+particular refusal condition. Restoring or deleting histories remains a
+separate trusted-history problem.
+
+## 3. Durable state machine
+
+| Event | Required meaning |
+| --- | --- |
+| `header` | One bank identity, fixed denominator/capacity/scope and exact native-journal origin; all probability qualifications false. |
+| `lease_open` | A higher bank epoch and higher native-owner epoch, an actual `open_observed` native checkpoint, unchanged total expenditure and the full prior pending-start set. |
+| `start` | Fixed claim and allowance, exact native prefix, expected next native intent, and increased cumulative expenditure. It is durable before dispatch. |
+| `outcome` | Only the current start in the same epoch may be completed; exact native result/prefix is bound and expenditure stays unchanged. |
+| `lease_end` | The original native owner has actually written its `lease_end`; the bank preserves cumulative expenditure and all older unresolved starts. |
+
+`start_confirmation` returns an exclusive `PendingRiskConfirmation` handle
+**after** the start is synced. `execute` performs the actual original native
+confirmation and returns `PendingRiskOutcome`. Only `finish` on the latter
+persists the bank's outcome. The ordinary `confirmation` method performs all
+three steps in order.
+
+Dropping either handle blocks that wrapper lease. A process exit at either
+cut leaves the start spent and pending. Reopening preserves its charge and
+identity and permits a new lease's operations; it never automatically invokes
+the old request, infers a bank outcome from native state, or authorizes a new
+epoch to finish an old registration. A later native terminal can be reported
+as actual native evidence while the corresponding risk-bank outcome remains
+absent.
+
+A rejected scope or allowance is checked before publication, has no native
+effect and is not a registered start. An I/O or capacity failure during
+publication stops the lease. Written bytes or uncertain durability are not
+interpreted as a refund. No native confirmation is dispatched unless the
+registration append and sync returned successfully.
+
+If native preparation or terminal persistence fails after registration, the
+bank may retain the actual wrapper error with the incomplete native prefix.
+This does not fabricate a native terminal or clear the native owner's stop
+condition. The original PNOJ1 unresolved intent remains available on recovery.
+
+## 4. Independent exhaustive reconciliation
+
+The Python reader accepts raw bank/native directories and optional expected
+prefix pins. It rechecks the complete PNOJ1 binary journal and every retained
+packet through the existing independent reader. It then parses **all** PNRL1
+frames, rejecting duplicate fields, bad types, wrong hashes, cumulative
+arithmetic errors, changed scope, broken epochs and all unsupported events.
+The bank-file digest is computed from the exact byte buffer that was parsed,
+and a final bounded reread must match it. A legal append between parsing and
+a separately opened hash read cannot silently bind an old parsed checkpoint
+to a newer file digest; the negative suite switches between two actual run
+prefixes at precisely this cut.
+
+For every start, its expected native index is precisely the prefix sequence
+plus one. Its prefix must leave the same native owner epoch ready: it ends in
+`open_observed`, or in a `terminal` whose result does not require owner stop.
+An `open_intent`, unfinished `intent` or `prepared`, `lease_end`, another owner
+epoch, or a stopping terminal cannot precede a new start even when no following
+native confirmation intent exists. Both the Rust recovery verifier and the
+independent reader enforce this recorded-state requirement. The negative suite
+retains a coherent bank rewrite that appends a pending charge after an actual
+native lease end; the full native-intent census alone would not reject it.
+This checks the supplied trace's source consistency, not physical readiness.
+
+If native dispatch occurred there, the native intent must have the
+same owner epoch, transaction, included block and validation-time argument.
+A complete outcome must match the actual native confirmation terminal at the
+expected three-frame boundary. A pre-dispatch interruption may instead be
+followed by a later native `open_intent`; this does not count as a native call.
+
+Finally the reader enumerates **every confirmation intent in the entire actual
+PNOJ1 file** and requires exact equality with the set covered by bank starts.
+It does not accept a caller-supplied claims subset. This also detects an
+ordinary `JournaledNativeOwner` confirmation executed outside the bank after
+a bank lease ended, if that call is present in the supplied native journal.
+A coherent bank rewrite that omits one completed start and adjusts all later
+cumulative totals still fails this full native-intent comparison.
+
+These conclusions are relative to the full supplied journals and the trusted
+source/owner boundary. They do not enumerate calls executed on another native
+journal, another machine, an erased history, an unrecorded ordinary `Node`, or
+any global confirmation population. The report keeps
+`world_confirmation_attempts_covered = false`.
+
+## 5. Checkpoints and the exact chronology boundary
+
+A bank checkpoint is `{bank_id, sequence, record_hash}`. Every native prefix
+pin is also rechecked against raw PNOJ1 bytes. A saved newer bank checkpoint
+rejects an old bank snapshot. An old bank paired with a newer native journal
+that contains additional confirmation intents fails exhaustive confirmation
+coverage.
+
+The pre-dispatch cut has a stricter limit: a durable start can exist while the
+native confirmation-intent set is unchanged. Rolling back only the bank to
+before that start can then pass unpinned consistency even if the current native
+journal is supplied. A new bank can likewise be created if that journal has
+never had any confirmation intent. The counterexample test uses exact actual
+child-31 prefixes: the real charged bank has expenditure 15, its preceding bank
+has expenditure 10, and both cover the same four native confirmation intents.
+The independently retained child-31 bank checkpoint rejects the older bank.
+Exhaustive native-call enumeration does not replace that external history pin.
+
+If both old files are restored together and no later independently retained
+pin is supplied, a self-consistent old pair can pass historical consistency.
+The reader explicitly keeps `latest_checkpoint_authenticated = false` and
+`trusted_history_anchor = false`. A supplied matching checkpoint proves only
+that supplied-prefix expectation; it does not prove who retained it, that it
+is newest, or that an external observer witnessed the physical host.
+
+There is a second necessary distinction. The wrapper source fsyncs a start
+before invoking native confirmation. A bank start also references a real
+native prefix and an exact next native intent. Nevertheless, an attacker who
+can rewrite the bank and recompute its entire hash chain can coherently change
+allowances after the fact while preserving those native links. The unchanged
+independently retained bank checkpoint rejects that rewrite; self-hashing
+alone cannot establish physical pre-registration. The negative suite contains
+this exact coherently rewritten allowance counterexample. Therefore
+`physical_pre_registration_independently_attested` remains false, including
+when all byte-level and arithmetic checks pass.
+
+## 6. What a future common probability statement would additionally require
+
+Let `I_i` indicate that registration `i` occurs and let `tau_i` be its stopping
+time in one complete coalition filtration. If a separately proved result gives
+
+\[
+\Pr(F_i\mid\mathcal F_{\tau_i})\le a_i/D
+\]
+
+at every reachable registered start, and all failures of interest are in the
+registered union, a predictable bank with the **pathwise** bound
+
+\[
+\sum_i I_i a_i\le B
+\]
+
+gives, without independence between attempts,
+
+\[
+\Pr\!\left(\bigcup_i\{I_i=1,F_i\}\right)
+\le \mathbb E\!\left[\sum_i I_i a_i/D\right]\le B/D.
+\]
+
+PNRL1 checks one observed local bank's integer accounting and source-mediated
+registration protocol. It does not prove the conditional inequalities, the
+complete filtration or stopping-time hypotheses, world coverage, the joint
+initial state, physical-time/envelope assumptions, hidden inventory or the
+relation/resource reduction. Its unchanged common-scope digest supplies none
+of those missing premises. The numerical spent fraction in an example is
+**declared expenditure only** and must not be reported as a measured or proved
+native failure probability.
+
+## 7. Real execution scenario and checks
+
+The example
+[`native_risk_ledger_v1.rs`](../../trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs)
+uses the actual native producer, packet admission, activation and transaction
+confirmation. Its
+[scenario](../../trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs)
+contains eight registrations with allowances `1,2,...,8`, a common denominator
+1,000 and capacity 40:
+
+1. A real transaction at A1 is queried before it has enough descendants and is
+   unconfirmed; charge 1 remains.
+2. After real A1...A7 production, the transaction is confirmed; charge 2 remains.
+3. The same confirmed statement is queried again; it incurs charge 3.
+4. The native membership check rejects a different transaction; charge 4 remains.
+5. A genuine child exits with status 31 after registration 5 is synced and
+   before native dispatch. The next lease retains that pending charge.
+6. A new actual confirmation incurs charge 6.
+7. A second genuine child executes a successful native confirmation and exits
+   with status 32 before its bank outcome. Registration 7 remains pending.
+8. Another actual confirmation incurs charge 8. An additional charge 5 would
+   exceed the remaining capacity 4 and is refused before a native call.
+
+The expected diagnostic totals are eight starts, seven native confirmation
+intents, six recorded bank outcomes, two retained pending starts and expenditure
+36. These are scenario expectations until a specific run is retained and
+checked. A separate actual native owner supplies the cross-owner negative
+control, and the old bank/native pair is retained for checkpoint controls.
+
+The
+[Rust integration target](../../trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs)
+also exercises Legacy and AuthenticatedV1 owners, immutable budgets/scopes,
+uncounted bypass calls, forbidden bank resets, native-preparation capacity
+failure, bank-storage failure, exclusive locks and torn-tail refusal. The
+ignored child helper is actually executed twice by the parent process-cut test.
+
+The [Python tests](test_native_risk_ledger.py) require the **actual** example's
+`run.json`; a missing `NATIVE_RISK_LEDGER_RUN` is a failure, not a skip or a
+synthetic substitute. Mutations occur only in private copies.
+
+```sh
+cargo test --locked --offline --manifest-path trillionnium/Cargo.toml \
+  -p trnm-pon-node --test native_risk_ledger -- --test-threads=1
+
+cargo run --locked --offline --manifest-path trillionnium/Cargo.toml \
+  -p trnm-pon-node --example native_risk_ledger_v1 -- NEW_OUTPUT_DIRECTORY
+
+NATIVE_RISK_LEDGER_RUN=NEW_OUTPUT_DIRECTORY/run.json \
+  PYTHONPATH=formal/pon-nakamoto-v1 \
+  python -m unittest discover -s formal/pon-nakamoto-v1 \
+    -p test_native_risk_ledger.py -v
+
+python formal/pon-nakamoto-v1/native_risk_ledger.py \
+  --run NEW_OUTPUT_DIRECTORY/run.json --output NEW_CHECK_JSON
+```
+
+Use the existing qualified Cargo graph, lockfile and native-host toolchain for
+these commands. Real process records, failures, source hashes and file hashes
+belong in the run's evidence manifest; simulated journal bytes are not actual
+native invocation evidence.

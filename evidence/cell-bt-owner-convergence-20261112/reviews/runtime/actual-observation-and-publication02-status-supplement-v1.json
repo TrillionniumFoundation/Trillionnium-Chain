@@ -1,0 +1,58 @@
+{
+  "desktop_publication02": {
+    "actual_source_stdout": {
+      "bytes": 423,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/publication-stage/evidence/cell-bt-owner-convergence-20261112/publication/publication02-source-01/full-physical-source.stdout",
+      "sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902"
+    },
+    "actual_source_stdout_binary_receipt": {
+      "bytes": 1154,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/publication-stage/evidence/cell-bt-owner-convergence-20261112/publication/publication02-source-01/full-physical-source.read-receipt.json",
+      "sha256": "e516009ae96a0e8db7696cb014063edf43b1db617a2a4cb83b94693b2bb8d203"
+    },
+    "authoritative_original_status": {
+      "bytes": 910,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/publication-stage/evidence/cell-bt-owner-convergence-20261112/publication/publication02-source-01/authoritative-status-original-sdk.json",
+      "sha256": "60c1a12eb5d121dc2d4a109d185c96b6a763137220b6fb778444c8367c744d17"
+    },
+    "equals_actual_summary_full_physical_source": true,
+    "exit_code": 0,
+    "job_id": "1a1cf58e486-2564-19f9",
+    "output_complete_durable_untruncated": true,
+    "source_stdout_original_bytes_verified": true,
+    "state": "succeeded",
+    "timed_out": false,
+    "tracked_bytes": 2552660560,
+    "tracked_entries": 27686
+  },
+  "findings": [],
+  "original_model_observation": {
+    "actual_binary_original_bytes_reassembled": true,
+    "actual_file": {
+      "bytes": 3490,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-observation-actual-readback/observation.json",
+      "sha256": "f90651535d987073260a69c14aaa66e5a05de98b1c8f53c7ea9e61507c7fae50"
+    },
+    "binary_response": {
+      "bytes": 5155,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-observation-actual-readback/read.response.json",
+      "sha256": "0a42a429026ea56d784768dbb9505faef147d973d27752d520e1eb834555be5e"
+    },
+    "equals_staged_file": true,
+    "matching_previously_derived_bytes_is_not_the_basis_of_original_recovery": true,
+    "remote_path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/real-native-env2-bf34a669dc4b3617-attempt01-wrapper/observation.json",
+    "semantically_equals_original_controller_final_json": true,
+    "version": "66306:48807039:3490:1794479464546087584:1794479464546087584"
+  },
+  "reviewed_at_utc": "2026-11-12T10:55:30.061135+00:00",
+  "reviewer": "release_acceptance",
+  "schema": "release_acceptance_actual_original_readback_supplement_v1",
+  "supersedes_only_pending_observation_scope": [
+    "desktop-publication02-source-result-review-v1.json previously had not independently observed the authoritative h terminal result; this supplement now verifies succeeded/exit0.",
+    "publication-documents-fact-review-v1.json previously had not seen the model/observation.json original file; actual binary readback is now verified."
+  ],
+  "unchanged_limits": [
+    "The old 104-hidden-entry arrays and all 37 desktop command streams have not all been locally rehashed in this supplement.",
+    "No h process or mutation was invoked by this review; no commit/push/PR edit is inferred from source preparation success."
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "backend_exported": true,
+  "build_directory": "/workspace/scratch/d95a703b8dd6/provider-setup/trnm-pq-provider-3.5.9.7m2iI6kX",
+  "cli_executable": "/workspace/scratch/d95a703b8dd6/provider-setup/trnm-pq-provider-3.5.9.7m2iI6kX/install/bin/openssl",
+  "cli_sha256": "30a18598d7965ba90a391ebf6619a2dca44b132d5ca0000af81426071bf19e90",
+  "cli_version_output": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+  "elapsed_wall_seconds": 124,
+  "exit_code": 0,
+  "github_actions_reported": false,
+  "independent_cryptographic_implementation_claim": false,
+  "install_prefix": "/workspace/scratch/d95a703b8dd6/provider-setup/trnm-pq-provider-3.5.9.7m2iI6kX/install",
+  "last_stage": "complete",
+  "ml_dsa_65_sign_verify_and_wrong_message_rejection": true,
+  "native_backend_inputs": [
+    {
+      "bytes": 8839432,
+      "path": "/workspace/scratch/d95a703b8dd6/provider-setup/trnm-pq-provider-3.5.9.7m2iI6kX/install/bin/openssl",
+      "sha256": "30a18598d7965ba90a391ebf6619a2dca44b132d5ca0000af81426071bf19e90"
+    },
+    {
+      "bytes": 3449,
+      "path": "/workspace/scratch/d95a703b8dd6/provider-setup/trnm-pq-provider-3.5.9.7m2iI6kX/install/include/openssl/opensslv.h",
+      "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+    },
+    {
+      "bytes": 4729,
+      "path": "/workspace/scratch/d95a703b8dd6/provider-setup/trnm-pq-provider-3.5.9.7m2iI6kX/install/include/openssl/configuration.h",
+      "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+    },
+    {
+      "bytes": 12103480,
+      "path": "/workspace/scratch/d95a703b8dd6/provider-setup/trnm-pq-provider-3.5.9.7m2iI6kX/install/lib/libcrypto.a",
+      "sha256": "fcb9b03f442dec255db00c9af2fc97f7c41c5e1d06eaf8cc2a5b5985e67620bb"
+    },
+    {
+      "bytes": 2073650,
+      "path": "/workspace/scratch/d95a703b8dd6/provider-setup/trnm-pq-provider-3.5.9.7m2iI6kX/install/lib/libssl.a",
+      "sha256": "ce766975e2748030cdcab09302cae4a2e774130dff9376e42e1bef4f9918a490"
+    }
+  ],
+  "native_rust_pq_tests_run_by_preparation": false,
+  "openssl_conf": "/dev/null",
+  "openssl_modules": "/workspace/scratch/d95a703b8dd6/provider-setup/trnm-pq-provider-3.5.9.7m2iI6kX/install/lib/ossl-modules",
+  "preparation_script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+  "production_activation": false,
+  "result": "PREPARED_AND_SMOKE_VERIFIED",
+  "runner_environment_reported": null,
+  "schema": "trnm-ci-pq-provider-v3",
+  "source_archive_sha256_expected": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+  "source_digest_verified": true,
+  "source_transport": "download",
+  "source_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+  "static_build": true,
+  "upstream_full_tests_run": false,
+  "version": "3.5.9",
+  "whole_chain_quantum_security_qualified": false
+}

@@ -1,0 +1,2004 @@
+{
+  "all_requested_lanes_present": true,
+  "capture_count": 12,
+  "cross_host_legal_search_fingerprints_match": true,
+  "false_trace_lanes": [
+    {
+      "actual_inclusive_attacker_cohort_cpu_ns": 4621205,
+      "actual_receiver_cpu_ns": {
+        "column-limb-experimental": 110855545,
+        "limb": 98012243,
+        "production": 95873856,
+        "reference": 121763740
+      },
+      "all_attempts": 573,
+      "architecture": "x64",
+      "artifact_id": 13079739170,
+      "complete_record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1152
+      },
+      "exhausted_searches": 0,
+      "mode": "original",
+      "per_material_receiver_over_attacker_range": {
+        "column-limb-experimental": {
+          "maximum": 33.15005081546726,
+          "minimum": 19.15465190685367
+        },
+        "limb": {
+          "maximum": 29.301131185622072,
+          "minimum": 16.923061228905905
+        },
+        "production": {
+          "maximum": 28.70652051170369,
+          "minimum": 16.463665140606693
+        },
+        "reference": {
+          "maximum": 36.48576091457087,
+          "minimum": 20.99510341864225
+        }
+      },
+      "receiver_over_complete_attacker_cpu": {
+        "column-limb-experimental": 23.98844998220161,
+        "limb": 21.209239365057382,
+        "production": 20.74650572740227,
+        "reference": 26.34891548849272
+      },
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 9V74 80-Core Processor"
+        ]
+      },
+      "semantic_alerts": [],
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    },
+    {
+      "actual_inclusive_attacker_cohort_cpu_ns": 5395678,
+      "actual_receiver_cpu_ns": {
+        "column-limb-experimental": 111192239,
+        "full-limb-experimental": 95571025,
+        "limb": 97930064,
+        "production": 96021685,
+        "reference": 121832423
+      },
+      "all_attempts": 573,
+      "architecture": "x64",
+      "artifact_id": 13079739170,
+      "comparison": {
+        "cpu_cohort_distributions_against_old_limb": {
+          "full-limb-experimental": {
+            "candidate_faster": 69,
+            "candidate_slower": 3,
+            "count": 72,
+            "maximum_candidate_over_limb": 1.0086810622604787,
+            "minimum_candidate_over_limb": 0.9406169438550863,
+            "ties": 0
+          },
+          "production": {
+            "candidate_faster": 67,
+            "candidate_slower": 5,
+            "count": 72,
+            "maximum_candidate_over_limb": 1.0194496133937798,
+            "minimum_candidate_over_limb": 0.9519831878842749,
+            "ties": 0
+          }
+        },
+        "default_over_old_limb": {
+          "baseline_cpu_ns": 97930064,
+          "candidate_cpu_ns": 96021685,
+          "candidate_over_baseline": 0.9805128382229996,
+          "candidate_saved_fraction": 0.019487161777000384
+        },
+        "explicit_full_over_old_limb": {
+          "baseline_cpu_ns": 97930064,
+          "candidate_cpu_ns": 95571025,
+          "candidate_over_baseline": 0.9759109827601052,
+          "candidate_saved_fraction": 0.02408901723989476
+        },
+        "same_kernel_explicit_full_over_default_cpu": 0.9953066851513801
+      },
+      "complete_record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1440
+      },
+      "exhausted_searches": 0,
+      "mode": "full-limb",
+      "per_material_receiver_over_attacker_range": {
+        "column-limb-experimental": {
+          "maximum": 27.69998247994178,
+          "minimum": 19.077536385833003
+        },
+        "full-limb-experimental": {
+          "maximum": 23.760532250384095,
+          "minimum": 16.389073627622135
+        },
+        "limb": {
+          "maximum": 24.273551001338713,
+          "minimum": 16.776986480203707
+        },
+        "production": {
+          "maximum": 23.89611503939767,
+          "minimum": 16.44716934075983
+        },
+        "reference": {
+          "maximum": 30.581764764018292,
+          "minimum": 20.772911451646177
+        }
+      },
+      "receiver_over_complete_attacker_cpu": {
+        "column-limb-experimental": 20.607649122130713,
+        "full-limb-experimental": 17.712514534781356,
+        "limb": 18.149723537987256,
+        "production": 17.796036939194668,
+        "reference": 22.579631883147957
+      },
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 9V74 80-Core Processor"
+        ]
+      },
+      "semantic_alerts": [],
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    },
+    {
+      "actual_inclusive_attacker_cohort_cpu_ns": 8897312,
+      "actual_receiver_cpu_ns": {
+        "column-limb-experimental": 205181120,
+        "limb": 204083712,
+        "production": 198013680,
+        "reference": 296028456
+      },
+      "all_attempts": 573,
+      "architecture": "arm64",
+      "artifact_id": 13080333217,
+      "complete_record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1152
+      },
+      "exhausted_searches": 0,
+      "mode": "original",
+      "per_material_receiver_over_attacker_range": {
+        "column-limb-experimental": {
+          "maximum": 25.40997081581836,
+          "minimum": 21.41316113900833
+        },
+        "limb": {
+          "maximum": 25.28422001481521,
+          "minimum": 21.304123943831375
+        },
+        "production": {
+          "maximum": 24.52250394923559,
+          "minimum": 20.632084974591816
+        },
+        "reference": {
+          "maximum": 36.674636536453455,
+          "minimum": 30.914672099106955
+        }
+      },
+      "receiver_over_complete_attacker_cpu": {
+        "column-limb-experimental": 23.06102337425056,
+        "limb": 22.937681852676405,
+        "production": 22.25544973583033,
+        "reference": 33.27167306260588
+      },
+      "reported_cpu_fields": {
+        "CPU architecture": [
+          "8"
+        ],
+        "CPU implementer": [
+          "0x41"
+        ],
+        "CPU part": [
+          "0xd49"
+        ],
+        "model name": []
+      },
+      "semantic_alerts": [],
+      "source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "actual_inclusive_attacker_cohort_cpu_ns": 9414088,
+      "actual_receiver_cpu_ns": {
+        "column-limb-experimental": 205043568,
+        "full-limb-experimental": 197793888,
+        "limb": 203907168,
+        "production": 197720392,
+        "reference": 295842704
+      },
+      "all_attempts": 573,
+      "architecture": "arm64",
+      "artifact_id": 13080333217,
+      "comparison": {
+        "cpu_cohort_distributions_against_old_limb": {
+          "full-limb-experimental": {
+            "candidate_faster": 72,
+            "candidate_slower": 0,
+            "count": 72,
+            "maximum_candidate_over_limb": 0.9782843811756445,
+            "minimum_candidate_over_limb": 0.9539813900210006,
+            "ties": 0
+          },
+          "production": {
+            "candidate_faster": 72,
+            "candidate_slower": 0,
+            "count": 72,
+            "maximum_candidate_over_limb": 0.9804541843706976,
+            "minimum_candidate_over_limb": 0.9551822123352673,
+            "ties": 0
+          }
+        },
+        "default_over_old_limb": {
+          "baseline_cpu_ns": 203907168,
+          "candidate_cpu_ns": 197720392,
+          "candidate_over_baseline": 0.9696588596630404,
+          "candidate_saved_fraction": 0.03034114033695956
+        },
+        "explicit_full_over_old_limb": {
+          "baseline_cpu_ns": 203907168,
+          "candidate_cpu_ns": 197793888,
+          "candidate_over_baseline": 0.970019298193578,
+          "candidate_saved_fraction": 0.029980701806421983
+        },
+        "same_kernel_explicit_full_over_default_cpu": 1.0003717168434503
+      },
+      "complete_record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1440
+      },
+      "exhausted_searches": 0,
+      "mode": "full-limb",
+      "per_material_receiver_over_attacker_range": {
+        "column-limb-experimental": {
+          "maximum": 24.17261495934132,
+          "minimum": 21.15117488043252
+        },
+        "full-limb-experimental": {
+          "maximum": 23.30143386499114,
+          "minimum": 20.430368654011822
+        },
+        "limb": {
+          "maximum": 24.025760389373627,
+          "minimum": 21.0304340076642
+        },
+        "production": {
+          "maximum": 23.33946393291106,
+          "minimum": 20.39157977601521
+        },
+        "reference": {
+          "maximum": 34.84422511086804,
+          "minimum": 30.531080117636574
+        }
+      },
+      "receiver_over_complete_attacker_cpu": {
+        "column-limb-experimental": 21.7805025829374,
+        "full-limb-experimental": 21.01041417925985,
+        "limb": 21.65978988086791,
+        "production": 21.002607156423437,
+        "reference": 31.425529907942224
+      },
+      "reported_cpu_fields": {
+        "CPU architecture": [
+          "8"
+        ],
+        "CPU implementer": [
+          "0x41"
+        ],
+        "CPU part": [
+          "0xd49"
+        ],
+        "model name": []
+      },
+      "semantic_alerts": [],
+      "source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "actual_inclusive_attacker_cohort_cpu_ns": 9022512,
+      "actual_receiver_cpu_ns": {
+        "column-limb-experimental": 205312360,
+        "limb": 204087104,
+        "production": 197808424,
+        "reference": 295941816
+      },
+      "all_attempts": 573,
+      "architecture": "arm64",
+      "artifact_id": 13080377955,
+      "complete_record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1152
+      },
+      "exhausted_searches": 0,
+      "mode": "original",
+      "per_material_receiver_over_attacker_range": {
+        "column-limb-experimental": {
+          "maximum": 25.496579293322245,
+          "minimum": 20.558143732896248
+        },
+        "limb": {
+          "maximum": 25.3397901966571,
+          "minimum": 20.468637404056523
+        },
+        "production": {
+          "maximum": 24.546418766041548,
+          "minimum": 19.836006151935475
+        },
+        "reference": {
+          "maximum": 36.75997817902145,
+          "minimum": 29.659896168037374
+        }
+      },
+      "receiver_over_complete_attacker_cpu": {
+        "column-limb-experimental": 22.755565190714073,
+        "limb": 22.61976531591202,
+        "production": 21.92387485879764,
+        "reference": 32.800379317866245
+      },
+      "reported_cpu_fields": {
+        "CPU architecture": [
+          "8"
+        ],
+        "CPU implementer": [
+          "0x41"
+        ],
+        "CPU part": [
+          "0xd49"
+        ],
+        "model name": []
+      },
+      "semantic_alerts": [],
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    },
+    {
+      "actual_inclusive_attacker_cohort_cpu_ns": 9618088,
+      "actual_receiver_cpu_ns": {
+        "column-limb-experimental": 205082592,
+        "full-limb-experimental": 197745424,
+        "limb": 204139032,
+        "production": 197960160,
+        "reference": 295988952
+      },
+      "all_attempts": 573,
+      "architecture": "arm64",
+      "artifact_id": 13080377955,
+      "comparison": {
+        "cpu_cohort_distributions_against_old_limb": {
+          "full-limb-experimental": {
+            "candidate_faster": 72,
+            "candidate_slower": 0,
+            "count": 72,
+            "maximum_candidate_over_limb": 0.9766191533720087,
+            "minimum_candidate_over_limb": 0.9444767394034451,
+            "ties": 0
+          },
+          "production": {
+            "candidate_faster": 72,
+            "candidate_slower": 0,
+            "count": 72,
+            "maximum_candidate_over_limb": 0.9920251335923365,
+            "minimum_candidate_over_limb": 0.9410053359803013,
+            "ties": 0
+          }
+        },
+        "default_over_old_limb": {
+          "baseline_cpu_ns": 204139032,
+          "candidate_cpu_ns": 197960160,
+          "candidate_over_baseline": 0.9697320402694963,
+          "candidate_saved_fraction": 0.03026795973050367
+        },
+        "explicit_full_over_old_limb": {
+          "baseline_cpu_ns": 204139032,
+          "candidate_cpu_ns": 197745424,
+          "candidate_over_baseline": 0.9686801297264895,
+          "candidate_saved_fraction": 0.031319870273510464
+        },
+        "same_kernel_explicit_full_over_default_cpu": 0.9989152564839309
+      },
+      "complete_record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1440
+      },
+      "exhausted_searches": 0,
+      "mode": "full-limb",
+      "per_material_receiver_over_attacker_range": {
+        "column-limb-experimental": {
+          "maximum": 24.023326614773524,
+          "minimum": 20.650046060887416
+        },
+        "full-limb-experimental": {
+          "maximum": 23.17387014345109,
+          "minimum": 19.929501454363454
+        },
+        "limb": {
+          "maximum": 23.896632567867293,
+          "minimum": 20.55641551998027
+        },
+        "production": {
+          "maximum": 23.16811860647512,
+          "minimum": 19.924532681469017
+        },
+        "reference": {
+          "maximum": 34.66858665677155,
+          "minimum": 29.79766576479207
+        }
+      },
+      "receiver_over_complete_attacker_cpu": {
+        "column-limb-experimental": 21.32259467786113,
+        "full-limb-experimental": 20.559743682944053,
+        "limb": 21.2244920196197,
+        "production": 20.582069949869453,
+        "reference": 30.774198780464474
+      },
+      "reported_cpu_fields": {
+        "CPU architecture": [
+          "8"
+        ],
+        "CPU implementer": [
+          "0x41"
+        ],
+        "CPU part": [
+          "0xd49"
+        ],
+        "model name": []
+      },
+      "semantic_alerts": [],
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    },
+    {
+      "actual_inclusive_attacker_cohort_cpu_ns": 5087086,
+      "actual_receiver_cpu_ns": {
+        "column-limb-experimental": 133399856,
+        "limb": 116970237,
+        "production": 113884350,
+        "reference": 149800467
+      },
+      "all_attempts": 573,
+      "architecture": "x64",
+      "artifact_id": 13080552293,
+      "complete_record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1152
+      },
+      "exhausted_searches": 0,
+      "mode": "original",
+      "per_material_receiver_over_attacker_range": {
+        "column-limb-experimental": {
+          "maximum": 35.255514912035814,
+          "minimum": 21.278106160055327
+        },
+        "limb": {
+          "maximum": 31.040401726593984,
+          "minimum": 18.62490995647717
+        },
+        "production": {
+          "maximum": 30.248471095776335,
+          "minimum": 18.14883601223298
+        },
+        "reference": {
+          "maximum": 39.8055044483018,
+          "minimum": 23.803725087396835
+        }
+      },
+      "receiver_over_complete_attacker_cpu": {
+        "column-limb-experimental": 26.223235856441192,
+        "limb": 22.993563898860764,
+        "production": 22.38695197997439,
+        "reference": 29.447205531811335
+      },
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 7763 64-Core Processor"
+        ]
+      },
+      "semantic_alerts": [],
+      "source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "actual_inclusive_attacker_cohort_cpu_ns": 5761032,
+      "actual_receiver_cpu_ns": {
+        "column-limb-experimental": 133291703,
+        "full-limb-experimental": 114569502,
+        "limb": 117467705,
+        "production": 114431727,
+        "reference": 149459716
+      },
+      "all_attempts": 573,
+      "architecture": "x64",
+      "artifact_id": 13080552293,
+      "comparison": {
+        "cpu_cohort_distributions_against_old_limb": {
+          "full-limb-experimental": {
+            "candidate_faster": 69,
+            "candidate_slower": 3,
+            "count": 72,
+            "maximum_candidate_over_limb": 1.014744536371669,
+            "minimum_candidate_over_limb": 0.9567169547855805,
+            "ties": 0
+          },
+          "production": {
+            "candidate_faster": 72,
+            "candidate_slower": 0,
+            "count": 72,
+            "maximum_candidate_over_limb": 0.9947297106842351,
+            "minimum_candidate_over_limb": 0.9515877458881111,
+            "ties": 0
+          }
+        },
+        "default_over_old_limb": {
+          "baseline_cpu_ns": 117467705,
+          "candidate_cpu_ns": 114431727,
+          "candidate_over_baseline": 0.974154785777078,
+          "candidate_saved_fraction": 0.025845214222921964
+        },
+        "explicit_full_over_old_limb": {
+          "baseline_cpu_ns": 117467705,
+          "candidate_cpu_ns": 114569502,
+          "candidate_over_baseline": 0.9753276613346622,
+          "candidate_saved_fraction": 0.0246723386653378
+        },
+        "same_kernel_explicit_full_over_default_cpu": 1.0012039930149792
+      },
+      "complete_record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1440
+      },
+      "exhausted_searches": 0,
+      "mode": "full-limb",
+      "per_material_receiver_over_attacker_range": {
+        "column-limb-experimental": {
+          "maximum": 30.781267538341815,
+          "minimum": 21.754285297549593
+        },
+        "full-limb-experimental": {
+          "maximum": 26.558020225033225,
+          "minimum": 18.636340431738624
+        },
+        "limb": {
+          "maximum": 27.267694817726426,
+          "minimum": 19.109934364060678
+        },
+        "production": {
+          "maximum": 26.588793821079182,
+          "minimum": 18.605936406067677
+        },
+        "reference": {
+          "maximum": 34.52659151650195,
+          "minimum": 24.308449533255544
+        }
+      },
+      "receiver_over_complete_attacker_cpu": {
+        "column-limb-experimental": 23.136775320810578,
+        "full-limb-experimental": 19.886975458563676,
+        "limb": 20.390045568224583,
+        "production": 19.863060472498677,
+        "reference": 25.943219201004265
+      },
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 7763 64-Core Processor"
+        ]
+      },
+      "semantic_alerts": [],
+      "source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+      "source_kind": "prospective-merge"
+    }
+  ],
+  "inputs": {
+    "performance-report.json": "04373cb78d08202e30ff81671a24b66c4761d25c4be806d96fcedbfa1158c2e0",
+    "provenance-report.json": "4ff884577b1b51f0dd70af87707ea451e6ca202de549417aded091ae2b52f724",
+    "reader-source/SOURCE.json": "e99c688ad2fbdd75be40de0930ee0b437501d7b45c6e825ae5b9f83690a03887",
+    "source-binding/DEFAULT_KERNEL.json": "3448c8d69300683391c9537f35558c5b5b20297081e7042e7928fc809d93d83b"
+  },
+  "legal_lanes": [
+    {
+      "architecture": "arm64",
+      "artifact_id": 13080572291,
+      "cases": {
+        "legal": {
+          "cpu_cohort_distributions_against_old_limb": {
+            "full-limb-experimental": {
+              "candidate_faster": 120,
+              "candidate_slower": 0,
+              "count": 120,
+              "maximum_candidate_over_limb": 0.9610196376363961,
+              "minimum_candidate_over_limb": 0.9151429910923582,
+              "ties": 0
+            },
+            "production": {
+              "candidate_faster": 120,
+              "candidate_slower": 0,
+              "count": 120,
+              "maximum_candidate_over_limb": 0.9770405435617291,
+              "minimum_candidate_over_limb": 0.9132676980778247,
+              "ties": 0
+            }
+          },
+          "default_over_old_limb": {
+            "baseline_cpu_ns": 2398019352,
+            "candidate_cpu_ns": 2282082640,
+            "candidate_over_baseline": 0.9516531374514112,
+            "candidate_saved_fraction": 0.048346862548588776
+          },
+          "explicit_full_over_old_limb": {
+            "baseline_cpu_ns": 2398019352,
+            "candidate_cpu_ns": 2282686512,
+            "candidate_over_baseline": 0.9519049586051881,
+            "candidate_saved_fraction": 0.04809504139481191
+          },
+          "same_kernel_explicit_full_over_default_cpu": 1.000264614431316,
+          "sums_ns": {
+            "full-limb-experimental": {
+              "cpu_ns": 2282686512,
+              "wall_ns": 2282637446
+            },
+            "limb": {
+              "cpu_ns": 2398019352,
+              "wall_ns": 2397972641
+            },
+            "production": {
+              "cpu_ns": 2282082640,
+              "wall_ns": 2282042922
+            },
+            "reference": {
+              "cpu_ns": 3514339992,
+              "wall_ns": 3514420325
+            }
+          }
+        },
+        "product-last": {
+          "cpu_cohort_distributions_against_old_limb": {
+            "full-limb-experimental": {
+              "candidate_faster": 120,
+              "candidate_slower": 0,
+              "count": 120,
+              "maximum_candidate_over_limb": 0.9609815711003569,
+              "minimum_candidate_over_limb": 0.9066336052430979,
+              "ties": 0
+            },
+            "production": {
+              "candidate_faster": 120,
+              "candidate_slower": 0,
+              "count": 120,
+              "maximum_candidate_over_limb": 0.960857919330557,
+              "minimum_candidate_over_limb": 0.8680901770772183,
+              "ties": 0
+            }
+          },
+          "default_over_old_limb": {
+            "baseline_cpu_ns": 2393008600,
+            "candidate_cpu_ns": 2278933200,
+            "candidate_over_baseline": 0.9523297158230021,
+            "candidate_saved_fraction": 0.047670284176997924
+          },
+          "explicit_full_over_old_limb": {
+            "baseline_cpu_ns": 2393008600,
+            "candidate_cpu_ns": 2278715760,
+            "candidate_over_baseline": 0.9522388511265693,
+            "candidate_saved_fraction": 0.04776114887343075
+          },
+          "same_kernel_explicit_full_over_default_cpu": 0.9999045869356767,
+          "sums_ns": {
+            "full-limb-experimental": {
+              "cpu_ns": 2278715760,
+              "wall_ns": 2278666479
+            },
+            "limb": {
+              "cpu_ns": 2393008600,
+              "wall_ns": 2392987551
+            },
+            "production": {
+              "cpu_ns": 2278933200,
+              "wall_ns": 2279011442
+            },
+            "reference": {
+              "cpu_ns": 3506212208,
+              "wall_ns": 3506291793
+            }
+          }
+        }
+      },
+      "complete_record_counts": {
+        "campaign": 30,
+        "candidate": 1460,
+        "cohort": 120,
+        "end": 30,
+        "material": 30,
+        "product_mutation": 2920,
+        "search": 2920,
+        "verifier": 23360
+      },
+      "complete_strategy_attempts": 50034,
+      "dispatcher": {
+        "class_cpu_ratios": {
+          "continuity-maintenance-v1": {
+            "dispatch_over_generic": 0.9783150929956047,
+            "generic_over_dispatch": 1.0221655652249992
+          },
+          "full-rank-field": {
+            "dispatch_over_generic": 1.0828116450576386,
+            "generic_over_dispatch": 0.923521652694056
+          },
+          "one-zero-left-rank-one": {
+            "dispatch_over_generic": 1.0098240936836094,
+            "generic_over_dispatch": 0.9902714802062473
+          },
+          "one-zero-right-rank-one": {
+            "dispatch_over_generic": 1.01065280877118,
+            "generic_over_dispatch": 0.9894594774004217
+          },
+          "zero": {
+            "dispatch_over_generic": 1.1166484051390415,
+            "generic_over_dispatch": 0.8955370333202448
+          }
+        },
+        "dispatch_over_generic_cpu": 1.0368677119784777,
+        "generic_over_dispatch": {
+          "cpu_ns": 0.9644431863847613,
+          "wall_ns": 0.9644008878934125
+        },
+        "inclusive_total_costs_ns": {
+          "frozen-public-dispatch-v1": {
+            "cpu_ns": 18390450592,
+            "wall_ns": 18393065845
+          },
+          "prepared-generic": {
+            "cpu_ns": 17736544768,
+            "wall_ns": 17738289032
+          }
+        },
+        "slower_aggregate_cpu": true,
+        "strategy": "frozen-public-dispatch-v1"
+      },
+      "exhausted_searches": 0,
+      "reported_cpu_fields": {
+        "CPU architecture": [
+          "8"
+        ],
+        "CPU implementer": [
+          "0x41"
+        ],
+        "CPU part": [
+          "0xd49"
+        ],
+        "model name": []
+      },
+      "semantic_alerts": [],
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    },
+    {
+      "architecture": "arm64",
+      "artifact_id": 13080726688,
+      "cases": {
+        "legal": {
+          "cpu_cohort_distributions_against_old_limb": {
+            "full-limb-experimental": {
+              "candidate_faster": 120,
+              "candidate_slower": 0,
+              "count": 120,
+              "maximum_candidate_over_limb": 0.9627203962716742,
+              "minimum_candidate_over_limb": 0.9194924833276817,
+              "ties": 0
+            },
+            "production": {
+              "candidate_faster": 120,
+              "candidate_slower": 0,
+              "count": 120,
+              "maximum_candidate_over_limb": 0.9843469785575049,
+              "minimum_candidate_over_limb": 0.9171564748879093,
+              "ties": 0
+            }
+          },
+          "default_over_old_limb": {
+            "baseline_cpu_ns": 2397683992,
+            "candidate_cpu_ns": 2281461144,
+            "candidate_over_baseline": 0.9515270367622324,
+            "candidate_saved_fraction": 0.04847296323776762
+          },
+          "explicit_full_over_old_limb": {
+            "baseline_cpu_ns": 2397683992,
+            "candidate_cpu_ns": 2282146096,
+            "candidate_over_baseline": 0.9518127091036608,
+            "candidate_saved_fraction": 0.04818729089633922
+          },
+          "same_kernel_explicit_full_over_default_cpu": 1.0003002251437862,
+          "sums_ns": {
+            "full-limb-experimental": {
+              "cpu_ns": 2282146096,
+              "wall_ns": 2281703651
+            },
+            "limb": {
+              "cpu_ns": 2397683992,
+              "wall_ns": 2397217192
+            },
+            "production": {
+              "cpu_ns": 2281461144,
+              "wall_ns": 2281040642
+            },
+            "reference": {
+              "cpu_ns": 3513439488,
+              "wall_ns": 3512956210
+            }
+          }
+        },
+        "product-last": {
+          "cpu_cohort_distributions_against_old_limb": {
+            "full-limb-experimental": {
+              "candidate_faster": 120,
+              "candidate_slower": 0,
+              "count": 120,
+              "maximum_candidate_over_limb": 0.9619264976687694,
+              "minimum_candidate_over_limb": 0.9299108632441966,
+              "ties": 0
+            },
+            "production": {
+              "candidate_faster": 120,
+              "candidate_slower": 0,
+              "count": 120,
+              "maximum_candidate_over_limb": 0.9626306153787983,
+              "minimum_candidate_over_limb": 0.9308832642165975,
+              "ties": 0
+            }
+          },
+          "default_over_old_limb": {
+            "baseline_cpu_ns": 2392963520,
+            "candidate_cpu_ns": 2278437568,
+            "candidate_over_baseline": 0.9521405357654595,
+            "candidate_saved_fraction": 0.04785946423454046
+          },
+          "explicit_full_over_old_limb": {
+            "baseline_cpu_ns": 2392963520,
+            "candidate_cpu_ns": 2278633864,
+            "candidate_over_baseline": 0.9522225662679554,
+            "candidate_saved_fraction": 0.04777743373204457
+          },
+          "same_kernel_explicit_full_over_default_cpu": 1.00008615377606,
+          "sums_ns": {
+            "full-limb-experimental": {
+              "cpu_ns": 2278633864,
+              "wall_ns": 2278264838
+            },
+            "limb": {
+              "cpu_ns": 2392963520,
+              "wall_ns": 2392568139
+            },
+            "production": {
+              "cpu_ns": 2278437568,
+              "wall_ns": 2278123374
+            },
+            "reference": {
+              "cpu_ns": 3506173448,
+              "wall_ns": 3505751864
+            }
+          }
+        }
+      },
+      "complete_record_counts": {
+        "campaign": 30,
+        "candidate": 1460,
+        "cohort": 120,
+        "end": 30,
+        "material": 30,
+        "product_mutation": 2920,
+        "search": 2920,
+        "verifier": 23360
+      },
+      "complete_strategy_attempts": 50034,
+      "dispatcher": {
+        "class_cpu_ratios": {
+          "continuity-maintenance-v1": {
+            "dispatch_over_generic": 0.9786191964432529,
+            "generic_over_dispatch": 1.021847929853057
+          },
+          "full-rank-field": {
+            "dispatch_over_generic": 1.0825254275927874,
+            "generic_over_dispatch": 0.9237658298925141
+          },
+          "one-zero-left-rank-one": {
+            "dispatch_over_generic": 1.0097783089854797,
+            "generic_over_dispatch": 0.9903163804386885
+          },
+          "one-zero-right-rank-one": {
+            "dispatch_over_generic": 1.0109606181810986,
+            "generic_over_dispatch": 0.9891582144902749
+          },
+          "zero": {
+            "dispatch_over_generic": 1.1168069616251852,
+            "generic_over_dispatch": 0.8954098911998123
+          }
+        },
+        "dispatch_over_generic_cpu": 1.0369643415786673,
+        "generic_over_dispatch": {
+          "cpu_ns": 0.9643533146738748,
+          "wall_ns": 0.9642778277958318
+        },
+        "inclusive_total_costs_ns": {
+          "frozen-public-dispatch-v1": {
+            "cpu_ns": 18389120952,
+            "wall_ns": 18389251114
+          },
+          "prepared-generic": {
+            "cpu_ns": 17733609744,
+            "wall_ns": 17732347119
+          }
+        },
+        "slower_aggregate_cpu": true,
+        "strategy": "frozen-public-dispatch-v1"
+      },
+      "exhausted_searches": 0,
+      "reported_cpu_fields": {
+        "CPU architecture": [
+          "8"
+        ],
+        "CPU implementer": [
+          "0x41"
+        ],
+        "CPU part": [
+          "0xd49"
+        ],
+        "model name": []
+      },
+      "semantic_alerts": [],
+      "source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "architecture": "x64",
+      "artifact_id": 13080975027,
+      "cases": {
+        "legal": {
+          "cpu_cohort_distributions_against_old_limb": {
+            "full-limb-experimental": {
+              "candidate_faster": 120,
+              "candidate_slower": 0,
+              "count": 120,
+              "maximum_candidate_over_limb": 0.9937999895068396,
+              "minimum_candidate_over_limb": 0.8440063743138759,
+              "ties": 0
+            },
+            "production": {
+              "candidate_faster": 120,
+              "candidate_slower": 0,
+              "count": 120,
+              "maximum_candidate_over_limb": 0.9909045422704984,
+              "minimum_candidate_over_limb": 0.8683414566123934,
+              "ties": 0
+            }
+          },
+          "default_over_old_limb": {
+            "baseline_cpu_ns": 1628956739,
+            "candidate_cpu_ns": 1524406552,
+            "candidate_over_baseline": 0.9358177019089026,
+            "candidate_saved_fraction": 0.06418229809109743
+          },
+          "explicit_full_over_old_limb": {
+            "baseline_cpu_ns": 1628956739,
+            "candidate_cpu_ns": 1524663974,
+            "candidate_over_baseline": 0.9359757306605796,
+            "candidate_saved_fraction": 0.0640242693394204
+          },
+          "same_kernel_explicit_full_over_default_cpu": 1.0001688670254416,
+          "sums_ns": {
+            "full-limb-experimental": {
+              "cpu_ns": 1524663974,
+              "wall_ns": 1524429490
+            },
+            "limb": {
+              "cpu_ns": 1628956739,
+              "wall_ns": 1628799439
+            },
+            "production": {
+              "cpu_ns": 1524406552,
+              "wall_ns": 1524260202
+            },
+            "reference": {
+              "cpu_ns": 2005844770,
+              "wall_ns": 2005626602
+            }
+          }
+        },
+        "product-last": {
+          "cpu_cohort_distributions_against_old_limb": {
+            "full-limb-experimental": {
+              "candidate_faster": 120,
+              "candidate_slower": 0,
+              "count": 120,
+              "maximum_candidate_over_limb": 0.9801360842844601,
+              "minimum_candidate_over_limb": 0.8819978556973982,
+              "ties": 0
+            },
+            "production": {
+              "candidate_faster": 120,
+              "candidate_slower": 0,
+              "count": 120,
+              "maximum_candidate_over_limb": 0.9792727538776704,
+              "minimum_candidate_over_limb": 0.86517462094642,
+              "ties": 0
+            }
+          },
+          "default_over_old_limb": {
+            "baseline_cpu_ns": 1625837107,
+            "candidate_cpu_ns": 1521566430,
+            "candidate_over_baseline": 0.9358664674640127,
+            "candidate_saved_fraction": 0.0641335325359873
+          },
+          "explicit_full_over_old_limb": {
+            "baseline_cpu_ns": 1625837107,
+            "candidate_cpu_ns": 1521242851,
+            "candidate_over_baseline": 0.9356674444508173,
+            "candidate_saved_fraction": 0.06433255554918271
+          },
+          "same_kernel_explicit_full_over_default_cpu": 0.9997873382366881,
+          "sums_ns": {
+            "full-limb-experimental": {
+              "cpu_ns": 1521242851,
+              "wall_ns": 1521057580
+            },
+            "limb": {
+              "cpu_ns": 1625837107,
+              "wall_ns": 1625671156
+            },
+            "production": {
+              "cpu_ns": 1521566430,
+              "wall_ns": 1521410691
+            },
+            "reference": {
+              "cpu_ns": 2001164225,
+              "wall_ns": 2001039438
+            }
+          }
+        }
+      },
+      "complete_record_counts": {
+        "campaign": 30,
+        "candidate": 1460,
+        "cohort": 120,
+        "end": 30,
+        "material": 30,
+        "product_mutation": 2920,
+        "search": 2920,
+        "verifier": 23360
+      },
+      "complete_strategy_attempts": 50034,
+      "dispatcher": {
+        "class_cpu_ratios": {
+          "continuity-maintenance-v1": {
+            "dispatch_over_generic": 0.895246349301428,
+            "generic_over_dispatch": 1.1170109777943384
+          },
+          "full-rank-field": {
+            "dispatch_over_generic": 1.0685265647721098,
+            "generic_over_dispatch": 0.935868169279699
+          },
+          "one-zero-left-rank-one": {
+            "dispatch_over_generic": 1.0376893184921885,
+            "generic_over_dispatch": 0.9636795736252226
+          },
+          "one-zero-right-rank-one": {
+            "dispatch_over_generic": 1.0425945983426164,
+            "generic_over_dispatch": 0.9591455792977177
+          },
+          "zero": {
+            "dispatch_over_generic": 1.0594087967097066,
+            "generic_over_dispatch": 0.9439226888673972
+          }
+        },
+        "dispatch_over_generic_cpu": 1.0166128225053328,
+        "generic_over_dispatch": {
+          "cpu_ns": 0.9836586533854725,
+          "wall_ns": 0.9836383320811783
+        },
+        "inclusive_total_costs_ns": {
+          "frozen-public-dispatch-v1": {
+            "cpu_ns": 10633570727,
+            "wall_ns": 10634370216
+          },
+          "prepared-generic": {
+            "cpu_ns": 10459803862,
+            "wall_ns": 10460374182
+          }
+        },
+        "slower_aggregate_cpu": true,
+        "strategy": "frozen-public-dispatch-v1"
+      },
+      "exhausted_searches": 0,
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 7763 64-Core Processor"
+        ]
+      },
+      "semantic_alerts": [],
+      "source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "architecture": "x64",
+      "artifact_id": 13081005037,
+      "cases": {
+        "legal": {
+          "cpu_cohort_distributions_against_old_limb": {
+            "full-limb-experimental": {
+              "candidate_faster": 119,
+              "candidate_slower": 1,
+              "count": 120,
+              "maximum_candidate_over_limb": 1.136251200610502,
+              "minimum_candidate_over_limb": 0.8656110934039111,
+              "ties": 0
+            },
+            "production": {
+              "candidate_faster": 119,
+              "candidate_slower": 1,
+              "count": 120,
+              "maximum_candidate_over_limb": 1.0372122407470183,
+              "minimum_candidate_over_limb": 0.8755812294965055,
+              "ties": 0
+            }
+          },
+          "default_over_old_limb": {
+            "baseline_cpu_ns": 1342894733,
+            "candidate_cpu_ns": 1267240866,
+            "candidate_over_baseline": 0.9436635909420906,
+            "candidate_saved_fraction": 0.056336409057909376
+          },
+          "explicit_full_over_old_limb": {
+            "baseline_cpu_ns": 1342894733,
+            "candidate_cpu_ns": 1265853959,
+            "candidate_over_baseline": 0.9426308167670802,
+            "candidate_saved_fraction": 0.05736918323291984
+          },
+          "same_kernel_explicit_full_over_default_cpu": 0.9989055695430832,
+          "sums_ns": {
+            "full-limb-experimental": {
+              "cpu_ns": 1265853959,
+              "wall_ns": 1265633956
+            },
+            "limb": {
+              "cpu_ns": 1342894733,
+              "wall_ns": 1342673212
+            },
+            "production": {
+              "cpu_ns": 1267240866,
+              "wall_ns": 1266996874
+            },
+            "reference": {
+              "cpu_ns": 1556234076,
+              "wall_ns": 1556054437
+            }
+          }
+        },
+        "product-last": {
+          "cpu_cohort_distributions_against_old_limb": {
+            "full-limb-experimental": {
+              "candidate_faster": 119,
+              "candidate_slower": 1,
+              "count": 120,
+              "maximum_candidate_over_limb": 1.0046204722462604,
+              "minimum_candidate_over_limb": 0.8687222441402891,
+              "ties": 0
+            },
+            "production": {
+              "candidate_faster": 120,
+              "candidate_slower": 0,
+              "count": 120,
+              "maximum_candidate_over_limb": 0.990323166460562,
+              "minimum_candidate_over_limb": 0.9038212481611893,
+              "ties": 0
+            }
+          },
+          "default_over_old_limb": {
+            "baseline_cpu_ns": 1339881094,
+            "candidate_cpu_ns": 1264795958,
+            "candidate_over_baseline": 0.943961343781749,
+            "candidate_saved_fraction": 0.05603865621825099
+          },
+          "explicit_full_over_old_limb": {
+            "baseline_cpu_ns": 1339881094,
+            "candidate_cpu_ns": 1263282137,
+            "candidate_over_baseline": 0.9428315263622937,
+            "candidate_saved_fraction": 0.057168473637706274
+          },
+          "same_kernel_explicit_full_over_default_cpu": 0.9988031105014015,
+          "sums_ns": {
+            "full-limb-experimental": {
+              "cpu_ns": 1263282137,
+              "wall_ns": 1263134931
+            },
+            "limb": {
+              "cpu_ns": 1339881094,
+              "wall_ns": 1339684825
+            },
+            "production": {
+              "cpu_ns": 1264795958,
+              "wall_ns": 1264586064
+            },
+            "reference": {
+              "cpu_ns": 1551489624,
+              "wall_ns": 1551302217
+            }
+          }
+        }
+      },
+      "complete_record_counts": {
+        "campaign": 30,
+        "candidate": 1460,
+        "cohort": 120,
+        "end": 30,
+        "material": 30,
+        "product_mutation": 2920,
+        "search": 2920,
+        "verifier": 23360
+      },
+      "complete_strategy_attempts": 50034,
+      "dispatcher": {
+        "class_cpu_ratios": {
+          "continuity-maintenance-v1": {
+            "dispatch_over_generic": 0.9077711941749312,
+            "generic_over_dispatch": 1.1015991765511959
+          },
+          "full-rank-field": {
+            "dispatch_over_generic": 1.0843312996374534,
+            "generic_over_dispatch": 0.9222273675345812
+          },
+          "one-zero-left-rank-one": {
+            "dispatch_over_generic": 1.057568974207978,
+            "generic_over_dispatch": 0.9455648041763972
+          },
+          "one-zero-right-rank-one": {
+            "dispatch_over_generic": 1.0578662265501286,
+            "generic_over_dispatch": 0.9452991076774994
+          },
+          "zero": {
+            "dispatch_over_generic": 1.0115586574384616,
+            "generic_over_dispatch": 0.9885734185027577
+          }
+        },
+        "dispatch_over_generic_cpu": 1.019916751328274,
+        "generic_over_dispatch": {
+          "cpu_ns": 0.9804721794182361,
+          "wall_ns": 0.9804536630580751
+        },
+        "inclusive_total_costs_ns": {
+          "frozen-public-dispatch-v1": {
+            "cpu_ns": 9042352282,
+            "wall_ns": 9043128875
+          },
+          "prepared-generic": {
+            "cpu_ns": 8865774849,
+            "wall_ns": 8866368831
+          }
+        },
+        "slower_aggregate_cpu": true,
+        "strategy": "frozen-public-dispatch-v1"
+      },
+      "exhausted_searches": 0,
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 9V74 80-Core Processor"
+        ]
+      },
+      "semantic_alerts": [],
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    }
+  ],
+  "limitations": [
+    "No new native execution was performed by this readback.",
+    "Reported ratios are ratios of complete sums, not pooled independent samples or universal speed bounds.",
+    "Legal data have two samples per class, below unchanged eight-sample qualification policy.",
+    "Cross-horizon search prefixes and cross-source/cross-host proof identities repeat intentionally.",
+    "Primitive timings do not establish service acceptance; service evidence is assessed separately.",
+    "Member hashes and immutable-source reader equality authenticate consistency, not host independence or honest clock measurement.",
+    "The earlier e885/8d9 production label meant Transposed; on this exact 8327 source it means FullLimb. Do not pool those labels as one unchanged implementation.",
+    "Earlier Intel head legal/Product aggregate regressions against transcript-only limb remain historical evidence; no slower run is discarded.",
+    "Cross-run host models and execution conditions differ. Before/after wall or CPU changes across those runs are not a controlled same-host causal comparison."
+  ],
+  "new_native_execution": false,
+  "production_and_full_limb_are_same_arithmetic_kernel": true,
+  "production_vs_full_limb_ratio_interpretation": "Repeated timed invocations through two public entries of the same kernel. Relative timing is not an arithmetic implementation speedup or independent verifier evidence.",
+  "provenance": {
+    "all_captured_binary_sha_and_ELF_architecture_match": true,
+    "all_manifest_reader_fields_match": true,
+    "all_original_zip_digests_and_members_match": true,
+    "cargo_limits": "Four false-trace job artifacts retain cargo metadata graphs; the four legal-strategy jobs do not retain separate metadata graphs. Their locked command, exact tree, configuration, compiler identity and reported build output are checked; missing graphs are not reconstructed as original evidence.",
+    "cost_captures": 12,
+    "distinct_metadata_graph_count": 1,
+    "legal_jobs_have_separate_metadata_graph": false,
+    "metadata_graph_count": 4,
+    "original_cost_zip_artifacts": 8
+  },
+  "qualification": {
+    "hardness_accepted": false,
+    "independent_hardware_qualified": false,
+    "legal_samples_per_class": 2,
+    "production_activation": false,
+    "public_service_accepted": false,
+    "resource_fairness_qualified": false,
+    "unchanged_required_samples_per_class": 8,
+    "work_profile_qualified": false
+  },
+  "result": "PASS_RETAINED_READER_AND_PROVENANCE_CONSISTENCY",
+  "retained_old_limb_faster_cpu_cohorts": [
+    {
+      "all_path_cpu_ns": {
+        "full-limb-experimental": 444511,
+        "limb": 454286,
+        "production": 471191,
+        "reference": 583368
+      },
+      "architecture": "x64",
+      "artifact_id": 13081005037,
+      "family": "legal-strategy",
+      "key": [
+        "legal",
+        "full-rank-field",
+        0,
+        1,
+        0,
+        "prepared-generic"
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "target_index",
+        "reuse_winners",
+        "sample",
+        "strategy"
+      ],
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 9V74 80-Core Processor"
+        ]
+      },
+      "slower_entry_comparisons": {
+        "production": {
+          "baseline_cpu_ns": 454286,
+          "candidate_cpu_ns": 471191,
+          "candidate_over_baseline": 1.0372122407470183,
+          "candidate_saved_fraction": -0.037212240747018344
+        }
+      },
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    },
+    {
+      "all_path_cpu_ns": {
+        "full-limb-experimental": 518151,
+        "limb": 456018,
+        "production": 429670,
+        "reference": 538501
+      },
+      "architecture": "x64",
+      "artifact_id": 13081005037,
+      "family": "legal-strategy",
+      "key": [
+        "legal",
+        "one-zero-left-rank-one",
+        1,
+        1,
+        1,
+        "prepared-generic"
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "target_index",
+        "reuse_winners",
+        "sample",
+        "strategy"
+      ],
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 9V74 80-Core Processor"
+        ]
+      },
+      "slower_entry_comparisons": {
+        "full-limb-experimental": {
+          "baseline_cpu_ns": 456018,
+          "candidate_cpu_ns": 518151,
+          "candidate_over_baseline": 1.136251200610502,
+          "candidate_saved_fraction": -0.1362512006105021
+        }
+      },
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    },
+    {
+      "all_path_cpu_ns": {
+        "full-limb-experimental": 455077,
+        "limb": 452984,
+        "production": 432864,
+        "reference": 533123
+      },
+      "architecture": "x64",
+      "artifact_id": 13081005037,
+      "family": "legal-strategy",
+      "key": [
+        "product-last",
+        "one-zero-left-rank-one",
+        0,
+        1,
+        1,
+        "frozen-public-dispatch-v1"
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "target_index",
+        "reuse_winners",
+        "sample",
+        "strategy"
+      ],
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 9V74 80-Core Processor"
+        ]
+      },
+      "slower_entry_comparisons": {
+        "full-limb-experimental": {
+          "baseline_cpu_ns": 452984,
+          "candidate_cpu_ns": 455077,
+          "candidate_over_baseline": 1.0046204722462604,
+          "candidate_saved_fraction": -0.0046204722462603875
+        }
+      },
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    },
+    {
+      "all_path_cpu_ns": {
+        "column-limb-experimental": 1525369,
+        "full-limb-experimental": 1351029,
+        "limb": 1347334,
+        "production": 1316046,
+        "reference": 1703073
+      },
+      "architecture": "x64",
+      "artifact_id": 13079739170,
+      "family": "false-trace",
+      "key": [
+        "Transcript",
+        "continuity-maintenance-v1",
+        3
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "sample"
+      ],
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 9V74 80-Core Processor"
+        ]
+      },
+      "slower_entry_comparisons": {
+        "full-limb-experimental": {
+          "baseline_cpu_ns": 1347334,
+          "candidate_cpu_ns": 1351029,
+          "candidate_over_baseline": 1.0027424528736009,
+          "candidate_saved_fraction": -0.0027424528736008646
+        }
+      },
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    },
+    {
+      "all_path_cpu_ns": {
+        "column-limb-experimental": 1535324,
+        "full-limb-experimental": 1317170,
+        "limb": 1353703,
+        "production": 1380032,
+        "reference": 1672938
+      },
+      "architecture": "x64",
+      "artifact_id": 13079739170,
+      "family": "false-trace",
+      "key": [
+        "Transcript",
+        "full-rank-field",
+        6
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "sample"
+      ],
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 9V74 80-Core Processor"
+        ]
+      },
+      "slower_entry_comparisons": {
+        "production": {
+          "baseline_cpu_ns": 1353703,
+          "candidate_cpu_ns": 1380032,
+          "candidate_over_baseline": 1.0194496133937798,
+          "candidate_saved_fraction": -0.01944961339377982
+        }
+      },
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    },
+    {
+      "all_path_cpu_ns": {
+        "column-limb-experimental": 1544408,
+        "full-limb-experimental": 1339433,
+        "limb": 1347354,
+        "production": 1366403,
+        "reference": 1672788
+      },
+      "architecture": "x64",
+      "artifact_id": 13079739170,
+      "family": "false-trace",
+      "key": [
+        "Transcript",
+        "one-zero-left-rank-one",
+        2
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "sample"
+      ],
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 9V74 80-Core Processor"
+        ]
+      },
+      "slower_entry_comparisons": {
+        "production": {
+          "baseline_cpu_ns": 1347354,
+          "candidate_cpu_ns": 1366403,
+          "candidate_over_baseline": 1.0141380810091483,
+          "candidate_saved_fraction": -0.014138081009148262
+        }
+      },
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    },
+    {
+      "all_path_cpu_ns": {
+        "column-limb-experimental": 1545389,
+        "full-limb-experimental": 1351271,
+        "limb": 1348795,
+        "production": 1318191,
+        "reference": 1703125
+      },
+      "architecture": "x64",
+      "artifact_id": 13079739170,
+      "family": "false-trace",
+      "key": [
+        "Transcript",
+        "one-zero-left-rank-one",
+        7
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "sample"
+      ],
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 9V74 80-Core Processor"
+        ]
+      },
+      "slower_entry_comparisons": {
+        "full-limb-experimental": {
+          "baseline_cpu_ns": 1348795,
+          "candidate_cpu_ns": 1351271,
+          "candidate_over_baseline": 1.0018357126175585,
+          "candidate_saved_fraction": -0.0018357126175585492
+        }
+      },
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    },
+    {
+      "all_path_cpu_ns": {
+        "column-limb-experimental": 1520051,
+        "full-limb-experimental": 1375496,
+        "limb": 1363658,
+        "production": 1318611,
+        "reference": 1690675
+      },
+      "architecture": "x64",
+      "artifact_id": 13079739170,
+      "family": "false-trace",
+      "key": [
+        "Transcript",
+        "periodic-dense-fixture",
+        0
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "sample"
+      ],
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 9V74 80-Core Processor"
+        ]
+      },
+      "slower_entry_comparisons": {
+        "full-limb-experimental": {
+          "baseline_cpu_ns": 1363658,
+          "candidate_cpu_ns": 1375496,
+          "candidate_over_baseline": 1.0086810622604787,
+          "candidate_saved_fraction": -0.008681062260478711
+        }
+      },
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    },
+    {
+      "all_path_cpu_ns": {
+        "column-limb-experimental": 1554823,
+        "full-limb-experimental": 1315086,
+        "limb": 1345732,
+        "production": 1366010,
+        "reference": 1674992
+      },
+      "architecture": "x64",
+      "artifact_id": 13079739170,
+      "family": "false-trace",
+      "key": [
+        "Transcript",
+        "periodic-dense-fixture",
+        3
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "sample"
+      ],
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 9V74 80-Core Processor"
+        ]
+      },
+      "slower_entry_comparisons": {
+        "production": {
+          "baseline_cpu_ns": 1345732,
+          "candidate_cpu_ns": 1366010,
+          "candidate_over_baseline": 1.0150683791423551,
+          "candidate_saved_fraction": -0.015068379142355148
+        }
+      },
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    },
+    {
+      "all_path_cpu_ns": {
+        "column-limb-experimental": 1564297,
+        "full-limb-experimental": 1318430,
+        "limb": 1347756,
+        "production": 1356357,
+        "reference": 1688962
+      },
+      "architecture": "x64",
+      "artifact_id": 13079739170,
+      "family": "false-trace",
+      "key": [
+        "Transcript",
+        "sparse-diagonal",
+        2
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "sample"
+      ],
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 9V74 80-Core Processor"
+        ]
+      },
+      "slower_entry_comparisons": {
+        "production": {
+          "baseline_cpu_ns": 1347756,
+          "candidate_cpu_ns": 1356357,
+          "candidate_over_baseline": 1.0063817189461595,
+          "candidate_saved_fraction": -0.006381718946159465
+        }
+      },
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    },
+    {
+      "all_path_cpu_ns": {
+        "column-limb-experimental": 1532740,
+        "full-limb-experimental": 1316840,
+        "limb": 1376657,
+        "production": 1377750,
+        "reference": 1673100
+      },
+      "architecture": "x64",
+      "artifact_id": 13079739170,
+      "family": "false-trace",
+      "key": [
+        "Transcript",
+        "sparse-diagonal",
+        3
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "sample"
+      ],
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 9V74 80-Core Processor"
+        ]
+      },
+      "slower_entry_comparisons": {
+        "production": {
+          "baseline_cpu_ns": 1376657,
+          "candidate_cpu_ns": 1377750,
+          "candidate_over_baseline": 1.0007939523062026,
+          "candidate_saved_fraction": -0.0007939523062026055
+        }
+      },
+      "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "source_kind": "head"
+    },
+    {
+      "all_path_cpu_ns": {
+        "column-limb-experimental": 1844822,
+        "full-limb-experimental": 1642293,
+        "limb": 1618430,
+        "production": 1591439,
+        "reference": 2090841
+      },
+      "architecture": "x64",
+      "artifact_id": 13080552293,
+      "family": "false-trace",
+      "key": [
+        "Transcript",
+        "continuity-maintenance-v1",
+        3
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "sample"
+      ],
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 7763 64-Core Processor"
+        ]
+      },
+      "slower_entry_comparisons": {
+        "full-limb-experimental": {
+          "baseline_cpu_ns": 1618430,
+          "candidate_cpu_ns": 1642293,
+          "candidate_over_baseline": 1.014744536371669,
+          "candidate_saved_fraction": -0.014744536371668948
+        }
+      },
+      "source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "all_path_cpu_ns": {
+        "column-limb-experimental": 1847738,
+        "full-limb-experimental": 1612538,
+        "limb": 1611247,
+        "production": 1596589,
+        "reference": 2132168
+      },
+      "architecture": "x64",
+      "artifact_id": 13080552293,
+      "family": "false-trace",
+      "key": [
+        "Transcript",
+        "one-zero-left-rank-one",
+        3
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "sample"
+      ],
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 7763 64-Core Processor"
+        ]
+      },
+      "slower_entry_comparisons": {
+        "full-limb-experimental": {
+          "baseline_cpu_ns": 1611247,
+          "candidate_cpu_ns": 1612538,
+          "candidate_over_baseline": 1.0008012427641448,
+          "candidate_saved_fraction": -0.0008012427641448383
+        }
+      },
+      "source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "all_path_cpu_ns": {
+        "column-limb-experimental": 1871481,
+        "full-limb-experimental": 1667159,
+        "limb": 1665337,
+        "production": 1615385,
+        "reference": 2078309
+      },
+      "architecture": "x64",
+      "artifact_id": 13080552293,
+      "family": "false-trace",
+      "key": [
+        "Transcript",
+        "one-zero-right-rank-one",
+        2
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "sample"
+      ],
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 7763 64-Core Processor"
+        ]
+      },
+      "slower_entry_comparisons": {
+        "full-limb-experimental": {
+          "baseline_cpu_ns": 1665337,
+          "candidate_cpu_ns": 1667159,
+          "candidate_over_baseline": 1.0010940728513207,
+          "candidate_saved_fraction": -0.001094072851320682
+        }
+      },
+      "source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+      "source_kind": "prospective-merge"
+    }
+  ],
+  "run_id": 41298626837,
+  "schema": "pon-w1-independent-default-limb-performance-summary-v1",
+  "source_binding": {
+    "default_entry": "verify_with_progress",
+    "explicit_full_limb_selects_same_kernel": true,
+    "git_blob_sha1": "5b9dd609f2a77e77670f4082a47d82645b4d3871",
+    "historical_transposed_explicitly_retained": true,
+    "native_execution_by_this_binding_check": false,
+    "selected_kernel": "FullLimb",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "source_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "source_sha256": "4d2d858f0b156aac24d0c73ee4cccba06b85b2a4d927b5cf64bd0522dedeb17b"
+  },
+  "totals": {
+    "all_semantic_alerts": 0,
+    "all_verifier_calls": 103808,
+    "cohorts_with_old_limb_faster_than_either_default_or_explicit_full_cpu": 14,
+    "false_trace_attempts": 4584,
+    "false_trace_record_counts": {
+      "campaign": 8,
+      "candidate": 2304,
+      "cohort": 576,
+      "end": 8,
+      "material": 72,
+      "search": 2304,
+      "verifier": 10368
+    },
+    "legal_record_counts": {
+      "campaign": 120,
+      "candidate": 5840,
+      "cohort": 480,
+      "end": 120,
+      "material": 120,
+      "product_mutation": 11680,
+      "search": 11680,
+      "verifier": 93440
+    },
+    "legal_strategy_attempts": 200136,
+    "old_limb_faster_cpu_comparison_counts": {
+      "full-limb-experimental": 8,
+      "production": 6
+    },
+    "slower_dispatcher_aggregate_lanes": 4
+  }
+}

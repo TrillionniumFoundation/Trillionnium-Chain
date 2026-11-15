@@ -1,0 +1,50 @@
+{
+  "schema": "trnm-pq-ci-package-inventory-v1",
+  "self_exclusions": [
+    "package-inventory.json",
+    "SHA256SUMS"
+  ],
+  "note": "SHA256SUMS separately includes package-inventory.json and excludes itself",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 8301,
+      "sha256": "5c6862e1e830a74a67573a4fc352b25d1e42d62caa18c996ee37546b23c38094"
+    },
+    {
+      "path": "archive-verification.json",
+      "bytes": 2230,
+      "sha256": "0ea8e998571b561b3b6895cd95aa26b763ac9612d44a4b17d92069c96cc75303"
+    },
+    {
+      "path": "chain-pq-ci-run-41691371037-full-members.tar.xz",
+      "bytes": 705720,
+      "sha256": "4f218c1f30760e81ab06740c3a7db02a0667d510385bdca8fa58cdba3f9157f6"
+    },
+    {
+      "path": "four-matrix-complete-summary.json",
+      "bytes": 7326,
+      "sha256": "40c280d4ef0100f1484ec5f7186631411353a9cf28e2d39c7150135cca7d7f1a"
+    },
+    {
+      "path": "four-matrix-controls-summary.json",
+      "bytes": 5717,
+      "sha256": "9239af94f18a4fd2f05b1559940b9a5b18506265d289df49fa18158ebe8f7b65"
+    },
+    {
+      "path": "full-members-manifest.json",
+      "bytes": 241760,
+      "sha256": "67f1dd5e99393c366a14d37f50c9de85510b68e89eaf62a2e50896e4f3cb6619"
+    },
+    {
+      "path": "package-ci-evidence.py",
+      "bytes": 23817,
+      "sha256": "06346a4bde701d4ff1f2d603bd480ee54721174848f3176238e1875558fe9045"
+    },
+    {
+      "path": "source-artifacts.json",
+      "bytes": 11229,
+      "sha256": "3d7791d222cf016964be54fcdccb92de25b73a4b81c51c520c0a9d69ba91ac43"
+    }
+  ]
+}

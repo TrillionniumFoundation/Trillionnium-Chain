@@ -1,0 +1,9 @@
+{
+  "bytes": 596257,
+  "file": "retained-runs.tar.gz",
+  "full_member_sha_size_and_safe_path_readback_verified": true,
+  "members": 327,
+  "payload_bytes": 22417043,
+  "schema": "multimodal-v3/archive",
+  "sha256": "abc1af6b35fea775ecd2904ff99bbe33f37750af4370f2ea748f04993d72374d"
+}

@@ -1,0 +1,1198 @@
+{
+  "aggregation": "sum all chunks within each workload repeat first; retain repeat 0/1/2 and min/median/max of those three totals",
+  "all_complete_denominators_and_payload_checks_passed": true,
+  "analysis_kind": "read-only parsing of already-completed CI observations; no examples or cargo executed",
+  "architecture": "x86_64",
+  "artifact_directory": "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-validation/ci-x86-head",
+  "artifact_input_sha256": {
+    "cell_bep52_cost_v1.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "cell_bep52_cost_v1.json": "c040dc69b932a1205d59f907a4fd73973955eae3d8db15ffc9088daf2f29683f",
+    "cell_rs46_cost_v1.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "cell_rs46_cost_v1.json": "73ea9068d8f226834a97a537c53b2be37159289766742ac995fbb94d4b92fae2",
+    "sha256sums.txt": "7cc465d15b88c3b39994df9055fe06e5752f409fe106275de7cf001055ac985f",
+    "source-after.json": "e75735e4c04118bd8d20acb997ac04a04a28280749ca4d4aa27c4e8537d4c4e0",
+    "source-before.json": "e75735e4c04118bd8d20acb997ac04a04a28280749ca4d4aa27c4e8537d4c4e0",
+    "stage-outcomes.json": "7d57116ccd35d1c3871d1684ad92369ee9e92c7687b87ce3537175d03611b8ed"
+  },
+  "artifact_inputs_unchanged_after_analysis": true,
+  "ci_job_id": 128652655480,
+  "ci_run_id": 42455215948,
+  "cpu_rss_status": "unknown; no counters were collected in these CI artifacts",
+  "expected_source_hash_basis": "git show of immutable C3 commit blobs, not raw JSON self-report",
+  "peak_rss_kib": null,
+  "phase_unit": "nanoseconds",
+  "production_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "results": [
+    {
+      "binary_hash_status": "not_retained_in_this_CI_artifact",
+      "binary_sha256": null,
+      "chunk_pairs_verified": 399,
+      "cpu_rss_status": "unknown; not collected by these CI example invocations",
+      "deterministic_synthetic_payload_sha256_recomputed": true,
+      "example": "cell_bep52_cost_v1",
+      "exit_code": 0,
+      "expected_source_sha256_from_git_blobs": {
+        "binding_source_sha256": "c33ff4435a2227d1de962b40d3e7bb5cb913b6a13c2a442aed1399fe36732447",
+        "example_source_sha256": "b50cc1f84708221e922beebcda538825f642d68a2ff8557b6cdc9d1c4e0d97c2"
+      },
+      "peak_rss_kib": null,
+      "raw_bytes": 169103,
+      "raw_file": "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-validation/ci-x86-head/cell_bep52_cost_v1.json",
+      "raw_sha256": "c040dc69b932a1205d59f907a4fd73973955eae3d8db15ffc9088daf2f29683f",
+      "source_paths_at_commit": {
+        "binding_source_sha256": "trillionnium/crates/trnm-data-availability/src/cell/bep52.rs",
+        "example_source_sha256": "trillionnium/crates/trnm-data-availability/examples/cell_bep52_cost_v1.rs"
+      },
+      "strict_validation_passed": true,
+      "strict_validator_result": {
+        "all_payload_and_chunk_checks_verified": true,
+        "expected_workloads": 15,
+        "statistical_unit": "one complete workload repeat; chunk metrics are SUMS over every chunk before three-repeat statistics",
+        "workload_summaries": [
+          {
+            "chunk_bytes": 16384,
+            "chunks_per_repeat": 1,
+            "payload_bytes": 3,
+            "phase_wall": {
+              "binding": {
+                "max_ns": 3072,
+                "median_ns": 2960,
+                "min_ns": 2774,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  3072,
+                  2774,
+                  2960
+                ]
+              },
+              "valid_check_all_chunks": {
+                "max_ns": 344,
+                "median_ns": 340,
+                "min_ns": 326,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  344,
+                  340,
+                  326
+                ]
+              }
+            }
+          },
+          {
+            "chunk_bytes": 16384,
+            "chunks_per_repeat": 1,
+            "payload_bytes": 16384,
+            "phase_wall": {
+              "binding": {
+                "max_ns": 2801,
+                "median_ns": 2744,
+                "min_ns": 2672,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  2672,
+                  2801,
+                  2744
+                ]
+              },
+              "valid_check_all_chunks": {
+                "max_ns": 13090,
+                "median_ns": 12779,
+                "min_ns": 12776,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  12779,
+                  12776,
+                  13090
+                ]
+              }
+            }
+          },
+          {
+            "chunk_bytes": 16384,
+            "chunks_per_repeat": 2,
+            "payload_bytes": 16385,
+            "phase_wall": {
+              "binding": {
+                "max_ns": 3404,
+                "median_ns": 3328,
+                "min_ns": 2971,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  2971,
+                  3328,
+                  3404
+                ]
+              },
+              "valid_check_all_chunks": {
+                "max_ns": 13476,
+                "median_ns": 13357,
+                "min_ns": 13248,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  13248,
+                  13476,
+                  13357
+                ]
+              }
+            }
+          },
+          {
+            "chunk_bytes": 16384,
+            "chunks_per_repeat": 64,
+            "payload_bytes": 1048576,
+            "phase_wall": {
+              "binding": {
+                "max_ns": 18014,
+                "median_ns": 17382,
+                "min_ns": 16315,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  16315,
+                  17382,
+                  18014
+                ]
+              },
+              "valid_check_all_chunks": {
+                "max_ns": 929100,
+                "median_ns": 923330,
+                "min_ns": 922911,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  929100,
+                  923330,
+                  922911
+                ]
+              }
+            }
+          },
+          {
+            "chunk_bytes": 16384,
+            "chunks_per_repeat": 65,
+            "payload_bytes": 1048577,
+            "phase_wall": {
+              "binding": {
+                "max_ns": 25793,
+                "median_ns": 24970,
+                "min_ns": 24698,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  24970,
+                  24698,
+                  25793
+                ]
+              },
+              "valid_check_all_chunks": {
+                "max_ns": 932606,
+                "median_ns": 928268,
+                "min_ns": 912731,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  932606,
+                  912731,
+                  928268
+                ]
+              }
+            }
+          }
+        ],
+        "workloads_verified": 15
+      },
+      "system_cpu_seconds": null,
+      "user_cpu_seconds": null,
+      "whole_payload_correctness_flags_verified": true,
+      "whole_process_wall_ns": null,
+      "workload_count": 15,
+      "workload_phase_statistics": [
+        {
+          "chunk_bytes": 16384,
+          "chunks_per_repeat": 1,
+          "payload_bytes": 3,
+          "phase_wall_ns": {
+            "binding_wall_ns": {
+              "max_ns": 3072,
+              "median_ns": 2960,
+              "min_ns": 2774,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                3072,
+                2774,
+                2960
+              ]
+            },
+            "complete_cached_payload_verify_wall_ns": {
+              "max_ns": 25428,
+              "median_ns": 23858,
+              "min_ns": 23302,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                25428,
+                23858,
+                23302
+              ]
+            },
+            "corrupt_verify_all_chunks_wall_ns": {
+              "max_ns": 171,
+              "median_ns": 159,
+              "min_ns": 158,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                159,
+                171,
+                158
+              ]
+            },
+            "descriptor_roundtrip_wall_ns": {
+              "max_ns": 4029,
+              "median_ns": 3871,
+              "min_ns": 3791,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                3791,
+                4029,
+                3871
+              ]
+            },
+            "pack_file_wall_ns": {
+              "max_ns": 1378158,
+              "median_ns": 1216031,
+              "min_ns": 1195542,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                1216031,
+                1195542,
+                1378158
+              ]
+            },
+            "proof_construction_all_chunks_wall_ns": {
+              "max_ns": 167,
+              "median_ns": 116,
+              "min_ns": 105,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                167,
+                116,
+                105
+              ]
+            },
+            "proof_decode_all_chunks_wall_ns": {
+              "max_ns": 130,
+              "median_ns": 128,
+              "min_ns": 112,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                130,
+                112,
+                128
+              ]
+            },
+            "valid_verify_all_chunks_wall_ns": {
+              "max_ns": 344,
+              "median_ns": 340,
+              "min_ns": 326,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                344,
+                340,
+                326
+              ]
+            }
+          }
+        },
+        {
+          "chunk_bytes": 16384,
+          "chunks_per_repeat": 1,
+          "payload_bytes": 16384,
+          "phase_wall_ns": {
+            "binding_wall_ns": {
+              "max_ns": 2801,
+              "median_ns": 2744,
+              "min_ns": 2672,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                2672,
+                2801,
+                2744
+              ]
+            },
+            "complete_cached_payload_verify_wall_ns": {
+              "max_ns": 53661,
+              "median_ns": 53228,
+              "min_ns": 52768,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                53228,
+                52768,
+                53661
+              ]
+            },
+            "corrupt_verify_all_chunks_wall_ns": {
+              "max_ns": 12699,
+              "median_ns": 12564,
+              "min_ns": 12483,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                12483,
+                12564,
+                12699
+              ]
+            },
+            "descriptor_roundtrip_wall_ns": {
+              "max_ns": 3774,
+              "median_ns": 3715,
+              "min_ns": 3582,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                3774,
+                3715,
+                3582
+              ]
+            },
+            "pack_file_wall_ns": {
+              "max_ns": 1612823,
+              "median_ns": 1272070,
+              "min_ns": 1268866,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                1272070,
+                1268866,
+                1612823
+              ]
+            },
+            "proof_construction_all_chunks_wall_ns": {
+              "max_ns": 170,
+              "median_ns": 115,
+              "min_ns": 103,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                170,
+                115,
+                103
+              ]
+            },
+            "proof_decode_all_chunks_wall_ns": {
+              "max_ns": 124,
+              "median_ns": 117,
+              "min_ns": 110,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                124,
+                117,
+                110
+              ]
+            },
+            "valid_verify_all_chunks_wall_ns": {
+              "max_ns": 13090,
+              "median_ns": 12779,
+              "min_ns": 12776,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                12779,
+                12776,
+                13090
+              ]
+            }
+          }
+        },
+        {
+          "chunk_bytes": 16384,
+          "chunks_per_repeat": 2,
+          "payload_bytes": 16385,
+          "phase_wall_ns": {
+            "binding_wall_ns": {
+              "max_ns": 3404,
+              "median_ns": 3328,
+              "min_ns": 2971,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                2971,
+                3328,
+                3404
+              ]
+            },
+            "complete_cached_payload_verify_wall_ns": {
+              "max_ns": 63157,
+              "median_ns": 61505,
+              "min_ns": 59239,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                59239,
+                63157,
+                61505
+              ]
+            },
+            "corrupt_verify_all_chunks_wall_ns": {
+              "max_ns": 12946,
+              "median_ns": 12848,
+              "min_ns": 12827,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                12848,
+                12827,
+                12946
+              ]
+            },
+            "descriptor_roundtrip_wall_ns": {
+              "max_ns": 4244,
+              "median_ns": 3689,
+              "min_ns": 3610,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                3610,
+                4244,
+                3689
+              ]
+            },
+            "pack_file_wall_ns": {
+              "max_ns": 2277401,
+              "median_ns": 2124423,
+              "min_ns": 1859377,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                1859377,
+                2124423,
+                2277401
+              ]
+            },
+            "proof_construction_all_chunks_wall_ns": {
+              "max_ns": 207,
+              "median_ns": 204,
+              "min_ns": 195,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                207,
+                204,
+                195
+              ]
+            },
+            "proof_decode_all_chunks_wall_ns": {
+              "max_ns": 519,
+              "median_ns": 510,
+              "min_ns": 498,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                510,
+                498,
+                519
+              ]
+            },
+            "valid_verify_all_chunks_wall_ns": {
+              "max_ns": 13476,
+              "median_ns": 13357,
+              "min_ns": 13248,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                13248,
+                13476,
+                13357
+              ]
+            }
+          }
+        },
+        {
+          "chunk_bytes": 16384,
+          "chunks_per_repeat": 64,
+          "payload_bytes": 1048576,
+          "phase_wall_ns": {
+            "binding_wall_ns": {
+              "max_ns": 18014,
+              "median_ns": 17382,
+              "min_ns": 16315,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                16315,
+                17382,
+                18014
+              ]
+            },
+            "complete_cached_payload_verify_wall_ns": {
+              "max_ns": 2313103,
+              "median_ns": 2275680,
+              "min_ns": 2244272,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                2244272,
+                2313103,
+                2275680
+              ]
+            },
+            "corrupt_verify_all_chunks_wall_ns": {
+              "max_ns": 858843,
+              "median_ns": 856025,
+              "min_ns": 850683,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                850683,
+                856025,
+                858843
+              ]
+            },
+            "descriptor_roundtrip_wall_ns": {
+              "max_ns": 5920,
+              "median_ns": 5209,
+              "min_ns": 5052,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                5052,
+                5920,
+                5209
+              ]
+            },
+            "pack_file_wall_ns": {
+              "max_ns": 60410903,
+              "median_ns": 55238865,
+              "min_ns": 55157465,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                60410903,
+                55157465,
+                55238865
+              ]
+            },
+            "proof_construction_all_chunks_wall_ns": {
+              "max_ns": 5069,
+              "median_ns": 4821,
+              "min_ns": 4626,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                4626,
+                4821,
+                5069
+              ]
+            },
+            "proof_decode_all_chunks_wall_ns": {
+              "max_ns": 47621,
+              "median_ns": 47478,
+              "min_ns": 47404,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                47621,
+                47478,
+                47404
+              ]
+            },
+            "valid_verify_all_chunks_wall_ns": {
+              "max_ns": 929100,
+              "median_ns": 923330,
+              "min_ns": 922911,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                929100,
+                923330,
+                922911
+              ]
+            }
+          }
+        },
+        {
+          "chunk_bytes": 16384,
+          "chunks_per_repeat": 65,
+          "payload_bytes": 1048577,
+          "phase_wall_ns": {
+            "binding_wall_ns": {
+              "max_ns": 25793,
+              "median_ns": 24970,
+              "min_ns": 24698,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                24970,
+                24698,
+                25793
+              ]
+            },
+            "complete_cached_payload_verify_wall_ns": {
+              "max_ns": 2266652,
+              "median_ns": 2261109,
+              "min_ns": 2247813,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                2266652,
+                2261109,
+                2247813
+              ]
+            },
+            "corrupt_verify_all_chunks_wall_ns": {
+              "max_ns": 880398,
+              "median_ns": 864269,
+              "min_ns": 863377,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                863377,
+                880398,
+                864269
+              ]
+            },
+            "descriptor_roundtrip_wall_ns": {
+              "max_ns": 5987,
+              "median_ns": 5862,
+              "min_ns": 5429,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                5862,
+                5429,
+                5987
+              ]
+            },
+            "pack_file_wall_ns": {
+              "max_ns": 60883938,
+              "median_ns": 59524580,
+              "min_ns": 58674642,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                58674642,
+                60883938,
+                59524580
+              ]
+            },
+            "proof_construction_all_chunks_wall_ns": {
+              "max_ns": 5435,
+              "median_ns": 5249,
+              "min_ns": 5114,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                5435,
+                5114,
+                5249
+              ]
+            },
+            "proof_decode_all_chunks_wall_ns": {
+              "max_ns": 56206,
+              "median_ns": 56088,
+              "min_ns": 55685,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                56206,
+                55685,
+                56088
+              ]
+            },
+            "valid_verify_all_chunks_wall_ns": {
+              "max_ns": 932606,
+              "median_ns": 928268,
+              "min_ns": 912731,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                932606,
+                912731,
+                928268
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "binary_hash_status": "not_retained_in_this_CI_artifact",
+      "binary_sha256": null,
+      "chunk_pairs_verified": 207,
+      "cpu_rss_status": "unknown; not collected by these CI example invocations",
+      "deterministic_synthetic_payload_sha256_recomputed": true,
+      "example": "cell_rs46_cost_v1",
+      "exit_code": 0,
+      "expected_source_sha256_from_git_blobs": {
+        "example_source_sha256": "4016f977622858c514564c75a25a7101b3de1053382b857b125723516dd7ccc2",
+        "implementation_source_sha256": "c207330ec8cf1b0c07a824c5d66d28c24708166ce5f9714c0a57b7c4116695d9"
+      },
+      "peak_rss_kib": null,
+      "raw_bytes": 126285,
+      "raw_file": "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-validation/ci-x86-head/cell_rs46_cost_v1.json",
+      "raw_sha256": "73ea9068d8f226834a97a537c53b2be37159289766742ac995fbb94d4b92fae2",
+      "source_paths_at_commit": {
+        "example_source_sha256": "trillionnium/crates/trnm-data-availability/examples/cell_rs46_cost_v1.rs",
+        "implementation_source_sha256": "trillionnium/crates/trnm-data-availability/src/cell/erasure.rs"
+      },
+      "strict_validation_passed": true,
+      "strict_validator_result": {
+        "all_payload_and_chunk_checks_verified": true,
+        "expected_workloads": 12,
+        "statistical_unit": "one complete workload repeat; chunk metrics are SUMS over every chunk before three-repeat statistics",
+        "workload_summaries": [
+          {
+            "chunk_bytes": 16384,
+            "chunks_per_repeat": 1,
+            "payload_bytes": 16384,
+            "phase_wall": {
+              "encode_all_chunks": {
+                "max_ns": 55716,
+                "median_ns": 54968,
+                "min_ns": 54913,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  54913,
+                  55716,
+                  54968
+                ]
+              },
+              "recover_all_chunks": {
+                "max_ns": 134923,
+                "median_ns": 123385,
+                "min_ns": 122760,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  134923,
+                  123385,
+                  122760
+                ]
+              }
+            }
+          },
+          {
+            "chunk_bytes": 16384,
+            "chunks_per_repeat": 2,
+            "payload_bytes": 16385,
+            "phase_wall": {
+              "encode_all_chunks": {
+                "max_ns": 76527,
+                "median_ns": 75842,
+                "min_ns": 75768,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  75842,
+                  76527,
+                  75768
+                ]
+              },
+              "recover_all_chunks": {
+                "max_ns": 184609,
+                "median_ns": 172384,
+                "min_ns": 170793,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  172384,
+                  184609,
+                  170793
+                ]
+              }
+            }
+          },
+          {
+            "chunk_bytes": 16384,
+            "chunks_per_repeat": 65,
+            "payload_bytes": 1048577,
+            "phase_wall": {
+              "encode_all_chunks": {
+                "max_ns": 3538245,
+                "median_ns": 3509551,
+                "min_ns": 3487762,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  3509551,
+                  3538245,
+                  3487762
+                ]
+              },
+              "recover_all_chunks": {
+                "max_ns": 7939760,
+                "median_ns": 7871583,
+                "min_ns": 7833730,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  7871583,
+                  7939760,
+                  7833730
+                ]
+              }
+            }
+          },
+          {
+            "chunk_bytes": 4194304,
+            "chunks_per_repeat": 1,
+            "payload_bytes": 1048577,
+            "phase_wall": {
+              "encode_all_chunks": {
+                "max_ns": 2439381,
+                "median_ns": 2199543,
+                "min_ns": 2184329,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  2439381,
+                  2184329,
+                  2199543
+                ]
+              },
+              "recover_all_chunks": {
+                "max_ns": 5619453,
+                "median_ns": 4858029,
+                "min_ns": 4852275,
+                "n": 3,
+                "repeat_0_1_2_ns": [
+                  5619453,
+                  4858029,
+                  4852275
+                ]
+              }
+            }
+          }
+        ],
+        "workloads_verified": 12
+      },
+      "system_cpu_seconds": null,
+      "user_cpu_seconds": null,
+      "whole_payload_correctness_flags_verified": true,
+      "whole_process_wall_ns": null,
+      "workload_count": 12,
+      "workload_phase_statistics": [
+        {
+          "chunk_bytes": 16384,
+          "chunks_per_repeat": 1,
+          "payload_bytes": 16384,
+          "phase_wall_ns": {
+            "binding_all_chunks_wall_ns": {
+              "max_ns": 2095,
+              "median_ns": 1811,
+              "min_ns": 1771,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                1811,
+                2095,
+                1771
+              ]
+            },
+            "complete_tcm1_verify_wall_ns": {
+              "max_ns": 56162,
+              "median_ns": 54008,
+              "min_ns": 52098,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                56162,
+                54008,
+                52098
+              ]
+            },
+            "corrupt_reject_all_chunks_wall_ns": {
+              "max_ns": 89508,
+              "median_ns": 85959,
+              "min_ns": 85416,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                89508,
+                85959,
+                85416
+              ]
+            },
+            "encode_all_chunks_wall_ns": {
+              "max_ns": 55716,
+              "median_ns": 54968,
+              "min_ns": 54913,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                54913,
+                55716,
+                54968
+              ]
+            },
+            "native_pack_file_wall_ns": {
+              "max_ns": 1764357,
+              "median_ns": 1737252,
+              "min_ns": 1600864,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                1737252,
+                1600864,
+                1764357
+              ]
+            },
+            "recover_all_chunks_wall_ns": {
+              "max_ns": 134923,
+              "median_ns": 123385,
+              "min_ns": 122760,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                134923,
+                123385,
+                122760
+              ]
+            },
+            "selected_wire_roundtrip_all_chunks_wall_ns": {
+              "max_ns": 5285,
+              "median_ns": 4712,
+              "min_ns": 3287,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                3287,
+                5285,
+                4712
+              ]
+            }
+          }
+        },
+        {
+          "chunk_bytes": 16384,
+          "chunks_per_repeat": 2,
+          "payload_bytes": 16385,
+          "phase_wall_ns": {
+            "binding_all_chunks_wall_ns": {
+              "max_ns": 4934,
+              "median_ns": 4057,
+              "min_ns": 3975,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                3975,
+                4934,
+                4057
+              ]
+            },
+            "complete_tcm1_verify_wall_ns": {
+              "max_ns": 68753,
+              "median_ns": 67922,
+              "min_ns": 63999,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                68753,
+                67922,
+                63999
+              ]
+            },
+            "corrupt_reject_all_chunks_wall_ns": {
+              "max_ns": 131814,
+              "median_ns": 119265,
+              "min_ns": 118520,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                119265,
+                131814,
+                118520
+              ]
+            },
+            "encode_all_chunks_wall_ns": {
+              "max_ns": 76527,
+              "median_ns": 75842,
+              "min_ns": 75768,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                75842,
+                76527,
+                75768
+              ]
+            },
+            "native_pack_file_wall_ns": {
+              "max_ns": 2338814,
+              "median_ns": 2295515,
+              "min_ns": 1996178,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                1996178,
+                2338814,
+                2295515
+              ]
+            },
+            "recover_all_chunks_wall_ns": {
+              "max_ns": 184609,
+              "median_ns": 172384,
+              "min_ns": 170793,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                172384,
+                184609,
+                170793
+              ]
+            },
+            "selected_wire_roundtrip_all_chunks_wall_ns": {
+              "max_ns": 5453,
+              "median_ns": 4266,
+              "min_ns": 3523,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                3523,
+                5453,
+                4266
+              ]
+            }
+          }
+        },
+        {
+          "chunk_bytes": 16384,
+          "chunks_per_repeat": 65,
+          "payload_bytes": 1048577,
+          "phase_wall_ns": {
+            "binding_all_chunks_wall_ns": {
+              "max_ns": 445828,
+              "median_ns": 419926,
+              "min_ns": 410174,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                445828,
+                410174,
+                419926
+              ]
+            },
+            "complete_tcm1_verify_wall_ns": {
+              "max_ns": 2282500,
+              "median_ns": 2264322,
+              "min_ns": 2235527,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                2264322,
+                2282500,
+                2235527
+              ]
+            },
+            "corrupt_reject_all_chunks_wall_ns": {
+              "max_ns": 5596101,
+              "median_ns": 5563387,
+              "min_ns": 5510992,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                5510992,
+                5596101,
+                5563387
+              ]
+            },
+            "encode_all_chunks_wall_ns": {
+              "max_ns": 3538245,
+              "median_ns": 3509551,
+              "min_ns": 3487762,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                3509551,
+                3538245,
+                3487762
+              ]
+            },
+            "native_pack_file_wall_ns": {
+              "max_ns": 61487902,
+              "median_ns": 60807875,
+              "min_ns": 56036062,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                56036062,
+                61487902,
+                60807875
+              ]
+            },
+            "recover_all_chunks_wall_ns": {
+              "max_ns": 7939760,
+              "median_ns": 7871583,
+              "min_ns": 7833730,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                7871583,
+                7939760,
+                7833730
+              ]
+            },
+            "selected_wire_roundtrip_all_chunks_wall_ns": {
+              "max_ns": 121159,
+              "median_ns": 105201,
+              "min_ns": 103053,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                105201,
+                121159,
+                103053
+              ]
+            }
+          }
+        },
+        {
+          "chunk_bytes": 4194304,
+          "chunks_per_repeat": 1,
+          "payload_bytes": 1048577,
+          "phase_wall_ns": {
+            "binding_all_chunks_wall_ns": {
+              "max_ns": 1861,
+              "median_ns": 1781,
+              "min_ns": 1706,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                1861,
+                1781,
+                1706
+              ]
+            },
+            "complete_tcm1_verify_wall_ns": {
+              "max_ns": 1876067,
+              "median_ns": 1856376,
+              "min_ns": 1807975,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                1876067,
+                1856376,
+                1807975
+              ]
+            },
+            "corrupt_reject_all_chunks_wall_ns": {
+              "max_ns": 3794373,
+              "median_ns": 3507286,
+              "min_ns": 3479163,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                3794373,
+                3507286,
+                3479163
+              ]
+            },
+            "encode_all_chunks_wall_ns": {
+              "max_ns": 2439381,
+              "median_ns": 2199543,
+              "min_ns": 2184329,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                2439381,
+                2184329,
+                2199543
+              ]
+            },
+            "native_pack_file_wall_ns": {
+              "max_ns": 8701557,
+              "median_ns": 7406419,
+              "min_ns": 7089633,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                8701557,
+                7406419,
+                7089633
+              ]
+            },
+            "recover_all_chunks_wall_ns": {
+              "max_ns": 5619453,
+              "median_ns": 4858029,
+              "min_ns": 4852275,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                5619453,
+                4858029,
+                4852275
+              ]
+            },
+            "selected_wire_roundtrip_all_chunks_wall_ns": {
+              "max_ns": 504232,
+              "median_ns": 174083,
+              "min_ns": 148732,
+              "n": 3,
+              "repeat_0_1_2_ns": [
+                504232,
+                174083,
+                148732
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "runner": "ubuntu-24.04",
+  "schema": "trnm.ci-cell-cost-analysis.v1",
+  "scope": "deterministic synthetic bytes; only local component phase wall observations",
+  "source_before_after_bytes_equal": true,
+  "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+  "source_kind": "head",
+  "source_record": {
+    "base": null,
+    "candidate": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "tested_tree": "f81f35d014eeeedf266e2a4fd8a5fc46f83d0f4e",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1734126476,
+    "tracked_entries": 16760,
+    "tracked_worktree_verified": true
+  },
+  "system_cpu_seconds": null,
+  "user_cpu_seconds": null,
+  "validator_path": "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-delivery/measure_next_cells.py",
+  "validator_sha256": "c901b20f750e7decb65c254349b23960f158ba6e500307b6e4f722406b8bc9fe",
+  "whole_process_wall_ns": null
+}

@@ -1,0 +1,2 @@
+{"installed": [{"bytes": 7990, "path": "/home/qq/work/chain-bt-4a0b-frozen02-control/full-preflight-frozen02-v1.py", "sha256": "d29aa959df9625df90b379a15e4d98dfd41da6cb5d715ddf1b32aab3e9d84633"}, {"bytes": 12954, "path": "/home/qq/work/chain-bt-4a0b-frozen02-control/observe-full-preflight-frozen02-v2.py", "sha256": "3142c91629ebb9420857e35bd5cb66574ae3c6fbde0679150324b115ce145394"}], "native_operation_started": false}
+{"completed": true, "native_operation_started": false, "output": "/home/qq/work/chain-bt-4a0b-frozen02-validation/runtime-admission-01", "passed": true}

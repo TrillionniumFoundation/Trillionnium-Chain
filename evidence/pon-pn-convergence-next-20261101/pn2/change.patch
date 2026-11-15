@@ -1,0 +1,40 @@
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs
+index 1eab610..c4bb9db 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs
+@@ -73,6 +73,7 @@ impl ArithmeticCache {
+         &self,
+         settings: &Settings,
+         state: &State,
++        current_bytes: Option<&[u8]>,
+     ) -> trnm_mvcc_fee::pon_executor::Result<Hash> {
+         let _measurement = self.history.observe(super::HistoryStage::CompleteStateRoot);
+         // The separate root entry is genesis arithmetic. It must not evict the
+@@ -83,10 +84,14 @@ impl ArithmeticCache {
+             settings.parameters(),
+             settings.genesis(),
+         ];
+-        if let (Some(bytes), Ok(entry)) = (bounded_bytes(state), self.root.try_borrow()) {
+-            if let Some(entry) = entry.as_ref().filter(|entry| {
+-                entry.context == context && entry.bytes.as_slice() == bytes.as_slice()
+-            }) {
++        // complete() already encoded this same immutably borrowed State. Reuse
++        // that exact input, including an oversize miss, without a second bounded
++        // serialization. The original root calculation still runs on a miss.
++        if let (Some(bytes), Ok(entry)) = (current_bytes, self.root.try_borrow()) {
++            if let Some(entry) = entry
++                .as_ref()
++                .filter(|entry| entry.context == context && entry.bytes.as_slice() == bytes)
++            {
+                 self.root_arithmetic.exact_root_hit();
+                 return Ok(entry.value);
+             }
+@@ -210,7 +215,7 @@ impl ArithmeticCache {
+             settings,
+             state,
+             Some(&self.lifts),
+-            || self.complete_root(settings, state),
++            || self.complete_root(settings, state, bytes.as_deref()),
+             |partition| {
+                 self.root_arithmetic
+                     .calculate_non_accounts(settings, partition)

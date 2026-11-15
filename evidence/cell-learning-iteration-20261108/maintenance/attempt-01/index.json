@@ -1,0 +1,77 @@
+{
+  "all_source_diffs_empty": true,
+  "archive_preflight_completed_before_copy": true,
+  "attempt": "attempt-01",
+  "command_exit_codes": {
+    "post-fmt": 0,
+    "scoped-fix": 0,
+    "strict-clippy": 101
+  },
+  "engineering_controls_only": true,
+  "exit_code": 101,
+  "files": [
+    {
+      "bytes": 7954,
+      "file": "result.json",
+      "sha256": "3908a74073088c92b01af7bca0db40b36c3f65a8661ad54963e9f53a91c9179e",
+      "source_file": "native-evidence/maintenance-v1/result.json"
+    },
+    {
+      "bytes": 1927,
+      "file": "start.json",
+      "sha256": "748f43d8e177c46f5191142465d8c164ed0952b61f03b521fd7fa3ddf13be79b",
+      "source_file": "native-evidence/maintenance-v1/start.json"
+    },
+    {
+      "bytes": 0,
+      "file": "pre-maintenance-source-diff.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_file": "native-evidence/maintenance-v1/pre-maintenance-source-diff.patch"
+    },
+    {
+      "bytes": 22250,
+      "file": "scoped-fix.stdout",
+      "sha256": "92ef48c3e2e02009b06656303ff5912b65edbee1753fa87e055cb0772751b4ef",
+      "source_file": "native-evidence/maintenance-v1/scoped-fix.log"
+    },
+    {
+      "bytes": 0,
+      "file": "scoped-fix-source-diff.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_file": "native-evidence/maintenance-v1/scoped-fix-source-diff.patch"
+    },
+    {
+      "bytes": 73,
+      "file": "post-fmt.stdout",
+      "sha256": "b6a6d5ad920f48c9b49a3ca8c2308227b7849b9e0a498dc452f3a7bd2f7fb752",
+      "source_file": "native-evidence/maintenance-v1/post-fmt.log"
+    },
+    {
+      "bytes": 0,
+      "file": "post-fmt-source-diff.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_file": "native-evidence/maintenance-v1/post-fmt-source-diff.patch"
+    },
+    {
+      "bytes": 21795,
+      "file": "strict-clippy.stdout",
+      "sha256": "69d93c15e5d853c9203763d1ef94f9c25cd1f25c8a20f80abe95241b7c95dcaf",
+      "source_file": "native-evidence/maintenance-v1/strict-clippy.log"
+    },
+    {
+      "bytes": 0,
+      "file": "strict-clippy-source-diff.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_file": "native-evidence/maintenance-v1/strict-clippy-source-diff.patch"
+    }
+  ],
+  "original_artifact_bytes_preserved": true,
+  "production_final_use_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "schema": "hepta-maintenance-attempt-archive-v1",
+  "source_commit": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+  "source_tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198",
+  "source_unchanged": true,
+  "status": "FAILED_STRICT_CLIPPY_DUPLICATE_MOD",
+  "tests_rerun_after_maintenance": false
+}

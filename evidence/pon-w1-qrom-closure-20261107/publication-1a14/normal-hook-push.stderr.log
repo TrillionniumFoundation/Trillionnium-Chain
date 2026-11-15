@@ -1,0 +1,6 @@
+remote: 
+remote: GitHub found 7 vulnerabilities on TrillionniumFoundation/Trillionnium-Chain's default branch (4 high, 2 moderate, 1 low). To find out more, visit:        
+remote:      https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot        
+remote: 
+To https://github.com/TrillionniumFoundation/Trillionnium-Chain.git
+   7150d96a2..1a14f7d48  HEAD -> fix/chain-w1-qrom-implementation-map-20261107

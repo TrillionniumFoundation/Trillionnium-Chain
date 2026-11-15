@@ -1,0 +1,69 @@
+{
+  "schema": "pon-work-time-original-parts-readback-v1",
+  "operation": "read-only h_file_info for five original writes with unknown acknowledgements",
+  "result": "UNKNOWN_ALL_METADATA_REQUESTS_TIMED_OUT",
+  "claims_of_file_presence": false,
+  "claims_of_archive_delivery": false,
+  "responses": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "tool call error: tool call failed for `codex_apps/h.file_info`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "tool call error: tool call failed for `codex_apps/h.file_info`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "tool call error: tool call failed for `codex_apps/h.file_info`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "tool call error: tool call failed for `codex_apps/h.file_info`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "tool call error: tool call failed for `codex_apps/h.file_info`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+          }
+        ],
+        "isError": true
+      }
+    }
+  ]
+}

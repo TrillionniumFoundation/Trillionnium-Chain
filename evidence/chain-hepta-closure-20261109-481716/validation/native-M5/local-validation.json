@@ -1,0 +1,19 @@
+{
+  "all_manifest_file_sizes_and_sha256_match": true,
+  "archive_bytes": 577631,
+  "archive_sha256": "2ad7f1189e1286301beac719dc98bb92b1c73410cecb1d0da4ad096fdcec3e16",
+  "manifest_sha256": "1e6d3c7f902f0857ead03518d914e2702db45336f841d8012312815e8e41acc3",
+  "only_safe_regular_relative_members": true,
+  "original_files_verified": 471,
+  "schema": "m5-native-evidence-local-verification-v1",
+  "source_matches_fixed_M5": true,
+  "standard_native_validation_status": "FAILED_LIBRARY_TESTS",
+  "tar_members_verified": 472,
+  "unified_standard_top_level_totals": {
+    "failed": 1,
+    "filtered_out": 0,
+    "ignored": 41,
+    "measured": 0,
+    "passed": 2449
+  }
+}

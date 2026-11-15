@@ -1,0 +1,38 @@
+{
+  "deduplicated_source": "native-inputs.json.gz",
+  "note": "The TCP before/after payloads are byte-identical; build before/after decode to the same manifest. Raw serialization identities are retained separately. Scope is native inputs, not all repository files.",
+  "observations": [
+    {
+      "manifest_sha256": "0e9dd2812f4ae9388e5bba175934ee71632c4e053f5f94906d0dd21a22209c88",
+      "native_input_count": 1194,
+      "origin_readback_file": "tail-native-73ab-trimmed-schema-attempt-1/source-before.json",
+      "raw_bytes": 177323,
+      "raw_sha256": "0e9538f36b3d59995812c075329aaf4fd9cf737ae10beabb64b18edf049dc46d",
+      "same_decoded_manifest": true
+    },
+    {
+      "manifest_sha256": "0e9dd2812f4ae9388e5bba175934ee71632c4e053f5f94906d0dd21a22209c88",
+      "native_input_count": 1194,
+      "origin_readback_file": "tail-native-73ab-trimmed-schema-attempt-1/source-after-tests.json",
+      "raw_bytes": 177323,
+      "raw_sha256": "0e9538f36b3d59995812c075329aaf4fd9cf737ae10beabb64b18edf049dc46d",
+      "same_decoded_manifest": true
+    },
+    {
+      "manifest_sha256": "0e9dd2812f4ae9388e5bba175934ee71632c4e053f5f94906d0dd21a22209c88",
+      "native_input_count": 1194,
+      "origin_readback_file": "prewrite-73ab-trimmed-schema-build-attempt-1/source-before.json",
+      "raw_bytes": 177323,
+      "raw_sha256": "ad713acd4dcea8e5cb57b187498f8e95ff502c416cca04d913a40c5d2927a0c5",
+      "same_decoded_manifest": true
+    },
+    {
+      "manifest_sha256": "0e9dd2812f4ae9388e5bba175934ee71632c4e053f5f94906d0dd21a22209c88",
+      "native_input_count": 1194,
+      "origin_readback_file": "prewrite-73ab-trimmed-schema-build-attempt-1/source-after.json",
+      "raw_bytes": 177323,
+      "raw_sha256": "ad713acd4dcea8e5cb57b187498f8e95ff502c416cca04d913a40c5d2927a0c5",
+      "same_decoded_manifest": true
+    }
+  ]
+}

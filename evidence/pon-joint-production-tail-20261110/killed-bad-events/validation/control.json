@@ -1,0 +1,14 @@
+{
+  "command": [
+    "python3",
+    "evidence/pon-joint-production-tail-20261110/killed-bad-events/check.py"
+  ],
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "source_commit": "85905b41943cd872fbaedbcfe19ea753839847ef",
+  "source_tree": "949f5972d2b2d766cd2f229c680a83e66412b521",
+  "elapsed_seconds": 0.024119556001096498,
+  "stdout_sha256": "fb64b3e5a2255950f9aabd20416f43bac836c67384976c3bc7a5abab0e16f2ed",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "native_execution": false
+}

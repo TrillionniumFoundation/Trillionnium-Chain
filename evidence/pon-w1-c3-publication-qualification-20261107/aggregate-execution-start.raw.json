@@ -1,0 +1,33 @@
+{
+  "audit_recorded": true,
+  "job": {
+    "args": [
+      "-B",
+      "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/build_qualification.py"
+    ],
+    "created_unix_ms": 1794098856805,
+    "cwd": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo",
+    "env_keys": [],
+    "executable": "/usr/bin/python3.12",
+    "execution_mode": "operator",
+    "host": "desktop",
+    "id": "1a1b8a00365-12894-105d",
+    "idempotency_key": "trnm-w1-7d418660-abab79dac0cb-aggregate-exact-02",
+    "launch_error": null,
+    "launch_state": "launched",
+    "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b8a00365-12894-105d",
+    "request_digest": "17a717d9c2030d49126e4c53fdc2c08105171d753b16efc3f447277a3e43a0b3",
+    "request_fingerprint": 1704357208013344073,
+    "ssh_target": "desktop-ts",
+    "system_jobctl": false,
+    "unit": "hepta-runtime-job-1a1b8a00365-12894-105d"
+  },
+  "launch": {
+    "backend": "systemd",
+    "launcher_pid": null,
+    "ok": true,
+    "unit": "hepta-runtime-job-1a1b8a00365-12894-105d"
+  },
+  "local_record_pending": false,
+  "reused": false
+}

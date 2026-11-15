@@ -1,0 +1,16 @@
+{
+  "source_path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs",
+  "source_sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb",
+  "source_words": [
+    1958252411,
+    3287394615,
+    1805488136,
+    1516578702,
+    78549041,
+    790278610,
+    301018785,
+    4279049364
+  ],
+  "official_result_matches_source": true,
+  "official_result_sha256": "509cb37e1288257736cfecd0befc32da9880a955d8fb707aa92cbe1f6d1592cf"
+}

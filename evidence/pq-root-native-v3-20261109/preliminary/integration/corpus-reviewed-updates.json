@@ -1,0 +1,142 @@
+[
+  {
+    "path": "config/pon/pq-root-dependency-register-v3.json",
+    "before": null,
+    "after": "a25230f48e5fbd19ce5e82395405d9e7e5d1c2a3"
+  },
+  {
+    "path": "docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md",
+    "before": null,
+    "after": "5e2bb35cf6481c3ade9b688cfe11ab00eaef403a"
+  },
+  {
+    "path": "docs/security/PQ_ROOT_RECOVERY_NATIVE_V3.md",
+    "before": null,
+    "after": "704f2a66904067bb698e2ea497f03388d3107cc9"
+  },
+  {
+    "path": "scripts/ci/check_ci_contract.py",
+    "before": "5a4cd516376c845e16f9003c02ac157e811911d7",
+    "after": "a8809b3262d39b93ce15249e90d23630e7fc39f6"
+  },
+  {
+    "path": "scripts/ci/check_pq_research_integration.py",
+    "before": "9cb4dd53d335066beab5c54301914b4460b48656",
+    "after": "411ca30506a3a4951931ce023a212a91dd7a4247"
+  },
+  {
+    "path": "scripts/ci/ci_job.sh",
+    "before": "56d05fb8800d79328623158d75c019027baf4f8a",
+    "after": "50eb24bdc20af9a8336b52811e43a87c8f560345"
+  },
+  {
+    "path": "scripts/ci/pq_root_dependency_register.py",
+    "before": null,
+    "after": "99628d572186c1e8f8e80ada4046a14db403c878"
+  },
+  {
+    "path": "scripts/ci/run_pq_root_native_v3.py",
+    "before": null,
+    "after": "3487ecb548d5f5e0b9406eb581d19ef92d1b2f0a"
+  },
+  {
+    "path": "scripts/ci/test_ci_contract.py",
+    "before": "ceb3daa313b38faf1fbcf3fcf45c8de68b5fca30",
+    "after": "1e9d538425fde6f54af3ae0276f56297f437e43c"
+  },
+  {
+    "path": "scripts/ci/test_pq_research_integration.py",
+    "before": "20f1aaa463598677ccb5ed0aec2497bac3910122",
+    "after": "d54a4ff84faaf742c267e3a843db09f8de14e4fc"
+  },
+  {
+    "path": "scripts/ci/test_pq_root_dependency_register.py",
+    "before": null,
+    "after": "73be7b92e10b8c95e19b02fe4818d95a58cfe522"
+  },
+  {
+    "path": "scripts/ci/test_run_pq_root_native_v3.py",
+    "before": null,
+    "after": "db13e3fde5d76a937809196813409c217985b3d6"
+  },
+  {
+    "path": "trillionnium/Cargo.lock",
+    "before": "008502330351a7ab0001c04b7d88ea504dac80f3",
+    "after": "0d1855651fe76ed51b76e6f92c3afd4db1681d5a"
+  },
+  {
+    "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+    "before": "e67b801d5ffdaa0a820560c45d1befdedc7ba7d7",
+    "after": "78e6935ba3cfdb2fe300ba88400246e61a05c47e"
+  },
+  {
+    "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
+    "before": null,
+    "after": "1174606c6001d9ec32ad994592a4d0a601ba9da5"
+  },
+  {
+    "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs",
+    "before": null,
+    "after": "3d7a5cceff3268c9837f31dace070b0e1c890475"
+  },
+  {
+    "path": "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs",
+    "before": null,
+    "after": "eef480c0b72c6051f224e2a8cd5552e50edf70c4"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "before": "b9c4f415548fd0e7b8d4accaa65fa765abbd6c64",
+    "after": "54b8d73f358dc220f8131b7df4800c702407a3a4"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "before": "c92db768cda005a984292af522ab2db46aeeec59",
+    "after": "508ff3866df80eac7b38166792f2dc5886390db8"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+    "before": "fa069cdad4505ffb3ee6bb74f164e3223c13b806",
+    "after": "52dc7eb7ec874b12012849db014136775dced616"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs",
+    "before": null,
+    "after": "701867b3c40276148007f6365a251ad1246e7eb5"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/anchor.rs",
+    "before": null,
+    "after": "de0dd4464a525305d52bc0b5b75c6853d015c6d1"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/storage.rs",
+    "before": null,
+    "after": "7a9efc8a622a124f78b4d20cc561f6a48ab8a304"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/tests/root_recovery_v3_native.rs",
+    "before": null,
+    "after": "701abe4109407944ca9d5fc4a45d2f1f8cc8cd72"
+  },
+  {
+    "path": "trillionnium/crates/trnm-release-bundle/Cargo.toml",
+    "before": "670ec449dee3fe69562f938753dfbd3621dd2e90",
+    "after": "53d6dcf7be8c1f4a1777814052c593965b7fd783"
+  },
+  {
+    "path": "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+    "before": "dd4e83155a2b1533c6d516908026ce159f84a5c9",
+    "after": "d16cd19e4128666b9dcb143955a48dcb37aed4ee"
+  },
+  {
+    "path": "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3.rs",
+    "before": null,
+    "after": "b77a32a2e51f71db550d7b62438b35fee704a312"
+  },
+  {
+    "path": "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3_tests.rs",
+    "before": null,
+    "after": "a0f81de77f9004c30f41d65a5e332619680ba59c"
+  }
+]

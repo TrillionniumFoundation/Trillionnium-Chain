@@ -1,0 +1,171 @@
+{
+  "schema": "p3.pruned-mmcs.source-and-evidence-provenance.v1",
+  "baseline": {
+    "pull_request": 795,
+    "commit": "1fe2f31c70977a030aec73b63fe0617f34d15a77",
+    "tree": "ff035632ecbf4c10d383fbbe936582666f4eb25e"
+  },
+  "final_source": {
+    "github_commit": "4d0a212a0cb592e5c9492c39a6439cd09310ac13",
+    "native_commit": "5747946c5e87ee601f20c640c0a4b0973f7f17b8",
+    "tree": "ae3ac43e02ee68d8adcb864b0cf4d21ef21864d7",
+    "github_parent": "1fe2f31c70977a030aec73b63fe0617f34d15a77",
+    "github_and_native_source_trees_equal": true,
+    "files": [
+      {
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/examples/tagged_sha3_mmcs_binding.rs",
+        "sha256": "a1fc0496f4013879f859eaaa9a556ebd9cd308901e8bff2d56f8cfa796c1a22a",
+        "bytes": 28311,
+        "mode": "100644",
+        "git_blob_sha1": "08fbc040648646871c7b27d8a7fa009eabf70ebd"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/BINDING_REDUCTION.md",
+        "sha256": "1d4eeeb61ae206a765b509c3757be4f797989871cbd6a50eeed35b0d12b7f764",
+        "bytes": 11939,
+        "mode": "100644",
+        "git_blob_sha1": "8d1b86aefcac7bd1ce5f98fea5db69ea143ee8b3"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/verify_upstream_source.py",
+        "sha256": "8e4b1d223c70736f267278a3636e39303db0b38485846b1e90538e2c03151be2",
+        "bytes": 4828,
+        "mode": "100644",
+        "git_blob_sha1": "416d58d6b847b06238b340ee4c5a6440c04b36f2"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/SECURITY_CONTRACT.md",
+        "sha256": "623ef99d27da7cff918a72395b58738fa76fef40363e84a3c4acfbc70a9830e4",
+        "bytes": 12938,
+        "mode": "100644",
+        "git_blob_sha1": "ff526f5d612b07469df6d475285b2bd489789b0c"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/README.md",
+        "sha256": "8a43cd0659832a86412200c3f344436d49786919c41f0dfef3e2bf3c8ec64538",
+        "bytes": 15434,
+        "mode": "100644",
+        "git_blob_sha1": "1184d6c93ea3e3c5c32674e5fda27b11783ebace"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/run_qualification_checks.py",
+        "sha256": "410d5c2fccf0b131fec24cbfc5f68bceaaafbd693d5c55e0e6444e37641bf1e5",
+        "bytes": 12242,
+        "mode": "100644",
+        "git_blob_sha1": "0b303e29e57d08badad3c48471c26a9408cc8d86"
+      },
+      {
+        "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "sha256": "48dba6d2f6f6652bd5d2120aa7af1fd36e453c25405fb92e386cefab1ff8e5e7",
+        "bytes": 578161,
+        "mode": "100644",
+        "git_blob_sha1": "250229cf9a3d12be97f454339e32533069d7b2f3"
+      }
+    ]
+  },
+  "stages": [
+    {
+      "version": "v2",
+      "native_commit": "70293cec717416ed57a97b0d326909c4227963e6",
+      "raw_commit_object": "runner-review-v4/v2-commit.txt",
+      "tree": "2ae8517c1d8c386d4357bfed8fe6cb14a4a76023"
+    },
+    {
+      "version": "v3",
+      "native_commit": "e55f7f84fbaeda2a3a033edd294773db7be3a903",
+      "raw_commit_object": "runner-review-v4/v3-commit.txt",
+      "tree": "81962dcfac38dcf7b158d490588c5d2fe586b840"
+    },
+    {
+      "version": "v4",
+      "native_commit": "5747946c5e87ee601f20c640c0a4b0973f7f17b8",
+      "raw_commit_object": "runner-review-v4/v4-commit.txt",
+      "tree": "ae3ac43e02ee68d8adcb864b0cf4d21ef21864d7"
+    }
+  ],
+  "validation_scope": {
+    "v2": {
+      "complete_focused_gate": true,
+      "python_tests": 158,
+      "rust_tests": 79,
+      "new_rust_tests_included_in_total": 11,
+      "native_rejection_controls": 11
+    },
+    "v3": {
+      "complete_focused_gate": false,
+      "rust_tests_reexecuted": 79,
+      "new_named_rust_tests_included_in_total": 11,
+      "clippy_and_fmt_reexecuted": true,
+      "native_report_reexecuted": true,
+      "runner_only_diff": true
+    },
+    "v4": {
+      "complete_focused_gate": false,
+      "rust_tests_reexecuted": false,
+      "native_report_reexecuted": true,
+      "actual_final_runner_ast_checked_on_original_v3_log": true,
+      "parser_negative_mutations_rejected": 2,
+      "runner_only_diff": true
+    }
+  },
+  "archive": {
+    "path": "native-evidence.tar.gz",
+    "bytes": 132185,
+    "sha256": "e8891904942de3c45d8c7d343876ff0a835f3857bd364eace28a92cca38aee0d",
+    "regular_members": 151,
+    "indexed_files": 150,
+    "index_path": "native-evidence-index.json",
+    "index_sha256": "0def84b8077c29455fcdc47c26027e73313b46ca8beaebea067a3bf4ee376b7d"
+  },
+  "readable_receipts": [
+    {
+      "path": "v2-focused-gates.json",
+      "bytes": 16837,
+      "sha256": "e0582ff6a838b2e00884488fcb93c7d82244a45c5af8119fd7aa2cdb84b87379"
+    },
+    {
+      "path": "v3-runner-review.json",
+      "bytes": 8734,
+      "sha256": "72bed2f539cd1a2e24440ccb261c8786bc66805eac2a2293c5c4e86c4a124f60"
+    },
+    {
+      "path": "v4-runner-delta-review.json",
+      "bytes": 6815,
+      "sha256": "913d611792f94cf51fd45550f2236a92b4a0d0e096a9264cb0f5b97333099b70"
+    },
+    {
+      "path": "v4-parser-review.json",
+      "bytes": 1857,
+      "sha256": "2176ed55fb61e55c7403f7af832c9f34a4be6ca9140b901628a9fd18334c8eae"
+    },
+    {
+      "path": "native-mmcs-report.json",
+      "bytes": 5859,
+      "sha256": "06f0ca48a869b2342cf08eb18fdd6dd69a02ccbc46d6044ca9994ccd81875606"
+    },
+    {
+      "path": "upstream-source-identity.json",
+      "bytes": 13459,
+      "sha256": "c924a21dcc76689870bb33ea3a72fab5f926294d85edb5a23be4a0796f2deed5"
+    },
+    {
+      "path": "root-readback.json",
+      "bytes": 576,
+      "sha256": "1af7ee9d69ca76cf6ba5578f0144d070e0e9ad78f9eb54baa5c8df77eac1ea1f"
+    }
+  ],
+  "measured_executable": {
+    "name": "tagged_sha3_mmcs_binding",
+    "sha256": "10f18b7d11784d1dfdc72b9104f006460b144636ca810364fba90274a43136a4",
+    "example_source_sha256": "a1fc0496f4013879f859eaaa9a556ebd9cd308901e8bff2d56f8cfa796c1a22a",
+    "report_sha256": "06f0ca48a869b2342cf08eb18fdd6dd69a02ccbc46d6044ca9994ccd81875606"
+  },
+  "qualification": "HOLD_NO_GO",
+  "concrete_hash_binding_bits": null,
+  "complete_noninteractive_security_bits": null,
+  "quantum_pcs_extraction": false,
+  "fiat_shamir_knowledge_soundness": false,
+  "actual_w1_forgery": false,
+  "production_activation": false,
+  "full_repository_ci_claimed": false
+}

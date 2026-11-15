@@ -1,0 +1,111 @@
+{
+  "candidate": "f85fea4e8da02404d513d074ceb35ad5292b017b",
+  "does_not_include_expanded_payload_or_assembled_transport": true,
+  "files": [
+    {
+      "bytes": 376997,
+      "git_blob": "6e6e83ccb2dd19c241daf3ad8ca015d54d67631f",
+      "path": "FILES.tsv",
+      "sha256": "d9f746f23d6f0e71b0d93518747ffd449c0e43ca66a545ef66bbe7f3931b8d26"
+    },
+    {
+      "bytes": 2420,
+      "git_blob": "c7959b5c0599e4dad758675f0a1000f0ee45415a",
+      "path": "README.md",
+      "sha256": "9045c512cf1093ff315ccd249e8e0351d70359b9bd313faf5f6921f172fe9ea6"
+    },
+    {
+      "bytes": 469120,
+      "git_blob": "bc647839a140fcb990c4d10fa7f557103b926b05",
+      "path": "archive-index.json",
+      "sha256": "675e0d08c19b13e53f3175f33eb774d6780c0ae51e8a6859c01cb8eb0f9f07e7"
+    },
+    {
+      "bytes": 459,
+      "git_blob": "c74b94fce2654334630cd52146e018019764d2db",
+      "path": "archive-verification.json",
+      "sha256": "86d5adec855be34a20586c12be553286f131d4220c350e87a1349e2167f4876d"
+    },
+    {
+      "bytes": 23998,
+      "git_blob": "4ca6d7d9830e6b6ae919e43e5df537fdcb139c6c",
+      "path": "collection-status.json",
+      "sha256": "735cfea76cb0f6cf6ee35ab112033c2eb8def6fb2db6a2a84f3ff0d73a89eec8"
+    },
+    {
+      "bytes": 860799,
+      "git_blob": "eef9a108400954d0135acc04cde44e264bce0d60",
+      "path": "file-manifest.json",
+      "sha256": "aead0b0b227c103c8c5b33ceee31791e41b031118f0ad40e2bdb8cac0e55edce"
+    },
+    {
+      "bytes": 1572864,
+      "git_blob": "211a0a30aa96264fb672f3092b6e5953ee3c03a1",
+      "path": "raw-evidence.tar.zst.part-000",
+      "sha256": "ec1f7c7068057ff7a3d281ff2555c01c1b606fefb0bdef71eb7dc8711fef23b7"
+    },
+    {
+      "bytes": 1572864,
+      "git_blob": "7518cd17226caecc7257e90f3d30e8e3d7e1c968",
+      "path": "raw-evidence.tar.zst.part-001",
+      "sha256": "97cd1ed6c7f7c3e3199e8afd8b955d7570df3b2935d6511170a02f6b0f9a4563"
+    },
+    {
+      "bytes": 1572864,
+      "git_blob": "1a52fea12bd5abe065ac015c5c6fcfbaac2d6715",
+      "path": "raw-evidence.tar.zst.part-002",
+      "sha256": "3061e0483748071b291b3ff6fe7f4a2a818eca33da1a1f93325dfb000deab2ad"
+    },
+    {
+      "bytes": 1572864,
+      "git_blob": "da7bbd867854f828e1c0295b4eb304ccbed5bbd9",
+      "path": "raw-evidence.tar.zst.part-003",
+      "sha256": "f7a7601063075989d2120321fb2a114d678b2ca6eacd7f6505c320cebfc83854"
+    },
+    {
+      "bytes": 1572864,
+      "git_blob": "79c06dc4a65727788b0338092e1f02510a21122a",
+      "path": "raw-evidence.tar.zst.part-004",
+      "sha256": "fb32df5d3fb05e9b060efc8c2b29ee9a25731d3912a9713f2f4ccaec7f02c272"
+    },
+    {
+      "bytes": 1572864,
+      "git_blob": "a91ec16c9dcc09faab17314c0d334360ee9d5353",
+      "path": "raw-evidence.tar.zst.part-005",
+      "sha256": "d1d3f2af6eaae69623e605aefc2b7ac34a1d7bdb6c45b6d9cc54a9343db2ec0c"
+    },
+    {
+      "bytes": 1572864,
+      "git_blob": "f2eec56e44b1e2e723996d909f43344b98cdab96",
+      "path": "raw-evidence.tar.zst.part-006",
+      "sha256": "40d657651b1a7f12b53cc95dc51a814490b75fa76d97d58d245f1514176bb197"
+    },
+    {
+      "bytes": 1572864,
+      "git_blob": "e16e2003f86323039561de9ba0d37d1db2e5f0b5",
+      "path": "raw-evidence.tar.zst.part-007",
+      "sha256": "08a1e7c30b74130662d759d920b80472af9afd252e81f6a864f63f456d682bf0"
+    },
+    {
+      "bytes": 1572864,
+      "git_blob": "a5f35afb639e9038841ed97511d95f88a58645a7",
+      "path": "raw-evidence.tar.zst.part-008",
+      "sha256": "9ec6758cfb6dcef1d5b70dc35819c2dace8ff801f8dc3fac824b26b795b9c13e"
+    },
+    {
+      "bytes": 127974,
+      "git_blob": "4634262db9b95eb854ff12ba817e226f3f0ce8fb",
+      "path": "raw-evidence.tar.zst.part-009",
+      "sha256": "7f519b0abe99484265e11da9dcc87b0bc6e310e9cb1f186724230768d08a0a96"
+    },
+    {
+      "bytes": 5012,
+      "git_blob": "87566b728641b6ea95d311a66b150df273151486",
+      "path": "verify_curated_evidence.py",
+      "sha256": "ad84ee5ccec29a339a54a20a863e964ced941821321c87f10e188de9979174c4"
+    }
+  ],
+  "final_native_and_ci_pending": true,
+  "manifest_excludes_itself": true,
+  "schema": "trnm-curated-evidence-publication-files-v1"
+}

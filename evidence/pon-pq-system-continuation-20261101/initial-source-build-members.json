@@ -1,0 +1,36 @@
+{
+  "schema": "trnm-pq-initial-source-build-members-v1",
+  "result": "BUILD_FAILED_SIGKILL_NO_NATIVE_EXECUTION",
+  "source_commit": "ed31b019525963456e0e84eb5f0862ef6ee0186a",
+  "source_tree": "f5cdc9a1c46ef01a722ab472e89a2a7b80ca17aa",
+  "same_tree_remote_commit": "82a576f111f686ffaa5e4eff015bf6b83bb7cec2",
+  "native_controls_executed": 0,
+  "files": [
+    {
+      "path": "green-build.log",
+      "bytes": 105874,
+      "sha256": "45c27b578e2b6e0a7a2340a39c2cb1283cbbfaad656e1848e606abb41a45c985"
+    },
+    {
+      "path": "green-build.json",
+      "bytes": 2371,
+      "sha256": "88ce1063f0b121bd0c30a33980e011044c04ff959002c59db23a3b4588b81a22"
+    },
+    {
+      "path": "green-build-runner.json",
+      "bytes": 514,
+      "sha256": "14a9b5bf698c19518ea27787fe709c521bc98b271da1c4d4a7b2c1a7f366c2f0"
+    },
+    {
+      "path": "green-build-failure-observation.json",
+      "bytes": 815,
+      "sha256": "29b4cd8279bbec69d56a8017fdac800f9ecc5d40136297079b7ec5d7cbe7f75b"
+    },
+    {
+      "path": "green-build-source.commit",
+      "bytes": 277,
+      "sha256": "7b32a5610f81b63619f94de9f9d40d10a00284eabaf587d2e382873e74fc221d"
+    }
+  ],
+  "whole_chain_pq_qualified": false
+}

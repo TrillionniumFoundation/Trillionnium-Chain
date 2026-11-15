@@ -1,0 +1,158 @@
+[
+  {
+    "name": "pack-head-before",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+    "started_ns": 1794071025144471312,
+    "ended_ns": 1794071025176527475,
+    "exit_code": 0,
+    "stdout_bytes": 41,
+    "stdout_sha256": "bfdbb83ef2cb2cc2688db59b086905e3e6488d0c58a4cdd57c1ed4b5346306d6",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "pin-ARCHIVE.json",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "rev-parse",
+      "9b70db69b5a7a7cdd0b73b273f189211d507dfe2:evidence/pon-cell-integration-v1-20261107/ARCHIVE.json"
+    ],
+    "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+    "started_ns": 1794071025176947545,
+    "ended_ns": 1794071025180797862,
+    "exit_code": 0,
+    "stdout_bytes": 41,
+    "stdout_sha256": "081b8c7c864e46aa4b062258735ed12f7b76b59fe081e6e9e8e3d2ba1b640311",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "pin-MANIFEST.json",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "rev-parse",
+      "9b70db69b5a7a7cdd0b73b273f189211d507dfe2:evidence/pon-cell-integration-v1-20261107/MANIFEST.json"
+    ],
+    "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+    "started_ns": 1794071025223049488,
+    "ended_ns": 1794071025226647058,
+    "exit_code": 0,
+    "stdout_bytes": 41,
+    "stdout_sha256": "4c37ff314f7d6bd98eef874af602ff98e08399113547eb6533a28110f320344e",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "pin-retained-runs.tar.gz",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "rev-parse",
+      "9b70db69b5a7a7cdd0b73b273f189211d507dfe2:evidence/pon-cell-integration-v1-20261107/retained-runs.tar.gz"
+    ],
+    "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+    "started_ns": 1794071025244845483,
+    "ended_ns": 1794071025249156228,
+    "exit_code": 0,
+    "stdout_bytes": 41,
+    "stdout_sha256": "3b9c821ced3ec11ff8f29db60a3a1881bab9a98d95a0268a5d0affebf48dc3ac",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "isolated-git-init",
+    "argv": [
+      "/usr/bin/git",
+      "init",
+      "--bare",
+      "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/isolated-original-object-pack.git"
+    ],
+    "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+    "started_ns": 1794071025438569987,
+    "ended_ns": 1794071025474307341,
+    "exit_code": 0,
+    "stdout_bytes": 142,
+    "stdout_sha256": "05cf4bd88bb44cad458e6eb77aa3bcb7ef74a102ef17c6f3026408e079e59115",
+    "stderr_bytes": 472,
+    "stderr_sha256": "a503220a0961c2c95ba78f8cdb1a355dc4b80e53a4c3bf741f249c6e9f674422"
+  },
+  {
+    "name": "isolated-index-pack",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "index-pack",
+      "--stdin",
+      "--strict"
+    ],
+    "cwd": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/isolated-original-object-pack.git",
+    "started_ns": 1794071025511730051,
+    "ended_ns": 1794071027111382942,
+    "exit_code": 0,
+    "stdout_bytes": 46,
+    "stdout_sha256": "bb8800e16b149439a747100da9ffbcc8ebc5d7254a7ff50b5bbe3b05183cbfb0",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "isolated-object-list",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "cat-file",
+      "--batch-all-objects",
+      "--batch-check=%(objectname) %(objecttype) %(objectsize)"
+    ],
+    "cwd": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/isolated-original-object-pack.git",
+    "started_ns": 1794071027171186808,
+    "ended_ns": 1794071027176138806,
+    "exit_code": 0,
+    "stdout_bytes": 13270,
+    "stdout_sha256": "7f039c56f10b3864a0f695ba2a8434113b100b9cbf321937373c8ea065eb18c3",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "inventory-from-retained-pack",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "cat-file",
+      "blob",
+      "d846deb176a4290658859efb369b5b0947f04356"
+    ],
+    "cwd": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/isolated-original-object-pack.git",
+    "started_ns": 1794071027262636770,
+    "ended_ns": 1794071027266942597,
+    "exit_code": 0,
+    "stdout_bytes": 26365,
+    "stdout_sha256": "364f348fff4625e500ba5d1cd66ccdedeee72068e0a6d75209527c833d2799b9",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "required-object-presence-before",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "cat-file",
+      "--batch-check=%(objectname) %(objecttype) %(objectsize)"
+    ],
+    "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+    "started_ns": 1794071027335507744,
+    "ended_ns": 1794071034497623820,
+    "exit_code": 128,
+    "stdout_bytes": 1965,
+    "stdout_sha256": "ababd40f1c07f756bcedde6bd63b4443b89278e6f38fb44a6c609c67fb9befa7",
+    "stderr_bytes": 152,
+    "stderr_sha256": "068e09253e2fbdca9434916e8d9c747a5107105c0915752183c8c8ad2e46534f"
+  }
+]

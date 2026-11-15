@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "exit_code": 0,
+  "base_head": "e2ac004fbd523a4c4f4d9c3f7f88d7a25258fef8",
+  "scope": "evidence-only working tree; no new native execution"
+}

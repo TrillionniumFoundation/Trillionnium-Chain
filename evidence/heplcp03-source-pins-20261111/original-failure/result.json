@@ -1,0 +1,11 @@
+{
+  "fixed_tree": "ff1e6c252e273b45ed29a7150f7fd24dc5934b2c",
+  "published_head": "ced03a7aa4a09af36825a6fa258fd6bd80c79fa7",
+  "local_equal_tree_commit": "8d7f347891dfeff5772e32c353b064cf5875c4c1",
+  "argv": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "returncode": 1,
+  "hosted_execution": false
+}

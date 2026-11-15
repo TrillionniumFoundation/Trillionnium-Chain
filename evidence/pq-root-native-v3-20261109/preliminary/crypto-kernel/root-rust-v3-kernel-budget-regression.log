@@ -1,0 +1,2 @@
+error: the package 'trnm-release-bundle' does not contain this feature: pq-native-openssl
+help: packages with the missing feature: trnm-crypto-primitives, trnm-mvcc-fee, trnm-pon-node

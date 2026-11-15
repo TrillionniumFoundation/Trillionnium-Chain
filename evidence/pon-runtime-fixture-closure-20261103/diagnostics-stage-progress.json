@@ -1,0 +1,15 @@
+{
+  "schema": "diagnostics-evidence-stage-progress-v1",
+  "observed_utc": "2026-11-03T21:44:28.385238+00:00",
+  "completed_evidence_prepared": true,
+  "full974_terminal_pending": false,
+  "full974_terminal": {
+    "passed": 950,
+    "failed": 1,
+    "ignored": 23,
+    "native_exit_code": 101
+  },
+  "formal_fixture_cargo_terminal_pending": true,
+  "future_fixture_composed_source_is_separate": true,
+  "retained_failure_attempts_overwritten": false
+}

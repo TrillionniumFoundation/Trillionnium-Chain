@@ -1,0 +1,230 @@
+test_cross_experiment_game_model_scope_and_profile_inputs_are_refused (__main__.ArithmeticContractTests.test_cross_experiment_game_model_scope_and_profile_inputs_are_refused) ... ok
+test_declared_bounds_require_a_complete_theorem_declaration_and_probability (__main__.ArithmeticContractTests.test_declared_bounds_require_a_complete_theorem_declaration_and_probability) ... ok
+test_default_unknown_contract_keeps_every_leaf_unknown (__main__.ArithmeticContractTests.test_default_unknown_contract_keeps_every_leaf_unknown) ... ok
+test_missing_common_or_loss_input_is_refused_instead_of_defaulted_to_zero (__main__.ArithmeticContractTests.test_missing_common_or_loss_input_is_refused_instead_of_defaulted_to_zero) ... ok
+test_product_combiner_and_independence_assertion_cannot_enable_multiplication (__main__.ArithmeticContractTests.test_product_combiner_and_independence_assertion_cannot_enable_multiplication) ... ok
+test_schema_unknown_fields_and_self_verified_claims_are_refused (__main__.ArithmeticContractTests.test_schema_unknown_fields_and_self_verified_claims_are_refused) ... ok
+test_threshold_successor_possession_and_population_scope_are_fixed (__main__.ArithmeticContractTests.test_threshold_successor_possession_and_population_scope_are_fixed) ... ok
+test_unknown_status_cannot_carry_a_number_or_theorem (__main__.ArithmeticContractTests.test_unknown_status_cannot_carry_a_number_or_theorem) ... ok
+test_checked_in_manifest_matches_the_frozen_contract (__main__.InventoryContractTests.test_checked_in_manifest_matches_the_frozen_contract) ... FAIL
+test_conflicting_primitive_identity_units_caps_resets_and_sets_are_refused (__main__.InventoryContractTests.test_conflicting_primitive_identity_units_caps_resets_and_sets_are_refused) ... ok
+test_every_resource_instance_retains_all_channels_and_unknown_units (__main__.InventoryContractTests.test_every_resource_instance_retains_all_channels_and_unknown_units) ... ok
+test_pre_client_timing_legacy_identity_remains_refused (__main__.InventoryContractTests.test_pre_client_timing_legacy_identity_remains_refused) ... ok
+test_previous_five_role_population_cannot_omit_the_witness (__main__.InventoryContractTests.test_previous_five_role_population_cannot_omit_the_witness) ... ok
+test_primitive_bridge_has_four_shared_scopes_without_numerical_budgets (__main__.InventoryContractTests.test_primitive_bridge_has_four_shared_scopes_without_numerical_budgets) ... ok
+test_pure_validation_cannot_report_source_or_deployment_checks (__main__.InventoryContractTests.test_pure_validation_cannot_report_source_or_deployment_checks) ... ERROR
+test_shared_source_identity_merges_once_and_conflicts_are_refused (__main__.InventoryContractTests.test_shared_source_identity_merges_once_and_conflicts_are_refused) ... ok
+test_superseded_child_manifest_identities_are_refused (__main__.InventoryContractTests.test_superseded_child_manifest_identities_are_refused) ... ok
+test_unknowns_and_nonqualification_cannot_be_promoted_in_the_manifest (__main__.InventoryContractTests.test_unknowns_and_nonqualification_cannot_be_promoted_in_the_manifest) ... ok
+test_all_events_in_a_weighted_finite_space_satisfy_root_union_intersection_bound (__main__.ProbabilitySemanticsTests.test_all_events_in_a_weighted_finite_space_satisfy_root_union_intersection_bound) ... ok
+test_common_failure_and_shared_loss_remain_additive (__main__.ProbabilitySemanticsTests.test_common_failure_and_shared_loss_remain_additive) ... ok
+test_family_losses_cannot_be_chosen_separately_from_event_bounds (__main__.ProbabilitySemanticsTests.test_family_losses_cannot_be_chosen_separately_from_event_bounds) ... ok
+test_one_complete_declared_family_bound_is_usable_but_never_qualified (__main__.ProbabilitySemanticsTests.test_one_complete_declared_family_bound_is_usable_but_never_qualified) ... ok
+test_partial_family_without_its_loss_is_not_a_complete_bound (__main__.ProbabilitySemanticsTests.test_partial_family_without_its_loss_is_not_a_complete_bound) ... ok
+test_perfectly_correlated_family_failures_do_not_multiply (__main__.ProbabilitySemanticsTests.test_perfectly_correlated_family_failures_do_not_multiply) ... ok
+test_positive_loss_at_an_exact_target_is_not_rounded_away (__main__.ProbabilitySemanticsTests.test_positive_loss_at_an_exact_target_is_not_rounded_away) ... ok
+test_probability_cap_preserves_the_uncapped_sum (__main__.ProbabilitySemanticsTests.test_probability_cap_preserves_the_uncapped_sum) ... ok
+test_unknown_required_common_failure_or_shared_loss_does_not_disappear (__main__.ProbabilitySemanticsTests.test_unknown_required_common_failure_or_shared_loss_does_not_disappear) ... ok
+test_zero_marginal_with_an_unknown_reduction_loss_is_not_a_zero_bound (__main__.ProbabilitySemanticsTests.test_zero_marginal_with_an_unknown_reduction_loss_is_not_a_zero_bound) ... ok
+test_all_bad_and_overrun_events_in_weighted_finite_space_satisfy_bound (__main__.QueryTailSemanticsTests.test_all_bad_and_overrun_events_in_weighted_finite_space_satisfy_bound) ... ok
+test_all_unknown_inputs_keep_complete_bound_unknown (__main__.QueryTailSemanticsTests.test_all_unknown_inputs_keep_complete_bound_unknown) ... ok
+test_cap_retains_uncapped_three_term_sum (__main__.QueryTailSemanticsTests.test_cap_retains_uncapped_three_term_sum) ... ok
+test_coverage_cannot_drop_external_or_prior_work_channels (__main__.QueryTailSemanticsTests.test_coverage_cannot_drop_external_or_prior_work_channels) ... ok
+test_declared_zero_requires_all_explicit_inputs_and_never_promotes (__main__.QueryTailSemanticsTests.test_declared_zero_requires_all_explicit_inputs_and_never_promotes) ... ok
+test_each_required_unknown_input_propagates (__main__.QueryTailSemanticsTests.test_each_required_unknown_input_propagates) ... ok
+test_foreign_experiment_game_model_scope_and_query_definition_refused (__main__.QueryTailSemanticsTests.test_foreign_experiment_game_model_scope_and_query_definition_refused) ... ok
+test_invalid_probability_types_ranges_and_missing_theorem_refused (__main__.QueryTailSemanticsTests.test_invalid_probability_types_ranges_and_missing_theorem_refused) ... ok
+test_invalid_query_budget_types_and_partial_budget_are_refused (__main__.QueryTailSemanticsTests.test_invalid_query_budget_types_and_partial_budget_are_refused) ... ok
+test_node_limits_or_epoch_resets_cannot_supply_a_global_cap (__main__.QueryTailSemanticsTests.test_node_limits_or_epoch_resets_cannot_supply_a_global_cap) ... ok
+test_numeric_declarations_cannot_use_an_unknown_query_count (__main__.QueryTailSemanticsTests.test_numeric_declarations_cannot_use_an_unknown_query_count) ... ok
+test_omitted_input_is_not_an_implicit_zero (__main__.QueryTailSemanticsTests.test_omitted_input_is_not_an_implicit_zero) ... ok
+test_query_count_and_unit_must_agree_for_every_leaf (__main__.QueryTailSemanticsTests.test_query_count_and_unit_must_agree_for_every_leaf) ... ok
+test_real_inspector_embeds_unknown_tail_without_changing_qualification (__main__.QueryTailSemanticsTests.test_real_inspector_embeds_unknown_tail_without_changing_qualification) ... ERROR
+test_reduction_loss_is_additive_and_cannot_hide_in_overrun (__main__.QueryTailSemanticsTests.test_reduction_loss_is_additive_and_cannot_hide_in_overrun) ... ok
+test_target_headroom_is_exact_and_signed_without_hiding_excess (__main__.QueryTailSemanticsTests.test_target_headroom_is_exact_and_signed_without_hiding_excess) ... ok
+test_tiny_positive_overrun_exceeds_exhausted_target_without_rounding (__main__.QueryTailSemanticsTests.test_tiny_positive_overrun_exceeds_exhausted_target_without_rounding) ... ok
+test_unknown_input_cannot_carry_a_number_or_theorem (__main__.QueryTailSemanticsTests.test_unknown_input_cannot_carry_a_number_or_theorem) ... ok
+test_unknown_loss_does_not_erase_known_target_excess (__main__.QueryTailSemanticsTests.test_unknown_loss_does_not_erase_known_target_excess) ... ok
+test_unknown_overrun_is_not_zero_even_at_exact_bounded_game_target (__main__.QueryTailSemanticsTests.test_unknown_overrun_is_not_zero_even_at_exact_bounded_game_target) ... ok
+test_unsupported_fields_and_self_certification_are_refused (__main__.QueryTailSemanticsTests.test_unsupported_fields_and_self_certification_are_refused) ... ok
+test_changed_child_manifest_bytes_are_refused_even_when_json_semantics_match (__main__.SourceInspectionTests.test_changed_child_manifest_bytes_are_refused_even_when_json_semantics_match) ... 
+  test_changed_child_manifest_bytes_are_refused_even_when_json_semantics_match (__main__.SourceInspectionTests.test_changed_child_manifest_bytes_are_refused_even_when_json_semantics_match) (path='config/pon/pq128-lifetime-budget-v1.json') ... FAIL
+  test_changed_child_manifest_bytes_are_refused_even_when_json_semantics_match (__main__.SourceInspectionTests.test_changed_child_manifest_bytes_are_refused_even_when_json_semantics_match) (path='config/pon/pq-root-dependency-register-v3.json') ... FAIL
+test_changed_shared_scope_in_child_is_refused_before_joining (__main__.SourceInspectionTests.test_changed_shared_scope_in_child_is_refused_before_joining) ... ok
+test_changed_shared_source_is_refused (__main__.SourceInspectionTests.test_changed_shared_source_is_refused) ... ok
+test_cli_changed_input_returns_structured_refusal_without_qualification (__main__.SourceInspectionTests.test_cli_changed_input_returns_structured_refusal_without_qualification) ... FAIL
+test_cli_inspection_returns_hold_and_null_not_a_security_pass (__main__.SourceInspectionTests.test_cli_inspection_returns_hold_and_null_not_a_security_pass) ... FAIL
+test_conflicting_source_lock_cannot_override_root_source_identity (__main__.SourceInspectionTests.test_conflicting_source_lock_cannot_override_root_source_identity) ... ok
+test_inspection_rejects_duplicate_json_fields (__main__.SourceInspectionTests.test_inspection_rejects_duplicate_json_fields) ... ok
+test_missing_composition_manifest_is_refused (__main__.SourceInspectionTests.test_missing_composition_manifest_is_refused) ... ok
+test_missing_each_child_manifest_or_legacy_lock_is_refused (__main__.SourceInspectionTests.test_missing_each_child_manifest_or_legacy_lock_is_refused) ... ok
+test_missing_source_from_either_inventory_is_refused (__main__.SourceInspectionTests.test_missing_source_from_either_inventory_is_refused) ... ok
+test_real_inspection_binds_65_distinct_declared_sources_and_four_scopes (__main__.SourceInspectionTests.test_real_inspection_binds_65_distinct_declared_sources_and_four_scopes) ... ERROR
+
+======================================================================
+ERROR: test_pure_validation_cannot_report_source_or_deployment_checks (__main__.InventoryContractTests.test_pure_validation_cannot_report_source_or_deployment_checks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_lifetime_composition.py", line 82, in exact
+    root_register.exact(value, expected, where)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_root_dependency_register.py", line 96, in exact
+    exact(value[key], item, where + "." + key)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_root_dependency_register.py", line 96, in exact
+    exact(value[key], item, where + "." + key)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_root_dependency_register.py", line 96, in exact
+    exact(value[key], item, where + "." + key)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_root_dependency_register.py", line 102, in exact
+    require(value == expected, "changed frozen contract: " + where)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_root_dependency_register.py", line 82, in require
+    raise RegisterError(message)
+pq_root_dependency_register.RegisterError: changed frozen contract: composition manifest.input_manifests.root.declared_revision
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/test_pq_lifetime_composition.py", line 344, in test_pure_validation_cannot_report_source_or_deployment_checks
+    report = composition.validate_manifest(load(MANIFEST))
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_lifetime_composition.py", line 420, in validate_manifest
+    exact(data, default_manifest(), "composition manifest")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_lifetime_composition.py", line 84, in exact
+    raise CompositionError(str(error)) from error
+pq_lifetime_composition.CompositionError: changed frozen contract: composition manifest.input_manifests.root.declared_revision
+
+======================================================================
+ERROR: test_real_inspector_embeds_unknown_tail_without_changing_qualification (__main__.QueryTailSemanticsTests.test_real_inspector_embeds_unknown_tail_without_changing_qualification)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_lifetime_composition.py", line 82, in exact
+    root_register.exact(value, expected, where)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_root_dependency_register.py", line 96, in exact
+    exact(value[key], item, where + "." + key)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_root_dependency_register.py", line 96, in exact
+    exact(value[key], item, where + "." + key)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_root_dependency_register.py", line 96, in exact
+    exact(value[key], item, where + "." + key)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_root_dependency_register.py", line 102, in exact
+    require(value == expected, "changed frozen contract: " + where)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_root_dependency_register.py", line 82, in require
+    raise RegisterError(message)
+pq_root_dependency_register.RegisterError: changed frozen contract: composition manifest.input_manifests.root.declared_revision
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/test_pq_lifetime_composition.py", line 785, in test_real_inspector_embeds_unknown_tail_without_changing_qualification
+    report = composition.inspect(ROOT)
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_lifetime_composition.py", line 448, in inspect
+    result = validate_manifest(data)
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_lifetime_composition.py", line 420, in validate_manifest
+    exact(data, default_manifest(), "composition manifest")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_lifetime_composition.py", line 84, in exact
+    raise CompositionError(str(error)) from error
+pq_lifetime_composition.CompositionError: changed frozen contract: composition manifest.input_manifests.root.declared_revision
+
+======================================================================
+ERROR: test_real_inspection_binds_65_distinct_declared_sources_and_four_scopes (__main__.SourceInspectionTests.test_real_inspection_binds_65_distinct_declared_sources_and_four_scopes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_lifetime_composition.py", line 446, in inspect
+    raw = read_regular(root, legacy.relative_path(manifest_path, "manifest"), MAX_BYTES)
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_source_reader.py", line 53, in read_regular
+    raise SourceReadError("symlink source refused: " + relative)
+pq_source_reader.SourceReadError: symlink source refused: config/pon/pq128-lifetime-composition-v2.json
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/test_pq_lifetime_composition.py", line 447, in test_real_inspection_binds_65_distinct_declared_sources_and_four_scopes
+    report = composition.inspect(self.root)
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_lifetime_composition.py", line 514, in inspect
+    raise CompositionError(str(error)) from error
+pq_lifetime_composition.CompositionError: symlink source refused: config/pon/pq128-lifetime-composition-v2.json
+
+======================================================================
+FAIL: test_checked_in_manifest_matches_the_frozen_contract (__main__.InventoryContractTests.test_checked_in_manifest_matches_the_frozen_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/test_pq_lifetime_composition.py", line 287, in test_checked_in_manifest_matches_the_frozen_contract
+    self.assertEqual(data, composition.default_manifest())
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'actual_lifetime_failure_bound': None, 'ad[10457 chars]alse} != {'schema': 'trnm-pq128-lifetime-composition[10457 chars]alse}
+Diff is 24595 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_changed_child_manifest_bytes_are_refused_even_when_json_semantics_match (__main__.SourceInspectionTests.test_changed_child_manifest_bytes_are_refused_even_when_json_semantics_match) (path='config/pon/pq128-lifetime-budget-v1.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_lifetime_composition.py", line 446, in inspect
+    raw = read_regular(root, legacy.relative_path(manifest_path, "manifest"), MAX_BYTES)
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_source_reader.py", line 53, in read_regular
+    raise SourceReadError("symlink source refused: " + relative)
+pq_source_reader.SourceReadError: symlink source refused: config/pon/pq128-lifetime-composition-v2.json
+
+The above exception was the direct cause of the following exception:
+
+pq_lifetime_composition.CompositionError: symlink source refused: config/pon/pq128-lifetime-composition-v2.json
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/test_pq_lifetime_composition.py", line 495, in test_changed_child_manifest_bytes_are_refused_even_when_json_semantics_match
+    with self.assertRaisesRegex(composition.CompositionError, "input manifest differs"):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "input manifest differs" does not match "symlink source refused: config/pon/pq128-lifetime-composition-v2.json"
+
+======================================================================
+FAIL: test_changed_child_manifest_bytes_are_refused_even_when_json_semantics_match (__main__.SourceInspectionTests.test_changed_child_manifest_bytes_are_refused_even_when_json_semantics_match) (path='config/pon/pq-root-dependency-register-v3.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_lifetime_composition.py", line 446, in inspect
+    raw = read_regular(root, legacy.relative_path(manifest_path, "manifest"), MAX_BYTES)
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/pq_source_reader.py", line 53, in read_regular
+    raise SourceReadError("symlink source refused: " + relative)
+pq_source_reader.SourceReadError: symlink source refused: config/pon/pq128-lifetime-composition-v2.json
+
+The above exception was the direct cause of the following exception:
+
+pq_lifetime_composition.CompositionError: symlink source refused: config/pon/pq128-lifetime-composition-v2.json
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/test_pq_lifetime_composition.py", line 495, in test_changed_child_manifest_bytes_are_refused_even_when_json_semantics_match
+    with self.assertRaisesRegex(composition.CompositionError, "input manifest differs"):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "input manifest differs" does not match "symlink source refused: config/pon/pq128-lifetime-composition-v2.json"
+
+======================================================================
+FAIL: test_cli_changed_input_returns_structured_refusal_without_qualification (__main__.SourceInspectionTests.test_cli_changed_input_returns_structured_refusal_without_qualification)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/test_pq_lifetime_composition.py", line 561, in test_cli_changed_input_returns_structured_refusal_without_qualification
+    self.assertIn("input manifest differs", report["error"])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'input manifest differs' not found in 'symlink source refused: config/pon/pq128-lifetime-composition-v2.json'
+
+======================================================================
+FAIL: test_cli_inspection_returns_hold_and_null_not_a_security_pass (__main__.SourceInspectionTests.test_cli_inspection_returns_hold_and_null_not_a_security_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/chain-pq-lifetime-source-binding-20261114/scripts/ci/test_pq_lifetime_composition.py", line 545, in test_cli_inspection_returns_hold_and_null_not_a_security_pass
+    self.assertEqual(process.returncode, 0, process.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0 : 
+
+----------------------------------------------------------------------
+Ran 60 tests in 0.449s
+
+FAILED (failures=5, errors=3)

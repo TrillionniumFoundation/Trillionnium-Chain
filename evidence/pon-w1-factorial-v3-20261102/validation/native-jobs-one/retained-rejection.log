@@ -1,0 +1,11 @@
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-crypto-primitives)
+    Finished `release` profile [optimized] target(s) in 15.59s
+     Running unittests examples/pon_rejection_cost.rs (/workspace/scratch/e08750459604/pon-v3-target-682/x86_64-unknown-linux-gnu/release/examples/pon_rejection_cost-f4e6314142b0006e)
+
+running 3 tests
+test tests::actual_late_rejection_stage_matches_scalar_and_keeps_cancellation_distinct ... ok
+test tests::bounded_search_and_fake_ticket_exhaustion_keep_every_attempt ... ok
+test tests::product_last_cell_mutation_is_canonical_even_at_modulus_boundary ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

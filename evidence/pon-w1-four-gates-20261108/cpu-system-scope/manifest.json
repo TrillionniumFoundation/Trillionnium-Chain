@@ -1,0 +1,91 @@
+{
+  "schema": "TRNM-W1-CPU-SCOPE-EVIDENCE1",
+  "files": [
+    {
+      "path": "attempt-01/configuration-address-families.json",
+      "bytes": 701,
+      "sha256": "63cc6a654953a8a95c11e8c5348e9385d6359509bcb3d213044ccd8aa3615d0b"
+    },
+    {
+      "path": "attempt-01/configuration-diagnosis.json",
+      "bytes": 3414,
+      "sha256": "8cbc14eed80dda54f328c244565aecb70f7f4a84e493bcd2708e40cf1187ea5f"
+    },
+    {
+      "path": "attempt-01/configuration-groups.json",
+      "bytes": 2133,
+      "sha256": "7921c0312621c669f4c48cc687be854f62c3452e8d598794f569140ab5f3844b"
+    },
+    {
+      "path": "attempt-01/intent.json",
+      "bytes": 3199,
+      "sha256": "6c5aeddf6d6ca218b838910058122fb14a862cddd468d4b5411fa11748f62d60"
+    },
+    {
+      "path": "attempt-01/payload.py",
+      "bytes": 5239,
+      "sha256": "f9b43bab15385478660f6c7e0e858e4f1e86ec26ac94e36671c419dbaec2b415"
+    },
+    {
+      "path": "attempt-01/result.json",
+      "bytes": 6487,
+      "sha256": "867799dc9a0724807f146fd56b5adc75e7d3049555a1ddb4df07575651e59d1f"
+    },
+    {
+      "path": "attempt-01/stderr.txt",
+      "bytes": 88,
+      "sha256": "5e41658d2dfd302d13b2db3b2de82fa7757aebb6d7f35c05c0e1046eac075e84"
+    },
+    {
+      "path": "attempt-01/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "attempt-01-runner.py",
+      "bytes": 10672,
+      "sha256": "45f41305e32e116d8555540c3cc506259e7e689abb9c999bc9c35786e7bf7d5d"
+    },
+    {
+      "path": "attempt-02/intent.json",
+      "bytes": 3220,
+      "sha256": "a68a4541e29c5b947caf1b52ec8fdef4ce85852336a624d8be7a08ec4de64c75"
+    },
+    {
+      "path": "attempt-02/payload.py",
+      "bytes": 5239,
+      "sha256": "f9b43bab15385478660f6c7e0e858e4f1e86ec26ac94e36671c419dbaec2b415"
+    },
+    {
+      "path": "attempt-02/result.json",
+      "bytes": 20089,
+      "sha256": "2c37aaeea36d4b4432ab6938572733c22060c4aa2c3b94b71655f7a090621824"
+    },
+    {
+      "path": "attempt-02/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "attempt-02/stdout.json",
+      "bytes": 5429,
+      "sha256": "676f2a8f8e2738299ab5e9809f11437c0106ae8c42123e37d9cd0d7b5c13081c"
+    },
+    {
+      "path": "attempt-02-runner.py",
+      "bytes": 10693,
+      "sha256": "2a2afaf6b1c1166e1fb40ba90c1e884dd390fa266856cf71a1ca0ab2f68f5d83"
+    }
+  ],
+  "scope": "new short system service only; no historical reassessment",
+  "old_gpu_ns": null,
+  "resource_billing_complete": false,
+  "publication_renames": [
+    {
+      "original_observation_name": "attempt-01/stdout.json",
+      "public_name": "attempt-01/stdout.txt",
+      "bytes_unchanged": true,
+      "reason": "failed service never produced JSON; preserve its empty stdout as raw text without claiming JSON"
+    }
+  ]
+}

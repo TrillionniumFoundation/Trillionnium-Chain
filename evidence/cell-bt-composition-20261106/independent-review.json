@@ -1,0 +1,405 @@
+{
+  "schema": "trnm.cell.independent_static_review.v1",
+  "reviewer": "/root/cold_evidence",
+  "reviewed_at_utc": "2026-11-06T06:43:35.190397+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "checkout": "/workspace/scratch/2e04527a60e8/chain",
+  "baseline_commit": "b173c1f52d927522af67df30dd08ecfb2e3a1bb0",
+  "repository_head_at_snapshot": "b173c1f52d927522af67df30dd08ecfb2e3a1bb0",
+  "review_kind": "Independent source inspection of the uncommitted combined candidate; no native build or test execution by reviewer.",
+  "conclusion": "No blocking production-code finding in the reviewed scope. One documentation overstatement was identified, accepted by the owner, and corrected in the observed source. Final frozen-source identity, complete source gates and actual native/CLI validation remain the root owner's responsibility.",
+  "blocking_production_code_findings": [],
+  "source_state": {
+    "final_commit_frozen_and_rechecked": false,
+    "artifact_is_a_point_in_time_record": true,
+    "note": "The request began while transport was finishing its two-page test. Before this snapshot the transport agent reported its M09 files frozen. This report binds the bytes actually observed, not an eventual commit or another branch.",
+    "final_owner_verification_pending": true
+  },
+  "reviewed_and_bound_files": [
+    {
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "bytes": 39896,
+      "sha256": "78df5fab85009eb6829051efa118d45adaf91dba32942336f8b31c8e839f3933",
+      "git_blob_sha1": "f2ec53b247694f990dc9150c31d5f4dec9320eeb",
+      "scope": "supplemental",
+      "extent": "Four-path diff, required-set propagation, exact blob checks, HOLD/activation flags, AST syntax."
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "bytes": 553815,
+      "sha256": "89a31f88cc82d557517d67ae71cc78c4f4f2541d22d2c983ee30a6440ee9b335",
+      "git_blob_sha1": "8c42650fba3cf62b87df7f6e788dbac65e344ff1",
+      "scope": "supplemental",
+      "extent": "New 2026-11-06 Cell composition paragraph only, relative to baseline."
+    },
+    {
+      "path": "docs/development/specs/pon/CELL_MODEL_STORAGE_V1.md",
+      "bytes": 26592,
+      "sha256": "dbf5cf82f95dd9f5d7349e2fb8820c7020bdca4dd3e8d840161eb31adb62626a",
+      "git_blob_sha1": "ff260f479ff752dc0fc3aa3e1ac3dc6f8473e534",
+      "scope": "supplemental",
+      "extent": "Changed transfer and single-object preflight paragraphs; corrected rejection-scope sentence."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+      "bytes": 16522,
+      "sha256": "f6afb07b4549342cd150db6283c4f380cf6980d61dbd25d6c0dc2f8740bc4871",
+      "git_blob_sha1": "17d1933b0f4dc8e56d24debbb25b9f4c2f8e64d6",
+      "scope": "supplemental",
+      "extent": "Full retain_native_cell and repair_native_cell paths, CPU/wall checks, effect replay and economic boundary."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs",
+      "bytes": 28013,
+      "sha256": "7e76f71b1669a8a5e58d9bc569c43c8c5937156eb20a936fe0e52c48e96590e0",
+      "git_blob_sha1": "af11ee0d1716f7a6acac3e67c5988021cc514aa2",
+      "scope": "supplemental",
+      "extent": "New module linkage; existing actual-funding, reorg/restart, pending-effect and repair-reconciliation controls inspected, not executed."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs",
+      "bytes": 7499,
+      "sha256": "0024d618e98db072b566a3a2921d891ed933d5d82e3e502d2fc4ec8dc21ce574",
+      "git_blob_sha1": "3294891376ed381f45ebc9a360b482c36bea58ab",
+      "scope": "supplemental",
+      "extent": "Both new tests and repair helper read in full; three configured state backends, denial-before-hold and exact recovery assertions."
+    },
+    {
+      "path": "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+      "bytes": 68208,
+      "sha256": "dd200bb218967dc4456ad48cf81a4e648202f0ed6593972717d7ee4a5eafe4db",
+      "git_blob_sha1": "f8e5c12c3015d4c25eb8d5cc87ee944578405783",
+      "scope": "supporting_dependency",
+      "extent": "check_effects, open_budget, reserve, begin_effect_in_window/window, Event::Intent, anchor/funding validation and report boundary."
+    },
+    {
+      "path": "trillionnium/crates/trnm-service-settlement/src/native_budget/tests.rs",
+      "bytes": 57572,
+      "sha256": "7d9694f0be1078ab250b6abf9b0997b5158e4a37153e57bdcd553686457d0424",
+      "git_blob_sha1": "be801fe0c3d34cab44102fb45dd817c285581808",
+      "scope": "supporting_dependency",
+      "extent": "Existing preflight/no-mutation, absent funding, Pending/Done, window-reorg/restart and context mismatch controls inspected, not executed."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/funding.rs",
+      "bytes": 3030,
+      "sha256": "7cd7a6155e35d413ba1b31678a3e36c6d9f18bc2d6b49f3e9032a0146f34bc11",
+      "git_blob_sha1": "71ab19e0ad93dc6962ca91c74c2f5c606e6fdca2",
+      "scope": "supporting_dependency",
+      "extent": "NativeFundingOwnerV1 implementation and actual native snapshot observation; absent funding remains row=None."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service/release.rs",
+      "bytes": 22559,
+      "sha256": "81cb9c33029b882779d41ac1698035859276c7adb31eb4639faf85a0c1c2e3d5",
+      "git_blob_sha1": "daef6ff4c8a52745c29f552f99757fa8bb1636ce",
+      "scope": "supporting_dependency",
+      "extent": "Existing complete-release and repair check_effects composition used for comparison; no full rereview of unrelated release logic."
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+      "bytes": 72494,
+      "sha256": "7dd1731e34c57eaadaa1c323872f548d545cc6157de0fba8d852b606a60d1260",
+      "git_blob_sha1": "d73bc05d617e8148ee49e6650ccfb435d4d72b1b",
+      "scope": "supporting_dependency",
+      "extent": "reserve_until, reconcile_acknowledgement_controlled and reconcile_repair_controlled; existing target-only recovery semantics."
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+      "bytes": 80505,
+      "sha256": "45b50bff63873c4897fca011fc009b229af618d5cc9e0cd8dcc14da5387d97db",
+      "git_blob_sha1": "40192e48750ab07e6efa649c93d20cddfccaf867",
+      "scope": "prior_v3_review",
+      "extent": "Previously reviewed V3 production diff; current SHA256 matches prior reviewed bytes."
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network/availability.rs",
+      "bytes": 5095,
+      "sha256": "e8e781df6a0bf83ca719ee75f57d4744a94f4c0919009c7ebc35a2cf7cb42241",
+      "git_blob_sha1": "6fada4c6b4a850a871154e7d9f5a443cbac6b96e",
+      "scope": "prior_v3_review",
+      "extent": "Previously reviewed inventory transport delegation and canonical-bitfield validation; current SHA256 unchanged."
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network/persistent.rs",
+      "bytes": 25058,
+      "sha256": "0a5eb5aba7dc838a73fd05dafbd69412b08cd8347cd839398f74bb85e52adde4",
+      "git_blob_sha1": "f1bf1975b35d5f4ee6706c65a7d73ffbf199fb58",
+      "scope": "prior_v3_review",
+      "extent": "Previously reviewed V3 frame shape, budgets, lifetime, pool, cancellation and refusal paths; current SHA256 unchanged."
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell.rs",
+      "bytes": 6141,
+      "sha256": "342a1d64e2fd14ed17059b813d10850dc12370aff8812d1aca1ee64e0a35096c",
+      "git_blob_sha1": "7d713ae26a0ef000beb6d241dcada7df008a2859",
+      "scope": "prior_v3_review",
+      "extent": "Previously reviewed public exports; current SHA256 unchanged."
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+      "bytes": 38450,
+      "sha256": "3ff57ff1afd1a13ff6c60a78448d599f6d49c03c79f8312888b0aa9242ea6c60",
+      "git_blob_sha1": "c0926385d14c823929c9549999dd4b8c8e15d66d",
+      "scope": "prior_v3_review",
+      "extent": "Previously reviewed CLI profile selection and report schemas; current SHA256 unchanged."
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs",
+      "bytes": 27319,
+      "sha256": "d4b0ffe1f4e477f81a755525c3f63a485901b5021298b365cfa8a2a82ee1347c",
+      "git_blob_sha1": "eead173cd3d562a930982a972802bb8872bd0341",
+      "scope": "required_test_source",
+      "extent": "V3 controls read in prior review, and final 269-chunk/two-page source inspected in this pass; no execution by reviewer."
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests/rarest.rs",
+      "bytes": 5709,
+      "sha256": "36a93c676f664a0eb9f4301965fc3b8ff6a2b1e7af0b7176807fcf7b99bc7638",
+      "git_blob_sha1": "4e9de74b5a13ee2b5a1b8f49c7536881b853729e",
+      "scope": "required_test_source",
+      "extent": "Four marker profiles and aggregate frame/byte refusal/resume controls inspected; no execution by reviewer."
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests.rs",
+      "bytes": 21740,
+      "sha256": "c0f31478e72ac5e61529aa318a108f69e1ccbd4d5f5f5202c7f9eb432c9f4b55",
+      "git_blob_sha1": "cc02673d2d23b678831a975cc08928828c7598b3",
+      "scope": "test_module_binding",
+      "extent": "Parent module linkage and marker dispatch inspected."
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli/rarest.rs",
+      "bytes": 6887,
+      "sha256": "b3436c61e47ba6f50035686e86484cac124d617f09798c4808cef77eb721bb42",
+      "git_blob_sha1": "751137a4d393a32d4592b13674e287e67c0d4c69",
+      "scope": "required_test_source_identity",
+      "extent": "Existence, exact identity and parent module linkage verified; this supplemental pass is not a full CLI-test-body review."
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli.rs",
+      "bytes": 11024,
+      "sha256": "569a6bed2f3d8d1018e79f18bc78caac39d4d91a94ef29a89cc1410fffb75ec9",
+      "git_blob_sha1": "b70026ed428f6c857be47ff1e2e98453524c27fa",
+      "scope": "test_module_binding",
+      "extent": "Explicit child #[path] and mod linkage verified."
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "bytes": 98747,
+      "sha256": "2241ae6de68a6f06bfc998dcb120feeff1a748740782f0c8038c9ba86585532d",
+      "git_blob_sha1": "efde44e3a15e3d330ed39df2e23681e8ed4f9373",
+      "scope": "integration_identity_snapshot",
+      "extent": "Actual SHA256/blob identity and four new required_paths/pinned_blobs entries observed; full checker not run by reviewer."
+    }
+  ],
+  "validated_invariants": [
+    {
+      "id": "single_cell_preflight_before_new_holds",
+      "result": "SUPPORTED_BY_SOURCE",
+      "evidence": [
+        "storage_service.rs::retain_native_cell",
+        "native_budget.rs::NativeBudgetStoreV1::check_effects",
+        "native_budget.rs::BudgetState::apply(Event::Intent)"
+      ],
+      "reason": "The exact policy, claim, operation, effect and original [retain_from_height, retain_until_height) window are passed to check_effects before open_budget, reserve or retention.reserve_until. Event simulation uses the original validators in a loaded in-memory snapshot, so a rejection at this preflight creates no new durable budget, claim or physical hold."
+    },
+    {
+      "id": "repair_preflight_preserves_original_resource_owner",
+      "result": "SUPPORTED_BY_SOURCE",
+      "evidence": [
+        "storage_service.rs::repair_native_cell",
+        "storage_service.rs::RepairCpuOwner"
+      ],
+      "reason": "The independent Repair task and effect identity use the original custody window. Preflight occurs before the separate budget/claim reservation and is surrounded by the existing thread-CPU and absolute-wall checkpoints. The original mutation checks remain in place."
+    },
+    {
+      "id": "pending_and_done_are_not_new_intents",
+      "result": "SUPPORTED_BY_SOURCE",
+      "evidence": [
+        "native_budget.rs::NativeBudgetStoreV1::check_effects",
+        "native_budget.rs::NativeBudgetStoreV1::begin_effect_window",
+        "storage_service.rs::retain_native_cell",
+        "storage_service.rs::repair_native_cell"
+      ],
+      "reason": "If the original effect exists, preflight requires exact policy/claim and operation/effect/window bindings, then returns Pending or Done without applying Event::Intent or decoding live funding for a new reservation. The service retains the original target-only reconcile paths; no new cache-bearing payload dispatch is granted. Completion bookkeeping may be reconciled, but the original cost reservation is not refunded."
+    },
+    {
+      "id": "reorg_recovery_preserves_context_and_obligation",
+      "result": "SUPPORTED_BY_SOURCE",
+      "evidence": [
+        "store/funding.rs::Node::native_funding_observation",
+        "native_budget.rs::BudgetState::observe_anchor",
+        "native_budget.rs::NativeBudgetStoreV1::check_effects",
+        "storage_service/tests.rs::native_cell_storage_escrow_replay_and_reorg_keep_physical_obligation"
+      ],
+      "reason": "The real native observer returns row=None when funding is absent after branch replacement. Exact existing effects bypass new-funding conversion while retaining network/parameters/genesis and owner-generation validation. A new intent still requires live funding. Existing reorg/restart controls inspect the original retained bytes with an empty source cache and unchanged charged report; these controls were read, not rerun by reviewer."
+    },
+    {
+      "id": "target_only_reconciliation",
+      "result": "SUPPORTED_BY_SOURCE",
+      "evidence": [
+        "retention.rs::reconcile_acknowledgement_controlled",
+        "retention.rs::reconcile_repair_controlled"
+      ],
+      "reason": "These recovery functions have no source/cache parameter and verify actual retained payload before reconciling completion metadata. Corruption or a missing target cannot authorize another initial copy or repair under the old effect."
+    },
+    {
+      "id": "four_paths_are_hard_requirements",
+      "result": "SUPPORTED_BY_SOURCE",
+      "evidence": [
+        "check_pq_research_integration.py::CONVERGENCE_REQUIRED_PATHS",
+        "check_pq_research_integration.py::NATIVE_REQUIRED_PATHS",
+        "check_pq_research_integration.py::check"
+      ],
+      "reason": "The four new paths are unconditionally unioned before NATIVE_REQUIRED_PATHS is formed. check() requires their presence in required_paths, requires every required entry in pinned_blobs, and checks actual regular-file git-blob bytes. All four are linked from existing Rust test parents. HOLD and false activation/qualification flags are unchanged. This is source identity checking, not proof of test execution."
+    },
+    {
+      "id": "no_payment_or_lock_claim",
+      "result": "SUPPORTED_BY_SOURCE",
+      "evidence": [
+        "storage_service.rs module boundary and return paths",
+        "CELL_MODEL_STORAGE_V1.md changed preflight paragraph",
+        "TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md new composition paragraph"
+      ],
+      "reason": "The new calls only preflight existing M12 local obligations. They do not submit TaskCancel/TaskReceipt/TaskAccept, lock funds against reorg/cancellation, transfer provider balances, issue Positive settlement, or refund an unknown effect. Documentation explicitly retains those economic boundaries and the two cold-load cohort identities."
+    }
+  ],
+  "new_test_source_assessment": {
+    "executed_by_reviewer": false,
+    "tests": [
+      {
+        "name": "native_cell_storage_height_window_refuses_before_reservation_and_recovers_original_effect",
+        "scope": "Legacy, AuthenticatedV1, PermanentAccountGrowthV2",
+        "assertions": "At a genuinely funded current height, both past and future windows refuse with the complete budget report and arena unchanged and no target contract; entering the original window admits New; after its end the same effect returns Done with original readback/receipt/cost."
+      },
+      {
+        "name": "native_cell_repair_height_window_preserves_recovery_without_reserving_new_work",
+        "scope": "Legacy, AuthenticatedV1, PermanentAccountGrowthV2",
+        "assertions": "A real target-byte corruption is repaired under an independent funded Repair task; after the original window the exact effect returns Done without another attempt/charge; a different still-funded task is rejected without a new hold, repair bytes, or arena change."
+      }
+    ],
+    "retained_controls_inspected": [
+      "native_cell_storage_escrow_replay_and_reorg_keep_physical_obligation",
+      "native_cell_retirement_cannot_release_a_pending_effect_before_reconciliation",
+      "native_cell_failed_initial_copy_needs_a_separate_funded_repair_and_preserves_unknown_cost",
+      "composition_preflight_checks_late_funding_failure_without_changing_the_journal",
+      "composition_preflight_is_not_authority_and_exact_recovery_keeps_original_context",
+      "effect_window_replay_survives_reorg_and_restart_only_for_reconciliation"
+    ],
+    "limits": "This review did not execute these controls or qualify any PQ backend or additional operating system. Repair CPU sampling retains the existing Linux implementation and cooperative I/O/SQLite limits."
+  },
+  "review_findings_and_followup": [
+    {
+      "id": "DOC-1",
+      "severity": "documentation_precision",
+      "original_issue": "The phrase 'A permanently inadmissible first request ...' promised no new hold for all later refusals, although M09 physical-capacity/target admission follows M12 reservations and the owners are not atomic.",
+      "requested_correction": "A first request rejected by this preflight leaves no new budget, claim or physical obligation.",
+      "owner_response": "Accepted by root.",
+      "snapshot_observation": {
+        "narrowed_sentence_present": true,
+        "superseded_broad_sentence_present": false
+      },
+      "status": "Corrected text observed; owner must include these exact bytes in final pins/source gates.",
+      "final_owner_verification_pending": true
+    },
+    {
+      "id": "CI-1",
+      "severity": "integration_gate",
+      "original_issue": "The first supplemental read occurred before the four new corpus required_paths/blob entries were added.",
+      "owner_response": "Root accepted and repinned actual source bytes.",
+      "snapshot_observation": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs",
+          "exists": true,
+          "in_required_paths": true,
+          "blob_pin_matches": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests/rarest.rs",
+          "exists": true,
+          "in_required_paths": true,
+          "blob_pin_matches": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli/rarest.rs",
+          "exists": true,
+          "in_required_paths": true,
+          "blob_pin_matches": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs",
+          "exists": true,
+          "in_required_paths": true,
+          "blob_pin_matches": true
+        }
+      ],
+      "status": "All four actual paths and git-blob pins match at this snapshot; full checker/final committed source not independently executed or rechecked by reviewer.",
+      "final_owner_verification_pending": true
+    },
+    {
+      "id": "V3-TEST-1",
+      "severity": "coverage",
+      "original_issue": "Initial V3 positive fixture did not cross the 256-slot inventory page boundary.",
+      "status": "Final 269-chunk synthetic two-page source inspected. It checks page sizes 32 and 2 bytes, 3 frames, 1 reused connection, original exact byte allowance and a verified tail chunk. It is explicitly distinct from both historical model cohorts.",
+      "execution_note": "Transport agent reported targeted r2 PASS; reviewer did not execute the tests and does not claim independent runtime validation."
+    }
+  ],
+  "prior_v3_review": {
+    "production_sha256_continuity_with_previous_review": true,
+    "scope": "The five previously reviewed V3 production files retain their exact reviewed SHA256 values. The prior budget/deadline/pool/refusal/cancellation/namespace conclusions remain source-bound.",
+    "not_repeated_as_new_runtime_evidence": true
+  },
+  "validations_performed_by_reviewer": {
+    "git_diff_check": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "ci_script_ast_parse": "PASS",
+    "four_required_path_existence_and_current_blob_membership": [
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs",
+        "exists": true,
+        "in_required_paths": true,
+        "blob_pin_matches": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests/rarest.rs",
+        "exists": true,
+        "in_required_paths": true,
+        "blob_pin_matches": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli/rarest.rs",
+        "exists": true,
+        "in_required_paths": true,
+        "blob_pin_matches": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs",
+        "exists": true,
+        "in_required_paths": true,
+        "blob_pin_matches": true
+      }
+    ],
+    "native_builds_run": 0,
+    "native_tests_run": 0,
+    "model_downloads_or_training_started": 0,
+    "full_source_integrity_gate_run": false,
+    "final_frozen_commit_recheck_run": false
+  },
+  "material_limits": [
+    "Static review is not a native execution, CI acceptance, merge approval, cryptographic acceptance or deployment authorization.",
+    "Preflight is not a cross-owner transaction or reservation. Later capacity/funding changes or physical-store failures can retain original holds; no refund is inferred.",
+    "Pending/Done recovery may reconcile metadata/completion records, but grants no new source-bearing payload copy/repair.",
+    "The original 272189990-byte, 35-second cold-load case remains HOLD; its exact materials and invocation have not been recovered.",
+    "The separate 272190131-byte success, new synthetic controls and V3 source review do not qualify ordinary Hepta CURRENT/FinalUse, independent custody, provider payment, WAN operation or BEP 52 Merkle proofs.",
+    "This point-in-time report must not be transplanted to #723, another source tree, or later edits without identity comparison."
+  ],
+  "owner_next_verification": [
+    "Bind the corrected documentation and four required test files to the final corpus/inventory/source pins; execute the full source-integrity and negative gates on the frozen source.",
+    "Run the unified native/CLI validation, including the added height-window tests and retained Pending/Done/reorg controls; retain actual results separately from this static report.",
+    "After the final source is frozen, compare its relevant file identities with this report and obtain a final static identity recheck."
+  ]
+}

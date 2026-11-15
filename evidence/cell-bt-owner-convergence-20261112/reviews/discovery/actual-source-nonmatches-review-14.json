@@ -1,0 +1,89 @@
+{
+  "actual_nonmatch_subset": {
+    "bytes": 120822,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/old-source-nonmatches/old-source-nonmatches.json",
+    "sha256": "6aa3ff0f366eacd8dcfd474c6208c6fd5f1dd46f0262ab711c2171b633353ec9"
+  },
+  "all_four_gates_passed": false,
+  "all_index_blob_ids_equal_HEAD_blob_ids": true,
+  "all_nonmatches_equal_hidden_S_path_set": true,
+  "all_nonmatches_have_null_initial_and_final_stat_fields": true,
+  "binary_read_response": {
+    "bytes": 18496,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/old-source-nonmatches/binary-read.response.json",
+    "sha256": "aa1bdc90010bc2ab801978445309fee8f7cdd5beca53ddc02939e8c032ca261b"
+  },
+  "complete_nonmatch_count": 102,
+  "complete_sorted_nonmatch_paths_sha256": "e54f3fb5ec990b1f74477948bed4b67ccb75f587ac8c39218a20fd7f066da10e",
+  "diagnostic_exit_code": 0,
+  "diagnostic_exit_success_is_not_source_guard_success": true,
+  "diagnostic_job": "1a1cf2c9afd-2564-19ba",
+  "expected_total_not_misrepresented_as_all_physically_verified": true,
+  "expected_tracked_bytes": 2552660560,
+  "expected_tracked_entries": 27686,
+  "gzip": {
+    "bytes": 13507,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/old-source-nonmatches/old-source-nonmatches.json.gz",
+    "sha256": "3dccb96239225e35380575686feffe29716fe397bd8ee73434f80b716e0c1f23"
+  },
+  "gzip_matches_complete_json_bytes": true,
+  "hepta_final_use": false,
+  "independently_summed_missing_expected_bytes": 759943890,
+  "index_after_snapshot": {
+    "bytes": 4668256,
+    "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/source-index-diagnostic-02/git-index.after",
+    "sha256": "ea921423ef074057ac46fa03244059c7d1bc71b7d9bc59271cbace5e3d253517"
+  },
+  "index_and_flags_unchanged_reported": true,
+  "index_before_after_metadata_equal": true,
+  "index_snapshot": {
+    "bytes": 4668256,
+    "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/source-index-diagnostic-02/git-index.before",
+    "sha256": "ea921423ef074057ac46fa03244059c7d1bc71b7d9bc59271cbace5e3d253517"
+  },
+  "local_independent_read_scope": "The complete 102-row rejection subset, original diagnostic stdout/status SDK payloads and gzip transport were read. The referenced 10,626,711-byte all-row file and 4,668,256-byte index snapshots were not downloaded by this reviewer; their exact sizes/hashes and equality are preserved from the actual pinned diagnostic report.",
+  "native_model_run_claimed": false,
+  "new_independent_checkout_authorized_separately": true,
+  "nonmatch_error_type_counts": {
+    "FileNotFoundError": 102
+  },
+  "null_stat_interpretation": "The initial no-follow os.stat raised FileNotFoundError. The subsequent byte read and final stat were not reached; null final stat is not a second independent absence observation.",
+  "old_failed_source_guard_remains_failed": true,
+  "old_scene_restoration_or_flag_clear_performed": false,
+  "old_source_root": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b",
+  "original_full_report": {
+    "bytes": 129666,
+    "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/source-index-diagnostic-02/summary.json",
+    "sha256": "23b1ec49a7491eea583ec171d208fe050a5acd531f9377f8d1f5bcbb5d179029"
+  },
+  "original_full_row_record": {
+    "bytes": 10626711,
+    "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/source-index-diagnostic-02/all-tracked-byte-observation.json",
+    "sha256": "a370754f245b5cd31f6d55219264f642494828929684896b00ac6e5b67b2d5d2"
+  },
+  "production_activation": false,
+  "relevant_config_text": "",
+  "reported_verified_bytes": 1792716670,
+  "reported_verified_entries": 27584,
+  "runtime_import_admitted": false,
+  "safe_effective_git_environment": {
+    "GIT_OPTIONAL_LOCKS": {
+      "value": "0"
+    },
+    "GIT_PAGER": {
+      "value": "cat"
+    },
+    "GIT_TERMINAL_PROMPT": {
+      "value": "0"
+    }
+  },
+  "schema": "trnm.bt-independent-review.actual-complete-source-rejection-subset.v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_code_required_original_blob_reader_for_each_tracked_row": true,
+  "tag_counts": {
+    "H": 27584,
+    "S": 102
+  },
+  "transport_base64_sha_size_offsets_eof_verified": true,
+  "writer_or_deleter_attribution": "not diagnosed"
+}

@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "scripts/ci/test_ci_source_integrity.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+  "end_utc": "2026-11-07T22:05:13.212435+00:00",
+  "exit_code": 0,
+  "log": "logs/02-test_ci_source_integrity.log",
+  "log_bytes": 6898,
+  "log_sha256": "1510fbe2efa462303bea1ae6e13722748cb65c6da52edb7bdca32287329dbab8",
+  "name": "02-test_ci_source_integrity",
+  "pid": 1906916,
+  "start_utc": "2026-11-07T22:05:08.470437+00:00",
+  "supervisor_timeout_seconds": 1800,
+  "timed_out": false,
+  "wall_ns": 4742010231
+}

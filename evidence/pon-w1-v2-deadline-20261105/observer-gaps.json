@@ -1,0 +1,345 @@
+{
+  "sample_count": 2883,
+  "gaps_over_three_seconds": [
+    {
+      "seconds": 3.6905411950010603,
+      "start_unix_ns": 1793866847305557592,
+      "end_unix_ns": 1793866847509217359,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5311,
+          "user_ticks": 109,
+          "system_ticks": 2
+        }
+      ]
+    },
+    {
+      "seconds": 4.912891647998549,
+      "start_unix_ns": 1793867030656566146,
+      "end_unix_ns": 1793867032416033757,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5387,
+          "user_ticks": 688,
+          "system_ticks": 6
+        }
+      ]
+    },
+    {
+      "seconds": 3.9098415070002375,
+      "start_unix_ns": 1793867307699141705,
+      "end_unix_ns": 1793867312254278874,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5501,
+          "user_ticks": 1088,
+          "system_ticks": 18
+        }
+      ]
+    },
+    {
+      "seconds": 4.289433674000975,
+      "start_unix_ns": 1793867312254278874,
+      "end_unix_ns": 1793867312313163932,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5501,
+          "user_ticks": 31,
+          "system_ticks": 0
+        }
+      ]
+    },
+    {
+      "seconds": 13.974122372001148,
+      "start_unix_ns": 1793867327669136825,
+      "end_unix_ns": 1793867327889900756,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5501,
+          "user_ticks": 177,
+          "system_ticks": 2
+        }
+      ]
+    },
+    {
+      "seconds": 3.001034199998685,
+      "start_unix_ns": 1793867327889900756,
+      "end_unix_ns": 1793867338938204076,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5501,
+          "user_ticks": 2309,
+          "system_ticks": 35
+        }
+      ]
+    },
+    {
+      "seconds": 8.270817627000724,
+      "start_unix_ns": 1793867338938204076,
+      "end_unix_ns": 1793867339016369337,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5501,
+          "user_ticks": 55,
+          "system_ticks": 0
+        }
+      ]
+    },
+    {
+      "seconds": 19.986219664999226,
+      "start_unix_ns": 1793867352222187814,
+      "end_unix_ns": 1793867361125201835,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5501,
+          "user_ticks": 1206,
+          "system_ticks": 20
+        }
+      ]
+    },
+    {
+      "seconds": 25.317982148000738,
+      "start_unix_ns": 1793867383952999548,
+      "end_unix_ns": 1793867388584308635,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5501,
+          "user_ticks": 902,
+          "system_ticks": 16
+        }
+      ]
+    },
+    {
+      "seconds": 8.751553730999149,
+      "start_unix_ns": 1793867390589721273,
+      "end_unix_ns": 1793867407285034431,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5501,
+          "user_ticks": 2871,
+          "system_ticks": 53
+        }
+      ]
+    },
+    {
+      "seconds": 10.10475585200038,
+      "start_unix_ns": 1793867407285034431,
+      "end_unix_ns": 1793867412321604331,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5501,
+          "user_ticks": 925,
+          "system_ticks": 14
+        }
+      ]
+    },
+    {
+      "seconds": 3.3896010810003645,
+      "start_unix_ns": 1793867412321604331,
+      "end_unix_ns": 1793867416899847820,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5501,
+          "user_ticks": 837,
+          "system_ticks": 17
+        }
+      ]
+    },
+    {
+      "seconds": 4.584111824999127,
+      "start_unix_ns": 1793867416899847820,
+      "end_unix_ns": 1793867460019761077,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5501,
+          "user_ticks": 5397,
+          "system_ticks": 85
+        }
+      ]
+    },
+    {
+      "seconds": 44.250548285999685,
+      "start_unix_ns": 1793867460019761077,
+      "end_unix_ns": 1793867463275402422,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5501,
+          "user_ticks": 872,
+          "system_ticks": 16
+        }
+      ]
+    },
+    {
+      "seconds": 3.965560970000297,
+      "start_unix_ns": 1793867532514472276,
+      "end_unix_ns": 1793867534823983290,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5539,
+          "user_ticks": 94,
+          "system_ticks": 40
+        }
+      ]
+    },
+    {
+      "seconds": 4.520381361000545,
+      "start_unix_ns": 1793867534823983290,
+      "end_unix_ns": 1793867537568549014,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5539,
+          "user_ticks": 212,
+          "system_ticks": 100
+        }
+      ]
+    },
+    {
+      "seconds": 3.9950341639996623,
+      "start_unix_ns": 1793867541728049293,
+      "end_unix_ns": 1793867546949100470,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5539,
+          "user_ticks": 398,
+          "system_ticks": 155
+        }
+      ]
+    },
+    {
+      "seconds": 4.489788195000074,
+      "start_unix_ns": 1793867546949100470,
+      "end_unix_ns": 1793867547674413479,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5539,
+          "user_ticks": 79,
+          "system_ticks": 0
+        }
+      ]
+    },
+    {
+      "seconds": 3.5819449489990802,
+      "start_unix_ns": 1793867590585294335,
+      "end_unix_ns": 1793867593036048156,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5539,
+          "user_ticks": 124,
+          "system_ticks": 117
+        }
+      ]
+    },
+    {
+      "seconds": 3.6669420630005334,
+      "start_unix_ns": 1793867674083880062,
+      "end_unix_ns": 1793867677750585299,
+      "cpu_tick_deltas": [
+        {
+          "pid": 4210,
+          "user_ticks": 0,
+          "system_ticks": 0
+        },
+        {
+          "pid": 5558,
+          "user_ticks": 2733,
+          "system_ticks": 6
+        }
+      ]
+    }
+  ]
+}

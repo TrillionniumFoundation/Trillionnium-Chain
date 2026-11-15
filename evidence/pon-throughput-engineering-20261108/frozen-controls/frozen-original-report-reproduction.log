@@ -1,0 +1,1 @@
+{"fresh_native_executions_by_reproducer": 0, "historical_record_readbacks": 3, "new_native_record_readbacks": 1, "original_pressure_gate": "NOT_RUN", "production_activation": false, "qualification": "HOLD_NO_GO", "qualified_confirmed_tps": null, "qualified_wan_tps": null, "reports_match_retained_bytes": true, "reproductions": 4, "schema": "trnm-throughput-reproduction-v1"}

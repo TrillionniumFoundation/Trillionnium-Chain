@@ -1,0 +1,62 @@
+{
+  "attempts": [
+    {
+      "benchmark_executed": false,
+      "cause_observed": "ENOSPC temporary directory creation in trnm-crypto-primitives",
+      "exit_code": 101,
+      "id": "run1",
+      "raw_directory": "/workspace/scratch/a0d4983b1065/validation/mvcc-native-20261109",
+      "raw_status": "AVAILABLE_AND_REHASHED",
+      "raw_stderr_sha256": "dfb2a08285380b23d7567c04ff810581e3ad7f89c56cd1d531f00aad9c87aade",
+      "raw_stdout_sha256": "b481a799f28f9cc5d5cdd50e5afcd379f5e1f18a700bf786d5dd48b61e649876",
+      "recorded_hashes_match": true,
+      "status": "BUILD_FAILED",
+      "wall_ns": 501164135730
+    },
+    {
+      "benchmark_executed": false,
+      "cause_observed": "missing original sparse-checkout include_str! file tests/vectors/pon/native-growth-reference-v2.json",
+      "exit_code": 101,
+      "id": "run2",
+      "observed_raw_directory_exists_now": false,
+      "prior_raw_directory": "/tmp/trnm-throughput-a0d4-native-run2",
+      "raw_status": "RAW_UNAVAILABLE_AFTER_ENVIRONMENT_RESTART",
+      "raw_stderr_sha256": null,
+      "raw_stdout_sha256": null,
+      "status": "BUILD_FAILED",
+      "wall_ns": 25701009519
+    },
+    {
+      "benchmark_executed": false,
+      "cause_not_established": "no unique OOM attribution; approximately 9.1 GB disk free was observed",
+      "cause_observed": "rustc trnm-mvcc-fee libtest terminated by SIGKILL (signal 9)",
+      "exit_code": 101,
+      "id": "run3",
+      "observed_raw_directory_exists_now": false,
+      "prior_raw_directory": "/tmp/trnm-throughput-a0d4-native-run3",
+      "raw_status": "RAW_UNAVAILABLE_AFTER_ENVIRONMENT_RESTART",
+      "raw_stderr_sha256": null,
+      "raw_stdout_sha256": null,
+      "status": "BUILD_FAILED",
+      "wall_ns": 44230989367
+    }
+  ],
+  "confirmed_business_tps": null,
+  "per_arm_cpu_ns": null,
+  "recorded_unix_ns": 1794231442373080267,
+  "remote_read_only_discovery": {
+    "host_health_result": "MCP -32603 Internal error",
+    "hosts": [
+      "ai395",
+      "desktop"
+    ],
+    "idempotency_keys": [
+      "trnm-throughput-a0d4-native-env-ai395-r1",
+      "trnm-throughput-a0d4-native-env-desktop-r1"
+    ],
+    "remote_execution_known": false,
+    "shell_start_result": "MCP -32603 Internal error; no job id"
+  },
+  "schema": "trnm-native-attempt-tool-observations-after-environment-restart-v1",
+  "scope": "post-restart reconstruction of tool observations; not replacement raw process logs"
+}

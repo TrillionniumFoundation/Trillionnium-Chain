@@ -1,0 +1,150 @@
+{
+  "schema": "extra-native-independent-parser-probes-v1",
+  "native_campaign_executed": false,
+  "scope": "synthetic parser inputs only",
+  "results": [
+    {
+      "probe": "python_single_count_failed_then_ok",
+      "accepted": false,
+      "error": "ValueError: one successful Python terminal with no failed outcomes required",
+      "input": {
+        "stderr": "Ran 2 tests in 0.01s\n\nFAILED (failures=1)\nOK\n",
+        "observed": {
+          "reported_test_counts": [
+            2
+          ],
+          "outcome_counts": {
+            "failures": 1
+          },
+          "terminal_outcomes": [
+            {
+              "status": "FAILED",
+              "raw_details": "failures=1",
+              "fields": [
+                [
+                  "failures",
+                  "1"
+                ]
+              ],
+              "well_formed": true
+            },
+            {
+              "status": "OK",
+              "raw_details": "",
+              "fields": [],
+              "well_formed": true
+            }
+          ],
+          "executed_including_expected_failures": 2,
+          "raw_skipped_lines": []
+        }
+      }
+    },
+    {
+      "probe": "python_single_count_ok_then_failed",
+      "accepted": false,
+      "error": "ValueError: one successful Python terminal with no failed outcomes required",
+      "input": {
+        "stderr": "Ran 2 tests in 0.01s\n\nOK\nFAILED (failures=1)\n",
+        "observed": {
+          "reported_test_counts": [
+            2
+          ],
+          "outcome_counts": {
+            "failures": 1
+          },
+          "terminal_outcomes": [
+            {
+              "status": "OK",
+              "raw_details": "",
+              "fields": [],
+              "well_formed": true
+            },
+            {
+              "status": "FAILED",
+              "raw_details": "failures=1",
+              "fields": [
+                [
+                  "failures",
+                  "1"
+                ]
+              ],
+              "well_formed": true
+            }
+          ],
+          "executed_including_expected_failures": 2,
+          "raw_skipped_lines": []
+        }
+      }
+    },
+    {
+      "probe": "python_single_ok_but_nonzero_failure_counter",
+      "accepted": false,
+      "error": "ValueError: one successful Python terminal with no failed outcomes required",
+      "input": {
+        "stderr": "Ran 2 tests in 0.01s\n\nOK (failures=1)\n",
+        "observed": {
+          "reported_test_counts": [
+            2
+          ],
+          "outcome_counts": {
+            "failures": 1
+          },
+          "terminal_outcomes": [
+            {
+              "status": "OK",
+              "raw_details": "failures=1",
+              "fields": [
+                [
+                  "failures",
+                  "1"
+                ]
+              ],
+              "well_formed": true
+            }
+          ],
+          "executed_including_expected_failures": 2,
+          "raw_skipped_lines": []
+        }
+      }
+    },
+    {
+      "probe": "workspace_trailing_unattributed_failed_test",
+      "accepted": false,
+      "error": "ValueError: workspace harness/readback order is ambiguous or incomplete",
+      "input": {
+        "suffix": "\nrunning 1 test\ntest late_unreported_failure ... FAILED\n",
+        "global_failed_name_count": 1,
+        "summary_failed_count": 0,
+        "execution_order_unambiguous": false
+      }
+    },
+    {
+      "probe": "workspace_trailing_unattributed_passed_test",
+      "accepted": false,
+      "error": "ValueError: workspace harness/readback order is ambiguous or incomplete",
+      "input": {
+        "suffix": "\nrunning 1 test\ntest late_unreported_pass ... ok\n",
+        "global_failed_name_count": 0,
+        "summary_failed_count": 0,
+        "execution_order_unambiguous": false
+      }
+    },
+    {
+      "probe": "workspace_extra_dispatch_without_summary",
+      "accepted": false,
+      "error": "ValueError: workspace harness/readback order is ambiguous or incomplete",
+      "input": {
+        "mutation": "extra_dispatch"
+      }
+    },
+    {
+      "probe": "workspace_extra_failure_summary",
+      "accepted": false,
+      "error": "ValueError: workspace harness/readback order is ambiguous or incomplete",
+      "input": {
+        "mutation": "extra_summary"
+      }
+    }
+  ]
+}

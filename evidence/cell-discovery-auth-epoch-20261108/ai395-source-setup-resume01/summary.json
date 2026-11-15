@@ -1,0 +1,110 @@
+{
+  "schema": "cell-ai395-source-setup-v1",
+  "expected_commit": "939aa069af41d31d41082272d7ae7367ef08f812",
+  "host": "ai395",
+  "started_unix": 1794164750.184714,
+  "commands": [
+    {
+      "label": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.026329163927584887,
+      "stdout_sha256": "85270f1a7a88943bee16803a32da2e58cd3bffa999070da943f4c3d58d9f35d8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "rustc",
+      "command": [
+        "/home/qq/.cargo/bin/rustup",
+        "run",
+        "1.95.0",
+        "rustc",
+        "--version"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.008605743059888482,
+      "stdout_sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "cargo",
+      "command": [
+        "/home/qq/.cargo/bin/rustup",
+        "run",
+        "1.95.0",
+        "cargo",
+        "--version"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.0048666479997336864,
+      "stdout_sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "workspace-fetch",
+      "command": [
+        "/home/qq/.cargo/bin/rustup",
+        "run",
+        "1.95.0",
+        "cargo",
+        "fetch",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.08862612908706069,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "fuzz-fetch",
+      "command": [
+        "/home/qq/.cargo/bin/rustup",
+        "run",
+        "1.95.0",
+        "cargo",
+        "fetch",
+        "--locked",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.04134248313494027,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "prior_failed_setup": {
+    "directory": "/home/qq/work/chain-cell-storage-discovery-f2568-setup",
+    "job_id": "1a1bc893328-138b0-320",
+    "exit_code": 1,
+    "cause": "systemd process PATH did not expose installed rustup; clone and preflight succeeded"
+  },
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+  "native_tmp": "/home/qq/work/chain-cell-storage-discovery-f2568-native-tmp",
+  "native_mount": {
+    "filesystems": [
+      {
+        "target": "/",
+        "source": "/dev/nvme0n1p2",
+        "fstype": "ext4",
+        "options": "rw,relatime"
+      }
+    ]
+  },
+  "disk_usage": {
+    "total": 1966736678912,
+    "used": 1057419739136,
+    "free": 809336688640
+  },
+  "finished_unix": 1794164750.3794582,
+  "head": "939aa069af41d31d41082272d7ae7367ef08f812",
+  "tree": "51a8876138f039b189a10fe3a436617b98795592",
+  "source_clean": true,
+  "passed": true
+}

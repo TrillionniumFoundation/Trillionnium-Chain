@@ -1,0 +1,568 @@
+{
+  "schema": "pon-native-boundaries-evidence-v1",
+  "qualification": "HOLD / NO-GO",
+  "measured_source": "39336622c63df1ae746d83a76bb53202cd01ba17",
+  "measured_tree": "42fbd7d5a7f00b75000cb4aa242e578a8f941d59",
+  "parent_source": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "delivery_scope": "evidence-only child of measured source; no execution identity transfer",
+  "hosted_ci_at_packaging": "no hosted execution pass claimed",
+  "native_production_changes": [
+    "O_NONBLOCK at native_owner_journal::read_packet_file",
+    "O_NONBLOCK at native_risk_ledger native-prefix read"
+  ],
+  "local_fifo_scope": "requires local filesystem substitution; does not establish remote write access or bounded regular-file I/O",
+  "native_suites": {
+    "native_owner_journal": {
+      "passed_top_level": 11,
+      "failed": 0,
+      "ignored_owned_subprocess_entrypoints": 2
+    },
+    "native_risk_ledger": {
+      "passed_top_level": 12,
+      "failed": 0,
+      "ignored_owned_subprocess_entrypoints": 2
+    }
+  },
+  "cost_execution": {
+    "result": "PASS",
+    "binary_sha256": "82b03a766f0a84055d1d96ab8f052bd6f8f89f23bee1f2f3eb2644fe9b115f00",
+    "stream_sha256": "953ef816f391839d1bae8b7c3cb2c6653b2bfad2eb611968288167afcf2d3f7d",
+    "samples": 96,
+    "stage_observations": 576,
+    "host": {
+      "system": "Linux",
+      "machine": "x86_64",
+      "kernel": "6.18.57",
+      "logical_cpus": 9,
+      "cpu_model": "INTEL(R) XEON(R) PLATINUM 8573C"
+    },
+    "observations": [
+      {
+        "class": "zero",
+        "target_bits": 1,
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "conditional_uniform_ticket_probability": "1/2",
+        "arm": "from-zero",
+        "samples": 8,
+        "completed_losing_trials": 11,
+        "all_construction_cpu_ns": 403429,
+        "setup_cpu_ns": 341343,
+        "search_cpu_ns": 62086,
+        "all_trials": 19,
+        "receiver_setup_cpu_ns": 21465,
+        "stages_cpu_ns": {
+          "precheck": 239872,
+          "raw-first": 5587880,
+          "raw-repeat": 5617049,
+          "arithmetic-cold": 6193324,
+          "arithmetic-hot": 288361,
+          "scalar-reference": 9782272
+        },
+        "precheck_plus_raw_first_over_construction": {
+          "numerator_cpu_ns": 5827752,
+          "denominator_cpu_ns": 403429,
+          "ratio": 14.445545560681062
+        },
+        "raw_first_over_construction": {
+          "numerator_cpu_ns": 5587880,
+          "denominator_cpu_ns": 403429,
+          "ratio": 13.85096262291506
+        }
+      },
+      {
+        "class": "zero",
+        "target_bits": 1,
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "conditional_uniform_ticket_probability": "1/2",
+        "arm": "legal",
+        "samples": 8,
+        "completed_losing_trials": 10,
+        "all_construction_cpu_ns": 15396317,
+        "setup_cpu_ns": 3544026,
+        "search_cpu_ns": 11852291,
+        "all_trials": 18,
+        "receiver_setup_cpu_ns": 17236,
+        "stages_cpu_ns": {
+          "precheck": 236124,
+          "raw-first": 7741733,
+          "raw-repeat": 7089656,
+          "arithmetic-cold": 6641918,
+          "arithmetic-hot": 464459,
+          "scalar-reference": 10707300
+        },
+        "precheck_plus_raw_first_over_construction": {
+          "numerator_cpu_ns": 7977857,
+          "denominator_cpu_ns": 15396317,
+          "ratio": 0.5181665849046886
+        },
+        "raw_first_over_construction": {
+          "numerator_cpu_ns": 7741733,
+          "denominator_cpu_ns": 15396317,
+          "ratio": 0.5028301898434541
+        }
+      },
+      {
+        "class": "zero",
+        "target_bits": 4,
+        "target": "0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "conditional_uniform_ticket_probability": "1/16",
+        "arm": "from-zero",
+        "samples": 8,
+        "completed_losing_trials": 155,
+        "all_construction_cpu_ns": 571635,
+        "setup_cpu_ns": 368693,
+        "search_cpu_ns": 202942,
+        "all_trials": 163,
+        "receiver_setup_cpu_ns": 20845,
+        "stages_cpu_ns": {
+          "precheck": 251569,
+          "raw-first": 5664962,
+          "raw-repeat": 5999460,
+          "arithmetic-cold": 5896563,
+          "arithmetic-hot": 317638,
+          "scalar-reference": 12597171
+        },
+        "precheck_plus_raw_first_over_construction": {
+          "numerator_cpu_ns": 5916531,
+          "denominator_cpu_ns": 571635,
+          "ratio": 10.350190243774437
+        },
+        "raw_first_over_construction": {
+          "numerator_cpu_ns": 5664962,
+          "denominator_cpu_ns": 571635,
+          "ratio": 9.910103475119612
+        }
+      },
+      {
+        "class": "zero",
+        "target_bits": 4,
+        "target": "0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "conditional_uniform_ticket_probability": "1/16",
+        "arm": "legal",
+        "samples": 8,
+        "completed_losing_trials": 181,
+        "all_construction_cpu_ns": 137108701,
+        "setup_cpu_ns": 4807412,
+        "search_cpu_ns": 132301289,
+        "all_trials": 189,
+        "receiver_setup_cpu_ns": 24431,
+        "stages_cpu_ns": {
+          "precheck": 1194308,
+          "raw-first": 7728741,
+          "raw-repeat": 8383415,
+          "arithmetic-cold": 8334471,
+          "arithmetic-hot": 839587,
+          "scalar-reference": 34461706
+        },
+        "precheck_plus_raw_first_over_construction": {
+          "numerator_cpu_ns": 8923049,
+          "denominator_cpu_ns": 137108701,
+          "ratio": 0.06508010749806462
+        },
+        "raw_first_over_construction": {
+          "numerator_cpu_ns": 7728741,
+          "denominator_cpu_ns": 137108701,
+          "ratio": 0.056369442228177774
+        }
+      },
+      {
+        "class": "zero",
+        "target_bits": 8,
+        "target": "00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "conditional_uniform_ticket_probability": "1/256",
+        "arm": "from-zero",
+        "samples": 8,
+        "completed_losing_trials": 1874,
+        "all_construction_cpu_ns": 1208725,
+        "setup_cpu_ns": 326412,
+        "search_cpu_ns": 882313,
+        "all_trials": 1882,
+        "receiver_setup_cpu_ns": 21648,
+        "stages_cpu_ns": {
+          "precheck": 253870,
+          "raw-first": 5784184,
+          "raw-repeat": 5088116,
+          "arithmetic-cold": 5017835,
+          "arithmetic-hot": 236454,
+          "scalar-reference": 7522739
+        },
+        "precheck_plus_raw_first_over_construction": {
+          "numerator_cpu_ns": 6038054,
+          "denominator_cpu_ns": 1208725,
+          "ratio": 4.995391011189477
+        },
+        "raw_first_over_construction": {
+          "numerator_cpu_ns": 5784184,
+          "denominator_cpu_ns": 1208725,
+          "ratio": 4.785359779933401
+        }
+      },
+      {
+        "class": "zero",
+        "target_bits": 8,
+        "target": "00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "conditional_uniform_ticket_probability": "1/256",
+        "arm": "legal",
+        "samples": 8,
+        "completed_losing_trials": 4224,
+        "all_construction_cpu_ns": 2422748163,
+        "setup_cpu_ns": 3381767,
+        "search_cpu_ns": 2419366396,
+        "all_trials": 4232,
+        "receiver_setup_cpu_ns": 31973,
+        "stages_cpu_ns": {
+          "precheck": 881426,
+          "raw-first": 7677246,
+          "raw-repeat": 8382523,
+          "arithmetic-cold": 6816522,
+          "arithmetic-hot": 482187,
+          "scalar-reference": 11538535
+        },
+        "precheck_plus_raw_first_over_construction": {
+          "numerator_cpu_ns": 8558672,
+          "denominator_cpu_ns": 2422748163,
+          "ratio": 0.0035326296520238037
+        },
+        "raw_first_over_construction": {
+          "numerator_cpu_ns": 7677246,
+          "denominator_cpu_ns": 2422748163,
+          "ratio": 0.0031688171792868263
+        }
+      },
+      {
+        "class": "full-rank-field",
+        "target_bits": 1,
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "conditional_uniform_ticket_probability": "1/2",
+        "arm": "from-zero",
+        "samples": 8,
+        "completed_losing_trials": 2,
+        "all_construction_cpu_ns": 627404,
+        "setup_cpu_ns": 594068,
+        "search_cpu_ns": 33336,
+        "all_trials": 10,
+        "receiver_setup_cpu_ns": 20025,
+        "stages_cpu_ns": {
+          "precheck": 383611,
+          "raw-first": 6561667,
+          "raw-repeat": 5696892,
+          "arithmetic-cold": 6200781,
+          "arithmetic-hot": 242821,
+          "scalar-reference": 9646777
+        },
+        "precheck_plus_raw_first_over_construction": {
+          "numerator_cpu_ns": 6945278,
+          "denominator_cpu_ns": 627404,
+          "ratio": 11.069865668691943
+        },
+        "raw_first_over_construction": {
+          "numerator_cpu_ns": 6561667,
+          "denominator_cpu_ns": 627404,
+          "ratio": 10.458439856934287
+        }
+      },
+      {
+        "class": "full-rank-field",
+        "target_bits": 1,
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "conditional_uniform_ticket_probability": "1/2",
+        "arm": "legal",
+        "samples": 8,
+        "completed_losing_trials": 7,
+        "all_construction_cpu_ns": 12508888,
+        "setup_cpu_ns": 3231631,
+        "search_cpu_ns": 9277257,
+        "all_trials": 15,
+        "receiver_setup_cpu_ns": 21425,
+        "stages_cpu_ns": {
+          "precheck": 313235,
+          "raw-first": 7858607,
+          "raw-repeat": 6625147,
+          "arithmetic-cold": 7217970,
+          "arithmetic-hot": 790280,
+          "scalar-reference": 11722211
+        },
+        "precheck_plus_raw_first_over_construction": {
+          "numerator_cpu_ns": 8171842,
+          "denominator_cpu_ns": 12508888,
+          "ratio": 0.6532828497625048
+        },
+        "raw_first_over_construction": {
+          "numerator_cpu_ns": 7858607,
+          "denominator_cpu_ns": 12508888,
+          "ratio": 0.6282418549114838
+        }
+      },
+      {
+        "class": "full-rank-field",
+        "target_bits": 4,
+        "target": "0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "conditional_uniform_ticket_probability": "1/16",
+        "arm": "from-zero",
+        "samples": 8,
+        "completed_losing_trials": 124,
+        "all_construction_cpu_ns": 402983,
+        "setup_cpu_ns": 325584,
+        "search_cpu_ns": 77399,
+        "all_trials": 132,
+        "receiver_setup_cpu_ns": 21096,
+        "stages_cpu_ns": {
+          "precheck": 342352,
+          "raw-first": 5996702,
+          "raw-repeat": 6098702,
+          "arithmetic-cold": 6703691,
+          "arithmetic-hot": 326151,
+          "scalar-reference": 9502704
+        },
+        "precheck_plus_raw_first_over_construction": {
+          "numerator_cpu_ns": 6339054,
+          "denominator_cpu_ns": 402983,
+          "ratio": 15.730326093160258
+        },
+        "raw_first_over_construction": {
+          "numerator_cpu_ns": 5996702,
+          "denominator_cpu_ns": 402983,
+          "ratio": 14.880781571431053
+        }
+      },
+      {
+        "class": "full-rank-field",
+        "target_bits": 4,
+        "target": "0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "conditional_uniform_ticket_probability": "1/16",
+        "arm": "legal",
+        "samples": 8,
+        "completed_losing_trials": 78,
+        "all_construction_cpu_ns": 59750200,
+        "setup_cpu_ns": 3733676,
+        "search_cpu_ns": 56016524,
+        "all_trials": 86,
+        "receiver_setup_cpu_ns": 19520,
+        "stages_cpu_ns": {
+          "precheck": 648921,
+          "raw-first": 7347349,
+          "raw-repeat": 7222085,
+          "arithmetic-cold": 7738526,
+          "arithmetic-hot": 604552,
+          "scalar-reference": 12018063
+        },
+        "precheck_plus_raw_first_over_construction": {
+          "numerator_cpu_ns": 7996270,
+          "denominator_cpu_ns": 59750200,
+          "ratio": 0.13382833864991248
+        },
+        "raw_first_over_construction": {
+          "numerator_cpu_ns": 7347349,
+          "denominator_cpu_ns": 59750200,
+          "ratio": 0.12296777249281174
+        }
+      },
+      {
+        "class": "full-rank-field",
+        "target_bits": 8,
+        "target": "00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "conditional_uniform_ticket_probability": "1/256",
+        "arm": "from-zero",
+        "samples": 8,
+        "completed_losing_trials": 1600,
+        "all_construction_cpu_ns": 1088035,
+        "setup_cpu_ns": 403477,
+        "search_cpu_ns": 684558,
+        "all_trials": 1608,
+        "receiver_setup_cpu_ns": 30332,
+        "stages_cpu_ns": {
+          "precheck": 354910,
+          "raw-first": 6086050,
+          "raw-repeat": 6532157,
+          "arithmetic-cold": 6067115,
+          "arithmetic-hot": 393913,
+          "scalar-reference": 8351350
+        },
+        "precheck_plus_raw_first_over_construction": {
+          "numerator_cpu_ns": 6440960,
+          "denominator_cpu_ns": 1088035,
+          "ratio": 5.919809564949657
+        },
+        "raw_first_over_construction": {
+          "numerator_cpu_ns": 6086050,
+          "denominator_cpu_ns": 1088035,
+          "ratio": 5.59361601419072
+        }
+      },
+      {
+        "class": "full-rank-field",
+        "target_bits": 8,
+        "target": "00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "conditional_uniform_ticket_probability": "1/256",
+        "arm": "legal",
+        "samples": 8,
+        "completed_losing_trials": 2980,
+        "all_construction_cpu_ns": 1861382898,
+        "setup_cpu_ns": 4245248,
+        "search_cpu_ns": 1857137650,
+        "all_trials": 2988,
+        "receiver_setup_cpu_ns": 27186,
+        "stages_cpu_ns": {
+          "precheck": 276113,
+          "raw-first": 7150540,
+          "raw-repeat": 7306342,
+          "arithmetic-cold": 8106516,
+          "arithmetic-hot": 676808,
+          "scalar-reference": 11806497
+        },
+        "precheck_plus_raw_first_over_construction": {
+          "numerator_cpu_ns": 7426653,
+          "denominator_cpu_ns": 1861382898,
+          "ratio": 0.003989857760044811
+        },
+        "raw_first_over_construction": {
+          "numerator_cpu_ns": 7150540,
+          "denominator_cpu_ns": 1861382898,
+          "ratio": 0.0038415201986023617
+        }
+      }
+    ],
+    "whole_campaign": {
+      "cpu_ns": 5098216152,
+      "wall_ns": 5180605522
+    },
+    "disjoint_interval_totals": {
+      "cpu_ns": 4917893239,
+      "wall_ns": 4998588250
+    },
+    "limits": [
+      "Finite synthetic inputs and fixed seeds/targets; no all-legal-strategy cost bound.",
+      "All search misses and binary observation bookkeeping are included; JSON/hex/output and retained-buffer cleanup are outside algorithm intervals and inside the whole campaign interval.",
+      "Public fixture generation and statement setup are reported separately from per-sample construction ratios.",
+      "Precheck and raw verifier are separate calls; their sum is a component cost, not measured Node admission.",
+      "Raw-first/raw-repeat identify call order only, not controlled hardware cache temperature; arithmetic-cold/hot identify a new cache owner and exact-statement reuse.",
+      "Verifier intervals include their progress-count callbacks; path order is fixed, while construction arm order rotates by sample.",
+      "Legal and forged searches share material/target/sample, but legal attempts change the challenge and forged attempts change the claimed trace at fixed challenge; they need not finish on the same statement.",
+      "ArithmeticFactCache is an opt-in mathematical component; these hot results do not establish default public-listener behavior, paid admission, restart/cross-receiver fairness or a service speedup.",
+      "The legal comparator is one explicit full-limb/dense-setup/lazy-winner implementation, not a fastest legal producer.",
+      "Records do not independently authenticate clocks, binary execution, hardware or physical resource isolation."
+    ],
+    "actual_stream_controls_passed": 20,
+    "actual_stream_controls_skipped": 0
+  },
+  "validation": [
+    {
+      "label": "ci-contract-controls",
+      "receipt": "validation-39336622/ci-contract-controls.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "measured_source": "39336622c63df1ae746d83a76bb53202cd01ba17",
+      "elapsed_ns": 122108105103
+    },
+    {
+      "label": "fuzz-graph-restored",
+      "receipt": "validation-39336622/fuzz-graph-restored.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "measured_source": "39336622c63df1ae746d83a76bb53202cd01ba17",
+      "elapsed_ns": 12612425099
+    },
+    {
+      "label": "fuzz-graph",
+      "receipt": "validation-39336622/fuzz-graph.json",
+      "status": "command_failed",
+      "exit_code": 101,
+      "measured_source": "39336622c63df1ae746d83a76bb53202cd01ba17",
+      "elapsed_ns": 9102424774
+    },
+    {
+      "label": "native-journal-suites",
+      "receipt": "validation-39336622/native-journal-suites.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "measured_source": "39336622c63df1ae746d83a76bb53202cd01ba17",
+      "elapsed_ns": 193312686633
+    },
+    {
+      "label": "repository-links",
+      "receipt": "validation-39336622/repository-links.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "measured_source": "39336622c63df1ae746d83a76bb53202cd01ba17",
+      "elapsed_ns": 41138792480
+    },
+    {
+      "label": "source-integrity-controls",
+      "receipt": "validation-39336622/source-integrity-controls.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "measured_source": "39336622c63df1ae746d83a76bb53202cd01ba17",
+      "elapsed_ns": 40088487060
+    },
+    {
+      "label": "source-inventory",
+      "receipt": "validation-39336622/source-inventory.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "measured_source": "39336622c63df1ae746d83a76bb53202cd01ba17",
+      "elapsed_ns": 12939101828
+    },
+    {
+      "label": "strict-workspace-clippy-restored",
+      "receipt": "validation-39336622/strict-workspace-clippy-restored.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "measured_source": "39336622c63df1ae746d83a76bb53202cd01ba17",
+      "elapsed_ns": 315680053847
+    },
+    {
+      "label": "strict-workspace-clippy",
+      "receipt": "validation-39336622/strict-workspace-clippy.json",
+      "status": "command_failed",
+      "exit_code": 101,
+      "measured_source": "39336622c63df1ae746d83a76bb53202cd01ba17",
+      "elapsed_ns": 12076610886
+    },
+    {
+      "label": "workspace-format",
+      "receipt": "validation-39336622/workspace-format.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "measured_source": "39336622c63df1ae746d83a76bb53202cd01ba17",
+      "elapsed_ns": 35156002072
+    },
+    {
+      "label": "workspace-graph-restored",
+      "receipt": "validation-39336622/workspace-graph-restored.json",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "measured_source": "39336622c63df1ae746d83a76bb53202cd01ba17",
+      "elapsed_ns": 31760472322
+    },
+    {
+      "label": "workspace-graph",
+      "receipt": "validation-39336622/workspace-graph.json",
+      "status": "command_failed",
+      "exit_code": 101,
+      "measured_source": "39336622c63df1ae746d83a76bb53202cd01ba17",
+      "elapsed_ns": 8925769971
+    }
+  ],
+  "raw_archive": {
+    "path": "raw-records.tar.xz",
+    "bytes": 1221392,
+    "sha256": "0dd1ed9f2b47858b744d19d48138b1dfb62f40d63eb53940b2834aaa430fa4b6"
+  },
+  "native_header_admission": false,
+  "node_service_measured": false,
+  "work_cost_lower_bound_proved": false,
+  "production_activation": false,
+  "whole_chain_quantum_security_qualified": false,
+  "open_obligations": [
+    "independent authorized/funded task demand and data rights",
+    "complete computation and independent actual delivery/readback",
+    "frozen independent future-task model net benefit including lifecycle failures and costs",
+    "minimum legal strategy cost including caches/setup/nonce/task/multi-target amortization, GPU/ASIC and classical/quantum models",
+    "public-service liveness across connection/identity/restart/receiver boundaries and lifetime PQ budget exhaustion/recovery",
+    "joint DAA/timestamp/chainwork, participation, congestion, hidden ancestry and confirmation bounds",
+    "evaluation common-control/collusion, holdout contamination, model copying and fabricated demand",
+    "external effects under reorg/partition/ACK loss with durable target-side idempotency/reconciliation/Unknown",
+    "same-inode/same-length live native journal mutation beyond dev/ino/length guard",
+    "whole-chain PQ security and fixed-SHA/QROM obligations"
+  ]
+}

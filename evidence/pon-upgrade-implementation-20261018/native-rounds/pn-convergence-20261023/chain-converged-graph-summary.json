@@ -1,0 +1,20 @@
+{
+  "command": {
+    "name": "chain-converged-graph",
+    "command": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "returncode": 0,
+    "seconds": 0.234712254954502,
+    "log_sha256": "5e5cba4953cf5115061631c3b22da295e946f1fff35e786831dafed9df3dc245"
+  },
+  "package_count": 145,
+  "workspace_member_count": 25,
+  "resolved": true,
+  "scope": "Complete locked/offline graph; the original full JSON log remains retained on the test host under the command log hash."
+}

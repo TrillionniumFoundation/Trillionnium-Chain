@@ -1,0 +1,15 @@
+{
+  "schema": "w1-node-scope-integration-check-v1",
+  "baseline_commit": "3bbd072e4983eceee4531d7576d329da5b0d0900",
+  "integration_parent_head": "2632d3e5bca93fccc062db6ff4a8470cfc2fa51f",
+  "uncommitted_integration_is_bound_separately_by_source_hashes": true,
+  "scopes": [
+    "trillionnium",
+    "config",
+    "qualification"
+  ],
+  "tracked_diff_empty": true,
+  "untracked_or_modified_files_in_scope": false,
+  "production_node_executed": false,
+  "qualification": "HOLD_NO_GO"
+}

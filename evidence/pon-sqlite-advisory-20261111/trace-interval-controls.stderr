@@ -1,0 +1,4 @@
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-sqlite-advisory-20261110/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-pon-node v0.1.0 (/home/qq/work/chain-sqlite-advisory-20261110/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4m 00s
+     Running unittests src/lib.rs (/home/qq/work/chain-sqlite-advisory-20261110-checks/native-target/debug/deps/trnm_pon_node-f1f15ff1816645c1)

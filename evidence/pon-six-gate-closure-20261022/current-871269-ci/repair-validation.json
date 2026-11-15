@@ -1,0 +1,42 @@
+{
+  "schema": "minimal-ci-and-observer-diagnostic-repair-validation-v1",
+  "parent": "87126992dd5634348cc1a788442126997b28c624",
+  "changes": {
+    "branch_encoding": "One exact retained test-count assertion 11 to 12; unchanged Rust sources, selectors, negative controls and budgets",
+    "model_observer": "Same original status-read State/Threads/preconditions/attempted/rejection diagnostic only; no additional procfs read or acceptance authority"
+  },
+  "actual_checks": [
+    {
+      "command": "python3 -B -m unittest discover -s scripts -p 'test_llm_runtime_*.py'",
+      "passed": 107,
+      "failed": 0
+    },
+    {
+      "command": "python3 -B -m unittest discover -s scripts/ci -p test_ci_contract.py",
+      "passed": 82,
+      "failed": 0
+    },
+    {
+      "command": "python3 -B -m unittest discover -s scripts/ci -p test_ci_source_integrity.py",
+      "passed": 33,
+      "failed": 0
+    },
+    {
+      "command": "python3 -B scripts/ci/check_ci_contract.py",
+      "exit": 0,
+      "tests_executed": false
+    },
+    {
+      "check": "All four original branch logs have exactly 12 passed, zero failed and one ignored",
+      "passed": 4
+    },
+    {
+      "check": "100 relative plan links resolve against Git tree/new evidence",
+      "exit": 0
+    }
+  ],
+  "rust_source_changed": false,
+  "full_workflow_acceptance": false,
+  "security_acceptance": false,
+  "activation": false
+}

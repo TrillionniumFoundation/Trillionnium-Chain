@@ -1,0 +1,23 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "cutoff-source-bundle",
+  "command": [
+    "git",
+    "bundle",
+    "verify",
+    "/workspace/scratch/e537ad232c79/native-tested-source.bundle"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+  "tree": "923c1aa59bc090baeff79979d950aebeec4def78",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T14:20:47.221584+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 23388252,
+  "finished_at": "2026-11-04T14:20:47.245213+00:00",
+  "log_bytes": 346,
+  "log_sha256": "cacad0d9a95a74c0e2dbff508976210199bc0167564773468bb1833ee94c1146",
+  "final_head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+  "final_dirty_paths": []
+}

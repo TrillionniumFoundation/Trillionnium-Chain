@@ -1,0 +1,44 @@
+{
+  "read_only": true,
+  "rows": [
+    {
+      "exists": false,
+      "path": "/opt/homebrew/bin/python3.12"
+    },
+    {
+      "exists": false,
+      "path": "/opt/homebrew/bin/python3.11"
+    },
+    {
+      "exists": false,
+      "path": "/opt/homebrew/opt/python@3.12/bin/python3.12"
+    },
+    {
+      "exists": false,
+      "path": "/opt/homebrew/opt/python@3.11/bin/python3.11"
+    },
+    {
+      "exists": false,
+      "path": "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3.12"
+    },
+    {
+      "exists": false,
+      "path": "/Library/Frameworks/Python.framework/Versions/3.11/bin/python3.11"
+    },
+    {
+      "exists": true,
+      "exit": 0,
+      "path": "/opt/homebrew/bin/uv",
+      "version_stderr": "",
+      "version_stdout": "uv 0.10.2 (Homebrew 2026-02-10)"
+    },
+    {
+      "exists": true,
+      "exit": 0,
+      "path": "/usr/bin/python3",
+      "version_stderr": "",
+      "version_stdout": "Python 3.9.6"
+    }
+  ],
+  "schema": "readiness-isolated-python-availability-v1"
+}

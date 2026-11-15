@@ -1,0 +1,82 @@
+{
+  "schema": "trnm-pon-five-claims-observation-summary-v1",
+  "source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+  "implementation": "f2375a08f4458f842b96d30215adcd5380270f1d",
+  "pr": 907,
+  "scope": "recorded-source-and-mechanism-observations",
+  "evidence_commit_tree_is_not_claimed_native_tested": true,
+  "results": {
+    "crypto_w1": {
+      "passed": 135,
+      "failed": 0,
+      "ignored": 0,
+      "filtered_out": 61
+    },
+    "node_exact_selectors": {
+      "passed": 14,
+      "failed": 0,
+      "whole_node_library_run": false,
+      "live_process_image_observed": false,
+      "elf_before_after_equal": true
+    },
+    "da_integrations": {
+      "passed": 45,
+      "failed": 0,
+      "adoption_cli_subset": 11,
+      "empty_bin_harnesses": 3
+    },
+    "da_library_first": {
+      "passed": 740,
+      "failed": 1,
+      "ignored": 0,
+      "filter": 0,
+      "error": "CacheWriterBusy"
+    },
+    "da_isolated_first": {
+      "passed": 0,
+      "failed": 1,
+      "filtered_out": 740,
+      "error": "RS46 provider deadline"
+    },
+    "da_quiet_isolated": {
+      "passed": 1,
+      "failed": 0,
+      "filtered_out": 740,
+      "replaces_full_suite": false
+    },
+    "da_quiet_library": {
+      "passed": 740,
+      "failed": 1,
+      "ignored": 0,
+      "filtered_out": 0,
+      "error": "CacheWriterBusy"
+    },
+    "python_controls": {
+      "successful_distinct_methods": 620,
+      "all_initial_commands_passed": false,
+      "setup_refusals_preserved": 2,
+      "original_roster_recovery_passed": true
+    },
+    "quality": {
+      "workspace_fmt": true,
+      "workspace_locked_offline_metadata": true,
+      "fuzz_locked_offline_metadata": true,
+      "workspace_all_targets_all_features_clippy_deny_warnings": true
+    }
+  },
+  "qualifications": {
+    "native_complete_recomputation_path_implemented": true,
+    "succinct_proof_native_admission_established": false,
+    "all_legal_strategy_work_cost_bound": null,
+    "independent_future_task_full_cost_model_benefit_established": false,
+    "production_adoption_observed": false,
+    "ordinary_subsequent_task_final_use_observed": false,
+    "complete_da_suite_passed": false,
+    "all_required_hosted_checks_passed": false,
+    "production_activation": false
+  },
+  "original_failures_preserved": true,
+  "repeated_passes_are_not_added_to_independent_denominators": true,
+  "retained_elf_files_archived_in_this_commit": false
+}

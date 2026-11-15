@@ -1,0 +1,57 @@
+
+running 52 tests
+test cell::discovery::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::publish_commit_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::publish_owner_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::publish_writer_contention_keeps_original_deadline ... ok
+test cell::discovery::diversity_tests::real_tcp_low_owner_flood_keeps_later_bootstrap_provider_and_original_budgets ... ok
+test cell::discovery::diversity_tests::real_tcp_manifest_quota_flood_keeps_later_source_without_resetting_highwater_or_budget ... ok
+test cell::discovery::diversity_tests::real_tcp_receive_time_equivocation_survives_later_bootstrap_delay_and_expiry ... ok
+test cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation ... ok
+test cell::discovery::pq::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::publish_commit_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::publish_owner_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::publish_writer_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::tests::actual_mldsa_record_rejects_every_changed_field_classic_and_trailing_wire ... ok
+test cell::discovery::pq::tests::cpk2_roster_wire_is_canonical_and_revocation_bound ... ok
+test cell::discovery::pq::tests::fresh_schema_commits_key_roster_and_never_rewinds_with_expiry_or_restart ... ok
+test cell::discovery::pq::tests::invalid_signatures_consume_server_slots_without_publication ... ok
+test cell::discovery::pq::tests::pq_discovery_actual_response_exhaustion_stops_before_dial ... ok
+test cell::discovery::pq::tests::randomized_signatures_preserve_semantic_high_water_and_original_durable_bytes ... ok
+test cell::discovery::pq::tests::real_tcp_pq_discovery_fetch_and_withdrawal_share_persisted_high_water_and_budget ... ok
+test cell::discovery::pq::tests::real_tcp_pq_low_owner_flood_keeps_later_bootstrap_without_extra_budget ... ok
+test cell::discovery::pq::tests::real_tcp_pq_manifest_quota_flood_keeps_later_source_without_resetting_highwater_or_budget ... ok
+test cell::discovery::pq::tests::real_tcp_pq_receive_time_equivocation_survives_later_bootstrap_delay_and_expiry ... ok
+test cell::discovery::selection::tests::bootstrap_flood_cannot_take_all_slots_from_later_observed_sources ... ok
+test cell::discovery::selection::tests::dedup_uses_latest_current_expiry_without_losing_actual_source_provenance ... ok
+test cell::discovery::selection::tests::ipv4_and_ipv6_prefixes_and_ips_precede_additional_ports_of_low_keys ... ok
+test cell::discovery::selection::tests::one_network_fallbacks_survive_and_candidate_identity_is_not_peer_chosen ... ok
+test cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget ... ok
+test cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial ... ok
+test cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication ... ok
+test cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint ... ok
+test cell::discovery::tests::bad_advertisement_cannot_trigger_an_unscoped_dial_or_grant_a_candidate ... ok
+test cell::discovery::tests::cached_advertisements_cannot_replace_an_actual_bootstrap_reply ... ok
+test cell::discovery::tests::canonical_record_binds_every_field_and_rejects_invalid_signature_time_and_encoding ... ok
+test cell::discovery::tests::discovery_actual_response_exhaustion_stops_before_dial ... ok
+test cell::discovery::tests::discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets ... ok
+test cell::discovery::tests::expired_records_keep_highwater_across_restart_and_clock_rollback_fails_closed ... ok
+test cell::discovery::tests::explicit_scopes_reject_loopback_linklocal_multicast_mapped_and_unlisted_ports ... ok
+test cell::discovery::tests::first_manifest_read_preserves_cold_warm_status_and_exact_rejection_counts ... ok
+test cell::discovery::tests::fixed_512_identity_capacity_survives_expiry_and_never_evicts_for_new_keys ... ok
+test cell::discovery::tests::four_bootstraps_exhaust_exact_eight_attempts_and_64_validation_slots_without_referrals ... ok
+test cell::discovery::tests::live_schema_namespace_and_same_path_replacement_cannot_manufacture_publication_ack ... ok
+test cell::discovery::tests::lookup_rejects_old_signed_wire_with_retained_new_highwater_columns ... ok
+test cell::discovery::tests::oversized_and_partial_tcp_replies_debit_actual_bytes_and_do_not_reopen_attempts ... ok
+test cell::discovery::tests::owner_manifest_and_observed_source_limits_are_independent_permanent_caps ... ok
+test cell::discovery::tests::slowloris_retains_one_absolute_deadline_and_counts_partial_response_bytes ... ok
+test cell::discovery::tests::tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit ... ok
+test cell::discovery::tests::tcp_publication_ack_requires_live_schema_and_actual_persisted_highwater ... ok
+test cell::discovery::vectors::signed_development_profile_has_an_independent_exact_encoding_vector ... ok
+
+test result: ok. 52 passed; 0 failed; 0 ignored; 0 measured; 376 filtered out; finished in 43.00s
+

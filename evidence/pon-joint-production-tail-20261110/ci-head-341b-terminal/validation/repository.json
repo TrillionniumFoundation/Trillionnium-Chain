@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "exit_code": 0,
+  "base_head": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+  "scope": "evidence-only working tree validation; not fresh native qualification",
+  "stdout": {
+    "bytes": 307,
+    "sha256": "0d9483770ab934c5a354ca0fc58ca2910f7c558dd1ec2bd1a28aca26d68b405d"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

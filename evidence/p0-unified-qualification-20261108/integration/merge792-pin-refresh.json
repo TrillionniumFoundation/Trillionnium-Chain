@@ -1,0 +1,51 @@
+{
+  "changes": [
+    {
+      "path": ".github/workflows/pon-w1-transparent-profile.yml",
+      "before": "8824f553b6d8242ccb322be64eec55f15ff4d4d1",
+      "after": "693a1bfb79a73c2e3d7f9d9eca6de157e90e4c20"
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "before": "91c786a54bedb8794d4b4aeda6195ceb972f528d",
+      "after": "aa98b0c9f2fd2457369b0b1a93aa5ba96addf33c"
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "before": "1b678839f5825088570e778a83db0b0e847df62c",
+      "after": "db126a83326e4aecf863e6960fd948ab0861ddd1"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "before": "d1098c009d4316f14cc04dbb133a87ab93ad5235",
+      "after": "0c474ceb5f2b51811461cb4c0a7c1770bebb8930"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+      "before": "7c66954facd0e45b54a09a82bdd23b11ad33c715",
+      "after": "f00593d24d15aed608f4017d84d888889bc08aab"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed.rs",
+      "before": "6490b8c84e09a7f3425e5754279a4e03b7ffbfe4",
+      "after": "697c598fe227bcc395f8715291883ed45acd6f74"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs",
+      "before": "11ffc43888c7a201834b7a5d1f536c029f29734c",
+      "after": "5a5d13b2b5932df2ba856be16b6ebb978c97be1c"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "before": "c7db147493ab5f23ff161dcaec5c039dbac1176b",
+      "after": "de5877409d68dd353360fba6a3e7943359175406"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+      "before": "6be5d9910854f86da43fdbcb984865cd087898fe",
+      "after": "1b2999ec2efb51b1291e4fac19f55ee0afeb5d75"
+    }
+  ],
+  "pins": 870,
+  "required": 778
+}

@@ -1,0 +1,58 @@
+{
+  "base_ddl_sha256": "2da4a5c306f2e1742667f4097a3205546b4b51005547654bb97bd10d6bbda257",
+  "business_tps_measured": false,
+  "native_node_executed": false,
+  "observations": [
+    {
+      "fixture_rows": 4099,
+      "index_present": true,
+      "query_plan": [
+        [
+          4,
+          0,
+          213,
+          "SCAN blocks USING COVERING INDEX work_order"
+        ]
+      ],
+      "result_id": "0000000000000000000000000000000000000000000000000000000000002329",
+      "result_matches_independent_sort": true,
+      "temporary_order_btree": false,
+      "work_order_covering_index_seen": true
+    },
+    {
+      "fixture_rows": 4099,
+      "index_present": false,
+      "query_plan": [
+        [
+          4,
+          0,
+          216,
+          "SCAN blocks"
+        ],
+        [
+          17,
+          0,
+          0,
+          "USE TEMP B-TREE FOR ORDER BY"
+        ]
+      ],
+      "result_id": "0000000000000000000000000000000000000000000000000000000000002329",
+      "result_matches_independent_sort": true,
+      "temporary_order_btree": true,
+      "work_order_covering_index_seen": false
+    }
+  ],
+  "python_version": "3.12.14",
+  "query": "SELECT id FROM blocks ORDER BY chainwork DESC,height,id LIMIT 1",
+  "query_sha256": "22b14090e1d87a965b78423e3398d79352fe622c9fb40cb4765d818cbe7a0a5f",
+  "reference_order": "descending integer work, ascending height, ascending full ID bytes",
+  "schema": "chain-recovery-order-sql-observation-v1",
+  "scope": "Source-extracted SQL in isolated Python SQLite databases with synthetic records. No state validity, native recovery, time bound, or throughput claim.",
+  "script_sha256": "bf6652c1fb2460b5fb4eb0f6e8da4d30a5bc4b99f3d6efe34b67656306218e68",
+  "source_commit": "e4abb172147e941b62483652b0ceabaae4317624",
+  "source_git_blob": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+  "source_path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+  "source_sha256": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554",
+  "source_tree": "016ebf3deeac88d6d7a782edf563f2291ebe17f5",
+  "sqlite_version": "3.53.1"
+}

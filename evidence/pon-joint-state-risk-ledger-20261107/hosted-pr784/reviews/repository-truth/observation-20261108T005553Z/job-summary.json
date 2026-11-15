@@ -1,0 +1,94 @@
+{
+  "observed_at": "2026-11-08T00:55:55.158847+00:00",
+  "directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-repository-truth-review/observation-20261108T005553Z",
+  "job_id": 128580281254,
+  "name": "repository-truth",
+  "head_sha": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "status": "in_progress",
+  "conclusion": null,
+  "started_at": "2026-11-08T00:45:33Z",
+  "completed_at": null,
+  "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209912/job/128580281254",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1,
+      "started_at": "2026-11-08T00:45:34Z",
+      "completed_at": "2026-11-08T00:45:35Z"
+    },
+    {
+      "name": "Checkout exact candidate",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2,
+      "started_at": "2026-11-08T00:45:35Z",
+      "completed_at": "2026-11-08T00:46:14Z"
+    },
+    {
+      "name": "Verify immutable source identity",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3,
+      "started_at": "2026-11-08T00:46:14Z",
+      "completed_at": "2026-11-08T00:46:16Z"
+    },
+    {
+      "name": "Set isolated Cargo paths after runner allocation",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4,
+      "started_at": "2026-11-08T00:46:16Z",
+      "completed_at": "2026-11-08T00:46:16Z"
+    },
+    {
+      "name": "Check PQ provider CI wiring and failure controls",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5,
+      "started_at": "2026-11-08T00:46:16Z",
+      "completed_at": "2026-11-08T00:46:17Z"
+    },
+    {
+      "name": "Check original public Host CI ownership and failure controls",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 6,
+      "started_at": "2026-11-08T00:46:17Z",
+      "completed_at": "2026-11-08T00:46:18Z"
+    },
+    {
+      "name": "Run actual repository-truth checks",
+      "status": "in_progress",
+      "conclusion": null,
+      "number": 7,
+      "started_at": "2026-11-08T00:46:18Z",
+      "completed_at": null
+    },
+    {
+      "name": "Verify source remained unchanged",
+      "status": "pending",
+      "conclusion": null,
+      "number": 8,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "name": "Retain source and execution observations",
+      "status": "pending",
+      "conclusion": null,
+      "number": 9,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "name": "Post Checkout exact candidate",
+      "status": "pending",
+      "conclusion": null,
+      "number": 18,
+      "started_at": null,
+      "completed_at": null
+    }
+  ]
+}

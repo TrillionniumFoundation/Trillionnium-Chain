@@ -1,0 +1,39 @@
+{
+  "schema": "trnm-local-resource-owner-contract-v1",
+  "status": "experimental-local-component-hold-no-go",
+  "profile_domain": "pon-local-resource-owner-v1",
+  "journal_name": "resource-owner-v1.journal",
+  "journal_magic_hex": "504e524f31000000",
+  "frame_domain": "pon-local-resource-owner-frame-v1\u0000",
+  "maximum_operations_all_classes": 1024,
+  "maximum_journal_bytes": 20971520,
+  "maximum_frame_bytes": 4096,
+  "classes": [
+    "bootstrap",
+    "committed",
+    "recovery"
+  ],
+  "resources": [
+    "cpu_ns",
+    "io_bytes"
+  ],
+  "automatic_refill": false,
+  "manual_refill_supported": false,
+  "reopen_initializes": false,
+  "replay_dispatches": false,
+  "drop_refunds": false,
+  "profile_overshoot_must_be_nonzero": true,
+  "overshoot_is_spendable_credit": false,
+  "recovery_requires_original_operation": true,
+  "native_integration": "observe_existing_packet_owned",
+  "observer_class": "bootstrap",
+  "observer_charge_basis": "full-original-reservation",
+  "observer_actual_cpu_measured": false,
+  "observer_actual_io_measured": false,
+  "r14_signed_profile_changed": false,
+  "whole_entry_coverage_qualified": false,
+  "physical_resource_bound_qualified": false,
+  "honest_service_bound_qualified": false,
+  "independent_rollback_anchor_qualified": false,
+  "production_activation": false
+}

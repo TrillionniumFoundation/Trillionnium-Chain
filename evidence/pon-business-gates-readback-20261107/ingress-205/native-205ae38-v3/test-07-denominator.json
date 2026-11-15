@@ -1,0 +1,16 @@
+{
+  "name": "test-07-denominator",
+  "argv": [
+    "python3",
+    "scripts/ci/check_required_native_test.py",
+    "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-07.log",
+    "--test",
+    "ingress::public_v3::input_decode_tests::initialized_socket_reads_retain_original_quantum_and_do_not_swallow_trailing_bytes"
+  ],
+  "started_unix_ns": 1794068929462733724,
+  "ended_unix_ns": 1794068929511560645,
+  "exit_code": 0,
+  "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-07-denominator.log",
+  "log_bytes": 215,
+  "log_sha256": "4cbbe9510a746cbc23331efc145c6af6c8bcee2da03f3e6d64469464ea5e9037"
+}

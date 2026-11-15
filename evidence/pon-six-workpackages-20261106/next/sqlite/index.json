@@ -1,0 +1,446 @@
+{
+  "schema": "trnm-sqlite-build-watch-archive-v1",
+  "archive": "raw.tar.gz",
+  "archive_sha256": "de1ee4be19dc02d10abf9794267b63849ab0bf560eb47e73c7a959fd75645002",
+  "archive_bytes": 13817,
+  "member_count": 87,
+  "raw_bytes": 93021,
+  "members": [
+    {
+      "path": "after/absolute-trnm-sqlite-io-boundary-1852245d1d1c36ab-output.txt",
+      "bytes": 5199,
+      "sha256": "46fa3fe833406ce575dcb102270c250bcc34527a5cb79715bcb07860e407c18f"
+    },
+    {
+      "path": "after/absolute.json",
+      "bytes": 2383,
+      "sha256": "f96fda757aed23d1429be4ea3dd883a2058514c8b69a87f801696474f7f86963"
+    },
+    {
+      "path": "after/absolute.log",
+      "bytes": 205,
+      "sha256": "976501d362bd568d5a775318f2aa61eedc7687b0e6420d8fa21a6b2e21103b87"
+    },
+    {
+      "path": "after/relative-trnm-sqlite-io-boundary-1852245d1d1c36ab-output.txt",
+      "bytes": 1693,
+      "sha256": "6450522b6c67fdc62b3f00dbe38657f20fccc1d33a07cd2658c3c72c364e435e"
+    },
+    {
+      "path": "after/relative.json",
+      "bytes": 2397,
+      "sha256": "db09fbb57d9fc5a42427958b405bdde8ddf369456529872d9a60222c43d39782"
+    },
+    {
+      "path": "after/relative.log",
+      "bytes": 306,
+      "sha256": "cf769fa348e00b5c746cf03e07cdeba62e6abd1871660a96a691bc599c9725b9"
+    },
+    {
+      "path": "after/summary.json",
+      "bytes": 5199,
+      "sha256": "b043778f1e608336aa07b8688486db5d4845699d4bc37a160112cee87384e0d8"
+    },
+    {
+      "path": "before/absolute-trnm-sqlite-io-boundary-1852245d1d1c36ab-output.txt",
+      "bytes": 435,
+      "sha256": "18c922080d009fb7ef2b0c8d706ff647dec359dc9a127d1a30f7df536d16289b"
+    },
+    {
+      "path": "before/absolute.json",
+      "bytes": 2347,
+      "sha256": "cd1425dd57be21d03acdb4029021a3978102bb623279d382c8e9cb93b58b681a"
+    },
+    {
+      "path": "before/absolute.log",
+      "bytes": 173,
+      "sha256": "d2944d0f8915ae1d767c54c16a47459bb2ec5e73ad94ae52e3e315c5ee5d2bd8"
+    },
+    {
+      "path": "before/relative-trnm-sqlite-io-boundary-1852245d1d1c36ab-output.txt",
+      "bytes": 435,
+      "sha256": "18c922080d009fb7ef2b0c8d706ff647dec359dc9a127d1a30f7df536d16289b"
+    },
+    {
+      "path": "before/relative.json",
+      "bytes": 2277,
+      "sha256": "562235e1db2e3a766933fcaa47a8096b1158b2dff14de8cf33484a8c23a5c264"
+    },
+    {
+      "path": "before/relative.log",
+      "bytes": 1391,
+      "sha256": "9ec62b9ddc3eaf60888126006c6af63145cc14b2b39ec2cc84aba6cc5abfbd7b"
+    },
+    {
+      "path": "before/summary.json",
+      "bytes": 5044,
+      "sha256": "8f05038923152e3f9de579f5102eeb9e6a6beae9b989414c26dccadb0d4ac1e5"
+    },
+    {
+      "path": "native-held-original-limits/controller.log",
+      "bytes": 412,
+      "sha256": "3b5c7b33e393920f49a1728706932cf9e3015840186ed7c263755e78e8ada871"
+    },
+    {
+      "path": "native-held-original-limits/controls/actual-inherited-process-limits.json",
+      "bytes": 1525,
+      "sha256": "c83dfbc9a34cdb239d31ebe0cbd2e1ced45de0d8e728ea51adf40a38a210b317"
+    },
+    {
+      "path": "native-held-original-limits/controls/all-planned-child-terminals.json",
+      "bytes": 2400,
+      "sha256": "2a0657f294acb619e2c229354117e3311904115a04b61fb7698164f2a386918b"
+    },
+    {
+      "path": "native-held-original-limits/controls/bad_basename_escape_claim/child.stderr",
+      "bytes": 64,
+      "sha256": "88cc514901ef8a3d9f24a96c4b27458e534aeccddfa453b6fca529a654968c47"
+    },
+    {
+      "path": "native-held-original-limits/controls/bad_basename_escape_claim/child.stdout",
+      "bytes": 230,
+      "sha256": "d9b7042b21fe81b3a1a3f655919b2a6058f22b79932acbbcc5a900d313cd3bb9"
+    },
+    {
+      "path": "native-held-original-limits/controls/bad_basename_escape_claim/parent-observed-terminal.json",
+      "bytes": 420,
+      "sha256": "e1905246b617d4d717542ea434b90d5efaf6e9a4d175c5f0e16eb7a164545fa4"
+    },
+    {
+      "path": "native-held-original-limits/controls/existing_symlink_claim/child.stderr",
+      "bytes": 64,
+      "sha256": "88cc514901ef8a3d9f24a96c4b27458e534aeccddfa453b6fca529a654968c47"
+    },
+    {
+      "path": "native-held-original-limits/controls/existing_symlink_claim/child.stdout",
+      "bytes": 230,
+      "sha256": "d9b7042b21fe81b3a1a3f655919b2a6058f22b79932acbbcc5a900d313cd3bb9"
+    },
+    {
+      "path": "native-held-original-limits/controls/existing_symlink_claim/parent-observed-terminal.json",
+      "bytes": 417,
+      "sha256": "b848f2e13a6a01c2cd0f66f9996c59670b39d1f965c2a51c6e945252e39c3077"
+    },
+    {
+      "path": "native-held-original-limits/controls/held_parent_rename_sqlite_cold/child.stderr",
+      "bytes": 64,
+      "sha256": "88cc514901ef8a3d9f24a96c4b27458e534aeccddfa453b6fca529a654968c47"
+    },
+    {
+      "path": "native-held-original-limits/controls/held_parent_rename_sqlite_cold/child.stdout",
+      "bytes": 230,
+      "sha256": "d9b7042b21fe81b3a1a3f655919b2a6058f22b79932acbbcc5a900d313cd3bb9"
+    },
+    {
+      "path": "native-held-original-limits/controls/held_parent_rename_sqlite_cold/parent-observed-terminal.json",
+      "bytes": 424,
+      "sha256": "ee9a2b1112ff0b12a35d62f0179a3c6982e300827c72d2ae27cc65aa29f2f61e"
+    },
+    {
+      "path": "native-held-original-limits/controls/nondirectory_parent_claim/child.stderr",
+      "bytes": 64,
+      "sha256": "88cc514901ef8a3d9f24a96c4b27458e534aeccddfa453b6fca529a654968c47"
+    },
+    {
+      "path": "native-held-original-limits/controls/nondirectory_parent_claim/child.stdout",
+      "bytes": 230,
+      "sha256": "d9b7042b21fe81b3a1a3f655919b2a6058f22b79932acbbcc5a900d313cd3bb9"
+    },
+    {
+      "path": "native-held-original-limits/controls/nondirectory_parent_claim/parent-observed-terminal.json",
+      "bytes": 420,
+      "sha256": "71a3ec9c9e2cd0ca0391e0ade521118a97789f5a52470d8e3513d87767ea7f4d"
+    },
+    {
+      "path": "native-held-original-limits/result.json",
+      "bytes": 685,
+      "sha256": "a8dac36bf12188bc97e419a4d36ea9ed467b7b979fe506b7e1ba2c4e3cb5e06f"
+    },
+    {
+      "path": "native/held-directory.json",
+      "bytes": 620,
+      "sha256": "86ba815ccafb485b8185229b6d0e72a9f3dd9cce8e1b4e68da97f834e85da66d"
+    },
+    {
+      "path": "native/held-directory.log",
+      "bytes": 1008,
+      "sha256": "adca8143e4518ea076472b3460770309a40c1301d0400c55ff4247741e832a9a"
+    },
+    {
+      "path": "native/held-directory/actual-inherited-process-limits.json",
+      "bytes": 1525,
+      "sha256": "89f96a6a99b8c758356d4434c048819156c6313fd3222e1860ddb2056113e79c"
+    },
+    {
+      "path": "native/library.json",
+      "bytes": 551,
+      "sha256": "b2a5c70d813ce1125fe7cfd342736edab6ab66abb3260e5b9b25dcbb77d1a5a0"
+    },
+    {
+      "path": "native/library.log",
+      "bytes": 2328,
+      "sha256": "dfd909faaa59ae448cb6c09c19929eafb7f8d9f96fd7f7de3d6e855747925a7a"
+    },
+    {
+      "path": "native/proc-identity-environment.json",
+      "bytes": 419,
+      "sha256": "e7e8be4b964769df734b28a0f8e95d0a8eac9257965fb8b27d894908ec033b1e"
+    },
+    {
+      "path": "native/public-api.json",
+      "bytes": 670,
+      "sha256": "ecb1a6bc863d45b4760cf00c0c415138e97878e6e03f216434405f65ee00f59d"
+    },
+    {
+      "path": "native/public-api.log",
+      "bytes": 1021,
+      "sha256": "08898bad20145a357e78037ca18759976f26e05aac2b3ef490e77f763e6e8244"
+    },
+    {
+      "path": "native/public-api/all-planned-child-terminals.json",
+      "bytes": 4793,
+      "sha256": "62225fccdcb3d3fd91a5122873b89c9d4864675321089dcb878d1b3cff4dd4aa"
+    },
+    {
+      "path": "native/public-api/attach_uri_path_refusals/child.stderr",
+      "bytes": 237,
+      "sha256": "c5a8853ff6a3b130d53082c7b300225305a1fd7bbb2a9f89feb32332b7f14be5"
+    },
+    {
+      "path": "native/public-api/attach_uri_path_refusals/child.stdout",
+      "bytes": 222,
+      "sha256": "1b2047b67e00d3cce55901db21aaeda1641de69060948771e1961a7c497bd793"
+    },
+    {
+      "path": "native/public-api/attach_uri_path_refusals/parent-observed-terminal.json",
+      "bytes": 366,
+      "sha256": "ab5f3ada1e2838813a0ff858eb43a3270c83b6dc6582d3b2d37624b3bbf628d1"
+    },
+    {
+      "path": "native/public-api/bare_named_memory_permanent_registration/child.stderr",
+      "bytes": 237,
+      "sha256": "2b8cd22a9933db8c1b9fb1438de42848e8192201596d4a7fea559bd4ac75fc5a"
+    },
+    {
+      "path": "native/public-api/bare_named_memory_permanent_registration/child.stdout",
+      "bytes": 222,
+      "sha256": "1b2047b67e00d3cce55901db21aaeda1641de69060948771e1961a7c497bd793"
+    },
+    {
+      "path": "native/public-api/bare_named_memory_permanent_registration/parent-observed-terminal.json",
+      "bytes": 382,
+      "sha256": "e97b163ec3639abe6fd6a80773cefafe2c89b2442aecb26b7a4e4efac3f53fdd"
+    },
+    {
+      "path": "native/public-api/disk_drop_order/child.stderr",
+      "bytes": 237,
+      "sha256": "e03275fda73a9745aafb80b90e364a06f00bc158f02aa4344561c250218b86ab"
+    },
+    {
+      "path": "native/public-api/disk_drop_order/child.stdout",
+      "bytes": 222,
+      "sha256": "1b2047b67e00d3cce55901db21aaeda1641de69060948771e1961a7c497bd793"
+    },
+    {
+      "path": "native/public-api/disk_drop_order/parent-observed-terminal.json",
+      "bytes": 357,
+      "sha256": "cb15604096d84e3ea6fb7b38526a5bf8200cdf1deeaf41a80cf598c17da9d417"
+    },
+    {
+      "path": "native/public-api/failed_owner_claim_consumed/child.stderr",
+      "bytes": 237,
+      "sha256": "cdfc0e243f94cdd34308042955d05ed87e97673e87fd8820bbe4b180ddbd184e"
+    },
+    {
+      "path": "native/public-api/failed_owner_claim_consumed/child.stdout",
+      "bytes": 222,
+      "sha256": "1b2047b67e00d3cce55901db21aaeda1641de69060948771e1961a7c497bd793"
+    },
+    {
+      "path": "native/public-api/failed_owner_claim_consumed/parent-observed-terminal.json",
+      "bytes": 369,
+      "sha256": "d545093e64140dc8047d21126d50b9341c78c635ae88aaf06886f160f0b65b77"
+    },
+    {
+      "path": "native/public-api/memory_drop_order/child.stderr",
+      "bytes": 237,
+      "sha256": "9e5abd1b87e8085f5651a9bdf0a9a210bc98d288e6a78804e93aecfe71e2e482"
+    },
+    {
+      "path": "native/public-api/memory_drop_order/child.stdout",
+      "bytes": 222,
+      "sha256": "1b2047b67e00d3cce55901db21aaeda1641de69060948771e1961a7c497bd793"
+    },
+    {
+      "path": "native/public-api/memory_drop_order/parent-observed-terminal.json",
+      "bytes": 359,
+      "sha256": "1860297c4c2fc30e05ba453444f0594328f6eea4638b3f309fec8d687729b6f1"
+    },
+    {
+      "path": "native/public-api/memory_real_deleted_temp/child.stderr",
+      "bytes": 237,
+      "sha256": "5cb257a3ae3b6f6b4e6dd58ffa0cdd88bc0d313bf6223ca9862fb8d699fa8d8f"
+    },
+    {
+      "path": "native/public-api/memory_real_deleted_temp/child.stdout",
+      "bytes": 222,
+      "sha256": "1b2047b67e00d3cce55901db21aaeda1641de69060948771e1961a7c497bd793"
+    },
+    {
+      "path": "native/public-api/memory_real_deleted_temp/parent-observed-terminal.json",
+      "bytes": 366,
+      "sha256": "333f87d8b07d130cf1037235778da7e2e0849e2a5c5410187cb542ba65c2a396"
+    },
+    {
+      "path": "native/public-api/multiple_connections/child.stderr",
+      "bytes": 237,
+      "sha256": "24b3e1ee39051754382bff073bc52a9474d6c05937b92c10eb5155891216cba8"
+    },
+    {
+      "path": "native/public-api/multiple_connections/child.stdout",
+      "bytes": 222,
+      "sha256": "1b2047b67e00d3cce55901db21aaeda1641de69060948771e1961a7c497bd793"
+    },
+    {
+      "path": "native/public-api/multiple_connections/parent-observed-terminal.json",
+      "bytes": 362,
+      "sha256": "80bfccff0c41a7199cb7245f3ce9e56acf843a2ac280f83e2cac0ac8b5614aa6"
+    },
+    {
+      "path": "native/public-api/real_file_cap_sticky/child.stderr",
+      "bytes": 237,
+      "sha256": "ee2b5427acb1106467af89c67ff55a09c332c7f967b0cda9062e0d2907efd751"
+    },
+    {
+      "path": "native/public-api/real_file_cap_sticky/child.stdout",
+      "bytes": 222,
+      "sha256": "1b2047b67e00d3cce55901db21aaeda1641de69060948771e1961a7c497bd793"
+    },
+    {
+      "path": "native/public-api/real_file_cap_sticky/parent-observed-terminal.json",
+      "bytes": 362,
+      "sha256": "b6063bb51542eafca5e95474633b8364cd08833194b1b0a10930e4f60c16354b"
+    },
+    {
+      "path": "native/public-api/rollback_to_wal/child.stderr",
+      "bytes": 237,
+      "sha256": "6ebd3a3d739a17a7deb7aad07e44f4fee7269b7dd22f2c7423df3b697ab52696"
+    },
+    {
+      "path": "native/public-api/rollback_to_wal/child.stdout",
+      "bytes": 222,
+      "sha256": "1b2047b67e00d3cce55901db21aaeda1641de69060948771e1961a7c497bd793"
+    },
+    {
+      "path": "native/public-api/rollback_to_wal/parent-observed-terminal.json",
+      "bytes": 357,
+      "sha256": "b928473c0b827b92902add5e870e4c9ffff1ee91e8c10632a0871171d8d3fece"
+    },
+    {
+      "path": "native/public-api/same_lease_cold_reopen/child.stderr",
+      "bytes": 237,
+      "sha256": "136f8f3a1ad03af86e1b317c2fd8d5e19952e80345b57ce5a2f07486def44096"
+    },
+    {
+      "path": "native/public-api/same_lease_cold_reopen/child.stdout",
+      "bytes": 222,
+      "sha256": "1b2047b67e00d3cce55901db21aaeda1641de69060948771e1961a7c497bd793"
+    },
+    {
+      "path": "native/public-api/same_lease_cold_reopen/parent-observed-terminal.json",
+      "bytes": 364,
+      "sha256": "0a063a90feee8fcb1221ffabb74bc927506fd42f3165686a4049b7bf713d586c"
+    },
+    {
+      "path": "native/summary.json",
+      "bytes": 2266,
+      "sha256": "0b8baa295f8303789db9deb625b092c0de24782fc7d8b40f1cf17815d2b0219e"
+    },
+    {
+      "path": "reproduction/probe_sqlite_watch.py",
+      "bytes": 2547,
+      "sha256": "aa17611a995f58ac5227bc8543a6ccdf93661f543565ae70b446c54722cb09f9"
+    },
+    {
+      "path": "reproduction/run_sqlite_watch_native.py",
+      "bytes": 1906,
+      "sha256": "6e694dee7d82f22f3d2dcee808a24fec5cfc97ec18be56adaeec40bf58d69737"
+    },
+    {
+      "path": "requalification/qualify-1-trnm-sqlite-io-boundary-1852245d1d1c36ab.txt",
+      "bytes": 5215,
+      "sha256": "87ccc4c93acdcb56c7e4746e9b502fea8adcaf198f4246a8de528f128ff6be87"
+    },
+    {
+      "path": "requalification/qualify-1.json",
+      "bytes": 1021,
+      "sha256": "e834032d10ba332cfec27058133f795307f2ec3b2be308722ee770c3539a5653"
+    },
+    {
+      "path": "requalification/qualify-1.log",
+      "bytes": 205,
+      "sha256": "80a0f743055ed3ec407a8177051e473f02f11619a2f45b094ab3423b7cb40940"
+    },
+    {
+      "path": "requalification/qualify-2-trnm-sqlite-io-boundary-1852245d1d1c36ab.txt",
+      "bytes": 5215,
+      "sha256": "87ccc4c93acdcb56c7e4746e9b502fea8adcaf198f4246a8de528f128ff6be87"
+    },
+    {
+      "path": "requalification/qualify-2.json",
+      "bytes": 1011,
+      "sha256": "88b2a496c22face57196fe10ecfe4a2c593dba89a7c853dafa836f0e23040faf"
+    },
+    {
+      "path": "requalification/qualify-2.log",
+      "bytes": 205,
+      "sha256": "9189446943ba8083259ee696a370e90554670130d6b423b9efc09796f2cb22cb"
+    },
+    {
+      "path": "requalification/refuse-1-trnm-sqlite-io-boundary-1852245d1d1c36ab.txt",
+      "bytes": 1693,
+      "sha256": "6450522b6c67fdc62b3f00dbe38657f20fccc1d33a07cd2658c3c72c364e435e"
+    },
+    {
+      "path": "requalification/refuse-1.json",
+      "bytes": 1024,
+      "sha256": "3fc1e3455ab7c280f70639b426e2ebe19a825907f7ba1197416b0958fd3e04f4"
+    },
+    {
+      "path": "requalification/refuse-1.log",
+      "bytes": 1391,
+      "sha256": "316ffee9344894fbba9790a530161aa3cce41d533007d951f5ccf66cd19d213d"
+    },
+    {
+      "path": "requalification/refuse-2-trnm-sqlite-io-boundary-1852245d1d1c36ab.txt",
+      "bytes": 1693,
+      "sha256": "6450522b6c67fdc62b3f00dbe38657f20fccc1d33a07cd2658c3c72c364e435e"
+    },
+    {
+      "path": "requalification/refuse-2.json",
+      "bytes": 1031,
+      "sha256": "adce1d3d18f3774fd1bd333a737e68b74cf097e4322b82ea392cc5e9331a26e8"
+    },
+    {
+      "path": "requalification/refuse-2.log",
+      "bytes": 306,
+      "sha256": "c7d9ac3db8e45f35756836dd140c77656df03f437af9dcecd74c15e974962687"
+    },
+    {
+      "path": "requalification/source-after.json",
+      "bytes": 1445,
+      "sha256": "54d81e8c9a73ccfcb3065e8c7e49929b3666f31cc09ad5c889c0e3842fdd4028"
+    },
+    {
+      "path": "requalification/source-before.json",
+      "bytes": 1445,
+      "sha256": "54d81e8c9a73ccfcb3065e8c7e49929b3666f31cc09ad5c889c0e3842fdd4028"
+    },
+    {
+      "path": "requalification/summary.json",
+      "bytes": 4870,
+      "sha256": "22fa391bba0d84104742d81bb0225fecc55d0e4fac185981f2159a6e859741ad"
+    }
+  ],
+  "native_public_service_qualified": false
+}

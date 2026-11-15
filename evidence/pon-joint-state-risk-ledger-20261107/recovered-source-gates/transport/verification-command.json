@@ -1,0 +1,8 @@
+{
+  "argv": [
+    "python3",
+    "transport/verify-transfer.py"
+  ],
+  "cwd": "/workspace/scratch/8f0d1a7a75bb/chain_certificates/evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates",
+  "exit_code": 0
+}

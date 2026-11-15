@@ -1,0 +1,86 @@
+[
+  {
+    "label": "preflight",
+    "exit": 0,
+    "seconds": 0.043,
+    "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+  },
+  {
+    "label": "merge",
+    "exit": 1,
+    "seconds": 0.168,
+    "sha256": "09b397241ff8c12520ba1eb3ccef1de78db0034cc97985400118eff464da9ca7"
+  },
+  {
+    "label": "stage-resolved",
+    "exit": 0,
+    "seconds": 0.039,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "metadata-original-controls",
+    "exit": 0,
+    "seconds": 0.081,
+    "sha256": "33183342c30dadbd9ad4077b650de70cd14f14397cab7d62dd294502c6135973"
+  },
+  {
+    "label": "semantic-original-controls",
+    "exit": 0,
+    "seconds": 0.045,
+    "sha256": "ecb3af2b95aa811e02b92e7f7f88b2f066cb64520074029d3c51cc09a4f72737"
+  },
+  {
+    "label": "source-negative",
+    "exit": 0,
+    "seconds": 1.448,
+    "sha256": "a58c1c811acb510ce2ab7f1946c2b3e04bdcffe18430680dcf9eec0f77d2cc39"
+  },
+  {
+    "label": "independent-ci-command-negative",
+    "exit": 0,
+    "seconds": 0.325,
+    "sha256": "62f82a9daf3a66e12329314b926108b2b44973669b4a4c249b3ebeb6fae3c504"
+  },
+  {
+    "label": "current-corpus",
+    "exit": 0,
+    "seconds": 0.416,
+    "sha256": "92e20a0c1acb2e39ea9492ab8c4a9e9fb3b0c64a5016c970f5bbe435915c4bab"
+  },
+  {
+    "label": "current-ci-contract",
+    "exit": 0,
+    "seconds": 0.065,
+    "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+  },
+  {
+    "label": "shell",
+    "exit": 0,
+    "seconds": 0.008,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "fmt",
+    "exit": 0,
+    "seconds": 5.165,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "diff-check",
+    "exit": 0,
+    "seconds": 0.016,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "precommit-preflight",
+    "exit": 0,
+    "seconds": 0.044,
+    "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+  },
+  {
+    "label": "commit",
+    "exit": 0,
+    "seconds": 0.058,
+    "sha256": "70810b692bc88ebae0df7e9ca655a0b3f78b04f72033d189e17044a69a1080b4"
+  }
+]

@@ -1,0 +1,16 @@
+tree 25ae0d2035b763b916575292d04571e93a512dd1
+parent fc86ed8e927a8eb4e048b160437126a6c0b96c0d
+parent 8f8462803f190e6c60e3e8d87f6673c3480504b7
+author Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793856536 -0500
+committer Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793856536 -0500
+
+merge(pq): preserve current-root fixes and concurrent native work
+
+Integrate checkpoint live-journal verification, current publisher and Cell
+expectations, and PNQ2 original-deadline completion with concurrent Cell,
+Growth, public-request and shared-material work. Preserve exact source
+pins and both plan additions; retain all prior failed observations.
+
+HOLD: native evidence remains scoped to its executed commits. Combined
+checks follow on this fixed source. No whole-chain qualification, original
+budget relaxation, protected-main merge or production activation.

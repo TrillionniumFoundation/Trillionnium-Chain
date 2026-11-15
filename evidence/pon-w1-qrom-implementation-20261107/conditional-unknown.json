@@ -1,0 +1,103 @@
+{
+  "inputs": {
+    "input_kind": "hypothetical",
+    "merkle": {
+      "ell_max": null,
+      "k": null,
+      "n": null,
+      "q_s": null,
+      "sigma": null,
+      "t": null,
+      "target_error": null,
+      "w_vc": null
+    },
+    "pqsr": {
+      "k": null,
+      "kappa_rrbr": null,
+      "r_min": null,
+      "t": null,
+      "target_error": null,
+      "w": null
+    },
+    "schema": "TRNM-W1-QROM-CONDITIONAL-INPUT1"
+  },
+  "merkle_components": {
+    "boundary": "Separate named errors, not a combined proof failure probability. w_vc is the mass on commitment oracles. No positional substitution into Theorem 11.3 is made; the indexed January signatures need reconciliation. sigma denotes an ideal oracle output width, not stored digest bytes.",
+    "conditional_expressions": {
+      "commutativity": null,
+      "extraction_correctness": null,
+      "offline_extractability": null,
+      "online_indistinguishability": null
+    },
+    "each_expression_meets_component_target": {
+      "commutativity": null,
+      "extraction_correctness": null,
+      "offline_extractability": null,
+      "online_indistinguishability": null
+    },
+    "theorem": "2026-01-01 manuscript, Theorem 8.3, page 53",
+    "unknown_inputs": [
+      "ell_max",
+      "k",
+      "n",
+      "q_s",
+      "sigma",
+      "t",
+      "target_error",
+      "w_vc"
+    ]
+  },
+  "pqsr_component": {
+    "boundary": "The finite addend is a floor of this upper expression, not an attack lower bound. kappa_rrbr must bound relaxed round-by-round knowledge error over the entire allowed statement set; no implementation bound is supplied or inferred.",
+    "conditional_expression_meets_target": null,
+    "conditional_upper_expression": null,
+    "finite_randomness_addend": null,
+    "rrbr_addend": null,
+    "rrbr_coefficient": null,
+    "target_analysis": {
+      "finite_randomness_addend_exceeds_target": null,
+      "kappa_rrbr_required_at_most": null,
+      "some_nonnegative_rrbr_bound_can_meet_target_by_this_expression": null
+    },
+    "theorem": "2026-01-01 manuscript, Theorem 6.10, page 46",
+    "unknown_inputs": [
+      "k",
+      "kappa_rrbr",
+      "r_min",
+      "t",
+      "target_error",
+      "w"
+    ]
+  },
+  "qualification": {
+    "complete_w1_attack_established": false,
+    "consensus_admission": false,
+    "full_recursive_security_bits": null,
+    "post_quantum_soundness_qualified": false,
+    "production_qualified": false,
+    "qrom_theorem_instantiated": false,
+    "quantum_security_bits": null,
+    "unconditional_project_security_bits": null,
+    "whole_recursive_proof_soundness_qualified": false
+  },
+  "schema": "TRNM-W1-QROM-CONDITIONAL-COMPONENTS1",
+  "source": {
+    "indexed_copy": "https://files01.core.ac.uk/download/690750245.pdf",
+    "indexed_manuscript_date": "2026-01-01",
+    "latest_revision_date_observed_in_metadata": "2026-03-02",
+    "latest_revision_full_text_equivalence_verified": false,
+    "paper": "https://eprint.iacr.org/2025/2166",
+    "scope": "Selected indexed formal theorem statements; not a whole-manuscript proof audit."
+  },
+  "status": "hypothetical_component_arithmetic_only",
+  "theorem_10_6_composed_bound": null,
+  "theorem_11_3_full_bound": null,
+  "unresolved_obligations": [
+    "Match the entire implemented IOR and statement set to relaxed RBR knowledge soundness.",
+    "Match concrete hash/transcript/Merkle encodings to the stipulated quantum oracle model.",
+    "Theorem 11.3 needs a monotone output relation, committed-relation decider costs, mass maximization, shifted query budgets, factors 4/4/8/4 and a commutator term.",
+    "Theorem 10.6 needs compatible relations and the same emulated oracle, two doubled extraction terms at enlarged query budgets, and a commutator cross-term.",
+    "Resolve indexed January parameter-signature differences against an authoritative revision.",
+    "Account for all permitted recursive programs and lifetime adversarial quantum queries."
+  ]
+}

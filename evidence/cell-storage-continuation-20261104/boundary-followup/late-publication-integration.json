@@ -1,0 +1,63 @@
+{
+  "schema": "trnm-storage-late-publication-integration-v1",
+  "incoming": "23a56123e3112de06d7c684ef2057578759176ff",
+  "incoming_tree": "31121e474271432c2b038672fea514872e1f1166",
+  "storage_evidence_checkpoint_G": "d9681ca15570e71514b6445c190fa9fbdf50321f",
+  "storage_evidence_tree_G": "5d65a31149984480be125214c2be25cbb646e257",
+  "completed_static_source_F": "d6be11987b44deb0028382bd9f791dc1c4efc37f",
+  "ordered_parents": [
+    "23a56123e3112de06d7c684ef2057578759176ff",
+    "d9681ca15570e71514b6445c190fa9fbdf50321f"
+  ],
+  "common_base": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+  "incoming_commits_since_base": 3,
+  "incoming_changed_paths": 59,
+  "incoming_nonplan_paths_preserved_before_scope_edits": 58,
+  "G_nonplan_paths_preserved_before_scope_edits": 114,
+  "automatic_plan_union_blob_before_scope_edits": "092c5b56d1535a13fd7bedd6dd10647c30b3829b",
+  "source_subtrees_equal_incoming": {
+    "trillionnium": {
+      "merged": "72c1c7ab529ef6b4df3bec5b45bbc9a3009755ff",
+      "incoming": "72c1c7ab529ef6b4df3bec5b45bbc9a3009755ff",
+      "equal": true
+    },
+    "scripts": {
+      "merged": "492d6b6e07a898739257aa8903765a7f4d7705e1",
+      "incoming": "492d6b6e07a898739257aa8903765a7f4d7705e1",
+      "equal": true
+    },
+    "config": {
+      "merged": "b52717a82dfd0c8db1762b1c9bf627b46a0fca10",
+      "incoming": "b52717a82dfd0c8db1762b1c9bf627b46a0fca10",
+      "equal": true
+    },
+    "formal": {
+      "merged": "54e4ef07b86251f6e0bcff2b866c49f6fe47a8d1",
+      "incoming": "54e4ef07b86251f6e0bcff2b866c49f6fe47a8d1",
+      "equal": true
+    },
+    ".github": {
+      "merged": "dba2d8a9e7a57ee320dc042ffbfb0f8faf0a536c",
+      "incoming": "dba2d8a9e7a57ee320dc042ffbfb0f8faf0a536c",
+      "equal": true
+    }
+  },
+  "native_change_since_F": {
+    "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth/account_prefix_tests.rs",
+    "kind": "test-only import correction",
+    "description": "Use the Node-owned sequence_root import, removing the import from trnm_protocol::pon_wire; retain every test and assertion.",
+    "exact_source_pin_updated": true
+  },
+  "M09_subtree_equal_F": true,
+  "whole_native_tree_equal_F": false,
+  "whole_native_tree": "72c1c7ab529ef6b4df3bec5b45bbc9a3009755ff",
+  "source_integrity_suite_equal_F": true,
+  "source_integrity_test_count": 43,
+  "corpus_pin_count": 464,
+  "C_N_D_E_F_results_relabelled": false,
+  "native_tests_executed_on_late_incoming_by_this_task": 0,
+  "Clippy_on_late_incoming_by_this_task": "NOT_RUN",
+  "combined_native_acceptance": "HOLD",
+  "prospective_merge_acceptance": "UNRESOLVED",
+  "production_activation": false
+}

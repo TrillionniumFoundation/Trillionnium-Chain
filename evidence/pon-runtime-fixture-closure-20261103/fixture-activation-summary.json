@@ -1,0 +1,376 @@
+{
+  "schema": "evaluation-paid-activation-three-attempt-staging-v1",
+  "prepared_utc": "2026-11-03T21:33:21.737304+00:00",
+  "scope": "Separate scratch fixture source, exact direct-rustc attempts only; not a Cargo or actual Host gate.",
+  "original_library_source_manifest_sha256": "22cd64ab7427e49ed5d844b2fe7c6b8d7ca11799b25b78d4cea8eccfa5e54af3",
+  "original_library_test_elf_sha256": "a937d88d3858e89b1583b870e5bde458ff024bd5034c3a38abb966b94d2c24b9",
+  "attempts": [
+    {
+      "version": "v1",
+      "plan": {
+        "schema": "trnm-evaluation-paid-activation-direct-control-v1",
+        "created_utc": "2026-11-03T21:22:59.780150+00:00",
+        "scope": "candidate integration source compiled directly against completed native diagnostic rlibs, explicit original opt3 debug2 assertions and overflow flags; not Cargo or full hosted fixture qualification",
+        "candidate_sha256": "805f6e649d1b810e51a9a62fbd25620e4fc69e9461014e407b83f13990c3400f",
+        "unchanged_library_artifacts": {
+          "serde_json": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libserde_json-f0d4891802ba697c.rlib",
+            "sha256": "67c946de8479208e21b2715685694c97dc1c9c9886c6d77892e78d22f3de0676"
+          },
+          "trnm_crypto_primitives": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_crypto_primitives-6c0fba21bcbcf661.rlib",
+            "sha256": "87da34f2dd96d0101adfb4d5bd318ea116657c1795d9b852d1d25ba2ed1dd91f"
+          },
+          "trnm_mvcc_fee": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_mvcc_fee-a9b3b2ed517fbdd8.rlib",
+            "sha256": "c8d3a03172fcd83864ac043c6e821902562202f82ab3fb650b0bc195996facb9"
+          },
+          "trnm_pon_node": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_pon_node-8f385318f2b1b47b.rlib",
+            "sha256": "9b2aaf11dd36e7eb89820214e0bb39841abcd1922f79fe934cfe3a52b65ada45"
+          },
+          "trnm_protocol": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_protocol-53c3856c5b953f7c.rlib",
+            "sha256": "d3907c6232918bf803ef3e1fee4bd5f5b24835f972be782224dad294441fbc6a"
+          },
+          "hex": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libhex-1558f6adc06e3fa8.rlib",
+            "sha256": "b345f539fbe209c9d0fc602f789be3331cddd7a89e627003682f8a62e0d6dbf7"
+          },
+          "tempfile": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtempfile-3587518b5ee06720.rlib",
+            "sha256": "fedc4ae1c39c5fe734252c8cee21de45f8a18d868ef10e6c5a6777ad28bc84a5"
+          }
+        },
+        "original_native_source_manifest_sha256": "22cd64ab7427e49ed5d844b2fe7c6b8d7ca11799b25b78d4cea8eccfa5e54af3",
+        "original_node_libtest_sha256": "a937d88d3858e89b1583b870e5bde458ff024bd5034c3a38abb966b94d2c24b9",
+        "original_fixture_assertions_and_deadlines_retained": true,
+        "new_test_ready_bound_seconds": 10,
+        "new_test_supervisor_seconds": 60,
+        "full_hosted_fixture_executed": false
+      },
+      "compile": {
+        "argv": [
+          "rustc",
+          "--edition=2021",
+          "--crate-name",
+          "evaluation_sync_observation_candidate",
+          "--test",
+          "-C",
+          "opt-level=3",
+          "-C",
+          "debuginfo=2",
+          "-C",
+          "debug-assertions=yes",
+          "-C",
+          "overflow-checks=yes",
+          "--cfg",
+          "feature=\"default\"",
+          "--cfg",
+          "feature=\"pq-native-openssl\"",
+          "-D",
+          "warnings",
+          "-L",
+          "dependency=/workspace/scratch/b5a148b09b11/target/debug/deps",
+          "--extern",
+          "serde_json=/workspace/scratch/b5a148b09b11/target/debug/deps/libserde_json-f0d4891802ba697c.rlib",
+          "--extern",
+          "trnm_crypto_primitives=/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_crypto_primitives-6c0fba21bcbcf661.rlib",
+          "--extern",
+          "trnm_mvcc_fee=/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_mvcc_fee-a9b3b2ed517fbdd8.rlib",
+          "--extern",
+          "trnm_pon_node=/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_pon_node-8f385318f2b1b47b.rlib",
+          "--extern",
+          "trnm_protocol=/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_protocol-53c3856c5b953f7c.rlib",
+          "--extern",
+          "hex=/workspace/scratch/b5a148b09b11/target/debug/deps/libhex-1558f6adc06e3fa8.rlib",
+          "--extern",
+          "tempfile=/workspace/scratch/b5a148b09b11/target/debug/deps/libtempfile-3587518b5ee06720.rlib",
+          "-L",
+          "native=/workspace/scratch/b5a148b09b11/target/debug/build/libsqlite3-sys-0b4e9332de508ef1/out",
+          "-L",
+          "native=/workspace/scratch/b5a148b09b11/provider/trnm-pq-provider-3.5.9.Dd13QuZx/install/lib",
+          "-L",
+          "native=/workspace/scratch/b5a148b09b11/target/debug/build/trnm-sqlite-io-boundary-1f7024ebc7559ac9/out",
+          "/workspace/scratch/b5a148b09b11/next-validation/evaluation-paid-activation-review/evaluation_sync_observation.rs",
+          "-o",
+          "/workspace/scratch/b5a148b09b11/next-validation/evaluation-paid-activation-review/candidate-test"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 3852934235,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_sha256": "805f6e649d1b810e51a9a62fbd25620e4fc69e9461014e407b83f13990c3400f",
+      "patch_sha256": "20d30165c61b8cf7cbe1374b043cef1f3c45efe2256b46f767043445f71b5a8d",
+      "cargo_qualified": false,
+      "full_host_fixture_qualified": false,
+      "native_result": {
+        "argv": [
+          "/workspace/scratch/b5a148b09b11/next-validation/evaluation-paid-activation-review/candidate-test",
+          "prepared_forks_keep_original_public_cpu_after_listener_join_and_restart",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "exit_code": 101,
+        "timed_out": false,
+        "wall_ns": 10057103584,
+        "stdout_sha256": "cd1c4e15aeddc76a6a989ec630f74cb2324031a217dbfbcb95b0f6c9d4d0e355",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "result": {
+        "exit_code": 101,
+        "candidate_sha256": "805f6e649d1b810e51a9a62fbd25620e4fc69e9461014e407b83f13990c3400f",
+        "candidate_elf_sha256": "9eea5e370e84c04469d57df5423c6760aba64474750f1b23b9832ab8d1591f86",
+        "library_inputs_unchanged": true,
+        "original_node_libtest_unchanged": true,
+        "original_fixture_deadlines_or_assertions_removed": false,
+        "full_hosted_fixture_qualified": false
+      },
+      "failure": "Original new-control ten-second owner-readiness wait expired; not a supervisor timeout"
+    },
+    {
+      "version": "v2",
+      "plan": {
+        "schema": "trnm-evaluation-paid-activation-direct-control-v1",
+        "created_utc": "2026-11-03T21:24:26.911602+00:00",
+        "scope": "candidate integration source compiled directly against completed native diagnostic rlibs, explicit original opt3 debug2 assertions and overflow flags; not Cargo or full hosted fixture qualification",
+        "candidate_sha256": "53aab628d01a031537809fd31020be2f042647b25ba4d100fca31fccd0782110",
+        "unchanged_library_artifacts": {
+          "serde_json": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libserde_json-f0d4891802ba697c.rlib",
+            "sha256": "67c946de8479208e21b2715685694c97dc1c9c9886c6d77892e78d22f3de0676"
+          },
+          "trnm_crypto_primitives": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_crypto_primitives-6c0fba21bcbcf661.rlib",
+            "sha256": "87da34f2dd96d0101adfb4d5bd318ea116657c1795d9b852d1d25ba2ed1dd91f"
+          },
+          "trnm_mvcc_fee": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_mvcc_fee-a9b3b2ed517fbdd8.rlib",
+            "sha256": "c8d3a03172fcd83864ac043c6e821902562202f82ab3fb650b0bc195996facb9"
+          },
+          "trnm_pon_node": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_pon_node-8f385318f2b1b47b.rlib",
+            "sha256": "9b2aaf11dd36e7eb89820214e0bb39841abcd1922f79fe934cfe3a52b65ada45"
+          },
+          "trnm_protocol": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_protocol-53c3856c5b953f7c.rlib",
+            "sha256": "d3907c6232918bf803ef3e1fee4bd5f5b24835f972be782224dad294441fbc6a"
+          },
+          "hex": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libhex-1558f6adc06e3fa8.rlib",
+            "sha256": "b345f539fbe209c9d0fc602f789be3331cddd7a89e627003682f8a62e0d6dbf7"
+          },
+          "tempfile": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtempfile-3587518b5ee06720.rlib",
+            "sha256": "fedc4ae1c39c5fe734252c8cee21de45f8a18d868ef10e6c5a6777ad28bc84a5"
+          }
+        },
+        "original_native_source_manifest_sha256": "22cd64ab7427e49ed5d844b2fe7c6b8d7ca11799b25b78d4cea8eccfa5e54af3",
+        "original_node_libtest_sha256": "a937d88d3858e89b1583b870e5bde458ff024bd5034c3a38abb966b94d2c24b9",
+        "original_fixture_assertions_and_deadlines_retained": true,
+        "new_test_pinned_head_deadline_seconds": 2,
+        "new_test_supervisor_seconds": 60,
+        "full_hosted_fixture_executed": false
+      },
+      "compile": {
+        "argv": [
+          "rustc",
+          "--edition=2021",
+          "--crate-name",
+          "evaluation_sync_observation_candidate",
+          "--test",
+          "-C",
+          "opt-level=3",
+          "-C",
+          "debuginfo=2",
+          "-C",
+          "debug-assertions=yes",
+          "-C",
+          "overflow-checks=yes",
+          "--cfg",
+          "feature=\"default\"",
+          "--cfg",
+          "feature=\"pq-native-openssl\"",
+          "-D",
+          "warnings",
+          "-L",
+          "dependency=/workspace/scratch/b5a148b09b11/target/debug/deps",
+          "--extern",
+          "serde_json=/workspace/scratch/b5a148b09b11/target/debug/deps/libserde_json-f0d4891802ba697c.rlib",
+          "--extern",
+          "trnm_crypto_primitives=/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_crypto_primitives-6c0fba21bcbcf661.rlib",
+          "--extern",
+          "trnm_mvcc_fee=/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_mvcc_fee-a9b3b2ed517fbdd8.rlib",
+          "--extern",
+          "trnm_pon_node=/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_pon_node-8f385318f2b1b47b.rlib",
+          "--extern",
+          "trnm_protocol=/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_protocol-53c3856c5b953f7c.rlib",
+          "--extern",
+          "hex=/workspace/scratch/b5a148b09b11/target/debug/deps/libhex-1558f6adc06e3fa8.rlib",
+          "--extern",
+          "tempfile=/workspace/scratch/b5a148b09b11/target/debug/deps/libtempfile-3587518b5ee06720.rlib",
+          "-L",
+          "native=/workspace/scratch/b5a148b09b11/target/debug/build/libsqlite3-sys-0b4e9332de508ef1/out",
+          "-L",
+          "native=/workspace/scratch/b5a148b09b11/provider/trnm-pq-provider-3.5.9.Dd13QuZx/install/lib",
+          "-L",
+          "native=/workspace/scratch/b5a148b09b11/target/debug/build/trnm-sqlite-io-boundary-1f7024ebc7559ac9/out",
+          "/workspace/scratch/b5a148b09b11/next-validation/evaluation-paid-activation-review/v2/evaluation_sync_observation.rs",
+          "-o",
+          "/workspace/scratch/b5a148b09b11/next-validation/evaluation-paid-activation-review/v2/candidate-test"
+        ],
+        "exit_code": 1,
+        "timed_out": false,
+        "wall_ns": 315393107,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "79e1011b7c1382ca9231915184c218713737d07c310e32ae8c9eddbec18f85ad"
+      },
+      "source_sha256": "53aab628d01a031537809fd31020be2f042647b25ba4d100fca31fccd0782110",
+      "patch_sha256": "7932e7d79df342f1d335abc4e05c90794793ab68d58fbd67e2cbac45f9341501",
+      "cargo_qualified": false,
+      "full_host_fixture_qualified": false,
+      "native_result": null,
+      "failure": "E0308: ingress::Request::Head supplied where public_v3::Request::Head is required"
+    },
+    {
+      "version": "v3",
+      "plan": {
+        "schema": "trnm-evaluation-paid-activation-direct-control-v1",
+        "created_utc": "2026-11-03T21:25:22.523874+00:00",
+        "scope": "candidate integration source compiled directly against completed native diagnostic rlibs, explicit original opt3 debug2 assertions and overflow flags; not Cargo or full hosted fixture qualification",
+        "candidate_sha256": "402f29fa7ef75e4ba3b406290890a960db335d084620125d95c9cc539e857b04",
+        "unchanged_library_artifacts": {
+          "serde_json": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libserde_json-f0d4891802ba697c.rlib",
+            "sha256": "67c946de8479208e21b2715685694c97dc1c9c9886c6d77892e78d22f3de0676"
+          },
+          "trnm_crypto_primitives": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_crypto_primitives-6c0fba21bcbcf661.rlib",
+            "sha256": "87da34f2dd96d0101adfb4d5bd318ea116657c1795d9b852d1d25ba2ed1dd91f"
+          },
+          "trnm_mvcc_fee": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_mvcc_fee-a9b3b2ed517fbdd8.rlib",
+            "sha256": "c8d3a03172fcd83864ac043c6e821902562202f82ab3fb650b0bc195996facb9"
+          },
+          "trnm_pon_node": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_pon_node-8f385318f2b1b47b.rlib",
+            "sha256": "9b2aaf11dd36e7eb89820214e0bb39841abcd1922f79fe934cfe3a52b65ada45"
+          },
+          "trnm_protocol": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_protocol-53c3856c5b953f7c.rlib",
+            "sha256": "d3907c6232918bf803ef3e1fee4bd5f5b24835f972be782224dad294441fbc6a"
+          },
+          "hex": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libhex-1558f6adc06e3fa8.rlib",
+            "sha256": "b345f539fbe209c9d0fc602f789be3331cddd7a89e627003682f8a62e0d6dbf7"
+          },
+          "tempfile": {
+            "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtempfile-3587518b5ee06720.rlib",
+            "sha256": "fedc4ae1c39c5fe734252c8cee21de45f8a18d868ef10e6c5a6777ad28bc84a5"
+          }
+        },
+        "original_native_source_manifest_sha256": "22cd64ab7427e49ed5d844b2fe7c6b8d7ca11799b25b78d4cea8eccfa5e54af3",
+        "original_node_libtest_sha256": "a937d88d3858e89b1583b870e5bde458ff024bd5034c3a38abb966b94d2c24b9",
+        "original_fixture_assertions_and_deadlines_retained": true,
+        "new_test_pinned_head_deadline_seconds": 2,
+        "new_test_supervisor_seconds": 60,
+        "full_hosted_fixture_executed": false
+      },
+      "compile": {
+        "argv": [
+          "rustc",
+          "--edition=2021",
+          "--crate-name",
+          "evaluation_sync_observation_candidate",
+          "--test",
+          "-C",
+          "opt-level=3",
+          "-C",
+          "debuginfo=2",
+          "-C",
+          "debug-assertions=yes",
+          "-C",
+          "overflow-checks=yes",
+          "--cfg",
+          "feature=\"default\"",
+          "--cfg",
+          "feature=\"pq-native-openssl\"",
+          "-D",
+          "warnings",
+          "-L",
+          "dependency=/workspace/scratch/b5a148b09b11/target/debug/deps",
+          "--extern",
+          "serde_json=/workspace/scratch/b5a148b09b11/target/debug/deps/libserde_json-f0d4891802ba697c.rlib",
+          "--extern",
+          "trnm_crypto_primitives=/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_crypto_primitives-6c0fba21bcbcf661.rlib",
+          "--extern",
+          "trnm_mvcc_fee=/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_mvcc_fee-a9b3b2ed517fbdd8.rlib",
+          "--extern",
+          "trnm_pon_node=/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_pon_node-8f385318f2b1b47b.rlib",
+          "--extern",
+          "trnm_protocol=/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_protocol-53c3856c5b953f7c.rlib",
+          "--extern",
+          "hex=/workspace/scratch/b5a148b09b11/target/debug/deps/libhex-1558f6adc06e3fa8.rlib",
+          "--extern",
+          "tempfile=/workspace/scratch/b5a148b09b11/target/debug/deps/libtempfile-3587518b5ee06720.rlib",
+          "-L",
+          "native=/workspace/scratch/b5a148b09b11/target/debug/build/libsqlite3-sys-0b4e9332de508ef1/out",
+          "-L",
+          "native=/workspace/scratch/b5a148b09b11/provider/trnm-pq-provider-3.5.9.Dd13QuZx/install/lib",
+          "-L",
+          "native=/workspace/scratch/b5a148b09b11/target/debug/build/trnm-sqlite-io-boundary-1f7024ebc7559ac9/out",
+          "/workspace/scratch/b5a148b09b11/next-validation/evaluation-paid-activation-review/v3/evaluation_sync_observation.rs",
+          "-o",
+          "/workspace/scratch/b5a148b09b11/next-validation/evaluation-paid-activation-review/v3/candidate-test"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 3500908876,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_sha256": "402f29fa7ef75e4ba3b406290890a960db335d084620125d95c9cc539e857b04",
+      "patch_sha256": "ddb71e205a061322bede39aa18bcc70733fd6ea9b158042f618ca3e798f51c03",
+      "cargo_qualified": false,
+      "full_host_fixture_qualified": false,
+      "native_result": {
+        "argv": [
+          "/workspace/scratch/b5a148b09b11/next-validation/evaluation-paid-activation-review/v3/candidate-test",
+          "prepared_forks_keep_original_public_cpu_after_listener_join_and_restart",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 164837783,
+        "stdout_sha256": "6a5b3cc0174ad58dd3679e9acb4cc5e67aa17ac8b6f44f5fe9a403d3e8dffae1",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "result": {
+        "exit_code": 0,
+        "candidate_sha256": "402f29fa7ef75e4ba3b406290890a960db335d084620125d95c9cc539e857b04",
+        "candidate_elf_sha256": "1a11a8526bf0dee9f90ca676aada41f21bd87fb32757a2aee585706695c695e0",
+        "library_inputs_unchanged": true,
+        "original_node_libtest_unchanged": true,
+        "original_fixture_deadlines_or_assertions_removed": false,
+        "full_hosted_fixture_qualified": false
+      },
+      "failure": null
+    }
+  ],
+  "all_v1_v2_failures_retained": true,
+  "v3_control_unique_selector": "prepared_forks_keep_original_public_cpu_after_listener_join_and_restart",
+  "v3_native_summary_seconds": 0.15,
+  "v3_process_wall_ns": 164837783,
+  "v3_cargo_result": null,
+  "v3_actual_fixed_host_result": null,
+  "v3_original_full_evaluation_selector_result": null,
+  "original_listener_120s_policy2s_three64page_chunks_preserved_by_review": true,
+  "new_readiness_control_has_actual_pinned_head_before_join": true,
+  "new_control_not_a_replacement_for_original_hosted_selector": true,
+  "no_service_performance_acceptance": true
+}

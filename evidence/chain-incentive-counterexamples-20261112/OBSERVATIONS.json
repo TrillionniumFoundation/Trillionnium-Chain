@@ -1,0 +1,93 @@
+{
+  "PNW1_chain_verified": false,
+  "all_real_world_costs_measured": false,
+  "base_commit": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+  "complete_roster_independent_order_worker_cases": 144,
+  "complete_roster_missing_member_worker_cases": 12,
+  "complete_roster_native_tests_passed": 8,
+  "complete_roster_source": "3b97b97f3a3387532b00594d3805186143ac6f45",
+  "economic_security_qualified": false,
+  "independent_History_confirmation_verified": false,
+  "independent_observations": {
+    "alias_net_account_increase": 26814,
+    "original": {
+      "alias_fees": 6615,
+      "alias_gross": 66666,
+      "alias_net_account_change": 60051,
+      "dust": 1,
+      "total_claimed": 99999,
+      "verified_signatures": 20,
+      "zero_subset_checks": 1
+    },
+    "split": {
+      "alias_fees": 9686,
+      "alias_gross": 96551,
+      "alias_net_account_change": 86865,
+      "dust": 1,
+      "total_claimed": 99999,
+      "verified_signatures": 26,
+      "zero_subset_checks": 4
+    }
+  },
+  "legacy_native_reference_tests_passed": 2,
+  "native_receipt_sha256": "07c11a04880eab6303a66000d23082748a8f8568f8e1defe92d91c0a8b30db40",
+  "negative_mutation_unique_cases": 6,
+  "node_genesis_split_command": {
+    "argv": [
+      "cargo",
+      "test",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "model_composition_v4",
+      "-j",
+      "2",
+      "same_full_bundle_admits_split_reward_redistribution_with_known_aliases",
+      "--",
+      "--exact",
+      "--nocapture"
+    ],
+    "cwd": "/workspace/scratch/3069292387f3/incentives",
+    "duration_seconds": 70.48314002499956,
+    "economic_security_qualified": false,
+    "environment": {
+      "CARGO_HOME": "/workspace/scratch/747d27b1ca86/cargo-home",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_TARGET_DIR": "/workspace/scratch/3069292387f3/incentive-target",
+      "RUSTC": null,
+      "TRNM_MODEL_COMPOSITION_RUN_ID": null,
+      "TRNM_MODEL_COMPOSITION_VECTORS": null,
+      "TRNM_NATIVE_EXECUTOR": null
+    },
+    "exit_code": 0,
+    "finished_utc": "2026-11-12T00:15:11.043402+00:00",
+    "production_activation": false,
+    "schema": "chain-incentive-local-command-observation-v1",
+    "source_commit_after": "8197606d844e9d4c79c068a07746fabf2506fed4",
+    "source_commit_before": "8197606d844e9d4c79c068a07746fabf2506fed4",
+    "source_status_after": "",
+    "source_status_before": "",
+    "started_utc": "2026-11-12T00:14:00.560243+00:00"
+  },
+  "node_genesis_split_initialization": "ordinary-Node-open-genesis-state-only",
+  "node_genesis_split_profiles": {
+    "continuity_profile": "consensus-maintenance-continuity-dev-v1",
+    "evaluation_profile": "native-public-evaluation-dev-v1",
+    "model_profile": "linear-factor-composition-dev-v4"
+  },
+  "ordinary_Node_submission_verified": false,
+  "production_activation": false,
+  "python_oracle_unique_tests_passed": 19,
+  "release_qualification": false,
+  "schema": "chain-incentive-counterexample-observations-v1",
+  "source_cap_bypassed": false,
+  "source_integrity_negative_controls_before_819": 43,
+  "split_source": "8197606d844e9d4c79c068a07746fabf2506fed4",
+  "unauthorized_payer_debit": false,
+  "uncompleted_gates": "unfinished/observations.json",
+  "unknown_common_control_discovered": false
+}

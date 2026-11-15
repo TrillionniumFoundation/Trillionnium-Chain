@@ -1,0 +1,36 @@
+{
+  "historical_test_stubs_excluded": true,
+  "local_cargo_or_rustc_available": false,
+  "local_registry_available": false,
+  "local_search_roots": [
+    "/opt",
+    "/usr/local",
+    "/home/agent",
+    "/workspace/scratch"
+  ],
+  "native_security_qualified": false,
+  "observed_at_utc": "2026-11-10T07:54:57.651527+00:00",
+  "production_activation": false,
+  "rog_hashlink_archive": {
+    "bytes": 32204,
+    "matches_selected_Cargo_lock_checksum": true,
+    "path": "/home/qian-qi/.cargo/registry/cache/index.crates.io-1949cf8c6b5b557f/hashlink-0.11.1.crate",
+    "sha256": "824e001ac4f3012dd16a264bec811403a67ca9deb6c102fc5049b32c4574b35f"
+  },
+  "rog_toolchain_files_listed": [
+    "cargo",
+    "rustc",
+    "rustfmt",
+    "clippy-driver"
+  ],
+  "rog_toolchain_path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu",
+  "schema": "joint-tail-rust-resource-discovery-v1",
+  "seed_git_pointer": "/home/qian-qi/chain-hepta-481716-native-check/source/.git/worktrees/chain-hepta-review-340e",
+  "seed_lock_is_selected_source_lock": false,
+  "seed_lock_sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+  "seed_worktree": "/home/qian-qi/chain-hepta-review-340e",
+  "selected_source_lock_sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+  "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+  "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310",
+  "toolchain_executed_during_discovery": false
+}

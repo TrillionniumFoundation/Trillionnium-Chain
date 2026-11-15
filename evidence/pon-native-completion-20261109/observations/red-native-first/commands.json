@@ -1,0 +1,77 @@
+[
+  {
+    "name": "preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/red-source",
+    "timeout_seconds": 30,
+    "exit_code": 0,
+    "elapsed_seconds": 0.16512721288017929,
+    "stdout": {
+      "bytes": 176,
+      "sha256": "3fc1a9ec379575f886ffe79bc9d37f1c7b7d8df3b51d9f5f0ce573c4b5d117c9"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "fmt-check",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/red-source",
+    "timeout_seconds": 90,
+    "exit_code": 1,
+    "elapsed_seconds": 21.52370318491012,
+    "stdout": {
+      "bytes": 4832,
+      "sha256": "c3716c37c156b5718dd1494ff67902fe142508c4bafdf23c6534457785d10390"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "red-six-native-controls",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "native_completion_priority",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/red-source",
+    "timeout_seconds": 900,
+    "exit_code": 101,
+    "elapsed_seconds": 693.2736725700088,
+    "stdout": {
+      "bytes": 3025,
+      "sha256": "46bcc0925f7d883497e06957d481f57f85f718e3c8410ce5b12cab984e70944a"
+    },
+    "stderr": {
+      "bytes": 3376,
+      "sha256": "08e9989ba90ba066facfaddfd421c3a9a9e972fc0bffb5d6b45983841ed82f47"
+    }
+  }
+]

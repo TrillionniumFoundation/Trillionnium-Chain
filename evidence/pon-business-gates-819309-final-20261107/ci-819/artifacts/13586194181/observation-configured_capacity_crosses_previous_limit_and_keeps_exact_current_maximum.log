@@ -1,0 +1,13 @@
+    Finished `release` profile [optimized] target(s) in 0.04s
+     Running tests/public_v3_observation_cli.rs (/home/runner/work/_temp/target-priority/release/deps/public_v3_observation_cli-b0915f6192df7fe8)
+
+running 1 test
+test configured_capacity_crosses_previous_limit_and_keeps_exact_current_maximum ... ok
+
+successes:
+
+successes:
+    configured_capacity_crosses_previous_limit_and_keeps_exact_current_maximum
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.03s
+

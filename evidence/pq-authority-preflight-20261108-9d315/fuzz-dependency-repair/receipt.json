@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "metadata",
+    "--offline",
+    "--manifest-path",
+    "tests/fuzz/Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "exit_code": 0,
+  "fuzz_lock_before_sha256": "6bb73c6a273d5a61637ba673a15f435e82596eb07ecceac64c79e87fea7a9f35",
+  "fuzz_lock_after_sha256": "93cdc50ae55389e4f90f919ab7c29d3c4c3a7ed5567e80a8436b9a7c2c4357ab",
+  "main_lock_sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+  "only_change": "trnm-release-bundle normal dependency on trnm-protocol",
+  "package_identities_and_versions_unchanged": true,
+  "source_pin_changes": {
+    "tests/fuzz/Cargo.lock": {
+      "before": "6026fb9aedc9dc4201965d9d9e1abd3c62d22d1e",
+      "after": "299b7eb6ce0878881446fafc6a4cccbaea6156e5"
+    },
+    "docs/security/PQ_AUTHORITY_PREFLIGHT_20261108.md": {
+      "before": "7695d0edef5f6a247438c75d9f461af5778ea793",
+      "after": "6b2d8179f74910541514cf15d675580e0cb21302"
+    }
+  }
+}

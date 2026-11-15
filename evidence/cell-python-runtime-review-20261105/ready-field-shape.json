@@ -1,0 +1,36 @@
+{
+  "equal": true,
+  "python_ready_fields": [
+    "actions",
+    "actual_loaded_parent",
+    "authority",
+    "backbone",
+    "contract",
+    "file_sha256",
+    "generation",
+    "observed_rss_bytes",
+    "runtime_snapshot_sha256",
+    "schema",
+    "source_pins",
+    "tokenizer",
+    "worker_source"
+  ],
+  "rust_profile_sha256": "401f726653c6e7cb3b22f8e9ea6356ec282ce95df27cfb9f97b72fc3175a4c25",
+  "rust_ready_fields": [
+    "actions",
+    "actual_loaded_parent",
+    "authority",
+    "backbone",
+    "contract",
+    "file_sha256",
+    "generation",
+    "observed_rss_bytes",
+    "runtime_snapshot_sha256",
+    "schema",
+    "source_pins",
+    "tokenizer",
+    "worker_source"
+  ],
+  "scope": "static Ready field-set comparison only; no emitted model Ready",
+  "worker_sha256": "2e0b0fa5641dfb668031e4f8bda67003c4207c822e59ff3eeb8aefa855a3a797"
+}

@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "<stdin>", line 65, in <module>
+  File "<stdin>", line 17, in prefix
+AssertionError: postwrite-readback: expected 23 actual registered controls, got 25

@@ -1,0 +1,31 @@
+{
+  "bytes": 136114,
+  "kind": "hosted-followup",
+  "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/w1-qrom-1a14-hosted-followup-v1.tar.gz",
+  "sha256": "cb67206f4a6361343a40c24823d404d2f4624a76aebe5110bfd7e7e344f74db5",
+  "stage": "archive-created",
+  "transfer": {
+    "chunks": [
+      {
+        "next_offset": 65536,
+        "offset": 0,
+        "sha256": "5c1cc459bcbf2dcb062c6f361e85a84055231baaf51df23d03c7d068046a6b95"
+      },
+      {
+        "next_offset": 131072,
+        "offset": 65536,
+        "sha256": "a91add7d6959d10192bf801344600739e5b457a9c62371c71ef121c038f79beb"
+      },
+      {
+        "next_offset": 136114,
+        "offset": 131072,
+        "sha256": "cc1ddc8a7145a71d1140e1c9c7730064143a4f56ee4f54c9f6164e1232026879"
+      }
+    ],
+    "eof": true,
+    "next_offset": 136114,
+    "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/w1-qrom-1a14-hosted-followup-v1.tar.gz",
+    "size": 136114,
+    "version": "2050:51045305:136114:1794061032399110176:1794061032399110176"
+  }
+}

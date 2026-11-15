@@ -1,0 +1,24 @@
+{
+  "actual_oid": "b11d59a47e7280220f55f48871b95af9ee3be353",
+  "bytes": 9810126,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "b11d59a47e7280220f55f48871b95af9ee3be353"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 9810126,
+  "expected_oid": "b11d59a47e7280220f55f48871b95af9ee3be353",
+  "finished_at": "2026-11-12T01:55:17.630440+00:00",
+  "path": "evidence/pon-hepta-preservation-20261108/observations.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLWhlcHRhLXByZXNlcnZhdGlvbi0yMDI2MTEwOC9vYnNlcnZhdGlvbnMudGFyLmd6",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "37baa58d0b88d13f3df9f1549bf8df1b0fea32c59129cbf7bedf3bd9b1f6d6a9",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:17.521220+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

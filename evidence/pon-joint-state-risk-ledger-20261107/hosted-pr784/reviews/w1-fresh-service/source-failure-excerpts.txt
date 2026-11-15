@@ -1,0 +1,22 @@
+scripts/ci/run_w1_fresh_service_v1.py @ b5c655ebe9611b3d62cf739e61e6867decc053e3
+334: 
+335: 
+336: def validate_execution(process: dict, log: Path, selector: str, report: Path) -> dict:
+337:     require(selector in SELECTORS, 'FRESH_EXACT_SELECTOR_REQUIRED')
+338:     require(process.get('executed') is True and process.get('exit_code') == 0
+339:             and process.get('process_exit_code') == 0 and process.get('timed_out') is False
+340:             and process.get('source_verified') is True, 'FRESH_NATIVE_PROCESS_REQUIRED')
+341:     named = validate(log.read_text().splitlines(), selector)
+342:     read = (native.validate_confirmation_report(report) if selector == ORIGINAL
+343:             else validate_fresh_report(report))
+344:     return {'named_execution': named, 'report': read}
+
+trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs @ b5c655ebe9611b3d62cf739e61e6867decc053e3
+238:     )
+239:     .unwrap();
+240:     println!(
+241:         "{}",
+242:         json!({"schema": report["schema"], "finite_target_met": passed, "report_path": path.join("report.json")})
+243:     );
+244:     assert!(passed, "fresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit");
+245: }

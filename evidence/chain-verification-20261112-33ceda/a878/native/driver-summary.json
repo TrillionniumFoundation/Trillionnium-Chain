@@ -1,0 +1,136 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "-Vv"
+      ],
+      "elapsed_ns": 3385900785,
+      "label": "rustc-version",
+      "pid": 4018930,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "-V"
+      ],
+      "elapsed_ns": 3384546677,
+      "label": "cargo-version",
+      "pid": 4019099,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "elapsed_ns": 3436610965,
+      "label": "locked-default-graph",
+      "pid": 4019281,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "elapsed_ns": 3382715650,
+      "label": "locked-all-feature-graph",
+      "pid": 4019466,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "elapsed_ns": 10480128085,
+      "label": "cargo-fmt",
+      "pid": 4019770,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "elapsed_ns": 165307542958,
+      "label": "node-all-feature-test-build",
+      "pid": 4023268,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/candidate-a878-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::output_reservation_tests::",
+        "--list",
+        "--format",
+        "pretty",
+        "--include-ignored"
+      ],
+      "elapsed_ns": 3316809820,
+      "label": "output-reservation-list",
+      "pid": 4069009,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/candidate-a878-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::output_reservation_tests::",
+        "--test-threads=1",
+        "--nocapture",
+        "--format",
+        "pretty",
+        "--include-ignored"
+      ],
+      "elapsed_ns": 3367918576,
+      "label": "output-reservation",
+      "pid": 4069171,
+      "recorder_exit_code": 101,
+      "timed_out": false
+    }
+  ],
+  "error": "command failed; retained original observation: output-reservation",
+  "executed_tests": 0,
+  "groups": [],
+  "performance_qualified": false,
+  "source": "a878584d10f13ea5cd6f35130033457658985b51",
+  "status": "FAILED_OR_INCOMPLETE",
+  "whole_chain_quantum_security_qualified": false
+}

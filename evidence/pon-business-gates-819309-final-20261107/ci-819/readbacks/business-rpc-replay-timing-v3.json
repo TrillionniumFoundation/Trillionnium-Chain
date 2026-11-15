@@ -1,0 +1,3178 @@
+{
+  "schema": "trnm-final819-business-rpc-replay-timing-v3",
+  "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+  "scope": "Original retained report RPC and independent replay timing only; no phase CPU attribution",
+  "clock_rule": "Keep original raw phase-relative timestamps; do not subtract business_started_ns or treat wall intervals as CPU.",
+  "native_gate_validated": false,
+  "reports": [
+    {
+      "lane": "priority-ubuntu-24.04-prospective-merge-service-model-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "artifact_id": 13586194181,
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T185919Z-819309fd3122-f4da8b5c/service-artifact-read-v1/13586194181/from-zero-native/confirmation/report.json",
+      "expected_sha256": "44afacbb1d64f50053926a483feee888e49b322be8d9d8dd0dadc3f8c35a2379",
+      "bytes": 12666866,
+      "sha256": "44afacbb1d64f50053926a483feee888e49b322be8d9d8dd0dadc3f8c35a2379",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 89475,
+          "confirmation_ended_ns": 2380022464,
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 2379932989,
+          "honest_submissions": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 404130,
+              "ended_ns": 65530862,
+              "elapsed_wall_ns": 65127934,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 65882933,
+              "ended_ns": 80579723,
+              "elapsed_wall_ns": 14698032,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 80911254,
+              "ended_ns": 95584748,
+              "elapsed_wall_ns": 14674376,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 95861646,
+              "ended_ns": 110615202,
+              "elapsed_wall_ns": 14754467,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 110914875,
+              "ended_ns": 160084354,
+              "elapsed_wall_ns": 49170411,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 160431107,
+              "ended_ns": 176284504,
+              "elapsed_wall_ns": 15854609,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 176582824,
+              "ended_ns": 191281398,
+              "elapsed_wall_ns": 14699505,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "honest_history": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 191426667,
+              "ended_ns": 203375188,
+              "elapsed_wall_ns": 11949082,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 768559669,
+              "ended_ns": 780547729,
+              "elapsed_wall_ns": 11989102,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 979783752,
+              "ended_ns": 990350877,
+              "elapsed_wall_ns": 10568157,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1271781574,
+              "ended_ns": 1283827552,
+              "elapsed_wall_ns": 12047010,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1559998417,
+              "ended_ns": 1572051506,
+              "elapsed_wall_ns": 12054431,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1770908946,
+              "ended_ns": 1781973723,
+              "elapsed_wall_ns": 11065808,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2070644606,
+              "ended_ns": 2084385439,
+              "elapsed_wall_ns": 13742025,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "independent_history_page_replay": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 203375188,
+              "replay_started_ns": 203391663,
+              "replay_ended_ns": 768507350,
+              "replay_wall_ns": 565115687,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 780547729,
+              "replay_started_ns": 780565206,
+              "replay_ended_ns": 979732374,
+              "replay_wall_ns": 199167168,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 990350877,
+              "replay_started_ns": 990363356,
+              "replay_ended_ns": 1271728554,
+              "replay_wall_ns": 281365198,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 3,
+              "history_request_ended_ns": 1283827552,
+              "replay_started_ns": 1283846270,
+              "replay_ended_ns": 1559906027,
+              "replay_wall_ns": 276059757,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "next_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 4,
+              "history_request_ended_ns": 1572051506,
+              "replay_started_ns": 1572063233,
+              "replay_ended_ns": 1770854434,
+              "replay_wall_ns": 198791201,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "next_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 5,
+              "history_request_ended_ns": 1781973723,
+              "replay_started_ns": 1781990488,
+              "replay_ended_ns": 2070572648,
+              "replay_wall_ns": 288582160,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "next_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 6,
+              "history_request_ended_ns": 2084385439,
+              "replay_started_ns": 2084411658,
+              "replay_ended_ns": 2379381176,
+              "replay_wall_ns": 294969518,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+            }
+          ]
+        },
+        {
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 44700983,
+          "confirmation_ended_ns": null,
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "honest_submissions": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 44857669,
+              "ended_ns": 145201221,
+              "elapsed_wall_ns": 100345525,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 145544349,
+              "ended_ns": 331380299,
+              "elapsed_wall_ns": 185836881,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 331670056,
+              "ended_ns": 431212083,
+              "elapsed_wall_ns": 99543058,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 431485586,
+              "ended_ns": 457349258,
+              "elapsed_wall_ns": 25864603,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 457580367,
+              "ended_ns": 586109200,
+              "elapsed_wall_ns": 128529775,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 586402062,
+              "ended_ns": 735756258,
+              "elapsed_wall_ns": 149355147,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 736045906,
+              "ended_ns": 889881079,
+              "elapsed_wall_ns": 153836135,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "honest_history": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 889973639,
+              "ended_ns": 902057329,
+              "elapsed_wall_ns": 12084692,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1542081966,
+              "ended_ns": 1645136776,
+              "elapsed_wall_ns": 103055672,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2038949660,
+              "ended_ns": 2134010771,
+              "elapsed_wall_ns": 95061972,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2540151086,
+              "ended_ns": 2635371657,
+              "elapsed_wall_ns": 95221562,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 3135683217,
+              "ended_ns": 3148242130,
+              "elapsed_wall_ns": 12559784,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 3638808943,
+              "ended_ns": 3733973520,
+              "elapsed_wall_ns": 95165509,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "independent_history_page_replay": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 902057329,
+              "replay_started_ns": 902073313,
+              "replay_ended_ns": 1542034023,
+              "replay_wall_ns": 639960710,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 1645136776,
+              "replay_started_ns": 1645149315,
+              "replay_ended_ns": 2038901017,
+              "replay_wall_ns": 393751702,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 2134010771,
+              "replay_started_ns": 2134019424,
+              "replay_ended_ns": 2540090775,
+              "replay_wall_ns": 406071351,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 3,
+              "history_request_ended_ns": 2635371657,
+              "replay_started_ns": 2635380981,
+              "replay_ended_ns": 3135633803,
+              "replay_wall_ns": 500252822,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "next_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 4,
+              "history_request_ended_ns": 3148242130,
+              "replay_started_ns": 3148251454,
+              "replay_ended_ns": 3638757175,
+              "replay_wall_ns": 490505721,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "next_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 5,
+              "history_request_ended_ns": 3733973520,
+              "replay_started_ns": 3733988302,
+              "replay_ended_ns": 4031969218,
+              "replay_wall_ns": 297980916,
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE",
+              "prior_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "next_after": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "lane": "priority-ubuntu-24.04-arm-head-service-model-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "artifact_id": 13586980357,
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T190954Z-819309fd3122-2881e25e/service-artifact-read-remaining-v1/13586980357/from-zero-native/confirmation/report.json",
+      "expected_sha256": "68b31b4495ab7102a324f2e8d68b759b58418ae12964207b2fc0c4d1e5e52e7b",
+      "bytes": 12103036,
+      "sha256": "68b31b4495ab7102a324f2e8d68b759b58418ae12964207b2fc0c4d1e5e52e7b",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 68576627,
+          "confirmation_ended_ns": 1878958553,
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 1810381926,
+          "honest_submissions": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 68839114,
+              "ended_ns": 85365948,
+              "elapsed_wall_ns": 16528985,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 85790297,
+              "ended_ns": 101583312,
+              "elapsed_wall_ns": 15795071,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 101990751,
+              "ended_ns": 117815628,
+              "elapsed_wall_ns": 15826325,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 118224099,
+              "ended_ns": 173515610,
+              "elapsed_wall_ns": 55293239,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 173922689,
+              "ended_ns": 189985095,
+              "elapsed_wall_ns": 16064006,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 190410189,
+              "ended_ns": 207348541,
+              "elapsed_wall_ns": 16939472,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 207755939,
+              "ended_ns": 271710279,
+              "elapsed_wall_ns": 63956084,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "honest_history": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 271915786,
+              "ended_ns": 283925101,
+              "elapsed_wall_ns": 12009923,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 779931258,
+              "ended_ns": 791603779,
+              "elapsed_wall_ns": 11673849,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 973256524,
+              "ended_ns": 985119936,
+              "elapsed_wall_ns": 11864596,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1088516505,
+              "ended_ns": 1099471238,
+              "elapsed_wall_ns": 10956005,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1283381970,
+              "ended_ns": 1295153756,
+              "elapsed_wall_ns": 11773082,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1476840347,
+              "ended_ns": 1488060087,
+              "elapsed_wall_ns": 11220980,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1591878822,
+              "ended_ns": 1677435719,
+              "elapsed_wall_ns": 85558097,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "independent_history_page_replay": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 283925101,
+              "replay_started_ns": 283944364,
+              "replay_ended_ns": 779852759,
+              "replay_wall_ns": 495908395,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 791603779,
+              "replay_started_ns": 791624433,
+              "replay_ended_ns": 973195623,
+              "replay_wall_ns": 181571190,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 985119936,
+              "replay_started_ns": 985138871,
+              "replay_ended_ns": 1088455508,
+              "replay_wall_ns": 103316637,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 3,
+              "history_request_ended_ns": 1099471238,
+              "replay_started_ns": 1099491932,
+              "replay_ended_ns": 1283305279,
+              "replay_wall_ns": 183813347,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "next_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 4,
+              "history_request_ended_ns": 1295153756,
+              "replay_started_ns": 1295173771,
+              "replay_ended_ns": 1476779231,
+              "replay_wall_ns": 181605460,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "next_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 5,
+              "history_request_ended_ns": 1488060087,
+              "replay_started_ns": 1488080094,
+              "replay_ended_ns": 1591818513,
+              "replay_wall_ns": 103738419,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "next_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 6,
+              "history_request_ended_ns": 1677435719,
+              "replay_started_ns": 1677456389,
+              "replay_ended_ns": 1878081415,
+              "replay_wall_ns": 200625026,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+            }
+          ]
+        },
+        {
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 54387176,
+          "confirmation_ended_ns": null,
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "honest_submissions": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 54611978,
+              "ended_ns": 244854395,
+              "elapsed_wall_ns": 190244249,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 245178311,
+              "ended_ns": 350664670,
+              "elapsed_wall_ns": 105488887,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 350988282,
+              "ended_ns": 546432615,
+              "elapsed_wall_ns": 195445797,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 546755443,
+              "ended_ns": 655459657,
+              "elapsed_wall_ns": 108706782,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 655784572,
+              "ended_ns": 846633952,
+              "elapsed_wall_ns": 190852244,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 846974331,
+              "ended_ns": 952883479,
+              "elapsed_wall_ns": 105910932,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 953219634,
+              "ended_ns": 1143819349,
+              "elapsed_wall_ns": 190601627,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "honest_history": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1143940997,
+              "ended_ns": 1158629417,
+              "elapsed_wall_ns": 14689076,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1849802191,
+              "ended_ns": 1948372564,
+              "elapsed_wall_ns": 98571493,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2244534010,
+              "ended_ns": 2342911147,
+              "elapsed_wall_ns": 98378169,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2739658759,
+              "ended_ns": 2839857360,
+              "elapsed_wall_ns": 100199801,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 3144360373,
+              "ended_ns": 3246564352,
+              "elapsed_wall_ns": 102205219,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 3551516992,
+              "ended_ns": 3655236221,
+              "elapsed_wall_ns": 103720581,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "independent_history_page_replay": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 1158629417,
+              "replay_started_ns": 1158646824,
+              "replay_ended_ns": 1849743243,
+              "replay_wall_ns": 691096419,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 1948372564,
+              "replay_started_ns": 1948390082,
+              "replay_ended_ns": 2244472614,
+              "replay_wall_ns": 296082532,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 2342911147,
+              "replay_started_ns": 2342929466,
+              "replay_ended_ns": 2739585700,
+              "replay_wall_ns": 396656234,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 3,
+              "history_request_ended_ns": 2839857360,
+              "replay_started_ns": 2839874615,
+              "replay_ended_ns": 3144295945,
+              "replay_wall_ns": 304421330,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "next_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 4,
+              "history_request_ended_ns": 3246564352,
+              "replay_started_ns": 3246582591,
+              "replay_ended_ns": 3551449580,
+              "replay_wall_ns": 304866989,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "next_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 5,
+              "history_request_ended_ns": 3655236221,
+              "replay_started_ns": 3655254252,
+              "replay_ended_ns": 4041249072,
+              "replay_wall_ns": 385994820,
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE",
+              "prior_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "next_after": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "lane": "priority-ubuntu-24.04-arm-prospective-merge-service-model-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "artifact_id": 13586309794,
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T190954Z-819309fd3122-2881e25e/service-artifact-read-remaining-v1/13586309794/from-zero-native/confirmation/report.json",
+      "expected_sha256": "c6f6af775512a7af67f4c6c7f527f64e741da6f7210ca7744efbcfeeb7df8057",
+      "bytes": 12236680,
+      "sha256": "c6f6af775512a7af67f4c6c7f527f64e741da6f7210ca7744efbcfeeb7df8057",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 156597,
+          "confirmation_ended_ns": 1781846140,
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 1781689543,
+          "honest_submissions": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 408908,
+              "ended_ns": 16478492,
+              "elapsed_wall_ns": 16071640,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 16894696,
+              "ended_ns": 81729765,
+              "elapsed_wall_ns": 64836805,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 82140097,
+              "ended_ns": 97950377,
+              "elapsed_wall_ns": 15812104,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 98345316,
+              "ended_ns": 113099277,
+              "elapsed_wall_ns": 14755441,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 113485633,
+              "ended_ns": 129319481,
+              "elapsed_wall_ns": 15835937,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 129727725,
+              "ended_ns": 192427500,
+              "elapsed_wall_ns": 62701327,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 192848440,
+              "ended_ns": 208592798,
+              "elapsed_wall_ns": 15746326,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "honest_history": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 208803412,
+              "ended_ns": 220785332,
+              "elapsed_wall_ns": 11982504,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 688401894,
+              "ended_ns": 700042188,
+              "elapsed_wall_ns": 11641262,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 881624505,
+              "ended_ns": 893858768,
+              "elapsed_wall_ns": 12235223,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 997247184,
+              "ended_ns": 1009736095,
+              "elapsed_wall_ns": 12490007,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1189578561,
+              "ended_ns": 1202038767,
+              "elapsed_wall_ns": 12461350,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1381930739,
+              "ended_ns": 1393614945,
+              "elapsed_wall_ns": 11685222,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1497431246,
+              "ended_ns": 1508375639,
+              "elapsed_wall_ns": 10945745,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "independent_history_page_replay": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 220785332,
+              "replay_started_ns": 220810812,
+              "replay_ended_ns": 688342973,
+              "replay_wall_ns": 467532161,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 700042188,
+              "replay_started_ns": 700059100,
+              "replay_ended_ns": 881563399,
+              "replay_wall_ns": 181504299,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 893858768,
+              "replay_started_ns": 893875073,
+              "replay_ended_ns": 997187375,
+              "replay_wall_ns": 103312302,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 3,
+              "history_request_ended_ns": 1009736095,
+              "replay_started_ns": 1009755343,
+              "replay_ended_ns": 1189519199,
+              "replay_wall_ns": 179763856,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "next_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 4,
+              "history_request_ended_ns": 1202038767,
+              "replay_started_ns": 1202057023,
+              "replay_ended_ns": 1381869617,
+              "replay_wall_ns": 179812594,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "next_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 5,
+              "history_request_ended_ns": 1393614945,
+              "replay_started_ns": 1393652490,
+              "replay_ended_ns": 1497368092,
+              "replay_wall_ns": 103715602,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "next_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 6,
+              "history_request_ended_ns": 1508375639,
+              "replay_started_ns": 1508394248,
+              "replay_ended_ns": 1781027148,
+              "replay_wall_ns": 272632900,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+            }
+          ]
+        },
+        {
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 62405007,
+          "confirmation_ended_ns": null,
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "honest_submissions": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 62618485,
+              "ended_ns": 255461117,
+              "elapsed_wall_ns": 192845704,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 255781014,
+              "ended_ns": 362980886,
+              "elapsed_wall_ns": 107202312,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 363310128,
+              "ended_ns": 550518963,
+              "elapsed_wall_ns": 187210371,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 550839612,
+              "ended_ns": 657975186,
+              "elapsed_wall_ns": 107137934,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 658309300,
+              "ended_ns": 762121920,
+              "elapsed_wall_ns": 103814284,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 762438026,
+              "ended_ns": 952359772,
+              "elapsed_wall_ns": 189923234,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 952695526,
+              "ended_ns": 1058095707,
+              "elapsed_wall_ns": 105401957,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "honest_history": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1058213567,
+              "ended_ns": 1154371081,
+              "elapsed_wall_ns": 96158162,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1760116232,
+              "ended_ns": 1858932656,
+              "elapsed_wall_ns": 98817368,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2153585354,
+              "ended_ns": 2250301460,
+              "elapsed_wall_ns": 96717210,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2555189330,
+              "ended_ns": 2653322542,
+              "elapsed_wall_ns": 98134140,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2958656714,
+              "ended_ns": 3059703947,
+              "elapsed_wall_ns": 101048153,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 3355994605,
+              "ended_ns": 3453399107,
+              "elapsed_wall_ns": 97405574,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 3752895228,
+              "ended_ns": 3855772891,
+              "elapsed_wall_ns": 102878679,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "independent_history_page_replay": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 1154371081,
+              "replay_started_ns": 1154387025,
+              "replay_ended_ns": 1760059366,
+              "replay_wall_ns": 605672341,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 1858932656,
+              "replay_started_ns": 1858950296,
+              "replay_ended_ns": 2153516536,
+              "replay_wall_ns": 294566240,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 2250301460,
+              "replay_started_ns": 2250318236,
+              "replay_ended_ns": 2555130049,
+              "replay_wall_ns": 304811813,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 3,
+              "history_request_ended_ns": 2653322542,
+              "replay_started_ns": 2653341814,
+              "replay_ended_ns": 2958593160,
+              "replay_wall_ns": 305251346,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "next_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 4,
+              "history_request_ended_ns": 3059703947,
+              "replay_started_ns": 3059720548,
+              "replay_ended_ns": 3355932259,
+              "replay_wall_ns": 296211711,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "next_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 5,
+              "history_request_ended_ns": 3453399107,
+              "replay_started_ns": 3453416196,
+              "replay_ended_ns": 3752831618,
+              "replay_wall_ns": 299415422,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "next_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 6,
+              "history_request_ended_ns": 3855772891,
+              "replay_started_ns": 3855790835,
+              "replay_ended_ns": 4050543893,
+              "replay_wall_ns": 194753058,
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE",
+              "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "next_after": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "lane": "priority-ubuntu-24.04-head-service-model-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "artifact_id": 13586249872,
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T190954Z-819309fd3122-2881e25e/service-artifact-read-remaining-v1/13586249872/from-zero-native/confirmation/report.json",
+      "expected_sha256": "78e453f7a8f7bb28d0db3d80cd282d870cf9683416dd41536ee016d3c6ac5bae",
+      "bytes": 10029611,
+      "sha256": "78e453f7a8f7bb28d0db3d80cd282d870cf9683416dd41536ee016d3c6ac5bae",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 136955,
+          "confirmation_ended_ns": 2998535176,
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 2998398221,
+          "honest_submissions": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 615014,
+              "ended_ns": 18907975,
+              "elapsed_wall_ns": 18294724,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 19406171,
+              "ended_ns": 35243754,
+              "elapsed_wall_ns": 15839156,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 35759474,
+              "ended_ns": 101406919,
+              "elapsed_wall_ns": 65648918,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 101915485,
+              "ended_ns": 118936670,
+              "elapsed_wall_ns": 17022768,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 119416332,
+              "ended_ns": 136271368,
+              "elapsed_wall_ns": 16856428,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 136790814,
+              "ended_ns": 202567327,
+              "elapsed_wall_ns": 65777786,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 203044735,
+              "ended_ns": 221242970,
+              "elapsed_wall_ns": 18199697,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "honest_history": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 221499618,
+              "ended_ns": 233750598,
+              "elapsed_wall_ns": 12251752,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 899466027,
+              "ended_ns": 911733057,
+              "elapsed_wall_ns": 12269155,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1203763652,
+              "ended_ns": 1215897555,
+              "elapsed_wall_ns": 12135005,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1510977887,
+              "ended_ns": 1523537212,
+              "elapsed_wall_ns": 12560467,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1820547004,
+              "ended_ns": 1898405105,
+              "elapsed_wall_ns": 77859203,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2204028279,
+              "ended_ns": 2216225963,
+              "elapsed_wall_ns": 12198796,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2513277704,
+              "ended_ns": 2525677351,
+              "elapsed_wall_ns": 12400709,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "independent_history_page_replay": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 233750598,
+              "replay_started_ns": 233772810,
+              "replay_ended_ns": 899379976,
+              "replay_wall_ns": 665607166,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 911733057,
+              "replay_started_ns": 911757813,
+              "replay_ended_ns": 1203706004,
+              "replay_wall_ns": 291948191,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 1215897555,
+              "replay_started_ns": 1215916320,
+              "replay_ended_ns": 1510919419,
+              "replay_wall_ns": 295003099,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 3,
+              "history_request_ended_ns": 1523537212,
+              "replay_started_ns": 1523561848,
+              "replay_ended_ns": 1820489608,
+              "replay_wall_ns": 296927760,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "next_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 4,
+              "history_request_ended_ns": 1898405105,
+              "replay_started_ns": 1898423069,
+              "replay_ended_ns": 2203965432,
+              "replay_wall_ns": 305542363,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "next_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 5,
+              "history_request_ended_ns": 2216225963,
+              "replay_started_ns": 2216245869,
+              "replay_ended_ns": 2513219776,
+              "replay_wall_ns": 296973907,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "next_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 6,
+              "history_request_ended_ns": 2525677351,
+              "replay_started_ns": 2525695985,
+              "replay_ended_ns": 2997542169,
+              "replay_wall_ns": 471846184,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+            }
+          ]
+        },
+        {
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 96393811,
+          "confirmation_ended_ns": null,
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "honest_submissions": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 96957179,
+              "ended_ns": 309067451,
+              "elapsed_wall_ns": 212111694,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 397713990,
+              "ended_ns": 509969202,
+              "elapsed_wall_ns": 112256385,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 597558439,
+              "ended_ns": 711003229,
+              "elapsed_wall_ns": 200578539,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 711615518,
+              "ended_ns": 903327616,
+              "elapsed_wall_ns": 191713380,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 903802529,
+              "ended_ns": 1098546248,
+              "elapsed_wall_ns": 194745191,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1099059894,
+              "ended_ns": 1295918006,
+              "elapsed_wall_ns": 196859695,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1296440117,
+              "ended_ns": 1408262765,
+              "elapsed_wall_ns": 111824511,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "honest_history": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1408441728,
+              "ended_ns": 1506254613,
+              "elapsed_wall_ns": 97813857,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2701146377,
+              "ended_ns": 2800851342,
+              "elapsed_wall_ns": 99706037,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 3505051136,
+              "ended_ns": 3695813163,
+              "elapsed_wall_ns": 190763159,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "independent_history_page_replay": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 1506254613,
+              "replay_started_ns": 1506272577,
+              "replay_ended_ns": 2701087588,
+              "replay_wall_ns": 1194815011,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 2800851342,
+              "replay_started_ns": 2800876969,
+              "replay_ended_ns": 3504990072,
+              "replay_wall_ns": 704113103,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 3695813163,
+              "replay_started_ns": 3695833361,
+              "replay_ended_ns": 4001553124,
+              "replay_wall_ns": 305719763,
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE",
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "next_after": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "lane": "fresh-workflow-x64-head-original",
+      "artifact_id": 13586581750,
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T185302Z-819309fd3122-28c8f400/fresh-artifact-read-v1/13586581750/fresh-service/original/report.json",
+      "expected_sha256": "df6a932c8ee2cd9ba6287918ae2861a62f2215f012bddbc57dbb849ae3226377",
+      "bytes": 9823682,
+      "sha256": "df6a932c8ee2cd9ba6287918ae2861a62f2215f012bddbc57dbb849ae3226377",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 175821,
+          "confirmation_ended_ns": 3013703734,
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 3013527913,
+          "honest_submissions": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 626762,
+              "ended_ns": 20308100,
+              "elapsed_wall_ns": 19683171,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 20804697,
+              "ended_ns": 37846779,
+              "elapsed_wall_ns": 17043445,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 38334089,
+              "ended_ns": 97186883,
+              "elapsed_wall_ns": 58854377,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 97691314,
+              "ended_ns": 116786594,
+              "elapsed_wall_ns": 19096792,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 117299962,
+              "ended_ns": 134181585,
+              "elapsed_wall_ns": 16883025,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 134661650,
+              "ended_ns": 201460086,
+              "elapsed_wall_ns": 66799698,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 201948739,
+              "ended_ns": 218964364,
+              "elapsed_wall_ns": 17017199,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "honest_history": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 219207072,
+              "ended_ns": 231443940,
+              "elapsed_wall_ns": 12237630,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 898104378,
+              "ended_ns": 910460576,
+              "elapsed_wall_ns": 12357601,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1207215046,
+              "ended_ns": 1219478354,
+              "elapsed_wall_ns": 12264490,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1594200123,
+              "ended_ns": 1606341231,
+              "elapsed_wall_ns": 12142311,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1901900472,
+              "ended_ns": 1913837134,
+              "elapsed_wall_ns": 11937815,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2210365948,
+              "ended_ns": 2290286252,
+              "elapsed_wall_ns": 79921526,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2600655019,
+              "ended_ns": 2612865729,
+              "elapsed_wall_ns": 12211831,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "independent_history_page_replay": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 231443940,
+              "replay_started_ns": 231462766,
+              "replay_ended_ns": 898004279,
+              "replay_wall_ns": 666541513,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 910460576,
+              "replay_started_ns": 910479802,
+              "replay_ended_ns": 1207154892,
+              "replay_wall_ns": 296675090,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 1219478354,
+              "replay_started_ns": 1219498693,
+              "replay_ended_ns": 1594136603,
+              "replay_wall_ns": 374637910,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 3,
+              "history_request_ended_ns": 1606341231,
+              "replay_started_ns": 1606361440,
+              "replay_ended_ns": 1901838645,
+              "replay_wall_ns": 295477205,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "next_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 4,
+              "history_request_ended_ns": 1913837134,
+              "replay_started_ns": 1913856220,
+              "replay_ended_ns": 2210303620,
+              "replay_wall_ns": 296447400,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "next_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 5,
+              "history_request_ended_ns": 2290286252,
+              "replay_started_ns": 2290312592,
+              "replay_ended_ns": 2600594946,
+              "replay_wall_ns": 310282354,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "next_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 6,
+              "history_request_ended_ns": 2612865729,
+              "replay_started_ns": 2612885576,
+              "replay_ended_ns": 3012741719,
+              "replay_wall_ns": 399856143,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+            }
+          ]
+        },
+        {
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 100046969,
+          "confirmation_ended_ns": null,
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "honest_submissions": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 100362916,
+              "ended_ns": 308704184,
+              "elapsed_wall_ns": 208343352,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 309202995,
+              "ended_ns": 506906394,
+              "elapsed_wall_ns": 197704571,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 507493502,
+              "ended_ns": 705765183,
+              "elapsed_wall_ns": 198273164,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 706269615,
+              "ended_ns": 810931893,
+              "elapsed_wall_ns": 104663831,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 811538968,
+              "ended_ns": 1009665318,
+              "elapsed_wall_ns": 198127913,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1010129083,
+              "ended_ns": 1207559567,
+              "elapsed_wall_ns": 197431796,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1207949894,
+              "ended_ns": 1401289679,
+              "elapsed_wall_ns": 193341188,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "honest_history": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1401498724,
+              "ended_ns": 1503069727,
+              "elapsed_wall_ns": 101571965,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2608288749,
+              "ended_ns": 2713564244,
+              "elapsed_wall_ns": 105276617,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 3503245491,
+              "ended_ns": 3604867487,
+              "elapsed_wall_ns": 101623549,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "independent_history_page_replay": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 1503069727,
+              "replay_started_ns": 1503090406,
+              "replay_ended_ns": 2608231631,
+              "replay_wall_ns": 1105141225,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 2713564244,
+              "replay_started_ns": 2713583310,
+              "replay_ended_ns": 3503164148,
+              "replay_wall_ns": 789580838,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 3604867487,
+              "replay_started_ns": 3604893176,
+              "replay_ended_ns": 4001035757,
+              "replay_wall_ns": 396142581,
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE",
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "next_after": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "lane": "fresh-workflow-x64-head-fresh",
+      "artifact_id": 13586581750,
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T185302Z-819309fd3122-28c8f400/fresh-artifact-read-v1/13586581750/fresh-service/fresh/report.json",
+      "expected_sha256": "242c09c6196980e5e0552be822e93c00797486f17e18d70bedef1b060c7daa80",
+      "bytes": 6806476,
+      "sha256": "242c09c6196980e5e0552be822e93c00797486f17e18d70bedef1b060c7daa80",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 133863,
+          "confirmation_ended_ns": 3104958774,
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 3104824911,
+          "honest_submissions": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 594031,
+              "ended_ns": 18780212,
+              "elapsed_wall_ns": 18188046,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 19273413,
+              "ended_ns": 90061412,
+              "elapsed_wall_ns": 70789351,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 90545485,
+              "ended_ns": 107568913,
+              "elapsed_wall_ns": 17024920,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 108082703,
+              "ended_ns": 125026793,
+              "elapsed_wall_ns": 16945494,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 125513672,
+              "ended_ns": 190382470,
+              "elapsed_wall_ns": 64870160,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 190894215,
+              "ended_ns": 207990927,
+              "elapsed_wall_ns": 17098295,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 208458078,
+              "ended_ns": 225366442,
+              "elapsed_wall_ns": 16909786,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "honest_history": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 225571498,
+              "ended_ns": 287584768,
+              "elapsed_wall_ns": 62014081,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 986186650,
+              "ended_ns": 998700201,
+              "elapsed_wall_ns": 12514844,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1293727532,
+              "ended_ns": 1306411404,
+              "elapsed_wall_ns": 12685616,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1601843646,
+              "ended_ns": 1613972190,
+              "elapsed_wall_ns": 12130097,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1992836908,
+              "ended_ns": 2005237124,
+              "elapsed_wall_ns": 12401419,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2303265088,
+              "ended_ns": 2314975243,
+              "elapsed_wall_ns": 11711607,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2692914613,
+              "ended_ns": 2705074607,
+              "elapsed_wall_ns": 12161226,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "independent_history_page_replay": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 287584768,
+              "replay_started_ns": 287603794,
+              "replay_ended_ns": 986116667,
+              "replay_wall_ns": 698512873,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 998700201,
+              "replay_started_ns": 998718716,
+              "replay_ended_ns": 1293644966,
+              "replay_wall_ns": 294926250,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 1306411404,
+              "replay_started_ns": 1306434979,
+              "replay_ended_ns": 1601780406,
+              "replay_wall_ns": 295345427,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 3,
+              "history_request_ended_ns": 1613972190,
+              "replay_started_ns": 1613991136,
+              "replay_ended_ns": 1992774590,
+              "replay_wall_ns": 378783454,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "next_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 4,
+              "history_request_ended_ns": 2005237124,
+              "replay_started_ns": 2005257994,
+              "replay_ended_ns": 2303190488,
+              "replay_wall_ns": 297932494,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "next_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 5,
+              "history_request_ended_ns": 2314975243,
+              "replay_started_ns": 2314995111,
+              "replay_ended_ns": 2692854570,
+              "replay_wall_ns": 377859459,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "next_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 6,
+              "history_request_ended_ns": 2705074607,
+              "replay_started_ns": 2705093783,
+              "replay_ended_ns": 3103989745,
+              "replay_wall_ns": 398895962,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+            }
+          ]
+        },
+        {
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 156023484,
+          "confirmation_ended_ns": null,
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "honest_submissions": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 156287723,
+              "ended_ns": 456993390,
+              "elapsed_wall_ns": 300707442,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 457418382,
+              "ended_ns": 757940775,
+              "elapsed_wall_ns": 300523927,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 758558090,
+              "ended_ns": 1060944928,
+              "elapsed_wall_ns": 302388341,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1061339042,
+              "ended_ns": 1358960716,
+              "elapsed_wall_ns": 297623217,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1359429791,
+              "ended_ns": 1657215390,
+              "elapsed_wall_ns": 297787312,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1657659208,
+              "ended_ns": 1960024612,
+              "elapsed_wall_ns": 302366868,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1960505249,
+              "ended_ns": 2259719095,
+              "elapsed_wall_ns": 299215619,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "honest_history": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2259891921,
+              "ended_ns": 2459007092,
+              "elapsed_wall_ns": 199116162,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "error",
+              "error": "IO: Resource temporarily unavailable (os error 11)",
+              "started_ns": 3858824199,
+              "ended_ns": 4052858242,
+              "elapsed_wall_ns": 194035727,
+              "returned_after_deadline": false,
+              "returned_after_window": true
+            }
+          ],
+          "independent_history_page_replay": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 2459007092,
+              "replay_started_ns": 2459026970,
+              "replay_ended_ns": 3858738888,
+              "replay_wall_ns": 1399711918,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "lane": "fresh-workflow-x64-prospective-merge-original",
+      "artifact_id": 13585963261,
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T185302Z-819309fd3122-28c8f400/fresh-artifact-read-v1/13585963261/fresh-service/original/report.json",
+      "expected_sha256": "43018547e1dccf1017bc90f6f73f481fac6586ee834c761aa9a9ef72394b3bb0",
+      "bytes": 11060832,
+      "sha256": "43018547e1dccf1017bc90f6f73f481fac6586ee834c761aa9a9ef72394b3bb0",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 103587,
+          "confirmation_ended_ns": 2682698626,
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 2682595039,
+          "honest_submissions": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 468386,
+              "ended_ns": 17259404,
+              "elapsed_wall_ns": 16792770,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 17690753,
+              "ended_ns": 87396172,
+              "elapsed_wall_ns": 69706971,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 87831328,
+              "ended_ns": 103626074,
+              "elapsed_wall_ns": 15796329,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 104039627,
+              "ended_ns": 119750457,
+              "elapsed_wall_ns": 15712302,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 120176860,
+              "ended_ns": 182859908,
+              "elapsed_wall_ns": 62684350,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 183294753,
+              "ended_ns": 200038479,
+              "elapsed_wall_ns": 16746039,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 200484962,
+              "ended_ns": 216204595,
+              "elapsed_wall_ns": 15721085,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "honest_history": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 216430406,
+              "ended_ns": 228530375,
+              "elapsed_wall_ns": 12100762,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 794641441,
+              "ended_ns": 806907441,
+              "elapsed_wall_ns": 12267101,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1094610506,
+              "ended_ns": 1106836155,
+              "elapsed_wall_ns": 12226710,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1392574871,
+              "ended_ns": 1404619207,
+              "elapsed_wall_ns": 12045468,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1689881875,
+              "ended_ns": 1701500099,
+              "elapsed_wall_ns": 11619336,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1990065583,
+              "ended_ns": 2001521973,
+              "elapsed_wall_ns": 11457521,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2290172977,
+              "ended_ns": 2302524714,
+              "elapsed_wall_ns": 12352878,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "independent_history_page_replay": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 228530375,
+              "replay_started_ns": 228545418,
+              "replay_ended_ns": 794586168,
+              "replay_wall_ns": 566040750,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 806907441,
+              "replay_started_ns": 806924487,
+              "replay_ended_ns": 1094550456,
+              "replay_wall_ns": 287625969,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 1106836155,
+              "replay_started_ns": 1106852971,
+              "replay_ended_ns": 1392518546,
+              "replay_wall_ns": 285665575,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 3,
+              "history_request_ended_ns": 1404619207,
+              "replay_started_ns": 1404637524,
+              "replay_ended_ns": 1689824689,
+              "replay_wall_ns": 285187165,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "next_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 4,
+              "history_request_ended_ns": 1701500099,
+              "replay_started_ns": 1701515352,
+              "replay_ended_ns": 1990011061,
+              "replay_wall_ns": 288495709,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "next_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 5,
+              "history_request_ended_ns": 2001521973,
+              "replay_started_ns": 2001537337,
+              "replay_ended_ns": 2290111976,
+              "replay_wall_ns": 288574639,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "next_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 6,
+              "history_request_ended_ns": 2302524714,
+              "replay_started_ns": 2302540938,
+              "replay_ended_ns": 2681731369,
+              "replay_wall_ns": 379190431,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+            }
+          ]
+        },
+        {
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 65032053,
+          "confirmation_ended_ns": null,
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "honest_submissions": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 65350713,
+              "ended_ns": 262573449,
+              "elapsed_wall_ns": 197224528,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 263068785,
+              "ended_ns": 554732075,
+              "elapsed_wall_ns": 291664492,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 555234392,
+              "ended_ns": 658141901,
+              "elapsed_wall_ns": 102908671,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 658664939,
+              "ended_ns": 851371751,
+              "elapsed_wall_ns": 192708385,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 851858935,
+              "ended_ns": 961125494,
+              "elapsed_wall_ns": 109269283,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 961533338,
+              "ended_ns": 1154010990,
+              "elapsed_wall_ns": 192478995,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1154412646,
+              "ended_ns": 1263221840,
+              "elapsed_wall_ns": 108810476,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "honest_history": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1263573860,
+              "ended_ns": 1364864694,
+              "elapsed_wall_ns": 101291675,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2454434286,
+              "ended_ns": 2556335930,
+              "elapsed_wall_ns": 101902736,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 3158147826,
+              "ended_ns": 3261033102,
+              "elapsed_wall_ns": 102886417,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 3859064743,
+              "ended_ns": 3962640499,
+              "elapsed_wall_ns": 103576877,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "independent_history_page_replay": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 1364864694,
+              "replay_started_ns": 1364895941,
+              "replay_ended_ns": 2454368617,
+              "replay_wall_ns": 1089472676,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 2556335930,
+              "replay_started_ns": 2556355329,
+              "replay_ended_ns": 3158093895,
+              "replay_wall_ns": 601738566,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 3261033102,
+              "replay_started_ns": 3261050398,
+              "replay_ended_ns": 3859008068,
+              "replay_wall_ns": 597957670,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 3,
+              "history_request_ended_ns": 3962640499,
+              "replay_started_ns": 3962658416,
+              "replay_ended_ns": 4052593434,
+              "replay_wall_ns": 89935018,
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE",
+              "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "next_after": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "lane": "fresh-workflow-x64-prospective-merge-fresh",
+      "artifact_id": 13585963261,
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T185302Z-819309fd3122-28c8f400/fresh-artifact-read-v1/13585963261/fresh-service/fresh/report.json",
+      "expected_sha256": "92eb9b47359816171288cf4b61d362df75567feabb912a281d88a7124f7cd98a",
+      "bytes": 7629894,
+      "sha256": "92eb9b47359816171288cf4b61d362df75567feabb912a281d88a7124f7cd98a",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 120832,
+          "confirmation_ended_ns": 2681096657,
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 2680975825,
+          "honest_submissions": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 470528,
+              "ended_ns": 101689669,
+              "elapsed_wall_ns": 101221094,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 102153308,
+              "ended_ns": 117905600,
+              "elapsed_wall_ns": 15753735,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 118343800,
+              "ended_ns": 137247881,
+              "elapsed_wall_ns": 18905683,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 137673822,
+              "ended_ns": 169272238,
+              "elapsed_wall_ns": 31599838,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 169703487,
+              "ended_ns": 185791295,
+              "elapsed_wall_ns": 16089620,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 186235865,
+              "ended_ns": 203177068,
+              "elapsed_wall_ns": 16942345,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 203642319,
+              "ended_ns": 220423541,
+              "elapsed_wall_ns": 16782665,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "honest_history": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 220620218,
+              "ended_ns": 232620337,
+              "elapsed_wall_ns": 12000920,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 786305111,
+              "ended_ns": 797678867,
+              "elapsed_wall_ns": 11375318,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1085807978,
+              "ended_ns": 1097685292,
+              "elapsed_wall_ns": 11878456,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1383591209,
+              "ended_ns": 1395661970,
+              "elapsed_wall_ns": 12071943,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1682089928,
+              "ended_ns": 1693457054,
+              "elapsed_wall_ns": 11368318,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1983391835,
+              "ended_ns": 1993679164,
+              "elapsed_wall_ns": 10288360,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 2284093323,
+              "ended_ns": 2295826990,
+              "elapsed_wall_ns": 11734979,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "independent_history_page_replay": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 232620337,
+              "replay_started_ns": 232635099,
+              "replay_ended_ns": 786241475,
+              "replay_wall_ns": 553606376,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 797678867,
+              "replay_started_ns": 797693939,
+              "replay_ended_ns": 1085752354,
+              "replay_wall_ns": 288058415,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 2,
+              "history_request_ended_ns": 1097685292,
+              "replay_started_ns": 1097700375,
+              "replay_ended_ns": 1383535515,
+              "replay_wall_ns": 285835140,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 3,
+              "history_request_ended_ns": 1395661970,
+              "replay_started_ns": 1395679706,
+              "replay_ended_ns": 1682018931,
+              "replay_wall_ns": 286339225,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "next_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 4,
+              "history_request_ended_ns": 1693457054,
+              "replay_started_ns": 1693474099,
+              "replay_ended_ns": 1983336041,
+              "replay_wall_ns": 289861942,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "next_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 5,
+              "history_request_ended_ns": 1993679164,
+              "replay_started_ns": 1993696019,
+              "replay_ended_ns": 2284018079,
+              "replay_wall_ns": 290322060,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "next_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 6,
+              "history_request_ended_ns": 2295826990,
+              "replay_started_ns": 2295842804,
+              "replay_ended_ns": 2680252285,
+              "replay_wall_ns": 384409481,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+            }
+          ]
+        },
+        {
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 137833694,
+          "confirmation_ended_ns": null,
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "honest_submissions": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 138157221,
+              "ended_ns": 347147893,
+              "elapsed_wall_ns": 208992725,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 347600195,
+              "ended_ns": 637463077,
+              "elapsed_wall_ns": 289864535,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 637854727,
+              "ended_ns": 936186009,
+              "elapsed_wall_ns": 298332864,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 936618210,
+              "ended_ns": 1143578063,
+              "elapsed_wall_ns": 206961445,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1144050434,
+              "ended_ns": 1442677541,
+              "elapsed_wall_ns": 298628179,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1443171986,
+              "ended_ns": 1645369045,
+              "elapsed_wall_ns": 202198391,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1645770460,
+              "ended_ns": 1943670706,
+              "elapsed_wall_ns": 297901838,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "honest_history": [
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 1943839410,
+              "ended_ns": 2139819857,
+              "elapsed_wall_ns": 195981529,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            },
+            {
+              "status": "ok",
+              "error": null,
+              "started_ns": 3339056309,
+              "ended_ns": 3539152189,
+              "elapsed_wall_ns": 200096892,
+              "returned_after_deadline": false,
+              "returned_after_window": false
+            }
+          ],
+          "independent_history_page_replay": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 2139819857,
+              "replay_started_ns": 2139838345,
+              "replay_ended_ns": 3339002488,
+              "replay_wall_ns": 1199164143,
+              "replay_accepted": true,
+              "replay_error": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 3539152189,
+              "replay_started_ns": 3539167232,
+              "replay_ended_ns": 4037687725,
+              "replay_wall_ns": 498520493,
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE",
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "next_after": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

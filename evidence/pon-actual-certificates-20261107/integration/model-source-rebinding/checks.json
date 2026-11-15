@@ -1,0 +1,65 @@
+{
+  "scope": "historical source evidence remains historical; new local bindings never confer native execution or probability qualification",
+  "checks": [
+    {
+      "name": "historical-is-not-current",
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/native_execution_certificate.py",
+        "--verify-evidence",
+        "evidence/pon-work-native-certificates-20261107/native_execution/model_evidence_v1.json"
+      ],
+      "expected_exit_code": 2,
+      "actual_exit_code": 2,
+      "matched_expected": true,
+      "stdout": {
+        "archive": "historical-is-not-current.stdout.gz",
+        "raw_sha256": "144d44dfdaf4d53ef8ab398c264ebc7c0d02105f838e8dc6a4680736615bfdf7"
+      },
+      "stderr": {
+        "archive": "historical-is-not-current.stderr.gz",
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "new-current-binding",
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/native_execution_certificate.py",
+        "--write-evidence",
+        "evidence/pon-actual-certificates-20261107/integration/model-source-rebinding/current_model_evidence.json"
+      ],
+      "expected_exit_code": 0,
+      "actual_exit_code": 0,
+      "matched_expected": true,
+      "stdout": {
+        "archive": "new-current-binding.stdout.gz",
+        "raw_sha256": "117a96e27f06538f951bce2c4af41e5cded22a942bae918aa6842be365f8cb9b"
+      },
+      "stderr": {
+        "archive": "new-current-binding.stderr.gz",
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "current-readback",
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/native_execution_certificate.py",
+        "--verify-evidence",
+        "evidence/pon-actual-certificates-20261107/integration/model-source-rebinding/current_model_evidence.json"
+      ],
+      "expected_exit_code": 0,
+      "actual_exit_code": 0,
+      "matched_expected": true,
+      "stdout": {
+        "archive": "current-readback.stdout.gz",
+        "raw_sha256": "6f55d7121a85038e35dcb21d6970c8ba474055eecd3b2e7f9f44e9968251033c"
+      },
+      "stderr": {
+        "archive": "current-readback.stderr.gz",
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ]
+}

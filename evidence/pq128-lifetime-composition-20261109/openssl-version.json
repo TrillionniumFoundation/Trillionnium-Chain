@@ -1,0 +1,20 @@
+{
+  "name": "openssl-version",
+  "argv": [
+    "/workspace/scratch/a6fe7c2e72c7/pq-validation/provider-run/trnm-pq-provider-3.5.9.Uv4EkAot/install/bin/openssl",
+    "version",
+    "-a"
+  ],
+  "cwd": "/workspace/scratch/678905e225be/chain-lifetime",
+  "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+  "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+  "started_utc": "2026-11-09T13:52:17.912797+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 0.04179977900093945,
+  "openssl_dir": "/workspace/scratch/a6fe7c2e72c7/pq-validation/provider-run/trnm-pq-provider-3.5.9.Uv4EkAot/install",
+  "cargo_build_jobs": 2,
+  "stdout_sha256": "e7a05974ee5fff2ad82fea435e68c6582501dea22605cab064852d2b70e33025",
+  "stdout_bytes": 813,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_bytes": 0
+}

@@ -1,0 +1,56 @@
+import pathlib,subprocess,json,hashlib,sys
+root=pathlib.Path('/home/qian-qi/work/chain-mmcs-composition-d9fb-20261108')
+upstream=pathlib.Path('/home/qian-qi/work/chain-six-unified-d9fb-20261108')
+revision='e64c75253e3e876018c8a62e8b327650448b6dbf'
+evidence=pathlib.Path('/home/qian-qi/work/chain-pq-lock-review-d9fb-evidence-20261108')
+subprocess.run(['bash','scripts/project-preflight.sh'],cwd=root,check=True)
+assert not subprocess.check_output(['git','status','--porcelain=v1'],cwd=root,text=True).strip()
+subprocess.run(['git','fetch',str(upstream),revision],cwd=root,check=True)
+subprocess.run(['git','checkout','-b','fix/chain-pq-reviewed-locks-d9fb-20261108',revision],cwd=root,check=True)
+subprocess.run(['bash','scripts/project-preflight.sh'],cwd=root,check=True)
+assert not evidence.exists()
+evidence.mkdir()
+commands=[]
+def run(name,argv,expected=0):
+    with (evidence/(name+'.stdout')).open('xb') as out,(evidence/(name+'.stderr')).open('xb') as err:
+        p=subprocess.run(argv,cwd=root,stdout=out,stderr=err)
+    row={'name':name,'argv':argv,'exit_code':p.returncode,'expected_exit_code':expected}
+    for stream in ('stdout','stderr'):
+        raw=(evidence/(name+'.'+stream)).read_bytes()
+        row[stream+'_sha256']=hashlib.sha256(raw).hexdigest()
+    commands.append(row)
+    (evidence/(name+'.json')).write_text(json.dumps(row,indent=2)+'\n')
+    print(json.dumps(row),flush=True)
+    assert p.returncode==expected,row
+run('00-runtime-source-before',['python3','-B','scripts/ci/verify_ci_source.py','--kind','head','--expected-head',revision,'--output',str(evidence/'runtime-source-before.json')])
+run('01-original-lifetime-refusal',['python3','-B','scripts/ci/pq_lifetime_budget.py'],2)
+run('02-original-effect-refusal',['python3','-B','scripts/ci/pq_authority_effect_register.py'],2)
+sys.path.insert(0,str(root/'scripts/ci'))
+from pq_source_reader import read_regular
+review={'schema':'trnm-pq-composition-source-review-v1','reviewed_source_revision':revision,'reviewed_source_tree':subprocess.check_output(['git','--no-replace-objects','rev-parse',revision+'^{tree}'],cwd=root,text=True).strip(),'source_paths_only':True,'native_tests_executed':False,'whole_chain_pq_qualified':False,'production_activation':False,'status':'HOLD','locks':[]}
+for rel,field in [('config/pon/pq128-source-lock-v1.json','files'),('config/pon/pq-authority-effects-v1.json','source_files_sha256')]:
+    raw=read_regular(root,rel,1024*1024)
+    lock=json.loads(raw)
+    (evidence/('original-'+pathlib.Path(rel).name)).write_bytes(raw)
+    item={'manifest_path':rel,'manifest_field':field,'original_manifest_sha256':hashlib.sha256(raw).hexdigest(),'original_reviewed_source_revision':lock['source_revision'],'files':[]}
+    for path,expected in lock[field].items():
+        entry=subprocess.check_output(['git','--no-replace-objects','--literal-pathspecs','ls-tree','-z',revision,'--',path],cwd=root)
+        metadata,name=entry.removesuffix(b'\0').split(b'\t')
+        mode,kind,oid=metadata.decode().split()
+        assert mode in ('100644','100755') and kind=='blob' and name.decode()==path,(path,entry)
+        blob=subprocess.check_output(['git','--no-replace-objects','show',revision+':'+path],cwd=root)
+        assert blob==read_regular(root,path,1024*1024),path
+        old_blob=subprocess.check_output(['git','--no-replace-objects','show',lock['source_revision']+':'+path],cwd=root)
+        assert hashlib.sha256(old_blob).hexdigest()==expected,(path,'original pin differs from declared history')
+        current=hashlib.sha256(blob).hexdigest()
+        row={'path':path,'mode':mode,'reviewed_git_blob':oid,'reviewed_bytes':len(blob),'original_sha256':expected,'reviewed_sha256':current,'changed':expected!=current}
+        if row['changed']:
+            row['diff']=subprocess.check_output(['git','--no-replace-objects','diff','--no-ext-diff','--no-textconv','--full-index','--binary',lock['source_revision'],revision,'--',path],cwd=root,text=True)
+            row['diff_sha256']=hashlib.sha256(row['diff'].encode()).hexdigest()
+        item['files'].append(row)
+    review['locks'].append(item)
+(evidence/'fixed-source-review-input.json').write_text(json.dumps(review,indent=2)+'\n')
+for rel in ('config/pon/pq128-lifetime-budget-v1.json','scripts/ci/pq_authority_effect_register.py','scripts/ci/test_pq_authority_effect_register.py'):
+    raw=read_regular(root,rel,1024*1024)
+    (evidence/('original-'+pathlib.Path(rel).name)).write_bytes(raw)
+print(json.dumps({'review_path':str(evidence/'fixed-source-review-input.json'),'review_bytes':(evidence/'fixed-source-review-input.json').stat().st_size,'locks':[{'path':x['manifest_path'],'count':len(x['files']),'changed':[{'path':p['path'],'hash':p['reviewed_sha256'],'diff_bytes':len(p.get('diff',''))} for p in x['files'] if p['changed']]} for x in review['locks']]}),flush=True)

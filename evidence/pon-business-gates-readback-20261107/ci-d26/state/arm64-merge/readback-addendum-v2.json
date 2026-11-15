@@ -1,0 +1,55 @@
+{
+  "artifact_id": 13580181082,
+  "job_id": 128435695082,
+  "original_job_conclusion": "success",
+  "source_binding": {
+    "kind": "prospective-merge",
+    "tested_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+    "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+    "before_after_equal": true,
+    "resolver_context_equal": true
+  },
+  "zip_metadata_digest_verified": true,
+  "retained_zip_sha256": "116ae16723ab9f1c7fd59e81390dcfad3a42d574938f0b65b1ff69ded2007f5a",
+  "preserved_initial_observer_errors": [
+    "ValueError: migration suite terminal"
+  ],
+  "original_named_controls": {
+    "required": 6,
+    "read_back": 6,
+    "passed": 6
+  },
+  "migration_original_grep_gate_passed": true,
+  "migration_terminal_lines": [
+    {
+      "line": 48,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1176 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 54,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1176 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 70,
+      "text": "test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 1137 filtered out; finished in 4.78s"
+    }
+  ],
+  "migration_main_terminal": {
+    "line": 70,
+    "text": "test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 1137 filtered out; finished in 4.78s"
+  },
+  "migration_nested_process_summaries": [
+    {
+      "line": 48,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1176 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 54,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1176 filtered out; finished in 0.00s"
+    }
+  ],
+  "migration_summary_counts_must_not_be_added": true,
+  "component_controls_readback_passed": true,
+  "scope": "original-state-component-controls-only",
+  "production_or_throughput_gate_validated": false
+}

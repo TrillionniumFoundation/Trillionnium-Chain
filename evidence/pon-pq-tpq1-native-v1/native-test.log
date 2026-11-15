@@ -1,0 +1,10 @@
+test_bounded_regular_file_no_symlink_and_empty_payload (test_pq_tpq1_native_verify.Pql9NativeCryptoTests.test_bounded_regular_file_no_symlink_and_empty_payload) ... ok
+test_caller_pin_replay_time_and_downgrade_reject (test_pq_tpq1_native_verify.Pql9NativeCryptoTests.test_caller_pin_replay_time_and_downgrade_reject) ... ok
+test_every_signed_statement_byte_and_fake_signature_rejects (test_pq_tpq1_native_verify.Pql9NativeCryptoTests.test_every_signed_statement_byte_and_fake_signature_rejects) ... ok
+test_real_all_six_purposes_and_cross_language_digest (test_pq_tpq1_native_verify.Pql9NativeCryptoTests.test_real_all_six_purposes_and_cross_language_digest) ... ok
+test_real_other_signer_and_classical_key_reject (test_pq_tpq1_native_verify.Pql9NativeCryptoTests.test_real_other_signer_and_classical_key_reject) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.856s
+
+OK

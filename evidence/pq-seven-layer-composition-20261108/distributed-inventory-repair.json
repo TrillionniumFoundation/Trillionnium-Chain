@@ -1,0 +1,259 @@
+{
+  "schema": "trnm-distributed-source-inventory-repair-v1",
+  "worktree": "/workspace/scratch/21690b881bed/chain-pq-composition",
+  "repair_head": "d8280daa8651ca387813b25e2a712f3fd1c82a1d",
+  "base_head": "88568e2511fcf166e6824947ac97b06b72104385",
+  "observed_at_utc": "2026-11-08T11:46:32.644024+00:00",
+  "scope": "Canonical embedded inventory refresh plus its one existing corpus pin; no native test acceptance.",
+  "commands": [
+    {
+      "label": "head-before",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "started_at_utc": "2026-11-08T11:46:32.644041+00:00",
+      "duration_seconds": 0.002455,
+      "exit_code": 0,
+      "stdout": "d8280daa8651ca387813b25e2a712f3fd1c82a1d\n",
+      "stderr": ""
+    },
+    {
+      "label": "project-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "started_at_utc": "2026-11-08T11:46:32.646735+00:00",
+      "duration_seconds": 0.055949,
+      "exit_code": 0,
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-pq-seven-layer-composition-20261108-21690\", \"remote_policy_mutated\": false}\n",
+      "stderr": ""
+    },
+    {
+      "label": "inventory-check-before-repair",
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "started_at_utc": "2026-11-08T11:46:32.705802+00:00",
+      "duration_seconds": 0.059759,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "distributed native source inventory differs; refresh before freezing source\n"
+    },
+    {
+      "label": "canonical-generator",
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py"
+      ],
+      "started_at_utc": "2026-11-08T11:46:32.816846+00:00",
+      "duration_seconds": 0.059954,
+      "exit_code": 0,
+      "stdout": "distributed source inventory: PASS\n",
+      "stderr": ""
+    },
+    {
+      "label": "inventory-check-after-repair",
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "started_at_utc": "2026-11-08T11:46:32.880801+00:00",
+      "duration_seconds": 0.070742,
+      "exit_code": 0,
+      "stdout": "distributed source inventory: PASS\n",
+      "stderr": ""
+    },
+    {
+      "label": "pq-research-integration-check",
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "started_at_utc": "2026-11-08T11:46:32.951943+00:00",
+      "duration_seconds": 0.287484,
+      "exit_code": 0,
+      "stdout": "{\"canonical_default_provider_contract_checked\": true, \"canonical_pnq2_contract_checked\": true, \"continuous_npq6_combination_accepted\": false, \"cryptographic_acceptance\": false, \"exact_source_blobs\": 727, \"legacy_qtx1_optional_adapter_contract_checked\": true, \"native_transfer_account_contract_checked\": true, \"native_transport_contract_checked\": true, \"node_activated\": false, \"production_confidentiality_accepted\": false, \"schema\": \"trnm-pq-cross-branch-check-v1\", \"status\": \"HOLD_NO_GO\", \"upstream_heads\": 6, \"whole_native_authorization_migrated\": false}\n",
+      "stderr": ""
+    },
+    {
+      "label": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "started_at_utc": "2026-11-08T11:46:33.239905+00:00",
+      "duration_seconds": 0.013415,
+      "exit_code": 128,
+      "stdout": "",
+      "stderr": "fatal: unable to read 321534988edead06caa384a97e647e2f84490e47\n"
+    },
+    {
+      "label": "exact-two-file-diff",
+      "argv": [
+        "git",
+        "diff",
+        "--",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "config/pon/pq-cross-branch-corpus-v1.json"
+      ],
+      "started_at_utc": "2026-11-08T11:46:33.253691+00:00",
+      "duration_seconds": 0.010199,
+      "exit_code": 0,
+      "stdout": "diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json\nindex 0b9b738..2f8a9d5 100644\n--- a/config/pon/pq-cross-branch-corpus-v1.json\n+++ b/config/pon/pq-cross-branch-corpus-v1.json\n@@ -590,7 +590,7 @@\n     \"trillionnium/crates/trnm-pon-node/examples/pon_w1_cost_matrix_v2.rs\": \"e3a3c2a893eb1c7ee99dd93d2993e8b26ce2d2e3\",\n     \"trillionnium/crates/trnm-pon-node/examples/pon_w1_preparation_strategy_v4.rs\": \"10236458a1fabf587e2aace247a43edbfabda7a9\",\n     \"trillionnium/crates/trnm-pon-node/examples/pon_w1_reused_cost_v3.rs\": \"92f1e2a9e971af5abe9e43b1ddfb976c41da9be4\",\n-    \"trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\": \"dc4914b370d7bd179cf1aa07d9633a2e224dc7bd\",\n+    \"trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\": \"c92db768cda005a984292af522ab2db46aeeec59\",\n     \"trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs\": \"d5dca8c623748172c3e910f9da7c24212aeb26ad\",\n     \"trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs\": \"0f611459c4c1c37488861ba36c82ba8302e40c4c\",\n     \"trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth/account_prefix_tests.rs\": \"10cccefbab932cc22569eb4a8c035f6de7defc05\",\ndiff --git a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\nindex dc4914b..c92db76 100644\n--- a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\n+++ b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\n@@ -182,6 +182,13 @@ pub const FILES: &[(&str, &[u8])] = &[\n             \"/../../../config/pon/post-quantum-transition-v1.json\"\n         )),\n     ),\n+    (\n+        \"config/pon/pq-authority-effects-v1.json\",\n+        include_bytes!(concat!(\n+            env!(\"CARGO_MANIFEST_DIR\"),\n+            \"/../../../config/pon/pq-authority-effects-v1.json\"\n+        )),\n+    ),\n     (\n         \"config/pon/pq-cross-branch-corpus-v1.json\",\n         include_bytes!(concat!(\n@@ -217,6 +224,27 @@ pub const FILES: &[(&str, &[u8])] = &[\n             \"/../../../config/pon/pq-system-required-tests-v1.json\"\n         )),\n     ),\n+    (\n+        \"config/pon/pq128-lifetime-budget-v1.json\",\n+        include_bytes!(concat!(\n+            env!(\"CARGO_MANIFEST_DIR\"),\n+            \"/../../../config/pon/pq128-lifetime-budget-v1.json\"\n+        )),\n+    ),\n+    (\n+        \"config/pon/pq128-lifetime-example-v1.json\",\n+        include_bytes!(concat!(\n+            env!(\"CARGO_MANIFEST_DIR\"),\n+            \"/../../../config/pon/pq128-lifetime-example-v1.json\"\n+        )),\n+    ),\n+    (\n+        \"config/pon/pq128-source-lock-v1.json\",\n+        include_bytes!(concat!(\n+            env!(\"CARGO_MANIFEST_DIR\"),\n+            \"/../../../config/pon/pq128-source-lock-v1.json\"\n+        )),\n+    ),\n     (\n         \"config/pon/public-evaluation-model-evolution-v5.json\",\n         include_bytes!(concat!(\n",
+      "stderr": ""
+    },
+    {
+      "label": "changed-paths",
+      "argv": [
+        "git",
+        "diff",
+        "--name-only"
+      ],
+      "started_at_utc": "2026-11-08T11:46:33.264227+00:00",
+      "duration_seconds": 0.011434,
+      "exit_code": 128,
+      "stdout": "",
+      "stderr": "fatal: unable to read 321534988edead06caa384a97e647e2f84490e47\n"
+    },
+    {
+      "label": "authorized-two-file-diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "config/pon/pq-cross-branch-corpus-v1.json"
+      ],
+      "started_at_utc": "2026-11-08T11:47:56.607092+00:00",
+      "duration_seconds": 0.009438,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "non-evidence-changed-paths",
+      "argv": [
+        "git",
+        "diff",
+        "--name-only",
+        "--",
+        ".",
+        ":(exclude)evidence/**"
+      ],
+      "started_at_utc": "2026-11-08T11:47:56.614221+00:00",
+      "duration_seconds": 0.007114,
+      "exit_code": 0,
+      "stdout": "config/pon/pq-cross-branch-corpus-v1.json\ntrillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\n",
+      "stderr": ""
+    }
+  ],
+  "status": "SCOPED_REPAIR_PASS_GLOBAL_DIFF_UNAVAILABLE",
+  "commits_created": 0,
+  "source_pin_set_changed": false,
+  "sparse_configuration_changed": false,
+  "index_flags_changed": false,
+  "native_tests_executed": false,
+  "source_before": {
+    "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "bytes": 380253,
+    "sha256": "f834d8c2b0f49811ff8930898e01c65b40801d8fbef550a8662457bbbdea02e8",
+    "git_blob": "dc4914b370d7bd179cf1aa07d9633a2e224dc7bd"
+  },
+  "corpus_before": {
+    "path": "config/pon/pq-cross-branch-corpus-v1.json",
+    "bytes": 134919,
+    "sha256": "4b03850510862f2a027a7dcca44088a15d11b4e22434eb7cfe59438e8c9cfe5d",
+    "git_blob": "0b9b7386f6c7fda40356674c59a12f999d27c8b1",
+    "pin_count": 727
+  },
+  "canonical_render_before_write": {
+    "bytes": 381101,
+    "sha256": "8fa3beca6d59a94fb2f50473df8c8ebe845b412fa841f4da7e815bbc5d6129f1",
+    "git_blob": "c92db768cda005a984292af522ab2db46aeeec59",
+    "added_entries": [
+      "config/pon/pq-authority-effects-v1.json",
+      "config/pon/pq128-lifetime-budget-v1.json",
+      "config/pon/pq128-lifetime-example-v1.json",
+      "config/pon/pq128-source-lock-v1.json"
+    ],
+    "removed_entries": []
+  },
+  "omission_sources": [
+    {
+      "path": "config/pon/pq-authority-effects-v1.json",
+      "exists_at_base_88568e2": false,
+      "exists_at_repair_head_d8280da": true,
+      "missing_from_prior_embedded_inventory": true,
+      "omission_origin": "new composition config omitted from embedded inventory"
+    },
+    {
+      "path": "config/pon/pq128-lifetime-budget-v1.json",
+      "exists_at_base_88568e2": true,
+      "exists_at_repair_head_d8280da": true,
+      "missing_from_prior_embedded_inventory": true,
+      "omission_origin": "pre-existing base omission"
+    },
+    {
+      "path": "config/pon/pq128-lifetime-example-v1.json",
+      "exists_at_base_88568e2": true,
+      "exists_at_repair_head_d8280da": true,
+      "missing_from_prior_embedded_inventory": true,
+      "omission_origin": "pre-existing base omission"
+    },
+    {
+      "path": "config/pon/pq128-source-lock-v1.json",
+      "exists_at_base_88568e2": false,
+      "exists_at_repair_head_d8280da": true,
+      "missing_from_prior_embedded_inventory": true,
+      "omission_origin": "new composition config omitted from embedded inventory"
+    }
+  ],
+  "source_after": {
+    "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "bytes": 381101,
+    "sha256": "8fa3beca6d59a94fb2f50473df8c8ebe845b412fa841f4da7e815bbc5d6129f1",
+    "git_blob": "c92db768cda005a984292af522ab2db46aeeec59"
+  },
+  "corpus_after": {
+    "path": "config/pon/pq-cross-branch-corpus-v1.json",
+    "bytes": 134919,
+    "sha256": "5dda480e7b849d3149a7565d43212aff3ee8d1237a00b757b5a3b83d9c6af791",
+    "git_blob": "2f8a9d53514cdcd7f0abc46689c8132efa157598",
+    "pin_count": 727
+  },
+  "changed_pin_paths": [
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+  ],
+  "pin_path_set_sha256_before": "195f676e9e203adbc2196aebd498e16f724dae45e97bc4d4e1bdd4265bf4e44d",
+  "pin_path_set_sha256_after": "195f676e9e203adbc2196aebd498e16f724dae45e97bc4d4e1bdd4265bf4e44d",
+  "diff": "diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json\nindex 0b9b738..2f8a9d5 100644\n--- a/config/pon/pq-cross-branch-corpus-v1.json\n+++ b/config/pon/pq-cross-branch-corpus-v1.json\n@@ -590,7 +590,7 @@\n     \"trillionnium/crates/trnm-pon-node/examples/pon_w1_cost_matrix_v2.rs\": \"e3a3c2a893eb1c7ee99dd93d2993e8b26ce2d2e3\",\n     \"trillionnium/crates/trnm-pon-node/examples/pon_w1_preparation_strategy_v4.rs\": \"10236458a1fabf587e2aace247a43edbfabda7a9\",\n     \"trillionnium/crates/trnm-pon-node/examples/pon_w1_reused_cost_v3.rs\": \"92f1e2a9e971af5abe9e43b1ddfb976c41da9be4\",\n-    \"trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\": \"dc4914b370d7bd179cf1aa07d9633a2e224dc7bd\",\n+    \"trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\": \"c92db768cda005a984292af522ab2db46aeeec59\",\n     \"trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs\": \"d5dca8c623748172c3e910f9da7c24212aeb26ad\",\n     \"trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs\": \"0f611459c4c1c37488861ba36c82ba8302e40c4c\",\n     \"trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth/account_prefix_tests.rs\": \"10cccefbab932cc22569eb4a8c035f6de7defc05\",\ndiff --git a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\nindex dc4914b..c92db76 100644\n--- a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\n+++ b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\n@@ -182,6 +182,13 @@ pub const FILES: &[(&str, &[u8])] = &[\n             \"/../../../config/pon/post-quantum-transition-v1.json\"\n         )),\n     ),\n+    (\n+        \"config/pon/pq-authority-effects-v1.json\",\n+        include_bytes!(concat!(\n+            env!(\"CARGO_MANIFEST_DIR\"),\n+            \"/../../../config/pon/pq-authority-effects-v1.json\"\n+        )),\n+    ),\n     (\n         \"config/pon/pq-cross-branch-corpus-v1.json\",\n         include_bytes!(concat!(\n@@ -217,6 +224,27 @@ pub const FILES: &[(&str, &[u8])] = &[\n             \"/../../../config/pon/pq-system-required-tests-v1.json\"\n         )),\n     ),\n+    (\n+        \"config/pon/pq128-lifetime-budget-v1.json\",\n+        include_bytes!(concat!(\n+            env!(\"CARGO_MANIFEST_DIR\"),\n+            \"/../../../config/pon/pq128-lifetime-budget-v1.json\"\n+        )),\n+    ),\n+    (\n+        \"config/pon/pq128-lifetime-example-v1.json\",\n+        include_bytes!(concat!(\n+            env!(\"CARGO_MANIFEST_DIR\"),\n+            \"/../../../config/pon/pq128-lifetime-example-v1.json\"\n+        )),\n+    ),\n+    (\n+        \"config/pon/pq128-source-lock-v1.json\",\n+        include_bytes!(concat!(\n+            env!(\"CARGO_MANIFEST_DIR\"),\n+            \"/../../../config/pon/pq128-source-lock-v1.json\"\n+        )),\n+    ),\n     (\n         \"config/pon/public-evaluation-model-evolution-v5.json\",\n         include_bytes!(concat!(\n",
+  "worktree_changed_paths": null,
+  "completed_at_utc": "2026-11-08T11:47:56.620715+00:00",
+  "preserved_initial_orchestration_status": {
+    "status": "FAIL-or-interrupted-scoped-repair",
+    "failure": "AssertionError()",
+    "reason": "The global diff inventory could not read an unrelated historical evidence object; empty stdout was not treated as an unchanged worktree."
+  },
+  "scoped_gate_result": "PASS",
+  "global_diff_result": "UNAVAILABLE_UNRELATED_MISSING_LOCAL_GIT_OBJECT",
+  "global_diff_missing_blob": "321534988edead06caa384a97e647e2f84490e47",
+  "global_diff_missing_blob_path": "evidence/crypto-profile-20261104/continuation-59f75acd/ac240-compare-metadata.json",
+  "global_diff_followup": "Preserve this local failure; final whole-source gate belongs to the parent full desktop checkout.",
+  "non_evidence_changed_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+  ],
+  "authorized_changed_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+  ],
+  "full_worktree_diff_available": false
+}

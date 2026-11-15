@@ -1,0 +1,17 @@
+{
+  "label": "final-15-pnh1-authenticated-retained-reader",
+  "argv": [
+    "python3",
+    "scripts/pon_joint_daa_reader.py",
+    "--raw-dir",
+    "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/retained-joint-native/pnh1-authenticated",
+    "--expected-report-sha256",
+    "664ef8549b32794aac16ea884860f1d447e59cae779c0f33dc370ffde13f175c"
+  ],
+  "exit": 0,
+  "duration_seconds": 19.74509379104711,
+  "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+  "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+  "native_passed_counts": [],
+  "unittest_counts": []
+}

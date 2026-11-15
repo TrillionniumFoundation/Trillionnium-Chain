@@ -1,0 +1,15 @@
+{
+  "schema": "trnm-exact-commit-native-byte-association-v1",
+  "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+  "native_manifest_sha256": "545222b5d1baa03ca3403375170c30416b8351fdc570e5d994603c3fb2fcaa82",
+  "native_paths": 1190,
+  "node_elf_sha256": "34bd6631d69e093be42a35e89ce3d989d60f7cee4f7eb75d1c0f0527c43d7acf",
+  "native_execution_invocation_base": "8ebded733d90bf74e7d8e3adbd2458ad8b572159",
+  "native_executed_after_clean_commit_checkout": false,
+  "exact_commit_gate_native_execution": false,
+  "association": "The original Cargo build and native invocation used the frozen 1190 native bytes. The clean c5dd exact-commit gate verified those bytes while the full native run was still in progress; the native terminal manifest matched the same bytes again after completion. No full native run was launched or repeated from the clean c5dd checkout.",
+  "hosted_ci_result_inherited": false,
+  "exact_commit_gate_finished_utc": "2026-11-03T22:10:08.051381+00:00",
+  "native_driver_terminal_completed_utc": "2026-11-03T22:16:52.525096+00:00"
+}

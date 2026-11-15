@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": ""
+}

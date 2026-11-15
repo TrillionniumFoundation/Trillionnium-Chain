@@ -1,0 +1,32 @@
+{
+  "schema": "history-exact-source-native-build-v1",
+  "source_commit": "3ca96292ccc7815f4c7f49b34445f3d28687b5f4",
+  "source_tree": "00941a4238b5f9fd2142f1115fedbdf69a2a224d",
+  "source_manifest_sha256": "106a6cf428cd2b1a7b728ec5aec938d319df48e40d1abbb433f51148fb2a7f70",
+  "source_paths": 1034,
+  "source_scope": "all materialized original native build inputs; full repository source verifier remains separately required because retained worktree is sparse",
+  "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--no-run",
+    "--offline",
+    "--locked",
+    "--config",
+    "profile.test.package.trnm-pon-node.debug=0",
+    "--message-format=json"
+  ],
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "cargo_incremental": "0",
+  "jobs": 2,
+  "started_utc": "2026-10-28T00:27:13.535145+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 192.17355406899878,
+  "binary": "/tmp/target-history-56818e4fba76/owner-next-3ca96292cc-trnm-pon-node",
+  "binary_bytes": 126551784,
+  "binary_sha256": "86d70c9cf0e6bfffbf0e8e0758433e9d2fbb8791d9a01e7f9cb6fcb7cf7b6f40"
+}

@@ -1,0 +1,30 @@
+{
+  "command": [
+    "cargo",
+    "+1.95.0",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+  "returncode": 0,
+  "failure": null,
+  "elapsed_ns": 216869797,
+  "timeout_seconds": 300,
+  "files": {
+    "stdout.log": {
+      "bytes": 828865,
+      "sha256": "f7fa07b5dfc8b50d30c09b9fdd19223416c81e7cf791e8bf6b0af37156f00200"
+    },
+    "stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "profile_overrides": false,
+  "acceptance_granted": false
+}

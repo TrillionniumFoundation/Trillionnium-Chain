@@ -1,0 +1,41 @@
+{
+  "base_commit": "8d5389748873dad6e296d17f2ff20483b5afa5bc",
+  "files": [
+    {
+      "path": "docs/development/specs/pon/NATIVE_PACKET_STATUS_OBSERVATION_V1.md",
+      "sha256": "a5412569e300ad894cf82b1c02954fd4d40dde8d15b322619bbedd639386b731"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/packet_observer_cli.rs",
+      "sha256": "fab341f00e832783027f94b1185b3a05c8ca7de65f26897475ef0a9bd217513b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/packet_observation.rs",
+      "sha256": "de75dca5fef207ebd5729cdb53a270ca76f22d8020215df5ad3758b92eaef8d7"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/native_packet_observer.rs",
+      "sha256": "28d97ecc1829d8edf2168673d7e6e007140bc8f22d91decfcd1dc291e3f94974"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_metered_fact_tests.rs",
+      "sha256": "c35003afd06bef859f6f78d2f0b71472d0cfaf6c6bf0f8577adf7fa16488a0ba"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "sha256": "a60f8337427f33407d9abb3a8667532c76a94eeb008f874f5dc2d986af7d50f7"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "sha256": "f1ad3938dc474eaeb8ad0fc689e023d374be7400463a394cf80108fb5d261fe6"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "3f1feb77e69758fc7469cb4f0ff7b1233889f315a384166efeaf2b3032b29b26"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/observer.rs",
+      "sha256": "a669b93b43b61d3c3c5d223f939b621a772c40ce5806cacadbc3d36fc02a2a33"
+    }
+  ]
+}

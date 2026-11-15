@@ -1,0 +1,18 @@
+{
+  "scope": "read-only current repository configuration observation; no security settings or workflows changed by this request",
+  "host": "desktop",
+  "job_id": "1a1c8a59794-135c4-14e",
+  "command": "gh api --method GET repos/TrillionniumFoundation/Trillionnium-Chain/code-scanning/default-setup --jq '{state, languages, updated_at}'",
+  "exit_code": 0,
+  "output_complete": true,
+  "output_durable": true,
+  "stdout": {
+    "languages": ["actions", "python", "rust"],
+    "state": "configured",
+    "updated_at": "2026-09-28T17:29:09Z"
+  },
+  "stderr": "",
+  "configuration_mutation_performed": false,
+  "workflow_rerun_performed": false,
+  "api_export_gap_closed": false
+}

@@ -1,0 +1,10 @@
+{"phase": "command", "argv": ["git", "init", "--quiet", "/home/qq/chain-system-security-20261112-306929"], "cwd": null}
+{"phase": "command", "argv": ["git", "remote", "add", "origin", "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"], "cwd": "/home/qq/chain-system-security-20261112-306929"}
+{"phase": "command", "argv": ["git", "config", "remote.origin.promisor", "true"], "cwd": "/home/qq/chain-system-security-20261112-306929"}
+{"phase": "command", "argv": ["git", "config", "remote.origin.partialclonefilter", "blob:none"], "cwd": "/home/qq/chain-system-security-20261112-306929"}
+{"phase": "command", "argv": ["git", "config", "core.sparseCheckout", "false"], "cwd": "/home/qq/chain-system-security-20261112-306929"}
+{"phase": "command", "argv": ["git", "config", "core.sparseCheckoutCone", "false"], "cwd": "/home/qq/chain-system-security-20261112-306929"}
+{"phase": "fetch-c5", "base": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d", "source_object_alternate": "/home/qq/trnm-v4-e12ecc-recovery/repo/.git/objects"}
+{"phase": "command", "argv": ["git", "fetch", "--quiet", "--no-tags", "--depth=1", "--filter=blob:none", "origin", "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d"], "cwd": "/home/qq/chain-system-security-20261112-306929"}
+{"phase": "command", "argv": ["git", "switch", "--quiet", "-c", "verify/chain-system-security-20261112-306929", "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d"], "cwd": "/home/qq/chain-system-security-20261112-306929"}
+{"phase": "command", "argv": ["bash", "scripts/project-preflight.sh"], "cwd": "/home/qq/chain-system-security-20261112-306929"}

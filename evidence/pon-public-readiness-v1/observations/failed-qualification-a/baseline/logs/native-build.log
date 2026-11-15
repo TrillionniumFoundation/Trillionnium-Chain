@@ -1,0 +1,6 @@
+   Compiling libc v0.2.184
+   Compiling trnm-transport v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-transport)
+   Compiling getrandom v0.4.2
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)
+    Finished `release` profile [optimized] target(s) in 2.07s

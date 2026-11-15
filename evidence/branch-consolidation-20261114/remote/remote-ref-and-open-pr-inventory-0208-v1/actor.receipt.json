@@ -1,0 +1,8 @@
+{
+  "label": "actor",
+  "started_at": "2026-11-14T04:48:40.800564+00:00",
+  "finished_at": "2026-11-14T04:48:42.666676+00:00",
+  "exit": 0,
+  "stdout_sha256": "7c6b9fd1c2f7309eb6bceb64a63c52c1bbfd7fdf0925f4bfc6e15c106f58b2f7",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

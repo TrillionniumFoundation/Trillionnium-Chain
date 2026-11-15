@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized] target(s) in 0.14s
+     Running unittests src/lib.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/trnm_pon_node-3d075b189916f208)
+
+running 1 test
+test ingress::public_v3::input_decode_tests::initialized_socket_reads_retain_original_quantum_and_do_not_swallow_trailing_bytes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1198 filtered out; finished in 0.00s
+

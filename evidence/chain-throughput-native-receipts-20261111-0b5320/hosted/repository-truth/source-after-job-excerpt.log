@@ -1,0 +1,13 @@
+2026-11-11T05:46:38.5414000Z {
+2026-11-11T05:46:38.5414221Z   "base": null,
+2026-11-11T05:46:38.5414405Z   "candidate": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+2026-11-11T05:46:38.5414590Z   "kind": "head",
+2026-11-11T05:46:38.5414712Z   "prospective_merge": null,
+2026-11-11T05:46:38.5414857Z   "schema": "trnm-ci-source-v1",
+2026-11-11T05:46:38.5415030Z   "tested_commit": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+2026-11-11T05:46:38.5415231Z   "tested_tree": "1f42f41923d7761c02fc68b478df5b019c7d83e8",
+2026-11-11T05:46:38.5415414Z   "tests_executed_by_identity_check": false,
+2026-11-11T05:46:38.5415564Z   "tracked_bytes": 2592587811,
+2026-11-11T05:46:38.5415694Z   "tracked_entries": 28058,
+2026-11-11T05:46:38.5415824Z   "tracked_worktree_verified": true
+2026-11-11T05:46:38.5415950Z }

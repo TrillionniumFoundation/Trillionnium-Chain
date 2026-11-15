@@ -1,0 +1,21 @@
+{
+  "case_ids": [
+    "normalized-retention-and-winners-only",
+    "classical-slower-quantum-faster-ideal",
+    "required-quantum-stages-reverse-apparent-advantage",
+    "renewal-failures-proof-tail-and-shared-preparation"
+  ],
+  "scope": {
+    "composition_lower_bound_proved": false,
+    "consensus_activation": false,
+    "evidence": "conditional finite arithmetic on caller-supplied premises",
+    "global_cost_lower_bound_proved": false,
+    "network_security_proved": false,
+    "quantum_state_preparation_implemented": false,
+    "release_ready": false,
+    "schema": "trnm-normalized-search-cost-v1",
+    "w1_quantum_attack_implemented": false
+  },
+  "verification": "PASS",
+  "verification_scope": "fixed-example arithmetic and local-source replay only"
+}

@@ -1,0 +1,113 @@
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-controlled-restore-audit-20261114", "remote_policy_mutated": false}
+{"command": ["git", "diff", "--check"]}
+[?1h=[K[?1l>{"command": ["python3", "scripts/ci/check_pq_research_integration.py"]}
+{"canonical_default_provider_contract_checked": true, "canonical_pnq2_contract_checked": true, "continuous_npq6_combination_accepted": false, "cryptographic_acceptance": false, "exact_source_blobs": 2460, "legacy_qtx1_optional_adapter_contract_checked": true, "native_transfer_account_contract_checked": true, "native_transport_contract_checked": true, "node_activated": false, "production_confidentiality_accepted": false, "schema": "trnm-pq-cross-branch-check-v1", "status": "HOLD_NO_GO", "upstream_heads": 6, "whole_native_authorization_migrated": false}
+{"command": ["python3", "scripts/ci/check_repository.py"]}
+{"activation": false, "head": "332d7f723d71707d88a2cffa52b3754579a46926", "local_links": 8515, "normal_dependency_edges": 27, "result": "PASS", "runtime_implemented": false, "rust_files": 1580, "source_state": "dirty-candidate", "tree": "c93086b354d75827ca96a42c7eaa3f8be8954311", "workspace_packages": 26}
+{"result": "PASS", "mode": "--staged", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-controlled-restore-audit-20261114", "remote_policy_mutated": false}
+[fix/chain-controlled-restore-audit-20261114 8fac1d44f] Preserve cooperative paged restore owner checkpoints
+ 10 files changed, 544 insertions(+), 61 deletions(-)
+{"controlled_restore_commit": "8fac1d44fb0280fc0cdceb8b1586b4f66f2ed474", "paths": ["config/pon/pq-cross-branch-corpus-v1.json", "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md", "trillionnium/crates/trnm-data-availability/src/cell.rs", "trillionnium/crates/trnm-data-availability/src/cell/erasure.rs", "trillionnium/crates/trnm-data-availability/src/cell/erasure/custody.rs", "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs", "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged.rs", "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore.rs", "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs", "trillionnium/crates/trnm-data-availability/src/cell/version_content.rs"]}
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-controlled-restore-audit-20261114", "remote_policy_mutated": false}
+{"command": ["git", "diff", "--check"]}
+[?1h=[K[?1l>{"command": ["cargo", "fmt", "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-data-availability", "--", "--check"]}
+{"command": ["python3", "scripts/ci/check_pq_research_integration.py"]}
+{"canonical_default_provider_contract_checked": true, "canonical_pnq2_contract_checked": true, "continuous_npq6_combination_accepted": false, "cryptographic_acceptance": false, "exact_source_blobs": 2460, "legacy_qtx1_optional_adapter_contract_checked": true, "native_transfer_account_contract_checked": true, "native_transport_contract_checked": true, "node_activated": false, "production_confidentiality_accepted": false, "schema": "trnm-pq-cross-branch-check-v1", "status": "HOLD_NO_GO", "upstream_heads": 6, "whole_native_authorization_migrated": false}
+{"command": ["python3", "scripts/ci/check_repository.py"]}
+{"activation": false, "head": "8fac1d44fb0280fc0cdceb8b1586b4f66f2ed474", "local_links": 8515, "normal_dependency_edges": 27, "result": "PASS", "runtime_implemented": false, "rust_files": 1580, "source_state": "dirty-candidate", "tree": "dd2cb73ffe7cb78d88ea840456dfccc6b5a3d79c", "workspace_packages": 26}
+{"result": "PASS", "mode": "--staged", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-controlled-restore-audit-20261114", "remote_policy_mutated": false}
+[fix/chain-controlled-restore-audit-20261114 b98ef2436] Make Unix snapshot FIFO refusal fixture portable
+ 3 files changed, 29 insertions(+), 8 deletions(-)
+{"portable_fifo_commit": "b98ef2436bdef513daa44b8eb96f0f164b1f2067", "parent": "8fac1d44fb0280fc0cdceb8b1586b4f66f2ed474", "paths": ["config/pon/pq-cross-branch-corpus-v1.json", "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md", "trillionnium/crates/trnm-data-availability/src/cell/snapshot_schedule/tests.rs"]}
+{"committed_source": "b98ef2436bdef513daa44b8eb96f0f164b1f2067", "command": ["cargo", "test", "--manifest-path", "trillionnium/Cargo.toml", "--offline", "--locked", "-p", "trnm-data-availability", "--lib", "cell::erasure::retained_plan::paged::restore::tests::", "--", "--test-threads=1"]}
+   Compiling trnm-data-availability v0.1.0 (/private/tmp/chain-architecture-controlled-restore-20261114/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.36s
+     Running unittests src/lib.rs (/private/tmp/chain-architecture-controlled-restore-target-20261114/debug/deps/trnm_data_availability-5836d349db7798db)
+
+running 16 tests
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_control_all_boundaries_preserve_costs_bytes_and_stop_retries ... [31mFAILED(B[m
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_control_cancels_after_last_valid_shard_before_final_chunk_write ... [31mFAILED(B[m
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_control_checks_the_original_deadline_after_owner_returns ... [32mok(B[m
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_control_read_error_cannot_hide_concurrent_owner_cancellation ... [31mFAILED(B[m
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_control_read_failure_can_retry_within_original_allowance ... [32mok(B[m
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_catalog_change_cannot_be_hidden_by_a_readable_selected_version ... [31mFAILED(B[m
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_cold_targets_share_the_original_cumulative_allowance ... [32mok(B[m
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_corrupt_committed_shard_cannot_be_hidden_by_available_peers ... [31mFAILED(B[m
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_crosses_128_from_four_actual_targets_without_copy_fallback ... [32mok(B[m
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_global_short_budget_refuses_before_callback ... [31mFAILED(B[m
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_late_missing_quorum_spends_one_original_attempt ... [32mok(B[m
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_missing_last_page_refuses_before_reads_or_cache_writes ... [31mFAILED(B[m
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_rechecks_earlier_page_bytes_after_last_provider_read ... [32mok(B[m
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_requires_the_original_retained_root_operation ... [31mFAILED(B[m
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_uses_parity_when_two_systematic_targets_are_unavailable ... [32mok(B[m
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_wrong_content_pin_refuses_even_when_shards_are_available ... [31mFAILED(B[m
+
+failures:
+
+---- cell::erasure::retained_plan::paged::restore::tests::paged_consumer_control_all_boundaries_preserve_costs_bytes_and_stop_retries stdout ----
+
+thread 'cell::erasure::retained_plan::paged::restore::tests::paged_consumer_control_all_boundaries_preserve_costs_bytes_and_stop_retries' (6831120) panicked at crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs:201:10:
+called `Result::unwrap()` on an `Err` value: Invalid("retention physical capacity")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- cell::erasure::retained_plan::paged::restore::tests::paged_consumer_control_cancels_after_last_valid_shard_before_final_chunk_write stdout ----
+
+thread 'cell::erasure::retained_plan::paged::restore::tests::paged_consumer_control_cancels_after_last_valid_shard_before_final_chunk_write' (6831121) panicked at crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs:201:10:
+called `Result::unwrap()` on an `Err` value: Invalid("retention physical capacity")
+
+---- cell::erasure::retained_plan::paged::restore::tests::paged_consumer_control_read_error_cannot_hide_concurrent_owner_cancellation stdout ----
+
+thread 'cell::erasure::retained_plan::paged::restore::tests::paged_consumer_control_read_error_cannot_hide_concurrent_owner_cancellation' (6831199) panicked at crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs:201:10:
+called `Result::unwrap()` on an `Err` value: Invalid("retention physical capacity")
+
+---- cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_catalog_change_cannot_be_hidden_by_a_readable_selected_version stdout ----
+
+thread 'cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_catalog_change_cannot_be_hidden_by_a_readable_selected_version' (6831261) panicked at crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs:201:10:
+called `Result::unwrap()` on an `Err` value: Invalid("retention physical capacity")
+
+---- cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_corrupt_committed_shard_cannot_be_hidden_by_available_peers stdout ----
+
+thread 'cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_corrupt_committed_shard_cannot_be_hidden_by_available_peers' (6831370) panicked at crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs:201:10:
+called `Result::unwrap()` on an `Err` value: Invalid("retention physical capacity")
+
+---- cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_global_short_budget_refuses_before_callback stdout ----
+
+thread 'cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_global_short_budget_refuses_before_callback' (6834419) panicked at crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs:201:10:
+called `Result::unwrap()` on an `Err` value: Invalid("retention physical capacity")
+
+---- cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_missing_last_page_refuses_before_reads_or_cache_writes stdout ----
+
+thread 'cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_missing_last_page_refuses_before_reads_or_cache_writes' (6834505) panicked at crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs:201:10:
+called `Result::unwrap()` on an `Err` value: Invalid("retention physical capacity")
+
+---- cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_requires_the_original_retained_root_operation stdout ----
+
+thread 'cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_requires_the_original_retained_root_operation' (6834697) panicked at crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs:201:10:
+called `Result::unwrap()` on an `Err` value: Invalid("retention physical capacity")
+
+---- cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_wrong_content_pin_refuses_even_when_shards_are_available stdout ----
+
+thread 'cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_wrong_content_pin_refuses_even_when_shards_are_available' (6834853) panicked at crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs:201:10:
+called `Result::unwrap()` on an `Err` value: Invalid("retention physical capacity")
+
+
+failures:
+    cell::erasure::retained_plan::paged::restore::tests::paged_consumer_control_all_boundaries_preserve_costs_bytes_and_stop_retries
+    cell::erasure::retained_plan::paged::restore::tests::paged_consumer_control_cancels_after_last_valid_shard_before_final_chunk_write
+    cell::erasure::retained_plan::paged::restore::tests::paged_consumer_control_read_error_cannot_hide_concurrent_owner_cancellation
+    cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_catalog_change_cannot_be_hidden_by_a_readable_selected_version
+    cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_corrupt_committed_shard_cannot_be_hidden_by_available_peers
+    cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_global_short_budget_refuses_before_callback
+    cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_missing_last_page_refuses_before_reads_or_cache_writes
+    cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_requires_the_original_retained_root_operation
+    cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_wrong_content_pin_refuses_even_when_shards_are_available
+
+test result: [31mFAILED(B[m. 7 passed; 9 failed; 0 ignored; 0 measured; 881 filtered out; finished in 37.13s
+
+error: test failed, to rerun pass `-p trnm-data-availability --lib`
+{"exit": 101, "command": ["cargo", "test", "--manifest-path", "trillionnium/Cargo.toml", "--offline", "--locked", "-p", "trnm-data-availability", "--lib", "cell::erasure::retained_plan::paged::restore::tests::", "--", "--test-threads=1"]}
+Traceback (most recent call last):
+  File [35m"<string>"[0m, line [35m85[0m, in [35m<module>[0m
+    assert [1;31mr.returncode==0[0m
+           [1;31m^^^^^^^^^^^^^^^[0m
+[1;35mAssertionError[0m

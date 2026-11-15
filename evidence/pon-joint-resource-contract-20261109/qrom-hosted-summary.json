@@ -1,0 +1,846 @@
+{
+  "schema": "pon-ci-failure-readback-v1",
+  "created_utc": "2026-11-09T03:05:48.100121+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "pr": 827,
+  "run_id": 42553751987,
+  "run_attempt": 1,
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42553751987",
+  "workflow_name": "PoN W1 QROM implementation observations",
+  "workflow_path": ".github/workflows/pon-w1-qrom-implementation.yml",
+  "run_status": "completed",
+  "run_conclusion": "failure",
+  "head_commit": "11791e2da79b69322271be2cffe03725165151d1",
+  "base_commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "prospective_merge": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+  "reported_jobs": 2,
+  "retained_jobs": 2,
+  "reported_artifacts": 2,
+  "retained_artifacts": 2,
+  "jobs": [
+    {
+      "source_kind": "head",
+      "job_id": 128954796952,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42553751987/job/128954796952",
+      "status": "completed",
+      "conclusion": "failure",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-09T02:57:57Z",
+          "completed_at": "2026-11-09T02:57:58Z"
+        },
+        {
+          "name": "Reserve source-specific observations",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-09T02:57:58Z",
+          "completed_at": "2026-11-09T02:57:58Z"
+        },
+        {
+          "name": "Checkout exact candidate without persistent credentials",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-09T02:57:58Z",
+          "completed_at": "2026-11-09T02:58:34Z"
+        },
+        {
+          "name": "Verify ordered source identity before execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-09T02:58:34Z",
+          "completed_at": "2026-11-09T02:58:37Z"
+        },
+        {
+          "name": "Audit the project boundary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-09T02:58:37Z",
+          "completed_at": "2026-11-09T02:58:37Z"
+        },
+        {
+          "name": "Execute every fixed named Python control exactly once",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 6,
+          "started_at": "2026-11-09T02:58:37Z",
+          "completed_at": "2026-11-09T02:58:38Z"
+        },
+        {
+          "name": "Reproduce the fixed implementation and saved-fixture map",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 7,
+          "started_at": "2026-11-09T02:58:38Z",
+          "completed_at": "2026-11-09T02:58:39Z"
+        },
+        {
+          "name": "Preserve all unknown project quantum inputs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-09T02:58:39Z",
+          "completed_at": "2026-11-09T02:58:39Z"
+        },
+        {
+          "name": "Reproduce explicitly hypothetical component arithmetic",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-09T02:58:39Z",
+          "completed_at": "2026-11-09T02:58:39Z"
+        },
+        {
+          "name": "Require every report to retain the unqualified security boundary",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-11-09T02:58:39Z",
+          "completed_at": "2026-11-09T02:58:39Z"
+        },
+        {
+          "name": "Verify ordered source identity after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-09T02:58:39Z",
+          "completed_at": "2026-11-09T02:58:41Z"
+        },
+        {
+          "name": "Require every stage and retain failed or skipped status",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 12,
+          "started_at": "2026-11-09T02:58:41Z",
+          "completed_at": "2026-11-09T02:58:41Z"
+        },
+        {
+          "name": "Retain source identities reports logs and every failure",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-09T02:58:41Z",
+          "completed_at": "2026-11-09T02:58:42Z"
+        },
+        {
+          "name": "Post Checkout exact candidate without persistent credentials",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-11-09T02:58:42Z",
+          "completed_at": "2026-11-09T02:58:42Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-11-09T02:58:42Z",
+          "completed_at": "2026-11-09T02:58:42Z"
+        }
+      ],
+      "source_before": {
+        "base": null,
+        "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+        "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2485379627,
+        "tracked_entries": 26124,
+        "tracked_worktree_verified": true
+      },
+      "source_after": {
+        "base": null,
+        "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+        "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2485379627,
+        "tracked_entries": 26124,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_equal": true,
+      "ci_status": {
+        "all_required_observations_passed": false,
+        "complete_w1_soundness_qualified": false,
+        "consensus_admission": false,
+        "expected_base": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+        "expected_candidate": "11791e2da79b69322271be2cffe03725165151d1",
+        "expected_source": "11791e2da79b69322271be2cffe03725165151d1",
+        "failed_or_skipped_stages": [
+          "named_tests",
+          "implementation",
+          "report_scopes"
+        ],
+        "named_test_completion_error": "named-test completion schema, total or scope invalid",
+        "named_test_completion_sha256": null,
+        "named_test_completion_verified": false,
+        "post_quantum_soundness_qualified": false,
+        "pq_signature_qualification_inferred": false,
+        "production_qualified": false,
+        "quantum_work_qualified": false,
+        "required_stages": [
+          "observations",
+          "checkout",
+          "source_before",
+          "preflight",
+          "named_tests",
+          "implementation",
+          "budget_unknown",
+          "budget_hypothetical",
+          "report_scopes",
+          "source_after"
+        ],
+        "schema": "TRNM-W1-QROM-CI-OBSERVATION1",
+        "scope": "Offline construction and saved-fixture mapping with conditional arithmetic. This workflow does not establish proof or quantum security.",
+        "source_identity_error": null,
+        "source_kind": "head",
+        "steps": {
+          "budget_hypothetical": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "budget_unknown": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "checkout": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {
+              "commit": "11791e2da79b69322271be2cffe03725165151d1",
+              "ref": ""
+            }
+          },
+          "implementation": {
+            "conclusion": "failure",
+            "outcome": "failure",
+            "outputs": {}
+          },
+          "named_tests": {
+            "conclusion": "failure",
+            "outcome": "failure",
+            "outputs": {}
+          },
+          "observations": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "preflight": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "report_scopes": {
+            "conclusion": "skipped",
+            "outcome": "skipped",
+            "outputs": {}
+          },
+          "source_after": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "source_before": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          }
+        },
+        "unconditional_project_security_bits": null
+      },
+      "implementation_refusal": {
+        "result": "INPUT_REJECTED",
+        "reason": "input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+        "qualification": {
+          "post_quantum_soundness_qualified": false,
+          "complete_w1_soundness_qualified": false,
+          "quantum_work_qualified": false,
+          "pq_signature_qualification_inferred": false,
+          "production_qualified": false,
+          "consensus_admission": false,
+          "security_bits_quantum": null
+        }
+      },
+      "named_required": 81,
+      "named_started": 67,
+      "named_successful": 63,
+      "suites": [
+        {
+          "module": "test_w1_control_tree_audit",
+          "required": 28,
+          "started": 28,
+          "tests_run": 28,
+          "success": 28,
+          "failure_ids": [],
+          "error_ids": [],
+          "not_started_ids": [],
+          "skipped": [],
+          "passed": true
+        },
+        {
+          "module": "test_w1_qrom_conditional_budget",
+          "required": 13,
+          "started": 13,
+          "tests_run": 13,
+          "success": 13,
+          "failure_ids": [],
+          "error_ids": [],
+          "not_started_ids": [],
+          "skipped": [],
+          "passed": true
+        },
+        {
+          "module": "test_w1_qrom_implementation_audit",
+          "required": 19,
+          "started": 19,
+          "tests_run": 19,
+          "success": 15,
+          "failure_ids": [
+            "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_seal_word_is_rejected_by_full_artifact_identity",
+            "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_source_snapshot_is_refused"
+          ],
+          "error_ids": [
+            "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_actual_saved_v2_mapping_keeps_all_security_claims_unqualified",
+            "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_import_cache_and_search_path_cannot_replace_checked_helper_bytes"
+          ],
+          "not_started_ids": [],
+          "skipped": [],
+          "passed": false
+        },
+        {
+          "module": "test_w1_fri_transcript_audit",
+          "required": 7,
+          "started": 7,
+          "tests_run": 7,
+          "success": 7,
+          "failure_ids": [],
+          "error_ids": [],
+          "not_started_ids": [],
+          "skipped": [],
+          "passed": true
+        },
+        {
+          "module": "test_w1_qrom_workflow_gate",
+          "required": 14,
+          "started": 0,
+          "tests_run": 0,
+          "success": 0,
+          "failure_ids": [],
+          "error_ids": [
+            "setUpClass (test_w1_qrom_workflow_gate.WorkflowGateTests)"
+          ],
+          "not_started_ids": [
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_actual_unknown_and_hypothetical_reports_pass_the_scope_gate",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_hypothetical_report_rejects_inexact_fraction_input",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_hypothetical_report_rejects_wrong_fractions_and_numeric_booleans",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_hypothetical_report_requires_nonnull_component_results",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_named_import_system_exit_zero_is_rejected",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_named_load_tests_system_exit_zero_is_rejected",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_named_missing_duplicate_and_skipped_controls_are_rejected",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_named_roster_executes_exactly_once_without_recursing_into_real_suites",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_status_independently_rechecks_named_ids_and_boolean_scope",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_status_rejects_exit_zero_without_named_completion",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_status_requires_every_step_outcome_and_conclusion",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_unknown_report_cannot_infer_derived_values_or_comparisons",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_unknown_report_requires_all_input_and_component_names"
+          ],
+          "skipped": [],
+          "passed": false
+        }
+      ],
+      "python_version": "Python 3.12.3",
+      "decoded_log_path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/w1-qrom-run42553751987/job-128954796952.decoded.log",
+      "decoded_log_bytes": 208039,
+      "decoded_log_sha256": "7c2c1a0dca682c8566cfefd044533415e267fe04e9549b677e10fa64fe992701",
+      "environment_resource_failure_markers": []
+    },
+    {
+      "source_kind": "merge",
+      "job_id": 128954797102,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42553751987/job/128954797102",
+      "status": "completed",
+      "conclusion": "failure",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-09T02:57:57Z",
+          "completed_at": "2026-11-09T02:57:58Z"
+        },
+        {
+          "name": "Reserve source-specific observations",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-09T02:57:58Z",
+          "completed_at": "2026-11-09T02:57:58Z"
+        },
+        {
+          "name": "Checkout exact candidate without persistent credentials",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-09T02:57:58Z",
+          "completed_at": "2026-11-09T02:58:43Z"
+        },
+        {
+          "name": "Verify ordered source identity before execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-09T02:58:43Z",
+          "completed_at": "2026-11-09T02:58:46Z"
+        },
+        {
+          "name": "Audit the project boundary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-09T02:58:46Z",
+          "completed_at": "2026-11-09T02:58:46Z"
+        },
+        {
+          "name": "Execute every fixed named Python control exactly once",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 6,
+          "started_at": "2026-11-09T02:58:46Z",
+          "completed_at": "2026-11-09T02:58:47Z"
+        },
+        {
+          "name": "Reproduce the fixed implementation and saved-fixture map",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 7,
+          "started_at": "2026-11-09T02:58:47Z",
+          "completed_at": "2026-11-09T02:58:48Z"
+        },
+        {
+          "name": "Preserve all unknown project quantum inputs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-09T02:58:48Z",
+          "completed_at": "2026-11-09T02:58:48Z"
+        },
+        {
+          "name": "Reproduce explicitly hypothetical component arithmetic",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-09T02:58:48Z",
+          "completed_at": "2026-11-09T02:58:48Z"
+        },
+        {
+          "name": "Require every report to retain the unqualified security boundary",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-11-09T02:58:48Z",
+          "completed_at": "2026-11-09T02:58:48Z"
+        },
+        {
+          "name": "Verify ordered source identity after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-09T02:58:48Z",
+          "completed_at": "2026-11-09T02:58:51Z"
+        },
+        {
+          "name": "Require every stage and retain failed or skipped status",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 12,
+          "started_at": "2026-11-09T02:58:51Z",
+          "completed_at": "2026-11-09T02:58:51Z"
+        },
+        {
+          "name": "Retain source identities reports logs and every failure",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-09T02:58:51Z",
+          "completed_at": "2026-11-09T02:58:52Z"
+        },
+        {
+          "name": "Post Checkout exact candidate without persistent credentials",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-11-09T02:58:52Z",
+          "completed_at": "2026-11-09T02:58:52Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-11-09T02:58:52Z",
+          "completed_at": "2026-11-09T02:58:52Z"
+        }
+      ],
+      "source_before": {
+        "base": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+        "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+        "kind": "prospective-merge",
+        "prospective_merge": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+        "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2485379627,
+        "tracked_entries": 26124,
+        "tracked_worktree_verified": true
+      },
+      "source_after": {
+        "base": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+        "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+        "kind": "prospective-merge",
+        "prospective_merge": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+        "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2485379627,
+        "tracked_entries": 26124,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_equal": true,
+      "ci_status": {
+        "all_required_observations_passed": false,
+        "complete_w1_soundness_qualified": false,
+        "consensus_admission": false,
+        "expected_base": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+        "expected_candidate": "11791e2da79b69322271be2cffe03725165151d1",
+        "expected_source": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+        "failed_or_skipped_stages": [
+          "named_tests",
+          "implementation",
+          "report_scopes"
+        ],
+        "named_test_completion_error": "named-test completion schema, total or scope invalid",
+        "named_test_completion_sha256": null,
+        "named_test_completion_verified": false,
+        "post_quantum_soundness_qualified": false,
+        "pq_signature_qualification_inferred": false,
+        "production_qualified": false,
+        "quantum_work_qualified": false,
+        "required_stages": [
+          "observations",
+          "checkout",
+          "source_before",
+          "preflight",
+          "named_tests",
+          "implementation",
+          "budget_unknown",
+          "budget_hypothetical",
+          "report_scopes",
+          "source_after"
+        ],
+        "schema": "TRNM-W1-QROM-CI-OBSERVATION1",
+        "scope": "Offline construction and saved-fixture mapping with conditional arithmetic. This workflow does not establish proof or quantum security.",
+        "source_identity_error": null,
+        "source_kind": "prospective-merge",
+        "steps": {
+          "budget_hypothetical": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "budget_unknown": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "checkout": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {
+              "commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+              "ref": ""
+            }
+          },
+          "implementation": {
+            "conclusion": "failure",
+            "outcome": "failure",
+            "outputs": {}
+          },
+          "named_tests": {
+            "conclusion": "failure",
+            "outcome": "failure",
+            "outputs": {}
+          },
+          "observations": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "preflight": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "report_scopes": {
+            "conclusion": "skipped",
+            "outcome": "skipped",
+            "outputs": {}
+          },
+          "source_after": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "source_before": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          }
+        },
+        "unconditional_project_security_bits": null
+      },
+      "implementation_refusal": {
+        "result": "INPUT_REJECTED",
+        "reason": "input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+        "qualification": {
+          "post_quantum_soundness_qualified": false,
+          "complete_w1_soundness_qualified": false,
+          "quantum_work_qualified": false,
+          "pq_signature_qualification_inferred": false,
+          "production_qualified": false,
+          "consensus_admission": false,
+          "security_bits_quantum": null
+        }
+      },
+      "named_required": 81,
+      "named_started": 67,
+      "named_successful": 63,
+      "suites": [
+        {
+          "module": "test_w1_control_tree_audit",
+          "required": 28,
+          "started": 28,
+          "tests_run": 28,
+          "success": 28,
+          "failure_ids": [],
+          "error_ids": [],
+          "not_started_ids": [],
+          "skipped": [],
+          "passed": true
+        },
+        {
+          "module": "test_w1_qrom_conditional_budget",
+          "required": 13,
+          "started": 13,
+          "tests_run": 13,
+          "success": 13,
+          "failure_ids": [],
+          "error_ids": [],
+          "not_started_ids": [],
+          "skipped": [],
+          "passed": true
+        },
+        {
+          "module": "test_w1_qrom_implementation_audit",
+          "required": 19,
+          "started": 19,
+          "tests_run": 19,
+          "success": 15,
+          "failure_ids": [
+            "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_seal_word_is_rejected_by_full_artifact_identity",
+            "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_source_snapshot_is_refused"
+          ],
+          "error_ids": [
+            "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_actual_saved_v2_mapping_keeps_all_security_claims_unqualified",
+            "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_import_cache_and_search_path_cannot_replace_checked_helper_bytes"
+          ],
+          "not_started_ids": [],
+          "skipped": [],
+          "passed": false
+        },
+        {
+          "module": "test_w1_fri_transcript_audit",
+          "required": 7,
+          "started": 7,
+          "tests_run": 7,
+          "success": 7,
+          "failure_ids": [],
+          "error_ids": [],
+          "not_started_ids": [],
+          "skipped": [],
+          "passed": true
+        },
+        {
+          "module": "test_w1_qrom_workflow_gate",
+          "required": 14,
+          "started": 0,
+          "tests_run": 0,
+          "success": 0,
+          "failure_ids": [],
+          "error_ids": [
+            "setUpClass (test_w1_qrom_workflow_gate.WorkflowGateTests)"
+          ],
+          "not_started_ids": [
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_actual_unknown_and_hypothetical_reports_pass_the_scope_gate",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_hypothetical_report_rejects_inexact_fraction_input",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_hypothetical_report_rejects_wrong_fractions_and_numeric_booleans",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_hypothetical_report_requires_nonnull_component_results",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_named_import_system_exit_zero_is_rejected",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_named_load_tests_system_exit_zero_is_rejected",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_named_missing_duplicate_and_skipped_controls_are_rejected",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_named_roster_executes_exactly_once_without_recursing_into_real_suites",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_status_independently_rechecks_named_ids_and_boolean_scope",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_status_rejects_exit_zero_without_named_completion",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_status_requires_every_step_outcome_and_conclusion",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_unknown_report_cannot_infer_derived_values_or_comparisons",
+            "test_w1_qrom_workflow_gate.WorkflowGateTests.test_unknown_report_requires_all_input_and_component_names"
+          ],
+          "skipped": [],
+          "passed": false
+        }
+      ],
+      "python_version": "Python 3.12.3",
+      "decoded_log_path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/w1-qrom-run42553751987/job-128954797102.decoded.log",
+      "decoded_log_bytes": 208999,
+      "decoded_log_sha256": "c487b965766013d11ef7172c288c38bae4330027af89044c3be65470d4054ef9",
+      "environment_resource_failure_markers": []
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 13646975317,
+      "name": "w1-qrom-implementation-prospective-merge-x64-b472c21f7b14ba27bb87d9d2f52d299365ed3145-1",
+      "path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/w1-qrom-run42553751987/qrom-117-merge-run42553751987.zip",
+      "bytes": 22388,
+      "sha256": "a05b9ae9ea9a2b01187072c587daae8ecb0f417abc1cf9f76becf41bb9138dbf",
+      "api_size_in_bytes": 22388,
+      "api_digest": "sha256:a05b9ae9ea9a2b01187072c587daae8ecb0f417abc1cf9f76becf41bb9138dbf",
+      "matches_api_size_and_digest": true
+    },
+    {
+      "id": 13646790968,
+      "name": "w1-qrom-implementation-head-x64-11791e2da79b69322271be2cffe03725165151d1-1",
+      "path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/w1-qrom-run42553751987/qrom-117-head-run42553751987.zip",
+      "bytes": 22155,
+      "sha256": "b0d67297fe26fc4f8d4137f957271a668eda7651655045d52045f644722eed39",
+      "api_size_in_bytes": 22155,
+      "api_digest": "sha256:b0d67297fe26fc4f8d4137f957271a668eda7651655045d52045f644722eed39",
+      "matches_api_size_and_digest": true
+    }
+  ],
+  "failure_input_pin": {
+    "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+    "bytes": 9233,
+    "sha256": "07415e8e3bb53f3e81dd489e4ebda63368170efbe4a217ae6b0dd6cc0af14128"
+  },
+  "historical_contract_source_base": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+  "source_comparison": [
+    {
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+      "unchanged_from_pr_base": true,
+      "base_bytes": 11172,
+      "head_bytes": 11172,
+      "base_sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7",
+      "head_sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7",
+      "head_git_blob": "1b2999ec2efb51b1291e4fac19f55ee0afeb5d75"
+    },
+    {
+      "path": "config/pon/w1-qrom-implementation-v1.json",
+      "unchanged_from_pr_base": true,
+      "base_bytes": 6875,
+      "head_bytes": 6875,
+      "base_sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22",
+      "head_sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22",
+      "head_git_blob": "b8fe1e3f00d171400f57426dc3aa04d7b6faa0ca"
+    },
+    {
+      "path": "scripts/w1_qrom_implementation_audit.py",
+      "unchanged_from_pr_base": true,
+      "base_bytes": 21678,
+      "head_bytes": 21678,
+      "base_sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354",
+      "head_sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354",
+      "head_git_blob": "d345b2f2a397a254b44ab0a38c33083f507e206d"
+    },
+    {
+      "path": "scripts/ci/test_w1_qrom_implementation_audit.py",
+      "unchanged_from_pr_base": true,
+      "base_bytes": 10834,
+      "head_bytes": 10834,
+      "base_sha256": "56cb5f923e3082118ac71fee5ead5dedc8bcf29330320333a3d5a1f39eb0faf2",
+      "head_sha256": "56cb5f923e3082118ac71fee5ead5dedc8bcf29330320333a3d5a1f39eb0faf2",
+      "head_git_blob": "4798472b088c4b4ac4b195f01bba6bea2fc3d92d"
+    },
+    {
+      "path": "scripts/ci/test_w1_qrom_workflow_gate.py",
+      "unchanged_from_pr_base": true,
+      "base_bytes": 18386,
+      "head_bytes": 18386,
+      "base_sha256": "9c787224ef93427688991791016e458f40b03cea2daea62e00569203fcc0ca85",
+      "head_sha256": "9c787224ef93427688991791016e458f40b03cea2daea62e00569203fcc0ca85",
+      "head_git_blob": "99e12db01727543e806c148f20bc31c92c291b6d"
+    },
+    {
+      "path": ".github/workflows/pon-w1-qrom-implementation.yml",
+      "unchanged_from_pr_base": true,
+      "base_bytes": 38772,
+      "head_bytes": 38772,
+      "base_sha256": "e01f7fdc80164b0c7d9874421a2bf44d62602527d9005a392a1c7cdca5f462af",
+      "head_sha256": "e01f7fdc80164b0c7d9874421a2bf44d62602527d9005a392a1c7cdca5f462af",
+      "head_git_blob": "735fb437d579d1cb011199374c7b5c33f7a831b8"
+    },
+    {
+      "path": "scripts/w1_current_source_observation.py",
+      "unchanged_from_pr_base": true,
+      "base_bytes": 12868,
+      "head_bytes": 12868,
+      "base_sha256": "2860dc4d16c642cc57e94964e1e5c23fda5cc71d52ea1d83f6cf1ef87c323567",
+      "head_sha256": "2860dc4d16c642cc57e94964e1e5c23fda5cc71d52ea1d83f6cf1ef87c323567",
+      "head_git_blob": "bfe98a30155bfeb2e8ad209f8ed6ffcfc71f2a6e"
+    },
+    {
+      "path": "docs/security/W1_QROM_CURRENT_SOURCE_OBSERVATION_DESIGN_20261108.md",
+      "unchanged_from_pr_base": true,
+      "base_bytes": 8804,
+      "head_bytes": 8804,
+      "base_sha256": "d03c6f1d7aa3100459525c5d0cdc045d44b7abe10d8eb7ebe8e20fbb010a92b8",
+      "head_sha256": "d03c6f1d7aa3100459525c5d0cdc045d44b7abe10d8eb7ebe8e20fbb010a92b8",
+      "head_git_blob": "5d9e036f8d409c7a0fad4099f4afb51ad15e37a9"
+    }
+  ],
+  "attribution": {
+    "classification": "inherited-fixed-historical-input-scope-refusal",
+    "direct_cause": "Historical project_files pin caps main.rs at 9233 bytes; both PR base e798 and implementation117 carry the same 11172-byte file. bounded_file reads limit+1 and rejects before exact pinned-byte hash comparison.",
+    "new_changes_relation": "Failure input, contract, audit implementation, named tests and workflow are byte-identical to PR base. The direct refusal is not introduced by this PR changed files.",
+    "known_refusal_record": "Unchanged scripts/w1_current_source_observation.py line171 and docs/security/W1_QROM_CURRENT_SOURCE_OBSERVATION_DESIGN_20261108.md lines27-41 explicitly retain this historical refusal and deny original workflow completion.",
+    "resource_failure_evidence": "No ENOSPC, SIGKILL, OOM or timeout failure marker in the two complete decoded logs; actual traces terminate at the fixed input size guard.",
+    "failure_status_preserved": true,
+    "reclassified_as_pass": false,
+    "historical_pins_changed": false,
+    "ci_cancelled_or_restarted": false,
+    "source_changed_by_readback": false,
+    "whole_system_or_quantum_acceptance_granted": false
+  },
+  "retention_scope": "Two original ZIPs validated against API size and digest; all extracted bytes retained. Full GitHub job logs are connector-decoded UTF-8, saved without truncation and separately hashed. No original archive or fixture was executed or modified."
+}

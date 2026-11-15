@@ -1,0 +1,73 @@
+{
+  "schema": "native-test-execution-v1",
+  "source_commit": "469c4d4bb36efb37045d968f35f83cb2c1771933",
+  "source_tree": "383a3cbc8a4a71f27e4f18d7df089b860f302439",
+  "cwd": "/workspace/scratch/abae1861b451/chain-frontier",
+  "worktree_clean_before": false,
+  "worktree_clean_after": false,
+  "test_artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-pon-node#0.1.0",
+    "manifest_path": "/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "target": {
+      "kind": [
+        "lib"
+      ],
+      "crate_types": [
+        "lib"
+      ],
+      "name": "trnm_pon_node",
+      "src_path": "/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "edition": "2021",
+      "doc": true,
+      "doctest": true,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 2,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": true
+    },
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/workspace/scratch/abae1861b451/frontier-target/debug/deps/trnm_pon_node-bc529951eafca1c3"
+    ],
+    "executable": "/workspace/scratch/abae1861b451/frontier-target/debug/deps/trnm_pon_node-bc529951eafca1c3",
+    "fresh": false
+  },
+  "binary_sha256": "b440cf0aba50cc7f7b30257d2245f6968614202142dd785f1be391802a6c4bad",
+  "binary_unchanged": true,
+  "command": [
+    "/workspace/scratch/abae1861b451/frontier-target/debug/deps/trnm_pon_node-bc529951eafca1c3",
+    "store::native_authenticated::",
+    "--include-ignored",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "elapsed_ns": 50023035831,
+  "user_cpu_s": 48.677467,
+  "system_cpu_s": 0.560716,
+  "max_rss_kib": 241112,
+  "native_summaries": [
+    [
+      "ok",
+      "83",
+      "0",
+      "0",
+      "0",
+      "856"
+    ]
+  ],
+  "physical_host_qualification": false,
+  "expected_count": 83,
+  "executed_count": 83,
+  "harness_accepted": true,
+  "performance_or_throughput_claim": false,
+  "stdout.log_sha256": "e891f3157e2215eedc04ee766139aa83f9655a8afdf879980c9bcfd633ea2e46",
+  "stderr.log_sha256": "213c10c2c490c5e4309349ab3ef7e3ae0d029682ee0a4782aa1535301eea60c7"
+}

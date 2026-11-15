@@ -1,0 +1,1876 @@
+{
+  "archive": {
+    "bytes": 327328,
+    "path": "/home/qq/work/chain-cell-storage-convergence-preparations06-package-f2568-20261109/preparations06.tar.xz",
+    "sha256": "56d2380b2618a4c20af146c6885f2a7d6592ba4b457878ac51afba09a25c09e1",
+    "version": "66306:46268858:327328:1794210233599071075:1794210233599071075"
+  },
+  "archive_reopened_and_all_members_verified": true,
+  "cloud_sources_verified_before_after_transfer": true,
+  "created_unix": 1794210233.631422,
+  "cross_host_snapshot_is_not_atomic": true,
+  "direct_source_set_versions_and_bytes_unchanged": true,
+  "excluded_members": [
+    {
+      "bytes": 0,
+      "reason": "Private or binary owner/catalog/arena/database/lock object; only original public JSON/logs from this execution are included.",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/consumer.sqlite-writer-lock-v4"
+    },
+    {
+      "bytes": 44,
+      "reason": "Private or binary owner/catalog/arena/database/lock object; only original public JSON/logs from this execution are included.",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/independent-catalog-anchor.cva3"
+    },
+    {
+      "bytes": 3573,
+      "reason": "Private or binary owner/catalog/arena/database/lock object; only original public JSON/logs from this execution are included.",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/owner-authorization.cpv4"
+    },
+    {
+      "bytes": 24479,
+      "reason": "Private or binary owner/catalog/arena/database/lock object; only original public JSON/logs from this execution are included.",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/owner-content.tcv2"
+    },
+    {
+      "bytes": 537,
+      "reason": "Private or binary owner/catalog/arena/database/lock object; only original public JSON/logs from this execution are included.",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/owner-handoff.chb1"
+    },
+    {
+      "bytes": 0,
+      "reason": "Private or binary owner/catalog/arena/database/lock object; only original public JSON/logs from this execution are included.",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/publisher.sqlite-writer-lock-v4"
+    },
+    {
+      "bytes": 81920,
+      "reason": "Private or binary owner/catalog/arena/database/lock object; only original public JSON/logs from this execution are included.",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/retained/versions.sqlite"
+    },
+    {
+      "bytes": 536870912,
+      "reason": "Private or binary owner/catalog/arena/database/lock object; only original public JSON/logs from this execution are included.",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/retained/objects/payload.arena"
+    },
+    {
+      "bytes": 45056,
+      "reason": "Private or binary owner/catalog/arena/database/lock object; only original public JSON/logs from this execution are included.",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/retained/objects/retention.sqlite"
+    }
+  ],
+  "excluded_scope": [
+    "private Hepta producer/material-audit",
+    "full runtime snapshots",
+    "model and adapter payloads",
+    "binary owner and catalog descriptors",
+    "arenas and databases",
+    "keys and credentials",
+    "bytecode caches",
+    "unfinished exact097-01 gates or future results"
+  ],
+  "format": "USTAR/XZ; regular files only; zero archive ownership/timestamps; original modes",
+  "groups": {
+    "committed-release03": {
+      "bytes": 800942,
+      "members": 5
+    },
+    "isolated-checkout05": {
+      "bytes": 2208,
+      "members": 11
+    },
+    "isolated-checkout06": {
+      "bytes": 2699926,
+      "members": 51
+    },
+    "model-execution-observation-03": {
+      "bytes": 792087,
+      "members": 20
+    },
+    "native-attempt-03": {
+      "bytes": 33893,
+      "members": 11
+    },
+    "provenance": {
+      "bytes": 27384,
+      "members": 3
+    },
+    "python-roster17-preparation": {
+      "bytes": 453218,
+      "members": 34
+    },
+    "sync04": {
+      "bytes": 322,
+      "members": 3
+    }
+  },
+  "member_count": 138,
+  "members": [
+    {
+      "bytes": 3011,
+      "mode": 384,
+      "path": "committed-release03/build-sealed-research-example.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-committed-release03/build-sealed-research-example.stderr",
+        "version_after": "66306:52470654:3011:1794209573389681971:1794209573389681971",
+        "version_before": "66306:52470654:3011:1794209573389681971:1794209573389681971"
+      },
+      "sha256": "ad191d00757fa9c2d39002bda4be17c3e7f4405063f5b463664090a34c607dac"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "committed-release03/build-sealed-research-example.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-committed-release03/build-sealed-research-example.stdout",
+        "version_after": "66306:52470652:0:1794209525463425633:1794209525463425633",
+        "version_before": "66306:52470652:0:1794209525463425633:1794209525463425633"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 387930,
+      "mode": 384,
+      "path": "committed-release03/source-after.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-committed-release03/source-after.json",
+        "version_after": "66306:52470653:387930:1794209573499430309:1794209573499430309",
+        "version_before": "66306:52470653:387930:1794209573499430309:1794209573499430309"
+      },
+      "sha256": "6742777089d44cd2daa39ef13bb39730be00c20446aa14f872a93b48cc58e606"
+    },
+    {
+      "bytes": 387930,
+      "mode": 384,
+      "path": "committed-release03/source-before.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-committed-release03/source-before.json",
+        "version_after": "66306:52470649:387930:1794209525463180202:1794209525463180202",
+        "version_before": "66306:52470649:387930:1794209525463180202:1794209525463180202"
+      },
+      "sha256": "6742777089d44cd2daa39ef13bb39730be00c20446aa14f872a93b48cc58e606"
+    },
+    {
+      "bytes": 22071,
+      "mode": 384,
+      "path": "committed-release03/summary.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-committed-release03/summary.json",
+        "version_after": "66306:52470803:22071:1794209573569085845:1794209573569085845",
+        "version_before": "66306:52470803:22071:1794209573569085845:1794209573569085845"
+      },
+      "sha256": "1a7d0c84197426be307bbef57f01ed11e9486e54417f56e959d2a658d4dca4e8"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout05/old-before-branch.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout05/old-before-branch.stderr",
+        "version_after": "66306:52863623:0:1794209272276940914:1794209272276940914",
+        "version_before": "66306:52863623:0:1794209272276940914:1794209272276940914"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 50,
+      "mode": 384,
+      "path": "isolated-checkout05/old-before-branch.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout05/old-before-branch.stdout",
+        "version_after": "66306:52863622:50:1794209272276940914:1794209272276940914",
+        "version_before": "66306:52863622:50:1794209272276940914:1794209272276940914"
+      },
+      "sha256": "5722f9e61df4b647cf0ec6b77903aaddc138f3af524ae2d52a415259db1487c9"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout05/old-before-head.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout05/old-before-head.stderr",
+        "version_after": "66306:52863619:0:1794209272274816098:1794209272274816098",
+        "version_before": "66306:52863619:0:1794209272274816098:1794209272274816098"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "isolated-checkout05/old-before-head.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout05/old-before-head.stdout",
+        "version_after": "66306:52863618:41:1794209272274816098:1794209272274816098",
+        "version_before": "66306:52863618:41:1794209272274816098:1794209272274816098"
+      },
+      "sha256": "24306674731824e90866cbd473fd636c26fb3b192098842acc3b14f10d33ff96"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout05/old-before-stash.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout05/old-before-stash.stderr",
+        "version_after": "66306:52863627:0:1794209272281972338:1794209272281972338",
+        "version_before": "66306:52863627:0:1794209272281972338:1794209272281972338"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "isolated-checkout05/old-before-stash.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout05/old-before-stash.stdout",
+        "version_after": "66306:52863626:41:1794209272281972338:1794209272281972338",
+        "version_before": "66306:52863626:41:1794209272281972338:1794209272281972338"
+      },
+      "sha256": "79a0a9a0507899cb9870e81deab45e06d4adfd77988b2a418810b4eb980233de"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout05/old-before-status.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout05/old-before-status.stderr",
+        "version_after": "66306:52863625:0:1794209272280988348:1794209272280988348",
+        "version_before": "66306:52863625:0:1794209272280988348:1794209272280988348"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout05/old-before-status.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout05/old-before-status.stdout",
+        "version_after": "66306:52863624:0:1794209272280988348:1794209272280988348",
+        "version_before": "66306:52863624:0:1794209272280988348:1794209272280988348"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout05/old-before-tree.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout05/old-before-tree.stderr",
+        "version_after": "66306:52863621:0:1794209272276127243:1794209272276127243",
+        "version_before": "66306:52863621:0:1794209272276127243:1794209272276127243"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "isolated-checkout05/old-before-tree.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout05/old-before-tree.stdout",
+        "version_after": "66306:52863620:41:1794209272276127243:1794209272276127243",
+        "version_before": "66306:52863620:41:1794209272276127243:1794209272276127243"
+      },
+      "sha256": "fe5cda1ffff9935b528ba8b08a1a6c3a92c12885900d76471a115338bc3ac9eb"
+    },
+    {
+      "bytes": 2035,
+      "mode": 384,
+      "path": "isolated-checkout05/summary.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout05/summary.json",
+        "version_after": "66306:52863628:2035:1794209272282118883:1794209272282118883",
+        "version_before": "66306:52863628:2035:1794209272282118883:1794209272282118883"
+      },
+      "sha256": "1ec6a05720c1c537687c0050c8d175d908a43e6e4605146fca2acb69790118fb"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/ancestor.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/ancestor.stderr",
+        "version_after": "66306:52864089:0:1794209427270283724:1794209427270283724",
+        "version_before": "66306:52864089:0:1794209427270283724:1794209427270283724"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/ancestor.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/ancestor.stdout",
+        "version_after": "66306:52864088:0:1794209427270283724:1794209427270283724",
+        "version_before": "66306:52864088:0:1794209427270283724:1794209427270283724"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/canonical-origin.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/canonical-origin.stderr",
+        "version_after": "66306:52863684:0:1794209415067872032:1794209415067872032",
+        "version_before": "66306:52863684:0:1794209415067872032:1794209415067872032"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/canonical-origin.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/canonical-origin.stdout",
+        "version_after": "66306:52863668:0:1794209415067872032:1794209415067872032",
+        "version_before": "66306:52863668:0:1794209415067872032:1794209415067872032"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 63,
+      "mode": 384,
+      "path": "isolated-checkout06/checkout-original.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/checkout-original.stderr",
+        "version_after": "66306:52864076:63:1794209420806245640:1794209420806245640",
+        "version_before": "66306:52864076:63:1794209420806245640:1794209420806245640"
+      },
+      "sha256": "54ec69ed8a16971bf01a623e9f4a2e5f1ba2dedae0a5d391bd42e14cb77e39ea"
+    },
+    {
+      "bytes": 91,
+      "mode": 384,
+      "path": "isolated-checkout06/checkout-original.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/checkout-original.stdout",
+        "version_after": "66306:52863674:91:1794209420806198481:1794209420806198481",
+        "version_before": "66306:52863674:91:1794209420806198481:1794209420806198481"
+      },
+      "sha256": "7e31c1b2aa1968a288b88b27e34fc1ba56e5d439588fd05147b7adbaa05df653"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/clean-after.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/clean-after.stderr",
+        "version_after": "66306:52864100:0:1794209427476275765:1794209427476275765",
+        "version_before": "66306:52864100:0:1794209427476275765:1794209427476275765"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/clean-after.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/clean-after.stdout",
+        "version_after": "66306:52864091:0:1794209427476275765:1794209427476275765",
+        "version_before": "66306:52864091:0:1794209427476275765:1794209427476275765"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/clean-initial.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/clean-initial.stderr",
+        "version_after": "66306:52864082:0:1794209420963527541:1794209420963527541",
+        "version_before": "66306:52864082:0:1794209420963527541:1794209420963527541"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/clean-initial.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/clean-initial.stdout",
+        "version_after": "66306:52863685:0:1794209420963527541:1794209420963527541",
+        "version_before": "66306:52863685:0:1794209420963527541:1794209420963527541"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 87,
+      "mode": 384,
+      "path": "isolated-checkout06/clone.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/clone.stderr",
+        "version_after": "66306:52863664:87:1794209415067872032:1794209415067872032",
+        "version_before": "66306:52863664:87:1794209415067872032:1794209415067872032"
+      },
+      "sha256": "af207157651344dd9e38c92c7ecf8c78abe402b4688797fa34e315b38539f1da"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/clone.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/clone.stdout",
+        "version_after": "66306:52863661:0:1794209415066755676:1794209415066755676",
+        "version_before": "66306:52863661:0:1794209415066755676:1794209415066755676"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/fast-forward.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/fast-forward.stderr",
+        "version_after": "66306:52864081:0:1794209427408113395:1794209427408113395",
+        "version_before": "66306:52864081:0:1794209427408113395:1794209427408113395"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2465,
+      "mode": 384,
+      "path": "isolated-checkout06/fast-forward.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/fast-forward.stdout",
+        "version_after": "66306:52863677:2465:1794209427408113395:1794209427408113395",
+        "version_before": "66306:52863677:2465:1794209427408113395:1794209427408113395"
+      },
+      "sha256": "06cdc5c49c8af20e8832e0f936ff25e25c637ae9b93586074e3c5a16ffd8923b"
+    },
+    {
+      "bytes": 290,
+      "mode": 384,
+      "path": "isolated-checkout06/fetch.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/fetch.stderr",
+        "version_after": "66306:52864085:290:1794209427268640961:1794209427268640961",
+        "version_before": "66306:52864085:290:1794209427268640961:1794209427268640961"
+      },
+      "sha256": "e22c1e170089febcb799f35ef80babc70cb658edcce311643425ed33237af5e1"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/fetch.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/fetch.stdout",
+        "version_after": "66306:52864084:0:1794209427267283840:1794209427267283840",
+        "version_before": "66306:52864084:0:1794209427267283840:1794209427267283840"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/fetched.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/fetched.stderr",
+        "version_after": "66306:52864087:0:1794209427269636104:1794209427269636104",
+        "version_before": "66306:52864087:0:1794209427269636104:1794209427269636104"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "isolated-checkout06/fetched.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/fetched.stdout",
+        "version_after": "66306:52864086:41:1794209427269636104:1794209427269636104",
+        "version_before": "66306:52864086:41:1794209427269636104:1794209427269636104"
+      },
+      "sha256": "29f4e92a9ff88f0f1e8d0c4380d63c6b2f4a337ba0ad5d54d41ef12bf7d3a6f2"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/head-after.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/head-after.stderr",
+        "version_after": "66306:52864096:0:1794209427436492067:1794209427436492067",
+        "version_before": "66306:52864096:0:1794209427436492067:1794209427436492067"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "isolated-checkout06/head-after.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/head-after.stdout",
+        "version_after": "66306:52864095:41:1794209427436492067:1794209427436492067",
+        "version_before": "66306:52864095:41:1794209427436492067:1794209427436492067"
+      },
+      "sha256": "29f4e92a9ff88f0f1e8d0c4380d63c6b2f4a337ba0ad5d54d41ef12bf7d3a6f2"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/head-initial.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/head-initial.stderr",
+        "version_after": "66306:52864080:0:1794209420834872852:1794209420834872852",
+        "version_before": "66306:52864080:0:1794209420834872852:1794209420834872852"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "isolated-checkout06/head-initial.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/head-initial.stdout",
+        "version_after": "66306:52864079:41:1794209420834872852:1794209420834872852",
+        "version_before": "66306:52864079:41:1794209420834872852:1794209420834872852"
+      },
+      "sha256": "24306674731824e90866cbd473fd636c26fb3b192098842acc3b14f10d33ff96"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/index-flags.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/index-flags.stderr",
+        "version_after": "66306:52864102:0:1794209427483306989:1794209427483306989",
+        "version_before": "66306:52864102:0:1794209427483306989:1794209427483306989"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2683980,
+      "mode": 384,
+      "path": "isolated-checkout06/index-flags.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/index-flags.stdout",
+        "version_after": "66306:52864101:2683980:1794209427483306989:1794209427483306989",
+        "version_before": "66306:52864101:2683980:1794209427483306989:1794209427483306989"
+      },
+      "sha256": "6b5ed29051f06fa1a541846e25bc6348a83e813f3928f113be816c4c2a69be53"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/old-after-branch.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-after-branch.stderr",
+        "version_after": "66306:52864108:0:1794209427493292940:1794209427493292940",
+        "version_before": "66306:52864108:0:1794209427493292940:1794209427493292940"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 50,
+      "mode": 384,
+      "path": "isolated-checkout06/old-after-branch.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-after-branch.stdout",
+        "version_after": "66306:52864107:50:1794209427493292940:1794209427493292940",
+        "version_before": "66306:52864107:50:1794209427493292940:1794209427493292940"
+      },
+      "sha256": "5722f9e61df4b647cf0ec6b77903aaddc138f3af524ae2d52a415259db1487c9"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/old-after-head.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-after-head.stderr",
+        "version_after": "66306:52864104:0:1794209427490537235:1794209427490537235",
+        "version_before": "66306:52864104:0:1794209427490537235:1794209427490537235"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "isolated-checkout06/old-after-head.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-after-head.stdout",
+        "version_after": "66306:52864103:41:1794209427490537235:1794209427490537235",
+        "version_before": "66306:52864103:41:1794209427490537235:1794209427490537235"
+      },
+      "sha256": "24306674731824e90866cbd473fd636c26fb3b192098842acc3b14f10d33ff96"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/old-after-stash.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-after-stash.stderr",
+        "version_after": "66306:52864112:0:1794209427498799161:1794209427498799161",
+        "version_before": "66306:52864112:0:1794209427498799161:1794209427498799161"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "isolated-checkout06/old-after-stash.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-after-stash.stdout",
+        "version_after": "66306:52864111:41:1794209427498799161:1794209427498799161",
+        "version_before": "66306:52864111:41:1794209427498799161:1794209427498799161"
+      },
+      "sha256": "79a0a9a0507899cb9870e81deab45e06d4adfd77988b2a418810b4eb980233de"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/old-after-status.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-after-status.stderr",
+        "version_after": "66306:52864110:0:1794209427496274992:1794209427496274992",
+        "version_before": "66306:52864110:0:1794209427496274992:1794209427496274992"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/old-after-status.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-after-status.stdout",
+        "version_after": "66306:52864109:0:1794209427496274992:1794209427496274992",
+        "version_before": "66306:52864109:0:1794209427496274992:1794209427496274992"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/old-after-tree.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-after-tree.stderr",
+        "version_after": "66306:52864106:0:1794209427492063637:1794209427492063637",
+        "version_before": "66306:52864106:0:1794209427492063637:1794209427492063637"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "isolated-checkout06/old-after-tree.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-after-tree.stdout",
+        "version_after": "66306:52864105:41:1794209427492063637:1794209427492063637",
+        "version_before": "66306:52864105:41:1794209427492063637:1794209427492063637"
+      },
+      "sha256": "fe5cda1ffff9935b528ba8b08a1a6c3a92c12885900d76471a115338bc3ac9eb"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/old-before-branch.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-before-branch.stderr",
+        "version_after": "66306:52863635:0:1794209400704720120:1794209400704720120",
+        "version_before": "66306:52863635:0:1794209400704720120:1794209400704720120"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 50,
+      "mode": 384,
+      "path": "isolated-checkout06/old-before-branch.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-before-branch.stdout",
+        "version_after": "66306:52863634:50:1794209400704720120:1794209400704720120",
+        "version_before": "66306:52863634:50:1794209400704720120:1794209400704720120"
+      },
+      "sha256": "5722f9e61df4b647cf0ec6b77903aaddc138f3af524ae2d52a415259db1487c9"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/old-before-head.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-before-head.stderr",
+        "version_after": "66306:52863631:0:1794209400703339633:1794209400703339633",
+        "version_before": "66306:52863631:0:1794209400703339633:1794209400703339633"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "isolated-checkout06/old-before-head.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-before-head.stdout",
+        "version_after": "66306:52863630:41:1794209400703339633:1794209400703339633",
+        "version_before": "66306:52863630:41:1794209400703339633:1794209400703339633"
+      },
+      "sha256": "24306674731824e90866cbd473fd636c26fb3b192098842acc3b14f10d33ff96"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/old-before-stash.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-before-stash.stderr",
+        "version_after": "66306:52863639:0:1794209400710316387:1794209400710316387",
+        "version_before": "66306:52863639:0:1794209400710316387:1794209400710316387"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "isolated-checkout06/old-before-stash.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-before-stash.stdout",
+        "version_after": "66306:52863638:41:1794209400710316387:1794209400710316387",
+        "version_before": "66306:52863638:41:1794209400710316387:1794209400710316387"
+      },
+      "sha256": "79a0a9a0507899cb9870e81deab45e06d4adfd77988b2a418810b4eb980233de"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/old-before-status.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-before-status.stderr",
+        "version_after": "66306:52863637:0:1794209400708311867:1794209400708311867",
+        "version_before": "66306:52863637:0:1794209400708311867:1794209400708311867"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/old-before-status.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-before-status.stdout",
+        "version_after": "66306:52863636:0:1794209400708311867:1794209400708311867",
+        "version_before": "66306:52863636:0:1794209400708311867:1794209400708311867"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/old-before-tree.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-before-tree.stderr",
+        "version_after": "66306:52863633:0:1794209400704153942:1794209400704153942",
+        "version_before": "66306:52863633:0:1794209400704153942:1794209400704153942"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "isolated-checkout06/old-before-tree.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/old-before-tree.stdout",
+        "version_after": "66306:52863632:41:1794209400704153942:1794209400704153942",
+        "version_before": "66306:52863632:41:1794209400704153942:1794209400704153942"
+      },
+      "sha256": "fe5cda1ffff9935b528ba8b08a1a6c3a92c12885900d76471a115338bc3ac9eb"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/preflight-after.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/preflight-after.stderr",
+        "version_after": "66306:52864094:0:1794209427434883448:1794209427434883448",
+        "version_before": "66306:52864094:0:1794209427434883448:1794209427434883448"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 180,
+      "mode": 384,
+      "path": "isolated-checkout06/preflight-after.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/preflight-after.stdout",
+        "version_after": "66306:52864093:180:1794209427434883448:1794209427434883448",
+        "version_before": "66306:52864093:180:1794209427434883448:1794209427434883448"
+      },
+      "sha256": "579c1abf6dbb49074700e3f1d25d6c75bda18b52cf89e838dcabb885b04e0394"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/preflight-before-fetch.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/preflight-before-fetch.stderr",
+        "version_after": "66306:52864078:0:1794209420833039041:1794209420833039041",
+        "version_before": "66306:52864078:0:1794209420833039041:1794209420833039041"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 180,
+      "mode": 384,
+      "path": "isolated-checkout06/preflight-before-fetch.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/preflight-before-fetch.stdout",
+        "version_after": "66306:52864077:180:1794209420833039041:1794209420833039041",
+        "version_before": "66306:52864077:180:1794209420833039041:1794209420833039041"
+      },
+      "sha256": "579c1abf6dbb49074700e3f1d25d6c75bda18b52cf89e838dcabb885b04e0394"
+    },
+    {
+      "bytes": 12080,
+      "mode": 384,
+      "path": "isolated-checkout06/summary.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/summary.json",
+        "version_after": "66306:52864114:12080:1794209427499672908:1794209427499672908",
+        "version_before": "66306:52864114:12080:1794209427499672908:1794209427499672908"
+      },
+      "sha256": "0c44320786f95a443ed8a0520cdf8a5b944ae2d00ceafcfa0846d924c8e2aecb"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "isolated-checkout06/tree-after.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/tree-after.stderr",
+        "version_after": "66306:52864098:0:1794209427437936642:1794209427437936642",
+        "version_before": "66306:52864098:0:1794209427437936642:1794209427437936642"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "isolated-checkout06/tree-after.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-isolated-checkout06/tree-after.stdout",
+        "version_after": "66306:52864097:41:1794209427437936642:1794209427437936642",
+        "version_before": "66306:52864097:41:1794209427437936642:1794209427437936642"
+      },
+      "sha256": "99af2ce24492b2f88476e6fd65b2dfc99637c18a143b8998b6e83ce515be71ff"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-03/head-after.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/head-after.stderr",
+        "version_after": "66306:87960992:0:1794209669059412956:1794209669059412956",
+        "version_before": "66306:87960992:0:1794209669059412956:1794209669059412956"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "model-execution-observation-03/head-after.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/head-after.stdout",
+        "version_after": "66306:87960984:41:1794209669059412956:1794209669059412956",
+        "version_before": "66306:87960984:41:1794209669059412956:1794209669059412956"
+      },
+      "sha256": "29f4e92a9ff88f0f1e8d0c4380d63c6b2f4a337ba0ad5d54d41ef12bf7d3a6f2"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-03/head.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/head.stderr",
+        "version_after": "66306:87960947:0:1794209651312659076:1794209651312659076",
+        "version_before": "66306:87960947:0:1794209651312659076:1794209651312659076"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "model-execution-observation-03/head.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/head.stdout",
+        "version_after": "66306:87960946:41:1794209651312659076:1794209651312659076",
+        "version_before": "66306:87960946:41:1794209651312659076:1794209651312659076"
+      },
+      "sha256": "29f4e92a9ff88f0f1e8d0c4380d63c6b2f4a337ba0ad5d54d41ef12bf7d3a6f2"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-03/native.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/native.stderr",
+        "version_after": "66306:87960956:0:1794209651407144157:1794209651407144157",
+        "version_before": "66306:87960956:0:1794209651407144157:1794209651407144157"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 5212,
+      "mode": 384,
+      "path": "model-execution-observation-03/native.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/native.stdout",
+        "version_after": "66306:87960955:5212:1794209668958059869:1794209668958059869",
+        "version_before": "66306:87960955:5212:1794209668958059869:1794209668958059869"
+      },
+      "sha256": "6f3e8e5b898d9dcc33e053879f1aa3abf46f66ae70dfd62de2ec392eb891b577"
+    },
+    {
+      "bytes": 2522,
+      "mode": 384,
+      "path": "model-execution-observation-03/observation.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/observation.json",
+        "version_after": "66306:87960995:2522:1794209669061008437:1794209669061008437",
+        "version_before": "66306:87960995:2522:1794209669061008437:1794209669061008437"
+      },
+      "sha256": "d31725b6bd959abea325c11fd2cecac3f43c4467de1ece4a8201debb945a44f2"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-03/preflight.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/preflight.stderr",
+        "version_after": "66306:87960945:0:1794209651311663373:1794209651311663373",
+        "version_before": "66306:87960945:0:1794209651311663373:1794209651311663373"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 180,
+      "mode": 384,
+      "path": "model-execution-observation-03/preflight.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/preflight.stdout",
+        "version_after": "66306:87960944:180:1794209651311663373:1794209651311663373",
+        "version_before": "66306:87960944:180:1794209651311663373:1794209651311663373"
+      },
+      "sha256": "579c1abf6dbb49074700e3f1d25d6c75bda18b52cf89e838dcabb885b04e0394"
+    },
+    {
+      "bytes": 387930,
+      "mode": 384,
+      "path": "model-execution-observation-03/source-after.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/source-after.json",
+        "version_after": "66306:87960961:387930:1794209669018845910:1794209669018845910",
+        "version_before": "66306:87960961:387930:1794209669018845910:1794209669018845910"
+      },
+      "sha256": "6742777089d44cd2daa39ef13bb39730be00c20446aa14f872a93b48cc58e606"
+    },
+    {
+      "bytes": 387930,
+      "mode": 384,
+      "path": "model-execution-observation-03/source-before.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/source-before.json",
+        "version_after": "66306:87960952:387930:1794209651407009012:1794209651407009012",
+        "version_before": "66306:87960952:387930:1794209651407009012:1794209651407009012"
+      },
+      "sha256": "6742777089d44cd2daa39ef13bb39730be00c20446aa14f872a93b48cc58e606"
+    },
+    {
+      "bytes": 8149,
+      "mode": 384,
+      "path": "model-execution-observation-03/source-inputs.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/source-inputs.json",
+        "version_after": "66306:87960953:8149:1794209651407101629:1794209651407101629",
+        "version_before": "66306:87960953:8149:1794209651407101629:1794209651407101629"
+      },
+      "sha256": "e509695eb9ad60320ea1ed75efa35b28d254bcd9ca868153bd5f8869fb269280"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-03/status-after.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/status-after.stderr",
+        "version_after": "66306:87960967:0:1794209669058056093:1794209669058056093",
+        "version_before": "66306:87960967:0:1794209669058056093:1794209669058056093"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-03/status-after.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/status-after.stdout",
+        "version_after": "66306:87960962:0:1794209669058056093:1794209669058056093",
+        "version_before": "66306:87960962:0:1794209669058056093:1794209669058056093"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-03/status-before.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/status-before.stderr",
+        "version_after": "66306:87960951:0:1794209651342725367:1794209651342725367",
+        "version_before": "66306:87960951:0:1794209651342725367:1794209651342725367"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-03/status-before.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/status-before.stdout",
+        "version_after": "66306:87960950:0:1794209651342725367:1794209651342725367",
+        "version_before": "66306:87960950:0:1794209651342725367:1794209651342725367"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-03/tree-after.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/tree-after.stderr",
+        "version_after": "66306:87960994:0:1794209669060861252:1794209669060861252",
+        "version_before": "66306:87960994:0:1794209669060861252:1794209669060861252"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "model-execution-observation-03/tree-after.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/tree-after.stdout",
+        "version_after": "66306:87960993:41:1794209669060861252:1794209669060861252",
+        "version_before": "66306:87960993:41:1794209669060861252:1794209669060861252"
+      },
+      "sha256": "99af2ce24492b2f88476e6fd65b2dfc99637c18a143b8998b6e83ce515be71ff"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-03/tree.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/tree.stderr",
+        "version_after": "66306:87960949:0:1794209651313993786:1794209651313993786",
+        "version_before": "66306:87960949:0:1794209651313993786:1794209651313993786"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "model-execution-observation-03/tree.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/tree.stdout",
+        "version_after": "66306:87960948:41:1794209651313993786:1794209651313993786",
+        "version_before": "66306:87960948:41:1794209651313993786:1794209651313993786"
+      },
+      "sha256": "99af2ce24492b2f88476e6fd65b2dfc99637c18a143b8998b6e83ce515be71ff"
+    },
+    {
+      "bytes": 3623,
+      "mode": 384,
+      "path": "native-attempt-03/independent-execution-inputs.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/independent-execution-inputs.json",
+        "version_after": "66306:87960970:3623:1794209656982512200:1794209656982512200",
+        "version_before": "66306:87960970:3623:1794209656982512200:1794209656982512200"
+      },
+      "sha256": "65a93569cffdea68684feba44f6092d56066c8c2bf862cb724f36ae1939cc062"
+    },
+    {
+      "bytes": 7635,
+      "mode": 384,
+      "path": "native-attempt-03/native-result.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/native-result.json",
+        "version_after": "66306:87960960:7635:1794209668956059944:1794209668956059944",
+        "version_before": "66306:87960960:7635:1794209668956059944:1794209668956059944"
+      },
+      "sha256": "964ffaeff8241c82c064015f95948cfa5e51c5e77a87106b3b551ed658202408"
+    },
+    {
+      "bytes": 2441,
+      "mode": 384,
+      "path": "native-attempt-03/next-use-observations.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/next-use-observations.json",
+        "version_after": "66306:87960989:2441:1794209668899871443:1794209668903061945",
+        "version_before": "66306:87960989:2441:1794209668899871443:1794209668903061945"
+      },
+      "sha256": "3a00a925027c78666021781e9a9755422ef1d4876e2c3f6a0a79178d2c556f17"
+    },
+    {
+      "bytes": 3535,
+      "mode": 384,
+      "path": "native-attempt-03/next-use-result.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/next-use-result.json",
+        "version_after": "66306:87960990:3535:1794209668903989440:1794209668904061907",
+        "version_before": "66306:87960990:3535:1794209668903989440:1794209668904061907"
+      },
+      "sha256": "78ad1e238af79051565994a7202bfaad7569f238305852f0b397088a7d0e7407"
+    },
+    {
+      "bytes": 8149,
+      "mode": 384,
+      "path": "native-attempt-03/original-source-inputs.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/original-source-inputs.json",
+        "version_after": "66306:87960958:8149:1794209651407722910:1794209651407722910",
+        "version_before": "66306:87960958:8149:1794209651407722910:1794209651407722910"
+      },
+      "sha256": "e509695eb9ad60320ea1ed75efa35b28d254bcd9ca868153bd5f8869fb269280"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "native-attempt-03/supervisor.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/supervisor.stderr",
+        "version_after": "66306:87960973:0:1794209656983512162:1794209656983512162",
+        "version_before": "66306:87960973:0:1794209656983512162:1794209656983512162"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "native-attempt-03/supervisor.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/supervisor.stdout",
+        "version_after": "66306:87960971:0:1794209656983512162:1794209656983512162",
+        "version_before": "66306:87960971:0:1794209656983512162:1794209656983512162"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1428,
+      "mode": 384,
+      "path": "native-attempt-03/worker/cost-events.jsonl",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/worker/cost-events.jsonl",
+        "version_after": "66306:87960987:1428:1794209667763104985:1794209667763104985",
+        "version_before": "66306:87960987:1428:1794209667763104985:1794209667763104985"
+      },
+      "sha256": "dabf55569c9cf6676954d7341b0c557d873e7fe4530c541cfec08ea17abb731d"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "native-attempt-03/worker/process.log",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/worker/process.log",
+        "version_after": "66306:87960986:0:1794209661003360280:1794209661003360280",
+        "version_before": "66306:87960986:0:1794209661003360280:1794209661003360280"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 4247,
+      "mode": 384,
+      "path": "native-attempt-03/worker/ready.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/worker/ready.json",
+        "version_after": "66306:87960991:4247:1794209668141794939:1794209668145090563",
+        "version_before": "66306:87960991:4247:1794209668141794939:1794209668145090563"
+      },
+      "sha256": "da866164d67cf4ec0e59bc11df2e2636d3c548706713f7dd40030839b76bc0cb"
+    },
+    {
+      "bytes": 2835,
+      "mode": 384,
+      "path": "native-attempt-03/worker/supervisor.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03/worker/supervisor.json",
+        "version_after": "66306:87960988:2835:1794209668899712579:1794209668899712579",
+        "version_before": "66306:87960988:2835:1794209668899712579:1794209668899712579"
+      },
+      "sha256": "51b9179516aa05079f3d582fa18e88e7ed92e552c786a75c38dd04990db72d52"
+    },
+    {
+      "bytes": 5412,
+      "mode": 384,
+      "path": "provenance/committed-model-attempt03-native02.py",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-committed-model-attempt03-native02.py",
+        "version_after": "66306:46179435:5412:1794209409702933927:1794209409702963333",
+        "version_before": "66306:46179435:5412:1794209409702933927:1794209409702963333"
+      },
+      "sha256": "98176fe45b074b0c2da9a868b5fcdc0442bcef7aba4926e37fb03299635a34b2"
+    },
+    {
+      "bytes": 6232,
+      "mode": 384,
+      "path": "provenance/committed-release-build03-native02.py",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-committed-release-build03-native02.py",
+        "version_after": "66306:46179431:6232:1794209407625378661:1794209407626043778",
+        "version_before": "66306:46179431:6232:1794209407625378661:1794209407626043778"
+      },
+      "sha256": "1aeeac13f1556d564e1e8f4b6abceeafdb30f43503aeb77384218c3ecdbd1115"
+    },
+    {
+      "bytes": 15740,
+      "mode": 384,
+      "path": "provenance/python-roster17-original-members.json",
+      "provenance": {
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/preparations06-roster17-transfer/transfer.members.json"
+      },
+      "sha256": "e289ffc0e8919b95c9904181db93302be72cede2fa6424b5c467daad0932cc6d"
+    },
+    {
+      "bytes": 5200,
+      "mode": 420,
+      "path": "python-roster17-preparation/actual24-readback-verification.json",
+      "provenance": {
+        "captured_version": "27:840811:5200:1794207841768687408:1794207841768687408",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/actual24-readback-verification.json",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "f331f2ddc6f75bf89c3ba5b77823df36d5c9f71e47c8935433b0905465923063"
+    },
+    {
+      "bytes": 4701,
+      "mode": 420,
+      "path": "python-roster17-preparation/actual24/fixed24.stderr",
+      "provenance": {
+        "captured_version": "27:840809:4701:1794207841768054704:1794207841768054704",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/actual24/fixed24.stderr",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "c00ce14163f0785a3c646d6e09085f27059d4b06b99c5f49ca4d153f2a814f41"
+    },
+    {
+      "bytes": 0,
+      "mode": 420,
+      "path": "python-roster17-preparation/actual24/fixed24.stdout",
+      "provenance": {
+        "captured_version": "27:840810:0:1794207841768054704:1794207841768054704",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/actual24/fixed24.stdout",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 12656,
+      "mode": 420,
+      "path": "python-roster17-preparation/actual24/receipt.json",
+      "provenance": {
+        "captured_version": "27:840808:12656:1794207841767985903:1794207841767985903",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/actual24/receipt.json",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "cc1c24ff98e9f066d6f1aa0cc4a49d742cacde3b3fc4f794d2c9e09c5c19ce81"
+    },
+    {
+      "bytes": 3638,
+      "mode": 420,
+      "path": "python-roster17-preparation/after-ci-controls.stderr",
+      "provenance": {
+        "captured_version": "27:840806:3638:1794207841763139394:1794207841763139394",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/after-ci-controls.stderr",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "0d1584f3cde61c592ba7dd8c7040b2082660ca5c670fb92d8522d8bdb54a5619"
+    },
+    {
+      "bytes": 0,
+      "mode": 420,
+      "path": "python-roster17-preparation/after-ci-controls.stdout",
+      "provenance": {
+        "captured_version": "27:840805:0:1794207841758748350:1794207841758748350",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/after-ci-controls.stdout",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 420,
+      "path": "python-roster17-preparation/after-parser-controls.stderr",
+      "provenance": {
+        "captured_version": "27:840804:0:1794207841642098795:1794207841642098795",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/after-parser-controls.stderr",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3762,
+      "mode": 420,
+      "path": "python-roster17-preparation/after-parser-controls.stdout",
+      "provenance": {
+        "captured_version": "27:840803:3762:1794207841642098795:1794207841642098795",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/after-parser-controls.stdout",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "c656434073def4ad37f0b5a6376ab6440c74e9cde2304c5949937ea88a5054c6"
+    },
+    {
+      "bytes": 25128,
+      "mode": 420,
+      "path": "python-roster17-preparation/after/.github/workflows/pon-next-architecture-security.yml",
+      "provenance": {
+        "captured_version": "27:840787:25128:1794207841484896616:1794207841484896616",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/after/.github/workflows/pon-next-architecture-security.yml",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "616d152f4191250eadf07c563b45a8b0336cc9d76083d12175c85bfbf416d181"
+    },
+    {
+      "bytes": 1342,
+      "mode": 420,
+      "path": "python-roster17-preparation/after/evidence/cell-storage-convergence-f2568-20261109/storage-convergence-process-death-observation.json",
+      "provenance": {
+        "captured_version": "27:840795:1342:1794207841285777313:1794207841285777313",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/after/evidence/cell-storage-convergence-f2568-20261109/storage-convergence-process-death-observation.json",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "2cb662ae41ac64242233b0595eab2886f564b1ef53f445ea0ed82c8618530102"
+    },
+    {
+      "bytes": 3227,
+      "mode": 420,
+      "path": "python-roster17-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tooling-files.json",
+      "provenance": {
+        "captured_version": "27:840789:3227:1794207841484963715:1794207841484963715",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tooling-files.json",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "e85684049c53262ebc7ef9f54a4a545f030b6136da21200e6174c13c247035bd"
+    },
+    {
+      "bytes": 39150,
+      "mode": 420,
+      "path": "python-roster17-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/run_exact_gates_previous.py",
+      "provenance": {
+        "captured_version": "27:840793:39150:1794207841285716223:1794207841285716223",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/run_exact_gates_previous.py",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "806329aaa71ff9952ebefa84995ebd0a0ae576e6e89ed0774cb77f7891892d4a"
+    },
+    {
+      "bytes": 66890,
+      "mode": 420,
+      "path": "python-roster17-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates.py",
+      "provenance": {
+        "captured_version": "27:840791:66890:1794207841485018446:1794207841485018446",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates.py",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "a1405aa977ad592cf8b1f09c52f7d0617ce78a5583f9f925655088ce3710be62"
+    },
+    {
+      "bytes": 14905,
+      "mode": 420,
+      "path": "python-roster17-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates_selftest.py",
+      "provenance": {
+        "captured_version": "27:840781:14905:1794207841484801766:1794207841484801766",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates_selftest.py",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "519a679ee51e72c70b0d7bb7d986d4c1f7d4bc7b9cbe602f583fc59456668c6e"
+    },
+    {
+      "bytes": 1342,
+      "mode": 420,
+      "path": "python-roster17-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/storage-convergence-process-death-observation.json",
+      "provenance": {
+        "captured_version": "27:840797:1342:1794207841285865853:1794207841285865853",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/storage-convergence-process-death-observation.json",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "2cb662ae41ac64242233b0595eab2886f564b1ef53f445ea0ed82c8618530102"
+    },
+    {
+      "bytes": 39388,
+      "mode": 420,
+      "path": "python-roster17-preparation/after/scripts/ci/test_cell_storage_convergence_ci.py",
+      "provenance": {
+        "captured_version": "27:840773:39388:1794207841484692715:1794207841484692715",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/after/scripts/ci/test_cell_storage_convergence_ci.py",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "3f5aff5a6d01699a6d1b463fd17513e6ce9e272453f48f8096c54efb70a68001"
+    },
+    {
+      "bytes": 3441,
+      "mode": 420,
+      "path": "python-roster17-preparation/before-ci-controls.stderr",
+      "provenance": {
+        "captured_version": "27:840802:3441:1794207841478638816:1794207841478638816",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/before-ci-controls.stderr",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "35a0abfa1746126192f9269e78812091465396d361a12dbbcd3c3534534c1099"
+    },
+    {
+      "bytes": 0,
+      "mode": 420,
+      "path": "python-roster17-preparation/before-ci-controls.stdout",
+      "provenance": {
+        "captured_version": "27:840801:0:1794207841474751922:1794207841474751922",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/before-ci-controls.stdout",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 420,
+      "path": "python-roster17-preparation/before-parser-controls.stderr",
+      "provenance": {
+        "captured_version": "27:840799:0:1794207841360229812:1794207841360229812",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/before-parser-controls.stderr",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3311,
+      "mode": 420,
+      "path": "python-roster17-preparation/before-parser-controls.stdout",
+      "provenance": {
+        "captured_version": "27:840798:3311:1794207841360229812:1794207841360229812",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/before-parser-controls.stdout",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "828d661d4d6829d5548cdf58428da39b95927c6389fd1b79c47b1dfc5a5da9c8"
+    },
+    {
+      "bytes": 25128,
+      "mode": 420,
+      "path": "python-roster17-preparation/before/.github/workflows/pon-next-architecture-security.yml",
+      "provenance": {
+        "captured_version": "27:840784:25128:1794207841285243255:1794207841285243255",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/before/.github/workflows/pon-next-architecture-security.yml",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "616d152f4191250eadf07c563b45a8b0336cc9d76083d12175c85bfbf416d181"
+    },
+    {
+      "bytes": 1342,
+      "mode": 420,
+      "path": "python-roster17-preparation/before/evidence/cell-storage-convergence-f2568-20261109/storage-convergence-process-death-observation.json",
+      "provenance": {
+        "captured_version": "27:840794:1342:1794207841285751004:1794207841285751004",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/before/evidence/cell-storage-convergence-f2568-20261109/storage-convergence-process-death-observation.json",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "2cb662ae41ac64242233b0595eab2886f564b1ef53f445ea0ed82c8618530102"
+    },
+    {
+      "bytes": 3227,
+      "mode": 420,
+      "path": "python-roster17-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tooling-files.json",
+      "provenance": {
+        "captured_version": "27:840788:3227:1794207841285366367:1794207841285366367",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tooling-files.json",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "f37ffbd19330322ebcf5b6006169055a0963b0518da236e68b31b3f65034b3a4"
+    },
+    {
+      "bytes": 39150,
+      "mode": 420,
+      "path": "python-roster17-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tools/run_exact_gates_previous.py",
+      "provenance": {
+        "captured_version": "27:840792:39150:1794207841285682673:1794207841285682673",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tools/run_exact_gates_previous.py",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "806329aaa71ff9952ebefa84995ebd0a0ae576e6e89ed0774cb77f7891892d4a"
+    },
+    {
+      "bytes": 66688,
+      "mode": 420,
+      "path": "python-roster17-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates.py",
+      "provenance": {
+        "captured_version": "27:840790:66688:1794207841285574203:1794207841285574203",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates.py",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "ea3698f8d89ab0cf49fb68210eb03d73dfec1ddd95948dca5cc8a16856f1adf6"
+    },
+    {
+      "bytes": 13388,
+      "mode": 420,
+      "path": "python-roster17-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates_selftest.py",
+      "provenance": {
+        "captured_version": "27:840777:13388:1794207841285071031:1794207841285071031",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates_selftest.py",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "3e86e9ddd930145eca7ddf0179dd42d8fb9f39f0b63c37681874474ecb475a70"
+    },
+    {
+      "bytes": 1342,
+      "mode": 420,
+      "path": "python-roster17-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tools/storage-convergence-process-death-observation.json",
+      "provenance": {
+        "captured_version": "27:840796:1342:1794207841285806245:1794207841285806245",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tools/storage-convergence-process-death-observation.json",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "2cb662ae41ac64242233b0595eab2886f564b1ef53f445ea0ed82c8618530102"
+    },
+    {
+      "bytes": 37652,
+      "mode": 420,
+      "path": "python-roster17-preparation/before/scripts/ci/test_cell_storage_convergence_ci.py",
+      "provenance": {
+        "captured_version": "27:840769:37652:1794207841284823416:1794207841284823416",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/before/scripts/ci/test_cell_storage_convergence_ci.py",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "6d99da2f530e7f6164f14f7e3f5fdbfece9559d86ce04356d554b221a3445f85"
+    },
+    {
+      "bytes": 4238,
+      "mode": 420,
+      "path": "python-roster17-preparation/commands.json",
+      "provenance": {
+        "captured_version": "27:840800:4238:1794207841775121528:1794207841775121528",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/commands.json",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "bc5051f8f55850518e34f3002912d6516c7cf837bbe01deadbbdce3454187cce"
+    },
+    {
+      "bytes": 0,
+      "mode": 420,
+      "path": "python-roster17-preparation/patch-check.stderr",
+      "provenance": {
+        "captured_version": "27:840814:0:1794207841771025657:1794207841771025657",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/patch-check.stderr",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 420,
+      "path": "python-roster17-preparation/patch-check.stdout",
+      "provenance": {
+        "captured_version": "27:840813:0:1794207841771025657:1794207841771025657",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/patch-check.stdout",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14153,
+      "mode": 420,
+      "path": "python-roster17-preparation/python-roster17.patch",
+      "provenance": {
+        "captured_version": "27:840812:14153:1794207841771025657:1794207841771025657",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/python-roster17.patch",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "e21864825b4234ce92a093443017f1eafbf87e174d160d9c8f3e4420bd240a7c"
+    },
+    {
+      "bytes": 14725,
+      "mode": 420,
+      "path": "python-roster17-preparation/result.json",
+      "provenance": {
+        "captured_version": "27:840816:14725:1794207841775720842:1794207841775720842",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/result.json",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "75e40ebd1de4617ef094b977ee6d42bcf965396c8d2f3e5855bf52e19378cf81"
+    },
+    {
+      "bytes": 4104,
+      "mode": 420,
+      "path": "python-roster17-preparation/source-identity.json",
+      "provenance": {
+        "captured_version": "27:840815:4104:1794207841775468119:1794207841775468119",
+        "host": "cloud",
+        "source_path": "/workspace/scratch/f2568c76b48f/python-roster17-preparation/source-identity.json",
+        "verified_immutable_transfer_sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d"
+      },
+      "sha256": "8e23d59df153f20306fb07d6339bb7f7ffde5c49944a7df5e562ca37e0c273d4"
+    },
+    {
+      "bytes": 62,
+      "mode": 384,
+      "path": "sync04/preflight.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-sync04/preflight.stderr",
+        "version_after": "66306:52863615:62:1794208329217144601:1794208329217144601",
+        "version_before": "66306:52863615:62:1794208329217144601:1794208329217144601"
+      },
+      "sha256": "fc49971e9ae5c6ac5b94c58667063cde983727a1e8fd1516c5759cb918847932"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "sync04/preflight.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-sync04/preflight.stdout",
+        "version_after": "66306:52863614:0:1794208329215319801:1794208329215319801",
+        "version_before": "66306:52863614:0:1794208329215319801:1794208329215319801"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 260,
+      "mode": 384,
+      "path": "sync04/summary.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-sync04/summary.json",
+        "version_after": "66306:52863616:260:1794208329217227398:1794208329217227398",
+        "version_before": "66306:52863616:260:1794208329217227398:1794208329217227398"
+      },
+      "sha256": "113b7cb8fd638d079a2f9ee559349311ffb68e35ea52839a14569c8925232c69"
+    }
+  ],
+  "native_model_or_test_commands_executed": 0,
+  "no_canonical_mutations": true,
+  "notes": [
+    "Original failed sync04 and isolated-checkout05 records remain unchanged.",
+    "Model03 records successful research execution with two actual forwards; the second prompt is expected to answer no but its yes action score is larger. No efficacy or production-service qualification is claimed.",
+    "The wait4 ru_maxrss figure is a maximum single-process high-water, not simultaneous process-tree RSS.",
+    "The 4-second service condition, separate 30-second pressure observation, and 300-second research operation are independent acceptance scopes; this archive does not establish the first two.",
+    "The old sparse retired source and stash were preserved by the original checkout controller. This packager made no checkout or source change.",
+    "Local roster parser/CI controls and readback do not establish final25 native-gate success.",
+    "The ongoing exact097-01 directory was not read or included.",
+    "Empty original stdout and stderr files are retained."
+  ],
+  "observed_original_outcomes": {
+    "committed_release03": {
+      "model_executed": false,
+      "native_tests_executed": 0,
+      "passed": true
+    },
+    "isolated_checkout05": {
+      "clone_command_recorded": false,
+      "passed": false
+    },
+    "isolated_checkout06": {
+      "old_retired_root_before_equals_after": true,
+      "passed": true
+    },
+    "model03": {
+      "binary_unchanged": true,
+      "connector_complete": true,
+      "efficacy_claim": false,
+      "elapsed_seconds": 17.552772521972656,
+      "exit_code": 0,
+      "expected_answers": [
+        "yes",
+        "no"
+      ],
+      "head": "097f59f505f8ec42f72e3b8255e6cb7822a70646",
+      "manifest_unchanged": true,
+      "memory_scope": "sampled_peak_rss_bytes is direct-child 50ms RSS; waited_child_peak_rss_bytes is exact owned-child Linux wait4 ru_maxrss in KiB times 1024, a maximum single-process high-water with inherited waited-descendant accounting; neither is simultaneous process-tree RSS",
+      "next_use_observations": 2,
+      "original_operation_deadline_seconds": 300,
+      "selected_actions": [
+        "yes",
+        "yes"
+      ],
+      "source_unchanged": true,
+      "wait4_peak_bytes": 1468784640,
+      "wait4_reaped": true
+    },
+    "python_roster17": {
+      "ci_control_count": 19,
+      "existing_worker_control_readback_count": 24,
+      "native_gates_executed_by_roster_preparation": 0,
+      "parser_control_count": 59,
+      "worker_tests_reexecuted_by_roster_preparation": 0
+    },
+    "sync04": {
+      "passed": false
+    }
+  },
+  "original_model03_job_status": {
+    "at_unix_ms": 1794209669111,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1bf3a96c0-5e21-459",
+    "launch_nonce": "644ea2e45c637af43d2b06bc4c56a941",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 177,
+        "stored": 177
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "payload_bytes": 4809980,
+  "schema": "cell-storage-preparations06-member-manifest-v1",
+  "transfer_input": {
+    "bytes": 39304,
+    "expected_members": 34,
+    "host": "cloud",
+    "manifest_sha256": "e289ffc0e8919b95c9904181db93302be72cede2fa6424b5c467daad0932cc6d",
+    "original_archive": "/workspace/scratch/f2568c76b48f/preparations06-roster17-transfer/transfer.tar.xz",
+    "original_archive_version": "27:840825:39304:1794210022624324234:1794210022624324234",
+    "path": "/home/qq/work/chain-cell-storage-convergence-preparations06-roster17-transfer.tar.xz",
+    "roots": [
+      "/workspace/scratch/f2568c76b48f/python-roster17-preparation"
+    ],
+    "sha256": "5cd55f1937cb6a46373a376f8c0e1c4952fcec3ff42c3ff10ca484e088c9e12d",
+    "version": "66306:46179437:39304:1794210089155108298:1794210089156131781"
+  },
+  "transfer_versions_and_bytes_unchanged": true
+}

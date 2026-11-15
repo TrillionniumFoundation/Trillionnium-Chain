@@ -1,0 +1,18 @@
+{
+  "A": {
+    "bounded_read_decode_and_proof_shape": 16.990901,
+    "canonical_plans_and_public_only_sha_air": 13.493809,
+    "sha_verifier_independent_preprocessing_setup": 45.8565695,
+    "sha_stark_verify": 261.727286,
+    "arith_verifier_independent_preprocessing_setup": 527.984175,
+    "arith_stark_verify": 26.377406
+  },
+  "B": {
+    "bounded_read_decode_and_proof_shape": 14.205459000000001,
+    "canonical_plans_and_public_only_sha_air": 19.9938645,
+    "sha_verifier_independent_preprocessing_setup": 202.0868175,
+    "sha_stark_verify": 177.20756699999998,
+    "arith_verifier_independent_preprocessing_setup": 514.1583209999999,
+    "arith_stark_verify": 24.472603
+  }
+}

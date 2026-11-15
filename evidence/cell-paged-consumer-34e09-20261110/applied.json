@@ -1,0 +1,24 @@
+{
+  "originals": {
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "833212c3715a686ee2df6dab1f6d6ab171c9db2be1288f78fec6f3b47d7242f4",
+    "docs/development/specs/pon/CELL_STORAGE_CAPACITY_V2.md": "ef5ef48933597352c2b2bdf7d5bc29ef5db151800438b06c97e8c8535b806ea1",
+    "trillionnium/crates/trnm-data-availability/src/cell.rs": "980637d6e6fee22b466d4e93ad2694f5a06745209254a0fc7844b02b350a22de",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure.rs": "8d0ccd02eb2df9789738e6416f4ad1aa7e957676dd3600c0a44b309eb03f1df7",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs": "eedfaca124f31186be6c7681386f6066f66a0d33e68d764424ca8c588d3f033b",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged.rs": "e873a5e6a3234d748e3328115a51fa0e8a0b9e4341066ec9ca575f70d19d5895",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore.rs": null,
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs": null
+  },
+  "patch_bytes": 51982,
+  "patch_sha256": "8fc2b32a9948c9f4bcf5fdc8b35c9801c684576eae44b4f0994b819587dadc27",
+  "paths": [
+    "trillionnium/crates/trnm-data-availability/src/cell.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/development/specs/pon/CELL_STORAGE_CAPACITY_V2.md"
+  ]
+}

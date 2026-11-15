@@ -1,0 +1,124 @@
+{
+  "base_commit": "ae781122c3d3dc2ec81031f929f62d918502cd6a",
+  "local_validated_source": "0832d38067cd901a0ec6063558963b549243819c",
+  "local_validated_tree": "99cb57f83dfe2f822d3a678e018e0afc4a28c706",
+  "initial_failed_local_source": "3ed32522db87ef55f8d9cd2dd9c4c6bb6f598803",
+  "initial_failed_tree": "10fd165334bac6091b557db7f3a82ef1fabbfaa4",
+  "initial_failed_results": {
+    "passed": 5,
+    "failed": 2
+  },
+  "native_toolchain": "Rust 1.95.0; original test profile; locked dependencies; default features; one build job",
+  "native_results": {
+    "native_authenticated": {
+      "passed": 95,
+      "failed": 0,
+      "ignored": 1
+    },
+    "task_observation_unit": {
+      "passed": 3,
+      "failed": 0
+    },
+    "admission_wire": {
+      "passed": 2,
+      "failed": 0
+    },
+    "request_observation": {
+      "passed": 22,
+      "failed": 0
+    },
+    "accepted_task_integration": {
+      "passed": 4,
+      "failed": 0
+    },
+    "distinct_passed": 126,
+    "packet_subset_not_additional": {
+      "passed": 7,
+      "failed": 0
+    }
+  },
+  "static_results": {
+    "source_controls": 37,
+    "ci_controls": 100,
+    "source_pins": 524,
+    "inline_pins": 23,
+    "inventory_unchanged": true,
+    "strict_all_feature_workspace_clippy": "PASS",
+    "format": "PASS",
+    "repository_local_links": 3332
+  },
+  "whole_business_qualification": false,
+  "pq_native_provider_runtime_qualification": false,
+  "raw_files": {
+    "stored-packet-initial-3ed32522-failure.txt": {
+      "bytes": 4772,
+      "sha256": "b799138af9ca8de0103b03d078d918b55b60dac52f7fefb02eb1f912bc982ae2"
+    },
+    "stored-packet-source.sha256": {
+      "bytes": 250,
+      "sha256": "5eb1dfe24e0ae43c3b807d8f76991083c1ab0ccca7ca70e5eccc703c2516eb69"
+    },
+    "stored-packet-combined-native.txt": {
+      "bytes": 1346,
+      "sha256": "fa5dcbdb9f15937f63739c69e1428af185ce4a6f74e4233e9e97a84fe46b642a"
+    },
+    "stored-packet-task-tests.txt": {
+      "bytes": 660,
+      "sha256": "d691f5bdab7378b8a9c2b52961006b180c332b2a8cf8c7d4072451d1a665b7d7"
+    },
+    "stored-packet-owner-tests.txt": {
+      "bytes": 23148,
+      "sha256": "dc564a2574506ab33a1b418776382102a38c98bc0bfc778c8c5c6572f7e4b002"
+    },
+    "stored-packet-wire-tests.txt": {
+      "bytes": 509,
+      "sha256": "2fb8028cb59023e487b2946ad11314d65890378b152b5fdab2281be4af8e4edd"
+    },
+    "stored-packet-request-tests.txt": {
+      "bytes": 3640,
+      "sha256": "4ec2887f008da381bbb03cddcd0ace3175a41f6b2b8fb6f5ec193a3c5bb524c3"
+    },
+    "stored-packet-task-integration.txt": {
+      "bytes": 1068,
+      "sha256": "4838d15e14a8220b686e20009947094722f94a793819592fcd1eb3feac2ee169"
+    },
+    "stored-packet-combined-source.sha256": {
+      "bytes": 380,
+      "sha256": "53202dfa2934c54173f13e0e2554b6b5ae5c053555104c143a4eefd11d6d2fbf"
+    },
+    "stored-packet-combined-clippy.txt": {
+      "bytes": 194,
+      "sha256": "fde35dd4851f85f6b1cbed73af4deaa673b5b6a184f64ab6aa1a2ef5a9a3584b"
+    },
+    "stored-packet-combined-fmt.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stored-packet-combined-static.txt": {
+      "bytes": 17582,
+      "sha256": "b269ca7077868e89d08f3c68558ce01b7cb5ed40211162d765545b495531b5a3"
+    },
+    "stored-packet-final-elf.txt": {
+      "bytes": 152,
+      "sha256": "e8663b2e5f74dbae4d816149f45f8d29d662e69765882b64922f8b34d8af0978"
+    },
+    "validated-source.patch": {
+      "bytes": 48454,
+      "sha256": "da7094e15905a7439a4a6145c28125f246f615e9494808d33930234c6dc6f01d"
+    },
+    "initial-failed-source.patch": {
+      "bytes": 22875,
+      "sha256": "602e29d5fe77ec31c3991c70094da21e424bcc5c590b4b93b9babdc092ba1930"
+    },
+    "stored-packet-repository.txt": {
+      "bytes": 307,
+      "sha256": "2c04be48cc186aeaac3c7eb6d5bce5e7c5b0df7cee9cabd913675b1a9019382c"
+    },
+    "stored-packet-integration-elf.txt": {
+      "bytes": 294,
+      "sha256": "52f854c4a1a48e3f5b74220f695833bc9c8770169a7b9c7c96c0decb8fa76db2"
+    }
+  },
+  "archive_sha256": "5b49bf5776aba98841a0f8f248a8f381d52d0701bb3aad4ec1720154a59aad52",
+  "repository_check_source_state": "dirty-candidate: evidence files newly added; Rust source hashes unchanged"
+}

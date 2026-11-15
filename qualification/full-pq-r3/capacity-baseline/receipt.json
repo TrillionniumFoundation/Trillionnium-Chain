@@ -1,0 +1,50 @@
+{
+  "schema": "trnm-full-pq-r3-capacity-baseline-receipt-v1",
+  "before_commit": "da31aff73adadda492da2642bef1f8d3d74be530",
+  "before_source": "before_commit plus the unchanged observation-only source.patch; no production changes",
+  "source_patch_sha256": "3596621adf15f2778ea8ac57d531f8b7c283420861747c9f26e8aafbf86daf5b",
+  "baseline_executable_sha256": "bfa734cc0a558bae9ffed81abe585dbc7f234e7d5c81bbe298694f1a6cae8c68",
+  "source_file_count": 1312,
+  "original_public_mutation_cpu_limit_ns": 2000000000,
+  "actual_fixture_key_and_canonical_value_bytes": 8625548,
+  "samples": [
+    {
+      "test": "admitted-custom-genesis",
+      "backend": "authenticated",
+      "total_cpu_ns": 2807473643,
+      "result": "PUBLIC_MUTATION_CPU_BUDGET",
+      "test_exit_code": 101
+    },
+    {
+      "test": "authenticated-large-parent",
+      "backend": "authenticated",
+      "total_cpu_ns": 2791540228,
+      "result": "PUBLIC_MUTATION_CPU_BUDGET",
+      "test_exit_code": 101
+    }
+  ],
+  "enclosing_test_legacy_branch": {
+    "total_cpu_ns": 1062225586,
+    "native_result": "Ok; enclosing test failed in authenticated branch"
+  },
+  "after_status": "pending; no optimized candidate execution or pass is attested here",
+  "measurement_scope": "shared environment; no exclusive-hardware, WAN, throughput or deployment qualification",
+  "stage_interpretation": "before/after deltas verified against raw JSON; nested stage CPU is not additive and does not replace original owner/worker settlement",
+  "excluded_attempts": {
+    "excluded-attempts/failed-provider-environment-not-exported.log": "build selected host OpenSSL because provider settings were not exported; no signer patch",
+    "excluded-attempts/failed-enospc-during-observation.log": "truncated disk-full execution; excluded; two valid tests rerun after recovery"
+  },
+  "artifact_sha256": {
+    "README.md": "53799f4e6d9bc9adf58ea2d338d43636d63fc10e193541e993467009127ed5ff",
+    "admitted-custom-genesis.log": "be84eae21c62c62c9e90583467428b3998ef74843aeb3e16c72a2aff68b02454",
+    "admitted-custom-genesis.status": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c",
+    "authenticated-large-parent.log": "6b4db3df42aa3e3fca0bd4090efd8cb5ec8d953cb2a9e7649b8b6a3157f6ac4d",
+    "authenticated-large-parent.status": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c",
+    "compiler.txt": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+    "excluded-attempts/failed-enospc-during-observation.log": "a14a6c5ec72d4ed1885e0fb0e6eeaf0d5c616602c813ccb9f444c42074f31b9b",
+    "excluded-attempts/failed-provider-environment-not-exported.log": "dc1f8a1e241f1c9532591926152b2e127e9026f75a476fcb8f81c65ee2b6d472",
+    "source-manifest.json": "ffa6034336dda8e14b642d8c402c500842fc436e1a55587e22553945bd7ade69",
+    "source.patch": "3596621adf15f2778ea8ac57d531f8b7c283420861747c9f26e8aafbf86daf5b",
+    "stage-deltas.json": "5b88edcc499ac49ea7396dd0a977014e843d8a9d7adf42956dda1dbc3d019718"
+  }
+}

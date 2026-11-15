@@ -1,0 +1,47 @@
+[
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_w1_transparent_compare.py",
+      "-v"
+    ],
+    "returncode": 0,
+    "wall_seconds": 5.809634232999997
+  },
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_w1_profile_source_map.py",
+      "-v"
+    ],
+    "returncode": 0,
+    "wall_seconds": 0.11460540899997795
+  },
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_w1_security_budget.py",
+      "-v"
+    ],
+    "returncode": 0,
+    "wall_seconds": 0.1523575730000175
+  }
+]

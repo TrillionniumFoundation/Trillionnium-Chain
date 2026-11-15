@@ -1,0 +1,108 @@
+
+running 34 tests
+test arith_air::tests::bounded_noncanonical_intermediate_is_an_equivalent_representation ... ok
+test arith_air::tests::maximum_inputs_and_addition_are_integer_exact ... ok
+test arith_air::tests::nonboolean_bit_and_wrong_quotient_are_rejected ... ok
+test arith_air::tests::prior_whole_dot_goldilocks_alias_is_rejected ... ok
+test arith_air::tests::public_noncanonical_words_are_refused ... ok
+test arith_carry_air::tests::canonical_false_goals_and_noncanonical_public_words_are_rejected ... ok
+test arith_carry_air::tests::maximum_canonical_inputs_and_boundary_additions_are_exact ... ok
+test arith_carry_air::tests::prior_whole_dot_goldilocks_alias_is_rejected ... ok
+test arith_carry_air::tests::packed_lanes_preserve_order_and_constrain_final_lane ... ok
+test public::tests::original_noise_rejection_selection_and_budget_are_preserved ... ok
+test public::tests::public_parser_refuses_wrong_length_before_allocation ... ok
+test public::tests::original_prefix_order_is_grouped_without_losing_any_word ... ok
+test arith_carry_air::tests::each_witness_bit_and_nonboolean_value_are_checked ... ok
+test sha_air::tests::changed_compression_bit_rejects ... ok
+test sha_air::tests::changed_public_message_rejects_valid_compressions ... ok
+test sha_air::tests::honest_complete_messages_and_hash_free_public_construction ... ok
+test sha_air::tests::recomputed_compressions_with_broken_chain_reject ... ok
+test sha_plan::tests::framing_has_original_lengths_and_endianness ... ok
+test sha_plan::tests::exact_padding_boundaries ... ok
+test sha_air::tests::changed_public_digest_rejects_valid_compressions ... ok
+test sha_schedule_air::tests::changed_compression_bit_rejects ... ok
+test sha_air::tests::recomputed_compression_with_wrong_padding_rejects ... ok
+test sha_schedule_air::tests::changed_public_digest_rejects_valid_compressions ... ok
+test sha_air::tests::recomputed_compressions_with_wrong_iv_reject ... ok
+test arith_carry_air::tests::deterministic_rows_match_independent_u128_relation ... ok
+test sha_schedule_air::tests::changed_preprocessed_schedule_limb_rejects ... ok
+test sha_schedule_air::tests::every_retained_column_matches_official_trace_projection ... ok
+test sha_schedule_air::tests::changed_public_message_rejects_valid_compressions ... ok
+test sha_plan::tests::complete_plan_binds_independent_outputs_without_host_hash_checks ... ok
+test sha_schedule_air::tests::first_last_round_and_nonboolean_mutations_reject ... ok
+test sha_schedule_air::tests::honest_complete_messages_and_hash_free_public_construction ... ok
+test sha_schedule_air::tests::recomputed_compression_with_wrong_padding_rejects ... ok
+test sha_schedule_air::tests::recomputed_compressions_with_broken_chain_reject ... ok
+test sha_schedule_air::tests::recomputed_compressions_with_wrong_iv_reject ... ok
+
+test result: ok. 34 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 3 tests
+test carry_proof_rejects_changed_goal_vk_opening_and_old_domain ... ok
+test packed_carry_proof_rejects_changed_goal_vk_opening_and_old_domain ... ok
+test complete_retained_statement_preserves_every_original_arithmetic_row ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+
+
+running 3 tests
+test tiny_arithmetic_real_proof_rejects_changed_goal_vk_and_opening ... ok
+test metadata_uses_actual_widths_and_keeps_noninteractive_bound_open ... ok
+test tiny_sha_real_proof_rejects_changed_public_vk_opening_and_domain ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.64s
+
+
+running 1 test
+test tiny_sha_real_proof_rejects_changed_public_vk_opening_and_domain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+
+
+running 11 tests
+test actual_streaming_hashes_match_the_exact_framed_encoding ... ok
+test frozen_profile_descriptor_constants_match_actual_configuration ... ok
+test domain_bytes_and_typed_statement_context_are_unambiguous_for_test_cases ... ok
+test inherited_hash_challenger_history_alias_is_recorded_not_hidden ... ok
+test known_raw_inverse_witness_does_not_repeat_under_explicit_new_digest_embedding ... ok
+test research_metadata_carries_no_security_bit_qualification ... ok
+test sha3_standard_vector_and_full_digest_word_roundtrip ... ok
+test upstream_serializing_challenger_rejects_modulus_before_sampling_extension ... ok
+test independent_python_hashlib_vectors_match_actual_hash_roles ... ok
+test tiny_packed_carry_proof_independent_verify_rejects_changed_goal_and_opening ... ok
+test tiny_sha_proof_independent_verify_rejects_context_component_statement_and_opening ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+
+
+running 16 tests
+test carry_profiles_have_separate_envelopes_and_fixed_bounds ... ok
+test fold_round_query_and_sibling_counts_are_fixed ... ok
+test fold_merkle_frontier_uses_its_own_reduced_height ... ok
+test final_polynomial_and_trace_degree_are_fixed ... ok
+test input_merkle_frontier_cannot_exceed_all_full_paths ... ok
+test oversized_component_envelope_rejects_without_scanning_payload ... ok
+test huge_cap_and_trace_length_words_reject_before_any_allocation ... ok
+test valid_shape_with_changed_canonical_value_is_not_misclassified_as_a_proof ... ok
+test input_opening_query_matrix_and_width_counts_are_fixed ... ok
+test carry_profile_opening_shapes_are_checked_before_decode ... ok
+test wrong_fri_commitment_and_pow_counts_reject_before_preprocessing ... ok
+test noncanonical_field_and_option_tags_are_rejected ... ok
+test component_confusion_truncation_and_trailing_data_are_rejected ... ok
+test actual_complete_proofs_match_the_frozen_codec_and_scan_without_allocations ... ok
+test incorrect_ood_openings_reject_before_preprocessing ... ok
+test scheduled_sha_profile_bounds_and_openings_are_fixed ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

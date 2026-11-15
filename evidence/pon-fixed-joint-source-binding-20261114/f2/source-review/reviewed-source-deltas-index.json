@@ -1,0 +1,38 @@
+{
+  "archive_bytes": 6866,
+  "archive_sha256": "50c2fe86bae9c55c02e174032d26d8f9914022fbdc72ac8a420c9e305d731b17",
+  "members": [
+    {
+      "bytes": 1582,
+      "from": "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8",
+      "path": "trillionnium--crates--trnm-pon-node--src--lib.rs.patch",
+      "sha256": "a329fa45c2ea81f1258e379a76c22b01cdfb3ff558d70ed7b97cfbdb5db983c9",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "to": "2d9baf313e54e49a4507c5057578e89ddbe7a1b6"
+    },
+    {
+      "bytes": 10354,
+      "from": "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8",
+      "path": "trillionnium--crates--trnm-pon-node--src--store.rs.patch",
+      "sha256": "2472b0457f11b4c6d246083032bf75cbaafeaef0368dabb1b3c90bccd4d2921d",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "to": "2d9baf313e54e49a4507c5057578e89ddbe7a1b6"
+    },
+    {
+      "bytes": 3663,
+      "from": "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8",
+      "path": "trillionnium--crates--trnm-crypto-primitives--src--pon_work.rs.patch",
+      "sha256": "a9fc3195a51e2eb1e4859274f7ab1997f71ead9390492cc429c355969dbc5ca5",
+      "source_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "to": "2d9baf313e54e49a4507c5057578e89ddbe7a1b6"
+    },
+    {
+      "bytes": 1078,
+      "from": "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8",
+      "path": "formal--pon-nakamoto-v1--fixed_probability_contract_v1.json.patch",
+      "sha256": "3f8f6ce4fb6067b1a8aed406f94a2e4c31aa8722735e054886dea3acf12c8939",
+      "source_path": "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json",
+      "to": "2d9baf313e54e49a4507c5057578e89ddbe7a1b6"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "schema": "native-completion-unbound-helper-guard-addon-v1",
+  "applies_after_main_patch_sha256": "99fae1e27590c0e23c715850a815239b8e958f7dc264136082016bc4228006a8",
+  "compatible_with_prepared_held_addon_sha256": "35780992872deba17a5f144816dea44294690652aaea16edd47adcf5bb135c4c",
+  "patch_sha256": "7426da2e492a8a095d22bb19fde7a7000e6bcdb8751b9c41206d4fe13556362c",
+  "file": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+  "input_sha256": "4d6963f5e7439811915c86a8509f4895432b1fa817395af599f6687dc143e1c9",
+  "output_sha256": "06cfdaedfeafd157c5f3e90c065cb407a5fa2c40fee8f990f9c9de24f957f99b",
+  "scope": "skip new scheduling hash/checkpoints for existing unbound trusted local helpers; no change to bound public/History relation, reserve or deadline",
+  "native_validation": "not run in incomplete preparation tree; existing metered native tests requested on parent exact checkout"
+}

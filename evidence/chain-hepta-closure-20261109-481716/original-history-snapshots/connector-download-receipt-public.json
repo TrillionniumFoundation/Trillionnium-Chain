@@ -1,0 +1,14 @@
+{
+  "artifact_id": 13662172930,
+  "bytes": 76441344,
+  "completed_at_utc": "2026-11-09T16:16:13.451438+00:00",
+  "expected_zip_identity_matched": true,
+  "new_campaign_executed": false,
+  "original_run_id": 42591962205,
+  "path": "/workspace/scratch/481716a90d06/verification/history-snapshot-download/campaign0746-original.zip",
+  "schema": "original-artifact-recovery-v1",
+  "sha256": "4e8a243caf2aadf4a195b4cb96dbb0229a0e001a830f0e9de2c4f853ee7dff5c",
+  "signed_url_retained": false,
+  "source": "GitHub download_workflow_artifact connector; reusable file reference",
+  "started_at_utc": "2026-11-09T16:16:11.236334+00:00"
+}

@@ -1,0 +1,28 @@
+{
+  "label": "02-distributed-inventory",
+  "command": [
+    "python3",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "cwd": "/workspace/scratch/abae1861b451/chain-post-ci",
+  "started_at": "2026-11-03T16:36:08.521547+00:00",
+  "elapsed_seconds": 0.09630768300030468,
+  "exit_code": 0,
+  "stdout": {
+    "path": "/workspace/scratch/abae1861b451/post-ci-static-validation/02-distributed-inventory.stdout",
+    "bytes": 35,
+    "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+  },
+  "stderr": {
+    "path": "/workspace/scratch/abae1861b451/post-ci-static-validation/02-distributed-inventory.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "actual_unittest_count": null,
+  "unittest_harness_seconds": null,
+  "skipped_lines": [],
+  "source_before_receipt": "/workspace/scratch/abae1861b451/post-ci-static-validation/source-before.json",
+  "source_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "scope": "Original read-only candidate gate; test mutations, if any, confined by the original test to temporary fixtures. Not native runtime acceptance."
+}

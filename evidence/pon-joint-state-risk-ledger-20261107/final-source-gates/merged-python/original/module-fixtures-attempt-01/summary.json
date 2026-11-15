@@ -1,0 +1,78 @@
+{
+  "all_commands_zero_exit": true,
+  "commands": [
+    {
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "scripts/ci/check_detailed_contracts.py"
+      ],
+      "elapsed_seconds": 50.56938342680223,
+      "exit_code": 0,
+      "name": "detailed-contracts",
+      "streams": {
+        "stderr": {
+          "bytes": 0,
+          "file": "detailed-contracts.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 122,
+          "file": "detailed-contracts.stdout.log",
+          "sha256": "69039cab62248ab74fb53ef59bec3a6951ebf916d591fbd33143ed894b8e4396"
+        }
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "scripts/ci/check_applicability.py"
+      ],
+      "elapsed_seconds": 60.16850908403285,
+      "exit_code": 0,
+      "name": "applicability",
+      "streams": {
+        "stderr": {
+          "bytes": 0,
+          "file": "applicability.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 267005,
+          "file": "applicability.stdout.log",
+          "sha256": "f97616df009c6f1d3072e8e55b5c8f7acb824bd6c1e529a594520758c92109cf"
+        }
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "scripts/ci/report_current_implementation.py",
+        "--check"
+      ],
+      "elapsed_seconds": 0.15894368709996343,
+      "exit_code": 0,
+      "name": "current-implementation-check",
+      "streams": {
+        "stderr": {
+          "bytes": 0,
+          "file": "current-implementation-check.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 71,
+          "file": "current-implementation-check.stdout.log",
+          "sha256": "431e373353829a7aa76abab6c3a606519c90290e2dc0909202c9a9f4cab92be3"
+        }
+      }
+    }
+  ],
+  "commit": "2d46d8682201bc0619f5b156af50e77fb399322e",
+  "fixture_bytes": 965044,
+  "fixtures": 13,
+  "full_repository_truth_lane_executed": false,
+  "production_qualified": false,
+  "result": "PASS",
+  "schema": "materialized-module-contract-fixture-check-v1",
+  "source_head_tree_status_unchanged": true,
+  "tree": "5ae5317304588cca8295a19dd512c8e853f1ef5b"
+}

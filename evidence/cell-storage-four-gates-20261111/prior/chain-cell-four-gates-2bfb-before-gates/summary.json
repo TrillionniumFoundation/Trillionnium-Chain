@@ -1,0 +1,77 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qq/work/chain-cell-four-gates-20261111-2bfb-before",
+      "elapsed_ns": 31914129,
+      "ended_unix_ns": 1794441504398215157,
+      "exit_code": 0,
+      "name": "preflight",
+      "pid": 999776,
+      "started_unix_ns": 1794441504366195512,
+      "status": "completed",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 175,
+      "stdout_sha256": "4da534a362b9c64365090813b2f5b76b95f9296d5d14aeb39bb82c933af128e0",
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "6985aca3803debe2945eebbc55e6c495598ae609"
+      ],
+      "cwd": "/home/qq/work/chain-cell-four-gates-20261111-2bfb-before",
+      "elapsed_ns": 113889387,
+      "ended_unix_ns": 1794441504512515971,
+      "exit_code": 1,
+      "name": "source-before",
+      "pid": 999783,
+      "started_unix_ns": 1794441504398554746,
+      "status": "completed",
+      "stderr_bytes": 754,
+      "stderr_sha256": "66dc4854d9d5e969594dc369942a7cd8229d56cab3dc890057eb1f9fbe642e64",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 300
+    }
+  ],
+  "completed": false,
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_HOME": "/home/qq/.cargo",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qq/work/chain-cell-four-gates-2bfb-target-before",
+    "LD_LIBRARY_PATH": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_DIR": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install",
+    "OPENSSL_MODULES": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/ossl-modules",
+    "OPENSSL_STATIC": "1",
+    "RUSTC": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+    "RUST_TEST_THREADS": "1",
+    "TMPDIR": "/home/qq/work/chain-cell-four-gates-2bfb-before-gates/tmp",
+    "TRNM_PQ_OPENSSL": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "independent_domains_qualified": false,
+  "lane": "before",
+  "production_qualified": false,
+  "root": "/home/qq/work/chain-cell-four-gates-20261111-2bfb-before",
+  "runner_sha256": "73557997a8ccb1c461081499ba2bbfa346723b30f754a55d6430c185d3622fa2",
+  "schema": "cell-storage-four-gates-execution-v1",
+  "source": "6985aca3803debe2945eebbc55e6c495598ae609",
+  "target_existed": false,
+  "wan_qualified": false
+}

@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/data/chain-abg-70ae-20261108/review/r3-def-finite-inputs-ef025cbe/r3-def-finite-runner.py",
+    "--expected-commit",
+    "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "--expected-tree",
+    "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+    "--command-manifest",
+    "/data/chain-abg-70ae-20261108/review/r3-def-finite-inputs-ef025cbe/def-python-commands.json"
+  ],
+  "command_manifest_sha256": "91dba3636dbdcdbcfb6adbd1e32250e705ceecdb8ecddcc255752b7200c86d9b",
+  "concurrent_load": "Same-host B static gates and root native/strict-Clippy development checks run concurrently. The original fixed-host pressure contract is not exercised.",
+  "expected_commit": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+  "expected_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+  "python_executable": "/usr/bin/python3",
+  "python_version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "runner_sha256": "1099446c74403b812c7e960326e4c33888bb0e11aaf96e22916f58b5f779f9ed",
+  "scope": "Existing nine-suite finite-model roster only; no production qualification",
+  "source_root": "/data/chain-abg-70ae-20261108/source",
+  "started_utc": "2026-11-09T04:03:04.563257+00:00"
+}

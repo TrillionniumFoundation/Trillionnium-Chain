@@ -1,0 +1,23 @@
+{
+  "compile_command": [
+    "g++",
+    "-std=c++20",
+    "-O2",
+    "-DNDEBUG",
+    "-Wall",
+    "-Wextra",
+    "-I",
+    "/workspace/scratch/6d698534cba7/upstream-sampler/include",
+    "/workspace/scratch/6d698534cba7/upstream-sampler/sampler_component.cpp",
+    "-lcrypto",
+    "-o",
+    "/workspace/scratch/6d698534cba7/upstream-sampler/sampler_component"
+  ],
+  "compile_exit": 0,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "scope": "unchanged upstream sampling header component; no proof backend",
+  "run_exit": 0,
+  "stdout": "first_block_equal=true\nsecond_block_equal=false\nfc3de8e08d32b2e54d1df9ba421ef50d0f660ac74baf8cf77a0b81a1f57055af6abd0f2e8ee1ad11988f88ebeb2ce0936dee4483ad5546d4fdf89c91819e5573\nfc3de8e08d32b2e54d1df9ba421ef50d0f660ac74baf8cf77a0b81a1f57055af2ba74cd2df86c0f86c9d2312edfff8ebab529590b77e4ffe0bf6b6b62e7506b1\n",
+  "binary_sha256": "379d6f79e1b8965ebc3262468ca9a0572b20dbba9d7481d3bafbef51b9e08397",
+  "first_block_matches_independent_sha256_zero_counter": true
+}

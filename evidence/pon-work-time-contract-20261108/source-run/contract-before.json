@@ -1,0 +1,21 @@
+{
+  "schema": "pon-work-cost-contract-check-v1",
+  "contract_digest": "6d71aced74e18bcb025653ba0f03efc8475d014de04ed4563f2ba3545b213ed7",
+  "source_commit": "b16bae2824e6c8236ef2011fc93a74df3ac7f039",
+  "source_tree": "49392edc1b49a1ad92c1956f8a37c741d835677a",
+  "verified_source_entries": 1747,
+  "verified_source_bytes": 27613671,
+  "contract_and_source_consistent": true,
+  "native_binary_executed": false,
+  "qualification": {
+    "all_legal_algorithm_cost_lower_bound": false,
+    "variable_u_native_relation": false,
+    "native_time_daa_upgrade": false,
+    "joint_cp_cq_cg_proof": false,
+    "lifetime_security_bound": null,
+    "same_iteration_deployment": false,
+    "real_hepta_product_loop": false,
+    "production_activation": false
+  },
+  "status": "HOLD_NO_GO"
+}

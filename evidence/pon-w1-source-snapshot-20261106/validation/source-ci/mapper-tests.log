@@ -1,0 +1,20 @@
+test_archive_and_selected_members_match_locked_checksum (test_w1_profile_source_map.SourceMapTests.test_archive_and_selected_members_match_locked_checksum) ... ok
+test_archive_replacement_does_not_change_the_inspected_snapshot (test_w1_profile_source_map.SourceMapTests.test_archive_replacement_does_not_change_the_inspected_snapshot) ... ok
+test_archive_replacement_with_matching_changed_sources_is_refused (test_w1_profile_source_map.SourceMapTests.test_archive_replacement_with_matching_changed_sources_is_refused) ... ok
+test_duplicate_and_missing_locked_packages_are_refused (test_w1_profile_source_map.SourceMapTests.test_duplicate_and_missing_locked_packages_are_refused) ... ok
+test_duplicate_archive_member_is_refused (test_w1_profile_source_map.SourceMapTests.test_duplicate_archive_member_is_refused) ... ok
+test_existing_output_is_never_overwritten (test_w1_profile_source_map.SourceMapTests.test_existing_output_is_never_overwritten) ... ok
+test_json_snapshot_keeps_the_digest_of_the_parsed_bytes (test_w1_profile_source_map.SourceMapTests.test_json_snapshot_keeps_the_digest_of_the_parsed_bytes) ... ok
+test_json_snapshot_preserves_duplicate_key_refusal (test_w1_profile_source_map.SourceMapTests.test_json_snapshot_preserves_duplicate_key_refusal) ... ok
+test_lock_snapshot_keeps_the_digest_of_the_parsed_bytes (test_w1_profile_source_map.SourceMapTests.test_lock_snapshot_keeps_the_digest_of_the_parsed_bytes) ... ok
+test_locked_archive_checksum_drift_is_refused (test_w1_profile_source_map.SourceMapTests.test_locked_archive_checksum_drift_is_refused) ... ok
+test_modified_extracted_source_is_refused (test_w1_profile_source_map.SourceMapTests.test_modified_extracted_source_is_refused) ... ok
+test_oversized_selected_archive_member_is_refused (test_w1_profile_source_map.SourceMapTests.test_oversized_selected_archive_member_is_refused) ... ok
+test_provenance_is_parsed_from_the_hashed_source_snapshot (test_w1_profile_source_map.SourceMapTests.test_provenance_is_parsed_from_the_hashed_source_snapshot) ... ok
+test_source_size_and_digest_describe_the_same_read (test_w1_profile_source_map.SourceMapTests.test_source_size_and_digest_describe_the_same_read) ... ok
+test_stark_value_or_declaration_drift_is_refused (test_w1_profile_source_map.SourceMapTests.test_stark_value_or_declaration_drift_is_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.026s
+
+OK

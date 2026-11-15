@@ -1,0 +1,24 @@
+{
+  "source": "eb32162449eab623f69bbd7016b694600cb382c5",
+  "tree": "c15f37e3f64456c9817019e8aec5d723a29549f0",
+  "native_runtime_source": "b9a38fd6d245e20849c7edd848dbbe18298cad7e",
+  "original_profile_native_or_clippy_rerun": false,
+  "negative_control_suites": {
+    "pq_source": 59,
+    "ci_source_integrity": 43,
+    "pq_claim": 55
+  },
+  "suite_execution_total": 157,
+  "counts_not_added_to_prior_786_native_or_94_supporting": true,
+  "source_counts": {
+    "inventory_entries": 1582,
+    "pq_pins": 1079,
+    "updated_pins": 7,
+    "unchanged_pins": 1072,
+    "unchanged_prior_code_config_objects": 2101,
+    "changed_prior_code_config_objects": 2
+  },
+  "scope": "Exact-source inventory/PQ source refusal and immutable DA/graph readback; not remote-CI acceptance, new native execution, model benefit or production qualification.",
+  "all_seven_validation_commands_exited_zero": true,
+  "separate_cargo_launch_failures_retained": 2
+}

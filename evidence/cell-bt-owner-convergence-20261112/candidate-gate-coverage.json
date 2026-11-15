@@ -1,0 +1,3336 @@
+{
+  "commands": [
+    {
+      "name": "preflight",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "bash",
+            "scripts/project-preflight.sh",
+            "--audit"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 177,
+              "path": "cloud/frozen-candidate-01/preflight.stdout",
+              "sha256": "5dd7bd6b3ece115afdc4220006fed84a5520177cd662d725ac96ca585765d252"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/preflight.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "bash",
+            "scripts/project-preflight.sh",
+            "--audit"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": null,
+          "streams": [
+            {
+              "bytes": 177,
+              "path": "cloud/frozen-candidate-dependency-recheck-01/preflight.stdout",
+              "sha256": "5dd7bd6b3ece115afdc4220006fed84a5520177cd662d725ac96ca585765d252"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-dependency-recheck-01/preflight.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-dependency-recheck-01/summary.json",
+          "timed_out": null
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/bin/bash",
+            "scripts/project-preflight.sh",
+            "--audit"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 177,
+              "path": "remote/remaining-gates-02/preflight.stdout",
+              "sha256": "5dd7bd6b3ece115afdc4220006fed84a5520177cd662d725ac96ca585765d252"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/preflight.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/bin/bash",
+            "scripts/project-preflight.sh",
+            "--audit"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 177,
+              "path": "remote/static-recheck-01/preflight.stdout",
+              "sha256": "5dd7bd6b3ece115afdc4220006fed84a5520177cd662d725ac96ca585765d252"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/static-recheck-01/preflight.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/static-recheck-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "source-before",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/verify_ci_source.py",
+            "--kind",
+            "head",
+            "--expected-head",
+            "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 423,
+              "path": "cloud/frozen-candidate-01/source-before.stdout",
+              "sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/source-before.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/verify_ci_source.py",
+            "--kind",
+            "head",
+            "--expected-head",
+            "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": null,
+          "streams": [
+            {
+              "bytes": 423,
+              "path": "cloud/frozen-candidate-dependency-recheck-01/source-before.stdout",
+              "sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-dependency-recheck-01/source-before.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-dependency-recheck-01/summary.json",
+          "timed_out": null
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/verify_ci_source.py",
+            "--kind",
+            "head",
+            "--expected-head",
+            "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 423,
+              "path": "remote/remaining-gates-02/source-before.stdout",
+              "sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/source-before.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/verify_ci_source.py",
+            "--kind",
+            "head",
+            "--expected-head",
+            "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 423,
+              "path": "remote/static-recheck-01/source-before.stdout",
+              "sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/static-recheck-01/source-before.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/static-recheck-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "rustc-version",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+            "-Vv"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 196,
+              "path": "cloud/frozen-candidate-01/rustc-version.stdout",
+              "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/rustc-version.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "cargo-version",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "-V"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 36,
+              "path": "cloud/frozen-candidate-01/cargo-version.stdout",
+              "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/cargo-version.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "locked-graph",
+      "observations": [
+        {
+          "accepted_exit_observation": false,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "metadata",
+            "--locked",
+            "--offline",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--format-version",
+            "1"
+          ],
+          "exit_code": 101,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/locked-graph.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 118,
+              "path": "cloud/frozen-candidate-01/locked-graph.stderr",
+              "sha256": "5bec0998e0b48800de803266cfea4b27fd81cef58dbf8e499cd7ca0b6e33b8fd"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "metadata",
+            "--locked",
+            "--offline",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--format-version",
+            "1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": null,
+          "streams": [
+            {
+              "bytes": 858656,
+              "path": "cloud/frozen-candidate-dependency-recheck-01/locked-graph.stdout",
+              "sha256": "3e1fd6a6a6563df3923347ff0dbb9a7047d9a39aed695a74ff02f08afffe596a"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-dependency-recheck-01/locked-graph.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-dependency-recheck-01/summary.json",
+          "timed_out": null
+        }
+      ]
+    },
+    {
+      "name": "locked-all-feature-graph",
+      "observations": [
+        {
+          "accepted_exit_observation": false,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "metadata",
+            "--locked",
+            "--offline",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all-features",
+            "--format-version",
+            "1"
+          ],
+          "exit_code": 101,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/locked-all-feature-graph.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 118,
+              "path": "cloud/frozen-candidate-01/locked-all-feature-graph.stderr",
+              "sha256": "5bec0998e0b48800de803266cfea4b27fd81cef58dbf8e499cd7ca0b6e33b8fd"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "metadata",
+            "--locked",
+            "--offline",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all-features",
+            "--format-version",
+            "1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": null,
+          "streams": [
+            {
+              "bytes": 873806,
+              "path": "cloud/frozen-candidate-dependency-recheck-01/locked-all-feature-graph.stdout",
+              "sha256": "3ba34e4be53cd37ae0f3a94dd9931658d9867b5634b5e39dce9200630df6f48a"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-dependency-recheck-01/locked-all-feature-graph.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-dependency-recheck-01/summary.json",
+          "timed_out": null
+        }
+      ]
+    },
+    {
+      "name": "format",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "fmt",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/format.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/format.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "inventory",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/refresh_distributed_source_inventory.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 35,
+              "path": "cloud/frozen-candidate-01/inventory.stdout",
+              "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/inventory.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "test_cell_discovery_v3_ci",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/test_cell_discovery_v3_ci.py"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/test_cell_discovery_v3_ci.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 103,
+              "path": "cloud/frozen-candidate-01/test_cell_discovery_v3_ci.stderr",
+              "sha256": "0f7e4b97443e54aca647179972594d13bb587afcbf151fab8228148587ea844a"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "test_cell_storage_convergence_ci",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/test_cell_storage_convergence_ci.py"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/test_cell_storage_convergence_ci.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 118,
+              "path": "cloud/frozen-candidate-01/test_cell_storage_convergence_ci.stderr",
+              "sha256": "23f33eed9421073094fbeea7a81956857446e68e66859ee179c4c1ae657ff930"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "test_ci_source_integrity",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/test_ci_source_integrity.py"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 856,
+              "path": "cloud/frozen-candidate-01/test_ci_source_integrity.stdout",
+              "sha256": "d358602d6823a4eb8159017a82a5fb840b84dc01310145fb34fb8259077fc26b"
+            },
+            {
+              "bytes": 6414,
+              "path": "cloud/frozen-candidate-01/test_ci_source_integrity.stderr",
+              "sha256": "1db5194a6f816e078d7b0baa26f23b1ad5db63dec7d8f0a65dbe2bd95eb5bb24"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "check_pq_research_integration",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/check_pq_research_integration.py"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 557,
+              "path": "cloud/frozen-candidate-01/check_pq_research_integration.stdout",
+              "sha256": "be8c32a5af43419155e594f8f11c5c1eb5892079027c59736737a43205125667"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/check_pq_research_integration.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "test_pq_research_integration",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/test_pq_research_integration.py"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/test_pq_research_integration.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 160,
+              "path": "cloud/frozen-candidate-01/test_pq_research_integration.stderr",
+              "sha256": "0bc8d3297f4db88721fc20d02411bacbcb7c5e208a7528e5fc912d7ce07736c5"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "check_repository",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/check_repository.py"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 307,
+              "path": "cloud/frozen-candidate-01/check_repository.stdout",
+              "sha256": "b50d7c6fb211fe43191b30f542943d11c1a92d07128239d85a2dcdb37596f426"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/check_repository.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "next-architecture-python",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "formal/next-architecture-security",
+            "-p",
+            "test_*.py",
+            "-v"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/next-architecture-python.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 4997,
+              "path": "cloud/frozen-candidate-01/next-architecture-python.stderr",
+              "sha256": "d8205d6adefa280af75c84d6f5181daa592558f0c21a86cf32971b49074516a6"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "counterexample-fixture",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "formal/next-architecture-security/counterexamples.py",
+            "--check-fixture"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 110,
+              "path": "cloud/frozen-candidate-01/counterexample-fixture.stdout",
+              "sha256": "7a941affd4a8bb4da8185cda32a027ecf7b4c9df67933bcf80657874b6af5f71"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/counterexample-fixture.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "cell_complete_version_vector",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/cell_complete_version_vector.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 43,
+              "path": "cloud/frozen-candidate-01/cell_complete_version_vector.stdout",
+              "sha256": "a52fe4645753dc3f3f7bbb47038dee80d69e9c30465a2596fa1d1130d7be4f9d"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/cell_complete_version_vector.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "cell_discovery_epoch_v3_vector",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/cell_discovery_epoch_v3_vector.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 73,
+              "path": "cloud/frozen-candidate-01/cell_discovery_epoch_v3_vector.stdout",
+              "sha256": "a6ca19954096c6a820b444e3179152046c13d8ab82d50dfc53d6dd225d1d2f19"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/cell_discovery_epoch_v3_vector.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "cell_version_content_vector",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/cell_version_content_vector.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 39,
+              "path": "cloud/frozen-candidate-01/cell_version_content_vector.stdout",
+              "sha256": "5b4677d887d5c61a5a0753fcf0dac8f61c81722511e7ac57e93611a903a5cd82"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/cell_version_content_vector.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "cell_version_retention_v3_vector",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/cell_version_retention_v3_vector.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 29,
+              "path": "cloud/frozen-candidate-01/cell_version_retention_v3_vector.stdout",
+              "sha256": "aa65247be491ddce8016c901ffda8c25320f55ad68ca4e84549b549b6650e7c0"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/cell_version_retention_v3_vector.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "cell_storage_descriptor_reference",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/cell_storage_descriptor_reference.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 56,
+              "path": "cloud/frozen-candidate-01/cell_storage_descriptor_reference.stdout",
+              "sha256": "90353ba0c059abdd0726859f829cb54cf36cf42cc6ad7c760708aa39996db779"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/cell_storage_descriptor_reference.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "sealed-research-python-controls",
+      "observations": [
+        {
+          "accepted_exit_observation": false,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "scripts",
+            "-p",
+            "test_llm_cell_sealed_worker_v1.py",
+            "-v"
+          ],
+          "exit_code": 1,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 7170,
+              "path": "cloud/frozen-candidate-01/sealed-research-python-controls.stdout",
+              "sha256": "aca1edbae5f56594e1502dac1938dcfc9038c090865880ff3f361ee8df25166c"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/sealed-research-python-controls.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "scripts",
+            "-p",
+            "test_llm_cell_sealed_worker_v1.py",
+            "-v"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 4701,
+              "path": "remote/remaining-gates-02/sealed-research-python-controls.stdout",
+              "sha256": "596e34f11cd23b5eb9f5063176413a3980897a39fcb8138bd57622cd4ff81063"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/sealed-research-python-controls.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "sealed-research-python-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": false,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/test_cell_storage_convergence_ci.py",
+            "--check-sealed-controls",
+            "/workspace/scratch/4a0b199bc6c0/validation/frozen-candidate-01/sealed-research-python-controls.stdout"
+          ],
+          "exit_code": 1,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/sealed-research-python-readback.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 922,
+              "path": "cloud/frozen-candidate-01/sealed-research-python-readback.stderr",
+              "sha256": "27079a3d6a64a3b1ad9a82823e4862f67a8a249895a27284b3c5568af831778f"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/test_cell_storage_convergence_ci.py",
+            "--check-sealed-controls",
+            "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/sealed-research-python-controls.stdout"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 1787,
+              "path": "remote/remaining-gates-02/sealed-research-python-readback.stdout",
+              "sha256": "bacf7286ca2fa0a95929dbe730e65fd7abc14221f4017e747760ac41243300ee"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/sealed-research-python-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "da-complete",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-data-availability",
+            "--",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 94542,
+              "path": "cloud/frozen-candidate-01/da-complete.stdout",
+              "sha256": "9608b950a3e084c4e07a77b751e345572966db5aab7702076214b492e0beb466"
+            },
+            {
+              "bytes": 1921,
+              "path": "cloud/frozen-candidate-01/da-complete.stderr",
+              "sha256": "ed834b62a2cd0c48dd0b4416f1fba9406f1398ed4823151b184ab1992a89a4bb"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "da-required-01",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-data-availability",
+            "--lib",
+            "cell::host_handoff::tests::research_fds::research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 247,
+              "path": "cloud/frozen-candidate-01/da-required-01.stdout",
+              "sha256": "62a02b0db9a50cd422241e742339ca8e5c615ca66a4cc3df2e2dfae2ebfa8917"
+            },
+            {
+              "bytes": 200,
+              "path": "cloud/frozen-candidate-01/da-required-01.stderr",
+              "sha256": "2b4acf253200bbc03f71e8b634dd1e9529e1ebb488c634cee92fc12c124c6174"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "da-required-01-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/workspace/scratch/4a0b199bc6c0/validation/frozen-candidate-01/da-required-01.stdout",
+            "--test",
+            "cell::host_handoff::tests::research_fds::research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 213,
+              "path": "cloud/frozen-candidate-01/da-required-01-readback.stdout",
+              "sha256": "97c97bba7ec442e8c55da0b58508366d32b5f4fe9d19bc7e453630b3e203434c"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/da-required-01-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "da-required-02",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-data-availability",
+            "--lib",
+            "cell::host_handoff::tests::research_fds::research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 252,
+              "path": "cloud/frozen-candidate-01/da-required-02.stdout",
+              "sha256": "b98de1f228f300a04cb398d223db553961285681209d98db84ae09e88fd13222"
+            },
+            {
+              "bytes": 200,
+              "path": "cloud/frozen-candidate-01/da-required-02.stderr",
+              "sha256": "5f7a28d4021ede0f4c898ffe68f77efb70a098728e4d2bdd3a889e8dd346a4c3"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "da-required-02-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/workspace/scratch/4a0b199bc6c0/validation/frozen-candidate-01/da-required-02.stdout",
+            "--test",
+            "cell::host_handoff::tests::research_fds::research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 218,
+              "path": "cloud/frozen-candidate-01/da-required-02-readback.stdout",
+              "sha256": "770aae2a1a822f84f29f61690377103c2d7f2f0e32e7993c13bc99ff56bb860e"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/da-required-02-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "da-required-03",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-data-availability",
+            "--lib",
+            "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 263,
+              "path": "cloud/frozen-candidate-01/da-required-03.stdout",
+              "sha256": "b3f396b346a37ec1bed9ae71f1581e076398bcc2f58503149a52245166328014"
+            },
+            {
+              "bytes": 200,
+              "path": "cloud/frozen-candidate-01/da-required-03.stderr",
+              "sha256": "5f7a28d4021ede0f4c898ffe68f77efb70a098728e4d2bdd3a889e8dd346a4c3"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "da-required-03-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/workspace/scratch/4a0b199bc6c0/validation/frozen-candidate-01/da-required-03.stdout",
+            "--test",
+            "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 229,
+              "path": "cloud/frozen-candidate-01/da-required-03-readback.stdout",
+              "sha256": "ebf6f51ff3d8f3996864f9b30982e297904880b8b8ab2358bafb2b5bad0b3305"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/da-required-03-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "da-required-04",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-data-availability",
+            "--lib",
+            "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 263,
+              "path": "cloud/frozen-candidate-01/da-required-04.stdout",
+              "sha256": "966d6f9a2e8cbc70a51d55e9f556d765eef9bd82ccdf821a879ea89325d4ac3d"
+            },
+            {
+              "bytes": 200,
+              "path": "cloud/frozen-candidate-01/da-required-04.stderr",
+              "sha256": "fc410a9963614d4fb1b5f4fb5174c179b967f57527a43956833e214fc6186aa4"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "da-required-04-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/workspace/scratch/4a0b199bc6c0/validation/frozen-candidate-01/da-required-04.stdout",
+            "--test",
+            "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 229,
+              "path": "cloud/frozen-candidate-01/da-required-04-readback.stdout",
+              "sha256": "ced6bc2f0a282e5ad9212e984d21766e185e024c48a478115ceb6d60bec03b9c"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/da-required-04-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "da-required-05",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-data-availability",
+            "--lib",
+            "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 265,
+              "path": "cloud/frozen-candidate-01/da-required-05.stdout",
+              "sha256": "3270664e81cd9beb1c1e18a22a27457f91e6ca494277513c95c16bc6a112805b"
+            },
+            {
+              "bytes": 200,
+              "path": "cloud/frozen-candidate-01/da-required-05.stderr",
+              "sha256": "fc410a9963614d4fb1b5f4fb5174c179b967f57527a43956833e214fc6186aa4"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "da-required-05-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/workspace/scratch/4a0b199bc6c0/validation/frozen-candidate-01/da-required-05.stdout",
+            "--test",
+            "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 231,
+              "path": "cloud/frozen-candidate-01/da-required-05-readback.stdout",
+              "sha256": "802ca9a38f8f8cc20a35036f6f3d2bc222b249e18129c2b1ca9f5d7a591ebd62"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/da-required-05-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "cell_sealed_research_next_use_v2-tests",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-data-availability",
+            "--example",
+            "cell_sealed_research_next_use_v2",
+            "--",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 1187,
+              "path": "cloud/frozen-candidate-01/cell_sealed_research_next_use_v2-tests.stdout",
+              "sha256": "2018c863d189c61ffd19bedb322d6fd8fcb25d50c8250f21edaea70203cc332b"
+            },
+            {
+              "bytes": 379,
+              "path": "cloud/frozen-candidate-01/cell_sealed_research_next_use_v2-tests.stderr",
+              "sha256": "ea5ac8cac3ac1790ba7e6d1191b3b08a293f24988067afe0c43fa204ec912702"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "cell_sealed_research_paged_next_use_v1-tests",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-data-availability",
+            "--example",
+            "cell_sealed_research_paged_next_use_v1",
+            "--",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 1187,
+              "path": "cloud/frozen-candidate-01/cell_sealed_research_paged_next_use_v1-tests.stdout",
+              "sha256": "b4f0f4a71f53efaa0c3ba05fffc15299a016a97e66f86c5c6f38878a2d45f960"
+            },
+            {
+              "bytes": 444,
+              "path": "cloud/frozen-candidate-01/cell_sealed_research_paged_next_use_v1-tests.stderr",
+              "sha256": "e1daa1fa57b505f2f516e0be93feb2905a4c3537601065caa43e27a3ff5c174d"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "native-grouped-example-default",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--example",
+            "cell_native_shard_research_next_use_v2",
+            "--",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 1582,
+              "path": "cloud/frozen-candidate-01/native-grouped-example-default.stdout",
+              "sha256": "10a053924d669f40c833b86dc416c78b147b2e5cef023ae1a36d5deb09a3b4ae"
+            },
+            {
+              "bytes": 2127,
+              "path": "cloud/frozen-candidate-01/native-grouped-example-default.stderr",
+              "sha256": "236e36a5591404cec54551e996582736fe2c58122b313c7f400754db6661a093"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "native-complete-selection-default",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--example",
+            "cell_native_shard_research_next_use_v2",
+            "cell_native_shard_research_v2::tests::native_callback_requires_complete_current_release_selection_after_recovery",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 239,
+              "path": "cloud/frozen-candidate-01/native-complete-selection-default.stdout",
+              "sha256": "9d2ab44c0aba7388766044cf44a6878b17d08ef8c32494f70a9356a0adb215cd"
+            },
+            {
+              "bytes": 260,
+              "path": "cloud/frozen-candidate-01/native-complete-selection-default.stderr",
+              "sha256": "4eab5a57b72fdfcf700657b59e4efa30c4242c44c07123ae6bb4d58601f19d43"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "native-complete-selection-default-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/workspace/scratch/4a0b199bc6c0/validation/frozen-candidate-01/native-complete-selection-default.stdout",
+            "--test",
+            "cell_native_shard_research_v2::tests::native_callback_requires_complete_current_release_selection_after_recovery"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 205,
+              "path": "cloud/frozen-candidate-01/native-complete-selection-default-readback.stdout",
+              "sha256": "94bfb9e12d144d8558b0f92910221482eb149b6edc8927ebf55cf281487a4bc1"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/native-complete-selection-default-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "native-grouped-example-pq",
+      "observations": [
+        {
+          "accepted_exit_observation": false,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--features",
+            "pq-native-openssl",
+            "--example",
+            "cell_native_shard_research_next_use_v2",
+            "--",
+            "--test-threads=1"
+          ],
+          "exit_code": 101,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/native-grouped-example-pq.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 4710,
+              "path": "cloud/frozen-candidate-01/native-grouped-example-pq.stderr",
+              "sha256": "f68131c1dba0e2cd348c761f740c83628975e7e4e40085971201e89f660e8c3f"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--features",
+            "pq-native-openssl",
+            "--example",
+            "cell_native_shard_research_next_use_v2",
+            "--",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 1582,
+              "path": "remote/remaining-gates-02/native-grouped-example-pq.stdout",
+              "sha256": "c08a7a5078dbab5267f899d9e5b2bf1a189b12e14fd3d9f8745d696162c45991"
+            },
+            {
+              "bytes": 4588,
+              "path": "remote/remaining-gates-02/native-grouped-example-pq.stderr",
+              "sha256": "51475178dbc0409de7f737fd0ae6d95a6f1a9a4eb951754800f5837ea65c1065"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "native-complete-selection-pq",
+      "observations": [
+        {
+          "accepted_exit_observation": false,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--features",
+            "pq-native-openssl",
+            "--example",
+            "cell_native_shard_research_next_use_v2",
+            "cell_native_shard_research_v2::tests::native_callback_requires_complete_current_release_selection_after_recovery",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 101,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/native-complete-selection-pq.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 4036,
+              "path": "cloud/frozen-candidate-01/native-complete-selection-pq.stderr",
+              "sha256": "b37a058e6e3bd4b4bba0c1d5345b1cdeeea0a91853b544c86f9b8da6102c3d8b"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--features",
+            "pq-native-openssl",
+            "--example",
+            "cell_native_shard_research_next_use_v2",
+            "cell_native_shard_research_v2::tests::native_callback_requires_complete_current_release_selection_after_recovery",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 238,
+              "path": "remote/remaining-gates-02/native-complete-selection-pq.stdout",
+              "sha256": "3d8349e07cf7253f9b3ccd5465cb579d7c0ea4071ae27bd47a2672be16a15fdb"
+            },
+            {
+              "bytes": 273,
+              "path": "remote/remaining-gates-02/native-complete-selection-pq.stderr",
+              "sha256": "3ad04550b9066de72b9f8692ee10812d9f76f8be497a633f31d5862b8a7db1db"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "native-complete-selection-pq-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": false,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/workspace/scratch/4a0b199bc6c0/validation/frozen-candidate-01/native-complete-selection-pq.stdout",
+            "--test",
+            "cell_native_shard_research_v2::tests::native_callback_requires_complete_current_release_selection_after_recovery"
+          ],
+          "exit_code": 1,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/native-complete-selection-pq-readback.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 54,
+              "path": "cloud/frozen-candidate-01/native-complete-selection-pq-readback.stderr",
+              "sha256": "834ae99dd06177897f22165046e71ac729a2e0e968ce90da7bbbd2fd2c0f8437"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/native-complete-selection-pq.stdout",
+            "--test",
+            "cell_native_shard_research_v2::tests::native_callback_requires_complete_current_release_selection_after_recovery"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 205,
+              "path": "remote/remaining-gates-02/native-complete-selection-pq-readback.stdout",
+              "sha256": "94bfb9e12d144d8558b0f92910221482eb149b6edc8927ebf55cf281487a4bc1"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/native-complete-selection-pq-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-storage-default",
+      "observations": [
+        {
+          "accepted_exit_observation": false,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::",
+            "--",
+            "--test-threads=1"
+          ],
+          "exit_code": 101,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/node-storage-default.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 3868,
+              "path": "cloud/frozen-candidate-01/node-storage-default.stderr",
+              "sha256": "147a1dce9cdb885df0af2bfbe03ec9895cf4e0b6a87c39c35c0014ccb4005512"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::",
+            "--",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 8781,
+              "path": "remote/remaining-gates-02/node-storage-default.stdout",
+              "sha256": "1701faa36df3c93330b31ec41dc95d8300be0c8e11014ce826acb8aabf9ca114"
+            },
+            {
+              "bytes": 878,
+              "path": "remote/remaining-gates-02/node-storage-default.stderr",
+              "sha256": "f0138544b817583810edd8f2fa7c3338922cbb49f2f759b1cf3521063d1b7f99"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-01",
+      "observations": [
+        {
+          "accepted_exit_observation": false,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 101,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/node-required-01.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 3868,
+              "path": "cloud/frozen-candidate-01/node-required-01.stderr",
+              "sha256": "147a1dce9cdb885df0af2bfbe03ec9895cf4e0b6a87c39c35c0014ccb4005512"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 253,
+              "path": "remote/remaining-gates-02/node-required-01.stdout",
+              "sha256": "f57e2b62644726f2062f9e01db51d6ebd402390c9de08be22ed7379551a79330"
+            },
+            {
+              "bytes": 204,
+              "path": "remote/remaining-gates-02/node-required-01.stderr",
+              "sha256": "e60dc0b0c7b6cebc261d2d8727d8b3bbcaefd1605da1dc28cd9080cce9f5efc6"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-01-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": false,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/workspace/scratch/4a0b199bc6c0/validation/frozen-candidate-01/node-required-01.stdout",
+            "--test",
+            "store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement"
+          ],
+          "exit_code": 1,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-01/node-required-01-readback.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 54,
+              "path": "cloud/frozen-candidate-01/node-required-01-readback.stderr",
+              "sha256": "834ae99dd06177897f22165046e71ac729a2e0e968ce90da7bbbd2fd2c0f8437"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": false
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-01.stdout",
+            "--test",
+            "store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 218,
+              "path": "remote/remaining-gates-02/node-required-01-readback.stdout",
+              "sha256": "a548544b2f9c2c89575145e7dcdc13b4c8898800a0544a98860f6d6cc3513dbe"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/node-required-01-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-02",
+      "observations": [
+        {
+          "accepted_exit_observation": false,
+          "argv": [
+            "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": null,
+          "raw_verified": false,
+          "status": "running",
+          "streams": [],
+          "summary": "cloud/frozen-candidate-01/summary.json",
+          "timed_out": null
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 256,
+              "path": "remote/remaining-gates-02/node-required-02.stdout",
+              "sha256": "449e70802b4e5a557dfe3aa3c29c878663f27a1ea66716263ee022b808226b00"
+            },
+            {
+              "bytes": 204,
+              "path": "remote/remaining-gates-02/node-required-02.stderr",
+              "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-02-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-02.stdout",
+            "--test",
+            "store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 221,
+              "path": "remote/remaining-gates-02/node-required-02-readback.stdout",
+              "sha256": "714b28f5619508b1d97f4a8b278259c0e5b1b8d413a2d8fdf2a48a493a6a4d11"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/node-required-02-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-03",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 242,
+              "path": "remote/remaining-gates-02/node-required-03.stdout",
+              "sha256": "d97bfdad5c4eceb064056edf28f5a4f39cb4f20eb218a7605f983001c80b1497"
+            },
+            {
+              "bytes": 204,
+              "path": "remote/remaining-gates-02/node-required-03.stderr",
+              "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-03-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-03.stdout",
+            "--test",
+            "store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 207,
+              "path": "remote/remaining-gates-02/node-required-03-readback.stdout",
+              "sha256": "413f01c133c6a3b5485c9b4b057bf4af4560349d5c6cf9cd78a70dc89b4fb8c4"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/node-required-03-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-04",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 244,
+              "path": "remote/remaining-gates-02/node-required-04.stdout",
+              "sha256": "5c6cdaf34e16ea00166573c6c0e55ec7e3e1bdd92d2b1d8bee409562fe824f93"
+            },
+            {
+              "bytes": 204,
+              "path": "remote/remaining-gates-02/node-required-04.stderr",
+              "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-04-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-04.stdout",
+            "--test",
+            "store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 209,
+              "path": "remote/remaining-gates-02/node-required-04-readback.stdout",
+              "sha256": "fced046989210e115f71efd362824af4dead383742bbbfd2b2a174e3d476ea83"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/node-required-04-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-05",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 233,
+              "path": "remote/remaining-gates-02/node-required-05.stdout",
+              "sha256": "7813e4188e56282122f8565d2daf0f054a5da25a63a4573b4bd66017e27cd34b"
+            },
+            {
+              "bytes": 204,
+              "path": "remote/remaining-gates-02/node-required-05.stderr",
+              "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-05-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-05.stdout",
+            "--test",
+            "store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 198,
+              "path": "remote/remaining-gates-02/node-required-05-readback.stdout",
+              "sha256": "3e97ded24981cc613b098615e76fa3f1db42b316744f659e9936a31e43c2d48e"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/node-required-05-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-06",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 239,
+              "path": "remote/remaining-gates-02/node-required-06.stdout",
+              "sha256": "c4be04758094bc9b79e2292835e2f5028777d9a695583f56b1b4083b3b126cc4"
+            },
+            {
+              "bytes": 204,
+              "path": "remote/remaining-gates-02/node-required-06.stderr",
+              "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-06-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-06.stdout",
+            "--test",
+            "store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 204,
+              "path": "remote/remaining-gates-02/node-required-06-readback.stdout",
+              "sha256": "a1c74f74a73a8446e1758b528262abb67b00254bba29dad0f3c1fffd38958a9d"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/node-required-06-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-07",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 242,
+              "path": "remote/remaining-gates-02/node-required-07.stdout",
+              "sha256": "65dc77fbf3ece766bab7a6472372133e6397025f6195f8f1bc8018a8b75fbe4c"
+            },
+            {
+              "bytes": 204,
+              "path": "remote/remaining-gates-02/node-required-07.stderr",
+              "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-07-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-07.stdout",
+            "--test",
+            "store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 207,
+              "path": "remote/remaining-gates-02/node-required-07-readback.stdout",
+              "sha256": "5fcccbfa4673241d941605f8e47d5e5828c0b61e3400118072154bdb03acf00a"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/node-required-07-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-08",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 240,
+              "path": "remote/remaining-gates-02/node-required-08.stdout",
+              "sha256": "6694a43f1877d07cc4fb10bc98c1f6197e1dffa7ccd4d2d1d48c32f9beadfbc9"
+            },
+            {
+              "bytes": 204,
+              "path": "remote/remaining-gates-02/node-required-08.stderr",
+              "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-08-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-08.stdout",
+            "--test",
+            "store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 205,
+              "path": "remote/remaining-gates-02/node-required-08-readback.stdout",
+              "sha256": "449dc4e1875e3a7ee4f1924f07646d1f042f105ccf490f8cc49c6be4d98a5685"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/node-required-08-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-09",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 270,
+              "path": "remote/remaining-gates-02/node-required-09.stdout",
+              "sha256": "455d5141d02d58d085483ebfc1e62f796720b4107ad2e22521ca19e4db3b37d1"
+            },
+            {
+              "bytes": 204,
+              "path": "remote/remaining-gates-02/node-required-09.stderr",
+              "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-09-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-09.stdout",
+            "--test",
+            "store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 235,
+              "path": "remote/remaining-gates-02/node-required-09-readback.stdout",
+              "sha256": "61db2fc0fde87096ebafdde208d47deecaeb57d13ee9121208d9cb203be8763e"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/node-required-09-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-10",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 274,
+              "path": "remote/remaining-gates-02/node-required-10.stdout",
+              "sha256": "bd49041b46e8bedb4f208cc45d0652928003c4475e7ef5981ce17a3db03b96a8"
+            },
+            {
+              "bytes": 204,
+              "path": "remote/remaining-gates-02/node-required-10.stderr",
+              "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-10-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-10.stdout",
+            "--test",
+            "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 239,
+              "path": "remote/remaining-gates-02/node-required-10-readback.stdout",
+              "sha256": "6f33f4d33ed724ed59b54dce9542695d4988850d7212032e544835e4fce04426"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/node-required-10-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-11",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 287,
+              "path": "remote/remaining-gates-02/node-required-11.stdout",
+              "sha256": "2c1acfa732491a34910f539b38bcb1dee3711d1bdd74275e62b48c150e8f8951"
+            },
+            {
+              "bytes": 204,
+              "path": "remote/remaining-gates-02/node-required-11.stderr",
+              "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-11-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-11.stdout",
+            "--test",
+            "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 252,
+              "path": "remote/remaining-gates-02/node-required-11-readback.stdout",
+              "sha256": "f62079ec7243b2897baae189174bac21dbec29cce7499f659cadca2874515ebd"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/node-required-11-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-12",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 274,
+              "path": "remote/remaining-gates-02/node-required-12.stdout",
+              "sha256": "3f27c33dd29bcfc2ef7fa5d9284445f56aa9b9ae69468f4a210ae323374c6993"
+            },
+            {
+              "bytes": 204,
+              "path": "remote/remaining-gates-02/node-required-12.stderr",
+              "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-12-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-12.stdout",
+            "--test",
+            "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 239,
+              "path": "remote/remaining-gates-02/node-required-12-readback.stdout",
+              "sha256": "735d7c3e87d404d56c88551364e164679b57b3320d5b691cb445a8396c62d271"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/node-required-12-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-13",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--lib",
+            "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 277,
+              "path": "remote/remaining-gates-02/node-required-13.stdout",
+              "sha256": "3241b563f23c68c97f71ce8348a7bbff01afe28e937bff766b6363f8088915da"
+            },
+            {
+              "bytes": 204,
+              "path": "remote/remaining-gates-02/node-required-13.stderr",
+              "sha256": "601495aa131ef92f317e4d529ee7a9ce7ccdba5c95b44dbab245116052b3bd1f"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-required-13-readback",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/check_required_native_test.py",
+            "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/node-required-13.stdout",
+            "--test",
+            "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 242,
+              "path": "remote/remaining-gates-02/node-required-13-readback.stdout",
+              "sha256": "c1dafc4f2690e09a92e7c0a0e747ee9d680e2139455949899faabc5569ef0db2"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/node-required-13-readback.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "node-storage",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--features",
+            "pq-native-openssl",
+            "--lib",
+            "storage_service",
+            "--",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 8781,
+              "path": "remote/remaining-gates-02/node-storage.stdout",
+              "sha256": "c3211f3bf49f293655c68a00ea1642034b802ccb36e20df74db80af22307b73b"
+            },
+            {
+              "bytes": 330,
+              "path": "remote/remaining-gates-02/node-storage.stderr",
+              "sha256": "6bfc13cdfc54cfc0029db2d9e81ab3e4b390efe22dd1befda0ba25cd328105d7"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "clippy-default-trnm-data-availability",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "clippy",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-data-availability",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "remote/static-recheck-01/clippy-default-trnm-data-availability.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 2979,
+              "path": "remote/static-recheck-01/clippy-default-trnm-data-availability.stderr",
+              "sha256": "a2992231c311418ac5d38d43d0b6b13526bb17d8ea794283a95da34a6d45b564"
+            }
+          ],
+          "summary": "remote/static-recheck-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "clippy-default-trnm-pon-node",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "clippy",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "remote/static-recheck-01/clippy-default-trnm-pon-node.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 2071,
+              "path": "remote/static-recheck-01/clippy-default-trnm-pon-node.stderr",
+              "sha256": "fc7671351bff8a8bd58b0cb80f25265334650c51f9549d86010d7b3522c8028c"
+            }
+          ],
+          "summary": "remote/static-recheck-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "strict-clippy",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+            "clippy",
+            "--release",
+            "--locked",
+            "--offline",
+            "--jobs",
+            "2",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--workspace",
+            "--all-targets",
+            "--all-features",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 0,
+              "path": "remote/static-recheck-01/strict-clippy.stdout",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 5993,
+              "path": "remote/static-recheck-01/strict-clippy.stderr",
+              "sha256": "b61593f38c84ced1eff12c22dafa63fdf11d836bee3cd83681f2a73db100c9d0"
+            }
+          ],
+          "summary": "remote/static-recheck-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    },
+    {
+      "name": "source-after",
+      "observations": [
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/verify_ci_source.py",
+            "--kind",
+            "head",
+            "--expected-head",
+            "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": null,
+          "streams": [
+            {
+              "bytes": 423,
+              "path": "cloud/frozen-candidate-dependency-recheck-01/source-after.stdout",
+              "sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902"
+            },
+            {
+              "bytes": 0,
+              "path": "cloud/frozen-candidate-dependency-recheck-01/source-after.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "cloud/frozen-candidate-dependency-recheck-01/summary.json",
+          "timed_out": null
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/verify_ci_source.py",
+            "--kind",
+            "head",
+            "--expected-head",
+            "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 423,
+              "path": "remote/remaining-gates-02/source-after.stdout",
+              "sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/remaining-gates-02/source-after.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/remaining-gates-02/summary.json",
+          "timed_out": false
+        },
+        {
+          "accepted_exit_observation": true,
+          "argv": [
+            "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+            "-B",
+            "scripts/ci/verify_ci_source.py",
+            "--kind",
+            "head",
+            "--expected-head",
+            "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+          ],
+          "exit_code": 0,
+          "raw_verified": true,
+          "status": "completed",
+          "streams": [
+            {
+              "bytes": 423,
+              "path": "remote/static-recheck-01/source-after.stdout",
+              "sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902"
+            },
+            {
+              "bytes": 0,
+              "path": "remote/static-recheck-01/source-after.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "summary": "remote/static-recheck-01/summary.json",
+          "timed_out": false
+        }
+      ]
+    }
+  ],
+  "coverage_complete": true,
+  "covered_command_count": 74,
+  "expected_candidate_command_count": 74,
+  "inputs": [
+    {
+      "bytes": 45429,
+      "original_all_commands_passed": null,
+      "original_completed": false,
+      "original_status": "running",
+      "path": "cloud/frozen-candidate-01/summary.json",
+      "sha256": "64ee04d0f1ca821278c71ae3c04be69ae62da8cd5eeb76d7906007f6ae50da1c"
+    },
+    {
+      "bytes": 3378,
+      "original_all_commands_passed": true,
+      "original_completed": true,
+      "original_status": null,
+      "path": "cloud/frozen-candidate-dependency-recheck-01/summary.json",
+      "sha256": "0432e3602630b15e2a3116318e3b3245313f175a9acfe257b9ef359df5fdcf5b"
+    },
+    {
+      "bytes": 50666,
+      "original_all_commands_passed": null,
+      "original_completed": true,
+      "original_status": null,
+      "path": "remote/remaining-gates-02/summary.json",
+      "sha256": "19a503f6e4ebe3e4dd329a72eb07bb583a8c9ff8218ef0af97a64e0952e152f3"
+    },
+    {
+      "bytes": 17881,
+      "original_all_commands_passed": null,
+      "original_completed": true,
+      "original_status": "passed",
+      "path": "remote/static-recheck-01/summary.json",
+      "sha256": "0da7b83afa38549de5cd97f2df1e87e1ad23d07fd785fe9181c99cebcf5a9f9d"
+    }
+  ],
+  "missing_commands": [],
+  "native_model_execution_qualified_by_this_index": false,
+  "original_runner_sha256": "8f82ae65d146be8513d0bc9fb14ed8f08e2df378f5db8e3471d99301d78fd3d9",
+  "original_summaries_rewritten": false,
+  "production_qualified": false,
+  "schema": "trnm.bt-candidate-separate-observation-coverage.v1",
+  "single_original_campaign_claimed_passed": false,
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_and_environment_binding_requires_original_reports": true
+}

@@ -1,0 +1,28 @@
+test_client_navigation_retains_observations_without_covering_changed_runtime (__main__.ClientEvidenceTests.test_client_navigation_retains_observations_without_covering_changed_runtime) ... ok
+test_duplicate_named_result_rejects (__main__.ClientEvidenceTests.test_duplicate_named_result_rejects) ... ok
+test_edited_log_without_rehash_rejects (__main__.ClientEvidenceTests.test_edited_log_without_rehash_rejects) ... ok
+test_fabricated_source_digest_rejects (__main__.ClientEvidenceTests.test_fabricated_source_digest_rejects) ... ok
+test_failed_execution_cannot_be_hidden (__main__.ClientEvidenceTests.test_failed_execution_cannot_be_hidden) ... ok
+test_historical_inventory_cannot_be_dropped (__main__.ClientEvidenceTests.test_historical_inventory_cannot_be_dropped) ... ok
+test_independent_acceptance_cannot_be_rehashed (__main__.ClientEvidenceTests.test_independent_acceptance_cannot_be_rehashed) ... ok
+test_missing_client_runtime_input_rejects (__main__.ClientEvidenceTests.test_missing_client_runtime_input_rejects) ... ok
+test_missing_measured_runner_rejects (__main__.ClientEvidenceTests.test_missing_measured_runner_rejects) ... ok
+test_native_backend_must_be_explicit (__main__.ClientEvidenceTests.test_native_backend_must_be_explicit) ... ok
+test_native_build_cannot_drop_work_verifier (__main__.ClientEvidenceTests.test_native_build_cannot_drop_work_verifier) ... ok
+test_native_suite_cannot_drop_locked_dependencies (__main__.ClientEvidenceTests.test_native_suite_cannot_drop_locked_dependencies) ... ok
+test_native_suite_count_cannot_be_inflated (__main__.ClientEvidenceTests.test_native_suite_count_cannot_be_inflated) ... ok
+test_old_evidence_cannot_be_repinned (__main__.ClientEvidenceTests.test_old_evidence_cannot_be_repinned) ... ok
+test_old_model_measurement_is_not_rerun (__main__.ClientEvidenceTests.test_old_model_measurement_is_not_rerun) ... ok
+test_one_backend_cannot_replace_two (__main__.ClientEvidenceTests.test_one_backend_cannot_replace_two) ... ok
+test_physical_power_loss_is_not_inferred (__main__.ClientEvidenceTests.test_physical_power_loss_is_not_inferred) ... ok
+test_public_acceptance_cannot_be_rehashed (__main__.ClientEvidenceTests.test_public_acceptance_cannot_be_rehashed) ... ok
+test_rehashed_log_cannot_drop_actual_client_selectors (__main__.ClientEvidenceTests.test_rehashed_log_cannot_drop_actual_client_selectors) ... ok
+test_unchanged_complete_package_passes (__main__.ClientEvidenceTests.test_unchanged_complete_package_passes) ... ok
+test_unmeasured_network_throughput_rejects (__main__.ClientEvidenceTests.test_unmeasured_network_throughput_rejects) ... ok
+test_all_direct_cases_remain_required (__main__.ClientSelectorBindingTests.test_all_direct_cases_remain_required) ... ok
+test_nested_callbacks_are_not_independent_unittest_cases (__main__.ClientSelectorBindingTests.test_nested_callbacks_are_not_independent_unittest_cases) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 2.644s
+
+OK

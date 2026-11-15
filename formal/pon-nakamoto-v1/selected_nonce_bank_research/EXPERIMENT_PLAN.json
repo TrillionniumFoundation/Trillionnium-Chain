@@ -1,0 +1,21 @@
+{
+  "schema": "selected-nonce-bank-predeclared-plan-r4-v1",
+  "published_baseline": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+  "created_before_new_nonce_ticket_evaluation": true,
+  "relation": "unchanged selected LOCAL product8 v1, not cumulative W1 or a STARK",
+  "context": "exact original real_lottery_hit_p_1_64.expected.bin",
+  "inputs": ["exact original structured-a.bin", "exact original structured-b.bin"],
+  "nonce_start_inclusive": 512,
+  "nonce_end_exclusive": 1024,
+  "batch_order": "descending coordinate occupancy, then ascending (bi,bk,bj); within bucket ascending nonce",
+  "bank_selection_inputs": ["prepaid seed", "prepaid selected coordinate"],
+  "bank_selection_must_not_read": ["ticket", "event", "noise", "winner positions"],
+  "mining_strategies": ["dense_online_direct", "dense_online_cache1", "dense_bank_cache1", "global_affine_online", "global_affine_bank_cache1"],
+  "online_policy": "ascending nonce; cache1 variant retains the first useful product and computes other coordinates without storing",
+  "stop_rule": "stop at first target-qualified candidate; otherwise exhaust declared nonce range",
+  "verification": "each generated attempt byte-compared with the frozen unmodified relation producer; each winner verified by frozen native relation; separately priced full-range audit",
+  "costs": "record whole input/tree/recognition/compile setup, all selector gates including unattempted bank entries, failures, result acquisitions, bank/cache payload and indexing operations; SHA prefix replay is separately measured against hashlib",
+  "auxiliary_model": "independent tickets theorem is not a claim about concrete SHA or physical cost",
+  "production_qualification": false,
+  "pressure_experiments": false
+}

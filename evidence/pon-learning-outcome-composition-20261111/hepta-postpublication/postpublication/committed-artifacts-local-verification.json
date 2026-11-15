@@ -1,0 +1,21 @@
+{
+  "scope": "independent local verification of 41 files fetched from exact GitHub commit ef3a398d460574813957a25f5455e12c60db6d5d; remote original-byte and live-PR verifier separate",
+  "status": "PASS",
+  "finished_at": "2026-11-12T01:11:11.775428+00:00",
+  "files_git_blob_sha1_verified_at_download": 41,
+  "sha256_manifest_entries_verified": 40,
+  "original_stdout_marker_slices_verified": 26,
+  "native7_exit": 0,
+  "native8_exit": 0,
+  "native7_log_sha256": "3e7ee2dcd9019949256a2987a3c8612d976952a58503d7050198adaab11a5261",
+  "native8_log_sha256": "bf752718b91d313dfd2a626e998f52c95dcb5e41d4a63705a4f63fbf9b1b375e",
+  "maintenance_stage_exits": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "historical_cloud_attempt_exit": 101,
+  "output_ack_event_verified": false,
+  "production_qualification": "HOLD_NO_GO"
+}

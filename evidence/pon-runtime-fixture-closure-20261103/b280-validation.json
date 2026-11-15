@@ -1,0 +1,1148 @@
+{
+  "schema": "trnm-b280-original-profile-terminal-supplement-v1",
+  "created_utc": "2026-11-03T21:02:32.707964+00:00",
+  "source": {
+    "commit": "b28098c092dca72165c0d26054fce95a8636d777",
+    "tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+    "native_manifest_sha256": "fd57a7ac6a44ef49258c885a1efc056676f5031577ab17ede3949aff4b4f9188",
+    "native_manifest_paths": 1190,
+    "manifest_scope": "All retained files found under trillionnium/crates and config plus trillionnium/Cargo.toml and Cargo.lock. Exact full tracked-source identity is separately established by committed-check/exact-source.stdout.",
+    "native_manifests_before_after_final_terminal_identical": true,
+    "compiler": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "cargo_build_jobs": "1",
+    "cargo_incremental": "0",
+    "original_profiles_and_native_budgets_unchanged": true
+  },
+  "build": {
+    "receipt": {
+      "name": "build",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--test",
+        "architecture_delivery_compare",
+        "--test",
+        "public_intake_v2",
+        "--test",
+        "public_cli",
+        "--test",
+        "public_pool_cli",
+        "--test",
+        "mining_service_budget",
+        "--test",
+        "evaluation_sync_observation",
+        "--test",
+        "native_node",
+        "--test",
+        "pinned_peer_polling",
+        "--all-features",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "exit_code": 0,
+      "wall_ns": 863937609194,
+      "stdout_sha256": "6efc62da779595017c67f31c056b0cf0ceb1249e0ceea919b2fa290d715e0af4",
+      "stderr_sha256": "6a6de69eb530117e93688537290131f6c5bd7166853e3e6805c90a5d7b0507ce"
+    },
+    "artifact_count": 10,
+    "integration_targets_built": 8,
+    "library_and_cli_built": true,
+    "library_artifact": {
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "trnm_pon_node",
+        "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "edition": "2021",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+      "sha256": "5c63c59a0bdfe05fab8039f83d2e360c9e960136857c0b189ffb5bac25a44483"
+    },
+    "retained_original_library_snapshot": "/workspace/scratch/b5a148b09b11/next-validation/b280-native-snapshot/trnm_pon_node-4a176b3f1058369c",
+    "snapshot_elf_rehashed_by_this_packaging": false,
+    "live_target_paths_read_by_this_packaging": false,
+    "formatter": {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_ns": 13265547568,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "strict_complete_workspace_clippy": {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "wall_ns": 64464107995,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "4e013bc7379641a5629ced1efa74e53892744ee9bd3dbc1df1a53f04055ec2d0"
+    },
+    "completion": {
+      "completed_utc": "2026-11-03T20:45:04.049456+00:00",
+      "native_source_unchanged": true
+    }
+  },
+  "clean_committed_checks": {
+    "checks": [
+      {
+        "name": "preflight",
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh",
+          "--audit"
+        ],
+        "exit_code": 0,
+        "wall_ns": 75222763,
+        "stdout_sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "exact-source",
+        "command": [
+          "python3",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "b28098c092dca72165c0d26054fce95a8636d777"
+        ],
+        "exit_code": 0,
+        "wall_ns": 3563634724,
+        "stdout_sha256": "ad4dd0271ae1941621e012a13b433cf2d71338de49e301a9a71609b84994412b",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "repository",
+        "command": [
+          "python3",
+          "scripts/ci/check_repository.py"
+        ],
+        "exit_code": 0,
+        "wall_ns": 46862896439,
+        "stdout_sha256": "2ae187f1ec0446713bd47d4a0b27ade5b5db2256e550d957fccc5ed3b0a2ceb3",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "source-pins",
+        "command": [
+          "python3",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "exit_code": 0,
+        "wall_ns": 142869617,
+        "stdout_sha256": "01f8b236ffd929a5c12078cda4c44c61a86978b1de4077bace21058d2484b054",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "inventory",
+        "command": [
+          "python3",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "wall_ns": 64766788,
+        "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "all_five_exit_zero": true,
+    "exact_source": {
+      "base": null,
+      "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 872904508,
+      "tracked_entries": 7563,
+      "tracked_worktree_verified": true
+    },
+    "source_pin_result": {
+      "canonical_default_provider_contract_checked": true,
+      "canonical_pnq2_contract_checked": true,
+      "continuous_npq6_combination_accepted": false,
+      "cryptographic_acceptance": false,
+      "exact_source_blobs": 376,
+      "legacy_qtx1_optional_adapter_contract_checked": true,
+      "native_transfer_account_contract_checked": true,
+      "native_transport_contract_checked": true,
+      "node_activated": false,
+      "production_confidentiality_accepted": false,
+      "schema": "trnm-pq-cross-branch-check-v1",
+      "status": "HOLD_NO_GO",
+      "upstream_heads": 6,
+      "whole_native_authorization_migrated": false
+    }
+  },
+  "static_controls": {
+    "source": {
+      "head": "b28098c092dca72165c0d26054fce95a8636d777",
+      "status": "",
+      "previous_completed_gate_record": "committed-check/results.json"
+    },
+    "records": [
+      {
+        "name": "preflight",
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh",
+          "--audit"
+        ],
+        "exit_code": 0,
+        "wall_ns": 77458717,
+        "unittest_summaries": [],
+        "stdout_sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "source-integrity-negative",
+        "command": [
+          "python3",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "exit_code": 0,
+        "wall_ns": 2822535415,
+        "unittest_summaries": [
+          [
+            "34",
+            "2.721"
+          ]
+        ],
+        "stdout_sha256": "b095c7ef844397b06bda05ffdbb4ebee56dc8695600ab4c4e994f06057f8506a",
+        "stderr_sha256": "64cd652c7512e400663e14ae71cf8d887a2f079d966b76a5fabbadc45cf99a04"
+      },
+      {
+        "name": "pq-source-contract",
+        "command": [
+          "python3",
+          "scripts/ci/test_pq_research_integration.py"
+        ],
+        "exit_code": 0,
+        "wall_ns": 15432741432,
+        "unittest_summaries": [
+          [
+            "34",
+            "15.370"
+          ]
+        ],
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "31246a4513b30ae523e6701a38d18061c24d70febf2d4f83c5181d34c5e18522"
+      },
+      {
+        "name": "ci-contract",
+        "command": [
+          "python3",
+          "scripts/ci/test_ci_contract.py"
+        ],
+        "exit_code": 0,
+        "wall_ns": 9064740645,
+        "unittest_summaries": [
+          [
+            "98",
+            "8.980"
+          ]
+        ],
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "59413c26a22b3238c56aed7a4d5e8738ecff3cbb281d669d12446476578a2d54"
+      },
+      {
+        "name": "ci-execution",
+        "command": [
+          "python3",
+          "scripts/ci/test_ci_execution.py"
+        ],
+        "exit_code": 0,
+        "wall_ns": 24694714806,
+        "unittest_summaries": [
+          [
+            "67",
+            "24.590"
+          ]
+        ],
+        "stdout_sha256": "5041b0bf830397883d7e7f0ddf8ccaafc2c5c26243831ae4c7af4b04a19588c4",
+        "stderr_sha256": "43ffb0fb391de0ed44f81a8e081d359d3a47c853d059d1caafe3371ef4c9d01d"
+      },
+      {
+        "name": "claim-guard-controls",
+        "command": [
+          "python3",
+          "scripts/ci/test_pq_chain_claim_guard.py"
+        ],
+        "exit_code": 0,
+        "wall_ns": 445810490,
+        "unittest_summaries": [
+          [
+            "22",
+            "0.394"
+          ]
+        ],
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "fb08d41e4664e4cd4bddc2fb68b48b0ec90b39f53ea46d4bc2afd2e4fe761818"
+      }
+    ],
+    "unittest_executions": 255,
+    "suite_count": 5,
+    "counts_by_suite": {
+      "source-integrity-negative": 34,
+      "pq-source-contract": 34,
+      "ci-contract": 98,
+      "ci-execution": 67,
+      "claim-guard-controls": 22
+    },
+    "qualification": "Source/CI/claim controls only; preflight is separate. Repeated AF source-control executions do not increase unique coverage."
+  },
+  "locked_graphs": {
+    "source": {
+      "head": "b28098c092dca72165c0d26054fce95a8636d777",
+      "status": "",
+      "lockfiles_before": {
+        "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+        "tests/fuzz/Cargo.lock": "8102aabc115e12470a5eee89735b3f3094134e1b3701cb61209e45b3129214a2"
+      }
+    },
+    "results": [
+      {
+        "name": "default",
+        "command": [
+          "cargo",
+          "metadata",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--format-version=1",
+          "--filter-platform",
+          "x86_64-unknown-linux-gnu"
+        ],
+        "exit_code": 0,
+        "wall_ns": 219966453,
+        "stdout_sha256": "a70197e7ced0cedf5deb3ae6b83103545d817727f45247db248fde74edffebb0",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "packages": 133,
+        "resolve_nodes": 133,
+        "workspace_members": 26
+      },
+      {
+        "name": "all-features",
+        "command": [
+          "cargo",
+          "metadata",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--format-version=1",
+          "--filter-platform",
+          "x86_64-unknown-linux-gnu",
+          "--all-features"
+        ],
+        "exit_code": 0,
+        "wall_ns": 111197960,
+        "stdout_sha256": "dde43526b3e2aa3d1326c9df8ef37ecfee493d48c6cf66557f14acce9b2051f9",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "packages": 138,
+        "resolve_nodes": 138,
+        "workspace_members": 26
+      },
+      {
+        "name": "fuzz",
+        "command": [
+          "cargo",
+          "metadata",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "tests/fuzz/Cargo.toml",
+          "--format-version=1",
+          "--filter-platform",
+          "x86_64-unknown-linux-gnu"
+        ],
+        "exit_code": 0,
+        "wall_ns": 108688648,
+        "stdout_sha256": "15e9a30628cf8340749b56cd37552c31f85f0c8d3f23b5ce697762c28a0b605d",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "packages": 106,
+        "resolve_nodes": 106,
+        "workspace_members": 1
+      }
+    ],
+    "lockfiles_after": {
+      "locks": {
+        "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+        "tests/fuzz/Cargo.lock": "8102aabc115e12470a5eee89735b3f3094134e1b3701cb61209e45b3129214a2"
+      },
+      "unchanged": true
+    },
+    "qualification": "Locked dependency resolution only, not native execution."
+  },
+  "full_node": {
+    "status": "FAILED_ONE_LOCAL_UNIX_LISTENER_EPERM",
+    "registered": 971,
+    "passed": 947,
+    "failed": 1,
+    "ignored": 23,
+    "exit_code": 101,
+    "timed_out": false,
+    "wall_ns": 1441188688254,
+    "binary_sha256": "5c63c59a0bdfe05fab8039f83d2e360c9e960136857c0b189ffb5bac25a44483",
+    "binary_unchanged": true,
+    "native_log_bytes": 7288609,
+    "native_log_sha256": "1372b8e6d498e7571ef5db087a6cb653e1dd162c03ad9d07b090683360e4f78d",
+    "complete_original_registry": true,
+    "reader_error": null,
+    "failed_selectors": [
+      "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart"
+    ],
+    "failure_boundary": "UnixListener::bind at combined_tests.rs:191:71 returns OS code 1/PermissionDenied before witness ready, socket transport or CAS. Failure remains recorded; no bypass, retry or success substitution.",
+    "source_for_boundary": "b28098c092dca72165c0d26054fce95a8636d777:trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+    "original_ignored_match_plan": true,
+    "later_diagnostic_candidate_registry_or_results_not_inferred": true
+  },
+  "selected_execution": {
+    "library_source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+    "library_elf_sha256": "5c63c59a0bdfe05fab8039f83d2e360c9e960136857c0b189ffb5bac25a44483",
+    "original_43_preserved": true,
+    "pq_selectors": 53,
+    "pq_passed": 52,
+    "pq_failed": 1,
+    "pq_failure_is_same_selector_as_full_node": true,
+    "pq_failure_receipt": {
+      "selector": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+      "command": [
+        "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+        "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "exit_code": 101,
+      "timed_out": false,
+      "wall_ns": 766052129,
+      "log": "pq-36.log",
+      "log_sha256": "ae0235ae1d548988de145823e216ffc78f8b0f70ca758f8886289f78a9d97e2c",
+      "reader": null,
+      "reader_error": "ValueError:required-native-test: expected one passed, zero failed/ignored/measured"
+    },
+    "history": {
+      "command": [
+        "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+        "ingress::history_import::tests::",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "wall_ns": 18391135140,
+      "log_sha256": "ec62d069cc413150611be56713cb54ac9c10d5927645242e3e4d76ec8a9cfb7d",
+      "summaries": [
+        "test result: ok. 25 passed; 0 failed; 1 ignored; 0 measured; 945 filtered out; finished in 18.35s"
+      ],
+      "all_26_named_entries_seen": true
+    },
+    "history_registered": 26,
+    "history_meaningful_passed": 25,
+    "history_original_ignored": 1,
+    "history_ignored_selector": "ingress::history_import::tests::history_kill_cut_child",
+    "all_selected_and_history_names_are_subsets_of_971": true,
+    "subsets_not_added_to_full_suite_unique_denominator": true,
+    "integration": [
+      {
+        "target": "pinned_peer_polling",
+        "selector": "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/pinned_peer_polling-4d64eee6f480ca80",
+          "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "wall_ns": 565690536,
+        "binary_sha256": "ca3775e1814c1447818566ad8641fe8e19a17dcbf5e83b3984748c521a50ce92",
+        "binary_unchanged": true,
+        "log_sha256": "e67896e201c12ca97b6f781aa1155a07c62279e09e8f13dc222d841e8497ff5a",
+        "expectation_met": true,
+        "real_fixed_host_positive": false,
+        "reader": {
+          "result": "PASS",
+          "test": "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission",
+          "executed_tests": 1,
+          "scope": "named-libtest-execution-only"
+        }
+      },
+      {
+        "target": "architecture_delivery_compare",
+        "selector": "reference_dag_rejects_withheld_body_equivocation_and_changed_signed_history",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/architecture_delivery_compare-d79010039403b74c",
+          "reference_dag_rejects_withheld_body_equivocation_and_changed_signed_history",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "wall_ns": 32351757,
+        "binary_sha256": "0573fd982b5e748824b107a11c31af3011f6076842a2259bed573aec39f6bc48",
+        "binary_unchanged": true,
+        "log_sha256": "87b95131cb596c05d6e754856cde908301d9a99a219c1b5efdb8270dff361833",
+        "expectation_met": true,
+        "real_fixed_host_positive": false,
+        "reader": {
+          "result": "PASS",
+          "test": "reference_dag_rejects_withheld_body_equivocation_and_changed_signed_history",
+          "executed_tests": 1,
+          "scope": "named-libtest-execution-only"
+        }
+      },
+      {
+        "target": "architecture_delivery_compare",
+        "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/architecture_delivery_compare-d79010039403b74c",
+          "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "exit_code": 101,
+        "expected_exit": 101,
+        "wall_ns": 3885556,
+        "binary_sha256": "0573fd982b5e748824b107a11c31af3011f6076842a2259bed573aec39f6bc48",
+        "binary_unchanged": true,
+        "log_sha256": "8ba8ababd05df12cb326d89309060cab011432c57f82d6b8c95dcc9a98457d3b",
+        "expectation_met": true,
+        "real_fixed_host_positive": false,
+        "original_kernel_refusal_seen": true
+      }
+    ],
+    "integration_summary": {
+      "named_native_controls_passed": 2,
+      "expected_kernel_marker_refusals": 1,
+      "marker_native_exit_code": 101,
+      "actual_fixed_host_positive_qualified": false
+    },
+    "raw_log_files": 57
+  },
+  "independent_reviews": {
+    "semantic_review": "b280-independent-review.json",
+    "terminal_reader_review": "b280-terminal-reader-review.json",
+    "actual_elf_list_only_registry": "b280-native-registry.json",
+    "scope": "Independent static reviews and actual --list registration. Those artifacts execute no test bodies and do not replace the terminal native result."
+  },
+  "hosted_original43": {
+    "head": "b28098c092dca72165c0d26054fce95a8636d777",
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "actual_merge": "49b40ecff37acac0b00a23b28a69d65df98308d1",
+    "tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+    "all_four_original_43_passed": true,
+    "unique_selectors": 43,
+    "lane_selector_executions": 172,
+    "executions_are_not_172_unique_controls": true,
+    "full_node_suite_verdict": null
+  },
+  "hosted_service_gates": {
+    "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+    "source_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+    "artifact_bindings": "hosted/original-service-failure-bindings.json",
+    "full_compact": "hosted/original-service-failure-compact.json",
+    "additional_original_fresh_failures": "hosted/additional-fresh-service-failures.json",
+    "fresh_native_named_tests_and_fmt_passed": true,
+    "fresh_business_manifest_passed": false,
+    "fresh_failure": "CONFIRMATION_TARGET",
+    "fresh_windows": [
+      {
+        "mode": "attack-free-baseline",
+        "requested_window_ns": 4000000000,
+        "independently_confirmed_in_window": true,
+        "confirmed_transactions": 1,
+        "submit_counts": {
+          "attempts": 7,
+          "successful_in_original_window": 7,
+          "failed_or_late": 0
+        },
+        "history_counts": {
+          "attempts": 7,
+          "successful_in_original_window": 7,
+          "failed_or_late": 0
+        }
+      },
+      {
+        "mode": "from-zero-pressure",
+        "requested_window_ns": 4000000000,
+        "independently_confirmed_in_window": false,
+        "confirmed_transactions": 0,
+        "submit_counts": {
+          "attempts": 7,
+          "successful_in_original_window": 7,
+          "failed_or_late": 0
+        },
+        "history_counts": {
+          "attempts": 2,
+          "successful_in_original_window": 1,
+          "failed_or_late": 1
+        }
+      }
+    ],
+    "f0": {
+      "failure": "NATIVE_F0_FAILED",
+      "native_result_failure": "NATIVE_F0_FAILED",
+      "report_validation_failure": "BASELINE_MUST_PASS",
+      "planned_confirmations": 6,
+      "planned_business_packet_exposures": 42,
+      "confirmed_in_thirty_seconds": 1,
+      "four_second_slo_successes": 0,
+      "unobserved_planned_rounds": 3,
+      "timely_packet_acknowledgements": 21,
+      "packet_attempts": 28,
+      "all_services_known_empty": true
+    },
+    "three_campaigns": {
+      "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+      "planned_runs": 3,
+      "planned_confirmations": 27,
+      "planned_business_packet_exposures": 189,
+      "confirmed_in_original_windows": 3,
+      "observed_rounds": 12,
+      "unobserved_rounds": 15,
+      "submission_attempts": 84,
+      "imports_observed": 78,
+      "imports_succeeded": 69,
+      "imports_failed": 9
+    },
+    "all_original_failure_and_unobserved_denominators_preserved": true,
+    "root_phase_missing_codes": {
+      "schema": "b280-f0-unknown-refusal-denominators-v1",
+      "head": "b28098c092dca72165c0d26054fce95a8636d777",
+      "run_id": 41708486800,
+      "job_id": 126178548474,
+      "artifact_id": 13269380609,
+      "phase": "valid-work-root",
+      "stages": {
+        "work": {
+          "rejected": 3,
+          "recorded_error_codes": {
+            "PUBLIC_REQUEST_CANCELLED": 3
+          },
+          "without_recorded_error_code": 0
+        },
+        "admission_prepare": {
+          "rejected": 33,
+          "recorded_error_codes": {
+            "PUBLIC_REQUEST_CANCELLED": 33
+          },
+          "without_recorded_error_code": 0
+        },
+        "execution": {
+          "rejected": 309,
+          "recorded_error_codes": {
+            "PUBLIC_REQUEST_CANCELLED": 3
+          },
+          "without_recorded_error_code": 306
+        },
+        "commit": {
+          "rejected": 4,
+          "recorded_error_codes": {
+            "PUBLIC_REQUEST_CANCELLED": 4
+          },
+          "without_recorded_error_code": 0
+        },
+        "root_commitment": {
+          "rejected": 3,
+          "recorded_error_codes": {
+            "PUBLIC_REQUEST_CANCELLED": 3
+          },
+          "without_recorded_error_code": 0
+        }
+      },
+      "scope": "All server records in the phase, including honest and hostile. Missing error code is not classified as ROOT or as a specific server cause."
+    },
+    "newer_telemetry_candidate_not_qualified": true
+  },
+  "separate_release_evidence": {
+    "carrier_commit": "af570eaef44870ba3ec1f3d5be2cbdde2981931d",
+    "tested_source": "b28098c092dca72165c0d26054fce95a8636d777",
+    "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+    "binary_sha256": "9e51ef0a2fd597fd2e21d73f739b2e7da362ecdd9dd33099c699b18ff4bf450e",
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": true
+    },
+    "native_passed": 14,
+    "native_failed": 0,
+    "native_ignored": 0,
+    "all_14_names_already_registered_in_local_971": true,
+    "independent_elf": true,
+    "evidence": "hosted/af570-evidence-readback/validation-b280-status.json",
+    "original_profile_substitution": false,
+    "added_to_971_or_53_denominators": false,
+    "host_unique_controls": 78,
+    "repeated_host_subset_executions_not_additional_unique": 41,
+    "source_integrity_control_executions": 68,
+    "source_controls_not_added_to_local_255_unique_count": true
+  },
+  "prior_interruption": {
+    "source_label": "8a74 composed candidate; separate from prior 3898 build and later b280 j1 invocation",
+    "status": "UNKNOWN_NO_TERMINAL_RESULT",
+    "error": "executor key changed during session recovery",
+    "build_exit": null,
+    "build_passed": null,
+    "build_failed": null,
+    "native_execution_observed": false,
+    "receipt": "8a74-interrupted-readback.json",
+    "stdio_bundle": "b280-build-static-and-prior-8a74-logs.json.gz",
+    "no_oom_or_success_inferred": true,
+    "later_b280_successful_build_does_not_rewrite_prior_unknown": true
+  },
+  "qualification": {
+    "all_blockers_closed": false,
+    "performance_acceptance": false,
+    "whole_chain_pq": false,
+    "actual_fixed_host_positive_from_local_runs": false,
+    "public_network_ready": false,
+    "execution_authority": false,
+    "activation_authority": false,
+    "native_or_ci_results_for_later_diagnostics_source": null,
+    "reason": "The local complete registry retains one actual UnixListener EPERM failure. Four separate hosted original-profile library lanes pass 948/0/23 with exact source and original ignored entries. The real runtime head executes architecture successfully under fixed Host with the original 18-sample business reader, then evaluation fails with OWNER_REORG_TERMINATION_CPU_REQUIRED; seven declared Host selectors are unexecuted. Original public service/F0/campaign and independent scientific/operator/economic gates remain under the sole plan. No later diagnostic source is qualified by this evidence.",
+    "actual_fixed_host_architecture_positive_from_hosted_run": true,
+    "nine_positive_host_selectors_pass": false
+  },
+  "bundles": {
+    "native": "b280-full-node-native.log.gz",
+    "selected_logs": "b280-selected-native-logs.json.gz",
+    "build_static_and_prior_interruption_stdio": "b280-build-static-and-prior-8a74-logs.json.gz",
+    "original_records": "b280-original-records.json.gz",
+    "manifest": "b280-artifact-index.json",
+    "hosted_runtime_original_records": "hosted/runtime-head-selected-original-records.json.gz"
+  },
+  "hosted_full_node": {
+    "readback": "hosted/pq-original-node-four-lane-readback.json",
+    "prior_three_lane_snapshot_retained": "hosted/pq-original-node-three-lane-readback-20261103T2104.json",
+    "captured_at": "2026-11-03T21:20:32.845778+00:00",
+    "run_id": 41708487004,
+    "run_attempt": 1,
+    "event_head": "b28098c092dca72165c0d26054fce95a8636d777",
+    "actual_merge": "49b40ecff37acac0b00a23b28a69d65df98308d1",
+    "ordered_merge_parents": [
+      "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "b28098c092dca72165c0d26054fce95a8636d777"
+    ],
+    "tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+    "lane_count": 4,
+    "same_948_unique_pass_names_all_four_lanes": true,
+    "outer_registry_per_lane": 971,
+    "outer_passed_per_lane": 948,
+    "outer_failed_per_lane": 0,
+    "outer_original_ignored_per_lane": 23,
+    "nested_subprocess_harnesses_not_additional_tests": true,
+    "lanes": [
+      {
+        "lane": "arm64-head",
+        "job_id": 126170051709,
+        "artifact_id": 13269328356,
+        "artifact_bytes": 1050485,
+        "artifact_sha256": "afdf60c468f671f9ceab71ff08855a38f5f04696b3eabf5b2308eb7d32f70cf3",
+        "source": {
+          "base": null,
+          "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+          "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 872904508,
+          "tracked_entries": 7563,
+          "tracked_worktree_verified": true
+        },
+        "source_before_after_identical": true,
+        "outer_summary": "test result: ok. 948 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 2163.86s",
+        "success_names_sha256": "7a33df673d1978666b7f603f0db2d3b1297f2e8c0390a665c475d214eaabb056",
+        "complete_971_registry_matches_frozen_original": true,
+        "node_command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--all-features",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "node_log_sha256": "4239af13ed1a62f62ebbffdac5fb1590bd33ff9a1b0993e073bfce5296f3a61c",
+        "strict_clippy_command": [
+          "cargo",
+          "+1.95.0",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--tests",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "strict_clippy_exit_code": 0
+      },
+      {
+        "lane": "x64-head",
+        "job_id": 126170052598,
+        "artifact_id": 13269873705,
+        "artifact_bytes": 1052044,
+        "artifact_sha256": "7196401e0e8acb8112664b971b22510c84596f416ddc563fb509d3643f9bf36a",
+        "source": {
+          "base": null,
+          "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+          "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 872904508,
+          "tracked_entries": 7563,
+          "tracked_worktree_verified": true
+        },
+        "source_before_after_identical": true,
+        "outer_summary": "test result: ok. 948 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1367.58s",
+        "success_names_sha256": "7a33df673d1978666b7f603f0db2d3b1297f2e8c0390a665c475d214eaabb056",
+        "complete_971_registry_matches_frozen_original": true,
+        "node_command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--all-features",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "node_log_sha256": "3b2f769d1c18446b2a9c292bb3149540a2cfab8d60fc37e3471910d5d75113f0",
+        "strict_clippy_command": [
+          "cargo",
+          "+1.95.0",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--tests",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "strict_clippy_exit_code": 0
+      },
+      {
+        "lane": "x64-actual-merge",
+        "job_id": 126170052239,
+        "artifact_id": 13269449017,
+        "artifact_bytes": 1055748,
+        "artifact_sha256": "4a9888da2416cf2117a3ccb41324ff8c7930484b77f0abce8282536f0acb85de",
+        "source": {
+          "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+          "kind": "prospective-merge",
+          "prospective_merge": "49b40ecff37acac0b00a23b28a69d65df98308d1",
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "49b40ecff37acac0b00a23b28a69d65df98308d1",
+          "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 872904508,
+          "tracked_entries": 7563,
+          "tracked_worktree_verified": true
+        },
+        "source_before_after_identical": true,
+        "outer_summary": "test result: ok. 948 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1374.38s",
+        "success_names_sha256": "7a33df673d1978666b7f603f0db2d3b1297f2e8c0390a665c475d214eaabb056",
+        "complete_971_registry_matches_frozen_original": true,
+        "node_command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--all-features",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "node_log_sha256": "03e293872a1b8b4f2be028e7f18a95fc1be4c1840273f2160718a0cfe5ce1662",
+        "strict_clippy_command": [
+          "cargo",
+          "+1.95.0",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--tests",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "strict_clippy_exit_code": 0
+      },
+      {
+        "lane": "arm64-actual-merge",
+        "job_id": 126170052621,
+        "artifact_id": 13270947933,
+        "artifact_bytes": 1053882,
+        "artifact_sha256": "3b0e83ec2f21fd8e0b52f07b083bc7e7b867c35e0e83d2f77a2a68a7b6724140",
+        "source": {
+          "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+          "kind": "prospective-merge",
+          "prospective_merge": "49b40ecff37acac0b00a23b28a69d65df98308d1",
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "49b40ecff37acac0b00a23b28a69d65df98308d1",
+          "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 872904508,
+          "tracked_entries": 7563,
+          "tracked_worktree_verified": true
+        },
+        "source_before_after_identical": true,
+        "outer_summary": "test result: ok. 948 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 2167.70s",
+        "success_names_sha256": "7a33df673d1978666b7f603f0db2d3b1297f2e8c0390a665c475d214eaabb056",
+        "complete_971_registry_matches_frozen_original": true,
+        "node_command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--all-features",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "node_log_sha256": "7052f47437732b1562200ed4f63a32bb39271a05ea57671caa309fe02d9c8687",
+        "strict_clippy_command": [
+          "cargo",
+          "+1.95.0",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--tests",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "strict_clippy_exit_code": 0
+      }
+    ],
+    "local_947_1_23_result_is_not_rewritten": true,
+    "scope": "Four complete original Node library commands at b280 head/actual merge under original test source profile, plus original 43 named controls per lane; not full workspace integration, performance acceptance, later source or whole-chain PQ qualification.",
+    "profile_interpretation": {
+      "original_command_and_banner_preserved": true,
+      "cargo_banner_is_not_node_package_optimization_level": true,
+      "node_optimization_level_not_inferred_from_banner": true,
+      "source_cargo_manifest_git_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "source_cargo_manifest_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "source_cargo_manifest": "trillionnium/Cargo.toml",
+      "package_override_blocks": [
+        "[profile.test.package.trnm-mvcc-fee]\nopt-level = 1\ndebug-assertions = true\noverflow-checks = true\n\n# Keep the full debug/test inventory and all checks, but compile the costly\n# public-work primitive with the same optimizing compiler used for native work.\n# This is a test-build choice, not a resource-policy or security qualification.",
+        "[profile.test.package.trnm-pon-node]\nopt-level = 3\ndebug-assertions = true\noverflow-checks = true\n"
+      ],
+      "qualification": "Original Cargo test invocation and source profile are retained. No claim that banner unoptimized means Node opt0. This artifact review does not derive per-crate rustc flags from the banner."
+    }
+  },
+  "supplemented_utc": "2026-11-03T21:24:33.152255+00:00",
+  "hosted_runtime": {
+    "readback": "hosted/runtime-head-terminal-failure-compact.json",
+    "architecture_readback": "hosted/runtime-head-architecture-host-positive.json",
+    "raw_records_bundle": "hosted/runtime-head-selected-original-records.json.gz",
+    "raw_record_count": 25,
+    "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+    "tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+    "run_id": 41708487030,
+    "job_id": 126173966811,
+    "artifact_id": 13271043247,
+    "artifact_sha256": "5d7963dd19e8c758e6e564c8a9165040f0bab94a86d264eceafffb21bea8fb59",
+    "source_before_after_identical": true,
+    "workspace_command_exit_code": 101,
+    "whole_workspace_pass": false,
+    "declared_host_selectors": 9,
+    "observed_host_selectors": 2,
+    "observed_passed": 1,
+    "observed_failed": 1,
+    "unexecuted_host_selectors": [
+      {
+        "target": "public_intake_v2",
+        "selector": "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+        "cli_required": false
+      },
+      {
+        "target": "public_intake_v2",
+        "selector": "one_packet_history_preserves_partial_progress_and_independent_validation",
+        "cli_required": false
+      },
+      {
+        "target": "public_cli",
+        "selector": "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+        "cli_required": true
+      },
+      {
+        "target": "public_pool_cli",
+        "selector": "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+        "cli_required": true
+      },
+      {
+        "target": "public_pool_cli",
+        "selector": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+        "cli_required": true
+      },
+      {
+        "target": "mining_service_budget",
+        "selector": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+        "cli_required": true
+      },
+      {
+        "target": "native_node",
+        "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+        "cli_required": true
+      }
+    ],
+    "architecture": {
+      "target": "architecture_delivery_compare",
+      "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+      "native_exit_code": 0,
+      "named_execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract"
+      },
+      "controller_passed": true,
+      "business_reader_passed": true,
+      "original_samples": 18,
+      "performance_acceptance": false,
+      "report_sha256": "7018be53078ed1bf6156d1ec1e983fe47a4b7a51a6ef7494bc618c69a6ddc010",
+      "report_bytes": 15530500,
+      "report_storage": "Original hosted artifact; staged readback retains the authenticated reader result and report hash, not another complete report copy.",
+      "original_selector_timeout_seconds": 120,
+      "observed_wall_ns": 56298270108,
+      "limits_or_deadlines_changed": false
+    },
+    "evaluation": {
+      "target": "evaluation_sync_observation",
+      "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+      "panic_lines": [
+        "thread 'actual_public_full_sync_query_partial_refusals_reorg_and_retirement' (33598) panicked at crates/trnm-pon-node/tests/evaluation_sync_observation.rs:551:46:",
+        "called `Result::unwrap()` on an `Err` value: Error { code: Some(OwnerReorgTerminationCpuRequired), kind: DependencyUnavailable, message: \"OWNER_REORG_TERMINATION_CPU_REQUIRED\", source: None, request_history_budget: false }",
+        "note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+        ""
+      ],
+      "terminal_result_lines": [
+        "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1 filtered out; finished in 45.79s"
+      ],
+      "native_error_message": "OWNER_REORG_TERMINATION_CPU_REQUIRED",
+      "actual_body_outcome": "Direct fixture owner activation returns OWNER_REORG_TERMINATION_CPU_REQUIRED; named native test fails.",
+      "native_exit_code": 101,
+      "native_passed": 0,
+      "native_failed": 1,
+      "host_controller_internal_failure": null,
+      "final_host_errors": [],
+      "cleanup": "already-collected",
+      "empty_owned_cgroup_after": true,
+      "controller_passed": false,
+      "wrapper_failure_is_not_substituted_for_actual_native_error": true
+    },
+    "actual_host_limits": {
+      "cpu.max": "25000 100000",
+      "cpu.max.burst": "0",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    },
+    "runtime_merge_scope": "Not observed in the frozen handoff; remained in_progress at 2026-11-03T21:20:33Z.",
+    "later_source_or_pending_fixture_fix_qualified": false
+  }
+}

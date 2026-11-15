@@ -1,0 +1,27 @@
+{
+  "schema": "pon-failed-process-observations-v1",
+  "records": [
+    {
+      "job_id": "1a1bb09eca4-13c47-23",
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-fixed-probability-contract-20261108-63b38\", \"remote_policy_mutated\": false}\n",
+      "stderr": "error: 打补丁失败：scripts/ci/check_ci_contract.py:142\nerror: scripts/ci/check_ci_contract.py：补丁未应用\nerror: 打补丁失败：scripts/ci/ci_job.sh:16\nerror: scripts/ci/ci_job.sh：补丁未应用\nTraceback (most recent call last):\n  File \"<string>\", line 7, in <module>\n  File \"/usr/lib/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['git', 'apply', '--check', '-']' returned non-zero exit status 1.\n",
+      "stdout_complete": true,
+      "stderr_complete": true
+    },
+    {
+      "job_id": "1a1bb0bc704-13c47-30",
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-fixed-probability-contract-20261108-63b38\", \"remote_policy_mutated\": false}\n自动合并 .github/workflows/pon-recent-batch-acceptance.yml\n冲突（内容）：合并冲突于 .github/workflows/pon-recent-batch-acceptance.yml\n自动合并 config/pon/pq-cross-branch-corpus-v1.json\n冲突（内容）：合并冲突于 config/pon/pq-cross-branch-corpus-v1.json\n自动合并 trillionnium/crates/trnm-pon-node/src/store.rs\n自动合并失败，修正冲突然后提交修正的结果。\n",
+      "stderr": "来自 https://github.com/TrillionniumFoundation/Trillionnium-Chain\n * branch                fix/chain-joint-consensus-daa-20261108 -> FETCH_HEAD\n",
+      "stdout_complete": true,
+      "stderr_complete": true
+    },
+    {
+      "job_id": "1a1bb399214-13c47-141",
+      "stdout": "START final-00-preflight\nEND {\"label\": \"final-00-preflight\", \"argv\": [\"bash\", \"scripts/project-preflight.sh\"], \"exit\": 0, \"duration_seconds\": 0.09528747899457812, \"source_head_before\": \"747a7169fae3bc27618e267eef8a5a03701bb6f3\", \"source_head_after\": \"747a7169fae3bc27618e267eef8a5a03701bb6f3\", \"native_passed_counts\": [], \"unittest_counts\": []}\nSTART final-01-inventory-refresh\nEND {\"label\": \"final-01-inventory-refresh\", \"argv\": [\"python3\", \"scripts/refresh_distributed_source_inventory.py\"], \"exit\": 0, \"duration_seconds\": 0.11187283811159432, \"source_head_before\": \"747a7169fae3bc27618e267eef8a5a03701bb6f3\", \"source_head_after\": \"747a7169fae3bc27618e267eef8a5a03701bb6f3\", \"native_passed_counts\": [], \"unittest_counts\": []}\n",
+      "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 54, in <module>\nAssertionError: {'added': ['trillionnium/crates/trnm-pon-node/src/research_work_schedule.rs', 'trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs', 'trillionnium/crates/trnm-pon-node/tests/research_work_schedule.rs'], 'removed': []}\n",
+      "stdout_complete": true,
+      "stderr_complete": true
+    }
+  ],
+  "normalization": "JSON string escaping only; stdout/stderr text retained"
+}

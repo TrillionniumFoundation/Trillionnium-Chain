@@ -1,0 +1,32 @@
+{
+  "schema": "TRNM-W1-V2-RECOVERED-HOST-COMMAND1",
+  "command": [
+    "cargo",
+    "clippy",
+    "--locked",
+    "--release",
+    "--manifest-path",
+    "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+    "-p",
+    "trnm-w1-zk-host-v2",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/workspace/scratch/79360d3567d1/chain",
+  "started_utc": "2026-11-05T01:06:47.004546+00:00",
+  "wall_seconds": 56.3580403269998,
+  "exit_code": 0,
+  "log": "/workspace/scratch/79360d3567d1/continuation-runtime/clippy-v2-recovered.log",
+  "log_sha256": "120a2ea4cf3c50938a442505e6e96624c0cdf58764353007b1ed661f8beb5943",
+  "environment": {
+    "CARGO_HOME": "/workspace/scratch/79360d3567d1/cargo",
+    "RUSTUP_HOME": "/workspace/scratch/79360d3567d1/rustup",
+    "RISC0_HOME": "/workspace/scratch/79360d3567d1/risc0",
+    "CARGO_TARGET_DIR": "/workspace/scratch/79360d3567d1/target-v2",
+    "CARGO_BUILD_JOBS": "1",
+    "RISC0_BUILD_LOCKED": "1"
+  },
+  "source_modified_by_command": false
+}

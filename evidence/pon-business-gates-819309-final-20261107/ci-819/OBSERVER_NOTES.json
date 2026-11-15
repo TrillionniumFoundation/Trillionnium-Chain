@@ -1,0 +1,23 @@
+{
+  "scope": "read-only diagnostic tooling; these failures are separate from original CI outcomes",
+  "retained_preparation_failures": [
+    {
+      "job_id": "1a1b7602d01-12894-a78",
+      "reason": "missing pinned local import pon_public_v3_phase_read; no artifact GET occurred"
+    },
+    {
+      "job_id": "1a1b764efce-12894-a97",
+      "reason": "missing config/pon/ledger-v1.json during import; no artifact GET occurred"
+    },
+    {
+      "job_id": "1a1b7667540-12894-a9f",
+      "reason": "same retained import-time config preparation failure; no artifact GET occurred"
+    }
+  ],
+  "preparation_resolution": "exact-H local Python import and six literal source configuration closures pinned; no source edits or fake CI variables",
+  "package_builder_preparation_error": "First JavaScript template literal contained unescaped Markdown backticks and failed parsing before any Hepta call or file creation. Corrected preparation preserved this fact.",
+  "tool_read_failures": "Bounded UTF-8 read tool returned INVALID_ARGUMENT on oversized reports/derived files; original files remained intact and small local extracts were used.",
+  "timing_versions": "v1 generic replay timing keys yielded null; v2 uses actual replay_started_ns/replay_ended_ns and is preserved; v3 covers all eight reports with original raw phase clock, without subtracting business_started_ns.",
+  "original_cache_subcheck": "Fresh-only negative-cache path subcheck is not_applicable_original_retained_proof for original retained-proof cohort; it is not a failure or false value.",
+  "archive_policy": "All fourteen original ZIP byte streams retained. Complete eight SQLite byte streams remain within the verified original History ZIPs; local extracted originals were not modified or recovered."
+}

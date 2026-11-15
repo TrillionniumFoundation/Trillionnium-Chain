@@ -1,0 +1,144 @@
+{
+  "archive_checks_are_native_test_results": false,
+  "candidate": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+  "captured_utc": "2026-11-06T14:35:01.441138+00:00",
+  "copied_bytes": 20785236,
+  "copied_files": 966,
+  "declared_raw_binding_checks": [
+    {
+      "kind": "flat_manifest",
+      "path": "quantum-current-c07-terminal-v1/payload/manifest.json",
+      "scope": "original-byte binding only",
+      "sha256": "bfa63c02b548e625c63d0f0c8bcdeba41ed4864212d1863e37bbf38cdaa48763",
+      "verified_entries": 677
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "integration-review/d6-source20-full-readback-recovery-v1/originals/manifest.json",
+      "scope": "original-byte binding only",
+      "sha256": "bef3151a9b4222616548d6b6a553409b8ac7e0defa3451afc0706558c98fd1f3",
+      "verified_entries": 102
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "integration-review/c07-static-recovery-review-v1/handoff-manifest.json",
+      "scope": "original-byte binding only",
+      "sha256": "3904f2b1b36f8c0c3b51fa55e6db3c7663837e438aa7e2976c9f81a6b4fba813",
+      "verified_entries": 8
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "integration-review/tls-audit-recovery-v2/final-handoff-v1.json",
+      "scope": "original-byte binding only",
+      "sha256": "0e5a3f653e65669917fed065becb8e51fd100bb89f1fc767dbe2d502e64cd61d",
+      "verified_entries": 27
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "integration-review/c07-terminal-reader-recovery-v2/readback-handoff-final-v1.json",
+      "scope": "original-byte binding only",
+      "sha256": "d920bf3fb909aa85fbccf673bd8bab6cb879dd05fb04914b53ba3071186741ab",
+      "verified_entries": 16
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "integration-review/c07-terminal-reader-recovery-v2/final-v6-qa-addendum-manifest-v1.json",
+      "scope": "original-byte binding only",
+      "sha256": "c6c53238c5b725ce3ade08776e42826c49489b38b04eaedd25eac84effbb9cd9",
+      "verified_entries": 9
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "integration-review/tls-audit-recovery-v2/post-handoff-supplement-v2.json",
+      "scope": "original-byte binding only",
+      "sha256": "1bfc4ced4e6869ad79a264e7df75fb5cb8e201dda15a19dfd63e0bdc209c74c4",
+      "verified_entries": 6
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "integration-review/final-mapping-readback-v1/manifest.json",
+      "scope": "original-byte binding only",
+      "sha256": "973341effc55eab30a87814885ac610ca6972f82f9a348d0b01deab2375979a7",
+      "verified_entries": 8
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "integration-review/final-publication-checker-review-v1/manifest.json",
+      "scope": "original-byte binding only",
+      "sha256": "87a14192cf2a489e08bd551bf4680c2309da83cce55181913d1607298cef0530",
+      "verified_entries": 2
+    }
+  ],
+  "input_bytes_rechecked_after_copy": true,
+  "native_tests_executed_by_collector": 0,
+  "package_state": "TERMINAL_C07_NATIVE_FAILED_74_SUCCEEDED_1_FAILED_2_BLOCKED_HOLD_NO_GO",
+  "pending_observations_from_owner_plan": [
+    "Unique failed witness control root cause is not established;later reopen/whole-old-directory assertions were not reached.",
+    "Containing publication's seven source-only gates have not executed at package freeze;later immutable records bind their actual commit and result.",
+    "Full private transport/WAN/custody/final-use/PQ finality and quantum-work/DAA/fork economics remain unqualified.",
+    "Original old790 source-only logs and unavailable V3/V4/V5 controller preparation bytes are not claimed recovered."
+  ],
+  "production_activated": false,
+  "schema": "trnm-terminal-increment-collection-v1",
+  "scope": "Copies frozen raw observations and explicit owner classifications. It does not infer test success, manufacture a terminal CI state, or transfer results across source commits.",
+  "selection_plan_sha256": "2357bb2951cd794e2e84ceeb3a7b2b285e72ecbbd022aac1ab45d4f7ba200850",
+  "source_scopes_from_frozen_owner_plan": [
+    {
+      "actual_scope": "4 locked-cache preparation commands;20 source gates/232 Python tests;77 native observations=74 succeeded/1 failed/2 blocked;22+1 Node controls;release43 with six overlapping exact reruns;strict workspace Clippy exit0",
+      "native_exit_code": 1,
+      "source": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+      "tree": "35125592c14098385eab8693bbf05df0506d3610",
+      "whole_chain_pq_qualified": false
+    },
+    {
+      "actual_scope": "Historical source20 exit1:16 passed/4 failed;232 Python;native never dispatched",
+      "original_result_reclassified": false,
+      "source": "d6ec50bb4c9f92656c3b95430ca305896012e69c",
+      "tree": "e279dd9e87058e8aa72dc951253a2bfb67665ce6"
+    },
+    {
+      "actual_scope": "Complete previously frozen report/qualification/source map remain historical;not current source/native qualification",
+      "source": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b"
+    },
+    {
+      "actual_scope": "Historical full-Node timeout and frozen original CI failures remain in immutable prior packages;not rerun or reclassified",
+      "source": "f85fea4e8da02404d513d074ceb35ad5292b017b"
+    },
+    {
+      "actual_scope": "Historical13pass/1fail and67 cumulative CPU refusals remain in immutable prior packages;not rerun or reclassified",
+      "source": "ebd3c06da7d5f2bd136b7a24f24604508d420279"
+    }
+  ],
+  "tree": "35125592c14098385eab8693bbf05df0506d3610",
+  "whole_chain_pq_qualified": false,
+  "workspace_recovery_adapter": {
+    "adaptations": [
+      "Explicit recovered workspace locators; original method bytes unchanged",
+      "New generated package README without Markdown trailing-space hard breaks",
+      "Additional generated collection-status adapter provenance"
+    ],
+    "bytes": 6510,
+    "old_workspace_restored": false,
+    "original_input_bytes_rewritten": false,
+    "original_methods": [
+      {
+        "bytes": 15204,
+        "path": "integration-review/collect_terminal_increment_v2.py",
+        "sha256": "5320a3097a0757dc1b92d460026e3409ebb113e0eb64837e9a27b0317fee2649"
+      },
+      {
+        "bytes": 5465,
+        "path": "integration-review/scan_terminal_sensitive_patterns_v1.py",
+        "sha256": "79424d0b5e0ba3da7496263f057e717acab5c8027087414ef3a32f3b2a3119a7"
+      },
+      {
+        "bytes": 5012,
+        "path": "integration-review/verify_curated_evidence.py",
+        "sha256": "ad84ee5ccec29a339a54a20a863e964ced941821321c87f10e188de9979174c4"
+      }
+    ],
+    "path": "witness-composition-4c76/collect_witness_release_increment_recovery_v2.py",
+    "sha256": "0cc488c4d34deb407eacf63c317365513ed3829a4fde48d4fb841126c67f2701",
+    "validation_or_exclusion_rules_changed": false
+  }
+}

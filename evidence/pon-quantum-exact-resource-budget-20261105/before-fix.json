@@ -1,0 +1,91 @@
+{
+  "source_commit": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+  "source_blob": "c923cd5e5d2b3bf5aa704fec8dec7f9409297568",
+  "counterexample": "Decimal100 budget comparison accepts exact rational failure above budget at the only allowed distance",
+  "counts": {
+    "gate_count": 1,
+    "gate_depth": 1,
+    "toffoli_count": 0,
+    "toffoli_depth": 0,
+    "direct_t_count": 0,
+    "direct_t_depth": 0
+  },
+  "qubits": 1,
+  "instances": 1,
+  "physical_model": {
+    "name": "exact-boundary-control",
+    "physical_error": "0.00012417932217752179272980361142046390724444508747779439848445687548554830000271818488976751050969",
+    "threshold": "0.00017561608158974938109702438901669278414455491762773180649037829452903236044819113312873784733839",
+    "logical_error_prefactor": "0.01",
+    "cycle_ns": "1000",
+    "logical_gate_cycles_per_distance": 1,
+    "toffoli_decomposition_depth": 10,
+    "t_per_toffoli": 7,
+    "t_depth_per_toffoli": 3,
+    "data_physical_qubits_per_d2": 2,
+    "factories_per_instance": 2,
+    "factory_physical_qubits_per_d2": 100,
+    "factory_t_cycles_per_distance": 10,
+    "magic_state_error": "0",
+    "total_failure_budget": "0.15",
+    "maximum_distance": 3
+  },
+  "pell_x": "17561608158974938109702438901669278414455491762773180649037829452903236044819113312873784733839",
+  "pell_y": "12417932217752179272980361142046390724444508747779439848445687548554830000271818488976751050969",
+  "pell_x_squared_minus_twice_y_squared": "-1",
+  "exact_failure": {
+    "numerator": "462615121694062672630112106380780526049509188145276649464752240561674365766920642261092007701442219052978299445590661521076889217700176725988263219404260390575594017822954935939138107516883",
+    "denominator": "3084100811293751150867414042538536840330061254301844329765014937077829105112804281740613384676281460353188662970604410140512594784667844839921754796028402603837293452153032906260920716779210"
+  },
+  "exact_budget": {
+    "numerator": "3",
+    "denominator": "20"
+  },
+  "exact_excess": {
+    "numerator": "3",
+    "denominator": "6168201622587502301734828085077073680660122508603688659530029874155658210225608563481226769352562920706377325941208820281025189569335689679843509592056805207674586904306065812521841433558420"
+  },
+  "exact_failure_exceeds_budget": true,
+  "expected_status": "NO_DISTANCE_IN_DECLARED_RANGE",
+  "actual_report": {
+    "name": "exact-boundary-control",
+    "assumptions": {
+      "name": "exact-boundary-control",
+      "physical_error": "0.00012417932217752179272980361142046390724444508747779439848445687548554830000271818488976751050969",
+      "threshold": "0.00017561608158974938109702438901669278414455491762773180649037829452903236044819113312873784733839",
+      "logical_error_prefactor": "0.01",
+      "cycle_ns": "1000",
+      "logical_gate_cycles_per_distance": 1,
+      "toffoli_decomposition_depth": 10,
+      "t_per_toffoli": 7,
+      "t_depth_per_toffoli": 3,
+      "data_physical_qubits_per_d2": 2,
+      "factories_per_instance": 2,
+      "factory_physical_qubits_per_d2": 100,
+      "factory_t_cycles_per_distance": 10,
+      "magic_state_error": "0",
+      "total_failure_budget": "0.15",
+      "maximum_distance": 3
+    },
+    "t_count_per_instance_conditional": 0,
+    "t_depth_upper_bound_per_instance_conditional": 0,
+    "whole_workload_magic_error_union_estimate": "0",
+    "model_is_physical_calibration": false,
+    "status": "CONDITIONAL_ESTIMATE",
+    "estimate": {
+      "code_distance": 3,
+      "allocated_code_cycles_per_instance": 30,
+      "data_physical_qubits_per_instance": 18,
+      "factory_physical_qubits_per_instance": 1800,
+      "total_physical_qubits_all_instances": 1818,
+      "quantum_wall_seconds_serial_magic_delivery_schedule": "0.00003",
+      "quantum_wall_seconds_ideal_overlap_lower_bound": "0.00003",
+      "factory_error_includes_all_factory_faults_assumed": true,
+      "logical_error_per_patch_cycle_assumption": "0.00500000000000000000000000000000",
+      "whole_workload_failure_union_estimate": "0.150000000000000000000000000000",
+      "bottleneck": "depth"
+    }
+  },
+  "full_quantum_security_claim": false,
+  "real_hardware_cost_or_attack_claim": false
+}

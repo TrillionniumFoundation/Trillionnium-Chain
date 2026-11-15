@@ -1,0 +1,685 @@
+{
+  "schema": "selected-nonce-bank-actual-SHA-observation-r4-v1",
+  "generated_utc": "2026-11-08T05:01:53.384891+00:00",
+  "source_pins": {
+    "EXPERIMENT_PLAN.json": "d3b8f939533631e58d8b8bcf1fea8e9b7e167532c4d58325552e58f298aea2cf",
+    "SOURCE_PINS.json": "f1cbc85a9aee060f0b2bbcb402ad8c6cc7af8f761956ea4130f43f53a1b0a55e",
+    "research_core.py": "d9224d8e1c943a348f6b5077f3cb704d9fa8faf3649bb992f005b88f88fed82b",
+    "bank_policy.py": "fae13a8a62fa11bd6507de69b4081cba3efd5d402425b1f2d3532434ff6997b6",
+    "run_campaign.py": "3491d267115596dd732d41b9eabefaed0567f488c1e409226f7153804ae1f2a1",
+    "test_research.py": "5bd1da62d6cc9d068835a36717e21a2328458bbb583c6794a6456217b428d151"
+  },
+  "plan": {
+    "schema": "selected-nonce-bank-predeclared-plan-r4-v1",
+    "published_baseline": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+    "created_before_new_nonce_ticket_evaluation": true,
+    "relation": "unchanged selected LOCAL product8 v1, not cumulative W1 or a STARK",
+    "context": "exact original real_lottery_hit_p_1_64.expected.bin",
+    "inputs": [
+      "exact original structured-a.bin",
+      "exact original structured-b.bin"
+    ],
+    "nonce_start_inclusive": 512,
+    "nonce_end_exclusive": 1024,
+    "batch_order": "descending coordinate occupancy, then ascending (bi,bk,bj); within bucket ascending nonce",
+    "bank_selection_inputs": [
+      "prepaid seed",
+      "prepaid selected coordinate"
+    ],
+    "bank_selection_must_not_read": [
+      "ticket",
+      "event",
+      "noise",
+      "winner positions"
+    ],
+    "mining_strategies": [
+      "dense_online_direct",
+      "dense_online_cache1",
+      "dense_bank_cache1",
+      "global_affine_online",
+      "global_affine_bank_cache1"
+    ],
+    "online_policy": "ascending nonce; cache1 variant retains the first useful product and computes other coordinates without storing",
+    "stop_rule": "stop at first target-qualified candidate; otherwise exhaust declared nonce range",
+    "verification": "each generated attempt byte-compared with the frozen unmodified relation producer; each winner verified by frozen native relation; separately priced full-range audit",
+    "costs": "record whole input/tree/recognition/compile setup, all selector gates including unattempted bank entries, failures, result acquisitions, bank/cache payload and indexing operations; SHA prefix replay is separately measured against hashlib",
+    "auxiliary_model": "independent tickets theorem is not a claim about concrete SHA or physical cost",
+    "production_qualification": false,
+    "pressure_experiments": false
+  },
+  "strategies": [
+    {
+      "name": "dense_bank_cache1",
+      "global_affine": false,
+      "bank": true,
+      "cache_mode": "replace",
+      "gates_paid": 512,
+      "attempts": 7,
+      "failed_attempts": 6,
+      "winner_nonce": 561,
+      "paid_but_unattempted_selectors": 505,
+      "useful_product_acquisitions": 2,
+      "setup_counts": {
+        "sha256_calls": 254,
+        "sha256_input_bytes": 68006,
+        "sha256_compression_blocks": 1146,
+        "scalar_multiplications": 0,
+        "scalar_additions": 0,
+        "field_equality_checks": 0,
+        "recognition_words": 0,
+        "compiled_table_reads": 0,
+        "useful_product_acquisitions": 0
+      },
+      "setup_field_detail": {
+        "multiplications": 0,
+        "additions": 0,
+        "comparisons": 0,
+        "recognition_words": 0,
+        "input_coefficient_reads": 0,
+        "table_field_reads": 0,
+        "table_field_writes": 0
+      },
+      "prepaid_gate_counts": {
+        "sha256_calls": 2048,
+        "sha256_input_bytes": 319488,
+        "sha256_compression_blocks": 6144,
+        "scalar_multiplications": 0,
+        "scalar_additions": 0,
+        "field_equality_checks": 0,
+        "recognition_words": 0,
+        "compiled_table_reads": 0,
+        "useful_product_acquisitions": 0
+      },
+      "whole_campaign_counts": {
+        "sha256_calls": 2554,
+        "sha256_input_bytes": 417377,
+        "sha256_compression_blocks": 7878,
+        "scalar_multiplications": 11776,
+        "scalar_additions": 11200,
+        "field_equality_checks": 0,
+        "recognition_words": 0,
+        "compiled_table_reads": 0,
+        "useful_product_acquisitions": 2
+      },
+      "sha_tag_counts": {
+        "leaf": 128,
+        "node": 126,
+        "task": 519,
+        "context": 519,
+        "noise-seed": 512,
+        "selected-coordinate": 512,
+        "noise-eight": 224,
+        "event": 7,
+        "ticket": 7
+      },
+      "bounded_prefix_replay": {
+        "compressions": 2748,
+        "digest_comparisons": 2554,
+        "payload": {
+          "prefix_state_bytes": 160,
+          "prefix_key_bytes": 320,
+          "full_digest_bytes": 64,
+          "full_digest_key_bytes": 437,
+          "max_prefix_slots": 5,
+          "max_full_digest_slots": 2,
+          "python_object_overhead_included": false,
+          "transient_compression_workspace_included": false
+        },
+        "replay_ns": 395845566,
+        "part_of_measured_hashlib_producer": false,
+        "interpretation": "separate executable attainable compression schedule, never a SHA lower bound"
+      },
+      "sampler_digest_calls": 224,
+      "all_observed_samplers_used_one_digest": true,
+      "bank_operations": {
+        "bucket_dictionary_lookups": 512,
+        "bucket_appends": 512,
+        "bucket_order_comparisons": 2215,
+        "nonce_order_comparisons": 195,
+        "emitted_bank_entries": 512
+      },
+      "cache_operations": {
+        "lookups": 7,
+        "hits": 5,
+        "writes": 2,
+        "evictions": 1
+      },
+      "payload": {
+        "original_inputs": 32768,
+        "expected_context": 192,
+        "merkle_digests": 8128,
+        "compiled_field_words": 0,
+        "selector_records": 22016,
+        "explicit_order_nonce_list": 4096,
+        "cached_useful_result": 256,
+        "coordinate_key": 3,
+        "one_candidate_wire": 1419,
+        "raw_input_parse_temporaries_and_compression_workspace_included": false,
+        "python_producer_reachable_size_after_bank": 512379,
+        "python_size_is_not_RSS_or_total_allocator_usage": true,
+        "separate_evidence_recorders_and_saved_witness_files_not_producer_cache": true
+      },
+      "instrumented_phase_ns": {
+        "input_load_and_setup": 3604347,
+        "bank_gates_and_sort_and_seal_logging": 8610492,
+        "continuations_and_attempt_logging": 8061022
+      },
+      "wall_times_are_not_native_performance_or_lower_bounds": true,
+      "setup_hash_messages": 254,
+      "prepaid_gate_hash_messages": 2048,
+      "selection_sealed_before_ticket": true,
+      "qualification": "RESEARCH_ONLY_HOLD_NO_GO"
+    },
+    {
+      "name": "global_affine_bank_cache1",
+      "global_affine": true,
+      "bank": true,
+      "cache_mode": "replace",
+      "gates_paid": 512,
+      "attempts": 7,
+      "failed_attempts": 6,
+      "winner_nonce": 561,
+      "paid_but_unattempted_selectors": 505,
+      "useful_product_acquisitions": 2,
+      "setup_counts": {
+        "sha256_calls": 254,
+        "sha256_input_bytes": 68006,
+        "sha256_compression_blocks": 1146,
+        "scalar_multiplications": 26,
+        "scalar_additions": 8533,
+        "field_equality_checks": 8192,
+        "recognition_words": 8192,
+        "compiled_table_reads": 0,
+        "useful_product_acquisitions": 0
+      },
+      "setup_field_detail": {
+        "multiplications": 26,
+        "additions": 8533,
+        "comparisons": 8192,
+        "recognition_words": 8192,
+        "input_coefficient_reads": 10,
+        "table_field_reads": 0,
+        "table_field_writes": 329
+      },
+      "prepaid_gate_counts": {
+        "sha256_calls": 2048,
+        "sha256_input_bytes": 319488,
+        "sha256_compression_blocks": 6144,
+        "scalar_multiplications": 0,
+        "scalar_additions": 0,
+        "field_equality_checks": 0,
+        "recognition_words": 0,
+        "compiled_table_reads": 0,
+        "useful_product_acquisitions": 0
+      },
+      "whole_campaign_counts": {
+        "sha256_calls": 2554,
+        "sha256_input_bytes": 417377,
+        "sha256_compression_blocks": 7878,
+        "scalar_multiplications": 10778,
+        "scalar_additions": 18983,
+        "field_equality_checks": 8192,
+        "recognition_words": 8192,
+        "compiled_table_reads": 14,
+        "useful_product_acquisitions": 2
+      },
+      "sha_tag_counts": {
+        "leaf": 128,
+        "node": 126,
+        "task": 519,
+        "context": 519,
+        "noise-seed": 512,
+        "selected-coordinate": 512,
+        "noise-eight": 224,
+        "event": 7,
+        "ticket": 7
+      },
+      "bounded_prefix_replay": {
+        "compressions": 2748,
+        "digest_comparisons": 2554,
+        "payload": {
+          "prefix_state_bytes": 160,
+          "prefix_key_bytes": 320,
+          "full_digest_bytes": 64,
+          "full_digest_key_bytes": 437,
+          "max_prefix_slots": 5,
+          "max_full_digest_slots": 2,
+          "python_object_overhead_included": false,
+          "transient_compression_workspace_included": false
+        },
+        "replay_ns": 404819086,
+        "part_of_measured_hashlib_producer": false,
+        "interpretation": "separate executable attainable compression schedule, never a SHA lower bound"
+      },
+      "sampler_digest_calls": 224,
+      "all_observed_samplers_used_one_digest": true,
+      "bank_operations": {
+        "bucket_dictionary_lookups": 512,
+        "bucket_appends": 512,
+        "bucket_order_comparisons": 2215,
+        "nonce_order_comparisons": 195,
+        "emitted_bank_entries": 512
+      },
+      "cache_operations": {
+        "lookups": 7,
+        "hits": 5,
+        "writes": 2,
+        "evictions": 1
+      },
+      "payload": {
+        "original_inputs": 32768,
+        "expected_context": 192,
+        "merkle_digests": 8128,
+        "compiled_field_words": 1316,
+        "selector_records": 22016,
+        "explicit_order_nonce_list": 4096,
+        "cached_useful_result": 256,
+        "coordinate_key": 3,
+        "one_candidate_wire": 1419,
+        "raw_input_parse_temporaries_and_compression_workspace_included": false,
+        "python_producer_reachable_size_after_bank": 524395,
+        "python_size_is_not_RSS_or_total_allocator_usage": true,
+        "separate_evidence_recorders_and_saved_witness_files_not_producer_cache": true
+      },
+      "instrumented_phase_ns": {
+        "input_load_and_setup": 7171968,
+        "bank_gates_and_sort_and_seal_logging": 6922752,
+        "continuations_and_attempt_logging": 7125129
+      },
+      "wall_times_are_not_native_performance_or_lower_bounds": true,
+      "setup_hash_messages": 254,
+      "prepaid_gate_hash_messages": 2048,
+      "selection_sealed_before_ticket": true,
+      "qualification": "RESEARCH_ONLY_HOLD_NO_GO"
+    },
+    {
+      "name": "dense_online_direct",
+      "global_affine": false,
+      "bank": false,
+      "cache_mode": "none",
+      "gates_paid": 50,
+      "attempts": 50,
+      "failed_attempts": 49,
+      "winner_nonce": 561,
+      "paid_but_unattempted_selectors": 0,
+      "useful_product_acquisitions": 50,
+      "setup_counts": {
+        "sha256_calls": 254,
+        "sha256_input_bytes": 68006,
+        "sha256_compression_blocks": 1146,
+        "scalar_multiplications": 0,
+        "scalar_additions": 0,
+        "field_equality_checks": 0,
+        "recognition_words": 0,
+        "compiled_table_reads": 0,
+        "useful_product_acquisitions": 0
+      },
+      "setup_field_detail": {
+        "multiplications": 0,
+        "additions": 0,
+        "comparisons": 0,
+        "recognition_words": 0,
+        "input_coefficient_reads": 0,
+        "table_field_reads": 0,
+        "table_field_writes": 0
+      },
+      "prepaid_gate_counts": {
+        "sha256_calls": 0,
+        "sha256_input_bytes": 0,
+        "sha256_compression_blocks": 0,
+        "scalar_multiplications": 0,
+        "scalar_additions": 0,
+        "field_equality_checks": 0,
+        "recognition_words": 0,
+        "compiled_table_reads": 0,
+        "useful_product_acquisitions": 0
+      },
+      "whole_campaign_counts": {
+        "sha256_calls": 2254,
+        "sha256_input_bytes": 312656,
+        "sha256_compression_blocks": 5946,
+        "scalar_multiplications": 102400,
+        "scalar_additions": 96000,
+        "field_equality_checks": 0,
+        "recognition_words": 0,
+        "compiled_table_reads": 0,
+        "useful_product_acquisitions": 50
+      },
+      "sha_tag_counts": {
+        "leaf": 128,
+        "node": 126,
+        "task": 100,
+        "context": 100,
+        "noise-seed": 50,
+        "selected-coordinate": 50,
+        "noise-eight": 1600,
+        "event": 50,
+        "ticket": 50
+      },
+      "bounded_prefix_replay": {
+        "compressions": 3254,
+        "digest_comparisons": 2254,
+        "payload": {
+          "prefix_state_bytes": 160,
+          "prefix_key_bytes": 320,
+          "full_digest_bytes": 64,
+          "full_digest_key_bytes": 437,
+          "max_prefix_slots": 5,
+          "max_full_digest_slots": 2,
+          "python_object_overhead_included": false,
+          "transient_compression_workspace_included": false
+        },
+        "replay_ns": 488661287,
+        "part_of_measured_hashlib_producer": false,
+        "interpretation": "separate executable attainable compression schedule, never a SHA lower bound"
+      },
+      "sampler_digest_calls": 1600,
+      "all_observed_samplers_used_one_digest": true,
+      "bank_operations": {},
+      "cache_operations": {
+        "lookups": 0,
+        "hits": 0,
+        "writes": 0,
+        "evictions": 0
+      },
+      "payload": {
+        "original_inputs": 32768,
+        "expected_context": 192,
+        "merkle_digests": 8128,
+        "compiled_field_words": 0,
+        "selector_records": 0,
+        "explicit_order_nonce_list": 0,
+        "cached_useful_result": 0,
+        "coordinate_key": 0,
+        "one_candidate_wire": 1419,
+        "raw_input_parse_temporaries_and_compression_workspace_included": false,
+        "python_producer_reachable_size_after_bank": 312461,
+        "python_size_is_not_RSS_or_total_allocator_usage": true,
+        "separate_evidence_recorders_and_saved_witness_files_not_producer_cache": true
+      },
+      "instrumented_phase_ns": {
+        "input_load_and_setup": 3263778,
+        "bank_gates_and_sort_and_seal_logging": 1633,
+        "continuations_and_attempt_logging": 45710116
+      },
+      "wall_times_are_not_native_performance_or_lower_bounds": true,
+      "setup_hash_messages": 254,
+      "prepaid_gate_hash_messages": 0,
+      "selection_sealed_before_ticket": false,
+      "qualification": "RESEARCH_ONLY_HOLD_NO_GO"
+    },
+    {
+      "name": "dense_online_cache1",
+      "global_affine": false,
+      "bank": false,
+      "cache_mode": "retain_first",
+      "gates_paid": 50,
+      "attempts": 50,
+      "failed_attempts": 49,
+      "winner_nonce": 561,
+      "paid_but_unattempted_selectors": 0,
+      "useful_product_acquisitions": 50,
+      "setup_counts": {
+        "sha256_calls": 254,
+        "sha256_input_bytes": 68006,
+        "sha256_compression_blocks": 1146,
+        "scalar_multiplications": 0,
+        "scalar_additions": 0,
+        "field_equality_checks": 0,
+        "recognition_words": 0,
+        "compiled_table_reads": 0,
+        "useful_product_acquisitions": 0
+      },
+      "setup_field_detail": {
+        "multiplications": 0,
+        "additions": 0,
+        "comparisons": 0,
+        "recognition_words": 0,
+        "input_coefficient_reads": 0,
+        "table_field_reads": 0,
+        "table_field_writes": 0
+      },
+      "prepaid_gate_counts": {
+        "sha256_calls": 0,
+        "sha256_input_bytes": 0,
+        "sha256_compression_blocks": 0,
+        "scalar_multiplications": 0,
+        "scalar_additions": 0,
+        "field_equality_checks": 0,
+        "recognition_words": 0,
+        "compiled_table_reads": 0,
+        "useful_product_acquisitions": 0
+      },
+      "whole_campaign_counts": {
+        "sha256_calls": 2254,
+        "sha256_input_bytes": 312656,
+        "sha256_compression_blocks": 5946,
+        "scalar_multiplications": 102400,
+        "scalar_additions": 96000,
+        "field_equality_checks": 0,
+        "recognition_words": 0,
+        "compiled_table_reads": 0,
+        "useful_product_acquisitions": 50
+      },
+      "sha_tag_counts": {
+        "leaf": 128,
+        "node": 126,
+        "task": 100,
+        "context": 100,
+        "noise-seed": 50,
+        "selected-coordinate": 50,
+        "noise-eight": 1600,
+        "event": 50,
+        "ticket": 50
+      },
+      "bounded_prefix_replay": {
+        "compressions": 3254,
+        "digest_comparisons": 2254,
+        "payload": {
+          "prefix_state_bytes": 160,
+          "prefix_key_bytes": 320,
+          "full_digest_bytes": 64,
+          "full_digest_key_bytes": 437,
+          "max_prefix_slots": 5,
+          "max_full_digest_slots": 2,
+          "python_object_overhead_included": false,
+          "transient_compression_workspace_included": false
+        },
+        "replay_ns": 489286211,
+        "part_of_measured_hashlib_producer": false,
+        "interpretation": "separate executable attainable compression schedule, never a SHA lower bound"
+      },
+      "sampler_digest_calls": 1600,
+      "all_observed_samplers_used_one_digest": true,
+      "bank_operations": {},
+      "cache_operations": {
+        "lookups": 50,
+        "hits": 0,
+        "writes": 1,
+        "evictions": 0
+      },
+      "payload": {
+        "original_inputs": 32768,
+        "expected_context": 192,
+        "merkle_digests": 8128,
+        "compiled_field_words": 0,
+        "selector_records": 0,
+        "explicit_order_nonce_list": 0,
+        "cached_useful_result": 256,
+        "coordinate_key": 3,
+        "one_candidate_wire": 1419,
+        "raw_input_parse_temporaries_and_compression_workspace_included": false,
+        "python_producer_reachable_size_after_bank": 312437,
+        "python_size_is_not_RSS_or_total_allocator_usage": true,
+        "separate_evidence_recorders_and_saved_witness_files_not_producer_cache": true
+      },
+      "instrumented_phase_ns": {
+        "input_load_and_setup": 3088273,
+        "bank_gates_and_sort_and_seal_logging": 1563,
+        "continuations_and_attempt_logging": 46101617
+      },
+      "wall_times_are_not_native_performance_or_lower_bounds": true,
+      "setup_hash_messages": 254,
+      "prepaid_gate_hash_messages": 0,
+      "selection_sealed_before_ticket": false,
+      "qualification": "RESEARCH_ONLY_HOLD_NO_GO"
+    },
+    {
+      "name": "global_affine_online",
+      "global_affine": true,
+      "bank": false,
+      "cache_mode": "none",
+      "gates_paid": 50,
+      "attempts": 50,
+      "failed_attempts": 49,
+      "winner_nonce": 561,
+      "paid_but_unattempted_selectors": 0,
+      "useful_product_acquisitions": 50,
+      "setup_counts": {
+        "sha256_calls": 254,
+        "sha256_input_bytes": 68006,
+        "sha256_compression_blocks": 1146,
+        "scalar_multiplications": 26,
+        "scalar_additions": 8533,
+        "field_equality_checks": 8192,
+        "recognition_words": 8192,
+        "compiled_table_reads": 0,
+        "useful_product_acquisitions": 0
+      },
+      "setup_field_detail": {
+        "multiplications": 26,
+        "additions": 8533,
+        "comparisons": 8192,
+        "recognition_words": 8192,
+        "input_coefficient_reads": 10,
+        "table_field_reads": 0,
+        "table_field_writes": 329
+      },
+      "prepaid_gate_counts": {
+        "sha256_calls": 0,
+        "sha256_input_bytes": 0,
+        "sha256_compression_blocks": 0,
+        "scalar_multiplications": 0,
+        "scalar_additions": 0,
+        "field_equality_checks": 0,
+        "recognition_words": 0,
+        "compiled_table_reads": 0,
+        "useful_product_acquisitions": 0
+      },
+      "whole_campaign_counts": {
+        "sha256_calls": 2254,
+        "sha256_input_bytes": 312656,
+        "sha256_compression_blocks": 5946,
+        "scalar_multiplications": 76826,
+        "scalar_additions": 85783,
+        "field_equality_checks": 8192,
+        "recognition_words": 8192,
+        "compiled_table_reads": 350,
+        "useful_product_acquisitions": 50
+      },
+      "sha_tag_counts": {
+        "leaf": 128,
+        "node": 126,
+        "task": 100,
+        "context": 100,
+        "noise-seed": 50,
+        "selected-coordinate": 50,
+        "noise-eight": 1600,
+        "event": 50,
+        "ticket": 50
+      },
+      "bounded_prefix_replay": {
+        "compressions": 3254,
+        "digest_comparisons": 2254,
+        "payload": {
+          "prefix_state_bytes": 160,
+          "prefix_key_bytes": 320,
+          "full_digest_bytes": 64,
+          "full_digest_key_bytes": 437,
+          "max_prefix_slots": 5,
+          "max_full_digest_slots": 2,
+          "python_object_overhead_included": false,
+          "transient_compression_workspace_included": false
+        },
+        "replay_ns": 467487007,
+        "part_of_measured_hashlib_producer": false,
+        "interpretation": "separate executable attainable compression schedule, never a SHA lower bound"
+      },
+      "sampler_digest_calls": 1600,
+      "all_observed_samplers_used_one_digest": true,
+      "bank_operations": {},
+      "cache_operations": {
+        "lookups": 0,
+        "hits": 0,
+        "writes": 0,
+        "evictions": 0
+      },
+      "payload": {
+        "original_inputs": 32768,
+        "expected_context": 192,
+        "merkle_digests": 8128,
+        "compiled_field_words": 1316,
+        "selector_records": 0,
+        "explicit_order_nonce_list": 0,
+        "cached_useful_result": 0,
+        "coordinate_key": 0,
+        "one_candidate_wire": 1419,
+        "raw_input_parse_temporaries_and_compression_workspace_included": false,
+        "python_producer_reachable_size_after_bank": 324445,
+        "python_size_is_not_RSS_or_total_allocator_usage": true,
+        "separate_evidence_recorders_and_saved_witness_files_not_producer_cache": true
+      },
+      "instrumented_phase_ns": {
+        "input_load_and_setup": 6786206,
+        "bank_gates_and_sort_and_seal_logging": 1352,
+        "continuations_and_attempt_logging": 44908717
+      },
+      "wall_times_are_not_native_performance_or_lower_bounds": true,
+      "setup_hash_messages": 254,
+      "prepaid_gate_hash_messages": 0,
+      "selection_sealed_before_ticket": false,
+      "qualification": "RESEARCH_ONLY_HOLD_NO_GO"
+    }
+  ],
+  "audit": {
+    "nonce_start": 512,
+    "nonce_end": 1024,
+    "full_range_dense_candidates": 512,
+    "all_full_range_dense_against_frozen_producer": true,
+    "strategy_complete_witness_byte_comparisons": 164,
+    "accepted_nonces": [
+      561,
+      605,
+      644,
+      654,
+      764,
+      770,
+      775,
+      790,
+      835,
+      863,
+      918,
+      946,
+      998
+    ],
+    "prepared_dense_audit_counts": {
+      "sha256_calls": 20734,
+      "sha256_input_bytes": 2573222,
+      "sha256_compression_blocks": 50298,
+      "scalar_multiplications": 1048576,
+      "scalar_additions": 983040
+    },
+    "original_unprepared_audit_counts": {
+      "sha256_calls": 148480,
+      "sha256_input_bytes": 36744192,
+      "sha256_compression_blocks": 625664,
+      "scalar_multiplications": 1048576,
+      "scalar_additions": 983040
+    },
+    "instrumented_audit_ns": 1481779843,
+    "audit_work_included_in_mining_costs": false,
+    "audit_results_read_by_strategy": false
+  },
+  "iid_theorem_applied_to_concrete_SHA": false,
+  "whole_W1_or_STARK_or_production_acceptance_claim": false
+}

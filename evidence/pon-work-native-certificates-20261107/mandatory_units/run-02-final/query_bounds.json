@@ -1,0 +1,910 @@
+{
+  "fresh_examples": [
+    {
+      "actual_sha_qrom_reduction_proved": false,
+      "attacker_only_online_query_budget": false,
+      "bound": {
+        "decimal_approximation": 1.0,
+        "denominator": 1,
+        "numerator": 1
+      },
+      "cauchy_saturated": {
+        "decimal_approximation": 1.0,
+        "denominator": 1,
+        "numerator": 1
+      },
+      "complete_outputs_M": 0,
+      "credit_threshold": 0,
+      "full_value_queries_Q": 0,
+      "mandatory_u_minimum_gate_cost_proved": false,
+      "maximum_identity_credit": 128,
+      "model": "mu1-ideal-terminal-oracle-global-budget-v1",
+      "native_confirmation_risk": false,
+      "p": {
+        "decimal_approximation": 0.0625,
+        "denominator": 16,
+        "numerator": 1
+      },
+      "physical_resource_bound": false,
+      "required_distinct_successes_k": 0,
+      "simulated_bit_queries_N": 0,
+      "triangle_rational": {
+        "decimal_approximation": 1.0,
+        "denominator": 1,
+        "numerator": 1
+      }
+    },
+    {
+      "actual_sha_qrom_reduction_proved": false,
+      "attacker_only_online_query_budget": false,
+      "bound": {
+        "decimal_approximation": 0.5166015625,
+        "denominator": 1024,
+        "numerator": 529
+      },
+      "cauchy_saturated": {
+        "decimal_approximation": 0.564453125,
+        "denominator": 512,
+        "numerator": 289
+      },
+      "complete_outputs_M": 1,
+      "credit_threshold": 128,
+      "full_value_queries_Q": 0,
+      "mandatory_u_minimum_gate_cost_proved": false,
+      "maximum_identity_credit": 128,
+      "model": "mu1-ideal-terminal-oracle-global-budget-v1",
+      "native_confirmation_risk": false,
+      "p": {
+        "decimal_approximation": 0.0625,
+        "denominator": 16,
+        "numerator": 1
+      },
+      "physical_resource_bound": false,
+      "required_distinct_successes_k": 1,
+      "simulated_bit_queries_N": 1,
+      "triangle_rational": {
+        "decimal_approximation": 0.5166015625,
+        "denominator": 1024,
+        "numerator": 529
+      }
+    },
+    {
+      "actual_sha_qrom_reduction_proved": false,
+      "attacker_only_online_query_budget": false,
+      "bound": {
+        "decimal_approximation": 0.19096626915426415,
+        "denominator": 1208925819614629174706176,
+        "numerator": 230864053456066676371209
+      },
+      "cauchy_saturated": {
+        "decimal_approximation": 0.19096626915426415,
+        "denominator": 1208925819614629174706176,
+        "numerator": 230864053456066676371209
+      },
+      "complete_outputs_M": 8,
+      "credit_threshold": 1024,
+      "full_value_queries_Q": 0,
+      "mandatory_u_minimum_gate_cost_proved": false,
+      "maximum_identity_credit": 128,
+      "model": "mu1-ideal-terminal-oracle-global-budget-v1",
+      "native_confirmation_risk": false,
+      "p": {
+        "decimal_approximation": 0.0625,
+        "denominator": 16,
+        "numerator": 1
+      },
+      "physical_resource_bound": false,
+      "required_distinct_successes_k": 8,
+      "simulated_bit_queries_N": 8,
+      "triangle_rational": {
+        "decimal_approximation": 1.0,
+        "denominator": 1,
+        "numerator": 1
+      }
+    },
+    {
+      "actual_sha_qrom_reduction_proved": false,
+      "attacker_only_online_query_budget": false,
+      "bound": {
+        "decimal_approximation": 0.06575603822076288,
+        "denominator": 2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576,
+        "numerator": 140454045173069371481143492358807086428419762188630077033390956101290961603360424107510831797633
+      },
+      "cauchy_saturated": {
+        "decimal_approximation": 0.06575603822076288,
+        "denominator": 2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576,
+        "numerator": 140454045173069371481143492358807086428419762188630077033390956101290961603360424107510831797633
+      },
+      "complete_outputs_M": 32,
+      "credit_threshold": 4096,
+      "full_value_queries_Q": 1,
+      "mandatory_u_minimum_gate_cost_proved": false,
+      "maximum_identity_credit": 128,
+      "model": "mu1-ideal-terminal-oracle-global-budget-v1",
+      "native_confirmation_risk": false,
+      "p": {
+        "decimal_approximation": 0.0625,
+        "denominator": 16,
+        "numerator": 1
+      },
+      "physical_resource_bound": false,
+      "required_distinct_successes_k": 32,
+      "simulated_bit_queries_N": 34,
+      "triangle_rational": {
+        "decimal_approximation": 1.0,
+        "denominator": 1,
+        "numerator": 1
+      }
+    },
+    {
+      "actual_sha_qrom_reduction_proved": false,
+      "attacker_only_online_query_budget": false,
+      "bound": {
+        "decimal_approximation": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      },
+      "cauchy_saturated": {
+        "decimal_approximation": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      },
+      "complete_outputs_M": 3,
+      "credit_threshold": 385,
+      "full_value_queries_Q": 1,
+      "mandatory_u_minimum_gate_cost_proved": false,
+      "maximum_identity_credit": 128,
+      "model": "mu1-ideal-terminal-oracle-global-budget-v1",
+      "native_confirmation_risk": false,
+      "p": {
+        "decimal_approximation": 0.0625,
+        "denominator": 16,
+        "numerator": 1
+      },
+      "physical_resource_bound": false,
+      "required_distinct_successes_k": 4,
+      "simulated_bit_queries_N": 5,
+      "triangle_rational": {
+        "decimal_approximation": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      }
+    }
+  ],
+  "residual_interfaces": {
+    "fresh_32": {
+      "actual_w1_residual_state_certificate": false,
+      "bound": {
+        "decimal_approximation": 0.06575603822076288,
+        "denominator": 2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576,
+        "numerator": 140454045173069371481143492358807086428419762188630077033390956101290961603360424107510831797633
+      },
+      "distinct_outputs_k": 32,
+      "initial_joint_tail_squared": [
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "decimal_approximation": 0.0,
+          "denominator": 1,
+          "numerator": 0
+        }
+      ],
+      "input_tail_certificate_proved_by_this_function": false,
+      "model": "conditional-joint-record-tail-arithmetic-v1",
+      "native_confirmation_risk": false,
+      "physical_resource_bound": false,
+      "propagated_joint_tail_squared_upper": [
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 0.48673649607017266,
+          "denominator": 22300745198530623141535718272648361505980416,
+          "numerator": 10854586577686522566180082261562347412109375
+        },
+        {
+          "decimal_approximation": 0.013669213265654118,
+          "denominator": 5708990770823839524233143877797980545530986496,
+          "numerator": 78037412378042159277566863596439361572265625
+        },
+        {
+          "decimal_approximation": 0.00028125953221510533,
+          "denominator": 5708990770823839524233143877797980545530986496,
+          "numerator": 1605708073622266651801787316799163818359375
+        },
+        {
+          "decimal_approximation": 4.120012678932207e-06,
+          "denominator": 5846006549323611672814739330865132078623730171904,
+          "numerator": 24085621104333999777026809751987457275390625
+        },
+        {
+          "decimal_approximation": 4.1334847774661705e-08,
+          "denominator": 93536104789177786765035829293842113257979682750464,
+          "numerator": 3866300652895469643161259591579437255859375
+        },
+        {
+          "decimal_approximation": 2.6910708186628716e-10,
+          "denominator": 23945242826029513411849172299223580994042798784118784,
+          "numerator": 6443834421492449405268765985965728759765625
+        },
+        {
+          "decimal_approximation": 1.0501056784584567e-12,
+          "denominator": 95780971304118053647396689196894323976171195136475136,
+          "numerator": 100580141854720854400657117366790771484375
+        },
+        {
+          "decimal_approximation": 2.1631510405256905e-15,
+          "denominator": 6277101735386680763835789423207666416102355444464034512896,
+          "numerator": 13578319150387315344088710844516754150390625
+        }
+      ],
+      "queries_N": 34
+    },
+    "known_winner_zero_online_queries": {
+      "actual_w1_residual_state_certificate": false,
+      "bound": {
+        "decimal_approximation": 1.0,
+        "denominator": 1,
+        "numerator": 1
+      },
+      "distinct_outputs_k": 1,
+      "initial_joint_tail_squared": [
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 0.9375,
+          "denominator": 16,
+          "numerator": 15
+        }
+      ],
+      "input_tail_certificate_proved_by_this_function": false,
+      "model": "conditional-joint-record-tail-arithmetic-v1",
+      "native_confirmation_risk": false,
+      "physical_resource_bound": false,
+      "propagated_joint_tail_squared_upper": [
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 0.9375,
+          "denominator": 16,
+          "numerator": 15
+        }
+      ],
+      "queries_N": 0
+    },
+    "unrestricted_32": {
+      "actual_w1_residual_state_certificate": false,
+      "bound": {
+        "decimal_approximation": 1.0,
+        "denominator": 1,
+        "numerator": 1
+      },
+      "distinct_outputs_k": 32,
+      "initial_joint_tail_squared": [
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        }
+      ],
+      "input_tail_certificate_proved_by_this_function": false,
+      "model": "conditional-joint-record-tail-arithmetic-v1",
+      "native_confirmation_risk": false,
+      "physical_resource_bound": false,
+      "propagated_joint_tail_squared_upper": [
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_approximation": 1.0,
+          "denominator": 1,
+          "numerator": 1
+        }
+      ],
+      "queries_N": 34
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "archive_bytes_changed": false,
+  "checks": [
+    {
+      "command": [
+        "python",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "name": "ci-contract",
+      "stderr": "",
+      "stdout": "{\"artifact_comparison_jobs\": 1, \"head_jobs\": 5, \"inline_source_pins\": 22, \"merge_lanes\": 5, \"native_cost_architectures\": 2, \"tests_executed\": false, \"w1_actual_reuse_v3_cells\": 4}\n"
+    },
+    {
+      "command": [
+        "python",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "name": "pq-source",
+      "stderr": "",
+      "stdout": "{\"canonical_default_provider_contract_checked\": true, \"canonical_pnq2_contract_checked\": true, \"continuous_npq6_combination_accepted\": false, \"cryptographic_acceptance\": false, \"exact_source_blobs\": 502, \"legacy_qtx1_optional_adapter_contract_checked\": true, \"native_transfer_account_contract_checked\": true, \"native_transport_contract_checked\": true, \"node_activated\": false, \"production_confidentiality_accepted\": false, \"schema\": \"trnm-pq-cross-branch-check-v1\", \"status\": \"HOLD_NO_GO\", \"upstream_heads\": 6, \"whole_native_authorization_migrated\": false}\n"
+    },
+    {
+      "command": [
+        "bash",
+        "-n",
+        "scripts/ci/ci_job.sh"
+      ],
+      "exit_code": 0,
+      "name": "ci-syntax",
+      "stderr": "",
+      "stdout": ""
+    }
+  ],
+  "earlier_composed_commit": "c962f6ddac5beaed87f094852743168e156d118d",
+  "explicit_merge_base": "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb",
+  "inherited_ci_addition": "retain existing test_llm_runtime_release.py repository-truth command and both earlier command sets",
+  "measured_source": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+  "measurement_core_or_raw_records_changed": false,
+  "overlap": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "scripts/ci/ci_job.sh"
+  ],
+  "pin_updates": {
+    "scripts/ci/check_ci_contract.py": "89b4ef2addb137e3c191d169677a3307be93e2a7",
+    "scripts/ci/ci_job.sh": "261751db56335f9ae6b53b9fa4606d07f50fb136"
+  },
+  "preserved_latest_remote": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+  "preserves_all_nonoverlap_remote_bytes": true,
+  "production_activation": false,
+  "qualification": false,
+  "remote_changed_paths": [
+    ".github/workflows/pon-branch-encoding-acceptance.yml",
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md",
+    "evidence/pon-architecture-continuation-20261105/LATEST_COMPOSITION.md",
+    "evidence/pon-architecture-continuation-20261105/README.md",
+    "evidence/pon-architecture-continuation-20261105/latest-composition.json",
+    "evidence/pon-architecture-continuation-20261105/latest-records-index.json",
+    "evidence/pon-architecture-continuation-20261105/latest-records.tar.gz",
+    "scripts/ci/ci_job.sh",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/src/mining.rs",
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/difference_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/tests/materialization_control.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pool_mining.rs"
+  ],
+  "remote_tree": "4a0314e72ebc45659986d03e7ca2f96cab9399ea",
+  "schema": "pon-shared-material-publication-tail-v2"
+}

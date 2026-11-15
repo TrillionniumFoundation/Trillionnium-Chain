@@ -1,0 +1,8 @@
+tree 7887047307ca2fd0debcae00d6fa93b4cc17c9ce
+parent 4e007a87ceecbec8d265f6a70cfd71d512a514b5
+author Qian QI <102159240+ProfHepta@users.noreply.github.com> 1794138974 +0800
+committer Qian QI <102159240+ProfHepta@users.noreply.github.com> 1794138974 +0800
+
+Fence M12 generation against independently retained witness checkpoints
+
+Source tree matches local frozen commit d150a6fc446caf5f62b1e5d2a3c3b268053a4ce7. Preserve local validation identities separately; full operational qualification remains HOLD.

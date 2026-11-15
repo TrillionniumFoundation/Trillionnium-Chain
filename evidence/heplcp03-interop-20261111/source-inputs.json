@@ -1,0 +1,534 @@
+{
+  "source_commit": "f97f3c90ac1ac3d5171fd9f25b3e34431f44a367",
+  "scope": "exact copied crates and codec; isolated interop harness, not full daemon build",
+  "files": [
+    {
+      "path": "codex-rs/hepta-agentd/src/learning_iteration_checkpoint_codec.rs",
+      "blob": "9564a0973714028d37484d84d3a8a1cab6e372b4",
+      "sha256": "f2d003729bfdfd85cc1cb42841d0161b5f7df0a6a76221c05e912ef1dc3a70ac",
+      "bytes": 20018
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/BUILD.bazel",
+      "blob": "50fc6b1adf1b4e8671f42667d666b29845044a78",
+      "sha256": "18a7b6d6e6e240c1b4b77f61c304a5d3ed0705980183e57fbc824c9fdb42f968",
+      "bytes": 201
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/Cargo.toml",
+      "blob": "725a63c9f2475ad632c7c189fd9ca271702a8899",
+      "sha256": "e66cea514a732f5ddab6ec5eb35a435f46f7becb8a49a4b5b736c89fc37a880a",
+      "bytes": 412
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/DATASET_REVOCATION.md",
+      "blob": "334876999225616d26ca6d45292a8fa762021188",
+      "sha256": "ee7345f042c574aed26c5e412da714f4d307b3e31df4700f85255565fcbaa859",
+      "bytes": 5432
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/NATIVE_MAPPING.md",
+      "blob": "2d3cdb83dde51d99993c0ede12c713ef5802addd",
+      "sha256": "fd654ad4ee4cebb46e2f4dc2bac1e1e7c2c9d8c94acccc9506fe574fda8db0d9",
+      "bytes": 11288
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/PINNED_LOAD.md",
+      "blob": "bc1e189debac86310c79e98149ea2acbf38816e1",
+      "sha256": "02c496c4c2c02ee86ebc1bcce81ed39287792c41a62dbfc5f4f6ccfcaf39a78e",
+      "bytes": 3617
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/READ_BOUNDARY.md",
+      "blob": "585ac69fbca49bbdb4816099bda21a17436dc2ae",
+      "sha256": "8fea1f86e2b4186e1d2ba624f93f837f67944466001404b016ffe1cdc4f4b791",
+      "bytes": 4333
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/READ_BUDGET.md",
+      "blob": "1ecf13d73203f2b9285ffbc1f20ad62dee535f4d",
+      "sha256": "e9bb381b329dad29bc622ec47e1187a1afbd13c2f3985b2ab4947ae1f9cf53ca",
+      "bytes": 1049
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/SELF_ITERATION_RUNTIME.md",
+      "blob": "78325fa416cd8400f57ae3da7c97c6f1388c4de8",
+      "sha256": "30237e274a77de86973c4f644e8ed6ffde5898aa2354937a1ade96ee7bf7c70f",
+      "bytes": 1040
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/STORAGE.md",
+      "blob": "4584edd31bc93ad114bdf4d119bb1304f20d0187",
+      "sha256": "ef8e47eea1b9264a681131088a9d6841995952d967b9e6ad41495d62acb091e1",
+      "bytes": 8530
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/admin.rs",
+      "blob": "16aefca608be73ad736a4bcb63c5d20a2359a6a9",
+      "sha256": "ee2159d7e0193c0ee599a16e81127a5fa4caf736781301715de5257dfa80c555",
+      "bytes": 5581
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/admission_v3.rs",
+      "blob": "8e4f8830dbda3f387b54992f297c8d1f8baa329f",
+      "sha256": "3c98a8e22938808bcf272d19789f8ff87a8cc5e19ff3a5d8b98b3daa710d335c",
+      "bytes": 10332
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/cell_bundle.rs",
+      "blob": "64c7018f44b1365d7e2fb51926209758cef00468",
+      "sha256": "73aa1067d49ed19d58266be4c2ea2052aa760bd6a56a2294be712c7fc0a52769",
+      "bytes": 10758
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/cell_bundle_tests.rs",
+      "blob": "d677ebc29566d9c9a13b52d81385492936b65c71",
+      "sha256": "605dc6632b4002c8a28e3e2838495f2645b73fb7d01440e0d712888e6c0f5862",
+      "bytes": 8012
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/closure_v2.rs",
+      "blob": "49af2232566bf4c38380d88b7cf63e9b7975537a",
+      "sha256": "68f13a0c3f44dfb774f599f2e36322420621fe21f368fd42e5f8a5483b0f1845",
+      "bytes": 27363
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/closure_v2_tests.rs",
+      "blob": "8f3c902d82daa65e77fff7e86f0a4b0ad54bcee7",
+      "sha256": "9113524de36cc39821dfc8aeffb22484453004b78ba074a1f36b43fbfb63f2b3",
+      "bytes": 6319
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/dataset_revocation.rs",
+      "blob": "dddf8c49adcde6b91c3151720a32b6907fba93a3",
+      "sha256": "ac6abbf63b9f32b8819458889cd63e8a7ee38c9e8b2b4206eb978986462db8c3",
+      "bytes": 7723
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/dataset_revocation_tests.rs",
+      "blob": "de0a5d66ddf49155e66b5ce21c4f4945ad524f1d",
+      "sha256": "28476f4bcafc06e7a26262ce61e300e63e23c6e6a08adea850d169b5c6a9eab0",
+      "bytes": 11759
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/durable_snapshots.rs",
+      "blob": "f1e2bb61b6c5a8cff9b5742e2899f2dbde8b49bf",
+      "sha256": "3472db1eb750164c43f32dbbfa4df5b7b2dbf47259a8cabe9f82f226477823b8",
+      "bytes": 23892
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/error.rs",
+      "blob": "de340c630cb3988ad8e4043f21f9623e6008a9d3",
+      "sha256": "9850bd8a67014eec1aa9688dbafc07a025ffba0a970a4fe38228c854e8dad270",
+      "bytes": 4601
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/iteration.rs",
+      "blob": "70bbc88323e05b29af379003ac052288421c207b",
+      "sha256": "c5272c0f8a1b92ce4fdcc57b90b1a73606b890fda90b876ed95c27b679635a7a",
+      "bytes": 7992
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/iteration_ledger.rs",
+      "blob": "a0b1fd3db118cba0498209e38ad650850270c807",
+      "sha256": "41644cab78e05daf0afad67968e751a40a67bd958d391bf8d77a539d15eb13e1",
+      "bytes": 15013
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/learning_iteration.rs",
+      "blob": "70b0194f3863ab88445476e7c3a33bec1f47efea",
+      "sha256": "e3305a1bab3239d84168ab67ad3b3f52508c1e3295ab774c5181855531503fc5",
+      "bytes": 19593
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/learning_iteration_digest.rs",
+      "blob": "9b7e8da3c7ebe9dc51cf24684945b60931028978",
+      "sha256": "83b9d2cfd7f248ac7300ec95c8eacd045e6906e9a9b0b0af4221a1ab1ae23664",
+      "bytes": 7909
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/learning_iteration_profile_tests.rs",
+      "blob": "971fdc77ed824bb7da6cf8f5c6e77672d8521807",
+      "sha256": "e5812710227303a80fb6ad5cc42ccdfed5daabae1ade7e799416ff5475c7d739",
+      "bytes": 5890
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/learning_iteration_retained_tests.rs",
+      "blob": "b9e097d48460c483eec2567f7ad5b5b88cb0fd87",
+      "sha256": "0ab1991c8d5f08a6b550910cfc9978d122267433a9bb06e4a75835a2a0c524fc",
+      "bytes": 7610
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/learning_iteration_scope.rs",
+      "blob": "a702abce92903e1c8e4c411baff1fa82ad8bcdf4",
+      "sha256": "51281b59b332c472acb4a7fbe91d71d784ee164386ef4bd6e58fb89eab6c5e71",
+      "bytes": 5176
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/learning_iteration_scope_tests.rs",
+      "blob": "f501bb53a93dafba0daa0e92b5b2c91530ff4589",
+      "sha256": "f8859d86892ec97bb5f55121de15f62cc7ce534a8e2d83b33e56cb84de452578",
+      "bytes": 4846
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/learning_iteration_test_support.rs",
+      "blob": "2a38cfaabf88ecd02eae25e8286f8b4e1277a822",
+      "sha256": "855546db2569d455c17aaee19c2cfc56425c134990a4d3d623cefa8f7478a117",
+      "bytes": 7821
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/learning_iteration_tests.rs",
+      "blob": "e1c83fe4fe1fe7d894c1bf89e0bc262bdf0b0bd8",
+      "sha256": "73369974cd5f7f2b6a23add004fc071fc2b472f476ee2836c9d89e322058463c",
+      "bytes": 11496
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/learning_iteration_training_no_update_tests.rs",
+      "blob": "fe20a93f8e3bbc6e5bfb0821558a195d1b62443e",
+      "sha256": "b11e3d1bcf3a43edae5b149f6cdd02d901e4824448fd28c54eed34cc36fd0b40",
+      "bytes": 7814
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/learning_iteration_types.rs",
+      "blob": "827d05abc541498920013465880e6fd4211088b9",
+      "sha256": "fe2b03a31b5d7e48f27674bad66ce627323d130ec3401861f25c2957a857a0f8",
+      "bytes": 7792
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/lib.rs",
+      "blob": "78ddbb8d8802a801b16433cf7c13598b975b1b29",
+      "sha256": "e31586c1af80460cbdbae3c24ea292f39fdaed81af5aa184dc3956761d803a93",
+      "bytes": 8368
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/lifecycle_journal.rs",
+      "blob": "afa6ee9f052def7d17e291bf0fcd4e483bf4e08f",
+      "sha256": "4ba4f89c72979756a8f957b0def0317d3834878406d355157b76923c4c2d59b2",
+      "bytes": 18929
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/limits.rs",
+      "blob": "dd29d690593f07fbe7a4596cda209a4e24263ebc",
+      "sha256": "7d97f54624a1f28478cb7b06c42b831935b799b5f9dfb0d4c11dfd5af69e20e4",
+      "bytes": 456
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/model.rs",
+      "blob": "8f536bc75cac1a860e244c2708e59f4e39e916ac",
+      "sha256": "5e914dadd307d0c22f73caa72606018e9885309451270adca073e57f003e35e8",
+      "bytes": 3213
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/owner_host.rs",
+      "blob": "cdde5193d614f464f4b6b917a2eeffa3e1ee126b",
+      "sha256": "9ac23a42999349a7defd1dd7f268ccb498f007ff1766b51e5cc1fea3d9dbd822",
+      "bytes": 88330
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/owner_service.rs",
+      "blob": "1427589355efa2ea3ac12cc076d0e9a028b29f0b",
+      "sha256": "f993d1e56f25da24b90400ca590248faa7c165dfcd188717ab4cec4d640de888",
+      "bytes": 24881
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/pinned.rs",
+      "blob": "3a097702ef7294467e2a16b5ae8624b716372c41",
+      "sha256": "bdca616c77008c7b4fb9cdbdc0dd972f912facd3665279d1ede0df15e6654098",
+      "bytes": 10147
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/pinned_tests.rs",
+      "blob": "c586c4f2dbde4c350fbc42209752da44952de547",
+      "sha256": "d9215501ad652a07bc1bf1e94c8a21abae8c383d76ccc640bd819865c3239e75",
+      "bytes": 13328
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/publication.rs",
+      "blob": "eef46b0ab4d27214cad511ac2b0152a5b05a24b3",
+      "sha256": "1e2de5b649b2564716aebfcf7739906716af932b88ad5abf096c84a5f9e657ac",
+      "bytes": 31808
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/registry.rs",
+      "blob": "e723e3cf7c8e53ef59405bf71aa8cd4f5dc95f42",
+      "sha256": "1bea1060d9435171d47f6a3536d40feb016b1ab56f3ef2b7509f9a7498bdb5aa",
+      "bytes": 14433
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/registry_tests.rs",
+      "blob": "b6eda8bfc10fe729c181c4e13affae4904e41afc",
+      "sha256": "7e9c591920aa7d8a4cf91c899ab2c3535de11a0fe940948dc887af8647f29bf6",
+      "bytes": 6377
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/selection.rs",
+      "blob": "83bfc190f930409df01d099668370ad2d7578f7f",
+      "sha256": "f7ef6d101e90c347fe7f3b49aec62a8a3c8148540789c10d5e7bb0e6e92f96df",
+      "bytes": 29173
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/sensor_core_registry.rs",
+      "blob": "58d629d83c697c66977f8f26db9e260d99d08c81",
+      "sha256": "99801f239c0031989789515920a9463ebd0d4bf992af8f6dac9ea37c2c4f6700",
+      "bytes": 6997
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/storage.rs",
+      "blob": "d25f9e2a3070b3cf13aebfd5259611c4d66e1956",
+      "sha256": "d7e3db6a2996658322d9a0046c9f4c8d919bb9e694d49d4b3fbd2f1f4da6c48e",
+      "bytes": 25948
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/storage_budget_tests.rs",
+      "blob": "421a235372fe5b5e3f065c1174584268b919b12e",
+      "sha256": "3258375bdbf0e870a7d728d54bba52e6b7cebf6b9c0eb7fd7204bcf68b211e55",
+      "bytes": 4643
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/storage_hygiene.rs",
+      "blob": "0dccfc883820c94b9aeba01329fac135087faeb4",
+      "sha256": "7b08e51d8cc1cde49e9350088c0b0237623a568158da683f6e69911b23992eb7",
+      "bytes": 5556
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/storage_lock_tests.rs",
+      "blob": "59d9ac7afa374b3ae31fd808f1e02f0137d422b2",
+      "sha256": "373092274351d4c1d1c59a27fb5dd9e7fb3227a7c2a23bebac840c33a3493ea8",
+      "bytes": 6034
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/storage_tests.rs",
+      "blob": "e201f4ef22644c7e80e32ac7bf0f50bad8cd1ddf",
+      "sha256": "19162ce07047935e64e88503466ac41d4d26bf0cf4ea6705c7bb5c236dacc4a7",
+      "bytes": 18187
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/test_support.rs",
+      "blob": "143ecfdc5c9175d5f18789cc471e33a93c3bddc1",
+      "sha256": "95f59f80cec0c87611a5eb714d2fc453e11185783f2b292c52dd166c8a198731",
+      "bytes": 837
+    },
+    {
+      "path": "codex-rs/hepta-types/BUILD.bazel",
+      "blob": "df56b1032c7184ece376d8524ffc7c50a13f3733",
+      "sha256": "17cc281ebcb7260184f6efed980e1b2528ce60aed498759e0ea78b8444ceb1ec",
+      "bytes": 125
+    },
+    {
+      "path": "codex-rs/hepta-types/CANONICAL_DIGEST_V1.md",
+      "blob": "62bf8679c36b30d4d4a5235f1cbf732e4ba5d7ca",
+      "sha256": "b5c0645ff95391dc770e0438667f9168bf22a74f2d87863444eeb4f78d1b434d",
+      "bytes": 2868
+    },
+    {
+      "path": "codex-rs/hepta-types/CANONICAL_V1_CONFORMANCE.json",
+      "blob": "1d925b7283a0b15aa5d52a95879154a6e8b38b79",
+      "sha256": "cb26f693ea7832e6b042efa4bf55d573cc08f14546d3f9ef1c0baf4cefd39eba",
+      "bytes": 8007
+    },
+    {
+      "path": "codex-rs/hepta-types/Cargo.toml",
+      "blob": "753e54835f933be4bf647417b2fb4c90a5e55181",
+      "sha256": "0df592ec8d8b63b9c8e7f9ca9f74feca802ffbd3b71dd0959c4127b4ad3109b0",
+      "bytes": 268
+    },
+    {
+      "path": "codex-rs/hepta-types/NUMERIC_SIGNAL_CONVERSION.md",
+      "blob": "b1d6f451bfe97cf8571d151096762363886e80de",
+      "sha256": "c9c7cdbfc69af6dac470e5970844af58ed05ce8d977ac5057f7bb59684d612cc",
+      "bytes": 2949
+    },
+    {
+      "path": "codex-rs/hepta-types/bindings/PLATFORM_TYPES_BINDINGS_V1.json",
+      "blob": "d72d79091b6304f52c32fc9284ef7e6cda3eab3d",
+      "sha256": "21d936f0fd60fccc78413e1a44cb741122429f698a253d6c757e5b5488f94b5b",
+      "bytes": 2025
+    },
+    {
+      "path": "codex-rs/hepta-types/bindings/generate_bindings.py",
+      "blob": "f8f2d0ceb0d84d79cbf0121a727259b140f7b2f2",
+      "sha256": "b7c3b29fe2d76ee48ce14069c6979a54b7672bc02b5385905d91e2e42e2a81bb",
+      "bytes": 8382
+    },
+    {
+      "path": "codex-rs/hepta-types/bindings/verify_generated.mjs",
+      "blob": "d1e686821f28c4f54f3d7215fc02ea1b7dddf05c",
+      "sha256": "eecd1536cf292221bf8962151a02dfeffcd93777f15e0121c83643ee15d9665c",
+      "bytes": 2453
+    },
+    {
+      "path": "codex-rs/hepta-types/bindings/verify_generated.py",
+      "blob": "9437a58417646d1ea30bf90e7da56e4b8d358748",
+      "sha256": "f5a41e35cd549958a34cbc771c15d09a65fdf44ab1e687d182a63c3bf97b8e6f",
+      "bytes": 2145
+    },
+    {
+      "path": "codex-rs/hepta-types/conformance/verify_rejections.mjs",
+      "blob": "8ed39a8988bd8e8da33192714139556879450133",
+      "sha256": "d6455456de29ce31d84ef84cc8ca516851646d01cf755057d322357a3eb4a4af",
+      "bytes": 6960
+    },
+    {
+      "path": "codex-rs/hepta-types/conformance/verify_rejections.py",
+      "blob": "fdfc3e44000763596749ca887d9d87aa59968326",
+      "sha256": "dc4cc07baf7d82f37861c58e9a7dbd9e558d47db34b0f8b93cbe53a33a9ccca8",
+      "bytes": 7144
+    },
+    {
+      "path": "codex-rs/hepta-types/conformance/verify_vectors.py",
+      "blob": "b1f6e2dc89e6ed61290e1b75f1f8e89913638d24",
+      "sha256": "9bdffb8a01e0a2783161d117df568b12b21126caa94cf68867947e913e24a4a2",
+      "bytes": 3988
+    },
+    {
+      "path": "codex-rs/hepta-types/conformance/verify_vectors.ts",
+      "blob": "d7a1fff002c3452c53bfdf7c008f75c17841ef4b",
+      "sha256": "1e29cbe33fc26613fa23574a1a37ff817c8cebb18244f14cb454d602b99d9552",
+      "bytes": 4595
+    },
+    {
+      "path": "codex-rs/hepta-types/generated/javascript/hepta_platform_types_v1.mjs",
+      "blob": "76a9bd2320abd840cb12d10c07554f14442a8a97",
+      "sha256": "73480584646dc737923a3685bf1ac23f968c6a1b82e92b610741850ab3260a9d",
+      "bytes": 3794
+    },
+    {
+      "path": "codex-rs/hepta-types/generated/python/hepta_platform_types_v1.py",
+      "blob": "ea1d91f4473fb72eff4dd8345b6bc7682fce432d",
+      "sha256": "c3ef4d249519f9b5bb65fe9f38cd17a0b3a191ad8b1fd0f84718829cfaf8fd01",
+      "bytes": 4067
+    },
+    {
+      "path": "codex-rs/hepta-types/generated/typescript/hepta_platform_types_v1.d.ts",
+      "blob": "935b7216e59323b08114df986e41474ec0609dd4",
+      "sha256": "ee051dedd4b02b2e495799facfe29bdee375cd18a5b7ba7dfb559fbb936bd95c",
+      "bytes": 1578
+    },
+    {
+      "path": "codex-rs/hepta-types/src/bounded.rs",
+      "blob": "5b8afd7be362d5383283d03b785b57b6128fa28d",
+      "sha256": "5907602ef8128b3237991e737e2fc687eb5ac9c716505cc7d884eed9523ea2a9",
+      "bytes": 3413
+    },
+    {
+      "path": "codex-rs/hepta-types/src/bounded_tests.rs",
+      "blob": "b82714a659ef1bc0505a9aa2fb1ebd2f443a9589",
+      "sha256": "3145c56c2882e91420bc994dd93f3375e1b532b03331826868d0ecfc019077bc",
+      "bytes": 1642
+    },
+    {
+      "path": "codex-rs/hepta-types/src/canonical_digest.rs",
+      "blob": "331d16b144b559d170c5e2919b6c042b45289f61",
+      "sha256": "d7df2b3581046fec4d7350747b1a8053a549c6feb33e462802107a4eb4acd391",
+      "bytes": 15228
+    },
+    {
+      "path": "codex-rs/hepta-types/src/canonical_digest_tests.rs",
+      "blob": "3f85f0d52ad0198b83476d051d36f0992ac6c106",
+      "sha256": "9985f3ac27b0f357653206f4788cb366b623548c53502d277cd81f1a0f3d8fbe",
+      "bytes": 14679
+    },
+    {
+      "path": "codex-rs/hepta-types/src/digest.rs",
+      "blob": "4b6fe231f9faa717067818f509ebb4b150dbfbce",
+      "sha256": "8bfa9aa8424a4a60d4f2f7044099a080a07e9bf3cff958690c3a4e9046a4b4e2",
+      "bytes": 4474
+    },
+    {
+      "path": "codex-rs/hepta-types/src/digest_stream_tests.rs",
+      "blob": "b38ebda455df98d1380f0bae0a8e094630341217",
+      "sha256": "9ff87ab6ffb17f27c2a23762893f641bb55edaff33f8bfb307729d9be8295a6c",
+      "bytes": 1484
+    },
+    {
+      "path": "codex-rs/hepta-types/src/digest_tests.rs",
+      "blob": "9479823a601803f9c43c4e9a465907f4d466fc2b",
+      "sha256": "838dc12e305735321c1028dabb7c5dd4e363f1bced8126d2c50eb7527febe37c",
+      "bytes": 1719
+    },
+    {
+      "path": "codex-rs/hepta-types/src/fixed.rs",
+      "blob": "3c2674dce405fd20f254f5f1816654aae99d7c13",
+      "sha256": "38de891c6a9dd6a2889c0d6a83fd0bcecf6ed17e2b7090739df8d2effe0b2cff",
+      "bytes": 3717
+    },
+    {
+      "path": "codex-rs/hepta-types/src/fixed_tests.rs",
+      "blob": "0b6194dd7ec6f14c966faa951abbbc8289e3ffdb",
+      "sha256": "cfa86da0bc63fa273c3124bbd0988fd6bd22383a0338b15ac2a944c80aa5544b",
+      "bytes": 2115
+    },
+    {
+      "path": "codex-rs/hepta-types/src/identity.rs",
+      "blob": "d57e5c9d0ebe8dced59c096a3586830d52e3df4f",
+      "sha256": "5e73c7848a46cd72f22fed856890ff4978204a6a0d2a0088dfe4a974796515f3",
+      "bytes": 13344
+    },
+    {
+      "path": "codex-rs/hepta-types/src/identity_tests.rs",
+      "blob": "a51092759c8ac8da9d494f920637a291ef1a38a1",
+      "sha256": "c3bba7041a11ead1ccb655fb6491c5835a3020c3f26d4deb22edc94a4f8e34be",
+      "bytes": 5482
+    },
+    {
+      "path": "codex-rs/hepta-types/src/lib.rs",
+      "blob": "80039df26ca8d1a4fc74d715e2b73423c6806365",
+      "sha256": "6793a05230b404884f1e2aed89a4369c52ad9a7f7adbb52a39a3ff1bf0ef5283",
+      "bytes": 3046
+    },
+    {
+      "path": "codex-rs/hepta-types/src/numeric_conversion.rs",
+      "blob": "03f4df15838b6c71fc0017fdb75cb179fb1b70a7",
+      "sha256": "d183cfb5f6981cb9d767a0d8a90cb895153f932ebc3c635ceb4f0b86e090cbfd",
+      "bytes": 9505
+    },
+    {
+      "path": "codex-rs/hepta-types/src/numeric_conversion_tests.rs",
+      "blob": "dcaadc76f2563010e955cc5a61e64909bd3b7312",
+      "sha256": "554d51398fdef4cd69ccc43b3f0d4a002a2a8eed20552a8228770bfde364883a",
+      "bytes": 11101
+    },
+    {
+      "path": "codex-rs/hepta-types/src/numeric_profile.rs",
+      "blob": "383ef3eb7a62873b74faa50f097f7aa11130b18a",
+      "sha256": "d656fa38fea5a18105da911107caae4d326a653854df0c5baed10d4ab3c6bbe9",
+      "bytes": 9363
+    },
+    {
+      "path": "codex-rs/hepta-types/src/numeric_profile_tests.rs",
+      "blob": "87f2a3388516610ac96da38fb2e1c36feba41a72",
+      "sha256": "fab0d6bd469412e77191e43cb17dde7f9638b07292ea5e2df5ad242cf616ea1a",
+      "bytes": 1969
+    },
+    {
+      "path": "codex-rs/hepta-types/src/prompt_delivery.rs",
+      "blob": "11494905ff09b30a51e0131d81364df87cd41475",
+      "sha256": "f01b741add536a597bf9c87664f83909fd77989d19ff4e2fc2c752d98cfbf593",
+      "bytes": 4948
+    },
+    {
+      "path": "codex-rs/hepta-types/src/prompt_delivery_tests.rs",
+      "blob": "a87cfe27c12292278e4db2a7b3fc13c860255cf9",
+      "sha256": "1ad1075b9433c1a31629ba3df0509ce16ae7c70060797d2ea08f21b5a2c63f1a",
+      "bytes": 2578
+    },
+    {
+      "path": "codex-rs/hepta-types/src/registry.rs",
+      "blob": "b9af7af31f2eb6dda29f78701ccc608563920f87",
+      "sha256": "ad15fac503e3988c3fc5d8892136f91c45bb41a12266de5e037a31a6a690b005",
+      "bytes": 9460
+    },
+    {
+      "path": "codex-rs/hepta-types/src/registry_tests.rs",
+      "blob": "3f1091284d412fdebd05ccb76c7a803349252c99",
+      "sha256": "d964bd53b636362da367fc9edf053c72272d62416ef231b632ee3dda6a5ec59a",
+      "bytes": 5008
+    },
+    {
+      "path": "codex-rs/hepta-types/src/topology.rs",
+      "blob": "0089680a88f93b1b9245a6077cb95eaa14e6affe",
+      "sha256": "e1888c64c8682491837c907a91a960327530251450ecb38e70a60df792adba22",
+      "bytes": 14135
+    }
+  ]
+}

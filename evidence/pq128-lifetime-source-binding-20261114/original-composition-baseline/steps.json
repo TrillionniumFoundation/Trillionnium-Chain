@@ -1,0 +1,53 @@
+[
+  {
+    "label": "head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit_code": 0
+  },
+  {
+    "label": "status",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit_code": 0
+  },
+  {
+    "label": "preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit_code": 0
+  },
+  {
+    "label": "direct-lifetime-consumers",
+    "argv": [
+      "rg",
+      "-n",
+      "pq_lifetime_budget|LIFETIME_BUDGET|lifetime[.]DEFAULT|legacy[.]DEFAULT",
+      "scripts"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit_code": 0
+  },
+  {
+    "label": "original-composition-60",
+    "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "scripts/ci/test_pq_lifetime_composition.py",
+      "-v"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit_code": 1
+  }
+]

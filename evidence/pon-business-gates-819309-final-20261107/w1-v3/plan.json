@@ -1,0 +1,19 @@
+{
+  "schema": "trnm-final819-one-range-v3-plan",
+  "artifact_id": 13586509176,
+  "prefix_path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-transport-v2/13586509176/artifact.zip",
+  "prefix_bytes": 170967040,
+  "prefix_sha256": "7915efca8e574436400a7d9bb5c8e59c8681ba0522f77dd5b119fddafac5dae2",
+  "range_header": "bytes=170967040-174175855",
+  "required_content_range": "bytes 170967040-174175855/174175856",
+  "required_http_status": 206,
+  "body_limit_bytes": 4194304,
+  "body_expected_bytes": 3208816,
+  "get_timeout_seconds": 120,
+  "range_get_attempts": 1,
+  "expected_complete_archive_bytes": 174175856,
+  "expected_complete_archive_sha256": "d5e6720c1070b1772107be2d316aea6d27dfdf8dd68535103650730138e9bf38",
+  "original_v1_v2_core14_unchanged": true,
+  "identity_reads_only_other_network_calls": true,
+  "v2_seal_sha256": "f2952e394846e5f15d4f016bc00895b283872111ebe29ee2f09b468401d79edc"
+}

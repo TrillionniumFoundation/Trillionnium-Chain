@@ -1,0 +1,518 @@
+{
+  "schema": "trnm-w1-original-ci-job-readback-v1",
+  "source_commit": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+  "scope": "Selected original workflow job API readbacks, latest attempt first page; not a new run and not evidence of qualification.",
+  "runs": [
+    {
+      "run_id": 42239570130,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570130",
+      "jobs": [
+        {
+          "id": 127965972972,
+          "name": "W1 transparent candidate (prospective-merge, x64)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570130/job/127965972972",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973405,
+          "name": "W1 transparent candidate (head, x64)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570130/job/127965973405",
+          "non_success_steps": []
+        }
+      ]
+    },
+    {
+      "run_id": 42239570278,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278",
+      "jobs": [
+        {
+          "id": 127965973086,
+          "name": "repository-truth",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965973086",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973488,
+          "name": "rust-baseline shard (quality)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965973488",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973590,
+          "name": "rust-baseline shard (runtime)",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965973590",
+          "non_success_steps": [
+            {
+              "name": "Run retained Rust shard",
+              "status": "completed",
+              "conclusion": "cancelled"
+            }
+          ]
+        },
+        {
+          "id": 127965973620,
+          "name": "prospective Rust shard (quality)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965973620",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973669,
+          "name": "cross-arch-cost (arm64)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965973669",
+          "non_success_steps": [
+            {
+              "name": "Execute exact native from-zero service controls",
+              "status": "completed",
+              "conclusion": "failure"
+            }
+          ]
+        },
+        {
+          "id": 127965973675,
+          "name": "W1 actual reuse V3 (x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965973675",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973727,
+          "name": "prospective Rust shard (runtime)",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965973727",
+          "non_success_steps": [
+            {
+              "name": "Run retained Rust shard",
+              "status": "completed",
+              "conclusion": "cancelled"
+            }
+          ]
+        },
+        {
+          "id": 127965973729,
+          "name": "protocol-contract",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965973729",
+          "non_success_steps": [
+            {
+              "name": "Run actual protocol-contract checks",
+              "status": "completed",
+              "conclusion": "failure"
+            }
+          ]
+        },
+        {
+          "id": 127965973758,
+          "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965973758",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973763,
+          "name": "prospective-merge (protocol-contract)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965973763",
+          "non_success_steps": [
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "status": "completed",
+              "conclusion": "failure"
+            }
+          ]
+        },
+        {
+          "id": 127965973783,
+          "name": "cross-arch-cost (x64)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965973783",
+          "non_success_steps": [
+            {
+              "name": "Execute exact native from-zero service controls",
+              "status": "completed",
+              "conclusion": "failure"
+            }
+          ]
+        },
+        {
+          "id": 127965973843,
+          "name": "external-evidence-contract",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965973843",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973851,
+          "name": "W1 actual reuse V3 (arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965973851",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973892,
+          "name": "W1 actual reuse V3 (x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965973892",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973940,
+          "name": "fuzz-smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965973940",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965974015,
+          "name": "prospective-merge (fuzz-smoke)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965974015",
+          "non_success_steps": [
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "status": "completed",
+              "conclusion": "skipped"
+            }
+          ]
+        },
+        {
+          "id": 127965974023,
+          "name": "prospective-merge (repository-truth)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965974023",
+          "non_success_steps": [
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "skipped"
+            }
+          ]
+        },
+        {
+          "id": 127965974449,
+          "name": "prospective-merge (external-evidence-contract)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/127965974449",
+          "non_success_steps": [
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "status": "completed",
+              "conclusion": "skipped"
+            }
+          ]
+        },
+        {
+          "id": 128005952730,
+          "name": "cross-arch-cost-consistency",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/128005952730",
+          "non_success_steps": []
+        },
+        {
+          "id": 128086552787,
+          "name": "rust-baseline",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/128086552787",
+          "non_success_steps": [
+            {
+              "name": "Require both successful exact-source Rust shards",
+              "status": "completed",
+              "conclusion": "failure"
+            }
+          ]
+        },
+        {
+          "id": 128093468666,
+          "name": "prospective-merge (rust-baseline)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278/job/128093468666",
+          "non_success_steps": [
+            {
+              "name": "Require both successful exact-source Rust shards",
+              "status": "completed",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 42239570104,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104",
+      "jobs": [
+        {
+          "id": 127965972627,
+          "name": "W1 fresh challenge service (x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965972627",
+          "non_success_steps": [
+            {
+              "name": "Execute original and fresh service with original Host resources",
+              "status": "completed",
+              "conclusion": "failure"
+            }
+          ]
+        },
+        {
+          "id": 127965972869,
+          "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965972869",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965972886,
+          "name": "W1 fresh challenge service (x64, head)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965972886",
+          "non_success_steps": [
+            {
+              "name": "Execute original and fresh service with original Host resources",
+              "status": "completed",
+              "conclusion": "failure"
+            }
+          ]
+        },
+        {
+          "id": 127965972987,
+          "name": "W1 false trace reuse (arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965972987",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965972990,
+          "name": "W1 false trace reuse (x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965972990",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973092,
+          "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965973092",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973102,
+          "name": "W1 complete legal strategies (v1, arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965973102",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973135,
+          "name": "W1 false trace reuse (x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965973135",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973187,
+          "name": "W1 complete legal strategies (v1, arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965973187",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973215,
+          "name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965973215",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973242,
+          "name": "W1 factorial legal strategies v3 (x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965973242",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973259,
+          "name": "W1 factorial legal strategies v3 (arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965973259",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973281,
+          "name": "W1 false trace reuse (arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965973281",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973329,
+          "name": "W1 complete legal strategies (v1, x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965973329",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973342,
+          "name": "W1 complete legal strategies (v2, arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965973342",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973401,
+          "name": "W1 complete legal strategies (v2, x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965973401",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973449,
+          "name": "W1 complete legal strategies (v2, x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965973449",
+          "non_success_steps": []
+        },
+        {
+          "id": 127965973601,
+          "name": "W1 complete legal strategies (v1, x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104/job/127965973601",
+          "non_success_steps": []
+        }
+      ]
+    }
+  ],
+  "whole_chain_pq_qualified": false,
+  "production_activation": false
+}

@@ -1,0 +1,1181 @@
+{
+  "total_count": 10,
+  "jobs": [
+    {
+      "id": 124824740215,
+      "run_id": 41298626837,
+      "workflow_name": "PoN W1 work security observations",
+      "head_branch": "fix/chain-pon-work-security-20261101",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAdECJhdw",
+      "head_sha": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/124824740215",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837/job/124824740215",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-01T10:42:01Z",
+      "started_at": "2026-11-01T10:42:04Z",
+      "completed_at": "2026-11-01T10:46:24Z",
+      "name": "W1 fresh challenge service (x64, head)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-01T10:42:05Z",
+          "completed_at": "2026-11-01T10:42:05Z"
+        },
+        {
+          "name": "Checkout exact observed source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-01T10:42:05Z",
+          "completed_at": "2026-11-01T10:42:22Z"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-01T10:42:22Z",
+          "completed_at": "2026-11-01T10:42:25Z"
+        },
+        {
+          "name": "Install original pinned compiler",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-01T10:42:25Z",
+          "completed_at": "2026-11-01T10:42:33Z"
+        },
+        {
+          "name": "Run refusal controls for original Host and fresh successor",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-01T10:42:33Z",
+          "completed_at": "2026-11-01T10:42:42Z"
+        },
+        {
+          "name": "Execute original and fresh service with original Host resources",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 6,
+          "started_at": "2026-11-01T10:42:42Z",
+          "completed_at": "2026-11-01T10:46:20Z"
+        },
+        {
+          "name": "Verify observed source after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-01T10:46:20Z",
+          "completed_at": "2026-11-01T10:46:21Z"
+        },
+        {
+          "name": "Retain both service outcomes and original Host evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-01T10:46:21Z",
+          "completed_at": "2026-11-01T10:46:23Z"
+        },
+        {
+          "name": "Post Checkout exact observed source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-01T10:46:23Z",
+          "completed_at": "2026-11-01T10:46:23Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-01T10:46:23Z",
+          "completed_at": "2026-11-01T10:46:23Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/124824740215",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000312755,
+      "runner_name": "GitHub Actions 1000312755",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124824740392,
+      "run_id": 41298626837,
+      "workflow_name": "PoN W1 work security observations",
+      "head_branch": "fix/chain-pon-work-security-20261101",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAdECJiKA",
+      "head_sha": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/124824740392",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837/job/124824740392",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-01T10:42:01Z",
+      "started_at": "2026-11-01T10:42:04Z",
+      "completed_at": "2026-11-01T10:49:25Z",
+      "name": "W1 complete legal strategies (x64, prospective-merge)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-01T10:42:05Z",
+          "completed_at": "2026-11-01T10:42:05Z"
+        },
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-01T10:42:05Z",
+          "completed_at": "2026-11-01T10:42:22Z"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-01T10:42:22Z",
+          "completed_at": "2026-11-01T10:42:24Z"
+        },
+        {
+          "name": "Install exact original compiler and tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-01T10:42:24Z",
+          "completed_at": "2026-11-01T10:42:33Z"
+        },
+        {
+          "name": "Verify complete legal-cost readers and native controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-01T10:42:33Z",
+          "completed_at": "2026-11-01T10:45:58Z"
+        },
+        {
+          "name": "Execute all thirty original-budget legal strategy shards",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-01T10:45:58Z",
+          "completed_at": "2026-11-01T10:49:18Z"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-01T10:49:18Z",
+          "completed_at": "2026-11-01T10:49:19Z"
+        },
+        {
+          "name": "Retain costs, binaries and all failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-01T10:49:19Z",
+          "completed_at": "2026-11-01T10:49:23Z"
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-01T10:49:23Z",
+          "completed_at": "2026-11-01T10:49:24Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-01T10:49:24Z",
+          "completed_at": "2026-11-01T10:49:24Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/124824740392",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000312756,
+      "runner_name": "GitHub Actions 1000312756",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124824740398,
+      "run_id": 41298626837,
+      "workflow_name": "PoN W1 work security observations",
+      "head_branch": "fix/chain-pon-work-security-20261101",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAdECJiLg",
+      "head_sha": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/124824740398",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837/job/124824740398",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-01T10:42:01Z",
+      "started_at": "2026-11-01T10:42:07Z",
+      "completed_at": "2026-11-01T10:49:41Z",
+      "name": "W1 false trace reuse (arm64, head)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-01T10:42:08Z",
+          "completed_at": "2026-11-01T10:42:08Z"
+        },
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-01T10:42:08Z",
+          "completed_at": "2026-11-01T10:42:25Z"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-01T10:42:25Z",
+          "completed_at": "2026-11-01T10:42:27Z"
+        },
+        {
+          "name": "Install exact original compiler and tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-01T10:42:27Z",
+          "completed_at": "2026-11-01T10:42:32Z"
+        },
+        {
+          "name": "Execute reader rejection controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-01T10:42:32Z",
+          "completed_at": "2026-11-01T10:42:52Z"
+        },
+        {
+          "name": "Verify actual locked graph and formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-01T10:42:52Z",
+          "completed_at": "2026-11-01T10:43:03Z"
+        },
+        {
+          "name": "Run complete W1 module tests and strict primitive lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-01T10:43:03Z",
+          "completed_at": "2026-11-01T10:46:50Z"
+        },
+        {
+          "name": "Execute complete false trace reuse campaign",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-01T10:46:50Z",
+          "completed_at": "2026-11-01T10:49:31Z"
+        },
+        {
+          "name": "Execute additional complete full-limb comparison",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-01T10:49:31Z",
+          "completed_at": "2026-11-01T10:49:35Z"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-01T10:49:35Z",
+          "completed_at": "2026-11-01T10:49:36Z"
+        },
+        {
+          "name": "Retain costs, binaries and all failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-01T10:49:36Z",
+          "completed_at": "2026-11-01T10:49:38Z"
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-11-01T10:49:38Z",
+          "completed_at": "2026-11-01T10:49:38Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-11-01T10:49:38Z",
+          "completed_at": "2026-11-01T10:49:38Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/124824740398",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_id": 1000312772,
+      "runner_name": "GitHub Actions 1000312772",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124824740402,
+      "run_id": 41298626837,
+      "workflow_name": "PoN W1 work security observations",
+      "head_branch": "fix/chain-pon-work-security-20261101",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAdECJiMg",
+      "head_sha": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/124824740402",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837/job/124824740402",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-01T10:42:01Z",
+      "started_at": "2026-11-01T10:42:04Z",
+      "completed_at": "2026-11-01T10:45:29Z",
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-01T10:42:05Z",
+          "completed_at": "2026-11-01T10:42:05Z"
+        },
+        {
+          "name": "Checkout exact observed source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-01T10:42:05Z",
+          "completed_at": "2026-11-01T10:42:22Z"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-01T10:42:22Z",
+          "completed_at": "2026-11-01T10:42:24Z"
+        },
+        {
+          "name": "Install original pinned compiler",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-01T10:42:24Z",
+          "completed_at": "2026-11-01T10:42:31Z"
+        },
+        {
+          "name": "Run refusal controls for original Host and fresh successor",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-01T10:42:31Z",
+          "completed_at": "2026-11-01T10:42:39Z"
+        },
+        {
+          "name": "Execute original and fresh service with original Host resources",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 6,
+          "started_at": "2026-11-01T10:42:39Z",
+          "completed_at": "2026-11-01T10:45:23Z"
+        },
+        {
+          "name": "Verify observed source after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-01T10:45:23Z",
+          "completed_at": "2026-11-01T10:45:24Z"
+        },
+        {
+          "name": "Retain both service outcomes and original Host evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-01T10:45:24Z",
+          "completed_at": "2026-11-01T10:45:26Z"
+        },
+        {
+          "name": "Post Checkout exact observed source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-01T10:45:26Z",
+          "completed_at": "2026-11-01T10:45:26Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-01T10:45:26Z",
+          "completed_at": "2026-11-01T10:45:26Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/124824740402",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000312757,
+      "runner_name": "GitHub Actions 1000312757",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124824740417,
+      "run_id": 41298626837,
+      "workflow_name": "PoN W1 work security observations",
+      "head_branch": "fix/chain-pon-work-security-20261101",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAdECJiQQ",
+      "head_sha": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/124824740417",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837/job/124824740417",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-01T10:42:01Z",
+      "started_at": "2026-11-01T10:42:04Z",
+      "completed_at": "2026-11-01T10:48:46Z",
+      "name": "W1 false trace reuse (x64, head)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-01T10:42:05Z",
+          "completed_at": "2026-11-01T10:42:06Z"
+        },
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-01T10:42:06Z",
+          "completed_at": "2026-11-01T10:42:23Z"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-01T10:42:23Z",
+          "completed_at": "2026-11-01T10:42:25Z"
+        },
+        {
+          "name": "Install exact original compiler and tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-01T10:42:25Z",
+          "completed_at": "2026-11-01T10:42:33Z"
+        },
+        {
+          "name": "Execute reader rejection controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-01T10:42:33Z",
+          "completed_at": "2026-11-01T10:42:54Z"
+        },
+        {
+          "name": "Verify actual locked graph and formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-01T10:42:54Z",
+          "completed_at": "2026-11-01T10:43:05Z"
+        },
+        {
+          "name": "Run complete W1 module tests and strict primitive lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-01T10:43:05Z",
+          "completed_at": "2026-11-01T10:46:17Z"
+        },
+        {
+          "name": "Execute complete false trace reuse campaign",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-01T10:46:17Z",
+          "completed_at": "2026-11-01T10:48:37Z"
+        },
+        {
+          "name": "Execute additional complete full-limb comparison",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-01T10:48:37Z",
+          "completed_at": "2026-11-01T10:48:40Z"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-01T10:48:40Z",
+          "completed_at": "2026-11-01T10:48:41Z"
+        },
+        {
+          "name": "Retain costs, binaries and all failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-01T10:48:41Z",
+          "completed_at": "2026-11-01T10:48:43Z"
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-11-01T10:48:43Z",
+          "completed_at": "2026-11-01T10:48:44Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-11-01T10:48:44Z",
+          "completed_at": "2026-11-01T10:48:44Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/124824740417",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000312758,
+      "runner_name": "GitHub Actions 1000312758",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124824740431,
+      "run_id": 41298626837,
+      "workflow_name": "PoN W1 work security observations",
+      "head_branch": "fix/chain-pon-work-security-20261101",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAdECJiTw",
+      "head_sha": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/124824740431",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837/job/124824740431",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-01T10:42:01Z",
+      "started_at": "2026-11-01T10:42:07Z",
+      "completed_at": "2026-11-01T10:49:55Z",
+      "name": "W1 complete legal strategies (arm64, head)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-01T10:42:07Z",
+          "completed_at": "2026-11-01T10:42:08Z"
+        },
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-01T10:42:08Z",
+          "completed_at": "2026-11-01T10:42:24Z"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-01T10:42:24Z",
+          "completed_at": "2026-11-01T10:42:26Z"
+        },
+        {
+          "name": "Install exact original compiler and tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-01T10:42:26Z",
+          "completed_at": "2026-11-01T10:42:32Z"
+        },
+        {
+          "name": "Verify complete legal-cost readers and native controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-01T10:42:32Z",
+          "completed_at": "2026-11-01T10:46:00Z"
+        },
+        {
+          "name": "Execute all thirty original-budget legal strategy shards",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-01T10:46:00Z",
+          "completed_at": "2026-11-01T10:49:49Z"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-01T10:49:49Z",
+          "completed_at": "2026-11-01T10:49:49Z"
+        },
+        {
+          "name": "Retain costs, binaries and all failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-01T10:49:49Z",
+          "completed_at": "2026-11-01T10:49:53Z"
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-01T10:49:53Z",
+          "completed_at": "2026-11-01T10:49:53Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-01T10:49:53Z",
+          "completed_at": "2026-11-01T10:49:54Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/124824740431",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_id": 1000312774,
+      "runner_name": "GitHub Actions 1000312774",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124824740439,
+      "run_id": 41298626837,
+      "workflow_name": "PoN W1 work security observations",
+      "head_branch": "fix/chain-pon-work-security-20261101",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAdECJiVw",
+      "head_sha": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/124824740439",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837/job/124824740439",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-01T10:42:01Z",
+      "started_at": "2026-11-01T10:42:04Z",
+      "completed_at": "2026-11-01T10:48:09Z",
+      "name": "W1 complete legal strategies (x64, head)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-01T10:42:05Z",
+          "completed_at": "2026-11-01T10:42:06Z"
+        },
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-01T10:42:06Z",
+          "completed_at": "2026-11-01T10:42:25Z"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-01T10:42:25Z",
+          "completed_at": "2026-11-01T10:42:27Z"
+        },
+        {
+          "name": "Install exact original compiler and tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-01T10:42:27Z",
+          "completed_at": "2026-11-01T10:42:34Z"
+        },
+        {
+          "name": "Verify complete legal-cost readers and native controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-01T10:42:34Z",
+          "completed_at": "2026-11-01T10:45:21Z"
+        },
+        {
+          "name": "Execute all thirty original-budget legal strategy shards",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-01T10:45:21Z",
+          "completed_at": "2026-11-01T10:48:02Z"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-01T10:48:02Z",
+          "completed_at": "2026-11-01T10:48:02Z"
+        },
+        {
+          "name": "Retain costs, binaries and all failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-01T10:48:02Z",
+          "completed_at": "2026-11-01T10:48:07Z"
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-01T10:48:07Z",
+          "completed_at": "2026-11-01T10:48:07Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-01T10:48:07Z",
+          "completed_at": "2026-11-01T10:48:07Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/124824740439",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000312759,
+      "runner_name": "GitHub Actions 1000312759",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124824740444,
+      "run_id": 41298626837,
+      "workflow_name": "PoN W1 work security observations",
+      "head_branch": "fix/chain-pon-work-security-20261101",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAdECJiXA",
+      "head_sha": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/124824740444",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837/job/124824740444",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-01T10:42:01Z",
+      "started_at": "2026-11-01T10:42:07Z",
+      "completed_at": "2026-11-01T10:49:53Z",
+      "name": "W1 complete legal strategies (arm64, prospective-merge)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-01T10:42:08Z",
+          "completed_at": "2026-11-01T10:42:08Z"
+        },
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-01T10:42:08Z",
+          "completed_at": "2026-11-01T10:42:24Z"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-01T10:42:24Z",
+          "completed_at": "2026-11-01T10:42:27Z"
+        },
+        {
+          "name": "Install exact original compiler and tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-01T10:42:27Z",
+          "completed_at": "2026-11-01T10:42:33Z"
+        },
+        {
+          "name": "Verify complete legal-cost readers and native controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-01T10:42:33Z",
+          "completed_at": "2026-11-01T10:46:00Z"
+        },
+        {
+          "name": "Execute all thirty original-budget legal strategy shards",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-01T10:46:00Z",
+          "completed_at": "2026-11-01T10:49:47Z"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-01T10:49:47Z",
+          "completed_at": "2026-11-01T10:49:47Z"
+        },
+        {
+          "name": "Retain costs, binaries and all failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-01T10:49:47Z",
+          "completed_at": "2026-11-01T10:49:51Z"
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-01T10:49:51Z",
+          "completed_at": "2026-11-01T10:49:51Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-01T10:49:51Z",
+          "completed_at": "2026-11-01T10:49:51Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/124824740444",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_id": 1000312773,
+      "runner_name": "GitHub Actions 1000312773",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124824740514,
+      "run_id": 41298626837,
+      "workflow_name": "PoN W1 work security observations",
+      "head_branch": "fix/chain-pon-work-security-20261101",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAdECJiog",
+      "head_sha": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/124824740514",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837/job/124824740514",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-01T10:42:01Z",
+      "started_at": "2026-11-01T10:42:04Z",
+      "completed_at": "2026-11-01T10:49:51Z",
+      "name": "W1 false trace reuse (x64, prospective-merge)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-01T10:42:05Z",
+          "completed_at": "2026-11-01T10:42:06Z"
+        },
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-01T10:42:06Z",
+          "completed_at": "2026-11-01T10:42:28Z"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-01T10:42:28Z",
+          "completed_at": "2026-11-01T10:42:30Z"
+        },
+        {
+          "name": "Install exact original compiler and tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-01T10:42:30Z",
+          "completed_at": "2026-11-01T10:42:39Z"
+        },
+        {
+          "name": "Execute reader rejection controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-01T10:42:39Z",
+          "completed_at": "2026-11-01T10:43:00Z"
+        },
+        {
+          "name": "Verify actual locked graph and formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-01T10:43:00Z",
+          "completed_at": "2026-11-01T10:43:15Z"
+        },
+        {
+          "name": "Run complete W1 module tests and strict primitive lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-01T10:43:15Z",
+          "completed_at": "2026-11-01T10:46:58Z"
+        },
+        {
+          "name": "Execute complete false trace reuse campaign",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-01T10:46:58Z",
+          "completed_at": "2026-11-01T10:49:41Z"
+        },
+        {
+          "name": "Execute additional complete full-limb comparison",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-01T10:49:41Z",
+          "completed_at": "2026-11-01T10:49:44Z"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-01T10:49:44Z",
+          "completed_at": "2026-11-01T10:49:45Z"
+        },
+        {
+          "name": "Retain costs, binaries and all failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-01T10:49:45Z",
+          "completed_at": "2026-11-01T10:49:48Z"
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-11-01T10:49:48Z",
+          "completed_at": "2026-11-01T10:49:48Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-11-01T10:49:48Z",
+          "completed_at": "2026-11-01T10:49:48Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/124824740514",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000312760,
+      "runner_name": "GitHub Actions 1000312760",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124824740526,
+      "run_id": 41298626837,
+      "workflow_name": "PoN W1 work security observations",
+      "head_branch": "fix/chain-pon-work-security-20261101",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAdECJirg",
+      "head_sha": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/124824740526",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41298626837/job/124824740526",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-01T10:42:01Z",
+      "started_at": "2026-11-01T10:42:07Z",
+      "completed_at": "2026-11-01T10:49:17Z",
+      "name": "W1 false trace reuse (arm64, prospective-merge)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-01T10:42:07Z",
+          "completed_at": "2026-11-01T10:42:08Z"
+        },
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-01T10:42:08Z",
+          "completed_at": "2026-11-01T10:42:25Z"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-01T10:42:25Z",
+          "completed_at": "2026-11-01T10:42:26Z"
+        },
+        {
+          "name": "Install exact original compiler and tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-01T10:42:26Z",
+          "completed_at": "2026-11-01T10:42:32Z"
+        },
+        {
+          "name": "Execute reader rejection controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-01T10:42:32Z",
+          "completed_at": "2026-11-01T10:42:51Z"
+        },
+        {
+          "name": "Verify actual locked graph and formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-01T10:42:51Z",
+          "completed_at": "2026-11-01T10:43:02Z"
+        },
+        {
+          "name": "Run complete W1 module tests and strict primitive lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-01T10:43:02Z",
+          "completed_at": "2026-11-01T10:46:35Z"
+        },
+        {
+          "name": "Execute complete false trace reuse campaign",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-01T10:46:35Z",
+          "completed_at": "2026-11-01T10:49:09Z"
+        },
+        {
+          "name": "Execute additional complete full-limb comparison",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-01T10:49:09Z",
+          "completed_at": "2026-11-01T10:49:12Z"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-01T10:49:12Z",
+          "completed_at": "2026-11-01T10:49:13Z"
+        },
+        {
+          "name": "Retain costs, binaries and all failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-01T10:49:13Z",
+          "completed_at": "2026-11-01T10:49:15Z"
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-11-01T10:49:15Z",
+          "completed_at": "2026-11-01T10:49:15Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-11-01T10:49:15Z",
+          "completed_at": "2026-11-01T10:49:15Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/124824740526",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_id": 1000312775,
+      "runner_name": "GitHub Actions 1000312775",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

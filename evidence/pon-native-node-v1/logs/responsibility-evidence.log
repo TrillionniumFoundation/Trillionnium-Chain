@@ -1,0 +1,40 @@
+test_boolean_exit_code_is_not_integer_success (__main__.ExactObservationTests.test_boolean_exit_code_is_not_integer_success) ... ok
+test_exact_file_class_method_observed (__main__.ExactObservationTests.test_exact_file_class_method_observed) ... ok
+test_failed_process_cannot_supply_passing_selector (__main__.ExactObservationTests.test_failed_process_cannot_supply_passing_selector) ... ok
+test_missing_suite_summary_is_not_success (__main__.ExactObservationTests.test_missing_suite_summary_is_not_success) ... ok
+test_native_selector_is_not_guessed_from_test_name (__main__.ExactObservationTests.test_native_selector_is_not_guessed_from_test_name) ... ok
+test_other_registered_selector_remains_unobserved (__main__.ExactObservationTests.test_other_registered_selector_remains_unobserved) ... ok
+test_same_method_other_class_is_not_evidence (__main__.ExactObservationTests.test_same_method_other_class_is_not_evidence) ... ok
+test_same_named_method_in_other_file_is_not_evidence (__main__.ExactObservationTests.test_same_named_method_in_other_file_is_not_evidence) ... ok
+test_skipped_test_is_not_observed_pass (__main__.ExactObservationTests.test_skipped_test_is_not_observed_pass) ... ok
+test_timed_out_process_is_not_success (__main__.ExactObservationTests.test_timed_out_process_is_not_success) ... ok
+test_exact_package_target_and_success_are_required (__main__.NativeSelectorTests.test_exact_package_target_and_success_are_required) ... ok
+test_actual_bindings_are_not_execution (__main__.ResponsibilityBindingTests.test_actual_bindings_are_not_execution) ... ok
+test_archive_path_does_not_become_new_measured_commit (__main__.ResponsibilityBindingTests.test_archive_path_does_not_become_new_measured_commit) ... ok
+test_duplicate_owner_does_not_fill_a_gap (__main__.ResponsibilityBindingTests.test_duplicate_owner_does_not_fill_a_gap) ... ok
+test_duplicate_test_does_not_create_more_evidence (__main__.ResponsibilityBindingTests.test_duplicate_test_does_not_create_more_evidence) ... ok
+test_invented_test_class_rejects (__main__.ResponsibilityBindingTests.test_invented_test_class_rejects) ... ok
+test_m08_names_actual_distinct_phases (__main__.ResponsibilityBindingTests.test_m08_names_actual_distinct_phases) ... ok
+test_missing_backend_or_scope_rejects (__main__.ResponsibilityBindingTests.test_missing_backend_or_scope_rejects) ... ok
+test_missing_callable_rejects (__main__.ResponsibilityBindingTests.test_missing_callable_rejects) ... ok
+test_missing_manifest_rejects (__main__.ResponsibilityBindingTests.test_missing_manifest_rejects) ... ok
+test_missing_procedure_owner_rejects (__main__.ResponsibilityBindingTests.test_missing_procedure_owner_rejects) ... ok
+test_native_method_must_belong_to_named_impl (__main__.ResponsibilityBindingTests.test_native_method_must_belong_to_named_impl) ... ok
+test_reusable_component_cannot_fill_ordinary_product_entry (__main__.ResponsibilityBindingTests.test_reusable_component_cannot_fill_ordinary_product_entry) ... ok
+test_source_path_escape_rejects (__main__.ResponsibilityBindingTests.test_source_path_escape_rejects) ... ok
+test_specified_mempool_consumer_cannot_claim_controlled_entry (__main__.ResponsibilityBindingTests.test_specified_mempool_consumer_cannot_claim_controlled_entry) ... ok
+test_unknown_implementation_kind_rejects (__main__.ResponsibilityBindingTests.test_unknown_implementation_kind_rejects) ... ok
+test_absent_subject_is_not_assumed_covered (__main__.SourceApplicabilityTests.test_absent_subject_is_not_assumed_covered) ... ok
+test_added_runtime_invalidates_complete_match (__main__.SourceApplicabilityTests.test_added_runtime_invalidates_complete_match) ... ok
+test_changed_dependency_does_not_hide_behind_subject_match (__main__.SourceApplicabilityTests.test_changed_dependency_does_not_hide_behind_subject_match) ... ok
+test_class_and_method_source_bindings_are_distinct (__main__.SourceApplicabilityTests.test_class_and_method_source_bindings_are_distinct) ... ok
+test_empty_recorded_runtime_cannot_be_current (__main__.SourceApplicabilityTests.test_empty_recorded_runtime_cannot_be_current) ... ok
+test_no_subject_is_not_a_positive_identity_claim (__main__.SourceApplicabilityTests.test_no_subject_is_not_a_positive_identity_claim) ... ok
+test_removed_runtime_invalidates_complete_match (__main__.SourceApplicabilityTests.test_removed_runtime_invalidates_complete_match) ... ok
+test_report_does_not_rewrite_original_hashes (__main__.SourceApplicabilityTests.test_report_does_not_rewrite_original_hashes) ... ok
+test_unchanged_recorded_subject_and_runtime (__main__.SourceApplicabilityTests.test_unchanged_recorded_subject_and_runtime) ... ok
+
+----------------------------------------------------------------------
+Ran 35 tests in 1.541s
+
+OK

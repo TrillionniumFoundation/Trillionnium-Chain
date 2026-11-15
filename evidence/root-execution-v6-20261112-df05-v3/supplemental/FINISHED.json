@@ -1,0 +1,100 @@
+{
+  "arm_verified": false,
+  "binding": {
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-checkpoint-store",
+      "--test",
+      "socket_ownership",
+      "--",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "native_environment_sha256": "62cf6344c0c44f0da02f1bb2ab0c3ef13a90f4744ae6ab81c2354ef2d0ae877e",
+    "operation_key": "root-operation-20261112-df05-native-publication-v2-socket-ownership",
+    "outer_timeout_seconds": 1200,
+    "required_tests": [
+      "rejected_nonprivate_socket_parent_does_not_unlink_existing_listener",
+      "different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint",
+      "copied_lease_record_cannot_replace_a_live_checkpoint_endpoint"
+    ],
+    "source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+    "timeout_scope": "new supplemental outer bound; original tests unchanged",
+    "tree": "5d2538f404e32319ea1084a6c79f37c52503546f"
+  },
+  "execution": {
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-checkpoint-store",
+      "--test",
+      "socket_ownership",
+      "--",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "cwd": "/data/chain-root-operation-owned-20261112-df05-v4",
+    "elapsed_ns": 19035855529,
+    "executed": true,
+    "exit_code": 101,
+    "expected_source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+    "log": "socket-ownership.log",
+    "process_exit_code": 101,
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "timed_out": false
+  },
+  "files": {
+    "STARTED.json": {
+      "bytes": 941,
+      "sha256": "7741825e2703a65269064aa53d1ae5393a686d20e9bc18ba5134c291dd027bfd"
+    },
+    "cargo-version.log": {
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    "cargo-version.receipt.json": {
+      "bytes": 451,
+      "sha256": "1c7f552153e5ba43c5f31c132d9ac0cddf62efef0c6b552f7d7e8eef298f62a2"
+    },
+    "socket-ownership.log": {
+      "bytes": 2289,
+      "sha256": "755eec647ebec248ec1c5e5802db4c3e7268612d26834a510bbc7f428b4fc2ad"
+    },
+    "socket-ownership.receipt.json": {
+      "bytes": 662,
+      "sha256": "0fad488094fe8773e6b00082e70c1882974451c76b58b8ec3660f89783a87a50"
+    },
+    "source-after.json": {
+      "bytes": 423,
+      "sha256": "052ef6d0ddf240462214a7ad0205bf2928c8ed9a04ed42b08237fe9b682ccf54"
+    }
+  },
+  "observation": {
+    "complete_success": false,
+    "observed_counts": {
+      "failed": 1,
+      "filtered_out": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 2
+    },
+    "required": 3
+  },
+  "original_three_30s_campaigns_verified": false,
+  "production_activation": false,
+  "prospective_merge_verified": false,
+  "status": "HOLD"
+}

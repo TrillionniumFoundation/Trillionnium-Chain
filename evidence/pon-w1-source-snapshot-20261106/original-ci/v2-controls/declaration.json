@@ -1,0 +1,14 @@
+{
+  "additional_work_tickets": 0,
+  "crypto_context_scope": "construction profile and complete receipt verification; not a guarantee that every rejection executes all STARK checks",
+  "deadline_monotonic": 320.720806754,
+  "new_proofs_generated": 0,
+  "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+  "runner_sha256": "ef68fc78226d0eee314d7457a4f2b54235be0fadf3786f79493b974c8f5569c3",
+  "schema": "TRNM-W1-V2-RECEIPT-CONTROLS1",
+  "scope": "one actual saved full-v2 receipt, explicit independent verifier, local hostile-input observations only",
+  "started_monotonic": 200.720806754,
+  "started_unix_ns": 1793980442187117481,
+  "termination_settlement_adds_acceptance_budget": false,
+  "total_wall_budget_seconds": 120
+}

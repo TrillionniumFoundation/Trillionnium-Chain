@@ -1,0 +1,2119 @@
+{
+  "schema": "w1-fresh-service-independent-artifact-readback-v1",
+  "run_id": 41293327123,
+  "created_utc": "2026-11-01T09:34:00.060209+00:00",
+  "read_only_source_inspection": true,
+  "database_connection_options": {
+    "mode": "ro",
+    "immutable": true
+  },
+  "service_acceptance": false,
+  "work_hardness_acceptance": false,
+  "entries": [
+    {
+      "label": "head",
+      "artifact_id": 13078475975,
+      "artifact_name": "w1-fresh-service-head-c041564b8a6bb0b98ca9c30e7871878427e5d9a4-1",
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41293327123/artifacts/13078475975",
+      "zip_path": "/workspace/scratch/76b96c45510e/ci-artifact-review-41293327123/w1-fresh-head-41293327123.zip",
+      "zip_sha256": "b855b64cc01a0461d8654b1fd9f583eb686c3fb9687e23e780c81c00985ff2ba",
+      "github_digest": "sha256:b855b64cc01a0461d8654b1fd9f583eb686c3fb9687e23e780c81c00985ff2ba",
+      "zip_sha256_verified_against_github": true,
+      "manifest_sha256": "fee33961cae2eb0f26d50057d881e4229f48d3b6d6347440094974baa99945ab",
+      "source_before": "c041564b8a6bb0b98ca9c30e7871878427e5d9a4",
+      "source_after": "c041564b8a6bb0b98ca9c30e7871878427e5d9a4",
+      "source_tree": "11c25a7d409b6281d3f90dc56f0ebb2c1a96b305",
+      "expected_source": "c041564b8a6bb0b98ca9c30e7871878427e5d9a4",
+      "manifest_passed": false,
+      "manifest_failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+      ],
+      "binary_sha256": "8e862696158f8bbc4a6c8fab2c6506b08fefb91008d809288a09cea1d418f2a9",
+      "binary_matches_previous_run": true,
+      "host_controller_sha256": "0792753154fdba74fdf4535445b0c209e208d27833ac5352db4693b685d4cf8e",
+      "host_final_errors": [],
+      "host_controller_failure": null,
+      "host_before_sha256": "a25414fcb12b3136c11340632a0074d12f7c46b8de6d62a0f2403ee351fe95dc",
+      "host_after_sha256": "6d34223b62ff0ec5095ac4f3c78459f598e23d4f14ea9ed048eb807e6038d1d9",
+      "host_limits_before": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "host_limits_after": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "cpu_quota_fraction": {
+        "numerator_us": 25000,
+        "denominator_us": 100000,
+        "cores": 0.25
+      },
+      "cases": [
+        {
+          "kind": "original",
+          "report_sha256": "a10a1d38c02e1dedeb981430a7135a601d31f9832c85b2bf9105c0b61a8ce38a",
+          "finite_target_met": false,
+          "execution": {
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "process": {
+              "command": [
+                "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-6c91a9a89111eddb",
+                "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+                "--exact",
+                "--nocapture",
+                "--test-threads=1"
+              ],
+              "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+              "exit_code": 0,
+              "timed_out": false,
+              "elapsed_ns": 14406939524,
+              "log": "original.log",
+              "executed": true,
+              "process_exit_code": 0,
+              "expected_source": "c041564b8a6bb0b98ca9c30e7871878427e5d9a4",
+              "source_before_verified": true,
+              "source_after_verified": true,
+              "source_verified": true
+            },
+            "passed": false,
+            "log_sha256": "ce409ed94998b5d31f782038702bbcd57f1f57ccde494ce965db058f4090386f",
+            "report_path": "original/report.json",
+            "failure": "CONFIRMATION_TARGET"
+          },
+          "phases": [
+            {
+              "mode": "attack-free-baseline",
+              "requested_window_ns": 4000000000,
+              "workers": 0,
+              "finite_business_target_met": true,
+              "client_confirmed_transactions": 1,
+              "client_confirmed_before_original_window_end": true,
+              "confirmation_ended_ns": 2581386168,
+              "business_started_ns": 128163,
+              "attacker_workers_cpu_ns": 0,
+              "independent_replay_and_confirmation_cpu_ns": 455314627,
+              "independent_replay_and_confirmation_wall_ns": 2370151342,
+              "verification_errors": [],
+              "no_attack_accepted": true,
+              "invariant_target_met": true,
+              "full_native_state_equal": true,
+              "maximum_honest_head_gap_ns": 108864439,
+              "honest_submissions": [
+                {
+                  "height": 1,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 433573,
+                  "ended_ns": 16230873,
+                  "client_thread_cpu_ns": 659841,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 2,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 16552348,
+                  "ended_ns": 84860965,
+                  "client_thread_cpu_ns": 551280,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 3,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 85205064,
+                  "ended_ns": 100975173,
+                  "client_thread_cpu_ns": 567026,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 4,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 101295326,
+                  "ended_ns": 117094318,
+                  "client_thread_cpu_ns": 550080,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 5,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 117425127,
+                  "ended_ns": 177276562,
+                  "client_thread_cpu_ns": 617068,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 6,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 177614532,
+                  "ended_ns": 194941618,
+                  "client_thread_cpu_ns": 664950,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 7,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 195261320,
+                  "ended_ns": 211078550,
+                  "client_thread_cpu_ns": 556259,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                }
+              ],
+              "honest_history": [
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 211239102,
+                  "ended_ns": 223171083,
+                  "elapsed_wall_ns": 11932622,
+                  "client_thread_cpu_ns": 560875,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                  "page_next": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 790686339,
+                  "ended_ns": 801953108,
+                  "elapsed_wall_ns": 11268141,
+                  "client_thread_cpu_ns": 570381,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                  "page_next": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1086232803,
+                  "ended_ns": 1097833935,
+                  "elapsed_wall_ns": 11602194,
+                  "client_thread_cpu_ns": 513236,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+                  "page_next": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1380448774,
+                  "ended_ns": 1391713169,
+                  "elapsed_wall_ns": 11267199,
+                  "client_thread_cpu_ns": 567025,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+                  "page_next": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1597286098,
+                  "ended_ns": 1608534228,
+                  "elapsed_wall_ns": 11249282,
+                  "client_thread_cpu_ns": 564110,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+                  "page_next": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1894042296,
+                  "ended_ns": 1905392850,
+                  "elapsed_wall_ns": 11351696,
+                  "client_thread_cpu_ns": 603689,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+                  "page_next": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 2188318810,
+                  "ended_ns": 2199991200,
+                  "elapsed_wall_ns": 11673822,
+                  "client_thread_cpu_ns": 541947,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": true,
+                  "page_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+                  "page_next": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                }
+              ],
+              "metrics": {
+                "work_started": 7,
+                "work_finished": 7,
+                "work_failed": 0,
+                "mutation_cpu_charged_ns": 35035786,
+                "mutation_dispatch_excluding_work_cpu_ns": 27516319,
+                "mutation_full_work_cpu_ns": 7519467,
+                "mutation_cpu_refusals": 0,
+                "mutation_cpu_credit_ns_after_shutdown": 1994814213,
+                "queue_wait_ns": 84051963,
+                "pending_challenge_wait_ns": 92655762,
+                "pending_grant_wait_ns": 130855039
+              },
+              "observer": {
+                "accepted_connections_seen": 79,
+                "records_not_retained": 0,
+                "measurement_failures": 0,
+                "records": 79
+              },
+              "attack_call_count": 0,
+              "actual_transcript_replies": 0,
+              "attempt_cap_reached": false,
+              "attack_response_error_counts": {}
+            },
+            {
+              "mode": "from-zero-pressure",
+              "requested_window_ns": 4000000000,
+              "workers": 16,
+              "finite_business_target_met": false,
+              "client_confirmed_transactions": 0,
+              "client_confirmed_before_original_window_end": false,
+              "confirmation_ended_ns": null,
+              "business_started_ns": 57192095,
+              "attacker_workers_cpu_ns": 230731206,
+              "independent_replay_and_confirmation_cpu_ns": 168232771,
+              "independent_replay_and_confirmation_wall_ns": 2581118951,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ],
+              "no_attack_accepted": true,
+              "invariant_target_met": true,
+              "full_native_state_equal": false,
+              "maximum_honest_head_gap_ns": 220352905,
+              "honest_submissions": [
+                {
+                  "height": 1,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 57463044,
+                  "ended_ns": 259439469,
+                  "client_thread_cpu_ns": 637298,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 2,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 259747895,
+                  "ended_ns": 460236267,
+                  "client_thread_cpu_ns": 691231,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 3,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 460619365,
+                  "ended_ns": 658270469,
+                  "client_thread_cpu_ns": 650830,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 4,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 658514797,
+                  "ended_ns": 857933287,
+                  "client_thread_cpu_ns": 568988,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 5,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 858304957,
+                  "ended_ns": 1056579191,
+                  "client_thread_cpu_ns": 694574,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 6,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1056985093,
+                  "ended_ns": 1254267861,
+                  "client_thread_cpu_ns": 797507,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 7,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1254529556,
+                  "ended_ns": 1474685974,
+                  "client_thread_cpu_ns": 657239,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                }
+              ],
+              "honest_history": [
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1474789871,
+                  "ended_ns": 1558621810,
+                  "elapsed_wall_ns": 83832600,
+                  "client_thread_cpu_ns": 602966,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                  "page_next": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 2559498186,
+                  "ended_ns": 2755177466,
+                  "elapsed_wall_ns": 195680181,
+                  "client_thread_cpu_ns": 579212,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                  "page_next": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 3555072452,
+                  "ended_ns": 3567733392,
+                  "elapsed_wall_ns": 12662292,
+                  "client_thread_cpu_ns": 465855,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+                  "page_next": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+                }
+              ],
+              "metrics": {
+                "work_started": 307,
+                "work_finished": 307,
+                "work_failed": 300,
+                "mutation_cpu_charged_ns": 499962499,
+                "mutation_dispatch_excluding_work_cpu_ns": 194561373,
+                "mutation_full_work_cpu_ns": 305401126,
+                "mutation_cpu_refusals": 0,
+                "mutation_cpu_credit_ns_after_shutdown": 1998392520,
+                "queue_wait_ns": 4104931650,
+                "pending_challenge_wait_ns": 3991926775,
+                "pending_grant_wait_ns": 17801093545
+              },
+              "observer": {
+                "accepted_connections_seen": 346,
+                "records_not_retained": 0,
+                "measurement_failures": 0,
+                "records": 346
+              },
+              "attack_call_count": 313,
+              "actual_transcript_replies": 297,
+              "attempt_cap_reached": false,
+              "attack_response_error_counts": {
+                "WORK:Transcript": 297,
+                "no_response": 16
+              }
+            }
+          ],
+          "independent_client_database_readback": {
+            "archive_member": "fresh-service/original/pressure/independent-client/native.sqlite",
+            "workspace_path": "/workspace/scratch/76b96c45510e/ci-artifact-review-41293327123/head/fresh-service/original/pressure/independent-client/native.sqlite",
+            "zip_member_sha256": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4",
+            "database_sha256_before": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4",
+            "database_sha256_after": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4",
+            "readonly_uri": "file:/workspace/scratch/76b96c45510e/ci-artifact-review-41293327123/head/fresh-service/original/pressure/independent-client/native.sqlite?mode=ro&immutable=1",
+            "query": "SELECT COUNT(*), MIN(height), MAX(height) FROM blocks",
+            "columns": [
+              "block_count",
+              "minimum_height",
+              "maximum_height"
+            ],
+            "result": [
+              3,
+              0,
+              2
+            ],
+            "genesis_only": false,
+            "stored_genesis_plus_two_admitted_blocks": true,
+            "six_depth_confirmation_claimed": false,
+            "database_unchanged": true
+          }
+        },
+        {
+          "kind": "fresh",
+          "report_sha256": "6e965d1375f7173020bfc43b92319f329b6c44a6613371b686db7f54a497d909",
+          "finite_target_met": false,
+          "execution": {
+            "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+            "process": {
+              "command": [
+                "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-6c91a9a89111eddb",
+                "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+                "--exact",
+                "--nocapture",
+                "--test-threads=1",
+                "--ignored"
+              ],
+              "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+              "exit_code": 101,
+              "timed_out": false,
+              "elapsed_ns": 13798934015,
+              "log": "fresh.log",
+              "executed": true,
+              "process_exit_code": 101,
+              "expected_source": "c041564b8a6bb0b98ca9c30e7871878427e5d9a4",
+              "source_before_verified": true,
+              "source_after_verified": true,
+              "source_verified": true
+            },
+            "passed": false,
+            "log_sha256": "a260c917905a00d2469d7c1d906486bf7410223d216a1a6d4175feca72284746",
+            "report_path": "fresh/report.json",
+            "failure": "FRESH_NATIVE_PROCESS_REQUIRED"
+          },
+          "phases": [
+            {
+              "mode": "attack-free-baseline",
+              "requested_window_ns": 4000000000,
+              "workers": 0,
+              "finite_business_target_met": true,
+              "client_confirmed_transactions": 1,
+              "client_confirmed_before_original_window_end": true,
+              "confirmation_ended_ns": 2698647338,
+              "business_started_ns": 124188,
+              "attacker_workers_cpu_ns": 0,
+              "independent_replay_and_confirmation_cpu_ns": 477623427,
+              "independent_replay_and_confirmation_wall_ns": 2501699266,
+              "verification_errors": [],
+              "no_attack_accepted": true,
+              "invariant_target_met": true,
+              "full_native_state_equal": true,
+              "maximum_honest_head_gap_ns": 109916452,
+              "honest_submissions": [
+                {
+                  "height": 1,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 400645,
+                  "ended_ns": 17230150,
+                  "client_thread_cpu_ns": 604831,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 2,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 17534239,
+                  "ended_ns": 33362876,
+                  "client_thread_cpu_ns": 602878,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 3,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 33688797,
+                  "ended_ns": 91527156,
+                  "client_thread_cpu_ns": 633084,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 4,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 91864454,
+                  "ended_ns": 108811358,
+                  "client_thread_cpu_ns": 602036,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 5,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 109161857,
+                  "ended_ns": 126021328,
+                  "client_thread_cpu_ns": 629417,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 6,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 126364856,
+                  "ended_ns": 142209767,
+                  "client_thread_cpu_ns": 570258,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 7,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 142540896,
+                  "ended_ns": 196768872,
+                  "client_thread_cpu_ns": 547085,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                }
+              ],
+              "honest_history": [
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 196952349,
+                  "ended_ns": 208846363,
+                  "elapsed_wall_ns": 11894575,
+                  "client_thread_cpu_ns": 650259,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                  "page_next": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 802578572,
+                  "ended_ns": 814342971,
+                  "elapsed_wall_ns": 11765551,
+                  "client_thread_cpu_ns": 522217,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                  "page_next": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1193799190,
+                  "ended_ns": 1205935981,
+                  "elapsed_wall_ns": 12138073,
+                  "client_thread_cpu_ns": 591440,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+                  "page_next": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1410259889,
+                  "ended_ns": 1421687629,
+                  "elapsed_wall_ns": 11429032,
+                  "client_thread_cpu_ns": 700262,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+                  "page_next": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1706015804,
+                  "ended_ns": 1717487400,
+                  "elapsed_wall_ns": 11472848,
+                  "client_thread_cpu_ns": 645592,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+                  "page_next": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 2003515358,
+                  "ended_ns": 2014378456,
+                  "elapsed_wall_ns": 10864341,
+                  "client_thread_cpu_ns": 694444,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+                  "page_next": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 2304123108,
+                  "ended_ns": 2314297148,
+                  "elapsed_wall_ns": 10175121,
+                  "client_thread_cpu_ns": 583799,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": true,
+                  "page_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+                  "page_next": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                }
+              ],
+              "metrics": {
+                "work_started": 7,
+                "work_finished": 7,
+                "work_failed": 0,
+                "mutation_cpu_charged_ns": 36309019,
+                "mutation_dispatch_excluding_work_cpu_ns": 28590605,
+                "mutation_full_work_cpu_ns": 7718414,
+                "mutation_cpu_refusals": 0,
+                "mutation_cpu_credit_ns_after_shutdown": 1995882964,
+                "queue_wait_ns": 82368751,
+                "pending_challenge_wait_ns": 180123539,
+                "pending_grant_wait_ns": 82642300
+              },
+              "observer": {
+                "accepted_connections_seen": 77,
+                "records_not_retained": 0,
+                "measurement_failures": 0,
+                "records": 77
+              },
+              "attack_call_count": 0,
+              "actual_transcript_replies": 0,
+              "attempt_cap_reached": false,
+              "attack_response_error_counts": {}
+            },
+            {
+              "mode": "from-zero-pressure",
+              "requested_window_ns": 4000000000,
+              "workers": 16,
+              "finite_business_target_met": false,
+              "client_confirmed_transactions": 0,
+              "client_confirmed_before_original_window_end": false,
+              "confirmation_ended_ns": null,
+              "business_started_ns": 71963981,
+              "attacker_workers_cpu_ns": 295111411,
+              "independent_replay_and_confirmation_cpu_ns": 138658890,
+              "independent_replay_and_confirmation_wall_ns": 2321842071,
+              "verification_errors": [],
+              "no_attack_accepted": true,
+              "invariant_target_met": true,
+              "full_native_state_equal": false,
+              "maximum_honest_head_gap_ns": 205061594,
+              "honest_submissions": [
+                {
+                  "height": 1,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 72219236,
+                  "ended_ns": 280442588,
+                  "client_thread_cpu_ns": 711258,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 2,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 280718995,
+                  "ended_ns": 573632844,
+                  "client_thread_cpu_ns": 507476,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 3,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 574046207,
+                  "ended_ns": 774625965,
+                  "client_thread_cpu_ns": 655806,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 4,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 774913899,
+                  "ended_ns": 1072630359,
+                  "client_thread_cpu_ns": 529098,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 5,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1072915299,
+                  "ended_ns": 1273911934,
+                  "client_thread_cpu_ns": 685181,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 6,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1274300480,
+                  "ended_ns": 1480872361,
+                  "client_thread_cpu_ns": 568658,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 7,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1568435651,
+                  "ended_ns": 1679082615,
+                  "client_thread_cpu_ns": 537842,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                }
+              ],
+              "honest_history": [
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1679201975,
+                  "ended_ns": 1868918543,
+                  "elapsed_wall_ns": 189717249,
+                  "client_thread_cpu_ns": 505964,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                  "page_next": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 3072799274,
+                  "ended_ns": 3268410044,
+                  "elapsed_wall_ns": 195611801,
+                  "client_thread_cpu_ns": 607135,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                  "page_next": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+                },
+                {
+                  "status": "error",
+                  "error": "IO: Resource temporarily unavailable (os error 11)",
+                  "started_ns": 3976555034,
+                  "ended_ns": 4001027842,
+                  "elapsed_wall_ns": 24473810,
+                  "client_thread_cpu_ns": 146006,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": true,
+                  "request": {
+                    "after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 0,
+                  "page_complete": null,
+                  "page_after": null,
+                  "page_next": null
+                }
+              ],
+              "metrics": {
+                "work_started": 265,
+                "work_finished": 265,
+                "work_failed": 258,
+                "mutation_cpu_charged_ns": 462855414,
+                "mutation_dispatch_excluding_work_cpu_ns": 184952994,
+                "mutation_full_work_cpu_ns": 277902420,
+                "mutation_cpu_refusals": 0,
+                "mutation_cpu_credit_ns_after_shutdown": 1998231355,
+                "queue_wait_ns": 4374104653,
+                "pending_challenge_wait_ns": 3659664210,
+                "pending_grant_wait_ns": 14876220994
+              },
+              "observer": {
+                "accepted_connections_seen": 302,
+                "records_not_retained": 0,
+                "measurement_failures": 0,
+                "records": 302
+              },
+              "attack_call_count": 271,
+              "actual_transcript_replies": 255,
+              "attempt_cap_reached": false,
+              "attack_response_error_counts": {
+                "WORK:Transcript": 255,
+                "no_response": 16
+              }
+            }
+          ],
+          "independent_client_database_readback": {
+            "archive_member": "fresh-service/fresh/pressure/independent-client/native.sqlite",
+            "workspace_path": "/workspace/scratch/76b96c45510e/ci-artifact-review-41293327123/head/fresh-service/fresh/pressure/independent-client/native.sqlite",
+            "zip_member_sha256": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4",
+            "database_sha256_before": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4",
+            "database_sha256_after": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4",
+            "readonly_uri": "file:/workspace/scratch/76b96c45510e/ci-artifact-review-41293327123/head/fresh-service/fresh/pressure/independent-client/native.sqlite?mode=ro&immutable=1",
+            "query": "SELECT COUNT(*), MIN(height), MAX(height) FROM blocks",
+            "columns": [
+              "block_count",
+              "minimum_height",
+              "maximum_height"
+            ],
+            "result": [
+              3,
+              0,
+              2
+            ],
+            "genesis_only": false,
+            "stored_genesis_plus_two_admitted_blocks": true,
+            "six_depth_confirmation_claimed": false,
+            "database_unchanged": true
+          },
+          "construction_coverage": {
+            "accounting_scope": "construction intervals are nested in joined attacker worker CPU; never add them twice; shared public material setup is separate",
+            "all_context_bindings_and_challenges_unique": true,
+            "all_nested_cpu_measurements_known": true,
+            "constructed": 271,
+            "exhausted": 0,
+            "full_transcript_rejections": 255,
+            "nested_from_zero_construction_cpu_ns": 78698743,
+            "submitted": 271,
+            "unique_challenges": 271,
+            "unique_packet_indices": 271
+          }
+        }
+      ]
+    },
+    {
+      "label": "merge",
+      "artifact_id": 13077889185,
+      "artifact_name": "w1-fresh-service-prospective-merge-b824293d71a346a3461705b5eb129e7b83ce2920-1",
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41293327123/artifacts/13077889185",
+      "zip_path": "/workspace/scratch/76b96c45510e/ci-artifact-review-41293327123/w1-fresh-merge-41293327123.zip",
+      "zip_sha256": "5578ed1daca71790d7c76a1a8766378df011d4e94bcbe641957e83de6aadcb6e",
+      "github_digest": "sha256:5578ed1daca71790d7c76a1a8766378df011d4e94bcbe641957e83de6aadcb6e",
+      "zip_sha256_verified_against_github": true,
+      "manifest_sha256": "8ff2d3df8a4a79510ddd244bd78299a0d1397cc9040a8119e4b97947300ac146",
+      "source_before": "b824293d71a346a3461705b5eb129e7b83ce2920",
+      "source_after": "b824293d71a346a3461705b5eb129e7b83ce2920",
+      "source_tree": "11c25a7d409b6281d3f90dc56f0ebb2c1a96b305",
+      "expected_source": "b824293d71a346a3461705b5eb129e7b83ce2920",
+      "manifest_passed": false,
+      "manifest_failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+      ],
+      "binary_sha256": "8e862696158f8bbc4a6c8fab2c6506b08fefb91008d809288a09cea1d418f2a9",
+      "binary_matches_previous_run": true,
+      "host_controller_sha256": "cc71aef3261cd68112408bdc7233fcfc4483decbe5e278b6f6f28fc5238055c3",
+      "host_final_errors": [],
+      "host_controller_failure": null,
+      "host_before_sha256": "5eb30aebd2396508be696cc2a69efa1ddda37ceeffe25dc7349b03208307173a",
+      "host_after_sha256": "136c5d95db2347bf84d407b0a0ddb4fe8e179a16d961adb34c7187f469d30864",
+      "host_limits_before": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "host_limits_after": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "cpu_quota_fraction": {
+        "numerator_us": 25000,
+        "denominator_us": 100000,
+        "cores": 0.25
+      },
+      "cases": [
+        {
+          "kind": "original",
+          "report_sha256": "af9d1c3ab47742942f1656857a9891ffbf60413d474e6ac6771f4de945eae1b8",
+          "finite_target_met": false,
+          "execution": {
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "process": {
+              "command": [
+                "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-6c91a9a89111eddb",
+                "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+                "--exact",
+                "--nocapture",
+                "--test-threads=1"
+              ],
+              "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+              "exit_code": 0,
+              "timed_out": false,
+              "elapsed_ns": 14404727954,
+              "log": "original.log",
+              "executed": true,
+              "process_exit_code": 0,
+              "expected_source": "b824293d71a346a3461705b5eb129e7b83ce2920",
+              "source_before_verified": true,
+              "source_after_verified": true,
+              "source_verified": true
+            },
+            "passed": false,
+            "log_sha256": "2e2186a56aa7b192fff6af0125a7d18548182e32b3859ebc1e2696be50ec6144",
+            "report_path": "original/report.json",
+            "failure": "CONFIRMATION_TARGET"
+          },
+          "phases": [
+            {
+              "mode": "attack-free-baseline",
+              "requested_window_ns": 4000000000,
+              "workers": 0,
+              "finite_business_target_met": true,
+              "client_confirmed_transactions": 1,
+              "client_confirmed_before_original_window_end": true,
+              "confirmation_ended_ns": 2682026893,
+              "business_started_ns": 99017,
+              "attacker_workers_cpu_ns": 0,
+              "independent_replay_and_confirmation_cpu_ns": 478010451,
+              "independent_replay_and_confirmation_wall_ns": 2468772631,
+              "verification_errors": [],
+              "no_attack_accepted": true,
+              "invariant_target_met": true,
+              "full_native_state_equal": true,
+              "maximum_honest_head_gap_ns": 108749673,
+              "honest_submissions": [
+                {
+                  "height": 1,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 385996,
+                  "ended_ns": 17140854,
+                  "client_thread_cpu_ns": 629981,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 2,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 17460892,
+                  "ended_ns": 83312388,
+                  "client_thread_cpu_ns": 578434,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 3,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 83631494,
+                  "ended_ns": 99509715,
+                  "client_thread_cpu_ns": 665873,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 4,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 99835922,
+                  "ended_ns": 115587693,
+                  "client_thread_cpu_ns": 590021,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 5,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 115935372,
+                  "ended_ns": 178582220,
+                  "client_thread_cpu_ns": 595788,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 6,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 178953595,
+                  "ended_ns": 195901191,
+                  "client_thread_cpu_ns": 619676,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 7,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 196238044,
+                  "ended_ns": 213076187,
+                  "client_thread_cpu_ns": 653014,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                }
+              ],
+              "honest_history": [
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 213258759,
+                  "ended_ns": 225198641,
+                  "elapsed_wall_ns": 11940553,
+                  "client_thread_cpu_ns": 593125,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                  "page_next": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 795375969,
+                  "ended_ns": 807035772,
+                  "elapsed_wall_ns": 11660835,
+                  "client_thread_cpu_ns": 557612,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                  "page_next": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1092699091,
+                  "ended_ns": 1104102392,
+                  "elapsed_wall_ns": 11404293,
+                  "client_thread_cpu_ns": 509920,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+                  "page_next": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1387217106,
+                  "ended_ns": 1398997990,
+                  "elapsed_wall_ns": 11781946,
+                  "client_thread_cpu_ns": 560418,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+                  "page_next": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1692674110,
+                  "ended_ns": 1705095159,
+                  "elapsed_wall_ns": 12427210,
+                  "client_thread_cpu_ns": 628379,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+                  "page_next": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1987980962,
+                  "ended_ns": 1998829786,
+                  "elapsed_wall_ns": 10849725,
+                  "client_thread_cpu_ns": 512935,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+                  "page_next": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 2286501342,
+                  "ended_ns": 2297689351,
+                  "elapsed_wall_ns": 11188941,
+                  "client_thread_cpu_ns": 476821,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": true,
+                  "page_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+                  "page_next": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                }
+              ],
+              "metrics": {
+                "work_started": 7,
+                "work_finished": 7,
+                "work_failed": 0,
+                "mutation_cpu_charged_ns": 35585493,
+                "mutation_dispatch_excluding_work_cpu_ns": 27747866,
+                "mutation_full_work_cpu_ns": 7837627,
+                "mutation_cpu_refusals": 0,
+                "mutation_cpu_credit_ns_after_shutdown": 1994536147,
+                "queue_wait_ns": 87342156,
+                "pending_challenge_wait_ns": 90104828,
+                "pending_grant_wait_ns": 180958379
+              },
+              "observer": {
+                "accepted_connections_seen": 82,
+                "records_not_retained": 0,
+                "measurement_failures": 0,
+                "records": 82
+              },
+              "attack_call_count": 0,
+              "actual_transcript_replies": 0,
+              "attempt_cap_reached": false,
+              "attack_response_error_counts": {}
+            },
+            {
+              "mode": "from-zero-pressure",
+              "requested_window_ns": 4000000000,
+              "workers": 16,
+              "finite_business_target_met": false,
+              "client_confirmed_transactions": 0,
+              "client_confirmed_before_original_window_end": false,
+              "confirmation_ended_ns": null,
+              "business_started_ns": 68344713,
+              "attacker_workers_cpu_ns": 226489431,
+              "independent_replay_and_confirmation_cpu_ns": 153579349,
+              "independent_replay_and_confirmation_wall_ns": 2500545697,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ],
+              "no_attack_accepted": true,
+              "invariant_target_met": true,
+              "full_native_state_equal": false,
+              "maximum_honest_head_gap_ns": 203549047,
+              "honest_submissions": [
+                {
+                  "height": 1,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 68531251,
+                  "ended_ns": 259894853,
+                  "client_thread_cpu_ns": 506756,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 2,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 260175902,
+                  "ended_ns": 459773863,
+                  "client_thread_cpu_ns": 539195,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 3,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 460139299,
+                  "ended_ns": 662339253,
+                  "client_thread_cpu_ns": 774817,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 4,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 662732470,
+                  "ended_ns": 862167811,
+                  "client_thread_cpu_ns": 682009,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 5,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 862506276,
+                  "ended_ns": 1065231646,
+                  "client_thread_cpu_ns": 556340,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 6,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1065759343,
+                  "ended_ns": 1265893405,
+                  "client_thread_cpu_ns": 696350,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 7,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1266172842,
+                  "ended_ns": 1555484817,
+                  "client_thread_cpu_ns": 530111,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                }
+              ],
+              "honest_history": [
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1555606999,
+                  "ended_ns": 1659647185,
+                  "elapsed_wall_ns": 104040887,
+                  "client_thread_cpu_ns": 554639,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                  "page_next": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 2758293099,
+                  "ended_ns": 2865216589,
+                  "elapsed_wall_ns": 106924541,
+                  "client_thread_cpu_ns": 461789,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                  "page_next": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 3656071054,
+                  "ended_ns": 3761482328,
+                  "elapsed_wall_ns": 105412155,
+                  "client_thread_cpu_ns": 517303,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+                  "page_next": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+                }
+              ],
+              "metrics": {
+                "work_started": 309,
+                "work_finished": 309,
+                "work_failed": 302,
+                "mutation_cpu_charged_ns": 515018819,
+                "mutation_dispatch_excluding_work_cpu_ns": 197853704,
+                "mutation_full_work_cpu_ns": 317165115,
+                "mutation_cpu_refusals": 0,
+                "mutation_cpu_credit_ns_after_shutdown": 1998520244,
+                "queue_wait_ns": 3202667649,
+                "pending_challenge_wait_ns": 5735088746,
+                "pending_grant_wait_ns": 15969719322
+              },
+              "observer": {
+                "accepted_connections_seen": 350,
+                "records_not_retained": 0,
+                "measurement_failures": 0,
+                "records": 350
+              },
+              "attack_call_count": 316,
+              "actual_transcript_replies": 300,
+              "attempt_cap_reached": false,
+              "attack_response_error_counts": {
+                "WORK:Transcript": 300,
+                "no_response": 16
+              }
+            }
+          ],
+          "independent_client_database_readback": {
+            "archive_member": "fresh-service/original/pressure/independent-client/native.sqlite",
+            "workspace_path": "/workspace/scratch/76b96c45510e/ci-artifact-review-41293327123/merge/fresh-service/original/pressure/independent-client/native.sqlite",
+            "zip_member_sha256": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4",
+            "database_sha256_before": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4",
+            "database_sha256_after": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4",
+            "readonly_uri": "file:/workspace/scratch/76b96c45510e/ci-artifact-review-41293327123/merge/fresh-service/original/pressure/independent-client/native.sqlite?mode=ro&immutable=1",
+            "query": "SELECT COUNT(*), MIN(height), MAX(height) FROM blocks",
+            "columns": [
+              "block_count",
+              "minimum_height",
+              "maximum_height"
+            ],
+            "result": [
+              3,
+              0,
+              2
+            ],
+            "genesis_only": false,
+            "stored_genesis_plus_two_admitted_blocks": true,
+            "six_depth_confirmation_claimed": false,
+            "database_unchanged": true
+          }
+        },
+        {
+          "kind": "fresh",
+          "report_sha256": "56cf81c950e720a188ea18ce8f932c333d4bd43f130f6cb96c2250c1288d567f",
+          "finite_target_met": false,
+          "execution": {
+            "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+            "process": {
+              "command": [
+                "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-6c91a9a89111eddb",
+                "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+                "--exact",
+                "--nocapture",
+                "--test-threads=1",
+                "--ignored"
+              ],
+              "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+              "exit_code": 101,
+              "timed_out": false,
+              "elapsed_ns": 13693772199,
+              "log": "fresh.log",
+              "executed": true,
+              "process_exit_code": 101,
+              "expected_source": "b824293d71a346a3461705b5eb129e7b83ce2920",
+              "source_before_verified": true,
+              "source_after_verified": true,
+              "source_verified": true
+            },
+            "passed": false,
+            "log_sha256": "a05ed6a139c1b5b0873a655ab412239beeb0460e21df065dd8b1a2f5d676beb5",
+            "report_path": "fresh/report.json",
+            "failure": "FRESH_NATIVE_PROCESS_REQUIRED"
+          },
+          "phases": [
+            {
+              "mode": "attack-free-baseline",
+              "requested_window_ns": 4000000000,
+              "workers": 0,
+              "finite_business_target_met": true,
+              "client_confirmed_transactions": 1,
+              "client_confirmed_before_original_window_end": true,
+              "confirmation_ended_ns": 2581118886,
+              "business_started_ns": 88261,
+              "attacker_workers_cpu_ns": 0,
+              "independent_replay_and_confirmation_cpu_ns": 462346666,
+              "independent_replay_and_confirmation_wall_ns": 2366600986,
+              "verification_errors": [],
+              "no_attack_accepted": true,
+              "invariant_target_met": true,
+              "full_native_state_equal": true,
+              "maximum_honest_head_gap_ns": 108197702,
+              "honest_submissions": [
+                {
+                  "height": 1,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 373007,
+                  "ended_ns": 76990135,
+                  "client_thread_cpu_ns": 648558,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 2,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 77410573,
+                  "ended_ns": 93203483,
+                  "client_thread_cpu_ns": 674576,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 3,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 93534928,
+                  "ended_ns": 110443615,
+                  "client_thread_cpu_ns": 570521,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 4,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 110751445,
+                  "ended_ns": 127711979,
+                  "client_thread_cpu_ns": 584163,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 5,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 128065517,
+                  "ended_ns": 181140083,
+                  "client_thread_cpu_ns": 583299,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 6,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 181463797,
+                  "ended_ns": 197274023,
+                  "client_thread_cpu_ns": 560046,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 7,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 197572890,
+                  "ended_ns": 214369920,
+                  "client_thread_cpu_ns": 546726,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                }
+              ],
+              "honest_history": [
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 214521536,
+                  "ended_ns": 225401321,
+                  "elapsed_wall_ns": 10880346,
+                  "client_thread_cpu_ns": 525575,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                  "page_next": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 787787337,
+                  "ended_ns": 799342139,
+                  "elapsed_wall_ns": 11555824,
+                  "client_thread_cpu_ns": 484943,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                  "page_next": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1082754318,
+                  "ended_ns": 1094012197,
+                  "elapsed_wall_ns": 11259121,
+                  "client_thread_cpu_ns": 481309,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+                  "page_next": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1376228180,
+                  "ended_ns": 1386361800,
+                  "elapsed_wall_ns": 10135043,
+                  "client_thread_cpu_ns": 564611,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+                  "page_next": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1590576327,
+                  "ended_ns": 1601960886,
+                  "elapsed_wall_ns": 11385710,
+                  "client_thread_cpu_ns": 575409,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+                  "page_next": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1887046293,
+                  "ended_ns": 1897344053,
+                  "elapsed_wall_ns": 10298762,
+                  "client_thread_cpu_ns": 506937,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+                  "page_next": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 2184462345,
+                  "ended_ns": 2196321772,
+                  "elapsed_wall_ns": 11860649,
+                  "client_thread_cpu_ns": 589750,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": true,
+                  "page_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+                  "page_next": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                }
+              ],
+              "metrics": {
+                "work_started": 7,
+                "work_finished": 7,
+                "work_failed": 0,
+                "mutation_cpu_charged_ns": 36592116,
+                "mutation_dispatch_excluding_work_cpu_ns": 28521720,
+                "mutation_full_work_cpu_ns": 8070396,
+                "mutation_cpu_refusals": 0,
+                "mutation_cpu_credit_ns_after_shutdown": 1993432986,
+                "queue_wait_ns": 86149219,
+                "pending_challenge_wait_ns": 88837537,
+                "pending_grant_wait_ns": 181546583
+              },
+              "observer": {
+                "accepted_connections_seen": 81,
+                "records_not_retained": 0,
+                "measurement_failures": 0,
+                "records": 81
+              },
+              "attack_call_count": 0,
+              "actual_transcript_replies": 0,
+              "attempt_cap_reached": false,
+              "attack_response_error_counts": {}
+            },
+            {
+              "mode": "from-zero-pressure",
+              "requested_window_ns": 4000000000,
+              "workers": 16,
+              "finite_business_target_met": false,
+              "client_confirmed_transactions": 0,
+              "client_confirmed_before_original_window_end": false,
+              "confirmation_ended_ns": null,
+              "business_started_ns": 66006222,
+              "attacker_workers_cpu_ns": 293732730,
+              "independent_replay_and_confirmation_cpu_ns": 135839662,
+              "independent_replay_and_confirmation_wall_ns": 2401789915,
+              "verification_errors": [],
+              "no_attack_accepted": true,
+              "invariant_target_met": true,
+              "full_native_state_equal": false,
+              "maximum_honest_head_gap_ns": 300577745,
+              "honest_submissions": [
+                {
+                  "height": 1,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 66277787,
+                  "ended_ns": 259922466,
+                  "client_thread_cpu_ns": 630662,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 2,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 260289134,
+                  "ended_ns": 556147262,
+                  "client_thread_cpu_ns": 785142,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 3,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 556394981,
+                  "ended_ns": 757395349,
+                  "client_thread_cpu_ns": 532375,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 4,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 757656859,
+                  "ended_ns": 959697895,
+                  "client_thread_cpu_ns": 493997,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 5,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 959952135,
+                  "ended_ns": 1162796476,
+                  "client_thread_cpu_ns": 517411,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 6,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1163058066,
+                  "ended_ns": 1362789424,
+                  "client_thread_cpu_ns": 566474,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                },
+                {
+                  "height": 7,
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1363041891,
+                  "ended_ns": 1652630965,
+                  "client_thread_cpu_ns": 616570,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false
+                }
+              ],
+              "honest_history": [
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 1652766928,
+                  "ended_ns": 1758017936,
+                  "elapsed_wall_ns": 105251689,
+                  "client_thread_cpu_ns": 617612,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+                  "page_next": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+                },
+                {
+                  "status": "ok",
+                  "error": null,
+                  "started_ns": 2956258415,
+                  "ended_ns": 3152747414,
+                  "elapsed_wall_ns": 196490331,
+                  "client_thread_cpu_ns": 578414,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": false,
+                  "request": {
+                    "after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 1,
+                  "page_complete": false,
+                  "page_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+                  "page_next": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+                },
+                {
+                  "status": "error",
+                  "error": "FRAME_DEADLINE",
+                  "started_ns": 3954962861,
+                  "ended_ns": 4054548170,
+                  "elapsed_wall_ns": 99586511,
+                  "client_thread_cpu_ns": 204284,
+                  "deadline_ms": 2000,
+                  "returned_after_deadline": false,
+                  "returned_after_window": true,
+                  "request": {
+                    "after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+                    "op": "history",
+                    "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+                  },
+                  "packet_count": 0,
+                  "page_complete": null,
+                  "page_after": null,
+                  "page_next": null
+                }
+              ],
+              "metrics": {
+                "work_started": 273,
+                "work_finished": 273,
+                "work_failed": 266,
+                "mutation_cpu_charged_ns": 463665231,
+                "mutation_dispatch_excluding_work_cpu_ns": 183373358,
+                "mutation_full_work_cpu_ns": 280291873,
+                "mutation_cpu_refusals": 0,
+                "mutation_cpu_credit_ns_after_shutdown": 1999978230,
+                "queue_wait_ns": 3700549083,
+                "pending_challenge_wait_ns": 5831536893,
+                "pending_grant_wait_ns": 16125406302
+              },
+              "observer": {
+                "accepted_connections_seen": 312,
+                "records_not_retained": 0,
+                "measurement_failures": 0,
+                "records": 312
+              },
+              "attack_call_count": 281,
+              "actual_transcript_replies": 265,
+              "attempt_cap_reached": false,
+              "attack_response_error_counts": {
+                "WORK:Transcript": 265,
+                "no_response": 16
+              }
+            }
+          ],
+          "independent_client_database_readback": {
+            "archive_member": "fresh-service/fresh/pressure/independent-client/native.sqlite",
+            "workspace_path": "/workspace/scratch/76b96c45510e/ci-artifact-review-41293327123/merge/fresh-service/fresh/pressure/independent-client/native.sqlite",
+            "zip_member_sha256": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4",
+            "database_sha256_before": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4",
+            "database_sha256_after": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4",
+            "readonly_uri": "file:/workspace/scratch/76b96c45510e/ci-artifact-review-41293327123/merge/fresh-service/fresh/pressure/independent-client/native.sqlite?mode=ro&immutable=1",
+            "query": "SELECT COUNT(*), MIN(height), MAX(height) FROM blocks",
+            "columns": [
+              "block_count",
+              "minimum_height",
+              "maximum_height"
+            ],
+            "result": [
+              3,
+              0,
+              2
+            ],
+            "genesis_only": false,
+            "stored_genesis_plus_two_admitted_blocks": true,
+            "six_depth_confirmation_claimed": false,
+            "database_unchanged": true
+          },
+          "construction_coverage": {
+            "accounting_scope": "construction intervals are nested in joined attacker worker CPU; never add them twice; shared public material setup is separate",
+            "all_context_bindings_and_challenges_unique": true,
+            "all_nested_cpu_measurements_known": true,
+            "constructed": 281,
+            "exhausted": 0,
+            "full_transcript_rejections": 265,
+            "nested_from_zero_construction_cpu_ns": 74869637,
+            "submitted": 281,
+            "unique_challenges": 281,
+            "unique_packet_indices": 281
+          }
+        }
+      ]
+    }
+  ],
+  "static_hypotheses": [
+    {
+      "status": "static_code_hypothesis_not_measured_stage_attribution",
+      "source_paths": [
+        "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+        "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs"
+      ],
+      "observation": "History W1 progress invokes a live CPU checkpoint whose resource callback rechecks actual Host membership and limits; selected progress boundaries subsequently invoke the resource callback again. KernelBudget::check also reconstructs immutable file paths and membership-prefix text on each call.",
+      "measurement_limits": "The reports measure the whole independent-replay calling thread, not CPU attributed specifically to Host checks. No measured speedup, dominant-stage share, or causal sufficiency for the 4s service failure is claimed.",
+      "scope": "Potential immutable-path precomputation may preserve all actual reads/checkpoints, but no source, sampling frequency, resource limit, identity policy, test budget, or acceptance logic was changed for this readback."
+    }
+  ],
+  "previous_run_comparison": {
+    "run_id": 41292410360,
+    "previous_readback_sha256": "32cb085cab4f0d515df4147708681ef3bb2d040f366652ab7f9061cbdea26ced",
+    "previous_binary_sha256": "8e862696158f8bbc4a6c8fab2c6506b08fefb91008d809288a09cea1d418f2a9",
+    "note": "The native binary is byte-identical across the two runs. Wall/CPU timing and partial durable-import progress differ across finite observations; these differences are not attributed to the cost-runner environment correction or any native algorithm change. Original 4s/16-worker and fixed Host quotas remain unchanged. First-run pressure databases contain genesis only; this run stores genesis plus two admitted blocks in every pressure case. Neither run reaches six-depth confirmation under attack."
+  }
+}

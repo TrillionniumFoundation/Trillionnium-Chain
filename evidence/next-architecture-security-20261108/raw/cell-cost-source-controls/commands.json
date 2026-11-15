@@ -1,0 +1,80 @@
+[
+  {
+    "args": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+      "--output",
+      "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-validation/cell-cost-source-controls/source-before.json"
+    ],
+    "elapsed_wall_ns": 4075422663,
+    "exit_code": 0,
+    "label": "source-before",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "sha256": "e75735e4c04118bd8d20acb997ac04a04a28280749ca4d4aa27c4e8537d4c4e0"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "python3",
+      "-B",
+      "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-delivery/measure_next_cells.py",
+      "--repo",
+      "/home/qian-qi/work/chain-next-architecture-security-20261108-8720",
+      "--target-dir",
+      "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-target",
+      "--output-dir",
+      "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-validation/cell-cost-observation"
+    ],
+    "elapsed_wall_ns": 72210606246,
+    "exit_code": 0,
+    "label": "measurement",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 190,
+      "sha256": "e09b8e519e6599aa97488bcfd988a43c1d01844a1ff1454571dc609d6102695a"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+      "--output",
+      "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-validation/cell-cost-source-controls/source-after.json"
+    ],
+    "elapsed_wall_ns": 4226812205,
+    "exit_code": 0,
+    "label": "source-after",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "sha256": "e75735e4c04118bd8d20acb997ac04a04a28280749ca4d4aa27c4e8537d4c4e0"
+    },
+    "timeout": false
+  }
+]

@@ -1,0 +1,29 @@
+{
+  "actual_new_runtime_execution_verified": false,
+  "findings": [
+    "The helper diff from the reviewed env2 helper changes only checkout/input/audit/operation/output identities; the original prepare_runtime, runtime_import and verify_runtime_ready calls remain unchanged.",
+    "The runtime child uses the same canonical private Python, held verified helper bytes via -c, exactly LANG/LC_ALL/TMPDIR, -I -S -B -X unused private pycache_prefix, and the original 180-second limit.",
+    "The original source verifier is an outer utility run with the original separately pinned CI Python. This does not select old Python paths for the isolated runtime child, and both identities are explicitly recorded.",
+    "The source-before/source-after original physical verifier and exact 423-byte output SHA remain mandatory. The helper/inputs/original worker/contract/snapshot/Python/ELF receipt and actual ELF are pinned before and after.",
+    "The v1 ELF pins proved window equality but did not independently assert accepted artifact identity. Unexecuted v2 now requires independent copy-receipt 2304 bytes/SHA614686d6f0088592fc6858cc97ea6a1254b363cf8b47d3cf249b7566dd49f1d2, selected path, B/tree, recompiled=false/test_harness=false, actual19752832-byte ELF and ef4d33be1574c27852187546f4393f301eb175b8246f647ce3d15a5d21fd2155.",
+    "The report explicitly states normal_main_not_executed_by_this_preflight. Original CTS1/CHB1/model/owner/FinalUse/production and aggregate model-memory qualification remain false.",
+    "The observer enforces actual nice10/four-CPU quota. Its memory readings remain observations; only the later native operation can establish its separate actual 8-GiB model-cgroup requirement.",
+    "No runtime/source guard, original resource limit, source pin or test criterion was weakened; no test was added or run by this review."
+  ],
+  "helper": {
+    "bytes": 7990,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_full_preflight_frozen02_v1.py",
+    "sha256": "d29aa959df9625df90b379a15e4d98dfd41da6cb5d715ddf1b32aab3e9d84633"
+  },
+  "model_execution_verified": false,
+  "observer": {
+    "bytes": 12954,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_observe_full_preflight_frozen02_v2.py",
+    "sha256": "3142c91629ebb9420857e35bd5cb66574ae3c6fbde0679150324b115ce145394"
+  },
+  "retained_unexecuted_v1": "remote_observe_full_preflight_frozen02_v1.py",
+  "review_only": true,
+  "review_passed": true,
+  "reviewer": "release_acceptance",
+  "schema": "trnm.bt-frozen02-full-runtime-caller-source-independent-review.v2"
+}

@@ -1,0 +1,22 @@
+test_bank_order_only_accepts_prepaid_gate_fields (test_research.BankTheoremTests.test_bank_order_only_accepts_prepaid_gate_fields) ... ok
+test_empty_coordinates_are_not_purchased (test_research.BankTheoremTests.test_empty_coordinates_are_not_purchased) ... ok
+test_every_small_schedule_and_eviction (test_research.BankTheoremTests.test_every_small_schedule_and_eviction) ... ok
+test_invalid_model_parameters (test_research.BankTheoremTests.test_invalid_model_parameters) ... ok
+test_nonuniform_setup_changes_order (test_research.BankTheoremTests.test_nonuniform_setup_changes_order) ... ok
+test_strict_old_online_lower_certificate (test_research.BankTheoremTests.test_strict_old_online_lower_certificate) ... ok
+test_three_selectors_two_coordinates_bank_success (test_research.BankTheoremTests.test_three_selectors_two_coordinates_bank_success) ... ok
+test_uniform_price_descending_occupancy (test_research.BankTheoremTests.test_uniform_price_descending_occupancy) ... ok
+test_zero_cost_and_empty_batch (test_research.BankTheoremTests.test_zero_cost_and_empty_batch) ... ok
+test_bad_coordinate_and_shape_refused (test_research.GlobalCompilerTests.test_bad_coordinate_and_shape_refused) ... ok
+test_exact_original_coefficients (test_research.GlobalCompilerTests.test_exact_original_coefficients) ... ok
+test_last_word_corruption_is_refused (test_research.GlobalCompilerTests.test_last_word_corruption_is_refused) ... ok
+test_noncanonical_input_is_refused (test_research.GlobalCompilerTests.test_noncanonical_input_is_refused) ... ok
+test_original_all_512_products (test_research.GlobalCompilerTests.test_original_all_512_products) ... ok
+test_preserved_block_affine_but_not_global_is_refused (test_research.GlobalCompilerTests.test_preserved_block_affine_but_not_global_is_refused) ... ok
+test_wrapping_nontrivial_family_all_512 (test_research.GlobalCompilerTests.test_wrapping_nontrivial_family_all_512) ... ok
+test_zero_and_rank_one_degeneracy (test_research.GlobalCompilerTests.test_zero_and_rank_one_degeneracy) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.710s
+
+OK

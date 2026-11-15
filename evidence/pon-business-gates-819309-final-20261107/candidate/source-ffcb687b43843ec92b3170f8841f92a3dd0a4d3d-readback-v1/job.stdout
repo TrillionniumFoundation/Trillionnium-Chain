@@ -1,0 +1,49 @@
+{"event": "prelaunch_verified", "head": "ffcb687b43843ec92b3170f8841f92a3dd0a4d3d", "tree": "73dcb40e7021bb7f18d1ddb75fd26a53d0e1201a", "root": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107", "runner_sha256": "09573875a35c49c4fcffcef2eae8da1e5fbd80e07d262e2235965a802e4edc0c", "roster_sha256": "950e9ceff839a8c599f4ebdb4a1b6d72bd7719f48557c76c832b74b8518aed72", "output": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/admission-fence/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d", "test_suites_started": false}
+{"event": "command_complete", "name": "source-before", "exit_code": 0, "timed_out": false, "log_bytes": 423}
+{"event": "command_complete", "name": "python-runtime", "exit_code": 0, "timed_out": false, "log_bytes": 339}
+{"event": "command_complete", "name": "preflight-audit", "exit_code": 0, "timed_out": false, "log_bytes": 173}
+{"event": "command_complete", "name": "ci-contract", "exit_code": 0, "timed_out": false, "log_bytes": 180}
+{"event": "command_complete", "name": "pq-research-integration", "exit_code": 0, "timed_out": false, "log_bytes": 557}
+{"event": "command_complete", "name": "distributed-source-inventory", "exit_code": 0, "timed_out": false, "log_bytes": 35}
+{"event": "command_complete", "name": "repository-links-and-contracts", "exit_code": 0, "timed_out": false, "log_bytes": 307}
+{"event": "command_complete", "name": "git-diff-check", "exit_code": 0, "timed_out": false, "log_bytes": 0}
+{"event": "command_complete", "name": "cargo-version", "exit_code": 0, "timed_out": false, "log_bytes": 36}
+{"event": "command_complete", "name": "rustc-version", "exit_code": 0, "timed_out": false, "log_bytes": 196}
+{"event": "command_complete", "name": "fmt-all-check", "exit_code": 0, "timed_out": false, "log_bytes": 0}
+{"event": "command_complete", "name": "cargo-locked-offline-metadata", "exit_code": 0, "timed_out": false, "log_bytes": 898189}
+{"event": "command_complete", "name": "01-test_pq_research_integration", "exit_code": 0, "timed_out": false, "log_bytes": 5326}
+{"event": "suite_denominator", "name": "01-test_pq_research_integration", "expected": 37, "observed": 37, "verbose_starts": 37, "passed": true}
+{"event": "command_complete", "name": "02-test_ci_source_integrity", "exit_code": 0, "timed_out": false, "log_bytes": 6898}
+{"event": "suite_denominator", "name": "02-test_ci_source_integrity", "expected": 43, "observed": 43, "verbose_starts": 43, "passed": true}
+{"event": "command_complete", "name": "03-test_integration_push_source", "exit_code": 0, "timed_out": false, "log_bytes": 2176}
+{"event": "suite_denominator", "name": "03-test_integration_push_source", "expected": 13, "observed": 13, "verbose_starts": 13, "passed": true}
+{"event": "command_complete", "name": "04-test_run_from_zero_native", "exit_code": 0, "timed_out": false, "log_bytes": 24541}
+{"event": "suite_denominator", "name": "04-test_run_from_zero_native", "expected": 149, "observed": 149, "verbose_starts": 149, "passed": true}
+{"event": "command_complete", "name": "05-test_run_w1_fresh_service_v1", "exit_code": 0, "timed_out": false, "log_bytes": 5432}
+{"event": "suite_denominator", "name": "05-test_run_w1_fresh_service_v1", "expected": 29, "observed": 29, "verbose_starts": 29, "passed": true}
+{"event": "command_complete", "name": "06-test_from_zero_host_ci", "exit_code": 0, "timed_out": false, "log_bytes": 14229}
+{"event": "suite_denominator", "name": "06-test_from_zero_host_ci", "expected": 79, "observed": 79, "verbose_starts": 79, "passed": true}
+{"event": "command_complete", "name": "07-test_ci_observation_process", "exit_code": 0, "timed_out": false, "log_bytes": 1102}
+{"event": "suite_denominator", "name": "07-test_ci_observation_process", "expected": 7, "observed": 7, "verbose_starts": 7, "passed": true}
+{"event": "command_complete", "name": "08-test_record_pq_native_command", "exit_code": 0, "timed_out": false, "log_bytes": 1166}
+{"event": "suite_denominator", "name": "08-test_record_pq_native_command", "expected": 4, "observed": 4, "verbose_starts": 4, "passed": true}
+{"event": "command_complete", "name": "09-test_ci_contract", "exit_code": 0, "timed_out": false, "log_bytes": 17181}
+{"event": "suite_denominator", "name": "09-test_ci_contract", "expected": 103, "observed": 103, "verbose_starts": 103, "passed": true}
+{"event": "command_complete", "name": "10-test_useful_cell_numeric_v1", "exit_code": 0, "timed_out": false, "log_bytes": 3082}
+{"event": "suite_denominator", "name": "10-test_useful_cell_numeric_v1", "expected": 20, "observed": 20, "verbose_starts": 20, "passed": true}
+{"event": "command_complete", "name": "11-test_useful_cell_relation_v1", "exit_code": 0, "timed_out": false, "log_bytes": 7668}
+{"event": "suite_denominator", "name": "11-test_useful_cell_relation_v1", "expected": 47, "observed": 47, "verbose_starts": 47, "passed": true}
+{"event": "command_complete", "name": "12-test_useful_cell_execution_v2", "exit_code": 0, "timed_out": false, "log_bytes": 5873}
+{"event": "suite_denominator", "name": "12-test_useful_cell_execution_v2", "expected": 34, "observed": 34, "verbose_starts": 34, "passed": true}
+{"event": "command_complete", "name": "13-test_useful_cell_relation_v2", "exit_code": 0, "timed_out": false, "log_bytes": 1682}
+{"event": "suite_denominator", "name": "13-test_useful_cell_relation_v2", "expected": 11, "observed": 11, "verbose_starts": 11, "passed": true}
+{"event": "command_complete", "name": "14-test_useful_cell_relation_v2_adversarial", "exit_code": 0, "timed_out": false, "log_bytes": 2146}
+{"event": "suite_denominator", "name": "14-test_useful_cell_relation_v2_adversarial", "expected": 11, "observed": 11, "verbose_starts": 11, "passed": true}
+{"event": "command_complete", "name": "15-test_useful_cell_source_guard_v2", "exit_code": 0, "timed_out": false, "log_bytes": 3336}
+{"event": "suite_denominator", "name": "15-test_useful_cell_source_guard_v2", "expected": 20, "observed": 20, "verbose_starts": 20, "passed": true}
+{"event": "command_complete", "name": "16-test_useful_cell_multimodal_execution_v3", "exit_code": 0, "timed_out": false, "log_bytes": 6009}
+{"event": "suite_denominator", "name": "16-test_useful_cell_multimodal_execution_v3", "expected": 34, "observed": 34, "verbose_starts": 34, "passed": true}
+{"event": "command_complete", "name": "17-test_useful_cell_multimodal_relation_v3", "exit_code": 0, "timed_out": false, "log_bytes": 4576}
+{"event": "suite_denominator", "name": "17-test_useful_cell_multimodal_relation_v3", "expected": 25, "observed": 25, "verbose_starts": 25, "passed": true}
+{"event": "command_complete", "name": "source-after", "exit_code": 0, "timed_out": false, "log_bytes": 423}
+{"event": "validation_complete", "output": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/admission-fence/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d", "all_controls_passed": true, "observed": 666, "passed": 666, "failures": []}

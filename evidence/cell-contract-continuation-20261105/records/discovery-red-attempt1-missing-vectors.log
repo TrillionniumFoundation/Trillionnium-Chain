@@ -1,0 +1,32 @@
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/42d46a663b73/red-discovery/trillionnium/crates/trnm-data-availability)
+error: couldn't read `/workspace/scratch/42d46a663b73/red-discovery/trillionnium/crates/trnm-data-availability/../../../formal/pon-nakamoto-v1/vectors/cell-dependency-closure-v1.json`: No such file or directory (os error 2)
+  --> crates/trnm-data-availability/src/cell/closure_tests.rs:20:26
+   |
+20 |       serde_json::from_str(include_str!(concat!(
+   |  __________________________^
+21 | |         env!("CARGO_MANIFEST_DIR"),
+22 | |         "/../../../formal/pon-nakamoto-v1/vectors/cell-dependency-closure-v1.json"
+23 | |     )))
+   | |______^
+
+error: couldn't read `/workspace/scratch/42d46a663b73/red-discovery/trillionnium/crates/trnm-data-availability/../../../formal/pon-nakamoto-v1/vectors/cell-model-root-v1.json`: No such file or directory (os error 2)
+  --> crates/trnm-data-availability/src/cell/model_root_tests.rs:9:26
+   |
+ 9 |       serde_json::from_str(include_str!(concat!(
+   |  __________________________^
+10 | |         env!("CARGO_MANIFEST_DIR"),
+11 | |         "/../../../formal/pon-nakamoto-v1/vectors/cell-model-root-v1.json"
+12 | |     )))
+   | |______^
+
+error: couldn't read `/workspace/scratch/42d46a663b73/red-discovery/trillionnium/crates/trnm-data-availability/../../../formal/pon-nakamoto-v1/vectors/cell-dependency-closure-v1.json`: No such file or directory (os error 2)
+  --> crates/trnm-data-availability/src/cell/model_root_tests.rs:56:56
+   |
+56 |       let data: serde_json::Value = serde_json::from_str(include_str!(concat!(
+   |  ________________________________________________________^
+57 | |         env!("CARGO_MANIFEST_DIR"),
+58 | |         "/../../../formal/pon-nakamoto-v1/vectors/cell-dependency-closure-v1.json"
+59 | |     )))
+   | |______^
+
+error: could not compile `trnm-data-availability` (lib test) due to 3 previous errors

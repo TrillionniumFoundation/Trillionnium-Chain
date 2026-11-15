@@ -1,0 +1,86 @@
+{
+  "schema": "extra-native-independent-review-v1",
+  "reviewed_snapshot": {
+    "run-extra-native.py": {
+      "sha256": "ed81accfe464050817571c94950ceb4874410406316c659a258a897f1365f01c",
+      "bytes": 34580,
+      "source_path": "integration-patch/evidence/p0-unified-qualification-20261108/run-extra-native.py"
+    },
+    "test_run_extra_native.py": {
+      "sha256": "2f8e83a04c00cf4a3692e51892e01916e89854d4ef6fb0f9ac7c606869d1f678",
+      "bytes": 18248,
+      "source_path": "integration-patch/evidence/p0-unified-qualification-20261108/test_run_extra_native.py"
+    },
+    "EXTRA_NATIVE_RUNNER.md": {
+      "sha256": "e127a6d3f26fd09044dc6cf11644b635860462eac3e65f42bc5ba8b721a44abd",
+      "bytes": 7908,
+      "source_path": "integration-patch/evidence/p0-unified-qualification-20261108/EXTRA_NATIVE_RUNNER.md"
+    }
+  },
+  "review_status": "CHANGES_REQUIRED_BEFORE_COMPONENT_SUCCESS_IS_TRUSTED",
+  "native_campaign_executed": false,
+  "production_activation": false,
+  "original_helper": {
+    "sha256": "d81437a1cef461666b9103cc3f9e8f8ab0c67a90903b5802f582d2c52cd82710",
+    "modified": false
+  },
+  "control_run": {
+    "tests": 30,
+    "passed": 30,
+    "exit_code": 0,
+    "receipt": "parser-controls.receipt.json",
+    "scope": "synthetic parser controls only"
+  },
+  "independent_probes": "independent-parser-probes.json",
+  "findings": [
+    {
+      "id": "E1",
+      "file": "run-extra-native.py",
+      "lines": [
+        135,
+        143,
+        262,
+        267
+      ],
+      "title": "Python terminal outcome ambiguity or explicit failure can be accepted",
+      "reproduction": "One Ran 2 tests summary followed by FAILED (failures=1) and OK, in either order; also OK (failures=1).",
+      "observed": "validate_readback accepts all three using the actual frozen base helper. test_observations keeps only the last terminal count details; the OK terminal match in the base helper is not exclusive.",
+      "impact": "If a zero-exit wrapper emits contradictory or malformed summaries, extra row can become PASS despite raw FAILED/nonzero failure counts. The ordinary nonzero process exit remains FAIL; this is not a claim that the actual native run failed.",
+      "minimum_fix": "In extra layer preserve all terminal matches, require exactly one OK with valid aggregate counts, reject any FAILED, failures>0, errors>0 or unexpected successes>0. Keep original32 helper bytes fixed.",
+      "status": "REPRODUCED"
+    },
+    {
+      "id": "E2",
+      "file": "run-extra-native.py",
+      "lines": [
+        175,
+        203,
+        247,
+        257
+      ],
+      "title": "Trailing unassigned libtest output is omitted from harness reconciliation",
+      "reproduction": "Append running 1 test and test late_unreported_failure ... FAILED after the last complete valid workspace summary, without another summary/dispatch record.",
+      "observed": "Global test rows include one FAILED but totals.failed=0, execution_order_unambiguous=true, required_roster_complete=true, and validate_readback accepts.",
+      "impact": "Contradictory/incomplete trailing test output can be excluded from per-harness totals. A native nonzero Cargo exit still prevents component success.",
+      "minimum_fix": "Require every recognized running/test/summary event to belong to exactly one completed harness; reject trailing or otherwise unassigned events and reconcile all-stream test rows with all harness rows.",
+      "status": "REPRODUCED"
+    }
+  ],
+  "reviewed_safe_properties": [
+    "Multi-harness compilation/dispatched inventory, required nonzero Node target and unit-group roster, complete workspace membership, filtered/measured refusal and missing/extra summaries are checked.",
+    "NO_TESTS and fully IGNORED harnesses remain separately labelled; zero execution in required targets/groups blocks.",
+    "run_command retains native nonzero exit and parses failed output; watchdog outcomes are not normal PASS.",
+    "Fresh export roots must be absent before the single workspace producer; readers only consume manifests from that run and exact explicit --raw-dir paths.",
+    "Reader report digest, packet inventory and limited-authority flags are checked; manifests are checked before each reader and after all readers.",
+    "Preflight/source admission failure stops further dispatch; final source guard is attempted even after failure; all row passed flags and failures control components_passed.",
+    "The exact original32 helper SHA256 is checked before compile of its already-read bytes and again at final observation.",
+    "Production, public-network, original-resource, whole-chain-PQ and throughput qualification fields remain false."
+  ],
+  "identity_interpretation": {
+    "observed": "Cargo compiler JSON identifies intended artifacts; Cargo stderr identifies dispatch paths; files are hashed after the command.",
+    "not_observed": "No operating-system /proc executable or actual model/DSO load observation is made by this extra runner.",
+    "recommendation": "Explicitly record CARGO_DISPATCH_AND_POST_RUN_FILE_HASH and os_loaded_identity=NOT_OBSERVED to prevent promotion of file hashes."
+  },
+  "original32_failure_interpretation": "Extra components_passed covers only its own 17 commands and does not consume the original32 summary. Both receipts must remain separate; original32 FAIL must remain in the final overall integration report.",
+  "actions": "Findings and exact reproducer sent to root and consensus_audit; no candidate files edited."
+}

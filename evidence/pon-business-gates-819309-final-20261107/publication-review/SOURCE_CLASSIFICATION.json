@@ -1,0 +1,56 @@
+{
+  "schema": "fixed-819-source-credential-classification-v1",
+  "source_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+  "reviewer": "independent state_growth read-only source review",
+  "classifications": [
+    {
+      "category": "public_deterministic_signing_fixtures",
+      "sources": [
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:36-37",
+        "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs:109-110"
+      ],
+      "finding": "DevelopmentIdentity constructed from fixed test bytes; fresh_challenge uses the parent from_zero helper."
+    },
+    {
+      "category": "public_deterministic_state_signing_fixtures",
+      "sources": [
+        "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration_tests.rs:21-44",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs:370-376",
+        "trillionnium/crates/trnm-pon-node/src/lib.rs:685-691",
+        "trillionnium/crates/trnm-pon-node/src/lib.rs:708-712"
+      ],
+      "finding": "State fixture signers derive from public development-domain hashing and index."
+    },
+    {
+      "category": "actual_random_server_secret_not_reported_by_examined_writers",
+      "sources": [
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:584-610",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:745-775",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:870-900"
+      ],
+      "finding": "Per-instance entropy creates a private server secret used for HMAC; the examined struct has no Serialize/Debug derivation and the examined report writers do not emit it."
+    },
+    {
+      "category": "protocol_visible_values",
+      "sources": [
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:537-560",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:849-871",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:3180-3189",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:3226-3236"
+      ],
+      "finding": "Serialized Cookie epoch/nonces/peer binding/MAC/signature and public reply metrics do not serialize the underlying server secret. Cookie is protocol authorization material, not the private HMAC key."
+    },
+    {
+      "category": "host_identity_and_permission_observations",
+      "sources": [
+        "scripts/ci/public_fixture_host_lease.py:41-70",
+        "scripts/ci/public_fixture_host_lease.py:151-179",
+        "scripts/ci/run_from_zero_host.py:36-49",
+        "scripts/ci/run_from_zero_host.py:90-105"
+      ],
+      "finding": "Examined Host lease writers record job/source/root-owned file, cgroup and permission identity. Examined environment forwarding is an explicit nonsecret allowlist; no random Host permission-secret generator was found."
+    }
+  ],
+  "values_not_retained": true,
+  "scope_limit": "Not an audit of all repository PQ/deployment key-management modules."
+}

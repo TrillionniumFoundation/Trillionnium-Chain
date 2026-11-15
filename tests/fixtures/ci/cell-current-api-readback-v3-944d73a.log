@@ -1,0 +1,33 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+   Doc-tests trnm_data_availability
+
+running 1 test
+test crates/trnm-data-availability/src/cell/pq.rs - cell::pq::VerifiedCellPqReleaseV2 (line 423) - compile fail ... ok
+
+successes:
+
+---- crates/trnm-data-availability/src/cell/pq.rs - cell::pq::VerifiedCellPqReleaseV2 (line 423) stdout ----
+error[E0308]: mismatched types
+   --> crates/trnm-data-availability/src/cell/pq.rs:435:30
+    |
+435 |     let _ = proof.release_at(300);
+    |                   ---------- ^^^ expected `&CellPqReleaseExpectationV2<'_>`, found integer
+    |                   |
+    |                   arguments to this method are incorrect
+    |
+note: method defined here
+   --> crates/trnm-data-availability/src/cell/pq.rs:448:12
+    |
+448 |     pub fn release_at(
+    |            ^^^^^^^^^^
+
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0308`.
+
+
+successes:
+    crates/trnm-data-availability/src/cell/pq.rs - cell::pq::VerifiedCellPqReleaseV2 (line 423)
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 16 filtered out; finished in 0.04s
+

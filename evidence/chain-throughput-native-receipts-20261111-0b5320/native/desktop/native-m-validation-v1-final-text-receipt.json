@@ -1,0 +1,25 @@
+{
+  "archive": "/dev/shm/chain-throughput-0b5320/native-m-validation-v1-final-text.tar.gz",
+  "bytes": 188684,
+  "sha256": "195c77615f45a15b1c547ccad35532bc9764d13f52255ecc1832d3d3b5dbc2bd",
+  "files": 36,
+  "summary_sha256": "ab05426922986387ed65bf3b90ef0179da5989506516f93ed5ff6e614d17dc34",
+  "source": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "outer_success": true,
+  "library_pass": true,
+  "library_process_exit": 0,
+  "library_last_result_line": [
+    "test result: ok. 1313 passed; 0 failed; 39 ignored; 0 measured; 0 filtered out; finished in 4283.75s"
+  ],
+  "format_exit": 0,
+  "clippy_exit": 0,
+  "final_binary_guards": {
+    "cli": true,
+    "libtest": true,
+    "pool-integration": true
+  },
+  "provider_equal": true,
+  "failure": null,
+  "final_guard_failure": null,
+  "utc": "2026-11-11T06:38:23Z"
+}

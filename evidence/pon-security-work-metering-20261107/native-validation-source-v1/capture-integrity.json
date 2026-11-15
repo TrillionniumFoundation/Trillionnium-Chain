@@ -1,0 +1,12 @@
+{
+  "all_indexed_bytes_verified": true,
+  "archive": "native-validation-source-v1.tar.gz",
+  "bytes": 210154,
+  "indexed_files": 112,
+  "members": 113,
+  "schema": "pon-profile-validation-capture-readback-v1",
+  "scope": "Capture integrity is separate from command success and profile qualification.",
+  "sha256": "a693cb2d829d978865b1f8ff53f31f1306959df9968ae3adf26ce5ec2c5c82b5",
+  "source": "66b4f5a735d350849267e44526be2e12f1d076b5",
+  "validation_status": "FAIL"
+}

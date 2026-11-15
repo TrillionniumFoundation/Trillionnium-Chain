@@ -1,0 +1,52 @@
+{
+  "schema": "trnm-final819-w1-reader-import-readiness-v1",
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "native_invocations": 0,
+  "ci_environment_fabricated": false,
+  "modules": [
+    {
+      "module": "pon_w1_false_trace_reuse_reader_v1",
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/pinned-readers-819309fd-v1/scripts/pon_w1_false_trace_reuse_reader_v1.py",
+      "sha256": "7455227a2acfec76505c480e4513acbbb9764b59cc1e6a3d8bdaf70d2f9f409c",
+      "signatures": {
+        "analyze": "(path, *, full_limb=False)"
+      }
+    },
+    {
+      "module": "pon_w1_legal_strategy_reader_v1",
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/pinned-readers-819309fd-v1/scripts/pon_w1_legal_strategy_reader_v1.py",
+      "sha256": "a316920b50d1ca3ecc1c4ef76dc1f09e3b7b2f133ae5b24071a0f5b1f4be10c3",
+      "signatures": {
+        "analyze": "(paths, *, profile=Profile(schema='pon-w1-legal-strategy-v1', selector='--legal-strategy-v1', samples=2, challenge_domain=b'pon-w1-legal-strategy-challenge-v1', max_bytes=536870912))",
+        "analyze_shard": "(path, *, profile=Profile(schema='pon-w1-legal-strategy-v1', selector='--legal-strategy-v1', samples=2, challenge_domain=b'pon-w1-legal-strategy-challenge-v1', max_bytes=536870912))"
+      }
+    },
+    {
+      "module": "pon_w1_legal_strategy_reader_v2",
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/pinned-readers-819309fd-v1/scripts/pon_w1_legal_strategy_reader_v2.py",
+      "sha256": "81318207c8bb1db70efb202122ca4f56e5836e8abba92ad91c4ae9c67d8d7b39",
+      "signatures": {
+        "analyze": "(paths)",
+        "analyze_shard": "(path)"
+      }
+    },
+    {
+      "module": "pon_w1_legal_strategy_reader_v3",
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/pinned-readers-819309fd-v1/scripts/pon_w1_legal_strategy_reader_v3.py",
+      "sha256": "88657a45b22a350c140ae8bcbe7f294544e8d9788c86592238cc9c6437bd58ff",
+      "signatures": {
+        "analyze": "(paths)",
+        "analyze_shard": "(path)"
+      }
+    },
+    {
+      "module": "pon_w1_rank_batch_reader_v5",
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/pinned-readers-819309fd-v1/scripts/pon_w1_rank_batch_reader_v5.py",
+      "sha256": "03b34de9bd63616d8a243cae0c9e226c21102aca4bef7c52904cf7d20f364f26",
+      "signatures": {
+        "analyze": "(path)",
+        "campaign": "(reports)"
+      }
+    }
+  ]
+}

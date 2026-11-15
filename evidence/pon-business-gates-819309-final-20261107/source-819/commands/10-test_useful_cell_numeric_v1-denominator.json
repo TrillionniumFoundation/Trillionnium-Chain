@@ -1,0 +1,49 @@
+{
+  "command_record": "commands/10-test_useful_cell_numeric_v1.json",
+  "duplicate_test_names": {},
+  "expected_tests": 20,
+  "missing_expected_test_names": [],
+  "observed_full_test_ids": [
+    "__main__.BehaviorComparisonTests.test_agreement_denominators_are_separate_and_complete",
+    "__main__.BehaviorComparisonTests.test_equal_numbers_do_not_imply_equal_decision_observations",
+    "__main__.BehaviorComparisonTests.test_float_bool_and_mismatched_observations_are_rejected",
+    "__main__.BehaviorComparisonTests.test_tiny_exact_error_can_cross_the_stop_threshold",
+    "__main__.BehaviorComparisonTests.test_tiny_exact_error_can_flip_lowest_index_route",
+    "__main__.ExactCellTests.test_complete_integer_products_equal_centered_field_contraction",
+    "__main__.ExactCellTests.test_declared_scales_and_integer_only_semantics",
+    "__main__.ExactCellTests.test_extreme_positive_and_negative_outputs_are_not_rescaled_or_saturated",
+    "__main__.ExactCellTests.test_input_shape_bias_type_range_and_batch_are_enforced",
+    "__main__.ExactCellTests.test_invalid_artifact_numbers_and_unknown_numeric_schemas_are_rejected",
+    "__main__.ExactCellTests.test_lowest_index_ties_include_negative_and_nonzero_winners",
+    "__main__.ExactCellTests.test_no_inference_rounding_erases_a_small_integer_score",
+    "__main__.ExactCellTests.test_seeded_integer_predictions_match_existing_scalar_contract",
+    "__main__.ExactCellTests.test_sparse_all_tile_regions_and_bias_have_exact_known_outputs",
+    "__main__.SignedBoundsTests.test_ambiguous_or_noninteger_moduli_are_rejected",
+    "__main__.SignedBoundsTests.test_bound_construction_does_not_wrap_or_overflow_abs",
+    "__main__.SignedBoundsTests.test_centered_decode_requires_canonical_residues",
+    "__main__.SignedBoundsTests.test_merged_weights_require_their_own_doubled_bound",
+    "__main__.SignedBoundsTests.test_negative_limits_and_noninteger_aliases_are_rejected",
+    "__main__.SignedBoundsTests.test_odd_half_boundary_uses_exact_doubling"
+  ],
+  "observed_ran_tests": 20,
+  "observed_verbose_test_starts": 20,
+  "original_final_status_rows": [
+    "OK"
+  ],
+  "original_summary_rows": [
+    [
+      "20",
+      "0.171"
+    ]
+  ],
+  "passed": true,
+  "path": "formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py",
+  "process_exit_code": 0,
+  "process_timed_out": false,
+  "raw_log_bytes": 3082,
+  "raw_log_sha256": "c22df78ba544b4d752c0a090d343b4152a0023ba31e9f47aeabbc60215f19d4c",
+  "scope": "Original unittest CLI output; counts are test methods, not subtests.",
+  "source_sha256": "73358b259307ad1c2bbf2df9ac26853a0cab484e09eda5c240a2a68215a52795",
+  "strict_zero_failure_skip_expected_failure_success": true,
+  "unexpected_test_names": []
+}

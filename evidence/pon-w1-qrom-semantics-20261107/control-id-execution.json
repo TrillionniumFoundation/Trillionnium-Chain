@@ -1,0 +1,110 @@
+{
+  "schema": "TRNM-W1-NATIVE-CONTROL-EXECUTION1",
+  "host": "desktop",
+  "source_template": {
+    "path": "scripts/w1_zkr_control_id.c",
+    "sha256": "b388eeea5ae14ae2595acb1c6c241141d435fca91f72285e43969554dd3d6813"
+  },
+  "source_driver": {
+    "path": "scripts/w1_zkr_control_id_audit.py",
+    "sha256": "876c262c5f8b0263f9fceb38a8df586d8d98756358e552135da68893b41c78ac"
+  },
+  "native_binary_sha256": "35e645eac7f0681cefa8b98f068d89b9fc2c9dcafd3c994a97d0eccb6ed5adc5",
+  "generated_header_sha256": "505d0ba904b6acb1e7e3aeb05378d8f5bc1a1fc5b24e54d39cd05baa7dcfee06",
+  "join_job": {
+    "id": "1a1b62506c5-12894-2a2",
+    "status": {
+      "at_unix_ms": 1794057255714,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b62506c5-12894-2a2",
+      "launch_nonce": "8d3061ab694b7ae3cf5c45f868209fe8",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 294,
+          "stored": 294
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    }
+  },
+  "all27_job": {
+    "id": "1a1b627363f-12894-2ab",
+    "status": {
+      "at_unix_ms": 1794057660250,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b627363f-12894-2ab",
+      "launch_nonce": "5bf8b6754661fcf35295fead0c61a446",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 5670,
+          "stored": 5670
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    }
+  },
+  "reports": [
+    {
+      "name": "control-id-join.json",
+      "bytes": 12628,
+      "sha256": "190841da4d23af81d17783238f403b6894ff1208fdbf5c130d118a28c1a17f0b"
+    },
+    {
+      "name": "control-ids-all27.json",
+      "bytes": 77726,
+      "sha256": "48be4b4f4016e90adab07505e27f511232ec4164049c333073ded39a2f462aad"
+    }
+  ],
+  "program_wall_seconds_sum": 257.23679144796915,
+  "observed_native_control_mismatches": 0,
+  "observed_native_program_timeouts": 0,
+  "qualification": "Exact requested compiled artifact-to-code-commitment reconstruction; no program execution semantics, compiler correctness, trace reachability, or QROM theorem proved."
+}

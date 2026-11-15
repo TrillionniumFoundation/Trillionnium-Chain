@@ -1,0 +1,21 @@
+{
+  "files": [
+    {
+      "name": "run_model.original-a67d83.py.txt",
+      "origin": "GitHub original observer at a67d83a05d6ff4c2fdc4a5fd5c23fc38d38b563d, retained exact fetch content",
+      "sha256": "120c70fb52909072eacf84251a44ff6c62f777479685db2cacf8cc1846a9e139",
+      "size": 13639
+    },
+    {
+      "name": "run_model.candidate.py.txt",
+      "origin": "Previously reviewed exact one-line REPO replacement retained in reviewer session store",
+      "sha256": "d6540d88b88341c94a2be72fc76b16261f0607e1fd9c2a98ed9096aa913435f4",
+      "size": 13640
+    }
+  ],
+  "observer_executed": false,
+  "only_repo_line_changed": true,
+  "original_cloud_files_recreated": false,
+  "remote_model_result_claimed": false,
+  "schema": "trnm-bt-observer-recovered-review-support-v1"
+}

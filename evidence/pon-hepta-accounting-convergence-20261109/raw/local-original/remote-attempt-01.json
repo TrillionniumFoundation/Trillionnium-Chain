@@ -1,0 +1,14 @@
+{
+  "job_id": "1a1be781f37-5e21-f5",
+  "idempotency_key": "hepta-accounting-d9bb-ai395-prepare-20261109-v1",
+  "launch_state": "launch_unknown",
+  "followup_status": "remote job directory not found",
+  "execution_claimed": false,
+  "separate_readonly_reconciliation": {
+    "job_id": "1a1be79207d-5e21-f9",
+    "exit_code": 0,
+    "output_complete": true,
+    "candidate_directory_exists": false,
+    "results_directory_exists": false
+  }
+}

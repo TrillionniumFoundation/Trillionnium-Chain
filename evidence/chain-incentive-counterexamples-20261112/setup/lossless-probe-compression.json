@@ -1,0 +1,16 @@
+{
+  "schema": "incentive-lossless-executable-compression-v1",
+  "original": {
+    "path": "/workspace/scratch/3069292387f3/incentive-split-probe",
+    "bytes": 54589512,
+    "mode": "0o755",
+    "sha256": "c0df7dca98248db5db55e962d1fd2670ce23a8bc34e84a9b54d522a568c21edb"
+  },
+  "gzip": {
+    "path": "/workspace/scratch/3069292387f3/incentive-split-probe.elf.gz",
+    "bytes": 15116098,
+    "sha256": "ec3dd47ad23ee1c093c295220ef61f50b4c35dae280b621b505d2b6b4dedbaf4"
+  },
+  "decompressed_sha256_verified": "c0df7dca98248db5db55e962d1fd2670ce23a8bc34e84a9b54d522a568c21edb",
+  "original_uncompressed_copy_removed": true
+}

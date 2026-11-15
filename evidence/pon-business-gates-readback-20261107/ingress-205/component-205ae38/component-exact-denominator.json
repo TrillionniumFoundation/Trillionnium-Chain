@@ -1,0 +1,16 @@
+{
+  "name": "component-exact-denominator",
+  "argv": [
+    "python3",
+    "scripts/ci/check_required_native_test.py",
+    "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/component-abba.log",
+    "--test",
+    "ingress::public_v3::canonical_packet::tests::body_packet_decode_component_abba_retains_every_trial"
+  ],
+  "started_unix_ns": 1794070470373024708,
+  "ended_unix_ns": 1794070470424428369,
+  "exit_code": 0,
+  "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/component-exact-denominator.log",
+  "log_bytes": 191,
+  "log_sha256": "b671cf3b3d4e9b8554a913835cb1f54a64bd2086311ae3131419dbb6d6d9e788"
+}

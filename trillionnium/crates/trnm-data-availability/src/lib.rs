@@ -68,6 +68,8 @@ mod retrieval;
 mod store;
 mod types;
 
+pub mod cell;
+
 pub use error::{DaErrorCodeV1, DaErrorV1, DaResultV1};
 pub use retrieval::{
     DaChunkInclusionProofV1, MerkleStepV1, RetrievalProofV1, RetrievalReceiptBodyV1,

@@ -1,0 +1,108 @@
+{
+  "actual_model_execution_accepted": false,
+  "exports": {
+    "adopted_acked": {
+      "captures": {
+        "CHECKPOINT_V2": {
+          "byte_length": 3965,
+          "byte_offset": 96897
+        },
+        "COMPLETION_V1": {
+          "byte_length": 4725,
+          "byte_offset": 100906
+        },
+        "READBACK_V1": {
+          "byte_length": 13520,
+          "byte_offset": 83333
+        }
+      },
+      "files": {
+        "adopted_acked.completed-export.json": "e92db0d67ffc38ccbe3df053046e843df35b8ce4f8402a0d01f4fd468b4dfce3",
+        "adopted_acked.completed-review.json": "082de984911c4e62ebcf232ee5d9ff47f60ff65714235b9738c28da7b4804dc6",
+        "adopted_acked.completed.bin": "d4c34ebcf4d0e37754294402aa175d278188a7a246eb6e07b1d16bc119838f02",
+        "adopted_acked.expected.json": "0bc6ca87adecd88ccffd20f6e717d6f4a60c8b093262a40f432fc2c288c473d0",
+        "adopted_acked.freeze.json": "2e70907686e0d34256bed244fb08ac949a0618c1ac0d5a3a6e097ae4d30005a0",
+        "adopted_acked.json": "7cadb6df6bcda64cc9fc7a21e7850e08265812463da106609b09bfda0934f561",
+        "adopted_acked.review.json": "3c72aa8cadf3b2590f142aba4e6e08bfb1aa800f0eb31c096a704ea43726a92f",
+        "adopted_acked.selection-export.json": "318faa89ed92e1a12e84b43709f856eb2f470bdd6c5064785b481795a960d8e5",
+        "adopted_acked.selection.bin": "b4580307b7ae1d06d7589eb3df083d4ef8380d9c38d53a1147533af488db25ad"
+      }
+    },
+    "adopted_pending": {
+      "captures": {
+        "CHECKPOINT_V2": {
+          "byte_length": 3965,
+          "byte_offset": 79326
+        },
+        "READBACK_V1": {
+          "byte_length": 13826,
+          "byte_offset": 65454
+        }
+      },
+      "files": {
+        "adopted_pending.expected.json": "8ea929a3d2d4b69d94b59495728d82504c849dde9b5caa01e93d97d274596b86",
+        "adopted_pending.freeze.json": "2e70907686e0d34256bed244fb08ac949a0618c1ac0d5a3a6e097ae4d30005a0",
+        "adopted_pending.json": "c26b9b3031d108a1892760ba88453fa0982c350a669452db09f57ab0de72fe66",
+        "adopted_pending.review.json": "a04e7cac8dfb17ba420836db0aca430094f71b32a1f7f028c6b78b79f12c401d",
+        "adopted_pending.selection-export.json": "318faa89ed92e1a12e84b43709f856eb2f470bdd6c5064785b481795a960d8e5",
+        "adopted_pending.selection.bin": "b4580307b7ae1d06d7589eb3df083d4ef8380d9c38d53a1147533af488db25ad"
+      }
+    },
+    "retained_acked": {
+      "captures": {
+        "CHECKPOINT_V2": {
+          "byte_length": 3665,
+          "byte_offset": 134065
+        },
+        "COMPLETION_V1": {
+          "byte_length": 4414,
+          "byte_offset": 137775
+        },
+        "READBACK_V1": {
+          "byte_length": 11838,
+          "byte_offset": 122182
+        }
+      },
+      "files": {
+        "retained_acked.completed-export.json": "a992d00e4a081c997754423697e10ca1e078211f1e4e95ab408e1f28c238c9ae",
+        "retained_acked.completed-review.json": "ef38b92edb39e25712395130b9667f82fcc3515b4abf5643caf9ac93c740db8a",
+        "retained_acked.completed.bin": "82fa9bdbd1813ba3f364667e77fa0c73f1cd9f3e9da2fde7dd1dced27835f32e",
+        "retained_acked.expected.json": "9e4f8c76d5a47e4d9fe8cb8e00862e2e21697c4ffe182e3c03570bb0433d10a1",
+        "retained_acked.freeze.json": "2e70907686e0d34256bed244fb08ac949a0618c1ac0d5a3a6e097ae4d30005a0",
+        "retained_acked.json": "8174678882f4b60cca9b8eccbc332d3bdfed48013f4ff8642e928310258a9220",
+        "retained_acked.review.json": "9621fcce571696fd8a0a81ccb690af1783e72c77f5c57f2c53636f3c88262b89",
+        "retained_acked.selection-export.json": "4a89b80f336605d64ec4381b9df6ac5fd52a0a1cee3ad2b314cacdbfe1606c07",
+        "retained_acked.selection.bin": "7e61b75aee24347e4d38eaccdba6a67229466cba2bab689510bc6243c5e588aa"
+      }
+    },
+    "retained_pending": {
+      "captures": {
+        "CHECKPOINT_V2": {
+          "byte_length": 3665,
+          "byte_offset": 118474
+        },
+        "READBACK_V1": {
+          "byte_length": 12160,
+          "byte_offset": 106267
+        }
+      },
+      "files": {
+        "retained_pending.expected.json": "eb94f15cc0bc802e043b85599a062afacc8ed5e0675f58640978ef83f89167a8",
+        "retained_pending.freeze.json": "2e70907686e0d34256bed244fb08ac949a0618c1ac0d5a3a6e097ae4d30005a0",
+        "retained_pending.json": "b9e44f11442b3c20ede95f533c9d5a1345469b6df27748029f1601dabc2d4da0",
+        "retained_pending.review.json": "55867cc76aa80dcad4015369beba80a42175b24b0a738d5b2eb2588794a3485e",
+        "retained_pending.selection-export.json": "4a89b80f336605d64ec4381b9df6ac5fd52a0a1cee3ad2b314cacdbfe1606c07",
+        "retained_pending.selection.bin": "7e61b75aee24347e4d38eaccdba6a67229466cba2bab689510bc6243c5e588aa"
+      }
+    }
+  },
+  "native_origin_authenticated": false,
+  "native_source": "34eacaec1c94032f4980807e4a6f7c3516a7dafc",
+  "native_test_pass_not_inferred_from_capture": true,
+  "pins_are_fixture_derived": true,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "schema": "trnm-cell-learning-completion-native-fixtures-v1",
+  "scope": "original-native-engineering-fixtures-not-production",
+  "source_log_sha256": "dd87a08e99c8fd1f9d4aa3fff7032d71f8b429574cc8e590098af22245f4003e"
+}

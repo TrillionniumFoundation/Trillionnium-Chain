@@ -1,0 +1,135 @@
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+   Compiling typenum v1.19.0
+   Compiling cfg-if v1.0.4
+   Compiling semver v1.0.27
+   Compiling generic-array v0.14.7
+   Compiling cpufeatures v0.2.17
+   Compiling serde_core v1.0.228
+   Compiling zerocopy v0.8.48
+   Compiling rustc_version v0.4.1
+   Compiling ahash v0.8.12
+   Compiling syn v2.0.117
+   Compiling winnow v1.0.4
+   Compiling once_cell v1.21.4
+   Compiling find-msvc-tools v0.1.9
+   Compiling shlex v1.3.0
+   Compiling equivalent v1.0.2
+   Compiling hashbrown v0.16.1
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling indexmap v2.13.1
+   Compiling cc v1.2.59
+   Compiling curve25519-dalek v4.1.3
+   Compiling pkg-config v0.3.32
+   Compiling thiserror v1.0.69
+   Compiling vcpkg v0.2.15
+   Compiling serde v1.0.228
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling libsqlite3-sys v0.30.1
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling thiserror-impl v1.0.69
+   Compiling serde_derive v1.0.228
+   Compiling signature v2.2.0
+   Compiling subtle v2.6.1
+   Compiling zeroize v1.8.2
+   Compiling anyhow v1.0.103
+   Compiling cfg_aliases v0.2.2
+   Compiling zmij v1.0.21
+   Compiling libc v0.2.184
+   Compiling bitflags v2.11.0
+   Compiling hashbrown v0.14.5
+   Compiling borsh v1.8.0
+   Compiling ed25519 v2.2.3
+   Compiling proc-macro-crate v3.5.0
+   Compiling serde_json v1.0.149
+   Compiling rustix v1.1.4
+   Compiling hex v0.4.3
+   Compiling getrandom v0.4.2
+   Compiling borsh-derive v1.8.0
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-protocol)
+   Compiling ed25519-dalek v2.2.0
+   Compiling hashlink v0.9.1
+   Compiling itoa v1.0.18
+   Compiling smallvec v1.15.1
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling memchr v2.8.0
+   Compiling fallible-iterator v0.3.0
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-verification-profiles)
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling rusqlite v0.32.1
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-mvcc-fee)
+    Finished `release` profile [optimized] target(s) in 1m 53s
+     Running unittests src/lib.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/trnm_mvcc_fee-8067cdff91cb0d54)
+
+running 1 test
+test pon_commitment::bounded_encoding_tests::canonical_buffer_reuse_component_timing ... {"comparisons_per_sample":16,"exact_comparison_equal":true,"order":"alternating paired arms","original_allocating_ns":[1523655,842282,845589,794821,837453,764420,759970,859329,764575,736309,722623,724278,729562,728891,728757,730571],"physical_memory_bound":false,"public_tps_measured":false,"reused_encoder_ns":[760660,742665,699691,703529,694652,696941,666699,670810,645760,644959,713737,650006,645865,646002,646401,647494],"samples_per_arm":16,"schema":"canonical-buffer-reuse-component-v1","scope":"canonical byte comparison only; no state, history, root or authority checks omitted","state_keys":64}
+{"comparisons_per_sample":16,"exact_comparison_equal":true,"order":"alternating paired arms","original_allocating_ns":[6135177,6190725,6074529,6019311,6117656,6163660,6025286,6021011,6024677,6023442,6116708,6164390,6076151,6081182,6062631,6213112],"physical_memory_bound":false,"public_tps_measured":false,"reused_encoder_ns":[5973991,6023259,5526244,5474206,5494805,5447763,5450405,5536807,5477156,5432857,5427676,5427695,5501158,5616138,5562678,5442376],"samples_per_arm":16,"schema":"canonical-buffer-reuse-component-v1","scope":"canonical byte comparison only; no state, history, root or authority checks omitted","state_keys":512}
+{"comparisons_per_sample":16,"exact_comparison_equal":true,"order":"alternating paired arms","original_allocating_ns":[53223522,47032539,48260902,46607141,51502237,56132048,53253570,51976778,52749429,53948335,47126977,51139395,53382742,49996972,48487122,46164535],"physical_memory_bound":false,"public_tps_measured":false,"reused_encoder_ns":[44978923,46014038,51983960,44998796,43173393,47346600,52040953,51935976,41287033,43405012,43223903,40146530,42924439,44631508,43281184,42544782],"samples_per_arm":16,"schema":"canonical-buffer-reuse-component-v1","scope":"canonical byte comparison only; no state, history, root or authority checks omitted","state_keys":4096}
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 71 filtered out; finished in 1.78s
+
+     Running tests/capacity_progress.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/capacity_progress-a147ba96b49d9620)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/checkpoint_tile_material_v1.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/checkpoint_tile_material_v1-2117807ab65f17ea)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/checkpoint_tile_policy_v1.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/checkpoint_tile_policy_v1-3db35407090fa30f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/continuity_v1.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/continuity_v1-d15f4dae43662505)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/incremental_prefix.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/incremental_prefix-f88fae5df853dcec)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/pon_commitment.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/pon_commitment-454d1a4ec3fc39b5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 16 filtered out; finished in 0.00s
+
+     Running tests/qualified_task_lifecycle_v2.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/qualified_task_lifecycle_v2-dbe02debcabee841)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/qualified_task_lifecycle_v3.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/qualified_task_lifecycle_v3-cdf5a9c5699d9431)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/qualified_task_lifecycle_v4.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/qualified_task_lifecycle_v4-7bd0fec2894ceb6b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+

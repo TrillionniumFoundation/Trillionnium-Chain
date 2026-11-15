@@ -1,0 +1,70 @@
+{
+  "schema": "trnm-pon-pqn1-native-qtx1-local-qualification-v1",
+  "upstream_branch": "research/pq-peer-durable-replay-20261026",
+  "upstream_frozen_sha": "2692d69c567f41a6ae4d981cad7a426005efe689",
+  "source": [
+    "pq_qtx1_verify.c",
+    "test_pq_native_qtx1.py"
+  ],
+  "inherited_reference": "pq_envelope.py",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "python": "3.13.5",
+  "cc": "cc (Debian 14.2.0-19) 14.2.0",
+  "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+  "normal_command": "python3 -m unittest -v test_pq_native_qtx1.py",
+  "sanitizer_command": "PQN1_SANITIZE=1 ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 python3 -m unittest -v test_pq_native_qtx1.py",
+  "normal_tests_passed": 10,
+  "sanitizer_tests_passed": 10,
+  "tests_failed": 0,
+  "body_byte_mutations": "every byte in 144 + 18 byte signed body",
+  "tpq1_statement_mutations": 176,
+  "verified_real_ml_dsa_65": true,
+  "native_rust_product_integration": false,
+  "chain_product_authority": false,
+  "independent_accepted": false,
+  "production_activation": false,
+  "files": [
+    {
+      "path": "pq_qtx1_verify.c",
+      "bytes": 9675,
+      "git_blob_sha1": "b0744709bf866d7d15e3de5c83bf49c7f14c940a",
+      "sha256": "f3ec2f83fb9db6f6de11ba3e7b988e82341c12c87be42c902b9f780659e5cc56"
+    },
+    {
+      "path": "test_pq_native_qtx1.py",
+      "bytes": 9995,
+      "git_blob_sha1": "cb7a196465280c1088ea77bee08b481e8efaadd2",
+      "sha256": "e11c95335297f283beb81f3f8c83cfee1dc8dd9d4a46150600f54551f4085a8f"
+    },
+    {
+      "path": "pq_envelope.py",
+      "bytes": 9442,
+      "git_blob_sha1": "27e40b04ac8eaa381ad4dc017f23f226f99f3f41",
+      "sha256": "d3fdc1faef02d7911f8e073c73fb82e2236093a0bd98395805cba22dde7bfbbb"
+    },
+    {
+      "path": "native-test.log",
+      "bytes": 1579,
+      "git_blob_sha1": "d309a4f6e1297c8ea86cf98b0bb158df8eb46200",
+      "sha256": "a265ff07fbff8299d8d78dae9a73107b296601e5330be6e3c20770b4d1e5ba58"
+    },
+    {
+      "path": "sanitizer-test.log",
+      "bytes": 1580,
+      "git_blob_sha1": "5fd68cfbc89e0e2ba082c38a847f9a4261e31e99",
+      "sha256": "c821a790fac4b81e07dfb8c2b3ae598e462d915814536d7913a286d59e1943c8"
+    },
+    {
+      "path": "PQ_QTX1_NATIVE_CRYPTO_CONFORMANCE_V1.md",
+      "bytes": 4626,
+      "git_blob_sha1": "8f2f1fe5d9dac7b5b897a1e818a20b104144a3e7",
+      "sha256": "f10fc925dad394d8cc207d4e3caffaa883ff6af232a4d69fe3d1c87b688c23ff"
+    },
+    {
+      "path": "README.md",
+      "bytes": 775,
+      "git_blob_sha1": "aa8d1ab4862249f2578e6985d80fa608210cef91",
+      "sha256": "0f5a462139daa7bb26020f69a527491614f508d4ea70f90dee1c01caecc58993"
+    }
+  ]
+}

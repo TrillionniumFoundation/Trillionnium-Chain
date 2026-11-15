@@ -1,0 +1,40 @@
+{
+  "command_record": "commands/13-test_useful_cell_relation_v2.json",
+  "duplicate_test_names": {},
+  "expected_tests": 11,
+  "missing_expected_test_names": [],
+  "observed_full_test_ids": [
+    "__main__.StatefulCellRelationTests.test_complete_masked_stateful_training_relation",
+    "__main__.StatefulCellRelationTests.test_every_state_component_is_recomputed",
+    "__main__.StatefulCellRelationTests.test_forward_backward_loss_and_clipping_trace_are_replayed",
+    "__main__.StatefulCellRelationTests.test_issued_deadline_and_parent_are_independently_bound",
+    "__main__.StatefulCellRelationTests.test_live_completion_and_clock_regression",
+    "__main__.StatefulCellRelationTests.test_malformed_deep_and_cyclic_objects_fail_closed",
+    "__main__.StatefulCellRelationTests.test_new_execution_loaded_code_is_guarded",
+    "__main__.StatefulCellRelationTests.test_preprocessing_cannot_be_self_certified_by_rehashing_features",
+    "__main__.StatefulCellRelationTests.test_updated_model_cannot_change_a_frozen_parameter",
+    "__main__.StatefulCellRelationTests.test_valid_v1_challenge_transcript_is_not_a_v2_proof",
+    "__main__.StatefulCellRelationTests.test_witness_and_output_closed_schemas"
+  ],
+  "observed_ran_tests": 11,
+  "observed_verbose_test_starts": 11,
+  "original_final_status_rows": [
+    "OK"
+  ],
+  "original_summary_rows": [
+    [
+      "11",
+      "28.392"
+    ]
+  ],
+  "passed": true,
+  "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v2.py",
+  "process_exit_code": 0,
+  "process_timed_out": false,
+  "raw_log_bytes": 1682,
+  "raw_log_sha256": "aea2fac4dd18bd7b669c2923225f3ec7a2148b733cc9646efb73af6c68a7cf48",
+  "scope": "Original unittest CLI output; counts are test methods, not subtests.",
+  "source_sha256": "6ed1a512a29600fdbc0c53621bebfc095c2750fb3e7105145fc247cc185162f1",
+  "strict_zero_failure_skip_expected_failure_success": true,
+  "unexpected_test_names": []
+}

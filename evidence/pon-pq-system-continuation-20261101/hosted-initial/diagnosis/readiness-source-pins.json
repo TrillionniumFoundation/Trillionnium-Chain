@@ -1,0 +1,12 @@
+{
+  "scripts/ci/check_public_readiness_evidence.py": {
+    "git_blob_sha1": "86db28e70106602f81779d38fd9832b2f131d873",
+    "sha256": "e90ca7590b5fe225df7ce3c21b937440da1b7b2a4054a1dd01b4081ffb136c67",
+    "bytes": 57585
+  },
+  "scripts/ci/test_public_readiness_evidence.py": {
+    "git_blob_sha1": "82e7004b000917438831b1ce79b936cbfba417f4",
+    "sha256": "6e3d7103b567f39e968d8f8c0ad4a1b755fdf01de75171ae886078d7853b2528",
+    "bytes": 94578
+  }
+}

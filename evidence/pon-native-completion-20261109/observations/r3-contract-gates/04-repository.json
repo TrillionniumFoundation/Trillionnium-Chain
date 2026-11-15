@@ -1,0 +1,44 @@
+{
+  "label": "repository",
+  "argv": [
+    "python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "command": "python3 scripts/ci/check_repository.py",
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "expected_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+  "expected_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+  "before": {
+    "head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "started_utc": "2026-11-09T04:04:17.782518+00:00",
+  "timeout_seconds": 600,
+  "timeout_scope": "source/graph command wall-time supervisor only; no product deadline changed",
+  "stdout": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/04-repository.stdout",
+  "stderr": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/04-repository.stderr",
+  "expected_tests": null,
+  "tests_run": null,
+  "skipped": null,
+  "failures": null,
+  "errors": null,
+  "timed_out": false,
+  "exit_code": 0,
+  "passed": true,
+  "elapsed_seconds": 26.136707,
+  "after": {
+    "head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "finished_utc": "2026-11-09T04:04:44.035705+00:00",
+  "stdout_bytes": 307,
+  "stderr_bytes": 0,
+  "stdout_sha256": "3aa9504f174f815707921c2d2a97abedd3224111b578d4e8a6d5cae1b6ea35bc",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

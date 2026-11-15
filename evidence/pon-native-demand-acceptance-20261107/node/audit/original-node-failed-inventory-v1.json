@@ -1,0 +1,5361 @@
+{
+  "all_inventory_targets_have_unambiguous_completion": false,
+  "auditor": {
+    "bytes": 29432,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/audit_failed_node_observation_recovery_v1.py",
+    "sha256": "3add13fa42e47103c90d6e35c98c7be0accccc739963bad26aabcb8c930900cf"
+  },
+  "binding_integrity": true,
+  "cargo_header_count": 31,
+  "completed_target_count": 30,
+  "completed_target_totals": {
+    "failed": 8,
+    "filtered_out": 0,
+    "ignored": 40,
+    "measured": 0,
+    "passed": 1254
+  },
+  "controlled_run_qualification_passed": false,
+  "coverage": [
+    {
+      "label": "unittests src/lib.rs",
+      "qualification": false,
+      "segment_indexes": [
+        0
+      ],
+      "status": "completed_with_failures",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "5106.26",
+        "failed": 5,
+        "filtered_out": 0,
+        "ignored": 31,
+        "line": 1366,
+        "measured": 0,
+        "passed": 1139,
+        "raw": "test result: FAILED. 1139 passed; 5 failed; 31 ignored; 0 measured; 0 filtered out; finished in 5106.26s",
+        "status": "FAILED",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "lib"
+        ],
+        "name": "trnm_pon_node",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "source_sha256": "7da3267fd7769c80715f2c82d89dcee040afc14a6c50b889e9727dcf43076db6",
+        "test": true
+      }
+    },
+    {
+      "label": "unittests src/main.rs",
+      "qualification": false,
+      "segment_indexes": [
+        1
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "0.04",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1387,
+        "measured": 0,
+        "passed": 14,
+        "raw": "test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "bin"
+        ],
+        "name": "trnm-pon-node",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "source_sha256": "c56b50263e5e47c1da51dc9b2c679a8383762e4837cadd24cfd8ca82aebccc66",
+        "test": true
+      }
+    },
+    {
+      "label": "unittests examples/account_archive_vectors.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "account_archive_vectors",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/account_archive_vectors.rs",
+        "source_sha256": "4c3d0772c5073eff831ee29697bdea315a768f8b34b4ff30fe7d832024657eaf",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/account_execution_vectors.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "account_execution_vectors",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/account_execution_vectors.rs",
+        "source_sha256": "d01324aa4982d10fd9c1f72cbc1add00f3e69451635807839aa64ac92ecc72df",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/continuous_pipeline.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "continuous_pipeline",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs",
+        "source_sha256": "de13825b4acbae4a4b16402f76021dd96b0c300092f9c79c052a7c53868ba58e",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/distributed_pipeline.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "distributed_pipeline",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/distributed_pipeline.rs",
+        "source_sha256": "5cc1c812019127ad5ae27a63b2a94acd0a486c5d61a917d324594280977bcd45",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/hepta_task_fixture.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "hepta_task_fixture",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/hepta_task_fixture.rs",
+        "source_sha256": "916a4d045d05e8664fd272cb7ca984225e6f0c0bbfd939cfdef180cba3140bdb",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/history_state_cost.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "history_state_cost",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/history_state_cost.rs",
+        "source_sha256": "43fce5600d39321a0486827891c6951243f49ab20d58212c1025551e4c1f24b8",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/lifecycle_atomic_continuity.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "lifecycle_atomic_continuity",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/lifecycle_atomic_continuity.rs",
+        "source_sha256": "a1eec9969170f3e6d3072d84bad4aa8f804425a762e16191c5763d34987ec3b7",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/lifecycle_continuity.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "lifecycle_continuity",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/lifecycle_continuity.rs",
+        "source_sha256": "da12b1d617be4a82a48d4911d5e4feee2aeb9cdd1bb585bf8c88cf6142d59159",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/llm_zero_gain_round.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "llm_zero_gain_round",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/llm_zero_gain_round.rs",
+        "source_sha256": "4de646e753f35b215e6d15a5d6f0c2ccadd8164f901ba5c8bfbb81ee21bb3f35",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/native_reorg_query_cost.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "native_reorg_query_cost",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/native_reorg_query_cost.rs",
+        "source_sha256": "fa0fb60feb71c09043a72a8806bc689a366782697c2935dd39810a8f4a1ca7cb",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/operator_owned_finite_mining.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "operator_owned_finite_mining",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/operator_owned_finite_mining.rs",
+        "source_sha256": "2acdb77a62b283e0940e365cfcfa8ec396d702b260b9646acd9745545c747872",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/operator_pool_fixture.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "operator_pool_fixture",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/operator_pool_fixture.rs",
+        "source_sha256": "7fac39093cf2176a3c39a7de5c2ac91b39941568e9d547fa8210067f3e891ab7",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/pon_w1_budget_report.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "pon_w1_budget_report",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/pon_w1_budget_report.rs",
+        "source_sha256": "de213fce7cbd227da188a137abe71fa2f9f13eae7faa2ba59661d2d2eec81a48",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/pon_w1_cost_matrix_v2.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "pon_w1_cost_matrix_v2",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/pon_w1_cost_matrix_v2.rs",
+        "source_sha256": "1ec1866e6f52fd3b916a968bbffd1979c0a1dd0b09263f01b59a8372f80fc545",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/pon_w1_false_trace_reuse_v1.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "pon_w1_false_trace_reuse_v1",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/pon_w1_false_trace_reuse_v1.rs",
+        "source_sha256": "5afe2f1f1578b4264f79d8ce56a6d0abeb51b0be987eca22438f59e01bf3033e",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/pon_w1_legal_strategy_v1.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "pon_w1_legal_strategy_v1",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/pon_w1_legal_strategy_v1.rs",
+        "source_sha256": "6f95f053557c17d90011236eb0e2d079787844aba6065655331fe41c19c08776",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/pon_w1_legal_strategy_v3.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "pon_w1_legal_strategy_v3",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/pon_w1_legal_strategy_v3.rs",
+        "source_sha256": "fd22b893e8459b4eb374aedc774b8a267f56c194642b5ed29d2555ee2b3388c3",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/pon_w1_preparation_strategy_v4.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "pon_w1_preparation_strategy_v4",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/pon_w1_preparation_strategy_v4.rs",
+        "source_sha256": "95ef26992da9126e328007375bce91e94be8647705828a1975cbd03afa1dbfc8",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/pon_w1_reused_cost_v3.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "pon_w1_reused_cost_v3",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/pon_w1_reused_cost_v3.rs",
+        "source_sha256": "7027516cdb2c2fafa6c68d7051e965bc7bb573f395466974fc09c8dd3187b20a",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/public_pool_fixture.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "public_pool_fixture",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/public_pool_fixture.rs",
+        "source_sha256": "e399c829a193f793811562ddad48bc3f33b747e94091234c5948b90f986039ac",
+        "test": false
+      }
+    },
+    {
+      "label": "tests/accepted_task_observation.rs",
+      "qualification": false,
+      "segment_indexes": [
+        2
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "2.97",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1397,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.97s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "accepted_task_observation",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/accepted_task_observation.rs",
+        "source_sha256": "01d0ad64ce7f1d04c0bd461dd38f181e36497aa36df8e137936351e8ba6662d7",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/account_archive_execution.rs",
+      "qualification": false,
+      "segment_indexes": [
+        3
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "15.16",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1415,
+        "measured": 0,
+        "passed": 12,
+        "raw": "test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.16s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "account_archive_execution",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs",
+        "source_sha256": "18c77455098651820d1b734b9abfae1418601ce218c13b94b85d066b202d6071",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/account_archive_projection.rs",
+      "qualification": false,
+      "segment_indexes": [
+        4
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "29.09",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1422,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.09s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "account_archive_projection",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/account_archive_projection.rs",
+        "source_sha256": "4478d3e6dd065a393a95e99df16fa2d9610539ba6c34f63f2c033989e3041acc",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/account_archive_prototype.rs",
+      "qualification": false,
+      "segment_indexes": [
+        5
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "1.11",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1437,
+        "measured": 0,
+        "passed": 8,
+        "raw": "test result: ok. 8 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.11s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "account_archive_prototype",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs",
+        "source_sha256": "afb3c9c04ed06fb7f434d8c8437b79971868d1523ad59e2896bea00340d6741c",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/account_obligation_ranges.rs",
+      "qualification": false,
+      "segment_indexes": [
+        6
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "97.08",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1447,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 97.08s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "account_obligation_ranges",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+        "source_sha256": "cb9a30c29c92bb97defa5453909ec850d77e7ea1f4d8ca63b7b83463a7e4ef0d",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/ancestry_long_sync.rs",
+      "qualification": false,
+      "segment_indexes": [
+        7
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "0.00",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1454,
+        "measured": 0,
+        "passed": 0,
+        "raw": "test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "ancestry_long_sync",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+        "source_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/architecture_delivery_compare.rs",
+      "qualification": false,
+      "segment_indexes": [
+        8
+      ],
+      "status": "completed_with_failures",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "37.00",
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1504,
+        "measured": 0,
+        "passed": 12,
+        "raw": "test result: FAILED. 12 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 37.00s",
+        "status": "FAILED",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "architecture_delivery_compare",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+        "source_sha256": "a247c14aa7213a93275fc6a6089f37ebb7841da70d0ed08f4a62deb2d34de661",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/authenticated_storage_cli.rs",
+      "qualification": false,
+      "segment_indexes": [
+        9
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "2.04",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1518,
+        "measured": 0,
+        "passed": 7,
+        "raw": "test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.04s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "authenticated_storage_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs",
+        "source_sha256": "bf20c645991250ee811434817cbefaf63374adbbe0c3ca014d586949028895f7",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/checkpoint_tile_operator.rs",
+      "qualification": false,
+      "segment_indexes": [
+        10
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "4.63",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1528,
+        "measured": 0,
+        "passed": 3,
+        "raw": "test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 4.63s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "checkpoint_tile_operator",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/checkpoint_tile_operator.rs",
+        "source_sha256": "d5283373831a990764e1be08b593378337b7076016b6b726e057108a91661b0a",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/cli_secret_canary.rs",
+      "qualification": false,
+      "segment_indexes": [
+        11
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "6.94",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1535,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.94s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "cli_secret_canary",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/cli_secret_canary.rs",
+        "source_sha256": "195972a6ca246c8cb8e53cc224db11571d7b9bc8458f1d3037dbebc9ae53b4d3",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/continuity_authenticated.rs",
+      "qualification": false,
+      "segment_indexes": [
+        12
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "7.54",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1542,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.54s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "continuity_authenticated",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/continuity_authenticated.rs",
+        "source_sha256": "8363be4bccd36ceaa60a953a7ef19e5cca9f321d5e33d149cba4200d80f61b0e",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/continuity_cli.rs",
+      "qualification": false,
+      "segment_indexes": [
+        13
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "0.74",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1550,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.74s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "continuity_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/continuity_cli.rs",
+        "source_sha256": "2f573b161f7697e59b9be54a1fef54151b554594f588a5d032630675c4f1f082",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/daa_adversarial_schedule.rs",
+      "qualification": false,
+      "segment_indexes": [
+        14
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "26.07",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1558,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 26.07s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "daa_adversarial_schedule",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/daa_adversarial_schedule.rs",
+        "source_sha256": "4b499f13255673f8ea3e4ed40dbcaa226742c9cf185c452f26cbb6efac223c86",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/derived_commitment.rs",
+      "qualification": false,
+      "segment_indexes": [
+        15
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "185.70",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1569,
+        "measured": 0,
+        "passed": 5,
+        "raw": "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 185.70s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "derived_commitment",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/derived_commitment.rs",
+        "source_sha256": "5ca4d7e52f3641dc642d1e14b2035eeb72c089b7b031709587277c17ea622488",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/distributed_roles.rs",
+      "qualification": false,
+      "segment_indexes": [
+        16
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "0.00",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 4,
+        "line": 1579,
+        "measured": 0,
+        "passed": 0,
+        "raw": "test result: ok. 0 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "distributed_roles",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/distributed_roles.rs",
+        "source_sha256": "3786c4e54a8ea0274b07997043f08ca833c5f6c831bfcd3a2cc368b0b2f6e1d1",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/evaluation_observation.rs",
+      "qualification": false,
+      "segment_indexes": [
+        17
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "64.80",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1586,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 64.80s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "evaluation_observation",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/evaluation_observation.rs",
+        "source_sha256": "0b84e8b770f71eb6dc8624c33459bfefb1c7afcd145cde1c299213a41a295df9",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/evaluation_observation_cli.rs",
+      "qualification": false,
+      "segment_indexes": [
+        18
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "28.28",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1594,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 28.28s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "evaluation_observation_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/evaluation_observation_cli.rs",
+        "source_sha256": "5fecde5ab322c6e76740ce76e47a5e55b7d218b679a858c2656271fb19cb8c52",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/evaluation_quorum_cli.rs",
+      "qualification": false,
+      "segment_indexes": [
+        19
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "1.45",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1601,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.45s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "evaluation_quorum_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/evaluation_quorum_cli.rs",
+        "source_sha256": "9f72df478570a64ad97cb3f89f7dd77d6b513b870c41e1a17a1b94bcedbd2380",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/evaluation_round_observation.rs",
+      "qualification": false,
+      "segment_indexes": [
+        20
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "6.73",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1609,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 6.73s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "evaluation_round_observation",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/evaluation_round_observation.rs",
+        "source_sha256": "346773d23c86677bf236813f66a4174663ed24ef78f33c86caa65b1fad4c3832",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/evaluation_round_observation_cli.rs",
+      "qualification": false,
+      "segment_indexes": [
+        21
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "32.28",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1617,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 32.28s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "evaluation_round_observation_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/evaluation_round_observation_cli.rs",
+        "source_sha256": "0458b22d768a2f58218324e53746e6f7f9a0a37186f7654ea45447251f75debb",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/evaluation_sync_observation.rs",
+      "qualification": false,
+      "segment_indexes": [
+        22
+      ],
+      "status": "completed_with_failures",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "12.80",
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1640,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.80s",
+        "status": "FAILED",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "evaluation_sync_observation",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+        "source_sha256": "402f29fa7ef75e4ba3b406290890a960db335d084620125d95c9cc539e857b04",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/evolution_cli.rs",
+      "qualification": false,
+      "segment_indexes": [
+        23
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "4.53",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1651,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.53s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "evolution_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs",
+        "source_sha256": "d90163c67787572fa2ad61021e01e37f1c3b3a478e6063f8d0e0b9e7cc3ddcc9",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/funded_service_contract.rs",
+      "qualification": false,
+      "segment_indexes": [
+        24
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "5.80",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1661,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.80s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "funded_service_contract",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/funded_service_contract.rs",
+        "source_sha256": "49793008eef45af05c409ded1741f98d11d6fa87b08435c09e4766f2d239ee7c",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/growth_persistence_cancellation.rs",
+      "qualification": false,
+      "segment_indexes": [
+        25
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "8.29",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1669,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.29s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "growth_persistence_cancellation",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/growth_persistence_cancellation.rs",
+        "source_sha256": "28c49b7211208f3a74269798b1cb34b45c925e158530e516a72e120c82195a37",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/integer_factor_candidate_v2.rs",
+      "qualification": false,
+      "segment_indexes": [
+        26
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "130.15",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1679,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 130.15s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "integer_factor_candidate_v2",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs",
+        "source_sha256": "5acd5335b5694acdd929c08d1c7f0c2fc4d97fc23ede36294b1f54716bce8ef2",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/local_mempool.rs",
+      "qualification": false,
+      "segment_indexes": [
+        27
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "8.76",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1700,
+        "measured": 0,
+        "passed": 14,
+        "raw": "test result: ok. 14 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 8.76s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "local_mempool",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/local_mempool.rs",
+        "source_sha256": "39e49bacf11a9540eefe075460a7fabaf1cd32e99a85f3293c4f9442c0f98b37",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/maintenance_paired_conformance.rs",
+      "qualification": false,
+      "segment_indexes": [
+        28
+      ],
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "0.88",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1707,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.88s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "maintenance_paired_conformance",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/maintenance_paired_conformance.rs",
+        "source_sha256": "df5872449b938a0284a679ffcc534b98f7ddbe2446e442e7ea2987d9fdb0d255",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/mining_service_budget.rs",
+      "qualification": false,
+      "segment_indexes": [
+        29
+      ],
+      "status": "completed_with_failures",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "16.64",
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1728,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.64s",
+        "status": "FAILED",
+        "whole_line": true
+      },
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "mining_service_budget",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs",
+        "source_sha256": "de77046e05414963efb186e10c4ae9795ef69033f9a4bfd662537412bbafa8b2",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/model_composition_v4.rs",
+      "qualification": false,
+      "segment_indexes": [
+        30
+      ],
+      "status": "incomplete_at_termination",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "model_composition_v4",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+        "source_sha256": "de7112a67873598d89cac1ff87288e5802253eeb4dda8012da5241e0ccc6e2e1",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/model_evidence_v3.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "model_evidence_v3",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+        "source_sha256": "c906e671037440ba1d61e5a32a703274405eaa4fd259543ab344bf0de19862ef",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/native_active_anchor.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_active_anchor",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_active_anchor.rs",
+        "source_sha256": "1fb2c4f51e8d68d78e3d78b633f7a6442a00da920fad2cacebf90ef9e963ba7f",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/native_compact_execution.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_compact_execution",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_compact_execution.rs",
+        "source_sha256": "a071cad52f313bfb79205246bb6cb234fab033e459acbc326d6399bf8a9e904b",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/native_demand_evidence.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_demand_evidence",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_demand_evidence.rs",
+        "source_sha256": "35943ab69cd524bee84afb09527b9b5a020aa0bbdc172b87cbb845ba07913259",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/native_growth_cli.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_growth_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_growth_cli.rs",
+        "source_sha256": "39ca70a1262980a02931809f82ee3b08d4bf18bbbd9a8af62669ae003d26a298",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/native_growth_public_cli.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_growth_public_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_growth_public_cli.rs",
+        "source_sha256": "d922c5978f541415d223915251d4a1207d315b24684dbf24c21eccbd28a67b90",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/native_node.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_node",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+        "source_sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/native_task_operation_v2.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_task_operation_v2",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_task_operation_v2.rs",
+        "source_sha256": "5ce148eb993dcd0a5a5c6cce3e996d67f0cfa8124122729a31d1fafdcadec5f4",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/no_gain_fees.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "no_gain_fees",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/no_gain_fees.rs",
+        "source_sha256": "0fb22858cb974053ea9f1028734f449ce0b84f86b020471c1a3b40e007007a2d",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/nonce_speculation_cost.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "nonce_speculation_cost",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/nonce_speculation_cost.rs",
+        "source_sha256": "6f790bb65d043149e5a2e0a9a52af3287efcec71686c0187ac92e63580e7e912",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/one_zero_task_preparation_lifecycle.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "one_zero_task_preparation_lifecycle",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/one_zero_task_preparation_lifecycle.rs",
+        "source_sha256": "9710856571d12d03a36a2a28d870b524f8be7dc43e7e79d3581ae186e8756ce9",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/operation_local_parent.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "operation_local_parent",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/operation_local_parent.rs",
+        "source_sha256": "50e32cb82d9e31027b57fc19e3602f48c0ef9e0af5f8d6cbda2cb26fb1b035b1",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/operator_actors.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "operator_actors",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/operator_actors.rs",
+        "source_sha256": "01c979c9e072f68bd81819ee47157a252df33235082050e741d45c1c64eb9f94",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/pinned_peer_polling.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "pinned_peer_polling",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/pinned_peer_polling.rs",
+        "source_sha256": "0f07820acea72e4e552297d82c22b1918653e2e8673c8f90b23e9317dc4e9b0e",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/pool_mining.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "pool_mining",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/pool_mining.rs",
+        "source_sha256": "97d5430115e575d518e1d3b4e2f8c3abc8b00704e3421aa6c2d6990317a2e552",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/pq_account_native.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "pq_account_native",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs",
+        "source_sha256": "2b70c0c0aa2ff27ebd951590faf34125cb878b0e6d1a5e4c35fbcc59f855c10d",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/pq_migration_inventory.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "pq_migration_inventory",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/pq_migration_inventory.rs",
+        "source_sha256": "63d879e2f2e47ddb0e4b4c2f6078397a83b7f82026b1f99112671d0e8876aa3b",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/protected_ingress.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "protected_ingress",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/protected_ingress.rs",
+        "source_sha256": "2c84d6c39d7568f0a3c7cdddfaee2721de0f7784ad05fce61d5434c74fd2db1a",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_cache_modes.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_cache_modes",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_cache_modes.rs",
+        "source_sha256": "64722f31d663a63ef250b57bcdb160d0c636531c7033c72889107eb84de1775f",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_cli.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_cli.rs",
+        "source_sha256": "376d26752b617c7dac4b0d35ee1fb95cc78cdc096fac790149376de69c25890b",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_evaluation.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_evaluation",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_evaluation.rs",
+        "source_sha256": "bbd1bbcf8ea78e0b7d656a4b2f4f5afaf0891758df59d6d67c73f3b5c6ef0274",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_intake_v2.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_intake_v2",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+        "source_sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_pool_cli.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_pool_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+        "source_sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_pool_v3.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_pool_v3",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_pool_v3.rs",
+        "source_sha256": "b2b4523a27d4b3c8067eb2587e8ef320323d4dbbadd1e613c173f6e9d3ffd359",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_submit_recovery.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_submit_recovery",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs",
+        "source_sha256": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_v3_from_zero.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_v3_from_zero",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+        "source_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_v3_multiprocess.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_v3_multiprocess",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+        "source_sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_v3_observation_cli.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_v3_observation_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_v3_observation_cli.rs",
+        "source_sha256": "b9c8b2afe362578e5c71c3d939c1b96be189bae150281d07298ee3f905a9c550",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_v3_observer.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_v3_observer",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_v3_observer.rs",
+        "source_sha256": "8a4e47dd0175bb16d240152b5991120abcf21b6bcd199844ed22aedbde2bf238",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_v3_request_accounting.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_v3_request_accounting",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_v3_request_accounting.rs",
+        "source_sha256": "4633f293d089caf91297b035a8f7e2d503b324b477605bb2c32ffc395710c7dc",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_v3_service_campaign.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_v3_service_campaign",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_v3_service_campaign.rs",
+        "source_sha256": "0e2e0792a2ab95d1098787496de2ea13c2dad7f73154ac8b7abe0445bd06067f",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/qualified_tasks.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "qualified_tasks",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs",
+        "source_sha256": "23b8b4ecb40b7ec517b13f2543d491f481e0ef7b561e8d3e03b0c1729964330d",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/release_finality_v2.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "release_finality_v2",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/release_finality_v2.rs",
+        "source_sha256": "d34da033529f65c73ae687d8436f338963883f3139350429ac2b65d2b923fe1f",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/task_lifecycle.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "task_lifecycle",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/task_lifecycle.rs",
+        "source_sha256": "5bde9c75d6906fb6974be4f0e4f347919609cf7e49932e84ddeb8af211b5da2d",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/task_lifecycle_v3.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "task_lifecycle_v3",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/task_lifecycle_v3.rs",
+        "source_sha256": "158b1d16a7a30cc780381bba63f4819026c83b246a15f47707786e316a745f2b",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/task_lifecycle_v4.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "task_lifecycle_v4",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/task_lifecycle_v4.rs",
+        "source_sha256": "81e42e028b63d5829613bf632c72807b3e3b284aad65114a5380f3e4cbfba5a8",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/task_output_root_parity.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "task_output_root_parity",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/task_output_root_parity.rs",
+        "source_sha256": "0a5d7982b8e6f2dad33dc1519d2e61717361d6d3cf2a9d530d2385f584d53d01",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/work_fuzz_semantics.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "work_fuzz_semantics",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/work_fuzz_semantics.rs",
+        "source_sha256": "b3cba63661911a423f8f8adb7ed210db97496d079d7d81dd3c14021408870445",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/work_header_binding.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "work_header_binding",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/work_header_binding.rs",
+        "source_sha256": "1807d604aea126a994b9bc5df3619902fba73af18f52ae67e23d6caf39b5d3ac",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/zero_task_preparation_lifecycle.rs",
+      "note": "No Cargo Running header in retained log; not an inference about all possible effects.",
+      "qualification": false,
+      "segment_indexes": [],
+      "status": "not_observed_started",
+      "summary": null,
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "zero_task_preparation_lifecycle",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs",
+        "source_sha256": "01f1a27fd5dbaff7232a53f8b15a573737b5f68bf27a78a91f9b8d2810bff53b",
+        "test": true
+      }
+    }
+  ],
+  "coverage_by_status": {
+    "completed_passed": 26,
+    "completed_with_failures": 4,
+    "incomplete_at_termination": 1,
+    "not_observed_started": 60
+  },
+  "ending": {
+    "expected_job_id": "1a1b6390138-12894-305",
+    "host_status": {
+      "at_unix_ms": 1794065754521,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 124,
+      "job_id": "1a1b6390138-12894-305",
+      "launch_nonce": "9077104f7a8b9d2f12db5c0d44bcaf44",
+      "log_bytes": {
+        "stderr": {
+          "seen": 505,
+          "stored": 505
+        },
+        "stdout": {
+          "seen": 707,
+          "stored": 707
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "timed_out",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": true
+    },
+    "host_terminal_confirmed": true,
+    "host_terminal_status_present": true,
+    "original_native_exit_code": null,
+    "original_native_result_present": false,
+    "readiness_checked_before_log_read": true
+  },
+  "errors": [],
+  "independent_acceptance": false,
+  "inputs": {
+    "capture": {
+      "bytes": 3570,
+      "path": "recovery-evidence-tools/inventory-capture-recovery-v1.json",
+      "sha256": "5fcee5ec1ce721a7e2dc954f6e5352737e46da8562db06e89245aaaa58fc386f"
+    },
+    "environment": {
+      "bytes": 1068,
+      "path": "build-receipts/complete-node-690f710c-v1/environment.json",
+      "sha256": "8f1908b30b513bec120ab5e1e1ac83e4252846b12600897e93f6e68e5e279632"
+    },
+    "host_terminal_status": {
+      "bytes": 735,
+      "path": "recovery-evidence-tools/original-node-terminal-status.json",
+      "sha256": "1ad19471b75c6b97570592289ebabe6bd1d486dca60d6bcb794a9dd40137e949"
+    },
+    "inventory": {
+      "bytes": 33120,
+      "path": "recovery-evidence-tools/node-target-inventory-recovery-v1.json",
+      "sha256": "e7e2f7e0717cfaa4dc1278f0ef0bec449796c7a738def2fb093ea8b2a38300e5"
+    },
+    "log": {
+      "bytes": 268168,
+      "path": "build-receipts/complete-node-690f710c-v1/complete-node.log",
+      "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+    },
+    "metadata": {
+      "bytes": 863223,
+      "path": "recovery-evidence-tools/cargo-metadata-recovery-v1.json",
+      "sha256": "1ec54313dda4cafa54b7b47e75964a4cf7ba3adcba8cd01cc317450f359473af"
+    },
+    "run_recorder": {
+      "bytes": 7770,
+      "path": "run_remote_node_gate.py",
+      "sha256": "049c64cf32927bcd16a82059707a468c91d6fc9be7d7abc9047bb3efcd2d8123"
+    },
+    "source_before": {
+      "bytes": 2320287,
+      "canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+      "path": "build-receipts/complete-node-690f710c-v1/source-before.json",
+      "sha256": "9c7791917a4721a2b7d70397a09109ac44dba4a9364e02813d41c0e30e83c9d6"
+    },
+    "started": {
+      "bytes": 531,
+      "path": "build-receipts/complete-node-690f710c-v1/started.json",
+      "sha256": "72a5e934d05847dbf4044c66fcfb9308d7fa72242fc7d0ba8e4c76cea8595c55"
+    }
+  },
+  "inventory_target_count": 91,
+  "kind": "failure_or_partial_coverage_diagnostic",
+  "nested_filtered_out_added_to_top_level": false,
+  "nested_summaries_added_to_completed_totals": false,
+  "original_log_or_result_rewritten": false,
+  "original_naive_nested_inclusive_totals_observed": {
+    "failed": 8,
+    "ignored": 40,
+    "passed": 1257,
+    "test_summary_count": 33
+  },
+  "original_naive_totals_used_as_top_level": false,
+  "production_activation": false,
+  "qualification": false,
+  "raw_log_evidence": {
+    "bound_to_original_native_result": false,
+    "newline_terminated": false,
+    "observed_stable_after_host_or_native_ending": true,
+    "scope": "If no native result exists, this is a new post-termination byte/hash observation, not a recovered or invented original closing receipt."
+  },
+  "raw_parsed_completed_candidates_only": {
+    "failed": 8,
+    "filtered_out": 0,
+    "ignored": 40,
+    "measured": 0,
+    "passed": 1254
+  },
+  "result": "DIAGNOSTIC_RECORDED",
+  "schema": "pon-node-failed-observation-inventory-recovery-v1",
+  "segments": [
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "0.00",
+          "failed": 0,
+          "filtered_out": 1174,
+          "ignored": 0,
+          "line": 698,
+          "measured": 0,
+          "passed": 1,
+          "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1174 filtered out; finished in 0.00s",
+          "status": "ok",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "elapsed_seconds": "0.00",
+          "failed": 0,
+          "filtered_out": 1174,
+          "ignored": 0,
+          "line": 813,
+          "measured": 0,
+          "passed": 1,
+          "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1174 filtered out; finished in 0.00s",
+          "status": "ok",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "elapsed_seconds": "0.00",
+          "failed": 0,
+          "filtered_out": 1174,
+          "ignored": 0,
+          "line": 819,
+          "measured": 0,
+          "passed": 1,
+          "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1174 filtered out; finished in 0.00s",
+          "status": "ok",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "elapsed_seconds": "5106.26",
+          "failed": 5,
+          "filtered_out": 0,
+          "ignored": 31,
+          "line": 1366,
+          "measured": 0,
+          "passed": 1139,
+          "raw": "test result: FAILED. 1139 passed; 5 failed; 31 ignored; 0 measured; 0 filtered out; finished in 5106.26s",
+          "status": "FAILED",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "5106.26",
+        "failed": 5,
+        "filtered_out": 0,
+        "ignored": 31,
+        "line": 1366,
+        "measured": 0,
+        "passed": 1139,
+        "raw": "test result: FAILED. 1139 passed; 5 failed; 31 ignored; 0 measured; 0 filtered out; finished in 5106.26s",
+        "status": "FAILED",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [
+        {
+          "line": 851,
+          "raw": "test store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner ... FAILED",
+          "scope": "unattributed raw test line; not added as a count"
+        },
+        {
+          "line": 1153,
+          "raw": "test store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation ... FAILED",
+          "scope": "unattributed raw test line; not added as a count"
+        },
+        {
+          "line": 1201,
+          "raw": "test store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart ... FAILED",
+          "scope": "unattributed raw test line; not added as a count"
+        },
+        {
+          "line": 1202,
+          "raw": "test store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics ... FAILED",
+          "scope": "unattributed raw test line; not added as a count"
+        },
+        {
+          "line": 1203,
+          "raw": "test store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart ... FAILED",
+          "scope": "unattributed raw test line; not added as a count"
+        }
+      ],
+      "first_running": {
+        "column": 1,
+        "count": 1175,
+        "line": 99,
+        "raw": "running 1175 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-a20974e529510774",
+        "label": "unittests src/lib.rs",
+        "line": 97,
+        "raw": "     Running unittests src/lib.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-a20974e529510774)"
+      },
+      "ignored_count": 31,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "5106.26",
+        "failed": 5,
+        "filtered_out": 0,
+        "ignored": 31,
+        "line": 1366,
+        "measured": 0,
+        "passed": 1139,
+        "raw": "test result: FAILED. 1139 passed; 5 failed; 31 ignored; 0 measured; 0 filtered out; finished in 5106.26s",
+        "status": "FAILED",
+        "whole_line": true
+      },
+      "nested_running_headers": [
+        {
+          "column": 1,
+          "count": 1,
+          "line": 695,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 788,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 790,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 792,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 794,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 796,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 810,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 816,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 827,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 943,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 1261,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 1263,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 1265,
+          "raw": "running 1 test",
+          "whole_line": true
+        }
+      ],
+      "nested_starts_without_matched_summary": [
+        {
+          "column": 1,
+          "count": 1,
+          "line": 788,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 790,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 792,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 794,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 796,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 827,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 943,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 1261,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 1263,
+          "raw": "running 1 test",
+          "whole_line": true
+        },
+        {
+          "column": 1,
+          "count": 1,
+          "line": 1265,
+          "raw": "running 1 test",
+          "whole_line": true
+        }
+      ],
+      "nested_summary_candidates": [
+        {
+          "attribution": "provisional nested observation",
+          "column": 1,
+          "elapsed_seconds": "0.00",
+          "failed": 0,
+          "filtered_out": 1174,
+          "ignored": 0,
+          "included_in_completed_target_totals": false,
+          "line": 698,
+          "matched_nested_running": {
+            "column": 1,
+            "count": 1,
+            "line": 695,
+            "raw": "running 1 test",
+            "whole_line": true
+          },
+          "measured": 0,
+          "passed": 1,
+          "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1174 filtered out; finished in 0.00s",
+          "status": "ok",
+          "whole_line": true
+        },
+        {
+          "attribution": "provisional nested observation",
+          "column": 1,
+          "elapsed_seconds": "0.00",
+          "failed": 0,
+          "filtered_out": 1174,
+          "ignored": 0,
+          "included_in_completed_target_totals": false,
+          "line": 813,
+          "matched_nested_running": {
+            "column": 1,
+            "count": 1,
+            "line": 810,
+            "raw": "running 1 test",
+            "whole_line": true
+          },
+          "measured": 0,
+          "passed": 1,
+          "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1174 filtered out; finished in 0.00s",
+          "status": "ok",
+          "whole_line": true
+        },
+        {
+          "attribution": "provisional nested observation",
+          "column": 1,
+          "elapsed_seconds": "0.00",
+          "failed": 0,
+          "filtered_out": 1174,
+          "ignored": 0,
+          "included_in_completed_target_totals": false,
+          "line": 819,
+          "matched_nested_running": {
+            "column": 1,
+            "count": 1,
+            "line": 816,
+            "raw": "running 1 test",
+            "whole_line": true
+          },
+          "measured": 0,
+          "passed": 1,
+          "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1174 filtered out; finished in 0.00s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_with_failures",
+      "target": {
+        "harness": null,
+        "kind": [
+          "lib"
+        ],
+        "name": "trnm_pon_node",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "source_sha256": "7da3267fd7769c80715f2c82d89dcee040afc14a6c50b889e9727dcf43076db6",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "0.04",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1387,
+          "measured": 0,
+          "passed": 14,
+          "raw": "test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "0.04",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1387,
+        "measured": 0,
+        "passed": 14,
+        "raw": "test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 14,
+        "line": 1371,
+        "raw": "running 14 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-9d413a65dc5d9760",
+        "label": "unittests src/main.rs",
+        "line": 1369,
+        "raw": "     Running unittests src/main.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-9d413a65dc5d9760)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "0.04",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1387,
+        "measured": 0,
+        "passed": 14,
+        "raw": "test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "bin"
+        ],
+        "name": "trnm-pon-node",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "source_sha256": "c56b50263e5e47c1da51dc9b2c679a8383762e4837cadd24cfd8ca82aebccc66",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "2.97",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1397,
+          "measured": 0,
+          "passed": 4,
+          "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.97s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "2.97",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1397,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.97s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 4,
+        "line": 1391,
+        "raw": "running 4 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/accepted_task_observation-3ccb0c5c0a0871aa",
+        "label": "tests/accepted_task_observation.rs",
+        "line": 1389,
+        "raw": "     Running tests/accepted_task_observation.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/accepted_task_observation-3ccb0c5c0a0871aa)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "2.97",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1397,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.97s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "accepted_task_observation",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/accepted_task_observation.rs",
+        "source_sha256": "01d0ad64ce7f1d04c0bd461dd38f181e36497aa36df8e137936351e8ba6662d7",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "15.16",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1415,
+          "measured": 0,
+          "passed": 12,
+          "raw": "test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.16s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "15.16",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1415,
+        "measured": 0,
+        "passed": 12,
+        "raw": "test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.16s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 12,
+        "line": 1401,
+        "raw": "running 12 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/account_archive_execution-f27c845332fdc929",
+        "label": "tests/account_archive_execution.rs",
+        "line": 1399,
+        "raw": "     Running tests/account_archive_execution.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/account_archive_execution-f27c845332fdc929)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "15.16",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1415,
+        "measured": 0,
+        "passed": 12,
+        "raw": "test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.16s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "account_archive_execution",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs",
+        "source_sha256": "18c77455098651820d1b734b9abfae1418601ce218c13b94b85d066b202d6071",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "29.09",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1422,
+          "measured": 0,
+          "passed": 1,
+          "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.09s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "29.09",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1422,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.09s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 1,
+        "line": 1419,
+        "raw": "running 1 test",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/account_archive_projection-83edebb74c9ce5ee",
+        "label": "tests/account_archive_projection.rs",
+        "line": 1417,
+        "raw": "     Running tests/account_archive_projection.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/account_archive_projection-83edebb74c9ce5ee)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "29.09",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1422,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.09s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "account_archive_projection",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/account_archive_projection.rs",
+        "source_sha256": "4478d3e6dd065a393a95e99df16fa2d9610539ba6c34f63f2c033989e3041acc",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "1.11",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 1,
+          "line": 1437,
+          "measured": 0,
+          "passed": 8,
+          "raw": "test result: ok. 8 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.11s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "1.11",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1437,
+        "measured": 0,
+        "passed": 8,
+        "raw": "test result: ok. 8 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.11s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 9,
+        "line": 1426,
+        "raw": "running 9 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/account_archive_prototype-dd4a305bf9b56f23",
+        "label": "tests/account_archive_prototype.rs",
+        "line": 1424,
+        "raw": "     Running tests/account_archive_prototype.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/account_archive_prototype-dd4a305bf9b56f23)"
+      },
+      "ignored_count": 1,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "1.11",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1437,
+        "measured": 0,
+        "passed": 8,
+        "raw": "test result: ok. 8 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.11s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "account_archive_prototype",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs",
+        "source_sha256": "afb3c9c04ed06fb7f434d8c8437b79971868d1523ad59e2896bea00340d6741c",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "97.08",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1447,
+          "measured": 0,
+          "passed": 4,
+          "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 97.08s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "97.08",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1447,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 97.08s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 4,
+        "line": 1441,
+        "raw": "running 4 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/account_obligation_ranges-feb5627665634598",
+        "label": "tests/account_obligation_ranges.rs",
+        "line": 1439,
+        "raw": "     Running tests/account_obligation_ranges.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/account_obligation_ranges-feb5627665634598)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "97.08",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1447,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 97.08s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "account_obligation_ranges",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+        "source_sha256": "cb9a30c29c92bb97defa5453909ec850d77e7ea1f4d8ca63b7b83463a7e4ef0d",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "0.00",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 1,
+          "line": 1454,
+          "measured": 0,
+          "passed": 0,
+          "raw": "test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "0.00",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1454,
+        "measured": 0,
+        "passed": 0,
+        "raw": "test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 1,
+        "line": 1451,
+        "raw": "running 1 test",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/ancestry_long_sync-378b14e616f32278",
+        "label": "tests/ancestry_long_sync.rs",
+        "line": 1449,
+        "raw": "     Running tests/ancestry_long_sync.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/ancestry_long_sync-378b14e616f32278)"
+      },
+      "ignored_count": 1,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "0.00",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1454,
+        "measured": 0,
+        "passed": 0,
+        "raw": "test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "ancestry_long_sync",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+        "source_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "37.00",
+          "failed": 1,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1504,
+          "measured": 0,
+          "passed": 12,
+          "raw": "test result: FAILED. 12 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 37.00s",
+          "status": "FAILED",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "37.00",
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1504,
+        "measured": 0,
+        "passed": 12,
+        "raw": "test result: FAILED. 12 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 37.00s",
+        "status": "FAILED",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [
+        {
+          "line": 1471,
+          "raw": "test signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract ... FAILED",
+          "scope": "unattributed raw test line; not added as a count"
+        }
+      ],
+      "first_running": {
+        "column": 1,
+        "count": 13,
+        "line": 1458,
+        "raw": "running 13 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/architecture_delivery_compare-f13b1e5812a3d91d",
+        "label": "tests/architecture_delivery_compare.rs",
+        "line": 1456,
+        "raw": "     Running tests/architecture_delivery_compare.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/architecture_delivery_compare-f13b1e5812a3d91d)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "37.00",
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1504,
+        "measured": 0,
+        "passed": 12,
+        "raw": "test result: FAILED. 12 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 37.00s",
+        "status": "FAILED",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_with_failures",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "architecture_delivery_compare",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+        "source_sha256": "a247c14aa7213a93275fc6a6089f37ebb7841da70d0ed08f4a62deb2d34de661",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "2.04",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1518,
+          "measured": 0,
+          "passed": 7,
+          "raw": "test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.04s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "2.04",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1518,
+        "measured": 0,
+        "passed": 7,
+        "raw": "test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.04s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 7,
+        "line": 1509,
+        "raw": "running 7 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/authenticated_storage_cli-3c387dc15c084ca3",
+        "label": "tests/authenticated_storage_cli.rs",
+        "line": 1507,
+        "raw": "     Running tests/authenticated_storage_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/authenticated_storage_cli-3c387dc15c084ca3)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "2.04",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1518,
+        "measured": 0,
+        "passed": 7,
+        "raw": "test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.04s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "authenticated_storage_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs",
+        "source_sha256": "bf20c645991250ee811434817cbefaf63374adbbe0c3ca014d586949028895f7",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "4.63",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 1,
+          "line": 1528,
+          "measured": 0,
+          "passed": 3,
+          "raw": "test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 4.63s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "4.63",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1528,
+        "measured": 0,
+        "passed": 3,
+        "raw": "test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 4.63s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 4,
+        "line": 1522,
+        "raw": "running 4 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/checkpoint_tile_operator-63594027d627559b",
+        "label": "tests/checkpoint_tile_operator.rs",
+        "line": 1520,
+        "raw": "     Running tests/checkpoint_tile_operator.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/checkpoint_tile_operator-63594027d627559b)"
+      },
+      "ignored_count": 1,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "4.63",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1528,
+        "measured": 0,
+        "passed": 3,
+        "raw": "test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 4.63s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "checkpoint_tile_operator",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/checkpoint_tile_operator.rs",
+        "source_sha256": "d5283373831a990764e1be08b593378337b7076016b6b726e057108a91661b0a",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "6.94",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1535,
+          "measured": 0,
+          "passed": 1,
+          "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.94s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "6.94",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1535,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.94s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 1,
+        "line": 1532,
+        "raw": "running 1 test",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/cli_secret_canary-0dea6cd00f154e6a",
+        "label": "tests/cli_secret_canary.rs",
+        "line": 1530,
+        "raw": "     Running tests/cli_secret_canary.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/cli_secret_canary-0dea6cd00f154e6a)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "6.94",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1535,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.94s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "cli_secret_canary",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/cli_secret_canary.rs",
+        "source_sha256": "195972a6ca246c8cb8e53cc224db11571d7b9bc8458f1d3037dbebc9ae53b4d3",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "7.54",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1542,
+          "measured": 0,
+          "passed": 1,
+          "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.54s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "7.54",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1542,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.54s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 1,
+        "line": 1539,
+        "raw": "running 1 test",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/continuity_authenticated-ec281d120340614a",
+        "label": "tests/continuity_authenticated.rs",
+        "line": 1537,
+        "raw": "     Running tests/continuity_authenticated.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/continuity_authenticated-ec281d120340614a)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "7.54",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1542,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.54s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "continuity_authenticated",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/continuity_authenticated.rs",
+        "source_sha256": "8363be4bccd36ceaa60a953a7ef19e5cca9f321d5e33d149cba4200d80f61b0e",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "0.74",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1550,
+          "measured": 0,
+          "passed": 2,
+          "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.74s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "0.74",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1550,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.74s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 2,
+        "line": 1546,
+        "raw": "running 2 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/continuity_cli-f1a369ca5476e14b",
+        "label": "tests/continuity_cli.rs",
+        "line": 1544,
+        "raw": "     Running tests/continuity_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/continuity_cli-f1a369ca5476e14b)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "0.74",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1550,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.74s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "continuity_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/continuity_cli.rs",
+        "source_sha256": "2f573b161f7697e59b9be54a1fef54151b554594f588a5d032630675c4f1f082",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "26.07",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1558,
+          "measured": 0,
+          "passed": 2,
+          "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 26.07s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "26.07",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1558,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 26.07s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 2,
+        "line": 1554,
+        "raw": "running 2 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/daa_adversarial_schedule-a9eef563f2d26228",
+        "label": "tests/daa_adversarial_schedule.rs",
+        "line": 1552,
+        "raw": "     Running tests/daa_adversarial_schedule.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/daa_adversarial_schedule-a9eef563f2d26228)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "26.07",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1558,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 26.07s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "daa_adversarial_schedule",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/daa_adversarial_schedule.rs",
+        "source_sha256": "4b499f13255673f8ea3e4ed40dbcaa226742c9cf185c452f26cbb6efac223c86",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "185.70",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1569,
+          "measured": 0,
+          "passed": 5,
+          "raw": "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 185.70s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "185.70",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1569,
+        "measured": 0,
+        "passed": 5,
+        "raw": "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 185.70s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 5,
+        "line": 1562,
+        "raw": "running 5 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/derived_commitment-462a19df42bc27c6",
+        "label": "tests/derived_commitment.rs",
+        "line": 1560,
+        "raw": "     Running tests/derived_commitment.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/derived_commitment-462a19df42bc27c6)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "185.70",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1569,
+        "measured": 0,
+        "passed": 5,
+        "raw": "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 185.70s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "derived_commitment",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/derived_commitment.rs",
+        "source_sha256": "5ca4d7e52f3641dc642d1e14b2035eeb72c089b7b031709587277c17ea622488",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "0.00",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 4,
+          "line": 1579,
+          "measured": 0,
+          "passed": 0,
+          "raw": "test result: ok. 0 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "0.00",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 4,
+        "line": 1579,
+        "measured": 0,
+        "passed": 0,
+        "raw": "test result: ok. 0 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 4,
+        "line": 1573,
+        "raw": "running 4 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/distributed_roles-f5e7db8b160409a9",
+        "label": "tests/distributed_roles.rs",
+        "line": 1571,
+        "raw": "     Running tests/distributed_roles.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/distributed_roles-f5e7db8b160409a9)"
+      },
+      "ignored_count": 4,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "0.00",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 4,
+        "line": 1579,
+        "measured": 0,
+        "passed": 0,
+        "raw": "test result: ok. 0 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "distributed_roles",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/distributed_roles.rs",
+        "source_sha256": "3786c4e54a8ea0274b07997043f08ca833c5f6c831bfcd3a2cc368b0b2f6e1d1",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "64.80",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1586,
+          "measured": 0,
+          "passed": 1,
+          "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 64.80s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "64.80",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1586,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 64.80s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 1,
+        "line": 1583,
+        "raw": "running 1 test",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_observation-caa86d3369a2b9f0",
+        "label": "tests/evaluation_observation.rs",
+        "line": 1581,
+        "raw": "     Running tests/evaluation_observation.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_observation-caa86d3369a2b9f0)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "64.80",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1586,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 64.80s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "evaluation_observation",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/evaluation_observation.rs",
+        "source_sha256": "0b84e8b770f71eb6dc8624c33459bfefb1c7afcd145cde1c299213a41a295df9",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "28.28",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1594,
+          "measured": 0,
+          "passed": 2,
+          "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 28.28s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "28.28",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1594,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 28.28s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 2,
+        "line": 1590,
+        "raw": "running 2 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_observation_cli-71983da47904499a",
+        "label": "tests/evaluation_observation_cli.rs",
+        "line": 1588,
+        "raw": "     Running tests/evaluation_observation_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_observation_cli-71983da47904499a)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "28.28",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1594,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 28.28s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "evaluation_observation_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/evaluation_observation_cli.rs",
+        "source_sha256": "5fecde5ab322c6e76740ce76e47a5e55b7d218b679a858c2656271fb19cb8c52",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "1.45",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1601,
+          "measured": 0,
+          "passed": 1,
+          "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.45s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "1.45",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1601,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.45s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 1,
+        "line": 1598,
+        "raw": "running 1 test",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_quorum_cli-f3c9ec98f9062e6d",
+        "label": "tests/evaluation_quorum_cli.rs",
+        "line": 1596,
+        "raw": "     Running tests/evaluation_quorum_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_quorum_cli-f3c9ec98f9062e6d)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "1.45",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1601,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.45s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "evaluation_quorum_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/evaluation_quorum_cli.rs",
+        "source_sha256": "9f72df478570a64ad97cb3f89f7dd77d6b513b870c41e1a17a1b94bcedbd2380",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "6.73",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 1,
+          "line": 1609,
+          "measured": 0,
+          "passed": 1,
+          "raw": "test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 6.73s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "6.73",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1609,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 6.73s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 2,
+        "line": 1605,
+        "raw": "running 2 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_round_observation-1f65ce87986dd5dc",
+        "label": "tests/evaluation_round_observation.rs",
+        "line": 1603,
+        "raw": "     Running tests/evaluation_round_observation.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_round_observation-1f65ce87986dd5dc)"
+      },
+      "ignored_count": 1,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "6.73",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1609,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 6.73s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "evaluation_round_observation",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/evaluation_round_observation.rs",
+        "source_sha256": "346773d23c86677bf236813f66a4174663ed24ef78f33c86caa65b1fad4c3832",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "32.28",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1617,
+          "measured": 0,
+          "passed": 2,
+          "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 32.28s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "32.28",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1617,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 32.28s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 2,
+        "line": 1613,
+        "raw": "running 2 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_round_observation_cli-1b84002057e64e3c",
+        "label": "tests/evaluation_round_observation_cli.rs",
+        "line": 1611,
+        "raw": "     Running tests/evaluation_round_observation_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_round_observation_cli-1b84002057e64e3c)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "32.28",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1617,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 32.28s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "evaluation_round_observation_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/evaluation_round_observation_cli.rs",
+        "source_sha256": "0458b22d768a2f58218324e53746e6f7f9a0a37186f7654ea45447251f75debb",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "12.80",
+          "failed": 1,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1640,
+          "measured": 0,
+          "passed": 2,
+          "raw": "test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.80s",
+          "status": "FAILED",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "12.80",
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1640,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.80s",
+        "status": "FAILED",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [
+        {
+          "line": 1622,
+          "raw": "test actual_public_full_sync_query_partial_refusals_reorg_and_retirement ... FAILED",
+          "scope": "unattributed raw test line; not added as a count"
+        }
+      ],
+      "first_running": {
+        "column": 1,
+        "count": 3,
+        "line": 1621,
+        "raw": "running 3 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_sync_observation-3fa018be36885f45",
+        "label": "tests/evaluation_sync_observation.rs",
+        "line": 1619,
+        "raw": "     Running tests/evaluation_sync_observation.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_sync_observation-3fa018be36885f45)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "12.80",
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1640,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.80s",
+        "status": "FAILED",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_with_failures",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "evaluation_sync_observation",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+        "source_sha256": "402f29fa7ef75e4ba3b406290890a960db335d084620125d95c9cc539e857b04",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "4.53",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1651,
+          "measured": 0,
+          "passed": 4,
+          "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.53s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "4.53",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1651,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.53s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 4,
+        "line": 1645,
+        "raw": "running 4 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evolution_cli-194b03b45e8da831",
+        "label": "tests/evolution_cli.rs",
+        "line": 1643,
+        "raw": "     Running tests/evolution_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evolution_cli-194b03b45e8da831)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "4.53",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1651,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.53s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "evolution_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs",
+        "source_sha256": "d90163c67787572fa2ad61021e01e37f1c3b3a478e6063f8d0e0b9e7cc3ddcc9",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "5.80",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1661,
+          "measured": 0,
+          "passed": 4,
+          "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.80s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "5.80",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1661,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.80s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 4,
+        "line": 1655,
+        "raw": "running 4 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/funded_service_contract-93b7e5fe3346ff7a",
+        "label": "tests/funded_service_contract.rs",
+        "line": 1653,
+        "raw": "     Running tests/funded_service_contract.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/funded_service_contract-93b7e5fe3346ff7a)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "5.80",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1661,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.80s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "funded_service_contract",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/funded_service_contract.rs",
+        "source_sha256": "49793008eef45af05c409ded1741f98d11d6fa87b08435c09e4766f2d239ee7c",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "8.29",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1669,
+          "measured": 0,
+          "passed": 2,
+          "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.29s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "8.29",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1669,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.29s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 2,
+        "line": 1665,
+        "raw": "running 2 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/growth_persistence_cancellation-e7c90d45bac6c1d8",
+        "label": "tests/growth_persistence_cancellation.rs",
+        "line": 1663,
+        "raw": "     Running tests/growth_persistence_cancellation.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/growth_persistence_cancellation-e7c90d45bac6c1d8)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "8.29",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1669,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.29s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "growth_persistence_cancellation",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/growth_persistence_cancellation.rs",
+        "source_sha256": "28c49b7211208f3a74269798b1cb34b45c925e158530e516a72e120c82195a37",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "130.15",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1679,
+          "measured": 0,
+          "passed": 4,
+          "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 130.15s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "130.15",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1679,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 130.15s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 4,
+        "line": 1673,
+        "raw": "running 4 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/integer_factor_candidate_v2-a479f92805ba104e",
+        "label": "tests/integer_factor_candidate_v2.rs",
+        "line": 1671,
+        "raw": "     Running tests/integer_factor_candidate_v2.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/integer_factor_candidate_v2-a479f92805ba104e)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "130.15",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1679,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 130.15s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "integer_factor_candidate_v2",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs",
+        "source_sha256": "5acd5335b5694acdd929c08d1c7f0c2fc4d97fc23ede36294b1f54716bce8ef2",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "8.76",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 1,
+          "line": 1700,
+          "measured": 0,
+          "passed": 14,
+          "raw": "test result: ok. 14 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 8.76s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "8.76",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1700,
+        "measured": 0,
+        "passed": 14,
+        "raw": "test result: ok. 14 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 8.76s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 15,
+        "line": 1683,
+        "raw": "running 15 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/local_mempool-7e64c5d856db9523",
+        "label": "tests/local_mempool.rs",
+        "line": 1681,
+        "raw": "     Running tests/local_mempool.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/local_mempool-7e64c5d856db9523)"
+      },
+      "ignored_count": 1,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "8.76",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1700,
+        "measured": 0,
+        "passed": 14,
+        "raw": "test result: ok. 14 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 8.76s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "local_mempool",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/local_mempool.rs",
+        "source_sha256": "39e49bacf11a9540eefe075460a7fabaf1cd32e99a85f3293c4f9442c0f98b37",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "0.88",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1707,
+          "measured": 0,
+          "passed": 1,
+          "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.88s",
+          "status": "ok",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "0.88",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1707,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.88s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 1,
+        "line": 1704,
+        "raw": "running 1 test",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/maintenance_paired_conformance-cc25a333d85bb7cb",
+        "label": "tests/maintenance_paired_conformance.rs",
+        "line": 1702,
+        "raw": "     Running tests/maintenance_paired_conformance.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/maintenance_paired_conformance-cc25a333d85bb7cb)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "0.88",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1707,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.88s",
+        "status": "ok",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_passed",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "maintenance_paired_conformance",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/maintenance_paired_conformance.rs",
+        "source_sha256": "df5872449b938a0284a679ffcc534b98f7ddbe2446e442e7ea2987d9fdb0d255",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [
+        {
+          "column": 1,
+          "elapsed_seconds": "16.64",
+          "failed": 1,
+          "filtered_out": 0,
+          "ignored": 0,
+          "line": 1728,
+          "measured": 0,
+          "passed": 1,
+          "raw": "test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.64s",
+          "status": "FAILED",
+          "whole_line": true
+        }
+      ],
+      "attribution_problems": [],
+      "completed_top_level_summary": {
+        "column": 1,
+        "elapsed_seconds": "16.64",
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1728,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.64s",
+        "status": "FAILED",
+        "whole_line": true
+      },
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [
+        {
+          "line": 1713,
+          "raw": "test mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain ... FAILED",
+          "scope": "unattributed raw test line; not added as a count"
+        }
+      ],
+      "first_running": {
+        "column": 1,
+        "count": 2,
+        "line": 1711,
+        "raw": "running 2 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/mining_service_budget-c5d23289fc9a9ead",
+        "label": "tests/mining_service_budget.rs",
+        "line": 1709,
+        "raw": "     Running tests/mining_service_budget.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/mining_service_budget-c5d23289fc9a9ead)"
+      },
+      "ignored_count": 0,
+      "last_summary_candidate": {
+        "column": 1,
+        "elapsed_seconds": "16.64",
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1728,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.64s",
+        "status": "FAILED",
+        "whole_line": true
+      },
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "completed_with_failures",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "mining_service_budget",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs",
+        "source_sha256": "de77046e05414963efb186e10c4ae9795ef69033f9a4bfd662537412bbafa8b2",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": false
+    },
+    {
+      "all_summary_observations": [],
+      "attribution_problems": [],
+      "completed_top_level_summary": null,
+      "currently_running": false,
+      "currently_running_note": "Audit requires an ending receipt; this is historical state at log end.",
+      "failed_test_lines_not_counted": [],
+      "first_running": {
+        "column": 1,
+        "count": 4,
+        "line": 1733,
+        "raw": "running 4 tests",
+        "whole_line": true
+      },
+      "header": {
+        "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/model_composition_v4-8ca9dd0d4c460304",
+        "label": "tests/model_composition_v4.rs",
+        "line": 1731,
+        "raw": "     Running tests/model_composition_v4.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/model_composition_v4-8ca9dd0d4c460304)"
+      },
+      "ignored_count": null,
+      "last_summary_candidate": null,
+      "nested_running_headers": [],
+      "nested_starts_without_matched_summary": [],
+      "nested_summary_candidates": [],
+      "qualification": false,
+      "skip_note": "Rust libtest has no skipped summary field.",
+      "skipped": null,
+      "status": "incomplete_at_termination",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "model_composition_v4",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+        "source_sha256": "de7112a67873598d89cac1ff87288e5802253eeb4dda8012da5241e0ccc6e2e1",
+        "test": true
+      },
+      "unclassified_skip_markers": [],
+      "unclosed_child_note": "Intentional crash/SIGKILL children need not print summaries; no pass inferred.",
+      "was_in_progress_at_log_end": true
+    }
+  ],
+  "skipped_classification": {
+    "ignored_kept_separate_and_not_passes": true,
+    "rust_libtest_explicit_skipped_count": null,
+    "unclassified_skip_markers": []
+  },
+  "source": {
+    "after_present": false,
+    "available_before_after_snapshots_identical": null,
+    "before_present": true,
+    "commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "missing_after_not_replaced_with_current_checkout": true,
+    "original_result_source_unchanged": null,
+    "tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+  },
+  "source_or_original_recorder_or_job_modified": false,
+  "sqlite_index_available_from_original_result": false,
+  "sqlite_retained_observations": [],
+  "target_headers": [
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-a20974e529510774",
+      "label": "unittests src/lib.rs",
+      "line": 97,
+      "raw": "     Running unittests src/lib.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-a20974e529510774)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-9d413a65dc5d9760",
+      "label": "unittests src/main.rs",
+      "line": 1369,
+      "raw": "     Running unittests src/main.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-9d413a65dc5d9760)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/accepted_task_observation-3ccb0c5c0a0871aa",
+      "label": "tests/accepted_task_observation.rs",
+      "line": 1389,
+      "raw": "     Running tests/accepted_task_observation.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/accepted_task_observation-3ccb0c5c0a0871aa)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/account_archive_execution-f27c845332fdc929",
+      "label": "tests/account_archive_execution.rs",
+      "line": 1399,
+      "raw": "     Running tests/account_archive_execution.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/account_archive_execution-f27c845332fdc929)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/account_archive_projection-83edebb74c9ce5ee",
+      "label": "tests/account_archive_projection.rs",
+      "line": 1417,
+      "raw": "     Running tests/account_archive_projection.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/account_archive_projection-83edebb74c9ce5ee)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/account_archive_prototype-dd4a305bf9b56f23",
+      "label": "tests/account_archive_prototype.rs",
+      "line": 1424,
+      "raw": "     Running tests/account_archive_prototype.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/account_archive_prototype-dd4a305bf9b56f23)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/account_obligation_ranges-feb5627665634598",
+      "label": "tests/account_obligation_ranges.rs",
+      "line": 1439,
+      "raw": "     Running tests/account_obligation_ranges.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/account_obligation_ranges-feb5627665634598)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/ancestry_long_sync-378b14e616f32278",
+      "label": "tests/ancestry_long_sync.rs",
+      "line": 1449,
+      "raw": "     Running tests/ancestry_long_sync.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/ancestry_long_sync-378b14e616f32278)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/architecture_delivery_compare-f13b1e5812a3d91d",
+      "label": "tests/architecture_delivery_compare.rs",
+      "line": 1456,
+      "raw": "     Running tests/architecture_delivery_compare.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/architecture_delivery_compare-f13b1e5812a3d91d)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/authenticated_storage_cli-3c387dc15c084ca3",
+      "label": "tests/authenticated_storage_cli.rs",
+      "line": 1507,
+      "raw": "     Running tests/authenticated_storage_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/authenticated_storage_cli-3c387dc15c084ca3)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/checkpoint_tile_operator-63594027d627559b",
+      "label": "tests/checkpoint_tile_operator.rs",
+      "line": 1520,
+      "raw": "     Running tests/checkpoint_tile_operator.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/checkpoint_tile_operator-63594027d627559b)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/cli_secret_canary-0dea6cd00f154e6a",
+      "label": "tests/cli_secret_canary.rs",
+      "line": 1530,
+      "raw": "     Running tests/cli_secret_canary.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/cli_secret_canary-0dea6cd00f154e6a)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/continuity_authenticated-ec281d120340614a",
+      "label": "tests/continuity_authenticated.rs",
+      "line": 1537,
+      "raw": "     Running tests/continuity_authenticated.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/continuity_authenticated-ec281d120340614a)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/continuity_cli-f1a369ca5476e14b",
+      "label": "tests/continuity_cli.rs",
+      "line": 1544,
+      "raw": "     Running tests/continuity_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/continuity_cli-f1a369ca5476e14b)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/daa_adversarial_schedule-a9eef563f2d26228",
+      "label": "tests/daa_adversarial_schedule.rs",
+      "line": 1552,
+      "raw": "     Running tests/daa_adversarial_schedule.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/daa_adversarial_schedule-a9eef563f2d26228)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/derived_commitment-462a19df42bc27c6",
+      "label": "tests/derived_commitment.rs",
+      "line": 1560,
+      "raw": "     Running tests/derived_commitment.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/derived_commitment-462a19df42bc27c6)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/distributed_roles-f5e7db8b160409a9",
+      "label": "tests/distributed_roles.rs",
+      "line": 1571,
+      "raw": "     Running tests/distributed_roles.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/distributed_roles-f5e7db8b160409a9)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_observation-caa86d3369a2b9f0",
+      "label": "tests/evaluation_observation.rs",
+      "line": 1581,
+      "raw": "     Running tests/evaluation_observation.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_observation-caa86d3369a2b9f0)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_observation_cli-71983da47904499a",
+      "label": "tests/evaluation_observation_cli.rs",
+      "line": 1588,
+      "raw": "     Running tests/evaluation_observation_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_observation_cli-71983da47904499a)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_quorum_cli-f3c9ec98f9062e6d",
+      "label": "tests/evaluation_quorum_cli.rs",
+      "line": 1596,
+      "raw": "     Running tests/evaluation_quorum_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_quorum_cli-f3c9ec98f9062e6d)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_round_observation-1f65ce87986dd5dc",
+      "label": "tests/evaluation_round_observation.rs",
+      "line": 1603,
+      "raw": "     Running tests/evaluation_round_observation.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_round_observation-1f65ce87986dd5dc)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_round_observation_cli-1b84002057e64e3c",
+      "label": "tests/evaluation_round_observation_cli.rs",
+      "line": 1611,
+      "raw": "     Running tests/evaluation_round_observation_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_round_observation_cli-1b84002057e64e3c)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_sync_observation-3fa018be36885f45",
+      "label": "tests/evaluation_sync_observation.rs",
+      "line": 1619,
+      "raw": "     Running tests/evaluation_sync_observation.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_sync_observation-3fa018be36885f45)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evolution_cli-194b03b45e8da831",
+      "label": "tests/evolution_cli.rs",
+      "line": 1643,
+      "raw": "     Running tests/evolution_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evolution_cli-194b03b45e8da831)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/funded_service_contract-93b7e5fe3346ff7a",
+      "label": "tests/funded_service_contract.rs",
+      "line": 1653,
+      "raw": "     Running tests/funded_service_contract.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/funded_service_contract-93b7e5fe3346ff7a)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/growth_persistence_cancellation-e7c90d45bac6c1d8",
+      "label": "tests/growth_persistence_cancellation.rs",
+      "line": 1663,
+      "raw": "     Running tests/growth_persistence_cancellation.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/growth_persistence_cancellation-e7c90d45bac6c1d8)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/integer_factor_candidate_v2-a479f92805ba104e",
+      "label": "tests/integer_factor_candidate_v2.rs",
+      "line": 1671,
+      "raw": "     Running tests/integer_factor_candidate_v2.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/integer_factor_candidate_v2-a479f92805ba104e)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/local_mempool-7e64c5d856db9523",
+      "label": "tests/local_mempool.rs",
+      "line": 1681,
+      "raw": "     Running tests/local_mempool.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/local_mempool-7e64c5d856db9523)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/maintenance_paired_conformance-cc25a333d85bb7cb",
+      "label": "tests/maintenance_paired_conformance.rs",
+      "line": 1702,
+      "raw": "     Running tests/maintenance_paired_conformance.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/maintenance_paired_conformance-cc25a333d85bb7cb)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/mining_service_budget-c5d23289fc9a9ead",
+      "label": "tests/mining_service_budget.rs",
+      "line": 1709,
+      "raw": "     Running tests/mining_service_budget.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/mining_service_budget-c5d23289fc9a9ead)"
+    },
+    {
+      "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/model_composition_v4-8ca9dd0d4c460304",
+      "label": "tests/model_composition_v4.rs",
+      "line": 1731,
+      "raw": "     Running tests/model_composition_v4.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/model_composition_v4-8ca9dd0d4c460304)"
+    }
+  ],
+  "tests_started": false,
+  "totals_scope": "Only individually unambiguous completed Cargo top-level targets; never a total for unstarted or interrupted targets, and never qualification.",
+  "uncovered_or_ambiguous_targets": [
+    "unittests examples/account_archive_vectors.rs",
+    "unittests examples/account_execution_vectors.rs",
+    "unittests examples/continuous_pipeline.rs",
+    "unittests examples/distributed_pipeline.rs",
+    "unittests examples/hepta_task_fixture.rs",
+    "unittests examples/history_state_cost.rs",
+    "unittests examples/lifecycle_atomic_continuity.rs",
+    "unittests examples/lifecycle_continuity.rs",
+    "unittests examples/llm_zero_gain_round.rs",
+    "unittests examples/native_reorg_query_cost.rs",
+    "unittests examples/operator_owned_finite_mining.rs",
+    "unittests examples/operator_pool_fixture.rs",
+    "unittests examples/pon_w1_budget_report.rs",
+    "unittests examples/pon_w1_cost_matrix_v2.rs",
+    "unittests examples/pon_w1_false_trace_reuse_v1.rs",
+    "unittests examples/pon_w1_legal_strategy_v1.rs",
+    "unittests examples/pon_w1_legal_strategy_v3.rs",
+    "unittests examples/pon_w1_preparation_strategy_v4.rs",
+    "unittests examples/pon_w1_reused_cost_v3.rs",
+    "unittests examples/public_pool_fixture.rs",
+    "tests/model_composition_v4.rs",
+    "tests/model_evidence_v3.rs",
+    "tests/native_active_anchor.rs",
+    "tests/native_compact_execution.rs",
+    "tests/native_demand_evidence.rs",
+    "tests/native_growth_cli.rs",
+    "tests/native_growth_public_cli.rs",
+    "tests/native_node.rs",
+    "tests/native_task_operation_v2.rs",
+    "tests/no_gain_fees.rs",
+    "tests/nonce_speculation_cost.rs",
+    "tests/one_zero_task_preparation_lifecycle.rs",
+    "tests/operation_local_parent.rs",
+    "tests/operator_actors.rs",
+    "tests/pinned_peer_polling.rs",
+    "tests/pool_mining.rs",
+    "tests/pq_account_native.rs",
+    "tests/pq_migration_inventory.rs",
+    "tests/protected_ingress.rs",
+    "tests/public_cache_modes.rs",
+    "tests/public_cli.rs",
+    "tests/public_evaluation.rs",
+    "tests/public_intake_v2.rs",
+    "tests/public_pool_cli.rs",
+    "tests/public_pool_v3.rs",
+    "tests/public_submit_recovery.rs",
+    "tests/public_v3_from_zero.rs",
+    "tests/public_v3_multiprocess.rs",
+    "tests/public_v3_observation_cli.rs",
+    "tests/public_v3_observer.rs",
+    "tests/public_v3_request_accounting.rs",
+    "tests/public_v3_service_campaign.rs",
+    "tests/qualified_tasks.rs",
+    "tests/release_finality_v2.rs",
+    "tests/task_lifecycle.rs",
+    "tests/task_lifecycle_v3.rs",
+    "tests/task_lifecycle_v4.rs",
+    "tests/task_output_root_parity.rs",
+    "tests/work_fuzz_semantics.rs",
+    "tests/work_header_binding.rs",
+    "tests/zero_task_preparation_lifecycle.rs"
+  ],
+  "unexpected_targets": []
+}

@@ -1,0 +1,18 @@
+    Checking libc v0.2.184
+    Checking getrandom v0.4.2
+    Checking rusqlite v0.41.0
+    Checking rustix v1.1.6
+    Checking crypto-common v0.2.2
+    Checking digest v0.11.3
+    Checking shake v0.1.0
+    Checking signature v3.0.0
+    Checking tempfile v3.27.0
+    Checking ml-dsa v0.1.1
+    Checking trnm-crypto-primitives v0.1.0 (/home/qq/chain-system-security-20261112-306929/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-mvcc-fee v0.1.0 (/home/qq/chain-system-security-20261112-306929/trillionnium/crates/trnm-mvcc-fee)
+    Checking fs2 v0.4.3
+    Checking getrandom v0.2.17
+    Checking trnm-data-availability v0.1.0 (/home/qq/chain-system-security-20261112-306929/trillionnium/crates/trnm-data-availability)
+    Checking trnm-task-kernel v0.1.0 (/home/qq/chain-system-security-20261112-306929/trillionnium/crates/trnm-task-kernel)
+    Checking trnm-service-settlement v0.1.0 (/home/qq/chain-system-security-20261112-306929/trillionnium/crates/trnm-service-settlement)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 17s

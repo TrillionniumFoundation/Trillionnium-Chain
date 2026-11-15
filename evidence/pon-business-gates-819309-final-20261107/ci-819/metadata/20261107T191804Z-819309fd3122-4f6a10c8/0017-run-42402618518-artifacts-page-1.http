@@ -1,0 +1,29 @@
+HTTP/2.0 200 OK
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+Cache-Control: private, max-age=60, s-maxage=60
+Content-Security-Policy: default-src 'none'
+Content-Type: application/json; charset=utf-8
+Date: Sat, 07 Nov 2026 19:18:34 GMT
+Etag: W/"d1aea520306340782cf2dca62269bb25e82a21d2f0733c79c66b687785ba3718"
+Referrer-Policy: origin-when-cross-origin, strict-origin-when-cross-origin
+Server: github.com
+Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
+Vary: Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With
+X-Accepted-Oauth-Scopes: 
+X-Content-Type-Options: nosniff
+X-Frame-Options: deny
+X-Github-Api-Version-Selected: 2022-11-28
+X-Github-Edge-Region: iad
+X-Github-Media-Type: github.v3; format=json
+X-Github-Request-Id: B006:1668E0:ADE5A:23776A:6AEF7989
+X-Oauth-Client-Id: 178c6fc778ccc68e1d6a
+X-Oauth-Scopes: delete_repo, gist, read:org, repo, workflow
+X-Ratelimit-Limit: 5000
+X-Ratelimit-Remaining: 4840
+X-Ratelimit-Reset: 1794080845
+X-Ratelimit-Resource: core
+X-Ratelimit-Used: 160
+X-Xss-Protection: 0
+
+{"total_count":5,"artifacts":[{"id":13586980357,"node_id":"MDg6QXJ0aWZhY3QxMzU4Njk4MDM1Nw==","name":"priority-ubuntu-24.04-arm-head-service-model-819309fd312298e099642e1253b1d4ba07113e98-1","size_in_bytes":7765942,"url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586980357","archive_download_url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586980357/zip","expired":false,"digest":"sha256:972ddc499d326a0474393fd8b71394b9d3806d2b8fa25cc8c38e5f8b9342b0af","created_at":"2026-11-07T19:04:58Z","updated_at":"2026-11-07T19:04:58Z","expires_at":"2026-12-07T19:04:56Z","workflow_run":{"id":42402618518,"repository_id":1323087357,"head_repository_id":1323087357,"head_branch":"fix/chain-six-axis-performance-20261103","head_sha":"819309fd312298e099642e1253b1d4ba07113e98"}},{"id":13586309794,"node_id":"MDg6QXJ0aWZhY3QxMzU4NjMwOTc5NA==","name":"priority-ubuntu-24.04-arm-prospective-merge-service-model-819309fd312298e099642e1253b1d4ba07113e98-1","size_in_bytes":7772335,"url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586309794","archive_download_url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586309794/zip","expired":false,"digest":"sha256:4948b0757fa2ebb9aea2f5f4df4923c4bbcd8b5a0c7c4a296e09f6fcff1c1902","created_at":"2026-11-07T19:04:47Z","updated_at":"2026-11-07T19:04:47Z","expires_at":"2026-12-07T19:04:45Z","workflow_run":{"id":42402618518,"repository_id":1323087357,"head_repository_id":1323087357,"head_branch":"fix/chain-six-axis-performance-20261103","head_sha":"819309fd312298e099642e1253b1d4ba07113e98"}},{"id":13586249872,"node_id":"MDg6QXJ0aWZhY3QxMzU4NjI0OTg3Mg==","name":"priority-ubuntu-24.04-head-service-model-819309fd312298e099642e1253b1d4ba07113e98-1","size_in_bytes":7857673,"url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586249872","archive_download_url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586249872/zip","expired":false,"digest":"sha256:fa0e21f60a649513b9a7d6fb8fcd86c7a27f9ac93b726104f96fc71fa2cf5933","created_at":"2026-11-07T19:04:05Z","updated_at":"2026-11-07T19:04:05Z","expires_at":"2026-12-07T19:04:03Z","workflow_run":{"id":42402618518,"repository_id":1323087357,"head_repository_id":1323087357,"head_branch":"fix/chain-six-axis-performance-20261103","head_sha":"819309fd312298e099642e1253b1d4ba07113e98"}},{"id":13586194181,"node_id":"MDg6QXJ0aWZhY3QxMzU4NjE5NDE4MQ==","name":"priority-ubuntu-24.04-prospective-merge-service-model-819309fd312298e099642e1253b1d4ba07113e98-1","size_in_bytes":8011502,"url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586194181","archive_download_url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586194181/zip","expired":false,"digest":"sha256:0248ce80439b577575da4c151d60e8988ca803e5174927041271823453b68009","created_at":"2026-11-07T18:59:23Z","updated_at":"2026-11-07T18:59:23Z","expires_at":"2026-12-07T18:59:21Z","workflow_run":{"id":42402618518,"repository_id":1323087357,"head_repository_id":1323087357,"head_branch":"fix/chain-six-axis-performance-20261103","head_sha":"819309fd312298e099642e1253b1d4ba07113e98"}},{"id":13585647797,"node_id":"MDg6QXJ0aWZhY3QxMzU4NTY0Nzc5Nw==","name":"integration-push-source-42402618518-1","size_in_bytes":1362,"url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13585647797","archive_download_url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13585647797/zip","expired":false,"digest":"sha256:9c5ef9faf60ce9e36a817633fc10493b3f11d12248fb39c977d4bee1d2d96a1e","created_at":"2026-11-07T18:43:20Z","updated_at":"2026-11-07T18:43:20Z","expires_at":"2026-12-07T18:43:19Z","workflow_run":{"id":42402618518,"repository_id":1323087357,"head_repository_id":1323087357,"head_branch":"fix/chain-six-axis-performance-20261103","head_sha":"819309fd312298e099642e1253b1d4ba07113e98"}}]}

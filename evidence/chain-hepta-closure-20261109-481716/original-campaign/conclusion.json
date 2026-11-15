@@ -1,0 +1,61 @@
+{
+  "all_nine_original_windows_seconds": [
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30
+  ],
+  "all_nine_phases_include_public_request_deadline": true,
+  "campaign_returncodes": [
+    101,
+    101,
+    101
+  ],
+  "denominators": {
+    "confirmed_rounds": 3,
+    "observed_confirmation_rounds": 12,
+    "observed_phases": 9,
+    "observed_runs": 3,
+    "planned_confirmation_rounds": 27,
+    "planned_phases": 9,
+    "planned_runs": 3,
+    "successful_runs": 0,
+    "unobserved_scheduled_rounds": 15
+  },
+  "history_imports": 66,
+  "host_calls_unfinished": 0,
+  "host_cpu_is_not_process_tree_cpu": true,
+  "host_cpu_unknown_calls": 0,
+  "host_measurement_slots": 264,
+  "imports_with_complete_host_cpu_measurement": 66,
+  "native_measurement_failures": 0,
+  "nested_timing_values_were_not_added": true,
+  "original_build_returncode": 0,
+  "original_head": "0746a462e80067b78317597f2fa4bacf5e3db958",
+  "phase_startup_errors": [],
+  "prior_v1_values_preserved": "Prior v1 report retained separately; v2 only tightens measurement-completeness handling for these records.",
+  "report_validation_failures": [],
+  "schema": "original-campaign-retained-conclusion-v1",
+  "scope": {
+    "artifact_integrity_is_not_execution_authenticity": true,
+    "client_import_cpu_scope": "calling thread; excludes scoped worker CPU",
+    "consensus_or_signatures_replayed": false,
+    "host_cpu_known_sum_scope": "only available per-Host-slot aggregates; incomplete slots and missing observations remain explicit",
+    "host_cpu_scope": "sum across individual calling threads; not full worker or process-tree CPU",
+    "host_four_second_acceptance_closed": false,
+    "independent_wan_acceptance_closed": false,
+    "native_tests_executed": false,
+    "nested_timing_intervals_are_not_additive": true,
+    "phase_projection_scope": "listed fields only",
+    "production_activation": false,
+    "sole_cause_established": false,
+    "source_and_host_authenticated": false,
+    "unknown_cpu_is_not_zero": true
+  },
+  "successful_phases": 0
+}

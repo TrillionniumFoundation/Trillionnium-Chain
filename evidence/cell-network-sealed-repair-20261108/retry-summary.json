@@ -1,0 +1,112 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "09b584bea2e1a265a7e4be10c7aa98cf8e34629b",
+        "--output",
+        "/workspace/scratch/277c778f9cb0/validation/final-02/source-before.receipt.json"
+      ],
+      "cwd": "/workspace/scratch/277c778f9cb0/chain",
+      "elapsed_seconds": 4.934743,
+      "exit_code": 0,
+      "name": "source-before",
+      "source": "09b584bea2e1a265a7e4be10c7aa98cf8e34629b",
+      "started_utc": "2026-11-08T17:47:05.155042+00:00",
+      "stderr": "source-before.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "source-before.stdout.log",
+      "stdout_sha256": "d95c003958ec1ea32a6fee411a5a8d3104ed44116cdb85cc8a7340ef98ccabbe",
+      "timeout_seconds": 900
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/workspace/scratch/277c778f9cb0/chain",
+      "elapsed_seconds": 0.064212,
+      "exit_code": 0,
+      "name": "preflight",
+      "source": "09b584bea2e1a265a7e4be10c7aa98cf8e34629b",
+      "started_utc": "2026-11-08T17:47:10.090532+00:00",
+      "stderr": "preflight.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "preflight.stdout.log",
+      "stdout_sha256": "7998a9d5114348187257cc59c53a977fc4d3dcdaf2cafcc4708369b8121e0415",
+      "timeout_seconds": 900
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/ci/check_canonical_development_plan.sh"
+      ],
+      "cwd": "/workspace/scratch/277c778f9cb0/chain",
+      "elapsed_seconds": 219.162119,
+      "exit_code": 0,
+      "name": "canonical-plan",
+      "source": "09b584bea2e1a265a7e4be10c7aa98cf8e34629b",
+      "started_utc": "2026-11-08T17:47:10.155062+00:00",
+      "stderr": "canonical-plan.stderr.log",
+      "stderr_sha256": "5d2e428ac0a60a4757112e25fd44266f5f5e07fd8affff610717f5c9bb28da92",
+      "stdout": "canonical-plan.stdout.log",
+      "stdout_sha256": "3ba2cd687edc05e4bf591958dd84435620d9ff8240eaaecba1d79946ef43ac1e",
+      "timeout_seconds": 900
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "cwd": "/workspace/scratch/277c778f9cb0/chain",
+      "elapsed_seconds": 14.470954,
+      "exit_code": 0,
+      "name": "ci-contract-negative-controls",
+      "source": "09b584bea2e1a265a7e4be10c7aa98cf8e34629b",
+      "started_utc": "2026-11-08T17:50:49.317967+00:00",
+      "stderr": "ci-contract-negative-controls.stderr.log",
+      "stderr_sha256": "45504ef20ddb4a052fd518f020464961c174e04fdbf898b42fd4420819840512",
+      "stdout": "ci-contract-negative-controls.stdout.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout_seconds": 900
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "09b584bea2e1a265a7e4be10c7aa98cf8e34629b",
+        "--output",
+        "/workspace/scratch/277c778f9cb0/validation/final-02/source-after.receipt.json"
+      ],
+      "cwd": "/workspace/scratch/277c778f9cb0/chain",
+      "elapsed_seconds": 2.720761,
+      "exit_code": 0,
+      "name": "source-after",
+      "source": "09b584bea2e1a265a7e4be10c7aa98cf8e34629b",
+      "started_utc": "2026-11-08T17:51:03.789540+00:00",
+      "stderr": "source-after.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "source-after.stdout.log",
+      "stdout_sha256": "d95c003958ec1ea32a6fee411a5a8d3104ed44116cdb85cc8a7340ef98ccabbe",
+      "timeout_seconds": 900
+    }
+  ],
+  "original_failure_preserved_in": "../final-01",
+  "production_activation": false,
+  "result": "PASS_SAME_SOURCE_FAILED_CONTROLS",
+  "runtime_tests_repeated": false,
+  "schema": "trnm-cell-failed-control-retry-v1",
+  "source": "09b584bea2e1a265a7e4be10c7aa98cf8e34629b",
+  "source_before_after_identical": true,
+  "tests_not_weakened": true
+}

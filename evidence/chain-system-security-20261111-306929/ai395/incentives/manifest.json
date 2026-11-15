@@ -1,0 +1,42 @@
+{
+  "archive": {
+    "bytes": 1882840,
+    "file": "incentive-bac6b7659bd7-raw-20261112.tar.xz",
+    "members": 109,
+    "sha256": "3d543e24395320c860d342f396ad492baa76365128be1ee91a296ffc23ca09c9",
+    "uncompressed_bytes": 28288909
+  },
+  "economic_security_qualified": false,
+  "mutation_controls": 6,
+  "native_observation_files": 13,
+  "native_run_id": "incentive-bac6b7659bd7e2d633e25c2da0add60f6a10c7fb-20261112-v1",
+  "pinned_python_native_differential_tests": 5,
+  "pinned_python_pure_tests": 8,
+  "production_activation": false,
+  "publication_source_native_qualified": false,
+  "recovery": {
+    "archive_and_reader_hashes_preserved": true,
+    "cloud_environment_disconnected_before_commit_confirmed": true,
+    "first_ai395_stage_failed_before_recheck": "missing earlier d438 evidence path in bac tree; original FAIL and traceback retained",
+    "new_archive_only_recheck": "recovery-recheck.receipt.json",
+    "original_previous_receipt_git_object": {
+      "bytes": 199212,
+      "git_blob": "ba983b9c7b7e3975f0cff50c0fd9cf92c9e25461",
+      "method": "exact immutable Git blob read from parent-prepared independent bare repository; no reconstruction",
+      "path": "evidence/chain-incentive-counterexamples-20261112/node-genesis-split/native.json",
+      "sha256": "07c11a04880eab6303a66000d23082748a8f8568f8e1defe92d91c0a8b30db40",
+      "source_revision": "98cb32df65d11cf6124e47b5246ab4854f137bb1"
+    },
+    "original_uncommitted_bytes": 2009375,
+    "original_uncommitted_files": 16,
+    "per_file_provenance": "recovery-manifest.json",
+    "prior_original_receipt_file_sha256_claimed": false,
+    "readme_and_this_manifest_newly_reconstructed": true,
+    "two_original_local_command_receipts_reconstructed_from_observed_fields": true
+  },
+  "rust_tests": 31,
+  "schema": "chain-incentive-ai395-recovered-evidence-identity-v1",
+  "scope": "exact archived bac6 component execution; later evidence publication commits are not native-tested by these results",
+  "source_commit": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+  "source_tree": "371c3f55de7940e276496efe2008b537ba4d8268"
+}

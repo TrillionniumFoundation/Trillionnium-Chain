@@ -1,0 +1,85 @@
+{
+  "prior": "e82419698aa3fd527c6f828da11cc8749dcb007b",
+  "selected": "283981a062158f3b41eea42d52f56eaee457ba97",
+  "base": "3eb2cfdd9c123a2418c138e4c18940bcc584d878",
+  "commit": "77c1831de49763fa047c7b2ca2f39000f82412b9",
+  "tree": "c323c68858a68abab5af970308d879c40c208e16",
+  "selected_blobs": {
+    "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "b9d1547e13c8c5ac0820c7d6eaa1a17a0940630d",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/availability/tests.rs": "dcdd3d86271c074fb02b26e2502816f0a7fa4ff5",
+    "trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs": "edf9baf2d76c7cb519c1554c4d65f33231771169"
+  },
+  "conflicts": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/test_pq_research_integration.py"
+  ],
+  "steps": [
+    {
+      "label": "preflight",
+      "exit": 0,
+      "seconds": 0.052,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "merge",
+      "exit": 1,
+      "seconds": 0.162,
+      "sha256": "a74e78b9eba66ce4f6fb40448ba6048bd59193a4065c2b7039ca6b917c6941de"
+    },
+    {
+      "label": "stage-resolved",
+      "exit": 0,
+      "seconds": 0.041,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "cell-source-negative",
+      "exit": 0,
+      "seconds": 1.564,
+      "sha256": "e4e2b82e7c4a8e26a4886be03a0a146bcb2b76e024af64d7f1874de80b85b945"
+    },
+    {
+      "label": "current-corpus",
+      "exit": 0,
+      "seconds": 0.808,
+      "sha256": "6d0b62cd0ae72f94235b5affbcacaa14235d42bebf9fb112060321b519931169"
+    },
+    {
+      "label": "current-ci-contract",
+      "exit": 0,
+      "seconds": 0.07,
+      "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+    },
+    {
+      "label": "fmt",
+      "exit": 0,
+      "seconds": 5.321,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "diff-check",
+      "exit": 0,
+      "seconds": 0.018,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "precommit-preflight",
+      "exit": 0,
+      "seconds": 0.05,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "commit",
+      "exit": 0,
+      "seconds": 0.067,
+      "sha256": "b0417e0d7e7a0ed70084ae38f05b091d2c4cb9037a10ac06b840ceec27e8315f"
+    }
+  ],
+  "component_linux_passed": 44,
+  "original_mac_failure_preserved": true,
+  "original_failure_cause_proven": false,
+  "hosted_four_second_gate_qualified": false,
+  "remote_writes": false
+}

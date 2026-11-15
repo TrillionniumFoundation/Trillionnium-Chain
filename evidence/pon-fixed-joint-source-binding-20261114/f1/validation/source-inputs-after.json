@@ -1,0 +1,30 @@
+{
+  "formal/pon-nakamoto-v1/contract_wire.py": {
+    "bytes": 8924,
+    "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+  },
+  "formal/pon-nakamoto-v1/fixed_probability_contract.py": {
+    "bytes": 11399,
+    "sha256": "5d797bfe7b82f11613162636d2ae30778b4e17070e6570705041e86e9fbd75bc"
+  },
+  "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json": {
+    "bytes": 5102,
+    "sha256": "916cbdcf0f163844d269a7152305de952022f92065d0f70f77a752baa6cba092"
+  },
+  "formal/pon-nakamoto-v1/mandatory_units_relation.py": {
+    "bytes": 14587,
+    "sha256": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834"
+  },
+  "formal/pon-nakamoto-v1/test_fixed_probability_contract.py": {
+    "bytes": 9606,
+    "sha256": "d84bf207c8aec58de95912f6f282109145e6fa1be010e942908d2122a2c4cf51"
+  },
+  "formal/pon-nakamoto-v1/work_oracle.py": {
+    "bytes": 2944,
+    "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+  },
+  "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": {
+    "bytes": 106066,
+    "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+  }
+}

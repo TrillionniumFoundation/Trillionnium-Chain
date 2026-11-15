@@ -1,0 +1,128 @@
+{
+  "bindings": {
+    "baseline": {
+      "binary": "/workspace/scratch/ae364bcbabfb/validation/reorg-baseline-e70f134",
+      "identity": {
+        "bytes": 8162416,
+        "elf_machine": 62,
+        "sha256": "fc525d355ea1489eeb5163101a1572360c8c48385d10e6006dfe6b2c474afe76"
+      },
+      "receipt": {
+        "binary": "/workspace/scratch/ae364bcbabfb/validation/reorg-baseline-e70f134",
+        "build_cpu_ns": null,
+        "build_exit": 0,
+        "build_log": "reorg-baseline-build.log",
+        "build_log_sha256": "a3d880d7c900bc2864077823b6017b4105d8fc78bb0cf859995ca4894dd7a3dd",
+        "build_peak_memory_bytes": null,
+        "bytes": 8162416,
+        "cargo": "1.95.0",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "native_reorg_query_cost"
+        ],
+        "compiler": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "observer_sha256": "fa0fb60feb71c09043a72a8806bc689a366782697c2935dd39810a8f4a1ca7cb",
+        "profile": "original release; no extra RUSTFLAGS",
+        "schema": "throughput-reorg-build-v1",
+        "sha256": "fc525d355ea1489eeb5163101a1572360c8c48385d10e6006dfe6b2c474afe76",
+        "source_commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "source_tree": "1fc19c44ab2d4b35672b25d0f4e4039b769cadea",
+        "store_sha256": "8e65b358f83e7be4863879dd719fd7bf17af7ff78dae60e7b8ebb30c64605541"
+      },
+      "receipt_file": "baseline-build-receipt.json",
+      "receipt_sha256": "eafb91e696ed72ce4ef4c263df8569f7928284f2c10f64e6fea5407b3a87c499"
+    },
+    "candidate": {
+      "binary": "/workspace/scratch/ae364bcbabfb/validation/reorg-candidate-a9efd4c",
+      "identity": {
+        "bytes": 8153272,
+        "elf_machine": 62,
+        "sha256": "e9fc0da3abc32f868f89abb4eb3dc9cab7e36011987b0c592df6d005c3dfa60b"
+      },
+      "receipt": {
+        "binary": "/workspace/scratch/ae364bcbabfb/validation/reorg-candidate-a9efd4c",
+        "build_command_record": "exact-source/reorg-release-build-cache-cleared.json",
+        "build_cpu_ns": null,
+        "build_exit": 0,
+        "build_log": "exact-source/reorg-release-build-cache-cleared.log",
+        "build_log_sha256": "b26894100ddc9573776a4c0f62370e6677ceeb733966c8c85f2b87e69119cb85",
+        "build_peak_memory_bytes": null,
+        "bytes": 8153272,
+        "cache_repair": "cargo clean --release for trnm-mvcc-fee, trnm-data-availability and trnm-pon-node; all three packages recompiled from candidate checkout; baseline executable kept separate",
+        "cargo": "1.95.0",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "native_reorg_query_cost"
+        ],
+        "compiler": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "observer_sha256": "fa0fb60feb71c09043a72a8806bc689a366782697c2935dd39810a8f4a1ca7cb",
+        "profile": "original release; no extra RUSTFLAGS",
+        "retained_previous_failure": "exact-source/reorg-release-build.json",
+        "schema": "throughput-reorg-build-v1",
+        "sha256": "e9fc0da3abc32f868f89abb4eb3dc9cab7e36011987b0c592df6d005c3dfa60b",
+        "source_commit": "a9efd4cba7546a8ef1e854ee0acdce9f5903ac2d",
+        "source_tree": "807e589d4cb8c2c0d2c2123e8e4ff0870d6a1eb7",
+        "store_sha256": "a8767acddd8c49133d105f87a988514c509866fc36e3817866c5fc7d3ac494c3"
+      },
+      "receipt_file": "candidate-build-receipt.json",
+      "receipt_sha256": "b6362f15dcc5eb7d1db8c26a67808e2daab67eb54e0c23bc7b702985050ecb09"
+    }
+  },
+  "host": {
+    "allowed_cpus": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "cgroup": {
+      "cpu.max": "800000 100000",
+      "cpuset.cpus.effective": "0-8",
+      "memory.max": "8589934592",
+      "memory.swap.max": "max",
+      "pids.max": "max"
+    },
+    "logical_cpus": 9,
+    "machine": "x86_64",
+    "system": "Linux",
+    "uname": [
+      "Linux",
+      "65b974a7b2fb",
+      "6.18.57",
+      "#1 SMP Tue Oct 20 21:56:04 UTC 2026",
+      "x86_64",
+      "x86_64"
+    ]
+  },
+  "source": {
+    "commit": "a9efd4cba7546a8ef1e854ee0acdce9f5903ac2d",
+    "source_state": "committed-clean",
+    "tracked_bytes": 1027954932,
+    "tracked_entries": 10797,
+    "tracked_worktree_verified": true,
+    "tree": "807e589d4cb8c2c0d2c2123e8e4ff0870d6a1eb7"
+  }
+}

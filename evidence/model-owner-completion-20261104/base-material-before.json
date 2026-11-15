@@ -1,0 +1,45 @@
+{
+  "source_commit": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+  "source_sha256": "9a567f29f0bc64913dbfaae45d195772b66362c775060c1e418d3ed92f3741b6",
+  "scope": "actual-tiny-untrained-Llama-path-substitution-not-pretrained-or-authorized-use",
+  "tiny_profile_overrides": [
+    "RUNTIME_CONFIG_PROFILE dimensions",
+    "RUNTIME_LOADED_PARAMETERS count"
+  ],
+  "verified_actual_shapes": true,
+  "verified_actual_fp32_dtype": true,
+  "verified_tied_head": true,
+  "vocab_size": 49152,
+  "threads": 1,
+  "pretrained_execution": false,
+  "qualification": false,
+  "torch": "2.9.1+cpu",
+  "tokenizer_substitution": {
+    "old_path_accepted": true,
+    "same_fp32_backbone": true,
+    "declared_tokenizer_root": "f2b80c33a95068489488d7875b51a1ae73d320ebb255b7ea32269896739fa2da",
+    "loaded_tokenizer_file_differs_from_pin": true,
+    "original_ids": [
+      3,
+      4
+    ],
+    "substituted_ids": [
+      4,
+      3
+    ],
+    "same_vocabulary_size": true,
+    "same_chat_template": true,
+    "forward_max_absolute_difference": 0.38436418771743774
+  },
+  "config_substitution": {
+    "old_path_accepted": true,
+    "same_fp32_backbone": true,
+    "declared_architecture_unchanged": true,
+    "actual_rope_theta": 16,
+    "actual_rms_norm_eps": 0.125,
+    "original_rope_theta": 100000,
+    "original_rms_norm_eps": 1e-05,
+    "loaded_config_file_differs_from_pin": true,
+    "forward_max_absolute_difference": 0.23294110596179962
+  }
+}

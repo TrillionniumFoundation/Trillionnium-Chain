@@ -1,0 +1,17 @@
+{
+  "name": "frozen-ci-contract-current",
+  "argv": [
+    "python3",
+    "scripts/ci/check_ci_contract.py"
+  ],
+  "cwd": "/workspace/scratch/678905e225be/chain-lifetime",
+  "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+  "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+  "started_utc": "2026-11-09T14:03:17.517139+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 0.48815084300076705,
+  "stdout_bytes": 180,
+  "stdout_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

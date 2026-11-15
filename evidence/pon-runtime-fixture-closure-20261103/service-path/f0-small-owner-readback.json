@@ -1,0 +1,340 @@
+{
+  "schema": "trnm-original-f0-small-owner-readback-v1",
+  "source_head": "b28098c092dca72165c0d26054fce95a8636d777",
+  "scope": "Original recorded before/after native owner snapshots; not a new run, performance comparison, exact per-request attribution or whole-host CPU percentage. Intervals are nested and cannot be added.",
+  "capture_scope_source": {
+    "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs",
+    "before": "446-447: after seed replay and initial active read, before original service starts",
+    "after": "760-767: after original service.finish/join, before final read_active at790-791"
+  },
+  "source_readback": {
+    "path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/f0-stage-deltas.json",
+    "sha256": "fd5c9893f6e69bc09ec20c1534d60c6b2d822695c91f58ef62a913fab9029e5a"
+  },
+  "archive": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/b280-review/b280-f0-13269380609.zip",
+    "bytes": 17510407,
+    "sha256": "ff7797f705eeafd7faeddcfb4b7a64ef695627f288954d3e20ed7a8602897074"
+  },
+  "selected_raw_before_after_rows": [
+    {
+      "mode": "baseline",
+      "actor": "independent_client",
+      "entry": {
+        "name": "execution/raw/baseline-fixed-root-host-control/phase-result.json",
+        "bytes": 3293025,
+        "sha256": "2166928618de18b739a6ff1dec849f1448279c639f23f58527f3f9f16b73647b"
+      },
+      "measurement_failure_before": false,
+      "measurement_failure_after": false,
+      "stages": [
+        {
+          "stage": "publish",
+          "before": {
+            "calls": 4,
+            "cpu_known_calls": 4,
+            "cpu_ns": 219704496,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 895398983
+          },
+          "after": {
+            "calls": 18,
+            "cpu_known_calls": 18,
+            "cpu_ns": 2036390374,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 9068084707
+          },
+          "delta": {
+            "calls": 14,
+            "cpu_known_calls": 14,
+            "cpu_ns": 1816685878,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 8172685724
+          }
+        },
+        {
+          "stage": "admission",
+          "before": {
+            "calls": 4,
+            "cpu_known_calls": 4,
+            "cpu_ns": 409651395,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 1610790485
+          },
+          "after": {
+            "calls": 18,
+            "cpu_known_calls": 18,
+            "cpu_ns": 4002795712,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 17310248049
+          },
+          "delta": {
+            "calls": 14,
+            "cpu_known_calls": 14,
+            "cpu_ns": 3593144317,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 15699457564
+          }
+        },
+        {
+          "stage": "activation",
+          "before": {
+            "calls": 4,
+            "cpu_known_calls": 4,
+            "cpu_ns": 102953471,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 401915300
+          },
+          "after": {
+            "calls": 6,
+            "cpu_known_calls": 6,
+            "cpu_ns": 1487907062,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 6598610740
+          },
+          "delta": {
+            "calls": 2,
+            "cpu_known_calls": 2,
+            "cpu_ns": 1384953591,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 6196695440
+          }
+        },
+        {
+          "stage": "account_graph",
+          "before": {
+            "calls": 34,
+            "cpu_known_calls": 34,
+            "cpu_ns": 55397221,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 55429779
+          },
+          "after": {
+            "calls": 150,
+            "cpu_known_calls": 150,
+            "cpu_ns": 3752485785,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 16779875965
+          },
+          "delta": {
+            "calls": 116,
+            "cpu_known_calls": 116,
+            "cpu_ns": 3697088564,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 16724446186
+          }
+        }
+      ]
+    },
+    {
+      "mode": "valid-work-root",
+      "actor": "receiver",
+      "entry": {
+        "name": "execution/raw/valid-work-root-fixed-root-host-control/phase-result.json",
+        "bytes": 5129506,
+        "sha256": "7c9270aeac4e084f3030fabc53a1529bf33a03cd153ce124909bb5f403ef6854"
+      },
+      "measurement_failure_before": false,
+      "measurement_failure_after": false,
+      "stages": [
+        {
+          "stage": "activation",
+          "before": {
+            "calls": 4,
+            "cpu_known_calls": 4,
+            "cpu_ns": 101583280,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 476652855
+          },
+          "after": {
+            "calls": 14,
+            "cpu_known_calls": 14,
+            "cpu_ns": 217883757,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 1216731279
+          },
+          "delta": {
+            "calls": 10,
+            "cpu_known_calls": 10,
+            "cpu_ns": 116300477,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 740078424
+          }
+        },
+        {
+          "stage": "account_graph",
+          "before": {
+            "calls": 36,
+            "cpu_known_calls": 36,
+            "cpu_ns": 68716058,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 369183037
+          },
+          "after": {
+            "calls": 430,
+            "cpu_known_calls": 430,
+            "cpu_ns": 2877804796,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 15582647440
+          },
+          "delta": {
+            "calls": 394,
+            "cpu_known_calls": 394,
+            "cpu_ns": 2809088738,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 15213464403
+          }
+        }
+      ]
+    },
+    {
+      "mode": "valid-work-root",
+      "actor": "independent_client",
+      "entry": {
+        "name": "execution/raw/valid-work-root-fixed-root-host-control/phase-result.json",
+        "bytes": 5129506,
+        "sha256": "7c9270aeac4e084f3030fabc53a1529bf33a03cd153ce124909bb5f403ef6854"
+      },
+      "measurement_failure_before": false,
+      "measurement_failure_after": false,
+      "stages": [
+        {
+          "stage": "publish",
+          "before": {
+            "calls": 4,
+            "cpu_known_calls": 4,
+            "cpu_ns": 216277742,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 890092432
+          },
+          "after": {
+            "calls": 4,
+            "cpu_known_calls": 4,
+            "cpu_ns": 216277742,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 890092432
+          },
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          }
+        },
+        {
+          "stage": "admission",
+          "before": {
+            "calls": 4,
+            "cpu_known_calls": 4,
+            "cpu_ns": 404524755,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 1677512838
+          },
+          "after": {
+            "calls": 5,
+            "cpu_known_calls": 5,
+            "cpu_ns": 486605109,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 2477937024
+          },
+          "delta": {
+            "calls": 1,
+            "cpu_known_calls": 1,
+            "cpu_ns": 82080354,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 800424186
+          }
+        },
+        {
+          "stage": "activation",
+          "before": {
+            "calls": 4,
+            "cpu_known_calls": 4,
+            "cpu_ns": 100586109,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 474901666
+          },
+          "after": {
+            "calls": 4,
+            "cpu_known_calls": 4,
+            "cpu_ns": 100586109,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 474901666
+          },
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          }
+        },
+        {
+          "stage": "account_graph",
+          "before": {
+            "calls": 34,
+            "cpu_known_calls": 34,
+            "cpu_ns": 55379191,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 205148456
+          },
+          "after": {
+            "calls": 35,
+            "cpu_known_calls": 35,
+            "cpu_ns": 130211690,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 910028629
+          },
+          "delta": {
+            "calls": 1,
+            "cpu_known_calls": 1,
+            "cpu_ns": 74832499,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 704880173
+          }
+        }
+      ]
+    }
+  ],
+  "observed_failure_boundary": {
+    "mode": "valid-work-root",
+    "actor": "independent_client",
+    "failed_imports": 1,
+    "successful_imports": 0,
+    "terminal_error": "PUBLIC_REQUEST_DEADLINE",
+    "activation_delta_calls": 0,
+    "publish_delta_calls": 0,
+    "interpretation": "The recorded failed import did not reach activation or publication. An append-only optimization does not directly remove the measured failed admission graph cost."
+  }
+}

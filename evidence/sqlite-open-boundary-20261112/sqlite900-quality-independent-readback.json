@@ -1,0 +1,81 @@
+{
+  "artifact_id": 13843531543,
+  "archive_bytes": 614086,
+  "archive_sha256": "0cfcc708ba2117942a1ae5461cfa3cda527475249750559f6180067615aa09a4",
+  "unique_members": true,
+  "member_count": 14,
+  "crc_failure": null,
+  "original_source": {
+    "commit": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+    "source_state": "committed-clean",
+    "tracked_bytes": 2555443317,
+    "tracked_entries": 26871,
+    "tracked_worktree_verified": true,
+    "tree": "6b4cc764016598c2737f0110829d43865546ce98"
+  },
+  "original_result": "FAIL",
+  "original_observations": [
+    {
+      "log": "tool-version.log",
+      "exit_code": 0,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "log": "fetch-crates-0.log",
+      "exit_code": 0,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "log": "fetch-crates-1.log",
+      "exit_code": 0,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "log": "fetch-advisories.log",
+      "exit_code": 0,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "log": "archive-0.log",
+      "exit_code": 0,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "log": "check-0.jsonl",
+      "exit_code": 1,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "log": "check-1.jsonl",
+      "exit_code": 0,
+      "source_verified": true,
+      "timed_out": false
+    }
+  ],
+  "artifact_pins_verified": {
+    "advisories-0-31cf5a8673e10d3a4d7d829ad5095f47ed419049.tar.gz": true,
+    "archive-0.log": true,
+    "check-0.jsonl": true,
+    "check-1.jsonl": true,
+    "fetch-advisories.log": true,
+    "fetch-crates-0.log": true,
+    "fetch-crates-1.log": true,
+    "tool-version.log": true
+  },
+  "diagnostics": [
+    {
+      "log": "check-0.jsonl",
+      "id": "RUSTSEC-2026-0486",
+      "package": "rustix",
+      "code": "unsound"
+    }
+  ],
+  "new_native_or_ci_execution": false,
+  "scope": "original supply-chain archive readback only"
+}

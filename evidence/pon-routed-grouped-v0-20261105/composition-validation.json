@@ -1,0 +1,375 @@
+{
+  "source_before": {
+    "head": "32c3d63c907d0060a5b02cd678c74b01e54ec0f9",
+    "tree": "f35ca28e45ff563aac85164e971b7c1ae4d71def",
+    "status": ""
+  },
+  "source_after": {
+    "head": "32c3d63c907d0060a5b02cd678c74b01e54ec0f9",
+    "tree": "f35ca28e45ff563aac85164e971b7c1ae4d71def",
+    "status": ""
+  },
+  "source_unchanged": true,
+  "checks": [
+    {
+      "name": "grouped-python",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_grouped*.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "wall_ns": 615185778,
+      "log_sha256": "320f040570e8b7cd336b4db3e74120ff248a5cfb3b88d0f0252183f7ff63ba7f",
+      "log_bytes": 5894,
+      "python_test_counts": [
+        "32"
+      ],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "retained-w1-consumer",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_shared_cell_operator_v1.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "wall_ns": 1702223710,
+      "log_sha256": "3151285429e5ad4183f5bb20a2a97c11bcb8bd1a04f52a02159b1bd053acfcd1",
+      "log_bytes": 2109,
+      "python_test_counts": [
+        "12"
+      ],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "ci-source-negatives",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "returncode": 0,
+      "wall_ns": 4112155945,
+      "log_sha256": "932fc17e98f30a232aa1564c3c61f863e7460979552d48f1c5a9b3f8eb8410ca",
+      "log_bytes": 6898,
+      "python_test_counts": [
+        "43"
+      ],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "pq-source-negatives",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "returncode": 0,
+      "wall_ns": 23490896588,
+      "log_sha256": "5e9975047d4e5e9a366b6c2db34a2ddd535d5efdb13c0505b9487f06cd32866e",
+      "log_bytes": 137,
+      "python_test_counts": [
+        "37"
+      ],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "ci-contract",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "returncode": 0,
+      "wall_ns": 10960462937,
+      "log_sha256": "f73ef8c312ea43d814b1f784cba6373a89554b33919e1f1f7e7974bf9b4007f9",
+      "log_bytes": 16318,
+      "python_test_counts": [
+        "98"
+      ],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "retained-native",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--release",
+        "--jobs",
+        "2",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--all-targets"
+      ],
+      "returncode": 0,
+      "wall_ns": 43430719375,
+      "log_sha256": "c8ae00156a2ed07f0e13a195a4a71ef44b5e06c647a7e8138afd1d83058749fc",
+      "log_bytes": 26141,
+      "python_test_counts": [],
+      "rust_test_summaries": [
+        "test result: ok. 149 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.60s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s",
+        "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+        "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+        "test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s",
+        "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+        "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+      ]
+    },
+    {
+      "name": "strict-clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--release",
+        "--jobs",
+        "2",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 0,
+      "wall_ns": 3223390696,
+      "log_sha256": "d8be1b0112356d59ec3fbd80c907ff8990c4fa8a03183df3ce827d365f0511d4",
+      "log_bytes": 188,
+      "python_test_counts": [],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "workspace-format",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--check"
+      ],
+      "returncode": 0,
+      "wall_ns": 11664962435,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "python_test_counts": [],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "pq-source-check",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "returncode": 0,
+      "wall_ns": 176896075,
+      "log_sha256": "641eb6ec3d7f216485f37620658762802b9b5afe9338a57e4269f989f46f2345",
+      "log_bytes": 557,
+      "python_test_counts": [],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "inventory",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "wall_ns": 57389767,
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "log_bytes": 35,
+      "python_test_counts": [],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "repository",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "scripts/ci/check_repository.py"
+      ],
+      "returncode": 0,
+      "wall_ns": 45748299393,
+      "log_sha256": "120f56e4052c88eef3037f1b7bc4acfd10bc53d735d0a687c6081e5a2fd3ec92",
+      "log_bytes": 307,
+      "python_test_counts": [],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "locked-graph",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "returncode": 0,
+      "wall_ns": 151690509,
+      "log_sha256": "b8287f6b202e61e452ceb24de8b207ad29766d820ab917e7ba4a2b6193a7cfd2",
+      "log_bytes": 833239,
+      "python_test_counts": [],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "wall_ns": 8649613,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "python_test_counts": [],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "source-identity",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "32c3d63c907d0060a5b02cd678c74b01e54ec0f9",
+        "--output",
+        "/workspace/scratch/78dc81ff67a6/measurements/validation-32c3d63/raw-source-identity.json"
+      ],
+      "returncode": 0,
+      "wall_ns": 1913377288,
+      "log_sha256": "9cb90899c2f94527d2b3269904988f61cdad2b3042e9c823a9b3dc851f61b596",
+      "log_bytes": 422,
+      "python_test_counts": [],
+      "rust_test_summaries": []
+    }
+  ],
+  "scope": "M01 all default-feature native targets, grouped and retained W1 Python, CI/source/graph/format/link checks; not full workspace or public-service execution",
+  "schema": "pon-routed-grouped-composition-validation-v0",
+  "build": {
+    "source": "32c3d63c907d0060a5b02cd678c74b01e54ec0f9",
+    "argv": [
+      "cargo",
+      "build",
+      "--locked",
+      "--release",
+      "--jobs",
+      "2",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-crypto-primitives",
+      "--example",
+      "pon_routed_int257_grouped"
+    ],
+    "returncode": 0,
+    "wall_ns": 7362322511,
+    "log_sha256": "de737eb44f1adfe459c22808daa9d04af93235c237eb5c38672b4a7e37b9fd9f",
+    "runner_sha256": "00868858aac1def3db92d7c1027739960f45f31d0244bb439b52117ef17137e0"
+  },
+  "test_counts": {
+    "grouped-python": 32,
+    "retained-w1-consumer": 12,
+    "ci-source-negatives": 43,
+    "pq-source-negatives": 37,
+    "ci-contract": 98,
+    "retained-native": 208
+  },
+  "source_registration_result": {
+    "canonical_default_provider_contract_checked": true,
+    "canonical_pnq2_contract_checked": true,
+    "continuous_npq6_combination_accepted": false,
+    "cryptographic_acceptance": false,
+    "exact_source_blobs": 505,
+    "legacy_qtx1_optional_adapter_contract_checked": true,
+    "native_transfer_account_contract_checked": true,
+    "native_transport_contract_checked": true,
+    "node_activated": false,
+    "production_confidentiality_accepted": false,
+    "schema": "trnm-pq-cross-branch-check-v1",
+    "status": "HOLD_NO_GO",
+    "upstream_heads": 6,
+    "whole_native_authorization_migrated": false
+  },
+  "repository_result": {
+    "activation": false,
+    "head": "32c3d63c907d0060a5b02cd678c74b01e54ec0f9",
+    "local_links": 3076,
+    "normal_dependency_edges": 25,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1153,
+    "source_state": "committed-clean",
+    "tree": "f35ca28e45ff563aac85164e971b7c1ae4d71def",
+    "workspace_packages": 26
+  },
+  "declared_measurement_source_changes": [
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py",
+      "measured_sha256": "3eba7b1d04065abd868428936b07bca0033e7f2a087ae792b7a183afd6b020d8",
+      "composition_sha256": "5c2c6d900c6a6898a5d5eb8b28d48a44217159b0efe11fb84d8f0f58277dbaf6"
+    }
+  ],
+  "imported_helper_ast_equal": {
+    "baseline": false,
+    "execution_identity": true,
+    "hardware_snapshot": true,
+    "load_inputs": true,
+    "numpy_operator": true,
+    "prepare_numpy": true,
+    "save_json": true
+  },
+  "comparison_to_measured_source": {
+    "measurement_source": "e0fc4df37bed96050db2a07d91d427829921e5fa",
+    "owned_grouped_files_unchanged": [
+      "formal/pon-nakamoto-v1/experiments/grouped_cell_operator_v0.py",
+      "formal/pon-nakamoto-v1/grouped_low_rank_v0.py",
+      "formal/pon-nakamoto-v1/grouped_request_batch_v0.py",
+      "formal/pon-nakamoto-v1/test_grouped_cell_operator_v0.py",
+      "formal/pon-nakamoto-v1/test_grouped_low_rank_v0.py",
+      "formal/pon-nakamoto-v1/test_grouped_request_batch_v0.py",
+      "trillionnium/crates/trnm-crypto-primitives/examples/pon_routed_int257_grouped.rs",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_routed_int257_grouped.rs"
+    ],
+    "binary_identical": false,
+    "performance_observation_performed": false,
+    "timing_tables_apply_to_later_binary": false,
+    "purpose": "Check compatibility with concurrent W1 cost and CI/source registration changes. Do not relabel earlier measurements."
+  }
+}

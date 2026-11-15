@@ -1,0 +1,391 @@
+{
+  "schema": "throughput-retained-command-files-v1",
+  "files": [
+    {
+      "source_file": "exact-source/acceptance-reader.json",
+      "retained_file": "acceptance-reader.json",
+      "original_bytes": 1958,
+      "original_sha256": "6d8c224f4521ad1a712d2274789a45e3ba6ccb99ab0f2228a3e8326b36bc9caf",
+      "encoding": "identity",
+      "retained_sha256": "6d8c224f4521ad1a712d2274789a45e3ba6ccb99ab0f2228a3e8326b36bc9caf"
+    },
+    {
+      "source_file": "exact-source/acceptance-reader.log",
+      "retained_file": "acceptance-reader.log.gz",
+      "original_bytes": 24541,
+      "original_sha256": "5a69c9e8ff359199a29fc7d4c917a309ff7906796dc0809d64fe84cbf86b9c51",
+      "encoding": "gzip",
+      "retained_sha256": "64d750f5f9274fefd8879f8695ce5135ac2c437ed81bcac3c74f4704096d14bc"
+    },
+    {
+      "source_file": "exact-source/cargo-graph.json",
+      "retained_file": "cargo-graph.json",
+      "original_bytes": 2387,
+      "original_sha256": "258f457968e62445ec1af1a20a42db03f3b9f627201b6273585b51f242d9cd6b",
+      "encoding": "identity",
+      "retained_sha256": "258f457968e62445ec1af1a20a42db03f3b9f627201b6273585b51f242d9cd6b"
+    },
+    {
+      "source_file": "exact-source/cargo-graph.log",
+      "retained_file": "cargo-graph.log.gz",
+      "original_bytes": 852592,
+      "original_sha256": "38ad85450e0edbad5b13069ec884fbca6ebfbc13ceec9bf1e9051bb337976830",
+      "encoding": "gzip",
+      "retained_sha256": "f58fdf8242006753659df1801ee2756ff38f3ec7a747a8b36479b247ad9098f0"
+    },
+    {
+      "source_file": "exact-source/clippy-workspace.json",
+      "retained_file": "clippy-workspace.json",
+      "original_bytes": 2433,
+      "original_sha256": "bc6b82c6ac3807fb7fcc47fee608f963b1c7a95d56509f6ee3fb880955c17411",
+      "encoding": "identity",
+      "retained_sha256": "bc6b82c6ac3807fb7fcc47fee608f963b1c7a95d56509f6ee3fb880955c17411"
+    },
+    {
+      "source_file": "exact-source/clippy-workspace.log",
+      "retained_file": "clippy-workspace.log.gz",
+      "original_bytes": 5779,
+      "original_sha256": "92cce50832584c59abcc1129d6a8c0b9ab568d1793e4095853ec2954e5b34e69",
+      "encoding": "gzip",
+      "retained_sha256": "8df087448ad709ad7f6bdcb9bb05cc326c1369b78afadf48fe0b74c245f57e3f"
+    },
+    {
+      "source_file": "exact-source/command-exits.txt",
+      "retained_file": "command-exits.txt",
+      "original_bytes": 99,
+      "original_sha256": "9005d311d7f7185f02afe03b99de010509ad48fc46f1ec80ccaeddcf8f567ed6",
+      "encoding": "identity",
+      "retained_sha256": "9005d311d7f7185f02afe03b99de010509ad48fc46f1ec80ccaeddcf8f567ed6"
+    },
+    {
+      "source_file": "exact-source/command-recorder-controls.json",
+      "retained_file": "command-recorder-controls.json",
+      "original_bytes": 1967,
+      "original_sha256": "2cc6440a57f171f745492165f788783a153fd8aa6b836d9896c595a4b2b1611d",
+      "encoding": "identity",
+      "retained_sha256": "2cc6440a57f171f745492165f788783a153fd8aa6b836d9896c595a4b2b1611d"
+    },
+    {
+      "source_file": "exact-source/command-recorder-controls.log",
+      "retained_file": "command-recorder-controls.log.gz",
+      "original_bytes": 576,
+      "original_sha256": "2b0e53c128be655ece89fb2af7c861440fd61bc8c2cace1b90bd270dfedf02dd",
+      "encoding": "gzip",
+      "retained_sha256": "8889f8d9b034de2af70fc6f6bc2240f1849359d31924a648511a2a0e2030e28e"
+    },
+    {
+      "source_file": "exact-source/data-availability-lib.json",
+      "retained_file": "data-availability-lib.json",
+      "original_bytes": 2447,
+      "original_sha256": "01cf57c9923c7e8765a8af67eb524221fe994272a3649755cceee21404f498f5",
+      "encoding": "identity",
+      "retained_sha256": "01cf57c9923c7e8765a8af67eb524221fe994272a3649755cceee21404f498f5"
+    },
+    {
+      "source_file": "exact-source/data-availability-lib.log",
+      "retained_file": "data-availability-lib.log.gz",
+      "original_bytes": 38866,
+      "original_sha256": "f03cc1c87ea5824f6e0171b53456cf278bb9e58eebcd8ac9b45515e0c8469a9c",
+      "encoding": "gzip",
+      "retained_sha256": "3008a5ef439ae299d18a4a3f92d448078f9a98861197155ca35f33d4de4dc9cb"
+    },
+    {
+      "source_file": "exact-source/fmt.json",
+      "retained_file": "fmt.json",
+      "original_bytes": 2320,
+      "original_sha256": "33592d06f8d875eedaa204439ed85c5ca8e58a8a6bb75971760b21c451e35bb1",
+      "encoding": "identity",
+      "retained_sha256": "33592d06f8d875eedaa204439ed85c5ca8e58a8a6bb75971760b21c451e35bb1"
+    },
+    {
+      "source_file": "exact-source/fmt.log",
+      "retained_file": "fmt.log.gz",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "retained_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "source_file": "exact-source/fresh-service-reader.json",
+      "retained_file": "fresh-service-reader.json",
+      "original_bytes": 1961,
+      "original_sha256": "4679c67651f896a9e5b1d2a62c666b2d8e81c5823996edf4f29975c1d75c863a",
+      "encoding": "identity",
+      "retained_sha256": "4679c67651f896a9e5b1d2a62c666b2d8e81c5823996edf4f29975c1d75c863a"
+    },
+    {
+      "source_file": "exact-source/fresh-service-reader.log",
+      "retained_file": "fresh-service-reader.log.gz",
+      "original_bytes": 119,
+      "original_sha256": "6c5949a6b7772313e88d64eba39480ed4c9c0a0bb5eb64cfb4278b899c139de3",
+      "encoding": "gzip",
+      "retained_sha256": "ba45a7daf8640607aa4d98087b7a6dce11f22c38801c15e5dd28592a8df277d9"
+    },
+    {
+      "source_file": "exact-source/inventory-check.json",
+      "retained_file": "inventory-check.json",
+      "original_bytes": 1975,
+      "original_sha256": "ccce7c46aaefaa8363d6298549186bbcfc70583909344eaa636fde82adb6e0f3",
+      "encoding": "identity",
+      "retained_sha256": "ccce7c46aaefaa8363d6298549186bbcfc70583909344eaa636fde82adb6e0f3"
+    },
+    {
+      "source_file": "exact-source/inventory-check.log",
+      "retained_file": "inventory-check.log.gz",
+      "original_bytes": 35,
+      "original_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "encoding": "gzip",
+      "retained_sha256": "b2ac584c0e9f95251d4fe5572e1692e11a8923a388dc7e7a4ebf112954435108"
+    },
+    {
+      "source_file": "exact-source/m06-lib.json",
+      "retained_file": "m06-lib.json",
+      "original_bytes": 2424,
+      "original_sha256": "c0832d7ec9c04972e3dacf5d91bd86a764e733a2017503e94b2a99c81218b555",
+      "encoding": "identity",
+      "retained_sha256": "c0832d7ec9c04972e3dacf5d91bd86a764e733a2017503e94b2a99c81218b555"
+    },
+    {
+      "source_file": "exact-source/m06-lib.log",
+      "retained_file": "m06-lib.log.gz",
+      "original_bytes": 18138,
+      "original_sha256": "a44b4c90deaae0b83daecbb37d6eedc24aa4c91eebd41162e410f7e77b4e1b8b",
+      "encoding": "gzip",
+      "retained_sha256": "6b885b368d82eb017ee917f74cf485f603ddf43ca32eb9aa549b5b6b25e99025"
+    },
+    {
+      "source_file": "exact-source/node-lib.json",
+      "retained_file": "node-lib.json",
+      "original_bytes": 2427,
+      "original_sha256": "ecee69e73431f0547a1fac3aa189606b76709266eece417972f0f93474e96572",
+      "encoding": "identity",
+      "retained_sha256": "ecee69e73431f0547a1fac3aa189606b76709266eece417972f0f93474e96572"
+    },
+    {
+      "source_file": "exact-source/node-lib.log",
+      "retained_file": "node-lib.log.gz",
+      "original_bytes": 154084,
+      "original_sha256": "3920b9dea6408a57b204fa49217549759c8ef7a8b8f963b8edd55c6a91ce0932",
+      "encoding": "gzip",
+      "retained_sha256": "7546e8b70f8ee6755e6d5a2e8c77ca579ae82e85b74ecfebe9cc5315ecc861cd"
+    },
+    {
+      "source_file": "exact-source/pq-source-check.json",
+      "retained_file": "pq-source-check.json",
+      "original_bytes": 1957,
+      "original_sha256": "683f6e4921734ece8f4e91e44a5e337c041bdbbf3a4a8d1429432f59db3225f3",
+      "encoding": "identity",
+      "retained_sha256": "683f6e4921734ece8f4e91e44a5e337c041bdbbf3a4a8d1429432f59db3225f3"
+    },
+    {
+      "source_file": "exact-source/pq-source-check.log",
+      "retained_file": "pq-source-check.log.gz",
+      "original_bytes": 557,
+      "original_sha256": "34547b48ac463b9ce1ff0efa705294aa02b12f7cdc55287ce5a9980d638071ed",
+      "encoding": "gzip",
+      "retained_sha256": "a6c331970743344909bf3b9b9fe5b8bbd6bc46d3784987da0b35d57089ae4fcb"
+    },
+    {
+      "source_file": "exact-source/pq-source-controls.json",
+      "retained_file": "pq-source-controls.json",
+      "original_bytes": 1960,
+      "original_sha256": "62c6f40fc9606291bae39e1a1b77ff50096233a33342ca73cde2e7ed4c0cd30b",
+      "encoding": "identity",
+      "retained_sha256": "62c6f40fc9606291bae39e1a1b77ff50096233a33342ca73cde2e7ed4c0cd30b"
+    },
+    {
+      "source_file": "exact-source/pq-source-controls.log",
+      "retained_file": "pq-source-controls.log.gz",
+      "original_bytes": 137,
+      "original_sha256": "8bd5bb62c72e5162e96409e015c6e8f8b2ca87c55f393767a5568ba5876e0ed5",
+      "encoding": "gzip",
+      "retained_sha256": "ae4b30fb891b7cafbc3dc83f8d8423f17a3689ff3333ac420761e35a1c40bd16"
+    },
+    {
+      "source_file": "exact-source/python-exits.txt",
+      "retained_file": "python-exits.txt",
+      "original_bytes": 187,
+      "original_sha256": "5e95853b98e37d29eb46c7d86ab263194821cb7d844b8d361b89715799f64a6b",
+      "encoding": "identity",
+      "retained_sha256": "5e95853b98e37d29eb46c7d86ab263194821cb7d844b8d361b89715799f64a6b"
+    },
+    {
+      "source_file": "exact-source/reorg-abba-controls.json",
+      "retained_file": "reorg-abba-controls.json",
+      "original_bytes": 1963,
+      "original_sha256": "d0f49495b87a6402d077369603c667e641ead431d6eae73adfffe42a2a54e08e",
+      "encoding": "identity",
+      "retained_sha256": "d0f49495b87a6402d077369603c667e641ead431d6eae73adfffe42a2a54e08e"
+    },
+    {
+      "source_file": "exact-source/reorg-abba-controls.log",
+      "retained_file": "reorg-abba-controls.log.gz",
+      "original_bytes": 101,
+      "original_sha256": "27c4a39d34ece4cbc66cc59cb0870c7abe4cc0a5f009205bdd0ea06a93f8b3ac",
+      "encoding": "gzip",
+      "retained_sha256": "06e5e0eb9b2690f485bbf4eba05fcc3cda15d8c83757e92612f53328b1dd45dd"
+    },
+    {
+      "source_file": "exact-source/reorg-release-build-cache-cleared.json",
+      "retained_file": "reorg-release-build-cache-cleared.json",
+      "original_bytes": 2223,
+      "original_sha256": "04a5193cb852c94f733b3ab99f3ad3cc90890e72375da66807a09567e9392c84",
+      "encoding": "identity",
+      "retained_sha256": "04a5193cb852c94f733b3ab99f3ad3cc90890e72375da66807a09567e9392c84"
+    },
+    {
+      "source_file": "exact-source/reorg-release-build-cache-cleared.log",
+      "retained_file": "reorg-release-build-cache-cleared.log.gz",
+      "original_bytes": 438,
+      "original_sha256": "b26894100ddc9573776a4c0f62370e6677ceeb733966c8c85f2b87e69119cb85",
+      "encoding": "gzip",
+      "retained_sha256": "48a8d1f340a42695ad0df1569301535d0c9525931e03b609775130ea4c20a776"
+    },
+    {
+      "source_file": "exact-source/reorg-release-build.json",
+      "retained_file": "reorg-release-build.json",
+      "original_bytes": 2208,
+      "original_sha256": "8f1b42c37515e89db2143c23744f55b7cfb6fccf405c26004419a22c6f5d0fea",
+      "encoding": "identity",
+      "retained_sha256": "8f1b42c37515e89db2143c23744f55b7cfb6fccf405c26004419a22c6f5d0fea"
+    },
+    {
+      "source_file": "exact-source/reorg-release-build.log",
+      "retained_file": "reorg-release-build.log.gz",
+      "original_bytes": 1040,
+      "original_sha256": "a59a226e87f35f3c694303bae824bc98846b1009ab58112183980150ae7940f2",
+      "encoding": "gzip",
+      "retained_sha256": "b844a38992196d346154e11f585edce9d5d37b9838b554d9dfd923198cf8d448"
+    },
+    {
+      "source_file": "exact-source/repeated-sender-cost-exact-selector.json",
+      "retained_file": "repeated-sender-cost-exact-selector.json",
+      "original_bytes": 2594,
+      "original_sha256": "2268991b5381da89d3dd87457fee7ec9dc45c5b4ff9da5c8947af2708854f31c",
+      "encoding": "identity",
+      "retained_sha256": "2268991b5381da89d3dd87457fee7ec9dc45c5b4ff9da5c8947af2708854f31c"
+    },
+    {
+      "source_file": "exact-source/repeated-sender-cost-exact-selector.log",
+      "retained_file": "repeated-sender-cost-exact-selector.log.gz",
+      "original_bytes": 33391,
+      "original_sha256": "f8d965f650b47a9c36629f8f4c88029de09c49333b4c2f36676d63a90f637209",
+      "encoding": "gzip",
+      "retained_sha256": "43bdcc178685242359fa98a7114bd2262f4e1182eb1f484ace428c9af85ab0dd"
+    },
+    {
+      "source_file": "exact-source/repeated-sender-cost.json",
+      "retained_file": "repeated-sender-cost.json",
+      "original_bytes": 2563,
+      "original_sha256": "613b90d9c0c8f6e6e83137e7898e349367c3487244b3bc98b7d49e6bdfad4198",
+      "encoding": "identity",
+      "retained_sha256": "613b90d9c0c8f6e6e83137e7898e349367c3487244b3bc98b7d49e6bdfad4198"
+    },
+    {
+      "source_file": "exact-source/repeated-sender-cost.log",
+      "retained_file": "repeated-sender-cost.log.gz",
+      "original_bytes": 293,
+      "original_sha256": "e1d80792f06b67464031aa06dfd2e4107211b1b81bd7b889bc20a9244b38ae6a",
+      "encoding": "gzip",
+      "retained_sha256": "c344bf421488c610be0945404b1239c08b53c0ab8d3b6470171869a7e2a3d490"
+    },
+    {
+      "source_file": "exact-source/repository-check.json",
+      "retained_file": "repository-check.json",
+      "original_bytes": 1946,
+      "original_sha256": "9388546d47319b8179a1659676eb8c02bb21fe09c3d0d45b1f9280f91f89a639",
+      "encoding": "identity",
+      "retained_sha256": "9388546d47319b8179a1659676eb8c02bb21fe09c3d0d45b1f9280f91f89a639"
+    },
+    {
+      "source_file": "exact-source/repository-check.log",
+      "retained_file": "repository-check.log.gz",
+      "original_bytes": 307,
+      "original_sha256": "4eea33f086fd57eddaa15eb848ef2d86423d6fc9ba0b963ba65d4c54a433ca0b",
+      "encoding": "gzip",
+      "retained_sha256": "7dc0b9161c2a58f1006adc72a8fe4fd1107ad52cc8de257191807972a1d9d1c6"
+    },
+    {
+      "source_file": "exact-source/source-negative.json",
+      "retained_file": "source-negative.json",
+      "original_bytes": 1953,
+      "original_sha256": "d78d88727e6e40f6653352d1e4906431d8a3d78156e1b26159e3029fca112566",
+      "encoding": "identity",
+      "retained_sha256": "d78d88727e6e40f6653352d1e4906431d8a3d78156e1b26159e3029fca112566"
+    },
+    {
+      "source_file": "exact-source/source-negative.log",
+      "retained_file": "source-negative.log.gz",
+      "original_bytes": 6898,
+      "original_sha256": "6a4bca8feca5ebdf11eae06f147b5affcf03c3658c67b299ce0c964204ae1a85",
+      "encoding": "gzip",
+      "retained_sha256": "586e1b87802a0494305fa3eaa56064d8f00e26bb5b1a10f233c3847861f51060"
+    },
+    {
+      "source_file": "exact-source/sqlite-lib.json",
+      "retained_file": "sqlite-lib.json",
+      "original_bytes": 2435,
+      "original_sha256": "c7cef574cf3e88ecebca0f24b24204223b52af6ab26daa944985dfb21b61438c",
+      "encoding": "identity",
+      "retained_sha256": "c7cef574cf3e88ecebca0f24b24204223b52af6ab26daa944985dfb21b61438c"
+    },
+    {
+      "source_file": "exact-source/sqlite-lib.log",
+      "retained_file": "sqlite-lib.log.gz",
+      "original_bytes": 1991,
+      "original_sha256": "527b9109bd51acbfad213cd4890538bbadbf9f9b0660a5256e0ca61cd8111946",
+      "encoding": "gzip",
+      "retained_sha256": "6aaaf46e26fd0853280f798dc80ccf6abe3409d52f6e8b661bf29e2982408fd8"
+    },
+    {
+      "source_file": "node-unix-socket-failure.json",
+      "retained_file": "node-unix-socket-failure.json",
+      "original_bytes": 15378,
+      "original_sha256": "ca2d13bd765074918a1893e0af3d58c2af87f473843868d0501bf351449b7750",
+      "encoding": "identity",
+      "retained_sha256": "ca2d13bd765074918a1893e0af3d58c2af87f473843868d0501bf351449b7750"
+    },
+    {
+      "source_file": "tested-local-commit.txt",
+      "retained_file": "tested-local-commit.txt",
+      "original_bytes": 318,
+      "original_sha256": "166f02b5f835ec7e104458d87c45601b5a310aca8e7e8a6217cd19aa72a12942",
+      "encoding": "identity",
+      "retained_sha256": "166f02b5f835ec7e104458d87c45601b5a310aca8e7e8a6217cd19aa72a12942"
+    },
+    {
+      "source_file": "repeated-sender-named-execution.json",
+      "retained_file": "repeated-sender-named-execution.json",
+      "original_bytes": 1222,
+      "original_sha256": "ab3ed7f74e7e0a1eb1d746df853737e83d547db95f7112bb446afdc8dc21d64a",
+      "encoding": "identity",
+      "retained_sha256": "ab3ed7f74e7e0a1eb1d746df853737e83d547db95f7112bb446afdc8dc21d64a"
+    },
+    {
+      "source_file": "reorg-baseline-build.json",
+      "retained_file": "reorg-baseline-build.json",
+      "original_bytes": 1090,
+      "original_sha256": "eafb91e696ed72ce4ef4c263df8569f7928284f2c10f64e6fea5407b3a87c499",
+      "encoding": "identity",
+      "retained_sha256": "eafb91e696ed72ce4ef4c263df8569f7928284f2c10f64e6fea5407b3a87c499"
+    },
+    {
+      "source_file": "reorg-candidate-build.json",
+      "retained_file": "reorg-candidate-build.json",
+      "original_bytes": 1463,
+      "original_sha256": "b6362f15dcc5eb7d1db8c26a67808e2daab67eb54e0c23bc7b702985050ecb09",
+      "encoding": "identity",
+      "retained_sha256": "b6362f15dcc5eb7d1db8c26a67808e2daab67eb54e0c23bc7b702985050ecb09"
+    },
+    {
+      "source_file": "reorg-baseline-build.log",
+      "retained_file": "reorg-baseline-build.log.gz",
+      "original_bytes": 1458,
+      "original_sha256": "a3d880d7c900bc2864077823b6017b4105d8fc78bb0cf859995ca4894dd7a3dd",
+      "encoding": "gzip",
+      "retained_sha256": "63846b9948e33595fc10aa3433aa5ae28e385ecd5230d200bed40be58a65380f"
+    }
+  ],
+  "original_receipt_bytes_unchanged": true,
+  "logs_gzip_preserve_exact_original_bytes": true
+}

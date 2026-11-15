@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all-features",
+    "--format-version",
+    "1"
+  ],
+  "cargo_net_offline": "true",
+  "elapsed_seconds": 0.31588282715529203,
+  "id": "main-metadata-locked-offline",
+  "returncode": 0,
+  "stderr": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/main-metadata-locked-offline.stderr",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/main-metadata-locked-offline.stdout",
+  "stdout_sha256": "a1a6cf2c425c1d16497eba284c30109689c65b69916e67e6fe84d0bfbca0061f"
+}

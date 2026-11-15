@@ -1,0 +1,171 @@
+{
+  "base_commit": "f34f432c6c533c651ab74f69f4f43aef326eedcb",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_authority_effect_register.py"
+      ],
+      "elapsed_seconds": 0.432539701461792,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 117,
+          "name": "00-test_pq_authority_effect_register.stderr",
+          "sha256": "db7daa3795d3d0bb3c81f7dd49159fa75975576ab04e874b7bd33a5acbe791e6"
+        },
+        "stdout": {
+          "bytes": 0,
+          "name": "00-test_pq_authority_effect_register.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_hash_use_contract.py"
+      ],
+      "elapsed_seconds": 0.22701787948608398,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 132,
+          "name": "01-test_hash_use_contract.stderr",
+          "sha256": "b18526252970450ce12061f44647c421a07db681c9899d07c71908f7e5985847"
+        },
+        "stdout": {
+          "bytes": 0,
+          "name": "01-test_hash_use_contract.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py"
+      ],
+      "elapsed_seconds": 0.3455045223236084,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 134,
+          "name": "02-test_joint_consensus_qualification.stderr",
+          "sha256": "5bd8f36ed30f8482c6cf85531e8a3c6944510b55cac829408a55af44d007636d"
+        },
+        "stdout": {
+          "bytes": 0,
+          "name": "02-test_joint_consensus_qualification.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_w1_lifetime_current_observation.py"
+      ],
+      "elapsed_seconds": 0.41078972816467285,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 113,
+          "name": "03-test_w1_lifetime_current_observation.stderr",
+          "sha256": "e360beef77a34a42e042af96137d38fbacfc8ce256cf08a50157127f658e8cd8"
+        },
+        "stdout": {
+          "bytes": 0,
+          "name": "03-test_w1_lifetime_current_observation.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "elapsed_seconds": 3.1046462059020996,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 6414,
+          "name": "04-test_ci_source_integrity.stderr",
+          "sha256": "1ff64843ff63741630908faf97ac41fb1db6938abd48f691d059d9beb196e1e7"
+        },
+        "stdout": {
+          "bytes": 484,
+          "name": "04-test_ci_source_integrity.stdout",
+          "sha256": "cde5596f62bd6fe83de4733053c5557e0fbad0f02be198c8cd5cdba33ba2a675"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "elapsed_seconds": 22.332939386367798,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "name": "05-check_repository.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 307,
+          "name": "05-check_repository.stdout",
+          "sha256": "b7a49cd449dbd4daab8bfb8b68b2cbaa692eb9820bf974fe548a0a4dcc366ee2"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "elapsed_seconds": 0.06300640106201172,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "name": "06-refresh_distributed_source_inventory.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 35,
+          "name": "06-refresh_distributed_source_inventory.stdout",
+          "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+        }
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "HEAD",
+        "--check"
+      ],
+      "elapsed_seconds": 0.05743718147277832,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "name": "07-diff.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 0,
+          "name": "07-diff.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ],
+  "corpus_sha256": "1d111ea8fa290ab883c21f06e5c7e11c1c9dcb18d269c7cc4bdbe5017f8535d9",
+  "scope": "Current authority 44-path map correction plus remaining exact composed-source negative controls; original failed binding run is retained separately."
+}

@@ -1,0 +1,103 @@
+evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch:16: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch:149: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch:181: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch:188: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch:191: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch:239: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch:249: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch:252: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch:286: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch:305: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch:339: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch:449: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch:452: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch:463: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch:581: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/cell-readiness/cell-startup-readiness.patch:676: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/pq-diagnostics/analyze_controls.py:222: new blank line at EOF.
+evidence/pon-ci-closure-20261103/value-pool/implementation-checkpoint.patch:127: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/implementation-checkpoint.patch:136: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/implementation-checkpoint.patch:142: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/implementation-checkpoint.patch:191: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/implementation-checkpoint.patch:199: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/implementation-checkpoint.patch:206: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/implementation-checkpoint.patch:210: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/implementation-checkpoint.patch:221: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/implementation-checkpoint.patch:225: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/implementation-checkpoint.patch:340: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/measurements/pair-00-baseline.stdout:81: new blank line at EOF.
+evidence/pon-ci-closure-20261103/value-pool/measurements/pair-00-candidate.stdout:81: new blank line at EOF.
+evidence/pon-ci-closure-20261103/value-pool/measurements/pair-01-baseline.stdout:81: new blank line at EOF.
+evidence/pon-ci-closure-20261103/value-pool/measurements/pair-01-candidate.stdout:81: new blank line at EOF.
+evidence/pon-ci-closure-20261103/value-pool/measurements/pair-02-baseline.stdout:81: new blank line at EOF.
+evidence/pon-ci-closure-20261103/value-pool/measurements/pair-02-candidate.stdout:81: new blank line at EOF.
+evidence/pon-ci-closure-20261103/value-pool/measurements/pair-03-baseline.stdout:81: new blank line at EOF.
+evidence/pon-ci-closure-20261103/value-pool/measurements/pair-03-candidate.stdout:81: new blank line at EOF.
+evidence/pon-ci-closure-20261103/value-pool/measurements/pair-04-baseline.stdout:81: new blank line at EOF.
+evidence/pon-ci-closure-20261103/value-pool/measurements/pair-04-candidate.stdout:81: new blank line at EOF.
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch:150: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch:159: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch:165: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch:214: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch:222: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch:229: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch:233: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch:244: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch:248: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch:363: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch.before-count-fix:127: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch.before-count-fix:136: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch.before-count-fix:142: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch.before-count-fix:191: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch.before-count-fix:199: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch.before-count-fix:206: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch.before-count-fix:210: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch.before-count-fix:221: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch.before-count-fix:225: trailing whitespace.
++ 
+evidence/pon-ci-closure-20261103/value-pool/source-freeze.patch.before-count-fix:340: trailing whitespace.
++ 

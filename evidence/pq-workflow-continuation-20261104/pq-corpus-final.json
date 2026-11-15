@@ -1,0 +1,15 @@
+{
+  "name": "pq-corpus-final",
+  "argv": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "base_sha": "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+  "env_overrides": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "exit_code": 0,
+  "wall_seconds": 0.251788,
+  "log": "pq-corpus-final.log",
+  "log_sha256": "5a60d35f1ac4303d69d1e92fe06718897d47d523eee0d5652c175955215811bc"
+}

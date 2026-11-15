@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "/home/qian-qi/work/chain-pon-outcome-7612-final-checkout-preparation/helper-final.py",
+    "--restore-missing-skipped",
+    "--out",
+    "/home/qian-qi/work/chain-pon-outcome-7612-checkout-visibility-final"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+  "execution_error": null,
+  "exit_code": 0,
+  "finished_at": "2026-11-12T01:55:40.428435+00:00",
+  "label": "helper-invocation",
+  "started_at": "2026-11-12T01:54:51.085302+00:00",
+  "stderr": "helper-invocation.stderr",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "helper-invocation.stdout",
+  "stdout_bytes": 111017,
+  "stdout_sha256": "aa468091dc7c7f08fba0e4e665d7da5dd20a8dc8ed3fea4e8d3844445e60d353"
+}

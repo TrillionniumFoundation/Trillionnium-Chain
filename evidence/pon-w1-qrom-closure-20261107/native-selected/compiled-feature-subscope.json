@@ -1,0 +1,126 @@
+{
+  "head": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "records": [
+    {
+      "name": "env-reject-risc0_dev_mode",
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/w1-verify-v2",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/succinct.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/header.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "expectation_met": true,
+      "elapsed_seconds": 0.013269635848701,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "a22ddfdbf8ae7bdc410cf1fcd535d1d519a68ee2eba62a708e0663d52af39c66",
+      "environment_values_disclosed": false
+    },
+    {
+      "name": "env-reject-risc0_prover",
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/w1-verify-v2",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/succinct.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/header.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "expectation_met": true,
+      "elapsed_seconds": 0.0022027159575372934,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "0409e939e4ad34845eb370e5baa00bb4926e35f1c8bcca9257696399bd82f9ac",
+      "environment_values_disclosed": false
+    },
+    {
+      "name": "env-reject-bonsai_api_url",
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/w1-verify-v2",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/succinct.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/header.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "expectation_met": true,
+      "elapsed_seconds": 0.002041386906057596,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "da69ec3b6aa92d3263b4b5d02a74d7da1d41fed0945456a13494442c0cf8dace",
+      "environment_values_disclosed": false
+    },
+    {
+      "name": "env-reject-bonsai_api_key",
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/w1-verify-v2",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/succinct.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/header.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "expectation_met": true,
+      "elapsed_seconds": 0.0021338339429348707,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "7cf906a5621b93fc7a00e27230736b34d1800c7956ed42588590111a04bcac9b",
+      "environment_values_disclosed": false
+    },
+    {
+      "name": "release-context-build",
+      "command": [
+        "rustc",
+        "--edition=2021",
+        "-C",
+        "opt-level=2",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/release_context.rs",
+        "--extern",
+        "trnm_w1_hardened_verifier=/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/deps/libtrnm_w1_hardened_verifier-3bccb92cabaa8810.rlib",
+        "-L",
+        "dependency=/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/deps",
+        "-o",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/release-context"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "expectation_met": true,
+      "elapsed_seconds": 2.218449179083109,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "environment_values_disclosed": false
+    },
+    {
+      "name": "release-context",
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/release-context"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "expectation_met": true,
+      "elapsed_seconds": 0.0021255360916256905,
+      "stdout_sha256": "00d23c43997b9d32fc51f165af8bb8402276a8aa0b7a550f2a1aa761f8780ecf",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "environment_values_disclosed": false
+    }
+  ],
+  "all_expectations_met": true,
+  "binary_sha256": "47840d410ef31fc15ea2475621c391d7091161bc8ddd030d3b4f4217bdd8c1b7",
+  "context_probe_source_sha256": "6314f56394611d51711a4a159392624f475293e594624161ea016f65a61abaf4",
+  "context_probe_binary_sha256": "a5d3decbcec03c0486d3ed7b95814097280008ddc1f5f7677577c89319261754",
+  "linked_hardened_rlib_sha256": "f94a96c267a417a883240468ab5cf4f5859b8d89b3b1ac98f04f9d04f65dc009",
+  "scope": "fixed v2 release build and accepted outer verification profile only",
+  "debug_info_is_not_dev_mode": true,
+  "full_recursive_soundness_qualified": false,
+  "production_supply_chain_qualified": false
+}

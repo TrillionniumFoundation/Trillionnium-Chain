@@ -1,0 +1,34 @@
+{
+  "elapsed_seconds": 41.83672401192598,
+  "end_unix_ns": 1794166079470722619,
+  "error": "AssertionError('original actual test did not pass')",
+  "exit_code": 100,
+  "junit_candidates": [
+    "/home/qq/hepta-learning-native-b3ed953-d9fb-20261108/source/codex-rs/target/nextest/local/junit.xml"
+  ],
+  "junit_sha256": "02700dd2bc247acc9bc804f3b18b3f520af155067a1f02fcc634ace8c4d97f8a",
+  "log_sha256": "f0b01ac396c7e1f380e6c0aaeb5ec44d1411092b807b2688df54244e8aa1f464",
+  "model_test_started": true,
+  "operation": "learning-d9fb-native-v6",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "recorded_unix_ns": 1794166079681460410,
+  "result": "FAIL",
+  "schema": "hepta-real-model-native-archived-run-v1",
+  "source": "b3ed9533aa4018fc05c9eed5bfe98a8a7e64644b",
+  "start_unix_ns": 1794166037633998727,
+  "testcases": [
+    {
+      "classname": "codex-hepta-agentd",
+      "error": false,
+      "failure": true,
+      "name": "neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback",
+      "skipped": false,
+      "time": "40.887"
+    }
+  ],
+  "traceback": "Traceback (most recent call last):\n  File \"<string>\", line 78, in <module>\n    assert p.returncode==0 and len(cases)==1 and selected in cases[0].get(\"name\",\"\") and not any(result[\"testcases\"][0][k]for k in [\"failure\",\"error\",\"skipped\"]),\"original actual test did not pass\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: original actual test did not pass\n",
+  "tracked_after": 11207,
+  "tracked_before": 11207,
+  "tree": "dd9cdd9863af1754fd251538825a4245426f6f2b"
+}

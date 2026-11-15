@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/home/qq/work/chain-cell-four-gates-2bfb-target-c1/release/examples/cell_sealed_research_paged_next_use_v1",
+    "/home/qq/work/cell-four-gates-paged-source-operation-01.json",
+    "cfeb462afd142ba0c2dd29f722216161346810038e19c0ac1815b12f4828d107"
+  ],
+  "binary_sha256": "0607e6086eb48ce01cf1bb1191cddf7288967e12c923abd9a96ff41e7b0e4f60",
+  "cwd": "/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium",
+  "external_cleanup_watchdog_seconds": 360,
+  "input_sha256": "cfeb462afd142ba0c2dd29f722216161346810038e19c0ac1815b12f4828d107",
+  "internal_original_seconds": 300,
+  "source": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "started_unix_ns": 1794445188990323827,
+  "tree": "21e970bfdb11ab64403d2af5f3c56536a2961f80"
+}

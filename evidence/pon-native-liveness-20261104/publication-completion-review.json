@@ -1,0 +1,30 @@
+{
+  "schema": "trnm-1c-completion-static-review-v1",
+  "scope": "Independent read-only source review of budget-owned public_v3 merge conflict resolution.",
+  "ours": "8f1c0267f419d4b737b524515ea5b55d3d440ec2",
+  "incoming": "1c885019fdf1cc2f33af8da0780da603fff1c353",
+  "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+  "candidate_sha256": "028ca36853f0544536dac494fdf7147c108ba385b571ed2a458c1ae90a7d4e76",
+  "candidate_git_blob": "f398794a8bb0a250c4b645f19a5bb0ae87176b02",
+  "candidate_bytes": 373564,
+  "static_review_result": "NO_BLOCKING_ISSUE_FOUND",
+  "qualification": false,
+  "build_executed_by_reviewer": false,
+  "native_runtime_executed": false,
+  "repo_modified_by_reviewer": false,
+  "completion_tests_present": 9,
+  "retained": [
+    "Original six-argument helper, stop/cancel/work/total/service deadline checks and equality refusal.",
+    "Finished bytes, permit, TaskObservation drop before removing Connection.",
+    "Original timely output total/service bounds and original dispatch accepted/CPU observations.",
+    "Incoming four test names and independent live worker ownership semantics.",
+    "Actual late encoding failures counted as overlapping output events; Deadline/Cancelled remains primary terminal.",
+    "WorkerResources declaration order releases raw bytes, body, lane, then the original TaskObservation; observer remains incomplete until actual worker release."
+  ],
+  "limitations": [
+    "Static source review only; no latest native execution.",
+    "Synthetic prior dispatch observation is explicitly a fixture, not native W1 execution evidence.",
+    "Existing error schema has no secondary complete text slot; no full secondary encoding message preservation is claimed.",
+    "No fabricated reactor ResponseEncoding phase, extra dispatch diagnostic or CPU charge."
+  ]
+}

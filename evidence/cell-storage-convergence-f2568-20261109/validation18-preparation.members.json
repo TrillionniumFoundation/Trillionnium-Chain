@@ -1,0 +1,594 @@
+{
+  "archive": {
+    "bytes": 120416,
+    "path": "/workspace/scratch/f2568c76b48f/validation18-evidence-package/validation18-preparation.tar.xz",
+    "sha256": "269ad49f95d8e3a77f59cf2dd420a4cfb3cc814d6d8655fa514b56e1a32737c7",
+    "version": "27:840955:120416:1794211411558006551:1794211411558006551"
+  },
+  "archive_reopened_all_members_verified": true,
+  "bounds": {
+    "max_member_bytes": 16777216,
+    "max_members": 512,
+    "max_payload_bytes": 33554432
+  },
+  "canonical_modified": false,
+  "created_unix": 1794211411.593575,
+  "excluded": [
+    {
+      "entries": [],
+      "root": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation"
+    },
+    {
+      "entries": [],
+      "root": "/workspace/scratch/f2568c76b48f/discovery-fixture-order18-preparation"
+    },
+    {
+      "entries": [],
+      "root": "/workspace/scratch/f2568c76b48f/final-evidence-work"
+    }
+  ],
+  "format": "USTAR/XZ regular files; original permission modes; zero archive ownership/timestamps",
+  "groups": {
+    "discovery-fixture-order18-preparation": {
+      "bytes": 318899,
+      "members": 6
+    },
+    "final-evidence-work": {
+      "bytes": 118510,
+      "members": 6
+    },
+    "process-death-parser18-preparation": {
+      "bytes": 1098535,
+      "members": 46
+    }
+  },
+  "inventory_before_equals_after": true,
+  "member_count": 58,
+  "members": [
+    {
+      "bytes": 68436,
+      "mode": 420,
+      "path": "discovery-fixture-order18-preparation/after/evidence/cell-storage-convergence-f2568-20261109/controls/original-auth-server-tests.rs",
+      "sha256": "288a2403fdcc8182f392fcc9e8f76b2b9de684fe69235e401199f22e34f564ce",
+      "source_path": "/workspace/scratch/f2568c76b48f/discovery-fixture-order18-preparation/after/evidence/cell-storage-convergence-f2568-20261109/controls/original-auth-server-tests.rs",
+      "source_version_after": "27:840924:68436:1794210911838816936:1794210911838816936",
+      "source_version_before": "27:840924:68436:1794210911838816936:1794210911838816936"
+    },
+    {
+      "bytes": 88583,
+      "mode": 420,
+      "path": "discovery-fixture-order18-preparation/after/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+      "sha256": "eb454e4660531fca30ddeb5c17318ef4b74689ac6a6845c97e1c56b8e61d92cc",
+      "source_path": "/workspace/scratch/f2568c76b48f/discovery-fixture-order18-preparation/after/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+      "source_version_after": "27:840920:88583:1794210911837101523:1794210911837101523",
+      "source_version_before": "27:840920:88583:1794210911837101523:1794210911837101523"
+    },
+    {
+      "bytes": 68436,
+      "mode": 420,
+      "path": "discovery-fixture-order18-preparation/before/evidence/cell-storage-convergence-f2568-20261109/controls/original-auth-server-tests.rs",
+      "sha256": "cf247a21ddd167f23aff7a662eb7aa397d70c7aa58e6a0d272bf1af5cb034253",
+      "source_path": "/workspace/scratch/f2568c76b48f/discovery-fixture-order18-preparation/before/evidence/cell-storage-convergence-f2568-20261109/controls/original-auth-server-tests.rs",
+      "source_version_after": "27:840911:68436:1794210911836071313:1794210911836071313",
+      "source_version_before": "27:840911:68436:1794210911836071313:1794210911836071313"
+    },
+    {
+      "bytes": 88583,
+      "mode": 420,
+      "path": "discovery-fixture-order18-preparation/before/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+      "sha256": "77f7d593f2eb8f45b00603fadcd2cded5755c617fb57eb3e979d4cf3daa17d64",
+      "source_path": "/workspace/scratch/f2568c76b48f/discovery-fixture-order18-preparation/before/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+      "source_version_after": "27:840907:88583:1794210911833473417:1794210911833473417",
+      "source_version_before": "27:840907:88583:1794210911833473417:1794210911833473417"
+    },
+    {
+      "bytes": 1862,
+      "mode": 420,
+      "path": "discovery-fixture-order18-preparation/fixture-epoch-order18.patch",
+      "sha256": "52129118bf1f22bb3d4a50e6af9e45f376d898b40161c6f76c08799a7c3fd631",
+      "source_path": "/workspace/scratch/f2568c76b48f/discovery-fixture-order18-preparation/fixture-epoch-order18.patch",
+      "source_version_after": "27:840925:1862:1794210911839560235:1794210911839560235",
+      "source_version_before": "27:840925:1862:1794210911839560235:1794210911839560235"
+    },
+    {
+      "bytes": 2999,
+      "mode": 420,
+      "path": "discovery-fixture-order18-preparation/source-identity.json",
+      "sha256": "23242c900c9c01a39fd68b33b8853033cdaea7d084f404b68d3048d28d6ae35c",
+      "source_path": "/workspace/scratch/f2568c76b48f/discovery-fixture-order18-preparation/source-identity.json",
+      "source_version_after": "27:840926:2999:1794210911840440375:1794210911840440375",
+      "source_version_before": "27:840926:2999:1794210911840440375:1794210911840440375"
+    },
+    {
+      "bytes": 3427,
+      "mode": 420,
+      "path": "final-evidence-work/after/evidence/cell-storage-convergence-f2568-20261109/tooling-files.json",
+      "sha256": "d3e0420829c81357cef750ca99ca1c4da6045db906ea99d1faee8245b6143b8c",
+      "source_path": "/workspace/scratch/f2568c76b48f/final-evidence-work/after/evidence/cell-storage-convergence-f2568-20261109/tooling-files.json",
+      "source_version_after": "27:840944:3427:1794211225016232195:1794211225016232195",
+      "source_version_before": "27:840944:3427:1794211225016232195:1794211225016232195"
+    },
+    {
+      "bytes": 53837,
+      "mode": 420,
+      "path": "final-evidence-work/after/evidence/cell-storage-convergence-f2568-20261109/tools/run_discovery_convergence_differential.py",
+      "sha256": "755aaee9547882c1bdf2dd8bb2a06bb940c634e6982c1e82289834e3ca513e53",
+      "source_path": "/workspace/scratch/f2568c76b48f/final-evidence-work/after/evidence/cell-storage-convergence-f2568-20261109/tools/run_discovery_convergence_differential.py",
+      "source_version_after": "27:840942:53837:1794211225015913995:1794211225015913995",
+      "source_version_before": "27:840942:53837:1794211225015913995:1794211225015913995"
+    },
+    {
+      "bytes": 3427,
+      "mode": 420,
+      "path": "final-evidence-work/before/evidence/cell-storage-convergence-f2568-20261109/tooling-files.json",
+      "sha256": "69a60036273ef61733e9f960810f11f46cdc7fe15c725a2cfd2aeee93f2622cb",
+      "source_path": "/workspace/scratch/f2568c76b48f/final-evidence-work/before/evidence/cell-storage-convergence-f2568-20261109/tooling-files.json",
+      "source_version_after": "27:840943:3427:1794211225016177525:1794211225016177525",
+      "source_version_before": "27:840943:3427:1794211225016177525:1794211225016177525"
+    },
+    {
+      "bytes": 53837,
+      "mode": 420,
+      "path": "final-evidence-work/before/evidence/cell-storage-convergence-f2568-20261109/tools/run_discovery_convergence_differential.py",
+      "sha256": "0062ab0290065261d06a04a79ab29b89a70a3068ccb8c6bb56c9d3012106a042",
+      "source_path": "/workspace/scratch/f2568c76b48f/final-evidence-work/before/evidence/cell-storage-convergence-f2568-20261109/tools/run_discovery_convergence_differential.py",
+      "source_version_after": "27:840937:53837:1794211225015681502:1794211225015681502",
+      "source_version_before": "27:840937:53837:1794211225015681502:1794211225015681502"
+    },
+    {
+      "bytes": 1558,
+      "mode": 420,
+      "path": "final-evidence-work/shared-pins18.patch",
+      "sha256": "887377290b150ecae71c9a5e90f0f85d9fef2b36cc147a82fc340e0cf5c1adeb",
+      "source_path": "/workspace/scratch/f2568c76b48f/final-evidence-work/shared-pins18.patch",
+      "source_version_after": "27:840945:1558:1794211225016267668:1794211225016267668",
+      "source_version_before": "27:840945:1558:1794211225016267668:1794211225016267668"
+    },
+    {
+      "bytes": 2424,
+      "mode": 420,
+      "path": "final-evidence-work/source-import.json",
+      "sha256": "70ea727e96d81faa5da9200ed3294661cd76dbd416611fad0caf6432387f7a69",
+      "source_path": "/workspace/scratch/f2568c76b48f/final-evidence-work/source-import.json",
+      "source_version_after": "27:840946:2424:1794211225016388196:1794211225016388196",
+      "source_version_before": "27:840946:2424:1794211225016388196:1794211225016388196"
+    },
+    {
+      "bytes": 118,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/after-ci.stderr",
+      "sha256": "87f887ba1200a6acf8227a21236970bee7bcf124efe4c86e6c33d92f95aaaeb6",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/after-ci.stderr",
+      "source_version_after": "27:840872:118:1794210847175606835:1794210847175606835",
+      "source_version_before": "27:840872:118:1794210847175606835:1794210847175606835"
+    },
+    {
+      "bytes": 0,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/after-ci.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/after-ci.stdout",
+      "source_version_after": "27:840871:0:1794210847171823208:1794210847171823208",
+      "source_version_before": "27:840871:0:1794210847171823208:1794210847171823208"
+    },
+    {
+      "bytes": 0,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/after-parser.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/after-parser.stderr",
+      "source_version_after": "27:840870:0:1794210847023387244:1794210847023387244",
+      "source_version_before": "27:840870:0:1794210847023387244:1794210847023387244"
+    },
+    {
+      "bytes": 4935,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/after-parser.stdout",
+      "sha256": "dffa3b595ea598ec5ca5b89bf32a0451e370319f68a8c517b6b907ed1886144a",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/after-parser.stdout",
+      "source_version_after": "27:840869:4935:1794210847023387244:1794210847023387244",
+      "source_version_before": "27:840869:4935:1794210847023387244:1794210847023387244"
+    },
+    {
+      "bytes": 25128,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/after/.github/workflows/pon-next-architecture-security.yml",
+      "sha256": "616d152f4191250eadf07c563b45a8b0336cc9d76083d12175c85bfbf416d181",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/after/.github/workflows/pon-next-architecture-security.yml",
+      "source_version_after": "27:840853:25128:1794210662886076024:1794210662886076024",
+      "source_version_before": "27:840853:25128:1794210662886076024:1794210662886076024"
+    },
+    {
+      "bytes": 3427,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tooling-files.json",
+      "sha256": "69a60036273ef61733e9f960810f11f46cdc7fe15c725a2cfd2aeee93f2622cb",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tooling-files.json",
+      "source_version_after": "27:840841:3427:1794210905367740864:1794210905367740864",
+      "source_version_before": "27:840841:3427:1794210905367740864:1794210905367740864"
+    },
+    {
+      "bytes": 39150,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/run_exact_gates_previous.py",
+      "sha256": "806329aaa71ff9952ebefa84995ebd0a0ae576e6e89ed0774cb77f7891892d4a",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/run_exact_gates_previous.py",
+      "source_version_after": "27:840857:39150:1794210662886292715:1794210662886292715",
+      "source_version_before": "27:840857:39150:1794210662886292715:1794210662886292715"
+    },
+    {
+      "bytes": 67306,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates.py",
+      "sha256": "cd9f3b98d03beaca6bbccf56e8a8e359dadbe3549b41a1cb6c5faa0ee9cb488b",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates.py",
+      "source_version_after": "27:840837:67306:1794210699017353777:1794210699017353777",
+      "source_version_before": "27:840837:67306:1794210699017353777:1794210699017353777"
+    },
+    {
+      "bytes": 19357,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates_selftest.py",
+      "sha256": "0ca5ad1abad6338cea24c26c360ae44368a3ad81797c2e9ca321273576a5282c",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates_selftest.py",
+      "source_version_after": "27:840839:19357:1794210745776871153:1794210745776871153",
+      "source_version_before": "27:840839:19357:1794210745776871153:1794210745776871153"
+    },
+    {
+      "bytes": 1342,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/storage-convergence-process-death-observation.json",
+      "sha256": "2cb662ae41ac64242233b0595eab2886f564b1ef53f445ea0ed82c8618530102",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/storage-convergence-process-death-observation.json",
+      "source_version_after": "27:840855:1342:1794210662886176763:1794210662886176763",
+      "source_version_before": "27:840855:1342:1794210662886176763:1794210662886176763"
+    },
+    {
+      "bytes": 1078,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/storage-convergence-process-death-prefixed-observation.json",
+      "sha256": "8a82150e6dca5cd2c8635cd62a9f45f15c56542b774d74932d2ec7eef11892c7",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/after/evidence/cell-storage-convergence-f2568-20261109/tools/storage-convergence-process-death-prefixed-observation.json",
+      "source_version_after": "27:840863:1078:1794210690817422635:1794210690817422635",
+      "source_version_before": "27:840863:1078:1794210690817422635:1794210690817422635"
+    },
+    {
+      "bytes": 39388,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/after/scripts/ci/test_cell_storage_convergence_ci.py",
+      "sha256": "3f5aff5a6d01699a6d1b463fd17513e6ce9e272453f48f8096c54efb70a68001",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/after/scripts/ci/test_cell_storage_convergence_ci.py",
+      "source_version_after": "27:840847:39388:1794210662885891452:1794210662885891452",
+      "source_version_before": "27:840847:39388:1794210662885891452:1794210662885891452"
+    },
+    {
+      "bytes": 0,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/before-parser.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/before-parser.stderr",
+      "source_version_after": "27:840867:0:1794210846957556266:1794210846957556266",
+      "source_version_before": "27:840867:0:1794210846957556266:1794210846957556266"
+    },
+    {
+      "bytes": 3762,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/before-parser.stdout",
+      "sha256": "c656434073def4ad37f0b5a6376ab6440c74e9cde2304c5949937ea88a5054c6",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/before-parser.stdout",
+      "source_version_after": "27:840866:3762:1794210846957556266:1794210846957556266",
+      "source_version_before": "27:840866:3762:1794210846957556266:1794210846957556266"
+    },
+    {
+      "bytes": 25128,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/before/.github/workflows/pon-next-architecture-security.yml",
+      "sha256": "616d152f4191250eadf07c563b45a8b0336cc9d76083d12175c85bfbf416d181",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/before/.github/workflows/pon-next-architecture-security.yml",
+      "source_version_after": "27:840850:25128:1794210662886012621:1794210662886012621",
+      "source_version_before": "27:840850:25128:1794210662886012621:1794210662886012621"
+    },
+    {
+      "bytes": 3227,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tooling-files.json",
+      "sha256": "e85684049c53262ebc7ef9f54a4a545f030b6136da21200e6174c13c247035bd",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tooling-files.json",
+      "source_version_after": "27:840840:3227:1794210662885674131:1794210662885674131",
+      "source_version_before": "27:840840:3227:1794210662885674131:1794210662885674131"
+    },
+    {
+      "bytes": 39150,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tools/run_exact_gates_previous.py",
+      "sha256": "806329aaa71ff9952ebefa84995ebd0a0ae576e6e89ed0774cb77f7891892d4a",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tools/run_exact_gates_previous.py",
+      "source_version_after": "27:840856:39150:1794210662886257102:1794210662886257102",
+      "source_version_before": "27:840856:39150:1794210662886257102:1794210662886257102"
+    },
+    {
+      "bytes": 66890,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates.py",
+      "sha256": "a1405aa977ad592cf8b1f09c52f7d0617ce78a5583f9f925655088ce3710be62",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates.py",
+      "source_version_after": "27:840832:66890:1794210662885308500:1794210662885308500",
+      "source_version_before": "27:840832:66890:1794210662885308500:1794210662885308500"
+    },
+    {
+      "bytes": 14905,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates_selftest.py",
+      "sha256": "519a679ee51e72c70b0d7bb7d986d4c1f7d4bc7b9cbe602f583fc59456668c6e",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates_selftest.py",
+      "source_version_after": "27:840838:14905:1794210662885564849:1794210662885564849",
+      "source_version_before": "27:840838:14905:1794210662885564849:1794210662885564849"
+    },
+    {
+      "bytes": 1342,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tools/storage-convergence-process-death-observation.json",
+      "sha256": "2cb662ae41ac64242233b0595eab2886f564b1ef53f445ea0ed82c8618530102",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/before/evidence/cell-storage-convergence-f2568-20261109/tools/storage-convergence-process-death-observation.json",
+      "source_version_after": "27:840854:1342:1794210662886147119:1794210662886147119",
+      "source_version_before": "27:840854:1342:1794210662886147119:1794210662886147119"
+    },
+    {
+      "bytes": 39388,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/before/scripts/ci/test_cell_storage_convergence_ci.py",
+      "sha256": "3f5aff5a6d01699a6d1b463fd17513e6ce9e272453f48f8096c54efb70a68001",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/before/scripts/ci/test_cell_storage_convergence_ci.py",
+      "source_version_after": "27:840844:39388:1794210662885793417:1794210662885793417",
+      "source_version_before": "27:840844:39388:1794210662885793417:1794210662885793417"
+    },
+    {
+      "bytes": 2251,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/commands.json",
+      "sha256": "b26d781f80097bb65658503245c158ab67393a8e71bd357ad21867f561757684",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/commands.json",
+      "source_version_after": "27:840868:2251:1794210847259709042:1794210847259709042",
+      "source_version_before": "27:840868:2251:1794210847259709042:1794210847259709042"
+    },
+    {
+      "bytes": 85158,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/complete-da-native.original.stdout.log",
+      "sha256": "1ce59bde5c6802777295b4404ebb0e8ec3af3e403e264aa0c9ae31dbcd06acb2",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/complete-da-native.original.stdout.log",
+      "source_version_after": "27:840862:85158:1794210690817166387:1794210690817166387",
+      "source_version_before": "27:840862:85158:1794210690817166387:1794210690817166387"
+    },
+    {
+      "bytes": 0,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/full-original-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/full-original-log.stderr",
+      "source_version_after": "27:840874:0:1794210847259446083:1794210847259446083",
+      "source_version_before": "27:840874:0:1794210847259446083:1794210847259446083"
+    },
+    {
+      "bytes": 97959,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/full-original-log.stdout",
+      "sha256": "3ca0b7a34ad0279b94e0d3d3ab7d6d3ff999e5550439c7872f33d16b50db4046",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/full-original-log.stdout",
+      "source_version_after": "27:840873:97959:1794210847259446083:1794210847259446083",
+      "source_version_before": "27:840873:97959:1794210847259446083:1794210847259446083"
+    },
+    {
+      "bytes": 104144,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/native-config-097.json",
+      "sha256": "013be8af54eead8a48d645acf5217eeb109fc7f04db543454e77ca6649fca3a4",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/native-config-097.json",
+      "source_version_after": "27:840859:104144:1794210662886524627:1794210662886524627",
+      "source_version_before": "27:840859:104144:1794210662886524627:1794210662886524627"
+    },
+    {
+      "bytes": 0,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/patch-apply.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/patch-apply.stderr",
+      "source_version_after": "27:840895:0:1794210905421549661:1794210905421549661",
+      "source_version_before": "27:840895:0:1794210905421549661:1794210905421549661"
+    },
+    {
+      "bytes": 0,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/patch-apply.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/patch-apply.stdout",
+      "source_version_after": "27:840894:0:1794210905421549661:1794210905421549661",
+      "source_version_before": "27:840894:0:1794210905421549661:1794210905421549661"
+    },
+    {
+      "bytes": 0,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/patch-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/patch-check.stderr",
+      "source_version_after": "27:840892:0:1794210905419243640:1794210905419243640",
+      "source_version_before": "27:840892:0:1794210905419243640:1794210905419243640"
+    },
+    {
+      "bytes": 0,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/patch-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/patch-check.stdout",
+      "source_version_after": "27:840891:0:1794210905419243640:1794210905419243640",
+      "source_version_before": "27:840891:0:1794210905419243640:1794210905419243640"
+    },
+    {
+      "bytes": 25128,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/patch-check/.github/workflows/pon-next-architecture-security.yml",
+      "sha256": "616d152f4191250eadf07c563b45a8b0336cc9d76083d12175c85bfbf416d181",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/patch-check/.github/workflows/pon-next-architecture-security.yml",
+      "source_version_after": "27:840887:25128:1794210662886012621:1794210905417180881",
+      "source_version_before": "27:840887:25128:1794210662886012621:1794210905417180881"
+    },
+    {
+      "bytes": 3427,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/patch-check/evidence/cell-storage-convergence-f2568-20261109/tooling-files.json",
+      "sha256": "69a60036273ef61733e9f960810f11f46cdc7fe15c725a2cfd2aeee93f2622cb",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/patch-check/evidence/cell-storage-convergence-f2568-20261109/tooling-files.json",
+      "source_version_after": "27:840893:3427:1794210905421549661:1794210905421549661",
+      "source_version_before": "27:840893:3427:1794210905421549661:1794210905421549661"
+    },
+    {
+      "bytes": 39150,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/patch-check/evidence/cell-storage-convergence-f2568-20261109/tools/run_exact_gates_previous.py",
+      "sha256": "806329aaa71ff9952ebefa84995ebd0a0ae576e6e89ed0774cb77f7891892d4a",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/patch-check/evidence/cell-storage-convergence-f2568-20261109/tools/run_exact_gates_previous.py",
+      "source_version_after": "27:840884:39150:1794210662886257102:1794210905416287136",
+      "source_version_before": "27:840884:39150:1794210662886257102:1794210905416287136"
+    },
+    {
+      "bytes": 67306,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/patch-check/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates.py",
+      "sha256": "cd9f3b98d03beaca6bbccf56e8a8e359dadbe3549b41a1cb6c5faa0ee9cb488b",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/patch-check/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates.py",
+      "source_version_after": "27:840879:67306:1794210905421500728:1794210905421500728",
+      "source_version_before": "27:840879:67306:1794210905421500728:1794210905421500728"
+    },
+    {
+      "bytes": 19357,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/patch-check/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates_selftest.py",
+      "sha256": "0ca5ad1abad6338cea24c26c360ae44368a3ad81797c2e9ca321273576a5282c",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/patch-check/evidence/cell-storage-convergence-f2568-20261109/tools/run_storage_convergence_exact_gates_selftest.py",
+      "source_version_after": "27:840881:19357:1794210905421534388:1794210905421534388",
+      "source_version_before": "27:840881:19357:1794210905421534388:1794210905421534388"
+    },
+    {
+      "bytes": 1342,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/patch-check/evidence/cell-storage-convergence-f2568-20261109/tools/storage-convergence-process-death-observation.json",
+      "sha256": "2cb662ae41ac64242233b0595eab2886f564b1ef53f445ea0ed82c8618530102",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/patch-check/evidence/cell-storage-convergence-f2568-20261109/tools/storage-convergence-process-death-observation.json",
+      "source_version_after": "27:840882:1342:1794210662886147119:1794210905416127429",
+      "source_version_before": "27:840882:1342:1794210662886147119:1794210905416127429"
+    },
+    {
+      "bytes": 1078,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/patch-check/evidence/cell-storage-convergence-f2568-20261109/tools/storage-convergence-process-death-prefixed-observation.json",
+      "sha256": "8a82150e6dca5cd2c8635cd62a9f45f15c56542b774d74932d2ec7eef11892c7",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/patch-check/evidence/cell-storage-convergence-f2568-20261109/tools/storage-convergence-process-death-prefixed-observation.json",
+      "source_version_after": "27:840883:1078:1794210905421549661:1794210905421549661",
+      "source_version_before": "27:840883:1078:1794210905421549661:1794210905421549661"
+    },
+    {
+      "bytes": 39388,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/patch-check/scripts/ci/test_cell_storage_convergence_ci.py",
+      "sha256": "3f5aff5a6d01699a6d1b463fd17513e6ce9e272453f48f8096c54efb70a68001",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/patch-check/scripts/ci/test_cell_storage_convergence_ci.py",
+      "source_version_after": "27:840890:39388:1794210662885793417:1794210905417648143",
+      "source_version_before": "27:840890:39388:1794210662885793417:1794210905417648143"
+    },
+    {
+      "bytes": 8813,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/preservation-review.json",
+      "sha256": "8a0004335ec1952481d577d51592f3f3c7577e22e8171cda1775cd6aea0d133a",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/preservation-review.json",
+      "source_version_after": "27:840897:8813:1794210905424594719:1794210905424594719",
+      "source_version_before": "27:840897:8813:1794210905424594719:1794210905424594719"
+    },
+    {
+      "bytes": 11639,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/process-death-parser18.patch",
+      "sha256": "77676373b5ead43a13ea9074f99c9ccb6ec1f86c22b8160baff74bf01936b0af",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/process-death-parser18.patch",
+      "source_version_after": "27:840875:11639:1794210905415488993:1794210905415488993",
+      "source_version_before": "27:840875:11639:1794210905415488993:1794210905415488993"
+    },
+    {
+      "bytes": 114488,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/raw-readback-chunks.json",
+      "sha256": "e2aa78bc759841f07315cc968e40666e6590e011f8da31a19b3117f6094d1de0",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/raw-readback-chunks.json",
+      "source_version_after": "27:840861:114488:1794210671205640033:1794210671205640033",
+      "source_version_before": "27:840861:114488:1794210671205640033:1794210671205640033"
+    },
+    {
+      "bytes": 1536,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/raw-readback-verification.json",
+      "sha256": "c5eefeb76bd5ba1ab054b28d402b5ca0ab8dfbfb49c482125b64d46cfc0d11b7",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/raw-readback-verification.json",
+      "source_version_after": "27:840864:1536:1794210690817508091:1794210690817508091",
+      "source_version_before": "27:840864:1536:1794210690817508091:1794210690817508091"
+    },
+    {
+      "bytes": 71706,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/retained-rust-tests.rs",
+      "sha256": "c542caa71a98e854271d84fca607286cdf919f3e60d32dcc1ecd9e4f85019fb2",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/retained-rust-tests.rs",
+      "source_version_after": "27:840858:71706:1794210662886451399:1794210662886451399",
+      "source_version_before": "27:840858:71706:1794210662886451399:1794210662886451399"
+    },
+    {
+      "bytes": 1573,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/source-before.json",
+      "sha256": "67d0496ddfc8a73ec97b700a34a2a86afb73933ed65500f33618c5b7142b0efc",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/source-before.json",
+      "source_version_after": "27:840860:1573:1794210662886628691:1794210662886628691",
+      "source_version_before": "27:840860:1573:1794210662886628691:1794210662886628691"
+    },
+    {
+      "bytes": 3772,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/source-identity.json",
+      "sha256": "1f34d9ac271cf1110ebadbe6fa03d28347cdc9e943e21f71ec9047c1a19566ee",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/source-identity.json",
+      "source_version_after": "27:840896:3772:1794210905424413861:1794210905424413861",
+      "source_version_before": "27:840896:3772:1794210905424413861:1794210905424413861"
+    },
+    {
+      "bytes": 4299,
+      "mode": 420,
+      "path": "process-death-parser18-preparation/verify_original_full_log.py",
+      "sha256": "01b6d82c253748dc58a228c3def9d306a21fe64835fc2b1c45fe1e5f9b888eea",
+      "source_path": "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation/verify_original_full_log.py",
+      "source_version_after": "27:840865:4299:1794210831115989071:1794210831115989071",
+      "source_version_before": "27:840865:4299:1794210831115989071:1794210831115989071"
+    }
+  ],
+  "notes": [
+    "The original full 85158-byte native stdout is preserved verbatim with its exact SHA256.",
+    "Original failed097 status remains failed in the included excerpt and preservation review.",
+    "No fresh tests, native gates, model executions, or differential executions were launched by this packager.",
+    "All before/after source copies, patches, source identities and raw outputs are original preparation records.",
+    "final-evidence-work before/after files and metadata were read only.",
+    "This package is separate from the original failed25/failedDiff02 verification097 archive."
+  ],
+  "observed_existing_control_counts": {
+    "ci": 19,
+    "parser": 76
+  },
+  "original_failed097_status_preserved": true,
+  "payload_bytes": 1535944,
+  "schema": "cell-storage-validation18-preparation-manifest-v1",
+  "scope": "Immutable local preparation evidence only. Existing parser/CI controls and readback do not convert the original failed097 acceptance or differential into success.",
+  "source_bytes_modes_and_versions_unchanged": true,
+  "source_roots": [
+    "/workspace/scratch/f2568c76b48f/process-death-parser18-preparation",
+    "/workspace/scratch/f2568c76b48f/discovery-fixture-order18-preparation",
+    "/workspace/scratch/f2568c76b48f/final-evidence-work"
+  ],
+  "tests_model_cargo_or_differential_commands_executed": 0
+}

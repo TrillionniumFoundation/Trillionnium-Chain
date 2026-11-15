@@ -1,0 +1,16 @@
+
+running 1 test
+test fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget ... {"finite_target_met":false,"report_path":"/home/runner/work/_temp/w1-fresh-service-head-42402618462-1/fresh-service/fresh/report.json","schema":"public-v3-fresh-challenge-confirmation-pressure-v1"}
+
+thread 'fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget' (5658) panicked at crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs:244:5:
+fresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.62s
+

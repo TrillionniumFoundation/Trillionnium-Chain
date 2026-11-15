@@ -1,0 +1,13 @@
+{
+  "commit": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1",
+  "bytes": 782,
+  "transport": "Normal Git fetch into task-owned temporary object store; existing objects read via process-scoped environment only. Repository configuration and source guards unchanged.",
+  "permanent_alternates_added": false,
+  "headers": [
+    "tree",
+    "parent",
+    "parent",
+    "author",
+    "committer"
+  ]
+}

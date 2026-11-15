@@ -1,0 +1,10 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "formal/pon-nakamoto-v1/finite_joint_state_certificate.py",
+    "--evidence-dir",
+    "evidence/pon-joint-state-risk-ledger-20261107/joint-state/run-01"
+  ],
+  "elapsed_seconds": 0.21204733848571777,
+  "exit_code": 0
+}

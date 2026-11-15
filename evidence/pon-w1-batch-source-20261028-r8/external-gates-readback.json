@@ -1,0 +1,117 @@
+{
+  "schema": "TRNM-W1-R8-EXTERNAL-GATE-READBACK1",
+  "read_utc": "2026-10-28T03:41:21.650994+00:00",
+  "source_base": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+  "query": [
+    "rg",
+    "-l",
+    "trnm-wan-preregistration-v1|external_attestation_sha256",
+    "config",
+    "evidence",
+    "docs",
+    "scripts",
+    "formal",
+    "-g",
+    "*.json",
+    "-g",
+    "*.jsonl",
+    "-g",
+    "*.py",
+    "-g",
+    "*.md"
+  ],
+  "stdout": "docs/protocol/pon-nakamoto-v1/details/WAN_EVIDENCE_ACCOUNTING_V1.md\nscripts/pon_wan_evidence.py\nscripts/ci/test_pon_wan_evidence.py\n",
+  "returncode": 0,
+  "earlier_reports": [
+    {
+      "path": "evidence/pon-v3/multihost/report.json",
+      "sha256": "ebbad637d1155dd37410ef6a922c9cc5b08b3d8bd84330d4fdb5e87516830097",
+      "declarations": [
+        {
+          "path": "/hosts/0/hello/independent_operator",
+          "value": false
+        },
+        {
+          "path": "/hosts/1/hello/independent_operator",
+          "value": false
+        },
+        {
+          "path": "/hosts/2/hello/independent_operator",
+          "value": false
+        },
+        {
+          "path": "/same_operator",
+          "value": true
+        },
+        {
+          "path": "/independent_operators",
+          "value": false
+        },
+        {
+          "path": "/public_network_security_accepted",
+          "value": false
+        }
+      ]
+    },
+    {
+      "path": "evidence/pon-v4/native-hosts/report.json",
+      "sha256": "630b08c030c7bdf78b2176a9b4b27ef00ac2c5fcefcb9ce818f8271e6d20a2aa",
+      "declarations": [
+        {
+          "path": "/results/0/independent_operator",
+          "value": false
+        },
+        {
+          "path": "/results/1/independent_operator",
+          "value": false
+        },
+        {
+          "path": "/results/2/independent_operator",
+          "value": false
+        },
+        {
+          "path": "/independent_operators",
+          "value": false
+        }
+      ]
+    },
+    {
+      "path": "evidence/pon-evaluation-bundle-v1/hosts/report.json",
+      "sha256": "38dad8d64b50893890156162577a30a0ab08a83acdbc87fa6dcf3da2700c1a5b",
+      "declarations": [
+        {
+          "path": "/results/0/independent_operator",
+          "value": false
+        },
+        {
+          "path": "/results/1/independent_operator",
+          "value": false
+        },
+        {
+          "path": "/results/2/independent_operator",
+          "value": false
+        },
+        {
+          "path": "/independent_operators",
+          "value": false
+        }
+      ]
+    },
+    {
+      "path": "evidence/pon-v1/network-report.json",
+      "sha256": "abe48263c1d22e994d0c337d471719704cfd81ae26eeebee781554dd8fd1f095",
+      "declarations": [
+        {
+          "path": "/independent_operators",
+          "value": false
+        }
+      ]
+    }
+  ],
+  "network_endpoints_probed": false,
+  "credentials_probed": false,
+  "people_contacted": false,
+  "actual_independent_wan": "NOT_RUN",
+  "quantum_attack_executed": false,
+  "production_activation": false
+}

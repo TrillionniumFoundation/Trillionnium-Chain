@@ -1,0 +1,25 @@
+{
+  "command": [
+    "systemctl",
+    "--user",
+    "show",
+    "trnm-pn1-root-20261023-96a98a63-1.service",
+    "--property=ControlGroup,MainPID,KillMode,RuntimeMaxUSec"
+  ],
+  "complete_success": true,
+  "cwd": "/tmp/trnm-pn-convergence-20261023/integration",
+  "elapsed_ns": 10352915,
+  "elapsed_seconds": 0.010352915,
+  "error": null,
+  "name": "service-identity",
+  "outer_stage_timeout_seconds": 10,
+  "returncode": 0,
+  "stderr": "service-identity.stderr.log",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_truncated": false,
+  "stdout": "service-identity.stdout.log",
+  "stdout_bytes": 170,
+  "stdout_sha256": "b866986b6419da117cc89d4e2d760bf6c2a520a8b3ef4476b46ceee4a272013d",
+  "stdout_truncated": false
+}

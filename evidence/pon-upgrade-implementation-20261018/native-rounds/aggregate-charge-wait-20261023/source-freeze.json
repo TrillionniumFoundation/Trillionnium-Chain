@@ -1,0 +1,58 @@
+{
+  "utc": "2026-10-23T09:36:31.349028+00:00",
+  "head": "ec0f58d36cf3929df23b36e9d796696b3dbf1884",
+  "tree": "5406311b5c24a5f724ba12b902647615a22fab38",
+  "component": "3cc1f6f498d0a4835acf3e7a971b444a5d360139",
+  "normalMergedForward": "65acd34ee8da81c61c8ecac38b16c2394b730bf8",
+  "source": [
+    {
+      "path": ".github/workflows/pon-owned-process-cleanup.yml",
+      "bytes": 8411,
+      "sha256": "38a32defc663513ed0c9ac1fcc688d7622cafdaa05d1d8d7f15e6277b79c62f1",
+      "blob": "23ac6bdde9a046d5d01eb529cc1e876f9a6ad1ff"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "bytes": 265180,
+      "sha256": "a7efdcba1180a01edde3d81f7c66f60399821147fd6921bacaa85cefa91ff34b",
+      "blob": "4afdbd4219556eda0037451691035a6ceb211ac9"
+    },
+    {
+      "path": "scripts/llm_runtime_README.md",
+      "bytes": 45851,
+      "sha256": "fdae21dfb03ada2715cb426c6e942c85f3c43a8c8e1e1c105c5a91f884dfc2f2",
+      "blob": "37bda8cc9990be8162a83bbe28de908ec30bb26f"
+    },
+    {
+      "path": "scripts/llm_runtime_kernel_aggregate.py",
+      "bytes": 20654,
+      "sha256": "6fb401bd45a76702c94ae0e3c1efa85e19bbf3ff97b4ff784b6ddeb64c4a6c30",
+      "blob": "31df5f4ed42019649c9d7b68ae27a7dfd16211e1"
+    },
+    {
+      "path": "scripts/test_llm_runtime_terminal_charge_wait.py",
+      "bytes": 7551,
+      "sha256": "3060ea46ece904433eebccbe8c18b55bc1f07419174da5df7395e7d945809915",
+      "blob": "7c6fe52d050f4f961f91cd01a73aa159927da13b"
+    }
+  ],
+  "oldRemoteHeadAncestor": true,
+  "baseAncestor": true,
+  "nativeControls": {
+    "passed": 66,
+    "skipped": 0,
+    "realCgroup": false,
+    "afterLastProductionChangeLog": "08-final-all66-owner-controls.log"
+  },
+  "reviewIssuesClosed": [
+    "second raw child recheck in production and both-read negative controls",
+    "documentation distinguishes timely fact from blocking failure cleanup tail",
+    "mandatory CI rejects expectedFailures; explicit negative check09"
+  ],
+  "notQualified": [
+    "fresh controlled aggregate mechanics still PREPARING",
+    "outer reconciliation, resource refund, actual model and three installed rounds",
+    "current remote/prospective CI still required"
+  ],
+  "push": false
+}

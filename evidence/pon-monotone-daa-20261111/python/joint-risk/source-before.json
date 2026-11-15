@@ -1,0 +1,18 @@
+{
+  "expected_head_and_tree_match": true,
+  "head": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+  "selected_input_sha256": {
+    "config/pon/joint-consensus-qualification-v1.json": "c9f8c02768b8937f601dd9824f9bd7f32f810e47840d9ece4f09d1d60ef78607",
+    "formal/pon-nakamoto-v1/joint_consensus_qualification.py": "833fc34df404a9211b543852293c5592131145d6a10b30343ad53d15d59a1894",
+    "formal/pon-nakamoto-v1/native_execution_certificate.py": "8ee16a5e0378ba97a5a1bd45085f5b94aff2005d0a67cae7318342f556183033",
+    "formal/pon-nakamoto-v1/native_owner_journal.py": "9a8a3eae2615d4c84194d58578897849ac3f0714408a98184a18365dabe34338",
+    "formal/pon-nakamoto-v1/native_owner_score_bridge.py": "a249eb26e1d6144e83d20a7fcc93a31af85da66d495102a04c26e251a79b7bb0",
+    "formal/pon-nakamoto-v1/native_risk_ledger.py": "2444750cf32a584b48b1a8f6c9afc1849d643b9ca1dadbd2a48076f68ae4bd4d",
+    "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py": "f7cf2191b5af7425d8e34c20c4d09229b46c8b7675e3abc10a65529c1deedc3b",
+    "formal/pon-nakamoto-v1/test_native_risk_ledger.py": "28b2f1e88c60e4b143b3195cd13e700eed59af60839e979319b90bee28d19aff",
+    "scripts/project-preflight.sh": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f"
+  },
+  "tracked_status_porcelain": "",
+  "tracked_tree_clean": true,
+  "tree": "72b106b4458299c37da146b0218b8f5276195b6d"
+}

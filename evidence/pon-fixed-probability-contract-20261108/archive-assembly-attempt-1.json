@@ -1,0 +1,8 @@
+{
+  "job_id": "1a1bb4f0482-13c47-1ce",
+  "stdout": "START archive-00-preflight\nEND {\"label\": \"archive-00-preflight\", \"argv\": [\"bash\", \"scripts/project-preflight.sh\"], \"exit\": 0, \"seconds\": 0.09307944611646235, \"head\": \"103cdf67108a667d8570388f9dd402210c160157\"}\n",
+  "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 73, in <module>\nAssertionError: artifact-manifest.json\n",
+  "source_unchanged": true,
+  "reason": "Archive link validation ran before generating the manifest and archive metadata that README links to.",
+  "repair": "Generate metadata before validating README links; compare final staged byte hashes and preserve all source entries."
+}

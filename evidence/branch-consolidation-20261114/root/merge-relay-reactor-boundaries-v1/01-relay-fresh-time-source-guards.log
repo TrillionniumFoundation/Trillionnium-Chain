@@ -1,0 +1,7 @@
+test_relay_preflight_source_bytes_are_bound_without_qualification (scripts.ci.test_pq_research_integration.CorpusGateTests.test_relay_preflight_source_bytes_are_bound_without_qualification) ... ok
+test_relay_preflight_sources_require_each_path_and_pin (scripts.ci.test_pq_research_integration.CorpusGateTests.test_relay_preflight_sources_require_each_path_and_pin) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 1.809s
+
+OK

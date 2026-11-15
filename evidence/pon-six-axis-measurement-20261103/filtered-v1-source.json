@@ -1,0 +1,46 @@
+{
+  "source_base": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "binary_sha256": "1874642cf728d58034a6ef52edaf3b47f6bfb687bae149f01e7b731f35fd0471",
+  "source_sha256": {
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+    "trillionnium/crates/trnm-mvcc-fee/Cargo.toml": "9aa41333719fd478a784a57ffb2bf5afdae18359af815f30db03217440c36fff",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": "90221c452d24ceb2e13b8030738b082e5c3b5d1112b2cb741bd56d9964239b5e",
+    "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs": "741a7c7c33555b229631ffd928f63f343afcf5ab0b524c004eaab9c5d49e5f5f",
+    "trillionnium/crates/trnm-mvcc-fee/examples/borrowed_non_account_cost.rs": "dceaa144d1370a303293f40e9d269ad3705cc9d0a99600a053b6f382c9f79d5d"
+  },
+  "rustc": "1.95.0",
+  "cargo_profile": "test",
+  "features": "default",
+  "rounds": 16,
+  "order": "ABBA",
+  "primary_metric": "thread allocator requests and requested bytes",
+  "timing_metric": "monotonic wall ns; counter disabled, allocator wrapper installed",
+  "cohorts": [
+    [
+      64,
+      64
+    ],
+    [
+      1024,
+      64
+    ],
+    [
+      2100,
+      64
+    ],
+    [
+      64,
+      2100
+    ]
+  ],
+  "modes": [
+    "cold",
+    "warm"
+  ],
+  "decision_registered_before_measurement": {
+    "paired_median_wall_ratio_max": 0.95,
+    "p95_wall_ratio_max": 1.1
+  },
+  "scope": "M06 component only, no native parent or service CPU acceptance"
+}

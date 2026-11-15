@@ -1,0 +1,2090 @@
+use super::*;
+use std::{
+    cell::RefCell,
+    fs,
+    os::unix::process::ExitStatusExt,
+    process::{Child, Command, Stdio},
+    sync::{
+        atomic::{AtomicUsize, Ordering},
+        Arc, Barrier,
+    },
+};
+
+type Observer = Box<dyn Fn(&str)>;
+
+#[path = "history_import_deadline_tests.rs"]
+mod deadline_controls;
+
+#[path = "history_import_detached_budget_tests.rs"]
+mod detached_budget_controls;
+
+thread_local! {
+    static OBSERVER: RefCell<Option<Observer>> = RefCell::new(None);
+}
+
+pub(super) fn cut(stage: &str) {
+    OBSERVER.with(|observer| {
+        if let Some(observe) = observer.borrow().as_ref() {
+            observe(stage);
+        }
+    });
+    if std::env::var("TRNM_HISTORY_KILL_STAGE").ok().as_deref() == Some(stage) {
+        let root = std::env::var("TRNM_HISTORY_KILL_DIRECTORY").unwrap();
+        // A created file is visible before fs::write finishes its payload.
+        // Publish the closed marker atomically before the parent's exact check.
+        let marker = std::path::Path::new(&root).join("ready.pending");
+        fs::write(&marker, stage).unwrap();
+        fs::rename(marker, std::path::Path::new(&root).join("ready")).unwrap();
+        // Only this isolated test child pauses. The parent issues SIGKILL;
+        // no destructor, normal error return or clean epoch close can run.
+        loop {
+            thread::park();
+        }
+    }
+}
+
+fn page(settings: &Settings, packet: &Packet) -> Page {
+    let id = packet.id().unwrap();
+    Page {
+        schema: "pon-native-history-v1".into(),
+        network: hex::encode(settings.network()),
+        parameters: hex::encode(settings.parameters()),
+        genesis: hex::encode(settings.genesis()),
+        tip: hex::encode(id),
+        after: hex::encode(packet.header.parent),
+        packets: vec![hex::encode(packet.encode().unwrap())],
+        next: hex::encode(id),
+        complete: true,
+    }
+}
+
+fn fixture() -> (tempfile::TempDir, Settings, Node, Packet, u64) {
+    let clock = now().unwrap();
+    let settings = Settings::development(Some(clock - 100)).unwrap();
+    let directory = tempfile::tempdir().unwrap();
+    let node = Node::open(directory.path(), settings.clone(), 2).unwrap();
+    let packet = node
+        .make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        )
+        .unwrap();
+    (directory, settings, node, packet, clock)
+}
+
+fn history_successor(
+    directory: &std::path::Path,
+    settings: &Settings,
+    parent: &Packet,
+    clock: u64,
+) -> Packet {
+    let mut source = Node::open(&directory.join("history-source"), settings.clone(), 2).unwrap();
+    source.admit(parent, clock).unwrap();
+    source
+        .make(
+            parent.id().unwrap(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            parent.header.timestamp + 10,
+            4096,
+        )
+        .unwrap()
+}
+
+#[test]
+fn shared_history_native_completion_handoff_settles_before_next_packet() {
+    let (directory, settings, node, first, clock) = fixture();
+    let second = history_successor(directory.path(), &settings, &first, clock);
+    let ids = [first.id().unwrap(), second.id().unwrap()];
+    let owner = Arc::new(Mutex::new(node));
+    let original = owner.lock().unwrap().remote_history_cpu_domain().unwrap();
+    assert_eq!(original.observe().unwrap().stored_credit_ns, 0);
+    let admitted = Arc::new(AtomicUsize::new(0));
+    let pending = Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let handoffs = AtomicUsize::new(0);
+    let observed_owner = owner.clone();
+    let observed_cpu = original.clone();
+    let observed_admitted = admitted.clone();
+    let observed_pending = pending.clone();
+    OBSERVER.with(|hook| {
+        *hook.borrow_mut() = Some(Box::new(move |stage| {
+            if matches!(stage, "w1" | "m06") {
+                let completion = observed_cpu.observe_completion_work().unwrap();
+                // Each packet starts without its predecessor's scheduling
+                // marker. W1/M06 alone never promotes the new operation.
+                assert_eq!(completion.live_completions, 0);
+                assert_eq!(
+                    completion.retained_identities,
+                    observed_admitted.load(Ordering::SeqCst)
+                );
+            }
+            if stage == "admitted" {
+                let index = observed_admitted.fetch_add(1, Ordering::SeqCst);
+                let completion = observed_cpu.observe_completion_work().unwrap();
+                assert_eq!(completion.live_completions, 1);
+                assert_eq!(completion.retained_identities, index + 1);
+                assert_eq!(observed_cpu.observe().unwrap().in_flight, 1);
+                // Both the original transaction and its Node writer have ended.
+                let node = observed_owner.try_lock().unwrap();
+                assert_eq!(node.packet(ids[index]).unwrap().id().unwrap(), ids[index]);
+                assert!(!observed_pending.swap(true, Ordering::SeqCst));
+            }
+        }));
+    });
+    let mut import = page(&settings, &first);
+    import.packets.push(hex::encode(second.encode().unwrap()));
+    import.tip = hex::encode(ids[1]);
+    import.next = hex::encode(ids[1]);
+    let deadline = Instant::now() + Duration::from_secs(5);
+    let result = receive(
+        Owner::Shared(&owner),
+        import,
+        ids[1],
+        settings.genesis(),
+        clock,
+        Control {
+            deadline,
+            resource: &|| {
+                if pending.swap(false, Ordering::SeqCst) {
+                    owner.try_lock().unwrap().active().unwrap();
+                    // This must be the same qualified operation's detached
+                    // handoff, before finish releases it and the next reserve.
+                    assert_eq!(original.observe().unwrap().in_flight, 1);
+                    assert_eq!(
+                        original.observe_completion_work().unwrap().live_completions,
+                        1
+                    );
+                    handoffs.fetch_add(1, Ordering::SeqCst);
+                }
+                Ok(())
+            },
+        },
+    );
+    OBSERVER.with(|hook| *hook.borrow_mut() = None);
+    assert_eq!(result.unwrap(), ids[1]);
+    assert_eq!(admitted.load(Ordering::SeqCst), 2);
+    assert_eq!(handoffs.load(Ordering::SeqCst), 2);
+    assert!(!pending.load(Ordering::SeqCst));
+    let completion = original.observe_completion_work().unwrap();
+    assert_eq!(completion.retained_identities, 2);
+    assert_eq!(completion.live_completions, 0);
+    let flow = original.observe_actual_flow().unwrap().unwrap();
+    assert_eq!(flow.initial_credit_ns, 0);
+    assert_eq!(flow.booked_reservation_ns, 0);
+    assert_eq!(flow.live_owners, 0);
+    assert_eq!(flow.paid_cpu_debit_ns, flow.settled_full_cpu_ns);
+    assert!(flow.balance_identity_verified);
+    let node = owner.lock().unwrap();
+    assert!(node
+        .public_service_cpu_domain()
+        .unwrap()
+        .shares_domain_with(&original));
+    assert_eq!(node.read_active().unwrap().0, ids[1]);
+    for packet in [&first, &second] {
+        assert_eq!(
+            node.packet(packet.id().unwrap()).unwrap().encode().unwrap(),
+            packet.encode().unwrap()
+        );
+    }
+}
+
+#[test]
+fn history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors() {
+    let (_directory, mut settings, _node, packet, _clock) = fixture();
+    let raw = packet.encode_for_settings(&settings).unwrap();
+    // Initial State is irrelevant to packet grammar. The former Settings clone
+    // copied it while holding Node; the replacement copies only Config. Keep
+    // the old full snapshot as the independent codec reference in this test.
+    settings.initial.insert(
+        "codec-snapshot-only".into(),
+        serde_json::json!("initial-state-material".repeat(65_536)),
+    );
+    let original = settings.clone();
+    let context = settings.packet_codec_context();
+    settings.initial.clear();
+    settings.app.network[0] ^= 1;
+    let decoded = hex_packet_for_context(&hex::encode(&raw), &context).unwrap();
+    let reference = Packet::decode_for_settings(&raw, &original).unwrap();
+    assert_eq!(decoded.encode().unwrap(), reference.encode().unwrap());
+    assert_eq!(decoded.encode().unwrap(), raw);
+    let completed = WorkCheckedPacket::verify(packet).unwrap();
+    assert_eq!(
+        completed.completion_identity_for_context(&context).unwrap(),
+        completed.completion_identity().unwrap()
+    );
+    assert_eq!(
+        completed
+            .completion_identity_for_context(&settings.packet_codec_context())
+            .unwrap_err()
+            .to_string(),
+        "CONTEXT"
+    );
+
+    let mut unconfigured = original;
+    unconfigured.app.params["native_pq_accounts_profile"] =
+        serde_json::json!("pon-native-pq-accounts-v2");
+    // Snapshot construction must not move profile errors ahead of the original
+    // hex framing check, or replace the absent configured PQ policy.
+    let context = unconfigured.packet_codec_context();
+    assert_eq!(
+        hex_packet_for_context("x", &context)
+            .unwrap_err()
+            .to_string(),
+        "PACKET_HEX"
+    );
+    let expected = Packet::decode_for_settings(&raw, &unconfigured)
+        .unwrap_err()
+        .to_string();
+    assert_eq!(expected, "PQ2_PROFILE_REQUIRED");
+    for _ in 0..2 {
+        assert_eq!(
+            hex_packet_for_context(&hex::encode(&raw), &context)
+                .unwrap_err()
+                .to_string(),
+            expected
+        );
+        assert_eq!(
+            completed
+                .completion_identity_for_context(&context)
+                .unwrap_err()
+                .to_string(),
+            expected
+        );
+    }
+}
+
+fn native_work_boundaries(
+    packet: &Packet,
+) -> Vec<trnm_crypto_primitives::pon_work::VerificationProgress> {
+    let mut boundaries = Vec::new();
+    WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |point| {
+        boundaries.push(point);
+        Ok(())
+    })
+    .unwrap();
+    boundaries
+}
+
+#[test]
+fn history_w1_checks_host_once_at_every_real_progress_boundary() {
+    use trnm_crypto_primitives::pon_work::VerificationProgress;
+    let (_directory, _settings, _node, packet, _clock) = fixture();
+    // The reference is the actual full verifier's callbacks, not a hand-built
+    // selector sequence or a claim that this fixture changed a real cgroup.
+    let boundaries = native_work_boundaries(&packet);
+    assert_eq!(
+        boundaries.first(),
+        Some(&VerificationProgress::BeforeReplay)
+    );
+    assert_eq!(
+        boundaries.last(),
+        Some(&VerificationProgress::BeforeVerifiedWork)
+    );
+    assert_eq!(
+        boundaries
+            .iter()
+            .filter(|point| matches!(point, VerificationProgress::TranscriptTile { .. }))
+            .count(),
+        512
+    );
+    assert!(boundaries
+        .iter()
+        .any(|point| matches!(point, VerificationProgress::Noise { .. })));
+    assert!(boundaries
+        .iter()
+        .any(|point| matches!(point, VerificationProgress::MatrixRow { .. })));
+    assert!(boundaries.contains(&VerificationProgress::BeforeProduct));
+    for owns_node_mutex in [false, true] {
+        let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+        let operation = cpu.begin().unwrap();
+        let deadline = Instant::now() + Duration::from_secs(10);
+        operation.bind_history_request(deadline).unwrap();
+        let calls = AtomicUsize::new(0);
+        let resource = || {
+            calls.fetch_add(1, Ordering::SeqCst);
+            Ok(())
+        };
+        let result = verify_history_work(
+            packet.clone(),
+            &operation.checkpoint_handle(),
+            owns_node_mutex,
+            &Control {
+                deadline,
+                resource: &resource,
+            },
+        );
+        let receipt = operation.finish();
+        assert!(result.is_ok());
+        assert_eq!(
+            calls.load(Ordering::SeqCst),
+            boundaries.len(),
+            "every actual boundary checks the Host once without a refill wait"
+        );
+        assert!(receipt.total_cpu_ns.is_some_and(|paid| paid > 0));
+        assert!(!receipt.accounting_unavailable && !receipt.live_refused);
+        assert_eq!(cpu.observe().unwrap().in_flight, 0);
+    }
+}
+
+#[test]
+fn history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries() {
+    use trnm_crypto_primitives::pon_work::VerificationProgress;
+    let (_directory, _settings, _node, packet, _clock) = fixture();
+    let boundaries = native_work_boundaries(&packet);
+    let noise = boundaries
+        .iter()
+        .position(|point| matches!(point, VerificationProgress::Noise { .. }))
+        .unwrap();
+    let row = boundaries
+        .iter()
+        .position(|point| matches!(point, VerificationProgress::MatrixRow { .. }))
+        .unwrap();
+    let tile = boundaries
+        .iter()
+        .position(|point| matches!(point, VerificationProgress::TranscriptTile { .. }))
+        .unwrap();
+    let product = boundaries
+        .iter()
+        .position(|point| *point == VerificationProgress::BeforeProduct)
+        .unwrap();
+    // Cover original selected boundaries AND immediately following boundaries
+    // omitted by the removed coarse selector. The actual resource check must
+    // still occur before the next piece of native work at each of these points.
+    let cuts = [
+        0,
+        noise,
+        noise + 1,
+        row,
+        row + 1,
+        tile,
+        tile + 1,
+        product,
+        boundaries.len() - 1,
+    ];
+    for owns_node_mutex in [false, true] {
+        for index in cuts {
+            let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+            let deadline = Instant::now() + Duration::from_secs(10);
+            let operation = cpu.begin().unwrap();
+            operation.bind_history_request(deadline).unwrap();
+            let calls = AtomicUsize::new(0);
+            let resource = || {
+                let current = calls.fetch_add(1, Ordering::SeqCst);
+                ensure(current < index, "PUBLIC_HOST_KERNEL_LIMITS_CHANGED")
+            };
+            let result = verify_history_work(
+                packet.clone(),
+                &operation.checkpoint_handle(),
+                owns_node_mutex,
+                &Control {
+                    deadline,
+                    resource: &resource,
+                },
+            );
+            let receipt = operation.finish();
+            assert_eq!(
+                result.err().unwrap().to_string(),
+                "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+            );
+            assert_eq!(calls.load(Ordering::SeqCst), index + 1);
+            assert!(!receipt.accounting_unavailable);
+            assert_eq!(cpu.observe().unwrap().in_flight, 0);
+
+            // A local resource failure is neither a false mathematical claim
+            // nor a cached negative. Retry the identical proof on the same
+            // original CPU domain, settling both real paid operations.
+            let retry = cpu.begin().unwrap();
+            retry.bind_history_request(deadline).unwrap();
+            let accepted = verify_history_work(
+                packet.clone(),
+                &retry.checkpoint_handle(),
+                owns_node_mutex,
+                &Control {
+                    deadline,
+                    resource: &|| Ok(()),
+                },
+            );
+            let retry_receipt = retry.finish();
+            assert!(accepted.is_ok());
+            assert!(!retry_receipt.accounting_unavailable);
+            assert_eq!(cpu.observe().unwrap().in_flight, 0);
+        }
+    }
+}
+
+#[test]
+fn history_w1_original_deadline_precedes_resource_and_complete_work() {
+    let (_directory, _settings, _node, packet, _clock) = fixture();
+    let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+    let operation = cpu.begin().unwrap();
+    let deadline = Instant::now();
+    assert_eq!(
+        operation
+            .bind_history_request(deadline)
+            .unwrap_err()
+            .to_string(),
+        "PUBLIC_REQUEST_DEADLINE"
+    );
+    let calls = AtomicUsize::new(0);
+    let resource = || {
+        calls.fetch_add(1, Ordering::SeqCst);
+        Err(crate::Error::from("PUBLIC_HOST_KERNEL_LIMITS_CHANGED"))
+    };
+    // The real caller refuses the expired binding above. Also check the
+    // extracted verifier's own first boundary: even an unbound operation
+    // cannot bypass that deadline or reach the Host/CPU callback here.
+    let result = verify_history_work(
+        packet,
+        &operation.checkpoint_handle(),
+        false,
+        &Control {
+            deadline,
+            resource: &resource,
+        },
+    );
+    let receipt = operation.finish();
+    assert_eq!(result.err().unwrap().to_string(), "PUBLIC_REQUEST_DEADLINE");
+    assert_eq!(calls.load(Ordering::SeqCst), 0);
+    assert!(!receipt.accounting_unavailable);
+    assert_eq!(cpu.observe().unwrap().in_flight, 0);
+    assert_eq!(
+        cpu.observe_completion_work().unwrap().retained_identities,
+        0
+    );
+}
+
+#[test]
+fn history_w1_checks_host_once_at_every_native_boundary_without_refill() {
+    use trnm_crypto_primitives::pon_work::{self, VerificationProgress, WorkError};
+    let (_directory, _settings, _node, packet, _clock) = fixture();
+    let mut false_trace = packet.clone();
+    let trace_start = pon_work::PROOF_BYTES - 32;
+    let mut ticket_passed = false;
+    for attempt in 0..4096_u64 {
+        let trace = pon_work::hash(b"history-host-count-false-trace", &[&attempt.to_le_bytes()]);
+        if trace.as_slice() == &packet.proof[trace_start..] {
+            continue;
+        }
+        false_trace.proof[trace_start..].copy_from_slice(&trace);
+        if pon_work::precheck_proof_statement(
+            false_trace.header.challenge(),
+            false_trace.header.work_task,
+            false_trace.header.target,
+            &false_trace.proof,
+        )
+        .is_ok()
+        {
+            ticket_passed = true;
+            break;
+        }
+    }
+    assert!(ticket_passed, "exercise actual full false-trace rejection");
+    for (name, packet) in [("valid", packet), ("false-trace", false_trace)] {
+        // The retained scalar relation independently supplies the complete
+        // boundary count, including data-dependent noise rejection sampling.
+        let mut reference_points = Vec::new();
+        let reference = pon_work::verify_reference_with_progress(
+            packet.header.challenge(),
+            packet.header.work_task,
+            packet.header.target,
+            &packet.proof,
+            &mut |point| {
+                reference_points.push(point);
+                Ok::<_, crate::Error>(())
+            },
+        );
+        if name == "false-trace" {
+            assert!(matches!(
+                reference.unwrap_err(),
+                pon_work::VerificationError::Relation(WorkError::Transcript)
+            ));
+        } else {
+            reference.unwrap();
+        }
+        assert_eq!(
+            reference_points
+                .iter()
+                .filter(|point| matches!(point, VerificationProgress::TranscriptTile { .. }))
+                .count(),
+            512
+        );
+        for owns_node_mutex in [false, true] {
+            // This control counts callbacks, not physical cgroup reads or
+            // public-service latency. The original standalone burst avoids
+            // refill so each mathematical checkpoint must check Host once.
+            let domain = public_v3::ServiceMutationCpuDomain::standalone();
+            let initial = domain.observe().unwrap();
+            let calls = AtomicUsize::new(0);
+            let resource = || {
+                calls.fetch_add(1, Ordering::SeqCst);
+                Ok(())
+            };
+            let control = Control {
+                deadline: Instant::now() + Duration::from_secs(10),
+                resource: &resource,
+            };
+            let operation = domain.begin().unwrap();
+            operation.bind_history_request(control.deadline).unwrap();
+            let result = verify_history_work(
+                packet.clone(),
+                &operation.checkpoint_handle(),
+                owns_node_mutex,
+                &control,
+            );
+            if name == "false-trace" {
+                assert_eq!(result.err().unwrap().to_string(), "WORK:Transcript");
+            } else {
+                assert!(result.is_ok(), "{name}/{owns_node_mutex}");
+            }
+            assert_eq!(calls.load(Ordering::SeqCst), reference_points.len());
+            let receipt = operation.finish();
+            assert!(!receipt.accounting_unavailable);
+            assert!(!receipt.live_refused);
+            let flow = domain.observe_actual_flow().unwrap().unwrap();
+            assert_eq!(flow.initial_credit_ns, i128::from(initial.burst_ns));
+            assert_eq!(flow.booked_reservation_ns, 0);
+            assert_eq!(flow.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+            assert!(flow.balance_identity_verified);
+            println!(
+                "{}",
+                serde_json::json!({"schema":"history-w1-host-boundary-count-v1",
+                "case":name,"owns_node_mutex":owns_node_mutex,
+                "reference_boundaries":reference_points.len(),
+                "resource_calls":calls.load(Ordering::SeqCst),
+                "physical_host_measurement":false,"receipt":receipt,"flow":flow})
+            );
+        }
+    }
+}
+
+#[test]
+fn history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account() {
+    use trnm_crypto_primitives::pon_work::{self, VerificationProgress};
+    let (_directory, _settings, _node, packet, _clock) = fixture();
+    let mut reference_points = Vec::new();
+    pon_work::verify_reference_with_progress(
+        packet.header.challenge(),
+        packet.header.work_task,
+        packet.header.target,
+        &packet.proof,
+        &mut |point| {
+            reference_points.push(point);
+            Ok::<_, crate::Error>(())
+        },
+    )
+    .unwrap();
+    let cuts: Vec<_> = reference_points
+        .iter()
+        .enumerate()
+        .filter_map(|(index, point)| {
+            let selected = match point {
+                VerificationProgress::BeforeReplay
+                | VerificationProgress::BeforeProduct
+                | VerificationProgress::BeforeVerifiedWork => true,
+                VerificationProgress::Noise { label, counter } => {
+                    (*label, *counter) == (0, 0) || (*label, *counter) == (3, 63)
+                }
+                VerificationProgress::MatrixRow { row } => *row == 63,
+                VerificationProgress::TranscriptTile { row, column, inner } => {
+                    [(0, 0, 0), (4, 0, 0), (7, 7, 7)].contains(&(*row, *column, *inner))
+                }
+            };
+            selected.then_some(index)
+        })
+        .collect();
+    for owns_node_mutex in [false, true] {
+        for cut in cuts.iter().copied().map(Some).chain([None]) {
+            let domain = public_v3::ServiceMutationCpuDomain::standalone();
+            let initial = domain.observe().unwrap();
+            let calls = AtomicUsize::new(0);
+            let resource = || {
+                let index = calls.fetch_add(1, Ordering::SeqCst);
+                ensure(Some(index) != cut, "PUBLIC_HOST_KERNEL_LIMITS_CHANGED")
+            };
+            let control = Control {
+                deadline: if cut.is_some() {
+                    Instant::now() + Duration::from_secs(10)
+                } else {
+                    Instant::now() + Duration::from_millis(100)
+                },
+                resource: &resource,
+            };
+            let operation = domain.begin().unwrap();
+            operation.bind_history_request(control.deadline).unwrap();
+            if cut.is_none() {
+                // Binding rejects an already expired request. Bind while the
+                // original deadline is live, then let that same deadline pass
+                // before entering W1; never rewrite or renew the binding.
+                while Instant::now() < control.deadline {
+                    thread::sleep(control.deadline.saturating_duration_since(Instant::now()));
+                }
+            }
+            let result = verify_history_work(
+                packet.clone(),
+                &operation.checkpoint_handle(),
+                owns_node_mutex,
+                &control,
+            );
+            assert_eq!(
+                result.err().unwrap().to_string(),
+                if cut.is_some() {
+                    "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+                } else {
+                    "PUBLIC_REQUEST_DEADLINE"
+                }
+            );
+            assert_eq!(calls.load(Ordering::SeqCst), cut.map_or(0, |n| n + 1));
+            // A cancelled relation never acquires completion priority; its
+            // actual partial CPU still settles into the original account.
+            assert_eq!(
+                domain
+                    .observe_completion_work()
+                    .unwrap()
+                    .retained_identities,
+                0
+            );
+            let receipt = operation.finish();
+            assert!(!receipt.accounting_unavailable);
+            let flow = domain.observe_actual_flow().unwrap().unwrap();
+            assert_eq!(flow.initial_credit_ns, i128::from(initial.burst_ns));
+            assert_eq!(flow.booked_reservation_ns, 0);
+            assert_eq!(flow.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+            assert!(flow.balance_identity_verified);
+        }
+    }
+}
+
+#[test]
+fn pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one() {
+    let (_directory, settings, node, packet, _clock) = fixture();
+    let owner = Mutex::new(node);
+    let error = admit_shared_packet(
+        &owner,
+        packet,
+        Instant::now() + Duration::from_secs(10),
+        &|| Ok(()),
+        Some(settings.genesis()),
+    )
+    .unwrap_err();
+    assert_eq!(error.to_string(), "PAGE_COMPLETE");
+    assert!(owner.lock().unwrap().public_service_cpu_domain().is_err());
+    let error = complete_shared(
+        &owner,
+        settings.genesis(),
+        Instant::now() + Duration::from_secs(10),
+        &|| Ok(()),
+    )
+    .unwrap_err();
+    assert_eq!(error.to_string(), "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND");
+    assert!(owner.lock().unwrap().public_service_cpu_domain().is_err());
+    let error =
+        complete_shared(&owner, settings.genesis(), Instant::now(), &|| Ok(())).unwrap_err();
+    assert!(error.is(crate::ErrorCode::PublicRequestDeadline));
+    assert!(owner.lock().unwrap().public_service_cpu_domain().is_err());
+    assert_eq!(
+        owner.lock().unwrap().read_active().unwrap().0,
+        settings.genesis()
+    );
+}
+
+#[test]
+fn pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1() {
+    let (_directory, settings, mut node, packet, _clock) = fixture();
+    let original = public_v3::ServiceMutationCpuDomain::standalone();
+    node.bind_public_service_cpu_domain(&original).unwrap();
+    let owner = Mutex::new(node);
+    let w1 = Arc::new(AtomicUsize::new(0));
+    let activations = Arc::new(AtomicUsize::new(0));
+    let observed_w1 = w1.clone();
+    let observed_activations = activations.clone();
+    let observed_cpu = original.clone();
+    OBSERVER.with(|hook| {
+        *hook.borrow_mut() = Some(Box::new(move |stage| {
+            if stage == "w1" {
+                observed_w1.fetch_add(1, Ordering::SeqCst);
+            }
+            if stage == "activation_progress" {
+                observed_activations.fetch_add(1, Ordering::SeqCst);
+                assert_eq!(observed_cpu.observe().unwrap().in_flight, 1);
+            }
+        }))
+    });
+    let id = packet.id().unwrap();
+    let end = Instant::now() + Duration::from_secs(10);
+    let admitted = admit_shared_packet(&owner, packet.clone(), end, &|| Ok(()), Some(id));
+    assert_eq!(admitted.unwrap(), (true, Some(id)));
+    let verified = w1.load(Ordering::SeqCst);
+    assert!(verified > 0);
+    assert!(activations.load(Ordering::SeqCst) > 0);
+    assert_eq!(
+        original
+            .observe_completion_work()
+            .unwrap()
+            .retained_identities,
+        1
+    );
+    assert_eq!(complete_shared(&owner, id, end, &|| Ok(())).unwrap(), id);
+    assert_eq!(
+        admit_shared_packet(&owner, packet, end, &|| Ok(()), Some(id)).unwrap(),
+        (false, Some(id))
+    );
+    OBSERVER.with(|hook| *hook.borrow_mut() = None);
+    assert_eq!(w1.load(Ordering::SeqCst), verified);
+    assert_eq!(
+        original
+            .observe_completion_work()
+            .unwrap()
+            .retained_identities,
+        1
+    );
+    assert_eq!(original.observe().unwrap().in_flight, 0);
+    assert!(!original.observe().unwrap().accounting_unavailable);
+    let node = owner.lock().unwrap();
+    assert!(node
+        .public_service_cpu_domain()
+        .unwrap()
+        .shares_domain_with(&original));
+    assert_eq!(node.active().unwrap().0, id);
+    assert_ne!(id, settings.genesis());
+}
+
+#[test]
+fn pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1() {
+    let (_directory, settings, mut node, packet, _clock) = fixture();
+    let original = public_v3::ServiceMutationCpuDomain::standalone();
+    node.bind_public_service_cpu_domain(&original).unwrap();
+    let owner = Mutex::new(node);
+    let fail_activation = Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let w1 = Arc::new(AtomicUsize::new(0));
+    let observed_failure = fail_activation.clone();
+    let observed_w1 = w1.clone();
+    OBSERVER.with(|hook| {
+        *hook.borrow_mut() = Some(Box::new(move |stage| {
+            if stage == "w1" {
+                observed_w1.fetch_add(1, Ordering::SeqCst);
+            }
+            if stage == "admitted" {
+                observed_failure.store(true, Ordering::SeqCst);
+            }
+        }))
+    });
+    let id = packet.id().unwrap();
+    let end = Instant::now() + Duration::from_secs(10);
+    let refused = admit_shared_packet(
+        &owner,
+        packet.clone(),
+        end,
+        &|| {
+            ensure(
+                !fail_activation.load(Ordering::SeqCst),
+                "PUBLIC_REQUEST_DEADLINE",
+            )
+        },
+        Some(id),
+    );
+    assert!(refused
+        .unwrap_err()
+        .is(crate::ErrorCode::PublicRequestDeadline));
+    assert_eq!(owner.lock().unwrap().packet(id).unwrap().id().unwrap(), id);
+    assert_eq!(
+        owner.lock().unwrap().active().unwrap().0,
+        settings.genesis()
+    );
+    let verified = w1.load(Ordering::SeqCst);
+    assert!(verified > 0);
+    fail_activation.store(false, Ordering::SeqCst);
+    let retried = admit_shared_packet(&owner, packet, end, &|| Ok(()), Some(id));
+    OBSERVER.with(|hook| *hook.borrow_mut() = None);
+    assert_eq!(retried.unwrap(), (false, Some(id)));
+    assert_eq!(w1.load(Ordering::SeqCst), verified);
+    assert_eq!(
+        original
+            .observe_completion_work()
+            .unwrap()
+            .retained_identities,
+        1
+    );
+    assert_eq!(original.observe().unwrap().in_flight, 0);
+    assert_eq!(owner.lock().unwrap().active().unwrap().0, id);
+}
+
+#[test]
+fn expired_history_never_starts_an_epoch_or_a_cpu_account() {
+    let (_directory, settings, node, packet, clock) = fixture();
+    let owner = Mutex::new(node);
+    let result = receive(
+        Owner::Shared(&owner),
+        page(&settings, &packet),
+        packet.id().unwrap(),
+        settings.genesis(),
+        clock,
+        Control {
+            deadline: Instant::now(),
+            resource: &|| Ok(()),
+        },
+    );
+    assert!(result
+        .unwrap_err()
+        .is(crate::ErrorCode::PublicRequestDeadline));
+    let node = owner.lock().unwrap();
+    assert!(node.public_service_cpu_domain().is_err());
+    assert_eq!(node.read_active().unwrap().0, settings.genesis());
+}
+
+#[test]
+fn observed_history_retains_complete_native_path_and_real_w1_cancellation() {
+    for cancel in [false, true] {
+        let (_directory, settings, mut node, packet, clock) = fixture();
+        let id = packet.id().unwrap();
+        let observation = HistoryImportObserver::new();
+        let cancelled = Arc::new(std::sync::atomic::AtomicBool::new(false));
+        if cancel {
+            let cancelled = cancelled.clone();
+            OBSERVER.with(|hook| {
+                *hook.borrow_mut() = Some(Box::new(move |stage| {
+                    if stage == "w1" {
+                        cancelled.store(true, Ordering::Release);
+                    }
+                }))
+            });
+        }
+        let resource = || {
+            ensure(
+                !cancelled.load(Ordering::Acquire),
+                "PUBLIC_REQUEST_CANCELLED",
+            )
+        };
+        let result = receive_observed(
+            Owner::Exclusive(&mut node),
+            page(&settings, &packet),
+            id,
+            settings.genesis(),
+            clock,
+            Control {
+                deadline: Instant::now() + Duration::from_secs(5),
+                resource: &resource,
+            },
+            Some(&observation),
+        );
+        OBSERVER.with(|hook| *hook.borrow_mut() = None);
+        assert_eq!(result.is_ok(), !cancel);
+        let snapshot = observation.snapshot();
+        assert_eq!(snapshot.measurement_failures, 0);
+        assert_eq!(snapshot.packet_capacity, 16);
+        assert_eq!(snapshot.packets.len(), 1);
+        assert_eq!(snapshot.packets[0].packet_id, Some(id));
+        let attribution = snapshot.native_attribution.as_ref().unwrap();
+        let page = attribution.page.as_ref().unwrap();
+        assert_eq!(page.owner_mode, Some("exclusive"));
+        assert_eq!(page.epoch_substeps.len(), 2);
+        assert!(page.epoch_substeps.iter().all(|step| {
+            step.span.completed && step.span.accepted == Some(true) && step.span.wall_ns.is_some()
+        }));
+        assert_eq!(page.cpu_waits.len(), 1);
+        assert_eq!(attribution.packets.len(), 1);
+        assert_eq!(attribution.packets[0].packet_index, 0);
+        assert_eq!(attribution.packets[0].packet_id, Some(id));
+        let wait = attribution.packets[0].attribution.cpu_waits[0];
+        // W1 can subsequently reject/cancel despite a real successful reserve.
+        assert_eq!(wait.span.accepted, Some(true));
+        assert_eq!(wait.reserve_granted, 1);
+        assert_eq!(wait.reserve_attempts, wait.reserve_returns);
+        let encoded = serde_json::to_value(&snapshot).unwrap();
+        assert_eq!(encoded["packets"][0].as_object().unwrap().len(), 3);
+        let imported = snapshot.phases[SubmitPhase::HistoryImport as usize];
+        assert!(imported.started && imported.completed);
+        assert_eq!(imported.accepted, Some(!cancel));
+        assert_eq!(
+            imported.ended_ns.unwrap() - imported.started_ns.unwrap(),
+            imported.wall_ns.unwrap()
+        );
+        let phases = &snapshot.packets[0].phases;
+        let work = phases[SubmitPhase::Work as usize];
+        assert!(work.started && work.completed && work.wall_ns.is_some());
+        assert_eq!(work.accepted, Some(!cancel));
+        assert!(phases[SubmitPhase::CpuSettle as usize].completed);
+        if cancel {
+            assert_eq!(work.error_code, Some("PUBLIC_REQUEST_CANCELLED"));
+            assert!(!phases[SubmitPhase::Admission as usize].started);
+            assert_eq!(node.read_active().unwrap().0, settings.genesis());
+            assert!(node.packet(id).is_err());
+        } else {
+            assert_eq!(node.read_active().unwrap().0, id);
+            for phase in [
+                SubmitPhase::AdmissionPrepare,
+                SubmitPhase::Execution,
+                SubmitPhase::RootCommitment,
+                SubmitPhase::Commit,
+                SubmitPhase::SubmitResult,
+            ] {
+                assert_eq!(phases[phase as usize].accepted, Some(true), "{phase:?}");
+            }
+        }
+    }
+}
+
+#[test]
+fn observed_expired_history_keeps_failure_and_unentered_phases_null() {
+    let (_directory, settings, mut node, packet, clock) = fixture();
+    let observation = HistoryImportObserver::new();
+    let result = receive_observed(
+        Owner::Exclusive(&mut node),
+        page(&settings, &packet),
+        packet.id().unwrap(),
+        settings.genesis(),
+        clock,
+        Control {
+            deadline: Instant::now(),
+            resource: &|| Ok(()),
+        },
+        Some(&observation),
+    );
+    assert!(result
+        .unwrap_err()
+        .is(crate::ErrorCode::PublicRequestDeadline));
+    let snapshot = observation.snapshot();
+    assert_eq!(snapshot.measurement_failures, 0);
+    assert!(snapshot.packets.is_empty());
+    assert!(snapshot.native_attribution.is_none());
+    for phase in &snapshot.phases {
+        let entered = matches!(
+            phase.phase,
+            SubmitPhase::Context | SubmitPhase::HistoryImport
+        );
+        assert_eq!(phase.started, entered);
+        assert_eq!(phase.completed, entered);
+        assert_eq!(phase.accepted, entered.then_some(false));
+        assert_eq!(phase.wall_ns.is_some(), entered);
+        assert_eq!(
+            phase.error_code,
+            entered.then_some("PUBLIC_REQUEST_DEADLINE")
+        );
+    }
+    assert!(node.public_service_cpu_domain().is_err());
+}
+
+#[test]
+fn shared_history_refill_full_w1_and_actual_m06_release_the_original_writer() {
+    let (_directory, settings, node, packet, clock) = fixture();
+    let owner = Arc::new(Mutex::new(node));
+    let original = owner.lock().unwrap().remote_history_cpu_domain().unwrap();
+    assert_eq!(original.observe().unwrap().stored_credit_ns, 0);
+    let unlocked_waits = Arc::new(AtomicUsize::new(0));
+    let unlocked_w1 = Arc::new(AtomicUsize::new(0));
+    let unlocked_m06 = Arc::new(AtomicUsize::new(0));
+    let observed_owner = owner.clone();
+    let waits = unlocked_waits.clone();
+    let works = unlocked_w1.clone();
+    let executions = unlocked_m06.clone();
+    OBSERVER.with(|hook| {
+        *hook.borrow_mut() = Some(Box::new(move |stage| {
+            if stage == "cpu_wait" || stage == "w1" || stage == "m06" {
+                let node = observed_owner
+                    .try_lock()
+                    .expect("History held writer across refill/W1/M06");
+                node.active().unwrap();
+                if stage == "cpu_wait" {
+                    waits.fetch_add(1, Ordering::SeqCst);
+                } else if stage == "w1" {
+                    works.fetch_add(1, Ordering::SeqCst);
+                } else {
+                    executions.fetch_add(1, Ordering::SeqCst);
+                }
+            }
+        }))
+    });
+    let id = packet.id().unwrap();
+    let result = receive(
+        Owner::Shared(&owner),
+        page(&settings, &packet),
+        id,
+        settings.genesis(),
+        clock,
+        Control {
+            deadline: Instant::now() + Duration::from_secs(10),
+            resource: &|| Ok(()),
+        },
+    );
+    OBSERVER.with(|hook| *hook.borrow_mut() = None);
+    assert_eq!(result.unwrap(), id);
+    assert!(unlocked_waits.load(Ordering::SeqCst) > 0);
+    assert!(unlocked_w1.load(Ordering::SeqCst) > 0);
+    assert!(unlocked_m06.load(Ordering::SeqCst) > 0);
+    let node = owner.lock().unwrap();
+    assert!(node
+        .public_service_cpu_domain()
+        .unwrap()
+        .shares_domain_with(&original));
+    assert_eq!(node.read_active().unwrap().0, id);
+    assert_eq!(original.observe().unwrap().in_flight, 0);
+}
+
+#[test]
+fn history_decode_cannot_renew_the_original_w1_deadline() {
+    let (_directory, settings, node, packet, clock) = fixture();
+    let owner = Mutex::new(node);
+    let end = Instant::now() + Duration::from_millis(700);
+    let work = Arc::new(AtomicUsize::new(0));
+    let observed_work = work.clone();
+    OBSERVER.with(|hook| {
+        *hook.borrow_mut() = Some(Box::new(move |stage| {
+            if stage == "decoded" {
+                thread::sleep(
+                    end.saturating_duration_since(Instant::now()) + Duration::from_millis(5),
+                );
+            }
+            if stage == "w1" {
+                observed_work.fetch_add(1, Ordering::SeqCst);
+            }
+        }))
+    });
+    let result = receive(
+        Owner::Shared(&owner),
+        page(&settings, &packet),
+        packet.id().unwrap(),
+        settings.genesis(),
+        clock,
+        Control {
+            deadline: end,
+            resource: &|| Ok(()),
+        },
+    );
+    OBSERVER.with(|hook| *hook.borrow_mut() = None);
+    assert!(result
+        .unwrap_err()
+        .is(crate::ErrorCode::PublicRequestDeadline));
+    assert_eq!(work.load(Ordering::SeqCst), 0);
+    let node = owner.lock().unwrap();
+    assert_eq!(node.read_active().unwrap().0, settings.genesis());
+    assert!(node.packet(packet.id().unwrap()).is_err());
+    assert_eq!(
+        node.public_service_cpu_domain()
+            .unwrap()
+            .observe()
+            .unwrap()
+            .in_flight,
+        0
+    );
+}
+
+#[test]
+fn actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced() {
+    let (directory, settings, node, packet, clock) = fixture();
+    let owner = Mutex::new(node);
+    let original = owner.lock().unwrap().remote_history_cpu_domain().unwrap();
+    let observed = original.clone();
+    let stages = Arc::new(AtomicUsize::new(0));
+    let seen = stages.clone();
+    OBSERVER.with(|hook| {
+        *hook.borrow_mut() = Some(Box::new(move |stage| {
+            if stage == "m06" {
+                seen.fetch_add(1, Ordering::SeqCst);
+                observed.abandon_history_epoch();
+            }
+        }))
+    });
+    let result = receive(
+        Owner::Shared(&owner),
+        page(&settings, &packet),
+        packet.id().unwrap(),
+        settings.genesis(),
+        clock,
+        Control {
+            deadline: Instant::now() + Duration::from_secs(10),
+            resource: &|| Ok(()),
+        },
+    );
+    OBSERVER.with(|hook| *hook.borrow_mut() = None);
+    assert!(result
+        .unwrap_err()
+        .is(crate::ErrorCode::PublicMutationCpuUnavailable));
+    assert_eq!(stages.load(Ordering::SeqCst), 1);
+    assert!(original.observe().unwrap().accounting_unavailable);
+    assert!(original
+        .begin()
+        .err()
+        .unwrap()
+        .is(crate::ErrorCode::PublicMutationCpuUnavailable));
+    {
+        let node = owner.lock().unwrap();
+        assert!(node
+            .public_service_cpu_domain()
+            .unwrap()
+            .shares_domain_with(&original));
+        assert!(node.packet(packet.id().unwrap()).is_err());
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
+    }
+    drop(owner);
+    let mut reopened = Node::open(directory.path(), settings, 2).unwrap();
+    assert!(reopened
+        .remote_history_cpu_domain()
+        .err()
+        .unwrap()
+        .is(crate::ErrorCode::OwnerPublicServiceUncleanEpoch));
+}
+
+#[test]
+fn committed_history_keeps_original_deadline_inside_native_activation() {
+    let (_directory, settings, node, packet, clock) = fixture();
+    let owner = Mutex::new(node);
+    let end = Instant::now() + Duration::from_secs(1);
+    let activations = Arc::new(AtomicUsize::new(0));
+    let observed = activations.clone();
+    OBSERVER.with(|hook| {
+        *hook.borrow_mut() = Some(Box::new(move |stage| {
+            if stage == "activation_progress" && observed.fetch_add(1, Ordering::SeqCst) == 0 {
+                // Enter the actual native activation API after block admission
+                // committed, then exceed the SAME business deadline.
+                thread::sleep(
+                    end.saturating_duration_since(Instant::now()) + Duration::from_millis(5),
+                );
+            }
+        }))
+    });
+    let result = receive(
+        Owner::Shared(&owner),
+        page(&settings, &packet),
+        packet.id().unwrap(),
+        settings.genesis(),
+        clock,
+        Control {
+            deadline: end,
+            resource: &|| Ok(()),
+        },
+    );
+    OBSERVER.with(|hook| *hook.borrow_mut() = None);
+    assert!(result
+        .unwrap_err()
+        .is(crate::ErrorCode::PublicRequestDeadline));
+    assert_eq!(activations.load(Ordering::SeqCst), 1);
+    let node = owner.lock().unwrap();
+    assert_eq!(
+        node.packet(packet.id().unwrap()).unwrap().encode().unwrap(),
+        packet.encode().unwrap()
+    );
+    // Inspect this same owner before cold recovery may activate committed work.
+    assert_eq!(node.read_active().unwrap().0, settings.genesis());
+    let original = node.public_service_cpu_domain().unwrap().observe().unwrap();
+    assert_eq!(original.in_flight, 0);
+    assert!(!original.accounting_unavailable);
+}
+
+#[test]
+fn shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit() {
+    for (business_limit, expected) in [
+        (
+            Duration::from_millis(20),
+            crate::ErrorCode::PublicRequestDeadline,
+        ),
+        (Duration::from_secs(4), crate::ErrorCode::PublicQueueBusy),
+    ] {
+        let (_directory, _settings, node, packet, clock) = fixture();
+        let checked = WorkCheckedPacket::verify(packet).unwrap();
+        let owner = Arc::new(Mutex::new(node));
+        let held = owner.lock().unwrap();
+        let request_owner = owner.clone();
+        let request = thread::spawn(move || {
+            let end = Instant::now() + business_limit;
+            let check = |_| ensure(Instant::now() < end, "PUBLIC_REQUEST_DEADLINE");
+            crate::ingress::admit_shared_checked(
+                &request_owner,
+                checked,
+                None,
+                &mut |_| Ok(()),
+                crate::ingress::SharedAdmissionExecution {
+                    held: &trnm_mvcc_fee::pon_executor::ExecutionControl::new(&check, &()),
+                    detached_progress: &check,
+                    before_writer: &|| Ok(()),
+                    activation_parent: None,
+                },
+                || Ok(clock),
+                crate::ingress::AdmissionDispatchContext::default(),
+            )
+            .err()
+            .unwrap()
+        });
+        // Hold the actual Node mutex until the caller refuses; there is no
+        // scheduler release that could accidentally pass this deadline check.
+        let error = request.join().unwrap();
+        drop(held);
+        assert!(error.is(expected), "unexpected owner-wait result: {error}");
+    }
+}
+
+#[test]
+fn one_history_close_cannot_clear_another_imports_live_epoch() {
+    let (_directory, _settings, mut node, _packet, _clock) = fixture();
+    let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+    node.bind_public_service_cpu_domain(&cpu).unwrap();
+    assert!(node.begin_remote_history_cpu_epoch().unwrap());
+    assert!(node.begin_remote_history_cpu_epoch().unwrap());
+    let operation = cpu.begin().unwrap();
+    // The first import finished its own work. A second import is still live.
+    node.finish_remote_history_cpu_epoch(&cpu).unwrap();
+    assert_eq!(cpu.observe().unwrap().in_flight, 1);
+    assert!(node.begin_remote_history_cpu_epoch().unwrap());
+    node.finish_remote_history_cpu_epoch(&cpu).unwrap();
+    assert!(!operation.finish().accounting_unavailable);
+    node.finish_remote_history_cpu_epoch(&cpu).unwrap();
+    assert!(cpu.accounting_available());
+}
+
+#[test]
+fn concurrent_false_product_wrong_root_and_honest_history_share_one_account() {
+    let (_directory, settings, node, honest, clock) = fixture();
+    let owner = Arc::new(Mutex::new(node));
+    let cpu = owner.lock().unwrap().remote_history_cpu_domain().unwrap();
+    let gate = Arc::new(Barrier::new(4));
+    let end = Instant::now() + Duration::from_secs(15);
+    let mut tasks = Vec::new();
+    for index in 0..3 {
+        let mut packet = honest.clone();
+        if index == 0 {
+            let offset = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+            let value = u32::from_le_bytes(packet.proof[offset..offset + 4].try_into().unwrap());
+            let changed = ((u128::from(value) + index as u128 + 1)
+                % trnm_crypto_primitives::pon_work::Q) as u32;
+            packet.proof[offset..offset + 4].copy_from_slice(&changed.to_le_bytes());
+        }
+        if index == 1 {
+            use trnm_crypto_primitives::pon_work;
+            let words = |range: std::ops::Range<usize>| {
+                packet.proof[range]
+                    .chunks_exact(4)
+                    .map(|word| u32::from_le_bytes(word.try_into().unwrap()))
+                    .collect::<Vec<_>>()
+            };
+            let a = words(4..4 + 4 * pon_work::CELLS);
+            let b = words(4 + 4 * pon_work::CELLS..4 + 8 * pon_work::CELLS);
+            let prepared = pon_work::PreparedTask::new(&a, &b).unwrap();
+            packet.header.state[0] ^= 1;
+            for nonce in 0..4096 {
+                packet.header.nonce = nonce;
+                packet.proof = prepared.prove(packet.header.challenge()).unwrap();
+                if pon_work::precheck_proof_statement(
+                    packet.header.challenge(),
+                    packet.header.work_task,
+                    packet.header.target,
+                    &packet.proof,
+                )
+                .is_ok()
+                {
+                    break;
+                }
+            }
+            // It must reach actual M06 ROOT refusal, never merely fail W1.
+            WorkCheckedPacket::verify(packet.clone()).unwrap();
+        }
+        let owner = owner.clone();
+        let settings = settings.clone();
+        let gate = gate.clone();
+        tasks.push(thread::spawn(move || {
+            gate.wait();
+            receive(
+                Owner::Shared(&owner),
+                page(&settings, &packet),
+                packet.id().unwrap(),
+                settings.genesis(),
+                clock,
+                Control {
+                    deadline: end,
+                    resource: &|| Ok(()),
+                },
+            )
+        }));
+    }
+    gate.wait();
+    for (index, task) in tasks.into_iter().enumerate() {
+        let outcome = task.join().unwrap();
+        if index == 2 {
+            assert_eq!(outcome.unwrap(), honest.id().unwrap());
+        } else if index == 0 {
+            let error = outcome.unwrap_err();
+            assert!(
+                error.to_string() == "WORK:Product" || error.is(crate::ErrorCode::DuplicateContent),
+                "unexpected hostile outcome: {error}"
+            );
+        } else {
+            assert_eq!(outcome.unwrap_err().to_string(), "ROOT");
+        }
+    }
+    let node = owner.lock().unwrap();
+    assert!(node
+        .public_service_cpu_domain()
+        .unwrap()
+        .shares_domain_with(&cpu));
+    assert_eq!(
+        node.packet(honest.id().unwrap()).unwrap().encode().unwrap(),
+        honest.encode().unwrap()
+    );
+    assert_eq!(node.read_active().unwrap().0, honest.id().unwrap());
+    let measured = cpu.observe().unwrap();
+    assert_eq!(measured.in_flight, 0);
+    assert!(!measured.accounting_unavailable);
+    assert!(cpu.observe_actual_flow().unwrap().is_some());
+}
+
+#[test]
+#[ignore = "subprocess fixture: parent selects a real SIGKILL cut"]
+fn history_kill_cut_child() {
+    let root = std::path::PathBuf::from(std::env::var("TRNM_HISTORY_KILL_DIRECTORY").unwrap());
+    let clock: u64 = std::env::var("TRNM_HISTORY_KILL_CLOCK")
+        .unwrap()
+        .parse()
+        .unwrap();
+    let settings = Settings::development(Some(clock - 100)).unwrap();
+    let node = Node::open(&root.join("node"), settings.clone(), 2).unwrap();
+    let packet = node
+        .make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        )
+        .unwrap();
+    let id = packet.id().unwrap();
+    fs::write(root.join("block"), hex::encode(id)).unwrap();
+    let owner = Mutex::new(node);
+    receive(
+        Owner::Shared(&owner),
+        page(&settings, &packet),
+        id,
+        settings.genesis(),
+        clock,
+        Control {
+            deadline: Instant::now() + Duration::from_secs(20),
+            resource: &|| Ok(()),
+        },
+    )
+    .unwrap();
+    panic!("requested native kill cut was not reached");
+}
+
+struct KillOnDrop(Child);
+impl Drop for KillOnDrop {
+    fn drop(&mut self) {
+        let _ = self.0.kill();
+        let _ = self.0.wait();
+    }
+}
+
+#[test]
+fn real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks() {
+    for stage in ["epoch", "w1", "m06", "admitted", "activated"] {
+        let directory = tempfile::tempdir().unwrap();
+        let clock = now().unwrap();
+        let mut child = KillOnDrop(
+            Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--exact",
+                    "ingress::history_import::tests::history_kill_cut_child",
+                    "--ignored",
+                    "--nocapture",
+                ])
+                .env("TRNM_HISTORY_KILL_DIRECTORY", directory.path())
+                .env("TRNM_HISTORY_KILL_CLOCK", clock.to_string())
+                .env("TRNM_HISTORY_KILL_STAGE", stage)
+                .stdout(Stdio::null())
+                .stderr(Stdio::inherit())
+                .spawn()
+                .unwrap(),
+        );
+        let end = Instant::now() + Duration::from_secs(30);
+        while !directory.path().join("ready").exists() {
+            assert!(
+                Instant::now() < end,
+                "child failed to reach {stage} in time"
+            );
+            assert!(
+                child.0.try_wait().unwrap().is_none(),
+                "child exited before {stage}"
+            );
+            thread::sleep(Duration::from_millis(5));
+        }
+        assert_eq!(
+            fs::read_to_string(directory.path().join("ready")).unwrap(),
+            stage
+        );
+        child.0.kill().unwrap();
+        assert_eq!(child.0.wait().unwrap().signal(), Some(libc::SIGKILL));
+        let settings = Settings::development(Some(clock - 100)).unwrap();
+        let id =
+            crate::digest(&fs::read_to_string(directory.path().join("block")).unwrap()).unwrap();
+        // Observe the actual cut BEFORE Node::open invokes ordinary heaviest-
+        // work recovery. An admission-gap reopen intentionally activates a
+        // fully committed best block; that is not an uncommitted acceptance.
+        let db = rusqlite::Connection::open_with_flags(
+            directory.path().join("node/native.sqlite"),
+            rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+        )
+        .unwrap();
+        let cut_tip: Vec<u8> = db
+            .query_row("SELECT tip FROM active WHERE singleton=1", [], |row| {
+                row.get(0)
+            })
+            .unwrap();
+        let expected_cut_tip = if stage == "activated" {
+            id
+        } else {
+            settings.genesis()
+        };
+        assert_eq!(
+            cut_tip.as_slice(),
+            expected_cut_tip.as_slice(),
+            "active publication at cut {stage}"
+        );
+        let marker: Vec<u8> = db
+            .query_row(
+                "SELECT value FROM metadata WHERE key='ordinary-public-v3-epoch-v1'",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(marker, b"active-v1");
+        drop(db);
+        let mut reopened = Node::open(&directory.path().join("node"), settings.clone(), 2).unwrap();
+        let committed = stage == "admitted" || stage == "activated";
+        assert_eq!(
+            reopened.packet(id).is_ok(),
+            committed,
+            "native commit mismatch at {stage}"
+        );
+        assert_eq!(
+            reopened.read_active().unwrap().0,
+            if committed { id } else { settings.genesis() },
+            "ordinary recovery at cut {stage}"
+        );
+        assert!(reopened
+            .remote_history_cpu_domain()
+            .err()
+            .unwrap()
+            .is(crate::ErrorCode::OwnerPublicServiceUncleanEpoch));
+        assert!(reopened
+            .begin_remote_history_cpu_epoch()
+            .unwrap_err()
+            .is(crate::ErrorCode::OwnerPublicServiceUncleanEpoch));
+        assert!(reopened.public_service_cpu_domain().is_err());
+        println!(
+            "{}",
+            serde_json::json!({"schema":"native-history-real-kill-cut-v1", "cut":stage,
+            "observed_signal":libc::SIGKILL, "cut_active_tip":hex::encode(cut_tip),
+            "durable_epoch_marker":String::from_utf8(marker).unwrap(),
+            "stored_block_after_reopen":reopened.packet(id).is_ok(),
+            "reopened_active_tip":hex::encode(reopened.read_active().unwrap().0),
+            "new_cpu_account_available":reopened.public_service_cpu_domain().is_ok(),
+            "physical_power_loss":false, "debt_reconciliation_complete":false})
+        );
+    }
+}
+
+// Fault injection through the real History resource boundary. These controls
+// execute native W1, M06, SQL publication and CPU settlement; they do not claim
+// that this test process provisioned or revoked a real fixed Host cgroup.
+#[test]
+fn first_history_resource_failure_preserves_cold_account_and_clean_restart() {
+    for shared in [false, true] {
+        let (directory, settings, mut node, packet, clock) = fixture();
+        let original = node.remote_history_cpu_domain().unwrap();
+        let before = node.read_active().unwrap();
+        let calls = AtomicUsize::new(0);
+        let resource = || {
+            calls.fetch_add(1, Ordering::SeqCst);
+            Err(crate::Error::from("PUBLIC_HOST_KERNEL_LIMITS_CHANGED"))
+        };
+        let owner = Mutex::new(node);
+        let control = Control {
+            deadline: Instant::now() + Duration::from_secs(10),
+            resource: &resource,
+        };
+        let result = if shared {
+            receive(
+                Owner::Shared(&owner),
+                page(&settings, &packet),
+                packet.id().unwrap(),
+                settings.genesis(),
+                clock,
+                control,
+            )
+        } else {
+            receive(
+                Owner::Exclusive(&mut owner.lock().unwrap()),
+                page(&settings, &packet),
+                packet.id().unwrap(),
+                settings.genesis(),
+                clock,
+                control,
+            )
+        };
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+        );
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        assert_eq!(owner.lock().unwrap().read_active().unwrap(), before);
+        let observed = original.observe().unwrap();
+        assert_eq!(observed.in_flight, 0);
+        assert_eq!(observed.stored_credit_ns, 0);
+        assert!(!observed.accounting_unavailable);
+        let flow = original.observe_actual_flow().unwrap().unwrap();
+        assert_eq!(flow.paid_cpu_debit_ns, 0);
+        assert_eq!(flow.booked_reservation_ns, 0);
+        assert!(flow.balance_identity_verified);
+        drop(owner);
+        let mut reopened = Node::open(directory.path(), settings, 2).unwrap();
+        let cold = reopened
+            .remote_history_cpu_domain()
+            .unwrap()
+            .observe()
+            .unwrap();
+        assert_eq!(cold.stored_credit_ns, 0);
+        assert!(!cold.accounting_unavailable);
+        assert_eq!(reopened.read_active().unwrap(), before);
+    }
+}
+
+fn history_checkpoint_transfer(settings: &Settings) -> Vec<u8> {
+    use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+    use trnm_protocol::pon_wire::{hash, Envelope};
+    let key =
+        signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]))).unwrap();
+    let mut payload = crate::development_public(1).unwrap().to_vec();
+    payload.extend(1_u64.to_le_bytes());
+    let mut envelope = Envelope {
+        network: settings.network(),
+        sender: crate::development_public(0).unwrap(),
+        nonce: 1,
+        expiry: 10_000,
+        fee_limit: 1_000_000,
+        tag: 1,
+        payload,
+        signature: [0; 64],
+    };
+    envelope.signature = hex::decode(sign_hex(&key, &envelope.signing_digest().unwrap()))
+        .unwrap()
+        .try_into()
+        .unwrap();
+    envelope.encode().unwrap()
+}
+
+#[test]
+fn history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account() {
+    use std::sync::atomic::AtomicBool;
+    for shared in [false, true] {
+        for stage in ["w1", "m06", "admitted", "activation_progress"] {
+            let clock = now().unwrap();
+            let settings = Settings::development(Some(clock - 100)).unwrap();
+            let directory = tempfile::tempdir().unwrap();
+            let mut node =
+                Node::open_with_authenticated_state(directory.path(), settings.clone(), 1).unwrap();
+            let before = node.read_active().unwrap();
+            let original = node.remote_history_cpu_domain().unwrap();
+            let packet = node
+                .make(
+                    settings.genesis(),
+                    vec![history_checkpoint_transfer(&settings)],
+                    crate::development_public(0).unwrap(),
+                    settings.genesis_time() + 10,
+                    4096,
+                )
+                .unwrap();
+            let id = packet.id().unwrap();
+            let revoked = Arc::new(AtomicBool::new(false));
+            let observed = revoked.clone();
+            OBSERVER.with(|hook| {
+                *hook.borrow_mut() = Some(Box::new(move |point| {
+                    if point == stage {
+                        observed.store(true, Ordering::SeqCst);
+                    }
+                }));
+            });
+            let resource = || {
+                ensure(
+                    !revoked.load(Ordering::SeqCst),
+                    "PUBLIC_HOST_KERNEL_LIMITS_CHANGED",
+                )
+            };
+            let owner = Mutex::new(node);
+            let control = Control {
+                deadline: Instant::now() + Duration::from_secs(10),
+                resource: &resource,
+            };
+            let outcome = if shared {
+                receive(
+                    Owner::Shared(&owner),
+                    page(&settings, &packet),
+                    id,
+                    settings.genesis(),
+                    clock,
+                    control,
+                )
+            } else {
+                receive(
+                    Owner::Exclusive(&mut owner.lock().unwrap()),
+                    page(&settings, &packet),
+                    id,
+                    settings.genesis(),
+                    clock,
+                    control,
+                )
+            };
+            OBSERVER.with(|hook| *hook.borrow_mut() = None);
+            assert!(
+                revoked.load(Ordering::SeqCst),
+                "unreached original cut {stage}"
+            );
+            assert_eq!(
+                outcome.unwrap_err().to_string(),
+                "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+            );
+            let committed = matches!(stage, "admitted" | "activation_progress");
+            {
+                let node = owner.lock().unwrap();
+                assert_eq!(node.packet(id).is_ok(), committed, "{shared}/{stage}");
+                assert_eq!(node.read_active().unwrap(), before, "{shared}/{stage}");
+                assert!(node
+                    .public_service_cpu_domain()
+                    .unwrap()
+                    .shares_domain_with(&original));
+            }
+            let observation = original.observe().unwrap();
+            assert_eq!(observation.in_flight, 0);
+            assert!(!observation.accounting_unavailable);
+            let flow = original.observe_actual_flow().unwrap().unwrap();
+            assert!(flow.paid_cpu_debit_ns > 0);
+            assert_eq!(flow.paid_cpu_debit_ns, flow.settled_full_cpu_ns);
+            assert_eq!(flow.unsettled_known_live_cpu_ns, 0);
+            assert_eq!(flow.booked_reservation_ns, 0);
+            assert_eq!(flow.initial_credit_ns, 0);
+            assert!(flow.balance_identity_verified);
+            println!(
+                "{}",
+                serde_json::json!({"schema":"history-native-resource-failure-v1",
+                "shared":shared,"cut":stage,"committed":committed,"flow":flow,
+                "real_host_revocation":false})
+            );
+            // A separate request may retry after the resource owner is restored;
+            // the same Node and original CPU domain retain all already paid work.
+            let control = Control {
+                deadline: Instant::now() + Duration::from_secs(10),
+                resource: &|| Ok(()),
+            };
+            let outcome = if shared {
+                receive(
+                    Owner::Shared(&owner),
+                    page(&settings, &packet),
+                    id,
+                    settings.genesis(),
+                    clock,
+                    control,
+                )
+            } else {
+                receive(
+                    Owner::Exclusive(&mut owner.lock().unwrap()),
+                    page(&settings, &packet),
+                    id,
+                    settings.genesis(),
+                    clock,
+                    control,
+                )
+            };
+            assert_eq!(outcome.unwrap(), id);
+            let active = owner.lock().unwrap().read_active().unwrap();
+            assert_eq!(active.0, id);
+            let sender = format!(
+                "account:{}",
+                hex::encode(crate::development_public(0).unwrap())
+            );
+            assert_eq!(before.2[&sender]["nonce"], 0);
+            assert_eq!(active.2[&sender]["nonce"], 1);
+            assert_eq!(original.observe().unwrap().in_flight, 0);
+            drop(owner);
+            let mut reopened =
+                Node::open_with_authenticated_state(directory.path(), settings, 1).unwrap();
+            assert_eq!(reopened.read_active().unwrap(), active);
+            let cold = reopened
+                .remote_history_cpu_domain()
+                .unwrap()
+                .observe()
+                .unwrap();
+            assert_eq!(cold.stored_credit_ns, 0);
+            assert!(!cold.accounting_unavailable);
+        }
+    }
+}
+
+#[test]
+fn shared_history_paid_deficit_refuses_without_waiting_under_original_writer() {
+    let (directory, settings, mut node, packet, _clock) = fixture();
+    let domain = node.remote_history_cpu_domain().unwrap();
+    let before = node.read_active().unwrap();
+    let writer = Mutex::new(node);
+    let control = Control {
+        deadline: Instant::now() + Duration::from_secs(5),
+        resource: &|| Ok(()),
+    };
+    let observed = Mutex::new(None);
+    // Use the same epoch guard and close path as a real import. A last scope
+    // with actual remaining debt must retain its marker, even with known CPU.
+    let close = scoped(&mut Owner::Shared(&writer), &control, |_owner, cpu| {
+        assert!(cpu.shares_domain_with(&domain));
+        let operation = begin_cpu(cpu, &control)?;
+        operation.bind_history_request(control.deadline)?;
+        let checked = WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |_| {
+            operation.history_checkpoint(false, &|| control.check())
+        })?;
+        operation.test_legacy_history_w1_only_priority(&checked)?;
+        let held = writer.lock().unwrap();
+        let mut boundaries = 0;
+        // Real W1 CPU depletes the original cold account; no synthetic meter
+        // debit or new account replaces the original writer's checkpoints.
+        loop {
+            let result = WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |_| {
+                boundaries += 1;
+                assert!(matches!(writer.try_lock(), Err(TryLockError::WouldBlock)));
+                operation.history_checkpoint(true, &|| control.check())
+            });
+            match result {
+                Ok(_) => assert!(Instant::now() < control.deadline),
+                Err(error) => {
+                    assert!(
+                        error.is(crate::ErrorCode::PublicMutationCpuBudget),
+                        "{error}"
+                    );
+                    break;
+                }
+            }
+        }
+        assert!(boundaries > 0);
+        assert!(cpu.observe()?.stored_credit_ns < 0);
+        drop(held);
+        let receipt = operation.finish();
+        assert!(!receipt.accounting_unavailable);
+        let flow = cpu.observe_actual_flow()?.unwrap();
+        assert_eq!(flow.initial_credit_ns, 0);
+        assert_eq!(flow.booked_reservation_ns, 0);
+        assert_eq!(flow.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+        assert_eq!(flow.live_owners, 0);
+        assert!(flow.balance_identity_verified);
+        *observed.lock().unwrap() = Some((boundaries, receipt, flow));
+        Ok(())
+    });
+    let (boundaries, receipt, flow) = observed.into_inner().unwrap().unwrap();
+    // Settlement uses actual elapsed refill. Whether that final refill has
+    // covered the small measured overshoot is observed, never manufactured.
+    let debt_remains = flow.stored_credit_ns < 0;
+    if debt_remains {
+        assert!(close
+            .unwrap_err()
+            .is(crate::ErrorCode::PublicMutationCpuUnavailable));
+        assert!(!domain.accounting_available());
+        assert!(writer
+            .lock()
+            .unwrap()
+            .remote_history_cpu_domain()
+            .err()
+            .unwrap()
+            .is(crate::ErrorCode::OwnerPublicServiceUncleanEpoch));
+    } else {
+        close.unwrap();
+        assert!(domain.accounting_available());
+    }
+    assert_eq!(writer.lock().unwrap().read_active().unwrap(), before);
+    drop(writer);
+    let mut reopened = Node::open(directory.path(), settings, 2).unwrap();
+    assert_eq!(reopened.read_active().unwrap(), before);
+    if debt_remains {
+        assert!(reopened
+            .remote_history_cpu_domain()
+            .err()
+            .unwrap()
+            .is(crate::ErrorCode::OwnerPublicServiceUncleanEpoch));
+    } else {
+        assert_eq!(
+            reopened
+                .remote_history_cpu_domain()
+                .unwrap()
+                .observe()
+                .unwrap()
+                .stored_credit_ns,
+            0
+        );
+    }
+    println!(
+        "{}",
+        serde_json::json!({"schema":"history-shared-real-paid-deficit-v1",
+        "boundaries":boundaries,"receipt":receipt,"flow":flow,"debt_remains":debt_remains,
+        "scope":"bounded full native W1 CPU control, not a network saturation attack"})
+    );
+}
+
+// These owner controls open temporary native state without preparing a packet,
+// running W1, starting a service, or entering a History CPU epoch.
+fn history_owner_only_fixture() -> (tempfile::TempDir, Node) {
+    let clock = now().unwrap();
+    let settings = Settings::development(Some(clock - 100)).unwrap();
+    let directory = tempfile::tempdir().unwrap();
+    let node = Node::open(directory.path(), settings, 2).unwrap();
+    (directory, node)
+}
+
+#[test]
+fn history_shared_owner_checks_host_once_before_each_uncontended_action() {
+    let (_directory, node) = history_owner_only_fixture();
+    let shared = Mutex::new(node);
+    let calls = AtomicUsize::new(0);
+    let resource = || {
+        assert!(
+            shared.try_lock().is_ok(),
+            "Host observation is outside the writer"
+        );
+        calls.fetch_add(1, Ordering::SeqCst);
+        Ok(())
+    };
+    let control = Control {
+        deadline: Instant::now() + Duration::from_secs(10),
+        resource: &resource,
+    };
+    let mut owner = Owner::Shared(&shared);
+    for expected in 1..=2 {
+        owner
+            .with(&control, |node| {
+                assert_eq!(calls.load(Ordering::SeqCst), expected);
+                node.read_active().map(|_| ())
+            })
+            .unwrap();
+        assert_eq!(calls.load(Ordering::SeqCst), expected);
+    }
+}
+
+#[test]
+fn history_shared_owner_busy_retry_keeps_fresh_host_refusal() {
+    let (_directory, node) = history_owner_only_fixture();
+    let shared = Mutex::new(node);
+    let _writer = shared.lock().unwrap();
+    let calls = AtomicUsize::new(0);
+    let actions = AtomicUsize::new(0);
+    let control = Control {
+        deadline: Instant::now() + Duration::from_secs(10),
+        resource: &|| {
+            if calls.fetch_add(1, Ordering::SeqCst) == 0 {
+                Ok(())
+            } else {
+                Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into())
+            }
+        },
+    };
+    let result = Owner::Shared(&shared).with(&control, |_| {
+        actions.fetch_add(1, Ordering::SeqCst);
+        Ok(())
+    });
+    assert_eq!(
+        result.unwrap_err().to_string(),
+        "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+    );
+    assert_eq!(calls.load(Ordering::SeqCst), 2);
+    assert_eq!(actions.load(Ordering::SeqCst), 0);
+}
+
+#[test]
+fn history_page_cannot_decode_past_fixed_tip_before_native_admission() {
+    let (_source_directory, settings, mut source, first, clock) = fixture();
+    let first_id = source.admit(&first, clock).unwrap();
+    source.activate_observed(first_id, clock).unwrap();
+    let mut chain = vec![first];
+    for height in [2, 3] {
+        let packet = source
+            .make(
+                chain.last().unwrap().id().unwrap(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                settings.genesis_time() + height * 10,
+                4096,
+            )
+            .unwrap();
+        let id = source.admit(&packet, clock).unwrap();
+        source.activate_observed(id, clock).unwrap();
+        chain.push(packet);
+    }
+    let ids: Vec<_> = chain.iter().map(|packet| packet.id().unwrap()).collect();
+    let tip = ids[1];
+    let target_state = source.state_at(tip).unwrap();
+
+    // All supplied packets belong to a real, admitted G -> A -> B -> C chain.
+    // Exercise the importer after its transport boundary. This callback checks
+    // resource-boundary retention, not qualification of a fixed Host cgroup.
+    for shared in [false, true] {
+        for (case, after, supplied, complete) in [
+            ("past_tip", settings.genesis(), &chain[..], false),
+            ("already_at_tip", tip, &chain[2..], false),
+            ("exact_tip", settings.genesis(), &chain[..2], true),
+        ] {
+            let directory = tempfile::tempdir().unwrap();
+            let mut node = Node::open(directory.path(), settings.clone(), 2).unwrap();
+            if after == tip {
+                // Make C admissible in the negative control. Unknown parent
+                // rejection must not conceal the missing fixed-target fence.
+                for packet in &chain[..2] {
+                    let id = node.admit(packet, clock).unwrap();
+                    node.activate_observed(id, clock).unwrap();
+                }
+            }
+            let before = node.read_active().unwrap();
+            let original = node.remote_history_cpu_domain().unwrap();
+            let owner = Mutex::new(node);
+            let mut incoming = page(&settings, &supplied[0]);
+            incoming.tip = hex::encode(tip);
+            incoming.after = hex::encode(after);
+            incoming.packets = supplied
+                .iter()
+                .map(|packet| hex::encode(packet.encode().unwrap()))
+                .collect();
+            incoming.next = hex::encode(supplied.last().unwrap().id().unwrap());
+            incoming.complete = complete;
+            let observation = HistoryImportObserver::new();
+            let calls = AtomicUsize::new(0);
+            let resource = || {
+                calls.fetch_add(1, Ordering::SeqCst);
+                Ok(())
+            };
+            let control = Control {
+                deadline: Instant::now() + Duration::from_secs(10),
+                resource: &resource,
+            };
+            let result = if shared {
+                receive_observed(
+                    Owner::Shared(&owner),
+                    incoming,
+                    tip,
+                    after,
+                    clock,
+                    control,
+                    Some(&observation),
+                )
+            } else {
+                receive_observed(
+                    Owner::Exclusive(&mut owner.lock().unwrap()),
+                    incoming,
+                    tip,
+                    after,
+                    clock,
+                    control,
+                    Some(&observation),
+                )
+            };
+            if complete {
+                assert_eq!(result.unwrap(), tip, "{shared}/{case}");
+            } else {
+                assert_eq!(
+                    result.unwrap_err().to_string(),
+                    "PAGE_COMPLETE",
+                    "{shared}/{case}"
+                );
+            }
+            let snapshot = observation.snapshot();
+            assert_eq!(snapshot.measurement_failures, 0, "{shared}/{case}");
+            assert_eq!(snapshot.tip, Some(tip));
+            assert_eq!(snapshot.after, Some(after));
+            assert_eq!(snapshot.supplied_packets, Some(supplied.len()));
+            for phase in [SubmitPhase::Decode, SubmitPhase::HistoryImport] {
+                assert_eq!(
+                    snapshot.phases[phase as usize].accepted,
+                    Some(complete),
+                    "{shared}/{case}/{phase:?}"
+                );
+            }
+            for phase in [SubmitPhase::CpuSettle, SubmitPhase::HistoryEpochClose] {
+                assert_eq!(snapshot.phases[phase as usize].accepted, Some(true));
+            }
+            let decoded = if after == tip { 0 } else { 2 };
+            assert_eq!(snapshot.packets.len(), decoded, "{shared}/{case}");
+            for (index, packet) in snapshot.packets.iter().enumerate() {
+                assert_eq!(packet.packet_id, Some(ids[index]));
+                if complete {
+                    for phase in [
+                        SubmitPhase::Work,
+                        SubmitPhase::Execution,
+                        SubmitPhase::RootCommitment,
+                        SubmitPhase::Commit,
+                        SubmitPhase::HistoryImport,
+                    ] {
+                        assert_eq!(
+                            packet.phases[phase as usize].accepted,
+                            Some(true),
+                            "{shared}/{case}/{index}/{phase:?}"
+                        );
+                    }
+                } else {
+                    assert!(packet.phases.iter().all(|phase| !phase.started));
+                }
+            }
+            assert!(calls.load(Ordering::SeqCst) > 0);
+            let expected_active = {
+                let node = owner.lock().unwrap();
+                assert!(node
+                    .public_service_cpu_domain()
+                    .unwrap()
+                    .shares_domain_with(&original));
+                let active = node.read_active().unwrap();
+                if complete {
+                    assert_eq!(active.0, tip);
+                    assert_eq!(active.2, target_state);
+                } else {
+                    assert_eq!(active, before, "{shared}/{case}");
+                }
+                for (index, id) in ids.iter().enumerate() {
+                    let present = index < 2 && (complete || after == tip);
+                    assert_eq!(node.packet(*id).is_ok(), present, "{shared}/{case}/{index}");
+                    if present {
+                        assert_eq!(
+                            node.packet(*id).unwrap().encode().unwrap(),
+                            chain[index].encode().unwrap()
+                        );
+                    }
+                }
+                active
+            };
+            let account = original.observe().unwrap();
+            assert_eq!(account.in_flight, 0);
+            assert!(!account.accounting_unavailable);
+            let flow = original.observe_actual_flow().unwrap().unwrap();
+            assert_eq!(flow.initial_credit_ns, 0);
+            assert_eq!(flow.booked_reservation_ns, 0);
+            assert_eq!(flow.unsettled_known_live_cpu_ns, 0);
+            assert_eq!(flow.paid_cpu_debit_ns, flow.settled_full_cpu_ns);
+            assert!(flow.balance_identity_verified);
+            assert_eq!(
+                original
+                    .observe_completion_work()
+                    .unwrap()
+                    .retained_identities,
+                if complete { 2 } else { 0 }
+            );
+            drop(owner);
+            let mut reopened = Node::open(directory.path(), settings.clone(), 2).unwrap();
+            assert_eq!(
+                reopened.read_active().unwrap(),
+                expected_active,
+                "{shared}/{case}"
+            );
+            for (index, id) in ids.iter().enumerate() {
+                let present = index < 2 && (complete || after == tip);
+                assert_eq!(
+                    reopened.packet(*id).is_ok(),
+                    present,
+                    "{shared}/{case}/{index}"
+                );
+            }
+            let cold = reopened
+                .remote_history_cpu_domain()
+                .unwrap()
+                .observe()
+                .unwrap();
+            assert_eq!(cold.stored_credit_ns, 0);
+            assert!(!cold.accounting_unavailable);
+        }
+    }
+}

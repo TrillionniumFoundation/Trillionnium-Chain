@@ -1,0 +1,42 @@
+{
+  "schema": "trnm-published-source-tree-readback-v1",
+  "published_commit": "b7e38fdc2e43c468692abc52aec03737f2df7f1b",
+  "published_parent": "d6bbac6baf9e5356721ab56f7432058d07b6b49b",
+  "published_tree": "b75d318fc7b7b027a810f4a70a9cd91e0b3930f8",
+  "local_source_commit": "9029f2ab2c6382aaaf096b841a20fbf335f4b172",
+  "root_tree_entries": 23,
+  "root_tree_raw_reconstructed_from_github_json_matches_git_tree": true,
+  "local_and_published_trees_equal": true,
+  "key_file_readbacks": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "github_ref": "b7e38fdc2e43c468692abc52aec03737f2df7f1b",
+      "github_blob_sha": "2213a39b14c03d9476c35b80a30fcb8414d459f0",
+      "bytes": 20510,
+      "sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d",
+      "github_bytes_equal_local_G1_git_blob_and_working_file": true,
+      "display_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b7e38fdc2e43c468692abc52aec03737f2df7f1b/trillionnium/crates/trnm-pon-node/src/consensus.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "github_ref": "b7e38fdc2e43c468692abc52aec03737f2df7f1b",
+      "github_blob_sha": "01a50ed43f7baf52d3fcce1a5cdec45174e7382d",
+      "bytes": 217889,
+      "sha256": "d291364d058f443c38b7cfee84710daa3fd53f07a757a7939599aca3fcf9182d",
+      "github_bytes_equal_local_G1_git_blob_and_working_file": true,
+      "display_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b7e38fdc2e43c468692abc52aec03737f2df7f1b/trillionnium/crates/trnm-pon-node/src/ingress.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "github_ref": "b7e38fdc2e43c468692abc52aec03737f2df7f1b",
+      "github_blob_sha": "4d2de868f0632532267dcbc2ecef4c018d8c2804",
+      "bytes": 382877,
+      "sha256": "9029e9a362aab349916a6ad417d962aeef3307a3d2e0c724b16d78ffaf1278e3",
+      "github_bytes_equal_local_G1_git_blob_and_working_file": true,
+      "display_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b7e38fdc2e43c468692abc52aec03737f2df7f1b/trillionnium/crates/trnm-pon-node/src/store.rs"
+    }
+  ],
+  "commit_api_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/b7e38fdc2e43c468692abc52aec03737f2df7f1b",
+  "tree_api_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/b75d318fc7b7b027a810f4a70a9cd91e0b3930f8",
+  "scope": "Independent GitHub JSON and complete key-file byte readback, checked against exact local Git objects; no native execution or acceptance promotion"
+}

@@ -1,0 +1,111 @@
+{
+  "entries": [
+    {
+      "bytes": 8723,
+      "path": "summary.json",
+      "sha256": "1fe1d5a9e62ed3d1ffdd71f8f85ae4c66945a92164d7bb9e82cf629dcf578084",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/summary.json"
+    },
+    {
+      "bytes": 7469,
+      "path": "steps.json",
+      "sha256": "f63c74d8f1a28fe193b27a64f98f4c3416e848850e5607601b354a5fe8114a31",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/steps.json"
+    },
+    {
+      "bytes": 316946,
+      "path": "actual-source-manifest.json",
+      "sha256": "38b9cb01715ac961dbf07cd2237f68bf4037d73aa6d2277f04117cd9d02bf651",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/actual-source-manifest.json"
+    },
+    {
+      "bytes": 175,
+      "path": "pre-update-preflight.log",
+      "sha256": "29aaae57601cc357c22f2d3185d722d324b12d45289c05be50872b794b1a9640",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/pre-update-preflight.log"
+    },
+    {
+      "bytes": 322,
+      "path": "bundle-verify.log",
+      "sha256": "74c6a23c232ba0fcf061e195656591e5370f673d243ca70cb236ffb3f8591ea0",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/bundle-verify.log"
+    },
+    {
+      "bytes": 131,
+      "path": "bundle-fetch.log",
+      "sha256": "efeecfbececc033bbb57cfc5026a1421ee21b90f36d2d209fead03b65a6eb657",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/bundle-fetch.log"
+    },
+    {
+      "bytes": 2913,
+      "path": "fast-forward.log",
+      "sha256": "d9921d39295f87474e44d914dee3b0a7e6c9dfefd170258234d2d422f3e5a50b",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/fast-forward.log"
+    },
+    {
+      "bytes": 175,
+      "path": "preflight.log",
+      "sha256": "29aaae57601cc357c22f2d3185d722d324b12d45289c05be50872b794b1a9640",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/preflight.log"
+    },
+    {
+      "bytes": 811174,
+      "path": "public-v3-complete.log",
+      "sha256": "bf1f1dd171d72287f71730b9954b74a3a916bfdfac086aa779793323bad0a156",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/public-v3-complete.log"
+    },
+    {
+      "bytes": 2740,
+      "path": "cell-release.log",
+      "sha256": "101e143a9a9f88e100bfb2d04605dcb1bf48f0dcb7ae8557970fb9770e587eec",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/cell-release.log"
+    },
+    {
+      "bytes": 1931,
+      "path": "cell-availability.log",
+      "sha256": "3e798ebfdd9e1e7560898a9fad5fcb912d91c4a285854d5036aa6b9b7a5f66f2",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/cell-availability.log"
+    },
+    {
+      "bytes": 2297,
+      "path": "cell-budget.log",
+      "sha256": "bfa63dd3e9f9309cf528a274f26c3aee1a431588801c7dcf6b025b3028a4aef2",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/cell-budget.log"
+    },
+    {
+      "bytes": 809,
+      "path": "cell-cancellation.log",
+      "sha256": "245df156117aca8002616a32ed7fed496cad4d1cf58679faadc826313df944ae",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/cell-cancellation.log"
+    },
+    {
+      "bytes": 697140,
+      "path": "mining-timestamp-liveness.log",
+      "sha256": "9534552a52770fd0bae781027be5107a416bd7e1314f2c9fa32bbcabff8af19a",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/mining-timestamp-liveness.log"
+    },
+    {
+      "bytes": 1578,
+      "path": "strict-clippy.log",
+      "sha256": "767e1fdf6ccc9bf959cdbda9a596137dbad9a95f93acfbdded9588646287d5ca",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/strict-clippy.log"
+    },
+    {
+      "bytes": 0,
+      "path": "fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/fmt.log"
+    },
+    {
+      "bytes": 6804,
+      "path": "native-final-rust-composition-dba-v1-driver.py",
+      "sha256": "925e9c4240448709ebbc0f80969f1b4ad58ff247c0c8c489c3b48999169b5333",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1-driver.py"
+    }
+  ],
+  "head": "dba81d56be6598cec9df2774446ca3ab7fccca98",
+  "hosted_four_second_qualification": false,
+  "schema": "root-native-final-rust-original-receipts-v1",
+  "tests_reexecuted_for_packaging": false,
+  "tree": "031d74a1060c0c0cb0f10a1651fab829784d0ca8"
+}

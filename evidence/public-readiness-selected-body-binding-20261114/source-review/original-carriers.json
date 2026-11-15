@@ -1,0 +1,39 @@
+{
+  "carriers": [
+    {
+      "bytes": 45497,
+      "members": [
+        {
+          "bytes": 72270,
+          "path": "check_public_readiness_evidence-E1.py.original",
+          "sha256": "602abf4e1ef39772fb1434efe9ca8957ca567f6b0c7ac3fa5f43e43c893ed3bd"
+        },
+        {
+          "bytes": 125434,
+          "path": "test_public_readiness_evidence-E1.py.original",
+          "sha256": "92c9aa15bb8dadbafaf5c4a96e8f077d971b56647b18e49f3b22a35a61ba546b"
+        }
+      ],
+      "path": "historical/readiness-E1-originals.zip",
+      "sha256": "4bed6dbc7d1f8f151515c8f4a99976475f07b71f0336614365da1c5de9f7a1c7"
+    },
+    {
+      "bytes": 9509,
+      "members": [
+        {
+          "bytes": 20493,
+          "path": "historical-2bb-open_selected_mode.rs.original",
+          "sha256": "e89baea593c5a31e16760c3ad42854d9112775b2e51a8994262f06eee379f1d3"
+        },
+        {
+          "bytes": 20846,
+          "path": "E1-open_selected_mode.rs.original",
+          "sha256": "f79b2baf4938ca8f410a26559118505fb36ba3b21b50efb3971bc9ba82845978"
+        }
+      ],
+      "path": "source-review/selected-bodies.zip",
+      "sha256": "e03fc8826c78123250698f237615ab61c0fda1150aca430f86aacdc48d8e76f0"
+    }
+  ],
+  "reason": "Keep exact historical bytes, including trailing indentation in extracted Rust bodies, without treating them as current source files."
+}

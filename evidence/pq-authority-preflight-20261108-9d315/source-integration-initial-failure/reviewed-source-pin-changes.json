@@ -1,0 +1,58 @@
+{
+  "assertions_unchanged": {
+    "allow_legacy_fallback": false,
+    "hepta_final_use_integrated": false,
+    "independent_accepted": false,
+    "native_pq_node_integrated": false,
+    "physical_rollback_resistant": false,
+    "production_activation": false,
+    "public_wan_accepted": false,
+    "quantum_pon_hardness_qualified": false
+  },
+  "changes": {
+    ".github/workflows/pon-pq-system-continuation.yml": {
+      "after": "0026cebc61487c1069c4aefd2187d73031bc9371",
+      "before": "70bc322e71f992794259a3f37bd8397c6f16907a"
+    },
+    "config/pon/pq-initial-root-material-required-tests-v1.json": {
+      "after": "0c14ebf5c70fb0f7ee823d324897e12fb41820c8",
+      "before": "36b7b80f4bb2c02d7b7070cb30a41c69eb4235a9"
+    },
+    "docs/security/PQ_AUTHORITY_PREFLIGHT_20261108.md": {
+      "after": "7695d0edef5f6a247438c75d9f461af5778ea793",
+      "before": null
+    },
+    "formal/pon-nakamoto-v1/pq_root_quorum_research.py": {
+      "after": "753419e01b40e0d0160f2fca8d310585d15811d8",
+      "before": null
+    },
+    "formal/pon-nakamoto-v1/test_pq_root_quorum_research.py": {
+      "after": "2876fb2fdc6e723a8dbd6a6536b03f947eb6d020",
+      "before": null
+    },
+    "scripts/ci/check_ci_contract.py": {
+      "after": "128f668f3a82740f686a20fea636447316bafbdf",
+      "before": "f892a0c186fcf32c2bcee47c4f4a5418e1a99f5f"
+    },
+    "scripts/ci/test_ci_contract.py": {
+      "after": "27b10840803f2309d05aa06d29c9865ac03f5d49",
+      "before": "ff19fc2fbf21d8b23175481f363b2d127c6f5b22"
+    },
+    "trillionnium/crates/trnm-release-bundle/Cargo.toml": {
+      "after": "d3ca6d017b48fe5b99c1b360c136a4fabe294b55",
+      "before": "670ec449dee3fe69562f938753dfbd3621dd2e90"
+    },
+    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": {
+      "after": "04fc5e9a584a3052e2fbf0a8cd33fb528fe6e5ad",
+      "before": "c64e3cf40568a93c2f1d506739580b39cc0055a1"
+    },
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs": {
+      "after": "f8e61f0f8d233b1a0d7729d10155d89cd739d979",
+      "before": null
+    },
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs": {
+      "after": "ab2302235dd09d62d7e60a34b7b53163a5224be2",
+      "before": "7b6a37d374eb02da4aa41c8562e5f06299a2afdb"
+    }
+  }
+}

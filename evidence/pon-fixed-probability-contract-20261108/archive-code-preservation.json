@@ -1,0 +1,12 @@
+{
+  "schema": "pon-source-preservation-v1",
+  "tested_commit": "103cdf67108a667d8570388f9dd402210c160157",
+  "tested_tree": "6910f1838a5801f7c0e6d0c5de544a4c3161713e",
+  "preexisting_entries": 17888,
+  "preexisting_git_entries_sha256": "9a90157a73543880dd1e9a2065e4757eec06d41fb003ab859ed01856b1c2a2e9",
+  "comparison": "Each pre-existing Git path, mode, object kind and object ID must be unchanged in the archive commit; all added paths must remain under the evidence prefix.",
+  "staging_existing_entries_unchanged": true,
+  "new_path_prefix": "evidence/pon-fixed-probability-contract-20261108/",
+  "activation": false,
+  "runtime_retested_after_archive": false
+}

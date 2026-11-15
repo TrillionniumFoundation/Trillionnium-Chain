@@ -1,0 +1,162 @@
+diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json
+index 4700439..4f7e053 100644
+--- a/config/pon/pq-cross-branch-corpus-v1.json
++++ b/config/pon/pq-cross-branch-corpus-v1.json
+@@ -726,7 +726,7 @@
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/application_v6.rs": "8dbcda0a527f27919d7fa07a353c7c175f8a8f99",
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/application_v6_scope_tests.rs": "0ba488dd5edbe51a7f2d3a638163711c0748e252",
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/application_v6_tests.rs": "9f0bec5c315ee0dc13aaeaeb63651634cf79dc60",
+-    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs": "3ba50971df114f888373c833b787c5a97cdaa290",
++    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs": "f4af2dc570e705c80c11c1dca880f2e249fe7a12",
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration_inventory_tests.rs": "e3357b6dfdb9aa905dc01a7bc1318aac9d150a37",
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration_inventory_v1.rs": "774cf5cf6d4460d36267e029df7341731c656f78",
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/task_migration_v1.rs": "26768c1f05544f7b73e3e68c2a3ee50d4c187062",
+@@ -734,7 +734,7 @@
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v4_tests.rs": "c8b13548bf759b48f7b24f12c9cf63134198ecaf",
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v5.rs": "649c2c435062f748e3aa66f00356f4556b3d421f",
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v5_tests.rs": "f27f498ef0ae53aa685707e7e05d25d6552bcd21",
+-    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs": "0f2701da52c1756722fbabd7e996ca68824d402a",
++    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs": "046297918ece4753cfa595ca88885bbb44d1a660",
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs": "5c90fd5966e964724e0bbb2b91de0577d70f628f",
+     "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs": "08cef9af222b5f8a72d030acdc56e8de5ce867a1",
+     "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/pq_storage.rs": "a696bc185d24cebf6bc44df33c39bcc4efb3c20f",
+diff --git a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs
+index 3ba5097..f4af2dc 100644
+--- a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs
++++ b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs
+@@ -1,6 +1,8 @@
+ //! Explicit operator-selected checkpoint trust for a NEW research network.
+ //! No wire decoder, authenticated Boolean, source-chain retirement proof or
+ //! retroactive recovery of Shor-compromised Ed ownership exists in this module.
++//! Unsupported source state is refused, even when its monetary value is zero;
++//! complete funds conservation cannot establish its preservation or retirement.
+ use super::*;
+ use trnm_protocol::pon_wire::Header;
+ 
+@@ -156,6 +158,10 @@ impl TrustedPqPrecommitments {
+             material.header.height,
+             source_cfg,
+         )?;
++        require(
++            material.state.get("model:current") == Some(&json!(hex::encode([0; 32]))),
++            "PQ2_UNSUPPORTED_SOURCE_STATE",
++        )?;
+         let issued = super::super::num(material.state.get("meta:issued").ok_or("STATE")?)?;
+         let mut projection = State::new();
+         let mut needed = BTreeSet::new();
+@@ -271,8 +277,24 @@ impl TrustedPqPrecommitments {
+                     field(value, "remaining")? == 0,
+                     "PQ2_UNSUPPORTED_SOURCE_LIABILITY",
+                 )?;
++                // A spent/zero monetary row can still bind lifecycle,
++                // settlement or replay state. This importer has no rule for
++                // preserving those owners, so zero is not permission to drop it.
++                return Err("PQ2_UNSUPPORTED_SOURCE_STATE");
+             } else if name.starts_with("pq-") {
+                 return Err("PQ2_SOURCE_PROFILE");
++            } else {
++                // These are the only rows re-established by the destination's
++                // own genesis constructor. Everything else needs an explicit
++                // preservation rule before this trusted anchor can be created.
++                require(
++                    name == "meta:issued"
++                        || name == "model:current"
++                        || (name == crate::continuity_v1::MAINTENANCE_KEY
++                            && crate::continuity_v1::enabled(source_cfg)
++                            && value == &crate::continuity_v1::maintenance_record(source_cfg)?),
++                    "PQ2_UNSUPPORTED_SOURCE_STATE",
++                )?;
+             }
+         }
+         require(
+diff --git a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs
+index 0f2701d..0462979 100644
+--- a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs
++++ b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs
+@@ -650,6 +650,86 @@ fn anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once() {
+     assert!(migration_claim_payload(&fresh, owner).is_err());
+ }
+ 
++#[test]
++fn migration_refuses_unprojected_nonmonetary_source_state() {
++    let owner = [201; 32];
++    let provider = [202; 32];
++    let a = Key::public_test_seed(101);
++    let b = Key::public_test_seed(102);
++    let (cfg, material, _) = synthetic_legacy_checkpoint(owner, provider);
++    let registry = synthetic_registry(&cfg, &material, &[(owner, &a), (provider, &b)]);
++    // These are deliberately opaque source-reader fixtures, not claims that
++    // a particular application/retirement transition has already occurred.
++    // A root and a balanced monetary projection cannot authorize discarding
++    // records whose original owner and preservation rule are unknown.
++    for key in [
++        "debt:legacy",
++        "revoked:legacy",
++        "retired:legacy",
++        "execution:pending",
++        "contribution:retained",
++        "evaluation-archive:retained",
++        "meta:issued:legacy",
++        crate::continuity_v1::MAINTENANCE_KEY,
++    ] {
++        let mut source = material.clone();
++        source
++            .state
++            .insert(key.into(), json!("unresolved-source-owner"));
++        assert_eq!(
++            synthetic_repin(registry.clone(), &cfg, source).err(),
++            Some("PQ2_UNSUPPORTED_SOURCE_STATE"),
++            "unprojected source record {key} was silently omitted"
++        );
++    }
++}
++
++#[test]
++fn migration_refuses_zero_value_quota_and_release_records() {
++    let owner = [201; 32];
++    let provider = [202; 32];
++    let a = Key::public_test_seed(101);
++    let b = Key::public_test_seed(102);
++    let (cfg, material, _) = synthetic_legacy_checkpoint(owner, provider);
++    let registry = synthetic_registry(&cfg, &material, &[(owner, &a), (provider, &b)]);
++    for prefix in ["quota:", "release:"] {
++        let mut source = material.clone();
++        source.state.insert(
++            format!("{prefix}{}", hex::encode([213; 32])),
++            json!({"owner":hex::encode(owner),"remaining":0,"deadline":30,"status":"open"}),
++        );
++        assert_eq!(
++            synthetic_repin(registry.clone(), &cfg, source).err(),
++            Some("PQ2_UNSUPPORTED_SOURCE_STATE"),
++            "zero remaining value erased {prefix} lifecycle state"
++        );
++    }
++}
++
++#[test]
++fn migration_requires_the_explicit_empty_current_model_sentinel() {
++    let owner = [201; 32];
++    let provider = [202; 32];
++    let a = Key::public_test_seed(101);
++    let b = Key::public_test_seed(102);
++    let (cfg, material, _) = synthetic_legacy_checkpoint(owner, provider);
++    let registry = synthetic_registry(&cfg, &material, &[(owner, &a), (provider, &b)]);
++    for current in [Some(json!(hex::encode([214; 32]))), Some(Value::Null), None] {
++        let mut source = material.clone();
++        if let Some(value) = current {
++            source.state.insert("model:current".into(), value);
++        } else {
++            source.state.remove("model:current");
++        }
++        assert_eq!(
++            synthetic_repin(registry.clone(), &cfg, source).err(),
++            Some("PQ2_UNSUPPORTED_SOURCE_STATE"),
++            "source current-model state was reset to an empty destination"
++        );
++    }
++    assert!(synthetic_repin(registry, &cfg, material).is_ok());
++}
++
+ #[test]
+ fn migration_refuses_omissions_ambiguous_ids_untranslated_liabilities_and_unbound_roots() {
+     let owner = [201; 32];

@@ -1,0 +1,48 @@
+{
+  "identity_binding_fields": [
+    "job_id",
+    "request_digest",
+    "argv",
+    "source_commit",
+    "config_sha256",
+    "boot_id",
+    "pid",
+    "start_ticks"
+  ],
+  "new_cold_processes": 0,
+  "new_generation_dispatches": 0,
+  "note": "Original derived connector receipts used JavaScript JSON number parsing; auxiliary uint64 request_fingerprint may be rounded. The immutable original receipts are retained. These exact raw MCP response texts recover that auxiliary integer through Python arbitrary-precision parsing using the same original idempotency keys, both explicitly reused=true. No operation was restarted. Cold launch validation used exact job/digest/argv/source/config/boot/PID identity fields, not request_fingerprint.",
+  "observed_unix_ns": 1794089647599393120,
+  "original_cold_validated_receipts_rewritten": false,
+  "records": [
+    {
+      "job_id": "1a1b80aa46c-12894-d18",
+      "new_process_dispatched": false,
+      "original_receipt": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-launch-02/original-job-receipt.json",
+      "prior_js_serialized_fingerprint_decimal": "16578405327285805000",
+      "raw_request_fingerprint_decimal": "16578405327285804340",
+      "raw_response": {
+        "bytes": 2328,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-observation-02/main-launch-idempotency-readback.raw.json",
+        "sha256": "f9d5133f503bc6d9828ff897953ef24997e4add2d92d2c85e3f074d90e9d54a8"
+      },
+      "request_digest": "e61253cf1b505d34d780e2e24cf839a60c27b7f23222df501405d0d3099895d2",
+      "reused": true
+    },
+    {
+      "job_id": "1a1b80d2416-12894-d1e",
+      "new_process_dispatched": false,
+      "original_receipt": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-observation-02/cold-job-receipt.json",
+      "prior_js_serialized_fingerprint_decimal": "18430757844093903000",
+      "raw_request_fingerprint_decimal": "18430757844093902700",
+      "raw_response": {
+        "bytes": 2628,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-observation-02/cold-launch-idempotency-readback.raw.json",
+        "sha256": "286de6605b2cc195e0be64a216752ce6f245b6acf0c1599ce24b05a758a3f24c"
+      },
+      "request_digest": "ffc7349bde761f6c553f28bc837e60aaff95840346554ed7fd80ef53aa517d74",
+      "reused": true
+    }
+  ],
+  "schema": "TRNM-W1-CONNECTOR-EXACT-INTEGER-READBACK1"
+}

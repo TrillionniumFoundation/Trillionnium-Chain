@@ -1,0 +1,84 @@
+{
+  "observed_at": "2026-11-14T04:50:42.630337+00:00",
+  "finished_at": "2026-11-14T04:52:21.898537+00:00",
+  "viewer": "ProfHepta",
+  "repository_id": "R_kgDOTty1_Q",
+  "pages": [
+    {
+      "original_page": 1,
+      "source": "/private/tmp/chain-consolidation-20261114-root/remote-open-pr-graphql-0210-v1/page-1.json",
+      "nodes": 100,
+      "totalCount": 579,
+      "sha256": "a21751bc47bbd38e45fc4cd161fe8e484a218b94ffd970c3d33c8028e1a46d26"
+    },
+    {
+      "original_page": 2,
+      "source": "/private/tmp/chain-consolidation-20261114-root/remote-open-pr-graphql-0210-v1/page-2.json",
+      "nodes": 100,
+      "totalCount": 579,
+      "sha256": "c97415dcb6cb92b13b8d85a27ea0b35c5f34587a5402ed2763daae1a4303fc78"
+    },
+    {
+      "original_page": 3,
+      "source": "/private/tmp/chain-consolidation-20261114-root/remote-open-pr-graphql-0210-v1/page-3.json",
+      "nodes": 100,
+      "totalCount": 579,
+      "sha256": "20fe7da19be5272068557bab8f1e92b4484b06b10a7b97340a6355a003021535"
+    },
+    {
+      "continuation_page": 1,
+      "source": "/private/tmp/chain-consolidation-20261114-root/remote-open-pr-graphql-continuation-0212-v1/page-1.json",
+      "nodes": 50,
+      "totalCount": 579,
+      "sha256": "a6c0181dc233115f3ed75eb3ba37d7169de4c0687386f9d3e0f23151f513d8fa"
+    },
+    {
+      "continuation_page": 2,
+      "source": "/private/tmp/chain-consolidation-20261114-root/remote-open-pr-graphql-continuation-0212-v1/page-2.json",
+      "nodes": 50,
+      "totalCount": 579,
+      "sha256": "0bc305af235313685538a82c320394646a034710c63c7fc4c956e0f1022f1414"
+    },
+    {
+      "continuation_page": 3,
+      "source": "/private/tmp/chain-consolidation-20261114-root/remote-open-pr-graphql-continuation-0212-v1/page-3.json",
+      "nodes": 50,
+      "totalCount": 579,
+      "sha256": "84201a57f5e4b989f174bc53f4984ca1344f403371cf30d7fea80a532bc77d7d"
+    },
+    {
+      "continuation_page": 4,
+      "source": "/private/tmp/chain-consolidation-20261114-root/remote-open-pr-graphql-continuation-0212-v1/page-4.json",
+      "nodes": 50,
+      "totalCount": 579,
+      "sha256": "ea2737efb3bafdf63a6248932156c889071cdd50bd1021315cd721de0e51cdfe"
+    },
+    {
+      "continuation_page": 5,
+      "source": "/private/tmp/chain-consolidation-20261114-root/remote-open-pr-graphql-continuation-0212-v1/page-5.json",
+      "nodes": 50,
+      "totalCount": 579,
+      "sha256": "40556d4c7588cb1ac2d22e6c51870bf43a8df9a31c1f2814c1ce42b8fc0e2e68"
+    },
+    {
+      "continuation_page": 6,
+      "source": "/private/tmp/chain-consolidation-20261114-root/remote-open-pr-graphql-continuation-0212-v1/page-6.json",
+      "nodes": 29,
+      "totalCount": 579,
+      "sha256": "32bbd14908eebe0f098d09449eaacbc5b8c4c3a9a73a64657f1734e48d89b15f"
+    }
+  ],
+  "open_prs": 579,
+  "drafts": 569,
+  "non_drafts": 10,
+  "non_main_bases": 499,
+  "same_repo_heads": 579,
+  "pagination_total_counts_consistent": true,
+  "snapshot_atomic": false,
+  "remote_writes": false,
+  "normalized_sha256": "5a0ad93370510112238f2a0a7870f03f9018b9486f63abceaa6c265bb728daaf",
+  "retained_failed_attempts": [
+    "/private/tmp/chain-consolidation-20261114-root/remote-ref-and-open-pr-inventory-0208-v1",
+    "/private/tmp/chain-consolidation-20261114-root/remote-open-pr-graphql-0210-v1/page-4.receipt.json"
+  ]
+}

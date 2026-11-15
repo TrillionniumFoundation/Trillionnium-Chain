@@ -1,0 +1,533 @@
+{
+  "schema": "trnm-final819-w1-observer-authoritative-receipts-v1",
+  "notes": [
+    "All native/CI records preexist; these jobs only retrieve or read evidence.",
+    "V1 preparation script f268f01e... was not executed against an artifact; before first pure-reader run, v2 corrected a derived native_invocations total and added per-command rank source/exit checks. Original pinned readers were unchanged.",
+    "The metadata-input inspection job exited 1 because an untrusted partial archive has no manifests field. Its exact stdout/stderr are retained; it is an observer inspection failure, not a native/CI result.",
+    "The once-only v1 transport has six 240-second timeouts and keeps partial ZIPs as UNKNOWN. The independent pure-reader pass covers authenticated originals only."
+  ],
+  "records": {
+    "final819_w1_stage1_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "/home/qian-qi/throughput-final-ci-observation-20261107/read_w1_artifacts_stage1_819_v1.py"
+        ],
+        "created_unix_ms": 1794081877034,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b79cec2a-12894-ba0",
+        "idempotency_key": "acceptance-final819-once-read-twenty-w1-artifacts-v1",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b79cec2a-12894-ba0",
+        "request_digest": "627524edc203b517af09d840c5db132ef28b7a4d623bd78763887de97b0fc30c",
+        "request_fingerprint": 7094617391572956000,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b79cec2a-12894-ba0"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b79cec2a-12894-ba0"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_w1_pure_driver_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "/home/qian-qi/throughput-final-ci-observation-20261107/run_w1_pure_readback_once_819_v2.py"
+        ],
+        "created_unix_ms": 1794082457227,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b7a5c68b-12894-bbf",
+        "idempotency_key": "acceptance-final819-once-pure-readback-twenty-w1-v2",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b7a5c68b-12894-bbf",
+        "request_digest": "1b7782d5336f4111ca10069d50d941933cee58f572fae0505fd20aedcdfa9996",
+        "request_fingerprint": 1979194413455196400,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b7a5c68b-12894-bbf"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b7a5c68b-12894-bbf"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_w1_seal_stage1read": {
+      "audit_recorded": true,
+      "job_id": "1a1b79cec2a-12894-ba0",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 4362,
+        "offset": 0,
+        "size": 4362,
+        "text": "{\"artifact_id\": 13586043542, \"family\": \"false-trace\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 5555051, \"manifest_count\": 2}\n{\"artifact_id\": 13586462531, \"family\": \"false-trace\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 5555008, \"manifest_count\": 2}\n{\"artifact_id\": 13586686618, \"family\": \"false-trace\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 5571609, \"manifest_count\": 2}\n{\"artifact_id\": 13586332713, \"family\": \"false-trace\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 5571925, \"manifest_count\": 2}\n{\"artifact_id\": 13586108382, \"family\": \"legal-v1\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 35957803, \"manifest_count\": 1}\n{\"artifact_id\": 13586482467, \"family\": \"legal-v1\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 35957706, \"manifest_count\": 1}\n{\"artifact_id\": 13586660807, \"family\": \"legal-v1\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 35964047, \"manifest_count\": 1}\n{\"artifact_id\": 13586257049, \"family\": \"legal-v1\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 35968945, \"manifest_count\": 1}\n{\"artifact_id\": 13586616233, \"family\": \"rank-batch\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 45039428, \"manifest_count\": 1}\n{\"artifact_id\": 13586467463, \"family\": \"rank-batch\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 45041931, \"manifest_count\": 1}\n{\"artifact_id\": 13586536526, \"family\": \"rank-batch\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 45108509, \"manifest_count\": 1}\n{\"artifact_id\": 13586691635, \"family\": \"rank-batch\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 45105785, \"manifest_count\": 1}\n{\"artifact_id\": 13585554366, \"family\": \"legal-v2\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 140616124, \"manifest_count\": 1}\n{\"artifact_id\": 13586616185, \"family\": \"legal-v2\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 140607077, \"manifest_count\": 1}\n{\"artifact_id\": 13586253351, \"family\": \"legal-v2\", \"status\": \"UNKNOWN\", \"errors\": [\"ValueError: GitHub ZIP digest/size mismatch\"], \"zip_bytes\": 57507840, \"manifest_count\": 0}\n{\"artifact_id\": 13586791050, \"family\": \"legal-v2\", \"status\": \"UNKNOWN\", \"errors\": [\"ValueError: GitHub ZIP digest/size mismatch\"], \"zip_bytes\": 49250304, \"manifest_count\": 0}\n{\"artifact_id\": 13587135201, \"family\": \"factorial\", \"status\": \"UNKNOWN\", \"errors\": [\"ValueError: GitHub ZIP digest/size mismatch\"], \"zip_bytes\": 29900800, \"manifest_count\": 0}\n{\"artifact_id\": 13586509176, \"family\": \"factorial\", \"status\": \"UNKNOWN\", \"errors\": [\"ValueError: GitHub ZIP digest/size mismatch\"], \"zip_bytes\": 39600128, \"manifest_count\": 0}\n{\"artifact_id\": 13586134600, \"family\": \"factorial\", \"status\": \"UNKNOWN\", \"errors\": [\"ValueError: GitHub ZIP digest/size mismatch\"], \"zip_bytes\": 29507584, \"manifest_count\": 0}\n{\"artifact_id\": 13586459476, \"family\": \"factorial\", \"status\": \"UNKNOWN\", \"errors\": [\"ValueError: GitHub ZIP digest/size mismatch\"], \"zip_bytes\": 66338816, \"manifest_count\": 0}\n{\"schema\": \"trnm-final819-w1-stage1-readback-v1\", \"candidate\": \"819309fd312298e099642e1253b1d4ba07113e98\", \"native_job_success_denominator\": 20, \"artifact_denominator\": 20, \"attempted\": 20, \"verified_archive_source_manifest\": 14, \"unknown\": 6, \"identity_before\": {\"argv\": [\"/usr/bin/gh\", \"api\", \"--hostname\", \"github.com\", \"--method\", \"GET\", \"user\"], \"exit_code\": 0, \"timed_out\": false, \"error\": null, \"bytes\": 1221, \"sha256\": \"fb21e626cd6c7f169945f4113574e68390b5c924c73ea971fac98e8c2b3117a3\"}, \"identity_after\": {\"argv\": [\"/usr/bin/gh\", \"api\", \"--hostname\", \"github.com\", \"--method\", \"GET\", \"user\"], \"exit_code\": 0, \"timed_out\": false, \"error\": null, \"bytes\": 1221, \"sha256\": \"fb21e626cd6c7f169945f4113574e68390b5c924c73ea971fac98e8c2b3117a3\"}, \"identity_unchanged\": true, \"pure_readers_executed\": false, \"business_qualification\": false}\n"
+      }
+    },
+    "final819_w1_seal_stage1status": {
+      "at_unix_ms": 1794082756018,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b79cec2a-12894-ba0",
+      "launch_nonce": "604c4510e41471875b298a5c1aa139bd",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 4362,
+          "stored": 4362
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "final819_w1_seal_pureRead": {
+      "audit_recorded": true,
+      "job_id": "1a1b7a5c68b-12894-bbf",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 3958,
+        "offset": 0,
+        "size": 3958,
+        "text": "{\"artifact_id\": 13586686618, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 2, \"errors\": []}\n{\"artifact_id\": 13586332713, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 2, \"errors\": []}\n{\"artifact_id\": 13586043542, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 2, \"errors\": []}\n{\"artifact_id\": 13586462531, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 2, \"errors\": []}\n{\"artifact_id\": 13586257049, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 30, \"errors\": []}\n{\"artifact_id\": 13586660807, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 30, \"errors\": []}\n{\"artifact_id\": 13586482467, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 30, \"errors\": []}\n{\"artifact_id\": 13586108382, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 30, \"errors\": []}\n{\"artifact_id\": 13586791050, \"status\": \"UNKNOWN\", \"attempted\": false, \"exit_code\": null, \"native_campaign_commands\": null, \"errors\": [\"archive/source/manifest not authenticated; pure reader not attempted\"]}\n{\"artifact_id\": 13585554366, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 30, \"errors\": []}\n{\"artifact_id\": 13586253351, \"status\": \"UNKNOWN\", \"attempted\": false, \"exit_code\": null, \"native_campaign_commands\": null, \"errors\": [\"archive/source/manifest not authenticated; pure reader not attempted\"]}\n{\"artifact_id\": 13586616185, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 30, \"errors\": []}\n{\"artifact_id\": 13586536526, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 66, \"errors\": []}\n{\"artifact_id\": 13586691635, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 66, \"errors\": []}\n{\"artifact_id\": 13586467463, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 66, \"errors\": []}\n{\"artifact_id\": 13587135201, \"status\": \"UNKNOWN\", \"attempted\": false, \"exit_code\": null, \"native_campaign_commands\": null, \"errors\": [\"archive/source/manifest not authenticated; pure reader not attempted\"]}\n{\"artifact_id\": 13586509176, \"status\": \"UNKNOWN\", \"attempted\": false, \"exit_code\": null, \"native_campaign_commands\": null, \"errors\": [\"archive/source/manifest not authenticated; pure reader not attempted\"]}\n{\"artifact_id\": 13586134600, \"status\": \"UNKNOWN\", \"attempted\": false, \"exit_code\": null, \"native_campaign_commands\": null, \"errors\": [\"archive/source/manifest not authenticated; pure reader not attempted\"]}\n{\"artifact_id\": 13586616233, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 66, \"errors\": []}\n{\"artifact_id\": 13586459476, \"status\": \"UNKNOWN\", \"attempted\": false, \"exit_code\": null, \"native_campaign_commands\": null, \"errors\": [\"archive/source/manifest not authenticated; pure reader not attempted\"]}\n{\"schema\": \"trnm-final819-w1-pure-reader-coverage-v2\", \"head\": \"819309fd312298e099642e1253b1d4ba07113e98\", \"github_jobs_success\": 20, \"artifact_denominator\": 20, \"started_utc\": \"2026-11-07T20:14:28.196933+00:00\", \"finished_utc\": \"2026-11-07T20:19:14.074394+00:00\", \"script_sha256\": \"d6de643b9440731fc23272f3c5f81fccdcfa62f6d8d57e1729540b715fc8d2ca\", \"observer_timeout_seconds_per_artifact\": 240, \"no_native_executed\": true, \"no_retry\": true, \"business_qualification\": false, \"complete_component_readbacks\": 14, \"unknown\": 6, \"original_native_campaigns_verified\": 452, \"original_native_manifest_count\": 18}\n"
+      }
+    },
+    "final819_w1_seal_pureStatus": {
+      "at_unix_ms": 1794082754113,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b7a5c68b-12894-bbf",
+      "launch_nonce": "765a9811801a26f53e1cdc4ad1417234",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 3958,
+          "stored": 3958
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "final819_w1_package_inputs_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "-"
+        ],
+        "created_unix_ms": 1794082535362,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b7a6f7c2-12894-bc6",
+        "idempotency_key": "acceptance-final819-inspect-small-w1-package-inputs-v1",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b7a6f7c2-12894-bc6",
+        "request_digest": "ef5302a07807f07a99ce43bd764ccc5ecd79b796e186e82fcc8249a5b7197aa7",
+        "request_fingerprint": 17245130286363570000,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b7a6f7c2-12894-bc6"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b7a6f7c2-12894-bc6"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_w1_inputs_v4": {
+      "audit_recorded": true,
+      "job_id": "1a1b7a6f7c2-12894-bc6",
+      "stderr": {
+        "eof": true,
+        "next_offset": 95,
+        "offset": 0,
+        "size": 95,
+        "text": "Traceback (most recent call last):\n  File \"<stdin>\", line 8, in <module>\nKeyError: 'manifests'\n"
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 5805,
+        "offset": 0,
+        "size": 5805,
+        "text": "{\"directory\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1\", \"files\": [{\"name\": \"13585554366\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586043542\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586108382\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586134600\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586253351\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586257049\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586332713\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586459476\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586462531\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586467463\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586482467\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586509176\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586536526\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586616185\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586616233\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586660807\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586686618\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586691635\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13586791050\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"13587135201\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"identity-before.json\", \"bytes\": 1221, \"directory\": false}, {\"name\": \"identity-before.json.stderr\", \"bytes\": 0, \"directory\": false}]}\n{\"directory\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586332713\", \"files\": [{\"name\": \"artifact.zip\", \"bytes\": 5571925, \"directory\": false}, {\"name\": \"artifact.zip.stderr\", \"bytes\": 0, \"directory\": false}, {\"name\": \"independent-v2-w1-false-trace-reuse-v1.json\", \"bytes\": 14420, \"directory\": false}, {\"name\": \"independent-v2-w1-full-limb-reuse-v1.json\", \"bytes\": 16632, \"directory\": false}, {\"name\": \"job.log\", \"bytes\": 209184, \"directory\": false}, {\"name\": \"job.log.stderr\", \"bytes\": 0, \"directory\": false}, {\"name\": \"members\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"pure-driver-v2.json\", \"bytes\": 1639, \"directory\": false}, {\"name\": \"pure-v2.stderr\", \"bytes\": 0, \"directory\": false}, {\"name\": \"pure-v2.stdout\", \"bytes\": 165, \"directory\": false}, {\"name\": \"readback-pure-v2.json\", \"bytes\": 4200, \"directory\": false}, {\"name\": \"readback-stage1.json\", \"bytes\": 12247, \"directory\": false}]}\n{\"directory\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586791050\", \"files\": [{\"name\": \"artifact.zip\", \"bytes\": 49250304, \"directory\": false}, {\"name\": \"artifact.zip.stderr\", \"bytes\": 0, \"directory\": false}, {\"name\": \"pure-driver-v2.json\", \"bytes\": 591, \"directory\": false}, {\"name\": \"readback-stage1.json\", \"bytes\": 2012, \"directory\": false}]}\n{\"directory\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586616233\", \"files\": [{\"name\": \"artifact.zip\", \"bytes\": 45039428, \"directory\": false}, {\"name\": \"artifact.zip.stderr\", \"bytes\": 0, \"directory\": false}, {\"name\": \"job.log\", \"bytes\": 184621, \"directory\": false}, {\"name\": \"job.log.stderr\", \"bytes\": 0, \"directory\": false}, {\"name\": \"members\", \"bytes\": 4096, \"directory\": true}, {\"name\": \"readback-stage1.json\", \"bytes\": 46664, \"directory\": false}]}\n{\"id\": 13586332713, \"keys\": [\"artifact_id\", \"metadata\", \"errors\", \"warnings\", \"archive_authenticated\", \"source_bound\", \"manifest_hashes_complete\", \"pure_read_status\", \"business_qualification\", \"family\", \"arch\", \"source_kind\", \"tested_commit\", \"job\", \"download\", \"archive_inventory\", \"source_before\", \"source_after\", \"manifests\", \"job_log\", \"coverage_status\", \"finished_utc\"], \"metadata\": null, \"manifest_sizes\": [{\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586332713/members/w1-false-trace-reuse-v1/manifest.json\", \"bytes\": 24130}, {\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586332713/members/w1-full-limb-reuse-v1/manifest.json\", \"bytes\": 26478}], \"other_fields\": {\"artifact_id\": 13586332713, \"metadata\": {\"id\": 13586332713, \"name\": \"w1-false-trace-head-x64-819309fd312298e099642e1253b1d4ba07113e98-1\", \"size_in_bytes\": 5571925, \"digest\": \"sha256:b827fdd429d518b24a53c7dd7ace1d65bf43a874eb932bb0860c9f94ac959bf3\", \"expired\": false, \"created_at\": \"2026-11-07T18:50:38Z\", \"updated_at\": \"2026-11-07T18:50:38Z\", \"workflow_run\": {\"id\": 42402618462, \"repository_id\": 1323087357, \"head_repository_id\": 1323087357, \"head_branch\": \"fix/chain-six-axis-performance-20261103\", \"head_sha\": \"819309fd312298e099642e1253b1d4ba07113e98\"}}, \"errors\": [], \"warnings\": [], \"archive_authenticated\": true, \"source_bound\": true, \"manifest_hashes_complete\": true, \"pure_read_status\": \"NOT_RUN\", \"business_qualification\": false, \"family\": \"false-trace\", \"arch\": \"x64\", \"source_kind\": \"head\", \"tested_commit\": \"819309fd312298e099642e1253b1d4ba07113e98\", \"job\": {\"id\": 128493695647, \"name\": \"W1 false trace reuse (x64, head)\", \"family\": \"false-trace\", \"arch\": \"x64\", \"source\": \"head\", \"status\": \"completed\", \"conclusion\": \"success\"}, \"download\": {\"argv\": [\"/usr/bin/gh\", \"api\", \"--hostname\", \"github.com\", \"--method\", \"GET\", \"repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586332713/zip\"], \"exit_code\": 0, \"timed_out\": false, \"error\": null, \"bytes\": 5571925, \"sha256\": \"b827fdd429d518b24a53c7dd7ace1d65bf43a874eb932bb0860c9f94ac959bf3\"}, \"job_log\": {\"argv\": [\"/usr/bin/gh\", \"api\", \"--hostname\", \"github.com\", \"--method\", \"GET\", \"repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128493695647/logs\"], \"exit_code\": 0, \"timed_out\": false, \"error\": null, \"bytes\": 209184, \"sha256\": \"3c9cc4f51d66cd9a360158e4b3eb014075cbaf66ca9ff89554177527e98421bb\"}, \"coverage_status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"finished_utc\": \"2026-11-07T20:05:04.750900+00:00\"}}\n"
+      }
+    },
+    "final819_w1_inputsStatus": {
+      "at_unix_ms": 1794082545934,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 1,
+      "job_id": "1a1b7a6f7c2-12894-bc6",
+      "launch_nonce": "753298f4ac3086679c4a6a8f618c15b3",
+      "log_bytes": {
+        "stderr": {
+          "seen": 95,
+          "stored": 95
+        },
+        "stdout": {
+          "seen": 5805,
+          "stored": 5805
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "failed",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "final819_w1_pure_prep_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "-"
+        ],
+        "created_unix_ms": 1794082156378,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b7a12f5a-12894-bb0",
+        "idempotency_key": "acceptance-final819-prepare-w1-pure-native-record-reader-v1",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b7a12f5a-12894-bb0",
+        "request_digest": "b6329e299455ea77747818aa2f1e84aaa4e05fac78080e1a7fd238838eeb5a6b",
+        "request_fingerprint": 13128729765157923000,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b7a12f5a-12894-bb0"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b7a12f5a-12894-bb0"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_resume_pure-prep-read": {
+      "audit_recorded": true,
+      "job_id": "1a1b7a12f5a-12894-bb0",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 191,
+        "offset": 0,
+        "size": 191,
+        "text": "{\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/read_w1_pure_records_819_v1.py\", \"bytes\": 8568, \"sha256\": \"f268f01e3127d8294dacb96cdb11a37fe4e45ccf319ae8475c317ce051c0f4a8\"}\n"
+      }
+    },
+    "final819_resume_pure-prep-status": {
+      "at_unix_ms": 1794082163079,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b7a12f5a-12894-bb0",
+      "launch_nonce": "1adb507a818dfd1d46bf815ac6770956",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 191,
+          "stored": 191
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "final819_w1_pure_driver_prep_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "-"
+        ],
+        "created_unix_ms": 1794082427077,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b7a550c5-12894-bbc",
+        "idempotency_key": "acceptance-final819-prepare-once-pure-driver-v2",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b7a550c5-12894-bbc",
+        "request_digest": "25cc52c8ec04ba32bd2a6c3378fb9288390973f7d08ad58c41157c3f292511a6",
+        "request_fingerprint": 2723642897558977000,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b7a550c5-12894-bbc"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b7a550c5-12894-bbc"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_w1_pure_driver_prep": {
+      "audit_recorded": true,
+      "job_id": "1a1b7a550c5-12894-bbc",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 387,
+        "offset": 0,
+        "size": 387,
+        "text": "{\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/read_w1_pure_records_819_v2.py\", \"bytes\": 8894, \"sha256\": \"d6de643b9440731fc23272f3c5f81fccdcfa62f6d8d57e1729540b715fc8d2ca\"}\n{\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/run_w1_pure_readback_once_819_v2.py\", \"bytes\": 5182, \"sha256\": \"8c451e00d5c0dc246f9e459e43bcb7dfc0c4cdccc62fca762bfe4604781c6b47\"}\n"
+      }
+    },
+    "final819_w1_pure_driver_status": {
+      "at_unix_ms": 1794082434235,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b7a550c5-12894-bbc",
+      "launch_nonce": "894086e560c0cac0e558917f856104fb",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 387,
+          "stored": 387
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "final819_w1_package_builder_prep_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "-"
+        ],
+        "created_unix_ms": 1794082793235,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b7aae713-12894-bcc",
+        "idempotency_key": "acceptance-final819-prepare-w1-small-metadata-builder-v1",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b7aae713-12894-bcc",
+        "request_digest": "8929df5b17d30f7077e506e8f2fa3056259540e72a540eb5fd390d8efc2732f4",
+        "request_fingerprint": 9883676439575990000,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b7aae713-12894-bcc"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b7aae713-12894-bcc"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_w1_seal_packagePrep": {
+      "audit_recorded": true,
+      "job_id": "1a1b7aae713-12894-bcc",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 193,
+        "offset": 0,
+        "size": 193,
+        "text": "{\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/build_w1_metadata_package_v1.py\", \"bytes\": 11563, \"sha256\": \"f4cb1be5357fb583822bb3f664740a894287d07f57052c1ace5f6272a22adddf\"}\n"
+      }
+    },
+    "final819_w1_builderPrepStatus": {
+      "at_unix_ms": 1794082794564,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b7aae713-12894-bcc",
+      "launch_nonce": "40f9cbedf151979ab3d1661106d33f6c",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 193,
+          "stored": 193
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    }
+  }
+}

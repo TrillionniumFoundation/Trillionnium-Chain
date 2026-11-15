@@ -1,0 +1,4 @@
+[fix/chain-local-ingress-canonical-20261107 205ae38ff] perf(ingress): borrow canonical paid Submit text
+ 6 files changed, 974 insertions(+), 237 deletions(-)
+ create mode 100644 trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet.rs
+ create mode 100644 trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet/tests.rs

@@ -1,0 +1,112 @@
+{
+  "additional_fixed_vc_check_mass_addend": null,
+  "affine_coefficients": {
+    "w_fs": null,
+    "w_m": {
+      "denominator": "1",
+      "numerator": "0"
+    },
+    "w_vc": null
+  },
+  "affine_maximum_formula": "C + t * max(a_fs, a_vc)",
+  "an_attaining_mass_assignment": null,
+  "arithmetic_maximized_upper_expression": null,
+  "conditional_expression_on_declared_query_domains": null,
+  "constant_terms": {
+    "commutator": null,
+    "finite_randomness": null,
+    "input_commitment_extraction": null,
+    "offline_opening_set": null,
+    "online_fixed_vc_mass_including_verifier_checks": null,
+    "state_restoration_rrbr": null
+  },
+  "constant_total": null,
+  "domain_checks": {
+    "commutativity_max_queries": null,
+    "pqsr_max_queries": null,
+    "vc_max_queries": null
+  },
+  "expression_exceeds_one": null,
+  "extraction_mass": "w_m + 1",
+  "hypothetical_expression_meets_target": null,
+  "inputs": {
+    "declared_query_domains": {
+      "commutativity_max_queries": null,
+      "pqsr_max_queries": null,
+      "vc_max_queries": null
+    },
+    "input_kind": "hypothetical",
+    "parameters": {
+      "ell_max": null,
+      "k": null,
+      "kappa_rrbr": null,
+      "n_y": null,
+      "n_y_prime": null,
+      "q_pi": null,
+      "q_r_input": null,
+      "q_r_output": null,
+      "q_v": null,
+      "q_y": null,
+      "r_min": null,
+      "sigma": null,
+      "t": null
+    },
+    "schema": "TRNM-W1-CDHZ-MARCH-BCS-ASSUMED-INPUT1",
+    "target_error": null
+  },
+  "maximum_domain": "real nonnegative w_fs,w_vc,w_m with sum <= t",
+  "ordinary_vc_mass": "w_vc + q_v + q_r_input + q_r_output",
+  "qualification": {
+    "actual_joint_oracle_model_proved": false,
+    "author_erratum_claimed": false,
+    "complete_manuscript_proof_independently_verified": false,
+    "complete_w1_soundness_qualified": false,
+    "component_hypotheses_proved_for_implementation": false,
+    "consensus_admission": false,
+    "pinned_january_to_march_statement_correspondence_verified": true,
+    "post_quantum_soundness_qualified": false,
+    "production_qualified": false,
+    "qrom_theorem_instantiated": false,
+    "quantum_work_qualified": false,
+    "unconditional_project_security_bits": null,
+    "whole_lifetime_failure_bound": null
+  },
+  "query_points": {
+    "adversary_t": null,
+    "commutativity_t": null,
+    "decider_queries": null,
+    "extract_and_offline_t": null,
+    "offline_opening_set_size": null,
+    "online_t": null
+  },
+  "record_mass": "w_fs + k",
+  "required_query_domains": {
+    "commutativity_max_queries": null,
+    "pqsr_max_queries": null,
+    "vc_max_queries": null
+  },
+  "schema": "TRNM-W1-CDHZ-MARCH-BCS-ASSUMED-EXPRESSION1",
+  "source": {
+    "interfaces": [
+      "Theorem 6.10",
+      "Theorem 8.3",
+      "Lemma 8.8",
+      "Lemma 9.7",
+      "Theorem 11.3",
+      "Construction 11.11"
+    ],
+    "interpretation": "Named ordinary-VC mass from Lemma 9.7; includes q_V for step-13 VC checks. Conservative derived adapter, not an author correction or a complete theorem audit.",
+    "january_pdf_sha256": "215a62b9a1b5144c89ae103aaabaf6049eab23f7ccb23130bc7d65d597c1eac9",
+    "march_pdf": "https://eprint.iacr.org/archive/2025/2166/1772467621.pdf",
+    "march_pdf_sha256": "2cfb88c76732d9f39f4b1943b4aabc0390dd3d17830d91d910c38e16e4bb5a30",
+    "paper": "https://eprint.iacr.org/2025/2166"
+  },
+  "status": "HYPOTHETICAL_CONSERVATIVE_ADAPTER_ONLY",
+  "unresolved_premises": [
+    "Actual IOR relations, monotonicity, compiler semantics and uniform RRBR knowledge extractor.",
+    "Admissible quantum multi-extractor for the actual salted/capped/encoded commitment and joint oracle.",
+    "Validity of every assumed envelope, query bound and statement-size/proximity scope for the implementation.",
+    "Actual FS construction, all recursive programs, matching middle relations and sequential extraction costs.",
+    "A truthful whole-lifetime adversarial budget; this is one hypothetical reduction expression only."
+  ]
+}

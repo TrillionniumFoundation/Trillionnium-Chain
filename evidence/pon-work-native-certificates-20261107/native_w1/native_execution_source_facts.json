@@ -1,0 +1,105 @@
+{
+  "schema": "pon-native-execution-source-bridge-v1",
+  "base_commit": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+  "records": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "git_blob": "5f6f16ddabde5d7fa67d0c993e9d508e804ef3b7",
+      "sha256": "8e65b358f83e7be4863879dd719fd7bf17af7ff78dae60e7b8ebb30c64605541",
+      "working_bytes_equal_to_pin": true,
+      "functions": "activate_with_fault_and_progress",
+      "fact": "Compares submitted target only to current active tip. No SELECT global argmax in this activation function. Strictly larger score replaces; <= keeps incumbent."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "git_blob": "5f6f16ddabde5d7fa67d0c993e9d508e804ef3b7",
+      "sha256": "8e65b358f83e7be4863879dd719fd7bf17af7ff78dae60e7b8ebb30c64605541",
+      "working_bytes_equal_to_pin": true,
+      "functions": "recover",
+      "fact": "Explicit SELECT id FROM blocks ORDER BY chainwork DESC,height,id LIMIT 1, then activate chosen tip; this global scan is a recovery entry, not evidence all submission paths maintain instantaneous global maximality."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "git_blob": "5f6f16ddabde5d7fa67d0c993e9d508e804ef3b7",
+      "sha256": "8e65b358f83e7be4863879dd719fd7bf17af7ff78dae60e7b8ebb30c64605541",
+      "working_bytes_equal_to_pin": true,
+      "functions": "activate_observed_with_termination; check_observed_history_with_progress",
+      "fact": "Rechecks all observed ancestry timestamps against supplied observed_now+future_skew before activation; supplies no global clock synchronization or propagation latency certificate."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "git_blob": "5f6f16ddabde5d7fa67d0c993e9d508e804ef3b7",
+      "sha256": "8e65b358f83e7be4863879dd719fd7bf17af7ff78dae60e7b8ebb30c64605541",
+      "working_bytes_equal_to_pin": true,
+      "functions": "confirmations_with_progress",
+      "fact": "Current active tip/generation snapshot, on-chain membership, successor depth/work, entire ancestry future-time check, final same tip/generation. No inventory of every eligible competitor is emitted."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "git_blob": "dc7610506c476b865445e6ff7227f0c3d40f436f",
+      "sha256": "e00f2b736cb22c42468cd494eece859eb78fe1005a7c83c621f14c319c74f743",
+      "working_bytes_equal_to_pin": true,
+      "functions": "growth_activate_with_progress; growth_recover",
+      "fact": "Growth activation also compares target to incumbent only under transaction; growth_recover alone performs global chainwork scan."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "git_blob": "ca6ac60b53cef412b1e8c65719ad9a0c15eb1428",
+      "sha256": "4ee4efc6cc1f5fac5ee78710a2620cc7acba6034e9bfaf3aed5e602efdec002e",
+      "working_bytes_equal_to_pin": true,
+      "functions": "dispatch_shared_with_execution_observation; admit_shared_checked; submit_result_with_progress",
+      "fact": "Submit: bounded decode + context under owner, release owner for full W1, reacquire for parent-bound admission; detached execution may release/reacquire; refreshed now at commit; then activate only submitted id. Existing request can retry pending exact activation. Actual owner/queue/validation latency is not a deterministic Delta contract."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "git_blob": "bd89990d6e1d7bda56f0be69a526815d87edbc29",
+      "sha256": "df389b242de3f75f8ee2448b755726c23b3196f0bef0dc79573c183791118882",
+      "working_bytes_equal_to_pin": true,
+      "functions": "receive_observed; activate_packet",
+      "fact": "History page admission reuses full WorkCheckedPacket and native storage; final activation requested tip after processing. A partial valid prefix can remain admitted. This does not enumerate every private branch or every ready output."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "git_blob": "891ec08f59a6e2346735bd08b1bf363466fe38a3",
+      "sha256": "325c3d0fd88e7bd361255d2d50f0e89155a3b735483f302bf2d3bcfe8851ba93",
+      "working_bytes_equal_to_pin": true,
+      "functions": "public_dispatch",
+      "fact": "Original paid request/CPU/deadline path invokes full W1 callback before native admission; Instant wall, thread CPU, task counters recorded. No alternate no-proof acceptance."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "git_blob": "e8e3afa160cbf6e958d2d6b47b2cf7561f229ba4",
+      "sha256": "fdd161cfee7e994f092e048020ae8dce140e852edf0c9e99ec9edce1cc838d21",
+      "working_bytes_equal_to_pin": true,
+      "functions": "PublicRequestObservation; PublicRequestLifecycleObservation; SubmitPhase",
+      "fact": "Local observer epoch Instant clocks, 16384 bounded records; nested phase wall/CPU samples, actual request membership/diagnostics, explicit unknown clocks and incomplete live snapshots. clock_is_observer_local=true; has_control_authority=false. These are not globally synchronized ready/parent-bind/all-branch execution receipts."
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md",
+      "git_blob": "411242a4a73dab0bdc0453ac864e04ec3821940c",
+      "sha256": "084fdda6dd2c789e4d51d520b2a3bc18076e32a0d0be8a833843de4f3ff72f9f",
+      "working_bytes_equal_to_pin": true,
+      "functions": "Actual PNW1 timestamp and chainwork boundaries",
+      "fact": "Retained native DAA test uses explicit logical validation clocks, full PNW1 and actual native admission, 85 observations/84 packet identities; explicitly not elapsed production time or live mining rate. Cannot relabel as production timestamp/availability calibration."
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs",
+      "git_blob": "99db2bb54d10f7fc36a4b3529211fba8ffa74cf1",
+      "sha256": "2377bbb748a67fb238c2d113799adce472e905465b5ac46372597ff7ab4dd0b3",
+      "working_bytes_equal_to_pin": true,
+      "functions": "run prove/verify",
+      "fact": "Fixed-size native bridge: prove challenge32+A/B32768 -> full49188 PNW1; verify challenge/task/target96+proof49188 -> native-work-verification hash32 on success, exit2 on failure. Calls full producer/verifier APIs."
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs",
+      "git_blob": "ed5c6814db9fa15dad986d09b2dfb462c4f9f000",
+      "sha256": "344f09d0a7112ac4c507d262b9b11391b892df74c24c06b67253b3272fa185cf",
+      "working_bytes_equal_to_pin": true,
+      "functions": "Operation::Generic; Blocked",
+      "fact": "Native exact complete proof producers generic/structured-zero/blocked/paired; canonical input check and explicit unsupported zero-only refusal. Useful to test valid algorithm diversity, not a minimum-cost proof."
+    }
+  ],
+  "instantaneous_global_maximality_proved": false,
+  "global_ready_or_clock_coverage_observed": false,
+  "node_runtime_reexecuted_in_this_audit": false
+}

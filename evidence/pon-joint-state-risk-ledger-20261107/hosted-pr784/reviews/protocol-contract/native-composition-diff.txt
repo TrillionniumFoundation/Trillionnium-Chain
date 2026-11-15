@@ -1,0 +1,68 @@
+diff --git a/trillionnium/crates/trnm-pon-node/src/lib.rs b/trillionnium/crates/trnm-pon-node/src/lib.rs
+index f0bf079..3ea7345 100644
+--- a/trillionnium/crates/trnm-pon-node/src/lib.rs
++++ b/trillionnium/crates/trnm-pon-node/src/lib.rs
+@@ -9,6 +9,10 @@ mod error;
+ pub mod host_kernel_parent;
+ pub mod ingress;
+ pub mod mining;
++/// Opt-in durable local owner observations; grants no global execution authority.
++pub mod native_owner_journal;
++/// Persistent declared risk expenditure; grants no probability-law authority.
++pub mod native_risk_ledger;
+ pub mod operator_checkpoint_tile;
+ pub mod operator_continuous_controller;
+ mod operator_continuous_cpu;
+@@ -54,6 +58,10 @@ pub use store::native_budget::{
+     NativeBudgetInventoryV1, NativeBudgetLaneV1, NativeBudgetLocalRecordV1,
+     NativeBudgetObservationV1, NativeBudgetRequestV1, NativeContributionClaimV1,
+ };
++pub use store::native_owner_observation::{
++    OwnerCensus, OwnerCensusBlock, OwnerCensusLimits, OwnerCensusProgress, MAX_CENSUS_BLOCKS,
++    MAX_CENSUS_PACKET_BYTES,
++};
+ pub use store::pinned_account_query::PinnedNativeAccountQuery;
+ pub use store::storage_service::{
+     native_cell_release_repair_subject_v2, native_cell_repair_subject_v1,
+diff --git a/trillionnium/crates/trnm-pon-node/src/store.rs b/trillionnium/crates/trnm-pon-node/src/store.rs
+index 7d6d5bd..88c3190 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store.rs
+@@ -27,6 +27,7 @@ mod legacy_reorg_root_tests;
+ pub mod mempool;
+ pub(crate) mod native_authenticated;
+ pub mod native_budget;
++pub mod native_owner_observation;
+ mod operator_continuous_owner;
+ mod operator_mining_owner;
+ pub mod pinned_account_query;
+@@ -1276,6 +1277,9 @@ pub struct Node {
+     commitment_observation: RefCell<Option<CommitmentObservation>>,
+     history_read_counters: Cell<HistoryReadCounters>,
+     history_page_read_counters: Cell<HistoryPageReadCounters>,
++    // Opt-in, process-local observation identity/clock. It grants no write,
++    // consensus, remote coverage or physical-clock attestation authority.
++    native_owner_observer: RefCell<Option<native_owner_observation::OwnerObserver>>,
+     owner_policy: Option<OwnerPolicy>,
+     mining_owner: Option<operator_mining_owner::MiningOwner>,
+     continuous_owner: Option<operator_continuous_owner::ContinuousOwner>,
+@@ -2133,6 +2137,7 @@ impl Node {
+             commitment_observation: RefCell::new(None),
+             history_read_counters: Cell::new(HistoryReadCounters::default()),
+             history_page_read_counters: Cell::new(HistoryPageReadCounters::default()),
++            native_owner_observer: RefCell::new(None),
+             owner_policy,
+             mining_owner,
+             continuous_owner,
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs b/trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs
+index 6f56355..13f87f8 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs
+@@ -352,6 +352,7 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
+         commitment_observation: RefCell::new(None),
+         history_read_counters: Cell::new(super::super::HistoryReadCounters::default()),
+         history_page_read_counters: Cell::new(super::super::HistoryPageReadCounters::default()),
++        native_owner_observer: RefCell::new(None),
+         owner_policy: None,
+         mining_owner: None,
+         continuous_owner: None,

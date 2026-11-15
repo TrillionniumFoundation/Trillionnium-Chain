@@ -1,0 +1,47 @@
+{
+  "changed_source_files": [],
+  "completed_at_utc": "2026-11-10T09:40:39.240837+00:00",
+  "gates": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "completed_at_utc": "2026-11-10T09:40:38.947649+00:00",
+      "elapsed_seconds": 0.03170708520337939,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "ff54581654e0f832cc74bee0c819644e1663993a00ca5bb835ce58462675886c",
+      "name": "preflight",
+      "started_at_utc": "2026-11-10T09:40:38.915933+00:00"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "86c67e6418feae9638756f9c34c6e306d8f96820"
+      ],
+      "completed_at_utc": "2026-11-10T09:40:39.104464+00:00",
+      "elapsed_seconds": 0.11422059778124094,
+      "exit_code": 1,
+      "failure": null,
+      "log_sha256": "cd8cc1a402bd7475e209cbf65997d7b7baaadaa00e437b58b12013ae48173889",
+      "name": "exact-source",
+      "started_at_utc": "2026-11-10T09:40:38.990254+00:00"
+    }
+  ],
+  "identity": {
+    "commit": "86c67e6418feae9638756f9c34c6e306d8f96820",
+    "status": "",
+    "tree": "e8e470ac00ab332b70f79be7718b44498ccf449e"
+  },
+  "passed": false,
+  "phase": "cargo",
+  "source_end_manifest_sha256": "3f2d0af7e94dca0646c7c80842dab9ae01b851f08f5a53bb8172fd3634101e36",
+  "source_start_manifest_sha256": "3f2d0af7e94dca0646c7c80842dab9ae01b851f08f5a53bb8172fd3634101e36",
+  "sources_unchanged": true,
+  "started_at_utc": "2026-11-10T09:40:38.870853+00:00"
+}

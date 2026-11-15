@@ -1,0 +1,6 @@
+    Checking trnm-crypto-primitives v0.1.0 (/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-sqlite-io-boundary)
+    Checking trnm-mvcc-fee v0.1.0 (/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-data-availability v0.1.0 (/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-data-availability)
+    Checking trnm-pon-node v0.1.0 (/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 40.36s

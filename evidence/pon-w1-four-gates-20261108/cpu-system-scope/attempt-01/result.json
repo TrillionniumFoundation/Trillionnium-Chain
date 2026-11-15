@@ -1,0 +1,174 @@
+{
+  "intent": {
+    "schema": "TRNM-W1-CPU-DENIAL-PROBE-INTENT1",
+    "unit": "w1-cpu-probe-ec265-01",
+    "nodes": [
+      {
+        "path": "/dev/nvidia-modeset",
+        "major": 195,
+        "minor": 254,
+        "mode": "0o20666",
+        "uid": 0,
+        "gid": 0,
+        "alias": "/run/w1-gpu-denial-probe/device-0"
+      },
+      {
+        "path": "/dev/nvidia-uvm",
+        "major": 235,
+        "minor": 0,
+        "mode": "0o20666",
+        "uid": 0,
+        "gid": 0,
+        "alias": "/run/w1-gpu-denial-probe/device-1"
+      },
+      {
+        "path": "/dev/nvidia-uvm-tools",
+        "major": 235,
+        "minor": 1,
+        "mode": "0o20666",
+        "uid": 0,
+        "gid": 0,
+        "alias": "/run/w1-gpu-denial-probe/device-2"
+      },
+      {
+        "path": "/dev/nvidia0",
+        "major": 195,
+        "minor": 0,
+        "mode": "0o20666",
+        "uid": 0,
+        "gid": 0,
+        "alias": "/run/w1-gpu-denial-probe/device-3"
+      },
+      {
+        "path": "/dev/nvidiactl",
+        "major": 195,
+        "minor": 255,
+        "mode": "0o20666",
+        "uid": 0,
+        "gid": 0,
+        "alias": "/run/w1-gpu-denial-probe/device-4"
+      },
+      {
+        "path": "/dev/dri/card0",
+        "major": 226,
+        "minor": 0,
+        "mode": "0o20660",
+        "uid": 0,
+        "gid": 44,
+        "alias": "/run/w1-gpu-denial-probe/device-5"
+      },
+      {
+        "path": "/dev/dri/renderD128",
+        "major": 226,
+        "minor": 128,
+        "mode": "0o20660",
+        "uid": 0,
+        "gid": 992,
+        "alias": "/run/w1-gpu-denial-probe/device-6"
+      }
+    ],
+    "properties": [
+      "DynamicUser=yes",
+      "PrivateDevices=yes",
+      "DevicePolicy=strict",
+      "DeviceAllow=/dev/null rw",
+      "DeviceAllow=/dev/zero r",
+      "DeviceAllow=/dev/random r",
+      "DeviceAllow=/dev/urandom r",
+      "PrivateNetwork=yes",
+      "RestrictAddressFamilies=none",
+      "PrivateIPC=yes",
+      "PrivateTmp=yes",
+      "ProtectProc=invisible",
+      "ProcSubset=pid",
+      "ProtectSystem=strict",
+      "ProtectHome=yes",
+      "ProtectKernelTunables=yes",
+      "ProtectKernelModules=yes",
+      "ProtectControlGroups=yes",
+      "RestrictNamespaces=yes",
+      "RestrictSUIDSGID=yes",
+      "NoNewPrivileges=yes",
+      "CapabilityBoundingSet=",
+      "AmbientCapabilities=",
+      "SystemCallFilter=~@debug",
+      "SystemCallErrorNumber=EPERM",
+      "LockPersonality=yes",
+      "MemoryMax=268435456",
+      "MemorySwapMax=0",
+      "TasksMax=16",
+      "CPUQuota=25%",
+      "RuntimeMaxSec=20s",
+      "TimeoutStopSec=5s",
+      "KillMode=control-group",
+      "BindReadOnlyPaths=/dev/nvidia-modeset:/run/w1-gpu-denial-probe/device-0",
+      "BindReadOnlyPaths=/dev/nvidia-uvm:/run/w1-gpu-denial-probe/device-1",
+      "BindReadOnlyPaths=/dev/nvidia-uvm-tools:/run/w1-gpu-denial-probe/device-2",
+      "BindReadOnlyPaths=/dev/nvidia0:/run/w1-gpu-denial-probe/device-3",
+      "BindReadOnlyPaths=/dev/nvidiactl:/run/w1-gpu-denial-probe/device-4",
+      "BindReadOnlyPaths=/dev/dri/card0:/run/w1-gpu-denial-probe/device-5",
+      "BindReadOnlyPaths=/dev/dri/renderD128:/run/w1-gpu-denial-probe/device-6"
+    ],
+    "payload_sha256": "f9b43bab15385478660f6c7e0e858e4f1e86ec26ac94e36671c419dbaec2b415",
+    "scope": "one new short system-scope service only",
+    "fresh_proofs": 0,
+    "original_tasks_reassessed": false,
+    "resource_billing_complete": false,
+    "old_gpu_ns": null
+  },
+  "unit_before": {
+    "argv": [
+      "systemctl",
+      "show",
+      "w1-cpu-probe-ec265-01.service",
+      "--property=LoadState"
+    ],
+    "returncode": 0,
+    "stdout": "LoadState=not-found\n",
+    "stderr": ""
+  },
+  "unit_during": {
+    "argv": [
+      "systemctl",
+      "show",
+      "w1-cpu-probe-ec265-01.service",
+      "--property=LoadState,ActiveState,SubState,MainPID,ControlGroup,DynamicUser,User,PrivateDevices,DevicePolicy,DeviceAllow,PrivateNetwork,RestrictAddressFamilies,PrivateIPC,PrivateTmp,ProtectProc,ProcSubset,ProtectSystem,ProtectHome,CapabilityBoundingSet,AmbientCapabilities,NoNewPrivileges,SystemCallFilter,CPUQuotaPerSecUSec,MemoryMax,MemorySwapMax,TasksMax,Result,ExecMainCode,ExecMainStatus,CPUUsageNSec,MemoryPeak"
+    ],
+    "returncode": 0,
+    "stdout": "MainPID=0\nResult=success\nExecMainCode=0\nExecMainStatus=0\nControlGroup=\nMemoryPeak=[not set]\nCPUUsageNSec=[not set]\nCPUQuotaPerSecUSec=infinity\nMemoryMax=infinity\nMemorySwapMax=infinity\nDevicePolicy=auto\nTasksMax=142893\nCapabilityBoundingSet=cap_chown cap_dac_override cap_dac_read_search cap_fowner cap_fsetid cap_kill cap_setgid cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config cap_mknod cap_lease cap_audit_write cap_audit_control cap_setfcap cap_mac_override cap_mac_admin cap_syslog cap_wake_alarm cap_block_suspend cap_audit_read cap_perfmon cap_bpf cap_checkpoint_restore\nAmbientCapabilities=\nUser=\nDynamicUser=no\nPrivateTmp=no\nPrivateDevices=no\nPrivateNetwork=no\nPrivateIPC=no\nProtectHome=no\nProtectSystem=no\nNoNewPrivileges=no\nSystemCallFilter=~\nRestrictAddressFamilies=~\nProtectProc=default\nProcSubset=all\nLoadState=not-found\nActiveState=inactive\nSubState=dead\n",
+    "stderr": ""
+  },
+  "unit_after": {
+    "argv": [
+      "systemctl",
+      "show",
+      "w1-cpu-probe-ec265-01.service",
+      "--property=LoadState,ActiveState,SubState,Result,ExecMainCode,ExecMainStatus,CPUUsageNSec,MemoryPeak"
+    ],
+    "returncode": 0,
+    "stdout": "Result=success\nExecMainCode=0\nExecMainStatus=0\nMemoryPeak=[not set]\nCPUUsageNSec=[not set]\nLoadState=not-found\nActiveState=inactive\nSubState=dead\n",
+    "stderr": ""
+  },
+  "journal": {
+    "argv": [
+      "journalctl",
+      "--no-pager",
+      "--unit",
+      "w1-cpu-probe-ec265-01.service",
+      "-n",
+      "40",
+      "-o",
+      "short-iso"
+    ],
+    "returncode": 0,
+    "stdout": "-- No entries --\n",
+    "stderr": ""
+  },
+  "actual_systemd_run_exit": 1,
+  "started_monotonic_ns": 1188018277996187,
+  "finished_monotonic_ns": 1188018990477678,
+  "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "5e41658d2dfd302d13b2db3b2de82fa7757aebb6d7f35c05c0e1046eac075e84",
+  "probe_passed": false
+}

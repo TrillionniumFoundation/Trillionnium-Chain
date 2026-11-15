@@ -1,0 +1,448 @@
+{
+  "schema": "chain-hepta-M4-publication-evidence-v1",
+  "host": "main",
+  "account": "ProfHepta",
+  "source_commit": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+  "source_tree": "c82829c3a5710960081d91930cf425f9a768e9e4",
+  "original_failed_attempt": {
+    "status": {
+      "at_unix_ms": 1794234165671,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 128,
+      "job_id": "1a1c0ae2934-11c5a-18",
+      "launch_nonce": "8d5f09b2945f5e1b1c9b80c32841679b",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 794,
+          "stored": 794
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "failed",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "logs": {
+      "job_id": "1a1c0ae2934-11c5a-18",
+      "stdout": "The bundle contains this ref:\ne4e4a8e049915ba09d9e97444b4709ce8769ce81 refs/heads/fix/chain-hepta-closure-candidate-20261109-481716\nThe bundle requires these 3 refs:\n0746a462e80067b78317597f2fa4bacf5e3db958 \ne2a02f9271b49f146e70806c8a66e161b5973971 \n44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0 \nThe bundle uses this hash algorithm: sha1\n{\"argv\": [\"/usr/bin/git\", \"-C\", \"/Users/qianqi/chain-hepta-closure-481716/publish.git\", \"-c\", \"push.negotiate=true\", \"push\", \"origin\", \"e4e4a8e049915ba09d9e97444b4709ce8769ce81:refs/heads/fix/chain-hepta-closure-candidate-20261109-481716\"], \"exit\": 128, \"stderr\": \"fatal: unable to access 'https://github.com/TrillionniumFoundation/Trillionnium-Chain.git/': Failed to connect to github.com port 443 after 75003 ms: Couldn't connect to server\\n\", \"stdout\": \"\"}\n",
+      "stderr": "",
+      "stdout_eof": true,
+      "stderr_eof": true
+    }
+  },
+  "original_effect_reconciliation": {
+    "status": {
+      "at_unix_ms": 1794234513015,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 1,
+      "job_id": "1a1c0b5f1ce-11c5a-2a",
+      "launch_nonce": "c6e5064cec6b389ec167f8210dfe7fb4",
+      "log_bytes": {
+        "stderr": {
+          "seen": 25,
+          "stored": 25
+        },
+        "stdout": {
+          "seen": 114,
+          "stored": 114
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "failed",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "logs": {
+      "job_id": "1a1c0b5f1ce-11c5a-2a",
+      "stdout": "{\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/git/refs#get-a-reference\",\"status\":\"404\"}",
+      "stderr": "gh: Not Found (HTTP 404)\n",
+      "stdout_eof": true,
+      "stderr_eof": true
+    },
+    "authenticated_repo_and_config_check": {
+      "bundle": {
+        "bytes": 98652,
+        "sha256": "cb6d7b9e77e2eeb259adc013cd09a7d8097c2734550f66c398fcf5b972f599f3"
+      },
+      "candidate_ref": {
+        "exit": 0,
+        "identities": [
+          "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+          "c82829c3a5710960081d91930cf425f9a768e9e4"
+        ]
+      },
+      "credential.helper": {
+        "exit": 0,
+        "value": [
+          "gh-auth-git-credential"
+        ]
+      },
+      "gh_identity": {
+        "error": null,
+        "exit": 0,
+        "login": "ProfHepta"
+      },
+      "git_version": "git version 2.54.0 (Apple Git-157)",
+      "http.proxy": {
+        "exit": 1,
+        "value": {
+          "present": false
+        }
+      },
+      "http.sslVerify": {
+        "exit": 1,
+        "value": ""
+      },
+      "http.version": {
+        "exit": 1,
+        "value": ""
+      },
+      "no_proxy_present": false,
+      "origin": {
+        "canonical_expected": true,
+        "endpoint": {
+          "host": "github.com",
+          "port": null,
+          "present": true,
+          "scheme": "https",
+          "userinfo_present": false
+        },
+        "exit": 0
+      },
+      "proxy_environment": {},
+      "repository_access": {
+        "error": null,
+        "exit": 0,
+        "response": {
+          "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+          "permissions": {
+            "admin": true,
+            "maintain": true,
+            "pull": true,
+            "push": true,
+            "triage": true
+          }
+        }
+      },
+      "system_proxy": {
+        "exit": 0,
+        "values": {}
+      }
+    }
+  },
+  "successful_second_push": {
+    "start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "-c",
+          "push.negotiate=true",
+          "push",
+          "--porcelain",
+          "origin",
+          "e4e4a8e049915ba09d9e97444b4709ce8769ce81:refs/heads/fix/chain-hepta-closure-candidate-20261109-481716"
+        ],
+        "created_unix_ms": 1794234742427,
+        "cwd": "/Users/qianqi/chain-hepta-closure-481716/publish.git",
+        "env_keys": [
+          "GIT_TERMINAL_PROMPT"
+        ],
+        "executable": "/usr/bin/git",
+        "execution_mode": "operator",
+        "host": "main",
+        "id": "1a1c0b9769b-11c5a-3a",
+        "idempotency_key": "chain-hepta-closure-481716-source-publish-02",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/jobs/1a1c0b9769b-11c5a-3a",
+        "request_digest": "2da00427a37163fd3878d2971b1f6b26d09aedb124b2de4cc2e620e5dc978306",
+        "request_fingerprint": 3287632296272815000,
+        "ssh_target": "hepta-mac-local",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1c0b9769b-11c5a-3a"
+      },
+      "launch": {
+        "backend": "detached",
+        "launcher_pid": 92047,
+        "ok": true,
+        "systemd_error": "systemd user units unavailable on this platform",
+        "unit": "hepta-runtime-job-1a1c0b9769b-11c5a-3a"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "terminal_status": {
+      "at_unix_ms": 1794234813314,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1c0b9769b-11c5a-3a",
+      "launch_nonce": "9c64bd8acd5ae8c7c202440f429b2d9d",
+      "log_bytes": {
+        "stderr": {
+          "seen": 550,
+          "stored": 550
+        },
+        "stdout": {
+          "seen": 190,
+          "stored": 190
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "logs": {
+      "job_id": "1a1c0b9769b-11c5a-3a",
+      "stdout": "To https://github.com/TrillionniumFoundation/Trillionnium-Chain.git\n*\te4e4a8e049915ba09d9e97444b4709ce8769ce81:refs/heads/fix/chain-hepta-closure-candidate-20261109-481716\t[new branch]\nDone\n",
+      "stderr": "remote: \nremote: Create a pull request for 'fix/chain-hepta-closure-candidate-20261109-481716' on GitHub by visiting:        \nremote:      https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/new/fix/chain-hepta-closure-candidate-20261109-481716        \nremote: \nremote: GitHub found 7 vulnerabilities on TrillionniumFoundation/Trillionnium-Chain's default branch (4 high, 2 moderate, 1 low). To find out more, visit:        \nremote:      https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot        \nremote: \n",
+      "stdout_eof": true,
+      "stderr_eof": true
+    }
+  },
+  "remote_M4_readback": {
+    "status": {
+      "at_unix_ms": 1794234846753,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1c0bb095d-11c5a-43",
+      "launch_nonce": "2353267470debf80f4bdfa2b5712061e",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 264,
+          "stored": 264
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "logs": {
+      "job_id": "1a1c0bb095d-11c5a-43",
+      "stdout": "{\"ref\":\"refs/heads/fix/chain-hepta-closure-candidate-20261109-481716\",\"sha\":\"e4e4a8e049915ba09d9e97444b4709ce8769ce81\",\"url\":\"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs/heads/fix/chain-hepta-closure-candidate-20261109-481716\"}\n",
+      "stderr": "",
+      "stdout_eof": true,
+      "stderr_eof": true
+    }
+  },
+  "before_create_pr_query": {
+    "status": {
+      "at_unix_ms": 1794234930749,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1c0bc338c-11c5a-49",
+      "launch_nonce": "dced853ad9faf0d4d59c72801c43de62",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 3,
+          "stored": 3
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "logs": {
+      "job_id": "1a1c0bc338c-11c5a-49",
+      "stdout": "[]\n",
+      "stderr": "",
+      "stdout_eof": true,
+      "stderr_eof": true
+    }
+  },
+  "draft_pr": {
+    "start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "-"
+        ],
+        "created_unix_ms": 1794235051752,
+        "cwd": "/Users/qianqi/chain-hepta-closure-481716/publish.git",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "main",
+        "id": "1a1c0be2ee8-11c5a-4e",
+        "idempotency_key": "chain-hepta-closure-481716-draft-pr-create-01",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/jobs/1a1c0be2ee8-11c5a-4e",
+        "request_digest": "3de624d540298b6ddf28f6b3f3a894ea17b85c40787f675e1a5af748918a5575",
+        "request_fingerprint": 4460292979280153600,
+        "ssh_target": "hepta-mac-local",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1c0be2ee8-11c5a-4e"
+      },
+      "launch": {
+        "backend": "detached",
+        "launcher_pid": 94600,
+        "ok": true,
+        "systemd_error": "systemd user units unavailable on this platform",
+        "unit": "hepta-runtime-job-1a1c0be2ee8-11c5a-4e"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "terminal_status": {
+      "at_unix_ms": 1794235074647,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1c0be2ee8-11c5a-4e",
+      "launch_nonce": "480078b59a9f0f908831311b13f92ff2",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 710,
+          "stored": 710
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "result": {
+      "created": true,
+      "argv": [
+        "pr",
+        "create",
+        "--repo",
+        "TrillionniumFoundation/Trillionnium-Chain",
+        "--base",
+        "main",
+        "--head",
+        "fix/chain-hepta-closure-candidate-20261109-481716",
+        "--title",
+        "Converge fixed Chain/Hepta closure source and evidence contracts",
+        "--draft",
+        "--body-file",
+        "/Users/qianqi/chain-hepta-closure-481716/draft-pr-body-28698b40a554.md"
+      ],
+      "exit_code": 0,
+      "stdout": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847\n",
+      "stderr": "",
+      "body_sha256": "28698b40a554d0b4b18c49a08eebd81d99c0f07bcd0aa639f31fa74e5341475d",
+      "body_file": "/Users/qianqi/chain-hepta-closure-481716/draft-pr-body-28698b40a554.md",
+      "head_before_create": "e4e4a8e049915ba09d9e97444b4709ce8769ce81"
+    }
+  },
+  "production_qualification": false,
+  "M5_evidence_published": false,
+  "main_branch_written": false,
+  "force_push_used": false,
+  "global_config_changed": false
+}

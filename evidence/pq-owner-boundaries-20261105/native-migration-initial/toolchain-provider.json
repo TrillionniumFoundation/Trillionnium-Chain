@@ -1,0 +1,52 @@
+{
+  "rustc_vV": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "cargo_version": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\n",
+  "ambient_compiler_overrides": {
+    "RUSTFLAGS": null,
+    "RUSTDOCFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "RUSTC": null,
+    "RUSTDOC": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTUP_TOOLCHAIN": null,
+    "CARGO_PROFILE_TEST_OPT_LEVEL": null,
+    "CARGO_PROFILE_TEST_DEBUG": null,
+    "CARGO_PROFILE_DEV_OPT_LEVEL": null,
+    "CARGO_PROFILE_DEV_DEBUG": null
+  },
+  "features": "all-features (pq-native-openssl)",
+  "profile": "test [unoptimized + debuginfo]",
+  "artifact_sha256": {
+    "rustc": {
+      "path": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+      "bytes": 644784
+    },
+    "cargo": {
+      "path": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66",
+      "bytes": 42185192
+    },
+    "openssl": {
+      "path": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/bin/openssl",
+      "sha256": "35f28c82e7e4fdcd06b0a42062efd224a5fd5d32d5cc9894252f8206219d496e",
+      "bytes": 8933400
+    },
+    "libcrypto": {
+      "path": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/lib/libcrypto.a",
+      "sha256": "a287a19e2d6863b06adc85bfcd81e399a2c95a31c5ef4f10784de969a5d320c3",
+      "bytes": 12380480
+    },
+    "libssl": {
+      "path": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/lib/libssl.a",
+      "sha256": "e15be5fe884475c5efdd00ad40173d9abe71a2127f476145bed6ef2d86dfd5c9",
+      "bytes": 2123050
+    },
+    "cargo_lock": {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/repo/trillionnium/Cargo.lock",
+      "sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+      "bytes": 40033
+    }
+  }
+}

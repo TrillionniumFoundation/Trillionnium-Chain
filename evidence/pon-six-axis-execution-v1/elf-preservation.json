@@ -1,0 +1,229 @@
+{
+  "schema": "exact-elf-lossless-preservation-v1",
+  "started_utc": "2026-11-05T02:45:14.140457+00:00",
+  "authorization_scope": "Only the two named completed M09/M06 test ELFs; no Cargo, native TMPDIR change, rlib/rmeta/Node/other-user file changes.",
+  "preflight": {
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/workspace/scratch/fee7901564fd/chain",
+    "exit": 0,
+    "result": "PASS"
+  },
+  "gzip": {
+    "compresslevel": 6,
+    "mtime": 0,
+    "header_filename": ""
+  },
+  "ram_directory": "/dev/shm/fee7901564fd-elf-preservation",
+  "scratch_directory": "/workspace/scratch/fee7901564fd/validation-node/preserved-elf",
+  "disk_before": {
+    "free_bytes": 16797696,
+    "available_bytes": 0
+  },
+  "files": [
+    {
+      "name": "M09",
+      "original_path": "/workspace/scratch/fee7901564fd/target-cell/debug/deps/trnm_data_availability-860e4d3b2378d360",
+      "original_bytes": 74812296,
+      "original_sha256": "549bb30b010fdf74a7736b10c38c72d266aa4c8d3800d8e47a3893bd2c0d9298",
+      "original_stat": {
+        "device": 27,
+        "inode": 840677,
+        "mode": 493,
+        "uid": 0,
+        "gid": 0,
+        "mtime_ns": 1793842276451677487,
+        "ctime_ns": 1793842276455677454,
+        "allocated_bytes": 74801152
+      },
+      "ram_gzip": {
+        "path": "/dev/shm/fee7901564fd-elf-preservation/trnm_data_availability-860e4d3b2378d360.gz",
+        "bytes": 18503521,
+        "allocated_bytes": 18505728,
+        "sha256": "3cceb95a69bc997c8c7feab1ce85f3b7e6f06f2dcaa924f0bf2a2cd0879e7243",
+        "status": "VERIFIED",
+        "decompressed_bytes": 74812296,
+        "decompressed_sha256": "549bb30b010fdf74a7736b10c38c72d266aa4c8d3800d8e47a3893bd2c0d9298"
+      },
+      "original_reverification_before_unlink": {
+        "bytes": 74812296,
+        "sha256": "549bb30b010fdf74a7736b10c38c72d266aa4c8d3800d8e47a3893bd2c0d9298",
+        "device_and_inode_unchanged": true,
+        "mtime_and_ctime_unchanged": true,
+        "status": "PASS"
+      },
+      "original_unlink": {
+        "status": "DONE",
+        "path_absent_after_unlink": true,
+        "disk_after": {
+          "free_bytes": 91598848,
+          "available_bytes": 0
+        }
+      },
+      "scratch_gzip": {
+        "path": "/workspace/scratch/fee7901564fd/validation-node/preserved-elf/trnm_data_availability-860e4d3b2378d360.gz",
+        "bytes": 18503521,
+        "allocated_bytes": 18509824,
+        "sha256": "3cceb95a69bc997c8c7feab1ce85f3b7e6f06f2dcaa924f0bf2a2cd0879e7243",
+        "decompressed_bytes": 74812296,
+        "decompressed_sha256": "549bb30b010fdf74a7736b10c38c72d266aa4c8d3800d8e47a3893bd2c0d9298",
+        "status": "VERIFIED"
+      }
+    },
+    {
+      "name": "M06",
+      "original_path": "/workspace/scratch/fee7901564fd/target-cell/debug/deps/trnm_mvcc_fee-d84608d7777c78ee",
+      "original_bytes": 77077400,
+      "original_sha256": "d253514807a8616b673c0a0e9d0bcfaa0fd4d5b7a442095815ee2b799b5a81b4",
+      "original_stat": {
+        "device": 27,
+        "inode": 841273,
+        "mode": 493,
+        "uid": 0,
+        "gid": 0,
+        "mtime_ns": 1793842866118472614,
+        "ctime_ns": 1793842866134472470,
+        "allocated_bytes": 77062144
+      },
+      "ram_gzip": {
+        "path": "/dev/shm/fee7901564fd-elf-preservation/trnm_mvcc_fee-d84608d7777c78ee.gz",
+        "bytes": 18878848,
+        "allocated_bytes": 18882560,
+        "sha256": "c2001b47680a86e0f0bbd9df6f26dcd662a678417fba9898cba85e6f183d80b8",
+        "status": "VERIFIED",
+        "decompressed_bytes": 77077400,
+        "decompressed_sha256": "d253514807a8616b673c0a0e9d0bcfaa0fd4d5b7a442095815ee2b799b5a81b4"
+      },
+      "original_reverification_before_unlink": {
+        "bytes": 77077400,
+        "sha256": "d253514807a8616b673c0a0e9d0bcfaa0fd4d5b7a442095815ee2b799b5a81b4",
+        "device_and_inode_unchanged": true,
+        "mtime_and_ctime_unchanged": true,
+        "status": "PASS"
+      },
+      "original_unlink": {
+        "status": "DONE",
+        "path_absent_after_unlink": true,
+        "disk_after": {
+          "free_bytes": 168660992,
+          "available_bytes": 0
+        }
+      },
+      "scratch_gzip": {
+        "path": "/workspace/scratch/fee7901564fd/validation-node/preserved-elf/trnm_mvcc_fee-d84608d7777c78ee.gz",
+        "bytes": 18878848,
+        "allocated_bytes": 18886656,
+        "sha256": "c2001b47680a86e0f0bbd9df6f26dcd662a678417fba9898cba85e6f183d80b8",
+        "decompressed_bytes": 77077400,
+        "decompressed_sha256": "d253514807a8616b673c0a0e9d0bcfaa0fd4d5b7a442095815ee2b799b5a81b4",
+        "status": "VERIFIED"
+      }
+    }
+  ],
+  "events": [
+    {
+      "at_utc": "2026-11-05T02:45:17.332044+00:00",
+      "step": "ram_gzip_saved_and_decompressed",
+      "status": "PASS",
+      "name": "M09",
+      "ram_gzip": {
+        "path": "/dev/shm/fee7901564fd-elf-preservation/trnm_data_availability-860e4d3b2378d360.gz",
+        "bytes": 18503521,
+        "allocated_bytes": 18505728,
+        "sha256": "3cceb95a69bc997c8c7feab1ce85f3b7e6f06f2dcaa924f0bf2a2cd0879e7243",
+        "status": "VERIFIED",
+        "decompressed_bytes": 74812296,
+        "decompressed_sha256": "549bb30b010fdf74a7736b10c38c72d266aa4c8d3800d8e47a3893bd2c0d9298"
+      }
+    },
+    {
+      "at_utc": "2026-11-05T02:45:20.419599+00:00",
+      "step": "ram_gzip_saved_and_decompressed",
+      "status": "PASS",
+      "name": "M06",
+      "ram_gzip": {
+        "path": "/dev/shm/fee7901564fd-elf-preservation/trnm_mvcc_fee-d84608d7777c78ee.gz",
+        "bytes": 18878848,
+        "allocated_bytes": 18882560,
+        "sha256": "c2001b47680a86e0f0bbd9df6f26dcd662a678417fba9898cba85e6f183d80b8",
+        "status": "VERIFIED",
+        "decompressed_bytes": 77077400,
+        "decompressed_sha256": "d253514807a8616b673c0a0e9d0bcfaa0fd4d5b7a442095815ee2b799b5a81b4"
+      }
+    },
+    {
+      "at_utc": "2026-11-05T02:45:20.420831+00:00",
+      "step": "visible_process_check",
+      "status": "PASS"
+    },
+    {
+      "at_utc": "2026-11-05T02:45:20.469458+00:00",
+      "step": "original_reverification_before_unlink",
+      "status": "PASS",
+      "name": "M09"
+    },
+    {
+      "at_utc": "2026-11-05T02:45:20.479539+00:00",
+      "step": "original_exact_path_unlinked",
+      "status": "PASS",
+      "name": "M09"
+    },
+    {
+      "at_utc": "2026-11-05T02:45:20.550302+00:00",
+      "step": "original_reverification_before_unlink",
+      "status": "PASS",
+      "name": "M06"
+    },
+    {
+      "at_utc": "2026-11-05T02:45:20.553896+00:00",
+      "step": "original_exact_path_unlinked",
+      "status": "PASS",
+      "name": "M06"
+    },
+    {
+      "at_utc": "2026-11-05T02:45:20.890339+00:00",
+      "step": "scratch_gzip_create_only_copy_verified",
+      "status": "PASS",
+      "name": "M09"
+    },
+    {
+      "at_utc": "2026-11-05T02:45:21.208100+00:00",
+      "step": "scratch_gzip_create_only_copy_verified",
+      "status": "PASS",
+      "name": "M06"
+    },
+    {
+      "at_utc": "2026-11-05T02:45:21.208590+00:00",
+      "step": "preservation_complete",
+      "status": "COMPLETE"
+    }
+  ],
+  "status": "COMPLETE",
+  "original_unlink_count": 2,
+  "visible_process_check_before_unlink": {
+    "exact_path_references": [],
+    "visible_build_processes": [],
+    "scan_errors": {
+      "PermissionError": 23
+    },
+    "scope": "point-in-time visible PID namespace only"
+  },
+  "disk_after_unlink_before_copy": {
+    "free_bytes": 168660992,
+    "available_bytes": 0
+  },
+  "ram_gzip_retained": true,
+  "disk_after": {
+    "free_bytes": 131260416,
+    "available_bytes": 0
+  },
+  "original_allocated_bytes_unlinked": 151863296,
+  "scratch_gzip_allocated_bytes": 37396480,
+  "accounted_net_scratch_bytes_reclaimed_before_receipt": 114466816,
+  "observed_filesystem_free_byte_change": 114462720,
+  "filesystem_free_change_caveat": "Concurrent unrelated writes can change observed filesystem totals; accounted net uses only the two exact source ELFs and verified scratch gzip copies.",
+  "completed_utc": "2026-11-05T02:45:21.208582+00:00",
+  "restore_requirements": "Verify gzip SHA, stream decompress to a new temporary file, verify recorded full original bytecount/SHA, restore mode, fsync, create-only link to exact original path only if absent. Never overwrite a subsequently rebuilt target."
+}

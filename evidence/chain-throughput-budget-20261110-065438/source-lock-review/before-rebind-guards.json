@@ -1,0 +1,22 @@
+[
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/pq_lifetime_budget.py"
+    ],
+    "source_commit": "9029f2ab2c6382aaaf096b841a20fbf335f4b172",
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "{\"reason\": \"source lock hash mismatch: trillionnium/crates/trnm-pon-node/src/consensus.rs\", \"schema\": \"trnm-pq128-lifetime-budget-result-v1\", \"status\": \"REFUSE\"}\n"
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/pq_authority_effect_register.py"
+    ],
+    "source_commit": "9029f2ab2c6382aaaf096b841a20fbf335f4b172",
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "{\"reason\": \"source lock hash mismatch: trillionnium/crates/trnm-pon-node/src/ingress.rs\", \"schema\": \"trnm-pq-authority-effects-result-v1\", \"status\": \"REFUSE\"}\n"
+  }
+]

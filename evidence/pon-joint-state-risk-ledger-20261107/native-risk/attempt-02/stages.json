@@ -1,0 +1,146 @@
+[
+  {
+    "stage": "preflight",
+    "args": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.09878969192504883
+  },
+  {
+    "stage": "rustfmt-check",
+    "args": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+      "--edition",
+      "2021",
+      "--check",
+      "trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs",
+      "trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs",
+      "trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.056586503982543945
+  },
+  {
+    "stage": "reader-tests-earlier-actual-run",
+    "args": [
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/pon-nakamoto-v1",
+      "-p",
+      "test_native_risk_ledger.py",
+      "-v"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 1.6399109363555908
+  },
+  {
+    "stage": "native-tests",
+    "args": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--config",
+      "profile.test.package.trnm-pon-node.opt-level=0",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_risk_ledger",
+      "--",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 78.36405396461487
+  },
+  {
+    "stage": "build-example",
+    "args": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "build",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--config",
+      "profile.test.package.trnm-pon-node.opt-level=0",
+      "--profile",
+      "test",
+      "-p",
+      "trnm-pon-node",
+      "--example",
+      "native_risk_ledger_v1"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 1.551255702972412
+  },
+  {
+    "stage": "actual-native-scenario",
+    "args": [
+      "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/examples/native_risk_ledger_v1",
+      "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/native-risk-attempt-02/native-run"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 24.104946851730347
+  },
+  {
+    "stage": "independent-reader",
+    "args": [
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+      "formal/pon-nakamoto-v1/native_risk_ledger.py",
+      "--run",
+      "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/native-risk-attempt-02/native-run/run.json",
+      "--output",
+      "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/native-risk-attempt-02/checked.json"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.16915154457092285
+  },
+  {
+    "stage": "reader-tests",
+    "args": [
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/pon-nakamoto-v1",
+      "-p",
+      "test_native_risk_ledger.py",
+      "-v"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 1.5416901111602783
+  },
+  {
+    "stage": "strict-clippy",
+    "args": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--config",
+      "profile.test.package.trnm-pon-node.opt-level=0",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_risk_ledger",
+      "--example",
+      "native_risk_ledger_v1",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 42.8587920665741
+  }
+]

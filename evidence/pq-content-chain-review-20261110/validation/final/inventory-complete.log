@@ -1,0 +1,37 @@
+{"running": ["python3", "-B", "scripts/ci/test_pq_content_chain_review.py", "-v"]}
+test_authority_promotion_and_numeric_false_aliases_refuse (__main__.ContentChainReviewTests.test_authority_promotion_and_numeric_false_aliases_refuse) ... ok
+test_cli_missing_or_changed_inputs_fail_without_stdout_receipt (__main__.ContentChainReviewTests.test_cli_missing_or_changed_inputs_fail_without_stdout_receipt) ... ok
+test_cli_success_is_a_scoped_hold_report (__main__.ContentChainReviewTests.test_cli_success_is_a_scoped_hold_report) ... ok
+test_download_readback_restore_and_handoff_accounting_refuse (__main__.ContentChainReviewTests.test_download_readback_restore_and_handoff_accounting_refuse) ... ok
+test_five_input_copies_match_independent_fixed_lengths_and_digests (__main__.ContentChainReviewTests.test_five_input_copies_match_independent_fixed_lengths_and_digests) ... ok
+test_inspect_refuses_missing_files_and_symlinked_paths (__main__.ContentChainReviewTests.test_inspect_refuses_missing_files_and_symlinked_paths) ... ok
+test_inspect_refuses_modified_pinned_bytes (__main__.ContentChainReviewTests.test_inspect_refuses_modified_pinned_bytes) ... ok
+test_json_byte_depth_and_string_escape_boundaries (__main__.ContentChainReviewTests.test_json_byte_depth_and_string_escape_boundaries) ... ok
+test_missing_duplicated_and_reordered_transport_members_refuse (__main__.ContentChainReviewTests.test_missing_duplicated_and_reordered_transport_members_refuse) ... ok
+test_missing_extra_and_wrong_record_containers_refuse (__main__.ContentChainReviewTests.test_missing_extra_and_wrong_record_containers_refuse) ... ok
+test_numeric_booleans_and_malformed_dimensions_refuse (__main__.ContentChainReviewTests.test_numeric_booleans_and_malformed_dimensions_refuse) ... ok
+test_only_recorded_action_profile_and_complete_forward_observations_are_accepted (__main__.ContentChainReviewTests.test_only_recorded_action_profile_and_complete_forward_observations_are_accepted) ... ok
+test_operation_content_version_descriptor_snapshot_and_plan_grafts_refuse (__main__.ContentChainReviewTests.test_operation_content_version_descriptor_snapshot_and_plan_grafts_refuse) ... ok
+test_original_cohort_is_consistent_without_authority_or_security_promotion (__main__.ContentChainReviewTests.test_original_cohort_is_consistent_without_authority_or_security_promotion) ... ok
+test_original_deadlines_process_outcomes_and_rss_budgets_refuse (__main__.ContentChainReviewTests.test_original_deadlines_process_outcomes_and_rss_budgets_refuse) ... ok
+test_request_identity_hash_prompt_order_and_uniqueness_refuse (__main__.ContentChainReviewTests.test_request_identity_hash_prompt_order_and_uniqueness_refuse) ... ok
+test_research_scope_cannot_be_promoted_by_summary_flags (__main__.ContentChainReviewTests.test_research_scope_cannot_be_promoted_by_summary_flags) ... ok
+test_schema_and_nested_next_use_drift_refuse (__main__.ContentChainReviewTests.test_schema_and_nested_next_use_drift_refuse) ... ok
+test_strict_json_rejects_duplicates_numbers_and_invalid_unicode (__main__.ContentChainReviewTests.test_strict_json_rejects_duplicates_numbers_and_invalid_unicode) ... ok
+test_worker_parent_environment_and_all_material_profile_grafts_refuse (__main__.ContentChainReviewTests.test_worker_parent_environment_and_all_material_profile_grafts_refuse) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.142s
+
+OK
+{"running": ["python3", "-B", "scripts/ci/pq_content_chain_review.py"]}
+{"actual_lifetime_failure_bound": null, "evidence_consistent": true, "hash_scope": {"CCH1_TCV2": "full-content claims in archived research observations", "TCV1_CTS1_CHB1": "structural/version/descriptor claims; no inherited security-bit bound", "source_and_interpreter_SHA256": "identity consistency; host dependencies are not sealed transport"}, "hepta_final_use": false, "installation_authorized": false, "limits": ["Record agreement is not execution authentication or a full-byte replay.", "No new native/model execution is performed by this reader.", "Single-operator loopback and research authority do not establish ordinary installation or FinalUse.", "Hash query complexities do not supply protocol or physical-cost bounds."], "model_efficacy_accepted": false, "observed": {"members": 30, "operation": "fad809b14a2ef0814d5cb125ac4c2713ca81d962797e038857416a838c0c5cc2", "payload_bytes": 280269602, "pins": {"bep52_plan": "fec516f77633a58dc1e60927ba7158103ca36c3f743efd05f0b566ad4317995b7b733d23031a173217533d82b049fce0eceb6ebf3d14b022941872ba475b4360", "chb1": "c0e7fc1e1d94ad185895d17475ca009305725b31b1768299601c8fda3a354b53ba08a476c09f1b6b8a754ee6aa131e9028c65f5c1bc93a3661fb7396093617a9", "cts1": "dd644852ec5bb6ec68048477838b97f10b4e3117cf49644505ffab737b0c7898d4bf915d73d2f013d43eafe860dff6beb500745e2cd0b7b66e62c7e8baf7552e", "operation": "fad809b14a2ef0814d5cb125ac4c2713ca81d962797e038857416a838c0c5cc2", "tcv1": "76e318b243995ff788bdfc4ef317395a525eeb1c3d751b549c0791a4da4e51deb4366338fcd0330b816252c9bcf5195b4de3247408afdad3386d94bf34e879dd", "tcv2": "1ae64d141b4fcb979c18c846d0795237400eff1ad76abfd8d972c8a35196efee16448d1652e920ddb1fc3d58c32c4a52fb089195d7f51f1f72647f37814c43bb"}, "recorded_actions": ["yes", "yes"], "recorded_forwards": 2, "restored_chunks": 95}, "ordinary_hepta_use_proved": false, "production_activation": false, "provenance": {"evidence_sha256_pins_checked": true, "execution_authenticated": false, "publication_commit": "06233be630f8eff6cea59cd5111e5941135a4aa5", "recorded_runtime_commit": "6ea3bf3fe13d66333bba3a8c7b97e14b4319b39f", "source_or_authority_authenticated": false}, "schema": "trnm-pq-content-chain-review-v1", "security_bits": null, "status": "HOLD_NO_GO", "whole_chain_pq_qualified": false}
+{"running": ["python3", "-B", "scripts/ci/check_ci_contract.py"]}
+{"artifact_comparison_jobs": 1, "head_jobs": 5, "inline_source_pins": 26, "merge_lanes": 5, "native_cost_architectures": 2, "pq_release_authority_controls": {"complete_release": 55, "groups": {"cch1_content_binding": 3, "initial_root_material": 6, "original_release": 37, "quorum_preflight": 9}, "platform_scope": "unix", "python_test_doubles": 18, "tests_executed": false}, "tests_executed": false, "w1_actual_reuse_v3_cells": 4}
+{"running": ["python3", "-B", "scripts/ci/check_pq_research_integration.py"]}
+{"canonical_default_provider_contract_checked": true, "canonical_pnq2_contract_checked": true, "continuous_npq6_combination_accepted": false, "cryptographic_acceptance": false, "exact_source_blobs": 1088, "legacy_qtx1_optional_adapter_contract_checked": true, "native_transfer_account_contract_checked": true, "native_transport_contract_checked": true, "node_activated": false, "production_confidentiality_accepted": false, "schema": "trnm-pq-cross-branch-check-v1", "status": "HOLD_NO_GO", "upstream_heads": 6, "whole_native_authorization_migrated": false}
+{"running": ["python3", "-B", "scripts/ci/check_repository.py"]}
+{"activation": false, "head": "f9a8bf3c0773c6ef60476b252ee81862cf665b05", "local_links": 6560, "normal_dependency_edges": 27, "result": "PASS", "runtime_implemented": false, "rust_files": 1470, "source_state": "committed-clean", "tree": "9a1c0d83ae3bb12012328b5edccd77e2da9c3272", "workspace_packages": 26}
+{"running": ["python3", "-B", "scripts/refresh_distributed_source_inventory.py", "--check"]}
+distributed source inventory: PASS
+{"completed_commands": 6, "native_tests_executed": false, "production_activation": false}

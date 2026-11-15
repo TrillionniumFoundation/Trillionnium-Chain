@@ -1,0 +1,61 @@
+{
+  "assumptions": {
+    "independent_world": "Two independently sampled uniform ideal functions, one per purpose.",
+    "input_choice": "Two fixed non-adaptive classical queries; an equality test on the outputs.",
+    "range_choice": "An explicit hypothetical M, never inferred from a native hash representation.",
+    "shared_world": "One uniformly sampled ideal function; both interfaces use it."
+  },
+  "each_single_output_is_uniform_under_both_model_assumptions": true,
+  "each_single_output_point_probability": null,
+  "encoded_inputs_alias": null,
+  "equal_prior_optimal_guess_success": null,
+  "equality_test": {
+    "acceptance_probability_gap": null,
+    "independent_acceptance_probability": null,
+    "shared_acceptance_probability": null
+  },
+  "independent_joint_law": {
+    "probability_of_each_diagonal_pair": null,
+    "probability_of_each_off_diagonal_pair": null
+  },
+  "inputs": {
+    "input_kind": "hypothetical",
+    "left_encoded_input_hex": null,
+    "range_cardinality": null,
+    "right_encoded_input_hex": null,
+    "schema": "TRNM-W1-JOINT-ORACLE-TOY-INPUT1"
+  },
+  "joint_total_variation_distance": null,
+  "next_obligations": [
+    "Specify the actual joint encoded-input family and identify every domain intersection.",
+    "Prove a compatible single-oracle emulation/reduction, or prove disjoint domains for every interface where independent functions are invoked in a theorem.",
+    "Account for extraction, Fiat-Shamir and all other exposed uses in that same model.",
+    "Establish whether any exhibited encoding intersection is reachable under the fixed accepted proof relation before making an implementation security claim."
+  ],
+  "oracle_queries_in_this_experiment": "2",
+  "qualification": {
+    "accepted_w1_proof_attack_demonstrated": false,
+    "actual_poseidon_distribution_proved": false,
+    "actual_purpose_independence_proved": false,
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "quantum_security_bits": null,
+    "quantum_work_qualified": false,
+    "unconditional_project_security_bits": null
+  },
+  "schema": "TRNM-W1-JOINT-ORACLE-TOY-REPORT1",
+  "scope": {
+    "actual_shared_permutation_vector_is_separate_evidence": true,
+    "actual_w1_statement_or_reachable_commitment_checked": false,
+    "numeric_results_conditional_on_toy_assumptions": true,
+    "permutation_queries_to_cdhz_oracle_queries_mapping_proved": false,
+    "positive_control_scope": "Distinct inputs concern only this fixed two-query experiment; they do not prove global domain separation of a program."
+  },
+  "shared_joint_law": {
+    "probability_of_each_diagonal_pair": null,
+    "probability_of_each_off_diagonal_pair": null
+  },
+  "status": "finite_hypothetical_joint_law_only"
+}

@@ -1,0 +1,768 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.24s
+     Running tests/model_composition_v4.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/model_composition_v4-8ca9dd0d4c460304)
+
+running 4 tests
+test native_composition_rewards_reorg_reopen_and_continuity_cleanup ... ok
+test quorum_profile_replays_two_composition_generations_and_zero_score_components ... ok
+test signed_executor_rejects_unrelated_weak_zero_marginal_and_precommitted_false_weights ... ok
+test two_native_generations_use_the_actual_nonzero_parent_once ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 580.06s
+
+     Running tests/model_evidence_v3.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/model_evidence_v3-c1903a1bb3fe577b)
+
+running 6 tests
+test combined_continuity_and_model_evidence_complete_native_lifecycle_and_cleanup ... ok
+test explicit_quorum_native_release_survives_one_absence_and_hash_appeal_with_durable_reorg ... ok
+test known_alias_intakes_share_one_limit_and_reorganization_restores_it ... ok
+test missing_corrupt_or_noncanonical_control_bytes_refuse_signed_admission ... ok
+test objective_release_shared_source_reward_reopen_and_review_fork_are_native ... ok
+test zero_gain_and_noop_cannot_become_positive_by_consistent_signatures ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 512.62s
+
+     Running tests/native_active_anchor.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/native_active_anchor-c9caacb70b20b12e)
+
+running 2 tests
+test retained_never_active_funding_cannot_borrow_an_actual_generation_number ... ok
+test retained_never_active_payment_cannot_be_reported_as_historical_active_payment ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.49s
+
+     Running tests/native_compact_execution.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/native_compact_execution-a0ea612a6b216e57)
+
+running 5 tests
+test native_compact_cancellation_keeps_both_checked_phases_and_has_no_publication ... ok
+test native_compact_missing_extra_counterfeit_and_wrong_parent_inputs_fail_without_state_fallback ... ok
+test native_compact_preserves_source_binding_budgets_and_old_namespace_refusals ... ok
+test native_compact_real_expiry_and_maturity_require_proofs_before_signed_spending ... ok
+test native_compact_signed_overlay_zero_nonce_reentry_matches_real_admission_and_reopen ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.71s
+
+     Running tests/native_demand_evidence.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/native_demand_evidence-0939034586a5d8d0)
+
+running 2 tests
+test complete_contract_real_arbitration_reconciles_after_restart_reorg_and_epoch ... ok
+test ordinary_growth_task_keeps_native_evidence_without_claiming_full_contract ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 28.11s
+
+     Running tests/native_growth_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/native_growth_cli-f39cf9060ff6a84d)
+
+running 5 tests
+test capacity_observe_refuses_complete_state_reference_before_creating_store ... ok
+test growth_evaluation_cli_observes_actual_tag6_current_generation_without_source_writes ... ok
+test growth_evaluation_cli_validates_before_store_io_and_never_recovers_source ... ok
+test native_growth_v2_cli_rejects_ambiguous_or_malformed_inputs_before_creating_store ... ok
+test native_growth_v2_cli_signed_packet_remote_admission_and_cold_current_snapshot ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.90s
+
+     Running tests/native_growth_public_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/native_growth_public_cli-93245e744c72e52b)
+
+running 4 tests
+test growth_public_cli_original_serve_exposes_fixed_growth_head ... ok
+test growth_public_cli_packet_file_rejects_fifo_symlink_and_oversize_before_dispatch ... ok
+test growth_public_cli_refuses_unsupported_owner_and_pool_before_store_creation ... ok
+test growth_public_cli_still_open_stdin_obeys_command_deadline_before_dispatch ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.24s
+
+     Running tests/native_node.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/native_node-5936921b7f3bbf53)
+
+running 31 tests
+test abrupt_child ... ignored, owned subprocess helper, invoked by the process-cut tests
+test test_active_state_cancellation_does_not_publish_a_commitment_or_change_generation ... ok
+test test_active_state_rechecks_generation_before_publishing_a_derived_snapshot ... ok
+test test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner ... FAILED
+test test_authentication_options_are_scoped_to_network_commands ... ok
+test test_cached_work_never_reuses_an_old_clock_verdict ... ok
+test test_confirmed_transfer_is_removed_by_a_real_heavier_fork ... ok
+test test_every_reorg_process_cut_and_admission_gap_recovers_once ... ok
+test test_existing_output_path_cannot_publish_a_new_cli_block ... ok
+test test_full_transaction_pages_use_byte_limits_and_recover_all_native_state ... FAILED
+test test_golden_native_state_matches_separate_oracle_and_duplicate_is_idempotent ... ok
+test test_history_batches_cross_boundaries_cancel_and_recheck_actual_rows ... ok
+test test_initialization_process_cuts_recover_only_the_owned_context ... ok
+test test_joined_history_projection_rejects_corrupt_genesis_record_shapes ... ok
+test test_lower_height_higher_required_work_wins_after_native_retarget ... ok
+test test_malformed_work_and_changed_duplicate_never_mutate_state ... ok
+test test_native_batch_actual_heavier_reorg_removes_all_confirmations ... ok
+test test_native_batch_and_history_cancel_after_traversal_without_writes_or_cache ... ok
+test test_native_batch_checks_one_history_and_one_shared_body ... ok
+test test_native_batch_cli_uses_the_real_persisted_owner ... ok
+test test_native_batch_generation_change_is_detected_before_any_response ... ok
+test test_native_batch_invalid_tail_duplicate_and_limits_return_no_partial_success ... ok
+test test_native_batch_rechecks_future_ancestor_below_all_inclusions ... ok
+test test_native_body_membership_is_still_checked_after_header_projection ... ok
+test test_native_cli_replays_the_existing_signed_vector_without_a_reference_backend ... ok
+test test_native_header_projection_rejects_changed_header_or_trace ... ok
+test test_native_writer_and_namespace_fences_are_not_optional ... ok
+test test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry ... ok
+test test_packet_status_observes_exact_durable_packet_without_replaying_or_creating_store ... ok
+test test_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry ... ok
+test test_socket_history_uses_real_native_validation_and_separate_stores ... ok
+
+failures:
+
+---- test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner stdout ----
+
+thread 'test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner' (809581) panicked at crates/trnm-pon-node/tests/native_node.rs:1590:5:
+PUBLIC_HOST_KERNEL_PARENT
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- test_full_transaction_pages_use_byte_limits_and_recover_all_native_state stdout ----
+
+thread 'test_full_transaction_pages_use_byte_limits_and_recover_all_native_state' (811108) panicked at crates/trnm-pon-node/tests/native_node.rs:1407:37:
+called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: "PUBLIC_MUTATION_CPU_BUDGET", source: None, request_history_budget: false }
+
+thread 'test_full_transaction_pages_use_byte_limits_and_recover_all_native_state' (811108) panicked at crates/trnm-pon-node/tests/native_node.rs:1432:12:
+called `Result::unwrap()` on an `Err` value: Any { .. }
+
+
+failures:
+    test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner
+    test_full_transaction_pages_use_byte_limits_and_recover_all_native_state
+
+test result: FAILED. 28 passed; 2 failed; 1 ignored; 0 measured; 0 filtered out; finished in 95.78s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test native_node`
+     Running tests/native_task_operation_v2.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/native_task_operation_v2-519457f21f1f0d14)
+
+running 3 tests
+test ordinary_task_cannot_claim_full_contract_v2_admission ... ok
+test real_old_funding_rows_cannot_backfill_a_later_native_begin_or_reservation ... ok
+test unknown_output_uses_native_once_fence_and_real_delivery_on_both_backends ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.42s
+
+     Running tests/no_gain_fees.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/no_gain_fees-cf270654917258a3)
+
+running 2 tests
+test native_no_gain_evaluation_task_fee_survives_reopen_and_reorg_without_double_payment ... ok
+test native_no_gain_training_task_fee_survives_reopen_and_reorg_without_double_payment ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.85s
+
+     Running tests/nonce_speculation_cost.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/nonce_speculation_cost-a8ccdee27fe5aa7a)
+
+running 1 test
+test complete_native_repeated_sender_operation_cost ... ignored, exact pre/post binary complete actual256signed-tx native make/admit/activate/reopen comparison; new output directory required
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/one_zero_task_preparation_lifecycle.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/one_zero_task_preparation_lifecycle-5ab4738c7c051514)
+
+running 1 test
+test signed_one_zero_rank_one_work_uses_actual_parent_authority_in_both_directions ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.92s
+
+     Running tests/operation_local_parent.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/operation_local_parent-230cbd019231b4b7)
+
+running 2 tests
+test every_new_operation_rereads_actual_kv_and_preserves_material_error_order ... ok
+test registered_and_explicit_packets_match_active_inactive_parent_and_reopen ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.56s
+
+     Running tests/operator_actors.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/operator_actors-b7df59287d78078a)
+
+running 12 tests
+test actual_native_renewal_transfer_parent_binding_reopen_and_heavier_fork ... ok
+test actual_operator_pool_mining_and_peer_configuration_use_public_context ... ok
+test cli_prepare_offline_sign_finalize_public_status_and_explicit_miner ... ok
+test descriptor_canonical_bounds_and_false_acceptance_are_required ... ok
+test duplicate_unfunded_short_roster_known_fixture_and_overflow_refused ... ok
+test fresh_descriptor_changes_context_and_rejects_old_certificate ... ok
+test manually_proved_bad_nonce_packet_is_rejected_without_durable_state_movement ... ok
+test material_hash_field_encoding_source_and_requester_signatures_fail_closed ... ok
+test offline_secret_pin_owner_mode_symlink_hardlink_and_template_checks ... ok
+test operator_roster_is_used_by_actual_native_evaluation_and_fixture_votes_are_not_authority ... ok
+test public_only_bootstrap_two_owners_reopen_exact_context_and_no_fixture_funding ... ok
+test weak_actor_key_and_cross_context_approval_refused ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.14s
+
+     Running tests/pinned_peer_polling.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/pinned_peer_polling-b515e98ce2dc5014)
+
+running 1 test
+test actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.73s
+
+     Running tests/pool_mining.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/pool_mining-481cfee15f0f58e7)
+
+running 10 tests
+test actual_cli_retains_signed_group_then_mines_with_wall_clock_and_refuses_logical_clock ... ok
+test bounded_stop_runtime_and_invalid_material_do_not_mine_or_consume_pending_transactions ... ok
+test completed_sqlite_blocked_batch_observes_stop_before_revalidation_or_preparation ... ok
+test failed_pool_batch_retains_elapsed_before_any_search_or_admission ... ok
+test failed_post_search_revalidation_retains_elapsed_without_admission ... ok
+test next_block_uses_current_authenticated_statement_after_atomic_renewal ... ok
+test reconciliation_failure_reports_the_already_activated_durable_block ... ok
+test wall_clock_loop_executes_funding_dependencies_then_reopens_exact_queue_and_chain ... ok
+test wall_clock_miner_extends_admissible_future_tip_without_advancing_its_clock ... ok
+test wall_clock_miner_waits_when_native_median_itself_is_still_in_the_future ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.83s
+
+     Running tests/pq_account_native.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/pq_account_native-849a9b2ca26b3b56)
+
+running 11 tests
+test account_cases::account_forks_keep_the_original_state_nonce_owner_without_shared_credits ... ok
+test account_cases::dual_migration_native_verification_rejects_either_signature_revocation_or_target_substitution ... ok
+test account_cases::dual_possession_does_not_recover_already_compromised_classical_identity ... ok
+test account_cases::native_parent_rejects_nonce_reset_liability_omission_and_rebound_parameters ... ok
+test account_cases::pqg1_native_import_preserves_nonces_all_four_liabilities_and_original_m06_transfers ... ok
+test account_cases::qtx1_from_another_import_context_refuses_even_if_declared_network_reused ... ok
+test account_cases::real_wrong_signatures_context_nonce_quarantine_and_classical_fallback_refuse ... ok
+test account_cases::rust_qtx1_matches_original_python_wire_signature_identity_and_exact_fee ... ok
+test open_pon_reward_address_gets_no_implicit_pq_spending_key ... ok
+test real_node_pq_account_packets_work_forks_reorg_and_cold_replay ... ok
+test real_pq_transport_dispatch_consumes_qtx1_through_w1_and_native_account_owner ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.26s
+
+     Running tests/pq_migration_inventory.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/pq_migration_inventory-91ab3a1445dd9441)
+
+running 5 tests
+test fixed_admitted_checkpoint_keeps_inventory_across_forks_reorg_and_cold_open ... ok
+test inventory_does_not_substitute_growth_working_partition_for_complete_state ... ok
+test inventory_rechecks_actual_state_packet_and_storage_context_after_a_prior_success ... ok
+test inventory_refuses_durable_pending_reorg_then_uses_recovered_snapshot ... ok
+test inventory_requires_independent_source_pins_and_actual_admission ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.89s
+
+     Running tests/protected_ingress.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/protected_ingress-5fecfcf361fcba4b)
+
+running 13 tests
+test attack_body_counts_survive_response_loss_without_guessing_partial_writes ... ok
+test authenticated_protected_retry_preserves_durable_wire_and_verifies_server ... ok
+test client_binds_ready_profile_before_searching_challenge ... ok
+test previous_zero_opportunity_profile_is_rejected_without_legacy_work_fallback ... ok
+test protected_mixed_socket_load_preserves_honest_ingress_and_measures_actual_rejections ... ok
+test protected_rendezvous_busy_proof_workers_keep_read_only_head_and_zero_pending_sockets ... ok
+test protected_rendezvous_serial_confirmation_bursts_preserve_native_chain_and_socket_counts ... ok
+test protected_untrusted_large_errors_have_bounded_real_socket_responses ... ok
+test slow_hello_bodies_cannot_take_the_reserved_read_only_worker ... ok
+test socket_admission_absolute_expiry_and_client_caps_prevent_work ... ok
+test socket_admission_binds_exact_challenge_and_keeps_fake_work_invalid ... ok
+test strict_negotiation_refuses_legacy_before_mutation_and_blocks_unnegotiated_submit ... ok
+test sustained_protected_socket_cost_campaign ... ignored, release-only sustained socket cost measurement; run explicitly with --ignored
+
+test result: ok. 12 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 9.49s
+
+     Running tests/public_cache_modes.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_cache_modes-11ebe7517ac0e403)
+
+running 4 tests
+test arithmetic_profile_then_rejection_cache_is_refused ... ok
+test either_cache_alone_preserves_original_cold_cpu_budget_and_profile ... ok
+test rejection_cache_owner_cannot_be_replaced_by_repeated_setup ... ok
+test rejection_cache_then_arithmetic_profile_is_refused ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/public_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_cli-91fff1936f900ea0)
+
+running 3 tests
+test actual_cli_explicit_v3_bootstrap_mines_and_refuses_v2_namespace_reuse ... ok
+test actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history ... FAILED
+test public_cli_requires_explicit_profile_and_rejects_private_session_options ... ok
+
+failures:
+
+---- actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history stdout ----
+
+thread 'actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history' (820950) panicked at crates/trnm-pon-node/tests/public_cli.rs:38:5:
+PUBLIC_HOST_KERNEL_PARENT
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.23s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test public_cli`
+     Running tests/public_evaluation.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_evaluation-c894a2cda8c87bd8)
+
+running 8 tests
+test actual_store_reopen_and_heavier_fork_remove_native_evaluation_state ... ok
+test appeals_preserve_closed_score_and_require_exact_result_binding ... ok
+test complete_native_evaluation_gates_release_and_mature_reward_and_preserves_appeal ... ok
+test completed_round_accepts_all_sixteen_appeals_and_both_late_conflict_phases_under_four_kib ... ok
+test every_arrival_order_closes_identically_and_missing_is_abort ... ok
+test independently_verified_conflict_blocks_adoption_and_next_round_eligibility ... ok
+test premature_wrong_salt_direct_votes_and_historical_profiles_are_refused ... ok
+test scattered_evidence_is_context_count_and_size_bound_and_active_cleanup_is_safe ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.85s
+
+     Running tests/public_intake_v2.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_intake_v2-986a187331701696)
+
+running 2 tests
+test one_packet_history_preserves_partial_progress_and_independent_validation ... FAILED
+test unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work ... FAILED
+
+failures:
+
+---- one_packet_history_preserves_partial_progress_and_independent_validation stdout ----
+
+thread 'one_packet_history_preserves_partial_progress_and_independent_validation' (821762) panicked at crates/trnm-pon-node/tests/public_intake_v2.rs:316:14:
+called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "PUBLIC_HOST_KERNEL_PARENT", source: None, request_history_budget: false }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work stdout ----
+
+thread 'unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work' (821769) panicked at crates/trnm-pon-node/tests/public_intake_v2.rs:202:6:
+called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "PUBLIC_HOST_KERNEL_PARENT", source: None, request_history_budget: false }
+
+
+failures:
+    one_packet_history_preserves_partial_progress_and_independent_validation
+    unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.90s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test public_intake_v2`
+     Running tests/public_pool_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_pool_cli-b49faaebc1ed30ab)
+
+running 5 tests
+test actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner ... PUBLIC_HOST_KERNEL_PARENT
+FAILED
+test actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver ... FAILED
+test peer_cli_rejects_unused_options_and_wrong_context_before_store_creation ... ok
+test real_two_cli_process_cold_reopens_one_node_without_fresh_cpu_burst ... ok
+test v3_mining_options_refuse_v2_and_unused_or_logical_clock_options ... ok
+
+failures:
+
+---- actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner stdout ----
+
+thread '<unnamed>' (821789) panicked at crates/trnm-pon-node/tests/public_pool_cli.rs:582:30:
+called `Option::unwrap()` on a `None` value
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner' (821784) panicked at crates/trnm-pon-node/tests/public_pool_cli.rs:722:80:
+called `Result::unwrap()` on an `Err` value: Disconnected
+
+---- actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver stdout ----
+
+thread 'actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver' (821793) panicked at crates/trnm-pon-node/tests/public_pool_cli.rs:153:5:
+first independent full-native sync: stderr=PUBLIC_HOST_KERNEL_PARENT
+ stdout=
+
+
+failures:
+    actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner
+    actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver
+
+test result: FAILED. 3 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.16s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test public_pool_cli`
+     Running tests/public_pool_v3.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_pool_v3-da5ba04c1344fb39)
+
+running 3 tests
+test both_actual_socket_cross_version_clients_reject_without_body_or_fallback ... ok
+test real_guest_bundle_exact_pool_duplicate_stale_snapshot_and_restart_no_authority ... ok
+test serving_cannot_enable_pool_and_lifetime_has_explicit_72h_bound ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.84s
+
+     Running tests/public_submit_recovery.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_submit_recovery-4b00023c9adde414)
+
+running 24 tests
+test actual_absolute_epoch_call_cap_and_current_clock_fail_closed ... ok
+test actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack ... ok
+test actual_budget_absence_with_two_call_cap_stops_without_another_submit ... ok
+test actual_caps_context_and_mutated_same_id_refuse_without_relabeling_duplicates ... ok
+test actual_cli_bad_combinations_and_limits_precede_store_creation ... ok
+test actual_cli_default_reply_is_unchanged_and_opt_in_reports_duplicate_membership ... ok
+test actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership ... ok
+test actual_eof_before_admission_keeps_same_packet_and_all_failed_attempts ... ok
+test actual_eof_recovery_keeps_short_pause_instead_of_budget_wait_schedule ... ok
+test actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies ... ok
+test actual_lost_native_ack_is_resolved_by_full_membership_without_fabricated_ack ... ok
+test actual_membership_readiness_does_not_replace_installed_confirmation ... ok
+test actual_missing_parent_is_restored_before_child_and_reopens_byte_exact ... ok
+test actual_native_admission_without_response_at_deadline_is_uncertain_and_not_retried ... ok
+test actual_nonpreemptive_local_full_root_late_return_is_not_reported_on_time ... ok
+test actual_repeated_exact_eof_stops_after_three_identical_submits ... ok
+test actual_signed_cpu_budget_absent_membership_retries_same_bytes_within_original_limits ... ok
+test actual_signed_cpu_budget_different_branch_and_changed_generation_do_not_advance ... ok
+test actual_signed_cpu_budget_inactive_equal_work_and_forged_history_do_not_advance ... ok
+test actual_signed_cpu_budget_read_and_retry_obey_original_call_cap_and_epoch ... ok
+test actual_signed_cpu_budget_refusal_resolves_known_membership_without_an_ack ... ok
+test actual_signed_cpu_budget_without_membership_retains_all_three_refusals ... ok
+test actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity ... ok
+test actual_two_signed_budget_absences_spread_attempts_and_keep_real_final_ack ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 27.77s
+
+     Running tests/public_v3_from_zero.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_v3_from_zero-d56e3765ecaa2661)
+
+running 6 tests
+test caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct ... ok
+test four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged ... ok
+test fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget ... ignored, explicit native four-second/16-worker business acceptance; retains failures and asserts the actual six-depth target
+test from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection ... ok
+test from_zero_service_shares_cpu_with_honest_work_and_reopened_owner ... ok
+test from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline ... ok
+
+test result: ok. 5 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 22.00s
+
+     Running tests/public_v3_multiprocess.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_v3_multiprocess-fcb89e2264ef8369)
+
+running 25 tests
+test arithmetic_campaign_configuration_requires_the_original_measured_backend ... ok
+test arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_jobs ... ok
+test arithmetic_campaign_server_routing_does_not_change_cpu_capacity ... ok
+test fixed_public_host_root_rejection_and_signed_confirmation_diagnostic ... ignored, one fixed Host F0 pair; use the exact hosted resource runner
+test independent_hostile_construction_preserves_exact_rejection_stage_and_misses ... ok
+test multiprocess_actor_entry ... ignored, subprocess entry; parent supplies an immutable explicit job file
+test multiprocess_fixed_root_phase_owner_entry ... ignored, explicit fixed Host ROOT F0 entry; requires a verified external controller
+test multiprocess_phase_owner_entry ... ignored, only the declared fixed-Host phase launcher supplies this immutable job
+test paid_depletion_cannot_be_manufactured_by_reservations_or_unknown_clocks ... ok
+test phase_host::explicit_placement_has_no_unknown_or_partial_fallback ... ok
+test phase_host::phase_job_refuses_unknown_fields_and_broker_never_claims_actor_authority ... ok
+test phase_host::separate_broker_scope_clears_on_unwind_and_refuses_missing_actors ... ok
+test root_acquisition_receipt_refuses_unknown_cost_and_incomplete_search ... ok
+test root_phase_host::controller_resources::fixed_root_controller_resource_interval_rejects_rewind_and_lifetime_peak_as_delta ... ok
+test root_phase_host::controller_resources::fixed_root_controller_resource_parser_rejects_missing_duplicate_and_unknown_counters ... ok
+test root_phase_host::fixed_root_denominators_retain_all_missing_failed_and_duplicate_rounds ... ok
+test root_phase_host::fixed_root_four_second_slo_cannot_remove_queue_or_prior_round_delay ... ok
+test root_phase_host::fixed_root_job_requires_its_exact_profile_and_complete_workload ... ok
+test root_phase_host::fixed_root_proc_identity_requires_exact_pid_and_start_despite_command_parentheses ... ok
+test root_reply_overlap_requires_signed_refusal_inside_the_whole_window ... ok
+test separate_process_arithmetic_facts_and_signed_confirmation_campaign ... ignored, explicit arithmetic-facts profile; same original finite 3x30 second workload, CPU and confirmation criteria; no r13 or arbitrary-key qualification
+test separate_process_root_rejection_and_signed_confirmation_supplement ... ignored, explicit single 30s baseline + 30s ROOT supplement; use the pinned resource runner
+test separate_process_work_and_signed_confirmation_campaign ... ignored, explicit finite 3x30 second separate-process local campaign and producer cost; see retained report
+test signed_seed_state_root_replay_component_cost ... ignored, explicit fixed 1024-signed-seed component cost; not a saturation campaign
+test valid_work_state_root_replays_are_paid_without_admission ... ok
+
+test result: ok. 17 passed; 0 failed; 8 ignored; 0 measured; 0 filtered out; finished in 1.66s
+
+     Running tests/public_v3_observation_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_v3_observation_cli-66fa1e2213f07623)
+
+running 6 tests
+test actual_opt_in_capture_and_default_output_keep_the_same_public_context ... ok
+test configured_capacity_crosses_previous_limit_and_keeps_exact_current_maximum ... ok
+test joined_miner_failure_still_exports_facts_before_error_propagation ... ok
+test option_and_create_new_nofollow_refusals_precede_node_open ... ok
+test post_join_output_failure_preserves_service_facts_and_native_store ... ok
+test retention_loss_is_explicit_and_pre_join_kill_does_not_publish_completion ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 30.09s
+
+     Running tests/public_v3_observer.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_v3_observer-8e4238097f1609f8)
+
+running 2 tests
+test external_read_only_observer_survives_shutdown_with_actual_paid_snapshot_counts ... ok
+test refusal_retains_partial_challenge_cost_without_body_or_ticket_claim ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s
+
+     Running tests/public_v3_request_accounting.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_v3_request_accounting-538a6561d0c91d3c)
+
+running 4 tests
+test actual_depletion::actual_replay_depletion_public_recovery_and_same_epoch_reopen ... ok
+test actual_depletion::depleted_domain_serves_honest_block_during_rotating_public_false_work ... ok
+test actual_paid_native_work_rejection_read_frames_and_partial_eof_are_attributed ... ok
+test real_observer_capacity_overflow_does_not_refuse_concurrent_honest_reads ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.35s
+
+     Running tests/public_v3_service_campaign.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_v3_service_campaign-f74a4088b8b258c5)
+
+running 2 tests
+test network_only_business::network_only_business_confirmations_survive_rotating_false_work ... ok
+test public_v3_mixed_calls_reopen_with_complete_failure_denominators ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.31s
+
+     Running tests/qualified_tasks.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/qualified_tasks-fc33a6bf9fc032d1)
+
+running 4 tests
+test expiry_precedes_expensive_proof_and_a_heavier_branch_removes_registration_and_meter ... ok
+test registered_task_mines_real_work_and_counts_one_output_across_fresh_challenges ... ok
+test source_nonce_demand_withdrawal_and_historical_profile_are_checked_atomically ... ok
+test validator_rejects_signed_false_recipe_even_with_manually_constructed_valid_work_and_state ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.21s
+
+     Running tests/release_finality_v2.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/release_finality_v2-d98892ce8afb716c)
+
+running 4 tests
+test native_reader_enforces_adversarial_corpus_without_python ... ok
+test original_python_reader_and_native_reader_agree_on_adversarial_corpus ... ignored, requires explicit TRNM_FINALITY_REFERENCE_PYTHON with the reference dependencies
+test original_reference_signed_fixture_preserves_facts_and_scope ... ok
+test unchanged_python_reference_regenerates_exact_fixture_bytes ... ignored, requires explicit TRNM_FINALITY_REFERENCE_PYTHON with the reference dependencies
+
+test result: ok. 2 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running tests/task_lifecycle.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/task_lifecycle-1128e10b82ca11a6)
+
+running 4 tests
+test evaluation_storage_revision_changes_transaction_network_even_with_the_same_wall_clock ... ok
+test real_model_family_uses_a_distinct_namespace_and_enforces_its_artifact_budget ... ok
+test renew_keeps_one_output_revoke_stops_new_work_and_reopen_reorg_are_real ... ok
+test v2_genesis_and_statement_never_reinterpret_v1_store ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.41s
+
+     Running tests/task_lifecycle_v3.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/task_lifecycle_v3-e6987cdff0cc56dd)
+
+running 3 tests
+test atomic_renew_preserves_used_output_meter_and_revoke_reorg_state ... ok
+test sole_task_atomic_renew_rejects_partial_legacy_bad_signature_window_sequence_without_mutation ... ok
+test v3_never_reinterprets_v2_genesis_store_network_or_tag22_authority ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.53s
+
+     Running tests/task_lifecycle_v4.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/task_lifecycle_v4-0f27f527790a0549)
+
+running 4 tests
+test actual_900_preview_905_delayed_inclusion_999_reorg_preserves_certificate_and_local_prune ... ignored, explicit release-only 1001-height logical continuity receipt campaign
+test delayed_atomic_renew_preserves_used_output_meter_and_revoke_reorg_state ... ok
+test identical_signed_successor_can_be_contained_at_different_real_native_heights ... ok
+test overlap_profile_is_fresh_and_refuses_v3_source_raw_store_standalone19_and_future_window ... ok
+
+test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.96s
+
+     Running tests/task_output_root_parity.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/task_output_root_parity-9b10c865533e0dcd)
+
+running 2 tests
+test first_repeated_and_maintenance_atomic_packets_equal_complete_native_recomputation ... ok
+test signed_v1_first_and_repeated_packets_equal_complete_native_recomputation ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.94s
+
+     Running tests/work_fuzz_semantics.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/work_fuzz_semantics-a1a7d698348c87df)
+
+running 6 tests
+test cancellation_is_identical_at_early_middle_and_last_observation ... ok
+test canonical_product_mutations_reach_product_without_verification_authority ... ok
+test challenge_and_transcript_mutations_reject_before_product ... ok
+test raw_malformed_certificates_are_not_replaced_by_semantic_fixtures ... ok
+test retained_winner_accepts_at_its_exact_ticket ... ok
+test target_predecessor_and_wrong_task_reject_before_replay ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+     Running tests/work_header_binding.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/work_header_binding-0b9d7aac802b08a5)
+
+running 1 test
+test complete_w1_proofs_cannot_move_between_header_fields_or_growth_domains ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.41s
+
+     Running tests/zero_task_preparation_lifecycle.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/zero_task_preparation_lifecycle-daa81760735002b0)
+
+running 1 test
+test signed_zero_preparation_never_replaces_parent_renewal_revocation_or_expiry ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.18s
+
+     Running unittests examples/account_archive_vectors.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/account_archive_vectors-2d367f478f34add6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/account_execution_vectors.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/account_execution_vectors-c6f465cae80e6a4d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/continuous_pipeline.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/continuous_pipeline-94f46af4780413f2)
+
+running 13 tests
+test tests::batch_compaction_preserves_owned_obligations_across_later_panic_and_retry ... ok
+test tests::batched_confirmation_validates_late_context_before_claiming_any_success ... ok
+test tests::batched_poll_every_rpc_failure_preserves_retry_ownership ... ok
+test tests::batched_poll_matches_single_queries_without_reordering_deferred_work ... ok
+test tests::batched_poll_rejects_dimensions_before_any_rpc ... ok
+test tests::batched_poll_rejects_partial_or_extra_decisions_without_removal ... ok
+test tests::batched_poll_uses_complete_blocks_with_exact_wire_limit ... ok
+test tests::every_failure_cut_preserves_exact_remaining_order ... ok
+test tests::failed_poll_retains_deferred_failed_and_unread_obligations ... ok
+test tests::original_drain_loses_obligations_on_the_same_failure ... ok
+test tests::retained_batch_and_single_completion_keep_later_failed_obligations ... ok
+test tests::shutdown_joins_before_returning_server_failure ... ok
+test tests::shutdown_preserves_success_and_reports_panicked_server ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests examples/distributed_pipeline.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/distributed_pipeline-a0adc486b7bcb60d)
+
+running 9 tests
+test tests::actual_local_packet_content_is_checked_after_full_admission ... ok
+test tests::explicit_resume_preserves_exact_uncommitted_tail_and_signed_prefix ... ok
+test tests::reopened_producer_retries_the_exact_durable_authenticated_submit ... ok
+test tests::resume_rejects_committed_corruption_without_changing_any_bytes ... ok
+test tests::resume_requires_exact_source_config_identity_and_exclusive_owner ... ok
+test tests::retained_partial_packet_is_preserved_then_recovered_from_native_owner ... ok
+test tests::secret_symlink_and_public_permissions_are_rejected ... ok
+test tests::source_scope_and_campaign_bounds_reject ... ok
+test tests::strict_config_rejects_unknown_fields ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.03s
+
+     Running unittests examples/hepta_task_fixture.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/hepta_task_fixture-917a5d09e45b5ebd)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/history_state_cost.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/history_state_cost-a73a5b18688c4c0f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/lifecycle_atomic_continuity.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/lifecycle_atomic_continuity-ad17efc5ed41f5e1)
+
+running 2 tests
+test tests::cannot_report_short_or_unbounded_campaign_as_continuity ... ok
+test tests::empirical_cost_report_retains_denominator_and_tail_resolution ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/lifecycle_continuity.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/lifecycle_continuity-953255ee5522839f)
+
+running 2 tests
+test tests::cannot_report_short_or_unbounded_campaign_as_continuity ... ok
+test tests::empirical_cost_report_retains_denominator_and_tail_resolution ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/llm_zero_gain_round.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/llm_zero_gain_round-17a691b2d19cd29e)
+
+running 8 tests
+test public_report::tests::non_scalar_or_invalid_contract_outputs_fail_without_echoing_the_value ... ok
+test public_report::tests::unknown_sensitive_members_are_omitted_at_every_public_level ... ok
+test public_report::tests::valid_public_fields_and_canonical_bytes_are_preserved ... ok
+test tests::different_valid_contract_ids_fail_before_output_or_native_state ... ok
+test tests::duplicate_json_and_symlink_fail ... ok
+test tests::invalid_contracts_in_either_input_never_echo_or_create_native_state ... ok
+test tests::malformed_json_has_a_fixed_error_without_input_echo ... ok
+test tests::ratio_rejects_boolean_zero_denominator_and_out_of_range ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.22s
+
+     Running unittests examples/native_reorg_query_cost.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/native_reorg_query_cost-4730f83651fa4d31)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/operator_owned_finite_mining.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/operator_owned_finite_mining-180568c30d4d80f0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/operator_pool_fixture.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/operator_pool_fixture-c4b37b258524a11f)
+
+running 2 tests
+test tests::actual_offline161_inputs_execute20_native_blocks_and_reopen_public_only ... ok
+test tests::distinct_transfer_signer_allowed_but_requester_conflict_wrong_source_and_unfunded_miner_refused ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.48s
+
+     Running unittests examples/pon_w1_budget_report.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/pon_w1_budget_report-d20a57be9d2d50a4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_w1_cost_matrix_v2.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/pon_w1_cost_matrix_v2-08939d7a5754e946)
+
+running 5 tests
+test tests::all_thirteen_preparations_reused_across_challenges_preserve_full_w1 ... ok
+test tests::every_existing_arm_is_exercised_without_unsupported_fallback ... ok
+test tests::exact_complete_proofs_and_fact_cold_warm_outcomes_match ... ok
+test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok
+test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.49s
+
+     Running unittests examples/pon_w1_false_trace_reuse_v1.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/pon_w1_false_trace_reuse_v1-8ba9688cc6e5524d)
+
+running 5 tests
+test tests::exhausted_hash_search_keeps_every_miss_without_a_candidate ... ok
+test tests::one_public_prefix_reused_for_distinct_forged_proofs_is_never_valid_work ... ok
+test tests::public_challenge_binds_task_sample_and_search_without_a_legal_winner ... ok
+test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok
+test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running unittests examples/pon_w1_legal_strategy_v1.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/pon_w1_legal_strategy_v1-b18760cc0ab4856c)
+
+running 8 tests
+test tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments ... ok
+test tests::last_product_mutation_wraps_canonically_and_changes_only_that_word ... ok
+test tests::public_dispatch_keeps_complete_bytes_and_all_misses ... ok
+test tests::v2_final_sample_keeps_both_legal_producers_and_complete_negative_verification ... ok
+test tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity ... ok
+test tests::versions_keep_exact_namespaces_and_eight_new_sample_streams ... ok
+test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok
+test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running unittests examples/pon_w1_legal_strategy_v3.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/pon_w1_legal_strategy_v3-58692e35398d3ba3)
+
+running 6 tests
+test tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments ... ok
+test tests::factorial_search_keeps_every_miss_and_identical_complete_winners ... ok
+test tests::last_product_mutation_wraps_canonically_and_changes_only_that_word ... ok
+test tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity ... ok
+test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok
+test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running unittests examples/pon_w1_preparation_strategy_v4.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/pon_w1_preparation_strategy_v4-3eff4c358cb2e4a6)
+
+running 9 tests
+test tests::all_six_structures_match_full_limb_and_independent_scalar_replay ... ok
+test tests::both_preparations_reject_noncanonical_material_even_in_zero_products ... ok
+test tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments ... ok
+test tests::external_raw_material_is_exact_bounded_and_never_promoted_to_provenance ... ok
+test tests::factorial_search_keeps_every_miss_and_identical_complete_winners ... ok
+test tests::last_product_mutation_wraps_canonically_and_changes_only_that_word ... ok
+test tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity ... ok
+test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok
+test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
+
+     Running unittests examples/pon_w1_reused_cost_v3.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/pon_w1_reused_cost_v3-94295f232782ca98)
+
+running 4 tests
+test tests::independent_search_domain_binds_each_fixed_coordinate ... ok
+test tests::one_actual_preparation_keeps_full_exhaustion_and_four_full_searches ... ok
+test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok
+test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running unittests examples/public_pool_fixture.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/public_pool_fixture-4d780c38987ef1f3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: 4 targets failed:
+    `-p trnm-pon-node --test native_node`
+    `-p trnm-pon-node --test public_cli`
+    `-p trnm-pon-node --test public_intake_v2`
+    `-p trnm-pon-node --test public_pool_cli`

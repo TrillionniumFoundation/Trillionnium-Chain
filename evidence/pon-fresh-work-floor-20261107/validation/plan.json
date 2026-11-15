@@ -1,0 +1,378 @@
+{
+  "commands": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "command_sha256": "5b583afa8d0e1015ccea6e57be8d59fa61e845fc8d9d22a31bcb9fe9ca31a2cb",
+      "environment_overrides": {},
+      "label": "preflight",
+      "ordinal": 1,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "--version"
+      ],
+      "command_sha256": "1e76b4ccaf2e493caf70bc897a1695ffc8b8bd768e00e4d7e8814bf0ed8a05f9",
+      "environment_overrides": {},
+      "label": "cargo-version",
+      "ordinal": 2,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "rustc",
+        "--version"
+      ],
+      "command_sha256": "4e9854faf174fbe7e8704b7c2a2181090e65588c7840ac2a5955fac11def2c7c",
+      "environment_overrides": {},
+      "label": "rustc-version",
+      "ordinal": 3,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/workspace/scratch/62902f6722b7/pq-next/trnm-pq-provider-3.5.9.oVQCdYOJ/install/bin/openssl",
+        "version"
+      ],
+      "command_sha256": "685f1166f97ce3e3d8b87c502fc9f67ffba368c1410b5648ec84311ade2c5da0",
+      "environment_overrides": {},
+      "label": "openssl-version",
+      "ordinal": 4,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "command_sha256": "109d3adc5e5593605a0dcaa62997df15351e247dd502f9dc927d8c57c63a1724",
+      "environment_overrides": {},
+      "label": "locked-workspace-graph",
+      "ordinal": 5,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "command_sha256": "1fd572e853f83a18616faebe9b4bbadeac11dada70d840ded30f20e25c8f112e",
+      "environment_overrides": {
+        "CARGO_HOME": "/workspace/scratch/10a9f8f2cba0/fresh-fuzz-metadata-cargo"
+      },
+      "label": "locked-fuzz-graph",
+      "ordinal": 6,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "command_sha256": "1d33ca658bab144c9abe5bc3c46dc94650e97dc473d50060c41fb9f52c2fc8a0",
+      "environment_overrides": {},
+      "label": "format",
+      "ordinal": 7,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--example",
+        "pon_routed_int257_grouped"
+      ],
+      "command_sha256": "fb6140e74c055770f95a5f9f3723a481fbdbc434f2a08109df14512641bc309d",
+      "environment_overrides": {},
+      "label": "native-build",
+      "ordinal": 8,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--example",
+        "grouped_fresh_admission_v0"
+      ],
+      "command_sha256": "671c341628ec285188804320eabfb1a0239d71465b02166884ce3c43e3d5aa3f",
+      "environment_overrides": {},
+      "label": "fresh-native-build",
+      "ordinal": 9,
+      "original_gate": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_grouped*.py",
+        "-v"
+      ],
+      "command_sha256": "9027730170bf1dc5bdfa824fac998a86b0523f699fd77962f8e974e5e75175dd",
+      "environment_overrides": {},
+      "label": "grouped-python-and-native",
+      "ordinal": 10,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_work_query_bound.py",
+        "-v"
+      ],
+      "command_sha256": "e1f1422949116041d163603b90471cefac8638394a0ef818dc4b7aa2cdb76985",
+      "environment_overrides": {},
+      "label": "conditional-query-bound",
+      "ordinal": 11,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_fresh_work_query_floor_v0.py",
+        "-v"
+      ],
+      "command_sha256": "1bb195434d27e9c2716a05fc51664ab1a4d09653c011ded60ddf43bbe0e5b6da",
+      "environment_overrides": {},
+      "label": "fresh-query-floor",
+      "ordinal": 12,
+      "original_gate": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--all-targets",
+        "--all-features"
+      ],
+      "command_sha256": "3552cadb79a4c87e7e2c420fc531ab736d9ec02a14eea6f82a8209fe08b51ee7",
+      "environment_overrides": {},
+      "label": "native-crypto-all-targets",
+      "ordinal": 13,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "work_header_binding"
+      ],
+      "command_sha256": "b1b9ecde996b9bcbfd5be8caf7c25ae718e601c1271e2dfa2c1048f89bd882e0",
+      "environment_overrides": {},
+      "label": "native-header-binding",
+      "ordinal": 14,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "grouped_fresh_admission_v0"
+      ],
+      "command_sha256": "aa0b941f659af51bf262da857a3deb03f7b373232854eee50c38a8e5ea50687d",
+      "environment_overrides": {},
+      "label": "native-fresh-admission",
+      "ordinal": 15,
+      "original_gate": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "command_sha256": "1357ee6a5387922e76361c7ad9fbe7e845f6433d6fdf50314ede3f731dce5227",
+      "environment_overrides": {},
+      "label": "source-integrity-controls",
+      "ordinal": 16,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "command_sha256": "d4dbe4bde8a2ba9794293869e6e0c6354e013ace56465238c4fdcb5b1de8efcf",
+      "environment_overrides": {},
+      "label": "ci-contract-controls",
+      "ordinal": 17,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "command_sha256": "30c366b9be3c359b7e002dec037a3f850d5c64d5f4107dbd13b949d5219f2be3",
+      "environment_overrides": {},
+      "label": "source-inventory",
+      "ordinal": 18,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "command_sha256": "d373a63b28d1756e8b78780ae093aa86c7808e22dfec95b244a6e178c3cda790",
+      "environment_overrides": {},
+      "label": "repository-and-links",
+      "ordinal": 19,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "command_sha256": "09205e3e1123cf6112d234b751de2c6807499e9da19850bfaab7ffca65b0c0be",
+      "environment_overrides": {},
+      "label": "strict-workspace-clippy",
+      "ordinal": 20,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "command_sha256": "de984f1cae6504808caec0ab4b5b6b192a8f849ffd005461b85ed1f894c8777e",
+      "environment_overrides": {},
+      "label": "whitespace",
+      "ordinal": 21,
+      "original_gate": true,
+      "timeout_seconds": 1800
+    }
+  ],
+  "created_utc": "2026-11-07T12:54:45.717498+00:00",
+  "driver_relative_path": "formal/pon-nakamoto-v1/experiments/validate_grouped_fresh_work_v0.py",
+  "driver_sha256": "2ec7eea710c5a8255c8306a3f8b5694566fe3970080a11185ebe85e3737cf374",
+  "expected_source_sha": "1e0eba75f4f4a4e24e17cbd0f263f915c1493ac7",
+  "fuzz_cargo_home_override": "/workspace/scratch/10a9f8f2cba0/fresh-fuzz-metadata-cargo",
+  "new_gates": 3,
+  "original_gates": 18,
+  "planned_commands": 21,
+  "production_activation": false,
+  "repository": "/workspace/scratch/10a9f8f2cba0/chain-fairness",
+  "runners": {
+    "fresh": "/dev/shm/chain-fresh-work-10a9f8f2cba0-release/examples/grouped_fresh_admission_v0",
+    "grouped": "/dev/shm/chain-fresh-work-10a9f8f2cba0-release/examples/pon_routed_int257_grouped"
+  },
+  "schema": "pon-grouped-fresh-validation-plan-v0",
+  "source_validation_is_not_qualification": true,
+  "timeout_seconds_per_command": 1800
+}

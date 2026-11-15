@@ -1,0 +1,1 @@
+{"pid": 6, "command": ["cargo", "+1.95.0", "metadata", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "--format-version", "1"]}

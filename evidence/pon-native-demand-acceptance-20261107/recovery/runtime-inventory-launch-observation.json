@@ -1,0 +1,17 @@
+{
+  "schema": "pon-runtime-readonly-launch-observation-v1",
+  "purpose": "Read-only root evidence directory inventory",
+  "host": "desktop",
+  "job_id": "1a1b6bad1df-12894-641",
+  "idempotency_key": "525798-root-evidence-top-inventory-v1",
+  "created_unix_ms": 1794067059167,
+  "launcher_observation": "launch_unknown",
+  "launcher_message": "Remote launch outcome unavailable",
+  "subsequent_process_status_observation": "FileNotFoundError: remote private job directory did not exist",
+  "subsequent_process_status_error_code": "INVALID_ARGUMENT",
+  "execution_or_completion_asserted": false,
+  "reissued_with_new_key": false,
+  "counted_as_test_result": false,
+  "later_inventory_method": "Bounded read-only H filesystem directory view",
+  "note": "This is a summary of actual tool observations, not a native terminal receipt."
+}

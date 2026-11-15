@@ -1,0 +1,203 @@
+{
+  "schema": "sealed-publication-secret-candidate-classification-v1",
+  "created_utc": "2026-11-07T22:05:58.200364+00:00",
+  "synthetic_candidates": [
+    {
+      "path": "w1-range-v3-package/observer/test_range_v3_response_controls.py",
+      "category": "url",
+      "classification": "synthetic_response_control_requires_source_check",
+      "byte_offset": 2184,
+      "matched_bytes": 40,
+      "line": 33,
+      "source_file_sha256": "56bcc1d2d4e0098466640d32b0c3519dc71d43067764ebf232581b052fb1e8e0",
+      "enclosing_test_method": "test_signed_url_is_not_retained_in_diagnostics",
+      "containing_literal_is_ast_constant": true,
+      "test_calls": [
+        "m.clean",
+        "self.assertNotIn"
+      ],
+      "url_host_is_reserved_example": true,
+      "query_parameter_names": [
+        "sig"
+      ],
+      "url_value_omitted": true
+    },
+    {
+      "path": "w1-range-v3-package/observer/test_range_v3_response_controls.py",
+      "category": "authorization_literal",
+      "classification": "synthetic_response_control_requires_source_check",
+      "byte_offset": 2232,
+      "matched_bytes": 31,
+      "line": 33,
+      "source_file_sha256": "56bcc1d2d4e0098466640d32b0c3519dc71d43067764ebf232581b052fb1e8e0",
+      "enclosing_test_method": "test_signed_url_is_not_retained_in_diagnostics",
+      "containing_literal_is_ast_constant": true,
+      "test_calls": [
+        "m.clean",
+        "self.assertNotIn"
+      ],
+      "authorization_value_bytes": 9,
+      "authorization_value_omitted": true
+    },
+    {
+      "path": "w1-range-v3-package/observer/test_range_v3_response_controls_b.py",
+      "category": "url",
+      "classification": "synthetic_response_control_requires_source_check",
+      "byte_offset": 2186,
+      "matched_bytes": 40,
+      "line": 33,
+      "source_file_sha256": "54ca592965600d54d24362f0b8e3a95c03466b8a36aa5806c1b42aa5e41a98f8",
+      "enclosing_test_method": "test_signed_url_is_not_retained_in_diagnostics",
+      "containing_literal_is_ast_constant": true,
+      "test_calls": [
+        "m.clean",
+        "self.assertNotIn"
+      ],
+      "url_host_is_reserved_example": true,
+      "query_parameter_names": [
+        "sig"
+      ],
+      "url_value_omitted": true
+    },
+    {
+      "path": "w1-range-v3-package/observer/test_range_v3_response_controls_b.py",
+      "category": "authorization_literal",
+      "classification": "synthetic_response_control_requires_source_check",
+      "byte_offset": 2234,
+      "matched_bytes": 31,
+      "line": 33,
+      "source_file_sha256": "54ca592965600d54d24362f0b8e3a95c03466b8a36aa5806c1b42aa5e41a98f8",
+      "enclosing_test_method": "test_signed_url_is_not_retained_in_diagnostics",
+      "containing_literal_is_ast_constant": true,
+      "test_calls": [
+        "m.clean",
+        "self.assertNotIn"
+      ],
+      "authorization_value_bytes": 9,
+      "authorization_value_omitted": true
+    }
+  ],
+  "template_reference_groups": [
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "count": 14
+    }
+  ],
+  "matched_values_not_in_output": true
+}

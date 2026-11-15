@@ -1,0 +1,2813 @@
+{
+  "schema": "trnm-final-gate-inventory-readonly-v1",
+  "reviewed_baseline": "dba81d56be6598cec9df2774446ca3ab7fccca98",
+  "source_head": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+  "source_tree": "8f26631e80c14a3c750210019606df13327d633f",
+  "created_utc": "2026-11-14T04:51:35.136821+00:00",
+  "execution_checkpoint": "Use the final committed clean root after current source bindings and final report are committed; do not label an earlier-head result as final-head execution.",
+  "required_check_names": [
+    "repository-truth",
+    "protocol-contract",
+    "fuzz-smoke",
+    "rust-baseline",
+    "external-evidence-contract"
+  ],
+  "source_references": [
+    {
+      "path": "AGENTS.md",
+      "blob": "daadb4de994624fd8ee740547a81c07034698955",
+      "sha256": "082d3f5d3d134efe1273f3bd1cc28a9d41db41be6f8996de8cc9545386094631",
+      "bytes": 1416,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/AGENTS.md"
+    },
+    {
+      "path": "scripts/project-preflight.sh",
+      "blob": "cfd4f58405ca7620ad267f6aa42b240be038797c",
+      "sha256": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f",
+      "bytes": 242,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/scripts--project-preflight.sh"
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "blob": "ba703105bcbec8a368c08309abd0e8705ddd4a40",
+      "sha256": "625e2b0da839618033638cb0b141f0daa146022d3d0527d46eb0164ef1e6010b",
+      "bytes": 46547,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/scripts--ci--ci_job.sh"
+    },
+    {
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "blob": "7837ff18f48b3cb9b0d38f161fc8f27a9fdbf919",
+      "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844",
+      "bytes": 35462,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/.github--workflows--trnm-required-baseline.yml"
+    },
+    {
+      "path": "scripts/ci/check_repository.py",
+      "blob": "7e7fd7d10d2063d490d8c8bea8e96e26a196ac21",
+      "sha256": "776cb1a0cb604e9614b6f7d0e7833f95b84507354b2b9a9152e8302e0f732cde",
+      "bytes": 14135,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/scripts--ci--check_repository.py"
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "blob": "e12e7839f406056bab9c05086baacb0059627835",
+      "sha256": "134891ef8fe761de10c9282a35c5b94422a0541b93139e3ab44d8c205c5b15a2",
+      "bytes": 199207,
+      "same_as_dba": false,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/scripts--ci--check_ci_contract.py"
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "blob": "b8f39d29a0cd3382f54bcafa43808f1a0a871429",
+      "sha256": "6617712071c45564af54de365e94d9a6d757daf17f09227a68ed9d26b7862c89",
+      "bytes": 246476,
+      "same_as_dba": false,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/scripts--ci--test_ci_contract.py"
+    },
+    {
+      "path": "scripts/ci/verify_ci_source.py",
+      "blob": "c775290c138c3b41a32e654f56ed5cbe9acec3ee",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+      "bytes": 11231,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/scripts--ci--verify_ci_source.py"
+    },
+    {
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "blob": "d31e7d8b992f23164e9dc6825d45277303d1d355",
+      "sha256": "558e77a040d1f89e0771227cd46b32289f575112b5b63f6d7983d1c9ae6964e3",
+      "bytes": 113403,
+      "same_as_dba": false,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/scripts--ci--check_pq_research_integration.py"
+    },
+    {
+      "path": "scripts/refresh_distributed_source_inventory.py",
+      "blob": "2db9c6a754d8f0d9a65aa329455856f35274fa8f",
+      "sha256": "6b2a785999e1117a95bbfd504053314f4a08c5cfb56d5e5ad780190163d277d9",
+      "bytes": 2758,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/scripts--refresh_distributed_source_inventory.py"
+    },
+    {
+      "path": "scripts/ci/run_from_zero_host.py",
+      "blob": "df0643a36ab7110d0b5af9d13cd9e291bbf022f0",
+      "sha256": "2840de7cc19626c32d165bcfd032479db27180f03516ba3cefb0dafdaf61f4eb",
+      "bytes": 28366,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/scripts--ci--run_from_zero_host.py"
+    },
+    {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "blob": "2aba481576bc5a09a2d546e467e1b19d6e9de7bd",
+      "sha256": "3f497112a01f71f7259a1e12fff48f2a38499e396dae591692d623813bd6b5b0",
+      "bytes": 115087,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/scripts--ci--run_from_zero_native.py"
+    },
+    {
+      "path": "scripts/ci/public_host_ci_observation.py",
+      "blob": "160c489693f3ec600e2e015c30773d66cff3bcdf",
+      "sha256": "cc0facf46d14bc113d6a83d6b1215afe91c7b5cf22d65892f34921c8f1b983e3",
+      "bytes": 13543,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/scripts--ci--public_host_ci_observation.py"
+    },
+    {
+      "path": "config/systemd/trnmponpublic.slice",
+      "blob": "8981b6aeed4c08c21679664940366b36a991444a",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "bytes": 325,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/config--systemd--trnmponpublic.slice"
+    },
+    {
+      "path": "config/repository-policy-v1.json",
+      "blob": "805e2c208aa998a8af9a9995f1104c98d20c7c00",
+      "sha256": "762218c8aa49899df1a8867e026cb544ce2720e0d9ee5eaa8b88b7ef25775b08",
+      "bytes": 446,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/config--repository-policy-v1.json"
+    },
+    {
+      "path": "scripts/ci/rust_baseline_shards.py",
+      "blob": "a0849ab91b97334e8909f04c973ecfd209a2e8df",
+      "sha256": "58776aaaca6fa59a94561dbfcd626d362ee8b0b299ee64fa8ae94a31b12f1671",
+      "bytes": 9286,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/scripts--ci--rust_baseline_shards.py"
+    },
+    {
+      "path": "scripts/ci/tool-versions.env",
+      "blob": "6b7d4459a5e8ae69ac6ad36a0376443138e7b474",
+      "sha256": "b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408",
+      "bytes": 185,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/scripts--ci--tool-versions.env"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "blob": "8770b1d875864c5356dc4abad904b69ec484817f",
+      "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+      "bytes": 86,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/rust-toolchain.toml"
+    },
+    {
+      "path": "scripts/ci/runtime-release-requirements.txt",
+      "blob": "9f706153570ab1b72c949b3fa17ff7f04417ff85",
+      "sha256": "2acf07322b544b1d2318642b59877dd035bc7808590619f3cf23e75eedd0bbe7",
+      "bytes": 378,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/scripts--ci--runtime-release-requirements.txt"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/requirements.txt",
+      "blob": "f505bfe105e824248803af99d2865a97dbf3cd8c",
+      "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5",
+      "bytes": 128,
+      "same_as_dba": true,
+      "export_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/exact-5c04-final-sources/formal--pon-nakamoto-v1--requirements.txt"
+    }
+  ],
+  "exact_lane_inventory": [
+    {
+      "lane": "repository-truth",
+      "canonical_command": "bash scripts/ci/ci_job.sh repository-truth",
+      "source_file": "scripts/ci/ci_job.sh",
+      "source_start_line": 6,
+      "source_end_line": 237,
+      "exact_body_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/final-gate-exact-lane-bodies/repository-truth.txt",
+      "body_sha256": "020b3f128302606919d61dc47621aba3ed75bcfd3ae78ccb6d57f0d44e180cbd",
+      "command_references": [
+        {
+          "start_line": 6,
+          "end_line": 6,
+          "literal": "bash scripts/project-preflight.sh --audit",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 7,
+          "end_line": 7,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 8,
+          "end_line": 8,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 9,
+          "end_line": 9,
+          "literal": "python3 scripts/ci/test_project_boundary.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 11,
+          "end_line": 11,
+          "literal": "python3 scripts/ci/test_cross_repo_candidate.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "literal": "python3 scripts/ci/test_sqlite_build_requalification.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 15,
+          "end_line": 15,
+          "literal": "python3 scripts/ci/test_llm_cell_acquisition.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 17,
+          "end_line": 17,
+          "literal": "python3 scripts/ci/test_pon_wan_evidence.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 18,
+          "end_line": 18,
+          "literal": "python3 scripts/ci/test_pon_decentralization_audit.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 19,
+          "end_line": 19,
+          "literal": "python3 scripts/ci/test_pon_wan_control_domains.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 21,
+          "end_line": 21,
+          "literal": "python3 scripts/ci/test_pq_lifetime_budget.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 22,
+          "end_line": 22,
+          "literal": "python3 scripts/ci/pq_lifetime_budget.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 23,
+          "end_line": 23,
+          "literal": "python3 scripts/ci/test_pq_authority_effect_register.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 24,
+          "end_line": 24,
+          "literal": "python3 scripts/ci/pq_authority_effect_register.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 25,
+          "end_line": 25,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 26,
+          "end_line": 26,
+          "literal": "python3 formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 27,
+          "end_line": 27,
+          "literal": "python3 formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 28,
+          "end_line": 28,
+          "literal": "python3 formal/pon-nakamoto-v1/test_pq_root_journal_cleanup.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 29,
+          "end_line": 29,
+          "literal": "python3 scripts/ci/test_pq_root_dependency_register.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 30,
+          "end_line": 30,
+          "literal": "python3 scripts/ci/pq_root_dependency_register.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 31,
+          "end_line": 31,
+          "literal": "python3 scripts/ci/test_run_pq_root_native_v3.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 32,
+          "end_line": 32,
+          "literal": "python3 scripts/ci/test_pq_root_custody_review_v1.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 33,
+          "end_line": 33,
+          "literal": "python3 scripts/ci/pq_root_custody_review_v1.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 34,
+          "end_line": 34,
+          "literal": "python3 scripts/ci/test_pq_root_custody_review_v2.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 35,
+          "end_line": 35,
+          "literal": "python3 scripts/ci/pq_root_custody_review_v2.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 36,
+          "end_line": 36,
+          "literal": "python3 scripts/ci/test_pq_root_migration_review_v1.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 37,
+          "end_line": 37,
+          "literal": "python3 scripts/ci/pq_root_migration_review_v1.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 38,
+          "end_line": 38,
+          "literal": "python3 scripts/ci/test_run_pq_root_continuation_v4.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 39,
+          "end_line": 39,
+          "literal": "python3 scripts/ci/test_run_pq_root_witness_v5.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 40,
+          "end_line": 40,
+          "literal": "python3 scripts/ci/test_ci_observation_process.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 41,
+          "end_line": 41,
+          "literal": "python3 scripts/ci/test_authenticated_suite_count.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 42,
+          "end_line": 42,
+          "literal": "python3 scripts/ci/test_pq_chain_claim_guard.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 44,
+          "end_line": 44,
+          "literal": "python3 scripts/ci/test_w1_qrom_current_implementation_audit.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 45,
+          "end_line": 45,
+          "literal": "python3 scripts/w1_qrom_current_implementation_audit.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 46,
+          "end_line": 46,
+          "literal": "python3 scripts/ci/test_w1_upstream_security.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 47,
+          "end_line": 47,
+          "literal": "python3 scripts/ci/w1_upstream_security.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 48,
+          "end_line": 48,
+          "literal": "python3 scripts/ci/test_pq_proof_profile_binding.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 49,
+          "end_line": 49,
+          "literal": "python3 scripts/ci/pq_proof_profile_binding.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 50,
+          "end_line": 50,
+          "literal": "python3 scripts/ci/test_w1_qrom_current_ci.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 52,
+          "end_line": 52,
+          "literal": "python3 scripts/ci/test_w1_stark_field_certificates.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 53,
+          "end_line": 53,
+          "literal": "python3 scripts/w1_stark_field_certificates.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 54,
+          "end_line": 54,
+          "literal": "python3 scripts/ci/test_w1_stark_route_audit.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 55,
+          "end_line": 55,
+          "literal": "python3 scripts/w1_stark_route_audit.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 57,
+          "end_line": 57,
+          "literal": "python3 scripts/ci/test_w1_fri_ideal_sampler.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 58,
+          "end_line": 58,
+          "literal": "python3 scripts/w1_fri_query_replay.py --ideal-sampler-law",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 60,
+          "end_line": 60,
+          "literal": "python3 scripts/ci/test_w1_lifetime_current_observation.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 61,
+          "end_line": 61,
+          "literal": "python3 scripts/w1_lifetime_current_observation.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 62,
+          "end_line": 62,
+          "literal": "python3 scripts/ci/test_w1_qrom_closure_current_controls.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 63,
+          "end_line": 63,
+          "literal": "python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 64,
+          "end_line": 64,
+          "literal": "python3 scripts/ci/pq_authority_surface_scan.py --summary-only",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 65,
+          "end_line": 65,
+          "literal": "python3 scripts/ci/test_hash_use_contract.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 66,
+          "end_line": 66,
+          "literal": "python3 scripts/ci/hash_use_contract.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 67,
+          "end_line": 67,
+          "literal": "python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 68,
+          "end_line": 68,
+          "literal": "python3 -m unittest discover -s scripts/ci -p 'test_pq_quantum_daa_scenarios.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 70,
+          "end_line": 70,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_seed_recovery_v1.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 73,
+          "end_line": 73,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 74,
+          "end_line": 74,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_probability_contract.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 75,
+          "end_line": 75,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_feasibility.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 76,
+          "end_line": 76,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 77,
+          "end_line": 77,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential_independent.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 78,
+          "end_line": 78,
+          "literal": "python3 formal/pon-nakamoto-v1/fixed_probability_contract.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 79,
+          "end_line": 79,
+          "literal": "python3 formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py --check",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 80,
+          "end_line": 80,
+          "literal": "python3 formal/pon-nakamoto-v1/stateful_tail.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 81,
+          "end_line": 81,
+          "literal": "python3 formal/pon-nakamoto-v1/test_stateful_tail_snapshot.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 82,
+          "end_line": 82,
+          "literal": "python3 formal/pon-nakamoto-v1/residual_grover.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 83,
+          "end_line": 83,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_fork_witness.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 84,
+          "end_line": 84,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_execution_certificate.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 85,
+          "end_line": 85,
+          "literal": "python3 formal/pon-nakamoto-v1/mandatory_units_tests.py ContextContractTests QueryCertificateTests -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 86,
+          "end_line": 86,
+          "literal": "python3 formal/pon-nakamoto-v1/certificate_observability_tests.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 87,
+          "end_line": 87,
+          "literal": "python3 formal/pon-nakamoto-v1/lifecycle_query_tests.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 88,
+          "end_line": 88,
+          "literal": "python3 formal/pon-nakamoto-v1/finite_joint_state_tests.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 89,
+          "end_line": 89,
+          "literal": "python3 formal/pon-nakamoto-v1/test_joint_consensus_boundaries.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 90,
+          "end_line": 90,
+          "literal": "python3 formal/pon-nakamoto-v1/joint_consensus_qualification.py --check",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 91,
+          "end_line": 91,
+          "literal": "python3 formal/pon-nakamoto-v1/test_joint_consensus_qualification.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 92,
+          "end_line": 92,
+          "literal": "python3 formal/pon-nakamoto-v1/test_dynamic_participation_v1.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 93,
+          "end_line": 93,
+          "literal": "python3 formal/pon-nakamoto-v1/test_joint_production_tail_v1.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 94,
+          "end_line": 94,
+          "literal": "python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 95,
+          "end_line": 95,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_oracle_resources.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 96,
+          "end_line": 96,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_network_sim.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 97,
+          "end_line": 97,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_probability_sampling.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 98,
+          "end_line": 98,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_joint_resource_competition_campaign.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 99,
+          "end_line": 99,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_candidate_check_clock.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 100,
+          "end_line": 100,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_adversarial_search.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 101,
+          "end_line": 101,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_posterior_policy.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 102,
+          "end_line": 102,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_resource_clock.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 103,
+          "end_line": 103,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_oracle.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 104,
+          "end_line": 104,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_marked_domain.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 105,
+          "end_line": 105,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_restricted_oracle.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 106,
+          "end_line": 106,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fast_daa_reference_component.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 107,
+          "end_line": 107,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_parallel_variable_ohie.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 109,
+          "end_line": 109,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_ghostdag_order_reference.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 110,
+          "end_line": 110,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_architecture_compare.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 111,
+          "end_line": 111,
+          "literal": "python3 scripts/ci/pq_chain_claim_guard.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 112,
+          "end_line": 112,
+          "literal": "python3 scripts/ci/check_repository.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 113,
+          "end_line": 113,
+          "literal": "python3 scripts/refresh_distributed_source_inventory.py --check",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 114,
+          "end_line": 114,
+          "literal": "python3 scripts/ci/test_repository.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 115,
+          "end_line": 115,
+          "literal": "python3 scripts/ci/test_invariants_registry.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 116,
+          "end_line": 116,
+          "literal": "python3 scripts/ci/test_responsibility_evidence.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 117,
+          "end_line": 117,
+          "literal": "python3 scripts/ci/test_applicability.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 118,
+          "end_line": 118,
+          "literal": "python3 scripts/ci/test_ci_contract.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 119,
+          "end_line": 119,
+          "literal": "python3 scripts/ci/test_ci_execution.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 120,
+          "end_line": 120,
+          "literal": "python3 scripts/ci/test_capture_chain_hepta_identity.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 121,
+          "end_line": 121,
+          "literal": "python3 scripts/ci/test_chain_hepta_qualification.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 122,
+          "end_line": 122,
+          "literal": "python3 scripts/ci/test_chain_system_security.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 123,
+          "end_line": 123,
+          "literal": "python3 scripts/ci/test_chain_hepta_command_binding.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 124,
+          "end_line": 124,
+          "literal": "python3 scripts/test_cell_learning_business_economics.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 125,
+          "end_line": 125,
+          "literal": "python3 scripts/test_cell_learning_business_join.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 126,
+          "end_line": 126,
+          "literal": "python3 scripts/test_cell_learning_training_no_update_join.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 127,
+          "end_line": 127,
+          "literal": "python3 scripts/ci/test_pon_daa_head_binding.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 128,
+          "end_line": 128,
+          "literal": "python3 -B scripts/ci/test_llm_hosted_once.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 129,
+          "end_line": 129,
+          "literal": "\"${TRNM_RUNTIME_RELEASE_PYTHON:-python3}\" scripts/test_llm_runtime_release.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 130,
+          "end_line": 130,
+          "literal": "python3 scripts/ci/test_replay_pinned_native.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 131,
+          "end_line": 131,
+          "literal": "python3 scripts/ci/test_cross_arch_cost.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 132,
+          "end_line": 132,
+          "literal": "python3 scripts/ci/test_zero_locality_cost.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 133,
+          "end_line": 133,
+          "literal": "python3 scripts/ci/test_zero_paired_cost.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 134,
+          "end_line": 134,
+          "literal": "python3 scripts/ci/test_one_zero_locality_cost.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 135,
+          "end_line": 135,
+          "literal": "python3 scripts/ci/test_maintenance_cost.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 136,
+          "end_line": 136,
+          "literal": "python3 scripts/ci/test_work_rejection_report.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 137,
+          "end_line": 137,
+          "literal": "python3 scripts/ci/test_six_workpackage_native_rosters.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 138,
+          "end_line": 138,
+          "literal": "python3 scripts/ci/test_w1_full_v2_disposition.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 140,
+          "end_line": 140,
+          "literal": "python3 scripts/ci/test_pon_proof_latency.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 141,
+          "end_line": 141,
+          "literal": "python3 scripts/ci/test_w1_proof_latency_readback.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 153,
+          "end_line": 153,
+          "literal": "python3 -m unittest discover -s scripts/ci -p test_w1_cancellation_handoff.py -v 2>&1 | tee \"$w1_contract_out/cancellation-handoff.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 154,
+          "end_line": 154,
+          "literal": "python3 -m unittest discover -s scripts/ci -p test_w1_coordinator_contract.py -v 2>&1 | tee \"$w1_contract_out/coordinator-contract.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 155,
+          "end_line": 155,
+          "literal": "python3 -m unittest discover -s scripts -p test_kaggle_generation_contract_v2.py -v 2>&1 | tee \"$w1_contract_out/provider-contract.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 156,
+          "end_line": 156,
+          "literal": "python3 -m unittest discover -s scripts -p test_w1_generation_target_v2.py -v 2>&1 | tee \"$w1_contract_out/generation-target.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 157,
+          "end_line": 157,
+          "literal": "python3 -m unittest discover -s scripts -p test_w1_owner_cancellation_v1.py -v 2>&1 | tee \"$w1_contract_out/owner-cancellation.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 158,
+          "end_line": 158,
+          "literal": "python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_source_builder.py -v 2>&1 | tee \"$w1_contract_out/source-builder.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 159,
+          "end_line": 159,
+          "literal": "python3 -m unittest discover -s scripts -p test_w1_owned_generation_runtime_v2.py -v 2>&1 | tee \"$w1_contract_out/owned-runtime-reader.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 160,
+          "end_line": 160,
+          "literal": "python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_worker_contract.py -v 2>&1 | tee \"$w1_contract_out/kaggle-worker-contract.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 161,
+          "end_line": 161,
+          "literal": "python3 -m unittest discover -s scripts/ci -p test_w1_postwin_identity.py -v 2>&1 | tee \"$w1_contract_out/winner-identity.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 162,
+          "end_line": 162,
+          "literal": "python3 -m unittest discover -s scripts/ci -p test_w1_deployment_evidence_binding.py -v 2>&1 | tee \"$w1_contract_out/deployment-evidence-binding.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 163,
+          "end_line": 163,
+          "literal": "python3 -m unittest discover -s scripts/ci -p test_w1_deployment_comparison_audit.py -v 2>&1 | tee \"$w1_contract_out/deployment-comparison-audit.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 164,
+          "end_line": 164,
+          "literal": "python3 scripts/test_w1_owned_process_collector_v1.py -v 2>&1 | tee \"$w1_contract_out/owned-process-collector.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 165,
+          "end_line": 165,
+          "literal": "python3 - \"$w1_contract_out\" <<'PY'",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 182,
+          "end_line": 182,
+          "literal": "python3 scripts/ci/test_pon_w1_preparation_strategy_reader_v4.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 183,
+          "end_line": 183,
+          "literal": "python3 scripts/ci/test_pon_w1_rank_batch_reader_v5.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 184,
+          "end_line": 184,
+          "literal": "python3 scripts/ci/test_run_w1_rank_batch_v5.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 185,
+          "end_line": 185,
+          "literal": "python3 scripts/ci/test_pon_w1_zero_paired_lazy_v1.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 186,
+          "end_line": 186,
+          "literal": "python3 scripts/ci/test_run_legacy_reorg_root_abba.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 187,
+          "end_line": 187,
+          "literal": "python3 -B scripts/ci/test_w1_factorial_native_gate.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 188,
+          "end_line": 188,
+          "literal": "python3 -B scripts/ci/test_prepare_artifact_upload.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 189,
+          "end_line": 189,
+          "literal": "python3 -B scripts/ci/test_cell_storage_convergence_ci.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 190,
+          "end_line": 190,
+          "literal": "python3 -B scripts/ci/test_fresh_rejection_report.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 192,
+          "end_line": 192,
+          "literal": "python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 193,
+          "end_line": 193,
+          "literal": "python3 scripts/ci/test_pon_public_v3_phase_read.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 194,
+          "end_line": 194,
+          "literal": "python3 scripts/ci/test_pon_public_v3_policy_read.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 195,
+          "end_line": 195,
+          "literal": "python3 scripts/ci/test_pon_v3_cookie_cpu_study.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 196,
+          "end_line": 196,
+          "literal": "python3 scripts/ci/test_run_pon_w1_native_campaign.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 197,
+          "end_line": 197,
+          "literal": "python3 scripts/ci/test_read_validated_business_goodput.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 198,
+          "end_line": 198,
+          "literal": "python3 scripts/ci/test_read_failed_native_campaign_zip.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 199,
+          "end_line": 199,
+          "literal": "python3 scripts/ci/test_read_native_campaign_attempt.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 200,
+          "end_line": 200,
+          "literal": "python3 scripts/ci/test_pon_w1_cost_matrix_reader.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 201,
+          "end_line": 201,
+          "literal": "python3 scripts/ci/test_throughput_cost_coverage.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 202,
+          "end_line": 202,
+          "literal": "python3 scripts/ci/test_rust_source_tokens.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 203,
+          "end_line": 203,
+          "literal": "python3 scripts/ci/test_collected_unit_empty_v1.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 204,
+          "end_line": 204,
+          "literal": "python3 scripts/ci/test_collect_pinned_codeql_metadata_v1.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 205,
+          "end_line": 205,
+          "literal": "python3 scripts/ci/test_codeql_semantic_observations_v1.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 206,
+          "end_line": 206,
+          "literal": "python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 207,
+          "end_line": 207,
+          "literal": "python3 scripts/ci/test_run_w1_reused_cost_v3.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 208,
+          "end_line": 208,
+          "literal": "python3 scripts/ci/test_w1_lifecycle_cost_v4.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 209,
+          "end_line": 209,
+          "literal": "python3 scripts/ci/test_llm_cell_handoff_deadline.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 210,
+          "end_line": 210,
+          "literal": "python3 scripts/test_llm_cell_release.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 211,
+          "end_line": 215,
+          "literal": "python3 scripts/ci/test_read_original_native_campaign.py \\\n      --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 \\\n      --expected-manifest-sha256 12406cc156e57c130fa14af2b50b386031ec3640ce7f0234ed5bc9f0a700aac3 \\\n      --expected-head 9e705ccf75b7318dcc4bda4815956f58beb10e72 \\\n      --expected-tree 521ae87a28060d545979069b189eebbc74a71fd8 --retained-subset",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 216,
+          "end_line": 216,
+          "literal": "python3 scripts/ci/test_account_archive_conformance.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 217,
+          "end_line": 217,
+          "literal": "python3 scripts/ci/test_run_account_execution_conformance.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 218,
+          "end_line": 218,
+          "literal": "python3 scripts/ci/report_current_implementation.py --check",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 219,
+          "end_line": 219,
+          "literal": "python3 scripts/ci/test_work_cost_report.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 221,
+          "end_line": 221,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_evidence_scope.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 222,
+          "end_line": 222,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_native_bridge.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 223,
+          "end_line": 223,
+          "literal": "python3 scripts/ci/test_w1_risc0_deep_event_audit.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 224,
+          "end_line": 224,
+          "literal": "python3 scripts/w1_risc0_deep_event_audit.py --repo-root .",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 225,
+          "end_line": 225,
+          "literal": "python3 scripts/ci/test_w1_p3_sampling_audit.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 226,
+          "end_line": 226,
+          "literal": "python3 scripts/w1_p3_sampling_audit.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 227,
+          "end_line": 227,
+          "literal": "python3 scripts/ci/test_pq_lifetime_composition.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 228,
+          "end_line": 228,
+          "literal": "python3 scripts/ci/pq_lifetime_composition.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 229,
+          "end_line": 229,
+          "literal": "python3 scripts/ci/test_pq_content_chain_review.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 230,
+          "end_line": 230,
+          "literal": "python3 scripts/ci/pq_content_chain_review.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 231,
+          "end_line": 231,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_success_query_frontier.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 232,
+          "end_line": 232,
+          "literal": "python3 formal/pon-nakamoto-v1/fixed_success_query_frontier.py --check",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 233,
+          "end_line": 233,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_cost_tail_transfer.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 234,
+          "end_line": 234,
+          "literal": "python3 formal/pon-nakamoto-v1/cost_tail_transfer.py --check",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 235,
+          "end_line": 235,
+          "literal": "python3 formal/pon-nakamoto-v1/test_quantum_bernoulli_source_audit.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 236,
+          "end_line": 236,
+          "literal": "python3 scripts/ci/test_retained_research_ci.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 237,
+          "end_line": 237,
+          "literal": "python3 scripts/test_qualification_runtime.py",
+          "hosted_provisioner": false
+        }
+      ],
+      "execution_scope": "local Linux with exact pinned tools/dependencies and kernel/test prerequisites; existing hosted result remains separate"
+    },
+    {
+      "lane": "protocol-contract",
+      "canonical_command": "bash scripts/ci/ci_job.sh protocol-contract",
+      "source_file": "scripts/ci/ci_job.sh",
+      "source_start_line": 240,
+      "source_end_line": 367,
+      "exact_body_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/final-gate-exact-lane-bodies/protocol-contract.txt",
+      "body_sha256": "881e939910d64e49e87c94847ed028d7fcab75c37c6b6248422013b245a3aced",
+      "command_references": [
+        {
+          "start_line": 242,
+          "end_line": 242,
+          "literal": "PYTHONWARNINGS=error::ResourceWarning python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_account_migration.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 243,
+          "end_line": 243,
+          "literal": "PYTHONWARNINGS=error::ResourceWarning python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_migration_journal_owner.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 244,
+          "end_line": 244,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_seed_relation_vectors_v1.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 248,
+          "end_line": 248,
+          "literal": "python3 formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_native_v2.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 249,
+          "end_line": 249,
+          "literal": "python3 formal/pon-nakamoto-v1/test_pq_root_effect_readback_native_v2.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 250,
+          "end_line": 250,
+          "literal": "python3 formal/pon-nakamoto-v1/test_pq_root_recovery_journal_native_v2.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 251,
+          "end_line": 251,
+          "literal": "python3 scripts/ci/run_pq_root_native_v3.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 252,
+          "end_line": 252,
+          "literal": "python3 scripts/ci/run_pq_root_continuation_v4.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 253,
+          "end_line": 253,
+          "literal": "python3 scripts/ci/run_pq_root_witness_v5.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 254,
+          "end_line": 254,
+          "literal": "python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native\"",
+          "hosted_provisioner": true
+        },
+        {
+          "start_line": 255,
+          "end_line": 255,
+          "literal": "cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_lifecycle_cost_v4",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 256,
+          "end_line": 256,
+          "literal": "cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 257,
+          "end_line": 257,
+          "literal": "cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 258,
+          "end_line": 258,
+          "literal": "cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 259,
+          "end_line": 259,
+          "literal": "TRNM_CONTINUITY_BINARY=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_vectors\")\" python3 formal/pon-nakamoto-v1/test_continuity.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 260,
+          "end_line": 260,
+          "literal": "TRNM_CONTINUITY_TRANSITIONS_BINARY=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_transition_vectors\")\" python3 formal/pon-nakamoto-v1/test_continuity_transitions.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 261,
+          "end_line": 261,
+          "literal": "TRNM_PAIRED_WORK=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_paired_io\")\" TRNM_PAIRED_WORK_OUTPUT=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/paired-work\" python3 formal/pon-nakamoto-v1/test_paired_work.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 262,
+          "end_line": 262,
+          "literal": "TRNM_ZERO_WORK=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io\")\" TRNM_ZERO_WORK_OUTPUT=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/zero-work\" python3 formal/pon-nakamoto-v1/test_zero_work.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 264,
+          "end_line": 264,
+          "literal": "MU1_NATIVE_WORK=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io\")\" MU1_NATIVE_PREPARED=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io\")\" python3 formal/pon-nakamoto-v1/mandatory_units_tests.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 266,
+          "end_line": 266,
+          "literal": "WLC_NATIVE_WORK=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io\")\" WLC_NATIVE_PQ=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pq_message_oracle\")\" python3 formal/pon-nakamoto-v1/work_lifecycle_tests.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 267,
+          "end_line": 267,
+          "literal": "python3 formal/pon-nakamoto-v1/work_lifecycle_observe.py --native-work \"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io\")\" --native-pq \"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pq_message_oracle\")\" --out \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/work-lifecycle\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 268,
+          "end_line": 268,
+          "literal": "LQC_NATIVE_WORK=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io\")\" LQC_NATIVE_PREPARED=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io\")\" python3 formal/pon-nakamoto-v1/lifecycle_query_evidence.py --out \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/lifecycle-query\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 269,
+          "end_line": 269,
+          "literal": "TRNM_GROUPED_NATIVE=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_routed_int257_grouped\")\" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_grouped*.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 270,
+          "end_line": 270,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fresh_work_query_floor_v0.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 271,
+          "end_line": 271,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fresh_work_resource_transfer_v0.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 272,
+          "end_line": 272,
+          "literal": "cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-transport proof_admission --all-targets",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 273,
+          "end_line": 273,
+          "literal": "python3 formal/pon-nakamoto-v1/test_contracts.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 274,
+          "end_line": 274,
+          "literal": "python3 formal/pon-nakamoto-v1/test_invariants.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 275,
+          "end_line": 275,
+          "literal": "cargo fetch --locked --manifest-path trillionnium/Cargo.toml",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 276,
+          "end_line": 276,
+          "literal": "cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 277,
+          "end_line": 277,
+          "literal": "python3 formal/pon-nakamoto-v1/test_account_archive_oracle.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 278,
+          "end_line": 278,
+          "literal": "python3 scripts/ci/run_account_archive_conformance.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 279,
+          "end_line": 279,
+          "literal": "python3 formal/pon-nakamoto-v1/test_account_execution_oracle.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 280,
+          "end_line": 280,
+          "literal": "python3 formal/pon-nakamoto-v1/test_state_witness_oracle.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 281,
+          "end_line": 281,
+          "literal": "python3 scripts/ci/run_account_execution_conformance.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 282,
+          "end_line": 282,
+          "literal": "python3 -B formal/pon-nakamoto-v1/test_gsc2_native_readback_synthetic.py --source-root \"$(pwd -P)\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 284,
+          "end_line": 284,
+          "literal": "TRNM_NATIVE_OWNER_OBSERVATION=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_owner_observation_v1\")\" TRNM_NATIVE_OWNER_RECORD_DIR=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge\" python3 formal/pon-nakamoto-v1/test_native_owner_score_bridge.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 285,
+          "end_line": 285,
+          "literal": "python3 formal/pon-nakamoto-v1/certificate_observability_evidence.py --native-owner-json \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge/native.json\" --out \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge/observability.json\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 286,
+          "end_line": 286,
+          "literal": "cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_owner_journal",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 288,
+          "end_line": 288,
+          "literal": "NATIVE_OWNER_JOURNAL_RUN=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json\" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_owner_journal.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 289,
+          "end_line": 289,
+          "literal": "python3 formal/pon-nakamoto-v1/native_owner_journal.py --run \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json\" --output \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/checked.json\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 290,
+          "end_line": 290,
+          "literal": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'certificate_composition_tests.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 291,
+          "end_line": 291,
+          "literal": "python3 formal/pon-nakamoto-v1/certificate_composition_evidence.py --native-run \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json\" --output-dir \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/certificate-composition\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 292,
+          "end_line": 292,
+          "literal": "cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_risk_ledger",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 294,
+          "end_line": 294,
+          "literal": "NATIVE_RISK_LEDGER_RUN=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json\" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_risk_ledger.py' -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 295,
+          "end_line": 295,
+          "literal": "python3 formal/pon-nakamoto-v1/native_risk_ledger.py --run \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json\" --output \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/checked.json\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 296,
+          "end_line": 296,
+          "literal": "cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks --test protected_ingress --test task_lifecycle --test task_lifecycle_v3 --test task_lifecycle_v4 --test public_evaluation --test public_intake_v2 --test public_cli --test local_mempool --test pool_mining --test public_pool_v3 --test public_pool_cli --test public_v3_observer --test pinned_peer_polling --test ancestry_long_sync --test distributed_roles --test cell_native_v1 --test grouped_fresh_admission_v0 --test grouped_verification_authority_v0",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 297,
+          "end_line": 297,
+          "literal": "TRNM_DISTRIBUTED_TEST_BINARY=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/distributed_pipeline\" TRNM_DISTRIBUTED_TEST_OUTPUT=\"${RUNNER_TEMP:-/tmp}/trnm-distributed-conformance-$$\" cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test distributed_roles -- --ignored --test-threads=1",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 298,
+          "end_line": 298,
+          "literal": "python3 scripts/run_public_v3_service_campaign.py --out \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 299,
+          "end_line": 299,
+          "literal": "python3 scripts/test_llm_runtime_pilot.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 300,
+          "end_line": 300,
+          "literal": "python3 scripts/test_llm_parent_material.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 301,
+          "end_line": 301,
+          "literal": "python3 scripts/test_llm_runtime_parent_step.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 302,
+          "end_line": 302,
+          "literal": "python3 scripts/test_llm_runtime_rss_owner.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 303,
+          "end_line": 303,
+          "literal": "python3 scripts/test_llm_runtime_exit_observation.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 304,
+          "end_line": 304,
+          "literal": "python3 scripts/test_llm_runtime_stop.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 305,
+          "end_line": 305,
+          "literal": "python3 scripts/test_llm_inherited_runtime.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 306,
+          "end_line": 306,
+          "literal": "python3 scripts/test_llm_neural_read_worker.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 307,
+          "end_line": 307,
+          "literal": "python3 scripts/test_llm_runtime_parent_step_v2.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 308,
+          "end_line": 308,
+          "literal": "python3 scripts/test_llm_runtime_parent_step_task_v2.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 309,
+          "end_line": 309,
+          "literal": "python3 scripts/test_llm_python_runtime_contract.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 310,
+          "end_line": 310,
+          "literal": "python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 311,
+          "end_line": 311,
+          "literal": "python3 formal/pon-nakamoto-v1/test_demand_evidence.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 312,
+          "end_line": 312,
+          "literal": "python3 formal/pon-nakamoto-v1/test_upgrade_policy.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 313,
+          "end_line": 313,
+          "literal": "cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test no_gain_fees --test funded_service_contract --test native_demand_evidence --test native_task_operation_v2 --test native_active_anchor --all-features -- --test-threads=1",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 314,
+          "end_line": 314,
+          "literal": "python3 formal/pon-nakamoto-v1/test_model_attribution.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 315,
+          "end_line": 315,
+          "literal": "python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 316,
+          "end_line": 316,
+          "literal": "python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 317,
+          "end_line": 317,
+          "literal": "python3 formal/pon-nakamoto-v1/test_work_utility.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 318,
+          "end_line": 318,
+          "literal": "python3 formal/pon-nakamoto-v1/test_four_propositions_v1.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 319,
+          "end_line": 319,
+          "literal": "python3 formal/pon-nakamoto-v1/test_four_propositions_w1_v2.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 320,
+          "end_line": 320,
+          "literal": "python3 formal/pon-nakamoto-v1/test_shared_cell_operator_v1.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 321,
+          "end_line": 321,
+          "literal": "python3 scripts/ci/test_shared_material_cost_v2.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 322,
+          "end_line": 322,
+          "literal": "python3 scripts/ci/test_shared_material_security_v1.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 323,
+          "end_line": 323,
+          "literal": "python3 scripts/ci/test_shared_material_campaign_v2.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 324,
+          "end_line": 324,
+          "literal": "python3 formal/pon-nakamoto-v1/test_public_evaluation_lifecycle.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 325,
+          "end_line": 325,
+          "literal": "python3 formal/pon-nakamoto-v1/test_llm_adapter_contract.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 326,
+          "end_line": 326,
+          "literal": "python3 formal/pon-nakamoto-v1/test_model_acceptance.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 327,
+          "end_line": 327,
+          "literal": "python3 formal/pon-nakamoto-v1/test_model_window_history.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 328,
+          "end_line": 328,
+          "literal": "python3 formal/pon-nakamoto-v1/test_native_evaluation_quorum_oracle.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 329,
+          "end_line": 329,
+          "literal": "python3 formal/pon-nakamoto-v1/native_evaluation_quorum_oracle.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 331,
+          "end_line": 331,
+          "literal": "python3 formal/pon-nakamoto-v1/test_evaluation_round.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 332,
+          "end_line": 332,
+          "literal": "python3 formal/pon-nakamoto-v1/test_evaluation.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 333,
+          "end_line": 333,
+          "literal": "python3 formal/pon-nakamoto-v1/test_evaluation_bundle.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 334,
+          "end_line": 334,
+          "literal": "python3 formal/pon-nakamoto-v1/test_artifacts.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 335,
+          "end_line": 335,
+          "literal": "python3 formal/pon-nakamoto-v1/test_inference_receipt.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 336,
+          "end_line": 336,
+          "literal": "python3 formal/pon-nakamoto-v1/test_bounded_process.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 337,
+          "end_line": 337,
+          "literal": "python3 formal/pon-nakamoto-v1/test_kernel_process.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 338,
+          "end_line": 338,
+          "literal": "python3 formal/pon-nakamoto-v1/test_client_confirmation.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 339,
+          "end_line": 339,
+          "literal": "python3 formal/pon-nakamoto-v1/test_native_session.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 340,
+          "end_line": 340,
+          "literal": "python3 formal/pon-nakamoto-v1/test_work_precheck.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 341,
+          "end_line": 341,
+          "literal": "TRNM_NATIVE_WORK=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io\" TRNM_NATIVE_SESSION=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session\" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_client_confirmation.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 342,
+          "end_line": 342,
+          "literal": "TRNM_NATIVE_WORK=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io\" TRNM_NATIVE_SESSION=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session\" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_contracts.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 343,
+          "end_line": 343,
+          "literal": "TRNM_NATIVE_WORK=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io\" TRNM_NATIVE_SESSION=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session\" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_invariants.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 344,
+          "end_line": 344,
+          "literal": "TRNM_NATIVE_WORK=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io\" TRNM_NATIVE_EXECUTOR=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute\" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_client_confirmation.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 345,
+          "end_line": 345,
+          "literal": "python3 formal/pon-nakamoto-v1/test_model_contract.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 347,
+          "end_line": 347,
+          "literal": "python3 formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 348,
+          "end_line": 348,
+          "literal": "python3 formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 349,
+          "end_line": 349,
+          "literal": "python3 formal/pon-nakamoto-v1/test_useful_cell_execution_v2.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 350,
+          "end_line": 350,
+          "literal": "python3 formal/pon-nakamoto-v1/test_useful_cell_relation_v2.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 351,
+          "end_line": 351,
+          "literal": "python3 formal/pon-nakamoto-v1/test_useful_cell_relation_v2_adversarial.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 352,
+          "end_line": 352,
+          "literal": "python3 formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 353,
+          "end_line": 353,
+          "literal": "python3 formal/pon-nakamoto-v1/test_useful_cell_multimodal_execution_v3.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 354,
+          "end_line": 354,
+          "literal": "python3 formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 355,
+          "end_line": 355,
+          "literal": "python3 formal/pon-nakamoto-v1/test_lifecycle_cost_v1.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 356,
+          "end_line": 356,
+          "literal": "python3 formal/pon-nakamoto-v1/test_cell_lottery_cost_audit_v1.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 357,
+          "end_line": 357,
+          "literal": "python3 formal/pon-nakamoto-v1/test_service_work_settlement_v1.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 358,
+          "end_line": 358,
+          "literal": "python3 formal/pon-nakamoto-v1/test_work_backend.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 359,
+          "end_line": 359,
+          "literal": "python3 formal/pon-nakamoto-v1/test_strict_signature.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 360,
+          "end_line": 360,
+          "literal": "TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_native_execution.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 361,
+          "end_line": 361,
+          "literal": "TRNM_NATIVE_EXECUTOR=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute\" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_contracts.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 362,
+          "end_line": 362,
+          "literal": "TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 363,
+          "end_line": 363,
+          "literal": "TRNM_NATIVE_MODE=release python3 scripts/ci/test_pon_accepted_block.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 364,
+          "end_line": 364,
+          "literal": "cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --bin trnm-cell",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 367,
+          "end_line": 367,
+          "literal": "TRNM_CELL_BIN=\"$trnm_cell_handoff_binary\" python3 scripts/ci/test_llm_cell_host_handoff.py -v",
+          "hosted_provisioner": false
+        }
+      ],
+      "execution_scope": "hosted-only as a complete lane because it includes the fixed Host provisioner; listed non-provisioning component commands can be reviewed/executed separately without claiming this lane passed"
+    },
+    {
+      "lane": "fuzz-smoke",
+      "canonical_command": "bash scripts/ci/ci_job.sh fuzz-smoke",
+      "source_file": "scripts/ci/ci_job.sh",
+      "source_start_line": 370,
+      "source_end_line": 375,
+      "exact_body_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/final-gate-exact-lane-bodies/fuzz-smoke.txt",
+      "body_sha256": "6eb4e9af0e786faeff414bd5641dbdf374c01026ca7883f02a2a35bfd25e09d7",
+      "command_references": [
+        {
+          "start_line": 370,
+          "end_line": 370,
+          "literal": "python3 scripts/ci/test_repository.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 371,
+          "end_line": 371,
+          "literal": "python3 formal/pon-nakamoto-v1/test_reference.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 372,
+          "end_line": 372,
+          "literal": "python3 formal/pon-nakamoto-v1/test_native_consensus_reference_v1.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 373,
+          "end_line": 373,
+          "literal": "python3 formal/pon-nakamoto-v1/test_honest_rate_model.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 374,
+          "end_line": 374,
+          "literal": "cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives fixed_hash_text -- --nocapture",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 375,
+          "end_line": 375,
+          "literal": "python3 scripts/ci/run_fuzz_smoke.py",
+          "hosted_provisioner": false
+        }
+      ],
+      "execution_scope": "local Linux with exact pinned tools/dependencies and kernel/test prerequisites; existing hosted result remains separate"
+    },
+    {
+      "lane": "rust-baseline",
+      "canonical_command": "bash scripts/ci/ci_job.sh rust-baseline",
+      "source_file": "scripts/ci/ci_job.sh",
+      "source_start_line": 378,
+      "source_end_line": 498,
+      "exact_body_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/final-gate-exact-lane-bodies/rust-baseline.txt",
+      "body_sha256": "2554acdd5e47c972377a9ef7c65a22a7c71ee90a6b6df276ce096370d8e21773",
+      "command_references": [
+        {
+          "start_line": 378,
+          "end_line": 378,
+          "literal": "cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 379,
+          "end_line": 379,
+          "literal": "python3 scripts/ci/run_supply_chain.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 431,
+          "end_line": 431,
+          "literal": "cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features 2>&1 | tee \"$trnm_model_receipt_root/workspace-tests.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 433,
+          "end_line": 433,
+          "literal": "python3 scripts/pon_daa_schedule_reader.py --raw-dir \"$TRNM_DAA_EVIDENCE_DIR\" --expected-report-sha256 \"$(sha256sum \"$TRNM_DAA_EVIDENCE_DIR/daa-bounds.json\" | cut -d ' ' -f 1)\" > \"$trnm_model_receipt_root/daa-bounds-python.json\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 434,
+          "end_line": 434,
+          "literal": "python3 scripts/ci/test_pon_daa_schedule_reader.py --raw-dir \"$TRNM_DAA_EVIDENCE_DIR\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 439,
+          "end_line": 439,
+          "literal": "python3 scripts/pon_branch_work_schedule_reader.py --raw-dir \"$trnm_schedule_dir\" --report-sha256 \"$trnm_schedule_digest\" > \"$trnm_model_receipt_root/branch-work-schedule-$trnm_schedule_backend.json\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 440,
+          "end_line": 440,
+          "literal": "python3 scripts/ci/test_pon_branch_work_schedule_reader.py --raw-dir \"$trnm_schedule_dir\" --report-sha256 \"$trnm_schedule_digest\" -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 443,
+          "end_line": 443,
+          "literal": "python3 scripts/pon_joint_daa_reader.py --raw-dir \"$TRNM_JOINT_DAA_EVIDENCE_DIR/pnh1-authenticated\" --expected-report-sha256 \"$(sha256sum \"$TRNM_JOINT_DAA_EVIDENCE_DIR/pnh1-authenticated/joint-daa.json\" | cut -d ' ' -f 1)\" > \"$trnm_model_receipt_root/joint-daa-pnh1-python.json\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 444,
+          "end_line": 444,
+          "literal": "python3 scripts/ci/test_pon_joint_daa_reader.py --raw-dir \"$TRNM_JOINT_DAA_EVIDENCE_DIR/pnh1-authenticated\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 445,
+          "end_line": 445,
+          "literal": "python3 scripts/pon_joint_daa_reader.py --raw-dir \"$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth\" --expected-report-sha256 \"$(sha256sum \"$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth/joint-daa.json\" | cut -d ' ' -f 1)\" > \"$trnm_model_receipt_root/joint-daa-pgh2-python.json\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 446,
+          "end_line": 446,
+          "literal": "python3 scripts/ci/test_pon_joint_daa_reader.py --raw-dir \"$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 448,
+          "end_line": 448,
+          "literal": "python3 scripts/pon_monotone_daa_reader.py --raw-dir \"$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pnh1-authenticated\" --expected-report-sha256 \"$(sha256sum \"$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pnh1-authenticated/monotone-daa.json\" | cut -d ' ' -f 1)\" > \"$trnm_model_receipt_root/monotone-daa-pnh1-python.json\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 449,
+          "end_line": 449,
+          "literal": "python3 scripts/ci/test_pon_monotone_daa_reader.py --raw-dir \"$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pnh1-authenticated\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 450,
+          "end_line": 450,
+          "literal": "python3 scripts/pon_monotone_daa_reader.py --raw-dir \"$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pgh2-growth\" --expected-report-sha256 \"$(sha256sum \"$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pgh2-growth/monotone-daa.json\" | cut -d ' ' -f 1)\" > \"$trnm_model_receipt_root/monotone-daa-pgh2-python.json\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 451,
+          "end_line": 451,
+          "literal": "python3 scripts/ci/test_pon_monotone_daa_reader.py --raw-dir \"$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pgh2-growth\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 453,
+          "end_line": 453,
+          "literal": "python3 formal/pon-nakamoto-v1/test_zero_work.py --verify-prefix-export \"$trnm_model_receipt_root/zero-paired-prefix\" --output \"$trnm_model_receipt_root/zero-paired-prefix-python\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 454,
+          "end_line": 454,
+          "literal": "python3 formal/pon-nakamoto-v1/test_model_composition_oracle.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 455,
+          "end_line": 455,
+          "literal": "python3 formal/pon-nakamoto-v1/test_model_composition.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 456,
+          "end_line": 456,
+          "literal": "python3 formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 457,
+          "end_line": 457,
+          "literal": "python3 formal/pon-nakamoto-v1/authenticated_state_archive_oracle.py \"$TRNM_AUTHENTICATED_STATE_VECTORS\" \"$trnm_model_receipt_root/authenticated-state/native.sqlite\" --output \"$trnm_model_receipt_root/authenticated-state/oracle.json\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 458,
+          "end_line": 458,
+          "literal": "python3 formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 459,
+          "end_line": 459,
+          "literal": "python3 formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py \"$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR/native.json\" \"$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR/native.sqlite\" --output \"$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR/oracle.json\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 460,
+          "end_line": 460,
+          "literal": "python3 formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py \"$TRNM_AUTHENTICATED_MIGRATION_EXPORT/native.json\" \"$TRNM_AUTHENTICATED_MIGRATION_EXPORT/native.sqlite\" --migration-source \"$TRNM_AUTHENTICATED_MIGRATION_EXPORT/source.sqlite\" --output \"$TRNM_AUTHENTICATED_MIGRATION_EXPORT/oracle.json\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 461,
+          "end_line": 461,
+          "literal": "python3 formal/pon-nakamoto-v1/test_account_multiproof_oracle.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 462,
+          "end_line": 462,
+          "literal": "python3 formal/pon-nakamoto-v1/account_multiproof_oracle.py \"$TRNM_ACCOUNT_MULTIPROOF_VECTORS\" --output \"$trnm_model_receipt_root/account-multiproof/oracle.json\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 463,
+          "end_line": 463,
+          "literal": "python3 formal/pon-nakamoto-v1/test_obligation_range_oracle.py -v",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 464,
+          "end_line": 464,
+          "literal": "python3 formal/pon-nakamoto-v1/obligation_range_oracle.py \"$TRNM_OBLIGATION_RANGE_VECTORS\" --output \"$trnm_model_receipt_root/obligation-range/oracle.json\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 471,
+          "end_line": 471,
+          "literal": "cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee \"$trnm_native_receipt_root/native-capacity-release.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 472,
+          "end_line": 472,
+          "literal": "python3 scripts/ci/check_required_native_test.py \"$trnm_native_receipt_root/native-capacity-release.log\" --test account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 477,
+          "end_line": 477,
+          "literal": "TRNM_NATIVE_GROWTH_EXPORT_DIRECTORY=\"$trnm_native_receipt_root/native-growth-reference\" cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::growth_reference::tests::native_growth_reference_65537_signed_accounts_and_cold_reopen -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee \"$trnm_native_receipt_root/native-growth-reference-release.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 478,
+          "end_line": 478,
+          "literal": "python3 scripts/ci/check_required_native_test.py \"$trnm_native_receipt_root/native-growth-reference-release.log\" --test store::growth_reference::tests::native_growth_reference_65537_signed_accounts_and_cold_reopen",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 481,
+          "end_line": 481,
+          "literal": "python3 -B formal/pon-nakamoto-v1/check_gsc2_native_readback.py --artifact-dir \"$trnm_native_receipt_root/native-growth-reference\" --source-root \"$(pwd -P)\" --minimum-accounts 65537 > \"$trnm_native_receipt_root/native-growth-reference/readback.json\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 486,
+          "end_line": 486,
+          "literal": "TRNM_NATIVE_GROWTH_V2_EXPORT_DIR=\"$trnm_native_receipt_root/native-growth-v2\" cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee \"$trnm_native_receipt_root/native-growth-v2-release.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 487,
+          "end_line": 487,
+          "literal": "python3 scripts/ci/check_required_native_test.py \"$trnm_native_receipt_root/native-growth-v2-release.log\" --test store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 494,
+          "end_line": 494,
+          "literal": "TRNM_NATIVE_ACCOUNT_VERIFY_COST_DIRECTORY=\"$trnm_native_receipt_root/native-account-verification-cost\" cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee \"$trnm_native_receipt_root/native-account-verification-cost.log\"",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 495,
+          "end_line": 495,
+          "literal": "python3 scripts/ci/check_required_native_test.py \"$trnm_native_receipt_root/native-account-verification-cost.log\" --test account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 497,
+          "end_line": 497,
+          "literal": "cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --doc --all-features",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 498,
+          "end_line": 498,
+          "literal": "cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings",
+          "hosted_provisioner": false
+        }
+      ],
+      "execution_scope": "local Linux with exact pinned tools/dependencies and kernel/test prerequisites; existing hosted result remains separate"
+    },
+    {
+      "lane": "external-evidence-contract",
+      "canonical_command": "bash scripts/ci/ci_job.sh external-evidence-contract",
+      "source_file": "scripts/ci/ci_job.sh",
+      "source_start_line": 501,
+      "source_end_line": 530,
+      "exact_body_path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/final-gate-exact-lane-bodies/external-evidence-contract.txt",
+      "body_sha256": "3aa78e1a9f3407f3cd70dbec31099ca112f25025bcd966a15c9b1bc9ecc6f061",
+      "command_references": [
+        {
+          "start_line": 501,
+          "end_line": 501,
+          "literal": "python3 scripts/ci/prepare_evidence_sources.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 502,
+          "end_line": 502,
+          "literal": "python3 scripts/ci/test_evidence_sources.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 503,
+          "end_line": 503,
+          "literal": "python3 scripts/ci/check_repository.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 504,
+          "end_line": 504,
+          "literal": "python3 scripts/ci/test_repository.py EvidenceBoundaryTests",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 505,
+          "end_line": 505,
+          "literal": "python3 scripts/ci/check_pon_evidence.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 506,
+          "end_line": 506,
+          "literal": "python3 scripts/ci/test_pon_evidence.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 507,
+          "end_line": 507,
+          "literal": "python3 scripts/ci/check_invariant_evidence.py --historical",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 508,
+          "end_line": 508,
+          "literal": "python3 scripts/ci/test_invariant_evidence.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 509,
+          "end_line": 509,
+          "literal": "python3 scripts/ci/check_completion_evidence.py --historical",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 510,
+          "end_line": 510,
+          "literal": "python3 scripts/ci/test_completion_evidence.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 511,
+          "end_line": 511,
+          "literal": "python3 scripts/ci/check_evaluation_bundle_evidence.py --historical",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 512,
+          "end_line": 512,
+          "literal": "python3 scripts/ci/check_client_confirmation_evidence.py --historical",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 513,
+          "end_line": 513,
+          "literal": "python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-session-v1",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 514,
+          "end_line": 514,
+          "literal": "python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-node-v1",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 515,
+          "end_line": 515,
+          "literal": "python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-closed-round-v1",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 516,
+          "end_line": 516,
+          "literal": "python3 scripts/ci/check_public_readiness_evidence.py --historical --evidence evidence/pon-public-readiness-v1",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 517,
+          "end_line": 517,
+          "literal": "python3 scripts/ci/test_public_readiness_evidence.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 518,
+          "end_line": 518,
+          "literal": "python3 scripts/ci/check_native_node_supplements.py --historical",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 519,
+          "end_line": 519,
+          "literal": "python3 scripts/ci/test_native_node_supplements.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 520,
+          "end_line": 520,
+          "literal": "python3 scripts/ci/test_native_session_evidence.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 521,
+          "end_line": 521,
+          "literal": "python3 scripts/ci/test_client_confirmation_evidence.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 522,
+          "end_line": 522,
+          "literal": "python3 scripts/ci/test_evaluation_bundle_evidence.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 523,
+          "end_line": 523,
+          "literal": "python3 scripts/ci/report_module_evidence.py --format markdown",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 524,
+          "end_line": 524,
+          "literal": "python3 scripts/pon_work_cost_report.py --verify evidence/pon-contract-authority-v1/work-cost --historical",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 525,
+          "end_line": 525,
+          "literal": "python3 scripts/pon_work_cost_report.py --verify evidence/pon-native-session-v1/work-cost --historical",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 526,
+          "end_line": 526,
+          "literal": "python3 scripts/pon_work_cost_report.py --verify evidence/pon-native-node-v1/work-cost --historical",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 527,
+          "end_line": 527,
+          "literal": "python3 scripts/pon_work_cost_report.py --verify evidence/pon-closed-round-v1/work-cost --historical",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 528,
+          "end_line": 528,
+          "literal": "python3 scripts/ci/check_four_priority_evidence.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 529,
+          "end_line": 529,
+          "literal": "python3 scripts/ci/test_four_priority_evidence.py",
+          "hosted_provisioner": false
+        },
+        {
+          "start_line": 530,
+          "end_line": 530,
+          "literal": "python3 scripts/pon_work_cost_report.py --verify evidence/pon-four-priority-audit-v1/work-cost --historical",
+          "hosted_provisioner": false
+        }
+      ],
+      "execution_scope": "local Linux with exact pinned tools/dependencies and kernel/test prerequisites; existing hosted result remains separate"
+    }
+  ],
+  "workflow_jobs": [
+    {
+      "job": "repository-truth",
+      "name": [
+        "repository-truth"
+      ],
+      "timeout_minutes": [
+        "45"
+      ],
+      "runs_on": [
+        "ubuntu-24.04"
+      ],
+      "needs": [],
+      "if": []
+    },
+    {
+      "job": "cross-arch-cost",
+      "name": [
+        "cross-arch-cost (${{ matrix.arch }})"
+      ],
+      "timeout_minutes": [
+        "155"
+      ],
+      "runs_on": [
+        "${{ matrix.runner }}"
+      ],
+      "needs": [],
+      "if": []
+    },
+    {
+      "job": "cross-arch-w1-reuse-v3",
+      "name": [
+        "W1 actual reuse V3 (${{ matrix.arch }}, ${{ matrix.source }})"
+      ],
+      "timeout_minutes": [
+        "155"
+      ],
+      "runs_on": [
+        "${{ matrix.runner }}"
+      ],
+      "needs": [],
+      "if": [
+        "github.event_name == 'pull_request'"
+      ]
+    },
+    {
+      "job": "cross-arch-cost-consistency",
+      "name": [
+        "cross-arch-cost-consistency"
+      ],
+      "timeout_minutes": [
+        "10"
+      ],
+      "runs_on": [
+        "ubuntu-24.04"
+      ],
+      "needs": [
+        "cross-arch-cost"
+      ],
+      "if": [
+        "always()"
+      ]
+    },
+    {
+      "job": "protocol-contract",
+      "name": [
+        "protocol-contract"
+      ],
+      "timeout_minutes": [
+        "240"
+      ],
+      "runs_on": [
+        "ubuntu-24.04"
+      ],
+      "needs": [],
+      "if": []
+    },
+    {
+      "job": "fuzz-smoke",
+      "name": [
+        "fuzz-smoke"
+      ],
+      "timeout_minutes": [
+        "45"
+      ],
+      "runs_on": [
+        "ubuntu-24.04"
+      ],
+      "needs": [],
+      "if": []
+    },
+    {
+      "job": "rust-baseline-shards",
+      "name": [
+        "rust-baseline shard (${{ matrix.shard }})"
+      ],
+      "timeout_minutes": [
+        "180"
+      ],
+      "runs_on": [
+        "ubuntu-24.04"
+      ],
+      "needs": [],
+      "if": []
+    },
+    {
+      "job": "rust-baseline",
+      "name": [
+        "rust-baseline"
+      ],
+      "timeout_minutes": [
+        "180"
+      ],
+      "runs_on": [
+        "ubuntu-24.04"
+      ],
+      "needs": [
+        "rust-baseline-shards"
+      ],
+      "if": [
+        "always()"
+      ]
+    },
+    {
+      "job": "prospective-rust-shards",
+      "name": [
+        "prospective Rust shard (${{ matrix.shard }})"
+      ],
+      "timeout_minutes": [
+        "180"
+      ],
+      "runs_on": [
+        "ubuntu-24.04"
+      ],
+      "needs": [],
+      "if": [
+        "github.event_name == 'pull_request'"
+      ]
+    },
+    {
+      "job": "prospective-rust-baseline",
+      "name": [
+        "prospective-merge (rust-baseline)"
+      ],
+      "timeout_minutes": [
+        "180"
+      ],
+      "runs_on": [
+        "ubuntu-24.04"
+      ],
+      "needs": [
+        "prospective-rust-shards"
+      ],
+      "if": [
+        "${{ always() && github.event_name == 'pull_request' }}"
+      ]
+    },
+    {
+      "job": "external-evidence-contract",
+      "name": [
+        "external-evidence-contract"
+      ],
+      "timeout_minutes": [
+        "45"
+      ],
+      "runs_on": [
+        "ubuntu-24.04"
+      ],
+      "needs": [],
+      "if": []
+    },
+    {
+      "job": "prospective-merge",
+      "name": [
+        "prospective-merge (${{ matrix.lane }})"
+      ],
+      "timeout_minutes": [
+        "${{ matrix.lane == 'protocol-contract' && 240 || matrix.lane == 'rust-baseline' && 180 || 45 }}"
+      ],
+      "runs_on": [
+        "ubuntu-24.04"
+      ],
+      "needs": [],
+      "if": [
+        "github.event_name == 'pull_request'"
+      ]
+    }
+  ],
+  "source_pq_docs_inventory_checks": [
+    {
+      "command": "bash scripts/project-preflight.sh --audit",
+      "purpose": "AGENTS/project-boundary, current sole plan/source ownership and no retired/privileged boundary drift",
+      "source": "AGENTS.md; scripts/project-preflight.sh; scripts/ci/project_boundary.py::check",
+      "already_in_repository_truth": true
+    },
+    {
+      "command": "python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head \"$FINAL_HEAD\" --output \"$CHECK_OUTPUT/source-before.json\"",
+      "purpose": "Immutable committed source before execution; same command without output after execution",
+      "source": "scripts/ci/verify_ci_source.py::verify/main; required workflow before/after steps",
+      "already_in_repository_truth": false
+    },
+    {
+      "command": "python3 scripts/ci/check_repository.py",
+      "purpose": "Complete package/Cargo graph ownership; frozen all-false declarations; every current local Markdown link, JSON/TOML parsing; nested CI/detailed/applicability/invariant/current-doc validators",
+      "source": "scripts/ci/check_repository.py::check",
+      "already_in_repository_truth": true
+    },
+    {
+      "command": "python3 scripts/refresh_distributed_source_inventory.py --check",
+      "purpose": "Exact generated distributed native source inventory without rewriting it",
+      "source": "scripts/refresh_distributed_source_inventory.py::render and __main__",
+      "already_in_repository_truth": true
+    },
+    {
+      "command": "python3 scripts/ci/check_ci_contract.py",
+      "purpose": "All actual required lanes, literal inline Git blob pins, original native rosters/counts, T03 typed pending control registration, no skipped or swallowed failures",
+      "source": "scripts/ci/check_ci_contract.py::validate and check_typed_pending_worker_controls",
+      "already_in_repository_truth": "called by check_repository; test suite is also explicit"
+    },
+    {
+      "command": "python3 -B scripts/ci/test_ci_contract.py -v",
+      "purpose": "Full positive/negative CI fixture suite; no zero-discovery shortcut",
+      "source": "scripts/ci/test_ci_contract.py; repository-truth explicit command",
+      "already_in_repository_truth": true
+    },
+    {
+      "command": "python3 scripts/ci/test_ci_execution.py",
+      "purpose": "Original source-integrity execution and refusal controls",
+      "source": "scripts/ci/ci_job.sh repository-truth",
+      "already_in_repository_truth": true
+    },
+    {
+      "command": "python3 scripts/ci/check_pq_research_integration.py",
+      "purpose": "Every current corpus pinned Git blob; selected required coverage; fixed PNQ2/NPQ6 research boundaries and all false qualification flags",
+      "source": "scripts/ci/check_pq_research_integration.py::check/_check_pq_source_coverage",
+      "already_in_repository_truth": "direct final-binding audit entry; do not infer its full coverage merely from a different successful checker"
+    },
+    {
+      "command": "python3 scripts/ci/pq_authority_effect_register.py",
+      "purpose": "Reviewed seven-route/44-input current source consistency, always HOLD",
+      "source": "scripts/ci/pq_authority_effect_register.py::inspect/validate_manifest",
+      "already_in_repository_truth": true
+    },
+    {
+      "command": "python3 scripts/w1_lifetime_current_observation.py",
+      "purpose": "Reviewed ordered20 current observation with frozen7150 reader/pins and unknown security bound",
+      "source": "scripts/w1_lifetime_current_observation.py::load/report",
+      "already_in_repository_truth": true
+    },
+    {
+      "command": "python3 scripts/w1_qrom_current_implementation_audit.py",
+      "purpose": "Separate current QROM source map, preserving historical implementation identities and security HOLD",
+      "source": "scripts/ci/ci_job.sh repository-truth explicit current reader"
+    },
+    {
+      "command": "python3 scripts/ci/test_w1_qrom_closure_current_controls.py",
+      "purpose": "Current QROM source-closure negative controls",
+      "source": "scripts/ci/ci_job.sh repository-truth explicit current tests"
+    },
+    {
+      "command": "python3 scripts/ci/report_current_implementation.py --check",
+      "purpose": "Generated documentation matches existing registries",
+      "source": "scripts/ci/report_current_implementation.py::validate; check_repository nested; repository-truth explicit"
+    }
+  ],
+  "local_environment": {
+    "platform": "Linux for the complete local lane recipes: repository-truth has /dev/shm fixture allocation; native tests retain their actual platform dependencies. Mac fixture diagnostics are not substitutes for unsupported Linux native checks.",
+    "rust": "1.95.0 with rustfmt/clippy",
+    "default_build_jobs": 2,
+    "default_test_threads": 1,
+    "cargo_incremental": "0 in hosted workflow",
+    "python": "Python with tomllib (3.11+); conformance numpy1.26.4/cryptography50.0.2; runtime material verifier packaging26.3 with exact wheel hash",
+    "provider": "Existing exact OpenSSL3.5.9 provider, binary/hash and original environment contract; no missing-provider skip or classical fallback",
+    "fuzz": "cargo-fuzz0.13.2/nightly2026-10-01; existing default60s per all targets, per-input10s, RSS2048MiB, capture1200s",
+    "supply_chain": "cargo-deny0.20.2; both locked native/fuzz graphs, all advisories/licenses/bans/sources; retain actual RustSec database identity; per-check900s",
+    "receipt_paths": "Fresh outside-checkout directory per full invocation; no reuse/overwrite of retained failure artifacts; do not repurposeHOME/CODEX_HOME",
+    "hosted_identity": "Never forge CI/GITHUB_ACTIONS/run IDs locally. rust_baseline_shards run/check are current-GitHub-run receipt contracts; local Rust recipe is ci_job.sh rust-baseline."
+  },
+  "hosted_only_original_host_gate": {
+    "canonical_command": "python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\"",
+    "callsites": "protocol-contract head and prospective merge; cross-architecture cost jobs independently retain their original call",
+    "guard": "run_from_zero_host.py::outer/outer_owned require real hosted CI and non-root original runner; never provision local ROG/Mac",
+    "unit": "config/systemd/trnmponpublic.slice",
+    "unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+    "kernel_limits": {
+      "cpu.max": "25000 100000",
+      "cpu.max.burst": "0",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    },
+    "systemd": {
+      "CPUQuota": "25%",
+      "CPUQuotaPeriodSec": "100ms",
+      "MemoryMax": "2G",
+      "MemorySwapMax": "0",
+      "TasksMax": 256,
+      "KillMode": "control-group",
+      "TimeoutStopSec": "20s",
+      "Delegate": "no",
+      "NoNewPrivileges": "yes",
+      "CapabilityBoundingSet": ""
+    },
+    "original_native_named_tests": [
+      "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+      "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+      "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+      "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+      "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+    ],
+    "native_deadlines": {
+      "preparation_build_seconds": 900,
+      "in_service_exact_build_seconds": 900,
+      "complete_fmt_check_seconds": 60,
+      "per_original_named_test_seconds": 90,
+      "pressure_requested_window_ns": 4000000000,
+      "attack_workers": 16,
+      "construction_attempt_budget": 4096,
+      "worker_attempt_cap": 1024,
+      "per_call_deadline_ms": 2000
+    },
+    "conservation_and_replay": "Original complete denonimators, full current Host readback, charged CPU/work joins, 7 signed packet sequence, independent replay and finite confirmation target remain mandatory; these are not replaceable with readonly summaries.",
+    "performance_qualified": false
+  },
+  "run_once_guidance": [
+    "After final source freeze, use full original repository-truth and external-evidence-contract recipes once with exact before/after source checks. The individual audit entries here identify coverage and should not be redundantly repeated if that same exact final-head execution already recorded them.",
+    "The complete protocol-contract gate stays on hosted CI because of its original Host provisioner. Local allowed component validation cannot produce the required protocol check result.",
+    "Local rust-baseline complete recipe contains full workspace/exports/oracles,4 explicit release ignored selectors,doc tests and strict all-target/all-feature Clippy; hosted runtime/quality partition and fan-in retain those commands without weakening.",
+    "Keep existing 45/240/180 minute orchestration budgets separate from4s business window,90s native selector,60s format and900s exact build bounds.",
+    "Run final exact head and prospective merge checks via normal PR847 synchronization; manual workflow_dispatch is not a prospective-merge substitute."
+  ],
+  "tests_executed_by_inventory": false,
+  "source_or_workflow_edits": false,
+  "host_provisioning": false,
+  "remote_writes": false,
+  "qualification_granted": false
+}

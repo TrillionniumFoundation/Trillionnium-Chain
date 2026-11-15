@@ -1,0 +1,32 @@
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-paged-model-34e09-20261110/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.90s
+     Running unittests examples/cell_sealed_research_next_use_v2.rs (/home/qq/work/chain-cell-paged-model-34e09-20261110-target/debug/examples/cell_sealed_research_next_use_v2-1bad5a80098a9f42)
+
+running 11 tests
+test linux::bep52::tests::explicit_endpoint_allowances_fit_one_total ... ok
+test linux::bep52::tests::old_network_profile_unknown_fields_and_missing_grants_are_refused ... ok
+test linux::bep52::tests::same_operation_transfer_handles_cross_member_cache_dedup ... ok
+test linux::paged::tests::paged_research_expired_original_deadline_retains_failure_observation ... ok
+test linux::paged::tests::paged_research_original_cancellation_is_not_reset_for_cold_reconstruction ... ok
+test linux::paged::tests::paged_research_profile_binds_exact_canonical_available_slots ... ok
+test linux::paged::tests::paged_research_restores_two_pages_from_four_reopened_targets ... FAILED
+test linux::paged::tests::paged_research_wrapper_is_explicit_and_old_v2_wire_stays_closed ... ok
+test linux::paged::tests::paged_research_wrapper_requires_independent_previous_identity_and_canonical_pins ... ok
+test linux::snapshot::tests::actual_worker_and_closed_composition_profile_are_required ... ok
+test linux::snapshot::tests::dense_roster_rejects_unknown_dtype_duplicate_fields_and_layout_gaps ... ok
+
+failures:
+
+---- linux::paged::tests::paged_research_restores_two_pages_from_four_reopened_targets stdout ----
+
+thread 'linux::paged::tests::paged_research_restores_two_pages_from_four_reopened_targets' (62778) panicked at crates/trnm-data-availability/examples/cell_sealed_research_v2/paged/tests.rs:300:6:
+called `Result::unwrap()` on an `Err` value: CacheQuotaExceeded
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    linux::paged::tests::paged_research_restores_two_pages_from_four_reopened_targets
+
+test result: FAILED. 10 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.85s
+
+error: test failed, to rerun pass `-p trnm-data-availability --example cell_sealed_research_next_use_v2`

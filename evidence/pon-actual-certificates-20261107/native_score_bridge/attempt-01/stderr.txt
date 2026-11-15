@@ -1,0 +1,37 @@
+test_256_bit_work_encoding_is_rejected (__main__.ActualOwnerBridgeTests.test_256_bit_work_encoding_is_rejected) ... ok
+test_active_path_is_recomputed (__main__.ActualOwnerBridgeTests.test_active_path_is_recomputed) ... ok
+test_actual_cancellation_budget_and_bad_product_are_refusals (__main__.ActualOwnerBridgeTests.test_actual_cancellation_budget_and_bad_product_are_refusals) ... ok
+test_actual_six_successors_and_reorganization (__main__.ActualOwnerBridgeTests.test_actual_six_successors_and_reorganization) ... ok
+test_boolean_cannot_substitute_for_integer_clock (__main__.ActualOwnerBridgeTests.test_boolean_cannot_substitute_for_integer_clock) ... ok
+test_boolean_cannot_substitute_for_observed_height (__main__.ActualOwnerBridgeTests.test_boolean_cannot_substitute_for_observed_height) ... ok
+test_caller_clock_is_rechecked_not_reused (__main__.ActualOwnerBridgeTests.test_caller_clock_is_rechecked_not_reused) ... ok
+test_chainwork_sum_is_recomputed (__main__.ActualOwnerBridgeTests.test_chainwork_sum_is_recomputed) ... ok
+test_child_eligibility_cannot_ignore_its_future_ancestor (__main__.ActualOwnerBridgeTests.test_child_eligibility_cannot_ignore_its_future_ancestor) ... ok
+test_coherent_plaintext_rewrite_is_not_independent_attestation (__main__.ActualOwnerBridgeTests.test_coherent_plaintext_rewrite_is_not_independent_attestation) ... ok
+test_confirmation_generation_must_bind_same_snapshot (__main__.ActualOwnerBridgeTests.test_confirmation_generation_must_bind_same_snapshot) ... ok
+test_confirmation_weight_gate_is_not_inferred_from_depth (__main__.ActualOwnerBridgeTests.test_confirmation_weight_gate_is_not_inferred_from_depth) ... ok
+test_duplicate_block_identity_is_rejected (__main__.ActualOwnerBridgeTests.test_duplicate_block_identity_is_rejected) ... ok
+test_duplicate_json_keys_are_rejected (__main__.ActualOwnerBridgeTests.test_duplicate_json_keys_are_rejected) ... ok
+test_early_unseen_view_pays_whole_reference_deficit (__main__.ActualOwnerBridgeTests.test_early_unseen_view_pays_whole_reference_deficit) ... ok
+test_fresh_native_run_has_bounded_local_scope (__main__.ActualOwnerBridgeTests.test_fresh_native_run_has_bounded_local_scope) ... ok
+test_future_ancestry_maturity_changes_eligible_maximum (__main__.ActualOwnerBridgeTests.test_future_ancestry_maturity_changes_eligible_maximum) ... ok
+test_incomplete_or_unauthenticated_scope_cannot_escalate (__main__.ActualOwnerBridgeTests.test_incomplete_or_unauthenticated_scope_cannot_escalate) ... ok
+test_known_heavier_chain_exposes_native_selection_lag (__main__.ActualOwnerBridgeTests.test_known_heavier_chain_exposes_native_selection_lag) ... ok
+test_local_commitment_changes_after_export_mutation (__main__.ActualOwnerBridgeTests.test_local_commitment_changes_after_export_mutation) ... ok
+test_maximum_id_list_must_be_complete (__main__.ActualOwnerBridgeTests.test_maximum_id_list_must_be_complete) ... ok
+test_missing_parent_refuses_a_partial_view (__main__.ActualOwnerBridgeTests.test_missing_parent_refuses_a_partial_view) ... ok
+test_native_target_cost_is_recomputed (__main__.ActualOwnerBridgeTests.test_native_target_cost_is_recomputed) ... ok
+test_nonfinite_json_is_rejected (__main__.ActualOwnerBridgeTests.test_nonfinite_json_is_rejected) ... ok
+test_owner_attempt_cannot_rewind_after_reorg (__main__.ActualOwnerBridgeTests.test_owner_attempt_cannot_rewind_after_reorg) ... ok
+test_packet_hash_is_not_a_replaceable_label (__main__.ActualOwnerBridgeTests.test_packet_hash_is_not_a_replaceable_label) ... ok
+test_real_hidden_branch_does_not_change_alice_view_commitment (__main__.ActualOwnerBridgeTests.test_real_hidden_branch_does_not_change_alice_view_commitment) ... ok
+test_reorged_confirmation_cannot_be_relabelled_confirmed (__main__.ActualOwnerBridgeTests.test_reorged_confirmation_cannot_be_relabelled_confirmed) ... ok
+test_safety_claim_cannot_be_added_to_native_run (__main__.ActualOwnerBridgeTests.test_safety_claim_cannot_be_added_to_native_run) ... ok
+test_selection_deficit_cannot_be_dropped (__main__.ActualOwnerBridgeTests.test_selection_deficit_cannot_be_dropped) ... ok
+test_view_maximum_is_recomputed (__main__.ActualOwnerBridgeTests.test_view_maximum_is_recomputed) ... ok
+test_zero_target_is_not_an_allowed_free_block (__main__.ActualOwnerBridgeTests.test_zero_target_is_not_an_allowed_free_block) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 2.815s
+
+OK

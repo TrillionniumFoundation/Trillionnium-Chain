@@ -1,0 +1,42 @@
+{
+  "schema": "incentive-selected-build-artifacts-v1",
+  "source_commit": "3b97b97f3a3387532b00594d3805186143ac6f45",
+  "scope": "selected original dev-profile M06 build artifacts and inputs; not complete source closure",
+  "artifacts": [
+    {
+      "path": "incentive-target/debug/examples/pon_execute",
+      "bytes": 54323408,
+      "sha256": "da52df62eaefd7b40857180ff8b560c75f077e3933a68cdb4d87ca2a42f16885"
+    },
+    {
+      "path": "incentive-split-probe",
+      "bytes": 54589512,
+      "sha256": "c0df7dca98248db5db55e962d1fd2670ce23a8bc34e84a9b54d522a568c21edb"
+    },
+    {
+      "path": "incentives/trillionnium/Cargo.lock",
+      "bytes": 40597,
+      "sha256": "53c4eab0fb3d2951894348de2b765e0a573e49acb5dbfe1fe805719ec868a136"
+    },
+    {
+      "path": "incentives/trillionnium/Cargo.toml",
+      "bytes": 2204,
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "path": "incentives/config/pon/model-evidence-v3.json",
+      "bytes": 145756,
+      "sha256": "d665b9aa8f48e0ac90055868e5716ec133f2546497c6fbb4128d6934dfcb5eb0"
+    },
+    {
+      "path": "incentives/trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs",
+      "bytes": 17870,
+      "sha256": "a62f9e0b96bc68bae20800514116d9447b1a123f134210c60cc21ad7ea135279"
+    },
+    {
+      "path": "incentives/trillionnium/crates/trnm-pon-node/tests/public_evaluation.rs",
+      "bytes": 25658,
+      "sha256": "0c56938f2b04fcadac2cc018561fcf2e5b945f3d0af0dc7f4328a1ff3e75da31"
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "actual_model_execution": false,
+  "attempts": [
+    {
+      "attempt": "native-v1",
+      "declared_native_subtree": "eda105c2b03d32287d64ae58679189c16b2772f5",
+      "declared_source_commit": "f6247df765bb82d18247ed7d492635d09d2bb403",
+      "declared_source_tree": "f04abc058a7ca542984517bc5463ca0c7a482268",
+      "executed_test_count": 0,
+      "exit_code": 101,
+      "failure_causes": [
+        "Incomplete sparse source materialization omitted tracked docs/modules/MODULES.json; compilation failed before tests."
+      ],
+      "files": [
+        {
+          "encoding": "identity",
+          "file": "native-v1/result.json",
+          "raw_bytes": 11755,
+          "raw_bytes_unchanged": true,
+          "raw_sha256": "11f8955045ca11d3027630032cff9edf0e5fceb3177ceeb17be7bc4d8fd355b4",
+          "source_basename": "result.json",
+          "stored_bytes": 11755
+        },
+        {
+          "encoding": "identity",
+          "file": "native-v1/native-controls.stdout",
+          "raw_bytes": 19688,
+          "raw_bytes_unchanged": true,
+          "raw_sha256": "32f79dd4c227717b3bb4e80e9b0ee781311eb96423ca87816441afdd75c87ed3",
+          "source_basename": "native-controls.log",
+          "stored_bytes": 19688
+        },
+        {
+          "encoding": "identity",
+          "file": "native-v1/start.json",
+          "raw_bytes": 13507,
+          "raw_bytes_unchanged": true,
+          "raw_sha256": "cf90c0e079845aea788670747ce5764d0bf1b6a6bd8beab2864a02985617f5b2",
+          "source_basename": "start.json",
+          "stored_bytes": 13507
+        }
+      ],
+      "native_junit_available": false,
+      "selected_test_count": 39,
+      "source_unchanged_during_attempt": true,
+      "status": "BUILD_FAILED_NO_TEST_EXECUTION",
+      "working_tree_materialization_complete": false
+    },
+    {
+      "attempt": "native-v2",
+      "declared_native_subtree": "eda105c2b03d32287d64ae58679189c16b2772f5",
+      "declared_source_commit": "f6247df765bb82d18247ed7d492635d09d2bb403",
+      "declared_source_tree": "f04abc058a7ca542984517bc5463ca0c7a482268",
+      "executed_test_count": 0,
+      "exit_code": 101,
+      "failure_causes": [
+        "Incomplete sparse source materialization omitted tracked qualification/neuron-v13-generation/proposal_worker.py.",
+        "Actual source error: ambiguous assert_eq macro in learning_iteration_profile_tests.rs; compilation failed before tests."
+      ],
+      "files": [
+        {
+          "encoding": "identity",
+          "file": "native-v2/result.json",
+          "raw_bytes": 12026,
+          "raw_bytes_unchanged": true,
+          "raw_sha256": "a7476c379b75f18017531f72bea437b1eb6f40e456c01fb05d3e9c6eeab5a476",
+          "source_basename": "result.json",
+          "stored_bytes": 12026
+        },
+        {
+          "encoding": "identity",
+          "file": "native-v2/native-controls.stdout",
+          "raw_bytes": 14114,
+          "raw_bytes_unchanged": true,
+          "raw_sha256": "bc5314441729d26f4d0f3345ff03b582a052e41e2877b2e6d2e8ec7c3d4705d2",
+          "source_basename": "native-controls.log",
+          "stored_bytes": 14114
+        }
+      ],
+      "native_junit_available": false,
+      "selected_test_count": 39,
+      "source_unchanged_during_attempt": true,
+      "status": "BUILD_FAILED_NO_TEST_EXECUTION",
+      "working_tree_materialization_complete": false
+    },
+    {
+      "agentd_test_execution_started": false,
+      "attempt": "windows-f6247",
+      "declared_source_commit": "f6247df765bb82d18247ed7d492635d09d2bb403",
+      "failed_step_number": 8,
+      "failed_step_scope": "Agentd compilation",
+      "failure_causes": [
+        "Rust E0659: ambiguous assert_eq macro."
+      ],
+      "files": [
+        {
+          "connector_decoded_utf8_bytes_unchanged": true,
+          "encoding": "connector-decoded-utf8",
+          "file": "windows-f6247/job128724143747.stdout",
+          "github_transport_raw_bytes_claimed": false,
+          "raw_bytes": 228811,
+          "raw_bytes_unchanged": true,
+          "raw_sha256": "25e10038492bf8a16d9d2342d39e33a90f38ced9b9646e8a437d1dec8a8dc411",
+          "source_basename": "windows-f6247-job128724143747.log",
+          "stored_bytes": 228811
+        }
+      ],
+      "github_job_id": "128724143747",
+      "github_job_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/42478192065/job/128724143747",
+      "github_run_id": "42478192065",
+      "github_run_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/42478192065",
+      "preceding_workflow_steps_executed": "Contract and path checks already ran; this entry does not infer a zero-test entire workflow.",
+      "status": "AGENTD_COMPILATION_FAILED",
+      "workflow_executed_test_count": "NOT_INFERRED",
+      "workflow_zero_tests_claimed": false
+    }
+  ],
+  "byte_offsets_refer_to": "uncompressed original raw log bytes",
+  "production_final_use_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "raw_logs_preserved": true,
+  "schema": "trnm-cell-learning-failed-native-attempts-v1",
+  "scope": "failed-engineering-build-attempts-not-native-test-passes",
+  "selected_test_registry_sha256": "70c73f29515e30588203a1fba9d78741ba8f27f376a78537485a42d5216c8855",
+  "transport_decoding_boundaries_recorded": true
+}

@@ -1,0 +1,71 @@
+{
+  "schema": "w1-public-schedule-fresh-complete-abba-v1",
+  "qualification": "HOLD_NO_GO",
+  "scope": "Complete new prepare/prove/verify process chain on preconstructed raw/prefix fixtures; no mining/search, production Node, global cost, NI or PQ claim",
+  "result": "PASS",
+  "completed_full_proofs": 8,
+  "distinct_input_tasks": 2,
+  "source_binaries_and_inputs_unchanged": true,
+  "observed_medians": {
+    "all": {
+      "A": {
+        "count": 4,
+        "pipeline_outer_s": 14.5193950535,
+        "pipeline_peak_rss_kib": 2035728.0,
+        "transmitted_bytes": 5187028.0,
+        "prepare_outer_s": 0.1651670375,
+        "prove_outer_s": 12.834679348,
+        "verify_outer_s": 0.972320643
+      },
+      "B": {
+        "count": 4,
+        "pipeline_outer_s": 11.862382255,
+        "pipeline_peak_rss_kib": 1463658.0,
+        "transmitted_bytes": 3978068.0,
+        "prepare_outer_s": 0.1653441655,
+        "prove_outer_s": 10.377300196499998,
+        "verify_outer_s": 1.0685001415
+      }
+    },
+    "retained": {
+      "A": {
+        "count": 2,
+        "pipeline_outer_s": 15.171203795,
+        "pipeline_peak_rss_kib": 2035728.0,
+        "transmitted_bytes": 5187252.0,
+        "prepare_outer_s": 0.7919371595,
+        "prove_outer_s": 13.4112691845,
+        "verify_outer_s": 0.967997451
+      },
+      "B": {
+        "count": 2,
+        "pipeline_outer_s": 12.889063205,
+        "pipeline_peak_rss_kib": 1464030.0,
+        "transmitted_bytes": 3978100.0,
+        "prepare_outer_s": 0.41612067550000004,
+        "prove_outer_s": 11.4540844225,
+        "verify_outer_s": 1.018858107
+      }
+    },
+    "dense": {
+      "A": {
+        "count": 2,
+        "pipeline_outer_s": 13.8694737785,
+        "pipeline_peak_rss_kib": 2034870.0,
+        "transmitted_bytes": 5186804.0,
+        "prepare_outer_s": 0.089790378,
+        "prove_outer_s": 12.807205003,
+        "verify_outer_s": 0.9724783975
+      },
+      "B": {
+        "count": 2,
+        "pipeline_outer_s": 10.582560131,
+        "pipeline_peak_rss_kib": 1463658.0,
+        "transmitted_bytes": 3978036.0,
+        "prepare_outer_s": 0.1651259545,
+        "prove_outer_s": 9.348873592499999,
+        "verify_outer_s": 1.068560584
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schema": "throughput-named-execution-readback-v1",
+  "test": "pon_executor::repeated_sender_tests::repeated_sender_complete_block_cost_observation",
+  "records": [
+    {
+      "label": "repeated-sender-cost",
+      "log_sha256": "e1d80792f06b67464031aa06dfd2e4107211b1b81bd7b889bc20a9244b38ae6a",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "required-native-test: expected exactly one test invocation\n",
+      "named_execution_qualified": false,
+      "disposition": "Initial mistaken module selector executed zero tests; command exit zero is not execution qualification. Retained and superseded by fully qualified selector."
+    },
+    {
+      "label": "repeated-sender-cost-exact-selector",
+      "log_sha256": "f8d965f650b47a9c36629f8f4c88029de09c49333b4c2f36676d63a90f637209",
+      "exit_code": 0,
+      "stdout": "{\"executed_tests\": 1, \"result\": \"PASS\", \"scope\": \"named-libtest-execution-only\", \"test\": \"pon_executor::repeated_sender_tests::repeated_sender_complete_block_cost_observation\"}\n",
+      "stderr": "",
+      "named_execution_qualified": true,
+      "disposition": "One intended ignored test executed"
+    }
+  ],
+  "source": "a9efd4cba7546a8ef1e854ee0acdce9f5903ac2d"
+}

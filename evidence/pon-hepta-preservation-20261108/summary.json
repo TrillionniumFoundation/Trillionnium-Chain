@@ -1,0 +1,184 @@
+{
+  "tested_commit": "91dd3082633ea0b3a5ec9b0ed91f28603229be01",
+  "results": [
+    {
+      "label": "preflight",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "preflight.json",
+      "elapsed_ns": 16123659612
+    },
+    {
+      "label": "graph-default",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "graph-default.json",
+      "elapsed_ns": 16327693138
+    },
+    {
+      "label": "graph-all-features",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "graph-all-features.json",
+      "elapsed_ns": 16197036561
+    },
+    {
+      "label": "service-settlement",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "service-settlement.json",
+      "elapsed_ns": 66275708857
+    },
+    {
+      "label": "crypto-library",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "crypto-library.json",
+      "elapsed_ns": 223357295780
+    },
+    {
+      "label": "grouped-session",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "grouped-session.json",
+      "elapsed_ns": 52924202497
+    },
+    {
+      "label": "grouped-cli-build",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "grouped-cli-build.json",
+      "elapsed_ns": 37650281170
+    },
+    {
+      "label": "grouped-cross-language",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "grouped-cross-language.json",
+      "elapsed_ns": 24153879608
+    },
+    {
+      "label": "legal-optimizations",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "legal-optimizations.json",
+      "elapsed_ns": 16115369449
+    },
+    {
+      "label": "factor-reference",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "factor-reference.json",
+      "elapsed_ns": 15961421581
+    },
+    {
+      "label": "service-no-update-reference",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "service-no-update-reference.json",
+      "elapsed_ns": 25037827308
+    },
+    {
+      "label": "node-payment-integration",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "node-payment-integration.json",
+      "elapsed_ns": 540932925665
+    },
+    {
+      "label": "strict-workspace-clippy",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "strict-workspace-clippy.json",
+      "elapsed_ns": 357045468055
+    },
+    {
+      "label": "workspace-format",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "workspace-format.json",
+      "elapsed_ns": 52476464660
+    },
+    {
+      "label": "source-integrity-controls",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "source-integrity-controls.json",
+      "elapsed_ns": 100222583898
+    },
+    {
+      "label": "ci-contract-controls",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "ci-contract-controls.json",
+      "elapsed_ns": 71096287218
+    },
+    {
+      "label": "corpus-controls",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "corpus-controls.json",
+      "elapsed_ns": 111845383125
+    },
+    {
+      "label": "ci-contract",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "ci-contract.json",
+      "elapsed_ns": 35669612667
+    },
+    {
+      "label": "source-inventory",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "source-inventory.json",
+      "elapsed_ns": 21440090575
+    },
+    {
+      "label": "corpus-identity",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "corpus-identity.json",
+      "elapsed_ns": 20785720373
+    },
+    {
+      "label": "repository-links",
+      "recorder_exit_code": 0,
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": "repository-links.json",
+      "elapsed_ns": 39537936885
+    },
+    {
+      "label": "repository-controls",
+      "recorder_exit_code": 1,
+      "status": "command_failed",
+      "exit_code": 1,
+      "receipt": "repository-controls.json",
+      "elapsed_ns": 43372779225
+    }
+  ],
+  "complete": true,
+  "all_commands_succeeded": false,
+  "production_activation": false
+}

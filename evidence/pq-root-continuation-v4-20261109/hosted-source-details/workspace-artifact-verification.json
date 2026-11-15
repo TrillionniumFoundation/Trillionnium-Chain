@@ -1,0 +1,114 @@
+{
+  "artifact_id": 13657159624,
+  "source": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+  "zip_bytes": 72858,
+  "zip_sha256": "248ae39a225e13b10921558df31a9462f92f5b3a85df9cad327bad347d99ed1e",
+  "github_digest_verified": true,
+  "members": [
+    {
+      "name": "build-artifact-check.exit",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "name": "build-artifact-check.stderr",
+      "bytes": 142,
+      "sha256": "3761d78e01cb83ac846d581940192ac623db2cf296913f2ab0c970520bd664cf"
+    },
+    {
+      "name": "build-artifact-check.json",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "build-command.json",
+      "bytes": 2028,
+      "sha256": "7036c20c2f1452d6af0267b75639ba74914c7a85aff099e04eac890437db5f86"
+    },
+    {
+      "name": "build-input-check.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "name": "build-input-check.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "build-input-check.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "build-space-after.txt",
+      "bytes": 89,
+      "sha256": "61928cd6da8b6c707583411ec8856e2e00052ab34df202cab6e6354309b7c660"
+    },
+    {
+      "name": "build-space-before.txt",
+      "bytes": 89,
+      "sha256": "da35937633a6e711d9339aeff881cc8742bf1bdf3e37bee3c7204a939a40831c"
+    },
+    {
+      "name": "build.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "name": "build.jsonl",
+      "bytes": 561506,
+      "sha256": "57ba13ab061de45612f95764a733d19a903591e3e81ca113ade83d8ae8bea84f"
+    },
+    {
+      "name": "build.resources.txt",
+      "bytes": 893,
+      "sha256": "ab44a9383b03c00a3b83c2b75609da7b0331d70874cd2c59ba40685381394621"
+    },
+    {
+      "name": "build.stderr",
+      "bytes": 10409,
+      "sha256": "931d9456827fab419c76dc7d4f0e88db41529bdb4dafa999b34d30ead115e6e3"
+    },
+    {
+      "name": "cargo.txt",
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    {
+      "name": "host.txt",
+      "bytes": 128,
+      "sha256": "2437786a005300b4d25ddff7c65a91bdfe873d85b22086b4a7b863f333197732"
+    },
+    {
+      "name": "pq-provider/build-and-smoke.log",
+      "bytes": 1176820,
+      "sha256": "871baaa6724ca3825153265741c26134263d7b97c7cb3b2302c600f14e86f290"
+    },
+    {
+      "name": "pq-provider/provider.json",
+      "bytes": 2699,
+      "sha256": "85c7a52992eed85277c5d9a508f69e231dac7811868d8883d4b9e67b10f11628"
+    },
+    {
+      "name": "rustc-path.txt",
+      "bytes": 74,
+      "sha256": "d0193700af7f567877ce9dbc20f915552972e146926733da26ae3fe0e363efcc"
+    },
+    {
+      "name": "rustc.txt",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "name": "source-after.json",
+      "bytes": 423,
+      "sha256": "cfd69e7d5152622f27c873d96abcdbbfea89c20ae217e0aabb45548ca63e8cf8"
+    },
+    {
+      "name": "source-before.json",
+      "bytes": 423,
+      "sha256": "cfd69e7d5152622f27c873d96abcdbbfea89c20ae217e0aabb45548ca63e8cf8"
+    }
+  ]
+}

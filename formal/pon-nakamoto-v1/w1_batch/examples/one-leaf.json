@@ -1,0 +1,9 @@
+{
+  "schema": "TRNM-W1-BATCH-EXPERIMENT1",
+  "leaves": [
+    {
+      "header": "../../../../evidence/pon-w1-complete-succinct-20261028/full-proof/header.bin",
+      "receipt": "../../../../evidence/pon-w1-complete-succinct-20261028/full-proof/succinct.bin"
+    }
+  ]
+}

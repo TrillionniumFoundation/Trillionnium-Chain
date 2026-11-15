@@ -1,0 +1,3 @@
+   Compiling trnm-w1-v2-verifier v0.1.0 (/workspace/scratch/79360d3567d1/chain/formal/pon-nakamoto-v1/w1_v2_verifier)
+    Finished `release` profile [optimized + debuginfo] target(s) in 9.54s
+     Running unittests src/main.rs (/workspace/scratch/79360d3567d1/target-verifier/release/deps/w1_verify_v2-f8ff2e47affba4da)

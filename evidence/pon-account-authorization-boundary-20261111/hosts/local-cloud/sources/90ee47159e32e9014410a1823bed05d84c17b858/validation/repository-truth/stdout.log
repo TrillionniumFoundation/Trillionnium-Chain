@@ -1,0 +1,3511 @@
+{"result": "PASS", "mode": "--audit", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-hepta-closure-candidate-20261109-481716", "remote_policy_mutated": false}
+{"actual_lifetime_failure_bound": null, "all_declared_assumptions_assumed": false, "allocated_sum": {"denominator": "340282366920938463463374607431768211456", "numerator": "1"}, "assumptions": [{"id": "experiment_complete", "statement": "Pin protected outcomes, finite lifetime/stopping rule, initial state/advice and the full adaptive adversary experiment.", "status": "unmet"}, {"id": "implementation_refinement", "statement": "Establish that every effect-bearing native implementation refines its complete specified relation and authorization contract.", "status": "unmet"}, {"id": "independent_custody", "statement": "Specify independently administered custody, compromise and external witness assumptions; no numerical common-mode failure model is established.", "status": "unmet"}, {"id": "network_and_consensus", "statement": "Qualify the W1 work, branch DAA, timestamp, chainweight, adversary resource and network model jointly.", "status": "unmet"}, {"id": "preprocessing_and_advice", "statement": "Specify construction-correlated classical/quantum initial advice and its preprocessing cost or a valid advice-based tradeoff.", "status": "unmet"}, {"id": "adversary_resource_bound", "statement": "Establish or explicitly assume total adversary resources including offline, rejected, failed, unpublished and helper work; node logs cannot establish this.", "status": "unmet"}, {"id": "shared_oracle_instantiation", "statement": "Map every hash use, actual construction and oracle interface jointly; include any model-replacement error and simulator/extractor overhead.", "status": "unmet"}, {"id": "whole_chain_coverage", "statement": "Prove that all protected whole-chain bad outcomes reduce to the registered terms, including cross-owner failures.", "status": "unmet"}, {"id": "independent_review", "statement": "Independently review exact theorem versions, parameter/profile bindings, reductions and implementation evidence.", "status": "unmet"}], "composition_coverage_proved": false, "experiment": {"horizon": "UNSPECIFIED: no finite deployment lifetime or stopping rule is qualified; include prior preprocessing and surviving authority after retirement.", "id": "trnm-pq128-proposed-lifetime-experiment-v1", "model": "quantum-adaptive-lifetime", "profile": "pon-nakamoto-v1-pq-research-native-pnw1", "source_revision": "077ac4f33206de00a178553d9a0c729a20685088"}, "manifest_sha256": "e70ed3f9ef266f330bae12cc37f8f37ad544e522fcca3a32e69db1d5552ffef7", "model_arithmetic_sum": null, "note": "Exact arithmetic over declared inputs only. References, source hashes and node logs do not prove a PQ128 security claim; no unconditional bound or activation is produced.", "obligations": [{"obligation": "Prove the complete whole-chain bad-event reduction, including shared-model replacement/hybrid errors; the eight audit categories alone do not establish coverage.", "term_id": null}, {"obligation": "Independently establish applicability of each theorem to the pinned implementation and the common adaptive quantum experiment, including legal auxiliary quantum states and preprocessing.", "term_id": null}, {"obligation": "Discharge external assumptions; unmodeled implementation failures and simultaneous custodian compromise have no invented probability.", "term_id": null}, {"obligation": "Concrete quantum multi-user/multi-message forgery bound is not instantiated.", "term_id": "signature-lifetime-unqualified"}, {"obligation": "Map all key epochs, signing/verification interfaces and contextual authority entrypoints; NIST categories do not supply epsilon.", "term_id": "signature-lifetime-unqualified"}, {"obligation": "Complete per-purpose encoding, binding and actual shared-hash construction mapping is missing.", "term_id": "commitment-lifetime-unqualified"}, {"obligation": "Include preprocessing/advice, multi-target dimensions and joint model replacement; an unrestricted compressor attack is not a complete W1 forgery.", "term_id": "commitment-lifetime-unqualified"}, {"obligation": "Native PNW1 relation-to-implementation and complete input binding need independent qualification.", "term_id": "proof-lifetime-unqualified"}, {"obligation": "Any separate succinct backend needs its own exact PCS/Fiat-Shamir/recursive quantum proof; no P3 or RISC0 component estimate is imported.", "term_id": "proof-lifetime-unqualified"}, {"obligation": "Cheapest legal quantum strategy and actual resource-to-query reduction remain open.", "term_id": "ledger-lifetime-unqualified"}, {"obligation": "Specify network, resource, stopping/confirmation rule and adaptive branch history together; correct W1 evaluation is not a work-cost lower bound.", "term_id": "ledger-lifetime-unqualified"}, {"obligation": "Concrete composed KEM/authentication/session game and actual deployed interfaces are not qualified.", "term_id": "transport-lifetime-unqualified"}, {"obligation": "Include failed sessions, identity selection, replay/eclipsing and verifier-resource assumptions; do not substitute observed sessions for all adversary queries.", "term_id": "transport-lifetime-unqualified"}, {"obligation": "Full-state recovery/migration and independent monotonic witness assumptions remain unproved.", "term_id": "recovery-lifetime-unqualified"}, {"obligation": "Retain consumed effects, revoked generations and unknown-provider effects across chain reorg and full-machine rollback; no invented custody-failure probability.", "term_id": "recovery-lifetime-unqualified"}, {"obligation": "Independent root/quorum/revocation and current loaded-byte FinalUse composition are not qualified.", "term_id": "release-lifetime-unqualified"}, {"obligation": "A historical valid signature or successful download does not prove current execution authority or actual model use.", "term_id": "release-lifetime-unqualified"}, {"obligation": "Complete cross-owner refinement, independent evaluation/custody and external effect binding remain unqualified.", "term_id": "application-lifetime-unqualified"}, {"obligation": "Separate implementation and trust assumptions from probabilistic cryptographic events; prove coverage and absence of omitted shared-model losses.", "term_id": "application-lifetime-unqualified"}], "partial_arithmetic_sum": {"denominator": "1", "numerator": "0"}, "pq_128_qualified": false, "production_activation": false, "purpose": "research-model", "schema": "trnm-pq128-lifetime-budget-result-v1", "source_binding_scope": "declared-event-paths-only", "source_files_sha256": {"trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03", "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b", "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37", "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5", "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915", "trillionnium/crates/trnm-data-availability/src/cell/pq.rs": "7326da0ad2c31fe599300d928fde84129ce83de0b072ef3bb46799d424aca3eb", "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs": "c26d0f9838628a0a254e803f231dee8781c31899b2d5de6f7e9f8b18af3aec3d", "trillionnium/crates/trnm-pon-node/src/consensus.rs": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62", "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs": "8146d8bc6a759246098d3c67040839364248b95ba54309f21d72805b31019617", "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": "090c13700baf9ed945a4aa86519f1d4df85105ef1064addd73de2acb025d9a45", "trillionnium/crates/trnm-pon-node/src/store.rs": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca", "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs": "14f10ec0fa8a4c6cd017b79f72f6fd2a2dafec6002ddfbffe34fd455bfdf3ab5", "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": "eb17390e1d16fe7fa82c773c0ed81004374687469f6081a2ad5ce9bd7d87ac9b", "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs": "06b4c988f921b03c6f20134bdc5130fbd7db18bec6f291bfd289de52c81087e6", "trillionnium/crates/trnm-service-settlement/src/native_budget.rs": "1fd964a4bfb3dec372c04a32853d9b08a3b80773d3182099d80705ab916ace38"}, "source_lock_sha256": "8489c8a862e8801aa385006a600708a521e16e5c6f5afbf0a1f88ed84bffa655", "source_paths": ["trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs", "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs", "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs", "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs", "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs", "trillionnium/crates/trnm-data-availability/src/cell/pq.rs", "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs", "trillionnium/crates/trnm-pon-node/src/consensus.rs", "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs", "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs", "trillionnium/crates/trnm-pon-node/src/store.rs", "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs", "trillionnium/crates/trnm-release-bundle/src/pq_release.rs", "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs", "trillionnium/crates/trnm-service-settlement/src/native_budget.rs"], "source_revision_bound": true, "status": "HOLD", "target": {"denominator": "340282366920938463463374607431768211456", "numerator": "1"}, "target_met_under_declared_bounds": null, "term_results": [{"allocation": {"denominator": "2722258935367507707706996859454145691648", "numerator": "1"}, "covers": ["signature"], "declared_lifetime_term": null, "id": "signature-lifetime-unqualified", "input_status": "unknown", "multiplier": "1", "proof_verified": false, "scope": "whole-lifetime", "theorem": null, "within_allocation": null}, {"allocation": {"denominator": "2722258935367507707706996859454145691648", "numerator": "1"}, "covers": ["commitment"], "declared_lifetime_term": null, "id": "commitment-lifetime-unqualified", "input_status": "unknown", "multiplier": "1", "proof_verified": false, "scope": "whole-lifetime", "theorem": null, "within_allocation": null}, {"allocation": {"denominator": "2722258935367507707706996859454145691648", "numerator": "1"}, "covers": ["proof"], "declared_lifetime_term": null, "id": "proof-lifetime-unqualified", "input_status": "unknown", "multiplier": "1", "proof_verified": false, "scope": "whole-lifetime", "theorem": null, "within_allocation": null}, {"allocation": {"denominator": "2722258935367507707706996859454145691648", "numerator": "1"}, "covers": ["ledger"], "declared_lifetime_term": null, "id": "ledger-lifetime-unqualified", "input_status": "unknown", "multiplier": "1", "proof_verified": false, "scope": "whole-lifetime", "theorem": null, "within_allocation": null}, {"allocation": {"denominator": "2722258935367507707706996859454145691648", "numerator": "1"}, "covers": ["transport"], "declared_lifetime_term": null, "id": "transport-lifetime-unqualified", "input_status": "unknown", "multiplier": "1", "proof_verified": false, "scope": "whole-lifetime", "theorem": null, "within_allocation": null}, {"allocation": {"denominator": "2722258935367507707706996859454145691648", "numerator": "1"}, "covers": ["recovery"], "declared_lifetime_term": null, "id": "recovery-lifetime-unqualified", "input_status": "unknown", "multiplier": "1", "proof_verified": false, "scope": "whole-lifetime", "theorem": null, "within_allocation": null}, {"allocation": {"denominator": "2722258935367507707706996859454145691648", "numerator": "1"}, "covers": ["release"], "declared_lifetime_term": null, "id": "release-lifetime-unqualified", "input_status": "unknown", "multiplier": "1", "proof_verified": false, "scope": "whole-lifetime", "theorem": null, "within_allocation": null}, {"allocation": {"denominator": "2722258935367507707706996859454145691648", "numerator": "1"}, "covers": ["application"], "declared_lifetime_term": null, "id": "application-lifetime-unqualified", "input_status": "unknown", "multiplier": "1", "proof_verified": false, "scope": "whole-lifetime", "theorem": null, "within_allocation": null}], "theorem_applicability_verified": false, "unknown_query_budgets": ["sha256", "sha512", "shake128", "shake256"], "unknown_terms": ["signature-lifetime-unqualified", "commitment-lifetime-unqualified", "proof-lifetime-unqualified", "ledger-lifetime-unqualified", "transport-lifetime-unqualified", "recovery-lifetime-unqualified", "release-lifetime-unqualified", "application-lifetime-unqualified"], "whole_chain_pq_qualified": false}
+{"call_graph_proved": false, "coverage_complete": false, "curated_routes_checked": 7, "manifest_sha256": "7686475ebf7751095d56fe92f911eac3ca99ba52f8a3b59f7633242dca72a256", "native_tests_executed": false, "production_activation": false, "provenance_authenticated": false, "reviewed_source_lock_sha256": "d9b9f94cfd7cfed46784c22eb6ee8ec865460bdfb587948874d4c9c498832350", "routes": [{"authentication_sources": ["trillionnium/crates/trnm-data-availability/src/cell/discovery.rs", "trillionnium/crates/trnm-data-availability/src/types.rs"], "effect_scope": "provider-directory-and-content-cache-only", "entry_sources": ["trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-discovery.rs", "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs"], "id": "cell_discovery_v1_fetch_cache", "negative_test_sources": ["trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs", "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs"], "profile_boundary": "explicit-v1-v2-cli-wire-and-directory-selection", "profile_sources": ["trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-discovery.rs", "trillionnium/crates/trnm-data-availability/src/bin/unix/pq.rs", "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs", "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs", "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs", "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/transport.rs"], "reachability_observation": "cli-transport-store-file-source-connection", "state_or_effect_sources": ["trillionnium/crates/trnm-data-availability/src/cell/discovery/directory.rs", "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs", "trillionnium/crates/trnm-data-availability/src/cell/network.rs", "trillionnium/crates/trnm-data-availability/src/cell/store.rs"]}, {"authentication_sources": ["trillionnium/crates/trnm-types/src/transfer.rs"], "effect_scope": "validation-result-only", "entry_sources": ["trillionnium/crates/trnm-types/src/transfer.rs", "trillionnium/crates/trnm-types/src/lib.rs"], "id": "compat_transfer_type_v1", "negative_test_sources": ["trillionnium/crates/trnm-types/src/transfer.rs"], "profile_boundary": "classic-type-without-a-selected-node-profile", "profile_sources": [], "reachability_observation": "no-in-repository-native-consumer-found", "state_or_effect_sources": []}, {"authentication_sources": ["trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs", "trillionnium/crates/trnm-research-protocol/src/state.rs"], "effect_scope": "owner-context-comparison-only", "entry_sources": ["trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs"], "id": "hepta_admission_compare_v1", "negative_test_sources": ["trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs", "trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs"], "profile_boundary": "classical-v1-and-separate-pq-v2-comparators", "profile_sources": ["trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs", "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs"], "reachability_observation": "comparison-result-no-final-use-consumer-found", "state_or_effect_sources": []}, {"authentication_sources": ["trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs", "trillionnium/crates/trnm-crypto-primitives/src/lib.rs"], "effect_scope": "native-account-state-and-node-persistence", "entry_sources": ["trillionnium/crates/trnm-protocol/src/pon_wire.rs", "trillionnium/crates/trnm-pon-node/src/ingress.rs", "trillionnium/crates/trnm-pon-node/src/store.rs"], "id": "native_pnx1_account_transfer", "negative_test_sources": ["trillionnium/crates/trnm-mvcc-fee/tests/pq_account_owner.rs", "trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs", "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs", "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs"], "profile_boundary": "distinct-pq-account-and-network-owner-selection", "profile_sources": ["trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs", "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts.rs", "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs", "trillionnium/crates/trnm-pon-node/src/ingress.rs", "trillionnium/crates/trnm-pon-node/src/public_submit.rs"], "reachability_observation": "native-owner-source-connection", "state_or_effect_sources": ["trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs", "trillionnium/crates/trnm-pon-node/src/store.rs"]}, {"authentication_sources": ["trillionnium/crates/trnm-service-settlement/src/engine.rs", "trillionnium/crates/trnm-service-settlement/src/types.rs"], "effect_scope": "portable-settlement-store-only", "entry_sources": ["trillionnium/crates/trnm-service-settlement/src/store.rs"], "id": "portable_consumption_settlement_v1", "negative_test_sources": ["trillionnium/crates/trnm-service-settlement/src/tests.rs"], "profile_boundary": "fixed-classical-bilateral-signature-schema", "profile_sources": ["trillionnium/crates/trnm-service-settlement/src/types.rs"], "reachability_observation": "portable-kernel-no-native-consumer-found", "state_or_effect_sources": ["trillionnium/crates/trnm-service-settlement/src/engine.rs", "trillionnium/crates/trnm-service-settlement/src/store.rs"]}, {"authentication_sources": ["formal/release-finality-v2/verify_certificate.py", "formal/pon-nakamoto-v1/strict_signature.py", "trillionnium/crates/trnm-pon-node/src/release_finality.rs", "trillionnium/crates/trnm-crypto-primitives/src/lib.rs"], "effect_scope": "read-only-certificate-facts", "entry_sources": ["formal/release-finality-v2/verify_certificate.py", "trillionnium/crates/trnm-pon-node/src/release_finality.rs"], "id": "reference_release_finality_v2_observer", "negative_test_sources": ["trillionnium/crates/trnm-pon-node/tests/release_finality_v2.rs"], "profile_boundary": "classical-reference-profile-without-activation", "profile_sources": ["config/release-finality-v2.json", "formal/release-finality-v2/protocol.py"], "reachability_observation": "reference-and-native-read-only-observation", "state_or_effect_sources": []}, {"authentication_sources": ["trillionnium/crates/trnm-research-protocol/src/command.rs", "trillionnium/crates/trnm-research-protocol/src/state.rs"], "effect_scope": "research-protocol-state-only", "entry_sources": ["trillionnium/crates/trnm-research-protocol/src/command.rs", "trillionnium/crates/trnm-research-protocol/src/state.rs"], "id": "research_command_state_v1", "negative_test_sources": ["trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs", "trillionnium/crates/trnm-research-protocol/tests/protocol_v1/security_cases.rs"], "profile_boundary": "fixed-classical-research-command-schema", "profile_sources": ["trillionnium/crates/trnm-research-protocol/src/command.rs"], "reachability_observation": "local-state-machine-no-native-consumer-found", "state_or_effect_sources": ["trillionnium/crates/trnm-research-protocol/src/state.rs"]}], "runtime_reachability_proved": false, "schema": "trnm-pq-authority-effects-result-v1", "scope": "curated-source-consistency-only", "source_consistency": "PASS", "source_files_sha256": {"config/release-finality-v2.json": "e845063344f5245296e4e3483f8158a56d6084f8385bfefd9707ff4d10e3cfe8", "formal/pon-nakamoto-v1/strict_signature.py": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e", "formal/release-finality-v2/protocol.py": "f91a5e61ce796217a7ea862cfcc8ceb0369a5512280b113b21175fd65618f961", "formal/release-finality-v2/verify_certificate.py": "11a734fb9c3a6931f801a5d4a97ba45aae5b6310b07016d94d0673397d720169", "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "74f11c99984a0c199f6b1a882206dc887440a3c69668dd3833054eb0e98fd32c", "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-discovery.rs": "16d3b164f80c0e22e2457bb99291e901a4dc30aa7e7a0fa636713e6a80d91fe2", "trillionnium/crates/trnm-data-availability/src/bin/unix/pq.rs": "4dbf789d4b56036042c2562f52c39285511c7a077416ea8d25bc43e55abee303", "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs": "5459086595bdaedcd1f74881b51a4b14eb83524948a1a2c05a36cc5b37b1943f", "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory.rs": "b3913d57df8ff8f779633b92d28f41a2e703f330272087abbf3ade1b88d8a854", "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": "e51a5e9777578dfa378dbd17db3d79850822c5a5da31dbc99b11936f0cbd48c1", "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs": "81513ddc42841478c1a9380e47fdf28586bf57ed88ca76f5acc0907bde3a452c", "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs": "8ce505a7d2e8909fc4169d271ee3a9caba05fad873f0af7ecc2543a2fc8a9fec", "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/transport.rs": "2a304727c6f7bc81898d839579e2e7f5961d146cb75a372697f8f1b4b0262a05", "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "e01a83b518933310f16f19b4dae63f00813e4244975e4a4805a918bc87145554", "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs": "97b0d3392d922bc2a5f62f38204a4b0157f49029dd61759ce69611867fc2d0b3", "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "45b50bff63873c4897fca011fc009b229af618d5cc9e0cd8dcc14da5387d97db", "trillionnium/crates/trnm-data-availability/src/cell/store.rs": "b3f1f62fcc984ffdbdbb8118dc6df8094bc62fba57fcde109a32133a62b54330", "trillionnium/crates/trnm-data-availability/src/types.rs": "9251274c47edc1ddc5fef34c0130f5341d6977681a4e07c2eab89a235c6d55f1", "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": "30c367d0a8e9c7339f26b00606d9cd8bf3e34dd801ff23875c4c0b9ae5c24c2c", "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts.rs": "1254678a5f4db4b7b7e6aa7c97bc6c6baca74cb663b65acc1593f4786f7287c5", "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d", "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs": "c4b6248c8cee8d2ad31110fcc6e87e9d6306fdf34981c0a428341b5f9c3b6751", "trillionnium/crates/trnm-mvcc-fee/tests/pq_account_owner.rs": "3d4381aba6850515fb947f44591fa1f543ddc1588c5f5668c1ac4d22493a6827", "trillionnium/crates/trnm-pon-node/src/ingress.rs": "7a0ea0cc4a000a693d94faa43b6acf8541cf1f8965f9fe837d01e7d757a0bee7", "trillionnium/crates/trnm-pon-node/src/public_submit.rs": "11fb84b1c7c7ab4e0f31723c5f708d0d5042dc080712fe899a632b6edc573a5a", "trillionnium/crates/trnm-pon-node/src/release_finality.rs": "5a70f3985c511a5bec6b107e9184ea5f5a6f533aa4be647b9ced23be0b7232df", "trillionnium/crates/trnm-pon-node/src/store.rs": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca", "trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs": "2b70c0c0aa2ff27ebd951590faf34125cb878b0e6d1a5e4c35fbcc59f855c10d", "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs": "c38fd34412d955f04add458c91873a7fd7421171c3d64b5829ee5a3a4d51cdd6", "trillionnium/crates/trnm-pon-node/tests/release_finality_v2.rs": "d34da033529f65c73ae687d8436f338963883f3139350429ac2b65d2b923fe1f", "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b", "trillionnium/crates/trnm-research-protocol/src/command.rs": "675c819160a7d8c7de56f5084bf187c576fe8365ff22da062e1c030919173ca5", "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs": "a54d725aa5116ed050e18655f1578fef193ed98faf38bd61c7d7a97ecfe1f9a5", "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs": "06b4c988f921b03c6f20134bdc5130fbd7db18bec6f291bfd289de52c81087e6", "trillionnium/crates/trnm-research-protocol/src/state.rs": "3904a1b3184a0a32bf77df4dc573579bf1cee75ae1e095361588c774af34e7c6", "trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs": "6665ee6f7f8cd2f301ae16025b3dfb0ce90248e8bd8e4b2b5c1a5d2fbdbefacb", "trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs": "0bd5c2eafa0cf0631d7da67e6b5d2851a7dddf36d47ca571fb9e9bf97d2e8711", "trillionnium/crates/trnm-research-protocol/tests/protocol_v1/security_cases.rs": "6f2bde4430b55d9d79ecf9e0733599cbcd95c6411af59a7bb48daf830624d809", "trillionnium/crates/trnm-service-settlement/src/engine.rs": "a0f54594849d850efe342765df24223df3cf859d01c6ac9eb273e4d3455efc22", "trillionnium/crates/trnm-service-settlement/src/store.rs": "c990cfc2e1267d681633de6c99387c9074348b621ab51cafd956dd2c47db846b", "trillionnium/crates/trnm-service-settlement/src/tests.rs": "209aec0e8974b1c276b4ac88a892138027f8059c47407918c69eb264bdc87663", "trillionnium/crates/trnm-service-settlement/src/types.rs": "002c1fd3fdc7f04e63d30cde86bd3ca60c87d30c1b0f616e3f64a1fd886a6992", "trillionnium/crates/trnm-types/src/lib.rs": "ab9e48f0e70c44e714394b0455d1d12c5a52f280a4a51f1490525400d2b793d4", "trillionnium/crates/trnm-types/src/transfer.rs": "b707b1f094ee4fa38dfb397877b021ed73ea5bc9d676742d952ef415804985d1"}, "source_revision": "077ac4f33206de00a178553d9a0c729a20685088", "source_revision_binding": "fixed-reviewed-file-lock-only", "status": "HOLD", "whole_chain_pq_qualified": false}
+{"actual_external_effects_verified": false, "actual_lifetime_failure_bound": null, "anchor_independence_verified": false, "composition_coverage_proved": false, "declared_roles": ["root-approval", "successor-possession", "anchor-writer", "anchor-response", "effect-provider"], "declared_source_snapshot_sha256": "54106449c9d83a4b2926429160c8fd340d8004a67502ddf7b1e932df655859f6", "domain_failure_bounds": {"application": null, "commitment": null, "ledger": null, "proof": null, "recovery": null, "release": null, "signature": null, "transport": null}, "hash_use_count": 16, "independent_custody_verified": false, "inventory_contract_satisfied": true, "manifest_sha256": "2064de52b24badefec91c9cb04f5ab7ca445cb4bdf7c66548de44e733ee5c0ef", "native_m15_production_integration_complete": false, "native_readback_candidate_roles": ["effect-provider"], "native_unwired_role_scope": "effect-entry-and-production-owner-not-readback-code", "native_unwired_roles": ["effect-provider"], "note": "Frozen declared-role/source inventory only; no call-graph, deployed-owner, complete dependency, cryptographic reduction or adversary query-cap qualification.", "open_obligations": ["concrete-quantum-multi-user-forgery", "implementation-refinement", "independent-custody", "independently-retained-fresh-anchor", "native-provider-and-effect-owner-integration", "preprocessing-and-initial-advice", "real-external-effect-reconciliation", "resource-and-query-transformations", "shared-oracle-instantiation", "whole-chain-event-coverage"], "operational_refusal_caps_are_adversary_bounds": false, "pq_128_qualified": false, "production_activation": false, "review_base_revision": "be5f047771e4d714726fec41abfa68231a06260b", "schema": "trnm-pq-root-dependency-register-result-v3", "source_binding_scope": "declared-root-component-files-only", "source_file_count": 37, "source_files_checked": true, "source_files_sha256": {"formal/pon-nakamoto-v1/pq_openssl_backend.py": "ac9217a8238ecb5ade4e877670b8f01243b20fe1f231c0eba7fbc1832a8c05c3", "formal/pon-nakamoto-v1/pq_operation_budget.py": "e4bca5d0d47b2d1f41822876df8771ee9b23665d5ea753b53b99562a4e143f4c", "formal/pon-nakamoto-v1/pq_root_effect_readback_v2.py": "dabe1e55940366aa4a344ea130b622f65e6ec6a90492128e7c17045d16c59cfe", "formal/pon-nakamoto-v1/pq_root_recovery_journal_v2.py": "b163c732775bcd79a132462782609fd81008ac30df3b03c5201996411bfc3519", "formal/pon-nakamoto-v1/pq_root_recovery_policy_v1.py": "0060409241ef656831f64be61fbb965347ede7a7e67db465f18da031995bfce9", "formal/pon-nakamoto-v1/pq_root_recovery_signatures_v2.py": "3031dc21e27dd492fa37c17ca4413dae0632f5fbf072f4c5a90c9183021a175f", "scripts/ci/pq_lifetime_budget.py": "eba31bee86b025a55c45cf8a86ad95bb85db1221af9c1ccd38799666e512555e", "scripts/ci/pq_source_reader.py": "b3eb3f23b42c012dc1a5a07daa479db5e2982b2a20006f047552c9f13e1a65cb", "trillionnium/Cargo.lock": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f", "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b", "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3", "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "74f11c99984a0c199f6b1a882206dc887440a3c69668dd3833054eb0e98fd32c", "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs": "2f775934937dc0997579ca43132c3a2aee262103ec66ca4a4be08d3b8f4f93f4", "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs": "9b03c4f4a22175fe183e045bc1a2e25282232a4bb156281970f542e7277ebf1b", "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs": "2b638555857b20c2d1e5888757c0b96612a00c6eec62ebc056acc35ed1659ba1", "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs": "3ae8818e5e805985dd9298ff5ba293c62f06211d5b98e94f679d4b60bc3abb3d", "trillionnium/crates/trnm-pon-node/Cargo.toml": "397ca6c01aec6227f95fa11c9e2ba19da180e953afa5a9cb1dec521d4a171e71", "trillionnium/crates/trnm-pon-node/src/lib.rs": "0b7e076069645bdf502ff4521ea7c1d77b75a64e5137df3527b0cd6e7167c461", "trillionnium/crates/trnm-pon-node/src/release_owner.rs": "350702d2221a3f343c3968174e1ec5ae7b9179f0cf3e372db7d0614ee6784ab6", "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs": "34000f247b1708eaff11bf9e97914c8d805fb65c58c44a4b5d24f3acb3f1a905", "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/anchor.rs": "c3bee91ae17af6c5a67ee7d603e553e82dab38024cc07d230c0a6bf75865d7f2", "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/effect_readback_v4.rs": "23b779c13241d2c6e28b60d94d697017d6e304e68309f8610f062452e43e1a5d", "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/recovery_floor.rs": "af6199f2c6d2392e3292d341aa5a16b7d55be7fb830d85a196c692c809b4600c", "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/storage.rs": "2449be51c9a74b1e3f4eda3bd2c8adb44e80ee3646ff0d02cf9faae59a83a356", "trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs": "3d7508ed5f6a38cdb36fcb3bd3662640d4af91b271592fb636507ab51a8ade5c", "trillionnium/crates/trnm-pon-node/tests/root_budget_v4_native.rs": "adff3dee63a81b67256bf8d97ca92d8a470a0a741bb82a8b110206f2cdf0305a", "trillionnium/crates/trnm-pon-node/tests/root_effect_readback_v4_native.rs": "008e58e14d4e9cbdcf26d1ea22e3d6cfaa7ee0d5b039367df913a335f52b763b", "trillionnium/crates/trnm-pon-node/tests/root_recovery_v3_native.rs": "3e0cc6d167ba846193a1fd06b079333c104168529fc20a611468a6ac8c2e8cea", "trillionnium/crates/trnm-pon-node/tests/support/root_recovery_v3_fixture.rs": "6d0570da659dd93df86f6239814b67178c47afe4dc05f14f38209db582c9a400", "trillionnium/crates/trnm-protocol/Cargo.toml": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc", "trillionnium/crates/trnm-protocol/src/crypto_profile.rs": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a", "trillionnium/crates/trnm-protocol/src/lib.rs": "b965065ca4915d57e61af480ef6cfb8f775465c8ad0e4dec0b2895e110946b86", "trillionnium/crates/trnm-release-bundle/Cargo.toml": "5fde65e85f21d1325b1868004e63f115ec8f48e966495dab6e3fbf9f79205e5e", "trillionnium/crates/trnm-release-bundle/src/lib.rs": "e41410d1151ad6edf17cfa20cf2a592baf9fc23225b78d6596c838fa9445b5ce", "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": "eb17390e1d16fe7fa82c773c0ed81004374687469f6081a2ad5ce9bd7d87ac9b", "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3.rs": "06caa4741b9289c20d4f7cfc7377ad16b64cb10f7ca98fc10fdd0424631b6438", "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3_tests.rs": "9b937bd40c87ef92b0c9ae03c9ec91c73d34307b0d44f6998c6369caddd2efa8"}, "source_revision_bound": false, "status": "HOLD", "theorem_applicability_verified": false, "transitive_dependency_closure_proved": false, "unknown_lifetime_query_budgets": ["sha256", "sha512", "shake128", "shake256"], "unknown_role_lifetime_populations": ["root-approval", "successor-possession", "anchor-writer", "anchor-response", "effect-provider"], "whole_chain_hash_query_scope_closed": false, "whole_chain_pq_qualified": false}
+{"actual_lifetime_failure_bound": null, "anchor_independence_verified": false, "declaration_contract_satisfied": true, "declared_cross_role_shared_domains": [], "declared_inventory_complete": false, "declared_separation_consistent": false, "enrolled_key_binding_verified": false, "evidence_authenticity_verified": false, "evidence_files_checked": true, "evidence_files_sha256": {}, "freshness_source_authenticated": false, "independent_common_restore_exclusion_proved": false, "independent_custody_verified": false, "manifest_sha256": "9cb8f180b8274217dfc166ebcfb561bf643889015f5e853db668b98741e7abe0", "minimum_declared_domains_for_and_quorum": {"anchor": {"backup": null, "device": null, "operator": null, "recovery": null}, "provider": {"backup": null, "device": null, "operator": null, "recovery": null}, "root": {"backup": null, "device": null, "operator": null, "recovery": null}, "writer": {"backup": null, "device": null, "operator": null, "recovery": null}}, "missing_evidence": ["anchor:complete-six-key-roster", "provider:complete-six-key-roster", "recovery-floor:age_policy_ref", "recovery-floor:authenticated_source_ref", "recovery-floor:enrollment", "recovery-floor:external-source", "recovery-floor:head", "recovery-floor:independent_survival_ref", "recovery-floor:recovery_drill_ref", "root:complete-six-key-roster", "writer:complete-six-key-roster"], "observation_scope": "declarations-and-local-file-consistency-only", "production_activation": false, "recovery_floor_installation_authorized": false, "schema": "trnm-pq-root-custody-review-result-v1", "signed_ancestry_verified": false, "single_declared_domain_quorums": [], "status": "HOLD", "whole_chain_pq_qualified": false}
+{"actual_lifetime_failure_bound": null, "availability_independence_verified": false, "cross_axis_control_coverage_verified": false, "custody_v1": {"actual_lifetime_failure_bound": null, "anchor_independence_verified": false, "declaration_contract_satisfied": true, "declared_cross_role_shared_domains": [], "declared_inventory_complete": false, "declared_separation_consistent": false, "enrolled_key_binding_verified": false, "evidence_authenticity_verified": false, "evidence_files_checked": false, "freshness_source_authenticated": false, "independent_common_restore_exclusion_proved": false, "independent_custody_verified": false, "minimum_declared_domains_for_and_quorum": {"anchor": {"backup": null, "device": null, "operator": null, "recovery": null}, "provider": {"backup": null, "device": null, "operator": null, "recovery": null}, "root": {"backup": null, "device": null, "operator": null, "recovery": null}, "writer": {"backup": null, "device": null, "operator": null, "recovery": null}}, "missing_evidence": ["anchor:complete-six-key-roster", "provider:complete-six-key-roster", "recovery-floor:age_policy_ref", "recovery-floor:authenticated_source_ref", "recovery-floor:enrollment", "recovery-floor:external-source", "recovery-floor:head", "recovery-floor:independent_survival_ref", "recovery-floor:recovery_drill_ref", "root:complete-six-key-roster", "writer:complete-six-key-roster"], "observation_scope": "declarations-and-local-file-consistency-only", "production_activation": false, "recovery_floor_installation_authorized": false, "schema": "trnm-pq-root-custody-review-result-v1", "signed_ancestry_verified": false, "single_declared_domain_quorums": [], "status": "HOLD", "whole_chain_pq_qualified": false}, "declaration_contract_satisfied": true, "declared_common_control_coverage": "unprovided", "declared_cross_role_common_groups": [], "declared_cross_role_shared_domains": [], "declared_inventory_complete": false, "declared_separation_consistent": false, "evidence_authenticity_verified": false, "evidence_files_checked": true, "evidence_files_sha256": {}, "independent_common_restore_exclusion_proved": false, "independent_operational_qualification": false, "listed_availability_axis_minimum_to_block_and_quorum": {"anchor": {"network": null, "power": null}, "provider": {"network": null, "power": null}, "root": {"network": null, "power": null}, "writer": {"network": null, "power": null}}, "listed_factor_minimum_for_and_key_control": {"anchor": null, "provider": null, "root": null, "writer": null}, "listed_factor_minimum_to_block_and_quorum": {"anchor": null, "provider": null, "root": null, "writer": null}, "manifest_sha256": "72265d0860a7cbaec1d7100087607dbf8393b2d6898739d3f2fa62ee396dc8c7", "minimum_scope": "minimum-over-listed-factors-only-not-a-certified-lower-bound", "missing_evidence": ["anchor:complete-six-key-roster", "common-control:coverage", "provider:complete-six-key-roster", "recovery-floor:age_policy_ref", "recovery-floor:authenticated_source_ref", "recovery-floor:enrollment", "recovery-floor:external-source", "recovery-floor:head", "recovery-floor:independent_survival_ref", "recovery-floor:recovery_drill_ref", "root:complete-six-key-roster", "writer:complete-six-key-roster"], "observation_scope": "declared-incidence-and-local-file-consistency-only", "production_activation": false, "recovery_floor_installation_authorized": false, "schema": "trnm-pq-root-custody-review-result-v2", "single_listed_factor_key_control": [], "single_listed_factor_quorum_outages": [], "status": "HOLD", "whole_chain_pq_qualified": false}
+{"actual_external_effects_verified": false, "actual_lifetime_failure_bound": null, "anchor_independence_verified": false, "complete_key_epoch_population_verified": false, "composition_coverage_proved": false, "cryptographic_verification_performed": false, "independent_custody_verified": false, "manifest_sha512": "e6193214470e7cb8d8013b8dd747766eaf982f90d90cf77f242614e53cb2a756d1a307ebf9f5be57793b40d51f740a38e7418a476453e326b1ed1a9e6d397b21", "material_bytes_checked": false, "migration_authorized": false, "migration_implementation_verified": false, "observed_query_counts_bound_adversary": false, "open_obligations": ["explicit-versioned-migration-implementation", "transition-statement", "current-authority-envelope", "successor-possession-material", "transition-implementation", "history-continuity", "fresh-anchor", "effect-reconciliation", "new-profile-security-reduction", "shared-oracle-composition"], "production_activation": false, "proposal_present": false, "required_evidence_kinds": ["transition-statement", "current-authority-envelope", "successor-possession-material", "transition-implementation", "history-continuity", "fresh-anchor", "effect-reconciliation", "new-profile-security-reduction", "shared-oracle-composition"], "review_material_complete": false, "schema": "trnm-pq-root-migration-review-result-v1", "status": "HOLD", "theorem_applicability_verified": false, "whole_chain_pq_qualified": false}
+{
+  "contract_sha256": "846efa5cedfb811ae8255a5b3d5c0223e6e89180a89c9670e7bcb9204cbbed30",
+  "control_scope": {
+    "all_program_bytecode_to_control_ids_recomputed": false,
+    "all_program_relations_and_rbr_proved": false,
+    "all_recursive_trace_sizes_reachable": null,
+    "allowed_lift_po2_max": 22,
+    "allowed_lift_po2_min": 14,
+    "fixed_final_program": "join.zkr",
+    "generic_outer_verifier_explicit_po2_max": 24,
+    "generic_outer_verifier_explicit_po2_min": null,
+    "named_default_inner_programs": 27,
+    "padding_digest_has_no_accepting_code_proved": false,
+    "padding_leaf_count": 229,
+    "padding_leaf_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+    "warning": "Parser po2 and lift-name limits do not prove reachable recursion trace bounds."
+  },
+  "control_tree": {
+    "allowed_program_count": 27,
+    "allowed_programs": [
+      {
+        "control_id": "0d79bc33b4760b4783cbb96fdc87724c7e0c463eb0ba1b2705d39f43c698bd2d",
+        "inclusion_recomputed": true,
+        "index": 0,
+        "program": "identity.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+        "inclusion_recomputed": true,
+        "index": 1,
+        "program": "join.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "96cdf605f755f175a5661812810f2d491507c05f2ea4a83e4c3cad693d26651e",
+        "inclusion_recomputed": true,
+        "index": 2,
+        "program": "join_povw.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "f74a894ff593584f65847630ead1a23af78c5f5fed2b61090866e01fa5767f12",
+        "inclusion_recomputed": true,
+        "index": 3,
+        "program": "join_unwrap_povw.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "411fa636f2d364648f035174d3778d6340d9ae1dd648fc35657c173f01e27e5f",
+        "inclusion_recomputed": true,
+        "index": 4,
+        "program": "lift_rv32im_v2_14.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "1ca3ca03030719064ba61b3125bdd326fc57f74e799ef860bdea6f3227381e16",
+        "inclusion_recomputed": true,
+        "index": 5,
+        "program": "lift_rv32im_v2_15.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "c32b3627d2b3d60c64adf523a98bd16c0ff607471f3d6630d1f26d5e9406d841",
+        "inclusion_recomputed": true,
+        "index": 6,
+        "program": "lift_rv32im_v2_16.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "c9b08054994f542a6310b00d9b6fc6528ed7bb6f4ca5476a686847127cdfdc5b",
+        "inclusion_recomputed": true,
+        "index": 7,
+        "program": "lift_rv32im_v2_17.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "e7934a23ddce1423b425cf32aa23be29f48cd40e0b6ff9376dce6f3bf9d0bc35",
+        "inclusion_recomputed": true,
+        "index": 8,
+        "program": "lift_rv32im_v2_18.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "8c2fdd36ede09a4b9d316a43c51f1160cbd8876659c5f35810c3a119c60d3843",
+        "inclusion_recomputed": true,
+        "index": 9,
+        "program": "lift_rv32im_v2_19.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "34530b42028fb631c90e1226bb0e750d4b9b593840d45216f75dca449dac7734",
+        "inclusion_recomputed": true,
+        "index": 10,
+        "program": "lift_rv32im_v2_20.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "fd84d83092a1e1244d423a26d89c892ab098b467c6d82229912deb26e37d2562",
+        "inclusion_recomputed": true,
+        "index": 11,
+        "program": "lift_rv32im_v2_21.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "9d9dbf33535ab11f52a93839dfd23b352b7626009e81d9459fd04e488898ec6a",
+        "inclusion_recomputed": true,
+        "index": 12,
+        "program": "lift_rv32im_v2_22.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "c6972402cc81bc6c1122e65aa7cf463f3ac3f477c7dd860582ca7420fc7b8b02",
+        "inclusion_recomputed": true,
+        "index": 13,
+        "program": "lift_rv32im_v2_povw_14.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "2f6ea1104bdd5955faa135611e8f803e7b4461703b937e704da70955ec115467",
+        "inclusion_recomputed": true,
+        "index": 14,
+        "program": "lift_rv32im_v2_povw_15.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "a7b55654228123448cd67c400d9bf80b4e54eb3997ee92103e900903b6578862",
+        "inclusion_recomputed": true,
+        "index": 15,
+        "program": "lift_rv32im_v2_povw_16.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "2adab2445391035b21f255606a1ba060a7d5a64db5cdf13d9fda7f22a2853270",
+        "inclusion_recomputed": true,
+        "index": 16,
+        "program": "lift_rv32im_v2_povw_17.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "58b27422240db834c08b8e6c12000c093efce8613263f05825c380009c41da48",
+        "inclusion_recomputed": true,
+        "index": 17,
+        "program": "lift_rv32im_v2_povw_18.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "26c84437d3e26875b259880d0f29da47ed5ca869133637701d33fb15a83dce4b",
+        "inclusion_recomputed": true,
+        "index": 18,
+        "program": "lift_rv32im_v2_povw_19.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "177fde1441dc735dbd6a58245d82b2036623ac41547dc345f1fd7c486ac51462",
+        "inclusion_recomputed": true,
+        "index": 19,
+        "program": "lift_rv32im_v2_povw_20.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "eac3fb487080a62e6ff85d331dd72a4706e50e55c9cb842dea48d71e3e119a04",
+        "inclusion_recomputed": true,
+        "index": 20,
+        "program": "lift_rv32im_v2_povw_21.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "0344cd54d62d2a1b6538b674d5aa141250ff4c5be08c6e3d16cb5e1de632252d",
+        "inclusion_recomputed": true,
+        "index": 21,
+        "program": "lift_rv32im_v2_povw_22.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "53a7b23d07f99e5d5685e85874f5181e8486aa267a0ae607ffe9ba47c8bdda4a",
+        "inclusion_recomputed": true,
+        "index": 22,
+        "program": "resolve.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "20ac6e29b1806a143b508414140e2e15e461f93e04e3830af39cca362b8f005d",
+        "inclusion_recomputed": true,
+        "index": 23,
+        "program": "resolve_povw.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "ba1d7275d5840e4f998e2c5120810c0eb197e90219696e2a64dec7662aa3cb06",
+        "inclusion_recomputed": true,
+        "index": 24,
+        "program": "resolve_unwrap_povw.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "7771415b778fea1923440e2eb22c4a1e1d7ada2d42cbe03d13402743c0988a31",
+        "inclusion_recomputed": true,
+        "index": 25,
+        "program": "union.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "1688f04cca489638862dba455c1d5c561513f975c885a3491f0fe12df761c847",
+        "inclusion_recomputed": true,
+        "index": 26,
+        "program": "unwrap_povw.zkr",
+        "program_semantics_audited": false
+      }
+    ],
+    "complete_cargo_graph_audited": false,
+    "complete_qrom_bound_established": false,
+    "control_ids_derived_from_zkr_binaries": false,
+    "declared_root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
+    "depth": 8,
+    "digest_encoding": "8 canonical Montgomery u32 words, little-endian bytes",
+    "field_modulus": 2013265921,
+    "final_join": {
+      "control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+      "index": 1,
+      "merkle_path": [
+        "0d79bc33b4760b4783cbb96fdc87724c7e0c463eb0ba1b2705d39f43c698bd2d",
+        "c179ca3a39f26310b4f4ea0a7c3c9307e036fc3728d86c0a43b22d3605e2893f",
+        "191a654c175b0d5eabfd4670cf0df42ac810d769edfd29025c6417144bd8d72c",
+        "9b98b73af20fba33f5ae2204d2fecb16bf1b3618572b652103ac9c722ef47e5b",
+        "977f9e2868d664458077ac35fa9050290c7db016c2750620c362da3c275cab67",
+        "f765ab6e0cf5dc55c11d65688af0fe1428afc359c08b1656bbc4ba6b54c9746c",
+        "c6b87a237165c549ef7ac614d762ec1ce4b97441c9bfef6fd8ac90378170d816",
+        "2be97040fd0b390959c33114712a436382b2cd419665ee2fe801c158a9bbb155"
+      ]
+    },
+    "internal_node_hashes": 255,
+    "leaf_encoding": "control ID itself; no additional leaf hash",
+    "level_widths": [
+      256,
+      128,
+      64,
+      32,
+      16,
+      8,
+      4,
+      2,
+      1
+    ],
+    "matches_fixed_root": true,
+    "node_hash": "Poseidon2 unpadded overwrite sponge on exactly 16 field elements",
+    "ordering": "lexicographic program-name order, matching BTreeSet<String>",
+    "program_semantics_audited": false,
+    "root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
+    "schema": "TRNM-W1-CONTROL-TREE-AUDIT1",
+    "sdk_catalog_count": 32,
+    "sdk_programs_outside_default_root": [
+      {
+        "control_id": "817a4b13453eac5a4e67ea1bdcc0677681faa94e386bdd4b510429363685f067",
+        "program": "lift_rv32im_v2_23.zkr"
+      },
+      {
+        "control_id": "6c4f9e2ae5d3d5375956f608a54112418333ad2008052b059f3b500ba8df9d63",
+        "program": "lift_rv32im_v2_24.zkr"
+      },
+      {
+        "control_id": "bd19f156d23811155241e10f7d03ab483949e5039a512d75b7e3da40fcb5490e",
+        "program": "lift_rv32im_v2_povw_23.zkr"
+      },
+      {
+        "control_id": "7898f8140d13c04781c2073b2b28541dfa40f23fa824c30228b80b2601d7114a",
+        "program": "lift_rv32im_v2_povw_24.zkr"
+      },
+      {
+        "control_id": "6d55102aa73086602f7039412200124bdec91f0c497c606f9aa09040403e030b",
+        "program": "test_recursion_circuit.zkr"
+      }
+    ],
+    "source_checks": [
+      {
+        "bytes": 28372,
+        "path": "risc0/core/src/field/baby_bear.rs",
+        "sha256": "df3e77d606dd74d78fb6b6f3dbbe72455c5ed5b091f7a74de8c049e85b857ff3"
+      },
+      {
+        "bytes": 14258,
+        "path": "risc0/zkp/src/core/hash/poseidon2/consts.rs",
+        "sha256": "5ee51bce046bce1306181a43136aa0731dcf976ab10e2e8d82db88711efdcc41"
+      },
+      {
+        "bytes": 13790,
+        "path": "risc0/zkp/src/core/hash/poseidon2/mod.rs",
+        "sha256": "a2993a2e29fa33345a6a9ce0b4f192efe7412746b92b172b0eed8ce78ee8471f"
+      },
+      {
+        "bytes": 8231,
+        "path": "risc0/zkp/src/core/digest.rs",
+        "sha256": "15ea8c15627e5074eea6d0e71895bd006d28f0cfe9ddb2f2dd73de6cbcd22772"
+      },
+      {
+        "bytes": 13225,
+        "path": "risc0/circuit/recursion/src/control_id.rs",
+        "sha256": "6fedf46fad3ca0ce3e537139be7873a43dd68fee5fc803d3e58604b4e9ae16cb"
+      },
+      {
+        "bytes": 7725,
+        "path": "risc0/zkvm/src/receipt/merkle.rs",
+        "sha256": "b3eeb7cc62bba1dfa9ba32a75b905510b4777b9f61004891163d8f43ee8072d6"
+      },
+      {
+        "bytes": 16709,
+        "path": "risc0/zkvm/src/receipt/succinct.rs",
+        "sha256": "8e0165b3210e30e77074763d71d85fd0595e4190b96725182f33665b7df90d60"
+      },
+      {
+        "bytes": 45343,
+        "path": "risc0/zkvm/src/receipt.rs",
+        "sha256": "ec445670befb0fad19bfe46eede73e551de03d9f91fa1fb81c9149dc04912fed"
+      },
+      {
+        "bytes": 1762,
+        "path": "risc0/zkp/src/lib.rs",
+        "sha256": "107521d2426442fbc9358b7b9ae5650be92d670ea85e9a34aec7b9e9cc27dc6d"
+      }
+    ],
+    "status": "CATALOG_AND_TREE_RECOMPUTED",
+    "upstream_commit": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9",
+    "zero_padding_leaves": 229,
+    "zkr_binaries_rebuilt": false
+  },
+  "field": {
+    "digest_storage_bits": 256,
+    "digest_support_size": "269903886087112502248563194479599378733081424069948722819014098894255554561",
+    "extension_degree": 4,
+    "extension_polynomial": "X^4 + 11",
+    "proof_base_modulus": 2013265921,
+    "uniform_bit_oracle_sigma_justified": null,
+    "work_modulus": 4294967291
+  },
+  "fresh_cryptographic_verification": false,
+  "fri_schedule_scope": "Public parser arithmetic; reachable seals and full IOR rounds are unproved.",
+  "fri_schedules": [
+    {
+      "final_coefficients_base": 4,
+      "final_coefficients_extension": 1,
+      "folding_rounds": [],
+      "initial_rows": 4,
+      "po2": 0,
+      "queries": 50,
+      "query_position_bits": 2
+    },
+    {
+      "final_coefficients_base": 8,
+      "final_coefficients_extension": 2,
+      "folding_rounds": [],
+      "initial_rows": 8,
+      "po2": 1,
+      "queries": 50,
+      "query_position_bits": 3
+    },
+    {
+      "final_coefficients_base": 16,
+      "final_coefficients_extension": 4,
+      "folding_rounds": [],
+      "initial_rows": 16,
+      "po2": 2,
+      "queries": 50,
+      "query_position_bits": 4
+    },
+    {
+      "final_coefficients_base": 32,
+      "final_coefficients_extension": 8,
+      "folding_rounds": [],
+      "initial_rows": 32,
+      "po2": 3,
+      "queries": 50,
+      "query_position_bits": 5
+    },
+    {
+      "final_coefficients_base": 64,
+      "final_coefficients_extension": 16,
+      "folding_rounds": [],
+      "initial_rows": 64,
+      "po2": 4,
+      "queries": 50,
+      "query_position_bits": 6
+    },
+    {
+      "final_coefficients_base": 128,
+      "final_coefficients_extension": 32,
+      "folding_rounds": [],
+      "initial_rows": 128,
+      "po2": 5,
+      "queries": 50,
+      "query_position_bits": 7
+    },
+    {
+      "final_coefficients_base": 256,
+      "final_coefficients_extension": 64,
+      "folding_rounds": [],
+      "initial_rows": 256,
+      "po2": 6,
+      "queries": 50,
+      "query_position_bits": 8
+    },
+    {
+      "final_coefficients_base": 512,
+      "final_coefficients_extension": 128,
+      "folding_rounds": [],
+      "initial_rows": 512,
+      "po2": 7,
+      "queries": 50,
+      "query_position_bits": 9
+    },
+    {
+      "final_coefficients_base": 1024,
+      "final_coefficients_extension": 256,
+      "folding_rounds": [],
+      "initial_rows": 1024,
+      "po2": 8,
+      "queries": 50,
+      "query_position_bits": 10
+    },
+    {
+      "final_coefficients_base": 128,
+      "final_coefficients_extension": 32,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 128,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 2048,
+      "po2": 9,
+      "queries": 50,
+      "query_position_bits": 11
+    },
+    {
+      "final_coefficients_base": 256,
+      "final_coefficients_extension": 64,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 256,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 4096,
+      "po2": 10,
+      "queries": 50,
+      "query_position_bits": 12
+    },
+    {
+      "final_coefficients_base": 512,
+      "final_coefficients_extension": 128,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 512,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 8192,
+      "po2": 11,
+      "queries": 50,
+      "query_position_bits": 13
+    },
+    {
+      "final_coefficients_base": 1024,
+      "final_coefficients_extension": 256,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 1024,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 16384,
+      "po2": 12,
+      "queries": 50,
+      "query_position_bits": 14
+    },
+    {
+      "final_coefficients_base": 128,
+      "final_coefficients_extension": 32,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 2048,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 128,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 32768,
+      "po2": 13,
+      "queries": 50,
+      "query_position_bits": 15
+    },
+    {
+      "final_coefficients_base": 256,
+      "final_coefficients_extension": 64,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 4096,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 256,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 65536,
+      "po2": 14,
+      "queries": 50,
+      "query_position_bits": 16
+    },
+    {
+      "final_coefficients_base": 512,
+      "final_coefficients_extension": 128,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 8192,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 512,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 131072,
+      "po2": 15,
+      "queries": 50,
+      "query_position_bits": 17
+    },
+    {
+      "final_coefficients_base": 1024,
+      "final_coefficients_extension": 256,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 16384,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 1024,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 262144,
+      "po2": 16,
+      "queries": 50,
+      "query_position_bits": 18
+    },
+    {
+      "final_coefficients_base": 128,
+      "final_coefficients_extension": 32,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 32768,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 2048,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 128,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 524288,
+      "po2": 17,
+      "queries": 50,
+      "query_position_bits": 19
+    },
+    {
+      "final_coefficients_base": 256,
+      "final_coefficients_extension": 64,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 65536,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 4096,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 256,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 1048576,
+      "po2": 18,
+      "queries": 50,
+      "query_position_bits": 20
+    },
+    {
+      "final_coefficients_base": 512,
+      "final_coefficients_extension": 128,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 131072,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 8192,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 512,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 2097152,
+      "po2": 19,
+      "queries": 50,
+      "query_position_bits": 21
+    },
+    {
+      "final_coefficients_base": 1024,
+      "final_coefficients_extension": 256,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 262144,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 16384,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 1024,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 4194304,
+      "po2": 20,
+      "queries": 50,
+      "query_position_bits": 22
+    },
+    {
+      "final_coefficients_base": 128,
+      "final_coefficients_extension": 32,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 524288,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 32768,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 2048,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 128,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 8388608,
+      "po2": 21,
+      "queries": 50,
+      "query_position_bits": 23
+    },
+    {
+      "final_coefficients_base": 256,
+      "final_coefficients_extension": 64,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 1048576,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 65536,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 4096,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 256,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 16777216,
+      "po2": 22,
+      "queries": 50,
+      "query_position_bits": 24
+    },
+    {
+      "final_coefficients_base": 512,
+      "final_coefficients_extension": 128,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 2097152,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 131072,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 8192,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 512,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 33554432,
+      "po2": 23,
+      "queries": 50,
+      "query_position_bits": 25
+    },
+    {
+      "final_coefficients_base": 1024,
+      "final_coefficients_extension": 256,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 4194304,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 262144,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 16384,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 1024,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 67108864,
+      "po2": 24,
+      "queries": 50,
+      "query_position_bits": 26
+    }
+  ],
+  "fri_transcript_audit": {
+    "build_precondition": "circuit_debug disabled; this module does not attest build features.",
+    "grinding": {
+      "credited_grinding_bits": 0,
+      "explicit_gate_found_in_inspected_path": false,
+      "limits": "Does not exclude offline transcript search, wrapper gates, the separate rv32im protocol, or generated recursive verifier behavior. PoN lottery supplies no credit here.",
+      "method": "Manual control-flow review tied to exact six-file source hashes.",
+      "source_scope": [
+        "risc0/zkp/src/verify/mod.rs",
+        "risc0/zkp/src/verify/fri.rs",
+        "risc0/zkp/src/verify/merkle.rs",
+        "risc0/zkp/src/verify/read_iop.rs",
+        "risc0/zkp/src/core/hash/poseidon2/mod.rs",
+        "risc0/zkp/src/core/hash/poseidon2/rng.rs"
+      ]
+    },
+    "merkle_binding": {
+      "cap": "Read fixed cap in order, validate digests, reconstruct root; only root is mixed.",
+      "dimensions_or_positions_tagged_inside_hash": false,
+      "encoding": "Reduced Montgomery u32 words; digest has eight words; widths are typed externally.",
+      "final_polynomial_layout": "component-major: coefficient i component j is final[j*d_final+i].",
+      "fri_leaf_layout": "component-major: element i component j is data[j*16+i].",
+      "leaf_length": "Trusted taps/CHECK_SIZE/FRI constants set exact consumed field-word counts.",
+      "leaf_node_purpose_tags_present": false,
+      "leaf_position": "idx<row_size; idx+row_size and low bits determine ordered hash_pair path.",
+      "source": [
+        "risc0/zkp/src/verify/mod.rs",
+        "risc0/zkp/src/verify/fri.rs",
+        "risc0/zkp/src/verify/merkle.rs",
+        "risc0/zkp/src/merkle.rs",
+        "risc0/zkp/src/verify/read_iop.rs",
+        "risc0/zkp/src/core/hash/poseidon2/mod.rs"
+      ],
+      "tree_depth": "Derived from committed raw po2 and fixed circuit; consume L-cap_depth siblings.",
+      "u_coefficients_layout": "Each Fp4 coefficient has four consecutive base words."
+    },
+    "ordered_fs_events": [
+      {
+        "id": "rng_init",
+        "kind": "initialize",
+        "operation": "new: zero cells; pool_used=0",
+        "order": 0,
+        "source": "risc0/zkp/src/core/hash/poseidon2/rng.rs"
+      },
+      {
+        "id": "proof_system_info",
+        "kind": "commit",
+        "operation": "commit_circuit_info: H_elem(16 byte-to-field elements)",
+        "order": 1,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "circuit_info",
+        "kind": "commit",
+        "operation": "commit_circuit_info: H_elem(16 byte-to-field elements)",
+        "order": 2,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "public_outputs_and_po2",
+        "kind": "commit",
+        "operation": "read_slice_with_po2: H_elem(32 outputs + raw po2 word); values vary, size is fixed",
+        "order": 3,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "code_root",
+        "kind": "commit_then_code_check",
+        "operation": "verify_group(CODE): reconstruct cap root, mix, then call check_code(po2,root)",
+        "order": 4,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "data_root",
+        "kind": "commit",
+        "operation": "verify_group(DATA): reconstruct cap root and mix",
+        "order": 5,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "accum_mix",
+        "kind": "challenge",
+        "operation": "read_rng: 20 base-field squeezes",
+        "order": 6,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "accum_root",
+        "kind": "commit",
+        "operation": "verify_group(ACCUM): reconstruct cap root and mix",
+        "order": 7,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "constraint_mix",
+        "kind": "challenge",
+        "operation": "verify_validity: one Fp4 before check root",
+        "order": 8,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "check_root",
+        "kind": "commit",
+        "operation": "MerkleTreeVerifier::new: reconstruct cap root and mix",
+        "order": 9,
+        "source": "risc0/zkp/src/verify/merkle.rs"
+      },
+      {
+        "id": "deep_point_z",
+        "kind": "challenge",
+        "operation": "one Fp4 after check root; requires circuit_debug disabled",
+        "order": 10,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "u_coefficients",
+        "kind": "commit_then_constraint_check",
+        "operation": "H_ext(num_taps+CHECK_SIZE extension coefficients); reject failed validity equation",
+        "order": 11,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "fri_batch_mix",
+        "kind": "challenge",
+        "operation": "one Fp4 after U commitment and validity check",
+        "order": 12,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "fri0_root",
+        "kind": "commit",
+        "operation": "VerifyRoundInfo::new: root for 65536 rows of 64 base words",
+        "order": 13,
+        "source": "risc0/zkp/src/verify/fri.rs"
+      },
+      {
+        "id": "fri0_fold_mix",
+        "kind": "challenge",
+        "operation": "one Fp4 after the corresponding root commitment",
+        "order": 14,
+        "source": "risc0/zkp/src/verify/fri.rs"
+      },
+      {
+        "id": "fri1_root",
+        "kind": "commit",
+        "operation": "VerifyRoundInfo::new: root for 4096 rows of 64 base words",
+        "order": 15,
+        "source": "risc0/zkp/src/verify/fri.rs"
+      },
+      {
+        "id": "fri1_fold_mix",
+        "kind": "challenge",
+        "operation": "one Fp4 after the corresponding root commitment",
+        "order": 16,
+        "source": "risc0/zkp/src/verify/fri.rs"
+      },
+      {
+        "id": "fri2_root",
+        "kind": "commit",
+        "operation": "VerifyRoundInfo::new: root for 256 rows of 64 base words",
+        "order": 17,
+        "source": "risc0/zkp/src/verify/fri.rs"
+      },
+      {
+        "id": "fri2_fold_mix",
+        "kind": "challenge",
+        "operation": "one Fp4 after the corresponding root commitment",
+        "order": 18,
+        "source": "risc0/zkp/src/verify/fri.rs"
+      },
+      {
+        "id": "final_polynomial",
+        "kind": "commit",
+        "operation": "H_elem(4*d_final base elements), component-major layout",
+        "order": 19,
+        "source": "risc0/zkp/src/verify/fri.rs"
+      },
+      {
+        "id": "query_loop",
+        "kind": "challenge_and_openings",
+        "operation": "50 positions, with replacement; accum,code,data,check then each FRI round; openings do not mix RNG",
+        "order": 20,
+        "source": "risc0/zkp/src/verify/fri.rs"
+      },
+      {
+        "id": "seal_exhaustion",
+        "kind": "check",
+        "operation": "verify_complete rejects unread seal words",
+        "order": 21,
+        "source": "risc0/zkp/src/verify/read_iop.rs"
+      }
+    ],
+    "parameters": {
+      "accum_mix_base_elements": 20,
+      "circuit_info_ascii": "RECURSION:rev1v1",
+      "digest_words": 8,
+      "explicit_generic_po2_max": 24,
+      "extension_degree": 4,
+      "extension_polynomial": "X^4+11",
+      "field_modulus": 2013265921,
+      "final_coefficient_threshold": 256,
+      "fold": 16,
+      "inverse_rate": 4,
+      "leaf_widths_base_elements": {
+        "accum": 12,
+        "check": 16,
+        "code": 23,
+        "data": 128,
+        "fri": 64
+      },
+      "output_base_elements": 32,
+      "proof_system_info_ascii": "RISC0_STARK:v1__",
+      "queries": 50,
+      "register_count": 163,
+      "rng_rate_cells": 16,
+      "rng_width_cells": 24,
+      "tap_count": 643,
+      "u_coefficients_extension_elements": 659
+    },
+    "po2_boundary": {
+      "all_po2_up_to_generic_max_accepted_claimed": false,
+      "default_lift_name_limit_is_not_proven_outer_seal_limit": true,
+      "generic_explicit_max": 24,
+      "raw_word_not_as_u32_decoded": true,
+      "reachable_outer_po2_set_proved": false,
+      "source": [
+        "risc0/zkp/src/verify/mod.rs",
+        "risc0/core/src/field/baby_bear.rs",
+        "risc0/zkvm/src/receipt/succinct.rs"
+      ],
+      "succinct_code_callback_ignores_po2_argument": true
+    },
+    "qrom_interface_obligations": [
+      "Bind vector widths, lengths, heights, field encodings and phase/circuit context throughout extraction.",
+      "Instantiate the selected theorem's quantum commitment-extraction property for the cap-Merkle construction.",
+      "Account for unpadded hashing and cross-length/type aliases; parser typing is not an arbitrary-length CRH proof.",
+      "Prove the required joint quantum oracle model for commitment hashing and stateful RNG sharing Poseidon2.",
+      "Match actual commit/challenge order, raw po2, sampling, statement adaptivity and build features to the theorem.",
+      "Prove generated recursive verifiers implement this relation for all allowed control programs.",
+      "Instantiate RBR/state-restoration and circuit/proximity bounds including exceptional DEEP points.",
+      "Bound lifetime queries across every use and attempt, with compiler losses; RNG call counts are not that budget."
+    ],
+    "qualification": {
+      "arithmetic_relation_verified": false,
+      "fiat_shamir_challenges_recomputed": false,
+      "fresh_cryptographic_verification": false,
+      "merkle_openings_verified": false,
+      "post_quantum_soundness_qualified": false,
+      "qrom_instantiated": false,
+      "security_bits_quantum": null,
+      "whole_receipt_identity_enforced_here": false
+    },
+    "result": "SOURCE_MAPPING_AND_ENCODING_GEOMETRY_REPRODUCED_SECURITY_HOLD",
+    "rng": {
+      "base_draws_per_query": 4,
+      "bit_rule": "Always draw four; first nonzero as_u32 or zero; mask low bits.",
+      "commit_rule": "If pool_used!=0 permute and reset; add 8 raw digest cells; permute.",
+      "derived_rng_cost": {
+        "base_squeezes": 244,
+        "count_kind": "Source-level RNG call schedule, not a QROM query budget.",
+        "includes_commitment_hash_calls": false,
+        "includes_nested_verification_or_adversary_queries": false,
+        "qrom_queries_inferred": null,
+        "rng_permutation_calls": 32
+      },
+      "extension_rule": "Four consecutive base squeezes in the fixed Fp4 basis.",
+      "ideal_sampler_deviation": {
+        "assumption": "Conditionally independent uniform Fp draws and k<=27.",
+        "fifty_queries_tv_upper_bound": "50/p^4",
+        "per_query_tv": "(1-2^-k)/p^4 <= p^-4",
+        "real_poseidon2_qrom_distribution_proved": false
+      },
+      "openings_change_rng_state": false,
+      "query_position_bits": 20,
+      "sampling_with_replacement": true
+    },
+    "saved_v2_geometry": {
+      "D": 1048576,
+      "N": 262144,
+      "R": 3,
+      "all_seal_words_accounted_for": true,
+      "all_seal_words_canonical": true,
+      "final_coefficients_base": 256,
+      "final_coefficients_extension": 64,
+      "opaque_outer_suffix_bytes": 34334,
+      "opaque_outer_suffix_semantically_parsed": false,
+      "opaque_outer_suffix_sha256": "809bee1f7723c38f048650f5af5e388250bc6efe1fd35fde1e4d11ebf436b282",
+      "per_query_words": 1019,
+      "po2": 18,
+      "prequery_ranges": [
+        {
+          "base_word_count": 33,
+          "id": "outputs_and_po2",
+          "raw_bytes_sha256": "93be9f45591e88bb37bfd9799a5f5191c8848ce2024eb5dcb63a5862575c1029",
+          "seal_word_end_exclusive": 33,
+          "seal_word_start_inclusive": 0
+        },
+        {
+          "base_word_count": 256,
+          "id": "code_cap",
+          "raw_bytes_sha256": "4c188b968744163c02a9a9a0cb787eac089f5add3a86818cd8b965b2b83e017d",
+          "seal_word_end_exclusive": 289,
+          "seal_word_start_inclusive": 33
+        },
+        {
+          "base_word_count": 256,
+          "id": "data_cap",
+          "raw_bytes_sha256": "4589abf539ba45314d2869e3e66ed0a1c6d51dda1a5cb5c141453a5fb1fca9bf",
+          "seal_word_end_exclusive": 545,
+          "seal_word_start_inclusive": 289
+        },
+        {
+          "base_word_count": 256,
+          "id": "accum_cap",
+          "raw_bytes_sha256": "3f575e77862f7be83d84e7d06e6e475dafd4d22002b890020d5fc7c2fe2f5080",
+          "seal_word_end_exclusive": 801,
+          "seal_word_start_inclusive": 545
+        },
+        {
+          "base_word_count": 256,
+          "id": "check_cap",
+          "raw_bytes_sha256": "923cc196e1074405ffb0908f69a340f39f5f51ab8d229dbc5f70f3adb9e61329",
+          "seal_word_end_exclusive": 1057,
+          "seal_word_start_inclusive": 801
+        },
+        {
+          "base_word_count": 2636,
+          "id": "u_coefficients",
+          "raw_bytes_sha256": "c05e854944727e090513343a3f1b31de06f4c654214ee098a3eca137bdecd369",
+          "seal_word_end_exclusive": 3693,
+          "seal_word_start_inclusive": 1057
+        },
+        {
+          "base_word_count": 256,
+          "id": "fri0_cap",
+          "raw_bytes_sha256": "c41e6dab88be077ecb43a65408687eb5b7a9d0868bb6f3ad1c5151a85024377e",
+          "seal_word_end_exclusive": 3949,
+          "seal_word_start_inclusive": 3693
+        },
+        {
+          "base_word_count": 256,
+          "id": "fri1_cap",
+          "raw_bytes_sha256": "85515293f963f8287641ef5e366c2419ef6fce5c92fa6232dfe4ceb376b44410",
+          "seal_word_end_exclusive": 4205,
+          "seal_word_start_inclusive": 3949
+        },
+        {
+          "base_word_count": 256,
+          "id": "fri2_cap",
+          "raw_bytes_sha256": "2725efa31e8c33faa07c0c9527f6ecae91435a77c13c82c18f146f420e2df627",
+          "seal_word_end_exclusive": 4461,
+          "seal_word_start_inclusive": 4205
+        },
+        {
+          "base_word_count": 256,
+          "id": "final_polynomial_coefficients",
+          "raw_bytes_sha256": "5ec99808efbe33ab9647996ee5c0269030f2a18df0a20f38385c86d18f1970fd",
+          "seal_word_end_exclusive": 4717,
+          "seal_word_start_inclusive": 4461
+        }
+      ],
+      "prequery_words": 4717,
+      "queries": 50,
+      "query_end_word_exclusive": 55667,
+      "query_template": [
+        {
+          "cap_depth": 5,
+          "cap_digests": 32,
+          "height": 20,
+          "leaf_words": 12,
+          "opening_words": 132,
+          "oracle": "accum",
+          "query_word_end_exclusive": 132,
+          "query_word_start_inclusive": 0,
+          "rows": 1048576,
+          "sibling_digest_count": 15
+        },
+        {
+          "cap_depth": 5,
+          "cap_digests": 32,
+          "height": 20,
+          "leaf_words": 23,
+          "opening_words": 143,
+          "oracle": "code",
+          "query_word_end_exclusive": 275,
+          "query_word_start_inclusive": 132,
+          "rows": 1048576,
+          "sibling_digest_count": 15
+        },
+        {
+          "cap_depth": 5,
+          "cap_digests": 32,
+          "height": 20,
+          "leaf_words": 128,
+          "opening_words": 248,
+          "oracle": "data",
+          "query_word_end_exclusive": 523,
+          "query_word_start_inclusive": 275,
+          "rows": 1048576,
+          "sibling_digest_count": 15
+        },
+        {
+          "cap_depth": 5,
+          "cap_digests": 32,
+          "height": 20,
+          "leaf_words": 16,
+          "opening_words": 136,
+          "oracle": "check",
+          "query_word_end_exclusive": 659,
+          "query_word_start_inclusive": 523,
+          "rows": 1048576,
+          "sibling_digest_count": 15
+        },
+        {
+          "cap_depth": 5,
+          "cap_digests": 32,
+          "height": 16,
+          "leaf_words": 64,
+          "opening_words": 152,
+          "oracle": "fri0",
+          "query_word_end_exclusive": 811,
+          "query_word_start_inclusive": 659,
+          "rows": 65536,
+          "sibling_digest_count": 11
+        },
+        {
+          "cap_depth": 5,
+          "cap_digests": 32,
+          "height": 12,
+          "leaf_words": 64,
+          "opening_words": 120,
+          "oracle": "fri1",
+          "query_word_end_exclusive": 931,
+          "query_word_start_inclusive": 811,
+          "rows": 4096,
+          "sibling_digest_count": 7
+        },
+        {
+          "cap_depth": 5,
+          "cap_digests": 32,
+          "height": 8,
+          "leaf_words": 64,
+          "opening_words": 88,
+          "oracle": "fri2",
+          "query_word_end_exclusive": 1019,
+          "query_word_start_inclusive": 931,
+          "rows": 256,
+          "sibling_digest_count": 3
+        }
+      ],
+      "receipt_bytes": 257014,
+      "receipt_sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+      "seal_bytes": 222668,
+      "seal_file_offset_bytes": 12,
+      "seal_po2_raw_word_index": 32,
+      "seal_sha256": "5db567c375823939177220fe12beb9df29ca032d3f5c64adcce8c60d04679619",
+      "seal_words": 55667
+    },
+    "schema": "TRNM-W1-FRI-TRANSCRIPT-GEOMETRY1",
+    "scope": "Fixed po2=18 saved-v2 recursion seal; static source map and encoding only.",
+    "source_files": [
+      {
+        "bytes": 1762,
+        "git_blob_sha1": "de0ffeb566be8ec5a85ef9e68b9376cdd8e85907",
+        "path": "risc0/zkp/src/lib.rs",
+        "sha256": "107521d2426442fbc9358b7b9ae5650be92d670ea85e9a34aec7b9e9cc27dc6d"
+      },
+      {
+        "bytes": 21753,
+        "git_blob_sha1": "e7ddb1a285d85c1bb74e45540cf5f827eb89faff",
+        "path": "risc0/zkp/src/verify/mod.rs",
+        "sha256": "003a67af89a7cfaeac9ff23808225cdc4d81c41d64956f20243574531b166c4f"
+      },
+      {
+        "bytes": 5802,
+        "git_blob_sha1": "2eefff59b74e92586b1e0a314dbf4f2930d675e5",
+        "path": "risc0/zkp/src/verify/fri.rs",
+        "sha256": "a601cfad5d01b294f934d697d6d832c57662e4778eac20ac549b1da53d11e377"
+      },
+      {
+        "bytes": 7173,
+        "git_blob_sha1": "b636147f6bf69e0a5062dc4db2dfa5c1aafcba2e",
+        "path": "risc0/zkp/src/verify/merkle.rs",
+        "sha256": "267ab31c38f7502d9d0d3feebe7eb2fc2cbed9d3af4db66fde349e2c3b61a478"
+      },
+      {
+        "bytes": 3473,
+        "git_blob_sha1": "762afe44b9665f1b6ae32ba588b985620791b8a8",
+        "path": "risc0/zkp/src/verify/read_iop.rs",
+        "sha256": "40a7027486fbce5979bd045860e3014ebc1d40f242c4b71ce2adf5722b6d81bc"
+      },
+      {
+        "bytes": 3584,
+        "git_blob_sha1": "284852330817b91836fbf2fc14157ebadda7995f",
+        "path": "risc0/zkp/src/merkle.rs",
+        "sha256": "87bf97f1eb09235bce50b62c4a5fef5517400f6c57554853e9c8043f4b32c64a"
+      },
+      {
+        "bytes": 8222,
+        "git_blob_sha1": "e3fb2bc82dac618808124d5299f6958fbdcf6f46",
+        "path": "risc0/zkp/src/taps.rs",
+        "sha256": "f5f69bcbed730cc8acd43da89dd4e37ca7560b9eb991a37238482f3655f7e402"
+      },
+      {
+        "bytes": 12957,
+        "git_blob_sha1": "d193c13fec17d56fc7eb4522f818a0ff495dc4c3",
+        "path": "risc0/zkp/src/adapter.rs",
+        "sha256": "1d1aca1dd7cc4c12477e0d887a3edfa0825b822efee671170ec667c7dd65ca1d"
+      },
+      {
+        "bytes": 1815,
+        "git_blob_sha1": "e1ab21d095cbf46a8aecd08ac2e87ea9ed5a1522",
+        "path": "risc0/circuit/recursion/src/info.rs",
+        "sha256": "128c29a8ddf0560fb3a69c03fa1d959fab542d2fa09eae6794d28be871e345e9"
+      },
+      {
+        "bytes": 90720,
+        "git_blob_sha1": "b301d24c8b367a667902802549dcd1081777a8d3",
+        "path": "risc0/circuit/recursion/src/taps.rs",
+        "sha256": "d32cbf5350d6f724cf3582ef92fb6c392f993b51ee89c5384f7ad79bab43ce83"
+      },
+      {
+        "bytes": 28372,
+        "git_blob_sha1": "989a827f26e34bfd81f670dc51db4a5ddfa7c6d7",
+        "path": "risc0/core/src/field/baby_bear.rs",
+        "sha256": "df3e77d606dd74d78fb6b6f3dbbe72455c5ed5b091f7a74de8c049e85b857ff3"
+      },
+      {
+        "bytes": 13790,
+        "git_blob_sha1": "d5bd9ebd899c3847c57aa11c58c8a287600f08e8",
+        "path": "risc0/zkp/src/core/hash/poseidon2/mod.rs",
+        "sha256": "a2993a2e29fa33345a6a9ce0b4f192efe7412746b92b172b0eed8ce78ee8471f"
+      },
+      {
+        "bytes": 2509,
+        "git_blob_sha1": "de17a70ab81f2e4661f877e13455a88974f4ac2c",
+        "path": "risc0/zkp/src/core/hash/poseidon2/rng.rs",
+        "sha256": "8c5868a8b258896835e2c3c93a84cfe01167f1a446e4d74a3b7be94ae1bf8017"
+      },
+      {
+        "bytes": 14258,
+        "git_blob_sha1": "0eedf1a38b71a3ce586ab05b51de2979da28e78e",
+        "path": "risc0/zkp/src/core/hash/poseidon2/consts.rs",
+        "sha256": "5ee51bce046bce1306181a43136aa0731dcf976ab10e2e8d82db88711efdcc41"
+      },
+      {
+        "bytes": 8231,
+        "git_blob_sha1": "5b6304ac2fb5421e575d285825b8fbe3f81060dc",
+        "path": "risc0/zkp/src/core/digest.rs",
+        "sha256": "15ea8c15627e5074eea6d0e71895bd006d28f0cfe9ddb2f2dd73de6cbcd22772"
+      },
+      {
+        "bytes": 16709,
+        "git_blob_sha1": "f8b2142d41cc6a80787653fd8e07f5b2027bd948",
+        "path": "risc0/zkvm/src/receipt/succinct.rs",
+        "sha256": "8e0165b3210e30e77074763d71d85fd0595e4190b96725182f33665b7df90d60"
+      }
+    ],
+    "upstream_commit": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9"
+  },
+  "generator_sha256": "42f55e68fef753d4c63ca1749a2031d5b80e4184f9e4e316c7dd267dcdaa095f",
+  "git_commit_ancestry_verified": false,
+  "helper_execution": {
+    "mode": "compile_exact_pinned_repository_audit_bytes",
+    "sources": [
+      {
+        "bytes": 18002,
+        "path": "scripts/w1_control_tree_audit.py",
+        "sha256": "0e9b8e2fd9f6905f98b3df1a52b4ac2a46481b101b1d1a6afd29c2f5502f4865"
+      },
+      {
+        "bytes": 33723,
+        "path": "scripts/w1_profile_source_map.py",
+        "sha256": "324dc1726fc5bfcfd79e5d78d890737bfdd3c5877d74e417d2ed8018254523b0"
+      },
+      {
+        "bytes": 23660,
+        "path": "scripts/w1_fri_transcript_audit.py",
+        "sha256": "12cc991999f68d925f078888d1e18302739171ee6187bbeb2f3bfb17c19a88fc"
+      }
+    ],
+    "upstream_source_executed": false
+  },
+  "historical_v1": {
+    "contract_sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22",
+    "named_roster_completed": false,
+    "reader_sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354",
+    "reason": "input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+    "result": "INPUT_REJECTED",
+    "workflow_passed": false
+  },
+  "lifetime_budget": {
+    "accepted_statements_lifetime": null,
+    "adaptive_composition_bound": null,
+    "concrete_hash_to_ideal_oracle_error": null,
+    "hash_output_sigma_bits": null,
+    "max_fs_rounds_per_reduction": null,
+    "max_recursive_nodes_per_statement": null,
+    "min_verifier_randomness_bits": null,
+    "policy_adopted": false,
+    "quantum_queries_lifetime": null,
+    "rrbr_knowledge_error": null,
+    "target_total_failure_probability": null
+  },
+  "local_path_closure": {
+    "files": [
+      {
+        "bytes": 1596,
+        "path": "config/pon/work-profile-v1.json",
+        "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+      },
+      {
+        "bytes": 318,
+        "path": "evidence/pon-w1-complete-succinct-20261028/full-proof/header.bin",
+        "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+      },
+      {
+        "bytes": 256886,
+        "path": "evidence/pon-w1-complete-succinct-20261028/full-proof/succinct.bin",
+        "sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+      },
+      {
+        "bytes": 223154,
+        "path": "evidence/pon-w1-verifier-hardening-20261028/real-lift-0000.bin",
+        "sha256": "d2b06a1feca2d15e8dc5741b43f481a82c32d7d3dab01e413d357012467093d3"
+      },
+      {
+        "bytes": 38332,
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock",
+        "sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865"
+      },
+      {
+        "bytes": 349,
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml",
+        "sha256": "9ed358e1e24b58505d5d37e0a88ef3538b2c6146c3303a87c33b19208d667d25"
+      },
+      {
+        "bytes": 110,
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/lib.rs",
+        "sha256": "35b60c3d87a6dff48ff7fc63820f86fcc50bf7c7cb3551a58fa2242c6b8e77b5"
+      },
+      {
+        "bytes": 28049,
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs",
+        "sha256": "53048b6a7fd413bfb25abee86c4b7868be1c28364d43f53dc1bb2e40b14ae4b5"
+      },
+      {
+        "bytes": 5246,
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs",
+        "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9"
+      },
+      {
+        "bytes": 1282,
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/wire.rs",
+        "sha256": "fae4f60cca4bcd5aff132935307d3ea11de194765c6e3050adfaf7f346ef9cf3"
+      },
+      {
+        "bytes": 46489,
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+        "sha256": "9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef"
+      },
+      {
+        "bytes": 498,
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "sha256": "65263e60248f29008ff098d5fcf1f573a19da5a40f87ecdaa6d3cd5063c104ba"
+      },
+      {
+        "bytes": 284,
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs",
+        "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb"
+      },
+      {
+        "bytes": 11172,
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+        "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+      },
+      {
+        "bytes": 74379,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+        "sha256": "ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a"
+      },
+      {
+        "bytes": 397,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "sha256": "955e810713a1c15cf7b9af3f635705e7fdd20434aee829080f314fd68b98725e"
+      },
+      {
+        "bytes": 46025,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock",
+        "sha256": "03a3b7f6cc81a6e1678f2fd23b2b448f8f90931c258f4e66a7bcdc422447d2bf"
+      },
+      {
+        "bytes": 564,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml",
+        "sha256": "48f1c4580ff7de989bdcf1055d12ed5128b105994e653e6d11a593c029bd2037"
+      },
+      {
+        "bytes": 445,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/src/main.rs",
+        "sha256": "c2db185d338be3ab7c6256239b750445e084547de742221517f9fc9f12711468"
+      },
+      {
+        "bytes": 290,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml",
+        "sha256": "98317da54f1b107b02486236f409f240c1910c948eaf31b5e093365147e2004f"
+      },
+      {
+        "bytes": 14597,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+        "sha256": "aeee8bebc5b098744a34a568232fadb5a79963760d8e2e8b3fb6176683987322"
+      },
+      {
+        "bytes": 11159,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/v2.rs",
+        "sha256": "9f31aec3b6d7f376164b58f3ab2f89a191716a560235f73c692b390d1c9fa45b"
+      },
+      {
+        "bytes": 86,
+        "path": "rust-toolchain.toml",
+        "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+      },
+      {
+        "bytes": 5079,
+        "path": "tests/fixtures/cpq1-content-v1/vectors.json",
+        "sha256": "b295ac507b880840176e5dc836dbb1773c13f16f4c4a60c0c89a0c57905dda5e"
+      },
+      {
+        "bytes": 40597,
+        "path": "trillionnium/Cargo.lock",
+        "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+      },
+      {
+        "bytes": 2204,
+        "path": "trillionnium/Cargo.toml",
+        "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+      },
+      {
+        "bytes": 924,
+        "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+        "sha256": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3"
+      },
+      {
+        "bytes": 3488,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_adversarial_cost.rs",
+        "sha256": "0d091365566386c60d90cd69ef040aff0500bd396a7f94e70410b4aed72e9fd9"
+      },
+      {
+        "bytes": 1722,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_cost.rs",
+        "sha256": "a6a7d58f5d3bbfabb63f4c0a9e9a14cc183f02d820b55999f376624180460cae"
+      },
+      {
+        "bytes": 28108,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs",
+        "sha256": "3310556fde267fdecbad1b2e8d0ff716a1ce536dbf755dee60a2124490bbf0c7"
+      },
+      {
+        "bytes": 5963,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_io.rs",
+        "sha256": "1efb46c8d663829688a60084031186795ceaf4837e2167f417a27f159afc611d"
+      },
+      {
+        "bytes": 27944,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_locality_cost.rs",
+        "sha256": "e697d084bd7ee9f3e847649044b311220756c26e63bdaae05686cb5f23336617"
+      },
+      {
+        "bytes": 2806,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_paired_io.rs",
+        "sha256": "aed36ea1d2dc71b8b1f5c70af4781a937c00998dabb6d9848c049761411faaa4"
+      },
+      {
+        "bytes": 3905,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_prepared_cost.rs",
+        "sha256": "9ac01ea460ec3e8c2280500c390faf918a93a73debc0a66ad55e0cd53c3519ab"
+      },
+      {
+        "bytes": 17263,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_producer_comparison.rs",
+        "sha256": "c82c7a6c91cac154b4f229c8b318ca1778fd5d04eebc9de6dca23893cff49493"
+      },
+      {
+        "bytes": 26180,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs",
+        "sha256": "68582c646c39079cd0b85ed8317feb82ee5a9639775b8359b5c9410577ee6ec0"
+      },
+      {
+        "bytes": 26739,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs",
+        "sha256": "9c361257f43d4a2dd1c37b5a5178b3dcdd28b0da41879410b282f14701e24aed"
+      },
+      {
+        "bytes": 41232,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_routed_int257_grouped.rs",
+        "sha256": "1c29a290fffc5481b1980e19c13ef381e5caf9540af3787f227f2a145083d128"
+      },
+      {
+        "bytes": 50152,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_shared_material_v1.rs",
+        "sha256": "313f7b83dfb36d3eb0b0061bc87001057d9cb05ce4dfea24b9e95b9350d3106c"
+      },
+      {
+        "bytes": 1527,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_tiled_io.rs",
+        "sha256": "657ba21f36ca6b2efd229b1c0a019bbc59236a5c96e0b293d3d1a3d5fea5d1bb"
+      },
+      {
+        "bytes": 10535,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_native_winner_v2.rs",
+        "sha256": "ee1a573012568b1f104d66f37ff08a083719d8745031c6904929899217e9d7d1"
+      },
+      {
+        "bytes": 40529,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_rank_batch_v5.rs",
+        "sha256": "a5bd50b96e51f6c63fdf4ee996d47bcdf4b177a046d632365ee24398cdd91e48"
+      },
+      {
+        "bytes": 2953,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work.rs",
+        "sha256": "af443df76b65018d287874d22866ce873e283a3ca3526d5be6f9508da5af517a"
+      },
+      {
+        "bytes": 40448,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_v1.rs",
+        "sha256": "86cce1ac568a4542f37922ac88887f1e9a0c8071d233cd4be1fc0da19cf4364e"
+      },
+      {
+        "bytes": 17650,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_verifier_v1.rs",
+        "sha256": "e27598a342e73e100d9f801b9e040db45c46dd4f92bd900f73245ef270f076b8"
+      },
+      {
+        "bytes": 1495,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs",
+        "sha256": "2377bbb748a67fb238c2d113799adce472e905465b5ac46372597ff7ab4dd0b3"
+      },
+      {
+        "bytes": 5395,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs",
+        "sha256": "344f09d0a7112ac4c507d262b9b11391b892df74c24c06b67253b3272fa185cf"
+      },
+      {
+        "bytes": 26758,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs",
+        "sha256": "d3f620c89c05b20a845d0df0207af349efbb637d7e3fc40d3f0a0a69718017ae"
+      },
+      {
+        "bytes": 3938,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs",
+        "sha256": "da7ff070555cb88c7ee88cc3b764611097c79db26a0c00960d9d8e7779b78227"
+      },
+      {
+        "bytes": 18697,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_parameter_bench.rs",
+        "sha256": "8567e6a09d03fb7b63d73dedc1b0ae8bd77f25790af19a6c9d670974494336fb"
+      },
+      {
+        "bytes": 29053,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_profile_bench.rs",
+        "sha256": "a4741b0179e52388dd4daeee30eaf82a1ef18b41a330b4806ab66102932a6a5a"
+      },
+      {
+        "bytes": 7114,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs",
+        "sha256": "ca6196f9067ea3ac86a2d743c13de9c9cac0715e4ae652654cdd6592a6d0cf9a"
+      },
+      {
+        "bytes": 8117,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+        "sha256": "74f11c99984a0c199f6b1a882206dc887440a3c69668dd3833054eb0e98fd32c"
+      },
+      {
+        "bytes": 2171,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs",
+        "sha256": "cb2b365c7f9428cc0adca1deb38e3e627859fab3a8b45816d77370546fb2645d"
+      },
+      {
+        "bytes": 17866,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_grouped_fresh_seal_v0.rs",
+        "sha256": "7763bd52066366b0f30c9b4bc314ae713fbcf9063abd651c48c5c495cdfcad29"
+      },
+      {
+        "bytes": 48908,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_routed_int257_grouped.rs",
+        "sha256": "e9416457ee3df24cf5446ebffde6d7748a8eeff8f0f46e77b6ad9555e0ef6b0a"
+      },
+      {
+        "bytes": 104121,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+      },
+      {
+        "bytes": 13186,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs",
+        "sha256": "b6f453410f588391b8a05427299f7e7c3b10d1972d2057620146cde5ca28fbb9"
+      },
+      {
+        "bytes": 5124,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs",
+        "sha256": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5"
+      },
+      {
+        "bytes": 23186,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs",
+        "sha256": "1e53a6aa598d0fcb23866253f5c89add025cdd0654d6e82570a761a2d253f7a5"
+      },
+      {
+        "bytes": 9812,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/full_limb_controls.rs",
+        "sha256": "b418bcbac9261335b0296f46fed8644f2cdc11d3df368bee9b39f7909a357905"
+      },
+      {
+        "bytes": 4167,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs",
+        "sha256": "f93b72aa1b5dec2b991de6586214f274a7797f8a347d0444125101f0e52cee2f"
+      },
+      {
+        "bytes": 3747,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs",
+        "sha256": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919"
+      },
+      {
+        "bytes": 16879,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs",
+        "sha256": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031"
+      },
+      {
+        "bytes": 10436,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs",
+        "sha256": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f"
+      },
+      {
+        "bytes": 22281,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
+        "sha256": "0c9c4ddb772292efd0cf92dc174e8b2353b1e0f16f36df484a5e16b280316a0f"
+      },
+      {
+        "bytes": 8795,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs",
+        "sha256": "d3e10fd0b3f2ab50fbf95778bd38353a1c9da38f44cf6f558d309661f47606a2"
+      },
+      {
+        "bytes": 21981,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs",
+        "sha256": "010410761dc0a71e03f32f43e82b09f808ee69cab860f5a708081ae661f6396e"
+      },
+      {
+        "bytes": 5033,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs",
+        "sha256": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101"
+      },
+      {
+        "bytes": 24418,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs",
+        "sha256": "e029837d050952046c9c4fa694a8191470a8733cd96a3dc81e98cc46af59a0a3"
+      },
+      {
+        "bytes": 13599,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs",
+        "sha256": "b167b51b07a6fbf186a1485c1f742de3df1007cb9794c364c7421d77e0afacb4"
+      },
+      {
+        "bytes": 20390,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
+        "sha256": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d"
+      },
+      {
+        "bytes": 12611,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs",
+        "sha256": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac"
+      },
+      {
+        "bytes": 26429,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
+        "sha256": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899"
+      },
+      {
+        "bytes": 15194,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs",
+        "sha256": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab"
+      },
+      {
+        "bytes": 27102,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+        "sha256": "329fad8979b4ab8681aebe26edf6d3e65fcdbbc6de027262bffe697fb3ef31e2"
+      },
+      {
+        "bytes": 8669,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache_tests.rs",
+        "sha256": "6ced986fd49f46c2e29df809488c50844ad8ae6f05e69d540abaca1638fd611c"
+      },
+      {
+        "bytes": 22800,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
+        "sha256": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c"
+      },
+      {
+        "bytes": 12902,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+        "sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b"
+      },
+      {
+        "bytes": 8563,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tests.rs",
+        "sha256": "3b28edf202a2b7c7b42b12f2e07884d5e25593036fc74d2372900e294b73ee4c"
+      },
+      {
+        "bytes": 7158,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tuf.rs",
+        "sha256": "f94910f4eefc7be98c0741a48140d59d3a638f4613fdc1e7d0f6f5137c3fca73"
+      },
+      {
+        "bytes": 19075,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+        "sha256": "2f775934937dc0997579ca43132c3a2aee262103ec66ca4a4be08d3b8f4f93f4"
+      },
+      {
+        "bytes": 3525,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth.rs",
+        "sha256": "5d7cb197c4296777ac00708b6b260cf2ee27aac17b778b43bbd71b9009b708d9"
+      },
+      {
+        "bytes": 5018,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth/profile_boundary_tests.rs",
+        "sha256": "0a5a6950d30d998ea3f89e8698d3aae64dd1c0126fc5435a57c9ee57942f5dd5"
+      },
+      {
+        "bytes": 4729,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth/tests.rs",
+        "sha256": "b96ec0d04833d8c69faeb958a6ddb4c0b7881bfae92035d3ba739f095d8b7ac7"
+      },
+      {
+        "bytes": 11609,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+        "sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37"
+      },
+      {
+        "bytes": 21524,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
+        "sha256": "9b03c4f4a22175fe183e045bc1a2e25282232a4bb156281970f542e7277ebf1b"
+      },
+      {
+        "bytes": 11174,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs",
+        "sha256": "2b638555857b20c2d1e5888757c0b96612a00c6eec62ebc056acc35ed1659ba1"
+      },
+      {
+        "bytes": 8198,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task.rs",
+        "sha256": "d2e08fc8bbd5527a67467ef39bdb7fc80dc17443242e240f3704d1d2f12b4c86"
+      },
+      {
+        "bytes": 4044,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/lifecycle_v2.rs",
+        "sha256": "00e0c3ec2a9e51add5393a9b4ce6e6eb58de9d709fb63cd61d2a6b1681ef0a3e"
+      },
+      {
+        "bytes": 6831,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v4.rs",
+        "sha256": "e4162c548d62787437564e19a9dbfbf1df8af310b40464db52942742cdfec2a0"
+      },
+      {
+        "bytes": 8938,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v5.rs",
+        "sha256": "9a78f1a2e4c3343e2c4885a95d9ab99eb1c25394f56fc9589cddf0fd9ebc936f"
+      },
+      {
+        "bytes": 18941,
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/tuf_tap21_mldsa65_v1.json",
+        "sha256": "d56d1c460e0372e262fe4d0cfc4b255b9dc325eda93e512638bedbd3e18deef2"
+      },
+      {
+        "bytes": 1664284,
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json",
+        "sha256": "1ca235f61928421a173a171780beb00264ae9155dc33c52a11e1766cc7979034"
+      },
+      {
+        "bytes": 7088,
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/pq_openssl_native.rs",
+        "sha256": "ec5635368af81c3982298d45071efbf57e74963ff3fc66a09a55c9c84d4492c3"
+      },
+      {
+        "bytes": 12740,
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs",
+        "sha256": "3ae8818e5e805985dd9298ff5ba293c62f06211d5b98e94f679d4b60bc3abb3d"
+      },
+      {
+        "bytes": 7624,
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/qualified_task_lifecycle_v2.rs",
+        "sha256": "da2d906d90f5f1a7ed80eff3368305a7275c52bcd80a6a9a4cbfd507901a2a2f"
+      },
+      {
+        "bytes": 9762,
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/qualified_work_task.rs",
+        "sha256": "8ad9579c1b96f319c46bd63acc4d1838e5b39609474bb8e1ecdc14192efc74bd"
+      },
+      {
+        "bytes": 6132,
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/tuf_tap21.rs",
+        "sha256": "ca4fcb7198dfcadf5ed0fa609594f7cb1e6104aeafe428fee57bfba169857052"
+      },
+      {
+        "bytes": 684,
+        "path": "trillionnium/crates/trnm-protocol/Cargo.toml",
+        "sha256": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc"
+      },
+      {
+        "bytes": 1279,
+        "path": "trillionnium/crates/trnm-protocol/examples/pon_wire.rs",
+        "sha256": "2452de24afff42aaa72ac9a148d39bb0fe16e70f0547f33a3fae2ab8274260ad"
+      },
+      {
+        "bytes": 9650,
+        "path": "trillionnium/crates/trnm-protocol/src/content_commitment.rs",
+        "sha256": "1e85bb848addea4287ae4f8d5f26dcc1aece9919106dfd73c531ba0b96eeb5e1"
+      },
+      {
+        "bytes": 8022,
+        "path": "trillionnium/crates/trnm-protocol/src/content_commitment/tests.rs",
+        "sha256": "8ed765a896ea89891c921b216f4a5dd7c3ee89b8f4eb1a5b6b9e1d7e5eec5fe6"
+      },
+      {
+        "bytes": 41595,
+        "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+        "sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a"
+      },
+      {
+        "bytes": 59988,
+        "path": "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",
+        "sha256": "600bb311882e1094c55826040b7d215f2f7b680bfcedab10678cdcb409a2ba27"
+      },
+      {
+        "bytes": 14038,
+        "path": "trillionnium/crates/trnm-protocol/src/funded_service_task_v1.rs",
+        "sha256": "c7c501901dd9fe38b447db61069a6d605379c5a02555acc874ffebfb2c948cb1"
+      },
+      {
+        "bytes": 5249,
+        "path": "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
+        "sha256": "b16311bcbff7af586641931e1980e6886df6543fc6700251c3b44ec8a9adc305"
+      },
+      {
+        "bytes": 3284,
+        "path": "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs",
+        "sha256": "2300d2683378211e4e6d9e1720a6869eb2f1d30d35666f810cb6876613dccc38"
+      },
+      {
+        "bytes": 15774,
+        "path": "trillionnium/crates/trnm-protocol/src/lib.rs",
+        "sha256": "b965065ca4915d57e61af480ef6cfb8f775465c8ad0e4dec0b2895e110946b86"
+      },
+      {
+        "bytes": 3760,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_growth.rs",
+        "sha256": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f"
+      },
+      {
+        "bytes": 19189,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_state.rs",
+        "sha256": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb"
+      },
+      {
+        "bytes": 12129,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_state_bulk_tests.rs",
+        "sha256": "c3e16e156883125f5b7e6f601a5bd8abff7ba7139457220d1cde5299ce800f89"
+      },
+      {
+        "bytes": 32654,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+      },
+      {
+        "bytes": 21244,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+        "sha256": "8b18f12347a32c4ad55dae7c8fd7400144e0505fdd26ee7407362beafee7f0bb"
+      },
+      {
+        "bytes": 30536,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs",
+        "sha256": "04d70da9048f5e85a6b580ccfdcf9bcd26576af802084af53bc37f70de71c647"
+      },
+      {
+        "bytes": 13891,
+        "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+        "sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429"
+      },
+      {
+        "bytes": 1856,
+        "path": "trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs",
+        "sha256": "5ba12e5b3bedcfcb2e495ef255ac4c4d457d27cbd9e6f90f8f839dda445fea75"
+      },
+      {
+        "bytes": 26325,
+        "path": "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs",
+        "sha256": "025f9a45830d97583a454241b61a73ca6fee41fdadeafc771ca60a0169a0530f"
+      },
+      {
+        "bytes": 9944,
+        "path": "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2/tests.rs",
+        "sha256": "29c450985b2151b22a67e4863ea042cfdccc87bc4aba7646e43d1a5bb19aefdb"
+      },
+      {
+        "bytes": 6151,
+        "path": "trillionnium/crates/trnm-protocol/src/pq_transaction.rs",
+        "sha256": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3"
+      },
+      {
+        "bytes": 11950,
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs",
+        "sha256": "429d696b9d8438efc8e17733555a4f4913e6d19a96c86b2af411a85ab863ffc5"
+      },
+      {
+        "bytes": 10733,
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v2.rs",
+        "sha256": "a1ea641665dc38f8e4dc88d4d2c86358f0b8daa64ee56984e8ba36cd93cf5bd8"
+      },
+      {
+        "bytes": 1792,
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v3.rs",
+        "sha256": "312a344ce187b3e942b29e0675915600c85c4f8db72b25ae04e8dc5ae1188069"
+      },
+      {
+        "bytes": 459,
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
+        "sha256": "e84890971bb6416e56913fdac1c735a8437e0e67770e1076530cdf5e7f2b41b8"
+      },
+      {
+        "bytes": 12866,
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
+        "sha256": "aeb3429701913abe20cdead6a33b022548214a1796a48f40fdb85a953a903719"
+      },
+      {
+        "bytes": 13706,
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v5.rs",
+        "sha256": "002de1ce7bcfafa1c6d3dc540666311e8c8a2a973374f5c0f6a096c34ae643b4"
+      },
+      {
+        "bytes": 2844,
+        "path": "trillionnium/crates/trnm-protocol/src/sha2_backend_tests.rs",
+        "sha256": "b55c61c1be3be33e1ffa8d865416a0ac61e2270a41e953fbc51d48390d485379"
+      },
+      {
+        "bytes": 1974,
+        "path": "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der",
+        "sha256": "0fb9557e08a03348d149977dcd9182af2981168a122107ea6a7e136c75774d61"
+      },
+      {
+        "bytes": 3615,
+        "path": "trillionnium/crates/trnm-protocol/tests/integer_evolution_v3.rs",
+        "sha256": "4056f533271873d6b8a4d1ea5aefa99f10ea4a8bf2d7fd8df2aff2410878aecd"
+      },
+      {
+        "bytes": 7353,
+        "path": "trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v2.rs",
+        "sha256": "c02f0dc67d6ae82e823729c224d945dbf228cd8eaeca877d7821520efb763873"
+      },
+      {
+        "bytes": 5051,
+        "path": "trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v3.rs",
+        "sha256": "d1d0d0e3909768035d4f9770ab94407ad871931cdd44dcd10e16118cac579eb6"
+      },
+      {
+        "bytes": 4606,
+        "path": "trillionnium/crates/trnm-protocol/tests/qualified_work_task.rs",
+        "sha256": "e6a79653acace6efc30ba289c0624fb3581f90d1267c4e8a427a44e2b41ea9f8"
+      },
+      {
+        "bytes": 2236,
+        "path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_accounts_fixture.rs",
+        "sha256": "d460750af7794feb69d5563859938e79e9f4a2bb9991877ad560c280e351bee1"
+      },
+      {
+        "bytes": 2531,
+        "path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_fixture.rs",
+        "sha256": "ec4b8732e4fa8dc151cad9679845213e3d47d7099d3feb4db885de1e5f55706d"
+      },
+      {
+        "bytes": 2496,
+        "path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_quota_fixture.rs",
+        "sha256": "660d3efc76338a602240ed2e1062e5a9c91d370ecbc4a3a9039c076ed7f48b0f"
+      },
+      {
+        "bytes": 6531,
+        "path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture.rs",
+        "sha256": "f094d64efd1f64d01fc7362c54332f2cf14a284077513a779ac76c6b1739bcfa"
+      },
+      {
+        "bytes": 7659,
+        "path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture_v5.rs",
+        "sha256": "082efa18a67350bc7c5851a19f5c5ab1749ac35f94e8eb1f2254153add9dc707"
+      }
+    ],
+    "literal_include_files": [
+      "config/pon/work-profile-v1.json",
+      "evidence/pon-w1-complete-succinct-20261028/full-proof/header.bin",
+      "evidence/pon-w1-complete-succinct-20261028/full-proof/succinct.bin",
+      "evidence/pon-w1-verifier-hardening-20261028/real-lift-0000.bin",
+      "tests/fixtures/cpq1-content-v1/vectors.json",
+      "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/tuf_tap21_mldsa65_v1.json",
+      "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json",
+      "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der"
+    ],
+    "path_edges": [
+      {
+        "dependency": "trnm-w1-hardened-verifier",
+        "manifest": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "target": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml"
+      },
+      {
+        "dependency": "trnm-w1-zk-relation",
+        "manifest": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "target": "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml"
+      },
+      {
+        "dependency": "trnm-w1-zk-relation",
+        "manifest": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml",
+        "target": "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml"
+      },
+      {
+        "dependency": "trnm-crypto-primitives",
+        "manifest": "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml",
+        "target": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml"
+      },
+      {
+        "dependency": "trnm-protocol",
+        "manifest": "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml",
+        "target": "trillionnium/crates/trnm-protocol/Cargo.toml"
+      },
+      {
+        "dependency": "trnm-protocol",
+        "manifest": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+        "target": "trillionnium/crates/trnm-protocol/Cargo.toml"
+      }
+    ],
+    "scope": "all-local-path-crate-source-files-and-literal-includes; external-implementation-and-build-identity-unqualified",
+    "source_before_after_equal": true,
+    "source_files_checked": 137
+  },
+  "locked_package_mapping": {
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock": {
+      "selected_packages": [
+        {
+          "checksum": "d836c6ad82f4ced7c61d5feedf905a17780312e393aa681d29cc0bbc5131672b",
+          "name": "risc0-binfmt",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "7c731e12429eb4457e1ddc69c56ee7343a1e10b86e4aa55bc8f4d2b13734abb9",
+          "name": "risc0-circuit-keccak",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.6"
+        },
+        {
+          "checksum": "40dd640122abcc67d4d4e4f055c68cbc3ad2efb8589c65c2b23d354632971b60",
+          "name": "risc0-circuit-recursion",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.5"
+        },
+        {
+          "checksum": "cb11231aa4b74bcc0c8d16597893fbd7ea6f6a9ebbc35e16bfd06b467c7ee104",
+          "name": "risc0-circuit-rv32im",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.5"
+        },
+        {
+          "checksum": "d6eb2d2b2c6cac0e43cbb2202daacee1a2f24d0dfa03fd08887a11dc6defdcc1",
+          "name": "risc0-core",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.2"
+        },
+        {
+          "checksum": "b0ca702ea7d0162766defe7ed6a79bda4a747ad9e2684000a6edd14df0a6d1f3",
+          "name": "risc0-groth16",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "b8b0b598ba7946354b10ca5c56e382de801e6c7fce9fccad0396ec436bc5072b",
+          "name": "risc0-zkos-v1compat",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "2.2.3"
+        },
+        {
+          "checksum": "21c0c921e5e2d44197940d387a45e29c6165e318b5a168fdfdbd50f50ba03678",
+          "name": "risc0-zkp",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "a5d4f24ec767f71a1663a4d24cf9d02b6bfee44c64647cae677227817051007a",
+          "name": "risc0-zkvm",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.6"
+        },
+        {
+          "checksum": "2eb37a97ff7e8e4ee1b2a1c43ec143b4887759883c343507af9e4787a57914cd",
+          "name": "risc0-zkvm-platform",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "2.2.3"
+        },
+        {
+          "checksum": "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283",
+          "name": "sha2",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "0.10.9"
+        }
+      ],
+      "sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865"
+    },
+    "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock": {
+      "selected_packages": [
+        {
+          "checksum": "d836c6ad82f4ced7c61d5feedf905a17780312e393aa681d29cc0bbc5131672b",
+          "name": "risc0-binfmt",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "7c731e12429eb4457e1ddc69c56ee7343a1e10b86e4aa55bc8f4d2b13734abb9",
+          "name": "risc0-circuit-keccak",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.6"
+        },
+        {
+          "checksum": "40dd640122abcc67d4d4e4f055c68cbc3ad2efb8589c65c2b23d354632971b60",
+          "name": "risc0-circuit-recursion",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.5"
+        },
+        {
+          "checksum": "cb11231aa4b74bcc0c8d16597893fbd7ea6f6a9ebbc35e16bfd06b467c7ee104",
+          "name": "risc0-circuit-rv32im",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.5"
+        },
+        {
+          "checksum": "d6eb2d2b2c6cac0e43cbb2202daacee1a2f24d0dfa03fd08887a11dc6defdcc1",
+          "name": "risc0-core",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.2"
+        },
+        {
+          "checksum": "b0ca702ea7d0162766defe7ed6a79bda4a747ad9e2684000a6edd14df0a6d1f3",
+          "name": "risc0-groth16",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "b8b0b598ba7946354b10ca5c56e382de801e6c7fce9fccad0396ec436bc5072b",
+          "name": "risc0-zkos-v1compat",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "2.2.3"
+        },
+        {
+          "checksum": "21c0c921e5e2d44197940d387a45e29c6165e318b5a168fdfdbd50f50ba03678",
+          "name": "risc0-zkp",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "a5d4f24ec767f71a1663a4d24cf9d02b6bfee44c64647cae677227817051007a",
+          "name": "risc0-zkvm",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.6"
+        },
+        {
+          "checksum": "2eb37a97ff7e8e4ee1b2a1c43ec143b4887759883c343507af9e4787a57914cd",
+          "name": "risc0-zkvm-platform",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "2.2.3"
+        },
+        {
+          "checksum": "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283",
+          "name": "sha2",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "0.10.9"
+        }
+      ],
+      "sha256": "9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock": {
+      "selected_packages": [
+        {
+          "checksum": "d836c6ad82f4ced7c61d5feedf905a17780312e393aa681d29cc0bbc5131672b",
+          "name": "risc0-binfmt",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "7c731e12429eb4457e1ddc69c56ee7343a1e10b86e4aa55bc8f4d2b13734abb9",
+          "name": "risc0-circuit-keccak",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.6"
+        },
+        {
+          "checksum": "40dd640122abcc67d4d4e4f055c68cbc3ad2efb8589c65c2b23d354632971b60",
+          "name": "risc0-circuit-recursion",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.5"
+        },
+        {
+          "checksum": "cb11231aa4b74bcc0c8d16597893fbd7ea6f6a9ebbc35e16bfd06b467c7ee104",
+          "name": "risc0-circuit-rv32im",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.5"
+        },
+        {
+          "checksum": "d6eb2d2b2c6cac0e43cbb2202daacee1a2f24d0dfa03fd08887a11dc6defdcc1",
+          "name": "risc0-core",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.2"
+        },
+        {
+          "checksum": "b0ca702ea7d0162766defe7ed6a79bda4a747ad9e2684000a6edd14df0a6d1f3",
+          "name": "risc0-groth16",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "b8b0b598ba7946354b10ca5c56e382de801e6c7fce9fccad0396ec436bc5072b",
+          "name": "risc0-zkos-v1compat",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "2.2.3"
+        },
+        {
+          "checksum": "21c0c921e5e2d44197940d387a45e29c6165e318b5a168fdfdbd50f50ba03678",
+          "name": "risc0-zkp",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "3fcce11648a9ff60b8e7af2f0ce7fbf8d25275ab6d414cc91b9da69ee75bc978",
+          "name": "risc0-zkvm",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.3"
+        },
+        {
+          "checksum": "2eb37a97ff7e8e4ee1b2a1c43ec143b4887759883c343507af9e4787a57914cd",
+          "name": "risc0-zkvm-platform",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "2.2.3"
+        },
+        {
+          "checksum": null,
+          "name": "sha2",
+          "source": "git+https://github.com/risc0/RustCrypto-hashes?rev=244dc3b08788f7a4ccce14c66896ae3b4f24c166#244dc3b08788f7a4ccce14c66896ae3b4f24c166",
+          "version": "0.10.8"
+        }
+      ],
+      "sha256": "03a3b7f6cc81a6e1678f2fd23b2b448f8f90931c258f4e66a7bcdc422447d2bf"
+    }
+  },
+  "native_binary_executed": false,
+  "open_obligations": [
+    {
+      "id": "latest_theorem_version_equivalence",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "complete_relation_and_compiler",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "all_27_recursion_program_semantics",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "control_padding_and_recursive_trace_size_reachability",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "relaxed_rbr_knowledge_soundness",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "committed_relation_monotonicity",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "merkle_multi_extractability",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "sponge_and_domain_separation_mapping",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "fiat_shamir_challenge_and_salt_mapping",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "finite_field_sampling_and_challenge_length",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "sequential_adaptive_composition",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "lifetime_global_quantum_budget",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "concrete_enabled_features_and_debug_exclusion",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "quantum_work_and_chainweight",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "pq_signature_owner_authorization",
+      "state": "UNRESOLVED"
+    }
+  ],
+  "parameter_digest_independently_recomputed": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
+  "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+  "project_files": [
+    {
+      "bytes": 5246,
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs",
+      "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9"
+    },
+    {
+      "bytes": 1282,
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/wire.rs",
+      "sha256": "fae4f60cca4bcd5aff132935307d3ea11de194765c6e3050adfaf7f346ef9cf3"
+    },
+    {
+      "bytes": 349,
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml",
+      "sha256": "9ed358e1e24b58505d5d37e0a88ef3538b2c6146c3303a87c33b19208d667d25"
+    },
+    {
+      "bytes": 38332,
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock",
+      "sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865"
+    },
+    {
+      "bytes": 11172,
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+      "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+    },
+    {
+      "bytes": 284,
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs",
+      "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb"
+    },
+    {
+      "bytes": 498,
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+      "sha256": "65263e60248f29008ff098d5fcf1f573a19da5a40f87ecdaa6d3cd5063c104ba"
+    },
+    {
+      "bytes": 46489,
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+      "sha256": "9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef"
+    },
+    {
+      "bytes": 445,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/src/main.rs",
+      "sha256": "c2db185d338be3ab7c6256239b750445e084547de742221517f9fc9f12711468"
+    },
+    {
+      "bytes": 564,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml",
+      "sha256": "48f1c4580ff7de989bdcf1055d12ed5128b105994e653e6d11a593c029bd2037"
+    },
+    {
+      "bytes": 46025,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock",
+      "sha256": "03a3b7f6cc81a6e1678f2fd23b2b448f8f90931c258f4e66a7bcdc422447d2bf"
+    },
+    {
+      "bytes": 14597,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+      "sha256": "aeee8bebc5b098744a34a568232fadb5a79963760d8e2e8b3fb6176683987322"
+    },
+    {
+      "bytes": 11159,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/v2.rs",
+      "sha256": "9f31aec3b6d7f376164b58f3ab2f89a191716a560235f73c692b390d1c9fa45b"
+    },
+    {
+      "bytes": 104121,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+    },
+    {
+      "bytes": 3747,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs",
+      "sha256": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919"
+    },
+    {
+      "bytes": 32654,
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+    }
+  ],
+  "provider_build_identity_verified": false,
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "post_quantum_soundness_qualified": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false,
+    "security_bits_quantum": null
+  },
+  "result": "CURRENT_MAPPING_REPRODUCED_SECURITY_HOLD",
+  "reviewed_changes": {
+    "funded_service_wire": "Tags 2 and 5 also decode exact FundedServiceReservationV1 and FundedServiceDecisionV1; full local path-crate sources and literal includes are pinned. This is no theorem about all new wire behaviors.",
+    "grouped_factored_producer": "Expanded local closure includes the reviewed #824 exact B(Ax) preparation/execution and separate example selector. These two files do not call or change W1; no verifier/protocol/manifest/lock/include changes relative to #827 were observed. This inventory establishes no cost lower bound or consensus credit.",
+    "root_storage_integration_20261109": "Reviewed merge 44e96b1a841a50613d0b93484c5e576caec9f81f retains all 16 selected project files, saved fixtures, parameters and unresolved obligations. The local closure adds the three pq_root_v3 Rust source/test files and rebinds only the crypto module export and workspace lock among the prior 134 inputs. Optional root exports, the release OpenSSL dependency edge and the storage getrandom edge do not establish native execution, external dependency closure, a new proof or any security qualification.",
+    "sqlite_dependency_security_20261109": "Reviewed dependency checkpoint 189b9b5959d836ef6ae96e14fb285948e4920aa9 rebinds only trillionnium/Cargo.lock within the existing 137 local-closure files. The fixed package graph upgrades bundled rusqlite/libsqlite3-sys to 0.41.0/0.39.0 with their required hashlink/hashbrown resolution. All 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations are unchanged. This mapping supplies no native execution, third-party dependency closure or security qualification.",
+    "verifier_native_once": "New explicit native replay command; receipt verification dispatch and existing proof relation retained. Native execution is not performed by this mapping."
+  },
+  "saved_fixture_files": [
+    {
+      "bytes": 257014,
+      "path": "evidence/pon-w1-full-v2-20261105/succinct.bin",
+      "sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"
+    },
+    {
+      "bytes": 318,
+      "path": "evidence/pon-w1-full-v2-20261105/header.bin",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+    },
+    {
+      "bytes": 64,
+      "path": "evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+    },
+    {
+      "bytes": 49506,
+      "path": "evidence/pon-w1-full-v2-20261105/input.bin",
+      "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+    },
+    {
+      "bytes": 375928,
+      "path": "evidence/pon-w1-full-v2-20261105/guest.bin",
+      "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f"
+    },
+    {
+      "bytes": 198014,
+      "path": "evidence/pon-w1-full-v2-20261105/proof-result.json",
+      "sha256": "a2bbd9ed141b87823ea6d50322c0d65f706e32aca028d1b5ab19f1327c1194cc"
+    }
+  ],
+  "saved_v2": {
+    "both_parameter_fields_match": true,
+    "bytes": 257014,
+    "complete_native_work_replayed": false,
+    "control_inclusion_depth": 8,
+    "control_inclusion_index": 1,
+    "control_inclusion_matches_reconstructed_tree": true,
+    "final_control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+    "fresh_cryptographic_verification": false,
+    "full_claim_digest_from_output": "ee723bb7fbf8883ce892809ec2248abca9cd8c269944eb0e2c669d36880f0f32",
+    "guest_elf_sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+    "guest_elf_to_image_recomputed": false,
+    "guest_image_u32_le_hex": "7b8fb87437a9f1c308909d6b8e27655a3190ae04d2b11a2fa12ef111941c0dff",
+    "guest_image_words": [
+      1958252411,
+      3287394615,
+      1805488136,
+      1516578702,
+      78549041,
+      790278610,
+      301018785,
+      4279049364
+    ],
+    "hash_suite": "poseidon2",
+    "historical_rv32im_segments": 43,
+    "historical_segment_limit_po2": 18,
+    "inner_control_root_from_seal": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
+    "journal_bytes": 16882,
+    "journal_sha256": "56a5fcd0a18fc4db36aa37583dc8f7f75fe8f811482eec36d9b7121bae6f07ee",
+    "outer_recursion_seal_po2_raw": 18,
+    "parameter_digest": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
+    "public_artifact_commitments_recomputed": true,
+    "receipt_kind": "Succinct",
+    "receipt_sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+    "scope": "Fixed-byte partial metadata and public-identity reconstruction. Historical verification remains a separate record.",
+    "seal_words": 55667,
+    "work_id": "ccf544056c6df13a5ab4e6c021e587ff0008d92388270e64f72a6e2168a326cd"
+  },
+  "schema": "TRNM-W1-QROM-CURRENT-IMPLEMENTATION-AUDIT2",
+  "source_base_commit": "189b9b5959d836ef6ae96e14fb285948e4920aa9",
+  "source_binding_scope": "reviewed-local-path-crate-files-and-selected-mapping-inputs",
+  "stark_parameters": {
+    "FRI_FOLD_PO2": 4,
+    "FRI_MIN_DEGREE": 256,
+    "INV_RATE": 4,
+    "MAX_CYCLES_PO2": 24,
+    "MIN_CYCLES_PO2": 13,
+    "QUERIES": 50
+  },
+  "third_party_source_closure_verified": false,
+  "upstream_commit": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9",
+  "upstream_selected_sources": [
+    {
+      "bytes": 10174,
+      "git_blob_sha1": "f433b1a53f5b830a205fd2df78e2b34974656c7b",
+      "matches_historical_selected_archive_source": null,
+      "path": "LICENSE",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    {
+      "bytes": 5305,
+      "git_blob_sha1": "206dc0b6cb911aa687d8d3bf71e8671d94be8e9a",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/binfmt/src/hash.rs",
+      "sha256": "dc1439d9def4fff1d97d442ada4da4848109dfd31631120e8fb956f3c643eaed"
+    },
+    {
+      "bytes": 13225,
+      "git_blob_sha1": "cb50b4b4716a4e0bc78661e2b750256db8f94ec3",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/circuit/recursion/src/control_id.rs",
+      "sha256": "6fedf46fad3ca0ce3e537139be7873a43dd68fee5fc803d3e58604b4e9ae16cb"
+    },
+    {
+      "bytes": 1815,
+      "git_blob_sha1": "e1ab21d095cbf46a8aecd08ac2e87ea9ed5a1522",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/circuit/recursion/src/info.rs",
+      "sha256": "128c29a8ddf0560fb3a69c03fa1d959fab542d2fa09eae6794d28be871e345e9"
+    },
+    {
+      "bytes": 90720,
+      "git_blob_sha1": "b301d24c8b367a667902802549dcd1081777a8d3",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/circuit/recursion/src/taps.rs",
+      "sha256": "d32cbf5350d6f724cf3582ef92fb6c392f993b51ee89c5384f7ad79bab43ce83"
+    },
+    {
+      "bytes": 3411,
+      "git_blob_sha1": "7933ba3f245da082788f166cae10864409a641f1",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/circuit/rv32im/src/zirgen/info.rs",
+      "sha256": "4d7b76bc2843e55a4a0429c52542b94a2cd30120e7f6ca4ecad10a16494ddb30"
+    },
+    {
+      "bytes": 28372,
+      "git_blob_sha1": "989a827f26e34bfd81f670dc51db4a5ddfa7c6d7",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/core/src/field/baby_bear.rs",
+      "sha256": "df3e77d606dd74d78fb6b6f3dbbe72455c5ed5b091f7a74de8c049e85b857ff3"
+    },
+    {
+      "bytes": 12957,
+      "git_blob_sha1": "d193c13fec17d56fc7eb4522f818a0ff495dc4c3",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/adapter.rs",
+      "sha256": "1d1aca1dd7cc4c12477e0d887a3edfa0825b822efee671170ec667c7dd65ca1d"
+    },
+    {
+      "bytes": 8231,
+      "git_blob_sha1": "5b6304ac2fb5421e575d285825b8fbe3f81060dc",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/core/digest.rs",
+      "sha256": "15ea8c15627e5074eea6d0e71895bd006d28f0cfe9ddb2f2dd73de6cbcd22772"
+    },
+    {
+      "bytes": 4275,
+      "git_blob_sha1": "c75165452fa1115d977fa86876cb5da2a27d0439",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/core/hash/mod.rs",
+      "sha256": "c4cb4bcd5077bf65c3bb8cc148bb26e41cb4ca317e05325156e8cd5a090d99d9"
+    },
+    {
+      "bytes": 14258,
+      "git_blob_sha1": "0eedf1a38b71a3ce586ab05b51de2979da28e78e",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/core/hash/poseidon2/consts.rs",
+      "sha256": "5ee51bce046bce1306181a43136aa0731dcf976ab10e2e8d82db88711efdcc41"
+    },
+    {
+      "bytes": 13790,
+      "git_blob_sha1": "d5bd9ebd899c3847c57aa11c58c8a287600f08e8",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/core/hash/poseidon2/mod.rs",
+      "sha256": "a2993a2e29fa33345a6a9ce0b4f192efe7412746b92b172b0eed8ce78ee8471f"
+    },
+    {
+      "bytes": 2509,
+      "git_blob_sha1": "de17a70ab81f2e4661f877e13455a88974f4ac2c",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/core/hash/poseidon2/rng.rs",
+      "sha256": "8c5868a8b258896835e2c3c93a84cfe01167f1a446e4d74a3b7be94ae1bf8017"
+    },
+    {
+      "bytes": 18818,
+      "git_blob_sha1": "f21be6ee00d6157fb3d5df9ffac9eb101c1f9c44",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/core/hash/sha/mod.rs",
+      "sha256": "47ace16612d682d66f5c6e281b0d3a97688314566295692e06e4189015baf7ff"
+    },
+    {
+      "bytes": 1762,
+      "git_blob_sha1": "de0ffeb566be8ec5a85ef9e68b9376cdd8e85907",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/lib.rs",
+      "sha256": "107521d2426442fbc9358b7b9ae5650be92d670ea85e9a34aec7b9e9cc27dc6d"
+    },
+    {
+      "bytes": 3584,
+      "git_blob_sha1": "284852330817b91836fbf2fc14157ebadda7995f",
+      "matches_historical_selected_archive_source": null,
+      "path": "risc0/zkp/src/merkle.rs",
+      "sha256": "87bf97f1eb09235bce50b62c4a5fef5517400f6c57554853e9c8043f4b32c64a"
+    },
+    {
+      "bytes": 8222,
+      "git_blob_sha1": "e3fb2bc82dac618808124d5299f6958fbdcf6f46",
+      "matches_historical_selected_archive_source": null,
+      "path": "risc0/zkp/src/taps.rs",
+      "sha256": "f5f69bcbed730cc8acd43da89dd4e37ca7560b9eb991a37238482f3655f7e402"
+    },
+    {
+      "bytes": 5802,
+      "git_blob_sha1": "2eefff59b74e92586b1e0a314dbf4f2930d675e5",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/verify/fri.rs",
+      "sha256": "a601cfad5d01b294f934d697d6d832c57662e4778eac20ac549b1da53d11e377"
+    },
+    {
+      "bytes": 7173,
+      "git_blob_sha1": "b636147f6bf69e0a5062dc4db2dfa5c1aafcba2e",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/verify/merkle.rs",
+      "sha256": "267ab31c38f7502d9d0d3feebe7eb2fc2cbed9d3af4db66fde349e2c3b61a478"
+    },
+    {
+      "bytes": 21753,
+      "git_blob_sha1": "e7ddb1a285d85c1bb74e45540cf5f827eb89faff",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/verify/mod.rs",
+      "sha256": "003a67af89a7cfaeac9ff23808225cdc4d81c41d64956f20243574531b166c4f"
+    },
+    {
+      "bytes": 3473,
+      "git_blob_sha1": "762afe44b9665f1b6ae32ba588b985620791b8a8",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/verify/read_iop.rs",
+      "sha256": "40a7027486fbce5979bd045860e3014ebc1d40f242c4b71ce2adf5722b6d81bc"
+    },
+    {
+      "bytes": 45343,
+      "git_blob_sha1": "55cb42b41a558e440f871ad9c1c862e017a17961",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkvm/src/receipt.rs",
+      "sha256": "ec445670befb0fad19bfe46eede73e551de03d9f91fa1fb81c9149dc04912fed"
+    },
+    {
+      "bytes": 7725,
+      "git_blob_sha1": "f371b100d3d5192cfdc05be4f661270ceaca8871",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkvm/src/receipt/merkle.rs",
+      "sha256": "b3eeb7cc62bba1dfa9ba32a75b905510b4777b9f61004891163d8f43ee8072d6"
+    },
+    {
+      "bytes": 16709,
+      "git_blob_sha1": "f8b2142d41cc6a80787653fd8e07f5b2027bd948",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkvm/src/receipt/succinct.rs",
+      "sha256": "8e0165b3210e30e77074763d71d85fd0595e4190b96725182f33665b7df90d60"
+    }
+  ],
+  "upstream_snapshot": {
+    "bytes": 69332,
+    "path": "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz",
+    "sha256": "f6be3667106df6843f5f29c0954cdce8e2617da36c9c91a7a5198665675e0253"
+  },
+  "whole_repository_source_verified": false
+}
+{"reviewed_roles_mapped":23,"schema":"trnm-pq-rust-source-authority-inventory-v1","scope":"All Rust files beneath trillionnium/crates, including build scripts, examples, tests and nonstandard directories; no reachability or runtime-effect proof","source_files_read":1472,"status":"HOLD_INCOMPLETE_AUTHORITY_TRACING","unreviewed_indicator_files":140,"whole_chain_pq_qualified":false}
+{
+  "binding_validation": "PASS",
+  "contract_sha256": "9902cf90df81ef5e4ffbf7f30c64abc3286bb4e3b3785c2f0a227f12d969cc05",
+  "finite_model_certificate_is_actual_w1_lower_bound": false,
+  "full_execution_identity_verified": false,
+  "ideal_probability": {
+    "denominator": 16,
+    "numerator": 1
+  },
+  "native_admission_policy_changed": false,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "relation_parameters": "0d25474289a0149ed7c12824f8c06ee703c0c3bf1bc734c4cf765d70ceb732b1",
+  "relation_profile": "pon-mandatory-w1-64-research-v1",
+  "research_credit_range": [
+    16,
+    128
+  ],
+  "schema": "pon-fixed-probability-cost-audit-result-v1",
+  "source_binding_scope": "four_relation_source_files_only",
+  "subset_controls": {
+    "classically_dearer_quantum_cheaper": {
+      "actual_w1_quantum_attack_implemented": false,
+      "classical_comparison": "dearer",
+      "classical_winner_cost_ratio": {
+        "denominator": 5,
+        "numerator": 8
+      },
+      "model": "ideal-search-scaling-only",
+      "normalized_probability": {
+        "denominator": 64,
+        "numerator": 1
+      },
+      "normalized_probability_ratio": {
+        "denominator": 4,
+        "numerator": 1
+      },
+      "quantum_comparison": "cheaper",
+      "quantum_winner_cost_ratio_squared": {
+        "denominator": 25,
+        "numerator": 16
+      },
+      "ratio_semantics": "assumed-inverse-p-and-inverse-sqrt-p-cost-laws;not-finite-grover-or-fixed-success-exact-runtime",
+      "setup_and_post_win_tail_included": false
+    },
+    "quarter_domain_quarter_winners_keeps_density": {
+      "actual_w1_quantum_attack_implemented": false,
+      "classical_comparison": "equal",
+      "classical_winner_cost_ratio": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "model": "ideal-search-scaling-only",
+      "normalized_probability": {
+        "denominator": 16,
+        "numerator": 1
+      },
+      "normalized_probability_ratio": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "quantum_comparison": "equal",
+      "quantum_winner_cost_ratio_squared": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "ratio_semantics": "assumed-inverse-p-and-inverse-sqrt-p-cost-laws;not-finite-grover-or-fixed-success-exact-runtime",
+      "setup_and_post_win_tail_included": false
+    }
+  },
+  "unclosed_obligations": [
+    "complete-legal-strategy-simulation",
+    "classical-amortized-cost-lower-bound",
+    "quantum-amortized-cost-lower-bound",
+    "bounded-initial-classical-and-quantum-potential",
+    "cross-scale-and-cross-fork-composition",
+    "actual-hash-to-search-model-reduction",
+    "resource-to-physical-time-and-network-model",
+    "mixed-miner-common-prefix-chain-quality-chain-growth",
+    "native-work-identity-and-weight-bridge",
+    "real-cell-quality-and-owner-adoption"
+  ],
+  "unknown_cost_points": [
+    {
+      "class": "classical",
+      "units": 1
+    },
+    {
+      "class": "classical",
+      "units": 2
+    },
+    {
+      "class": "classical",
+      "units": 3
+    },
+    {
+      "class": "classical",
+      "units": 4
+    },
+    {
+      "class": "classical",
+      "units": 5
+    },
+    {
+      "class": "classical",
+      "units": 6
+    },
+    {
+      "class": "classical",
+      "units": 7
+    },
+    {
+      "class": "classical",
+      "units": 8
+    },
+    {
+      "class": "quantum",
+      "units": 1
+    },
+    {
+      "class": "quantum",
+      "units": 2
+    },
+    {
+      "class": "quantum",
+      "units": 3
+    },
+    {
+      "class": "quantum",
+      "units": 4
+    },
+    {
+      "class": "quantum",
+      "units": 5
+    },
+    {
+      "class": "quantum",
+      "units": 6
+    },
+    {
+      "class": "quantum",
+      "units": 7
+    },
+    {
+      "class": "quantum",
+      "units": 8
+    }
+  ]
+}
+{
+  "all_algorithm_cost_qualified": false,
+  "artifact_manifest": {
+    "hybrid-nonce26.pmh1": {
+      "bytes": 432,
+      "sha256": "c5773dd3bb3b58630330dc646a72fff4de90d4919b984c1afbf4408f4f73ed9c"
+    },
+    "hybrid-nonce26.pmu1": {
+      "bytes": 98882,
+      "sha256": "04d5b00f0e2b73c88a8a5674041077014c322a4021ba9083d43d6f1377256443"
+    },
+    "original-nonce24.pmh1": {
+      "bytes": 432,
+      "sha256": "290a8724dee47e23a9ae258157361cedc8e19b0a7e6b6a0701be1e05d2bc0403"
+    },
+    "original-nonce24.pmu1": {
+      "bytes": 98882,
+      "sha256": "711643c498353dc1a2cdd450ff5b2fdb37e998617ec752418035e382654b4647"
+    }
+  },
+  "attack_profitability_established": false,
+  "checks": {
+    "both_unit_challenges_changed": true,
+    "complete_MU1_rejected_at_transcript": true,
+    "counter_credit_before_hybrid_32": true,
+    "counter_credit_did_not_increase": true,
+    "counter_rejected_at_transcript": true,
+    "first_admission_credit_32": true,
+    "fixed_context_duplicate_credit_zero": true,
+    "fixed_context_last_proof_byte_identical": true,
+    "fixed_context_packet_byte_identical": true,
+    "fixed_context_ticket_and_identity_unchanged": true,
+    "hybrid_keeps_unit_0_byte_for_byte": true,
+    "hybrid_outer_target_passes": true,
+    "hybrid_reproduces_recorded_bytes": true,
+    "hybrid_unit_1_complete_scalar_verification": true,
+    "hybrid_unit_1_matches_constructed_full_proof": true,
+    "independent_context_pin_matches": true,
+    "new_unit_trace_changed": true,
+    "original_complete_scalar_verification": true,
+    "original_packet_pin_matches": true,
+    "prepared_AB_prefix_actually_reused": true,
+    "stale_unit_rejected_at_transcript": true
+  },
+  "fixture_provenance": {
+    "context_path": "evidence/pon-work-native-certificates-20261107/mandatory_units/run-02-final/dense-repeat-u2.pmh1",
+    "context_sha256": "290a8724dee47e23a9ae258157361cedc8e19b0a7e6b6a0701be1e05d2bc0403",
+    "expected_context_origin": "separate pinned PMH1 fixture, not untrusted packet metadata",
+    "packet_path": "evidence/pon-work-native-certificates-20261107/mandatory_units/run-02-final/dense-repeat-u2.pmu1",
+    "packet_sha256": "711643c498353dc1a2cdd450ff5b2fdb37e998617ec752418035e382654b4647",
+    "pin_scope": "previously recorded fixture identity; full scalar verification reruns here"
+  },
+  "hybrid": {
+    "complete_rejection": "W1_TRANSCRIPT",
+    "counter_credit_after_rejection": 32,
+    "counter_rejection": "W1_TRANSCRIPT",
+    "identity": "0c23253b9f4b542ea374b2d1aaf27f77ca60e57ab31eb23dae2d6946daa7bd1c",
+    "nonce": 26,
+    "nonce_selection": "fixed reproducible control; actual outer predicate must pass",
+    "outputs_root": "d98d25e13c4e6dcb1daf0e3fdda6eb784694d4c971d9e671521a4f0daeaca356",
+    "packet_sha256": "04d5b00f0e2b73c88a8a5674041077014c322a4021ba9083d43d6f1377256443",
+    "stale_unit_rejection": "TRANSCRIPT",
+    "ticket": "0946f73e649645045f05b35dd3f84d58cbd54bc4d6e07d59b0caa986a1d05015",
+    "unit_0_source_nonce": 24,
+    "unit_1_source_nonce": 26
+  },
+  "interpretation": {
+    "hash_binding": "assumed for generalization; not proved by fixture checks",
+    "legal_prepared_AB_reuse": "observed and permitted",
+    "native_backend": "not executed; this probe explicitly uses the complete scalar MU1 verifier",
+    "observed": "same-context regeneration is identical; changing the global nonce invalidates the retained full unit proof",
+    "other_preprocessing_batching_or_quantum_costs": "open; no minimum-cost conclusion",
+    "synthetic_MDP_mapping": "none claimed",
+    "whole_context_nonce_bank": "prior preparation for each different context must remain in lifecycle accounting"
+  },
+  "native_consensus_qualified": false,
+  "original": {
+    "credit": 32,
+    "duplicate_added_credit": 0,
+    "identity": "3fd902c5ca3b1b44fe4c147bc0ce6b961a0bd7bcb7d18bec412df4e290750c12",
+    "nonce": 24,
+    "ticket": "097fc5263801e80a4db6ebab4deeba8804f2364eadd3cb1c1590b23d0ca2ebed",
+    "units": 2
+  },
+  "production_qualified": false,
+  "profile": "pon-mandatory-w1-64-research-v1",
+  "quantum_cost_qualified": false,
+  "relation_parameters": "0d25474289a0149ed7c12824f8c06ee703c0c3bf1bc734c4cf765d70ceb732b1",
+  "result": "PASS",
+  "schema": "pon-fixed-probability-reuse-probe-v1",
+  "source_sha256": {
+    "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py": "675f61035c56e3c95c8b6cfa74c597a41ab7da6b135f784f91d8eb1c24686414",
+    "formal/pon-nakamoto-v1/mandatory_units_relation.py": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834",
+    "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+  },
+  "tail_qualified": false
+}
+{
+  "adaptive_policy_checks": {
+    "cases": 6156,
+    "max_probability_over_bound": {
+      "denominator": 1,
+      "numerator": 1
+    },
+    "strict_cases": 5220
+  },
+  "claim_flags": {
+    "actual_w1_quantum_transition_certificate": false,
+    "actual_w1_resource_tail": false,
+    "cheapest_legal_work_lower_bound": false,
+    "native_consensus_failure_mapping": false,
+    "physical_time_bound": false,
+    "production_qualification": false,
+    "six_successor_risk_bound": false
+  },
+  "erased_potential_failures": [
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "state": "stash_1",
+      "valid": false
+    },
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "state": "stash_2",
+      "valid": false
+    },
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "state": "stash_3",
+      "valid": false
+    }
+  ],
+  "independent_binomial_checks": {
+    "all_equal": true,
+    "cases": 324
+  },
+  "invalid_certificate_refused": true,
+  "law": {
+    "capacity": 3,
+    "gamma": {
+      "denominator": 4,
+      "numerator": 5
+    },
+    "p": {
+      "denominator": 4,
+      "numerator": 1
+    },
+    "potential": {
+      "stash_0": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "stash_1": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "stash_2": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "stash_3": {
+        "denominator": 1,
+        "numerator": 8
+      }
+    },
+    "z": {
+      "denominator": 1,
+      "numerator": 2
+    }
+  },
+  "schema": "stateful-tail-finite-toy-v1",
+  "status": "ABSTRACT_CERTIFICATE_ONLY_HOLD_FOR_W1",
+  "transition_checks": [
+    {
+      "action": "generate",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "state": "stash_0",
+      "valid": true
+    },
+    {
+      "action": "generate",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "state": "stash_1",
+      "valid": true
+    },
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "state": "stash_1",
+      "valid": true
+    },
+    {
+      "action": "generate",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "state": "stash_2",
+      "valid": true
+    },
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "state": "stash_2",
+      "valid": true
+    },
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 8
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 8
+      },
+      "state": "stash_3",
+      "valid": true
+    }
+  ],
+  "zero_new_resource_counterexample": {
+    "actual_probability": {
+      "denominator": 1,
+      "numerator": 1
+    },
+    "budget": 0,
+    "certified_bound_with_potential": {
+      "denominator": 1,
+      "numerator": 1
+    },
+    "horizon": 1,
+    "initial_stash": 1,
+    "invalid_bound_after_reset_to_one": {
+      "denominator": 2,
+      "numerator": 1
+    },
+    "threshold": 1
+  }
+}
+{
+  "schema": "pon-exact-residual-grover-countermodel-v1",
+  "scope": "Four-address oracle model only; no W1 or physical-resource claim",
+  "grover_cases": [
+    {
+      "marked": 0,
+      "initial_amplitudes": [
+        "1/2",
+        "1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_query_amplitudes": [
+        "-1/2",
+        "1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_diffusion_amplitudes": [
+        "1",
+        "0",
+        "0",
+        "0"
+      ],
+      "success_on_measurement": "1"
+    },
+    {
+      "marked": 1,
+      "initial_amplitudes": [
+        "1/2",
+        "1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_query_amplitudes": [
+        "1/2",
+        "-1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_diffusion_amplitudes": [
+        "0",
+        "1",
+        "0",
+        "0"
+      ],
+      "success_on_measurement": "1"
+    },
+    {
+      "marked": 2,
+      "initial_amplitudes": [
+        "1/2",
+        "1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_query_amplitudes": [
+        "1/2",
+        "1/2",
+        "-1/2",
+        "1/2"
+      ],
+      "post_diffusion_amplitudes": [
+        "0",
+        "0",
+        "1",
+        "0"
+      ],
+      "success_on_measurement": "1"
+    },
+    {
+      "marked": 3,
+      "initial_amplitudes": [
+        "1/2",
+        "1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_query_amplitudes": [
+        "1/2",
+        "1/2",
+        "1/2",
+        "-1/2"
+      ],
+      "post_diffusion_amplitudes": [
+        "0",
+        "0",
+        "0",
+        "1"
+      ],
+      "success_on_measurement": "1"
+    }
+  ],
+  "cut": {
+    "position": "after one Grover iterate, before measurement",
+    "new_oracle_queries": 0,
+    "measured_winner_records": 0,
+    "winner_probability": "1"
+  },
+  "same_private_marginal": {
+    "diagonal": [
+      "1/4",
+      "1/4",
+      "1/4",
+      "1/4"
+    ],
+    "correlated_success": "1",
+    "independent_success": "1/4",
+    "conclusion": "Private marginal alone omits oracle correlation"
+  },
+  "checks": {
+    "exact_grover_cases": 4,
+    "norm_checks": 4,
+    "joint_state_counterexample": true
+  },
+  "claims": {
+    "actual_W1_attack": false,
+    "quantum_hardware_executed": false,
+    "actual_W1_resource_tail_proved": false
+  }
+}
+{"gates": {"authorization": {"source_paths": ["trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs", "trillionnium/crates/trnm-pon-node/src/ingress.rs", "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs", "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs", "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs", "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs", "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs", "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs", "trillionnium/crates/trnm-pon-node/src/public_submit.rs", "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs", "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs", "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs", "trillionnium/crates/trnm-data-availability/src/cell/closure.rs", "trillionnium/crates/trnm-data-availability/src/cell/release.rs", "trillionnium/crates/trnm-pon-node/src/store/funding.rs", "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs", "scripts/ci/pq_authority_surface_scan.py", "scripts/ci/test_pq_authority_surface_scan.py", "scripts/ci/pq_authority_effect_register.py", "scripts/ci/test_pq_authority_effect_register.py", "config/pon/pq-authority-effects-v1.json", "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md", "docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md"], "status": "UNQUALIFIED"}, "capacity_and_invalid_input": {"source_paths": ["trillionnium/crates/trnm-protocol/src/pq_frame.rs", "config/pon/post-quantum-transition-v1.json"], "status": "UNQUALIFIED"}, "independent_end_to_end": {"source_paths": ["docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md", "config/pon/pq-cross-branch-corpus-v1.json", "scripts/ci/pq_source_reader.py"], "status": "UNQUALIFIED"}, "lifetime_budget": {"source_paths": ["config/pon/pq128-lifetime-budget-v1.json", "config/pon/pq128-source-lock-v1.json", "scripts/ci/pq_lifetime_budget.py", "scripts/ci/test_pq_lifetime_budget.py", "docs/security/PQ128_LIFETIME_BUDGET_V1.md"], "status": "UNQUALIFIED"}, "migration_and_rollback": {"source_paths": ["trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs", "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs", "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs", "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs", "trillionnium/crates/trnm-service-settlement/src/native_budget.rs", "trillionnium/crates/trnm-data-availability/src/cell/retention.rs", "scripts/ci/pq_external_rollback_oracle.py", "scripts/ci/test_pq_external_rollback_oracle.py", "docs/security/PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md", "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs", "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs", "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs", "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs", "docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md"], "status": "UNQUALIFIED"}, "proof_pq128": {"source_paths": ["trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs", "docs/security/POST_QUANTUM_TRANSITION_V1.md"], "status": "UNQUALIFIED"}, "quantum_mining_fork_choice": {"source_paths": ["config/pon/devnet-v1.json", "docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md", "scripts/ci/pq_quantum_daa_scenarios.py", "scripts/ci/test_pq_quantum_daa_scenarios.py", "docs/security/PQ_QUANTUM_DAA_SENSITIVITY_20261031.md"], "status": "UNQUALIFIED"}}, "lifetime_budget": {"actual_lifetime_failure_bound": null, "allocated_sum": {"denominator": "340282366920938463463374607431768211456", "numerator": "1"}, "composition_coverage_proved": false, "manifest_sha256": "e70ed3f9ef266f330bae12cc37f8f37ad544e522fcca3a32e69db1d5552ffef7", "model_arithmetic_sum": null, "schema": "trnm-pq128-lifetime-budget-result-v1", "source_binding_scope": "declared-event-paths-only", "source_lock_sha256": "8489c8a862e8801aa385006a600708a521e16e5c6f5afbf0a1f88ed84bffa655", "source_revision_bound": true, "status": "HOLD", "theorem_applicability_verified": false, "unknown_query_budgets": ["sha256", "sha512", "shake128", "shake256"], "unknown_terms": ["signature-lifetime-unqualified", "commitment-lifetime-unqualified", "proof-lifetime-unqualified", "ledger-lifetime-unqualified", "transport-lifetime-unqualified", "recovery-lifetime-unqualified", "release-lifetime-unqualified", "application-lifetime-unqualified"]}, "note": "Source/flag refusal only; no independent crypto, quantum cost, WAN, rollback or production evidence.", "pq_128_qualified": false, "production_activation": false, "schema": "trnm-whole-chain-pq-claim-guard-v1", "status": "HOLD", "whole_chain_pq_qualified": false}
+{"activation": false, "head": "90ee47159e32e9014410a1823bed05d84c17b858", "local_links": 6618, "normal_dependency_edges": 27, "result": "PASS", "runtime_implemented": false, "rust_files": 1472, "source_state": "committed-clean", "tree": "ee45502fb8ef1b7556751c58d8a3804c450f0962", "workspace_packages": 26}
+distributed source inventory: PASS
+{"receipt": "/tmp/trnm-ci-raw-source-rascuos4/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-kgmzw8br/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-mk2b9hgq/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-o_0wfynx/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-rg9jbnnq/.git/receipt-PASS", "result": "PASS"}
+{"receipt": "/tmp/trnm-ci-raw-source-rg9jbnnq/.git/receipt-FAIL", "result": "FAIL"}
+test_cancellation_sidecar_write_failure_cannot_return_success (test_w1_cancellation_handoff.CancellationHandoffTests.test_cancellation_sidecar_write_failure_cannot_return_success) ... ok
+test_first_cancel_only_at_unmask_keeps_saved_snapshot (test_w1_cancellation_handoff.CancellationHandoffTests.test_first_cancel_only_at_unmask_keeps_saved_snapshot) ... ok
+test_first_deferred_cancel_wins_over_new_unmask_signal (test_w1_cancellation_handoff.CancellationHandoffTests.test_first_deferred_cancel_wins_over_new_unmask_signal) ... ok
+test_io_error_text_does_not_invent_a_cancellation (test_w1_cancellation_handoff.CancellationHandoffTests.test_io_error_text_does_not_invent_a_cancellation) ... ok
+test_later_deferred_signal_is_retained_without_replacing_the_first (test_w1_cancellation_handoff.CancellationHandoffTests.test_later_deferred_signal_is_retained_without_replacing_the_first) ... ok
+test_live_deadline_from_another_boot_is_not_compared (test_w1_cancellation_handoff.CancellationHandoffTests.test_live_deadline_from_another_boot_is_not_compared) ... ok
+test_pair_installation_defers_signal_until_both_handlers_are_installed (test_w1_cancellation_handoff.CancellationHandoffTests.test_pair_installation_defers_signal_until_both_handlers_are_installed) ... ok
+test_prior_actual_cancel_survives_io_without_second_signal (test_w1_cancellation_handoff.CancellationHandoffTests.test_prior_actual_cancel_survives_io_without_second_signal) ... ok
+test_prior_actual_cancel_wins_over_deferred_and_unmask_signals (test_w1_cancellation_handoff.CancellationHandoffTests.test_prior_actual_cancel_wins_over_deferred_and_unmask_signals) ... ok
+test_prior_cancel_and_io_keep_already_published_snapshot (test_w1_cancellation_handoff.CancellationHandoffTests.test_prior_cancel_and_io_keep_already_published_snapshot) ... ok
+test_real_keyboard_interrupt_stays_primary_when_persistence_fails (test_w1_cancellation_handoff.CancellationHandoffTests.test_real_keyboard_interrupt_stays_primary_when_persistence_fails) ... ok
+test_saved_clock_without_live_context_does_not_create_current_timeout (test_w1_cancellation_handoff.CancellationHandoffTests.test_saved_clock_without_live_context_does_not_create_current_timeout) ... ok
+test_cleanup_grace_rejects_unbounded_or_non_numeric_values (test_w1_cancellation_handoff.NestedSupervisorCleanupTests.test_cleanup_grace_rejects_unbounded_or_non_numeric_values) ... ok
+test_outer_grace_allows_real_nested_session_kill_reap_and_raw_handoff (test_w1_cancellation_handoff.NestedSupervisorCleanupTests.test_outer_grace_allows_real_nested_session_kill_reap_and_raw_handoff) ... ok
+test_actual_stage_prior_cancel_and_real_write_error_keep_cancellation (test_w1_cancellation_handoff.StageAndControllerCancellationTests.test_actual_stage_prior_cancel_and_real_write_error_keep_cancellation) ... ok
+test_controller_marks_unretained_canceled_stage_usage_unknown (test_w1_cancellation_handoff.StageAndControllerCancellationTests.test_controller_marks_unretained_canceled_stage_usage_unknown) ... ok
+test_controller_post_snapshot_cancel_preserves_raw_and_writes_sidecar (test_w1_cancellation_handoff.StageAndControllerCancellationTests.test_controller_post_snapshot_cancel_preserves_raw_and_writes_sidecar) ... ok
+test_controller_retention_io_keeps_actual_cancel_and_stage_usage (test_w1_cancellation_handoff.StageAndControllerCancellationTests.test_controller_retention_io_keeps_actual_cancel_and_stage_usage) ... ok
+test_first_signal_during_normal_cleanup_is_not_ignored (test_w1_cancellation_handoff.StageAndControllerCancellationTests.test_first_signal_during_normal_cleanup_is_not_ignored) ... ok
+test_original_deadline_remains_exhausted_when_cleanup_also_cancels (test_w1_cancellation_handoff.StageAndControllerCancellationTests.test_original_deadline_remains_exhausted_when_cleanup_also_cancels) ... ok
+test_post_snapshot_cancel_keeps_fact_and_live_deadline_wins_at_handoff (test_w1_cancellation_handoff.StageAndControllerCancellationTests.test_post_snapshot_cancel_keeps_fact_and_live_deadline_wins_at_handoff) ... ok
+test_signal_after_result_fsync_keeps_completed_fact_but_cancels_call (test_w1_cancellation_handoff.StageAndControllerCancellationTests.test_signal_after_result_fsync_keeps_completed_fact_but_cancels_call) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 9.736s
+
+OK
+test_a_different_boot_cannot_supply_a_monotonic_deadline (test_w1_coordinator_contract.CoordinatorDeadlineControls.test_a_different_boot_cannot_supply_a_monotonic_deadline) ... ok
+test_cli_resource_oversubscription_is_rejected_before_dispatch (test_w1_coordinator_contract.CoordinatorDeadlineControls.test_cli_resource_oversubscription_is_rejected_before_dispatch) ... ok
+test_completion_hook_requires_complete_v2_statement (test_w1_coordinator_contract.CoordinatorDeadlineControls.test_completion_hook_requires_complete_v2_statement) ... ok
+test_expired_original_deadline_cannot_restart_a_relative_allowance (test_w1_coordinator_contract.CoordinatorDeadlineControls.test_expired_original_deadline_cannot_restart_a_relative_allowance) ... ok
+test_initialization_work_spends_the_unchanged_original_deadline (test_w1_coordinator_contract.CoordinatorDeadlineControls.test_initialization_work_spends_the_unchanged_original_deadline) ... ok
+test_later_original_deadline_cannot_extend_the_local_budget (test_w1_coordinator_contract.CoordinatorDeadlineControls.test_later_original_deadline_cannot_extend_the_local_budget) ... ok
+test_nonfinite_original_deadlines_are_rejected_before_dispatch (test_w1_coordinator_contract.CoordinatorDeadlineControls.test_nonfinite_original_deadlines_are_rejected_before_dispatch) ... ok
+test_omitted_original_deadline_retains_the_local_budget (test_w1_coordinator_contract.CoordinatorDeadlineControls.test_omitted_original_deadline_retains_the_local_budget) ... ok
+test_original_deadline_and_boot_id_are_a_required_pair (test_w1_coordinator_contract.CoordinatorDeadlineControls.test_original_deadline_and_boot_id_are_a_required_pair) ... ok
+test_prior_wall_cost_and_original_deadline_both_bound_resume (test_w1_coordinator_contract.CoordinatorDeadlineControls.test_prior_wall_cost_and_original_deadline_both_bound_resume) ... ok
+test_real_cancel_preserves_the_original_deadline_and_boot (test_w1_coordinator_contract.CoordinatorDeadlineControls.test_real_cancel_preserves_the_original_deadline_and_boot) ... ok
+test_actual_child_receives_declared_rayon_without_mutating_parent (test_w1_coordinator_contract.ResourceAndHookControls.test_actual_child_receives_declared_rayon_without_mutating_parent) ... ok
+test_cli_late_snapshot_write_keeps_the_fact_but_returns_timeout (test_w1_coordinator_contract.ResourceAndHookControls.test_cli_late_snapshot_write_keeps_the_fact_but_returns_timeout) ... ok
+test_existing_ack_and_dangling_symlink_cannot_supply_completion (test_w1_coordinator_contract.ResourceAndHookControls.test_existing_ack_and_dangling_symlink_cannot_supply_completion) ... ok
+test_explicit_schedule_preserves_the_sequential_baseline_argv (test_w1_coordinator_contract.ResourceAndHookControls.test_explicit_schedule_preserves_the_sequential_baseline_argv) ... ok
+test_hook_declaration_pins_configuration_and_executable_only (test_w1_coordinator_contract.ResourceAndHookControls.test_hook_declaration_pins_configuration_and_executable_only) ... ok
+test_hook_rejects_relative_paths_invalid_argv_and_other_schema (test_w1_coordinator_contract.ResourceAndHookControls.test_hook_rejects_relative_paths_invalid_argv_and_other_schema) ... ok
+test_invalid_environment_override_does_not_start_a_process (test_w1_coordinator_contract.ResourceAndHookControls.test_invalid_environment_override_does_not_start_a_process) ... ok
+test_receiver_ack_rejects_every_wrong_identity_and_negative_terminal_fact (test_w1_coordinator_contract.ResourceAndHookControls.test_receiver_ack_rejects_every_wrong_identity_and_negative_terminal_fact) ... ok
+test_resource_plan_rejects_type_and_budget_substitution (test_w1_coordinator_contract.ResourceAndHookControls.test_resource_plan_rejects_type_and_budget_substitution) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 2.365s
+
+OK
+test_ack_queued_has_no_gpu_proof_payment_or_release_authority (test_kaggle_generation_contract_v2.ContractTests.test_ack_queued_has_no_gpu_proof_payment_or_release_authority) ... ok
+test_clock_change_prevents_initial_submission_and_does_not_renew_deadline (test_kaggle_generation_contract_v2.ContractTests.test_clock_change_prevents_initial_submission_and_does_not_renew_deadline) ... ok
+test_cold_replay_and_different_journal_never_dispatch_twice (test_kaggle_generation_contract_v2.ContractTests.test_cold_replay_and_different_journal_never_dispatch_twice) ... ok
+test_complete_download_is_only_input_to_full_verifier (test_kaggle_generation_contract_v2.ContractTests.test_complete_download_is_only_input_to_full_verifier) ... ok
+test_exact_terminal_set_and_identity_required (test_kaggle_generation_contract_v2.ContractTests.test_exact_terminal_set_and_identity_required) ... ok
+test_live_schema_change_refuses_reconcile_without_provider_call (test_kaggle_generation_contract_v2.ContractTests.test_live_schema_change_refuses_reconcile_without_provider_call) ... ok
+test_provider_replayed_submission_flag_is_never_erased (test_kaggle_generation_contract_v2.ContractTests.test_provider_replayed_submission_flag_is_never_erased) ... ok
+test_real_subprocess_cli_contract_retains_failed_transport_and_normal_prefix (test_kaggle_generation_contract_v2.ContractTests.test_real_subprocess_cli_contract_retains_failed_transport_and_normal_prefix) ... ok
+test_session_never_falls_back_to_version_or_notebook_id (test_kaggle_generation_contract_v2.ContractTests.test_session_never_falls_back_to_version_or_notebook_id) ... ok
+test_unknown_submission_and_cancel_refusal_keep_original_identity_and_reservation (test_kaggle_generation_contract_v2.ContractTests.test_unknown_submission_and_cancel_refusal_keep_original_identity_and_reservation) ... ok
+test_version_kernel_ref_and_intent_are_not_rebound (test_kaggle_generation_contract_v2.ContractTests.test_version_kernel_ref_and_intent_are_not_rebound) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.155s
+
+OK
+test_339_real_pins_over_64k_use_shared_preflight_and_dispatch_loader (test_w1_generation_target_v2.TargetTests.test_339_real_pins_over_64k_use_shared_preflight_and_dispatch_loader) ... ok
+test_actual_process_cold_replay_and_cross_journal_fence_no_second_child (test_w1_generation_target_v2.TargetTests.test_actual_process_cold_replay_and_cross_journal_fence_no_second_child) ... ok
+test_actual_running_cancel_is_sticky_and_not_a_resource_release (test_w1_generation_target_v2.TargetTests.test_actual_running_cancel_is_sticky_and_not_a_resource_release) ... ok
+test_ambiguous_json_nonfinite_and_nonobject_reject_before_target_intent (test_w1_generation_target_v2.TargetTests.test_ambiguous_json_nonfinite_and_nonobject_reject_before_target_intent) ... ok
+test_changed_proof_plan_and_argv_cannot_reuse_real_original_operation (test_w1_generation_target_v2.TargetTests.test_changed_proof_plan_and_argv_cannot_reuse_real_original_operation) ... ok
+test_expired_deadline_and_changed_clock_refuse_before_intent (test_w1_generation_target_v2.TargetTests.test_expired_deadline_and_changed_clock_refuse_before_intent) ... ok
+test_missing_hierarchical_events_and_replaced_identity_remain_unknown (test_w1_generation_target_v2.TargetTests.test_missing_hierarchical_events_and_replaced_identity_remain_unknown) ... ok
+test_raw_cap_exact_plus_one_and_actual_read_bound (test_w1_generation_target_v2.TargetTests.test_raw_cap_exact_plus_one_and_actual_read_bound) ... ok
+test_raw_utf8_only_and_legacy_nonascii_canonical_bytes_are_unchanged (test_w1_generation_target_v2.TargetTests.test_raw_utf8_only_and_legacy_nonascii_canonical_bytes_are_unchanged) ... ok
+test_recursive_population_cannot_hide_behind_empty_direct_members (test_w1_generation_target_v2.TargetTests.test_recursive_population_cannot_hide_behind_empty_direct_members) ... ok
+test_retained_v2_blob_is_not_reinterpreted_using_the_inbound_raw_cap (test_w1_generation_target_v2.TargetTests.test_retained_v2_blob_is_not_reinterpreted_using_the_inbound_raw_cap) ... ok
+test_strict_request_shape_and_current_binding_reject_before_intent (test_w1_generation_target_v2.TargetTests.test_strict_request_shape_and_current_binding_reject_before_intent) ... ok
+test_tree_change_during_observation_cannot_be_complete (test_w1_generation_target_v2.TargetTests.test_tree_change_during_observation_cannot_be_complete) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 3.301s
+
+OK
+test_actual_coordinator_whole_argv_requires_fixed_r0vm_and_plan (test_w1_owner_cancellation_v1.OwnerCancellationTests.test_actual_coordinator_whole_argv_requires_fixed_r0vm_and_plan) ... ok
+test_duplicate_and_nonfinite_configuration_rejected (test_w1_owner_cancellation_v1.OwnerCancellationTests.test_duplicate_and_nonfinite_configuration_rejected) ... ok
+test_only_explicit_complete_owner_plan_grants_a_request (test_w1_owner_cancellation_v1.OwnerCancellationTests.test_only_explicit_complete_owner_plan_grants_a_request) ... ok
+test_original_large_request_uses_common_loader_and_keeps_exact_bindings (test_w1_owner_cancellation_v1.OwnerCancellationTests.test_original_large_request_uses_common_loader_and_keeps_exact_bindings) ... ok
+test_request_loader_refuses_ambiguity_but_reconcile_keeps_original_expired_clock (test_w1_owner_cancellation_v1.OwnerCancellationTests.test_request_loader_refuses_ambiguity_but_reconcile_keeps_original_expired_clock) ... ok
+test_timeout_domain_and_original_deadline_cannot_be_substituted_by_cancel (test_w1_owner_cancellation_v1.OwnerCancellationTests.test_timeout_domain_and_original_deadline_cannot_be_substituted_by_cancel) ... ok
+test_unknown_terminal_retains_last_real_readback_not_only_error_text (test_w1_owner_cancellation_v1.OwnerCancellationTests.test_unknown_terminal_retains_last_real_readback_not_only_error_text) ... ok
+test_worker_exit_observation_does_not_claim_wait_reaped (test_w1_owner_cancellation_v1.OwnerCancellationTests.test_worker_exit_observation_does_not_claim_wait_reaped) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.593s
+
+OK
+test_duplicate_or_oversized_configuration_never_silently_normalizes (test_w1_kaggle_source_builder.SourceBuilderContract.test_duplicate_or_oversized_configuration_never_silently_normalizes) ... ok
+test_exact_pinned_configuration_accepts_observed_four_cpu_envelope (test_w1_kaggle_source_builder.SourceBuilderContract.test_exact_pinned_configuration_accepts_observed_four_cpu_envelope) ... ok
+test_existing_outputs_and_symlink_destinations_cannot_be_replaced (test_w1_kaggle_source_builder.SourceBuilderContract.test_existing_outputs_and_symlink_destinations_cannot_be_replaced) ... ok
+test_nested_parallel_oversubscription_and_implicit_compression_are_rejected (test_w1_kaggle_source_builder.SourceBuilderContract.test_nested_parallel_oversubscription_and_implicit_compression_are_rejected) ... ok
+test_serialization_is_deterministic_bounded_and_never_interpolates_code (test_w1_kaggle_source_builder.SourceBuilderContract.test_serialization_is_deterministic_bounded_and_never_interpolates_code) ... ok
+test_source_tree_binary_and_template_identifiers_are_exact (test_w1_kaggle_source_builder.SourceBuilderContract.test_source_tree_binary_and_template_identifiers_are_exact) ... ok
+test_template_mutation_bom_crlf_and_wrong_entry_are_rejected (test_w1_kaggle_source_builder.SourceBuilderContract.test_template_mutation_bom_crlf_and_wrong_entry_are_rejected) ... ok
+test_unknown_schema_fields_and_boolean_or_float_budgets_are_rejected (test_w1_kaggle_source_builder.SourceBuilderContract.test_unknown_schema_fields_and_boolean_or_float_budgets_are_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.032s
+
+OK
+test_archive_ambiguous_json_and_path_escape_never_enter_owner_observation (test_w1_owned_generation_runtime_v2.OwnerRuntimeTests.test_archive_ambiguous_json_and_path_escape_never_enter_owner_observation) ... ok
+test_archive_reads_exact_regular_member_and_rejects_duplicate_or_link (test_w1_owned_generation_runtime_v2.OwnerRuntimeTests.test_archive_reads_exact_regular_member_and_rejects_duplicate_or_link) ... ok
+test_complete_fact_never_overrides_actual_cancellation_or_missing_stage (test_w1_owned_generation_runtime_v2.OwnerRuntimeTests.test_complete_fact_never_overrides_actual_cancellation_or_missing_stage) ... ok
+test_local_generate_parses_large_real_pins_but_keeps_containment_gate (test_w1_owned_generation_runtime_v2.OwnerRuntimeTests.test_local_generate_parses_large_real_pins_but_keeps_containment_gate) ... ok
+test_local_generate_rejects_via_shared_loader_before_target_open_or_dispatch (test_w1_owned_generation_runtime_v2.OwnerRuntimeTests.test_local_generate_rejects_via_shared_loader_before_target_open_or_dispatch) ... ok
+test_receipt_fact_does_not_hide_nonzero_or_unreconciled_owned_processes (test_w1_owned_generation_runtime_v2.OwnerRuntimeTests.test_receipt_fact_does_not_hide_nonzero_or_unreconciled_owned_processes) ... ok
+test_verified_controller_does_not_substitute_for_complete_worker_archive (test_w1_owned_generation_runtime_v2.OwnerRuntimeTests.test_verified_controller_does_not_substitute_for_complete_worker_archive) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.089s
+
+OK
+test_archive_is_deterministic_and_binds_exact_regular_members (test_w1_kaggle_worker_contract.WorkerDataContracts.test_archive_is_deterministic_and_binds_exact_regular_members) ... ok
+test_archive_rejects_links_output_inside_input_and_overwrite (test_w1_kaggle_worker_contract.WorkerDataContracts.test_archive_rejects_links_output_inside_input_and_overwrite) ... ok
+test_cpu_config_preserves_opaque_owner_clock_without_translation (test_w1_kaggle_worker_contract.WorkerDataContracts.test_cpu_config_preserves_opaque_owner_clock_without_translation) ... ok
+test_cuda_unknown_profile_and_changed_old_pin_are_rejected (test_w1_kaggle_worker_contract.WorkerDataContracts.test_cuda_unknown_profile_and_changed_old_pin_are_rejected) ... ok
+test_expected64_length_and_hash_cannot_drift (test_w1_kaggle_worker_contract.WorkerDataContracts.test_expected64_length_and_hash_cannot_drift) ... ok
+test_file_read_and_new_write_refuse_links_and_existing_bytes (test_w1_kaggle_worker_contract.WorkerDataContracts.test_file_read_and_new_write_refuse_links_and_existing_bytes) ... ok
+test_incomplete_fresh_history_cannot_become_complete (test_w1_kaggle_worker_contract.WorkerDataContracts.test_incomplete_fresh_history_cannot_become_complete) ... ok
+test_input_header_binding_is_independent_of_their_own_hashes (test_w1_kaggle_worker_contract.WorkerDataContracts.test_input_header_binding_is_independent_of_their_own_hashes) ... ok
+test_proof_fact_cannot_override_cancelled_operation (test_w1_kaggle_worker_contract.WorkerDataContracts.test_proof_fact_cannot_override_cancelled_operation) ... ok
+test_template_does_not_automatically_dispatch (test_w1_kaggle_worker_contract.WorkerDataContracts.test_template_does_not_automatically_dispatch) ... ok
+test_unknown_config_fields_and_duplicate_nonfinite_json_are_rejected (test_w1_kaggle_worker_contract.WorkerDataContracts.test_unknown_config_fields_and_duplicate_nonfinite_json_are_rejected) ... ok
+test_worker_resource_and_integer_boundaries_are_exact (test_w1_kaggle_worker_contract.WorkerDataContracts.test_worker_resource_and_integer_boundaries_are_exact) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.012s
+
+OK
+test_another_self_consistent_winner_record_is_rejected (test_w1_postwin_identity.WinnerIdentityReadbackTests.test_another_self_consistent_winner_record_is_rejected) ... ok
+test_pre_search_intent_change_is_rejected_even_with_same_deadline (test_w1_postwin_identity.WinnerIdentityReadbackTests.test_pre_search_intent_change_is_rejected_even_with_same_deadline) ... ok
+test_semantically_identical_json_rewrite_cannot_reuse_original_bytes (test_w1_postwin_identity.WinnerIdentityReadbackTests.test_semantically_identical_json_rewrite_cannot_reuse_original_bytes) ... ok
+test_unchanged_record_identity_reads_without_claiming_execution (test_w1_postwin_identity.WinnerIdentityReadbackTests.test_unchanged_record_identity_reads_without_claiming_execution) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.006s
+
+OK
+test_all_80_real_rows_bind_exact_stdout_and_remain_replays (test_w1_deployment_evidence_binding.RetainedVerifierEvidenceTests.test_all_80_real_rows_bind_exact_stdout_and_remain_replays) ... ok
+test_boolean_and_float_exit_status_are_rejected (test_w1_deployment_evidence_binding.RetainedVerifierEvidenceTests.test_boolean_and_float_exit_status_are_rejected) ... ok
+test_boolean_and_float_proof_cardinality_are_rejected (test_w1_deployment_evidence_binding.RetainedVerifierEvidenceTests.test_boolean_and_float_proof_cardinality_are_rejected) ... ok
+test_boolean_time_arguments_fail_before_dispatch_and_output_creation (test_w1_deployment_evidence_binding.RetainedVerifierEvidenceTests.test_boolean_time_arguments_fail_before_dispatch_and_output_creation) ... ok
+test_invalid_wall_and_cpu_measurements_are_rejected_before_acceptance (test_w1_deployment_evidence_binding.RetainedVerifierEvidenceTests.test_invalid_wall_and_cpu_measurements_are_rejected_before_acceptance) ... ok
+test_missing_or_malformed_stdout_commitment_is_not_unpinned_read (test_w1_deployment_evidence_binding.RetainedVerifierEvidenceTests.test_missing_or_malformed_stdout_commitment_is_not_unpinned_read) ... ok
+test_regular_symlink_is_preserved_but_fifo_cannot_block_json_reader (test_w1_deployment_evidence_binding.RetainedVerifierEvidenceTests.test_regular_symlink_is_preserved_but_fifo_cannot_block_json_reader) ... ok
+test_rejected_receipt_and_timing_cannot_seed_journal_identity (test_w1_deployment_evidence_binding.RetainedVerifierEvidenceTests.test_rejected_receipt_and_timing_cannot_seed_journal_identity) ... ok
+test_rewritten_inner_timing_cannot_reuse_observer_stdout_commitment (test_w1_deployment_evidence_binding.RetainedVerifierEvidenceTests.test_rewritten_inner_timing_cannot_reuse_observer_stdout_commitment) ... ok
+test_timeout_flags_and_stage_time_types_cannot_contradict_completion (test_w1_deployment_evidence_binding.RetainedVerifierEvidenceTests.test_timeout_flags_and_stage_time_types_cannot_contradict_completion) ... ok
+test_unknown_row_kind_is_not_a_proof_row (test_w1_deployment_evidence_binding.RetainedVerifierEvidenceTests.test_unknown_row_kind_is_not_a_proof_row) ... ok
+test_utf16_duplicate_keys_and_overflow_numbers_are_rejected (test_w1_deployment_evidence_binding.RetainedVerifierEvidenceTests.test_utf16_duplicate_keys_and_overflow_numbers_are_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.241s
+
+OK
+test_aggregate_cardinality_requires_an_integer (test_w1_deployment_comparison_audit.AuditTests.test_aggregate_cardinality_requires_an_integer) ... ok
+test_block_contrast_uses_each_abba_block_not_ratio_of_marginal_medians (test_w1_deployment_comparison_audit.AuditTests.test_block_contrast_uses_each_abba_block_not_ratio_of_marginal_medians) ... ok
+test_caller_cannot_omit_independent_report_pin (test_w1_deployment_comparison_audit.AuditTests.test_caller_cannot_omit_independent_report_pin) ... ok
+test_dangling_cancellation_paths_are_not_absence (test_w1_deployment_comparison_audit.AuditTests.test_dangling_cancellation_paths_are_not_absence) ... ok
+test_exclusive_resource_claim_is_not_inherited_from_retained_records (test_w1_deployment_comparison_audit.AuditTests.test_exclusive_resource_claim_is_not_inherited_from_retained_records) ... ok
+test_existing_output_is_never_overwritten (test_w1_deployment_comparison_audit.AuditTests.test_existing_output_is_never_overwritten) ... ok
+test_fifo_evidence_cannot_block_the_bounded_reader (test_w1_deployment_comparison_audit.AuditTests.test_fifo_evidence_cannot_block_the_bounded_reader) ... ok
+test_forged_aggregate_is_recomputed_and_rejected (test_w1_deployment_comparison_audit.AuditTests.test_forged_aggregate_is_recomputed_and_rejected) ... ok
+test_intent_mismatch_and_late_cancel_prevent_complete_audit (test_w1_deployment_comparison_audit.AuditTests.test_intent_mismatch_and_late_cancel_prevent_complete_audit) ... ok
+test_intent_type_aliases_cannot_replace_original_declaration (test_w1_deployment_comparison_audit.AuditTests.test_intent_type_aliases_cannot_replace_original_declaration) ... ok
+test_late_cancellation_after_arm_read_prevents_audit_completion (test_w1_deployment_comparison_audit.AuditTests.test_late_cancellation_after_arm_read_prevents_audit_completion) ... ok
+test_linked_records_still_reject_profile_source_count_and_clock_drift (test_w1_deployment_comparison_audit.AuditTests.test_linked_records_still_reject_profile_source_count_and_clock_drift) ... ok
+test_nonfinite_duplicate_keys_and_symlink_fail_closed (test_w1_deployment_comparison_audit.AuditTests.test_nonfinite_duplicate_keys_and_symlink_fail_closed) ... ok
+test_raw_change_after_arm_read_prevents_audit_completion (test_w1_deployment_comparison_audit.AuditTests.test_raw_change_after_arm_read_prevents_audit_completion) ... ok
+test_raw_record_boolean_and_float_aliases_do_not_match_pinned_integers (test_w1_deployment_comparison_audit.AuditTests.test_raw_record_boolean_and_float_aliases_do_not_match_pinned_integers) ... ok
+test_raw_stdout_replacement_invalidates_embedded_evidence (test_w1_deployment_comparison_audit.AuditTests.test_raw_stdout_replacement_invalidates_embedded_evidence) ... ok
+test_relabeling_or_dropping_rows_does_not_pass_acceptance_booleans (test_w1_deployment_comparison_audit.AuditTests.test_relabeling_or_dropping_rows_does_not_pass_acceptance_booleans) ... ok
+test_two_receipts_do_not_become_sixteen_fresh_generations (test_w1_deployment_comparison_audit.AuditTests.test_two_receipts_do_not_become_sixteen_fresh_generations) ... ok
+test_utf16_and_utf32_do_not_become_utf8_evidence (test_w1_deployment_comparison_audit.AuditTests.test_utf16_and_utf32_do_not_become_utf8_evidence) ... ok
+test_wrong_digest_and_duplicate_reports_rejected (test_w1_deployment_comparison_audit.AuditTests.test_wrong_digest_and_duplicate_reports_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.202s
+
+OK
+test_actual_cancel_reaps_detached_ignoring_descendant (__main__.CollectorControls.test_actual_cancel_reaps_detached_ignoring_descendant) ... ok
+test_actual_collector_sigkill_is_unknown_even_after_guard_reaps_orphan (__main__.CollectorControls.test_actual_collector_sigkill_is_unknown_even_after_guard_reaps_orphan) ... ok
+test_actual_double_fork_new_session_root_exits_before_descendants (__main__.CollectorControls.test_actual_double_fork_new_session_root_exits_before_descendants) ... ok
+test_actual_exec_closes_inherited_fd_and_rejects_direct_shebang (__main__.CollectorControls.test_actual_exec_closes_inherited_fd_and_rejects_direct_shebang) ... ok
+test_actual_generation_dispatch_worker_exec_chain_is_wrapped_without_status_theft (__main__.CollectorControls.test_actual_generation_dispatch_worker_exec_chain_is_wrapped_without_status_theft) ... ok
+test_actual_internal_popen_status_and_external_sibling_are_preserved (__main__.CollectorControls.test_actual_internal_popen_status_and_external_sibling_are_preserved) ... ok
+test_actual_original_timeout_reaps_after_root_has_exited (__main__.CollectorControls.test_actual_original_timeout_reaps_after_root_has_exited) ... ok
+test_actual_output_limit_is_bounded_and_fails_without_losing_root_status (__main__.CollectorControls.test_actual_output_limit_is_bounded_and_fails_without_losing_root_status) ... ok
+test_actual_owner_lost_is_cleaned_without_treating_successful_root_as_success (__main__.CollectorControls.test_actual_owner_lost_is_cleaned_without_treating_successful_root_as_success) ... ok
+test_actual_post_fork_identity_failure_reaps_gated_root_without_exec (__main__.CollectorControls.test_actual_post_fork_identity_failure_reaps_gated_root_without_exec) ... ok
+test_actual_root_signal_is_not_translated_to_success (__main__.CollectorControls.test_actual_root_signal_is_not_translated_to_success) ... ok
+test_original_clock_gate_and_nonlinux_never_execute_payload (__main__.CollectorControls.test_original_clock_gate_and_nonlinux_never_execute_payload) ... ok
+test_reader_strict_types_identity_clock_and_actual_terminal_binding (__main__.CollectorControls.test_reader_strict_types_identity_clock_and_actual_terminal_binding) ... ok
+test_real_pidfd_rejects_wrong_birth_and_fifo_reads_do_not_block (__main__.CollectorControls.test_real_pidfd_rejects_wrong_birth_and_fifo_reads_do_not_block) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 3.984s
+
+OK

@@ -1,0 +1,25 @@
+{
+  "schema": "trnm-pql6-research-qualification-v1",
+  "parent_pr": 463,
+  "parent_commit": "d7f897ef35023ac48dff868e8cffde42eea9bbc1",
+  "source_git_blobs": {
+    "pq_pql6_equivocation.py": "455584aa307aaf4f945dc7837bc85b420266e2b3",
+    "test_pq_pql6_equivocation.py": "8db125534145fab394fc267780b2eecab78a2609",
+    "PQL6_EQUIVOCATION_RESEARCH.md": "ff022dc055b6a9160293f4fd8e8091b8afa8315e",
+    "local-unittest.log": "49c196163648614d7fad33bf57ba9ee8d5d550c2"
+  },
+  "environment": {
+    "python": "3.13.5",
+    "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+    "platform": "Linux x86_64"
+  },
+  "command": "PYTHONWARNINGS=error::ResourceWarning python3 -m unittest -v test_pq_pql6_equivocation.py",
+  "tests_passed": 10,
+  "tests_failed": 0,
+  "mutated_header_positions": 269,
+  "independently_accepted": false,
+  "native_node_integrated": false,
+  "whole_chain_post_quantum": false,
+  "production_activation": false,
+  "limits": "Isolated research test of own source on this host; cannot issue signer authority or nonrewindable checkpoint; no full-tree test or external review."
+}

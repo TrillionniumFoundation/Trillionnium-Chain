@@ -1,0 +1,46 @@
+{
+  "schema": "pon-history-model-read-local-evidence-v1",
+  "implementation_commit": "54594c0c80c4684f3c3aaaec8f8a8db286d74d2d",
+  "implementation_tree": "e9316f487342dc02da5e7accbdb1c15c4ebb791a",
+  "parent_commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+  "scope": "isolated local ordinary regression; no public-service or physical-work qualification",
+  "source_files": 7987,
+  "source_bytes": 929309500,
+  "initial_native_batch_source_before_after_sha256": "aaf7593149369184d2af56e7b1ed4ad8f4e1914108bd2b476e9155e41ef7d833",
+  "initial_native_batch_source_payload": "final-validation-source-before.json",
+  "initial_native_batch_source_unchanged": true,
+  "followup_source_unchanged": true,
+  "only_followup_source_change": [
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "before_sha256": "32104814ecb952b259adc97a40ebb6d5506d0b1239798408146ecb9e821f4a54",
+      "after_sha256": "01a1f083833c0e8813e78fa4b3c99357da3124be15780915e9ff37baaf49a58a"
+    }
+  ],
+  "all_current_files_match_implementation_commit": true,
+  "unique_native_test_passes": 39,
+  "native_groups": {
+    "final-prefix-native.log": 5,
+    "final-history-1.log": 1,
+    "final-history-2.log": 1,
+    "final-history-3.log": 1,
+    "final-history-4.log": 1,
+    "final-model-mvcc-regression.log": 30
+  },
+  "python_test_passes": 128,
+  "python_groups": {
+    "final-work-cost-cli.log": 57,
+    "followup-source-integrity-controls.log": 34,
+    "followup-applicability-controls.log": 37
+  },
+  "repeated_runs_are_not_added": true,
+  "profile_overrides_introduced": false,
+  "native_binary_identity_scope": "after-execution hashes only; no before-execution or independent binary attestation",
+  "whole_workspace_native_suite_executed": false,
+  "original_f0_executed": false,
+  "work_hardness_qualified": false,
+  "prospective_model_utility_qualified": false,
+  "independent_governance_qualified": false,
+  "public_service_qualified": false,
+  "production_activation": false
+}

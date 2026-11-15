@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running unittests src/lib.rs (/data/chain-abg-70ae-20261108/target-green/debug/deps/trnm_pon_node-571a85d65bb41857)
+
+thread 'ingress::public_v3::scalar_cpu::metered_fact_tests::panic_fences_shared_budget_without_rewriting_native_history' (3451073) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_metered_fact_tests.rs:350:17:
+assertion `left == right` failed: injected W1 callback unwind
+  left: 1
+ right: 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

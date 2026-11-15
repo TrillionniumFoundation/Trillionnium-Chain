@@ -1,0 +1,301 @@
+[
+  {
+    "label": "preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit": 0,
+    "timeout_seconds": 120,
+    "elapsed_seconds": 0.056,
+    "stdout_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/preflight.stdout",
+    "stdout_bytes": 176,
+    "stdout_sha256": "7fa2b78873a62e07f42a54ae3aea2a81f1fcfd67487254a89b2caf5ab3aa30ac",
+    "stderr_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/preflight.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "unittest_run_counts": []
+  },
+  {
+    "label": "source-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit": 0,
+    "timeout_seconds": 120,
+    "elapsed_seconds": 0.006,
+    "stdout_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/source-head.stdout",
+    "stdout_bytes": 41,
+    "stdout_sha256": "f8bdb660a523c7aef3c4b0e70725614ec2a0c95f5b916f07d17b970ea4feb079",
+    "stderr_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/source-head.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "unittest_run_counts": []
+  },
+  {
+    "label": "lifetime-58",
+    "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "scripts/ci/test_pq_lifetime_budget.py",
+      "-v"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit": 0,
+    "timeout_seconds": 120,
+    "elapsed_seconds": 0.15,
+    "stdout_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/lifetime-58.stdout",
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/lifetime-58.stderr",
+    "stderr_bytes": 9494,
+    "stderr_sha256": "7d9fc86b1cfebce1efbda6ca1105390cd6b602f01444af253938d1ebefe812d9",
+    "unittest_run_counts": [
+      58
+    ]
+  },
+  {
+    "label": "lifetime-inspect",
+    "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "scripts/ci/pq_lifetime_budget.py"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit": 0,
+    "timeout_seconds": 120,
+    "elapsed_seconds": 0.036,
+    "stdout_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/lifetime-inspect.stdout",
+    "stdout_bytes": 14388,
+    "stdout_sha256": "a29987e24ce39030679870c09b3817e3586450fe6ab6cef28ed44319b2ba497c",
+    "stderr_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/lifetime-inspect.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "unittest_run_counts": []
+  },
+  {
+    "label": "composition-60",
+    "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "scripts/ci/test_pq_lifetime_composition.py",
+      "-v"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit": 0,
+    "timeout_seconds": 120,
+    "elapsed_seconds": 0.566,
+    "stdout_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/composition-60.stdout",
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/composition-60.stderr",
+    "stderr_bytes": 9999,
+    "stderr_sha256": "7add440ac311a8ad5ff704d1b5466be816be5b224dbb049af52cbf264a40ca2a",
+    "unittest_run_counts": [
+      60
+    ]
+  },
+  {
+    "label": "composition-inspect",
+    "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "scripts/ci/pq_lifetime_composition.py"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit": 0,
+    "timeout_seconds": 120,
+    "elapsed_seconds": 0.048,
+    "stdout_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/composition-inspect.stdout",
+    "stdout_bytes": 21095,
+    "stdout_sha256": "1682faeaad327337b1f145f89533e3452343418b2bf648ac7bb7ebf46a42add5",
+    "stderr_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/composition-inspect.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "unittest_run_counts": []
+  },
+  {
+    "label": "root-dependency-controls",
+    "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "scripts/ci/test_pq_root_dependency_register.py",
+      "-v"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit": 0,
+    "timeout_seconds": 120,
+    "elapsed_seconds": 0.402,
+    "stdout_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/root-dependency-controls.stdout",
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/root-dependency-controls.stderr",
+    "stderr_bytes": 8642,
+    "stderr_sha256": "f5dfc6c8c3e64892268c4294d0806b118ccf20274c76639e688c51b9accc4f89",
+    "unittest_run_counts": [
+      51
+    ]
+  },
+  {
+    "label": "root-dependency-inspect",
+    "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "scripts/ci/pq_root_dependency_register.py"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit": 0,
+    "timeout_seconds": 120,
+    "elapsed_seconds": 0.04,
+    "stdout_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/root-dependency-inspect.stdout",
+    "stdout_bytes": 8661,
+    "stdout_sha256": "5ca8240ddaf8e946209396f36ed205d72fa2cc6ab80a09f3b258e35d3a7430d1",
+    "stderr_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/root-dependency-inspect.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "unittest_run_counts": []
+  },
+  {
+    "label": "chain-claim-controls",
+    "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "scripts/ci/test_pq_chain_claim_guard.py",
+      "-v"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit": 0,
+    "timeout_seconds": 120,
+    "elapsed_seconds": 0.921,
+    "stdout_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/chain-claim-controls.stdout",
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/chain-claim-controls.stderr",
+    "stderr_bytes": 7366,
+    "stderr_sha256": "b8a3eaa99442775939d8047713105a33614d8bf83c5dfe71c7dda5f095c5d998",
+    "unittest_run_counts": [
+      57
+    ]
+  },
+  {
+    "label": "chain-claim-inspect",
+    "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "scripts/ci/pq_chain_claim_guard.py"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit": 0,
+    "timeout_seconds": 120,
+    "elapsed_seconds": 0.048,
+    "stdout_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/chain-claim-inspect.stdout",
+    "stdout_bytes": 4835,
+    "stdout_sha256": "3edc69b68b5b78883dd32cc2f2b5060c99a1b3cd958350b8c8a4115d0a79504f",
+    "stderr_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/chain-claim-inspect.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "unittest_run_counts": []
+  },
+  {
+    "label": "proof-profile-controls",
+    "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "scripts/ci/test_pq_proof_profile_binding.py",
+      "-v"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit": 0,
+    "timeout_seconds": 120,
+    "elapsed_seconds": 0.825,
+    "stdout_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/proof-profile-controls.stdout",
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/proof-profile-controls.stderr",
+    "stderr_bytes": 6132,
+    "stderr_sha256": "27a17eff3cdad9d784af15dce6f8bba3cbcb741928e4c25ebaeb928e6b7250bf",
+    "unittest_run_counts": [
+      39
+    ]
+  },
+  {
+    "label": "proof-profile-inspect",
+    "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "scripts/ci/pq_proof_profile_binding.py"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit": 0,
+    "timeout_seconds": 120,
+    "elapsed_seconds": 0.065,
+    "stdout_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/proof-profile-inspect.stdout",
+    "stdout_bytes": 24238,
+    "stdout_sha256": "4d64999d1126bae37b51307c75e3e9c8045425aa58ff0d0f6b83043a6ba1fcf8",
+    "stderr_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/proof-profile-inspect.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "unittest_run_counts": []
+  },
+  {
+    "label": "actual-corpus",
+    "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit": 0,
+    "timeout_seconds": 120,
+    "elapsed_seconds": 0.648,
+    "stdout_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/actual-corpus.stdout",
+    "stdout_bytes": 558,
+    "stdout_sha256": "5f1fe207ff94b51831ba165f387faaaed9a527754a4bce334fb5c20cbb421546",
+    "stderr_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/actual-corpus.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "unittest_run_counts": []
+  },
+  {
+    "label": "actual-ci-contract",
+    "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit": 0,
+    "timeout_seconds": 120,
+    "elapsed_seconds": 0.087,
+    "stdout_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/actual-ci-contract.stdout",
+    "stdout_bytes": 852,
+    "stdout_sha256": "04a27d4ea2af1ccbbf7ed70f56bad64b02ba958a2645254d6d547d8a28102c55",
+    "stderr_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/actual-ci-contract.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "unittest_run_counts": []
+  },
+  {
+    "label": "diff-check",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+    "exit": 0,
+    "timeout_seconds": 120,
+    "elapsed_seconds": 0.118,
+    "stdout_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/diff-check.stdout",
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/validation-v1/diff-check.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "unittest_run_counts": []
+  }
+]

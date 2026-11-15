@@ -1,0 +1,3 @@
+    Finished `release` profile [optimized] target(s) in 0.18s
+     Running unittests src/lib.rs (/home/qian-qi/work/chain-next-architecture-security-20261108-8720-target/release/deps/trnm_data_availability-b3ca9e50346ca035)
+error: test failed, to rerun pass `-p trnm-data-availability --lib`

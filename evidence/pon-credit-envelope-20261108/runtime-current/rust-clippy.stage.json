@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "cargo",
+    "+1.95.0",
+    "clippy",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+  "elapsed_seconds": 112.521889,
+  "exception": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-08T13:02:34.708289+00:00",
+  "passed": true,
+  "stage": "rust-clippy",
+  "started_utc": "2026-11-08T13:00:42.186417+00:00",
+  "stderr": "rust-clippy.stderr.log",
+  "stderr_sha256": "22d609df230ff46c6300b2e812f6d6e106e71992845f0a880cf457b577db3385",
+  "stdout": "rust-clippy.stdout.log",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

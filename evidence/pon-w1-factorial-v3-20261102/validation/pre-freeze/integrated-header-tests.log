@@ -1,0 +1,10 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: unknown or duplicate Cargo loader directory: observed="/tmp/pon-next-target/release"; derived_normal={"/tmp/pon-next-target/x86_64-unknown-linux-gnu/release", "/tmp/pon-next-target/x86_64-unknown-linux-gnu/release/deps", "/tmp/trnm-original-budget-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib", "/tmp/trnm-original-budget-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"}
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 5.26s
+     Running tests/work_header_binding.rs (/tmp/pon-next-target/x86_64-unknown-linux-gnu/release/deps/work_header_binding-764386f73e710fea)
+
+running 1 test
+test complete_w1_proofs_cannot_move_between_header_fields_or_growth_domains ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+

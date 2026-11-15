@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "commit",
+    "-m",
+    "test(m15): bind completion expiry wait to the signed window"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 0.11501021613366902,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794125358.120193,
+  "label": "commit-reviewed-fix",
+  "logs": {
+    "commit-reviewed-fix.stderr.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/commit-reviewed-fix.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-reviewed-fix.stdout.log": {
+      "bytes": 171,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/commit-reviewed-fix.stdout.log",
+      "sha256": "bbfe637a4bbc665760c1565f0cdf73208e6a94147d4c24002426809294c60364"
+    }
+  },
+  "passed": true,
+  "readback": {},
+  "started_unix_seconds": 1794125358.0051827
+}

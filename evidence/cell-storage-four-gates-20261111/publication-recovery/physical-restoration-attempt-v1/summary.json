@@ -1,0 +1,1363 @@
+{
+  "cause": "unknown",
+  "completed": false,
+  "error": "FileExistsError(17, 'File exists')",
+  "existing_files_overwritten": false,
+  "index_listing_sha256": "5a80999e5503e665514135d46c5f42bbbdd80ef6c27e1b9adfa6c0c1ab90ac59",
+  "missing_regular_files": [
+    {
+      "blob": "9b5402c6ad7f6051292f8097f4826154f8123f26",
+      "mode": "100644",
+      "path": "evidence/cell-storage-convergence-f2568-20261109/preparations01.tar.gz"
+    },
+    {
+      "blob": "3bd377dca2f040d33b09ab5d61443958813b72cf",
+      "mode": "100644",
+      "path": "evidence/chain-six-full-20261108/archives/github-native-campaign-original-text-f3.tar.xz"
+    },
+    {
+      "blob": "1063992cff41d01b4b9a51fe0d40a2744dafe98d",
+      "mode": "100644",
+      "path": "evidence/chain-six-full-20261108/archives/github-work-security-original-controls.tar.xz"
+    },
+    {
+      "blob": "5c2352b5d545ab5d3a2612c98977af8489c0cfbc",
+      "mode": "100644",
+      "path": "evidence/chain-six-full-20261108/archives/proof-mmcs-f3-originals.tar.xz"
+    },
+    {
+      "blob": "eb2efdd08898ccbf41ae4c4f2a3d9c53fe9d11de",
+      "mode": "100644",
+      "path": "evidence/chain-six-full-20261108/archives/proof-owner-history.tar.xz"
+    },
+    {
+      "blob": "3a2b539c82464d5762c9868d4de8e226e3a926aa",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13585963261.zip"
+    },
+    {
+      "blob": "34fd4feb4e6d8d05cace89705fb330150ea5c944",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13586194181.zip"
+    },
+    {
+      "blob": "1114ae0b2effa5c3c4c1552878e5c95b286ef55f",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13586249872.zip"
+    },
+    {
+      "blob": "275d95355e646c53467d44d7dfc5a76db9a27ca0",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13586309794.zip"
+    },
+    {
+      "blob": "da74bf21960fe89d273209a5e441c6696f68db7c",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13586581750.zip"
+    },
+    {
+      "blob": "7e0584e92bc436b774ffb9b0e65650464f7efced",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13586980357.zip"
+    },
+    {
+      "blob": "6966abeb62f9111130ad4c0dd7601706a53439ed",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587313298.zip"
+    },
+    {
+      "blob": "e286af8969c120ffdd3cfd79704bb882e56b36ba",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587353281.zip"
+    },
+    {
+      "blob": "e0848c003c08db3744fb51369ce935fcba9e1103",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587604654.zip"
+    },
+    {
+      "blob": "5ba4f22b1f43cd002566fcd84fd98096cbcf3157",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13588091577.zip"
+    },
+    {
+      "blob": "4419c5864861da5e0d3f47cc4ac1f00c79610447",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/w1-v1/artifacts/13585554366/members/w1-legal-strategy-v2/manifest.json.gz"
+    },
+    {
+      "blob": "0f540b08674860b7ea6b854c1723c95efaa9b774",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/w1-v1/artifacts/13586616185/members/w1-legal-strategy-v2/manifest.json.gz"
+    },
+    {
+      "blob": "96cec0fa668a94473c7ede806ef71b314d4283b8",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/w1-v2/artifacts/13586134600/members/w1-legal-strategy-v3/manifest.json.gz"
+    },
+    {
+      "blob": "387d5c57f0e07fb4c49853aca2a10f71edf7a699",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/w1-v2/artifacts/13586253351/members/w1-legal-strategy-v2/manifest.json.gz"
+    },
+    {
+      "blob": "0d58c1a17c70e4356feab45c5ab893ba9b699f51",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/w1-v2/artifacts/13586459476/members/w1-legal-strategy-v3/manifest.json.gz"
+    },
+    {
+      "blob": "6100ef70916da831ba5c02366db4378eb1f525f5",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/w1-v2/artifacts/13586791050/members/w1-legal-strategy-v2/manifest.json.gz"
+    },
+    {
+      "blob": "40f3678d4b1c2def70eedab5211ed07cceb891f5",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/w1-v2/artifacts/13587135201/members/w1-legal-strategy-v3/manifest.json.gz"
+    },
+    {
+      "blob": "4e52bc0cc1c5c750af9f2244f83557cd739db8db",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/w1-legal-strategy-v3/manifest.json.gz"
+    },
+    {
+      "blob": "73012f32ba8e37c0e4debe1d5c9d0c085f5cc444",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-head/history-native/long-history/confirmer/native.sqlite.gz"
+    },
+    {
+      "blob": "b32248b830eb79a1212422377c21e71a9351346e",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-head/history-native/long-history/validator/native.sqlite.gz"
+    },
+    {
+      "blob": "395e803bd62bbaa173a9c01c859cbe351b334a20",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-merge/history-native/long-history/confirmer/native.sqlite.gz"
+    },
+    {
+      "blob": "15102f46f749e85ffcceb3b31beac427ba718e8b",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-merge/history-native/long-history/validator/native.sqlite.gz"
+    },
+    {
+      "blob": "faaa696e366ca1a54941d83c90422af79290a271",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-head/history-native/long-history/confirmer/native.sqlite.gz"
+    },
+    {
+      "blob": "57298142faf62901802e1bd270da0b9423418062",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-head/history-native/long-history/validator/native.sqlite.gz"
+    },
+    {
+      "blob": "677beeb7d6e6c17bd94bcee1ac9ce6a90c69a174",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-merge/history-native/long-history/confirmer/native.sqlite.gz"
+    },
+    {
+      "blob": "cd8fffe413f0cdc2e4963d158a83b95d26dac1ac",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-merge/history-native/long-history/validator/native.sqlite.gz"
+    },
+    {
+      "blob": "1c0ae5c9e535288002b32f2147ebf0254a0fb5ea",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/w1-observer-attempts/w1-component-artifact-read-v1/13578024702/w1-legal-strategy-v3/manifest.json.gz"
+    },
+    {
+      "blob": "1eaafa7ff80779c0f4faff8f3d185954df48c7a4",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/w1-observer-attempts/w1-component-artifact-read-v1/13578223381/w1-legal-strategy-v2/manifest.json.gz"
+    },
+    {
+      "blob": "46993a80e37d3578c8b0969070f2b1cec7c5e79a",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/w1-observer-attempts/w1-component-artifact-read-v1/13578254252/w1-legal-strategy-v3/manifest.json.gz"
+    },
+    {
+      "blob": "da7e75159c0986e6b636d741037a60c7da423aeb",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/w1-observer-attempts/w1-component-artifact-read-v1/13578583134/w1-legal-strategy-v2/manifest.json.gz"
+    },
+    {
+      "blob": "87a8576426497244637adce4155b22f2b6923c4f",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/w1-observer-attempts/w1-component-artifact-read-v1/13578793210/w1-legal-strategy-v2/manifest.json.gz"
+    },
+    {
+      "blob": "5ff89f2ae3c121ef48b19c662ff2414ffb87d802",
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/codeql-d26/retained-observation.tar.gz"
+    },
+    {
+      "blob": "ae10582f6b180ded7c31bd089c562bd6eb9dd8aa",
+      "mode": "100644",
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/ci/concurrent-ci-acc2ec24-v1.tar.gz"
+    },
+    {
+      "blob": "11ef9017eed7bfc1a6f8ea687d5f6e62d511aa88",
+      "mode": "100644",
+      "path": "evidence/pon-cell-hepta-readback-20261028/hepta-original-cell-receipts-40607183163.zip"
+    },
+    {
+      "blob": "0debaa36aed20e3bbc0fb40172e4490e260546fe",
+      "mode": "100644",
+      "path": "evidence/pon-fc23-native-host-20261028/fc23-artifact-12782458035.zip"
+    },
+    {
+      "blob": "89da3f2a9380d1eda36ea7390d72458809d14ad5",
+      "mode": "100644",
+      "path": "evidence/pon-fc23-native-host-20261028/fc23-artifact-12782961722.zip"
+    },
+    {
+      "blob": "b8ffe24a326fbf31eb99de73cad0ad2551297f7a",
+      "mode": "100644",
+      "path": "evidence/pon-fc23-native-host-20261028/fc23-artifact-12783021727.zip"
+    },
+    {
+      "blob": "b9acd1ec8e92da2eb0e863bcd2d0fab0b62a8c9a",
+      "mode": "100644",
+      "path": "evidence/pon-fc23-native-host-20261028/fc23-artifact-12783296539.zip"
+    },
+    {
+      "blob": "7afea2a3978109990eac67370aa278af23686cf4",
+      "mode": "100644",
+      "path": "evidence/pon-fresh-work-floor-20261107/history/complete-history.tar.gz"
+    },
+    {
+      "blob": "6933e9c627aa11c3fa26673d814fe99f187f7b5d",
+      "mode": "100644",
+      "path": "evidence/pon-history-checkpoint-r8-20261028/raw-observations.tar.gz"
+    },
+    {
+      "blob": "c2bc02fda34c2cc8bd0af3c3b060d79847640220",
+      "mode": "100644",
+      "path": "evidence/pon-joint-state-risk-ledger-20261107/final-source-gates/merge-review/final-merge-audit-2d46.tar.gz"
+    },
+    {
+      "blob": "6cfdcad8e5a3e4e1acd4971b40f4cc7c7d9097c7",
+      "mode": "100644",
+      "path": "evidence/pon-native-history-deadline-20261027/observations.tar.gz"
+    },
+    {
+      "blob": "fd0814759a70dfd7ec1328b9d9e90a5ab25864d4",
+      "mode": "100644",
+      "path": "evidence/pon-native-profile-closure-20261107/ci-source-pin-repair-v1/ci-pq-head-failure-v1.tar.gz"
+    },
+    {
+      "blob": "6e27f4ae412ab2a179f9f59a335028f0186ec34d",
+      "mode": "100644",
+      "path": "evidence/pon-ordered-request-cost-20261105/raw-records.tar.gz"
+    },
+    {
+      "blob": "d6fafcd100224cb9c33e9d4b854b533a23baaacf",
+      "mode": "100644",
+      "path": "evidence/pon-pq-local-origin-runtime-20261028-r8/raw-native-records.zip"
+    },
+    {
+      "blob": "a5eee090ff57d41b40b82b1a5cd1a68af3a59974",
+      "mode": "100644",
+      "path": "evidence/pon-proof-publication-latency-20261107/validation-raw.tar.gz"
+    },
+    {
+      "blob": "dd1714c4c62fab972c7ac502744f20a45d1aea5e",
+      "mode": "100644",
+      "path": "evidence/pon-resource-transfer-20261107/history/fanout-smoke-05.tar.gz"
+    },
+    {
+      "blob": "ee4ad99bdfbcb6eeff032b29b534f8df790f5fb7",
+      "mode": "100644",
+      "path": "evidence/pon-resource-transfer-20261107/rog/fanout-exact-rog-v1.tar.gz"
+    },
+    {
+      "blob": "35bb28ba459cb8257d1d5e10e9921d314541e561",
+      "mode": "100644",
+      "path": "evidence/pon-reversible-components-20261028/exact-observation.tar.gz"
+    },
+    {
+      "blob": "8cca7b59bc88ffeb9c41b2f55aa8c6bbd29f23d3",
+      "mode": "100644",
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/b4bdf/f0-selected-original-records.json.gz"
+    },
+    {
+      "blob": "d1b9788bf1cd2ec9f8450aafb9c10fd41f0ae96c",
+      "mode": "100644",
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/b4bdf/original-three-campaign-selected-records.json.gz"
+    },
+    {
+      "blob": "1ebb25f2f4ce7bef053e50e2b3d8d731b8df3a08",
+      "mode": "100644",
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/f0-selected-original-records.json.gz"
+    },
+    {
+      "blob": "b3053d71cb75b0082c93664da2f5bbddd98799c7",
+      "mode": "100644",
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/original-three-campaign-selected-records.json.gz"
+    },
+    {
+      "blob": "2fbe29ed311cd9ad9ae3e507dbd680ae21406a6c",
+      "mode": "100644",
+      "path": "evidence/pon-six-workpackages-20261106/settlement/original-acceptance/service-head-raw-text.tar.gz"
+    },
+    {
+      "blob": "cd764fab940091a450bea244683d7bc96cff7b8b",
+      "mode": "100644",
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-494-final-native/observations.tar.gz"
+    },
+    {
+      "blob": "7f8548ea959145b566ca9a53f72bb362744486f4",
+      "mode": "100644",
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963/run-1-report.json.gz"
+    },
+    {
+      "blob": "137ff4c45912214cd1894959b9b012d07c7c81dc",
+      "mode": "100644",
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963/run-2-report.json.gz"
+    },
+    {
+      "blob": "357cf930c240c2cfa1fa9bb71bcff8d2add40294",
+      "mode": "100644",
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963/run-3-report.json.gz"
+    },
+    {
+      "blob": "a7cfb1dfeb38f62214a58ca20047acaf76cd748b",
+      "mode": "100644",
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/pn-convergence-20261023/closure-receipts/chain-final-scale-export/settings.json.gz"
+    },
+    {
+      "blob": "b3c7fa058c1b5d081bcda13b908e4222471d8ca4",
+      "mode": "100644",
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/pn-convergence-20261023/closure-receipts/pn1-root-final-execute/raw/report.json.gz"
+    },
+    {
+      "blob": "08f530d1c18f001df0d686420f7a2529ae5ab4b4",
+      "mode": "100644",
+      "path": "evidence/pon-useful-cell-stateful-v2-20261107/retained-runs.tar.gz"
+    },
+    {
+      "blob": "07289d1c0906f82e0831ac1abf9525ff9f6dd7cc",
+      "mode": "100644",
+      "path": "evidence/pon-w1-batch-build-20261028-r8/attempt5/compiled-host.gz"
+    },
+    {
+      "blob": "03da878821c19d28d50ca5b3565d821cf292e63d",
+      "mode": "100644",
+      "path": "evidence/pon-w1-four-gates-20261108/ci-c3/raw.tar.gz"
+    },
+    {
+      "blob": "3f1784288462b7a308022a1f86eda25c8bd213ad",
+      "mode": "100644",
+      "path": "evidence/pon-w1-fresh-runtime-20261107/fresh-full/fresh-full-public-raw.tar.gz"
+    },
+    {
+      "blob": "7e409adfdda7cfe563d57ddd551255e0b847b000",
+      "mode": "100644",
+      "path": "evidence/pon-w1-fresh-runtime-20261107/owner-cancellation-C1b/raw.tar.gz"
+    },
+    {
+      "blob": "cc1c79d1b54f7a30d69e0262163a8a73477e6e67",
+      "mode": "100644",
+      "path": "evidence/pon-w1-fresh-runtime-20261107/qualification-A/qualification-raw.tar.gz"
+    },
+    {
+      "blob": "bacdb53b3df17b083a7785d5b423373f6d79985e",
+      "mode": "100644",
+      "path": "evidence/pon-w1-fresh-runtime-20261107/qualification-C1/qualification-raw.tar.gz"
+    },
+    {
+      "blob": "70e774eba040dfd7ed2cd7b144d09165609dbbbc",
+      "mode": "100644",
+      "path": "evidence/pon-w1-fresh-runtime-20261107/qualification-C1b/qualification-raw.tar.gz"
+    },
+    {
+      "blob": "f3f6c0e23807ddbca67577acf4706a362146c953",
+      "mode": "100644",
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/observations.tar.gz"
+    },
+    {
+      "blob": "20f485a3b57f148261d0a91e04581627c2403c1c",
+      "mode": "100644",
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-repository/observations.tar.gz"
+    },
+    {
+      "blob": "8f0cd650cf346132f727cd3837bd60f7deec1fde",
+      "mode": "100644",
+      "path": "evidence/pon-w1-qrom-closure-20261107/native-7150-observations.tar.gz"
+    },
+    {
+      "blob": "9eecd2da8e65e44d4589a2384395e1870e6a4b73",
+      "mode": "100644",
+      "path": "evidence/pon-w1-runtime-recovery-20261107/validation-raw.tar.gz"
+    },
+    {
+      "blob": "56351d34b7bf4894d7e69ac08d9fc23eb78dfb84",
+      "mode": "100644",
+      "path": "evidence/pon-w1-work-security-ci-followup-20261101/initial-ci/service-head.zip"
+    },
+    {
+      "blob": "e7055254a1067742ee0daf9100203bde8b3e4982",
+      "mode": "100644",
+      "path": "evidence/pon-w1-work-security-ci-followup-20261101/initial-ci/service-prospective-merge.zip"
+    },
+    {
+      "blob": "701e353ac0023e9a3f7400842711ea529039bf52",
+      "mode": "100644",
+      "path": "evidence/pq-m15-native-followthrough-20261107/hosted-gate-failures.tar.gz"
+    },
+    {
+      "blob": "981cc560c519ed46958f75095dea4b2c0b5cd404",
+      "mode": "100644",
+      "path": "evidence/pq-m15-native-followthrough-20261107/original-continuation.tar.gz"
+    },
+    {
+      "blob": "4e6555154315fd193c4eeb361c6cde0e2b646347",
+      "mode": "100644",
+      "path": "evidence/pq-m15-native-followthrough-20261107/targeted-and-complete-native.tar.gz"
+    },
+    {
+      "blob": "9b91f5d3dd24c9f41366e833ee909987f4262bf5",
+      "mode": "100644",
+      "path": "evidence/pq-seven-layer-continuation-20261107/raw/frozen-validation.tar.gz"
+    },
+    {
+      "blob": "8b32d1a4f9d0e51d30f775de60948001b4a31224",
+      "mode": "100644",
+      "path": "evidence/pq-seven-layer-continuation-20261107/raw/historical-ci.tar.gz"
+    },
+    {
+      "blob": "33fb51c43f424793575384690d5bbbf2a55c3603",
+      "mode": "100644",
+      "path": "evidence/system-integration-20261105/observations-through-2a8/raw.zip"
+    },
+    {
+      "blob": "d57a91a2fe54e6c51c3f4865e2731a71c7ba39e0",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/objects/220e442f50a050710a07b21646787a9b32514b9fb5e32ca885de495eba766712.bin.gz"
+    },
+    {
+      "blob": "8f9728a5d97603ebf6d522a763e05d984cd1a33c",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/objects/3966b856d13c087b16c12d090846e10e7a045de5c24d2f99586896d00a4b6753.bin.gz"
+    },
+    {
+      "blob": "6013bb195b77eb85d0caa931f1f8d7babe305eee",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/objects/4b3026a679046faa1962ee10236d0124e0dce352582653850dfaeeba85a94d6e.bin.gz"
+    },
+    {
+      "blob": "3e08a5f26d161902bc7014c9e2c8ee6b43d4823e",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/objects/51789aa5919accd5d8a4a0cb2117413ddb823dbbdcf09504af30354fd7f78d6b.bin.gz"
+    },
+    {
+      "blob": "63e50fd49f0aee11efeed97bb9ba3414a5aa5337",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/objects/71ea441516048ce01c7ed7daa22196a45185a6017063659d040eada76cc318f4.bin.gz"
+    },
+    {
+      "blob": "16e432a42c875b594eee8637138424e284100aed",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/objects/ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c.bin.gz"
+    },
+    {
+      "blob": "f0250ed899b9b2d5f733e35c42e87b9a60fdc952",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/objects/cf6e0d63088e1194e37fe29c573a52794c436ac60e18fbb11d56f0d29a11157d.bin.gz"
+    },
+    {
+      "blob": "337b7455e2ed2dc5af5bc09ad51c7de20e744468",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/objects/ef3652b06e74251c78b7983ca1589321c6a62ff5203683ff9888fd98048ddde0.bin.gz"
+    },
+    {
+      "blob": "d57a91a2fe54e6c51c3f4865e2731a71c7ba39e0",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/220e442f50a050710a07b21646787a9b32514b9fb5e32ca885de495eba766712.bin.gz"
+    },
+    {
+      "blob": "8f9728a5d97603ebf6d522a763e05d984cd1a33c",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/3966b856d13c087b16c12d090846e10e7a045de5c24d2f99586896d00a4b6753.bin.gz"
+    },
+    {
+      "blob": "6013bb195b77eb85d0caa931f1f8d7babe305eee",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/4b3026a679046faa1962ee10236d0124e0dce352582653850dfaeeba85a94d6e.bin.gz"
+    },
+    {
+      "blob": "3e08a5f26d161902bc7014c9e2c8ee6b43d4823e",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/51789aa5919accd5d8a4a0cb2117413ddb823dbbdcf09504af30354fd7f78d6b.bin.gz"
+    },
+    {
+      "blob": "63e50fd49f0aee11efeed97bb9ba3414a5aa5337",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/71ea441516048ce01c7ed7daa22196a45185a6017063659d040eada76cc318f4.bin.gz"
+    },
+    {
+      "blob": "16e432a42c875b594eee8637138424e284100aed",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c.bin.gz"
+    },
+    {
+      "blob": "f0250ed899b9b2d5f733e35c42e87b9a60fdc952",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/cf6e0d63088e1194e37fe29c573a52794c436ac60e18fbb11d56f0d29a11157d.bin.gz"
+    },
+    {
+      "blob": "337b7455e2ed2dc5af5bc09ad51c7de20e744468",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/ef3652b06e74251c78b7983ca1589321c6a62ff5203683ff9888fd98048ddde0.bin.gz"
+    },
+    {
+      "blob": "6ed442c651783bc03340d3485196fa59adf1c093",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/node-pressure-evidence-final.tar.gz"
+    }
+  ],
+  "restored": [
+    {
+      "blob": "9b5402c6ad7f6051292f8097f4826154f8123f26",
+      "bytes": 1162077,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/cell-storage-convergence-f2568-20261109/preparations01.tar.gz",
+      "sha256": "b327f53a022689389d1b31a9d2c74ca56eed78ad94dc77792af18b10917b7aa5"
+    },
+    {
+      "blob": "3bd377dca2f040d33b09ab5d61443958813b72cf",
+      "bytes": 19663320,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/chain-six-full-20261108/archives/github-native-campaign-original-text-f3.tar.xz",
+      "sha256": "eeb6d78ac6dcbeae9e1415799529a298b28f4851467cddc4157ce5b58dc9de52"
+    },
+    {
+      "blob": "1063992cff41d01b4b9a51fe0d40a2744dafe98d",
+      "bytes": 2303980,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/chain-six-full-20261108/archives/github-work-security-original-controls.tar.xz",
+      "sha256": "48086312817e44228c13cfa0913a937326fe6d01789b68f7e89c26211ecc7b1e"
+    },
+    {
+      "blob": "5c2352b5d545ab5d3a2612c98977af8489c0cfbc",
+      "bytes": 16012332,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/chain-six-full-20261108/archives/proof-mmcs-f3-originals.tar.xz",
+      "sha256": "3a620d4e0fc597913d37bfc3eac7cc1c9cfb90d2ff7c398a535425d9fd7de319"
+    },
+    {
+      "blob": "eb2efdd08898ccbf41ae4c4f2a3d9c53fe9d11de",
+      "bytes": 3901732,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/chain-six-full-20261108/archives/proof-owner-history.tar.xz",
+      "sha256": "5cc328353efb2222419f51fbdb97511a987dc164d0b1e719e58c36ca9f730b84"
+    },
+    {
+      "blob": "3a2b539c82464d5762c9868d4de8e226e3a926aa",
+      "bytes": 5622867,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13585963261.zip",
+      "sha256": "5bbd11368d4c893b3c80ed488bb519b7aff365e0cb46f61b48abf24dbff89591"
+    },
+    {
+      "blob": "34fd4feb4e6d8d05cace89705fb330150ea5c944",
+      "bytes": 8011502,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13586194181.zip",
+      "sha256": "0248ce80439b577575da4c151d60e8988ca803e5174927041271823453b68009"
+    },
+    {
+      "blob": "1114ae0b2effa5c3c4c1552878e5c95b286ef55f",
+      "bytes": 7857673,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13586249872.zip",
+      "sha256": "fa0e21f60a649513b9a7d6fb8fcd86c7a27f9ac93b726104f96fc71fa2cf5933"
+    },
+    {
+      "blob": "275d95355e646c53467d44d7dfc5a76db9a27ca0",
+      "bytes": 7772335,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13586309794.zip",
+      "sha256": "4948b0757fa2ebb9aea2f5f4df4923c4bbcd8b5a0c7c4a296e09f6fcff1c1902"
+    },
+    {
+      "blob": "da74bf21960fe89d273209a5e441c6696f68db7c",
+      "bytes": 5525534,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13586581750.zip",
+      "sha256": "5bcae89f4f14aa35bd7cf6ca84fd329bb4e648ac45cc49d91c74f77cb5b27451"
+    },
+    {
+      "blob": "7e0584e92bc436b774ffb9b0e65650464f7efced",
+      "bytes": 7765942,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13586980357.zip",
+      "sha256": "972ddc499d326a0474393fd8b71394b9d3806d2b8fa25cc8c38e5f8b9342b0af"
+    },
+    {
+      "blob": "6966abeb62f9111130ad4c0dd7601706a53439ed",
+      "bytes": 61183946,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587313298.zip",
+      "sha256": "02d417cf40d07903f635918a6061bdd7279e08c811aad581c89901d1427d4bf6"
+    },
+    {
+      "blob": "e286af8969c120ffdd3cfd79704bb882e56b36ba",
+      "bytes": 61216668,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587353281.zip",
+      "sha256": "8c45617945f1d60786dc250e65652bcc3748e5dd51dadb9092444131c4890327"
+    },
+    {
+      "blob": "e0848c003c08db3744fb51369ce935fcba9e1103",
+      "bytes": 56937244,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587604654.zip",
+      "sha256": "1367e8489575a9f3ec89ed488afb5d901392a9f363cbc79c817b780da5fa2fb4"
+    },
+    {
+      "blob": "5ba4f22b1f43cd002566fcd84fd98096cbcf3157",
+      "bytes": 53531740,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13588091577.zip",
+      "sha256": "98b522a872f7577266b6ddb912d5be97acf1cb116d72fbe03c61a17365b632d2"
+    },
+    {
+      "blob": "4419c5864861da5e0d3f47cc4ac1f00c79610447",
+      "bytes": 1708544,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/w1-v1/artifacts/13585554366/members/w1-legal-strategy-v2/manifest.json.gz",
+      "sha256": "c8649491c54ae013de0aa3df2e77f05054b9810f1923b578b935a7727717cabb"
+    },
+    {
+      "blob": "0f540b08674860b7ea6b854c1723c95efaa9b774",
+      "bytes": 1709337,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/w1-v1/artifacts/13586616185/members/w1-legal-strategy-v2/manifest.json.gz",
+      "sha256": "e48d7a40faa5f73987d6b5ea8752e0e3814b4919e42074e7cc99d5ae64871c72"
+    },
+    {
+      "blob": "96cec0fa668a94473c7ede806ef71b314d4283b8",
+      "bytes": 2063384,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/w1-v2/artifacts/13586134600/members/w1-legal-strategy-v3/manifest.json.gz",
+      "sha256": "24ff082dd955be4315615e2a7e3f16b38a66c439b17317e186dab87161424568"
+    },
+    {
+      "blob": "387d5c57f0e07fb4c49853aca2a10f71edf7a699",
+      "bytes": 1708729,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/w1-v2/artifacts/13586253351/members/w1-legal-strategy-v2/manifest.json.gz",
+      "sha256": "2de8d907bbe825b2f58b4dba1ed73db1e827e51cdc34e927e989af70f96fab54"
+    },
+    {
+      "blob": "0d58c1a17c70e4356feab45c5ab893ba9b699f51",
+      "bytes": 2063449,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/w1-v2/artifacts/13586459476/members/w1-legal-strategy-v3/manifest.json.gz",
+      "sha256": "84ca5023f1c4b88ff8b9578f4a3544ce69c43c39ddb142dfb8df3ddc37b0557c"
+    },
+    {
+      "blob": "6100ef70916da831ba5c02366db4378eb1f525f5",
+      "bytes": 1709321,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/w1-v2/artifacts/13586791050/members/w1-legal-strategy-v2/manifest.json.gz",
+      "sha256": "91cd88ff60275cf128926c13691a1f903413625f9fd2ab3e85b433226d8e9fba"
+    },
+    {
+      "blob": "40f3678d4b1c2def70eedab5211ed07cceb891f5",
+      "bytes": 2061468,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/w1-v2/artifacts/13587135201/members/w1-legal-strategy-v3/manifest.json.gz",
+      "sha256": "c05ff25828c25669af9d3664a38b2679667f574d14d7732b3638b3391aadb40f"
+    },
+    {
+      "blob": "4e52bc0cc1c5c750af9f2244f83557cd739db8db",
+      "bytes": 2060945,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/w1-legal-strategy-v3/manifest.json.gz",
+      "sha256": "eb4f9742e3b5537f273a7b17672a37874637e08455042e33f5e13741bc7cc284"
+    },
+    {
+      "blob": "73012f32ba8e37c0e4debe1d5c9d0c085f5cc444",
+      "bytes": 22385347,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-head/history-native/long-history/confirmer/native.sqlite.gz",
+      "sha256": "9dfe56c46dccd18dbb1f3f309935b3d2148a9ae5caebc75989ac4072e132311e"
+    },
+    {
+      "blob": "b32248b830eb79a1212422377c21e71a9351346e",
+      "bytes": 22393525,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-head/history-native/long-history/validator/native.sqlite.gz",
+      "sha256": "ce4848d75f1c46b1ca563275922f7050f2e2201058f0a8cb23063e05416cd47d"
+    },
+    {
+      "blob": "395e803bd62bbaa173a9c01c859cbe351b334a20",
+      "bytes": 22372352,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-merge/history-native/long-history/confirmer/native.sqlite.gz",
+      "sha256": "f15bf9ccc956a61546bbfd58327a9bd84f47818165bb1c4b1bba30828992919a"
+    },
+    {
+      "blob": "15102f46f749e85ffcceb3b31beac427ba718e8b",
+      "bytes": 22377472,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-merge/history-native/long-history/validator/native.sqlite.gz",
+      "sha256": "aff8007bd0cd1f8651b368a46e6cd65ef819207ab3d56954d46a4096fcd85739"
+    },
+    {
+      "blob": "faaa696e366ca1a54941d83c90422af79290a271",
+      "bytes": 21147039,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-head/history-native/long-history/confirmer/native.sqlite.gz",
+      "sha256": "a9db42a4e939d86d454550152287550491a2609c703d52cba970f89c0dabd0d8"
+    },
+    {
+      "blob": "57298142faf62901802e1bd270da0b9423418062",
+      "bytes": 22371209,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-head/history-native/long-history/validator/native.sqlite.gz",
+      "sha256": "462c8f9fb782063f1884dfab3db2f9451e0a33a163787a08f5fbd6d7e249946c"
+    },
+    {
+      "blob": "677beeb7d6e6c17bd94bcee1ac9ce6a90c69a174",
+      "bytes": 21159512,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-merge/history-native/long-history/confirmer/native.sqlite.gz",
+      "sha256": "0507b61e0f5575e485697a1dd09ff70113b53b20a4f5b18370a7dd4499832230"
+    },
+    {
+      "blob": "cd8fffe413f0cdc2e4963d158a83b95d26dac1ac",
+      "bytes": 22390593,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-merge/history-native/long-history/validator/native.sqlite.gz",
+      "sha256": "bbfe55020bc6c196084ed3f0318ef775686c6314bcd4472cfa05405f16b781d4"
+    },
+    {
+      "blob": "1c0ae5c9e535288002b32f2147ebf0254a0fb5ea",
+      "bytes": 1818642,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/w1-observer-attempts/w1-component-artifact-read-v1/13578024702/w1-legal-strategy-v3/manifest.json.gz",
+      "sha256": "720c442d1e5201de88650586849d3f732b2943597aaba934b1258f4aa2250fff"
+    },
+    {
+      "blob": "1eaafa7ff80779c0f4faff8f3d185954df48c7a4",
+      "bytes": 1556052,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/w1-observer-attempts/w1-component-artifact-read-v1/13578223381/w1-legal-strategy-v2/manifest.json.gz",
+      "sha256": "02660d1f33430a94a5744c4ea85116795e3c18bf71ccdb6911f603723932f228"
+    },
+    {
+      "blob": "46993a80e37d3578c8b0969070f2b1cec7c5e79a",
+      "bytes": 1814950,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/w1-observer-attempts/w1-component-artifact-read-v1/13578254252/w1-legal-strategy-v3/manifest.json.gz",
+      "sha256": "7c4a6539d92b24c10046b7e4193726b5bb6e17ad950d0568dd04cbead5b3cb27"
+    },
+    {
+      "blob": "da7e75159c0986e6b636d741037a60c7da423aeb",
+      "bytes": 1556503,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/w1-observer-attempts/w1-component-artifact-read-v1/13578583134/w1-legal-strategy-v2/manifest.json.gz",
+      "sha256": "5776d29a4b4354b8d0bc00438b8f059ac5012bcde7e437f428034ae016f24cb9"
+    },
+    {
+      "blob": "87a8576426497244637adce4155b22f2b6923c4f",
+      "bytes": 1556336,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/w1-observer-attempts/w1-component-artifact-read-v1/13578793210/w1-legal-strategy-v2/manifest.json.gz",
+      "sha256": "3a27f7562ee27a495a405282c9818b149f9893b16cbbe947e086922f852cd757"
+    },
+    {
+      "blob": "5ff89f2ae3c121ef48b19c662ff2414ffb87d802",
+      "bytes": 1226203,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/codeql-d26/retained-observation.tar.gz",
+      "sha256": "5f691a97cacf52aa05f27735c256e4139bfe1fa647e0b4d5b2e878de84cbb402"
+    },
+    {
+      "blob": "ae10582f6b180ded7c31bd089c562bd6eb9dd8aa",
+      "bytes": 1803594,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/ci/concurrent-ci-acc2ec24-v1.tar.gz",
+      "sha256": "07e037a308804890aa4f8f6fbe2b3e04da7b8ed68600e79bfc0ade8f79f932c2"
+    },
+    {
+      "blob": "11ef9017eed7bfc1a6f8ea687d5f6e62d511aa88",
+      "bytes": 3169702,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-cell-hepta-readback-20261028/hepta-original-cell-receipts-40607183163.zip",
+      "sha256": "dd0a56247fcb72a18873247540ce49bce04cde72dad1fad88f3639c570fb3306"
+    },
+    {
+      "blob": "0debaa36aed20e3bbc0fb40172e4490e260546fe",
+      "bytes": 4631810,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-fc23-native-host-20261028/fc23-artifact-12782458035.zip",
+      "sha256": "56c3f4fc0fb454ca2352faae6d3466abc22c7de367745da68c59c719b8bfa463"
+    },
+    {
+      "blob": "89da3f2a9380d1eda36ea7390d72458809d14ad5",
+      "bytes": 6947366,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-fc23-native-host-20261028/fc23-artifact-12782961722.zip",
+      "sha256": "06f2702c5565878742a5ae22bc4c5a38039f129559ef6a448c3245ce42d15cc9"
+    },
+    {
+      "blob": "b8ffe24a326fbf31eb99de73cad0ad2551297f7a",
+      "bytes": 4771258,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-fc23-native-host-20261028/fc23-artifact-12783021727.zip",
+      "sha256": "28fd8eb823511681bb81e0111f4e0573e7fdd704965559b27f929aabb8b530be"
+    },
+    {
+      "blob": "b9acd1ec8e92da2eb0e863bcd2d0fab0b62a8c9a",
+      "bytes": 7168186,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-fc23-native-host-20261028/fc23-artifact-12783296539.zip",
+      "sha256": "8b25a31a9eaea8e4928037538c2ad116c227066c5c78473128307fb344572468"
+    },
+    {
+      "blob": "7afea2a3978109990eac67370aa278af23686cf4",
+      "bytes": 2011407,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-fresh-work-floor-20261107/history/complete-history.tar.gz",
+      "sha256": "ae641088a180a823855f95be0f17eb640c11a6e83a289719364578a5b90c97bd"
+    },
+    {
+      "blob": "6933e9c627aa11c3fa26673d814fe99f187f7b5d",
+      "bytes": 2483660,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-history-checkpoint-r8-20261028/raw-observations.tar.gz",
+      "sha256": "d9c0d724126b10b8b44263f69d8aca210d463ca0ba1351107de1e76878559697"
+    },
+    {
+      "blob": "c2bc02fda34c2cc8bd0af3c3b060d79847640220",
+      "bytes": 6269719,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-joint-state-risk-ledger-20261107/final-source-gates/merge-review/final-merge-audit-2d46.tar.gz",
+      "sha256": "824b243b25579796382dc9da5b1873cfe1b03ea0009ea76c31b61e695652539d"
+    },
+    {
+      "blob": "6cfdcad8e5a3e4e1acd4971b40f4cc7c7d9097c7",
+      "bytes": 4968319,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-native-history-deadline-20261027/observations.tar.gz",
+      "sha256": "9e46c7ad94828e57af5e4f8b15422baefac94fd01cc205e6b0dcc07fe60883e3"
+    },
+    {
+      "blob": "fd0814759a70dfd7ec1328b9d9e90a5ab25864d4",
+      "bytes": 1288352,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-native-profile-closure-20261107/ci-source-pin-repair-v1/ci-pq-head-failure-v1.tar.gz",
+      "sha256": "21b784d4cc3222450fcc21edf1c9881bee61e5747f3c9ff48e0504d108c6973d"
+    },
+    {
+      "blob": "6e27f4ae412ab2a179f9f59a335028f0186ec34d",
+      "bytes": 2718197,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-ordered-request-cost-20261105/raw-records.tar.gz",
+      "sha256": "ab71df2294c2737e7842796cda62bfcd5f233144d6e8bf5c8dabbbbb7dd31e4e"
+    },
+    {
+      "blob": "d6fafcd100224cb9c33e9d4b854b533a23baaacf",
+      "bytes": 1545993,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-pq-local-origin-runtime-20261028-r8/raw-native-records.zip",
+      "sha256": "4ebe0c59fa64383172f4afae2ef7f2a76e61c8d80e34224d34956abaf5321cb7"
+    },
+    {
+      "blob": "a5eee090ff57d41b40b82b1a5cd1a68af3a59974",
+      "bytes": 2236276,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-proof-publication-latency-20261107/validation-raw.tar.gz",
+      "sha256": "113431ee37ca39bb2d21c16785cedc0e760c071c48e4205dfeb611aeebdeaf62"
+    },
+    {
+      "blob": "dd1714c4c62fab972c7ac502744f20a45d1aea5e",
+      "bytes": 1049864,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-resource-transfer-20261107/history/fanout-smoke-05.tar.gz",
+      "sha256": "2aba53c6a1545abb69d52ce0f7725180691b9aeaf19336b41b23a9c08384d313"
+    },
+    {
+      "blob": "ee4ad99bdfbcb6eeff032b29b534f8df790f5fb7",
+      "bytes": 1058988,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-resource-transfer-20261107/rog/fanout-exact-rog-v1.tar.gz",
+      "sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+    },
+    {
+      "blob": "35bb28ba459cb8257d1d5e10e9921d314541e561",
+      "bytes": 1727386,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-reversible-components-20261028/exact-observation.tar.gz",
+      "sha256": "c30cb922a55fc0bbd483228b9c54fe58a7f83b79744f0600a7cc7a1b121bbc65"
+    },
+    {
+      "blob": "8cca7b59bc88ffeb9c41b2f55aa8c6bbd29f23d3",
+      "bytes": 1862302,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/b4bdf/f0-selected-original-records.json.gz",
+      "sha256": "565fba925680ceafaaff48a8d5207a3e20b4e7fca52b7ce49e5bfd57a06ee135"
+    },
+    {
+      "blob": "d1b9788bf1cd2ec9f8450aafb9c10fd41f0ae96c",
+      "bytes": 6035838,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/b4bdf/original-three-campaign-selected-records.json.gz",
+      "sha256": "c12419f067220378b1e285fbe49e27bc5387c47c4df1ae4c8449c0b87e67056e"
+    },
+    {
+      "blob": "1ebb25f2f4ce7bef053e50e2b3d8d731b8df3a08",
+      "bytes": 1835912,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/f0-selected-original-records.json.gz",
+      "sha256": "9d8f0cb98c8b66fee9f60277c011bd69f4ce06af9754035b43d46ef22adcefd9"
+    },
+    {
+      "blob": "b3053d71cb75b0082c93664da2f5bbddd98799c7",
+      "bytes": 6069186,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/original-three-campaign-selected-records.json.gz",
+      "sha256": "009de88d176c549718e4d89bd67f0a2ff2fee358f5c4df8c28ceeb8c38e89182"
+    },
+    {
+      "blob": "2fbe29ed311cd9ad9ae3e507dbd680ae21406a6c",
+      "bytes": 1893296,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-six-workpackages-20261106/settlement/original-acceptance/service-head-raw-text.tar.gz",
+      "sha256": "63dc1a96dd3627c2275969a70337b738a6ccafb79769797312f0251b2039c248"
+    },
+    {
+      "blob": "cd764fab940091a450bea244683d7bc96cff7b8b",
+      "bytes": 8861501,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-494-final-native/observations.tar.gz",
+      "sha256": "aa5869a304be8dd4e3bb873df4e88a785642e65526160d7ef130b652e9524925"
+    },
+    {
+      "blob": "7f8548ea959145b566ca9a53f72bb362744486f4",
+      "bytes": 2633344,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963/run-1-report.json.gz",
+      "sha256": "a5a7a39866ab2d9dd0deb40e9f29173af8cbeb70d9c3bcc4d78aaee17c5c43b4"
+    },
+    {
+      "blob": "137ff4c45912214cd1894959b9b012d07c7c81dc",
+      "bytes": 2579570,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963/run-2-report.json.gz",
+      "sha256": "05cddb92e6f6645c325dc35c2ca97fb0778c4f9d09f45621fb0927677309bfe4"
+    },
+    {
+      "blob": "357cf930c240c2cfa1fa9bb71bcff8d2add40294",
+      "bytes": 2592028,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963/run-3-report.json.gz",
+      "sha256": "bee4ff00c33015e7c760716010667f2131dc1f3473489eea156abb47f59e3db1"
+    },
+    {
+      "blob": "a7cfb1dfeb38f62214a58ca20047acaf76cd748b",
+      "bytes": 2504907,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/pn-convergence-20261023/closure-receipts/chain-final-scale-export/settings.json.gz",
+      "sha256": "f79223c35cab31ef3c4a0193d415a6974b0743e42c01e0b45f8d2a3c836e86c1"
+    },
+    {
+      "blob": "b3c7fa058c1b5d081bcda13b908e4222471d8ca4",
+      "bytes": 1258676,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/pn-convergence-20261023/closure-receipts/pn1-root-final-execute/raw/report.json.gz",
+      "sha256": "dd53e14763318c520ad604d394fea6e3384eda7d3d2ce331e4f5e1404ffb22fa"
+    },
+    {
+      "blob": "08f530d1c18f001df0d686420f7a2529ae5ab4b4",
+      "bytes": 1928181,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-useful-cell-stateful-v2-20261107/retained-runs.tar.gz",
+      "sha256": "d49d7e8e2e4d2d5bf87beb172fab61bfb5a91decaf3697435f0987c32ae3e0c1"
+    },
+    {
+      "blob": "07289d1c0906f82e0831ac1abf9525ff9f6dd7cc",
+      "bytes": 11496239,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-w1-batch-build-20261028-r8/attempt5/compiled-host.gz",
+      "sha256": "fcdb5ccfbeea25b55bb1ba2a4dbb72f55872385d03c34706cabeaa417971da38"
+    },
+    {
+      "blob": "03da878821c19d28d50ca5b3565d821cf292e63d",
+      "bytes": 10248840,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-w1-four-gates-20261108/ci-c3/raw.tar.gz",
+      "sha256": "4983a445568178aaf21379147773f959156a6aafc796b79ed52a647f75719e32"
+    },
+    {
+      "blob": "3f1784288462b7a308022a1f86eda25c8bd213ad",
+      "bytes": 1614210,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-w1-fresh-runtime-20261107/fresh-full/fresh-full-public-raw.tar.gz",
+      "sha256": "5af276828a6674661d8e543b7f07488324f16391f94c03d2665f0515958cc0c7"
+    },
+    {
+      "blob": "7e409adfdda7cfe563d57ddd551255e0b847b000",
+      "bytes": 1887039,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-w1-fresh-runtime-20261107/owner-cancellation-C1b/raw.tar.gz",
+      "sha256": "9d8dfeab33e13106fac011f0273d13ce396876d7cad87a59194a4ca59d0b4bc7"
+    },
+    {
+      "blob": "cc1c79d1b54f7a30d69e0262163a8a73477e6e67",
+      "bytes": 1142426,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-w1-fresh-runtime-20261107/qualification-A/qualification-raw.tar.gz",
+      "sha256": "96dc798c2ee78081a6b0da38c03bb42fdc9017cbe03c2351ed70f913437deaff"
+    },
+    {
+      "blob": "bacdb53b3df17b083a7785d5b423373f6d79985e",
+      "bytes": 1414611,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-w1-fresh-runtime-20261107/qualification-C1/qualification-raw.tar.gz",
+      "sha256": "dd43317265e13c8014079adfe146dcf60b15ae0830d108abc480c0a499be1325"
+    },
+    {
+      "blob": "70e774eba040dfd7ed2cd7b144d09165609dbbbc",
+      "bytes": 2543023,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-w1-fresh-runtime-20261107/qualification-C1b/qualification-raw.tar.gz",
+      "sha256": "c7200a0e87a2323637b5e39cf67de3d642a8dc663686e4fa4d189fd155c05d06"
+    },
+    {
+      "blob": "f3f6c0e23807ddbca67577acf4706a362146c953",
+      "bytes": 1066112,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/observations.tar.gz",
+      "sha256": "787ecdea6f3dfb11f03b61dd20f2484b763453f390b3d9802ca37e0cc5ec89c0"
+    },
+    {
+      "blob": "20f485a3b57f148261d0a91e04581627c2403c1c",
+      "bytes": 2113947,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-repository/observations.tar.gz",
+      "sha256": "3e896af8114d5dfd3b5ae3f80b2151bd70845e11079609561e990e6c1024594c"
+    },
+    {
+      "blob": "8f0cd650cf346132f727cd3837bd60f7deec1fde",
+      "bytes": 1067844,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-w1-qrom-closure-20261107/native-7150-observations.tar.gz",
+      "sha256": "e11d0f9d28621b459795e5c692ed05636275cf7d4461bda2cc7cbe5960a60e3e"
+    },
+    {
+      "blob": "9eecd2da8e65e44d4589a2384395e1870e6a4b73",
+      "bytes": 1657172,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-w1-runtime-recovery-20261107/validation-raw.tar.gz",
+      "sha256": "6993f9eb9e91d2440f3d65d0531cdce696b3444fc92acb1e624b9f4da40396b6"
+    },
+    {
+      "blob": "56351d34b7bf4894d7e69ac08d9fc23eb78dfb84",
+      "bytes": 4955682,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-w1-work-security-ci-followup-20261101/initial-ci/service-head.zip",
+      "sha256": "6805eb3194b9a706c66d4a98f95d7b60253c7c0798654f7728b413ab7f184c00"
+    },
+    {
+      "blob": "e7055254a1067742ee0daf9100203bde8b3e4982",
+      "bytes": 4957587,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pon-w1-work-security-ci-followup-20261101/initial-ci/service-prospective-merge.zip",
+      "sha256": "8e7e3c44de4a92348b5025ecc42948a73725d43ce6650522ed6a7ccb6df9bae9"
+    },
+    {
+      "blob": "701e353ac0023e9a3f7400842711ea529039bf52",
+      "bytes": 7113456,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pq-m15-native-followthrough-20261107/hosted-gate-failures.tar.gz",
+      "sha256": "122759362de9d2f2967596b6315520392f54d94b94d53e93a204fde73a5e91cd"
+    },
+    {
+      "blob": "981cc560c519ed46958f75095dea4b2c0b5cd404",
+      "bytes": 1259462,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pq-m15-native-followthrough-20261107/original-continuation.tar.gz",
+      "sha256": "0819b9efb519e687c3713fba53aa07fbb7ac72b16ffbe487c8eac14a886adc3a"
+    },
+    {
+      "blob": "4e6555154315fd193c4eeb361c6cde0e2b646347",
+      "bytes": 1807629,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pq-m15-native-followthrough-20261107/targeted-and-complete-native.tar.gz",
+      "sha256": "ec94ac14f8617739994cbc69c2982fe6e2b45312fb2da93fa44751cd052a8d6a"
+    },
+    {
+      "blob": "9b91f5d3dd24c9f41366e833ee909987f4262bf5",
+      "bytes": 1288093,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pq-seven-layer-continuation-20261107/raw/frozen-validation.tar.gz",
+      "sha256": "250ecfcacbf6503124c814ec9feb7fee8f49cb5e0a888b60c0883c157e1bd539"
+    },
+    {
+      "blob": "8b32d1a4f9d0e51d30f775de60948001b4a31224",
+      "bytes": 5855276,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/pq-seven-layer-continuation-20261107/raw/historical-ci.tar.gz",
+      "sha256": "778dbd421af191dd70d8544196827863537d7016d86f7ec23fa118ca68373194"
+    },
+    {
+      "blob": "33fb51c43f424793575384690d5bbbf2a55c3603",
+      "bytes": 7018417,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "evidence/system-integration-20261105/observations-through-2a8/raw.zip",
+      "sha256": "20802bdb7828a6b634763a223d33a665cafde6ca486d87f83be8a44b7097d71b"
+    },
+    {
+      "blob": "d57a91a2fe54e6c51c3f4865e2731a71c7ba39e0",
+      "bytes": 4458529,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/objects/220e442f50a050710a07b21646787a9b32514b9fb5e32ca885de495eba766712.bin.gz",
+      "sha256": "958bd9ff3e9b4f228246bec3a3558395c2bb443fbc6edde34dd740b928fb5bd8"
+    },
+    {
+      "blob": "8f9728a5d97603ebf6d522a763e05d984cd1a33c",
+      "bytes": 4458529,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/objects/3966b856d13c087b16c12d090846e10e7a045de5c24d2f99586896d00a4b6753.bin.gz",
+      "sha256": "392cc659119c9be7e06c8039798d704f9432c142c55ade5b4fb97bb4c90e090d"
+    },
+    {
+      "blob": "6013bb195b77eb85d0caa931f1f8d7babe305eee",
+      "bytes": 4458529,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/objects/4b3026a679046faa1962ee10236d0124e0dce352582653850dfaeeba85a94d6e.bin.gz",
+      "sha256": "facd31e72aca7f64d2672f53a3208bb1b038c291ca0869a60fdd07df1aa58056"
+    },
+    {
+      "blob": "3e08a5f26d161902bc7014c9e2c8ee6b43d4823e",
+      "bytes": 4465731,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/objects/51789aa5919accd5d8a4a0cb2117413ddb823dbbdcf09504af30354fd7f78d6b.bin.gz",
+      "sha256": "6e387a333fa70b4a802d60e5d8f46433d288c8103351303cdeab40f5e9aa6354"
+    },
+    {
+      "blob": "63e50fd49f0aee11efeed97bb9ba3414a5aa5337",
+      "bytes": 4348426,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/objects/71ea441516048ce01c7ed7daa22196a45185a6017063659d040eada76cc318f4.bin.gz",
+      "sha256": "d22017a96835745df478982a935b5320c3b284216807e9ebc8af4ba87910f09c"
+    },
+    {
+      "blob": "16e432a42c875b594eee8637138424e284100aed",
+      "bytes": 4347050,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/objects/ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c.bin.gz",
+      "sha256": "357fbe8e39dae404bea36372ae4e1da41d954c435324a1af7cf5604d06b9f27e"
+    },
+    {
+      "blob": "f0250ed899b9b2d5f733e35c42e87b9a60fdc952",
+      "bytes": 4458529,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/objects/cf6e0d63088e1194e37fe29c573a52794c436ac60e18fbb11d56f0d29a11157d.bin.gz",
+      "sha256": "8bc3bcb8432203eabb82eed1214134a1ea8ae53810f8b6a6377a32d1e08d9a83"
+    },
+    {
+      "blob": "337b7455e2ed2dc5af5bc09ad51c7de20e744468",
+      "bytes": 4458528,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/objects/ef3652b06e74251c78b7983ca1589321c6a62ff5203683ff9888fd98048ddde0.bin.gz",
+      "sha256": "938c984cb25b47b692de3a163d1072a340e890fc7d6807015fa1058002c6b0f0"
+    }
+  ],
+  "schema": "missing-tracked-original-restoration-v1",
+  "source": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "started_ns": 1794453792085265257,
+  "tracked_entries": 27100,
+  "unexpected_missing_modes": []
+}

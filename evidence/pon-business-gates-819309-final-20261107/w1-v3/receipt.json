@@ -1,0 +1,108 @@
+{
+  "schema": "trnm-final819-one-range-v3-receipt",
+  "artifact_id": 13586509176,
+  "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+  "original_workflow_run": 42402618462,
+  "v2_seal_sha256": "f2952e394846e5f15d4f016bc00895b283872111ebe29ee2f09b468401d79edc",
+  "completed": true,
+  "errors": [],
+  "no_ci_or_native_execution": true,
+  "business_qualification": false,
+  "started_utc": "2026-11-07T21:13:55.049477+00:00",
+  "identity-before": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "user"
+    ],
+    "timeout_seconds": 30,
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout_bytes": 1221,
+    "stdout_sha256": "fb21e626cd6c7f169945f4113574e68390b5c924c73ea971fac98e8c2b3117a3",
+    "stderr_bytes": 0,
+    "stderr_sanitized": "",
+    "login": "ProfHepta",
+    "id": 102159240
+  },
+  "range_get": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "--include",
+      "--header",
+      "Range: bytes=170967040-174175855",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586509176/zip"
+    ],
+    "timeout_seconds": 120,
+    "maximum_body_bytes": 4194304,
+    "attempted": true,
+    "completed": true,
+    "timed_out": false,
+    "process_exit_code": 0,
+    "stdout_bytes_observed": 3209979,
+    "body_count_scope": "bytes after candidate HTTP header terminator, including rejected responses; unread bytes unknown on abort",
+    "body_bytes_observed": 3208816,
+    "body_bytes_retained": 3208816,
+    "stderr_bytes_observed": 0,
+    "stderr_text_truncated": false,
+    "raw_headers_retained": false,
+    "http": {
+      "status_line": "HTTP/1.1 206 Partial Content",
+      "status": 206,
+      "headers": {
+        "content-length": "3208816",
+        "content-range": "bytes 170967040-174175855/174175856",
+        "content-type": "application/zip"
+      },
+      "raw_headers_sha256": "9e56b291ec966878afb55f7f0b9fbe64cc1cc9695caec10b797b8ec3bca47310",
+      "raw_header_bytes": 1159
+    },
+    "elapsed_ns": 4867631836,
+    "stderr_sanitized": "",
+    "stderr_retained_prefix_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "unread_pipe_or_kernel_body_bytes_unknown": false,
+    "tail_file": {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3/13586509176/tail.bin",
+      "bytes": 3208816,
+      "sha256": "54648d1d464be4d15e21c2170dd2bad796e5cad008eb0a46300f6d757d721e37"
+    }
+  },
+  "assembled_archive": {
+    "path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3/13586509176/artifact.zip",
+    "bytes": 174175856,
+    "sha256": "d5e6720c1070b1772107be2d316aea6d27dfdf8dd68535103650730138e9bf38",
+    "complete_github_size_digest_matched": true,
+    "original_partial_unchanged": true,
+    "body_was_only_original_tail": true
+  },
+  "identity-after": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "user"
+    ],
+    "timeout_seconds": 30,
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout_bytes": 1221,
+    "stdout_sha256": "fb21e626cd6c7f169945f4113574e68390b5c924c73ea971fac98e8c2b3117a3",
+    "stderr_bytes": 0,
+    "stderr_sanitized": "",
+    "login": "ProfHepta",
+    "id": 102159240
+  },
+  "finished_utc": "2026-11-07T21:14:04.835351+00:00"
+}

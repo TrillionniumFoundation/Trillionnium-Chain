@@ -1,0 +1,50 @@
+warning: The `--native-tls` flag is deprecated and will be removed in a future release. Use `--system-certs` instead.
+Using Python 3.12.14 environment at: model-preparation/runtime-venv
+Resolved 31 packages in 29.02s
+Downloading torch (175.8MiB)
+Downloading cryptography (4.5MiB)
+Downloading networkx (2.0MiB)
+Downloading hf-xet (4.0MiB)
+Downloading sympy (6.0MiB)
+Downloading tokenizers (3.1MiB)
+Downloading transformers (11.4MiB)
+ Downloaded sympy
+ Downloaded cryptography
+ Downloaded hf-xet
+ Downloaded transformers
+ Downloaded tokenizers
+ Downloaded networkx
+ Downloaded torch
+Prepared 30 packages in 23.59s
+Installed 31 packages in 5.86s
+ + accelerate==1.15.0
+ + certifi==2026.10.23
+ + cffi==2.0.0
+ + charset-normalizer==3.5.2
+ + cryptography==50.0.2
+ + filelock==4.2.4
+ + fsspec==2026.9.0
+ + hf-xet==1.7.0
+ + huggingface-hub==0.36.2
+ + idna==3.20
+ + jinja2==3.1.6
+ + markupsafe==3.0.4
+ + mpmath==1.3.0
+ + networkx==3.7
+ + numpy==1.26.4
+ + packaging==26.3
+ + peft==0.18.0
+ + psutil==7.2.2
+ + pycparser==2.23
+ + pyyaml==6.0.3
+ + regex==2026.9.29
+ + requests==2.34.2
+ + safetensors==0.7.0
+ + setuptools==84.2.1
+ + sympy==1.14.0
+ + tokenizers==0.22.2
+ + torch==2.9.1+cpu (from https://download-r2.pytorch.org/whl/cpu/torch-2.9.1%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl)
+ + tqdm==4.70.1
+ + transformers==4.57.3
+ + typing-extensions==4.16.0
+ + urllib3==2.8.0

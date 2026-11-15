@@ -1,0 +1,74 @@
+# PoN lifecycle reader and hosted native gate repair evidence
+
+Base source: `da1374a200022bc14dc2bd325cc9ba29dbcd24ab`.
+These captures describe uncommitted changes to the shared task checkout. They
+do not certify a later commit, a complete native execution, or public consensus.
+
+## Lifecycle evidence integrity
+
+The unchanged reader accepted self-consistent material relabeling, replacement
+of the frozen full-rank recipe, inversion of specialized-producer support, and
+an arbitrary losing-proof digest. The new reader reuses the retained V2 material
+recipes and constructor support matrix, and binds every trial digest to the
+canonical proof prefix plus the reported trace. Full W1 replay and execution
+authentication remain false.
+
+- `before-fix-roster.*`: the final 15-method test code against the unchanged
+  reader fails on 76 subtests: three material mutations, 72 specialized support
+  inversions, and one losing-proof digest mutation.
+- `after-fix.*`: the same 15 test methods pass with the repaired reader.
+- `before-fix.*`: an earlier diagnostic test attempt is retained. Its 121 failed
+  subtests include 45 generic support refusals whose error label differed from
+  an over-specific assertion. Those 45 are not reader acceptance defects. The
+  assertion was corrected before the `before-fix-roster` measurement.
+- The original eleven test method names and their refusal assertions remain.
+  The changed equal-winner fixture now uses a correctly bound synthetic digest
+  before exercising its original cross-producer disagreement refusal.
+
+The full fixed matrix has 117 producer/material pairs, with 59 supported pairs.
+The eight samples and four searches per supported pair imply 1,888 searches;
+exhausted searches are not counted as verified winners. These are roster
+requirements, not a new native measurement or an all-algorithm lower bound.
+
+## CI gate repair on original hosted logs
+
+`replay_hosted_gates.py` extracts complete Rust test spans from the two retained
+GitHub job logs by removing only each line's GitHub timestamp. The JSON reports
+bind the original SHA-256, byte size, exact original line span, and derived
+bytes. Original logs remain under the task's `observations` directory.
+
+- Job `129678540672` actually has 13 passed tests, including the five shared
+  observed-search controls. The old legal gate expected eight.
+- Job `129678540829` actually has 11 factorial example passes and 33 History
+  passes plus its one retained ignored subprocess fixture. The old gate expected
+  six example passes and 28 History passes.
+- `before-fix-hosted-gates.json`: both original inline gates reject their
+  original successful test spans.
+- `after-fix-hosted-gates.json`: both repaired inline gates accept exactly the
+  same spans. This reinterprets the gate only; it does not change the recorded
+  failed workflow conclusion or claim new Rust execution.
+- `native-gate-before-fix.*`: nine gate test methods give three failures on the
+  old workflow, including its acceptance of a stale eight-pass summary attached
+  to the new 13-name roster.
+- `native-gate-after-fix.*`: all nine methods pass, including missing, duplicate,
+  replaced, failed, ignored, measured, filtered and duplicate-summary mutations.
+
+The repaired legal and factorial gates require each complete current named
+example/material/observer roster exactly once. Kernel named checks remain.
+The original three History named checks remain, with the five additional
+deadline controls explicitly required. No test set, ignored-fixture exception,
+sampling target, attempt budget, or service deadline is reduced.
+
+All actual W1/MU1 lower and upper cost points remain unknown. Scientific work
+security, fresh model utility, independent demand, joint consensus security and
+production activation remain outside these changes.
+
+## Historical native V4 compatibility replay
+
+The final compatibility check is now complete. See
+`native-v4-historical-replay/README.md` and `replay-summary.json`.
+The current stricter reader accepts the byte-identical retained complete native
+journal (23,069 records) and preserves the original SIGTERM incomplete result.
+Both readback JSON outputs are byte-identical to their historical outputs.
+This is reader replay, not a new native execution; all cost/production
+qualification flags remain false.

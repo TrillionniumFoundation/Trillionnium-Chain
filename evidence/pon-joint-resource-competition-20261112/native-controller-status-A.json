@@ -1,0 +1,17 @@
+{
+  "commands_completed": 27,
+  "current_pid": null,
+  "current_step": null,
+  "disk_free_bytes": 21772894208,
+  "last_completed": "source-after",
+  "last_exit_code": 0,
+  "manifest_sha256": "536ad7cb891ec669a9da3e35c0fd7bf1d23aedabef2f9f9ab1cae332fd7064e2",
+  "receipt_sha256": "f028e870242e0e072ff7e6b3c52682c95720730b6acf7d44537ddde1d1198708",
+  "result": "PASS",
+  "schema": "trnm-native-daa-validation-status-v1",
+  "source_commit": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "source_tree": "beac87c2431d149dbd6d2de4a2e1eaf0617520cc",
+  "started_unix": 1794470518.915231,
+  "state": "COMPLETE",
+  "updated_unix": 1794471613.0173402
+}

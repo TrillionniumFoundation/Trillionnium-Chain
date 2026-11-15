@@ -1,0 +1,45 @@
+test_actual_serialization_and_loopback_keep_remote_metrics_unmeasured (scripts.ci.test_w1_staged_observer.BindingAndLocalCostTests.test_actual_serialization_and_loopback_keep_remote_metrics_unmeasured) ... ok
+test_duplicate_nonfinite_and_overflow_json_are_not_observations (scripts.ci.test_w1_staged_observer.BindingAndLocalCostTests.test_duplicate_nonfinite_and_overflow_json_are_not_observations) ... ok
+test_fresh_and_many_same_profile_cannot_substitute_image_but_native_needs_none (scripts.ci.test_w1_staged_observer.BindingAndLocalCostTests.test_fresh_and_many_same_profile_cannot_substitute_image_but_native_needs_none) ... ok
+test_old_journal_cannot_be_relabelled_v2 (scripts.ci.test_w1_staged_observer.BindingAndLocalCostTests.test_old_journal_cannot_be_relabelled_v2) ... ok
+test_v2_envelope_requires_external_64_byte_commitments (scripts.ci.test_w1_staged_observer.BindingAndLocalCostTests.test_v2_envelope_requires_external_64_byte_commitments) ... ok
+test_v2_report_requires_same_work_bytes_profile_and_real_sample_types (scripts.ci.test_w1_staged_observer.BindingAndLocalCostTests.test_v2_report_requires_same_work_bytes_profile_and_real_sample_types) ... ok
+test_exit_zero_without_actual_checkpoint_cannot_claim_a_full_proof (scripts.ci.test_w1_staged_observer.CoordinatorFailureTests.test_exit_zero_without_actual_checkpoint_cannot_claim_a_full_proof) ... ok
+test_preparation_consumes_same_cumulative_budget (scripts.ci.test_w1_staged_observer.CoordinatorFailureTests.test_preparation_consumes_same_cumulative_budget) ... ok
+test_same_prior_observation_is_not_counted_twice (scripts.ci.test_w1_staged_observer.CoordinatorFailureTests.test_same_prior_observation_is_not_counted_twice) ... ok
+test_absolute_budget_exhaustion_does_not_spawn (scripts.ci.test_w1_staged_observer.ProcessLifecycleTests.test_absolute_budget_exhaustion_does_not_spawn) ... ok
+test_absolute_deadline_wins_over_fresh_stage_allowance (scripts.ci.test_w1_staged_observer.ProcessLifecycleTests.test_absolute_deadline_wins_over_fresh_stage_allowance) ... ok
+test_actual_success_and_failure_keep_raw_logs_and_usage (scripts.ci.test_w1_staged_observer.ProcessLifecycleTests.test_actual_success_and_failure_keep_raw_logs_and_usage) ... ok
+test_cancellation_signal_is_recorded_by_real_supervisor (scripts.ci.test_w1_staged_observer.ProcessLifecycleTests.test_cancellation_signal_is_recorded_by_real_supervisor) ... ok
+test_cleanup_scan_failure_keeps_result_and_signals_known_groups (scripts.ci.test_w1_staged_observer.ProcessLifecycleTests.test_cleanup_scan_failure_keeps_result_and_signals_known_groups) ... ok
+test_enoent_exit_race_is_distinct_from_unknown_membership (scripts.ci.test_w1_staged_observer.ProcessLifecycleTests.test_enoent_exit_race_is_distinct_from_unknown_membership) ... ok
+test_exit_zero_cannot_leave_unsettled_descendants (scripts.ci.test_w1_staged_observer.ProcessLifecycleTests.test_exit_zero_cannot_leave_unsettled_descendants) ... ok
+test_ignored_sigterm_escalates_and_output_overflow_remains_failure (scripts.ci.test_w1_staged_observer.ProcessLifecycleTests.test_ignored_sigterm_escalates_and_output_overflow_remains_failure) ... ok
+test_kernel_group_probe_exposes_an_empty_proc_snapshot (scripts.ci.test_w1_staged_observer.ProcessLifecycleTests.test_kernel_group_probe_exposes_an_empty_proc_snapshot) ... ok
+test_late_observed_exit_zero_cannot_pass_the_budget (scripts.ci.test_w1_staged_observer.ProcessLifecycleTests.test_late_observed_exit_zero_cannot_pass_the_budget) ... ok
+test_timeout_preserves_failed_trial_and_settles_session (scripts.ci.test_w1_staged_observer.ProcessLifecycleTests.test_timeout_preserves_failed_trial_and_settles_session) ... ok
+test_unreadable_or_malformed_owned_proc_is_not_an_empty_session (scripts.ci.test_w1_staged_observer.ProcessLifecycleTests.test_unreadable_or_malformed_owned_proc_is_not_an_empty_session) ... ok
+test_image_duplicate_or_escaped_alias_keys_cannot_override_the_pin (scripts.ci.test_w1_staged_observer.ReceiptControlReportTests.test_image_duplicate_or_escaped_alias_keys_cannot_override_the_pin) ... ok
+test_missing_and_noncanonical_image_are_rejected (scripts.ci.test_w1_staged_observer.ReceiptControlReportTests.test_missing_and_noncanonical_image_are_rejected) ... ok
+test_positive_report_retains_independent_image_and_original_bindings (scripts.ci.test_w1_staged_observer.ReceiptControlReportTests.test_positive_report_retains_independent_image_and_original_bindings) ... ok
+test_same_profile_cannot_substitute_any_image_word_or_historical_guest (scripts.ci.test_w1_staged_observer.ReceiptControlReportTests.test_same_profile_cannot_substitute_any_image_word_or_historical_guest) ... ok
+test_valid_image_cannot_bypass_existing_identity_scope_or_sample_checks (scripts.ci.test_w1_staged_observer.ReceiptControlReportTests.test_valid_image_cannot_bypass_existing_identity_scope_or_sample_checks) ... ok
+test_run_from_zero_native (unittest.loader._FailedTest.test_run_from_zero_native) ... ERROR
+
+======================================================================
+ERROR: test_run_from_zero_native (unittest.loader._FailedTest.test_run_from_zero_native)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_run_from_zero_native
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/0c2d131ac5a9/chain-storage/scripts/ci/test_run_from_zero_native.py", line 19, in <module>
+    import run_from_zero_native as driver
+ModuleNotFoundError: No module named 'run_from_zero_native'
+
+
+----------------------------------------------------------------------
+Ran 27 tests in 3.321s
+
+FAILED (errors=1)

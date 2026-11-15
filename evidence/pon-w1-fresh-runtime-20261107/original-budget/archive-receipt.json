@@ -1,0 +1,19 @@
+{
+  "archive": {
+    "bytes": 78431,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-fresh-runtime-01/evidence/pon-w1-fresh-runtime-20261107/original-budget/raw.tar.gz",
+    "sha256": "2fc86fefc431df7ff87c90d8ebe263998c6079b1c88f683e2e3d8aad9f9844d8"
+  },
+  "component": "original-budget",
+  "every_member_readback_verified": true,
+  "excluded_files": 0,
+  "index": {
+    "bytes": 18479,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-fresh-runtime-01/evidence/pon-w1-fresh-runtime-20261107/original-budget/raw-index.json",
+    "sha256": "2bef2823d763d3f06510ad3fee77a783cb9dcf3f8ec56ed9b73cb529ab25654c"
+  },
+  "members": 51,
+  "no_payload_executed": true,
+  "raw_bytes": 165994,
+  "schema": "TRNM-W1-PUBLIC-COMPONENT-ARCHIVE1"
+}

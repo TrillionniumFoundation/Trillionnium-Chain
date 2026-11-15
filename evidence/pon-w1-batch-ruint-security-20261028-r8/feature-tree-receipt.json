@@ -1,0 +1,34 @@
+{
+  "schema": "TRNM-W1-BATCH-RUINT-SECURITY-FEATURES1",
+  "status": "SECURITY_HOLD_NO_BUILD",
+  "command": [
+    "/tmp/pure-pon-toolchain-20261027/bin/cargo",
+    "tree",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.toml",
+    "--target",
+    "riscv32im-risc0-zkvm-elf",
+    "-e",
+    "features",
+    "-i",
+    "ruint"
+  ],
+  "returncode": 0,
+  "wall_seconds": 0.15463705800357275,
+  "child_cpu_seconds": 0.14057799999999998,
+  "environment": {
+    "CARGO_HOME": "/tmp/pure-pon-cargo-20261027",
+    "CARGO_NET_OFFLINE": "true",
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_INCREMENTAL": "0",
+    "RUSTC": "/tmp/pure-pon-risc0-home-20261027/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu/bin/rustc"
+  },
+  "lock_before_sha256": "6de3cb567deb89569bdabe5c224e44b6fd5232ae9a91d9074e55bd4f9b43a993",
+  "lock_after_sha256": "6de3cb567deb89569bdabe5c224e44b6fd5232ae9a91d9074e55bd4f9b43a993",
+  "compilation_requested": false,
+  "proving_requested": false,
+  "output_sha256": "18bd9027c52c30e043d0caa5ddad378f5f406be42eb57798985a2331a5089946",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

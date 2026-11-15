@@ -1,0 +1,107 @@
+{
+  "diagnostic_boundary": {
+    "a_managed_path_inventory_difference_is_confirmed": true,
+    "difference_creation_cause_known": false,
+    "do_not_delete_ignore_or_reclassify_entries_without_actual_delta_and_authorized_plan": true,
+    "original_pinned_member_byte_change_proven_by_this_failure": false,
+    "probe_results_available_in_this_record": false,
+    "read_only_delta_probe": "validation/durable-current-remote/remote_runtime_inventory_diagnostic_v1.py",
+    "runtime_imports_or_model_were_reached": false,
+    "specific_added_or_missing_paths_known_in_this_record": false
+  },
+  "native_payload_files": [
+    {
+      "bytes": 15962,
+      "local_file_verified": true,
+      "remote_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/runtime-admission-02/summary.json",
+      "sha256": "ac8e45939653113174344a8551fa2325eb5594401db910f7d473fd6f2ce35c2d"
+    },
+    {
+      "bytes": 677,
+      "local_file_verified": true,
+      "remote_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/runtime-admission-02/runtime-import.stderr",
+      "sha256": "5c59136f1efe559e9ea4a1906d1bcab5b2e620496004107df70a602edf1dbb4a"
+    },
+    {
+      "bytes": 0,
+      "local_file_verified": true,
+      "remote_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/runtime-admission-02/runtime-import.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "observation": {
+    "child_elapsed_seconds": 0.61491879215464,
+    "child_exit_code": 1,
+    "child_timeout_seconds": 180,
+    "completed": true,
+    "exception": "ValueError: NEURAL_RUNTIME_INVENTORY_DRIFT",
+    "passed": false,
+    "source_and_pins_unchanged": true,
+    "stack": [
+      "worker.prepare_runtime line 379",
+      "runtime_contract.verify_files line 148"
+    ],
+    "timed_out": false
+  },
+  "original_inventory_rule": {
+    "contract_source": {
+      "bytes": 22751,
+      "path": "validation/discovery-reviewer/pinned-source/llm_python_runtime_contract.py.txt",
+      "sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc"
+    },
+    "file_digest_symlink_semantics": "Resolve(strict=True) first, then open resolved regular file with O_NOFOLLOW and compare one-FD before/after identity; original symlinks are not categorically forbidden.",
+    "function": "managed_inventory",
+    "included_files": "Every path whose is_file() is true, without extension or __pycache__ exclusions",
+    "lines": "130-143",
+    "per_member_byte_verification": "Begins later at lines 149-154; not reached by this failed guard invocation",
+    "result": "Sorted set of original path strings",
+    "roots": [
+      "snapshot.prefix",
+      "snapshot.stdlib_root"
+    ],
+    "snapshot_comparison": "Exact equality with snapshot.managed_inventory at verify_files line 148",
+    "stdlib_exclusion": "Only descendants whose relative parts contain site-packages when scanning stdlib_root",
+    "traversal": "Path.rglob(*)"
+  },
+  "prior_caller_repair": {
+    "actual_child_argv_contains_original_x_pycache_prefix": true,
+    "configure_private_unused_bytecode_guard_was_passed": true,
+    "prior_missing_x_failure_erased": false
+  },
+  "qualification": {
+    "all_four_gates_passed": false,
+    "hepta_final_use": false,
+    "model_executed": false,
+    "model_loaded": false,
+    "native_model_run_claimed": false,
+    "native_operation_started": false,
+    "production_activation": false,
+    "runtime_bytes_admitted": false,
+    "runtime_inventory_guard_passed": false
+  },
+  "reviewer_actions": {
+    "model_execution": false,
+    "original_runtime_or_snapshot_written": false,
+    "remote_calls": false,
+    "rust_compilation": false,
+    "source_or_guard_modified": false
+  },
+  "schema": "trnm-bt-runtime-inventory-failure-review-v1",
+  "sdk": {
+    "bytes": 20354,
+    "path": "validation/durable-current-remote/runtime02-observation-01/original-native-sdk-payload.json",
+    "sha256": "d602b15d36a3b6a5e3a6d52cc991148cdafbe93bc6b58027387fa154cb5f607f"
+  },
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "stderr": {
+    "bytes": 677,
+    "path": "validation/durable-current-remote/runtime02-observation-01/runtime-import.stderr",
+    "sha256": "5c59136f1efe559e9ea4a1906d1bcab5b2e620496004107df70a602edf1dbb4a"
+  },
+  "summary": {
+    "bytes": 15962,
+    "path": "validation/durable-current-remote/runtime02-observation-01/summary.json",
+    "sha256": "ac8e45939653113174344a8551fa2325eb5594401db910f7d473fd6f2ce35c2d"
+  },
+  "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+}

@@ -1,0 +1,7 @@
+# Exact a13 native source checks
+
+The installed Rust/Cargo 1.95.0 toolchain was absent from the earlier task PATH. These new executions select its explicit bin directory without installing a toolchain or changing source. Both original recorders compare all 26,605 tracked entries / 2,540,856,237 bytes before and after on exact `a13c56ca` / tree `ec3dcf4e`. Earlier NOT_RUN observations remain historical.
+
+The first recorder retains exit1: workspace locked/offline metadata and workspace format passed, but this run selected a nonexistent `trillionnium/fuzz/Cargo.toml`. The second discovers the actual tracked `tests/fuzz/Cargo.toml`, passes its locked/offline graph, runs the original three-package all-target/all-feature test command and passes workspace/all-target/all-feature Clippy with `-D warnings`. Full raw metadata, receipts, streams and the original driver error are retained.
+
+There are 298 passed methods across 34 harnesses, zero failures/ignored/filtered; zero-test harnesses are not additional tests. The packages are trnm-crypto-primitives, trnm-checkpoint-types and trnm-verification-profiles. This is not the whole workspace test suite or original Host/native campaign. It supplies no public-service timing, model utility, independent commission, all-strategy lower bound or whole-chain qualification. All four proven/authority flags stay false and unproved cost bounds stay null. Prospective-merge CI remains a separate source lane.

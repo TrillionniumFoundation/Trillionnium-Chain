@@ -1,0 +1,101 @@
+{
+  "schema": "trnm-cell-learning-publication-input-audit-v1",
+  "source_scope": "explicit-files-against-exact-published-parent",
+  "chain_parent_commit": "e02126dabef04f13792dec45d96ac5d6916d0651",
+  "chain_parent_tree": "94752a3e02a6a8d53d4b98ea7bb7bf75216cc4da",
+  "local_whole_git_head_is_not_candidate_identity": true,
+  "original_v1_fixture_inputs": [
+    {
+      "path": "evidence/cell-adoption-20261108/native-readbacks/fixture-manifest.json",
+      "bytes": 6165,
+      "blob_sha": "10a3add900929448c59a05930d76fd7e78bfe0d2",
+      "sha256": "46adda249f068efc216898b6fba1cae567b018de1bce0f25a1e6804526a4e966"
+    },
+    {
+      "path": "evidence/cell-adoption-20261108/native-readbacks/retained_pending.json",
+      "bytes": 12149,
+      "blob_sha": "540c19b65b735983de5034f6f0d75c86a7f99450",
+      "sha256": "8908ec58db9af8942f7215112cfae02ec93ab3bb36fe4fbfcc25bcd2bdd08fe8"
+    },
+    {
+      "path": "evidence/cell-adoption-20261108/native-readbacks/retained_pending.expected.json",
+      "bytes": 1631,
+      "blob_sha": "7ea075f312ed6d4fd854bc28d1016dd3da148334",
+      "sha256": "9db742282463927d3ed5a484f85142f877333352f851839785d3bc31372c16f3"
+    },
+    {
+      "path": "evidence/cell-adoption-20261108/native-readbacks/retained_acked.json",
+      "bytes": 11821,
+      "blob_sha": "06c676816dc32aabb7e8a4d7dd36a1842c15d76e",
+      "sha256": "67c11f0a957098a5db4c433452cffb1070bd7c220c18e947f9f7b7fe65e55d47"
+    },
+    {
+      "path": "evidence/cell-adoption-20261108/native-readbacks/retained_acked.expected.json",
+      "bytes": 1631,
+      "blob_sha": "5df2ed9c788fed1e9858f3852b991aed043fe620",
+      "sha256": "a38464656f5bfc372701cbdb5b7de0bd118500db42e2a88f74f186d2b6454d2b"
+    },
+    {
+      "path": "evidence/cell-adoption-20261108/native-readbacks/adopted_pending.json",
+      "bytes": 13823,
+      "blob_sha": "16a720277087b0a8bb9bddfb69a9aadc4d478548",
+      "sha256": "3b3fe72584f128f369c18cd7dae0697ee93beca3404ace106ccd8446ede60f00"
+    },
+    {
+      "path": "evidence/cell-adoption-20261108/native-readbacks/adopted_pending.expected.json",
+      "bytes": 1698,
+      "blob_sha": "5a29d42a04c317e683fd9fcb7ca54e308c7fadb1",
+      "sha256": "103f03c24811f7ba8ad230ad2aaa40ca64389f9b2ad4947f80f6963aac52cebe"
+    },
+    {
+      "path": "evidence/cell-adoption-20261108/native-readbacks/adopted_acked.json",
+      "bytes": 13520,
+      "blob_sha": "137f3bc9f670eba808b3974a38f0fb4dc3c96683",
+      "sha256": "69a80c932903c1685b7db9f83d544ef403da0c668f95480ce447c7aa955ab31c"
+    },
+    {
+      "path": "evidence/cell-adoption-20261108/native-readbacks/adopted_acked.expected.json",
+      "bytes": 1698,
+      "blob_sha": "9534e87a865eadebfe10d484be1e5d04c678ac92",
+      "sha256": "3a0fcb59cf75f157c5795653a01efb639962a256e5248b5b3bd5e922f6833159"
+    }
+  ],
+  "historical_research_refusal_input": {
+    "path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json",
+    "bytes": 108884,
+    "blob_sha": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+    "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+    "base_blob": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+    "exact_base_match": true
+  },
+  "code_blobs": [
+    {
+      "path": "scripts/cell_adoption_readback.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "47c94dfbf1ea9752439a09b29f750f27a1e4e3b8"
+    },
+    {
+      "path": "scripts/cell_learning_iteration_join.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "58fe5b64c02758b646f16e8e4c0c47f67aee7e15"
+    },
+    {
+      "path": "scripts/test_cell_learning_iteration_join.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "da3b2e58901d00ff0ba33d22e1589eda904cc78e"
+    }
+  ],
+  "sole_plan": {
+    "base_blob": "4ef52fb5da372d022405998894fefa1ffba10376",
+    "candidate_blob": "b69fe2cd3fb02b273e17803f721f59d7eecfc7d0",
+    "unchanged_outside_new_section": true,
+    "inserted_lines": 15
+  },
+  "native_fixture_source": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+  "code_and_data_sha_verification_is_not_native_origin_authentication": true,
+  "full_product_qualified": false,
+  "qualification": "HOLD_NO_GO"
+}

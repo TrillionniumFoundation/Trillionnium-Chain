@@ -1,0 +1,29 @@
+{
+  "actual_retry_observed_in_this_replay": false,
+  "all_native_positive_commands_returned_zero": true,
+  "annotation_error": "post-success wrapper attempted create-only transport-report.json a second time; FileExistsError; original report unchanged",
+  "annotation_wrapper_returncode": 1,
+  "authority": {
+    "hepta_final_use": false,
+    "independent_accepted": false,
+    "installation_authorized": false,
+    "prospective_accepted": false,
+    "public_reward_eligible": false,
+    "selection_authorized": false
+  },
+  "build_profile": "release",
+  "cell_binary_sha256": "01bb933f9ac62882148c8a25078f28281e0d84126e36b1cf0456d16add632156",
+  "deterministic_actual_retry_regressions_passed": true,
+  "independent_operators": false,
+  "model_quality_claim": false,
+  "native_base_commit": "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251",
+  "negative_offline_publisher_returncode": 1,
+  "network_source_git_blob": "d80e068ea90d46f531a2afaaa596d9d561c6f46f",
+  "pq_authenticated_transport": false,
+  "public_wan_accepted": false,
+  "readback_elapsed_seconds": 0.44579029199940123,
+  "report_sha256": "be2bf1265a8729c1c2723e93e91f6cb76067faed493d64afc3ecadd12c4485c6",
+  "schema": "trnm-cell-transient-retry-replay-v1",
+  "status": "native-transfer-and-original-content-readback-verified",
+  "subsequent_readback_returncode": 0
+}

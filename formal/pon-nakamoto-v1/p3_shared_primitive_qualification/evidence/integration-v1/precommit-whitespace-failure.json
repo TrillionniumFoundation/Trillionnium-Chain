@@ -1,0 +1,12 @@
+{
+  "schema": "p3.root.integration.whitespace-fix.v1",
+  "prior_failed_job": "1a1b9dd8c8c-12894-1752",
+  "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-p3-shared-profile-20261108-3acf89\", \"remote_policy_mutated\": false}\n{\"path\": \"formal/pon-nakamoto-v1/p3_shared_primitive_qualification/README.md\", \"sha256\": \"5137cb0c6d5eddf4672df453313cd3570bbb6b95f3c7c924d2bb9242bd918060\"}\n{\"path\": \"formal/pon-nakamoto-v1/p3_shared_primitive_qualification/verify_new_dependency_sources.py\", \"sha256\": \"940b34178144b7d8ee5ce5e38655f4b76002ff0620ce25a9afdd5dad0a102216\"}\n{\"path\": \"formal/pon-nakamoto-v1/p3_shared_primitive_qualification/sources/new-dependency-integrity.json\", \"sha256\": \"ea0cc2393db95b508ead498d887c1cecc2dc9bd8a49c119dbbf0b352a67ba052\"}\nformal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml:34: new blank line at EOF.\n",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 26, in <module>\n  File \"/usr/lib/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['git', 'diff', '--check']' returned non-zero exit status 2.\n",
+  "path": "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+  "before_sha256": "082425d937d0be1ea67f5c1f1c1df280ad803398b35199772123f680c22a82e7",
+  "after_sha256": "f4b3ac509ba9ff16fef73f16f096e89436ebd7d6b11eb0158113dc6a2d5c39f5",
+  "change": "remove extra terminal blank line only",
+  "parsed_toml_equal": true,
+  "prior_native_receipts_preserved": true
+}

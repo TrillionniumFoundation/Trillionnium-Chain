@@ -1,0 +1,6 @@
+test_collected_unit_observer_sources_cannot_omit_or_mutate (__main__.CorpusGateTests.test_collected_unit_observer_sources_cannot_omit_or_mutate) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 2.762s
+
+OK

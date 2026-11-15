@@ -1,0 +1,230 @@
+{
+  "all_27_recomputed_here": false,
+  "forward_reverse_root_towers_coherent_through_po2": 27,
+  "hash_cases": [
+    {
+      "permutation_and_hash23_match": true,
+      "vector": 0
+    },
+    {
+      "permutation_and_hash23_match": true,
+      "vector": 1
+    },
+    {
+      "permutation_and_hash23_match": true,
+      "vector": 2
+    },
+    {
+      "permutation_and_hash23_match": true,
+      "vector": 3
+    }
+  ],
+  "native_input_boundary_cases": [
+    {
+      "case": "exact_N_minus_1024_rows",
+      "exit_code": 0,
+      "root_matches_independent_constant_tree": true
+    },
+    {
+      "case": "one_row_over_capacity",
+      "exit_code": 2,
+      "success_stdout_absent": true
+    },
+    {
+      "case": "extra_word",
+      "exit_code": 2,
+      "success_stdout_absent": true
+    },
+    {
+      "case": "partial_byte",
+      "exit_code": 2,
+      "success_stdout_absent": true
+    },
+    {
+      "case": "noncanonical_modulus",
+      "exit_code": 2,
+      "success_stdout_absent": true
+    },
+    {
+      "case": "noncanonical_u32_max",
+      "exit_code": 2,
+      "success_stdout_absent": true
+    },
+    {
+      "case": "huge_po2",
+      "exit_code": 2,
+      "success_stdout_absent": true
+    },
+    {
+      "case": "huge_threads",
+      "exit_code": 2,
+      "success_stdout_absent": true
+    },
+    {
+      "case": "negative_po2",
+      "exit_code": 2,
+      "success_stdout_absent": true
+    },
+    {
+      "case": "empty_threads",
+      "exit_code": 2,
+      "success_stdout_absent": true
+    }
+  ],
+  "reviewed_sha256": {
+    "generated_header": "505d0ba904b6acb1e7e3aeb05378d8f5bc1a1fc5b24e54d39cd05baa7dcfee06",
+    "scripts/w1_zkr_control_id.c": "b388eeea5ae14ae2595acb1c6c241141d435fca91f72285e43969554dd3d6813",
+    "scripts/w1_zkr_control_id_audit.py": "876c262c5f8b0263f9fceb38a8df586d8d98756358e552135da68893b41c78ac"
+  },
+  "schema": "TRNM-W1-ZKR-INDEPENDENT-SMALL-REVIEW1",
+  "scope": "actual pinned C functions versus small O(n^2) DFT and separately transcribed SDK bit-reversed recursive butterflies; no large artifact run, compilation-correctness proof or program-semantics proof",
+  "security_qualification": false,
+  "tiny_control_roots": [
+    {
+      "bits": 2,
+      "control_id": "f744bf61b680bf0704c7f677941624615e7beb50787afe37a27e8a72aea1aa28",
+      "root_and_lde_samples_match": true,
+      "rows": 1
+    },
+    {
+      "bits": 3,
+      "control_id": "b9146c065c0dc24d85a596729e50d220561cac189bd87f154d36384b12a41549",
+      "root_and_lde_samples_match": true,
+      "rows": 7
+    },
+    {
+      "bits": 4,
+      "control_id": "8c0ceb1f169d9813eecd6d1e22e9640efaf32d4ac46a6c3e9329c667b62aa802",
+      "root_and_lde_samples_match": true,
+      "rows": 15
+    },
+    {
+      "bits": 5,
+      "control_id": "abf9e7636df91c723455575f7d718164d067c8009b792c067fcd4e1f10c1b248",
+      "root_and_lde_samples_match": true,
+      "rows": 31
+    }
+  ],
+  "transformation_cases": [
+    {
+      "bits": 1,
+      "forward_inverse_and_lde_match": true,
+      "vector": 0
+    },
+    {
+      "bits": 1,
+      "forward_inverse_and_lde_match": true,
+      "vector": 1
+    },
+    {
+      "bits": 1,
+      "forward_inverse_and_lde_match": true,
+      "vector": 2
+    },
+    {
+      "bits": 1,
+      "forward_inverse_and_lde_match": true,
+      "vector": 3
+    },
+    {
+      "bits": 2,
+      "forward_inverse_and_lde_match": true,
+      "vector": 0
+    },
+    {
+      "bits": 2,
+      "forward_inverse_and_lde_match": true,
+      "vector": 1
+    },
+    {
+      "bits": 2,
+      "forward_inverse_and_lde_match": true,
+      "vector": 2
+    },
+    {
+      "bits": 2,
+      "forward_inverse_and_lde_match": true,
+      "vector": 3
+    },
+    {
+      "bits": 3,
+      "forward_inverse_and_lde_match": true,
+      "vector": 0
+    },
+    {
+      "bits": 3,
+      "forward_inverse_and_lde_match": true,
+      "vector": 1
+    },
+    {
+      "bits": 3,
+      "forward_inverse_and_lde_match": true,
+      "vector": 2
+    },
+    {
+      "bits": 3,
+      "forward_inverse_and_lde_match": true,
+      "vector": 3
+    },
+    {
+      "bits": 4,
+      "forward_inverse_and_lde_match": true,
+      "vector": 0
+    },
+    {
+      "bits": 4,
+      "forward_inverse_and_lde_match": true,
+      "vector": 1
+    },
+    {
+      "bits": 4,
+      "forward_inverse_and_lde_match": true,
+      "vector": 2
+    },
+    {
+      "bits": 4,
+      "forward_inverse_and_lde_match": true,
+      "vector": 3
+    },
+    {
+      "bits": 5,
+      "forward_inverse_and_lde_match": true,
+      "vector": 0
+    },
+    {
+      "bits": 5,
+      "forward_inverse_and_lde_match": true,
+      "vector": 1
+    },
+    {
+      "bits": 5,
+      "forward_inverse_and_lde_match": true,
+      "vector": 2
+    },
+    {
+      "bits": 5,
+      "forward_inverse_and_lde_match": true,
+      "vector": 3
+    },
+    {
+      "bits": 6,
+      "forward_inverse_and_lde_match": true,
+      "vector": 0
+    },
+    {
+      "bits": 6,
+      "forward_inverse_and_lde_match": true,
+      "vector": 1
+    },
+    {
+      "bits": 6,
+      "forward_inverse_and_lde_match": true,
+      "vector": 2
+    },
+    {
+      "bits": 6,
+      "forward_inverse_and_lde_match": true,
+      "vector": 3
+    }
+  ]
+}

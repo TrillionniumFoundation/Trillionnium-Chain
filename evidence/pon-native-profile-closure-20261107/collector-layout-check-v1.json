@@ -1,0 +1,37 @@
+{
+  "archive": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/native-validation-source-v1.tar.gz",
+  "bytes": 788410,
+  "collector_sha256": "2bb1be21235c496dae6c40307bf1a45f5b7e919f01e2fdfe242fde00e61c0d8a",
+  "evidence_integrity_status": "INCOMPLETE",
+  "file_bytes": 8387647,
+  "issues": [
+    {
+      "code": "PRIMARY_FIXTURE_FILE_MISSING_OR_UNSAFE",
+      "directory": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/tmp/pon-query-observer-v1-42gl6p47",
+      "path": "owner/native-node.sqlite"
+    },
+    {
+      "code": "PRIMARY_FIXTURE_FILE_MISSING_OR_UNSAFE",
+      "directory": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/tmp/pon-query-observer-v1-42gl6p47-retained-1",
+      "path": "owner/native-node.sqlite"
+    },
+    {
+      "code": "PRIMARY_FIXTURE_FILE_MISSING_OR_UNSAFE",
+      "directory": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/tmp/pon-query-observer-v1-8lzaud74",
+      "path": "owner/native-node.sqlite"
+    },
+    {
+      "code": "PRIMARY_FIXTURE_FILE_MISSING_OR_UNSAFE",
+      "directory": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/tmp/pon-query-observer-v1-8lzaud74-retained-1",
+      "path": "owner/native-node.sqlite"
+    }
+  ],
+  "member_count": 132,
+  "out": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/validation-history-v1",
+  "qualification_run": false,
+  "readback_verified": true,
+  "review_status": "FAIL",
+  "schema": "pon-native-profile-validation-history-archive-receipt-v1",
+  "sha256": "02404d1ed7694752b7381a1aa84e12259e17c667f30fed01cc4d82bc0a13e300",
+  "status": "FAIL"
+}

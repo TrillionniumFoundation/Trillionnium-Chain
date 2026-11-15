@@ -1,0 +1,17 @@
+{
+  "body_comparison": "exact",
+  "draft": true,
+  "evidence": "b62cb86d22405dd9e5b441970639b6e5dd44a8b8",
+  "number": 947,
+  "observed_body": {
+    "bytes": 6277,
+    "sha256": "62b0470dfe44ff2a853243a8bd98e218658d09edf77f8c252d5d3c00b5e9b8c2"
+  },
+  "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "status": "HOLD",
+  "submitted_body": {
+    "bytes": 6277,
+    "sha256": "62b0470dfe44ff2a853243a8bd98e218658d09edf77f8c252d5d3c00b5e9b8c2"
+  },
+  "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/947"
+}

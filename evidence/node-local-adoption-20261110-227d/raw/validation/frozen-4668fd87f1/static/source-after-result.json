@@ -1,0 +1,20 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "4668fd87f1c4c7f6f4e206572e817a0c22201582",
+    "--output",
+    "/workspace/scratch/227dcdfdc6e4/validation/frozen-4668fd87f1/static/source-after.json"
+  ],
+  "elapsed_seconds": 4.863050024999666,
+  "exit_code": 1,
+  "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-4668fd87f1/static/source-after.log",
+  "log_sha256": "0b9a5f6bd0f9372837e6fe4e31c2da57f1c45a2d62cdb1e1c7f21523a4b4d4d0",
+  "name": "source-after",
+  "started_utc": "2026-11-11T00:51:56.261556+00:00",
+  "tests": null
+}

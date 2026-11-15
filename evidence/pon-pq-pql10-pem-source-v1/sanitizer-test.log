@@ -1,0 +1,12 @@
+test_caller_signed_purpose_still_bound (test_pq_tpq1_canonical_pem.CanonicalPemTests.test_caller_signed_purpose_still_bound) ... ok
+test_canonical_genuine_signature_accepts (test_pq_tpq1_canonical_pem.CanonicalPemTests.test_canonical_genuine_signature_accepts) ... ok
+test_der_trailing_bytes_inside_pem_rejected (test_pq_tpq1_canonical_pem.CanonicalPemTests.test_der_trailing_bytes_inside_pem_rejected) ... ok
+test_ed25519_downgrade_rejected (test_pq_tpq1_canonical_pem.CanonicalPemTests.test_ed25519_downgrade_rejected) ... ok
+test_extra_key_block_rejected (test_pq_tpq1_canonical_pem.CanonicalPemTests.test_extra_key_block_rejected) ... ok
+test_pem_suffix_space_is_not_single_canonical_file (test_pq_tpq1_canonical_pem.CanonicalPemTests.test_pem_suffix_space_is_not_single_canonical_file) ... ok
+test_preamble_before_pem_rejected (test_pq_tpq1_canonical_pem.CanonicalPemTests.test_preamble_before_pem_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.556s
+
+OK

@@ -1,0 +1,33 @@
+[
+  {
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "fmt",
+      "--all"
+    ],
+    "returncode": 0,
+    "seconds": 0.21780800819396973
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "returncode": 0,
+    "seconds": 0.20274114608764648
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "test",
+      "--offline",
+      "--locked",
+      "--lib"
+    ],
+    "returncode": 101,
+    "seconds": 23.795441150665283
+  }
+]

@@ -1,0 +1,46 @@
+{
+  "command": [
+    "cargo",
+    "+1.95.0",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-mvcc-fee",
+    "--all-targets",
+    "--all-features"
+  ],
+  "source_before": {
+    "head": "36f5d18a93834792025326cfb178415d78103e42",
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status": "",
+    "changed_file_sha256": {}
+  },
+  "source_after": {
+    "head": "36f5d18a93834792025326cfb178415d78103e42",
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status": "",
+    "changed_file_sha256": {}
+  },
+  "source_unchanged": true,
+  "exit_code": 101,
+  "elapsed_seconds": 161.73518133163452,
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_INCREMENTAL": "0",
+    "RUST_TEST_THREADS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CARGO_TARGET_DIR": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target",
+    "CARGO_NET_OFFLINE": "true",
+    "OPENSSL_DIR": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/lib/ossl-modules",
+    "TRNM_PQ_OPENSSL_SHA256": "35f28c82e7e4fdcd06b0a42062efd224a5fd5d32d5cc9894252f8206219d496e"
+  },
+  "output_sha256": "ed3d1065b06b0f183fe5666855733f3cf70f7b1bd1a455b547590439037d3ca2"
+}

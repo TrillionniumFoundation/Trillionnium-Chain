@@ -1,0 +1,281 @@
+{
+  "authority": "DENY_ALL",
+  "independent_wan_qualification": false,
+  "native_compilation": {
+    "M4": {
+      "all_five_libraries_passed": false,
+      "check_elapsed_seconds": 39.009401555,
+      "check_exit": 0,
+      "clippy_elapsed_seconds": 30.007221033,
+      "clippy_exit": 0,
+      "evidence": "native/M4/README.md",
+      "local_status": "NOT_STARTED_INSUFFICIENT_DISK",
+      "remote_host": "rog",
+      "retained_attempt_01": "NOT_STARTED_WRONG_PACKAGE_NAME",
+      "retained_attempt_02": {
+        "completed_libraries": {
+          "crypto": 196,
+          "data_availability": 714
+        },
+        "node_completed": false,
+        "original_summary_nested_count_error_retained_and_corrected": true,
+        "protocol_started": false,
+        "release_bundle_started": false,
+        "status": "TIMEOUT_INCOMPLETE"
+      },
+      "retained_attempt_03": {
+        "cargo_exit": 101,
+        "crypto_passed": 196,
+        "data_availability_failed": 1,
+        "data_availability_passed": 713,
+        "elapsed_seconds": 23.932759582,
+        "failed_test": "cell::residency::sealed_loader::tests::copied_byte_corruption_is_rejected_by_postseal_full_hash_without_partial_bundle",
+        "other_three_libraries_started": false,
+        "status": "FAILED"
+      },
+      "source_commit": "e4e4a8e049915ba09d9e97444b4709ce8769ce81"
+    },
+    "M5": {
+      "all_five_harnesses_completed": true,
+      "all_five_libraries_passed": false,
+      "archive_sha256": "2ad7f1189e1286301beac719dc98bb92b1c73410cecb1d0da4ad096fdcec3e16",
+      "canonical_provider": "static OpenSSL 3.5.9",
+      "check_exit": 0,
+      "clippy_exit": 0,
+      "collected_at_utc": "2026-11-09T17:01:54.574224+00:00",
+      "counts": {
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 41,
+        "passed": 2449
+      },
+      "evidence": "validation/native-M5/README.md",
+      "failed_test": "public_submit::pq::journal::tests::journal_unknown_publication_is_sticky_and_cold_replay_does_not_refund_attempt",
+      "failure_cause": "unestablished; no lock-owner snapshot captured",
+      "libraries": {
+        "trnm-crypto-primitives": {
+          "elapsed": "0.36s",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 196,
+          "raw_line": "test result: ok. 196 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s",
+          "status": "ok"
+        },
+        "trnm-data-availability": {
+          "elapsed": "20.64s",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 715,
+          "raw_line": "test result: ok. 715 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 20.64s",
+          "status": "ok"
+        },
+        "trnm-pon-node": {
+          "elapsed": "361.64s",
+          "failed": 1,
+          "filtered_out": 0,
+          "ignored": 39,
+          "measured": 0,
+          "passed": 1358,
+          "raw_line": "test result: FAILED. 1358 passed; 1 failed; 39 ignored; 0 measured; 0 filtered out; finished in 361.64s",
+          "status": "FAILED"
+        },
+        "trnm-protocol": {
+          "elapsed": "6.27s",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 2,
+          "measured": 0,
+          "passed": 113,
+          "raw_line": "test result: ok. 113 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 6.27s",
+          "status": "ok"
+        },
+        "trnm-release-bundle": {
+          "elapsed": "8.68s",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 67,
+          "raw_line": "test result: ok. 67 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.68s",
+          "status": "ok"
+        }
+      },
+      "source_commit": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "source_tree": "fbbb4dca143775bae75ea825ff502f368e122ebb",
+      "status": "FAILED_LIBRARY_TESTS",
+      "timed_out": false
+    },
+    "M6": {
+      "M5_failure_cause_remains_unestablished": true,
+      "all_five_harnesses_completed": true,
+      "all_five_libraries_passed": true,
+      "all_retained_release_service_gates_closed": false,
+      "archive_sha256": "c59397c89f1ed4e50605dfe337b77d2b63d82309f339ea7fa29f8884c99c16f9",
+      "canonical_provider": "static OpenSSL 3.5.9 reused with unchanged input hashes",
+      "check_exit": 0,
+      "clippy_exit": 0,
+      "collected_at_utc": "2026-11-09T17:34:06.926059+00:00",
+      "counts": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 41,
+        "measured": 0,
+        "passed": 2450
+      },
+      "evidence": "validation/native-M6/README.md",
+      "five_compiler_artifact_direct_identity_joins_passed": true,
+      "ignored_count_scope": "top-level harness only; some helpers explicitly invoked by parent tests",
+      "ignored_scope_correction": "validation/native-M6/ignored-scope-correction.json",
+      "journal_exact_child_complete_body_observed": true,
+      "libraries": {
+        "trnm-crypto-primitives": {
+          "elapsed": "0.35s",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 196,
+          "raw_line": "test result: ok. 196 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.35s",
+          "status": "ok"
+        },
+        "trnm-data-availability": {
+          "elapsed": "20.15s",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 715,
+          "raw_line": "test result: ok. 715 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 20.15s",
+          "status": "ok"
+        },
+        "trnm-pon-node": {
+          "elapsed": "361.75s",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 39,
+          "measured": 0,
+          "passed": 1359,
+          "raw_line": "test result: ok. 1359 passed; 0 failed; 39 ignored; 0 measured; 0 filtered out; finished in 361.75s",
+          "status": "ok"
+        },
+        "trnm-protocol": {
+          "elapsed": "6.29s",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 2,
+          "measured": 0,
+          "passed": 113,
+          "raw_line": "test result: ok. 113 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 6.29s",
+          "status": "ok"
+        },
+        "trnm-release-bundle": {
+          "elapsed": "8.74s",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 67,
+          "raw_line": "test result: ok. 67 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.74s",
+          "status": "ok"
+        }
+      },
+      "node_nested_summaries_not_added_to_top_level": 4,
+      "ordinary_daemon_executed": false,
+      "rustfmt_exit": 0,
+      "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+      "source_tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1",
+      "status": "PASS_WITH_RETAINED_IGNORED_GATES_OPEN",
+      "timed_out": false
+    },
+    "daemon_execution_performed": false,
+    "scope": "all-feature workspace library check/Clippy and selected retained libraries; no ordinary daemon or original campaign"
+  },
+  "observed_at_utc": "2026-11-09T17:40:53.549240+00:00",
+  "ordinary_daemon_learning_qualification": false,
+  "original_campaign_rerun_performed": false,
+  "production_activation": false,
+  "publication": {
+    "actor": "ProfHepta",
+    "all_hosted_checks_passed": false,
+    "candidate_source_publish_status_at_record_time": "M6_FROZEN_NOT_YET_ATTEMPTED",
+    "candidate_source_pushed": false,
+    "channel": "HeptaRuntime main local Git/gh",
+    "checks_cancelled": 2,
+    "checks_failure": 0,
+    "checks_in_progress": 0,
+    "checks_observed_at_utc": "2026-11-09T15:04:02.102516Z",
+    "checks_queued": 140,
+    "checks_skipped": 3,
+    "checks_snapshot": "publication/publication-observation-M4-02.json",
+    "checks_source_commit": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+    "checks_success": 4,
+    "checks_total": 149,
+    "draft": true,
+    "evidence_child_pushed": false,
+    "evidence_child_status_at_record_time": "not_yet_attempted",
+    "first_push_exit": 128,
+    "historical_checks_not_M5_checks": true,
+    "historical_checks_not_M6_checks": true,
+    "historical_checks_not_current_candidate_checks": true,
+    "new_reader_checks_queued": 6,
+    "pr_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847",
+    "prepublication_readiness": {
+      "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "draft": true,
+      "observed_at_utc": "2026-11-09T15:59:08.947957Z",
+      "open": true,
+      "path": "publication/publication-readiness-M5-01.json",
+      "pr_head": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "profhepta_push_access": true,
+      "write_performed": false
+    },
+    "publication_fields_are_dated_prepublication_observations": true,
+    "published_source_commit": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+    "second_push_exit": 0,
+    "source_branch_pushed": true
+  },
+  "python_controls_M5": {
+    "commands_exit_zero": 7,
+    "completed_at_utc": "2026-11-09T15:54:09.442213Z",
+    "full_test_files": {
+      "campaign_reader": 23,
+      "ci_contract": 176,
+      "corpus": 59,
+      "proof_profile": 26,
+      "scope": 11
+    },
+    "input_hash_count": 1380,
+    "qualified_native_daemon": false,
+    "source_before_after_unchanged": true,
+    "source_commit": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+    "source_tree": "fbbb4dca143775bae75ea825ff502f368e122ebb",
+    "summary": "validation/M5-controls/summary.json",
+    "summary_sha256": "57a89e4409a8a097c1f01dd6370a72fc851f83393f2877b00df800565b6a30e1"
+  },
+  "python_controls_M6": {
+    "commands_exit_zero": 7,
+    "completed_at_utc": "2026-11-09T17:21:20.214430+00:00",
+    "full_test_files": {
+      "campaign_reader": 23,
+      "ci_contract": 176,
+      "corpus": 59,
+      "proof_profile": 26,
+      "scope": 11
+    },
+    "input_hash_count": 1380,
+    "qualified_native_daemon": false,
+    "source_before_after_unchanged": true,
+    "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+    "source_tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1",
+    "summary": "validation/M6-controls/summary.json",
+    "summary_sha256": "17d4f9bd26b553b3abb0d8dda281bade4c76a3ef5c723e09225d5a57344ff00f"
+  },
+  "qualification": "HOLD_NO_GO",
+  "schema": "trnm-chain-hepta-closure-execution-status-v1",
+  "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+  "source_tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1"
+}

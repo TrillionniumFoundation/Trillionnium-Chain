@@ -1,0 +1,97 @@
+{
+  "accepted_complete_witnesses": 2,
+  "additional_chainwork": 0,
+  "additional_same_witness_replays": 1,
+  "complete_w1_verifications_in_accepted_paths": 15,
+  "contract_id": "4536e65865423777444c5a872ae1ae61f39ece2ce0f23bfe26f215baab5f01ff",
+  "fixed_nonces": [
+    0,
+    1
+  ],
+  "model_artifact": "d6ac3f24a43045dda6af862344918688b5fbb047599d423e27c567cf670ccfc2",
+  "model_quality_qualified": false,
+  "model_source": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+  "native_node_admission": false,
+  "open_cost_obligations": [
+    "fresh-randomness-enters-a-proven-paid-work-part",
+    "all-legal-sharing-preprocessing-and-partial-recomputation",
+    "joint-equivalent-encoding-proof-randomness-and-ticket-bound",
+    "joint-execution-soundness-and-late-witness-search",
+    "durable-cross-parent-profile-version-credit-deduplication",
+    "all-admitted-model-input-parameter-choices"
+  ],
+  "ordinary_hepta_encoder_verified": false,
+  "padded_dense_product_positions": 1310720,
+  "parameters_sha256": "d5cb070af92c18f354b72a2379cea5fadb83eb80e2665f615b8c3c69d6fb3549",
+  "physical_cost_lower_bound": null,
+  "position_counts_are_physical_cost_bounds": false,
+  "products": [
+    {
+      "active_output_rows": 15,
+      "active_requests": 2,
+      "complete_product_sha256": "a118923f2463552eace0e639076761381c82d665c44877eb9e5cc0431fce94e2",
+      "feature_count": 64,
+      "index": 0,
+      "transcript_changed": true,
+      "useful_product_equal": true
+    },
+    {
+      "active_output_rows": 15,
+      "active_requests": 2,
+      "complete_product_sha256": "8e8935ef524f5ddd2e89a9e7bddb10f66eeaf50accf6133dd7de10e262b0e758",
+      "feature_count": 64,
+      "index": 1,
+      "transcript_changed": true,
+      "useful_product_equal": true
+    },
+    {
+      "active_output_rows": 15,
+      "active_requests": 2,
+      "complete_product_sha256": "0e03ea22e44b3ebc2b7e627b4021cdec6d2b52b633beaa50504662ef48c51da2",
+      "feature_count": 64,
+      "index": 2,
+      "transcript_changed": true,
+      "useful_product_equal": true
+    },
+    {
+      "active_output_rows": 15,
+      "active_requests": 2,
+      "complete_product_sha256": "00ef1817b091e4566e8284198221f8540dcb086f831c0162247ad0471f02461b",
+      "feature_count": 64,
+      "index": 3,
+      "transcript_changed": true,
+      "useful_product_equal": true
+    },
+    {
+      "active_output_rows": 15,
+      "active_requests": 2,
+      "complete_product_sha256": "0e4d75418b73919e0edba83c61405a31d94764c941ce96e69b774d8226c52766",
+      "feature_count": 1,
+      "index": 4,
+      "transcript_changed": true,
+      "useful_product_equal": true
+    }
+  ],
+  "program_sha256": "b4ba1e9d48d5c486d36e142ea1ff60da116d24a3f57ebeb194db52c0acdd8097",
+  "qualification": "HOLD",
+  "refusals": {
+    "independent_parent_mismatch": "EXPECTED_PARENT_CONTEXT",
+    "noncanonical_witness_whitespace": "V2_WITNESS_CANONICAL",
+    "nonce_change_without_reexecution": "TRANSCRIPT"
+  },
+  "relation": "pon-useful-cell-stateful-int257-v2",
+  "rows": 2,
+  "schema": "pon-cell-lottery-cost-audit-v1",
+  "scope": "retained-public-source-model-reference-conformance",
+  "searched_nonces": false,
+  "source_sha256": {
+    "formal/pon-nakamoto-v1/cell_lottery_cost_audit_v1.py": "2edd0800f44a8ea26bbfc8bfbc76b67c9398901a5b0f18a00f798a3d642a56d7",
+    "formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py": "5c2c6d900c6a6898a5d5eb8b28d48a44217159b0efe11fb84d8f0f58277dbaf6",
+    "formal/pon-nakamoto-v1/useful_cell_execution_v2.py": "629fb9c8627dd03dd9281d10c2a3edecb20a027f5fe741377d8a2df80061d313",
+    "formal/pon-nakamoto-v1/useful_cell_relation_v2.py": "6810a67ee01012595d41d678515c8baaf648e7b2a6e4c9751be6c968da3303a0",
+    "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+  },
+  "target": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "useful_dense_positions": 7710,
+  "work_profile_qualified": false
+}

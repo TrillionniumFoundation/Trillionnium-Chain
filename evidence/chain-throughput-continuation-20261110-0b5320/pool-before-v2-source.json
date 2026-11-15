@@ -1,0 +1,16 @@
+{
+  "schema": "pon-pool-before-fixture-correction-v1",
+  "base_before_source": "db93026b9314bfd8bc4350945036998f1b7d34aa",
+  "corrected_before_source": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+  "corrected_before_tree": "4e85966ae98b0081fcc2f9d0e8af313bc4f7d005",
+  "corrected_fixed_test_source": "36f803033ca342a966fe6a8c6d5bf8b68355b5b9",
+  "changed_paths": [
+    "trillionnium/crates/trnm-pon-node/src/pool_run_control_tests.rs"
+  ],
+  "production_bytes_unchanged_from_before": true,
+  "identical_test_bytes": true,
+  "test_git_blob": "e2c8f8224270449587907a0a5607efaab147eb70",
+  "test_sha256": "ca6009352e67fe8fe20719102a95b3714b8d9946e30d3cc53266b621df9c1d2e",
+  "original_assertion_sites_preserved": true,
+  "native_execution_performed_by_this_step": false
+}

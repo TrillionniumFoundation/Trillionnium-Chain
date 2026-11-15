@@ -1,0 +1,12 @@
+test_all_declared_actions_must_pass (__main__.Controls.test_all_declared_actions_must_pass) ... ok
+test_good_law_is_not_renormalized (__main__.Controls.test_good_law_is_not_renormalized) ... ok
+test_independent_complete_tiny_policy_trees (__main__.Controls.test_independent_complete_tiny_policy_trees) ... ok
+test_initial_residual_potential_cannot_be_reset (__main__.Controls.test_initial_residual_potential_cannot_be_reset) ... ok
+test_never_issues_native_qualification (__main__.Controls.test_never_issues_native_qualification) ... ok
+test_nontrivial_exact_union_and_bad_budget (__main__.Controls.test_nontrivial_exact_union_and_bad_budget) ... ok
+test_strict_types_mass_and_limits (__main__.Controls.test_strict_types_mass_and_limits) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.003s
+
+OK

@@ -1,0 +1,38 @@
+{
+  "M5_ignored_json_sha256": "2d99d181a590a3c66d32e91cfd6fedebc37a217fd5852ae21ffc63d26d84c9b2",
+  "M5_raw_archive_sha256": "2ad7f1189e1286301beac719dc98bb92b1c73410cecb1d0da4ad096fdcec3e16",
+  "M5_readme_sha256": "bed8238258ddba1193138bcd743f8581ddd97011c575838033eb73338a26561b",
+  "M6_raw_archive_sha256": "c59397c89f1ed4e50605dfe337b77d2b63d82309f339ea7fa29f8884c99c16f9",
+  "actual_evidence": "retained-ignored-tests.json",
+  "applies_to_source_labels": [
+    "M5",
+    "M6"
+  ],
+  "correct_scope": "The five top-level libtest summaries retain 41 ignored entries. Existing parent tests explicitly invoke a bounded ignored helper in a subprocess. The main validation argv adds no --ignored, and subprocess observations are recorded separately without adding them to top-level denominators.",
+  "held_helper_observed_in_each_cohort": true,
+  "native_tests_rerun_for_this_correction": false,
+  "new_nonignored_journal_child_only_in_M6": true,
+  "original_raw_archives_unchanged": true,
+  "raw_field_scope_clarification": {
+    "all_retained_release_service_gates_closed_false": "Remains false; original service/capacity/heavy/release gates were not closed by this validation.",
+    "ignored_tests_explicitly_enabled_false": "Only describes the outer native validation command; it does not deny existing child commands with --ignored.",
+    "ignored_tests_remain_unexecuted_true": "Does not establish that every ignored definition was unexecuted in all subprocesses."
+  },
+  "schema": "native-evidence-ignored-scope-narrative-correction-v1",
+  "superseded_generalization": "Earlier handoff wording that all 41 ignored entries were unexecuted, or all were business gates, was too broad. Any blanket wording that no ignored test was enabled is also too broad.",
+  "top_level_counts_unchanged": {
+    "M5": {
+      "failed": 1,
+      "filtered_out": 0,
+      "ignored": 41,
+      "passed": 2449
+    },
+    "M6": {
+      "failed": 0,
+      "filtered_out": 0,
+      "ignored": 41,
+      "passed": 2450
+    }
+  },
+  "two_nonignored_migration_child_executions_in_each_cohort": true
+}

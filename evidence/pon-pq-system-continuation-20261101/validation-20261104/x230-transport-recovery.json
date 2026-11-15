@@ -1,0 +1,8 @@
+{
+  "archive_shell_request_idempotency_key": "pq-admission-x230-terminal-archive-20261104-01",
+  "archive_shell_response": "MCP timeout; action was not replayed",
+  "reconciliation": "file_info confirmed immutable output, then pinned-version reads transferred and local whole-file/member hashes verified",
+  "initial_65536_byte_read": "MCP timeout; read-only",
+  "one_16384_byte_offset_zero_read": "transient UNAVAILABLE/Connection failed; repeat of same bounded read succeeded",
+  "tests_or_budget_changed_during_recovery": false
+}

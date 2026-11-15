@@ -1,0 +1,99 @@
+{
+  "base_commit": "f2d14f9ebd25e054fe17c880331ae0d0c7df46e3",
+  "files": {
+    ".gitattributes": {
+      "bytes": 2628,
+      "git_blob": "cc5c01a3ad09490c6f263b7a7e624b2c618ce3bb",
+      "sha256": "099bf04618f0e4fd5ef20185bbdb818e54368f238a06f89244421bc3e293b821"
+    },
+    ".github/workflows/pon-throughput-evidence.yml": {
+      "bytes": 8891,
+      "git_blob": "0a4ae71ebc0b917ba6c1298b2ac6f028fba99274",
+      "sha256": "075b02f3306ad2221835b466b915941c1a7de8beff94dcdca9b091109a233128"
+    },
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "bytes": 107676,
+      "git_blob": "b721e857c894f2d200e651865e89ddd92b27dd4b",
+      "sha256": "09a44bba88bb020c8634e6b94f019a6f7955fca423a66b76691fe4919a7d04ed"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "bytes": 592637,
+      "git_blob": "607e75decbed9df3b9a396f413fcc6872a476fdd",
+      "sha256": "63cdef13a0e0b20d4072f3ab0c147e21eea8793d7d162d1d30a87e5a4b3837f4"
+    },
+    "formal/throughput-v1/COMPONENT_COST_OBSERVATIONS_V1.md": {
+      "bytes": 5757,
+      "git_blob": "71db95776c5b77f42fe75d8c74f1c22f80f09ca9",
+      "sha256": "dbfab1769847ac59fe7aba110cd823383a47a90ca37c72524cd2def0d02f6c43"
+    },
+    "formal/throughput-v1/README.md": {
+      "bytes": 10760,
+      "git_blob": "8f9300bb1b3cc29be20753368d114d6fa90de790",
+      "sha256": "6969f82576b9f4d7a4e587e2111bb1ddaf70102a9c17f270355da140d2aecc41"
+    },
+    "formal/throughput-v1/USEFUL_TASK_OBSERVATIONS_V1.md": {
+      "bytes": 6104,
+      "git_blob": "6cf9da46146c1e753ef379e500b4acff58ef3a08",
+      "sha256": "ec2f3bdb6ba33c33afc69a6153674da03aa01e1e5ebaff4b7091e0742ece9311"
+    },
+    "formal/throughput-v1/execution_report.py": {
+      "bytes": 44953,
+      "git_blob": "8546cf723cecfa5b15fcf5391b154813e4142f6d",
+      "sha256": "453a27e28079a30b86725057e7a35b105cf6b0aea4f46cfac6559a2e5961f692"
+    },
+    "formal/throughput-v1/run_component_observations.py": {
+      "bytes": 21297,
+      "git_blob": "e8f680b3c77a34624783481129fd6a8cba6609e7",
+      "sha256": "7f55bef2abc7cfebc78413ce68648ec42f693d227f80ca79f5f7fdf4fb46a15e"
+    },
+    "formal/throughput-v1/test_execution_report.py": {
+      "bytes": 33210,
+      "git_blob": "8c7a090bb97dd87722e730a52233e46a44921622",
+      "sha256": "231b6818cc9c5cac81cd8a25f6221e3a24301bca71c071abd5a0ff18315807aa"
+    },
+    "formal/throughput-v1/test_useful_task_metrics.py": {
+      "bytes": 9472,
+      "git_blob": "2a944349f88951489799bb79e6d98fe0b7cb1418",
+      "sha256": "2d1ee38593ea0d19677aac1c2fa923f65446dc681f75dccccbb1f8d847914538"
+    },
+    "formal/throughput-v1/test_whole_block_cost_metrics.py": {
+      "bytes": 11398,
+      "git_blob": "eaba213cfcf602cd41d2ef829a91920d018edc3e",
+      "sha256": "248c1267850d88d96824b843d3c51b41ca67d858cb8ab728a295a732435b8809"
+    },
+    "formal/throughput-v1/useful_task_metrics.py": {
+      "bytes": 13803,
+      "git_blob": "e462b46c822472bd766feb05f1ef25e4496b16eb",
+      "sha256": "18301b67d57a121a5cb468a3f490e61880a559e88f9cd69bcaf922895d66466b"
+    },
+    "formal/throughput-v1/whole_block_cost_metrics.py": {
+      "bytes": 16154,
+      "git_blob": "a2e61de834c182d3e331e751049b69477e9a48eb",
+      "sha256": "bfb080d22d3d6765f210730e6f0bb46e5c0d198864c6710796777bd319283a52"
+    },
+    "scripts/ci/test_pon_public_v3_phase_read.py": {
+      "bytes": 101458,
+      "git_blob": "f23d536e4ec380a6da829a3d740291dd0c41909c",
+      "sha256": "80d81cd6169ba73ca4d3bfbf58ebac931c91a8bfd3e0f03e5c4986a9d68b6fd2"
+    },
+    "scripts/pon_public_v3_phase_read.py": {
+      "bytes": 90040,
+      "git_blob": "b4d1b25634d59ce389b36175f9931151ed9be385",
+      "sha256": "a7aa80908566d60a834d85ed654b67f2c733b7ee1431bb1fc66c37ee5a7ba978"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
+      "bytes": 394554,
+      "git_blob": "2d401481877181feebbf3b21544d1d21d88aacf4",
+      "sha256": "b298f066e823d3d8dcad6dcd474d787205a62959bfcc35b7a099b2d852658145"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs": {
+      "bytes": 105940,
+      "git_blob": "414a9beca6a68eba121c39b483b58d87767150d1",
+      "sha256": "1e1a21e72f61b08f2ec0cf353c8f5844a41524a21282e1d41be60389a55a66d3"
+    }
+  },
+  "native_execution_of_publication_commit_claimed": false,
+  "qualification": "HOLD_NO_GO",
+  "schema": "pon-throughput-publication-source-files-v1",
+  "scope": "Changed implementation and documentation bytes only; native source identities remain in individual run records."
+}

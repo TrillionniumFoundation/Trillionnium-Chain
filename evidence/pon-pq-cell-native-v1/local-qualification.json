@@ -1,0 +1,56 @@
+{
+  "schema": "pon-pq-native-cell-local-evidence-v1",
+  "parent_commit": "f4050776006ee67de1075fb247df7a848fb12447",
+  "scope": "research-only / non-authoritative / HOLD_NO_GO",
+  "environment": {
+    "python": "3.13.5",
+    "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+    "cc": "cc (Debian 14.2.0-19) 14.2.0",
+    "system": "Linux",
+    "architecture": "x86_64"
+  },
+  "source_files": {
+    "formal/pon-nakamoto-v1/pq_cell_native_verify.c": {
+      "sha256": "13ef40ffdaed08bcf5b29d947efc81c38c0d6d9e480ba8ce842727cdf7f3420d",
+      "git_blob_sha1": "95daaadb18b998e6c1b594dd0b02ae43f91c42ac",
+      "bytes": 11671
+    },
+    "formal/pon-nakamoto-v1/test_pq_cell_native_verify.py": {
+      "sha256": "0b3e6f2c173b9f54fe1a1e0394c4d4239048b1c6503359ba689967e8b218aca7",
+      "git_blob_sha1": "61b1e9688d4db9a3b4e0e04f7721674ed8033931",
+      "bytes": 12301
+    },
+    "docs/security/PQ_CELL_NATIVE_CRYPTO_CONFORMANCE_V1.md": {
+      "sha256": "76cd9eb1d19a9262b03c5a49aae2767caf988f853fb860941b10727c8585b313",
+      "git_blob_sha1": "1fc70bbe43b6eb42d58180feb24d49586d9a16cd",
+      "bytes": 5608
+    }
+  },
+  "observed_runs": [
+    {
+      "command": "PYTHONWARNINGS=error::ResourceWarning python3 -m unittest -v test_pq_cell_native_verify.py",
+      "returncode": 0,
+      "named_tests": 12,
+      "passed": 12,
+      "failed": 0,
+      "log": "normal.log",
+      "log_sha256": "fa0c56f87726fc204791ea67a602f5b13d3587a44e2614d3c0eeaf3fcf954864"
+    },
+    {
+      "command": "PQN4_SANITIZE=1 ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 PYTHONWARNINGS=error::ResourceWarning python3 -m unittest -v test_pq_cell_native_verify.py",
+      "returncode": 0,
+      "named_tests": 12,
+      "passed": 12,
+      "failed": 0,
+      "log": "sanitized.log",
+      "log_sha256": "a95ed24aae0ab040740c620583da732b23f62ecda333b2bb47eea1b8146d071e"
+    }
+  ],
+  "signed_header_byte_negative_cases": 176,
+  "challenge_byte_negative_cases": 217,
+  "native_rust_node_integrated": false,
+  "independent_operator_acceptance": false,
+  "production_consensus_activation": false,
+  "quantum_pon_work_hardness_accepted": false,
+  "hepta_final_use_authorized": false
+}

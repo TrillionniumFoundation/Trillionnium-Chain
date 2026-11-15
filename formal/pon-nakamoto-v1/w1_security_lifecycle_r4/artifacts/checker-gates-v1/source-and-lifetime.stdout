@@ -1,0 +1,1498 @@
+{
+  "schema": "trnm-w1-shared-permutation-lifecycle-v1",
+  "source_base": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+  "source_check": {
+    "ok": true,
+    "checked": [
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "sha256": "e4abafba6867bf145ddd3f5b8f669ce039a93973d80f7eb3096dd3a7ce1c184c"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock",
+        "sha256": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/lib.rs",
+        "sha256": "558c88cb7ef72aba1fbc95ea5a9aeb0e811ebaeb11485d1c7cb2a67c83e817e9"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs",
+        "sha256": "b39c2405e8c2263cfd52fc162e6a92ccfdc7c83ce8ebaca179b32e2187b8137d"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_wire.rs",
+        "sha256": "5933e95cc02e35ca33348728ca57cbca87ac52bc4c3e2ee6a39045aba85cc70b"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs",
+        "sha256": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_air.rs",
+        "sha256": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_plan.rs",
+        "sha256": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs",
+        "sha256": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_carry_air.rs",
+        "sha256": "6524719eaa69e1c24e67ff4e82f26676612dcfc9b45da8d4a8ce08885dc56ec1"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "sha256": "e4abafba6867bf145ddd3f5b8f669ce039a93973d80f7eb3096dd3a7ce1c184c"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock",
+        "sha256": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/lib.rs",
+        "sha256": "02af0734368cb416dd4ed600254727f32e1c096e33a158b3abad903f5027ade1"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs",
+        "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_wire.rs",
+        "sha256": "e8660e3b91849f538713b32835035f0eb39425326268dd9302b3c7b01b090921"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs",
+        "sha256": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_air.rs",
+        "sha256": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_plan.rs",
+        "sha256": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs",
+        "sha256": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_carry_air.rs",
+        "sha256": "6524719eaa69e1c24e67ff4e82f26676612dcfc9b45da8d4a8ce08885dc56ec1"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_schedule_air.rs",
+        "sha256": "88557607225e402b6f16ec7edffb7c8b90ddfe14cc7e87a2640042a205011a64"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-symmetric-0.8.0/src/sponge.rs",
+        "sha256": "2f74ff9049e96a23d3d26aa1c0dc6cffb471b5b271bfe37af8dc34ff75d6ac97"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-symmetric-0.8.0/src/compression.rs",
+        "sha256": "fb4ddd15d6808ed240efdfb838607de2fda18cb7825749fd96f025ba410ee84b"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-commit-0.8.0/src/adapters/extension_mmcs.rs",
+        "sha256": "84c93692a9955aa2ee9aed5f756dc460d24d9f6eca3076b7cf99935dc06fca07"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-fri-0.8.0/src/prover.rs",
+        "sha256": "26c595b377a25947fbabe132653947cf2f56b0a2fe78f6c7187fe697fde0878a"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-fri-0.8.0/src/verifier.rs",
+        "sha256": "975392a464c823c93c9ec50ce4e73d17a8b0fbdf22f047f887fb749dcf7280a3"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-fri-0.8.0/src/proof.rs",
+        "sha256": "9c6efe2f05ec8f89f43ea1f2e706bf0fd826d9191d20d12b24ea2da10ad494a6"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-fri-0.8.0/src/transcript.rs",
+        "sha256": "a9ee1af03b02514bffffa6519c1f0544c91457c3e2327024cdfcfd84273ab6e9"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-fri-0.8.0/src/pcs_transcript.rs",
+        "sha256": "8c05386bd5b59c1a1dc0de7f537b1ca6ba8e7db04bd534d86a5db2fafb9bd4bd"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-fri-0.8.0/src/two_adic_pcs.rs",
+        "sha256": "926b6ecfe0c3c2ae3956d77f78795c3d5d4b7b171c16ec1ae251852c2d2a24cb"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-uni-stark-0.8.0/src/transcript.rs",
+        "sha256": "a68793bb4a0de0387598353cf15bcfc86f62c25f9a9822acc33883b8461a26a5"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-uni-stark-0.8.0/src/verifier.rs",
+        "sha256": "d55e7787358dca6ad70d28bad8ce8a25428322160fe0133fa680c1a5fe6ab077"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-uni-stark-0.8.0/src/proof.rs",
+        "sha256": "73aa8cd250bdd7ebc8045bbdbcea883d79a391dd44a22be46a733765e3932aec"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-challenger-0.8.0/src/duplex_challenger.rs",
+        "sha256": "82d7f006d285015d358e70e3c08378cc907ebb5416a1d1ad2d03d374c56f62e9"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-challenger-0.8.0/src/grinding_challenger.rs",
+        "sha256": "80072b2448c23cdfc0caaabc915fbb29f18f697c03a5219caf2b14deefc437b0"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-challenger-0.8.0/src/fs/domain_separator.rs",
+        "sha256": "07f9d2827d62eb05946fd6df6a3b12c1c08bccb1798e175858737b17ce431d17"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-challenger-0.8.0/src/fs/transcript_field.rs",
+        "sha256": "8d45379a1d95e3eed314374487d3dee076ed9ec970f9bfbd506f38bc79d8c9ac"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-challenger-0.8.0/src/fs/pattern/sequence.rs",
+        "sha256": "f08c0cdba31a24d91473955413a22b1669f62ee7663fb74ff9159b32eb0996f1"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-challenger-0.8.0/src/fs/pattern/step.rs",
+        "sha256": "e6c41cbb442af75dbc0084a49e366bcf6ed8de7c63bff6c2ab0f39dd26f4d3a5"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-challenger-0.8.0/src/fs/codecs/field_to_field.rs",
+        "sha256": "6ff3034987d8d2ea92e3b55cd99bee2141cd1baa7dd61328be71634ccffe322e"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-challenger-0.8.0/src/fs/codecs/extension.rs",
+        "sha256": "78b3920a826a0c65cf309c077be399ea43f95821f7e23dec984f7af03b557be2"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-challenger-0.8.0/src/fs/state/verifier.rs",
+        "sha256": "9365f4007a3bfc1ac05e9be3359b36d6cb09c62c7057e268f77fb0dbdf246c77"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-goldilocks-0.8.0/src/poseidon2.rs",
+        "sha256": "f6154a75152391481a44d6bd9ed3dc540ed2001bbdba323c278c2ff61430faa4"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-sha256-air-0.8.0/src/air.rs",
+        "sha256": "42a079d9cc36a10162e42c73f6b816bb97ae67aa7f998be2a89f789d1882f88d"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-sha256-air-0.8.0/src/generation.rs",
+        "sha256": "b9bd18aa6325b39bf2b60511069f6373b5629f25f497c23da6adbdf3d7981c6f"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-sha256-air-0.8.0/src/columns.rs",
+        "sha256": "1b9f9b24b420958497a5acf868fa7ab93df4de4996ab353f40dc9a0489f0ffbc"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-merkle-tree-0.8.0/src/hiding_mmcs.rs",
+        "sha256": "f0e04424ea9141519cd76ce56995c6ed7eb8eb8c203cd51f4fa71378bda6dd57"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-merkle-tree-0.8.0/src/lib.rs",
+        "sha256": "867df1c2f75cab3f1bf934b6070d18542e8257b6fe3707ef9522307f3156ec02"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-merkle-tree-0.8.0/src/merkle_tree.rs",
+        "sha256": "fd60d2c74e89f18d97371668536e405296cc10f923f2c982ec320bf507274dbc"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-merkle-tree-0.8.0/src/mmcs/batch.rs",
+        "sha256": "f893dbbb6818e386980d7cee66383725e5546832071a2975fc4b3cedb0cca1b4"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-merkle-tree-0.8.0/src/mmcs/error.rs",
+        "sha256": "88f83cefa68f4f2d64998033d8bbe3b86e6c62faea5dae6858c8c521584cca65"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-merkle-tree-0.8.0/src/mmcs/geometry.rs",
+        "sha256": "ee359d63f2badd8195a4c125fea49f4225c87e68180a3e6477a357f08742374a"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-merkle-tree-0.8.0/src/mmcs/mod.rs",
+        "sha256": "8164c4089590055bed06739a327b4561ce4793f3bc19b730fd1c24d77dec1e4c"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-merkle-tree-0.8.0/src/mmcs/pruned.rs",
+        "sha256": "7b6bf996320371b413b889070353fb50d297f47bb1b5365dfc6e57188542417d"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-merkle-tree-0.8.0/src/packed_row_tests.rs",
+        "sha256": "f972c2ccc886cb49829daa921a617c3c87cc977da53dbb67f3fe8129f74f5e20"
+      },
+      {
+        "root": "registry",
+        "revision": null,
+        "path": "p3-merkle-tree-0.8.0/src/pruning.rs",
+        "sha256": "ae09ad2377b6bf3166ebbb4ef6402b9d09fb642b9dbafe749b075e0c9c2b2da5"
+      },
+      {
+        "root": "repo",
+        "revision": null,
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/examples/r4_lifecycle_probe.rs",
+        "sha256": "1d2deb4e6e79877de6a21ab2fcc2d0dedb7fcf86fa92c0f808a48ebc980c096e"
+      }
+    ],
+    "failures": []
+  },
+  "native_receipt_replays": {
+    "r3-sha1": {
+      "component": 1,
+      "source_base": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+      "replay": {
+        "permutation_evaluations": 7814,
+        "absorbed_base_fields": 31191,
+        "sampled_base_fields": 96,
+        "pending_inputs": 0,
+        "buffered_outputs": 0
+      },
+      "query_law": {
+        "bits": 15,
+        "alphabet_size": 32768,
+        "exceptional_index": 0,
+        "probability_zero": {
+          "numerator": "562949953290241",
+          "denominator": "18446744069414584321",
+          "negative_log2_display_only": 15.0
+        },
+        "probability_each_nonzero": {
+          "numerator": "562949953290240",
+          "denominator": "18446744069414584321",
+          "negative_log2_display_only": 15.0
+        },
+        "total_variation_from_uniform": {
+          "numerator": "32767",
+          "denominator": "604462909666577099030528",
+          "negative_log2_display_only": 64.00004402789455
+        },
+        "maximum_density_ratio": {
+          "numerator": "18446744069414617088",
+          "denominator": "18446744069414584321",
+          "negative_log2_display_only": 0.0
+        },
+        "condition": "uniform canonical base-field sample; not established for fixed Poseidon2"
+      },
+      "measurements": {
+        "cold_verification_total": {
+          "branch_compressor": 36986,
+          "leaf_sponge": 354109,
+          "shared_total": 398909,
+          "transcript": 7814
+        },
+        "config_initialization": {
+          "branch_compressor": 0,
+          "leaf_sponge": 0,
+          "shared_total": 12,
+          "transcript": 12
+        },
+        "independent_preprocessing": {
+          "branch_compressor": 32767,
+          "leaf_sponge": 229376,
+          "shared_total": 262143,
+          "transcript": 0
+        },
+        "one_verification": {
+          "branch_compressor": 4219,
+          "leaf_sponge": 124733,
+          "shared_total": 136754,
+          "transcript": 7802
+        },
+        "same_proof_reverification": {
+          "branch_compressor": 4219,
+          "leaf_sponge": 124733,
+          "shared_total": 136754,
+          "transcript": 7802
+        }
+      },
+      "proof_sha256": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c"
+    },
+    "r3-packed4": {
+      "component": 4,
+      "source_base": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+      "replay": {
+        "permutation_evaluations": 347,
+        "absorbed_base_fields": 1324,
+        "sampled_base_fields": 98,
+        "pending_inputs": 0,
+        "buffered_outputs": 0
+      },
+      "query_law": {
+        "bits": 16,
+        "alphabet_size": 65536,
+        "exceptional_index": 0,
+        "probability_zero": {
+          "numerator": "281474976645121",
+          "denominator": "18446744069414584321",
+          "negative_log2_display_only": 16.0
+        },
+        "probability_each_nonzero": {
+          "numerator": "281474976645120",
+          "denominator": "18446744069414584321",
+          "negative_log2_display_only": 16.0
+        },
+        "total_variation_from_uniform": {
+          "numerator": "65535",
+          "denominator": "1208925819333154198061056",
+          "negative_log2_display_only": 64.00002201361136
+        },
+        "maximum_density_ratio": {
+          "numerator": "18446744069414649856",
+          "denominator": "18446744069414584321",
+          "negative_log2_display_only": 0.0
+        },
+        "condition": "uniform canonical base-field sample; not established for fixed Poseidon2"
+      },
+      "measurements": {
+        "cold_verification_total": {
+          "branch_compressor": 70628,
+          "leaf_sponge": 2958663,
+          "shared_total": 3029638,
+          "transcript": 347
+        },
+        "config_initialization": {
+          "branch_compressor": 0,
+          "leaf_sponge": 0,
+          "shared_total": 12,
+          "transcript": 12
+        },
+        "independent_preprocessing": {
+          "branch_compressor": 65535,
+          "leaf_sponge": 2949120,
+          "shared_total": 3014655,
+          "transcript": 0
+        },
+        "one_verification": {
+          "branch_compressor": 5093,
+          "leaf_sponge": 9543,
+          "shared_total": 14971,
+          "transcript": 335
+        },
+        "same_proof_reverification": {
+          "branch_compressor": 5093,
+          "leaf_sponge": 9543,
+          "shared_total": 14971,
+          "transcript": 335
+        }
+      },
+      "proof_sha256": "2b96cb7c32e34ab22ba39e1de424281b6d20b7811cff24ba769cf2e6cb67a988"
+    },
+    "r4-sha5": {
+      "component": 5,
+      "source_base": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+      "replay": {
+        "permutation_evaluations": 5534,
+        "absorbed_base_fields": 22071,
+        "sampled_base_fields": 96,
+        "pending_inputs": 0,
+        "buffered_outputs": 0
+      },
+      "query_law": {
+        "bits": 15,
+        "alphabet_size": 32768,
+        "exceptional_index": 0,
+        "probability_zero": {
+          "numerator": "562949953290241",
+          "denominator": "18446744069414584321",
+          "negative_log2_display_only": 15.0
+        },
+        "probability_each_nonzero": {
+          "numerator": "562949953290240",
+          "denominator": "18446744069414584321",
+          "negative_log2_display_only": 15.0
+        },
+        "total_variation_from_uniform": {
+          "numerator": "32767",
+          "denominator": "604462909666577099030528",
+          "negative_log2_display_only": 64.00004402789455
+        },
+        "maximum_density_ratio": {
+          "numerator": "18446744069414617088",
+          "denominator": "18446744069414584321",
+          "negative_log2_display_only": 0.0
+        },
+        "condition": "uniform canonical base-field sample; not established for fixed Poseidon2"
+      },
+      "measurements": {
+        "cold_verification_total": {
+          "branch_compressor": 37075,
+          "leaf_sponge": 1236040,
+          "shared_total": 1278649,
+          "transcript": 5534
+        },
+        "config_initialization": {
+          "branch_compressor": 0,
+          "leaf_sponge": 0,
+          "shared_total": 12,
+          "transcript": 12
+        },
+        "independent_preprocessing": {
+          "branch_compressor": 32767,
+          "leaf_sponge": 1146880,
+          "shared_total": 1179647,
+          "transcript": 0
+        },
+        "one_verification": {
+          "branch_compressor": 4308,
+          "leaf_sponge": 89160,
+          "shared_total": 98990,
+          "transcript": 5522
+        },
+        "same_proof_reverification": {
+          "branch_compressor": 4308,
+          "leaf_sponge": 89160,
+          "shared_total": 98990,
+          "transcript": 5522
+        }
+      },
+      "proof_sha256": "11423125f0f5cde3accbcd46f221386c3005d2e72e0e30020b4ae9850acf9085"
+    },
+    "r4-packed4": {
+      "component": 4,
+      "source_base": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+      "replay": {
+        "permutation_evaluations": 347,
+        "absorbed_base_fields": 1324,
+        "sampled_base_fields": 98,
+        "pending_inputs": 0,
+        "buffered_outputs": 0
+      },
+      "query_law": {
+        "bits": 16,
+        "alphabet_size": 65536,
+        "exceptional_index": 0,
+        "probability_zero": {
+          "numerator": "281474976645121",
+          "denominator": "18446744069414584321",
+          "negative_log2_display_only": 16.0
+        },
+        "probability_each_nonzero": {
+          "numerator": "281474976645120",
+          "denominator": "18446744069414584321",
+          "negative_log2_display_only": 16.0
+        },
+        "total_variation_from_uniform": {
+          "numerator": "65535",
+          "denominator": "1208925819333154198061056",
+          "negative_log2_display_only": 64.00002201361136
+        },
+        "maximum_density_ratio": {
+          "numerator": "18446744069414649856",
+          "denominator": "18446744069414584321",
+          "negative_log2_display_only": 0.0
+        },
+        "condition": "uniform canonical base-field sample; not established for fixed Poseidon2"
+      },
+      "measurements": {
+        "cold_verification_total": {
+          "branch_compressor": 70628,
+          "leaf_sponge": 2958663,
+          "shared_total": 3029638,
+          "transcript": 347
+        },
+        "config_initialization": {
+          "branch_compressor": 0,
+          "leaf_sponge": 0,
+          "shared_total": 12,
+          "transcript": 12
+        },
+        "independent_preprocessing": {
+          "branch_compressor": 65535,
+          "leaf_sponge": 2949120,
+          "shared_total": 3014655,
+          "transcript": 0
+        },
+        "one_verification": {
+          "branch_compressor": 5093,
+          "leaf_sponge": 9543,
+          "shared_total": 14971,
+          "transcript": 335
+        },
+        "same_proof_reverification": {
+          "branch_compressor": 5093,
+          "leaf_sponge": 9543,
+          "shared_total": 14971,
+          "transcript": 335
+        }
+      },
+      "proof_sha256": "2b96cb7c32e34ab22ba39e1de424281b6d20b7811cff24ba769cf2e6cb67a988"
+    }
+  },
+  "scenarios": [
+    {
+      "scenario": "retained_R3_cold_verifier_workload_only",
+      "primitive_scope": "one fixed Poseidon2Goldilocks<8> across components, roles and epochs",
+      "epochs": [
+        {
+          "label": "R3 components 1 and 4",
+          "receipt_keys": [
+            "r3-sha1",
+            "r3-packed4"
+          ],
+          "measured_roles": {
+            "leaf_sponge": 3312772,
+            "branch_compressor": 107614,
+            "transcript": 8161
+          },
+          "declared_unmeasured_queries": 0,
+          "same_primitive_epoch_total": 3428547
+        }
+      ],
+      "measured_role_evaluations": {
+        "leaf_sponge": 3312772,
+        "branch_compressor": 107614,
+        "transcript": 8161
+      },
+      "declared_offline_forward_queries": 0,
+      "declared_offline_inverse_queries": 0,
+      "declared_other_honest_evaluations": 0,
+      "merged_total_evaluations_and_queries": 3428547,
+      "query_count_is_an_assumption_for_unmeasured_part": true,
+      "complete_experiment_query_budget_established": false,
+      "prover_and_diagnostic_run_queries_measured_here": false,
+      "measured_workload_scope": "exact repeated retained proofs; not a worst-case bound for arbitrary accepted or malformed proofs",
+      "other_hash_functions_measured": false,
+      "restricted_fri_leaf_subtheorem": {
+        "game": "fixed four-field input H4(m)=first4(Pi(m||0^4)); classical adaptive forward/inverse ideal-permutation queries",
+        "half_alphabet_size": "115792089129476408817739443160502628952720274482139873392618675794070921543681",
+        "total_queries_including_two_final_checks": "3428549",
+        "conditional_collision_probability_upper_bound": {
+          "numerator": "680564808972501762282348428265495519867449469744822431591121203910404887256392056831456106",
+          "denominator": "13407807904968608723212281202841119622236618273039694023524124302519438897008088122680625462946347946790432608105011691604414360592606126580786095987601213",
+          "negative_log2_display_only": 213.58166699879166
+        },
+        "concrete_poseidon2_instantiation_proved": false,
+        "covers_internal_compressor": false,
+        "covers_other_leaf_widths": false,
+        "covers_merkle_opening_binding_or_extraction": false,
+        "covers_quantum_queries": false,
+        "is_w1_noninteractive_bound": false
+      },
+      "quadratic_accounting_only": {
+        "merged_square": "11754934531209",
+        "incorrect_separate_role_square_sum": "10986105698901",
+        "omitted_cross_terms": "768828832308",
+        "is_a_collision_bound": false,
+        "reason": "raw truncated-permutation arbitrary-input collision resistance is already falsified; no birthday theorem is applied here"
+      },
+      "abstract_adaptive_bad_event_lemma": {
+        "conditional_failure_upper_bound": {
+          "numerator": "0",
+          "denominator": "1",
+          "negative_log2_display_only": null
+        },
+        "is_p3_noninteractive_bound": false,
+        "conditional_hazard_hypotheses_proved_here": false,
+        "independence_required": false,
+        "opportunities_not_inferred_from_proof_count": true
+      },
+      "unclosed_crypto_items": [
+        "restricted_mmcs_opening_binding_and_extraction_with_shared_permutation",
+        "complete_fixed_air_pcs_iop_rbr_reduction_with_concrete_constants",
+        "actual_length_tagged_duplex_fs_compiler_in_the_same_oracle_game",
+        "concrete_poseidon2_instantiation_from_ideal_permutation",
+        "quantum_extraction_compiler_with_concrete_constants"
+      ],
+      "actual_w1_lifetime_failure_probability": null,
+      "actual_w1_noninteractive_bits": null,
+      "actual_w1_quantum_bits": null,
+      "pq128": false,
+      "qualification": "HOLD_NO_GO"
+    },
+    {
+      "scenario": "retained_R4_cold_verifier_workload_only",
+      "primitive_scope": "one fixed Poseidon2Goldilocks<8> across components, roles and epochs",
+      "epochs": [
+        {
+          "label": "R4 components 5 and 4",
+          "receipt_keys": [
+            "r4-sha5",
+            "r4-packed4"
+          ],
+          "measured_roles": {
+            "leaf_sponge": 4194703,
+            "branch_compressor": 107703,
+            "transcript": 5881
+          },
+          "declared_unmeasured_queries": 0,
+          "same_primitive_epoch_total": 4308287
+        }
+      ],
+      "measured_role_evaluations": {
+        "leaf_sponge": 4194703,
+        "branch_compressor": 107703,
+        "transcript": 5881
+      },
+      "declared_offline_forward_queries": 0,
+      "declared_offline_inverse_queries": 0,
+      "declared_other_honest_evaluations": 0,
+      "merged_total_evaluations_and_queries": 4308287,
+      "query_count_is_an_assumption_for_unmeasured_part": true,
+      "complete_experiment_query_budget_established": false,
+      "prover_and_diagnostic_run_queries_measured_here": false,
+      "measured_workload_scope": "exact repeated retained proofs; not a worst-case bound for arbitrary accepted or malformed proofs",
+      "other_hash_functions_measured": false,
+      "restricted_fri_leaf_subtheorem": {
+        "game": "fixed four-field input H4(m)=first4(Pi(m||0^4)); classical adaptive forward/inverse ideal-permutation queries",
+        "half_alphabet_size": "115792089129476408817739443160502628952720274482139873392618675794070921543681",
+        "total_queries_including_two_final_checks": "4308289",
+        "conditional_collision_probability_upper_bound": {
+          "numerator": "1074628735158030395231214183893641473731891328589661435882912278330505998885386276434126496",
+          "denominator": "13407807904968608723212281202841119622236618273039694023524124302519438897008088122680625462946347946790432608105011691604414360592606126580786095986721473",
+          "negative_log2_display_only": 212.92263313666757
+        },
+        "concrete_poseidon2_instantiation_proved": false,
+        "covers_internal_compressor": false,
+        "covers_other_leaf_widths": false,
+        "covers_merkle_opening_binding_or_extraction": false,
+        "covers_quantum_queries": false,
+        "is_w1_noninteractive_bound": false
+      },
+      "quadratic_accounting_only": {
+        "merged_square": "18561336874369",
+        "incorrect_separate_role_square_sum": "17607167780579",
+        "omitted_cross_terms": "954169093790",
+        "is_a_collision_bound": false,
+        "reason": "raw truncated-permutation arbitrary-input collision resistance is already falsified; no birthday theorem is applied here"
+      },
+      "abstract_adaptive_bad_event_lemma": {
+        "conditional_failure_upper_bound": {
+          "numerator": "0",
+          "denominator": "1",
+          "negative_log2_display_only": null
+        },
+        "is_p3_noninteractive_bound": false,
+        "conditional_hazard_hypotheses_proved_here": false,
+        "independence_required": false,
+        "opportunities_not_inferred_from_proof_count": true
+      },
+      "unclosed_crypto_items": [
+        "restricted_mmcs_opening_binding_and_extraction_with_shared_permutation",
+        "complete_fixed_air_pcs_iop_rbr_reduction_with_concrete_constants",
+        "actual_length_tagged_duplex_fs_compiler_in_the_same_oracle_game",
+        "concrete_poseidon2_instantiation_from_ideal_permutation",
+        "quantum_extraction_compiler_with_concrete_constants"
+      ],
+      "actual_w1_lifetime_failure_probability": null,
+      "actual_w1_noninteractive_bits": null,
+      "actual_w1_quantum_bits": null,
+      "pq128": false,
+      "qualification": "HOLD_NO_GO"
+    },
+    {
+      "scenario": "hypothetical_R4_million_reverifications_reusing_preprocessing",
+      "primitive_scope": "one fixed Poseidon2Goldilocks<8> across components, roles and epochs",
+      "epochs": [
+        {
+          "label": "one retained statement and proof pair",
+          "receipt_keys": [
+            "r4-sha5",
+            "r4-packed4"
+          ],
+          "measured_roles": {
+            "leaf_sponge": 98707096000,
+            "branch_compressor": 9401098302,
+            "transcript": 5857000024
+          },
+          "declared_unmeasured_queries": 0,
+          "same_primitive_epoch_total": 113965194326
+        }
+      ],
+      "measured_role_evaluations": {
+        "leaf_sponge": 98707096000,
+        "branch_compressor": 9401098302,
+        "transcript": 5857000024
+      },
+      "declared_offline_forward_queries": 0,
+      "declared_offline_inverse_queries": 0,
+      "declared_other_honest_evaluations": 0,
+      "merged_total_evaluations_and_queries": 113965194326,
+      "query_count_is_an_assumption_for_unmeasured_part": true,
+      "complete_experiment_query_budget_established": false,
+      "prover_and_diagnostic_run_queries_measured_here": false,
+      "measured_workload_scope": "exact repeated retained proofs; not a worst-case bound for arbitrary accepted or malformed proofs",
+      "other_hash_functions_measured": false,
+      "restricted_fri_leaf_subtheorem": {
+        "game": "fixed four-field input H4(m)=first4(Pi(m||0^4)); classical adaptive forward/inverse ideal-permutation queries",
+        "half_alphabet_size": "115792089129476408817739443160502628952720274482139873392618675794070921543681",
+        "total_queries_including_two_final_checks": "113965194328",
+        "conditional_collision_probability_upper_bound": {
+          "numerator": "375978810022968653581287851725887405947114540193293870560774963114178639940720332679597424456179834",
+          "denominator": "6703903952484304361606140601420559811118309136519847011762062151259719448504044061340312731473173973395216304052505845802207180296303063290392991012917717",
+          "negative_log2_display_only": 183.5403953437256
+        },
+        "concrete_poseidon2_instantiation_proved": false,
+        "covers_internal_compressor": false,
+        "covers_other_leaf_widths": false,
+        "covers_merkle_opening_binding_or_extraction": false,
+        "covers_quantum_queries": false,
+        "is_w1_noninteractive_bound": false
+      },
+      "quadratic_accounting_only": {
+        "merged_square": "12988065517762942594276",
+        "incorrect_separate_role_square_sum": "9865775899318219283780",
+        "omitted_cross_terms": "3122289618444723310496",
+        "is_a_collision_bound": false,
+        "reason": "raw truncated-permutation arbitrary-input collision resistance is already falsified; no birthday theorem is applied here"
+      },
+      "abstract_adaptive_bad_event_lemma": {
+        "conditional_failure_upper_bound": {
+          "numerator": "0",
+          "denominator": "1",
+          "negative_log2_display_only": null
+        },
+        "is_p3_noninteractive_bound": false,
+        "conditional_hazard_hypotheses_proved_here": false,
+        "independence_required": false,
+        "opportunities_not_inferred_from_proof_count": true
+      },
+      "unclosed_crypto_items": [
+        "restricted_mmcs_opening_binding_and_extraction_with_shared_permutation",
+        "complete_fixed_air_pcs_iop_rbr_reduction_with_concrete_constants",
+        "actual_length_tagged_duplex_fs_compiler_in_the_same_oracle_game",
+        "concrete_poseidon2_instantiation_from_ideal_permutation",
+        "quantum_extraction_compiler_with_concrete_constants"
+      ],
+      "actual_w1_lifetime_failure_probability": null,
+      "actual_w1_noninteractive_bits": null,
+      "actual_w1_quantum_bits": null,
+      "pq128": false,
+      "qualification": "HOLD_NO_GO"
+    },
+    {
+      "scenario": "hypothetical_two_protocol_epochs_share_one_permutation",
+      "primitive_scope": "one fixed Poseidon2Goldilocks<8> across components, roles and epochs",
+      "epochs": [
+        {
+          "label": "R3 old component domains",
+          "receipt_keys": [
+            "r3-sha1",
+            "r3-packed4"
+          ],
+          "measured_roles": {
+            "leaf_sponge": 1345938496,
+            "branch_compressor": 93218302,
+            "transcript": 81370024
+          },
+          "declared_unmeasured_queries": 6459228160,
+          "same_primitive_epoch_total": 7979754982
+        },
+        {
+          "label": "R4 new component domain same permutation",
+          "receipt_keys": [
+            "r4-sha5",
+            "r4-packed4"
+          ],
+          "measured_roles": {
+            "leaf_sponge": 991126000,
+            "branch_compressor": 94108302,
+            "transcript": 58570024
+          },
+          "declared_unmeasured_queries": 6459228160,
+          "same_primitive_epoch_total": 7603032486
+        }
+      ],
+      "measured_role_evaluations": {
+        "leaf_sponge": 2337064496,
+        "branch_compressor": 187326604,
+        "transcript": 139940048
+      },
+      "declared_offline_forward_queries": 8589934592,
+      "declared_offline_inverse_queries": 4294967296,
+      "declared_other_honest_evaluations": 33554432,
+      "merged_total_evaluations_and_queries": 15582787468,
+      "query_count_is_an_assumption_for_unmeasured_part": true,
+      "complete_experiment_query_budget_established": false,
+      "prover_and_diagnostic_run_queries_measured_here": false,
+      "measured_workload_scope": "exact repeated retained proofs; not a worst-case bound for arbitrary accepted or malformed proofs",
+      "other_hash_functions_measured": false,
+      "restricted_fri_leaf_subtheorem": {
+        "game": "fixed four-field input H4(m)=first4(Pi(m||0^4)); classical adaptive forward/inverse ideal-permutation queries",
+        "half_alphabet_size": "115792089129476408817739443160502628952720274482139873392618675794070921543681",
+        "total_queries_including_two_final_checks": "15582787470",
+        "conditional_collision_probability_upper_bound": {
+          "numerator": "14058506590299170240709650764133766922134012328294300834554636427463615746619633108955747376917915",
+          "denominator": "13407807904968608723212281202841119622236618273039694023524124302519438897008088122680625462946347946790432608105011691604414360592606126580786080408242292",
+          "negative_log2_display_only": 189.2815314455708
+        },
+        "concrete_poseidon2_instantiation_proved": false,
+        "covers_internal_compressor": false,
+        "covers_other_leaf_widths": false,
+        "covers_merkle_opening_binding_or_extraction": false,
+        "covers_quantum_queries": false,
+        "is_w1_noninteractive_bound": false
+      },
+      "quadratic_accounting_only": {
+        "merged_square": "242823265272857851024",
+        "incorrect_separate_role_square_sum": "97751391200518749840",
+        "omitted_cross_terms": "145071874072339101184",
+        "is_a_collision_bound": false,
+        "reason": "raw truncated-permutation arbitrary-input collision resistance is already falsified; no birthday theorem is applied here"
+      },
+      "abstract_adaptive_bad_event_lemma": {
+        "conditional_failure_upper_bound": {
+          "numerator": "0",
+          "denominator": "1",
+          "negative_log2_display_only": null
+        },
+        "is_p3_noninteractive_bound": false,
+        "conditional_hazard_hypotheses_proved_here": false,
+        "independence_required": false,
+        "opportunities_not_inferred_from_proof_count": true
+      },
+      "unclosed_crypto_items": [
+        "restricted_mmcs_opening_binding_and_extraction_with_shared_permutation",
+        "complete_fixed_air_pcs_iop_rbr_reduction_with_concrete_constants",
+        "actual_length_tagged_duplex_fs_compiler_in_the_same_oracle_game",
+        "concrete_poseidon2_instantiation_from_ideal_permutation",
+        "quantum_extraction_compiler_with_concrete_constants"
+      ],
+      "actual_w1_lifetime_failure_probability": null,
+      "actual_w1_noninteractive_bits": null,
+      "actual_w1_quantum_bits": null,
+      "pq128": false,
+      "qualification": "HOLD_NO_GO"
+    },
+    {
+      "scenario": "hypothetical_2pow64_offline_queries",
+      "primitive_scope": "one fixed Poseidon2Goldilocks<8> across components, roles and epochs",
+      "epochs": [
+        {
+          "label": "explicit assumed unmeasured budget",
+          "receipt_keys": [
+            "r4-sha5",
+            "r4-packed4"
+          ],
+          "measured_roles": {
+            "leaf_sponge": 4194703,
+            "branch_compressor": 107703,
+            "transcript": 5881
+          },
+          "declared_unmeasured_queries": 18446744073709551616,
+          "same_primitive_epoch_total": 18446744073713859903
+        }
+      ],
+      "measured_role_evaluations": {
+        "leaf_sponge": 4194703,
+        "branch_compressor": 107703,
+        "transcript": 5881
+      },
+      "declared_offline_forward_queries": 9223372036854775808,
+      "declared_offline_inverse_queries": 9223372036854775808,
+      "declared_other_honest_evaluations": 0,
+      "merged_total_evaluations_and_queries": 18446744073713859903,
+      "query_count_is_an_assumption_for_unmeasured_part": true,
+      "complete_experiment_query_budget_established": false,
+      "prover_and_diagnostic_run_queries_measured_here": false,
+      "measured_workload_scope": "exact repeated retained proofs; not a worst-case bound for arbitrary accepted or malformed proofs",
+      "other_hash_functions_measured": false,
+      "restricted_fri_leaf_subtheorem": {
+        "game": "fixed four-field input H4(m)=first4(Pi(m||0^4)); classical adaptive forward/inverse ideal-permutation queries",
+        "half_alphabet_size": "115792089129476408817739443160502628952720274482139873392618675794070921543681",
+        "total_queries_including_two_final_checks": "18446744073713859905",
+        "conditional_collision_probability_upper_bound": {
+          "numerator": "19701003079858453137273320903341616341375606259137825209049561919623531425877129974365076042848070351194687207155360",
+          "denominator": "13407807904968608723212281202841119622236618273039694023524124302519438897008088122680625462946347946790432608105011691604414360592606108134042022277169857",
+          "negative_log2_display_only": 128.9999999986557
+        },
+        "concrete_poseidon2_instantiation_proved": false,
+        "covers_internal_compressor": false,
+        "covers_other_leaf_widths": false,
+        "covers_merkle_opening_binding_or_extraction": false,
+        "covers_quantum_queries": false,
+        "is_w1_noninteractive_bound": false
+      },
+      "quadratic_accounting_only": {
+        "merged_square": "340282366921097411198744805799111169409",
+        "incorrect_separate_role_square_sum": "170141183460469231731687321323051886307",
+        "omitted_cross_terms": "170141183460628179467057484476059283102",
+        "is_a_collision_bound": false,
+        "reason": "raw truncated-permutation arbitrary-input collision resistance is already falsified; no birthday theorem is applied here"
+      },
+      "abstract_adaptive_bad_event_lemma": {
+        "conditional_failure_upper_bound": {
+          "numerator": "0",
+          "denominator": "1",
+          "negative_log2_display_only": null
+        },
+        "is_p3_noninteractive_bound": false,
+        "conditional_hazard_hypotheses_proved_here": false,
+        "independence_required": false,
+        "opportunities_not_inferred_from_proof_count": true
+      },
+      "unclosed_crypto_items": [
+        "restricted_mmcs_opening_binding_and_extraction_with_shared_permutation",
+        "complete_fixed_air_pcs_iop_rbr_reduction_with_concrete_constants",
+        "actual_length_tagged_duplex_fs_compiler_in_the_same_oracle_game",
+        "concrete_poseidon2_instantiation_from_ideal_permutation",
+        "quantum_extraction_compiler_with_concrete_constants"
+      ],
+      "actual_w1_lifetime_failure_probability": null,
+      "actual_w1_noninteractive_bits": null,
+      "actual_w1_quantum_bits": null,
+      "pq128": false,
+      "qualification": "HOLD_NO_GO"
+    },
+    {
+      "scenario": "hypothetical_2pow128_offline_queries",
+      "primitive_scope": "one fixed Poseidon2Goldilocks<8> across components, roles and epochs",
+      "epochs": [
+        {
+          "label": "explicit assumed unmeasured budget",
+          "receipt_keys": [
+            "r4-sha5",
+            "r4-packed4"
+          ],
+          "measured_roles": {
+            "leaf_sponge": 4194703,
+            "branch_compressor": 107703,
+            "transcript": 5881
+          },
+          "declared_unmeasured_queries": 340282366920938463463374607431768211456,
+          "same_primitive_epoch_total": 340282366920938463463374607431772519743
+        }
+      ],
+      "measured_role_evaluations": {
+        "leaf_sponge": 4194703,
+        "branch_compressor": 107703,
+        "transcript": 5881
+      },
+      "declared_offline_forward_queries": 170141183460469231731687303715884105728,
+      "declared_offline_inverse_queries": 170141183460469231731687303715884105728,
+      "declared_other_honest_evaluations": 0,
+      "merged_total_evaluations_and_queries": 340282366920938463463374607431772519743,
+      "query_count_is_an_assumption_for_unmeasured_part": true,
+      "complete_experiment_query_budget_established": false,
+      "prover_and_diagnostic_run_queries_measured_here": false,
+      "measured_workload_scope": "exact repeated retained proofs; not a worst-case bound for arbitrary accepted or malformed proofs",
+      "other_hash_functions_measured": false,
+      "restricted_fri_leaf_subtheorem": {
+        "game": "fixed four-field input H4(m)=first4(Pi(m||0^4)); classical adaptive forward/inverse ideal-permutation queries",
+        "half_alphabet_size": "115792089129476408817739443160502628952720274482139873392618675794070921543681",
+        "total_queries_including_two_final_checks": "340282366920938463463374607431772519745",
+        "conditional_collision_probability_upper_bound": {
+          "numerator": "6703903958727801452789221656464090188401874024594809321536306531811627870049955549148288654351417050012859554130474320276409068341940089120619933902087840",
+          "denominator": "13407807904968608723212281202841119622236618273039694023524124302519438897008088122680625462946347946790432608105011351322047439654142663206178664218510017",
+          "negative_log2_display_only": 0.9999999986563921
+        },
+        "concrete_poseidon2_instantiation_proved": false,
+        "covers_internal_compressor": false,
+        "covers_other_leaf_widths": false,
+        "covers_merkle_opening_binding_or_extraction": false,
+        "covers_quantum_queries": false,
+        "is_w1_noninteractive_bound": false
+      },
+      "quadratic_accounting_only": {
+        "merged_square": "115792089237316195423570985008690839921465454084060442503052240807219324786049",
+        "incorrect_separate_role_square_sum": "57896044618658097711785492504343953926634992332820282019728792021563732600547",
+        "omitted_cross_terms": "57896044618658097711785492504346885994830461751240160483323448785655592185502",
+        "is_a_collision_bound": false,
+        "reason": "raw truncated-permutation arbitrary-input collision resistance is already falsified; no birthday theorem is applied here"
+      },
+      "abstract_adaptive_bad_event_lemma": {
+        "conditional_failure_upper_bound": {
+          "numerator": "0",
+          "denominator": "1",
+          "negative_log2_display_only": null
+        },
+        "is_p3_noninteractive_bound": false,
+        "conditional_hazard_hypotheses_proved_here": false,
+        "independence_required": false,
+        "opportunities_not_inferred_from_proof_count": true
+      },
+      "unclosed_crypto_items": [
+        "restricted_mmcs_opening_binding_and_extraction_with_shared_permutation",
+        "complete_fixed_air_pcs_iop_rbr_reduction_with_concrete_constants",
+        "actual_length_tagged_duplex_fs_compiler_in_the_same_oracle_game",
+        "concrete_poseidon2_instantiation_from_ideal_permutation",
+        "quantum_extraction_compiler_with_concrete_constants"
+      ],
+      "actual_w1_lifetime_failure_probability": null,
+      "actual_w1_noninteractive_bits": null,
+      "actual_w1_quantum_bits": null,
+      "pq128": false,
+      "qualification": "HOLD_NO_GO"
+    },
+    {
+      "scenario": "hypothetical_2pow129_offline_queries_saturates_leaf_bound",
+      "primitive_scope": "one fixed Poseidon2Goldilocks<8> across components, roles and epochs",
+      "epochs": [
+        {
+          "label": "explicit assumed unmeasured budget",
+          "receipt_keys": [
+            "r4-sha5",
+            "r4-packed4"
+          ],
+          "measured_roles": {
+            "leaf_sponge": 4194703,
+            "branch_compressor": 107703,
+            "transcript": 5881
+          },
+          "declared_unmeasured_queries": 680564733841876926926749214863536422912,
+          "same_primitive_epoch_total": 680564733841876926926749214863540731199
+        }
+      ],
+      "measured_role_evaluations": {
+        "leaf_sponge": 4194703,
+        "branch_compressor": 107703,
+        "transcript": 5881
+      },
+      "declared_offline_forward_queries": 340282366920938463463374607431768211456,
+      "declared_offline_inverse_queries": 340282366920938463463374607431768211456,
+      "declared_other_honest_evaluations": 0,
+      "merged_total_evaluations_and_queries": 680564733841876926926749214863540731199,
+      "query_count_is_an_assumption_for_unmeasured_part": true,
+      "complete_experiment_query_budget_established": false,
+      "prover_and_diagnostic_run_queries_measured_here": false,
+      "measured_workload_scope": "exact repeated retained proofs; not a worst-case bound for arbitrary accepted or malformed proofs",
+      "other_hash_functions_measured": false,
+      "restricted_fri_leaf_subtheorem": {
+        "game": "fixed four-field input H4(m)=first4(Pi(m||0^4)); classical adaptive forward/inverse ideal-permutation queries",
+        "half_alphabet_size": "115792089129476408817739443160502628952720274482139873392618675794070921543681",
+        "total_queries_including_two_final_checks": "680564733841876926926749214863540731201",
+        "conditional_collision_probability_upper_bound": {
+          "numerator": "1",
+          "denominator": "1",
+          "negative_log2_display_only": 0.0
+        },
+        "concrete_poseidon2_instantiation_proved": false,
+        "covers_internal_compressor": false,
+        "covers_other_leaf_widths": false,
+        "covers_merkle_opening_binding_or_extraction": false,
+        "covers_quantum_queries": false,
+        "is_w1_noninteractive_bound": false
+      },
+      "quadratic_accounting_only": {
+        "merged_square": "463168356949264781694283940034757495549470877499402013085019649611703571977601",
+        "incorrect_separate_role_square_sum": "231584178474632390847141970017375815706539969331281128078915168033433427060451",
+        "omitted_cross_terms": "231584178474632390847141970017381679842930908168120885006104481578270144917150",
+        "is_a_collision_bound": false,
+        "reason": "raw truncated-permutation arbitrary-input collision resistance is already falsified; no birthday theorem is applied here"
+      },
+      "abstract_adaptive_bad_event_lemma": {
+        "conditional_failure_upper_bound": {
+          "numerator": "0",
+          "denominator": "1",
+          "negative_log2_display_only": null
+        },
+        "is_p3_noninteractive_bound": false,
+        "conditional_hazard_hypotheses_proved_here": false,
+        "independence_required": false,
+        "opportunities_not_inferred_from_proof_count": true
+      },
+      "unclosed_crypto_items": [
+        "restricted_mmcs_opening_binding_and_extraction_with_shared_permutation",
+        "complete_fixed_air_pcs_iop_rbr_reduction_with_concrete_constants",
+        "actual_length_tagged_duplex_fs_compiler_in_the_same_oracle_game",
+        "concrete_poseidon2_instantiation_from_ideal_permutation",
+        "quantum_extraction_compiler_with_concrete_constants"
+      ],
+      "actual_w1_lifetime_failure_probability": null,
+      "actual_w1_noninteractive_bits": null,
+      "actual_w1_quantum_bits": null,
+      "pq128": false,
+      "qualification": "HOLD_NO_GO"
+    },
+    {
+      "scenario": "hypothetical_long_lifetime_2pow40_cold_verifications",
+      "primitive_scope": "one fixed Poseidon2Goldilocks<8> across components, roles and epochs",
+      "epochs": [
+        {
+          "label": "no caching",
+          "receipt_keys": [
+            "r4-sha5",
+            "r4-packed4"
+          ],
+          "measured_roles": {
+            "leaf_sponge": 4612124723566870528,
+            "branch_compressor": 118420700846358528,
+            "transcript": 6466227882950656
+          },
+          "declared_unmeasured_queries": 0,
+          "same_primitive_epoch_total": 4737011652296179712
+        }
+      ],
+      "measured_role_evaluations": {
+        "leaf_sponge": 4612124723566870528,
+        "branch_compressor": 118420700846358528,
+        "transcript": 6466227882950656
+      },
+      "declared_offline_forward_queries": 0,
+      "declared_offline_inverse_queries": 0,
+      "declared_other_honest_evaluations": 0,
+      "merged_total_evaluations_and_queries": 4737011652296179712,
+      "query_count_is_an_assumption_for_unmeasured_part": true,
+      "complete_experiment_query_budget_established": false,
+      "prover_and_diagnostic_run_queries_measured_here": false,
+      "measured_workload_scope": "exact repeated retained proofs; not a worst-case bound for arbitrary accepted or malformed proofs",
+      "other_hash_functions_measured": false,
+      "restricted_fri_leaf_subtheorem": {
+        "game": "fixed four-field input H4(m)=first4(Pi(m||0^4)); classical adaptive forward/inverse ideal-permutation queries",
+        "half_alphabet_size": "115792089129476408817739443160502628952720274482139873392618675794070921543681",
+        "total_queries_including_two_final_checks": "4737011652296179714",
+        "conditional_collision_probability_upper_bound": {
+          "numerator": "1299145519795044142843139777397774557780917147986454300259865018537287612928302605450684728830574866494734121041921",
+          "denominator": "13407807904968608723212281202841119622236618273039694023524124302519438897008088122680625462946347946790432608105011691604414360592606121843774443694850048",
+          "negative_log2_display_only": 132.9226341412628
+        },
+        "concrete_poseidon2_instantiation_proved": false,
+        "covers_internal_compressor": false,
+        "covers_other_leaf_widths": false,
+        "covers_merkle_opening_binding_or_extraction": false,
+        "covers_quantum_queries": false,
+        "is_w1_noninteractive_bound": false
+      },
+      "quadratic_accounting_only": {
+        "merged_square": "22439279393989782597747730869800402944",
+        "incorrect_separate_role_square_sum": "21285759740228758871091443326364155904",
+        "omitted_cross_terms": "1153519653761023726656287543436247040",
+        "is_a_collision_bound": false,
+        "reason": "raw truncated-permutation arbitrary-input collision resistance is already falsified; no birthday theorem is applied here"
+      },
+      "abstract_adaptive_bad_event_lemma": {
+        "conditional_failure_upper_bound": {
+          "numerator": "0",
+          "denominator": "1",
+          "negative_log2_display_only": null
+        },
+        "is_p3_noninteractive_bound": false,
+        "conditional_hazard_hypotheses_proved_here": false,
+        "independence_required": false,
+        "opportunities_not_inferred_from_proof_count": true
+      },
+      "unclosed_crypto_items": [
+        "restricted_mmcs_opening_binding_and_extraction_with_shared_permutation",
+        "complete_fixed_air_pcs_iop_rbr_reduction_with_concrete_constants",
+        "actual_length_tagged_duplex_fs_compiler_in_the_same_oracle_game",
+        "concrete_poseidon2_instantiation_from_ideal_permutation",
+        "quantum_extraction_compiler_with_concrete_constants"
+      ],
+      "actual_w1_lifetime_failure_probability": null,
+      "actual_w1_noninteractive_bits": null,
+      "actual_w1_quantum_bits": null,
+      "pq128": false,
+      "qualification": "HOLD_NO_GO"
+    },
+    {
+      "scenario": "ideal_oracle_domain_exhaustion_returns_trivial_bound",
+      "primitive_scope": "one fixed Poseidon2Goldilocks<8> across components, roles and epochs",
+      "epochs": [
+        {
+          "label": "query count exceeds finite oracle domain",
+          "receipt_keys": [],
+          "measured_roles": {
+            "leaf_sponge": 0,
+            "branch_compressor": 0,
+            "transcript": 0
+          },
+          "declared_unmeasured_queries": 13407807904968608723212281202841119622236618273039694023524124302519438897008088122680625462946347946790432608105011691604414360592606126580786095991029761,
+          "same_primitive_epoch_total": 13407807904968608723212281202841119622236618273039694023524124302519438897008088122680625462946347946790432608105011691604414360592606126580786095991029761
+        }
+      ],
+      "measured_role_evaluations": {
+        "leaf_sponge": 0,
+        "branch_compressor": 0,
+        "transcript": 0
+      },
+      "declared_offline_forward_queries": 13407807904968608723212281202841119622236618273039694023524124302519438897008088122680625462946347946790432608105011691604414360592606126580786095991029761,
+      "declared_offline_inverse_queries": 0,
+      "declared_other_honest_evaluations": 0,
+      "merged_total_evaluations_and_queries": 13407807904968608723212281202841119622236618273039694023524124302519438897008088122680625462946347946790432608105011691604414360592606126580786095991029761,
+      "query_count_is_an_assumption_for_unmeasured_part": true,
+      "complete_experiment_query_budget_established": false,
+      "prover_and_diagnostic_run_queries_measured_here": false,
+      "measured_workload_scope": "exact repeated retained proofs; not a worst-case bound for arbitrary accepted or malformed proofs",
+      "other_hash_functions_measured": false,
+      "restricted_fri_leaf_subtheorem": {
+        "game": "fixed four-field input H4(m)=first4(Pi(m||0^4)); classical adaptive forward/inverse ideal-permutation queries",
+        "half_alphabet_size": "115792089129476408817739443160502628952720274482139873392618675794070921543681",
+        "total_queries_including_two_final_checks": "13407807904968608723212281202841119622236618273039694023524124302519438897008088122680625462946347946790432608105011691604414360592606126580786095991029763",
+        "conditional_collision_probability_upper_bound": {
+          "numerator": "1",
+          "denominator": "1",
+          "negative_log2_display_only": 0.0
+        },
+        "concrete_poseidon2_instantiation_proved": false,
+        "covers_internal_compressor": false,
+        "covers_other_leaf_widths": false,
+        "covers_merkle_opening_binding_or_extraction": false,
+        "covers_quantum_queries": false,
+        "is_w1_noninteractive_bound": false
+      },
+      "quadratic_accounting_only": {
+        "merged_square": "179769312816538712606876147221330507433113994286434258300847350958613640225476113980959993522741867625152064704714870008046647914747736293385885669449206803382827064715154871803601641265408326171455575381323085082093788773939238478178293692089996772083507094297742339588012568664964130333407822086577187717121",
+        "incorrect_separate_role_square_sum": "179769312816538712606876147221330507433113994286434258300847350958613640225476113980959993522741867625152064704714870008046647914747736293385885669449206803382827064715154871803601641265408326171455575381323085082093788773939238478178293692089996772083507094297742339588012568664964130333407822086577187717121",
+        "omitted_cross_terms": "0",
+        "is_a_collision_bound": false,
+        "reason": "raw truncated-permutation arbitrary-input collision resistance is already falsified; no birthday theorem is applied here"
+      },
+      "abstract_adaptive_bad_event_lemma": {
+        "conditional_failure_upper_bound": {
+          "numerator": "0",
+          "denominator": "1",
+          "negative_log2_display_only": null
+        },
+        "is_p3_noninteractive_bound": false,
+        "conditional_hazard_hypotheses_proved_here": false,
+        "independence_required": false,
+        "opportunities_not_inferred_from_proof_count": true
+      },
+      "unclosed_crypto_items": [
+        "restricted_mmcs_opening_binding_and_extraction_with_shared_permutation",
+        "complete_fixed_air_pcs_iop_rbr_reduction_with_concrete_constants",
+        "actual_length_tagged_duplex_fs_compiler_in_the_same_oracle_game",
+        "concrete_poseidon2_instantiation_from_ideal_permutation",
+        "quantum_extraction_compiler_with_concrete_constants"
+      ],
+      "actual_w1_lifetime_failure_probability": null,
+      "actual_w1_noninteractive_bits": null,
+      "actual_w1_quantum_bits": null,
+      "pq128": false,
+      "qualification": "HOLD_NO_GO"
+    },
+    {
+      "scenario": "abstract_conditional_hazard_demo_not_a_P3_bound",
+      "primitive_scope": "one fixed Poseidon2Goldilocks<8> across components, roles and epochs",
+      "epochs": [],
+      "measured_role_evaluations": {
+        "leaf_sponge": 0,
+        "branch_compressor": 0,
+        "transcript": 0
+      },
+      "declared_offline_forward_queries": 0,
+      "declared_offline_inverse_queries": 0,
+      "declared_other_honest_evaluations": 0,
+      "merged_total_evaluations_and_queries": 0,
+      "query_count_is_an_assumption_for_unmeasured_part": true,
+      "complete_experiment_query_budget_established": false,
+      "prover_and_diagnostic_run_queries_measured_here": false,
+      "measured_workload_scope": "exact repeated retained proofs; not a worst-case bound for arbitrary accepted or malformed proofs",
+      "other_hash_functions_measured": false,
+      "restricted_fri_leaf_subtheorem": {
+        "game": "fixed four-field input H4(m)=first4(Pi(m||0^4)); classical adaptive forward/inverse ideal-permutation queries",
+        "half_alphabet_size": "115792089129476408817739443160502628952720274482139873392618675794070921543681",
+        "total_queries_including_two_final_checks": "2",
+        "conditional_collision_probability_upper_bound": {
+          "numerator": "115792089129476408817739443160502628952720274482139873392618675794070921543681",
+          "denominator": "13407807904968608723212281202841119622236618273039694023524124302519438897008088122680625462946347946790432608105011691604414360592606126580786095991029760",
+          "negative_log2_display_only": 255.9999999986564
+        },
+        "concrete_poseidon2_instantiation_proved": false,
+        "covers_internal_compressor": false,
+        "covers_other_leaf_widths": false,
+        "covers_merkle_opening_binding_or_extraction": false,
+        "covers_quantum_queries": false,
+        "is_w1_noninteractive_bound": false
+      },
+      "quadratic_accounting_only": {
+        "merged_square": "0",
+        "incorrect_separate_role_square_sum": "0",
+        "omitted_cross_terms": "0",
+        "is_a_collision_bound": false,
+        "reason": "raw truncated-permutation arbitrary-input collision resistance is already falsified; no birthday theorem is applied here"
+      },
+      "abstract_adaptive_bad_event_lemma": {
+        "conditional_failure_upper_bound": {
+          "numerator": "1",
+          "denominator": "4294967296",
+          "negative_log2_display_only": 32.0
+        },
+        "is_p3_noninteractive_bound": false,
+        "conditional_hazard_hypotheses_proved_here": false,
+        "independence_required": false,
+        "opportunities_not_inferred_from_proof_count": true
+      },
+      "unclosed_crypto_items": [
+        "restricted_mmcs_opening_binding_and_extraction_with_shared_permutation",
+        "complete_fixed_air_pcs_iop_rbr_reduction_with_concrete_constants",
+        "actual_length_tagged_duplex_fs_compiler_in_the_same_oracle_game",
+        "concrete_poseidon2_instantiation_from_ideal_permutation",
+        "quantum_extraction_compiler_with_concrete_constants"
+      ],
+      "actual_w1_lifetime_failure_probability": null,
+      "actual_w1_noninteractive_bits": null,
+      "actual_w1_quantum_bits": null,
+      "pq128": false,
+      "qualification": "HOLD_NO_GO"
+    },
+    {
+      "scenario": "abstract_conditional_hazard_saturation_not_a_P3_bound",
+      "primitive_scope": "one fixed Poseidon2Goldilocks<8> across components, roles and epochs",
+      "epochs": [],
+      "measured_role_evaluations": {
+        "leaf_sponge": 0,
+        "branch_compressor": 0,
+        "transcript": 0
+      },
+      "declared_offline_forward_queries": 0,
+      "declared_offline_inverse_queries": 0,
+      "declared_other_honest_evaluations": 0,
+      "merged_total_evaluations_and_queries": 0,
+      "query_count_is_an_assumption_for_unmeasured_part": true,
+      "complete_experiment_query_budget_established": false,
+      "prover_and_diagnostic_run_queries_measured_here": false,
+      "measured_workload_scope": "exact repeated retained proofs; not a worst-case bound for arbitrary accepted or malformed proofs",
+      "other_hash_functions_measured": false,
+      "restricted_fri_leaf_subtheorem": {
+        "game": "fixed four-field input H4(m)=first4(Pi(m||0^4)); classical adaptive forward/inverse ideal-permutation queries",
+        "half_alphabet_size": "115792089129476408817739443160502628952720274482139873392618675794070921543681",
+        "total_queries_including_two_final_checks": "2",
+        "conditional_collision_probability_upper_bound": {
+          "numerator": "115792089129476408817739443160502628952720274482139873392618675794070921543681",
+          "denominator": "13407807904968608723212281202841119622236618273039694023524124302519438897008088122680625462946347946790432608105011691604414360592606126580786095991029760",
+          "negative_log2_display_only": 255.9999999986564
+        },
+        "concrete_poseidon2_instantiation_proved": false,
+        "covers_internal_compressor": false,
+        "covers_other_leaf_widths": false,
+        "covers_merkle_opening_binding_or_extraction": false,
+        "covers_quantum_queries": false,
+        "is_w1_noninteractive_bound": false
+      },
+      "quadratic_accounting_only": {
+        "merged_square": "0",
+        "incorrect_separate_role_square_sum": "0",
+        "omitted_cross_terms": "0",
+        "is_a_collision_bound": false,
+        "reason": "raw truncated-permutation arbitrary-input collision resistance is already falsified; no birthday theorem is applied here"
+      },
+      "abstract_adaptive_bad_event_lemma": {
+        "conditional_failure_upper_bound": {
+          "numerator": "1",
+          "denominator": "1",
+          "negative_log2_display_only": 0.0
+        },
+        "is_p3_noninteractive_bound": false,
+        "conditional_hazard_hypotheses_proved_here": false,
+        "independence_required": false,
+        "opportunities_not_inferred_from_proof_count": true
+      },
+      "unclosed_crypto_items": [
+        "restricted_mmcs_opening_binding_and_extraction_with_shared_permutation",
+        "complete_fixed_air_pcs_iop_rbr_reduction_with_concrete_constants",
+        "actual_length_tagged_duplex_fs_compiler_in_the_same_oracle_game",
+        "concrete_poseidon2_instantiation_from_ideal_permutation",
+        "quantum_extraction_compiler_with_concrete_constants"
+      ],
+      "actual_w1_lifetime_failure_probability": null,
+      "actual_w1_noninteractive_bits": null,
+      "actual_w1_quantum_bits": null,
+      "pq128": false,
+      "qualification": "HOLD_NO_GO"
+    }
+  ],
+  "qualification": "HOLD_NO_GO"
+}

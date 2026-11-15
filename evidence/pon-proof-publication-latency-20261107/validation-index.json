@@ -1,0 +1,486 @@
+{
+  "all_final_python_checks_passed": true,
+  "all_final_rust_checks_passed": true,
+  "archive": {
+    "bytes": 2236276,
+    "path": "validation-raw.tar.gz",
+    "sha256": "113431ee37ca39bb2d21c16785cedc0e760c071c48e4205dfeb611aeebdeaf62"
+  },
+  "collector_summary_correction_retained": true,
+  "consensus_admission": false,
+  "initial_rust_failures_retained": [
+    {
+      "label": "precommit-clippy",
+      "log": "precommit-clippy.stderr.log",
+      "returncode": 1,
+      "scope": "rustup tool dispatch/recovery before project compilation"
+    },
+    {
+      "label": "committed-clippy",
+      "log": "committed-clippy.stderr.log",
+      "returncode": 101,
+      "scope": "offline required crate absent in first selected cargo cache before project compilation"
+    }
+  ],
+  "members": [
+    {
+      "bytes": 293,
+      "path": "python/ci-controls.json",
+      "sha256": "e88cadbc945c2b982597bd3e003d9cec8d2779b50eeeb6f71da80532c559a640"
+    },
+    {
+      "bytes": 17023,
+      "path": "python/ci-controls.log",
+      "sha256": "76adce52818a814cb11c6cecd257282e98ed9af832d2c75e067dbb884eaa439b"
+    },
+    {
+      "bytes": 6623,
+      "path": "python/collector-original-validation.json",
+      "sha256": "a363dbac7f09f396e84d498a6847e8142b376a4e00048e4c0af2d403671d9b40"
+    },
+    {
+      "bytes": 274,
+      "path": "python/diff-check.json",
+      "sha256": "8e9c569add1aca8fdced5e8aa073f3ddfd30f9d1d141c5c07cae86febec33c96"
+    },
+    {
+      "bytes": 0,
+      "path": "python/diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 343,
+      "path": "python/distributed-inventory.json",
+      "sha256": "c9e2573056e19d7ea692209c93981fb410608974768cf084c3297fbf37c8e90e"
+    },
+    {
+      "bytes": 35,
+      "path": "python/distributed-inventory.log",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "bytes": 337,
+      "path": "python/historical-latency-controls.json",
+      "sha256": "0f6038fd0ec72138b8222ddaae7be1ab5d29d416ef88974c47e16c19af6fdcb1"
+    },
+    {
+      "bytes": 110,
+      "path": "python/historical-latency-controls.log",
+      "sha256": "09567ee1aa00c39c853f67d263840a820de6ab70b54bccbc68c1ba0515cdc82d"
+    },
+    {
+      "bytes": 307,
+      "path": "python/latency-controls.json",
+      "sha256": "2cae5e2bfe7f12e134205b64e0f19c07def19c7eba7a1bb0af85b900cbcab5b4"
+    },
+    {
+      "bytes": 126,
+      "path": "python/latency-controls.log",
+      "sha256": "b81b1d6b849cb0dff93d0f3d1abfc140f84ec0b536aededece7d314d43f12a48"
+    },
+    {
+      "bytes": 303,
+      "path": "python/pq-claim-guard.json",
+      "sha256": "a2021a3dea493ca35a51ac200418f7ff7d5ffd8639753c0b530ca780ffa23c52"
+    },
+    {
+      "bytes": 3333,
+      "path": "python/pq-claim-guard.log",
+      "sha256": "6235b839d36b92351665414a731c9433441f007e727860d0c3bd138e7d731690"
+    },
+    {
+      "bytes": 316,
+      "path": "python/pq-source-controls.json",
+      "sha256": "46a260288afc366b5057e1f163c07cf425429b36d4dedddfa99ba3f549e79d57"
+    },
+    {
+      "bytes": 137,
+      "path": "python/pq-source-controls.log",
+      "sha256": "56c5f8d1ad739a5ff77b63eea9763f1a9fa88f80c478b122757f113ad60160fe"
+    },
+    {
+      "bytes": 310,
+      "path": "python/pq-source-pins.json",
+      "sha256": "00b6ab40aa4a622e962dd9fa1cdd8b790c2a0b4ec96fcd89df9909481e77c6a0"
+    },
+    {
+      "bytes": 557,
+      "path": "python/pq-source-pins.log",
+      "sha256": "34547b48ac463b9ce1ff0efa705294aa02b12f7cdc55287ce5a9980d638071ed"
+    },
+    {
+      "bytes": 324,
+      "path": "python/project-boundary-controls.json",
+      "sha256": "d59fb6960b8bc0b5db889e3c406cecc657006e493083b36da74b2e2ba0dc1d55"
+    },
+    {
+      "bytes": 2425,
+      "path": "python/project-boundary-controls.log",
+      "sha256": "7d3bb99ab91cfbba3a5f5d46b18e170267c0e7c0dbc8e911b187e60c60a44f82"
+    },
+    {
+      "bytes": 299,
+      "path": "python/project-preflight.json",
+      "sha256": "6301d0428b83b7444ce12b978772c6d22aca6d3c1f2c3bd4a43347733a7bcec4"
+    },
+    {
+      "bytes": 178,
+      "path": "python/project-preflight.log",
+      "sha256": "689c7b32588fa46500aeb275f362173d71e6bc69f7f8a68ed6a756a13e113c73"
+    },
+    {
+      "bytes": 300,
+      "path": "python/repository-check.json",
+      "sha256": "e839a9b264cd8a4faafac15f7c06c57666bc14218b8249ec669d1947fe6f1d19"
+    },
+    {
+      "bytes": 307,
+      "path": "python/repository-check.log",
+      "sha256": "600e1d756f1478774fbfea1f0c04f5b198b4b86623410d249c746f772b899747"
+    },
+    {
+      "bytes": 306,
+      "path": "python/repository-controls.json",
+      "sha256": "42a060d84a94c209b66117c38343d3bd61a88304ef5a50b6f0827b7593152baa"
+    },
+    {
+      "bytes": 5345,
+      "path": "python/repository-controls.log",
+      "sha256": "43414e64271bc104c57d05e3810bf7d1715f14ff6faef6359a3eb19eeea848f2"
+    },
+    {
+      "bytes": 320,
+      "path": "python/retained-v2-controls.json",
+      "sha256": "d8d6242c9d39f25513482a4139cd19015251be5e05fd8bd434c61380be4d0878"
+    },
+    {
+      "bytes": 110,
+      "path": "python/retained-v2-controls.log",
+      "sha256": "de645566d423d768a702db0b767f6c75adb120e33577380129d1743b55266f89"
+    },
+    {
+      "bytes": 288,
+      "path": "python/shell-parse.json",
+      "sha256": "7d166273e3dc9f0455772f0ab1851f0b3a8cc1cee8b4a0d53f58488652ca54e4"
+    },
+    {
+      "bytes": 0,
+      "path": "python/shell-parse.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "path": "python/source-after-identity.json",
+      "sha256": "9f50259ca71610ade31c77c787659f36e40314bbd5aa6be6ce8f5dd72e329297"
+    },
+    {
+      "bytes": 488,
+      "path": "python/source-after.json",
+      "sha256": "e63f15ae704e50acdd3b6da0e49b38a7cd5c31e6f38634890877cff6576d0992"
+    },
+    {
+      "bytes": 423,
+      "path": "python/source-after.log",
+      "sha256": "9f50259ca71610ade31c77c787659f36e40314bbd5aa6be6ce8f5dd72e329297"
+    },
+    {
+      "bytes": 423,
+      "path": "python/source-before-identity.json",
+      "sha256": "9f50259ca71610ade31c77c787659f36e40314bbd5aa6be6ce8f5dd72e329297"
+    },
+    {
+      "bytes": 492,
+      "path": "python/source-before.json",
+      "sha256": "8971b42395729721f9c686e57fcfee044b293862cdddebaf6a0d1767a85a4112"
+    },
+    {
+      "bytes": 423,
+      "path": "python/source-before.log",
+      "sha256": "9f50259ca71610ade31c77c787659f36e40314bbd5aa6be6ce8f5dd72e329297"
+    },
+    {
+      "bytes": 8106,
+      "path": "python/validation.json",
+      "sha256": "42f5531e88f466072bd6d820187696f7f5f099de6181d11597b997b0761f242c"
+    },
+    {
+      "bytes": 488992,
+      "path": "rust/cargo-version.json",
+      "sha256": "61ceb2f9f01dcb881e884589d648dc98d29f2512f5bcfec6f198f5e5b7277690"
+    },
+    {
+      "bytes": 0,
+      "path": "rust/cargo-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 328,
+      "path": "rust/cargo-version.stdout.log",
+      "sha256": "c6cd47fb28b137d9450165b5b0796de3dfdac887c91ea225c53506f3fc5f6add"
+    },
+    {
+      "bytes": 489001,
+      "path": "rust/clippy-version.json",
+      "sha256": "7bcec412a563b0c5bb455396f92ab16ca6e6b21a845f5386a0d9506b570a7808"
+    },
+    {
+      "bytes": 0,
+      "path": "rust/clippy-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 38,
+      "path": "rust/clippy-version.stdout.log",
+      "sha256": "35a36a02149eb682cc65a0f29c482942cab20c49fe19f75208155febbcbb78e8"
+    },
+    {
+      "bytes": 488209,
+      "path": "rust/committed-clippy-complete-cache.json",
+      "sha256": "5af34973c037ae355edc2ece701f8c7786516c4bda80c12088f475e675394771"
+    },
+    {
+      "bytes": 6549,
+      "path": "rust/committed-clippy-complete-cache.stderr.log",
+      "sha256": "d68c5854e2fcd83703936a8c18df774e8559d9ff166a5db8c40d4a34adabbcd4"
+    },
+    {
+      "bytes": 0,
+      "path": "rust/committed-clippy-complete-cache.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 488169,
+      "path": "rust/committed-clippy.json",
+      "sha256": "7463361532578efcd7924c1819b04dd25614c73d2ee7bfd43bd88d91bb4409bf"
+    },
+    {
+      "bytes": 283,
+      "path": "rust/committed-clippy.stderr.log",
+      "sha256": "747382e2b3fc8f8faca0a412f077bec154f283efc79959d81a6b03b35f22681b"
+    },
+    {
+      "bytes": 0,
+      "path": "rust/committed-clippy.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 488051,
+      "path": "rust/committed-fmt.json",
+      "sha256": "b3f97f076dbf06f351e49ae70eaf5b13abb152d06a0f911f36f239ccedc659e7"
+    },
+    {
+      "bytes": 0,
+      "path": "rust/committed-fmt.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "rust/committed-fmt.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 488169,
+      "path": "rust/committed-metadata-all-features.json",
+      "sha256": "b34f04dc9c1b6b7a3a82791faa4ad2b2fd54d74eea2fb667b1ae0e2631415a8b"
+    },
+    {
+      "bytes": 0,
+      "path": "rust/committed-metadata-all-features.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 850823,
+      "path": "rust/committed-metadata-all-features.stdout.log",
+      "sha256": "8b1c39bcbb91665741b7b002e6a70e797111aec390fdeca91809bb5aabba51cd"
+    },
+    {
+      "bytes": 488142,
+      "path": "rust/committed-metadata-selected.json",
+      "sha256": "c40703bdc439235be75c810bc017f395342621d13844f7ffbd91d6319dfcd6b0"
+    },
+    {
+      "bytes": 104,
+      "path": "rust/committed-metadata-selected.stderr.log",
+      "sha256": "e237bf68452f394ffe54e018832419d40907390b5a98d44e8939943ca20bf452"
+    },
+    {
+      "bytes": 839603,
+      "path": "rust/committed-metadata-selected.stdout.log",
+      "sha256": "b636e334f0a6ff455c8ca5ff0375abe08a686901aeaccb6d6dacad390264bdf2"
+    },
+    {
+      "bytes": 487889,
+      "path": "rust/committed-metadata.json",
+      "sha256": "7dc0ac7bccaaf3f7b6ecc42bc5fc287bbbf4296ed327d5023e7b4817021102fb"
+    },
+    {
+      "bytes": 0,
+      "path": "rust/committed-metadata.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 839603,
+      "path": "rust/committed-metadata.stdout.log",
+      "sha256": "b636e334f0a6ff455c8ca5ff0375abe08a686901aeaccb6d6dacad390264bdf2"
+    },
+    {
+      "bytes": 487830,
+      "path": "rust/committed-preflight.json",
+      "sha256": "e15deda14cfdb55fec30b310e9b1c762b5cbfdd62196c0717a1cf46040b56f9f"
+    },
+    {
+      "bytes": 0,
+      "path": "rust/committed-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 178,
+      "path": "rust/committed-preflight.stdout.log",
+      "sha256": "689c7b32588fa46500aeb275f362173d71e6bc69f7f8a68ed6a756a13e113c73"
+    },
+    {
+      "bytes": 44704,
+      "path": "rust/local-cache-audit.json",
+      "sha256": "edf333fbf4cead89a444907cf76b3db562db28d1ef871e199ade50028a34d254"
+    },
+    {
+      "bytes": 7128,
+      "path": "rust/log-sha256.json",
+      "sha256": "0a5796a6b028f51a975e4d066b09c937c7d9fb27d5de87bc58694f47d85d4c00"
+    },
+    {
+      "bytes": 487945,
+      "path": "rust/precommit-clippy.json",
+      "sha256": "9c95b4ad4d4ddfb9e7d149c9f5550844bded907e06147026367f6edae2d6f0e7"
+    },
+    {
+      "bytes": 2002,
+      "path": "rust/precommit-clippy.stderr.log",
+      "sha256": "96dccec6fffe9cc8bbe530f1678c8421e3d8df484516a5122e5aac467ca848ec"
+    },
+    {
+      "bytes": 0,
+      "path": "rust/precommit-clippy.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 488433,
+      "path": "rust/precommit-fmt.json",
+      "sha256": "c4fc06f87c02e3ee7bc5c31eb9cc3f9845918e359246ad50deb53d611cc12545"
+    },
+    {
+      "bytes": 437,
+      "path": "rust/precommit-fmt.stderr.log",
+      "sha256": "44d0bf02b0209346efe0f61589d002f859a4680e21230c2b3ff7c0aea1c40016"
+    },
+    {
+      "bytes": 0,
+      "path": "rust/precommit-fmt.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 489093,
+      "path": "rust/precommit-metadata.json",
+      "sha256": "d2baf2a227378b154698756537e8c36c99b266b7b818047ba5195a773f8d3047"
+    },
+    {
+      "bytes": 0,
+      "path": "rust/precommit-metadata.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 839603,
+      "path": "rust/precommit-metadata.stdout.log",
+      "sha256": "b636e334f0a6ff455c8ca5ff0375abe08a686901aeaccb6d6dacad390264bdf2"
+    },
+    {
+      "bytes": 489034,
+      "path": "rust/precommit-preflight.json",
+      "sha256": "572ccfa90246c5edf3d07f63d6f6639961bc65b1e6ca66c6b66b495cfd6b572b"
+    },
+    {
+      "bytes": 0,
+      "path": "rust/precommit-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 178,
+      "path": "rust/precommit-preflight.stdout.log",
+      "sha256": "689c7b32588fa46500aeb275f362173d71e6bc69f7f8a68ed6a756a13e113c73"
+    },
+    {
+      "bytes": 2983,
+      "path": "rust/run-command.initial.py",
+      "sha256": "d89c373e42ddfae17ca16e83235f3465f719484527776339951bc489be1b21db"
+    },
+    {
+      "bytes": 3245,
+      "path": "rust/run-command.py",
+      "sha256": "b9d9e988c73a4e62f40db1ec06a6e2d337a49646f0eca5fb793574491ef320a9"
+    },
+    {
+      "bytes": 3197,
+      "path": "rust/run-command.selected-toolchain.py",
+      "sha256": "2a5a309117e2d30ff44ee7c69d689136915020dabe937306f33879d65ab1379f"
+    },
+    {
+      "bytes": 488992,
+      "path": "rust/rustc-version.json",
+      "sha256": "35b81dc82cc7b7630882f0bf400417c47645334c8a2195734a52dff04c9ff4c0"
+    },
+    {
+      "bytes": 0,
+      "path": "rust/rustc-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196,
+      "path": "rust/rustc-version.stdout.log",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "bytes": 488996,
+      "path": "rust/rustfmt-version.json",
+      "sha256": "aa36b6c09641c93742826ed1d474ebeefcf5d881c9c3b1bff83b519e86576b99"
+    },
+    {
+      "bytes": 0,
+      "path": "rust/rustfmt-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 45,
+      "path": "rust/rustfmt-version.stdout.log",
+      "sha256": "21e923568a260155c34a6f780f9513d3962c088aa3bbe8c91ab5385f470547d1"
+    },
+    {
+      "bytes": 1474,
+      "path": "rust/toolchain-binary-identities.json",
+      "sha256": "37dbf920f17169de7716f5126cea0d00f0cfc97142c25f54914173c23ba6f230"
+    },
+    {
+      "bytes": 6486,
+      "path": "rust/validation-summary.json",
+      "sha256": "869132c2103084dff1b63f6a4da370f09b805e109651ffe07653b567c4eeb0af"
+    }
+  ],
+  "new_latency_specific_tests_passed": 38,
+  "new_proofs_generated": 0,
+  "production_activation": false,
+  "python_test_counts": {
+    "ci-controls": 102,
+    "historical-latency-controls": 11,
+    "latency-controls": 27,
+    "pq-source-controls": 37,
+    "project-boundary-controls": 16,
+    "repository-controls": 50,
+    "retained-v2-controls": 11
+  },
+  "python_tests_passed": 254,
+  "rust_tests_executed": false,
+  "schema": "trnm-proof-publication-validation-package-v1",
+  "scope": "Retained exact-source Python controls and Rust metadata/fmt/Clippy; publication changes only documentation/evidence. Not native business, proof, WAN or production acceptance.",
+  "source_identity_stdout_equal": true,
+  "tested_commit": "baa64498b8bb47198c99f8e9382cb36829f594f4",
+  "tested_tree": "d7929f82e8e563298adc0aebc673ccac0cd11b47"
+}

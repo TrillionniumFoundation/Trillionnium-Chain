@@ -1,0 +1,27 @@
+{
+  "name": "test-12",
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "--all-features",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "ingress::public_v3::work_arithmetic::tests::arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challenges",
+    "--",
+    "--exact",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "started_unix_ns": 1794068931446808634,
+  "ended_unix_ns": 1794068931640380432,
+  "exit_code": 0,
+  "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-12.log",
+  "log_bytes": 462,
+  "log_sha256": "a0cae088077326a1a462557cc265bbc628d19047eb6327c06d7c346edbffd697"
+}

@@ -1,0 +1,105 @@
+{
+  "schema": "pon-hepta-accounting-convergence-delivery-index-v1",
+  "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "source_host": "ai395",
+  "root": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results",
+  "artifacts": [
+    {
+      "name": "PR_BODY_C1.md",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/PR_BODY_C1.md",
+      "size": 5707,
+      "sha256": "6abf1eae3d66bfa0d460db3f55580c7d34217952b80b2c3d8eb0933c84f9700b",
+      "version": "66306:46179350:5707:1794198323435477701:1794198323481750334",
+      "classification": "draft_pr_description"
+    },
+    {
+      "name": "observed-validation-summary-c1.json",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/observed-validation-summary-c1.json",
+      "size": 6864,
+      "sha256": "bd450ef04c9f66514f44bdd52115f825c29e5785909928971a9d2d9373695bdb",
+      "version": "66306:46179352:6864:1794198325705685927:1794198325726664227",
+      "classification": "reconstructed_observation_summary"
+    },
+    {
+      "name": "failure-and-gate-status-c1.json",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/failure-and-gate-status-c1.json",
+      "size": 3632,
+      "sha256": "2ee3c1d0916b81503c36f202c986a4269aac06dc8184475d47bcccdef6621445",
+      "version": "66306:46179354:3632:1794198329549036704:1794198329587516151",
+      "classification": "reconstructed_observation_summary"
+    },
+    {
+      "name": "remote-setup-02-process-read.json",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/remote-setup-02-process-read.json",
+      "size": 3954,
+      "sha256": "04bdac98dd1349e3c33bbc6bf83caa4c8cbe68bc82b5d275e317dddf2437c784",
+      "version": "66306:46179356:3954:1794198358187627890:1794198358211418857",
+      "classification": "original_h_process_payload_reserialized_with_raw_stream_bytes"
+    },
+    {
+      "name": "remote-setup-02-status.json",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/remote-setup-02-status.json",
+      "size": 732,
+      "sha256": "0f5e446694e22d50ab47756a109d038f3d54a0f7115e3c35cf44d5e51c64e57b",
+      "version": "66306:46179358:732:1794198360765343686:1794198360782320346",
+      "classification": "original_h_process_payload_reserialized_with_raw_stream_bytes"
+    },
+    {
+      "name": "remote-setup-03-process-read.json",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/remote-setup-03-process-read.json",
+      "size": 2401,
+      "sha256": "c1c6584cfc4a143312d8ebb180031447c9a1451bc2cfa554daabd78712a5b39c",
+      "version": "66306:46179360:2401:1794198363361297271:1794198363377220921",
+      "classification": "original_h_process_payload_reserialized_with_raw_stream_bytes"
+    },
+    {
+      "name": "remote-setup-03-status.json",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/remote-setup-03-status.json",
+      "size": 733,
+      "sha256": "c77b688b0c023c3482169a331c49b1f6e64ae96fd461778a2cf9e42baea18951",
+      "version": "66306:46179362:733:1794198367752379899:1794198367783052127",
+      "classification": "original_h_process_payload_reserialized_with_raw_stream_bytes"
+    },
+    {
+      "name": "source-inputs-c1-copy.json",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/source-inputs-c1-copy.json",
+      "size": 4073,
+      "sha256": "bc53319e019624efec86e8f8a4228035dd231b229dd9c61613349bc3f4a0c7c6",
+      "version": "66306:46179364:4073:1794198372557119829:1794198372577868453",
+      "classification": "byte_exact_copy_of_committed_provenance_manifest"
+    }
+  ],
+  "small_bundle": {
+    "path": "/home/qq/chain-hepta-accounting-d9bb-candidate-c1.bundle",
+    "size": 26924,
+    "sha256": "147a9587ea34c2622875892690a048cdf6efade5053c3a796a9b732f194328ef",
+    "prerequisite": "fd1cf356fcc557dbd2aee2318ffc524d17aa02f0",
+    "ref": "HEAD",
+    "commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e"
+  },
+  "available_raw": {
+    "setup_failed_job": "1a1be7a3223-5e21-103",
+    "setup_success_job": "1a1be7bb27b-5e21-110",
+    "note": "Process payload JSON is reserialized; bytes_hex contains the original stdout/stderr bytes. Both streams were read from offset 0 to EOF. Status records confirm complete/durable outputs.",
+    "scope": "Remote checkout/import/preflight preparation; no remote native tests.",
+    "candidate_source_manifest": "The copied source-inputs manifest was read as exact binary bytes from C1 on ai395."
+  },
+  "unavailable_local_raw": {
+    "root": "/workspace/scratch/d9bbb5ad0229/accounting-convergence-setup",
+    "reason": "Execution workspace became unavailable before artifact transfer.",
+    "known_locations": [
+      "results/summary.json and raw Python logs",
+      "unchanged-native-rerun/summary.json and native/cross-language raw logs",
+      "source-checks/summary.json and graph/format/CI command logs",
+      "full-source-before.json",
+      "gates-c1/ partial receipts",
+      "selected-source.json"
+    ],
+    "final_gate_session": 58416,
+    "final_gate_terminal": "not observed",
+    "retained_native_build_source": "91dd3082633ea0b3a5ec9b0ed91f28603229be01",
+    "reconstruction_warning": "Observed-validation summary records seen results; it must not substitute for missing original command receipts."
+  },
+  "publishing_status": "Not published by this agent. Parent may publish exact C1 as draft with HOLD.",
+  "qualification": "HOLD_NO_GO"
+}

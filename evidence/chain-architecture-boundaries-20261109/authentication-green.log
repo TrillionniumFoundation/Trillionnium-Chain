@@ -1,0 +1,18 @@
+    Finished `test` profile [unoptimized] target(s) in 0.19s
+     Running unittests src/lib.rs (/workspace/scratch/736a3d6dec1b/target/debug/deps/trnm_pon_node-a836e0af78a05d55)
+
+running 11 tests
+test ingress::public_v3::pq_identity::tests::pq_authentication_known_refusal_preserves_clean_listener_close ... ok
+test ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_last_history_epoch_close ... ok
+test ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_original_listener_close_and_cold_reopen ... ok
+test ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_shared_classical_listener_close ... ok
+test ingress::public_v3::pq_identity::tests::pq_history_failure_budget_and_listener_reconstruction_share_the_original_epoch ... ok
+test ingress::public_v3::pq_identity::tests::pq_history_native_application_account_packet_uses_the_same_paid_history_owner ... ok
+test ingress::public_v3::pq_identity::tests::pq_history_original_listener_reads_real_owner_and_classical_clients_cannot_downgrade ... ok
+test ingress::public_v3::pq_identity::tests::pq_history_real_three_party_messages_are_strict_and_old_wire_is_refused ... ok
+test ingress::public_v3::pq_identity::tests::pq_only_account_profile_rejects_classical_public_v3_client_before_connection ... ok
+test ingress::public_v3::pq_identity::tests::pq_response_cancellation_between_encoding_and_signing_stops_new_work ... ok
+test ingress::public_v3::pq_identity::tests::pq_response_expiry_stop_and_cancel_do_not_start_signing ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 1368 filtered out; finished in 2.60s
+

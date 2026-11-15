@@ -1,0 +1,119 @@
+{
+  "archive_count": 14,
+  "archive_member_count": 1880,
+  "archives": [
+    {
+      "bytes": 4334,
+      "members": 7,
+      "path": "finite/complete-capture.tar.gz",
+      "payload_bytes": 18103,
+      "sha256": "df78074ec428e79c5f60d38d8d5bace85ec3d8930f5fd45bd4537dc590d3040b"
+    },
+    {
+      "bytes": 701049,
+      "members": 460,
+      "path": "history/fanout-smoke-01-04.tar.gz",
+      "payload_bytes": 7250442,
+      "sha256": "b62f006a10533fcf2ea861a859eb79cf46efa38a50f2c6c97ae0c9ecd70c19f4"
+    },
+    {
+      "bytes": 1049864,
+      "members": 396,
+      "path": "history/fanout-smoke-05.tar.gz",
+      "payload_bytes": 8414285,
+      "sha256": "2aba53c6a1545abb69d52ce0f7725180691b9aeaf19336b41b23a9c08384d313"
+    },
+    {
+      "bytes": 10588,
+      "members": 13,
+      "path": "history/prior-github-publication.tar.gz",
+      "payload_bytes": 40673,
+      "sha256": "c90741b2fb2e2b39ef7e0977de1e276f81933569f8c35584cc56451f83a9c4b5"
+    },
+    {
+      "bytes": 26096,
+      "members": 5,
+      "path": "history/rog-initial/python-setup-v0.tar.gz",
+      "payload_bytes": 79531,
+      "sha256": "4866b24aac5bd073c90e111496ef742c0884cc91926a03ba397a0fa4a5670f19"
+    },
+    {
+      "bytes": 165490,
+      "members": 57,
+      "path": "history/rog-initial/validation-initial-v0.tar.gz",
+      "payload_bytes": 1841082,
+      "sha256": "207b0e36339fe33e6fd01071878cf4b98698820b1b99bb2edca08d26276f0e97"
+    },
+    {
+      "bytes": 552735,
+      "members": 3,
+      "path": "history/storage-relocation.tar.gz",
+      "payload_bytes": 2722178,
+      "sha256": "533770160c11b348d0987d67c9d62a0976547331dbfaa0469523984a6c6dedd2"
+    },
+    {
+      "bytes": 3310,
+      "members": 3,
+      "path": "history/theory-development.tar.gz",
+      "payload_bytes": 12773,
+      "sha256": "784710c403c3e574847a00c818a5c347d1429e0dda66ae57aecd357b25c717e9"
+    },
+    {
+      "bytes": 334231,
+      "members": 301,
+      "path": "owner/complete-capture.tar.gz",
+      "payload_bytes": 2388870,
+      "sha256": "a77f923b76b01ed201051535905ea0bafac01d80ff7a08426bc3eedb42cc5e2f"
+    },
+    {
+      "bytes": 4185,
+      "members": 7,
+      "path": "provenance/source-github-publication.tar.gz",
+      "payload_bytes": 17358,
+      "sha256": "81ce72955d21df129e87a202708c6dc804623d4526d04a0133ee80d353d6c371"
+    },
+    {
+      "bytes": 1058988,
+      "members": 396,
+      "path": "rog/fanout-exact-rog-v1.tar.gz",
+      "payload_bytes": 8426422,
+      "sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+    },
+    {
+      "bytes": 132151,
+      "members": 134,
+      "path": "rog/owner-exact-rog-v1.tar.gz",
+      "payload_bytes": 959249,
+      "sha256": "43c82756dbf6a8b979f41d72474118a0c89e28b7494ae9d6ce0b981f2c231685"
+    },
+    {
+      "bytes": 415145,
+      "members": 41,
+      "path": "rog/readiness-capture-v1.tar.gz",
+      "payload_bytes": 5739335,
+      "sha256": "ae8a1cf4f2ba77770a3baf0ae3ac28e46036485245f7b0a25c4d62aa976c3d2d"
+    },
+    {
+      "bytes": 164758,
+      "members": 57,
+      "path": "rog/validation-canonical-v1.tar.gz",
+      "payload_bytes": 1837063,
+      "sha256": "26f2d895fa1ec4da4d5c5e687dd42f279bcf01b095af4a5f36cc480adce87ba6"
+    }
+  ],
+  "chainwork_zero_and_production_inactive": true,
+  "claim_scope": "Evidence identity and internal accounting review; not independent operators, a hardware lower bound, or production security qualification.",
+  "fanout_counts_and_cost_scope_confirmed": true,
+  "final_24_command_logs_match_results": true,
+  "final_613_test_executions_confirmed": true,
+  "final_source_guards_equal": true,
+  "owner_report_bound_to_325_check_audit": true,
+  "payload_bytes": 39747364,
+  "schema": "pon-resource-transfer-root-evidence-review-v0",
+  "source": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+  "sqlite_three_outputs_qualified_without_warning": true,
+  "status": "PASS",
+  "three_built_runner_bindings_verified": true,
+  "tree": "c815d3710d5f7feffc043aed1aa6e003e03d3a10",
+  "whole_archive_and_all_member_bytes_modes_and_sha256_verified": true
+}

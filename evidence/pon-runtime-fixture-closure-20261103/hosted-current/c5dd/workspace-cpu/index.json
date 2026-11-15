@@ -1,0 +1,87 @@
+{
+  "cohort": {
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "head": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "merge": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+    "run": 41728500384,
+    "tracked_bytes": 882506480,
+    "tracked_entries": 7723,
+    "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+  },
+  "files": [
+    {
+      "bytes": 196352,
+      "file": "arm-head-original-records.json.gz",
+      "sha256": "10e816f118b239f584b8764bb65d92e9560079b09807575f0a81f724c441e0d9"
+    },
+    {
+      "bytes": 196515,
+      "file": "arm-merge-original-records.json.gz",
+      "sha256": "3679f4ce73caf52aea04f85b3fbcd66f358b61e13fb63298d0abf4696749a15c"
+    },
+    {
+      "bytes": 28749,
+      "file": "collect-workspace-cpu.py",
+      "sha256": "26afd63082a78abd5c80643085120a3914c5067f2b70f077cb0133a951642023"
+    },
+    {
+      "bytes": 27495,
+      "file": "collector-attempt-1-source.py",
+      "sha256": "69902c0e6f7559f4459d8ac48cce3f73b028b85dbcf885e4f7d837492ea76cd5"
+    },
+    {
+      "bytes": 818,
+      "file": "collector-attempt-1.json",
+      "sha256": "52ff042b95f533f6f66093bdc17c33045452793cc4ed97aa8f3335289bec246c"
+    },
+    {
+      "bytes": 1159,
+      "file": "collector-attempt-1.stderr",
+      "sha256": "9c46b1cfd8dc0bc34a6a1e6da6c5610ae72b8d4d465f181edaf3d8271114de5e"
+    },
+    {
+      "bytes": 0,
+      "file": "collector-attempt-1.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 272,
+      "file": "preflight-attempt-1.json",
+      "sha256": "53d48b2260002578054c06a82a05f4b7e8e172204c22b1649d045c5f850258cb"
+    },
+    {
+      "bytes": 272,
+      "file": "preflight.json",
+      "sha256": "53d48b2260002578054c06a82a05f4b7e8e172204c22b1649d045c5f850258cb"
+    },
+    {
+      "bytes": 448562,
+      "file": "readback.json",
+      "sha256": "ef296db778e870a780d322208b069261c0c468989f58152bcd75f5af8d73daa5"
+    },
+    {
+      "bytes": 53322,
+      "file": "source-and-original-metadata.json.gz",
+      "sha256": "35f628d9f5777b985ed56b260d548bafb99b985578015abce60add22578adc64"
+    },
+    {
+      "bytes": 17164,
+      "file": "summary.json",
+      "sha256": "b0909baf232a1d0066713be51591bd027652a154a6c68b16ee7f2cbdbb77fa51"
+    },
+    {
+      "bytes": 197041,
+      "file": "x64-head-original-records.json.gz",
+      "sha256": "86cf5d1e00f7194c8be6f2e2f918f2af3a392419b9d646c7be5bcf41e8efd091"
+    },
+    {
+      "bytes": 196908,
+      "file": "x64-merge-original-records.json.gz",
+      "sha256": "6eb08a84d7c64ff9e930ce169792f28d8994be31bc19ce33c0eae7320ae70806"
+    }
+  ],
+  "immutable_outputs": true,
+  "native_executed": false,
+  "result": "PASS",
+  "schema": "trnm-workspace-cpu-readback-file-index-v1"
+}

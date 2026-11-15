@@ -1,0 +1,33 @@
+{
+  "head": "9b70db69b5a7a7cdd0b73b273f189211d507dfe2",
+  "tree": "2195b7d2e091a06c819554e82a335d354ce0d93a",
+  "parents": [
+    "43e3584925c959f00cf90e44278dcf66b06e28c0",
+    "205ae38ff01bbf968f3fc2ef0297bee986224684"
+  ],
+  "pushed": false,
+  "author": "ProfHepta",
+  "ingress_rust_sources_exact": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "blob": "0efaeb7d6034d67f80c2ef3c698703479cd1159c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "blob": "4d41ec41f8bdb50720d4c865c8f5997ca8ef5816"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet.rs",
+      "blob": "d4ddbdb52d877f5e629002ef45051711f6fa62c3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet/tests.rs",
+      "blob": "c06945b8ab0e7f2956d51e301854f3035d901dcd"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/input_decode_tests.rs",
+      "blob": "3cac5b5da7aaa706244e49ab11041d55b31ea390"
+    }
+  ],
+  "evidence_untracked_and_preserved": "?? evidence/pon-business-gates-readback-20261107/"
+}

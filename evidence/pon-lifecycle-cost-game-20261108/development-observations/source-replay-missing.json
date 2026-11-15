@@ -1,0 +1,62 @@
+[
+  {
+    "path": "trillionnium/crates/trnm-protocol/src/lib.rs",
+    "sha": "523c91846a53e509a8d83d8d13db4444bc45036c"
+  },
+  {
+    "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+    "sha": "4ea8e30cb15880c6e645b2f7950f6cf3d94cd9f9"
+  },
+  {
+    "path": "trillionnium/crates/trnm-research-protocol/src/command.rs",
+    "sha": "518b49ce93861966e8cf239c9651e5d02a1fd6c8"
+  },
+  {
+    "path": "trillionnium/crates/trnm-research-protocol/src/lib.rs",
+    "sha": "cec078765580cd1f3008721ef9a0b9b96f3a7d6a"
+  },
+  {
+    "path": "trillionnium/crates/trnm-research-protocol/src/state.rs",
+    "sha": "bce4fcf5894150681b2a5ff27d251b753673fdfd"
+  },
+  {
+    "path": "trillionnium/crates/trnm-research-protocol/src/types.rs",
+    "sha": "ade501df57ff576cb1a6b71ff7444cfc794806f5"
+  },
+  {
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "sha": "443998a11f439439805b9df68919901ac0013a0a"
+  },
+  {
+    "path": "trillionnium/crates/trnm-worker-agent/src/assigned.rs",
+    "sha": "52defb0c01c615c79cd9229e527f9fd65de352eb"
+  },
+  {
+    "path": "trillionnium/crates/trnm-worker-agent/src/assigned_runner.rs",
+    "sha": "1589a526485ffb99980543082163f2c2a0e657df"
+  },
+  {
+    "path": "trillionnium/crates/trnm-worker-agent/src/command_runtime_exec.rs",
+    "sha": "d5093abb169471997b5382137c589bba88a4bcb5"
+  },
+  {
+    "path": "trillionnium/crates/trnm-worker-agent/src/flush.rs",
+    "sha": "92b75fdb36219981cfbca130eaa10229bcbba3b9"
+  },
+  {
+    "path": "trillionnium/crates/trnm-worker-agent/src/flush_submission.rs",
+    "sha": "a262bb210150438afa83fe2dddd9fb1f9169284c"
+  },
+  {
+    "path": "trillionnium/crates/trnm-worker-agent/src/main.rs",
+    "sha": "e87d5db3e89f2e4b33cda8b03ad3073e3d15a06f"
+  },
+  {
+    "path": "trillionnium/crates/trnm-worker-agent/src/workflow.rs",
+    "sha": "d879967334f98ac5c9130b797d4821dc3788926b"
+  },
+  {
+    "path": "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs",
+    "sha": "d081f4381bf831aecd99130a5ddc50491f588e3b"
+  }
+]

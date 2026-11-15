@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/bin/bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 0.5165559130255133,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794129046.0911906,
+  "label": "preflight-before-edit",
+  "logs": {
+    "preflight-before-edit.stderr.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/preflight-before-edit.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preflight-before-edit.stdout.log": {
+      "bytes": 178,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/preflight-before-edit.stdout.log",
+      "sha256": "3e9e970d160b66960d5566a0f7e262756d1bd8d7873459da8c146b0d8ee8a6d9"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+    "mode": "--dev",
+    "packages": 26,
+    "project": "trillionnium-chain",
+    "remote_policy_mutated": false,
+    "result": "PASS"
+  },
+  "started_unix_seconds": 1794129045.5746357
+}

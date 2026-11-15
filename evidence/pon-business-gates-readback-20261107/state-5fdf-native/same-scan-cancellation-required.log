@@ -1,0 +1,1 @@
+{"executed_tests": 1, "result": "PASS", "scope": "named-libtest-execution-only", "test": "store::canonical_row_reuse_tests::every_original_scan_cancellation_and_late_corruption_still_refuses"}

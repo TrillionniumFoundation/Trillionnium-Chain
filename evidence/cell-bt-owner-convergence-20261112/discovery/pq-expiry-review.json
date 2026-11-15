@@ -1,0 +1,112 @@
+{
+  "additional_tests_or_rust_builds_executed": false,
+  "all_four_reviewed_source_files_equal_baseline_bytes": true,
+  "baseline_source": "040fb0cf460a6db568f0b4ec5ba581add3f2d2ba",
+  "baseline_source_files_sha256": {
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": "0d573cdde725bdac91b3e941facb5f2847c5d4db1c3ac4d47f3066e6d1c7d6b8",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs": "5350337ae4f65eec9296bd29b29921b27219862279c47f1fa08a6a7a7b39f5a6",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/epoch.rs": "97e7458abf849a29ff5e27187742500fe776fa29659c3b47914f9b9035681b49",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/epoch_directory.rs": "0561ca0a471389f5645e143ef12ed0b66568eee0d4f9571ff8d2c158556a6362"
+  },
+  "compatible_but_unconfirmed_paths": [
+    {
+      "path": "short_record_already_expired_at_first_complete_receipt",
+      "reason": "The one-second lease begins before two record signatures, two bootstrap key preparations, directory persistence and response signing/transport. A late first receipt fails live_at before its provider signature verification and historical insertion; a valid later record can then remain admissible."
+    },
+    {
+      "path": "one_conflicting_source_response_not_completed_or_not_authenticated",
+      "reason": "Discovery catches source exchange errors, increments rejected_bootstraps and continues. The failed test did not reach its later transport/accounting assertions, so its log does not exclude this path."
+    }
+  ],
+  "critical_precondition": "The first complete response must have been received while the short provider record was live, and its bootstrap response and provider statement must actually authenticate. Provider signature verification need not finish before expiry because the algorithm deliberately verifies against saved receipt time after collecting later replies.",
+  "diagnosis_status": "not_diagnosed",
+  "existing_comparable_fixture": {
+    "observation": "A separate existing cohort creates its short lease inside start_generated only after reading the real query and records a later source query time to prove the earlier complete-reply receipt precondition. This review does not transplant that fixture or change the failed test.",
+    "source": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs:1358-1412"
+  },
+  "historical_cause_confirmed": false,
+  "limits": [
+    "Source ordering establishes possible timing paths, not elapsed durations or the cause of this particular debug failure.",
+    "Validation-attempt counters reserve shared slots before decoding/liveness checks and therefore do not prove that each native signature verification actually ran or succeeded.",
+    "Verifying a first provider statement after wall-clock expiry is intentional when its saved complete-frame receipt time was valid; this fact alone is not a failure.",
+    "The debug failure must remain separate from the historical hosted release higher-sequence failure and from any new full release result."
+  ],
+  "minimal_diagnostic_recommendations": [
+    "Before the failing assertion, record the loop sequence, result category and existing observation counters so a panic cannot hide them.",
+    "Add bounded fixture-stage wall and monotonic timing observations after now, record signing, each source preparation, directory open and immediately before discover.",
+    "Use cfg(test)-only fixed-format observations at complete-frame receipt and bootstrap verification, then at provider verify_at: source/slot, saved receipt time relative to expiry, accepted/rejected state and fixed error category. Do not emit keys, signatures or payload bytes.",
+    "Confirm the late-receipt path only when actual receipt >= expiry and the first provider record is rejected as expired/future. If receipt < expiry and both conflicting provider statements verified, investigate conflict memory and selection instead.",
+    "Keep every original lease, request timeout, overall deadline, verification budget, retry rule and admission order unchanged. Wait for the separately running full release result before selecting a code change."
+  ],
+  "new_full_release_result_observed_by_reviewer": false,
+  "not_diagnosed": true,
+  "retained_failure": {
+    "distinct_from_original_hosted_higher_sequence_failure": true,
+    "elapsed_seconds": 617.89,
+    "exit_code": 101,
+    "failed": 1,
+    "ignored": 0,
+    "log": "validation/discovery/baseline-full-lib.log",
+    "not_an_exact_profile_match_to_original_hosted_release_ci": true,
+    "panic_line": 1077,
+    "panic_message": "expired receipt-time conflict was forgotten",
+    "panic_source": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+    "passed": 784,
+    "profile": "debug",
+    "sha256": "18dd7561bd73b905a42001b964068023a993ce1cb4bf7cf759aa42e7510783a7",
+    "test": "cell::discovery::pq::auth::tests::authenticated_v3_real_tcp_receipt_time_equivocation_survives_later_source_expiry"
+  },
+  "review_kind": "read-only-source-and-retained-log-analysis",
+  "reviewed_head": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "runtime_source_edited": false,
+  "schema": "cell-discovery-pq-expiry-readonly-review-v1",
+  "source_order": [
+    {
+      "event": "Provider key generation precedes the loop. The fixture aligns to a wall-second boundary, samples now, and commits the short record expiry to now + 1 second.",
+      "source": "auth_tests.rs:993-1009"
+    },
+    {
+      "event": "Both provider records are signed after now. Both SignedSource instances are then started before discovery; the second source has its existing 1200 ms response delay.",
+      "source": "auth_tests.rs:1010-1042"
+    },
+    {
+      "event": "Each SignedSource start binds a listener, generates its bootstrap key and pin, then spawns its service thread.",
+      "source": "auth_tests.rs:920-933"
+    },
+    {
+      "event": "Options, source pins, temporary directory, SQLite directory opening, schema/metadata transaction and parent-directory sync precede creation of the operation deadline and discover call.",
+      "source": "auth_tests.rs:1043-1075; epoch_directory.rs:172-252"
+    },
+    {
+      "event": "The service reads the actual query, applies its configured delay, signs the response, and writes the frame. Its write result is not asserted.",
+      "source": "auth_tests.rs:945-965"
+    },
+    {
+      "event": "The consumer reads the complete header and complete body plus signature before sampling CellDiscoveryTimeV3. That paired sample enters bootstrap response verification.",
+      "source": "auth.rs:1041-1084"
+    },
+    {
+      "event": "Discovery authenticates source replies before its fair provider-record loop. Provider verification uses each saved reply.received_time, even after waiting for later sources.",
+      "source": "auth.rs:367-437"
+    },
+    {
+      "event": "Provider verify_at checks record liveness at the saved receipt time before invoking key signature verification. It constructs a receipt with the original monotonic expiry and never renews the lease.",
+      "source": "epoch.rs:303-336"
+    },
+    {
+      "event": "Only verified receipts enter the same-owner/same-sequence statement map. Conflict memory precedes the later current-liveness and durable-admission checks.",
+      "source": "auth.rs:443-502"
+    },
+    {
+      "event": "The observed panic occurs at result.is_err() in the sequence-1 branch. The later expiry, connection, validation-slot, response-byte and source-finish assertions were not reached in that failed iteration.",
+      "source": "auth_tests.rs:1077-1111"
+    }
+  ],
+  "unobserved_preconditions": [
+    "First complete-frame receipt time was strictly earlier than short expires_unix_seconds.",
+    "First bootstrap response authentication succeeded and its body was retained for provider verification.",
+    "First provider verify_at succeeded and inserted the historical statement.",
+    "Second source response completed and authenticated with the conflicting same-sequence statement.",
+    "Post-result connection, signature-slot, response-byte and finish expectations held in the failed iteration."
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "label": "proof-profile-controls",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "scripts/ci/test_pq_proof_profile_binding.py",
+    "-v"
+  ],
+  "started_at_utc": "2026-11-09T15:51:17.174748+00:00",
+  "completed_at_utc": "2026-11-09T15:51:17.798528+00:00",
+  "elapsed_seconds": 0.6237907319991791,
+  "engineering_timeout_seconds": 240,
+  "timed_out": false,
+  "exit_code": 0,
+  "process_exit_after_timeout": null,
+  "status": "PASS",
+  "expected_test_count": 26,
+  "observed_test_counts": [
+    26
+  ],
+  "expected_count_matched": true,
+  "raw_unittest_summary": [
+    "Ran 26 tests in 0.409s",
+    "OK"
+  ],
+  "stdout": {
+    "path": "proof-profile-controls.stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "proof-profile-controls.stderr.log",
+    "bytes": 3993,
+    "sha256": "ea2b097cbd5ceffc4aa16e006a70542097d321077d18b600d93b39bf602c6e66"
+  }
+}

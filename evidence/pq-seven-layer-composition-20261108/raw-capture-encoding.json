@@ -1,0 +1,15 @@
+{
+  "files": [
+    {
+      "codec": "gzip",
+      "original_bytes": 24302,
+      "original_name": "pq-source-lock-red.txt",
+      "original_sha256": "032d3d6e21e7f59dd17949b2db4e62174027209539d6573fcaeef1e6474a1188",
+      "reason": "Preserve actual unittest whitespace without modifying original failed observations.",
+      "stored_bytes": 1485,
+      "stored_name": "pq-source-lock-red.txt.gz",
+      "stored_sha256": "f4a7daf69a128ae444187e267643a8687d821f424c3fcc81015dc0e8e660bd48"
+    }
+  ],
+  "schema": "trnm-lossless-raw-capture-v1"
+}

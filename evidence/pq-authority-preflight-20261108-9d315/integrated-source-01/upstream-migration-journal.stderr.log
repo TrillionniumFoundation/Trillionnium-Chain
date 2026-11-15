@@ -1,0 +1,18 @@
+test_eight_concurrent_writers_exactly_one_first (test_pq_migration_journal_owner.OwnedMigrationJournalTests.test_eight_concurrent_writers_exactly_one_first) ... ok
+test_honest_commit_repeat_cold_reopen (test_pq_migration_journal_owner.OwnedMigrationJournalTests.test_honest_commit_repeat_cold_reopen) ... ok
+test_legacy_if_not_exists_or_foreign_schema_not_silently_claimed (test_pq_migration_journal_owner.OwnedMigrationJournalTests.test_legacy_if_not_exists_or_foreign_schema_not_silently_claimed) ... ok
+test_mid_transaction_rename_never_acknowledged (test_pq_migration_journal_owner.OwnedMigrationJournalTests.test_mid_transaction_rename_never_acknowledged) ... ok
+test_owner_only_permissions_checked (test_pq_migration_journal_owner.OwnedMigrationJournalTests.test_owner_only_permissions_checked) ... ok
+test_sqlite_lookalike_persistent_table_rejected_on_consume_and_cold_open (test_pq_migration_journal_owner.OwnedMigrationJournalTests.test_sqlite_lookalike_persistent_table_rejected_on_consume_and_cold_open) ... ok
+test_sqlite_lookalike_persistent_trigger_cannot_erase_or_reuse_key (test_pq_migration_journal_owner.OwnedMigrationJournalTests.test_sqlite_lookalike_persistent_trigger_cannot_erase_or_reuse_key) ... ok
+test_sqlite_lookalike_persistent_trigger_rejected_on_cold_open (test_pq_migration_journal_owner.OwnedMigrationJournalTests.test_sqlite_lookalike_persistent_trigger_rejected_on_cold_open) ... ok
+test_sqlite_lookalike_temp_table_rejected_before_write (test_pq_migration_journal_owner.OwnedMigrationJournalTests.test_sqlite_lookalike_temp_table_rejected_before_write) ... ok
+test_sqlite_lookalike_temp_trigger_cannot_erase_or_reuse_key (test_pq_migration_journal_owner.OwnedMigrationJournalTests.test_sqlite_lookalike_temp_trigger_cannot_erase_or_reuse_key) ... ok
+test_symlink_and_hardlink_refused (test_pq_migration_journal_owner.OwnedMigrationJournalTests.test_symlink_and_hardlink_refused) ... ok
+test_temp_shadow_table_cannot_replace_persistent_records (test_pq_migration_journal_owner.OwnedMigrationJournalTests.test_temp_shadow_table_cannot_replace_persistent_records) ... ok
+test_temp_trigger_never_acknowledges_deleted_commit (test_pq_migration_journal_owner.OwnedMigrationJournalTests.test_temp_trigger_never_acknowledges_deleted_commit) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 2.844s
+
+OK

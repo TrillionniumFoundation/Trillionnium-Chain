@@ -1,0 +1,385 @@
+{
+  "all_primary_samples_verified": true,
+  "authenticated_new_demand": false,
+  "batch_size": 16,
+  "cases": [
+    {
+      "all_samples_verified": true,
+      "arms": [
+        {
+          "arm": "cpu_ordinary_cached_merged_exact_fp64",
+          "compute_ratio_to_cpu_i64": 1.1521342354610333,
+          "fresh_input_full_verification_single_sample_ms": 3.249112,
+          "median_compute_ms": 0.1615995,
+          "median_whole_verified_sample_ms": 0.3520235,
+          "warm_samples": 30
+        },
+        {
+          "arm": "cpu_ordinary_cached_merged_i64",
+          "compute_ratio_to_cpu_i64": 1.0,
+          "fresh_input_full_verification_single_sample_ms": 3.387964,
+          "median_compute_ms": 0.140261,
+          "median_whole_verified_sample_ms": 0.3001955,
+          "warm_samples": 30
+        },
+        {
+          "arm": "cuda_direct_cached_merged_exact_fp64",
+          "compute_ratio_to_cpu_i64": 2.9333314321158412,
+          "fresh_input_full_verification_single_sample_ms": 3.722155,
+          "median_compute_ms": 0.411432,
+          "median_whole_verified_sample_ms": 0.8370895,
+          "warm_samples": 30
+        },
+        {
+          "arm": "cuda_direct_original_exact_fp64",
+          "compute_ratio_to_cpu_i64": 5.0071295655955685,
+          "fresh_input_full_verification_single_sample_ms": 4.404901,
+          "median_compute_ms": 0.702305,
+          "median_whole_verified_sample_ms": 1.118157,
+          "warm_samples": 30
+        },
+        {
+          "arm": "cuda_grouped_cached_merged_exact_fp64",
+          "compute_ratio_to_cpu_i64": 10.246679404823864,
+          "fresh_input_full_verification_single_sample_ms": 4.924126,
+          "median_compute_ms": 1.4372095,
+          "median_whole_verified_sample_ms": 1.8456165,
+          "warm_samples": 30
+        }
+      ],
+      "attempts": 165,
+      "case_total_wall_ns": 1932426220,
+      "fresh_samples": 5,
+      "independent_reference_ns": 2638998,
+      "kind": "retained_trained_model_and_frozen_source_consumer",
+      "name": "retained_consumer16",
+      "numeric_bounds": {
+        "base_abs_partial_sum_bound": 6695,
+        "delta_abs_partial_sum_bound": 39739,
+        "f64_exact_integer_limit_exclusive": 9007199254740992,
+        "generic_full_logit_bound": 134737904,
+        "merged_abs_partial_sum_bound": 44748,
+        "original_max_coefficient": 778,
+        "router_abs_partial_sum_bound": 39973
+      },
+      "preparation": {
+        "cpu_fp64_merge_ns": 29086,
+        "cpu_i64_merge_ns": 63124,
+        "cpu_preparation_ns": 949051,
+        "gpu_merge_preparation_ns": 64042100,
+        "host_to_device_material_bytes": 63736,
+        "host_to_device_material_ns": 50383106,
+        "validation_and_factor_equivalence_ns": 2219393
+      },
+      "warm_samples": 150
+    },
+    {
+      "all_samples_verified": true,
+      "arms": [
+        {
+          "arm": "cpu_factor_selected_i64",
+          "compute_ratio_to_cpu_i64": 1.1893826990662042,
+          "fresh_input_full_verification_single_sample_ms": 3.177419,
+          "median_compute_ms": 0.181567,
+          "median_whole_verified_sample_ms": 0.363738,
+          "warm_samples": 42
+        },
+        {
+          "arm": "cpu_ordinary_cached_merged_exact_fp64",
+          "compute_ratio_to_cpu_i64": 1.0435913308637366,
+          "fresh_input_full_verification_single_sample_ms": 3.07727,
+          "median_compute_ms": 0.159311,
+          "median_whole_verified_sample_ms": 0.372098,
+          "warm_samples": 42
+        },
+        {
+          "arm": "cpu_ordinary_cached_merged_i64",
+          "compute_ratio_to_cpu_i64": 1.0,
+          "fresh_input_full_verification_single_sample_ms": 2.921926,
+          "median_compute_ms": 0.1526565,
+          "median_whole_verified_sample_ms": 0.3223985,
+          "warm_samples": 42
+        },
+        {
+          "arm": "cuda_direct_cached_merged_exact_fp64",
+          "compute_ratio_to_cpu_i64": 2.849056541974957,
+          "fresh_input_full_verification_single_sample_ms": 3.607432,
+          "median_compute_ms": 0.434927,
+          "median_whole_verified_sample_ms": 0.886389,
+          "warm_samples": 42
+        },
+        {
+          "arm": "cuda_direct_original_exact_fp64",
+          "compute_ratio_to_cpu_i64": 4.814760589951951,
+          "fresh_input_full_verification_single_sample_ms": 3.91988,
+          "median_compute_ms": 0.7350045,
+          "median_whole_verified_sample_ms": 1.1805935,
+          "warm_samples": 42
+        },
+        {
+          "arm": "cuda_factor_selected_exact_fp64",
+          "compute_ratio_to_cpu_i64": 11.56076223416625,
+          "fresh_input_full_verification_single_sample_ms": 5.40721,
+          "median_compute_ms": 1.7648255,
+          "median_whole_verified_sample_ms": 2.215846,
+          "warm_samples": 42
+        },
+        {
+          "arm": "cuda_grouped_cached_merged_exact_fp64",
+          "compute_ratio_to_cpu_i64": 11.244653847035664,
+          "fresh_input_full_verification_single_sample_ms": 4.871611,
+          "median_compute_ms": 1.7165695,
+          "median_whole_verified_sample_ms": 2.161173,
+          "warm_samples": 42
+        }
+      ],
+      "attempts": 315,
+      "case_total_wall_ns": 3986503974,
+      "fresh_samples": 7,
+      "independent_reference_ns": 2257274,
+      "kind": "synthetic_factor_control_not_trained_model",
+      "name": "controlled_rank1_same_shape",
+      "numeric_bounds": {
+        "base_abs_partial_sum_bound": 1077,
+        "delta_abs_partial_sum_bound": 802,
+        "f64_exact_integer_limit_exclusive": 9007199254740992,
+        "factor_abs_partial_sum_bound": 1879,
+        "generic_full_logit_bound": 134737904,
+        "merged_abs_partial_sum_bound": 1183,
+        "original_max_coefficient": 6,
+        "router_abs_partial_sum_bound": 911
+      },
+      "preparation": {
+        "cpu_fp64_merge_ns": 9322,
+        "cpu_i64_merge_ns": 28682,
+        "cpu_preparation_ns": 835723,
+        "gpu_merge_preparation_ns": 86029,
+        "host_to_device_material_bytes": 69976,
+        "host_to_device_material_ns": 244638,
+        "validation_and_factor_equivalence_ns": 3805531
+      },
+      "warm_samples": 294
+    }
+  ],
+  "chainwork_awarded": 0,
+  "cloud_attempts": [
+    {
+      "cloud_child_wall_seconds": 0.12003159523010254,
+      "cloud_execution_stopped": true,
+      "cloud_process_group_alive": false,
+      "exit_code": 2,
+      "finished_at_unix": 1794050684.9798024,
+      "job_id": "c44f27ec-d560-443d-8b75-0bb0fb5534fe",
+      "source_sha256": "5a63bfeeae1ff764dd49004af099346935c102f269663444f5a1ee7dd7f592f1",
+      "started_at_unix": 1794050684.8597708,
+      "state": "failed",
+      "submit_attempts": 1
+    },
+    {
+      "cloud_child_wall_seconds": 17.474958658218384,
+      "cloud_execution_stopped": true,
+      "cloud_process_group_alive": false,
+      "exit_code": 0,
+      "finished_at_unix": 1794050935.992305,
+      "job_id": "433199d9-4ee8-43c2-8140-ff440735cfbb",
+      "source_sha256": "c00765a255c021cb2e59b9670736acbcbcfcd36aa4773ef5befc60921de6fdc4",
+      "started_at_unix": 1794050918.5173464,
+      "state": "succeeded",
+      "submit_attempts": 1
+    }
+  ],
+  "cost_scope": {
+    "billing_limitation": "Provider balance/rate snapshots are not a per-job metered invoice; no complete financial cost inferred.",
+    "checkpoint_count": 988,
+    "checkpoint_seconds": 4.839262305,
+    "cuda_initialization_ns": 187271713,
+    "entry_to_ready_ns": 8304051371,
+    "gpu_energy_joules": null,
+    "metered_cost_currency": null,
+    "metered_total_compute_units": null,
+    "numpy_import_ns": 63745077,
+    "process_resource": {
+      "max_rss_kib_linux": 876632,
+      "system_cpu_seconds": 1.008052,
+      "user_cpu_seconds": 3.907835
+    },
+    "provider_metered_per_job_compute_units": null,
+    "python_observed_process_seconds_before_final_write": 14.246769672,
+    "torch_import_ns": 6975875110
+  },
+  "device": {
+    "compute_capability": [
+      7,
+      5
+    ],
+    "multiprocessor_count": 40,
+    "name": "Tesla T4",
+    "total_memory_bytes": 15637086208
+  },
+  "device_metadata_sha256": "f29eb311e2cea024f2d8084b5debbabef9b8f2f2f8cf61e13b3093bb48b31c6a",
+  "environment": {
+    "cpu_count": 2,
+    "cpu_threads_requested": 1,
+    "cuda_build": "13.0",
+    "cudnn": 92800,
+    "machine": "x86_64",
+    "numpy": "2.4.6",
+    "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+    "python": "3.13.16 (main, Oct  1 2026, 15:40:24) [GCC 13.3.0]",
+    "tf32_allowed": false,
+    "torch": "2.14.1+cu130"
+  },
+  "environment_sha256": "f6c730838fe78e01cfb3e492f93bc3d67924978fa52749e4a19456f74835ff13",
+  "evaluation_bundle": "485d1ddac3f10b859599297ede15c5703517952d3f507cdc3efea7f14214429e",
+  "exact_model_artifact": "d6ac3f24a43045dda6af862344918688b5fbb047599d423e27c567cf670ccfc2",
+  "failed_attempt_reason": "First frozen entrypoint received the deployed runpy launcher code.py argument; argparse exit2 before workload; exact stderr preserved. Successor freezes no-CLI embedded entrypoint and per-attempt checkpoints.",
+  "full_lottery_cost_measured": false,
+  "full_primary_samples": 492,
+  "minimum_legal_cost_proved": false,
+  "model_is_newly_trained": false,
+  "nvidia_smi": {
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "Tesla T4, 580.82.07, 15360\n"
+  },
+  "payload_sha256": "475c1583a1059ddd1acc5d58c81390f4fb3ebfe7045f5cf73f5ea0692c334142",
+  "post_release_observation": {
+    "assignments": {
+      "runtimes": [],
+      "status": "available"
+    },
+    "consumption": {
+      "assignments_count": 0,
+      "consumption_rate_hourly": 0.0,
+      "paid_compute_units_balance": 0.0,
+      "status": "available"
+    },
+    "observed_at": "2026-11-07T11:37:44.131097+00:00",
+    "qualification": "Both assignment inventory and consumption counters are zero at this later observation. The earlier disagreement remains in history. This is not a per-job accrued-cost invoice."
+  },
+  "post_release_observations": [
+    {
+      "assignments": {
+        "runtimes": [],
+        "status": "available"
+      },
+      "consumption": {
+        "assignments_count": 1,
+        "consumption_rate_hourly": 1.15,
+        "paid_compute_units_balance": 0.0,
+        "status": "available"
+      },
+      "observed_at": "2026-11-07T11:33:36.330002+00:00",
+      "qualification": "Assignments empty and original manager released; consumption counter remains1 at this snapshot, so retained as provider disagreement and not represented as zero accrued cost."
+    },
+    {
+      "assignments": {
+        "runtimes": [],
+        "status": "available"
+      },
+      "consumption": {
+        "assignments_count": 0,
+        "consumption_rate_hourly": 0.0,
+        "paid_compute_units_balance": 0.0,
+        "status": "available"
+      },
+      "observed_at": "2026-11-07T11:37:44.131097+00:00",
+      "qualification": "Both assignment inventory and consumption counters are zero at this later observation. The earlier disagreement remains in history. This is not a per-job accrued-cost invoice."
+    }
+  ],
+  "pow_qualified": false,
+  "production_activation": false,
+  "profile": "pon-routed-int257-grouped-research-v0",
+  "result_bytes": 256484,
+  "result_sha256": "b037da2e62f9d758beaeb977a710fcc01bdb93e761ac693658b45b993f4d8b37",
+  "runtime_ownership": {
+    "allocated_wall_seconds_including_setup_idle_fetch_release": 650.278609,
+    "created_at": "2026-11-07T11:21:25.981763+00:00",
+    "endpoint": "gpu-t4-s-ass1c2-186dzx8vobpjh",
+    "kernel_id": "8ca2760b-4df4-4d1d-9de8-f3f30e539a2a",
+    "kernel_submit_attempts": 1,
+    "key": "pon-legal-gpu-10a9-20261107-01",
+    "phase": "released",
+    "release_submit_attempts": 1,
+    "released_observed_at": "2026-11-07T11:32:16.260372+00:00",
+    "runtime_submit_attempts": 1
+  },
+  "schema": "pon-grouped-gpu-legal-summary-v1",
+  "scope_limitations": [
+    "Single T4 CPU-host/GPU comparison, fixed small3x257 model and16 historical inputs; no larger model extrapolation.",
+    "Warm compute includes Python dispatch and GPU synchronization; no claim of optimal fused native GPU kernel.",
+    "CPU cached merged control is a lawful ordinary baseline; factor execution is valid but does not always win once base/router and cached merge are included.",
+    "Synthetic rank1 control is not retained trained-model factorization and not an LLM128x gain.",
+    "Whole-sample comparisons use one independently computed scalar reference per case; each fresh-input sample recomputes it.",
+    "Repetitions share inputs and prepared weights; no independent lottery tickets or demand.",
+    "First calls share a process in recorded order; they are not independent cold boots.",
+    "Finite observed strategies do not establish minimum legal cost, fair chainwork or adversary lower bounds."
+  ],
+  "source_commit": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+  "source_replayed": true,
+  "source_template_sha256": "83c0e3162b8cdfe4936a6316560c9ea749af76b03c83fc5866c55e63ad81afdd",
+  "status": "gpu_comparison_complete_research_hold",
+  "submitted_script_sha256": "c00765a255c021cb2e59b9670736acbcbcfcd36aa4773ef5befc60921de6fdc4",
+  "tie_control": {
+    "gpu": true,
+    "groups": [
+      [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      [],
+      []
+    ],
+    "predictions": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "routes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "verified": true
+  }
+}

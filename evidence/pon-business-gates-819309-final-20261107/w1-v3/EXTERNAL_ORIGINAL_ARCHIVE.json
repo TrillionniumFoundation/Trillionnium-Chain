@@ -1,0 +1,16 @@
+{
+  "artifact_id": 13586509176,
+  "archive": {
+    "path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3/13586509176/artifact.zip",
+    "bytes": 174175856,
+    "sha256": "d5e6720c1070b1772107be2d316aea6d27dfdf8dd68535103650730138e9bf38",
+    "complete_github_size_digest_matched": true,
+    "original_partial_unchanged": true,
+    "body_was_only_original_tail": true
+  },
+  "raw_tail_included": "artifact/tail.bin",
+  "original_v2_partial_path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-transport-v2/13586509176/artifact.zip",
+  "original_v2_partial_sha256": "7915efca8e574436400a7d9bb5c8e59c8681ba0522f77dd5b119fddafac5dae2",
+  "full_zip_included_in_small_package": false,
+  "rehashed_at_seal": true
+}

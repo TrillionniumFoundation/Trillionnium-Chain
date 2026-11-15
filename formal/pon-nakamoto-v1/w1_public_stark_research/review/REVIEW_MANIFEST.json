@@ -1,0 +1,81 @@
+{
+  "schema": "w1-final-independent-review-delivery-manifest-v1",
+  "qualification": "HOLD_NO_GO",
+  "primary_record": "runner_review.json",
+  "final_run_record": "runner_review.run02.json",
+  "scope": "Review documents and immutable history only. Source, proofs and raw measurements are not modified by this manifest.",
+  "files": {
+    "AUDIT_SOURCE_LOCATORS.json": {
+      "bytes": 19609,
+      "sha256": "d45628f5ec7fb8ed1ca61df2afd71a664302243df64706c11fefea3ab55be1e9"
+    },
+    "DOT8_516_REVIEW.md": {
+      "bytes": 3749,
+      "sha256": "fd706b1700615286e4e3e7b92b7d552fde29cf0d3e86d4c17bc3525adcea2975"
+    },
+    "INTEGRATION_CONTRACT.md": {
+      "bytes": 13854,
+      "sha256": "a99046786d122b5fc75125f3cc5e2bba014143c62b9e37848c91e0c4330a3ec8"
+    },
+    "LATE_REJECTION_REVIEW.md": {
+      "bytes": 11626,
+      "sha256": "5da2e3f027ac472185ebc27f01f539fd780fe9f7fd3d2bb22f72a51315ac1a8b"
+    },
+    "P3_SECURITY_REVIEW.md": {
+      "bytes": 13599,
+      "sha256": "664a5071bd775c0982b9091a99f19cd934df7cca65fd1e6bcf84ba3d9ab7e282"
+    },
+    "QUERY_SAMPLING_REVIEW.md": {
+      "bytes": 7734,
+      "sha256": "a387c2965d6c7e415072849bc851cc349f997ad3972032793fb3db62f742f58b"
+    },
+    "RUNNER_REVIEW.md": {
+      "bytes": 12408,
+      "sha256": "00bf070a3a1ee2b811a9a9c21fdd67653e528fad0e4dba50fca9ac4bb2d4408f"
+    },
+    "goldilocks_query_sampling.json": {
+      "bytes": 14769,
+      "sha256": "21544ae1439bb7cd795438d43f1ff749f0cd78d6fc30c2733e96a4e18ca7e4b9"
+    },
+    "goldilocks_query_sampling.py": {
+      "bytes": 5695,
+      "sha256": "764ee4cfd41573767b52f68c4f71561d154d58782a641970b9f262da6e68a15e"
+    },
+    "prelint_sha_air.rs.txt": {
+      "bytes": 12176,
+      "sha256": "ccf2f7b52b0ad2a8de95289a1c4f6c3d56b497cd1da9141eb121f0c6bea5a2a5"
+    },
+    "run_late_controls.firstattempt.py.txt": {
+      "bytes": 6300,
+      "sha256": "2a28112146ac324bc575c06f44ba2653e03d584a8b36808b9f961c89787fd382"
+    },
+    "run_late_controls.run01.py.txt": {
+      "bytes": 6321,
+      "sha256": "aee13a8d21c85d547401e1f019c868d35029a5436f6bf8d12c51a25d15b13039"
+    },
+    "runner_review.json": {
+      "bytes": 30771,
+      "sha256": "5f005f6b41b851b381c53962f236a256355b5229c76f4772243bae9bd75d5f45"
+    },
+    "runner_review.preformat.json": {
+      "bytes": 2279,
+      "sha256": "81c1a698e2b5768bcb594eb99e162c1d82484d97d5eb1dbaab79f776d3c6c515"
+    },
+    "runner_review.run01.json": {
+      "bytes": 23082,
+      "sha256": "746a991cadf795f7b67f8d920dda8923362bb89804fb39775aafb3bb6f272490"
+    },
+    "runner_review.run01_late.json": {
+      "bytes": 16953,
+      "sha256": "d9bfaaaf54c048daa4bf2f58023d0e8823359aad458e144d319f6f4062012276"
+    },
+    "runner_review.run02.json": {
+      "bytes": 59946,
+      "sha256": "f82922893187e03ebd417ffad7417a919f39fd579da7f205f27900e4808a8621"
+    },
+    "source_review.json": {
+      "bytes": 3928,
+      "sha256": "66a6b965b4613fdce8533becf99bdd51171ae53b943c0ac3764bde96a36e7081"
+    }
+  }
+}

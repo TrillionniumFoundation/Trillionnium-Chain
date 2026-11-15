@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-pon-node",
+    "--features",
+    "pq-native-openssl",
+    "--lib",
+    "storage_service",
+    "--",
+    "--test-threads=1"
+  ],
+  "completed_at_utc": "2026-11-10T10:09:53.627441+00:00",
+  "elapsed_seconds": 298.2806949070655,
+  "exit_code": 0,
+  "failure": null,
+  "log_sha256": "aded61f479fa8df98163285b260d05938ce3283d785b0e5ecf311c4b688f39d0",
+  "name": "node-storage",
+  "started_at_utc": "2026-11-10T10:04:55.346767+00:00"
+}

@@ -1,0 +1,23 @@
+{
+  "schema": "TRNM-W1-FINAL-ARCHIVE-RECEIPTS1",
+  "complete_archive": {
+    "path": "/workspace/scratch/56818e4fba76/recovery/next-publication/w1-complete-final-20261028/w1-complete-raw-20261028.zip",
+    "bytes": 65349319,
+    "sha256": "5a888ab56f0a656ac26df5caf79a6c46c71b1e53110d189ca1a951591ddb5ac4",
+    "payload_members": 923,
+    "total_members": 925,
+    "uncompressed_payload_bytes": 80479963,
+    "every_payload_member_reopened_and_hash_verified": true
+  },
+  "runtime_archive": {
+    "path": "/workspace/scratch/56818e4fba76/recovery/next-publication/w1-complete-final-20261028/runtime-records.zip",
+    "bytes": 956616,
+    "sha256": "ebc8608217edfdb358f185199b16357594fe9d41f730f2bedb6f5309bd3ef260",
+    "payload_members": 493,
+    "total_members": 495,
+    "uncompressed_payload_bytes": 8202227,
+    "every_payload_member_reopened_and_hash_verified": true
+  },
+  "complete_archive_included_in_small_git_packet": false,
+  "reason": "The complete raw archive is delivered as an audit artifact; the small Git packet includes the final independently verifiable proof and all runtime records, with large intermediate proof assets kept in the separately hashed complete archive."
+}

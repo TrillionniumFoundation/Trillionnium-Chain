@@ -1,0 +1,22 @@
+[
+  {
+    "name": "actor",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "pr",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/784"
+    ],
+    "returncode": 0
+  }
+]

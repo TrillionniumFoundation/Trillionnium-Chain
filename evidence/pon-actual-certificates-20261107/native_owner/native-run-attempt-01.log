@@ -1,0 +1,4 @@
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/b9454e263603/chain_obligations/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 0.92s
+     Running `/workspace/scratch/b9454e263603/native_w1_target/debug/examples/native_owner_observation_v1 evidence/pon-actual-certificates-20261107/native_owner/actual_native_owner_run.json`
+{"native_execution_exercised":true,"native_runtime_attested":false,"recorded":"evidence/pon-actual-certificates-20261107/native_owner/actual_native_owner_run.json","six_successor_risk_qualified":false,"snapshots":11}

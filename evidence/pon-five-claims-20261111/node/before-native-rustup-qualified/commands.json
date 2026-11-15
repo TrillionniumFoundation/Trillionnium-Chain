@@ -1,0 +1,155 @@
+[
+  {
+    "label": "preflight-before-build",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "started_unix": 1794393569.244367,
+    "finished_unix": 1794393569.3594348,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 177,
+      "sha256": "7ba92de2e86e35bd8f486042978e0f3664c67111645b407ca022a311d6bdd436"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "rustc-version",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "--version"
+    ],
+    "started_unix": 1794393586.4264798,
+    "finished_unix": 1794393586.5915022,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 36,
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "cargo-version",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "--version"
+    ],
+    "started_unix": 1794393586.5924728,
+    "finished_unix": 1794393586.6252959,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "metadata",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "started_unix": 1794393586.6261816,
+    "finished_unix": 1794393587.1418989,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 854849,
+      "sha256": "b6f2b29e8400ee9354d325c942b3e0e55cb98ada69c18c2f5138ae8782e521e6"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "sqlite-qualification-build",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "build",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--release",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-sqlite-io-boundary",
+      "--message-format=json"
+    ],
+    "started_unix": 1794393587.148855,
+    "finished_unix": 1794393598.6446292,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 41389,
+      "sha256": "50b1cb96585e38f04a9ed7b2d33c3ce006b3704c81e6154fc5d3bc07f0f80c62"
+    },
+    "stderr": {
+      "bytes": 446,
+      "sha256": "cf8dc25b51d9dbe75e4c3f1918ae1d62c13545323c48db70707588492350f0ac"
+    }
+  },
+  {
+    "label": "build",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--release",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--no-run",
+      "--message-format=json"
+    ],
+    "started_unix": 1794393598.6465282,
+    "finished_unix": 1794394037.2741528,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 110188,
+      "sha256": "20c0dc72326f338ccb2e5032ccbc3a5a44170f23cb7f219a1d6a2707305a68ff"
+    },
+    "stderr": {
+      "bytes": 335,
+      "sha256": "a4ebea7062cf82c04899fbf39e9a8f1690da29496f42dc07e760e22dcaef555c"
+    }
+  },
+  {
+    "label": "native-probe",
+    "argv": [
+      "/home/qian-qi/work/chain-pon-submit-target-d6cb/release/deps/trnm_pon_node-b9510f5893fe9b62",
+      "--exact",
+      "ingress::submit_activation_history_tests::submit_future_ancestor_is_checked_after_full_work_before_m06",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "started_unix": 1794394037.7348635,
+    "finished_unix": 1794394038.0001655,
+    "exit_code": 101,
+    "stdout": {
+      "bytes": 367,
+      "sha256": "2527577ba1cfe0c137ddaeca377f27b1bc424e0d8014efa6dc00d13a3fc08520"
+    },
+    "stderr": {
+      "bytes": 418,
+      "sha256": "7c5b3b5b211d47f5b4e62f3d32754e412c6e467d939df3ab2e079932c0c48729"
+    }
+  }
+]

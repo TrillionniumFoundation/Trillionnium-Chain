@@ -1,0 +1,68 @@
+{
+  "status": "PASS-source-merge-only",
+  "ours_only_preserved": 12,
+  "upstream_only_preserved": 23,
+  "auto_merged_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "exact_corpus_pins": 346,
+  "work_security_jobs": [
+    "false-trace-reuse",
+    "legal-strategy",
+    "legal-factorial",
+    "fresh-challenge-service"
+  ],
+  "shell_scripts_syntax_checked": 39,
+  "native_build_or_cost_acceptance": false,
+  "python_tests": {
+    "ci-contract": {
+      "tests": 95,
+      "elapsed": "24.162s",
+      "status": "PASS",
+      "log": "/tmp/pon-integration-20261102-validation/ci-contract.log"
+    },
+    "pq-source-controls": {
+      "tests": 34,
+      "elapsed": "29.443s",
+      "status": "PASS",
+      "log": "/tmp/pon-integration-20261102-validation/pq-source-controls.log"
+    },
+    "reader-v1": {
+      "tests": 12,
+      "elapsed": "4.008s",
+      "status": "PASS",
+      "log": "/tmp/pon-integration-20261102-validation/reader-v1.log"
+    },
+    "reader-v2": {
+      "tests": 11,
+      "elapsed": "63.388s",
+      "status": "PASS",
+      "log": "/tmp/pon-integration-20261102-validation/reader-v2.log"
+    },
+    "reader-v3": {
+      "tests": 15,
+      "elapsed": "9.024s",
+      "status": "PASS",
+      "log": "/tmp/pon-integration-20261102-validation/reader-v3.log"
+    },
+    "runner": {
+      "tests": 49,
+      "elapsed": "3.678s",
+      "status": "PASS",
+      "log": "/tmp/pon-integration-20261102-validation/runner.log"
+    },
+    "source-integrity": {
+      "tests": 34,
+      "elapsed": "6.985s",
+      "status": "PASS",
+      "log": "/tmp/pon-integration-20261102-validation/source-integrity.log"
+    }
+  },
+  "python_test_total": 250,
+  "original_head": "d78b67d7bd2b1e194e7679c46dc77ac1ffed286c",
+  "merge_head": "93a70b7939413ac31717b1198a4569ec5248274f",
+  "published_commit_reported_by_parent": "2b250859e7c07088e6c3c01f75006372c684de61",
+  "development_and_staged_preflight": "PASS",
+  "whitespace_check": "Source/config/docs PASS; 3 byte-identical upstream raw logs retain trailing blank lines"
+}

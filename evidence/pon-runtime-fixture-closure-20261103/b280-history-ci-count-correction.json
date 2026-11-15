@@ -1,0 +1,71 @@
+{
+  "schema": "trnm-history-exact-ci-count-correction-v1",
+  "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+  "workflow": ".github/workflows/pon-w1-work-security.yml",
+  "before_git_blob": "ab04c80c6c05403e4abfcb261541755f8ba9ca2a",
+  "after_git_blob": "b19f39c6876b29cea5aaefe222c3fbd6bb707c52",
+  "retained_native_log_sha256": "ec62d069cc413150611be56713cb54ac9c10d5927645242e3e4d76ec8a9cfb7d",
+  "native_summary_rows": [
+    [
+      "25",
+      "1"
+    ]
+  ],
+  "old_expected": {
+    "factorial-kernel-tests": [
+      6,
+      0
+    ],
+    "factorial-example-tests": [
+      6,
+      0
+    ],
+    "header-binding-tests": [
+      1,
+      0
+    ],
+    "history-w1-tests": [
+      5,
+      0
+    ],
+    "history-import-tests": [
+      22,
+      1
+    ],
+    "cpu-completion-tests": [
+      11,
+      0
+    ]
+  },
+  "corrected_expected": {
+    "factorial-kernel-tests": [
+      6,
+      0
+    ],
+    "factorial-example-tests": [
+      6,
+      0
+    ],
+    "header-binding-tests": [
+      1,
+      0
+    ],
+    "history-w1-tests": [
+      5,
+      0
+    ],
+    "history-import-tests": [
+      25,
+      1
+    ],
+    "cpu-completion-tests": [
+      11,
+      0
+    ]
+  },
+  "old_reader_rejects_actual_success": true,
+  "corrected_reader_accepts_actual_success": true,
+  "other_readers_commands_and_predicates_unchanged": true,
+  "native_profile": "original local test profile; this readback is not a hosted release execution",
+  "hosted_native_verdict": null
+}

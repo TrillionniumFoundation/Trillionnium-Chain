@@ -1,0 +1,124 @@
+{
+  "fixed_p3_query_expression": {
+    "exact_value": {
+      "denominator": "340282366920938463463374607431768211456000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "numerator": "19046433850680128332530303856067761429965233087666857999034972585538175456751542638106112774388034082229278268690427125969777427498724998956888705911330936263715215257546009225436031998679179546550349320064128001"
+    },
+    "floating_point_used_for_decisions": false,
+    "formula": "(2001/4000)^64",
+    "negative_log2_expression_approx": 63.95384529640614
+  },
+  "formula": "A * alpha^ell <= 2^(-s)",
+  "hypothetical_case": null,
+  "multiplier_provenance": "explicit hypothetical factors; not adopted theorem/lifetime budgets",
+  "p3_fixed_m_hypothetical_rows": [
+    {
+      "hypothetical_multiplier": {
+        "denominator": "1",
+        "numerator": "1"
+      },
+      "hypothetical_multiplier_power_of_two_exponent": 0,
+      "least_queries_for_this_expression": 129,
+      "strict_johnson_necessary_queries_only": 129
+    },
+    {
+      "hypothetical_multiplier": {
+        "denominator": "1",
+        "numerator": "65536"
+      },
+      "hypothetical_multiplier_power_of_two_exponent": 16,
+      "least_queries_for_this_expression": 145,
+      "strict_johnson_necessary_queries_only": 145
+    },
+    {
+      "hypothetical_multiplier": {
+        "denominator": "1",
+        "numerator": "4294967296"
+      },
+      "hypothetical_multiplier_power_of_two_exponent": 32,
+      "least_queries_for_this_expression": 161,
+      "strict_johnson_necessary_queries_only": 161
+    },
+    {
+      "hypothetical_multiplier": {
+        "denominator": "1",
+        "numerator": "18446744073709551616"
+      },
+      "hypothetical_multiplier_power_of_two_exponent": 64,
+      "least_queries_for_this_expression": 193,
+      "strict_johnson_necessary_queries_only": 193
+    },
+    {
+      "hypothetical_multiplier": {
+        "denominator": "1",
+        "numerator": "340282366920938463463374607431768211456"
+      },
+      "hypothetical_multiplier_power_of_two_exponent": 128,
+      "least_queries_for_this_expression": 257,
+      "strict_johnson_necessary_queries_only": 257
+    },
+    {
+      "hypothetical_multiplier": {
+        "denominator": "1",
+        "numerator": "115792089237316195423570985008687907853269984665640564039457584007913129639936"
+      },
+      "hypothetical_multiplier_power_of_two_exponent": 256,
+      "least_queries_for_this_expression": 385,
+      "strict_johnson_necessary_queries_only": 385
+    }
+  ],
+  "profile": {
+    "alpha": {
+      "denominator": "4000",
+      "numerator": "2001"
+    },
+    "application_revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+    "base_field": "Goldilocks",
+    "estimator_source_revision": "a21e3ed42905040ad49c519e402f018381c12d0c",
+    "extension_degree": 2,
+    "fixed_ldr_m": 1000,
+    "folding_factor": 2,
+    "identity": "external-p3-research-cc836dfc13ef",
+    "inverse_rate": 4,
+    "p3_security_archive_independently_verified": false,
+    "p3_version": "0.8.0",
+    "queries": 64,
+    "query_pow": 0,
+    "risc0_parameter_transfer_qualified": false,
+    "terminal_extension_coefficients": 1
+  },
+  "qualification": {
+    "complete_noninteractive_security_bits": null,
+    "end_to_end_qualified": false,
+    "lifecycle_qualified": false,
+    "lifecycle_security_bits": null,
+    "noninteractive_qualified": false,
+    "pq128_qualified": false,
+    "quantum_qualified": false,
+    "quantum_security_bits": null,
+    "recursive_qualified": false,
+    "recursive_security_bits": null,
+    "theorem_11_3_mapping_qualified": false,
+    "theorem_6_10_mapping_qualified": false,
+    "unconditional_project_security_bits": null
+  },
+  "resource_limits": {
+    "kind": "evaluator bounds; refusal is not a cryptographic result",
+    "maximum_comparison_operand_bits": 262144,
+    "maximum_input_integer_bits": 1024,
+    "maximum_queries": 16384,
+    "maximum_target_exponent": 4096
+  },
+  "schema": "TRNM-W1-QUERY-EXPRESSION-FEASIBILITY1",
+  "scope": "one conditional query expression, not actual failure or attack cost",
+  "status": "arithmetic_only",
+  "strict_johnson_condition": {
+    "inequality_for_positive_queries": "A*alpha^ell > 2^(a-ell)",
+    "necessary_queries_for_nontrivial_target": "ell >= s+a+1",
+    "premises": "rho=1/4; alpha>1/2; A=2^a; s,a nonnegative integers",
+    "risc0_radix16_theorem_mapping_qualified": false,
+    "sufficient_for_unspecified_alpha": false,
+    "trivial_s_and_a_zero_queries": 0
+  },
+  "target_expression_exponent_s": 128
+}

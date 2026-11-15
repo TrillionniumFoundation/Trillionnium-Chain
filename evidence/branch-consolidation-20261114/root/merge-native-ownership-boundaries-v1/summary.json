@@ -1,0 +1,133 @@
+{
+  "prior": "43ca94da9df03740af9d668e200e5189b0f5ea0a",
+  "target": "687141e74aca9249ac8bec79d2b4116999683cae",
+  "base": "3e9fc12e724a40d1d6c880706a9c2bd3eccb0eb5",
+  "head": "1897d0fb17f167c33f2e30c6e154ec43a1a5753c",
+  "tree": "aa10c40f1ad352d1a3d3f13edfa48d1734d3a2a4",
+  "source_blobs": {
+    "trillionnium/crates/trnm-data-availability/src/cell/archive.rs": "64bc789f33737d2ab14f476bc473b2aad3a477ef",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention.rs": "d9350929dbebd5063f029f6a20a1fb35dc8ac14c",
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs": "c70b9948f48d8349f63420b6c82d70ef9cf2afa6",
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs": "8863dcf84a06a1157b50cd38dfe7faaf02327a72",
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs": "77deace0b5f56d960ff3314909254a18bc4d100b",
+    "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs": "d89ad26b3c7740b024a1bbdae841efb33eb40336",
+    "trillionnium/crates/trnm-pon-node/src/store/pinned_account_query.rs": "f86f8083eb74b05426ef47835c2450b826739324",
+    "trillionnium/crates/trnm-pon-node/src/store/pinned_account_query_tests.rs": "edb28486f15b5459d55b3f99183175eb3f489a5e",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs": "8629e539f3ec49d829689baba02fb51550b1e301",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/release.rs": "26583103c8e8bdd9037d66f90448ab5715c7dd9f",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs": "0d617d77d5ccfc79cad727e695da1aaad4aebeee",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/successor_owner_tests.rs": "55a3aee647c2de65807c1ce9f60a32094eefd21a",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs": "352a26136211120b82bebcc0c7184947d68ad560",
+    "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs": "3ec5b0f4e2a52df5f240ee4b8ef7ab3fb32e348e",
+    "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs": "38a76c3924057c61e7d7b85de3be1418cd37715e",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e"
+  },
+  "independent_store_composition": true,
+  "workflow_pin": ".github/workflows/pon-recent-batch-acceptance.yml",
+  "paths": [
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/test_pq_research_integration.py",
+    "trillionnium/crates/trnm-data-availability/src/cell/archive.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/pinned_account_query.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/pinned_account_query_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/release.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/successor_owner_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs",
+    "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+    "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs"
+  ],
+  "steps": [
+    {
+      "label": "preflight-w1",
+      "exit": 0,
+      "seconds": 0.048,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "ff-w1-clock-controls",
+      "exit": 0,
+      "seconds": 0.092,
+      "sha256": "a668b719ce1fc800f2fb0072549ee8b4e05c12675d40ca0f603f14eb10520fb6"
+    },
+    {
+      "label": "preflight-native",
+      "exit": 0,
+      "seconds": 0.046,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "merge-native-boundaries",
+      "exit": 0,
+      "seconds": 0.143,
+      "sha256": "b81d966bca1563c65c70543be0a5fef45f18f5555941bf4ceeb0d067e6bb3777"
+    },
+    {
+      "label": "inventory",
+      "exit": 0,
+      "seconds": 0.044,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "label": "source-guards",
+      "exit": 0,
+      "seconds": 5.165,
+      "sha256": "7b6aa459682d9346efac4fd096fb27b142022f0a94d3750e7412ee1acf662789"
+    },
+    {
+      "label": "corpus",
+      "exit": 0,
+      "seconds": 0.727,
+      "sha256": "cb230927bbdddca79b5a279c29d08de9fe2275f9821b3d494c057b566a3b6691"
+    },
+    {
+      "label": "ci-contract",
+      "exit": 0,
+      "seconds": 0.07,
+      "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+    },
+    {
+      "label": "fmt",
+      "exit": 0,
+      "seconds": 5.368,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "diff",
+      "exit": 0,
+      "seconds": 0.055,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "precommit",
+      "exit": 0,
+      "seconds": 0.05,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "stage",
+      "exit": 0,
+      "seconds": 0.058,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "commit",
+      "exit": 0,
+      "seconds": 0.066,
+      "sha256": "f212904ebc5239523f9be1665046cd832f6e088d1bdfc4bd0c290ce6f8503967"
+    }
+  ],
+  "linux_native_controls": "pending exact-head combined run",
+  "original_fixed_budget_campaign": "not run locally; hosted CI only"
+}

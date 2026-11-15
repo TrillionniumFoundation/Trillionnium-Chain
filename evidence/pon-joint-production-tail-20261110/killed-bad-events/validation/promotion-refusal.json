@@ -1,0 +1,15 @@
+{
+  "command": [
+    "python3",
+    "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+    "--require-qualified"
+  ],
+  "exit_code": 3,
+  "expected_exit_code": 3,
+  "source_commit": "85905b41943cd872fbaedbcfe19ea753839847ef",
+  "source_tree": "949f5972d2b2d766cd2f229c680a83e66412b521",
+  "elapsed_seconds": 0.06818643099904875,
+  "stdout_sha256": "f55c8d1b7ebbe4b512a35af8ccd619a52b818e848167e77762ea023504592fc5",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "native_execution": false
+}

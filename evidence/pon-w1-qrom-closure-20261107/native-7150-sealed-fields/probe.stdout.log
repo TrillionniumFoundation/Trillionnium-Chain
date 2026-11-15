@@ -1,0 +1,10 @@
+{"kind":"profile","memfd_flags":11,"required_seals":47,"pause_ms_between_operations":5}
+{"kind":"snapshot","stage":"validated","device":1,"inode":5754175,"size":28,"uid":1000,"gid":1000,"mode":33024,"mtime":1794061309,"mtime_nsec":810190859,"ctime":1794061309,"ctime_nsec":810190859,"seals":47,"bytes_equal":true}
+{"kind":"operation","name":"write_at","ok":false,"errno":1}
+{"kind":"snapshot","stage":"after_write_at","device":1,"inode":5754175,"size":28,"uid":1000,"gid":1000,"mode":33024,"mtime":1794061309,"mtime_nsec":815190742,"ctime":1794061309,"ctime_nsec":815190742,"seals":47,"bytes_equal":true}
+{"kind":"operation","name":"shrink","ok":false,"errno":1}
+{"kind":"snapshot","stage":"after_shrink","device":1,"inode":5754175,"size":28,"uid":1000,"gid":1000,"mode":33024,"mtime":1794061309,"mtime_nsec":815190742,"ctime":1794061309,"ctime_nsec":815190742,"seals":47,"bytes_equal":true}
+{"kind":"operation","name":"grow","ok":false,"errno":1}
+{"kind":"snapshot","stage":"after_grow","device":1,"inode":5754175,"size":28,"uid":1000,"gid":1000,"mode":33024,"mtime":1794061309,"mtime_nsec":815190742,"ctime":1794061309,"ctime_nsec":815190742,"seals":47,"bytes_equal":true}
+{"kind":"operation","name":"chmod_add_exec","ok":false,"errno":1}
+{"kind":"snapshot","stage":"after_chmod_add_exec","device":1,"inode":5754175,"size":28,"uid":1000,"gid":1000,"mode":33024,"mtime":1794061309,"mtime_nsec":815190742,"ctime":1794061309,"ctime_nsec":815190742,"seals":47,"bytes_equal":true}

@@ -1,0 +1,98 @@
+{
+  "actual_lifetime_failure_bound": null,
+  "completed_checks": [
+    {
+      "exit_code": 0,
+      "label": "ci-contract-tests",
+      "passed": true,
+      "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+      "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310"
+    },
+    {
+      "exit_code": 0,
+      "label": "ci-contract",
+      "passed": true,
+      "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+      "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310"
+    },
+    {
+      "exit_code": 0,
+      "label": "dynamic",
+      "passed": true,
+      "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+      "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310"
+    },
+    {
+      "exit_code": 0,
+      "label": "new-tail",
+      "passed": true,
+      "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+      "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310"
+    },
+    {
+      "exit_code": 0,
+      "label": "qualification-check",
+      "passed": true,
+      "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+      "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310"
+    },
+    {
+      "exit_code": 3,
+      "label": "qualification-refusal",
+      "passed": true,
+      "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+      "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310"
+    },
+    {
+      "exit_code": 0,
+      "label": "qualification-tests",
+      "passed": true,
+      "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+      "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310"
+    },
+    {
+      "exit_code": 0,
+      "label": "repository",
+      "passed": true,
+      "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+      "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310"
+    },
+    {
+      "exit_code": 0,
+      "label": "source-before",
+      "passed": true,
+      "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+      "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310"
+    },
+    {
+      "exit_code": 0,
+      "label": "source-final",
+      "passed": true,
+      "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+      "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310"
+    },
+    {
+      "exit_code": 0,
+      "label": "source-integrity-tests",
+      "passed": true,
+      "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+      "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310"
+    }
+  ],
+  "native_result_for_lost_session": "UNKNOWN",
+  "native_six_successor_risk_bound": null,
+  "new_source_blobs_are_original_lost_blobs": false,
+  "production_activation": false,
+  "python_methods": {
+    "ci-contract-tests": 167,
+    "dynamic": 28,
+    "new-tail": 27,
+    "qualification-tests": 34,
+    "source-integrity-tests": 43
+  },
+  "python_total": 299,
+  "qualification": "HOLD_NO_GO",
+  "rust_and_native_current_candidate": "PENDING",
+  "schema": "joint-tail-fresh-validation-v1",
+  "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa"
+}

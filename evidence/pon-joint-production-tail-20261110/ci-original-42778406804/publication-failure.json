@@ -1,0 +1,57 @@
+{
+  "job_id": "1a1c4ff7a56-cf39-574",
+  "request": {
+    "host": "mac",
+    "executable": "/usr/bin/python3",
+    "args": [
+      "-c",
+      "from pathlib import Path\nimport hashlib,tarfile,runpy,json\nbundle=Path('/Users/qianqi/work/chain-joint-original-ci-42778406804-20261110-8e76.tar.gz')\nraw=bundle.read_bytes();assert hashlib.sha256(raw).hexdigest()=='41027dc525e4d0fab2452f94c22346d8a91d05ae30d8acbedc67af6653d3d1c4'\nfolder=Path('/Users/qianqi/work/chain-joint-original-ci-publication-20261110-8e76');folder.mkdir(mode=0o700,exist_ok=False)\nwith tarfile.open(bundle,'r:gz') as t:\n assert sorted(t.getnames())==['payload.gz','publish_mac.py']\n for m in t.getmembers():\n  assert m.isfile();p=folder/m.name\n  with p.open('xb') as f:f.write(t.extractfile(m).read())\n  p.chmod(0o600)\nrunpy.run_path(str(folder/'publish_mac.py'),run_name='__main__')\n"
+    ],
+    "idempotency_key": "joint-original-ci-publication-42778406804-20261110-8e76-v1",
+    "timeout_seconds": 900
+  },
+  "terminal": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"at_unix_ms\": 1794306699400,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 1,\n  \"job_id\": \"1a1c4ff7a56-cf39-574\",\n  \"launch_nonce\": \"b96d5d585b5a1a481c0a957bc566e176\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 1354,\n      \"stored\": 1354\n    },\n    \"stdout\": {\n      \"seen\": 3320,\n      \"stored\": 3320\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"failed\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "error_receipt": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"chunk_sha256\":\"ed39fb79592d626cc6ff256aea85cec06d9c73c7460ef22d2830cd2bddf5d240\",\"data_base64\":\"UG9zdCAiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9UcmlsbGlvbm5pdW1Gb3VuZGF0aW9uL1RyaWxsaW9ubml1bS1DaGFpbi9naXQvYmxvYnMiOiBkaWFsIHRjcCAxNDAuODIuMTEyLjY6NDQzOiBpL28gdGltZW91dAo=\",\"eof\":true,\"next_offset\":128,\"offset\":0,\"path\":\"/Users/qianqi/work/chain-joint-original-ci-publication-20261110-8e76/records/020-blob-13.stderr\",\"size\":128,\"version\":\"16777233:599326760:128:1794306699355222684:1794306699355222684\"}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "failed_blob_readback": {
+    "content": [
+      {
+        "type": "text",
+        "text": "GitHub API error 404: {\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/git/blobs#get-a-blob\",\"status\":\"404\"}"
+      }
+    ],
+    "structuredContent": {
+      "error": "GitHub API error 404: {\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/git/blobs#get-a-blob\",\"status\":\"404\"}",
+      "error_code": "NOT_FOUND",
+      "error_data": {
+        "message": "Not Found",
+        "documentation_url": "https://docs.github.com/rest/git/blobs#get-a-blob",
+        "status": "404"
+      }
+    },
+    "isError": true
+  },
+  "branch_before_fallback": "89030fceebbb0e02261bfe5eb1ec64313ab842d3",
+  "local_checked_commit": "397487a5bca965acc178546af2ddf7a3899eac02",
+  "fallback_identity": {
+    "login": "ProfHepta",
+    "id": 102159240
+  }
+}

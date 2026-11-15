@@ -1,0 +1,37 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "/home/qian-qi/work/chain-hepta-native-1f3ba4601505/tools/bin/just",
+        "fix",
+        "-p",
+        "codex-hepta-agentd",
+        "--locked",
+        "--offline"
+      ],
+      "exit_code": 0,
+      "label": "fix",
+      "log_sha256": "c882f9a07662f5f97d4b7a181765b706d0a8cee27a39ec3ae0fc3f219282b984"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/work/chain-hepta-native-1f3ba4601505/tools/bin/just",
+        "fmt",
+        "--base",
+        "0fdb2900e319eb0e162390e41b9589b6f755bc35"
+      ],
+      "exit_code": 1,
+      "label": "fmt",
+      "log_sha256": "333cf0be4edabd72ac94fab3bb2cf650e7109923f26f169846f989bcea211fbf"
+    }
+  ],
+  "end_unix_ns": 1794167457183181447,
+  "error": "AssertionError('fmt failed')",
+  "git_status": " M codex-rs/hepta-agentd/src/neuron_generation_real_learning_process.rs\n M codex-rs/hepta-agentd/src/neuron_generation_real_learning_tests.rs\n M codex-rs/hepta-agentd/src/neuron_generation_real_learning_trust.rs\n",
+  "result": "FAIL_MAINTENANCE",
+  "schema": "hepta-real-native-maintenance-v1",
+  "start_unix_ns": 1794167421359503619,
+  "tested_source": "27849cbdcfc0d4afc69764d6c1742af22c41c293",
+  "tests_rerun_after_maintenance": false,
+  "traceback": "Traceback (most recent call last):\n  File \"<string>\", line 23, in <module>\n    assert p.returncode==0,label+\" failed\"\n           ^^^^^^^^^^^^^^^\nAssertionError: fmt failed\n"
+}

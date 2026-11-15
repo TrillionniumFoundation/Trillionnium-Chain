@@ -1,0 +1,39 @@
+{
+  "id": "pq-cli-retained-tests",
+  "argv": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--all-features",
+    "--test",
+    "pq_application_local_cli",
+    "--test",
+    "pq_tls_cli",
+    "--test",
+    "pq_tls_witness_cli",
+    "--",
+    "--test-threads=1"
+  ],
+  "returncode": 101,
+  "launch_error": null,
+  "elapsed_seconds": 200.6301769239999,
+  "finished_utc": "2026-11-11T01:53:09.382947+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "911de265e4de1873f7c70b37d920c5575a96e400c669df41f447a06bc4910241",
+  "pass": false,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 158.34263199999998,
+    "system_cpu_seconds": 27.533638999999994,
+    "maximum_rss_kib": 1811924,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

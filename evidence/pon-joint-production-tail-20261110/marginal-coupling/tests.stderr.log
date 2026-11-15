@@ -1,0 +1,12 @@
+test_cs_can_refuse_while_sharp_bound_passes (__main__.CouplingTests.test_cs_can_refuse_while_sharp_bound_passes) ... ok
+test_exact_rationals_and_mass_required (__main__.CouplingTests.test_exact_rationals_and_mass_required) ... ok
+test_independent_exhaustive_assignment (__main__.CouplingTests.test_independent_exhaustive_assignment) ... ok
+test_nonuniform_transportation_independent_2x2 (__main__.CouplingTests.test_nonuniform_transportation_independent_2x2) ... ok
+test_plans_preserve_both_marginals (__main__.CouplingTests.test_plans_preserve_both_marginals) ... ok
+test_product_of_means_can_falsely_pass (__main__.CouplingTests.test_product_of_means_can_falsely_pass) ... ok
+test_unknown_native_claims_remain_unknown (__main__.CouplingTests.test_unknown_native_claims_remain_unknown) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.005s
+
+OK

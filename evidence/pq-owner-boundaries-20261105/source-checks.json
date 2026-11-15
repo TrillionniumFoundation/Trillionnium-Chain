@@ -1,0 +1,42 @@
+{
+  "scope": "read-only source/package/link gates; not native deployment acceptance",
+  "source_commit": "14fcbede085b414a9621aef3f288d2b1ca1839ae",
+  "source_tree": "64b1a7e4072eddac05604d4bb4b1ef713e10d874",
+  "working_tree_documentation_edits": true,
+  "project_preflight": "PASS",
+  "source_corpus": {
+    "contract_result": "PASS",
+    "overall_status": "HOLD_NO_GO",
+    "source_pins": 472,
+    "upstream_heads": 6,
+    "cryptographic_acceptance": false
+  },
+  "distributed_source_inventory": "PASS",
+  "repository_check": {
+    "result": "PASS",
+    "workspace_packages": 26,
+    "rust_files": 1137,
+    "normal_dependency_edges": 25,
+    "local_links": 2927,
+    "runtime_implemented": false,
+    "activation": false
+  },
+  "source_negative_suite": {
+    "actual_source_commit": "36f5d18a93834792025326cfb178415d78103e42",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_pq_research_integration.py",
+      "-v"
+    ],
+    "tests_passed": 35,
+    "tests_failed": 0,
+    "elapsed_seconds": 34.379,
+    "scope": "earlier candidate corpus integrity controls; not relabelled as execution on later incoming hotpath changes"
+  }
+}

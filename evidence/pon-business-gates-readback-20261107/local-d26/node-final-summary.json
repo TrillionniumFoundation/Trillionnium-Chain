@@ -1,0 +1,92 @@
+{
+  "schema": "d26-node-full-native-result-v1",
+  "observed_unix": 1794066152.955848,
+  "commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+  "top_level_summary": "test result: FAILED. 1161 passed; 3 failed; 31 ignored; 0 measured; 0 filtered out; finished in 5290.07s",
+  "command_exit_code": 101,
+  "elapsed_including_pre_post_source_and_build_seconds": 5507.464713773,
+  "source_before_equals_after": true,
+  "source_identity": {
+    "base": null,
+    "candidate": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+    "tested_tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1031001045,
+    "tracked_entries": 11017,
+    "tracked_worktree_verified": true
+  },
+  "failures": [
+    {
+      "test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "panics": [
+        {
+          "line_in_section": 5,
+          "context": [
+            "{\"admitted_parent\":\"0d8bc316c037050a8ae9a58ba53c84970c48792f8bf471999ee5644672b1c6a2\",\"all_honest_service_qualified\":false,\"authenticated_backend\":false,\"budget_depletion_demonstrated\":false,\"complete_key_utf8_and_canonical_value_bytes\":8625548,\"early_capacity_observed_lower_bound_bytes\":8391103,\"genesis\":\"46f490f617a7aae11650bf20b790943699528de11341fd730b06b2017e24283a\",\"genesis_fixture\":\"2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth\",\"genesis_state_root\":\"afd8ca7ce215c51c620ca9d5823e9d7b3e4ccc47231ada4ef102366c15e66159\",\"host_qualified\":false,\"native_result\":{\"Err\":\"PUBLIC_MUTATION_CPU_BUDGET\"},\"original_cpu_receipt\":{\"accounting_unavailable\":false,\"finished_workers\":2,\"known_workers\":2,\"live_paid_cpu_ns\":2683271279,\"live_refused\":true,\"owner_cpu_ns\":2682248068,\"residual_cpu_ns\":8555,\"schema\":\"service-owner-scoped-thread-cpu-settlement-v1\",\"scoped_worker_cpu_ns\":1031766,\"spawned_workers\":2,\"started_workers\":2,\"total_cpu_ns\":2683279834},\"schema\":\"native-large-parent-schedule-parity-v1\"}",
+            "",
+            "thread 'store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner' (530793) panicked at crates/trnm-pon-node/src/store/detached_admission/tests.rs:877:31:",
+            "called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }",
+            "FAILED"
+          ]
+        }
+      ],
+      "section_sha256": "c6a8d0ad1869a52ca87a285922b02c0eb80d8ba9009220712ebf9128d1a56be3"
+    },
+    {
+      "test": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart",
+      "panics": [
+        {
+          "line_in_section": 3,
+          "context": [
+            "test store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart ... TRNM_PQ_FIXTURE_CLEANUP {\"child_cleanup_error\":null,\"child_exit_observed\":true,\"child_exit_success\":true,\"cleanup_complete\":true,\"primary_error_preserved\":true,\"worker_cleanup_error\":null,\"worker_join_observed\":true}",
+            "",
+            "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart' (620145) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:637:6:",
+            "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection reset by peer (os error 104)\", source: Some(Os { code: 104, kind: ConnectionReset, message: \"Connection reset by peer\" }), request_history_budget: false }",
+            "FAILED"
+          ]
+        }
+      ],
+      "section_sha256": "7aa8d9852d00803f992035d80585bfa961699af31145e11e30fb00cd107a3d44"
+    },
+    {
+      "test": "store::pq_rollback_witness::tests::cached_permission_is_rechecked_after_actual_native_tcp_success",
+      "panics": [
+        {
+          "line_in_section": 2,
+          "context": [
+            "test store::pq_rollback_witness::tests::cached_permission_is_rechecked_after_actual_native_tcp_success ... ",
+            "thread 'store::pq_rollback_witness::tests::cached_permission_is_rechecked_after_actual_native_tcp_success' (621937) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs:857:14:",
+            "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Resource temporarily unavailable (os error 11)\", source: Some(Os { code: 11, kind: WouldBlock, message: \"Resource temporarily unavailable\" }), request_history_budget: false }",
+            "FAILED"
+          ]
+        }
+      ],
+      "section_sha256": "46e08ffa89e3875ccb430031683034a1363fc5482bbad036fd4c92df96084ef7"
+    }
+  ],
+  "executed_binary": {
+    "source_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+    "source_tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+    "actual_cargo_running_path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/trnm_pon_node-3d075b189916f208",
+    "bytes": 78064248,
+    "sha256": "b8e65265f02c784f0ee54cf4becdf9d379cdb86b0b9d270e7c8ea057aa2810bf",
+    "preserved_path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/failed-node-test-binary",
+    "preserved_sha256": "b8e65265f02c784f0ee54cf4becdf9d379cdb86b0b9d270e7c8ea057aa2810bf",
+    "source_log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/records/node-lib-allfeatures.log",
+    "source_log_sha256": "15b4a44a2dcbdcaed3c2a8c07fabb884de5577d9daac5b039505b8d1ecb202d5"
+  },
+  "original_record": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/records/node-lib-allfeatures.json",
+  "original_record_sha256": "e6a0f2b05f893a5c1669cb5cc452fdcb3cb050b3c7397a677caebeb772b85ad0",
+  "qualification": {
+    "original_history_business_gate": false,
+    "original_attack_pressure_gate": false,
+    "release": false,
+    "production_activation": false
+  },
+  "result": "FAILED"
+}

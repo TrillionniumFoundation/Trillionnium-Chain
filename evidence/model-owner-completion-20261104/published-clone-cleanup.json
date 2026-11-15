@@ -1,0 +1,12 @@
+{
+  "schema": "model-owner-published-clone-cleanup-v1",
+  "reason": "Temporary complete clone no longer needed after exact intent publication and remote-ref verification; source, intent and prior draft remain retained in GitHub and evidence.",
+  "removed_worktree": "/workspace/scratch/f4976366a32a/hosted-source-complete",
+  "removed_task_owned_git_directory": "/dev/shm/trnm-model-owner-f4976366a32a-complete-git",
+  "source_commit": "f388f46d9df150a3599b9d961b48918b3ff1fb48",
+  "published_intent": "6bdaf9598d72c118798eb51a03db2e1c0e7c8507",
+  "registration_preserved": "/workspace/scratch/f4976366a32a/hosted-original-authority/published-registration.json",
+  "authority_preserved": "/workspace/scratch/f4976366a32a/hosted-original-authority/pilot.sqlite3",
+  "before_overlay_physical_free": 595873792,
+  "after_overlay_physical_free": 1569472512
+}

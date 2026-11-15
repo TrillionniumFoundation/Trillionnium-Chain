@@ -1,0 +1,177 @@
+[
+  {
+    "name": "final-source-before",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0",
+      "--output",
+      "/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-validation/source-before.json"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 391.6044144940097,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0",
+    "source_tree": "e881dd7cf318a562b09de38ff7774a508724fa18",
+    "test_threads": 1
+  },
+  {
+    "name": "final-metadata",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "metadata",
+      "--offline",
+      "--locked",
+      "--format-version",
+      "1",
+      "--manifest-path",
+      "trillionnium/Cargo.toml"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 0.3870140970684588,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0",
+    "source_tree": "e881dd7cf318a562b09de38ff7774a508724fa18",
+    "test_threads": 1
+  },
+  {
+    "name": "native-run-03",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "daa_joint_consensus",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 218.63357924507,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0",
+    "source_tree": "e881dd7cf318a562b09de38ff7774a508724fa18",
+    "test_threads": 1,
+    "native_test_sha256": "7b18ed2243d23c732bcac7be9f6085ee1339fc43453f7f243cb088d8f6be34ac"
+  },
+  {
+    "name": "final-native-retained",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "daa_adversarial_schedule",
+      "--test",
+      "native_node",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 101,
+    "wall_seconds": 298.3421065080911,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0",
+    "source_tree": "e881dd7cf318a562b09de38ff7774a508724fa18",
+    "test_threads": 1
+  },
+  {
+    "name": "final-legacy-reorg",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::legacy_reorg_root_tests::",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 361.462939752033,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0",
+    "source_tree": "e881dd7cf318a562b09de38ff7774a508724fa18",
+    "test_threads": 1
+  },
+  {
+    "name": "final-reorg-readback",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::reorg_readback_tests::",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 33.89049491495825,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0",
+    "source_tree": "e881dd7cf318a562b09de38ff7774a508724fa18",
+    "test_threads": 1
+  },
+  {
+    "name": "final-consensus-unit",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "consensus::tests",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 0.24031938309781253,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0",
+    "source_tree": "e881dd7cf318a562b09de38ff7774a508724fa18",
+    "test_threads": 1
+  },
+  {
+    "name": "final-source-after-native",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0",
+      "--output",
+      "/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-validation/source-after-native.json"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 25.09911215887405,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0",
+    "source_tree": "e881dd7cf318a562b09de38ff7774a508724fa18",
+    "test_threads": 1
+  }
+]

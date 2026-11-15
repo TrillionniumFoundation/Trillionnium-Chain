@@ -1,0 +1,51 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell_discovery-886084e361c47f39",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "child_reaped": true,
+  "cwd": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability",
+  "dispatch_object": {
+    "bytes": 1051256,
+    "device": 2050,
+    "inode": 52884486,
+    "sha256": "ab564447b6ae157faf1fbe17fded801c0c897264c2441f0aa877f79ab220e8da"
+  },
+  "dispatch_object_after_sha256": "ab564447b6ae157faf1fbe17fded801c0c897264c2441f0aa877f79ab220e8da",
+  "dispatch_object_stable": true,
+  "elapsed_ns": 14128303,
+  "exit_code": 0,
+  "label": "12-trnm-cell-discovery-native",
+  "native_observation": {
+    "bytes": 1051256,
+    "device": 2050,
+    "exe_link": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell_discovery-886084e361c47f39",
+    "executable_opened_monotonic_ns": 1472178504906351,
+    "hash_finished_monotonic_ns": 1472178509273930,
+    "inode": 52884486,
+    "observation_started_monotonic_ns": 1472178504839497,
+    "process": {
+      "parent_pid": 68035,
+      "pid": 91829,
+      "start_ticks": 147217850
+    },
+    "process_binding_finished_monotonic_ns": 1472178504937639,
+    "sha256": "ab564447b6ae157faf1fbe17fded801c0c897264c2441f0aa877f79ab220e8da",
+    "status": "OBSERVED"
+  },
+  "owned_pid": 91829,
+  "performance_measurement": false,
+  "started_unix_ns": 1794394512507219071,
+  "status": "command_succeeded",
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/12-trnm-cell-discovery-native.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 113,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/12-trnm-cell-discovery-native.stdout.log",
+    "sha256": "df166913f47ff1f04202cae9b31df67ed272d692d99a0023a8117dc3029100dd"
+  }
+}

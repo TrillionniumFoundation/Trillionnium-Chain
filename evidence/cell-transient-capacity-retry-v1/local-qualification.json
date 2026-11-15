@@ -1,0 +1,360 @@
+{
+  "schema": "trnm-cell-transient-capacity-retry-qualification-v1",
+  "native_base_commit": "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251",
+  "real_tcp_regressions_before_repair": {
+    "passed": 0,
+    "failed": 2
+  },
+  "native_library_after_repair": {
+    "passed": 141,
+    "failed": 0
+  },
+  "native_strict_clippy": true,
+  "source_git_blobs": {
+    "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "d80e068ea90d46f531a2afaaa596d9d561c6f46f",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs": "0ca154e6cf0648324ad0b46dd07f774234170c86",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs": "735c1c1d7c3f16de77acf8b5f9e3f79da769574e",
+    "trillionnium/crates/trnm-data-availability/src/cell/store.rs": "7c83e46c81640f078607e94939331ff320dc601a",
+    "trillionnium/Cargo.lock": "5c1034aee0ccb777d020e244e94ff1b0981913ac",
+    "scripts/run_smollm_cell_replica_research.py": "6e0cd1935ec88983cab160bd9b6e7628c7332b7e"
+  },
+  "original_optimized_failure": "../smollm-cell-replica-research-v1/failures/optimized-original",
+  "retained_replay_files": {
+    "optimized-replay/pack-3-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-3-command.json",
+      "source_sha256": "52361c9419c165608aa7874bd41084e61d212af6332a1014a83e4cf30d9a6a7f",
+      "retained_sha256": "52361c9419c165608aa7874bd41084e61d212af6332a1014a83e4cf30d9a6a7f"
+    },
+    "optimized-replay/materialize-10.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-10.log",
+      "source_sha256": "6e2e8b1d07a4d2a7506a787107cb21b1cf8edff5593c26ae15f5a620b3bc76a3",
+      "retained_sha256": "6e2e8b1d07a4d2a7506a787107cb21b1cf8edff5593c26ae15f5a620b3bc76a3"
+    },
+    "optimized-replay/offline-publisher-negative-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/offline-publisher-negative-command.json",
+      "source_sha256": "bcf40dc1b9f4e1701ca7d77f72d40c2c9b62af781e356f4dd3cd6d74339c72a0",
+      "retained_sha256": "bcf40dc1b9f4e1701ca7d77f72d40c2c9b62af781e356f4dd3cd6d74339c72a0"
+    },
+    "optimized-replay/materialize-1.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-1.log",
+      "source_sha256": "894713d9a4cc50088bf8a7816c8ad0ece59da15939a604d55d0bbce9f422f8b0",
+      "retained_sha256": "894713d9a4cc50088bf8a7816c8ad0ece59da15939a604d55d0bbce9f422f8b0"
+    },
+    "optimized-replay/materialize-10-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-10-command.json",
+      "source_sha256": "044d3fe8dc6192655aa853f2815f716364c1bc389d856a3ec31d09907290b0bf",
+      "retained_sha256": "044d3fe8dc6192655aa853f2815f716364c1bc389d856a3ec31d09907290b0bf"
+    },
+    "optimized-replay/publisher-to-replica-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/publisher-to-replica-command.json",
+      "source_sha256": "220a1f146557713c87893cd8594c4a4d1dab7a3e25f54147198537701a0ebe82",
+      "retained_sha256": "220a1f146557713c87893cd8594c4a4d1dab7a3e25f54147198537701a0ebe82"
+    },
+    "optimized-replay/pack-1.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-1.log",
+      "source_sha256": "ec543d6f39a288c4f6badd0e2661c9d9b70b34a0498ce5f818320c97fafcf0ed",
+      "retained_sha256": "ec543d6f39a288c4f6badd0e2661c9d9b70b34a0498ce5f818320c97fafcf0ed"
+    },
+    "optimized-replay/materialize-8-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-8-command.json",
+      "source_sha256": "98be1bc11e029f05878a1a928a9a6ba449e788a799269eb37bf9d17365d69d22",
+      "retained_sha256": "98be1bc11e029f05878a1a928a9a6ba449e788a799269eb37bf9d17365d69d22"
+    },
+    "optimized-replay/pack-9-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-9-command.json",
+      "source_sha256": "dc7161c74028853a54ca561b01ba08789870b1b0748d5e8a617c77296906c8b8",
+      "retained_sha256": "dc7161c74028853a54ca561b01ba08789870b1b0748d5e8a617c77296906c8b8"
+    },
+    "optimized-replay/materialize-3.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-3.log",
+      "source_sha256": "6e40f94ec51a52b8e89d435341932872054bb9919406f70639ec0c6f73e545a6",
+      "retained_sha256": "6e40f94ec51a52b8e89d435341932872054bb9919406f70639ec0c6f73e545a6"
+    },
+    "optimized-replay/materialize-4.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-4.log",
+      "source_sha256": "7118223e3a07bd56315b70a196bb6fd2a3cffe771e66cb8b17554c74132779be",
+      "retained_sha256": "7118223e3a07bd56315b70a196bb6fd2a3cffe771e66cb8b17554c74132779be"
+    },
+    "optimized-replay/pack-10.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-10.log",
+      "source_sha256": "97bd2c2ada829b6d6f3859326e730e03dfa4e3b23f249cb1defd9554f05105ad",
+      "retained_sha256": "97bd2c2ada829b6d6f3859326e730e03dfa4e3b23f249cb1defd9554f05105ad"
+    },
+    "optimized-replay/pack-4-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-4-command.json",
+      "source_sha256": "055c1befe5a3578d823956961249eb36630a8638ef50c35fb02a4901713a6d45",
+      "retained_sha256": "055c1befe5a3578d823956961249eb36630a8638ef50c35fb02a4901713a6d45"
+    },
+    "optimized-replay/replay-qualification.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/replay-qualification.json",
+      "source_sha256": "2536c16d274e03c47f0e6e8f10caaf03522d559c4512257a3df00ab4f694c7f7",
+      "retained_sha256": "2536c16d274e03c47f0e6e8f10caaf03522d559c4512257a3df00ab4f694c7f7"
+    },
+    "optimized-replay/pack-3.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-3.log",
+      "source_sha256": "3a546d6c659f83f8041fc0d9b41fc943eb7df142aa54592108a92e7b77b91a06",
+      "retained_sha256": "3a546d6c659f83f8041fc0d9b41fc943eb7df142aa54592108a92e7b77b91a06"
+    },
+    "optimized-replay/publisher-stderr.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/publisher-stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "optimized-replay/materialize-7-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-7-command.json",
+      "source_sha256": "61f20052b3c1977f299d90ca535d2a54c5d77403de80b599bef439352ca3c282",
+      "retained_sha256": "61f20052b3c1977f299d90ca535d2a54c5d77403de80b599bef439352ca3c282"
+    },
+    "optimized-replay/pack-6-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-6-command.json",
+      "source_sha256": "1b8057f6d690ba2cbd411a530345a6897a683e12235fb5c4dccdbe09e7f3fa16",
+      "retained_sha256": "1b8057f6d690ba2cbd411a530345a6897a683e12235fb5c4dccdbe09e7f3fa16"
+    },
+    "optimized-replay/pack-6.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-6.log",
+      "source_sha256": "eb03155c969ec31e015eba3a8d0b2550914ca178a3f6c4f2a90a323cf72493ad",
+      "retained_sha256": "eb03155c969ec31e015eba3a8d0b2550914ca178a3f6c4f2a90a323cf72493ad"
+    },
+    "optimized-replay/materialize-8.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-8.log",
+      "source_sha256": "210cd20078c60cb112b6eae7b7b3b87c04bd3e0ee3acb8c37502982921921fcd",
+      "retained_sha256": "210cd20078c60cb112b6eae7b7b3b87c04bd3e0ee3acb8c37502982921921fcd"
+    },
+    "optimized-replay/replica-process.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/replica-process.json",
+      "source_sha256": "e6f1febd53d2675253fc20b09cdc22e18b2c07a48cd648d07a025bcf0fbc4213",
+      "retained_sha256": "e6f1febd53d2675253fc20b09cdc22e18b2c07a48cd648d07a025bcf0fbc4213"
+    },
+    "optimized-replay/pack-7-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-7-command.json",
+      "source_sha256": "3f8ab05b89fadd456fd74af5593146a4e1d37337e08b0b7b9cb6a955c4fdf8d7",
+      "retained_sha256": "3f8ab05b89fadd456fd74af5593146a4e1d37337e08b0b7b9cb6a955c4fdf8d7"
+    },
+    "optimized-replay/pack-5-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-5-command.json",
+      "source_sha256": "95ae0993aca4de2a025599148e6142cc6a8cc2d6e3979ad9bcadaadd053e94bf",
+      "retained_sha256": "95ae0993aca4de2a025599148e6142cc6a8cc2d6e3979ad9bcadaadd053e94bf"
+    },
+    "optimized-replay/materialize-6.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-6.log",
+      "source_sha256": "cedc5bd2a44560a9c206fd71514c2d357add5e3399607398837030debed79474",
+      "retained_sha256": "cedc5bd2a44560a9c206fd71514c2d357add5e3399607398837030debed79474"
+    },
+    "optimized-replay/offline-publisher-negative.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/offline-publisher-negative.log",
+      "source_sha256": "9448a2a79390cd0ac73b54970d672cf6286b986572687e978c461d385b26916b",
+      "retained_sha256": "9448a2a79390cd0ac73b54970d672cf6286b986572687e978c461d385b26916b"
+    },
+    "optimized-replay/pack-0-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-0-command.json",
+      "source_sha256": "f8dc4d3a78520175c9455e3e51282a44bc08bf8350025d6e6e90884821020eba",
+      "retained_sha256": "f8dc4d3a78520175c9455e3e51282a44bc08bf8350025d6e6e90884821020eba"
+    },
+    "optimized-replay/materialize-7.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-7.log",
+      "source_sha256": "029a276dc74108795a2c6c77a2c520b6c3aa6a89e52f941319fda5029775efae",
+      "retained_sha256": "029a276dc74108795a2c6c77a2c520b6c3aa6a89e52f941319fda5029775efae"
+    },
+    "optimized-replay/replica-to-consumer.tcr1": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/replica-to-consumer.tcr1",
+      "source_sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed",
+      "retained_sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed"
+    },
+    "optimized-replay/materialize-0.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-0.log",
+      "source_sha256": "690ef1ea9609692f0b2d9dfce03fcf2a2a5c76a06545ad4cb55421ac98fd89c4",
+      "retained_sha256": "690ef1ea9609692f0b2d9dfce03fcf2a2a5c76a06545ad4cb55421ac98fd89c4"
+    },
+    "optimized-replay/pack-4.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-4.log",
+      "source_sha256": "9ad5aa8fd763899b9f4eecc1ae7d7ff446ba156c6d5cc303a926f0a9e0030cec",
+      "retained_sha256": "9ad5aa8fd763899b9f4eecc1ae7d7ff446ba156c6d5cc303a926f0a9e0030cec"
+    },
+    "optimized-replay/materialize-9.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-9.log",
+      "source_sha256": "b1acfe5bdc09305f8a4468d6b40f3449fa04c55161c1de4ca5c1b6bec8df4051",
+      "retained_sha256": "b1acfe5bdc09305f8a4468d6b40f3449fa04c55161c1de4ca5c1b6bec8df4051"
+    },
+    "optimized-replay/pack-2-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-2-command.json",
+      "source_sha256": "5fe7ff4f5cc7a613854063623c3da585cd1a0da7aaeda63183601f67091ed38d",
+      "retained_sha256": "5fe7ff4f5cc7a613854063623c3da585cd1a0da7aaeda63183601f67091ed38d"
+    },
+    "optimized-replay/materialize-2.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-2.log",
+      "source_sha256": "5329e63a5751684577859f10ce7c6ed4683cd9cb08cb106944b0fc7e5a076f15",
+      "retained_sha256": "5329e63a5751684577859f10ce7c6ed4683cd9cb08cb106944b0fc7e5a076f15"
+    },
+    "optimized-replay/prepare-release-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/prepare-release-command.json",
+      "source_sha256": "0ae2846ffce63525b0907f49e02c6d4c6953e93564708f7261b7ecb3bf883e72",
+      "retained_sha256": "0ae2846ffce63525b0907f49e02c6d4c6953e93564708f7261b7ecb3bf883e72"
+    },
+    "optimized-replay/materialize-5.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-5.log",
+      "source_sha256": "afc7ed1c3175205f251c2bcfb0e0bbf112751a592f9540472d1f969f3b66c500",
+      "retained_sha256": "afc7ed1c3175205f251c2bcfb0e0bbf112751a592f9540472d1f969f3b66c500"
+    },
+    "optimized-replay/prepare-release.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/prepare-release.log",
+      "source_sha256": "d901c8770ae12272b6ff1682bb2884627931ffbdd92a523dc128a960be7136f0",
+      "retained_sha256": "d901c8770ae12272b6ff1682bb2884627931ffbdd92a523dc128a960be7136f0"
+    },
+    "optimized-replay/materialize-6-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-6-command.json",
+      "source_sha256": "dc1ca70c10b35d96b8b1f6167a94f0b84279d4e90f2b4f00f9531cd608cfef76",
+      "retained_sha256": "dc1ca70c10b35d96b8b1f6167a94f0b84279d4e90f2b4f00f9531cd608cfef76"
+    },
+    "optimized-replay/source-release.tcr1": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/source-release.tcr1",
+      "source_sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed",
+      "retained_sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed"
+    },
+    "optimized-replay/pack-0.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-0.log",
+      "source_sha256": "80dd338926daf1871f02192070e4fdf350f02fee1449d6f262d3b418ec777bb7",
+      "retained_sha256": "80dd338926daf1871f02192070e4fdf350f02fee1449d6f262d3b418ec777bb7"
+    },
+    "optimized-replay/replica-to-consumer-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/replica-to-consumer-command.json",
+      "source_sha256": "03b1c87e9029c4824c5b3278cf6829e1f4780037d62424d462f402e4dacd9895",
+      "retained_sha256": "03b1c87e9029c4824c5b3278cf6829e1f4780037d62424d462f402e4dacd9895"
+    },
+    "optimized-replay/materialize-9-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-9-command.json",
+      "source_sha256": "9b4c2fa857b105edd53220a866a8af0d6d5ad3217912274e46f689c5eb3536a7",
+      "retained_sha256": "9b4c2fa857b105edd53220a866a8af0d6d5ad3217912274e46f689c5eb3536a7"
+    },
+    "optimized-replay/replica-to-consumer.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/replica-to-consumer.log",
+      "source_sha256": "d9f633f888e06fd4ae6eecd4453558987de25d04add63b556066ed225f72eed3",
+      "retained_sha256": "d9f633f888e06fd4ae6eecd4453558987de25d04add63b556066ed225f72eed3"
+    },
+    "optimized-replay/pack-7.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-7.log",
+      "source_sha256": "fea5e12d3b0d833fd3a3f74a0c629d01437445a334d4613bb0624667d34a8416",
+      "retained_sha256": "fea5e12d3b0d833fd3a3f74a0c629d01437445a334d4613bb0624667d34a8416"
+    },
+    "optimized-replay/publisher-to-replica.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/publisher-to-replica.log",
+      "source_sha256": "d9f633f888e06fd4ae6eecd4453558987de25d04add63b556066ed225f72eed3",
+      "retained_sha256": "d9f633f888e06fd4ae6eecd4453558987de25d04add63b556066ed225f72eed3"
+    },
+    "optimized-replay/pack-8.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-8.log",
+      "source_sha256": "1ea748f3316110c9469293cdf20d7d9bd73f47ce06d1a6a7615f1e68cf94a4da",
+      "retained_sha256": "1ea748f3316110c9469293cdf20d7d9bd73f47ce06d1a6a7615f1e68cf94a4da"
+    },
+    "optimized-replay/pack-1-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-1-command.json",
+      "source_sha256": "333e7749a5b3ec901d643f0b1e58b3ee67cb38121819e54e148b3bd498ee9dc4",
+      "retained_sha256": "333e7749a5b3ec901d643f0b1e58b3ee67cb38121819e54e148b3bd498ee9dc4"
+    },
+    "optimized-replay/replica-stderr.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/replica-stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "optimized-replay/publisher-process.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/publisher-process.json",
+      "source_sha256": "c7b47243840dba08d72b8dea3ca73baaa2218e7cff8ae5c0400e5d91818553ae",
+      "retained_sha256": "c7b47243840dba08d72b8dea3ca73baaa2218e7cff8ae5c0400e5d91818553ae"
+    },
+    "optimized-replay/pack-8-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-8-command.json",
+      "source_sha256": "553b7f4270891dc8d1eaa6df8be339b3f8d51cdd12a99bcd55074756976bab97",
+      "retained_sha256": "553b7f4270891dc8d1eaa6df8be339b3f8d51cdd12a99bcd55074756976bab97"
+    },
+    "optimized-replay/pack-2.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-2.log",
+      "source_sha256": "6bcf3a44160b27ef73eec77afe548e99e4fadef081456e92f9fda08fe38bee4e",
+      "retained_sha256": "6bcf3a44160b27ef73eec77afe548e99e4fadef081456e92f9fda08fe38bee4e"
+    },
+    "optimized-replay/transport-report.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/transport-report.json",
+      "source_sha256": "be2bf1265a8729c1c2723e93e91f6cb76067faed493d64afc3ecadd12c4485c6",
+      "retained_sha256": "be2bf1265a8729c1c2723e93e91f6cb76067faed493d64afc3ecadd12c4485c6"
+    },
+    "optimized-replay/materialize-1-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-1-command.json",
+      "source_sha256": "263c68abe712a649f3145adc194f2c7bd31b0c4ec428fad11eb3f013f141ff54",
+      "retained_sha256": "263c68abe712a649f3145adc194f2c7bd31b0c4ec428fad11eb3f013f141ff54"
+    },
+    "optimized-replay/pack-5.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-5.log",
+      "source_sha256": "bc8d70cc9e9950aba465332db66b166c80b08b43d307c32ea03427a9c38de189",
+      "retained_sha256": "bc8d70cc9e9950aba465332db66b166c80b08b43d307c32ea03427a9c38de189"
+    },
+    "optimized-replay/pack-9.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-9.log",
+      "source_sha256": "3c464bd12013d673953dbb14824a20deb0876eb7b2302ba7d13848e2d2afe96e",
+      "retained_sha256": "3c464bd12013d673953dbb14824a20deb0876eb7b2302ba7d13848e2d2afe96e"
+    },
+    "optimized-replay/publisher-to-replica.tcr1": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/publisher-to-replica.tcr1",
+      "source_sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed",
+      "retained_sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed"
+    },
+    "optimized-replay/materialize-0-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-0-command.json",
+      "source_sha256": "83b005d0236c463b04bb17f3ef0021e48e5715b9e1ed0a62f03b87c9a2e1c73c",
+      "retained_sha256": "83b005d0236c463b04bb17f3ef0021e48e5715b9e1ed0a62f03b87c9a2e1c73c"
+    },
+    "optimized-replay/materialize-3-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-3-command.json",
+      "source_sha256": "2db78b01fea1ec9d4e1fb631ad8f85e547aacdeefdc70c3a79e97a3972faa2fb",
+      "retained_sha256": "2db78b01fea1ec9d4e1fb631ad8f85e547aacdeefdc70c3a79e97a3972faa2fb"
+    },
+    "optimized-replay/materialize-4-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-4-command.json",
+      "source_sha256": "b8f6c81245a3688dfdced541d03979dc70681fc666e8c3532b3e43a9b0631612",
+      "retained_sha256": "b8f6c81245a3688dfdced541d03979dc70681fc666e8c3532b3e43a9b0631612"
+    },
+    "optimized-replay/materialize-2-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-2-command.json",
+      "source_sha256": "55f5a21061e8cc504f071e489f2d4b8e6789e7daf344e7d17d82ef121bb1bb13",
+      "retained_sha256": "55f5a21061e8cc504f071e489f2d4b8e6789e7daf344e7d17d82ef121bb1bb13"
+    },
+    "optimized-replay/materialize-5-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/materialize-5-command.json",
+      "source_sha256": "3da35c08146df56654619eee7c308f6bee4e5e75a411c69306061a04365cb4de",
+      "retained_sha256": "3da35c08146df56654619eee7c308f6bee4e5e75a411c69306061a04365cb4de"
+    },
+    "optimized-replay/publisher-stdout.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/publisher-stdout.log",
+      "source_sha256": "d1c269b6efe9701cc0e1316f30c697708f06e266243b927de6d41d92fdecb04f",
+      "retained_sha256": "d1c269b6efe9701cc0e1316f30c697708f06e266243b927de6d41d92fdecb04f"
+    },
+    "optimized-replay/replica-stdout.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/replica-stdout.log",
+      "source_sha256": "0d7be8f1ed549b7d31c5df751733e9084f5b4b5dff94a8641d0ba5875d314950",
+      "retained_sha256": "0d7be8f1ed549b7d31c5df751733e9084f5b4b5dff94a8641d0ba5875d314950"
+    },
+    "optimized-replay/pack-10-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-repaired/pack-10-command.json",
+      "source_sha256": "6b2b3d3dd90b317588f16042e638e55dadecb74ddcd7ebe03cec14819020a5bb",
+      "retained_sha256": "6b2b3d3dd90b317588f16042e638e55dadecb74ddcd7ebe03cec14819020a5bb"
+    }
+  },
+  "assertions": {
+    "production_activation": false,
+    "independent_accepted": false,
+    "public_wan_accepted": false,
+    "pq_authenticated_transport": false,
+    "hepta_final_use": false,
+    "model_selection_authorized": false
+  },
+  "native_replay_wrapper_annotation_error_retained": true,
+  "qualification_log_sha256": {
+    "native-library.log": "d50b11487f5836ce0efdde04d01a35d706c5a6c53780bb14549c1166fcaaf4c7",
+    "original-client-regression.log": "2a11a27cd2ef0875680d4a4710370fac5b71f0249af9332b6d7d13698f141a7d",
+    "native-clippy.log": "7740e2640649ed5eb94a2e7b998e0d0dd12cf2dd4489805e1972c68070bbb938",
+    "release-build.log": "e76786eb97da03533649ca8086dc22df747b601989c9a0f59ebc90d7fc716e40"
+  },
+  "native_library_log_capture": {
+    "normalization": "per-line trailing whitespace only for Git display",
+    "raw_gzip": "native-library-original.log.gz",
+    "raw_sha256": "92f44a7427b2f1a41f7f3cce3a5af43160d719935c1335abe044e20b9df3f431",
+    "display_sha256": "d50b11487f5836ce0efdde04d01a35d706c5a6c53780bb14549c1166fcaaf4c7"
+  }
+}

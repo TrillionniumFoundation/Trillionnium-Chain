@@ -1,0 +1,13 @@
+{
+  "binary": "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/target/release/examples/pon_zero_io",
+  "elapsed_ns_observed_not_a_lower_bound": 4870996,
+  "exchange_status": "COMPLETE",
+  "index": 18,
+  "mode": "generic",
+  "returncode": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdin_bytes": 32800,
+  "stdin_sha256": "5dd377c9de952ae2202bdde41e15ff97fa5bcefd4e208d3f98d7dc6e8b58e269",
+  "stdout_bytes": 49188,
+  "stdout_sha256": "a4f17f8624ea077b7e4942db3d79cdf52eab4f3c1672f0141ca35a04b24dfd11"
+}

@@ -1,0 +1,15 @@
+
+running 1 test
+test ingress::tests::authenticated_activation_recovery::signed_socket_missing_parent_preserves_exact_nonce_until_parent_arrives ... 
+thread 'ingress::tests::authenticated_activation_recovery::signed_socket_missing_parent_preserves_exact_nonce_until_parent_arrives' (36253) panicked at crates/trnm-pon-node/src/ingress/authenticated_recovery_tests.rs:627:9:
+missing parent ended exact retry: {"error":"UNKNOWN_PARENT"}
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    ingress::tests::authenticated_activation_recovery::signed_socket_missing_parent_preserves_exact_nonce_until_parent_arrives
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1425 filtered out; finished in 0.02s
+

@@ -1,0 +1,16 @@
+{
+  "time": "2026-11-09T14:29:33.395009+00:00",
+  "removed_reproducible_task_build_cache": "/workspace/scratch/dc0357cf2d6c/target",
+  "bytes": 1228003199,
+  "before": {
+    "total": 67586535424,
+    "used": 64141164544,
+    "free": 0
+  },
+  "after": {
+    "total": 67586535424,
+    "used": 63022211072,
+    "free": 1111576576
+  },
+  "source_and_validation_logs_preserved": true
+}

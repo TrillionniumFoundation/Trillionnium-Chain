@@ -1,0 +1,209 @@
+{
+  "acceptance_granted": false,
+  "advisory_databases": [
+    {
+      "archive": "advisories-0-28d73fc95e5972af3403225a217def57dcaba3c4.tar.gz",
+      "commit": "28d73fc95e5972af3403225a217def57dcaba3c4",
+      "commit_time": "2026-11-10T14:45:03+01:00",
+      "origin": "https://github.com/RustSec/advisory-db",
+      "tree": "247ffa118a3e073e70825e62bde8c473d4ac6b45"
+    }
+  ],
+  "artifact_sha256": {
+    "advisories-0-28d73fc95e5972af3403225a217def57dcaba3c4.tar.gz": "fcc2e8035756170b2dd9e292dcc8e6ee9194b35b6e50e54eab513269db3ccf4d",
+    "archive-0.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "check-0.jsonl": "5405ba7b365d92aac17032076f1a5732fd666907dea7adad2f7552ad250c80d0",
+    "check-1.jsonl": "c88a1a0151d3bad808710b9db6f5cfc62d0ba28865066e4ef7a452a02f7aaa48",
+    "fetch-advisories.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fetch-crates-0.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fetch-crates-1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tool-version.log": "1758f5ea93d8ad3585079f05c19358b7bb969cce1bf6c7bdab6659a8cd1ef6b8"
+  },
+  "cargo_deny_sha256": "5c6fbc977c16a36144f91ff4959e14a6e3468be150d6b2ac693bcdbdd591a535",
+  "input_sha256": {
+    "deny.toml": "c4543ba5da36d0dea6480d39e107b77efe3f4c6dfc6d86723c1c794407472954",
+    "scripts/ci/run_supply_chain.py": "3ba25e784966e4d52efe22d400ddb73657a02550a8d7ac955c2968b652d839f6",
+    "scripts/ci/tool-versions.env": "b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408",
+    "tests/fuzz/Cargo.lock": "c6c47bf71d51a8f046874418c81097cd03697de09d1149f2ad7839d1713107ae",
+    "trillionnium/Cargo.lock": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+  },
+  "observations": [
+    {
+      "command": [
+        "/home/qian-qi/chain-pq-a418-final-ci-tools/deny-0.20.2/bin/cargo-deny",
+        "--version"
+      ],
+      "cwd": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final",
+      "elapsed_ns": 11921916220,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "log": "tool-version.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "fetch",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "cwd": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final",
+      "elapsed_ns": 12623310757,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "log": "fetch-crates-0.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "fetch",
+        "--locked",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml"
+      ],
+      "cwd": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final",
+      "elapsed_ns": 12242371125,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "log": "fetch-crates-1.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "/home/qian-qi/chain-pq-a418-final-ci-tools/deny-0.20.2/bin/cargo-deny",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--config",
+        "deny.toml",
+        "--locked",
+        "fetch",
+        "db"
+      ],
+      "cwd": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final",
+      "elapsed_ns": 15822485976,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "log": "fetch-advisories.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/home/qian-qi/chain-pq-a418-final-cargo-home/advisory-dbs/advisory-db-3157b0e258782691",
+        "archive",
+        "--format=tar.gz",
+        "--output=/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/supply-chain/advisories-0-28d73fc95e5972af3403225a217def57dcaba3c4.tar.gz",
+        "28d73fc95e5972af3403225a217def57dcaba3c4"
+      ],
+      "cwd": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final",
+      "elapsed_ns": 12279737993,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "log": "archive-0.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "/home/qian-qi/chain-pq-a418-final-ci-tools/deny-0.20.2/bin/cargo-deny",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--config",
+        "deny.toml",
+        "--all-features",
+        "--frozen",
+        "--format",
+        "json",
+        "check",
+        "advisories",
+        "licenses",
+        "bans",
+        "sources"
+      ],
+      "cwd": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final",
+      "elapsed_ns": 12817901057,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "log": "check-0.jsonl",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "/home/qian-qi/chain-pq-a418-final-ci-tools/deny-0.20.2/bin/cargo-deny",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--config",
+        "deny.toml",
+        "--all-features",
+        "--frozen",
+        "--format",
+        "json",
+        "check",
+        "advisories",
+        "licenses",
+        "bans",
+        "sources"
+      ],
+      "cwd": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final",
+      "elapsed_ns": 12746902082,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "log": "check-1.jsonl",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    }
+  ],
+  "result": "PASS",
+  "schema": "trnm-supply-chain-v1",
+  "source": {
+    "commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+    "source_state": "committed-clean",
+    "tracked_bytes": 2551591940,
+    "tracked_entries": 27862,
+    "tracked_worktree_verified": true,
+    "tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec"
+  },
+  "source_consistent": true,
+  "source_expected": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "tools": {
+    "TRNM_CARGO_DENY_VERSION": "0.20.2",
+    "TRNM_CARGO_FUZZ_VERSION": "0.13.2",
+    "TRNM_FUZZ_TOOLCHAIN": "nightly-2026-10-01"
+  }
+}

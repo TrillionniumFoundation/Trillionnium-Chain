@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+    "formal/pon-nakamoto-v1/lifecycle_query_tests.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+  "elapsed_seconds": 0.23134549800306559,
+  "exit_code": 0,
+  "name": "lifecycle-query",
+  "started_at_utc": "2026-11-08T00:11:18.921853+00:00",
+  "streams": {
+    "stderr": {
+      "bytes": 3705,
+      "file": "lifecycle-query.stderr.log",
+      "sha256": "8c4a2fd7a57ab16470ed5dc214e9ac4c4d0c7c081e5e4a2a97efa507c7bdd2e8"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "lifecycle-query.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "test_summary_lines": [
+    "Ran 26 tests in 0.047s",
+    "OK"
+  ]
+}

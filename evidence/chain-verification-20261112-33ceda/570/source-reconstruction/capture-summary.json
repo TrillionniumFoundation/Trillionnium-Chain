@@ -1,0 +1,25 @@
+{
+  "base_commit": "97aa8539aad3ee7f497136c6d2f64e420605c1fa",
+  "commit_object": {
+    "bytes": 273,
+    "git_commit_object_id": "570801af9995a65f3f6c12a339bbca935e32282b",
+    "path": "counterfactual.commit.raw",
+    "sha256": "c42ac1f506962b26789b4152cee8f31f035ef073e6c298b8e15dbb804d9a3fed"
+  },
+  "counterfactual_commit": "570801af9995a65f3f6c12a339bbca935e32282b",
+  "counterfactual_tree": "1c55152a221697e8dd37385b5cb6c85c1f4d33d8",
+  "error": null,
+  "native_tests_executed_by_this_capture": false,
+  "parents": [
+    "97aa8539aad3ee7f497136c6d2f64e420605c1fa"
+  ],
+  "patch": {
+    "bytes": 10676,
+    "path": "counterfactual-from-97aa.patch",
+    "sha256": "4d0cf5fc9fdecd74a68146fb8c84d123896e7c500b4ef0697ab51d76cb86f631",
+    "source": "direct stdout from the recorded git diff --binary command"
+  },
+  "remote_ref_claimed": false,
+  "schema": "chain-counterfactual-reconstruction-source-v1",
+  "status": "PASS_SOURCE_CAPTURE"
+}

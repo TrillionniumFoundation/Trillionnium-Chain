@@ -1,0 +1,1 @@
+{"label": "preflight", "argv": ["bash", "scripts/project-preflight.sh"], "cwd": "/data/chain-abg-70ae-20261108/source", "exit_code": 0, "elapsed_seconds": 0.0895286169834435, "stdout": {"bytes": 172, "sha256": "4c58882a4134d8adc21e7bcf4a095a3d15d31c83a068667459aa26e612434295"}, "stderr": {"bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}}

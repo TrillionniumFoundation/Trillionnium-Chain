@@ -1,0 +1,21 @@
+{
+  "all_members_read_and_original_manifest_verified": true,
+  "archive": "cloud-b-observations-976f.tar.gz",
+  "archive_bytes": 378819,
+  "archive_members": 70,
+  "archive_sha256": "bbc1785b2325a4bc6de2f92a6b84ed9a981b9cde61c1f08dc6d51ecd67e5e07d",
+  "embedded_original_manifest": "MANIFEST.json",
+  "embedded_original_manifest_sha256": "e033da6afab3cad8987b61c5aa4536a16e1ef24f4263eaee870d55a2a5d8ddaf",
+  "original_archive_assembly_host": "cloud",
+  "original_execution_scopes_unchanged": true,
+  "preliminary_members_are_not_relabelled_as_committed_B_runs": true,
+  "recovery_observation_host": "ai395",
+  "schema": "trnm-retained-cloud-archive-recovery-observation-v1",
+  "scope": "New packaging observation; original archive bytes and original member manifest preserved.",
+  "unavailable_original_outer_metadata": {
+    "bytes": 415,
+    "original_bytes_recovered": false,
+    "sha256": "071e2b424732017c508c68a46d53cac94f05d13042ce0f2fb5aaa233feddfd83"
+  },
+  "whole_chain_quantum_security_qualified": false
+}

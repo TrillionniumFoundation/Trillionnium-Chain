@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/data/chain-abg-70ae-20261108/inputs/prepare_delivery_compact.py", line 65, in <module>
+    assert path.suffix in ('.json','.stdout','.stderr','.txt','.md','.py','.sh','.patch','.log','.raw','.rs'),str(path)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: /data/chain-abg-70ae-20261108/evidence/r2-def-finite/preflight/stderr

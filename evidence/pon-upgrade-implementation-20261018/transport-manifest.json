@@ -1,0 +1,79 @@
+{
+  "archive_bytes": 16552,
+  "archive_sha256": "67f1513455cb6a1b3f00bec6ca4b9b692cbbbf5ded3c8db034fae2710e4a6a62",
+  "files": [
+    {
+      "bytes": 798,
+      "path": "root-native-d76/accepted-task.log",
+      "sha256": "757b00633b1a2f404c91037e5826f7efdb6b14ff8d968c909f15995adbe49c15"
+    },
+    {
+      "bytes": 3030,
+      "path": "root-native-d76/clippy.log",
+      "sha256": "3801b2982cf01607046d55beb12e366e139d3cf7f1997e07a96b7116ae94221f"
+    },
+    {
+      "bytes": 0,
+      "path": "root-native-d76/fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2924,
+      "path": "root-native-d76/native-node.log",
+      "sha256": "9dd90963615ee699e4965f4bd69dc810adf2c099c5cf6c9dd29b2eef447d5d6a"
+    },
+    {
+      "bytes": 169,
+      "path": "root-native-d76/preflight.log",
+      "sha256": "958a0cd56a9ff4980e2d8148a2349de0b2d817fcf07d37461f1f1e1831d10599"
+    },
+    {
+      "bytes": 2371,
+      "path": "root-native-d76/results.json",
+      "sha256": "97f458c3ee0b4048d40481390c86bb8fde856b3b015cdcb46cc54159ddf11c72"
+    },
+    {
+      "bytes": 39750,
+      "path": "root-native-d76/worker.log",
+      "sha256": "a8f650915aa237d14d5b205db65a68e37da1ccbd34f6ac8a724b1eadd3dcb1d7"
+    },
+    {
+      "bytes": 822,
+      "path": "state-buffer-native/accepted-task.log",
+      "sha256": "e4a4ba5b83cdf59142137d7933aad1d2bc9307641a34e7e8b3e26d803ba24551"
+    },
+    {
+      "bytes": 2381,
+      "path": "state-buffer-native/clippy.log",
+      "sha256": "c80ca7154fc5e876c9f99038d9a4ece2aabdb7fe497ee2ae6ee9a6f6270056aa"
+    },
+    {
+      "bytes": 1279,
+      "path": "state-buffer-native/live-state.log",
+      "sha256": "181cd9d4cedb93ce8dde58ef36f9dd1d74e09932d546dcb6ea6bd1406756e899"
+    },
+    {
+      "bytes": 18801,
+      "path": "state-buffer-native/mvcc.log",
+      "sha256": "8638ed9b204f5bcd661a707c889ff7710ed1131199ad244bc6531de7e9ae109f"
+    },
+    {
+      "bytes": 162,
+      "path": "state-buffer-native/preflight.log",
+      "sha256": "916c84b593b84017366e9016a28b0e068c0ea772d04d08ca9348fa765e81668d"
+    },
+    {
+      "bytes": 1928,
+      "path": "state-buffer-native/results.json",
+      "sha256": "b4389ce4ffba5358156f372a45fd7a0e3b5a7097cde1ce9a4dbb7ca706034806"
+    },
+    {
+      "bytes": 7666,
+      "path": "state-buffer-native/timing.log",
+      "sha256": "59aeb7af2a6f6e08ea278883bbf2ddd97d044596f9ee5cea4a261ab3983923a5"
+    }
+  ],
+  "host": "main",
+  "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+  "schema_version": 1
+}

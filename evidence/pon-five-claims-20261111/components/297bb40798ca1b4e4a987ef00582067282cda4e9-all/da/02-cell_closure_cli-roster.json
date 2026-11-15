@@ -1,0 +1,17 @@
+{
+  "all": [
+    "cli_bounds_input_descriptor_and_rejects_symlink_directory_and_wrong_wire",
+    "cli_fetches_real_bytes_shares_budget_resumes_and_never_overwrites_marker",
+    "cli_model_root_bad_pin_and_symlink_refuse_before_cache_or_peer",
+    "cli_model_root_composes_and_fetches_exact_closure_without_granting_use_or_changing_tcd1",
+    "cli_rejects_owner_context_and_authentication_downgrade_before_cache_or_dial"
+  ],
+  "filter": null,
+  "selected": [
+    "cli_bounds_input_descriptor_and_rejects_symlink_directory_and_wrong_wire",
+    "cli_fetches_real_bytes_shares_budget_resumes_and_never_overwrites_marker",
+    "cli_model_root_bad_pin_and_symlink_refuse_before_cache_or_peer",
+    "cli_model_root_composes_and_fetches_exact_closure_without_granting_use_or_changing_tcd1",
+    "cli_rejects_owner_context_and_authentication_downgrade_before_cache_or_dial"
+  ]
+}

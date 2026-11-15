@@ -1,0 +1,11 @@
+{
+  "schema": "pon-throughput-precheck-archive-v1",
+  "archive": "working-tree-precheck.tar.gz",
+  "bytes": 113382,
+  "sha256": "b23b5b553ba2355617b71356a9a071ba719b654780b1f333eb73fe88eb6843e4",
+  "source_checkpoint": "5ec9b4490fbfd22df4527e3b75ec74d6986572cf",
+  "scope": "working-tree maintenance checks before delivery commit; no native execution",
+  "native_tests_executed": false,
+  "all_15_integration_commands_exit_zero": true,
+  "runner_controls_passed": 39
+}

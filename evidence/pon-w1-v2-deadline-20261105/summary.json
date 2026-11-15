@@ -1,0 +1,36 @@
+{
+  "schema": "TRNM-W1-V2-DEADLINE-OBSERVATION1",
+  "executed_source_commit": "2810f7c2b1b5e549302b3fdb2cf41b2a6ee19bff",
+  "published_tree_equivalent_commit": "a635200956843f0d2f335f929977d602b48b36ec",
+  "source_tree": "7e6ba31424eb17617d217cfe4eebe9c62b95ad97",
+  "elapsed_seconds": 7200.081220201,
+  "total_wall_budget_seconds": 7200.0,
+  "segments_success": 43,
+  "recursive_receipts_saved_verified": 73,
+  "last_completed_join": "join-through-0036",
+  "stopped_at": "lift-0037",
+  "compression_user_seconds": 18153.471557,
+  "compression_system_seconds": 178.034242,
+  "termination_reasons": [
+    "TIMEOUT"
+  ],
+  "observed_process_group_remaining": false,
+  "owned_session_observation_complete": true,
+  "complete_proof_claim": false,
+  "saved_receipt_controls_executed": 0,
+  "succinct_exists": false,
+  "new_proof_trials_success": 0,
+  "longest_recursive_step": {
+    "eligible_as_final": false,
+    "name": "join-through-0032",
+    "operation": "join",
+    "prover_ns": 256843265342,
+    "receipt_bytes": 223154,
+    "receipt_sha256": "497a0d48e2c6318cf72debb17c89b807dd262d3c5ebc9636aa30012b848ddf36",
+    "stage": "REAL_RECURSIVE_STARK_SAVED_VERIFIED",
+    "verifier_ns": 21074985
+  },
+  "parameters_unchanged": true,
+  "pq_128_qualified": false,
+  "production_activation": false
+}

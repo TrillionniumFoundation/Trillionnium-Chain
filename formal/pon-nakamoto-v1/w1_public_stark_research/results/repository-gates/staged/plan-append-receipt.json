@@ -1,0 +1,11 @@
+{
+  "schema": "sole-plan-append-receipt-v1",
+  "base_head": "8df4b21d893906570d48f5beafabb3b31e0aefbc",
+  "before_sha256": "063df6d6047e08addb40d92c01bf85c2ff1386788369bfd7ba1d22e0a421198b",
+  "before_bytes": 552675,
+  "append_sha256": "a966b9119f7fe5096b44ff33cd1c1dde6b5e8d84aa2734e3e19f96df92bd4bdb",
+  "append_bytes": 5157,
+  "after_sha256": "4b873c40bfb1d7131b3d771e05c458a12859981eabdd13fbab8d16e7ce5fb83d",
+  "after_bytes": 557832,
+  "qualification": "HOLD_NO_GO"
+}

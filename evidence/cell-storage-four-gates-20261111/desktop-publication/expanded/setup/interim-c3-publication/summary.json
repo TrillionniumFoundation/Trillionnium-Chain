@@ -1,0 +1,301 @@
+{
+  "actual_base": "fix/chain-cell-paged-release-34e09-20261110",
+  "actual_body_sha256": "7226f2e36ed2cb202b5c93c28a17308aebd6d4bbc63ba4d3cfe5822ffef0a8ad",
+  "actual_head": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "author": "ProfHepta",
+  "base": "fix/chain-cell-paged-release-34e09-20261110",
+  "branch": "fix/chain-cell-storage-four-gates-20261111-2bfb",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "elapsed_seconds": 0.008642801083624363,
+      "exit_code": 0,
+      "name": "source-head",
+      "redacted": false,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "2a3c779ef6c8106354f2ed1bd8fb24374e5751dedbfeb99a2e1de26f75d3b0fa",
+      "stdout_withheld": false,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "symbolic-ref",
+        "HEAD"
+      ],
+      "elapsed_seconds": 0.0035064700059592724,
+      "exit_code": 0,
+      "name": "source-branch",
+      "redacted": false,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c36d08e7a4bc5676cde4f109ee4181ed3ca0b4838ec85fde84f274d92377a05e",
+      "stdout_withheld": false,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "elapsed_seconds": 1.1447634608484805,
+      "exit_code": 0,
+      "name": "source-clean",
+      "redacted": false,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_withheld": false,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "remote",
+        "get-url",
+        "origin"
+      ],
+      "elapsed_seconds": 0.003298977157101035,
+      "exit_code": 0,
+      "name": "origin-fetch",
+      "redacted": false,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "stdout_withheld": true,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "remote",
+        "get-url",
+        "--push",
+        "origin"
+      ],
+      "elapsed_seconds": 0.0028846408240497112,
+      "exit_code": 0,
+      "name": "origin-push",
+      "redacted": false,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "stdout_withheld": true,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "user",
+        "--jq",
+        ".login"
+      ],
+      "elapsed_seconds": 1.4529369070660323,
+      "exit_code": 0,
+      "name": "github-identity",
+      "redacted": false,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+      "stdout_withheld": false,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "elapsed_seconds": 0.16783314803615212,
+      "exit_code": 0,
+      "name": "preflight",
+      "redacted": false,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "64d4a324a23bd14342da6eb90d43634651470c35bb7978b645ef64e9df0b624c",
+      "stdout_withheld": false,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "credential.helper=",
+        "-c",
+        "credential.https://github.com.helper=!/usr/bin/gh auth git-credential",
+        "push",
+        "origin",
+        "030de92be05bfd4f73e199098c12dfeaedf29b17:refs/heads/fix/chain-cell-storage-four-gates-20261111-2bfb"
+      ],
+      "elapsed_seconds": 5.228052016114816,
+      "exit_code": 0,
+      "name": "normal-push-c3",
+      "redacted": false,
+      "stderr_sha256": "59d6a8a8708378858bae5e2cb13192bc9db08398061d5a4bfa8107d78da6126b",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_withheld": false,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "credential.helper=",
+        "-c",
+        "credential.https://github.com.helper=!/usr/bin/gh auth git-credential",
+        "ls-remote",
+        "--heads",
+        "origin",
+        "refs/heads/fix/chain-cell-storage-four-gates-20261111-2bfb"
+      ],
+      "elapsed_seconds": 2.9522160911001265,
+      "exit_code": 0,
+      "name": "remote-head",
+      "redacted": false,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "055c1898aa3a7237f59d3eeabbbf1443f91d72bf47e0e663a02fef3b0e1f6542",
+      "stdout_withheld": false,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "pr",
+        "list",
+        "--repo",
+        "TrillionniumFoundation/Trillionnium-Chain",
+        "--head",
+        "fix/chain-cell-storage-four-gates-20261111-2bfb",
+        "--state",
+        "all",
+        "--json",
+        "number,url,state,isDraft,baseRefName,headRefName,headRefOid,isCrossRepository"
+      ],
+      "elapsed_seconds": 1.4475344230886549,
+      "exit_code": 0,
+      "name": "existing-prs",
+      "redacted": false,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "stdout_withheld": false,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "pr",
+        "create",
+        "--draft",
+        "--repo",
+        "TrillionniumFoundation/Trillionnium-Chain",
+        "--base",
+        "fix/chain-cell-paged-release-34e09-20261110",
+        "--head",
+        "fix/chain-cell-storage-four-gates-20261111-2bfb",
+        "--title",
+        "fix(cell): bound discovery waits and atomically select complete releases",
+        "--body-file",
+        "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/pr-body.md"
+      ],
+      "elapsed_seconds": 3.2094667030032724,
+      "exit_code": 0,
+      "name": "create-draft",
+      "redacted": false,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "dd48b92faaf7676ad72d695b882ca37effdf0f6dedeb19dd1ea52630d5500279",
+      "stdout_withheld": false,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "pr",
+        "list",
+        "--repo",
+        "TrillionniumFoundation/Trillionnium-Chain",
+        "--head",
+        "fix/chain-cell-storage-four-gates-20261111-2bfb",
+        "--state",
+        "all",
+        "--json",
+        "number,url,state,isDraft,baseRefName,headRefName,headRefOid,isCrossRepository"
+      ],
+      "elapsed_seconds": 1.2186923080589622,
+      "exit_code": 0,
+      "name": "reconcile-pr-1",
+      "redacted": false,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c2c48538d5d3306480c307a9a0ae0387ccd6602f4e79ad86e3d04593a7bb97bc",
+      "stdout_withheld": false,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "pr",
+        "view",
+        "923",
+        "--repo",
+        "TrillionniumFoundation/Trillionnium-Chain",
+        "--json",
+        "number,url,state,isDraft,baseRefName,headRefName,headRefOid,isCrossRepository,body,author,title"
+      ],
+      "elapsed_seconds": 1.2183298859745264,
+      "exit_code": 0,
+      "name": "pr-readback",
+      "redacted": false,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "5079f57bd88c34052be47bd884320cedb41a0dc9d9287ed946c79b65336be0e3",
+      "stdout_withheld": false,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "elapsed_seconds": 0.0035777101293206215,
+      "exit_code": 0,
+      "name": "final-local-head",
+      "redacted": false,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "2a3c779ef6c8106354f2ed1bd8fb24374e5751dedbfeb99a2e1de26f75d3b0fa",
+      "stdout_withheld": false,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "elapsed_seconds": 0.053560687927529216,
+      "exit_code": 0,
+      "name": "final-local-clean",
+      "redacted": false,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_withheld": false,
+      "timed_out": false
+    }
+  ],
+  "completed": true,
+  "create_attempted": true,
+  "draft": true,
+  "github_login": "ProfHepta",
+  "native_validation_claimed": false,
+  "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+  "pr_number": 923,
+  "publication_verified": true,
+  "push_exit": 0,
+  "remote_head_verified": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "scope": "authorized interim C3 draft publication",
+  "source": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/923"
+}

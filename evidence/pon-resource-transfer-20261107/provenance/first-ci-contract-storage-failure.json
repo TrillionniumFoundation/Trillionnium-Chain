@@ -1,0 +1,15 @@
+{
+  "event": "development-ci-contract-first-attempt",
+  "command": [
+    "python",
+    "-B",
+    "scripts/ci/test_ci_contract.py"
+  ],
+  "exit_code": 1,
+  "tests_started_reported": 32,
+  "errors_reported": 9,
+  "exception_observed": "OSError: [Errno 28] No space left on device under /tmp",
+  "full_raw_output_retained": false,
+  "output_limit": "original tool output was truncated; retain this limitation",
+  "no_failed_test_waived": true
+}

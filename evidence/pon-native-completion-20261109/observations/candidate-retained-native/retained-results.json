@@ -1,0 +1,183 @@
+[
+  {
+    "name": "scalar-budget",
+    "selector": "ingress::public_v3::scalar_cpu::tests::",
+    "selected_tests": [
+      "ingress::public_v3::scalar_cpu::tests::actual_owner_thread_mismatch_preserves_unknown_without_zero_refund",
+      "ingress::public_v3::scalar_cpu::tests::cloned_shared_domain_preserves_two_actual_owner_start_ceiling",
+      "ingress::public_v3::scalar_cpu::tests::extra_settlement_cannot_return_an_unowned_reservation",
+      "ingress::public_v3::scalar_cpu::tests::finish_reports_shared_settlement_uncertainty_without_erasing_known_cpu",
+      "ingress::public_v3::scalar_cpu::tests::missing_or_impossible_reservation_preserves_credit_and_marks_unknown",
+      "ingress::public_v3::scalar_cpu::tests::observing_budget_never_refills_or_returns_an_outstanding_reserve",
+      "ingress::public_v3::scalar_cpu::tests::repeated_real_scopes_and_worker_panic_join_before_single_settlement",
+      "ingress::public_v3::scalar_cpu::tests::settlement_result_distinguishes_known_debt_unknown_sample_and_unowned_return",
+      "ingress::public_v3::scalar_cpu::tests::shared_operation_real_partial_owner_debit_settles_only_residual",
+      "ingress::public_v3::scalar_cpu::tests::stale_refill_keeps_watermark_and_cannot_credit_the_same_interval_twice",
+      "ingress::public_v3::scalar_cpu::tests::stale_reserve_and_settle_match_the_non_decreasing_clock_trace",
+      "ingress::public_v3::scalar_cpu::tests::two_legitimate_reservations_return_once_and_keep_live_cpu_nested",
+      "ingress::public_v3::scalar_cpu::tests::unknown_live_clock_and_unclosed_operation_disable_all_shared_starts"
+    ],
+    "counts": {
+      "passed": 13,
+      "failed": 0,
+      "ignored": 0
+    },
+    "pass": true
+  },
+  {
+    "name": "scalar-completion",
+    "selector": "ingress::public_v3::scalar_cpu::completion_tests::",
+    "selected_tests": [
+      "ingress::public_v3::scalar_cpu::completion_tests::actual_w1_cpu_completion_waits_for_original_refill_and_preserves_balance_identity",
+      "ingress::public_v3::scalar_cpu::completion_tests::already_running_probe_cannot_spend_beyond_its_original_quantum_during_completion",
+      "ingress::public_v3::scalar_cpu::completion_tests::complete_actual_w1_blocks_new_probes_without_new_credit_and_releases_once",
+      "ingress::public_v3::scalar_cpu::completion_tests::completion_identity_survives_cancel_and_unknown_without_invalidating_retry",
+      "ingress::public_v3::scalar_cpu::completion_tests::completion_keeps_original_cancellation_deadline_and_unknown_clock_fences",
+      "ingress::public_v3::scalar_cpu::completion_tests::completion_work_claim_is_atomic_across_real_verifiers_and_domain_clones",
+      "ingress::public_v3::scalar_cpu::completion_tests::exclusive_history_refill_observes_original_resource_cancellation_without_new_credit",
+      "ingress::public_v3::scalar_cpu::completion_tests::full_completion_registry_keeps_all_markers_and_allows_real_native_admission",
+      "ingress::public_v3::scalar_cpu::completion_tests::only_fresh_successful_native_w1_promotes_not_false_product_or_existing_packet",
+      "ingress::public_v3::scalar_cpu::completion_tests::same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority",
+      "ingress::public_v3::scalar_cpu::completion_tests::same_verified_w1_with_changed_transaction_body_is_rejected_before_promotion"
+    ],
+    "counts": {
+      "passed": 11,
+      "failed": 0,
+      "ignored": 0
+    },
+    "pass": true
+  },
+  {
+    "name": "metered-facts",
+    "selector": "ingress::public_v3::scalar_cpu::metered_fact_tests::",
+    "selected_tests": [
+      "ingress::public_v3::scalar_cpu::metered_fact_tests::a_foreign_cpu_domain_is_refused_before_m05_work_and_any_reservation",
+      "ingress::public_v3::scalar_cpu::metered_fact_tests::cancellation_keeps_spent_cpu_and_retry_does_not_reset_domain",
+      "ingress::public_v3::scalar_cpu::metered_fact_tests::continuously_distinct_bad_products_exhaust_one_original_prepaid_domain",
+      "ingress::public_v3::scalar_cpu::metered_fact_tests::exhausted_domain_refuses_before_cold_or_warm_math_and_state",
+      "ingress::public_v3::scalar_cpu::metered_fact_tests::failed_product_and_warm_retry_each_pay_exact_cpu_without_poisoning",
+      "ingress::public_v3::scalar_cpu::metered_fact_tests::paid_cached_native_execution_registers_all_real_m06_workers",
+      "ingress::public_v3::scalar_cpu::metered_fact_tests::panic_fences_shared_budget_without_rewriting_native_history",
+      "ingress::public_v3::scalar_cpu::metered_fact_tests::read_request_cannot_consume_the_mutation_budget_via_this_entry",
+      "ingress::public_v3::scalar_cpu::metered_fact_tests::shared_listener_reconstruction_never_refills_debt_or_replaces_domain",
+      "ingress::public_v3::scalar_cpu::metered_fact_tests::two_reserved_real_owners_block_a_third_cache_entry_then_release_normally"
+    ],
+    "counts": {
+      "passed": 10,
+      "failed": 0,
+      "ignored": 0
+    },
+    "pass": true
+  },
+  {
+    "name": "metered-network",
+    "selector": "ingress::public_v3::scalar_cpu::metered_fact_network_tests::",
+    "selected_tests": [
+      "ingress::public_v3::scalar_cpu::metered_fact_network_tests::two_real_listeners_confirm_signed_work_while_bad_cached_request_is_in_flight"
+    ],
+    "counts": {
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    "pass": true
+  },
+  {
+    "name": "history",
+    "selector": "ingress::history_import::tests::",
+    "selected_tests": [
+      "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+      "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+      "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+      "ingress::history_import::tests::deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline",
+      "ingress::history_import::tests::deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu",
+      "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+      "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+      "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+      "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+      "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+      "ingress::history_import::tests::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors",
+      "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+      "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+      "ingress::history_import::tests::history_kill_cut_child",
+      "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+      "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+      "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+      "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+      "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+      "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+      "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+      "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+      "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+      "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+      "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+      "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+      "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+      "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+      "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+    ],
+    "counts": {
+      "passed": 28,
+      "failed": 0,
+      "ignored": 1
+    },
+    "pass": true
+  },
+  {
+    "name": "detached",
+    "selector": "store::detached_admission::tests::",
+    "selected_tests": [
+      "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+      "store::detached_admission::tests::completed_artifact_refuses_wrong_owner_reopen_and_late_owner_stop",
+      "store::detached_admission::tests::current_clock_target_and_unsupported_owner_are_rechecked_after_m06",
+      "store::detached_admission::tests::detached_full_state_cost_uses_real_signed_history_and_reports_scope",
+      "store::detached_admission::tests::detached_result_cannot_bypass_real_pending_reorganization",
+      "store::detached_admission::tests::final_sqlite_writer_fence_rejects_write_and_restore_after_last_context_check",
+      "store::detached_admission::tests::foreign_write_and_restore_cannot_reuse_original_database_epoch",
+      "store::detached_admission::tests::held_parent_continuation_checks_original_owner_epoch_and_current_clock",
+      "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+      "store::detached_admission::tests::legal_concurrent_append_revalidates_parent_and_preserves_competing_branch",
+      "store::detached_admission::tests::native_completion_controls::native_completion_priority_prepared_held_requires_complete_output",
+      "store::detached_admission::tests::native_m06_runs_without_writer_and_matches_held_owner_on_both_backends",
+      "store::detached_admission::tests::one_original_snapshot_lease_is_bounded_and_cannot_move_to_another_node",
+      "store::detached_admission::tests::original_transaction_readback_rejects_trigger_corruption_and_rolls_back",
+      "store::detached_admission::tests::real_w1_wrong_root_and_original_m06_cancellation_create_no_commit",
+      "store::detached_admission::tests::snapshot_payload_capacity_is_a_private_schedule_hint_and_preserves_control_errors",
+      "store::detached_admission::tests::snapshot_payload_count_keeps_exact_json_bytes_and_serialization_errors",
+      "store::detached_admission::tests::snapshot_payload_count_preserves_exact_capacity_and_cancellation_boundaries"
+    ],
+    "counts": {
+      "passed": 18,
+      "failed": 0,
+      "ignored": 1
+    },
+    "pass": true
+  },
+  {
+    "name": "signed-profile",
+    "selector": "paid_envelope_resource_profile_has_fresh_exact_signed_commitment",
+    "selected_tests": [
+      "ingress::public_v3::tests::paid_envelope_resource_profile_has_fresh_exact_signed_commitment"
+    ],
+    "counts": {
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    "pass": true
+  },
+  {
+    "name": "old-signed-profiles",
+    "selector": "resource_revision_r18_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+    "selected_tests": [
+      "ingress::public_v3::tests::resource_revision_r18_rejects_signed_old_cookies_and_preserves_control_output_reserve"
+    ],
+    "counts": {
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    "pass": true
+  }
+]

@@ -1,0 +1,12 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running unittests src/lib.rs (/workspace/scratch/abae1861b451/value-pool-target/debug/deps/trnm_mvcc_fee-71186ba6fe283ca3)
+
+running 5 tests
+test pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks ... ok
+test pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback ... ok
+test pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root ... ok
+test pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order ... ok
+test pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 101 filtered out; finished in 2.22s
+

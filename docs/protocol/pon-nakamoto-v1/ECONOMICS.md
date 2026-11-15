@@ -108,3 +108,87 @@ matrix FLOPs, parameter uploads, rewards emitted or token activity with useful A
 [Exact evaluated-score publication, bounded claims and prepaid free-use rules](details/LEDGER_WIRE.md)
 are executable. [The controlled real-model campaign](details/MODEL_EVALUATION.md) binds
 actual artifacts/observations to these transitions without claiming independent economics.
+
+## Evaluation ordering: frozen revision3 behavior and successor contracts
+
+Revision3 freezes the minimum of the first two eligible development attestations.
+For eligible scores (10,100,100), admitting the low score in the first pair yields10;
+admitting the two high scores first yields100. Nodes still agree on a given ordered
+block: this is producer-controlled reward ordering, not nondeterministic execution.
+The new native owner executes the SAME revision3 rule. It does not silently repair it
+by changing aggregation, receipts, historical roots or already bound evaluation objects.
+
+Before a successor policy can be admitted, M10/M11/M12 must specify one intake identity,
+commit/reveal deadlines, admitted evaluator set, complete-set closing rule, deterministic
+aggregation, missing/revoked/conflicting evidence treatment, bounded dispute deposits and
+resolution/expiry. Closing by a fixed complete set or deadline separates arrival order
+from set choice; it does not itself remove censorship or collusion. An absent evaluator
+must result in its declared no-adoption/refund outcome, not an invented positive score.
+Permuting the same complete admitted set must preserve result, allocation and root.
+A changed evidence set must be reported as different, not called order-independent.
+
+Copied or reparameterized deltas and split identities require an explicit root-work
+budget plus tested functional/provenance policy; a new digest alone is insufficient.
+Disputes distinguish invalid bytes/signatures, reproducible evaluation errors, private
+attestation disagreement and business arbitration. A timeout or failed learning run is
+not objectively proven fraud. Late dispositions affect permitted current obligations,
+never retrospectively change the validity of historical work. This successor remains
+implementation/review work; no native-node or source-equality flag grants it acceptance.
+
+The current native/reference counterexample
+`NativeExecutionTests.test_revision3_first_pair_is_order_sensitive_and_late_third_rejects`
+executes all six eligible-score permutations at 1/2/4/8 workers. The first pairs produce
+10 or 100; a third attestation after status becomes evaluated rejects STATE. This is a
+retained economic defect, not an order-independent successor claimed as complete.
+`test_exact_artifact_copy_across_authors_does_not_gain_second_intake` verifies existing
+exact-content duplicate rejection across authors. Functional equivalence, perturbations
+and identity splitting remain different obligations; no file-hash rule solves them.
+
+The explicitly selected [native public evaluation](details/PUBLIC_EVALUATION_LIFECYCLE.md)
+successor now implements the frozen complete-roster commit/reveal round. The further
+[native model evidence V3](details/NATIVE_MODEL_EVIDENCE_V3.md) profile recomputes its
+bounded integer empirical score and strongest controls, rejects invented reveal
+scores/digests, caps actual reserved payouts across known source aliases, and refuses
+publication under a timely unresolved participant objection. Historical revision3
+above is unchanged. Neither successor certifies public evaluator independence,
+prospective model benefit, semantic novelty, fair marginal attribution or sustainable
+hosted inference funding.
+
+V3 allocation roots commit to eligible contribution membership. They do not prove
+that the submitted bundle was computed from those components, or that any component
+caused its empirical gain. The bundle and each allocation contribution must beat
+their parent and the frozen historical controls; the bundle need not beat every
+newly submitted component. Composition correctness, complementary benefit and causal
+reward attribution remain separate unaccepted properties.
+
+The explicitly selected [native composition V4](details/NATIVE_MODEL_COMPOSITION_V4.md)
+successor makes one bounded rule executable: tag8 must derive the exact full bundle
+from2–4 same-parent component deltas, beat parent/frozen controls/every component,
+and recompute positive leave-one-out gains as the committed allocation weights.
+A component can have zero standalone gain when its ablation gain is positive; only
+the full bundle is promoted. Payouts remain funded integer floors, source caps
+reserve their actual amounts, and rounding dust follows the existing deadline refund.
+This closes the specified native derivation/ablation-weight gap for representable
+integer bundles. It does not certify Shapley fairness, concealed-source independence,
+arbitrary model composition or future model benefit. V3 retains its original rules.
+
+The retained V4 test
+`same_full_bundle_admits_split_reward_redistribution_with_known_aliases` makes one
+remaining weakness concrete: repartitioning one admitted source's unchanged
+aggregate delta can change its paid share. With the same complete bundle and
+unchanged author 2 component, `(A, B)` pays the source of authors 0/1 66666 units;
+`(A + Z, -Z, B)` pays it 96551 from the same authorized 100000-unit budget. Actual
+claims, all transaction fees charged to those two accounts and known-source quotas
+are checked. Their combined account increase after those fees rises by 26814 units;
+real-world training and operating costs are not measured. The 4-intake and
+100000-unit source caps remain enforced.
+
+This is a counterexample to decomposition-invariant attribution, not a cap bypass,
+forgery, unauthorized payer debit or independently governed public-network result.
+The [exact construction and successor conditions](details/NATIVE_MODEL_COMPOSITION_V4.md#retained-known-source-splitting-counterexample)
+preserve the public 25-row corpus, the existing profile and the source map. A fresh
+successor would need source-level aggregation, omission and entitlement before an
+explicit authorized internal allocation; identifying unknown common controllers
+and obtaining prospective evaluation remain separate obligations. A passing
+regression means that the counterexample was reproduced, not that the economic
+weakness was repaired or public economic security was qualified.

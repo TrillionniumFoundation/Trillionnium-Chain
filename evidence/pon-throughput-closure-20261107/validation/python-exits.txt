@@ -1,0 +1,9 @@
+acceptance-reader 0
+fresh-service-reader 0
+pq-source-controls 0
+pq-source-check 0
+source-negative 0
+command-recorder-controls 0
+reorg-abba-controls 0
+repository-check 0
+inventory-check 0

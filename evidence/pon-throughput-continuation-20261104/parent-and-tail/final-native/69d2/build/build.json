@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "bash",
+    "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+    "cargo",
+    "test",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--all-features",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "child_system_seconds": 17.642687,
+  "child_user_seconds": 567.360053,
+  "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+  "exit_code": 0,
+  "finished_at": "2026-11-04T08:49:26.734649+00:00",
+  "label": "build",
+  "max_child_rss_kib": 3114832,
+  "started_at": "2026-11-04T08:44:09.353789+00:00",
+  "stderr_sha256": "7c75109bff8ca9e3016ddd086c97f206523ca4f8cf23d11d96e61f4e000b2acd",
+  "stdout_sha256": "a91955efb911aeee84f63eeefe51b09cd45867b2f8229f69106584603e96fd01",
+  "wall_ns": 317380876197
+}

@@ -1,0 +1,57 @@
+{
+  "schema": "local-default-node-library-observation-v1",
+  "head": "a5b5127883393da33c8619cc5f2b8e333a2dcf1b",
+  "tree": "d0239cbf24633278db0d5622796b62bf92bc223b",
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--",
+    "--test-threads=1"
+  ],
+  "environment": {
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_BUILD_JOBS": "1"
+  },
+  "binary_sha256": "e57f3d4ae1031bfea821372d56cdd0794c270c26d49a7ecf2771316c6b177f2a",
+  "full_original_profile_acceptance": false,
+  "release_gate_accepted": false,
+  "status": "FAILED",
+  "passed": 1114,
+  "failed": 4,
+  "ignored": 31,
+  "filtered_out": 0,
+  "duration_seconds": 1761.15,
+  "exit_code": 101,
+  "reviewed_witness_retry": {
+    "passed": 0,
+    "failed": 3,
+    "filtered_out": 1146,
+    "duration_seconds": 2.66,
+    "exit_code": 101,
+    "cause": "UnixListener::bind returned EPERM before witness readiness"
+  },
+  "current_source_tree_after_execution": "d0239cbf24633278db0d5622796b62bf92bc223b",
+  "source_remained_clean": true,
+  "logs": [
+    {
+      "path": "node-default-library.txt.gz",
+      "uncompressed_sha256": "fd902bfae74813a3d5f6f96448fc01207689db140a077a7da3c6e019f8ec57de"
+    },
+    {
+      "path": "node-independent-witness-reviewed.txt.gz",
+      "uncompressed_sha256": "7afc6f7661cf75d078aaf76802462174e83882a171204665a412f10b380eb788"
+    },
+    {
+      "path": "node-default-environment.txt.gz",
+      "uncompressed_sha256": "c93bb01bb7f728a7de64af504db32a139ac4b4972b27dc654668f54051ae447a"
+    }
+  ]
+}

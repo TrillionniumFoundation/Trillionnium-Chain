@@ -1,0 +1,368 @@
+{
+  "ci_accepted": false,
+  "docs_parent_commit": "36cf6cc7a0ac3cfd9ace44d254bee0c266d3e7eb",
+  "docs_parent_tree": "6a5a5805970809b019b78c8b5e12ee14819346a3",
+  "full_confirmation_reports_retained_in_original_zips": [
+    {
+      "architecture": "x64",
+      "archive": "x64-original.zip",
+      "bytes": 9461299,
+      "duplicate_excluded_from_metadata_tar_only": true,
+      "git_blob": "e417d45b88759b259b397757ce0e13faf1d0e139",
+      "loose_input_copy": "x64/confirmation-report.json",
+      "member": "from-zero-native/confirmation/report.json",
+      "sha256": "899af529f2788a7e023bdc3bc93a5324d305282f4a85d2becec0993b30374013"
+    },
+    {
+      "architecture": "arm64",
+      "archive": "arm64-original.zip",
+      "bytes": 9456509,
+      "duplicate_excluded_from_metadata_tar_only": true,
+      "git_blob": "4dcdf908c6202216f6f08ece0a14610debadc106",
+      "loose_input_copy": "arm64/confirmation-report.json",
+      "member": "from-zero-native/confirmation/report.json",
+      "sha256": "7271b7be1453398e620283bf39192ff4747c21d2af3e5d997ca46aaeadfa8ecc"
+    }
+  ],
+  "independent_wan_accepted": false,
+  "main_or_reviewed_pr_pins_changed": false,
+  "manifest_self_hash_location": "External publication-plan.json; excluded here to avoid recursive self-hash.",
+  "metadata_archive": {
+    "bytes": 31617,
+    "file": "metadata.tar.gz",
+    "git_blob": "5882533040c5482900bcaa7195ea00708da86212",
+    "member_count": 14,
+    "sha256": "4ea586d9192bc766045bbddad3c1c2057d23d07122a8cf137b76f9436ec2e140",
+    "uncompressed_member_bytes": 214187
+  },
+  "metadata_archive_members": [
+    {
+      "bytes": 20150,
+      "git_blob": "d755a2ba1687dbd06c7281896bbecb189c27bee7",
+      "path": "original/arm64/from-zero-manifest.json",
+      "sha256": "a74fa3d9da264227ab9e91da003a609bc35d8b084de7409c6ec51448d2ec0969"
+    },
+    {
+      "bytes": 421,
+      "git_blob": "ea1a3995aa0b08248345dcd0644a03491dd1ee7b",
+      "path": "original/arm64/source.json",
+      "sha256": "5cea8c6aaf69f99a6a4c2db448599c9bbdfe1ea5a121acfdf21b42c85e9e671f"
+    },
+    {
+      "bytes": 3286,
+      "git_blob": "1fb5992dd7ebe99cf10b01bc5f0a05a0d3d16a33",
+      "path": "original/artifact-download-receipts.json",
+      "sha256": "e62ffeed55039198193f7f376eebe036f23d4e23dc2f4df0970699e6a2c184a5"
+    },
+    {
+      "bytes": 3303,
+      "git_blob": "4245549476d84cbc3e2eb8335e77dc69f77ac3c7",
+      "path": "original/artifact-list-response.json",
+      "sha256": "5a6efa229ca7c2d3fec6d0eee0955f67a20c95892cc2950e57edc36db875d8d3"
+    },
+    {
+      "bytes": 56765,
+      "git_blob": "90d70a56c4d59a0737047c28e0446c51180418a1",
+      "path": "original/confirmation-diagnosis.json",
+      "sha256": "e1f0849a94deff103bac869b07a88ccf8c6f80870ab73602e22646fa50c23c5a"
+    },
+    {
+      "bytes": 29907,
+      "git_blob": "88bc2f2df11ea32f04ffc8dc167c84dd51299b54",
+      "path": "original/cost-arm64-0c804e9f5bcf6e972bbb4524c744d4b3c8801c34-1-members.json",
+      "sha256": "0fffb38ed26bddc87bc0337801e279f78ed72c5e3998138253426b93924df244"
+    },
+    {
+      "bytes": 29905,
+      "git_blob": "d330e4a70eacd54fef728c8591cce5e49d30ba26",
+      "path": "original/cost-x64-0c804e9f5bcf6e972bbb4524c744d4b3c8801c34-1-members.json",
+      "sha256": "eec5b739c8b67c16fdfff54af811f36cd84a81cb79a80e7d3c1587d4079e75eb"
+    },
+    {
+      "bytes": 9689,
+      "git_blob": "481a584662fe65f75769bbdc91fc2b54e87abc96",
+      "path": "original/exact-source-excerpts.json",
+      "sha256": "33e3b97047252639fc2c317c06b1a0b2b1ad91dde7cb277f1312a43bca434645"
+    },
+    {
+      "bytes": 20141,
+      "git_blob": "75fdae7be8fba9df0fe4d33cc75d07175d233383",
+      "path": "original/x64/from-zero-manifest.json",
+      "sha256": "e659e0c281b9a855100f1090f50189e774563fcaf110e3a0fa5ab5e5fc9a0663"
+    },
+    {
+      "bytes": 421,
+      "git_blob": "ea1a3995aa0b08248345dcd0644a03491dd1ee7b",
+      "path": "original/x64/source.json",
+      "sha256": "5cea8c6aaf69f99a6a4c2db448599c9bbdfe1ea5a121acfdf21b42c85e9e671f"
+    },
+    {
+      "bytes": 2714,
+      "git_blob": "d05710ebf656cbb25584e2c5e1d91190e32b612b",
+      "path": "verification/credential-screen.json",
+      "sha256": "a392728d1a4fce8740119f5bf07522705ced519f47f1bb2c6715db55e925f81f"
+    },
+    {
+      "bytes": 4298,
+      "git_blob": "a0b38211160a865210d7cff22dbb2172c4d08e6a",
+      "path": "verification/native-before-after-identities.json",
+      "sha256": "47352f48f880831ee2527c66b9ed817049ce849456dd24669ea15acf98b35996"
+    },
+    {
+      "bytes": 32370,
+      "git_blob": "57fbda04cf0c28f99af20d572c16259010bf8936",
+      "path": "verification/original-artifact-validation.json",
+      "sha256": "955052dd49ec0dad116e98016ab25de15b7e7d9b9f3fcde1b8bcb247cb289ae5"
+    },
+    {
+      "bytes": 817,
+      "git_blob": "503759ec765027bac349f202cf109e03c5dc1aca",
+      "path": "verification/original-report-references.json",
+      "sha256": "5904b8f14424f517735135586b16a208ef28160aa15715ac97e3053c4e2083fd"
+    }
+  ],
+  "original_archives_filtered_or_repacked": false,
+  "original_native_before_after_identities": {
+    "arm64": {
+      "all_named_tests_passed": true,
+      "binary_sha256_after": "829f7586331b0e334292733d8339bb473bbd55e12efb6e9567a1cfae82a9e8ec",
+      "binary_sha256_before": "829f7586331b0e334292733d8339bb473bbd55e12efb6e9567a1cfae82a9e8ec",
+      "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+      "execution_finished": false,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "passed": false,
+      "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: aarch64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+      "source_after": {
+        "commit": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+        "test_sha256": "d10a3871e19ae2479c9eb3420ddf0bc47e89a1ef72d34ac5be5b82fad99eb023",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+          "tested_tree": "ebd3545aac5815260ec1f94a2b9a2f383e8dd051",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 706019303,
+          "tracked_entries": 5477,
+          "tracked_worktree_verified": true
+        },
+        "tree": "ebd3545aac5815260ec1f94a2b9a2f383e8dd051"
+      },
+      "source_before": {
+        "commit": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+        "test_sha256": "d10a3871e19ae2479c9eb3420ddf0bc47e89a1ef72d34ac5be5b82fad99eb023",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+          "tested_tree": "ebd3545aac5815260ec1f94a2b9a2f383e8dd051",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 706019303,
+          "tracked_entries": 5477,
+          "tracked_worktree_verified": true
+        },
+        "tree": "ebd3545aac5815260ec1f94a2b9a2f383e8dd051"
+      }
+    },
+    "x64": {
+      "all_named_tests_passed": true,
+      "binary_sha256_after": "a75e3fcd1e6fd9dcdc1ca7a0b45895d794e74f55f3e6e94db325e700fac170ef",
+      "binary_sha256_before": "a75e3fcd1e6fd9dcdc1ca7a0b45895d794e74f55f3e6e94db325e700fac170ef",
+      "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+      "execution_finished": false,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "passed": false,
+      "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+      "source_after": {
+        "commit": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+        "test_sha256": "d10a3871e19ae2479c9eb3420ddf0bc47e89a1ef72d34ac5be5b82fad99eb023",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+          "tested_tree": "ebd3545aac5815260ec1f94a2b9a2f383e8dd051",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 706019303,
+          "tracked_entries": 5477,
+          "tracked_worktree_verified": true
+        },
+        "tree": "ebd3545aac5815260ec1f94a2b9a2f383e8dd051"
+      },
+      "source_before": {
+        "commit": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+        "test_sha256": "d10a3871e19ae2479c9eb3420ddf0bc47e89a1ef72d34ac5be5b82fad99eb023",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+          "tested_tree": "ebd3545aac5815260ec1f94a2b9a2f383e8dd051",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 706019303,
+          "tracked_entries": 5477,
+          "tracked_worktree_verified": true
+        },
+        "tree": "ebd3545aac5815260ec1f94a2b9a2f383e8dd051"
+      }
+    }
+  },
+  "original_source_commit": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+  "original_source_tree": "ebd3545aac5815260ec1f94a2b9a2f383e8dd051",
+  "original_workflow_run_id": 40490734526,
+  "original_workflow_run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40490734526",
+  "original_zip_archives": [
+    {
+      "all_original_members_retained": true,
+      "architecture": "x64",
+      "bytes": 7406718,
+      "file": "x64-original.zip",
+      "git_blob": "034827090d2c95c2b5915fa7afecf296c00344c0",
+      "head_sha": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+      "original_artifact_id": 12728108214,
+      "original_artifact_name": "cost-x64-0c804e9f5bcf6e972bbb4524c744d4b3c8801c34-1",
+      "original_github_digest": "sha256:a0d4851c857d8d816d66942ee51ce351bb63d37d955f73e91750892b291c16cd",
+      "sha256": "a0d4851c857d8d816d66942ee51ce351bb63d37d955f73e91750892b291c16cd",
+      "uncompressed_bytes": 50591551,
+      "workflow_run_id": 40490734526,
+      "zip_member_count": 123
+    },
+    {
+      "all_original_members_retained": true,
+      "architecture": "arm64",
+      "bytes": 7155919,
+      "file": "arm64-original.zip",
+      "git_blob": "d1f5cde987ba3ced784eb4f411694049f16e4988",
+      "head_sha": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+      "original_artifact_id": 12727958291,
+      "original_artifact_name": "cost-arm64-0c804e9f5bcf6e972bbb4524c744d4b3c8801c34-1",
+      "original_github_digest": "sha256:b14bbb55e2678a0f9a4b0446dc6bc0ebb4fc5218f9017c3ba60cef1ed1c6326b",
+      "sha256": "b14bbb55e2678a0f9a4b0446dc6bc0ebb4fc5218f9017c3ba60cef1ed1c6326b",
+      "uncompressed_bytes": 49601706,
+      "workflow_run_id": 40490734526,
+      "zip_member_count": 123
+    }
+  ],
+  "phase_results": [
+    {
+      "architecture": "x64",
+      "business_confirmation_denominator": 1,
+      "business_confirmed": 0,
+      "history_import_errors": {
+        "PUBLIC_HOST_KERNEL_PARENT": 16
+      },
+      "history_import_success": 0,
+      "history_transport_attempts": 16,
+      "history_transport_success": 16,
+      "mode": "attack-free-baseline",
+      "requested_window_ns": 4000000000,
+      "signed_submit_attempts": 7,
+      "signed_submit_success": 7,
+      "workers": 0
+    },
+    {
+      "architecture": "x64",
+      "business_confirmation_denominator": 1,
+      "business_confirmed": 0,
+      "history_import_errors": {
+        "PUBLIC_HOST_KERNEL_PARENT": 16
+      },
+      "history_import_success": 0,
+      "history_transport_attempts": 16,
+      "history_transport_success": 16,
+      "mode": "from-zero-pressure",
+      "requested_window_ns": 4000000000,
+      "signed_submit_attempts": 7,
+      "signed_submit_success": 7,
+      "workers": 16
+    },
+    {
+      "architecture": "arm64",
+      "business_confirmation_denominator": 1,
+      "business_confirmed": 0,
+      "history_import_errors": {
+        "PUBLIC_HOST_KERNEL_PARENT": 16
+      },
+      "history_import_success": 0,
+      "history_transport_attempts": 16,
+      "history_transport_success": 16,
+      "mode": "attack-free-baseline",
+      "requested_window_ns": 4000000000,
+      "signed_submit_attempts": 7,
+      "signed_submit_success": 7,
+      "workers": 0
+    },
+    {
+      "architecture": "arm64",
+      "business_confirmation_denominator": 1,
+      "business_confirmed": 0,
+      "history_import_errors": {
+        "PUBLIC_HOST_KERNEL_PARENT": 16
+      },
+      "history_import_success": 0,
+      "history_transport_attempts": 16,
+      "history_transport_success": 16,
+      "mode": "from-zero-pressure",
+      "requested_window_ns": 4000000000,
+      "signed_submit_attempts": 7,
+      "signed_submit_success": 7,
+      "workers": 16
+    }
+  ],
+  "readback_window": {
+    "diagnosis_utc": "2026-10-27T10:59:38.877001+00:00",
+    "last_download_receipt_utc": "2026-10-27T10:57:07.636Z",
+    "list_utc": "2026-10-27T10:57:02.354Z"
+  },
+  "readme": {
+    "bytes": 7055,
+    "file": "README.md",
+    "git_blob": "a5461e46bf227f0e3b16b424aa2aa3f873bd8312",
+    "sha256": "c7d27ec206a0cdc798edb32c3598236e1278858e21c46cf200b77dcb484609f0"
+  },
+  "recognized_non_test_credentials_detected": false,
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "runtime_files_changed": false,
+  "schema": "chain-original-cross-arch-ci-artifact-package-v1",
+  "source_excerpts_verified": [
+    {
+      "exact_excerpts_checked": 1,
+      "git_blob": "7c62c50f008286e5a06b61e7fa53b1dd21924814",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "source_sha256": "685ba1843dd3680ad4914af18f7d06236ffe3f94050eb5c4fc6658a481547d94"
+    },
+    {
+      "exact_excerpts_checked": 2,
+      "git_blob": "06dc190f7dee41c8bd39f1da874b64e4ac55befa",
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "source_sha256": "405a28c6dedbfa1bdc4fb54ae35d649f88003d5304032180fced08c2a3e91753"
+    },
+    {
+      "exact_excerpts_checked": 2,
+      "git_blob": "3cf1abe11d637902f1a1c46935c606ac71709abf",
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "source_sha256": "d10a3871e19ae2479c9eb3420ddf0bc47e89a1ef72d34ac5be5b82fad99eb023"
+    },
+    {
+      "exact_excerpts_checked": 1,
+      "git_blob": "74d7d55a1eeed449fd158a622b61b856bf471e00",
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "source_sha256": "a077bd7bfb16835e51a2a5a9a62a50a2cbaf1e0cc444c482e91b3ecbddb2da87"
+    }
+  ],
+  "whole_chain_post_quantum_accepted": false,
+  "wrapper_successor_accepted": false
+}

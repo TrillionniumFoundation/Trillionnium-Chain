@@ -1,0 +1,246 @@
+{
+  "schema": "trnm-throughput-frozen-components-readback-v1",
+  "scope": "Readback of existing hosted paired component observations; no new execution and no complete service throughput qualification.",
+  "candidate_commit": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
+  "tested_tree": "87870eb9fc3d6477ee35e59334ccdbb669721777",
+  "prospective_merge_commit": "012b59ec5b1d94e83a9e2622ecb92684461a10d1",
+  "prospective_merge_base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "run_id": 41752900431,
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41752900431",
+  "source_and_integrity": "Every artifact ZIP size and SHA256 checked; native receipt log size/SHA256 and before/after source tree checked. Merge and head trees match; different runners must not be treated as a between-host paired experiment.",
+  "units": "All time columns are integer nanoseconds or half-nanosecond medians. Milliseconds = ns / 1000000; seconds = ns / 1000000000. Ratio = candidate median / reference median; above 1 is slower.",
+  "build_scope": "Existing CI all-features Node test binary, with compiled debug assertions; not release service capacity. Each arm runs in the same binary and runner. CPU values are actual calling-thread CPU; no process RSS qualification.",
+  "measurement_contracts": {
+    "pq": {
+      "samples_per_arm_per_case": 64,
+      "abba_pairs_per_case": 32,
+      "cases": 4,
+      "samples_per_lane": 512,
+      "cache_slots": 8,
+      "scope": "Complete charged caller authentication; original shared intake budget and exact wire pairs. Excludes ticket, network and Node.",
+      "columns": ["case", "original_wall_median_ns", "cached_wall_median_ns", "cached_over_original_wall", "original_cpu_median_ns", "cached_cpu_median_ns", "cached_hits", "cached_expansions"]
+    },
+    "delta": {
+      "samples_per_arm": 6,
+      "abba_rounds": 3,
+      "changed_keys": 2,
+      "scope": "Complete in-memory delta discovery and changed-value encoding. Excludes callbacks, SQL, snapshots, complete state validation and confirmation.",
+      "columns": ["state_keys", "reference_wall_median_ns", "merged_wall_median_ns", "merged_over_reference"]
+    },
+    "account_full_validation": {
+      "samples_per_arm": 6,
+      "abba_rounds": 3,
+      "scope": "Complete verify_state_with_cache, identical fresh arithmetic caches, current record/block/delta, roots and full SQL graph; test parser counters compiled in. Excludes Node opening/admission/network/contention/confirmation/RSS.",
+      "columns": ["state_keys", "reference_wall_median_ns", "reuse_wall_median_ns", "reuse_over_reference", "unchanged_verification_checkpoints"]
+    },
+    "history": {
+      "samples_per_arm_per_height": 8,
+      "pairs_per_height": 8,
+      "scope": "Same owner, CTE and binary; complete generic History call, returned packet encoding and release. Equality checks outside clocks. O(H) per page and O(H^2/p) full pagination remain; this does not describe the indexed public/PQ path.",
+      "columns": ["height", "vec_wall_median_ns", "inline_wall_median_ns", "inline_over_vec"]
+    },
+    "account_parser": {
+      "columns": ["state_keys", "reference_calls", "cold_reuse_calls", "warm_reuse_calls", "reference_rows", "cold_reuse_rows", "warm_reuse_rows", "unchanged_checkpoints"],
+      "rows": [
+        [9, 2, 1, 1, 18, 9, 9, 12],
+        [73, 2, 1, 1, 146, 73, 73, 140],
+        [1033, 2, 1, 1, 2066, 1033, 1033, 2060]
+      ]
+    }
+  },
+  "lanes": [
+    {
+      "lane": "x64-head",
+      "job_id": 126322034521,
+      "tested_commit": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
+      "artifact": {
+        "id": 13288151116,
+        "run_id": 41752900431,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41752900431/artifacts/13288151116",
+        "zip_bytes": 1160197,
+        "zip_sha256": "fa6ab8eb268be40a68a08b387766cfac53b933dcc9eccd8b60d5b7d658dab717"
+      },
+      "binary_sha256": "20d5b63298a012fd42d300ea402d77a943ad51573b9dda0d8a704c4c9a307212",
+      "complete_node_library": {
+        "exit_code": 0,
+        "passed": 968,
+        "failed": 0,
+        "ignored": 25
+      },
+      "raw_members": {
+        "node-lib.log": "8e2b2dad300e83a8c4ddc1fd1441f240f4ecff234f618c4c3d5c8c5afabf546b",
+        "cost-history_inline_record_complete_call_cost.log": "c2268677725f58a5b3984aa3113b4a3dc08eb13a587788ba6a8c49c70f4e50ac",
+        "cost-pq_caller_authentication_complete_cost.log": "74618e858a818f324c9f91bcbbfaba3e41429c89de5fbbddcf720ad130e7d18c"
+      },
+      "all_pq_wire_pairs_equal_and_accounting_preserved": true,
+      "unknown_pq_cpu": 0,
+      "history_all_bytes_progress_and_checks_equal": true,
+      "pq": [
+        ["eight-warm-keys", 5525974.5, 796610.0, 0.144157, 5525544.0, 797244.5, 64, 0],
+        ["one-warm-key", 5569955.5, 799769.5, 0.143586, 5570521.0, 800409.5, 64, 0],
+        ["sixteen-key-churn", 5543196.5, 5888271.5, 1.062252, 5543755.5, 5888830.5, 0, 64],
+        ["warm-invalid-signature", 5544098.0, 797491.5, 0.143845, 5544657.5, 798106.0, 64, 0]
+      ],
+      "delta": [
+        [1024, 194718.5, 14567.0, 0.074811],
+        [16384, 4159833.0, 246831.0, 0.059337],
+        [65536, 18138655.0, 1204133.0, 0.066385]
+      ],
+      "account_full_validation": [
+        [73, 4999923.5, 4889127.0, 0.97784, 140],
+        [1033, 67743150.5, 66983176.0, 0.988782, 2060]
+      ],
+      "history": [
+        [1, 125248.0, 120892.5, 0.965225],
+        [16, 791583.0, 799154.0, 1.009564],
+        [64, 1650501.0, 1659299.5, 1.005331],
+        [257, 5344371.0, 5312893.0, 0.99411]
+      ]
+    },
+    {
+      "lane": "arm-head",
+      "job_id": 126322034210,
+      "tested_commit": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
+      "artifact": {
+        "id": 13288584864,
+        "run_id": 41752900431,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41752900431/artifacts/13288584864",
+        "zip_bytes": 1158982,
+        "zip_sha256": "1b3c23fb58d1a3d2cdd3e1280a217558cfd5d12814147911da5c3653b0c3bff1"
+      },
+      "binary_sha256": "22c4481ce7e343e140365ed6c745fea5dab392c3c4618756e668b9911df1d6fe",
+      "complete_node_library": {
+        "exit_code": 101,
+        "passed": 967,
+        "failed": 1,
+        "ignored": 25
+      },
+      "raw_members": {
+        "node-lib.log": "f38262af7fc184fd3fee14ac5c8a052fd0a7e374347757131ce31202d34841b1",
+        "cost-history_inline_record_complete_call_cost.log": "960a040f6856dfdf3da0439f1d5e75473008e8b2cf4b568c9ee4f4a1f965db10",
+        "cost-pq_caller_authentication_complete_cost.log": "bf683e53ebc11c01506710b643b4a31642d88971ecca6c2697c69137c5b13dcb"
+      },
+      "all_pq_wire_pairs_equal_and_accounting_preserved": true,
+      "unknown_pq_cpu": 0,
+      "history_all_bytes_progress_and_checks_equal": true,
+      "pq": [
+        ["eight-warm-keys", 5403724.0, 1774120.0, 0.328314, 5405000.0, 1775092.0, 64, 0],
+        ["one-warm-key", 5405984.5, 1772479.0, 0.327873, 5407320.0, 1773464.0, 64, 0],
+        ["sixteen-key-churn", 5406964.5, 5407976.5, 1.000187, 5408288.0, 5409140.0, 0, 64],
+        ["warm-invalid-signature", 5411208.0, 1776455.0, 0.328292, 5412364.0, 1777444.0, 64, 0]
+      ],
+      "delta": [
+        [1024, 233367.5, 19835.0, 0.084995],
+        [16384, 5107570.0, 327925.5, 0.064204],
+        [65536, 22085258.0, 1296923.0, 0.058723]
+      ],
+      "account_full_validation": [
+        [73, 14640331.0, 14607377.5, 0.997749, 140],
+        [1033, 198863466.5, 198038066.0, 0.995849, 2060]
+      ],
+      "history": [
+        [1, 229348.5, 246272.0, 1.073789],
+        [16, 1241993.5, 1236886.5, 0.995888],
+        [64, 2740627.0, 2709881.5, 0.988782],
+        [257, 9283473.0, 9183044.0, 0.989182]
+      ]
+    },
+    {
+      "lane": "x64-merge",
+      "job_id": 126322034540,
+      "tested_commit": "012b59ec5b1d94e83a9e2622ecb92684461a10d1",
+      "artifact": {
+        "id": 13288627954,
+        "run_id": 41752900431,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41752900431/artifacts/13288627954",
+        "zip_bytes": 1164739,
+        "zip_sha256": "2f74f3024d66427f2cd0ec1becec616669f68b08e2ff6dc510b2aad7648ccf33"
+      },
+      "binary_sha256": "08c7aff89db3a3707f4889cf35923848ecd473d9b892e5277d8e79e17d80b564",
+      "complete_node_library": {
+        "exit_code": 0,
+        "passed": 968,
+        "failed": 0,
+        "ignored": 25
+      },
+      "raw_members": {
+        "node-lib.log": "cbd5783973b6d59d1010376fdf57d16fe3c18becf3c0df3f75665ca5d9ab1232",
+        "cost-history_inline_record_complete_call_cost.log": "3ddd636f7798bcdcb269c569f73b0b349e17f2f533b5e2bbb63e89af5412c2cc",
+        "cost-pq_caller_authentication_complete_cost.log": "dfcf7e5a1edc722d978d4c1814260ab4c713d2dd801155aa413cc060f356cf83"
+      },
+      "all_pq_wire_pairs_equal_and_accounting_preserved": true,
+      "unknown_pq_cpu": 0,
+      "history_all_bytes_progress_and_checks_equal": true,
+      "pq": [
+        ["eight-warm-keys", 9513768.5, 1427723.0, 0.150069, 9514709.5, 1428636.5, 64, 0],
+        ["one-warm-key", 9511770.5, 1426571.5, 0.14998, 9512720.5, 1427865.5, 64, 0],
+        ["sixteen-key-churn", 9517805.5, 9544294.5, 1.002783, 9518756.5, 9545261.5, 0, 64],
+        ["warm-invalid-signature", 9530689.5, 1425930.5, 0.149615, 9531666.5, 1426793.5, 64, 0]
+      ],
+      "delta": [
+        [1024, 349180.0, 25493.0, 0.073008],
+        [16384, 6991560.0, 392094.5, 0.056081],
+        [65536, 29974867.5, 1616329.0, 0.053923]
+      ],
+      "account_full_validation": [
+        [73, 7477368.0, 7420993.0, 0.992461, 140],
+        [1033, 101831861.5, 100703305.0, 0.988917, 2060]
+      ],
+      "history": [
+        [1, 285251.0, 261312.0, 0.916077],
+        [16, 1436684.5, 1430939.5, 0.996001],
+        [64, 2753386.5, 2750682.0, 0.999018],
+        [257, 8282511.5, 8245502.5, 0.995532]
+      ]
+    },
+    {
+      "lane": "arm-merge",
+      "job_id": 126322034556,
+      "tested_commit": "012b59ec5b1d94e83a9e2622ecb92684461a10d1",
+      "artifact": {
+        "id": 13289141483,
+        "run_id": 41752900431,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41752900431/artifacts/13289141483",
+        "zip_bytes": 1161592,
+        "zip_sha256": "cd189b71837ec77b4f01a3d78404e88d6eed25255175522ec480079b1304ff5d"
+      },
+      "binary_sha256": "59fb0982746fce0af3ea027be61a29f8264068250ea501605cf93f091f8f78b7",
+      "complete_node_library": {
+        "exit_code": 0,
+        "passed": 968,
+        "failed": 0,
+        "ignored": 25
+      },
+      "raw_members": {
+        "node-lib.log": "06853ae75410cff835a32c40faf4369a74309b8d6275e4dec6f44cd205b64fa5",
+        "cost-history_inline_record_complete_call_cost.log": "b7eecb03cffbf3c281e2210f5ad7212d1ef64a6f02e470f09ec4ea5ed846589e",
+        "cost-pq_caller_authentication_complete_cost.log": "cf5077e5a5e08c89a97e747491080022a86aba28bc47f0f28a8572df55d1ed02"
+      },
+      "all_pq_wire_pairs_equal_and_accounting_preserved": true,
+      "unknown_pq_cpu": 0,
+      "history_all_bytes_progress_and_checks_equal": true,
+      "pq": [
+        ["eight-warm-keys", 5402214.5, 1771989.0, 0.328012, 5402768.0, 1772736.0, 64, 0],
+        ["one-warm-key", 5401818.0, 1771541.5, 0.327953, 5402492.0, 1772184.0, 64, 0],
+        ["sixteen-key-churn", 5407357.5, 5407562.0, 1.000038, 5407664.0, 5408172.0, 0, 64],
+        ["warm-invalid-signature", 5393453.5, 1766165.0, 0.327465, 5394112.0, 1766904.0, 64, 0]
+      ],
+      "delta": [
+        [1024, 235971.0, 19212.5, 0.081419],
+        [16384, 5049425.0, 309137.5, 0.061222],
+        [65536, 21852458.0, 1219041.0, 0.055785]
+      ],
+      "account_full_validation": [
+        [73, 14664731.5, 14609237.5, 0.996216, 140],
+        [1033, 199063951.5, 198284408.0, 0.996084, 2060]
+      ],
+      "history": [
+        [1, 236223.5, 261696.0, 1.107832],
+        [16, 1320280.0, 1324832.5, 1.003448],
+        [64, 2939470.0, 2923545.5, 0.994583],
+        [257, 9902087.0, 9909735.0, 1.000772]
+      ]
+    }
+  ],
+  "interpretation_limits": ["All cases and heights are retained, including x64 head key-churn regression and ARM small-History regressions. No confidence interval, p99, WAN TPS or public activation claim.", "Parser counts halve, but observed complete-validation median changes are only about 0.2-2.2 percent; generic History full-call changes are mixed and small.", "Strong delta discovery and warm-key authentication wins are component observations; source44d3 and later candidates require their own execution."]
+}

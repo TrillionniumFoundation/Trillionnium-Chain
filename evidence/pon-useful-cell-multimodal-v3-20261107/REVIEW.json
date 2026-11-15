@@ -1,0 +1,96 @@
+{
+  "all_earlier_attempts_retained": true,
+  "boundaries": {
+    "actual_production_model_use_verified": false,
+    "backward_w1_proven": false,
+    "checkpoint_committed": false,
+    "external_delivery_verified": false,
+    "final_use_granted": false,
+    "fixed_codecs_and_graph": true,
+    "generated_arithmetic_inputs": true,
+    "model_quality_qualified": false,
+    "native_node_admission": false,
+    "ordinary_hepta_product": false,
+    "owner_authorization_verified": false,
+    "parent_context_authenticated": false,
+    "production_qualified": false,
+    "request_consumed": false,
+    "source_origin_authenticated": false,
+    "work_cost_qualified": false,
+    "work_security_qualified": false
+  },
+  "final_controls": {
+    "all_stop_still_computes_all_dense_operators": true,
+    "cases": 8,
+    "group": "controls-owner-snapshot",
+    "historical_live_and_cold_all_pass": true,
+    "proofs_per_case": 12,
+    "rows_per_case": 4,
+    "target": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "target_semantics": "maximal-correctness-control-not-work-hardness",
+    "training_to_next_model_artifact_continuity": true,
+    "unique_complete_w1_proofs": 96
+  },
+  "final_program_sha256": "f111c873f7df1e9b440072bc8776e2ba4e34228ae1c106149cf83eca77c6e357",
+  "no_failed_process_exit_in_this_new_lane": true,
+  "parameters_sha256": "78be8c582c149d46053d8e0306774624cb2c9136fef56108bc6361a0013fd16d",
+  "previous_controls": {
+    "counted_in_final_control_count": false,
+    "group": "controls-attempt1",
+    "program_sha256": "bfba421a366ce47f19431c0aa41cc050fca7ffbde7c43e903819e07420475f2c",
+    "unique_complete_w1_proofs": 96
+  },
+  "private_hepta_material_included": false,
+  "result": "PASS",
+  "runtime": {
+    "byteorder": "little",
+    "cache_tag": "cpython-312",
+    "implementation": "cpython",
+    "version": [
+      3,
+      12,
+      14
+    ]
+  },
+  "schema": "multimodal-v3/evidence-review",
+  "source_context": {
+    "base_commit": "d5c93eeff4fc7baf644eedced436dd7ee51685c7",
+    "qualification_identity": "per-file source hashes; shared integration worktree not asserted clean"
+  },
+  "source_files": {
+    "formal/pon-nakamoto-v1/experiments/useful_cell_multimodal_v3.py": {
+      "bytes": 13576,
+      "sha256": "e18a84581f6413a1c965e7549fbbedb78c7212f6cfe907e212cbb1552a03ac71"
+    },
+    "formal/pon-nakamoto-v1/test_useful_cell_multimodal_execution_v3.py": {
+      "bytes": 25852,
+      "sha256": "23ef7ade9d5ee2e9a80b7e4f71986dfd31af8dbdd8ad45707c8cfefe1c21aa2c"
+    },
+    "formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py": {
+      "bytes": 22315,
+      "sha256": "9fbd40ea0426db09cd6323ad7ce0065572882c47179b66bcf1b17dbfb48ee1e8"
+    },
+    "formal/pon-nakamoto-v1/useful_cell_multimodal_execution_v3.py": {
+      "bytes": 39053,
+      "sha256": "53cb962744d6f31812973310a467fc24492988e2d8f9aa8cb660b7772b611c93"
+    },
+    "formal/pon-nakamoto-v1/useful_cell_multimodal_relation_v3.py": {
+      "bytes": 23545,
+      "sha256": "3e145493afa6671acebf45db11c4e3199edf1fbd44448ce44919efe8200da97d"
+    }
+  },
+  "test_groups": [
+    {
+      "exit_code": 0,
+      "path": "raw/owner-snapshot-unit.json",
+      "tests": 58
+    },
+    {
+      "exit_code": 0,
+      "kind": "additional owner-snapshot behavior regression",
+      "path": "raw/snapshot-behavior.json",
+      "tests": 1
+    }
+  ],
+  "unique_tests_passed": 59
+}

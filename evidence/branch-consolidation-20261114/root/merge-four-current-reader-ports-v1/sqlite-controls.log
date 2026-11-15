@@ -1,0 +1,15 @@
+test_original_failure_remains_failure_and_later_attempts_are_retained (__main__.RequalificationOrchestrationTests.test_original_failure_remains_failure_and_later_attempts_are_retained) ... ok
+test_original_four_and_foreign_refusal_restore_have_separate_denominators (__main__.RequalificationOrchestrationTests.test_original_four_and_foreign_refusal_restore_have_separate_denominators) ... ok
+test_probe_timeout_is_retained_and_cannot_qualify (__main__.RequalificationOrchestrationTests.test_probe_timeout_is_retained_and_cannot_qualify) ... ok
+test_restore_requires_actual_qualified_witness (__main__.RequalificationOrchestrationTests.test_restore_requires_actual_qualified_witness) ... ok
+test_silent_filtering_of_foreign_loader_is_a_failed_control (__main__.RequalificationOrchestrationTests.test_silent_filtering_of_foreign_loader_is_a_failed_control) ... ok
+test_wrong_cargo_selection_is_retained_before_execution (__main__.RequalificationOrchestrationTests.test_wrong_cargo_selection_is_retained_before_execution) ... ok
+test_cache_transition_must_emit_a_fresh_output (__main__.RequalificationReaderTests.test_cache_transition_must_emit_a_fresh_output) ... ok
+test_foreign_path_requires_that_path_and_a_loader_rejection (__main__.RequalificationReaderTests.test_foreign_path_requires_that_path_and_a_loader_rejection) ... ok
+test_restore_preserves_absent_empty_and_existing_loader_values (__main__.RequalificationReaderTests.test_restore_preserves_absent_empty_and_existing_loader_values) ... ok
+test_zero_exit_without_actual_witness_cannot_qualify (__main__.RequalificationReaderTests.test_zero_exit_without_actual_witness_cannot_qualify) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.025s
+
+OK

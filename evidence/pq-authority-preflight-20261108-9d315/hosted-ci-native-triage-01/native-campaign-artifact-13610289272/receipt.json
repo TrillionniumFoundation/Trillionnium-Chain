@@ -1,0 +1,20 @@
+{
+  "artifact": {
+    "bytes": 71722426,
+    "sha256": "b6415ddf54d336c1c0647eca920cfe7ed0dfe24b75a7d65cf9a8c5b118d6c354"
+  },
+  "expected_head": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+  "no_cargo_or_ci_retry": true,
+  "out": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-native-triage-01/native-campaign-artifact-13610289272",
+  "report_summary": {
+    "bytes": 34473,
+    "sha256": "5a3a017fe3caca867cfa9bf53e1aa7855ca4e0f26b701113fff956f9da311ac1"
+  },
+  "result": "OBSERVED",
+  "selected_files": 16,
+  "source_unchanged": true,
+  "zip_index": {
+    "bytes": 251809,
+    "sha256": "4be3d8abab8fe0124b145aea48dbaa32bde40e27839289748021600cc1b8447e"
+  }
+}

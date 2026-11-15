@@ -1,0 +1,50 @@
+{
+  "all_selected_entries_identical": true,
+  "candidate": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "files": [
+    {
+      "candidate_tree_entry": "100644 blob 9d97dfadd5bad55383475b7583f384ea572f180c\tscripts/ci/run_from_zero_native.py",
+      "identical_type_mode_blob": true,
+      "integration_tree_entry": "100644 blob 9d97dfadd5bad55383475b7583f384ea572f180c\tscripts/ci/run_from_zero_native.py",
+      "path": "scripts/ci/run_from_zero_native.py"
+    },
+    {
+      "candidate_tree_entry": "100644 blob b7d6c49f3f21a946ed5dd20147205dcee9b0f17b\tscripts/ci/run_from_zero_host.py",
+      "identical_type_mode_blob": true,
+      "integration_tree_entry": "100644 blob b7d6c49f3f21a946ed5dd20147205dcee9b0f17b\tscripts/ci/run_from_zero_host.py",
+      "path": "scripts/ci/run_from_zero_host.py"
+    },
+    {
+      "candidate_tree_entry": "100644 blob 245b5b905e32446ed20f39398619553c4dccead0\tscripts/ci/public_host_ci_observation.py",
+      "identical_type_mode_blob": true,
+      "integration_tree_entry": "100644 blob 245b5b905e32446ed20f39398619553c4dccead0\tscripts/ci/public_host_ci_observation.py",
+      "path": "scripts/ci/public_host_ci_observation.py"
+    },
+    {
+      "candidate_tree_entry": "100644 blob d0bfb7f775a3ae3b17110d7259c8b069fbbda137\tscripts/ci/public_fixture_host_lease.py",
+      "identical_type_mode_blob": true,
+      "integration_tree_entry": "100644 blob d0bfb7f775a3ae3b17110d7259c8b069fbbda137\tscripts/ci/public_fixture_host_lease.py",
+      "path": "scripts/ci/public_fixture_host_lease.py"
+    },
+    {
+      "candidate_tree_entry": "100644 blob 87825357c881a1283ef46ce0226c2eacfd5af6cb\ttrillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "identical_type_mode_blob": true,
+      "integration_tree_entry": "100644 blob 87825357c881a1283ef46ce0226c2eacfd5af6cb\ttrillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs"
+    },
+    {
+      "candidate_tree_entry": "100644 blob ec3a691ad8f9e1ae4d61c6dc10a27762cabbcf2c\ttrillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs",
+      "identical_type_mode_blob": true,
+      "integration_tree_entry": "100644 blob ec3a691ad8f9e1ae4d61c6dc10a27762cabbcf2c\ttrillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs",
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs"
+    },
+    {
+      "candidate_tree_entry": "100644 blob 940753e4962536de928ce855d67ff2a2d7a84148\ttrillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs",
+      "identical_type_mode_blob": true,
+      "integration_tree_entry": "100644 blob 940753e4962536de928ce855d67ff2a2d7a84148\ttrillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs",
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs"
+    }
+  ],
+  "integration": "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+  "scope": "Selected driver, host/lease and native from-zero test sources; not a claim that every native library is unchanged."
+}

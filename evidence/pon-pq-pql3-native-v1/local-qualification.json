@@ -1,0 +1,63 @@
+{
+  "environment": {
+    "compiler": "cc (Debian 14.2.0-19) 14.2.0",
+    "filesystem": "overlayfs, isolated local working directory",
+    "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+    "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+    "python": "3.13.5"
+  },
+  "external_source_anchor_authenticated": false,
+  "files": {
+    "docs/security/PQ_PQL3_NATIVE_STATE_CONFORMANCE_V1.md": {
+      "bytes": 6225,
+      "git_blob_sha1": "f38f109a8c84c9f02f97d9f45bb65ea7f25cf166",
+      "sha256": "f954930bd0f138c118e4f0e9456130a080a4b8602b92a0a4699cab50bd0a998e"
+    },
+    "evidence/pon-pq-pql3-native-v1/README.md": {
+      "bytes": 1786,
+      "git_blob_sha1": "c5a5c626ac27362c4a134f08876e7e22f6a19540",
+      "sha256": "0ac7cda58f9409772adf154be8eff2fe6173425b56c52fd6376a41fba1c94ea1"
+    },
+    "evidence/pon-pq-pql3-native-v1/native-unittest.log": {
+      "bytes": 2490,
+      "git_blob_sha1": "f9bc11a3476e70637c3a8b00dde6d0481906f096",
+      "sha256": "0900b1ceb48136634344a103068d74293bf0c3f03118ca9cc5d8c6c4e5d66555"
+    },
+    "evidence/pon-pq-pql3-native-v1/sanitizer-unittest.log": {
+      "bytes": 2489,
+      "git_blob_sha1": "54ca71d5f4258b27a2119302b7d60650baf0a02f",
+      "sha256": "9c200fec87d5c2de6ae344c97d70eaa7e46096b83b434267fbbc505a2ea9727d"
+    },
+    "formal/pon-nakamoto-v1/pql3_native_verify.c": {
+      "bytes": 9748,
+      "git_blob_sha1": "bc1ec6384c5c6e2121ffedacd5d25c2e53c45561",
+      "sha256": "e7bf077d6beac12981fb8815f1ab154eb6956df4aae5cab37af07d8f3febafb4"
+    },
+    "formal/pon-nakamoto-v1/test_pql3_native_verify.py": {
+      "bytes": 14776,
+      "git_blob_sha1": "5961721b393281be6b505b3149b598cdcde25915",
+      "sha256": "b039190410bf33068ac4054ea753c67ab73bb3fb372122854ce8427d12c50908"
+    }
+  },
+  "independent_accepted": false,
+  "native_rust_node_executed": false,
+  "parent_commit": "6c63f18795e8937e7e8ea11b757fcdbd2ff1e59c",
+  "production_activation": false,
+  "python_parent_parity_executed": false,
+  "results": {
+    "asan_ubsan": {
+      "failed": 0,
+      "full_byte_mutations": false,
+      "passed": 14,
+      "skipped": 1
+    },
+    "normal": {
+      "failed": 0,
+      "full_byte_mutations": true,
+      "passed": 14,
+      "skipped": 1
+    }
+  },
+  "schema": "pql3-local-research-qualification-v1",
+  "signature_authority_verified": false
+}

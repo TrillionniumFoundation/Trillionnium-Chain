@@ -1,0 +1,57 @@
+[
+  {
+    "head": "10b64dca5afa09db2ca826383407648c53b79522",
+    "tree": "7a1dff44973bf1244571fd092fc7e44d807bab14",
+    "target": "3a0f3c6da82890be8bf134d688fc41f387fee75d",
+    "base": "6e06401819a40ffb8a6cb21f1a1bfd40d9018fcc",
+    "exact_source_blobs": {
+      "trillionnium/crates/trnm-types/src/relay.rs": "e090f7807a8f039fecc05fa98446a20263b830ab"
+    },
+    "source_guard_methods": [
+      "test_relay_preflight_source_bytes_are_bound_without_qualification",
+      "test_relay_preflight_sources_require_each_path_and_pin"
+    ],
+    "resolved_metadata": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    ],
+    "changed_paths": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "scripts/ci/check_pq_research_integration.py",
+      "scripts/ci/test_pq_research_integration.py",
+      "trillionnium/crates/trnm-types/src/relay.rs"
+    ]
+  },
+  {
+    "head": "20225691ec9f0cffd84884f6f21cd15db3cbe401",
+    "tree": "5cda0c9cbe4449d63820189e06c4d33dd38ed9ff",
+    "target": "a06fab1ec850e103ead9fee7ed7bc42cb4267165",
+    "base": "692f2454620faad648850f9421f2f11467ba046e",
+    "exact_source_blobs": {
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "90c0f3fadaa6fefaefe991254990f7b56cfaaa77",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/input_decode_tests.rs": "142262940ec1e564919037d61aa6bc1e40ae60e4",
+      "scripts/ci/pq_chain_claim_guard.py": "89d2b42488f11e7cef44b59453fb6aad8962bff6",
+      "scripts/ci/test_pq_chain_claim_guard.py": "72682391155dd65d0f54606324ec5a01465bb653"
+    },
+    "source_guard_methods": [
+      "test_public_v3_reactor_sources_cannot_omit_or_mutate"
+    ],
+    "resolved_metadata": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "scripts/ci/check_pq_research_integration.py",
+      "scripts/ci/test_pq_research_integration.py"
+    ],
+    "changed_paths": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "scripts/ci/check_pq_research_integration.py",
+      "scripts/ci/pq_chain_claim_guard.py",
+      "scripts/ci/test_pq_chain_claim_guard.py",
+      "scripts/ci/test_pq_research_integration.py",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/input_decode_tests.rs"
+    ]
+  }
+]

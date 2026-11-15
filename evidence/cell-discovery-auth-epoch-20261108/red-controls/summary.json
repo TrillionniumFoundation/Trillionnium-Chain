@@ -1,0 +1,46 @@
+{
+  "base": "0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a",
+  "scope": "Unchanged original discovery implementation with two added desired-behavior red controls; test-only source augmentation, not a production-source pass",
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "prior_operations_expiry_red::",
+    "--",
+    "--test-threads=1"
+  ],
+  "exit_code": 101,
+  "elapsed_seconds": 52.559826374053955,
+  "native_summary": [
+    "test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 428 filtered out; finished in 2.52s"
+  ],
+  "expected_red_observed": true,
+  "logs": {
+    "module-registration.patch": {
+      "bytes": 968,
+      "sha256": "83be07e52e1206ffff051b023e51d8dd848cd5ebefe3c69add2519ae5d307998"
+    },
+    "pq_prior_operations_expiry_red.rs": {
+      "bytes": 3805,
+      "sha256": "07fbd903def7c011152015ff87b32bbeb4d75ab1a118fe2a544bbd828d257962"
+    },
+    "stdout.log": {
+      "bytes": 1801,
+      "sha256": "205de36b349a839dfd2329685b7bbe079f26fd2586aebf672616d8dc1cc762ce"
+    },
+    "stderr.log": {
+      "bytes": 713,
+      "sha256": "bce3eb0efce4acd3597f124ec8aef23004c1392c7e9de9871e5b6eb2cba855ab"
+    },
+    "classic_prior_operations_expiry_red.rs": {
+      "bytes": 3245,
+      "sha256": "b8cbb61b3ce39512fe851dea30cde55906813e9e5d6f7080c8b1f2771f9ac57a"
+    }
+  }
+}

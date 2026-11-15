@@ -1,0 +1,24 @@
+{
+  "actual_oid": "11ef9017eed7bfc1a6f8ea687d5f6e62d511aa88",
+  "bytes": 3169702,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "11ef9017eed7bfc1a6f8ea687d5f6e62d511aa88"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 3169702,
+  "expected_oid": "11ef9017eed7bfc1a6f8ea687d5f6e62d511aa88",
+  "finished_at": "2026-11-12T01:55:16.985387+00:00",
+  "path": "evidence/pon-cell-hepta-readback-20261028/hepta-original-cell-receipts-40607183163.zip",
+  "path_base64": "ZXZpZGVuY2UvcG9uLWNlbGwtaGVwdGEtcmVhZGJhY2stMjAyNjEwMjgvaGVwdGEtb3JpZ2luYWwtY2VsbC1yZWNlaXB0cy00MDYwNzE4MzE2My56aXA=",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "dd0a56247fcb72a18873247540ce49bce04cde72dad1fad88f3639c570fb3306",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:16.943237+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

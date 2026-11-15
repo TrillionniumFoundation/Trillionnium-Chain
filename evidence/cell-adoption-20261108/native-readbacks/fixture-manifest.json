@@ -1,0 +1,137 @@
+{
+  "derived_reviews": {
+    "adopted_acked": {
+      "bytes": 1987,
+      "file": "adopted_acked.review.json",
+      "reader_sha256": "85bdf280e235da127fdd051fd06038228dd5be451933a4453d688953e88ce79f",
+      "scope": "fixture-derived-expectations-not-authorized-deployment",
+      "sha256": "80114f34ceed73043aa1671fd93c4c82699efa94ec8befa23ed2e53dd961864b"
+    },
+    "adopted_pending": {
+      "bytes": 1987,
+      "file": "adopted_pending.review.json",
+      "reader_sha256": "85bdf280e235da127fdd051fd06038228dd5be451933a4453d688953e88ce79f",
+      "scope": "fixture-derived-expectations-not-authorized-deployment",
+      "sha256": "f2ca9eae250cbce59081a776ca30ac921d9b0dbe3e1fd28f30de67d80de3e2ce"
+    },
+    "retained_acked": {
+      "bytes": 1982,
+      "file": "retained_acked.review.json",
+      "reader_sha256": "85bdf280e235da127fdd051fd06038228dd5be451933a4453d688953e88ce79f",
+      "scope": "fixture-derived-expectations-not-authorized-deployment",
+      "sha256": "0e3b901d4522913ccbe69983a7edcad48217de16d787b92657efa2d3a3cffff4"
+    },
+    "retained_pending": {
+      "bytes": 1982,
+      "file": "retained_pending.review.json",
+      "reader_sha256": "85bdf280e235da127fdd051fd06038228dd5be451933a4453d688953e88ce79f",
+      "scope": "fixture-derived-expectations-not-authorized-deployment",
+      "sha256": "07d67d71b4c1387a5d1d8117c098c2f7a850dc7d72b2891c350d8801944fd392"
+    }
+  },
+  "expectations": "Derived from these fixtures solely to exercise parsing; not independent deployment pins.",
+  "exports": {
+    "adopted_acked": {
+      "bytes": 13520,
+      "disposition": "adopted_model_reset",
+      "file": "adopted_acked.json",
+      "fixture_expected_bytes": 1698,
+      "fixture_expected_sha256": "3a0fcb59cf75f157c5795653a01efb639962a256e5248b5b3bd5e922f6833159",
+      "log_byte_end": 64536,
+      "log_byte_start": 51016,
+      "observation_kind": "next_use",
+      "payload_domain_digest": "96b77f852149f5c69192301bb3cc4c2ec8f218d931d09c7290c8d5b6bed43b20",
+      "payload_sha256": "ad08dac6654e974385d2e54fd7d9b004996dafa99f21bc273dbdc36565476e54",
+      "pending_output_present": false,
+      "phase": "adopted_acked",
+      "sha256": "69a80c932903c1685b7db9f83d544ef403da0c668f95480ce447c7aa955ab31c"
+    },
+    "adopted_pending": {
+      "bytes": 13823,
+      "disposition": "adopted_model_reset",
+      "file": "adopted_pending.json",
+      "fixture_expected_bytes": 1698,
+      "fixture_expected_sha256": "103f03c24811f7ba8ad230ad2aaa40ca64389f9b2ad4947f80f6963aac52cebe",
+      "log_byte_end": 50970,
+      "log_byte_start": 37147,
+      "observation_kind": "next_use",
+      "payload_domain_digest": "76391ec05d3a1fef8a4b9598aea488ca740953d854617194a9b9ed227e77e8b9",
+      "payload_sha256": "d9404a9be22b97d93f52e027fbd2ccdf4cf9ffa7d93a58a743a3f5362c16fd89",
+      "pending_output_present": true,
+      "phase": "adopted_pending",
+      "sha256": "3b3fe72584f128f369c18cd7dae0697ee93beca3404ace106ccd8446ede60f00"
+    },
+    "retained_acked": {
+      "bytes": 11821,
+      "disposition": "retained_model",
+      "file": "retained_acked.json",
+      "fixture_expected_bytes": 1631,
+      "fixture_expected_sha256": "a38464656f5bfc372701cbdb5b7de0bd118500db42e2a88f74f186d2b6454d2b",
+      "log_byte_end": 89059,
+      "log_byte_start": 77238,
+      "observation_kind": "retained_model_next_use",
+      "payload_domain_digest": "555a78513219fa7f6dd969351e0963cc03fd293eaa850ebf323b9e64b15dd08b",
+      "payload_sha256": "901eec47b98c4b9f2a3867e9087fd28f7cdeebcd0b4daf6116f740f9060fbe20",
+      "pending_output_present": false,
+      "phase": "retained_acked",
+      "sha256": "67c11f0a957098a5db4c433452cffb1070bd7c220c18e947f9f7b7fe65e55d47"
+    },
+    "retained_pending": {
+      "bytes": 12149,
+      "disposition": "retained_model",
+      "file": "retained_pending.json",
+      "fixture_expected_bytes": 1631,
+      "fixture_expected_sha256": "9db742282463927d3ed5a484f85142f877333352f851839785d3bc31372c16f3",
+      "log_byte_end": 77191,
+      "log_byte_start": 65042,
+      "observation_kind": "retained_model_next_use",
+      "payload_domain_digest": "c53132645f1f9bdb966d7cf809fcae64c95c35b673f3d0d69cc147d7696cad08",
+      "payload_sha256": "dc5673befd63d92b113d2377f57b0a92721c3451f6c2a603dd8a00becaae983f",
+      "pending_output_present": true,
+      "phase": "retained_pending",
+      "sha256": "8908ec58db9af8942f7215112cfae02ec93ab3bb36fe4fbfcc25bcd2bdd08fe8"
+    }
+  },
+  "native_log_retained": "native-controls.txt",
+  "native_log_sha256": "752c7e73292e964253c84baab5ef521dbc5576ed6261faf29d2b892107616ece",
+  "native_run_id": "a9f9b028-83ba-43f6-afe0-2fb1ce3e42ca",
+  "native_source": {
+    "head": "2c2a3adbcc4d6d6784e4ba76106bb1beb700e3bd",
+    "index_tree": "319737f613f1a9f786df78c4fb79e9c32cac5542",
+    "native_tree": "5287bca8328bbea7feb92a0fb8cc0c616104adc5",
+    "runner_sha256": "6c5289054cab43f8c6fdac0b4ac743de56f9365d26da23f0d220471c592ef848",
+    "status": "",
+    "tree": "319737f613f1a9f786df78c4fb79e9c32cac5542"
+  },
+  "retained_provenance": {
+    "capture-manifest.json": {
+      "bytes": 4384,
+      "sha256": "bcd988d171ea13a78bc44c4f576784078df47bdb5c8a2f4a83575bf89cb4bbb2"
+    },
+    "frozen-source.json": {
+      "bytes": 1197,
+      "sha256": "2ba2bad07baf0a4135498261d0d73898a18930b2f1a0dc87ecd97b1ed72ea69f"
+    },
+    "native-controls.junit.xml": {
+      "bytes": 1587,
+      "sha256": "3b24d2e09d1020b2ac30b6af2a7756a4f4cc600fee649847a2cd8f925cf04fe8"
+    },
+    "native-controls.txt": {
+      "bytes": 90678,
+      "sha256": "752c7e73292e964253c84baab5ef521dbc5576ed6261faf29d2b892107616ece"
+    },
+    "native-result.json": {
+      "bytes": 7076,
+      "sha256": "6d27be2c46db8e26ab415ddc9248e14156710798b9a493281acc113cff5cc24b"
+    }
+  },
+  "schema": "trnm-cell-native-readback-fixtures-v1",
+  "scope": "original-native-engineering-fixtures-not-production",
+  "source_file_inventory": {
+    "bytes": 69660,
+    "decompressed_bytes": 505385,
+    "decompressed_sha256": "273415d449d4080882e645464db624e791c089429fc3722f22c2c20ef002b212",
+    "file": "native-source-files.sha256.json.gz",
+    "sha256": "7d4bfc6665659bad0a1c419f168c2344718eb2e2bd6556885494723dd5fb0b09"
+  }
+}

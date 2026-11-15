@@ -1,0 +1,14 @@
+    Finished `release` profile [optimized] target(s) in 0.07s
+     Running tests/public_v3_multiprocess.rs (/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-ed1f83f1304f9903)
+P0 native campaign: honest 1024 signed transfers and 21 business blocks
+P0 native campaign: observed producer prepared-generic
+P0 native campaign: observed producer tiled-classical
+P0 native campaign: observed producer tiled-strassen-one-level
+P0 native campaign: observed producer paired-product
+P0 native campaign: observed producer maintenance-periodic
+P0 native campaign: observed producer maintenance-integer-paired
+P0 native campaign: observed producer maintenance-prefix
+P0 native campaign: observed producer maintenance-limb
+P0 native campaign: phase baseline 30s / 0 attacker processes
+P0 native campaign: phase from-zero 30s / 24 attacker processes
+P0 native campaign: phase late-product 30s / 24 attacker processes

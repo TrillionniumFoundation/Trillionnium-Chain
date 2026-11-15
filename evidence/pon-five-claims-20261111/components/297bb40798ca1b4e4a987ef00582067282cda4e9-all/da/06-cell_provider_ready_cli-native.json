@@ -1,0 +1,51 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_provider_ready_cli-6a234193b4ce88f5",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "child_reaped": true,
+  "cwd": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability",
+  "dispatch_object": {
+    "bytes": 3953872,
+    "device": 2050,
+    "inode": 52884525,
+    "sha256": "5e24ad09c0e93b04c1467f8c4220d30c95743e2adcbf1bb2eb9e16797abd4f46"
+  },
+  "dispatch_object_after_sha256": "5e24ad09c0e93b04c1467f8c4220d30c95743e2adcbf1bb2eb9e16797abd4f46",
+  "dispatch_object_stable": true,
+  "elapsed_ns": 137570649,
+  "exit_code": 0,
+  "label": "06-cell_provider_ready_cli-native",
+  "native_observation": {
+    "bytes": 3953872,
+    "device": 2050,
+    "exe_link": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_provider_ready_cli-6a234193b4ce88f5",
+    "executable_opened_monotonic_ns": 1472177172145032,
+    "hash_finished_monotonic_ns": 1472177190174610,
+    "inode": 52884525,
+    "observation_started_monotonic_ns": 1472177172031680,
+    "process": {
+      "parent_pid": 68035,
+      "pid": 91673,
+      "start_ticks": 147217717
+    },
+    "process_binding_finished_monotonic_ns": 1472177172195069,
+    "sha256": "5e24ad09c0e93b04c1467f8c4220d30c95743e2adcbf1bb2eb9e16797abd4f46",
+    "status": "OBSERVED"
+  },
+  "owned_pid": 91673,
+  "performance_measurement": false,
+  "started_unix_ns": 1794394511161087157,
+  "status": "command_succeeded",
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/06-cell_provider_ready_cli-native.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 267,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/06-cell_provider_ready_cli-native.stdout.log",
+    "sha256": "a5a455956e0016739a4cf29b2fa1387c6cdb104cba34b77a97d4b31bf0e33770"
+  }
+}

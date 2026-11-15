@@ -1,0 +1,54 @@
+{
+  "schema": "local-integration-pre-binding-refusals-v1",
+  "recorded_at_utc": "2026-11-09T13:45:47.328575+00:00",
+  "head_context": "d728137d082bb6def7cdaa13d27a9ba57925824d",
+  "worktree_state": "uncommitted-835-836-837-integration",
+  "source_commit_binding_claimed": false,
+  "purpose": "retain-original-register-refusals-before-explicit-source-review",
+  "commands": [
+    {
+      "name": "authority-before-binding",
+      "command": [
+        "python3",
+        "scripts/ci/pq_authority_effect_register.py"
+      ],
+      "returncode": 2,
+      "outputs": {
+        "stdout": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/authority-before-binding.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/authority-before-binding.stderr.log",
+          "bytes": 164,
+          "sha256": "58bea8ca40011468a1536549488f50c69f7a58d21400b5c16375d04bc53a1439"
+        }
+      },
+      "script_sha256": "bc8a8a54fb846aa5b1bd0a8981a6dcd4535586a96af01214661229c3ff28a011",
+      "manifest_sha256": "547902b48e185df987c2204eeb4113e01f975ad54ce3ef1c44c509a16cc1cbea"
+    },
+    {
+      "name": "root-before-binding",
+      "command": [
+        "python3",
+        "scripts/ci/pq_root_dependency_register.py"
+      ],
+      "returncode": 2,
+      "outputs": {
+        "stdout": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/root-before-binding.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/root-before-binding.stderr.log",
+          "bytes": 136,
+          "sha256": "692fda2c0a5be015eb8138fdec2c67fcab47265f3129f77b61966a239f012a99"
+        }
+      },
+      "script_sha256": "1ed30b793e733613f3116d75cae9a2d42e874c2010dbb38184a7c03c1168e66d",
+      "manifest_sha256": "eedc1db827d97aab0be4c43e58713a2e2f2a3d0331e045a509f0941557834028"
+    }
+  ]
+}

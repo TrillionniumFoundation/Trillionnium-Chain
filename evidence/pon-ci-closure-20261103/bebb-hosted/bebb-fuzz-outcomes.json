@@ -1,0 +1,546 @@
+{
+  "schema": "bebb-fuzz-exact-source-outcomes-v1",
+  "observed_at": "2026-11-03T15:24:43.038330+00:00",
+  "run_id": 41658914621,
+  "head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+  "actual_merge": "0153600a002c420d20128983c3280ff6c16e70c4",
+  "lanes": [
+    {
+      "kind": "head",
+      "source": {
+        "base": null,
+        "candidate": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 862029405,
+        "tracked_entries": 7315,
+        "tracked_worktree_verified": true
+      },
+      "source_manifest": {
+        "commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "source_state": "committed-clean",
+        "tracked_bytes": 862029405,
+        "tracked_entries": 7315,
+        "tracked_worktree_verified": true,
+        "tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7"
+      },
+      "artifact": {
+        "id": 13241916824,
+        "bytes": 175860,
+        "sha256": "733f5328abdda6fbf937ec4e8226f6ea9e95d9b1287f71258f1042d904c64d06",
+        "github_digest_verified": true,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41658914621/artifacts/13241916824"
+      },
+      "job_id": 125996626120,
+      "job_status": "completed",
+      "job_conclusion": "success",
+      "manifest_sha256": "1a8ab7e52ac0e4c00f83b4a2865469d2b51c7fd601622985db002bfd76a701bd",
+      "result": "PASS",
+      "acceptance_granted": false,
+      "source_consistent": true,
+      "fuzz_lock_sha256": "8102aabc115e12470a5eee89735b3f3094134e1b3701cb61209e45b3129214a2",
+      "tools": {
+        "TRNM_CARGO_DENY_VERSION": "0.20.2",
+        "TRNM_CARGO_FUZZ_VERSION": "0.13.2",
+        "TRNM_FUZZ_TOOLCHAIN": "nightly-2026-10-01"
+      },
+      "sanitizer": "address",
+      "seconds_per_target": 60,
+      "observations": [
+        {
+          "command": [
+            "cargo",
+            "fuzz",
+            "--version"
+          ],
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 2180988940,
+          "executed": true,
+          "exit_code": 0,
+          "expected_source": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+          "log": "cargo-fuzz-version.log",
+          "process_exit_code": 0,
+          "source_after_verified": true,
+          "source_before_verified": true,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "command": [
+            "rustc",
+            "--version",
+            "--verbose"
+          ],
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 2185076583,
+          "executed": true,
+          "exit_code": 0,
+          "expected_source": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+          "log": "compiler.log",
+          "process_exit_code": 0,
+          "source_after_verified": true,
+          "source_before_verified": true,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "command": [
+            "cargo",
+            "fetch",
+            "--locked",
+            "--manifest-path",
+            "tests/fuzz/Cargo.toml"
+          ],
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 3264305148,
+          "executed": true,
+          "exit_code": 0,
+          "expected_source": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+          "log": "fetch.log",
+          "process_exit_code": 0,
+          "source_after_verified": true,
+          "source_before_verified": true,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "command": [
+            "cargo",
+            "fuzz",
+            "run",
+            "--fuzz-dir",
+            "tests/fuzz",
+            "--sanitizer",
+            "address",
+            "--debug-assertions",
+            "canonical_wire",
+            "/home/runner/work/_temp/ci-observations/fuzz/corpus/canonical_wire",
+            "--",
+            "-max_total_time=60",
+            "-timeout=10",
+            "-rss_limit_mb=2048",
+            "-max_len=2049",
+            "-seed=20261004",
+            "-print_final_stats=1",
+            "-artifact_prefix=/home/runner/work/_temp/ci-observations/fuzz/artifacts/canonical_wire/"
+          ],
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 404866418309,
+          "executed": true,
+          "exit_code": 0,
+          "expected_source": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+          "log": "canonical_wire.log",
+          "process_exit_code": 0,
+          "source_after_verified": true,
+          "source_before_verified": true,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "command": [
+            "cargo",
+            "fuzz",
+            "run",
+            "--fuzz-dir",
+            "tests/fuzz",
+            "--sanitizer",
+            "address",
+            "--debug-assertions",
+            "work_certificate",
+            "/home/runner/work/_temp/ci-observations/fuzz/corpus/work_certificate",
+            "--",
+            "-max_total_time=60",
+            "-timeout=10",
+            "-rss_limit_mb=2048",
+            "-max_len=49189",
+            "-seed=20261004",
+            "-print_final_stats=1",
+            "-artifact_prefix=/home/runner/work/_temp/ci-observations/fuzz/artifacts/work_certificate/"
+          ],
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 65532188867,
+          "executed": true,
+          "exit_code": 0,
+          "expected_source": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+          "log": "work_certificate.log",
+          "process_exit_code": 0,
+          "source_after_verified": true,
+          "source_before_verified": true,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "command": [
+            "cargo",
+            "fuzz",
+            "run",
+            "--fuzz-dir",
+            "tests/fuzz",
+            "--sanitizer",
+            "address",
+            "--debug-assertions",
+            "authenticated_state",
+            "/home/runner/work/_temp/ci-observations/fuzz/corpus/authenticated_state",
+            "--",
+            "-max_total_time=60",
+            "-timeout=10",
+            "-rss_limit_mb=2048",
+            "-max_len=512",
+            "-seed=20261004",
+            "-print_final_stats=1",
+            "-artifact_prefix=/home/runner/work/_temp/ci-observations/fuzz/artifacts/authenticated_state/"
+          ],
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 77215402403,
+          "executed": true,
+          "exit_code": 0,
+          "expected_source": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+          "log": "authenticated_state.log",
+          "process_exit_code": 0,
+          "source_after_verified": true,
+          "source_before_verified": true,
+          "source_verified": true,
+          "timed_out": false
+        }
+      ],
+      "targets": {
+        "authenticated_state": {
+          "binary_sha256": "2636848332e655fb87435ed96225213394f1cfc4b8fd5e7161b570f1394d7b52",
+          "coverage_guided_instrumentation_observed": true,
+          "executed_units": 396,
+          "max_len": 512,
+          "maximum_reported_edge_coverage": 8166,
+          "seed_count": 34
+        },
+        "canonical_wire": {
+          "binary_sha256": "4d15850b526045f71df2b8e449e504f9bde52d5ad47ca3522df6be36b2ec7600",
+          "coverage_guided_instrumentation_observed": true,
+          "executed_units": 20147374,
+          "max_len": 2049,
+          "maximum_reported_edge_coverage": 304,
+          "seed_count": 18
+        },
+        "work_certificate": {
+          "binary_sha256": "54d4d65cdfcf8c63d411749008c37cab4ea71ec74c84da5668b24b7af15e3228",
+          "coverage_guided_instrumentation_observed": true,
+          "executed_units": 1089,
+          "max_len": 49189,
+          "maximum_reported_edge_coverage": 770,
+          "seed_count": 1
+        }
+      },
+      "raw_members": [
+        {
+          "member": "source.json",
+          "path": "/dev/shm/trnm-abae1861b451/acceptance/bebb-fuzz-head-raw/source.json",
+          "bytes": 421,
+          "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+        },
+        {
+          "member": "fuzz/manifest.json",
+          "path": "/dev/shm/trnm-abae1861b451/acceptance/bebb-fuzz-head-raw/fuzz/manifest.json",
+          "bytes": 58976,
+          "sha256": "1a8ab7e52ac0e4c00f83b4a2865469d2b51c7fd601622985db002bfd76a701bd"
+        },
+        {
+          "member": "fuzz/fetch.log",
+          "path": "/dev/shm/trnm-abae1861b451/acceptance/bebb-fuzz-head-raw/fuzz/fetch.log",
+          "bytes": 2317,
+          "sha256": "3349918ac101e6635c653303e49ce5ee8f6eebc8941f292674378f70e7ea6165"
+        },
+        {
+          "member": "fuzz/canonical_wire.log",
+          "path": "/dev/shm/trnm-abae1861b451/acceptance/bebb-fuzz-head-raw/fuzz/canonical_wire.log",
+          "bytes": 34022,
+          "sha256": "47827a658ae339214422cf0218de36132558b2746573b5151c365190c5a2828a"
+        },
+        {
+          "member": "fuzz/work_certificate.log",
+          "path": "/dev/shm/trnm-abae1861b451/acceptance/bebb-fuzz-head-raw/fuzz/work_certificate.log",
+          "bytes": 23834,
+          "sha256": "3bfde7d374df535ef9bad2d6e919651b8724db1a56f4f55cb45558ddcb4f6d6c"
+        },
+        {
+          "member": "fuzz/authenticated_state.log",
+          "path": "/dev/shm/trnm-abae1861b451/acceptance/bebb-fuzz-head-raw/fuzz/authenticated_state.log",
+          "bytes": 45752,
+          "sha256": "ddf952aa41094338fbc78bbb5d7d17a312b2ca2123a28bab14f8da5e72c8bf90"
+        }
+      ]
+    },
+    {
+      "kind": "prospective-merge",
+      "source": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "kind": "prospective-merge",
+        "prospective_merge": "0153600a002c420d20128983c3280ff6c16e70c4",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "0153600a002c420d20128983c3280ff6c16e70c4",
+        "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 862029405,
+        "tracked_entries": 7315,
+        "tracked_worktree_verified": true
+      },
+      "source_manifest": {
+        "commit": "0153600a002c420d20128983c3280ff6c16e70c4",
+        "source_state": "committed-clean",
+        "tracked_bytes": 862029405,
+        "tracked_entries": 7315,
+        "tracked_worktree_verified": true,
+        "tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7"
+      },
+      "artifact": {
+        "id": 13244350235,
+        "bytes": 175258,
+        "sha256": "e55538e234aa65c931776a2e0feecce9560b95c5402f94b3501c6d6dffd9bb31",
+        "github_digest_verified": true,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41658914621/artifacts/13244350235"
+      },
+      "job_id": 125996627268,
+      "job_status": "completed",
+      "job_conclusion": "success",
+      "manifest_sha256": "7cade193d6ff1dc1f064a32cd7e03e6312717b10a8db5100c07b24a7b2b0e2e4",
+      "result": "PASS",
+      "acceptance_granted": false,
+      "source_consistent": true,
+      "fuzz_lock_sha256": "8102aabc115e12470a5eee89735b3f3094134e1b3701cb61209e45b3129214a2",
+      "tools": {
+        "TRNM_CARGO_DENY_VERSION": "0.20.2",
+        "TRNM_CARGO_FUZZ_VERSION": "0.13.2",
+        "TRNM_FUZZ_TOOLCHAIN": "nightly-2026-10-01"
+      },
+      "sanitizer": "address",
+      "seconds_per_target": 60,
+      "observations": [
+        {
+          "command": [
+            "cargo",
+            "fuzz",
+            "--version"
+          ],
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 2211868497,
+          "executed": true,
+          "exit_code": 0,
+          "expected_source": "0153600a002c420d20128983c3280ff6c16e70c4",
+          "log": "cargo-fuzz-version.log",
+          "process_exit_code": 0,
+          "source_after_verified": true,
+          "source_before_verified": true,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "command": [
+            "rustc",
+            "--version",
+            "--verbose"
+          ],
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 2207395599,
+          "executed": true,
+          "exit_code": 0,
+          "expected_source": "0153600a002c420d20128983c3280ff6c16e70c4",
+          "log": "compiler.log",
+          "process_exit_code": 0,
+          "source_after_verified": true,
+          "source_before_verified": true,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "command": [
+            "cargo",
+            "fetch",
+            "--locked",
+            "--manifest-path",
+            "tests/fuzz/Cargo.toml"
+          ],
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 3393807075,
+          "executed": true,
+          "exit_code": 0,
+          "expected_source": "0153600a002c420d20128983c3280ff6c16e70c4",
+          "log": "fetch.log",
+          "process_exit_code": 0,
+          "source_after_verified": true,
+          "source_before_verified": true,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "command": [
+            "cargo",
+            "fuzz",
+            "run",
+            "--fuzz-dir",
+            "tests/fuzz",
+            "--sanitizer",
+            "address",
+            "--debug-assertions",
+            "canonical_wire",
+            "/home/runner/work/_temp/ci-observations/fuzz/corpus/canonical_wire",
+            "--",
+            "-max_total_time=60",
+            "-timeout=10",
+            "-rss_limit_mb=2048",
+            "-max_len=2049",
+            "-seed=20261004",
+            "-print_final_stats=1",
+            "-artifact_prefix=/home/runner/work/_temp/ci-observations/fuzz/artifacts/canonical_wire/"
+          ],
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 409788158839,
+          "executed": true,
+          "exit_code": 0,
+          "expected_source": "0153600a002c420d20128983c3280ff6c16e70c4",
+          "log": "canonical_wire.log",
+          "process_exit_code": 0,
+          "source_after_verified": true,
+          "source_before_verified": true,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "command": [
+            "cargo",
+            "fuzz",
+            "run",
+            "--fuzz-dir",
+            "tests/fuzz",
+            "--sanitizer",
+            "address",
+            "--debug-assertions",
+            "work_certificate",
+            "/home/runner/work/_temp/ci-observations/fuzz/corpus/work_certificate",
+            "--",
+            "-max_total_time=60",
+            "-timeout=10",
+            "-rss_limit_mb=2048",
+            "-max_len=49189",
+            "-seed=20261004",
+            "-print_final_stats=1",
+            "-artifact_prefix=/home/runner/work/_temp/ci-observations/fuzz/artifacts/work_certificate/"
+          ],
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 65582891482,
+          "executed": true,
+          "exit_code": 0,
+          "expected_source": "0153600a002c420d20128983c3280ff6c16e70c4",
+          "log": "work_certificate.log",
+          "process_exit_code": 0,
+          "source_after_verified": true,
+          "source_before_verified": true,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "command": [
+            "cargo",
+            "fuzz",
+            "run",
+            "--fuzz-dir",
+            "tests/fuzz",
+            "--sanitizer",
+            "address",
+            "--debug-assertions",
+            "authenticated_state",
+            "/home/runner/work/_temp/ci-observations/fuzz/corpus/authenticated_state",
+            "--",
+            "-max_total_time=60",
+            "-timeout=10",
+            "-rss_limit_mb=2048",
+            "-max_len=512",
+            "-seed=20261004",
+            "-print_final_stats=1",
+            "-artifact_prefix=/home/runner/work/_temp/ci-observations/fuzz/artifacts/authenticated_state/"
+          ],
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 77284143069,
+          "executed": true,
+          "exit_code": 0,
+          "expected_source": "0153600a002c420d20128983c3280ff6c16e70c4",
+          "log": "authenticated_state.log",
+          "process_exit_code": 0,
+          "source_after_verified": true,
+          "source_before_verified": true,
+          "source_verified": true,
+          "timed_out": false
+        }
+      ],
+      "targets": {
+        "authenticated_state": {
+          "binary_sha256": "14bedbd3b6298e1dbc9f66d4a24ed77c6002901ca8c610242b0e2006b12248c0",
+          "coverage_guided_instrumentation_observed": true,
+          "executed_units": 390,
+          "max_len": 512,
+          "maximum_reported_edge_coverage": 8163,
+          "seed_count": 34
+        },
+        "canonical_wire": {
+          "binary_sha256": "80151e6fd09d49c474170305450787bab8215e34c26998e2478b843a23848c14",
+          "coverage_guided_instrumentation_observed": true,
+          "executed_units": 19247106,
+          "max_len": 2049,
+          "maximum_reported_edge_coverage": 304,
+          "seed_count": 18
+        },
+        "work_certificate": {
+          "binary_sha256": "9a56809619304c37b9a3b5b627573dfa59618d69ed629da9230ba107bb7e7763",
+          "coverage_guided_instrumentation_observed": true,
+          "executed_units": 1064,
+          "max_len": 49189,
+          "maximum_reported_edge_coverage": 770,
+          "seed_count": 1
+        }
+      },
+      "raw_members": [
+        {
+          "member": "source.json",
+          "path": "/dev/shm/trnm-abae1861b451/acceptance/bebb-fuzz-prospective-merge-raw/source.json",
+          "bytes": 510,
+          "sha256": "8e34fb3b6b3bf22ffad23a8fa5e6f57ce03a3e5b9fe89b1065f2606241dc3f9f"
+        },
+        {
+          "member": "fuzz/manifest.json",
+          "path": "/dev/shm/trnm-abae1861b451/acceptance/bebb-fuzz-prospective-merge-raw/fuzz/manifest.json",
+          "bytes": 58690,
+          "sha256": "7cade193d6ff1dc1f064a32cd7e03e6312717b10a8db5100c07b24a7b2b0e2e4"
+        },
+        {
+          "member": "fuzz/fetch.log",
+          "path": "/dev/shm/trnm-abae1861b451/acceptance/bebb-fuzz-prospective-merge-raw/fuzz/fetch.log",
+          "bytes": 2317,
+          "sha256": "32a42dcd6358d2d558059f18d93a40d0a571b8b5fd32f033e421fc7dbef63321"
+        },
+        {
+          "member": "fuzz/canonical_wire.log",
+          "path": "/dev/shm/trnm-abae1861b451/acceptance/bebb-fuzz-prospective-merge-raw/fuzz/canonical_wire.log",
+          "bytes": 34029,
+          "sha256": "f9b0601626bd8528f0b6f83f3fa1ef149417c7a4ffe29ce6d9d85a52ba559221"
+        },
+        {
+          "member": "fuzz/work_certificate.log",
+          "path": "/dev/shm/trnm-abae1861b451/acceptance/bebb-fuzz-prospective-merge-raw/fuzz/work_certificate.log",
+          "bytes": 23848,
+          "sha256": "f6e9c32d27db12a2f8c34c9befed5f3d03f15ea98d63bd9eaa511b370455e37c"
+        },
+        {
+          "member": "fuzz/authenticated_state.log",
+          "path": "/dev/shm/trnm-abae1861b451/acceptance/bebb-fuzz-prospective-merge-raw/fuzz/authenticated_state.log",
+          "bytes": 45559,
+          "sha256": "ee7c16a59e21e311c4a0fd813028b15e81fadddeb396bbf2f0ca3a81b5902d38"
+        }
+      ]
+    }
+  ],
+  "scope": "Original retained 60-second-per-target address-sanitized smoke runs only, not exhaustive fuzz coverage or security qualification.",
+  "environment_note": "Read-only CI artifact audit; task evidence directory recreated after executor reset. No source/build/rerun performed."
+}

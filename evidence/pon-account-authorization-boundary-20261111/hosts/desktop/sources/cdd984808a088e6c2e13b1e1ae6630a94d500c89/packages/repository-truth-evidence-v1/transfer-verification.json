@@ -1,0 +1,270 @@
+{
+  "archive_bytes": 194065,
+  "archive_member_count": 38,
+  "archive_path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-evidence-v1/repository-truth-evidence-v1.tar.gz",
+  "archive_sha256": "f0499cffadc88c4377305e7b453090a638d513f4859e59cbb93b7a4c57fdc9ba",
+  "contiguous_chunk_hashes_verified": true,
+  "host": "desktop",
+  "manifest_sha256": "ca16102819e0267ab0e33431dc2a14d701039c6cb627525f1c91acab43c36ddf",
+  "original_file_checks": [
+    {
+      "archive_member": "repository-truth-evidence-v1/harness/run_validation.py",
+      "bytes": 5676,
+      "pass": true,
+      "sha256": "10089fad39140cbb56c15b85c72c8e5e8c76fc368d74c2ac2cb11233b1310562"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/installed.stderr.log",
+      "bytes": 0,
+      "pass": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/installed.stdout.log",
+      "bytes": 294,
+      "pass": true,
+      "sha256": "26c17d002738c0848bd8e81c672f804344b41631cdb11bdc37735c29d91b2a55"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/pip.stderr.log",
+      "bytes": 0,
+      "pass": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/pip.stdout.log",
+      "bytes": 441,
+      "pass": true,
+      "sha256": "7a1e543fdaa4ec6075520b58a279ba89cf40c1e46123132655c488027c991266"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/runtime-release-dependencies.json",
+      "bytes": 4800,
+      "pass": true,
+      "sha256": "06eb29bc6d1a63cbc890bb71be6ec0d06a4e37e3e01b2797ecc5b3cc8aebaf86"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/runtime-release-requirements.txt",
+      "bytes": 378,
+      "pass": true,
+      "sha256": "2acf07322b544b1d2318642b59877dd035bc7808590619f3cf23e75eedd0bbe7"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/setup.json",
+      "bytes": 2139,
+      "pass": true,
+      "sha256": "2eb37b2aa7842e207bec272aab1fc6676f0b02899949ae18ff1fc6f876cf3c10"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/venv.stderr.log",
+      "bytes": 0,
+      "pass": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/venv.stdout.log",
+      "bytes": 0,
+      "pass": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/source/.github/workflows/trnm-required-baseline.yml",
+      "bytes": 35332,
+      "pass": true,
+      "sha256": "1cb75c13bea9e7f9913985ff4c0210ff73a3f61ba72ae3584c34ee9476e0579d"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/source/scripts/ci/ci_job.sh",
+      "bytes": 40093,
+      "pass": true,
+      "sha256": "42bf80b48db9cdc3d4a4ea09cfa9aa4bec0dbee4fa8effbbec3a64af75daf210"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/source/scripts/ci/runtime-release-requirements.txt",
+      "bytes": 378,
+      "pass": true,
+      "sha256": "2acf07322b544b1d2318642b59877dd035bc7808590619f3cf23e75eedd0bbe7"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/llm-runtime-release-python/context.json",
+      "bytes": 4078,
+      "pass": true,
+      "sha256": "a208a61d66096da3bece5ba61802f1a8d5b0170197f9bc50a3176713a7aed306"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/llm-runtime-release-python/result.json",
+      "bytes": 927,
+      "pass": true,
+      "sha256": "c3226f8abd2a7ab669010576f68ed56fc69a565f40f710eec31353aaa38fb0f0"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/llm-runtime-release-python/stderr.log",
+      "bytes": 4166,
+      "pass": true,
+      "sha256": "e92b09503a2c87cb24271712fcc2c9f43d779940c45740616cb12740bc02993a"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/llm-runtime-release-python/stdout.log",
+      "bytes": 0,
+      "pass": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/context.json",
+      "bytes": 4143,
+      "pass": true,
+      "sha256": "0de13392a931032ea5ce2c8c85f02da7c1e28af78b51fc8a51c62ed82a821a43"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/cancellation-handoff.log",
+      "bytes": 4352,
+      "pass": true,
+      "sha256": "79ec4fd6f7a1b0ccd900b1427958f679bcfb7822d40b08870cba8d91cfd1d237"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/coordinator-contract.log",
+      "bytes": 3833,
+      "pass": true,
+      "sha256": "680c35a7744d9291953647b0a4e196d766e137ad2b09ae0155a656aa15a5de6b"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/deployment-comparison-audit.log",
+      "bytes": 3505,
+      "pass": true,
+      "sha256": "d705a61196bdd81d6e97089bb1fdb469aa25d832b2b7743463ec6cae6f221a57"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/deployment-evidence-binding.log",
+      "bytes": 2465,
+      "pass": true,
+      "sha256": "e614adb107b65e604db75a84ba91361f83981b6ea28208f3bd6ed2dc6f4b6e48"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/generation-target.log",
+      "bytes": 2457,
+      "pass": true,
+      "sha256": "73b8ed84a906b66773dabde2d3237938ceaa195902080d1298f461ebf8333f5c"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/kaggle-worker-contract.log",
+      "bytes": 2195,
+      "pass": true,
+      "sha256": "5fd0b89b93b1ed3d3a19187698065b15920a62a976e6d7381b352df377fc0ec2"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/owned-process-collector.log",
+      "bytes": 2459,
+      "pass": true,
+      "sha256": "459c26035b61d3eb08e3e27e680215439d1a7bac76fab3533451ee3ec20d0899"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/owned-runtime-reader.log",
+      "bytes": 1555,
+      "pass": true,
+      "sha256": "2868e6b58b31d6384265e9d09a1a002c69559469ba0c18d0a1b4b2684bd9391f"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/owner-cancellation.log",
+      "bytes": 1642,
+      "pass": true,
+      "sha256": "619a3a66ca9a8f1927d88a7895484d1ae7f4b4f016a78475be0b9cde2c8ee2ae"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/provider-contract.log",
+      "bytes": 2099,
+      "pass": true,
+      "sha256": "4231fed7b2c43f6c815014beae4ca42c5cf06aa40a19e56a834c8aea19b9fa9d"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/source-builder.log",
+      "bytes": 1662,
+      "pass": true,
+      "sha256": "76c2cd09de0c8ee1fd3430368b41f4532fa4d78efbc4ed8715b177712cad54b0"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/winner-identity.log",
+      "bytes": 854,
+      "pass": true,
+      "sha256": "2cae4084535e1f64e5862e8b2893f8f03c3c5a8166950e34157687c594c831df"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/result.json",
+      "bytes": 996,
+      "pass": true,
+      "sha256": "ed863e69ff7a307d8b1ec55270697555430711cf503aae9559a381db36e0ae23"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/stderr.log",
+      "bytes": 275841,
+      "pass": true,
+      "sha256": "6f3975318b61be63249e285757208e12cf2ff0ffc52d2401efbc4ed31494a798"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/stdout.log",
+      "bytes": 192436,
+      "pass": true,
+      "sha256": "5b85e578374f5375c0220615193f6382d45751b1190530637207cd4c393511b1"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth/context.json",
+      "bytes": 4025,
+      "pass": true,
+      "sha256": "bfabbe2cfe63a7ee869ab96159c4b626ccf02277a50e0b77c7d9b7e109885f74"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth/result.json",
+      "bytes": 878,
+      "pass": true,
+      "sha256": "75d5a5a8636705afc608c09384869a5c454cd18a0be6635e51346f2f0dcccd23"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth/stderr.log",
+      "bytes": 243731,
+      "pass": true,
+      "sha256": "e119dc80ed902a60c4d953e6d8f495f1fb1d0c293c4ee7c66a8932ea0b157bd2"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth/stdout.log",
+      "bytes": 163287,
+      "pass": true,
+      "sha256": "5ca077c67cf1dc84446bc2a94f35eeefbbbbd308290be1ed660f180d0e6256f6"
+    }
+  ],
+  "original_file_count": 37,
+  "original_output_bytes_unmodified": true,
+  "pass": true,
+  "qualification_granted": false,
+  "record_checks": [
+    {
+      "context_sha256": "a208a61d66096da3bece5ba61802f1a8d5b0170197f9bc50a3176713a7aed306",
+      "id": "llm-runtime-release-python",
+      "pass": true,
+      "result_sha256": "c3226f8abd2a7ab669010576f68ed56fc69a565f40f710eec31353aaa38fb0f0",
+      "returncode": 0,
+      "wrapper_raw_hashes_verified": true
+    },
+    {
+      "context_sha256": "bfabbe2cfe63a7ee869ab96159c4b626ccf02277a50e0b77c7d9b7e109885f74",
+      "id": "repository-truth",
+      "pass": false,
+      "result_sha256": "75d5a5a8636705afc608c09384869a5c454cd18a0be6635e51346f2f0dcccd23",
+      "returncode": 1,
+      "wrapper_raw_hashes_verified": true
+    },
+    {
+      "context_sha256": "0de13392a931032ea5ce2c8c85f02da7c1e28af78b51fc8a51c62ed82a821a43",
+      "id": "repository-truth-runtime-python",
+      "pass": true,
+      "result_sha256": "ed863e69ff7a307d8b1ec55270697555430711cf503aae9559a381db36e0ae23",
+      "returncode": 0,
+      "wrapper_raw_hashes_verified": true
+    }
+  ],
+  "remote_archive": "/home/qian-qi/chain-pq-a418-final-records/archives/repository-truth-evidence-v1.tar.gz",
+  "remote_archive_version": "2050:52882878:194065:1794365213349744898:1794365213458418088",
+  "same_remote_version_for_all_chunks": true,
+  "schema": "trnm-desktop-evidence-transfer-verification-v1",
+  "source_head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+  "verified_utc": "2026-11-11T02:50:45.136601+00:00"
+}

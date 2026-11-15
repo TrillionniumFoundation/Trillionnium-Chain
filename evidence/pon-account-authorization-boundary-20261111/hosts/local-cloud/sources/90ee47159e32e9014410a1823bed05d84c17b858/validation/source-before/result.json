@@ -1,0 +1,24 @@
+{
+  "id": "source-before",
+  "argv": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "90ee47159e32e9014410a1823bed05d84c17b858",
+    "--output",
+    "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/source-before.json"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 935.1203246279997,
+  "finished_utc": "2026-11-11T01:10:54.320572+00:00",
+  "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_status_after": "",
+  "stdout_sha256": "d14f6b1956be6909b16f9312dcc57a60e6442a8dfb3010ba2e00f691d8dda79f",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "pass": true,
+  "qualification_granted": false
+}

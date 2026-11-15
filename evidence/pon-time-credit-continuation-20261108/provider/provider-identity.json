@@ -1,0 +1,25 @@
+{
+  "prefix": "/home/qian-qi/chain-w1-ingress-r17-20261107/provider-runtime/trnm-pq-provider-3.5.9.lq0uAtbU/install",
+  "preexisting_provider": true,
+  "rebuild_claimed": false,
+  "files": {
+    "bin/openssl": {
+      "bytes": 8933408,
+      "sha256": "4467365b708d585d6d01da86ae47d43f096bc61454ebc24fb099544f52ca028d"
+    },
+    "lib/libcrypto.a": {
+      "bytes": 12381496,
+      "sha256": "409a32858cd67ac8d1736f1e05c16c92956d014f3c1c0519fc178cf59a28aacd"
+    },
+    "lib/libssl.a": {
+      "bytes": 2123138,
+      "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727"
+    }
+  },
+  "versions": {
+    "openssl": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2",
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "python": "Python 3.12.3"
+  }
+}

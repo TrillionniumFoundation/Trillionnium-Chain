@@ -1,0 +1,53 @@
+{
+  "schema": "original-pq-phase-log-budget-observation-v2",
+  "commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "raw_log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/records/node-lib-allfeatures.log",
+  "raw_log_sha256": "15b4a44a2dcbdcaed3c2a8c07fabb884de5577d9daac5b039505b8d1ecb202d5",
+  "process_budget_bytes": 262144,
+  "markers": [
+    {
+      "line": 1406,
+      "byte_offset_utf8": 6898772,
+      "nearest_preceding_test": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics",
+      "bytes_from_prefix": 104,
+      "schema": "pon-pq-test-phase-observation-v1",
+      "process_log_limit_reached": true,
+      "scope_snapshot_is_final": null,
+      "child_snapshot_missing_or_invalid": false
+    }
+  ],
+  "phase_lines_total": 26,
+  "phase_lines_before_first_marker": 25,
+  "phase_lines_after_first_marker": 0,
+  "emissions_after_first_marker": [],
+  "failed_scope_phase_lines": [
+    {
+      "test": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart",
+      "phase_line_count": 0,
+      "begins_after_first_limit_marker": true
+    },
+    {
+      "test": "store::pq_rollback_witness::tests::cached_permission_is_rechecked_after_actual_native_tcp_success",
+      "phase_line_count": 0,
+      "begins_after_first_limit_marker": true
+    }
+  ],
+  "qualification": false,
+  "limits": [
+    "emit_line rejects a line that does not fit remaining bytes; failed subtraction does not zero the remaining count, so a later smaller line could still fit",
+    "Scope snapshots carry process_id, while the one-time log-limit sentinel does not; forwarded child snapshots can carry a child process_id although the parent emit_line consumes the parent's budget",
+    "the retained raw log has zero later phase lines, but missing original failures cannot be reconstructed from this or a fresh process",
+    "records are separately bounded to eight per Scope; unknown phases are never zero time"
+  ],
+  "supersedes": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/monitoring/phase-log-budget-observation.json",
+    "sha256": "9f12aa5ad60e3d1854b979ba9fc56df847eba51bd004ffc56f8d8eec20f6045a",
+    "correction": "Scope snapshots contain process_id; the limit sentinel omits it. A forwarded child snapshot process_id identifies that snapshot source, not necessarily the parent emitter owning the log budget."
+  },
+  "snapshot_process_ids_before_limit": [
+    253144,
+    619253,
+    619723,
+    619794
+  ]
+}

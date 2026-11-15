@@ -1,0 +1,17 @@
+{
+  "command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check",
+    "--",
+    ".github",
+    "config",
+    "docs",
+    "trillionnium"
+  ],
+  "exit_code": 0,
+  "scope": "Original raw patches and test logs retain byte-identical contextual/trailing blank lines. No formatter/check configuration was changed. Source/doc/config formatting is checked separately.",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

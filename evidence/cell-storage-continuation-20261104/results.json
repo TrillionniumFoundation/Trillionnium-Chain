@@ -1,0 +1,83 @@
+{
+  "schema": "trnm.cell.storage-observation.v1",
+  "tested_commit": "3e866c637197339700c93a6b716d20a3968291f1",
+  "tested_tree": "38fd2b903c276d3d53e44a0e2fbd7ef3373681f1",
+  "source_before_after_equal": true,
+  "tracked_entries_verified": 8796,
+  "tracked_bytes_verified": 941172912,
+  "m09_library": {
+    "passed": 261,
+    "failed": 0,
+    "ignored": 0
+  },
+  "m09_cli_integration": {
+    "passed": 29,
+    "failed": 0,
+    "ignored": 0
+  },
+  "native_paid_storage_selected": {
+    "passed": 7,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 994,
+    "whole_node_suite_run": false
+  },
+  "python_tests": {
+    "ci_source_integrity": 34,
+    "pq_source_integrity": 34,
+    "claim_guard": 22,
+    "authority_surface": 11,
+    "model_root_oracle": 4
+  },
+  "strict_clippy": "PASS: whole workspace, all targets, default features, -D warnings",
+  "format": "PASS: cargo fmt --all -- --check",
+  "native_inventory": "PASS",
+  "source_pins": 421,
+  "repository_links": 2474,
+  "workspace_members": 26,
+  "resolved_platform_packages": 175,
+  "lock_packages": 180,
+  "lock_sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+  "executed_binary_observations": [
+    {
+      "name": "trnm_data_availability-4afa79d63a34aeeb",
+      "bytes": 72032440,
+      "sha256": "64190329367c38102329ae4b4f1297a2ef222cf96e70d6b2501f1ab3c5b513b5"
+    },
+    {
+      "name": "trnm_pon_node-524e9bf7e3b64440",
+      "bytes": 383890184,
+      "sha256": "a1cca167b727a85ce10b27eef1b9bfa83493f1f92136ceef2acc8344d1073cc9"
+    },
+    {
+      "name": "trnm-cell",
+      "bytes": 44908256,
+      "sha256": "7e07a3af18efe5d592f1bf40ac46c6b8431f2d6bdb8a0ace2114d134e37f8ed0"
+    }
+  ],
+  "initial_node_compile": {
+    "status": "SIGKILL",
+    "exit_code": 101,
+    "tests_executed": 0,
+    "container_memory_limit_bytes": 8589934592,
+    "cause": "Resource exhaustion is consistent with the memory limit/cgroup observations; no source diagnostic was emitted."
+  },
+  "node_retry": {
+    "cargo_build_jobs": 1,
+    "test_profile_unchanged": true,
+    "timeouts_and_assertions_unchanged": true,
+    "status": "7 selected tests passed"
+  },
+  "production_activation": false,
+  "public_wan_accepted": false,
+  "independent_acceptance": false,
+  "funded_automatic_renewal": false,
+  "new_expert_abi_accepted": false,
+  "current_or_final_use_granted": false,
+  "notes": [
+    "No durations are claimed as a performance comparison.",
+    "Command wall time includes shared build-directory waiting.",
+    "Printed FAIL receipts inside negative source fixtures are expected rejection observations, not additional failed native executions.",
+    "The delivery follow-up changes evidence only; implementation and pinned source remain the exact tested commit."
+  ]
+}

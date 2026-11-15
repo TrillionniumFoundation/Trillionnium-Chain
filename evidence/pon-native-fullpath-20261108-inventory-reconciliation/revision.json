@@ -1,0 +1,11 @@
+{
+  "head": "6e48656b51fc9bd85de386b3f01f41daa6e35069",
+  "tree": "d4217cc8c30d8eee86e6c40a0b450fb0e5e3fe19",
+  "parents": [
+    "0e3a80c4cbecf36a3dea6623f05ad7ce1de915d2",
+    "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+  ],
+  "measured_source": "a1a69c624db33205a69973b98a6db0f7d22e0782",
+  "preserved_failed_ci": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457599520",
+  "inventory_blob": "7c71aacb00920a8711c9028c8854bba3d22a098e"
+}

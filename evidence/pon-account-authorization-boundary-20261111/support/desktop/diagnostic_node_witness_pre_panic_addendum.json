@@ -1,0 +1,254 @@
+{
+  "schema": "readonly-node-fourth-failure-pre-panic-addendum-v1",
+  "created_utc": "2026-11-11T06:26:26.161076+00:00",
+  "predecessor_snapshots": [
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_node_recovery_readonly.md",
+      "sha256": "fa813f91f3e27694258eddcf196a25dbff0df7a1b8f85dee677ee1e249e1d983"
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_node_recovery_readonly.json",
+      "sha256": "04e0ccb41f8e00f6921e52a2bf12b48b805b2a6024a01ab0fc8e45fcac621c64"
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_node_large_parent_pre_panic_addendum.md",
+      "sha256": "cff1ddc924f9f4a6330c9290e6f710a4556285933a25708111d60cd8dd698338"
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_node_large_parent_pre_panic_addendum.json",
+      "sha256": "82e0f36e5d5d4791b0706d29780c3ecfecbe10bfd3e2df6f5169e106983d48b9"
+    }
+  ],
+  "source": {
+    "head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+    "base": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+    "tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+    "clean_at_read": true
+  },
+  "original_job": "1a1c8ba754b-135c4-1d3",
+  "observation": {
+    "path": "/workspace/scratch/a4188f5c86b5/coordination/data-node-stdout-observed-prefix-0-159890.log",
+    "bytes": 159890,
+    "sha256": "96c9bdbdc04c3f4b739191da1106c35c7107ebb3d1f3d0b1ceac3c1e607db778",
+    "complete_log": false,
+    "parent_lib_expected_tests": 1402,
+    "fail_markers": [
+      {
+        "line": 237,
+        "text": "test ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_lost_ack_and_cold_resume_reuse_exact_wire_without_history_consuming_sequence ... FAILED"
+      },
+      {
+        "line": 238,
+        "text": "test ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_plain_parent_recovery_and_cold_membership_keep_one_original_campaign ... FAILED"
+      },
+      {
+        "line": 931,
+        "text": "test store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner ... FAILED"
+      },
+      {
+        "line": 1320,
+        "text": "test store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart ... FAILED"
+      }
+    ],
+    "target_failure_line": 1320,
+    "adjacent_observed_passes": [
+      {
+        "line": 1318,
+        "text": "test store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart ... ok"
+      },
+      {
+        "line": 1319,
+        "text": "test store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics ... ok"
+      }
+    ],
+    "captured_panic_observed": false,
+    "parent_terminal_summary_observed": false,
+    "nested_child_test_summaries_are_not_parent_totals": true
+  },
+  "fixture": {
+    "test": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart",
+    "control": "ValidOnly",
+    "settings": "Settings::native_pq_application_v6",
+    "app_scope_valid_by_source": true,
+    "profile_reconstructed_by_same_constructor_in_child": true,
+    "profile_selector_transmitted_by_env": false,
+    "child_opens_node": false,
+    "child_opens_existing_durable_witness": true,
+    "child_argv": [
+      "<same current_exe>",
+      "--exact",
+      "store::pq_rollback_witness::combined_tests::independent_witness_process_child",
+      "--nocapture"
+    ],
+    "child_env_keys": [
+      "TRNM_PQ_WITNESS_PROCESS_FIXTURE",
+      "TRNM_PQ_WITNESS_PROCESS_GENESIS",
+      "TRNM_PQ_WITNESS_RECOVERY_SEQUENCE",
+      "TRNM_PQ_WITNESS_RECOVERY_ROOT"
+    ],
+    "account_transfer_amount": 42,
+    "first_client_send_seconds": 10,
+    "exact_replay_client_send_seconds": 10,
+    "request_signed_expiry_now_plus_seconds": 60,
+    "account_transaction_expiry_genesis_plus_seconds": 200,
+    "server_lifetime_seconds": 30,
+    "server_connection_limit_seconds": 10,
+    "child_startup_limit_seconds": 10,
+    "child_lifetime_seconds": 60,
+    "child_serve_one_limit_seconds": 10,
+    "witness_client_exchange_cap_milliseconds": 250,
+    "witness_effective_deadline": "min(original optional deadline, Instant::now()+250ms)",
+    "shared_final_cleanup_limit_seconds": 10,
+    "uses_scalar_public_service_cpu_domain": false,
+    "new_guard_reachable_in_parent_node": true,
+    "new_guard_inside_witness_request_250ms_body": false,
+    "guard_timing_impact_established": false,
+    "positive_assertions": {
+      "first_send_unwrap": 586,
+      "first_signed_response_ok": 587,
+      "exact_response_replay": 638,
+      "join_retained_checkpoint_stop": [
+        643,
+        644,
+        645,
+        646,
+        647,
+        648,
+        649,
+        650,
+        651,
+        652,
+        653,
+        654,
+        655,
+        656,
+        657,
+        658
+      ],
+      "reopen_unwrap": 667,
+      "active_tip": 668,
+      "recipient_balance": [
+        670,
+        671,
+        672,
+        673
+      ],
+      "single_retained_native_record": 675,
+      "two_signature_attempts_two_ingress_connections": [
+        680,
+        681
+      ],
+      "plaintext_status": 683,
+      "witness_sequence_advanced": 684,
+      "final_child_stop": 686
+    }
+  },
+  "object_comparison": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+      "base_object": "13c61b99303639372f058de580f2da6de0f53f16",
+      "z_object": "13c61b99303639372f058de580f2da6de0f53f16",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+      "base_object": "97f614be188d2acecef88e81da690c8121c7a595",
+      "z_object": "97f614be188d2acecef88e81da690c8121c7a595",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+      "base_object": "56359fb2b597fcf7cfbb39d6288e9b0d0c030389",
+      "z_object": "56359fb2b597fcf7cfbb39d6288e9b0d0c030389",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs",
+      "base_object": "655f0701562203f2e57c4e71591e08b301ac8b92",
+      "z_object": "655f0701562203f2e57c4e71591e08b301ac8b92",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "base_object": "53de49ec72ce2bd891b1342659949c31cba8b47e",
+      "z_object": "53de49ec72ce2bd891b1342659949c31cba8b47e",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "base_object": "68d5724a307fc16f43f0525b7ff76a0e6dbf4f48",
+      "z_object": "68d5724a307fc16f43f0525b7ff76a0e6dbf4f48",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+      "base_object": "2882767d02ed8be8ceacfb974e2626ee248e623a",
+      "z_object": "2882767d02ed8be8ceacfb974e2626ee248e623a",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/error.rs",
+      "base_object": "22a1be7f0603920ca1662ffe9c4363e6db763929",
+      "z_object": "22a1be7f0603920ca1662ffe9c4363e6db763929",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
+      "base_object": "ef2494869bfe78083d890e400ec6be7642bef033",
+      "z_object": "ef2494869bfe78083d890e400ec6be7642bef033",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+      "base_object": "61e8ff02976ebc79e2dc9f5a71ae531884cba5dc",
+      "z_object": "61e8ff02976ebc79e2dc9f5a71ae531884cba5dc",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "base_object": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+      "z_object": "a766d083bc1955041bf2fc537cb2731e2d4eb6c4",
+      "equal": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "base_object": "a52e20fe46fe409bf3aac5b63c4b9d01438bb705",
+      "z_object": "5d2ccbcac24abc55f3598fad0a22da4cd8c8d0d2",
+      "equal": false
+    },
+    {
+      "path": "config/pon/devnet-v1.json",
+      "base_object": "a60f403b2f0e7343aed61170ca2aef875a787790",
+      "z_object": "a60f403b2f0e7343aed61170ca2aef875a787790",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "base_object": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+      "z_object": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+      "equal": true
+    }
+  ],
+  "next_evidence": [
+    "Original panic file/line and first.value or unwrap Error",
+    "TRNM_PQ_PHASE_DIAGNOSTIC parent and forwarded child snapshots including phase timings/remaining/commit marks and snapshot incomplete flags",
+    "TRNM_PQ_FIXTURE_CLEANUP if a send returned Err; preserves the original send error separately from cleanup",
+    "Final actual source guard/receipt after original job creates them"
+  ],
+  "limitations": [
+    "Full configuration hashing is reachable through parent Node namespace and M06 root; unchanged witness files do not establish whole-test dependency isolation.",
+    "250ms witness request function contains no Node/Config guard; do not attribute an inner expiry to repeated config digest without phase evidence.",
+    "Calling-thread CPU and nested phase intervals are not additive and are not a paid CPU entitlement.",
+    "Captured child summary is not an additional meaningful test or parent suite completion.",
+    "No actual base execution control was performed."
+  ],
+  "actions": {
+    "source_modified": false,
+    "prior_reports_modified": false,
+    "raw_modified": false,
+    "cargo_run": false,
+    "remote_job_started_or_restarted": false,
+    "budgets_or_flags_changed": false
+  },
+  "cause_established": false
+}

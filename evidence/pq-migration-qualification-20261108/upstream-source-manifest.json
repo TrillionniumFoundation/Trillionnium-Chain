@@ -1,0 +1,47 @@
+{
+  "source_commit": "598cdff516c3086487a173d7d9f9af2830e04a32",
+  "repository": "SoundnessLabs/pqchain",
+  "scope": "pinned-source review and sampling-header characterization only",
+  "full_proof_generated": false,
+  "full_proof_verified": false,
+  "sources": [
+    {
+      "path": "src/webgpu_verifier.cpp",
+      "git_blob": "8f7bdeb5ffd48fb075d667b9afafed4b5e0ae16c",
+      "url": "https://github.com/SoundnessLabs/pqchain/blob/598cdff516c3086487a173d7d9f9af2830e04a32/src/webgpu_verifier.cpp"
+    },
+    {
+      "path": "src/webgpu_prover.cpp",
+      "git_blob": "21b2ccea34c2858e728d59b1456b82817f64502a",
+      "url": "https://github.com/SoundnessLabs/pqchain/blob/598cdff516c3086487a173d7d9f9af2830e04a32/src/webgpu_prover.cpp"
+    },
+    {
+      "path": "include/zkp/merkle_tree.hpp",
+      "git_blob": "73ee681be1ad5da079301c320502e5c308442f27",
+      "url": "https://github.com/SoundnessLabs/pqchain/blob/598cdff516c3086487a173d7d9f9af2830e04a32/include/zkp/merkle_tree.hpp"
+    },
+    {
+      "path": "include/zkp/random.hpp",
+      "git_blob": "c4e10f03fac3de43c597239ba8a8c536bd0fb171",
+      "url": "https://github.com/SoundnessLabs/pqchain/blob/598cdff516c3086487a173d7d9f9af2830e04a32/include/zkp/random.hpp",
+      "sha256": "337139dbfe74b6859e45b057a85ee97a658705343fd53229391277bb9150f3be"
+    },
+    {
+      "path": "RELEASE.json",
+      "git_blob": "ee95ebecaafa12536bd7b858b730b8a32a81337d",
+      "url": "https://github.com/SoundnessLabs/pqchain/blob/598cdff516c3086487a173d7d9f9af2830e04a32/RELEASE.json"
+    },
+    {
+      "path": "include/zkp/hash.hpp",
+      "git_blob": "7d39d7347f8b373e3721ea59b65fe7add122b157",
+      "url": "https://github.com/SoundnessLabs/pqchain/blob/598cdff516c3086487a173d7d9f9af2830e04a32/include/zkp/hash.hpp",
+      "sha256": "0eed69d59ac66c5f348b8d57e938fe32e2f1472e90b789cf17060b0dd486b4e4"
+    },
+    {
+      "path": "VERSION",
+      "git_blob": "26aaba0e86632e4d537006e45b0ec918d780b3b4",
+      "value": "1.2.0",
+      "url": "https://github.com/SoundnessLabs/pqchain/blob/598cdff516c3086487a173d7d9f9af2830e04a32/VERSION"
+    }
+  ]
+}

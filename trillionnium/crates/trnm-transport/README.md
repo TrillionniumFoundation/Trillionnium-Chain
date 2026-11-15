@@ -14,3 +14,8 @@ cargo test --locked -p trnm-transport --all-targets --all-features
 
 Run from `trillionnium`. See [modules](../../../docs/modules/README.md) and
 [ownership](../../../config/portability-inventory-v1.json).
+
+Local proof-work ingress retains outstanding capacity across stop/resume. If its
+cancellation generation can no longer advance, that ingress instance remains
+permanently stopped; resume cannot revive previously cancelled permits. This is
+counter-exhaustion invariant hardening, not evidence of a remotely reachable attack.

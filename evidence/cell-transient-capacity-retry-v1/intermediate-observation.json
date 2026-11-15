@@ -1,0 +1,10 @@
+{
+  "stage": "first bounded retry candidate",
+  "tests": 141,
+  "passed": 140,
+  "failed": 1,
+  "failing_test": "cell::tests::truncated_body_and_rejected_header_charge_only_received_bytes_before_fallback",
+  "failure": "existing test observed rejected_responses=2, expected1; initial broad EOF retry also retried a truncated response body",
+  "source_sha256": "1403ec7c70741d75080a661fb6edbac898b3124681eb6b35c40aaeca741c6dc7",
+  "resolution": "narrow retry to failures before completed response header; retain original truncation/fallback assertions unchanged"
+}

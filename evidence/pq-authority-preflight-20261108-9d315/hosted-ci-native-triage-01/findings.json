@@ -1,0 +1,1015 @@
+[
+  {
+    "annotations": [
+      {
+        "annotation_level": "warning",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+        "end_column": null,
+        "end_line": 2,
+        "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+        "path": ".github",
+        "raw_details": "",
+        "start_column": null,
+        "start_line": 2,
+        "title": ""
+      },
+      {
+        "annotation_level": "failure",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+        "end_column": null,
+        "end_line": 33,
+        "message": "Process completed with exit code 1.",
+        "path": ".github",
+        "raw_details": "",
+        "start_column": null,
+        "start_line": 33,
+        "title": ""
+      }
+    ],
+    "excerpts": [
+      {
+        "line": 509,
+        "text": "2026-11-08T08:39:42.8058029Z  * [new branch]          fix/chain-pq-recursive-source-coverage-20261027 -> origin/fix/chain-pq-recursive-source-coverage-20261027"
+      },
+      {
+        "line": 510,
+        "text": "2026-11-08T08:39:42.8059019Z  * [new branch]          fix/chain-pq-reject-nonfinite-security-json-20261031 -> origin/fix/chain-pq-reject-nonfinite-security-json-20261031"
+      },
+      {
+        "line": 511,
+        "text": "2026-11-08T08:39:42.8060004Z  * [new branch]          fix/chain-pq-retain-dag-failure-receipt-20261102 -> origin/fix/chain-pq-retain-dag-failure-receipt-20261102"
+      },
+      {
+        "line": 512,
+        "text": "2026-11-08T08:39:42.8061269Z  * [new branch]          fix/chain-pq-roster-52-current-head-20261106-gpt6 -> origin/fix/chain-pq-roster-52-current-head-20261106-gpt6"
+      },
+      {
+        "line": 513,
+        "text": "2026-11-08T08:39:42.8062176Z  * [new branch]          fix/chain-pq-roster-harness-20261107-6f8b -> origin/fix/chain-pq-roster-harness-20261107-6f8b"
+      },
+      {
+        "line": 545,
+        "text": "2026-11-08T08:39:42.8092039Z  * [new branch]          fix/chain-report-bounded-read-20261105 -> origin/fix/chain-report-bounded-read-20261105"
+      },
+      {
+        "line": 546,
+        "text": "2026-11-08T08:39:42.8092774Z  * [new branch]          fix/chain-reservation-settlement -> origin/fix/chain-reservation-settlement"
+      },
+      {
+        "line": 547,
+        "text": "2026-11-08T08:39:42.8093565Z  * [new branch]          fix/chain-retained-failure-readback-20261104 -> origin/fix/chain-retained-failure-readback-20261104"
+      },
+      {
+        "line": 548,
+        "text": "2026-11-08T08:39:42.8094414Z  * [new branch]          fix/chain-retained-meter-refill-20261007 -> origin/fix/chain-retained-meter-refill-20261007"
+      },
+      {
+        "line": 549,
+        "text": "2026-11-08T08:39:42.8095250Z  * [new branch]          fix/chain-retained-owner-candidate-20261024 -> origin/fix/chain-retained-owner-candidate-20261024"
+      },
+      {
+        "line": 585,
+        "text": "2026-11-08T08:39:42.8126912Z  * [new branch]          fix/chain-w1-native-budget-20261006 -> origin/fix/chain-w1-native-budget-20261006"
+      },
+      {
+        "line": 586,
+        "text": "2026-11-08T08:39:42.8127752Z  * [new branch]          fix/chain-w1-native-control-inputs-20261103-gpt6 -> origin/fix/chain-w1-native-control-inputs-20261103-gpt6"
+      },
+      {
+        "line": 587,
+        "text": "2026-11-08T08:39:42.8128723Z  * [new branch]          fix/chain-w1-native-failure-classification-20261106 -> origin/fix/chain-w1-native-failure-classification-20261106"
+      },
+      {
+        "line": 588,
+        "text": "2026-11-08T08:39:42.8129665Z  * [new branch]          fix/chain-w1-paired-cost-accounting-20261005 -> origin/fix/chain-w1-paired-cost-accounting-20261005"
+      },
+      {
+        "line": 589,
+        "text": "2026-11-08T08:39:42.8130564Z  * [new branch]          fix/chain-w1-postwin-runtime-recovery-20261107 -> origin/fix/chain-w1-postwin-runtime-recovery-20261107"
+      },
+      {
+        "line": 1023,
+        "text": "2026-11-08T08:39:45.5333717Z \u001b[36;1m  else\u001b[0m"
+      },
+      {
+        "line": 1024,
+        "text": "2026-11-08T08:39:45.5333919Z \u001b[36;1m    case \"$label\" in\u001b[0m"
+      },
+      {
+        "line": 1025,
+        "text": "2026-11-08T08:39:45.5334566Z \u001b[36;1m      node-lib) sed -n '/test result:/p; /trnm-state-delta-walk-observation-v1/p; /trnm-current-account-.*observation-v1/p' \"$PQ_OUT/$label.log\" ;;\u001b[0m"
+      },
+      {
+        "line": 1026,
+        "text": "2026-11-08T08:39:45.5335250Z \u001b[36;1m      cost-*) cat \"$PQ_OUT/$label.log\" ;;\u001b[0m"
+      },
+      {
+        "line": 1027,
+        "text": "2026-11-08T08:39:45.5335531Z \u001b[36;1m    esac\u001b[0m"
+      },
+      {
+        "line": 1093,
+        "text": "2026-11-08T08:42:43.2498519Z {\"exit_code\": 1, \"receipt\": \"/home/runner/work/_temp/pq-system-records/inventory.json\", \"status\": \"command_failed\"}"
+      },
+      {
+        "line": 1094,
+        "text": "2026-11-08T08:42:43.2590398Z distributed native source inventory differs; refresh before freezing source"
+      },
+      {
+        "line": 1095,
+        "text": "2026-11-08T08:42:43.2609726Z ##[error]Process completed with exit code 1."
+      },
+      {
+        "line": 1096,
+        "text": "2026-11-08T08:42:43.2800005Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+      },
+      {
+        "line": 1097,
+        "text": "2026-11-08T08:42:43.2800450Z with:"
+      }
+    ],
+    "failed_steps": [
+      {
+        "completed_at": "2026-11-08T08:42:43Z",
+        "conclusion": "failure",
+        "name": "Require retained source and claim controls",
+        "number": 4,
+        "started_at": "2026-11-08T08:39:47Z",
+        "status": "completed"
+      }
+    ],
+    "job": 128678654780,
+    "log": {
+      "bytes": 148137,
+      "sha256": "57e9457939696159691769158722040878624281cb5e4da31997898cf37f19d7"
+    },
+    "log_lines": 1147,
+    "name": "PQ network and witness (ubuntu-24.04, head)",
+    "run": 42463825160,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654780"
+  },
+  {
+    "annotations": [
+      {
+        "annotation_level": "warning",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+        "end_column": null,
+        "end_line": 2,
+        "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+        "path": ".github",
+        "raw_details": "",
+        "start_column": null,
+        "start_line": 2,
+        "title": ""
+      },
+      {
+        "annotation_level": "failure",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+        "end_column": null,
+        "end_line": 33,
+        "message": "Process completed with exit code 1.",
+        "path": ".github",
+        "raw_details": "",
+        "start_column": null,
+        "start_line": 33,
+        "title": ""
+      }
+    ],
+    "excerpts": [
+      {
+        "line": 509,
+        "text": "2026-11-08T08:39:42.8758569Z  * [new branch]          fix/chain-pq-recursive-source-coverage-20261027 -> origin/fix/chain-pq-recursive-source-coverage-20261027"
+      },
+      {
+        "line": 510,
+        "text": "2026-11-08T08:39:42.8759701Z  * [new branch]          fix/chain-pq-reject-nonfinite-security-json-20261031 -> origin/fix/chain-pq-reject-nonfinite-security-json-20261031"
+      },
+      {
+        "line": 511,
+        "text": "2026-11-08T08:39:42.8760853Z  * [new branch]          fix/chain-pq-retain-dag-failure-receipt-20261102 -> origin/fix/chain-pq-retain-dag-failure-receipt-20261102"
+      },
+      {
+        "line": 512,
+        "text": "2026-11-08T08:39:42.8762166Z  * [new branch]          fix/chain-pq-roster-52-current-head-20261106-gpt6 -> origin/fix/chain-pq-roster-52-current-head-20261106-gpt6"
+      },
+      {
+        "line": 513,
+        "text": "2026-11-08T08:39:42.8763260Z  * [new branch]          fix/chain-pq-roster-harness-20261107-6f8b -> origin/fix/chain-pq-roster-harness-20261107-6f8b"
+      },
+      {
+        "line": 545,
+        "text": "2026-11-08T08:39:42.8798363Z  * [new branch]          fix/chain-report-bounded-read-20261105 -> origin/fix/chain-report-bounded-read-20261105"
+      },
+      {
+        "line": 546,
+        "text": "2026-11-08T08:39:42.8799371Z  * [new branch]          fix/chain-reservation-settlement -> origin/fix/chain-reservation-settlement"
+      },
+      {
+        "line": 547,
+        "text": "2026-11-08T08:39:42.8800238Z  * [new branch]          fix/chain-retained-failure-readback-20261104 -> origin/fix/chain-retained-failure-readback-20261104"
+      },
+      {
+        "line": 548,
+        "text": "2026-11-08T08:39:42.8801265Z  * [new branch]          fix/chain-retained-meter-refill-20261007 -> origin/fix/chain-retained-meter-refill-20261007"
+      },
+      {
+        "line": 549,
+        "text": "2026-11-08T08:39:42.8802478Z  * [new branch]          fix/chain-retained-owner-candidate-20261024 -> origin/fix/chain-retained-owner-candidate-20261024"
+      },
+      {
+        "line": 585,
+        "text": "2026-11-08T08:39:42.8840026Z  * [new branch]          fix/chain-w1-native-budget-20261006 -> origin/fix/chain-w1-native-budget-20261006"
+      },
+      {
+        "line": 586,
+        "text": "2026-11-08T08:39:42.8841092Z  * [new branch]          fix/chain-w1-native-control-inputs-20261103-gpt6 -> origin/fix/chain-w1-native-control-inputs-20261103-gpt6"
+      },
+      {
+        "line": 587,
+        "text": "2026-11-08T08:39:42.8842487Z  * [new branch]          fix/chain-w1-native-failure-classification-20261106 -> origin/fix/chain-w1-native-failure-classification-20261106"
+      },
+      {
+        "line": 588,
+        "text": "2026-11-08T08:39:42.8843625Z  * [new branch]          fix/chain-w1-paired-cost-accounting-20261005 -> origin/fix/chain-w1-paired-cost-accounting-20261005"
+      },
+      {
+        "line": 589,
+        "text": "2026-11-08T08:39:42.8844624Z  * [new branch]          fix/chain-w1-postwin-runtime-recovery-20261107 -> origin/fix/chain-w1-postwin-runtime-recovery-20261107"
+      },
+      {
+        "line": 1020,
+        "text": "2026-11-08T08:39:45.0394880Z \u001b[36;1m  else\u001b[0m"
+      },
+      {
+        "line": 1021,
+        "text": "2026-11-08T08:39:45.0395104Z \u001b[36;1m    case \"$label\" in\u001b[0m"
+      },
+      {
+        "line": 1022,
+        "text": "2026-11-08T08:39:45.0395759Z \u001b[36;1m      node-lib) sed -n '/test result:/p; /trnm-state-delta-walk-observation-v1/p; /trnm-current-account-.*observation-v1/p' \"$PQ_OUT/$label.log\" ;;\u001b[0m"
+      },
+      {
+        "line": 1023,
+        "text": "2026-11-08T08:39:45.0396539Z \u001b[36;1m      cost-*) cat \"$PQ_OUT/$label.log\" ;;\u001b[0m"
+      },
+      {
+        "line": 1024,
+        "text": "2026-11-08T08:39:45.0396843Z \u001b[36;1m    esac\u001b[0m"
+      },
+      {
+        "line": 1090,
+        "text": "2026-11-08T08:42:09.8866391Z {\"exit_code\": 1, \"receipt\": \"/home/runner/work/_temp/pq-system-records/inventory.json\", \"status\": \"command_failed\"}"
+      },
+      {
+        "line": 1091,
+        "text": "2026-11-08T08:42:09.8964483Z distributed native source inventory differs; refresh before freezing source"
+      },
+      {
+        "line": 1092,
+        "text": "2026-11-08T08:42:09.8985061Z ##[error]Process completed with exit code 1."
+      },
+      {
+        "line": 1093,
+        "text": "2026-11-08T08:42:09.9199654Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+      },
+      {
+        "line": 1094,
+        "text": "2026-11-08T08:42:09.9200078Z with:"
+      }
+    ],
+    "failed_steps": [
+      {
+        "completed_at": "2026-11-08T08:42:09Z",
+        "conclusion": "failure",
+        "name": "Require retained source and claim controls",
+        "number": 4,
+        "started_at": "2026-11-08T08:39:47Z",
+        "status": "completed"
+      }
+    ],
+    "job": 128678654658,
+    "log": {
+      "bytes": 147980,
+      "sha256": "4d838f40adc710747f46583cd0c0e11d0f81eefff244247ee7c2e963249374c2"
+    },
+    "log_lines": 1144,
+    "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+    "run": 42463825160,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654658"
+  },
+  {
+    "annotations": [
+      {
+        "annotation_level": "warning",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+        "end_column": null,
+        "end_line": 2,
+        "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+        "path": ".github",
+        "raw_details": "",
+        "start_column": null,
+        "start_line": 2,
+        "title": ""
+      },
+      {
+        "annotation_level": "failure",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+        "end_column": null,
+        "end_line": 33,
+        "message": "Process completed with exit code 1.",
+        "path": ".github",
+        "raw_details": "",
+        "start_column": null,
+        "start_line": 33,
+        "title": ""
+      }
+    ],
+    "excerpts": [
+      {
+        "line": 509,
+        "text": "2026-11-08T08:39:43.1671899Z  * [new branch]          fix/chain-pq-recursive-source-coverage-20261027 -> origin/fix/chain-pq-recursive-source-coverage-20261027"
+      },
+      {
+        "line": 510,
+        "text": "2026-11-08T08:39:43.1673010Z  * [new branch]          fix/chain-pq-reject-nonfinite-security-json-20261031 -> origin/fix/chain-pq-reject-nonfinite-security-json-20261031"
+      },
+      {
+        "line": 511,
+        "text": "2026-11-08T08:39:43.1674223Z  * [new branch]          fix/chain-pq-retain-dag-failure-receipt-20261102 -> origin/fix/chain-pq-retain-dag-failure-receipt-20261102"
+      },
+      {
+        "line": 512,
+        "text": "2026-11-08T08:39:43.1675276Z  * [new branch]          fix/chain-pq-roster-52-current-head-20261106-gpt6 -> origin/fix/chain-pq-roster-52-current-head-20261106-gpt6"
+      },
+      {
+        "line": 513,
+        "text": "2026-11-08T08:39:43.1676283Z  * [new branch]          fix/chain-pq-roster-harness-20261107-6f8b -> origin/fix/chain-pq-roster-harness-20261107-6f8b"
+      },
+      {
+        "line": 545,
+        "text": "2026-11-08T08:39:43.1712629Z  * [new branch]          fix/chain-report-bounded-read-20261105 -> origin/fix/chain-report-bounded-read-20261105"
+      },
+      {
+        "line": 546,
+        "text": "2026-11-08T08:39:43.1713565Z  * [new branch]          fix/chain-reservation-settlement -> origin/fix/chain-reservation-settlement"
+      },
+      {
+        "line": 547,
+        "text": "2026-11-08T08:39:43.1714472Z  * [new branch]          fix/chain-retained-failure-readback-20261104 -> origin/fix/chain-retained-failure-readback-20261104"
+      },
+      {
+        "line": 548,
+        "text": "2026-11-08T08:39:43.1715410Z  * [new branch]          fix/chain-retained-meter-refill-20261007 -> origin/fix/chain-retained-meter-refill-20261007"
+      },
+      {
+        "line": 549,
+        "text": "2026-11-08T08:39:43.1716459Z  * [new branch]          fix/chain-retained-owner-candidate-20261024 -> origin/fix/chain-retained-owner-candidate-20261024"
+      },
+      {
+        "line": 585,
+        "text": "2026-11-08T08:39:43.1755163Z  * [new branch]          fix/chain-w1-native-budget-20261006 -> origin/fix/chain-w1-native-budget-20261006"
+      },
+      {
+        "line": 586,
+        "text": "2026-11-08T08:39:43.1756129Z  * [new branch]          fix/chain-w1-native-control-inputs-20261103-gpt6 -> origin/fix/chain-w1-native-control-inputs-20261103-gpt6"
+      },
+      {
+        "line": 587,
+        "text": "2026-11-08T08:39:43.1757377Z  * [new branch]          fix/chain-w1-native-failure-classification-20261106 -> origin/fix/chain-w1-native-failure-classification-20261106"
+      },
+      {
+        "line": 588,
+        "text": "2026-11-08T08:39:43.1758501Z  * [new branch]          fix/chain-w1-paired-cost-accounting-20261005 -> origin/fix/chain-w1-paired-cost-accounting-20261005"
+      },
+      {
+        "line": 589,
+        "text": "2026-11-08T08:39:43.1759805Z  * [new branch]          fix/chain-w1-postwin-runtime-recovery-20261107 -> origin/fix/chain-w1-postwin-runtime-recovery-20261107"
+      },
+      {
+        "line": 1022,
+        "text": "2026-11-08T08:39:45.5272500Z \u001b[36;1m  else\u001b[0m"
+      },
+      {
+        "line": 1023,
+        "text": "2026-11-08T08:39:45.5272720Z \u001b[36;1m    case \"$label\" in\u001b[0m"
+      },
+      {
+        "line": 1024,
+        "text": "2026-11-08T08:39:45.5273421Z \u001b[36;1m      node-lib) sed -n '/test result:/p; /trnm-state-delta-walk-observation-v1/p; /trnm-current-account-.*observation-v1/p' \"$PQ_OUT/$label.log\" ;;\u001b[0m"
+      },
+      {
+        "line": 1025,
+        "text": "2026-11-08T08:39:45.5274118Z \u001b[36;1m      cost-*) cat \"$PQ_OUT/$label.log\" ;;\u001b[0m"
+      },
+      {
+        "line": 1026,
+        "text": "2026-11-08T08:39:45.5274443Z \u001b[36;1m    esac\u001b[0m"
+      },
+      {
+        "line": 1092,
+        "text": "2026-11-08T08:42:09.6624317Z {\"exit_code\": 1, \"receipt\": \"/home/runner/work/_temp/pq-system-records/inventory.json\", \"status\": \"command_failed\"}"
+      },
+      {
+        "line": 1093,
+        "text": "2026-11-08T08:42:09.6717359Z distributed native source inventory differs; refresh before freezing source"
+      },
+      {
+        "line": 1094,
+        "text": "2026-11-08T08:42:09.6735382Z ##[error]Process completed with exit code 1."
+      },
+      {
+        "line": 1095,
+        "text": "2026-11-08T08:42:09.6931466Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+      },
+      {
+        "line": 1096,
+        "text": "2026-11-08T08:42:09.6931893Z with:"
+      }
+    ],
+    "failed_steps": [
+      {
+        "completed_at": "2026-11-08T08:42:09Z",
+        "conclusion": "failure",
+        "name": "Require retained source and claim controls",
+        "number": 4,
+        "started_at": "2026-11-08T08:39:47Z",
+        "status": "completed"
+      }
+    ],
+    "job": 128678654598,
+    "log": {
+      "bytes": 148590,
+      "sha256": "35453d0962aafc2decf2ec95f3ffb456ab6689f69ecb320f7ec5611808a0cd55"
+    },
+    "log_lines": 1146,
+    "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+    "run": 42463825160,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654598"
+  },
+  {
+    "annotations": [
+      {
+        "annotation_level": "warning",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+        "end_column": null,
+        "end_line": 2,
+        "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+        "path": ".github",
+        "raw_details": "",
+        "start_column": null,
+        "start_line": 2,
+        "title": ""
+      },
+      {
+        "annotation_level": "failure",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+        "end_column": null,
+        "end_line": 33,
+        "message": "Process completed with exit code 1.",
+        "path": ".github",
+        "raw_details": "",
+        "start_column": null,
+        "start_line": 33,
+        "title": ""
+      }
+    ],
+    "excerpts": [
+      {
+        "line": 509,
+        "text": "2026-11-08T08:39:39.9362578Z  * [new branch]          fix/chain-pq-recursive-source-coverage-20261027 -> origin/fix/chain-pq-recursive-source-coverage-20261027"
+      },
+      {
+        "line": 510,
+        "text": "2026-11-08T08:39:39.9363128Z  * [new branch]          fix/chain-pq-reject-nonfinite-security-json-20261031 -> origin/fix/chain-pq-reject-nonfinite-security-json-20261031"
+      },
+      {
+        "line": 511,
+        "text": "2026-11-08T08:39:39.9363677Z  * [new branch]          fix/chain-pq-retain-dag-failure-receipt-20261102 -> origin/fix/chain-pq-retain-dag-failure-receipt-20261102"
+      },
+      {
+        "line": 512,
+        "text": "2026-11-08T08:39:39.9364240Z  * [new branch]          fix/chain-pq-roster-52-current-head-20261106-gpt6 -> origin/fix/chain-pq-roster-52-current-head-20261106-gpt6"
+      },
+      {
+        "line": 513,
+        "text": "2026-11-08T08:39:39.9364768Z  * [new branch]          fix/chain-pq-roster-harness-20261107-6f8b -> origin/fix/chain-pq-roster-harness-20261107-6f8b"
+      },
+      {
+        "line": 545,
+        "text": "2026-11-08T08:39:39.9385516Z  * [new branch]          fix/chain-report-bounded-read-20261105 -> origin/fix/chain-report-bounded-read-20261105"
+      },
+      {
+        "line": 546,
+        "text": "2026-11-08T08:39:39.9385945Z  * [new branch]          fix/chain-reservation-settlement -> origin/fix/chain-reservation-settlement"
+      },
+      {
+        "line": 547,
+        "text": "2026-11-08T08:39:39.9386392Z  * [new branch]          fix/chain-retained-failure-readback-20261104 -> origin/fix/chain-retained-failure-readback-20261104"
+      },
+      {
+        "line": 548,
+        "text": "2026-11-08T08:39:39.9387099Z  * [new branch]          fix/chain-retained-meter-refill-20261007 -> origin/fix/chain-retained-meter-refill-20261007"
+      },
+      {
+        "line": 549,
+        "text": "2026-11-08T08:39:39.9387576Z  * [new branch]          fix/chain-retained-owner-candidate-20261024 -> origin/fix/chain-retained-owner-candidate-20261024"
+      },
+      {
+        "line": 585,
+        "text": "2026-11-08T08:39:39.9404901Z  * [new branch]          fix/chain-w1-native-budget-20261006 -> origin/fix/chain-w1-native-budget-20261006"
+      },
+      {
+        "line": 586,
+        "text": "2026-11-08T08:39:39.9405362Z  * [new branch]          fix/chain-w1-native-control-inputs-20261103-gpt6 -> origin/fix/chain-w1-native-control-inputs-20261103-gpt6"
+      },
+      {
+        "line": 587,
+        "text": "2026-11-08T08:39:39.9405899Z  * [new branch]          fix/chain-w1-native-failure-classification-20261106 -> origin/fix/chain-w1-native-failure-classification-20261106"
+      },
+      {
+        "line": 588,
+        "text": "2026-11-08T08:39:39.9406416Z  * [new branch]          fix/chain-w1-paired-cost-accounting-20261005 -> origin/fix/chain-w1-paired-cost-accounting-20261005"
+      },
+      {
+        "line": 589,
+        "text": "2026-11-08T08:39:39.9407098Z  * [new branch]          fix/chain-w1-postwin-runtime-recovery-20261107 -> origin/fix/chain-w1-postwin-runtime-recovery-20261107"
+      },
+      {
+        "line": 1022,
+        "text": "2026-11-08T08:39:42.2445961Z \u001b[36;1m  else\u001b[0m"
+      },
+      {
+        "line": 1023,
+        "text": "2026-11-08T08:39:42.2446073Z \u001b[36;1m    case \"$label\" in\u001b[0m"
+      },
+      {
+        "line": 1024,
+        "text": "2026-11-08T08:39:42.2446409Z \u001b[36;1m      node-lib) sed -n '/test result:/p; /trnm-state-delta-walk-observation-v1/p; /trnm-current-account-.*observation-v1/p' \"$PQ_OUT/$label.log\" ;;\u001b[0m"
+      },
+      {
+        "line": 1025,
+        "text": "2026-11-08T08:39:42.2446955Z \u001b[36;1m      cost-*) cat \"$PQ_OUT/$label.log\" ;;\u001b[0m"
+      },
+      {
+        "line": 1026,
+        "text": "2026-11-08T08:39:42.2447127Z \u001b[36;1m    esac\u001b[0m"
+      },
+      {
+        "line": 1092,
+        "text": "2026-11-08T08:41:28.8563244Z {\"exit_code\": 1, \"receipt\": \"/home/runner/work/_temp/pq-system-records/inventory.json\", \"status\": \"command_failed\"}"
+      },
+      {
+        "line": 1093,
+        "text": "2026-11-08T08:41:28.8650331Z distributed native source inventory differs; refresh before freezing source"
+      },
+      {
+        "line": 1094,
+        "text": "2026-11-08T08:41:28.8664689Z ##[error]Process completed with exit code 1."
+      },
+      {
+        "line": 1095,
+        "text": "2026-11-08T08:41:28.8774364Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+      },
+      {
+        "line": 1096,
+        "text": "2026-11-08T08:41:28.8774739Z with:"
+      }
+    ],
+    "failed_steps": [
+      {
+        "completed_at": "2026-11-08T08:41:28Z",
+        "conclusion": "failure",
+        "name": "Require retained source and claim controls",
+        "number": 4,
+        "started_at": "2026-11-08T08:39:43Z",
+        "status": "completed"
+      }
+    ],
+    "job": 128678654586,
+    "log": {
+      "bytes": 148547,
+      "sha256": "6630de114f4db04247f46b413bbdc8338129b01a542aa1131cb8185de9875b5d"
+    },
+    "log_lines": 1146,
+    "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+    "run": 42463825160,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654586"
+  },
+  {
+    "annotations": [
+      {
+        "annotation_level": "warning",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+        "end_column": null,
+        "end_line": 2,
+        "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+        "path": ".github",
+        "raw_details": "",
+        "start_column": null,
+        "start_line": 2,
+        "title": ""
+      },
+      {
+        "annotation_level": "failure",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+        "end_column": null,
+        "end_line": 64,
+        "message": "Process completed with exit code 1.",
+        "path": ".github",
+        "raw_details": "",
+        "start_column": null,
+        "start_line": 64,
+        "title": ""
+      }
+    ],
+    "excerpts": [
+      {
+        "line": 521,
+        "text": "2026-11-08T08:39:34.5685475Z  * [new branch]          fix/chain-pq-recursive-source-coverage-20261027 -> origin/fix/chain-pq-recursive-source-coverage-20261027"
+      },
+      {
+        "line": 522,
+        "text": "2026-11-08T08:39:34.5686200Z  * [new branch]          fix/chain-pq-reject-nonfinite-security-json-20261031 -> origin/fix/chain-pq-reject-nonfinite-security-json-20261031"
+      },
+      {
+        "line": 523,
+        "text": "2026-11-08T08:39:34.5686795Z  * [new branch]          fix/chain-pq-retain-dag-failure-receipt-20261102 -> origin/fix/chain-pq-retain-dag-failure-receipt-20261102"
+      },
+      {
+        "line": 524,
+        "text": "2026-11-08T08:39:34.5687340Z  * [new branch]          fix/chain-pq-roster-52-current-head-20261106-gpt6 -> origin/fix/chain-pq-roster-52-current-head-20261106-gpt6"
+      },
+      {
+        "line": 525,
+        "text": "2026-11-08T08:39:34.5687914Z  * [new branch]          fix/chain-pq-roster-harness-20261107-6f8b -> origin/fix/chain-pq-roster-harness-20261107-6f8b"
+      },
+      {
+        "line": 557,
+        "text": "2026-11-08T08:39:34.5705728Z  * [new branch]          fix/chain-report-bounded-read-20261105 -> origin/fix/chain-report-bounded-read-20261105"
+      },
+      {
+        "line": 558,
+        "text": "2026-11-08T08:39:34.5706205Z  * [new branch]          fix/chain-reservation-settlement -> origin/fix/chain-reservation-settlement"
+      },
+      {
+        "line": 559,
+        "text": "2026-11-08T08:39:34.5706666Z  * [new branch]          fix/chain-retained-failure-readback-20261104 -> origin/fix/chain-retained-failure-readback-20261104"
+      },
+      {
+        "line": 560,
+        "text": "2026-11-08T08:39:34.5707145Z  * [new branch]          fix/chain-retained-meter-refill-20261007 -> origin/fix/chain-retained-meter-refill-20261007"
+      },
+      {
+        "line": 561,
+        "text": "2026-11-08T08:39:34.5707676Z  * [new branch]          fix/chain-retained-owner-candidate-20261024 -> origin/fix/chain-retained-owner-candidate-20261024"
+      },
+      {
+        "line": 597,
+        "text": "2026-11-08T08:39:34.5725169Z  * [new branch]          fix/chain-w1-native-budget-20261006 -> origin/fix/chain-w1-native-budget-20261006"
+      },
+      {
+        "line": 598,
+        "text": "2026-11-08T08:39:34.5725644Z  * [new branch]          fix/chain-w1-native-control-inputs-20261103-gpt6 -> origin/fix/chain-w1-native-control-inputs-20261103-gpt6"
+      },
+      {
+        "line": 599,
+        "text": "2026-11-08T08:39:34.5726157Z  * [new branch]          fix/chain-w1-native-failure-classification-20261106 -> origin/fix/chain-w1-native-failure-classification-20261106"
+      },
+      {
+        "line": 600,
+        "text": "2026-11-08T08:39:34.5726656Z  * [new branch]          fix/chain-w1-paired-cost-accounting-20261005 -> origin/fix/chain-w1-paired-cost-accounting-20261005"
+      },
+      {
+        "line": 601,
+        "text": "2026-11-08T08:39:34.5727242Z  * [new branch]          fix/chain-w1-postwin-runtime-recovery-20261107 -> origin/fix/chain-w1-postwin-runtime-recovery-20261107"
+      },
+      {
+        "line": 1032,
+        "text": "2026-11-08T08:39:38.3048176Z test_arithmetic_attributes_do_not_turn_reuse_into_recomputation_or_absence_into_zero (test_pon_public_v3_phase_read.ReaderTests.test_arithmetic_attributes_do_not_turn_reuse_into_recomputation_or_absence_into_zero) ... ok"
+      },
+      {
+        "line": 1033,
+        "text": "2026-11-08T08:39:38.3088474Z test_arithmetic_report_cannot_claim_raw_policy_schema_owner_or_success (test_pon_public_v3_phase_read.ReaderTests.test_arithmetic_report_cannot_claim_raw_policy_schema_owner_or_success) ... ok"
+      },
+      {
+        "line": 1034,
+        "text": "2026-11-08T08:39:38.3134510Z test_arithmetic_report_recomputes_identity_and_preserves_path_unknowns_and_failure (test_pon_public_v3_phase_read.ReaderTests.test_arithmetic_report_recomputes_identity_and_preserves_path_unknowns_and_failure) ... ok"
+      },
+      {
+        "line": 1035,
+        "text": "2026-11-08T08:39:38.3135534Z test_boolean_and_negative_timing_are_not_integer_cpu (test_pon_public_v3_phase_read.ReaderTests.test_boolean_and_negative_timing_are_not_integer_cpu) ... ok"
+      },
+      {
+        "line": 1036,
+        "text": "2026-11-08T08:39:38.3561477Z test_client_history_import_binds_actual_request_and_supplied_count (test_pon_public_v3_phase_read.ReaderTests.test_client_history_import_binds_actual_request_and_supplied_count) ... ok"
+      },
+      {
+        "line": 1037,
+        "text": "2026-11-08T08:39:38.3563963Z test_client_history_import_preserves_native_success_followed_by_final_host_refusal (test_pon_public_v3_phase_read.ReaderTests.test_client_history_import_preserves_native_success_followed_by_final_host_refusal) ... ok"
+      },
+      {
+        "line": 1038,
+        "text": "2026-11-08T08:39:38.3571161Z test_client_history_import_readback_keeps_failure_unknowns_and_legacy_denominators (test_pon_public_v3_phase_read.ReaderTests.test_client_history_import_readback_keeps_failure_unknowns_and_legacy_denominators) ... ok"
+      },
+      {
+        "line": 1039,
+        "text": "2026-11-08T08:39:38.3577105Z test_client_history_import_rejects_bad_shapes_clocks_and_missing_host_data (test_pon_public_v3_phase_read.ReaderTests.test_client_history_import_rejects_bad_shapes_clocks_and_missing_host_data) ... ok"
+      },
+      {
+        "line": 1040,
+        "text": "2026-11-08T08:39:38.3600784Z test_cpu_settlement_keeps_native_outcomes_unknowns_and_separate_failure_causes (test_pon_public_v3_phase_read.ReaderTests.test_cpu_settlement_keeps_native_outcomes_unknowns_and_separate_failure_causes) ... ok"
+      },
+      {
+        "line": 1041,
+        "text": "2026-11-08T08:39:38.3618923Z test_cpu_settlement_rejects_bad_scope_types_and_inconsistent_or_missing_phase (test_pon_public_v3_phase_read.ReaderTests.test_cpu_settlement_rejects_bad_scope_types_and_inconsistent_or_missing_phase) ... ok"
+      },
+      {
+        "line": 1042,
+        "text": "2026-11-08T08:39:38.3769751Z test_cpu_settlement_scope_changes_only_reports_with_the_optional_extension (test_pon_public_v3_phase_read.ReaderTests.test_cpu_settlement_scope_changes_only_reports_with_the_optional_extension) ... ok"
+      },
+      {
+        "line": 1043,
+        "text": "2026-11-08T08:39:38.3778151Z test_current_derivation_separates_unobserved_startup_rounds_and_preserves_v2 (test_pon_public_v3_phase_read.ReaderTests.test_current_derivation_separates_unobserved_startup_rounds_and_preserves_v2) ... ok"
+      },
+      {
+        "line": 1044,
+        "text": "2026-11-08T08:39:38.3794523Z test_duplicate_nested_observation_cannot_overwrite_failure_or_missing_duration (test_pon_public_v3_phase_read.ReaderTests.test_duplicate_nested_observation_cannot_overwrite_failure_or_missing_duration) ... ok"
+      },
+      {
+        "line": 1045,
+        "text": "2026-11-08T08:39:38.3797315Z test_exact_hash_mismatch_rejects_before_parsing (test_pon_public_v3_phase_read.ReaderTests.test_exact_hash_mismatch_rejects_before_parsing) ... ok"
+      },
+      {
+        "line": 1046,
+        "text": "2026-11-08T08:39:38.3819519Z test_exact_policy_metadata_distinguishes_r11_r12_r13_and_does_not_relabel_history (test_pon_public_v3_phase_read.ReaderTests.test_exact_policy_metadata_distinguishes_r11_r12_r13_and_does_not_relabel_history) ... ok"
+      },
+      {
+        "line": 1059,
+        "text": "2026-11-08T08:39:38.5895423Z test_phase_tails_preserve_unknown_outcomes_and_inclusive_costs (test_pon_public_v3_phase_read.ReaderTests.test_phase_tails_preserve_unknown_outcomes_and_inclusive_costs) ... ok"
+      },
+      {
+        "line": 1060,
+        "text": "2026-11-08T08:39:38.5930483Z test_r13_registry_scope_is_bounded_explicit_and_never_added_to_r12 (test_pon_public_v3_phase_read.ReaderTests.test_r13_registry_scope_is_bounded_explicit_and_never_added_to_r12) ... ok"
+      },
+      {
+        "line": 1061,
+        "text": "2026-11-08T08:39:38.5966937Z test_r14_policy_preserves_failures_and_cannot_relabel_r13_phases (test_pon_public_v3_phase_read.ReaderTests.test_r14_policy_preserves_failures_and_cannot_relabel_r13_phases) ... ok"
+      },
+      {
+        "line": 1062,
+        "text": "2026-11-08T08:39:38.5967830Z test_repeated_confirmation_round_and_inflated_aggregate_reject (test_pon_public_v3_phase_read.ReaderTests.test_repeated_confirmation_round_and_inflated_aggregate_reject) ... ok"
+      },
+      {
+        "line": 1063,
+        "text": "2026-11-08T08:39:38.5985184Z test_report_descriptor_bounds_exact_limit_and_overflow (test_pon_public_v3_phase_read.ReaderTests.test_report_descriptor_bounds_exact_limit_and_overflow) ... ok"
+      },
+      {
+        "line": 1075,
+        "text": "2026-11-08T08:39:38.6161529Z test_same_known_body_across_roles_stays_ambiguous (test_pon_public_v3_phase_read.ReaderTests.test_same_known_body_across_roles_stays_ambiguous) ... ok"
+      },
+      {
+        "line": 1076,
+        "text": "2026-11-08T08:39:38.6162915Z test_unentered_and_entered_unknown_cpu_are_distinct (test_pon_public_v3_phase_read.ReaderTests.test_unentered_and_entered_unknown_cpu_are_distinct) ... ok"
+      },
+      {
+        "line": 1077,
+        "text": "2026-11-08T08:39:38.6170606Z test_unfinished_elapsed_does_not_enter_terminal_tail_or_erase_failure (test_pon_public_v3_phase_read.ReaderTests.test_unfinished_elapsed_does_not_enter_terminal_tail_or_erase_failure) ... ok"
+      },
+      {
+        "line": 1078,
+        "text": "2026-11-08T08:39:38.6171723Z test_unfinished_outcome_is_not_successful_or_rejected (test_pon_public_v3_phase_read.ReaderTests.test_unfinished_outcome_is_not_successful_or_rejected) ... ok"
+      },
+      {
+        "line": 1079,
+        "text": "2026-11-08T08:39:38.6181075Z test_unknown_body_digest_never_becomes_a_role_identity (test_pon_public_v3_phase_read.ReaderTests.test_unknown_body_digest_never_becomes_a_role_identity) ... ok"
+      },
+      {
+        "line": 1290,
+        "text": "2026-11-08T08:39:47.0531499Z \u001b[36;1m    },\u001b[0m"
+      },
+      {
+        "line": 1291,
+        "text": "2026-11-08T08:39:47.0531660Z \u001b[36;1m    'binary': None, 'source_after': None, 'complete_success': False,\u001b[0m"
+      },
+      {
+        "line": 1292,
+        "text": "2026-11-08T08:39:47.0531878Z \u001b[36;1m    'failure': None, 'finalization_failures': [],\u001b[0m"
+      },
+      {
+        "line": 1293,
+        "text": "2026-11-08T08:39:47.0532070Z \u001b[36;1m    'runner_sha256': bounds.sha(__file__),\u001b[0m"
+      },
+      {
+        "line": 1294,
+        "text": "2026-11-08T08:39:47.0532403Z \u001b[36;1m    'scope': 'same-host controlled loopback; no independent-operator, WAN, hardness, model-efficacy or activation qualification',\u001b[0m"
+      },
+      {
+        "line": 1391,
+        "text": "2026-11-08T08:39:47.0552017Z \u001b[36;1m        attempt = {'number': number, 'step': step,\u001b[0m"
+      },
+      {
+        "line": 1392,
+        "text": "2026-11-08T08:39:47.0552206Z \u001b[36;1m                   'report_directory': report_dir.name,\u001b[0m"
+      },
+      {
+        "line": 1393,
+        "text": "2026-11-08T08:39:47.0552456Z \u001b[36;1m                   'report_validation_failure': None,\u001b[0m"
+      },
+      {
+        "line": 1394,
+        "text": "2026-11-08T08:39:47.0552663Z \u001b[36;1m                   'original_criteria_met': False, 'complete_success': False}\u001b[0m"
+      },
+      {
+        "line": 1395,
+        "text": "2026-11-08T08:39:47.0552872Z \u001b[36;1m        result['attempts'].append(attempt)\u001b[0m"
+      },
+      {
+        "line": 1425,
+        "text": "2026-11-08T08:39:47.0559340Z \u001b[36;1m            stdout = (out / step['stdout']).read_text(errors='replace')\u001b[0m"
+      },
+      {
+        "line": 1426,
+        "text": "2026-11-08T08:39:47.0559542Z \u001b[36;1m            one_test_passed = re.search(\u001b[0m"
+      },
+      {
+        "line": 1427,
+        "text": "2026-11-08T08:39:47.0559737Z \u001b[36;1m                r'^test result: ok\\. 1 passed; 0 failed; 0 ignored;',\u001b[0m"
+      },
+      {
+        "line": 1428,
+        "text": "2026-11-08T08:39:47.0559934Z \u001b[36;1m                stdout, re.MULTILINE) is not None\u001b[0m"
+      },
+      {
+        "line": 1429,
+        "text": "2026-11-08T08:39:47.0560106Z \u001b[36;1m            attempt['complete_success'] = (\u001b[0m"
+      },
+      {
+        "line": 1430,
+        "text": "2026-11-08T08:39:47.0560288Z \u001b[36;1m                step['complete_success'] and one_test_passed\u001b[0m"
+      },
+      {
+        "line": 1431,
+        "text": "2026-11-08T08:39:47.0560478Z \u001b[36;1m                and attempt['original_criteria_met'])\u001b[0m"
+      },
+      {
+        "line": 1432,
+        "text": "2026-11-08T08:39:47.0560689Z \u001b[36;1m        except (OSError, ValueError, KeyError, TypeError) as error:\u001b[0m"
+      },
+      {
+        "line": 1433,
+        "text": "2026-11-08T08:39:47.0560919Z \u001b[36;1m            attempt['report_validation_failure'] = str(error)\u001b[0m"
+      },
+      {
+        "line": 1434,
+        "text": "2026-11-08T08:39:47.0561133Z \u001b[36;1m        bounds.write_new(out / f'{name}-result.json', attempt)\u001b[0m"
+      },
+      {
+        "line": 1435,
+        "text": "2026-11-08T08:39:47.0561339Z \u001b[36;1m        resources(f'{name}-resource-after.json')\u001b[0m"
+      },
+      {
+        "line": 1442,
+        "text": "2026-11-08T08:39:47.0562910Z \u001b[36;1m        and all(row['complete_success'] for row in result['attempts']))\u001b[0m"
+      },
+      {
+        "line": 1443,
+        "text": "2026-11-08T08:39:47.0563116Z \u001b[36;1m    if not result['complete_success']:\u001b[0m"
+      },
+      {
+        "line": 1444,
+        "text": "2026-11-08T08:39:47.0563318Z \u001b[36;1m        result['failure'] = 'ORIGINAL_THREE_RUN_CAMPAIGN_FAILED'\u001b[0m"
+      },
+      {
+        "line": 1445,
+        "text": "2026-11-08T08:39:47.0563597Z \u001b[36;1mexcept (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:\u001b[0m"
+      },
+      {
+        "line": 1446,
+        "text": "2026-11-08T08:39:47.0563850Z \u001b[36;1m    result['failure'] = str(error)\u001b[0m"
+      },
+      {
+        "line": 1447,
+        "text": "2026-11-08T08:39:47.0564013Z \u001b[36;1m    result['complete_success'] = False\u001b[0m"
+      },
+      {
+        "line": 1448,
+        "text": "2026-11-08T08:39:47.0564164Z \u001b[36;1mfinally:\u001b[0m"
+      },
+      {
+        "line": 1454,
+        "text": "2026-11-08T08:39:47.0565326Z \u001b[36;1m            if name == 'source':\u001b[0m"
+      },
+      {
+        "line": 1455,
+        "text": "2026-11-08T08:39:47.0565487Z \u001b[36;1m                result['source_after'] = value\u001b[0m"
+      },
+      {
+        "line": 1456,
+        "text": "2026-11-08T08:39:47.0565704Z \u001b[36;1m        except (OSError, ValueError, subprocess.SubprocessError) as error:\u001b[0m"
+      },
+      {
+        "line": 1457,
+        "text": "2026-11-08T08:39:47.0565965Z \u001b[36;1m            result['finalization_failures'].append(f'{name}: {error}')\u001b[0m"
+      },
+      {
+        "line": 1458,
+        "text": "2026-11-08T08:39:47.0566192Z \u001b[36;1m    if binary is not None and result['binary'] is not None:\u001b[0m"
+      },
+      {
+        "line": 1459,
+        "text": "2026-11-08T08:39:47.0566365Z \u001b[36;1m        try:\u001b[0m"
+      },
+      {
+        "line": 1462,
+        "text": "2026-11-08T08:39:47.0566928Z \u001b[36;1m                           == result['binary']['sha256_before'],\u001b[0m"
+      },
+      {
+        "line": 1463,
+        "text": "2026-11-08T08:39:47.0567115Z \u001b[36;1m                           'TEST_BINARY_CHANGED')\u001b[0m"
+      },
+      {
+        "line": 1464,
+        "text": "2026-11-08T08:39:47.0567288Z \u001b[36;1m        except (OSError, ValueError) as error:\u001b[0m"
+      },
+      {
+        "line": 1465,
+        "text": "2026-11-08T08:39:47.0567491Z \u001b[36;1m            result['finalization_failures'].append(f'binary: {error}')\u001b[0m"
+      },
+      {
+        "line": 1466,
+        "text": "2026-11-08T08:39:47.0567783Z \u001b[36;1m    result['complete_success'] = (\u001b[0m"
+      },
+      {
+        "line": 1467,
+        "text": "2026-11-08T08:39:47.0567990Z \u001b[36;1m        result['complete_success'] and not result['finalization_failures'])\u001b[0m"
+      },
+      {
+        "line": 1468,
+        "text": "2026-11-08T08:39:47.0568250Z \u001b[36;1m    result['completed_utc'] = datetime.now(timezone.utc).isoformat()\u001b[0m"
+      },
+      {
+        "line": 1469,
+        "text": "2026-11-08T08:39:47.0568471Z \u001b[36;1m    bounds.write_new(out / 'results.json', result)\u001b[0m"
+      },
+      {
+        "line": 1540,
+        "text": "2026-11-08T08:39:47.0683252Z ##[endgroup]"
+      },
+      {
+        "line": 1541,
+        "text": "2026-11-08T08:39:47.0930662Z Running as unit: trnm-native-campaign-42463825169-1.service"
+      },
+      {
+        "line": 1542,
+        "text": "2026-11-08T08:47:46.0029683Z {\"attempts\": [{\"complete_success\": false, \"number\": 1, \"original_criteria_met\": false, \"phase_startup_errors\": [], \"report_directory\": \"run-1-raw\", \"report_sha256\": \"d197ae07093dc9138b8e436075addc12df46b28bf71fdeb48ab59b0d7f5b1766\", \"report_validation_failure\": null, \"step\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"separate_process_work_and_signed_confirmation_campaign\", \"--\", \"--exact\", \"--ignored\", \"--nocapture\", \"--test-threads=1\"], \"complete_success\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 106419239484, \"elapsed_seconds\": 106.419239484, \"error\": null, \"name\": \"run-1\", \"outer_stage_timeout_seconds\": 600, \"returncode\": 101, \"stderr\": \"run-1.stderr.log\", \"stderr_bytes\": 1615, \"stderr_sha256\": \"24f1e6b62f79a4a3f8494b52a1b968fa208515d7fef77632da28d4b5d9080954\", \"stderr_truncated\": false, \"stdout\": \"run-1.stdout.log\", \"stdout_bytes\": 271, \"stdout_sha256\": \"4501fc5f03237db865100ef919a2e6dd2975feda364246ec33ed0e6e89c69aec\", \"stdout_truncated\": false}}, {\"complete_success\": false, \"number\": 2, \"original_criteria_met\": false, \"phase_startup_errors\": [], \"report_directory\": \"run-2-raw\", \"report_sha256\": \"2f44d437c932a31cc8b98be3dda0c954e37a41e68f15d51262d89aa2dfa4e507\", \"report_validation_failure\": null, \"step\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"separate_process_work_and_signed_confirmation_campaign\", \"--\", \"--exact\", \"--ignored\", \"--nocapture\", \"--test-threads=1\"]"
+      },
+      {
+        "line": 1543,
+        "text": "2026-11-08T08:47:46.1072746Z Finished with result: exit-code"
+      },
+      {
+        "line": 1544,
+        "text": "2026-11-08T08:47:46.1073410Z Main processes terminated with: code=exited/status=1"
+      },
+      {
+        "line": 1547,
+        "text": "2026-11-08T08:47:46.1074114Z Memory peak: 1.7G"
+      },
+      {
+        "line": 1548,
+        "text": "2026-11-08T08:47:46.1074320Z Memory swap peak: 0B"
+      },
+      {
+        "line": 1549,
+        "text": "2026-11-08T08:47:46.1192149Z ##[error]Process completed with exit code 1."
+      },
+      {
+        "line": 1550,
+        "text": "2026-11-08T08:47:46.1234285Z ##[group]Run set -uo pipefail"
+      },
+      {
+        "line": 1551,
+        "text": "2026-11-08T08:47:46.1234502Z \u001b[36;1mset -uo pipefail\u001b[0m"
+      }
+    ],
+    "failed_steps": [
+      {
+        "completed_at": "2026-11-08T08:47:46Z",
+        "conclusion": "failure",
+        "name": "Run three original campaigns under verified actual limits",
+        "number": 7,
+        "started_at": "2026-11-08T08:39:47Z",
+        "status": "completed"
+      }
+    ],
+    "job": 128678654684,
+    "log": {
+      "bytes": 200772,
+      "sha256": "b2672481b559d9bbcc4f0f6f7ef714fe88c0f3da4b8b5edde88af8773f2cd9de"
+    },
+    "log_lines": 1646,
+    "name": "original native campaign (x64, head, release)",
+    "run": 42463825169,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825169/job/128678654684"
+  }
+]

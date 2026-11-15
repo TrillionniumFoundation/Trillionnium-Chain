@@ -1,0 +1,90 @@
+{
+  "allowed_corpus_pin_paths": [
+    "trillionnium/crates/trnm-checkpoint-store/tests/socket_ownership.rs",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "branch": "fix/chain-checkpoint-probe-format-20261112-df05",
+  "head": "00b3a848009460e425d58b62f9edc9abe9603b78",
+  "input_sha256": "2ca425e388c7058b85921f2211fe0c0f9bec58e5f98cb0ee93471d6668a9c0f2",
+  "native_tests_executed": false,
+  "old_failures_reused_as_new_pass": false,
+  "old_source_head_unchanged": true,
+  "operation_key": "chain-checkpoint-probe-format-source-prep-20261112-df05-v1",
+  "parent": "b62cb86d22405dd9e5b441970639b6e5dd44a8b8",
+  "parent_pr": {
+    "author_login": "ProfHepta",
+    "baseRefName": "fix/chain-root-operation-owned-20261112-df05-v4",
+    "headRefName": "fix/chain-checkpoint-probe-20261112-df05",
+    "headRefOid": "b62cb86d22405dd9e5b441970639b6e5dd44a8b8",
+    "isDraft": true,
+    "number": 947,
+    "state": "OPEN",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/947"
+  },
+  "parent_publication_receipt": {
+    "bytes": 700,
+    "sha256": "6e7fd34fe5da34b4281864888ac01ce5c2a490990ae66d7026f6e4cc142e5b63"
+  },
+  "parent_publication_terminal_projection": {
+    "exit_code": 0,
+    "job_id": "1a1cff1cde7-2564-1af1",
+    "operation_key": "chain-checkpoint-probe-native-publication-20261112-df05-v2",
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "timed_out": false
+  },
+  "parent_tree": "5608b314520cf25068aff5627043d6f8cedd4a41",
+  "pr_base_branch": "fix/chain-root-operation-owned-20261112-df05-v4",
+  "pr_base_evidence": "09e4801308366fac01e55bcbdcf8bdfd4e6d2810",
+  "pr_base_pr": 945,
+  "prior_socket_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "production_activation": false,
+  "program_sha256": "bd22ede3f6aa7c23321704be8cbf4277b1584972e74bfe6bf8a579ba7373d4db",
+  "publication_performed": false,
+  "remote_branch": "fix/chain-checkpoint-probe-20261112-df05",
+  "safe_manifest_sha256": "a583f94a298641c3a55838fdd267279079ba14fead09298464fe85b80d434402",
+  "schema": "checkpoint-probe-format-source-v1",
+  "shared_config_unchanged": true,
+  "source_clean": true,
+  "status": "HOLD",
+  "three_path_delta": [
+    {
+      "new_blob": "f7a46a2471f14caddcf55933362bb7942956fc13",
+      "new_bytes": 10834,
+      "new_mode": "100644",
+      "new_sha256": "cec8a3f76316a75dca33a064d3a41accfbdd4d360359abdc2abf1e4b8f7a0525",
+      "old_blob": "17f4a0c5080f36a36da3e4b2124d7e7d06bf6fd3",
+      "old_bytes": 10812,
+      "old_mode": "100644",
+      "old_sha256": "6c0482cab4ce234e32ebd388a856f1754aeaa48f299b1996f721420b0bac088f",
+      "path": "trillionnium/crates/trnm-checkpoint-store/tests/socket_ownership.rs"
+    },
+    {
+      "new_blob": "aa972e1c10140bd326f287bc8d53f8f6745658d7",
+      "new_bytes": 893615,
+      "new_mode": "100644",
+      "new_sha256": "8982edec5da8620cf81255d3b56a8f193335b28869fc7c58d793f893571a934e",
+      "old_blob": "b9fefc4600108bf3a9341b07a71db760aceb9e4a",
+      "old_bytes": 892193,
+      "old_mode": "100644",
+      "old_sha256": "a8f71c536cabee8665f880c932f47213817bef88b333bd382692ab8de35b0d9c",
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    },
+    {
+      "new_blob": "ba334f26fbc009471c9ccac1e03270c3a5286621",
+      "new_bytes": 376776,
+      "new_mode": "100644",
+      "new_sha256": "2c0572bd9cea6d390bea4fcb8a32f917a7ce254ff523176c7029767ffd367f44",
+      "old_blob": "1b20930d560e72b192ab6a2e84c300cd21e24e10",
+      "old_bytes": 376776,
+      "old_mode": "100644",
+      "old_sha256": "1cf8014ab4fa9b0534975d6e315084ce376e8fd988efd5e62438bc32c752aacc",
+      "path": "config/pon/pq-cross-branch-corpus-v1.json"
+    }
+  ],
+  "tree": "e3428012a36210087f5a260f2cf1720d0086fa9e",
+  "unchanged_outside_three_paths": true,
+  "worktree": "/data/chain-checkpoint-probe-format-20261112-df05"
+}

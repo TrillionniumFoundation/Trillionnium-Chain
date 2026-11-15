@@ -1,0 +1,106 @@
+{
+  "actual_files": [
+    {
+      "actual_file": {
+        "bytes": 3490,
+        "path": "validation/durable-current-remote/model-final-three-small-readback/observation.json",
+        "sha256": "f90651535d987073260a69c14aaa66e5a05de98b1c8f53c7ea9e61507c7fae50"
+      },
+      "exact_bytes_equal": true,
+      "independent_expected_file": {
+        "bytes": 3490,
+        "path": "validation/durable-current-remote/model-frozen02-authoritative/observation.expected-from-stdout.json",
+        "sha256": "f90651535d987073260a69c14aaa66e5a05de98b1c8f53c7ea9e61507c7fae50"
+      },
+      "transport_original_path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/real-native-env2-bf34a669dc4b3617-attempt01-wrapper/observation.json",
+      "version": "66306:48807039:3490:1794479464546087584:1794479464546087584"
+    },
+    {
+      "actual_file": {
+        "bytes": 9984,
+        "path": "validation/durable-current-remote/model-final-three-small-readback/source-inputs.native-v2-env2.json",
+        "sha256": "3d4b4bbd30f1c37dc9986a5e512d13ae4d93a330a00fde904bd9b3fcf381083e"
+      },
+      "exact_bytes_equal": true,
+      "independent_expected_file": {
+        "bytes": 9984,
+        "path": "validation/discovery-reviewer/frozen02-independent-expectations/source-inputs.native-v2-env2.expected.json",
+        "sha256": "3d4b4bbd30f1c37dc9986a5e512d13ae4d93a330a00fde904bd9b3fcf381083e"
+      },
+      "transport_original_path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/inputs-env2-01/source-inputs.native-v2-env2.json",
+      "version": "66306:48806950:9984:1794478469377454547:1794478469377454547"
+    },
+    {
+      "actual_file": {
+        "bytes": 13842,
+        "path": "validation/durable-current-remote/model-final-three-small-readback/source-inputs.native-v2-env2.verification.json",
+        "sha256": "2a5db7a61d5340511895cdc6b2e2675b2cc87aaa2a38b2a8815c8bc4059edd47"
+      },
+      "exact_bytes_equal": true,
+      "independent_expected_file": {
+        "bytes": 13842,
+        "path": "validation/discovery-reviewer/frozen02-independent-expectations/source-inputs.native-v2-env2.verification.expected.json",
+        "sha256": "2a5db7a61d5340511895cdc6b2e2675b2cc87aaa2a38b2a8815c8bc4059edd47"
+      },
+      "transport_original_path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/inputs-env2-01/source-inputs.native-v2-env2.verification.json",
+      "version": "66306:48806951:13842:1794478469378754328:1794478469378754328"
+    }
+  ],
+  "blocking_findings": [],
+  "checks": {
+    "actual_source_and_audit_exactly_equal_previously_independent_expected_bytes": true,
+    "all_three_actual_file_text_bytes_sha_size_eof_and_version_verified": true,
+    "audit_uses_immediate_d2_predecessor_and_31_content_members": true,
+    "both_actual_prompt_hashes_match_recorded_forward_observations": true,
+    "closed_serialized_original_sdk_fully_reassembled_and_sha_verified": true,
+    "config_native_result_and_actual_source_audit_observation_share_exact_bindings": true,
+    "environment_generation_2_model_parent_generation_1_and_fresh_output_match": true,
+    "fresh_operation_recomputed_from_domain_previous_actual_source_frozen_b_new_root_and_env_generation": true,
+    "observation_exactly_equals_prior_stdout_expected_and_independent_binary_read": true
+  },
+  "expected_files_modified": false,
+  "final_small_input_binding_review_complete": true,
+  "operation": "bf34a669dc4b3617d97bee356f1cadf3504f3c5993999c5136ce1d6b0cd6f9c2",
+  "original_async_operation": "fce6a33a6aaa0c9f15f9b8e7935b5308f2dc6a3b048a03d783eb8eb7b608de6c",
+  "original_async_sdk": {
+    "bytes": 33859,
+    "path": "validation/durable-current-remote/model-final-three-small-readback/original-sdk-payload.json",
+    "sha256": "ec64757deedb473f8dae407100588019228fdbeea241910ab516541e0f5e2add"
+  },
+  "original_remote_files_modified": false,
+  "original_sdk_pages": [
+    {
+      "bytes": 22706,
+      "path": "validation/durable-current-remote/model-final-three-small-readback/payload-0.response.json",
+      "sha256": "991c483fa174069e082ca15788641da78c1d6a37811c7db77b32feeeced4ca29"
+    },
+    {
+      "bytes": 22710,
+      "path": "validation/durable-current-remote/model-final-three-small-readback/payload-16384.response.json",
+      "sha256": "3009cd84c2e5dbea34321ed0bd660426bfb8e855dbf5b64e8c7e4a68295018cc"
+    },
+    {
+      "bytes": 2317,
+      "path": "validation/durable-current-remote/model-final-three-small-readback/payload-32768.response.json",
+      "sha256": "aeebd0ea9709e09403b7cdfab8c3811e48da734936e75633a36375cd190d09d8"
+    }
+  ],
+  "remaining_archive_work": "Full preparation/model archives and all 162 gate byte cross-checks are separate evidence closure; no expected file was substituted for an actual readback here.",
+  "research_boundaries": {
+    "durable_current": false,
+    "hepta_final_use": false,
+    "independent_real_money_funding": false,
+    "model_efficacy_improvement_qualified": false,
+    "new_model_or_test_execution_by_this_review": false,
+    "original_hepta_owner_used": false,
+    "production_activation": false
+  },
+  "schema": "trnm.bt-final-small-input-binding-review.v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "transport_snapshot_scope": {
+    "atomic_snapshot": false,
+    "comment": "The async payload snapshot is immutable serialized transport data; the original three-file read explicitly did not claim an atomic cross-file filesystem snapshot.",
+    "snapshot_scope": "independent_file"
+  },
+  "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+}

@@ -1,0 +1,9 @@
+{
+  "bytes": 282,
+  "data": "ZXZpZGVuY2UvaGVwbGNwMDQtaW50ZXJvcC0yMDI2MTExMS9hdHRlbXB0cy9yZWFkZXItYXR0ZW1wdDEuc3RkZXJyLmxvZzo3OiB0cmFpbGluZyB3aGl0ZXNwYWNlLgordGVzdF9leHRlcm5hbF9ieXRlX3BpbnNfYW5kX2V4YWN0X29yaWdpbmFsX3JlY2VpcHRfcHJlZml4X2FyZV9tYW5kYXRvcnkgKF9fbWFpbl9fLkxvY2FsRGVjaXNpb25JbnRlcm9wVGVzdHMudGVzdF9leHRlcm5hbF9ieXRlX3BpbnNfYW5kX2V4YWN0X29yaWdpbmFsX3JlY2VpcHRfcHJlZml4X2FyZV9tYW5kYXRvcnkpIC4uLiAK",
+  "encoding": "base64",
+  "original_relative_path": "evidence/heplcp04-interop-20261111/attempts/freeze-second/staged-whitespace.stdout",
+  "schema": "heplcp04-exact-log-bytes-v1",
+  "sha256": "0ce2dd12d2a76cfeec67cbc891ff755f5430d0afd325e1e8897b520d7d9b40ae",
+  "unmodified_raw_retained_at": "/home/qq/af52-chain-20261111/retained-raw-evidence/1-staged-whitespace.stdout"
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "native-liveness-final-composition-resource-v1",
+  "observed_utc": "2026-11-04T14:33:18.316358+00:00",
+  "composition_commit": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+  "observed_clippy_exit": 101,
+  "observed_python_exit": 120,
+  "compiler_failure": "getrandom build-script linker terminated with signal 7 SIGBUS",
+  "concurrent_disk_errors": "Python/Git fixture creation reported ENOSPC; no final successful suite summary",
+  "compiler_signal_cause_uniquely_established": false,
+  "removed_only_rebuildable_task_target": "/workspace/scratch/e537ad232c79/target",
+  "cache_bytes_removed": 111661434,
+  "free_bytes_before": 309489664,
+  "free_bytes_after": 389652480,
+  "raw_logs_retained": true,
+  "earlier_successes_relabelled_as_final": false,
+  "native_runtime_repeated": false,
+  "later_bundle_attempt": "An initial pack-objects write failed with ENOSPC. After removing only the redundant uncompressed report (verified identical to retained gzip) and old staging copies, a retry produced a verified source bundle. No measured data was discarded."
+}

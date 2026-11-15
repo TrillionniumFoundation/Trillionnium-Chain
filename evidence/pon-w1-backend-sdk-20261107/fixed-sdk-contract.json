@@ -1,0 +1,192 @@
+{
+  "schema": "TRNM-W1-BACKEND-SDK-SOURCE-REVIEW1",
+  "observation_date_utc": "2026-11-07",
+  "kind": "bounded internal source review",
+  "baseline_commit": "b6c730c2a81b932266c9a8b93858e2641aafd9f7",
+  "baseline_host_sha256": "d9ed25f35d9c8a8aff40ad2d120a699516c67736a166aef33dbc72ff4a49d73b",
+  "baseline_independent_v2_verifier_sha256": "84d15da6a32d6e80d29b3beee6683e819a771930f49a495378a1146b8ea7c4df",
+  "expected_r0vm_sha256_from_baseline_source": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6",
+  "actual_r0vm_binary_checked_during_this_review": false,
+  "validation_status": {
+    "read_only_sdk_source_review": "COMPLETED_FOR_LISTED_FILES",
+    "proposal_formatting": "NOT_RUN",
+    "proposal_compilation": "NOT_RUN",
+    "proposal_tests": "NOT_RUN",
+    "proposal_proofs_or_benchmarks": "NOT_RUN",
+    "remote_source_applied": false,
+    "formal_security_proof": false,
+    "deployment_or_performance_qualification": false
+  },
+  "source_provenance": {
+    "configured_host": "desktop",
+    "local_package_root": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/risc0-zkvm-3.0.3",
+    "package_cargo_toml_sha256": "8c8c1e59ffb11a64544ff949885565e63f14e3cdd406ea7ec7a47c255c74a96c",
+    "package_version_in_cargo_toml": "3.0.3",
+    "package_vcs_info_declared_commit": "fba0c0179f0125afe23bd15eb4c34428aacf5705",
+    "cargo_checksum_json_present": false,
+    "whole_package_integrity_claimed": false,
+    "public_ref": "v3.0.3",
+    "method": "Normal configured /usr/bin/gh contents API GET; decoded file bytes checked against response size and Git blob SHA-1, then compared byte-for-byte with local package source.",
+    "credentials_or_policy_changed": false,
+    "packages_installed_or_fetched_by_cargo": false,
+    "raw_source_read_jobs": [
+      "1a1b6de1ee7-12894-778",
+      "1a1b6df518b-12894-786",
+      "1a1b6e1ffe2-12894-7a2"
+    ],
+    "fixed_ref_comparison_jobs": [
+      "1a1b6e09de9-12894-794",
+      "1a1b6e28a73-12894-7a9"
+    ],
+    "retained_initial_read_failure_job": "1a1b6dda429-12894-771",
+    "initial_failure": "The first source read stopped at missing .cargo-checksum.json. The next explicit read retained that absence instead of claiming checksum validation."
+  },
+  "public_source_files": [
+    {
+      "path": "risc0/zkvm/src/host/api/client.rs",
+      "url": "https://github.com/risc0/risc0/blob/v3.0.3/risc0/zkvm/src/host/api/client.rs",
+      "bytes": 37966,
+      "git_blob": "9a65116fac138821bac079b8f99605ae95a8ce43",
+      "sha256": "f69c1e4b95e1f6c896b9f5dfe6c71e7a8abd6792ba921effd6d3e2db8961823a",
+      "local_bytes_equal_api_bytes": true
+    },
+    {
+      "path": "risc0/zkvm/src/host/api/mod.rs",
+      "url": "https://github.com/risc0/risc0/blob/v3.0.3/risc0/zkvm/src/host/api/mod.rs",
+      "bytes": 13390,
+      "git_blob": "a707ae6b403ddedd8d4a3aece7edd094d880fd6b",
+      "sha256": "0d2359fc75873dadc8ce18458764f1c6b55252e2e40fd60be97c36a8e292a026",
+      "local_bytes_equal_api_bytes": true
+    },
+    {
+      "path": "risc0/zkvm/src/receipt/composite.rs",
+      "url": "https://github.com/risc0/risc0/blob/v3.0.3/risc0/zkvm/src/receipt/composite.rs",
+      "bytes": 13282,
+      "git_blob": "3859fda9f6e54bc0bda9ec4b34da4ebef821252f",
+      "sha256": "2955a200d318fbc3f9ff2194761141b11648b8080ebfc5017e93ef2e156f8103",
+      "local_bytes_equal_api_bytes": true
+    },
+    {
+      "path": "risc0/zkvm/src/host/server/prove/prover_impl.rs",
+      "url": "https://github.com/risc0/risc0/blob/v3.0.3/risc0/zkvm/src/host/server/prove/prover_impl.rs",
+      "bytes": 14000,
+      "git_blob": "43198e72b392399c44e2a2e63f76a9bae3618317",
+      "sha256": "2b3e6e61cfaf07d78cb935d5db6a7c0053c3581cfdf1347705b39844e15209a5",
+      "local_bytes_equal_api_bytes": true
+    },
+    {
+      "path": "risc0/zkvm/src/host/recursion/prove/mod.rs",
+      "url": "https://github.com/risc0/risc0/blob/v3.0.3/risc0/zkvm/src/host/recursion/prove/mod.rs",
+      "bytes": 40345,
+      "git_blob": "055c69ef0b388b0d7c00f410e152a423779efb87",
+      "sha256": "fc22e10101508ef40d6017c70519acb487965b3f8eed5c2989b132c1a791f7b0",
+      "local_bytes_equal_api_bytes": true
+    },
+    {
+      "path": "risc0/zkvm/src/claim/receipt.rs",
+      "url": "https://github.com/risc0/risc0/blob/v3.0.3/risc0/zkvm/src/claim/receipt.rs",
+      "bytes": 22131,
+      "git_blob": "0746711bafce88060ee1104c88cd6d7666c9d696",
+      "sha256": "7c8dafb73bbf96394ebd1a0e651c4e7bcf7b3a166438444e35615bb397223ba1",
+      "local_bytes_equal_api_bytes": true
+    }
+  ],
+  "verified_source_behavior": [
+    {
+      "subject": "ApiClient construction",
+      "locations": [
+        "api/client.rs:60-63",
+        "api/mod.rs:169-218"
+      ],
+      "finding": "new_sub_process calls new_narrow_version. This runs the selected executable with --version through Command::output, checks compatibility, and binds a TCP listener. Constructor timing includes this version subprocess and listener setup."
+    },
+    {
+      "subject": "Per-call backend startup",
+      "locations": [
+        "api/client.rs:164-207",
+        "api/client.rs:260-349",
+        "api/mod.rs:221-254"
+      ],
+      "finding": "prove_segment, lift and join each call connect. ParentProcessConnector::connect spawns a new selected executable with --port. Keeping one ApiClient per worker does not keep a proving subprocess alive across calls."
+    },
+    {
+      "subject": "Child cleanup boundary",
+      "locations": [
+        "api/mod.rs:221-254",
+        "api/mod.rs:282-307",
+        "api/client.rs:164-207",
+        "api/client.rs:260-349"
+      ],
+      "finding": "The normal close path calls Child::wait. The listed connection types have no Drop kill/wait implementation. Errors after spawn or before explicit close can bypass that wait. The close adapter also maps an exit status without a numeric code to zero. The proposal only guarantees joining its own scoped Rust worker threads; it cannot claim every SDK child or SDK helper thread was reaped."
+    },
+    {
+      "subject": "Independent segment proving",
+      "locations": [
+        "api/client.rs:164-207",
+        "server/prove/prover_impl.rs:227-282"
+      ],
+      "finding": "prove_segment accepts options, one frozen serialized segment asset and an output mode. It does not take a preceding verified receipt. Its successful segment receipt therefore does not by itself establish an original-image prefix; ordered pre/post linkage must be verified separately."
+    },
+    {
+      "subject": "Join claim algebra",
+      "locations": [
+        "claim/receipt.rs:188-198",
+        "claim/receipt.rs:243-248",
+        "recursion/prove/mod.rs:112-133"
+      ],
+      "finding": "ReceiptClaim::join composes left pre/input with right post/exit/output; it does not itself check continuity. The real recursive join merges the decoded proved claim with the expected claim. The proposal keeps explicit interval, state, left-exit and left-output checks before using the SDK composition, then verifies the actual returned seal and complete claim digest."
+    },
+    {
+      "subject": "Complete composite",
+      "locations": [
+        "receipt/composite.rs:65-193",
+        "server/prove/prover_impl.rs:155-170"
+      ],
+      "finding": "Composite integrity verifies every segment, continuation states, intermediate exit/output conditions and assumption receipts. Its claim uses original first pre/input and final post/exit/output. The proposal retains complete SDK Composite verification and equality with the original full claim before recursion."
+    }
+  ],
+  "proposal_contract": {
+    "compress_balanced_argv": [
+      "--r0vm",
+      "PINNED_BINARY",
+      "compress-balanced",
+      "DIR",
+      "WORKERS"
+    ],
+    "prove_parallel_argv": [
+      "--r0vm",
+      "PINNED_BINARY",
+      "prove-parallel",
+      "DIR",
+      "MAX_NEW",
+      "WORKERS"
+    ],
+    "threads_positional_argument": false,
+    "required_environment": "RAYON_NUM_THREADS must be an explicit positive integer for both commands",
+    "request_bounds": "1 <= WORKERS <= 4; WORKERS * RAYON_NUM_THREADS <= 8; 0 <= MAX_NEW <= 4096; actual new candidates <= remaining segments",
+    "os_cpu_memory_limits_enforced_by_these_checks": false,
+    "deadline": "No new relative 7200-second deadline is created here. The external supervisor must retain the original absolute execution deadline and observe all descendants, cleanup and result publication.",
+    "cold_recovery": "An incomplete or unreadable batch completion blocks new dispatch and candidate promotion. A retained complete batch completion only permits re-reading and cryptographically re-verifying all candidate seals and the entire original-image prefix before filling missing canonical files. It never proves prior on-time business completion or authorizes payment.",
+    "publication_failure": "A failure after the workers and complete chain have already verified can leave a retained completion or partial canonical publication. Cold re-verification may recover those mathematical proof artifacts; it does not change the prior failed or canceled operation record.",
+    "full_final_gate": "Canonical full ordered segment chain, original SDK Composite full claim, actual recursive succinct proof, exact original full claim and journal, then independent strict v2 verification with caller-supplied expected artifacts."
+  },
+  "remaining_evidence_boundaries": [
+    "The initial SDK review preceded repository preflight. Subsequent source changes and validation are recorded separately; this source-review JSON is not a build, test or proof result.",
+    "Requesting eight Rayon threads in total does not establish an eight-CPU cgroup, memory bound, aggregate descendant RSS or GPU allocation.",
+    "Error and cancellation cleanup require real outer-supervisor observations because the pinned SDK has early exits without guaranteed child reaping.",
+    "The new scheduler and rejection tests cannot establish successful cryptographic generation, whole-path latency, tail percentiles, deployment readiness or post-quantum security.",
+    "Sequential and balanced measurements require separate fresh checkpoint trees, matched declared resources, all startup and loading costs, failed attempts and original-deadline publication costs. Logical 43 lifts and 42 joins are not proof that 85 fresh backend calls completed."
+  ],
+  "retained_v2_guest_build": {
+    "selection": "host-v2 feature retained-v2-guest",
+    "source_artifact": "evidence/pon-w1-full-v2-20261105/guest.bin",
+    "bytes": 375928,
+    "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+    "format": "R0BF ProgramBinary containing user and kernel ELF",
+    "build_sdk_binfmt_version": "3.0.5 already in original lock",
+    "runtime_sdk_version": "3.0.3",
+    "fixed_image_checked_at_build_and_runtime": true,
+    "guest_compilation_claimed": false,
+    "validation": "NOT_RUN_ON_THIS_RETAINED_BUILD_CANDIDATE"
+  }
+}

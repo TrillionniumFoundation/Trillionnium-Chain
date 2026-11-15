@@ -1,0 +1,70 @@
+{
+  "ast_parse": "PASS",
+  "created_utc": "2026-11-11T03:19:04.847404+00:00",
+  "full_ci_acceptance_granted": false,
+  "helper_stage_executed": false,
+  "limitations": [
+    "AST and static plan checks are not native tests or proof of stage/copy execution.",
+    "Previously saved inspection and helper-review files remain historical snapshots; they are not approval for this changed plan.",
+    "Final staging still requires all actual terminal bundles, independently verified fixed archive/transfer hashes, the root-authored final README and a newly reviewed exact payload digest.",
+    "Original full rust-baseline FAIL remains; separate Node package validation cannot confer original full baseline or downstream oracle/release success."
+  ],
+  "new_readonly_inspection_executed": false,
+  "package_receipt_status_at_review": {
+    "independent_node": "No terminal bundle received. No PASS, count or hash filled in.",
+    "original_full_rust": "Remote collector reported terminal 3 PASS / 1 FAIL and frozen archive; local transfer is not yet complete. No archive or transfer pin added by this review."
+  },
+  "production_qualification_granted": false,
+  "reviewed_files": [
+    {
+      "bytes": 45897,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/prepare_delivery_evidence.py",
+      "sha256": "352da614ba1eaeb3bf3261f5e1bc1ee3758bd9bf81fe54323f56eef177be46d0"
+    },
+    {
+      "bytes": 23992,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/delivery-evidence-plan.json",
+      "sha256": "7a5d371eee540475ae7bac7f8024dc39e0e565818fa56f5e6c7a5242aff41f9c"
+    },
+    {
+      "bytes": 8517,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/DELIVERY_EVIDENCE_STAGING.md",
+      "sha256": "ec8eba93a4f85879dcb8d6ce41c395604473be3679ee318bffddc4e6df3a7018"
+    },
+    {
+      "bytes": 12520,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_da_rs46_readonly.json",
+      "sha256": "3913eacb20711ad19c9ed27fb098c0d25a94eb344f3b5952e0324bfb2417174b"
+    }
+  ],
+  "runtime_or_project_tests_executed": false,
+  "schema": "trnm-delivery-plan-static-review-v1",
+  "scope": "Independent Node follow-up adapter and mandatory terminal records; helper AST parse only.",
+  "source_identity_read_only": {
+    "head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+    "observation": "Actual read-only git rev-parse HEAD HEAD^{tree} and git status --porcelain=v1 completed before this report.",
+    "status_porcelain": "",
+    "tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec"
+  },
+  "source_repository_modified": false,
+  "static_plan_checks": {
+    "future_archive_and_transfer_hashes_not_invented": true,
+    "independent_node_three_records_required": [
+      "node-retained-preflight",
+      "node-retained-all-targets",
+      "node-retained-source-after"
+    ],
+    "no_large_file_approvals_added": true,
+    "node_destinations_separate_from_original_baseline": true,
+    "node_layout_confirmed_by_collector_agent": true,
+    "original_full_rust_four_records_preserved": [
+      "baseline-preflight",
+      "rust-baseline",
+      "pq-feature-off",
+      "source-after"
+    ],
+    "require_terminal_records": true,
+    "required_record_keys_unique": true
+  },
+  "whole_chain_pq_qualification_granted": false
+}

@@ -1,0 +1,9 @@
+{
+  "utc": "2026-11-09T14:24:04.554524+00:00",
+  "reason": "V2 attempt01 ENOSPC before compilation",
+  "removed_only": "/workspace/scratch/dc0357cf2d6c/target/debug/incremental",
+  "reproducible_incremental_cache_bytes": 392800846,
+  "free_before": 913481728,
+  "free_after": 1307189248,
+  "preserved": "source, deps binaries, build outputs, evidence logs, unrelated caches"
+}

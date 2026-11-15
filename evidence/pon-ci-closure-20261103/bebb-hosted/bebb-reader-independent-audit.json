@@ -1,0 +1,1096 @@
+{
+  "schema": "bebb-reader-independent-audit-v1",
+  "reviewed_at": "2026-11-03T16:01:18.840471+00:00",
+  "input_files": {
+    "extract_cpu_outcomes.py": {
+      "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/root/extract_cpu_outcomes.py",
+      "bytes": 8769,
+      "sha256": "0868b4abe6b74afcbee3f3d58b186ab1f1983b6145b3bed99c31bd78c8eb6bd2"
+    },
+    "extract_service_outcomes.py": {
+      "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/root/extract_service_outcomes.py",
+      "bytes": 15989,
+      "sha256": "1c16f04cf226fb85bb45068a428559c91173e0b2d612b9b8ff9411498796681b"
+    },
+    "bebb-original-cpu-outcomes.json": {
+      "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/root/bebb-original-cpu-outcomes.json",
+      "bytes": 242898,
+      "sha256": "4acaab2d6d9c3d6fd3b2056bf5baf9d1c9dec6e216401698a41e7e5acf74ca68"
+    },
+    "bebb-original-service-outcomes.json": {
+      "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/root/bebb-original-service-outcomes.json",
+      "bytes": 1066868,
+      "sha256": "3c8ea61a017a2eb907b1b459a104f79ca277c459eac66d002e0ecde2932299c0"
+    }
+  },
+  "github_artifact_metadata": [
+    {
+      "artifact_id": 13244425730,
+      "run": 41658914609,
+      "sha256": "2d45fc57b81d8e676a9546a8bceadc8d9cb4c144ea6a0aa85dca4f0cec83ace4",
+      "bytes": 320022,
+      "github_digest_and_head_match": true
+    },
+    {
+      "artifact_id": 13243430730,
+      "run": 41658914609,
+      "sha256": "9683f8e94d9354d802cba5739d61ede68f69a9c936baa56427dce8c5ea2a929f",
+      "bytes": 320142,
+      "github_digest_and_head_match": true
+    },
+    {
+      "artifact_id": 13244186644,
+      "run": 41658914609,
+      "sha256": "78157f65bedfdaaa721d87c1d243b8415e9812ff4d1316988577657a20857278",
+      "bytes": 320460,
+      "github_digest_and_head_match": true
+    },
+    {
+      "artifact_id": 13244361752,
+      "run": 41658914609,
+      "sha256": "bc0269742bbce4c5580ecbd346003575c221db2b75352ffa0926442ea3576111",
+      "bytes": 320661,
+      "github_digest_and_head_match": true
+    },
+    {
+      "artifact_id": 13239869502,
+      "run": 41658914625,
+      "sha256": "99fa79f0df16c7a8792fd04e9b803d5aa63b6fc23b7724a179481d1e4a067648",
+      "bytes": 5282764,
+      "github_digest_and_head_match": true
+    },
+    {
+      "artifact_id": 13242555260,
+      "run": 41658914625,
+      "sha256": "2878a4bb1d696590cb2bfdad845f98b315c016ec997fec4dce69c0986bc056f8",
+      "bytes": 5354417,
+      "github_digest_and_head_match": true
+    },
+    {
+      "artifact_id": 13241471698,
+      "run": 41658914767,
+      "sha256": "33addf9426f51dad1a7cc5e23aaa860f9542e721f787a8b631a295cd2b321a72",
+      "bytes": 16560151,
+      "github_digest_and_head_match": true
+    },
+    {
+      "artifact_id": 13241387206,
+      "run": 41658915167,
+      "sha256": "ab3be95db238bfdb2f74a4e49dfbc7a741baffd787f43a869823e0ee457e25db",
+      "bytes": 56439607,
+      "github_digest_and_head_match": true
+    }
+  ],
+  "source_member_checks": [
+    {
+      "member": "source-before.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "source-after.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "source-before.json",
+      "tested_commit": "0153600a002c420d20128983c3280ff6c16e70c4",
+      "sha256": "8e34fb3b6b3bf22ffad23a8fa5e6f57ce03a3e5b9fe89b1065f2606241dc3f9f"
+    },
+    {
+      "member": "source-after.json",
+      "tested_commit": "0153600a002c420d20128983c3280ff6c16e70c4",
+      "sha256": "8e34fb3b6b3bf22ffad23a8fa5e6f57ce03a3e5b9fe89b1065f2606241dc3f9f"
+    },
+    {
+      "member": "source-before.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "source-after.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "source-before.json",
+      "tested_commit": "0153600a002c420d20128983c3280ff6c16e70c4",
+      "sha256": "8e34fb3b6b3bf22ffad23a8fa5e6f57ce03a3e5b9fe89b1065f2606241dc3f9f"
+    },
+    {
+      "member": "source-after.json",
+      "tested_commit": "0153600a002c420d20128983c3280ff6c16e70c4",
+      "sha256": "8e34fb3b6b3bf22ffad23a8fa5e6f57ce03a3e5b9fe89b1065f2606241dc3f9f"
+    },
+    {
+      "member": "source-before.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "source-after.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "source-before.json",
+      "tested_commit": "0153600a002c420d20128983c3280ff6c16e70c4",
+      "sha256": "8e34fb3b6b3bf22ffad23a8fa5e6f57ce03a3e5b9fe89b1065f2606241dc3f9f"
+    },
+    {
+      "member": "source-after.json",
+      "tested_commit": "0153600a002c420d20128983c3280ff6c16e70c4",
+      "sha256": "8e34fb3b6b3bf22ffad23a8fa5e6f57ce03a3e5b9fe89b1065f2606241dc3f9f"
+    },
+    {
+      "member": "source-before.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "source-after.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "prepared/source-before.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "prepared/source-after.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "execution/source-before.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "execution/source-after.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "source-before.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "source-after.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "source-before-build.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "source-before-campaigns.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "source-after-native.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "run-1-source-after.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "run-2-source-after.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    },
+    {
+      "member": "run-3-source-after.json",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "sha256": "a9a759b4f8f50cc44a56287d2a8e589675cba2c0d63b4fce07a7a69ba02b19cc"
+    }
+  ],
+  "cpu_rows": [
+    {
+      "arch": "x64",
+      "kind": "head",
+      "selector": "admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "auth": false,
+      "outer": {
+        "Ok": "ok"
+      },
+      "native": {
+        "Ok": "ok"
+      },
+      "total_cpu_ns": 1836669452,
+      "refusal_state_unchanged": null,
+      "stages_match_raw": true,
+      "stage_failed_flags": [
+        false,
+        false
+      ],
+      "commitment_cpu_ns": 0,
+      "root_cpu_ns": 0
+    },
+    {
+      "arch": "x64",
+      "kind": "head",
+      "selector": "admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "auth": true,
+      "outer": {
+        "Ok": "ok"
+      },
+      "native": {
+        "Ok": "ok"
+      },
+      "total_cpu_ns": 2247052572,
+      "refusal_state_unchanged": null,
+      "stages_match_raw": true,
+      "stage_failed_flags": [
+        false,
+        false
+      ],
+      "commitment_cpu_ns": 768077174,
+      "root_cpu_ns": 376682892
+    },
+    {
+      "arch": "x64",
+      "kind": "head",
+      "selector": "authenticated_large_parent_original_schedule_supplementary_denominator",
+      "auth": true,
+      "outer": {
+        "Ok": "ok"
+      },
+      "native": {
+        "Ok": "ok"
+      },
+      "total_cpu_ns": 2242770567,
+      "refusal_state_unchanged": null,
+      "stages_match_raw": true,
+      "stage_failed_flags": [
+        false,
+        false
+      ],
+      "commitment_cpu_ns": 767128506,
+      "root_cpu_ns": 375886510
+    },
+    {
+      "arch": "x64",
+      "kind": "prospective-merge",
+      "selector": "admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "auth": false,
+      "outer": {
+        "Ok": "ok"
+      },
+      "native": {
+        "Ok": "ok"
+      },
+      "total_cpu_ns": 2070001795,
+      "refusal_state_unchanged": null,
+      "stages_match_raw": true,
+      "stage_failed_flags": [
+        false,
+        false
+      ],
+      "commitment_cpu_ns": 0,
+      "root_cpu_ns": 0
+    },
+    {
+      "arch": "x64",
+      "kind": "prospective-merge",
+      "selector": "admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "auth": true,
+      "outer": {
+        "Ok": "ok"
+      },
+      "native": {
+        "Ok": "ok"
+      },
+      "total_cpu_ns": 2649446497,
+      "refusal_state_unchanged": null,
+      "stages_match_raw": true,
+      "stage_failed_flags": [
+        false,
+        false
+      ],
+      "commitment_cpu_ns": 921891678,
+      "root_cpu_ns": 453519695
+    },
+    {
+      "arch": "x64",
+      "kind": "prospective-merge",
+      "selector": "authenticated_large_parent_original_schedule_supplementary_denominator",
+      "auth": true,
+      "outer": {
+        "Ok": "ok"
+      },
+      "native": {
+        "Ok": "ok"
+      },
+      "total_cpu_ns": 2647885531,
+      "refusal_state_unchanged": null,
+      "stages_match_raw": true,
+      "stage_failed_flags": [
+        false,
+        false
+      ],
+      "commitment_cpu_ns": 921216141,
+      "root_cpu_ns": 453165842
+    },
+    {
+      "arch": "arm64",
+      "kind": "head",
+      "selector": "admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "auth": false,
+      "outer": {
+        "Ok": "ok"
+      },
+      "native": {
+        "Ok": "ok"
+      },
+      "total_cpu_ns": 2363958608,
+      "refusal_state_unchanged": null,
+      "stages_match_raw": true,
+      "stage_failed_flags": [
+        false,
+        false
+      ],
+      "commitment_cpu_ns": 0,
+      "root_cpu_ns": 0
+    },
+    {
+      "arch": "arm64",
+      "kind": "head",
+      "selector": "admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "auth": true,
+      "outer": {
+        "Ok": "ok"
+      },
+      "native": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "total_cpu_ns": 2724999456,
+      "refusal_state_unchanged": null,
+      "stages_match_raw": true,
+      "stage_failed_flags": [
+        false,
+        false
+      ],
+      "commitment_cpu_ns": 934823264,
+      "root_cpu_ns": 463444112
+    },
+    {
+      "arch": "arm64",
+      "kind": "head",
+      "selector": "authenticated_large_parent_original_schedule_supplementary_denominator",
+      "auth": true,
+      "outer": {
+        "Ok": "ok"
+      },
+      "native": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "total_cpu_ns": 2686440456,
+      "refusal_state_unchanged": null,
+      "stages_match_raw": true,
+      "stage_failed_flags": [
+        false,
+        false
+      ],
+      "commitment_cpu_ns": 939028360,
+      "root_cpu_ns": 465948304
+    },
+    {
+      "arch": "arm64",
+      "kind": "prospective-merge",
+      "selector": "admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "auth": false,
+      "outer": {
+        "Ok": "ok"
+      },
+      "native": {
+        "Ok": "ok"
+      },
+      "total_cpu_ns": 2370453904,
+      "refusal_state_unchanged": null,
+      "stages_match_raw": true,
+      "stage_failed_flags": [
+        false,
+        false
+      ],
+      "commitment_cpu_ns": 0,
+      "root_cpu_ns": 0
+    },
+    {
+      "arch": "arm64",
+      "kind": "prospective-merge",
+      "selector": "admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "auth": true,
+      "outer": {
+        "Ok": "ok"
+      },
+      "native": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "total_cpu_ns": 2691436104,
+      "refusal_state_unchanged": null,
+      "stages_match_raw": true,
+      "stage_failed_flags": [
+        false,
+        false
+      ],
+      "commitment_cpu_ns": 940350456,
+      "root_cpu_ns": 465752824
+    },
+    {
+      "arch": "arm64",
+      "kind": "prospective-merge",
+      "selector": "authenticated_large_parent_original_schedule_supplementary_denominator",
+      "auth": true,
+      "outer": {
+        "Ok": "ok"
+      },
+      "native": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "total_cpu_ns": 2701866112,
+      "refusal_state_unchanged": null,
+      "stages_match_raw": true,
+      "stage_failed_flags": [
+        false,
+        false
+      ],
+      "commitment_cpu_ns": 940406168,
+      "root_cpu_ns": 466406360
+    }
+  ],
+  "four_second": [
+    {
+      "lane": "head",
+      "variant": "original",
+      "mode": "attack-free-baseline",
+      "planned_confirmations": 1,
+      "planned_packets": 7,
+      "confirmed": 1,
+      "confirmed_inwindow": true,
+      "submissions": {
+        "attempts": 7,
+        "timely_ack": 7,
+        "late": 0,
+        "unknown_window": 0,
+        "late_deadline_ok_window": 0,
+        "cpu_field_counts": {
+          "client_thread_cpu_ns": 7
+        }
+      },
+      "history": {
+        "attempts": 7,
+        "timely_ack": 7,
+        "late": 0,
+        "unknown_window": 0,
+        "late_deadline_ok_window": 0,
+        "cpu_field_counts": {
+          "client_thread_cpu_ns": 7
+        }
+      },
+      "imports": {
+        "attempts": 7,
+        "accepted": 7,
+        "rejected": 0,
+        "unknown": 0,
+        "accepted_after_window": 0,
+        "any_ended_after_window": 0,
+        "unknown_end": 0
+      }
+    },
+    {
+      "lane": "head",
+      "variant": "original",
+      "mode": "from-zero-pressure",
+      "planned_confirmations": 1,
+      "planned_packets": 7,
+      "confirmed": 0,
+      "confirmed_inwindow": false,
+      "submissions": {
+        "attempts": 7,
+        "timely_ack": 7,
+        "late": 0,
+        "unknown_window": 0,
+        "late_deadline_ok_window": 0,
+        "cpu_field_counts": {
+          "client_thread_cpu_ns": 7
+        }
+      },
+      "history": {
+        "attempts": 2,
+        "timely_ack": 1,
+        "late": 1,
+        "unknown_window": 0,
+        "late_deadline_ok_window": 0,
+        "cpu_field_counts": {
+          "client_thread_cpu_ns": 2
+        }
+      },
+      "imports": {
+        "attempts": 1,
+        "accepted": 1,
+        "rejected": 0,
+        "unknown": 0,
+        "accepted_after_window": 0,
+        "any_ended_after_window": 0,
+        "unknown_end": 0
+      }
+    },
+    {
+      "lane": "head",
+      "variant": "fresh",
+      "mode": "attack-free-baseline",
+      "planned_confirmations": 1,
+      "planned_packets": 7,
+      "confirmed": 1,
+      "confirmed_inwindow": true,
+      "submissions": {
+        "attempts": 7,
+        "timely_ack": 7,
+        "late": 0,
+        "unknown_window": 0,
+        "late_deadline_ok_window": 0,
+        "cpu_field_counts": {
+          "client_thread_cpu_ns": 7
+        }
+      },
+      "history": {
+        "attempts": 7,
+        "timely_ack": 7,
+        "late": 0,
+        "unknown_window": 0,
+        "late_deadline_ok_window": 0,
+        "cpu_field_counts": {
+          "client_thread_cpu_ns": 7
+        }
+      },
+      "imports": {
+        "attempts": 7,
+        "accepted": 7,
+        "rejected": 0,
+        "unknown": 0,
+        "accepted_after_window": 0,
+        "any_ended_after_window": 0,
+        "unknown_end": 0
+      }
+    },
+    {
+      "lane": "head",
+      "variant": "fresh",
+      "mode": "from-zero-pressure",
+      "planned_confirmations": 1,
+      "planned_packets": 7,
+      "confirmed": 0,
+      "confirmed_inwindow": false,
+      "submissions": {
+        "attempts": 7,
+        "timely_ack": 7,
+        "late": 0,
+        "unknown_window": 0,
+        "late_deadline_ok_window": 0,
+        "cpu_field_counts": {
+          "client_thread_cpu_ns": 7
+        }
+      },
+      "history": {
+        "attempts": 1,
+        "timely_ack": 1,
+        "late": 0,
+        "unknown_window": 0,
+        "late_deadline_ok_window": 0,
+        "cpu_field_counts": {
+          "client_thread_cpu_ns": 1
+        }
+      },
+      "imports": {
+        "attempts": 1,
+        "accepted": 0,
+        "rejected": 1,
+        "unknown": 0,
+        "accepted_after_window": 0,
+        "any_ended_after_window": 1,
+        "unknown_end": 0
+      }
+    },
+    {
+      "lane": "prospective-merge",
+      "variant": "original",
+      "mode": "attack-free-baseline",
+      "planned_confirmations": 1,
+      "planned_packets": 7,
+      "confirmed": 1,
+      "confirmed_inwindow": true,
+      "submissions": {
+        "attempts": 7,
+        "timely_ack": 7,
+        "late": 0,
+        "unknown_window": 0,
+        "late_deadline_ok_window": 0,
+        "cpu_field_counts": {
+          "client_thread_cpu_ns": 7
+        }
+      },
+      "history": {
+        "attempts": 7,
+        "timely_ack": 7,
+        "late": 0,
+        "unknown_window": 0,
+        "late_deadline_ok_window": 0,
+        "cpu_field_counts": {
+          "client_thread_cpu_ns": 7
+        }
+      },
+      "imports": {
+        "attempts": 7,
+        "accepted": 7,
+        "rejected": 0,
+        "unknown": 0,
+        "accepted_after_window": 0,
+        "any_ended_after_window": 0,
+        "unknown_end": 0
+      }
+    },
+    {
+      "lane": "prospective-merge",
+      "variant": "original",
+      "mode": "from-zero-pressure",
+      "planned_confirmations": 1,
+      "planned_packets": 7,
+      "confirmed": 0,
+      "confirmed_inwindow": false,
+      "submissions": {
+        "attempts": 7,
+        "timely_ack": 7,
+        "late": 0,
+        "unknown_window": 0,
+        "late_deadline_ok_window": 0,
+        "cpu_field_counts": {
+          "client_thread_cpu_ns": 7
+        }
+      },
+      "history": {
+        "attempts": 3,
+        "timely_ack": 2,
+        "late": 1,
+        "unknown_window": 0,
+        "late_deadline_ok_window": 0,
+        "cpu_field_counts": {
+          "client_thread_cpu_ns": 3
+        }
+      },
+      "imports": {
+        "attempts": 2,
+        "accepted": 2,
+        "rejected": 0,
+        "unknown": 0,
+        "accepted_after_window": 0,
+        "any_ended_after_window": 0,
+        "unknown_end": 0
+      }
+    },
+    {
+      "lane": "prospective-merge",
+      "variant": "fresh",
+      "mode": "attack-free-baseline",
+      "planned_confirmations": 1,
+      "planned_packets": 7,
+      "confirmed": 1,
+      "confirmed_inwindow": true,
+      "submissions": {
+        "attempts": 7,
+        "timely_ack": 7,
+        "late": 0,
+        "unknown_window": 0,
+        "late_deadline_ok_window": 0,
+        "cpu_field_counts": {
+          "client_thread_cpu_ns": 7
+        }
+      },
+      "history": {
+        "attempts": 7,
+        "timely_ack": 7,
+        "late": 0,
+        "unknown_window": 0,
+        "late_deadline_ok_window": 0,
+        "cpu_field_counts": {
+          "client_thread_cpu_ns": 7
+        }
+      },
+      "imports": {
+        "attempts": 7,
+        "accepted": 7,
+        "rejected": 0,
+        "unknown": 0,
+        "accepted_after_window": 0,
+        "any_ended_after_window": 0,
+        "unknown_end": 0
+      }
+    },
+    {
+      "lane": "prospective-merge",
+      "variant": "fresh",
+      "mode": "from-zero-pressure",
+      "planned_confirmations": 1,
+      "planned_packets": 7,
+      "confirmed": 0,
+      "confirmed_inwindow": false,
+      "submissions": {
+        "attempts": 7,
+        "timely_ack": 7,
+        "late": 0,
+        "unknown_window": 0,
+        "late_deadline_ok_window": 0,
+        "cpu_field_counts": {
+          "client_thread_cpu_ns": 7
+        }
+      },
+      "history": {
+        "attempts": 2,
+        "timely_ack": 2,
+        "late": 0,
+        "unknown_window": 0,
+        "late_deadline_ok_window": 0,
+        "cpu_field_counts": {
+          "client_thread_cpu_ns": 2
+        }
+      },
+      "imports": {
+        "attempts": 2,
+        "accepted": 1,
+        "rejected": 1,
+        "unknown": 0,
+        "accepted_after_window": 0,
+        "any_ended_after_window": 1,
+        "unknown_end": 0
+      }
+    }
+  ],
+  "F0": {
+    "planned_confirmations": 6,
+    "planned_packets": 42,
+    "confirmed": 1,
+    "four_second": 0,
+    "phases": [
+      {
+        "mode": "baseline",
+        "planned_confirmations": 3,
+        "observed_rounds": 2,
+        "confirmed": 1,
+        "four_second": 0,
+        "submissions": {
+          "attempts": 14,
+          "timely_ack": 14,
+          "late": 0,
+          "unknown_window": 0,
+          "late_deadline_ok_window": 0,
+          "cpu_field_counts": {
+            "calling_process_cpu_ns": 14
+          }
+        },
+        "imports": {
+          "attempts": 9,
+          "accepted": 8,
+          "rejected": 1,
+          "unknown": 0,
+          "accepted_after_window": 0,
+          "any_ended_after_window": 1,
+          "unknown_end": 0
+        },
+        "phase_matches_report": true
+      },
+      {
+        "mode": "valid-work-root",
+        "planned_confirmations": 3,
+        "observed_rounds": 1,
+        "confirmed": 0,
+        "four_second": 0,
+        "submissions": {
+          "attempts": 15,
+          "timely_ack": 3,
+          "late": 1,
+          "unknown_window": 0,
+          "late_deadline_ok_window": 0,
+          "cpu_field_counts": {
+            "calling_process_cpu_ns": 15
+          }
+        },
+        "imports": {
+          "attempts": 0,
+          "accepted": 0,
+          "rejected": 0,
+          "unknown": 0,
+          "accepted_after_window": 0,
+          "any_ended_after_window": 0,
+          "unknown_end": 0
+        },
+        "phase_matches_report": true
+      }
+    ]
+  },
+  "campaign": {
+    "planned_confirmations": 27,
+    "planned_packets": 189,
+    "confirmed": 3,
+    "observed_rounds": 12,
+    "unobserved_rounds": 15,
+    "submission_attempts": 72,
+    "distinct_attempted_packets": 72,
+    "unattempted_packet_exposures": 117,
+    "timely_ack": 69,
+    "phases": [
+      {
+        "run": 1,
+        "mode": "baseline",
+        "planned_confirmations": 3,
+        "planned_packets": 21,
+        "observed_rounds": 2,
+        "confirmed": 1,
+        "submissions": {
+          "attempts": 10,
+          "timely_ack": 9,
+          "late": 1,
+          "unknown_window": 0,
+          "late_deadline_ok_window": 0,
+          "cpu_field_counts": {
+            "calling_process_cpu_ns": 10
+          }
+        },
+        "imports": {
+          "attempts": 7,
+          "accepted": 7,
+          "rejected": 0,
+          "unknown": 0,
+          "accepted_after_window": 0,
+          "any_ended_after_window": 0,
+          "unknown_end": 0
+        }
+      },
+      {
+        "run": 1,
+        "mode": "from-zero",
+        "planned_confirmations": 3,
+        "planned_packets": 21,
+        "observed_rounds": 1,
+        "confirmed": 0,
+        "submissions": {
+          "attempts": 7,
+          "timely_ack": 7,
+          "late": 0,
+          "unknown_window": 0,
+          "late_deadline_ok_window": 0,
+          "cpu_field_counts": {
+            "calling_process_cpu_ns": 7
+          }
+        },
+        "imports": {
+          "attempts": 4,
+          "accepted": 3,
+          "rejected": 1,
+          "unknown": 0,
+          "accepted_after_window": 0,
+          "any_ended_after_window": 1,
+          "unknown_end": 0
+        }
+      },
+      {
+        "run": 1,
+        "mode": "late-product",
+        "planned_confirmations": 3,
+        "planned_packets": 21,
+        "observed_rounds": 1,
+        "confirmed": 0,
+        "submissions": {
+          "attempts": 7,
+          "timely_ack": 7,
+          "late": 0,
+          "unknown_window": 0,
+          "late_deadline_ok_window": 0,
+          "cpu_field_counts": {
+            "calling_process_cpu_ns": 7
+          }
+        },
+        "imports": {
+          "attempts": 3,
+          "accepted": 3,
+          "rejected": 0,
+          "unknown": 0,
+          "accepted_after_window": 0,
+          "any_ended_after_window": 0,
+          "unknown_end": 0
+        }
+      },
+      {
+        "run": 2,
+        "mode": "baseline",
+        "planned_confirmations": 3,
+        "planned_packets": 21,
+        "observed_rounds": 2,
+        "confirmed": 1,
+        "submissions": {
+          "attempts": 10,
+          "timely_ack": 9,
+          "late": 1,
+          "unknown_window": 0,
+          "late_deadline_ok_window": 0,
+          "cpu_field_counts": {
+            "calling_process_cpu_ns": 10
+          }
+        },
+        "imports": {
+          "attempts": 7,
+          "accepted": 7,
+          "rejected": 0,
+          "unknown": 0,
+          "accepted_after_window": 0,
+          "any_ended_after_window": 0,
+          "unknown_end": 0
+        }
+      },
+      {
+        "run": 2,
+        "mode": "from-zero",
+        "planned_confirmations": 3,
+        "planned_packets": 21,
+        "observed_rounds": 1,
+        "confirmed": 0,
+        "submissions": {
+          "attempts": 7,
+          "timely_ack": 7,
+          "late": 0,
+          "unknown_window": 0,
+          "late_deadline_ok_window": 0,
+          "cpu_field_counts": {
+            "calling_process_cpu_ns": 7
+          }
+        },
+        "imports": {
+          "attempts": 4,
+          "accepted": 3,
+          "rejected": 1,
+          "unknown": 0,
+          "accepted_after_window": 0,
+          "any_ended_after_window": 1,
+          "unknown_end": 0
+        }
+      },
+      {
+        "run": 2,
+        "mode": "late-product",
+        "planned_confirmations": 3,
+        "planned_packets": 21,
+        "observed_rounds": 1,
+        "confirmed": 0,
+        "submissions": {
+          "attempts": 7,
+          "timely_ack": 7,
+          "late": 0,
+          "unknown_window": 0,
+          "late_deadline_ok_window": 0,
+          "cpu_field_counts": {
+            "calling_process_cpu_ns": 7
+          }
+        },
+        "imports": {
+          "attempts": 3,
+          "accepted": 3,
+          "rejected": 0,
+          "unknown": 0,
+          "accepted_after_window": 1,
+          "any_ended_after_window": 1,
+          "unknown_end": 0
+        }
+      },
+      {
+        "run": 3,
+        "mode": "baseline",
+        "planned_confirmations": 3,
+        "planned_packets": 21,
+        "observed_rounds": 2,
+        "confirmed": 1,
+        "submissions": {
+          "attempts": 10,
+          "timely_ack": 9,
+          "late": 1,
+          "unknown_window": 0,
+          "late_deadline_ok_window": 0,
+          "cpu_field_counts": {
+            "calling_process_cpu_ns": 10
+          }
+        },
+        "imports": {
+          "attempts": 7,
+          "accepted": 7,
+          "rejected": 0,
+          "unknown": 0,
+          "accepted_after_window": 0,
+          "any_ended_after_window": 0,
+          "unknown_end": 0
+        }
+      },
+      {
+        "run": 3,
+        "mode": "from-zero",
+        "planned_confirmations": 3,
+        "planned_packets": 21,
+        "observed_rounds": 1,
+        "confirmed": 0,
+        "submissions": {
+          "attempts": 7,
+          "timely_ack": 7,
+          "late": 0,
+          "unknown_window": 0,
+          "late_deadline_ok_window": 0,
+          "cpu_field_counts": {
+            "calling_process_cpu_ns": 7
+          }
+        },
+        "imports": {
+          "attempts": 4,
+          "accepted": 3,
+          "rejected": 1,
+          "unknown": 0,
+          "accepted_after_window": 0,
+          "any_ended_after_window": 1,
+          "unknown_end": 0
+        }
+      },
+      {
+        "run": 3,
+        "mode": "late-product",
+        "planned_confirmations": 3,
+        "planned_packets": 21,
+        "observed_rounds": 1,
+        "confirmed": 0,
+        "submissions": {
+          "attempts": 7,
+          "timely_ack": 7,
+          "late": 0,
+          "unknown_window": 0,
+          "late_deadline_ok_window": 0,
+          "cpu_field_counts": {
+            "calling_process_cpu_ns": 7
+          }
+        },
+        "imports": {
+          "attempts": 4,
+          "accepted": 3,
+          "rejected": 1,
+          "unknown": 0,
+          "accepted_after_window": 0,
+          "any_ended_after_window": 1,
+          "unknown_end": 0
+        }
+      }
+    ]
+  },
+  "original_readers_or_reports_modified": false,
+  "native_rerun": false
+}

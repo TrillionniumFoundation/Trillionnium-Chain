@@ -1,0 +1,50 @@
+{
+  "accepted": false,
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "04f5b5515774aab6663bb80cf7831fe07367ba81",
+    "--output",
+    "/home/qian-qi/work/chain-pon-outcome-7612-c2-gates-04f5b5515774-provider2/source-before.json"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+  "elapsed_seconds": 0.266123,
+  "execution_error": null,
+  "exit_code": 1,
+  "expected_python_tests": null,
+  "expected_rust_tests": null,
+  "finished_utc": "2026-11-12T01:18:14.151118+00:00",
+  "interrupted": false,
+  "label": "source-before",
+  "observations": {
+    "build_script_events": [],
+    "cargo_json_errors": [],
+    "python_ok": false,
+    "python_tests": [],
+    "rust_tests": [],
+    "unqualified": false
+  },
+  "openssl_package_id": null,
+  "openssl_witness_required": false,
+  "openssl_witnesses": [],
+  "provider_environment_sha256": null,
+  "python_suite_required": false,
+  "rejections": [
+    "command did not complete successfully",
+    "source snapshot: Expecting value: line 1 column 1 (char 0)"
+  ],
+  "source_snapshot_sha256": null,
+  "sqlite_package_id": null,
+  "sqlite_witness_required": false,
+  "sqlite_witnesses": [],
+  "started_utc": "2026-11-12T01:18:13.885003+00:00",
+  "stderr": "source-before.stderr",
+  "stderr_sha256": "2825a58de9a898d08f31bac206af3d09504c6f85abaa6dc80aa5cd53b4bb7ee2",
+  "stdout": "source-before.stdout",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "timed_out": false
+}

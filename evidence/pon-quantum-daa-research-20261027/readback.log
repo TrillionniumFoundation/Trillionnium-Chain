@@ -1,0 +1,1 @@
+{"native_proof_verification": false, "quantum_cost_verification": false, "release_ready": false, "result": "ARITHMETIC_READBACK_PASS", "rows": 109190, "runtime_receipt_independently_attested": false, "scenarios": 11, "security_theorem": false, "source_git_head_reported": "c9bec058eed88708944b29e7b9332c9617849015"}

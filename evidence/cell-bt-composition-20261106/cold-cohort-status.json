@@ -1,0 +1,319 @@
+{
+  "schema": "trnm.cell.cold_cohort_status.v1",
+  "recorded_at_utc": "2026-11-06T06:49:16.783Z",
+  "publication_scope": "Public status summary with account/transport configuration, absolute host paths, unrelated path matches and private Library files omitted.",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "historical_evidence_commit": "b173c1f52d927522af67df30dd08ecfb2e3a1bb0",
+  "current_frozen_source_commit": "4fca468163dc1d24ef12355963eeb7c96cbcc37c",
+  "original_cohort": {
+    "payload_bytes": 272189990,
+    "historical_status": "HISTORICAL_FAILED",
+    "this_continuation_execution_status": "NOT_RUN",
+    "acceptance_status": "HOLD",
+    "original_overall_budget_seconds": 35,
+    "original_budget_relaxed": false,
+    "historical_failure_phase": "manifest response header",
+    "historical_failure_elapsed_seconds": 2.041,
+    "historical_consumer_payload_bytes": 0,
+    "exact_materials_recovered": false,
+    "complete_original_invocation_recovered": false,
+    "original_worktree_recovered": false,
+    "source_parent_and_material_identity_reconstructed": false,
+    "reason_not_run": "The exact original materials, complete invocation and original worktree were not recovered in the bounded searches. No replacement cohort or synthetic control is treated as the original case.",
+    "failure_record_preserved": true,
+    "new_success_claim": false,
+    "sources": [
+      "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b173c1f52d927522af67df30dd08ecfb2e3a1bb0/evidence/cell-storage-runtime-20261104/prior-pr-cell-continuation.md",
+      "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b173c1f52d927522af67df30dd08ecfb2e3a1bb0/evidence/cell-storage-runtime-20261104/README.md",
+      "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b173c1f52d927522af67df30dd08ecfb2e3a1bb0/evidence/cell-contract-continuation-20261105/README.md"
+    ]
+  },
+  "distinct_historical_success_cohort": {
+    "payload_bytes": 272190131,
+    "identity_relation_to_original": "DISTINCT_COHORT",
+    "historical_status": "HISTORICAL_TRANSFER_AND_CACHE_ONLY_MATERIALIZATION_SUCCESS",
+    "release_id": "d5f78d0a121aafb3bacc3b3714f27260fa653fda345a48a5ae490ab38ce10b56",
+    "release_sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed",
+    "cells": 11,
+    "chunks": 269,
+    "historical_success_scope": [
+      "Publisher-to-replica transfer completed.",
+      "Publisher exited and its old endpoint was refused before the fresh consumer acquisition.",
+      "Replica-only transfer and cache-only materialization completed with verified bytes."
+    ],
+    "actual_transient_retry_observed_in_successful_replay": false,
+    "deterministic_retry_controls_are_separate": true,
+    "historical_wrapper_observation": {
+      "wrapper_returncode": 1,
+      "reason": "After successful native commands, an annotation wrapper attempted a second create-only write to the existing transport report and raised FileExistsError; the original report was unchanged.",
+      "subsequent_readback_returncode": 0
+    },
+    "substitutes_for_original_cohort": false,
+    "changes_original_35_second_budget": false,
+    "qualifies_hepta_current_or_finaluse": false,
+    "qualifies_independent_custody_or_wan": false,
+    "qualifies_model_quality_or_provider_payment": false,
+    "sources": [
+      "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b173c1f52d927522af67df30dd08ecfb2e3a1bb0/evidence/cell-transient-capacity-retry-v1/README.md",
+      "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b173c1f52d927522af67df30dd08ecfb2e3a1bb0/evidence/cell-transient-capacity-retry-v1/optimized-replay/transport-report.json",
+      "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b173c1f52d927522af67df30dd08ecfb2e3a1bb0/evidence/cell-transient-capacity-retry-v1/optimized-replay/replay-qualification.json"
+    ]
+  },
+  "current_material_search": {
+    "status": "BOUNDED_SEARCH_DID_NOT_RECOVER_EXACT_ORIGINAL",
+    "host_count": 6,
+    "read_only": true,
+    "all_six_jobs_terminal_succeeded": true,
+    "model_downloads_training_or_original_case_replays_started": 0,
+    "search_record": {
+      "artifact_label": "cold-evidence-search.json",
+      "artifact_sha256": "2c6906c3c804dc9df60345f60a2d3d259e517f2c9a8e97f8c2cba9d9f0bd0004",
+      "artifact_bytes": 67477,
+      "recorded_at_utc": "2026-11-06T06:34:34.006Z",
+      "command_utf8_sha256": "dba8f0cbaafa43d6829eac09c374e33404e810525696171a593530e8c7462f5e",
+      "raw_record_contents_published_here": false,
+      "receipt_hash_definition": "Hashes ending canonical_json_sha256 use UTF-8 JSON with sort_keys=true, separators=(',', ':'), ensure_ascii=false, and no added newline. The artifact_sha256 hashes the actual retained file bytes.",
+      "record_scope": "The retained search artifact contains exact held terminal-status tool JSON and explicitly redacted launch/read observations. No missing original record has been reconstructed."
+    },
+    "bounds": {
+      "root_classes": [
+        "existing user work directory",
+        "existing user workspace directory",
+        "existing user Projects directory",
+        "selected data root",
+        "selected workspace scratch root"
+      ],
+      "maximum_directory_entry_levels": 3,
+      "maximum_descent_levels_below_each_root": 2,
+      "maximum_processed_entries_per_existing_root": 3000,
+      "entry_counter_can_report_3001": "The script increments the counter before its stop check; this does not mean more than 3000 entries were processed.",
+      "maximum_printed_matches_per_process": 150,
+      "path_basename_substring_search_only": true,
+      "basename_filters": [
+        "cell",
+        "smollm",
+        "chain",
+        "the two known historical worktree identifiers"
+      ],
+      "file_contents_models_databases_or_archives_scanned": false,
+      "symlink_directories_descended": false,
+      "hidden_directories_descended": false,
+      "excluded_dependency_directories": [
+        "target",
+        "node_modules",
+        "vendor",
+        "venv",
+        "site-packages"
+      ],
+      "directory_iteration_sorted": false,
+      "directory_read_errors": "OSError during scandir was skipped without an exhaustive skipped-path inventory.",
+      "bounded_targeted_directory_followups": "Two candidate recovery directory listings returned names; a third listing returned INVALID_ARGUMENT. These were not file-content or archive searches."
+    },
+    "coverage_limits": [
+      "Several root scans reached the 3000-entry bound.",
+      "One job reported 170 matches but printed only the first 150; the remaining 20 paths were not present in the retained output.",
+      "Tool receipts report complete capture of the emitted output, not exhaustive filesystem coverage.",
+      "Unrelated substring matches and all absolute host paths are omitted from this public summary.",
+      "No exact original materials, complete original invocation or original worktree were recovered by this bounded search.",
+      "Failure to locate the target does not prove that no copy exists elsewhere."
+    ],
+    "receipts": [
+      {
+        "search_target_id": "host-01",
+        "job_id": "1a1af89988b-fc05-6974",
+        "state": "succeeded",
+        "exit_code": 0,
+        "output_complete": true,
+        "output_durable": true,
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "terminal_publication_confirmed": true,
+        "status_observed_unix_ms": 1793946393474,
+        "terminal_status_tool_result_canonical_json_sha256": "c47a435844509caf8db27871491ae3dc67a47a609eed29a1319b5abf14fb0a54",
+        "terminal_status_decoded_canonical_json_sha256": "252d4b51eb2806273b3acfb44936f609093d3c874b47b9f0d9e7b263cf073934",
+        "retained_search_observation_canonical_json_sha256": "42ea495599e35daa856c3e3ebe5bed45df2fc6509772e5a754db73a783cb4f34",
+        "root_summary": [
+          {
+            "processed_entries_counter": 3001,
+            "entry_cap_reached": true
+          }
+        ],
+        "reported_matches": 96,
+        "emitted_matches": 96,
+        "retained_relevant_matches": 34,
+        "omitted_unrelated_matches": 62
+      },
+      {
+        "search_target_id": "host-02",
+        "job_id": "1a1af895c7a-fc05-6973",
+        "state": "succeeded",
+        "exit_code": 0,
+        "output_complete": true,
+        "output_durable": true,
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "terminal_publication_confirmed": true,
+        "status_observed_unix_ms": 1793946379044,
+        "terminal_status_tool_result_canonical_json_sha256": "f7237ab5809d7b41431d4d71e9f967d325fc7fee03b08268897a528d41d973ce",
+        "terminal_status_decoded_canonical_json_sha256": "849ba957f9823eb759a4a1a106428e8102563e3de57f8dcfddb6a4a0207b5702",
+        "retained_search_observation_canonical_json_sha256": "c3bf9e9c8fb1987b3bdb7d39e311c49f4e8c771fad634103ac7dd58901081420",
+        "root_summary": [
+          {
+            "processed_entries_counter": 3001,
+            "entry_cap_reached": true
+          },
+          {
+            "processed_entries_counter": 3001,
+            "entry_cap_reached": true
+          },
+          {
+            "processed_entries_counter": 3001,
+            "entry_cap_reached": true
+          }
+        ],
+        "reported_matches": 170,
+        "emitted_matches": 150,
+        "retained_relevant_matches": 126,
+        "omitted_unrelated_matches": 24
+      },
+      {
+        "search_target_id": "host-03",
+        "job_id": "1a1af8b194e-fc05-6982",
+        "state": "succeeded",
+        "exit_code": 0,
+        "output_complete": true,
+        "output_durable": true,
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "terminal_publication_confirmed": true,
+        "status_observed_unix_ms": 1793946494108,
+        "terminal_status_tool_result_canonical_json_sha256": "9d142c90c56dc7b3980e7dfcca44876e622356c1078544e4fc3ae8ef41e23765",
+        "terminal_status_decoded_canonical_json_sha256": "719fad8504051f4819fb2aac15fa86b84d12a609daef92ada057867f4f5b8678",
+        "retained_search_observation_canonical_json_sha256": "1b89e8a65556b493f894d6a4b97574ef22c1e094ebc5621c5b99f46c284c01fe",
+        "root_summary": [
+          {
+            "processed_entries_counter": 3001,
+            "entry_cap_reached": true
+          }
+        ],
+        "reported_matches": 38,
+        "emitted_matches": 38,
+        "retained_relevant_matches": 5,
+        "omitted_unrelated_matches": 33
+      },
+      {
+        "search_target_id": "host-04",
+        "job_id": "1a1af8addd9-fc05-697d",
+        "state": "succeeded",
+        "exit_code": 0,
+        "output_complete": true,
+        "output_durable": true,
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "terminal_publication_confirmed": true,
+        "status_observed_unix_ms": 1793946481931,
+        "terminal_status_tool_result_canonical_json_sha256": "62cfd6ed89d83e3f90173ac082eb66ad5f7973ba66645a40791d4adbb2c5d45d",
+        "terminal_status_decoded_canonical_json_sha256": "d93df66f8590739a87cb368894e9968ab42d50c9e4657bf350e1daedfe485ef5",
+        "retained_search_observation_canonical_json_sha256": "012401fba9ca4366f68974fff0b21548e6ceed9258fae556c42024bf393fa763",
+        "root_summary": [
+          {
+            "processed_entries_counter": 574,
+            "entry_cap_reached": false
+          },
+          {
+            "processed_entries_counter": 2384,
+            "entry_cap_reached": false
+          }
+        ],
+        "reported_matches": 10,
+        "emitted_matches": 10,
+        "retained_relevant_matches": 0,
+        "omitted_unrelated_matches": 10
+      },
+      {
+        "search_target_id": "host-05",
+        "job_id": "1a1af8b9e35-fc05-6985",
+        "state": "succeeded",
+        "exit_code": 0,
+        "output_complete": true,
+        "output_durable": true,
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "terminal_publication_confirmed": true,
+        "status_observed_unix_ms": 1793946531012,
+        "terminal_status_tool_result_canonical_json_sha256": "92b06b749d9844ce2943f350de19eee16279781ec54aa441308bcc372ff33b2d",
+        "terminal_status_decoded_canonical_json_sha256": "0cb77723a01192d157a1930ed7300eae915fee8f01fa0c324cb4a0509b5d9d18",
+        "retained_search_observation_canonical_json_sha256": "68b7e4dee81732c9dfb9231ba6c9b5d58e41af5053c677205dbc05c8ab208092",
+        "root_summary": [
+          {
+            "processed_entries_counter": 3001,
+            "entry_cap_reached": true
+          }
+        ],
+        "reported_matches": 87,
+        "emitted_matches": 87,
+        "retained_relevant_matches": 42,
+        "omitted_unrelated_matches": 45
+      },
+      {
+        "search_target_id": "host-06",
+        "job_id": "1a1af8a348d-fc05-6978",
+        "state": "succeeded",
+        "exit_code": 0,
+        "output_complete": true,
+        "output_durable": true,
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "terminal_publication_confirmed": true,
+        "status_observed_unix_ms": 1793946432908,
+        "terminal_status_tool_result_canonical_json_sha256": "fde33363e24af76b12fdbae9e1e612f5a3713400229e84f65d5e388f60be6a2f",
+        "terminal_status_decoded_canonical_json_sha256": "52c8cf73818b75c583f47ebe898bccc4727523b2653b5647013c38a674ff1c9f",
+        "retained_search_observation_canonical_json_sha256": "29403bc80e8e47148fce7d0f7506689dc47925ef549f7205e37346087700ad6e",
+        "root_summary": [
+          {
+            "processed_entries_counter": 3001,
+            "entry_cap_reached": true
+          }
+        ],
+        "reported_matches": 10,
+        "emitted_matches": 10,
+        "retained_relevant_matches": 3,
+        "omitted_unrelated_matches": 7
+      }
+    ]
+  },
+  "additional_library_search": {
+    "provenance": "Limited fact reported by the root task coordinator; no receipt, query, file identifier or file content is represented as independently held by this reviewer.",
+    "bounded_search_count": 3,
+    "result": "The three bounded Library searches did not locate the target.",
+    "nonexistence_proven": false,
+    "files_or_content_published": false
+  },
+  "status_rules": [
+    "The original failure and this continuation's NOT_RUN status must remain distinct from the different cohort's historical success.",
+    "Source changes, V3 component/CLI controls and the synthetic 269-chunk pagination fixture do not establish original-cohort acceptance.",
+    "An original-case pass requires recovered exact inputs and invocation identity, actual execution under the unchanged original budget, and preserved observations.",
+    "This status document is not Hepta CURRENT/FinalUse, native payment, independent fault-domain custody or production qualification."
+  ],
+  "privacy": {
+    "account_identifiers_included": false,
+    "ssh_or_transport_configuration_included": false,
+    "absolute_host_paths_included": false,
+    "unrelated_path_matches_included": false,
+    "library_files_or_identifiers_included": false,
+    "search_targets_anonymized": true,
+    "actual_job_identities_and_receipt_hashes_preserved": true
+  }
+}

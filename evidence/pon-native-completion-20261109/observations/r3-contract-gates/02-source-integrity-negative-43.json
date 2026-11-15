@@ -1,0 +1,49 @@
+{
+  "label": "source-integrity-negative-43",
+  "argv": [
+    "python3",
+    "scripts/ci/test_ci_source_integrity.py",
+    "-v"
+  ],
+  "command": "python3 scripts/ci/test_ci_source_integrity.py -v",
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "expected_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+  "expected_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+  "before": {
+    "head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "started_utc": "2026-11-09T03:59:40.070750+00:00",
+  "timeout_seconds": 600,
+  "timeout_scope": "source/graph command wall-time supervisor only; no product deadline changed",
+  "stdout": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/02-source-integrity-negative-43.stdout",
+  "stderr": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/02-source-integrity-negative-43.stderr",
+  "expected_tests": 43,
+  "tests_run": 43,
+  "skipped": 0,
+  "failures": 0,
+  "errors": 0,
+  "timed_out": false,
+  "exit_code": 0,
+  "passed": true,
+  "elapsed_seconds": 4.927794,
+  "after": {
+    "head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "harness_seconds": 4.684,
+  "unittest_status": "OK",
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "finished_utc": "2026-11-09T03:59:45.097505+00:00",
+  "stdout_bytes": 820,
+  "stderr_bytes": 6414,
+  "stdout_sha256": "f71bcf30ef60a2b9d04e41725164d36cd0aba4f8a66d4d7578d53cfc01741353",
+  "stderr_sha256": "afecbc1161fec42b0c4d9f7ee69029d8171224ef3d2a04e1ac39214d2c4fdd7e"
+}

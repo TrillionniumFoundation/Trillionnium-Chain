@@ -1,0 +1,14 @@
+{
+  "command": [
+    "python3",
+    "/home/qian-qi/work/w1-v5-readback-20261112-b34d/review_artifact.py",
+    "/home/qian-qi/work/w1-v5-readback-20261112-b34d/arm64/extracted",
+    "--zip",
+    "/home/qian-qi/work/w1-v5-readback-20261112-b34d/arm64/original.zip",
+    "--arch",
+    "arm64"
+  ],
+  "exit_code": 0,
+  "archive_sha256": "da553653d88eced182fa698e2c4d099cc7bb5c64d29083a87bf6791c2cbde6fd",
+  "archive_bytes": 45024075
+}

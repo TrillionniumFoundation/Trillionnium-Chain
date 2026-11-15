@@ -1,0 +1,12 @@
+{
+  "exit_code": 0,
+  "wall_ns": 334724750667,
+  "source_manifest_sha256": "0e9dd2812f4ae9388e5bba175934ee71632c4e053f5f94906d0dd21a22209c88",
+  "source_unchanged": true,
+  "child_user_seconds": 598.2946489999999,
+  "child_system_seconds": 14.448311,
+  "max_child_rss_kib": 3098936,
+  "binary": "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+  "binary_sha256": "65d283d519c942230a44b99db1b05308f226d5bca9706f8a1db059a7b852e144",
+  "binary_bytes": 392471696
+}

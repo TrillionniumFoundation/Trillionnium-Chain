@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "commit",
+    "-m",
+    "fix(ci): refresh native source inventory and retain its gate"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 0.1654050899669528,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794129049.2246826,
+  "label": "commit-inventory-fix",
+  "logs": {
+    "commit-inventory-fix.stderr.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/commit-inventory-fix.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-inventory-fix.stdout.log": {
+      "bytes": 277,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/commit-inventory-fix.stdout.log",
+      "sha256": "47577cf047dfe2651816402faa80611dab6d333de6ac308d0125dcc95fdf10ae"
+    }
+  },
+  "passed": true,
+  "readback": {},
+  "started_unix_seconds": 1794129049.0592775
+}

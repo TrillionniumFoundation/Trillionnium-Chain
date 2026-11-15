@@ -1,0 +1,129 @@
+--- a/formal/pon-nakamoto-v1/quantum_oracle_resources.py
++++ b/formal/pon-nakamoto-v1/quantum_oracle_resources.py
+@@ -329,23 +329,34 @@
+         factory_cycles_unit = bounded(factory_rounds * model.factory_t_cycles_per_distance)
+         ideal_cycle_unit = max(depth_cycles_unit, factory_cycles_unit)
+         allocated_cycle_unit = bounded(depth_cycles_unit + t_count * model.factory_t_cycles_per_distance)
+-        magic_failure = Decimal(bounded(t_count * instances)) * dec(model.magic_state_error, "MAGIC")
++        magic_state_count = bounded(t_count * instances)
++        magic_error = dec(model.magic_state_error, "MAGIC")
++        magic_failure = Decimal(magic_state_count) * magic_error
+         budget = dec(model.total_failure_budget, "BUDGET")
++        # Decimal values retain the report's presentation. Budget decisions
++        # use the exact decimal inputs, including gaps below that precision.
++        magic_failure_exact = magic_state_count * Fraction(magic_error)
++        budget_exact = Fraction(budget)
+         common = {"name": model.name, "assumptions": asdict(model),
+                   "t_count_per_instance_conditional": t_count,
+                   "t_depth_upper_bound_per_instance_conditional": t_depth_bound,
+                   "whole_workload_magic_error_union_estimate": decimal_text(magic_failure),
+                   "model_is_physical_calibration": False}
+-        if magic_failure >= budget:
++        if magic_failure_exact >= budget_exact:
+             return {**common, "status": "UNSATISFIED_MAGIC_STATE_ERROR_BUDGET", "estimate": None}
+-        ratio = dec(model.physical_error, "P") / dec(model.threshold, "THRESHOLD")
++        physical_error = dec(model.physical_error, "P")
++        threshold = dec(model.threshold, "THRESHOLD")
++        ratio = physical_error / threshold
++        ratio_exact = Fraction(physical_error) / Fraction(threshold)
+         prefactor = dec(model.logical_error_prefactor, "A")
+         for distance in range(3, model.maximum_distance + 1, 2):
+             cycles = bounded(allocated_cycle_unit * distance)
+             patch_cycles = bounded(qubits * cycles * instances)
+             logical_error = prefactor * ratio ** ((distance + 1) // 2)
+             failure = Decimal(patch_cycles) * logical_error + magic_failure
+-            if failure <= budget:
++            failure_exact = (patch_cycles * Fraction(prefactor)
++                             * ratio_exact ** ((distance + 1) // 2) + magic_failure_exact)
++            if failure_exact <= budget_exact:
+                 data = bounded(model.data_physical_qubits_per_d2 * distance**2 * qubits)
+                 factories = bounded(model.factory_physical_qubits_per_d2 * distance**2
+                                     * model.factories_per_instance)
+--- a/formal/pon-nakamoto-v1/test_quantum_oracle_resources.py
++++ b/formal/pon-nakamoto-v1/test_quantum_oracle_resources.py
+@@ -1,6 +1,7 @@
+ """Independent arithmetic controls for conditional quantum resource accounting."""
+ from dataclasses import asdict, replace
+ from decimal import Decimal
++from fractions import Fraction
+ import json
+ from pathlib import Path
+ import subprocess
+@@ -155,6 +156,77 @@
+             prior += Decimal(row["t_count_per_instance_conditional"] * 2) * Decimal("1e-15")
+             self.assertGreater(prior, Decimal("0.01"))
+ 
++
++    def test_distance_budget_uses_exact_failure_not_rounded_equality(self):
++        # Negative Pell solutions put 30 * .01 * (y/x)^2 exactly
++        # 3/(20*x*x) above .15. Both decimal inputs satisfy the 100-char
++        # bound, while Decimal precision 100 erases the positive excess.
++        x = y = 1
++        for _ in range(123):
++            x, y = 3*x + 4*y, 2*x + 3*y
++        self.assertEqual(x*x - 2*y*y, -1)
++        model = replace(q.example(True).physical_models[0],
++                        physical_error=f"0.{y:098d}", threshold=f"0.{x:098d}",
++                        logical_error_prefactor="0.01", magic_state_error="0",
++                        total_failure_budget="0.15", maximum_distance=3)
++        counts = {"gate_count": 1, "gate_depth": 1, "toffoli_count": 0,
++                  "toffoli_depth": 0, "direct_t_count": 0, "direct_t_depth": 0}
++        budget = Fraction(3, 20)
++        ratio = Fraction(y, x)
++
++        def exact_failure(distance):
++            return Fraction(distance, 10) * ratio ** ((distance + 1) // 2)
++
++        self.assertEqual(exact_failure(3), budget + Fraction(3, 20*x*x))
++        rejected = q.physical_estimate(counts, 1, 1, model)
++        self.assertEqual(rejected["status"], "NO_DISTANCE_IN_DECLARED_RANGE")
++        self.assertIsNone(rejected["estimate"])
++        accepted = q.physical_estimate(counts, 1, 1, replace(model, maximum_distance=11))
++        self.assertEqual(accepted["status"], "CONDITIONAL_ESTIMATE")
++        self.assertEqual(accepted["estimate"]["code_distance"], 11)
++        self.assertTrue(all(exact_failure(d) > budget for d in range(3, 11, 2)))
++        self.assertLessEqual(exact_failure(11), budget)
++
++    def test_exact_total_failure_budget_equality_remains_accepted(self):
++        model = replace(q.example(True).physical_models[0],
++                        physical_error="0.001", threshold="0.01",
++                        logical_error_prefactor="0.1", magic_state_error="0",
++                        total_failure_budget="0.03", maximum_distance=3)
++        counts = {"gate_count": 1, "gate_depth": 1, "toffoli_count": 0,
++                  "toffoli_depth": 0, "direct_t_count": 0, "direct_t_depth": 0}
++        self.assertEqual(30 * Fraction(1, 10) * Fraction(1, 10)**2, Fraction(3, 100))
++        report = q.physical_estimate(counts, 1, 1, model)
++        self.assertEqual(report["status"], "CONDITIONAL_ESTIMATE")
++        self.assertEqual(report["estimate"]["code_distance"], 3)
++        self.assertEqual(Decimal(report["estimate"]["whole_workload_failure_union_estimate"]),
++                         Decimal("0.03"))
++        self.assertFalse(report["model_is_physical_calibration"])
++
++    def test_magic_budget_does_not_round_away_positive_headroom(self):
++        t_count = 10**60 + 1
++        model = replace(q.example(True).physical_models[0],
++                        physical_error="1e-100", threshold="0.01",
++                        logical_error_prefactor="1e-100",
++                        magic_state_error="9"*60 + "e-121",
++                        total_failure_budget="0.1", maximum_distance=3)
++        counts = {"gate_count": t_count, "gate_depth": 1, "toffoli_count": 0,
++                  "toffoli_depth": 0, "direct_t_count": t_count, "direct_t_depth": 1}
++        exact_magic = t_count * Fraction(model.magic_state_error)
++        budget = Fraction(1, 10)
++        self.assertEqual(budget - exact_magic, Fraction(1, 10**121))
++        cycles = 3 * (10 + 10*t_count)
++        exact_failure = (cycles * Fraction(model.logical_error_prefactor)
++                         * (Fraction(model.physical_error) / Fraction(model.threshold))**2
++                         + exact_magic)
++        self.assertLess(exact_failure, budget)
++        report = q.physical_estimate(counts, 1, 1, model)
++        self.assertEqual(report["status"], "CONDITIONAL_ESTIMATE")
++        self.assertEqual(report["estimate"]["code_distance"], 3)
++        # The documented Decimal presentation remains rounded; it is not
++        # the value used to decide whether this exact model meets its budget.
++        self.assertEqual(Decimal(report["whole_workload_magic_error_union_estimate"]),
++                         Decimal("0.1"))
++
+     def test_distillation_failure_cannot_be_fixed_by_code_distance(self):
+         request = q.example(True)
+         model = replace(request.physical_models[0], magic_state_error="0.001")

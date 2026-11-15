@@ -1,0 +1,11 @@
+{
+  "command": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "exit_code": 0,
+  "finished_at": "2026-11-04T07:34:44.307406+00:00",
+  "started_at": "2026-11-04T07:34:44.241500+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069"
+}

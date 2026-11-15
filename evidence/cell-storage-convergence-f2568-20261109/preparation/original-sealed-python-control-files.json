@@ -1,0 +1,81 @@
+{
+  "scope": "original fifteen files recovered unchanged after workspace disconnection; no rerun or relabeling",
+  "archive_sha256": "8382ee7c2edfd19afa15486e59c0b5daeb84f1bd67f63d76e4f5cb0c6330f6a1",
+  "files": [
+    {
+      "path": "fd-parser-controls-01.json",
+      "bytes": 1181,
+      "sha256": "934ce39f868baccfa1b7b54fc6b8c99b6fdce97b2ccaa9bedb78402c842d8fd3"
+    },
+    {
+      "path": "fd-parser-controls-01.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "fd-parser-controls-01.stderr.log",
+      "bytes": 2856,
+      "sha256": "23bead9d52ec08e32fb6695b2f503c0f7b364e4378225755534d22500bebcdcb"
+    },
+    {
+      "path": "fd-parser-controls-02.json",
+      "bytes": 7570,
+      "sha256": "9abddfc4835d15f9787324e7bb3497d77e80dcfcbcc06badcc8bec65b746fe5c"
+    },
+    {
+      "path": "fd-parser-controls-02.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "fd-parser-controls-02.stderr.log",
+      "bytes": 2759,
+      "sha256": "f179046b58e0ad2d930e1ef4ffa72425d7d9d8ed31c9bed1b528ef97fe0dc8b6"
+    },
+    {
+      "path": "fd-parser-controls-03.json",
+      "bytes": 8714,
+      "sha256": "aaa57fc5928175551cde4a950de4cbebd00bb58a3043c5b26bbadb1e9b149388"
+    },
+    {
+      "path": "fd-parser-controls-03.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "fd-parser-controls-03.stderr.log",
+      "bytes": 3587,
+      "sha256": "2a0437ada27645fd96a996881a5b191daf8c366feddba2b95a42520f1515c26a"
+    },
+    {
+      "path": "fd-parser-controls-04.json",
+      "bytes": 11751,
+      "sha256": "2d0d6707a6027ca4962622015842abe2f9ef9c2d4bdb7fc0c4e63ab3b027f30a"
+    },
+    {
+      "path": "fd-parser-controls-04.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "fd-parser-controls-04.stderr.log",
+      "bytes": 3587,
+      "sha256": "fc350a41b7f2704f4f7c361dda12425946323ebdbdce9746f0df703c58afe970"
+    },
+    {
+      "path": "rustfmt-check-01.json",
+      "bytes": 1481,
+      "sha256": "1173d474a55582f565c3c1df695d812458580f02b14450cdfce4c46261d57e1e"
+    },
+    {
+      "path": "rustfmt-check-01.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "rustfmt-check-01.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

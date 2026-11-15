@@ -1,0 +1,26 @@
+{
+  "checked_at_utc": "2026-11-08T00:54:58.938909+00:00",
+  "expiry_vs_deletion_cause_established": false,
+  "historical_artifact_list": {
+    "artifacts": [],
+    "total_count": 0
+  },
+  "historical_run": {
+    "conclusion": "failure",
+    "created_at": "2026-10-08T04:59:55Z",
+    "event": "pull_request",
+    "head_sha": "560d44ac28fee7b073d1740e372839ab52f057b6",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/37730166589",
+    "id": 37730166589,
+    "name": "trnm-required-baseline",
+    "status": "completed",
+    "updated_at": "2026-10-08T06:00:38Z"
+  },
+  "pinned_artifact_cli_exit": 1,
+  "pinned_artifact_metadata": {
+    "documentation_url": "https://docs.github.com/rest/actions/artifacts#get-an-artifact",
+    "message": "Not Found",
+    "status": "404"
+  },
+  "pinned_artifact_stderr": "gh: Not Found (HTTP 404)\n"
+}

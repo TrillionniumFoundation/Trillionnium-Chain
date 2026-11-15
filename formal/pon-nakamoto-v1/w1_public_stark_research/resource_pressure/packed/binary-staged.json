@@ -1,0 +1,9 @@
+{
+  "original": "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/packed_carry_backend",
+  "copy": "/home/qian-qi/work/w1-pressure-packed-f16ac5-20261108/packed-verifier",
+  "sha256": "2774f3d718bf3831a79b3e348747be1117255b433219e8d2bad5c299da6462ad",
+  "bytes": 2228600,
+  "source_commit": "2632d3e5bca93fccc062db6ff4a8470cfc2fa51f",
+  "source_size": 2228600,
+  "source_mtime_ns": 1794109715588145604
+}

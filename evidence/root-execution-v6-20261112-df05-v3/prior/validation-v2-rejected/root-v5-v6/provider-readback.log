@@ -1,0 +1,12 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=["/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib"]; observed=["/data/chain-root-operation-v6-df05-target-v2/debug", "/data/chain-root-operation-v6-df05-target-v2/debug/deps", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"]; allowed=["/data/chain-root-operation-v6-df05-target-v2/debug", "/data/chain-root-operation-v6-df05-target-v2/debug/deps", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"]
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-root-operation-recovered-20261112-df05/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.09s
+     Running tests/root_witness_provider_v5_native.rs (/data/chain-root-operation-v6-df05-target-v2/debug/deps/root_witness_provider_v5_native-e95371e5fb5f8bab)
+
+running 14 tests
+test native_provider_floor_v6_every_identity_and_exact_frame_boundary_is_checked ... ok
+test native_provider_floor_v6_live_floor_cannot_be_downgraded_or_cleared ... ok
+test native_provider_floor_v6_new_and_cold_unpinned_queries_are_refused ... ok
+test native_provider_floor_v6_pending_suffix_reopens_original_operation ... ok
+test native_provider_floor_v6_surviving_prefix_refuses_cold_rollback_and_new_path ... ok
+test native_provider_floor_v6_unretained_suffix_loss_remains_an_explicit_boundary ... 

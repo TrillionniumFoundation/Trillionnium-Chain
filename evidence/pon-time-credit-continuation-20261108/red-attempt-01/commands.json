@@ -1,0 +1,94 @@
+[
+  {
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/work/chain-time-credit-20261108-qf01",
+    "exit_code": 0,
+    "stdout": "main-preflight.stdout",
+    "stderr": "main-preflight.stderr"
+  },
+  {
+    "command": [
+      "git",
+      "worktree",
+      "add",
+      "-b",
+      "test/chain-time-credit-red-20261108-qf01",
+      "/home/qian-qi/work/chain-time-credit-red-20261108-qf01",
+      "081da763ed8647fc3bf54f44a7b9706116390cda"
+    ],
+    "cwd": "/home/qian-qi/work/chain-time-credit-20261108-qf01",
+    "exit_code": 0,
+    "stdout": "create-worktree.stdout",
+    "stderr": "create-worktree.stderr"
+  },
+  {
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/work/chain-time-credit-red-20261108-qf01",
+    "exit_code": 0,
+    "stdout": "red-preflight.stdout",
+    "stderr": "red-preflight.stderr"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs"
+    ],
+    "cwd": "/home/qian-qi/work/chain-time-credit-20261108-qf01",
+    "exit_code": 0,
+    "stdout": "test-only-patch.stdout",
+    "stderr": "test-only-patch.stderr"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/home/qian-qi/work/chain-time-credit-red-20261108-qf01",
+    "exit_code": 0,
+    "stdout": "diff-check.stdout",
+    "stderr": "diff-check.stderr"
+  },
+  {
+    "command": [
+      "git",
+      "status",
+      "--porcelain=v1"
+    ],
+    "cwd": "/home/qian-qi/work/chain-time-credit-red-20261108-qf01",
+    "exit_code": 0,
+    "stdout": "status.stdout",
+    "stderr": "status.stderr"
+  },
+  {
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "ingress::public_v3::growth::tests::public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work",
+      "--",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cwd": "/home/qian-qi/work/chain-time-credit-red-20261108-qf01",
+    "exit_code": 101,
+    "stdout": "red-regression.stdout",
+    "stderr": "red-regression.stderr"
+  }
+]

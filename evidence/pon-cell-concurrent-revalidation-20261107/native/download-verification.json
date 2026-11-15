@@ -1,0 +1,15 @@
+{
+  "all_manifest_files_verified": true,
+  "archive_bytes": 679432,
+  "archive_sha256": "6fffb1e9538bd2a8fd0809488018694c1bd9b65225a8ac359dcdaa0d0888053b",
+  "local_bytes_equal_remote_compiled_source": true,
+  "local_head": "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030",
+  "local_tree": "e59270db7fe6ea77e01362b591dd98e4e93d62fe",
+  "transfer_only_failed_observation": {
+    "archive_or_source_bytes_changed": false,
+    "error": "large shell heredoc temporary file could not be created because overlay was full",
+    "recovery": "imported independently hashed chunks via python -c without temporary overlay files"
+  },
+  "verified_local_source_files": 1369,
+  "verified_payload_files": 176
+}

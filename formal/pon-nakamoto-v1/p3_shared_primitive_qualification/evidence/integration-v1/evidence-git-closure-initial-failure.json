@@ -1,0 +1,70 @@
+{
+  "schema": "p3.evidence-git-closure.initial-failure.v1",
+  "result": "FAIL",
+  "reason": "46 indexed native evidence logs existed in the working tree but were omitted from the commit by ignore rules",
+  "original_observation": {
+    "commit": "a860bbc2365e5796cfefbb64f7927cb03af632b6",
+    "reports": [
+      {
+        "store": "native-v1",
+        "indexed_original_files": 239,
+        "distinct_storage_files": 219,
+        "missing_from_commit": [
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/01-preflight.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/02-initial-0.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/02-initial-0.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/02-initial-1.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/02-initial-1.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/03-preflight.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/03-verified-0.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/03-verified-0.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/03-verified-1.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/03-verified-1.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/03-verified-2.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/03-verified-2.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/03-verified-3.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/03-verified-3.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/04-final-0.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/04-final-0.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/04-final-1.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/04-final-1.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/04-final-2.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/04-final-2.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/04-final-3.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/04-final-3.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/04-preflight.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/05-controls-0.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/05-controls-0.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/05-controls-1.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/05-controls-1.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/05-controls-2.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/05-controls-2.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/05-controls-3.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/05-controls-3.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/05-preflight.log"
+        ]
+      },
+      {
+        "store": "native-v2-base-sync",
+        "indexed_original_files": 232,
+        "distinct_storage_files": 212,
+        "missing_from_commit": [
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/00-preflight.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/00-preflight.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/01-build.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/01-build.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/02-tests.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/02-tests.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/03-clippy.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/03-clippy.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/04-abba.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/04-abba.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/05-receive.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/05-receive.stdout.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/06-package-preflight.stderr.log",
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/06-package-preflight.stdout.log"
+        ]
+      }
+    ]
+  }
+}

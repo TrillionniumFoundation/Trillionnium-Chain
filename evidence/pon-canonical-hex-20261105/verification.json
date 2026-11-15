@@ -1,0 +1,25 @@
+{
+  "source_parent": "549c5a26616113c6aeee76a62f34dd780d729b75",
+  "ingress_git_blob": "ca6ac60b53cef412b1e8c65719ad9a0c15eb1428",
+  "native_binary_sha256": "c72a0d19974ec3a814b76e403370317a11fcb22f8df7c9e6ac5f78c3bf4a0434",
+  "cost_binary_sha256": "ad92541ec3040b5b999e2a0d4d4a2adc6de56604447b2fe0a3a782789ce8bf2f",
+  "hex_cost_rlib_sha256": "bb8b37faaad76654e013e29aeebbe20d360adf8616b7268e2e7e6c493858632e",
+  "native_features": "default (no pq-native-openssl)",
+  "cargo_profiles": "unchanged original committed workspace profiles",
+  "native_total_distinct_passed": 54,
+  "native_existing_ignored": 1,
+  "targeted_three_are_subset": true,
+  "locked_graph": {
+    "workspace_members": 26,
+    "packages": 175
+  },
+  "benchmark_hex_version": "0.4.3",
+  "benchmark_compiler_flags": "rustc +1.95.0 -O for BOTH hex dependency and harness",
+  "production_acceptance": false,
+  "workspace_all_targets_all_features_clippy": "PASS -D warnings",
+  "format_check": "PASS",
+  "source_negative_tests": 37,
+  "source_pins": 521,
+  "inventory": "PASS",
+  "repository_local_links": 3218
+}

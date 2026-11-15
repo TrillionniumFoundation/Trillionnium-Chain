@@ -1,0 +1,35 @@
+{
+  "binary_or_model_execution_performed": false,
+  "commit": "71738345326b98d88b738250d2b84ecbcb466eb8",
+  "environment_guards": {
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_TERMINAL_PROMPT": "0"
+  },
+  "files": [
+    {
+      "bytes": 421418,
+      "git_blob": "46b1be5a5534631bf3151fbf1b3b1884451a8df9",
+      "git_object_id_recomputed": true,
+      "path": "codex-rs/Cargo.lock",
+      "sha256": "48b55c7ff5c23516fd0aeedca7c10a6e7902aeb5dc49fa4cef80971e1ae57d3f"
+    },
+    {
+      "bytes": 1786971,
+      "git_blob": "34a567e6140eadd1a422b6b3dca536965069bd47",
+      "git_object_id_recomputed": true,
+      "path": "MODULE.bazel.lock",
+      "sha256": "2be801e80e41fc993798e133a168c8202c73ed8c8e4e06f419779e317f7c0679"
+    }
+  ],
+  "full_two_worktree_identity_collector_executed": false,
+  "git_fetch_command_issued": false,
+  "observed_at_utc": "2026-11-09T17:23:46.707685+00:00",
+  "qualification_inferred": false,
+  "raw_commit_object_id_recomputed": true,
+  "repository_path": "/workspace/scratch/61217a3d50b1/hepta-eval-worktree",
+  "schema": "trnm.hepta-selected-lock-git-object-read.v1",
+  "tree": "bfd8384241bf09fcf79daa94f2ef9c9438f92ee4",
+  "working_tree_files_used": false
+}

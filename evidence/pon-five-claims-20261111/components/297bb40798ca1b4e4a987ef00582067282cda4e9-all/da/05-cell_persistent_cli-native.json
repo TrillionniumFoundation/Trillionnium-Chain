@@ -1,0 +1,51 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_persistent_cli-e7959ba45649113d",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "child_reaped": true,
+  "cwd": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability",
+  "dispatch_object": {
+    "bytes": 3800112,
+    "device": 2050,
+    "inode": 52884497,
+    "sha256": "cba6d86d421fac1f9c190d4235f02726876fa2c54058da6e3e12472b38969146"
+  },
+  "dispatch_object_after_sha256": "cba6d86d421fac1f9c190d4235f02726876fa2c54058da6e3e12472b38969146",
+  "dispatch_object_stable": true,
+  "elapsed_ns": 421330357,
+  "exit_code": 0,
+  "label": "05-cell_persistent_cli-native",
+  "native_observation": {
+    "bytes": 3800112,
+    "device": 2050,
+    "exe_link": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_persistent_cli-e7959ba45649113d",
+    "executable_opened_monotonic_ns": 1472176744958763,
+    "hash_finished_monotonic_ns": 1472176762296769,
+    "inode": 52884497,
+    "observation_started_monotonic_ns": 1472176744876419,
+    "process": {
+      "parent_pid": 68035,
+      "pid": 91630,
+      "start_ticks": 147217674
+    },
+    "process_binding_finished_monotonic_ns": 1472176745024113,
+    "sha256": "cba6d86d421fac1f9c190d4235f02726876fa2c54058da6e3e12472b38969146",
+    "status": "OBSERVED"
+  },
+  "owned_pid": 91630,
+  "performance_measurement": false,
+  "started_unix_ns": 1794394510735638464,
+  "status": "command_succeeded",
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/05-cell_persistent_cli-native.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 593,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/05-cell_persistent_cli-native.stdout.log",
+    "sha256": "867972be7844bbaaf7cf87310e0368094cbed084b0ee6b8e194fbb31883ea6bd"
+  }
+}

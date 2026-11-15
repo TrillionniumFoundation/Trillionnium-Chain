@@ -1,0 +1,19 @@
+{
+  "archive": {
+    "bytes": 1887039,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-fresh-runtime-01/evidence/pon-w1-fresh-runtime-20261107/owner-cancellation-C1b/raw.tar.gz",
+    "sha256": "9d8dfeab33e13106fac011f0273d13ce396876d7cad87a59194a4ca59d0b4bc7"
+  },
+  "component": "owner-cancellation-C1b",
+  "every_member_readback_verified": true,
+  "excluded_files": 5,
+  "index": {
+    "bytes": 61108,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-fresh-runtime-01/evidence/pon-w1-fresh-runtime-20261107/owner-cancellation-C1b/raw-index.json",
+    "sha256": "1ee0004a2206fd2493e31df4948434fafbf6acd4ba22c3134c99da667822341c"
+  },
+  "members": 170,
+  "no_payload_executed": true,
+  "raw_bytes": 3430553,
+  "schema": "TRNM-W1-PUBLIC-COMPONENT-ARCHIVE1"
+}

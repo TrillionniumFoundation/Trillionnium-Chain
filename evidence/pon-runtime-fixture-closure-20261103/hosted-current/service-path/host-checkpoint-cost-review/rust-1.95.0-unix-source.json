@@ -1,0 +1,8 @@
+{
+  "repository": "rust-lang/rust",
+  "ref": "1.95.0",
+  "path": "library/std/src/sys/fs/unix.rs",
+  "git_blob": "7db474544f04abc75e2d66ec007ebe4799a491d3",
+  "url": "https://github.com/rust-lang/rust/blob/1.95.0/library/std/src/sys/fs/unix.rs",
+  "scope": "Primary upstream source read-only; not executed or used as a native result."
+}

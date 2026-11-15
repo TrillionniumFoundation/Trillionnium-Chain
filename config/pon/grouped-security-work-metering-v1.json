@@ -1,0 +1,32 @@
+{
+  "schema": "pon-grouped-security-work-metering-v1",
+  "profile": "pon-grouped-int257-sealed-research-v0",
+  "status": "research-evidence-contract-hold",
+  "denomination": "classical-seal-step-oracle-query",
+  "step_queries_per_complete_seal": 64,
+  "ticket": "the unique canonical 64th endpoint; no outer carrier or proof lottery",
+  "nominal_award": "64 * floor(2^256 / (preauthorized_target + 1)); diagnostic model quantity only",
+  "query_identity": "complete fixed-domain native step preimage bytes; SHA256 verifies the recorded answer",
+  "counted_query_sources": [
+    "producer",
+    "preprocessing",
+    "delegate",
+    "verifier",
+    "helper",
+    "receiver",
+    "consumer"
+  ],
+  "useful_relation": "pon-routed-int257-grouped-research-v0",
+  "lawful_cached_business_output_allowed": true,
+  "fresh_producer_business_contractions_per_ticket_lower_bound": 0,
+  "fresh_neural_computation_is_credit_basis": false,
+  "physical_resource_conversion_established": false,
+  "public_query_coverage_established": false,
+  "independent_task_and_target_authority_established": false,
+  "genuine_demand_and_settlement_established": false,
+  "complete_resource_transfer_established": false,
+  "native_consensus_registration": null,
+  "actual_chainwork_awarded": 0,
+  "production_eligible": false,
+  "production_activation": false
+}

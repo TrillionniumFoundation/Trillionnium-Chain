@@ -1,0 +1,474 @@
+{
+  "affected_package_identity_count": 1,
+  "alert_count": 7,
+  "archive": {
+    "bytes": 92960,
+    "index_sha256": "bed1ad3ff7da527a47cae87a00d93401b544ba0516b316fc89aa34f8ffb7aea0",
+    "path": "dependency-readback-originals.tar.xz",
+    "raw_bytes": 2749202,
+    "raw_files": 23,
+    "sha256": "3e95e8d69ed76d6bcd11ab1a992e51ff703def2fa50ba7d50824a9e0a37038e4"
+  },
+  "c2_exact_source_identities": [
+    {
+      "bytes": 128,
+      "git_ls_tree": "100644 blob f505bfe105e824248803af99d2865a97dbf3cd8c\tformal/pon-nakamoto-v1/requirements.txt",
+      "path": "formal/pon-nakamoto-v1/requirements.txt",
+      "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5",
+      "source_revision": "0e554f36ffdde3053a5eb1756eb5e526b1935032"
+    },
+    {
+      "bytes": 40597,
+      "git_ls_tree": "100644 blob def80fa394ebb1ae6ce7d1d62ed77524152a2d04\ttrillionnium/Cargo.lock",
+      "path": "trillionnium/Cargo.lock",
+      "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+      "source_revision": "0e554f36ffdde3053a5eb1756eb5e526b1935032"
+    },
+    {
+      "bytes": 2204,
+      "git_ls_tree": "100644 blob 44df8f8d5eec880d10da42c12a903c03658cfc65\ttrillionnium/Cargo.toml",
+      "path": "trillionnium/Cargo.toml",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "source_revision": "0e554f36ffdde3053a5eb1756eb5e526b1935032"
+    },
+    {
+      "bytes": 34319,
+      "git_ls_tree": "100644 blob 30408ee702c2a31525286b2d4f14c9c461db8803\ttests/fuzz/Cargo.lock",
+      "path": "tests/fuzz/Cargo.lock",
+      "sha256": "c6c47bf71d51a8f046874418c81097cd03697de09d1149f2ad7839d1713107ae",
+      "source_revision": "0e554f36ffdde3053a5eb1756eb5e526b1935032"
+    },
+    {
+      "bytes": 1122,
+      "git_ls_tree": "100644 blob a55d73741e6971601f1f3df6dec9b19a924d9a8e\ttests/fuzz/Cargo.toml",
+      "path": "tests/fuzz/Cargo.toml",
+      "sha256": "4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321",
+      "source_revision": "0e554f36ffdde3053a5eb1756eb5e526b1935032"
+    },
+    {
+      "bytes": 45501,
+      "git_ls_tree": "100644 blob cc1bcbbe12e0870d976cca7861963897c667cfa2\t.github/workflows/pon-pq-system-continuation.yml",
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "sha256": "df5c12f19bc87a73ba8a7a63019e9944de3f6149d0b3071c569f840f9fb8df95",
+      "source_revision": "0e554f36ffdde3053a5eb1756eb5e526b1935032"
+    },
+    {
+      "bytes": 4678,
+      "git_ls_tree": "100644 blob 6796d0737af36e1521d89f6937df288fe67167a1\tscripts/ci/model-runtime-cpu-requirements.txt",
+      "path": "scripts/ci/model-runtime-cpu-requirements.txt",
+      "sha256": "178b2fe89a7bf58f2d127b195d82e4fa9b5c19d93cb3526d8789edf3df901017",
+      "source_revision": "0e554f36ffdde3053a5eb1756eb5e526b1935032"
+    },
+    {
+      "bytes": 8483,
+      "git_ls_tree": "100644 blob 839d88878f4e1f2d6f74167b2d763515cbcf6827\ttrillionnium/crates/trnm-crypto-primitives/tests/independent_backend/differential.py",
+      "path": "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/differential.py",
+      "sha256": "c291315fca62f5149b99eec2dda8580d07bc2b3d9b9c65eab4bd890f11eb229e",
+      "source_revision": "0e554f36ffdde3053a5eb1756eb5e526b1935032"
+    }
+  ],
+  "c2_lockfile_review": [
+    {
+      "cryptography_package_matches": [],
+      "openssl_packages": [
+        {
+          "name": "openssl",
+          "version": "0.10.81"
+        },
+        {
+          "name": "openssl-macros",
+          "version": "0.1.1"
+        },
+        {
+          "name": "openssl-sys",
+          "version": "0.9.117"
+        }
+      ],
+      "packages": 182,
+      "path": "trillionnium/Cargo.lock"
+    },
+    {
+      "cryptography_package_matches": [],
+      "openssl_packages": [],
+      "packages": 150,
+      "path": "tests/fuzz/Cargo.lock"
+    }
+  ],
+  "default_branch_exact_commit": null,
+  "existing_metadata_review": [
+    {
+      "argv": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "basis_for_c2_mapping": "C1 actual resolved graph; C1-to-C2 tracked changes exclude Cargo manifests, lockfiles and cargo configuration; no C2 metadata re-execution claimed",
+      "cryptography_package_matches": [],
+      "executed_commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+      "executed_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+      "exit_code": 0,
+      "name": "metadata-default",
+      "packages": 177,
+      "resolve_nodes": 177,
+      "stdout_bytes": 869050,
+      "stdout_sha256": "a056c8bafeab4a2e7e32eb415a6df4798137bb0823d62481d9c5490c3b8306c0",
+      "workspace_members": 26
+    },
+    {
+      "argv": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "basis_for_c2_mapping": "C1 actual resolved graph; C1-to-C2 tracked changes exclude Cargo manifests, lockfiles and cargo configuration; no C2 metadata re-execution claimed",
+      "cryptography_package_matches": [],
+      "executed_commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+      "executed_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+      "exit_code": 0,
+      "name": "metadata-all-features",
+      "packages": 182,
+      "resolve_nodes": 182,
+      "stdout_bytes": 884372,
+      "stdout_sha256": "362ef6ba0d3b05136183714ff0ea880ee03efb5bdb96b778d6c93e7e2f06fc49",
+      "workspace_members": 26
+    },
+    {
+      "argv": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "basis_for_c2_mapping": "C1 actual resolved graph; C1-to-C2 tracked changes exclude Cargo manifests, lockfiles and cargo configuration; no C2 metadata re-execution claimed",
+      "cryptography_package_matches": [],
+      "executed_commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+      "executed_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+      "exit_code": 0,
+      "name": "metadata-fuzz",
+      "packages": 150,
+      "resolve_nodes": 150,
+      "stdout_bytes": 753725,
+      "stdout_sha256": "acd2393095f373069796f9644ecc859e040130a96836feca9fe597737b6b4eb7",
+      "workspace_members": 1
+    }
+  ],
+  "original_job_exit_code": 0,
+  "original_job_id": "1a1c8c38b88-135c4-218",
+  "original_job_status": "succeeded",
+  "original_observed_at_utc": "2026-11-11T04:00:26.860190+00:00",
+  "original_output_complete": true,
+  "original_raw_api_bytes": 22148,
+  "original_raw_api_sha256": "d1bab106d32091dfb5eecbd39a7f17c8b86c9052dba2146738250b61b4d889a9",
+  "package": "cryptography",
+  "package_ecosystem": "pip",
+  "post_interruption_metadata_review_completed": true,
+  "preserved_interruption_snapshot_sha256": "eac9de969095823b0eef729d6d2c6262dd8deca48e398e0972a14d387add6db5",
+  "reviewed_at_utc": "2026-11-11T05:48:07.342747+00:00",
+  "schema": "TRNM-DEPENDABOT-RECOVERED-C2-MAPPING1",
+  "scope": {
+    "c1_execution_relabelled_as_c2": false,
+    "complete_vulnerability_scan": false,
+    "default_branch_alerts_closed": false,
+    "exploit_reachability_established": false,
+    "fresh_github_query": false,
+    "installed_environment_version_checked": false,
+    "known_job_restarted": false,
+    "new_cargo_resolution": false,
+    "new_tests_executed": 0,
+    "production_activation": false,
+    "source_or_dependencies_modified": false,
+    "whole_chain_pq_qualified": false
+  },
+  "severity_counts": {
+    "high": 4,
+    "low": 1,
+    "medium": 2
+  },
+  "source": {
+    "commit": "0e554f36ffdde3053a5eb1756eb5e526b1935032",
+    "tree": "753cdbad6714f00d8ccb9ddbb47f0fd71280ee62"
+  },
+  "version_mapping": [
+    {
+      "affected_range": ">= 0.5.0, < 48.0.1",
+      "alert_number": 21,
+      "alert_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot/21",
+      "api_relationship": "direct",
+      "api_scope": "runtime",
+      "c2_manifest_pin": "50.0.2",
+      "c2_manifest_pin_in_range": false,
+      "first_patched_version": "48.0.1",
+      "ghsa": "GHSA-537c-gmf6-5ccf",
+      "primary_references": [
+        {
+          "url": "https://github.com/pyca/cryptography/security/advisories/GHSA-537c-gmf6-5ccf"
+        },
+        {
+          "url": "https://openssl-library.org/news/secadv/20260609.txt"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-537c-gmf6-5ccf"
+        }
+      ],
+      "reported_version": "41.0.7",
+      "reported_version_in_range": true,
+      "severity": "high",
+      "summary": "Vulnerable OpenSSL included in cryptography wheels"
+    },
+    {
+      "affected_range": "< 46.0.6",
+      "alert_number": 20,
+      "alert_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot/20",
+      "api_relationship": "direct",
+      "api_scope": "runtime",
+      "c2_manifest_pin": "50.0.2",
+      "c2_manifest_pin_in_range": false,
+      "first_patched_version": "46.0.6",
+      "ghsa": "GHSA-m959-cc7f-wv43",
+      "primary_references": [
+        {
+          "url": "https://github.com/pyca/cryptography/security/advisories/GHSA-m959-cc7f-wv43"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-34073"
+        },
+        {
+          "url": "https://github.com/pypa/advisory-database/tree/main/vulns/cryptography/PYSEC-2026-35.yaml"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-m959-cc7f-wv43"
+        }
+      ],
+      "reported_version": "41.0.7",
+      "reported_version_in_range": true,
+      "severity": "low",
+      "summary": "cryptography has incomplete DNS name constraint enforcement on peer names"
+    },
+    {
+      "affected_range": "<= 46.0.4",
+      "alert_number": 19,
+      "alert_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot/19",
+      "api_relationship": "direct",
+      "api_scope": "runtime",
+      "c2_manifest_pin": "50.0.2",
+      "c2_manifest_pin_in_range": false,
+      "first_patched_version": "46.0.5",
+      "ghsa": "GHSA-r6ph-v2qm-q3c2",
+      "primary_references": [
+        {
+          "url": "https://github.com/pyca/cryptography/security/advisories/GHSA-r6ph-v2qm-q3c2"
+        },
+        {
+          "url": "https://github.com/pyca/cryptography/commit/0eebb9dbb6343d9bc1d91e5a2482ed4e054a6d8c"
+        },
+        {
+          "url": "https://github.com/pyca/cryptography/releases/tag/46.0.5"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-26007"
+        },
+        {
+          "url": "http://www.openwall.com/lists/oss-security/2026/02/10/4"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-r6ph-v2qm-q3c2"
+        }
+      ],
+      "reported_version": "41.0.7",
+      "reported_version_in_range": true,
+      "severity": "high",
+      "summary": "cryptography Vulnerable to a Subgroup Attack Due to Missing Subgroup Validation for SECT Curves"
+    },
+    {
+      "affected_range": ">= 37.0.0, < 43.0.1",
+      "alert_number": 18,
+      "alert_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot/18",
+      "api_relationship": "direct",
+      "api_scope": "runtime",
+      "c2_manifest_pin": "50.0.2",
+      "c2_manifest_pin_in_range": false,
+      "first_patched_version": "43.0.1",
+      "ghsa": "GHSA-h4gh-qq45-vh27",
+      "primary_references": [
+        {
+          "url": "https://github.com/pyca/cryptography/security/advisories/GHSA-h4gh-qq45-vh27"
+        },
+        {
+          "url": "https://openssl-library.org/news/secadv/20240903.txt"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-h4gh-qq45-vh27"
+        }
+      ],
+      "reported_version": "41.0.7",
+      "reported_version_in_range": true,
+      "severity": "medium",
+      "summary": "pyca/cryptography has a vulnerable OpenSSL included in cryptography wheels"
+    },
+    {
+      "affected_range": ">= 38.0.0, < 42.0.4",
+      "alert_number": 17,
+      "alert_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot/17",
+      "api_relationship": "direct",
+      "api_scope": "runtime",
+      "c2_manifest_pin": "50.0.2",
+      "c2_manifest_pin_in_range": false,
+      "first_patched_version": "42.0.4",
+      "ghsa": "GHSA-6vqw-3v5j-54x4",
+      "primary_references": [
+        {
+          "url": "https://github.com/pyca/cryptography/security/advisories/GHSA-6vqw-3v5j-54x4"
+        },
+        {
+          "url": "https://github.com/pyca/cryptography/pull/10423"
+        },
+        {
+          "url": "https://github.com/pyca/cryptography/commit/97d231672763cdb5959a3b191e692a362f1b9e55"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-26130"
+        },
+        {
+          "url": "https://github.com/pypa/advisory-database/tree/main/vulns/cryptography/PYSEC-2024-225.yaml"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-6vqw-3v5j-54x4"
+        }
+      ],
+      "reported_version": "41.0.7",
+      "reported_version_in_range": true,
+      "severity": "high",
+      "summary": "cryptography NULL pointer dereference with pkcs12.serialize_key_and_certificates when called with a non-matching certificate and private key and an hmac_hash override"
+    },
+    {
+      "affected_range": "< 42.0.2",
+      "alert_number": 16,
+      "alert_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot/16",
+      "api_relationship": "direct",
+      "api_scope": "runtime",
+      "c2_manifest_pin": "50.0.2",
+      "c2_manifest_pin_in_range": false,
+      "first_patched_version": "42.0.2",
+      "ghsa": "GHSA-9v9h-cgj8-h64p",
+      "primary_references": [
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-0727"
+        },
+        {
+          "url": "https://github.com/openssl/openssl/commit/09df4395b5071217b76dc7d3d2e630eb8c5a79c2"
+        },
+        {
+          "url": "https://github.com/openssl/openssl/commit/775acfdbd0c6af9ac855f34969cdab0c0c90844a"
+        },
+        {
+          "url": "https://github.com/openssl/openssl/commit/d135eeab8a5dbf72b3da5240bab9ddb7678dbd2c"
+        },
+        {
+          "url": "https://github.openssl.org/openssl/extended-releases/commit/03b3941d60c4bce58fab69a0c22377ab439bc0e8"
+        },
+        {
+          "url": "https://github.openssl.org/openssl/extended-releases/commit/aebaa5883e31122b404e450732dc833dc9dee539"
+        },
+        {
+          "url": "https://www.openssl.org/news/secadv/20240125.txt"
+        },
+        {
+          "url": "https://github.com/github/advisory-database/pull/3472"
+        },
+        {
+          "url": "https://github.com/openssl/openssl/pull/23362"
+        },
+        {
+          "url": "https://github.com/alexcrichton/openssl-src-rs/commit/add20f73b6b42be7451af2e1044d4e0e778992b2"
+        },
+        {
+          "url": "https://github.com/pyca/cryptography/commit/3519591d255d4506fbcd0d04037d45271903c64d"
+        },
+        {
+          "url": "https://security.netapp.com/advisory/ntap-20240208-0006"
+        },
+        {
+          "url": "http://www.openwall.com/lists/oss-security/2024/03/11/1"
+        },
+        {
+          "url": "https://lists.debian.org/debian-lts-announce/2024/10/msg00033.html"
+        },
+        {
+          "url": "https://lists.debian.org/debian-lts-announce/2024/11/msg00000.html"
+        },
+        {
+          "url": "https://cert-portal.siemens.com/productcert/html/ssa-915275.html"
+        },
+        {
+          "url": "https://cert-portal.siemens.com/productcert/html/ssa-769027.html"
+        },
+        {
+          "url": "https://cert-portal.siemens.com/productcert/html/ssa-331112.html"
+        },
+        {
+          "url": "https://cert-portal.siemens.com/productcert/html/ssa-277137.html"
+        },
+        {
+          "url": "https://cert-portal.siemens.com/productcert/html/ssa-265688.html"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-9v9h-cgj8-h64p"
+        }
+      ],
+      "reported_version": "41.0.7",
+      "reported_version_in_range": true,
+      "severity": "medium",
+      "summary": "Null pointer dereference in PKCS12 parsing"
+    },
+    {
+      "affected_range": "< 42.0.0",
+      "alert_number": 15,
+      "alert_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot/15",
+      "api_relationship": "direct",
+      "api_scope": "runtime",
+      "c2_manifest_pin": "50.0.2",
+      "c2_manifest_pin_in_range": false,
+      "first_patched_version": "42.0.0",
+      "ghsa": "GHSA-3ww4-gg4f-jr7f",
+      "primary_references": [
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-50782"
+        },
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2023-50782"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2254432"
+        },
+        {
+          "url": "https://github.com/pyca/cryptography/issues/9785"
+        },
+        {
+          "url": "https://www.couchbase.com/alerts"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-3ww4-gg4f-jr7f"
+        }
+      ],
+      "reported_version": "41.0.7",
+      "reported_version_in_range": true,
+      "severity": "high",
+      "summary": "Python Cryptography package vulnerable to Bleichenbacher timing oracle attack"
+    }
+  ]
+}

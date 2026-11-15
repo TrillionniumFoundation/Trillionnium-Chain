@@ -1,0 +1,33 @@
+{
+  "actual_c4_overall_status": "failed",
+  "actual_original_outer_exit_code": 1,
+  "commands": [
+    {
+      "actual_exit_code": 1,
+      "label": "corpus-source",
+      "log_bytes": 121,
+      "log_sha256": "ffc0e9d8ff902b78ddb7167d8d1c9b3edebe6c6a784cf4c7e28c0aceead58ca5",
+      "owner_exit_code": 1,
+      "receipt_sha256": "fb3340d264a0bea66263c2a23437e6b49a507bd7c20b50abab29b74f2d74d442",
+      "status": "failed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 1,
+      "label": "focused-native-batch",
+      "log_bytes": 6065,
+      "log_sha256": "8df50239ba2fcdc4001995b2a9cad71d6ccc0330dbe13669525ed736362fe4c2",
+      "owner_exit_code": 1,
+      "receipt_sha256": "f249c8705225b16cfbdca418fa3dba028367ac290fecd4c6dc2b96c5e810855a",
+      "status": "failed",
+      "timed_out": false
+    }
+  ],
+  "failed_labels": [
+    "corpus-source",
+    "focused-native-batch"
+  ],
+  "new_tests_executed_by_collector": false,
+  "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+  "tree": "15fd9e7a2f4121dce861e9e96b78d8196d3892fb"
+}

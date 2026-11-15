@@ -1,0 +1,109 @@
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 39.07s
+     Running unittests src/lib.rs (/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_mvcc_fee-649d89314223ac39)
+
+running 42 tests
+test pon_commitment::bounded_encoding_tests::actual_state_fallback_encoding_cost ... ignored, explicit whole-test process RSS comparison; no Node or throughput qualification
+test pon_commitment::bounded_encoding_tests::bounded_encoder_discards_full_payload_map_but_keeps_exact_old_charges ... ok
+test pon_commitment::bounded_encoding_tests::bounded_fallback_matches_old_full_map_for_forks_removals_and_every_budget ... ok
+test pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges ... ok
+test pon_commitment::bounded_encoding_tests::canonical_buffer_reuse_component_timing ... ignored, explicit encoder allocation A/B; excludes SQLite, roots, execution and networking
+test pon_commitment::bounded_encoding_tests::discarded_cache_never_hides_late_canonical_or_wire_errors_or_invalid_limits ... ok
+test pon_commitment::bounded_encoding_tests::payload_and_workspace_exact_edges_preserve_old_selection_and_root ... ok
+test pon_commitment::bounded_encoding_tests::reused_encoders_preserve_shrinking_values_deletions_and_late_errors ... ok
+test pon_commitment::checked_binding_tests::checked_binding_actual_eight_mib_payload_fallback_keeps_all_bytes ... ok
+test pon_commitment::checked_binding_tests::checked_binding_complete_cost_observation ... ignored, explicit same-operation binding cost; not Node or network throughput
+test pon_commitment::checked_binding_tests::checked_binding_matches_two_steps_for_cold_warm_and_every_budget_fallback ... ok
+test pon_commitment::checked_binding_tests::checked_binding_preserves_wrong_roots_late_errors_and_invalid_limits ... ok
+test pon_commitment::checked_binding_tests::checked_binding_rechecks_actual_values_and_repairs_only_derived_material ... ok
+test pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks ... ok
+test pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback ... ok
+test pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root ... ok
+test pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order ... ok
+test pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot ... ok
+test pon_commitment::tests::cancelled_panicked_and_partially_started_workers_all_finish_and_join ... ok
+test pon_commitment::tests::cancelled_prepare_apply_and_staged_root_never_publish_output_or_change_parent ... ok
+test pon_commitment::tests::checked_binding_signed_execution_errors_and_cancellation_match_two_steps ... ok
+test pon_commitment::tests::controlled_cancellation_joins_every_started_scoped_worker_before_return ... ok
+test pon_commitment::tests::controlled_previews_preserve_full_state_receipts_and_canonical_errors_for_all_workers ... ok
+test pon_commitment::tests::disjoint_delta_exact_and_overflow_preserve_full_state_and_allocation_order ... ok
+test pon_commitment::tests::immutable_parent_corrupt_tree_fallback_matches_full_execution ... ok
+test pon_commitment::tests::immutable_parent_preview_component_timing ... ignored, explicit component timing; excludes SQLite, M05 and Node lock wait
+test pon_commitment::tests::immutable_parent_previews_match_full_execution_including_failures_and_rebind ... ok
+test pon_commitment::tests::internal_tree_mismatch_uses_complete_root_without_mutating_snapshot ... ok
+test pon_commitment::tests::late_canonical_error_precedes_cache_choice_and_all_change_clones ... ok
+test pon_commitment::tests::resource_fallback_finishes_full_root_before_required_change_clones ... ok
+test pon_commitment::tests::scoped_accounting_preserves_all_workers_state_receipts_and_late_error_parity ... ok
+test pon_commitment::tests::warm_parent_binding_cancellation_preserves_shared_bytes_and_successful_retry ... ok
+test pon_commitment::tests::warm_parent_binding_component_timing ... ignored, explicit binding A/B timing; excludes execution, SQLite and Node locks
+test pon_commitment::tests::warm_parent_binding_preserves_late_canonical_limits_and_context_error_order ... ok
+test pon_commitment::tests::warm_parent_binding_shares_only_after_complete_actual_comparison ... ok
+test pon_commitment::unchanged_snapshot_tests::unchanged_candidate_early_miss_retains_complete_late_validation ... ok
+test pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_empty_delta_still_checks_the_original_tree_root ... ok
+test pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost ... ignored, explicit paired component cost, including adversarial same-root hints; no throughput qualification
+test pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_keeps_late_canonical_errors_before_wire_and_cache_limits ... ok
+test pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_misleading_root_and_changed_bytes_take_original_repair_path ... ok
+test pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_retains_exact_capacity_charges_and_all_budget_boundaries ... ok
+test pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_shares_only_after_full_actual_bytes_match ... ok
+
+successes:
+
+---- pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root stdout ----
+
+thread 'pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root' (110) panicked at crates/trnm-mvcc-fee/src/pon_commitment/full_root_arithmetic_tests.rs:256:9:
+poison mathematical material only
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- pon_commitment::tests::cancelled_panicked_and_partially_started_workers_all_finish_and_join stdout ----
+
+thread 'pon-exec-0' (118) panicked at crates/trnm-mvcc-fee/src/pon_commitment.rs:1973:33:
+test worker unwind
+
+---- pon_commitment::tests::disjoint_delta_exact_and_overflow_preserve_full_state_and_allocation_order stdout ----
+{"case":"disjoint-delta-allocation-order","changed_keys":65536,"complete_root_and_delta_parity":true,"method":"CheckedApply","stages":["budget-selected","changes-allocation","tree-allocation"]}
+{"case":"disjoint-delta-allocation-order","changed_keys":65537,"complete_root_and_delta_parity":true,"method":"FullRoot(DeltaBudget)","stages":["budget-selected","full-root-completed","changes-allocation"]}
+
+---- pon_commitment::tests::resource_fallback_finishes_full_root_before_required_change_clones stdout ----
+resource-allocation-order-control: {"allocator_or_RSS_measurement":false,"cached":["budget-selected","changes-allocation","tree-allocation"],"changed_keys":32,"fallback":["budget-selected","full-root-completed","changes-allocation"],"logical_change_bytes":256288}
+
+
+successes:
+    pon_commitment::bounded_encoding_tests::bounded_encoder_discards_full_payload_map_but_keeps_exact_old_charges
+    pon_commitment::bounded_encoding_tests::bounded_fallback_matches_old_full_map_for_forks_removals_and_every_budget
+    pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges
+    pon_commitment::bounded_encoding_tests::discarded_cache_never_hides_late_canonical_or_wire_errors_or_invalid_limits
+    pon_commitment::bounded_encoding_tests::payload_and_workspace_exact_edges_preserve_old_selection_and_root
+    pon_commitment::bounded_encoding_tests::reused_encoders_preserve_shrinking_values_deletions_and_late_errors
+    pon_commitment::checked_binding_tests::checked_binding_actual_eight_mib_payload_fallback_keeps_all_bytes
+    pon_commitment::checked_binding_tests::checked_binding_matches_two_steps_for_cold_warm_and_every_budget_fallback
+    pon_commitment::checked_binding_tests::checked_binding_preserves_wrong_roots_late_errors_and_invalid_limits
+    pon_commitment::checked_binding_tests::checked_binding_rechecks_actual_values_and_repairs_only_derived_material
+    pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks
+    pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback
+    pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root
+    pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order
+    pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot
+    pon_commitment::tests::cancelled_panicked_and_partially_started_workers_all_finish_and_join
+    pon_commitment::tests::cancelled_prepare_apply_and_staged_root_never_publish_output_or_change_parent
+    pon_commitment::tests::checked_binding_signed_execution_errors_and_cancellation_match_two_steps
+    pon_commitment::tests::controlled_cancellation_joins_every_started_scoped_worker_before_return
+    pon_commitment::tests::controlled_previews_preserve_full_state_receipts_and_canonical_errors_for_all_workers
+    pon_commitment::tests::disjoint_delta_exact_and_overflow_preserve_full_state_and_allocation_order
+    pon_commitment::tests::immutable_parent_corrupt_tree_fallback_matches_full_execution
+    pon_commitment::tests::immutable_parent_previews_match_full_execution_including_failures_and_rebind
+    pon_commitment::tests::internal_tree_mismatch_uses_complete_root_without_mutating_snapshot
+    pon_commitment::tests::late_canonical_error_precedes_cache_choice_and_all_change_clones
+    pon_commitment::tests::resource_fallback_finishes_full_root_before_required_change_clones
+    pon_commitment::tests::scoped_accounting_preserves_all_workers_state_receipts_and_late_error_parity
+    pon_commitment::tests::warm_parent_binding_cancellation_preserves_shared_bytes_and_successful_retry
+    pon_commitment::tests::warm_parent_binding_preserves_late_canonical_limits_and_context_error_order
+    pon_commitment::tests::warm_parent_binding_shares_only_after_complete_actual_comparison
+    pon_commitment::unchanged_snapshot_tests::unchanged_candidate_early_miss_retains_complete_late_validation
+    pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_empty_delta_still_checks_the_original_tree_root
+    pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_keeps_late_canonical_errors_before_wire_and_cache_limits
+    pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_misleading_root_and_changed_bytes_take_original_repair_path
+    pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_retains_exact_capacity_charges_and_all_budget_boundaries
+    pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_shares_only_after_full_actual_bytes_match
+
+test result: ok. 36 passed; 0 failed; 6 ignored; 0 measured; 78 filtered out; finished in 18.64s
+

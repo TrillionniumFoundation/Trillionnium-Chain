@@ -1,0 +1,70 @@
+{
+  "archive": {
+    "command": [
+      "cargo",
+      "nextest",
+      "archive",
+      "-p",
+      "codex-hepta-agentd",
+      "--lib",
+      "--locked",
+      "--offline",
+      "--archive-file",
+      "/home/qian-qi/work/hepta-learning-native-bridge-27849cb-archive-v1/agentd-nextest.tar.zst"
+    ],
+    "end_unix_ns": 1794166923230789883,
+    "exit_code": 0,
+    "files": {
+      "agentd-nextest.tar.zst": {
+        "bytes": 212292618,
+        "sha256": "e8af8b22e12c57366cb4f76621815483c39ad36f8e12bfd73d0968e051e6efa5"
+      },
+      "archive.log": {
+        "bytes": 2270,
+        "sha256": "c81a2581aac6ddea41aad9e9e24c2a39cd0c199294aa8b6584863ee07ce0d0b7"
+      },
+      "cargo-nextest": {
+        "bytes": 24038232,
+        "sha256": "e999c122a02c3fe74a1b66d254b6419a8a665e8bf540b1d31de7933a6d3753f1"
+      },
+      "just": {
+        "bytes": 5452040,
+        "sha256": "4f864ee6df9b9f351c8b5f95bc9fe589c92080237c2a87c048218a635c3604f7"
+      },
+      "source-files.json": {
+        "bytes": 2991984,
+        "sha256": "b0c09d976c65499f259c9b4833f6d4194f0d34c9217583d688bb855eb3374854"
+      },
+      "source.tar": {
+        "bytes": 160573440,
+        "sha256": "c007ff4b2cb520e9a80cdf700e010a3a5f61b4e1cbaf8d68c8f6daaae0822ee3"
+      }
+    },
+    "result": "PASS_ARCHIVE",
+    "schema": "hepta-real-model-nextest-archive-v1",
+    "source": "27849cbdcfc0d4afc69764d6c1742af22c41c293",
+    "start_unix_ns": 1794166919675440879,
+    "tree": "af50e58bf382891fb41861810cbf5425ca0da5a9"
+  },
+  "binaries": [
+    {
+      "bytes": 1084605952,
+      "ldd_exit": 0,
+      "ldd_stderr": "",
+      "ldd_stdout": "\tlinux-vdso.so.1 (0x000071d703562000)\n\tlibssl.so.3 => /usr/lib/x86_64-linux-gnu/libssl.so.3 (0x000071d703437000)\n\tlibcrypto.so.3 => /usr/lib/x86_64-linux-gnu/libcrypto.so.3 (0x000071d6f9200000)\n\tlibgcc_s.so.1 => /usr/lib/x86_64-linux-gnu/libgcc_s.so.1 (0x000071d703409000)\n\tlibm.so.6 => /usr/lib/x86_64-linux-gnu/libm.so.6 (0x000071d6f98da000)\n\tlibc.so.6 => /usr/lib/x86_64-linux-gnu/libc.so.6 (0x000071d6f8e00000)\n\t/lib64/ld-linux-x86-64.so.2 (0x000071d703564000)\n\tlibz.so.1 => /usr/lib/x86_64-linux-gnu/libz.so.1 (0x000071d7033e9000)\n\tlibzstd.so.1 => /usr/lib/x86_64-linux-gnu/libzstd.so.1 (0x000071d6f913d000)\n",
+      "path": "/home/qq/hepta-learning-native-27849cb-d9fb-20261108/extracted/target/debug/deps/codex_hepta_agentd-8345a11e98df03a2",
+      "sha256": "2f01afbbcd6b1e614d9883bd6d3565d0b67eacf668ee465059e84032a6414ede"
+    }
+  ],
+  "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bcaf717a-138b0-409.service\n",
+  "machine": {
+    "machine": "x86_64",
+    "node": "ai395",
+    "processor": "",
+    "release": "7.0.0-38-generic",
+    "system": "Linux",
+    "version": "#38-Ubuntu SMP PREEMPT_DYNAMIC Fri Sep  4 09:10:14 UTC 2026"
+  },
+  "os_release": "PRETTY_NAME=\"Ubuntu 26.04.1 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"26.04\"\nVERSION=\"26.04.1 LTS (Resolute Raccoon)\"\nVERSION_CODENAME=resolute\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=resolute\nLOGO=ubuntu-logo\n",
+  "rustc": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: x86_64-unknown-linux-gnu\nrelease: 1.96.0\nLLVM version: 22.1.2\n"
+}

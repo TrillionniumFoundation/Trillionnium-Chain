@@ -1,0 +1,174 @@
+{
+  "actual_parent_commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+  "arms": [
+    "original_full_map_ns",
+    "parent_40a_shared_map_ns",
+    "checked_shared_map_ns"
+  ],
+  "bindings_per_sample": 8,
+  "candidate_base_head": "b8116f65789a85148254f870c678a44f895316de",
+  "candidate_executor_source_sha256": "aa8ce1e89aa23a18fa5563b46fc9d43e9d834899a8301a8f70819c07e60d88b0",
+  "candidate_production_sha256": "d330e462e793ea187ccb525ac7e2c03c6009135860f09417b5dc74f348f0e832",
+  "cases": [
+    "unchanged",
+    "same_root_hint_first_value_changed",
+    "same_root_hint_last_value_changed"
+  ],
+  "common_inputs": [
+    [
+      128,
+      64
+    ],
+    [
+      1024,
+      512
+    ],
+    [
+      4096,
+      512
+    ]
+  ],
+  "compiled_parent_test_source_sha256": "4609b72cb03de234fa2f87119a1a5f4288d02c41b43f8cecfec2df15199df72c",
+  "compiled_test_source_sha256": "015d1225d9773e5d85b0247352a1a31e9a8a264f85dff5e08746577a2a821aa0",
+  "decision": {
+    "all_nine_cells_against_each_reference_required": true,
+    "candidate": "checked_shared_map_ns",
+    "expected_results": {
+      "same_root_hint_first_value_changed": "COMMITMENT_ROOT",
+      "same_root_hint_last_value_changed": "COMMITMENT_ROOT",
+      "unchanged": "Ok with expected root"
+    },
+    "maximum_missing_or_unexpected_result_bindings": 0,
+    "maximum_p95_regression_fraction": 0.1,
+    "maximum_paired_median_regression_fraction": 0.1,
+    "no_cell_aggregation_or_sample_exclusion": true,
+    "p95_definition": "nearest rank ceil(0.95 * N); N=12 gives order statistic twelve, the maximum; no confidence or full-chain latency claim",
+    "paired_median_definition": "median of round-matched (reference_ns - candidate_ns) / reference_ns; midpoint of central two values for twelve samples",
+    "physical_memory_qualification": false,
+    "primary_targets": [
+      {
+        "case": "same_root_hint_last_value_changed",
+        "minimum_paired_median_improvement_fraction": 0.05,
+        "reference": "parent_40a_shared_map_ns",
+        "state_keys": [
+          128,
+          1024,
+          4096
+        ]
+      },
+      {
+        "case": "unchanged",
+        "minimum_paired_median_improvement_fraction": 0.05,
+        "reference": "original_full_map_ns",
+        "state_keys": [
+          128,
+          1024,
+          4096
+        ]
+      }
+    ],
+    "public_business_gate_replaced": false,
+    "schema": "unchanged-snapshot-three-arm-decision-v1"
+  },
+  "experiment_identity": "independent-borrowed-checked-prefix-three-arm-one-attempt-v1",
+  "experiment_source_files": {
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs": "d330e462e793ea187ccb525ac7e2c03c6009135860f09417b5dc74f348f0e832",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/checked_prefix_three_arm_tests.rs": "015d1225d9773e5d85b0247352a1a31e9a8a264f85dff5e08746577a2a821aa0",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs": "4609b72cb03de234fa2f87119a1a5f4288d02c41b43f8cecfec2df15199df72c",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": "aa8ce1e89aa23a18fa5563b46fc9d43e9d834899a8301a8f70819c07e60d88b0"
+  },
+  "measurement_window": "sole M06 test process; no concurrent Cargo, Node or other benchmark; original configured profile and all budgets unchanged",
+  "native_timed_attempts_allowed": 1,
+  "no_green_rerun_or_cell_exclusion": true,
+  "original_commit": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+  "permutation_repetitions": 2,
+  "portable_manifest_note": "New production identity, not a rerun or relabeling of rejected 7dfee source. Same immutable v4 decision and schedule. The two reference implementations include their own literal a10 encoder because this candidate changes the production encoder wrapper. No timing samples exist at registration.",
+  "reference_provenance": {
+    "actual_parent_shared_map": {
+      "commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+      "file_sha256": "8d1f455e74114346275b24b70c3656bc2adb7d316f40f64958c0733674f345b4",
+      "functions": {
+        "checked_snapshot_with_optional_arithmetic": "9807b945fcadb317ec59339b009f63aef743297737b11a4934930d3f3c2be3ed",
+        "matches_unchanged_candidate": "d81f1ae763728c1244433497a80497a518299dd3633d41e44493ae4359b84264",
+        "prepare_unchanged_snapshot": "50e7b997823f8993b34424b0b2c27ac29f51bb3dd39de214487ac3708f7868fe"
+      }
+    },
+    "executor_original_functions_preserved": {
+      "candidate_file_sha256": "aa8ce1e89aa23a18fa5563b46fc9d43e9d834899a8301a8f70819c07e60d88b0",
+      "only_added_production_function": "canonical_matches",
+      "only_added_test_module": "canonical_comparison_tests",
+      "original_file_sha256": "f7f8aea894d0aec0d9612abc5c7e1a0cef69ccd0e2ca992e3300205d9824e67c",
+      "removing_only_added_block_restores_exact_original_file": true
+    },
+    "isolated_historical_encode_for_cache": {
+      "candidate_encoder_is_not_called_by_either_reference": true,
+      "compiled_location": "full_map_a10::encode_for_cache",
+      "sha256": "15ec8e8bd6eed0a6eb3c1f5189be40a78a42f89c4fd1ab041b69c07ce3ac9db9",
+      "source_commit": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+      "source_is_also_identical_in_actual_parent": true
+    },
+    "original_full_map": {
+      "commit": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+      "file_sha256": "18ed1e6582e34bdbf9b2a376171fccf27fc59eff8b6786bd44dfd525b25e5c01",
+      "functions": {
+        "checked_snapshot_with_optional_arithmetic": "01c31f2da592da99568ecf6560fddc9d84293c4c3f78a20fa47e4a3d506431ca",
+        "prepare_state_with_arithmetic": "4274253f512545defd33ab0ca81d94208f147aab5f9f971c58e0a1888aefac6f"
+      }
+    },
+    "preserved_parent_early_miss_function_sha256": "758364b7153f25a14f8640ebb58ae1a8539fd4e69265d07840f9ffbfce8931b8",
+    "shared_unchanged_helpers": {
+      "add": "7ca643b30caa8b1c965a43a82f66581b0da8451486de4889aecddcfd806092f1",
+      "charges": "8ce906200181c7a3040a4f1874c6a70faac25c19381bb1bd2cd77d799d28d6f9",
+      "fallback_reason": "038e44c48786cd22e66e7a0932b9b2dcb3148913a74820d994a8efe15d23e9f2",
+      "mark_stage": "173b4daf1dce3b502a72de113b3ae2af0c87a2af66b3c7b9cf4102bcbc9f1ab1",
+      "materialize_differences": "79c7243b04c8b5fb8195ebdedf9ec5a51d79cdd3ada0068aa648bacf5f56975b",
+      "mul": "d85e4f6187c280bace91361cf1e2aaa2bbb11d54cf013bca080d19b9cc88bc40",
+      "plan_differences": "134a1d577f003cd048696ba7085a80a9d93b3fab9ceee31005a96c13d063b99d",
+      "prepare_values": "f5e2f0309f0d804d43175f4186b71b56e8f72577fe734c8953e9b46b201dae18",
+      "visit_differences": "7951f9f7ecff3b74ef192d50a5fe51019df751ed9843cd1c20ecdaa22c5a5c85",
+      "visit_state_differences": "b3a584e2adf9008b1f72d9b2b183694f5db173ead235b6d8c41c85a39f1d6f79",
+      "workspace_charge": "f946e28ac790189d6371f9815f66fabb350ef49d869f1ce20d72e9c1fcbe269f"
+    },
+    "shared_unchanged_source_files": {
+      "trillionnium/crates/trnm-protocol/src/pon_state.rs": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb",
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+    }
+  },
+  "registered_before_v4_execution_utc": "2026-11-04T08:18:40.791827+00:00",
+  "samples_per_arm": 12,
+  "schema": "unchanged-snapshot-v4-preregistration-v1",
+  "six_permutation_order": [
+    [
+      0,
+      1,
+      2
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      1,
+      2,
+      0
+    ],
+    [
+      0,
+      2,
+      1
+    ],
+    [
+      2,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      2
+    ]
+  ],
+  "source_identity_policy": "v4 reports hashes of its compile-time production and test source bytes; changed sources or scheduling are a new experiment, never a relabelled old observation",
+  "upstream_preregistration_sha256": "fd5572bc61f693fb3dde59b4afe05507f78afaa7204508323052f7f8a6a2161d"
+}

@@ -1,0 +1,62 @@
+test_canonical_outside_path_reaches_create_only_boundary (__main__.OutputBoundaryTests.test_canonical_outside_path_reaches_create_only_boundary) ... FAIL
+test_external_symlink_parent_cannot_enter_source (__main__.OutputBoundaryTests.test_external_symlink_parent_cannot_enter_source) ... FAIL
+test_parent_traversal_cannot_enter_source (__main__.OutputBoundaryTests.test_parent_traversal_cannot_enter_source) ... FAIL
+
+======================================================================
+FAIL: test_canonical_outside_path_reaches_create_only_boundary (__main__.OutputBoundaryTests.test_canonical_outside_path_reaches_create_only_boundary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/d570ecfded92/chain-throughput/formal/throughput-v1/test_reproduce_reports.py", line 43, in test_canonical_outside_path_reaches_create_only_boundary
+    mkdir.assert_called_once_with((outside / "result").resolve(), parents=True, exist_ok=False)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 220, in assert_called_once_with
+    return mock.assert_called_once_with(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 961, in assert_called_once_with
+    return self.assert_called_with(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 949, in assert_called_with
+    raise AssertionError(_error_message()) from cause
+AssertionError: expected call not found.
+Expected: mkdir(PosixPath('/tmp/tmpl1xkr_e_/outside/result'), parents=True, exist_ok=False)
+  Actual: mkdir(PosixPath('/tmp/tmpl1xkr_e_/outside/unused/../result'), parents=True, exist_ok=False)
+
+======================================================================
+FAIL: test_external_symlink_parent_cannot_enter_source (__main__.OutputBoundaryTests.test_external_symlink_parent_cannot_enter_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/d570ecfded92/chain-throughput/formal/throughput-v1/test_reproduce_reports.py", line 31, in test_external_symlink_parent_cannot_enter_source
+    reader.main()
+  File "/workspace/scratch/d570ecfded92/chain-throughput/formal/throughput-v1/reproduce_reports.py", line 63, in main
+    output.mkdir(parents=True, exist_ok=False)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+AssertionError: source write reached
+
+======================================================================
+FAIL: test_parent_traversal_cannot_enter_source (__main__.OutputBoundaryTests.test_parent_traversal_cannot_enter_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/d570ecfded92/chain-throughput/formal/throughput-v1/test_reproduce_reports.py", line 21, in test_parent_traversal_cannot_enter_source
+    reader.main()
+  File "/workspace/scratch/d570ecfded92/chain-throughput/formal/throughput-v1/reproduce_reports.py", line 63, in main
+    output.mkdir(parents=True, exist_ok=False)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+AssertionError: source write reached
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.004s
+
+FAILED (failures=3)

@@ -1,0 +1,14 @@
+cargo:rerun-if-env-changed=RISC0_BUILD_DEBUG
+Building guest package: trnm-w1-zk-methods-v2.trnm-w1-full-guest-v2
+cargo:rerun-if-env-changed=RISC0_SKIP_BUILD
+Using Rust toolchain version 1.88.0
+Using rustc: /workspace/scratch/79360d3567d1/risc0/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu/bin/rustc
+cargo:rerun-if-env-changed=RISC0_BUILD_LOCKED
+cargo:rerun-if-env-changed=RISC0_RUST_SRC
+cargo:rerun-if-env-changed=CC_riscv32im_risc0_zkvm_elf
+cargo:rerun-if-env-changed=CFLAGS_riscv32im_risc0_zkvm_elf
+cargo:rerun-if-env-changed=RISC0_BUILD_DEBUG
+cargo:rerun-if-env-changed=RISC0_SKIP_BUILD
+cargo:rerun-if-env-changed=RISC0_SKIP_BUILD
+cargo:rerun-if-changed=/workspace/scratch/79360d3567d1/chain/formal/pon-nakamoto-v1/w1_zkvm/target/release/build/trnm-w1-zk-methods-v2-5e2e09588a3916b6/out/methods.rs
+cargo:rerun-if-env-changed=RISC0_GUEST_LOGFILE

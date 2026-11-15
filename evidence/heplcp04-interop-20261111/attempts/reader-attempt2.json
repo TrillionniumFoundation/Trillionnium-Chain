@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/test_cell_learning_local_decision_join.py",
+    "-v"
+  ],
+  "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+  "returncode": 0,
+  "before_test_sha256": "2dd93d5614718bdfb6d59e5bdc08c776927203dae743e406a89894b3b13b8d3b",
+  "after_test_sha256": "db5b90dd8efc48564776d48e17012408ac1e4ec00779da9563cd6502a1729e2d",
+  "source_state": "development validation after test-only helper fix, before freeze commit",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "50ab2387c25217d3a9f366c9ef30c5f2445fbf71b7817bab6aee914f387969c6",
+  "stdout": "",
+  "stderr": "test_all_native_cuts_and_24_original_signing_payloads_match (__main__.LocalDecisionInteropTests.test_all_native_cuts_and_24_original_signing_payloads_match) ... ok\ntest_boundaries_reject_nonbytes_truncation_trailing_data_and_excess_receipts (__main__.LocalDecisionInteropTests.test_boundaries_reject_nonbytes_truncation_trailing_data_and_excess_receipts) ... ok\ntest_choice_cannot_skip_selection_repeat_it_or_follow_no_update (__main__.LocalDecisionInteropTests.test_choice_cannot_skip_selection_repeat_it_or_follow_no_update) ... ok\ntest_cli_has_only_readback_output_and_requires_all_four_pins (__main__.LocalDecisionInteropTests.test_cli_has_only_readback_output_and_requires_all_four_pins) ... ok\ntest_evaluator_cannot_issue_local_choice_and_original_owners_bind_every_tail (__main__.LocalDecisionInteropTests.test_evaluator_cannot_issue_local_choice_and_original_owners_bind_every_tail) ... ok\ntest_expired_receipt_cannot_become_current_by_rehashing (__main__.LocalDecisionInteropTests.test_expired_receipt_cannot_become_current_by_rehashing) ... ok\ntest_external_byte_pins_and_exact_original_receipt_prefix_are_mandatory (__main__.LocalDecisionInteropTests.test_external_byte_pins_and_exact_original_receipt_prefix_are_mandatory) ... ok\ntest_frozen_request_and_original_root_scope_cannot_be_relabelled (__main__.LocalDecisionInteropTests.test_frozen_request_and_original_root_scope_cannot_be_relabelled) ... ok\ntest_original_legacy_reader_remains_closed_to_v4_and_new_reader_rejects_relabels (__main__.LocalDecisionInteropTests.test_original_legacy_reader_remains_closed_to_v4_and_new_reader_rejects_relabels) ... ok\ntest_rehashed_proposal_candidate_and_selected_bundle_substitution_are_refused (__main__.LocalDecisionInteropTests.test_rehashed_proposal_candidate_and_selected_bundle_substitution_are_refused) ... ok\ntest_three_choices_keep_qualification_closed_and_never_relabel_no_update (__main__.LocalDecisionInteropTests.test_three_choices_keep_qualification_closed_and_never_relabel_no_update) ... ok\ntest_unknown_disposition_and_zero_policy_reason_are_refused (__main__.LocalDecisionInteropTests.test_unknown_disposition_and_zero_policy_reason_are_refused) ... ok\ntest_wrong_selected_version_and_foreign_next_task_are_refused_even_after_rehash (__main__.LocalDecisionInteropTests.test_wrong_selected_version_and_foreign_next_task_are_refused_even_after_rehash) ... ok\ntest_wrong_use_kind_and_changed_operation_time_predecessor_are_refused (__main__.LocalDecisionInteropTests.test_wrong_use_kind_and_changed_operation_time_predecessor_are_refused) ... ok\n\n----------------------------------------------------------------------\nRan 14 tests in 0.163s\n\nOK\n"
+}

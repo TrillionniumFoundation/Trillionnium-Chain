@@ -1,0 +1,13 @@
+{
+  "base": null,
+  "candidate": "c2d67c5cf1ebb4caac525802362d5746b8fd957d",
+  "kind": "head",
+  "prospective_merge": null,
+  "schema": "trnm-ci-source-v1",
+  "tested_commit": "c2d67c5cf1ebb4caac525802362d5746b8fd957d",
+  "tested_tree": "40796fa1aac9fa78b5a69647ea952cdb4f67663c",
+  "tests_executed_by_identity_check": false,
+  "tracked_bytes": 2616632156,
+  "tracked_entries": 28885,
+  "tracked_worktree_verified": true
+}

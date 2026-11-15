@@ -1,0 +1,22 @@
+{
+  "schema": "p3.immutable-log-whitespace-observation.v1",
+  "result": "OBSERVED_COSMETIC_CHECK_FAILURE",
+  "failed_command": {
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "exit_code": 2,
+    "stdout": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/03-verified-1.stdout.log:15: new blank line at EOF.\nformal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/04-final-1.stdout.log:16: new blank line at EOF.\nformal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/05-controls-1.stdout.log:91: new blank line at EOF.\nformal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/02-tests.stdout.log:108: new blank line at EOF.\n",
+    "stderr": ""
+  },
+  "unchanged_raw_log_paths": [
+    "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/03-verified-1.stdout.log",
+    "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/04-final-1.stdout.log",
+    "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1/05-controls-1.stdout.log",
+    "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/02-tests.stdout.log"
+  ],
+  "resolution": "Keep byte-pinned original stdout including terminal blank lines. Apply the cosmetic diff check to every other staged path. Git-object evidence closure validates all four original log bytes."
+}

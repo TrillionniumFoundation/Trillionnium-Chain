@@ -1,0 +1,66 @@
+   Compiling typenum v1.20.1
+   Compiling cfg-if v1.0.4
+   Compiling cmov v0.5.4
+   Compiling libc v0.2.184
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+   Compiling getrandom v0.4.2
+   Compiling version_check v0.9.5
+   Compiling rand_core v0.10.1
+   Compiling autocfg v1.5.1
+   Compiling ctutils v0.4.6
+   Compiling serde_core v1.0.228
+   Compiling zeroize v1.8.2
+   Compiling const-oid v0.10.2
+   Compiling generic-array v0.14.7
+   Compiling zmij v1.0.21
+   Compiling keccak v0.2.2
+   Compiling num-traits v0.2.19
+   Compiling sponge-cursor v0.1.0
+   Compiling serde v1.0.228
+   Compiling thiserror v1.0.69
+   Compiling serde_json v1.0.149
+   Compiling hybrid-array v0.4.15
+   Compiling syn v2.0.117
+   Compiling memchr v2.8.0
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling hex v0.4.3
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling crypto-common v0.2.2
+   Compiling module-lattice v0.2.3
+   Compiling sha2 v0.10.9
+   Compiling digest v0.11.3
+   Compiling shake v0.1.0
+   Compiling signature v3.0.0
+   Compiling der v0.8.3
+   Compiling thiserror-impl v1.0.69
+   Compiling serde_derive v1.0.228
+   Compiling spki v0.8.1
+   Compiling pkcs8 v0.11.0
+   Compiling ml-dsa v0.1.1
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-protocol)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.17s
+     Running unittests src/lib.rs (/workspace/scratch/abae1861b451/value-pool-target/debug/deps/trnm_protocol-0e5857e5ae3847da)
+
+running 14 tests
+test pon_wire::state_root_arithmetic::tests::complete_inputs_match_original_across_random_changes_and_reordered_rows ... ok
+test pon_wire::state_root_arithmetic::tests::equal_value_bytes_in_distinct_allocations_are_never_charged_as_one ... ok
+test pon_wire::state_root_arithmetic::tests::exact_string_eligibility_excludes_escapes_controls_and_non_ascii_wire_bytes ... ok
+test pon_wire::state_root_arithmetic::tests::exact_string_hits_cannot_publish_after_failure_collision_or_abandonment ... ok
+test pon_wire::state_root_arithmetic::tests::exact_strings_require_full_current_keys_values_and_complete_row_sets ... ok
+test pon_wire::state_root_arithmetic::tests::exact_strings_share_the_existing_pool_with_tree_priority_and_no_replacement_credit ... ok
+test pon_wire::state_root_arithmetic::tests::incomplete_sources_and_original_wire_limits_publish_no_partial_material ... ok
+test pon_wire::state_root_arithmetic::tests::large_values_reuse_only_identical_complete_leaf_lists ... ok
+test pon_wire::state_root_arithmetic::tests::pending_shared_values_preserve_old_material_and_release_on_every_failed_finish ... ok
+test pon_wire::state_root_arithmetic::tests::retention_refusal_and_eviction_preserve_root_and_existing_budget ... ok
+test pon_wire::state_root_arithmetic::tests::shared_value_index_collisions_and_unique_values_only_limit_optional_retention ... ok
+test pon_wire::state_root_arithmetic::tests::shared_values_charge_only_selected_allocations_and_migrate_unused_old_values ... ok
+test pon_wire::state_root_arithmetic::tests::shared_values_keep_every_key_and_its_original_hashes_in_the_same_small_pool ... ok
+test pon_wire::state_root_arithmetic::tests::single_partition_forks_collision_checks_and_replacement_use_original_roots ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 46 filtered out; finished in 0.87s
+

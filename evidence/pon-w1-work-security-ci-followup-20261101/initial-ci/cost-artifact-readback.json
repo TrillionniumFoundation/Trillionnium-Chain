@@ -1,0 +1,165 @@
+{
+  "artifacts": [
+    {
+      "architecture": "x64",
+      "artifact_id": 13077753573,
+      "build_environment_overrides": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "bytes": 74257,
+      "clippy_log_sha256": "1e58ad62762b58999e4723f375e5cf5376abf67515f9f63061617fdb73597abc",
+      "error": "original release compiler/target contract forbids overrides",
+      "expected_source": "f2588fe1d5e02cf631334431570e3719e64109d7",
+      "fuzz_tests_passed": 6,
+      "github_digest_matched": true,
+      "manifest_path_in_zip": "w1-false-trace-reuse-v1/manifest.json",
+      "manifest_sha256": "830c9bcd369b0267f6a34cd20ef6075f94581baa372cb0c8b1e8c3a42e9518e4",
+      "native_observation_count": 0,
+      "path": "/workspace/scratch/76b96c45510e/work-security-initial-ci/cost-x64-head.zip",
+      "reader_present": false,
+      "result": "FAIL",
+      "sha256": "4653e04ff19e1cb9d8d975851e92ceba247eb165958a74506be4ed1090ab4d80",
+      "source_after": {
+        "commit": "f2588fe1d5e02cf631334431570e3719e64109d7",
+        "source_state": "committed-clean",
+        "tracked_bytes": 781718586,
+        "tracked_entries": 6766,
+        "tracked_worktree_verified": true,
+        "tree": "2c48f4f43321069cffa62ddf8348aeb40b7e8509"
+      },
+      "source_before": {
+        "commit": "f2588fe1d5e02cf631334431570e3719e64109d7",
+        "source_state": "committed-clean",
+        "tracked_bytes": 781718586,
+        "tracked_entries": 6766,
+        "tracked_worktree_verified": true,
+        "tree": "2c48f4f43321069cffa62ddf8348aeb40b7e8509"
+      },
+      "source_changed": false,
+      "source_kind": "head",
+      "w1_tests_passed": 98
+    },
+    {
+      "architecture": "arm64",
+      "artifact_id": 13077474778,
+      "build_environment_overrides": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "bytes": 74290,
+      "clippy_log_sha256": "c3d1fb94dacec9e0abe20b6339e1db9f8f6b410d9f9f6fe9cd2554ded7923930",
+      "error": "original release compiler/target contract forbids overrides",
+      "expected_source": "f2588fe1d5e02cf631334431570e3719e64109d7",
+      "fuzz_tests_passed": 6,
+      "github_digest_matched": true,
+      "manifest_path_in_zip": "w1-false-trace-reuse-v1/manifest.json",
+      "manifest_sha256": "ad1702e8a579f4d9b601c301765aaeb6c24a340806c37c2fc9e2234bf10e8ee4",
+      "native_observation_count": 0,
+      "path": "/workspace/scratch/76b96c45510e/work-security-initial-ci/cost-arm64-head.zip",
+      "reader_present": false,
+      "result": "FAIL",
+      "sha256": "a7b39079b387c796abb8d78433b7deb9c3f819286ec4fbc9f386ceccb0b8fb9a",
+      "source_after": {
+        "commit": "f2588fe1d5e02cf631334431570e3719e64109d7",
+        "source_state": "committed-clean",
+        "tracked_bytes": 781718586,
+        "tracked_entries": 6766,
+        "tracked_worktree_verified": true,
+        "tree": "2c48f4f43321069cffa62ddf8348aeb40b7e8509"
+      },
+      "source_before": {
+        "commit": "f2588fe1d5e02cf631334431570e3719e64109d7",
+        "source_state": "committed-clean",
+        "tracked_bytes": 781718586,
+        "tracked_entries": 6766,
+        "tracked_worktree_verified": true,
+        "tree": "2c48f4f43321069cffa62ddf8348aeb40b7e8509"
+      },
+      "source_changed": false,
+      "source_kind": "head",
+      "w1_tests_passed": 98
+    },
+    {
+      "architecture": "x64",
+      "artifact_id": 13077877550,
+      "build_environment_overrides": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "bytes": 74371,
+      "clippy_log_sha256": "2a865677b3569580933eb34ef02c71f90c787e18d2f3c8def379e32ae95047a9",
+      "error": "original release compiler/target contract forbids overrides",
+      "expected_source": "c028445ac4388378e26751bf456dffc86618873a",
+      "fuzz_tests_passed": 6,
+      "github_digest_matched": true,
+      "manifest_path_in_zip": "w1-false-trace-reuse-v1/manifest.json",
+      "manifest_sha256": "80fd3de551fd9e6848e271a76f3727fb605fc3666041947f65b10034ede316d5",
+      "native_observation_count": 0,
+      "path": "/workspace/scratch/76b96c45510e/work-security-initial-ci/cost-x64-prospective-merge.zip",
+      "reader_present": false,
+      "result": "FAIL",
+      "sha256": "f3a71e90d6048266cc0e0049e1e17e7a049d1acf56991ef3a6a104f4e974fb71",
+      "source_after": {
+        "commit": "c028445ac4388378e26751bf456dffc86618873a",
+        "source_state": "committed-clean",
+        "tracked_bytes": 781982063,
+        "tracked_entries": 6813,
+        "tracked_worktree_verified": true,
+        "tree": "ca7f884fb5f136faa96725c5eef6f1e2c937968d"
+      },
+      "source_before": {
+        "commit": "c028445ac4388378e26751bf456dffc86618873a",
+        "source_state": "committed-clean",
+        "tracked_bytes": 781982063,
+        "tracked_entries": 6813,
+        "tracked_worktree_verified": true,
+        "tree": "ca7f884fb5f136faa96725c5eef6f1e2c937968d"
+      },
+      "source_changed": false,
+      "source_kind": "prospective-merge",
+      "w1_tests_passed": 98
+    },
+    {
+      "architecture": "arm64",
+      "artifact_id": 13077708889,
+      "build_environment_overrides": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "bytes": 74384,
+      "clippy_log_sha256": "abbe485532899735097f13cd067df1891d230899ee6b52337bde6369a6fb3f89",
+      "error": "original release compiler/target contract forbids overrides",
+      "expected_source": "c028445ac4388378e26751bf456dffc86618873a",
+      "fuzz_tests_passed": 6,
+      "github_digest_matched": true,
+      "manifest_path_in_zip": "w1-false-trace-reuse-v1/manifest.json",
+      "manifest_sha256": "00afd56aa0c81d078964902430a10df4ca9bfff709ab9468a3976769b88709ec",
+      "native_observation_count": 0,
+      "path": "/workspace/scratch/76b96c45510e/work-security-initial-ci/cost-arm64-prospective-merge.zip",
+      "reader_present": false,
+      "result": "FAIL",
+      "sha256": "ec76226c256b1e004e46c401c143fc29185dcc6e67277d6c854901eee2e0d48a",
+      "source_after": {
+        "commit": "c028445ac4388378e26751bf456dffc86618873a",
+        "source_state": "committed-clean",
+        "tracked_bytes": 781982063,
+        "tracked_entries": 6813,
+        "tracked_worktree_verified": true,
+        "tree": "ca7f884fb5f136faa96725c5eef6f1e2c937968d"
+      },
+      "source_before": {
+        "commit": "c028445ac4388378e26751bf456dffc86618873a",
+        "source_state": "committed-clean",
+        "tracked_bytes": 781982063,
+        "tracked_entries": 6813,
+        "tracked_worktree_verified": true,
+        "tree": "ca7f884fb5f136faa96725c5eef6f1e2c937968d"
+      },
+      "source_changed": false,
+      "source_kind": "prospective-merge",
+      "w1_tests_passed": 98
+    }
+  ],
+  "budget_or_source_changes": false,
+  "cost_campaign_executed": false,
+  "retrieval": "GitHub download_workflow_artifact returned authorized temporary file URL; ordinary sandbox network was denied; read-only exec with approved require_escalated fetched exact ZIP bytes without changing proxy/environment/network policy.",
+  "run_id": 41292410360,
+  "schema": "trnm-w1-initial-cost-ci-download-observation-v1"
+}

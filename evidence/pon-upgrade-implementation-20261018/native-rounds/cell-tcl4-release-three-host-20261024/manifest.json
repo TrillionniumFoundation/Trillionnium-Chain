@@ -1,0 +1,34 @@
+{
+  "schema": "controlled-tcl4-three-host-evidence-v1",
+  "source": "2b7295a152e8d3eb0f75de5b3a06d8f3d31862a2",
+  "source_tree": "b66e6a8cf72d39517b3b9a497bf16450619ac397",
+  "unchanged_rust_subtree": "2af41e4b88f9b0bd42a0f58e991f2ab68375fa38",
+  "original_development_source": "7bce5ff4850790d939b40840494bc1ddb3614eb1",
+  "release_binary_sha256": "07d9d3784ba5aeb6ef4e409732d5d2cd22bbe5e42888b34c0fe07bafc58f1d57",
+  "development_binary_sha256": "39cff49627b3518f5ac2cabb6709df53ab49a274c5de9c7c224a7d094c23496a",
+  "cache_schema": "TCL4/schema4",
+  "same_immutable_cache_limits": {
+    "chunks": 512,
+    "main_db_bytes": 536870912,
+    "manifests": 64,
+    "payload_bytes": 536870912
+  },
+  "original_assertion_count": 27,
+  "release_driver_sha256": "cafb2423efca9c126d502ecfd14386e36511d874010fcc2b4afb01e79b558407",
+  "development_driver_sha256": "0130ecbd60ef7d2cb76f2e9a03e36a434923106fb93a9e7e38708ed81b72b2b2",
+  "driver_preparation_sha256": "64ee7b256d1a3a0693d68e6995851f8608d181a70602e8867a16efe4270dbc77",
+  "release_preparation_sha256": "0241aab53a74f9ec21371fe9a0d8a10490df40a160c6cd4ffddd6d7f4e5712e4",
+  "retained_private_release_receipt_sha256": "601f45780e08b863bdaa383363f22893cc27af5561c824bd1ad7a878e5065b94",
+  "retained_private_failure_receipt_sha256": "eed427a2396f11c63b3396c984933867d31c7e744fcb4256f5009b1f115295c8",
+  "results": {
+    "release-result.json": "c57bae5ae421d679c763af133fb5985ad9aade5427ec6919b5d68c98967c3064",
+    "development-failure.json": "99d6b816eb7167882a55a8769007006207de44d96e267ea1d49a04987868142b"
+  },
+  "same_administrator": true,
+  "controlled_tailnet_transport_only": true,
+  "real_model_loading": false,
+  "installation_qualified": false,
+  "funded_storage_qualified": false,
+  "global_disk_qualified": false,
+  "production_activation": false
+}

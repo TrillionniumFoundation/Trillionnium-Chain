@@ -1,0 +1,35 @@
+{
+  "source": {
+    "head": "92529f8492545e6c395044165b4f5d7c3fb0972a",
+    "tree": "e96be99451284479b474acb5dce7443ef0a957b4",
+    "baseline": "dbc1ca09c3db57ae683671a0e7c37ca0aca01f71"
+  },
+  "scope": "actual retained Cargo test outputs; not a separate independent rebuild claim",
+  "binaries": [
+    {
+      "path": "/home/qian-qi/chain-throughput-engineering-20261108-86a09d93-target/debug/deps/accepted_task_observation-9fbef46b6490eaae",
+      "bytes": 197313816,
+      "sha256": "4195e161f63999d228ee4e0e75707efbe73938c27fc5960c4c8f70434b2c3331"
+    },
+    {
+      "path": "/home/qian-qi/chain-throughput-engineering-20261108-86a09d93-target/debug/deps/public_v3_request_accounting-2ab408a826e488ef",
+      "bytes": 203144784,
+      "sha256": "23c27c528b172274819be31a23d21d82bc5b29a151e4ffb6fb088a6b1cdb44be"
+    },
+    {
+      "path": "/home/qian-qi/chain-throughput-engineering-20261108-86a09d93-target/debug/deps/trnm_data_availability-860e4d3b2378d360",
+      "bytes": 79299904,
+      "sha256": "bb21aee06bec577318d18cd7db8d337dac719c73ae76feba78c668695b092b4e"
+    },
+    {
+      "path": "/home/qian-qi/chain-throughput-engineering-20261108-86a09d93-target/debug/deps/trnm_mvcc_fee-ced44c332612cadc",
+      "bytes": 78443856,
+      "sha256": "80b098440ba613b51ceda2e3d2ecc4f8a3ebef5fa537439d805a29be7ab0ca9d"
+    },
+    {
+      "path": "/home/qian-qi/chain-throughput-engineering-20261108-86a09d93-target/debug/deps/trnm_pon_node-fc27c767cf2f262e",
+      "bytes": 467020480,
+      "sha256": "c8faacf3f35884b90d03be07e034148fb6af280908f355928c643dc163e4e92d"
+    }
+  ]
+}

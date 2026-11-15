@@ -1,0 +1,80 @@
+{
+  "schema": "trnm-diagnostics-interrupted-build-v1",
+  "observed_utc": "2026-11-03T21:04:58.014443+00:00",
+  "status": "UNKNOWN_NO_TERMINAL_RESULT",
+  "tool_reported_error": "write_stdin failed: Unknown process id 40410",
+  "native_tests_started": false,
+  "build_exit_code": null,
+  "no_compiler_or_oom_cause_inferred": true,
+  "files": [
+    {
+      "name": "build.stderr",
+      "bytes": 117,
+      "sha256": "3592f1a7c5a7a4f4ff73de96dac554df609b75afa5e200ad7aa87e087ff00a57",
+      "mtime_ns": 1793739019920906689
+    },
+    {
+      "name": "build.stdout",
+      "bytes": 117817,
+      "sha256": "46b70058388b612a759b74c131f2e90861c46210159847441e7bedea85140a69",
+      "mtime_ns": 1793739324819515601
+    },
+    {
+      "name": "invocation.json",
+      "bytes": 594,
+      "sha256": "91e1daa97c015e469f4f09a75b825f6e17e18efb85c178c4354aeca60ac91d51",
+      "mtime_ns": 1793739019358702894
+    },
+    {
+      "name": "native-source.before.json",
+      "bytes": 173233,
+      "sha256": "22cd64ab7427e49ed5d844b2fe7c6b8d7ca11799b25b78d4cea8eccfa5e54af3",
+      "mtime_ns": 1793739019579165199
+    },
+    {
+      "name": "phase.json",
+      "bytes": 644,
+      "sha256": "176b0af039b7048b974b25e9d882361e1bd2ad0fa7fde34cb04376d14b38faf5",
+      "mtime_ns": 1793739019633705610
+    },
+    {
+      "name": "preflight.json",
+      "bytes": 308,
+      "sha256": "c0215af4ab0e6fed33168bbae70d6e31ad411f3660e076b46b21f30b8795c164",
+      "mtime_ns": 1793739019633538158
+    },
+    {
+      "name": "preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mtime_ns": 1793739019582555388
+    },
+    {
+      "name": "preflight.stdout",
+      "bytes": 170,
+      "sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+      "mtime_ns": 1793739019624900715
+    }
+  ],
+  "completed_executable_names": [
+    "trnm-pon-node",
+    "pinned_peer_polling",
+    "mining_service_budget",
+    "architecture_delivery_compare",
+    "native_node",
+    "public_cli",
+    "public_pool_cli",
+    "public_intake_v2",
+    "evaluation_sync_observation"
+  ],
+  "build_finished_messages": [],
+  "missing_terminal_files": [
+    "build.json",
+    "artifacts.json",
+    "result.json",
+    "fmt.json",
+    "clippy.json",
+    "verification.json",
+    "terminal.json"
+  ]
+}

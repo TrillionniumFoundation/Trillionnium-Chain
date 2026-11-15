@@ -1,0 +1,76 @@
+{
+  "schema": "TRNM-W1-SERVICE-READONLY-INTERNAL1",
+  "zip_sha256": "ea3bbb909bd39ad5935f206298114e9bfed77b03c5ab26f1142e39f4f9e6f4f4",
+  "logs": [
+    {
+      "member": "fresh-service/fresh.log",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/internal-small-01/fresh-service__fresh.log",
+      "bytes": 914,
+      "sha256": "31e8059dd96a44de6ea02b6fb24801af290a17ebc86dfc6ebcdf7ad17ce836fc",
+      "text": "\nrunning 1 test\ntest fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-head-42422952132-1/fresh-service/fresh/report.json\",\"schema\":\"public-v3-fresh-challenge-confirmation-pressure-v1\"}\n\nthread 'fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget' (5190) panicked at crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs:244:5:\nfresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\nFAILED\n\nfailures:\n\nfailures:\n    fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 9.31s\n\n"
+    },
+    {
+      "member": "fresh-service/original.log",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/internal-small-01/fresh-service__original.log",
+      "bytes": 420,
+      "sha256": "aae7aaa3174e6e486163f331e59263532fbb49625d9ab8a7f81d6dc1df835a6d",
+      "text": "\nrunning 1 test\ntest from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-head-42422952132-1/fresh-service/original/report.json\",\"schema\":\"public-v3-signed-confirmation-pressure-v1\"}\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.89s\n\n"
+    },
+    {
+      "member": "fresh-service-host/systemd-run.log",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/internal-small-01/fresh-service-host__systemd-run.log",
+      "bytes": 541,
+      "sha256": "8f9820b23be9022ae250543ba95ed09cf9dec0116c884b2146f35ffed87352b6",
+      "text": "Running as unit: trnm-from-zero-42422952132-1-fresh-challenge-service-2368.service\n{\"passed\": false, \"failures\": [\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET\", \"fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED\"]}\nFinished with result: exit-code\nMain processes terminated with: code=exited/status=1\nService runtime: 1min 3.589s\nCPU time consumed: 15.112s\nMemory peak: 3.2M\nMemory swap peak: 0B\n"
+    }
+  ],
+  "fresh_report_structure": {
+    "attack_workers": 16,
+    "attacker_setup_and_workers_cpu_ns": 327161979,
+    "construction_coverage": {
+      "accounting_scope": "construction intervals are nested in joined attacker worker CPU; never add them twice; shared public material setup is separate",
+      "all_context_bindings_and_challenges_unique": true,
+      "all_nested_cpu_measurements_known": true,
+      "constructed": 245,
+      "exhausted": 0,
+      "full_transcript_rejections": 229,
+      "nested_from_zero_construction_cpu_ns": 88796794,
+      "submitted": 245,
+      "unique_challenges": 245,
+      "unique_packet_indices": 245
+    },
+    "finite_target_met": false,
+    "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+    "honest_chain_acquisition_wall_ns": 222294412,
+    "honest_chain_process_cpu_ns": 31677216,
+    "honest_chain_process_cpu_scope": "entire process during seven-block acquisition before service; not isolated W1 or exclusive producer CPU",
+    "negative_cache_enabled": true,
+    "negative_cache_observation_source": "actual-request-work-rejection-observations-v1",
+    "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+    "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+    "per_worker_attempt_cap": 1024,
+    "phases": {
+      "type": "list",
+      "length": 2
+    },
+    "policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+    "production_activation": false,
+    "public_network_ready": false,
+    "requested_window_ns": 4000000000,
+    "resource_fairness_qualified": false,
+    "same_signed_business_packets": true,
+    "schema": "public-v3-fresh-challenge-confirmation-pressure-v1",
+    "scope": "explicit diagnostic with actual business assertion; separate from unchanged retained-packet original gate; one host/operator, no WAN fairness or cheapest-work claim",
+    "shared_material_setup_cpu_ns": 51226,
+    "shared_material_setup_wall_ns": 59040,
+    "signed_honest_packets": {
+      "type": "list",
+      "length": 7
+    },
+    "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+    "work_profile_qualified": false
+  },
+  "artifact_executed": false,
+  "db_opened": false
+}

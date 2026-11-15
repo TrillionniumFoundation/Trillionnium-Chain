@@ -1,0 +1,38 @@
+{
+  "id": "pq-feature-off",
+  "argv": [
+    "env",
+    "CARGO_HOME=/home/qian-qi/chain-pq-a418-final-cargo-home",
+    "TRNM_CI_TOOL_ROOT=/home/qian-qi/chain-pq-a418-final-ci-tools",
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--no-default-features",
+    "--test",
+    "pq_application_local_feature_off",
+    "--",
+    "--test-threads=1"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 367.093820116017,
+  "finished_utc": "2026-11-11T03:09:29.350685+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "8e1482fe96e0c9a0174b1df0c4d735dcd816c40e1971cee26d71db7c205da98b",
+  "stderr_sha256": "2d6de43e71f3bbfb27965779d7777c1af26b8ebfba1d696bc0e424214293e62e",
+  "pass": true,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 661.679122,
+    "system_cpu_seconds": 20.243934,
+    "maximum_rss_kib": 2124936,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

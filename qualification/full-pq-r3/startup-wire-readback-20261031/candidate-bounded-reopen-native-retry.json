@@ -1,0 +1,49 @@
+{
+  "schema": "trnm-pq-startup-wire-readback-execution-v1",
+  "base_sha": "bbc511c7942de24b75054d1b4c3e5d0e4f4a5ab3",
+  "label": "candidate-bounded-reopen-native-retry",
+  "command": [
+    "/tmp/pq-r3-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--offline",
+    "--locked",
+    "--release",
+    "-p",
+    "trnm-pon-node",
+    "--all-features",
+    "--lib",
+    "operator_pq_startup::tests",
+    "--",
+    "--test-threads=1"
+  ],
+  "exit_code": 101,
+  "elapsed_seconds": 0.10397529300826136,
+  "log_sha256": "4f78ca196104110e2ed7dc45773d23083f88e3ba92257123d00948988c19e4ee",
+  "input_sha256": {
+    "trillionnium/Cargo.lock": "420b25c7cdf17e04be7c9f4e33b85fd026f8f464de7d9f4b3ea101faec228691",
+    "trillionnium/Cargo.toml": "18bfd6f65c0bd8a033b2faa266e1f668a1aa80d808c24d3edaef82559f42b988",
+    "trillionnium/crates/trnm-pon-node/src/operator_pq_startup_tests.rs": "1bfc3d97f39f3be7313add487a255a79ccbf9e32dd654b8d098f90398429e299",
+    "config/pon/pq-cross-branch-corpus-v1.json": "7cb0e07fec223c053f625fbcd2a475eb5ad74865bf83b5264567c896148fa86c",
+    "scripts/ci/check_pq_research_integration.py": "27d1c4b4d5f8f776b4bbd94806f5f25825d918583eb8ffaebec5ea30ee33f21e",
+    "docs/security/PQ_NATIVE_NETWORK_OWNER_V2.md": "42e877f5e84808403ea24f633b1ec27f4ffe909abb2801ab0ce4006cbb9f4439",
+    "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive.rs": "17ef7e3cbf9b2e57719a4b764b9489a68cbfa2941c891fcd7a8a7573b4cc5afc",
+    "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs": "75b372db00207e75a1bf122c946ed9f777f4a1b4f6906df424fb4b78660b1cf5"
+  },
+  "inputs_unchanged_during_execution": true,
+  "scope": "operator_pq_startup::tests; not full Node or whole-chain qualification",
+  "cgroup_memory_before": {
+    "memory.current": "8338989056",
+    "memory.max": "8589934592",
+    "memory.events": "low 0\nhigh 0\nmax 14966608\noom 38\noom_kill 8\noom_group_kill 0"
+  },
+  "cgroup_memory_after": {
+    "memory.current": "8406851584",
+    "memory.max": "8589934592",
+    "memory.events": "low 0\nhigh 0\nmax 14966608\noom 38\noom_kill 8\noom_group_kill 0"
+  },
+  "build_jobs": 1,
+  "incremental": false,
+  "production_activation": false
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "bytes": 7180,
+    "git_blob": "e9a873baa73d60f578b9723a9cf11cdf84a44c15",
+    "path": "evidence/crypto-profile-20261104/recompute_benchmark.py",
+    "provider": "authenticated-GitHub-exact-blob",
+    "sha256": "dda1656c265a9436f6e902cb5d760eec152fbbc1c3a0e2e255dd35e02636220b"
+  },
+  {
+    "bytes": 10500,
+    "git_blob": "ca5334fba301046c9f89132b62a4e10872c8d5cd",
+    "path": "evidence/crypto-profile-20261104/recompute_profile_ids.py",
+    "provider": "authenticated-GitHub-exact-blob",
+    "sha256": "530c8b6eaa29a25f09bace18ec10e0ce993bf93b9dedbfc8e7455d1c7c5f2977"
+  },
+  {
+    "bytes": 13018,
+    "git_blob": "12c295b27d2f71549d360150c7be0bd088ce2403",
+    "path": "evidence/pon-six-workpackages-20261106/strategy/package_raw.py",
+    "provider": "authenticated-GitHub-exact-blob",
+    "sha256": "4354476022738ff8df431ff44f31667c16c70453bff4e58f433ecd1e32358df5"
+  },
+  {
+    "bytes": 13233,
+    "git_blob": "49b1c04ff3fd30ad0b21cb9ebcdb55f4290b50be",
+    "path": "evidence/pon-six-workpackages-20261106/strategy/run_campaign.py",
+    "provider": "authenticated-GitHub-exact-blob",
+    "sha256": "bbb65dcbb16b0ccd944c054291526df3668e5ab0567c0b38437fba371254cebf"
+  },
+  {
+    "bytes": 6893,
+    "git_blob": "35a27f3c775fb2edb1ed8e38203cf479d03927a8",
+    "path": "evidence/pon-six-workpackages-20261106/strategy/summarize_costs.py",
+    "provider": "authenticated-GitHub-exact-blob",
+    "sha256": "850314c9f92dab9a6483a79fd85f636b2e246dd43036d69c771b7f3c7b36ecdf"
+  }
+]

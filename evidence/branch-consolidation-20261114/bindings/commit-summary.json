@@ -1,0 +1,375 @@
+{
+  "branch": "fix/chain-final-current-bindings-20261114",
+  "changed_paths": [
+    ".github/workflows/chain-hepta-closure-candidate.yml",
+    "config/pon/pq-authority-effects-v1.json",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "config/pon/pq-proof-profile-binding-v1.json",
+    "config/pon/pq-root-dependency-register-v3.json",
+    "config/pon/w1-lifetime-current-source-v2.json",
+    "config/pon/w1-qrom-current-required-tests-v1.json",
+    "config/pon/w1-qrom-implementation-current-v2.json",
+    "config/pon/w1-qrom-supplemental-tests-v1.json",
+    "config/pon/w1-stark-route-registry-v1.json",
+    "config/pon/w1-upstream-security-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+    "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+    "docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md",
+    "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+    "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+    "scripts/ci/pq_authority_effect_register.py",
+    "scripts/ci/pq_root_dependency_register.py",
+    "scripts/ci/test_pq_authority_effect_register.py",
+    "scripts/ci/test_pq_proof_profile_binding.py",
+    "scripts/ci/test_pq_root_dependency_register.py",
+    "scripts/ci/test_w1_lifetime_current_observation.py",
+    "scripts/ci/test_w1_qrom_closure_current_controls.py",
+    "scripts/ci/test_w1_qrom_current_ci.py",
+    "scripts/ci/test_w1_qrom_current_implementation_audit.py",
+    "scripts/ci/test_w1_qrom_semantics_audit.py",
+    "scripts/ci/test_w1_qrom_workflow_gate.py",
+    "scripts/ci/w1_qrom_closure_current_controls.py",
+    "scripts/ci/w1_qrom_current_ci.py",
+    "scripts/ci/w1_qrom_supplemental_controls.py",
+    "scripts/w1_lifetime_current_observation.py",
+    "scripts/w1_qrom_current_implementation_audit.py",
+    "scripts/w1_stark_route_audit.py"
+  ],
+  "clean": true,
+  "commit": "b84568a714e24070d9554008660f1382e2c1b1b5",
+  "common_git_directory": "/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+  "files": [
+    {
+      "after_bytes": 3683,
+      "after_git_blob": "15454b5322f118b52458adebf54cf00652107240",
+      "after_sha256": "3f0f780070d728b6b71fb8a2cfde7594705a60608b3b2d6507024bb40ef92582",
+      "before_bytes": 3683,
+      "before_git_blob": "a06f34caaa4f4a3ae673fa9b2d57a91e411936dd",
+      "before_sha256": "aaa55d9d82a3a5b4530a827e5d9bfda71ebea2cd34d0bd75f5c75779344aa54d",
+      "path": ".github/workflows/chain-hepta-closure-candidate.yml"
+    },
+    {
+      "after_bytes": 14196,
+      "after_git_blob": "128fabbf8ccb038c26636f5689fe239a90ac663f",
+      "after_sha256": "88c5dbdacee7c2193a05b7b7a974a62d95057c4f6baa122c9544523f01791eba",
+      "before_bytes": 14196,
+      "before_git_blob": "150b3b7f0da5c2c5effc6fb3aff94f52351a4ac3",
+      "before_sha256": "319bb6976b09ac2db73441652fc149b78172174ea08a126efbed058dea44ddcf",
+      "path": "config/pon/pq-authority-effects-v1.json"
+    },
+    {
+      "after_bytes": 522621,
+      "after_git_blob": "1ea24914584ee551d1729aae6b5e8d578813a50d",
+      "after_sha256": "63a2652dd790bde4debece2e6cbe5a66459e375220e4addf216405503e71fd8e",
+      "before_bytes": 522621,
+      "before_git_blob": "242c54ebf8de04e2b67839673ac88b5227463849",
+      "before_sha256": "8864a244c53961f59245ab4f4fd35b4cf0f6d631ea71a4e0c5a14acf51524aae",
+      "path": "config/pon/pq-cross-branch-corpus-v1.json"
+    },
+    {
+      "after_bytes": 2378,
+      "after_git_blob": "7714b037c3a752bdf11c7baf55723d27d90c8e8e",
+      "after_sha256": "797eaa3aa2dd5c46fd67a6bbad634d693be0d73b833f581c64d2cf341cc5a8fd",
+      "before_bytes": 2378,
+      "before_git_blob": "63553753715aebb0cff15cb589069bbcab55977c",
+      "before_sha256": "72d7bfd4394f5c23839bfdca3ab0214fa2900b8d26cf6ecfe5915b16b82495fe",
+      "path": "config/pon/pq-proof-profile-binding-v1.json"
+    },
+    {
+      "after_bytes": 54959,
+      "after_git_blob": "1e59559f598ed1935432b81eb00419f604341dba",
+      "after_sha256": "2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725",
+      "before_bytes": 54801,
+      "before_git_blob": "599963e9358e1269b7cd82e11af003a35d91d1e9",
+      "before_sha256": "d973cb827537c5b852370da6e4e916afc0f52ccdadb2f2c051ed2b9e041f40c8",
+      "path": "config/pon/pq-root-dependency-register-v3.json"
+    },
+    {
+      "after_bytes": 6997,
+      "after_git_blob": "7424efa09f64f8359e0b144a99478b41ce7913d2",
+      "after_sha256": "bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7",
+      "before_bytes": 6854,
+      "before_git_blob": "47db1efb70aac8fcd27a912b038e0809beb97287",
+      "before_sha256": "66aaee2e08e666f32a106832274703d8c9c9fa6be9882ddc45017882c66be96b",
+      "path": "config/pon/w1-lifetime-current-source-v2.json"
+    },
+    {
+      "after_bytes": 10175,
+      "after_git_blob": "04c4439af4dce19d87746beb6bb0a5f45e9d57bd",
+      "after_sha256": "88a96c11d81b5a5ea7f4d587564b09db0973b95a771068ec02ace8d6c51df363",
+      "before_bytes": 9892,
+      "before_git_blob": "42a21a6fddd71e63039fdd025c5fa702e236f3e0",
+      "before_sha256": "e48c23d4d6737d0143798a5c93a194310ebdf7ba1a0cb87bdf3a36af65b8f581",
+      "path": "config/pon/w1-qrom-current-required-tests-v1.json"
+    },
+    {
+      "after_bytes": 50313,
+      "after_git_blob": "f7842c7a89cec7c34630ba8edd0a57ab59e8b369",
+      "after_sha256": "77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5",
+      "before_bytes": 47790,
+      "before_git_blob": "7aaba8852368aea8900554b6d6fbda3c3c105e85",
+      "before_sha256": "5c53b9aba5255a163256bb9865448ea44e5b5f2f45079adf682ea4ace662a2fb",
+      "path": "config/pon/w1-qrom-implementation-current-v2.json"
+    },
+    {
+      "after_bytes": 3970,
+      "after_git_blob": "a6391e1a1c17ecbf19673c0e3b57526f4e9a581d",
+      "after_sha256": "fa715038acf5fa4536acc5c1d4fd4186d54af3f8a12ec76a03b5c502a53e1307",
+      "before_bytes": 3687,
+      "before_git_blob": "c0e27c935d52bd18a4ae3dc49cd85c79df734858",
+      "before_sha256": "33bdae599edc3ef8f54efd84245d24b90b0b4effdb2f71b2cdae52a71d4001c4",
+      "path": "config/pon/w1-qrom-supplemental-tests-v1.json"
+    },
+    {
+      "after_bytes": 25703,
+      "after_git_blob": "00366cd6b07dcbec4de0d8151e29c19e4d1d70b2",
+      "after_sha256": "0164cb7b3f6bfcf31e7efd29cc3264cab729249759ea3729cd132065d94a47fd",
+      "before_bytes": 25703,
+      "before_git_blob": "e2507ef4f4346010a0b87186e3bdc54ce62f2a47",
+      "before_sha256": "bfd8180a45361eaaa31924ef5f3dcbdecb0e54f5c9412e2bb7e4efeddc4f212c",
+      "path": "config/pon/w1-stark-route-registry-v1.json"
+    },
+    {
+      "after_bytes": 1366,
+      "after_git_blob": "2214bbab51f7c03ad80726d01857c4c8e2d4d9c2",
+      "after_sha256": "fa5c44d2f3a63154adcf743d3454434ee75b06db83aee89d5590d4336933e9c5",
+      "before_bytes": 1366,
+      "before_git_blob": "7dcc957d615c95f8e655ff5f2ff9bf9b1b97204c",
+      "before_sha256": "509ac9828a171bd82985ca0984aefd34c8162014eaa605b635a24719b41aba67",
+      "path": "config/pon/w1-upstream-security-v1.json"
+    },
+    {
+      "after_bytes": 1136032,
+      "after_git_blob": "029f5c4cadc8cdd7910b01457800b746a4a646af",
+      "after_sha256": "7a07ab37d1983a3e8f97426f7445bbd039453e59da821bd854c1b869f719b271",
+      "before_bytes": 1135030,
+      "before_git_blob": "391e1ba80487f3d6acc49d5c802ef3d14e8bc7bc",
+      "before_sha256": "c73761b1e398591d6875a4bd6e4d5d0bbfb465b8f0b6baf9cbee6942c69042cb",
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    },
+    {
+      "after_bytes": 39183,
+      "after_git_blob": "1b5ccd314220d3af5396cbd6f391380dc137f7ef",
+      "after_sha256": "d7fa73f7bb0ec6f8b12f7186cd8d5805b460521cb9d473f6eb71b2c838bdeef4",
+      "before_bytes": 38144,
+      "before_git_blob": "b33ded05b83bea76064eb82829bbddd1b87f9875",
+      "before_sha256": "dcf38c267ea58d3cbe2f20dba64ec5b4f586b50f73b28bc2e590ebf6e2c3319f",
+      "path": "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md"
+    },
+    {
+      "after_bytes": 9888,
+      "after_git_blob": "dc9ab3677b72dc0ce5fc25041aed3858f2121efe",
+      "after_sha256": "9ed2d36c06b947caf6e74e96474182bf8560e6c2f22eec67577a8e2caee5aa54",
+      "before_bytes": 8954,
+      "before_git_blob": "7975090289abdfaae256bb9644c4bef9343c7f64",
+      "before_sha256": "7939efca2fdb6cc51a2c280fb3be18bb29ef23625542f3abf9980938365f1ec1",
+      "path": "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md"
+    },
+    {
+      "after_bytes": 32146,
+      "after_git_blob": "bec280754766e6caeb8a5f20d4960fc4814b37a1",
+      "after_sha256": "74fefeb35fddf6f0351cbb83f195a4529a6ffda7f981f0a566bfa4522d58f99d",
+      "before_bytes": 30866,
+      "before_git_blob": "80fe5a70eada20f36118331bd525c4d14b4d34be",
+      "before_sha256": "4f60124501e83740a0cbbd466461bebc494426639246e9f2d586c38f11e44b7b",
+      "path": "docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md"
+    },
+    {
+      "after_bytes": 7324,
+      "after_git_blob": "bbf1200e2d410ff439dfb7367cee193902a91394",
+      "after_sha256": "20fdb9358fe360d05fc674339fcd2134eabc55ffe852b009e5be3a798ae0d783",
+      "before_bytes": 6349,
+      "before_git_blob": "76275c784fa52d16494370d6d9dda094cc579946",
+      "before_sha256": "a234c295d1f656a3e8043bc6affb5f65627e16718b6a0c14421e61085e67853b",
+      "path": "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md"
+    },
+    {
+      "after_bytes": 14936,
+      "after_git_blob": "d8641eb1cdc0edf01e6b155460de9173245432db",
+      "after_sha256": "d211381d9db8013035c68168183e8e740c907ffd0c6ce50a04ec51fef6048a73",
+      "before_bytes": 11295,
+      "before_git_blob": "8b88bac9032c7907c5f8158f233a93947871dfa2",
+      "before_sha256": "d9d9552bb438bc171aedd50c2ff4b4a6967042dea8088b9cf8ffa860dd821bf5",
+      "path": "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md"
+    },
+    {
+      "after_bytes": 11127,
+      "after_git_blob": "1c1b4dc0d4ef44f3c4e7a8bc5629058be09910b6",
+      "after_sha256": "3cf1b6a46a4a7d11127cd8524fa2a11886943277fb8c429db7c37606c9840a8e",
+      "before_bytes": 11127,
+      "before_git_blob": "ddf298a6a669b1b9be007972ba4990147f5a4821",
+      "before_sha256": "816394a53792544ab761ae5c57fbd78113af7e145a8906bf7f3dd10c62baad90",
+      "path": "scripts/ci/pq_authority_effect_register.py"
+    },
+    {
+      "after_bytes": 25957,
+      "after_git_blob": "34b793d911762e9564dfd58e417fc47de1f97f31",
+      "after_sha256": "db0bc9a3910cf67bbc8b9cbb372eb3a1baeed7f227b133b05ee11c7a5ba6a13c",
+      "before_bytes": 25957,
+      "before_git_blob": "bb2bfd1b1310155dd1350465462bcb80b863fe95",
+      "before_sha256": "73aaa852ed68bd8f668ac353232d069e7ae35813c12f396d2b26fd87ad45e622",
+      "path": "scripts/ci/pq_root_dependency_register.py"
+    },
+    {
+      "after_bytes": 16302,
+      "after_git_blob": "d6e3ae6e2fcb16ceec62924c9407307feb8cd75d",
+      "after_sha256": "fedf6595bdb51b188e65a1c8a7c3b1f4942ddcbd170d4cdfee189d5ccfb7efbb",
+      "before_bytes": 15986,
+      "before_git_blob": "c5d8ef1954917277e81dfc05f17430ef4d2ef8a2",
+      "before_sha256": "46cf536533ded075126338680a2ee710c58c6381aafe1ae37b90b36e7c2defdb",
+      "path": "scripts/ci/test_pq_authority_effect_register.py"
+    },
+    {
+      "after_bytes": 22261,
+      "after_git_blob": "5e7550720e94e80005612137b4270cf85ec71eb7",
+      "after_sha256": "cd0f00ab19244f36cc112282fa0743a60eac5cefa8e81156188ed0d6455d5e84",
+      "before_bytes": 22167,
+      "before_git_blob": "2a3992af77a06302b6beb8959cffe9fdc694245e",
+      "before_sha256": "79604814c7eda02e1d07eedf1c8978bf0fbaeb64fbdc3b5a1332c4ec7eeba0e6",
+      "path": "scripts/ci/test_pq_proof_profile_binding.py"
+    },
+    {
+      "after_bytes": 40427,
+      "after_git_blob": "928d33061719e3545a95f63d0bba3dddc2ce941d",
+      "after_sha256": "74e5a644f0b52d7045f23a249d9da92de0a0326a374ecc2f5cd3fb47661fccf2",
+      "before_bytes": 36803,
+      "before_git_blob": "8a5188e984b500299092ad9e51d266b8667d5b15",
+      "before_sha256": "82d26f6227597b3438f1d7ccb853bdddbbdae3f86d8f6f9d8fcedfe567f21bd6",
+      "path": "scripts/ci/test_pq_root_dependency_register.py"
+    },
+    {
+      "after_bytes": 10621,
+      "after_git_blob": "9e6989095794564623e9b56e58ab97af3cc42517",
+      "after_sha256": "8e4f8e6f3131da630ff00849465a8f0bc356173464347ca6b44b6ad14e99b982",
+      "before_bytes": 10461,
+      "before_git_blob": "18abdefc47eadcccb00a5e4bdc271b4b270e0790",
+      "before_sha256": "cb8133d9d0c6b72eacda4a924a8916690debc47fe134928dd9a495bc54481919",
+      "path": "scripts/ci/test_w1_lifetime_current_observation.py"
+    },
+    {
+      "after_bytes": 31742,
+      "after_git_blob": "79898f0dd2e44a433f6bd4e4a039893bab7cb819",
+      "after_sha256": "4105a7a2e5e0102c25f0cf17d76632bef78fdf1f8bd940d861dfba272a355283",
+      "before_bytes": 30649,
+      "before_git_blob": "816dc81feca4e7b2a37e465f7d761725f1a89572",
+      "before_sha256": "efc9234fda32ff50d0323eca2bb9065257f5650704f2a4e981cca5ad817e3a09",
+      "path": "scripts/ci/test_w1_qrom_closure_current_controls.py"
+    },
+    {
+      "after_bytes": 19687,
+      "after_git_blob": "ce9a6fd1bd05fea67ade25fdf5fa7c7eb6264e0f",
+      "after_sha256": "82e752078e462aa1b9f1c803bbd6928081a3d6bd53da79790455cdbd38e878fe",
+      "before_bytes": 16242,
+      "before_git_blob": "3ab5b3120a0d6ef508a051525e81140aa13d5f5a",
+      "before_sha256": "1f3cb03d9ce6b509d298d67e939198c86f30b21899c5f4f8c56cd1c9f5f1fd65",
+      "path": "scripts/ci/test_w1_qrom_current_ci.py"
+    },
+    {
+      "after_bytes": 12439,
+      "after_git_blob": "78d9a03447febd05b4e5ee35a4a60dfdbe7b2cda",
+      "after_sha256": "f63e88533619880f4ceb0bbfdd165c3a58b8edbf3f14c5aa987bda14a758b92c",
+      "before_bytes": 9874,
+      "before_git_blob": "0b820a21179f478e57cf9764de8b4ecd636357a9",
+      "before_sha256": "27a69afaa9bc2f9198f4f575a2d1476a0bec6251f81441f538f432d7a38d8a54",
+      "path": "scripts/ci/test_w1_qrom_current_implementation_audit.py"
+    },
+    {
+      "after_bytes": 20104,
+      "after_git_blob": "5339b28b50fae5c58f0d1de8f1111c6b8ad02af7",
+      "after_sha256": "b5ab498400ac5bf2af0e3db4b854b94c4b73788cb270c411c84700dbc166e234",
+      "before_bytes": 19477,
+      "before_git_blob": "663fefbd94382bd5b56c9af06ec2afcb000b4cf5",
+      "before_sha256": "d76f1c2600140a5551616573a50fc5ca63a86aef7ea80604e93a2d5b38cd3001",
+      "path": "scripts/ci/test_w1_qrom_semantics_audit.py"
+    },
+    {
+      "after_bytes": 31610,
+      "after_git_blob": "d514f92c03891828ee8ccd98304e7b4ae5c9d5a6",
+      "after_sha256": "c1c9f300898a93999498167fe897cc2a588fa76ff95846c4bb5d1fcdcda616a6",
+      "before_bytes": 26633,
+      "before_git_blob": "96ef5939efc69a5d44bf3447d2509fec5372d67f",
+      "before_sha256": "9974811ec1252498df88727e6e9e07e4aa61bbd39d4006fee1157d78a001bc15",
+      "path": "scripts/ci/test_w1_qrom_workflow_gate.py"
+    },
+    {
+      "after_bytes": 14367,
+      "after_git_blob": "3d2938a93e3ce52401dff1cd7b5a95a5b810bcbb",
+      "after_sha256": "92994b799069282b9aa0b1531e91bd8105650c1a61aed72260377b9125478148",
+      "before_bytes": 13646,
+      "before_git_blob": "bb47591f471b3b7554ce8997f487568d8de0f64d",
+      "before_sha256": "8cccdda28f86ada65c766697cc8bc4e21f5cb7a05abfb52d5dfdffc9421a3f6e",
+      "path": "scripts/ci/w1_qrom_closure_current_controls.py"
+    },
+    {
+      "after_bytes": 24631,
+      "after_git_blob": "4b26cf53c7278145bb8ad134e99f24c0ea594b7a",
+      "after_sha256": "b171ff84df6472e29738425c038e5830dab17e09dc276c3a4c59bd2e08d833d8",
+      "before_bytes": 24217,
+      "before_git_blob": "c7f6a7b72f861d3698bc0fa63447e30224758ac4",
+      "before_sha256": "ead9009eff1f890eab806a9f375f74f4f912599021bfec91de14ab0b745b5ae9",
+      "path": "scripts/ci/w1_qrom_current_ci.py"
+    },
+    {
+      "after_bytes": 10275,
+      "after_git_blob": "97b344e65dc5ec91b15b9a99289099e752dab2e8",
+      "after_sha256": "e9edfd3d9cbf8b854f43317523c6c22e1dfd68dd6b037ae27820fbf0581598e1",
+      "before_bytes": 10275,
+      "before_git_blob": "9ec7ed08cad550491940d4a9880cea2149ac450f",
+      "before_sha256": "42364a64d05995b20391911f26d9db3f9273fe04e7aa9372ce991393dc7cd561",
+      "path": "scripts/ci/w1_qrom_supplemental_controls.py"
+    },
+    {
+      "after_bytes": 9216,
+      "after_git_blob": "e98f81f5e7b057e39f6d7c534276c37fc9b9dbc0",
+      "after_sha256": "c8ef691c15a8c2381b6135d0107dd1ba26c12185daac08cc882a8a02bb7b1d05",
+      "before_bytes": 9074,
+      "before_git_blob": "937e9141fc7eab5ca5b04e41616cd22887ed0556",
+      "before_sha256": "cca6f57d882911df7296406806f8cce1540bd61776b4634304314ac777344b45",
+      "path": "scripts/w1_lifetime_current_observation.py"
+    },
+    {
+      "after_bytes": 17150,
+      "after_git_blob": "88b619db34314c1d5a212dba99e6105d4bfca14e",
+      "after_sha256": "55d3e0da144675614004b4dcd93617dccdf02a92f8468bf17ff42052d65c74a1",
+      "before_bytes": 17084,
+      "before_git_blob": "407910c28a10d16379d18505ca64f8810be18211",
+      "before_sha256": "72050dfcc48156019f846e4a0f6aa7951af242905a98e76cc233e5b61b26408b",
+      "path": "scripts/w1_qrom_current_implementation_audit.py"
+    },
+    {
+      "after_bytes": 35047,
+      "after_git_blob": "a567715c001cdca7aabe408a090e912cfa8834e7",
+      "after_sha256": "9e2f251b118a7ad0da8ba0f4c7111ca9882aeaa01ed53285d49fdd58797319dc",
+      "before_bytes": 35045,
+      "before_git_blob": "a33bce5f52ef17f1d577fc35300d1a655cb59eaa",
+      "before_sha256": "fcab69420cfb1d0ca6b76d2fc1d81f0a8e8e1ae16f739fa07528fd73477d917a",
+      "path": "scripts/w1_stark_route_audit.py"
+    }
+  ],
+  "historical_report_and_job_bytes_preserved": true,
+  "parent": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+  "patch": {
+    "bytes": 132260,
+    "path": "/private/tmp/chain-final-current-bindings-evidence-20261114/commit-v1/commit.patch",
+    "sha256": "d18b0191e87e45c3bb3c7fb21d4c073bc5cf7c0cc5c80a5ce76963905673aa89"
+  },
+  "qualification_escalation": false,
+  "raw_evidence_package_pending": true,
+  "root_merge_note": {
+    "preserve_corpus_pin": "8683f6b319cb6104bf7dc201e3b363c648901468",
+    "preserve_corpus_pin_path": "scripts/ci/test_ci_contract.py",
+    "root_parent": "51c215b45c41180fc044ec806fde39c7ceffb75c"
+  },
+  "rust_source_changed": false,
+  "source_scope": {
+    "authority": 44,
+    "current_lifetime": 20,
+    "distinct_input_union": 232,
+    "qrom_closure_inputs": 145,
+    "qrom_local_crates": 6,
+    "root_dependency": 46
+  },
+  "tree": "96197879781b8f77e53a9f044129fc938edb0a9e",
+  "worktree": "/private/tmp/chain-final-current-bindings-20261114"
+}

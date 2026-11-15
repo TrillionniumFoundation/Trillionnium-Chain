@@ -1,0 +1,12 @@
+{
+  "scope": "changed Markdown path targets checked against complete Git tree plus candidate additions; source-only checkout is not full repository execution",
+  "documents": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/development/specs/pon/W1_FALSE_TRACE_ACTUAL_REUSE_V1.md",
+    "docs/protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md",
+    "evidence/pon-w1-work-security-20261101/README.md"
+  ],
+  "checked_links": 203,
+  "missing": [],
+  "passed": true
+}

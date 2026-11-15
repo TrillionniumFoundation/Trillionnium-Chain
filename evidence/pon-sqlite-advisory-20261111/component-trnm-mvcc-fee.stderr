@@ -1,0 +1,7 @@
+   Compiling rustix v1.1.4
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-sqlite-advisory-20261110/trillionnium/crates/trnm-crypto-primitives)
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qq/work/chain-sqlite-advisory-20261110/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 26.63s
+     Running unittests src/lib.rs (/home/qq/work/chain-sqlite-advisory-20261110-checks/native-target/debug/deps/trnm_mvcc_fee-872c911c43d2615e)

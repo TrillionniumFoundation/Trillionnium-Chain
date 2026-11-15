@@ -1,0 +1,190 @@
+{
+  "schema": "b280-additional-original-service-failures-v1",
+  "scope": "Exact b280 head or actual 49b40ecf merge. Outer source.json binds lane role and ordered parents; inner native manifest checks current tested commit as a head snapshot. Protocol failure precedes later integration selectors.",
+  "rows": [
+    {
+      "run_id": 41708487030,
+      "job_id": 126173967031,
+      "artifact_id": 13269960411,
+      "arch": "ARM64",
+      "outer_source": {
+        "base": null,
+        "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+        "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 872904508,
+        "tracked_entries": 7563,
+        "tracked_worktree_verified": true
+      },
+      "native_manifest_source_before_and_after": {
+        "schema": "trnm-ci-source-v1",
+        "kind": "head",
+        "tested_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+        "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+        "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+        "base": null,
+        "prospective_merge": null,
+        "tracked_worktree_verified": true,
+        "tracked_entries": 7563,
+        "tracked_bytes": 872904508,
+        "tests_executed_by_identity_check": false
+      },
+      "zip_sha256": "a966aeab28c35a1efc660aa58f0d63e3ce789e5a858aa8add60f0edde4b8726b",
+      "all_named_tests_passed": true,
+      "named_tests": 5,
+      "format_passed": true,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "binary_sha256": "cdea3960bc448141c0b83c417dda66a4e64fc9b86d93b5a31b74ea17973e437a",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "required": 1,
+          "confirmed": 1,
+          "unconfirmed": 0,
+          "unknown": 0,
+          "confirmation_latency_ns": 2101468727,
+          "submit_attempts": 7,
+          "timely_submit_acks": 7,
+          "history_attempts": 7,
+          "timely_history_responses": 7,
+          "import_attempts": 7,
+          "timely_imports": 7,
+          "verification_errors": [],
+          "history_failures": []
+        },
+        {
+          "mode": "from-zero-pressure",
+          "required": 1,
+          "confirmed": 0,
+          "unconfirmed": 1,
+          "unknown": 0,
+          "confirmation_latency_ns": null,
+          "submit_attempts": 7,
+          "timely_submit_acks": 7,
+          "history_attempts": 3,
+          "timely_history_responses": 2,
+          "import_attempts": 2,
+          "timely_imports": 2,
+          "verification_errors": [],
+          "history_failures": [
+            {
+              "status": "error",
+              "error": "IO: Resource temporarily unavailable (os error 11)",
+              "metrics": {
+                "challenge_ns": 4365063,
+                "construction_ns": 16481,
+                "failed_stage": "solution-body-response",
+                "solution_body_response_ns": 101818619,
+                "solution_found": true,
+                "solution_search_ns": 26425,
+                "solution_trials": 66,
+                "total_elapsed_ns": 106226900
+              },
+              "started_ns": 3894377979,
+              "ended_ns": 4000653224,
+              "returned_after_window": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 41708487030,
+      "job_id": 126173966959,
+      "artifact_id": 13269276193,
+      "arch": "X64",
+      "outer_source": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+        "kind": "prospective-merge",
+        "prospective_merge": "49b40ecff37acac0b00a23b28a69d65df98308d1",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "49b40ecff37acac0b00a23b28a69d65df98308d1",
+        "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 872904508,
+        "tracked_entries": 7563,
+        "tracked_worktree_verified": true
+      },
+      "native_manifest_source_before_and_after": {
+        "schema": "trnm-ci-source-v1",
+        "kind": "head",
+        "tested_commit": "49b40ecff37acac0b00a23b28a69d65df98308d1",
+        "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+        "candidate": "49b40ecff37acac0b00a23b28a69d65df98308d1",
+        "base": null,
+        "prospective_merge": null,
+        "tracked_worktree_verified": true,
+        "tracked_entries": 7563,
+        "tracked_bytes": 872904508,
+        "tests_executed_by_identity_check": false
+      },
+      "zip_sha256": "e9d05fbffdfc0b685b440b47b2953840d357be471271de78db9e11e80ca27bc6",
+      "all_named_tests_passed": true,
+      "named_tests": 5,
+      "format_passed": true,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "binary_sha256": "1ac775e53c62c64965c5eb4dad455b29f91136e52650bf768453f91745c6c612",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "required": 1,
+          "confirmed": 1,
+          "unconfirmed": 0,
+          "unknown": 0,
+          "confirmation_latency_ns": 1975143042,
+          "submit_attempts": 7,
+          "timely_submit_acks": 7,
+          "history_attempts": 7,
+          "timely_history_responses": 7,
+          "import_attempts": 7,
+          "timely_imports": 7,
+          "verification_errors": [],
+          "history_failures": []
+        },
+        {
+          "mode": "from-zero-pressure",
+          "required": 1,
+          "confirmed": 0,
+          "unconfirmed": 1,
+          "unknown": 0,
+          "confirmation_latency_ns": null,
+          "submit_attempts": 7,
+          "timely_submit_acks": 7,
+          "history_attempts": 2,
+          "timely_history_responses": 1,
+          "import_attempts": 1,
+          "timely_imports": 1,
+          "verification_errors": [],
+          "history_failures": [
+            {
+              "status": "error",
+              "error": "PUBLIC_CLIENT_DEADLINE",
+              "metrics": {
+                "challenge_ns": 0,
+                "construction_ns": 2527,
+                "failed_stage": "construction",
+                "solution_body_response_ns": 0,
+                "solution_found": false,
+                "solution_search_ns": 0,
+                "solution_trials": 0,
+                "total_elapsed_ns": 2610
+              },
+              "started_ns": 4040892610,
+              "ended_ns": 4040993909,
+              "returned_after_window": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

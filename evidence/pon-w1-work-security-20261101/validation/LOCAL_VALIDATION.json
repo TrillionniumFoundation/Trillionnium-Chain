@@ -1,0 +1,130 @@
+{
+  "schema": "pon-w1-work-security-local-validation-v1",
+  "integration_parent": "acd8f79f2dcc22ecdee1d1a5fd88d619d06f37c9",
+  "scope": "exact source-module validation plus Python execution/readback controls; source-only sparse checkout",
+  "rust_version": "1.95.0",
+  "w1_module_tests": 98,
+  "native_fuzz_semantic_tests": 6,
+  "w1_module_clippy_strict": true,
+  "workspace_format_checked": true,
+  "python_controls": {
+    "fresh_service": 12,
+    "original_native": 86,
+    "original_host": 20,
+    "false_trace_reader": 16,
+    "false_trace_runner": 26,
+    "pq_source_negatives": 34,
+    "ci_contract": 95,
+    "source_integrity_negatives": 34,
+    "original_cost_v2_reader": 32,
+    "original_cost_v3_reader": 19
+  },
+  "changed_markdown_path_targets": 203,
+  "complete_workspace_graph_verified": false,
+  "original_lockfile_matched_by_module_harness": false,
+  "full_workspace_test_or_clippy_claim": false,
+  "native_original_service_executed_on_candidate": false,
+  "native_fresh_service_executed_on_candidate": false,
+  "hosted_dual_arch_cost_reviewed": false,
+  "work_hardness_qualified": false,
+  "public_service_qualified": false,
+  "production_activation": false,
+  "blocked_workspace_attempt": {
+    "exit_code": 101,
+    "cause": "locked ml-dsa unavailable in local registry; configured shell proxy connection refused",
+    "log": "full-workspace-locked-attempt.log",
+    "lockfile_or_dependency_versions_changed_to_make_workspace_pass": false
+  },
+  "source_inputs": {
+    ".github/workflows/pon-w1-work-security.yml": {
+      "sha256": "b840c7af660569eb9229561579789d4373a2c98e8efbf86af4528c2fce4bf869",
+      "git_blob": "49ba29229a2bdbc8dfc5d501ed010eb358d3d68c",
+      "bytes": 9904
+    },
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "sha256": "284e723dc4141e61085fc718c2b22e65e2a7666a52e501a1eac9291cce0f4fc4",
+      "git_blob": "57ace3ecdb21b97564a2d193dc6124195a7d9f37",
+      "bytes": 63347
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "sha256": "8deffa0475907f59c82232306ca258b8892fa821a12df3e51ec2125fbdf9f5ac",
+      "git_blob": "440b9c52af8a2a33799fe55d2bf9d37611b456e2",
+      "bytes": 354684
+    },
+    "docs/development/specs/pon/W1_FALSE_TRACE_ACTUAL_REUSE_V1.md": {
+      "sha256": "646a4f892613eecbfe491594573ebe737cafd280290638100c2d5156c460f4d9",
+      "git_blob": "a4a436b220f361dcb5edba08e8d99a7de86dbcb4",
+      "bytes": 7930
+    },
+    "docs/protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md": {
+      "sha256": "bc41a1dfbe461368aa593cf181a15ae133b743cdaea2815db1e85533c8b874f5",
+      "git_blob": "e48f51884126ee6d2ac7203286a9a7beaf71892e",
+      "bytes": 82926
+    },
+    "scripts/ci/run_from_zero_host.py": {
+      "sha256": "58d00d0559644e4a5bfdaf3a785c5be90e233a062d3ac6befec80df17f4fe5f3",
+      "git_blob": "e979fd4dea31444a7f7974fab0373e94b9f962d6",
+      "bytes": 21689
+    },
+    "scripts/ci/run_from_zero_native.py": {
+      "sha256": "0067168079a8876b548d32afd1f3b5d353868cc384d81d09ef0b051a343d424f",
+      "git_blob": "ffec7d876e8fbe548c3c1f451ea1479c84bffaa4",
+      "bytes": 53089
+    },
+    "scripts/ci/run_w1_false_trace_reuse_v1.py": {
+      "sha256": "057851730ce7d3f93487b6829094cccf82afd46fb5d7f2cfc6a86dd9e17b1f6a",
+      "git_blob": "2d5ee4121b1a341841256c1870596ac15ccd2541",
+      "bytes": 7753
+    },
+    "scripts/ci/run_w1_fresh_service_v1.py": {
+      "sha256": "98c33ede77445a4bbfb39703761d411963a02ff67e9d79e9e13b8ad12d745756",
+      "git_blob": "d825b0456004922a4723a75ca3b5f21f2d340990",
+      "bytes": 18223
+    },
+    "scripts/ci/test_pon_w1_false_trace_reuse_reader_v1.py": {
+      "sha256": "a6c0bb7bd4dbe72ce93dede85f5a027743ccfef581a025909fcca6ca6ed0f1be",
+      "git_blob": "8d7eb9bdd32b5dcc0d229adc287ffef7219814ad",
+      "bytes": 12160
+    },
+    "scripts/ci/test_run_w1_false_trace_reuse_v1.py": {
+      "sha256": "251a212ac2f711f7002bb53013f5124e746c7f005912b8b5e55e4fa74440d40c",
+      "git_blob": "c63fee375af4730902dda87dd947756fa4a36612",
+      "bytes": 16606
+    },
+    "scripts/ci/test_run_w1_fresh_service_v1.py": {
+      "sha256": "a79a5e26bb9f9fb6f6720b23bdf3ebfd4368a841152e1b10a2518d61f53b708d",
+      "git_blob": "f93cbbb8e419cb29c35ac33425b42d3a146300f7",
+      "bytes": 22580
+    },
+    "scripts/pon_w1_false_trace_reuse_reader_v1.py": {
+      "sha256": "2fdbf6ea15f8a6c5b00f6cba9cbfbd7d45dc9b999c450142200e790b1cf73812",
+      "git_blob": "6b631f07e27e7d1115d44e9d5d2dd04dc15e93c8",
+      "bytes": 17143
+    },
+    "tests/fuzz/fuzz_targets/support/work_certificate.rs": {
+      "sha256": "dd8d620c56b0a7041859f5164b7732ce6044ee6a51c153ec3b5d6fbe10bbc18d",
+      "git_blob": "0d8918be96d1b253746a5cfaf24a7686cbd993eb",
+      "bytes": 5305
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": {
+      "sha256": "91d7ccb4ea0ac710e0e207a765779b1f02fddb703be92cf1cb7df1c300632798",
+      "git_blob": "8fd82788af698c30c255ea08745ea4da005f03c2",
+      "bytes": 81545
+    },
+    "trillionnium/crates/trnm-pon-node/examples/pon_w1_false_trace_reuse_v1.rs": {
+      "sha256": "8caba498365709777e6320c4ccc5f1e13a08ac450855de306b17b5844bff5135",
+      "git_blob": "545c43836afa7c4824d07950647e3e2cf01720f8",
+      "bytes": 12056
+    },
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs": {
+      "sha256": "d538e0c2de65a11c0744d828b7f694e933427eacc3eff483a2b8d45a45804054",
+      "git_blob": "47e70ecad24780ce2fc5b6742848da7cdfe51291",
+      "bytes": 75282
+    },
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs": {
+      "sha256": "c45c0b04d09ffe045883e3fdae245588dd21cb8a9f9c64c16b6fbe288b636a3f",
+      "git_blob": "38d20a3344d40ea73a32982568dba14a275b1e10",
+      "bytes": 10907
+    }
+  }
+}

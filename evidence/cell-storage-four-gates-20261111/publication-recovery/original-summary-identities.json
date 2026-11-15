@@ -1,0 +1,108 @@
+{
+  "all_archive_manifest_and_stream_hashes_verified": true,
+  "source": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "summaries": [
+    {
+      "all_commands_passed": true,
+      "bytes": 66994,
+      "command_count": 68,
+      "completed": true,
+      "kind": "candidate",
+      "original_keys": [
+        "all_commands_passed",
+        "commands",
+        "completed",
+        "environment",
+        "independent_domains_qualified",
+        "lane",
+        "production_qualified",
+        "provider_pin_unchanged",
+        "root",
+        "runner_sha256",
+        "schema",
+        "source",
+        "source_unchanged",
+        "status",
+        "target_existed",
+        "wan_qualified"
+      ],
+      "path": "current/candidate/summary.json",
+      "sha256": "98e514c9f632d9919bf8f2615018ebc73a688fea393b848116a65d0adcabc75c",
+      "verified_identical_copies": [
+        "candidate/summary.json",
+        "model/candidate-gates.json"
+      ]
+    },
+    {
+      "all_commands_passed": true,
+      "bytes": 7468,
+      "command_count": 7,
+      "completed": true,
+      "kind": "observers",
+      "original_keys": [
+        "all_commands_passed",
+        "commands",
+        "completed",
+        "environment",
+        "independent_domains_qualified",
+        "lane",
+        "production_qualified",
+        "provider_pin_unchanged",
+        "root",
+        "runner_sha256",
+        "schema",
+        "source",
+        "source_unchanged",
+        "status",
+        "target_existed",
+        "wan_qualified"
+      ],
+      "path": "current/observers/summary.json",
+      "sha256": "5f3f100dda83ba4689006367831f35916356eff6024cc002f234ae07388b7e40",
+      "verified_identical_copies": [
+        "model/observer-gates.json",
+        "observers/summary.json"
+      ]
+    },
+    {
+      "bytes": 5785,
+      "kind": "model",
+      "original_keys": [
+        "binary_pin_unchanged",
+        "collection",
+        "completed",
+        "ended_unix_ns",
+        "identity_after",
+        "independent_domains_qualified",
+        "latency_observation_v1",
+        "metadata_evidence_complete",
+        "native",
+        "native_error",
+        "native_input_pin_matches",
+        "native_observed_passed",
+        "native_stage",
+        "native_start_attempted",
+        "native_started",
+        "operation_output",
+        "ordinary_hepta_final_use_qualified",
+        "production_qualified",
+        "provider_pin_unchanged",
+        "root",
+        "run_passed",
+        "runner_sha256",
+        "schema",
+        "source",
+        "source_unchanged",
+        "spec_pin_unchanged",
+        "started_unix_ns",
+        "tree",
+        "wan_qualified"
+      ],
+      "path": "current/model/summary.json",
+      "sha256": "f94d2090cd084d69863113c77f1011796574ffc0c8936ca783e324c20385bd3b",
+      "verified_identical_copies": [
+        "model/summary.json"
+      ]
+    }
+  ]
+}

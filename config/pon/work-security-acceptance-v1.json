@@ -1,0 +1,20 @@
+{
+  "schema": "pon-work-security-acceptance-profile-v1",
+  "status": "proposed-local-diagnostic-policy",
+  "consensus_parameter": false,
+  "production_activation": false,
+  "minimum_cost_samples_per_class": 8,
+  "setup_amortization_winners": [1, 8, 64],
+  "minimum_winner_to_verifier_ratio": 1,
+  "maximum_marginal_rejection_amplification": 1,
+  "service": {
+    "minimum_window_ns": 60000000000,
+    "minimum_offer_span_ns": 49000000000,
+    "minimum_honest_offered": 100,
+    "maximum_honest_failures": 0,
+    "honest_p99_deadline_ns": 2000000000,
+    "minimum_attacker_offered": 100,
+    "attacker_cpu_budget_ns": 60000000000,
+    "attacker_byte_budget": 67108864
+  }
+}

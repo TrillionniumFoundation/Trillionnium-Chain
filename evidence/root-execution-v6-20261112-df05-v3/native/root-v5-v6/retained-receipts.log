@@ -1,0 +1,16 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=["/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib"]; observed=["/data/chain-root-operation-v6-df05-target-v3/debug", "/data/chain-root-operation-v6-df05-target-v3/debug/deps", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"]; allowed=["/data/chain-root-operation-v6-df05-target-v3/debug", "/data/chain-root-operation-v6-df05-target-v3/debug/deps", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"]
+   Compiling trnm-pon-node v0.1.0 (/data/chain-root-operation-owned-20261112-df05-v4/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.60s
+     Running tests/root_witness_v6_receipts_native.rs (/data/chain-root-operation-v6-df05-target-v3/debug/deps/root_witness_v6_receipts_native-ddf166f1c450e1f8)
+
+running 7 tests
+test native_receipts_v6_cold_readback_preserves_exact_signatures_without_new_authority ... ok
+test native_receipts_v6_fresh_namespace_never_auto_migrates_v5_or_downgrades ... ok
+test native_receipts_v6_original_root_owner_recovers_lost_ack_without_repeating_cas ... ok
+test native_receipts_v6_oversized_record_and_live_history_removal_fail_closed ... ok
+test native_receipts_v6_replayed_writer_request_cannot_consume_capacity_or_fence_owner ... ok
+test native_receipts_v6_retention_commit_busy_preserves_advanced_head_without_claiming_ack ... ok
+test native_receipts_v6_same_head_history_loss_and_signature_tamper_are_rejected ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 210.64s
+

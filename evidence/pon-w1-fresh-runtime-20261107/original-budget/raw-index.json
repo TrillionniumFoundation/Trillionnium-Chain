@@ -1,0 +1,371 @@
+{
+  "component": "original-budget",
+  "excluded": [],
+  "full_host_raw_archive": false,
+  "records": [
+    {
+      "bytes": 683,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-proposal-01/00-preflight.json",
+      "relative": "unfunded-original-budget-proposal-01/00-preflight.json",
+      "sha256": "8f8ae2a0a74657cc127983c2cd1058b1f193ff6b6901cfb4688cfdc36c6350de"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-proposal-01/00-preflight.stderr",
+      "relative": "unfunded-original-budget-proposal-01/00-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 177,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-proposal-01/00-preflight.stdout",
+      "relative": "unfunded-original-budget-proposal-01/00-preflight.stdout",
+      "sha256": "a26394e63148ca29966ef3c4a4c28c5b86285d39ac6948d20087e0005c94b47f"
+    },
+    {
+      "bytes": 842,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-proposal-01/01-pure-contract-negative-controls.json",
+      "relative": "unfunded-original-budget-proposal-01/01-pure-contract-negative-controls.json",
+      "sha256": "75e9974202047e4f5a8d17c5a454ec2e951a8e3e8d8efb069b038928c42d15e4"
+    },
+    {
+      "bytes": 1807,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-proposal-01/01-pure-contract-negative-controls.stderr",
+      "relative": "unfunded-original-budget-proposal-01/01-pure-contract-negative-controls.stderr",
+      "sha256": "a53d3202af353838d4865a0eef7bf5840a3b04bf741e43855556dd6b3a85c37f"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-proposal-01/01-pure-contract-negative-controls.stdout",
+      "relative": "unfunded-original-budget-proposal-01/01-pure-contract-negative-controls.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 5015,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-proposal-01/README.md",
+      "relative": "unfunded-original-budget-proposal-01/README.md",
+      "sha256": "b314bbc6fca5937cb1b3d64698d39c2a0ad60ea77d6dc437c59e58983a703a14"
+    },
+    {
+      "bytes": 4533,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-proposal-01/declaration.json",
+      "relative": "unfunded-original-budget-proposal-01/declaration.json",
+      "sha256": "8767392f9f24bce1a2b8e8c1904ea4645ef79bd18a01ae5cc94084de42d63e46"
+    },
+    {
+      "bytes": 1040,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-proposal-01/proposed-hepta-launch.json",
+      "relative": "unfunded-original-budget-proposal-01/proposed-hepta-launch.json",
+      "sha256": "22bd49adc9c8d6e45801ec84f13161ceecc977c56d814ba956f4dfae0aab2201"
+    },
+    {
+      "bytes": 35925,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-proposal-01/run_unfunded_original_budget.py",
+      "relative": "unfunded-original-budget-proposal-01/run_unfunded_original_budget.py",
+      "sha256": "9c7fff313cf05ba442ee07c83140219950a9c19f841ed08269cde213ba69623b"
+    },
+    {
+      "bytes": 127,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-proposal-01/source-after.json",
+      "relative": "unfunded-original-budget-proposal-01/source-after.json",
+      "sha256": "5ac1fbea39ba252b123f792bb14ce2f355faa04345b32e79a64cc72eb06f3958"
+    },
+    {
+      "bytes": 127,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-proposal-01/source-before.json",
+      "relative": "unfunded-original-budget-proposal-01/source-before.json",
+      "sha256": "5ac1fbea39ba252b123f792bb14ce2f355faa04345b32e79a64cc72eb06f3958"
+    },
+    {
+      "bytes": 5241,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-proposal-01/test_unfunded_original_budget.py",
+      "relative": "unfunded-original-budget-proposal-01/test_unfunded_original_budget.py",
+      "sha256": "f715a35efbeb43d69a462cc329c5fbaec3c29d7d899b532123fd1ce35909e092"
+    },
+    {
+      "bytes": 4107,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-proposal-01/validation.json",
+      "relative": "unfunded-original-budget-proposal-01/validation.json",
+      "sha256": "a32d069cbc8bf00952b453f9112aa1ef477fe3dd41f2827191995546f258a9ff"
+    },
+    {
+      "bytes": 726,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/preflight.json",
+      "relative": "unfunded-original-budget-A-01/audit/preflight.json",
+      "sha256": "b0111f0582d1cca62a51bdf4813ba4080d9c6070d9405fdf9cde938b6fb1e0be"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/preflight.stderr",
+      "relative": "unfunded-original-budget-A-01/audit/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 177,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/preflight.stdout",
+      "relative": "unfunded-original-budget-A-01/audit/preflight.stdout",
+      "sha256": "a26394e63148ca29966ef3c4a4c28c5b86285d39ac6948d20087e0005c94b47f"
+    },
+    {
+      "bytes": 1054,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/source-after-command.json",
+      "relative": "unfunded-original-budget-A-01/audit/source-after-command.json",
+      "sha256": "a23349bb2df9faf55c359551990261dbcab94c09eaf5bb9b2ea2482a5115aa5c"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/source-after-command.stderr",
+      "relative": "unfunded-original-budget-A-01/audit/source-after-command.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/source-after-command.stdout",
+      "relative": "unfunded-original-budget-A-01/audit/source-after-command.stdout",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "bytes": 423,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/source-after.json",
+      "relative": "unfunded-original-budget-A-01/audit/source-after.json",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "bytes": 1058,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/source-before-command.json",
+      "relative": "unfunded-original-budget-A-01/audit/source-before-command.json",
+      "sha256": "6a8768cd393b1e4581475a023f37a52ce52c2df60e9d2583f0a065110f048ab6"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/source-before-command.stderr",
+      "relative": "unfunded-original-budget-A-01/audit/source-before-command.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/source-before-command.stdout",
+      "relative": "unfunded-original-budget-A-01/audit/source-before-command.stdout",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "bytes": 423,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/source-before.json",
+      "relative": "unfunded-original-budget-A-01/audit/source-before.json",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "bytes": 1524,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/connector-observations-01/launch_raw.json",
+      "relative": "unfunded-original-budget-A-01/connector-observations-01/launch_raw.json",
+      "sha256": "39767d10215a8e9e9659f1fa394a24cd665c47858a52eed9ac39d839d9654c2d"
+    },
+    {
+      "bytes": 947,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/connector-observations-01/read.json",
+      "relative": "unfunded-original-budget-A-01/connector-observations-01/read.json",
+      "sha256": "b810c80bd5f0571667164e2897e4867e97512c5c45eb41a0f5f586a3c9a13571"
+    },
+    {
+      "bytes": 2922,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/connector-observations-01/readback.json",
+      "relative": "unfunded-original-budget-A-01/connector-observations-01/readback.json",
+      "sha256": "52aa2527c9e1279b4b03f17a91ee073a81b7102b3802fce1dc09162ef3bb463d"
+    },
+    {
+      "bytes": 231,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/connector-observations-01/result_pin.json",
+      "relative": "unfunded-original-budget-A-01/connector-observations-01/result_pin.json",
+      "sha256": "9f0469b36c8568d0e379f9a1e0d34adbe7f910acc9636222290d94ce6d413ba7"
+    },
+    {
+      "bytes": 729,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/connector-observations-01/terminal.json",
+      "relative": "unfunded-original-budget-A-01/connector-observations-01/terminal.json",
+      "sha256": "081355b960e36734d59cc5832cae64dc6ed064bdc610db0aad05da142c8121e8"
+    },
+    {
+      "bytes": 4533,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/declaration-copy.json",
+      "relative": "unfunded-original-budget-A-01/declaration-copy.json",
+      "sha256": "8767392f9f24bce1a2b8e8c1904ea4645ef79bd18a01ae5cc94084de42d63e46"
+    },
+    {
+      "bytes": 1930,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/measure-native-winner/declaration.json",
+      "relative": "unfunded-original-budget-A-01/measure-native-winner/declaration.json",
+      "sha256": "37a2375bd1deb2252e40e77bc5061a51e29a69211e236edafca526dc7f783dd7"
+    },
+    {
+      "bytes": 537,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/measure-native-winner/process-samples.jsonl",
+      "relative": "unfunded-original-budget-A-01/measure-native-winner/process-samples.jsonl",
+      "sha256": "2e527e3749ba7ef8a4ef0d3cff9ccd1c1df70db0792026781514dd0494a0e32c"
+    },
+    {
+      "bytes": 4040,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/measure-native-winner/result.json",
+      "relative": "unfunded-original-budget-A-01/measure-native-winner/result.json",
+      "sha256": "bcc10e18da21dae46ca61bc43d07e3ed18c4387571d84088fbe1c2e4484550e1"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/measure-native-winner/stderr.log",
+      "relative": "unfunded-original-budget-A-01/measure-native-winner/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1067,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/measure-native-winner/stdout.log",
+      "relative": "unfunded-original-budget-A-01/measure-native-winner/stdout.log",
+      "sha256": "6b4343f1765dd296318c8607a4b130c3b412bb840578f219676e273bc67b55b0"
+    },
+    {
+      "bytes": 2489,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/measure-postwin-proof/declaration.json",
+      "relative": "unfunded-original-budget-A-01/measure-postwin-proof/declaration.json",
+      "sha256": "38f299f4a012cd3afd297e49ee45ba04c28c5089065077ba53c05b75d32b21d2"
+    },
+    {
+      "bytes": 1806,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/measure-postwin-proof/process-samples.jsonl",
+      "relative": "unfunded-original-budget-A-01/measure-postwin-proof/process-samples.jsonl",
+      "sha256": "e97ae99bc2d42f43e7c2fee3613378d5d170d3e254e86af4d3071bf8b2c78b65"
+    },
+    {
+      "bytes": 6158,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/measure-postwin-proof/result.json",
+      "relative": "unfunded-original-budget-A-01/measure-postwin-proof/result.json",
+      "sha256": "857160a43175833bc88f517c507856d9e57d7f8e35640d63f6cfe043d9f7fa11"
+    },
+    {
+      "bytes": 249,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/measure-postwin-proof/stderr.log",
+      "relative": "unfunded-original-budget-A-01/measure-postwin-proof/stderr.log",
+      "sha256": "0cb90169bdb18badd899c57ace5659f412a5e62d0993a3435e0b18fe7294cad7"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/measure-postwin-proof/stdout.log",
+      "relative": "unfunded-original-budget-A-01/measure-postwin-proof/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2417,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/origin.json",
+      "relative": "unfunded-original-budget-A-01/origin.json",
+      "sha256": "00ffa1ee5e164d99df21e8cda2024ef88aea9a07802e56739c126a86eb6affed"
+    },
+    {
+      "bytes": 13483,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/result.json",
+      "relative": "unfunded-original-budget-A-01/result.json",
+      "sha256": "f25d107e4dc0b751d95f561d3e6be7ec353921ca1c1eb0563ac8c1306633f06c"
+    },
+    {
+      "bytes": 1207,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/setup.json",
+      "relative": "unfunded-original-budget-A-01/setup.json",
+      "sha256": "f89dc131f6f7753d1c3b1ab235199edcdd55e6a5c5c5d64d2b2317ef04bf478d"
+    },
+    {
+      "bytes": 64,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/winner/expected-artifacts.bin",
+      "relative": "unfunded-original-budget-A-01/winner/expected-artifacts.bin",
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+    },
+    {
+      "bytes": 318,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/winner/header.bin",
+      "relative": "unfunded-original-budget-A-01/winner/header.bin",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+    },
+    {
+      "bytes": 49506,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/winner/input.bin",
+      "relative": "unfunded-original-budget-A-01/winner/input.bin",
+      "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+    },
+    {
+      "bytes": 858,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/winner/intent.json",
+      "relative": "unfunded-original-budget-A-01/winner/intent.json",
+      "sha256": "1147b546dee83fc486d8a38aedcdd36f2094f1a876331b57dbedc67f7d7f6ff4"
+    },
+    {
+      "bytes": 1067,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/winner/result.json",
+      "relative": "unfunded-original-budget-A-01/winner/result.json",
+      "sha256": "6b4343f1765dd296318c8607a4b130c3b412bb840578f219676e273bc67b55b0"
+    },
+    {
+      "bytes": 252,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/winner/trials.jsonl",
+      "relative": "unfunded-original-budget-A-01/winner/trials.jsonl",
+      "sha256": "8e2cca32dc39c2bbdc85e620b5a4be05137fe597b9e030cd3f15edbf61b75dfa"
+    },
+    {
+      "bytes": 3329,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-static-review-01/review.json",
+      "relative": "unfunded-original-budget-static-review-01/review.json",
+      "sha256": "9ee4de2396e01445c51082dd01a4c96022ebba53c699eabcf38f65e6aec60d58"
+    }
+  ],
+  "roots": [
+    "unfunded-original-budget-proposal-01",
+    "unfunded-original-budget-A-01",
+    "unfunded-original-budget-static-review-01"
+  ],
+  "schema": "TRNM-W1-PUBLIC-COMPONENT-RAW-INDEX1",
+  "source_bytes_unchanged": true
+}

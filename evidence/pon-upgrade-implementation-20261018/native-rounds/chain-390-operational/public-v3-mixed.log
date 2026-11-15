@@ -1,0 +1,21 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 2.78s
+     Running tests/public_v3_service_campaign.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/public_v3_service_campaign-a16b866263390a19)
+
+running 2 tests
+test network_only_business::network_only_business_confirmations_survive_rotating_false_work ... 
+thread 'network_only_business::network_only_business_confirmations_survive_rotating_false_work' (291195) panicked at crates/trnm-pon-node/tests/public_v3_service_campaign.rs:503:39:
+called `Result::unwrap()` on an `Err` value: Os { code: 2, kind: NotFound, message: "No such file or directory" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+test public_v3_mixed_calls_reopen_with_complete_failure_denominators ... {"attempts":130,"finite_target_met":true,"public_network_ready":false,"schema":"public-v3-local-mixed-service-v2"}
+ok
+
+failures:
+
+failures:
+    network_only_business::network_only_business_confirmations_survive_rotating_false_work
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.25s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test public_v3_service_campaign`

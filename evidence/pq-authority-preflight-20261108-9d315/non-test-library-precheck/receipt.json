@@ -1,0 +1,34 @@
+{
+  "scope": "uncommitted non-test dependency precheck; final committed validation follows",
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "check",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-release-bundle",
+    "--lib"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 25.49698487087153,
+  "logs": {
+    "stdout.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "preflight.stdout.log": {
+      "sha256": "3e9e970d160b66960d5566a0f7e262756d1bd8d7873459da8c146b0d8ee8a6d9",
+      "bytes": 178
+    },
+    "stderr.log": {
+      "sha256": "bf991d0fa7c2a756dfa45fa1fa0c0684ff6eec75e944e4465776b95f3ecea988",
+      "bytes": 1563
+    },
+    "preflight.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  }
+}

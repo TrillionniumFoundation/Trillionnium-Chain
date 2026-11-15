@@ -1,0 +1,350 @@
+{
+  "actual_ci_binary_sha256": "2db9669a1c9196885da8908bcaf3da8ccea9684a3fe048fbe2f614cbb093d4ba",
+  "cases": [
+    {
+      "expected_new": "ACCEPTED",
+      "expected_old": "ACCEPTED",
+      "name": "unchanged_actual_ci_artifact",
+      "new": {
+        "status": "ACCEPTED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "negative_nested_returncode_zero",
+      "new": {
+        "error": "process observation differs: returncode",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "positive_nested_returncode_nonzero",
+      "new": {
+        "error": "process observation differs: returncode",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "positive_nested_returncode_bool_false",
+      "new": {
+        "error": "process observation differs: returncode",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "nested_timeout_true",
+      "new": {
+        "error": "process observation differs: timed_out",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "stderr_scan_truncated",
+      "new": {
+        "error": "control observation differs: stderr_scan_truncated",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "stdout_scan_truncated",
+      "new": {
+        "error": "control observation differs: stdout_scan_truncated",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "owned_session_incomplete",
+      "new": {
+        "error": "process observation differs: owned_session_observation_complete",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "proc_scan_errors_despite_complete_flag",
+      "new": {
+        "error": "process observation differs: proc_scan_errors",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "group_probe_errors_despite_complete_flag",
+      "new": {
+        "error": "process observation differs: group_probe_errors",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "cleanup_errors_despite_complete_flag",
+      "new": {
+        "error": "process observation differs: cleanup_errors",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "sample_log_truncated",
+      "new": {
+        "status": "ACCEPTED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": false
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "negative_stage_process_complete_true",
+      "new": {
+        "error": "process observation differs: stage_process_complete",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "positive_stage_process_complete_false",
+      "new": {
+        "error": "process observation differs: stage_process_complete",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "final_group_present",
+      "new": {
+        "error": "owned process groups were not all observed absent",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "identity_verifier_digest_changed",
+      "new": {
+        "error": "runner identity differs: verifier_sha256",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "mutation_asset_digest_changed",
+      "new": {
+        "error": "case mutation identity differs from planned inputs",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "stderr_marker_removed_and_rehashed",
+      "new": {
+        "error": "recorded rejection layers differ from stderr",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "REFUSED",
+      "expected_old": "ACCEPTED",
+      "name": "positive_stdout_changed_and_rehashed",
+      "new": {
+        "error": "positive report work_id differs",
+        "error_type": "ValueError",
+        "status": "REFUSED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    },
+    {
+      "expected_new": "ACCEPTED",
+      "expected_old": "ACCEPTED",
+      "name": "legitimate_enoent_disappearance_race",
+      "new": {
+        "status": "ACCEPTED"
+      },
+      "old": {
+        "returncode": 0,
+        "status": "ACCEPTED",
+        "stderr": "",
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed."
+      },
+      "pass": true
+    }
+  ],
+  "ci_report_sha256": "7e7e5038b09c351fb54a8897c840e04363d053b1edd252f430f611ab5cc23dc6",
+  "gate_sha256": "c3a868b5feb6c8d4aa4d848f387291ce9b07b453ecb2c420dadd53a804ad9c3d",
+  "generated_at_utc": "2026-11-06T23:50:52.394309+00:00",
+  "old_validator_sha256": "10141d27aedb0c44d3f5d0bfc59db23b5e930403f8c8833bc3542b8749bff3be",
+  "purpose": "Evidence-consistency replay of actual retained controls. No new cryptographic verification, proof generation, or qualification.",
+  "retained_original": {
+    "archive_sha256": "0bdc390cd790f9e6493690db22658f12f40f4eb086c0499ba490623e8c16b1b1",
+    "scope": "Archived evidence identity only; historical executable is not supplied or executed.",
+    "status": "ACCEPTED"
+  },
+  "status": "FAIL"
+}

@@ -1,0 +1,26 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/check_repository.py"
+  ],
+  "elapsed_seconds": 22.905250942999373,
+  "exit_code": 0,
+  "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/check-repository.log",
+  "log_sha256": "c91633381bb744ca3ae71784e0bb95909c1056e53ace3553c8b9d54648ce5a36",
+  "name": "check-repository",
+  "reported": {
+    "activation": false,
+    "head": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+    "local_links": 6617,
+    "normal_dependency_edges": 27,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1480,
+    "source_state": "committed-clean",
+    "tree": "3fba36baa1682fd5b4cbd5e49e07204464c26ed4",
+    "workspace_packages": 26
+  },
+  "started_utc": "2026-11-11T01:27:58.061727+00:00",
+  "tests": null
+}

@@ -1,0 +1,32 @@
+{
+  "base_commit": "249f772cc2a2ace5e363fd5fbfec4241a26f4d4d",
+  "scope": "pre-existing current-corpus mismatches before this task edits; original pins retained here",
+  "count": 5,
+  "mismatches": [
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "recorded_git_blob": "e5f130a9648c285d71abc9ce659ec66fecf8f92f",
+      "actual_base_git_blob": "e0dd72649b912fca0a49434897d9c28f70022368"
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "recorded_git_blob": "8eeccef221a010129c6fc054d911b15a692be97a",
+      "actual_base_git_blob": "58827d344a4dc5e0648eb16cffc80907c000e2ab"
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "recorded_git_blob": "0b0596d5b2d5a0c26a1f746408180245ba2f2862",
+      "actual_base_git_blob": "1588d9f91e4fb55b06bab5db48efd2855f966a14"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "recorded_git_blob": "5165a6a135a6eb602d04d05d9df353177e146484",
+      "actual_base_git_blob": "4e8cc7117c6d5b76dbbb02c03f7df8a0bc9fc51e"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "recorded_git_blob": "88cfbf66086f151a5593101dbc5990bc1386b193",
+      "actual_base_git_blob": "3a00ffcd423fc8726f288a18475ccdd449cbbc65"
+    }
+  ]
+}

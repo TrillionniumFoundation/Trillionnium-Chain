@@ -1,0 +1,14 @@
+{
+  "schema": "trnm.cell.runtime-launch-observation.v1",
+  "status": "interrupted_unqualified_environment",
+  "terminal_tool_exit_code": 130,
+  "tests_executed": 0,
+  "recorder_receipt_incomplete": true,
+  "source_after_identity_claimed": false,
+  "diagnostic": "trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete",
+  "action": "Interrupt only the owned exec session with Ctrl-C; keep initial recorder JSON and raw log untouched. Restore original rustup run launcher and re-execute all selected cases on the frozen implementation source.",
+  "initial_log_sha256": "a19e7f970c4408840117d48abac01c19203f569b0828aa3c2fe5b5fa6436a22c",
+  "initial_runtime_sha256": "952dbf1d4418a91b3a6be68fdec7860d67c3dc02bd3572dfb54c036a15e5d2c8",
+  "corrected_runtime_sha256": "f1e004cc3b0feb17895258122e94bc6dffa0be1cfccb333676eb65512dfadcea",
+  "observed_utc": "2026-11-05T00:29:09.072725+00:00"
+}

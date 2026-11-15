@@ -1,0 +1,126 @@
+{
+  "scope": "Pre-isolation experimental Node binary, not final committed source; these single CPU observations do not support a strict speed ratio.",
+  "descriptor_binary_sha256": "68d9d1ba7ad5b3eb657a020a46ebd2aee576468934bdc77a011ac94faacef098",
+  "observed_passed": 119,
+  "observed_failed": 2,
+  "observed_ignored": 1,
+  "cpu_failure_code": "PUBLIC_MUTATION_CPU_BUDGET",
+  "control_logs": [
+    {
+      "name": "observer",
+      "source_log": "candidate-descriptor-node-controls/observer.log",
+      "source_log_bytes": 1170,
+      "source_log_sha256": "1467537778882e6b4d24a0513ef7231eb859a7716a47ae25cb810aaf4455c878",
+      "retained_raw_log": null,
+      "test_result_lines": [
+        "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 958 filtered out; finished in 0.00s"
+      ],
+      "explicit_ignored_lines": []
+    },
+    {
+      "name": "authenticated",
+      "source_log": "candidate-descriptor-node-controls/authenticated.log",
+      "source_log_bytes": 16088,
+      "source_log_sha256": "db1b5adde6b43dc3398dda7977ce4122fbdbbfa650abb16b8a70ce4fa4eab506",
+      "retained_raw_log": null,
+      "test_result_lines": [
+        "test result: ok. 85 passed; 0 failed; 1 ignored; 0 measured; 876 filtered out; finished in 34.45s"
+      ],
+      "explicit_ignored_lines": [
+        "test store::native_authenticated::stored_delta_stream_tests::retained_delta_stream_cost_preserves_all_paired_observations ... ignored, explicit release-only retained-delta cost observation; not a throughput gate"
+      ]
+    },
+    {
+      "name": "state",
+      "source_log": "candidate-descriptor-node-controls/state.log",
+      "source_log_bytes": 15104,
+      "source_log_sha256": "cf8fcb1eac86833647daa6b05f132d7740fe47b08f9da4443ff746649245950f",
+      "retained_raw_log": null,
+      "test_result_lines": [
+        "test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 941 filtered out; finished in 31.45s"
+      ],
+      "explicit_ignored_lines": []
+    },
+    {
+      "name": "reorg",
+      "source_log": "candidate-descriptor-node-controls/reorg.log",
+      "source_log_bytes": 791,
+      "source_log_sha256": "44a6af21b280792718b6d062a4eb3b31eaec5fc1d0b116b2ba542b5467aa03d3",
+      "retained_raw_log": null,
+      "test_result_lines": [
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 956 filtered out; finished in 6.28s"
+      ],
+      "explicit_ignored_lines": []
+    },
+    {
+      "name": "ancestry",
+      "source_log": "candidate-descriptor-node-controls/ancestry.log",
+      "source_log_bytes": 467,
+      "source_log_sha256": "ab59dfea80162849e953bfb8d88d4a1772c52ae2b292706b57a0c22e58583dbf",
+      "retained_raw_log": null,
+      "test_result_lines": [
+        "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 959 filtered out; finished in 3.50s"
+      ],
+      "explicit_ignored_lines": []
+    },
+    {
+      "name": "large-parent",
+      "source_log": "candidate-descriptor-node-controls/large-parent.log",
+      "source_log_bytes": 53532,
+      "source_log_sha256": "ddd6f20e9419597cca75a72dca80677762d6ad28b3fa9979dc0d58d4744cfcd1",
+      "retained_raw_log": "native-descriptor-large-parent.log",
+      "test_result_lines": [
+        "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 961 filtered out; finished in 36.40s"
+      ],
+      "explicit_ignored_lines": []
+    },
+    {
+      "name": "large-parent-auth",
+      "source_log": "candidate-descriptor-node-controls/large-parent-auth.log",
+      "source_log_bytes": 28277,
+      "source_log_sha256": "0663c147a98b1204a30d51de4f89369ce19c6d48b3187ccab05e31c63d076a4f",
+      "retained_raw_log": "native-descriptor-large-parent-auth.log",
+      "test_result_lines": [
+        "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 961 filtered out; finished in 19.55s"
+      ],
+      "explicit_ignored_lines": []
+    }
+  ],
+  "baseline_binary_sha256": "6f877f68c96591184ebdb1d77e0f2a938836fcc597d8b79eeec9c89f5a02cc34",
+  "baseline_logs": [
+    {
+      "source_log": "large-parent-baseline.log",
+      "source_log_bytes": 53524,
+      "source_log_sha256": "b09a5f6c6dafb0bafa5a8a75125ad9f63e6febd1493c40650942b9273aa87f17",
+      "test_result_lines": [
+        "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 958 filtered out; finished in 30.87s"
+      ],
+      "raw_parity_receipts": [
+        {
+          "retained_jsonl_line": 1,
+          "original_log_line": 5
+        },
+        {
+          "retained_jsonl_line": 2,
+          "original_log_line": 8
+        }
+      ]
+    },
+    {
+      "source_log": "large-parent-auth-baseline.log",
+      "source_log_bytes": 27642,
+      "source_log_sha256": "50928bd69d830f50426836d2f4043a5e32d54c43f8998e48b912a1175db6b4b9",
+      "test_result_lines": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 958 filtered out; finished in 21.24s"
+      ],
+      "raw_parity_receipts": [
+        {
+          "retained_jsonl_line": 3,
+          "original_log_line": 5
+        }
+      ]
+    }
+  ],
+  "baseline_receipt_rule": "All original JSON lines with schema native-large-parent-schedule-parity-v1 are copied verbatim and mapped to original log lines.",
+  "final_source_validation": "Owned by root integration; not asserted by this evidence snapshot."
+}

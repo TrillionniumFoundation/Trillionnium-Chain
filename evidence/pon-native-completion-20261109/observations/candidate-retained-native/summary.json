@@ -1,0 +1,10 @@
+{
+  "source_head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+  "source_tree": "46164cd85fff00e3a080acc29fef25a27751082b",
+  "retained_all_pass": true,
+  "strict_clippy_pass": false,
+  "selected_unique_tests": 85,
+  "ignored_tests": 2,
+  "fixed_host_contract": false,
+  "production_qualification": "HOLD_NO_GO"
+}

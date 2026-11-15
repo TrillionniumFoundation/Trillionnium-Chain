@@ -1,0 +1,23 @@
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-storage-convergence-f2568-20261109/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-storage-convergence-f2568-20261109/trillionnium/crates/trnm-pon-node)
+error[E0583]: file not found for module `execute`
+  --> crates/trnm-pon-node/src/store/storage_service/shard/plan/recovery.rs:12:1
+   |
+12 | mod execute;
+   | ^^^^^^^^^^^^
+   |
+   = help: to create the module `execute`, create file "crates/trnm-pon-node/src/store/storage_service/shard/plan/execute.rs" or "crates/trnm-pon-node/src/store/storage_service/shard/plan/execute/mod.rs"
+   = note: if there is a `mod execute` elsewhere in the crate already, import it with `use crate::...` instead
+
+warning: unused imports: `CellErrorV1` and `CellRs46StoredShardV1`
+ --> crates/trnm-pon-node/src/store/storage_service/shard/plan/recovery.rs:9:5
+  |
+9 |     CellErrorV1, CellRetainedShardPlanV1, CellRs46StoredShardV1, MAX_CELL_RETAINED_SHARD_CHUNKS_V1,
+  |     ^^^^^^^^^^^                           ^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+For more information about this error, try `rustc --explain E0583`.
+warning: `trnm-pon-node` (lib) generated 1 warning
+error: could not compile `trnm-pon-node` (lib) due to 1 previous error; 1 warning emitted
+warning: build failed, waiting for other jobs to finish...

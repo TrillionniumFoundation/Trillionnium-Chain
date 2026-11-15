@@ -1,0 +1,158 @@
+[
+  {
+    "nonce": 561,
+    "coordinate": [
+      7,
+      6,
+      4
+    ],
+    "event": "083bde38e2a44f8f488e614ff4b47ae9d895e9fec33a7966a16d2d18f92415da",
+    "ticket": "0064f72c54274e2db008608d934f0ca6381918be7ef0b176b4695405c624effa",
+    "target_passes": true,
+    "witness_sha256": "888443dd7ba6ee5489c8915e247772cd5bbcfca1a6f5404778a1151362cefd72"
+  },
+  {
+    "nonce": 605,
+    "coordinate": [
+      7,
+      5,
+      6
+    ],
+    "event": "e66012b51a786394d6de28149c67ddc28ab797a8f34c8715e6f8555a60c2ae89",
+    "ticket": "024003f1a2b881acd3cafa875f17df929b46418493504b7178edbe30c69e2f7a",
+    "target_passes": true,
+    "witness_sha256": "063ed6d47ec7fe20595373d259d487f0b909b4c87c4b370ef2fe8da840238c6e"
+  },
+  {
+    "nonce": 644,
+    "coordinate": [
+      4,
+      6,
+      7
+    ],
+    "event": "5b9f93e9ef1a83a825fb44164de4fe4624d8e37522df9632def327b6003a5428",
+    "ticket": "004bd7f435a98e57ff88bc93ca542fb29460f2e8f6de8c46c3034ab6b76fc739",
+    "target_passes": true,
+    "witness_sha256": "7dbc739e775c62b2517d8542cdd27e3a658408ed069cfcdd9462e67ccf3ca4d7"
+  },
+  {
+    "nonce": 654,
+    "coordinate": [
+      4,
+      2,
+      2
+    ],
+    "event": "e50237e3dd4c3939dff944ae4095bffc1166ac6b7381506dc07087c75596a6f8",
+    "ticket": "0222d39d89030e5af01210e038d8f8c2646db59cea9ec80b101aaf2c2bb2e15f",
+    "target_passes": true,
+    "witness_sha256": "f12da7d53ee67ee9510b7c520a254fa7cd488d74ea4142c9ff58b82fe091cbed"
+  },
+  {
+    "nonce": 764,
+    "coordinate": [
+      6,
+      4,
+      6
+    ],
+    "event": "319a8cdea7606c8a72baaf12bc274637f62b419b0447f9d7ad22988950855897",
+    "ticket": "0230c3bf21528ffd30970e42a6b15292c30cda82b0167c5004e0db8a6e1a615a",
+    "target_passes": true,
+    "witness_sha256": "8e0eb43c450468f1a59282bdd4faf4cf9822a2558abd5a622e98d98674b88b28"
+  },
+  {
+    "nonce": 770,
+    "coordinate": [
+      5,
+      2,
+      4
+    ],
+    "event": "ceb84e3820f9fa43b80ebdfa803ba3705f8cd7f82881d6755434c43cc67bbe07",
+    "ticket": "03f83ba041148b12dce0401a094b5265663685c32bfdabd976ecbbe1536e4e8e",
+    "target_passes": true,
+    "witness_sha256": "95d694dcdef47aaa33948d07aaaef0179bcdc43ceafc8b0e79aa99da4238197c"
+  },
+  {
+    "nonce": 775,
+    "coordinate": [
+      4,
+      2,
+      6
+    ],
+    "event": "80978032c2cb2e0ac2e19ee4ebe0a0fdf25ce5f5243d3ce3d2e861eaada97acc",
+    "ticket": "01a333871d10afc53bfc525bc21177c4095833322bdd3d92fe835b5d88a68239",
+    "target_passes": true,
+    "witness_sha256": "2d5157f103c40848db0d0d19d615ce5f73747ddc8ac08a89ee254540cbd7c869"
+  },
+  {
+    "nonce": 790,
+    "coordinate": [
+      5,
+      5,
+      5
+    ],
+    "event": "1977cd2ec7084b69ebf25ab589893a6e86bd8695c1f025d7b92c9c3dcf58b97d",
+    "ticket": "010cfd03dfc2c634bf15bac31c0c1368074427126b5ae642d6a4b4e22af92fad",
+    "target_passes": true,
+    "witness_sha256": "65f0d1d19b13a123d169004881b1cccc2a150513c34f1f9fef36d39dd58e1cc3"
+  },
+  {
+    "nonce": 835,
+    "coordinate": [
+      4,
+      1,
+      2
+    ],
+    "event": "66945827f9a0bcf07e280bd37a28b4a86ee358e1fd646e1a67756070cccd2309",
+    "ticket": "011be41d06f28c3c94c9c37a6c127a6501f1316e61ecd2879fe9e9a07a923b69",
+    "target_passes": true,
+    "witness_sha256": "b1d55f3a732799e6289f958254c12d123ab19ded262a26e8cfe3c8c343df926f"
+  },
+  {
+    "nonce": 863,
+    "coordinate": [
+      4,
+      4,
+      4
+    ],
+    "event": "ea3362fc699b35e4c48ccf3a44be8d44fbe0cd9f221921d9283841ed197a7141",
+    "ticket": "011cb69fa04a0dfdb84d80ce07f6ad7b47139065111d0defec8091c8797da658",
+    "target_passes": true,
+    "witness_sha256": "f3f1e2ac9b2c9433c7147afed8d0e932c4c8925d0ef402668a9d86378ac14e6f"
+  },
+  {
+    "nonce": 918,
+    "coordinate": [
+      7,
+      4,
+      7
+    ],
+    "event": "d402ce337962ccc151569e90765e92c032a4d0510559f8c838e1f95d92c421f1",
+    "ticket": "00737a09faa9f4835e380406f7ef1acfa63b06bff200f8d9a436270489d4a2c6",
+    "target_passes": true,
+    "witness_sha256": "2538cd4f90ef73a9ef059ff6bbbd695ab8af7a848211dd4e07d1c151606e28d8"
+  },
+  {
+    "nonce": 946,
+    "coordinate": [
+      4,
+      4,
+      1
+    ],
+    "event": "61a1b6cec116a0e2db9827a3e3aacb5d29c55a2a1b89efa7dd03db2321823f4c",
+    "ticket": "006963d317d6460c9f1be372c4d6faa50f5dc8524fdb01720e010914444ae4dc",
+    "target_passes": true,
+    "witness_sha256": "dd2a730557cf4dff2e447aa9a4a444323bd9c197897ed8effd5de011ddc2b6ee"
+  },
+  {
+    "nonce": 998,
+    "coordinate": [
+      6,
+      2,
+      7
+    ],
+    "event": "a51f25d860f7b55c00bc401403cfaf094ef634893373f178d237ec3bcd1e5e34",
+    "ticket": "0039cae05bc3754516104b25b6da8b010ccc93a6d94211b910c9bce531711138",
+    "target_passes": true,
+    "witness_sha256": "6d2f93e9dad89a674799c2923ebab99ea02d146443a0eb559095ec20354b0aa8"
+  }
+]

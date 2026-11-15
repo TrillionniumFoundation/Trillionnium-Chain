@@ -1,0 +1,94 @@
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling generic-array v0.14.7
+   Compiling proc-macro2 v1.0.106
+   Compiling cfg-if v1.0.4
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+   Compiling zeroize v1.8.2
+   Compiling cpufeatures v0.2.17
+   Compiling syn v2.0.117
+   Compiling find-msvc-tools v0.1.9
+   Compiling shlex v1.3.0
+   Compiling cc v1.2.59
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling cmov v0.5.4
+   Compiling ctutils v0.4.6
+   Compiling digest v0.10.7
+   Compiling pkg-config v0.3.32
+   Compiling serde_core v1.0.228
+   Compiling vcpkg v0.2.15
+   Compiling semver v1.0.27
+   Compiling libsqlite3-sys v0.37.0
+   Compiling rustc_version v0.4.1
+   Compiling hybrid-array v0.4.15
+   Compiling winnow v1.0.4
+   Compiling hashbrown v0.16.1
+   Compiling equivalent v1.0.2
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling indexmap v2.13.1
+   Compiling curve25519-dalek v4.1.3
+   Compiling sha2 v0.10.9
+   Compiling bitflags v2.11.0
+   Compiling foldhash v0.2.0
+   Compiling autocfg v1.5.1
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling num-traits v0.2.19
+   Compiling crypto-common v0.2.2
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling signature v2.2.0
+   Compiling libc v0.2.184
+   Compiling cfg_aliases v0.2.2
+   Compiling subtle v2.6.1
+   Compiling serde v1.0.228
+   Compiling borsh v1.8.0
+   Compiling ed25519 v2.2.3
+   Compiling digest v0.11.3
+   Compiling hashlink v0.11.1
+   Compiling proc-macro-crate v3.5.0
+   Compiling serde_derive v1.0.228
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling once_cell v1.21.4
+   Compiling thiserror v1.0.69
+   Compiling smallvec v1.15.1
+   Compiling fallible-iterator v0.3.0
+   Compiling zmij v1.0.21
+   Compiling rusqlite v0.39.0
+   Compiling borsh-derive v1.8.0
+   Compiling ed25519-dalek v2.2.0
+   Compiling thiserror-impl v1.0.69
+   Compiling keccak v0.2.2
+   Compiling sponge-cursor v0.1.0
+   Compiling anyhow v1.0.103
+   Compiling serde_json v1.0.149
+   Compiling shake v0.1.0
+   Compiling module-lattice v0.2.3
+   Compiling signature v3.0.0
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.0
+   Compiling rustix v1.1.4
+   Compiling hex v0.4.3
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-protocol)
+   Compiling ml-dsa v0.1.1
+   Compiling linux-raw-sys v0.12.1
+   Compiling getrandom v0.4.2
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-task-kernel)
+   Compiling fs2 v0.4.3
+   Compiling trnm-verification-profiles v0.1.0 (/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-verification-profiles)
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-transport v0.1.0 (/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-transport)
+   Compiling trnm-mempool v0.1.0 (/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-mempool)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-pon-node)
+rustc-LLVM ERROR: IO failure on output stream: No space left on device
+error: could not compile `trnm-pon-node` (lib test)
+
+Caused by:
+  process didn't exit successfully: `/workspace/scratch/4eec83b6ae24/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc --crate-name trnm_pon_node --edition=2021 crates/trnm-pon-node/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,link -C opt-level=3 -C embed-bitcode=no -C debuginfo=2 -C debug-assertions=on --test --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "pq-native-openssl"))' -C metadata=6f77d4e7a84b1626 -C extra-filename=-bc529951eafca1c3 --out-dir /workspace/scratch/abae1861b451/frontier-target/debug/deps -L dependency=/workspace/scratch/abae1861b451/frontier-target/debug/deps --extern fs2=/workspace/scratch/abae1861b451/frontier-target/debug/deps/libfs2-c204fb47daf20c57.rlib --extern hex=/workspace/scratch/abae1861b451/frontier-target/debug/deps/libhex-1558f6adc06e3fa8.rlib --extern libc=/workspace/scratch/abae1861b451/frontier-target/debug/deps/liblibc-b1f611c28b7e9ae9.rlib --extern rusqlite=/workspace/scratch/abae1861b451/frontier-target/debug/deps/librusqlite-babe8a83cd7d5d71.rlib --extern rustix=/workspace/scratch/abae1861b451/frontier-target/debug/deps/librustix-08f06c2eab418122.rlib --extern serde=/workspace/scratch/abae1861b451/frontier-target/debug/deps/libserde-3bd1ca99d837caa4.rlib --extern serde_json=/workspace/scratch/abae1861b451/frontier-target/debug/deps/libserde_json-f0d4891802ba697c.rlib --extern sha2=/workspace/scratch/abae1861b451/frontier-target/debug/deps/libsha2-15a05a0cfa4bff0d.rlib --extern tempfile=/workspace/scratch/abae1861b451/frontier-target/debug/deps/libtempfile-3587518b5ee06720.rlib --extern trnm_crypto_primitives=/workspace/scratch/abae1861b451/frontier-target/debug/deps/libtrnm_crypto_primitives-6be6150aa30cfee2.rlib --extern trnm_data_availability=/workspace/scratch/abae1861b451/frontier-target/debug/deps/libtrnm_data_availability-d636972079ae3b6f.rlib --extern trnm_mempool=/workspace/scratch/abae1861b451/frontier-target/debug/deps/libtrnm_mempool-6b692f2ffb93df30.rlib --extern trnm_mvcc_fee=/workspace/scratch/abae1861b451/frontier-target/debug/deps/libtrnm_mvcc_fee-d61d7992147668fe.rlib --extern trnm_protocol=/workspace/scratch/abae1861b451/frontier-target/debug/deps/libtrnm_protocol-53c3856c5b953f7c.rlib --extern trnm_service_settlement=/workspace/scratch/abae1861b451/frontier-target/debug/deps/libtrnm_service_settlement-546a47c7cc063bea.rlib --extern trnm_sqlite_io_boundary=/workspace/scratch/abae1861b451/frontier-target/debug/deps/libtrnm_sqlite_io_boundary-be4d51c2738d14f1.rlib --extern trnm_transport=/workspace/scratch/abae1861b451/frontier-target/debug/deps/libtrnm_transport-a3ce364ac5999f75.rlib --extern zeroize=/workspace/scratch/abae1861b451/frontier-target/debug/deps/libzeroize-cafe2ada39f15181.rlib -L native=/workspace/scratch/abae1861b451/frontier-target/debug/build/libsqlite3-sys-0b4e9332de508ef1/out -L native=/workspace/scratch/abae1861b451/frontier-target/debug/build/trnm-sqlite-io-boundary-1f7024ebc7559ac9/out` (exit status: 101)

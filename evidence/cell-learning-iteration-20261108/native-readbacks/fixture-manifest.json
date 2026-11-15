@@ -1,0 +1,108 @@
+{
+  "actual_model_execution_accepted": false,
+  "exports": {
+    "adopted_acked": {
+      "bytes": 13520,
+      "checkpoint_bytes": 2566,
+      "checkpoint_capture": {
+        "byte_length": 3965,
+        "byte_offset": 59539,
+        "source_log": "source-01.stdout"
+      },
+      "checkpoint_export_sha256": "318faa89ed92e1a12e84b43709f856eb2f470bdd6c5064785b481795a960d8e5",
+      "checkpoint_sha256": "b4580307b7ae1d06d7589eb3df083d4ef8380d9c38d53a1147533af488db25ad",
+      "fixture_expected_sha256": "0bc6ca87adecd88ccffd20f6e717d6f4a60c8b093262a40f432fc2c288c473d0",
+      "fixture_freeze_sha256": "2e70907686e0d34256bed244fb08ac949a0618c1ac0d5a3a6e097ae4d30005a0",
+      "native_evaluation_profile": "efe77b201dc216c0edf435a227df2b2898d3f6ea1ff16e5d4d0d4ec0cf593271",
+      "native_initial_head": "e4ed50fa57282b547aaf2a2e2a9dc8aea2941e73620f10ebcc28ebbac5084d6a",
+      "native_learning_head": "4c9dbf3401e922f62e70402241357ccddeb058606da500a784ba40c1037cea00",
+      "readback_capture": {
+        "byte_length": 13520,
+        "byte_offset": 45971,
+        "source_log": "source-01.stdout"
+      },
+      "sha256": "7cadb6df6bcda64cc9fc7a21e7850e08265812463da106609b09bfda0934f561"
+    },
+    "adopted_pending": {
+      "bytes": 13826,
+      "checkpoint_bytes": 2566,
+      "checkpoint_capture": {
+        "byte_length": 3965,
+        "byte_offset": 41960,
+        "source_log": "source-01.stdout"
+      },
+      "checkpoint_export_sha256": "318faa89ed92e1a12e84b43709f856eb2f470bdd6c5064785b481795a960d8e5",
+      "checkpoint_sha256": "b4580307b7ae1d06d7589eb3df083d4ef8380d9c38d53a1147533af488db25ad",
+      "fixture_expected_sha256": "8ea929a3d2d4b69d94b59495728d82504c849dde9b5caa01e93d97d274596b86",
+      "fixture_freeze_sha256": "2e70907686e0d34256bed244fb08ac949a0618c1ac0d5a3a6e097ae4d30005a0",
+      "native_evaluation_profile": "efe77b201dc216c0edf435a227df2b2898d3f6ea1ff16e5d4d0d4ec0cf593271",
+      "native_initial_head": "e4ed50fa57282b547aaf2a2e2a9dc8aea2941e73620f10ebcc28ebbac5084d6a",
+      "native_learning_head": "4c9dbf3401e922f62e70402241357ccddeb058606da500a784ba40c1037cea00",
+      "readback_capture": {
+        "byte_length": 13826,
+        "byte_offset": 28084,
+        "source_log": "source-01.stdout"
+      },
+      "sha256": "c26b9b3031d108a1892760ba88453fa0982c350a669452db09f57ab0de72fe66"
+    },
+    "retained_acked": {
+      "bytes": 11838,
+      "checkpoint_bytes": 2341,
+      "checkpoint_capture": {
+        "byte_length": 3665,
+        "byte_offset": 91820,
+        "source_log": "source-01.stdout"
+      },
+      "checkpoint_export_sha256": "4a89b80f336605d64ec4381b9df6ac5fd52a0a1cee3ad2b314cacdbfe1606c07",
+      "checkpoint_sha256": "7e61b75aee24347e4d38eaccdba6a67229466cba2bab689510bc6243c5e588aa",
+      "fixture_expected_sha256": "9e4f8c76d5a47e4d9fe8cb8e00862e2e21697c4ffe182e3c03570bb0433d10a1",
+      "fixture_freeze_sha256": "2e70907686e0d34256bed244fb08ac949a0618c1ac0d5a3a6e097ae4d30005a0",
+      "native_evaluation_profile": "efe77b201dc216c0edf435a227df2b2898d3f6ea1ff16e5d4d0d4ec0cf593271",
+      "native_initial_head": "e4ed50fa57282b547aaf2a2e2a9dc8aea2941e73620f10ebcc28ebbac5084d6a",
+      "native_learning_head": "c84815e8b490d2b3329eae15ae74bc13c3c8e64b8363f31ed6629acf04016197",
+      "readback_capture": {
+        "byte_length": 11838,
+        "byte_offset": 79933,
+        "source_log": "source-01.stdout"
+      },
+      "sha256": "8174678882f4b60cca9b8eccbc332d3bdfed48013f4ff8642e928310258a9220"
+    },
+    "retained_pending": {
+      "bytes": 12160,
+      "checkpoint_bytes": 2341,
+      "checkpoint_capture": {
+        "byte_length": 3665,
+        "byte_offset": 76221,
+        "source_log": "source-01.stdout"
+      },
+      "checkpoint_export_sha256": "4a89b80f336605d64ec4381b9df6ac5fd52a0a1cee3ad2b314cacdbfe1606c07",
+      "checkpoint_sha256": "7e61b75aee24347e4d38eaccdba6a67229466cba2bab689510bc6243c5e588aa",
+      "fixture_expected_sha256": "eb94f15cc0bc802e043b85599a062afacc8ed5e0675f58640978ef83f89167a8",
+      "fixture_freeze_sha256": "2e70907686e0d34256bed244fb08ac949a0618c1ac0d5a3a6e097ae4d30005a0",
+      "native_evaluation_profile": "efe77b201dc216c0edf435a227df2b2898d3f6ea1ff16e5d4d0d4ec0cf593271",
+      "native_initial_head": "e4ed50fa57282b547aaf2a2e2a9dc8aea2941e73620f10ebcc28ebbac5084d6a",
+      "native_learning_head": "c84815e8b490d2b3329eae15ae74bc13c3c8e64b8363f31ed6629acf04016197",
+      "readback_capture": {
+        "byte_length": 12160,
+        "byte_offset": 64010,
+        "source_log": "source-01.stdout"
+      },
+      "sha256": "b9e44f11442b3c20ede95f533c9d5a1345469b6df27748029f1601dabc2d4da0"
+    }
+  },
+  "independent_freeze_custody_accepted": false,
+  "native_source": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+  "native_test_pass_not_inferred_from_capture": true,
+  "pins_are_fixture_derived": true,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "schema": "trnm-cell-learning-native-fixtures-v2",
+  "scope": "original-native-engineering-fixtures-not-production",
+  "source_logs": [
+    {
+      "bytes": 108204,
+      "file": "source-01.stdout",
+      "sha256": "e0e75da06c749313b986eb10daeef0a786d148d76381023c10bb681d5a3bd36a"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+test_actual_pilot_registers_all_36_original_controls_once (__main__.TypedPendingWorkerWiringTests.test_actual_pilot_registers_all_36_original_controls_once) ... ok
+test_each_original_import_must_be_present_unconditional_and_unique (__main__.TypedPendingWorkerWiringTests.test_each_original_import_must_be_present_unconditional_and_unique) ... ok
+test_each_original_module_refuses_missing_renamed_duplicate_skipped_or_stubbed_controls (__main__.TypedPendingWorkerWiringTests.test_each_original_module_refuses_missing_renamed_duplicate_skipped_or_stubbed_controls) ... ok
+test_existing_pilot_ci_command_cannot_be_removed_duplicated_hidden_or_moved (__main__.TypedPendingWorkerWiringTests.test_existing_pilot_ci_command_cannot_be_removed_duplicated_hidden_or_moved) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.202s
+
+OK

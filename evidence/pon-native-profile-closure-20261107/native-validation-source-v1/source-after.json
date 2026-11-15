@@ -1,0 +1,25 @@
+{
+  "drivers": {
+    "driver_relative_path": "formal/pon-nakamoto-v1/experiments/validate_grouped_profile_closure_v1.py",
+    "driver_sha256": "84d7264a9e1572cc3f53a4ef1d0400787bc88fa98b76cfe4dfc84dbc408716f3",
+    "frozen_original_driver_sha256": "f32c38ce97270511783051b48b1249c7ce0e93af0c4e728077cdddfaeef64b64",
+    "loaded_driver_sha256": "84d7264a9e1572cc3f53a4ef1d0400787bc88fa98b76cfe4dfc84dbc408716f3",
+    "loaded_original_driver_sha256": "f32c38ce97270511783051b48b1249c7ce0e93af0c4e728077cdddfaeef64b64",
+    "original_driver_relative_path": "formal/pon-nakamoto-v1/experiments/validate_grouped_fresh_work_v0.py",
+    "original_driver_sha256": "f32c38ce97270511783051b48b1249c7ce0e93af0c4e728077cdddfaeef64b64"
+  },
+  "source": {
+    "base": null,
+    "candidate": "7e941e3c148008ab7264ecc7a3148153183fa6b5",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "7e941e3c148008ab7264ecc7a3148153183fa6b5",
+    "tested_tree": "faa6ab5f779ff9372468316de1be4c97a5481808",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1084419247,
+    "tracked_entries": 11434,
+    "tracked_worktree_verified": true
+  },
+  "status": "PASS"
+}

@@ -1,0 +1,90 @@
+{
+  "artifacts": [
+    {
+      "bytes": 1806,
+      "path": "reference-controls.json",
+      "sha256": "c18b19e99a9052a8fbf3b374677a0f00ed50a78a55c86724fcf5ca7deef0c780"
+    },
+    {
+      "bytes": 1459,
+      "path": "reference-tests.log",
+      "sha256": "afa53ea53b8d92a8f7c04d603f545b9103308bafb0aeeba54cca0cec29371e8b"
+    },
+    {
+      "bytes": 423,
+      "path": "research-source-after.json",
+      "sha256": "6d2f8a8ab76cc2d3f8ed5e591c72e7b2897697aedc11751dcff8966b64bf1ea5"
+    },
+    {
+      "bytes": 423,
+      "path": "research-source-before.json",
+      "sha256": "6d2f8a8ab76cc2d3f8ed5e591c72e7b2897697aedc11751dcff8966b64bf1ea5"
+    }
+  ],
+  "current_native_cost_qualified": false,
+  "error": {
+    "message": "FROZEN_REFERENCE_CONTROLS_FAILED",
+    "type": "ValueError"
+  },
+  "head_at_execution": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+  "head_tree_at_execution": "72b106b4458299c37da146b0218b8f5276195b6d",
+  "original_current_contract": {
+    "error": {
+      "message": "SOURCE_BYTES:config/pon/pq-cross-branch-corpus-v1.json",
+      "type": "ValueError"
+    },
+    "matched": false
+  },
+  "passed_research_controls": false,
+  "qualification": {
+    "all_legal_algorithm_cost_lower_bound": false,
+    "joint_cp_cq_cg_proof": false,
+    "lifetime_security_bound": null,
+    "native_time_daa_upgrade": false,
+    "production_activation": false,
+    "real_hepta_product_loop": false,
+    "same_iteration_deployment": false,
+    "variable_u_native_relation": false
+  },
+  "reference": {
+    "baseline_contract_check": {
+      "contract_and_source_consistent": true,
+      "contract_digest": "6d71aced74e18bcb025653ba0f03efc8475d014de04ed4563f2ba3545b213ed7",
+      "native_binary_executed": false,
+      "qualification": {
+        "all_legal_algorithm_cost_lower_bound": false,
+        "joint_cp_cq_cg_proof": false,
+        "lifetime_security_bound": null,
+        "native_time_daa_upgrade": false,
+        "production_activation": false,
+        "real_hepta_product_loop": false,
+        "same_iteration_deployment": false,
+        "variable_u_native_relation": false
+      },
+      "schema": "pon-work-cost-contract-check-v1",
+      "source_commit": "b16bae2824e6c8236ef2011fc93a74df3ac7f039",
+      "source_tree": "49392edc1b49a1ad92c1956f8a37c741d835677a",
+      "status": "HOLD_NO_GO",
+      "verified_source_bytes": 27613671,
+      "verified_source_entries": 1747
+    },
+    "current_native_cost_qualified": false,
+    "directory": "/workspace/scratch/7f73fe002713/frozen-work-baseline",
+    "native_binary_executed": false,
+    "native_tree": "bf84f89b235adfcffcb0d3540c22c120f4031e13",
+    "production_activation": false,
+    "schema": "pon-frozen-work-reference-v1",
+    "scope": "fixed historical source contract; not current native cost qualification",
+    "source_commit": "b16bae2824e6c8236ef2011fc93a74df3ac7f039",
+    "source_tree": "49392edc1b49a1ad92c1956f8a37c741d835677a"
+  },
+  "schema": "pon-work-time-frozen-replay-execution-v1",
+  "scope": "current research replay of fixed historical W1; no current native cost qualification",
+  "stage_results": [
+    {
+      "passed": true,
+      "stage": "current-research-source-after"
+    }
+  ],
+  "status": "HOLD_NO_GO"
+}

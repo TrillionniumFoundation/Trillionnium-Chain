@@ -1,0 +1,7 @@
+Packaging-only integrity reader, attempt 1 (not native execution): exit 1.
+
+Traceback (most recent call last):
+  File "<stdin>", line 22, in <module>
+AssertionError: store::native_authenticated::post_write_readback::tests::frontier::pre_write::publish_continuation_preserves_real_sql_and_reduces_graph_callbacks
+
+The reader incorrectly required inline "... ok" for every selector. The untouched historical stdout contains this test's actual diagnostic after "...", then "ok" on the next line, before the next named test. The second packaging reader preserves that legitimate libtest form and still requires this bounded test block to end with ok. No native test was rerun and no historical log was edited.

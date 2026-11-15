@@ -1,0 +1,72 @@
+{
+  "base_commit": "01e2c4c010c3cf65d1cf094368961efc1abab445",
+  "derived_changes": [
+    "Port only 10 reserved aliases, iterative nested dictionary/list walker and its six document invocation points",
+    "Do not import pq_lifetime_budget or require #790 lifetime register/configuration",
+    "Add six independently literal test methods; all 37 original named tests and their helper method ASTs preserved"
+  ],
+  "files": {
+    "scripts/ci/pq_chain_claim_guard.py": {
+      "after": {
+        "bytes": 12839,
+        "git_blob": "1348e0389a5a2084160e319f4758f13551ea88b9",
+        "sha256": "d3609756533b9646d39e31dea7a4d7eb85f586f7d7a2ac8a9e3e1e90989ba4d5"
+      },
+      "before": {
+        "bytes": 11102,
+        "git_blob": "42b8f37db5933e89033cac40a2544e02f10ae7a8",
+        "sha256": "4e72027352def4457e8d232e66b6d528ea62d52644b67e77debbfae5af97e6c2"
+      }
+    },
+    "scripts/ci/test_pq_chain_claim_guard.py": {
+      "after": {
+        "bytes": 24516,
+        "git_blob": "f21aac2a295f45997e0dc0c09f480b65e5f5aa6f",
+        "sha256": "eb5852d6bcb66a7a2a22620b1d8f9ad620515ce399fed7dd7fab3a2e4e6566be"
+      },
+      "before": {
+        "bytes": 19635,
+        "git_blob": "3bead7aae5466045ab7530575847a5a3549d8367",
+        "sha256": "ef6b016725e24b61219f9d75676d53b0de1348f9049ab307a41b034033abf5d6"
+      }
+    }
+  },
+  "green": {
+    "expected_failures": 0,
+    "log_sha256": "e40319677fc8e7d2d94b246d38aa7e5f8ac131af63a0782a93982b9d6917b42b",
+    "named_tests": 43,
+    "path": "evidence/reserved-alias-green-01.json",
+    "skipped": 0,
+    "successful_names": 43
+  },
+  "lifetime_register_validated": false,
+  "native_validation": false,
+  "new_test_methods": [
+    "TestClaimGuard.test_explicit_false_null_and_nested_hold_claims_stay_unqualified",
+    "TestClaimGuard.test_reserved_boolean_alias_requires_exact_false",
+    "TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero",
+    "TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document",
+    "TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists",
+    "TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document"
+  ],
+  "production_activation": false,
+  "retained_red": {
+    "failing_subtests": 131,
+    "log_sha256": "437da698cbef7b8a9684072debf986931aa56faf6ee93487e5fc2fb60c3d5ebf",
+    "named_failed_tests": 5,
+    "named_tests": 43,
+    "path": "evidence/reserved-alias-red-01.json"
+  },
+  "schema": "authority-reserved-alias-port-provenance-v1",
+  "scope": "Isolated fetched and derived Python guard controls only; caller must run project preflight, refresh source pins and execute required integration gates in the actual repository.",
+  "test_methods_original": 37,
+  "upstream_ast_identical": {
+    "LIFETIME_CLAIM_FLAGS": true,
+    "LIFETIME_CLAIM_VALUES": true,
+    "refuse_lifetime_promotion": true
+  },
+  "upstream_fix_commit": "88568e2511fcf166e6824947ac97b06b72104385",
+  "upstream_fix_path": "scripts/ci/pq_chain_claim_guard.py",
+  "whole_chain_pq_qualified": false,
+  "whole_repository_validation": false
+}

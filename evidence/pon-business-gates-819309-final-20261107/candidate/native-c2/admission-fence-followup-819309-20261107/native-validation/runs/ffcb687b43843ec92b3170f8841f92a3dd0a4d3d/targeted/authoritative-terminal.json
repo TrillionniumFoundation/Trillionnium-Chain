@@ -1,0 +1,89 @@
+{
+  "schema": "trnm-authoritative-native-terminal-v1",
+  "observed_utc": "2026-11-07T22:27:51.643838+00:00",
+  "phase": "targeted",
+  "commit": "ffcb687b43843ec92b3170f8841f92a3dd0a4d3d",
+  "tree": "73dcb40e7021bb7f18d1ddb75fd26a53d0e1201a",
+  "authoritative_status": {
+    "at_unix_ms": 1794090409780,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1b8120837-12894-d32",
+    "launch_nonce": "8ff01d01427a95d56230e2cf99dee06e",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 42078,
+        "stored": 42078
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "manifest": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/manifest.json",
+    "bytes": 101118,
+    "sha256": "5c6a5e3ef49c9eb162b9f7aafb729c59da5de3311bf84e88e91b4c1f67643f2a"
+  },
+  "source_receipts": {
+    "before": {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/source-before.json",
+      "bytes": 423,
+      "sha256": "1bf17f697e533ba4608a576fd5bd7b051980a0887d5e5daf1245ad1b63ed6721"
+    },
+    "after": {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/source-after.json",
+      "bytes": 423,
+      "sha256": "1bf17f697e533ba4608a576fd5bd7b051980a0887d5e5daf1245ad1b63ed6721"
+    },
+    "byte_identical": true
+  },
+  "binary_before": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/binary-before.json",
+    "bytes": 23021,
+    "sha256": "15ba6b766d6d7ff04ae9de526dbe714afcd71721d2ce74a187b84ff280dc06dd"
+  },
+  "binary_after": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/binary-after.json",
+    "bytes": 23021,
+    "sha256": "15ba6b766d6d7ff04ae9de526dbe714afcd71721d2ce74a187b84ff280dc06dd"
+  },
+  "all_binaries_byte_identical": true,
+  "verified_outer_summary_totals": {
+    "passed": 16,
+    "failed": 0,
+    "ignored": 0
+  },
+  "incomplete_outer_selectors": [],
+  "result": "TARGETED_NATIVE_PASS_ORIGINAL_GATES_UNQUALIFIED",
+  "all_declared_exact_passed": true,
+  "qualification": {
+    "original_business_gates": false,
+    "history_4105": false,
+    "four_second_pressure": false,
+    "throughput": false,
+    "whole_chain_quantum_security": false
+  },
+  "no_favorable_rerun": true
+}

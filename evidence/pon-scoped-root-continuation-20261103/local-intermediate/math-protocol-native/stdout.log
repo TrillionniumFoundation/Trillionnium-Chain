@@ -1,0 +1,14 @@
+
+running 9 tests
+test pon_wire::state_root_arithmetic::tests::complete_inputs_match_original_across_random_changes_and_reordered_rows ... ok
+test pon_wire::state_root_arithmetic::tests::exact_string_eligibility_excludes_escapes_controls_and_non_ascii_wire_bytes ... ok
+test pon_wire::state_root_arithmetic::tests::exact_string_hits_cannot_publish_after_failure_collision_or_abandonment ... ok
+test pon_wire::state_root_arithmetic::tests::exact_strings_require_full_current_keys_values_and_complete_row_sets ... ok
+test pon_wire::state_root_arithmetic::tests::exact_strings_share_the_existing_pool_with_tree_priority_and_no_replacement_credit ... ok
+test pon_wire::state_root_arithmetic::tests::incomplete_sources_and_original_wire_limits_publish_no_partial_material ... ok
+test pon_wire::state_root_arithmetic::tests::large_values_reuse_only_identical_complete_leaf_lists ... ok
+test pon_wire::state_root_arithmetic::tests::retention_refusal_and_eviction_preserve_root_and_existing_budget ... ok
+test pon_wire::state_root_arithmetic::tests::single_partition_forks_collision_checks_and_replacement_use_original_roots ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 46 filtered out; finished in 0.82s
+

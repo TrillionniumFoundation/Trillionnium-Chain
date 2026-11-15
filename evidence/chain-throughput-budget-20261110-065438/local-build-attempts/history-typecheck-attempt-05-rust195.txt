@@ -1,0 +1,72 @@
+    Checking typenum v1.20.1
+    Checking cfg-if v1.0.4
+    Checking zeroize v1.9.1
+    Checking generic-array v0.14.7
+    Checking block-buffer v0.10.4
+    Checking crypto-common v0.1.7
+    Checking cmov v0.5.4
+    Checking ctutils v0.4.6
+    Checking digest v0.10.7
+    Checking cpufeatures v0.2.17
+    Checking sha2-asm v0.6.4
+    Checking hybrid-array v0.4.15
+    Checking sha2 v0.10.9
+   Compiling curve25519-dalek v4.1.3
+    Checking serde_core v1.0.228
+    Checking bitflags v2.11.0
+    Checking crypto-common v0.2.2
+    Checking subtle v2.6.1
+    Checking foldhash v0.2.0
+    Checking signature v2.2.0
+    Checking ed25519 v2.2.3
+    Checking hashbrown v0.17.1
+    Checking digest v0.11.3
+    Checking zmij v1.0.21
+    Checking libc v0.2.184
+    Checking memchr v2.8.0
+    Checking itoa v1.0.18
+    Checking serde_json v1.0.149
+    Checking serde v1.0.228
+    Checking num-traits v0.2.19
+    Checking ed25519-dalek v2.2.0
+    Checking hashlink v0.12.2
+    Checking libsqlite3-sys v0.39.0
+    Checking keccak v0.2.2
+    Checking smallvec v1.15.1
+    Checking fallible-iterator v0.3.0
+    Checking fallible-streaming-iterator v0.1.9
+    Checking sponge-cursor v0.1.0
+    Checking shake v0.1.0
+    Checking rusqlite v0.41.0
+    Checking thiserror v1.0.69
+    Checking module-lattice v0.2.3
+    Checking signature v3.0.0
+    Checking hex v0.4.3
+    Checking trnm-protocol v0.1.0 (/workspace/scratch/0654386882cd/chain-throughput/trillionnium/crates/trnm-protocol)
+    Checking ml-dsa v0.1.1
+    Checking borsh v1.8.0
+    Checking anyhow v1.0.103
+    Checking trnm-crypto-primitives v0.1.0 (/workspace/scratch/0654386882cd/chain-throughput/trillionnium/crates/trnm-crypto-primitives)
+    Checking linux-raw-sys v0.12.1
+    Checking rustix v1.1.4
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/0654386882cd/chain-throughput/trillionnium/crates/trnm-sqlite-io-boundary)
+    Checking getrandom v0.4.2
+    Checking trnm-task-kernel v0.1.0 (/workspace/scratch/0654386882cd/chain-throughput/trillionnium/crates/trnm-task-kernel)
+    Checking getrandom v0.2.17
+    Checking fs2 v0.4.3
+    Checking trnm-verification-profiles v0.1.0 (/workspace/scratch/0654386882cd/chain-throughput/trillionnium/crates/trnm-verification-profiles)
+    Checking fastrand v2.3.0
+    Checking once_cell v1.21.4
+    Checking tempfile v3.27.0
+    Checking trnm-mvcc-fee v0.1.0 (/workspace/scratch/0654386882cd/chain-throughput/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-data-availability v0.1.0 (/workspace/scratch/0654386882cd/chain-throughput/trillionnium/crates/trnm-data-availability)
+    Checking trnm-service-settlement v0.1.0 (/workspace/scratch/0654386882cd/chain-throughput/trillionnium/crates/trnm-service-settlement)
+    Checking nix v0.30.1
+    Checking trnm-release-bundle v0.1.0 (/workspace/scratch/0654386882cd/chain-throughput/trillionnium/crates/trnm-release-bundle)
+    Checking trnm-transport v0.1.0 (/workspace/scratch/0654386882cd/chain-throughput/trillionnium/crates/trnm-transport)
+    Checking trnm-mempool v0.1.0 (/workspace/scratch/0654386882cd/chain-throughput/trillionnium/crates/trnm-mempool)
+    Checking trnm-pon-node v0.1.0 (/workspace/scratch/0654386882cd/chain-throughput/trillionnium/crates/trnm-pon-node)
+error: could not compile `trnm-pon-node` (lib test)
+
+Caused by:
+  process didn't exit successfully: `/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustc --crate-name trnm_pon_node --edition=2021 crates/trnm-pon-node/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,metadata -C embed-bitcode=no --test --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "pq-native-openssl", "pq-root-v3"))' -C metadata=ecdf52a37e9737d8 -C extra-filename=-80661f54cf2e5fd7 --out-dir /workspace/scratch/0654386882cd/target/debug/deps -C strip=debuginfo -L dependency=/workspace/scratch/0654386882cd/target/debug/deps --extern fs2=/workspace/scratch/0654386882cd/target/debug/deps/libfs2-542632ca917dd222.rmeta --extern hex=/workspace/scratch/0654386882cd/target/debug/deps/libhex-13f436a78953d7a3.rmeta --extern libc=/workspace/scratch/0654386882cd/target/debug/deps/liblibc-d2f63c64b79d7705.rmeta --extern nix=/workspace/scratch/0654386882cd/target/debug/deps/libnix-0854082bed2e84db.rmeta --extern rusqlite=/workspace/scratch/0654386882cd/target/debug/deps/librusqlite-ae88dd8b4ab398f6.rmeta --extern rustix=/workspace/scratch/0654386882cd/target/debug/deps/librustix-29ae08120353d122.rmeta --extern serde=/workspace/scratch/0654386882cd/target/debug/deps/libserde-d4356facdf2031e6.rmeta --extern serde_json=/workspace/scratch/0654386882cd/target/debug/deps/libserde_json-5b5ee85eaabfde07.rmeta --extern sha2=/workspace/scratch/0654386882cd/target/debug/deps/libsha2-c46f3ea90ef97830.rmeta --extern tempfile=/workspace/scratch/0654386882cd/target/debug/deps/libtempfile-e3d594e5c59c2a4c.rmeta --extern trnm_crypto_primitives=/workspace/scratch/0654386882cd/target/debug/deps/libtrnm_crypto_primitives-4154addf37bcb62a.rmeta --extern trnm_data_availability=/workspace/scratch/0654386882cd/target/debug/deps/libtrnm_data_availability-0b03aba0ec324691.rmeta --extern trnm_mempool=/workspace/scratch/0654386882cd/target/debug/deps/libtrnm_mempool-fd57549684f458a6.rmeta --extern trnm_mvcc_fee=/workspace/scratch/0654386882cd/target/debug/deps/libtrnm_mvcc_fee-dff330b8d8a2fa02.rmeta --extern trnm_protocol=/workspace/scratch/0654386882cd/target/debug/deps/libtrnm_protocol-a4be4db836dc7fd1.rmeta --extern trnm_release_bundle=/workspace/scratch/0654386882cd/target/debug/deps/libtrnm_release_bundle-67c5f0b103a30f9d.rmeta --extern trnm_service_settlement=/workspace/scratch/0654386882cd/target/debug/deps/libtrnm_service_settlement-54de63d21f1243d2.rmeta --extern trnm_sqlite_io_boundary=/workspace/scratch/0654386882cd/target/debug/deps/libtrnm_sqlite_io_boundary-adbc15bc0d878d71.rmeta --extern trnm_transport=/workspace/scratch/0654386882cd/target/debug/deps/libtrnm_transport-9c44e23b44ed5be6.rmeta --extern zeroize=/workspace/scratch/0654386882cd/target/debug/deps/libzeroize-b63ac1cfe71598d3.rmeta -L native=/workspace/scratch/0654386882cd/target/debug/build/libsqlite3-sys-16f01faf59db8a05/out -L native=/workspace/scratch/0654386882cd/target/debug/build/sha2-asm-7b2123667de20e96/out -L native=/workspace/scratch/0654386882cd/target/debug/build/sha2-asm-7b2123667de20e96/out -L native=/workspace/scratch/0654386882cd/target/debug/build/trnm-sqlite-io-boundary-8c9f7911c283d4ce/out` (signal: 9, SIGKILL: kill)

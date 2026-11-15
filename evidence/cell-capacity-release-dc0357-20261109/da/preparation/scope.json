@@ -1,0 +1,29 @@
+{
+  "attempt01": {
+    "failed": 2,
+    "log": "preparation/da-lib-attempt01.log",
+    "note": "The two original test failures remain failures. No retroactive upgrade from the later filtered runs or C2 gate.",
+    "outcome": "FAILED",
+    "passed": 759,
+    "test_threads": 2
+  },
+  "attempt02": {
+    "filtered_out": 760,
+    "log": "preparation/da-lib-attempt02.log",
+    "outcome": "PASS",
+    "passed": 1,
+    "scope": "One exact writer-lock/deadline test only.",
+    "test_threads": 1
+  },
+  "attempt03": {
+    "filtered_out": 760,
+    "log": "preparation/da-lib-attempt03.log",
+    "outcome": "PASS",
+    "passed": 1,
+    "scope": "One exact retained 512-owner/epoch test only.",
+    "test_threads": 1
+  },
+  "runner_scope": "run_da_lib-retained-final.py is the final retained preparation runner, including the later exact-test filter. The original preparation start records did not pin a runner digest; do not claim this copy is byte-identical to the pre-filter attempt01 runner.",
+  "scope": "Preparation observations on an uncommitted 0746a462e80067b78317597f2fa4bacf5e3db958 checkout with recorded local modifications; these are not the final C2 exact-source gates.",
+  "source_changes": "Attempt01 retained unchanged DA library inputs but two example source files changed concurrently; full source manifests and the original observation preserve that distinction. Attempts02/03 report no workspace source changes."
+}

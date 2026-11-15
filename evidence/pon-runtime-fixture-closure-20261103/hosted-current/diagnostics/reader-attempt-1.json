@@ -1,0 +1,13 @@
+{
+  "command": [
+    "python3",
+    "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/read_observability.py"
+  ],
+  "native_execution": false,
+  "reader_sha256": "57685ad23b1ac91122ad8e5b9710baee5671b28190efa749efe0f03aecd95876",
+  "exit_code": 0,
+  "wall_ns": 3419402410,
+  "completed_utc": "2026-11-03T22:58:36.864163+00:00",
+  "stdout_sha256": "7b59f5488819b8d8ca7f38655cf0e3d6310df12b8043383c8148f3db38ac2d5d",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

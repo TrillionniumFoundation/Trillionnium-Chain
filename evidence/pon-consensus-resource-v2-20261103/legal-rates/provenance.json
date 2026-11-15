@@ -1,0 +1,418 @@
+{
+  "archive": {
+    "archive": "successful-2b250859-observations.tar.zst",
+    "archive_bytes": 30711098,
+    "parts": [
+      {
+        "bytes": 4194304,
+        "git_blob": "e6a1f97499c1f981ae89e21dd0304fb4fafa1c32",
+        "name": "successful-2b250859-observations.tar.zst.part-00",
+        "sha256": "0d67bf3193aca4517e13103d90fb8d7a458f4edeecaceac0eb2e5570c22b9edf"
+      },
+      {
+        "bytes": 4194304,
+        "git_blob": "7edbc7c4a2d192b54e0be218ff9cac1570e4b40e",
+        "name": "successful-2b250859-observations.tar.zst.part-01",
+        "sha256": "24cfde2090ab176fbd1d39c595c5b051fc610f62ada35183a03e5a1808f6c285"
+      },
+      {
+        "bytes": 4194304,
+        "git_blob": "65a78db13e7d2d9f79104e21720d2db2aea38413",
+        "name": "successful-2b250859-observations.tar.zst.part-02",
+        "sha256": "f07865fcdd5c313d43de7517a8a6cfa7a426ebcfb8c00e50a667a0db63c0aba5"
+      },
+      {
+        "bytes": 4194304,
+        "git_blob": "e5fcb222a281522aaf84a139230615347dd0f955",
+        "name": "successful-2b250859-observations.tar.zst.part-03",
+        "sha256": "5c0845f2d5d179b0dcd300d5d9586bf49e3483d77b76f8cf8bb35da3eac078a8"
+      },
+      {
+        "bytes": 4194304,
+        "git_blob": "b496e4503c4b6de5b8b953983d0a6aa5cf870ab9",
+        "name": "successful-2b250859-observations.tar.zst.part-04",
+        "sha256": "1d8bd8635aefb72467d458110c0633547e7593b3d890d958dd7d006a0a92ed74"
+      },
+      {
+        "bytes": 4194304,
+        "git_blob": "ff524881400c283e876344b8a282b201a4fdf7bb",
+        "name": "successful-2b250859-observations.tar.zst.part-05",
+        "sha256": "3db3b5c80275888b1bf00b9e014c95a611ac9be14b8b145dab770399be1655e6"
+      },
+      {
+        "bytes": 4194304,
+        "git_blob": "71f61d0493f8f81e134fcc0f5ddca7de9f594f9e",
+        "name": "successful-2b250859-observations.tar.zst.part-06",
+        "sha256": "f2d61c2031a3d80eef3b698b227c54c13873bd7fb2041f19e2a1360d62826e3b"
+      },
+      {
+        "bytes": 1350970,
+        "git_blob": "25cfb226e290b1fbff7b1e49fb13fc8045753164",
+        "name": "successful-2b250859-observations.tar.zst.part-07",
+        "sha256": "2fbebc515127e6c644ca60909bea41fc2f6c8fa00ddb51b8046ce5c4c93ca239"
+      }
+    ],
+    "sha256": "06164a4b951a4f0b9c5d995cd2259d1220928104a3fa27426db53c9189168907"
+  },
+  "archive_members_verified": 84,
+  "complete_grid_and_common_prefixes_checked": true,
+  "execution": "reader.analyze_shard on all thirty retained legal shards; no native producer/verifier executed",
+  "historical_evidence_root": "evidence/pon-w1-factorial-v3-20261102",
+  "historical_inputs": {
+    "analysis/completed/analysis.json": {
+      "bytes": 297430,
+      "sha256": "b4137c04fd03f85109d7ac79fda01fc861fc4e9a18a8091093a950909e6d2631"
+    },
+    "archive-index.json": {
+      "bytes": 32258,
+      "sha256": "416b45f7531d78cec5c50c05bcc53bbad3c60d19c413692306808f1e727c05ee"
+    },
+    "legal-execution-manifest.json": {
+      "bytes": 6120797,
+      "sha256": "97b38a97c978959417d435692f2b7ef4ef7c399c5c1a371a263ad6afcd6f49fc"
+    }
+  },
+  "historical_manifest": {
+    "bytes": 21943,
+    "sha256": "7f616db348619cff89731cd372b1fb01ff948ef116a40fa31778677270544e54"
+  },
+  "historical_native_binary_sha256": "e075ff7ff0dd04f9ad9d02855ad6f31b38414be617c4cb417c69497bff5b1c53",
+  "historical_native_source": {
+    "commit": "2b250859e7c07088e6c3c01f75006372c684de61",
+    "source_state": "committed-clean",
+    "tracked_bytes": 792733780,
+    "tracked_entries": 6881,
+    "tracked_worktree_verified": true,
+    "tree": "12c414a565f58fde6e98ec6eba503d9389ddd06f"
+  },
+  "historical_reader_fields_exactly_preserved": true,
+  "legal_shard_inputs": [
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-00.stdout",
+      "bytes": 1023090,
+      "selection": {
+        "class": "full-rank-field",
+        "reuse_winners": 1,
+        "target_index": 0
+      },
+      "sha256": "ba32e89ce62429bd142f9f5586de12769ff2c0aea9354e10868323c982eca309"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-01.stdout",
+      "bytes": 7621281,
+      "selection": {
+        "class": "full-rank-field",
+        "reuse_winners": 8,
+        "target_index": 0
+      },
+      "sha256": "0a0a920de0f9b20a9145c4f71f5025febe67991c27a4ccad195334b093a25b35"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-02.stdout",
+      "bytes": 60420957,
+      "selection": {
+        "class": "full-rank-field",
+        "reuse_winners": 64,
+        "target_index": 0
+      },
+      "sha256": "39ad4bc3bf43c96282f6c2ce668ba67a07be986eb3cb220da486dcfe97c1013e"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-03.stdout",
+      "bytes": 1325344,
+      "selection": {
+        "class": "full-rank-field",
+        "reuse_winners": 1,
+        "target_index": 1
+      },
+      "sha256": "c216567e12c8408d4a4433732b50283f03134044a84b4b863f5a96991fac2123"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-04.stdout",
+      "bytes": 10443995,
+      "selection": {
+        "class": "full-rank-field",
+        "reuse_winners": 8,
+        "target_index": 1
+      },
+      "sha256": "b071b148287d2081ecf24e9f7d846b4de7b7e0ea72dd6117a0dcb8e2f84a6085"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-05.stdout",
+      "bytes": 82415085,
+      "selection": {
+        "class": "full-rank-field",
+        "reuse_winners": 64,
+        "target_index": 1
+      },
+      "sha256": "4f7d575cd3ce315896ccc05ad350e229e8aa191ebca85ed9cc0a9a5f1fc8d4b0"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-06.stdout",
+      "bytes": 1025440,
+      "selection": {
+        "class": "zero",
+        "reuse_winners": 1,
+        "target_index": 0
+      },
+      "sha256": "72f78c8d07fdcf1d2603f77a11abc48f2e3e16eb5a2eeb5421c96a4a41e5ae7c"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-07.stdout",
+      "bytes": 7594313,
+      "selection": {
+        "class": "zero",
+        "reuse_winners": 8,
+        "target_index": 0
+      },
+      "sha256": "e279d0bf06b854e8b2a9c9200d1540f4f054c38c1545208ebf5bd4fb1361a83d"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-08.stdout",
+      "bytes": 60385178,
+      "selection": {
+        "class": "zero",
+        "reuse_winners": 64,
+        "target_index": 0
+      },
+      "sha256": "774c9b957cd9a7c9b9b8fdbb7ef02a95d0374ff65f43651467c6cf2bfa2149e4"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-09.stdout",
+      "bytes": 1361773,
+      "selection": {
+        "class": "zero",
+        "reuse_winners": 1,
+        "target_index": 1
+      },
+      "sha256": "9a581231aed36e0282c3d5c6eabe632bdcc636ee3f560f74f797fdceeaeede41"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-10.stdout",
+      "bytes": 10095397,
+      "selection": {
+        "class": "zero",
+        "reuse_winners": 8,
+        "target_index": 1
+      },
+      "sha256": "fbe9a55b256d40b696dc96b9de865daf00c070b04739b18c81ced5ddceb57c20"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-11.stdout",
+      "bytes": 81973441,
+      "selection": {
+        "class": "zero",
+        "reuse_winners": 64,
+        "target_index": 1
+      },
+      "sha256": "dd23cc08cd904ebc1dd567ef0f5b655be2805521a5efb9d08b6d866fa503c42c"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-12.stdout",
+      "bytes": 1022843,
+      "selection": {
+        "class": "continuity-maintenance-v1",
+        "reuse_winners": 1,
+        "target_index": 0
+      },
+      "sha256": "b0c16c20e60d00bf4c6f7668d70597cf9fac528641cae681369c6a221d925a1b"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-13.stdout",
+      "bytes": 7607589,
+      "selection": {
+        "class": "continuity-maintenance-v1",
+        "reuse_winners": 8,
+        "target_index": 0
+      },
+      "sha256": "110393b2298416763c1b0e82215f5718e3ce27fd292d88a4b4f20a714ea0da39"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-14.stdout",
+      "bytes": 60406871,
+      "selection": {
+        "class": "continuity-maintenance-v1",
+        "reuse_winners": 64,
+        "target_index": 0
+      },
+      "sha256": "f17fab882fcdfce5250ed7f3f77ab0bc5b47f48285b3b8b907de240ad784a111"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-15.stdout",
+      "bytes": 1280713,
+      "selection": {
+        "class": "continuity-maintenance-v1",
+        "reuse_winners": 1,
+        "target_index": 1
+      },
+      "sha256": "225e5002d0d1ae07e2a3491c6b83d7d0035ccf336ede23fb29f424b0731984d4"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-16.stdout",
+      "bytes": 10009675,
+      "selection": {
+        "class": "continuity-maintenance-v1",
+        "reuse_winners": 8,
+        "target_index": 1
+      },
+      "sha256": "5cc679b67cf025c2e66cea2a3ee7840f8abb0e41f5bd357f737beb1556b1874f"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-17.stdout",
+      "bytes": 82706737,
+      "selection": {
+        "class": "continuity-maintenance-v1",
+        "reuse_winners": 64,
+        "target_index": 1
+      },
+      "sha256": "b58e459bbd6c33bdd952f881b7f1be47b5931923acc2496dec54d0852e89dbbb"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-18.stdout",
+      "bytes": 1027011,
+      "selection": {
+        "class": "one-zero-left-rank-one",
+        "reuse_winners": 1,
+        "target_index": 0
+      },
+      "sha256": "2220a683862dd44b0b4b8b12ca0c36d85fd4185db6766f44fc785155a4c36e29"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-19.stdout",
+      "bytes": 7628791,
+      "selection": {
+        "class": "one-zero-left-rank-one",
+        "reuse_winners": 8,
+        "target_index": 0
+      },
+      "sha256": "d4a9ad880fe941568e712d613c01c40a194fb79b8a9d584329ea8d3ed906968d"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-20.stdout",
+      "bytes": 60410997,
+      "selection": {
+        "class": "one-zero-left-rank-one",
+        "reuse_winners": 64,
+        "target_index": 0
+      },
+      "sha256": "6c2a512fd9762fe7224fee273cff0749f70cba0ca1356bda7e8a175e4b5c6353"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-21.stdout",
+      "bytes": 1458228,
+      "selection": {
+        "class": "one-zero-left-rank-one",
+        "reuse_winners": 1,
+        "target_index": 1
+      },
+      "sha256": "eb8ce24d17d9ba0373278b4e2f84ae32dc8a8a1d38fb7aa2a43b4927afac747d"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-22.stdout",
+      "bytes": 10661763,
+      "selection": {
+        "class": "one-zero-left-rank-one",
+        "reuse_winners": 8,
+        "target_index": 1
+      },
+      "sha256": "a3de3e6644de5f0d702f81627146a4e83f6854fd62b01090523e2a476efb6229"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-23.stdout",
+      "bytes": 82814198,
+      "selection": {
+        "class": "one-zero-left-rank-one",
+        "reuse_winners": 64,
+        "target_index": 1
+      },
+      "sha256": "19b03b2a5994af53c13eecdd38922ef54f3ca10a4eab1af74636f7bd1525bb64"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-24.stdout",
+      "bytes": 1012111,
+      "selection": {
+        "class": "one-zero-right-rank-one",
+        "reuse_winners": 1,
+        "target_index": 0
+      },
+      "sha256": "40f87fdade577880d2e69d2b52c5bd05f168df3be6aa17784e96730bf3ca398b"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-25.stdout",
+      "bytes": 7619549,
+      "selection": {
+        "class": "one-zero-right-rank-one",
+        "reuse_winners": 8,
+        "target_index": 0
+      },
+      "sha256": "18dc0e9602c32ae9ac47145cece447d18df32a0bdb7bf9687c02ffa4c7448f26"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-26.stdout",
+      "bytes": 60430099,
+      "selection": {
+        "class": "one-zero-right-rank-one",
+        "reuse_winners": 64,
+        "target_index": 0
+      },
+      "sha256": "ecb8f11dac9033cceb4f335e1d1004ce3da3ae95c1b7924be69069a4dba78580"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-27.stdout",
+      "bytes": 1336640,
+      "selection": {
+        "class": "one-zero-right-rank-one",
+        "reuse_winners": 1,
+        "target_index": 1
+      },
+      "sha256": "b385424813e9fd1fc6e400e9372f8f9fa5288b370a70fe4fc48587b9a5a9648a"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-28.stdout",
+      "bytes": 10715477,
+      "selection": {
+        "class": "one-zero-right-rank-one",
+        "reuse_winners": 8,
+        "target_index": 1
+      },
+      "sha256": "e77b8597ef2558607fe59645f74d04c2e0466bae464fc30ca639da2dc4c1aeb4"
+    },
+    {
+      "archive_member": "successful-2b250859/w1-legal-strategy-v3/campaign-29.stdout",
+      "bytes": 84006667,
+      "selection": {
+        "class": "one-zero-right-rank-one",
+        "reuse_winners": 64,
+        "target_index": 1
+      },
+      "sha256": "dcc50c3957fa2cebb76e46a95c2f845a4fc6404ef42948971c032d373478430d"
+    }
+  ],
+  "output": {
+    "rates.json": {
+      "bytes": 940833,
+      "sha256": "2eec65d74ca439b8d5331a3c066de91cf136fb731a9a3bdc331bada4a1384f74"
+    }
+  },
+  "qualification_status": "HOLD",
+  "reader_source_files": {
+    "config/pon/work-security-acceptance-v1.json": {
+      "bytes": 673,
+      "sha256": "4ca674c305112d51672efcab6c0f886e477a5397191addb806d209a08266165f"
+    },
+    "evidence/pon-consensus-resource-v2-20261103/legal-rates/readback.py": {
+      "bytes": 11602,
+      "sha256": "406f6a3f4622fbdc4f6a82678036b4e86699f999631c1716e5908af5bcbbd107"
+    },
+    "scripts/pon_w1_cost_matrix_reader.py": {
+      "bytes": 35800,
+      "sha256": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa"
+    },
+    "scripts/pon_w1_legal_strategy_reader_v3.py": {
+      "bytes": 30562,
+      "sha256": "88657a45b22a350c140ae8bcbe7f294544e8d9788c86592238cc9c6437bd58ff"
+    }
+  },
+  "reader_source_state": "working-tree bytes identified above; no final candidate commit inferred",
+  "schema": "pon-w1-retrospective-legal-rate-provenance-v1"
+}

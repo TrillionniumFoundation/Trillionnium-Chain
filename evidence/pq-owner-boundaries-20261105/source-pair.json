@@ -1,0 +1,1117 @@
+{
+  "schema": "trnm-hepta-source-review-pair-v1",
+  "document_status": "FINAL_SOURCE_REVIEW_RECORD",
+  "drafted_at_utc": "2026-11-05T06:18:15.047366+00:00",
+  "purpose": "One fixed candidate source pair S/R2 for review. Earlier S/R1 artifacts remain historical; this is not a binary, deployment or activation manifest.",
+  "qualification": "HOLD_NO_GO",
+  "activation": false,
+  "p0_1_strict_exit_satisfied": false,
+  "candidate_source_pair": {
+    "chain": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+      "tree": "ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855",
+      "parents": [
+        "160b6f91e39708454d1edd200ab9ef2b4192192e",
+        "14fcbede085b414a9621aef3f288d2b1ca1839ae"
+      ],
+      "raw_commit_and_root_tree_git_hashes_recomputed": true,
+      "declared_rust_toolchain": {
+        "channel": "1.95.0",
+        "profile": "minimal",
+        "components": [
+          "clippy",
+          "rustfmt"
+        ]
+      },
+      "pinned_files": [
+        {
+          "path": "trillionnium/Cargo.toml",
+          "role": "workspace manifest",
+          "git_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+          "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+          "bytes": 2204
+        },
+        {
+          "path": "trillionnium/Cargo.lock",
+          "role": "workspace lockfile",
+          "git_blob": "ce7b3d41c35e691bb4c21c3b6dc5be6b2bd8155e",
+          "sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+          "bytes": 40044
+        },
+        {
+          "path": "rust-toolchain.toml",
+          "role": "repository Rust toolchain declaration",
+          "git_blob": "8770b1d875864c5356dc4abad904b69ec484817f",
+          "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+          "bytes": 86
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+          "role": "Node package manifest",
+          "git_blob": "eb44e7bc91a36b54ae025e5c1f1629e548af204f",
+          "sha256": "caaf3a4a3247e84d0c2f8b2a86c83545a54df70dfdf88b07ea7c7a9eee2d71f3",
+          "bytes": 1559
+        },
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+          "role": "M06 package manifest; historical native scope",
+          "git_blob": "b2bb5a60236231b6b967ae5ec8f1e354dde28734",
+          "sha256": "9aa41333719fd478a784a57ffb2bf5afdae18359af815f30db03217440c36fff",
+          "bytes": 998
+        },
+        {
+          "path": "trillionnium/crates/trnm-release-bundle/Cargo.toml",
+          "role": "release-role component package manifest",
+          "git_blob": "201c768b20e3afb44779bd6bc5da501def4241f5",
+          "sha256": "e047dcd8e97697fa2d90462b3a1c92d92151f14799c860ff11ee381c0204218b",
+          "bytes": 523
+        },
+        {
+          "path": "config/pon/post-quantum-transition-v1.json",
+          "role": "selected repository PQ transition analysis configuration",
+          "git_blob": "b42b8ce2b02351b65351776bf83f848b556e8e57",
+          "sha256": "96758f0820cd5689d3a600a1e2cbddcebfd4bb265ab46bd3613832501f3330b3",
+          "bytes": 3462
+        },
+        {
+          "path": "config/pon/devnet-v1.json",
+          "role": "selected repository devnet configuration",
+          "git_blob": "a60f403b2f0e7343aed61170ca2aef875a787790",
+          "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+          "bytes": 1964
+        },
+        {
+          "path": "config/pon/work-profile-v1.json",
+          "role": "selected repository W1 profile",
+          "git_blob": "54e43139d3691b62f76f9e8976e1d2a974e8524b",
+          "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+          "bytes": 1596
+        },
+        {
+          "path": "config/pon/performance-six-axis-v1.json",
+          "role": "selected repository business/capacity observation contract",
+          "git_blob": "a4a75e7a0dd5350522ce825a49643dad7f57aac7",
+          "sha256": "6cdbf90a756b3898650cb018627aa0078d040ce71d689f6f38346edb64be4be3",
+          "bytes": 2981
+        },
+        {
+          "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+          "role": "PQ release-role component; not a Fleet installation receipt",
+          "git_blob": "c6e3c62219e6f10030cee3dad4df2f2045acd9cd",
+          "sha256": "92b9d2942a0ad2473ebee418accb20090e3fbc1f42f4b9ff2fcdc7e9d13ab204",
+          "bytes": 24778
+        }
+      ]
+    },
+    "runtime": {
+      "repository": "TrillionniumFoundation/hepta-private-ci",
+      "commit": "70115620a7f540c8618a9b0d32ead20f8bc508f0",
+      "tree": "ebd1437475d71252786788f67d2911f5a6e6108d",
+      "parents": [
+        "9e8faef449a4392b7b9aa6a9071f260a34d95ec9"
+      ],
+      "raw_commit_and_root_tree_git_hashes_recomputed": true,
+      "declared_rust_toolchain": {
+        "channel": "1.96.0",
+        "components": [
+          "clippy",
+          "rustfmt",
+          "rust-src"
+        ]
+      },
+      "pinned_files": [
+        {
+          "path": "codex-rs/Cargo.toml",
+          "role": "workspace manifest",
+          "git_blob": "02a140c213aa7ac9f621915f1ef5ef084d915069",
+          "sha256": "0a5c94692252cc1b0511be6c053201596788f24da3406b9a741cddb195681c69",
+          "bytes": 22517
+        },
+        {
+          "path": "codex-rs/Cargo.lock",
+          "role": "workspace lockfile",
+          "git_blob": "181d14a3124d94fb1f2c880da93f1c09a1f5cf76",
+          "sha256": "0f458d7746a0ca0b95bedc5404fd3347c1b0a7508f1c387f3b1f3f71ced08663",
+          "bytes": 425188
+        },
+        {
+          "path": "codex-rs/rust-toolchain.toml",
+          "role": "workspace Rust toolchain declaration",
+          "git_blob": "917d2492264a35bc9c0feaef41878d8825870866",
+          "sha256": "e8b379eaa492bf59d35187de269afd1c4f55d85e0322f6fea32803a3fec1a380",
+          "bytes": 78
+        },
+        {
+          "path": "codex-rs/hepta-agentd/Cargo.toml",
+          "role": "ordinary Agentd package manifest",
+          "git_blob": "5d13cd8f355bab3ecb95f8c068517de200dd143f",
+          "sha256": "011528024bbcb547a2aa256904b6102a05f17af7c91ace5300d7559e4ab8d94b",
+          "bytes": 4394
+        },
+        {
+          "path": "codex-rs/hepta-infer-worker-host/Cargo.toml",
+          "role": "neural entry and new fixture dev-dependency manifest",
+          "git_blob": "7bc85caa06ff80587496acb36fc7d1499fcb7b1c",
+          "sha256": "4e59b2f789bb6f27b138214a9b704c0ccc103ac363604204086941ee6ad3bf59",
+          "bytes": 2228
+        },
+        {
+          "path": "codex-rs/hepta-evidence/Cargo.toml",
+          "role": "shared evidence owner package manifest",
+          "git_blob": "7d5a851797a8c8fdc9c14382418158f9c9789dad",
+          "sha256": "bf06b9f286e93bb5d61122d43ff3cb27314584e04a1d08c18c90663e2b1fa3e0",
+          "bytes": 786
+        },
+        {
+          "path": "codex-rs/hepta-contracts/Cargo.toml",
+          "role": "existing PQ primitive/profile package manifest",
+          "git_blob": "e62bd1a08e99157ce0fd979b9b99c43410d3ac8a",
+          "sha256": "4523cea4e47d3082da85d5a7b42cd95ef31bfc4054101eb92409ddf9ba4e55d0",
+          "bytes": 1070
+        },
+        {
+          "path": "codex-rs/hepta-fleet/Cargo.toml",
+          "role": "actual Fleet installation owner package manifest",
+          "git_blob": "a271fa91b84d9ea0100703ff491c6826b0aabc6e",
+          "sha256": "c651dae8fede019ba6409f9e59815796444e4a9fb4a698aad40db94859dc3870",
+          "bytes": 631
+        },
+        {
+          "path": "codex-rs/hepta-agentd/PQ_INSTALLATION.md",
+          "role": "declared installation and recovery scope",
+          "git_blob": "37876ccf43fc00daf42af856779feed150508691",
+          "sha256": "afb8eb74c49487a47632d599bc856dc91e54c76800aef74f52dc70a0403968ab",
+          "bytes": 11171
+        },
+        {
+          "path": "codex-rs/hepta-agentd/src/evidence_frontier.rs",
+          "role": "PQ recovery frontier authentication and read-only admission",
+          "git_blob": "74a95d84f8bf1bc78eb372a50ffc03124f57e34e",
+          "sha256": "40db2a44263ad53f8791fe781b7214d70b1939dbc6774cc4b22a62de0dc025fe",
+          "bytes": 17350
+        },
+        {
+          "path": "codex-rs/hepta-agentd/src/main.rs",
+          "role": "ordinary CLI preflight before bootstrap",
+          "git_blob": "01387f0f2fcaa4641b6851961c4f9961913e7cb5",
+          "sha256": "a569c4f6247576b0bc3dc20fc386ea41eec35785088c01ae4d1ace9347586005",
+          "bytes": 11654
+        },
+        {
+          "path": "codex-rs/hepta-agentd/src/runtime.rs",
+          "role": "independent runtime admission before shared-state owners",
+          "git_blob": "2931472d8378984e8a7c17872dd4f8255bf041f4",
+          "sha256": "226c53fdf0b724e4dae40428c086e8c9533b95ed78189f0f4d64a34e6251bd92",
+          "bytes": 22250
+        },
+        {
+          "path": "codex-rs/hepta-infer-worker-host/src/bin/hepta-neural-agentd.rs",
+          "role": "real neural CLI flags and preflight before preparation",
+          "git_blob": "5d6835b5a995604fc96f6f996c92f1d0102a3fd1",
+          "sha256": "8d300b06174341550fe8841e75e0dd523a2bace6d84a0b1dd289a4e03857491b",
+          "bytes": 7662
+        },
+        {
+          "path": "codex-rs/hepta-evidence/src/store.rs",
+          "role": "current-schema read-only evidence open",
+          "git_blob": "a250a58f7a26377481fba466446aa72e99aa0c89",
+          "sha256": "e93f7c803470479f632c8fc0efa070c483adeb215f427950ef41debe285080fc",
+          "bytes": 17815
+        },
+        {
+          "path": "codex-rs/hepta-evidence/src/recovery_frontier.rs",
+          "role": "covered SQLite snapshot projections",
+          "git_blob": "202486445c3ae9a75e3eb63726313145332a8438",
+          "sha256": "aa04df00510000848bd1ddb316ecf7f2f0832ed9d1f178215492ad9ed266d70c",
+          "bytes": 9724
+        },
+        {
+          "path": "codex-rs/hepta-evidence/src/recovery_effect_frontier.rs",
+          "role": "provider-effect frontier projection",
+          "git_blob": "9cd2cfb8e8409df19ae18ee9042641cb0e493837",
+          "sha256": "86f5e0c2fea6909bffa871775336d2dd82edcb7e33cfbf7700494fd2af7f44a2",
+          "bytes": 4395
+        },
+        {
+          "path": "codex-rs/hepta-evidence/migrations/0016_provider_effect_observation_history.sql",
+          "role": "observation-history migration included in R",
+          "git_blob": "c6c0a4e0d68600dfc2d6527f181ad9a1616b74ee",
+          "sha256": "c08db803851dde8df7e2df6305cf98faa75268d4b7104959f15a81e90ebd5b3b",
+          "bytes": 5064
+        },
+        {
+          "path": "codex-rs/hepta-evidence/src/provider_effect_observation_schema.rs",
+          "role": "observation schema validation included in R",
+          "git_blob": "6fd3eb5942a8f0cef42d5947386784c025392619",
+          "sha256": "7ee35ce057ec7e31fe7b15553f544877d1e54eeff908e6fbdab702a91f8665cc",
+          "bytes": 1102
+        },
+        {
+          "path": "codex-rs/hepta-fleet/src/release.rs",
+          "role": "actual installer path; PQ release-role wiring remains open",
+          "git_blob": "c01de5ee4838b2911c3f24635458668f3e31a06f",
+          "sha256": "d1895dd418a065427271fddea9f0315758df82ca367f4951397c776914a424a8",
+          "bytes": 58513
+        },
+        {
+          "path": "codex-rs/ext/hepta-governance/src/install.rs",
+          "role": "ordinary governance installation and default Shadow mode",
+          "git_blob": "1b5d1e433df0786a6eff3e826f908bf58db9618f",
+          "sha256": "1c2070fae54721778703fd87b0d4e813f79bb6a9131afc62ec33d4452fa7af95",
+          "bytes": 5585
+        },
+        {
+          "path": "codex-rs/ext/hepta-governance/src/provider_policy.rs",
+          "role": "provider invocation behavior in Shadow mode",
+          "git_blob": "2dec0253ccff32c16a9c0c2cb36f1795ec8ba795",
+          "sha256": "6e8033892167e50ace68946786cc388123fa8262831af5266fd5d034065fd452",
+          "bytes": 7561
+        },
+        {
+          "path": "codex-rs/ext/hepta-governance/src/provider_lease.rs",
+          "role": "detached Shadow provider lease behavior",
+          "git_blob": "f72aed4a65bbd9702f277417945301335a851653",
+          "sha256": "357273bc4eadf292b2f3150e91e565733bf0548e119ac5241246ad818510542c",
+          "bytes": 2953
+        },
+        {
+          "path": "codex-rs/hepta-automation/src/store.rs",
+          "role": "separate automation database owner",
+          "git_blob": "4537a04bea028a1750dc0d88554cd26ca3cf1afd",
+          "sha256": "d8122bd9f7d61febc5ebe6ca059dd79c7b45a7761a8bc5b7f9cde64c68f1c950",
+          "bytes": 56895
+        },
+        {
+          "path": ".github/workflows/hepta-pq-policy-renewal.yml",
+          "role": "37 mandatory controls and scoped native linter",
+          "git_blob": "392ad92cfdf63c6a1a8281683ec1074a845cff68",
+          "sha256": "4ddddcc5fb88cf182ab430fb898f55c34d3e5c06b14170b1be977751026091ae",
+          "bytes": 16969
+        },
+        {
+          "path": "scripts/run-nextest.py",
+          "role": "existing exact-selector wrapper inspected by CI source audit",
+          "git_blob": "952fd964e36af1e713eae04b54d4887695e6dd43",
+          "sha256": "b939d9c06af3269924e05de14abb1cc7e4c44be32024325a593300b5199dd385",
+          "bytes": 10517
+        },
+        {
+          "path": "codex-rs/hepta-agentd/tests/kernel_evidence_product.rs",
+          "role": "four real product tests; explicit error conversion fixes the original R1 fixture compilation blocker",
+          "git_blob": "d87d97f193a6095e77a60fb3cb1894f77ebc6f95",
+          "sha256": "5baaac0f3034422f28bdbd14379b2d8bb08a42eb84c8e174245aa171d3649b32",
+          "bytes": 33165
+        }
+      ],
+      "candidate_label": "R2"
+    }
+  },
+  "pinning_method": {
+    "source": "git cat-file blob <fixed-commit>:<path>; no source bytes read from working trees",
+    "checks": "Recomputed each Git blob object ID and SHA-256 from exact blob bytes; recorded byte lengths; recomputed the two raw commit and root tree Git object IDs.",
+    "scope": "Selected build/config/owner files are listed for review. The commit trees pin the complete source, but this task does not attest an executed build or complete deployment.",
+    "self_referential_hash": "This manifest deliberately has no field claiming its own Git object ID or SHA-256."
+  },
+  "selected_chain_configuration": {
+    "status": "REPOSITORY_ARTIFACTS_FOR_SOURCE_REVIEW_ONLY",
+    "actual_deployed_configuration": "NOT_PROVIDED",
+    "files_are_not_a_deployed_command_line_or_secrets_bundle": true,
+    "pq_transition": {
+      "path": "config/pon/post-quantum-transition-v1.json",
+      "status": "research-only-no-activation",
+      "production_activation": false,
+      "allow_classical_fallback": false,
+      "native_account_migration_integrated_label": false,
+      "label_scope": "This is the retained reference-analysis file; its historical labels are not a substitute for current owner code or deployment evidence."
+    },
+    "devnet": {
+      "path": "config/pon/devnet-v1.json",
+      "schema": "pon-devnet-2",
+      "chain_label": "trnm-pon-invariant-contract-devnet-3",
+      "not_mainnet": true,
+      "production_activation": false,
+      "max_transaction_bytes": 2048,
+      "max_block_bytes": 1048576
+    },
+    "work": {
+      "path": "config/pon/work-profile-v1.json",
+      "id": "pon-matmul-transcript-64-v1",
+      "status": "experimental-recompute-profile",
+      "production_eligible": false,
+      "external_hardness_acceptance": false
+    },
+    "performance": {
+      "path": "config/pon/performance-six-axis-v1.json",
+      "status": "development-observation-hold",
+      "production_activation": false,
+      "whole_chain_post_quantum_qualified": false,
+      "independent_accepted": false,
+      "original_public_business_gate": {
+        "window_ns": 4000000000,
+        "hostile_workers": 16,
+        "required_unique_confirmed_transactions": 1,
+        "confirmation_depth": 6,
+        "host_cpu_quota_ns_per_second": 250000000,
+        "host_memory_bytes": 2147483648,
+        "native_runner": "scripts/ci/run_from_zero_native.py"
+      },
+      "embedded_integration_baseline_scope": "The older baseline embedded in this retained configuration remains historical metadata, not an additional candidate source pair or an execution record for S."
+    }
+  },
+  "deployment_artifacts": {
+    "chain_node_binary": {
+      "status": "NOT_PROVIDED",
+      "qualification": "NOT_QUALIFIED",
+      "sha256": null,
+      "bytes": null,
+      "build_receipt": null
+    },
+    "ordinary_agentd_binary": {
+      "status": "BUILT_AND_STARTED_FOR_NATIVE_PRODUCT_TESTS",
+      "qualification": "NOT_QUALIFIED_FOR_RELEASE_OR_DEPLOYMENT",
+      "source_commit": "70115620a7f540c8618a9b0d32ead20f8bc508f0",
+      "sha256": "1fda3237fa995431be7a909e69f938aa0e92ef1f10b80cd425dd2544b5b23d2f",
+      "bytes": 1232076656,
+      "build_profile": "original default Cargo test build; unoptimized plus debuginfo",
+      "observed_path": "/workspace/scratch/aea25ba345a8/hepta-effects-agent/target/debug/codex-hepta-agentd",
+      "artifact_retained_at_receipt_time": true,
+      "build_receipt": "R2-product-native-final.json",
+      "scope": "The real ordinary Agentd executable was built and started. Both positive IPC tests failed at the environment Unix socket boundary; this is not a qualified binary/configuration pair.",
+      "artifact_retained_at_final_manifest_readback": true,
+      "final_readback_sha256": "1fda3237fa995431be7a909e69f938aa0e92ef1f10b80cd425dd2544b5b23d2f",
+      "final_readback_bytes": 1232076656,
+      "final_readback_utc": "2026-11-05T07:00:23.403481+00:00",
+      "build_receipt_reference": {
+        "file": "R2-product-native-final.json",
+        "path": "evidence/pq-recovery-owner-20261105/R2-product-native-final.json",
+        "repository": "TrillionniumFoundation/hepta-private-ci",
+        "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+        "git_blob": "dd96cc3e85bd992fcdb570a8f45262a045c94c71",
+        "sha256": "26ecedca11df680471bfcab5cc4c06fd86b727d2c0dff9b174f2663096c27b9d",
+        "bytes": 3432,
+        "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/R2-product-native-final.json",
+        "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+      },
+      "final_retention_reference": {
+        "file": "R2-validation-summary.json",
+        "path": "evidence/pq-recovery-owner-20261105/R2-validation-summary.json",
+        "repository": "TrillionniumFoundation/hepta-private-ci",
+        "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+        "git_blob": "45b5947bffeeda33ad5279be250bba1f53dc3a8e",
+        "sha256": "1fcdbde92beef8f69c35efd607be11e5669b4712dfa604063d007ba3c7da0b7d",
+        "bytes": 4326,
+        "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/R2-validation-summary.json",
+        "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+      }
+    },
+    "neural_agentd_binary": {
+      "status": "NOT_PROVIDED",
+      "qualification": "NOT_QUALIFIED",
+      "sha256": null,
+      "bytes": null,
+      "build_receipt": null
+    },
+    "actual_deployed_configuration": {
+      "status": "NOT_PROVIDED",
+      "qualification": "NOT_QUALIFIED",
+      "digest": null
+    },
+    "same_installed_combination_for_ordinary_recovery_acceptance": {
+      "status": "NOT_ESTABLISHED",
+      "qualified": false
+    },
+    "historical_component_test_binaries_are_pair_binaries": false,
+    "activation_responsible_party": "NOT_ASSIGNED_BY_THIS_SOURCE_REVIEW_MANIFEST"
+  },
+  "runtime_recovery_source_summary": {
+    "installation_document": "codex-rs/hepta-agentd/PQ_INSTALLATION.md",
+    "frontier_owner": "codex-rs/hepta-agentd/src/evidence_frontier.rs",
+    "frontier_schema": 3,
+    "trust_schema": 2,
+    "snapshot_schema": 2,
+    "authentication_profile": "ml_dsa65_v2",
+    "algorithm": "ML-DSA-65",
+    "signature_domain": "hepta.kernel.evidence.recovery-frontier.pq.v3 followed by NUL",
+    "key_identity": "Canonical ML-DSA-65 SPKI and key ID are pinned; lowercase hex; no classical frontier fallback.",
+    "required_flags": [
+      "--evidence-recovery-frontier-file",
+      "--evidence-recovery-frontier-trust-file"
+    ],
+    "ordinary_entry": "main preflight precedes plasticity/cognitive bootstrap",
+    "neural_entry": "neural CLI preflight precedes model preparation and FinalUse/journal owners",
+    "runtime_entry": "run independently authenticates, checks the existing read-only current-schema image, then rechecks writable admission and binds identity before AgentdState/shared owner initialization",
+    "preflight_scope": "No evidence DB creation, migration or store-ID bind in preflight. Existing AgentdConfig loading can create/open its writer lock before preflight, so this is not a zero-file-write claim for the whole process.",
+    "current_migration": "0016_provider_effect_observation_history.sql is in R2; an old 0015 image must not be silently migrated ahead of read-only admission.",
+    "covered_snapshot": [
+      "migration set",
+      "qualification frontier",
+      "AuthBus replay frontier",
+      "provider_effect_intents",
+      "provider_effect_acknowledgements including source and recorded order",
+      "provider_effect_uncertainties"
+    ],
+    "not_a_whole_database_byte_commitment": true,
+    "root_file_excluded_directories": [
+      "agent home",
+      "agent run root",
+      "agent workspace",
+      "fleet root"
+    ],
+    "root_path_limit": "Canonical location outside those four directories does not prove separate UID, protected parents, independent custody or independent failure domain.",
+    "source_label_limit": "Signed source_commit/source_tree fields do not verify the running binary or establish that it was built from S/R2.",
+    "platform_limit": "This recovery file-identity profile is Unix-only; Windows startup is fail-closed and unqualified."
+  },
+  "runtime_ci_source_summary": {
+    "workflow": ".github/workflows/hepta-pq-policy-renewal.yml",
+    "workflow_git_blob": "392ad92cfdf63c6a1a8281683ec1074a845cff68",
+    "mandatory_test_counts": {
+      "dispatcher": 14,
+      "authbus_product": 3,
+      "evidence_recovery": 7,
+      "pq_frontier": 9,
+      "kernel_evidence_product": 4
+    },
+    "total_mandatory_tests": 37,
+    "new_exact_selection_budgets_seconds": {
+      "pq_frontier": 600,
+      "kernel_evidence_product": 1800
+    },
+    "preserved_controls": 24,
+    "mandatory_audit": "Every selected native test must pass exactly once with verified log hash and command exit code; missing, ignored, duplicate or unexpected records reject.",
+    "scoped_linter_packages": [
+      "codex-hepta-evidence",
+      "codex-hepta-agentd",
+      "codex-hepta-infer-worker-host"
+    ],
+    "local_source_audit": {
+      "source_commit": "70115620a7f540c8618a9b0d32ead20f8bc508f0",
+      "source_tree": "ebd1437475d71252786788f67d2911f5a6e6108d",
+      "status": "PASSED_SOURCE_AND_SYNTHETIC_LOG_FIXTURES_ONLY",
+      "fixture_outcomes_matched": 154,
+      "command_exit_code": 0,
+      "source_test_names_checked": 37,
+      "audit_input_files": 12,
+      "source_unchanged_and_clean": true,
+      "native_tests_executed_by_this_audit": 0,
+      "audit_did_not_trigger_ci": true,
+      "raw_receipt_file": "ci-selection-audit-r2-70115620.json",
+      "raw_receipt_sha256": "68cd2365c1e732a2142d356ca0ed236855957d24d27e86728cb234d3a93a091a",
+      "provenance_file": "ci-selection-audit-r2-70115620-provenance.json",
+      "provenance_sha256": "0f54566dfd11b6f05b0635b1c9a44cd84500052716808c8bce5e8fc2fffec92d",
+      "evidence_location_scope": "Published in runtime evidence commit 7530e4bc7aa61a0c23a5933fef4a65d86a586cf8; not a file in the tested R2 source tree.",
+      "ci_event_scope": "The audit did not trigger CI. Root separately published source; GitHub events and hosted outcomes are outside this audit.",
+      "receipt_reference": {
+        "file": "ci-selection-audit-r2-70115620.json",
+        "path": "evidence/pq-recovery-owner-20261105/ci-selection-audit-r2-70115620.json",
+        "repository": "TrillionniumFoundation/hepta-private-ci",
+        "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+        "git_blob": "efe2dc52f7c3a75c03aec09daa313e6ab157bb62",
+        "sha256": "68cd2365c1e732a2142d356ca0ed236855957d24d27e86728cb234d3a93a091a",
+        "bytes": 39196,
+        "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/ci-selection-audit-r2-70115620.json",
+        "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+      },
+      "provenance_reference": {
+        "file": "ci-selection-audit-r2-70115620-provenance.json",
+        "path": "evidence/pq-recovery-owner-20261105/ci-selection-audit-r2-70115620-provenance.json",
+        "repository": "TrillionniumFoundation/hepta-private-ci",
+        "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+        "git_blob": "c1d454d8a09d10251440fcf640174e0a6c092754",
+        "sha256": "0f54566dfd11b6f05b0635b1c9a44cd84500052716808c8bce5e8fc2fffec92d",
+        "bytes": 7541,
+        "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/ci-selection-audit-r2-70115620-provenance.json",
+        "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+      }
+    }
+  },
+  "candidate_execution_status": {
+    "chain_S_complete_native_qualification": "NOT_QUALIFIED",
+    "runtime_R_native": {
+      "candidate_label": "R2",
+      "source_commit": "70115620a7f540c8618a9b0d32ead20f8bc508f0",
+      "source_tree": "ebd1437475d71252786788f67d2911f5a6e6108d",
+      "status": "PARTIAL_NATIVE_VERIFICATION_GATES_OPEN",
+      "source_unchanged_and_clean_for_both_commands": true,
+      "frontier_units": {
+        "command": [
+          "just",
+          "test",
+          "-p",
+          "codex-hepta-agentd",
+          "--locked",
+          "--lib",
+          "-E",
+          "test(evidence_frontier)"
+        ],
+        "classification": "SCOPED_NATIVE_PASS",
+        "executed_tests": 9,
+        "passed_tests": 9,
+        "failed_tests": 0,
+        "other_tests_not_selected": 239,
+        "command_exit_code": 0,
+        "elapsed_seconds": 31.491846561431885,
+        "nextest_run_id": "54d22792-a42e-43b1-8324-67af72158366",
+        "log_sha256": "ee6e6876bbe4cccc5a6f6f661cec89e904350c687ac8cc2e156029f59780f44b"
+      },
+      "kernel_evidence_product": {
+        "command": [
+          "just",
+          "test",
+          "-p",
+          "codex-hepta-agentd",
+          "--locked",
+          "--test",
+          "kernel_evidence_product"
+        ],
+        "classification": "PRODUCT_GATE_OPEN_UNIX_SOCKET_EPERM",
+        "distinct_tests_run": 4,
+        "passed_tests": 2,
+        "failed_tests": 2,
+        "skipped_tests": 0,
+        "command_exit_code": 100,
+        "elapsed_seconds": 62.546286821365356,
+        "passed_names": [
+          "signed_recovery_frontier_rejects_valid_older_database_image",
+          "signed_recovery_frontier_rejects_effect_only_database_rollback"
+        ],
+        "failed_names": [
+          "real_agentd_composes_authenticated_evidence_writer_query_verifier_and_terminal_observer",
+          "signed_recovery_frontier_allows_exact_current_database"
+        ],
+        "nextest_run_id": "bc070a88-0a5b-4153-8e45-af34a33a4a7b",
+        "log_sha256": "778c0d4b447451fd6f648b39ea10e6971a1d633a18780614b7ee9311cddaa379",
+        "scope": "Two real process rollback rejections passed the recovery_required and unchanged restored database byte oracles. This does not establish successful positive IPC or real external provider exactly-once effects.",
+        "failure": "Real child Agentd could not bind its AF_UNIX control socket: Operation not permitted (os error 1). Positive IPC assertions were not reached.",
+        "retry_scope": "Original local nextest retry configuration produced TRY 2 FAIL for both positive cases; no test/filter/profile/timeout was changed or failure hidden"
+      },
+      "final_receipts": [
+        {
+          "file": "R2-validation-summary.json",
+          "path": "evidence/pq-recovery-owner-20261105/R2-validation-summary.json",
+          "repository": "TrillionniumFoundation/hepta-private-ci",
+          "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+          "git_blob": "45b5947bffeeda33ad5279be250bba1f53dc3a8e",
+          "sha256": "1fcdbde92beef8f69c35efd607be11e5669b4712dfa604063d007ba3c7da0b7d",
+          "bytes": 4326,
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/R2-validation-summary.json",
+          "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+        },
+        {
+          "file": "R2-70115620-agentd-frontier.json",
+          "path": "evidence/pq-recovery-owner-20261105/R2-70115620-agentd-frontier.json",
+          "repository": "TrillionniumFoundation/hepta-private-ci",
+          "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+          "git_blob": "edb32fd577f9e4a6f71d5c67c631c2e8e5be43ac",
+          "sha256": "55c244d1dc6b9d8a72b6ca1136ffefb6ef571b795193bbdda971b4e29d0edef0",
+          "bytes": 1230,
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/R2-70115620-agentd-frontier.json",
+          "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+        },
+        {
+          "file": "R2-frontier-native-final.json",
+          "path": "evidence/pq-recovery-owner-20261105/R2-frontier-native-final.json",
+          "repository": "TrillionniumFoundation/hepta-private-ci",
+          "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+          "git_blob": "1d0fe037d6e0b0cfaa741f592b455784178fc856",
+          "sha256": "5f13e65c2ffed33131d51fec8cd56b508fe71e83486b1bc50fe6e7179cb59bcf",
+          "bytes": 2218,
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/R2-frontier-native-final.json",
+          "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+        },
+        {
+          "file": "R2-70115620-kernel-evidence-product.json",
+          "path": "evidence/pq-recovery-owner-20261105/R2-70115620-kernel-evidence-product.json",
+          "repository": "TrillionniumFoundation/hepta-private-ci",
+          "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+          "git_blob": "8880a36210b2a7ca5088b236c8e467ce967aa5b5",
+          "sha256": "d5d448df629e6ccb82f804940a44ffb748d4867b6f16d5fc8713f4e4f796ff69",
+          "bytes": 1222,
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/R2-70115620-kernel-evidence-product.json",
+          "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+        },
+        {
+          "file": "R2-product-native-final.json",
+          "path": "evidence/pq-recovery-owner-20261105/R2-product-native-final.json",
+          "repository": "TrillionniumFoundation/hepta-private-ci",
+          "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+          "git_blob": "dd96cc3e85bd992fcdb570a8f45262a045c94c71",
+          "sha256": "26ecedca11df680471bfcab5cc4c06fd86b727d2c0dff9b174f2663096c27b9d",
+          "bytes": 3432,
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/R2-product-native-final.json",
+          "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+        },
+        {
+          "file": "R2-unix-socket-environment-probe.json",
+          "path": "evidence/pq-recovery-owner-20261105/R2-unix-socket-environment-probe.json",
+          "repository": "TrillionniumFoundation/hepta-private-ci",
+          "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+          "git_blob": "2f0de7cb50d37045de812357451c7db566804d1e",
+          "sha256": "ee73eec4e6ea0f2924496495f149dbb011b3e290e644e42b065f2663880a69b4",
+          "bytes": 770,
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/R2-unix-socket-environment-probe.json",
+          "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+        },
+        {
+          "file": "R2-70115620-infer-worker-lib.json",
+          "path": "evidence/pq-recovery-owner-20261105/R2-70115620-infer-worker-lib.json",
+          "repository": "TrillionniumFoundation/hepta-private-ci",
+          "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+          "git_blob": "4458eed42444c0e9e29bfa0c34c7a90a78d9a85b",
+          "sha256": "bd3e088bbb0bb3015935a31ca565680ac89ee606f6aa2f16210935b2dea9a2a2",
+          "bytes": 1193,
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/R2-70115620-infer-worker-lib.json",
+          "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+        },
+        {
+          "file": "R2-infer-worker-lib-classification.json",
+          "path": "evidence/pq-recovery-owner-20261105/R2-infer-worker-lib-classification.json",
+          "repository": "TrillionniumFoundation/hepta-private-ci",
+          "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+          "git_blob": "d4fc9bb3db1cb126b7d4c03cc57de37f5919527e",
+          "sha256": "854acd9c641a1114dfc942e10bf24880897c2379f20442f25cf01f03bb278e03",
+          "bytes": 886,
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/R2-infer-worker-lib-classification.json",
+          "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+        },
+        {
+          "file": "R2-70115620-scoped-just-fix.json",
+          "path": "evidence/pq-recovery-owner-20261105/R2-70115620-scoped-just-fix.json",
+          "repository": "TrillionniumFoundation/hepta-private-ci",
+          "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+          "git_blob": "b8ba8f83ffaf90f47e81e1d9bca1b67a03c8f08f",
+          "sha256": "e44f86e2970e5bff96db9ce9e5275b4b1e462d832021eb690ce6945c4c013607",
+          "bytes": 1252,
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/R2-70115620-scoped-just-fix.json",
+          "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+        },
+        {
+          "file": "R2-70115620-scoped-just-fix-attempt2.json",
+          "path": "evidence/pq-recovery-owner-20261105/R2-70115620-scoped-just-fix-attempt2.json",
+          "repository": "TrillionniumFoundation/hepta-private-ci",
+          "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+          "git_blob": "ba57011cc74a7e6b1d620541ebdb994f2b978b81",
+          "sha256": "7544b4423e2b6d3ccd3ccc7ebede55c73398774ba8c3634f814fdf5dd247ef68",
+          "bytes": 1253,
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/R2-70115620-scoped-just-fix-attempt2.json",
+          "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+        },
+        {
+          "file": "R2-just-fix-attempt1-classification.json",
+          "path": "evidence/pq-recovery-owner-20261105/R2-just-fix-attempt1-classification.json",
+          "repository": "TrillionniumFoundation/hepta-private-ci",
+          "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+          "git_blob": "e5935bd12f0c18029d95515e83c4aff04f35398c",
+          "sha256": "c38da8951fbb8511c3cdd0bb20f3527499af1e84c4d5deda4d35948087f3b539",
+          "bytes": 651,
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/R2-just-fix-attempt1-classification.json",
+          "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+        },
+        {
+          "file": "R2-just-fix-attempt2-classification.json",
+          "path": "evidence/pq-recovery-owner-20261105/R2-just-fix-attempt2-classification.json",
+          "repository": "TrillionniumFoundation/hepta-private-ci",
+          "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+          "git_blob": "5c7175041c7563324800860dde2543ccc9485ec8",
+          "sha256": "28d21199c960d45132aa2c7d258341a379831a00f21441b7be12c1509ae1a488",
+          "bytes": 1214,
+          "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/R2-just-fix-attempt2-classification.json",
+          "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+        }
+      ],
+      "does_not_establish_hosted_ci_or_deployment_qualification": true,
+      "inference_worker_library": {
+        "status": "BUILD_BLOCKED_LINKER_SIGBUS",
+        "executed_tests": 0,
+        "command": [
+          "just",
+          "test",
+          "-p",
+          "codex-hepta-infer-worker-host",
+          "--locked",
+          "--lib"
+        ],
+        "command_exit_code": 101,
+        "elapsed_seconds": 107.71768498420715,
+        "log_sha256": "3991dfbe87708a0486edbfdb3f07a4f7fb136946c66578855ad81107d3c2b90d",
+        "root_cause_established": false,
+        "scope": "Linker signal 7 before test execution. No ENOSPC diagnostic appears in that log; the cause is not established."
+      },
+      "required_scoped_lint": {
+        "status": "BUILD_BLOCKED_ENOSPC",
+        "passed": false,
+        "packages": [
+          "codex-hepta-evidence",
+          "codex-hepta-agentd",
+          "codex-hepta-infer-worker-host"
+        ],
+        "source_modified": false,
+        "attempts": [
+          {
+            "receipt": "R2-70115620-scoped-just-fix.json",
+            "command": [
+              "just",
+              "fix",
+              "-p",
+              "codex-hepta-evidence",
+              "-p",
+              "codex-hepta-agentd",
+              "-p",
+              "codex-hepta-infer-worker-host",
+              "--locked"
+            ],
+            "command_exit_code": 101,
+            "elapsed_seconds": 368.1885404586792,
+            "log_sha256": "583307cfd4e4e4a7548a689255bd50b2e989dcb8b0885b2e1101d33c5eb1f998",
+            "source_unchanged_and_clean": true
+          },
+          {
+            "receipt": "R2-70115620-scoped-just-fix-attempt2.json",
+            "command": [
+              "just",
+              "fix",
+              "-p",
+              "codex-hepta-evidence",
+              "-p",
+              "codex-hepta-agentd",
+              "-p",
+              "codex-hepta-infer-worker-host",
+              "--locked"
+            ],
+            "command_exit_code": 101,
+            "elapsed_seconds": 337.49704241752625,
+            "log_sha256": "19ccde6a1c4b54f4532ca9a06059c5a0f165e53fc2988f33cdb1f7ca3c0e23d8",
+            "source_unchanged_and_clean": true
+          }
+        ],
+        "scope": "Both original-command attempts terminated with an explicit ENOSPC diagnostic. No lint PASS or native test execution follows."
+      }
+    },
+    "complete_S_R_pair_acceptance": "NOT_RUN_AS_A_COMPLETE_DEPLOYMENT_PAIR",
+    "chain_S_source_checks": {
+      "source_commit": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+      "status": "PASS_SOURCE_SCOPE_ONLY",
+      "corpus_pins": 487,
+      "upstream_heads": 6,
+      "repository_packages": 26,
+      "rust_files": 1146,
+      "local_links": 2970,
+      "normal_dependency_edges": 25,
+      "complete_worktree_at_check_time": true,
+      "evidence_directory": "source-integration/published-source/",
+      "native_clippy_or_format_execution_on_S_by_this_continuation": false,
+      "results_are_not_execution_on_this_evidence_publication": true
+    }
+  },
+  "historical_evidence_keeps_original_scope": {
+    "stored_as_evidence_in_chain_S": [
+      {
+        "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-native-artifacts.json",
+        "role": "historical 14fc package results and component test-executable hashes",
+        "git_blob": "33f09db4dfef7002e5c67dd021b9a2b0de81f805",
+        "sha256": "1a22da87bceb9cead0365abf9898b055f451d7d6b3d429a0b802af0ea8ba93ff",
+        "bytes": 8035
+      },
+      {
+        "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-clippy.json",
+        "role": "historical 14fc strict Clippy receipt",
+        "git_blob": "ecc39c125d14a14599ea53c7e240e8dc8fedebda",
+        "sha256": "ff19adad65cc3ed1ff3871610ff6197de546cd2a02f207d02cbb51e431c6d869",
+        "bytes": 1718
+      },
+      {
+        "path": "evidence/pq-owner-boundaries-20261105/research-result.json",
+        "role": "historical dbc research execution receipt",
+        "git_blob": "c5acfe374e2c90fca2e9ccaf0aad6909748889b5",
+        "sha256": "b26149241dddcb84a756a3135137854a88af8a8ca0315908887e864805aa3adc",
+        "bytes": 13331
+      },
+      {
+        "path": "evidence/pq-owner-boundaries-20261105/research-source-equivalence.json",
+        "role": "52 recorded inputs compared against ef1 only",
+        "git_blob": "bd00f7e1ab6eaa357533e9294bd859fbf7e70104",
+        "sha256": "46ade59255295c494c9cfaee0ae5399a0317bcf846830009e5431382674e12ea",
+        "bytes": 17873
+      },
+      {
+        "path": "evidence/pq-owner-boundaries-20261105/research-component-numerical-recheck.json",
+        "role": "12-row mathematical recheck with original declared limits",
+        "git_blob": "c547109a06f726a216dd38dbea4adc9ab2520cc6",
+        "sha256": "d84713092cbf2f19a555751887fc62f8c55c934c079577e56a372aa9fa8e0e10",
+        "bytes": 3339
+      }
+    ],
+    "m06": {
+      "executed_commit": "14fcbede085b414a9621aef3f288d2b1ca1839ae",
+      "executed_tree": "64b1a7e4072eddac05604d4bb4b1ef713e10d874",
+      "result": {
+        "targets": 25,
+        "passed": 246,
+        "failed": 0,
+        "ignored": 8,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      "strict_clippy_exit_code": 0,
+      "scope": "M06 native all-target all-feature test executables; not Node or a deployment binary",
+      "applies_as_execution_of_S_R": false
+    },
+    "research": {
+      "executed_checkout": "dbc24913e9c23f2359dd22ff9b01243877a6dd4d",
+      "compared_research_commit": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+      "tests_run": 230,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "captured_input_count": 52,
+      "captured_inputs_identical_to_compared_commit": true,
+      "scope": "13 research and component-budget suites; no native, WAN, QROM theorem or independent deployment acceptance",
+      "applies_as_execution_of_S_R": false
+    },
+    "research_math": "The separate exact-arithmetic recheck retained 12 original rows; it is not a QROM theorem, a quantum attack lower bound, a complete proof run or WAN acceptance.",
+    "runtime_R1": {
+      "source_commit": "fc0c6f7430cc1cce9274d407536e7249f2290ccd",
+      "source_tree": "8403d5acabc83707e9b5fcb4e5250a4883c12293",
+      "frontier_units": {
+        "classification": "SCOPED_NATIVE_PASS",
+        "executed_tests": 9,
+        "passed_tests": 9,
+        "command_exit_code": 0,
+        "selected_tests": [
+          "evidence_frontier::tests::recovery_frontier_cannot_be_omitted_at_the_ordinary_agentd_run_entry",
+          "evidence_frontier::tests::recovery_frontier_enforces_root_scope_epoch_revocation_and_generation_floor",
+          "evidence_frontier::tests::recovery_frontier_refuses_valid_classical_v1_and_v2_signatures",
+          "evidence_frontier::tests::recovery_frontier_rejects_wrong_key_pin_and_noncanonical_signature",
+          "evidence_frontier::tests::recovery_frontier_rejects_wrong_domain_and_profile",
+          "evidence_frontier::tests::recovery_frontier_authenticates_both_effect_fields",
+          "evidence_frontier::tests::recovery_frontier_pq_survives_store_close_and_reopen",
+          "evidence_frontier::tests::recovery_frontier_root_rotation_retires_the_old_key",
+          "evidence_frontier::tests::recovery_frontier_read_only_preflight_never_binds_or_changes_the_image"
+        ],
+        "receipt": {
+          "file": "R-frontier-native-final.json",
+          "sha256": "9c39e312ad1eb31b436e3620c17b5070bb95eac5936577667281662a2475051f",
+          "bytes": 2298,
+          "role": "R1 scoped native unit result",
+          "scope": "Existing independently recorded receipt; not a file asserted to belong to the R2 Git tree."
+        }
+      },
+      "kernel_evidence_product": {
+        "classification": "COMPILE_FAILURE_BEFORE_PRODUCT_EXECUTION",
+        "executed_tests": 0,
+        "command_exit_code": 101,
+        "compiler_error": "E0277: ProviderEffectBindingError does not implement std::error::Error for the fixture implicit anyhow conversion",
+        "receipt": {
+          "file": "R-fc0c6f74-kernel-evidence-product.json",
+          "sha256": "70e92e39b282aefd1e6f1cf3f0f84a96f858a67fedee250a644507c8af9c1dd7",
+          "bytes": 1221,
+          "role": "R1 product compiler failure",
+          "scope": "Existing independently recorded receipt; not a file asserted to belong to the R2 Git tree."
+        }
+      },
+      "local_CI_source_audit": {
+        "fixture_outcomes_matched": 154,
+        "native_tests_executed_by_this_audit": 0,
+        "raw_receipt_sha256": "56c12da5443567bc580b986bc1591af5038e06a4ff4395510be83c17edad8d16"
+      },
+      "applies_as_execution_of_R2": false
+    },
+    "parallel_peer_current_root": {
+      "actual_executed_commit": "dba49c2f66d8a72d6845c70958c4a24d6c4e7e89",
+      "actual_executed_tree": "25ae0d2035b763b916575292d04571e93a512dd1",
+      "records": [
+        {
+          "path": "evidence/pq-current-root-integration-20261104/LATE_INTEGRATION.md",
+          "publication_commit": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+          "git_blob": "35be557813012a650e2c122a3a5ebc6bdb6be15b",
+          "sha256": "1e95abcf5c78de267e57a4a8bac6b96e65265a7c8467e672079c300cd2afc41f",
+          "bytes": 8701
+        },
+        {
+          "path": "evidence/pq-current-root-integration-20261104/PUBLICATION_SCOPE.json",
+          "publication_commit": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+          "git_blob": "83220ef556aa99b272b294fbc6a98077162f625b",
+          "sha256": "6820932e52f3aec4a5b14533549ef87cc0b1c5bb65f788b84356cba61067a952",
+          "bytes": 13414
+        },
+        {
+          "path": "evidence/pq-current-root-integration-20261104/late-integration.json",
+          "publication_commit": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+          "git_blob": "512621614f28a867a93a38c41771d49546e7c715",
+          "sha256": "4bd2ab5fc830e696c47928b506e8c40f50d86dab755b36bf0aa5404befcf7c38",
+          "bytes": 203026
+        }
+      ],
+      "scope": "Separately sourced peer native/Node/lint/Python observations; preserved without relabelling as S execution or independent deployment acceptance.",
+      "applies_as_execution_of_S_R2": false
+    }
+  },
+  "threat_model_and_remaining_assumptions": [
+    {
+      "id": "current_root_and_checkpoint",
+      "requirement": "Root policy, nonzero generation floor and a fresh checkpoint must be independently provisioned and retained outside the restored owner state; restored input may not define its own expected root or snapshot.",
+      "established_by_this_manifest": false
+    },
+    {
+      "id": "root_custody_and_clock",
+      "requirement": "Protect signing keys, revocation/rotation state and time/currentness services. Four pathname exclusions alone do not establish administrative independence, same-UID isolation or whole-host rollback resistance.",
+      "established_by_this_manifest": false
+    },
+    {
+      "id": "shared_store_and_writer",
+      "requirement": "The runtime writer assumption and every real shared-store owner need explicit deployment enforcement; directly launched non-Agentd app-server/governance constructors are not covered by the Agentd startup gate.",
+      "established_by_this_manifest": false
+    },
+    {
+      "id": "binary_and_deployment_identity",
+      "requirement": "Bind the delivered Node/Agentd binaries, selected deployed configuration, roots and ordinary/recovery/acceptance invocations to the reviewed pair with independent receipts. Signed source labels alone do not supply this binding.",
+      "established_by_this_manifest": false
+    },
+    {
+      "id": "real_effect_owner",
+      "requirement": "Stable operation IDs, exclusive consumption, independent monotonic state and authenticated provider reconciliation must hold across crashes, lost replies, retries, competing writers and host rollback.",
+      "established_by_this_manifest": false
+    }
+  ],
+  "explicit_open_boundaries": {
+    "P0-1": "The source review pair and selected inputs are fixed; an actual ordinary Agentd native-test executable is hashed, but no qualified Node/Agentd binary pair or deployed configuration is supplied. Ordinary entry, recovery tools and acceptance are not established as one installed combination.",
+    "P0-2": "The PQ recovery-owner source change does not establish current PQ authorization for every real owner or all ordinary/HTTP/PoN/AuthBus/automation relationships.",
+    "P0-3": "Chain has a PQ release-role component, but the actual Fleet installer/updater path is not connected to its production root authority. Real old/new root deployment, retirement, cold recovery and key/device faults remain unqualified.",
+    "P0-4": "Rejecting unsupported authenticated source state does not complete all balance/debt/nonce/task/revocation migration, CLAIM, reorg, recovery and source retirement obligations.",
+    "P0-5": {
+      "separate_governance_tables": "The covered provider_effect_* snapshot is not a commitment to the separate provider_invocation_* history.",
+      "shadow_mode": "Ordinary governance installation defaults to Shadow; detached provider behavior on observation failure or duplicate intent is not a durable exclusive-consumption proof.",
+      "automation": "TaskFlow automation_1.sqlite3 is a separate database and is not covered by this evidence snapshot.",
+      "publication_window_counterexample": {
+        "kind": "SOURCE_REASONING_NOT_A_LIVE_PROVIDER_EXPERIMENT",
+        "sequence": [
+          "Independently retained Q0 matches evidence image S0.",
+          "A real effect consumes permission and advances local evidence to S1.",
+          "The process crashes before an independent recovery owner retains Q1 or advances its floor.",
+          "Restored S0 still matches valid Q0 and can pass startup admission."
+        ],
+        "conclusion": "Preventing reuse still requires the real provider or an independent monotonic owner; startup signatures alone do not atomically consume permission and publish a fresh external checkpoint."
+      }
+    },
+    "research_A_B": "Independent cryptographic implementation and complete hash/relationship/recursion/verifier/QROM analysis and the cheapest legal W1/oracle/DAA/timestamp/fork model remain separate research gates; benchmark observations are not lower bounds.",
+    "P0-6": "Original business and hostile conditions on the same real PQ wire/binary pair, independent WAN/fault recovery, and activation responsibility have not been qualified."
+  },
+  "source_replacement_scope": {
+    "prior_runtime": "fc0c6f7430cc1cce9274d407536e7249f2290ccd",
+    "runtime_candidate": "70115620a7f540c8618a9b0d32ead20f8bc508f0",
+    "parent_preserving_peer_evidence": "9e8faef449a4392b7b9aa6a9071f260a34d95ec9",
+    "changed_source_paths_under_codex_rs_github_scripts": [
+      "codex-rs/hepta-agentd/tests/kernel_evidence_product.rs"
+    ],
+    "change": "Only the existing fixture converts its ProviderEffectBindingError explicitly to anyhow using its Debug representation.",
+    "unchanged": "Production source files, workspace lockfiles, fixed fixture inputs, checkpoints, four test names and assertions, and the 37-test workflow are unchanged from R1."
+  },
+  "source_publication_receipts": [
+    {
+      "path": "source-publication.json",
+      "sha256": "f88e1f1ef6b264f82ee5f81ba3606443910ea7754979faf3032d4bb2410f58fc",
+      "bytes": 2093,
+      "scope": "Retained S/R1 historical source publication. Its Chain S record remains the Chain publication reference; it is not a publication record for runtime R2.",
+      "is_native_or_deployment_evidence": false
+    },
+    {
+      "path": "runtime-R2-source-publication.json",
+      "sha256": "6d0c009f9293f45846bd2e86bea05166f1fd02524581f74eafe7296693ad908a",
+      "bytes": 1670,
+      "scope": "R2 existing-branch expected-ref update and exact fixture blob readback; source publication only. No native, hosted-CI completion, deployment or custody result.",
+      "is_native_or_deployment_evidence": false
+    },
+    {
+      "path": "runtime-evidence-publication.json",
+      "sha256": "03489058a92e4017f18fe6f979ab57e49f6c9613cc3d3b14e53d276525ad4002",
+      "bytes": 2012,
+      "scope": "Expected-head evidence-only publication and remote byte readback; source under test remains R2.",
+      "is_native_or_deployment_evidence": false
+    }
+  ],
+  "finalized_at_utc": "2026-11-05T07:07:57.696123+00:00",
+  "source_publication_verified": true,
+  "evidence_publication": {
+    "runtime_repository": "TrillionniumFoundation/hepta-private-ci",
+    "runtime_evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+    "runtime_evidence_tree": "253d7584783cf658b9d5192d1106aa4c08fe031f",
+    "source_commit_under_test": "70115620a7f540c8618a9b0d32ead20f8bc508f0",
+    "evidence_only_changed_files": 98,
+    "indexed_files_excluding_index": 97,
+    "source_ci_configuration_lock_changed": false,
+    "index": {
+      "file": "index.json",
+      "path": "evidence/pq-recovery-owner-20261105/index.json",
+      "repository": "TrillionniumFoundation/hepta-private-ci",
+      "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+      "git_blob": "ac2f413aa773553172e92ff4924de6172053e80e",
+      "sha256": "46caa8ac5f6258e3669dfc1c9efc929091bc4e2d03720559cc5fd91d73cd7b66",
+      "bytes": 24965,
+      "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/index.json",
+      "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+    },
+    "summary": {
+      "file": "R2-validation-summary.json",
+      "path": "evidence/pq-recovery-owner-20261105/R2-validation-summary.json",
+      "repository": "TrillionniumFoundation/hepta-private-ci",
+      "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+      "git_blob": "45b5947bffeeda33ad5279be250bba1f53dc3a8e",
+      "sha256": "1fcdbde92beef8f69c35efd607be11e5669b4712dfa604063d007ba3c7da0b7d",
+      "bytes": 4326,
+      "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/R2-validation-summary.json",
+      "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+    },
+    "readme": {
+      "file": "README.md",
+      "path": "evidence/pq-recovery-owner-20261105/README.md",
+      "repository": "TrillionniumFoundation/hepta-private-ci",
+      "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+      "git_blob": "03569a58ee87dd60eeabef51d0d613e142546ac7",
+      "sha256": "b1d5447856b3541a7e9502a7ce19746458a7c48879138e860e94408a8977b256",
+      "bytes": 25791,
+      "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/README.md",
+      "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+    },
+    "qualification_closed": false
+  },
+  "other_tooling_observations": {
+    "bazel_lock_update": {
+      "status": "PASS_COMMAND_ONLY",
+      "command_exit_code": 0,
+      "elapsed_seconds": 72.1563572883606,
+      "source_captured_at_command_boundaries": false,
+      "attributed_as_R2_execution": false,
+      "scope_reference": {
+        "file": "bazel-source-scope.json",
+        "path": "evidence/pq-recovery-owner-20261105/bazel-source-scope.json",
+        "repository": "TrillionniumFoundation/hepta-private-ci",
+        "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+        "git_blob": "dbe16f334403b833d4ee2feecdfdddd55de46ad5",
+        "sha256": "7ef4c01f52b3d7b3836ea51c2ed1049aeca18fcdf8f2523bf637e3777b2ff87b",
+        "bytes": 1113,
+        "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/bazel-source-scope.json",
+        "scope": "Receipt retained in the evidence commit; actual execution source remains R2 as recorded inside."
+      }
+    }
+  },
+  "publication_carrier_scope": {
+    "path": "publication-carrier-scope.json",
+    "sha256": "894318ed14bdf82d19b5f809135f25632067dee0d5c187c4e512faed2183ef28",
+    "bytes": 18431,
+    "publication_parent": "2e3e1cc2df14f809dcbfb560b94bca2b37a48a35",
+    "publication_parent_tree": "a8785b53959dc3ae94fefb1eda91d4b3c2531018",
+    "same_production_source_as_frozen_candidate": false,
+    "candidate_source_pair_changed": false,
+    "qualification_transferred": false,
+    "scope": "The shared PR branch includes later concurrent code/workflow changes. This manifest continues to pin S/R2; the publication carrier must not be substituted for the verified source identities.",
+    "object_import_receipt": {
+      "path": "publication-carrier-object-import.json",
+      "sha256": "4abde007bfaf5c7edd2c2552b2578218ddcb5751c709edaa31d156f78136b077",
+      "bytes": 3908,
+      "current_distinct_leaf_blobs": 8710,
+      "missing_current_leaf_blobs": 0,
+      "parent_history_complete": false,
+      "scope": "Exact latest carrier root tree, raw commit and current leaf closure only; its two direct parent commits were not materialized and no new source/native qualification follows."
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "repository-check",
+  "command": [
+    "python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+  "tree": "72d12bd434055f67c5f6becf2ee480a9ec09b99e",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T13:15:05.432797+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 75007600491,
+  "finished_at": "2026-11-04T13:16:20.441677+00:00",
+  "log_bytes": 307,
+  "log_sha256": "5570ef1e9672caf0ce84072b8768439958cf73193ff6dd449e34a007bbb5ae9f",
+  "final_head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+  "final_dirty_paths": []
+}

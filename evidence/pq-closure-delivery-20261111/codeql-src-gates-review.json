@@ -1,0 +1,1929 @@
+{
+  "counts": {
+    "explicit_cfg_test_files": 9,
+    "explicit_cfg_test_locations": 98,
+    "fixed_test_seed_locations": 1,
+    "initial_locations_outside_this_supplement": 756,
+    "initial_rust_unique_primary_locations": 857,
+    "ordinary_module_buffer_locations": 3,
+    "ordinary_module_files": 2,
+    "reviewed_remaining_src_locations": 101,
+    "reviewed_src_files": 11,
+    "test_fixture_salt_locations": 4,
+    "test_nonce_locations": 93
+  },
+  "created_at_utc": "2026-11-11T06:38:58.584572+00:00",
+  "files": [
+    {
+      "c1_source_pin": {
+        "bytes": 12902,
+        "git_blob": "3a38da1061df615b98e46b0d2fd56133f493b4cd",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+        "sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b"
+      },
+      "cfg_test_gate_for_selected_function_observed": false,
+      "full_call_chain_security_verified": false,
+      "locations": [
+        {
+          "messages": {
+            "This hard-coded value is used as [a key](1).": 1
+          },
+          "region": {
+            "endColumn": 55,
+            "startColumn": 30,
+            "startLine": 125
+          },
+          "source_line": "        let mut fixed_spki = [0; ML_DSA_65_SPKI_BYTES];"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a key](1).": 1
+          },
+          "region": {
+            "endColumn": 45,
+            "startColumn": 20,
+            "startLine": 279
+          },
+          "source_line": "    let mut spki = [0; ML_DSA_65_SPKI_BYTES];"
+        }
+      ],
+      "source_classification": "ordinary_module_buffer_initialization",
+      "unique_primary_locations": 2,
+      "uri": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
+    },
+    {
+      "all_primary_regions_inside_reviewed_module": true,
+      "c1_source_pin": {
+        "bytes": 19075,
+        "git_blob": "a5c8c6ba0ecedee4922137ebaa106ddf91fe4c75",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+        "sha256": "2f775934937dc0997579ca43132c3a2aee262103ec66ca4a4be08d3b8f4f93f4"
+      },
+      "cfg_attribute_line": 268,
+      "cfg_excerpt": {
+        "end_line": 269,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+        "start_line": 268,
+        "text": "#[cfg(test)]\nmod tests {"
+      },
+      "closing_excerpt": {
+        "end_line": 480,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+        "start_line": 478,
+        "text": "        check_mode_separation::<MlDsa87>(CandidateAlgorithm::MlDsa87);\n    }\n}"
+      },
+      "deployed_build_cfg_or_artifact_exclusion_verified": false,
+      "local_context": "SigningKey::<P>::new_from_slice(&[38; 32]) in check_mode_separation; called by two explicit ML-DSA mode-separation tests.",
+      "locations": [
+        {
+          "messages": {
+            "This hard-coded value is used as [a key](1).": 1
+          },
+          "region": {
+            "endColumn": 60,
+            "startColumn": 52,
+            "startLine": 419
+          },
+          "source_line": "        let raw = SigningKey::<P>::new_from_slice(&[38; 32]).unwrap();"
+        }
+      ],
+      "module_close_line": 480,
+      "module_open_line": 269,
+      "observed_role": "fixed_test_seed",
+      "public_known_answer_vector_provenance_verified": false,
+      "source_classification": "explicit_cfg_test_module",
+      "unique_primary_locations": 1,
+      "uri": "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs"
+    },
+    {
+      "c1_source_pin": {
+        "bytes": 33869,
+        "git_blob": "662ec394bffc84f568bca0f117456aa13f03e8b5",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+        "sha256": "cb2d527090ad4a2cf119a778b9854bde35fc12ee8e82f7f7d3218fc91fd5eca1"
+      },
+      "cfg_test_gate_for_selected_function_observed": false,
+      "full_call_chain_security_verified": false,
+      "locations": [
+        {
+          "messages": {
+            "This hard-coded value is used as [a salt](1).": 1
+          },
+          "region": {
+            "endColumn": 26,
+            "startColumn": 19,
+            "startLine": 52
+          },
+          "source_line": "    let mut out = [0; 32];"
+        }
+      ],
+      "source_classification": "ordinary_module_buffer_initialization",
+      "unique_primary_locations": 1,
+      "uri": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs"
+    },
+    {
+      "all_primary_regions_inside_reviewed_module": true,
+      "c1_source_pin": {
+        "bytes": 34815,
+        "git_blob": "ab18a5b18b534dbeb18955ae29555ef1ea42383e",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+        "sha256": "c7018524cefd74961862150893bd593b01e720c6fdaa84350b4fc1c54bc378ef"
+      },
+      "cfg_attribute_line": 675,
+      "cfg_excerpt": {
+        "end_line": 676,
+        "path": "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+        "start_line": 675,
+        "text": "#[cfg(test)]\nmod tests {"
+      },
+      "closing_excerpt": {
+        "end_line": 988,
+        "path": "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+        "start_line": 986,
+        "text": "        assert_eq!((blocks, indexes), (0, 0));\n    }\n}"
+      },
+      "deployed_build_cfg_or_artifact_exclusion_verified": false,
+      "local_context": "The local block fixture takes a salt, puts it into Header.nonce and an index-only-fixture hash; selected values are passed from chain/fork/rollback tests.",
+      "locations": [
+        {
+          "messages": {
+            "This hard-coded value is used as [a salt](1).": 1
+          },
+          "region": {
+            "endColumn": 68,
+            "startColumn": 67,
+            "startLine": 742
+          },
+          "source_line": "            let id = block(db, ctx, *ids.last().unwrap(), height, 0);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a salt](1).": 1
+          },
+          "region": {
+            "endColumn": 51,
+            "startColumn": 50,
+            "startLine": 833
+          },
+          "source_line": "        let fork1 = block(&db, ctx, ids[32], 33, 1);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a salt](1).": 1
+          },
+          "region": {
+            "endColumn": 49,
+            "startColumn": 48,
+            "startLine": 835
+          },
+          "source_line": "        let fork2 = block(&db, ctx, fork1, 34, 1);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a salt](1).": 1
+          },
+          "region": {
+            "endColumn": 46,
+            "startColumn": 45,
+            "startLine": 969
+          },
+          "source_line": "            id = block(&tx, ctx, ids[3], 4, 0);"
+        }
+      ],
+      "module_close_line": 988,
+      "module_open_line": 676,
+      "observed_role": "test_fixture_salt",
+      "public_known_answer_vector_provenance_verified": false,
+      "source_classification": "explicit_cfg_test_module",
+      "unique_primary_locations": 4,
+      "uri": "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs"
+    },
+    {
+      "all_primary_regions_inside_reviewed_module": true,
+      "c1_source_pin": {
+        "bytes": 217196,
+        "git_blob": "52b115797c30bdb4b89d2eb73fc56b9b8bc9d033",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "sha256": "7a0ea0cc4a000a693d94faa43b6acf8541cf1f8965f9fe837d01e7d757a0bee7"
+      },
+      "cfg_attribute_line": 2876,
+      "cfg_excerpt": {
+        "end_line": 2877,
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "start_line": 2876,
+        "text": "#[cfg(test)]\nmod tests {"
+      },
+      "closing_excerpt": {
+        "end_line": 5442,
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "start_line": 5438,
+        "text": "        assert_eq!(metrics.authenticated_requests, 2);\n    }\n}\n\n/// Explicit unintegrated public development successor; old listeners unchanged."
+      },
+      "deployed_build_cfg_or_artifact_exclusion_verified": false,
+      "local_context": "All selected literals call the nested transfer helper in existing_replay_cancelled_reorg_recovers_signed_payments_once, an explicit #[test].",
+      "locations": [
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 47,
+            "startColumn": 46,
+            "startLine": 4789
+          },
+          "source_line": "                    vec![transfer(&settings, 1, 1, 11)],"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 47,
+            "startColumn": 46,
+            "startLine": 4801
+          },
+          "source_line": "                    vec![transfer(&settings, 1, 2, 7)],"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 47,
+            "startColumn": 46,
+            "startLine": 4811
+          },
+          "source_line": "                    vec![transfer(&settings, 2, 3, 9)],"
+        }
+      ],
+      "module_close_line": 5440,
+      "module_open_line": 2877,
+      "observed_role": "test_nonce",
+      "public_known_answer_vector_provenance_verified": false,
+      "source_classification": "explicit_cfg_test_module",
+      "unique_primary_locations": 3,
+      "uri": "trillionnium/crates/trnm-pon-node/src/ingress.rs"
+    },
+    {
+      "all_primary_regions_inside_reviewed_module": true,
+      "c1_source_pin": {
+        "bytes": 20675,
+        "git_blob": "9f830268d71fcea84ceca7dc2469b9861f654d86",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/task_observation.rs",
+        "sha256": "2182999c12807831eb1f89c777e330dd46edd6c5ddff11144b20aaf552662a33"
+      },
+      "cfg_attribute_line": 191,
+      "cfg_excerpt": {
+        "end_line": 192,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/task_observation.rs",
+        "start_line": 191,
+        "text": "#[cfg(test)]\nmod tests {"
+      },
+      "closing_excerpt": {
+        "end_line": 538,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/task_observation.rs",
+        "start_line": 536,
+        "text": "        );\n    }\n}"
+      },
+      "deployed_build_cfg_or_artifact_exclusion_verified": false,
+      "local_context": "The selected common(settings, account, nonce) calls construct signed transaction inputs in the test module.",
+      "locations": [
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 38,
+            "startColumn": 37,
+            "startLine": 318
+          },
+          "source_line": "                common(settings, 1, 1),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 67,
+            "startColumn": 66,
+            "startLine": 331
+          },
+          "source_line": "            let acceptance = signed(profile, common(settings, 1, 1), 1, 5, &[9; 64]);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 55,
+            "startColumn": 54,
+            "startLine": 414
+          },
+          "source_line": "                signed(profile, common(&settings, 1, 1), 1, 2, &reserve),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 55,
+            "startColumn": 54,
+            "startLine": 415
+          },
+          "source_line": "                signed(profile, common(&settings, 2, 1), 2, 4, &receipt),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 55,
+            "startColumn": 54,
+            "startLine": 416
+          },
+          "source_line": "                signed(profile, common(&settings, 1, 2), 1, 5, &receipt),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 57,
+            "startColumn": 56,
+            "startLine": 464
+          },
+          "source_line": "                let mut foreign = common(&settings, 1, 2);"
+        }
+      ],
+      "module_close_line": 538,
+      "module_open_line": 192,
+      "observed_role": "test_nonce",
+      "public_known_answer_vector_provenance_verified": false,
+      "source_classification": "explicit_cfg_test_module",
+      "unique_primary_locations": 6,
+      "uri": "trillionnium/crates/trnm-pon-node/src/store/task_observation.rs"
+    },
+    {
+      "all_primary_regions_inside_reviewed_module": true,
+      "c1_source_pin": {
+        "bytes": 14038,
+        "git_blob": "fcb274af627df537f7debe5cf922e6fed766bd7c",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-protocol/src/funded_service_task_v1.rs",
+        "sha256": "c7c501901dd9fe38b447db61069a6d605379c5a02555acc874ffebfb2c948cb1"
+      },
+      "cfg_attribute_line": 235,
+      "cfg_excerpt": {
+        "end_line": 236,
+        "path": "trillionnium/crates/trnm-protocol/src/funded_service_task_v1.rs",
+        "start_line": 235,
+        "text": "#[cfg(test)]\nmod tests {"
+      },
+      "closing_excerpt": {
+        "end_line": 420,
+        "path": "trillionnium/crates/trnm-protocol/src/funded_service_task_v1.rs",
+        "start_line": 418,
+        "text": "        }\n    }\n}"
+      },
+      "deployed_build_cfg_or_artifact_exclusion_verified": false,
+      "local_context": "The selected task_id nonces and changed context tuples belong to exact_reservation_bytes_and_every_term_binding.",
+      "locations": [
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 71,
+            "startColumn": 70,
+            "startLine": 261
+          },
+          "source_line": "        let task = contract.task_id(context.0, context.1, context.2, 1);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 76,
+            "startColumn": 75,
+            "startLine": 292
+          },
+          "source_line": "                changed.contract.task_id(context.0, context.1, context.2, 1),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 47,
+            "startColumn": 46,
+            "startLine": 297
+          },
+          "source_line": "            ([23; 32], context.1, context.2, 1),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 47,
+            "startColumn": 46,
+            "startLine": 298
+          },
+          "source_line": "            (context.0, [23; 32], context.2, 1),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 47,
+            "startColumn": 46,
+            "startLine": 299
+          },
+          "source_line": "            (context.0, context.1, [23; 32], 1),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 48,
+            "startColumn": 47,
+            "startLine": 300
+          },
+          "source_line": "            (context.0, context.1, context.2, 2),"
+        }
+      ],
+      "module_close_line": 420,
+      "module_open_line": 236,
+      "observed_role": "test_nonce",
+      "public_known_answer_vector_provenance_verified": false,
+      "source_classification": "explicit_cfg_test_module",
+      "unique_primary_locations": 6,
+      "uri": "trillionnium/crates/trnm-protocol/src/funded_service_task_v1.rs"
+    },
+    {
+      "all_primary_regions_inside_reviewed_module": true,
+      "c1_source_pin": {
+        "bytes": 20068,
+        "git_blob": "82c0e78ea28aacd94546c73917702c25183f0917",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+        "sha256": "b7bf661c154ab2415c74159a6a65febcbcf45ad15ad5d4d6f4763bfd1b69a7ee"
+      },
+      "cfg_attribute_line": 409,
+      "cfg_excerpt": {
+        "end_line": 410,
+        "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+        "start_line": 409,
+        "text": "#[cfg(test)]\nmod tests {"
+      },
+      "closing_excerpt": {
+        "end_line": 647,
+        "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+        "start_line": 643,
+        "text": "        );\n    }\n}\n\n/// Bounded local proof ingress with isolated recovery capacity."
+      },
+      "deployed_build_cfg_or_artifact_exclusion_verified": false,
+      "local_context": "The local frame helper is called with fixed sequence/nonces by admission, replay, recovery and rejection tests.",
+      "locations": [
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 40,
+            "startColumn": 39,
+            "startLine": 463
+          },
+          "source_line": "        let first = frame(session(1), 1, 10);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 40,
+            "startColumn": 39,
+            "startLine": 478
+          },
+          "source_line": "        let first = frame(session(1), 1, 10);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 41,
+            "startColumn": 40,
+            "startLine": 493
+          },
+          "source_line": "        let second = frame(session(1), 2, 11);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 55,
+            "startColumn": 54,
+            "startLine": 505
+          },
+          "source_line": "            admission.verify_frame(frame(session(2), 1, 10), &mut source),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 55,
+            "startColumn": 54,
+            "startLine": 511
+          },
+          "source_line": "            admission.verify_frame(frame(session(1), 2, 10), &mut source),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 40,
+            "startColumn": 39,
+            "startLine": 518
+          },
+          "source_line": "        let first = frame(session(1), 1, 10);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 55,
+            "startColumn": 54,
+            "startLine": 522
+          },
+          "source_line": "            admission.verify_frame(frame(session(1), 1, 11), &mut source),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 55,
+            "startColumn": 54,
+            "startLine": 528
+          },
+          "source_line": "            admission.verify_frame(frame(session(1), 2, 12), &mut source),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 40,
+            "startColumn": 39,
+            "startLine": 560
+          },
+          "source_line": "        let first = frame(session(1), 1, 10);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 40,
+            "startColumn": 39,
+            "startLine": 578
+          },
+          "source_line": "        let first = frame(session(1), 1, 10);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 75,
+            "startColumn": 74,
+            "startLine": 612
+          },
+          "source_line": "            PeerReplayStateV0::new(session(1), 0, Some(frame(session(1), 2, 10))),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 75,
+            "startColumn": 74,
+            "startLine": 616
+          },
+          "source_line": "            PeerReplayStateV0::new(session(1), 0, Some(frame(session(2), 1, 10))),"
+        }
+      ],
+      "module_close_line": 645,
+      "module_open_line": 410,
+      "observed_role": "test_nonce",
+      "public_known_answer_vector_provenance_verified": false,
+      "source_classification": "explicit_cfg_test_module",
+      "unique_primary_locations": 12,
+      "uri": "trillionnium/crates/trnm-transport/src/lib.rs"
+    },
+    {
+      "all_primary_regions_inside_reviewed_module": true,
+      "c1_source_pin": {
+        "bytes": 38485,
+        "git_blob": "1c51bc7104e9c96abc45c185cf1f5140e5ce107b",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-types/src/relay.rs",
+        "sha256": "610bba86023958c903e82e4bdff654297edf72be99bd9a5f8aee8f2f78357672"
+      },
+      "cfg_attribute_line": 545,
+      "cfg_excerpt": {
+        "end_line": 546,
+        "path": "trillionnium/crates/trnm-types/src/relay.rs",
+        "start_line": 545,
+        "text": "#[cfg(test)]\nmod tests {"
+      },
+      "closing_excerpt": {
+        "end_line": 1064,
+        "path": "trillionnium/crates/trnm-types/src/relay.rs",
+        "start_line": 1062,
+        "text": "        assert_eq!(err.stable_code(), \"BadSig\");\n    }\n}"
+      },
+      "deployed_build_cfg_or_artifact_exclusion_verified": false,
+      "local_context": "The test-local sample_env creates envelopes from explicit nonce strings; it calls sign_for_test for its synthetic signature.",
+      "locations": [
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 42,
+            "startColumn": 33,
+            "startLine": 592
+          },
+          "source_line": "        let env = sample_env(1, \"nonce-1\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 46,
+            "startColumn": 37,
+            "startLine": 602
+          },
+          "source_line": "        let mut env = sample_env(1, \"nonce-1\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 45,
+            "startColumn": 34,
+            "startLine": 615
+          },
+          "source_line": "        let env1 = sample_env(1, \"nonce-dup\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 45,
+            "startColumn": 34,
+            "startLine": 616
+          },
+          "source_line": "        let env2 = sample_env(2, \"nonce-dup\", 1_730_000_000_100, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 48,
+            "startColumn": 34,
+            "startLine": 633
+          },
+          "source_line": "        let env1 = sample_env(1, \"nonce-shared\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 52,
+            "startColumn": 38,
+            "startLine": 635
+          },
+          "source_line": "        let mut env2 = sample_env(1, \"nonce-shared\", 1_730_000_000_050, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 48,
+            "startColumn": 34,
+            "startLine": 652
+          },
+          "source_line": "        let env1 = sample_env(1, \"nonce-shared\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 52,
+            "startColumn": 38,
+            "startLine": 654
+          },
+          "source_line": "        let mut env2 = sample_env(1, \"nonce-shared\", 1_730_000_000_050, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 43,
+            "startColumn": 34,
+            "startLine": 670
+          },
+          "source_line": "        let env1 = sample_env(1, \"nonce-1\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 43,
+            "startColumn": 34,
+            "startLine": 671
+          },
+          "source_line": "        let env2 = sample_env(1, \"nonce-2\", 1_730_000_000_100, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 50,
+            "startColumn": 33,
+            "startLine": 687
+          },
+          "source_line": "        let env = sample_env(3, \"nonce-first-gap\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 42,
+            "startColumn": 33,
+            "startLine": 699
+          },
+          "source_line": "        let env = sample_env(1, \"nonce-1\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 46,
+            "startColumn": 37,
+            "startLine": 711
+          },
+          "source_line": "        let mut env = sample_env(1, \"nonce-1\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 46,
+            "startColumn": 37,
+            "startLine": 725
+          },
+          "source_line": "        let mut env = sample_env(1, \"nonce-1\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 46,
+            "startColumn": 37,
+            "startLine": 739
+          },
+          "source_line": "        let mut env = sample_env(1, \"nonce-1\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 46,
+            "startColumn": 37,
+            "startLine": 753
+          },
+          "source_line": "        let mut env = sample_env(1, \"nonce-1\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 57,
+            "startColumn": 45,
+            "startLine": 769
+          },
+          "source_line": "                let mut env = sample_env(3, \"nonce-ph-1\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 57,
+            "startColumn": 45,
+            "startLine": 779
+          },
+          "source_line": "                let mut env = sample_env(3, \"nonce-ph-2\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 58,
+            "startColumn": 45,
+            "startLine": 790
+          },
+          "source_line": "                let mut env = sample_env(3, \"nonce-sig-1\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 58,
+            "startColumn": 45,
+            "startLine": 795
+          },
+          "source_line": "                let mut env = sample_env(3, \"nonce-sig-2\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 56,
+            "startColumn": 45,
+            "startLine": 805
+          },
+          "source_line": "                let mut env = sample_env(3, \"nonce-v-1\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 56,
+            "startColumn": 45,
+            "startLine": 811
+          },
+          "source_line": "                let mut env = sample_env(3, \"nonce-t-1\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 54,
+            "startColumn": 41,
+            "startLine": 822
+          },
+          "source_line": "                let env = sample_env(3, \"nonce-old-1\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 54,
+            "startColumn": 41,
+            "startLine": 826
+          },
+          "source_line": "                let env = sample_env(3, \"nonce-old-2\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 54,
+            "startColumn": 41,
+            "startLine": 830
+          },
+          "source_line": "                let env = sample_env(3, \"nonce-new-1\", 1_730_000_500_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 55,
+            "startColumn": 41,
+            "startLine": 834
+          },
+          "source_line": "                let env = sample_env(3, \"nonce-base-2\", 1_730_000_000_200, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 57,
+            "startColumn": 41,
+            "startLine": 838
+          },
+          "source_line": "                let env = sample_env(2, \"nonce-seq-back\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 57,
+            "startColumn": 41,
+            "startLine": 842
+          },
+          "source_line": "                let env = sample_env(5, \"nonce-seq-jump\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 57,
+            "startColumn": 43,
+            "startLine": 851
+          },
+          "source_line": "            let baseline1 = sample_env(1, \"nonce-base-1\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 57,
+            "startColumn": 43,
+            "startLine": 852
+          },
+          "source_line": "            let baseline2 = sample_env(2, \"nonce-base-2\", 1_730_000_000_100, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 53,
+            "startColumn": 37,
+            "startLine": 875
+          },
+          "source_line": "        let mut env = sample_env(1, \"nonce-legacy-1\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 71,
+            "startColumn": 41,
+            "startLine": 891
+          },
+          "source_line": "            let mut env = sample_env(1, \"nonce-legacy-invalid-binding\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 59,
+            "startColumn": 37,
+            "startLine": 915
+          },
+          "source_line": "        let mut env = sample_env(1, \"nonce-legacy-default\", now_ms, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 54,
+            "startColumn": 37,
+            "startLine": 930
+          },
+          "source_line": "        let mut env = sample_env(1, \"nonce-oversized\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 58,
+            "startColumn": 37,
+            "startLine": 938
+          },
+          "source_line": "        let mut env = sample_env(1, \"nonce-large-payload\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 38,
+            "startColumn": 13,
+            "startLine": 965
+          },
+          "source_line": "            \"nonce-capacity-overflow\","
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 48,
+            "startColumn": 33,
+            "startLine": 979
+          },
+          "source_line": "        let env = sample_env(1, \"nonce-unbound\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 53,
+            "startColumn": 37,
+            "startLine": 990
+          },
+          "source_line": "        let mut env = sample_env(1, \"nonce-legacy-2\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 56,
+            "startColumn": 37,
+            "startLine": 1005
+          },
+          "source_line": "        let mut env = sample_env(1, \"nonce-cross-chain\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 61,
+            "startColumn": 47,
+            "startLine": 1019
+          },
+          "source_line": "        let mut missing_chain = sample_env(1, \"nonce-miss-1\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 59,
+            "startColumn": 45,
+            "startLine": 1029
+          },
+          "source_line": "        let mut missing_seq = sample_env(0, \"nonce-miss-2\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 51,
+            "startColumn": 37,
+            "startLine": 1043
+          },
+          "source_line": "        let mut env = sample_env(1, \"nonce|poison\", 1_730_000_000_000, key);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 53,
+            "startColumn": 37,
+            "startLine": 1056
+          },
+          "source_line": "        let mut env = sample_env(1, \"nonce-domain-1\", 1_730_000_000_000, key);"
+        }
+      ],
+      "module_close_line": 1064,
+      "module_open_line": 546,
+      "observed_role": "test_nonce",
+      "public_known_answer_vector_provenance_verified": false,
+      "source_classification": "explicit_cfg_test_module",
+      "unique_primary_locations": 43,
+      "uri": "trillionnium/crates/trnm-types/src/relay.rs"
+    },
+    {
+      "all_primary_regions_inside_reviewed_module": true,
+      "c1_source_pin": {
+        "bytes": 6478,
+        "git_blob": "c180596a888f8705876354dc317f656d50999c7c",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+        "sha256": "148f9b49806364b04ca14002595356ffd0756883730893e5ceaab73c569b2ea6"
+      },
+      "cfg_attribute_line": 84,
+      "cfg_excerpt": {
+        "end_line": 85,
+        "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+        "start_line": 84,
+        "text": "#[cfg(test)]\nmod tests {"
+      },
+      "closing_excerpt": {
+        "end_line": 202,
+        "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+        "start_line": 200,
+        "text": "        assert!(batch_total < old_total);\n    }\n}"
+      },
+      "deployed_build_cfg_or_artifact_exclusion_verified": false,
+      "local_context": "The test-local sample_env puts literal nonce strings into RelayAuthEnvelope and uses a synthetic sig-{seq} signature.",
+      "locations": [
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 109
+          },
+          "source_line": "            sample_env(1, \"n1\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 110
+          },
+          "source_line": "            sample_env(2, \"n2\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 111
+          },
+          "source_line": "            sample_env(3, \"n3\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 120
+          },
+          "source_line": "            sample_env(1, \"n1\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 121
+          },
+          "source_line": "            sample_env(2, \"n2\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 122
+          },
+          "source_line": "            sample_env(3, \"n3\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 132
+          },
+          "source_line": "            sample_env(1, \"n1\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 133
+          },
+          "source_line": "            sample_env(3, \"n3\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 134
+          },
+          "source_line": "            sample_env(2, \"n2\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 37,
+            "startColumn": 33,
+            "startLine": 142
+          },
+          "source_line": "        let env = sample_env(1, \"n1\");"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 155
+          },
+          "source_line": "            sample_env(1, \"n1\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 156
+          },
+          "source_line": "            sample_env(2, \"n2\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 157
+          },
+          "source_line": "            sample_env(3, \"n3\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 158
+          },
+          "source_line": "            sample_env(4, \"n4\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 159
+          },
+          "source_line": "            sample_env(5, \"n5\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 174
+          },
+          "source_line": "            sample_env(1, \"n1\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 175
+          },
+          "source_line": "            sample_env(2, \"n2\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 31,
+            "startColumn": 27,
+            "startLine": 176
+          },
+          "source_line": "            sample_env(3, \"n3\"),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 43,
+            "startColumn": 39,
+            "startLine": 184
+          },
+          "source_line": "        let envs = vec![sample_env(1, \"n1\")];"
+        }
+      ],
+      "module_close_line": 202,
+      "module_open_line": 85,
+      "observed_role": "test_nonce",
+      "public_known_answer_vector_provenance_verified": false,
+      "source_classification": "explicit_cfg_test_module",
+      "unique_primary_locations": 19,
+      "uri": "trillionnium/crates/trnm-types/src/transcript/mod.rs"
+    },
+    {
+      "all_primary_regions_inside_reviewed_module": true,
+      "c1_source_pin": {
+        "bytes": 5199,
+        "git_blob": "45d92fc5f479659874ed29894e06acfc3fb0cda9",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs",
+        "sha256": "7ba87d4412526c859e49357875fe40e323c2ca20e9745cc3995d2a78d07dee20"
+      },
+      "cfg_attribute_line": 89,
+      "cfg_excerpt": {
+        "end_line": 90,
+        "path": "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs",
+        "start_line": 89,
+        "text": "#[cfg(test)]\nmod tests {"
+      },
+      "closing_excerpt": {
+        "end_line": 160,
+        "path": "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs",
+        "start_line": 158,
+        "text": "        assert_eq!(line.matches(\"submit_log=\").count(), 1);\n    }\n}"
+      },
+      "deployed_build_cfg_or_artifact_exclusion_verified": false,
+      "local_context": "Fixed values occur in command-template quoting/stability and run-output tests.",
+      "locations": [
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 67,
+            "startColumn": 66,
+            "startLine": 99
+          },
+          "source_line": "        let actual = commit_template(9, worker, \"digest;whoami\", 9);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 62,
+            "startColumn": 61,
+            "startLine": 109
+          },
+          "source_line": "            commit_template(9, \"worker/name:1\", \"deadbeef\", 9),"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 55,
+            "startColumn": 54,
+            "startLine": 116
+          },
+          "source_line": "        let out = commit_template(7, \"alice\", \"ccc\", 7);"
+        },
+        {
+          "messages": {
+            "This hard-coded value is used as [a nonce](1).": 1
+          },
+          "region": {
+            "endColumn": 43,
+            "startColumn": 41,
+            "startLine": 124
+          },
+          "source_line": "        let out = build_run_once_output(12, \"bob\", \"rhash\", \"shex\", \"chash\");"
+        }
+      ],
+      "module_close_line": 160,
+      "module_open_line": 90,
+      "observed_role": "test_nonce",
+      "public_known_answer_vector_provenance_verified": false,
+      "source_classification": "explicit_cfg_test_module",
+      "unique_primary_locations": 4,
+      "uri": "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs"
+    }
+  ],
+  "inputs": {
+    "bounded_packet": {
+      "bytes": 719180,
+      "path": "../pq-closure-hosted-c09dbbe992/bounded/bounded-readback-c09dbbe992.tar.xz",
+      "sha256": "9f7f152885e9eb54725a5fe8909ce90ee5ac23a62facff20f39d0702d2fd22a8"
+    },
+    "initial_inventory": {
+      "bytes": 383182,
+      "path": "codeql-findings-review.json",
+      "sha256": "26a8f9a6683d1a890ec7cc121f613737107a06fd50ad7ad352625e1b74c9ffef"
+    },
+    "initial_readme": {
+      "bytes": 8692,
+      "path": "CODEQL_FINDINGS_REVIEW.md",
+      "sha256": "8a266f13faa08b63b49af67d37ebca123e82a2fedb710c9d7c82bc11084d37a9"
+    },
+    "rust_head_sarif": {
+      "lane": "head",
+      "language": "rust",
+      "raw_results": 857,
+      "sarif_bytes": 7692014,
+      "sarif_member": "codeql-results/rust/head/rust.sarif",
+      "sarif_sha256": "ec3916e0c4bff2bf41a326d476a3f3adf62dc3ff19d5f4438f4f63e517c67781",
+      "tested_commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+      "tested_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+      "zip": {
+        "bytes": 206922,
+        "path": "local-codeql/artifact-13829034755.zip",
+        "sha256": "1b73d4ab40a3b15d80b38840181b8bd8415ff23efbd8273beb7ce92aee4c290a"
+      }
+    },
+    "source_packet": {
+      "before_after_bytes_equal": true,
+      "bytes": 1557288,
+      "path": "../pq-closure-native-observations-20261111/original/native-original-c09dbbe992.tar.xz",
+      "sha256": "6d22e3ca7dcd98a75da46f6717f122f2293fa0d870a5aa2807e7f8252aee6acd",
+      "snapshot_member": "native/source-before.json",
+      "snapshot_sha256": "536ed9fc1520a56ee332ae5d9a24f86be5b89bbee0eaf93a444792ba8659da7b"
+    }
+  },
+  "limits": {
+    "GitHub_CodeScanning_API_evidence_gap_closed": false,
+    "all_857_findings_semantically_reviewed": false,
+    "all_callers_or_interprocedural_security_proved": false,
+    "compiler_configuration_or_deployed_artifact_verified": false,
+    "external_crypto_or_hex_implementation_audited": false,
+    "findings_closed_ignored_suppressed_or_false_positive_marked": false,
+    "production_activation": false,
+    "public_known_answer_vector_provenance_verified": false,
+    "salt_randomness_or_input_authentication_or_no_grinding_proved": false,
+    "scope_text": "No hard-coded runtime private key/seed was established at these three selected initializer sites. This does not certify all runtime keys, all input paths, the 756 locations outside this supplement, compilation/deployment configuration, or absence of vulnerabilities. All existing findings and the API evidence gap remain open.",
+    "whole_chain_quantum_security_qualified": false
+  },
+  "method": {
+    "cfg_method": "Manual source review of the explicit attribute and enclosing module boundaries; all selected SARIF primary regions checked against those boundaries. Path names were not used to establish cfg membership. This is not a compiler, binary or deployed-build attestation.",
+    "local_flow_method": "Read ordinary module declarations, selected functions, framing helper, caller-owned seed construction, and the retained salt path; summarized existing SARIF traces without accepting them as a complete call-graph proof.",
+    "new_hosted_or_H_requests": false,
+    "reviewed_source_files_with_bytes_recomputed": 15,
+    "source_files": [
+      {
+        "bytes": 8117,
+        "git_blob": "7d7c8623a2fe93b1423be9cd4e4b3283d77ef63d",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+        "sha256": "74f11c99984a0c199f6b1a882206dc887440a3c69668dd3833054eb0e98fd32c"
+      },
+      {
+        "bytes": 12902,
+        "git_blob": "3a38da1061df615b98e46b0d2fd56133f493b4cd",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+        "sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b"
+      },
+      {
+        "bytes": 19075,
+        "git_blob": "a5c8c6ba0ecedee4922137ebaa106ddf91fe4c75",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+        "sha256": "2f775934937dc0997579ca43132c3a2aee262103ec66ca4a4be08d3b8f4f93f4"
+      },
+      {
+        "bytes": 2396,
+        "git_blob": "43805dd619873c6aa73806a61d88321790e2131e",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
+        "sha256": "52cb61529faa8791fa7c63b4eb07c746e64a5eb192943bc79305e6a1eff00e2a"
+      },
+      {
+        "bytes": 33869,
+        "git_blob": "662ec394bffc84f568bca0f117456aa13f03e8b5",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+        "sha256": "cb2d527090ad4a2cf119a778b9854bde35fc12ee8e82f7f7d3218fc91fd5eca1"
+      },
+      {
+        "bytes": 34815,
+        "git_blob": "ab18a5b18b534dbeb18955ae29555ef1ea42383e",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+        "sha256": "c7018524cefd74961862150893bd593b01e720c6fdaa84350b4fc1c54bc378ef"
+      },
+      {
+        "bytes": 217196,
+        "git_blob": "52b115797c30bdb4b89d2eb73fc56b9b8bc9d033",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "sha256": "7a0ea0cc4a000a693d94faa43b6acf8541cf1f8965f9fe837d01e7d757a0bee7"
+      },
+      {
+        "bytes": 20675,
+        "git_blob": "9f830268d71fcea84ceca7dc2469b9861f654d86",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/task_observation.rs",
+        "sha256": "2182999c12807831eb1f89c777e330dd46edd6c5ddff11144b20aaf552662a33"
+      },
+      {
+        "bytes": 14038,
+        "git_blob": "fcb274af627df537f7debe5cf922e6fed766bd7c",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-protocol/src/funded_service_task_v1.rs",
+        "sha256": "c7c501901dd9fe38b447db61069a6d605379c5a02555acc874ffebfb2c948cb1"
+      },
+      {
+        "bytes": 32654,
+        "git_blob": "a92d02b7e1edd316aba52cb1b2ff8b546e65c03d",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+      },
+      {
+        "bytes": 13891,
+        "git_blob": "07537462b6a2a57f8b29b2bb59c16862b770aa91",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+        "sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429"
+      },
+      {
+        "bytes": 20068,
+        "git_blob": "82c0e78ea28aacd94546c73917702c25183f0917",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+        "sha256": "b7bf661c154ab2415c74159a6a65febcbcf45ad15ad5d4d6f4763bfd1b69a7ee"
+      },
+      {
+        "bytes": 38485,
+        "git_blob": "1c51bc7104e9c96abc45c185cf1f5140e5ce107b",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-types/src/relay.rs",
+        "sha256": "610bba86023958c903e82e4bdff654297edf72be99bd9a5f8aee8f2f78357672"
+      },
+      {
+        "bytes": 6478,
+        "git_blob": "c180596a888f8705876354dc317f656d50999c7c",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+        "sha256": "148f9b49806364b04ca14002595356ffd0756883730893e5ceaab73c569b2ea6"
+      },
+      {
+        "bytes": 5199,
+        "git_blob": "45d92fc5f479659874ed29894e06acfc3fb0cda9",
+        "mode": "100644",
+        "path": "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs",
+        "sha256": "7ba87d4412526c859e49357875fe40e323c2ca20e9745cc3995d2a78d07dee20"
+      }
+    ],
+    "source_read_method": "Git show of the fixed C1 object with lazy fetch, replace objects, prompts, and optional locks disabled; actual bytes, SHA-256 and Git blob SHA-1 compared to the frozen full source snapshot.",
+    "target_code_imported_compiled_or_executed": false,
+    "tests_or_workloads_started": false
+  },
+  "ordinary_module_context": [
+    {
+      "end_line": 232,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+      "start_line": 224,
+      "text": "pub mod pon_work;\n\npub mod qualified_work_task;\n\npub mod pq_auth;\npub mod pq_candidate;\npub mod pq_content_auth;\npub mod pq_profile_auth;\npub mod pq_root_v3;"
+    },
+    {
+      "end_line": 40,
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
+      "start_line": 31,
+      "text": "pub mod deployment_actors;\npub mod deployment_checkpoint_tile_v1;\npub mod deterministic_parallel_v1;\nmod engine;\nmod error;\npub mod growth_profile_v2;\npub mod public_evaluation;\npub mod qualified_task_lifecycle;\nmod store;\nmod types;"
+    },
+    {
+      "end_line": 351,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+      "start_line": 347,
+      "text": "    Ok(())\n}\n\n#[cfg(test)]\nmod tests;"
+    }
+  ],
+  "preservation": {
+    "candidate_repository_or_frozen_packets_modified": false,
+    "initial_two_files_unchanged": true
+  },
+  "runtime_frozen_sarif_sink_summaries": [
+    {
+      "frozen_trace_summaries": [
+        {
+          "path_step_counts": {
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": 23,
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tests.rs": 7
+          },
+          "step_count": 30
+        },
+        {
+          "path_step_counts": {
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": 23,
+            "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs": 2,
+            "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tests.rs": 5
+          },
+          "step_count": 30
+        },
+        {
+          "path_step_counts": {
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": 23,
+            "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs": 7
+          },
+          "step_count": 30
+        },
+        {
+          "path_step_counts": {
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": 23,
+            "trillionnium/crates/trnm-pon-node/src/release_owner/proof_test_keys.rs": 3,
+            "trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs": 4
+          },
+          "step_count": 30
+        }
+      ],
+      "line": 125,
+      "message": "This hard-coded value is used as [a key](1).",
+      "sarif_sink": {
+        "region": {
+          "endColumn": 85,
+          "startColumn": 59,
+          "startLine": 123
+        },
+        "uri": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
+      },
+      "trace_callers_independently_reviewed": false,
+      "uri": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
+    },
+    {
+      "frozen_trace_summaries": [
+        {
+          "path_step_counts": {
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": 10
+          },
+          "step_count": 10
+        },
+        {
+          "path_step_counts": {
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": 8,
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tests.rs": 4
+          },
+          "step_count": 12
+        },
+        {
+          "path_step_counts": {
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": 10,
+            "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_next_use_v1.rs": 12,
+            "trillionnium/crates/trnm-data-availability/src/cell/pq/content.rs": 7
+          },
+          "step_count": 29
+        },
+        {
+          "path_step_counts": {
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": 10,
+            "trillionnium/crates/trnm-data-availability/src/cell/pq.rs": 4,
+            "trillionnium/crates/trnm-data-availability/src/cell/pq/tests.rs": 19
+          },
+          "step_count": 33
+        }
+      ],
+      "line": 279,
+      "message": "This hard-coded value is used as [a key](1).",
+      "sarif_sink": {
+        "region": {
+          "endColumn": 85,
+          "startColumn": 59,
+          "startLine": 123
+        },
+        "uri": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
+      },
+      "trace_callers_independently_reviewed": false,
+      "uri": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
+    },
+    {
+      "frozen_trace_summaries": [
+        {
+          "path_step_counts": {
+            "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs": 13
+          },
+          "step_count": 13
+        }
+      ],
+      "line": 52,
+      "message": "This hard-coded value is used as [a salt](1).",
+      "sarif_sink": {
+        "region": {
+          "endColumn": 23,
+          "startColumn": 13,
+          "startLine": 270
+        },
+        "uri": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs"
+      },
+      "trace_callers_independently_reviewed": false,
+      "uri": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs"
+    }
+  ],
+  "runtime_local_flows": [
+    {
+      "evidence": [
+        {
+          "end_line": 138,
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+          "start_line": 112,
+          "text": "pub struct PqNativeVerifier {\n    key: VerifyingKey<MlDsa65>,\n    spki: [u8; ML_DSA_65_SPKI_BYTES],\n    key_id: [u8; 32],\n}\nimpl PqNativeVerifier {\n    pub fn from_pinned_spki(spki: &[u8], expected_key_id: [u8; 32]) -> Result<Self, PqNativeError> {\n        let key_id = ml_dsa_65_key_id_from_spki(spki)?;\n        if key_id != expected_key_id {\n            return Err(PqNativeError::KeyPin);\n        }\n        let key = VerifyingKey::<MlDsa65>::new_from_slice(&spki[SPKI_PREFIX.len()..])\n            .map_err(|_| PqNativeError::KeyAlgorithm)?;\n        let mut fixed_spki = [0; ML_DSA_65_SPKI_BYTES];\n        fixed_spki.copy_from_slice(spki);\n        Ok(Self {\n            key,\n            spki: fixed_spki,\n            key_id,\n        })\n    }\n    pub fn public_key_id(&self) -> [u8; 32] {\n        self.key_id\n    }\n    pub fn public_spki(&self) -> &[u8; ML_DSA_65_SPKI_BYTES] {\n        &self.spki\n    }"
+        },
+        {
+          "end_line": 18,
+          "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+          "start_line": 10,
+          "text": "pub const ML_DSA_65_SIGNATURE_BYTES: usize = 3_309;\npub const ML_DSA_65_PUBLIC_KEY_BYTES: usize = 1_952;\npub const ML_DSA_65_SPKI_BYTES: usize = 1_974;\n// Strict DER SPKI: SEQUENCE(1970), SEQUENCE(id-ml-dsa-65 OID), BIT STRING(1953).\n// This checks framing/algorithm identity only; it is NOT ML-DSA public-key validation.\npub(crate) const ML_DSA_65_SPKI_PREFIX: [u8; 22] = [\n    0x30, 0x82, 0x07, 0xb2, 0x30, 0x0b, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03,\n    0x12, 0x03, 0x82, 0x07, 0xa1, 0x00,\n];"
+        },
+        {
+          "end_line": 113,
+          "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+          "start_line": 101,
+          "text": "/// alternative algorithms, optional parameters, non-minimal length encodings,\n/// padding changes, truncation and appended bytes. The 1,952 key bytes are\n/// NOT checked for cryptographic validity here; a real ML-DSA-65 verifier\n/// remains mandatory before any trust or authorization can be established.\npub fn ml_dsa_65_key_id_from_spki(spki: &[u8]) -> Result<[u8; 32], PqFrameError> {\n    if spki.len() != ML_DSA_65_SPKI_BYTES || !spki.starts_with(&ML_DSA_65_SPKI_PREFIX) {\n        return Err(PqFrameError::PublicKeyDer);\n    }\n    let mut digest = Sha256::new();\n    digest.update(PUBLIC_KEY_ID_DOMAIN);\n    digest.update(spki);\n    Ok(digest.finalize().into())\n}"
+        }
+      ],
+      "expected_pin_trust_and_all_callers_verified": false,
+      "line": 125,
+      "observed": [
+        "The function first validates SPKI length/prefix through ml_dsa_65_key_id_from_spki, compares expected key id, and constructs VerifyingKey from the public-key slice.",
+        "The 1,974-byte zero array is immediately fully overwritten by fixed_spki.copy_from_slice(spki) before it is put in the returned verifier.",
+        "The reported sink at line 123 is VerifyingKey::new_from_slice, not construction of a private signing key."
+      ],
+      "role": "public_SPki_copy_buffer",
+      "successful_local_return_contains_initial_zero_literal_as_fixed_key_material": false,
+      "uri": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
+    },
+    {
+      "caller_seed_entropy_or_custody_verified": false,
+      "evidence": [
+        {
+          "end_line": 33,
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+          "start_line": 25,
+          "text": "\npub mod tuf;\n\npub const PQ_MAX_MESSAGE_BYTES: usize = trnm_protocol::crypto_profile::MAX_SIGNED_MESSAGE_BYTES;\nconst SPKI_PREFIX: [u8; 22] = [\n    0x30, 0x82, 0x07, 0xb2, 0x30, 0x0b, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03,\n    0x12, 0x03, 0x82, 0x07, 0xa1, 0x00,\n];\n"
+        },
+        {
+          "end_line": 207,
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+          "start_line": 174,
+          "text": "enum OwnedSigningBackend {\n    RustCrypto(SigningKey<MlDsa65>),\n    #[cfg(feature = \"pq-native-openssl\")]\n    OpenSsl(PKey<Private>),\n}\n\n/// Owned, non-Clone secret key. This layer does not load files, authorize intents,\n/// generate implicit keys, export secrets, or claim HSM/side-channel qualification.\npub struct PqNativeSigningKey {\n    key: OwnedSigningBackend,\n    verifier: PqNativeVerifier,\n}\nimpl PqNativeSigningKey {\n    /// Public identity derivation for explicit key provisioning. This is not a\n    /// trust root: an application's expected pin must come from its own owner.\n    pub fn public_spki_from_seed(seed: &Zeroizing<[u8; 32]>) -> [u8; ML_DSA_65_SPKI_BYTES] {\n        let key = SigningKey::<MlDsa65>::new_from_slice(seed.as_ref())\n            .expect(\"fixed ML-DSA-65 seed length\");\n        public_spki(&key)\n    }\n    pub fn from_owned_seed(\n        seed: Zeroizing<[u8; 32]>,\n        expected_key_id: [u8; 32],\n    ) -> Result<Self, PqNativeError> {\n        let key = SigningKey::<MlDsa65>::new_from_slice(seed.as_ref())\n            .map_err(|_| PqNativeError::KeyAlgorithm)?;\n        // Both the input owner and ml-dsa's expanded key use zeroize-on-drop.\n        drop(seed);\n        let verifier = PqNativeVerifier::from_pinned_spki(&public_spki(&key), expected_key_id)?;\n        Ok(Self {\n            key: OwnedSigningBackend::RustCrypto(key),\n            verifier,\n        })\n    }"
+        },
+        {
+          "end_line": 283,
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+          "start_line": 278,
+          "text": "fn public_spki(key: &SigningKey<MlDsa65>) -> [u8; ML_DSA_65_SPKI_BYTES] {\n    let mut spki = [0; ML_DSA_65_SPKI_BYTES];\n    spki[..SPKI_PREFIX.len()].copy_from_slice(&SPKI_PREFIX);\n    spki[SPKI_PREFIX.len()..].copy_from_slice(&key.verifying_key().encode());\n    spki\n}"
+        }
+      ],
+      "line": 279,
+      "observed": [
+        "The 1,974-byte zero array is overwritten in two exhaustive nonoverlapping slices: 22-byte DER prefix and key.verifying_key().encode().",
+        "public_spki receives a SigningKey argument; in the inspected from_owned_seed function the seed is the caller-owned Zeroizing<[u8;32]> argument.",
+        "This is a local public-key serialization observation; it does not prove callers supply unpredictable or authorized signing seeds."
+      ],
+      "role": "public_SPki_encoding_buffer",
+      "successful_local_return_contains_initial_zero_literal_as_fixed_key_material": false,
+      "uri": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
+    },
+    {
+      "evidence": [
+        {
+          "end_line": 55,
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+          "start_line": 30,
+          "text": "fn check(ok: bool, error: &'static str) -> Result<()> {\n    if ok {\n        Ok(())\n    } else {\n        Err(error)\n    }\n}\nfn n(v: &Value, field: &str) -> Result<u64> {\n    v[field].as_u64().ok_or(\"PUBLIC_EVAL_STATE\")\n}\nfn bytes(v: &Value) -> Result<Vec<u8>> {\n    serde_json::to_vec(v).map_err(|_| \"PUBLIC_EVAL_STATE\")\n}\nfn digest(v: &Value, field: &str) -> Result<Hash> {\n    let value = v[field].as_str().ok_or(\"PUBLIC_EVAL_STATE\")?;\n    check(\n        value.len() == 64\n            && value\n                .bytes()\n                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),\n        \"PUBLIC_EVAL_STATE\",\n    )?;\n    let mut out = [0; 32];\n    hex::decode_to_slice(value, &mut out).map_err(|_| \"PUBLIC_EVAL_STATE\")?;\n    Ok(out)\n}"
+        },
+        {
+          "end_line": 273,
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+          "start_line": 242,
+          "text": "pub struct Reveal {\n    pub candidate: Hash,\n    pub round: Hash,\n    pub evaluator: Hash,\n    pub plan: Hash,\n    pub evidence: Hash,\n    pub score: u64,\n    pub salt: Hash,\n}\n/// Producers select a domain from the frozen record, never from a local default.\n/// The historical `reveal_commitment` function remains the exact v1 operation.\npub fn reveal_commitment_for(evaluation: &Value, value: &Reveal) -> Result<Hash> {\n    if is_quorum(evaluation)? {\n        check(\n            round(evaluation)? == value.round\n                && value.candidate == digest(&evaluation[\"plan\"], \"candidate\")?\n                && value.plan == digest(&evaluation[\"plan\"], \"model_and_task_contract\")?,\n            \"PUBLIC_EVAL_REVEAL_CONTEXT\",\n        )?;\n        Ok(quorum_v2::reveal_commitment(value))\n    } else {\n        Ok(reveal_commitment(\n            value.round,\n            value.candidate,\n            value.evaluator,\n            value.plan,\n            value.evidence,\n            value.score,\n            value.salt,\n        ))\n    }\n}"
+        },
+        {
+          "end_line": 365,
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+          "start_line": 307,
+          "text": "/// Revalidate retained commit/reveal bindings before evidence is restored or used.\n/// Live reveal admission already checks these invariants; canonical row bytes and\n/// storage chunk hashes alone do not establish that a retained reveal did so.\nfn validate_reveals(evaluation: &Value) -> Result<()> {\n    let round_id = round(evaluation)?;\n    let plan = &evaluation[\"plan\"];\n    let candidate = digest(plan, \"candidate\")?;\n    let contract = digest(plan, \"model_and_task_contract\")?;\n    let roster = plan[\"roster\"].as_array().ok_or(\"PUBLIC_EVAL_STATE\")?;\n    let commits = evaluation[\"commits\"]\n        .as_object()\n        .ok_or(\"PUBLIC_EVAL_STATE\")?;\n    let reveals = evaluation[\"reveals\"]\n        .as_object()\n        .ok_or(\"PUBLIC_EVAL_STATE\")?;\n    check(\n        commits.len() <= roster.len() && reveals.len() <= commits.len(),\n        \"PUBLIC_EVAL_STATE\",\n    )?;\n    for signer in commits.keys() {\n        identity(\"r\", signer)?;\n        check(\n            roster.iter().any(|key| key.as_str() == Some(signer)),\n            \"PUBLIC_EVAL_AUTHORITY\",\n        )?;\n        check(\n            digest(&evaluation[\"commits\"], signer)? != [0; 32],\n            \"PUBLIC_EVAL_COMMITMENT\",\n        )?;\n    }\n    for (signer, stored) in reveals {\n        identity(\"r\", signer)?;\n        check(\n            stored.as_object().is_some_and(|value| value.len() == 3)\n                && commits.contains_key(signer),\n            \"PUBLIC_EVAL_STATE\",\n        )?;\n        let mut evaluator = [0; 32];\n        hex::decode_to_slice(signer, &mut evaluator).map_err(|_| \"PUBLIC_EVAL_STATE\")?;\n        let value = Reveal {\n            candidate,\n            round: round_id,\n            evaluator,\n            plan: contract,\n            evidence: digest(stored, \"evidence\")?,\n            score: n(stored, \"score\")?,\n            salt: digest(stored, \"salt\")?,\n        };\n        check(\n            value.evidence != [0; 32] && value.score <= n(plan, \"max_score\")?,\n            \"PUBLIC_EVAL_REVEAL_CONTEXT\",\n        )?;\n        check(\n            digest(&evaluation[\"commits\"], signer)? == reveal_commitment_for(evaluation, &value)?,\n            \"PUBLIC_EVAL_COMMITMENT_BINDING\",\n        )?;\n    }\n    Ok(())\n}"
+        },
+        {
+          "end_line": 10,
+          "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+          "start_line": 1,
+          "text": "//! Exact development wire contract. Decoded values are NOT signature-verified authority.\nuse sha2::{Digest, Sha256};\nuse std::collections::BTreeMap;\nmod state_root_arithmetic;\npub use state_root_arithmetic::{\n    StateRootArithmetic, StateRootArithmeticObservation, StateRootInputBuilder,\n};\npub type Hash = [u8; 32];\npub const HEADER_BYTES: usize = 318;\npub const MAX_TX_BYTES: usize = 2048;"
+        }
+      ],
+      "freedom_from_grinding_verified": false,
+      "hardcoded_runtime_private_seed_established_at_selected_site": false,
+      "input_authentication_verified": false,
+      "line": 52,
+      "observed": [
+        "digest obtains a string field, requires exactly 64 ASCII lowercase hex characters, initializes a 32-byte output buffer, then calls hex::decode_to_slice; an error propagates before Ok(out).",
+        "The frozen SARIF salt sink is value.salt at line 270; the visible path includes digest(stored, \"salt\") at line 353, construction of Reveal, and reveal_commitment_for at line 360.",
+        "The local parser accepts the format of 64 zero digits. The selected code does not establish salt entropy, input authentication, freedom from grinding, or whole-call-chain security."
+      ],
+      "role": "decoded_hash_or_reveal_salt_buffer",
+      "salt_randomness_verified": false,
+      "third_party_hex_decoder_implementation_independently_reviewed": false,
+      "uri": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+      "whole_call_chain_security_verified": false
+    }
+  ],
+  "schema": "trnm-codeql-src-gates-local-review-v1",
+  "source": {
+    "commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+    "prospective_merge_same_tree_scope": "61589dddd13e7495369aaecad9212668049417c1; primary-location duplication is established in the initial inventory, not a new run",
+    "reviewed_sarif_lane": "head",
+    "tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+    "workflow_run": 42955582992
+  },
+  "test_generator_context_examples": [
+    {
+      "end_line": 425,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+      "start_line": 418,
+      "text": "    fn check_mode_separation<P: MlDsaParams>(algorithm: CandidateAlgorithm) {\n        let raw = SigningKey::<P>::new_from_slice(&[38; 32]).unwrap();\n        let public_key = raw.verifying_key().encode();\n        let verifier = CandidateVerifier::from_pinned_raw(algorithm, &public_key).unwrap();\n        let message = b\"TRNM/Test/PQCandidate/v1\\0exact message\";\n        let nonempty = raw\n            .expanded_key()\n            .sign_deterministic(message, b\"different FIPS context\")"
+    },
+    {
+      "end_line": 480,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+      "start_line": 471,
+      "text": "    #[test]\n    fn mldsa65_rejects_context_prehash_and_raw_internal_modes() {\n        check_mode_separation::<MlDsa65>(CandidateAlgorithm::MlDsa65);\n    }\n\n    #[test]\n    fn mldsa87_rejects_context_prehash_and_raw_internal_modes() {\n        check_mode_separation::<MlDsa87>(CandidateAlgorithm::MlDsa87);\n    }\n}"
+    },
+    {
+      "end_line": 720,
+      "path": "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+      "start_line": 699,
+      "text": "    // Pure index fixtures commit header/id/parent bytes but have no valid PNW1\n    // proof. Production insert is reachable only after Node's actual verifier.\n    fn block(db: &Connection, ctx: Context, parent: Hash, height: u64, salt: u64) -> Hash {\n        let header = Header {\n            network: ctx.network,\n            parameters: ctx.parameters,\n            parent,\n            height,\n            timestamp: height * 10,\n            target: [0xff; 32],\n            miner: [0; 32],\n            transactions: [0; 32],\n            state: [0; 32],\n            receipts: [0; 32],\n            work_task: [0; 32],\n            nonce: salt,\n        };\n        let trace = hash(\n            b\"index-only-fixture\",\n            &[&parent, &height.to_le_bytes(), &salt.to_le_bytes()],\n        );\n        let id = header.block_id(trace);"
+    },
+    {
+      "end_line": 4775,
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "start_line": 4750,
+      "text": "    #[test]\n    fn existing_replay_cancelled_reorg_recovers_signed_payments_once() {\n        use rusqlite::OptionalExtension;\n        use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};\n        use trnm_protocol::pon_wire::Envelope;\n        fn transfer(settings: &Settings, nonce: u64, recipient: u64, amount: u64) -> Vec<u8> {\n            let mut payload = crate::development_public(recipient).unwrap().to_vec();\n            payload.extend(amount.to_le_bytes());\n            let mut tx = Envelope {\n                network: settings.network(),\n                sender: crate::development_public(0).unwrap(),\n                nonce,\n                expiry: 1000,\n                fee_limit: 1_000_000,\n                tag: 1,\n                payload,\n                signature: [0; 64],\n            };\n            let key =\n                signing_key_from_hex(&hex::encode(hash(b\"DEV-ONLY-KEY\", &[&0_u64.to_le_bytes()])))\n                    .unwrap();\n            tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))\n                .unwrap()\n                .try_into()\n                .unwrap();\n            tx.encode().unwrap()"
+    },
+    {
+      "end_line": 585,
+      "path": "trillionnium/crates/trnm-types/src/relay.rs",
+      "start_line": 566,
+      "text": "    fn sample_env(seq: u64, nonce: &str, now_ms: u128, key: &str) -> RelayAuthEnvelope {\n        let payload = br#\"{\"hello\":\"world\"}\"#.to_vec();\n        let payload_hash = RelayAuthEnvelope::payload_hash_hex(&payload);\n        let mut env = RelayAuthEnvelope {\n            version: RelayAuthEnvelope::SPEC_VERSION.to_string(),\n            chain_id: \"trnm-mainnet\".to_string(),\n            task_id: \"task-1\".to_string(),\n            session_id: \"sess-1\".to_string(),\n            seq,\n            timestamp_ms: now_ms,\n            msg_type: \"INPUT_CHUNK\".to_string(),\n            from: \"trnm1from\".to_string(),\n            to: \"trnm1to\".to_string(),\n            nonce: nonce.to_string(),\n            payload,\n            payload_hash,\n            sig: String::new(),\n        };\n        env.sig = env.sign_for_test(key);\n        env"
+    },
+    {
+      "end_line": 104,
+      "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+      "start_line": 88,
+      "text": "    fn sample_env(seq: u64, nonce: &str) -> RelayAuthEnvelope {\n        RelayAuthEnvelope {\n            version: RelayAuthEnvelope::SPEC_VERSION.to_string(),\n            chain_id: \"trnm-mainnet\".to_string(),\n            task_id: \"task-1\".to_string(),\n            session_id: \"sess-1\".to_string(),\n            seq,\n            timestamp_ms: 1_730_000_000_000 + seq as u128,\n            msg_type: \"INPUT_CHUNK\".to_string(),\n            from: \"trnm1from\".to_string(),\n            to: \"trnm1to\".to_string(),\n            nonce: nonce.to_string(),\n            payload: vec![1, 2, 3],\n            payload_hash: RelayAuthEnvelope::payload_hash_hex(&[1, 2, 3]),\n            sig: format!(\"sig-{}\", seq),\n        }\n    }"
+    }
+  ]
+}

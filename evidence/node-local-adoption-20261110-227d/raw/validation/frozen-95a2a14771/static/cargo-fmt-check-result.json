@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/cargo",
+    "fmt",
+    "--all",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--",
+    "--check"
+  ],
+  "elapsed_seconds": 22.214927629000158,
+  "exit_code": 1,
+  "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/cargo-fmt-check.log",
+  "log_sha256": "549250996ea6688b928800695904fb041478053d0619b41a827451c8efff73ee",
+  "name": "cargo-fmt-check",
+  "started_utc": "2026-11-11T01:28:28.041927+00:00",
+  "tests": null
+}

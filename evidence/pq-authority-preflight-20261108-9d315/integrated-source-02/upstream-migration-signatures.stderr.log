@@ -1,0 +1,12 @@
+test_cannot_reinterpret_legitimate_signatures_for_new_head (test_pq_account_migration.DualPossessionTests.test_cannot_reinterpret_legitimate_signatures_for_new_head) ... ok
+test_local_acked_retry_cold_reopen_and_conflicting_replacement (test_pq_account_migration.DualPossessionTests.test_local_acked_retry_cold_reopen_and_conflicting_replacement) ... ok
+test_multiple_real_sqlite_writers_one_first_commit (test_pq_account_migration.DualPossessionTests.test_multiple_real_sqlite_writers_one_first_commit) ... ok
+test_reject_old_signature_pq_signature_and_wrong_key (test_pq_account_migration.DualPossessionTests.test_reject_old_signature_pq_signature_and_wrong_key) ... ok
+test_reject_wrong_network_owner_head_generation_sequence_expiry (test_pq_account_migration.DualPossessionTests.test_reject_wrong_network_owner_head_generation_sequence_expiry) ... ok
+test_same_new_pq_key_cannot_be_assigned_to_two_old_accounts (test_pq_account_migration.DualPossessionTests.test_same_new_pq_key_cannot_be_assigned_to_two_old_accounts) ... ok
+test_two_real_signers_and_identical_receipt (test_pq_account_migration.DualPossessionTests.test_two_real_signers_and_identical_receipt) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 2.625s
+
+OK

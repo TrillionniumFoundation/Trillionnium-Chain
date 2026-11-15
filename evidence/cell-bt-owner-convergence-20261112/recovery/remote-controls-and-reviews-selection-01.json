@@ -1,0 +1,201 @@
+{
+  "files": [
+    {
+      "bytes": 1313,
+      "destination": "remote/control/build-environment.json",
+      "sha256": "2002591f8581d17848b5cc45c4990f69daf37f7db1cd822b2fae0e1c516155a1",
+      "source": "validation/durable-current-remote/pre-model-bindings-01-readback/extracted/control/build-environment.json"
+    },
+    {
+      "bytes": 16573,
+      "destination": "remote/control/prepare-env2-inputs-v1.py",
+      "sha256": "3ca9e59411bff4b0c7de8f7de124e6a88ec2c86e3b7332f73929bf67c39e3794",
+      "source": "validation/durable-current-remote/pre-model-bindings-01-readback/extracted/control/prepare-env2-inputs-v1.py"
+    },
+    {
+      "bytes": 6232,
+      "destination": "remote/control/private-runtime-probe-v1.py",
+      "sha256": "b36333de24d3128eb619baa0cfb1417901d2b483f0e29b922cf5609d8b68bbef",
+      "source": "validation/durable-current-remote/pre-model-bindings-01-readback/extracted/control/private-runtime-probe-v1.py"
+    },
+    {
+      "bytes": 19219,
+      "destination": "remote/control/project-private-runtime-v2.py",
+      "sha256": "5b4f4d4f7a0dcde9bcba6221fc4c8fd7b92f1be05c1fd706fa0545b496c2caba",
+      "source": "validation/durable-current-remote/pre-model-bindings-01-readback/extracted/control/project-private-runtime-v2.py"
+    },
+    {
+      "bytes": 13640,
+      "destination": "remote/control/run_model.py",
+      "sha256": "d6540d88b88341c94a2be72fc76b16261f0607e1fd9c2a98ed9096aa913435f4",
+      "source": "validation/durable-current-remote/pre-model-bindings-01-readback/extracted/control/run_model.py"
+    },
+    {
+      "bytes": 21641,
+      "destination": "remote/control/static-recheck-v3.py",
+      "sha256": "1ddf491df68abfa4e12c09dd47bd5808dcb3a2c7b42fd1e292932007c1bf797e",
+      "source": "validation/durable-current-remote/pre-model-bindings-01-readback/extracted/control/static-recheck-v3.py"
+    },
+    {
+      "bytes": 14537,
+      "destination": "remote/control/validate-original-tail-v3.py",
+      "sha256": "c986525ef5a25f295f90fc80c452d97dba512e55fc3115a25cc88dd392597135",
+      "source": "validation/durable-current-remote/pre-model-bindings-01-readback/extracted/control/validate-original-tail-v3.py"
+    },
+    {
+      "bytes": 48895,
+      "destination": "recovery/remote-pre-model-bindings-01-manifest.json",
+      "sha256": "5684ab1391adc8355988fd4c66a651575a52f07e1b28131a77fb729b212f12bf",
+      "source": "validation/durable-current-remote/pre-model-bindings-01-readback/extracted/manifest.json"
+    },
+    {
+      "bytes": 7061,
+      "destination": "control/collect-candidate-gate-coverage.py",
+      "sha256": "73a2c617d5f3656c3a20ddc0befa60ed4921a00cbd7673b8664a150b1a8d9c77",
+      "source": "preparation/collect_candidate_gate_coverage.py"
+    },
+    {
+      "bytes": 10366,
+      "destination": "reviews/discovery/actual-env2-input-elf-binding-review-11.json",
+      "sha256": "e2711e3a39b6b2780846d59aba3e27303817d67951318eb0fb40902c04fa2ee4",
+      "source": "validation/discovery-reviewer/actual-env2-input-elf-binding-review-11.json"
+    },
+    {
+      "bytes": 9871,
+      "destination": "reviews/discovery/actual-materials-review-02.json",
+      "sha256": "ea02c5d64dc28d8f3d2e1222b8c9910b943a063d09cad96e8aec2251aa5a1f32",
+      "source": "validation/discovery-reviewer/actual-materials-review-02.json"
+    },
+    {
+      "bytes": 5239,
+      "destination": "reviews/discovery/env2-preparation-caller-static-review-10.json",
+      "sha256": "23f987aa4283bcccae229d4c28bea636ab4de19d2a216ffe2312e1b8d9a59518",
+      "source": "validation/discovery-reviewer/env2-preparation-caller-static-review-10.json"
+    },
+    {
+      "bytes": 8414,
+      "destination": "reviews/discovery/frozen02-source-static-review-12.json",
+      "sha256": "e3dd5f157e0d80db86d0f3909ae6542744fb406b91333cf76d3bb701e16213fa",
+      "source": "validation/discovery-reviewer/frozen02-source-static-review-12.json"
+    },
+    {
+      "bytes": 9454,
+      "destination": "reviews/discovery/hosted-candidate-invocation-review-05.json",
+      "sha256": "89453b702de396494e5e10e6e0b686a5ce941a2e939aef3bc42393fc0acda97a",
+      "source": "validation/discovery-reviewer/hosted-candidate-invocation-review-05.json"
+    },
+    {
+      "bytes": 5557,
+      "destination": "reviews/discovery/preflight-adapter-diagnosis-03.json",
+      "sha256": "d8c26d8fb35cf5202563c681b261f03a14d5bc7b4e10f067e881634369a70e1c",
+      "source": "validation/discovery-reviewer/preflight-adapter-diagnosis-03.json"
+    },
+    {
+      "bytes": 7992,
+      "destination": "reviews/discovery/preparation-input-review-01.json",
+      "sha256": "13ac51502c9e42eba8322659ad3a7fe11097e002925d28da5ddd21aa92161fab",
+      "source": "validation/discovery-reviewer/preparation-input-review-01.json"
+    },
+    {
+      "bytes": 7335,
+      "destination": "reviews/discovery/private-runtime-plan-and-tail-review-08.json",
+      "sha256": "bfc0ae8632bc592667b816c854c640e2eacf7fcab6a3b532249b0443bfe904cf",
+      "source": "validation/discovery-reviewer/private-runtime-plan-and-tail-review-08.json"
+    },
+    {
+      "bytes": 6193,
+      "destination": "reviews/discovery/projection-implementation-static-review-09.json",
+      "sha256": "9a9c0483df9039584408788b27f7c333c1cc89304d363201e122439930e845f1",
+      "source": "validation/discovery-reviewer/projection-implementation-static-review-09.json"
+    },
+    {
+      "bytes": 3934,
+      "destination": "reviews/discovery/repaired-caller-static-review-04.json",
+      "sha256": "6cce707d3de16d530823464cc3a1562eb6e32f8d2530aff895031dc7ac37171e",
+      "source": "validation/discovery-reviewer/repaired-caller-static-review-04.json"
+    },
+    {
+      "bytes": 9407,
+      "destination": "reviews/discovery/runtime-inventory-and-generation-review-07.json",
+      "sha256": "f104e4be24bc585c9545a0df4555749810a8662e6e0b2ffc1e57ae2df1dedb1f",
+      "source": "validation/discovery-reviewer/runtime-inventory-and-generation-review-07.json"
+    },
+    {
+      "bytes": 4581,
+      "destination": "reviews/discovery/runtime-inventory-failure-review-06.json",
+      "sha256": "fb2b79a5a19ea99f756da08b4b127bc121c2a628fbe9ccc9b89ba56492753331",
+      "source": "validation/discovery-reviewer/runtime-inventory-failure-review-06.json"
+    },
+    {
+      "bytes": 8467,
+      "destination": "reviews/runtime/full-runtime-preflight-failure-review-v1.json",
+      "sha256": "5d4a367c06377bceb48aa6e34da61a3e4bb7d601ef2965176478faa33354d41d",
+      "source": "validation/release-acceptance-runtime-review/full-runtime-preflight-failure-review-v1.json"
+    },
+    {
+      "bytes": 4823,
+      "destination": "reviews/runtime/native-elf-relocation-source-review-v1.json",
+      "sha256": "1067f8cdc8e5cf99c821f3b198d400fdc0a0db769cd205020b43006c8c0af246",
+      "source": "validation/release-acceptance-runtime-review/native-elf-relocation-source-review-v1.json"
+    },
+    {
+      "bytes": 2821,
+      "destination": "reviews/runtime/private-runtime-full-preflight-source-review-v1.json",
+      "sha256": "f81c5270dbec171daa2e0592850d2f503ca913fcb53a5ddadb395602b6e52ca9",
+      "source": "validation/release-acceptance-runtime-review/private-runtime-full-preflight-source-review-v1.json"
+    },
+    {
+      "bytes": 5708,
+      "destination": "reviews/runtime/private-runtime-probe-review-v1.json",
+      "sha256": "aafa065f59394d203e693c38fecb252227168a87a7ad67d1c01a78f6c32095f5",
+      "source": "validation/release-acceptance-runtime-review/private-runtime-probe-review-v1.json"
+    },
+    {
+      "bytes": 9649,
+      "destination": "reviews/runtime/private-runtime-projection-result-review-v1.json",
+      "sha256": "b8ba47363e1d4b5c84e76e017a11655c6d638ff33a9e11b5bc56616e59b0f308",
+      "source": "validation/release-acceptance-runtime-review/private-runtime-projection-result-review-v1.json"
+    },
+    {
+      "bytes": 8626,
+      "destination": "reviews/runtime/private-runtime-projection-review-v1.json",
+      "sha256": "5be54907daf603ac6336a1663d4f720593c2917b1997699d62825d68b2c7e590",
+      "source": "validation/release-acceptance-runtime-review/private-runtime-projection-review-v1.json"
+    },
+    {
+      "bytes": 4707,
+      "destination": "reviews/runtime/private-runtime-projection-source-review-v2.json",
+      "sha256": "7571ffa62a47a811a89054b3365d32f05845123d03d9eaed1eebf47e190369d6",
+      "source": "validation/release-acceptance-runtime-review/private-runtime-projection-source-review-v2.json"
+    },
+    {
+      "bytes": 2117,
+      "destination": "reviews/runtime/publication-boundary-draft-review-v1.json",
+      "sha256": "a6d9eb25e2710126af175465af32c94ddf4abdf4f855f05734a8f59e8212c3e1",
+      "source": "validation/release-acceptance-runtime-review/publication-boundary-draft-review-v1.json"
+    },
+    {
+      "bytes": 7963,
+      "destination": "remote/private-runtime02-runtime-admission-failed/summary.json",
+      "sha256": "b95f1063f8d4cb755372d8ca85aa1816e6e003c60e05a456990a88c619d08781",
+      "source": "validation/durable-current-remote/full-preflight-env2-01/summary.json"
+    },
+    {
+      "bytes": 815,
+      "destination": "remote/private-runtime02-runtime-admission-failed/source-before.stderr",
+      "sha256": "21d0eb6a0413c817414e69105551949e48a7955a8e348794538e13f01becb67e",
+      "source": "validation/durable-current-remote/full-preflight-env2-01/source-before.stderr"
+    },
+    {
+      "bytes": 757,
+      "destination": "recovery/remote-pre-model-bindings-01-archive-receipt.json",
+      "scope": "Earlier pre-model archive collection receipt; not runtime import acceptance.",
+      "sha256": "5067e32f4be67ae5c94fc1f76fe89178d33dc4286188381d9f772a83c737d519",
+      "source": "validation/durable-current-remote/full-preflight-env2-01/receipt.json"
+    }
+  ],
+  "new_test_or_model_execution_claimed": false,
+  "original_files_rewritten": false,
+  "schema": "trnm.bt-publication-selected-raw-copy.v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+}

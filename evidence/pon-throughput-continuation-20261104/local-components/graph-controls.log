@@ -1,0 +1,11 @@
+{"boundary": "SQLite I/O build unqualified; this selector is pure account-root mathematics only", "command": ["/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1", "native_root_digest::tests", "--test-threads=1", "--nocapture"], "identities": [{"bytes": 408239808, "path": "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1", "sha256": "a140ff1f7feadb7352f27d73609533b44c6c3d9b394c3814393b945f9f5b6636"}, {"bytes": 47682, "path": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs", "sha256": "0569202aef2d858c9ed7d85473cb4d084a5616137655f31f67e73b7cc6432078"}, {"bytes": 44926, "path": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs", "sha256": "08528bfeee465e653f48b84492bfe2aecb1dcfe7cd1bde917c07fde710a93ea0"}, {"bytes": 3228, "path": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs", "sha256": "c9533dc8a42b320fa2547c3372490366f2eb01e4cf494d992f2147db708fe080"}, {"bytes": 12150, "path": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs", "sha256": "c41936fbc7d4b4e9fbc562eab55faa3eba9bb3edd964277c7ea8d46a630d8b84"}], "kind": "source-and-command"}
+
+running 4 tests
+test account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_fork_shape_and_all_lift_input_relations ... ok
+test account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_original_traversal_cancellation_and_collision_order ... ok
+test account_archive_prototype::native_root_digest::tests::native_root_digest_matches_record_and_sparse_references_after_exact_input_changes ... ok
+test account_archive_prototype::native_root_digest::tests::native_root_digest_paired_complete_root_cost_observation ... ignored, explicit paired complete-account-root cost; excludes current SQL/Host/business confirmation
+
+test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 1006 filtered out; finished in 0.29s
+
+{"exit_code": 0, "elapsed_seconds": 0.29396704899954784}

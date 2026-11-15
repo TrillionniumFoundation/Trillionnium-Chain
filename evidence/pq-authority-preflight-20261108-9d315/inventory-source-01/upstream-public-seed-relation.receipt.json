@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "test_pq_seed_relation_vectors_v1.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 1.5199657180346549,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794129567.819476,
+  "label": "upstream-public-seed-relation",
+  "logs": {
+    "upstream-public-seed-relation.stderr.log": {
+      "bytes": 4360,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/inventory-source-01/upstream-public-seed-relation.stderr.log",
+      "sha256": "b4876231f7ad9ec337eb8fd3d00f2ebf7fef4b0ce56742046d2acbef9bf448fe"
+    },
+    "upstream-public-seed-relation.stdout.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/inventory-source-01/upstream-public-seed-relation.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "reported_test_counts": [
+      21
+    ]
+  },
+  "started_unix_seconds": 1794129566.29951
+}

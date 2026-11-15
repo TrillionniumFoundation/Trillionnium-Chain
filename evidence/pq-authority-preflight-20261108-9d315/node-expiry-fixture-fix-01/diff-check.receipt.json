@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "diff",
+    "--check"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 0.016504906816408038,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794125356.8361063,
+  "label": "diff-check",
+  "logs": {
+    "diff-check.stderr.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/diff-check.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diff-check.stdout.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/diff-check.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "passed": true,
+  "readback": {},
+  "started_unix_seconds": 1794125356.8196023
+}

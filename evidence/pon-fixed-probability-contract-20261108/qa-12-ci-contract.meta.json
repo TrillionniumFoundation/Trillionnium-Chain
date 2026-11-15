@@ -1,0 +1,13 @@
+{
+  "label": "qa-12-ci-contract",
+  "argv": [
+    "python3",
+    "scripts/ci/test_ci_contract.py"
+  ],
+  "exit": 0,
+  "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "duration_seconds": 95.26162100606598,
+  "unittest_count": [
+    "111"
+  ]
+}

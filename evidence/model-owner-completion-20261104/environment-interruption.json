@@ -1,0 +1,76 @@
+{
+  "schema": "model-owner-environment-interruption-v1",
+  "recorded_utc_ns": 1793840734152595636,
+  "platform_reported_unavailable": true,
+  "recovered_source_hashes_unchanged": true,
+  "owned_old_processes_remain": false,
+  "real_model_authority_initialized": false,
+  "real_model_trial_started": false,
+  "registration_published": false,
+  "observations": [
+    {
+      "log": "model-final-synchronized-tests.log",
+      "size": 342,
+      "sha256": "25018f4d3a4a5ec785b1f674d9ac286d66ae942d6c88a81c8c0aade59e4978d6",
+      "terminal_observed": false,
+      "state": "INTERRUPTED_UNKNOWN",
+      "retained_tail": [
+        "ssssssssssssssssssssssssssssssssssssssssssssssssss........................................................................................ssssssssssssssssssssssssssssssssssssssss....................s.sssssssssssssssssssssssssssssssssssssss......................................................................F...E...........................E"
+      ]
+    },
+    {
+      "log": "repository-negative-tests.log",
+      "size": 3971,
+      "sha256": "50bcd3f57a858c79bc4be64cb0ca02f5ec442912d1fecd67f1d795e07fc04de1",
+      "terminal_observed": false,
+      "state": "INTERRUPTED_UNKNOWN",
+      "retained_tail": [
+        "test_no_privileged_pr_event (__main__.RepositoryMutants.test_no_privileged_pr_event) ... ok",
+        "test_no_write_permission_for_untrusted_pr (__main__.RepositoryMutants.test_no_write_permission_for_untrusted_pr) ... ok",
+        "test_omitted_package (__main__.RepositoryMutants.test_omitted_package) ... ok",
+        "test_owner_unknown (__main__.RepositoryMutants.test_owner_unknown) ... ok",
+        "test_quality_cannot_be_work (__main__.RepositoryMutants.test_quality_cannot_be_work) ... ok",
+        "test_reference_does_not_imply_native_product_integration (__main__.RepositoryMutants.test_reference_does_not_imply_native_product_integration) ... "
+      ]
+    },
+    {
+      "log": "final-ci-contract-tests.log",
+      "size": 9051,
+      "sha256": "424c8cddc1850de56ea3898fc52044487fe5fd94bf284ee4317c1abb3e4d5001",
+      "terminal_observed": false,
+      "state": "INTERRUPTED_UNKNOWN",
+      "retained_tail": [
+        "test_release_control_pipeline_keeps_actual_shell_failure_and_output (__main__.CiContractTests.test_release_control_pipeline_keeps_actual_shell_failure_and_output) ... ok",
+        "test_release_pipeline_rejects_successful_zero_ignored_wrong_or_incomplete_runs (__main__.CiContractTests.test_release_pipeline_rejects_successful_zero_ignored_wrong_or_incomplete_runs) ... ok",
+        "test_release_test_execution_checks_cannot_be_removed_relabelled_or_reordered (__main__.CiContractTests.test_release_test_execution_checks_cannot_be_removed_relabelled_or_reordered) ... ok",
+        "test_required_rust_fanins_cannot_skip_ignore_or_invent_shards (__main__.CiContractTests.test_required_rust_fanins_cannot_skip_ignore_or_invent_shards) ... ok",
+        "test_signed_state_oracle_dependencies_are_installed_in_both_rust_lanes (__main__.CiContractTests.test_signed_state_oracle_dependencies_are_installed_in_both_rust_lanes) ... ok",
+        "test_signed_state_oracle_requires_fresh_native_outputs_and_actual_checks (__main__.CiContractTests.test_signed_state_oracle_requires_fresh_native_outputs_and_actual_checks) ... "
+      ]
+    },
+    {
+      "log": "composed-m06-clippy.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "terminal_observed": false,
+      "state": "INTERRUPTED_UNKNOWN",
+      "retained_tail": []
+    },
+    {
+      "log": "composed-repository-check.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "terminal_observed": false,
+      "state": "INTERRUPTED_UNKNOWN",
+      "retained_tail": []
+    },
+    {
+      "log": "composed-pq-check.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "terminal_observed": false,
+      "state": "INTERRUPTED_UNKNOWN",
+      "retained_tail": []
+    }
+  ]
+}

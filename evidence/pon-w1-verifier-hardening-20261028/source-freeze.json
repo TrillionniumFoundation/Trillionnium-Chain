@@ -1,0 +1,28 @@
+{
+  "schema": "TRNM-W1-INDEPENDENT-VERIFIER-SOURCE-FREEZE1",
+  "revision": 2,
+  "utc": "2026-10-28T00:53:41Z",
+  "files": [
+    {
+      "path": "Cargo.lock",
+      "bytes": 38332,
+      "sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865"
+    },
+    {
+      "path": "Cargo.toml",
+      "bytes": 349,
+      "sha256": "9ed358e1e24b58505d5d37e0a88ef3538b2c6146c3303a87c33b19208d667d25"
+    },
+    {
+      "path": "src/main.rs",
+      "bytes": 13710,
+      "sha256": "1c2e8c4821f9666061dd373be9b92688cc0c6b969041c3a1ecc14cf7e240809c"
+    }
+  ],
+  "supersedes_unbuilt_plan_revision": 1,
+  "source1_preserved_archive": "/tmp/w1-hardened-verifier-source-r1.tar.gz",
+  "source1_archive_sha256": "2b91aa552a7b13ed1fe0768eecc3972ad57519ae2de47a8c4cbb7a37b981c39b",
+  "jobs": 1,
+  "compile_wall_limit_seconds": 600,
+  "full_w1_controller_and_source_unchanged": true
+}

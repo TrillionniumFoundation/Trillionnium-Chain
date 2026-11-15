@@ -1,0 +1,92 @@
+{
+  "schema": "cell-four-gate-original-records-recovery-v1",
+  "observed_at": "2026-11-12T02:49:08.710Z",
+  "scope": "Recovery of original retained files after local review environment became unavailable. No native test or model operation was launched or repeated.",
+  "files": [
+    {
+      "key": "recovery_current",
+      "source": "/home/qq/work/chain-cell-four-gates-2bfb-current-records.tar.gz",
+      "destination": "/home/qian-qi/work/chain-cell-four-gates-2bfb-recovered-original-current.tar.gz",
+      "size": 286100,
+      "sha256": "38519564908a3bd7afbaed914c866f06331b4b421532dbce86b2ebef145b0954",
+      "source_version": "66306:46184481:286100:1794446790021187875:1794446790021187875",
+      "destination_version": "2050:49951984:286100:1794451701043966503:1794451701047341727",
+      "chunk_count": 5,
+      "all_chunk_hashes_verified": true
+    },
+    {
+      "key": "recovery_prior",
+      "source": "/home/qq/work/chain-cell-four-gates-2bfb-prior-records-snapshot-20261112-1/remote-prior-records.tar.gz",
+      "destination": "/home/qian-qi/work/chain-cell-four-gates-2bfb-recovered-original-prior.tar.gz",
+      "size": 183220,
+      "sha256": "64c3d37283e682830f65cd9b9a90d39e806f3f029aa2af5e9c9f9457900b80cc",
+      "source_version": "66306:48778622:183220:1794443675664480624:1794443675664480624",
+      "destination_version": "2050:49951986:183220:1794451706680937840:1794451706685171918",
+      "chunk_count": 3,
+      "all_chunk_hashes_verified": true
+    },
+    {
+      "key": "before_source_bundle",
+      "source": "/home/qq/work/cell-four-before-source-2bfb.bundle",
+      "destination": "/home/qian-qi/work/chain-cell-four-gates-2bfb-recovered-before-source.bundle",
+      "size": 3994,
+      "sha256": "36913620ab2d97421b42f4402cb62cae29a98de01c611c7a9a814f0945a63651",
+      "source_version": "66306:46184476:3994:1794445759304166149:1794445759304166149",
+      "destination_version": "2050:49951988:3994:1794451710892224285:1794451710893045196",
+      "chunk_count": 1,
+      "all_chunk_hashes_verified": true
+    }
+  ],
+  "verification": {
+    "method": "Decode each tool-returned base64 chunk, independently verify chunk SHA-256, require contiguous offsets and fixed original version, verify complete original expected size and SHA-256, create-only write to desktop and verify returned destination size/hash.",
+    "sha256_helper_known_vectors": [
+      "empty",
+      "abc"
+    ],
+    "root_verification_complete": true,
+    "archive_member_verification": "Performed separately during final desktop assembly; this receipt only verifies original entire-file bytes."
+  },
+  "transport_observations": [
+    {
+      "tool": "h_view",
+      "path": "ssh://ai395/home/qq/work",
+      "outcome": "SSH255 / connection closed on LAN helper; no file content obtained"
+    },
+    {
+      "tool": "h_host_health",
+      "host": "ai395",
+      "outcome": "authenticated=true; reachable=true; healthy"
+    },
+    {
+      "tool": "h_pty_start",
+      "host": "ai395",
+      "session_id": "dpty-cb538e6e36f881514e60a801bae986577fcb2c23b9fe4efdd308ec9eabda30d3",
+      "outcome": "read-only list started once"
+    },
+    {
+      "tool": "h_pty_read",
+      "session_id": "dpty-cb538e6e36f881514e60a801bae986577fcb2c23b9fe4efdd308ec9eabda30d3",
+      "outcome": "MCP request timed out; not a command failure; no restart"
+    },
+    {
+      "tool": "h_binary_read",
+      "path": "/home/qq/.local/state/hepta-runtime-mac-worker/terminals/dpty-cb538e6e36f881514e60a801bae986577fcb2c23b9fe4efdd308ec9eabda30d3/output.log",
+      "size": 6254,
+      "sha256": "8983fd6aa1b1e685624ba114c424a4d149d3f46f4a35f429e2f65e4cee0427e4",
+      "outcome": "read complete original directory-list output, which established exact archive paths"
+    }
+  ],
+  "local_review_loss": {
+    "environment": "ccarenv_b64_Y2NhcmVudl82YWVjMjVlZmJiNGM4MTkxYmVjMWM3ZmYwNzdlNTE2Zg",
+    "task_checkout": "/workspace/scratch/2bfb5c18e0f8/chain-cell-storage",
+    "source_head": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+    "native_execution_affected": false,
+    "ci_name_patch_applied_locally": true,
+    "ci_name_controls_attempt": "mkdir failed with ENOSPC before commands were executed",
+    "migration_attempt": "Started copy/inventory operation to /dev/shm/chain-cell-storage-2bfb; no completion receipt. Do not assert completion or deletion.",
+    "tool_failure": "exec-server transport disconnected; failed to resume exec-server session: recovery timed out after 45s",
+    "platform_state": "unavailable",
+    "subsequent_ai395_probe": "h_view ssh://ai395/home/qq/work returned SSH255; Connection closed by configured host",
+    "recovery_policy": "Continue from independently verified desktop C3 and recovered original retained evidence. Any newly assembled archive gets its own observed identity. No native rerun attribution."
+  }
+}

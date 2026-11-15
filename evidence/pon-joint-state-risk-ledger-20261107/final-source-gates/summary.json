@@ -1,0 +1,81 @@
+{
+  "actual_conditional_probability_law_proved": false,
+  "actual_initial_joint_state_attested": false,
+  "all_algorithm_physical_resource_bound_proved": false,
+  "all_world_native_views_covered": false,
+  "assembled_at_utc": "2026-11-08T00:35:31.384579+00:00",
+  "complete_b66_check_repository_passed": true,
+  "fixture_materialization": {
+    "actual_git_blobs": 13,
+    "bytes": 965044,
+    "original_validators_rerun_and_passed": true
+  },
+  "fresh_native_owner_scenario_exit": 0,
+  "fresh_native_risk_scenario_exit": 0,
+  "github_required_baseline_status": "not_observed_for_publication_head_yet",
+  "merged_canonical_check_repository_executed": false,
+  "merged_full_repository_truth_lane_executed": false,
+  "merged_independent_commit_tree_markdown": {
+    "canonical_checker_executed": false,
+    "errors": 0,
+    "local_links": 4133,
+    "markdown_files": 605,
+    "source_commit": "2d46d8682201bc0619f5b156af50e77fb399322e",
+    "verifier_negative_tests": 12
+  },
+  "merged_original_worktree_source_guard_pass_claimed": false,
+  "model_and_ci_test_suite_executions": {
+    "ci-contract-negative": 108,
+    "ci-execution": 77,
+    "event-coverage": 21,
+    "finite-joint-state": 34,
+    "lifecycle-query": 26,
+    "source-integrity": 43
+  },
+  "native_reader_and_composition_tests": {
+    "certificate-composition-tests-16": 16,
+    "owner-reader-tests-21": 21,
+    "risk-reader-tests-25": 25
+  },
+  "native_six_successor_failure_probability": null,
+  "ordered_merge_parents": [
+    "b66e66d2465258d808c0f56ff851123306d4bdb4",
+    "cb314bb4656e5da4844325cd83994ab4764fe8e9"
+  ],
+  "production_qualified": false,
+  "real_signature_packet_join": {
+    "actual_MLDSA65_signatures_verified": true,
+    "native_raw_journals_checked": 6,
+    "native_raw_packet_artifacts_checked_across_journals": 58,
+    "native_six_successor_failure_probability": null,
+    "production_qualified": false,
+    "source_and_input_samples_stable": true,
+    "status": "PASS"
+  },
+  "review_base_branch": "fix/chain-six-axis-performance-20261103",
+  "risk_bookkeeping": {
+    "budget_units": 40,
+    "global_failure_probability": null,
+    "native_confirmation_intents_covered": 7,
+    "outcomes_recorded": 6,
+    "remaining_units": 4,
+    "spent_units": 36,
+    "starts_registered": 8,
+    "unit_denominator": 1000,
+    "unresolved_starts": [
+      12,
+      18
+    ]
+  },
+  "rust_test_targets": {
+    "cell_native_v1": 12,
+    "native_owner_journal": 10,
+    "native_owner_observation": 10,
+    "native_risk_ledger": 11
+  },
+  "schema": "pon-joint-state-native-risk-final-source-evidence-v1",
+  "tested_code_commit": "2d46d8682201bc0619f5b156af50e77fb399322e",
+  "tested_code_tree": "5ae5317304588cca8295a19dd512c8e853f1ef5b",
+  "unique_test_count_claimed": false,
+  "unmaterialized_historical_evidence_paths_at_lane_audit": 12646
+}

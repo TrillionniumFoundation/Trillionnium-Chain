@@ -1,0 +1,29 @@
+   Compiling libc v0.2.184
+   Compiling getrandom v0.4.2
+   Compiling rand_core v0.10.1
+   Compiling const-oid v0.10.2
+   Compiling crypto-common v0.2.2
+   Compiling digest v0.11.3
+   Compiling serde_json v1.0.149
+   Compiling rustix v1.1.6
+   Compiling shake v0.1.0
+   Compiling signature v3.0.0
+   Compiling linux-raw-sys v0.12.1
+   Compiling der v0.8.3
+   Compiling spki v0.8.1
+   Compiling pkcs8 v0.11.0
+   Compiling ml-dsa v0.1.1
+   Compiling tempfile v3.27.0
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/3069292387f3/chain-sqlite/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-verification-profiles v0.1.0 (/workspace/scratch/3069292387f3/chain-sqlite/trillionnium/crates/trnm-verification-profiles)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/3069292387f3/chain-sqlite/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13m 38s
+     Running unittests src/lib.rs (/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_mvcc_fee-1a85f62fc4a0b328)
+
+thread 'tests::sqlite_sidecar_inspection_error_refuses_before_database_creation' (1069) panicked at crates/trnm-mvcc-fee/src/tests.rs:771:5:
+assertion failed: error.message().starts_with("cannot inspect SQLite sidecar")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'tests::sqlite_sidecar_objects_refuse_creation_and_reopen_without_file_effects' (1070) panicked at crates/trnm-mvcc-fee/src/tests.rs:729:22:
+sidecar object must refuse before SQLite is opened: MvccFeeStoreV1 { path: "/tmp/.tmpfj5PSP/mvcc.sqlite", genesis: MvccFeeGenesisV1 { schema_version: 1, context: ProtocolContextV1 { chain_id: [116, 114, 110, 109, 45, 116, 101, 115, 116], genesis_hash: Hash32V1([200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200]), protocol_id: [116, 114, 110, 109, 45, 112, 111, 114, 116, 97, 98, 108, 101, 45, 97, 112, 112, 108, 105, 99, 97, 116, 105, 111, 110, 45, 118, 50], protocol_version: 1, profile_hash: Hash32V1([201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201]) }, store_id: Hash32V1([42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42]), initial_height: 10, initial_block_id: Hash32V1([202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202, 202]), initial_objects: [ObjectStateV1 { schema_version: 1, object_id: TypedObjectIdV1 { object_kind: 45, object_id: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] }, version: 0, value: 10000, closed: false }, ObjectStateV1 { schema_version: 1, object_id: TypedObjectIdV1 { object_kind: 45, object_id: [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2] }, version: 0, value: 10000, closed: false }, ObjectStateV1 { schema_version: 1, object_id: TypedObjectIdV1 { object_kind: 45, object_id: [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3] }, version: 0, value: 100, closed: false }, ObjectStateV1 { schema_version: 1, object_id: TypedObjectIdV1 { object_kind: 45, object_id: [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4] }, version: 0, value: 200, closed: false }, ObjectStateV1 { schema_version: 1, object_id: TypedObjectIdV1 { object_kind: 45, object_id: [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5] }, version: 0, value: 300, closed: false }, ObjectStateV1 { schema_version: 1, object_id: TypedObjectIdV1 { object_kind: 46, object_id: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10] }, version: 0, value: 0, closed: false }, ObjectStateV1 { schema_version: 1, object_id: TypedObjectIdV1 { object_kind: 46, object_id: [11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11] }, version: 0, value: 0, closed: false }], resource_prices: [ResourcePriceV1 { resource_class: 0, resource_id: [], unit: 1, price_numerator: 1, price_denominator: 128, minimum_charge: 1, maximum_charge: 100 }, ResourcePriceV1 { resource_class: 2, resource_id: [], unit: 1, price_numerator: 1, price_denominator: 128, minimum_charge: 1, maximum_charge: 100 }, ResourcePriceV1 { resource_class: 3, resource_id: [], unit: 1, price_numerator: 1, price_denominator: 128, minimum_charge: 1, maximum_charge: 100 }, ResourcePriceV1 { resource_class: 7, resource_id: [], unit: 3, price_numerator: 1, price_denominator: 10, minimum_charge: 1, maximum_charge: 100 }], destination_splits: [FeeDestinationSplitV1 { destination: TypedObjectIdV1 { object_kind: 46, object_id: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10] }, numerator: 3, denominator: 4 }, FeeDestinationSplitV1 { destination: TypedObjectIdV1 { object_kind: 46, object_id: [11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11] }, numerator: 1, denominator: 4 }], remainder_destination: TypedObjectIdV1 { object_kind: 46, object_id: [11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11] } }, worker_count: 1 }
+error: test failed, to rerun pass `-p trnm-mvcc-fee --lib`

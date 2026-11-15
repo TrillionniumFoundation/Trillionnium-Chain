@@ -1,0 +1,13 @@
+{"name": "preflight", "exit_code": 0, "counts": null, "source_verified": true}
+{"name": "cargo-metadata", "exit_code": 0, "counts": null, "source_verified": true}
+{"name": "format", "exit_code": 0, "counts": null, "source_verified": true}
+{"name": "host-parent", "exit_code": 0, "counts": [["19", "0"]], "source_verified": true}
+{"name": "history-import", "exit_code": 0, "counts": [["20", "1"]], "source_verified": true}
+{"name": "cache-explicit", "exit_code": 0, "counts": [["1", "0"]], "source_verified": true}
+{"name": "protocol-wire", "exit_code": 0, "counts": [["18", "1"]], "source_verified": true}
+{"name": "header-binding", "exit_code": 0, "counts": [["1", "0"]], "source_verified": true}
+{"name": "factorial-example", "exit_code": 0, "counts": [["6", "0"]], "source_verified": true}
+{"name": "cpu-completion", "exit_code": 0, "counts": [["11", "0"]], "source_verified": true}
+{"name": "work-fuzz", "exit_code": 0, "counts": [["6", "0"]], "source_verified": true}
+{"name": "retained-rejection", "exit_code": 0, "counts": [["3", "0"]], "source_verified": true}
+{"name": "strict-clippy", "exit_code": 0, "counts": null, "source_verified": true}

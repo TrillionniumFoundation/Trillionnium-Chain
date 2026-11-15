@@ -1,0 +1,46 @@
+{
+  "schema": "trnm-pq-review-delivery-v1",
+  "date_utc": "2026-11-10",
+  "source_baseline": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "source_snapshots": "selected source subsets, not a full Git checkout",
+  "full_chain_qualification": "HOLD_NO_GO",
+  "final_integrated_source_commit": null,
+  "pushed_by_this_task": false,
+  "rust_tests_result": null,
+  "native_tls_result": null,
+  "strict_clippy_result": null,
+  "rustfmt_result": null,
+  "hosted_ci_result": null,
+  "native_job_start_observed": null,
+  "native_request_recovery": "same exact request and idempotency key only; no new duplicate job",
+  "reviewed_inputs_sha256": {
+    "identity/exact-spki.patch": "939910be8e0941fae8f5431d3977de0182a82bcfeda255888e87648c0c9e90e8",
+    "identity/negative-controls-only.patch": "24f142a6fca0f25d8d525ef4fd22c3f0b03485bf484f17463d4959d37830082b",
+    "identity/PQ_BOUNDARY_HARDENING_20261110.md": "194bc803eb11fa23658d41aea48bd30f9e767e5524c42f80edcb4440101465d1",
+    "quantum/quantum-numeric-inputs.patch": "3bb17bb9e66b0d22145a5bc479390b35ce3f2d6c663a33434400f2ca844c11fd",
+    "quantum/rog_tls_validate.py": "6a762abce1f09c8ae2f652dc967a74ad3761a8ad6f2699edd9298f6058e79e49",
+    "stark/stark-integration.tar.gz": "cba0c3fafebff73e9c1478bf920dd81f7c8c86b394fed167264f89c0801ce9cd",
+    "stark/stark-after-pack.tar.gz": "24b7231c3ed905b9e711acd7efeed51e4a2753d24a1e672364451d285ca461e2",
+    "stark/after-pack.patch": "026be99761467cd0645174582702f483bf99b959a9856732bd94178748dd95b6",
+    "stark/rebind_reviewed_outer_pins.py": "80a099b88c418986ab0392ca3531af0e0b2eb184f94ac5a6896ec680c1a9e862"
+  },
+  "python_observations": {
+    "stark_route": 32,
+    "field_certificates": 16,
+    "conditional_sampler": 7,
+    "retained_replay": 13,
+    "quantum_original_scoped": 71,
+    "quantum_patched_scoped": 75,
+    "corpus_suite": 63,
+    "ci_selected_class": 12,
+    "rebinder": 7,
+    "counts_may_overlap_and_must_not_be_summed_as_full_repo_qualification": true
+  },
+  "standard_scenarios": {
+    "count": 11,
+    "rows": 109190,
+    "uncompressed_bytes": 50534673,
+    "byte_equal_before_after": true,
+    "sha256": "53f1a902a01ed57b0de2285b928801b323d11a273bcc79b828e46371e28cddb3"
+  }
+}

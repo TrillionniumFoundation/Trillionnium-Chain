@@ -1,0 +1,86 @@
+{
+  "expected_source": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+  "optional_pq_features_tested": false,
+  "performance_or_economics_qualified": false,
+  "production_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "runner": "ubuntu-24.04",
+  "source_kind": "head",
+  "steps": {
+    "clippy": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "examples": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "graph_format": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "growth_observers": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "hepta_receivers": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "native_execution": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "native_packet": {
+      "conclusion": "failure",
+      "outcome": "failure",
+      "outputs": {}
+    },
+    "p2p": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "preflight": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "python": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "repository": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "reserve": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "source": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "source_after": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "toolchain": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    }
+  }
+}

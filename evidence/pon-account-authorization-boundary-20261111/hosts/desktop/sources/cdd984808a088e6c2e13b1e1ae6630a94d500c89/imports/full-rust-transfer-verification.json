@@ -1,0 +1,204 @@
+{
+  "acceptance_granted": false,
+  "all_34_decoded_chunk_hashes_verified": true,
+  "all_base64_file_hashes_verified": true,
+  "all_original_receipt_log_hashes_verified": true,
+  "archive": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/desktop-full-rust-evidence-v1.tar.gz",
+  "archive_bytes": 1100360,
+  "archive_sha256": "096cb2d208ad92dff1b2c39ec04da7579e9f06edba5e44451809ab6e11b66456",
+  "archive_to_manifest_to_extracted_members_verified": true,
+  "continuous_byte_ranges_verified": true,
+  "directory_inventory": [
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/baseline-preflight/",
+      "recursive_file_bytes": 5069,
+      "recursive_regular_files": 4,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/baseline-preflight"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/",
+      "recursive_file_bytes": 1966009,
+      "recursive_regular_files": 30,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/",
+      "recursive_file_bytes": 1826274,
+      "recursive_regular_files": 26,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/account-multiproof/",
+      "recursive_file_bytes": 0,
+      "recursive_regular_files": 0,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/account-multiproof"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/authenticated-state/",
+      "recursive_file_bytes": 0,
+      "recursive_regular_files": 0,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/authenticated-state"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/model-composition/",
+      "recursive_file_bytes": 0,
+      "recursive_regular_files": 0,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/model-composition"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/obligation-range/",
+      "recursive_file_bytes": 0,
+      "recursive_regular_files": 0,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/obligation-range"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/supply-chain/",
+      "recursive_file_bytes": 609123,
+      "recursive_regular_files": 9,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/supply-chain"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/zero-paired-prefix/",
+      "recursive_file_bytes": 1083008,
+      "recursive_regular_files": 16,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/zero-paired-prefix"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/zero-paired-prefix/case-0/",
+      "recursive_file_bytes": 270752,
+      "recursive_regular_files": 4,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/zero-paired-prefix/case-0"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/zero-paired-prefix/case-1/",
+      "recursive_file_bytes": 270752,
+      "recursive_regular_files": 4,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/zero-paired-prefix/case-1"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/zero-paired-prefix/case-2/",
+      "recursive_file_bytes": 270752,
+      "recursive_regular_files": 4,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/zero-paired-prefix/case-2"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/zero-paired-prefix/case-3/",
+      "recursive_file_bytes": 270752,
+      "recursive_regular_files": 4,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/zero-paired-prefix/case-3"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/pq-feature-off/",
+      "recursive_file_bytes": 7893,
+      "recursive_regular_files": 4,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/pq-feature-off"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-after/",
+      "recursive_file_bytes": 5651,
+      "recursive_regular_files": 4,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-after"
+    }
+  ],
+  "host": "desktop",
+  "local_extracted_directory": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/full-rust-evidence-v1",
+  "manifest_sha256": "cb849325d2a99c825dc8ca711660ad552b082eb79eae0b25670daad4b9e32532",
+  "member_count": 47,
+  "original_file_count": 46,
+  "records": {
+    "baseline-preflight": {
+      "pass": true,
+      "result_sha256": "b3458240771043e333bf512e44c3ab61692c921e39fb4293026931b1a3619397",
+      "returncode": 0
+    },
+    "pq-feature-off": {
+      "pass": true,
+      "result_sha256": "2a6cd04730e53af98315789b243465c5a3bcd11e75018b4c609be5ee17bc5f38",
+      "returncode": 0
+    },
+    "rust-baseline": {
+      "pass": false,
+      "result_sha256": "9a8b556ee56c48e08feb58c887d3317943a1395faf825228cac8ca0104773310",
+      "returncode": 101
+    },
+    "source-after": {
+      "pass": true,
+      "result_sha256": "c3203906a77c57c28d08d6870d7395a156393b1e087097532ba9473eccb81bf8",
+      "returncode": 0
+    }
+  },
+  "remote_archive": "/home/qian-qi/chain-pq-a418-final-ci-tools/desktop-full-rust-evidence-v1.tar.gz",
+  "remote_file_version": "2050:4388823:1100360:1794366728178446771:1794366728359002399",
+  "schema": "desktop-full-rust-transfer-verification-v1",
+  "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "transfer_sources": [
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/full-rust-transfer/chunk-0.json",
+      "sha256": "ec5d1a6f90c7c1f5cbbc73b8f1bec9ae0b6c361939f6f118ad4e06be191d8639"
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/full-rust-transfer/chunk-32768.json",
+      "sha256": "4db830c49bae50d24c0c1a8e4d4786fc9c01a343020613a18fc3767f6b893dc5"
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/full-rust-transfer/base64-batch-12.json",
+      "sha256": "027f7b857f3afb632abbe31d75d56d9d051148e08da684e93ea8d46b55e368fc"
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/full-rust-transfer/base64-batch-17.json",
+      "sha256": "c68cb62c58f7f17a8a919a070a6719e0e2ef84934f77a8ea335df1ab6cda0a54"
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/full-rust-transfer/base64-batch-2.json",
+      "sha256": "39d21eed0a2542f6243803190cefa204479690a4bbf7735821f7dace79e13ae6"
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/full-rust-transfer/base64-batch-22.json",
+      "sha256": "12ec5b1ea41d9e3e05906e0752bb24b11bfcf5c16f9a883e9ddac8968bf9d17e"
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/full-rust-transfer/base64-batch-27.json",
+      "sha256": "79c582b8e737cc58736d3615af3438849e131763604e92a7d8c24dc04aacb01d"
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/full-rust-transfer/base64-batch-32.json",
+      "sha256": "49a7a0b56733a2dbaec0b9d755b538e77a9f786fcb5262f85aeb9dd51961effb"
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/full-rust-transfer/base64-batch-7.json",
+      "sha256": "da357aaf53f08fd282bfd31a81bb4beeee008df91151ae2befba1ec4aabde3d9"
+    }
+  ],
+  "transport": "First two direct binary chunks; remaining exact base64 files in complete-file batches; no archive transformation",
+  "transport_failure_observations": [
+    {
+      "original_tool_error": {
+        "content": [
+          {
+            "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+            "type": "text"
+          }
+        ],
+        "isError": true
+      },
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/full-rust-transfer-read-error-offset-32768-attempt-1.json",
+      "sha256": "3ffe4c03224e6dd9144149dc67468425f02588b7a91d9650f61427336c3c72d7"
+    },
+    {
+      "original_tool_error": {
+        "content": [
+          {
+            "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+            "type": "text"
+          }
+        ],
+        "isError": true
+      },
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/full-rust-transfer-read-error-offset-65536-attempt-1.json",
+      "sha256": "3ffe4c03224e6dd9144149dc67468425f02588b7a91d9650f61427336c3c72d7"
+    }
+  ],
+  "transport_interruption_note": "One later read call was interrupted before batch22 was written; retained batches were revalidated and only remaining reads resumed. No native job or export was restarted.",
+  "transport_manifest_sha256": "416315fccfa21021e9260f1ae67a84da6aba5ed75f263543b6de24f66e450779",
+  "verified_utc": "2026-11-11T03:36:58.232281+00:00"
+}

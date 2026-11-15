@@ -1,0 +1,211 @@
+{
+  "scope": "read-only original-data analysis and deliberately injected record controls; no node execution",
+  "commands": [
+    {
+      "name": "wrapper-invocation-argument-order-failure",
+      "argv": [
+        "python3",
+        "-B",
+        "/tmp/history_checkpoint_r8_runner.py",
+        "r14-matrix-readback-attempt1",
+        "--timeout",
+        "60",
+        "--",
+        "nice",
+        "-n",
+        "19",
+        "python3",
+        "-B",
+        "evidence/pon-r14-attack-matrix-r8-20261028/analyze.py",
+        "--archive",
+        "/workspace/scratch/56818e4fba76/recovery/next-publication/ci-final-readback-r7-raw/chain-131f-native-12787328109.zip",
+        "--out",
+        "/tmp/r14-matrix-readback-r8-attempt1"
+      ],
+      "exit_code": 2,
+      "analyzer_started": false,
+      "native_started": false,
+      "cpu_observation": null,
+      "observation_scope": "initial exec tool output; wrapper did not create a receipt",
+      "output": "usage: history_checkpoint_r8_runner.py [-h] --timeout TIMEOUT name ...\nhistory_checkpoint_r8_runner.py: error: the following arguments are required: --timeout\n"
+    },
+    {
+      "name": "r14-matrix-readback-attempt1",
+      "receipt": {
+        "schema": "history-checkpoint-exact-source-control-v1",
+        "name": "r14-matrix-readback-attempt1",
+        "source_commit": "56462db5fae46830581a01a52deaca1e40ba8203",
+        "source_tree": "2ade68d837ca664a384b283ae83c419e28be0d04",
+        "source_status": "?? evidence/pon-r14-attack-matrix-r8-20261028/",
+        "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+        "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+        "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+        "source_paths": 1075,
+        "source_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "argv": [
+          "nice",
+          "-n",
+          "19",
+          "python3",
+          "-B",
+          "evidence/pon-r14-attack-matrix-r8-20261028/analyze.py",
+          "--archive",
+          "/workspace/scratch/56818e4fba76/recovery/next-publication/ci-final-readback-r7-raw/chain-131f-native-12787328109.zip",
+          "--out",
+          "/tmp/r14-matrix-readback-r8-attempt1"
+        ],
+        "env_overrides": {
+          "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+          "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+        },
+        "started_utc": "2026-10-28T04:19:32.882816+00:00",
+        "elapsed_seconds": 1.0860530960053438,
+        "exit_code": 0,
+        "timed_out": false,
+        "outer_timeout_seconds": 60,
+        "child_user_seconds": 0.936195,
+        "child_system_seconds": 0.108668,
+        "child_max_rss_kib": 145268,
+        "stdout_sha256": "c84f99797af3113a2a132d056e75511e92163c0d02fb8011d43fd74f875f5bd5",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "harness_results": [],
+        "zero_tests_executed": false
+      },
+      "analysis_script_sha256": "47649e52411147378c77f922a08491ae1f0d94d1a0d57bbd7c1969a5a9a0911c",
+      "imported_analyzer_sha256": "47649e52411147378c77f922a08491ae1f0d94d1a0d57bbd7c1969a5a9a0911c",
+      "raw_directory_in_archive": "r14-matrix-readback-attempt1",
+      "native_started": false,
+      "crypto_started": false
+    },
+    {
+      "name": "r14-matrix-controls",
+      "receipt": {
+        "schema": "history-checkpoint-exact-source-control-v1",
+        "name": "r14-matrix-controls",
+        "source_commit": "56462db5fae46830581a01a52deaca1e40ba8203",
+        "source_tree": "2ade68d837ca664a384b283ae83c419e28be0d04",
+        "source_status": "?? evidence/pon-r14-attack-matrix-r8-20261028/",
+        "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+        "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+        "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+        "source_paths": 1075,
+        "source_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "argv": [
+          "nice",
+          "-n",
+          "19",
+          "python3",
+          "-B",
+          "evidence/pon-r14-attack-matrix-r8-20261028/test_analyze.py",
+          "-v"
+        ],
+        "env_overrides": {
+          "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+          "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+        },
+        "started_utc": "2026-10-28T04:20:47.160034+00:00",
+        "elapsed_seconds": 0.6850185640068958,
+        "exit_code": 0,
+        "timed_out": false,
+        "outer_timeout_seconds": 60,
+        "child_user_seconds": 0.584239,
+        "child_system_seconds": 0.03545,
+        "child_max_rss_kib": 86988,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "06b9274198f1b51bd8f2d869cf453123ec89eb2f347418886f91c27d3d690f11",
+        "harness_results": [],
+        "zero_tests_executed": false
+      },
+      "analysis_script_sha256": "1464c61e763242c32d4976f52993791c79d981d1a6c5ead57a53031147056970",
+      "imported_analyzer_sha256": "47649e52411147378c77f922a08491ae1f0d94d1a0d57bbd7c1969a5a9a0911c",
+      "raw_directory_in_archive": "r14-matrix-controls",
+      "native_started": false,
+      "crypto_started": false
+    }
+  ],
+  "archive": {
+    "path": "readback-controls.tar.gz",
+    "bytes": 128240,
+    "sha256": "626b9f00211d247d593834dc0a765127e5ae21b5d61a00ddfdf28e7412d2cece"
+  },
+  "archive_members": [
+    {
+      "path": "r14-matrix-readback-attempt1/receipt.json",
+      "bytes": 2301,
+      "sha256": "a68eea3d34ee6d0154f2476890b23107890340a4a0a07d01766817ca6b839607"
+    },
+    {
+      "path": "r14-matrix-readback-attempt1/runner.py",
+      "bytes": 3825,
+      "sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be"
+    },
+    {
+      "path": "r14-matrix-readback-attempt1/source-manifest.json",
+      "bytes": 211269,
+      "sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1"
+    },
+    {
+      "path": "r14-matrix-readback-attempt1/source.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "r14-matrix-readback-attempt1/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "r14-matrix-readback-attempt1/stdout.txt",
+      "bytes": 102,
+      "sha256": "c84f99797af3113a2a132d056e75511e92163c0d02fb8011d43fd74f875f5bd5"
+    },
+    {
+      "path": "r14-matrix-controls/receipt.json",
+      "bytes": 2107,
+      "sha256": "750bb89ad7c54d811511102cd2dfeaf385e4a33d954d900c0a08327f8622dee8"
+    },
+    {
+      "path": "r14-matrix-controls/runner.py",
+      "bytes": 3825,
+      "sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be"
+    },
+    {
+      "path": "r14-matrix-controls/source-manifest.json",
+      "bytes": 211269,
+      "sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1"
+    },
+    {
+      "path": "r14-matrix-controls/source.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "r14-matrix-controls/stderr.txt",
+      "bytes": 1640,
+      "sha256": "06b9274198f1b51bd8f2d869cf453123ec89eb2f347418886f91c27d3d690f11"
+    },
+    {
+      "path": "r14-matrix-controls/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "executed-source/analyze.py",
+      "bytes": 17542,
+      "sha256": "47649e52411147378c77f922a08491ae1f0d94d1a0d57bbd7c1969a5a9a0911c"
+    },
+    {
+      "path": "executed-source/test_analyze.py",
+      "bytes": 5032,
+      "sha256": "1464c61e763242c32d4976f52993791c79d981d1a6c5ead57a53031147056970"
+    }
+  ],
+  "original_failures_retained": true,
+  "work_package_2b_closed": false
+}

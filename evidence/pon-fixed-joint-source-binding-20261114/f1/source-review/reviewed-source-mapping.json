@@ -1,0 +1,129 @@
+{
+  "changed_input_count": 1,
+  "context_is_source_checkpoint_not_metadata_commit": true,
+  "current_contract": {
+    "bytes": 5102,
+    "path": "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json",
+    "sha256": "916cbdcf0f163844d269a7152305de952022f92065d0f70f77a752baa6cba092"
+  },
+  "historical_source_context": "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8",
+  "inputs": [
+    {
+      "changed": false,
+      "current": {
+        "bytes": 8924,
+        "git_oid": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b",
+        "revision": "7d8d4c59fcd01480a12e1c64835b202079091800",
+        "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+      },
+      "fixed_pin": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+      "fixed_pin_matches_current": true,
+      "fixed_pin_matches_named_old_commit": true,
+      "joint_pin": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+      "joint_pin_matches_named_old_commit": true,
+      "old": {
+        "bytes": 8924,
+        "git_oid": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b",
+        "revision": "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8",
+        "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+      },
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "physical_root_equals_fixed_git": true
+    },
+    {
+      "changed": false,
+      "current": {
+        "bytes": 14587,
+        "git_oid": "baaaa19305bcc39e7fdd6d2c691e721bbce1e94c",
+        "revision": "7d8d4c59fcd01480a12e1c64835b202079091800",
+        "sha256": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834"
+      },
+      "fixed_pin": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834",
+      "fixed_pin_matches_current": true,
+      "fixed_pin_matches_named_old_commit": true,
+      "joint_pin": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834",
+      "joint_pin_matches_named_old_commit": true,
+      "old": {
+        "bytes": 14587,
+        "git_oid": "baaaa19305bcc39e7fdd6d2c691e721bbce1e94c",
+        "revision": "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8",
+        "sha256": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834"
+      },
+      "path": "formal/pon-nakamoto-v1/mandatory_units_relation.py",
+      "physical_root_equals_fixed_git": true
+    },
+    {
+      "changed": false,
+      "current": {
+        "bytes": 2944,
+        "git_oid": "9cbfccd2d50af48fc43522b967ffdfb1f45ec098",
+        "revision": "7d8d4c59fcd01480a12e1c64835b202079091800",
+        "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+      },
+      "fixed_pin": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+      "fixed_pin_matches_current": true,
+      "fixed_pin_matches_named_old_commit": true,
+      "joint_pin": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+      "joint_pin_matches_named_old_commit": true,
+      "old": {
+        "bytes": 2944,
+        "git_oid": "9cbfccd2d50af48fc43522b967ffdfb1f45ec098",
+        "revision": "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8",
+        "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+      },
+      "path": "formal/pon-nakamoto-v1/work_oracle.py",
+      "physical_root_equals_fixed_git": true
+    },
+    {
+      "changed": true,
+      "current": {
+        "bytes": 106066,
+        "git_oid": "b89112abb32b692c83cf94a3e85fce58c5798628",
+        "revision": "7d8d4c59fcd01480a12e1c64835b202079091800",
+        "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+      },
+      "fixed_pin": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "fixed_pin_matches_current": false,
+      "fixed_pin_matches_named_old_commit": true,
+      "joint_pin": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "joint_pin_matches_named_old_commit": true,
+      "old": {
+        "bytes": 104121,
+        "git_oid": "ce1608248d2ee67ed8f5d82a2c5f15942689139b",
+        "revision": "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8",
+        "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+      },
+      "patch": {
+        "bytes": 3663,
+        "path": "/private/tmp/chain-architecture-fixed-joint-current-binding-review-20261114-v1/pin-source-proof-v1/trillionnium--crates--trnm-crypto-primitives--src--pon_work.rs.patch",
+        "sha256": "a9fc3195a51e2eb1e4859274f7ab1997f71ead9390492cc429c355969dbc5ca5"
+      },
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "physical_root_equals_fixed_git": true
+    }
+  ],
+  "native_execution_performed": false,
+  "old_contract": {
+    "bytes": 5102,
+    "path": "historical/fixed_probability_contract_v1-2bb56596.json",
+    "sha256": "e249dfcda10720a1fc388cef9613302253a96b125c0ab1f0eda1b584b72cebef"
+  },
+  "original_reader_and_16_control_source_unchanged": true,
+  "probability_parameters_accounting_and_obligations_unchanged": true,
+  "production_activation": false,
+  "production_runtime_or_probability_contract_edited": false,
+  "qualification": "HOLD_NO_GO",
+  "reviewed_delta": {
+    "patch_sha256": "a9fc3195a51e2eb1e4859274f7ab1997f71ead9390492cc429c355969dbc5ca5",
+    "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "scope": "Previously selected progress API, same-invocation checked-verifier continuation, and explicitly added modules; the existing MU1 relation parameters and probability are unchanged."
+  },
+  "reviewed_source_binding_metadata_edited": true,
+  "reviewed_source_context": "7d8d4c59fcd01480a12e1c64835b202079091800",
+  "reviewed_source_context_tree": "47b283f20c7b2afdb668316c26d098e378b4b849",
+  "schema": "fixed-probability-reviewed-current-source-mapping-v1",
+  "source_input_count": 4,
+  "source_paths_unchanged": true,
+  "tests_not_yet_run_in_this_edit_step": true,
+  "unchanged_input_count": 3
+}

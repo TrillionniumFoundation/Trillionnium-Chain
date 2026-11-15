@@ -1,0 +1,17 @@
+test_batch_domain_image_count_and_trailing_bytes (__main__.ContractControls.test_batch_domain_image_count_and_trailing_bytes) ... ok
+test_changed_product_does_not_create_a_new_ticket (__main__.ContractControls.test_changed_product_does_not_create_a_new_ticket) ... ok
+test_exact_full_public_bytes_roundtrip (__main__.ContractControls.test_exact_full_public_bytes_roundtrip) ... ok
+test_exact_input_length_and_domain (__main__.ContractControls.test_exact_input_length_and_domain) ... ok
+test_full_cap_using_unproven_public_controls (__main__.ContractControls.test_full_cap_using_unproven_public_controls) ... ok
+test_full_leaf_bindings (__main__.ContractControls.test_full_leaf_bindings) ... ok
+test_ordered_public_headers_using_unproven_control (__main__.ContractControls.test_ordered_public_headers_using_unproven_control) ... ok
+test_original_identity_is_fixed (__main__.ContractControls.test_original_identity_is_fixed) ... ok
+test_oversized_zero_and_omitted_count (__main__.ContractControls.test_oversized_zero_and_omitted_count) ... ok
+test_same_receipt_cannot_supply_multiple_work (__main__.ContractControls.test_same_receipt_cannot_supply_multiple_work) ... ok
+test_source_pins_and_no_claim_only_api (__main__.ContractControls.test_source_pins_and_no_claim_only_api) ... ok
+test_zero_target_and_noncanonical_product (__main__.ContractControls.test_zero_target_and_noncanonical_product) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.113s
+
+OK

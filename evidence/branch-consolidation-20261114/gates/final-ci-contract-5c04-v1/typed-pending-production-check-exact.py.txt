@@ -1,0 +1,39 @@
+def check_typed_pending_worker_controls(root: Path) -> dict:
+    pilot_path = root / 'scripts/test_llm_runtime_pilot.py'
+    require(pilot_path.is_file() and not pilot_path.is_symlink(),
+            'typed pending controls require the regular pilot entry')
+    pilot = ast.parse(pilot_path.read_text())
+    counts = {}
+    for module_name, expected in LLM_TYPED_PENDING_TESTS.items():
+        imports = [node for node in ast.walk(pilot)
+                   if isinstance(node, ast.ImportFrom) and node.module == module_name]
+        require(len(imports) == 1 and imports[0] in pilot.body
+                and imports[0].level == 0
+                and [(alias.name, alias.asname) for alias in imports[0].names]
+                == [(expected['class'], None)],
+                'typed pending controls require one unconditional original class import: ' + module_name)
+        source = root / 'scripts' / (module_name + '.py')
+        require(source.is_file() and not source.is_symlink(),
+                'typed pending original control source missing: ' + module_name)
+        tree = ast.parse(source.read_text())
+        classes = [node for node in tree.body
+                   if isinstance(node, ast.ClassDef) and node.name == expected['class']]
+        require(len(classes) == 1 and not classes[0].decorator_list
+                and [ast.unparse(base) for base in classes[0].bases] == ['unittest.TestCase'],
+                'typed pending controls require their undecorated original TestCase: ' + module_name)
+        methods = [node for node in classes[0].body
+                   if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                   and node.name.startswith('test_')]
+        names = [node.name for node in methods]
+        require(len(names) == len(set(names)) == len(expected['methods'])
+                and set(names) == set(expected['methods'])
+                and all(isinstance(node, ast.FunctionDef) and not node.decorator_list
+                        and any(not isinstance(statement, ast.Pass)
+                                and not (isinstance(statement, ast.Expr)
+                                         and isinstance(statement.value, ast.Constant))
+                                for statement in node.body)
+                        for node in methods),
+                'typed pending controls must retain every original non-skipped method: ' + module_name)
+        counts[module_name] = len(methods)
+    return {'original_controls': counts, 'selected_original_controls': sum(counts.values()),
+            'tests_executed': False}

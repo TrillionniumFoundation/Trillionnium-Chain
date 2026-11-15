@@ -1,0 +1,38 @@
+60:   retained-pressure-failure:
+61:     runs-on: ubuntu-24.04
+62:     timeout-minutes: 10
+63:     permissions:
+64:       contents: read
+65:       actions: read
+66:     steps:
+67:       - name: Retrieve exact historical failed artifact without reclassifying it
+68:         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+69:         with:
+70:           artifact-ids: "11531476198"
+71:           run-id: "37730166589"
+72:           github-token: ${{ github.token }}
+73:           path: ${{ runner.temp }}/historical-pressure
+74:       - name: Expose bounded original honest-submit and state diagnostics
+75:         shell: bash
+76:         run: |
+77:           python3 - <<'PY'
+78:           import json, os
+79:           from pathlib import Path
+80:           root = Path(os.environ['RUNNER_TEMP']) / 'historical-pressure'
+81:           source = json.loads((root / 'source.json').read_text())
+82:           assert source['tested_commit'] == '560d44ac28fee7b073d1740e372839ab52f057b6'
+83:           path = root / 'public-v3-from-zero-suite/sustained/report.json'
+84:           assert path.stat().st_size <= 64 * 1024 * 1024
+85:           report = json.loads(path.read_text())
+86:           assert report['schema'] == 'public-v3-sustained-local-from-zero-v1'
+87:           print(json.dumps({'scope': 'immutable historical failure, not current acceptance', 'source': source}))
+88:           for phase in report['phases']:
+89:               result = {key: phase.get(key) for key in (
+90:                   'phase', 'service_target_met', 'invariant_target_met',
+91:                   'full_native_state_equal', 'honest_submissions',
+92:                   'post_pressure_head', 'initial_meter', 'meter_at_traffic_end',
+93:                   'budget_depletion_observed', 'service')}
+94:               text = json.dumps(result, sort_keys=True)
+95:               assert len(text.encode()) <= 256 * 1024
+96:               print(text)
+97:           PY

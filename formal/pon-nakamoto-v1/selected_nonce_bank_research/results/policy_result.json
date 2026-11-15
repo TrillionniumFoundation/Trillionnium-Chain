@@ -1,0 +1,77 @@
+{
+  "schema": "selected-bank-finite-iid-results-r4-v1",
+  "concrete_SHA_independence_claim": false,
+  "strict_old_online_counterexample": {
+    "D": 2,
+    "capacity": 1,
+    "draw_cap": 3,
+    "p": {
+      "numerator": "1",
+      "denominator": "2",
+      "decimal": "0.5"
+    },
+    "gate": 1,
+    "continuation": 1,
+    "uncached_useful": 100,
+    "required_success": {
+      "numerator": "3",
+      "denominator": "4",
+      "decimal": "0.75"
+    },
+    "lambda": 202,
+    "old_class_penalized_optimum": {
+      "numerator": "1281",
+      "denominator": "8",
+      "decimal": "160.125"
+    },
+    "old_class_cost_lower_bound": {
+      "numerator": "877",
+      "denominator": "8",
+      "decimal": "109.625"
+    },
+    "bank_policy_cost": {
+      "numerator": "209",
+      "denominator": "2",
+      "decimal": "104.5"
+    },
+    "bank_policy_success": {
+      "numerator": "3",
+      "denominator": "4",
+      "decimal": "0.75"
+    },
+    "strict_gap": {
+      "numerator": "41",
+      "denominator": "8",
+      "decimal": "5.125"
+    },
+    "construction": "pay three selectors, pick most frequent coordinate (lexicographic tie), attempt its first two nonce records"
+  },
+  "illustrative_fixed_batch": {
+    "order": [
+      0,
+      1,
+      2
+    ],
+    "success": {
+      "numerator": "33319196443135",
+      "denominator": "281474976710656",
+      "decimal": "0.11837356497016671141864208038896"
+    },
+    "expected_setup": {
+      "numerator": "12402047230399",
+      "denominator": "8589934592",
+      "decimal": "1443.7883196397451683878898620605"
+    },
+    "expected_continuation": {
+      "numerator": "13161082595038325",
+      "denominator": "1099511627776",
+      "decimal": "11969.934889783257858653087168932"
+    },
+    "expected_cost": {
+      "numerator": "14748544640529397",
+      "denominator": "1099511627776",
+      "decimal": "13413.723209423003027040977030993"
+    }
+  },
+  "all_physical_strategy_lower_bound_claim": false
+}

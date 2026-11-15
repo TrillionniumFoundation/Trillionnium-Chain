@@ -1,0 +1,56 @@
+{
+  "all_passed": true,
+  "runs": [
+    {
+      "command": [
+        "python3",
+        "-B",
+        "scripts/test_cell_learning_iteration_join.py",
+        "-v"
+      ],
+      "elapsed_seconds": 0.797718132999762,
+      "exit_code": 0,
+      "log": "/workspace/scratch/227dcdfdc6e4/validation/cell-learning-iteration-compatibility.log",
+      "log_sha256": "ac94c17a9b202780b301b70f4ce7b7478191fe1f04f3fff49087e3226422ac47",
+      "started_utc": "2026-11-11T00:41:57.872745+00:00",
+      "tests": 25
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "scripts/test_cell_learning_completion_join.py",
+        "-v"
+      ],
+      "elapsed_seconds": 2.9086437370001477,
+      "exit_code": 0,
+      "log": "/workspace/scratch/227dcdfdc6e4/validation/cell-learning-completion-compatibility.log",
+      "log_sha256": "1d81d068fcb40a3eb1c1642652b77054eb85b366a7e84c7446e38031822aca79",
+      "started_utc": "2026-11-11T00:41:58.670581+00:00",
+      "tests": 13
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "scripts/test_cell_learning_scope_join.py",
+        "-v"
+      ],
+      "elapsed_seconds": 2.5832530160000715,
+      "exit_code": 0,
+      "log": "/workspace/scratch/227dcdfdc6e4/validation/cell-learning-scope-compatibility.log",
+      "log_sha256": "5331d2af74b680674edb2598bf0dc50e7e78622d9c56f479615c4c1fa2371b1e",
+      "started_utc": "2026-11-11T00:42:01.579397+00:00",
+      "tests": 13
+    }
+  ],
+  "scope": "legacy-HEPLCP02-reader-refusal-controls-not-new-native-HEPLCP04-evidence",
+  "source_sha256": {
+    "docs/development/specs/pon/CELL_LEARNING_ITERATION_JOIN_V2.md": "290022ed69d4d36f076a1aa6b29b6d91490dba7311617962bfc898e6b3b9e93c",
+    "scripts/cell_learning_completion_join.py": "db90de5c974565c874a8d34679de907d6214bc84a6294c3ec5466c7e28eb4ed0",
+    "scripts/cell_learning_iteration_join.py": "b602e6217b9ec2bb143c141ea02e27ec666ef75ddf993eb794c23eb3ded5da7d",
+    "scripts/cell_learning_scope_join.py": "b1bb0873ac3f49676b6ae00e5cdb35f2a25002986d8477be751dc746ce4c040e",
+    "scripts/test_cell_learning_scope_join.py": "bebbb7286805844ed4112b1510e45e1551e29bb7a34d6441b7fcc2deac02df10"
+  },
+  "tests": 51
+}

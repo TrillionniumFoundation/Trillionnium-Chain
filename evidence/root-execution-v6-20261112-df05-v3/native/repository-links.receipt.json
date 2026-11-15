@@ -1,0 +1,22 @@
+{
+  "bytes": 307,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/data/chain-root-operation-owned-20261112-df05-v4",
+  "elapsed_ns": 42228579455,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "log": "repository-links.log",
+  "name": "repository-links",
+  "process_exit_code": 0,
+  "sha256": "6451b11663519c9fb9a735f49e84b34876dc5a262e4e66448446e28d8b4fef52",
+  "source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

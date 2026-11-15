@@ -1,0 +1,13 @@
+{
+  "command": [
+    "python",
+    "scripts/ci/check_repository.py"
+  ],
+  "exit_code": 2,
+  "full_repository_pass": false,
+  "guard_sha256": "0d7040ac82a54a97a2db0a3d94db30822a047af5a8f4946ff4d4fc29ae9a190f",
+  "log_bytes": 171,
+  "log_file": "repository-final.log",
+  "log_sha256": "645c324aba985f905b28427bcb4e27e3d55cef0edf2c6b8bd2d4c47e79c2c773",
+  "utc": "2026-11-08T06:35:52.158903+00:00"
+}

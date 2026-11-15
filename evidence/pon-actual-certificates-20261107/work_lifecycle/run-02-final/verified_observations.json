@@ -1,0 +1,106 @@
+{
+  "eligibility_refusal": "LIFECYCLE_COVERAGE_AND_INITIAL_STATE_UNATTESTED",
+  "query_budget_eligible": false,
+  "root": {
+    "actual_sha_qrom_composition_proved": false,
+    "all_world_events_covered": false,
+    "anchored_observation_fragment_complete": true,
+    "counters": {
+      "MU1_predicates_rechecked": 1,
+      "bounded_help_deliveries": 1,
+      "full_W1_artifact_predicates_rechecked": 2,
+      "reported_native_calls": 3,
+      "reported_native_nonzero_exits": 1,
+      "resource_readings": 3,
+      "terminal_records": 1,
+      "unmetered_import_records": 0
+    },
+    "end_head": "39fac056b5ba47b9a11b96145c0c6ec0ada94f5c1f2ca5def133628ed41fcfbe",
+    "end_sequence": 8,
+    "exports": {},
+    "header_digest": "7673a77d9c45720601cbbebeb2dca67d9a68d9c99c65c82b0192e5baa4a1ce06",
+    "help_observations_fit_declared_policy": true,
+    "help_policy_global_support_certified": false,
+    "initial_oracle_independence_proved": false,
+    "key_id": "ab4f6ebbe1378c5c8f66c58a6d59c5a4c58ed80f1dab3729722c02023f7ffd2a",
+    "label": "receiver",
+    "lifecycle_query_upper_bound": null,
+    "native_confirmation_risk": false,
+    "physical_resource_bound": false,
+    "real_independent_trust_root_established": false,
+    "recorder_execution_attested": false,
+    "signatures_verified_against_supplied_external_pin": true,
+    "signed_source_links": [
+      "public-helper"
+    ]
+  },
+  "schema": "pon-work-lifecycle-verification-result-v1",
+  "verified_sources": {
+    "public-helper": {
+      "actual_sha_qrom_composition_proved": false,
+      "all_world_events_covered": false,
+      "anchored_observation_fragment_complete": true,
+      "counters": {
+        "MU1_predicates_rechecked": 1,
+        "bounded_help_deliveries": 0,
+        "full_W1_artifact_predicates_rechecked": 2,
+        "reported_native_calls": 2,
+        "reported_native_nonzero_exits": 0,
+        "resource_readings": 2,
+        "terminal_records": 1,
+        "unmetered_import_records": 2
+      },
+      "end_head": "af7a0737380a07c913056ae79adb040cb03adb3e1cd3b4e8821b992cb73c87e7",
+      "end_sequence": 8,
+      "exports": {
+        "af7a0737380a07c913056ae79adb040cb03adb3e1cd3b4e8821b992cb73c87e7": "711643c498353dc1a2cdd450ff5b2fdb37e998617ec752418035e382654b4647"
+      },
+      "header_digest": "030d7ea842e03edc677ffd90e9d235cea0be2ebc769daaae7959b9cbc35d0068",
+      "help_observations_fit_declared_policy": true,
+      "help_policy_global_support_certified": false,
+      "initial_oracle_independence_proved": false,
+      "key_id": "942f06840d8c18414ae578da43f87efbd86c634c9d2179c6a97adf2dec4e9db6",
+      "label": "public-helper",
+      "lifecycle_query_upper_bound": null,
+      "native_confirmation_risk": false,
+      "physical_resource_bound": false,
+      "real_independent_trust_root_established": false,
+      "recorder_execution_attested": false,
+      "signatures_verified_against_supplied_external_pin": true,
+      "signed_source_links": []
+    },
+    "receiver": {
+      "actual_sha_qrom_composition_proved": false,
+      "all_world_events_covered": false,
+      "anchored_observation_fragment_complete": true,
+      "counters": {
+        "MU1_predicates_rechecked": 1,
+        "bounded_help_deliveries": 1,
+        "full_W1_artifact_predicates_rechecked": 2,
+        "reported_native_calls": 3,
+        "reported_native_nonzero_exits": 1,
+        "resource_readings": 3,
+        "terminal_records": 1,
+        "unmetered_import_records": 0
+      },
+      "end_head": "39fac056b5ba47b9a11b96145c0c6ec0ada94f5c1f2ca5def133628ed41fcfbe",
+      "end_sequence": 8,
+      "exports": {},
+      "header_digest": "7673a77d9c45720601cbbebeb2dca67d9a68d9c99c65c82b0192e5baa4a1ce06",
+      "help_observations_fit_declared_policy": true,
+      "help_policy_global_support_certified": false,
+      "initial_oracle_independence_proved": false,
+      "key_id": "ab4f6ebbe1378c5c8f66c58a6d59c5a4c58ed80f1dab3729722c02023f7ffd2a",
+      "label": "receiver",
+      "lifecycle_query_upper_bound": null,
+      "native_confirmation_risk": false,
+      "physical_resource_bound": false,
+      "real_independent_trust_root_established": false,
+      "recorder_execution_attested": false,
+      "signatures_verified_against_supplied_external_pin": true,
+      "signed_source_links": [
+        "public-helper"
+      ]
+    }
+  }
+}

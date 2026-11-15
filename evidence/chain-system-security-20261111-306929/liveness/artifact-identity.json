@@ -1,0 +1,27 @@
+{
+  "archive_bytes": 71025468,
+  "archive_sha256": "9a2c2250205c6a5fe18524451addf56115aafbf951d9a5c2fd3f6056988e437e",
+  "artifact_id": 13894656010,
+  "native_execution_performed_this_readback": false,
+  "original_attackers_by_phase": [
+    0,
+    24,
+    24
+  ],
+  "original_cpu_cores": 0.25,
+  "original_memory_bytes": 2147483648,
+  "original_phase_seconds": 30,
+  "original_pids": 256,
+  "original_source": "53e1b98a7955898b9feff4778f7136c0fd0199c8",
+  "original_swap_bytes": 0,
+  "original_tree": "094ccb0afc9e7ffbbcc83f85efb6ca4ad8d54aa0",
+  "original_workflow_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43104547221",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "reader_git_blob": "1852ddb0d54cbccef4329db4c2acc6534a9fdff2",
+  "reader_source": "a450df7fbf1149e62b9470b81e6a0e1b07834e25",
+  "reader_tests_executed": 13,
+  "reader_tests_git_blob": "befefc24a7c27be725e8b912032b6285750782ed",
+  "schema": "chain-system-security-liveness-artifact-identity-v1",
+  "workflow_run_id": 43104547221
+}

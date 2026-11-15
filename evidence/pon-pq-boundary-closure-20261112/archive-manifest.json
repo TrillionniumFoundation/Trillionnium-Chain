@@ -1,0 +1,18 @@
+{
+  "archive": {
+    "bytes": 1882944,
+    "name": "raw-evidence.tar.gz",
+    "sha256": "10e0c40303b11894271f110bd3c7316e8bda66e722c073fff87991891995acb1"
+  },
+  "format": "gzip-compressed-posix-tar",
+  "maximum_committed_file_bytes": 4194304,
+  "parts": [
+    {
+      "bytes": 1882944,
+      "path": "raw-evidence.tar.gz",
+      "sha256": "10e0c40303b11894271f110bd3c7316e8bda66e722c073fff87991891995acb1"
+    }
+  ],
+  "reconstruction": "Concatenate parts in the listed order; verify archive bytes and SHA-256 before reading the tar.",
+  "schema": "trnm-pq-evidence-archive-v1"
+}

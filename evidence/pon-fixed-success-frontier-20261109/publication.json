@@ -1,0 +1,94 @@
+{
+  "schema": "query-frontier-publication-identities-v1",
+  "source_commit": "51683089c7ec75cca3e0bcfb2201c08aa5dab654",
+  "source_tree": "c85745e3396723b07bda7c86a36618c7863e65a5",
+  "parent_commit": "e2a02f9271b49f146e70806c8a66e161b5973971",
+  "code_files": [
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha256": "450580b7342c02c8b83004430f1fd71564cc688cb4b4ee29f4f0728b4728d8a4",
+      "git_blob_sha": "aef12aaaa6ef0dda48d04b912541457c426d7859",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md",
+      "sha256": "947897787130a867135aba5bd978f8940ad4f4dac8b9bfb821231db48b69a6ba",
+      "git_blob_sha": "133ac19c06305bb6b56681ab2e211a6d11f7fe0f",
+      "mode": "100644"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/FIXED_SUCCESS_QUERY_FRONTIER_V1.md",
+      "sha256": "57aa3ff280d4ddede8b291c02939c5d5b4a4c4e88b0a53d5d8150c9fc074a04e",
+      "git_blob_sha": "7bddbe78fcd8c2be001397181b3ac67c1af3e5d6",
+      "mode": "100644"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/fixed_success_query_frontier.py",
+      "sha256": "046e7b6d741d246e8f617456035200685851cf6f617e857055c591905ed3b295",
+      "git_blob_sha": "c61925ed5127c01561b2f8c1355e01fed940e40a",
+      "mode": "100644"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/README.md",
+      "sha256": "64466412048573ca2ae8d97a8135257ddeb276e54877fb5572deb391b19c8da0",
+      "git_blob_sha": "8202bcb6ac87a8dbe705218fe5fd2104c8eb6feb",
+      "mode": "100644"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_fixed_success_query_frontier.py",
+      "sha256": "62928c7dc718b4f3f803a4875f44b24a297232bd178de27e4a37a94f00334696",
+      "git_blob_sha": "606daf980e08058f747aa5e8238aec07760989a6",
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "sha256": "155107ee15b0e2a66626634b79a7a7cfa51523ad17c3ff69860aba983f6f035a",
+      "git_blob_sha": "5f834ca85f25cf2938946f74efb7bc9b8da6538d",
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "sha256": "833f8844a7e94160d21786416bcdc095d531b07dae090a36e737b79604b75899",
+      "git_blob_sha": "35fa497b1fb74b39f38843c98af3aeb395e29b1b",
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "sha256": "5daeb5bf30712ad1a6c9e9e3f7ed3b03960f21305b1682983ddcaccacb322eab",
+      "git_blob_sha": "cfa5f8aae35ffed048b397d6a526cf4d031238de",
+      "mode": "100644"
+    }
+  ],
+  "archive": {
+    "archive_name": "frozen-code-validation.tar.gz",
+    "member_count": 50,
+    "bytes": 625873,
+    "base64_chars": 834500,
+    "sha256": "e95196697d41f45b809bcdd40578b5f6b881fe07076fc0179e85be3cd9ed773b",
+    "git_blob_sha": "983a31ee084b475479cb9834294e288695908121",
+    "receipt_index_verified": true
+  },
+  "archive_receipt_index_self_excluded": true,
+  "machine_cost_contract": {
+    "path": "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json",
+    "git_blob_sha": "c56f2ee0f6a47bc04c0abc0de6142959f855c8ef",
+    "unknown_cost_points": 16,
+    "all_lower_and_upper_null": true,
+    "all_status_unproved": true
+  },
+  "qualification": "HOLD_NO_GO",
+  "actual_w1_lower_bound": false,
+  "native_admission_changed": false,
+  "hosted_repository_truth_log": {
+    "file": "hosted-repository-truth-head.log",
+    "git_blob_sha": "64183e624e3210f007a5bdf8978c7f859bf7deec",
+    "utf8_bytes": 811927,
+    "line_count": 7443,
+    "transport": "GitHub decoded job log retained verbatim, including leading BOM"
+  },
+  "hosted_review": {
+    "file": "hosted-ci-review.md",
+    "bytes": 8361,
+    "sha256": "b93e8888e0d3583decaaed12c68a4b8db1bd6cbbcf9f19d678bf8103c98d3a79"
+  }
+}

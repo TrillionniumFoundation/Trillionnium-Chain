@@ -1,0 +1,17 @@
+test_conflicting_observation_has_no_additional_row (test_pq_cell_custody_journal_hardening.JournalOwnerHardeningTests.test_conflicting_observation_has_no_additional_row) ... ok
+test_created_journal_is_private_single_link_regular_file (test_pq_cell_custody_journal_hardening.JournalOwnerHardeningTests.test_created_journal_is_private_single_link_regular_file) ... ok
+test_eight_connections_only_one_first (test_pq_cell_custody_journal_hardening.JournalOwnerHardeningTests.test_eight_connections_only_one_first) ... ok
+test_first_exact_repeat_and_cold_reopen_are_distinct (test_pq_cell_custody_journal_hardening.JournalOwnerHardeningTests.test_first_exact_repeat_and_cold_reopen_are_distinct) ... ok
+test_foreign_empty_file_not_claimed_as_new_owned_store (test_pq_cell_custody_journal_hardening.JournalOwnerHardeningTests.test_foreign_empty_file_not_claimed_as_new_owned_store) ... ok
+test_missing_or_relocated_file_does_not_return_success (test_pq_cell_custody_journal_hardening.JournalOwnerHardeningTests.test_missing_or_relocated_file_does_not_return_success) ... ok
+test_open_file_replacement_refused_even_with_canonical_schema (test_pq_cell_custody_journal_hardening.JournalOwnerHardeningTests.test_open_file_replacement_refused_even_with_canonical_schema) ... ok
+test_post_open_foreign_table_cannot_make_fake_success (test_pq_cell_custody_journal_hardening.JournalOwnerHardeningTests.test_post_open_foreign_table_cannot_make_fake_success) ... ok
+test_post_open_trigger_cannot_delete_new_record (test_pq_cell_custody_journal_hardening.JournalOwnerHardeningTests.test_post_open_trigger_cannot_delete_new_record) ... ok
+test_schema_injected_after_signature_check_before_write_lock (test_pq_cell_custody_journal_hardening.JournalOwnerHardeningTests.test_schema_injected_after_signature_check_before_write_lock) ... ok
+test_symlink_and_hardlink_leaf_refused_without_writing (test_pq_cell_custody_journal_hardening.JournalOwnerHardeningTests.test_symlink_and_hardlink_leaf_refused_without_writing) ... ok
+test_world_readable_file_refused (test_pq_cell_custody_journal_hardening.JournalOwnerHardeningTests.test_world_readable_file_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.124s
+
+OK

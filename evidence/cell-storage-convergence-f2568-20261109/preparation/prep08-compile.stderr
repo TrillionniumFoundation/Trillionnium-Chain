@@ -1,0 +1,22 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-storage-convergence-f2568-20261109/trillionnium/crates/trnm-pon-node)
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-storage-convergence-f2568-20261109/trillionnium/crates/trnm-data-availability)
+error[E0624]: associated function `new` is private
+   --> crates/trnm-data-availability/examples/cell_sealed_research_next_use_v1.rs:264:44
+    |
+264 |               let manifest = CellManifestV1::new(
+    |                                              ^^^ private associated function
+    |
+   ::: crates/trnm-data-availability/src/cell/manifest.rs:56:5
+    |
+ 56 | /     pub(crate) fn new(
+ 57 | |         context: CellContextV1,
+ 58 | |         size: u64,
+ 59 | |         payload_sha256: CellDigestV1,
+ 60 | |         chunk_bytes: u32,
+ 61 | |         chunks: Vec<CellChunkV1>,
+ 62 | |     ) -> CellResultV1<Self> {
+    | |___________________________- private associated function defined here
+
+For more information about this error, try `rustc --explain E0624`.
+error: could not compile `trnm-data-availability` (example "cell_sealed_research_next_use_v1") due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

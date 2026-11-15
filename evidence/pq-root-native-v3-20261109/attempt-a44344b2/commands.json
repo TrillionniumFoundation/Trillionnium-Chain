@@ -1,0 +1,517 @@
+[
+  {
+    "name": "preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.0643672569995033,
+    "log": "preflight.log",
+    "bytes": 172,
+    "sha256": "08b2fd2e1c312098be69e8b363582dc5fedbe9ce9e4277a21c0242cc8fc04108"
+  },
+  {
+    "name": "versions-rust",
+    "argv": [
+      "rustc",
+      "--version",
+      "--verbose"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.06448546200044802,
+    "log": "versions-rust.log",
+    "bytes": 196,
+    "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+  },
+  {
+    "name": "versions-openssl",
+    "argv": [
+      "/usr/bin/openssl",
+      "version",
+      "-a"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.007814784999936819,
+    "log": "versions-openssl.log",
+    "bytes": 861,
+    "sha256": "6017396fca969a24a170dc56ddda539f0b69ed747fa75ec6fbb77b95731d17d1"
+  },
+  {
+    "name": "dependency-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_root_dependency_register.py"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.2649914619996707,
+    "log": "dependency-controls.log",
+    "bytes": 140,
+    "sha256": "d4a9b27e86dc170efc9a42f3f720344ca71d524c4b9e2129f3fa94f0f2f8c16b"
+  },
+  {
+    "name": "dependency-register",
+    "argv": [
+      "python3",
+      "scripts/ci/pq_root_dependency_register.py"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.06439602000045852,
+    "log": "dependency-register.log",
+    "bytes": 6024,
+    "sha256": "ea494f94aa4dcf53665a523da9b64ac59fae3b55e828f796a25ed62214e45023"
+  },
+  {
+    "name": "native-runner-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_run_pq_root_native_v3.py"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.11439947600047162,
+    "log": "native-runner-controls.log",
+    "bytes": 110,
+    "sha256": "34a82a30511a2175a5286cff0751874e9220ce5fb08cab87b09cc04e220f6b31"
+  },
+  {
+    "name": "ci-contract-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_ci_contract.py"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 6.788012959999833,
+    "log": "ci-contract-controls.log",
+    "bytes": 18020,
+    "sha256": "3bcb54d736f2195c812e720fa8dedbba8f0e7c78f580098b35e9f022e37a6e35"
+  },
+  {
+    "name": "ci-contract",
+    "argv": [
+      "python3",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.114497732000018,
+    "log": "ci-contract.log",
+    "bytes": 180,
+    "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+  },
+  {
+    "name": "source-integrity-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 2.8236671490003573,
+    "log": "source-integrity-controls.log",
+    "bytes": 6898,
+    "sha256": "f502d8e571090fe6849f9c40dfd7aaa96e45085f16d45f6e0fcd03c6f3c8fb66"
+  },
+  {
+    "name": "pq-source-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_research_integration.py"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 46.96466592700017,
+    "log": "pq-source-controls.log",
+    "bytes": 155,
+    "sha256": "a7689ec93bd0d0a7a5afc94108a4c1c48de62038eb64e74ffc0636e7df694fc0"
+  },
+  {
+    "name": "pq-source-corpus",
+    "argv": [
+      "python3",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.21502014299949224,
+    "log": "pq-source-corpus.log",
+    "bytes": 557,
+    "sha256": "e3f32faa7f86925b2889018752ace8a548c09642e5e2e9387efad1dff4831621"
+  },
+  {
+    "name": "lifetime-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_lifetime_budget.py"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.21480692800014367,
+    "log": "lifetime-controls.log",
+    "bytes": 157,
+    "sha256": "8a82b527154f833a85a2eb6fa9b1cd6cc749db488315cfcf69f8bd27b2ec570b"
+  },
+  {
+    "name": "lifetime-register",
+    "argv": [
+      "python3",
+      "scripts/ci/pq_lifetime_budget.py"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.06431576199975098,
+    "log": "lifetime-register.log",
+    "bytes": 12824,
+    "sha256": "5ec6d9237665c7c7500b3f63b35a4380b397dada80668b3804913be008c09b90"
+  },
+  {
+    "name": "claim-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_chain_claim_guard.py"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.31484511100006785,
+    "log": "claim-controls.log",
+    "bytes": 148,
+    "sha256": "70ade9fb745629552ccb419ec76f5976805eed22445cb6a451ff75559327ed6b"
+  },
+  {
+    "name": "claim-guard",
+    "argv": [
+      "python3",
+      "scripts/ci/pq_chain_claim_guard.py"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.06450124599996343,
+    "log": "claim-guard.log",
+    "bytes": 4835,
+    "sha256": "1071e58361cfdbc4b70e270822fc6984fe5f82331614be861ea41db0b9d6b7ec"
+  },
+  {
+    "name": "authority-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_authority_effect_register.py"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.4154378240000369,
+    "log": "authority-controls.log",
+    "bytes": 117,
+    "sha256": "e5f71a0c683cf8ce647e5e8ff27aefce64c194a48ed981324786b2696b1c99a6"
+  },
+  {
+    "name": "authority-register",
+    "argv": [
+      "python3",
+      "scripts/ci/pq_authority_effect_register.py"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.06442011599938269,
+    "log": "authority-register.log",
+    "bytes": 13223,
+    "sha256": "232e0ea5bcd6d9adf276a90110d9b56a616e1d4bc5e53b3f6216e9a8dfb11798"
+  },
+  {
+    "name": "repository-links",
+    "argv": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 44.13860709400069,
+    "log": "repository-links.log",
+    "bytes": 307,
+    "sha256": "0cdaf431e987bce6aadbaaf4c8e45047ac75367e79947253677a173294913ba1"
+  },
+  {
+    "name": "inventory",
+    "argv": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.1146306389991878,
+    "log": "inventory.log",
+    "bytes": 35,
+    "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+  },
+  {
+    "name": "implementation-summary",
+    "argv": [
+      "python3",
+      "scripts/ci/report_current_implementation.py",
+      "--check"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.06441474700022809,
+    "log": "implementation-summary.log",
+    "bytes": 71,
+    "sha256": "431e373353829a7aa76abab6c3a606519c90290e2dc0909202c9a9f4cab92be3"
+  },
+  {
+    "name": "format",
+    "argv": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 12.960077982999792,
+    "log": "format.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "graph-default",
+    "argv": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.3163556700001209,
+    "log": "graph-default.log",
+    "bytes": 850809,
+    "sha256": "25efc6144947d0f0860c5ca7dfa7c7b183d68cdb08fa9a3ab5bb68cd1ad192a7"
+  },
+  {
+    "name": "graph-all-features",
+    "argv": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1",
+      "--all-features"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.11502667200056749,
+    "log": "graph-all-features.log",
+    "bytes": 866196,
+    "sha256": "341f0f105595c0b115a9759126e26178b1e8ddfb51c87a0c7b7fd62ff9644493"
+  },
+  {
+    "name": "graph-fuzz",
+    "argv": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--manifest-path",
+      "tests/fuzz/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.11441443700005038,
+    "log": "graph-fuzz.log",
+    "bytes": 735668,
+    "sha256": "1f659da143fcba98946a8ff97d10f9e6f6226c51404deaaa427655893b82f1b3"
+  },
+  {
+    "name": "v3-native",
+    "argv": [
+      "python3",
+      "scripts/ci/run_pq_root_native_v3.py",
+      "--out",
+      "/workspace/scratch/5faaca703596/validation-v3/exact-a44344b2/native-v3"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 293.2733212490002,
+    "log": "v3-native.log",
+    "bytes": 6145,
+    "sha256": "2ea83418d4a3ec7932de0e8374854dd6a0368bb3031a29cb24a2f400f5d34a10"
+  },
+  {
+    "name": "v2-policy",
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_recovery_policy_v1.py",
+      "-v"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.16466898799990304,
+    "log": "v2-policy.log",
+    "bytes": 4683,
+    "sha256": "e2ffa3168c0a159ea4af664c4f22c2e6f2c0ee5a8875c0ae2b0045e0cfbb87c0"
+  },
+  {
+    "name": "v2-signature-structure",
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py",
+      "-v"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.21497580100003688,
+    "log": "v2-signature-structure.log",
+    "bytes": 2708,
+    "sha256": "a27ac6c1922d13c1415489694b1923e792120ca1c09727cfdd0ed636ff7d51dd"
+  },
+  {
+    "name": "v2-provider-structure",
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py",
+      "-v"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.164830821000578,
+    "log": "v2-provider-structure.log",
+    "bytes": 2728,
+    "sha256": "13530a64134404609f21b09472c9a009b1d2a299112f14c1a7f01de68d7441ed"
+  },
+  {
+    "name": "v2-signature-native",
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_native_v2.py",
+      "-v"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 23.567989508999744,
+    "log": "v2-signature-native.log",
+    "bytes": 2496,
+    "sha256": "d29f1fe55d4f71b222cba996cd93dbdfe529376ebc9845bb035cac1dc0b6851d"
+  },
+  {
+    "name": "v2-provider-native",
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_effect_readback_native_v2.py",
+      "-v"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 2.975814764000461,
+    "log": "v2-provider-native.log",
+    "bytes": 1074,
+    "sha256": "434c87df9de705812a157b87f917668264193e3f147fb72e060c32439b679d6a"
+  },
+  {
+    "name": "v2-journal-native",
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_recovery_journal_native_v2.py",
+      "-v"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 224.8064806299999,
+    "log": "v2-journal-native.log",
+    "bytes": 2745,
+    "sha256": "2f9b52d8420dea710498314d50224e128ec5f94e844a97b537158cb8a28ac6e1"
+  },
+  {
+    "name": "retained-crypto-default",
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-crypto-primitives",
+      "--lib",
+      "--",
+      "--test-threads=1"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 4.829873835999933,
+    "log": "retained-crypto-default.log",
+    "bytes": 18798,
+    "sha256": "cf0433c50bc6ae0884328cc2c06c88608cace7b35884d4f4fa42579491777db5"
+  },
+  {
+    "name": "retained-release-default",
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-release-bundle",
+      "--lib",
+      "--",
+      "--test-threads=1"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 40.68926190000002,
+    "log": "retained-release-default.log",
+    "bytes": 5123,
+    "sha256": "182e33e0d520c4424b00e4f1a574f2f6cfaccfc19350a56a30a44c9d5adcc47d"
+  },
+  {
+    "name": "workspace-clippy",
+    "argv": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 36.32396732699999,
+    "log": "workspace-clippy.log",
+    "bytes": 186,
+    "sha256": "c337e2892682587a6369ca2904839a2a4dfee822c4b2fa2e132a925d4b2c71c7"
+  },
+  {
+    "name": "diff-check",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "exit_code": 0,
+    "elapsed_seconds": 0.018024345000412723,
+    "log": "diff-check.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

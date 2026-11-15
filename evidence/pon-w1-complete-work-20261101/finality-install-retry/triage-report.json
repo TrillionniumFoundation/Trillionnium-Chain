@@ -1,0 +1,203 @@
+{
+  "schema": "pon-finality-two-attempt-readback-v1",
+  "run_id": 41299973511,
+  "source_commit": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+  "source_tree": "fef6125b338e5697896c0a32d0488458d8d93244",
+  "first_attempt": {
+    "job_id": 124828701949,
+    "conclusion": "failure",
+    "failure_class": "runner_toolchain_partial_installation_component_conflict",
+    "exact_error": "error: failed to install component: 'clippy-preview-aarch64-unknown-linux-gnu', detected conflict: 'bin/cargo-clippy'",
+    "native_compilation_started": false,
+    "native_tests_and_pipeline_started": false,
+    "failure_retained": true,
+    "report": "attempt-1-triage.json"
+  },
+  "same_run_original_arm_merge_control": {
+    "job_id": 124828701857,
+    "conclusion": "success",
+    "full_log": "job-124828701857-arm-merge-success.log",
+    "installation_and_native_execution_succeeded": true
+  },
+  "second_attempt": {
+    "job_id": 124832823723,
+    "conclusion": "success",
+    "rerun_count_after_first_failure": 1,
+    "rerun_authorized_and_triggered_by_parent": true,
+    "source_identity_before_and_after": [
+      {
+        "base": null,
+        "candidate": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+        "tested_tree": "fef6125b338e5697896c0a32d0488458d8d93244",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792454453,
+        "tracked_entries": 6852,
+        "tracked_worktree_verified": true
+      },
+      {
+        "base": null,
+        "candidate": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+        "tested_tree": "fef6125b338e5697896c0a32d0488458d8d93244",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792454453,
+        "tracked_entries": 6852,
+        "tracked_worktree_verified": true
+      }
+    ],
+    "rustup_install_completed": true,
+    "release_build_completed": true,
+    "native_required_selector_pass_count": 4,
+    "native_required_selectors": [
+      "original_reference_signed_fixture_preserves_facts_and_scope",
+      "native_reader_enforces_adversarial_corpus_without_python",
+      "unchanged_python_reference_regenerates_exact_fixture_bytes",
+      "original_python_reader_and_native_reader_agree_on_adversarial_corpus"
+    ],
+    "pipeline_patterns": [
+      "hot",
+      "disjoint4",
+      "growth"
+    ],
+    "pipeline_original_step_succeeded": true,
+    "pipeline_counter_recomputation_step_succeeded": true,
+    "source_final_recheck_succeeded": true,
+    "all_steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1
+      },
+      {
+        "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2
+      },
+      {
+        "name": "Verify actual immutable source and unchanged original preflight",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3
+      },
+      {
+        "name": "Install existing frozen conformance environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4
+      },
+      {
+        "name": "Execute all reference, recovery and separate-reader controls",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5
+      },
+      {
+        "name": "Preserve original signed learning suites and execute actual V3 join",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6
+      },
+      {
+        "name": "Build original native pipeline without changing runtime",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7
+      },
+      {
+        "name": "Require each native certificate and separate-reference selector to execute",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8
+      },
+      {
+        "name": "Observe every original hot disjoint and growth baseline; preserve failures",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9
+      },
+      {
+        "name": "Recompute existing native counters without claiming saturation",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10
+      },
+      {
+        "name": "Recheck source even after failures",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11
+      },
+      {
+        "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12
+      },
+      {
+        "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 24
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 25
+      }
+    ],
+    "scope": "Named selector outputs verified in complete job log; pipeline success verified by original unchanged commands and success of native step plus counter-recomputation step. Raw pipeline artifact metrics were not downloaded or newly recomputed."
+  },
+  "workflow_attempt_statuses": [
+    {
+      "id": 41299973511,
+      "name": "Release finality reference and native baseline",
+      "head_branch": "fix/chain-pon-work-security-20261101",
+      "head_sha": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+      "path": ".github/workflows/release-finality-reference.yml",
+      "run_number": 671,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41299973511",
+      "run_attempt": 1,
+      "created_at": "2026-11-01T11:00:53Z",
+      "updated_at": "2026-11-01T11:05:16Z",
+      "run_started_at": "2026-11-01T11:00:53Z"
+    },
+    {
+      "id": 41299973511,
+      "name": "Release finality reference and native baseline",
+      "head_branch": "fix/chain-pon-work-security-20261101",
+      "head_sha": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+      "path": ".github/workflows/release-finality-reference.yml",
+      "run_number": 671,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41299973511",
+      "run_attempt": 2,
+      "created_at": "2026-11-01T11:00:53Z",
+      "updated_at": "2026-11-01T11:23:56Z",
+      "run_started_at": "2026-11-01T11:19:30Z"
+    }
+  ],
+  "source_or_workflow_or_toolchain_version_changed_for_retry": false,
+  "budgets_or_success_criteria_changed": false,
+  "repeated_retry_until_green": false,
+  "artifact_downloads": 0,
+  "final_classification": "single_runner_toolchain_installation_failure_followed_by_one_same_source_successful_retry",
+  "runtime_algorithm_regression_demonstrated": false,
+  "qualification_scope_expanded": false,
+  "previous_frozen_public_evidence_modified": false,
+  "public_files": "See PUBLIC_EVIDENCE_INDEX.json for the exact explicit public file allowlist and byte digests."
+}

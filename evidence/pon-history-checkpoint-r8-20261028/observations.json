@@ -1,0 +1,12 @@
+{
+  "groups": 11,
+  "passed": 72,
+  "failed": 0,
+  "ignored": 4,
+  "elapsed_sum_seconds": 20.676123591998476,
+  "commands_with_nonzero_exit": [
+    "baseline-build",
+    "candidate-history-boundaries"
+  ],
+  "all_timeouts": []
+}

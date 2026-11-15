@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/home/qian-qi/work/chain-pon-outcome-7612-publish/scripts/ci/verify_ci_source.py", line 219, in <module>
+    main()
+  File "/home/qian-qi/work/chain-pon-outcome-7612-publish/scripts/ci/verify_ci_source.py", line 210, in main
+    result = verify(args.kind, args.expected_head, args.expected_base, args.expected_merge)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/work/chain-pon-outcome-7612-publish/scripts/ci/verify_ci_source.py", line 156, in verify
+    clean()
+  File "/home/qian-qi/work/chain-pon-outcome-7612-publish/scripts/ci/verify_ci_source.py", line 135, in clean
+    raise ValueError('index hides tracked worktree entries')
+ValueError: index hides tracked worktree entries

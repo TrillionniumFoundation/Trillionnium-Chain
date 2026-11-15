@@ -1,0 +1,15 @@
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-data-availability)
+    Finished `release` profile [optimized] target(s) in 1m 02s
+     Running unittests src/lib.rs (/home/qq/work/chain-cell-four-gates-2bfb-target-c1/release/deps/trnm_data_availability-005cca701b2d81ac)
+     Running unittests src/bin/trnm-cell.rs (/home/qq/work/chain-cell-four-gates-2bfb-target-c1/release/deps/trnm_cell-ea003aa4561b7e72)
+     Running unittests src/bin/trnm-cell-discovery.rs (/home/qq/work/chain-cell-four-gates-2bfb-target-c1/release/deps/trnm_cell_discovery-1c1a4b1be69e5808)
+     Running tests/cell_cache_wal_cli.rs (/home/qq/work/chain-cell-four-gates-2bfb-target-c1/release/deps/cell_cache_wal_cli-2b68b96423705d79)
+     Running tests/cell_closure_cli.rs (/home/qq/work/chain-cell-four-gates-2bfb-target-c1/release/deps/cell_closure_cli-862321df03ef3167)
+     Running tests/cell_discovery_cli.rs (/home/qq/work/chain-cell-four-gates-2bfb-target-c1/release/deps/cell_discovery_cli-0ce3396339a8a68c)
+     Running tests/cell_fetch_deadline_cli.rs (/home/qq/work/chain-cell-four-gates-2bfb-target-c1/release/deps/cell_fetch_deadline_cli-d835b9e919067acf)
+     Running tests/cell_persistent_cli.rs (/home/qq/work/chain-cell-four-gates-2bfb-target-c1/release/deps/cell_persistent_cli-f3377dd996b7fb46)
+     Running tests/cell_provider_ready_cli.rs (/home/qq/work/chain-cell-four-gates-2bfb-target-c1/release/deps/cell_provider_ready_cli-dc1ccfa7f173acd6)
+     Running tests/cell_release_cli.rs (/home/qq/work/chain-cell-four-gates-2bfb-target-c1/release/deps/cell_release_cli-ffffa49dba5fc49d)
+     Running tests/cell_tensor_cli.rs (/home/qq/work/chain-cell-four-gates-2bfb-target-c1/release/deps/cell_tensor_cli-0feadea145bfb942)
+     Running tests/pq_cell_cli.rs (/home/qq/work/chain-cell-four-gates-2bfb-target-c1/release/deps/pq_cell_cli-30fbc1d39314c1a7)
+   Doc-tests trnm_data_availability

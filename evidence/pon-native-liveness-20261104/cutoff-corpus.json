@@ -1,0 +1,21 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "cutoff-corpus",
+  "command": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+  "tree": "923c1aa59bc090baeff79979d950aebeec4def78",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T14:18:40.140811+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 219118651,
+  "finished_at": "2026-11-04T14:18:40.360284+00:00",
+  "log_bytes": 557,
+  "log_sha256": "090ddef889f5a6714b4a5d56a7299342e3a0ddc22d23853134428359002228ec",
+  "final_head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+  "final_dirty_paths": []
+}

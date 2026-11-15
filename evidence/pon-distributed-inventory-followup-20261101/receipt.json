@@ -1,0 +1,301 @@
+{
+  "schema": "pn-distributed-source-inventory-followup-v1",
+  "recorded_at_utc": "2026-11-01T08:23:19.943927+00:00",
+  "source_parent": "acd8f79f2dcc22ecdee1d1a5fd88d619d06f37c9",
+  "source_parent_tree": "4e83d2d4ba6b15ddd962ef08652dbeb24858c533",
+  "generator": {
+    "path": "scripts/refresh_distributed_source_inventory.py",
+    "sha256": "c83d9c0b84c21beec6917a86b2a3207c5f3bf6fd26cf432f2ef0990750e16a33",
+    "git_blob": "5e86bf0b23c2d9d85560659eacf01189f984e807",
+    "unchanged_from_parent": true
+  },
+  "inventory_path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+  "before": {
+    "sha256": "c8befc0550e2c0626f3ed6eb3aa0f46fdd6883cc38702b3db96c62c931788825",
+    "git_blob": "0640a262db482449eabad946f3af5a02e32b5733",
+    "bytes": 308591,
+    "entries": 1108
+  },
+  "after": {
+    "sha256": "7e441f33cafc4e44dda73dc7103d217576872f6f53612d45d3efe5d71f672eff",
+    "git_blob": "28c54fe84d958d3cc32586d5b1db8d391944533a",
+    "bytes": 313643,
+    "entries": 1127
+  },
+  "complete_tree_check": {
+    "selection": "All tracked .rs/.json or Cargo.toml under trillionnium/crates and config; plus trillionnium/Cargo.toml, trillionnium/Cargo.lock, inventory itself. Exact parent Git tree, independent of local enumeration.",
+    "selected_entries": 1127,
+    "sorted_paths_lf_sha256": "1b1f61a7a83dcbc9bc648b0742e9a46febc1181e1b351eab2c25a59742ebf029",
+    "canonical_git_entries_sha256": "d493d677557752e2ce005fcf37fe01977878351fa5bc110a08dc023700e3db58",
+    "missing_local_before": [],
+    "local_blob_mismatches_before": [],
+    "filesystem_enumeration_equals_git_tree": true,
+    "removed_entries": [],
+    "duplicates": [],
+    "only_selected_source_changed_after": [
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+    ]
+  },
+  "added_paths": [
+    {
+      "path": "config/pon/binary-diverse60-training-v3.json",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "4bad08228c9e85570a67a30f5a546b9cf418bd01",
+      "sha256": "d457f4b01cc6aaa445403e81b1fa9511e24f23e4254a6ef9ff9ec29abab693cf",
+      "bytes": 47712
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "be6fc7adacddadd5e00a4a12d31a02c3e7411f10",
+      "sha256": "0bcf5135ed42e70fbf8576a40646a0fd0f3f5bb8324a6036a25cb23ecc59f11e",
+      "bytes": 8873
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/fence_tests.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "1d1d601b6d1796fc1134864f37f8b9b179809fac",
+      "sha256": "ef9667f610344ad310425c93f1dfd7ccb35e9886fc7d469d67b66f7b5fedc936",
+      "bytes": 4906
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "55be0eaada7e38d6670ab4b83f8f2234aa24643f",
+      "sha256": "6254633f06508baf2715e804c20e4aca5c6a240e2dd772297ec357c349e05fe3",
+      "bytes": 13012
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "36972e39413614a7bff8d8801cb7b2f729030f3e",
+      "sha256": "91f0c5dee1d02ff6ee62b276e11429c0f616eae7d7a8bd00d1315ac777c987e9",
+      "bytes": 594
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/build.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "6320ab08a130df2b83e105be1f11cd1b6479ff57",
+      "sha256": "eeb5102f07506ef674db1cd8e104860232d800bf5db1dc4ad6b745a63cc83a81",
+      "bytes": 20590
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "f3909068ab58da8d147dfcaefdf69a3d44df41fa",
+      "sha256": "dc45172b51a80b0ca07785fd4216f77dc22f3a915455284b7b01dcbcc94c5779",
+      "bytes": 12640
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths_tests.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "5dbde738032978575d24384fececcae482fd9f4e",
+      "sha256": "15cc5cda245d561023367cca7033d3c816bcc4554cb0f34cd5a4985c1bcf1366",
+      "bytes": 8760
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/ledger.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "22c5c9a227e6e5aaf041a5ff9299421c9e0d3a9f",
+      "sha256": "e9205f1493694058cea5d84053e66518d78b424957c089c72babf4f2f0412a6a",
+      "bytes": 14272
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "c9308f4d94fd35772377fa03b3e616be4871eb0e",
+      "sha256": "7b56edcc1ad0ac27489050d66796517982fdf488582a039bee3c7865d9ee2802",
+      "bytes": 2307
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/owner.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "ed8bdcba602fdb1c781340437118393614e5a63b",
+      "sha256": "5b28890080f6f07dab3437a8b4ad2ae6d0ae1e9c6622b97cfcd87c486807a89c",
+      "bytes": 20247
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/sql.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "8914e65ed327051533b0163fa812c3689b0abcbf",
+      "sha256": "be7f66cf8996f2e5504c1fe11f15bf5884cde66bcd8163cf3f9ad8710ad221f1",
+      "bytes": 6655
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "b1daca95ea800ed45ac5fc01063e9814134f8f92",
+      "sha256": "7fc1376207c91ab9c58d5265936c8e40284ee5f532f649b1fb00edf55164d869",
+      "bytes": 12585
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope_tests.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "b41f4d33552e93432334bb6818c5b5766edb7c2f",
+      "sha256": "04bae77b0161a6169c7d00a79a25e69e44f2c0fd99f4675b996893759e3f5b5c",
+      "bytes": 11981
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/unix_abi.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "856483e8e8be13029ed698d99601a2fea28f0627",
+      "sha256": "3accbcf63cd96b9f28933c33520a109ea8bd1228b5a5a364872eac931d26e5b2",
+      "bytes": 15767
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/unsupported.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "f8cd54670b40f78a79d7a50c7d733ded99887294",
+      "sha256": "eb74fb9862213b4e4a27a31a6e1ac2197ec200e973ffded057a70f1c3e33e561",
+      "bytes": 1721
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/vfs.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "6cde50a98a7574ba9d4d3a9c3f94128779f224de",
+      "sha256": "d26305c2bbdae0c93bf5fea7ce697df5967847e2d254d29eb720119620387e99",
+      "bytes": 49986
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_held_directory_v1.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "1d33eb39cf1c449ed981b1e1681c5aca5145e428",
+      "sha256": "6e746d2f9c1497cda7dddf05bf87aaf6b97403ef846eaef6dad6f8f3146cb86d",
+      "bytes": 37979
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_public_api_v2.rs",
+      "mode": "100644",
+      "kind": "blob",
+      "git_blob": "67a07c7fa0cb9f24b59aa8ba22ca15c122e7d3db",
+      "sha256": "0459a4e7184a5d2912c8e19295c354e3c46be7e612b918a9a37fbce1a3bd79b5",
+      "bytes": 39668
+    }
+  ],
+  "source_delta": {
+    "files": 1,
+    "additions": 133,
+    "deletions": 0
+  },
+  "reference_review": {
+    "current_corpus_or_workflow_old_hash_pin_found": false,
+    "historical_manifests_preserved": [
+      {
+        "path": "qualification/full-pq-v6-r2/observations/chain-pq-m06-scope-r2.json",
+        "source_commit": "e19bf296a3e85dd15c00e9c6957fc59bfb358249",
+        "sha256": "86798b3c8aa5ad47c70c07477fc004ac7a7aca050e980279195c21e3d4dbcbc3"
+      },
+      {
+        "path": "qualification/full-pq-v6-r2/observations/chain-pq-m06-all-r2.json",
+        "source_commit": "e19bf296a3e85dd15c00e9c6957fc59bfb358249",
+        "sha256": "77e0f12a6f0abbdfcb58f057a3e3715302b6904da5c3e62bc780a176c8bb1a3d"
+      },
+      {
+        "path": "qualification/full-pq-r3/capacity-baseline/source-manifest.json",
+        "source_commit": "da31aff73adadda492da2642bef1f8d3d74be530",
+        "sha256": "ffa6034336dda8e14b642d8c402c500842fc436e1a55587e22553945bd7ade69"
+      }
+    ],
+    "scope": "Restored active config/scripts/workflows/qualification references searched; unrestored archival records are not rewritten."
+  },
+  "commands": [
+    {
+      "label": "before-original-check",
+      "command": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "distributed native source inventory differs; refresh before freezing source\n"
+    },
+    {
+      "label": "original-generator",
+      "command": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py"
+      ],
+      "exit_code": 0,
+      "stdout": "distributed source inventory: PASS\n",
+      "stderr": ""
+    },
+    {
+      "label": "after-original-check",
+      "command": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "distributed source inventory: PASS\n",
+      "stderr": ""
+    },
+    {
+      "label": "generated-file-format",
+      "command": [
+        "/tmp/hepta-digital-rust195/bin/rustfmt",
+        "--edition",
+        "2021",
+        "--check",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "current-pq-corpus",
+      "command": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"canonical_default_provider_contract_checked\": true, \"canonical_pnq2_contract_checked\": true, \"continuous_npq6_combination_accepted\": false, \"cryptographic_acceptance\": false, \"exact_source_blobs\": 346, \"legacy_qtx1_optional_adapter_contract_checked\": true, \"native_transfer_account_contract_checked\": true, \"native_transport_contract_checked\": true, \"node_activated\": false, \"production_confidentiality_accepted\": false, \"schema\": \"trnm-pq-cross-branch-check-v1\", \"status\": \"HOLD_NO_GO\", \"upstream_heads\": 6, \"whole_native_authorization_migrated\": false}\n",
+      "stderr": ""
+    },
+    {
+      "label": "whitespace-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "readme_sha256": "1db504d0b99eb136fe52d7b4e695c5d6dcfe5777002f9d8d085710f28bd341aa",
+  "full_repository_truth_run_passed": false,
+  "native_execution_qualified": false,
+  "independent_wan_accepted": false,
+  "production_activation": false,
+  "strict_pn_exits": {
+    "PN0": "HOLD",
+    "PN1": "HOLD",
+    "PN2": "HOLD",
+    "PN3": "HOLD",
+    "PN4": "HOLD",
+    "PN5": "HOLD",
+    "PN6": "HOLD"
+  }
+}

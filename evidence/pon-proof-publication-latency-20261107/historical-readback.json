@@ -1,0 +1,478 @@
+{
+  "consensus_admission": false,
+  "consensus_block_interval_changed": false,
+  "cryptographic_verification_performed_by_reader": false,
+  "disposition": "HOLD_NO_GO",
+  "gates": {
+    "async_task_proof_adapter": "NOT_IMPLEMENTED",
+    "historical_fresh_on_demand_pipeline_four_second_necessary_screen": "FAIL",
+    "independent_prover_tail_distribution": "INSUFFICIENT_DIRECT_EVIDENCE",
+    "winner_to_receiver_complete_latency": "INSUFFICIENT_DIRECT_EVIDENCE"
+  },
+  "historical_attempts": {
+    "all_attempts_total_cost": null,
+    "attempt_population_complete": false,
+    "complete_deadline_failure": 1,
+    "complete_success": 1,
+    "interrupted_outcome": "UNKNOWN",
+    "note": "retain unknown/interrupted and failed attempts; no success rate or amortized all-attempt claim"
+  },
+  "historical_cost_vetoes": {
+    "local_envelope_ratio": 5.189786908049916,
+    "native_local_envelope_bytes": 49603,
+    "native_median_ns": 954983.5,
+    "transparent_local_envelope_bytes": 257429,
+    "transparent_median_ns": 28882359.5,
+    "transparent_to_native_median_ratio": 30.243830914356113
+  },
+  "historical_identity": {
+    "external_artifacts_sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+    "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+    "image_id": [
+      1958252411,
+      3287394615,
+      1805488136,
+      1516578702,
+      78549041,
+      790278610,
+      301018785,
+      4279049364
+    ],
+    "input_sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+    "journal_sha256": "56a5fcd0a18fc4db36aa37583dc8f7f75fe8f811482eec36d9b7121bae6f07ee",
+    "receipt_bytes": 257014,
+    "receipt_sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+    "work_id": "ccf544056c6df13a5ab4e6c021e587ff0008d92388270e64f72a6e2168a326cd"
+  },
+  "historical_prover_source_commit": "2810f7c2b1b5e549302b3fdb2cf41b2a6ee19bff",
+  "input_declaration_sha256": "322420b8b58184fa5887770f76fb1f622a5a40afafbca8f5d2ca51e268a9846f",
+  "new_proofs_generated": 0,
+  "original_confirmation_deadline_seconds": 4,
+  "production_activation": false,
+  "reader_sha256": "433eb6486959d8dea3a411d9a0bd488aa8a496bb12a8f1e99d8daaab7f4ac47b",
+  "retained_disposition_reader_sha256": "7070a029e1d7054e7a41d09cc52f7b1ec646c5ff63d763afa9072e6c92fbc0d1",
+  "schema": "trnm-w1-historical-latency-readback-v1",
+  "scope": "Exact-byte historical readback; zero new proof or mining trials.",
+  "timing": {
+    "complete_controller_seconds": 6253.711474144,
+    "compression_share_of_pipeline": 0.3613326957730917,
+    "exclusive_pipeline_ledger": {
+      "controller_and_interstage_gaps_seconds": 5.33464277299754,
+      "fresh_verifier_stage_seconds": 0.053977280997060006,
+      "prepare_full_execution_seconds": 16.238464345000466,
+      "recursive_compression_stage_seconds": 2257.7816068050015,
+      "reverify_existing_prefix_seconds": 10.41486930100109,
+      "segment_stages_seconds": 3958.6605462940024
+    },
+    "fixed_other_stage_counterfactuals": {
+      "both_zero_remaining_seconds": 32.04195369999616,
+      "compression_stage_zero_remaining_seconds": 3990.7024999939986,
+      "scope": "Arithmetic only: set named observed intervals to zero and retain every other interval. Not a measured speedup, parallel schedule, hardware forecast or algorithmic lower bound.",
+      "segment_stages_zero_remaining_seconds": 2289.8235605049977
+    },
+    "fresh_pipeline_scope": "preparation, full execution, all segments, recursion, source/checkpoint checks, controller pauses, and fresh strict verification; starts after fixture availability; excludes build/setup",
+    "fresh_pipeline_seconds": 6248.484106799,
+    "measured_stale_probability": null,
+    "nested_clocks_not_additive_to_pipeline": {
+      "compression_outside_recursive_loop_seconds": 4.409276109001439,
+      "initial_prefix_stage_verified_receipts": 0,
+      "recursive_enclosing_clock_scope": "Starts before API client initialization; includes recursive loop, final claim check and Receipt construction. Not a pure cryptographic kernel clock.",
+      "recursive_loop_other_seconds": 0.4670767450002131,
+      "recursive_loop_seconds": 2253.372330696,
+      "recursive_operations": {
+        "join": {
+          "operations": 42,
+          "prover_seconds": 1112.044486135,
+          "verifier_seconds": 0.960466732
+        },
+        "lift": {
+          "operations": 43,
+          "prover_seconds": 1138.946912063,
+          "verifier_seconds": 0.953389021
+        }
+      },
+      "repeated_prefix_verifications": 903,
+      "repeated_prefix_verifier_seconds": 21.99608082,
+      "scope": "Nested wall clocks within the exclusive ledger, not additional CPU or work trials.",
+      "segment_prover_seconds": 3795.495161914,
+      "segment_unattributed_remainder_seconds": 140.10167298400256,
+      "segment_verifier_seconds": 1.067630576
+    },
+    "prover_p99_seconds": null,
+    "segment_share_of_pipeline": 0.6335393478854444,
+    "supervisor_spans": [
+      {
+        "end_seconds_from_controller": 16.819465397000386,
+        "preceding_controller_gap_seconds": 0.5810010519999196,
+        "stage": "prepare-full-execution",
+        "start_seconds_from_controller": 0.5810010519999196,
+        "supervisor_wall_seconds": 16.238464345000466
+      },
+      {
+        "end_seconds_from_controller": 27.347230024000964,
+        "preceding_controller_gap_seconds": 0.1128953259994887,
+        "stage": "reverify-existing-prefix",
+        "start_seconds_from_controller": 16.932360722999874,
+        "supervisor_wall_seconds": 10.41486930100109
+      },
+      {
+        "end_seconds_from_controller": 181.00889638700028,
+        "preceding_controller_gap_seconds": 0.09913587699884374,
+        "stage": "prove-0000",
+        "start_seconds_from_controller": 27.446365900999808,
+        "supervisor_wall_seconds": 153.56253048600047
+      },
+      {
+        "end_seconds_from_controller": 339.68054159500025,
+        "preceding_controller_gap_seconds": 0.16298952199940686,
+        "stage": "prove-0001",
+        "start_seconds_from_controller": 181.17188590899968,
+        "supervisor_wall_seconds": 158.50865568600057
+      },
+      {
+        "end_seconds_from_controller": 474.823565005001,
+        "preceding_controller_gap_seconds": 0.14996585600056278,
+        "stage": "prove-0002",
+        "start_seconds_from_controller": 339.8305074510008,
+        "supervisor_wall_seconds": 134.9930575540002
+      },
+      {
+        "end_seconds_from_controller": 575.9817987549995,
+        "preceding_controller_gap_seconds": 0.13136195999868505,
+        "stage": "prove-0003",
+        "start_seconds_from_controller": 474.9549269649997,
+        "supervisor_wall_seconds": 101.02687178999986
+      },
+      {
+        "end_seconds_from_controller": 667.228855581001,
+        "preceding_controller_gap_seconds": 0.050881345001471345,
+        "stage": "prove-0004",
+        "start_seconds_from_controller": 576.032680100001,
+        "supervisor_wall_seconds": 91.19617548099995
+      },
+      {
+        "end_seconds_from_controller": 756.339050822,
+        "preceding_controller_gap_seconds": 0.08459234999827459,
+        "stage": "prove-0005",
+        "start_seconds_from_controller": 667.3134479309992,
+        "supervisor_wall_seconds": 89.02560289100074
+      },
+      {
+        "end_seconds_from_controller": 865.4143023840006,
+        "preceding_controller_gap_seconds": 0.11499724699933722,
+        "stage": "prove-0006",
+        "start_seconds_from_controller": 756.4540480689993,
+        "supervisor_wall_seconds": 108.9602543150013
+      },
+      {
+        "end_seconds_from_controller": 953.8575218210008,
+        "preceding_controller_gap_seconds": 0.12372452799900202,
+        "stage": "prove-0007",
+        "start_seconds_from_controller": 865.5380269119996,
+        "supervisor_wall_seconds": 88.31949490900115
+      },
+      {
+        "end_seconds_from_controller": 1036.8206692959993,
+        "preceding_controller_gap_seconds": 0.05692263599848957,
+        "stage": "prove-0008",
+        "start_seconds_from_controller": 953.9144444569993,
+        "supervisor_wall_seconds": 82.90622483900006
+      },
+      {
+        "end_seconds_from_controller": 1140.1339232570008,
+        "preceding_controller_gap_seconds": 0.04915194700151915,
+        "stage": "prove-0009",
+        "start_seconds_from_controller": 1036.8698212430008,
+        "supervisor_wall_seconds": 103.26410201399995
+      },
+      {
+        "end_seconds_from_controller": 1259.8687191299996,
+        "preceding_controller_gap_seconds": 0.15247405499940214,
+        "stage": "prove-0010",
+        "start_seconds_from_controller": 1140.2863973120002,
+        "supervisor_wall_seconds": 119.5823218179994
+      },
+      {
+        "end_seconds_from_controller": 1353.7820941770005,
+        "preceding_controller_gap_seconds": 0.2400193350003974,
+        "stage": "prove-0011",
+        "start_seconds_from_controller": 1260.108738465,
+        "supervisor_wall_seconds": 93.67335571200056
+      },
+      {
+        "end_seconds_from_controller": 1433.2874859759995,
+        "preceding_controller_gap_seconds": 0.05570826300026965,
+        "stage": "prove-0012",
+        "start_seconds_from_controller": 1353.8378024400008,
+        "supervisor_wall_seconds": 79.4496835359987
+      },
+      {
+        "end_seconds_from_controller": 1513.7233339499999,
+        "preceding_controller_gap_seconds": 0.07714637000026414,
+        "stage": "prove-0013",
+        "start_seconds_from_controller": 1433.3646323459998,
+        "supervisor_wall_seconds": 80.35870160400009
+      },
+      {
+        "end_seconds_from_controller": 1600.5004704090006,
+        "preceding_controller_gap_seconds": 0.1310178599997016,
+        "stage": "prove-0014",
+        "start_seconds_from_controller": 1513.8543518099996,
+        "supervisor_wall_seconds": 86.64611859900106
+      },
+      {
+        "end_seconds_from_controller": 1693.5542702900002,
+        "preceding_controller_gap_seconds": 0.14375608099908277,
+        "stage": "prove-0015",
+        "start_seconds_from_controller": 1600.6442264899997,
+        "supervisor_wall_seconds": 92.9100438000005
+      },
+      {
+        "end_seconds_from_controller": 1785.349010373,
+        "preceding_controller_gap_seconds": 0.05423324299954402,
+        "stage": "prove-0016",
+        "start_seconds_from_controller": 1693.6085035329997,
+        "supervisor_wall_seconds": 91.74050684000031
+      },
+      {
+        "end_seconds_from_controller": 1860.8218623209996,
+        "preceding_controller_gap_seconds": 0.10378193200085661,
+        "stage": "prove-0017",
+        "start_seconds_from_controller": 1785.452792305001,
+        "supervisor_wall_seconds": 75.36907001599866
+      },
+      {
+        "end_seconds_from_controller": 1941.3817043990002,
+        "preceding_controller_gap_seconds": 0.10684309400130587,
+        "stage": "prove-0018",
+        "start_seconds_from_controller": 1860.9287054150009,
+        "supervisor_wall_seconds": 80.45299898399935
+      },
+      {
+        "end_seconds_from_controller": 2032.5994550550004,
+        "preceding_controller_gap_seconds": 0.12969555000017863,
+        "stage": "prove-0019",
+        "start_seconds_from_controller": 1941.5113999490004,
+        "supervisor_wall_seconds": 91.08805510599996
+      },
+      {
+        "end_seconds_from_controller": 2124.867761562,
+        "preceding_controller_gap_seconds": 0.06903129700003774,
+        "stage": "prove-0020",
+        "start_seconds_from_controller": 2032.6684863520004,
+        "supervisor_wall_seconds": 92.19927520999954
+      },
+      {
+        "end_seconds_from_controller": 2220.7001611630003,
+        "preceding_controller_gap_seconds": 0.11072698200041486,
+        "stage": "prove-0021",
+        "start_seconds_from_controller": 2124.9784885440004,
+        "supervisor_wall_seconds": 95.72167261899995
+      },
+      {
+        "end_seconds_from_controller": 2313.1625479390004,
+        "preceding_controller_gap_seconds": 0.18219134500031942,
+        "stage": "prove-0022",
+        "start_seconds_from_controller": 2220.8823525080006,
+        "supervisor_wall_seconds": 92.28019543099981
+      },
+      {
+        "end_seconds_from_controller": 2401.6833892899995,
+        "preceding_controller_gap_seconds": 0.0537227589993563,
+        "stage": "prove-0023",
+        "start_seconds_from_controller": 2313.216270698,
+        "supervisor_wall_seconds": 88.46711859199968
+      },
+      {
+        "end_seconds_from_controller": 2490.1224295409993,
+        "preceding_controller_gap_seconds": 0.05039368200050376,
+        "stage": "prove-0024",
+        "start_seconds_from_controller": 2401.733782972,
+        "supervisor_wall_seconds": 88.38864656899932
+      },
+      {
+        "end_seconds_from_controller": 2580.6028524600006,
+        "preceding_controller_gap_seconds": 0.1217470770006912,
+        "stage": "prove-0025",
+        "start_seconds_from_controller": 2490.244176618,
+        "supervisor_wall_seconds": 90.3586758420006
+      },
+      {
+        "end_seconds_from_controller": 2662.2883146570002,
+        "preceding_controller_gap_seconds": 0.12137270299899683,
+        "stage": "prove-0026",
+        "start_seconds_from_controller": 2580.7242251629996,
+        "supervisor_wall_seconds": 81.56408949400065
+      },
+      {
+        "end_seconds_from_controller": 2745.217164740001,
+        "preceding_controller_gap_seconds": 0.07777059199906944,
+        "stage": "prove-0027",
+        "start_seconds_from_controller": 2662.3660852489993,
+        "supervisor_wall_seconds": 82.85107949100166
+      },
+      {
+        "end_seconds_from_controller": 2824.0942857320006,
+        "preceding_controller_gap_seconds": 0.05566524899950309,
+        "stage": "prove-0028",
+        "start_seconds_from_controller": 2745.2728299890005,
+        "supervisor_wall_seconds": 78.82145574300012
+      },
+      {
+        "end_seconds_from_controller": 2903.5647350399995,
+        "preceding_controller_gap_seconds": 0.12559848799901374,
+        "stage": "prove-0029",
+        "start_seconds_from_controller": 2824.2198842199996,
+        "supervisor_wall_seconds": 79.34485081999992
+      },
+      {
+        "end_seconds_from_controller": 3000.0650362310007,
+        "preceding_controller_gap_seconds": 0.11092531200119993,
+        "stage": "prove-0030",
+        "start_seconds_from_controller": 2903.6756603520007,
+        "supervisor_wall_seconds": 96.389375879
+      },
+      {
+        "end_seconds_from_controller": 3074.251460366,
+        "preceding_controller_gap_seconds": 0.08474356799888483,
+        "stage": "prove-0031",
+        "start_seconds_from_controller": 3000.1497797989996,
+        "supervisor_wall_seconds": 74.10168056700059
+      },
+      {
+        "end_seconds_from_controller": 3160.8348290739996,
+        "preceding_controller_gap_seconds": 0.059052583999800845,
+        "stage": "prove-0032",
+        "start_seconds_from_controller": 3074.31051295,
+        "supervisor_wall_seconds": 86.5243161239996
+      },
+      {
+        "end_seconds_from_controller": 3252.4034785860003,
+        "preceding_controller_gap_seconds": 0.12164177900012874,
+        "stage": "prove-0033",
+        "start_seconds_from_controller": 3160.9564708529997,
+        "supervisor_wall_seconds": 91.44700773300065
+      },
+      {
+        "end_seconds_from_controller": 3344.5315037719993,
+        "preceding_controller_gap_seconds": 0.14618685700042988,
+        "stage": "prove-0034",
+        "start_seconds_from_controller": 3252.549665443001,
+        "supervisor_wall_seconds": 91.98183832899849
+      },
+      {
+        "end_seconds_from_controller": 3429.5939374129994,
+        "preceding_controller_gap_seconds": 0.05999409100149933,
+        "stage": "prove-0035",
+        "start_seconds_from_controller": 3344.5914978630008,
+        "supervisor_wall_seconds": 85.0024395499986
+      },
+      {
+        "end_seconds_from_controller": 3523.7062571120005,
+        "preceding_controller_gap_seconds": 0.07303115100148716,
+        "stage": "prove-0036",
+        "start_seconds_from_controller": 3429.666968564001,
+        "supervisor_wall_seconds": 94.0392885479996
+      },
+      {
+        "end_seconds_from_controller": 3615.1627203219996,
+        "preceding_controller_gap_seconds": 0.06497106899951177,
+        "stage": "prove-0037",
+        "start_seconds_from_controller": 3523.771228181,
+        "supervisor_wall_seconds": 91.39149214099962
+      },
+      {
+        "end_seconds_from_controller": 3702.240416652001,
+        "preceding_controller_gap_seconds": 0.14591092100090464,
+        "stage": "prove-0038",
+        "start_seconds_from_controller": 3615.3086312430005,
+        "supervisor_wall_seconds": 86.93178540900044
+      },
+      {
+        "end_seconds_from_controller": 3792.8419172470003,
+        "preceding_controller_gap_seconds": 0.109212335999473,
+        "stage": "prove-0039",
+        "start_seconds_from_controller": 3702.3496289880004,
+        "supervisor_wall_seconds": 90.4922882589999
+      },
+      {
+        "end_seconds_from_controller": 3875.373529061,
+        "preceding_controller_gap_seconds": 0.05511599499914155,
+        "stage": "prove-0040",
+        "start_seconds_from_controller": 3792.8970332419995,
+        "supervisor_wall_seconds": 82.47649581900077
+      },
+      {
+        "end_seconds_from_controller": 3949.80198878,
+        "preceding_controller_gap_seconds": 0.05144794199986791,
+        "stage": "prove-0041",
+        "start_seconds_from_controller": 3875.424977003,
+        "supervisor_wall_seconds": 74.377011777
+      },
+      {
+        "end_seconds_from_controller": 3990.4553470419996,
+        "preceding_controller_gap_seconds": 0.17871789399941918,
+        "stage": "prove-0042",
+        "start_seconds_from_controller": 3949.9807066739995,
+        "supervisor_wall_seconds": 40.47464036800011
+      },
+      {
+        "end_seconds_from_controller": 6248.341042187001,
+        "preceding_controller_gap_seconds": 0.10408834000008937,
+        "stage": "complete-recursive-compression",
+        "start_seconds_from_controller": 3990.5594353819997,
+        "supervisor_wall_seconds": 2257.7816068050015
+      },
+      {
+        "end_seconds_from_controller": 6248.481328832999,
+        "preceding_controller_gap_seconds": 0.08630936500048847,
+        "stage": "fresh-process-strict-verification",
+        "start_seconds_from_controller": 6248.427351552002,
+        "supervisor_wall_seconds": 0.053977280997060006
+      },
+      {
+        "end_seconds_from_controller": 6248.590381065,
+        "preceding_controller_gap_seconds": 0.005400713002018165,
+        "stage": "serialize-local-payloads",
+        "start_seconds_from_controller": 6248.486729546001,
+        "supervisor_wall_seconds": 0.10365151899895864
+      },
+      {
+        "end_seconds_from_controller": 6248.947710175,
+        "preceding_controller_gap_seconds": 0.0037230189991532825,
+        "stage": "observe-local-transfer-transparent",
+        "start_seconds_from_controller": 6248.594104083999,
+        "supervisor_wall_seconds": 0.3536060910009837
+      },
+      {
+        "end_seconds_from_controller": 6249.10913033,
+        "preceding_controller_gap_seconds": 0.0046466320018225815,
+        "stage": "observe-local-transfer-native",
+        "start_seconds_from_controller": 6248.952356807002,
+        "supervisor_wall_seconds": 0.15677352299826453
+      },
+      {
+        "end_seconds_from_controller": 6252.274459773,
+        "preceding_controller_gap_seconds": 0.022089354999479838,
+        "stage": "fixed-receipt-verifier-cost",
+        "start_seconds_from_controller": 6249.131219684999,
+        "supervisor_wall_seconds": 3.1432400880003115
+      },
+      {
+        "end_seconds_from_controller": 6253.707988646,
+        "preceding_controller_gap_seconds": 0.024945543002104387,
+        "stage": "native-full-verifier-cost",
+        "start_seconds_from_controller": 6252.299405316002,
+        "supervisor_wall_seconds": 1.4085833299977821
+      }
+    ],
+    "unmeasured": {
+      "confirmation_seconds": null,
+      "node_admission_seconds": null,
+      "post_find_publish_seconds": null,
+      "real_network_propagation_seconds": null,
+      "stale_block_rate": null
+    },
+    "winner_to_receiver_complete_seconds": null
+  }
+}

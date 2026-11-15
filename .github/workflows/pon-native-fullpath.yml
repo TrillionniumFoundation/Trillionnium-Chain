@@ -1,0 +1,107 @@
+name: PoN native full relation and path controls
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-native-fullpath.yml
+      - formal/pon-native-fullpath-v1/**
+      - trillionnium/**
+      - config/**
+      - rust-toolchain.toml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-fullpath-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  CARGO_BUILD_JOBS: "2"
+  CARGO_INCREMENTAL: "0"
+  RUST_TEST_THREADS: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+jobs:
+  native-fullpath-controls:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check source and project boundary
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/native-fullpath/source-before.json"
+      - name: Install pinned Rust toolchain
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Bind isolated target path
+        run: printf 'CARGO_TARGET_DIR=%s/native-fullpath-target\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Reject incomplete and spliced observation evidence
+        run: python3 -m unittest discover -s formal/pon-native-fullpath-v1 -p 'test_*.py' -v
+      - name: Check formatting and focused strict Clippy
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all --check
+          cargo clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_full_relation_context --example native_fullpath_v1 -- -D warnings
+      - name: Execute freshly sealed wrong-context native regressions
+        run: |
+          set -euo pipefail
+          cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_full_relation_context --test work_header_binding --test growth_persistence_cancellation -- --test-threads=1
+          cargo build --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example native_fullpath_v1
+      - name: Collect real native component processes
+        run: |
+          set -euo pipefail
+          python3 formal/pon-native-fullpath-v1/collect_native.py --repo "$GITHUB_WORKSPACE" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --binary "$CARGO_TARGET_DIR/debug/examples/native_fullpath_v1" --output "$RUNNER_TEMP/native-fullpath/processes" > "$RUNNER_TEMP/native-fullpath/collector-output.json"
+          cat "$RUNNER_TEMP/native-fullpath/collector-output.json"
+      - name: Read retained evidence and require explicit component HOLD
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import subprocess
+          import sys
+          root = Path(os.environ["RUNNER_TEMP"]) / "native-fullpath"
+          capture = json.loads((root / "collector-output.json").read_text())
+          result = subprocess.run([
+              sys.executable, "formal/pon-native-fullpath-v1/adapt_native.py",
+              str(root / "processes"), "--preregistration-sha256", capture["manifest_sha256"],
+          ], capture_output=True, text=True, check=False)
+          (root / "reader-stdout.json").write_text(result.stdout)
+          (root / "reader-stderr.txt").write_text(result.stderr)
+          print(result.stdout, end="")
+          if result.returncode != 1:
+              raise SystemExit("reader did not return the explicit valid-component HOLD code")
+          report = json.loads(result.stdout)
+          assert report["overall_gate"] == report["security_gate"] == "HOLD"
+          assert report["performance_gate"] == "COMPONENT_OBSERVATION_ONLY"
+          assert report["scheduled"] == report["recorded"] == 4 and not report["missing"]
+          assert report["recorded_unique_new_native_blocks"] == 1
+          attempts = {row["id"]: row for row in report["attempts"]}
+          assert {key: row["status"] for key, row in attempts.items()} == {
+              "valid": "accepted", "duplicate": "duplicate",
+              "late_product": "rejected", "cancelled": "cancelled",
+          }
+          assert attempts["valid"]["full_native_replay_observed"] is True
+          assert attempts["duplicate"]["full_native_replay_observed"] is False
+          assert attempts["late_product"]["late_product_rejection_observed"] is True
+          assert attempts["cancelled"]["full_native_replay_observed"] is False
+          assert attempts["valid"]["last_canonical_depth"] == 0
+          assert report["timely_accepted_progress"] == 0
+          assert report["production_activation"] is False
+          PY
+      - name: Verify source remained unchanged
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/native-fullpath/source-after.json"
+      - name: Retain raw component observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-fullpath-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/native-fullpath/
+          if-no-files-found: error
+          retention-days: 30

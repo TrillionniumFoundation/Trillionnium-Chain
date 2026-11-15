@@ -1,0 +1,17 @@
+tree 07add784b1e1be265ea0e4cc2fc4381a18c8e51f
+parent dba49c2f66d8a72d6845c70958c4a24d6c4e7e89
+parent 14fcbede085b414a9621aef3f288d2b1ca1839ae
+author Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793857366 +0000
+committer Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793857366 +0000
+
+fix(pq): preserve current source with migration owner boundaries
+
+Merge the fixed dba49c2f66d8a72d6845c70958c4a24d6c4e7e89 source
+with the previously verified 14fcbede085b414a9621aef3f288d2b1ca1839ae
+migration repair and scoped reproduction evidence.
+
+Retain all concurrent source and evidence, add the original 1234-byte
+plan note, and update only the two migration source pins in the current
+corpus. Preserve historical native and research execution attribution;
+native tests, strict Clippy and Rust formatting on this combined source
+are NOT_RUN. No activation or release authority is promoted.

@@ -1,0 +1,233 @@
+{
+  "schema": "pon-node-decode-page-validation-v1",
+  "base_source": "03521b2f32346a49cccde8ff72e8c7b886b31222",
+  "implementation_source": "1a9832032158779d1957795e1421470b16d1b665",
+  "final_validation_source": "0f443366feca2bd300932dc1d69c0c00b90ff55f",
+  "final_validation_tree": "02be2acdaf68602a96dbce627dd334f4008cf027",
+  "native_source_sha256": "3a71260b94c41de83a4789ccc8aa771517148fc18b601f8f4b19042a5171bf86",
+  "rust": "1.95.0",
+  "features": "default",
+  "profile": "original test profile",
+  "cargo_build_jobs": 1,
+  "native_selectors": {
+    "account_archive_prototype::native_store::": {
+      "passed": 23,
+      "failed": 0,
+      "ignored": 4
+    },
+    "store::native_authenticated::": {
+      "passed": 92,
+      "failed": 0,
+      "ignored": 1
+    }
+  },
+  "distinct_native_passes": 115,
+  "decode_controls_subset": 10,
+  "final_checks": {
+    "strict_workspace_all_targets_all_features_clippy": "PASS",
+    "fmt": "PASS",
+    "source_controls": 37,
+    "ci_controls": 100,
+    "source_pins": 522,
+    "inventory": "PASS unchanged",
+    "locked_workspace_members": 26,
+    "locked_resolved_packages": 175
+  },
+  "observed_charge": {
+    "pon_native_decode_retained_charge": {
+      "charge_is_process_rss_bound": false,
+      "counters": {
+        "borrow_conflicts": 0,
+        "bounded_probe_refusals": 2,
+        "calls": 18,
+        "exact_hits": 8,
+        "original_decodes": 10,
+        "retained": 8
+      },
+      "directory_entry_size_bytes": 8,
+      "excluded": "allocator metadata, SQLite, temporary row buffers, stacks and other caches",
+      "hard_software_charge_ceiling_bytes": 4194304,
+      "has_consensus_authority": false,
+      "maximum_allocated_slot_bytes": 3342336,
+      "maximum_directory_bytes": 8192,
+      "owner_size_bytes": 72,
+      "page_limit": 1024,
+      "page_size_bytes": 3264,
+      "page_slot_limit": 8,
+      "probe_limit": 8,
+      "record_byte_limit": 163,
+      "retained": {
+        "allocated_directory_bytes": 8192,
+        "allocated_directory_entries": 1024,
+        "allocated_pages": 1,
+        "allocated_slot_bytes": 3264,
+        "allocated_slots": 8,
+        "occupied_slots": 8,
+        "retained_record_bytes": 392,
+        "retained_software_charge_bytes": 11528
+      },
+      "retained_software_charge_limit_bytes": 3350600,
+      "schema": "pon-native-account-node-decode-arithmetic-v2",
+      "scope": "exact current SQL blob and expected ID only; every row and full graph relation is checked again",
+      "slot_limit": 8192,
+      "slot_size_bytes": 408,
+      "storage": "lazy-fixed-pages"
+    },
+    "pon_native_decode_full_charge": {
+      "charge_is_process_rss_bound": false,
+      "counters": {
+        "borrow_conflicts": 0,
+        "bounded_probe_refusals": 0,
+        "calls": 0,
+        "exact_hits": 0,
+        "original_decodes": 0,
+        "retained": 0
+      },
+      "directory_entry_size_bytes": 8,
+      "excluded": "allocator metadata, SQLite, temporary row buffers, stacks and other caches",
+      "hard_software_charge_ceiling_bytes": 4194304,
+      "has_consensus_authority": false,
+      "maximum_allocated_slot_bytes": 3342336,
+      "maximum_directory_bytes": 8192,
+      "owner_size_bytes": 72,
+      "page_limit": 1024,
+      "page_size_bytes": 3264,
+      "page_slot_limit": 8,
+      "probe_limit": 8,
+      "record_byte_limit": 163,
+      "retained": {
+        "allocated_directory_bytes": 8192,
+        "allocated_directory_entries": 1024,
+        "allocated_pages": 1024,
+        "allocated_slot_bytes": 3342336,
+        "allocated_slots": 8192,
+        "occupied_slots": 8192,
+        "retained_record_bytes": 401408,
+        "retained_software_charge_bytes": 3350600
+      },
+      "retained_software_charge_limit_bytes": 3350600,
+      "schema": "pon-native-account-node-decode-arithmetic-v2",
+      "scope": "exact current SQL blob and expected ID only; every row and full graph relation is checked again",
+      "slot_limit": 8192,
+      "slot_size_bytes": 408,
+      "storage": "lazy-fixed-pages"
+    },
+    "pon_native_decode_sparse_charge": {
+      "charge_is_process_rss_bound": false,
+      "counters": {
+        "borrow_conflicts": 0,
+        "bounded_probe_refusals": 0,
+        "calls": 4,
+        "exact_hits": 1,
+        "original_decodes": 3,
+        "retained": 3
+      },
+      "directory_entry_size_bytes": 8,
+      "excluded": "allocator metadata, SQLite, temporary row buffers, stacks and other caches",
+      "hard_software_charge_ceiling_bytes": 4194304,
+      "has_consensus_authority": false,
+      "maximum_allocated_slot_bytes": 3342336,
+      "maximum_directory_bytes": 8192,
+      "owner_size_bytes": 72,
+      "page_limit": 1024,
+      "page_size_bytes": 3264,
+      "page_slot_limit": 8,
+      "probe_limit": 8,
+      "record_byte_limit": 163,
+      "retained": {
+        "allocated_directory_bytes": 8192,
+        "allocated_directory_entries": 1024,
+        "allocated_pages": 2,
+        "allocated_slot_bytes": 6528,
+        "allocated_slots": 16,
+        "occupied_slots": 3,
+        "retained_record_bytes": 147,
+        "retained_software_charge_bytes": 14792
+      },
+      "retained_software_charge_limit_bytes": 3350600,
+      "schema": "pon-native-account-node-decode-arithmetic-v2",
+      "scope": "exact current SQL blob and expected ID only; every row and full graph relation is checked again",
+      "slot_limit": 8192,
+      "slot_size_bytes": 408,
+      "storage": "lazy-fixed-pages"
+    }
+  },
+  "previous_eager_derived_maximum": 3342408,
+  "new_derived_maximum": 3350600,
+  "directory_increase": 8192,
+  "hard_ceiling_unchanged": 4194304,
+  "software_charge_is_rss_bound": false,
+  "runtime_nonregression_measured": false,
+  "confirmation_gate_qualified": false,
+  "rejected_apply_hook_restored": false,
+  "notes": [
+    "The first parallel nocapture log has interleaved diagnostic text; it is retained. A serial diagnostic replay and final serial account suite retain complete JSON observations. Duplicate executions are excluded from the distinct count.",
+    "The leaf source was not previously registered. The first registration script asserted that it was present and stopped that registration step; final source adds the explicit pin and required path.",
+    "Synthetic full-capacity, hole and stale-byte fixtures test private storage accounting and branch behavior, not realizable valid SQL graphs.",
+    "No source file was added and the generated source inventory is unchanged."
+  ],
+  "files": {
+    "decode-pages-native.txt": {
+      "size": 6388,
+      "sha256": "ba5cd7e28770d13f52f9e6a14f09b99c99ae73811b6e209dcf1173f59e1f366c"
+    },
+    "decode-pages-native-serial.txt": {
+      "size": 4752,
+      "sha256": "2e4c679f65b07c48f711abdba47bbe951a27a7be8838bff7b5fc227d131a52c4"
+    },
+    "decode-pages-account-tests.txt": {
+      "size": 7489,
+      "sha256": "784b695fbceacc7f2ccc71e3150f5c40280553d120008d4c151dabe6d3d1984b"
+    },
+    "decode-pages-owner-tests.txt": {
+      "size": 22577,
+      "sha256": "f2608492df2e0dcbb0948c9cfa99a45a2b3576ae1f384693bf94517be6bcba57"
+    },
+    "decode-pages-clippy.txt": {
+      "size": 3435,
+      "sha256": "511ef99821958c8c1b493153ba62c20700d42add5d6bdeb202c0852cc6d1dda8"
+    },
+    "decode-pages-fmt.txt": {
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "decode-pages-final-account.txt": {
+      "size": 7807,
+      "sha256": "3f1372d1033e0eeccaa00025e994eb06743d2b2e5714295707cf2b278ba0ff9e"
+    },
+    "decode-pages-final-owner.txt": {
+      "size": 22769,
+      "sha256": "2825567555aadd0e4de15ec63200d06a84fbf3a3f2401981d3ab5df4ab9b6a26"
+    },
+    "decode-pages-final-clippy.txt": {
+      "size": 194,
+      "sha256": "e526428dcc5ebb7ed44857c2ac069426171b0359f890f733b94fd8e8d4727b66"
+    },
+    "decode-pages-final-fmt.txt": {
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "decode-pages-final-static.txt": {
+      "size": 17582,
+      "sha256": "f39b38beb402b039eb775597f0b329c92c603d82b4ecec8fef6df8852900a58f"
+    },
+    "decode-pages-elf.txt": {
+      "size": 152,
+      "sha256": "250cfe7d6d19b81252f380cae431faaed4e79163f31e42915d277c696aa5ab04"
+    },
+    "decode-pages-final-elf.txt": {
+      "size": 152,
+      "sha256": "4bc79a28d08876f69d192cb3a4a0758150ab33e10668e5f80638a0736c85f367"
+    },
+    "validated-source.patch": {
+      "size": 35011,
+      "sha256": "c41346261fac8fe38552f5f5b5da5b03a188d53b2680d2e669c95ae2a838d0c8"
+    }
+  },
+  "archive": {
+    "path": "raw-validation.zip",
+    "size": 27188,
+    "sha256": "252e323a3e63fdbf232d52f278c93ee7e231ad17789afe150ceab022ff11a5e4"
+  },
+  "source_identity_note": "Implementation and validation commit IDs are local source anchors. The retained validated-source.patch applied to the published base reconstructs the exact final validation tree. Delivery changes evidence only relative to that tree."
+}

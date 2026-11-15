@@ -1,0 +1,551 @@
+{
+  "actual_native_tests_executed_by_collection": false,
+  "all_requested_files_independently_read_back": true,
+  "frozen_selected_archive": {
+    "bytes": 5906836,
+    "name": "native-campaign-failure-evidence.tar.xz",
+    "sha256": "6c8a6fa91659283a7d7ad85795a82dfc7ea8f3f64cfb39d5a0c2a20465a7757b"
+  },
+  "independent_fixed_zip_rebuild": {
+    "actual_exit_code": 0,
+    "actual_terminal_state": "succeeded",
+    "all_six_publications_independently_verified": true,
+    "byte_identical_to_frozen_archive": true,
+    "create_only_publication_count": 6,
+    "finished_utc": "2026-11-11T16:35:28.153879+00:00",
+    "frozen_builder": {
+      "bytes": 11092,
+      "path": "pack-evidence.py",
+      "sha256": "a12543b7a6e3eb50e9cb70e55525fb8acd252972e018eea62c5d3d904fabcb99"
+    },
+    "input_bundle": {
+      "bytes": 77709,
+      "name": "campaign-rebuild-inputs.tar.gz",
+      "sha256": "66d5109c48284179788a813ce30413080d99be72bd9c3a4a2d04165864d21c87"
+    },
+    "multi_file_atomicity_is_not_claimed": true,
+    "official_artifact_api_path": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13858366171/zip",
+    "old_upload_staging_was_not_reused": true,
+    "original_zip_verified": {
+      "bytes": 75865526,
+      "sha256": "7250117547e038c408cb9400d76759777f578c67979f0d0e3353dd7ee5051945"
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "publication_protocol": "separate_per_file_RENAME_NOREPLACE_then_hash_readback",
+    "rebuild_controller": {
+      "bytes": 12280,
+      "sha256": "0162f3c43570a8c06f008f29a68895902eaa3329cec74376a09ffed6dc3620cb"
+    },
+    "rebuild_receipt_bytes": 9262,
+    "rebuild_receipt_sha256": "bc776e913a6302107c307b1cf6f297d8e8749ed5bfb6f3ae7231a024dc578631",
+    "started_utc": "2026-11-11T16:34:00.356496+00:00",
+    "steps": [
+      {
+        "elapsed_ns": 45316922171,
+        "exit_code": 0,
+        "name": "original-artifact-download",
+        "stderr_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout_identity": {
+          "bytes": 75865526,
+          "sha256": "7250117547e038c408cb9400d76759777f578c67979f0d0e3353dd7ee5051945"
+        },
+        "timed_out": false,
+        "timeout_seconds": 900
+      },
+      {
+        "elapsed_ns": 38823464937,
+        "exit_code": 0,
+        "name": "frozen-builder",
+        "stderr_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout_identity": {
+          "bytes": 779,
+          "sha256": "1268e3dcfa9d16e6eb2285c36352285fd2c2bd93913d898c16efe0f37b0c4ce1"
+        },
+        "timed_out": false,
+        "timeout_seconds": 600
+      }
+    ],
+    "terminal_publication_confirmed": true,
+    "timed_out": false,
+    "verified_input_member_count": 17
+  },
+  "native_builds_executed_by_collection": false,
+  "original_chunked_upload": {
+    "abort_request_sent": false,
+    "actual_call_count": 12,
+    "after_first_rejection_all_retries_preserved_the_original_offset_and_payload_with_create_only_expected_version": true,
+    "all_original_private_requests_and_raw_results_retained_outside_public_evidence": true,
+    "commit_request_sent": false,
+    "confirmed_chunk_count": 4,
+    "event_order_is_retained": true,
+    "events": [
+      {
+        "attempt_for_offset": 1,
+        "chunk_bytes": 1048576,
+        "chunk_sha256": "5c5e9e6d2ce72182aa9a435215d083cb3f3a0bf069efed041c151c87937132d6",
+        "missing_expected_version": true,
+        "offset": 0,
+        "order": 1,
+        "outcome": "invalid_argument",
+        "raw_error_text": "chunk requires expected version and bounded base64 data",
+        "remote_side_effect": "request_rejected",
+        "retained_response_sha256": "f7d4950ece6c1be99835ed2fcba02149ca3f2cf62cfba18f63d95e94839264c4"
+      },
+      {
+        "attempt_for_offset": 2,
+        "chunk_bytes": 1048576,
+        "chunk_sha256": "5c5e9e6d2ce72182aa9a435215d083cb3f3a0bf069efed041c151c87937132d6",
+        "offset": 0,
+        "order": 2,
+        "outcome": "transport_timeout",
+        "raw_error_text": "tool call error: tool call failed for `codex_apps/h.binary_upload`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+        "remote_side_effect": "unconfirmed",
+        "retained_response_sha256": "73e500bdb6c466a85d2d44300ca4950cafc30cb6aa8b619347d0522934421f8e"
+      },
+      {
+        "attempt_for_offset": 3,
+        "chunk_bytes": 1048576,
+        "chunk_sha256": "5c5e9e6d2ce72182aa9a435215d083cb3f3a0bf069efed041c151c87937132d6",
+        "final_file_visible": false,
+        "next_confirmed_offset": 1048576,
+        "offset": 0,
+        "order": 3,
+        "outcome": "chunk_acknowledged",
+        "retained_response_sha256": "ae7420ff7fea95816f3d3728434a4ada6f1804516f46b53efc89631801051f76"
+      },
+      {
+        "attempt_for_offset": 1,
+        "chunk_bytes": 1048576,
+        "chunk_sha256": "1e61b99bbda9f374d38ba38ea35a7ccfe30dec5633e055424d63a0892c3d275a",
+        "final_file_visible": false,
+        "next_confirmed_offset": 2097152,
+        "offset": 1048576,
+        "order": 4,
+        "outcome": "chunk_acknowledged",
+        "retained_response_sha256": "d6ef29cb4852e19c495908c796d9aa1c3cd0295e5d9d38cc7e562a79f95819ed"
+      },
+      {
+        "attempt_for_offset": 1,
+        "chunk_bytes": 1048576,
+        "chunk_sha256": "7356628266281a4961e1836ac24443b6220baf940cc40bac7b5533ecdf01fbfa",
+        "offset": 2097152,
+        "order": 5,
+        "outcome": "transport_timeout",
+        "raw_error_text": "tool call error: tool call failed for `codex_apps/h.binary_upload`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+        "remote_side_effect": "unconfirmed",
+        "retained_response_sha256": "73e500bdb6c466a85d2d44300ca4950cafc30cb6aa8b619347d0522934421f8e"
+      },
+      {
+        "attempt_for_offset": 2,
+        "chunk_bytes": 1048576,
+        "chunk_sha256": "7356628266281a4961e1836ac24443b6220baf940cc40bac7b5533ecdf01fbfa",
+        "final_file_visible": false,
+        "next_confirmed_offset": 3145728,
+        "offset": 2097152,
+        "order": 6,
+        "outcome": "chunk_acknowledged",
+        "retained_response_sha256": "5a2a85346b3cc49ea40204c0476e38811d04825d51a33a0ae01abdf12a39da7b"
+      },
+      {
+        "attempt_for_offset": 1,
+        "chunk_bytes": 1048576,
+        "chunk_sha256": "98e1bf1ca6f8828c49d414cf30e577a54b5e2c56724a03ae496f624454893fba",
+        "final_file_visible": false,
+        "next_confirmed_offset": 4194304,
+        "offset": 3145728,
+        "order": 7,
+        "outcome": "chunk_acknowledged",
+        "retained_response_sha256": "a969a55837d7b0222d28f31d2c33d4250a9bfe26ec191e3017e17fb02254ea3b"
+      },
+      {
+        "attempt_for_offset": 1,
+        "chunk_bytes": 1048576,
+        "chunk_sha256": "c2ce35e33640f62eca7b0a5596fdb3a90156d809aa42b0ac5f0e66df6171094b",
+        "offset": 4194304,
+        "order": 8,
+        "outcome": "transport_timeout",
+        "raw_error_text": "tool call error: tool call failed for `codex_apps/h.binary_upload`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+        "remote_side_effect": "unconfirmed",
+        "retained_response_sha256": "73e500bdb6c466a85d2d44300ca4950cafc30cb6aa8b619347d0522934421f8e"
+      },
+      {
+        "attempt_for_offset": 2,
+        "chunk_bytes": 1048576,
+        "chunk_sha256": "c2ce35e33640f62eca7b0a5596fdb3a90156d809aa42b0ac5f0e66df6171094b",
+        "offset": 4194304,
+        "order": 9,
+        "outcome": "transport_timeout",
+        "raw_error_text": "tool call error: tool call failed for `codex_apps/h.binary_upload`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+        "remote_side_effect": "unconfirmed",
+        "retained_response_sha256": "73e500bdb6c466a85d2d44300ca4950cafc30cb6aa8b619347d0522934421f8e"
+      },
+      {
+        "attempt_for_offset": 3,
+        "chunk_bytes": 1048576,
+        "chunk_sha256": "c2ce35e33640f62eca7b0a5596fdb3a90156d809aa42b0ac5f0e66df6171094b",
+        "offset": 4194304,
+        "order": 10,
+        "outcome": "transport_timeout",
+        "raw_error_text": "tool call error: tool call failed for `codex_apps/h.binary_upload`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+        "remote_side_effect": "unconfirmed",
+        "retained_response_sha256": "73e500bdb6c466a85d2d44300ca4950cafc30cb6aa8b619347d0522934421f8e"
+      },
+      {
+        "attempt_for_offset": 4,
+        "chunk_bytes": 1048576,
+        "chunk_sha256": "c2ce35e33640f62eca7b0a5596fdb3a90156d809aa42b0ac5f0e66df6171094b",
+        "offset": 4194304,
+        "order": 11,
+        "outcome": "transport_timeout",
+        "raw_error_text": "tool call error: tool call failed for `codex_apps/h.binary_upload`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+        "remote_side_effect": "unconfirmed",
+        "retained_response_sha256": "73e500bdb6c466a85d2d44300ca4950cafc30cb6aa8b619347d0522934421f8e"
+      },
+      {
+        "attempt_for_offset": 5,
+        "chunk_bytes": 1048576,
+        "chunk_sha256": "c2ce35e33640f62eca7b0a5596fdb3a90156d809aa42b0ac5f0e66df6171094b",
+        "offset": 4194304,
+        "order": 12,
+        "outcome": "transport_timeout",
+        "raw_error_text": "tool call error: tool call failed for `codex_apps/h.binary_upload`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+        "remote_side_effect": "unconfirmed",
+        "retained_response_sha256": "73e500bdb6c466a85d2d44300ca4950cafc30cb6aa8b619347d0522934421f8e"
+      }
+    ],
+    "fifth_chunk_not_written_is_not_claimed": true,
+    "fifth_chunk_stage": "unknown",
+    "final_archive_publication_by_this_route_is_not_claimed": true,
+    "invalid_argument_count": 1,
+    "last_confirmed_offset": 4194304,
+    "old_staging_termination_is_not_claimed": true,
+    "per_call_timestamps_not_retained": true,
+    "sixth_chunk_request_sent": false,
+    "transport_timeout_count": 7
+  },
+  "original_native_outcomes_changed": false,
+  "original_public_job": {
+    "artifact_id": 13858366171,
+    "job_id": 130540971588,
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "workflow_run_id": 43026071397
+  },
+  "original_three_campaign_exit_codes": [
+    101,
+    101,
+    101
+  ],
+  "original_zip": {
+    "bytes": 75865526,
+    "sha256": "7250117547e038c408cb9400d76759777f578c67979f0d0e3353dd7ee5051945"
+  },
+  "private_transport_data_included": false,
+  "repository_files_modified_by_collection": false,
+  "requested_delivery_file_count": 11,
+  "schema": "trnm-c4-evidence-transfer-observations-v1",
+  "scope": "evidence_collection_and_delivery_only",
+  "small_file_delivery_streams": [
+    {
+      "events": [
+        {
+          "bytes": 618149,
+          "operation": "atomic_create_only_write",
+          "order_in_file_stream": 1,
+          "outcome": "write_acknowledged",
+          "retained_response_sha256": "b0f87b5f700fad99368af79685c1a8a39a455163d239b34981e66e1f47567796",
+          "sha256": "5e5f90a60055c59670130faff760a9413fde74eabe1dd5e89a86782d491dbbd3"
+        },
+        {
+          "operation": "independent_file_info",
+          "order_in_file_stream": 2,
+          "outcome": "transport_timeout",
+          "raw_error_text": "tool call error: tool call failed for `codex_apps/h.file_info`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+          "remote_side_effect": "read_only",
+          "retained_response_sha256": "bbd2b7bca8cf6485d08db1f592cb0d4a911a36807fb29962bd76ce400f2a92c6"
+        },
+        {
+          "bytes": 618149,
+          "operation": "independent_file_info",
+          "order_in_file_stream": 3,
+          "outcome": "complete_size_and_sha256_verified",
+          "retained_response_sha256": "60f5e8b5493a50574329bc084b15acc12463ff6bacbac3c47660fe72938e13be",
+          "sha256": "5e5f90a60055c59670130faff760a9413fde74eabe1dd5e89a86782d491dbbd3"
+        }
+      ],
+      "final_independent_readback_verified": true,
+      "name": "source-records-controller.tar.gz",
+      "retry_policy": "same_saved_create_only_request_only_after_independent_absence_observation"
+    },
+    {
+      "events": [
+        {
+          "bytes": 399522,
+          "operation": "atomic_create_only_write",
+          "order_in_file_stream": 1,
+          "outcome": "write_acknowledged",
+          "retained_response_sha256": "d6dd80fd9b3dc57aa2f56a307e0d4aa3433f81717936830a4060b20821043427",
+          "sha256": "ef700d57ffdb4ae19fd2cc7701de469a292ef593289bafe0147e3582664fbabd"
+        },
+        {
+          "bytes": 399522,
+          "operation": "independent_file_info",
+          "order_in_file_stream": 2,
+          "outcome": "complete_size_and_sha256_verified",
+          "retained_response_sha256": "59239d54738999bac5d89d1293c776ec6a33d73381f42386ded84c55f44e0dcd",
+          "sha256": "ef700d57ffdb4ae19fd2cc7701de469a292ef593289bafe0147e3582664fbabd"
+        }
+      ],
+      "final_independent_readback_verified": true,
+      "name": "public-ci-observations.tar.gz",
+      "retry_policy": "same_saved_create_only_request_only_after_independent_absence_observation"
+    },
+    {
+      "events": [
+        {
+          "operation": "atomic_create_only_write",
+          "order_in_file_stream": 1,
+          "outcome": "transport_timeout",
+          "raw_error_text": "tool call error: tool call failed for `codex_apps/h.binary_write`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+          "remote_side_effect": "unconfirmed",
+          "retained_response_sha256": "73aa53748544aee83fe9acc53891b4e650891bf3c8fa7658cf131682e8994d5a"
+        },
+        {
+          "operation": "independent_file_info",
+          "order_in_file_stream": 2,
+          "outcome": "transport_timeout",
+          "raw_error_text": "tool call error: tool call failed for `codex_apps/h.file_info`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+          "remote_side_effect": "read_only",
+          "retained_response_sha256": "bbd2b7bca8cf6485d08db1f592cb0d4a911a36807fb29962bd76ce400f2a92c6"
+        },
+        {
+          "operation": "independent_file_info",
+          "order_in_file_stream": 3,
+          "outcome": "target_absent_observed",
+          "raw_error_text": "remote helper on desktop-ts failed with 1\nstdout:\n\nstderr:\nFileNotFoundError: [Errno 2] No such file or directory: 's3-hosted-controls.tar.gz'",
+          "remote_side_effect": "read_only",
+          "retained_response_sha256": "9c2c9119f65548fa10ea7010731f1974903825beebdaafa855cb823502541a2d"
+        },
+        {
+          "bytes": 247966,
+          "operation": "atomic_create_only_write",
+          "order_in_file_stream": 4,
+          "outcome": "write_acknowledged",
+          "retained_response_sha256": "1eab5d2a9758768f44c03c024f01d8af8f3cbfa56ba153235084deb18ab4b58d",
+          "sha256": "533cf6ff4fc1330a6a0b240ba8c9ae8d397e36f81d93e2c517b970a90fd9f41b"
+        },
+        {
+          "bytes": 247966,
+          "operation": "independent_file_info",
+          "order_in_file_stream": 5,
+          "outcome": "complete_size_and_sha256_verified",
+          "retained_response_sha256": "43a1b1c25b3e6a54afa5165dbd70cc7d14f978eb828f1e9683f47130f527fb75",
+          "sha256": "533cf6ff4fc1330a6a0b240ba8c9ae8d397e36f81d93e2c517b970a90fd9f41b"
+        }
+      ],
+      "final_independent_readback_verified": true,
+      "name": "s3-hosted-controls.tar.gz",
+      "retry_policy": "same_saved_create_only_request_only_after_independent_absence_observation"
+    },
+    {
+      "events": [
+        {
+          "operation": "atomic_create_only_write",
+          "order_in_file_stream": 1,
+          "outcome": "transport_broken_pipe",
+          "raw_error_text": "Broken pipe (os error 32)",
+          "remote_side_effect": "unconfirmed",
+          "retained_response_sha256": "e2bacc8b7a93a71a1f41375de11d1bd342c63d84c21381eb71e2372ebd06262e"
+        },
+        {
+          "operation": "independent_file_info",
+          "order_in_file_stream": 2,
+          "outcome": "target_absent_observed",
+          "raw_error_text": "remote helper on desktop-ts failed with 1\nstdout:\n\nstderr:\nFileNotFoundError: [Errno 2] No such file or directory: 'campaign-rebuild-inputs.tar.gz'",
+          "remote_side_effect": "read_only",
+          "retained_response_sha256": "1bb602af2e95e373922d3fed338229290b1b27bef92d6c809e578100d00783de"
+        },
+        {
+          "bytes": 77709,
+          "operation": "atomic_create_only_write",
+          "order_in_file_stream": 3,
+          "outcome": "write_acknowledged",
+          "retained_response_sha256": "8c663f098fcf1172504574f7a5367bb1fbba013231ce65c0debd707f9fa6f892",
+          "sha256": "66d5109c48284179788a813ce30413080d99be72bd9c3a4a2d04165864d21c87"
+        },
+        {
+          "bytes": 77709,
+          "operation": "independent_file_info",
+          "order_in_file_stream": 4,
+          "outcome": "complete_size_and_sha256_verified",
+          "retained_response_sha256": "ece837e019e9278fa6c2316390fa6c0a88e73c8be0f80644daabd77525f5671e",
+          "sha256": "66d5109c48284179788a813ce30413080d99be72bd9c3a4a2d04165864d21c87"
+        }
+      ],
+      "final_independent_readback_verified": true,
+      "name": "campaign-rebuild-inputs.tar.gz",
+      "retry_policy": "same_saved_create_only_request_only_after_independent_absence_observation"
+    },
+    {
+      "events": [
+        {
+          "operation": "atomic_create_only_write",
+          "order_in_file_stream": 1,
+          "outcome": "transport_timeout",
+          "raw_error_text": "tool call error: tool call failed for `codex_apps/h.binary_write`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+          "remote_side_effect": "unconfirmed",
+          "retained_response_sha256": "a83895fb68b4d5046ac521560f11f8b8062e51f67a93c78112439ebbe9a88e2e"
+        },
+        {
+          "operation": "independent_file_info",
+          "order_in_file_stream": 2,
+          "outcome": "target_absent_observed",
+          "raw_error_text": "remote helper on desktop-ts failed with 1\nstdout:\n\nstderr:\nFileNotFoundError: [Errno 2] No such file or directory: 'root-register-c4-review.tar.gz'",
+          "remote_side_effect": "read_only",
+          "retained_response_sha256": "7c76a1f9719998476a2c1f3b7173168d2fd69baf08caeb0159c4ddd248705f2a"
+        },
+        {
+          "bytes": 472783,
+          "operation": "atomic_create_only_write",
+          "order_in_file_stream": 3,
+          "outcome": "write_acknowledged",
+          "retained_response_sha256": "e92b0308caaa028dbe97262465d59d5a9caa96bce324b5a701b527996f3be726",
+          "sha256": "b886177ab6eb346538360e1f9d3b55ec357dfb9365080f788a0d45521435c4af"
+        },
+        {
+          "bytes": 472783,
+          "operation": "independent_file_info",
+          "order_in_file_stream": 4,
+          "outcome": "complete_size_and_sha256_verified",
+          "retained_response_sha256": "6855bfd45bbf5b0d93887e1142ae40b58b42df4ba74f20e896e7a828a01ded39",
+          "sha256": "b886177ab6eb346538360e1f9d3b55ec357dfb9365080f788a0d45521435c4af"
+        }
+      ],
+      "final_independent_readback_verified": true,
+      "name": "root-register-c4-review.tar.gz",
+      "retry_policy": "same_saved_create_only_request_only_after_independent_absence_observation"
+    },
+    {
+      "events": [
+        {
+          "bytes": 555412,
+          "operation": "atomic_create_only_write",
+          "order_in_file_stream": 1,
+          "outcome": "write_acknowledged",
+          "retained_response_sha256": "91dde175e402a0f117d43c4adb3c8c0b48fdc80aa2c790b972de4f984f5b39c3",
+          "sha256": "11e80e9e329b8acd3034fcb44979dad0d1152789e2d8578d58c2a59335458111"
+        },
+        {
+          "bytes": 555412,
+          "operation": "independent_file_info",
+          "order_in_file_stream": 2,
+          "outcome": "complete_size_and_sha256_verified",
+          "retained_response_sha256": "f9f69b4a8fee52018d1bb33d545c30de5dc2c256ed685e883ce7293b915ca986",
+          "sha256": "11e80e9e329b8acd3034fcb44979dad0d1152789e2d8578d58c2a59335458111"
+        }
+      ],
+      "final_independent_readback_verified": true,
+      "name": "s3-ci-status-snapshot.tar.gz",
+      "retry_policy": "same_saved_create_only_request_only_after_independent_absence_observation"
+    }
+  ],
+  "source_revision_of_original_campaign": "3c98e08e92094bb79ac811b682192d7252a7c325",
+  "transport_failures_are_not_native_failures": true,
+  "verified_delivery_files": [
+    {
+      "basename": "public-ci-observations.tar.gz",
+      "bytes": 399522,
+      "group": "approved_additional_archives",
+      "independent_readback": "file_info",
+      "sha256": "ef700d57ffdb4ae19fd2cc7701de469a292ef593289bafe0147e3582664fbabd",
+      "verified": true
+    },
+    {
+      "basename": "root-register-c4-review.tar.gz",
+      "bytes": 472783,
+      "group": "approved_additional_archives",
+      "independent_readback": "file_info",
+      "sha256": "b886177ab6eb346538360e1f9d3b55ec357dfb9365080f788a0d45521435c4af",
+      "verified": true
+    },
+    {
+      "basename": "s3-ci-status-snapshot.tar.gz",
+      "bytes": 555412,
+      "group": "approved_additional_archives",
+      "independent_readback": "file_info",
+      "sha256": "11e80e9e329b8acd3034fcb44979dad0d1152789e2d8578d58c2a59335458111",
+      "verified": true
+    },
+    {
+      "basename": "s3-hosted-controls.tar.gz",
+      "bytes": 247966,
+      "group": "approved_additional_archives",
+      "independent_readback": "file_info",
+      "sha256": "533cf6ff4fc1330a6a0b240ba8c9ae8d397e36f81d93e2c517b970a90fd9f41b",
+      "verified": true
+    },
+    {
+      "basename": "source-records-controller.tar.gz",
+      "bytes": 618149,
+      "group": "approved_additional_archives",
+      "independent_readback": "file_info",
+      "sha256": "5e5f90a60055c59670130faff760a9413fde74eabe1dd5e89a86782d491dbbd3",
+      "verified": true
+    },
+    {
+      "basename": "FINDINGS.md",
+      "bytes": 10960,
+      "group": "campaign_outputs",
+      "independent_readback": "complete_read_multiple_files_and_local_byte_hash",
+      "sha256": "3e2bb3f073b5762045941b3623ede1fea283127bdae1e03b3ab3a1e85c50bd6f",
+      "verified": true
+    },
+    {
+      "basename": "native-campaign-failure-evidence.filelist.tsv",
+      "bytes": 15142,
+      "group": "campaign_outputs",
+      "independent_readback": "complete_read_multiple_files_and_local_byte_hash",
+      "sha256": "f9cc0676c69ddb01642fa9dca4812c6b0d571d4cda6a7a24b87eba7e9963cb9f",
+      "verified": true
+    },
+    {
+      "basename": "native-campaign-failure-evidence.manifest.json",
+      "bytes": 48584,
+      "group": "campaign_outputs",
+      "independent_readback": "complete_read_multiple_files_and_local_byte_hash",
+      "sha256": "357bc091c19faa009c385503acc3e8927c2c91ac32c9c3c158c869dc2e8a4522",
+      "verified": true
+    },
+    {
+      "basename": "native-campaign-failure-evidence.tar.xz",
+      "bytes": 5906836,
+      "group": "campaign_outputs",
+      "independent_readback": "file_info",
+      "sha256": "6c8a6fa91659283a7d7ad85795a82dfc7ea8f3f64cfb39d5a0c2a20465a7757b",
+      "verified": true
+    },
+    {
+      "basename": "native-campaign-failure-evidence.tar.xz.sha256",
+      "bytes": 106,
+      "group": "campaign_outputs",
+      "independent_readback": "complete_read_multiple_files_and_local_byte_hash",
+      "sha256": "502ac1fe0cd5a1a24758a013c2b21820b41b15bbbd3ec7bd803f0a1a645d78b7",
+      "verified": true
+    },
+    {
+      "basename": "native-campaign-failure-evidence.verification.json",
+      "bytes": 18181,
+      "group": "campaign_outputs",
+      "independent_readback": "complete_read_multiple_files_and_local_byte_hash",
+      "sha256": "1ed7f162248fb00ea222449127b57039c211883c828e8251a19f65ca1ce8950a",
+      "verified": true
+    }
+  ],
+  "whole_chain_qualification_inferred": false
+}

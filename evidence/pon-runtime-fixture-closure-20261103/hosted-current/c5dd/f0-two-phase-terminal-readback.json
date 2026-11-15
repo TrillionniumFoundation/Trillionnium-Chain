@@ -1,0 +1,938 @@
+{
+  "schema": "c5dd7c-f0-two-phase-terminal-readback-v1",
+  "observed_utc": "2026-11-03T22:42:54.263272+00:00",
+  "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+  "run_id": 41728500288,
+  "job_id": 126239414945,
+  "artifact_receipt": {
+    "schema": "artifact-download-digest-check-v1",
+    "observed_utc": "2026-11-03T22:33:08.105346+00:00",
+    "artifact_id": 13278235080,
+    "file_name": "c5dd7c-f0-13278235080.zip",
+    "file_id": "file_000000000ef48230a525a6eff177fdac",
+    "metadata": {
+      "id": 13278235080,
+      "name": "pon-fixed-host-root-f0-x64-head-c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1-1",
+      "size_in_bytes": 16549786,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13278235080",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13278235080/zip",
+      "expired": false,
+      "created_at": "2026-11-03T22:30:15Z",
+      "expires_at": "2026-12-03T22:30:13Z",
+      "updated_at": "2026-11-03T22:30:15Z",
+      "digest": "sha256:733d30784e290779e9dc8f74a1f384712de681b4135e15859a7c2e5cadf067a3",
+      "workflow_run": {
+        "id": 41728500288,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1"
+      }
+    },
+    "matched": true,
+    "data_only": true,
+    "executed": false,
+    "actual_bytes": 16549786,
+    "actual_sha256": "733d30784e290779e9dc8f74a1f384712de681b4135e15859a7c2e5cadf067a3"
+  },
+  "source_before_after": {
+    "base": null,
+    "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 882506480,
+    "tracked_entries": 7723,
+    "tracked_worktree_verified": true
+  },
+  "binary": {
+    "build_artifact": "/home/runner/work/_temp/target-fixed-host-root-f0/release/deps/public_v3_multiprocess-64e29df06cf605a6",
+    "bytes": 11570832,
+    "compiler_profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "path": "/home/runner/work/_temp/pon-fixed-host-root-f0-41728500288-1/prepared/public_v3_multiprocess.bin",
+    "sha256": "809fcd2165f5e77a3bf093f78e1b2af63f993302932524f25f29d240d7054249"
+  },
+  "prepared_sha256": "e9e15e11d23e574c885bb56f306e97d7f7bcce399cacca83669fc3f06b279561",
+  "native_step": {
+    "command": [
+      "/home/runner/work/_temp/pon-fixed-host-root-f0-41728500288-1/prepared/public_v3_multiprocess.bin",
+      "--exact",
+      "fixed_public_host_root_rejection_and_signed_confirmation_diagnostic",
+      "--ignored",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "complete_success": false,
+    "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+    "elapsed_ns": 73411644493,
+    "elapsed_seconds": 73.411644493,
+    "error": null,
+    "name": "supplement",
+    "outer_stage_timeout_seconds": 540,
+    "returncode": 101,
+    "stderr": "supplement.stderr.log",
+    "stderr_bytes": 374,
+    "stderr_sha256": "fb824ab2a9616172190c06ae7cb3ee20a2e2ed7789d169afedadf11afe6954d4",
+    "stderr_truncated": false,
+    "stdout": "supplement.stdout.log",
+    "stdout_bytes": 296,
+    "stdout_sha256": "e17b950956627bd9c848b4bd6385cffcdb66549742488877fe3b9019f5331ae9",
+    "stdout_truncated": false
+  },
+  "native_stdout": "\nrunning 1 test\ntest fixed_public_host_root_rejection_and_signed_confirmation_diagnostic ... FAILED\n\nfailures:\n\nfailures:\n    fixed_public_host_root_rejection_and_signed_confirmation_diagnostic\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 24 filtered out; finished in 73.41s\n\n",
+  "native_stderr": "\nthread 'fixed_public_host_root_rejection_and_signed_confirmation_diagnostic' (5385) panicked at crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs:1423:5:\nF0 criteria failed; all raw evidence retained at /home/runner/work/_temp/pon-fixed-host-root-f0-41728500288-1/execution/raw\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n",
+  "original_report": {
+    "member": "execution/raw/report.json",
+    "bytes": 10622010,
+    "sha256": "8ec53a8d10daa0443efec7b8facdf1d460a8e6a0e905cf3c449e56028595d7f6"
+  },
+  "failure": "NATIVE_F0_FAILED",
+  "report_validation_failure": "BASELINE_MUST_PASS",
+  "post_checks": {
+    "binary": {
+      "complete_success": true,
+      "failure": null
+    },
+    "resources": {
+      "complete_success": true,
+      "failure": null
+    },
+    "source": {
+      "complete_success": true,
+      "failure": null
+    }
+  },
+  "inputs": {
+    "actor_call_cap": 480,
+    "attackers": 24,
+    "business_blocks": 21,
+    "confirmation_depth": 6,
+    "controller_resource_boundary_samples": 6,
+    "controller_resource_schema": "fixed-host-root-controller-resources-v1",
+    "cpu_burst_ns": 2000000000,
+    "cpu_refill_ns_per_second": 250000000,
+    "f1_implemented": false,
+    "four_second_slo_ns": 4000000000,
+    "legacy_four_second_from_zero_epoch_changed": false,
+    "m06_workers": 1,
+    "phase_profile": "fixed-public-root-phase-external-actors-v1",
+    "phase_seconds": 30,
+    "planned_business_packets": 42,
+    "planned_complete_runs": 1,
+    "planned_confirmations": 6,
+    "planned_phases": [
+      "baseline",
+      "valid-work-root"
+    ],
+    "round_start_seconds": [
+      1,
+      5,
+      9
+    ],
+    "seed_blocks": 4,
+    "seed_transfers": 1024,
+    "slo_starts_at_scheduled_offset": true,
+    "start_reserve_ns": 100000000
+  },
+  "phases": [
+    {
+      "mode": "baseline",
+      "planned_rounds": 3,
+      "observed_rounds": 2,
+      "unobserved_rounds": 1,
+      "original_30s_confirmed": 1,
+      "four_second_slo_successes": 0,
+      "all_planned_rounds": [
+        {
+          "actual_ended_ns": 23797857385,
+          "actual_started_ns": 1000326602,
+          "confirmed_inside_original_window": true,
+          "elapsed_from_scheduled_ns": 22797857385,
+          "end_lateness_from_four_second_deadline_ns": 18797857385,
+          "four_second_slo_met": false,
+          "observed_exactly_once": true,
+          "phase": "baseline",
+          "round": 0,
+          "scheduled_offset_ns": 1000000000,
+          "start_lateness_from_schedule_ns": 326602
+        },
+        {
+          "actual_ended_ns": 30001538179,
+          "actual_started_ns": 23797869684,
+          "confirmed_inside_original_window": false,
+          "elapsed_from_scheduled_ns": 25001538179,
+          "end_lateness_from_four_second_deadline_ns": 21001538179,
+          "four_second_slo_met": false,
+          "observed_exactly_once": true,
+          "phase": "baseline",
+          "round": 1,
+          "scheduled_offset_ns": 5000000000,
+          "start_lateness_from_schedule_ns": 18797869684
+        },
+        {
+          "actual_ended_ns": null,
+          "actual_started_ns": null,
+          "confirmed_inside_original_window": false,
+          "elapsed_from_scheduled_ns": null,
+          "end_lateness_from_four_second_deadline_ns": null,
+          "four_second_slo_met": false,
+          "observed_exactly_once": false,
+          "phase": "baseline",
+          "round": 2,
+          "scheduled_offset_ns": 9000000000,
+          "start_lateness_from_schedule_ns": null
+        }
+      ],
+      "native_phase_criteria_met": false,
+      "receiver_client_state_equal": false,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "budget_depletion_observed": false,
+      "host_controller": {
+        "binary_sha256": "809fcd2165f5e77a3bf093f78e1b2af63f993302932524f25f29d240d7054249",
+        "cleanup": {
+          "after": {
+            "group": {
+              "empty": true,
+              "evidence": "exact cgroup path absent after same-boot ownership validation",
+              "exists": false,
+              "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-41728500288-1-fixed-host-root-f0-baseline-5387.service"
+            },
+            "manager": {
+              "ActiveState": "inactive",
+              "ControlGroup": "",
+              "Description": "trnm-fixed-root-41728500288-1-fixed-host-root-f0-baseline-5387.service",
+              "Group": "",
+              "Id": "trnm-fixed-root-41728500288-1-fixed-host-root-f0-baseline-5387.service",
+              "InvocationID": "",
+              "KillMode": "control-group",
+              "LoadState": "not-found",
+              "MainPID": "0",
+              "Restart": "no",
+              "Slice": "",
+              "SubState": "dead",
+              "Transient": "no",
+              "User": "",
+              "WorkingDirectory": ""
+            }
+          },
+          "before": {
+            "group": {
+              "empty": true,
+              "evidence": "exact cgroup path absent after same-boot ownership validation",
+              "exists": false,
+              "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-41728500288-1-fixed-host-root-f0-baseline-5387.service"
+            },
+            "manager": {
+              "ActiveState": "inactive",
+              "ControlGroup": "",
+              "Description": "trnm-fixed-root-41728500288-1-fixed-host-root-f0-baseline-5387.service",
+              "Group": "",
+              "Id": "trnm-fixed-root-41728500288-1-fixed-host-root-f0-baseline-5387.service",
+              "InvocationID": "",
+              "KillMode": "control-group",
+              "LoadState": "not-found",
+              "MainPID": "0",
+              "Restart": "no",
+              "Slice": "",
+              "SubState": "dead",
+              "Transient": "no",
+              "User": "",
+              "WorkingDirectory": ""
+            }
+          },
+          "cleanup_attempted": false,
+          "failure": null,
+          "known_empty": true,
+          "ownership_validated": true,
+          "phase": "baseline",
+          "remaining": "observed-empty",
+          "service": "trnm-fixed-root-41728500288-1-fixed-host-root-f0-baseline-5387.service",
+          "stop_step": null
+        },
+        "consensus_or_model_authority": false,
+        "controller_after": {
+          "actual_parent_required": true,
+          "identity": {
+            "cgroup": {
+              "device": 31,
+              "gid": 0,
+              "inode": 7281,
+              "mode": 493,
+              "uid": 0
+            },
+            "process": {
+              "boot_id": "87b6fc31-fdf1-418e-8f74-b863fc322a84",
+              "cgroup": "/system.slice/trnm-fixed-root-f0-41728500288-1-fixed-host-root-f0.service",
+              "executable": {
+                "bytes": 11570832,
+                "device": 66305,
+                "inode": 9455386,
+                "modified_nanoseconds": 287959878,
+                "modified_seconds": 1793744934
+              },
+              "parent_pid": 5299,
+              "pid": 5384,
+              "start_ticks": 109607
+            }
+          },
+          "limits": {
+            "cpu.max": "400000 100000",
+            "memory.max": "17179869184"
+          },
+          "scope": "live external controller only; phase Host checked separately"
+        },
+        "controller_before": {
+          "actual_parent_required": true,
+          "identity": {
+            "cgroup": {
+              "device": 31,
+              "gid": 0,
+              "inode": 7281,
+              "mode": 493,
+              "uid": 0
+            },
+            "process": {
+              "boot_id": "87b6fc31-fdf1-418e-8f74-b863fc322a84",
+              "cgroup": "/system.slice/trnm-fixed-root-f0-41728500288-1-fixed-host-root-f0.service",
+              "executable": {
+                "bytes": 11570832,
+                "device": 66305,
+                "inode": 9455386,
+                "modified_nanoseconds": 287959878,
+                "modified_seconds": 1793744934
+              },
+              "parent_pid": 5299,
+              "pid": 5384,
+              "start_ticks": 109607
+            }
+          },
+          "limits": {
+            "cpu.max": "400000 100000",
+            "memory.max": "17179869184"
+          },
+          "scope": "live external controller only; phase Host checked separately"
+        },
+        "failure": null,
+        "final_host_errors": [],
+        "host_readiness_only": true,
+        "job_sha256": "8c40696cceb8d52ca873cf675b957abac93bb5a230d5d0735c88cf2b316bca3d",
+        "parent_preexisting": false,
+        "passed": true,
+        "schema": "fixed-public-root-phase-external-actors-v1",
+        "service": "trnm-fixed-root-41728500288-1-fixed-host-root-f0-baseline-5387.service",
+        "service_or_depletion_criteria_met": false,
+        "systemd_argv": [
+          "sudo",
+          "-n",
+          "systemd-run",
+          "--unit=trnm-fixed-root-41728500288-1-fixed-host-root-f0-baseline-5387.service",
+          "--description=Trillionnium F0 ROOT job 8c40696cceb8d52ca873cf675b957abac93bb5a230d5d0735c88cf2b316bca3d",
+          "--wait",
+          "--pipe",
+          "--collect",
+          "--service-type=exec",
+          "--expand-environment=no",
+          "--slice=trnmponpublic.slice",
+          "--uid=1001",
+          "--gid=1001",
+          "--working-directory=/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "--property=KillMode=control-group",
+          "--property=TimeoutStopSec=20s",
+          "--property=RuntimeMaxSec=300s",
+          "--property=Nice=10",
+          "--property=Delegate=no",
+          "--property=NoNewPrivileges=yes",
+          "--property=CapabilityBoundingSet=",
+          "--setenv=PATH=/snap/bin:/home/runner/.local/bin:/opt/pipx_bin:/home/runner/.cargo/bin:/home/runner/.config/composer/vendor/bin:/usr/local/.ghcup/bin:/home/runner/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+          "--setenv=PYTHONDONTWRITEBYTECODE=1",
+          "/usr/bin/python3",
+          "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/run_fixed_root_phase_host.py",
+          "--inside",
+          "--job",
+          "/home/runner/work/_temp/pon-fixed-host-root-f0-41728500288-1/execution/raw/baseline-fixed-root-host-control/root-phase-job.json",
+          "--binary",
+          "/home/runner/work/_temp/pon-fixed-host-root-f0-41728500288-1/prepared/public_v3_multiprocess.bin",
+          "--service",
+          "trnm-fixed-root-41728500288-1-fixed-host-root-f0-baseline-5387.service",
+          "--uid",
+          "1001",
+          "--gid",
+          "1001"
+        ],
+        "systemd_run_exit": 0
+      },
+      "outside_after_limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "outside_after_counters": {
+        "cgroup.events": "populated 0\nfrozen 0",
+        "cpu.stat": "usage_usec 8346713\nuser_usec 2815771\nsystem_usec 5530942\nnice_usec 2743000\ncore_sched.force_idle_usec 0\nnr_periods 346\nnr_throttled 329\nthrottled_usec 38116556\nnr_bursts 0\nburst_usec 0",
+        "memory.current": "10534912",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "pids.current": "0"
+      }
+    },
+    {
+      "mode": "valid-work-root",
+      "planned_rounds": 3,
+      "observed_rounds": 1,
+      "unobserved_rounds": 2,
+      "original_30s_confirmed": 0,
+      "four_second_slo_successes": 0,
+      "all_planned_rounds": [
+        {
+          "actual_ended_ns": 30053144247,
+          "actual_started_ns": 1000908288,
+          "confirmed_inside_original_window": false,
+          "elapsed_from_scheduled_ns": 29053144247,
+          "end_lateness_from_four_second_deadline_ns": 25053144247,
+          "four_second_slo_met": false,
+          "observed_exactly_once": true,
+          "phase": "valid-work-root",
+          "round": 0,
+          "scheduled_offset_ns": 1000000000,
+          "start_lateness_from_schedule_ns": 908288
+        },
+        {
+          "actual_ended_ns": null,
+          "actual_started_ns": null,
+          "confirmed_inside_original_window": false,
+          "elapsed_from_scheduled_ns": null,
+          "end_lateness_from_four_second_deadline_ns": null,
+          "four_second_slo_met": false,
+          "observed_exactly_once": false,
+          "phase": "valid-work-root",
+          "round": 1,
+          "scheduled_offset_ns": 5000000000,
+          "start_lateness_from_schedule_ns": null
+        },
+        {
+          "actual_ended_ns": null,
+          "actual_started_ns": null,
+          "confirmed_inside_original_window": false,
+          "elapsed_from_scheduled_ns": null,
+          "end_lateness_from_four_second_deadline_ns": null,
+          "four_second_slo_met": false,
+          "observed_exactly_once": false,
+          "phase": "valid-work-root",
+          "round": 2,
+          "scheduled_offset_ns": 9000000000,
+          "start_lateness_from_schedule_ns": null
+        }
+      ],
+      "native_phase_criteria_met": false,
+      "receiver_client_state_equal": false,
+      "verifier_errors": [],
+      "budget_depletion_observed": false,
+      "host_controller": {
+        "binary_sha256": "809fcd2165f5e77a3bf093f78e1b2af63f993302932524f25f29d240d7054249",
+        "cleanup": {
+          "after": {
+            "group": {
+              "empty": true,
+              "evidence": "exact cgroup path absent after same-boot ownership validation",
+              "exists": false,
+              "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-41728500288-1-fixed-host-root-f0-valid-work-root-5474.service"
+            },
+            "manager": {
+              "ActiveState": "inactive",
+              "ControlGroup": "",
+              "Description": "trnm-fixed-root-41728500288-1-fixed-host-root-f0-valid-work-root-5474.service",
+              "Group": "",
+              "Id": "trnm-fixed-root-41728500288-1-fixed-host-root-f0-valid-work-root-5474.service",
+              "InvocationID": "",
+              "KillMode": "control-group",
+              "LoadState": "not-found",
+              "MainPID": "0",
+              "Restart": "no",
+              "Slice": "",
+              "SubState": "dead",
+              "Transient": "no",
+              "User": "",
+              "WorkingDirectory": ""
+            }
+          },
+          "before": {
+            "group": {
+              "empty": true,
+              "evidence": "exact cgroup path absent after same-boot ownership validation",
+              "exists": false,
+              "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-41728500288-1-fixed-host-root-f0-valid-work-root-5474.service"
+            },
+            "manager": {
+              "ActiveState": "inactive",
+              "ControlGroup": "",
+              "Description": "trnm-fixed-root-41728500288-1-fixed-host-root-f0-valid-work-root-5474.service",
+              "Group": "",
+              "Id": "trnm-fixed-root-41728500288-1-fixed-host-root-f0-valid-work-root-5474.service",
+              "InvocationID": "",
+              "KillMode": "control-group",
+              "LoadState": "not-found",
+              "MainPID": "0",
+              "Restart": "no",
+              "Slice": "",
+              "SubState": "dead",
+              "Transient": "no",
+              "User": "",
+              "WorkingDirectory": ""
+            }
+          },
+          "cleanup_attempted": false,
+          "failure": null,
+          "known_empty": true,
+          "ownership_validated": true,
+          "phase": "valid-work-root",
+          "remaining": "observed-empty",
+          "service": "trnm-fixed-root-41728500288-1-fixed-host-root-f0-valid-work-root-5474.service",
+          "stop_step": null
+        },
+        "consensus_or_model_authority": false,
+        "controller_after": {
+          "actual_parent_required": true,
+          "identity": {
+            "cgroup": {
+              "device": 31,
+              "gid": 0,
+              "inode": 7281,
+              "mode": 493,
+              "uid": 0
+            },
+            "process": {
+              "boot_id": "87b6fc31-fdf1-418e-8f74-b863fc322a84",
+              "cgroup": "/system.slice/trnm-fixed-root-f0-41728500288-1-fixed-host-root-f0.service",
+              "executable": {
+                "bytes": 11570832,
+                "device": 66305,
+                "inode": 9455386,
+                "modified_nanoseconds": 287959878,
+                "modified_seconds": 1793744934
+              },
+              "parent_pid": 5299,
+              "pid": 5384,
+              "start_ticks": 109607
+            }
+          },
+          "limits": {
+            "cpu.max": "400000 100000",
+            "memory.max": "17179869184"
+          },
+          "scope": "live external controller only; phase Host checked separately"
+        },
+        "controller_before": {
+          "actual_parent_required": true,
+          "identity": {
+            "cgroup": {
+              "device": 31,
+              "gid": 0,
+              "inode": 7281,
+              "mode": 493,
+              "uid": 0
+            },
+            "process": {
+              "boot_id": "87b6fc31-fdf1-418e-8f74-b863fc322a84",
+              "cgroup": "/system.slice/trnm-fixed-root-f0-41728500288-1-fixed-host-root-f0.service",
+              "executable": {
+                "bytes": 11570832,
+                "device": 66305,
+                "inode": 9455386,
+                "modified_nanoseconds": 287959878,
+                "modified_seconds": 1793744934
+              },
+              "parent_pid": 5299,
+              "pid": 5384,
+              "start_ticks": 109607
+            }
+          },
+          "limits": {
+            "cpu.max": "400000 100000",
+            "memory.max": "17179869184"
+          },
+          "scope": "live external controller only; phase Host checked separately"
+        },
+        "failure": null,
+        "final_host_errors": [],
+        "host_readiness_only": true,
+        "job_sha256": "93a4b05519d272f482f1b5b650fbc1f0bc894c1ed2e4fe2c3919c6618dd372d0",
+        "parent_preexisting": true,
+        "passed": true,
+        "schema": "fixed-public-root-phase-external-actors-v1",
+        "service": "trnm-fixed-root-41728500288-1-fixed-host-root-f0-valid-work-root-5474.service",
+        "service_or_depletion_criteria_met": false,
+        "systemd_argv": [
+          "sudo",
+          "-n",
+          "systemd-run",
+          "--unit=trnm-fixed-root-41728500288-1-fixed-host-root-f0-valid-work-root-5474.service",
+          "--description=Trillionnium F0 ROOT job 93a4b05519d272f482f1b5b650fbc1f0bc894c1ed2e4fe2c3919c6618dd372d0",
+          "--wait",
+          "--pipe",
+          "--collect",
+          "--service-type=exec",
+          "--expand-environment=no",
+          "--slice=trnmponpublic.slice",
+          "--uid=1001",
+          "--gid=1001",
+          "--working-directory=/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "--property=KillMode=control-group",
+          "--property=TimeoutStopSec=20s",
+          "--property=RuntimeMaxSec=300s",
+          "--property=Nice=10",
+          "--property=Delegate=no",
+          "--property=NoNewPrivileges=yes",
+          "--property=CapabilityBoundingSet=",
+          "--setenv=PATH=/snap/bin:/home/runner/.local/bin:/opt/pipx_bin:/home/runner/.cargo/bin:/home/runner/.config/composer/vendor/bin:/usr/local/.ghcup/bin:/home/runner/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+          "--setenv=PYTHONDONTWRITEBYTECODE=1",
+          "/usr/bin/python3",
+          "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/run_fixed_root_phase_host.py",
+          "--inside",
+          "--job",
+          "/home/runner/work/_temp/pon-fixed-host-root-f0-41728500288-1/execution/raw/valid-work-root-fixed-root-host-control/root-phase-job.json",
+          "--binary",
+          "/home/runner/work/_temp/pon-fixed-host-root-f0-41728500288-1/prepared/public_v3_multiprocess.bin",
+          "--service",
+          "trnm-fixed-root-41728500288-1-fixed-host-root-f0-valid-work-root-5474.service",
+          "--uid",
+          "1001",
+          "--gid",
+          "1001"
+        ],
+        "systemd_run_exit": 0
+      },
+      "outside_after_limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "outside_after_counters": {
+        "cgroup.events": "populated 0\nfrozen 0",
+        "cpu.stat": "usage_usec 17295117\nuser_usec 8521059\nsystem_usec 8774058\nnice_usec 8319000\ncore_sched.force_idle_usec 0\nnr_periods 705\nnr_throttled 686\nthrottled_usec 94705639\nnr_bursts 0\nburst_usec 0",
+        "memory.current": "20819968",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "pids.current": "0"
+      }
+    }
+  ],
+  "planned_confirmations": 6,
+  "observed_rounds": 3,
+  "original_30s_confirmed_total": 1,
+  "four_second_slo_successes": 0,
+  "planned_business_packet_exposures": 42,
+  "all_planned_business_packets": [
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 0,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 1,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 2,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 3,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 4,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 5,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 6,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 7,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 8,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 9,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 10,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 11,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 12,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 13,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 14,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 15,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 16,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 17,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 18,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 19,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 20,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 3,
+      "packet_index": 0,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 4,
+      "packet_index": 1,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 3,
+      "packet_index": 2,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 3,
+      "packet_index": 3,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 2,
+      "packet_index": 4,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 5,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 6,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 7,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 8,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 9,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 10,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 11,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 12,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 13,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 14,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 15,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 16,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 17,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 18,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 19,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 20,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    }
+  ],
+  "all_services_known_empty": true,
+  "finalization_complete_success": false,
+  "controller_resources_complete": true,
+  "scope": "One original F0 pair. Original 30s confirmation and scheduled four-second SLO remain distinct. Unobserved planned rounds retain null timestamps; no later-source or production qualification."
+}

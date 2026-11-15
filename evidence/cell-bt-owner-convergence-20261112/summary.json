@@ -1,0 +1,384 @@
+{
+  "baseline_source": "040fb0cf460a6db568f0b4ec5ba581add3f2d2ba",
+  "candidate_command_coverage": {
+    "coverage_complete": true,
+    "covered": 74,
+    "expected": 74,
+    "index": "candidate-gate-coverage.json",
+    "index_sha256": "274c8356b6a0199501cbdbdbfff06d59a56133b75ab6873b06489c1daa40b30b",
+    "original_summaries_rewritten": false,
+    "scope": "Separately identified observations on the frozen source; raw stream size/SHA bindings retained.",
+    "single_original_campaign_claimed_passed": false
+  },
+  "custody": {
+    "all_parent_tasks_currently_funded": true,
+    "child_journal": {
+      "children": 760,
+      "context_sha256": "b5adf3562d23231f8e5c085388111dfa7eb5f5d0ce241bf5d1810997be80b177",
+      "done": 760,
+      "effect_dispatch_authority": false,
+      "events": 1568,
+      "groups": 48,
+      "payment_or_positive_verdict": false,
+      "pending": 0,
+      "root": "693d78552d84c614e48ef0614d727d54613994e492878305f16987fc37bf21ea",
+      "schema": "trnm.native-cell-group-child-journal.v3",
+      "unstarted": 0
+    },
+    "cold_restore": {
+      "actual_target_readback": true,
+      "anchored_reopen": true,
+      "bep52_cache_absent": true,
+      "cancellation_used": false,
+      "consumer_chunks": 95,
+      "destroyed_provider_arena_bytes": [
+        70254592,
+        70254592
+      ],
+      "four_original_shard_slots": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "future_retention_positive": false,
+      "grouped_child_journal_cold_reopened": true,
+      "m12_funding_admitted": true,
+      "native_development_ledger": true,
+      "native_erasure_shard_recovery": true,
+      "native_ledger_height_enforced": true,
+      "native_task_payment": false,
+      "parent_settlement_on_hold": true,
+      "retained_from_bep52_received_cache": true,
+      "retention_heights_are_research_terms": true,
+      "root_member_payload_current_readback_after_catalog_overwrite": false,
+      "source_cache_absent": true,
+      "source_catalog_arena_overwritten_bytes": 536870912,
+      "source_catalog_not_used_for_reconstruction": true,
+      "source_catalog_payload_repaired": false
+    },
+    "detected_damage": 190,
+    "future_retention_qualified": false,
+    "group_settlement_qualified": false,
+    "initial_slots": 570,
+    "logical_work_items": 791,
+    "m12_parent_claims": 79,
+    "native_ledger_coins_are_development_only": true,
+    "native_task_payment_submitted": false,
+    "repair_groups": 12,
+    "repaired_slots": 190,
+    "service_fee_paid": false,
+    "storage_groups": 36,
+    "v3_children": 760,
+    "wire_cache_metadata_grant": {
+      "original_128_temporary_wire_gate_passed": false,
+      "repair": {
+        "expected_chunk_rows": 190,
+        "expected_logical_bytes": 139892882,
+        "expected_manifest_rows": 190,
+        "full_payload_profile_not_unconditionally_supported": true,
+        "input_and_consumer_max_manifest_rows": 128,
+        "max_chunk_rows": 2048,
+        "max_database_bytes": 1073741824,
+        "max_logical_bytes": 536870912,
+        "max_manifest_rows": 768,
+        "new_temporary_wire_metadata_grant": true,
+        "original_128_temporary_wire_gate_passed": false,
+        "original_absolute_deadline": true,
+        "profile": "native-grouped-temporary-wire-cache-v3"
+      },
+      "storage": {
+        "expected_chunk_rows": 570,
+        "expected_logical_bytes": 419678646,
+        "expected_manifest_rows": 570,
+        "full_payload_profile_not_unconditionally_supported": true,
+        "input_and_consumer_max_manifest_rows": 128,
+        "max_chunk_rows": 2048,
+        "max_database_bytes": 1073741824,
+        "max_logical_bytes": 536870912,
+        "max_manifest_rows": 768,
+        "new_temporary_wire_metadata_grant": true,
+        "original_128_temporary_wire_gate_passed": false,
+        "original_absolute_deadline": true,
+        "profile": "native-grouped-temporary-wire-cache-v3"
+      }
+    }
+  },
+  "hepta_final_use": false,
+  "implementation_commit": "8dc744e03d95b0adcf65fc87471b41e89f1287c3",
+  "model": {
+    "actual_model_run": "observed_two_forwards",
+    "cargo_profile": "release",
+    "chunks": 95,
+    "complete_local_selection": {
+      "cts1": "d62adc92ac74dd40d0b68b4f20e299d89f93d95c552ce9161f629c14d3db91822fc963a40985261a9e7e9934ae721aec3d6715b0ed5f27235432b1087705c2eb",
+      "durable_current": false,
+      "execution_authorized": false,
+      "revision": 1,
+      "tcv1": "c17f3ed2df227108b805fc126fcb21ccb17edc0a48a433db338c55271d9de3139cc1a4317da76f26260fd3a6969bcb59ca3780a4d16af2203628f14271c73cd4"
+    },
+    "config_sha256": "f0e314ac93b175ada1a56969cfef58fe4e0236ed8c3e6b1cb0c2764f8b230150",
+    "controller_job": "1a1cf4e5d08-2564-19e3",
+    "cts1_envelope_transport_scope": "Original CTS1 envelope is independently bound by the outer content pin; it is not transported in the BEP52 plan. The runtime snapshot JSON is transported and sealed; its described host dependency files remain separately pinned host dependencies.",
+    "environment_bytes": 7437278,
+    "environment_generation": 2,
+    "forward_observations": {
+      "action_interpretation": "Unique argmax of the original recorded scores_q32 entries in action_ids order; offline interpretation, not newly generated text.",
+      "bytes": 2354,
+      "correct_recorded_actions": 1,
+      "general_accuracy_benchmark_qualified": false,
+      "incorrect_recorded_actions": 1,
+      "model_capability_improvement_demonstrated": false,
+      "new_model_inference_executed_for_interpretation": false,
+      "new_text_generated_for_interpretation": false,
+      "record": "model/next-use-observations.json",
+      "requests": [
+        {
+          "derived_action_is_correct": true,
+          "derived_unique_argmax_action": "yes",
+          "input_sha256": "fa02475d145785b5a890da77ae33906453ac1f4268e181137b5d875d1e9974ed",
+          "mathematically_correct_answer": "yes",
+          "prompt": "Answer with only yes or no. Is 8517 greater than 8516?",
+          "recorded_action_ids": [
+            "no",
+            "yes"
+          ],
+          "recorded_execution_ns": 71103460,
+          "recorded_input_tokens": 51,
+          "recorded_logits_sha256": "29730e6c15d3147b0641d772b6d7d6121f61ed17b81bf0926163a05a9c7afa14",
+          "recorded_scores_q32": [
+            116005421056,
+            124107309056
+          ],
+          "request_id": "chain-capacity-dc0357-v2-fad809b14a2e-1"
+        },
+        {
+          "derived_action_is_correct": false,
+          "derived_unique_argmax_action": "yes",
+          "input_sha256": "f500cab06315f2e2f345b54e40656524a8e3a52543d07f1b509504179bf02515",
+          "mathematically_correct_answer": "no",
+          "prompt": "Answer with only yes or no. Is 8517 greater than 8518?",
+          "recorded_action_ids": [
+            "no",
+            "yes"
+          ],
+          "recorded_execution_ns": 67700023,
+          "recorded_input_tokens": 51,
+          "recorded_logits_sha256": "90d35f1c7ee4cb95c9bce20969b19818fefe5ac0268dde664cc4fd9c72b0de42",
+          "recorded_scores_q32": [
+            115107659776,
+            122971414528
+          ],
+          "request_id": "chain-capacity-dc0357-v2-fad809b14a2e-2"
+        }
+      ],
+      "review": "reviews/discovery/model-two-forward-score-interpretation-v1.json",
+      "review_sha256": "339a008d92c6df0146a498e739a2353c1542a1740853c471954ef6a6d2e54bb8",
+      "sha256": "5cc5bf2bdd55158d6636689de9f72840b88cbc072a21dfd0ea70eb9a5768a097"
+    },
+    "host_runtime_inventory_separate_from_bt_payload": true,
+    "input_files": 30,
+    "model_bytes": 272189990,
+    "model_efficacy_qualified": false,
+    "model_parent_generation": 1,
+    "native_result": "model/native-result.json",
+    "native_result_sha256": "7e69ad30d35e984cf8e7d871bce91f7ec50f5e7c530a29c584454eab79c262a0",
+    "native_started": true,
+    "no_same_operation_replay": true,
+    "normal_main_bytes": 19752832,
+    "normal_main_sha256": "ef4d33be1574c27852187546f4393f301eb175b8246f647ce3d15a5d21fd2155",
+    "operation": "bf34a669dc4b3617d97bee356f1cadf3504f3c5993999c5136ce1d6b0cd6f9c2",
+    "operation_pins": {
+      "bep52_plan": "43db163072a392e46f46f4b53cd4df62eb88a4b5c29da734f8d5f3e817c421bcea77a4902d84902789ab730b55d562ab105075ea64382289ebe658fd17302452",
+      "chb1": "277b15ce25ca159f853407942de24dcb169eb5b0f94c5b5541b7a3b84623114db74edce91a4b3ec726308881ab974441a71e1ec7211378c96366daa7c6223131",
+      "cts1": "d62adc92ac74dd40d0b68b4f20e299d89f93d95c552ce9161f629c14d3db91822fc963a40985261a9e7e9934ae721aec3d6715b0ed5f27235432b1087705c2eb",
+      "operation": "bf34a669dc4b3617d97bee356f1cadf3504f3c5993999c5136ce1d6b0cd6f9c2",
+      "tcv1": "c17f3ed2df227108b805fc126fcb21ccb17edc0a48a433db338c55271d9de3139cc1a4317da76f26260fd3a6969bcb59ca3780a4d16af2203628f14271c73cd4",
+      "tcv2": "de2513121d9939187f154c92497df7bc2c94775f6539d60cd41d4c73741e355d6253af839e4167beee0e0a1855835fabdd5ef0f08756cb9218679f7016889bfc"
+    },
+    "original_file_readback_verification": "model/source-inputs.readback-verification.json",
+    "outer_observation": "model/observation.json",
+    "pages": 3,
+    "passed": true,
+    "payload_bytes": 279627268,
+    "raw_controller": "model/controller.stdout",
+    "runtime_snapshot_sha256": "1085538a9d5901bf8e724347c97166669d8dd1ac5815c3e8825cfaa1ba3dd11a",
+    "source_identity_after": {
+      "head": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+      "status": "",
+      "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+    },
+    "source_identity_before": {
+      "head": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+      "status": "",
+      "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+    },
+    "source_input": "model/source-inputs.json",
+    "source_input_audit": "model/source-inputs.verification.json",
+    "source_input_audit_sha256": "2a5db7a61d5340511895cdc6b2e2675b2cc87aaa2a38b2a8815c8bc4059edd47",
+    "source_sha256": "3d4b4bbd30f1c37dc9986a5e512d13ae4d93a330a00fde904bd9b3fcf381083e",
+    "test_harness": false,
+    "transport_plan_includes_cts1": false
+  },
+  "model_efficacy_qualified": false,
+  "observed_tests": {
+    "clippy_original_commands": 3,
+    "counts_overlap": true,
+    "da_doc": 16,
+    "da_integration": 34,
+    "da_release_unit": 789,
+    "da_total": 839,
+    "native_example_default": 14,
+    "native_example_pq": 14,
+    "node_storage_default": 60,
+    "node_storage_pq": 60,
+    "paged_example": 11,
+    "python_controls": 24,
+    "required_da_selectors": 5,
+    "required_node_selectors": 13,
+    "sealed_example": 11
+  },
+  "original_native_owner_source": "a67d83a05d6ff4c2fdc4a5fd5c23fc38d38b563d",
+  "preserved_negative_observations": [
+    {
+      "record": "discovery/original-hosted-job-130956234453.log",
+      "scope": "Historical 784/1 higher-sequence failure; stage/root cause not established."
+    },
+    {
+      "record": "discovery/baseline-full-lib.log",
+      "scope": "Separate baseline debug PQ receipt-expiry failure."
+    },
+    {
+      "record": "discovery/baseline-release.log",
+      "scope": "Compiler SIGKILL before tests; OOM cause not established."
+    },
+    {
+      "record": "cloud/frozen-candidate-01/summary.json",
+      "scope": "Original incomplete campaign, dependency/Python/compiler failures and controlled interruption retained."
+    },
+    {
+      "record": "remote/private-runtime02-runtime-admission-failed/summary.json",
+      "scope": "Source guard refused before full runtime import; later complete checkout is separate."
+    },
+    {
+      "record": "remote/old-source-diagnostic/complete-nonmatch-subset.json",
+      "scope": "Old ai395 checkout: 102 missing tracked entries; original index and failed observation preserved."
+    },
+    {
+      "record": "publication/prestage-source-01/report.json",
+      "scope": "Old desktop publication checkout later refused original source guard; no GitHub write occurred."
+    }
+  ],
+  "production_activation": false,
+  "publication_preparation": {
+    "authoritative_job": {
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1cf58e486-2564-19f9",
+      "output_complete": true,
+      "output_durable": true,
+      "raw_original_sdk": "publication/publication02-source-01/authoritative-status-original-sdk.json",
+      "state": "succeeded",
+      "timed_out": false
+    },
+    "branch_pushed": false,
+    "completed": true,
+    "full_physical_source": {
+      "base": null,
+      "candidate": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+      "tested_tree": "a897ba4c74897a05ceb364f098b1bfe32c850213",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2552660560,
+      "tracked_entries": 27686,
+      "tracked_worktree_verified": true
+    },
+    "github_write_performed": false,
+    "old_head_refs_index_flags_hidden_observations_and_failure_originals_unchanged": true,
+    "old_hidden_cause_or_writer_identified": false,
+    "old_hidden_entry_count": 104,
+    "old_hidden_missing_count": 104,
+    "passed": true,
+    "prior_source_refusal_preserved": "publication/prestage-source-01/report.json",
+    "raw_summary": "publication/publication02-source-01/summary.json",
+    "raw_summary_bytes": 61020,
+    "raw_summary_sha256": "55144152a53f63a11badbb1c55003acd753e69b0311c03d8a5bb4b7c92b1af85",
+    "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "source_tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+  },
+  "qualification": {
+    "durable_current": false,
+    "hepta_final_use": false,
+    "independent_failure_domains": false,
+    "independent_operators": false,
+    "independent_real_money_funding": false,
+    "installation_authorized": false,
+    "model_efficacy_qualified": false,
+    "ordinary_bt_adopt_adapter_qualified": false,
+    "original_hepta_owner_used": false,
+    "production_activation": false,
+    "real_service_fee_paid": false
+  },
+  "recovery": {
+    "actual_core_model_original_files_complete": true,
+    "additional_remote_collection_scope": "recovery/remote-collection-scope.json",
+    "all_remote_preparation_and_model_streams_copied": false,
+    "gap_report": "recovery/recovery-gap-report.json",
+    "lost_originals_reconstructed_as_success": false,
+    "old_draft_files_preserved": true,
+    "original_local_selected_bytes_missing": 1330223,
+    "original_local_selected_files_missing": 22
+  },
+  "resources": {
+    "actual_cgroup_peak_bytes": 3176267776,
+    "actual_cpu_period_us": 100000,
+    "actual_cpu_quota_us": 400000,
+    "actual_memory_max_bytes": 8589934592,
+    "compiler_memory_outside_model_grant": true,
+    "cpu_limits_same_before_after": true,
+    "io_stat_available": false,
+    "memory_events": {
+      "high": 0,
+      "low": 0,
+      "max": 0,
+      "oom": 0,
+      "oom_group_kill": 0,
+      "oom_kill": 0,
+      "sock_throttled": 0
+    },
+    "memory_limits_same_before_after": true,
+    "native_wait4_maxrss_kib": 1427836,
+    "wait4_is_not_whole_tree_simultaneous_rss": true
+  },
+  "schema": "trnm.bt-owner-convergence-local-research-summary.v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_tree": "a897ba4c74897a05ceb364f098b1bfe32c850213",
+  "status": "FROZEN_B_LOCAL_RESEARCH_PASS_QUALIFICATION_HOLD",
+  "time_measurements": {
+    "milestones": {
+      "clock": "std::time::Instant monotonic wall clock",
+      "cold_recovery_complete_ns": 66144535560,
+      "first_use_scope": "complete CTS1/TCV1 selected and admitted for typed local byte use; not first token or first model output",
+      "loopback_only": true,
+      "origin": "custody observation entry after input-file read/parse and fresh output setup; before source checks, packing and transport",
+      "pinned_snapshot_ready_ns": 1720152126,
+      "sealed_model_environment_ready_ns": 67915802091,
+      "selected_typed_release_ready_ns": 67491774971,
+      "transport_complete_ns": 5297532725,
+      "two_forward_receipt_ns": 77228412679,
+      "values_are_cumulative_not_additive": true,
+      "wan_qualified": false
+    },
+    "native_internal_elapsed_ms": 77228,
+    "native_process_elapsed_seconds": 77.26810846291482,
+    "original_native_seconds": 300,
+    "unpaired_historical_comparison_qualified": false,
+    "wan_latency_qualified": false,
+    "watchdog_kill": false,
+    "watchdog_term": false,
+    "wrapper_elapsed_seconds": 80.9540495260153
+  }
+}

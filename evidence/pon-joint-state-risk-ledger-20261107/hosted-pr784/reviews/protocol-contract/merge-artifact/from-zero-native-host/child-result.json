@@ -1,0 +1,13 @@
+{
+  "command_argv": [
+    "python3",
+    "scripts/ci/run_from_zero_native.py",
+    "--out",
+    "/home/runner/work/_temp/ci-observations/from-zero-native"
+  ],
+  "consensus_or_model_authority": false,
+  "host_errors": [],
+  "host_readiness_only": true,
+  "native_child_exit": 1,
+  "schema": "trnm-ci-original-public-host-child-v1"
+}

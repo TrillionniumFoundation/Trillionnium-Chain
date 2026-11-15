@@ -1,0 +1,46 @@
+{
+  "arbitrary_pid_signalling": false,
+  "cached_v2": {
+    "cancelled": false,
+    "checkout_completed": true,
+    "exit_code": 1,
+    "job_id": "1a1b6d5516b-12894-72e",
+    "preflight_exit_code": 2,
+    "reason": "Development preflight refused detached HEAD.",
+    "state": "failed"
+  },
+  "cached_v3_initial": {
+    "cancelled": false,
+    "checkout_completed": true,
+    "exit_code": 1,
+    "job_id": "1a1b6d79561-12894-741",
+    "preflight_exit_code": 2,
+    "reason": "Development preflight refused detached HEAD.",
+    "state": "failed"
+  },
+  "calculation_tests_rerun": false,
+  "cancellation_reason": "No cancellation was necessary: both superseded preparation jobs had already reached natural failed terminal states before the final decision.",
+  "completed_v3": {
+    "all_materialized_raw_git_blob_and_sha256_checked": true,
+    "all_source_link_ci_checks_passed": true,
+    "branch": "fix/chain-cell-evidence-recovery-20261107",
+    "exit_code": 0,
+    "job_id": "1a1b6d9e62b-12894-750",
+    "state": "succeeded"
+  },
+  "earlier_failures_are_native_or_ci_test_failures": false,
+  "failed_or_cancelled_attempts_labeled_pass": false,
+  "original_network": {
+    "cancelled": false,
+    "checkout_exit_code": 128,
+    "exit_code": 1,
+    "job_id": "1a1b6bcb863-12894-653",
+    "reason": "Actual retained Git stderr reports curl 56 connection reset, unexpected disconnect and early EOF; the checkout did not complete.",
+    "state": "failed",
+    "timed_out": false
+  },
+  "owned_cancellation_requested": false,
+  "pack_deletion_requested": false,
+  "private_code_modified": false,
+  "schema": "pon-evidence-recovery-runtime-transitions-v1"
+}

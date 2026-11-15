@@ -1,0 +1,26 @@
+{
+  "source_head": "103cdf67108a667d8570388f9dd402210c160157",
+  "observed_native_binaries": [
+    {
+      "command": "final-11-native-schedule",
+      "path": "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-target/debug/deps/research_work_schedule-731d9e3e1b76563b",
+      "bytes": 206960448,
+      "sha256": "3e43938d25082477343ba44f9231f0b324b0ec8c649d84024d4ae5eeace9589a"
+    },
+    {
+      "command": "final-14-retained-joint-native",
+      "path": "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-target/debug/deps/daa_joint_consensus-1ea4c3b5f1d637e0",
+      "bytes": 205032784,
+      "sha256": "a0c0907f51ada110b4b384abeeae58ec9c104241ed9004fe6bff25bbe121c18b"
+    },
+    {
+      "command": "final-17-consensus",
+      "path": "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-target/debug/deps/trnm_pon_node-fc27c767cf2f262e",
+      "bytes": 468002328,
+      "sha256": "a318eb7b69958bbf8646d1f44dd1301ea5a0df0743e39fd3478361919cb53be5"
+    }
+  ],
+  "existing_cargo_build_cache_used": true,
+  "fresh_full_toolchain_build": false,
+  "host_attested": false
+}

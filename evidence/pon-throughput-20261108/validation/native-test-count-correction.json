@@ -1,0 +1,15 @@
+{
+  "correction_before_branch_and_pr_publication": true,
+  "earlier_native_test_count_claim": 10,
+  "per_binary_counts": [
+    2,
+    1,
+    1
+  ],
+  "raw_logs_changed": false,
+  "schema": "trnm-publication-claim-correction-v1",
+  "source_archive": "native-validation.tar.gz",
+  "source_member": "native-retained/retained-native-context.stdout",
+  "stdout_sha256": "fb29c558d26510c37d100e384631c47219e547b0561fd0e98103a5f52d792076",
+  "verified_native_tests_passed": 4
+}

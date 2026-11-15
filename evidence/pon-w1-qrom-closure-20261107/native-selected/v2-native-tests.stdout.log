@@ -1,0 +1,8 @@
+
+running 3 tests
+test tests::expected_artifacts_are_exact_and_never_derived_from_receipt ... ok
+test tests::saved_full_v2_receipt_verifies_with_independent_artifacts ... ok
+test tests::historical_full_receipt_cannot_satisfy_v2_statement ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.31s
+

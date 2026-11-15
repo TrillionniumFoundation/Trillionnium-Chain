@@ -1,0 +1,13 @@
+{
+  "previous_shared_artifact": "/data/chain-abg-70ae-20261108/target/debug/deps/trnm_pon_node-571a85d65bb41857",
+  "previous_artifact_sha256": "ccb130ce163ba2f21ee73728aeef3f1f678613aad49eda31504982ea9c2f48dd",
+  "previous_listing_sha256": "49e95ba603b926e63fc0ad079cc016db6ddf5792ae33c1c74bbde13b2ace16ae",
+  "previous_has_prepared_held_control": false,
+  "previous_roster_tail": [
+    "",
+    "1303 tests, 0 benchmarks"
+  ],
+  "source_head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+  "fresh_target": "/data/chain-abg-70ae-20261108/target-green",
+  "old_observation_qualification": "INVALID_CANDIDATE_ARTIFACT_PROVENANCE"
+}

@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/home/qq/.cargo/bin/cargo",
+    "run",
+    "--offline",
+    "--manifest-path",
+    "/home/qq/af52-chain-20261111/native-workspace/Cargo.toml",
+    "-p",
+    "heplcp04-interop-export",
+    "--",
+    "/home/qq/af52-chain-20261111/source-sparse/evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/completed.bin"
+  ],
+  "at_utc": "2026-11-11T12:23:27.304690+00:00",
+  "returncode": 0,
+  "elapsed_seconds": 3.7494050490204245,
+  "source_commit": "afd2c91b3b9ef75ab9a174e3af772ad322118f7a",
+  "source_file_count": 89,
+  "stdout_bytes": 106963,
+  "stdout_sha256": "b873d6f0606100ec8a3246548009b6afda5aa9fbc55e2bd85a4c6fed7fd81a46",
+  "stderr_sha256": "72f327237c36092d1aa918592a760154d727296e172be7ea3a324b3dd2bd3250",
+  "stderr_tail": "   Compiling version_check v0.9.5\n   Compiling typenum v1.20.1\n   Compiling generic-array v0.14.7\n   Compiling proc-macro2 v1.0.107\n   Compiling zeroize v1.9.1\n   Compiling quote v1.0.47\n   Compiling unicode-ident v1.0.27\n   Compiling block-buffer v0.10.4\n   Compiling crypto-common v0.1.7\n   Compiling const-oid v0.9.6\n   Compiling semver v1.0.28\n   Compiling der v0.7.10\n   Compiling rustc_version v0.4.1\n   Compiling digest v0.10.7\n   Compiling cpufeatures v0.2.17\n   Compiling cfg-if v1.0.5\n   Compiling syn v2.0.119\n   Compiling spki v0.7.3\n   Compiling curve25519-dalek v4.1.3\n   Compiling pkcs8 v0.10.2\n   Compiling sha2 v0.10.9\n   Compiling serde_core v1.0.229\n   Compiling zmij v1.0.23\n   Compiling signature v2.2.0\n   Compiling subtle v2.6.1\n   Compiling ed25519 v2.2.3\n   Compiling serde_json v1.0.154\n   Compiling curve25519-dalek-derive v0.1.1\n   Compiling codex-hepta-types v0.0.0 (/home/qq/af52-chain-20261111/native-workspace/hepta-types)\n   Compiling ed25519-dalek v2.2.0\n   Compiling itoa v1.0.18\n   Compiling memchr v2.8.3\n   Compiling codex-hepta-learning-artifacts v0.0.0 (/home/qq/af52-chain-20261111/native-workspace/hepta-learning-artifacts)\n   Compiling heplcp04-interop-export v0.0.0 (/home/qq/af52-chain-20261111/native-workspace/exporter)\n    Finished `dev` profile [unoptimized] target(s) in 3.73s\n     Running `/home/qq/af52-chain-20261111/codec-target/debug/heplcp04-interop-export /home/qq/af52-chain-20261111/source-sparse/evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/completed.bin`\n",
+  "ordinary_task_executed": false,
+  "production_activation": false,
+  "cargo_lock_sha256": "fe6962b19cb111e8c1d472b9f008aa6b42b56e5b56fc85e1afb58831bc5941d3"
+}

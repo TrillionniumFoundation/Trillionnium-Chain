@@ -1,0 +1,31 @@
+{
+  "corpus_tests_passed": 60,
+  "environment": "cloud sparse checkout; GNU time was unavailable",
+  "full_checkout_materialized": false,
+  "independent_security_property_count": null,
+  "materialized_bytes": 171500060,
+  "materialized_files": 5135,
+  "original_result_retained": true,
+  "production_activation": false,
+  "readiness_error_cause": "three FileNotFoundError exceptions for /usr/bin/time",
+  "readiness_errors": [
+    "test_actual_owner_child_failure_and_post_observation_failure_keep_exit (__main__.PipelineExecutableBindingTests.test_actual_owner_child_failure_and_post_observation_failure_keep_exit)",
+    "test_actual_prelaunch_failures_retain_observations_without_inventing_exits (__main__.PipelineExecutableBindingTests.test_actual_prelaunch_failures_retain_observations_without_inventing_exits)",
+    "test_started_wait_and_cleanup_errors_retain_real_or_unknown_exit (__main__.PipelineExecutableBindingTests.test_started_wait_and_cleanup_errors_retain_real_or_unknown_exit)"
+  ],
+  "readiness_passed": false,
+  "readiness_terminal_exit": 1,
+  "readiness_tests_completed_ok": 68,
+  "readiness_tests_run": 71,
+  "schema": "trnm-c2-cloud-readiness-observation-v1",
+  "snapshot_sha256": "0e5a61947d960c508393188bd3ec3401ef4b305f367aba3cdd57b1f9e1591ff7",
+  "source": {
+    "commit": "0e554f36ffdde3053a5eb1756eb5e526b1935032",
+    "tree": "753cdbad6714f00d8ccb9ddbb47f0fd71280ee62"
+  },
+  "source_checker_commands_passed": 7,
+  "source_unchanged": true,
+  "sparse_absent_files": 22777,
+  "tests_skipped_or_stubbed": false,
+  "whole_chain_pq_qualified": false
+}

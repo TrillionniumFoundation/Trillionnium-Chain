@@ -1,0 +1,5 @@
+Initial composition 21ea06390:
+HOLD_NO_GO: changed source: .github/workflows/pon-recent-batch-acceptance.yml
+distributed native source inventory differs; refresh before freezing source
+After inventory regeneration, before its pin update:
+HOLD_NO_GO: changed source: trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs

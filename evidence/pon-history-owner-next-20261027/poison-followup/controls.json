@@ -1,0 +1,314 @@
+[
+  {
+    "group": "poison",
+    "schema": "history-exact-source-native-control-v1",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/owner-next-3ca96292cc-trnm-pon-node",
+      "ingress::public_v3::tests::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "source_commit": "3ca96292ccc7815f4c7f49b34445f3d28687b5f4",
+    "source_manifest_sha256": "106a6cf428cd2b1a7b728ec5aec938d319df48e40d1abbb433f51148fb2a7f70",
+    "binary_sha256": "86d70c9cf0e6bfffbf0e8e0758433e9d2fbb8791d9a01e7f9cb6fcb7cf7b6f40",
+    "started_utc": "2026-10-28T00:31:12.999286+00:00",
+    "outer_observer_timeout_seconds": 60,
+    "exit_code": 0,
+    "elapsed_seconds": 0.0036808799995924346,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 228,
+      "sha256": "dd7262468e8555b072f75cef6df963f1be475bc7baee0ee4a76cb5a7d1aebbdf"
+    },
+    "stderr.txt": {
+      "bytes": 209,
+      "sha256": "6f469289b13b281605460e124f9b0ce9c2497efeb481ed1c12570260b761f8d0"
+    },
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      }
+    ]
+  },
+  {
+    "group": "history-original",
+    "schema": "history-exact-source-native-control-v1",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/owner-next-3ca96292cc-trnm-pon-node",
+      "ingress::history_import::tests::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "source_commit": "3ca96292ccc7815f4c7f49b34445f3d28687b5f4",
+    "source_manifest_sha256": "106a6cf428cd2b1a7b728ec5aec938d319df48e40d1abbb433f51148fb2a7f70",
+    "binary_sha256": "86d70c9cf0e6bfffbf0e8e0758433e9d2fbb8791d9a01e7f9cb6fcb7cf7b6f40",
+    "started_utc": "2026-10-28T00:31:13.004017+00:00",
+    "outer_observer_timeout_seconds": 180,
+    "exit_code": 0,
+    "elapsed_seconds": 6.9511514659971,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 3342,
+      "sha256": "0305fc24a5e49d526976d48cdae2b9e0dc61cdda103a51d343d014e3d7da010d"
+    },
+    "stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 9,
+        "failed": 0,
+        "ignored": 1
+      }
+    ]
+  },
+  {
+    "group": "exclusive-inactive",
+    "schema": "history-exact-source-native-control-v1",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/owner-next-3ca96292cc-trnm-pon-node",
+      "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "source_commit": "3ca96292ccc7815f4c7f49b34445f3d28687b5f4",
+    "source_manifest_sha256": "106a6cf428cd2b1a7b728ec5aec938d319df48e40d1abbb433f51148fb2a7f70",
+    "binary_sha256": "86d70c9cf0e6bfffbf0e8e0758433e9d2fbb8791d9a01e7f9cb6fcb7cf7b6f40",
+    "started_utc": "2026-10-28T00:31:19.955874+00:00",
+    "outer_observer_timeout_seconds": 90,
+    "exit_code": 0,
+    "elapsed_seconds": 2.7074835609964794,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 5678,
+      "sha256": "a7812dd788aff58376d2543dd11b4ceace82493ee80d9bad86d0cb91e1319b59"
+    },
+    "stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      }
+    ]
+  },
+  {
+    "group": "large-original",
+    "schema": "history-exact-source-native-control-v1",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/owner-next-3ca96292cc-trnm-pon-node",
+      "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "source_commit": "3ca96292ccc7815f4c7f49b34445f3d28687b5f4",
+    "source_manifest_sha256": "106a6cf428cd2b1a7b728ec5aec938d319df48e40d1abbb433f51148fb2a7f70",
+    "binary_sha256": "86d70c9cf0e6bfffbf0e8e0758433e9d2fbb8791d9a01e7f9cb6fcb7cf7b6f40",
+    "started_utc": "2026-10-28T00:31:22.664200+00:00",
+    "outer_observer_timeout_seconds": 180,
+    "exit_code": 101,
+    "elapsed_seconds": 27.51405108799372,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 1496,
+      "sha256": "90fd51d350151384c5d086d047bb7e2f7c0920baffdcc59579b4d4bad66b07f4"
+    },
+    "stderr.txt": {
+      "bytes": 483,
+      "sha256": "34b768c35d3232a614768b9a508f1f7d34dba397a64e762158a2d157f308fba0"
+    },
+    "harness_results": [
+      {
+        "outcome": "FAILED",
+        "passed": 0,
+        "failed": 1,
+        "ignored": 0
+      }
+    ]
+  },
+  {
+    "group": "large-authenticated-independent",
+    "schema": "history-exact-source-native-control-v1",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/owner-next-3ca96292cc-trnm-pon-node",
+      "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "source_commit": "3ca96292ccc7815f4c7f49b34445f3d28687b5f4",
+    "source_manifest_sha256": "106a6cf428cd2b1a7b728ec5aec938d319df48e40d1abbb433f51148fb2a7f70",
+    "binary_sha256": "86d70c9cf0e6bfffbf0e8e0758433e9d2fbb8791d9a01e7f9cb6fcb7cf7b6f40",
+    "started_utc": "2026-10-28T00:31:50.179067+00:00",
+    "outer_observer_timeout_seconds": 180,
+    "exit_code": 101,
+    "elapsed_seconds": 65.56546359499771,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 1473,
+      "sha256": "04b58b073eb560a6183cacbcc6e369c8b79eedf10649db234c5a881fa24c513e"
+    },
+    "stderr.txt": {
+      "bytes": 472,
+      "sha256": "b7b97429ee37764ac82e3bb3ad8db8dc9c51a025bc6d8712270f9347c4cdb506"
+    },
+    "harness_results": [
+      {
+        "outcome": "FAILED",
+        "passed": 0,
+        "failed": 1,
+        "ignored": 0
+      }
+    ]
+  },
+  {
+    "group": "scalar-original",
+    "schema": "history-exact-source-native-control-v1",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/owner-next-3ca96292cc-trnm-pon-node",
+      "ingress::public_v3::scalar_cpu::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "source_commit": "3ca96292ccc7815f4c7f49b34445f3d28687b5f4",
+    "source_manifest_sha256": "106a6cf428cd2b1a7b728ec5aec938d319df48e40d1abbb433f51148fb2a7f70",
+    "binary_sha256": "86d70c9cf0e6bfffbf0e8e0758433e9d2fbb8791d9a01e7f9cb6fcb7cf7b6f40",
+    "started_utc": "2026-10-28T00:32:55.745285+00:00",
+    "outer_observer_timeout_seconds": 300,
+    "exit_code": 0,
+    "elapsed_seconds": 2.9291569249980967,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 9269,
+      "sha256": "7150002d72879fecf989bd6751b0b63ec8c8e89158ab20c6a956c4e1142beb00"
+    },
+    "stderr.txt": {
+      "bytes": 530,
+      "sha256": "a563f233235726f1d70917a1c05ff2b1be949b44b78c93b1c8d72ab75327f40b"
+    },
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 57,
+        "failed": 0,
+        "ignored": 0
+      }
+    ]
+  },
+  {
+    "group": "live-cpu-original",
+    "schema": "history-exact-source-native-control-v1",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/owner-next-3ca96292cc-trnm-pon-node",
+      "ingress::public_v3::tests::live_cpu_",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "source_commit": "3ca96292ccc7815f4c7f49b34445f3d28687b5f4",
+    "source_manifest_sha256": "106a6cf428cd2b1a7b728ec5aec938d319df48e40d1abbb433f51148fb2a7f70",
+    "binary_sha256": "86d70c9cf0e6bfffbf0e8e0758433e9d2fbb8791d9a01e7f9cb6fcb7cf7b6f40",
+    "started_utc": "2026-10-28T00:32:58.675246+00:00",
+    "outer_observer_timeout_seconds": 120,
+    "exit_code": 0,
+    "elapsed_seconds": 0.03220068199880188,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 557,
+      "sha256": "2899e9ede771b60ae1e1883af3903e141e7617018ac6eba285872802e4f2902d"
+    },
+    "stderr.txt": {
+      "bytes": 209,
+      "sha256": "873cd415a0c50b37f975174c86959e94e25d4c9a6743b0dbe299a7f0c25d6b3b"
+    },
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0
+      }
+    ]
+  },
+  {
+    "group": "actual-w1-depletion",
+    "schema": "history-exact-source-native-control-v1",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/owner-next-3ca96292cc-trnm-pon-node",
+      "ingress::public_v3::shared_cpu_domain_source_tests::process_cold_real_w1_cpu_depletion_preserves_read_and_recovers_honest_admission",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "source_commit": "3ca96292ccc7815f4c7f49b34445f3d28687b5f4",
+    "source_manifest_sha256": "106a6cf428cd2b1a7b728ec5aec938d319df48e40d1abbb433f51148fb2a7f70",
+    "binary_sha256": "86d70c9cf0e6bfffbf0e8e0758433e9d2fbb8791d9a01e7f9cb6fcb7cf7b6f40",
+    "started_utc": "2026-10-28T00:32:58.708172+00:00",
+    "outer_observer_timeout_seconds": 90,
+    "exit_code": 0,
+    "elapsed_seconds": 1.019098156997643,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 618,
+      "sha256": "e0db4b15b9e30c51a084b01b19effdbbfefe525d7f0ca547e769be37b90a9d25"
+    },
+    "stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      }
+    ]
+  },
+  {
+    "group": "withheld-original-frame",
+    "schema": "history-exact-source-native-control-v1",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/owner-next-3ca96292cc-trnm-pon-node",
+      "ingress::tests::authenticated_activation_recovery::withheld_original_frame_must_not_stall_a_different_honest_signed_mutation",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "source_commit": "3ca96292ccc7815f4c7f49b34445f3d28687b5f4",
+    "source_manifest_sha256": "106a6cf428cd2b1a7b728ec5aec938d319df48e40d1abbb433f51148fb2a7f70",
+    "binary_sha256": "86d70c9cf0e6bfffbf0e8e0758433e9d2fbb8791d9a01e7f9cb6fcb7cf7b6f40",
+    "started_utc": "2026-10-28T00:32:59.728067+00:00",
+    "outer_observer_timeout_seconds": 90,
+    "exit_code": 0,
+    "elapsed_seconds": 0.006399165002221707,
+    "timed_out": false,
+    "stdout.txt": {
+      "bytes": 347,
+      "sha256": "5a7e6c5da04d3e2cf0c786cf798cb0b98ae1927bb5a85fe9a4ad67a93c700675"
+    },
+    "stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 1
+      }
+    ]
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "python3",
+    "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+    "--require-qualified"
+  ],
+  "cwd": "/workspace/scratch/8e76272d9258/chain-joint-tail",
+  "elapsed_seconds": 0.06461255400063237,
+  "error": null,
+  "exit_code": 3,
+  "expected_exit_code": 3,
+  "label": "qualification-refusal",
+  "native_probability_qualified": false,
+  "passed": true,
+  "production_activation": false,
+  "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+  "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310",
+  "started_at_utc": "2026-11-10T07:31:45.986502+00:00",
+  "stderr": "qualification-refusal.stderr.log",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "qualification-refusal.stdout.log",
+  "stdout_sha256": "f55c8d1b7ebbe4b512a35af8ccd619a52b818e848167e77762ea023504592fc5"
+}

@@ -1,0 +1,93 @@
+{
+  "automatic_retries": 0,
+  "forward_count_kind": "source-bound-live-worker-ledger-delta-inference",
+  "general_model_quality_qualified": false,
+  "independent_operator_custody": false,
+  "native_daemon_os_restart": false,
+  "original_files": 417,
+  "original_parameter_v3_qualified": false,
+  "original_watchdog_seconds": 60,
+  "product_ope_qualified": false,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "result": "PASS_ORIGINAL_RESEARCH_RECORDS",
+  "runs": [
+    {
+      "checkpoint_sha256": "c890ca0ba1f5b5190e33bc93a0947c98a5cbfc4f77ad4f65ac8f428274ab222f",
+      "native_test_seconds": 44.44,
+      "next_task_answer": "yes",
+      "next_task_answer_correct": true,
+      "operation": "learning-d9fb-native-no-update-v9",
+      "original_checkpoint_counts": [
+        0,
+        5,
+        6
+      ],
+      "predicted_answers": [
+        [
+          "yes",
+          "no",
+          "yes",
+          "yes"
+        ],
+        [
+          "no",
+          "no",
+          "no",
+          "yes"
+        ]
+      ],
+      "real_new_candidate_adoption": false,
+      "scores": [
+        3,
+        1
+      ],
+      "selected_file_sha256": "a946c2cd7073092e607fb5ee3fd9b2dc78053ba5dc3d357a0a27c273ebbf95e2",
+      "unchanged_chain_reader_join": "PASS",
+      "worker_pids": [
+        226769,
+        226792
+      ]
+    },
+    {
+      "checkpoint_sha256": "49687e0ece90dceb6409978616700c0b32ec342631a1941994ae3b7a886a7496",
+      "native_test_seconds": 51.138,
+      "next_task_answer": "no",
+      "next_task_answer_correct": false,
+      "operation": "learning-d9fb-native-adopt-v1",
+      "original_checkpoint_counts": [
+        0,
+        6,
+        7
+      ],
+      "predicted_answers": [
+        [
+          "no",
+          "no",
+          "no",
+          "yes"
+        ],
+        [
+          "no",
+          "no",
+          "no",
+          "no"
+        ]
+      ],
+      "real_new_candidate_adoption": true,
+      "scores": [
+        1,
+        2
+      ],
+      "selected_file_sha256": "56d88f2dda61db06f88a96ebed05d29e1a9e2e8d1d02e3f296a8544df743e45c",
+      "unchanged_chain_reader_join": "PASS",
+      "worker_pids": [
+        227202,
+        227232
+      ]
+    }
+  ],
+  "schema": "hepta-real-native-adoption-record-review-v1",
+  "successful_native_source": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+  "successful_native_tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+}

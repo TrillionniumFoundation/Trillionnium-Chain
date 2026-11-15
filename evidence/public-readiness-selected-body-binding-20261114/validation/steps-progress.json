@@ -1,0 +1,48 @@
+[
+  {
+    "argv": [
+      "/bin/bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114",
+    "elapsed_seconds": 0.045894,
+    "exit": 0,
+    "label": "preflight",
+    "started_at": "2026-11-14T08:06:15.367727+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/public-readiness-selected-body-binding-20261114/validation/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 175,
+      "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/public-readiness-selected-body-binding-20261114/validation/preflight.stdout",
+      "sha256": "2c5200e81d5912693b13142591a36d9f5875dd9429beb9033e805ca5aa690c84"
+    },
+    "timeout_seconds": 300
+  },
+  {
+    "argv": [
+      "/opt/homebrew/bin/python3",
+      "-B",
+      "scripts/ci/test_public_readiness_evidence.py",
+      "-v"
+    ],
+    "cwd": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114",
+    "elapsed_seconds": 24.138515,
+    "exit": 1,
+    "label": "original-76-and-new-1-controls",
+    "started_at": "2026-11-14T08:06:15.430041+00:00",
+    "stderr": {
+      "bytes": 22339,
+      "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/public-readiness-selected-body-binding-20261114/validation/original-76-and-new-1-controls.stderr",
+      "sha256": "9a947fa06914b62b68de1230243ae4a18b22b6bbb3bda072778a2059b2239266"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/public-readiness-selected-body-binding-20261114/validation/original-76-and-new-1-controls.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timeout_seconds": 300
+  }
+]

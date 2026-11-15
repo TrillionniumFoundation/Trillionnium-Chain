@@ -1,0 +1,151 @@
+{
+  "source_commit": "14fcbede085b414a9621aef3f288d2b1ca1839ae",
+  "source_tree": "64b1a7e4072eddac05604d4bb4b1ef713e10d874",
+  "scope": "M06 native all-target all-feature test executables; not Node or a deployment binary",
+  "profile": "Original manifest test profile; see native-profile-scope.json for unchanged per-package opt levels and checks",
+  "target_results": {
+    "targets": 25,
+    "passed": 246,
+    "failed": 0,
+    "ignored": 8,
+    "measured": 0,
+    "filtered_out": 0
+  },
+  "ignored_test_lines": [
+    "test continuity_v1::capacity_range_tests::capacity_range_full_return_abba_observation ... ignored, paired complete-capacity observation; not original Host or confirmation acceptance",
+    "test pon_commitment::bounded_encoding_tests::actual_state_fallback_encoding_cost ... ignored, explicit whole-test process RSS comparison; no Node or throughput qualification",
+    "test pon_commitment::bounded_encoding_tests::canonical_buffer_reuse_component_timing ... ignored, explicit encoder allocation A/B; excludes SQLite, roots, execution and networking",
+    "test pon_commitment::checked_binding_tests::checked_binding_complete_cost_observation ... ignored, explicit same-operation binding cost; not Node or network throughput",
+    "test pon_commitment::tests::immutable_parent_preview_component_timing ... ignored, explicit component timing; excludes SQLite, M05 and Node lock wait",
+    "test pon_commitment::tests::warm_parent_binding_component_timing ... ignored, explicit binding A/B timing; excludes execution, SQLite and Node locks",
+    "test pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost ... ignored, explicit paired component cost, including adversarial same-root hints; no throughput qualification",
+    "test pon_executor::streaming_root_tests::complete_root_encoding_cost ... ignored, explicit paired complete-root cost; synthetic values, not native ledger growth"
+  ],
+  "binaries": [
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
+      "sha256": "42c842540decc5c7e9af82151993fb2f8e4e5c6fdee9ca76ed0ccf41293eebb1",
+      "bytes": 75885544
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/capacity_progress-74341374d4a728a6",
+      "sha256": "5f07b589a3af18469daf8767b37b735802e3593fbc3399f1703f4200524fa0e0",
+      "bytes": 57498328
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/checkpoint_tile_material_v1-c953c96734f7b5da",
+      "sha256": "8031a2342061df59f900b9502bdf989e6f603ff207ae7f6dff1ad935fd23c704",
+      "bytes": 59196336
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/checkpoint_tile_policy_v1-cdfbdac0ce279077",
+      "sha256": "accad56f1b29c705994817cea25deb6379c998f789ed64b3a4e29278027ccefc",
+      "bytes": 57231240
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/continuity_v1-452dfa4744ffe4ff",
+      "sha256": "6d9c676ccb8649f4596fb7400a74fff720aa22061d9ded06011f52344255b4f4",
+      "bytes": 59055176
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/evaluation_quorum_v2-8f89c890289ba966",
+      "sha256": "77639b776fc43b93030d5fe543ec28579680261dfeccd0f8e3c543170e9f1e4f",
+      "bytes": 58182776
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/incremental_prefix-e48f543af0d32fa7",
+      "sha256": "083906ec49eb4ef015f543c9df54693a79715dfc6238dfaf8a4e551a72b35be8",
+      "bytes": 61679472
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/model_evolution_v5-74dabf3ae601722f",
+      "sha256": "ce7245c3a38906d7de16f0b9fd6af435e0cb089b05178c26e0ba162e1d1aedf1",
+      "bytes": 60077488
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/pon_commitment-f62b0ca22de9e8a9",
+      "sha256": "04955a757d3505e66d4b192436eb4879eea2e6fdf1a54fdf58d4d325343e3923",
+      "bytes": 60423336
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/pq2_authority_capacity-2cad572f9b950d38",
+      "sha256": "e185f2795629ab9175e047f8d2b4a28a0af64b4fa1aa94e772f54c3ac843b64f",
+      "bytes": 60299176
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/pq3_quota_authority-cb20c39dfc36d66f",
+      "sha256": "c4a3c5458ddbabec0446bb18a94db404de9ef62cc720393cc6de0d5fa48ed556",
+      "bytes": 60311080
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/pq4_task_authority-fb92be26110af7b9",
+      "sha256": "5fe4a69a29069288e0e7c4597205d3149516297cafb7e6e53a433b47449c463a",
+      "bytes": 60583232
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/pq5_task_renewal-9ea60ab5acccf421",
+      "sha256": "e61006df56531224a5579c5a1a93ef80421ad1c53b139a77672e4e724245ae7e",
+      "bytes": 61807088
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/pq_account_owner-607c0ba6c5885273",
+      "sha256": "5e384ac843007c7ac6fdcc39f209d921012c26fd4eb9a8a92e55a14d7b5bb11c",
+      "bytes": 67441416
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/qualified_task_lifecycle_v2-ea80326d4f02bb75",
+      "sha256": "2124ce6c65a2d5a67d69055c7c6574d129639ddf168ec6b1be31ddec14113fe3",
+      "bytes": 59442088
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/qualified_task_lifecycle_v3-aace9b7ba16dc21a",
+      "sha256": "22bec0daea9547c8fc082a5658fce91eb5868876517ef07b5bdaaaec7ada693a",
+      "bytes": 57772056
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/qualified_task_lifecycle_v4-1436bb3607ff29bd",
+      "sha256": "3888d175a82307027878c32d02678f414a87001ae0c8e6227502e34d6cd3eb6e",
+      "bytes": 58046104
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/examples/borrowed_non_account_allocations-187ae7b6440d940c",
+      "sha256": "81d0993064558123023dbca65e21c368ad5f5e785bc6f9ed74550825e989f0ad",
+      "bytes": 7103184
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/examples/borrowed_non_account_cost-0a3f68fac45bf92f",
+      "sha256": "59eeab7cf4f3eb08d89178750ca816fc7aae6570bae5fe921d656d849b45c975",
+      "bytes": 6879848
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/examples/checkpoint_tile_material_v1-053b63ca763c224d",
+      "sha256": "12d995db696f685ad71db1982d5ef9a4d8eef97aeabe13f3a36806cbcd1a64f0",
+      "bytes": 6879864
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/examples/continuity_transition_vectors-4cce16e480a01845",
+      "sha256": "4c41e2770de124fccd44294994696ce19aa0f69ea97a40654ab6f3b6dc26fb4a",
+      "bytes": 6879880
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/examples/continuity_vectors-177e27a1083ec6b9",
+      "sha256": "f963d67634b0ca9547550653b20b97f295755c4afe24f872db51cf8bd9699ab4",
+      "bytes": 6879800
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/examples/pon_commitment_resource_bounds-22381a73ea68ba0f",
+      "sha256": "d0de486a3cdb50f1c7d2ed3f972eead5a28face9548e690774e70b05105dcd26",
+      "bytes": 6879880
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/examples/pon_execute-8d24c1ec95560b03",
+      "sha256": "8545ec84945dff1de2c41c8c2da9cdd2bb6f1e849376aaf507625dd32d560961",
+      "bytes": 6879752
+    },
+    {
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/examples/pon_execute_session-78f10c5da27a4dda",
+      "sha256": "96ba7b4c3a6927585bab9a929b8d79b164ca4adfb5ffc0db63ca9fc6f0f56492",
+      "bytes": 6879808
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import sys,platform,json,numpy,cryptography;print(json.dumps({'executable':sys.executable,'version':sys.version,'implementation':platform.python_implementation(),'python':platform.python_version(),'numpy':numpy.__version__,'numpy_file':numpy.__file__,'cryptography':cryptography.__version__,'cryptography_file':cryptography.__file__},sort_keys=True))"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+  "end_utc": "2026-11-07T22:02:02.486013+00:00",
+  "exit_code": 0,
+  "log": "logs/python-runtime.log",
+  "log_bytes": 339,
+  "log_sha256": "a7e58a05a38f7bf7b2fdd47357cc6262a3adb9ca6f9d115f39dec5b1df17f880",
+  "name": "python-runtime",
+  "pid": 1899354,
+  "start_utc": "2026-11-07T22:02:02.268426+00:00",
+  "supervisor_timeout_seconds": 60,
+  "timed_out": false,
+  "wall_ns": 217595824
+}

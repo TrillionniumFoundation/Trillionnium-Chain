@@ -1,0 +1,24 @@
+{
+  "schema": "node-pressure-integration-v1",
+  "archive": "node-pressure-evidence-final.tar.gz",
+  "archive_sha256": "c928d3bbac5d2bfb47e3f2e9dcd7be0989b2b8f631e5d3b85793c60c483c0bf7",
+  "archive_members": 949,
+  "readable_files_copied_from_original": [
+    "README.md",
+    "final-summary.json",
+    "final-evidence-files.json",
+    "final-archive.json",
+    "campaign-01/result.json",
+    "inputs/manifest.json",
+    "independent_cleanup.json",
+    "prepare_node_pressure.py",
+    "run_node_pressure.py",
+    "collect_node_pressure.py",
+    "finalize_node_pressure.py"
+  ],
+  "original_readme_sha256": "e1b060f19581111fed943788ade33408beeb09528e8ea19162032d48b7b3df1a",
+  "visible_readme_sha256": "7dab72646fa655bb7276ae39736b0b18fbd3bdf866b421cb67f8d5afef4148ce",
+  "visible_readme_scope_clarification": true,
+  "raw_archive_modified": false,
+  "qualification": "HOLD_NO_GO"
+}

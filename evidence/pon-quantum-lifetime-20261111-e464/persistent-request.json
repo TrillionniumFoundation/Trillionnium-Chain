@@ -1,0 +1,43 @@
+{
+  "allow_refresh": false,
+  "budget_units": 20,
+  "costs": {
+    "candidate_check": 1,
+    "domain_setup": 2,
+    "oracle_iteration": 1,
+    "readout": 1,
+    "state_prepare": 1,
+    "unit": "declared-additive-resource-units",
+    "winner_proof": 2
+  },
+  "domain_size": 4,
+  "iteration_choices": [
+    0,
+    1,
+    2
+  ],
+  "marked_count_prior": [
+    {
+      "denominator": 256,
+      "numerator": 81
+    },
+    {
+      "denominator": 64,
+      "numerator": 27
+    },
+    {
+      "denominator": 128,
+      "numerator": 27
+    },
+    {
+      "denominator": 64,
+      "numerator": 3
+    },
+    {
+      "denominator": 256,
+      "numerator": 1
+    }
+  ],
+  "processors": 1,
+  "schema": "trnm-quantum-posterior-request-v1"
+}

@@ -1,0 +1,3104 @@
+{
+  "schema": "trnm-selected-workflow-jobs-observation-v1",
+  "scope": "Selected failed workflows and active dependencies read between 10:51 and 10:56 UTC; this is not the complete 20-workflow job roster.",
+  "runs": [
+    {
+      "run_id": 42364678169,
+      "filter": "all",
+      "per_page": 100,
+      "pages_fetched": 1,
+      "total_count": 6,
+      "retrieved_count": 6,
+      "all_matching_pages_covered": true,
+      "jobs": [
+        {
+          "id": 128380125261,
+          "name": "CodeQL local SARIF (actions, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678169/job/128380125261",
+          "started_at": "2026-11-07T10:36:38Z",
+          "completed_at": "2026-11-07T10:37:42Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact event source",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Refuse any other source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize pinned official CodeQL",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Generate local exact-source SARIF for exact source SHA",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify generated SARIF is present and parseable",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify analyzed source stayed unchanged",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain exact-source local SARIF for independent review",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Generate local exact-source SARIF for exact source SHA",
+              "number": 14,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Initialize pinned official CodeQL",
+              "number": 15,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact event source",
+              "number": 16,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 17,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380125375,
+          "name": "CodeQL local SARIF (python, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678169/job/128380125375",
+          "started_at": "2026-11-07T10:36:38Z",
+          "completed_at": "2026-11-07T10:38:54Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact event source",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Refuse any other source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize pinned official CodeQL",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Generate local exact-source SARIF for exact source SHA",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify generated SARIF is present and parseable",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify analyzed source stayed unchanged",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain exact-source local SARIF for independent review",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Generate local exact-source SARIF for exact source SHA",
+              "number": 14,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Initialize pinned official CodeQL",
+              "number": 15,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact event source",
+              "number": 16,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 17,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380125435,
+          "name": "CodeQL local SARIF (rust, prospective-merge)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678169/job/128380125435",
+          "started_at": "2026-11-07T10:36:39Z",
+          "completed_at": "2026-11-07T10:48:58Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact event source",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Refuse any other source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize pinned official CodeQL",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Generate local exact-source SARIF for exact source SHA",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify generated SARIF is present and parseable",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify analyzed source stayed unchanged",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Retain exact-source local SARIF for independent review",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Generate local exact-source SARIF for exact source SHA",
+              "number": 14,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Initialize pinned official CodeQL",
+              "number": 15,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact event source",
+              "number": 16,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 17,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380125457,
+          "name": "CodeQL local SARIF (actions, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678169/job/128380125457",
+          "started_at": "2026-11-07T10:36:38Z",
+          "completed_at": "2026-11-07T10:38:10Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact event source",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Refuse any other source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize pinned official CodeQL",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Generate local exact-source SARIF for exact source SHA",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify generated SARIF is present and parseable",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify analyzed source stayed unchanged",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain exact-source local SARIF for independent review",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Generate local exact-source SARIF for exact source SHA",
+              "number": 14,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Initialize pinned official CodeQL",
+              "number": 15,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact event source",
+              "number": 16,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 17,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380125490,
+          "name": "CodeQL local SARIF (python, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678169/job/128380125490",
+          "started_at": "2026-11-07T10:36:38Z",
+          "completed_at": "2026-11-07T10:40:09Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact event source",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Refuse any other source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize pinned official CodeQL",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Generate local exact-source SARIF for exact source SHA",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify generated SARIF is present and parseable",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify analyzed source stayed unchanged",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain exact-source local SARIF for independent review",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Generate local exact-source SARIF for exact source SHA",
+              "number": 14,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Initialize pinned official CodeQL",
+              "number": 15,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact event source",
+              "number": 16,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 17,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380125550,
+          "name": "CodeQL local SARIF (rust, head)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678169/job/128380125550",
+          "started_at": "2026-11-07T10:36:38Z",
+          "completed_at": "2026-11-07T10:50:48Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact event source",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Refuse any other source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize pinned official CodeQL",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Generate local exact-source SARIF for exact source SHA",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify generated SARIF is present and parseable",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify analyzed source stayed unchanged",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Retain exact-source local SARIF for independent review",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Generate local exact-source SARIF for exact source SHA",
+              "number": 14,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Initialize pinned official CodeQL",
+              "number": 15,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact event source",
+              "number": 16,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 17,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 42364669362,
+      "filter": "all",
+      "per_page": 100,
+      "pages_fetched": 1,
+      "total_count": 3,
+      "retrieved_count": 3,
+      "all_matching_pages_covered": true,
+      "jobs": [
+        {
+          "id": 128380097806,
+          "name": "CodeQL local SARIF (rust, head)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364669362/job/128380097806",
+          "started_at": "2026-11-07T10:36:29Z",
+          "completed_at": "2026-11-07T10:50:23Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact event source",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Refuse any other source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize pinned official CodeQL",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Generate local exact-source SARIF for exact source SHA",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify generated SARIF is present and parseable",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify analyzed source stayed unchanged",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Retain exact-source local SARIF for independent review",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Generate local exact-source SARIF for exact source SHA",
+              "number": 14,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Initialize pinned official CodeQL",
+              "number": 15,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact event source",
+              "number": 16,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 17,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380098010,
+          "name": "CodeQL local SARIF (python, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364669362/job/128380098010",
+          "started_at": "2026-11-07T10:36:30Z",
+          "completed_at": "2026-11-07T10:39:55Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact event source",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Refuse any other source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize pinned official CodeQL",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Generate local exact-source SARIF for exact source SHA",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify generated SARIF is present and parseable",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify analyzed source stayed unchanged",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain exact-source local SARIF for independent review",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Generate local exact-source SARIF for exact source SHA",
+              "number": 14,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Initialize pinned official CodeQL",
+              "number": 15,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact event source",
+              "number": 16,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 17,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380098087,
+          "name": "CodeQL local SARIF (actions, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364669362/job/128380098087",
+          "started_at": "2026-11-07T10:36:30Z",
+          "completed_at": "2026-11-07T10:37:36Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact event source",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Refuse any other source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize pinned official CodeQL",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Generate local exact-source SARIF for exact source SHA",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify generated SARIF is present and parseable",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify analyzed source stayed unchanged",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain exact-source local SARIF for independent review",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Generate local exact-source SARIF for exact source SHA",
+              "number": 14,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Initialize pinned official CodeQL",
+              "number": 15,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact event source",
+              "number": 16,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 17,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 42364678199,
+      "filter": "all",
+      "per_page": 100,
+      "pages_fetched": 1,
+      "total_count": 1,
+      "retrieved_count": 1,
+      "all_matching_pages_covered": true,
+      "jobs": [
+        {
+          "id": 128380125519,
+          "name": "F0 (x64, head, one baseline and one ROOT phase)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678199/job/128380125519",
+          "started_at": "2026-11-07T10:36:51Z",
+          "completed_at": "2026-11-07T10:42:21Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Freeze all denominators before checkout or preparation",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exactly the event head without retained credentials",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify the exact source and all independent parser controls",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install source-pinned compiler and fetch the locked graph",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare one source-bound ELF and execute five original plus two resource controls",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Arm a previously absent exact controller service",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run exactly one pair in the declared controller and public Host",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Always retain denominators and inspect only exact owned services",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Retain final source, workflow outcomes and every regular partial artifact",
+              "number": 10,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Upload all available success, failure and unobserved evidence",
+              "number": 11,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exactly the event head without retained credentials",
+              "number": 22,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 23,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 42364678224,
+      "filter": "all",
+      "per_page": 100,
+      "pages_fetched": 1,
+      "total_count": 1,
+      "retrieved_count": 1,
+      "all_matching_pages_covered": true,
+      "jobs": [
+        {
+          "id": 128380125651,
+          "name": "original native campaign (x64, head, release)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678224/job/128380125651",
+          "started_at": "2026-11-07T10:36:38Z",
+          "completed_at": "2026-11-07T10:45:28Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Reserve new output and isolated Cargo directories",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout the immutable candidate head",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify actual tracked bytes and original source boundary",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install the source-pinned compiler and fetch locked dependencies",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare the exact original test runner without changing source",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run three original campaigns under verified actual limits",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Preserve final source verification and all partial artifact hashes",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Upload successful, failed and partial observations",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout the immutable candidate head",
+              "number": 18,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 19,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 42364678236,
+      "filter": "all",
+      "per_page": 100,
+      "pages_fetched": 1,
+      "total_count": 19,
+      "retrieved_count": 19,
+      "all_matching_pages_covered": true,
+      "jobs": [
+        {
+          "id": 128380125785,
+          "name": "cross-arch-cost (arm64)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380125785",
+          "started_at": "2026-11-07T10:37:22Z",
+          "completed_at": "2026-11-07T10:43:48Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native release setup and repeated-search costs",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native zero-matrix locality costs",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native one-zero rank-one locality costs",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native fixed maintenance producer and preparation costs",
+              "number": 10,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native legal and late-rejection verifier costs",
+              "number": 11,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute exact native from-zero service controls",
+              "number": 12,
+              "status": "completed",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "number": 13,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain native cost successes and failures",
+              "number": 14,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "number": 28,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380125877,
+          "name": "prospective Rust shard (runtime)",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380125877",
+          "started_at": "2026-11-07T10:38:30Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated signed-state oracle Python environment",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run retained Rust shard",
+              "number": 9,
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "number": 10,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Retain source and execution observations",
+              "number": 11,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Retain lightweight exact Rust shard proof",
+              "number": 12,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "number": 24,
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 128380125893,
+          "name": "external-evidence-contract",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380125893",
+          "started_at": "2026-11-07T10:38:31Z",
+          "completed_at": "2026-11-07T10:50:41Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated evidence-replay Python environment",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actual external-evidence-contract checks",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "number": 16,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 17,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380125925,
+          "name": "prospective Rust shard (quality)",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380125925",
+          "started_at": "2026-11-07T10:37:27Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated signed-state oracle Python environment",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run retained Rust shard",
+              "number": 9,
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "number": 10,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Retain source and execution observations",
+              "number": 11,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Retain lightweight exact Rust shard proof",
+              "number": 12,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "number": 24,
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 128380125927,
+          "name": "fuzz-smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380125927",
+          "started_at": "2026-11-07T10:38:38Z",
+          "completed_at": "2026-11-07T10:50:58Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actual fuzz-smoke checks",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "number": 18,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 19,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380125933,
+          "name": "cross-arch-cost (x64)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380125933",
+          "started_at": "2026-11-07T10:38:33Z",
+          "completed_at": "2026-11-07T10:43:34Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native release setup and repeated-search costs",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native zero-matrix locality costs",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native one-zero rank-one locality costs",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native fixed maintenance producer and preparation costs",
+              "number": 10,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native legal and late-rejection verifier costs",
+              "number": 11,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute exact native from-zero service controls",
+              "number": 12,
+              "status": "completed",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "number": 13,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain native cost successes and failures",
+              "number": 14,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "number": 28,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380125939,
+          "name": "prospective-merge (fuzz-smoke)",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380125939",
+          "started_at": "2026-11-07T10:38:35Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact prospective merge",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge identity and exact ordered parents",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "number": 10,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "number": 11,
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Verify merge source remained unchanged",
+              "number": 12,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Retain source and execution observations",
+              "number": 13,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Checkout exact prospective merge",
+              "number": 26,
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 128380125951,
+          "name": "rust-baseline shard (runtime)",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380125951",
+          "started_at": "2026-11-07T10:38:49Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated signed-state oracle Python environment",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run retained Rust shard",
+              "number": 9,
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "number": 10,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Retain source and execution observations",
+              "number": 11,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Retain lightweight exact Rust shard proof",
+              "number": 12,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "number": 24,
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 128380125961,
+          "name": "protocol-contract",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380125961",
+          "started_at": "2026-11-07T10:38:55Z",
+          "completed_at": "2026-11-07T10:46:16Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated conformance-only Python environment",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actual protocol-contract checks",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "number": 10,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "number": 20,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 21,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380125965,
+          "name": "W1 actual reuse V3 (x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380125965",
+          "started_at": "2026-11-07T10:38:40Z",
+          "completed_at": "2026-11-07T10:42:08Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check original repository boundary before native V3 build",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain V3 costs including all failed observations",
+              "number": 10,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "number": 20,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 21,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380125977,
+          "name": "W1 actual reuse V3 (x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380125977",
+          "started_at": "2026-11-07T10:38:52Z",
+          "completed_at": "2026-11-07T10:41:42Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check original repository boundary before native V3 build",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain V3 costs including all failed observations",
+              "number": 10,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "number": 20,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 21,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380125980,
+          "name": "prospective-merge (external-evidence-contract)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380125980",
+          "started_at": "2026-11-07T10:38:43Z",
+          "completed_at": "2026-11-07T10:51:01Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact prospective merge",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge identity and exact ordered parents",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "number": 10,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "number": 11,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge source remained unchanged",
+              "number": 12,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "number": 13,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact prospective merge",
+              "number": 26,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 27,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380125994,
+          "name": "rust-baseline shard (quality)",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380125994",
+          "started_at": "2026-11-07T10:38:56Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated signed-state oracle Python environment",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run retained Rust shard",
+              "number": 9,
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "number": 10,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Retain source and execution observations",
+              "number": 11,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Retain lightweight exact Rust shard proof",
+              "number": 12,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "number": 24,
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 128380126007,
+          "name": "repository-truth",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380126007",
+          "started_at": "2026-11-07T10:38:49Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check original public Host CI ownership and failure controls",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actual repository-truth checks",
+              "number": 7,
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "number": 8,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Retain source and execution observations",
+              "number": 9,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "number": 18,
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 128380126008,
+          "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380126008",
+          "started_at": "2026-11-07T10:37:35Z",
+          "completed_at": "2026-11-07T10:41:23Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check original repository boundary before native V3 build",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain V3 costs including all failed observations",
+              "number": 10,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "number": 20,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 21,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380126013,
+          "name": "prospective-merge (protocol-contract)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380126013",
+          "started_at": "2026-11-07T10:38:48Z",
+          "completed_at": "2026-11-07T10:46:13Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact prospective merge",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge identity and exact ordered parents",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "number": 10,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "number": 11,
+              "status": "completed",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Verify merge source remained unchanged",
+              "number": 12,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "number": 13,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact prospective merge",
+              "number": 26,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 27,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380126048,
+          "name": "prospective-merge (repository-truth)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380126048",
+          "started_at": "2026-11-07T10:39:03Z",
+          "completed_at": "2026-11-07T10:51:04Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact prospective merge",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge identity and exact ordered parents",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "number": 10,
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "number": 11,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge source remained unchanged",
+              "number": 12,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "number": 13,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact prospective merge",
+              "number": 26,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 27,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128380126093,
+          "name": "W1 actual reuse V3 (arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128380126093",
+          "started_at": "2026-11-07T10:37:23Z",
+          "completed_at": "2026-11-07T10:41:13Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check original repository boundary before native V3 build",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain V3 costs including all failed observations",
+              "number": 10,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "number": 20,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 21,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128381613019,
+          "name": "cross-arch-cost-consistency",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678236/job/128381613019",
+          "started_at": "2026-11-07T10:43:51Z",
+          "completed_at": "2026-11-07T10:44:40Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retrieve both actual cost observations from this run",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check actual streams and source identity without a speed threshold",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check zero-matrix streams and exact source identity",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check one-zero rank-one streams and exact source identity",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check fixed maintenance streams and exact source identity",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check actual rejection stages and paired native architectures",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "number": 10,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain comparison result including missing or failed architectures",
+              "number": 11,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "number": 22,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "number": 23,
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 42364678201,
+      "filter": "all",
+      "per_page": 100,
+      "pages_fetched": 1,
+      "total_count": 4,
+      "retrieved_count": 4,
+      "all_matching_pages_covered": true,
+      "jobs": [
+        {
+          "id": 128380125534,
+          "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678201/job/128380125534",
+          "started_at": "2026-11-07T10:36:48Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare exact-source command records",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require retained source and claim controls",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install the original pinned compiler",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare the independently pinned OpenSSL provider",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Record compiler, exact locked graph and formatting",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute every required native effect and rejection control",
+              "number": 8,
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Require original transaction scope controls",
+              "number": 9,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Require actual build-fence cache requalification",
+              "number": 10,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Preserve native control records before the complete regression",
+              "number": 11,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Preserve the complete original Node library regression suite",
+              "number": 12,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Check strict Clippy without rewriting source",
+              "number": 13,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Observe complete component costs with unchanged native budgets",
+              "number": 14,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Preserve complete records including failures",
+              "number": 15,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+              "number": 30,
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 128380125709,
+          "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678201/job/128380125709",
+          "started_at": "2026-11-07T10:36:40Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare exact-source command records",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require retained source and claim controls",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install the original pinned compiler",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare the independently pinned OpenSSL provider",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Record compiler, exact locked graph and formatting",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute every required native effect and rejection control",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require original transaction scope controls",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require actual build-fence cache requalification",
+              "number": 10,
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Preserve native control records before the complete regression",
+              "number": 11,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Preserve the complete original Node library regression suite",
+              "number": 12,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Check strict Clippy without rewriting source",
+              "number": 13,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Observe complete component costs with unchanged native budgets",
+              "number": 14,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Preserve complete records including failures",
+              "number": 15,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+              "number": 30,
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 128380125804,
+          "name": "PQ network and witness (ubuntu-24.04, head)",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678201/job/128380125804",
+          "started_at": "2026-11-07T10:37:28Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare exact-source command records",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require retained source and claim controls",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install the original pinned compiler",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare the independently pinned OpenSSL provider",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Record compiler, exact locked graph and formatting",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute every required native effect and rejection control",
+              "number": 8,
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Require original transaction scope controls",
+              "number": 9,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Require actual build-fence cache requalification",
+              "number": 10,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Preserve native control records before the complete regression",
+              "number": 11,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Preserve the complete original Node library regression suite",
+              "number": 12,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Check strict Clippy without rewriting source",
+              "number": 13,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Observe complete component costs with unchanged native budgets",
+              "number": 14,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Preserve complete records including failures",
+              "number": 15,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+              "number": 30,
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 128380125808,
+          "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678201/job/128380125808",
+          "started_at": "2026-11-07T10:36:40Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+              "number": 2,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare exact-source command records",
+              "number": 3,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require retained source and claim controls",
+              "number": 4,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install the original pinned compiler",
+              "number": 5,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare the independently pinned OpenSSL provider",
+              "number": 6,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Record compiler, exact locked graph and formatting",
+              "number": 7,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute every required native effect and rejection control",
+              "number": 8,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require original transaction scope controls",
+              "number": 9,
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require actual build-fence cache requalification",
+              "number": 10,
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Preserve native control records before the complete regression",
+              "number": 11,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Preserve the complete original Node library regression suite",
+              "number": 12,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Check strict Clippy without rewriting source",
+              "number": 13,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Observe complete component costs with unchanged native budgets",
+              "number": 14,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Preserve complete records including failures",
+              "number": 15,
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+              "number": 30,
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

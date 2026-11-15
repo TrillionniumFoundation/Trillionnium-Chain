@@ -1,0 +1,12 @@
+{
+  "not_used_for_validation_or_counts": true,
+  "original_empty_count_parser_output": {
+    "bytes": 234,
+    "raw_hex": "7b0a202022636f756e74735f6163726f73735f726572756e735f6172655f6e6f745f756e697175655f7465737473223a20747275652c0a202022726f7773223a205b5d2c0a202022736368656d61223a2022706f6e2d6e61746976652d70726f66696c652d6c6f672d746573742d636f756e74732d7631222c0a202022736f757263655f736861223a202237333262386666356538636165373462623066623634393035353064393938346632663562306436222c0a202022736f757263655f76616c69646174696f6e5f69735f6e6f745f7175616c696669636174696f6e223a20747275650a7d5c6e",
+    "sha256": "d71cb50f8569a83ad3f7a6f72158f1ea2f24d277b94684576234a7d739f06718"
+  },
+  "preparation_cost": "UNKNOWN",
+  "reason": "First auxiliary parser overescaped its regular expressions and newline. Original validation logs were unchanged; the corrected parser and independent collector recover the same 19 test summaries.",
+  "schema": "pon-profile-evidence-derivation-history-v1",
+  "validation_commands_rerun_by_parser": false
+}

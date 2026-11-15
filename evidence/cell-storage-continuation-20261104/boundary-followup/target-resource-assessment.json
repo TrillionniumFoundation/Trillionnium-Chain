@@ -1,0 +1,67 @@
+{
+  "schema": "trnm.cell.target-resource-assessment.v1",
+  "status": "read_only_assessment_complete",
+  "measurement_started_utc": "2026-11-05T00:55:13.310220+00:00",
+  "measurement_completed_utc": "2026-11-05T00:55:18.983185+00:00",
+  "scope": {
+    "target_root": "/workspace/scratch/73305aff6ced/target",
+    "baseline_observations": [
+      "/workspace/scratch/73305aff6ced/observations/baseline/baseline-node-composition.log",
+      "/workspace/scratch/73305aff6ced/observations/baseline/baseline-node-composition.json",
+      "/workspace/scratch/73305aff6ced/observations/baseline/initial-runtime-interruption.json",
+      "/workspace/scratch/73305aff6ced/observations/baseline/runtime-correction.json",
+      "/workspace/scratch/73305aff6ced/observations/baseline/initial-runtime-unqualified.sh"
+    ],
+    "actions": [
+      "Read-only target metadata, inode/link counts, allocated-block inventory and du/statvfs snapshot",
+      "Read initial interrupted baseline log and launcher/receipt metadata"
+    ],
+    "other_workspaces_inspected": false,
+    "note": "An initial filename-only search in this task directory located observations/baseline; unrelated source/evidence file contents were not read."
+  },
+  "target_allocated_bytes": 754257920,
+  "target_allocated_mib": 719.316,
+  "allocated_bytes_by_directory": {
+    "/workspace/scratch/73305aff6ced/target/tmp": 4096,
+    "/workspace/scratch/73305aff6ced/target/debug/deps": 618225664,
+    "/workspace/scratch/73305aff6ced/target/debug/.fingerprint": 10158080,
+    "/workspace/scratch/73305aff6ced/target/debug/incremental": 4096,
+    "/workspace/scratch/73305aff6ced/target/debug/build": 121585664,
+    "/workspace/scratch/73305aff6ced/target/debug/examples": 4263936,
+    "/workspace/scratch/73305aff6ced/target/debug": 754241536,
+    "/workspace/scratch/73305aff6ced/target": 754257920
+  },
+  "filesystem": {
+    "block_size": 4096,
+    "total_bytes": 67586535424,
+    "free_bytes": 2790916096,
+    "available_bytes": 0,
+    "available_mib": 0.0,
+    "scope": "Shared overlay containing this target; no other workspace was scanned.",
+    "point_in_time_only": true
+  },
+  "initial_baseline": {
+    "status": "interrupted_unqualified_environment",
+    "tests_executed": 0,
+    "terminal_tool_exit_code": 130,
+    "diagnostic": "trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete",
+    "initial_log_sha256_recorded_in_receipt": "a19e7f970c4408840117d48abac01c19203f569b0828aa3c2fe5b5fa6436a22c",
+    "observed_utc": "2026-11-05T00:29:09.072725+00:00"
+  },
+  "findings": [
+    "The target occupies less than one GiB in total; it cannot yield GiB-scale reclaim for an original-profile Node build.",
+    "Incremental directory has only directory metadata; no substantial incremental cache was found.",
+    "Metadata inventory of individual files occupying at least 16 MiB found M09 library/test artifacts, trnm-cell and discovery binaries (each binary has two hard links), and a task-kernel rlib; it found no large abandoned Node binary/object.",
+    "Initial baseline was interrupted with an unqualified SQLite loader environment and zero tests; its log is evidence, not a successful test receipt.",
+    "Small duplicate or uncertain artifacts were not classified for deletion; further fragmented cleanup investigation stopped at parent instruction."
+  ],
+  "safe_gib_scale_reclaim_candidates": [],
+  "deletion_candidates": [],
+  "files_deleted": [],
+  "source_or_target_modified": false,
+  "rust_commands_started": false,
+  "processes_signaled": false,
+  "node12_status": "NOT_RUN",
+  "clippy_status_at_parent_instruction": "RUNNING; not interrupted or modified by this assessment",
+  "qualification_claimed": false
+}

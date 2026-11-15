@@ -1,0 +1,12 @@
+{
+  "args": [
+    "gh",
+    "api",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162582/artifacts?per_page=100"
+  ],
+  "exit_code": 0,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 1680,
+  "stdout_sha256": "3a4b54e55545df1b92d0e741c1bfbb3243f6aab06054e2e005e49192c94ca48e"
+}

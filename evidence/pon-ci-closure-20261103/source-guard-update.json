@@ -1,0 +1,74 @@
+{
+  "schema": "post-ci-source-guard-update-v1",
+  "base": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "math_production_tree": "367bf61031f47fecc64123de644c3bf23b9d39b5",
+  "pin_count": 375,
+  "pin_changes": [
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+      "before": "71e7a36bc9ba448fd9383baa0f758c9c55836df0",
+      "after": "6a568982251c7b14727e4a55b6e4d843f8c89c56"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs",
+      "before": "a1f2412d673bd4d3a628e33a9b83ad4f39b52c7f",
+      "after": "40b58175be7ff7c617ee063dec37ed41922f959e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs",
+      "before": "fc02fbf611e1b853637114841be8b0202eb1c32e",
+      "after": "cb82771b6cf02518cccaa029c692cc05345e6ab6"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "before": "308ee4541d34682f82debb574eb523f23d1faad4",
+      "after": "abd262b2ed92ce3ac720d17bbe0b61e8f082c675"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "before": "827ba53a9ed39b06cbb5f39c5a25effd65ce5422",
+      "after": "14b5cbf88ad07fcc76a15c109c6f58bf46b84465"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs",
+      "before": "5a6e5b89cfec6ee1941b96ac5585cd5bc8d98d8d",
+      "after": "321027f2a9677b9c20c09319e9a4c3b778718e79"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+      "before": "2edb656a0e7795db5d8950596b3ee87458de2d8b",
+      "after": "241003ed34eff9a0a0ab4992acfa527ad38d702d"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+      "before": "89c338175a2f8eee9d6c7edb114524e522daaeb9",
+      "after": "a6fd9c8e4f514d19ca58295272cde7968b9b5abd"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs",
+      "before": "fb103ea998c8c9907b2276d6f3ec9703f5718609",
+      "after": "e0ac7c518715943c8ba1bd73f383beef8d7a7781"
+    },
+    {
+      "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "before": "f27f3b7f389ecbbc98ab06d026dac0bd72812f9f",
+      "after": "fc154885213e4c4c0a7d562b392038c81af3dcdc"
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "before": "7fe1dc1171695194e040d4b0d38674b8b5afc552",
+      "after": "3962e705b2c1fe8bb4ccfd3280e2efbd7310be95"
+    }
+  ],
+  "inline_changes": [
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "before": "308ee4541d34682f82debb574eb523f23d1faad4",
+      "after": "abd262b2ed92ce3ac720d17bbe0b61e8f082c675"
+    }
+  ],
+  "wire_gate_before": 22,
+  "wire_gate_after": 27,
+  "reason": "Five additional protocol arithmetic tests; previous controls and one ignored test remain."
+}

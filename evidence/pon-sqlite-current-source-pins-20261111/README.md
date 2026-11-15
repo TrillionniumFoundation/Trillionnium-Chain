@@ -1,0 +1,15 @@
+# SQLite-upgraded exact source observation binding
+
+Implementation source: `6a749936ff53c3c344669290893ec89229923a37`, tree `94dac78a9990b8e59f84f26e0edbf0a1cd8893ad`, parent `faf940a53154bc6b4dcbeeb54a868e0922ce863e`.
+
+PR #900 at faf and preview ab9f failed current-QROM setup because their old exact Cargo.lock size/hash no longer matched the reviewed SQLite dependency upgrade. CPQ1 and PQ-network corpus gates also refused the changed fuzz lock. Corpus review found 21 stale pins, including two already-stale inherited #885 workflow/fixture pins. All 937 pins and 845 required paths remain. No native command, resource, reader size bound, historical V1 contract, Rust/fuzz code, dependency version, or workflow was relaxed by this metadata repair.
+
+The lifetime current source contract explicitly retains the historical values and records the ordered changed paths Cargo.lock then store.rs. The original historical reader still refuses the earliest mismatch Cargo.lock (expected exit 2); store-specific negative controls remain. The exact 75 implementation and 110 closure method rosters remain unchanged. Overlapping controls are not summed.
+
+The original recorder before/after binds the implementation commit/tree with 26709 entries and 2548336101 tracked bytes. All 21 command outcomes match expectation: 20 exit 0, one expected historical refusal exit 2. Corpus 57, CI contract 169, source integrity 43, fixed implementation 75 and closure 110 controls completed; current observations, full workspace/fuzz all-feature locked-offline metadata, workspace all-target/all-feature check, fmt, strict Clippy, and original cargo-deny 0.20.2 dual graph policy completed. The policy uses unchanged deny.toml and RustSec commit 28d73fc95e5972af3403225a217def57dcaba3c4/tree247ffa118a3e073e70825e62bde8c473d4ac6b45. All per-command stdout/stderr and metadata are retained, along with the full policy artifact pins and advisory DB archive.
+
+This evidence child carries the implementation's receipts, not a transfer of its execution qualification to the evidence head or a prospective merge. A separate evidence-head source recorder is retained externally and linked in the PR. No native runtime, Host business campaign, or previously passed component fixture was rerun for this metadata-only change. #900's own native campaign remains 0/3 complete; fresh service failures, CodeQL timeout, and other original failures are retained. This does not prove QROM/FRI/extraction/recursion/lifecycle security or a universal resource bound.
+
+All four proven indicators and all authorities remain false. all_algorithm_cost_bound and all 16 MU1 universal strategy points remain null; HOLD/NO_GO. Real demand/data rights/budget, independent future full-cost net utility, and all legal coalition lifecycle probability/resource bounds remain unclosed. Caching, low rank, sparse/shared-base/batching, all reported costs and unknown GPU remain in scope.
+
+Files under validation are original streams and reports. README is derived scope description; manifest.json binds every other file in this directory.

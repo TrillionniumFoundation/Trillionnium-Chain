@@ -1,0 +1,33 @@
+{
+  "all_required_maintenance_passed": true,
+  "attempts": [
+    {
+      "directory": "attempt-01",
+      "exit_code": 101,
+      "index_sha256": "86e68878bd8b35886f672a826acd0123e68995cb66913ee98631a781619bc297",
+      "result_sha256": "3908a74073088c92b01af7bca0db40b36c3f65a8661ad54963e9f53a91c9179e",
+      "source_commit": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+      "source_tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198",
+      "status": "FAILED_STRICT_CLIPPY_DUPLICATE_MOD"
+    },
+    {
+      "directory": "attempt-02",
+      "exit_code": 0,
+      "index_sha256": "e0c442312d5d4f25ba9cffc7a6c31a773f3fe5442804d7248f8ff68ab60e786d",
+      "native_tree": "b710c1c49dc42598b79206dfdd37708da506f114",
+      "result_sha256": "49401819d4b64d24efaeca2a0a9406fa316d70f2fee96f17543a748fdf873710",
+      "source_commit": "ed1ea5691798a2dbffbbcc8216f2929e67724af7",
+      "source_equivalence_sha256": "8e8b72af7fcb24231f9883f9079f2d303a739fb6219583b2b3241a9c92804808",
+      "source_tree": "a1029394b64ef1f0ac46511716dba6892fdbb261",
+      "status": "PASSED_ON_REVIEWED_LINT_ONLY_SUCCESSOR"
+    }
+  ],
+  "latest_attempt": "attempt-02",
+  "latest_status": "PASSED_ON_REVIEWED_LINT_ONLY_SUCCESSOR",
+  "maintenance_source_commit": "ed1ea5691798a2dbffbbcc8216f2929e67724af7",
+  "production_final_use_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "schema": "hepta-maintenance-history-v1",
+  "tested_source_commit": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+  "tests_rerun_after_maintenance": false
+}

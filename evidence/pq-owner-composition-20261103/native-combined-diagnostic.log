@@ -1,0 +1,31 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/df0a4a720ed8/chain-source/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 47s
+     Running unittests src/lib.rs (/workspace/scratch/df0a4a720ed8/chain-target/debug/deps/trnm_pon_node-7f586ee1702a3d35)
+
+running 1 test
+test store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart ... FAILED
+
+successes:
+
+successes:
+
+failures:
+
+---- store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart stdout ----
+
+thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart' (310) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:119:17:
+independent witness exited before ready (exit status: 101): 
+thread 'store::pq_rollback_witness::combined_tests::independent_witness_process_child' (312) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:179:71:
+called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: "Operation not permitted" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 900 filtered out; finished in 0.84s
+
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

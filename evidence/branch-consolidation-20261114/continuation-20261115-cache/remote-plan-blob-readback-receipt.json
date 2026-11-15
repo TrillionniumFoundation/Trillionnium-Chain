@@ -1,0 +1,11 @@
+{
+  "source_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/3c8df20073bd3fc66d6819130400acd5540abfd7",
+  "read_channel": "GitHub read-only fetch connector",
+  "actual_bytes": 1174147,
+  "actual_blob": "3c8df20073bd3fc66d6819130400acd5540abfd7",
+  "actual_sha256": "247a0ef046c0ad7b5169487889fe544de2d64fd3c35df67d120337c1df90fb74",
+  "expected_blob": "3c8df20073bd3fc66d6819130400acd5540abfd7",
+  "expected_sha256": "247a0ef046c0ad7b5169487889fe544de2d64fd3c35df67d120337c1df90fb74",
+  "matches": true,
+  "scope": "exact immutable blob readback; all GitHub writes remain on ProfHepta HeptaRuntime Mac channel"
+}

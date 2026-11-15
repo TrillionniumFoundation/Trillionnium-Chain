@@ -1,0 +1,15 @@
+{
+  "name": "child-budget",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_pq_cell_swarm_deadline.PQCryptoChildBudgetTests"
+  ],
+  "cwd": "/workspace/scratch/56818e4fba76/chain-recovered/formal/pon-nakamoto-v1",
+  "started_utc": "2026-10-28T03:37:09.825006+00:00",
+  "wall_seconds": 0.4039822190097766,
+  "returncode": 0,
+  "real_cryptographic_success_test": false
+}

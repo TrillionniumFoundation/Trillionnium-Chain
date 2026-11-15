@@ -1,0 +1,4802 @@
+{
+  "actor_call_cap": 480,
+  "all_planned_business_packets": [
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 0,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 1,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 2,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 3,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 4,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 5,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 6,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 7,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 8,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 9,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 10,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 11,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 12,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 13,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 14,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 15,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 16,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 17,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 18,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 19,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 20,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 0,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 1,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 2,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 3,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 4,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 5,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 6,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 7,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 8,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 9,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 10,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 11,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 12,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 13,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 14,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 15,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 16,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 17,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 18,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 19,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 20,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    }
+  ],
+  "all_planned_rounds": [
+    {
+      "actual_ended_ns": 2000000000,
+      "actual_started_ns": 1000000000,
+      "confirmed_inside_original_window": true,
+      "elapsed_from_scheduled_ns": 1000000000,
+      "end_lateness_from_four_second_deadline_ns": 0,
+      "four_second_slo_met": true,
+      "observed_exactly_once": true,
+      "old_root_code_already_enforced_four_second_slo": false,
+      "phase": "baseline",
+      "round": 0,
+      "scheduled_offset_ns": 1000000000,
+      "start_lateness_from_schedule_ns": 0
+    },
+    {
+      "actual_ended_ns": 6000000000,
+      "actual_started_ns": 5000000000,
+      "confirmed_inside_original_window": true,
+      "elapsed_from_scheduled_ns": 1000000000,
+      "end_lateness_from_four_second_deadline_ns": 0,
+      "four_second_slo_met": true,
+      "observed_exactly_once": true,
+      "old_root_code_already_enforced_four_second_slo": false,
+      "phase": "baseline",
+      "round": 1,
+      "scheduled_offset_ns": 5000000000,
+      "start_lateness_from_schedule_ns": 0
+    },
+    {
+      "actual_ended_ns": 10000000000,
+      "actual_started_ns": 9000000000,
+      "confirmed_inside_original_window": true,
+      "elapsed_from_scheduled_ns": 1000000000,
+      "end_lateness_from_four_second_deadline_ns": 0,
+      "four_second_slo_met": true,
+      "observed_exactly_once": true,
+      "old_root_code_already_enforced_four_second_slo": false,
+      "phase": "baseline",
+      "round": 2,
+      "scheduled_offset_ns": 9000000000,
+      "start_lateness_from_schedule_ns": 0
+    },
+    {
+      "actual_ended_ns": 2000000000,
+      "actual_started_ns": 1000000000,
+      "confirmed_inside_original_window": true,
+      "elapsed_from_scheduled_ns": 1000000000,
+      "end_lateness_from_four_second_deadline_ns": 0,
+      "four_second_slo_met": true,
+      "observed_exactly_once": true,
+      "old_root_code_already_enforced_four_second_slo": false,
+      "phase": "valid-work-root",
+      "round": 0,
+      "scheduled_offset_ns": 1000000000,
+      "start_lateness_from_schedule_ns": 0
+    },
+    {
+      "actual_ended_ns": 6000000000,
+      "actual_started_ns": 5000000000,
+      "confirmed_inside_original_window": true,
+      "elapsed_from_scheduled_ns": 1000000000,
+      "end_lateness_from_four_second_deadline_ns": 0,
+      "four_second_slo_met": true,
+      "observed_exactly_once": true,
+      "old_root_code_already_enforced_four_second_slo": false,
+      "phase": "valid-work-root",
+      "round": 1,
+      "scheduled_offset_ns": 5000000000,
+      "start_lateness_from_schedule_ns": 0
+    },
+    {
+      "actual_ended_ns": 10000000000,
+      "actual_started_ns": 9000000000,
+      "confirmed_inside_original_window": true,
+      "elapsed_from_scheduled_ns": 1000000000,
+      "end_lateness_from_four_second_deadline_ns": 0,
+      "four_second_slo_met": true,
+      "observed_exactly_once": true,
+      "old_root_code_already_enforced_four_second_slo": false,
+      "phase": "valid-work-root",
+      "round": 2,
+      "scheduled_offset_ns": 9000000000,
+      "start_lateness_from_schedule_ns": 0
+    }
+  ],
+  "business_blocks": 21,
+  "controller_identity_after": {
+    "Ok": {
+      "cgroup": {
+        "device": 1,
+        "gid": 0,
+        "inode": 99,
+        "mode": 493,
+        "uid": 0
+      },
+      "process": {
+        "boot_id": "00000000-0000-0000-0000-000000000001",
+        "cgroup": "/system.slice/f0-fixture.service",
+        "executable": {
+          "bytes": 100,
+          "device": 1,
+          "inode": 17,
+          "modified_nanoseconds": 0,
+          "modified_seconds": 1
+        },
+        "parent_pid": 100,
+        "pid": 123,
+        "start_ticks": 1
+      }
+    }
+  },
+  "controller_identity_before": {
+    "cgroup": {
+      "device": 1,
+      "gid": 0,
+      "inode": 99,
+      "mode": 493,
+      "uid": 0
+    },
+    "process": {
+      "boot_id": "00000000-0000-0000-0000-000000000001",
+      "cgroup": "/system.slice/f0-fixture.service",
+      "executable": {
+        "bytes": 100,
+        "device": 1,
+        "inode": 17,
+        "modified_nanoseconds": 0,
+        "modified_seconds": 1
+      },
+      "parent_pid": 100,
+      "pid": 123,
+      "start_ticks": 1
+    }
+  },
+  "controller_stable": true,
+  "independent_operators": false,
+  "m06_workers": 1,
+  "new_f1_parameters_implemented": false,
+  "original_campaign_qualified": false,
+  "original_scalar_profile_changed": false,
+  "phase_seconds": 30,
+  "phases": [
+    {
+      "confirmations": [
+        {
+          "confirmed_inside_pressure_window": true,
+          "ended_ns": 2000000000,
+          "round": 0,
+          "started_ns": 1000000000
+        },
+        {
+          "confirmed_inside_pressure_window": true,
+          "ended_ns": 6000000000,
+          "round": 1,
+          "started_ns": 5000000000
+        },
+        {
+          "confirmed_inside_pressure_window": true,
+          "ended_ns": 10000000000,
+          "round": 2,
+          "started_ns": 9000000000
+        }
+      ],
+      "duration_seconds": 30,
+      "external_controller_observation": {
+        "actual_attack_process_contexts": [],
+        "controller_identity": {
+          "cgroup": {
+            "device": 1,
+            "gid": 0,
+            "inode": 99,
+            "mode": 493,
+            "uid": 0
+          },
+          "process": {
+            "boot_id": "00000000-0000-0000-0000-000000000001",
+            "cgroup": "/system.slice/f0-fixture.service",
+            "executable": {
+              "bytes": 100,
+              "device": 1,
+              "inode": 17,
+              "modified_nanoseconds": 0,
+              "modified_seconds": 1
+            },
+            "parent_pid": 100,
+            "pid": 123,
+            "start_ticks": 1
+          }
+        },
+        "controller_live_identity_after_verified": true,
+        "launched": 0,
+        "reaped": 0,
+        "schema": "fixed-public-root-phase-external-actors-v1"
+      },
+      "finite_phase_criteria_met": true,
+      "fixed_root_external_actor_membership": {
+        "actors": [],
+        "controller_check": {
+          "Ok": null
+        },
+        "controller_identity": {
+          "cgroup": {
+            "device": 1,
+            "gid": 0,
+            "inode": 99,
+            "mode": 493,
+            "uid": 0
+          },
+          "process": {
+            "boot_id": "00000000-0000-0000-0000-000000000001",
+            "cgroup": "/system.slice/f0-fixture.service",
+            "executable": {
+              "bytes": 100,
+              "device": 1,
+              "inode": 17,
+              "modified_nanoseconds": 0,
+              "modified_seconds": 1
+            },
+            "parent_pid": 100,
+            "pid": 123,
+            "start_ticks": 1
+          }
+        },
+        "distinct_pids": 0,
+        "expected_actors": 0,
+        "observed_actors": 0,
+        "verified": true
+      },
+      "initial_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "worker_limit": 2
+      },
+      "mode": "baseline",
+      "phase_process_context": {
+        "controller_identity": {
+          "cgroup": {
+            "device": 1,
+            "gid": 0,
+            "inode": 99,
+            "mode": 493,
+            "uid": 0
+          },
+          "process": {
+            "boot_id": "00000000-0000-0000-0000-000000000001",
+            "cgroup": "/system.slice/f0-fixture.service",
+            "executable": {
+              "bytes": 100,
+              "device": 1,
+              "inode": 17,
+              "modified_nanoseconds": 0,
+              "modified_seconds": 1
+            },
+            "parent_pid": 100,
+            "pid": 123,
+            "start_ticks": 1
+          }
+        },
+        "controller_live_identity_after_verified": true,
+        "phase_cgroup": "/trnmponpublic.slice/f0-fixture-0",
+        "runtime_business_deadline_changed": false,
+        "scalar_policy_changed": false,
+        "schema": "fixed-public-root-phase-external-actors-v1"
+      },
+      "submissions": [
+        {
+          "packet_index": 0,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 1,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 2,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 3,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 4,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 5,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 6,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 7,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 8,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 9,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 10,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 11,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 12,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 13,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 14,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 15,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 16,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 17,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 18,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 19,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 20,
+          "returned_after_window": false,
+          "status": "ok"
+        }
+      ]
+    },
+    {
+      "actor_reports_successful_without_cap_or_kill": true,
+      "attacker_processes_ready": 24,
+      "budget_samples": [
+        {
+          "attacker_process_rss": {
+            "complete": false,
+            "processes": [
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1000,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1001,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1002,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1003,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1004,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1005,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1006,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1007,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1008,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1009,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1010,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1011,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1012,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1013,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1014,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1015,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1016,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1017,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1018,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1019,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1020,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1021,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1022,
+                "rss_bytes": null
+              },
+              {
+                "parent_and_executable_identity_verified": false,
+                "pid": 1023,
+                "rss_bytes": null
+              }
+            ],
+            "sum_rss_bytes": null
+          },
+          "meter": {
+            "Ok": {
+              "actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 0,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 2000000000,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 2000000000,
+                "remaining_paid_credit_ns": 0,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 2000000000,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 0,
+                "stored_credit_ns": 0,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "clock_failures": 0,
+              "depleted": true,
+              "meter": {
+                "accounting_unavailable": false,
+                "burst_ns": 2000000000,
+                "refill_ns_per_second": 250000000,
+                "schema": "public-v3-local-stored-cpu-budget-v1",
+                "start_reserve_ns": 100000000,
+                "worker_limit": 2
+              },
+              "sample_at_ns": 1500000000
+            }
+          },
+          "observation_ended_ns": 1600000000,
+          "observation_started_ns": 1400000000
+        }
+      ],
+      "children": [
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1000,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1000,
+              "traffic_cpu_ns": null,
+              "worker": 0
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1001,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000001",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000001",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000001",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000001",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1001,
+              "traffic_cpu_ns": null,
+              "worker": 1
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1002,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000002",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000002",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000002",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000002",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1002,
+              "traffic_cpu_ns": null,
+              "worker": 2
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1003,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000003",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000003",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000003",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000003",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1003,
+              "traffic_cpu_ns": null,
+              "worker": 3
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1004,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000004",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000004",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000004",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000004",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1004,
+              "traffic_cpu_ns": null,
+              "worker": 4
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1005,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000005",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000005",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000005",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000005",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1005,
+              "traffic_cpu_ns": null,
+              "worker": 5
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1006,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000006",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000006",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000006",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000006",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1006,
+              "traffic_cpu_ns": null,
+              "worker": 6
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1007,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000007",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000007",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000007",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000007",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1007,
+              "traffic_cpu_ns": null,
+              "worker": 7
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1008,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000008",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000008",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000008",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000008",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1008,
+              "traffic_cpu_ns": null,
+              "worker": 8
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1009,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000009",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000009",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000009",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000009",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1009,
+              "traffic_cpu_ns": null,
+              "worker": 9
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1010,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000a",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000a",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000a",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000a",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1010,
+              "traffic_cpu_ns": null,
+              "worker": 10
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1011,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000b",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000b",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000b",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000b",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1011,
+              "traffic_cpu_ns": null,
+              "worker": 11
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1012,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000c",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000c",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000c",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000c",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1012,
+              "traffic_cpu_ns": null,
+              "worker": 12
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1013,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000d",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000d",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000d",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000d",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1013,
+              "traffic_cpu_ns": null,
+              "worker": 13
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1014,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000e",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000e",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000e",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000e",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1014,
+              "traffic_cpu_ns": null,
+              "worker": 14
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1015,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000f",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000f",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000f",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000f",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1015,
+              "traffic_cpu_ns": null,
+              "worker": 15
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1016,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000010",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000010",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000010",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000010",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1016,
+              "traffic_cpu_ns": null,
+              "worker": 16
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1017,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000011",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000011",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000011",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000011",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1017,
+              "traffic_cpu_ns": null,
+              "worker": 17
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1018,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000012",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000012",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000012",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000012",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1018,
+              "traffic_cpu_ns": null,
+              "worker": 18
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1019,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000013",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000013",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000013",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000013",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1019,
+              "traffic_cpu_ns": null,
+              "worker": 19
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1020,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000014",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000014",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000014",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000014",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1020,
+              "traffic_cpu_ns": null,
+              "worker": 20
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1021,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000015",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000015",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000015",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000015",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1021,
+              "traffic_cpu_ns": null,
+              "worker": 21
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1022,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000016",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000016",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000016",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000016",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1022,
+              "traffic_cpu_ns": null,
+              "worker": 22
+            }
+          }
+        },
+        {
+          "exit_success": true,
+          "parent_forced_kill": false,
+          "pid": 1023,
+          "report": {
+            "error": null,
+            "result": {
+              "acquisition": {
+                "acquisition_cpu_ns": 1,
+                "acquisition_wall_ns": 2,
+                "diagnostic_cpu_ns": 3,
+                "diagnostic_wall_ns": 4,
+                "method_index": 0,
+                "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000017",
+                "setup_calls": 1,
+                "valid_work_for_root_rejection": true
+              },
+              "attempt_cap_reached": false,
+              "calls": [
+                {
+                  "ended_ns": 1100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000017",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 1000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 5100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000017",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 5000000000,
+                  "status": "refused"
+                },
+                {
+                  "ended_ns": 9100000000,
+                  "error": null,
+                  "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000017",
+                  "response": {
+                    "ok": false,
+                    "value": {
+                      "error": "ROOT"
+                    }
+                  },
+                  "returned_after_window": false,
+                  "started_ns": 9000000000,
+                  "status": "refused"
+                }
+              ],
+              "entire_actor_cpu_ns": null,
+              "pid": 1023,
+              "traffic_cpu_ns": null,
+              "worker": 23
+            }
+          }
+        }
+      ],
+      "confirmations": [
+        {
+          "accepted_work_admission_refusal_during_round": true,
+          "confirmed_inside_pressure_window": true,
+          "ended_ns": 2000000000,
+          "observation": {
+            "depth": 6
+          },
+          "paid_credit_depletion_observed_during_round": true,
+          "receiver_hostile_admission_after": {
+            "accepted_work_admission_refusals": 1,
+            "admission_cpu_ns": 1
+          },
+          "receiver_hostile_admission_before": {
+            "accepted_work_admission_refusals": 0,
+            "admission_cpu_ns": 0
+          },
+          "round": 0,
+          "signed_root_responses_inside_round": 24,
+          "started_ns": 1000000000
+        },
+        {
+          "accepted_work_admission_refusal_during_round": true,
+          "confirmed_inside_pressure_window": true,
+          "ended_ns": 6000000000,
+          "observation": {
+            "depth": 6
+          },
+          "paid_credit_depletion_observed_during_round": false,
+          "receiver_hostile_admission_after": {
+            "accepted_work_admission_refusals": 2,
+            "admission_cpu_ns": 2
+          },
+          "receiver_hostile_admission_before": {
+            "accepted_work_admission_refusals": 1,
+            "admission_cpu_ns": 1
+          },
+          "round": 1,
+          "signed_root_responses_inside_round": 24,
+          "started_ns": 5000000000
+        },
+        {
+          "accepted_work_admission_refusal_during_round": true,
+          "confirmed_inside_pressure_window": true,
+          "ended_ns": 10000000000,
+          "observation": {
+            "depth": 6
+          },
+          "paid_credit_depletion_observed_during_round": false,
+          "receiver_hostile_admission_after": {
+            "accepted_work_admission_refusals": 3,
+            "admission_cpu_ns": 3
+          },
+          "receiver_hostile_admission_before": {
+            "accepted_work_admission_refusals": 2,
+            "admission_cpu_ns": 2
+          },
+          "round": 2,
+          "signed_root_responses_inside_round": 24,
+          "started_ns": 9000000000
+        }
+      ],
+      "depletion_meter": {
+        "actual_flow": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 0,
+          "initial_credit_ns": 2000000000,
+          "live_debited_cpu_ns": 2000000000,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 2000000000,
+          "remaining_paid_credit_ns": 0,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 2000000000,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 0,
+          "stored_credit_ns": 0,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "clock_failures": 0,
+        "depleted": true,
+        "meter": {
+          "accounting_unavailable": false,
+          "burst_ns": 2000000000,
+          "refill_ns_per_second": 250000000,
+          "schema": "public-v3-local-stored-cpu-budget-v1",
+          "start_reserve_ns": 100000000,
+          "worker_limit": 2
+        },
+        "sample_at_ns": 1500000000
+      },
+      "duration_seconds": 30,
+      "external_controller_observation": {
+        "actual_attack_process_contexts": [
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1000,
+              "start_ticks": 2000
+            },
+            "ordinal": 0,
+            "pid": 1000
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1001,
+              "start_ticks": 2001
+            },
+            "ordinal": 1,
+            "pid": 1001
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1002,
+              "start_ticks": 2002
+            },
+            "ordinal": 2,
+            "pid": 1002
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1003,
+              "start_ticks": 2003
+            },
+            "ordinal": 3,
+            "pid": 1003
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1004,
+              "start_ticks": 2004
+            },
+            "ordinal": 4,
+            "pid": 1004
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1005,
+              "start_ticks": 2005
+            },
+            "ordinal": 5,
+            "pid": 1005
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1006,
+              "start_ticks": 2006
+            },
+            "ordinal": 6,
+            "pid": 1006
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1007,
+              "start_ticks": 2007
+            },
+            "ordinal": 7,
+            "pid": 1007
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1008,
+              "start_ticks": 2008
+            },
+            "ordinal": 8,
+            "pid": 1008
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1009,
+              "start_ticks": 2009
+            },
+            "ordinal": 9,
+            "pid": 1009
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1010,
+              "start_ticks": 2010
+            },
+            "ordinal": 10,
+            "pid": 1010
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1011,
+              "start_ticks": 2011
+            },
+            "ordinal": 11,
+            "pid": 1011
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1012,
+              "start_ticks": 2012
+            },
+            "ordinal": 12,
+            "pid": 1012
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1013,
+              "start_ticks": 2013
+            },
+            "ordinal": 13,
+            "pid": 1013
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1014,
+              "start_ticks": 2014
+            },
+            "ordinal": 14,
+            "pid": 1014
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1015,
+              "start_ticks": 2015
+            },
+            "ordinal": 15,
+            "pid": 1015
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1016,
+              "start_ticks": 2016
+            },
+            "ordinal": 16,
+            "pid": 1016
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1017,
+              "start_ticks": 2017
+            },
+            "ordinal": 17,
+            "pid": 1017
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1018,
+              "start_ticks": 2018
+            },
+            "ordinal": 18,
+            "pid": 1018
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1019,
+              "start_ticks": 2019
+            },
+            "ordinal": 19,
+            "pid": 1019
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1020,
+              "start_ticks": 2020
+            },
+            "ordinal": 20,
+            "pid": 1020
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1021,
+              "start_ticks": 2021
+            },
+            "ordinal": 21,
+            "pid": 1021
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1022,
+              "start_ticks": 2022
+            },
+            "ordinal": 22,
+            "pid": 1022
+          },
+          {
+            "identity": {
+              "boot_id": "00000000-0000-0000-0000-000000000001",
+              "cgroup": "/system.slice/f0-fixture.service",
+              "executable": {
+                "bytes": 100,
+                "device": 1,
+                "inode": 17,
+                "modified_nanoseconds": 0,
+                "modified_seconds": 1
+              },
+              "parent_pid": 123,
+              "pid": 1023,
+              "start_ticks": 2023
+            },
+            "ordinal": 23,
+            "pid": 1023
+          }
+        ],
+        "controller_identity": {
+          "cgroup": {
+            "device": 1,
+            "gid": 0,
+            "inode": 99,
+            "mode": 493,
+            "uid": 0
+          },
+          "process": {
+            "boot_id": "00000000-0000-0000-0000-000000000001",
+            "cgroup": "/system.slice/f0-fixture.service",
+            "executable": {
+              "bytes": 100,
+              "device": 1,
+              "inode": 17,
+              "modified_nanoseconds": 0,
+              "modified_seconds": 1
+            },
+            "parent_pid": 100,
+            "pid": 123,
+            "start_ticks": 1
+          }
+        },
+        "controller_live_identity_after_verified": true,
+        "launched": 24,
+        "reaped": 24,
+        "schema": "fixed-public-root-phase-external-actors-v1"
+      },
+      "final_actual_flow": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 0,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 2000000000,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 2000000000,
+        "remaining_paid_credit_ns": 0,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 2000000000,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 0,
+        "stored_credit_ns": 0,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "finite_phase_criteria_met": false,
+      "fixed_root_external_actor_membership": {
+        "actors": [
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1000,
+                  "start_ticks": 2000
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1000
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1000,
+                    "start_ticks": 2000
+                  },
+                  "ordinal": 0,
+                  "pid": 1000
+                }
+              }
+            },
+            "ordinal": 0,
+            "pid": 1000,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1001,
+                  "start_ticks": 2001
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1001
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1001,
+                    "start_ticks": 2001
+                  },
+                  "ordinal": 1,
+                  "pid": 1001
+                }
+              }
+            },
+            "ordinal": 1,
+            "pid": 1001,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1002,
+                  "start_ticks": 2002
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1002
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1002,
+                    "start_ticks": 2002
+                  },
+                  "ordinal": 2,
+                  "pid": 1002
+                }
+              }
+            },
+            "ordinal": 2,
+            "pid": 1002,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1003,
+                  "start_ticks": 2003
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1003
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1003,
+                    "start_ticks": 2003
+                  },
+                  "ordinal": 3,
+                  "pid": 1003
+                }
+              }
+            },
+            "ordinal": 3,
+            "pid": 1003,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1004,
+                  "start_ticks": 2004
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1004
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1004,
+                    "start_ticks": 2004
+                  },
+                  "ordinal": 4,
+                  "pid": 1004
+                }
+              }
+            },
+            "ordinal": 4,
+            "pid": 1004,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1005,
+                  "start_ticks": 2005
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1005
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1005,
+                    "start_ticks": 2005
+                  },
+                  "ordinal": 5,
+                  "pid": 1005
+                }
+              }
+            },
+            "ordinal": 5,
+            "pid": 1005,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1006,
+                  "start_ticks": 2006
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1006
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1006,
+                    "start_ticks": 2006
+                  },
+                  "ordinal": 6,
+                  "pid": 1006
+                }
+              }
+            },
+            "ordinal": 6,
+            "pid": 1006,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1007,
+                  "start_ticks": 2007
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1007
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1007,
+                    "start_ticks": 2007
+                  },
+                  "ordinal": 7,
+                  "pid": 1007
+                }
+              }
+            },
+            "ordinal": 7,
+            "pid": 1007,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1008,
+                  "start_ticks": 2008
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1008
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1008,
+                    "start_ticks": 2008
+                  },
+                  "ordinal": 8,
+                  "pid": 1008
+                }
+              }
+            },
+            "ordinal": 8,
+            "pid": 1008,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1009,
+                  "start_ticks": 2009
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1009
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1009,
+                    "start_ticks": 2009
+                  },
+                  "ordinal": 9,
+                  "pid": 1009
+                }
+              }
+            },
+            "ordinal": 9,
+            "pid": 1009,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1010,
+                  "start_ticks": 2010
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1010
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1010,
+                    "start_ticks": 2010
+                  },
+                  "ordinal": 10,
+                  "pid": 1010
+                }
+              }
+            },
+            "ordinal": 10,
+            "pid": 1010,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1011,
+                  "start_ticks": 2011
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1011
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1011,
+                    "start_ticks": 2011
+                  },
+                  "ordinal": 11,
+                  "pid": 1011
+                }
+              }
+            },
+            "ordinal": 11,
+            "pid": 1011,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1012,
+                  "start_ticks": 2012
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1012
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1012,
+                    "start_ticks": 2012
+                  },
+                  "ordinal": 12,
+                  "pid": 1012
+                }
+              }
+            },
+            "ordinal": 12,
+            "pid": 1012,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1013,
+                  "start_ticks": 2013
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1013
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1013,
+                    "start_ticks": 2013
+                  },
+                  "ordinal": 13,
+                  "pid": 1013
+                }
+              }
+            },
+            "ordinal": 13,
+            "pid": 1013,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1014,
+                  "start_ticks": 2014
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1014
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1014,
+                    "start_ticks": 2014
+                  },
+                  "ordinal": 14,
+                  "pid": 1014
+                }
+              }
+            },
+            "ordinal": 14,
+            "pid": 1014,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1015,
+                  "start_ticks": 2015
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1015
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1015,
+                    "start_ticks": 2015
+                  },
+                  "ordinal": 15,
+                  "pid": 1015
+                }
+              }
+            },
+            "ordinal": 15,
+            "pid": 1015,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1016,
+                  "start_ticks": 2016
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1016
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1016,
+                    "start_ticks": 2016
+                  },
+                  "ordinal": 16,
+                  "pid": 1016
+                }
+              }
+            },
+            "ordinal": 16,
+            "pid": 1016,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1017,
+                  "start_ticks": 2017
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1017
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1017,
+                    "start_ticks": 2017
+                  },
+                  "ordinal": 17,
+                  "pid": 1017
+                }
+              }
+            },
+            "ordinal": 17,
+            "pid": 1017,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1018,
+                  "start_ticks": 2018
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1018
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1018,
+                    "start_ticks": 2018
+                  },
+                  "ordinal": 18,
+                  "pid": 1018
+                }
+              }
+            },
+            "ordinal": 18,
+            "pid": 1018,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1019,
+                  "start_ticks": 2019
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1019
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1019,
+                    "start_ticks": 2019
+                  },
+                  "ordinal": 19,
+                  "pid": 1019
+                }
+              }
+            },
+            "ordinal": 19,
+            "pid": 1019,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1020,
+                  "start_ticks": 2020
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1020
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1020,
+                    "start_ticks": 2020
+                  },
+                  "ordinal": 20,
+                  "pid": 1020
+                }
+              }
+            },
+            "ordinal": 20,
+            "pid": 1020,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1021,
+                  "start_ticks": 2021
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1021
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1021,
+                    "start_ticks": 2021
+                  },
+                  "ordinal": 21,
+                  "pid": 1021
+                }
+              }
+            },
+            "ordinal": 21,
+            "pid": 1021,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1022,
+                  "start_ticks": 2022
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1022
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1022,
+                    "start_ticks": 2022
+                  },
+                  "ordinal": 22,
+                  "pid": 1022
+                }
+              }
+            },
+            "ordinal": 22,
+            "pid": 1022,
+            "verified": true
+          },
+          {
+            "observation": {
+              "Ok": {
+                "identity": {
+                  "boot_id": "00000000-0000-0000-0000-000000000001",
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "executable": {
+                    "bytes": 100,
+                    "device": 1,
+                    "inode": 17,
+                    "modified_nanoseconds": 0,
+                    "modified_seconds": 1
+                  },
+                  "parent_pid": 123,
+                  "pid": 1023,
+                  "start_ticks": 2023
+                },
+                "ready": {
+                  "cgroup": "/system.slice/f0-fixture.service",
+                  "mode": "valid-work-root",
+                  "pid": 1023
+                },
+                "spawn_observation": {
+                  "identity": {
+                    "boot_id": "00000000-0000-0000-0000-000000000001",
+                    "cgroup": "/system.slice/f0-fixture.service",
+                    "executable": {
+                      "bytes": 100,
+                      "device": 1,
+                      "inode": 17,
+                      "modified_nanoseconds": 0,
+                      "modified_seconds": 1
+                    },
+                    "parent_pid": 123,
+                    "pid": 1023,
+                    "start_ticks": 2023
+                  },
+                  "ordinal": 23,
+                  "pid": 1023
+                }
+              }
+            },
+            "ordinal": 23,
+            "pid": 1023,
+            "verified": true
+          }
+        ],
+        "controller_check": {
+          "Ok": null
+        },
+        "controller_identity": {
+          "cgroup": {
+            "device": 1,
+            "gid": 0,
+            "inode": 99,
+            "mode": 493,
+            "uid": 0
+          },
+          "process": {
+            "boot_id": "00000000-0000-0000-0000-000000000001",
+            "cgroup": "/system.slice/f0-fixture.service",
+            "executable": {
+              "bytes": 100,
+              "device": 1,
+              "inode": 17,
+              "modified_nanoseconds": 0,
+              "modified_seconds": 1
+            },
+            "parent_pid": 100,
+            "pid": 123,
+            "start_ticks": 1
+          }
+        },
+        "distinct_pids": 24,
+        "expected_actors": 24,
+        "observed_actors": 24,
+        "verified": true
+      },
+      "genuine_budget_depletion_observed": true,
+      "initial_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "worker_limit": 2
+      },
+      "mode": "valid-work-root",
+      "observer_complete": true,
+      "phase_process_context": {
+        "controller_identity": {
+          "cgroup": {
+            "device": 1,
+            "gid": 0,
+            "inode": 99,
+            "mode": 493,
+            "uid": 0
+          },
+          "process": {
+            "boot_id": "00000000-0000-0000-0000-000000000001",
+            "cgroup": "/system.slice/f0-fixture.service",
+            "executable": {
+              "bytes": 100,
+              "device": 1,
+              "inode": 17,
+              "modified_nanoseconds": 0,
+              "modified_seconds": 1
+            },
+            "parent_pid": 100,
+            "pid": 123,
+            "start_ticks": 1
+          }
+        },
+        "controller_live_identity_after_verified": true,
+        "phase_cgroup": "/trnmponpublic.slice/f0-fixture-1",
+        "runtime_business_deadline_changed": false,
+        "scalar_policy_changed": false,
+        "schema": "fixed-public-root-phase-external-actors-v1"
+      },
+      "receiver_client_state_equal": true,
+      "receiver_observation": {
+        "accepted_connections_seen": 1,
+        "counter_overflow": false,
+        "measurement_failures": 0,
+        "records": [
+          {
+            "complete": true,
+            "dispatch_started": true,
+            "dispatch_thread_cpu_ns": 2000000000,
+            "observation_failed": false,
+            "operation": 1
+          }
+        ],
+        "records_not_retained": 0
+      },
+      "root_supplement": {
+        "acquisitions": [
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000001",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000002",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000003",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000004",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000005",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000006",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000007",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000008",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000009",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000a",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000b",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000c",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000d",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000e",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "000000000000000000000000000000000000000000000000000000000000000f",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000010",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000011",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000012",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000013",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000014",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000015",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000016",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          },
+          {
+            "acquisition_cpu_ns": 1,
+            "acquisition_wall_ns": 2,
+            "diagnostic_cpu_ns": 3,
+            "diagnostic_wall_ns": 4,
+            "method_index": 0,
+            "public_request_body_digest": "0000000000000000000000000000000000000000000000000000000000000017",
+            "setup_calls": 1,
+            "valid_work_for_root_rejection": true
+          }
+        ],
+        "actor_readiness": [
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1000
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1001
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1002
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1003
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1004
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1005
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1006
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1007
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1008
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1009
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1010
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1011
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1012
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1013
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1014
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1015
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1016
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1017
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1018
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1019
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1020
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1021
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1022
+          },
+          {
+            "cgroup": "/system.slice/f0-fixture.service",
+            "mode": "valid-work-root",
+            "pid": 1023
+          }
+        ],
+        "aggregate_membership_verified": true,
+        "aggregate_scoped_cpu_ns": 0,
+        "checked_acquisitions_complete": true,
+        "cold_state_equal": true,
+        "controller_cgroup": "/system.slice/f0-fixture.service",
+        "criteria_met": true,
+        "expected_legal_counts_and_tip": true,
+        "hostile_packet_ids": [
+          "0000000000000000000000000000000000000000000000000000000000000000",
+          "0000000000000000000000000000000000000000000000000000000000000001",
+          "0000000000000000000000000000000000000000000000000000000000000002",
+          "0000000000000000000000000000000000000000000000000000000000000003",
+          "0000000000000000000000000000000000000000000000000000000000000004",
+          "0000000000000000000000000000000000000000000000000000000000000005",
+          "0000000000000000000000000000000000000000000000000000000000000006",
+          "0000000000000000000000000000000000000000000000000000000000000007",
+          "0000000000000000000000000000000000000000000000000000000000000008",
+          "0000000000000000000000000000000000000000000000000000000000000009",
+          "000000000000000000000000000000000000000000000000000000000000000a",
+          "000000000000000000000000000000000000000000000000000000000000000b",
+          "000000000000000000000000000000000000000000000000000000000000000c",
+          "000000000000000000000000000000000000000000000000000000000000000d",
+          "000000000000000000000000000000000000000000000000000000000000000e",
+          "000000000000000000000000000000000000000000000000000000000000000f",
+          "0000000000000000000000000000000000000000000000000000000000000010",
+          "0000000000000000000000000000000000000000000000000000000000000011",
+          "0000000000000000000000000000000000000000000000000000000000000012",
+          "0000000000000000000000000000000000000000000000000000000000000013",
+          "0000000000000000000000000000000000000000000000000000000000000014",
+          "0000000000000000000000000000000000000000000000000000000000000015",
+          "0000000000000000000000000000000000000000000000000000000000000016",
+          "0000000000000000000000000000000000000000000000000000000000000017"
+        ],
+        "hostile_packets_absent_cold": true,
+        "hostile_packets_absent_live": true,
+        "mutation_owner_cpu_ns": 2000000000,
+        "whole_domain_paid_reconciled": true
+      },
+      "service_outcome": {
+        "Ok": {
+          "mutation_cpu_charged_ns": 2000000000
+        }
+      },
+      "submissions": [
+        {
+          "packet_index": 0,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 1,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 2,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 3,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 4,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 5,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 6,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 7,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 8,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 9,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 10,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 11,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 12,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 13,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 14,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 15,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 16,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 17,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 18,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 19,
+          "returned_after_window": false,
+          "status": "ok"
+        },
+        {
+          "packet_index": 20,
+          "returned_after_window": false,
+          "status": "ok"
+        }
+      ],
+      "verifier_errors": []
+    }
+  ],
+  "placement_complete": true,
+  "placement_profile": "fixed-public-root-phase-external-actors-v1",
+  "planned_complete_runs": 1,
+  "planned_confirmations": 6,
+  "preparation": {
+    "cpu_ns": 1,
+    "wall_ns": 2
+  },
+  "preparation_cost_known": true,
+  "producer_state_equal": true,
+  "production_activation": false,
+  "production_candidate": false,
+  "schema": "native-public-v3-fixed-host-root-f0-v1",
+  "seed_blocks": 4,
+  "seed_transfers": 1024,
+  "supplemental_criteria_met": true,
+  "wan_qualified": false,
+  "work_profile_qualified": false
+}

@@ -1,0 +1,328 @@
+{
+  "actions": {
+    "cargo_executed": false,
+    "original_full_wrapper_touched": false,
+    "source_modified": false,
+    "test_rerun": false,
+    "threshold_or_quota_changed": false
+  },
+  "comparison_base": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+  "created_utc": "2026-11-11T03:13:31.766852+00:00",
+  "minimum_next_diagnostic": {
+    "approach": "同 Z、同已产生 ELF、同原 loader/provider/TMPDIR，精确单测试串行运行一次，不改 10s、容量、断言或 ignored 状态；用于区分同环境可重复性，不授予完整 baseline PASS。",
+    "argv": [
+      "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final-target/debug/deps/trnm_data_availability-206231ff342af726",
+      "--exact",
+      "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "if_still_unresolved": "进一步诊断必须记录 case/chunk/slot、三个 check 的 elapsed/remaining、RS/contract/CAS 写阶段耗时；若需插桩，应单独归属诊断源/二进制，不能把插桩或改阈值的 PASS 当作原 Z 基线通过。",
+    "performed": false,
+    "prerequisite": "原 wrapper 的 feature-off/source-after 全部结束后，由 root 决定是否执行；先保存原完整 FAIL 与实际 ELF hash/context。"
+  },
+  "not_proven": [
+    "失败属于 65 还是 128 case；失败 chunk/slot；3 个 provider check 中的精确位置。",
+    "CPU 饱和、I/O 延迟、临时盘、调度/锁竞争各自的耗时贡献。",
+    "十秒窗口必然不合理，或任何放宽阈值/优化已经必要。",
+    "本轮账户边界代码造成该失败；直接相关包树、全部 path deps 与锁文件没有变化也不能等价于通过资格。",
+    "repository-truth 与 Rust job 的启动重叠导致 DA 争抢；local_audit 已核其完整 Python lane 先于 Rust 测试开始结束。",
+    "累计 children maximum RSS 可以作为 DA 阶段峰值或 OOM 证明。",
+    "没有在 comparison_base 实际执行本测试；不能把源/锁相同表述为已在 base 复现或已证明属于 preexisting failure。"
+  ],
+  "path_dependency_closure": [
+    "trnm-data-availability",
+    "trnm-crypto-primitives",
+    "trnm-protocol"
+  ],
+  "qualification_granted": false,
+  "raw_observation": {
+    "binary_hash_measured_by_this_review": false,
+    "binary_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final-target/debug/deps/trnm_data_availability-206231ff342af726",
+    "bytes": 134555,
+    "failure_lines": [
+      1480,
+      1482,
+      1483
+    ],
+    "panic_source_line": 162,
+    "path": "/workspace/scratch/a4188f5c86b5/coordination/full-rust-baseline-observed-complete-stdout.log",
+    "reported_error": "Invalid(\"RS46 provider deadline\")",
+    "running_binary_line": 752,
+    "sha256": "91f4595a10c116306297e2acf061a1449e45ce26d524fe05645b21a13cf19d92",
+    "suite_summary_line": 1490,
+    "suite_totals": {
+      "elapsed_seconds": 735.2,
+      "failed": 2,
+      "filtered_out": 0,
+      "ignored": 0,
+      "passed": 713
+    },
+    "test_name": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs",
+    "whole_baseline_status_preserved": "FAIL"
+  },
+  "reviewer": "/root/pq_profile_review",
+  "schema": "trnm-da-rs46-readonly-diagnostic-v1",
+  "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_files_sha256": [
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/shard_plan_capacity.rs",
+      "sha256": "a51ab7c577142b543d48b6ee86324d4239c8e09b26d846ac5b5ca01b5d73f3c2"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests.rs",
+      "sha256": "a3e6ef3b9c7f177cc4f268e5699d45dea7e622096288635d3ef7d22de64b7071"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/shard_plan.rs",
+      "sha256": "98f72d5e0a8ab725b58831976fa9ac7146926389885a0758be39528b1834e0f4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/version_retention/owner.rs",
+      "sha256": "a049f3a7ed9a5b849827df2622c9e5f80f8bd1f57ea831a0f16a314ddbb1846e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/file.rs",
+      "sha256": "bcb188315f9fbc48cced3ed661b9f5c454f5a895ba0b4ad2bdbf38f381e35a51"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs",
+      "sha256": "b61a8310c7a16df763cdf9023b3a1729f095a72e11699c64094b4ebf54ba1412"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/provider.rs",
+      "sha256": "9b1d2446037b46a51479b10e6482f7184a0cf8b0416361871a268648a77b47c0"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/provider/contract.rs",
+      "sha256": "570d2b58daf370563713d6a7c236ff459baa9efb0db34bfdfddf29ee96a3bed2"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/custody.rs",
+      "sha256": "d61ce12d4d4a99e559c20ba465079ad3e57f888bf944acddcf1fcaf4d1101e7e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure.rs",
+      "sha256": "6314404a4468f99954cb51a22b73e92b69f7b226a73c60c8ecab9a1d9f84bca0"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+      "sha256": "b3f1f62fcc984ffdbdbb8118dc6df8094bc62fba57fcde109a32133a62b54330"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/cache_wal.rs",
+      "sha256": "17805b6ef0d8aeba2a9959f4459e41e094ca601342f11e0874914efa9d8d71f8"
+    }
+  ],
+  "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+  "unchanged_source_and_dependency_objects": [
+    {
+      "base_git_object": "1345ba7ede9d5e08d26ecc2f7f8c6a3474ff6158",
+      "head_git_object": "1345ba7ede9d5e08d26ecc2f7f8c6a3474ff6158",
+      "identical": true,
+      "path": "trillionnium/crates/trnm-data-availability"
+    },
+    {
+      "base_git_object": "3bff846e9d6278d8f9bbad25aa71b66c0b9e7a00",
+      "head_git_object": "3bff846e9d6278d8f9bbad25aa71b66c0b9e7a00",
+      "identical": true,
+      "path": "trillionnium/crates/trnm-crypto-primitives"
+    },
+    {
+      "base_git_object": "7b15f61b2c6c195dc7f35ab3180cc7f74f939f67",
+      "head_git_object": "7b15f61b2c6c195dc7f35ab3180cc7f74f939f67",
+      "identical": true,
+      "path": "trillionnium/crates/trnm-protocol"
+    },
+    {
+      "base_git_object": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+      "head_git_object": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+      "identical": true,
+      "path": "trillionnium/Cargo.lock"
+    },
+    {
+      "base_git_object": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "head_git_object": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "identical": true,
+      "path": "trillionnium/Cargo.toml"
+    }
+  ],
+  "verified_findings": [
+    {
+      "anchors": [
+        {
+          "lines": [
+            13,
+            14
+          ],
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests.rs"
+        },
+        {
+          "lines": [
+            125,
+            155,
+            160,
+            162
+          ],
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/shard_plan_capacity.rs"
+        }
+      ],
+      "finding": "fixture 每个 65/128 case 各给整个 create 操作一个共享的 10 秒绝对 wall deadline；不是每个 shard 重新给 10 秒。"
+    },
+    {
+      "anchors": [
+        {
+          "lines": [
+            25,
+            33,
+            38
+          ],
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/file.rs"
+        },
+        {
+          "lines": [
+            232,
+            298,
+            300,
+            303,
+            315,
+            323,
+            325,
+            351
+          ],
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs"
+        },
+        {
+          "lines": [
+            163,
+            170,
+            173,
+            180,
+            559,
+            560
+          ],
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/provider.rs"
+        }
+      ],
+      "finding": "实际链为 File::create -> Plan::build -> source_view/容量校验 -> catalog.populate_cache -> 每 chunk 的 RS 编码和 6 个 CSP1 contract -> cache_shard。当前错误字符串只来自 provider::check；此 create 链没有物理 provider publish 调用。"
+    },
+    {
+      "anchors": [
+        {
+          "lines": [
+            170,
+            171,
+            172,
+            173,
+            174,
+            179,
+            180,
+            560
+          ],
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/provider.rs"
+        }
+      ],
+      "finding": "可将实际拒绝点缩到 cache_shard 的 3 个 check：入口；verify_pin/verify_wire 后；put_manifest/put_chunk 后。它证明共享 deadline 当时已耗尽，不能判定具体 case/chunk/slot 或 CPU/IO 原因。"
+    },
+    {
+      "anchors": [
+        {
+          "lines": [
+            120,
+            124,
+            132,
+            133,
+            147,
+            150,
+            156,
+            158,
+            177,
+            187,
+            234,
+            241
+          ],
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs"
+        },
+        {
+          "lines": [
+            16,
+            96,
+            124,
+            150
+          ],
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/cache_wal.rs"
+        }
+      ],
+      "finding": "每个 shard 缓存调用各执行独立 manifest 和 chunk 写事务；write_with_deadline 使用 min(原绝对 deadline, now+5s)，并在每次写前执行 WAL TRUNCATE、FULL synchronous、IMMEDIATE transaction 与提交。系统调用和 SQLite 工作是合作式 deadline，未提供抢占。"
+    },
+    {
+      "anchors": [
+        {
+          "lines": [
+            10,
+            15,
+            17,
+            18,
+            106,
+            114,
+            115
+          ],
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/shard_plan_capacity.rs"
+        },
+        {
+          "lines": [
+            270,
+            281,
+            291,
+            325,
+            351
+          ],
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs"
+        }
+      ],
+      "arithmetic": [
+        {
+          "complete_chunks": 65,
+          "configured_provider_capacity_bytes": 1048576,
+          "maximum_obligations": 128,
+          "required_provider_capacity_bytes": 528384,
+          "target_cache_chunk_rows": 455,
+          "target_cache_manifest_rows": 392,
+          "target_shard_write_transactions": 780,
+          "target_six_slot_calls": 390
+        },
+        {
+          "complete_chunks": 128,
+          "configured_provider_capacity_bytes": 1048576,
+          "maximum_obligations": 128,
+          "required_provider_capacity_bytes": 1044480,
+          "target_cache_chunk_rows": 896,
+          "target_cache_manifest_rows": 770,
+          "target_shard_write_transactions": 1536,
+          "target_six_slot_calls": 768
+        }
+      ],
+      "finding": "对于成功跑完的完整 65/128 case，目标是 390/768 次 cache_shard，因而仅 shard 缓存就有 780/1536 次写事务，另有原始 catalog 恢复和校验。失败运行完成了多少次没有记录；不能把这些目标数当作实测。"
+    },
+    {
+      "anchors": [
+        {
+          "lines": [
+            33,
+            38
+          ],
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/file.rs"
+        },
+        {
+          "lines": [
+            174,
+            179,
+            180
+          ],
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/provider.rs"
+        }
+      ],
+      "finding": "本次失效发生在 build 返回前；create 的 CRP1 open_file 位于 build 之后。局部 cache 暂存写可能已发生，不能扩写成零外部效果；也不能把此错误称为 provider 物理 quota 拒绝。"
+    }
+  ]
+}

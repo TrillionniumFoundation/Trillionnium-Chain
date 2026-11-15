@@ -1,0 +1,309 @@
+{
+  "schema": "trnm-learning-business-validation-summary-v1",
+  "qualification": "HOLD_NO_GO",
+  "authority": "DENY_ALL",
+  "code_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+  "code_tree": "93fbb686a983fa57e33791411fd3a18d6b2258ae",
+  "changed_source_files_match_published_blobs": true,
+  "scope": "selected-source-Python-controls-and-retrospective-readback-only",
+  "distinct_test_methods_passed": 124,
+  "test_suites": [
+    {
+      "name": "adoption",
+      "methods": 26,
+      "exit_code": 0
+    },
+    {
+      "name": "iteration",
+      "methods": 25,
+      "exit_code": 0
+    },
+    {
+      "name": "completion",
+      "methods": 13,
+      "exit_code": 0
+    },
+    {
+      "name": "economics",
+      "methods": 29,
+      "exit_code": 0
+    },
+    {
+      "name": "business",
+      "methods": 21,
+      "exit_code": 0
+    },
+    {
+      "name": "ci-contract",
+      "methods": 10,
+      "exit_code": 0
+    }
+  ],
+  "original_readbacks": [
+    {
+      "case": "adopt-v1",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "scripts/cell_learning_business_join.py",
+        "--bindings",
+        "/workspace/scratch/1a404f66afcf/chain-loop/evidence/cell-learning-business-readback-20261109/bindings/adopt-v1.json",
+        "--bindings-sha256",
+        "8ba561db51a2808a3d6a4ebcc684436cbb3619c94387c0f3939eadc34b7c88a8",
+        "--selection",
+        "/workspace/scratch/1a404f66afcf/chain-loop/evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/selection.bin",
+        "--completed",
+        "/workspace/scratch/1a404f66afcf/chain-loop/evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/completed.bin",
+        "--readback",
+        "/workspace/scratch/1a404f66afcf/chain-loop/evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/readback.json",
+        "--freeze",
+        "/workspace/scratch/1a404f66afcf/chain-loop/evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/freeze.json",
+        "--expected",
+        "/workspace/scratch/1a404f66afcf/chain-loop/evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/expected.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.1364825580003526,
+      "report_sha256": "2e6821f08b7cf76ceaf476d476609d562a4fcfabf291c09d4d12c6b448690645",
+      "original_completion_bytes_equal": true,
+      "reader_code_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+      "local_scope": "selected-source-projection",
+      "new_model_execution": false,
+      "native_payment_executed": false
+    },
+    {
+      "case": "no-update-v9",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "scripts/cell_learning_business_join.py",
+        "--bindings",
+        "/workspace/scratch/1a404f66afcf/chain-loop/evidence/cell-learning-business-readback-20261109/bindings/no-update-v9.json",
+        "--bindings-sha256",
+        "56821f43e6af00c0e7eeb21a1e965628333a0522b9833491f9e1f5bfac897bd6",
+        "--selection",
+        "/workspace/scratch/1a404f66afcf/chain-loop/evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/selection.bin",
+        "--completed",
+        "/workspace/scratch/1a404f66afcf/chain-loop/evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/completed.bin",
+        "--readback",
+        "/workspace/scratch/1a404f66afcf/chain-loop/evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/readback.json",
+        "--freeze",
+        "/workspace/scratch/1a404f66afcf/chain-loop/evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/freeze.json",
+        "--expected",
+        "/workspace/scratch/1a404f66afcf/chain-loop/evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/expected.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.3237942769992515,
+      "report_sha256": "8a4b4861eab7c82296d9ef095584dcf7a54baef170b213839dc9606566d16d73",
+      "original_completion_bytes_equal": true,
+      "reader_code_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+      "local_scope": "selected-source-projection",
+      "new_model_execution": false,
+      "native_payment_executed": false
+    }
+  ],
+  "repeated_runs_not_added_to_test_count": true,
+  "full_native_workspace_tests": "NOT_RUN",
+  "native_training_or_payment_execution": "NOT_RUN",
+  "hosted_workflow_snapshot": {
+    "observed_source": "GitHub Actions API readback",
+    "code_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+    "runs": [
+      {
+        "id": 42628225115,
+        "name": "PoN original large-state CPU acceptance",
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:45:12Z",
+        "updated_at": "2026-11-09T13:45:12Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628225115"
+      },
+      {
+        "id": 42628225400,
+        "name": "PoN W1 work security observations",
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:45:12Z",
+        "updated_at": "2026-11-09T13:45:12Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628225400"
+      },
+      {
+        "id": 42628225041,
+        "name": "PoN W1 QROM implementation observations",
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:45:12Z",
+        "updated_at": "2026-11-09T13:45:12Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628225041"
+      },
+      {
+        "id": 42628225051,
+        "name": "W1 QROM proof-chain observations",
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:45:12Z",
+        "updated_at": "2026-11-09T13:45:12Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628225051"
+      },
+      {
+        "id": 42628225259,
+        "name": "PoN classical and quantum credit contract",
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:45:12Z",
+        "updated_at": "2026-11-09T13:45:12Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628225259"
+      },
+      {
+        "id": 42628225292,
+        "name": "PoN original workspace test-profile CPU acceptance",
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:45:12Z",
+        "updated_at": "2026-11-09T13:45:12Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628225292"
+      },
+      {
+        "id": 42628225409,
+        "name": "PoN W1 QROM closure observations",
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:45:12Z",
+        "updated_at": "2026-11-09T13:45:12Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628225409"
+      },
+      {
+        "id": 42628225132,
+        "name": "PoN priority acceptance",
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:45:12Z",
+        "updated_at": "2026-11-09T13:45:12Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628225132"
+      },
+      {
+        "id": 42628225150,
+        "name": "PoN owned process cleanup",
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:45:12Z",
+        "updated_at": "2026-11-09T13:45:12Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628225150"
+      },
+      {
+        "id": 42628225359,
+        "name": "PoN W1 transparent candidate observations",
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:45:12Z",
+        "updated_at": "2026-11-09T13:45:12Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628225359"
+      },
+      {
+        "id": 42628225393,
+        "name": "Cell learning business readback controls",
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:45:12Z",
+        "updated_at": "2026-11-09T13:45:12Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628225393"
+      },
+      {
+        "id": 42628225304,
+        "name": "PoN next architecture exact-source observations",
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:45:12Z",
+        "updated_at": "2026-11-09T13:45:12Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628225304"
+      },
+      {
+        "id": 42628225158,
+        "name": "PoN work and time contract V1",
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:45:12Z",
+        "updated_at": "2026-11-09T13:45:12Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628225158"
+      },
+      {
+        "id": 42628225274,
+        "name": "trnm-required-baseline",
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:45:12Z",
+        "updated_at": "2026-11-09T13:45:12Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628225274"
+      },
+      {
+        "id": 42628225364,
+        "name": "PoN PQ network and rollback witness",
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:45:12Z",
+        "updated_at": "2026-11-09T13:45:12Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628225364"
+      },
+      {
+        "id": 42628225219,
+        "name": "CodeQL exact-source analysis export",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:45:12Z",
+        "updated_at": "2026-11-09T13:47:43Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628225219"
+      },
+      {
+        "id": 42628162579,
+        "name": "Cell learning business readback controls",
+        "event": "push",
+        "status": "queued",
+        "conclusion": null,
+        "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+        "created_at": "2026-11-09T13:44:47Z",
+        "updated_at": "2026-11-09T13:44:47Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628162579"
+      }
+    ],
+    "captured_at_utc": "2026-11-09T13:50:46.257480+00:00"
+  },
+  "native_origin_authenticated": false,
+  "independent_evaluation_verified": false,
+  "independent_customer_payment_verified": false,
+  "complete_recovery_qualified": false,
+  "hepta_final_use_accepted": false,
+  "production_activation": false,
+  "local_archive_sha256": "260b71ff72c7e7c8152b37ad77eb66bbbee759ba3d8fa89649aa98244aeba200",
+  "local_archive_files": 84
+}

@@ -1,0 +1,172 @@
+{
+  "artifacts_downloaded": false,
+  "candidate_source_commit": "cc4dd8bdd89309c635831db30b508af2f89419d7",
+  "downloaded_code_executed": false,
+  "earlier_C2_76_file_package_unchanged": true,
+  "exact_log_read_job_ids": [
+    128555110967,
+    128555111649,
+    128555111643,
+    128555111699,
+    128555111681,
+    128555111644,
+    128555111630,
+    128555111698,
+    128555111508
+  ],
+  "history_scope": "All four history matrix jobs passed the printed build preparation, then the outer original-public-host controller reported passed=false/systemd_run_exit=1/failure=null/final_host_errors=[]. The intended 4105-block target is the step name, not proof that 4105 blocks or paid full sync completed. Inner history artifacts were not downloaded or diagnosed.",
+  "known_export_reason": "CodeQL analyses/checks did not complete and stabilize before the deadline; exact existing read-only-token export step exited 1. This log does not establish an authorization failure or a vulnerability finding.",
+  "local_C3_commit": "abab79dac0cb89eb2753d3f579119ac135650eb5",
+  "new_proofs": 0,
+  "new_tests_run": 0,
+  "new_workflows_started": 0,
+  "nine_job_log_reads": [
+    {
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-07T23:17:21Z",
+          "conclusion": "failure",
+          "name": "Export exact PR analyses with the existing read-only token",
+          "number": 5,
+          "started_at": "2026-11-07T22:57:40Z",
+          "status": "completed"
+        }
+      ],
+      "job_id": 128555110967,
+      "name": "export"
+    },
+    {
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-07T23:56:13Z",
+          "conclusion": "failure",
+          "name": "Execute 4105 real work blocks and paid public full sync",
+          "number": 21,
+          "started_at": "2026-11-07T23:00:51Z",
+          "status": "completed"
+        }
+      ],
+      "job_id": 128555111649,
+      "name": "native priorities (ubuntu-24.04, head, history)"
+    },
+    {
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-07T23:02:47Z",
+          "conclusion": "failure",
+          "name": "Execute original release from-zero controls",
+          "number": 7,
+          "started_at": "2026-11-07T22:58:08Z",
+          "status": "completed"
+        }
+      ],
+      "job_id": 128555111643,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)"
+    },
+    {
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-07T23:53:08Z",
+          "conclusion": "failure",
+          "name": "Execute 4105 real work blocks and paid public full sync",
+          "number": 21,
+          "started_at": "2026-11-07T23:00:09Z",
+          "status": "completed"
+        }
+      ],
+      "job_id": 128555111699,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, history)"
+    },
+    {
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-07T23:02:14Z",
+          "conclusion": "failure",
+          "name": "Execute original release from-zero controls",
+          "number": 7,
+          "started_at": "2026-11-07T22:57:48Z",
+          "status": "completed"
+        }
+      ],
+      "job_id": 128555111681,
+      "name": "native priorities (ubuntu-24.04-arm, head, service-model)"
+    },
+    {
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-07T23:51:01Z",
+          "conclusion": "failure",
+          "name": "Execute 4105 real work blocks and paid public full sync",
+          "number": 21,
+          "started_at": "2026-11-07T23:00:47Z",
+          "status": "completed"
+        }
+      ],
+      "job_id": 128555111644,
+      "name": "native priorities (ubuntu-24.04-arm, head, history)"
+    },
+    {
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-07T23:02:26Z",
+          "conclusion": "failure",
+          "name": "Execute original release from-zero controls",
+          "number": 7,
+          "started_at": "2026-11-07T22:57:53Z",
+          "status": "completed"
+        }
+      ],
+      "job_id": 128555111630,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)"
+    },
+    {
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-07T23:49:00Z",
+          "conclusion": "failure",
+          "name": "Execute 4105 real work blocks and paid public full sync",
+          "number": 21,
+          "started_at": "2026-11-07T23:00:39Z",
+          "status": "completed"
+        }
+      ],
+      "job_id": 128555111698,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)"
+    },
+    {
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-07T23:03:58Z",
+          "conclusion": "failure",
+          "name": "Execute exact native from-zero service controls",
+          "number": 12,
+          "started_at": "2026-11-07T22:59:12Z",
+          "status": "completed"
+        }
+      ],
+      "job_id": 128555111508,
+      "name": "cross-arch-cost (x64)"
+    }
+  ],
+  "not_a_C3_remote_CI_result": true,
+  "originals_unchanged": true,
+  "projection_sha256": "7fb12244ef39d7d77a489b8a3f885e4075bba7061ac5594c88f4238a2a6188eb",
+  "raw_report_sha256": "6caca27284b8a0269a8301db5f2e64f431581dc74f2bdc81cdbe09b78bcf7301",
+  "schema": "TRNM-W1-C2-LATE-GITHUB-PUBLIC-SUMMARY1",
+  "service_model_and_x64_cost_scope": "Three service-model jobs and the x64 cost job failed in their original from-zero controls step. The inner cause remains unattributed by this log-only supplement. Later panic output belongs to subsequent control steps and is not used to attribute the earlier failing step.",
+  "snapshot": {
+    "bytes": 7787,
+    "sha256": "f4e98cfe2fa75c34db66dcc7b58d9496ead6232d3b2e43ed59507f889a38a0d9",
+    "source_relative_path": "github-C2-pre-C3-readback-01/report.json"
+  },
+  "snapshot_counts": {
+    "all_terminal": false,
+    "completed": 101,
+    "failure": 16,
+    "in_progress": 3,
+    "skipped": 3,
+    "success": 82,
+    "total": 104
+  },
+  "snapshot_observed_unix_ns": 1794096179076396620
+}

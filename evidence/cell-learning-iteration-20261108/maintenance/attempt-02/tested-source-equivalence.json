@@ -1,0 +1,51 @@
+{
+  "added_lines": 8,
+  "allowed_delta": "two local test-only duplicate_mod attributes and reasons",
+  "changed_paths": [
+    "codex-rs/hepta-agentd/src/learning_iteration_checkpoint_profile_tests.rs",
+    "codex-rs/hepta-agentd/src/neuron_generation_learning_readback_test_support.rs"
+  ],
+  "direct_successor": true,
+  "files": [
+    {
+      "maintenance_sha256": "43fd19fac9d3bfb3543a0ad667c0d1254253f08addf5e6d7a7b93d1335d21b89",
+      "path": "codex-rs/hepta-agentd/src/learning_iteration_checkpoint_profile_tests.rs",
+      "source_after_stripping_exact_attribute_matches_tested_bytes": true,
+      "tested_sha256": "4569299dd92372fddb51de6234db6c290114210c57a1939817923ffc39bd3087"
+    },
+    {
+      "maintenance_sha256": "0c097c88d6907829ca34ead1d0a1b168085f1f7eccf3bbefd7dd56ba0443f786",
+      "path": "codex-rs/hepta-agentd/src/neuron_generation_learning_readback_test_support.rs",
+      "source_after_stripping_exact_attribute_matches_tested_bytes": true,
+      "tested_sha256": "636926f30b580b646cae19a78893311271d4fa2ddb2c85221d354d8e6f2a04d9"
+    }
+  ],
+  "format_base": "f1785ca15e41e4e49509a5b211a659e3cbdbf60e",
+  "format_scope_paths": [
+    "codex-rs/hepta-agentd/src/learning_iteration_checkpoint.rs",
+    "codex-rs/hepta-agentd/src/learning_iteration_checkpoint_codec.rs",
+    "codex-rs/hepta-agentd/src/learning_iteration_checkpoint_profile_tests.rs",
+    "codex-rs/hepta-agentd/src/learning_iteration_checkpoint_test_support.rs",
+    "codex-rs/hepta-agentd/src/learning_iteration_checkpoint_tests.rs",
+    "codex-rs/hepta-agentd/src/learning_iteration_profile_tests.rs",
+    "codex-rs/hepta-agentd/src/learning_iteration_runtime_tests.rs",
+    "codex-rs/hepta-agentd/src/neuron_generation_adopted_learning_tests.rs",
+    "codex-rs/hepta-agentd/src/neuron_generation_learning_readback_test_support.rs",
+    "codex-rs/hepta-agentd/src/neuron_generation_learning_runtime_tests.rs",
+    "codex-rs/hepta-agentd/src/neuron_generation_update_learning_tests.rs",
+    "codex-rs/hepta-learning-artifacts/LEARNING_ITERATION_PROFILE.md",
+    "codex-rs/hepta-learning-artifacts/src/learning_iteration.rs",
+    "codex-rs/hepta-learning-artifacts/src/learning_iteration_digest.rs",
+    "codex-rs/hepta-learning-artifacts/src/learning_iteration_profile_tests.rs",
+    "codex-rs/hepta-learning-artifacts/src/learning_iteration_test_support.rs",
+    "codex-rs/hepta-learning-artifacts/src/learning_iteration_types.rs"
+  ],
+  "maintenance_head": "ed1ea5691798a2dbffbbcc8216f2929e67724af7",
+  "maintenance_native_tree": "b710c1c49dc42598b79206dfdd37708da506f114",
+  "maintenance_tree": "a1029394b64ef1f0ac46511716dba6892fdbb261",
+  "test_names_and_runtime_source_bytes_preserved": true,
+  "tested_head": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+  "tested_native_tree": "3e7f1024a78aad91438496cf70008d2caaf1faa0",
+  "tested_tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198",
+  "tests_rerun": false
+}

@@ -1,0 +1,10 @@
+{
+  "all_observed_command_expectations_met": false,
+  "bytes": 1066112,
+  "manifest_sha256": "180332efa62927fd8b8f5e93b020d5bfe0ea7f0c5f01192c94fb18087129aa20",
+  "narrow_candidate_gate_pass": false,
+  "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc/observations.tar.gz",
+  "payload_count": 134,
+  "sha256": "787ecdea6f3dfb11f03b61dd20f2484b763453f390b3d9802ca37e0cc5ec89c0",
+  "summary_sha256": "ddf738cce4d0d37d2d53cca440dc2f84b0a039372d88b299fe53b64fbd12cf1f"
+}

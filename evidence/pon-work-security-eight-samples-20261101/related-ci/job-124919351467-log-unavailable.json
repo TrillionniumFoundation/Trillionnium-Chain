@@ -1,0 +1,16 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "GitHub API error 404: ﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:6bfc3588-301e-002b-1429-6a6858000000\nTime:2026-11-01T17:47:57.6721443Z</Message></Error>"
+    }
+  ],
+  "structuredContent": {
+    "error": "GitHub API error 404: ﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:6bfc3588-301e-002b-1429-6a6858000000\nTime:2026-11-01T17:47:57.6721443Z</Message></Error>",
+    "error_code": "NOT_FOUND",
+    "error_data": {
+      "error_str": "GitHub API error 404: ﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:6bfc3588-301e-002b-1429-6a6858000000\nTime:2026-11-01T17:47:57.6721443Z</Message></Error>"
+    }
+  },
+  "isError": true
+}

@@ -1,0 +1,109 @@
+{
+  "source_revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+  "inputs_before": [
+    {
+      "path": "/home/qian-qi/work/chain-w1-scheduled-sha-measurements-20261108-f16ac-r4-01/01-retained-B/prepared/statement.bin",
+      "sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+      "bytes": 377290
+    },
+    {
+      "path": "/home/qian-qi/work/chain-w1-security-r4-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/round4-schedule/retained.expected-header.bin",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "bytes": 318
+    },
+    {
+      "path": "/home/qian-qi/work/chain-w1-security-r4-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/round4-schedule/retained.artifacts.bin",
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+      "bytes": 64
+    },
+    {
+      "path": "/home/qian-qi/work/chain-w1-scheduled-sha-measurements-20261108-f16ac-r4-01/01-retained-B/proof/sha.proof.bin",
+      "sha256": "11423125f0f5cde3accbcd46f221386c3005d2e72e0e30020b4ae9850acf9085",
+      "bytes": 3146949
+    },
+    {
+      "path": "/home/qian-qi/work/chain-w1-scheduled-sha-measurements-20261108-f16ac-r4-01/01-retained-B/proof/arith.proof.bin",
+      "sha256": "2b96cb7c32e34ab22ba39e1de424281b6d20b7811cff24ba769cf2e6cb67a988",
+      "bytes": 453861
+    },
+    {
+      "path": "/home/qian-qi/work/w1-security-r4-target-f16ac/release/examples/r4_lifecycle_probe",
+      "sha256": "d66f5cd8d64a03814b9aa67f61ba2bf2f3b165a73b5223e74923f3865ad02d1c",
+      "bytes": 1865800
+    },
+    {
+      "path": "/home/qian-qi/work/chain-w1-security-r4-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/examples/r4_lifecycle_probe.rs",
+      "sha256": "1d2deb4e6e79877de6a21ab2fcc2d0dedb7fcf86fa92c0f808a48ebc980c096e",
+      "bytes": 19111
+    }
+  ],
+  "environment": {
+    "RAYON_NUM_THREADS": "1"
+  },
+  "runs": [
+    {
+      "command": [
+        "/home/qian-qi/work/w1-security-r4-target-f16ac/release/examples/r4_lifecycle_probe",
+        "scheduled",
+        "/home/qian-qi/work/chain-w1-scheduled-sha-measurements-20261108-f16ac-r4-01/01-retained-B/prepared/statement.bin",
+        "/home/qian-qi/work/chain-w1-security-r4-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/round4-schedule/retained.expected-header.bin",
+        "/home/qian-qi/work/chain-w1-security-r4-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/round4-schedule/retained.artifacts.bin",
+        "/home/qian-qi/work/chain-w1-scheduled-sha-measurements-20261108-f16ac-r4-01/01-retained-B/proof/sha.proof.bin",
+        "/home/qian-qi/work/w1-security-r4-evidence-f16ac/scheduled-v1"
+      ],
+      "exit_code": 0,
+      "seconds": 3.679292917251587
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/w1-security-r4-target-f16ac/release/examples/r4_lifecycle_probe",
+        "packed",
+        "/home/qian-qi/work/chain-w1-scheduled-sha-measurements-20261108-f16ac-r4-01/01-retained-B/prepared/statement.bin",
+        "/home/qian-qi/work/chain-w1-security-r4-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/round4-schedule/retained.expected-header.bin",
+        "/home/qian-qi/work/chain-w1-security-r4-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/round4-schedule/retained.artifacts.bin",
+        "/home/qian-qi/work/chain-w1-scheduled-sha-measurements-20261108-f16ac-r4-01/01-retained-B/proof/arith.proof.bin",
+        "/home/qian-qi/work/w1-security-r4-evidence-f16ac/packed-r4-v1"
+      ],
+      "exit_code": 0,
+      "seconds": 6.4427690505981445
+    }
+  ],
+  "inputs_after": [
+    {
+      "path": "/home/qian-qi/work/chain-w1-scheduled-sha-measurements-20261108-f16ac-r4-01/01-retained-B/prepared/statement.bin",
+      "sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+      "bytes": 377290
+    },
+    {
+      "path": "/home/qian-qi/work/chain-w1-security-r4-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/round4-schedule/retained.expected-header.bin",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "bytes": 318
+    },
+    {
+      "path": "/home/qian-qi/work/chain-w1-security-r4-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/round4-schedule/retained.artifacts.bin",
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+      "bytes": 64
+    },
+    {
+      "path": "/home/qian-qi/work/chain-w1-scheduled-sha-measurements-20261108-f16ac-r4-01/01-retained-B/proof/sha.proof.bin",
+      "sha256": "11423125f0f5cde3accbcd46f221386c3005d2e72e0e30020b4ae9850acf9085",
+      "bytes": 3146949
+    },
+    {
+      "path": "/home/qian-qi/work/chain-w1-scheduled-sha-measurements-20261108-f16ac-r4-01/01-retained-B/proof/arith.proof.bin",
+      "sha256": "2b96cb7c32e34ab22ba39e1de424281b6d20b7811cff24ba769cf2e6cb67a988",
+      "bytes": 453861
+    },
+    {
+      "path": "/home/qian-qi/work/w1-security-r4-target-f16ac/release/examples/r4_lifecycle_probe",
+      "sha256": "d66f5cd8d64a03814b9aa67f61ba2bf2f3b165a73b5223e74923f3865ad02d1c",
+      "bytes": 1865800
+    },
+    {
+      "path": "/home/qian-qi/work/chain-w1-security-r4-f16ac/formal/pon-nakamoto-v1/w1_public_stark_research/examples/r4_lifecycle_probe.rs",
+      "sha256": "1d2deb4e6e79877de6a21ab2fcc2d0dedb7fcf86fa92c0f808a48ebc980c096e",
+      "bytes": 19111
+    }
+  ],
+  "inputs_unchanged": true
+}

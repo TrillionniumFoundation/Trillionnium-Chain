@@ -1,0 +1,19 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_run_from_zero_native.py"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 7.062298020000526,
+  "base_commit": "176822ae27692aefb288f62d751695501da5c0f0",
+  "source_state": "dirty-candidate",
+  "modified_source_sha256": {
+    "scripts/ci/test_run_from_zero_native.py": "56ed398c84564b99edeaea443a988ab716ef1d25d19300024be56dabb3dc0890",
+    "scripts/ci/run_from_zero_host.py": "36b6b290912b3f89a84f8a04be293503bb007cc7e386244fa46355ff964bf7d8",
+    "scripts/ci/test_from_zero_host_ci.py": "3e04f7508458874e9c04f56d67ae64de3f4c169ea75ae33f57277a0aa45eb3d2"
+  },
+  "log": "/workspace/scratch/56818e4fba76/publication/from-zero-selector-count-20261027/after-86.log",
+  "log_bytes": 12948,
+  "log_sha256": "585c7afe7eec46e66bcbb79bfa19e587a8b651371e835c19aeeb2183acdb45f7",
+  "scope": "Original complete Python mock/refusal unit suite; no native Rust or Hepta execution"
+}

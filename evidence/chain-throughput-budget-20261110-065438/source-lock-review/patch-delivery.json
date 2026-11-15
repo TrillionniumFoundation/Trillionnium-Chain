@@ -1,0 +1,15 @@
+{
+  "schema": "exact-diff-delivery-v1",
+  "original_staged_command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "original_exit_code": 2,
+  "original_stdout": "evidence/chain-throughput-budget-20261110-065438/source-lock-review/consensus-test-continuation.patch:8: trailing whitespace.\n+ \nevidence/chain-throughput-budget-20261110-065438/source-lock-review/consensus-test-continuation.patch:28: trailing whitespace.\n+ \nevidence/chain-throughput-budget-20261110-065438/source-lock-review/shared-admission-controls.patch:7: trailing whitespace.\n+ \n",
+  "original_stderr": "",
+  "cause": "Literal unified diff context markers on empty source lines were detected as trailing whitespace when added as text evidence. The raw diffs are now losslessly gzip encoded, preserving every decompressed byte and original SHA256. No source or whitespace rule was changed.",
+  "roundtrip_verified": true,
+  "native_tests_executed": false
+}

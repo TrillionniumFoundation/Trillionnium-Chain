@@ -1,0 +1,57 @@
+diff --git a/trillionnium/crates/trnm-service-settlement/src/native_budget.rs b/trillionnium/crates/trnm-service-settlement/src/native_budget.rs
+index 15c3b284f74120bd818c382a96698a97e25cfec1..7c2efcb189f7908b8923f95207a892ae36cfe423 100644
+--- a/trillionnium/crates/trnm-service-settlement/src/native_budget.rs
++++ b/trillionnium/crates/trnm-service-settlement/src/native_budget.rs
+@@ -1150,7 +1150,7 @@ impl NativeBudgetStoreV1 {
+         window: Option<(u64, u64)>,
+         target_receipt: NativeBudgetHashV1,
+     ) -> NativeBudgetResultV1<NativeBudgetAnchorV1> {
+-        let (mut state, _, _) = load_snapshot(&self.connection, &self.configuration)?;
++        let (mut state, sequence, root) = load_snapshot(&self.connection, &self.configuration)?;
+         let record = state.claim(claim)?;
+         require(
+             record.effect.as_ref()
+@@ -1167,9 +1167,26 @@ impl NativeBudgetStoreV1 {
+         let observed = owner.observe_funding(source)?;
+         require(observed.source == source, "BUDGET_NATIVE_SOURCE_BINDING")?;
+         state.observe_anchor(observed.anchor, &self.configuration)?;
++        self.check_native_readback_head(sequence, root)?;
+         Ok(observed.anchor)
+     }
+ 
++    fn check_native_readback_head(
++        &self,
++        sequence: u64,
++        root: NativeBudgetHashV1,
++    ) -> NativeBudgetResultV1<()> {
++        // The callback runs after the first read transaction has ended. A fresh
++        // snapshot must observe every committed concurrent append, including
++        // one that preserves the same native anchor but changes local liability.
++        let (_, current_sequence, current_root) =
++            load_snapshot(&self.connection, &self.configuration)?;
++        require(
++            (current_sequence, current_root) == (sequence, root),
++            "BUDGET_NATIVE_READBACK_JOURNAL_CHANGED",
++        )
++    }
++
+     /// Actual resources come from the worker/storage owner after join/readback.
+     /// Unknown measurement consumes the entire original reservation, never zero.
+     pub fn record_resources(
+@@ -1254,7 +1271,7 @@ impl NativeBudgetStoreV1 {
+         owner: &mut impl NativeFundingOwnerV1,
+         claim: NativeBudgetHashV1,
+     ) -> NativeBudgetResultV1<NativePaymentReadbackV1> {
+-        let (mut state, _, _) = load_snapshot(&self.connection, &self.configuration)?;
++        let (mut state, sequence, root) = load_snapshot(&self.connection, &self.configuration)?;
+         let record = state.claim(claim)?;
+         let historical = record.payment.clone().ok_or(NativeBudgetErrorV1::Invalid(
+             "BUDGET_NATIVE_PAYMENT_UNRECORDED",
+@@ -1279,6 +1296,7 @@ impl NativeBudgetStoreV1 {
+                 && observed.beneficiary_credit == historical.beneficiary_credit,
+             "BUDGET_NATIVE_PAYMENT_READBACK_BINDING",
+         )?;
++        self.check_native_readback_head(sequence, root)?;
+         Ok(NativePaymentReadbackV1 {
+             historical,
+             observed,

@@ -1,0 +1,189 @@
+{
+  "schema": "trnm.M5-source-validation.v1",
+  "started_at_utc": "2026-11-09T15:51:17.165021+00:00",
+  "head": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+  "tree": "fbbb4dca143775bae75ea825ff502f368e122ebb",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "inventoried_paths": 1380,
+  "source_read_errors_before": {},
+  "original_fixture_checks": [
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/initial.bin",
+      "bytes": 1326,
+      "sha256": "ad8cab25a363c0ef8555c1178edd9fddb202c8f5c916a026285f79b8bec8a124",
+      "git_blob": "8c57267ae3e4b6b43de5015253c266df0bb78ff3",
+      "head_blob": "8c57267ae3e4b6b43de5015253c266df0bb78ff3",
+      "matches_original_materialization_and_M5": true
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/selection.bin",
+      "bytes": 3213,
+      "sha256": "3c4060363122831d1279133cedfefcdc9d795d4653ae56287bc962d7a7b67aa9",
+      "git_blob": "28610de9ebc2cbabc52dab94d661b66ab92002d6",
+      "head_blob": "28610de9ebc2cbabc52dab94d661b66ab92002d6",
+      "matches_original_materialization_and_M5": true
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/completed.bin",
+      "bytes": 3687,
+      "sha256": "49687e0ece90dceb6409978616700c0b32ec342631a1941994ae3b7a886a7496",
+      "git_blob": "3a89dace16756125639e0b3b20717e15c3f3908a",
+      "head_blob": "3a89dace16756125639e0b3b20717e15c3f3908a",
+      "matches_original_materialization_and_M5": true
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/readback.json",
+      "bytes": 26822,
+      "sha256": "a11c43e68721199443ca265c35d5197f6883a732b04ae0f25e480cb9ce6adc5b",
+      "git_blob": "0a2d9284a7f9b450dad54f099bf163bcbffbba4e",
+      "head_blob": "0a2d9284a7f9b450dad54f099bf163bcbffbba4e",
+      "matches_original_materialization_and_M5": true
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/freeze.json",
+      "bytes": 3489,
+      "sha256": "00667a2e0a60f009702aeb589da642382b1a533ed0ad77f77a807bd3c472511d",
+      "git_blob": "c9eb2cba27979072e3073822aedb8e3c18e513a8",
+      "head_blob": "c9eb2cba27979072e3073822aedb8e3c18e513a8",
+      "matches_original_materialization_and_M5": true
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/expected.json",
+      "bytes": 1730,
+      "sha256": "1fdc83d8411fa1b9c4e95f1814ae4a32df07b977e754a8676a3ad5ccf351e810",
+      "git_blob": "db31b660a247e1e48f2389ccd4d5de400d4026b8",
+      "head_blob": "db31b660a247e1e48f2389ccd4d5de400d4026b8",
+      "matches_original_materialization_and_M5": true
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/initial.bin",
+      "bytes": 1345,
+      "sha256": "0ba9420cae7fce004f4ef9bfcd9f8a0cd06c6a39b20e503320930493216e70ca",
+      "git_blob": "944e551865e9a1d7fbc5bd62f6c764fd07393b79",
+      "head_blob": "944e551865e9a1d7fbc5bd62f6c764fd07393b79",
+      "matches_original_materialization_and_M5": true
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/selection.bin",
+      "bytes": 3018,
+      "sha256": "21ba8a9895ca7ae052dde45d7547b50e3b656e3c99eb50e004e1c60dd3967b62",
+      "git_blob": "77b1eadd9a056e35caca06a2b38f5fb398d3e301",
+      "head_blob": "77b1eadd9a056e35caca06a2b38f5fb398d3e301",
+      "matches_original_materialization_and_M5": true
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/completed.bin",
+      "bytes": 3508,
+      "sha256": "c890ca0ba1f5b5190e33bc93a0947c98a5cbfc4f77ad4f65ac8f428274ab222f",
+      "git_blob": "245dbbccd4b3e483077172b6f2d2d8c64316c5c9",
+      "head_blob": "245dbbccd4b3e483077172b6f2d2d8c64316c5c9",
+      "matches_original_materialization_and_M5": true
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/readback.json",
+      "bytes": 24556,
+      "sha256": "fdfc6d1bd390a2d6f37ac563d7fe49886e2ac0492b4dff47af95e32f403162a9",
+      "git_blob": "bc146179faf07a38459230265c227d7ff9df4612",
+      "head_blob": "bc146179faf07a38459230265c227d7ff9df4612",
+      "matches_original_materialization_and_M5": true
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/freeze.json",
+      "bytes": 3508,
+      "sha256": "ae6fbb4ea59fcf2c9ac2fbba5976501b27a7f5bc34838737a8fa99c05eb6bf69",
+      "git_blob": "c3b4c8ab108ce21aa2163cf090094e2ea4f89c99",
+      "head_blob": "c3b4c8ab108ce21aa2163cf090094e2ea4f89c99",
+      "matches_original_materialization_and_M5": true
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/expected.json",
+      "bytes": 1671,
+      "sha256": "d670b3094b47e3807c8ab7a093359ef8e16af3edad9368e78f517897e0345f14",
+      "git_blob": "440fac4efb6399c870fd14c8642dda24fd78eb37",
+      "head_blob": "440fac4efb6399c870fd14c8642dda24fd78eb37",
+      "matches_original_materialization_and_M5": true
+    }
+  ],
+  "commands": [
+    {
+      "label": "corpus-controls-full-900s",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py",
+        "-v"
+      ],
+      "engineering_timeout_seconds": 900,
+      "expected_test_count": 59
+    },
+    {
+      "label": "ci-contract-full",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py",
+        "-v"
+      ],
+      "engineering_timeout_seconds": 900,
+      "expected_test_count": 176
+    },
+    {
+      "label": "scope-controls",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/test_cell_learning_scope_join.py",
+        "-v"
+      ],
+      "engineering_timeout_seconds": 240,
+      "expected_test_count": 11
+    },
+    {
+      "label": "campaign-reader-controls",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_audit_native_campaign_outcomes.py",
+        "-v"
+      ],
+      "engineering_timeout_seconds": 240,
+      "expected_test_count": 23
+    },
+    {
+      "label": "proof-profile-controls",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_proof_profile_binding.py",
+        "-v"
+      ],
+      "engineering_timeout_seconds": 240,
+      "expected_test_count": 26
+    },
+    {
+      "label": "proof-profile-inspect",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/pq_proof_profile_binding.py",
+        "--expected-profile-descriptor-sha256",
+        "da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c"
+      ],
+      "engineering_timeout_seconds": 240,
+      "expected_test_count": null
+    },
+    {
+      "label": "corpus-inspect",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "engineering_timeout_seconds": 240,
+      "expected_test_count": null
+    }
+  ],
+  "timeout_scope": "Engineering harness only; original Host 4s and independent campaign 30s unchanged.",
+  "prior_M4_results_overwritten": false
+}

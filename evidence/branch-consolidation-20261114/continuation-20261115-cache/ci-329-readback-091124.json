@@ -1,0 +1,602 @@
+{
+  "schema": "trnm-ci-one-round-readback-v1",
+  "status_snapshot_at_utc": "2026-11-15T09:11:24Z",
+  "scope": "One status snapshot; subsequent calls only retrieve the identified failed-job evidence. No reruns, cancellations, source edits or local native execution.",
+  "candidate": "32989461a183dd5cc723100721e409a5450b72e3",
+  "prospective_merge": "aa4544d1827958834fcad7305df58de135d4cb14",
+  "tested_tree": "e5785f836110110fff9f8569f2e737c3ea72ce29",
+  "old_f34_required": {
+    "run_id": 43690736511,
+    "remaining_rust_shards": [
+      {
+        "id": 132740645400,
+        "name": "prospective Rust shard (quality)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 132740645421,
+        "name": "rust-baseline shard (runtime)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 132740645487,
+        "name": "prospective Rust shard (runtime)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 132740645523,
+        "name": "rust-baseline shard (quality)",
+        "status": "in_progress",
+        "conclusion": null
+      }
+    ],
+    "new_terminal_rust_results": 0
+  },
+  "new_required": {
+    "run_id": 43696884200,
+    "head_sha": "32989461a183dd5cc723100721e409a5450b72e3",
+    "status": "pending",
+    "conclusion": null,
+    "jobs_observed": 0,
+    "head_and_prospective_job_scope": "not_started; not passed or failed"
+  },
+  "workflow_inventory": {
+    "api_total_count": 32,
+    "observed_count": 32,
+    "complete": true,
+    "statuses": {
+      "success": 17,
+      "in_progress": 13,
+      "failure": 1,
+      "pending": 1
+    }
+  },
+  "job_inventory": {
+    "workflows_inspected": 32,
+    "jobs_observed": 145,
+    "every_workflow_job_page_complete": true,
+    "statuses": {
+      "success": 88,
+      "in_progress": 47,
+      "failure": 7,
+      "skipped": 3
+    }
+  },
+  "completed_failure_diagnoses": [
+    {
+      "category": "historical_before_input_guard_refusal",
+      "job_id": 132759307597,
+      "workflow_run": 43696884302,
+      "artifact_id": 14154723061,
+      "mode": "pool-scan-before",
+      "driver": "32989461a183dd5cc723100721e409a5450b72e3",
+      "subject": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+      "errors": [
+        "ValueError: IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED"
+      ],
+      "native_control_processes_started": 0,
+      "builds_started": 0,
+      "source_before": {
+        "driver": {
+          "base": null,
+          "candidate": "32989461a183dd5cc723100721e409a5450b72e3",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "32989461a183dd5cc723100721e409a5450b72e3",
+          "tested_tree": "e5785f836110110fff9f8569f2e737c3ea72ce29",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 3996391655,
+          "tracked_entries": 41791,
+          "tracked_worktree_verified": true
+        },
+        "subject": {
+          "base": null,
+          "candidate": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+          "tested_tree": "def5ae894d06b787222b6b2b2b2d97bf8be59366",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 2555020399,
+          "tracked_entries": 27987,
+          "tracked_worktree_verified": true
+        }
+      },
+      "first_mismatched_input": "trillionnium/Cargo.lock",
+      "current_and_f34_blob": "19530b3bce6b679ae87cb5b92b0578faf781c0b3",
+      "all_three_historical_subject_blob": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+      "additional_mismatch": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "driver_script_unchanged_since_f34_blob": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+      "interpretation": "The existing exact-input guard refuses historical comparison before compilation or tests. Not a new C compilation/test failure, and not successful evidence of the intended negative controls. Do not weaken the guard or count unexecuted controls."
+    },
+    {
+      "category": "historical_before_input_guard_refusal",
+      "job_id": 132759307734,
+      "workflow_run": 43696884302,
+      "artifact_id": 14154602818,
+      "mode": "pool-before-v2",
+      "driver": "32989461a183dd5cc723100721e409a5450b72e3",
+      "subject": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+      "errors": [
+        "ValueError: IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED"
+      ],
+      "native_control_processes_started": 0,
+      "builds_started": 0,
+      "source_before": {
+        "driver": {
+          "base": null,
+          "candidate": "32989461a183dd5cc723100721e409a5450b72e3",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "32989461a183dd5cc723100721e409a5450b72e3",
+          "tested_tree": "e5785f836110110fff9f8569f2e737c3ea72ce29",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 3996391655,
+          "tracked_entries": 41791,
+          "tracked_worktree_verified": true
+        },
+        "subject": {
+          "base": null,
+          "candidate": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+          "tested_tree": "4e85966ae98b0081fcc2f9d0e8af313bc4f7d005",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 2554976778,
+          "tracked_entries": 27985,
+          "tracked_worktree_verified": true
+        }
+      },
+      "first_mismatched_input": "trillionnium/Cargo.lock",
+      "current_and_f34_blob": "19530b3bce6b679ae87cb5b92b0578faf781c0b3",
+      "all_three_historical_subject_blob": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+      "additional_mismatch": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "driver_script_unchanged_since_f34_blob": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+      "interpretation": "The existing exact-input guard refuses historical comparison before compilation or tests. Not a new C compilation/test failure, and not successful evidence of the intended negative controls. Do not weaken the guard or count unexecuted controls."
+    },
+    {
+      "category": "historical_before_input_guard_refusal",
+      "job_id": 132759307961,
+      "workflow_run": 43696884302,
+      "artifact_id": 14154577900,
+      "mode": "budget-before-v2",
+      "driver": "32989461a183dd5cc723100721e409a5450b72e3",
+      "subject": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+      "errors": [
+        "ValueError: IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED"
+      ],
+      "native_control_processes_started": 0,
+      "builds_started": 0,
+      "source_before": {
+        "driver": {
+          "base": null,
+          "candidate": "32989461a183dd5cc723100721e409a5450b72e3",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "32989461a183dd5cc723100721e409a5450b72e3",
+          "tested_tree": "e5785f836110110fff9f8569f2e737c3ea72ce29",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 3996391655,
+          "tracked_entries": 41791,
+          "tracked_worktree_verified": true
+        },
+        "subject": {
+          "base": null,
+          "candidate": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+          "tested_tree": "c4cd82ed0004709192eff1563d90423bd5641e99",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 2554978813,
+          "tracked_entries": 27985,
+          "tracked_worktree_verified": true
+        }
+      },
+      "first_mismatched_input": "trillionnium/Cargo.lock",
+      "current_and_f34_blob": "19530b3bce6b679ae87cb5b92b0578faf781c0b3",
+      "all_three_historical_subject_blob": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+      "additional_mismatch": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "driver_script_unchanged_since_f34_blob": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+      "interpretation": "The existing exact-input guard refuses historical comparison before compilation or tests. Not a new C compilation/test failure, and not successful evidence of the intended negative controls. Do not weaken the guard or count unexecuted controls."
+    },
+    {
+      "category": "original_four_second_research_business_target_unmet",
+      "job_id": 132759308473,
+      "workflow_run": 43696884320,
+      "artifact_id": 14154548986,
+      "source": {
+        "base": null,
+        "candidate": "32989461a183dd5cc723100721e409a5450b72e3",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "32989461a183dd5cc723100721e409a5450b72e3",
+        "tested_tree": "e5785f836110110fff9f8569f2e737c3ea72ce29",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3996391655,
+        "tracked_entries": 41791,
+        "tracked_worktree_verified": true
+      },
+      "build_exit_code": 0,
+      "failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_TEST_FAILED"
+      ],
+      "all_named_tests_passed": false,
+      "execution_finished": true,
+      "original_native_test": "1 passed; qualification then CONFIRMATION_TARGET",
+      "fresh_native_test": "1 failed at tests/public_v3_from_zero/fresh_challenge.rs:244: original four-second/six-depth business target",
+      "requested_window_ns": 4000000000,
+      "attack_workers": 16,
+      "reports": {
+        "original": {
+          "report_sha256": "efeee7e3ce45bdb9a40f84dd82cce48a4f8c3b055603f30ddcd9b9809f7a769d",
+          "finite_target_met": false,
+          "phases": [
+            {
+              "mode": "attack-free-baseline",
+              "finite_business_target_met": true,
+              "client_confirmed_before_original_window_end": true,
+              "verification_errors": []
+            },
+            {
+              "mode": "from-zero-pressure",
+              "finite_business_target_met": false,
+              "client_confirmed_before_original_window_end": false,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            }
+          ]
+        },
+        "fresh": {
+          "report_sha256": "82484acdfa2065104b1f91f1c9932df2f744a9dc6ea71271e0136030eb5ec4cc",
+          "finite_target_met": false,
+          "phases": [
+            {
+              "mode": "attack-free-baseline",
+              "finite_business_target_met": true,
+              "client_confirmed_before_original_window_end": true,
+              "verification_errors": []
+            },
+            {
+              "mode": "from-zero-pressure",
+              "finite_business_target_met": false,
+              "client_confirmed_before_original_window_end": false,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            }
+          ]
+        }
+      },
+      "interpretation": "Original research business qualification remains false; do not reclassify this as a new compilation or test-count regression, and do not claim the new candidate has fixed the four-second confirmation target."
+    },
+    {
+      "category": "original_four_second_research_business_target_unmet",
+      "job_id": 132759308625,
+      "workflow_run": 43696884320,
+      "artifact_id": 14154986981,
+      "source": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "32989461a183dd5cc723100721e409a5450b72e3",
+        "kind": "prospective-merge",
+        "prospective_merge": "aa4544d1827958834fcad7305df58de135d4cb14",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "aa4544d1827958834fcad7305df58de135d4cb14",
+        "tested_tree": "e5785f836110110fff9f8569f2e737c3ea72ce29",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3996391655,
+        "tracked_entries": 41791,
+        "tracked_worktree_verified": true
+      },
+      "build_exit_code": 0,
+      "failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_TEST_FAILED"
+      ],
+      "all_named_tests_passed": false,
+      "execution_finished": true,
+      "original_native_test": "1 passed; qualification then CONFIRMATION_TARGET",
+      "fresh_native_test": "1 failed at tests/public_v3_from_zero/fresh_challenge.rs:244: original four-second/six-depth business target",
+      "requested_window_ns": 4000000000,
+      "attack_workers": 16,
+      "reports": {
+        "original": {
+          "report_sha256": "eaf3f0eea580eb718f56719f980936394b86cec53692b9af461630a9c8347c87",
+          "finite_target_met": false,
+          "phases": [
+            {
+              "mode": "attack-free-baseline",
+              "finite_business_target_met": true,
+              "client_confirmed_before_original_window_end": true,
+              "verification_errors": []
+            },
+            {
+              "mode": "from-zero-pressure",
+              "finite_business_target_met": false,
+              "client_confirmed_before_original_window_end": false,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            }
+          ]
+        },
+        "fresh": {
+          "report_sha256": "aacb5f1ea0a203ca4e53c05f80c965e82c54c6a8a47d51417ada3d821b090d44",
+          "finite_target_met": false,
+          "phases": [
+            {
+              "mode": "attack-free-baseline",
+              "finite_business_target_met": true,
+              "client_confirmed_before_original_window_end": true,
+              "verification_errors": []
+            },
+            {
+              "mode": "from-zero-pressure",
+              "finite_business_target_met": false,
+              "client_confirmed_before_original_window_end": false,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            }
+          ]
+        }
+      },
+      "interpretation": "Original research business qualification remains false; do not reclassify this as a new compilation or test-count regression, and do not claim the new candidate has fixed the four-second confirmation target."
+    },
+    {
+      "category": "macos_cleanup_error_newly_observed_on_unchanged_source",
+      "job_id": 132759306206,
+      "workflow_run": 43696884053,
+      "artifact_id": 14154952165,
+      "source": "aa4544d1827958834fcad7305df58de135d4cb14",
+      "tree": "e5785f836110110fff9f8569f2e737c3ea72ce29",
+      "test": "test_bounded_process.RetainedFailureTests.test_output_failure_retains_bounded_observed_prefix (fd=2)",
+      "error": "PermissionError: [Errno 1] Operation not permitted",
+      "location": "formal/pon-nakamoto-v1/bounded_process.py:153 os.killpg(child.pid,signal.SIGKILL)",
+      "test_module_outcome": {
+        "test_bounded_process": {
+          "executed": 26,
+          "errors": 1
+        },
+        "test_bounded_process_cleanup": {
+          "executed": 12,
+          "passed": true
+        },
+        "test_bounded_process_darwin": {
+          "executed": 14,
+          "passed": true
+        },
+        "test_qualification_runtime": {
+          "executed": 32,
+          "passed": true
+        }
+      },
+      "unchanged_C_and_f34_blobs": {
+        "formal/pon-nakamoto-v1/bounded_process.py": "b8579d1ea76e8c84214570f3f08d84595bfc77b6",
+        "formal/pon-nakamoto-v1/test_bounded_process.py": "7acf7a7d5855bfec493143af9b221e545b3e81bf",
+        ".github/workflows/pon-owned-process-cleanup.yml": "3ed5bff6e3ec2a9451cd3834289a5d83b59eb4f5"
+      },
+      "interpretation": "Real test failure on C prospective macOS, not a research qualification flag. The code/test/workflow are byte-identical to f34, so attribution to new C changes is not established. Investigate the Darwin exited-leader ownership proof; do not blanket-ignore PermissionError or relax the cleanup assertion."
+    },
+    {
+      "category": "historical_artifact_unavailable",
+      "job_id": 132759308045,
+      "workflow_run": 43696884406,
+      "requested_historical_run": 37730166589,
+      "requested_artifact_id": 11531476198,
+      "observed": "Found 0 artifact(s); None of the provided artifact IDs were found",
+      "code_or_tests_executed": false,
+      "interpretation": "Historical evidence retrieval failed. This is not a C compile, runtime or roster regression; expiry versus deletion is not established by this log."
+    }
+  ],
+  "incomplete_jobs_with_failed_steps": [
+    {
+      "workflow_run": 43696884406,
+      "workflow": "PoN priority acceptance",
+      "id": 132759308275,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+      "status": "in_progress",
+      "conclusion": null,
+      "completed_at": null,
+      "failed_steps": [
+        "Execute original release from-zero controls"
+      ],
+      "log_readback": "404 BlobNotFound; original complete job log not yet available, no cause inferred"
+    },
+    {
+      "workflow_run": 43696884406,
+      "workflow": "PoN priority acceptance",
+      "id": 132759308299,
+      "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+      "status": "in_progress",
+      "conclusion": null,
+      "completed_at": null,
+      "failed_steps": [
+        "Execute original release from-zero controls"
+      ],
+      "log_readback": "404 BlobNotFound; original complete job log not yet available, no cause inferred"
+    },
+    {
+      "workflow_run": 43696884406,
+      "workflow": "PoN priority acceptance",
+      "id": 132759308340,
+      "name": "native priorities (ubuntu-24.04, head, service-model)",
+      "status": "in_progress",
+      "conclusion": null,
+      "completed_at": null,
+      "failed_steps": [
+        "Execute original release from-zero controls"
+      ],
+      "log_readback": "404 BlobNotFound; original complete job log not yet available, no cause inferred"
+    },
+    {
+      "workflow_run": 43696884406,
+      "workflow": "PoN priority acceptance",
+      "id": 132759308400,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+      "status": "in_progress",
+      "conclusion": null,
+      "completed_at": null,
+      "failed_steps": [
+        "Execute original release from-zero controls"
+      ],
+      "log_readback": "404 BlobNotFound; original complete job log not yet available, no cause inferred"
+    }
+  ],
+  "conclusion_scope": "Among seven completed failing jobs inspected, no new C compilation or authenticated-suite-count failure is established. A real macOS cleanup test failure on unchanged source needs investigation; historical input compatibility and evidence availability failures remain separate. Ongoing jobs are not qualified by this observation.",
+  "evidence_files": [
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/all-C-jobs-full.json",
+      "bytes": 805713,
+      "sha256": "a901ce278a86f971a667c8f0ca645687333f9583139bff5544fa107b9103c9e8"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/all-C-jobs-summary.json",
+      "bytes": 40704,
+      "sha256": "edfb26935e0086a270c9b9dbf6ab7a5af433a2203f00e2fd78163c9b3493c3d1"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/all-C-workflows.json",
+      "bytes": 582368,
+      "sha256": "a2aad52f0a19468e2adf5751ef52eae318caad1bd854bdaabece21f606323020"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/artifact-14154548986.inventory.json",
+      "bytes": 6420,
+      "sha256": "a5620d08b5f77a1e2af4b148c45114d994f0cf4eddda93e1bcbc564dccc45f27"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/artifact-14154548986.zip",
+      "bytes": 6551339,
+      "sha256": "2a92bfee594bccce58af6a54c37fe9e1b32f0f7820bff57d3b7fcd27343d19d7"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/artifact-14154577900.inventory.json",
+      "bytes": 1385,
+      "sha256": "dc4ec7a732270f4c30a63b9c4381fd161bfdad52dec4360950a9023fcd27600b"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/artifact-14154577900.zip",
+      "bytes": 7127,
+      "sha256": "f0521d50788d956174d3f5d828460c1c0641bdb1296601dd8bb4d5bc0a4e0edd"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/artifact-14154602818.inventory.json",
+      "bytes": 1385,
+      "sha256": "799e3e29b1ae7a1e1b822521efb8c9f2caf4efaee4192178005a6260f803a8f0"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/artifact-14154602818.zip",
+      "bytes": 7065,
+      "sha256": "e53091e1b980d09a311ba71637536430d43844d1d29a761ea84869472748e685"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/artifact-14154723061.inventory.json",
+      "bytes": 1385,
+      "sha256": "ba5c7a668f04b4f858ffde814e1bc5eab53cbab678178441d3006791c9288310"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/artifact-14154723061.zip",
+      "bytes": 6930,
+      "sha256": "2615825c1b72fb23b1aecd147973262d0700cb486366d0ebc510d3f0426d1ba2"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/artifact-14154952165.inventory.json",
+      "bytes": 348,
+      "sha256": "129a00c9fac41f3c3921345635502eb8da7e70e780c61174d5f7d08bc119b0ea"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/artifact-14154952165.zip",
+      "bytes": 3412,
+      "sha256": "419c3c38cce54ddc31f23fda9c263bc6f69ef42ddcd3ad6f35aa8e57d09eaec0"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/artifact-14154986981.inventory.json",
+      "bytes": 6420,
+      "sha256": "703dc456872a8c8aa2a4ad2b6ca8469ac6ec636ad23e13a3dbf27a8a1e763230"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/artifact-14154986981.zip",
+      "bytes": 6548947,
+      "sha256": "492c182cb7257bf35ace2e724e35af89096accb9d61f3c6a70235f93e32fa085"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/artifact-metadata.json",
+      "bytes": 3998,
+      "sha256": "80a3d8c41875d4965f3b3f00a11f5ed633d5ffa211d748b67e53f6c3aeaf92c7"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/job-132759306206.log",
+      "bytes": 187894,
+      "sha256": "d4df05133b5013bad604af16b13282af7046f0f2954b6969dae86105b9f1bce5"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/job-132759307597.log",
+      "bytes": 323888,
+      "sha256": "cdc37157ec932aae90b8401abec8399bb369935cb6716e977294affb87f95873"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/job-132759307734.log",
+      "bytes": 323982,
+      "sha256": "e0d4f3075c130d947e765ad712abfd69b207cdf4c8cf812468532db30c6ceffc"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/job-132759307961.log",
+      "bytes": 323960,
+      "sha256": "d3ede0027272cce29f56c6ebf2badd34ead40fa4dedbf0765071b7f9a8972827"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/job-132759308045.log",
+      "bytes": 4113,
+      "sha256": "fa2429226b2e0c2c9b5da7f68fa7e748e1c972e732f941a7acce48c3ccb334bf"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/job-132759308473.log",
+      "bytes": 215724,
+      "sha256": "30bb665f81d94b55e10a9c35bb90b297b96ec38e676375a6e59199f428276420"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/job-132759308625.log",
+      "bytes": 216513,
+      "sha256": "2a7f378294f9d45a6e8cdc039f5ab36abceb4ccc39cd9e0e75bc8eb948b62ba1"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/observed-time.json",
+      "bytes": 49,
+      "sha256": "8ad731bf0d481c52c4c6855b41bf589e6418af87a1249bb8575cfb0edc9ffdc9"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/old-f34-jobs.json",
+      "bytes": 91586,
+      "sha256": "4b976f5a2419f4057815b835c09c59ec4c2c00baa7e1d2a744817d76daca6109"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/required-jobs.json",
+      "bytes": 38,
+      "sha256": "9a8b0aded0301a57748fe2b2ff321491342bb0825c9d59e1c0895ab84e9c424f"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/required-run.json",
+      "bytes": 17214,
+      "sha256": "29302b11357fe234bc2e185579316e569e2bcfecc981be8313e84b0830c6d560"
+    },
+    {
+      "path": "/workspace/scratch/b333277443cf/ci-329-fresh-20261115-091124/unfinished-failed-step-log-readback.json",
+      "bytes": 4380,
+      "sha256": "a05039bc3bd7eea4e1f260791163a0ab4d0acf1ad4690bf557ee56f77b244278"
+    }
+  ]
+}

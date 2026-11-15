@@ -1,0 +1,35 @@
+{"archive": "/home/qian/pq-witness-459-evidence-6f4fef89e370.tar.gz", "archive_bytes": 105006, "archive_sha256": "9dc5fc7159c99811dab7185fde572ba8d9cedeefe5d4e95320761f310f6c10ea", "binary_identity": {"binary_archived": false, "binary_bytes": 362808144, "binary_path": "/home/qian/pq-witness-target-6f4fef89e370/debug/deps/trnm_pon_node-4a176b3f1058369c", "binary_sha256": "05041780f13e0b9463a68107f9bd29bdaff33d078f59e5c22d4d073e05678d1f", "build_record": "native-build.json", "candidate": "45962558a7133375b16c0ac2600f2edb4a115585", "native_tests_executed_in_this_x230_stage": false, "schema": "trnm-pq-native-binary-identity-v1", "tested_tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9", "whole_chain_quantum_security_qualified": false}, "chunks": ["/home/qian/pq-witness-459-evidence-6f4fef89e370.tar.gz.part0.b64", "/home/qian/pq-witness-459-evidence-6f4fef89e370.tar.gz.part1.b64", "/home/qian/pq-witness-459-evidence-6f4fef89e370.tar.gz.part2.b64"], "source_commit": "45962558a7133375b16c0ac2600f2edb4a115585", "source_tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9"}
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-witness-x230-validation-20261103", "remote_policy_mutated": false}
+更新 4596255..8a74a9e
+Fast-forward
+ config/pon/pq-cross-branch-corpus-v1.json          |  14 +-
+ .../TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md  |  38 ++++
+ docs/security/PQ_SYSTEM_CONTINUATION_20261101.md   |   2 +-
+ .../WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md         |   4 +-
+ .../pon-history-close-deadline-20261103/README.md  | 104 +++++++++++
+ .../status.json                                    |  67 +++++++
+ .../support/distributed_source_inventory.rs        |   7 +
+ .../trnm-pon-node/src/ingress/history_import.rs    |  16 +-
+ .../src/ingress/history_import_deadline_tests.rs   | 195 +++++++++++++++++++++
+ .../src/ingress/history_import_tests.rs            |   4 +
+ .../src/store/pq_rollback_witness/tests.rs         |  11 +-
+ .../tests/architecture_delivery_compare.rs         |  33 ++++
+ 12 files changed, 482 insertions(+), 13 deletions(-)
+ create mode 100644 evidence/pon-history-close-deadline-20261103/README.md
+ create mode 100644 evidence/pon-history-close-deadline-20261103/status.json
+ create mode 100644 trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs
+{"provider_reuse": "verified", "inputs": 5}
+{"exit_code": 0, "receipt": "/home/qian/pq-witness-final-evidence-6f4fef89e370-8a74a9e4/preflight.json", "status": "command_succeeded"}
+{"exit_code": 0, "receipt": "/home/qian/pq-witness-final-evidence-6f4fef89e370-8a74a9e4/compiler.json", "status": "command_succeeded"}
+{"exit_code": 0, "receipt": "/home/qian/pq-witness-final-evidence-6f4fef89e370-8a74a9e4/locked-linux.json", "status": "command_succeeded"}
+{"exit_code": 0, "receipt": "/home/qian/pq-witness-final-evidence-6f4fef89e370-8a74a9e4/format.json", "status": "command_succeeded"}
+{"exit_code": 0, "receipt": "/home/qian/pq-witness-final-evidence-6f4fef89e370-8a74a9e4/native-build.json", "status": "command_succeeded"}
+{"exit_code": 0, "receipt": "/home/qian/pq-witness-final-evidence-6f4fef89e370-8a74a9e4/strict-clippy.json", "status": "command_succeeded"}
+{"exit_code": 0, "receipt": "/home/qian/pq-witness-final-evidence-6f4fef89e370-8a74a9e4/witness-inventory.json", "status": "command_succeeded"}
+{"exit_code": 0, "receipt": "/home/qian/pq-witness-final-evidence-6f4fef89e370-8a74a9e4/witness-scope.json", "status": "command_succeeded"}
+{"binary": {"archived": false, "bytes": 363681632, "path": "/home/qian/pq-witness-target-6f4fef89e370/debug/deps/trnm_pon_node-4a176b3f1058369c", "sha256": "1a592635ce27a99b0d34177a992a559c81d5da11bd564557186a05efdeca6fec"}, "child_process_harnesses_not_counted": ["store::pq_rollback_witness::combined_tests::independent_witness_process_child"], "failed": 0, "filtered_out": 922, "ignored": 0, "inventory_count": 45, "measured": 0, "new_controls_passed": ["pq_rollback_witness::tests::known_checkpoint_refuses_local_cas_conflicts_before_signing_or_transport", "pq_rollback_witness::tests::known_checkpoint_preserves_exact_retry_and_unobserved_other_writer_progress"], "original_business_budgets_changed": false, "original_required_witness_control_count": 38, "passed": 45, "passed_excluding_child_harness": 44, "schema": "trnm-pq-witness-scope-validation-v1", "source_commit": "8a74a9e42a9efbc52d83e861f64f03efd40f1406", "source_tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7", "whole_chain_quantum_security_qualified": false}
+{"exit_code": 0, "receipt": "/home/qian/pq-witness-final-evidence-6f4fef89e370-8a74a9e4/postflight.json", "status": "command_succeeded"}
+文件系统        1024的块      已用     可用 容量 挂载点
+/dev/sda5      229122412 195329792 22081032  90% /
+978488	/home/qian/pq-witness-target-6f4fef89e370
+1080	/home/qian/pq-witness-final-evidence-6f4fef89e370-8a74a9e4

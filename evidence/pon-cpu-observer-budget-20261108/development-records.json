@@ -1,0 +1,92 @@
+{
+  "archive": {
+    "bytes": 4223,
+    "path": "development-logs.tar.gz",
+    "sha256": "c15194bc204615b73e82baaa1a61befd3bbf8d06463349809dd860bfcb37152f"
+  },
+  "base_commit": "8d5389748873dad6e296d17f2ff20483b5afa5bc",
+  "early_logs_embed_complete_invocation": false,
+  "full_pressure_qualified": false,
+  "historical_pr_791_measurements_used_as_current_results": false,
+  "production_activation": false,
+  "records": [
+    {
+      "bytes": 0,
+      "exit_code": 0,
+      "member": "development/cargo-metadata-stderr.log",
+      "qualification": "Cargo metadata locked offline graph; 26 workspace packages",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3789,
+      "exit_code": 101,
+      "member": "development/distinct-w1-1.log",
+      "qualification": "original optimized Node lib-test compile SIGKILL; cause undetermined",
+      "sha256": "a5d2bdd982a5762d9a9a0dabf747211d3bc0118a01aae439d616fddfa0389182",
+      "tests_executed": 0
+    },
+    {
+      "bytes": 703,
+      "exit_code": 0,
+      "member": "development/distinct-w1-2.log",
+      "qualification": "explicit Node test opt-level=0 component; no original-profile pressure qualification",
+      "sha256": "025979b2aaacfba8ef580316255a3aaff7f25e6e71ecc2836a3bc69a54b3e9aa",
+      "tests_passed": 1
+    },
+    {
+      "bytes": 0,
+      "exit_code": 0,
+      "member": "development/format-1.log",
+      "qualification": "cargo fmt --all --check",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2157,
+      "exit_code": 0,
+      "member": "development/native-observer-1.log",
+      "qualification": "explicit Node test opt-level=0 component; accepted_task_observation=4; native_packet_observer=10",
+      "sha256": "f9cb17232dc3526bc5ae1fff253a8fd48f03d6b524039a3be0d695d8b8e0efe0",
+      "tests_passed": 14
+    },
+    {
+      "bytes": 1802,
+      "exit_code": 0,
+      "member": "development/observer-envelope-1.log",
+      "qualification": "component-only; optional SQLite loader witness UNQUALIFIED",
+      "sha256": "77655ff9df5725298add545beb4436196b3b5c4febff11ab255269d7a8f84599",
+      "tests_passed": 4
+    },
+    {
+      "bytes": 169,
+      "exit_code": 0,
+      "member": "development/preflight-commit.log",
+      "qualification": "project-preflight --dev; 26 packages",
+      "sha256": "c7b3f24f59d7a284e34e6ec3222fabb2358bf7c21d4288437667d00e4ed2a90c"
+    },
+    {
+      "bytes": 268,
+      "exit_code": 2,
+      "member": "development/repository-1.log",
+      "qualification": "refused stale inline store.rs source pin",
+      "sha256": "b7891d6d51b12c863136f733151d6664883007bc0d3e66fc902bd84a3884069a"
+    },
+    {
+      "bytes": 307,
+      "exit_code": 0,
+      "member": "development/repository-2.log",
+      "qualification": "working-tree candidate; current source pins refreshed without changing guard",
+      "sha256": "fccaa05e1cca09e453e4418f0220768182d3d4dadfa710be4a0cde27abd64388"
+    },
+    {
+      "bytes": 6898,
+      "exit_code": 0,
+      "member": "development/source-integrity-1.log",
+      "qualification": "source-check negative controls; not runtime acceptance",
+      "sha256": "be35d0456e858bf81c96a3d9b3faa4a95772d4d768a3b889f6f933bbdd232bdf",
+      "tests_passed": 43
+    }
+  ],
+  "schema": "pon-cpu-observer-component-development-records-v1",
+  "source_state": "development working tree before source freeze",
+  "whole_observer_cpu_qualified": false
+}

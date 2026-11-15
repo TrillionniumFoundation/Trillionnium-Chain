@@ -1,0 +1,30 @@
+{
+  "after_sha256": "06d49cf298ee945b34d9b11481fc01e65800f750947975eee815a6ba007cbc45",
+  "before_sha256": "06d49cf298ee945b34d9b11481fc01e65800f750947975eee815a6ba007cbc45",
+  "checks": {
+    "ingress-exact-test_named_completion": true,
+    "registry_extras_are_cache_markers": true,
+    "release-owner-tests_named_completion": false,
+    "resolved_dependency_sources_unchanged": true,
+    "selected_after_matches": true,
+    "selected_before_matches": true,
+    "selected_config_unchanged": true,
+    "selected_literal_includes_resolved": true,
+    "selected_source_unchanged": true,
+    "v2-environment-bonsai_api_key_rejection_reason": true,
+    "v2-environment-bonsai_api_url_rejection_reason": true,
+    "v2-environment-risc0_dev_mode_rejection_reason": true,
+    "v2-environment-risc0_prover_rejection_reason": true,
+    "v2-mutated-artifacts_rejection_reason": true,
+    "v2-mutated-receipt_rejection_reason": true,
+    "v2-native-mutated-artifacts_rejection_reason": true,
+    "v2-native-tests_named_completion": true,
+    "v2_features_checked": true,
+    "v2_receipt_native_binding": true,
+    "worktree_status_unchanged": true
+  },
+  "full_tracked_identity_claimed": false,
+  "head": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+  "selected_count": 2805,
+  "tree": "23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0"
+}

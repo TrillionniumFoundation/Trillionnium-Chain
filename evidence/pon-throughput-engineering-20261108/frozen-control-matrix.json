@@ -1,0 +1,89 @@
+[
+  {
+    "label": "frozen-source-and-links",
+    "recorder_exit": 0,
+    "summaries": []
+  },
+  {
+    "label": "frozen-source-pins",
+    "recorder_exit": 0,
+    "summaries": []
+  },
+  {
+    "label": "frozen-distributed-inventory",
+    "recorder_exit": 0,
+    "summaries": []
+  },
+  {
+    "label": "frozen-ci-contract",
+    "recorder_exit": 0,
+    "summaries": []
+  },
+  {
+    "label": "frozen-throughput-controls",
+    "recorder_exit": 0,
+    "summaries": [
+      "Ran 96 tests in 0.956s"
+    ]
+  },
+  {
+    "label": "frozen-fullpath-controls",
+    "recorder_exit": 0,
+    "summaries": [
+      "Ran 109 tests in 5.993s"
+    ]
+  },
+  {
+    "label": "frozen-phase-reader-controls",
+    "recorder_exit": 0,
+    "summaries": [
+      "Ran 65 tests in 0.790s"
+    ]
+  },
+  {
+    "label": "frozen-command-receipt-controls",
+    "recorder_exit": 0,
+    "summaries": [
+      "Ran 8 tests in 0.354s"
+    ]
+  },
+  {
+    "label": "frozen-source-negative-controls",
+    "recorder_exit": 0,
+    "summaries": [
+      "Ran 43 tests in 5.794s"
+    ]
+  },
+  {
+    "label": "frozen-original-host-controls",
+    "recorder_exit": 0,
+    "summaries": [
+      "Ran 79 tests in 2.160s"
+    ]
+  },
+  {
+    "label": "frozen-original-report-reproduction",
+    "recorder_exit": 0,
+    "summaries": []
+  },
+  {
+    "label": "frozen-formatting",
+    "recorder_exit": 0,
+    "summaries": []
+  },
+  {
+    "label": "frozen-graph-default",
+    "recorder_exit": 0,
+    "summaries": []
+  },
+  {
+    "label": "frozen-graph-all-features",
+    "recorder_exit": 0,
+    "summaries": []
+  },
+  {
+    "label": "frozen-clippy-all",
+    "recorder_exit": 101,
+    "summaries": []
+  }
+]

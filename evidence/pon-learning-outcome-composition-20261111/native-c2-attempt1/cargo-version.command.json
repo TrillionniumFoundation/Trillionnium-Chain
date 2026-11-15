@@ -1,0 +1,36 @@
+{
+  "accepted": true,
+  "command": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "-Vv"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+  "elapsed_seconds": 0.032902,
+  "execution_error": null,
+  "exit_code": 0,
+  "expected_python_tests": null,
+  "expected_rust_tests": null,
+  "finished_utc": "2026-11-12T00:58:59.063300+00:00",
+  "interrupted": false,
+  "label": "cargo-version",
+  "observations": {
+    "build_script_events": [],
+    "cargo_json_errors": [],
+    "python_ok": false,
+    "python_tests": [],
+    "rust_tests": [],
+    "unqualified": false
+  },
+  "python_suite_required": false,
+  "rejections": [],
+  "source_snapshot_sha256": null,
+  "sqlite_package_id": null,
+  "sqlite_witness_required": false,
+  "sqlite_witnesses": [],
+  "started_utc": "2026-11-12T00:58:59.030404+00:00",
+  "stderr": "cargo-version.stderr",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "cargo-version.stdout",
+  "stdout_sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e",
+  "timed_out": false
+}

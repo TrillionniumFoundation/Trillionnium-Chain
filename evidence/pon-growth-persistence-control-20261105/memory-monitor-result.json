@@ -1,0 +1,52 @@
+{
+  "boundary_controls_command": [
+    "python3",
+    "/workspace/scratch/822cc50e24f0/state-scheduling-restored/test_memory_estimate.py"
+  ],
+  "boundary_controls_exit_code": 0,
+  "boundary_controls_log_sha256": "c703baa8216fa2b6f2bbde8cbc17e5eaf6227c3365f768a4f2235dc2a6fc5c5b",
+  "legacy_full_runner_executed": false,
+  "legacy_full_runner_status": "NOT_RUN",
+  "legacy_algorithm_probe_executed": true,
+  "legacy_probe": {
+    "host_available": 9544966144,
+    "cgroup_limit": "8589934592",
+    "cgroup_current": 7350702080,
+    "effective_available": 1239232512,
+    "events": "low 0\nhigh 0\nmax 24818\noom 0\noom_kill 0\noom_group_kill 0\n"
+  },
+  "legacy_probe_would_block": false,
+  "corrected_probe": {
+    "host_available": 9544986624,
+    "cgroup_limit": "8589934592",
+    "cgroup_current": 7354998784,
+    "events": "low 0\nhigh 0\nmax 24818\noom 0\noom_kill 0\noom_group_kill 0\n",
+    "event_counters": {
+      "low": 0,
+      "high": 0,
+      "max": 24818,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    },
+    "effective_available": 3198046208,
+    "hard_cgroup_headroom": 1234935808,
+    "reclaimable_inactive_file_estimate": 1963110400,
+    "memory_stat_inputs": {
+      "file": 6545629184,
+      "shmem": 135168,
+      "file_dirty": 335532032,
+      "file_writeback": 0,
+      "inactive_file": 1963110400
+    }
+  },
+  "scope": "Actual helper observations and boundary controls only. No Cargo test has started.",
+  "run-bounded.py": {
+    "bytes": 16786,
+    "sha256": "64304edfb287e109fb11c8fcf6443fc271c52ecc7b57b5dda79db0554e671a16"
+  },
+  "test_memory_estimate.py": {
+    "bytes": 3416,
+    "sha256": "9997f79462a57eb5ecdacd2e27f3ea92a1fc1ec0915aaaeab42d511f4b35346e"
+  }
+}

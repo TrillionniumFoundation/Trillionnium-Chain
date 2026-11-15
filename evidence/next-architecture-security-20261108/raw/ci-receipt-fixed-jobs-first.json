@@ -1,0 +1,757 @@
+{
+  "jobs": [
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128656584093",
+      "completed_at": null,
+      "conclusion": null,
+      "created_at": "2026-11-08T06:52:46Z",
+      "head_branch": "feature/chain-next-architecture-security-20261108",
+      "head_sha": "9f54b05c643185a5041fc1f78cef77e95877f52a",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42456517352/job/128656584093",
+      "id": 128656584093,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "next architecture (ubuntu-24.04-arm, prospective-merge)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9IetnQ",
+      "run_attempt": 1,
+      "run_id": 42456517352,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42456517352",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000044396,
+      "runner_name": "GitHub Actions 1000044396",
+      "started_at": "2026-11-08T06:55:39Z",
+      "status": "in_progress",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T06:55:40Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T06:55:40Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:55:41Z",
+          "conclusion": "success",
+          "name": "Reserve isolated logs without changing source",
+          "number": 2,
+          "started_at": "2026-11-08T06:55:40Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:56:18Z",
+          "conclusion": "success",
+          "name": "Checkout the immutable event source",
+          "number": 3,
+          "started_at": "2026-11-08T06:55:41Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:56:20Z",
+          "conclusion": "success",
+          "name": "Verify exact source and ordered prospective merge",
+          "number": 4,
+          "started_at": "2026-11-08T06:56:18Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:56:20Z",
+          "conclusion": "success",
+          "name": "Retain original project preflight",
+          "number": 5,
+          "started_at": "2026-11-08T06:56:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:56:26Z",
+          "conclusion": "success",
+          "name": "Install pinned compiler and lint tools",
+          "number": 6,
+          "started_at": "2026-11-08T06:56:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:57:28Z",
+          "conclusion": "success",
+          "name": "Preserve repository truth and source-integrity negative controls",
+          "number": 7,
+          "started_at": "2026-11-08T06:56:26Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:57:28Z",
+          "conclusion": "success",
+          "name": "Run all next-architecture Python controls and retained exact fixture",
+          "number": 8,
+          "started_at": "2026-11-08T06:57:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:57:40Z",
+          "conclusion": "success",
+          "name": "Verify locked graph and unchanged all-source formatting",
+          "number": 9,
+          "started_at": "2026-11-08T06:57:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run the complete default-feature P2P crate",
+          "number": 10,
+          "started_at": "2026-11-08T06:57:40Z",
+          "status": "in_progress"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run the new packet observer and retained native packet-status controls",
+          "number": 11,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Verify original Hepta receivers and accepted-task binding",
+          "number": 12,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Preserve existing growth packet and cold-observer controls",
+          "number": 13,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Require nonempty filtered native executions without freezing test counts",
+          "number": 14,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run strict default-feature lint for both affected crates and all targets",
+          "number": 15,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Retain both release Cell examples as bounded local observations",
+          "number": 16,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Reverify the complete measured source after all attempts",
+          "number": 17,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Retain stage outcomes and artifact digests",
+          "number": 18,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Retain logs and failed or partial observations",
+          "number": 19,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Post Checkout the immutable event source",
+          "number": 38,
+          "started_at": null,
+          "status": "pending"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128656584093",
+      "workflow_name": "PoN next architecture exact-source observations"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128656584184",
+      "completed_at": null,
+      "conclusion": null,
+      "created_at": "2026-11-08T06:52:46Z",
+      "head_branch": "feature/chain-next-architecture-security-20261108",
+      "head_sha": "9f54b05c643185a5041fc1f78cef77e95877f52a",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42456517352/job/128656584184",
+      "id": 128656584184,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "next architecture (ubuntu-24.04, head)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9Iet-A",
+      "run_attempt": 1,
+      "run_id": 42456517352,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42456517352",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000044379,
+      "runner_name": "GitHub Actions 1000044379",
+      "started_at": "2026-11-08T06:54:19Z",
+      "status": "in_progress",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T06:54:20Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T06:54:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:54:20Z",
+          "conclusion": "success",
+          "name": "Reserve isolated logs without changing source",
+          "number": 2,
+          "started_at": "2026-11-08T06:54:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:54:51Z",
+          "conclusion": "success",
+          "name": "Checkout the immutable event source",
+          "number": 3,
+          "started_at": "2026-11-08T06:54:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:54:53Z",
+          "conclusion": "success",
+          "name": "Verify exact source and ordered prospective merge",
+          "number": 4,
+          "started_at": "2026-11-08T06:54:51Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:54:53Z",
+          "conclusion": "success",
+          "name": "Retain original project preflight",
+          "number": 5,
+          "started_at": "2026-11-08T06:54:53Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:55:01Z",
+          "conclusion": "success",
+          "name": "Install pinned compiler and lint tools",
+          "number": 6,
+          "started_at": "2026-11-08T06:54:53Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:55:35Z",
+          "conclusion": "success",
+          "name": "Preserve repository truth and source-integrity negative controls",
+          "number": 7,
+          "started_at": "2026-11-08T06:55:01Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:55:35Z",
+          "conclusion": "success",
+          "name": "Run all next-architecture Python controls and retained exact fixture",
+          "number": 8,
+          "started_at": "2026-11-08T06:55:35Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:55:44Z",
+          "conclusion": "success",
+          "name": "Verify locked graph and unchanged all-source formatting",
+          "number": 9,
+          "started_at": "2026-11-08T06:55:35Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:57:34Z",
+          "conclusion": "success",
+          "name": "Run the complete default-feature P2P crate",
+          "number": 10,
+          "started_at": "2026-11-08T06:55:44Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run the new packet observer and retained native packet-status controls",
+          "number": 11,
+          "started_at": "2026-11-08T06:57:34Z",
+          "status": "in_progress"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Verify original Hepta receivers and accepted-task binding",
+          "number": 12,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Preserve existing growth packet and cold-observer controls",
+          "number": 13,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Require nonempty filtered native executions without freezing test counts",
+          "number": 14,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run strict default-feature lint for both affected crates and all targets",
+          "number": 15,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Retain both release Cell examples as bounded local observations",
+          "number": 16,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Reverify the complete measured source after all attempts",
+          "number": 17,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Retain stage outcomes and artifact digests",
+          "number": 18,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Retain logs and failed or partial observations",
+          "number": 19,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Post Checkout the immutable event source",
+          "number": 38,
+          "started_at": null,
+          "status": "pending"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128656584184",
+      "workflow_name": "PoN next architecture exact-source observations"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128656584248",
+      "completed_at": null,
+      "conclusion": null,
+      "created_at": "2026-11-08T06:52:47Z",
+      "head_branch": "feature/chain-next-architecture-security-20261108",
+      "head_sha": "9f54b05c643185a5041fc1f78cef77e95877f52a",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42456517352/job/128656584248",
+      "id": 128656584248,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "next architecture (ubuntu-24.04-arm, head)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9IeuOA",
+      "run_attempt": 1,
+      "run_id": 42456517352,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42456517352",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000044399,
+      "runner_name": "GitHub Actions 1000044399",
+      "started_at": "2026-11-08T06:56:07Z",
+      "status": "in_progress",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T06:56:09Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T06:56:08Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:56:09Z",
+          "conclusion": "success",
+          "name": "Reserve isolated logs without changing source",
+          "number": 2,
+          "started_at": "2026-11-08T06:56:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:56:47Z",
+          "conclusion": "success",
+          "name": "Checkout the immutable event source",
+          "number": 3,
+          "started_at": "2026-11-08T06:56:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:56:49Z",
+          "conclusion": "success",
+          "name": "Verify exact source and ordered prospective merge",
+          "number": 4,
+          "started_at": "2026-11-08T06:56:47Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:56:49Z",
+          "conclusion": "success",
+          "name": "Retain original project preflight",
+          "number": 5,
+          "started_at": "2026-11-08T06:56:49Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:56:55Z",
+          "conclusion": "success",
+          "name": "Install pinned compiler and lint tools",
+          "number": 6,
+          "started_at": "2026-11-08T06:56:49Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:57:58Z",
+          "conclusion": "success",
+          "name": "Preserve repository truth and source-integrity negative controls",
+          "number": 7,
+          "started_at": "2026-11-08T06:56:55Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:57:58Z",
+          "conclusion": "success",
+          "name": "Run all next-architecture Python controls and retained exact fixture",
+          "number": 8,
+          "started_at": "2026-11-08T06:57:58Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:58:10Z",
+          "conclusion": "success",
+          "name": "Verify locked graph and unchanged all-source formatting",
+          "number": 9,
+          "started_at": "2026-11-08T06:57:58Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run the complete default-feature P2P crate",
+          "number": 10,
+          "started_at": "2026-11-08T06:58:10Z",
+          "status": "in_progress"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run the new packet observer and retained native packet-status controls",
+          "number": 11,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Verify original Hepta receivers and accepted-task binding",
+          "number": 12,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Preserve existing growth packet and cold-observer controls",
+          "number": 13,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Require nonempty filtered native executions without freezing test counts",
+          "number": 14,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run strict default-feature lint for both affected crates and all targets",
+          "number": 15,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Retain both release Cell examples as bounded local observations",
+          "number": 16,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Reverify the complete measured source after all attempts",
+          "number": 17,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Retain stage outcomes and artifact digests",
+          "number": 18,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Retain logs and failed or partial observations",
+          "number": 19,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Post Checkout the immutable event source",
+          "number": 38,
+          "started_at": null,
+          "status": "pending"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128656584248",
+      "workflow_name": "PoN next architecture exact-source observations"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128656584256",
+      "completed_at": null,
+      "conclusion": null,
+      "created_at": "2026-11-08T06:52:47Z",
+      "head_branch": "feature/chain-next-architecture-security-20261108",
+      "head_sha": "9f54b05c643185a5041fc1f78cef77e95877f52a",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42456517352/job/128656584256",
+      "id": 128656584256,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "next architecture (ubuntu-24.04, prospective-merge)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9IeuQA",
+      "run_attempt": 1,
+      "run_id": 42456517352,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42456517352",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000044427,
+      "runner_name": "GitHub Actions 1000044427",
+      "started_at": "2026-11-08T06:58:07Z",
+      "status": "in_progress",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T06:58:09Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T06:58:08Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:58:09Z",
+          "conclusion": "success",
+          "name": "Reserve isolated logs without changing source",
+          "number": 2,
+          "started_at": "2026-11-08T06:58:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:58:52Z",
+          "conclusion": "success",
+          "name": "Checkout the immutable event source",
+          "number": 3,
+          "started_at": "2026-11-08T06:58:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:58:55Z",
+          "conclusion": "success",
+          "name": "Verify exact source and ordered prospective merge",
+          "number": 4,
+          "started_at": "2026-11-08T06:58:52Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:58:55Z",
+          "conclusion": "success",
+          "name": "Retain original project preflight",
+          "number": 5,
+          "started_at": "2026-11-08T06:58:55Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T06:59:04Z",
+          "conclusion": "success",
+          "name": "Install pinned compiler and lint tools",
+          "number": 6,
+          "started_at": "2026-11-08T06:58:55Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Preserve repository truth and source-integrity negative controls",
+          "number": 7,
+          "started_at": "2026-11-08T06:59:04Z",
+          "status": "in_progress"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run all next-architecture Python controls and retained exact fixture",
+          "number": 8,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Verify locked graph and unchanged all-source formatting",
+          "number": 9,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run the complete default-feature P2P crate",
+          "number": 10,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run the new packet observer and retained native packet-status controls",
+          "number": 11,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Verify original Hepta receivers and accepted-task binding",
+          "number": 12,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Preserve existing growth packet and cold-observer controls",
+          "number": 13,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Require nonempty filtered native executions without freezing test counts",
+          "number": 14,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run strict default-feature lint for both affected crates and all targets",
+          "number": 15,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Retain both release Cell examples as bounded local observations",
+          "number": 16,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Reverify the complete measured source after all attempts",
+          "number": 17,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Retain stage outcomes and artifact digests",
+          "number": 18,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Retain logs and failed or partial observations",
+          "number": 19,
+          "started_at": null,
+          "status": "pending"
+        },
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Post Checkout the immutable event source",
+          "number": 38,
+          "started_at": null,
+          "status": "pending"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128656584256",
+      "workflow_name": "PoN next architecture exact-source observations"
+    }
+  ],
+  "total_count": 4
+}

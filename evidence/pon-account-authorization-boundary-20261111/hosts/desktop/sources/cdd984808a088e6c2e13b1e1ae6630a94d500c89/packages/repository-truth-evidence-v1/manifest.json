@@ -1,0 +1,493 @@
+{
+  "collected_utc": "2026-11-11T02:46:53.258445+00:00",
+  "files": [
+    {
+      "archive_member": "repository-truth-evidence-v1/harness/run_validation.py",
+      "bytes": 5676,
+      "device": 2050,
+      "inode": 51178584,
+      "mode": 384,
+      "mtime_ns": 1794362283494471840,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/run_validation.py",
+      "sha256": "10089fad39140cbb56c15b85c72c8e5e8c76fc368d74c2ac2cb11233b1310562"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/installed.stderr.log",
+      "bytes": 0,
+      "device": 2050,
+      "inode": 51178597,
+      "mode": 384,
+      "mtime_ns": 1794363715189346425,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/runtime-release-venv-setup/installed.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/installed.stdout.log",
+      "bytes": 294,
+      "device": 2050,
+      "inode": 51178596,
+      "mode": 384,
+      "mtime_ns": 1794363715225070599,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/runtime-release-venv-setup/installed.stdout.log",
+      "sha256": "26c17d002738c0848bd8e81c672f804344b41631cdb11bdc37735c29d91b2a55"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/pip.stderr.log",
+      "bytes": 0,
+      "device": 2050,
+      "inode": 51178594,
+      "mode": 384,
+      "mtime_ns": 1794363703997071191,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/runtime-release-venv-setup/pip.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/pip.stdout.log",
+      "bytes": 441,
+      "device": 2050,
+      "inode": 51178593,
+      "mode": 384,
+      "mtime_ns": 1794363715086075496,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/runtime-release-venv-setup/pip.stdout.log",
+      "sha256": "7a1e543fdaa4ec6075520b58a279ba89cf40c1e46123132655c488027c991266"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/runtime-release-dependencies.json",
+      "bytes": 4800,
+      "device": 2050,
+      "inode": 51178595,
+      "mode": 384,
+      "mtime_ns": 1794363714911081663,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/runtime-release-venv-setup/runtime-release-dependencies.json",
+      "sha256": "06eb29bc6d1a63cbc890bb71be6ec0d06a4e37e3e01b2797ecc5b3cc8aebaf86"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/runtime-release-requirements.txt",
+      "bytes": 378,
+      "device": 2050,
+      "inode": 51178588,
+      "mode": 384,
+      "mtime_ns": 1794363699522393639,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/runtime-release-venv-setup/runtime-release-requirements.txt",
+      "sha256": "2acf07322b544b1d2318642b59877dd035bc7808590619f3cf23e75eedd0bbe7"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/setup.json",
+      "bytes": 2139,
+      "device": 2050,
+      "inode": 51178591,
+      "mode": 384,
+      "mtime_ns": 1794363715336944914,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/runtime-release-venv-setup/setup.json",
+      "sha256": "2eb37b2aa7842e207bec272aab1fc6676f0b02899949ae18ff1fc6f876cf3c10"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/venv.stderr.log",
+      "bytes": 0,
+      "device": 2050,
+      "inode": 51178590,
+      "mode": 384,
+      "mtime_ns": 1794363699522393639,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/runtime-release-venv-setup/venv.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/runtime-release-venv-setup/venv.stdout.log",
+      "bytes": 0,
+      "device": 2050,
+      "inode": 51178589,
+      "mode": 384,
+      "mtime_ns": 1794363699522393639,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/runtime-release-venv-setup/venv.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/source/.github/workflows/trnm-required-baseline.yml",
+      "bytes": 35332,
+      "device": 2050,
+      "inode": 52223168,
+      "mode": 384,
+      "mtime_ns": 1794362192780270454,
+      "original_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/.github/workflows/trnm-required-baseline.yml",
+      "sha256": "1cb75c13bea9e7f9913985ff4c0210ff73a3f61ba72ae3584c34ee9476e0579d"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/source/scripts/ci/ci_job.sh",
+      "bytes": 40093,
+      "device": 2050,
+      "inode": 50637618,
+      "mode": 384,
+      "mtime_ns": 1794362205803917650,
+      "original_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/scripts/ci/ci_job.sh",
+      "sha256": "42bf80b48db9cdc3d4a4ea09cfa9aa4bec0dbee4fa8effbbec3a64af75daf210"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/source/scripts/ci/runtime-release-requirements.txt",
+      "bytes": 378,
+      "device": 2050,
+      "inode": 50638727,
+      "mode": 384,
+      "mtime_ns": 1794362205812917406,
+      "original_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/scripts/ci/runtime-release-requirements.txt",
+      "sha256": "2acf07322b544b1d2318642b59877dd035bc7808590619f3cf23e75eedd0bbe7"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/llm-runtime-release-python/context.json",
+      "bytes": 4078,
+      "device": 2050,
+      "inode": 2159698,
+      "mode": 384,
+      "mtime_ns": 1794363829485661157,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/llm-runtime-release-python/context.json",
+      "sha256": "a208a61d66096da3bece5ba61802f1a8d5b0170197f9bc50a3176713a7aed306"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/llm-runtime-release-python/result.json",
+      "bytes": 927,
+      "device": 2050,
+      "inode": 2159706,
+      "mode": 384,
+      "mtime_ns": 1794363836376995672,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/llm-runtime-release-python/result.json",
+      "sha256": "c3226f8abd2a7ab669010576f68ed56fc69a565f40f710eec31353aaa38fb0f0"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/llm-runtime-release-python/stderr.log",
+      "bytes": 4166,
+      "device": 2050,
+      "inode": 2159700,
+      "mode": 384,
+      "mtime_ns": 1794363836243864486,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/llm-runtime-release-python/stderr.log",
+      "sha256": "e92b09503a2c87cb24271712fcc2c9f43d779940c45740616cb12740bc02993a"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/llm-runtime-release-python/stdout.log",
+      "bytes": 0,
+      "device": 2050,
+      "inode": 2159699,
+      "mode": 384,
+      "mtime_ns": 1794363829485661157,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/llm-runtime-release-python/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/context.json",
+      "bytes": 4143,
+      "device": 2050,
+      "inode": 13148204,
+      "mode": 384,
+      "mtime_ns": 1794363974694080322,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-runtime-python/context.json",
+      "sha256": "0de13392a931032ea5ce2c8c85f02da7c1e28af78b51fc8a51c62ed82a821a43"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/cancellation-handoff.log",
+      "bytes": 4352,
+      "device": 2050,
+      "inode": 13161919,
+      "mode": 384,
+      "mtime_ns": 1794364935719455579,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/cancellation-handoff.log",
+      "sha256": "79ec4fd6f7a1b0ccd900b1427958f679bcfb7822d40b08870cba8d91cfd1d237"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/coordinator-contract.log",
+      "bytes": 3833,
+      "device": 2050,
+      "inode": 13162252,
+      "mode": 384,
+      "mtime_ns": 1794364939541285376,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/coordinator-contract.log",
+      "sha256": "680c35a7744d9291953647b0a4e196d766e137ad2b09ae0155a656aa15a5de6b"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/deployment-comparison-audit.log",
+      "bytes": 3505,
+      "device": 2050,
+      "inode": 13162480,
+      "mode": 384,
+      "mtime_ns": 1794364945022938028,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/deployment-comparison-audit.log",
+      "sha256": "d705a61196bdd81d6e97089bb1fdb469aa25d832b2b7743463ec6cae6f221a57"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/deployment-evidence-binding.log",
+      "bytes": 2465,
+      "device": 2050,
+      "inode": 13162475,
+      "mode": 384,
+      "mtime_ns": 1794364944594032269,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/deployment-evidence-binding.log",
+      "sha256": "e614adb107b65e604db75a84ba91361f83981b6ea28208f3bd6ed2dc6f4b6e48"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/generation-target.log",
+      "bytes": 2457,
+      "device": 2050,
+      "inode": 13162371,
+      "mode": 384,
+      "mtime_ns": 1794364942553435418,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/generation-target.log",
+      "sha256": "73b8ed84a906b66773dabde2d3237938ceaa195902080d1298f461ebf8333f5c"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/kaggle-worker-contract.log",
+      "bytes": 2195,
+      "device": 2050,
+      "inode": 13162457,
+      "mode": 384,
+      "mtime_ns": 1794364944004133435,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/kaggle-worker-contract.log",
+      "sha256": "5fd0b89b93b1ed3d3a19187698065b15920a62a976e6d7381b352df377fc0ec2"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/owned-process-collector.log",
+      "bytes": 2459,
+      "device": 2050,
+      "inode": 13162481,
+      "mode": 384,
+      "mtime_ns": 1794364949948258766,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/owned-process-collector.log",
+      "sha256": "459c26035b61d3eb08e3e27e680215439d1a7bac76fab3533451ee3ec20d0899"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/owned-runtime-reader.log",
+      "bytes": 1555,
+      "device": 2050,
+      "inode": 13162435,
+      "mode": 384,
+      "mtime_ns": 1794364943799139838,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/owned-runtime-reader.log",
+      "sha256": "2868e6b58b31d6384265e9d09a1a002c69559469ba0c18d0a1b4b2684bd9391f"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/owner-cancellation.log",
+      "bytes": 1642,
+      "device": 2050,
+      "inode": 13162416,
+      "mode": 384,
+      "mtime_ns": 1794364943326154611,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/owner-cancellation.log",
+      "sha256": "619a3a66ca9a8f1927d88a7895484d1ae7f4b4f016a78475be0b9cde2c8ee2ae"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/provider-contract.log",
+      "bytes": 2099,
+      "device": 2050,
+      "inode": 13162362,
+      "mode": 384,
+      "mtime_ns": 1794364939778265428,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/provider-contract.log",
+      "sha256": "4231fed7b2c43f6c815014beae4ca42c5cf06aa40a19e56a834c8aea19b9fa9d"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/source-builder.log",
+      "bytes": 1662,
+      "device": 2050,
+      "inode": 13162429,
+      "mode": 384,
+      "mtime_ns": 1794364943469150145,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/source-builder.log",
+      "sha256": "76c2cd09de0c8ee1fd3430368b41f4532fa4d78efbc4ed8715b177712cad54b0"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/winner-identity.log",
+      "bytes": 854,
+      "device": 2050,
+      "inode": 13162470,
+      "mode": 384,
+      "mtime_ns": 1794364944170128251,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-runtime-python/native-receipts/w1-postwin-contracts/winner-identity.log",
+      "sha256": "2cae4084535e1f64e5862e8b2893f8f03c3c5a8166950e34157687c594c831df"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/result.json",
+      "bytes": 996,
+      "device": 2050,
+      "inode": 13163735,
+      "mode": 384,
+      "mtime_ns": 1794365059951614192,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-runtime-python/result.json",
+      "sha256": "ed863e69ff7a307d8b1ec55270697555430711cf503aae9559a381db36e0ae23"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/stderr.log",
+      "bytes": 275841,
+      "device": 2050,
+      "inode": 13148206,
+      "mode": 384,
+      "mtime_ns": 1794365059707524533,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-runtime-python/stderr.log",
+      "sha256": "6f3975318b61be63249e285757208e12cf2ff0ffc52d2401efbc4ed31494a798"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth-runtime-python/stdout.log",
+      "bytes": 192436,
+      "device": 2050,
+      "inode": 13148205,
+      "mode": 384,
+      "mtime_ns": 1794365055362659891,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-runtime-python/stdout.log",
+      "sha256": "5b85e578374f5375c0220615193f6382d45751b1190530637207cd4c393511b1"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth/context.json",
+      "bytes": 4025,
+      "device": 2050,
+      "inode": 57730502,
+      "mode": 384,
+      "mtime_ns": 1794362588251832384,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth/context.json",
+      "sha256": "bfabbe2cfe63a7ee869ab96159c4b626ccf02277a50e0b77c7d9b7e109885f74"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth/result.json",
+      "bytes": 878,
+      "device": 2050,
+      "inode": 57730505,
+      "mode": 384,
+      "mtime_ns": 1794363479420307573,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth/result.json",
+      "sha256": "75d5a5a8636705afc608c09384869a5c454cd18a0be6635e51346f2f0dcccd23"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth/stderr.log",
+      "bytes": 243731,
+      "device": 2050,
+      "inode": 57730504,
+      "mode": 384,
+      "mtime_ns": 1794363479283665878,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth/stderr.log",
+      "sha256": "e119dc80ed902a60c4d953e6d8f495f1fb1d0c293c4ee7c66a8932ea0b157bd2"
+    },
+    {
+      "archive_member": "repository-truth-evidence-v1/validation/repository-truth/stdout.log",
+      "bytes": 163287,
+      "device": 2050,
+      "inode": 57730503,
+      "mode": 384,
+      "mtime_ns": 1794363435370340192,
+      "original_path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth/stdout.log",
+      "sha256": "5ca077c67cf1dc84446bc2a94f35eeefbbbbd308290be1ed660f180d0e6256f6"
+    }
+  ],
+  "host": "desktop",
+  "jobs": {
+    "llm-runtime-release-python": "1a1c86b248c-135c4-60",
+    "repository-truth": "1a1c858278f-135c4-36",
+    "repository-truth-runtime-python": "1a1c86d5a18-135c4-66",
+    "runtime-release-venv-setup": "1a1c8692974-135c4-5a"
+  },
+  "original_stdout_stderr_bytes_unmodified": true,
+  "qualification_granted": false,
+  "read_only_source_and_original_records": true,
+  "records": {
+    "llm-runtime-release-python": {
+      "context_sha256": "a208a61d66096da3bece5ba61802f1a8d5b0170197f9bc50a3176713a7aed306",
+      "result": {
+        "argv": [
+          "/home/qian-qi/chain-pq-a418-final-python-venv/bin/python",
+          "scripts/test_llm_runtime_release.py"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 46048,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 1.323151,
+          "user_cpu_seconds": 5.421343
+        },
+        "elapsed_seconds": 6.8904290669597685,
+        "finished_utc": "2026-11-11T02:23:56.376180+00:00",
+        "id": "llm-runtime-release-python",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e92b09503a2c87cb24271712fcc2c9f43d779940c45740616cb12740bc02993a",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "result_sha256": "c3226f8abd2a7ab669010576f68ed56fc69a565f40f710eec31353aaa38fb0f0"
+    },
+    "repository-truth": {
+      "context_sha256": "bfabbe2cfe63a7ee869ab96159c4b626ccf02277a50e0b77c7d9b7e109885f74",
+      "result": {
+        "argv": [
+          "bash",
+          "scripts/ci/ci_job.sh",
+          "repository-truth"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 212088,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 77.888876,
+          "user_cpu_seconds": 771.581073
+        },
+        "elapsed_seconds": 891.1635441971011,
+        "finished_utc": "2026-11-11T02:17:59.415468+00:00",
+        "id": "repository-truth",
+        "launch_error": null,
+        "pass": false,
+        "qualification_granted": false,
+        "returncode": 1,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e119dc80ed902a60c4d953e6d8f495f1fb1d0c293c4ee7c66a8932ea0b157bd2",
+        "stdout_sha256": "5ca077c67cf1dc84446bc2a94f35eeefbbbbd308290be1ed660f180d0e6256f6"
+      },
+      "result_sha256": "75d5a5a8636705afc608c09384869a5c454cd18a0be6635e51346f2f0dcccd23"
+    },
+    "repository-truth-runtime-python": {
+      "context_sha256": "0de13392a931032ea5ce2c8c85f02da7c1e28af78b51fc8a51c62ed82a821a43",
+      "result": {
+        "argv": [
+          "env",
+          "TRNM_RUNTIME_RELEASE_PYTHON=/home/qian-qi/chain-pq-a418-final-python-venv/bin/python",
+          "bash",
+          "scripts/ci/ci_job.sh",
+          "repository-truth"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 397388,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 88.921899,
+          "user_cpu_seconds": 948.803618
+        },
+        "elapsed_seconds": 1085.2464238810353,
+        "finished_utc": "2026-11-11T02:44:19.940646+00:00",
+        "id": "repository-truth-runtime-python",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "6f3975318b61be63249e285757208e12cf2ff0ffc52d2401efbc4ed31494a798",
+        "stdout_sha256": "5b85e578374f5375c0220615193f6382d45751b1190530637207cd4c393511b1"
+      },
+      "result_sha256": "ed863e69ff7a307d8b1ec55270697555430711cf503aae9559a381db36e0ae23"
+    }
+  },
+  "schema": "trnm-desktop-repository-truth-evidence-v1",
+  "setup": {
+    "packaging_version": "26.3",
+    "requirements_sha256": "2acf07322b544b1d2318642b59877dd035bc7808590619f3cf23e75eedd0bbe7",
+    "setup_sha256": "2eb37b2aa7842e207bec272aab1fc6676f0b02899949ae18ff1fc6f876cf3c10",
+    "wheel_sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c"
+  },
+  "source_identity_after": {
+    "head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+    "status_porcelain": "",
+    "tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec"
+  },
+  "source_identity_before": {
+    "head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+    "status_porcelain": "",
+    "tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec"
+  },
+  "wrapper_log_hashes_checked": true
+}

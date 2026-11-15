@@ -1,0 +1,18 @@
+{
+  "bytes": 85158,
+  "excerpt_end_line": 545,
+  "excerpt_start_line": 543,
+  "line_count": 831,
+  "lines": [
+    "test cell::retention::tests::real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capacity ... ",
+    "running 1 test",
+    "test cell::retention::tests::retention_process_child ... ok"
+  ],
+  "original_gate_state": "failed",
+  "original_overall_gate_result": "24/25; complete-da-native parser rejected this exact observed form despite Cargo exit 0",
+  "path": "/home/qq/work/chain-cell-storage-convergence-exact097-01/complete-da-native.stdout.log",
+  "scope": "Read-only excerpt from the original failed exact097 acceptance attempt. The child exits with 91 before its own libtest result; the retained parent asserts that exit and completes its recovery checks. This fixture does not change the original receipt or rerun native tests.",
+  "sha256": "1ce59bde5c6802777295b4404ebb0e8ec3af3e403e264aa0c9ae31dbcd06acb2",
+  "source_commit": "097f59f505f8ec42f72e3b8255e6cb7822a70646",
+  "source_tree": "4b1eb80fa88b0b8f98d216247f7b8bce2df73f20"
+}

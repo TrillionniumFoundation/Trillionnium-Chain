@@ -1,0 +1,24 @@
+{
+  "actual_oid": "d3148b76b5d50cdcd51a34d33ad8a213ab30650f",
+  "bytes": 1316547,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "d3148b76b5d50cdcd51a34d33ad8a213ab30650f"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1316547,
+  "expected_oid": "d3148b76b5d50cdcd51a34d33ad8a213ab30650f",
+  "finished_at": "2026-11-12T01:41:45.930263+00:00",
+  "path": "evidence/chain-architecture-boundaries-20261109/raw-observations.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvY2hhaW4tYXJjaGl0ZWN0dXJlLWJvdW5kYXJpZXMtMjAyNjExMDkvcmF3LW9ic2VydmF0aW9ucy50YXIuZ3o=",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "2dd43f99893ba82f9072d2c0e4b817153a3fc9d7ab6845daae9016ab1c614c05",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:45.905283+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

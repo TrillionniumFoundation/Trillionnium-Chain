@@ -1,0 +1,16 @@
+{
+  "local_negative_commit": "a53aaee3c827f29abeaa2aa3d4ef7355205dba40",
+  "published_negative_commit": "d6bbac6baf9e5356721ab56f7432058d07b6b49b",
+  "negative_tree": "653b1a8b483ccdbf69b272255ec0369d98296302",
+  "local_implementation_commit": "9029f2ab2c6382aaaf096b841a20fbf335f4b172",
+  "published_implementation_commit": "b7e38fdc2e43c468692abc52aec03737f2df7f1b",
+  "implementation_tree": "b75d318fc7b7b027a810f4a70a9cd91e0b3930f8",
+  "all_27_changed_blobs_verified_against_local_objects": true,
+  "raw_commit_reconstructed_and_sha1_verified": true,
+  "published_author_committer_timezone": "-0500",
+  "authenticated_github_login": "ProfHepta",
+  "branch_published": false,
+  "native_tests_executed": false,
+  "preferred_hepta_channel_result": "shell/read timeout; later binary_write/file_info/pty_start internal errors; effect unknown for attempted new transfer file",
+  "publication_channel": "previously authorized GitHub connector"
+}

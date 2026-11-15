@@ -1,0 +1,633 @@
+{
+  "schema": "root-metadata-static-original-members-v1",
+  "created_utc": "2026-11-12T01:40:35.323552+00:00",
+  "scope": "archive of completed source import and static freeze observations; no native execution",
+  "files": [
+    {
+      "member": "drivers/chain-system-security-root-metadata-freeze-driver-20261112-306929.py",
+      "source": "/home/qq/chain-system-security-root-metadata-freeze-driver-20261112-306929.py",
+      "bytes": 12004,
+      "sha256": "739da9d0fc276fbb921f5f6c7f62c585892b5fdf2c51bdec7e36a5ae712094ee",
+      "source_version": "66306:46053325:12004:1794446333335129379:1794446333335321862"
+    },
+    {
+      "member": "drivers/chain-system-security-root-metadata-pinfix-driver-20261112-306929.py",
+      "source": "/home/qq/chain-system-security-root-metadata-pinfix-driver-20261112-306929.py",
+      "bytes": 7207,
+      "sha256": "82ad164ed0b64c980adb743bc4a810a477c71717ae81e281b5186c63ad1130f8",
+      "source_version": "66306:46053327:7207:1794446630579132206:1794446630580132168"
+    },
+    {
+      "member": "root-metadata-813/import.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-813/import.json",
+      "bytes": 3654,
+      "sha256": "154661128bf7f1a36165f97dd000698d3ae186832d62554becb5219559b5e509",
+      "source_version": "66306:47489851:3654:1794446171967354153:1794446171967354153"
+    },
+    {
+      "member": "root-metadata-freeze-813/authority-current.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/authority-current.json",
+      "bytes": 600,
+      "sha256": "e06dc3aba156d42c8716256d4e35712d6ab723ae3d12ba3bf40a59a0a44f5c71",
+      "source_version": "66306:47489910:600:1794446370690912726:1794446370690912726"
+    },
+    {
+      "member": "root-metadata-freeze-813/authority-current.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/authority-current.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489909:0:1794446370619957098:1794446370619957098"
+    },
+    {
+      "member": "root-metadata-freeze-813/authority-current.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/authority-current.stdout.log",
+      "bytes": 13223,
+      "sha256": "8565e4de7039edf86f292ac2f5630f918aaac37d2d518e1c83a83d323f77c630",
+      "source_version": "66306:47489908:13223:1794446370677913216:1794446370677913216"
+    },
+    {
+      "member": "root-metadata-freeze-813/authority-prior-refusal.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/authority-prior-refusal.json",
+      "bytes": 617,
+      "sha256": "72e981cadc5e0e90af5ed0fadb3acd5ad6a6def21cf2aef64976de4d2c1fa621",
+      "source_version": "66306:47489864:617:1794446363138197552:1794446363138197552"
+    },
+    {
+      "member": "root-metadata-freeze-813/authority-prior-refusal.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/authority-prior-refusal.stderr.log",
+      "bytes": 167,
+      "sha256": "5cbf689199877def4c5cd2cf283bc996c69e445c9526f8534031438a7a46a82f",
+      "source_version": "66306:47489860:167:1794446363129197891:1794446363129197891"
+    },
+    {
+      "member": "root-metadata-freeze-813/authority-prior-refusal.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/authority-prior-refusal.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489859:0:1794446363060200493:1794446363060200493"
+    },
+    {
+      "member": "root-metadata-freeze-813/commit-preflight.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/commit-preflight.json",
+      "bytes": 579,
+      "sha256": "ba6a7d738f25f3c48571a51937145423bcb21eee2b9fa10c1078d15077191e5b",
+      "source_version": "66306:47489871:579:1794446363417581240:1794446363417581240"
+    },
+    {
+      "member": "root-metadata-freeze-813/commit-preflight.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/commit-preflight.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489870:0:1794446363376188576:1794446363376188576"
+    },
+    {
+      "member": "root-metadata-freeze-813/commit-preflight.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/commit-preflight.stdout.log",
+      "bytes": 172,
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source_version": "66306:47489869:172:1794446363408187369:1794446363408187369"
+    },
+    {
+      "member": "root-metadata-freeze-813/corpus-current.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/corpus-current.json",
+      "bytes": 590,
+      "sha256": "30479a44ae9de365f1b41bb32dc16c7e175b11d3a34d315fd3e78f3a2a668b37",
+      "source_version": "66306:47489916:590:1794446370783711022:1794446370783711022"
+    },
+    {
+      "member": "root-metadata-freeze-813/corpus-current.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/corpus-current.stderr.log",
+      "bytes": 68,
+      "sha256": "b7ad66ea2e3fdb9dbec2d1fc340997a7893fb658da43ac4aee9ff8d91559da14",
+      "source_version": "66306:47489915:68:1794446370778909407:1794446370778909407"
+    },
+    {
+      "member": "root-metadata-freeze-813/corpus-current.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/corpus-current.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489914:0:1794446370751611231:1794446370751611231"
+    },
+    {
+      "member": "root-metadata-freeze-813/freeze-failure.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/freeze-failure.json",
+      "bytes": 7681,
+      "sha256": "f9bbda48320caf1dbc6bdd79e441eff81a5670da6910de138ff2091b404dbdde",
+      "source_version": "66306:47489917:7681:1794446370787981634:1794446370787981634"
+    },
+    {
+      "member": "root-metadata-freeze-813/metadata-add.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/metadata-add.json",
+      "bytes": 828,
+      "sha256": "8dbd80b6aabe4e22c37587011cb7717322e3e02b2b96b912675ba8e598ffa6fa",
+      "source_version": "66306:47489884:828:1794446363450695023:1794446363450695023"
+    },
+    {
+      "member": "root-metadata-freeze-813/metadata-add.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/metadata-add.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489873:0:1794446363417581240:1794446363417581240"
+    },
+    {
+      "member": "root-metadata-freeze-813/metadata-add.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/metadata-add.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489872:0:1794446363417581240:1794446363417581240"
+    },
+    {
+      "member": "root-metadata-freeze-813/metadata-commit.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/metadata-commit.json",
+      "bytes": 733,
+      "sha256": "6270eef3c2ae0f92e1ac59d5a95b3465f36b2fc472f50125807fd8b3592fc062",
+      "source_version": "66306:47489905:733:1794446363537182504:1794446363537182504"
+    },
+    {
+      "member": "root-metadata-freeze-813/metadata-commit.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/metadata-commit.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489886:0:1794446363450695023:1794446363450695023"
+    },
+    {
+      "member": "root-metadata-freeze-813/metadata-commit.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/metadata-commit.stdout.log",
+      "bytes": 182,
+      "sha256": "44b657cdfb4b9cdd38d174465f5ccb7a3fd3f0653d87776fee478bd9815d40f8",
+      "source_version": "66306:47489885:182:1794446363535182580:1794446363535182580"
+    },
+    {
+      "member": "root-metadata-freeze-813/metadata-diff-check.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/metadata-diff-check.json",
+      "bytes": 865,
+      "sha256": "35547c696d8392c005ba0e5eca38351fed8df61eb935d4695aaead18f151ebb3",
+      "source_version": "66306:47489867:865:1794446363375952922:1794446363375952922"
+    },
+    {
+      "member": "root-metadata-freeze-813/metadata-diff-check.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/metadata-diff-check.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489866:0:1794446363353189443:1794446363353189443"
+    },
+    {
+      "member": "root-metadata-freeze-813/metadata-diff-check.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/metadata-diff-check.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489865:0:1794446363353189443:1794446363353189443"
+    },
+    {
+      "member": "root-metadata-freeze-813/preflight.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/preflight.json",
+      "bytes": 558,
+      "sha256": "25981e8ed529539def274da968af8b2c4d65a4dcefed9dfc856667e4d02f0093",
+      "source_version": "66306:47489858:558:1794446363060200493:1794446363060200493"
+    },
+    {
+      "member": "root-metadata-freeze-813/preflight.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/preflight.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489857:0:1794446362996202907:1794446362996202907"
+    },
+    {
+      "member": "root-metadata-freeze-813/preflight.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/preflight.stdout.log",
+      "bytes": 172,
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source_version": "66306:47489856:172:1794446363053200757:1794446363053200757"
+    },
+    {
+      "member": "root-metadata-freeze-813/reviewed-binding.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/reviewed-binding.json",
+      "bytes": 6973,
+      "sha256": "82f05410f57aaeb521c68bc2619d823776e64d66ad76d5bd5ba09196639bbbee",
+      "source_version": "66306:47489868:6973:1794446363376156465:1794446363376156465"
+    },
+    {
+      "member": "root-metadata-freeze-813/root-current.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/root-current.json",
+      "bytes": 584,
+      "sha256": "291c7baa1adfc9b399b679f5daf0a17e876df671bb41057ec3bc6dceab1c11d2",
+      "source_version": "66306:47489913:584:1794446370751611231:1794446370751611231"
+    },
+    {
+      "member": "root-metadata-freeze-813/root-current.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/root-current.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489912:0:1794446370690912726:1794446370690912726"
+    },
+    {
+      "member": "root-metadata-freeze-813/root-current.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/root-current.stdout.log",
+      "bytes": 8202,
+      "sha256": "b071d58c3f7c2381556012c5ecb2b7f09bfd8535272c5faa27ebc7573587149a",
+      "source_version": "66306:47489911:8202:1794446370743910727:1794446370743910727"
+    },
+    {
+      "member": "root-metadata-freeze-813/source-before-gates.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-813/source-before-gates.json",
+      "bytes": 423,
+      "sha256": "44e29a5f47e5dd2b6731530235f29e2356533839aa4d669f3140c5a4f84503f3",
+      "source_version": "66306:47489907:423:1794446370619957098:1794446370619957098"
+    },
+    {
+      "member": "root-metadata-freeze-f21/authority-and-root-controls.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/authority-and-root-controls.json",
+      "bytes": 732,
+      "sha256": "7e370343f2a40015aa087ba49d1d59f912b7633a188636d15e2b09e7fab09284",
+      "source_version": "66306:47489969:732:1794446704981186439:1794446704981186439"
+    },
+    {
+      "member": "root-metadata-freeze-f21/authority-and-root-controls.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/authority-and-root-controls.stderr.log",
+      "bytes": 12393,
+      "sha256": "7fe4c29e01d2e76ddc3eb48c4280a1a0da438bf7ebc54f05e4c300060321aa7e",
+      "source_version": "66306:47489958:12393:1794446704965338621:1794446704965338621"
+    },
+    {
+      "member": "root-metadata-freeze-f21/authority-and-root-controls.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/authority-and-root-controls.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489957:0:1794446704361909274:1794446704361909274"
+    },
+    {
+      "member": "root-metadata-freeze-f21/authority-current.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/authority-current.json",
+      "bytes": 601,
+      "sha256": "6eed0050f6d061e520c1e2243074b617617b32a0198261380980b4cdc027f2e4",
+      "source_version": "66306:47489950:601:1794446704058907987:1794446704058907987"
+    },
+    {
+      "member": "root-metadata-freeze-f21/authority-current.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/authority-current.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489949:0:1794446703986873874:1794446703986873874"
+    },
+    {
+      "member": "root-metadata-freeze-f21/authority-current.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/authority-current.stdout.log",
+      "bytes": 13223,
+      "sha256": "8565e4de7039edf86f292ac2f5630f918aaac37d2d518e1c83a83d323f77c630",
+      "source_version": "66306:47489948:13223:1794446704048373045:1794446704048373045"
+    },
+    {
+      "member": "root-metadata-freeze-f21/cargo-format.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/cargo-format.json",
+      "bytes": 695,
+      "sha256": "b1c47af55f112f15ed391635e9a5bc9d44fa4fd6ee3af7b6f27fb80c08a08599",
+      "source_version": "66306:47489986:695:1794446726096813087:1794446726096813087"
+    },
+    {
+      "member": "root-metadata-freeze-f21/cargo-format.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/cargo-format.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489985:0:1794446717263437542:1794446717263437542"
+    },
+    {
+      "member": "root-metadata-freeze-f21/cargo-format.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/cargo-format.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489984:0:1794446717263437542:1794446717263437542"
+    },
+    {
+      "member": "root-metadata-freeze-f21/combined-metadata-from-813.bundle",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/combined-metadata-from-813.bundle",
+      "bytes": 8507,
+      "sha256": "90e00b6e836c50d9009af0bac336ed16c40cf8b57d9be250f27febd49c4e615b",
+      "source_version": "66306:47489996:8507:1794446731786331853:1794446731787331816"
+    },
+    {
+      "member": "root-metadata-freeze-f21/commit-preflight.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/commit-preflight.json",
+      "bytes": 579,
+      "sha256": "9dfcbc61291a146f2a74285949f5447d8b37d1048bc8aaaba492f95d532b7eae",
+      "source_version": "66306:47489931:579:1794446696786092181:1794446696786092181"
+    },
+    {
+      "member": "root-metadata-freeze-f21/commit-preflight.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/commit-preflight.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489930:0:1794446696732773157:1794446696732773157"
+    },
+    {
+      "member": "root-metadata-freeze-f21/commit-preflight.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/commit-preflight.stdout.log",
+      "bytes": 172,
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source_version": "66306:47489929:172:1794446696775646084:1794446696775646084"
+    },
+    {
+      "member": "root-metadata-freeze-f21/corpus-current.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/corpus-current.json",
+      "bytes": 591,
+      "sha256": "bed5faaea4bb7a45d8bfd1da9828936787bf1a6a488240a3cc836aba7cd7203e",
+      "source_version": "66306:47489956:591:1794446704361909274:1794446704361909274"
+    },
+    {
+      "member": "root-metadata-freeze-f21/corpus-current.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/corpus-current.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489955:0:1794446704132369892:1794446704132369892"
+    },
+    {
+      "member": "root-metadata-freeze-f21/corpus-current.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/corpus-current.stdout.log",
+      "bytes": 558,
+      "sha256": "b136c725927bb476bdb514fd3fb059d7a5d812592506e5f0871e5b467a5b2de1",
+      "source_version": "66306:47489954:558:1794446704354361558:1794446704354361558"
+    },
+    {
+      "member": "root-metadata-freeze-f21/freeze-result.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/freeze-result.json",
+      "bytes": 14432,
+      "sha256": "9164a3294116474c0845597348a8af2faaca23c0c520bdf4beaf59f4c0483255",
+      "source_version": "66306:47490001:14432:1794446731916846365:1794446731916846365"
+    },
+    {
+      "member": "root-metadata-freeze-f21/locked-all-features-graph.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/locked-all-features-graph.json",
+      "bytes": 778,
+      "sha256": "ad9b1ff18ff9578f4c5bf43ca0ae905846f6e85b2d3529ea9bfbd8cbc2b3c07e",
+      "source_version": "66306:47489992:778:1794446726469885603:1794446726469885603"
+    },
+    {
+      "member": "root-metadata-freeze-f21/locked-all-features-graph.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/locked-all-features-graph.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489991:0:1794446726371535086:1794446726371535086"
+    },
+    {
+      "member": "root-metadata-freeze-f21/locked-all-features-graph.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/locked-all-features-graph.stdout.log",
+      "bytes": 861622,
+      "sha256": "8c7ce2896e95575452bad113beb9930b8abfa1680cd0ea4d39ad93dfd2b7ee80",
+      "source_version": "66306:47489990:861622:1794446726463531633:1794446726463531633"
+    },
+    {
+      "member": "root-metadata-freeze-f21/locked-default-graph.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/locked-default-graph.json",
+      "bytes": 742,
+      "sha256": "83bdaa8a6934b320dc25b62134a7fe2590eda8a69597c6e67641003fc90c5ee4",
+      "source_version": "66306:47489989:742:1794446726371535086:1794446726371535086"
+    },
+    {
+      "member": "root-metadata-freeze-f21/locked-default-graph.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/locked-default-graph.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489988:0:1794446726096813087:1794446726096813087"
+    },
+    {
+      "member": "root-metadata-freeze-f21/locked-default-graph.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/locked-default-graph.stdout.log",
+      "bytes": 846651,
+      "sha256": "71587c83f9ae755a99cf667c10ab580cc761f93e369e479e3e574c22c6bff109",
+      "source_version": "66306:47489987:846651:1794446726363535386:1794446726363535386"
+    },
+    {
+      "member": "root-metadata-freeze-f21/metadata-add.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/metadata-add.json",
+      "bytes": 598,
+      "sha256": "67d0b56aad080388b98eef0956be02757fd94111956d08d1c7b32ee5c65716d3",
+      "source_version": "66306:47489936:598:1794446696829828778:1794446696829828778"
+    },
+    {
+      "member": "root-metadata-freeze-f21/metadata-add.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/metadata-add.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489933:0:1794446696786092181:1794446696786092181"
+    },
+    {
+      "member": "root-metadata-freeze-f21/metadata-add.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/metadata-add.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489932:0:1794446696786092181:1794446696786092181"
+    },
+    {
+      "member": "root-metadata-freeze-f21/metadata-bundle-verify.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/metadata-bundle-verify.json",
+      "bytes": 719,
+      "sha256": "8881e5f7f1481b339d5862a2dadaf57538bf2a1e03f61bd821837fc0a301cb43",
+      "source_version": "66306:47490000:719:1794446731859977151:1794446731859977151"
+    },
+    {
+      "member": "root-metadata-freeze-f21/metadata-bundle-verify.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/metadata-bundle-verify.stderr.log",
+      "bytes": 130,
+      "sha256": "d4cfc40e5f5dfd79b80adc0bae45bb0aa2d0f240d970876f1eecd7144020e85b",
+      "source_version": "66306:47489999:130:1794446731857329188:1794446731857329188"
+    },
+    {
+      "member": "root-metadata-freeze-f21/metadata-bundle-verify.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/metadata-bundle-verify.stdout.log",
+      "bytes": 190,
+      "sha256": "d855136c59422fbc46fd88699d8b9ed8bdf22202c7675cd7f6bf2aa5c0bef139",
+      "source_version": "66306:47489998:190:1794446731857329188:1794446731857329188"
+    },
+    {
+      "member": "root-metadata-freeze-f21/metadata-bundle.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/metadata-bundle.json",
+      "bytes": 754,
+      "sha256": "2d9a76e8ae235f6af5377451d71c96341b0c328ebeb012d6388ae847bbe85b5b",
+      "source_version": "66306:47489997:754:1794446731789030947:1794446731789030947"
+    },
+    {
+      "member": "root-metadata-freeze-f21/metadata-bundle.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/metadata-bundle.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489995:0:1794446731747333317:1794446731747333317"
+    },
+    {
+      "member": "root-metadata-freeze-f21/metadata-bundle.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/metadata-bundle.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489994:0:1794446731747333317:1794446731747333317"
+    },
+    {
+      "member": "root-metadata-freeze-f21/metadata-commit.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/metadata-commit.json",
+      "bytes": 730,
+      "sha256": "e6c04a7265ba38d318a471a2c1c3262949372e54639db05b89fb757832fc9785",
+      "source_version": "66306:47489946:730:1794446696905624313:1794446696905624313"
+    },
+    {
+      "member": "root-metadata-freeze-f21/metadata-commit.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/metadata-commit.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489938:0:1794446696829828778:1794446696829828778"
+    },
+    {
+      "member": "root-metadata-freeze-f21/metadata-commit.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/metadata-commit.stdout.log",
+      "bytes": 176,
+      "sha256": "8aa485d81c02376cf36a49d03289bceb2f0ecdf6da82d540d23c4f90fdceaa9d",
+      "source_version": "66306:47489937:176:1794446696903641279:1794446696903641279"
+    },
+    {
+      "member": "root-metadata-freeze-f21/metadata-diff-check.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/metadata-diff-check.json",
+      "bytes": 636,
+      "sha256": "9a5328478de5d9011dfdce63d7cdf5d1a3ed1956c602c96eca41d894685dd974",
+      "source_version": "66306:47489925:636:1794446696386754238:1794446696386754238"
+    },
+    {
+      "member": "root-metadata-freeze-f21/metadata-diff-check.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/metadata-diff-check.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489924:0:1794446696377454231:1794446696377454231"
+    },
+    {
+      "member": "root-metadata-freeze-f21/metadata-diff-check.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/metadata-diff-check.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489923:0:1794446696377454231:1794446696377454231"
+    },
+    {
+      "member": "root-metadata-freeze-f21/pin-update-review.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/pin-update-review.json",
+      "bytes": 2365,
+      "sha256": "230b9bd132f012dfa048c2843e83584dee5aac99d4131b497e68a5884f2136c4",
+      "source_version": "66306:47489922:2365:1794446696377454231:1794446696377454231"
+    },
+    {
+      "member": "root-metadata-freeze-f21/preflight.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/preflight.json",
+      "bytes": 558,
+      "sha256": "0ea166e39ddd003dc76e364037df743efb8b6d02a00a723c61a3404147634f0f",
+      "source_version": "66306:47489921:558:1794446696338647592:1794446696338647592"
+    },
+    {
+      "member": "root-metadata-freeze-f21/preflight.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/preflight.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489920:0:1794446696268665119:1794446696268665119"
+    },
+    {
+      "member": "root-metadata-freeze-f21/preflight.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/preflight.stdout.log",
+      "bytes": 172,
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source_version": "66306:47489919:172:1794446696328662866:1794446696328662866"
+    },
+    {
+      "member": "root-metadata-freeze-f21/repository-links.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/repository-links.json",
+      "bytes": 582,
+      "sha256": "69f7c58200c49aacc2844e1e22fd15d312ce7cc3fc0cb399d06fb4a66bb702de",
+      "source_version": "66306:47489983:582:1794446717263437542:1794446717263437542"
+    },
+    {
+      "member": "root-metadata-freeze-f21/repository-links.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/repository-links.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489974:0:1794446707636186708:1794446707636186708"
+    },
+    {
+      "member": "root-metadata-freeze-f21/repository-links.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/repository-links.stdout.log",
+      "bytes": 307,
+      "sha256": "704d56208a9f9d75a85bce0d31dff16965d4366ee7d2fc65458e4e45de983ed9",
+      "source_version": "66306:47489973:307:1794446717241877771:1794446717241877771"
+    },
+    {
+      "member": "root-metadata-freeze-f21/reviewed-corpus-before-commit.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/reviewed-corpus-before-commit.json",
+      "bytes": 635,
+      "sha256": "490cce741be8d190f0ab34220c16b824f31575ce0e86f915e1a58e62fe00f3f1",
+      "source_version": "66306:47489928:635:1794446696732773157:1794446696732773157"
+    },
+    {
+      "member": "root-metadata-freeze-f21/reviewed-corpus-before-commit.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/reviewed-corpus-before-commit.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489927:0:1794446696386754238:1794446696386754238"
+    },
+    {
+      "member": "root-metadata-freeze-f21/reviewed-corpus-before-commit.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/reviewed-corpus-before-commit.stdout.log",
+      "bytes": 558,
+      "sha256": "b136c725927bb476bdb514fd3fb059d7a5d812592506e5f0871e5b467a5b2de1",
+      "source_version": "66306:47489926:558:1794446696722648074:1794446696722648074"
+    },
+    {
+      "member": "root-metadata-freeze-f21/root-current.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/root-current.json",
+      "bytes": 584,
+      "sha256": "bf62f8f1ed4932abcdd8129996e90d97227dd0464c44c0cd3cc406062f0c482e",
+      "source_version": "66306:47489953:584:1794446704132369892:1794446704132369892"
+    },
+    {
+      "member": "root-metadata-freeze-f21/root-current.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/root-current.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:47489952:0:1794446704058907987:1794446704058907987"
+    },
+    {
+      "member": "root-metadata-freeze-f21/root-current.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/root-current.stdout.log",
+      "bytes": 8202,
+      "sha256": "b071d58c3f7c2381556012c5ecb2b7f09bfd8535272c5faa27ebc7573587149a",
+      "source_version": "66306:47489951:8202:1794446704123370230:1794446704123370230"
+    },
+    {
+      "member": "root-metadata-freeze-f21/source-after-gates.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/source-after-gates.json",
+      "bytes": 423,
+      "sha256": "6b95bd150b95dc340ed49e3ad677bba5eda5a2ac3b971467d2c79cf4802e18f7",
+      "source_version": "66306:47489993:423:1794446731747333317:1794446731747333317"
+    },
+    {
+      "member": "root-metadata-freeze-f21/source-before-gates.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/source-before-gates.json",
+      "bytes": 423,
+      "sha256": "6b95bd150b95dc340ed49e3ad677bba5eda5a2ac3b971467d2c79cf4802e18f7",
+      "source_version": "66306:47489947:423:1794446703986873874:1794446703986873874"
+    },
+    {
+      "member": "root-metadata-freeze-f21/source-rejection-controls.json",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/source-rejection-controls.json",
+      "bytes": 620,
+      "sha256": "bb03d88ec0e27fe09bf6f95de32006961a9359ad0a25dc01daa936e6a15d221a",
+      "source_version": "66306:47489972:620:1794446707636186708:1794446707636186708"
+    },
+    {
+      "member": "root-metadata-freeze-f21/source-rejection-controls.stderr.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/source-rejection-controls.stderr.log",
+      "bytes": 6414,
+      "sha256": "7de7ca041b71cb3c8327f045992a0ff027ca6f01f9451e2add5834423aa5cf9d",
+      "source_version": "66306:47489971:6414:1794446707613239217:1794446707613239217"
+    },
+    {
+      "member": "root-metadata-freeze-f21/source-rejection-controls.stdout.log",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-metadata-freeze-f21/source-rejection-controls.stdout.log",
+      "bytes": 484,
+      "sha256": "0a5885c6c105ca151f6212852d6495c8f819005867dfe890bb1a8afe0df51bae",
+      "source_version": "66306:47489970:484:1794446707614239179:1794446707614239179"
+    }
+  ],
+  "source_modified": false,
+  "new_provider_build": false,
+  "new_native_execution": false
+}

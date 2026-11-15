@@ -1,0 +1,187 @@
+{
+  "artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node#0.1.0",
+    "manifest_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "target": {
+      "kind": [
+        "lib"
+      ],
+      "crate_types": [
+        "lib"
+      ],
+      "name": "trnm_pon_node",
+      "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "edition": "2021",
+      "doc": true,
+      "doctest": true,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 2,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": true
+    },
+    "features": [
+      "default",
+      "pq-native-openssl"
+    ],
+    "filenames": [
+      "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/trnm_pon_node-599ed40e76eefc57"
+    ],
+    "executable": "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/trnm_pon_node-599ed40e76eefc57",
+    "fresh": false
+  },
+  "sha256": "495212a4087bf52c6ca9d5aa1ed5cbe776f410efa1aed9ad4e4c927a7a33ecf9",
+  "profile_evidence": {
+    "trnm-pon-node": [
+      {
+        "reason": "compiler-artifact",
+        "package_id": "path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node#0.1.0",
+        "manifest_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "target": {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "edition": "2021",
+          "doc": true,
+          "doctest": true,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": false
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "filenames": [
+          "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/libtrnm_pon_node-0a6c7b4c39b854f0.rlib",
+          "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/libtrnm_pon_node-0a6c7b4c39b854f0.rmeta"
+        ],
+        "executable": null,
+        "fresh": false
+      },
+      {
+        "reason": "compiler-artifact",
+        "package_id": "path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node#0.1.0",
+        "manifest_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "target": {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "edition": "2021",
+          "doc": true,
+          "doctest": true,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "filenames": [
+          "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/trnm_pon_node-599ed40e76eefc57"
+        ],
+        "executable": "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/trnm_pon_node-599ed40e76eefc57",
+        "fresh": false
+      }
+    ],
+    "trnm-mvcc-fee": [
+      {
+        "reason": "compiler-artifact",
+        "package_id": "path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+        "manifest_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+        "target": {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "trnm_mvcc_fee",
+          "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
+          "edition": "2021",
+          "doc": true,
+          "doctest": true,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "1",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": false
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "filenames": [
+          "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/libtrnm_mvcc_fee-957c1c383e036bec.rlib",
+          "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/libtrnm_mvcc_fee-957c1c383e036bec.rmeta"
+        ],
+        "executable": null,
+        "fresh": false
+      },
+      {
+        "reason": "compiler-artifact",
+        "package_id": "path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+        "manifest_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+        "target": {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "trnm_mvcc_fee",
+          "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
+          "edition": "2021",
+          "doc": true,
+          "doctest": true,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "1",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "filenames": [
+          "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/trnm_mvcc_fee-c1ca8832ef03e569"
+        ],
+        "executable": "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/trnm_mvcc_fee-c1ca8832ef03e569",
+        "fresh": false
+      }
+    ]
+  },
+  "scope": "original test-profile CPU-policy selectors and native reactor-exit controls; not the complete runtime suite"
+}

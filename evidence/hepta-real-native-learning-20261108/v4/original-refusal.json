@@ -1,0 +1,1805 @@
+{
+  "automatic_retries": 0,
+  "cases": [
+    {
+      "failure": null,
+      "name": "neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback",
+      "time": "36.120"
+    }
+  ],
+  "checkpoint_cuts_present": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "current_after": {
+    "current": {
+      "config_digest": [
+        218,
+        161,
+        30,
+        241,
+        123,
+        142,
+        213,
+        205,
+        137,
+        103,
+        34,
+        222,
+        100,
+        209,
+        13,
+        81,
+        170,
+        140,
+        48,
+        77,
+        199,
+        192,
+        27,
+        204,
+        32,
+        142,
+        223,
+        190,
+        223,
+        164,
+        35,
+        157
+      ],
+      "generation": 41,
+      "initial_snapshot_digest": [
+        45,
+        236,
+        133,
+        165,
+        220,
+        11,
+        140,
+        130,
+        5,
+        236,
+        36,
+        31,
+        125,
+        218,
+        167,
+        229,
+        116,
+        58,
+        23,
+        207,
+        152,
+        206,
+        160,
+        96,
+        32,
+        150,
+        160,
+        150,
+        244,
+        17,
+        217,
+        230
+      ],
+      "manifest_digest": [
+        190,
+        66,
+        121,
+        206,
+        131,
+        4,
+        96,
+        59,
+        40,
+        156,
+        187,
+        205,
+        103,
+        208,
+        73,
+        196,
+        37,
+        211,
+        254,
+        94,
+        77,
+        242,
+        38,
+        26,
+        138,
+        60,
+        131,
+        249,
+        32,
+        221,
+        152,
+        237
+      ],
+      "scope": {
+        "agent_id": "018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12",
+        "cell_id": "learning-d9fb-native-v4-cell",
+        "principal_digest": [
+          126,
+          243,
+          42,
+          230,
+          254,
+          34,
+          110,
+          74,
+          102,
+          242,
+          228,
+          233,
+          154,
+          5,
+          33,
+          69,
+          50,
+          245,
+          62,
+          62,
+          82,
+          211,
+          43,
+          67,
+          252,
+          174,
+          192,
+          69,
+          96,
+          25,
+          137,
+          87
+        ],
+        "run_id": "learning-d9fb-native-v4-source"
+      },
+      "source_frontier": [
+        126,
+        135,
+        45,
+        194,
+        237,
+        36,
+        249,
+        12,
+        14,
+        176,
+        72,
+        49,
+        240,
+        130,
+        106,
+        195,
+        50,
+        149,
+        141,
+        111,
+        24,
+        135,
+        113,
+        55,
+        103,
+        190,
+        221,
+        220,
+        55,
+        240,
+        213,
+        76
+      ],
+      "task_digest": [
+        221,
+        178,
+        191,
+        91,
+        18,
+        243,
+        197,
+        210,
+        133,
+        182,
+        78,
+        170,
+        86,
+        196,
+        49,
+        103,
+        191,
+        197,
+        44,
+        142,
+        204,
+        1,
+        47,
+        20,
+        198,
+        120,
+        38,
+        51,
+        200,
+        113,
+        137,
+        125
+      ],
+      "writer_epoch": 7
+    },
+    "prepared": {
+      "completion": "owner_drained_same_model",
+      "genesis_checkpoint": [
+        106,
+        249,
+        116,
+        28,
+        230,
+        15,
+        226,
+        114,
+        65,
+        227,
+        223,
+        133,
+        222,
+        205,
+        129,
+        100,
+        151,
+        188,
+        244,
+        133,
+        163,
+        43,
+        152,
+        214,
+        251,
+        45,
+        10,
+        61,
+        32,
+        254,
+        163,
+        86
+      ],
+      "operation_id": "learning-retained-task:42e718713709be4079abbf1c94de8fa622ce0de977bfbad931b16fa59027c4a3",
+      "previous": {
+        "config_digest": [
+          218,
+          161,
+          30,
+          241,
+          123,
+          142,
+          213,
+          205,
+          137,
+          103,
+          34,
+          222,
+          100,
+          209,
+          13,
+          81,
+          170,
+          140,
+          48,
+          77,
+          199,
+          192,
+          27,
+          204,
+          32,
+          142,
+          223,
+          190,
+          223,
+          164,
+          35,
+          157
+        ],
+        "generation": 41,
+        "initial_snapshot_digest": [
+          45,
+          236,
+          133,
+          165,
+          220,
+          11,
+          140,
+          130,
+          5,
+          236,
+          36,
+          31,
+          125,
+          218,
+          167,
+          229,
+          116,
+          58,
+          23,
+          207,
+          152,
+          206,
+          160,
+          96,
+          32,
+          150,
+          160,
+          150,
+          244,
+          17,
+          217,
+          230
+        ],
+        "manifest_digest": [
+          190,
+          66,
+          121,
+          206,
+          131,
+          4,
+          96,
+          59,
+          40,
+          156,
+          187,
+          205,
+          103,
+          208,
+          73,
+          196,
+          37,
+          211,
+          254,
+          94,
+          77,
+          242,
+          38,
+          26,
+          138,
+          60,
+          131,
+          249,
+          32,
+          221,
+          152,
+          237
+        ],
+        "scope": {
+          "agent_id": "018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12",
+          "cell_id": "learning-d9fb-native-v4-cell",
+          "principal_digest": [
+            126,
+            243,
+            42,
+            230,
+            254,
+            34,
+            110,
+            74,
+            102,
+            242,
+            228,
+            233,
+            154,
+            5,
+            33,
+            69,
+            50,
+            245,
+            62,
+            62,
+            82,
+            211,
+            43,
+            67,
+            252,
+            174,
+            192,
+            69,
+            96,
+            25,
+            137,
+            87
+          ],
+          "run_id": "learning-d9fb-native-v4-source"
+        },
+        "source_frontier": [
+          126,
+          135,
+          45,
+          194,
+          237,
+          36,
+          249,
+          12,
+          14,
+          176,
+          72,
+          49,
+          240,
+          130,
+          106,
+          195,
+          50,
+          149,
+          141,
+          111,
+          24,
+          135,
+          113,
+          55,
+          103,
+          190,
+          221,
+          220,
+          55,
+          240,
+          213,
+          76
+        ],
+        "task_digest": [
+          221,
+          178,
+          191,
+          91,
+          18,
+          243,
+          197,
+          210,
+          133,
+          182,
+          78,
+          170,
+          86,
+          196,
+          49,
+          103,
+          191,
+          197,
+          44,
+          142,
+          204,
+          1,
+          47,
+          20,
+          198,
+          120,
+          38,
+          51,
+          200,
+          113,
+          137,
+          125
+        ],
+        "writer_epoch": 7
+      },
+      "previous_checkpoint": [
+        185,
+        91,
+        193,
+        221,
+        105,
+        123,
+        64,
+        139,
+        221,
+        218,
+        174,
+        75,
+        73,
+        227,
+        49,
+        48,
+        126,
+        120,
+        215,
+        224,
+        143,
+        209,
+        27,
+        162,
+        117,
+        250,
+        181,
+        82,
+        228,
+        14,
+        184,
+        5
+      ],
+      "previous_observation": [
+        202,
+        44,
+        244,
+        59,
+        23,
+        54,
+        141,
+        179,
+        164,
+        49,
+        195,
+        182,
+        209,
+        142,
+        19,
+        87,
+        30,
+        211,
+        67,
+        134,
+        207,
+        170,
+        132,
+        52,
+        91,
+        198,
+        154,
+        80,
+        201,
+        55,
+        205,
+        177
+      ],
+      "selection": [
+        127,
+        252,
+        251,
+        38,
+        131,
+        7,
+        214,
+        34,
+        249,
+        181,
+        90,
+        82,
+        249,
+        243,
+        5,
+        175,
+        236,
+        144,
+        118,
+        0,
+        122,
+        162,
+        105,
+        194,
+        61,
+        172,
+        55,
+        88,
+        252,
+        58,
+        172,
+        59
+      ],
+      "supersedes": null,
+      "target": {
+        "config_digest": [
+          91,
+          99,
+          24,
+          109,
+          248,
+          57,
+          54,
+          37,
+          182,
+          112,
+          233,
+          132,
+          103,
+          202,
+          216,
+          135,
+          95,
+          126,
+          105,
+          79,
+          226,
+          179,
+          33,
+          40,
+          113,
+          41,
+          109,
+          233,
+          11,
+          227,
+          23,
+          116
+        ],
+        "generation": 42,
+        "initial_snapshot_digest": [
+          178,
+          113,
+          132,
+          45,
+          200,
+          29,
+          48,
+          176,
+          147,
+          166,
+          244,
+          91,
+          104,
+          27,
+          176,
+          87,
+          217,
+          159,
+          56,
+          155,
+          143,
+          211,
+          193,
+          135,
+          157,
+          215,
+          130,
+          181,
+          245,
+          227,
+          73,
+          32
+        ],
+        "manifest_digest": [
+          190,
+          66,
+          121,
+          206,
+          131,
+          4,
+          96,
+          59,
+          40,
+          156,
+          187,
+          205,
+          103,
+          208,
+          73,
+          196,
+          37,
+          211,
+          254,
+          94,
+          77,
+          242,
+          38,
+          26,
+          138,
+          60,
+          131,
+          249,
+          32,
+          221,
+          152,
+          237
+        ],
+        "scope": {
+          "agent_id": "018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12",
+          "cell_id": "learning-d9fb-native-v4-cell",
+          "principal_digest": [
+            126,
+            243,
+            42,
+            230,
+            254,
+            34,
+            110,
+            74,
+            102,
+            242,
+            228,
+            233,
+            154,
+            5,
+            33,
+            69,
+            50,
+            245,
+            62,
+            62,
+            82,
+            211,
+            43,
+            67,
+            252,
+            174,
+            192,
+            69,
+            96,
+            25,
+            137,
+            87
+          ],
+          "run_id": "learning-d9fb-native-v4-next"
+        },
+        "source_frontier": [
+          126,
+          135,
+          45,
+          194,
+          237,
+          36,
+          249,
+          12,
+          14,
+          176,
+          72,
+          49,
+          240,
+          130,
+          106,
+          195,
+          50,
+          149,
+          141,
+          111,
+          24,
+          135,
+          113,
+          55,
+          103,
+          190,
+          221,
+          220,
+          55,
+          240,
+          213,
+          76
+        ],
+        "task_digest": [
+          125,
+          225,
+          249,
+          77,
+          184,
+          91,
+          114,
+          70,
+          139,
+          77,
+          4,
+          248,
+          38,
+          168,
+          214,
+          213,
+          5,
+          244,
+          118,
+          99,
+          246,
+          221,
+          95,
+          78,
+          231,
+          227,
+          244,
+          15,
+          234,
+          170,
+          175,
+          163
+        ],
+        "writer_epoch": 8
+      }
+    },
+    "published": null,
+    "schema_version": 1
+  },
+  "current_before": {
+    "current": {
+      "config_digest": [
+        218,
+        161,
+        30,
+        241,
+        123,
+        142,
+        213,
+        205,
+        137,
+        103,
+        34,
+        222,
+        100,
+        209,
+        13,
+        81,
+        170,
+        140,
+        48,
+        77,
+        199,
+        192,
+        27,
+        204,
+        32,
+        142,
+        223,
+        190,
+        223,
+        164,
+        35,
+        157
+      ],
+      "generation": 41,
+      "initial_snapshot_digest": [
+        45,
+        236,
+        133,
+        165,
+        220,
+        11,
+        140,
+        130,
+        5,
+        236,
+        36,
+        31,
+        125,
+        218,
+        167,
+        229,
+        116,
+        58,
+        23,
+        207,
+        152,
+        206,
+        160,
+        96,
+        32,
+        150,
+        160,
+        150,
+        244,
+        17,
+        217,
+        230
+      ],
+      "manifest_digest": [
+        190,
+        66,
+        121,
+        206,
+        131,
+        4,
+        96,
+        59,
+        40,
+        156,
+        187,
+        205,
+        103,
+        208,
+        73,
+        196,
+        37,
+        211,
+        254,
+        94,
+        77,
+        242,
+        38,
+        26,
+        138,
+        60,
+        131,
+        249,
+        32,
+        221,
+        152,
+        237
+      ],
+      "scope": {
+        "agent_id": "018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12",
+        "cell_id": "learning-d9fb-native-v4-cell",
+        "principal_digest": [
+          126,
+          243,
+          42,
+          230,
+          254,
+          34,
+          110,
+          74,
+          102,
+          242,
+          228,
+          233,
+          154,
+          5,
+          33,
+          69,
+          50,
+          245,
+          62,
+          62,
+          82,
+          211,
+          43,
+          67,
+          252,
+          174,
+          192,
+          69,
+          96,
+          25,
+          137,
+          87
+        ],
+        "run_id": "learning-d9fb-native-v4-source"
+      },
+      "source_frontier": [
+        126,
+        135,
+        45,
+        194,
+        237,
+        36,
+        249,
+        12,
+        14,
+        176,
+        72,
+        49,
+        240,
+        130,
+        106,
+        195,
+        50,
+        149,
+        141,
+        111,
+        24,
+        135,
+        113,
+        55,
+        103,
+        190,
+        221,
+        220,
+        55,
+        240,
+        213,
+        76
+      ],
+      "task_digest": [
+        221,
+        178,
+        191,
+        91,
+        18,
+        243,
+        197,
+        210,
+        133,
+        182,
+        78,
+        170,
+        86,
+        196,
+        49,
+        103,
+        191,
+        197,
+        44,
+        142,
+        204,
+        1,
+        47,
+        20,
+        198,
+        120,
+        38,
+        51,
+        200,
+        113,
+        137,
+        125
+      ],
+      "writer_epoch": 7
+    },
+    "prepared": null,
+    "published": null,
+    "schema_version": 1
+  },
+  "current_exact_equal": false,
+  "evaluation": {
+    "candidate": {
+      "adapter": "6d3ad4295d628df7e5d0927f9044f46dd4375511b2788eeb1606a2cb6d48aa34",
+      "contract": "fa676279f85d221afbd8ff426adce107dc2831c4205f7523adb5857b9d13cc3c",
+      "directory": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/training/worker",
+      "file_sha256": "9ed906784ad969209386762f514ba2d209899c7180076d52306c268b7587e64d",
+      "generation": 2,
+      "operation_id": "learning-d9fb-native-v4-train",
+      "schema": "hepta-smollm-parent-material-v1"
+    },
+    "disposition": "NoUpdate",
+    "evaluations": [
+      {
+        "adapter": "e1a9ce940c9d4b04bb827490708604178d4e2391e7afd81a3ca63008389d1e53",
+        "correct": 3,
+        "role": "parent",
+        "rows": [
+          {
+            "artifact": {
+              "artifact_id": "2037a4df0d410f386a488d652fbd9edebcc05e284766f86dd134c96062850469",
+              "byte_length": 197579,
+              "kind": "model-outputs",
+              "metadata": {
+                "tensors": [
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 49152,
+                    "name": "next_token_logits",
+                    "shape": [
+                      1,
+                      49152
+                    ]
+                  },
+                  {
+                    "dtype": "torch.int64",
+                    "elements": 51,
+                    "name": "input_ids",
+                    "shape": [
+                      1,
+                      51
+                    ]
+                  },
+                  {
+                    "dtype": "torch.bool",
+                    "elements": 51,
+                    "name": "attention_mask",
+                    "shape": [
+                      1,
+                      51
+                    ]
+                  },
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 2,
+                    "name": "raw_action_logits",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "dtype": "torch.int64",
+                    "elements": 2,
+                    "name": "scores_q32",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 2,
+                    "name": "conditional_binary_probabilities",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  }
+                ]
+              },
+              "path": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/parent-eval-store/14ada8949d9e442290e588cf7ec1bee4789ac34072d024742458e1353852cf02.safetensors",
+              "sha256": "14ada8949d9e442290e588cf7ec1bee4789ac34072d024742458e1353852cf02"
+            },
+            "correct": true,
+            "encoded_input_id": "52e804863678dfd9cb27698f46470dffa57b194eff2fa9ed3255d1c6817838ba",
+            "evidence": {
+              "artifact_id": "e55b7d70947e4ba0d4a4b3b0a84e8793a7be95ee192047659a016740ee745858",
+              "byte_length": 3403,
+              "kind": "probe",
+              "metadata": {},
+              "path": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/parent-eval-store/0c319576abb7d97bd66c5bdad5de797661ee07b24ff05631b279394f6c95c300.json",
+              "sha256": "0c319576abb7d97bd66c5bdad5de797661ee07b24ff05631b279394f6c95c300"
+            },
+            "expected_output": "yes",
+            "logits_sha256": "92ef5f365fd8baa72a24720d816ec35c043e6bff49d5a318d70e80788e7a14ba",
+            "model_forward_calls": 1,
+            "model_input_id": "b3df9737254b11c13f5e331110ca6926ac00ccc9785300137aa3278a312b55d4",
+            "output_sha256": "14ada8949d9e442290e588cf7ec1bee4789ac34072d024742458e1353852cf02",
+            "predicted_output": "yes",
+            "prompt_sha256": "cd9804ca9100f69579e20414801af26245dd2309cc4214a76e3288e5d790a70f",
+            "request_id": "learning-d9fb-native-v4-eval-0",
+            "scores_q32": [
+              161349681152,
+              161287553024
+            ],
+            "total_forward_examples": 1
+          },
+          {
+            "artifact": {
+              "artifact_id": "fe2762f9da2096119c015acdbe8f93049da57320649ccef887838c3964a47faf",
+              "byte_length": 197579,
+              "kind": "model-outputs",
+              "metadata": {
+                "tensors": [
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 49152,
+                    "name": "next_token_logits",
+                    "shape": [
+                      1,
+                      49152
+                    ]
+                  },
+                  {
+                    "dtype": "torch.int64",
+                    "elements": 51,
+                    "name": "input_ids",
+                    "shape": [
+                      1,
+                      51
+                    ]
+                  },
+                  {
+                    "dtype": "torch.bool",
+                    "elements": 51,
+                    "name": "attention_mask",
+                    "shape": [
+                      1,
+                      51
+                    ]
+                  },
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 2,
+                    "name": "raw_action_logits",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "dtype": "torch.int64",
+                    "elements": 2,
+                    "name": "scores_q32",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 2,
+                    "name": "conditional_binary_probabilities",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  }
+                ]
+              },
+              "path": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/parent-eval-store/c3c40861d14e0f72bc088b3662139287deaafc90aa773e54bda29c362b690c4f.safetensors",
+              "sha256": "c3c40861d14e0f72bc088b3662139287deaafc90aa773e54bda29c362b690c4f"
+            },
+            "correct": true,
+            "encoded_input_id": "3d0526ad68620315ed5da42f286ae59b7ca699cd19ab411cc7ec766ed6f34636",
+            "evidence": {
+              "artifact_id": "60e50d68c57864739eff1f3114aa36ba8d80caf321c4f9692437650e6146a419",
+              "byte_length": 3405,
+              "kind": "probe",
+              "metadata": {},
+              "path": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/parent-eval-store/e37dba529b9a177c4713e25d6ad4bda87c687d6f29017116090d76bfb10f1ea7.json",
+              "sha256": "e37dba529b9a177c4713e25d6ad4bda87c687d6f29017116090d76bfb10f1ea7"
+            },
+            "expected_output": "no",
+            "logits_sha256": "e4e4da055f7ad3dddcd199a5ff070b7ba42f97046edc0ca680b5721784451293",
+            "model_forward_calls": 1,
+            "model_input_id": "96e622c999ff6eb66c8e526c379f20ae1196adcc8a87c220071f72d56f03e030",
+            "output_sha256": "c3c40861d14e0f72bc088b3662139287deaafc90aa773e54bda29c362b690c4f",
+            "predicted_output": "no",
+            "prompt_sha256": "5d774887f68eaee35578ebf0d6b1c37b453d5794a249fb9a319912dc908f0233",
+            "request_id": "learning-d9fb-native-v4-eval-1",
+            "scores_q32": [
+              160928268288,
+              161835941888
+            ],
+            "total_forward_examples": 2
+          },
+          {
+            "artifact": {
+              "artifact_id": "d0fd8aa8aca58c9fd07b448fc5feb429fdff67dd4c8670f681d10cce86341d8b",
+              "byte_length": 197579,
+              "kind": "model-outputs",
+              "metadata": {
+                "tensors": [
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 49152,
+                    "name": "next_token_logits",
+                    "shape": [
+                      1,
+                      49152
+                    ]
+                  },
+                  {
+                    "dtype": "torch.int64",
+                    "elements": 51,
+                    "name": "input_ids",
+                    "shape": [
+                      1,
+                      51
+                    ]
+                  },
+                  {
+                    "dtype": "torch.bool",
+                    "elements": 51,
+                    "name": "attention_mask",
+                    "shape": [
+                      1,
+                      51
+                    ]
+                  },
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 2,
+                    "name": "raw_action_logits",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "dtype": "torch.int64",
+                    "elements": 2,
+                    "name": "scores_q32",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 2,
+                    "name": "conditional_binary_probabilities",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  }
+                ]
+              },
+              "path": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/parent-eval-store/039626386868aea52022131445657e632bf27165d38113a34f91094804263335.safetensors",
+              "sha256": "039626386868aea52022131445657e632bf27165d38113a34f91094804263335"
+            },
+            "correct": true,
+            "encoded_input_id": "09d09d04644c8b7d6b57e2f1ada7b78f2027070bfd8ddc6d43be987ee63e8b03",
+            "evidence": {
+              "artifact_id": "e8805a6ff9e2e09abd11d94d8537403df87acbdf739ac553a945237b5515ef80",
+              "byte_length": 3402,
+              "kind": "probe",
+              "metadata": {},
+              "path": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/parent-eval-store/a27e6774a140fc3e699b9ee89e65a117fc3904d2cc571e4708fdeaaf7eee7fe7.json",
+              "sha256": "a27e6774a140fc3e699b9ee89e65a117fc3904d2cc571e4708fdeaaf7eee7fe7"
+            },
+            "expected_output": "yes",
+            "logits_sha256": "1111d2b7ccc9fc4bbad2c4d3be010399bdf6c0df461d512ac90ccf95073bcdcd",
+            "model_forward_calls": 1,
+            "model_input_id": "076fe205647734368e38fe78992c5b3b09a31b32942ddb97155aba1f6a839882",
+            "output_sha256": "039626386868aea52022131445657e632bf27165d38113a34f91094804263335",
+            "predicted_output": "yes",
+            "prompt_sha256": "a60b14b4f797a5ebb83f56152a378fc4eb64dd48190ecccbd4b63aaf98471d65",
+            "request_id": "learning-d9fb-native-v4-eval-2",
+            "scores_q32": [
+              162542682112,
+              161390493696
+            ],
+            "total_forward_examples": 3
+          },
+          {
+            "artifact": {
+              "artifact_id": "cc99ae104bee04d7223a505463f70de0dddc60bc93be5b2b5cbc0fb7569566f6",
+              "byte_length": 197579,
+              "kind": "model-outputs",
+              "metadata": {
+                "tensors": [
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 49152,
+                    "name": "next_token_logits",
+                    "shape": [
+                      1,
+                      49152
+                    ]
+                  },
+                  {
+                    "dtype": "torch.int64",
+                    "elements": 51,
+                    "name": "input_ids",
+                    "shape": [
+                      1,
+                      51
+                    ]
+                  },
+                  {
+                    "dtype": "torch.bool",
+                    "elements": 51,
+                    "name": "attention_mask",
+                    "shape": [
+                      1,
+                      51
+                    ]
+                  },
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 2,
+                    "name": "raw_action_logits",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "dtype": "torch.int64",
+                    "elements": 2,
+                    "name": "scores_q32",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 2,
+                    "name": "conditional_binary_probabilities",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  }
+                ]
+              },
+              "path": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/parent-eval-store/c37a0ee1b76766ea0894843e89bd19a7ee82cbd619f60f26f85c481693379b54.safetensors",
+              "sha256": "c37a0ee1b76766ea0894843e89bd19a7ee82cbd619f60f26f85c481693379b54"
+            },
+            "correct": false,
+            "encoded_input_id": "0a56341c7f1c47b576f57c9d7459de39836cb587207e0e0e67c544ecbd768cb8",
+            "evidence": {
+              "artifact_id": "118bffabcdb00a9f5e89d9f4de8b97eccee3ac7b09954ed84f17f7b754b0aff1",
+              "byte_length": 3405,
+              "kind": "probe",
+              "metadata": {},
+              "path": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/parent-eval-store/19cbf597f8fbf35a7179b6b5ee5220d4c54dc4eb625eba841750cffbc61deef0.json",
+              "sha256": "19cbf597f8fbf35a7179b6b5ee5220d4c54dc4eb625eba841750cffbc61deef0"
+            },
+            "expected_output": "no",
+            "logits_sha256": "36d608fa847cabe1d03fb670c9013282018599dac92969332b0bef0937d87552",
+            "model_forward_calls": 1,
+            "model_input_id": "bb52b8632564496a3c407ba7202b7d11f240aecdc33e8b3b4ed1c6854c279a80",
+            "output_sha256": "c37a0ee1b76766ea0894843e89bd19a7ee82cbd619f60f26f85c481693379b54",
+            "predicted_output": "yes",
+            "prompt_sha256": "e8c019743f621bcdae362fbe156ed9be41c31d5f592a9c3c8599869a3e4ea4c7",
+            "request_id": "learning-d9fb-native-v4-eval-3",
+            "scores_q32": [
+              161551974400,
+              160666288128
+            ],
+            "total_forward_examples": 4
+          }
+        ]
+      },
+      {
+        "adapter": "6d3ad4295d628df7e5d0927f9044f46dd4375511b2788eeb1606a2cb6d48aa34",
+        "correct": 1,
+        "role": "candidate",
+        "rows": [
+          {
+            "artifact": {
+              "artifact_id": "69cd31d487b787080ac2e11ea99c45a041372446a5019aed7332e4d48e9ddc4f",
+              "byte_length": 197579,
+              "kind": "model-outputs",
+              "metadata": {
+                "tensors": [
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 49152,
+                    "name": "next_token_logits",
+                    "shape": [
+                      1,
+                      49152
+                    ]
+                  },
+                  {
+                    "dtype": "torch.int64",
+                    "elements": 51,
+                    "name": "input_ids",
+                    "shape": [
+                      1,
+                      51
+                    ]
+                  },
+                  {
+                    "dtype": "torch.bool",
+                    "elements": 51,
+                    "name": "attention_mask",
+                    "shape": [
+                      1,
+                      51
+                    ]
+                  },
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 2,
+                    "name": "raw_action_logits",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "dtype": "torch.int64",
+                    "elements": 2,
+                    "name": "scores_q32",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 2,
+                    "name": "conditional_binary_probabilities",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  }
+                ]
+              },
+              "path": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/candidate-eval-store/e9bcff13483cb851787c0e3b622d19fb2cae568f8226cd43d0cf180a752886c9.safetensors",
+              "sha256": "e9bcff13483cb851787c0e3b622d19fb2cae568f8226cd43d0cf180a752886c9"
+            },
+            "correct": false,
+            "encoded_input_id": "52e804863678dfd9cb27698f46470dffa57b194eff2fa9ed3255d1c6817838ba",
+            "evidence": {
+              "artifact_id": "154e12b7d7402e17011e270e6285d72cb35b695f824378ec7796ba1177d43aa3",
+              "byte_length": 3411,
+              "kind": "probe",
+              "metadata": {},
+              "path": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/candidate-eval-store/d9c3d984cb938452093ca0161c16914f92591bd9237f5d607f081962d37fa4ed.json",
+              "sha256": "d9c3d984cb938452093ca0161c16914f92591bd9237f5d607f081962d37fa4ed"
+            },
+            "expected_output": "yes",
+            "logits_sha256": "eee375cd6d35f4cf584e4ee02b86e7003f6fb10ebe0091917ae170eafce5da63",
+            "model_forward_calls": 1,
+            "model_input_id": "b3df9737254b11c13f5e331110ca6926ac00ccc9785300137aa3278a312b55d4",
+            "output_sha256": "e9bcff13483cb851787c0e3b622d19fb2cae568f8226cd43d0cf180a752886c9",
+            "predicted_output": "no",
+            "prompt_sha256": "cd9804ca9100f69579e20414801af26245dd2309cc4214a76e3288e5d790a70f",
+            "request_id": "learning-d9fb-native-v4-eval-0",
+            "scores_q32": [
+              155199078400,
+              155945041920
+            ],
+            "total_forward_examples": 1
+          },
+          {
+            "artifact": {
+              "artifact_id": "b50f25369e061afe2e40ad8e700764305c052e150fb33d54f96b2e501e68c227",
+              "byte_length": 197579,
+              "kind": "model-outputs",
+              "metadata": {
+                "tensors": [
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 49152,
+                    "name": "next_token_logits",
+                    "shape": [
+                      1,
+                      49152
+                    ]
+                  },
+                  {
+                    "dtype": "torch.int64",
+                    "elements": 51,
+                    "name": "input_ids",
+                    "shape": [
+                      1,
+                      51
+                    ]
+                  },
+                  {
+                    "dtype": "torch.bool",
+                    "elements": 51,
+                    "name": "attention_mask",
+                    "shape": [
+                      1,
+                      51
+                    ]
+                  },
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 2,
+                    "name": "raw_action_logits",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "dtype": "torch.int64",
+                    "elements": 2,
+                    "name": "scores_q32",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 2,
+                    "name": "conditional_binary_probabilities",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  }
+                ]
+              },
+              "path": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/candidate-eval-store/48c20b3109eca5b8a990ed7d997593f258a679a7c7574a2d19656f02a50b2836.safetensors",
+              "sha256": "48c20b3109eca5b8a990ed7d997593f258a679a7c7574a2d19656f02a50b2836"
+            },
+            "correct": true,
+            "encoded_input_id": "3d0526ad68620315ed5da42f286ae59b7ca699cd19ab411cc7ec766ed6f34636",
+            "evidence": {
+              "artifact_id": "901bcdf6ea9bfa59323f874bd8c9d7289ca6324cfd360f5a3d662dbd8d0a3d10",
+              "byte_length": 3411,
+              "kind": "probe",
+              "metadata": {},
+              "path": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/candidate-eval-store/2d2d2cacb9d028aa7eb607f3f87aa75007d5042de18d4d9175e8293d3481d444.json",
+              "sha256": "2d2d2cacb9d028aa7eb607f3f87aa75007d5042de18d4d9175e8293d3481d444"
+            },
+            "expected_output": "no",
+            "logits_sha256": "7f63ad2e955be491a12894a86010eeae6fafc2a6ea1db0ea3ee95f236e207f6c",
+            "model_forward_calls": 1,
+            "model_input_id": "96e622c999ff6eb66c8e526c379f20ae1196adcc8a87c220071f72d56f03e030",
+            "output_sha256": "48c20b3109eca5b8a990ed7d997593f258a679a7c7574a2d19656f02a50b2836",
+            "predicted_output": "no",
+            "prompt_sha256": "5d774887f68eaee35578ebf0d6b1c37b453d5794a249fb9a319912dc908f0233",
+            "request_id": "learning-d9fb-native-v4-eval-1",
+            "scores_q32": [
+              155782660096,
+              157095657472
+            ],
+            "total_forward_examples": 2
+          },
+          {
+            "artifact": {
+              "artifact_id": "fc35e517cfe3bc8956df775bd1640c0d997895c00963464420f1708476af36c0",
+              "byte_length": 197579,
+              "kind": "model-outputs",
+              "metadata": {
+                "tensors": [
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 49152,
+                    "name": "next_token_logits",
+                    "shape": [
+                      1,
+                      49152
+                    ]
+                  },
+                  {
+                    "dtype": "torch.int64",
+                    "elements": 51,
+                    "name": "input_ids",
+                    "shape": [
+                      1,
+                      51
+                    ]
+                  },
+                  {
+                    "dtype": "torch.bool",
+                    "elements": 51,
+                    "name": "attention_mask",
+                    "shape": [
+                      1,
+                      51
+                    ]
+                  },
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 2,
+                    "name": "raw_action_logits",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "dtype": "torch.int64",
+                    "elements": 2,
+                    "name": "scores_q32",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 2,
+                    "name": "conditional_binary_probabilities",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  }
+                ]
+              },
+              "path": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/candidate-eval-store/89c91685c43d1a1b5b841d64a199a5d7dc0a09686fdec46ab93731dfe3a5c59e.safetensors",
+              "sha256": "89c91685c43d1a1b5b841d64a199a5d7dc0a09686fdec46ab93731dfe3a5c59e"
+            },
+            "correct": false,
+            "encoded_input_id": "09d09d04644c8b7d6b57e2f1ada7b78f2027070bfd8ddc6d43be987ee63e8b03",
+            "evidence": {
+              "artifact_id": "a6e6e7632ea32dd965ed849d6c2a03e7f3fd20d68f9f7e071aeee0f46c6a5cdd",
+              "byte_length": 3410,
+              "kind": "probe",
+              "metadata": {},
+              "path": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/candidate-eval-store/562e0f211c1cd045c658317024d4ae7c7c6748e48f230c9d7a58003338c184c0.json",
+              "sha256": "562e0f211c1cd045c658317024d4ae7c7c6748e48f230c9d7a58003338c184c0"
+            },
+            "expected_output": "yes",
+            "logits_sha256": "354c212561333fc5d1efce6b516bc442a01aa351d1ab2a7e695160e16866ee3d",
+            "model_forward_calls": 1,
+            "model_input_id": "076fe205647734368e38fe78992c5b3b09a31b32942ddb97155aba1f6a839882",
+            "output_sha256": "89c91685c43d1a1b5b841d64a199a5d7dc0a09686fdec46ab93731dfe3a5c59e",
+            "predicted_output": "no",
+            "prompt_sha256": "a60b14b4f797a5ebb83f56152a378fc4eb64dd48190ecccbd4b63aaf98471d65",
+            "request_id": "learning-d9fb-native-v4-eval-2",
+            "scores_q32": [
+              156502310912,
+              156858155008
+            ],
+            "total_forward_examples": 3
+          },
+          {
+            "artifact": {
+              "artifact_id": "f6530c3a842f17f5a882f30451f73fafb9f696978b3a08f42b9988f45cfd52d4",
+              "byte_length": 197579,
+              "kind": "model-outputs",
+              "metadata": {
+                "tensors": [
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 49152,
+                    "name": "next_token_logits",
+                    "shape": [
+                      1,
+                      49152
+                    ]
+                  },
+                  {
+                    "dtype": "torch.int64",
+                    "elements": 51,
+                    "name": "input_ids",
+                    "shape": [
+                      1,
+                      51
+                    ]
+                  },
+                  {
+                    "dtype": "torch.bool",
+                    "elements": 51,
+                    "name": "attention_mask",
+                    "shape": [
+                      1,
+                      51
+                    ]
+                  },
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 2,
+                    "name": "raw_action_logits",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "dtype": "torch.int64",
+                    "elements": 2,
+                    "name": "scores_q32",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "dtype": "torch.float32",
+                    "elements": 2,
+                    "name": "conditional_binary_probabilities",
+                    "shape": [
+                      1,
+                      2
+                    ]
+                  }
+                ]
+              },
+              "path": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/candidate-eval-store/12db989d58552c8d34c88c7807059992b5e0cd8695ecbc0a1aeb67c425e29715.safetensors",
+              "sha256": "12db989d58552c8d34c88c7807059992b5e0cd8695ecbc0a1aeb67c425e29715"
+            },
+            "correct": false,
+            "encoded_input_id": "0a56341c7f1c47b576f57c9d7459de39836cb587207e0e0e67c544ecbd768cb8",
+            "evidence": {
+              "artifact_id": "d2b1e96102ad3520beb080cab21547ee404b7bac15d76ff2b013978332180caf",
+              "byte_length": 3409,
+              "kind": "probe",
+              "metadata": {},
+              "path": "/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/native-v4/model/candidate-eval-store/d5d716c3a01bf6dce8fcfed9fac57795c1bdf9e312cf02376c784e6ef29769a1.json",
+              "sha256": "d5d716c3a01bf6dce8fcfed9fac57795c1bdf9e312cf02376c784e6ef29769a1"
+            },
+            "expected_output": "no",
+            "logits_sha256": "72abcbd0fda3d4af2c7207d7ac5135395a94c9c93294b7fab63fde9806c588c1",
+            "model_forward_calls": 1,
+            "model_input_id": "bb52b8632564496a3c407ba7202b7d11f240aecdc33e8b3b4ed1c6854c279a80",
+            "output_sha256": "12db989d58552c8d34c88c7807059992b5e0cd8695ecbc0a1aeb67c425e29715",
+            "predicted_output": "yes",
+            "prompt_sha256": "e8c019743f621bcdae362fbe156ed9be41c31d5f592a9c3c8599869a3e4ea4c7",
+            "request_id": "learning-d9fb-native-v4-eval-3",
+            "scores_q32": [
+              155695611904,
+              155664678912
+            ],
+            "total_forward_examples": 4
+          }
+        ]
+      }
+    ],
+    "frozen_sha256": "7e872dc2ed24f90c0eb04831f0826ac332958d6f1887713767bedddc37f0d54c",
+    "selected_adapter": "e1a9ce940c9d4b04bb827490708604178d4e2391e7afd81a3ca63008389d1e53"
+  },
+  "files": {
+    "current.json": {
+      "bytes": 3773,
+      "sha256": "b254110591b0c0fb7379b7acfe71944a93d4ffd5de7ee6197fc8c27170bbb373"
+    },
+    "final-use-frontier.json": {
+      "bytes": 178,
+      "sha256": "abbb069b8eb7e3e9a1845e5b54dfc1cbe10f96d0c2f88748a357998a7b6e38eb"
+    },
+    "final-use/authority.claims": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "learning-checkpoint": {
+      "bytes": 3656,
+      "sha256": "d7be94dc6be262431180feb1029c63b7b375ad73a7ea5e7c0db90d866dd394c8"
+    },
+    "target-journal": {
+      "bytes": 40,
+      "sha256": "701667d5ae61b0838f2651703488426804eb6a1cccb2034ea38bf86bf81da360"
+    },
+    "target-witness": {
+      "bytes": 112,
+      "sha256": "be4cca13088e2445c842c49b08de01ba34e85521dbf1c49084dff6f6eae72e00"
+    }
+  },
+  "new_task_started": false,
+  "nextest_watchdog_seconds": 60,
+  "original_failure": "InvalidGrant",
+  "original_junit_sha256": "d1cdfeaf3e826b359e320f3c2c8a7ba918bc913506bba5edfef254f7c851dbbe",
+  "published": null,
+  "schema": "hepta-native-v4-original-grant-refusal-observation-v1",
+  "selected_test_exit": 100,
+  "selected_test_seconds": 36.12,
+  "source": "4f559bfe1ff226251f42f2d2f1fbc87f615bcb11"
+}

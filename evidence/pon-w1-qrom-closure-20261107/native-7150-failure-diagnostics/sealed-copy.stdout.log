@@ -1,0 +1,11 @@
+
+running 1 test
+test release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement ... FAILED
+
+failures:
+
+failures:
+    release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1200 filtered out; finished in 0.02s
+

@@ -1,0 +1,29 @@
+test_adaptive_recursion_matches_all_small_markov_policies (__main__.ConditionalTailTests.test_adaptive_recursion_matches_all_small_markov_policies) ... ok
+test_bad_or_mutable_conditional_laws_are_refused (__main__.ConditionalTailTests.test_bad_or_mutable_conditional_laws_are_refused) ... ok
+test_equal_means_do_not_justify_transferring_the_tail_envelope (__main__.ConditionalTailTests.test_equal_means_do_not_justify_transferring_the_tail_envelope) ... ok
+test_exact_one_step_and_independent_path_enumeration (__main__.ConditionalTailTests.test_exact_one_step_and_independent_path_enumeration) ... ok
+test_invalid_inventory_risk_and_finite_search_are_refused (__main__.ConditionalTailTests.test_invalid_inventory_risk_and_finite_search_are_refused) ... ok
+test_inventory_margin_and_multiple_starts_are_charged (__main__.ConditionalTailTests.test_inventory_margin_and_multiple_starts_are_charged) ... ok
+test_minimum_gaps_are_exact_and_previous_gap_fails (__main__.ConditionalTailTests.test_minimum_gaps_are_exact_and_previous_gap_fails) ... ok
+test_multiple_adaptive_horizons_obey_the_assumed_anytime_bound (__main__.ConditionalTailTests.test_multiple_adaptive_horizons_obey_the_assumed_anytime_bound) ... ok
+test_command_line_roundtrip_and_overwrite_refusal (__main__.ReportTests.test_command_line_roundtrip_and_overwrite_refusal) ... ok
+test_duplicate_json_key_nonfinite_and_oversize_reports_are_refused (__main__.ReportTests.test_duplicate_json_key_nonfinite_and_oversize_reports_are_refused) ... ok
+test_report_equality_preserves_boolean_and_integer_types (__main__.ReportTests.test_report_equality_preserves_boolean_and_integer_types) ... ok
+test_report_keeps_all_real_world_qualification_closed (__main__.ReportTests.test_report_keeps_all_real_world_qualification_closed) ... ok
+test_report_verifies_only_the_current_source_and_results (__main__.ReportTests.test_report_verifies_only_the_current_source_and_results) ... ok
+test_band_checks_hard_and_easy_boundaries (__main__.ScopeAndCostTests.test_band_checks_hard_and_easy_boundaries) ... ok
+test_fake_fixed_target_and_wrong_unit_policy_are_refused (__main__.ScopeAndCostTests.test_fake_fixed_target_and_wrong_unit_policy_are_refused) ... ok
+test_global_difficulty_band_has_square_root_scale_under_the_assumption (__main__.ScopeAndCostTests.test_global_difficulty_band_has_square_root_scale_under_the_assumption) ... ok
+test_inclusive_target_and_floor_weight_are_exact (__main__.ScopeAndCostTests.test_inclusive_target_and_floor_weight_are_exact) ... ok
+test_linear_and_sublinear_unit_costs_have_different_scale (__main__.ScopeAndCostTests.test_linear_and_sublinear_unit_costs_have_different_scale) ... ok
+test_only_exact_rational_cost_examples_are_accepted (__main__.ScopeAndCostTests.test_only_exact_rational_cost_examples_are_accepted) ... ok
+test_positive_linear_tail_does_not_make_finite_scale_neutral (__main__.ScopeAndCostTests.test_positive_linear_tail_does_not_make_finite_scale_neutral) ... ok
+test_private_anchor_rebinding_is_refused_for_every_policy (__main__.ScopeAndCostTests.test_private_anchor_rebinding_is_refused_for_every_policy) ... ok
+test_single_winner_linearity_does_not_control_cross_winner_reuse (__main__.ScopeAndCostTests.test_single_winner_linearity_does_not_control_cross_winner_reuse) ... ok
+test_three_scopes_accept_both_forks_under_one_declared_anchor (__main__.ScopeAndCostTests.test_three_scopes_accept_both_forks_under_one_declared_anchor) ... ok
+test_zero_boolean_and_out_of_scope_units_are_refused (__main__.ScopeAndCostTests.test_zero_boolean_and_out_of_scope_units_are_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 0.449s
+
+OK

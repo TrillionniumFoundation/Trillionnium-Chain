@@ -1,0 +1,70 @@
+{
+  "schema": "native-test-execution-v1",
+  "source_commit": "469c4d4bb36efb37045d968f35f83cb2c1771933",
+  "source_tree": "383a3cbc8a4a71f27e4f18d7df089b860f302439",
+  "cwd": "/workspace/scratch/abae1861b451/chain-frontier",
+  "worktree_clean_before": false,
+  "worktree_clean_after": false,
+  "test_artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-protocol#0.1.0",
+    "manifest_path": "/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-protocol/Cargo.toml",
+    "target": {
+      "kind": [
+        "lib"
+      ],
+      "crate_types": [
+        "lib"
+      ],
+      "name": "trnm_protocol",
+      "src_path": "/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-protocol/src/lib.rs",
+      "edition": "2021",
+      "doc": true,
+      "doctest": true,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 2,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": true
+    },
+    "features": [],
+    "filenames": [
+      "/workspace/scratch/abae1861b451/frontier-target/debug/deps/trnm_protocol-03cf137a9de141d7"
+    ],
+    "executable": "/workspace/scratch/abae1861b451/frontier-target/debug/deps/trnm_protocol-03cf137a9de141d7",
+    "fresh": false
+  },
+  "binary_sha256": "b35583ba6ad9e8eddec8c68fd4853c52a704c76df1a4610bc6e623588ad264b4",
+  "binary_unchanged": true,
+  "command": [
+    "/workspace/scratch/abae1861b451/frontier-target/debug/deps/trnm_protocol-03cf137a9de141d7",
+    "pon_wire::state_root_arithmetic::tests",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "elapsed_ns": 821552160,
+  "user_cpu_s": 0.791319,
+  "system_cpu_s": 0.01179,
+  "max_rss_kib": 11828,
+  "native_summaries": [
+    [
+      "ok",
+      "9",
+      "0",
+      "0",
+      "0",
+      "46"
+    ]
+  ],
+  "physical_host_qualification": false,
+  "expected_count": 9,
+  "executed_count": 9,
+  "harness_accepted": true,
+  "performance_or_throughput_claim": false,
+  "stdout.log_sha256": "72e9e62ebfe8c972f37abe75a115449f4fa4cd1c651af6ef8ae4ef79e32f0639",
+  "stderr.log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

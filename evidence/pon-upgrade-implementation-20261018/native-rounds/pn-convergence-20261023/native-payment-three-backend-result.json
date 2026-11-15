@@ -1,0 +1,20 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "store::funding::tests::native_payment_bridge_task_exact_signed_transition_net_balance_and_reorg",
+    "--",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "returncode": 0,
+  "seconds": 3.5491524069802836,
+  "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/native-payment-three-backend.log",
+  "log_sha256": "408388f3fb529b6293650dec99debb1ecfa4d3f0820b51b5c712e15af5bab483"
+}

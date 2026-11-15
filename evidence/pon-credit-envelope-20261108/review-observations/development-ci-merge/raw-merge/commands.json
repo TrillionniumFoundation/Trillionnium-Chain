@@ -1,0 +1,71 @@
+[
+  {
+    "argv": [
+      "git",
+      "merge-file",
+      "-p",
+      "-L",
+      "ours-b66-plus-credit",
+      "-L",
+      "base-b66",
+      "-L",
+      "latest-8d",
+      "/workspace/scratch/f7e62c814d9f/ci-merge-8d/ours/ci_job.sh",
+      "/workspace/scratch/f7e62c814d9f/ci-merge-8d/base/ci_job.sh",
+      "/workspace/scratch/f7e62c814d9f/ci-merge-8d/theirs/ci_job.sh"
+    ],
+    "exit_code": 0,
+    "file": "ci_job.sh",
+    "identical_to_first_three_way_output": true,
+    "stderr": "ci_job.sh.stderr",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "ci_job.sh.stdout",
+    "stdout_sha256": "30990e03384d1b195ffc9f4280035bd5423ef8aa96274cf51f314fc8ccf53b85"
+  },
+  {
+    "argv": [
+      "git",
+      "merge-file",
+      "-p",
+      "-L",
+      "ours-b66-plus-credit",
+      "-L",
+      "base-b66",
+      "-L",
+      "latest-8d",
+      "/workspace/scratch/f7e62c814d9f/ci-merge-8d/ours/check_ci_contract.py",
+      "/workspace/scratch/f7e62c814d9f/ci-merge-8d/base/check_ci_contract.py",
+      "/workspace/scratch/f7e62c814d9f/ci-merge-8d/theirs/check_ci_contract.py"
+    ],
+    "exit_code": 1,
+    "file": "check_ci_contract.py",
+    "identical_to_first_three_way_output": true,
+    "stderr": "check_ci_contract.py.stderr",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "check_ci_contract.py.stdout",
+    "stdout_sha256": "b5a9ca4ead73eb53696ec8f42be214fa209319ab5b45a99ae954b7b6b59673e3"
+  },
+  {
+    "argv": [
+      "git",
+      "merge-file",
+      "-p",
+      "-L",
+      "ours-b66-plus-credit",
+      "-L",
+      "base-b66",
+      "-L",
+      "latest-8d",
+      "/workspace/scratch/f7e62c814d9f/ci-merge-8d/ours/test_ci_contract.py",
+      "/workspace/scratch/f7e62c814d9f/ci-merge-8d/base/test_ci_contract.py",
+      "/workspace/scratch/f7e62c814d9f/ci-merge-8d/theirs/test_ci_contract.py"
+    ],
+    "exit_code": 1,
+    "file": "test_ci_contract.py",
+    "identical_to_first_three_way_output": true,
+    "stderr": "test_ci_contract.py.stderr",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "test_ci_contract.py.stdout",
+    "stdout_sha256": "8c92ba7a9716e36303f8b5507580e32858eee5967b7cffbc6422b126986cde88"
+  }
+]

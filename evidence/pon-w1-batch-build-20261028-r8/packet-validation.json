@@ -1,0 +1,33 @@
+{
+  "schema": "TRNM-W1-BATCH-REAL-BUILD-PACKET-CONTROLS1",
+  "checks": [
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.01011508100782521,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/w1_batch/contract_controls.py"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.15304009900137316,
+      "stdout": "{\"errors\": 0, \"failures\": 0, \"guest_executed\": false, \"prover_executed\": false, \"receipt_verification_executed\": false, \"rust_compiled\": false, \"schema\": \"TRNM-W1-BATCH-PUBLIC-CONTROLS1\", \"screen\": {\"aggregation_cost_measured\": false, \"aggregation_proved\": false, \"benefit_gate\": \"OPEN_FAIL_CURRENT_SINGLE_PROOF\", \"constant_final_cost_assumed_not_established\": true, \"first_bytes_screen_count\": 8, \"first_cpu_screen_count\": 31, \"measured_unique_complete_leaf_receipts_available\": 1, \"native_extra_parent_task_window_m06_authorization_cost_removed\": false, \"production_activation\": false, \"schema\": \"TRNM-W1-BATCH-ARITHMETIC-SCREEN1\", \"selected_rows\": [{\"assumed_batch_receipt_bytes\": 256945, \"assumed_final_decode_verify_ns\": 16660953, \"bytes_screen_only\": false, \"cpu_screen_only\": false, \"distinct_work_hypothesis\": 1, \"historical_native_sum_ns\": 554392.5, \"original_witness_bytes\": 49188}, {\"assumed_batch_receipt_bytes\": 374671, \"assumed_final_decode_verify_ns\": 16660953, \"bytes_screen_only\": true, \"cpu_screen_only\": false, \"distinct_work_hypothesis\": 8, \"historical_native_sum_ns\": 4435140.0, \"original_witness_bytes\": 393504}, {\"assumed_batch_receipt_bytes\": 761485, \"assumed_final_decode_verify_ns\": 16660953, \"bytes_screen_only\": true, \"cpu_screen_only\": true, \"distinct_work_hypothesis\": 31, \"historical_native_sum_ns\": 17186167.5, \"original_witness_bytes\": 1524828}, {\"assumed_batch_receipt_bytes\": 778303, \"assumed_final_decode_verify_ns\": 16660953, \"bytes_screen_only\": true, \"cpu_screen_only\": true, \"distinct_work_hypothesis\": 32, \"historical_native_sum_ns\": 17740560.0, \"original_witness_bytes\": 1574016}, {\"assumed_batch_receipt_bytes\": 1316479, \"assumed_final_decode_verify_ns\": 16660953, \"bytes_screen_only\": true, \"cpu_screen_only\": true, \"distinct_work_hypothesis\": 64, \"historical_native_sum_ns\": 35481120.0, \"original_witness_bytes\": 3148032}]}, \"synthetic_public_leaves_have_no_proof\": true, \"tests\": 12}\n",
+      "stderr": "test_batch_domain_image_count_and_trailing_bytes (__main__.ContractControls.test_batch_domain_image_count_and_trailing_bytes) ... ok\ntest_changed_product_does_not_create_a_new_ticket (__main__.ContractControls.test_changed_product_does_not_create_a_new_ticket) ... ok\ntest_exact_full_public_bytes_roundtrip (__main__.ContractControls.test_exact_full_public_bytes_roundtrip) ... ok\ntest_exact_input_length_and_domain (__main__.ContractControls.test_exact_input_length_and_domain) ... ok\ntest_full_cap_using_unproven_public_controls (__main__.ContractControls.test_full_cap_using_unproven_public_controls) ... ok\ntest_full_leaf_bindings (__main__.ContractControls.test_full_leaf_bindings) ... ok\ntest_ordered_public_headers_using_unproven_control (__main__.ContractControls.test_ordered_public_headers_using_unproven_control) ... ok\ntest_original_identity_is_fixed (__main__.ContractControls.test_original_identity_is_fixed) ... ok\ntest_oversized_zero_and_omitted_count (__main__.ContractControls.test_oversized_zero_and_omitted_count) ... ok\ntest_same_receipt_cannot_supply_multiple_work (__main__.ContractControls.test_same_receipt_cannot_supply_multiple_work) ... ok\ntest_source_pins_and_no_claim_only_api (__main__.ContractControls.test_source_pins_and_no_claim_only_api) ... ok\ntest_zero_target_and_noncanonical_product (__main__.ContractControls.test_zero_target_and_noncanonical_product) ... ok\n\n----------------------------------------------------------------------\nRan 12 tests in 0.106s\n\nOK\n"
+    }
+  ],
+  "all_json_parse": true,
+  "all_local_markdown_links": true,
+  "copied_guest_and_compressed_host_match_real_build_and_preservation_receipts": true,
+  "compiler_reexecuted": false,
+  "new_native_build_or_guest_execution_or_proof": false,
+  "compiled_commit": "401096e8f9eed84fcb4d78122a49fa5dd3aa88e9",
+  "compiled_tree": "db0908a57db7675b22485c6ad712c8e19e4f38fa"
+}

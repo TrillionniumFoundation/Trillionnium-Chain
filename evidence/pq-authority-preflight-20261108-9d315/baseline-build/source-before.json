@@ -1,0 +1,8 @@
+{
+  "branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+  "cargo_lock_sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+  "head": "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+  "observed_unix_seconds": 1794117634.196265,
+  "tree": "a8c9634b9e0d59ccc9fd6a03875eee7fc76c099f",
+  "worktree_status": ""
+}

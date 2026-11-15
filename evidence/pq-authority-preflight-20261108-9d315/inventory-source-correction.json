@@ -1,0 +1,40 @@
+{
+  "changed_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/security/PQ_AUTHORITY_PREFLIGHT_20261108.md",
+    "evidence/pq-authority-preflight-20261108-9d315/artifact-index.json",
+    "evidence/pq-authority-preflight-20261108-9d315/authority-final-validation-runner.py",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+  ],
+  "from_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+  "from_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+  "native_signature_implementation_changed": false,
+  "patch": {
+    "bytes": 36937,
+    "relative_path": "inventory-source-correction.patch",
+    "sha256": "54d961a90c38db7b819d787a6ea33d57b50d7948e3c6244b965a5cd808cb69b8"
+  },
+  "source_fix_receipt": {
+    "commands": 10,
+    "directory": "distributed-inventory-fix-01",
+    "expected_failed_command": {
+      "exit_code": 1,
+      "label": "inventory-before-check",
+      "passed": false
+    },
+    "native_validation_executed": false,
+    "parent_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+    "receipt": {
+      "bytes": 15934,
+      "sha256": "1a499c4cf604741546652750860fc1ace61f256cdb94d6143e0a90254ad906bf"
+    },
+    "result": "PASS",
+    "schema": "trnm-distributed-source-inventory-fix-v1",
+    "source_commit": "ca3c4f88afc70399000b18fc7d68cfa62e57fb2f",
+    "source_tree": "c06c28dbbb16bb30a4f568408913313ab533c47e",
+    "successful_commands": 9
+  },
+  "to_commit": "ca3c4f88afc70399000b18fc7d68cfa62e57fb2f",
+  "to_tree": "c06c28dbbb16bb30a4f568408913313ab533c47e"
+}

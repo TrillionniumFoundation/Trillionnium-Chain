@@ -1,0 +1,42 @@
+{
+  "files": {
+    "formal/pon-nakamoto-v1/contract_wire.py": {
+      "bytes": 8924,
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+    },
+    "formal/pon-nakamoto-v1/requirements.txt": {
+      "bytes": 128,
+      "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5"
+    },
+    "formal/pon-nakamoto-v1/work_oracle.py": {
+      "bytes": 2944,
+      "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+    },
+    "scripts/ci/check_public_readiness_evidence.py": {
+      "bytes": 72428,
+      "sha256": "6cf838deac78ae2f185c74b0f5d5c3c1ad12ca1116a874210570bfe57bbfe86d"
+    },
+    "scripts/ci/prepare_evidence_sources.py": {
+      "bytes": 7223,
+      "sha256": "6fe88742190e82e2045d26602b4375ed867602b148314554de7d8aa1b6a2f18c"
+    },
+    "scripts/ci/report_module_evidence.py": {
+      "bytes": 24277,
+      "sha256": "70941e508e48ef2f82553482b39b2b104bede82edfd9963e0d7e8f23343ff8bb"
+    },
+    "scripts/ci/test_public_readiness_evidence.py": {
+      "bytes": 127133,
+      "sha256": "e514e11f8835f58a281f9d35a2d31a3c890134a3742b8a6cec2e01038c51216e"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs": {
+      "bytes": 34815,
+      "sha256": "c7018524cefd74961862150893bd593b01e720c6fdaa84350b4fc1c54bc378ef"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "bytes": 391470,
+      "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+    }
+  },
+  "observed_at": "2026-11-14T08:11:19.804652+00:00",
+  "scope": "Read after the original failed test driver returned; no source edits occurred in between."
+}

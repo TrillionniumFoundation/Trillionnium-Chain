@@ -1,0 +1,379 @@
+{
+  "base_commit": "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11",
+  "base_tree": "7971aca2ff432ec8907bb69545a2c58d70b4a215",
+  "candidate_is_committed": false,
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "label": "head",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/head/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/head/stdout.log",
+        "sha256": "ffedc3405df9121f84d32af517e14127667925e8deb87aa46df5a564c29f01c8"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit": 0,
+      "label": "tree",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/tree/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/tree/stdout.log",
+        "sha256": "59832e89a2f0335f24bea52d63f83cd4841feb46e203a99bacdde709ff36c5e0"
+      }
+    },
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "exit": 0,
+      "label": "preflight",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/preflight/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 171,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/preflight/stdout.log",
+        "sha256": "22e2178221fa739d1cacc4bd4cfc5debe14a6dcccbe6f397a79e0b0c43b25b07"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "show",
+        "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11:scripts/w1_generation_target_v2.py"
+      ],
+      "exit": 0,
+      "label": "baseline-w1_generation_target_v2.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/baseline-w1_generation_target_v2.py/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 25002,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/baseline-w1_generation_target_v2.py/stdout.log",
+        "sha256": "fa67f19f6a5d2cf1a13f339aa14fb8cf2fcbb6eab70ce9749bb027e4399aba29"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "show",
+        "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11:scripts/w1_owned_generation_runtime_v2.py"
+      ],
+      "exit": 0,
+      "label": "baseline-w1_owned_generation_runtime_v2.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/baseline-w1_owned_generation_runtime_v2.py/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 38913,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/baseline-w1_owned_generation_runtime_v2.py/stdout.log",
+        "sha256": "500f2712942ff2e5f46e82cb2fb1a5d514be55a9ca6e851b7cede79374c15119"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "show",
+        "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11:scripts/w1_owner_cancellation_v1.py"
+      ],
+      "exit": 0,
+      "label": "baseline-w1_owner_cancellation_v1.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/baseline-w1_owner_cancellation_v1.py/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 19812,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/baseline-w1_owner_cancellation_v1.py/stdout.log",
+        "sha256": "b3ba7bfe226e66cc18419e89eec87ef8e383cab434970d4e1ca4b50003ffcf2b"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "show",
+        "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11:scripts/test_w1_generation_target_v2.py"
+      ],
+      "exit": 0,
+      "label": "baseline-test_w1_generation_target_v2.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/baseline-test_w1_generation_target_v2.py/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 11180,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/baseline-test_w1_generation_target_v2.py/stdout.log",
+        "sha256": "d654e737aaec99cfa8928bb8fa1fe04706c43894f53bad9be52ebc94038de5d9"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "show",
+        "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11:scripts/test_w1_owned_generation_runtime_v2.py"
+      ],
+      "exit": 0,
+      "label": "baseline-test_w1_owned_generation_runtime_v2.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/baseline-test_w1_owned_generation_runtime_v2.py/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 5979,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/baseline-test_w1_owned_generation_runtime_v2.py/stdout.log",
+        "sha256": "e17cbe7edc2bfa86599e90c6405a852eb023a6eb65642bd9fdffc65558528701"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "show",
+        "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11:scripts/test_w1_owner_cancellation_v1.py"
+      ],
+      "exit": 0,
+      "label": "baseline-test_w1_owner_cancellation_v1.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/baseline-test_w1_owner_cancellation_v1.py/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 6394,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/baseline-test_w1_owner_cancellation_v1.py/stdout.log",
+        "sha256": "523d0cbcf5f8de5e7c28ce3308c5480004b695c85ff44a04fa1ea01a0b6521ff"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_w1_generation_target_v2.py",
+        "-v"
+      ],
+      "exit": 0,
+      "label": "test-test_w1_generation_target_v2.py",
+      "stderr": {
+        "bytes": 2457,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/test-test_w1_generation_target_v2.py/stderr.log",
+        "sha256": "a95141fc4083f0c42b4e6381821b70da652ee00581214c1748b9fcaedd95f994"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/test-test_w1_generation_target_v2.py/stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_w1_owned_generation_runtime_v2.py",
+        "-v"
+      ],
+      "exit": 0,
+      "label": "test-test_w1_owned_generation_runtime_v2.py",
+      "stderr": {
+        "bytes": 1555,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/test-test_w1_owned_generation_runtime_v2.py/stderr.log",
+        "sha256": "c419e3ac59cdae899756ce3f4abd3d1b2f41c921d690324d1f5d1a1a875bdb03"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/test-test_w1_owned_generation_runtime_v2.py/stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_w1_owner_cancellation_v1.py",
+        "-v"
+      ],
+      "exit": 0,
+      "label": "test-test_w1_owner_cancellation_v1.py",
+      "stderr": {
+        "bytes": 1432,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/test-test_w1_owner_cancellation_v1.py/stderr.log",
+        "sha256": "ac10a48ec5584d523e283f246e5bc896fe92d7a5e4100726337b69e17d7e7fbb"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/test-test_w1_owner_cancellation_v1.py/stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--binary",
+        "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11",
+        "--",
+        "scripts/test_w1_generation_target_v2.py",
+        "scripts/test_w1_owned_generation_runtime_v2.py",
+        "scripts/test_w1_owner_cancellation_v1.py",
+        "scripts/w1_generation_target_v2.py",
+        "scripts/w1_owned_generation_runtime_v2.py",
+        "scripts/w1_owner_cancellation_v1.py"
+      ],
+      "exit": 0,
+      "label": "diff",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/diff/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 34978,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/diff/stdout.log",
+        "sha256": "ff545796eb763a7dc83847e5c5f4afb55eb0cd85ce23fb226f510b7654c83f26"
+      }
+    }
+  ],
+  "counts": {
+    "test_w1_generation_target_v2.py": 13,
+    "test_w1_owned_generation_runtime_v2.py": 7,
+    "test_w1_owner_cancellation_v1.py": 7
+  },
+  "fresh_proofs": 0,
+  "funding_operations": 0,
+  "original_failed_request_regression": {
+    "bytes": 651,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/original-failure-readback.json",
+    "sha256": "4892524889c16e165414698e21e8a51a567d6dea37a2ad47837d12a075c68517"
+  },
+  "original_operation_redispatched": false,
+  "passed": true,
+  "patch": {
+    "bytes": 34978,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/candidate.patch",
+    "sha256": "ff545796eb763a7dc83847e5c5f4afb55eb0cd85ce23fb226f510b7654c83f26"
+  },
+  "resources": {
+    "bytes": 225,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/resources.json",
+    "sha256": "a892890f8eaaa1cf8b426e71f2307ec902011e4b175a039d8f0882cf20a39b1e"
+  },
+  "schema": "TRNM-W1-CAPACITY-REPAIR-CANDIDATE1",
+  "source_after": {
+    "scripts/test_w1_generation_target_v2.py": {
+      "bytes": 21466,
+      "sha256": "ececf1fbe647358c4ef0efc531e85df02d3820fb2827d4d4762d45d831ec2138"
+    },
+    "scripts/test_w1_owned_generation_runtime_v2.py": {
+      "bytes": 8831,
+      "sha256": "fc14dca6a2e950b8d404b2fea6a6b72754a97972778e69a5f4422d181248f442"
+    },
+    "scripts/test_w1_owner_cancellation_v1.py": {
+      "bytes": 12184,
+      "sha256": "8bb29370073d9681a9a6393b0b8ce8f08dc9ee554ecfa01c612228a8badf4d80"
+    },
+    "scripts/w1_generation_target_v2.py": {
+      "bytes": 26876,
+      "sha256": "b82961b18d5ea15b05a8763008456e818766d24304442cb7a93ba3be527335ee"
+    },
+    "scripts/w1_owned_generation_runtime_v2.py": {
+      "bytes": 38944,
+      "sha256": "f2bc49081a0bc08d88e7c1337c2c8bc512f9b968f0334cd6c5d68f9e2e052297"
+    },
+    "scripts/w1_owner_cancellation_v1.py": {
+      "bytes": 20764,
+      "sha256": "94f0a3f6de92ee6fa1abba41097da7bae4b44b3328487f7a7a8f43943f448207"
+    }
+  },
+  "source_before": {
+    "scripts/test_w1_generation_target_v2.py": {
+      "bytes": 21466,
+      "sha256": "ececf1fbe647358c4ef0efc531e85df02d3820fb2827d4d4762d45d831ec2138"
+    },
+    "scripts/test_w1_owned_generation_runtime_v2.py": {
+      "bytes": 8831,
+      "sha256": "fc14dca6a2e950b8d404b2fea6a6b72754a97972778e69a5f4422d181248f442"
+    },
+    "scripts/test_w1_owner_cancellation_v1.py": {
+      "bytes": 12184,
+      "sha256": "8bb29370073d9681a9a6393b0b8ce8f08dc9ee554ecfa01c612228a8badf4d80"
+    },
+    "scripts/w1_generation_target_v2.py": {
+      "bytes": 26876,
+      "sha256": "b82961b18d5ea15b05a8763008456e818766d24304442cb7a93ba3be527335ee"
+    },
+    "scripts/w1_owned_generation_runtime_v2.py": {
+      "bytes": 38944,
+      "sha256": "f2bc49081a0bc08d88e7c1337c2c8bc512f9b968f0334cd6c5d68f9e2e052297"
+    },
+    "scripts/w1_owner_cancellation_v1.py": {
+      "bytes": 20764,
+      "sha256": "94f0a3f6de92ee6fa1abba41097da7bae4b44b3328487f7a7a8f43943f448207"
+    }
+  },
+  "test_enumeration": {
+    "bytes": 3423,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/test-enumeration.json",
+    "sha256": "ae589163e2230bed3f621b732ca54c0c5b5836393fdc0184701926e5d3251062"
+  },
+  "unchanged_v2_constants": {
+    "APPLICATION_ID": 1464292402,
+    "MAX_RESULT": 65536,
+    "META_SQL": "CREATE TABLE target_meta(singleton INTEGER PRIMARY KEY CHECK(singleton=1),namespace TEXT NOT NULL,target TEXT NOT NULL) STRICT",
+    "NAMESPACE": "trnm-w1-generation-posix-target-v2",
+    "OPS_SQL": "CREATE TABLE operations(operation TEXT PRIMARY KEY,task_scope TEXT UNIQUE NOT NULL,statement TEXT NOT NULL,request BLOB NOT NULL,request_sha256 TEXT NOT NULL,state TEXT NOT NULL,cancel INTEGER NOT NULL CHECK(cancel IN (0,1)),worker BLOB,result BLOB) STRICT"
+  },
+  "unchanged_v2_functions": [
+    "canonical",
+    "sha",
+    "clock_domain",
+    "open_db",
+    "read_operation"
+  ]
+}

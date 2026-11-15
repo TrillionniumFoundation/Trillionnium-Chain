@@ -1,0 +1,125 @@
+EE...EEE................EE.E
+======================================================================
+ERROR: test_actual_routes_keep_distinct_fields_and_unknown_security (__main__.RouteAuditTests.test_actual_routes_keep_distinct_fields_and_unknown_security)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/ci/test_w1_stark_route_audit.py", line 42, in test_actual_routes_keep_distinct_fields_and_unknown_security
+    result = audit.audit(self.root, self.request)
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 560, in audit
+    inputs = read_inputs(root, registry["source_inputs"])
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 138, in read_inputs
+    require(len(data) == size and sha256(data) == pin["sha256"], "source bytes differ: " + path)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 62, in require
+    raise RouteAuditError(message)
+w1_stark_route_audit.RouteAuditError: source bytes differ: config/pon/w1-qrom-implementation-current-v2.json
+
+======================================================================
+ERROR: test_allowed_root_is_distinct_from_final_control_id (__main__.RouteAuditTests.test_allowed_root_is_distinct_from_final_control_id)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/ci/test_w1_stark_route_audit.py", line 166, in test_allowed_root_is_distinct_from_final_control_id
+    result = audit.audit(self.root, self.request)
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 560, in audit
+    inputs = read_inputs(root, registry["source_inputs"])
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 138, in read_inputs
+    require(len(data) == size and sha256(data) == pin["sha256"], "source bytes differ: " + path)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 62, in require
+    raise RouteAuditError(message)
+w1_stark_route_audit.RouteAuditError: source bytes differ: config/pon/w1-qrom-implementation-current-v2.json
+
+======================================================================
+ERROR: test_historical_pdf_identity_does_not_become_fresh_retrieval (__main__.RouteAuditTests.test_historical_pdf_identity_does_not_become_fresh_retrieval)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/ci/test_w1_stark_route_audit.py", line 178, in test_historical_pdf_identity_does_not_become_fresh_retrieval
+    result = audit.audit(self.root, self.request)
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 560, in audit
+    inputs = read_inputs(root, registry["source_inputs"])
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 138, in read_inputs
+    require(len(data) == size and sha256(data) == pin["sha256"], "source bytes differ: " + path)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 62, in require
+    raise RouteAuditError(message)
+w1_stark_route_audit.RouteAuditError: source bytes differ: config/pon/w1-qrom-implementation-current-v2.json
+
+======================================================================
+ERROR: test_known_poseidon_premises_keep_actual_binding_open (__main__.RouteAuditTests.test_known_poseidon_premises_keep_actual_binding_open)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/ci/test_w1_stark_route_audit.py", line 77, in test_known_poseidon_premises_keep_actual_binding_open
+    premise = audit.audit(self.root, self.request)["routes"][1]["primitive_premises"]
+              ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 560, in audit
+    inputs = read_inputs(root, registry["source_inputs"])
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 138, in read_inputs
+    require(len(data) == size and sha256(data) == pin["sha256"], "source bytes differ: " + path)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 62, in require
+    raise RouteAuditError(message)
+w1_stark_route_audit.RouteAuditError: source bytes differ: config/pon/w1-qrom-implementation-current-v2.json
+
+======================================================================
+ERROR: test_primitive_premise_helpers_require_actual_source_anchors (__main__.RouteAuditTests.test_primitive_premise_helpers_require_actual_source_anchors)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/ci/test_w1_stark_route_audit.py", line 99, in test_primitive_premise_helpers_require_actual_source_anchors
+    inputs = audit.read_inputs(self.root, self.request["source_inputs"])
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 138, in read_inputs
+    require(len(data) == size and sha256(data) == pin["sha256"], "source bytes differ: " + path)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 62, in require
+    raise RouteAuditError(message)
+w1_stark_route_audit.RouteAuditError: source bytes differ: config/pon/w1-qrom-implementation-current-v2.json
+
+======================================================================
+ERROR: test_retained_version_progress_does_not_promote_security (__main__.RouteAuditTests.test_retained_version_progress_does_not_promote_security)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/ci/test_w1_stark_route_audit.py", line 67, in test_retained_version_progress_does_not_promote_security
+    result = audit.audit(self.root, self.request)
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 560, in audit
+    inputs = read_inputs(root, registry["source_inputs"])
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 138, in read_inputs
+    require(len(data) == size and sha256(data) == pin["sha256"], "source bytes differ: " + path)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 62, in require
+    raise RouteAuditError(message)
+w1_stark_route_audit.RouteAuditError: source bytes differ: config/pon/w1-qrom-implementation-current-v2.json
+
+======================================================================
+ERROR: test_route_domain_certificates_keep_other_proximity_results_open (__main__.RouteAuditTests.test_route_domain_certificates_keep_other_proximity_results_open)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/ci/test_w1_stark_route_audit.py", line 139, in test_route_domain_certificates_keep_other_proximity_results_open
+    result = audit.audit(self.root, self.request)
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 560, in audit
+    inputs = read_inputs(root, registry["source_inputs"])
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 138, in read_inputs
+    require(len(data) == size and sha256(data) == pin["sha256"], "source bytes differ: " + path)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 62, in require
+    raise RouteAuditError(message)
+w1_stark_route_audit.RouteAuditError: source bytes differ: config/pon/w1-qrom-implementation-current-v2.json
+
+======================================================================
+ERROR: test_tagged_frames_do_not_promote_transcript_history (__main__.RouteAuditTests.test_tagged_frames_do_not_promote_transcript_history)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/ci/test_w1_stark_route_audit.py", line 88, in test_tagged_frames_do_not_promote_transcript_history
+    model = audit.audit(self.root, self.request)["routes"][2]["transcript_model"]
+            ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 560, in audit
+    inputs = read_inputs(root, registry["source_inputs"])
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 138, in read_inputs
+    require(len(data) == size and sha256(data) == pin["sha256"], "source bytes differ: " + path)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-sqlite-advisory-20261110/scripts/w1_stark_route_audit.py", line 62, in require
+    raise RouteAuditError(message)
+w1_stark_route_audit.RouteAuditError: source bytes differ: config/pon/w1-qrom-implementation-current-v2.json
+
+----------------------------------------------------------------------
+Ran 28 tests in 0.073s
+
+FAILED (errors=8)

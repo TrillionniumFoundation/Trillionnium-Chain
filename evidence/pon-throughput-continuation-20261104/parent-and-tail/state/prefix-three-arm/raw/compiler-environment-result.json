@@ -1,0 +1,19 @@
+{
+  "child_system_seconds": 0.035906,
+  "child_user_seconds": 0.032802,
+  "command": [
+    "bash",
+    "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+    "python3",
+    "-c",
+    "import json,os,subprocess,platform,pathlib\nkeys=['RUSTUP_TOOLCHAIN','RUSTUP_HOME','CARGO_HOME','CARGO_TARGET_DIR','CARGO_BUILD_JOBS','CARGO_INCREMENTAL','RUSTFLAGS','CARGO_ENCODED_RUSTFLAGS','RUSTC','RUSTC_WRAPPER','RUSTC_WORKSPACE_WRAPPER','OPENSSL_DIR','OPENSSL_STATIC','RUST_TEST_THREADS']\ncaps={}\nfor name in ['cpu.max','cpu.stat','memory.max','cpuset.cpus.effective']:\n p=pathlib.Path('/sys/fs/cgroup')/name\n if p.exists(): caps[name]=p.read_text()\nprint(json.dumps({'environment':{key:os.environ.get(key) for key in keys},'compiler':subprocess.check_output(['rustc','-vV'],text=True),'cargo':subprocess.check_output(['cargo','--version'],text=True),'platform':platform.platform(),'cgroup':caps,'features':'M06 default; no --all-features','profile':'original Cargo test profile, per-package M06 opt-level 1'}))\n"
+  ],
+  "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+  "elapsed_ns": 114356220,
+  "exit_code": 0,
+  "finished_at": "2026-11-04T08:23:44.519092+00:00",
+  "max_child_rss_kib": 29816,
+  "started_at": "2026-11-04T08:23:44.404715+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "84b4ffc3047ee748c3fda9003d414fce8dd920427d70df0b3b32b195841da905"
+}

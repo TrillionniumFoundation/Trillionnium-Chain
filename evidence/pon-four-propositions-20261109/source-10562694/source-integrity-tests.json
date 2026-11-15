@@ -1,0 +1,63 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "10562694eab721f273d217c33d6eba12cf32a639",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "10562694eab721f273d217c33d6eba12cf32a639",
+    "tested_tree": "d1578a15c15beade4991c16369531e00b7e38188",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2501233489,
+    "tracked_entries": 26168,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_ci_source_integrity.py",
+    "-v"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "10562694eab721f273d217c33d6eba12cf32a639",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "10562694eab721f273d217c33d6eba12cf32a639",
+    "tested_tree": "d1578a15c15beade4991c16369531e00b7e38188",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2501233489,
+    "tracked_entries": 26168,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/workspace/scratch/9bf819202e55/chain",
+  "elapsed_ns": 128606723979,
+  "environment": {
+    "CARGO_BUILD_JOBS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": null,
+    "CARGO_TARGET_DIR": null,
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 0,
+  "log_bytes": 6923,
+  "log_file": "source-integrity-tests.log",
+  "log_sha256": "2cb709c3a46bb00d51047c6ab063a0a39d6820fff5e1d6e0609f6f5dbdd3f1f2",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-09T13:51:04.002836+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

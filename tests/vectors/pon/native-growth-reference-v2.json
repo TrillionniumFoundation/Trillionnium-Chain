@@ -1,0 +1,316 @@
+{
+  "algorithm": "SHA256 domain/length framing, little-endian u64 fields, MSB sparse paths built bottom-up",
+  "field_binding_mutations": [
+    {
+      "field": "network",
+      "id": "00f960d6219cd474ec0105dce96a3af7aae6dcad2ce99674b150af005c873ab1",
+      "mutated_fields": {
+        "account_balance": 17,
+        "account_count": 2,
+        "account_root": "6019c482496bd9944d464c134b3441dc29eaa06f1e4afd14ad8e01a63f5bdf46",
+        "escrow_balance": 0,
+        "issued": 17,
+        "maximum_permanent_accounts": 1000000,
+        "maximum_working_keys": 65536,
+        "network": "010102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        "parameters": "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+        "reward_balance": 0,
+        "working_count": 1,
+        "working_root": "1e0f12c4255a8e4f8cc55257a81922998997f9f0083b7b1f5e1205f68f6c44ed"
+      }
+    },
+    {
+      "field": "parameters",
+      "id": "594030d750b6c79af9e09d6d279aa9cb53058ef4175dc2aa2c738378cff45c27",
+      "mutated_fields": {
+        "account_balance": 17,
+        "account_count": 2,
+        "account_root": "6019c482496bd9944d464c134b3441dc29eaa06f1e4afd14ad8e01a63f5bdf46",
+        "escrow_balance": 0,
+        "issued": 17,
+        "maximum_permanent_accounts": 1000000,
+        "maximum_working_keys": 65536,
+        "network": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        "parameters": "212122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+        "reward_balance": 0,
+        "working_count": 1,
+        "working_root": "1e0f12c4255a8e4f8cc55257a81922998997f9f0083b7b1f5e1205f68f6c44ed"
+      }
+    },
+    {
+      "field": "account_root",
+      "id": "8cf9b68b2fbca392e33f5450d1773028e00051b8f576b3628edf6333d28b3bc4",
+      "mutated_fields": {
+        "account_balance": 17,
+        "account_count": 2,
+        "account_root": "6119c482496bd9944d464c134b3441dc29eaa06f1e4afd14ad8e01a63f5bdf46",
+        "escrow_balance": 0,
+        "issued": 17,
+        "maximum_permanent_accounts": 1000000,
+        "maximum_working_keys": 65536,
+        "network": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        "parameters": "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+        "reward_balance": 0,
+        "working_count": 1,
+        "working_root": "1e0f12c4255a8e4f8cc55257a81922998997f9f0083b7b1f5e1205f68f6c44ed"
+      }
+    },
+    {
+      "field": "account_count",
+      "id": "2045f372b1da6ad5bfb769f7e7d9b96656582fefcff91744bde0d3bba27fd7c5",
+      "mutated_fields": {
+        "account_balance": 17,
+        "account_count": 3,
+        "account_root": "6019c482496bd9944d464c134b3441dc29eaa06f1e4afd14ad8e01a63f5bdf46",
+        "escrow_balance": 0,
+        "issued": 17,
+        "maximum_permanent_accounts": 1000000,
+        "maximum_working_keys": 65536,
+        "network": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        "parameters": "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+        "reward_balance": 0,
+        "working_count": 1,
+        "working_root": "1e0f12c4255a8e4f8cc55257a81922998997f9f0083b7b1f5e1205f68f6c44ed"
+      }
+    },
+    {
+      "field": "account_balance",
+      "id": "23f89a865e72b8c1edfde1149aa06705533524c725ca909f3660ae1829b3875e",
+      "mutated_fields": {
+        "account_balance": 18,
+        "account_count": 2,
+        "account_root": "6019c482496bd9944d464c134b3441dc29eaa06f1e4afd14ad8e01a63f5bdf46",
+        "escrow_balance": 0,
+        "issued": 17,
+        "maximum_permanent_accounts": 1000000,
+        "maximum_working_keys": 65536,
+        "network": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        "parameters": "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+        "reward_balance": 0,
+        "working_count": 1,
+        "working_root": "1e0f12c4255a8e4f8cc55257a81922998997f9f0083b7b1f5e1205f68f6c44ed"
+      }
+    },
+    {
+      "field": "maximum_permanent_accounts",
+      "id": "cc7e328fc4e7e2a7b96e195defe0925fb636c1e8a6d4ffcf35ffffb313066cb3",
+      "mutated_fields": {
+        "account_balance": 17,
+        "account_count": 2,
+        "account_root": "6019c482496bd9944d464c134b3441dc29eaa06f1e4afd14ad8e01a63f5bdf46",
+        "escrow_balance": 0,
+        "issued": 17,
+        "maximum_permanent_accounts": 1000001,
+        "maximum_working_keys": 65536,
+        "network": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        "parameters": "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+        "reward_balance": 0,
+        "working_count": 1,
+        "working_root": "1e0f12c4255a8e4f8cc55257a81922998997f9f0083b7b1f5e1205f68f6c44ed"
+      }
+    },
+    {
+      "field": "working_root",
+      "id": "88d05718deaf1d99c41f3844802d6ee42faac16e4b72a9d5e07fcd85730df1c4",
+      "mutated_fields": {
+        "account_balance": 17,
+        "account_count": 2,
+        "account_root": "6019c482496bd9944d464c134b3441dc29eaa06f1e4afd14ad8e01a63f5bdf46",
+        "escrow_balance": 0,
+        "issued": 17,
+        "maximum_permanent_accounts": 1000000,
+        "maximum_working_keys": 65536,
+        "network": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        "parameters": "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+        "reward_balance": 0,
+        "working_count": 1,
+        "working_root": "1f0f12c4255a8e4f8cc55257a81922998997f9f0083b7b1f5e1205f68f6c44ed"
+      }
+    },
+    {
+      "field": "working_count",
+      "id": "b374cbbf223fff2fe18a63227fd71885465a8373145fa5c1277ea2f39109df2f",
+      "mutated_fields": {
+        "account_balance": 17,
+        "account_count": 2,
+        "account_root": "6019c482496bd9944d464c134b3441dc29eaa06f1e4afd14ad8e01a63f5bdf46",
+        "escrow_balance": 0,
+        "issued": 17,
+        "maximum_permanent_accounts": 1000000,
+        "maximum_working_keys": 65536,
+        "network": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        "parameters": "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+        "reward_balance": 0,
+        "working_count": 2,
+        "working_root": "1e0f12c4255a8e4f8cc55257a81922998997f9f0083b7b1f5e1205f68f6c44ed"
+      }
+    },
+    {
+      "field": "maximum_working_keys",
+      "id": "340a80a03bd0447ef23506602e2f6d0905fce0167850dea385b5e01acdc4a41d",
+      "mutated_fields": {
+        "account_balance": 17,
+        "account_count": 2,
+        "account_root": "6019c482496bd9944d464c134b3441dc29eaa06f1e4afd14ad8e01a63f5bdf46",
+        "escrow_balance": 0,
+        "issued": 17,
+        "maximum_permanent_accounts": 1000000,
+        "maximum_working_keys": 65537,
+        "network": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        "parameters": "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+        "reward_balance": 0,
+        "working_count": 1,
+        "working_root": "1e0f12c4255a8e4f8cc55257a81922998997f9f0083b7b1f5e1205f68f6c44ed"
+      }
+    },
+    {
+      "field": "escrow_balance",
+      "id": "822e1244845b114d809499a0454dc385f90247a576e58a97b4a7d3b0cb1167ea",
+      "mutated_fields": {
+        "account_balance": 17,
+        "account_count": 2,
+        "account_root": "6019c482496bd9944d464c134b3441dc29eaa06f1e4afd14ad8e01a63f5bdf46",
+        "escrow_balance": 1,
+        "issued": 17,
+        "maximum_permanent_accounts": 1000000,
+        "maximum_working_keys": 65536,
+        "network": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        "parameters": "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+        "reward_balance": 0,
+        "working_count": 1,
+        "working_root": "1e0f12c4255a8e4f8cc55257a81922998997f9f0083b7b1f5e1205f68f6c44ed"
+      }
+    },
+    {
+      "field": "reward_balance",
+      "id": "b44b8ad2a9e4336fab6924db265f9b16baf73b33d16b880023d46776b8a8cf52",
+      "mutated_fields": {
+        "account_balance": 17,
+        "account_count": 2,
+        "account_root": "6019c482496bd9944d464c134b3441dc29eaa06f1e4afd14ad8e01a63f5bdf46",
+        "escrow_balance": 0,
+        "issued": 17,
+        "maximum_permanent_accounts": 1000000,
+        "maximum_working_keys": 65536,
+        "network": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        "parameters": "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+        "reward_balance": 1,
+        "working_count": 1,
+        "working_root": "1e0f12c4255a8e4f8cc55257a81922998997f9f0083b7b1f5e1205f68f6c44ed"
+      }
+    },
+    {
+      "field": "issued",
+      "id": "d652269d2d6579d11dd59fd7020cce3a5e95ceaa2a7460a9d5af82255319c99d",
+      "mutated_fields": {
+        "account_balance": 17,
+        "account_count": 2,
+        "account_root": "6019c482496bd9944d464c134b3441dc29eaa06f1e4afd14ad8e01a63f5bdf46",
+        "escrow_balance": 0,
+        "issued": 18,
+        "maximum_permanent_accounts": 1000000,
+        "maximum_working_keys": 65536,
+        "network": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        "parameters": "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+        "reward_balance": 0,
+        "working_count": 1,
+        "working_root": "1e0f12c4255a8e4f8cc55257a81922998997f9f0083b7b1f5e1205f68f6c44ed"
+      }
+    }
+  ],
+  "fields_offset": {
+    "account_balance": 108,
+    "account_count": 100,
+    "account_root": 68,
+    "escrow_balance": 172,
+    "issued": 188,
+    "magic": 0,
+    "maximum_permanent_accounts": 116,
+    "maximum_working_keys": 164,
+    "network": 4,
+    "parameters": 36,
+    "reward_balance": 180,
+    "working_count": 156,
+    "working_root": 124
+  },
+  "scope": "Independent Python mathematical encoding and sparse-hash vectors; no native execution, admission, valid-config or bounded-validation claim",
+  "semantic_accounts": [
+    {
+      "balance": 0,
+      "nonce": 7,
+      "owner": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "balance": 17,
+      "nonce": 9,
+      "owner": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    }
+  ],
+  "semantic_legacy_full_state_root": "b31be460dda146ee74dfd207dfadf1dcbcdffa691d341e42c5d2e4ec07ad6ef5",
+  "semantic_working": {
+    "meta:issued": 17
+  },
+  "vectors": [
+    {
+      "encoded_bytes": 196,
+      "encoded_hex": "475343320101010101010101010101010101010101010101010101010101010101010101020202020202020202020202020202020202020202020202020202020202020203030303030303030303030303030303030303030303030303030303030303030400000000000000060000000000000040420f000000000004040404040404040404040404040404040404040404040404040404040404040300000000000000000001000000000007000000000000000b000000000000001800000000000000",
+      "fields": {
+        "account_balance": 6,
+        "account_count": 4,
+        "account_root": "0303030303030303030303030303030303030303030303030303030303030303",
+        "escrow_balance": 7,
+        "issued": 24,
+        "maximum_permanent_accounts": 1000000,
+        "maximum_working_keys": 65536,
+        "network": "0101010101010101010101010101010101010101010101010101010101010101",
+        "parameters": "0202020202020202020202020202020202020202020202020202020202020202",
+        "reward_balance": 11,
+        "working_count": 3,
+        "working_root": "0404040404040404040404040404040404040404040404040404040404040404"
+      },
+      "id": "ba20a82c4d08b745d8606f8ed273d9743fd9c60bf1d848c19cf6dbe240dd7179",
+      "name": "codec_only_existing_fixture"
+    },
+    {
+      "encoded_bytes": 196,
+      "encoded_hex": "47534332000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f6019c482496bd9944d464c134b3441dc29eaa06f1e4afd14ad8e01a63f5bdf460200000000000000110000000000000040420f00000000001e0f12c4255a8e4f8cc55257a81922998997f9f0083b7b1f5e1205f68f6c44ed01000000000000000000010000000000000000000000000000000000000000001100000000000000",
+      "fields": {
+        "account_balance": 17,
+        "account_count": 2,
+        "account_root": "6019c482496bd9944d464c134b3441dc29eaa06f1e4afd14ad8e01a63f5bdf46",
+        "escrow_balance": 0,
+        "issued": 17,
+        "maximum_permanent_accounts": 1000000,
+        "maximum_working_keys": 65536,
+        "network": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        "parameters": "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+        "reward_balance": 0,
+        "working_count": 1,
+        "working_root": "1e0f12c4255a8e4f8cc55257a81922998997f9f0083b7b1f5e1205f68f6c44ed"
+      },
+      "id": "52dc17ff09b274856fb990f53e25f0ab88c504891b59467e161fc3c9d882f913",
+      "name": "two_accounts_zero_balance_nonce_full_relation"
+    },
+    {
+      "encoded_bytes": 196,
+      "encoded_hex": "47534332ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000000119187a7736903ad6d421b99da3a9c11f0e141757d5edc0733d42761f3814ea00100000000000000ffffffffffffffff40420f00000000005b54dee29ef9b2cf9276b57bc69c2876a42cc4a99b34499f83fefcbd1c7edb380100000000000000000001000000000000000000000000000000000000000000ffffffffffffffff",
+      "fields": {
+        "account_balance": 18446744073709551615,
+        "account_count": 1,
+        "account_root": "119187a7736903ad6d421b99da3a9c11f0e141757d5edc0733d42761f3814ea0",
+        "escrow_balance": 0,
+        "issued": 18446744073709551615,
+        "maximum_permanent_accounts": 1000000,
+        "maximum_working_keys": 65536,
+        "network": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "parameters": "0000000000000000000000000000000000000000000000000000000000000000",
+        "reward_balance": 0,
+        "working_count": 1,
+        "working_root": "5b54dee29ef9b2cf9276b57bc69c2876a42cc4a99b34499f83fefcbd1c7edb38"
+      },
+      "id": "21800cd5584d71488fb0f686ebbc415f3dbe8216e6e43082d5f3774b5b651267",
+      "name": "maximum_u64_balance_and_nonce"
+    }
+  ],
+  "wrong_domain_id": "b75494a5397315bad59440e79346bcaa628773a07bc9b03c7254b476df2a47c3"
+}

@@ -1,0 +1,182 @@
+   Compiling find-msvc-tools v0.1.9
+   Compiling shlex v1.3.0
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.45
+   Compiling typenum v1.20.1
+   Compiling cfg-if v1.0.4
+   Compiling vcpkg v0.2.15
+   Compiling pkg-config v0.3.32
+   Compiling zeroize v1.8.2
+   Compiling cc v1.2.59
+   Compiling cpufeatures v0.2.17
+   Compiling cmov v0.5.4
+   Compiling generic-array v0.14.7
+   Compiling libc v0.2.184
+   Compiling bitflags v2.11.0
+   Compiling ctutils v0.4.6
+   Compiling semver v1.0.27
+   Compiling serde_core v1.0.228
+   Compiling hashbrown v0.16.1
+   Compiling rustc_version v0.4.1
+   Compiling winnow v1.0.4
+   Compiling syn v2.0.117
+   Compiling hybrid-array v0.4.15
+   Compiling equivalent v1.0.2
+   Compiling curve25519-dalek v4.1.3
+   Compiling indexmap v2.13.1
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling sha2-asm v0.6.4
+   Compiling libsqlite3-sys v0.37.0
+   Compiling digest v0.10.7
+   Compiling foldhash v0.2.0
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling autocfg v1.5.1
+   Compiling sha2 v0.10.9
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling crypto-common v0.2.2
+   Compiling num-traits v0.2.19
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling openssl-sys v0.9.117
+   Compiling serde v1.0.228
+   Compiling signature v2.2.0
+   Compiling cfg_aliases v0.2.2
+   Compiling subtle v2.6.1
+   Compiling zmij v1.0.21
+   Compiling borsh v1.8.0
+   Compiling proc-macro-crate v3.5.0
+   Compiling ed25519 v2.2.3
+   Compiling hashlink v0.11.1
+   Compiling digest v0.11.3
+   Compiling fallible-iterator v0.3.0
+   Compiling serde_json v1.0.149
+   Compiling thiserror v1.0.69
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling smallvec v1.15.1
+   Compiling once_cell v1.21.4
+   Compiling keccak v0.2.2
+   Compiling memchr v2.8.0
+   Compiling sponge-cursor v0.1.0
+   Compiling openssl v0.10.81
+   Compiling foreign-types-shared v0.1.1
+   Compiling itoa v1.0.18
+   Compiling anyhow v1.0.103
+   Compiling shake v0.1.0
+   Compiling foreign-types v0.3.2
+   Compiling signature v3.0.0
+   Compiling rustix v1.1.4
+   Compiling hex v0.4.3
+   Compiling module-lattice v0.2.3
+   Compiling ml-dsa v0.1.1
+   Compiling getrandom v0.4.2
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/build-native/trillionnium/crates/trnm-verification-profiles)
+   Compiling fs2 v0.4.3
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling serde_derive v1.0.228
+   Compiling borsh-derive v1.8.0
+   Compiling thiserror-impl v1.0.69
+   Compiling openssl-macros v0.1.1
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/build-native/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling ed25519-dalek v2.2.0
+   Compiling fastrand v2.3.0
+   Compiling trnm-mempool v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/build-native/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/build-native/trillionnium/crates/trnm-transport)
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/build-native/trillionnium/crates/trnm-protocol)
+   Compiling tempfile v3.27.0
+   Compiling rusqlite v0.39.0
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/build-native/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/build-native/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/build-native/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/build-native/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/build-native/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/build-native/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 3m 46s
+     Running unittests src/lib.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/trnm_pon_node-3d075b189916f208)
+
+running 68 tests
+test ingress::public_v3::work_arithmetic::tests::actual_paid_arithmetic_tcp_rejects_current_bad_products_then_activates_exact_valid_packet ... ok
+test ingress::public_v3::work_arithmetic::tests::arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challenges ... ok
+test ingress::public_v3::work_arithmetic::tests::explicit_arithmetic_setup_preserves_the_exact_cpu_owner_and_cold_start_credit ... ok
+test ingress::public_v3::work_arithmetic::tests::original_observer_json_has_no_arithmetic_claim_and_opt_in_unfinished_is_unknown ... ok
+test ingress::public_v3::work_arithmetic::tests::warm_arithmetic_dispatch_cannot_bypass_original_abandonment_or_current_context ... ok
+test ingress::public_v3::work_rejection::tests::absent_or_unfinished_rejection_observation_never_claims_a_cache_hit ... ok
+test ingress::public_v3::work_rejection::tests::default_paid_tcp_repeated_refusal_is_charged_and_valid_packet_still_replays ... ok
+test ingress::public_v3::work_rejection::tests::ordinary_default_preserves_cpu_owner_explicit_settings_and_other_profiles ... ok
+test ingress::public_v3::work_rejection::tests::warmed_refusal_keeps_original_cancellation_context_and_cpu_reservation ... ok
+test store::append_readback_tests::direct_append_cancellation_at_each_callback_leaves_no_partial_publication ... ok
+test store::append_readback_tests::direct_append_keeps_complete_rows_events_state_and_cold_reopen ... ok
+test store::authenticated_migration::tests::growth_rehearsal_preserves_all_native_facts_nonce_liabilities_and_cold_checkpoint ... ok
+test store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures ... ok
+test store::historical_commitment_tests::cached_historical_material_cannot_hide_final_writer_damage_or_publish_failed_block ... ok
+test store::historical_commitment_tests::historical_cancel_and_cpu_budget_keep_original_progress_and_error_identity ... ok
+test store::historical_commitment_tests::historical_material_reuses_arithmetic_after_complete_replay_and_reopens ... ok
+test store::historical_commitment_tests::independent_entry_payload_and_retention_bounds_discard_without_ledger_rejection ... ok
+test store::historical_commitment_tests::legacy_inactive_execution_reuses_only_checked_arithmetic_and_keeps_cancellation ... ok
+test store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback ... ok
+test store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes ... ok
+test store::historical_commitment_tests::original_context_parent_header_and_work_checks_keep_their_positions ... ok
+test store::historical_commitment_tests::wrong_block_material_is_only_an_index_miss_and_original_invalidation_clears_all ... ok
+test store::legacy_admission_readback::tests::legacy_pair_cancellation_at_every_commit_callback_rolls_back_all_rows ... ok
+test store::legacy_admission_readback::tests::legacy_pair_child_snapshot_and_active_parent_keep_distinct_sql_sources ... ok
+test store::legacy_admission_readback::tests::legacy_pair_ineligible_schema_keeps_original_reads_and_refuses_bad_delta_writes ... ok
+test store::legacy_admission_readback::tests::legacy_pair_matches_full_replays_snapshot_cadence_and_cold_publication ... 
+thread 'store::legacy_admission_readback::tests::legacy_pair_matches_full_replays_snapshot_cadence_and_cold_publication' (90808) panicked at crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs:201:5:
+assertion `left == right` failed
+  left: ([145, 36, 83, 10, 238, 255, 250, 155, 163, 89, 230, 122, 46, 178, 102, 171, 156, 92, 152, 143, 106, 189, 62, 251, 253, 246, 33, 247, 210, 101, 196, 184], 1)
+ right: ([105, 108, 253, 33, 241, 183, 136, 29, 190, 67, 81, 251, 183, 178, 119, 213, 15, 253, 28, 50, 233, 57, 184, 153, 248, 99, 83, 76, 125, 180, 39, 28], 0)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+test store::legacy_admission_readback::tests::legacy_pair_rejects_writes_ddl_and_transaction_aba_through_last_callback ... ok
+test store::legacy_admission_readback::tests::legacy_pair_rereads_snapshot_and_every_intermediate_delta_after_warm_use ... ok
+test store::legacy_admission_readback::tests::legacy_pair_selection_excludes_authenticated_and_growth_state_relations ... ok
+test store::legacy_reorg_observation_tests::legacy_observation_opt_in_is_local_and_keeps_unentered_unknown ... ok
+test store::legacy_reorg_observation_tests::legacy_observation_preserves_cancelled_and_failed_reorg_outcomes ... ok
+test store::legacy_reorg_observation_tests::legacy_observation_preserves_signed_reorg_state_and_progress ... ok
+test store::legacy_reorg_root_tests::legacy_reorg_root_keeps_all_tail_cancellation_boundaries_and_rollback ... ok
+test store::legacy_reorg_root_tests::legacy_reorg_root_keeps_signed_history_cursor_and_cold_publication ... ok
+test store::legacy_reorg_root_tests::legacy_reorg_root_never_selects_the_growth_or_authenticated_relation ... ok
+test store::legacy_reorg_root_tests::legacy_reorg_root_preserves_pq_v2_and_v6_state_validation ... ok
+test store::legacy_reorg_root_tests::legacy_reorg_root_rechecks_untouched_rows_root_claims_and_original_errors ... ok
+test store::native_authenticated::post_write_readback::tests::a_current_child_record_with_another_node_cannot_borrow_the_parent_graph ... ok
+test store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok
+test store::native_authenticated::post_write_readback::tests::actual_original_writer_excludes_an_independent_database_writer ... ok
+test store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt ... ok
+test store::native_authenticated::post_write_readback::tests::another_actual_connection_cannot_use_the_original_write_scope ... ok
+test store::native_authenticated::post_write_readback::tests::cached_catalog_statement_reads_current_ddl_and_unversioned_catalog_rows ... ok
+test store::native_authenticated::post_write_readback::tests::changed_schema_or_namespace_never_creates_a_new_scope ... ok
+test store::native_authenticated::post_write_readback::tests::consumed_active_reader_refuses_a_last_callback_write ... ok
+test store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks ... ok
+test store::native_authenticated::post_write_readback::tests::current_complete_state_remains_mandatory_on_a_graph_hit ... ok
+test store::native_authenticated::post_write_readback::tests::different_current_records_share_only_the_exact_account_graph_in_one_writer ... ok
+test store::native_authenticated::post_write_readback::tests::fences::cross_record_matches_preserve_boundary_cancellation_and_final_write_fencing ... ok
+test store::native_authenticated::post_write_readback::tests::fences::final_callback_after_a_first_match_falls_back_to_the_actual_original_graph ... ok
+test store::native_authenticated::post_write_readback::tests::fences::four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt ... ok
+test store::native_authenticated::post_write_readback::tests::fences::trusted_reset_exposes_preexisting_catalog_and_prepared_vm_divergence ... ok
+test store::native_authenticated::post_write_readback::tests::first_graph_callback_write_cannot_mint_a_result_or_reenable_it ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::final_callback_deletion_and_later_outer_write_cannot_use_partial_availability ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::real_different_roots_use_bounded_subtrees_without_promoting_partial_results ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::reencoded_frontier_child_ids_cannot_hide_missing_nodes_or_wrong_side_edges ... ok
+test store::native_authenticated::post_write_readback::tests::no_row_writes_and_reversed_ddl_disable_reuse_without_resetting_the_scope ... ok
+test store::native_authenticated::post_write_readback::tests::original_cancellation_before_and_after_a_match_is_preserved ... ok
+test store::native_authenticated::post_write_readback::tests::original_transaction_owner_refuses_commit_begin_and_savepoint_aba ... ok
+test store::native_authenticated::post_write_readback::tests::prepare_only_schema_reset_preserves_the_normalized_writer ... ok
+test store::native_authenticated::post_write_readback::tests::warm_catalog_statement_never_hides_temp_objects_or_database_attachments ... ok
+test store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit ... ok
+test store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source ... ok
+test store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen ... ok
+test store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit ... ok
+test store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence ... ok
+test store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen ... ok
+
+failures:
+
+failures:
+    store::legacy_admission_readback::tests::legacy_pair_matches_full_replays_snapshot_cadence_and_cold_publication
+
+test result: FAILED. 67 passed; 1 failed; 0 ignored; 0 measured; 1127 filtered out; finished in 284.42s
+
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

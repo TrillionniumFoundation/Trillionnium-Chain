@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "clippy",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 41.33749949815683,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794124021.5132587,
+  "label": "workspace-strict-clippy",
+  "logs": {
+    "workspace-strict-clippy.stderr.log": {
+      "bytes": 201,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-01/workspace-strict-clippy.stderr.log",
+      "sha256": "5664b89d54322896d12c9be9fb6b4c9e3d45a681401a94caad560f4c4df8520d"
+    },
+    "workspace-strict-clippy.stdout.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-01/workspace-strict-clippy.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "passed": true,
+  "readback": {},
+  "started_unix_seconds": 1794123980.1757596
+}

@@ -1,0 +1,71 @@
+{
+  "schema": "pon-host-build-exact-source-controls-v1",
+  "source_commit": "54bc9265a77b9aaa198c3e843551d840ddf4168b",
+  "commands": [
+    {
+      "name": "source-before",
+      "command": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "54bc9265a77b9aaa198c3e843551d840ddf4168b"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.8613013679932919,
+      "log_sha256": "95b41ef19f0986f7e0a19a5f6f5834c7d40b5e133d1b797d03bac40a8b1d7d5d"
+    },
+    {
+      "name": "host-controls",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_from_zero_host_ci.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.11976653499732492,
+      "log_sha256": "1151fe4dfe83d7148af68e8332382bac24c817d9624f7ec04b9a2309ba8b4b99"
+    },
+    {
+      "name": "native-controls",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_run_from_zero_native.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 9.459150634000252,
+      "log_sha256": "3b7db1b970df805e23c30d4f85b816049e738e292ccee85698048b483e0aa54c"
+    },
+    {
+      "name": "source-after",
+      "command": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "54bc9265a77b9aaa198c3e843551d840ddf4168b"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.1018372730031842,
+      "log_sha256": "95b41ef19f0986f7e0a19a5f6f5834c7d40b5e133d1b797d03bac40a8b1d7d5d"
+    }
+  ],
+  "all_completed": true,
+  "hosted_native_execution": false,
+  "production_activation": false
+}

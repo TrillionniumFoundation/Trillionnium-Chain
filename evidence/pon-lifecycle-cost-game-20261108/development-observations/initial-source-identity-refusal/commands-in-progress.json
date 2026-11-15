@@ -1,0 +1,21 @@
+[
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "8d5389748873dad6e296d17f2ff20483b5afa5bc",
+      "--output",
+      "/workspace/scratch/68dd104c2e6a/lifecycle-exact-2d71bd9/source-before.json"
+    ],
+    "cwd_relative_to_source": ".",
+    "duration_seconds": 0.08417081832885742,
+    "exit_code": 1,
+    "log": "source-before.log",
+    "name": "source-before",
+    "source_commit": "8d5389748873dad6e296d17f2ff20483b5afa5bc",
+    "started_unix_seconds": 1794140097.2615595
+  }
+]

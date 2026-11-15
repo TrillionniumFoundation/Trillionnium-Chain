@@ -1,0 +1,66 @@
+{
+  "schema": "trnm-final-source-publication-manifest-v1",
+  "source": "2d72fa3293989b01596ec8ce0ba3ff370dc4c584",
+  "tree": "ebc11e05eb0015ae5be58ca85ed764e06f4386be",
+  "target_prefix": "evidence/chain-system-security-20261111-306929/ai395/final-source/",
+  "stage": "/home/qq/chain-system-security-final-source-publication-20261112-306929/final-source",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 4216,
+      "sha256": "6d3d3815f1604f049521a1a07be3ee8a3edb22898be10df9b9ba3407fef519cb"
+    },
+    {
+      "path": "archive-members.json",
+      "bytes": 75758,
+      "sha256": "d41864eee22780714c3e826154ee6348dac449a2912bd071a8b8e4a73e69a7bb"
+    },
+    {
+      "path": "archive-verification.json",
+      "bytes": 1140,
+      "sha256": "2f917928e8b0c3482c55336ae9cd046b8ed1d5305f7920e62e185eec989afb11"
+    },
+    {
+      "path": "derived-F-qualification.json",
+      "bytes": 44704,
+      "sha256": "ea005ce94ed4b17ec9627531963b9783f48d2476086e79566f66bc488193cc5c"
+    },
+    {
+      "path": "full-F-original-observations.tar.gz",
+      "bytes": 1017511,
+      "sha256": "ae69bc525bb69ca2cc62c5c32ea7c3dbf25e156beeeca627d2c13b1002ad2b27"
+    },
+    {
+      "path": "original-F-source-after.json",
+      "bytes": 423,
+      "sha256": "174bc1c9cca4d9a45c5ede9b2685fbb7e4b273daf248b6fd2284b098dd8d99bd"
+    },
+    {
+      "path": "original-F-source-before.json",
+      "bytes": 423,
+      "sha256": "174bc1c9cca4d9a45c5ede9b2685fbb7e4b273daf248b6fd2284b098dd8d99bd"
+    },
+    {
+      "path": "original-F-summary.json",
+      "bytes": 10820,
+      "sha256": "e7461e37ddf48711faf23a3090e16558abe4e9ad9a076eddaaaa6060fe5610b7"
+    },
+    {
+      "path": "prepared-child-gate-v4.py",
+      "bytes": 26170,
+      "sha256": "1c3d0bd274e29cfad246fb0a63014a676341fb4d8393e3c2fa1d4fc7ffb497d3"
+    },
+    {
+      "path": "verify_archive.py",
+      "bytes": 5454,
+      "sha256": "bed35e56c1eb891922d28189bb1cddd2358b03dbee268111a43fdc95918d7242"
+    }
+  ],
+  "manifest_excludes_itself": true,
+  "runtime_files_changed": false,
+  "all_original_bytes_preserved": true,
+  "original_wrapper_exit_code": 1,
+  "actual_source_commands_passed": 10,
+  "raw_derived_original_controls": 108,
+  "new_native_tests_executed": false
+}

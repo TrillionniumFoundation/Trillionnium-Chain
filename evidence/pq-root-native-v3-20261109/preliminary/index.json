@@ -1,0 +1,257 @@
+{
+  "scope": "development-worktree observations; not final commit execution",
+  "files": [
+    {
+      "original_name": "crypto-kernel/root-rust-v3-clippy-final.log",
+      "stored_path": "crypto-kernel/root-rust-v3-clippy-final.log",
+      "compressed": false,
+      "raw_bytes": 203,
+      "raw_sha256": "60356dd31f2bf5a4a01e0cadfdc441a698a90d6cd9de3047bc3b5eb49b120e6b",
+      "stored_bytes": 203,
+      "stored_sha256": "60356dd31f2bf5a4a01e0cadfdc441a698a90d6cd9de3047bc3b5eb49b120e6b"
+    },
+    {
+      "original_name": "crypto-kernel/root-rust-v3-clippy.log",
+      "stored_path": "crypto-kernel/root-rust-v3-clippy.log",
+      "compressed": false,
+      "raw_bytes": 2549,
+      "raw_sha256": "e6fe80d3a9a6e74b2cdc721e0a2691c5d55ab24660756936a4ccc467bf72d90f",
+      "stored_bytes": 2549,
+      "stored_sha256": "e6fe80d3a9a6e74b2cdc721e0a2691c5d55ab24660756936a4ccc467bf72d90f"
+    },
+    {
+      "original_name": "crypto-kernel/root-rust-v3-format.log",
+      "stored_path": "crypto-kernel/root-rust-v3-format.log",
+      "compressed": false,
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "original_name": "crypto-kernel/root-rust-v3-initial.log",
+      "stored_path": "crypto-kernel/root-rust-v3-initial.log.gz",
+      "compressed": true,
+      "raw_bytes": 14491,
+      "raw_sha256": "fad5305ac5c292a33e40fc671c231467e514907b771ec3b5eea5f5c80303b83f",
+      "stored_bytes": 2498,
+      "stored_sha256": "d7ddbc874c30ac1f4efc4b24000f790327eae61b7722c8e46a28870860c38f3a"
+    },
+    {
+      "original_name": "crypto-kernel/root-rust-v3-kernel-budget-clippy.log",
+      "stored_path": "crypto-kernel/root-rust-v3-kernel-budget-clippy.log",
+      "compressed": false,
+      "raw_bytes": 388,
+      "raw_sha256": "5b1b7822689b3026f23ec052bd3d7f99a74fde7864307516ec1cc2241a3be50a",
+      "stored_bytes": 388,
+      "stored_sha256": "5b1b7822689b3026f23ec052bd3d7f99a74fde7864307516ec1cc2241a3be50a"
+    },
+    {
+      "original_name": "crypto-kernel/root-rust-v3-kernel-budget-format.log",
+      "stored_path": "crypto-kernel/root-rust-v3-kernel-budget-format.log",
+      "compressed": false,
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "original_name": "crypto-kernel/root-rust-v3-kernel-budget-regression-final.log",
+      "stored_path": "crypto-kernel/root-rust-v3-kernel-budget-regression-final.log.gz",
+      "compressed": true,
+      "raw_bytes": 795,
+      "raw_sha256": "530038907708454aa81b5d5d6bb527b9bfc3b6ac3e14f5ece875f41377094168",
+      "stored_bytes": 435,
+      "stored_sha256": "f937b0d39f9ba05b3f1a9855cb7fabb01e45b592b2f73d9e0e57571f96f08ac6"
+    },
+    {
+      "original_name": "crypto-kernel/root-rust-v3-kernel-budget-regression.log",
+      "stored_path": "crypto-kernel/root-rust-v3-kernel-budget-regression.log",
+      "compressed": false,
+      "raw_bytes": 184,
+      "raw_sha256": "a778d9aac213e54866378bae0be3bb80d1e53bc618fa658b68fa1354aa95bcae",
+      "stored_bytes": 184,
+      "stored_sha256": "a778d9aac213e54866378bae0be3bb80d1e53bc618fa658b68fa1354aa95bcae"
+    },
+    {
+      "original_name": "crypto-kernel/root-rust-v3-native.log",
+      "stored_path": "crypto-kernel/root-rust-v3-native.log.gz",
+      "compressed": true,
+      "raw_bytes": 1169,
+      "raw_sha256": "d5d272e7c57843ff425d8a94fd256891149447cb6d85cab2c06c5db880283d20",
+      "stored_bytes": 629,
+      "stored_sha256": "274b3e50ca47945e6688cf7080e3d381862b015367d5f0e01a6af1b1a608bcb1"
+    },
+    {
+      "original_name": "crypto-kernel/root-rust-v3-quorum-extra-final.log",
+      "stored_path": "crypto-kernel/root-rust-v3-quorum-extra-final.log.gz",
+      "compressed": true,
+      "raw_bytes": 538,
+      "raw_sha256": "d0c136c4a99d17822dcbd6ef3935543e09da1fc7c786bd930d4cbf5842e9e1e9",
+      "stored_bytes": 341,
+      "stored_sha256": "1eabbc239afe1d7c08cc4a30331a553fd6197af3c20ccfc7992c135746726d9d"
+    },
+    {
+      "original_name": "crypto-kernel/root-rust-v3-structural-final.log",
+      "stored_path": "crypto-kernel/root-rust-v3-structural-final.log.gz",
+      "compressed": true,
+      "raw_bytes": 1415,
+      "raw_sha256": "07600fbb4263f6df768fdfd518d03a0e632c36b0f9221c49d3a0677cbab2bbe3",
+      "stored_bytes": 685,
+      "stored_sha256": "c4a9d835c3d239c4e07880e9cdbc13273563c0e131dc749988559023373d55a4"
+    },
+    {
+      "original_name": "crypto-kernel/root-rust-v3-structural-stable.log",
+      "stored_path": "crypto-kernel/root-rust-v3-structural-stable.log.gz",
+      "compressed": true,
+      "raw_bytes": 1415,
+      "raw_sha256": "ff5ab1be507e28110ee4eeee512d674a7803e19fe9bec367b146ee2ad0e125e9",
+      "stored_bytes": 685,
+      "stored_sha256": "fe0fb3b4668cbe45c0dc01ec8175e237e1801c4a2e33d76d3e7abc0dae4c3130"
+    },
+    {
+      "original_name": "crypto-kernel/root-rust-v3-structural.log",
+      "stored_path": "crypto-kernel/root-rust-v3-structural.log.gz",
+      "compressed": true,
+      "raw_bytes": 3403,
+      "raw_sha256": "ac0139738f5220f397a0e8e669a54160f29bb6d2be7a188fd46d6e515a47178d",
+      "stored_bytes": 1276,
+      "stored_sha256": "398fddc8357e7c22596de631cae43f8c3006008641d2db0eba18323a1a82a91a"
+    },
+    {
+      "original_name": "owner/initial-lib-build-observation.txt",
+      "stored_path": "owner/initial-lib-build-observation.txt",
+      "compressed": false,
+      "raw_bytes": 1078,
+      "raw_sha256": "4a51f8190b53e973777d7638068fc175c3113e2dd43a2e80364f8157373812e6",
+      "stored_bytes": 1078,
+      "stored_sha256": "4a51f8190b53e973777d7638068fc175c3113e2dd43a2e80364f8157373812e6"
+    },
+    {
+      "original_name": "owner/integration-build.log",
+      "stored_path": "owner/integration-build.log",
+      "compressed": false,
+      "raw_bytes": 832,
+      "raw_sha256": "05c0e8775f4250776dc6a36be7b17f8d0cdff5e1a020fbb55bfceaa947208c0a",
+      "stored_bytes": 832,
+      "stored_sha256": "05c0e8775f4250776dc6a36be7b17f8d0cdff5e1a020fbb55bfceaa947208c0a"
+    },
+    {
+      "original_name": "owner/integration-clippy.log",
+      "stored_path": "owner/integration-clippy.log",
+      "compressed": false,
+      "raw_bytes": 3350,
+      "raw_sha256": "ec56b7527406bcf62c6761e543f98dca2e2b2c7da302eab41fcee13c7f3b67b6",
+      "stored_bytes": 3350,
+      "stored_sha256": "ec56b7527406bcf62c6761e543f98dca2e2b2c7da302eab41fcee13c7f3b67b6"
+    },
+    {
+      "original_name": "owner/integration-positive-v2.log",
+      "stored_path": "owner/integration-positive-v2.log",
+      "compressed": false,
+      "raw_bytes": 1411,
+      "raw_sha256": "5db55bbd7a52639e0600228f3df2167a7789a61335f5afbe45d15dbde8d47635",
+      "stored_bytes": 1411,
+      "stored_sha256": "5db55bbd7a52639e0600228f3df2167a7789a61335f5afbe45d15dbde8d47635"
+    },
+    {
+      "original_name": "owner/integration-tests-v3.log",
+      "stored_path": "owner/integration-tests-v3.log.gz",
+      "compressed": true,
+      "raw_bytes": 2103,
+      "raw_sha256": "d47f8e904daba9736ed4a590c59ec2cc76a5053b66dd57a679bbcfc40d2ac36b",
+      "stored_bytes": 869,
+      "stored_sha256": "76bbea97c3357f3d93c17b98b993f54edad7857ef14441895d56acdf0aa2cba1"
+    },
+    {
+      "original_name": "owner/integration-tests.log",
+      "stored_path": "owner/integration-tests.log",
+      "compressed": false,
+      "raw_bytes": 10161,
+      "raw_sha256": "8bd4b7e63d180dc6cb0ecf784d6439d0ca2b2f1d9658939ad0e777da4ae75278",
+      "stored_bytes": 10161,
+      "stored_sha256": "8bd4b7e63d180dc6cb0ecf784d6439d0ca2b2f1d9658939ad0e777da4ae75278"
+    },
+    {
+      "original_name": "owner/validation-summary.json",
+      "stored_path": "owner/validation-summary.json",
+      "compressed": false,
+      "raw_bytes": 6302,
+      "raw_sha256": "02a6d9b5ba43ed0393b86a12022e04e930e771af4d8b3b4225352aef710ffb46",
+      "stored_bytes": 6302,
+      "stored_sha256": "02a6d9b5ba43ed0393b86a12022e04e930e771af4d8b3b4225352aef710ffb46"
+    },
+    {
+      "original_name": "integration/preliminary-kernel-01.log",
+      "stored_path": "integration/preliminary-kernel-01.log.gz",
+      "compressed": true,
+      "raw_bytes": 3570,
+      "raw_sha256": "968af1810f801251bacd8f0c1ed3d9d5f4e7ca2a1b17fc894898544032a8ed3f",
+      "stored_bytes": 1222,
+      "stored_sha256": "5c9cbae992656d7dad64293e60a9ff33b775d7a0bc62c5a6b53fcdbf7dea7df1"
+    },
+    {
+      "original_name": "integration/preliminary-link-check-observation.txt",
+      "stored_path": "integration/preliminary-link-check-observation.txt",
+      "compressed": false,
+      "raw_bytes": 338,
+      "raw_sha256": "0a05201dae90dd5b97a3bf797730e232d7c6cca1da297b69fe84e5622ca714db",
+      "stored_bytes": 338,
+      "stored_sha256": "0a05201dae90dd5b97a3bf797730e232d7c6cca1da297b69fe84e5622ca714db"
+    },
+    {
+      "original_name": "integration/corpus-reviewed-updates.json",
+      "stored_path": "integration/corpus-reviewed-updates.json",
+      "compressed": false,
+      "raw_bytes": 4676,
+      "raw_sha256": "9384122425a15eb075e6ae7b8d93804ff80cfe5a96072e70760307ce59869c5e",
+      "stored_bytes": 4676,
+      "stored_sha256": "9384122425a15eb075e6ae7b8d93804ff80cfe5a96072e70760307ce59869c5e"
+    },
+    {
+      "original_name": "graphs/all-features.log",
+      "stored_path": "graphs/all-features.log.gz",
+      "compressed": true,
+      "raw_bytes": 866232,
+      "raw_sha256": "e1d5450c35e76bb0c6adb0dce19d3a7b3aa456c280a56edb0a063ece17d7f8d5",
+      "stored_bytes": 68392,
+      "stored_sha256": "21a63bfe229c4ed90896d85294e57465f777ebfe2fc71a5c53acd87b895417ff"
+    },
+    {
+      "original_name": "graphs/commands.json",
+      "stored_path": "graphs/commands.json",
+      "compressed": false,
+      "raw_bytes": 1094,
+      "raw_sha256": "ae155b1dc4132337f71fd811bc767858d242401b3c5467e37f73080b1908277f",
+      "stored_bytes": 1094,
+      "stored_sha256": "ae155b1dc4132337f71fd811bc767858d242401b3c5467e37f73080b1908277f"
+    },
+    {
+      "original_name": "graphs/default.log",
+      "stored_path": "graphs/default.log.gz",
+      "compressed": true,
+      "raw_bytes": 850845,
+      "raw_sha256": "636f8fe7b362317a9ed7af4197ae072e678777b1b01ea83cdc5b995d4e5b3edd",
+      "stored_bytes": 67296,
+      "stored_sha256": "3301d3f8f82727ec9ae257fce90fc84dc5fcbaef193bd7bebded3c432647080f"
+    },
+    {
+      "original_name": "graphs/fuzz.log",
+      "stored_path": "graphs/fuzz.log.gz",
+      "compressed": true,
+      "raw_bytes": 735700,
+      "raw_sha256": "809a9ec15efcbdc4390efd82dc4446290df6831df851dddbbd5190244f610dd2",
+      "stored_bytes": 59454,
+      "stored_sha256": "6a2e3fdc04dfd2c585f8e5395379450121e37def573b41f026e505daaceebc0d"
+    },
+    {
+      "original_name": "dependency-result.json",
+      "stored_path": "dependency-result.json",
+      "compressed": false,
+      "raw_bytes": 6024,
+      "raw_sha256": "978984d5d7f7abffddd0e357901995690d56a26cab84398df0a31885406a4c27",
+      "stored_bytes": 6024,
+      "stored_sha256": "978984d5d7f7abffddd0e357901995690d56a26cab84398df0a31885406a4c27"
+    }
+  ]
+}

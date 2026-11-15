@@ -1,0 +1,61 @@
+{
+  "schema": "owned-rebuildable-build-cache-cleanup-v1",
+  "at_utc": "2026-11-05T05:28:10.337160+00:00",
+  "authorization": "Root explicitly authorized these remaining owned inactive build caches; no Rust or optional tests were started",
+  "target": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target",
+  "active_target_processes_before": [],
+  "deleted_files": 1597,
+  "deleted_groups": {
+    ".rustc_info.json": {
+      "files": 1,
+      "logical_bytes": 1034,
+      "allocated_bytes": 4096
+    },
+    "CACHEDIR.TAG": {
+      "files": 1,
+      "logical_bytes": 177,
+      "allocated_bytes": 4096
+    },
+    "debug/.cargo-lock": {
+      "files": 1,
+      "logical_bytes": 0,
+      "allocated_bytes": 0
+    },
+    "debug/deps": {
+      "files": 460,
+      "logical_bytes": 393299604,
+      "allocated_bytes": 394137600
+    },
+    "debug/examples": {
+      "files": 24,
+      "logical_bytes": 8358,
+      "allocated_bytes": 65536
+    },
+    "debug/build": {
+      "files": 150,
+      "logical_bytes": 106038357,
+      "allocated_bytes": 106340352
+    },
+    "debug/.fingerprint": {
+      "files": 960,
+      "logical_bytes": 232565,
+      "allocated_bytes": 3948544
+    }
+  },
+  "deleted_logical_bytes": 499580095,
+  "deleted_allocated_bytes": 504500224,
+  "retained_main_test_binary": {
+    "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
+    "bytes": 75885544,
+    "sha256": "42c842540decc5c7e9af82151993fb2f8e4e5c6fdee9ca76ed0ccf41293eebb1"
+  },
+  "shared_filesystem_before": {
+    "free_bytes": 5129764864,
+    "available_bytes": 1677017088
+  },
+  "shared_filesystem_after": {
+    "free_bytes": 5635571712,
+    "available_bytes": 2182823936
+  },
+  "scope": "Only this agent target build caches. Source, receipts, provider, all evidence, and other repositories/targets were not modified."
+}

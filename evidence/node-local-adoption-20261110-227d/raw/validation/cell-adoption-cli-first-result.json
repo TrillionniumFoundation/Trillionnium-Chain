@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-data-availability",
+    "--test",
+    "cell_adoption_cli"
+  ],
+  "returncode": 101,
+  "seconds": 591.674
+}

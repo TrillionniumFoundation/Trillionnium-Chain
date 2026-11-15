@@ -1,0 +1,459 @@
+{
+  "current_stages": [
+    [
+      "preflight",
+      [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ]
+    ],
+    [
+      "finite-math",
+      [
+        "python3",
+        "scripts/ci/run_credit_envelope_checks.py",
+        "--output-dir",
+        "@OUT@/finite-math"
+      ]
+    ],
+    [
+      "candidate-clock",
+      [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_candidate_check_clock.py",
+        "-v"
+      ]
+    ],
+    [
+      "restricted-oracle",
+      [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_w1_quantum_restricted_oracle.py",
+        "-v"
+      ]
+    ],
+    [
+      "source-integrity",
+      [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ]
+    ],
+    [
+      "ci-contract",
+      [
+        "python3",
+        "scripts/ci/test_ci_contract.py"
+      ]
+    ],
+    [
+      "repository-check",
+      [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ]
+    ],
+    [
+      "inventory-check",
+      [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ]
+    ],
+    [
+      "cargo-graph",
+      [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ]
+    ],
+    [
+      "cargo-graph-all-features",
+      [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--all-features",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ]
+    ],
+    [
+      "rust-format",
+      [
+        "cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ]
+    ],
+    [
+      "rust-clippy",
+      [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    ],
+    [
+      "retained-native-work",
+      [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--lib",
+        "pon_work::",
+        "--",
+        "--test-threads=1"
+      ]
+    ],
+    [
+      "distributed-source-scope",
+      [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--no-default-features",
+        "--example",
+        "distributed_pipeline",
+        "tests::source_scope_and_campaign_bounds_reject",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ]
+    ],
+    [
+      "distributed-resume-identity",
+      [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--no-default-features",
+        "--example",
+        "distributed_pipeline",
+        "tests::resume_requires_exact_source_config_identity_and_exclusive_owner",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ]
+    ]
+  ],
+  "historical_stages_not_rerun_here": [
+    {
+      "historical_complete_source_receipts": [
+        {
+          "source_receipt_sha256": "9d5ed1a77d1535fb1a8e1df8e99394acdc5cf745bdef70fddf09430499aa2df4",
+          "stage": "source-before",
+          "stage_receipt_sha256": "b57cb2b345e301d5e058a93fef5f4f8ff7a58877c018076b46faadaee7e3f1bb",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "9d5ed1a77d1535fb1a8e1df8e99394acdc5cf745bdef70fddf09430499aa2df4"
+        },
+        {
+          "source_receipt_sha256": "9d5ed1a77d1535fb1a8e1df8e99394acdc5cf745bdef70fddf09430499aa2df4",
+          "stage": "source-after",
+          "stage_receipt_sha256": "43cb3c5ec54a361b4bf3e0c3c5b41f3eed7cfcf4d7c71b25d13a45edf0cbfe52",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "9d5ed1a77d1535fb1a8e1df8e99394acdc5cf745bdef70fddf09430499aa2df4"
+        }
+      ],
+      "historical_receipt": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_repository.py"
+        ],
+        "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+        "elapsed_seconds": 293.029696,
+        "exception": null,
+        "exit_code": 0,
+        "finished_utc": "2026-11-08T12:29:21.724838+00:00",
+        "passed": true,
+        "stage": "repository-negative",
+        "started_utc": "2026-11-08T12:24:28.695149+00:00",
+        "stderr": "repository-negative.stderr.log",
+        "stderr_sha256": "6cc87e0b9fb4a615e48a51304b33165478f0fab938bacb7300484834881b3a19",
+        "stdout": "repository-negative.stdout.log",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_methods": 50,
+        "unittest_terminal_receipt_valid": true
+      },
+      "historical_source_commit": "57511355b9dfb1fc02c90eb0713fd8e95263a662",
+      "historical_source_tree": "5d7a4f2e01e1b0712a7319cc230191043039ffa6",
+      "historical_test_methods": 50,
+      "reason": "Root selected reuse of prior negative controls; repair only adds one generated native inventory entry.",
+      "rerun_on_repaired_head": false,
+      "stage": "repository-negative",
+      "stage_receipt_sha256": "f1b054d394157e73a480ae7449120bf20ed8596a626f3e24d59a561f025d33c9"
+    },
+    {
+      "historical_complete_source_receipts": [
+        {
+          "source_receipt_sha256": "9d5ed1a77d1535fb1a8e1df8e99394acdc5cf745bdef70fddf09430499aa2df4",
+          "stage": "source-before",
+          "stage_receipt_sha256": "b57cb2b345e301d5e058a93fef5f4f8ff7a58877c018076b46faadaee7e3f1bb",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "9d5ed1a77d1535fb1a8e1df8e99394acdc5cf745bdef70fddf09430499aa2df4"
+        },
+        {
+          "source_receipt_sha256": "9d5ed1a77d1535fb1a8e1df8e99394acdc5cf745bdef70fddf09430499aa2df4",
+          "stage": "source-after",
+          "stage_receipt_sha256": "43cb3c5ec54a361b4bf3e0c3c5b41f3eed7cfcf4d7c71b25d13a45edf0cbfe52",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "9d5ed1a77d1535fb1a8e1df8e99394acdc5cf745bdef70fddf09430499aa2df4"
+        }
+      ],
+      "historical_receipt": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_project_boundary.py"
+        ],
+        "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+        "elapsed_seconds": 12.700062,
+        "exception": null,
+        "exit_code": 0,
+        "finished_utc": "2026-11-08T12:29:34.428013+00:00",
+        "passed": true,
+        "stage": "project-boundary-negative",
+        "started_utc": "2026-11-08T12:29:21.727958+00:00",
+        "stderr": "project-boundary-negative.stderr.log",
+        "stderr_sha256": "8fc33997d78f857f099bab47047a19aac98a87732c468fe730cb1ac094a1d1ed",
+        "stdout": "project-boundary-negative.stdout.log",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_methods": 16,
+        "unittest_terminal_receipt_valid": true
+      },
+      "historical_source_commit": "57511355b9dfb1fc02c90eb0713fd8e95263a662",
+      "historical_source_tree": "5d7a4f2e01e1b0712a7319cc230191043039ffa6",
+      "historical_test_methods": 16,
+      "reason": "Root selected reuse of prior negative controls; repair only adds one generated native inventory entry.",
+      "rerun_on_repaired_head": false,
+      "stage": "project-boundary-negative",
+      "stage_receipt_sha256": "e1bcc8bc2135b8709dcf0474f80876bc36ad5e3a924ce8789b0e773244adaefc"
+    }
+  ],
+  "original_stages": [
+    [
+      "preflight",
+      [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ]
+    ],
+    [
+      "finite-math",
+      [
+        "python3",
+        "scripts/ci/run_credit_envelope_checks.py",
+        "--output-dir",
+        "@OUT@/finite-math"
+      ]
+    ],
+    [
+      "candidate-clock",
+      [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_candidate_check_clock.py",
+        "-v"
+      ]
+    ],
+    [
+      "restricted-oracle",
+      [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_w1_quantum_restricted_oracle.py",
+        "-v"
+      ]
+    ],
+    [
+      "source-integrity",
+      [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ]
+    ],
+    [
+      "ci-contract",
+      [
+        "python3",
+        "scripts/ci/test_ci_contract.py"
+      ]
+    ],
+    [
+      "repository-negative",
+      [
+        "python3",
+        "scripts/ci/test_repository.py"
+      ]
+    ],
+    [
+      "project-boundary-negative",
+      [
+        "python3",
+        "scripts/ci/test_project_boundary.py"
+      ]
+    ],
+    [
+      "repository-check",
+      [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ]
+    ],
+    [
+      "inventory-check",
+      [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ]
+    ],
+    [
+      "cargo-graph",
+      [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ]
+    ],
+    [
+      "cargo-graph-all-features",
+      [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--all-features",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ]
+    ],
+    [
+      "rust-format",
+      [
+        "cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ]
+    ],
+    [
+      "rust-clippy",
+      [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    ],
+    [
+      "retained-native-work",
+      [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--lib",
+        "pon_work::",
+        "--",
+        "--test-threads=1"
+      ]
+    ]
+  ],
+  "schema": "pon-credit-envelope-repair-validation-spec-v1"
+}

@@ -1,0 +1,90 @@
+{
+  "source": "6e48656b51fc9bd85de386b3f01f41daa6e35069",
+  "results": [
+    {
+      "name": "preflight",
+      "exit_code": 0,
+      "elapsed_ns": 198214674
+    },
+    {
+      "name": "source-before",
+      "exit_code": 0,
+      "elapsed_ns": 28149766423
+    },
+    {
+      "name": "inventory",
+      "exit_code": 0,
+      "elapsed_ns": 99179705
+    },
+    {
+      "name": "pq-source",
+      "exit_code": 0,
+      "elapsed_ns": 364215955
+    },
+    {
+      "name": "pq-source-negatives",
+      "exit_code": 0,
+      "elapsed_ns": 93104084181
+    },
+    {
+      "name": "history-controls",
+      "exit_code": 0,
+      "elapsed_ns": 12573121036
+    },
+    {
+      "name": "source-negatives",
+      "exit_code": 0,
+      "elapsed_ns": 36320574456
+    },
+    {
+      "name": "repository-negatives",
+      "exit_code": 0,
+      "elapsed_ns": 303877962480
+    },
+    {
+      "name": "native-path-controls",
+      "exit_code": 0,
+      "elapsed_ns": 23922728996
+    },
+    {
+      "name": "cargo-default",
+      "exit_code": 0,
+      "elapsed_ns": 5093202639
+    },
+    {
+      "name": "cargo-all-features",
+      "exit_code": 0,
+      "elapsed_ns": 1670736595
+    },
+    {
+      "name": "format",
+      "exit_code": 0,
+      "elapsed_ns": 20106489611
+    },
+    {
+      "name": "strict-clippy",
+      "exit_code": 0,
+      "elapsed_ns": 26163800215
+    },
+    {
+      "name": "native-retained-tests",
+      "exit_code": 0,
+      "elapsed_ns": 61278412155
+    },
+    {
+      "name": "native-kernel-tests",
+      "exit_code": 0,
+      "elapsed_ns": 36119058143
+    },
+    {
+      "name": "repository-markdown",
+      "exit_code": 0,
+      "elapsed_ns": 147532663071
+    },
+    {
+      "name": "source-after",
+      "exit_code": 0,
+      "elapsed_ns": 59767038262
+    }
+  ]
+}

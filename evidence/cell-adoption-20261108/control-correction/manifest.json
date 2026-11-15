@@ -1,0 +1,35 @@
+{
+  "tested_commit": "9fa5d8d98212203b549ba3aa40f7f1699c4477f2",
+  "records": [
+    {
+      "retained": "finality-receipt.json",
+      "source_relative_path": "committed/receipt.json",
+      "bytes": 2420,
+      "sha256": "c1a8c921ef33f54ce350a1a0f9fe3d4675fa4b5a509b5770be68b8bb53603ef1"
+    },
+    {
+      "retained": "finality-tests.txt",
+      "source_relative_path": "committed/tests.log",
+      "bytes": 18055,
+      "sha256": "9eaae53ce32f39a28a1be91c9010b9201a13752843650e078fad675704dc7dc4"
+    },
+    {
+      "retained": "summary.json",
+      "source_relative_path": "committed-summary.json",
+      "bytes": 2252,
+      "sha256": "7048f0b73ecaa8b9f49a43afd9569a167eefa6e5cc3849ac480a18b7d5dc354c"
+    },
+    {
+      "retained": "source-before.json",
+      "source_relative_path": "source-before.json",
+      "bytes": 423,
+      "sha256": "459cfbf1e0a0b10d4bd0d66df6fa828477e612ba9469d3f2c6e813f85e1306fe"
+    },
+    {
+      "retained": "source-after.json",
+      "source_relative_path": "source-after.json",
+      "bytes": 423,
+      "sha256": "459cfbf1e0a0b10d4bd0d66df6fa828477e612ba9469d3f2c6e813f85e1306fe"
+    }
+  ]
+}

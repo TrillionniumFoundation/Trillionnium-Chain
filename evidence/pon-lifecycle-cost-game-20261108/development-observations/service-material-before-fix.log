@@ -1,0 +1,17 @@
+test_material_binding_and_execution_use_the_same_private_snapshot (test_service_work_settlement_v1.ServiceWorkSettlementTests.test_material_binding_and_execution_use_the_same_private_snapshot) ... FAIL
+
+======================================================================
+FAIL: test_material_binding_and_execution_use_the_same_private_snapshot (test_service_work_settlement_v1.ServiceWorkSettlementTests.test_material_binding_and_execution_use_the_same_private_snapshot)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/68dd104c2e6a/chain-lifecycle/formal/pon-nakamoto-v1/test_service_work_settlement_v1.py", line 165, in test_material_binding_and_execution_use_the_same_private_snapshot
+    self.assertEqual(json.loads(result)['decision'], 'NoUpdate')
+AssertionError: 'MeasuredImprovement' != 'NoUpdate'
+- MeasuredImprovement
++ NoUpdate
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.174s
+
+FAILED (failures=1)

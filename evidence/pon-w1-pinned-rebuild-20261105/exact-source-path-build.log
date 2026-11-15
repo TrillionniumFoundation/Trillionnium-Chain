@@ -1,0 +1,6 @@
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/79360d3567d1/chain/trillionnium/crates/trnm-protocol)
+   Compiling trnm-w1-zk-methods-v2 v0.1.0 (/workspace/scratch/79360d3567d1/chain/formal/pon-nakamoto-v1/w1_zkvm/methods-v2)
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/79360d3567d1/chain/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-w1-zk-relation v0.1.0 (/workspace/scratch/79360d3567d1/chain/formal/pon-nakamoto-v1/w1_zkvm/relation)
+   Compiling trnm-w1-zk-host-v2 v0.1.0 (/workspace/scratch/79360d3567d1/chain/formal/pon-nakamoto-v1/w1_zkvm/host-v2)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2m 43s

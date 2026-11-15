@@ -1,0 +1,5 @@
+Collecting packaging==26.3 (from -r /home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/scripts/ci/runtime-release-requirements.txt (line 4))
+  Downloading packaging-26.3-py3-none-any.whl (129 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 130.0/130.0 kB 89.2 kB/s eta 0:00:00
+Installing collected packages: packaging
+Successfully installed packaging-26.3

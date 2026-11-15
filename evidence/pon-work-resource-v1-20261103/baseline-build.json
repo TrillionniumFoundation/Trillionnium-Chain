@@ -1,0 +1,8 @@
+{
+  "source_commit": "a1f6cd3411681d5f1295e1deadba0b639bb7d4d5",
+  "source_sha256": "8c6d0105b8018990ef59c63246aacdefe04426a002df8d61a22c6e31fa1c85cc",
+  "binary_sha256": "be8ac27f5df6f0608d8d99f0f5b5acfae32f499e123288f2287019e93ccd96d3",
+  "harness_sha256": "6de123ce524fbf2ef6b4e7a3af965800886fa7d3cd162e8ae0da966c056b4760",
+  "scope": "locked workspace release library, local supplementary legal primitive observation only",
+  "initial_probe_compilation_failure_retained": "baseline-build-1.stderr"
+}

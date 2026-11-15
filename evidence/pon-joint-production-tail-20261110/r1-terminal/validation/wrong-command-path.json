@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/check_workflow_contract.py"
+  ],
+  "elapsed_seconds": 0.014605025000491878,
+  "executed_source_parent": "a782b1b501c9030d9f9f6fecd27b5858a702c9a8",
+  "exit_code": 2,
+  "scope": "new evidence packet with unchanged native source; working tree before evidence commit",
+  "stderr_bytes": 151,
+  "stderr_sha256": "5d55fef253244402cecc25b365c0aff8c4a9f54190330c88d90fe1942934297c",
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

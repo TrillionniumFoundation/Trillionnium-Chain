@@ -1,0 +1,410 @@
+{
+  "schema": "trnm-w1-fresh-source-producer-consumer-review-v1",
+  "completed_utc": "2026-11-03T22:16:50.988866+00:00",
+  "clean_source_before": {
+    "head": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+    "status": ""
+  },
+  "clean_source_after": {
+    "head": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+    "status": ""
+  },
+  "source_gate_control": "PASS_WITH_ORIGINAL_FAILURE_AND_NEGATIVES_RETAINED",
+  "old_producer_exit": 0,
+  "old_consumer_exit": 1,
+  "old_failure": "FileNotFoundError for source.json",
+  "corrected_producer_exit": 0,
+  "corrected_consumer_exit": 0,
+  "actual_source_identity": {
+    "base": null,
+    "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 882506480,
+    "tracked_entries": 7723,
+    "tracked_worktree_verified": true
+  },
+  "stale_receipt": {
+    "original_path": "/workspace/scratch/b5a148b09b11/next-validation/committed-check/exact-source.stdout",
+    "sha256": "ad4dd0271ae1941621e012a13b433cf2d71338de49e301a9a71609b84994412b",
+    "tested_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+    "copied_unchanged_for_negative_control_only": true
+  },
+  "wrong_and_stale_receipts_refused": 3,
+  "workflow": {
+    "path": ".github/workflows/pon-w1-work-security.yml",
+    "original_sha256": "7434725504d9ea31e96226d027fbaa2cf2080d56c5a58f41c453685311dc79cf",
+    "candidate_sha256": "a2fbb452b33462fa34847bb0d790e3b71b4d68d7af91a755803edff47332249f",
+    "candidate_patch_sha256": "c9530bea383e91f67a2deb81feebaff149f610f529037ca26d4c3941ea96d1af",
+    "changes": 1,
+    "scope": "Only fresh-challenge-service producer output basename source-before.json to source.json; all other jobs and source-after preserved."
+  },
+  "lease_source_sha256": "792c1c599082b0ce67e128e6dbbf0c99f583dd41f4af0091838cc10adcc98d70",
+  "verifier_source_sha256": "07fb32c6b1d6a5c9bd6200a4ef4f5916b0f25caa3ba4ac887a3ba58a407b7ff6",
+  "consumer_driver_sha256": "e1a4a3c97671def7ea0e914ec2c4f8b8bc9260877f2770703e1f7c37953bb57c",
+  "records": [
+    {
+      "name": "before-head",
+      "command": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:46.689814+00:00",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns": 4178647,
+      "stdout_sha256": "307246273a9ebfec5846a6290460f72be7d4dec54c00cbe35464e181f9551b25",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error_substring": null,
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    },
+    {
+      "name": "before-tree",
+      "command": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:46.694181+00:00",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns": 3854357,
+      "stdout_sha256": "85a37065e7710956fa9c9aa45fe106d6835bf40ea4f02036c3fd4f0554c35a6d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error_substring": null,
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    },
+    {
+      "name": "before-status",
+      "command": [
+        "git",
+        "--no-replace-objects",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:46.698143+00:00",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns": 32116233,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error_substring": null,
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    },
+    {
+      "name": "preflight-audit",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:46.730465+00:00",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns": 64359759,
+      "stdout_sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error_substring": null,
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    },
+    {
+      "name": "patch-check-only",
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "/workspace/scratch/b5a148b09b11/next-validation/w1-fresh-source-path-review/candidate.patch"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:46.795580+00:00",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns": 3880327,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error_substring": null,
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    },
+    {
+      "name": "source-basename-consumers",
+      "command": [
+        "rg",
+        "-n",
+        "source-before\\.json|source-after\\.json|w1-fresh-service",
+        ".github",
+        "scripts",
+        "config",
+        "--glob",
+        "*.py",
+        "--glob",
+        "*.sh",
+        "--glob",
+        "*.yml",
+        "--glob",
+        "*.yaml"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:46.799565+00:00",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns": 15971677,
+      "stdout_sha256": "a71fad4310b34eb59cd30a14b71bad5a9fa5a6237a245b575b7cd5f37d883c84",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error_substring": null,
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    },
+    {
+      "name": "host-callsites",
+      "command": [
+        "rg",
+        "-n",
+        "run_from_zero_host\\.py",
+        ".github",
+        "scripts",
+        "--glob",
+        "*.py",
+        "--glob",
+        "*.sh",
+        "--glob",
+        "*.yml"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:46.815814+00:00",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns": 7792651,
+      "stdout_sha256": "32f7f3b0c782bc64c937eb5bf89594b132d3026feca6cd1f4402170b15c00f15",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error_substring": null,
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    },
+    {
+      "name": "old-producer",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "--output",
+        "/workspace/scratch/b5a148b09b11/next-validation/w1-fresh-source-path-review/old-producer/source-before.json"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:46.824026+00:00",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns": 1782242886,
+      "stdout_sha256": "4aa420d224bd0e2c2e0c8ba043a52dd8f72017f40f101b19746bfa5d026598d5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error_substring": null,
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    },
+    {
+      "name": "old-consumer-missing-source",
+      "command": [
+        "python3",
+        "-B",
+        "/workspace/scratch/b5a148b09b11/next-validation/w1-fresh-source-path-review/consume_workflow_source.py"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:48.606534+00:00",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "wall_ns": 64360539,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "2153d20e06969d881ff45884a0407778cb4d5b0febd317252ab0d14205009191",
+      "expected_error_substring": "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b5a148b09b11/next-validation/w1-fresh-source-path-review/old-producer/source.json'",
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    },
+    {
+      "name": "corrected-producer",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "--output",
+        "/workspace/scratch/b5a148b09b11/next-validation/w1-fresh-source-path-review/corrected-producer/source.json"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:48.671109+00:00",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns": 1067164211,
+      "stdout_sha256": "4aa420d224bd0e2c2e0c8ba043a52dd8f72017f40f101b19746bfa5d026598d5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error_substring": null,
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    },
+    {
+      "name": "corrected-consumer-actual-source",
+      "command": [
+        "python3",
+        "-B",
+        "/workspace/scratch/b5a148b09b11/next-validation/w1-fresh-source-path-review/consume_workflow_source.py"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:49.738492+00:00",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns": 1017215946,
+      "stdout_sha256": "4aa420d224bd0e2c2e0c8ba043a52dd8f72017f40f101b19746bfa5d026598d5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error_substring": null,
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    },
+    {
+      "name": "wrong-expected-current-receipt",
+      "command": [
+        "python3",
+        "-B",
+        "/workspace/scratch/b5a148b09b11/next-validation/w1-fresh-source-path-review/consume_workflow_source.py"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:50.756274+00:00",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "wall_ns": 64691668,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "a7f5fe6c4bb04994d28094ddd3935fc8dc0251be0f2ff14767b149262f2f83b9",
+      "expected_error_substring": "FIXTURE_PARENT_WORKFLOW_SOURCE_REQUIRED",
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    },
+    {
+      "name": "stale-receipt-current-expected",
+      "command": [
+        "python3",
+        "-B",
+        "/workspace/scratch/b5a148b09b11/next-validation/w1-fresh-source-path-review/consume_workflow_source.py"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:50.821171+00:00",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "wall_ns": 64529277,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "a7f5fe6c4bb04994d28094ddd3935fc8dc0251be0f2ff14767b149262f2f83b9",
+      "expected_error_substring": "FIXTURE_PARENT_WORKFLOW_SOURCE_REQUIRED",
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    },
+    {
+      "name": "stale-receipt-self-consistent-claim",
+      "command": [
+        "python3",
+        "-B",
+        "/workspace/scratch/b5a148b09b11/next-validation/w1-fresh-source-path-review/consume_workflow_source.py"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:50.885900+00:00",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "wall_ns": 64221605,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "2de5a8c8552e8ef0e157539a1592cccd111682ef9dd3f747f09606b3475a6e02",
+      "expected_error_substring": "head identity mismatch",
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    },
+    {
+      "name": "after-head",
+      "command": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:50.950280+00:00",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns": 1765039,
+      "stdout_sha256": "307246273a9ebfec5846a6290460f72be7d4dec54c00cbe35464e181f9551b25",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error_substring": null,
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    },
+    {
+      "name": "after-tree",
+      "command": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:50.952164+00:00",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns": 3562608,
+      "stdout_sha256": "85a37065e7710956fa9c9aa45fe106d6835bf40ea4f02036c3fd4f0554c35a6d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error_substring": null,
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    },
+    {
+      "name": "after-status",
+      "command": [
+        "git",
+        "--no-replace-objects",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "cwd": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+      "started_utc": "2026-11-03T22:16:50.955827+00:00",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns": 32777504,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error_substring": null,
+      "expectation_met": true,
+      "scope": "source identity gate only; no Host or native invocation"
+    }
+  ],
+  "no_mocked_identity": true,
+  "no_production_consumer_change": true,
+  "context_parent_lock_or_Host_functions_called": false,
+  "Host_provisioned": false,
+  "native_or_cargo_executions": 0,
+  "checkout_target_ref_PR_modified": false,
+  "patch_applied": false,
+  "performance_acceptance": false,
+  "scope": "Real current-source producer/consumer regression only; corrected source gate does not certify Host, native service, confirmation or performance."
+}

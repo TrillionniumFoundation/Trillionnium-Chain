@@ -1,0 +1,207 @@
+{
+  "actions": {
+    "archive_extracted_to_filesystem": false,
+    "archives_modified": false,
+    "artifact_executed": false,
+    "credential_values_output": false,
+    "scope_expanded_beyond_six_archives": false,
+    "source_modified": false
+  },
+  "actual_private_key_blocks_found": 0,
+  "archive_count": 6,
+  "archive_identity_bound": true,
+  "archives": [
+    {
+      "archive": "117-ai395-native.tar.gz",
+      "binary_members_skipped": 235,
+      "bytes": 2787512,
+      "nested_zip_archives_read": 0,
+      "non_regular_members_skipped": 0,
+      "sha256": "178eae32c13c8fc4cd4cd14eadc45498094a2d07eb2ae206de2299eebe172293",
+      "text_bytes_scanned": 4760481,
+      "text_members_scanned": 243
+    },
+    {
+      "archive": "117-local-validation.tar.xz",
+      "binary_members_skipped": 1,
+      "bytes": 976596,
+      "nested_zip_archives_read": 0,
+      "non_regular_members_skipped": 0,
+      "sha256": "eeaa11ad8a6f565f989edf035d6cb5f59d45ed2956276c824b4daac7064ea8f6",
+      "text_bytes_scanned": 43543671,
+      "text_members_scanned": 104
+    },
+    {
+      "archive": "fc5-validation.tar.xz",
+      "binary_members_skipped": 0,
+      "bytes": 607772,
+      "nested_zip_archives_read": 0,
+      "non_regular_members_skipped": 0,
+      "sha256": "7d28c2424017998db6dd91637ebc612b13ea04db989c12148b5ff7566f30ae3e",
+      "text_bytes_scanned": 43778658,
+      "text_members_scanned": 102
+    },
+    {
+      "archive": "history-original-control.tar.xz",
+      "binary_members_skipped": 0,
+      "bytes": 2850152,
+      "nested_zip_archives_read": 0,
+      "non_regular_members_skipped": 0,
+      "sha256": "58d76e8d058d5684a11327000b726947710c58766697bc9532df1daa770d7b14",
+      "text_bytes_scanned": 20299519,
+      "text_members_scanned": 15
+    },
+    {
+      "archive": "preliminary-ci-failure.tar.xz",
+      "binary_members_skipped": 0,
+      "bytes": 49800,
+      "nested_zip_archives_read": 0,
+      "non_regular_members_skipped": 0,
+      "sha256": "6629c99816d9a4dd5ec71cc44a255ac8bf8a009b52b891d727979d4b1103f666",
+      "text_bytes_scanned": 398639,
+      "text_members_scanned": 6
+    },
+    {
+      "archive": "preparation-and-hosted-failures.tar.xz",
+      "binary_members_skipped": 50,
+      "bytes": 28496340,
+      "nested_zip_archives_read": 8,
+      "non_regular_members_skipped": 0,
+      "sha256": "a0fbaaa1a5992454f94b6694e08639f96bca3daa653d931f98d23a4f983463e9",
+      "text_bytes_scanned": 178130081,
+      "text_members_scanned": 575
+    }
+  ],
+  "authorization_mentions": 24,
+  "binary_members_skipped": 286,
+  "checks": [
+    "Obvious prefixed GitHub token patterns",
+    "Authorization Basic/Bearer/Token values and classification of all remaining Authorization mentions",
+    "Private-key PEM blocks and private-key begin markers"
+  ],
+  "findings": [
+    {
+      "assessment": "redacted",
+      "lines": [
+        99
+      ],
+      "member": "preparation-and-hosted-failures.tar.xz!preparation/ci-readback-117/required-baseline-42553751938/job-128954796735.decoded.log",
+      "occurrences": 1,
+      "type": "authorization_header"
+    },
+    {
+      "assessment": "redacted",
+      "lines": [
+        99
+      ],
+      "member": "preparation-and-hosted-failures.tar.xz!preparation/ci-readback-117/required-baseline-42553751938/job-128954796813.decoded.log",
+      "occurrences": 1,
+      "type": "authorization_header"
+    },
+    {
+      "assessment": "redacted",
+      "lines": [
+        98
+      ],
+      "member": "preparation-and-hosted-failures.tar.xz!preparation/ci-readback-117/required-baseline-42553751938/job-128954796906.decoded.log",
+      "occurrences": 1,
+      "type": "authorization_header"
+    },
+    {
+      "assessment": "redacted",
+      "lines": [
+        98
+      ],
+      "member": "preparation-and-hosted-failures.tar.xz!preparation/ci-readback-117/required-baseline-42553751938/job-128954796911.decoded.log",
+      "occurrences": 1,
+      "type": "authorization_header"
+    },
+    {
+      "assessment": "redacted",
+      "lines": [
+        100
+      ],
+      "member": "preparation-and-hosted-failures.tar.xz!preparation/ci-readback-117/required-baseline-42553751938/job-128954797024.decoded.log",
+      "occurrences": 1,
+      "type": "authorization_header"
+    },
+    {
+      "assessment": "redacted",
+      "lines": [
+        100
+      ],
+      "member": "preparation-and-hosted-failures.tar.xz!preparation/ci-readback-117/required-baseline-42553751938/job-128954797047.decoded.log",
+      "occurrences": 1,
+      "type": "authorization_header"
+    },
+    {
+      "assessment": "redacted",
+      "lines": [
+        114
+      ],
+      "member": "preparation-and-hosted-failures.tar.xz!preparation/ci-readback-117/w1-qrom-run42553751987/job-128954796952.decoded.log",
+      "occurrences": 1,
+      "type": "authorization_header"
+    },
+    {
+      "assessment": "redacted",
+      "lines": [
+        114
+      ],
+      "member": "preparation-and-hosted-failures.tar.xz!preparation/ci-readback-117/w1-qrom-run42553751987/job-128954797102.decoded.log",
+      "occurrences": 1,
+      "type": "authorization_header"
+    }
+  ],
+  "github_token_pattern_findings": 0,
+  "limitations": "Bounded text-pattern and context review; no claim of absence of arbitrary secret formats or binary-embedded secrets. W1 proof/packet bytes and generic hexadecimal data were not treated as credentials.",
+  "nested_zip_archives_read": 8,
+  "noncredential_authorization_mentions": [
+    {
+      "assessment": "repository_path_in_source_inventory",
+      "member": "history-original-control.tar.xz!history-deadline-evidence/red-source-after.json",
+      "occurrences": 4,
+      "type": "authorization_word_only"
+    },
+    {
+      "assessment": "repository_path_in_source_inventory",
+      "member": "history-original-control.tar.xz!history-deadline-evidence/red-source-before.json",
+      "occurrences": 4,
+      "type": "authorization_word_only"
+    },
+    {
+      "assessment": "plain_documentation_mention_without_header_assignment",
+      "member": "preparation-and-hosted-failures.tar.xz!preparation/current-corpus-maintenance-01/manifest-after.json",
+      "occurrences": 2,
+      "type": "authorization_word_only"
+    },
+    {
+      "assessment": "plain_documentation_mention_without_header_assignment",
+      "member": "preparation-and-hosted-failures.tar.xz!preparation/current-corpus-maintenance-01/manifest-before.json",
+      "occurrences": 2,
+      "type": "authorization_word_only"
+    },
+    {
+      "assessment": "plain_documentation_mention_without_header_assignment",
+      "member": "preparation-and-hosted-failures.tar.xz!preparation/lint-followup-01/manifest-after.json",
+      "occurrences": 2,
+      "type": "authorization_word_only"
+    },
+    {
+      "assessment": "plain_documentation_mention_without_header_assignment",
+      "member": "preparation-and-hosted-failures.tar.xz!preparation/lint-followup-01/manifest-before.json",
+      "occurrences": 2,
+      "type": "authorization_word_only"
+    }
+  ],
+  "private_key_markers": 0,
+  "public_fixture_credentials_identified": 0,
+  "recorded_utc": "2026-11-09T03:43:43.405230+00:00",
+  "redacted_authorization_headers": 8,
+  "result": "NO_OBVIOUS_UNREDACTED_CREDENTIAL_PATTERN_FOUND_IN_SCANNED_TEXT",
+  "schema": "pon-joint-evidence-publication-sensitive-text-review-v1",
+  "scope": "Exactly six current evidence-staging archives, including text members of their eight contained ZIPs. Archive members were read in memory; no disk extraction or execution.",
+  "text_bytes_scanned": 290911049,
+  "text_members_scanned": 1045,
+  "unresolved_credential_findings": []
+}

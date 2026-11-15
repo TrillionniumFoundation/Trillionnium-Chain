@@ -1,0 +1,122 @@
+{
+  "source": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "source_before": {
+    "commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+    "materialized_checked": 4890,
+    "unmaterialized_historical_evidence": 21242,
+    "materialized_manifest_sha256": "a821396cf6ea35c928e6bf598ae4d016ada773688b67134f1305d3b59eb04ba4",
+    "whole_materialized_repository_checked": false
+  },
+  "source_after": {
+    "commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+    "materialized_checked": 4890,
+    "unmaterialized_historical_evidence": 21242,
+    "materialized_manifest_sha256": "a821396cf6ea35c928e6bf598ae4d016ada773688b67134f1305d3b59eb04ba4",
+    "whole_materialized_repository_checked": false
+  },
+  "results": [
+    {
+      "module": "test_grouped_fresh_deployment_cost_v0",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_grouped_fresh_deployment_cost_v0"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.26183647899961215,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "3f7b7b4e8e07f8a50dbcaa4da60365200af1f5b6971ad53b2c90ee4fe37692a5",
+      "terminal": [
+        "----------------------------------------------------------------------",
+        "Ran 50 tests in 0.036s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "module": "test_grouped_fanout_reanalysis_v1",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_grouped_fanout_reanalysis_v1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.3409742779995213,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "933a1c325680b8512ea48a70340cae9e76084ef40bdcf7187864f898c0beebfc",
+      "terminal": [
+        "----------------------------------------------------------------------",
+        "Ran 21 tests in 0.104s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "module": "test_service_work_settlement_v1",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_service_work_settlement_v1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 6.209619983999801,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "4a311d1d79a2e9e999e66b6e4c65ca4ed8dd9ddc6651c50c24f0ede67ba061a2",
+      "terminal": [
+        "----------------------------------------------------------------------",
+        "Ran 38 tests in 6.061s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "module": "test_grouped_legal_strategy_v0",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_grouped_legal_strategy_v0"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.8382087760001014,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "a5d316cffa89f6a9efa741b76c1dde4d26b6543de7290bed9b51f790f806f1e1",
+      "terminal": [
+        "----------------------------------------------------------------------",
+        "Ran 19 tests in 0.612s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "module": "test_grouped_low_rank_v0",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_grouped_low_rank_v0"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.13534733100004814,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "f689766a36518f9e45d6e7b1e2e4b45f255b829daac04f34c887d1254e5f1a48",
+      "terminal": [
+        "----------------------------------------------------------------------",
+        "Ran 6 tests in 0.015s",
+        "",
+        "OK"
+      ]
+    }
+  ],
+  "all_passed": true,
+  "native_rerun": false,
+  "qualification": "HOLD_NO_GO"
+}

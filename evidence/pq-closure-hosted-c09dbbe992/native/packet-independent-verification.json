@@ -1,0 +1,13 @@
+{
+  "all_packet_members_regular_and_unique": true,
+  "all_retained_raw_members_equal_original_zip": true,
+  "all_three_original_zips_match_fixed_github_digest": true,
+  "complete_packet_index_coverage": true,
+  "indexed_files_verified": 1838,
+  "native_tests_run": 0,
+  "observed_utc": "2026-11-11T04:53:48.555136+00:00",
+  "old_315_outcomes_used": false,
+  "packet_bytes": 1850508,
+  "packet_sha256": "90f8da399cda835849001e5c65a49d0d8cc2a4b09e191e6c8b73dddbfb275456",
+  "schema": "c1-native-packet-independent-verification-v1"
+}

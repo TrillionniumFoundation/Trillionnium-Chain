@@ -1,0 +1,44 @@
+{
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--test",
+    "qualified_tasks",
+    "registered_task_mines_real_work_and_counts_one_output_across_fresh_challenges",
+    "--",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+  "elapsed_seconds": 37.872697,
+  "exact_test_required": true,
+  "exactly_one_test_passed": true,
+  "execution_error": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-12T00:23:17.913421+00:00",
+  "interrupted": false,
+  "label": "node-single-output-owner",
+  "observation_accepted": false,
+  "source_report_sha256": null,
+  "sqlite_unqualified_diagnostic": true,
+  "started_utc": "2026-11-12T00:22:40.040738+00:00",
+  "stderr": "node-single-output-owner.stderr",
+  "stderr_sha256": "f3eeb77a7a590baef67e122c2ee8714ca219f90197a3fdfff0eb732f6deb2f9b",
+  "stdout": "node-single-output-owner.stdout",
+  "stdout_sha256": "ec73186a19e221f5f7f4d195178fc57e240a899f5cf6ef2689c678e3f903b64b",
+  "test_harness_counts": [
+    [
+      "1",
+      "0",
+      "0"
+    ]
+  ],
+  "timed_out": false
+}

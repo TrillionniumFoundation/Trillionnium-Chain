@@ -1,0 +1,50 @@
+[
+  {
+    "label": "preflight",
+    "exit": 0,
+    "seconds": 0.054,
+    "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+  },
+  {
+    "label": "merge",
+    "exit": 1,
+    "seconds": 0.195,
+    "sha256": "394722d1d7a5c20b6c03c027893fc9f3292ab6601165a0e98973f2351b8746ba"
+  },
+  {
+    "label": "stage-resolved",
+    "exit": 0,
+    "seconds": 0.04,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "typed-pending-wiring-negative",
+    "exit": 0,
+    "seconds": 0.263,
+    "sha256": "1b5eeffd4ebf5b668abade1e04b41d7108c2c56cd226cba6f68644acd1610b86"
+  },
+  {
+    "label": "typed-pending-source-negative",
+    "exit": 0,
+    "seconds": 2.271,
+    "sha256": "a041fbd71d7cb7e0fda11521d45152ae7e92b1845f962e510ca6f7c0afcc9b46"
+  },
+  {
+    "label": "current-corpus",
+    "exit": 0,
+    "seconds": 0.668,
+    "sha256": "5f1fe207ff94b51831ba165f387faaaed9a527754a4bce334fb5c20cbb421546"
+  },
+  {
+    "label": "current-ci-contract",
+    "exit": 0,
+    "seconds": 0.076,
+    "sha256": "04a27d4ea2af1ccbbf7ed70f56bad64b02ba958a2645254d6d547d8a28102c55"
+  },
+  {
+    "label": "repository-check",
+    "exit": 2,
+    "seconds": 0.013,
+    "sha256": "6d70e549b960f0e949b35ea5e11563de6f6bf78c6fdbe45081244f5dd7689dfd"
+  }
+]

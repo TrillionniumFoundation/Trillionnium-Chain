@@ -1,0 +1,30 @@
+{
+  "schema": "trnm-published-candidate-readback-v1",
+  "candidate": "32989461a183dd5cc723100721e409a5450b72e3",
+  "tree": "e5785f836110110fff9f8569f2e737c3ea72ce29",
+  "parents": [
+    "f34f432c6c533c651ab74f69f4f43aef326eedcb"
+  ],
+  "main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "pr": {
+    "number": 847,
+    "head": "32989461a183dd5cc723100721e409a5450b72e3",
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "prospective_merge": "aa4544d1827958834fcad7305df58de135d4cb14",
+    "mergeable": true,
+    "mergeable_state": "blocked",
+    "merged": false
+  },
+  "publication": {
+    "host": "mac",
+    "job": "1a1de6c330d-392-23d3",
+    "state": "succeeded",
+    "exit_code": 0,
+    "script_sha256": "841384c85d3d408edbe93f55e73d3ca5683031f9f43e11bab795dd12f2274322",
+    "package_sha256": "869391b287783dcf35c4132f72df64c4656c4870d3519a6f9b5bbdca214603d7",
+    "force": false
+  },
+  "main_changed": false,
+  "branches_deleted": false,
+  "protection_changed": false
+}

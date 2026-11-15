@@ -1,0 +1,8 @@
+{
+  "path": "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/.hepta-lock-fa315bfdb1bf38a1ab881e1d",
+  "bytes": 0,
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "inode": 47091166,
+  "reason": "tool-owned persistent file-lock inode, excluded only from local untracked inventory; no source/test/workflow predicates changed",
+  "original_gate_refusal_job": "1a1c4d0c9f4-cf39-453"
+}

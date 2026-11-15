@@ -1,0 +1,13 @@
+    Finished `release` profile [optimized] target(s) in 0.06s
+     Running tests/native_node.rs (/home/runner/work/_temp/target-priority/release/deps/native_node-57d19a3156b78f71)
+
+running 1 test
+test test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry ... ok
+
+successes:
+
+successes:
+    test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 0.04s
+

@@ -1,0 +1,2335 @@
+{
+  "complete_fixed_grid": false,
+  "control_expected_outcome_observed": null,
+  "dense_eager_over_sparse_lazy_cpu": {
+    "denominator": 50854458,
+    "numerator": 50237503
+  },
+  "factorial_cpu_differences_ns": {
+    "interaction": -636768,
+    "lazy_minus_eager_dense": -506821,
+    "lazy_minus_eager_sparse": -1143589,
+    "sparse_minus_dense_eager": 1760544,
+    "sparse_minus_dense_lazy": 1123776
+  },
+  "fastest_adversary_lower_bound": false,
+  "hardness_accepted": false,
+  "independent_challenge_samples_per_shard": 8,
+  "independent_hardware_qualified": false,
+  "input_bytes": 7225740,
+  "input_sha256": "94b2cfcb956b17561d22a7470ff6822a70c3b632b7f673908a0037f9b310108a",
+  "matched_full_search_streams": true,
+  "material_identity": {
+    "a_sha256": "14ee979c1057cc574d656e97a28db83f8a078531f433960c773a8295eed23f62",
+    "b_sha256": "0b2c54394d5829911bdabaa96f35c9f2d7782b3dc456c27832462962d55d8815",
+    "provenance_verified": false,
+    "source": "synthetic-fixture",
+    "task": "3928df2604028b7376234282da5e32d8da27e069781f80a0d2b5e1a837bb72b6"
+  },
+  "material_setup": {
+    "cpu_ns": 926876,
+    "wall_ns": 930448
+  },
+  "native_execution_authenticated": false,
+  "observation_coverage": "one-complete-shard-only",
+  "observed_complete_shards": 1,
+  "production_activation": false,
+  "public_network_ready": false,
+  "public_service_measured": false,
+  "qualification_status": "HOLD",
+  "rate_diagnostic_scope": {
+    "aggregation": "ratio-of-sums-including-every-setup-miss-exhaustion-and-materialization",
+    "common_material_setup": "reported-once-per-shard-separately-not-added-to-each-strategy",
+    "confidence_bound": null,
+    "cross_horizon_aggregation": "none-shared-search-prefixes-are-not-independent",
+    "denominator": "one-actual-setup-and-all-complete-transcripts-tickets-and-proof-materializations-including-misses-and-binary-trial-retention-excludes-evidence-digests-hex-json-verification-and-retained-buffer-destruction",
+    "native_chainwork_observed": false,
+    "network_work_share": null,
+    "observation": "finite-recorded-cohorts-at-one-fixed-strategy-class-target-and-reuse-horizon",
+    "work_equivalent": "recorded-relation-valid-target-hits-times-required-target-weight-not-ledger-chainwork"
+  },
+  "record_consistency": "PASS",
+  "record_counts": {
+    "campaign": 1,
+    "candidate": 64,
+    "cohort": 32,
+    "end": 1,
+    "material": 1,
+    "product_mutation": 256,
+    "search": 256,
+    "verifier": 1024
+  },
+  "required_complete_shards": 36,
+  "required_target_weight": 2,
+  "resource_fairness_qualified": false,
+  "schema": "pon-w1-preparation-strategy-shard-readback-v4",
+  "search_fingerprints": [
+    {
+      "attempts": 3,
+      "sample": 0,
+      "search_index": 0,
+      "stream_sha256": "43b71a2cefc2b46669f3122bb4656f2c4775bd4a23ecf2cf1cbda2bb9123a151",
+      "winner": {
+        "challenge": "7b155206e060be1fa8ff668e2772f8819861d763547e8c369071192c19c96a79",
+        "proof_sha256": "ed2d12130ae69fb8068090ee79013b5feaca5df3a656795acfe345c019d86b3f"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 0,
+      "search_index": 1,
+      "stream_sha256": "c21ebfed17723ebb06af4176133e8c6621a6e3b0e97cf71aedcb2a50e67e08cb",
+      "winner": {
+        "challenge": "be56069032ee46a4828591ad516cf30c1286489a290bbcd578b3c89ef92ff66c",
+        "proof_sha256": "908e8ff8940fb5ecd2e1279fb0fc02a43bae0159f5be5b4d69fe6db7eb6e37d9"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 0,
+      "search_index": 2,
+      "stream_sha256": "087d41ff34938d256449e487b3161cad93d6e3417cee5e64a68a7630b7c20a58",
+      "winner": {
+        "challenge": "7b7e3d92b56eea397c09f0aecff502f05bfd1ac09dcd3bbb32a1a1ce6742b5ce",
+        "proof_sha256": "4517c7d38c0406632af07c21c8a39960cac092eb386b228323b03a9066ac1cfc"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 0,
+      "search_index": 3,
+      "stream_sha256": "22bece08e4b48559d47ae59fdb63e37832a7d6892b5951653ead0d3407a6cf57",
+      "winner": {
+        "challenge": "dff67e1ba3025c3595985e0e31e75ad2ac86defad0a9a6dcbdec255bd47a5ea5",
+        "proof_sha256": "d36367111d6d48e3b5132dca867e45cfd2b586c10526d78e6eb835ec943bf33e"
+      }
+    },
+    {
+      "attempts": 3,
+      "sample": 0,
+      "search_index": 4,
+      "stream_sha256": "5a7a8a8d9505dfb5794dcd101718ce343643e4a2a8699c6958a0284833f82d23",
+      "winner": {
+        "challenge": "51c1b9202a438c1927bee14d9427f099131fa3dd635605d7a4d21e49ae29c8bb",
+        "proof_sha256": "48119683b374a35227bb967e26bcf9c6ac4a8c655010b8afc1bb78e76b1f8ab4"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 0,
+      "search_index": 5,
+      "stream_sha256": "960b72d84e396bafb7f558f839a2775b51bbd19a0a1ae15fd413f9b3857c54d9",
+      "winner": {
+        "challenge": "772863e7defaa5ad9e42d26dabe663f4ad0a04d6febb6f241789ab29fdf1ed76",
+        "proof_sha256": "5bb1ca7cf5038b34a0c4bdbca792ea681321419fa8a8fbc296a74e0e8dcd3ad5"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 0,
+      "search_index": 6,
+      "stream_sha256": "e4230ecb26c51b51f305a8fae5c6f311ef1369e6048bc3eeb1ed1fd88edb43c3",
+      "winner": {
+        "challenge": "8e2e93c4a63db38924ae5f1548f5c7693403b52ae18985e25195a4b7e5472fec",
+        "proof_sha256": "9c5e8601732a2a5f15713a48866c27af65fd1c966ca06334f14e289fa618177c"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 0,
+      "search_index": 7,
+      "stream_sha256": "7d250893b6ad6d6a690375ef2630766ba58d0f7d3babeb861ef74ffe2308e883",
+      "winner": {
+        "challenge": "0a03495fcd0aa6aad50ad5f641f2ba69d1a1985cabcbcaa6884e4718ee929845",
+        "proof_sha256": "502482647aaa5eae6d128bdbefb42eaed264c79e85ba41de580896c45f02d556"
+      }
+    },
+    {
+      "attempts": 2,
+      "sample": 1,
+      "search_index": 0,
+      "stream_sha256": "1b2e78fa507231b9531d07ad1124754b9d7f0fca179dff074c009198e946405d",
+      "winner": {
+        "challenge": "6ae0347294253c115203640727aa54672a7c006ebebe949a23bdea5b127b0bec",
+        "proof_sha256": "4f14d2901930d5e3e578cca07ad153436a22f7db281e9496b48402875cef5951"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 1,
+      "search_index": 1,
+      "stream_sha256": "89548e2711c899293b28e9c8faac25340f52ca0aa07192f61e4d49b85b612134",
+      "winner": {
+        "challenge": "c2508e820909a0bbc3699bddab83c7ac4bf2e58c2f97ea87f3fd131e3a7288fb",
+        "proof_sha256": "be77ce181af7df40b8832ae913505dbf4797117ba00044baf214d3c42cc015ec"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 1,
+      "search_index": 2,
+      "stream_sha256": "dd1099e35f351b59763123e3b647932182351090f3c3009019041234efc26369",
+      "winner": {
+        "challenge": "c4efe2b627c76f886f2ca3b475cf85d3f18a966732cb2dc8537b967b82defc1c",
+        "proof_sha256": "c29758357e18ab18fdd5892da13ea2902704817406d2557b1cc65a186faa3f60"
+      }
+    },
+    {
+      "attempts": 3,
+      "sample": 1,
+      "search_index": 3,
+      "stream_sha256": "8ca4e70d65b6233223ce49b7b8f7f5da38b50933c9686f32651cabf0e95c67aa",
+      "winner": {
+        "challenge": "8baae7281125ef420ba79f4d30769f8b95a4fd21deb0eb87e57ffc9ee76659da",
+        "proof_sha256": "017383a299b2b79afb8a399b691fbbbb03641432052b8f47f6e5e930169d4d5c"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 1,
+      "search_index": 4,
+      "stream_sha256": "2688d9d52f041acee4b30220038857aa240736b62fb469592d0a0bb917e6d085",
+      "winner": {
+        "challenge": "40c1e1f3c82281ee1f0d79d0dc1b5679bbb57748b29567ca5633c91d5c978fcc",
+        "proof_sha256": "881de097b80db4f989e5ff3a970fdbe1ee3f2bcc9d92e513b17b592b7bf06fd3"
+      }
+    },
+    {
+      "attempts": 2,
+      "sample": 1,
+      "search_index": 5,
+      "stream_sha256": "d542dac7213dae62e4ef8c8058b3ef0bcf87fd54497e8ed26015e7144255321d",
+      "winner": {
+        "challenge": "6f4c7c575916602aa84c838997cebd33724d4acbd996c21a907f526ea634a9d2",
+        "proof_sha256": "b9654ec3a383b89b491d06776ee40b368ec3033b0654bfac32785469286efbfb"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 1,
+      "search_index": 6,
+      "stream_sha256": "a9b410ec4f9d92082c729196d5c0d6baa3913f2f31c345f75668d7590846aa4b",
+      "winner": {
+        "challenge": "f880235b881a3e7b1020d382e2b20a2af8c2a8817c74b861200081074a0ed128",
+        "proof_sha256": "3d2e452051718c27eb8579cd67ad5a6265378c72629bbfbc1cc00543d62b4b1f"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 1,
+      "search_index": 7,
+      "stream_sha256": "091542d765072d2213e972b324e43c83501c550c513e42fe763b2e83a7a5eba3",
+      "winner": {
+        "challenge": "6d3c77226b93ea8c2b9cd3c4599881038ab09b380942b8b81df08029a212fecb",
+        "proof_sha256": "ef7463722483c8627f74feed7377a49257df917fb20e54bd8f553f427471a6e1"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 2,
+      "search_index": 0,
+      "stream_sha256": "20ae88cf6264a73e4bb8357ef9e112ec5666834e5ba5e122a6c988ef9a4e845c",
+      "winner": {
+        "challenge": "967d6e2e8df1edc1b7d89fc5636b585d7cdaf928c5c6d135b66340c2a3362752",
+        "proof_sha256": "f7cdeb15ea323ab9780d2385eda94b1edbcf54d12e513c99a9772ff9cc0df104"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 2,
+      "search_index": 1,
+      "stream_sha256": "278491d73ddb9e7930f58a14bda95ae4e29a5f17d5fbc141cac384d9b027deec",
+      "winner": {
+        "challenge": "1a36687b88036c4b2853e1bc52c8e64d3480cf4b6c6b42666b81362e93ad660e",
+        "proof_sha256": "335f76894b0df4cd0dfc62a757790dd49ebae179dfd1b7e63133d1dd19515f1e"
+      }
+    },
+    {
+      "attempts": 2,
+      "sample": 2,
+      "search_index": 2,
+      "stream_sha256": "9c7ff7ae6cd24f9b2d5601d2b9a95a9c554ed0d4d632fac9cbc8320a0dd158f3",
+      "winner": {
+        "challenge": "8c9abd4c82af814d8f193eec4a8c35e3478a418b5e7fc9978ba53cc6f97c5dae",
+        "proof_sha256": "d435b438f36e6e82ba995ae5f5f616fbb85ed6a47fde080786847eb34997d3a8"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 2,
+      "search_index": 3,
+      "stream_sha256": "c026748e55727e88b777373a431ba4daf04c0efbabcd2fb1607a56d39308a561",
+      "winner": {
+        "challenge": "ce086fb5ec453806172ffdec78ec8fa05a5fa583b47854c271577b1558dc387a",
+        "proof_sha256": "17cf248b5032d021abe7fec53bd880222d0c687393532b6479f7c1e4660f716c"
+      }
+    },
+    {
+      "attempts": 2,
+      "sample": 2,
+      "search_index": 4,
+      "stream_sha256": "22ef87b2f539c35f6a95a0d4003d4f9c264e1b0ee2362751cb7d76ea0a513afd",
+      "winner": {
+        "challenge": "c67cf794e5bdf29fce727804ea7f617e1e69ec8a83b73ab6eeb4b882ec363994",
+        "proof_sha256": "c98fc53125a89dded25c32a7650723c64a47a6d6149046c72655bf01181af321"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 2,
+      "search_index": 5,
+      "stream_sha256": "8c57775b4bbe22ac7edfdbcca774b640d8712574553a73aa4eeebbac24751ce1",
+      "winner": {
+        "challenge": "592cbf0af65f4f19ad8eef50f62eddf08ed904b3556dcefa168e668aa0e68506",
+        "proof_sha256": "aa540981046d2b97277bd129273d0eecdd2d2ee99cc261703d86a6da7d550494"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 2,
+      "search_index": 6,
+      "stream_sha256": "6f2bc75ec752f51cf516e622be6ee20279ff0ecbd284d5b266e26bc48a202c6d",
+      "winner": {
+        "challenge": "ca03671cfdaf75bf60a5b3f9981ccd5fa938e5dc880b0d6f81797bcb3adc7441",
+        "proof_sha256": "188dba6b24f8c579c407bb566eef53b492d61876936de528750be9c3610d50c2"
+      }
+    },
+    {
+      "attempts": 5,
+      "sample": 2,
+      "search_index": 7,
+      "stream_sha256": "5806e914c683d9f4215f2c6ce693c2479ac7978bef4d5e0064afa1d11a754dc5",
+      "winner": {
+        "challenge": "df1860b3590a23faca123155720d7176f0a92816b5134d408771181de6fe6359",
+        "proof_sha256": "20e8667713999977116ae856765a8bbcdbc3e3b1907ce8246c7d3a7623388091"
+      }
+    },
+    {
+      "attempts": 2,
+      "sample": 3,
+      "search_index": 0,
+      "stream_sha256": "e07e4bd00e2e7df4e0c1626b3cccf18589a52a8ffe02345ac56a8d55aab71015",
+      "winner": {
+        "challenge": "75a6f7d8e1f257cb1bf4f5a8bb0d3e62caef422f2808072c9d5a83f8c1d18960",
+        "proof_sha256": "d0663c1c67387b24f5de317d000213a31005cad7f013a7719ca23d0ae50cf7ee"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 3,
+      "search_index": 1,
+      "stream_sha256": "f87768997c24b7d19b3aeacca4474ce71a75446446442b73fbe66cd030fca802",
+      "winner": {
+        "challenge": "b5d5987585d4401c6983c885aee8e1a6b6b6f0b97f5175eef68a15a97deeffc6",
+        "proof_sha256": "17ba03269fc3eec7d5a4401dfec3174097e95c63f356db25f8672a5d0fd330b1"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 3,
+      "search_index": 2,
+      "stream_sha256": "6bd52d60a08b4a2a450c0070a97fe3d68b9a74f8cb310126c4e01377b1b8e72a",
+      "winner": {
+        "challenge": "dd464222d3663815222c1aa47cda25ee97b2f2cd6436d742f64f1dd723c4d837",
+        "proof_sha256": "f869d30859308901083686cafcb6673e89d1020895d6d9fef6d7b69af7ac4c23"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 3,
+      "search_index": 3,
+      "stream_sha256": "f155fd95a157c143f2b78d992fe2dd9d53410037517185d629274082c2cc9071",
+      "winner": {
+        "challenge": "b27b6b777986cf2b850a75f3f5ba571e0d0ea3ebda6cfd08675b3a844916aee7",
+        "proof_sha256": "a33b674755da9eeab24643e8b93ad136235bff7cda814d8ae877b54c21a9dd27"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 3,
+      "search_index": 4,
+      "stream_sha256": "3226e10ddb6caef6ca287e2da5c3c08538c3830d764e588e304bf7b7e6c88445",
+      "winner": {
+        "challenge": "9a62ddb248fdb1540223982ef18ff44020fc2910a1ca5ca695b0720514e171ac",
+        "proof_sha256": "aed3ad0e1a93fe1d18556285a398b15cc4bc0cb792452a4150b12fa6f30ead96"
+      }
+    },
+    {
+      "attempts": 3,
+      "sample": 3,
+      "search_index": 5,
+      "stream_sha256": "d76463cfb8026136f951a2cc4839c16c233dbfa940d5d41506c06dc036a98f66",
+      "winner": {
+        "challenge": "0156db51da6460df8775e966ce1e369f12215c3731d375fec7168fe33706264c",
+        "proof_sha256": "720e4771b26c8ccf3c775bfebc6e84c3b425ab8ad90868aaf7490c1f25810bbb"
+      }
+    },
+    {
+      "attempts": 6,
+      "sample": 3,
+      "search_index": 6,
+      "stream_sha256": "23b5afc899e8adb9d8465964fbae8801913833c86197d955f48d974dfdde6770",
+      "winner": {
+        "challenge": "0375b74f9b1f2ceeaaf12ced25e26f419ee6fbc232b2571a682622aa86520c16",
+        "proof_sha256": "15e653210eb4b817ec973687c603a86ab1b907b5794765e69b83ab28f1d24284"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 3,
+      "search_index": 7,
+      "stream_sha256": "56b6148f9799e907beff089a0d2ab4071f5f43c0ddaf66171205b61d1aedf6c7",
+      "winner": {
+        "challenge": "766b63204c22e4f421bf67d0cd10d258f139ead4abb4c005dc305ffb0f22f528",
+        "proof_sha256": "a9facf7c451b5b109d22707a82bdc603d6f3556d548a11525df87bea7d876fd2"
+      }
+    },
+    {
+      "attempts": 3,
+      "sample": 4,
+      "search_index": 0,
+      "stream_sha256": "23830418608964130d7cbc10cd2a15fa62dd92de1f08ea1370345ebe2073c965",
+      "winner": {
+        "challenge": "b3f47f1f0c45d4da0f1330f356c217234cf082eda777f7e8448d261214c67546",
+        "proof_sha256": "410b322b4531fbceb94e8f05c9d499c8a28dc25dc852aec12751505b72655e64"
+      }
+    },
+    {
+      "attempts": 2,
+      "sample": 4,
+      "search_index": 1,
+      "stream_sha256": "088f92eafbd77ad082e22938d3224930d12c277426fc821426128a1932f12da0",
+      "winner": {
+        "challenge": "ce1f799192223e95b03bebbd5ab5c5a16f8984d40886c5140a24ec704972b472",
+        "proof_sha256": "0deff912fa032e0200d5a889dd8ca669dfbfa3fab7409aea204a9138869b2289"
+      }
+    },
+    {
+      "attempts": 2,
+      "sample": 4,
+      "search_index": 2,
+      "stream_sha256": "32b3c75cff3ad447d6c581fc5f19760782b1531cda17f878a5f521e5dc207a73",
+      "winner": {
+        "challenge": "2acab9f722b54727a7dcad818fd3dda8b897fac6f887950236db30498452514d",
+        "proof_sha256": "4f946c80bbb15723288546f6d6e4d132751f83f2604269d1c804dab38b971fde"
+      }
+    },
+    {
+      "attempts": 3,
+      "sample": 4,
+      "search_index": 3,
+      "stream_sha256": "dba5e6c08ec2d0b564c8b1e947f78cc14ab167a121c4df3cd751bd8f09e1b15b",
+      "winner": {
+        "challenge": "04563ce9b15458de0e2b5c47c6aacc5f32a163c1f0cdb5b3270d0f9672000c5f",
+        "proof_sha256": "2c0751bb9e16387105ddec360b71642c761ddbe337fa6a46aaeb424d83e7c5ad"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 4,
+      "search_index": 4,
+      "stream_sha256": "8e396450e79cb06dc0ff9a766394aedeeb46bec7cfa7a0c3447bdc58328e43a7",
+      "winner": {
+        "challenge": "54dc4f194b3d2d6e8a331d6e642a87a663b898bd894e81579e642bbb4b361a38",
+        "proof_sha256": "65ed6847b2a49e4074a3a390566345b704147f7e97f232c19ef4dfe948f022dd"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 4,
+      "search_index": 5,
+      "stream_sha256": "7cae99843b6777720a3672b1b47ad1e9aa3b9f81ffe19830e1813f3f0fe9a3db",
+      "winner": {
+        "challenge": "ee320182d72fb3a6c2225f377094f9e2e440fbd7d9e6a47593ca7db7c3f1d724",
+        "proof_sha256": "57dc319dd88077e4b28e60f7e64dd0b289e8f24e20df7aaf80783914331f9945"
+      }
+    },
+    {
+      "attempts": 2,
+      "sample": 4,
+      "search_index": 6,
+      "stream_sha256": "f7931ed189a7576f9564e40c0c1779a6c283b094fc874f544d88e9b001318a35",
+      "winner": {
+        "challenge": "bad4cb26f62b95fabdd3f53d137aa99c9af534fc981ab68d7559c625aad2079c",
+        "proof_sha256": "8b3140d74646469ccb9753d833729b19d55fa8dad917c01d94397afa7fa96412"
+      }
+    },
+    {
+      "attempts": 3,
+      "sample": 4,
+      "search_index": 7,
+      "stream_sha256": "7232950b995d255eb8a6b90e7d3e083f9823e88a7d5fa963a1a55399f8c33b9a",
+      "winner": {
+        "challenge": "39c2c1efd4c8610724c512d8845512e222fac2c32e2cd908f2d7bd155848cf76",
+        "proof_sha256": "cca227609af5ea52f872a3826ceaa4d9ebd2d88e85f05655fc9acfacf6b64e6a"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 5,
+      "search_index": 0,
+      "stream_sha256": "a7c02bf9849da04ba4eebf4c4380989aa35cc763fccc0ded3534d359642e4296",
+      "winner": {
+        "challenge": "39ee51aeef73d3d5d25e55dd83217cb31729b4b23086b333a51d16a698d22286",
+        "proof_sha256": "2db611daa90ceeb2d974561c4413dd344a0ae3392688728ece14da9876c56598"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 5,
+      "search_index": 1,
+      "stream_sha256": "94d38c3d666fbcdb8778eef2f345e76e70864df1398028ba9f74285b573425b9",
+      "winner": {
+        "challenge": "874fa6a231c8cff5df497318f5c2a3fae7c54c7424675bbf2bc00ed070ed87fc",
+        "proof_sha256": "5a0ad2d1ca9b8b5b9d3a3f010d6958d09604865e7e9d3213bd0bb9b791d96b30"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 5,
+      "search_index": 2,
+      "stream_sha256": "1c0b16138cede2e41d286fac738980515d400818c6835b1034041643f8e1fca8",
+      "winner": {
+        "challenge": "d21bf1b91b0d1635f81e6ee4aae7a05879bb61bcf96192cc81d55688e49cedf6",
+        "proof_sha256": "5ceaadb28cf54d12eda01d76eb9f4c1d1b5d17e063cca56b420a5397ed1b09dc"
+      }
+    },
+    {
+      "attempts": 6,
+      "sample": 5,
+      "search_index": 3,
+      "stream_sha256": "e4332986b642e959f82dc1c0e0109eb920a5a8d222b4617e13b29d85a0e1f45c",
+      "winner": {
+        "challenge": "a5c94d28d46d35bdd5ab1a983c3fc49e03bc0edc81d9822618f40ae450a5142b",
+        "proof_sha256": "4e7b02ad4a3579cb6a885cfc301f292a469adc6365b8e1fbabb30418230d1abe"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 5,
+      "search_index": 4,
+      "stream_sha256": "29c82df68ce5b49170c397a1e116a5b0733164db72afd1c4905ef7515fbf97d6",
+      "winner": {
+        "challenge": "fb38e66f0c18ef7da0b591e78b374f99558439501ec5d828f94c4aa238849f07",
+        "proof_sha256": "0b1dcbbe5f390bdaac3ffedf0ac9d3d6d680fb3705cd95f6b0dc3995f928d8dd"
+      }
+    },
+    {
+      "attempts": 2,
+      "sample": 5,
+      "search_index": 5,
+      "stream_sha256": "66a4a55974181444d7ede4087ede050bcaecdf408355284afcef23ec056e5ae8",
+      "winner": {
+        "challenge": "ebe210012546f140062f8bc2894faacb17f8299611a1684fdc1008895f3a7e66",
+        "proof_sha256": "a6d576710e61c8939bf4c9b9b81f8df0c9dc0e891d5411c21cc30b431e8751d3"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 5,
+      "search_index": 6,
+      "stream_sha256": "ccd1b925f8d050faf9b76287b74ef137fc0162747aea2379396a6ad831a93145",
+      "winner": {
+        "challenge": "ec12749ca084aaafa76e4dc89e59c722cf69c38a128c7a6121abbaf0f407af39",
+        "proof_sha256": "5d1d6a01d962e8984ebd228388bf861793406754600b961d13dca5fb3af345b9"
+      }
+    },
+    {
+      "attempts": 3,
+      "sample": 5,
+      "search_index": 7,
+      "stream_sha256": "2d544dbf048bd2162db810bc438dc1d22bc0fa0df642143117b5c4a9ddb8fb2b",
+      "winner": {
+        "challenge": "325b649972d06854300a45c9cd9625fe645bcdd7ad1b014a28bac8146daba53c",
+        "proof_sha256": "37494a0d168617933c9af057bfbcdea26bae0df999cdfcc2d520e2bf0f1a7809"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 6,
+      "search_index": 0,
+      "stream_sha256": "00bb3af91ae93a13277d727bef0d82a5e23652b1d5ecb96dc5f4eceac4ea2898",
+      "winner": {
+        "challenge": "568cc29a69e92e0165e8dc411c1e3b124ee257ac1786287c393a16b858498bb8",
+        "proof_sha256": "ce9cec0ccb72b6eda93c2ed1723bd3a94253553284e62dd38bbb10ed5e4575ec"
+      }
+    },
+    {
+      "attempts": 7,
+      "sample": 6,
+      "search_index": 1,
+      "stream_sha256": "d816f0bb7e30c8ff9f259c093f25fcca5b7d844df26508386e3950810e06f853",
+      "winner": {
+        "challenge": "705f96bce2954a980ae6938741dbd08fee22858134464f9f9ec78d7fbf425327",
+        "proof_sha256": "66db87cfc1875e1800f8fe5d471260725175a71a6122d0f0efc83dfe37fb29b3"
+      }
+    },
+    {
+      "attempts": 5,
+      "sample": 6,
+      "search_index": 2,
+      "stream_sha256": "9f80c99e3e8cf9d3fab53a631f969c3eebadde60d438f897b0e8160dcef80368",
+      "winner": {
+        "challenge": "65daeb2ce21877ba6577d8f0fcc0ce43c4dfc08ed5c5cb1eb0586d525bf6811e",
+        "proof_sha256": "25f1cf8c911f6cea93dfa1f3bd49ecf9b29f7d45e065dfbb85af09f8e8dd2a1f"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 6,
+      "search_index": 3,
+      "stream_sha256": "2e2acfa63975c02c78e07e01365e1c725028b03b1f801781c94e79a80b2b4ce4",
+      "winner": {
+        "challenge": "2d2e4ac5dfb3f333a698215f0d163a382064048ca2b70199f52b92df09fd3e3a",
+        "proof_sha256": "fcc8ebef7f7e269dd0512e6186bef62df1f4cc587161913face0f0432ec82507"
+      }
+    },
+    {
+      "attempts": 2,
+      "sample": 6,
+      "search_index": 4,
+      "stream_sha256": "7fd7ec76497433ad11d08fb92f179003f724801df189754f127954bfaefbece8",
+      "winner": {
+        "challenge": "0bc3ef904fc2e5c8e6fdfc80e59c776e96b168aa9e7c65c14f5de3d3d4e2a049",
+        "proof_sha256": "d1aacf880c581934ae01a30c2b16a743650edecab3484672fc4dda96bef0f849"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 6,
+      "search_index": 5,
+      "stream_sha256": "58894a2f0032e08ce1ee9410003311ff1f28a77157417c75ab1bd4511c27d304",
+      "winner": {
+        "challenge": "51da2cc146830c6b1409b20667b9415587a9cd02c29fd4ce16d230b4b937b626",
+        "proof_sha256": "7b76771d2ec94ac064cba8e8164a1b57751a960ffceb879100910039c17bb739"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 6,
+      "search_index": 6,
+      "stream_sha256": "4e556a3e30b94c90612182049706f4bdcc6afb57d3c73a12930ed0998ac75233",
+      "winner": {
+        "challenge": "8c554f267140d99ed01dcb4ea288b857b7442ecae0876541e3ee0308947ea417",
+        "proof_sha256": "4d1d61378c649bb0d8083c56c42cf3b17cdcc1be80e7c2b54014c4abfb0cca55"
+      }
+    },
+    {
+      "attempts": 3,
+      "sample": 6,
+      "search_index": 7,
+      "stream_sha256": "e94b04cf8de93404c281167d94722b83991fc8f1d5ddd28ab733d367d4aaaf21",
+      "winner": {
+        "challenge": "044bb77b31d857be7ed6b0c8a7b9b7c5318d4c84a99a913f6404b96da16bd34f",
+        "proof_sha256": "3b7e4d40aa9b38885878dfcd4d320bfc51441ca4001c9a95be6ed091fbbf5f96"
+      }
+    },
+    {
+      "attempts": 4,
+      "sample": 7,
+      "search_index": 0,
+      "stream_sha256": "dea942836b74c9bfc7d0d017ffa2c98b7c397347760fa87d5e48811a80999b1e",
+      "winner": {
+        "challenge": "40191d8efb4e1de914ce8da0f1ba1213a5f7f788efdf0d4d2cf2e4c8cfeed51d",
+        "proof_sha256": "0033adc53892d77981ce4529ae39b19ebfc94fc7533713f4e19d0e047a46dd23"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 7,
+      "search_index": 1,
+      "stream_sha256": "d0a3db45a4aa50b8ed60a9a485f9ab3dd0ea6895c59d088c325dfee9d57ede05",
+      "winner": {
+        "challenge": "cb52b7b8557ce5bd5bbab70d0d97fd4e78f5ba05bb7e45342638241ffbc200e7",
+        "proof_sha256": "6b9c8427d8c83ccabb445227a5bffa121de6a6d9dfdac29ab860c369eb6506b6"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 7,
+      "search_index": 2,
+      "stream_sha256": "b4430fa4e3632a526e2156b58401d29876e7af854735b0783511fbfebf539d33",
+      "winner": {
+        "challenge": "cdd97a78e04484c4a07608ab1b61c89e0db3c2825f1750f12219bc4a03447a45",
+        "proof_sha256": "e35b2f504cfd0e002fe4d836f84125890e7b3196ae66f358a56d1eec285daa3f"
+      }
+    },
+    {
+      "attempts": 2,
+      "sample": 7,
+      "search_index": 3,
+      "stream_sha256": "4f6643d6d83e4a02f18d9d8499fd1dd933282179067783e35c8e64a4daa5f6da",
+      "winner": {
+        "challenge": "035cecf6d2d633641e32a58c410885e0c0f183cdcd3f6057452c9eb6079c857e",
+        "proof_sha256": "1d67d90f3376b08f20cff74f209923d8737143a74b31599df19479fac1a1c1b0"
+      }
+    },
+    {
+      "attempts": 2,
+      "sample": 7,
+      "search_index": 4,
+      "stream_sha256": "d4862c4d586910ef9a3d5339d7e9c25df816fd975bd90fae557c371441db48b3",
+      "winner": {
+        "challenge": "aba2ca43205eee4377387e24de89da812506bee2243d0f60c873e6959fc25d72",
+        "proof_sha256": "d39ea48929a5974ec672abc5d2417fb3175891862729ae4499ea6df398cdb9a9"
+      }
+    },
+    {
+      "attempts": 3,
+      "sample": 7,
+      "search_index": 5,
+      "stream_sha256": "60b49944b164e4e6dde9232195b069e12c37b091f2de4d0494a1e463a8ef858d",
+      "winner": {
+        "challenge": "6e7b12f10dd47f8aa63a731a05a0f435c9e2a9f4fd15d8be1ca935a7e0ed43e5",
+        "proof_sha256": "e9191d168b337225da9a5f7d84dee18aec2220b000920434ff995d8e5f9cf688"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 7,
+      "search_index": 6,
+      "stream_sha256": "3a30a227435fae67a5508768a88be935066470c2de56178d5ea149be11ba66b6",
+      "winner": {
+        "challenge": "0e5fe3bce448d698e915e6bcafa68e59c7805eb9dcbc7b2c33a88a6fc1377bdf",
+        "proof_sha256": "9804edf8a54b12fb08f870459699a0fec7a8ae5b8c9141206fab99bbf64140ee"
+      }
+    },
+    {
+      "attempts": 2,
+      "sample": 7,
+      "search_index": 7,
+      "stream_sha256": "cc6ece2aa5f7b62abb85a8f0596c9fc0de10f5947722d43db9603e73cb1beeb6",
+      "winner": {
+        "challenge": "5989800187fa684a65fbffe5d45545c11f378038863ca96bb9994a9e2636935b",
+        "proof_sha256": "334788925e1c001cb5727d62f2d59764988bda68189fb64531c6787806557379"
+      }
+    }
+  ],
+  "selection": {
+    "class": "rank-one",
+    "purpose": "search-cost",
+    "reuse_winners": 8,
+    "target_index": 0
+  },
+  "semantic_alerts": [],
+  "strategy_costs": [
+    {
+      "actual_searches": 64,
+      "actual_setup_calls": 8,
+      "arithmetic": "full-limb",
+      "attempts": 124,
+      "cpu_per_observed_valid_winner": {
+        "denominator": 64,
+        "numerator": 50237503
+      },
+      "exhausted_searches": 0,
+      "inclusive_cohort_total": {
+        "cpu_ns": 50237503,
+        "wall_ns": 50329806
+      },
+      "materialization": "every-attempt",
+      "native_outcome_counts": {
+        "legal": {
+          "Accepted": 128
+        },
+        "product-last": {
+          "Product": 128
+        }
+      },
+      "per_sample_cohort_totals": [
+        {
+          "cpu_ns": 6171622,
+          "sample": 0,
+          "wall_ns": 6180395
+        },
+        {
+          "cpu_ns": 4210962,
+          "sample": 1,
+          "wall_ns": 4217774
+        },
+        {
+          "cpu_ns": 6163791,
+          "sample": 2,
+          "wall_ns": 6171251
+        },
+        {
+          "cpu_ns": 7006502,
+          "sample": 3,
+          "wall_ns": 7016300
+        },
+        {
+          "cpu_ns": 7041894,
+          "sample": 4,
+          "wall_ns": 7052154
+        },
+        {
+          "cpu_ns": 7111018,
+          "sample": 5,
+          "wall_ns": 7120248
+        },
+        {
+          "cpu_ns": 7486014,
+          "sample": 6,
+          "wall_ns": 7518508
+        },
+        {
+          "cpu_ns": 5045700,
+          "sample": 7,
+          "wall_ns": 5053176
+        }
+      ],
+      "per_sample_denominators": [
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 12,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 6171622,
+            "wall_ns": 6180395
+          },
+          "proof_materializations": 12,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 6171622,
+              "numerator": 12000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 6171622,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 6171622,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 0,
+          "serialized_proof_bytes": 590256,
+          "setup": {
+            "cpu_ns": 380685,
+            "wall_ns": 380425
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 12,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 4210962,
+            "wall_ns": 4217774
+          },
+          "proof_materializations": 12,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 4210962,
+              "numerator": 12000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 4210962,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 4210962,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 1,
+          "serialized_proof_bytes": 590256,
+          "setup": {
+            "cpu_ns": 212586,
+            "wall_ns": 212471
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 14,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 6163791,
+            "wall_ns": 6171251
+          },
+          "proof_materializations": 14,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 6163791,
+              "numerator": 14000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 6163791,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 6163791,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 2,
+          "serialized_proof_bytes": 688632,
+          "setup": {
+            "cpu_ns": 295428,
+            "wall_ns": 294826
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 16,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 7006502,
+            "wall_ns": 7016300
+          },
+          "proof_materializations": 16,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 7006502,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 7006502,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 7006502,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 3,
+          "serialized_proof_bytes": 787008,
+          "setup": {
+            "cpu_ns": 302829,
+            "wall_ns": 302157
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 17,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 7041894,
+            "wall_ns": 7052154
+          },
+          "proof_materializations": 17,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 7041894,
+              "numerator": 17000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 7041894,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 7041894,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 4,
+          "serialized_proof_bytes": 836196,
+          "setup": {
+            "cpu_ns": 298503,
+            "wall_ns": 298001
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 16,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 7111018,
+            "wall_ns": 7120248
+          },
+          "proof_materializations": 16,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 7111018,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 7111018,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 7111018,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 5,
+          "serialized_proof_bytes": 787008,
+          "setup": {
+            "cpu_ns": 316460,
+            "wall_ns": 315605
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 21,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 7486014,
+            "wall_ns": 7518508
+          },
+          "proof_materializations": 21,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 7486014,
+              "numerator": 21000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 7486014,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 7486014,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 6,
+          "serialized_proof_bytes": 1032948,
+          "setup": {
+            "cpu_ns": 361657,
+            "wall_ns": 361013
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 16,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 5045700,
+            "wall_ns": 5053176
+          },
+          "proof_materializations": 16,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 5045700,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 5045700,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 5045700,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 7,
+          "serialized_proof_bytes": 787008,
+          "setup": {
+            "cpu_ns": 206927,
+            "wall_ns": 206902
+          },
+          "target_hits": 8
+        }
+      ],
+      "preparation": "dense",
+      "proof_materializations": 124,
+      "rate_diagnostic": {
+        "attempts_per_cpu_second": {
+          "denominator": 50237503,
+          "numerator": 124000000000
+        },
+        "hypothetical_required_work_per_cpu_second": {
+          "denominator": 50237503,
+          "numerator": 128000000000
+        },
+        "hypothetical_required_work_total": 128,
+        "recorded_relation_valid_hits": 64,
+        "recorded_relation_valid_hits_per_cpu_second": {
+          "denominator": 50237503,
+          "numerator": 64000000000
+        },
+        "valid_rates_suppressed_by_shard_alerts": false
+      },
+      "separate_attempt_evidence_total": {
+        "cpu_ns": 2068600,
+        "wall_ns": 2072531
+      },
+      "separate_product_mutation_total": {
+        "cpu_ns": 274150,
+        "wall_ns": 255392
+      },
+      "serialized_proof_bytes": 6099312,
+      "setup_total": {
+        "cpu_ns": 2375075,
+        "wall_ns": 2371400
+      },
+      "strategy": "dense-eager-full-limb",
+      "target_hits": 64,
+      "verification": {
+        "legal": {
+          "production": {
+            "cpu_ns": 36634071,
+            "wall_ns": 36668533
+          },
+          "reference": {
+            "cpu_ns": 49182184,
+            "wall_ns": 49159739
+          }
+        },
+        "product-last": {
+          "production": {
+            "cpu_ns": 34116182,
+            "wall_ns": 34119202
+          },
+          "reference": {
+            "cpu_ns": 48113068,
+            "wall_ns": 48102337
+          }
+        }
+      }
+    },
+    {
+      "actual_searches": 64,
+      "actual_setup_calls": 8,
+      "arithmetic": "full-limb",
+      "attempts": 124,
+      "cpu_per_observed_valid_winner": {
+        "denominator": 64,
+        "numerator": 49730682
+      },
+      "exhausted_searches": 0,
+      "inclusive_cohort_total": {
+        "cpu_ns": 49730682,
+        "wall_ns": 49790134
+      },
+      "materialization": "target-hit",
+      "native_outcome_counts": {
+        "legal": {
+          "Accepted": 128
+        },
+        "product-last": {
+          "Product": 128
+        }
+      },
+      "per_sample_cohort_totals": [
+        {
+          "cpu_ns": 5443612,
+          "sample": 0,
+          "wall_ns": 5449338
+        },
+        {
+          "cpu_ns": 5475449,
+          "sample": 1,
+          "wall_ns": 5485322
+        },
+        {
+          "cpu_ns": 6029862,
+          "sample": 2,
+          "wall_ns": 6038941
+        },
+        {
+          "cpu_ns": 7031289,
+          "sample": 3,
+          "wall_ns": 7041287
+        },
+        {
+          "cpu_ns": 7065600,
+          "sample": 4,
+          "wall_ns": 7065844
+        },
+        {
+          "cpu_ns": 6824322,
+          "sample": 5,
+          "wall_ns": 6833837
+        },
+        {
+          "cpu_ns": 6901636,
+          "sample": 6,
+          "wall_ns": 6909831
+        },
+        {
+          "cpu_ns": 4958912,
+          "sample": 7,
+          "wall_ns": 4965734
+        }
+      ],
+      "per_sample_denominators": [
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 12,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 5443612,
+            "wall_ns": 5449338
+          },
+          "proof_materializations": 8,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 5443612,
+              "numerator": 12000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 5443612,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 5443612,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 0,
+          "serialized_proof_bytes": 393504,
+          "setup": {
+            "cpu_ns": 306265,
+            "wall_ns": 306043
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 12,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 5475449,
+            "wall_ns": 5485322
+          },
+          "proof_materializations": 8,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 5475449,
+              "numerator": 12000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 5475449,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 5475449,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 1,
+          "serialized_proof_bytes": 393504,
+          "setup": {
+            "cpu_ns": 322309,
+            "wall_ns": 322107
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 14,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 6029862,
+            "wall_ns": 6038941
+          },
+          "proof_materializations": 8,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 6029862,
+              "numerator": 14000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 6029862,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 6029862,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 2,
+          "serialized_proof_bytes": 393504,
+          "setup": {
+            "cpu_ns": 303781,
+            "wall_ns": 303339
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 16,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 7031289,
+            "wall_ns": 7041287
+          },
+          "proof_materializations": 8,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 7031289,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 7031289,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 7031289,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 3,
+          "serialized_proof_bytes": 393504,
+          "setup": {
+            "cpu_ns": 344531,
+            "wall_ns": 344061
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 17,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 7065600,
+            "wall_ns": 7065844
+          },
+          "proof_materializations": 8,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 7065600,
+              "numerator": 17000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 7065600,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 7065600,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 4,
+          "serialized_proof_bytes": 393504,
+          "setup": {
+            "cpu_ns": 316249,
+            "wall_ns": 315627
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 16,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 6824322,
+            "wall_ns": 6833837
+          },
+          "proof_materializations": 8,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 6824322,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 6824322,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 6824322,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 5,
+          "serialized_proof_bytes": 393504,
+          "setup": {
+            "cpu_ns": 294216,
+            "wall_ns": 293843
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 21,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 6901636,
+            "wall_ns": 6909831
+          },
+          "proof_materializations": 8,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 6901636,
+              "numerator": 21000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 6901636,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 6901636,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 6,
+          "serialized_proof_bytes": 393504,
+          "setup": {
+            "cpu_ns": 209080,
+            "wall_ns": 209025
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 16,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 4958912,
+            "wall_ns": 4965734
+          },
+          "proof_materializations": 8,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 4958912,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 4958912,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 4958912,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 7,
+          "serialized_proof_bytes": 393504,
+          "setup": {
+            "cpu_ns": 208489,
+            "wall_ns": 208254
+          },
+          "target_hits": 8
+        }
+      ],
+      "preparation": "dense",
+      "proof_materializations": 64,
+      "rate_diagnostic": {
+        "attempts_per_cpu_second": {
+          "denominator": 49730682,
+          "numerator": 124000000000
+        },
+        "hypothetical_required_work_per_cpu_second": {
+          "denominator": 49730682,
+          "numerator": 128000000000
+        },
+        "hypothetical_required_work_total": 128,
+        "recorded_relation_valid_hits": 64,
+        "recorded_relation_valid_hits_per_cpu_second": {
+          "denominator": 49730682,
+          "numerator": 64000000000
+        },
+        "valid_rates_suppressed_by_shard_alerts": false
+      },
+      "separate_attempt_evidence_total": {
+        "cpu_ns": 2030244,
+        "wall_ns": 2031976
+      },
+      "separate_product_mutation_total": {
+        "cpu_ns": 334985,
+        "wall_ns": 355068
+      },
+      "serialized_proof_bytes": 3148032,
+      "setup_total": {
+        "cpu_ns": 2304920,
+        "wall_ns": 2302299
+      },
+      "strategy": "dense-lazy-full-limb",
+      "target_hits": 64,
+      "verification": {
+        "legal": {
+          "production": {
+            "cpu_ns": 33657257,
+            "wall_ns": 33665337
+          },
+          "reference": {
+            "cpu_ns": 48219006,
+            "wall_ns": 48205149
+          }
+        },
+        "product-last": {
+          "production": {
+            "cpu_ns": 33663598,
+            "wall_ns": 33659426
+          },
+          "reference": {
+            "cpu_ns": 48701120,
+            "wall_ns": 48481414
+          }
+        }
+      }
+    },
+    {
+      "actual_searches": 64,
+      "actual_setup_calls": 8,
+      "arithmetic": "full-limb",
+      "attempts": 124,
+      "cpu_per_observed_valid_winner": {
+        "denominator": 64,
+        "numerator": 51998047
+      },
+      "exhausted_searches": 0,
+      "inclusive_cohort_total": {
+        "cpu_ns": 51998047,
+        "wall_ns": 52052383
+      },
+      "materialization": "every-attempt",
+      "native_outcome_counts": {
+        "legal": {
+          "Accepted": 128
+        },
+        "product-last": {
+          "Product": 128
+        }
+      },
+      "per_sample_cohort_totals": [
+        {
+          "cpu_ns": 5987248,
+          "sample": 0,
+          "wall_ns": 5993742
+        },
+        {
+          "cpu_ns": 5622386,
+          "sample": 1,
+          "wall_ns": 5628339
+        },
+        {
+          "cpu_ns": 5049548,
+          "sample": 2,
+          "wall_ns": 5056273
+        },
+        {
+          "cpu_ns": 7090136,
+          "sample": 3,
+          "wall_ns": 7097082
+        },
+        {
+          "cpu_ns": 7351254,
+          "sample": 4,
+          "wall_ns": 7361764
+        },
+        {
+          "cpu_ns": 6576794,
+          "sample": 5,
+          "wall_ns": 6583119
+        },
+        {
+          "cpu_ns": 9332205,
+          "sample": 6,
+          "wall_ns": 9339268
+        },
+        {
+          "cpu_ns": 4988476,
+          "sample": 7,
+          "wall_ns": 4992796
+        }
+      ],
+      "per_sample_denominators": [
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 12,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 5987248,
+            "wall_ns": 5993742
+          },
+          "proof_materializations": 12,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 5987248,
+              "numerator": 12000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 5987248,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 5987248,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 0,
+          "serialized_proof_bytes": 590256,
+          "setup": {
+            "cpu_ns": 392292,
+            "wall_ns": 392023
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 12,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 5622386,
+            "wall_ns": 5628339
+          },
+          "proof_materializations": 12,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 5622386,
+              "numerator": 12000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 5622386,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 5622386,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 1,
+          "serialized_proof_bytes": 590256,
+          "setup": {
+            "cpu_ns": 323441,
+            "wall_ns": 323119
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 14,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 5049548,
+            "wall_ns": 5056273
+          },
+          "proof_materializations": 14,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 5049548,
+              "numerator": 14000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 5049548,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 5049548,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 2,
+          "serialized_proof_bytes": 688632,
+          "setup": {
+            "cpu_ns": 213938,
+            "wall_ns": 213854
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 16,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 7090136,
+            "wall_ns": 7097082
+          },
+          "proof_materializations": 16,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 7090136,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 7090136,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 7090136,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 3,
+          "serialized_proof_bytes": 787008,
+          "setup": {
+            "cpu_ns": 359093,
+            "wall_ns": 358803
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 17,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 7351254,
+            "wall_ns": 7361764
+          },
+          "proof_materializations": 17,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 7351254,
+              "numerator": 17000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 7351254,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 7351254,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 4,
+          "serialized_proof_bytes": 836196,
+          "setup": {
+            "cpu_ns": 375798,
+            "wall_ns": 375107
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 16,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 6576794,
+            "wall_ns": 6583119
+          },
+          "proof_materializations": 16,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 6576794,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 6576794,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 6576794,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 5,
+          "serialized_proof_bytes": 787008,
+          "setup": {
+            "cpu_ns": 275269,
+            "wall_ns": 274894
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 21,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 9332205,
+            "wall_ns": 9339268
+          },
+          "proof_materializations": 21,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 9332205,
+              "numerator": 21000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 9332205,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 9332205,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 6,
+          "serialized_proof_bytes": 1032948,
+          "setup": {
+            "cpu_ns": 358032,
+            "wall_ns": 357679
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 16,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 4988476,
+            "wall_ns": 4992796
+          },
+          "proof_materializations": 16,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 4988476,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 4988476,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 4988476,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 7,
+          "serialized_proof_bytes": 787008,
+          "setup": {
+            "cpu_ns": 211924,
+            "wall_ns": 211869
+          },
+          "target_hits": 8
+        }
+      ],
+      "preparation": "sparse",
+      "proof_materializations": 124,
+      "rate_diagnostic": {
+        "attempts_per_cpu_second": {
+          "denominator": 51998047,
+          "numerator": 124000000000
+        },
+        "hypothetical_required_work_per_cpu_second": {
+          "denominator": 51998047,
+          "numerator": 128000000000
+        },
+        "hypothetical_required_work_total": 128,
+        "recorded_relation_valid_hits": 64,
+        "recorded_relation_valid_hits_per_cpu_second": {
+          "denominator": 51998047,
+          "numerator": 64000000000
+        },
+        "valid_rates_suppressed_by_shard_alerts": false
+      },
+      "separate_attempt_evidence_total": {
+        "cpu_ns": 2188069,
+        "wall_ns": 2189907
+      },
+      "separate_product_mutation_total": {
+        "cpu_ns": 376857,
+        "wall_ns": 382101
+      },
+      "serialized_proof_bytes": 6099312,
+      "setup_total": {
+        "cpu_ns": 2509787,
+        "wall_ns": 2507348
+      },
+      "strategy": "sparse-eager-full-limb",
+      "target_hits": 64,
+      "verification": {
+        "legal": {
+          "production": {
+            "cpu_ns": 32544178,
+            "wall_ns": 32522242
+          },
+          "reference": {
+            "cpu_ns": 46039783,
+            "wall_ns": 46037512
+          }
+        },
+        "product-last": {
+          "production": {
+            "cpu_ns": 33489797,
+            "wall_ns": 33487635
+          },
+          "reference": {
+            "cpu_ns": 46943988,
+            "wall_ns": 46933386
+          }
+        }
+      }
+    },
+    {
+      "actual_searches": 64,
+      "actual_setup_calls": 8,
+      "arithmetic": "full-limb",
+      "attempts": 124,
+      "cpu_per_observed_valid_winner": {
+        "denominator": 64,
+        "numerator": 50854458
+      },
+      "exhausted_searches": 0,
+      "inclusive_cohort_total": {
+        "cpu_ns": 50854458,
+        "wall_ns": 50901517
+      },
+      "materialization": "target-hit",
+      "native_outcome_counts": {
+        "legal": {
+          "Accepted": 128
+        },
+        "product-last": {
+          "Product": 128
+        }
+      },
+      "per_sample_cohort_totals": [
+        {
+          "cpu_ns": 5510470,
+          "sample": 0,
+          "wall_ns": 5518062
+        },
+        {
+          "cpu_ns": 4432981,
+          "sample": 1,
+          "wall_ns": 4439139
+        },
+        {
+          "cpu_ns": 5751709,
+          "sample": 2,
+          "wall_ns": 5751826
+        },
+        {
+          "cpu_ns": 6897960,
+          "sample": 3,
+          "wall_ns": 6907044
+        },
+        {
+          "cpu_ns": 7255582,
+          "sample": 4,
+          "wall_ns": 7266888
+        },
+        {
+          "cpu_ns": 7601575,
+          "sample": 5,
+          "wall_ns": 7611087
+        },
+        {
+          "cpu_ns": 8412459,
+          "sample": 6,
+          "wall_ns": 8412563
+        },
+        {
+          "cpu_ns": 4991722,
+          "sample": 7,
+          "wall_ns": 4994908
+        }
+      ],
+      "per_sample_denominators": [
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 12,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 5510470,
+            "wall_ns": 5518062
+          },
+          "proof_materializations": 8,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 5510470,
+              "numerator": 12000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 5510470,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 5510470,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 0,
+          "serialized_proof_bytes": 393504,
+          "setup": {
+            "cpu_ns": 357761,
+            "wall_ns": 357541
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 12,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 4432981,
+            "wall_ns": 4439139
+          },
+          "proof_materializations": 8,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 4432981,
+              "numerator": 12000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 4432981,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 4432981,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 1,
+          "serialized_proof_bytes": 393504,
+          "setup": {
+            "cpu_ns": 211654,
+            "wall_ns": 211480
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 14,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 5751709,
+            "wall_ns": 5751826
+          },
+          "proof_materializations": 8,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 5751709,
+              "numerator": 14000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 5751709,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 5751709,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 2,
+          "serialized_proof_bytes": 393504,
+          "setup": {
+            "cpu_ns": 209361,
+            "wall_ns": 209307
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 16,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 6897960,
+            "wall_ns": 6907044
+          },
+          "proof_materializations": 8,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 6897960,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 6897960,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 6897960,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 3,
+          "serialized_proof_bytes": 393504,
+          "setup": {
+            "cpu_ns": 391802,
+            "wall_ns": 391142
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 17,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 7255582,
+            "wall_ns": 7266888
+          },
+          "proof_materializations": 8,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 7255582,
+              "numerator": 17000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 7255582,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 7255582,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 4,
+          "serialized_proof_bytes": 393504,
+          "setup": {
+            "cpu_ns": 383269,
+            "wall_ns": 382295
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 16,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 7601575,
+            "wall_ns": 7611087
+          },
+          "proof_materializations": 8,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 7601575,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 7601575,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 7601575,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 5,
+          "serialized_proof_bytes": 393504,
+          "setup": {
+            "cpu_ns": 389328,
+            "wall_ns": 388986
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 21,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 8412459,
+            "wall_ns": 8412563
+          },
+          "proof_materializations": 8,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 8412459,
+              "numerator": 21000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 8412459,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 8412459,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 6,
+          "serialized_proof_bytes": 393504,
+          "setup": {
+            "cpu_ns": 276681,
+            "wall_ns": 276346
+          },
+          "target_hits": 8
+        },
+        {
+          "actual_searches": 8,
+          "actual_setup_calls": 1,
+          "attempts": 16,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 4991722,
+            "wall_ns": 4994908
+          },
+          "proof_materializations": 8,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 4991722,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 4991722,
+              "numerator": 16000000000
+            },
+            "hypothetical_required_work_total": 16,
+            "recorded_relation_valid_hits": 8,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 4991722,
+              "numerator": 8000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 7,
+          "serialized_proof_bytes": 393504,
+          "setup": {
+            "cpu_ns": 206717,
+            "wall_ns": 206662
+          },
+          "target_hits": 8
+        }
+      ],
+      "preparation": "sparse",
+      "proof_materializations": 64,
+      "rate_diagnostic": {
+        "attempts_per_cpu_second": {
+          "denominator": 50854458,
+          "numerator": 124000000000
+        },
+        "hypothetical_required_work_per_cpu_second": {
+          "denominator": 50854458,
+          "numerator": 128000000000
+        },
+        "hypothetical_required_work_total": 128,
+        "recorded_relation_valid_hits": 64,
+        "recorded_relation_valid_hits_per_cpu_second": {
+          "denominator": 50854458,
+          "numerator": 64000000000
+        },
+        "valid_rates_suppressed_by_shard_alerts": false
+      },
+      "separate_attempt_evidence_total": {
+        "cpu_ns": 2134624,
+        "wall_ns": 2137386
+      },
+      "separate_product_mutation_total": {
+        "cpu_ns": 286828,
+        "wall_ns": 292818
+      },
+      "serialized_proof_bytes": 3148032,
+      "setup_total": {
+        "cpu_ns": 2426573,
+        "wall_ns": 2423759
+      },
+      "strategy": "sparse-lazy-full-limb",
+      "target_hits": 64,
+      "verification": {
+        "legal": {
+          "production": {
+            "cpu_ns": 34548947,
+            "wall_ns": 34518700
+          },
+          "reference": {
+            "cpu_ns": 49456585,
+            "wall_ns": 49424098
+          }
+        },
+        "product-last": {
+          "production": {
+            "cpu_ns": 34260464,
+            "wall_ns": 34242569
+          },
+          "reference": {
+            "cpu_ns": 48879044,
+            "wall_ns": 48860426
+          }
+        }
+      }
+    }
+  ],
+  "w1_transcript_replayed": false,
+  "work_profile_qualified": false
+}

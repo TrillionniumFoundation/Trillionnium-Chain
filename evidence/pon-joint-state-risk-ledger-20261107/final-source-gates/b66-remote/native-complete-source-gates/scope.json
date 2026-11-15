@@ -1,0 +1,10 @@
+{
+  "head": "b66e66d2465258d808c0f56ff851123306d4bdb4",
+  "tree": "11eee4a56ccab63394102a19204ab3922021d87c",
+  "source_checkout_is_sparse": true,
+  "repository_and_tracked_markdown_gate": "Await same-head complete local tree validation from root; missing historical evidence is not source failure and no guard is changed.",
+  "standalone_native_example_reexecuted": false,
+  "retained_actual_example_run": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/native-risk-attempt-02/native-run/run.json",
+  "reason": "Both native test targets exercise real native scenarios; final merged source will run a fresh standalone example separately.",
+  "no_integration_merge_in_this_checkout": true
+}

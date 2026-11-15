@@ -1,0 +1,86 @@
+{
+  "schema": "trnm-bt-prior-local-inventory-checkpoint-v1",
+  "record_kind": "Reviewer reconstruction of previously observed selection rules and totals; not a recovered original per-file manifest",
+  "frozen_source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "original_root": "/workspace/scratch/4a0b199bc6c0",
+  "original_selected_files": 195,
+  "original_selected_bytes": 3958339,
+  "selection_suffixes": [
+    ".json",
+    ".stdout",
+    ".stderr",
+    ".log",
+    ".patch",
+    ".exit",
+    ".env"
+  ],
+  "excluded_subtree_name": "tmp",
+  "directories": [
+    {
+      "path": "validation/frozen-candidate-01",
+      "files": 93,
+      "bytes": 192672
+    },
+    {
+      "path": "validation/frozen-candidate-dependency-recheck-01",
+      "files": 11,
+      "bytes": 1736863
+    },
+    {
+      "path": "validation/frozen-static-gates-01",
+      "files": 13,
+      "bytes": 20112
+    },
+    {
+      "path": "validation/discovery",
+      "files": 20,
+      "bytes": 571732
+    },
+    {
+      "path": "validation/baseline",
+      "files": 5,
+      "bytes": 1024
+    },
+    {
+      "path": "validation/grouped",
+      "files": 6,
+      "bytes": 11627
+    },
+    {
+      "path": "validation/setup",
+      "files": 9,
+      "bytes": 1284022
+    },
+    {
+      "path": "model-preparation/logs",
+      "files": 23
+    }
+  ],
+  "root_validation_files": [
+    "authority-controls.stderr",
+    "authority-controls.stdout",
+    "authority-current.json",
+    "authority-source-review.json",
+    "corpus-current.json",
+    "corpus-source-binding-review.json",
+    "frozen-candidate-01-controlled-interruption.json",
+    "frozen-candidate-01.runner.stderr",
+    "frozen-candidate-01.runner.stdout",
+    "format-pre-freeze.stderr",
+    "format-pre-freeze.stdout",
+    "repository-pre-freeze.stderr",
+    "repository-pre-freeze.stdout",
+    "documentation-resource-scope.patch"
+  ],
+  "additional_files": [
+    "model-preparation/prep-manifest.json"
+  ],
+  "preflight_audit_generated_after_195_file_inventory": [
+    "validation/local-evidence-collection-preflight-audit.json",
+    "validation/local-evidence-collection-preflight-audit.stdout",
+    "validation/local-evidence-collection-preflight-audit.stderr"
+  ],
+  "prior_per_file_manifest_created": false,
+  "collection_actually_completed_before_outage": false,
+  "original_bytes_must_not_be_reconstructed_from_this_checkpoint": true
+}

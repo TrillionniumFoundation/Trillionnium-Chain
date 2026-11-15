@@ -1,0 +1,17 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute
+    Checking trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-pon-node)
+    Checking trnm-verification-profiles v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-verification-profiles)
+    Checking trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-data-availability)
+    Checking trnm-task-kernel v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-task-kernel)
+    Checking trnm-peer-lease v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-peer-lease)
+    Checking trnm-state-import v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-state-import)
+    Checking trnm-transport v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-transport)
+    Checking trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-protocol v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-protocol)
+    Checking trnm-oracle v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-oracle)
+    Checking trnm-types v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-types)
+    Checking trnm-control-plane v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-control-plane)
+    Checking trnm-checkpoint-types v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-checkpoint-types)
+    Checking trnm-mempool v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-mempool)
+    Checking trnm-audit-events v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-audit-events)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 14.34s

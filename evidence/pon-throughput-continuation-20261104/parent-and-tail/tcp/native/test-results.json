@@ -1,0 +1,157 @@
+[
+  {
+    "command": [
+      "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+      "ingress::public_v3::tests::completed_input_boundary_rejects_tail_without_consuming_pending_frame",
+      "--exact",
+      "--nocapture",
+      "--format",
+      "pretty",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "finished_at": "2026-11-04T07:40:59.506928+00:00",
+    "required_selector_check": {
+      "command": [
+        "python3",
+        "scripts/ci/check_required_native_test.py",
+        "/workspace/scratch/7318d5f890d1/throughput-readback/tail-native-73ab-attempt-2/test-1.stdout",
+        "--test",
+        "ingress::public_v3::tests::completed_input_boundary_rejects_tail_without_consuming_pending_frame"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-11-04T07:40:59.539001+00:00",
+      "started_at": "2026-11-04T07:40:59.507046+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "d5e090dd42d8afeda7c70cd2fcb28d709365814950539ffa55335672d89eb2c7"
+    },
+    "selector": "ingress::public_v3::tests::completed_input_boundary_rejects_tail_without_consuming_pending_frame",
+    "started_at": "2026-11-04T07:40:59.498937+00:00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "2e2aeb709e5315b303c0ee95e9038f1280338bf445d9ab8e1d2b8e7c08cd9ebf"
+  },
+  {
+    "command": [
+      "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+      "ingress::public_v3::tests::early_complete_body_waiting_for_ready_preserves_signed_native_submission",
+      "--exact",
+      "--nocapture",
+      "--format",
+      "pretty",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "finished_at": "2026-11-04T07:40:59.653589+00:00",
+    "required_selector_check": {
+      "command": [
+        "python3",
+        "scripts/ci/check_required_native_test.py",
+        "/workspace/scratch/7318d5f890d1/throughput-readback/tail-native-73ab-attempt-2/test-2.stdout",
+        "--test",
+        "ingress::public_v3::tests::early_complete_body_waiting_for_ready_preserves_signed_native_submission"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-11-04T07:40:59.685973+00:00",
+      "started_at": "2026-11-04T07:40:59.653860+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "98229d3322725f7f42dd45754310fdf13810dd0ee318fb4b37847b59f8dc18e3"
+    },
+    "selector": "ingress::public_v3::tests::early_complete_body_waiting_for_ready_preserves_signed_native_submission",
+    "started_at": "2026-11-04T07:40:59.539405+00:00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "bcd064be3454fe46a8a7cacd4954f2343f6744a67045a73d6f7b8deb3888d7e1"
+  },
+  {
+    "command": [
+      "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+      "ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work",
+      "--exact",
+      "--nocapture",
+      "--format",
+      "pretty",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "finished_at": "2026-11-04T07:40:59.951055+00:00",
+    "required_selector_check": {
+      "command": [
+        "python3",
+        "scripts/ci/check_required_native_test.py",
+        "/workspace/scratch/7318d5f890d1/throughput-readback/tail-native-73ab-attempt-2/test-3.stdout",
+        "--test",
+        "ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-11-04T07:40:59.983844+00:00",
+      "started_at": "2026-11-04T07:40:59.951232+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "5126db646946f201bc08f6208937f70782b5559adb3c59d7fa352205151ce527"
+    },
+    "selector": "ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work",
+    "started_at": "2026-11-04T07:40:59.686413+00:00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "84dabd8ae907d764d45ae461d29000b29e559d616d5e15e3c28477291a0f7336"
+  },
+  {
+    "command": [
+      "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+      "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+      "--exact",
+      "--nocapture",
+      "--format",
+      "pretty",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "finished_at": "2026-11-04T07:41:00.098787+00:00",
+    "required_selector_check": {
+      "command": [
+        "python3",
+        "scripts/ci/check_required_native_test.py",
+        "/workspace/scratch/7318d5f890d1/throughput-readback/tail-native-73ab-attempt-2/test-4.stdout",
+        "--test",
+        "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-11-04T07:41:00.163293+00:00",
+      "started_at": "2026-11-04T07:41:00.098944+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e177bedb0d8b8e98e08b321572322d6d976bf5020dd497b08d76e23d2584fdb1"
+    },
+    "selector": "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+    "started_at": "2026-11-04T07:40:59.984299+00:00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "f504ab2336e9bd68b7da4eaca806d9352f67605afcd0ea17620adbda9b8d62c0"
+  },
+  {
+    "command": [
+      "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+      "ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work",
+      "--exact",
+      "--nocapture",
+      "--format",
+      "pretty",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "finished_at": "2026-11-04T07:41:00.328540+00:00",
+    "required_selector_check": {
+      "command": [
+        "python3",
+        "scripts/ci/check_required_native_test.py",
+        "/workspace/scratch/7318d5f890d1/throughput-readback/tail-native-73ab-attempt-2/test-5.stdout",
+        "--test",
+        "ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-11-04T07:41:00.393463+00:00",
+      "started_at": "2026-11-04T07:41:00.329089+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "7a793f73ce3777fa31f5b16be337925fc9054e1624a30c3b9e4f7883c06e4c6d"
+    },
+    "selector": "ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work",
+    "started_at": "2026-11-04T07:41:00.163830+00:00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "39e77b3b6553c8bc55bd132631cae8f88b82bc75e35ffcb11a69a52ff313004d"
+  }
+]

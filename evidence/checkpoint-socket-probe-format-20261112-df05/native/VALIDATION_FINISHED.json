@@ -1,0 +1,12 @@
+{
+  "all_commands_passed": true,
+  "manifest_sha256": "b9841f83732d1aa8c3fe12af412bf41d866dce9edc887091b55a057c699ed3f8",
+  "operation_key": "chain-checkpoint-probe-format-native-validation-20261112-df05-v1",
+  "parent_evidence": "b62cb86d22405dd9e5b441970639b6e5dd44a8b8",
+  "publication_performed": false,
+  "schema": "checkpoint-probe-format-native-finished-v1",
+  "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+  "status": "HOLD",
+  "summary_sha256": "988aba1d1ce040872f2f3b2e44552660456317d96f7a65869e373dd7abab2f3c",
+  "tree": "e3428012a36210087f5a260f2cf1720d0086fa9e"
+}

@@ -1,0 +1,61 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.31s
+     Running unittests src/lib.rs (/workspace/shared/chain-confirmation-target/debug/deps/trnm_pon_node-2aaee31106a4dfcc)
+
+running 55 tests
+test ingress::tests::authenticated_activation_recovery::authenticated_dispatch_retry_is_confined_to_local_queue_and_cancellation ... ok
+test ingress::tests::authenticated_activation_recovery::signed_socket_exact_pending_frame_resumes_only_its_original_committed_intent ... ok
+test ingress::tests::authenticated_activation_recovery::signed_socket_local_queue_busy_keeps_exact_nonce_for_retry_and_invalid_work_terminal ... ok
+test ingress::tests::authenticated_activation_recovery::withheld_original_frame_must_not_stall_a_different_honest_signed_mutation ... ignored, actual original ten-second deadline and signed-socket honest-service gate; run explicitly
+test ingress::tests::authenticated_legacy_nonloopback_has_no_unmetered_host_bypass ... ok
+test ingress::tests::cancellation_after_actual_work_verification_has_no_commit ... ok
+test ingress::tests::cancellation_after_admission_preserves_fact_and_exact_retry_controls_activation ... ok
+test ingress::tests::cancellation_inside_last_work_tile_or_final_boundary_has_no_durable_packet ... ok
+test ingress::tests::clean_v3_epoch_close_permits_only_one_cold_history_owner ... ok
+test ingress::tests::cold_reopen_with_durable_active_v3_epoch_cannot_mint_history_cpu ... ok
+test ingress::tests::context_cancellation_precedes_work_verifier_and_preserves_public_retry ... ok
+test ingress::tests::context_reject_and_exact_duplicate_do_not_replay_work ... ok
+test ingress::tests::existing_replay_cancel_preserves_inactive_admission_for_recovery ... ok
+test ingress::tests::existing_replay_cancel_stops_active_history_spam ... ok
+test ingress::tests::existing_replay_cancelled_reorg_recovers_signed_payments_once ... ok
+test ingress::tests::four_distinct_ticket_valid_false_history_traces_never_obtain_work ... ok
+test ingress::tests::history_paid_epoch_crash_cut_refuses_new_cold_credit ... ok
+test ingress::tests::history_valid_w1_cannot_commit_after_m06_host_owner_rejection ... ok
+test ingress::tests::host_owner_failure_during_w1_tile_does_not_commit_or_poison_retry ... ok
+test ingress::tests::intervening_heavier_branch_does_not_promote_the_verified_stale_candidate ... ok
+test ingress::tests::loopback_history_false_product_charges_one_cold_node_cpu_domain ... ok
+test ingress::tests::loopback_history_valid_work_still_accepts_under_cold_cpu_meter ... ok
+test ingress::tests::malformed_paid_history_rejection_closes_known_epoch_without_poisoning_cold_reopen ... ok
+test ingress::tests::malformed_remote_history_decode_pays_original_cpu_and_preserves_state ... ok
+test ingress::tests::measured_native_w1_rejection_reports_real_or_explicitly_unknown_thread_cpu ... ok
+test ingress::tests::mixed_false_then_valid_history_across_source_ports_reuses_one_cpu_owner ... ok
+test ingress::tests::owner_lock_wait_remains_cooperatively_cancellable ... ok
+test ingress::tests::packet_hex_decoder_calls_current_codec_once_only_after_complete_validation ... ok
+test ingress::tests::packet_hex_decoder_matches_retained_canonical_domain ... ok
+test ingress::tests::packet_hex_decoder_preserves_real_packet_and_codec_error_order ... ok
+test ingress::tests::proof_statement_precheck_rejects_before_parent_state_or_work_and_preserves_retry ... ok
+test ingress::tests::protected_client_can_negotiate_after_260_busy_replies_then_full_native_admission ... ok
+test ingress::tests::protected_hello_additional_opportunities_never_refresh_expired_original_deadlines ... ok
+test ingress::tests::protected_hello_rendezvous_changes_the_explicit_transport_profile ... ok
+test ingress::tests::protected_hello_rendezvous_expired_original_preface_cannot_send_ready ... ok
+test ingress::tests::protected_hello_rendezvous_from_reserved_socket_preserves_full_native_admission ... ok
+test ingress::tests::protected_hello_rendezvous_has_no_pending_queue_or_refreshed_deadlines ... ok
+test ingress::tests::protected_hello_rendezvous_preserves_validation_before_reserved_refusal ... ok
+test ingress::tests::public_loopback_history_requires_real_fixed_host_parent ... ok
+test ingress::tests::public_v3_false_work_precedes_unowned_state_and_keeps_valid_retry ... ok
+test ingress::tests::public_v3_header_resource_refusal_precedes_parent_state_and_work ... ok
+test ingress::tests::public_v3_valid_work_cannot_reuse_parent_state_across_actual_sql_tampering ... ok
+test ingress::tests::remote_sync_without_original_host_cgroup_rejects_before_any_network_or_w1 ... ok
+test ingress::tests::standalone_history_does_not_steal_live_v3_listener_epoch ... ok
+test ingress::tests::test_authenticated_bytes_bind_session_signature_and_canonical_request ... ok
+test ingress::tests::test_authenticated_socket_replays_response_after_client_loses_first_ack ... ok
+test ingress::tests::test_cached_terminal_error_is_reverified_and_counted_as_rejected ... ok
+test ingress::tests::test_committed_submit_with_missing_auth_ack_recovers_without_work_replay ... ok
+test ingress::tests::test_durable_client_outbox_survives_network_loss_and_rejects_changed_request ... ok
+test ingress::tests::test_durable_client_retries_exact_wire_after_lost_server_response ... ok
+test ingress::tests::test_durable_pending_request_recovers_and_completed_response_replays ... ok
+test ingress::tests::test_slow_partial_frame_cannot_extend_the_absolute_deadline ... ok
+test ingress::tests::unclean_public_epoch_cannot_mint_fresh_remote_history_credit ... ok
+test ingress::tests::verified_work_cannot_bypass_destination_context_or_clock ... ok
+test ingress::tests::work_replay_does_not_hold_the_durable_owner_lock ... ok
+
+test result: ok. 54 passed; 0 failed; 1 ignored; 0 measured; 1051 filtered out; finished in 19.34s

@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "scripts/ci/test_run_from_zero_native.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+  "end_utc": "2026-11-07T18:09:12.753821+00:00",
+  "exit_code": 0,
+  "log": "logs/04-test_run_from_zero_native.log",
+  "log_bytes": 24541,
+  "log_sha256": "3f73e50410ee1df09a06beee50eb27e659bf8fa95f005a0c195416771ed85d97",
+  "name": "04-test_run_from_zero_native",
+  "pid": 1258587,
+  "start_utc": "2026-11-07T18:08:34.919210+00:00",
+  "supervisor_timeout_seconds": 1800,
+  "timed_out": false,
+  "wall_ns": 37834608208
+}

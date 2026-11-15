@@ -1,0 +1,143 @@
+{
+  "schema": "trnm-retained-raw-log-archive-v1",
+  "archive": "raw-logs.tar.gz",
+  "archive_bytes": 26164,
+  "archive_sha256": "1f136af2ad1e9e8939b75a20e248b4101129bfc9b2722524e966778e9440a3e5",
+  "members": [
+    {
+      "path": "raw/ci-contract-final.log",
+      "bytes": 18921,
+      "sha256": "6cf2167bdf44391cb7ff00cb1f03532daf0ca025f33eb33099082f96ad95a607"
+    },
+    {
+      "path": "raw/ci-contract-positive-final.log",
+      "bytes": 180,
+      "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+    },
+    {
+      "path": "raw/ci-contract.log",
+      "bytes": 128048,
+      "sha256": "da5d6bf261d6727c8342837809bd189cde297b73c3318d0f0319c8730237aa94"
+    },
+    {
+      "path": "raw/ci-execution-final.log",
+      "bytes": 13226,
+      "sha256": "d60f70749f9eb28346d4e2a974ecc4d5fc03430f5d9ae5a2c315b891bc42c35b"
+    },
+    {
+      "path": "raw/ci-execution.log",
+      "bytes": 12898,
+      "sha256": "f73f357bc87a3db50de4d519acbf1e71c4b701bdc4047ea936985384e0d2512a"
+    },
+    {
+      "path": "raw/ci-from-zero-host-final.log",
+      "bytes": 14728,
+      "sha256": "abe23ef921e28a442b74ca188f78352fc008a6c19507bc5eea8f1a30fdb8959b"
+    },
+    {
+      "path": "raw/journal-final.log",
+      "bytes": 2375,
+      "sha256": "7c11d9eca87511139496ba855f847ca8a032ef435fa7b9836a0642930eb24900"
+    },
+    {
+      "path": "raw/migration-journal-baseline.log",
+      "bytes": 14171,
+      "sha256": "8c8f5e945260529dd0d6888094ed297637f5c0a7891b38767fabd1f71b5b925a"
+    },
+    {
+      "path": "raw/migration-journal-patched.log",
+      "bytes": 2375,
+      "sha256": "aa8a099053b3aaab327ad1db9572ed383bfc935cbdc7c370d8005eed9350b1bc"
+    },
+    {
+      "path": "raw/migration-real-dual-signatures-configured.log",
+      "bytes": 1271,
+      "sha256": "449393a2a76fe204e6bb0534eb36a22e8cce98e14fede61a1edc7a65832ac810"
+    },
+    {
+      "path": "raw/migration-real-dual-signatures.log",
+      "bytes": 2133,
+      "sha256": "8c230c7f2987f332ca603871c3869e7d9d9dbcbfd9a18a91e110fd449da0855f"
+    },
+    {
+      "path": "raw/pq-claim-controls.log",
+      "bytes": 136,
+      "sha256": "7e7194c1837e5c80d1149eb905c37d634222c3417df70777ec1751199342e4b3"
+    },
+    {
+      "path": "raw/pq-claim-hold.log",
+      "bytes": 3425,
+      "sha256": "df2056982e26923ea65600bbe0e42783ad619221cf965082fa4945ed63097c47"
+    },
+    {
+      "path": "raw/preflight.log",
+      "bytes": 176,
+      "sha256": "2d42c8dd681e2b5586c5d4222dbbcbccd40c32be9ced4cedd294a23184937c78"
+    },
+    {
+      "path": "raw/repository-check.log",
+      "bytes": 165,
+      "sha256": "dd925892b5ba9abcc79d5d2c0f78dc41499cfa3f16a8360b29cb85ca391ac628"
+    },
+    {
+      "path": "raw/repository-final.log",
+      "bytes": 101,
+      "sha256": "f21a68cec32e2446839f927baf7852235385082e1a23060d5e2722259da7efba"
+    },
+    {
+      "path": "raw/sampler-build.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "raw/sampler-run.log",
+      "bytes": 306,
+      "sha256": "611f9d9b84a06452f7be7e3c75890398598b2805c7bd8757ecbceaebf8c8ae0a"
+    },
+    {
+      "path": "raw/seed-final.log",
+      "bytes": 8036,
+      "sha256": "c419a2e12faf425a26574e6e9b434d0202515ab855ccc573aff2b388aef99dc7"
+    },
+    {
+      "path": "raw/seed-relation-tests.log",
+      "bytes": 28531,
+      "sha256": "656abfb80cb0d0fc2f2ba2b890dddfa61b90c17c4d0d1a21b642a6234b24b237"
+    },
+    {
+      "path": "raw/signatures-final-no-path.log",
+      "bytes": 1271,
+      "sha256": "0613f282f8a611fc29b1460ca2354174ca00cbd9eeb172a54665a8bfbb44482a"
+    },
+    {
+      "path": "raw/source-controls-final.log",
+      "bytes": 155,
+      "sha256": "91f881bc47177969a1c9e25c3d9b4b3826eeff62664f259683c5cba08addc243"
+    },
+    {
+      "path": "raw/source-integrity-controls.log",
+      "bytes": 155,
+      "sha256": "ed7bce472bd248de94ced9a043d65f0050e2c3c2e838285195f6e264f8e367cc"
+    },
+    {
+      "path": "raw/source-pins-final.log",
+      "bytes": 557,
+      "sha256": "2e041315e4a99fb31ad03d065bed894ee6d90a6624078eb20a1ca89331450dad"
+    },
+    {
+      "path": "raw/source-pins.log",
+      "bytes": 557,
+      "sha256": "2e041315e4a99fb31ad03d065bed894ee6d90a6624078eb20a1ca89331450dad"
+    },
+    {
+      "path": "raw/whitespace-final.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "raw/whitespace.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

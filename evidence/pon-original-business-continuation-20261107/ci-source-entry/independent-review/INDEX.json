@@ -1,0 +1,38 @@
+{
+  "schema": "integration-push-independent-review-index-v1",
+  "scope": "Read-only code/workflow review and local controls; no hosted or native original-gate execution",
+  "files": {
+    "REVIEW.md": {
+      "bytes": 6122,
+      "sha256": "7fb93560cf7e734509d3ddcbdb928084b470377c59c5e209cd002cf3c420a48b"
+    },
+    "check_ci_contract.log": {
+      "bytes": 180,
+      "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+    },
+    "compare_workflows.py": {
+      "bytes": 6019,
+      "sha256": "47772cf811c435f441964aecff1c415c8f7e5209d3f53ae4e94728bf2808cef0"
+    },
+    "controls.json": {
+      "bytes": 2975,
+      "sha256": "905723e6c92aaaec514e4f485bc4cf37a2ef540921fcc7a063e23c17dc6a1dc4"
+    },
+    "preflight.log": {
+      "bytes": 164,
+      "sha256": "b3b641455432479a55bb47c549d9b1e249372a22e4a4188fd4d9949879d180dc"
+    },
+    "test_ci_source_integrity.log": {
+      "bytes": 6898,
+      "sha256": "ac61a3f03d2f175f831eda011d7fc15658dc358a0c7bff6dff64c086d8c349c0"
+    },
+    "test_integration_push_source.log": {
+      "bytes": 112,
+      "sha256": "2a340471ee08a9c1c0feffe663138bff75d3db73529f6486f061654ea4b1e238"
+    },
+    "workflow-preservation.json": {
+      "bytes": 7404,
+      "sha256": "b81933622c8ea0d9f5635e1834968d363e1de5d8c07744f01a5fadf59ef12c33"
+    }
+  }
+}

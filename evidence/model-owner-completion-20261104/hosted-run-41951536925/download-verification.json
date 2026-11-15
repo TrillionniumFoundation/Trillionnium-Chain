@@ -1,0 +1,113 @@
+{
+  "archive_sha256": "0890a0ff94f3ba2fc912b45805531c2058f4ca344f538133d863ab74f35ec924",
+  "archive_bytes": 55433,
+  "uncompressed_bytes": 221532,
+  "output": "/dev/shm/trnm-model-owner-f4976366a32a-observations/hosted-run-41951536925/artifact",
+  "files": [
+    {
+      "path": "collection.json",
+      "bytes": 32507
+    },
+    {
+      "path": "dependencies-exit.json",
+      "bytes": 405
+    },
+    {
+      "path": "dependencies.log",
+      "bytes": 8132
+    },
+    {
+      "path": "environment.json",
+      "bytes": 1825
+    },
+    {
+      "path": "execution-terminal.json",
+      "bytes": 368
+    },
+    {
+      "path": "installed-metadata.log",
+      "bytes": 695
+    },
+    {
+      "path": "installed-metadata-exit.json",
+      "bytes": 256
+    },
+    {
+      "path": "launch-intent.json",
+      "bytes": 1244
+    },
+    {
+      "path": "ledger.sqlite3",
+      "bytes": 36864
+    },
+    {
+      "path": "original-pilot-exit.json",
+      "bytes": 852
+    },
+    {
+      "path": "original-pilot.log",
+      "bytes": 5311
+    },
+    {
+      "path": "run/abort.json",
+      "bytes": 4485
+    },
+    {
+      "path": "run/experiment-freeze.json",
+      "bytes": 782
+    },
+    {
+      "path": "run/experiment-plan.json",
+      "bytes": 11443
+    },
+    {
+      "path": "run/loader-1thread/actual-receipt.json",
+      "bytes": 23207
+    },
+    {
+      "path": "run/loader-1thread/predictions.json",
+      "bytes": 12298
+    },
+    {
+      "path": "run/loader-1thread/process.log",
+      "bytes": 0
+    },
+    {
+      "path": "run/loader-1thread/supervisor.json",
+      "bytes": 4059
+    },
+    {
+      "path": "run/loader-1thread/target-contract.json",
+      "bytes": 56809
+    },
+    {
+      "path": "run/loader-1thread-plan.json",
+      "bytes": 11443
+    },
+    {
+      "path": "run/phase-outcomes.json",
+      "bytes": 4085
+    },
+    {
+      "path": "run/trial-checkpoint.json",
+      "bytes": 524
+    },
+    {
+      "path": "stages.jsonl",
+      "bytes": 2513
+    },
+    {
+      "path": "validation.json",
+      "bytes": 1265
+    },
+    {
+      "path": "venv-exit.json",
+      "bytes": 160
+    },
+    {
+      "path": "venv.log",
+      "bytes": 0
+    }
+  ],
+  "earlier_overlay_write_failed": "ENOSPC; archive verification succeeded before failed write, no model rerun"
+}

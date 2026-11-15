@@ -1,0 +1,28 @@
+{
+  "driver_sha256": "d15465778df62e95293f172775105d29f8c0c940f33099d87878fd3f1b9ac89c",
+  "full_library_argv": [
+    "/home/qian-qi/.cargo/bin/rustup",
+    "run",
+    "1.95.0",
+    "/usr/bin/python3",
+    "-u",
+    "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/quiet-driver-d15465778df62e95293f172775105d29f8c0c940f33099d87878fd3f1b9ac89c.py",
+    "--scope",
+    "full-library"
+  ],
+  "full_library_executed": true,
+  "full_library_exit": 1,
+  "quiet_argv": [
+    "/home/qian-qi/.cargo/bin/rustup",
+    "run",
+    "1.95.0",
+    "/usr/bin/python3",
+    "-u",
+    "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/quiet-driver-d15465778df62e95293f172775105d29f8c0c940f33099d87878fd3f1b9ac89c.py",
+    "--scope",
+    "quiet-control"
+  ],
+  "quiet_exit": 0,
+  "source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "status": "library_failed"
+}

@@ -1,0 +1,161 @@
+diff --git a/.github/workflows/pon-w1-work-security.yml b/.github/workflows/pon-w1-work-security.yml
+index a57ea05d96947389fe68959f799a331a5d3a7ef6..8c38558caa232c681bbf3f4376ef8deda349564b 100644
+--- a/.github/workflows/pon-w1-work-security.yml
++++ b/.github/workflows/pon-w1-work-security.yml
+@@ -452,7 +452,7 @@ jobs:
+           # its parent control selects real SIGKILL cuts. It is not a skipped gate.
+           expected = {"factorial-kernel-tests": (14, 0), "factorial-example-tests": (len(example_expected), 0),
+               "header-binding-tests": (1, 0), "history-w1-tests": (5, 0),
+-              "history-import-tests": (38, 1), "cpu-completion-tests": (11, 0)}
++              "history-import-tests": (40, 1), "cpu-completion-tests": (11, 0)}
+           for name, counts in expected.items():
+               text = (root / (name + ".log")).read_text()
+               rows = re.findall(r'^test result: (\S+)\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored;', text, re.M)
+@@ -506,9 +506,8 @@ jobs:
+               'shared_detached_history_refill_cannot_renew_original_deadline',
+           ):
+               selector = 'ingress::history_import::tests::detached_budget_controls::' + name
+-              rows = re.findall(r'^test ' + re.escape(selector) + r' \.\.\. ok$', history, re.M)
+-              if len(rows) != 1:
+-                  raise SystemExit(selector + ': exact detached budget control did not execute once')
++              from scripts.ci.check_w1_native_roster import require_named_success
++              require_named_success(history, selector)
+           codec_selector = ('ingress::history_import::tests::'
+               'history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors')
+           codec_rows = re.findall(r'^test ' + re.escape(codec_selector) + r' \.\.\. ok$', history, re.M)
+diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json
+index c1f785679ec6a0366c3749baf275cb0ac79f44e0..8ddc50a7d49d42f7e2189906eac9aedc1fc479f5 100644
+--- a/config/pon/pq-cross-branch-corpus-v1.json
++++ b/config/pon/pq-cross-branch-corpus-v1.json
+@@ -154,7 +154,7 @@
+     ".github/workflows/pon-w1-qrom-closure.yml": "fe0a830ee9b120bdc1928f044bfe8384243b2f38",
+     ".github/workflows/pon-w1-qrom-implementation.yml": "eca8b1d4733f452a685894e8e942461f64f74a1e",
+     ".github/workflows/pon-w1-transparent-profile.yml": "837d9eb80ca5e2567edf6d4f261757b3b5f6ff6c",
+-    ".github/workflows/pon-w1-work-security.yml": "a57ea05d96947389fe68959f799a331a5d3a7ef6",
++    ".github/workflows/pon-w1-work-security.yml": "8c38558caa232c681bbf3f4376ef8deda349564b",
+     ".github/workflows/trnm-required-baseline.yml": "7837ff18f48b3cb9b0d38f161fc8f27a9fdbf919",
+     "config/consensus-mainline.json": "b193c404177350c5e1443104f02bb0ac114f6aeb",
+     "config/pon/binary-diverse60-training-v3.json": "4bad08228c9e85570a67a30f5a546b9cf418bd01",
+@@ -1788,7 +1788,7 @@
+     "scripts/ci/test_w1_current_source_observation.py": "8dcae26c9e2f71971bb5851bb111c4cb4c62df4c",
+     "scripts/ci/test_w1_deployment_comparison_audit.py": "b5ee8ae551148134ab50c87d24b69f4c839a7abd",
+     "scripts/ci/test_w1_deployment_evidence_binding.py": "8f083a6fe3e8126c2705f271679f78b2d011e85a",
+-    "scripts/ci/test_w1_factorial_native_gate.py": "bd1978c2da8eb78922c23e438be9c2ca9e90599f",
++    "scripts/ci/test_w1_factorial_native_gate.py": "ed161ca1540bdf8b174c5ce7a736345ae4b82f28",
+     "scripts/ci/test_w1_fri_ideal_sampler.py": "e1d1b94fa0e56d66a43d54642af392ed5de81a80",
+     "scripts/ci/test_w1_full_v2_disposition.py": "484dd50ecc55a6e5f7dc828d74e584f1c4bebaf9",
+     "scripts/ci/test_w1_kaggle_source_builder.py": "874690dd216142e3fd396c83d5575f9ef866ff14",
+diff --git a/scripts/ci/check_w1_native_roster.py b/scripts/ci/check_w1_native_roster.py
+index ddfa94842a5ddcf5f217184b61b23d9c6034e684..3dbbb1cd5475ef2f776848882eb069ea488d89d2 100644
+--- a/scripts/ci/check_w1_native_roster.py
++++ b/scripts/ci/check_w1_native_roster.py
+@@ -8,6 +8,26 @@ import re
+ 
+ ROSTERS = json.loads(Path(__file__).with_name("w1_native_rosters_v1.json").read_text())
+ 
++def require_named_success(text, selector):
++    """Accept one libtest result, including nocapture output before its status.
++
++    A following named test or suite summary closes the record. Diagnostic text
++    cannot supply another test's status or replace a missing terminal result.
++    """
++    starts = list(re.finditer(r'^test (\S+) \.\.\. ', text, re.M))
++    matches = [i for i, match in enumerate(starts) if match[1] == selector]
++    if len(matches) != 1:
++        raise ValueError(selector + ': missing or duplicate native control')
++    i = matches[0]
++    end = starts[i + 1].start() if i + 1 < len(starts) else len(text)
++    body = text[starts[i].end():end].split('\ntest result:', 1)[0]
++    lines = [line.strip() for line in body.splitlines() if line.strip()]
++    if not lines or lines[-1] != 'ok':
++        raise ValueError(selector + ': native control did not succeed')
++    if any(line in ('ok', 'FAILED') or line.startswith('ignored') for line in lines[:-1]):
++        raise ValueError(selector + ': ambiguous native outcome')
++
++
+ def check(text, profile):
+     expected = ROSTERS[profile]
+     names = expected["names"]
+diff --git a/scripts/ci/test_w1_factorial_native_gate.py b/scripts/ci/test_w1_factorial_native_gate.py
+index bd1978c2da8eb78922c23e438be9c2ca9e90599f..ed161ca1540bdf8b174c5ce7a736345ae4b82f28 100644
+--- a/scripts/ci/test_w1_factorial_native_gate.py
++++ b/scripts/ci/test_w1_factorial_native_gate.py
+@@ -18,7 +18,7 @@ EXAMPLES = ROOT / 'trillionnium/crates/trnm-pon-node/examples'
+ MATERIAL_SOURCE = ROOT / 'trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs'
+ COUNTS = {'factorial-kernel-tests': (14, 0), 'factorial-example-tests': (11, 0),
+           'header-binding-tests': (1, 0), 'history-w1-tests': (5, 0),
+-          'history-import-tests': (38, 1), 'cpu-completion-tests': (11, 0)}
++          'history-import-tests': (40, 1), 'cpu-completion-tests': (11, 0)}
+ HISTORY = [
+     'deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline',
+     'deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu',
+@@ -76,15 +76,44 @@ class NativeGateTests(unittest.TestCase):
+                 (Path(directory) / (name + '.log')).write_text(content)
+             return subprocess.run([sys.executable, '-c', self.code, directory], capture_output=True).returncode
+ 
++    def test_detached_diagnostics_keep_exact_success_and_refuse_bad_records(self):
++        for name in [n for n in HISTORY if n.startswith('detached_budget_controls::')]:
++            selector = 'ingress::history_import::tests::' + name
++            original = self.logs['history-import-tests']
++            line = f'test {selector} ... ok\n'
++            observed = f'test {selector} ... {{"diagnostic":true}}\nmore diagnostic\nok\n'
++            self.logs['history-import-tests'] = original.replace(line, observed)
++            self.assertEqual(self.run_gate(), 0)
++            for bad in ('', observed + observed, observed.replace(selector, selector + '_wrong'),
++                        observed.replace('\nok\n', '\nFAILED\n'),
++                        observed.replace('\nok\n', '\nignored\n'),
++                        observed.replace('\nok\n', '\n'),
++                        observed.replace('\nok\n', '\nok\nok\n')):
++                with self.subTest(selector=selector, bad=bad):
++                    self.logs['history-import-tests'] = original.replace(line, bad)
++                    self.assertNotEqual(self.run_gate(), 0)
++            self.logs['history-import-tests'] = original
++
+     def test_fixture_counts_match_frozen_complete_named_rosters(self):
+         for suite, profile in [('factorial-example-tests', 'factorial-example'),
+                                ('history-import-tests', 'history-import')]:
+             roster = ROSTERS[profile]
+             ignored = len(roster['ignored'])
+             self.assertEqual(COUNTS[suite], (len(roster['names']) - ignored, ignored))
+-        # Independently reviewed Linux registration: 39 cases, one original child.
++        # Independently reviewed Linux registration: 41 cases, one original child.
++        history_root = ROOT / 'trillionnium/crates/trnm-pon-node/src/ingress'
++        actual = []
++        for filename, module in (
++                ('history_import_tests.rs', ''),
++                ('history_import_deadline_tests.rs', 'deadline_controls::'),
++                ('history_import_detached_budget_tests.rs', 'detached_budget_controls::')):
++            actual += ['ingress::history_import::tests::' + module + name for name in
++                       re.findall(r'#\[test\]\s+(?:#\[[^\]]+\]\s+)*fn (\w+)',
++                                  (history_root / filename).read_text())]
++        self.assertEqual(len(actual), 41)
++        self.assertCountEqual(actual, ROSTERS['history-import']['names'])
+         history = ROSTERS['history-import']
+-        self.assertEqual(len(history['names']), 39)
++        self.assertEqual(len(history['names']), 41)
+         self.assertEqual(history['ignored'], [
+             'ingress::history_import::tests::history_kill_cut_child'])
+         for name in (
+@@ -98,7 +127,8 @@ class NativeGateTests(unittest.TestCase):
+ 
+     def test_previous_incomplete_positive_fixture_is_refused(self):
+         for suite, old_passes, ignored in [('factorial-example-tests', 6, 0),
+-                                          ('history-import-tests', 28, 1)]:
++                                          ('history-import-tests', 28, 1),
++                                          ('history-import-tests', 38, 1)]:
+             original = self.logs[suite]
+             self.logs[suite] = original.replace(
+                 f'test result: ok. {COUNTS[suite][0]} passed;',
+diff --git a/scripts/ci/w1_native_rosters_v1.json b/scripts/ci/w1_native_rosters_v1.json
+index 3cdb2b389b1e9da1abdf5ad96a35fde7a06b221a..7890cae99d02c43df99d14ff07984de85c3ac09c 100644
+--- a/scripts/ci/w1_native_rosters_v1.json
++++ b/scripts/ci/w1_native_rosters_v1.json
+@@ -58,6 +58,8 @@
+       "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+       "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+       "ingress::history_import::tests::history_kill_cut_child",
++      "ingress::history_import::tests::history_shared_owner_busy_retry_keeps_fresh_host_refusal",
++      "ingress::history_import::tests::history_shared_owner_checks_host_once_before_each_uncontended_action",
+       "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+       "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+       "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",

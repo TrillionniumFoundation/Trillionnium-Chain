@@ -1,0 +1,15 @@
+{
+  "command": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--audit"
+  ],
+  "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+  "elapsed_seconds": 0.10105928708799183,
+  "exit_code": 0,
+  "head": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "scope": "Separate exact-test diagnostic, not replacement of original failed workspace trial.",
+  "started_utc": "2026-11-07T14:12:25.667648+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "51a5abc2021052aea213b79dde0b32428dc5a763c2cc00d35986433f71cab67b"
+}

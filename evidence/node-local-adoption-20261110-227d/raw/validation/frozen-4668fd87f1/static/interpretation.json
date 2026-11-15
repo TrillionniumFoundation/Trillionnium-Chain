@@ -1,0 +1,25 @@
+{
+  "all_original_checks_passed_except_source_after": true,
+  "cargo_build_test_clippy_executed": false,
+  "cargo_metadata_packages": 177,
+  "cargo_workspace_members": 26,
+  "changed_sha256_paths": [
+    "trillionnium/crates/trnm-data-availability/src/cell/adoption/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/residency/selected_version_tests.rs",
+    "trillionnium/crates/trnm-data-availability/tests/cell_adoption_cli.rs"
+  ],
+  "frozen_source_all_pass_claim": false,
+  "head_after": "4668fd87f1c4c7f6f4e206572e817a0c22201582",
+  "head_before": "4668fd87f1c4c7f6f4e206572e817a0c22201582",
+  "learning_reader_unittests": 51,
+  "lock_sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+  "lock_unchanged": true,
+  "scope": "source-contract-checks-not-native-runtime-pass",
+  "source_after": "REFUSED: authorized test-fixture corrections made the worktree dirty; no full-tree rescan occurred",
+  "source_before": "PASS for exact 4668fd87f1c4c7f6f4e206572e817a0c22201582",
+  "source_integrity_unittests": 43,
+  "status_after": " M trillionnium/crates/trnm-data-availability/src/cell/adoption/tests.rs\n M trillionnium/crates/trnm-data-availability/src/cell/residency/selected_version_tests.rs\n M trillionnium/crates/trnm-data-availability/tests/cell_adoption_cli.rs\n",
+  "status_before": "",
+  "tested_python_script_sha256_unchanged": true,
+  "total_python_unittests": 94
+}

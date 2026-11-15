@@ -1,0 +1,22 @@
+{
+  "actual_bytes": 1545993,
+  "actual_git_blob_sha1": "d6fafcd100224cb9c33e9d4b854b533a23baaacf",
+  "command": [
+    "/usr/bin/gh",
+    "api",
+    "-H",
+    "Accept: application/vnd.github.raw+json",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/d6fafcd100224cb9c33e9d4b854b533a23baaacf"
+  ],
+  "elapsed_seconds": 7.710047245025635,
+  "exit_code": 0,
+  "expected_blob": "d6fafcd100224cb9c33e9d4b854b533a23baaacf",
+  "expected_bytes": 1545993,
+  "import_exit_code": 0,
+  "import_stderr": "",
+  "import_stdout": "d6fafcd100224cb9c33e9d4b854b533a23baaacf\n",
+  "imported": true,
+  "path": "evidence/pon-pq-local-origin-runtime-20261028-r8/raw-native-records.zip",
+  "raw_sha256": "4ebe0c59fa64383172f4afae2ef7f2a76e61c8d80e34224d34956abaf5321cb7",
+  "timed_out": false
+}

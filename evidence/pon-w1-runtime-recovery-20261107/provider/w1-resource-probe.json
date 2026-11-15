@@ -1,0 +1,52 @@
+{
+  "cpu_affinity": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "cpu_count": 4,
+  "cuda_driver": {
+    "cuCtxCreate": 0,
+    "cuCtxDestroy": 0,
+    "cuDeviceGet": 0,
+    "cuDeviceGetCount": 0,
+    "cuInit": 0,
+    "cuMemAlloc": 0,
+    "cuMemFree": 0,
+    "cuMemcpyDtoH": 0,
+    "cuMemcpyHtoD": 0,
+    "device_count": 2,
+    "device_memory_roundtrip_verified": true
+  },
+  "experiment_status": "Passed",
+  "finished_unix_ns": 1794071115742945475,
+  "fresh_w1_proofs": 0,
+  "gpu_allocation_observed": true,
+  "gpu_memory_roundtrip_verified": true,
+  "initial_working_directory_names": [],
+  "nvidia_smi": {
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "Tesla T4, 580.178.04, 15360 MiB\nTesla T4, 580.178.04, 15360 MiB\n"
+  },
+  "observed_wall_ns": 932116346,
+  "observer_rusage": {
+    "max_single_process_rss_kib": 22552,
+    "system_seconds": 0.059129999999999995,
+    "user_seconds": 0.11611099999999999
+  },
+  "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+  "production_admission": false,
+  "python_version": "3.13.16",
+  "request_id": "trnm-w1-7d418660-kaggle-probe-01",
+  "resource_scope": "provider-visible worker environment; exclusive task cgroup ownership is not established",
+  "resource_scope_complete": false,
+  "schema": "TRNM-W1-PROVIDER-RESOURCE-PROBE1",
+  "started_monotonic_ns": 202578215850,
+  "started_unix_ns": 1794071114812305749,
+  "torch_distribution_version": "2.11.0+cu130",
+  "visible_cgroup_membership": "0::/\n",
+  "visible_cpu_max": "400000 100000\n",
+  "visible_memory_max": "32212254720\n"
+}

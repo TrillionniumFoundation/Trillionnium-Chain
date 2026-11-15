@@ -1,0 +1,14 @@
+{
+  "planned_bindings": 2592,
+  "production_source_digests": {
+    "commitment": "d330e462e793ea187ccb525ac7e2c03c6009135860f09417b5dc74f348f0e832",
+    "executor": "aa8ce1e89aa23a18fa5563b46fc9d43e9d834899a8301a8f70819c07e60d88b0"
+  },
+  "result_classification_and_result_destruction_inside_timed_interval": true,
+  "reviewer": "throughput_results",
+  "scope": "read-only independent reference/schedule review; no native execution",
+  "shared_helper_bodies_byte_identical": 11,
+  "six_reference_function_bodies_byte_identical_after_visibility_and_indentation": true,
+  "test_source_sha256": "015d1225d9773e5d85b0247352a1a31e9a8a264f85dff5e08746577a2a821aa0",
+  "timing_loop_and_decision_match_7dfee_v4": true
+}

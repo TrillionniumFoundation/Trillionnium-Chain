@@ -1,0 +1,99 @@
+{
+  "rog_access_during_extraction": false,
+  "schema": "fixed-joint-original-diagnostic-selection-v1",
+  "scope": "Only complete summary and four specified failed-command stdout/stderr pairs were extracted. This is not all122 diagnostic output files. Original full lane and six nonzero diagnostic units remain failures.",
+  "selected_files": [
+    {
+      "bytes": 202716,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-v1/summary.json"
+      },
+      "path": "summary.json",
+      "sha256": "d47c5501b2087a4ac8d9b092b51f246450cf57b2f02b5dbaf83b96e63672bef3"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-v1/unit-006-lines-74-74.stdout"
+      },
+      "path": "unit-006-lines-74-74.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 8136,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-v1/unit-006-lines-74-74.stderr"
+      },
+      "path": "unit-006-lines-74-74.stderr",
+      "sha256": "fa01e9864e501b6e21162eb2a616de8650806915d288b23c6709b2d01649d8b0"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-v1/unit-010-lines-78-78.stdout"
+      },
+      "path": "unit-010-lines-78-78.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 878,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-v1/unit-010-lines-78-78.stderr"
+      },
+      "path": "unit-010-lines-78-78.stderr",
+      "sha256": "10e0b8e08782eb86bd60c13d1c23897f044fdbc9cd71a574f59669857fc8eb0f"
+    },
+    {
+      "bytes": 175,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-v1/unit-022-lines-90-90.stdout"
+      },
+      "path": "unit-022-lines-90-90.stdout",
+      "sha256": "1feeea04b855e9e8f575d9a904d0971c83c7ee5239ab3eefca75357c63fcc8f2"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-v1/unit-022-lines-90-90.stderr"
+      },
+      "path": "unit-022-lines-90-90.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-v1/unit-023-lines-91-91.stdout"
+      },
+      "path": "unit-023-lines-91-91.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 68677,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-v1/unit-023-lines-91-91.stderr"
+      },
+      "path": "unit-023-lines-91-91.stderr",
+      "sha256": "546e228268abc5820ef0aa44749a73d20c92c29655d12cd32300f9f7747d2430"
+    }
+  ],
+  "source_index": {
+    "bytes": 97406,
+    "path": "/private/tmp/chain-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-copy-v1/EVIDENCE_INDEX.json",
+    "sha256": "4711b610ad6cf1f9711947caece9bc562002a8857d0ce454bc295806ad608ac1"
+  },
+  "source_zip": {
+    "bytes": 180498,
+    "path": "/private/tmp/chain-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-copy-v1/original-diagnostics-7d8d4c-v1.zip",
+    "sha256": "038fb138c75fef1eca35422e08f7d5e2c784bec70fcc739695c4ca71b5637c5a"
+  },
+  "tests_rerun": false
+}

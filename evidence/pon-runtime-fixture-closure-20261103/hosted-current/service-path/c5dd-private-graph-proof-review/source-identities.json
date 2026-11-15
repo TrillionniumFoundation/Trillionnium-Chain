@@ -1,0 +1,362 @@
+{
+  "schema": "cross-cursor-graph-proof-static-source-receipts-v1",
+  "observed_utc": "2026-11-03T23:20:47.022341+00:00",
+  "measured_source": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "followup_source": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 12585,
+          "sha256": "7fc1376207c91ab9c58d5265936c8e40284ee5f532f649b1fb00edf55164d869",
+          "git_blob": "b1daca95ea800ed45ac5fc01063e9814134f8f92"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 12585,
+          "sha256": "7fc1376207c91ab9c58d5265936c8e40284ee5f532f649b1fb00edf55164d869",
+          "git_blob": "b1daca95ea800ed45ac5fc01063e9814134f8f92"
+        }
+      ],
+      "bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope_tests.rs",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 11981,
+          "sha256": "04bae77b0161a6169c7d00a79a25e69e44f2c0fd99f4675b996893759e3f5b5c",
+          "git_blob": "b41f4d33552e93432334bb6818c5b5766edb7c2f"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 11981,
+          "sha256": "04bae77b0161a6169c7d00a79a25e69e44f2c0fd99f4675b996893759e3f5b5c",
+          "git_blob": "b41f4d33552e93432334bb6818c5b5766edb7c2f"
+        }
+      ],
+      "bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/sql.rs",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 6655,
+          "sha256": "be7f66cf8996f2e5504c1fe11f15bf5884cde66bcd8163cf3f9ad8710ad221f1",
+          "git_blob": "8914e65ed327051533b0163fa812c3689b0abcbf"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 6655,
+          "sha256": "be7f66cf8996f2e5504c1fe11f15bf5884cde66bcd8163cf3f9ad8710ad221f1",
+          "git_blob": "8914e65ed327051533b0163fa812c3689b0abcbf"
+        }
+      ],
+      "bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/owner.rs",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 20247,
+          "sha256": "5b28890080f6f07dab3437a8b4ad2ae6d0ae1e9c6622b97cfcd87c486807a89c",
+          "git_blob": "ed8bdcba602fdb1c781340437118393614e5a63b"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 20247,
+          "sha256": "5b28890080f6f07dab3437a8b4ad2ae6d0ae1e9c6622b97cfcd87c486807a89c",
+          "git_blob": "ed8bdcba602fdb1c781340437118393614e5a63b"
+        }
+      ],
+      "bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 2307,
+          "sha256": "7b56edcc1ad0ac27489050d66796517982fdf488582a039bee3c7865d9ee2802",
+          "git_blob": "c9308f4d94fd35772377fa03b3e616be4871eb0e"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 2307,
+          "sha256": "7b56edcc1ad0ac27489050d66796517982fdf488582a039bee3c7865d9ee2802",
+          "git_blob": "c9308f4d94fd35772377fa03b3e616be4871eb0e"
+        }
+      ],
+      "bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 594,
+          "sha256": "91f0c5dee1d02ff6ee62b276e11429c0f616eae7d7a8bd00d1315ac777c987e9",
+          "git_blob": "36972e39413614a7bff8d8801cb7b2f729030f3e"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 594,
+          "sha256": "91f0c5dee1d02ff6ee62b276e11429c0f616eae7d7a8bd00d1315ac777c987e9",
+          "git_blob": "36972e39413614a7bff8d8801cb7b2f729030f3e"
+        }
+      ],
+      "bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 331511,
+          "sha256": "a334ed1aca71058244cfbf42ca8c3b40ccd93cb6e62a063212fe2890828265db",
+          "git_blob": "c7669f3107ec806ecc680ab5a56fc0883dedc999"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 331511,
+          "sha256": "a334ed1aca71058244cfbf42ca8c3b40ccd93cb6e62a063212fe2890828265db",
+          "git_blob": "c7669f3107ec806ecc680ab5a56fc0883dedc999"
+        }
+      ],
+      "bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 94152,
+          "sha256": "b9f7aa9d535d07abf947612ed05df523f7d29f2faf560cb027cae47856e134e5",
+          "git_blob": "e250df3f9b6bbd792ba186e563677c36c8ba8959"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 94152,
+          "sha256": "b9f7aa9d535d07abf947612ed05df523f7d29f2faf560cb027cae47856e134e5",
+          "git_blob": "e250df3f9b6bbd792ba186e563677c36c8ba8959"
+        }
+      ],
+      "bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 13538,
+          "sha256": "d544bd342d3f86ad925f4f8178c557e5be1c48b8419711e0c325ff0626ee04e5",
+          "git_blob": "ed9c2000d253d7421ec899287012f2602f6f7fc5"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 13538,
+          "sha256": "d544bd342d3f86ad925f4f8178c557e5be1c48b8419711e0c325ff0626ee04e5",
+          "git_blob": "ed9c2000d253d7421ec899287012f2602f6f7fc5"
+        }
+      ],
+      "bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/fence_tests.rs",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 7162,
+          "sha256": "036ad091b995992bec61c6c1a7046231e1b4dae867d9f14ec2b605e031ab0766",
+          "git_blob": "4c4fe7aae2a194ef0d2d920c5f3e447ceb7197ba"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 7162,
+          "sha256": "036ad091b995992bec61c6c1a7046231e1b4dae867d9f14ec2b605e031ab0766",
+          "git_blob": "4c4fe7aae2a194ef0d2d920c5f3e447ceb7197ba"
+        }
+      ],
+      "bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 17306,
+          "sha256": "8ea7e8594b57054dc96240a0bcd83cfd24153468e30f464171ddb388f2d3b42d",
+          "git_blob": "fe84e7e93ca593473cf9a69b1bd47745cc014194"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 17306,
+          "sha256": "8ea7e8594b57054dc96240a0bcd83cfd24153468e30f464171ddb388f2d3b42d",
+          "git_blob": "fe84e7e93ca593473cf9a69b1bd47745cc014194"
+        }
+      ],
+      "bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_readback_tests.rs",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 26122,
+          "sha256": "78b8541e0d1da0d04239b72137cd99543a0f0882d552e545f3e9fea01bc931d8",
+          "git_blob": "caad5478bb950eeeb990e66f743b7d640db8fecb"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 26122,
+          "sha256": "78b8541e0d1da0d04239b72137cd99543a0f0882d552e545f3e9fea01bc931d8",
+          "git_blob": "caad5478bb950eeeb990e66f743b7d640db8fecb"
+        }
+      ],
+      "bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 19006,
+          "sha256": "a9d22ca6982afe6677c4d799a137c9e730a54d38d640ef551f9c4e02c4e5df4e",
+          "git_blob": "69318e0ffec2bd649fc9837d0662c4835417b485"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 19006,
+          "sha256": "a9d22ca6982afe6677c4d799a137c9e730a54d38d640ef551f9c4e02c4e5df4e",
+          "git_blob": "69318e0ffec2bd649fc9837d0662c4835417b485"
+        }
+      ],
+      "bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 11867,
+          "sha256": "8ce99b8cd82f4a709fd967b8f87cbf04c8084b817b3d77d3681be6d1f69cd35d",
+          "git_blob": "46e4dee2d0aa0952c830066790551794fc86b40f"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 11867,
+          "sha256": "8ce99b8cd82f4a709fd967b8f87cbf04c8084b817b3d77d3681be6d1f69cd35d",
+          "git_blob": "46e4dee2d0aa0952c830066790551794fc86b40f"
+        }
+      ],
+      "bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 1559,
+          "sha256": "caaf3a4a3247e84d0c2f8b2a86c83545a54df70dfdf88b07ea7c7a9eee2d71f3",
+          "git_blob": "eb44e7bc91a36b54ae025e5c1f1629e548af204f"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 1559,
+          "sha256": "caaf3a4a3247e84d0c2f8b2a86c83545a54df70dfdf88b07ea7c7a9eee2d71f3",
+          "git_blob": "eb44e7bc91a36b54ae025e5c1f1629e548af204f"
+        }
+      ],
+      "bytes_equal": true
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 57661,
+          "sha256": "a58b411677d5fed87287aae5a2f8133319c53443b89b8174e6dabaaaa4d7668e",
+          "git_blob": "c6c2c2a73346ac60e61c2a4fbba7d8e9cc5ba0bb"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 57661,
+          "sha256": "a58b411677d5fed87287aae5a2f8133319c53443b89b8174e6dabaaaa4d7668e",
+          "git_blob": "c6c2c2a73346ac60e61c2a4fbba7d8e9cc5ba0bb"
+        }
+      ],
+      "bytes_equal": true
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 39745,
+          "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+          "git_blob": "7a298d02ad14470a8c45094b4791c24109fc4519"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 39745,
+          "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+          "git_blob": "7a298d02ad14470a8c45094b4791c24109fc4519"
+        }
+      ],
+      "bytes_equal": true
+    }
+  ],
+  "pinned_dependency_sources": [
+    {
+      "package": "libsqlite3-sys",
+      "version": "0.37.0",
+      "package_checksum": "b1f111c8c41e7c61a49cd34e44c7619462967221a6443b0ec299e0ac30cfb9b1",
+      "path": "/workspace/scratch/b5a148b09b11/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libsqlite3-sys-0.37.0/sqlite3/sqlite3.c",
+      "bytes": 9390466,
+      "sha256": "9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5",
+      "registry_archive": "/workspace/scratch/b5a148b09b11/toolchain/cargo/registry/cache/index.crates.io-1949cf8c6b5b557f/libsqlite3-sys-0.37.0.crate",
+      "archive_sha256": "b1f111c8c41e7c61a49cd34e44c7619462967221a6443b0ec299e0ac30cfb9b1",
+      "archive_matches_cargo_lock": true,
+      "file_matches_archive_member": true,
+      "sqlite_version": "3.51.3",
+      "sqlite_source_id": "2026-03-13 10:38:09 737ae4a34738ffa0c3ff7f9bb18df914dd1cad163f28fd6b6e114a344fe6d618"
+    },
+    {
+      "package": "rusqlite",
+      "version": "0.39.0",
+      "package_checksum": "a0d2b0146dd9661bf67bb107c0bb2a55064d556eeb3fc314151b957f313bcd4e",
+      "path": "/workspace/scratch/b5a148b09b11/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rusqlite-0.39.0/src/trace.rs",
+      "bytes": 13904,
+      "sha256": "36fd38f0bb39f39ae43cf66c1489cb11fee64b86db65dbfe5240c4f959ae0e49",
+      "registry_archive": "/workspace/scratch/b5a148b09b11/toolchain/cargo/registry/cache/index.crates.io-1949cf8c6b5b557f/rusqlite-0.39.0.crate",
+      "archive_sha256": "a0d2b0146dd9661bf67bb107c0bb2a55064d556eeb3fc314151b957f313bcd4e",
+      "archive_matches_cargo_lock": true,
+      "file_matches_archive_member": true
+    }
+  ],
+  "related_existing_readbacks": [
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-scope-review/review.json",
+      "bytes": 23760,
+      "sha256": "0985533fa71a2470c02f74bfa2e8f1d6ae0db0a1670f03abaf7917315c2075ec"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-internal-review/review.json",
+      "bytes": 30495,
+      "sha256": "8e821be2100646483aa258dddf127b2c454c3080ee969dd31dab90892b4a274d"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-baseline-critical-path/small-readback.json",
+      "bytes": 15282,
+      "sha256": "63f5cf4a73141d032b8cb4a426a3e8aae7b8c3bd7be69fab4a76e28a4b991763"
+    }
+  ],
+  "native_or_sqlite_executions": 0,
+  "source_or_target_modifications": false,
+  "scope": "Static source and retained evidence only; named test source is not a newly executed control."
+}

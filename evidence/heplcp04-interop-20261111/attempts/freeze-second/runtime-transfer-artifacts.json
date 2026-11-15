@@ -1,0 +1,11 @@
+{
+  "moved": [
+    {
+      "bytes": 0,
+      "former_path": "evidence/heplcp04-interop-20261111/.hepta-lock-c33cb9ca6a86e14c7bcbbc9a",
+      "retained_path": "/home/qq/af52-chain-20261111/runtime-transfer-artifacts/.hepta-lock-c33cb9ca6a86e14c7bcbbc9a",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "source_writes_quiescent": true
+}

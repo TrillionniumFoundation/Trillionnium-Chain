@@ -1,0 +1,11 @@
+
+running 1 test
+test release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay ... FAILED
+
+failures:
+
+failures:
+    release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1200 filtered out; finished in 1.62s
+

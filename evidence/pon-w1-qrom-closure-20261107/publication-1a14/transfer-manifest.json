@@ -1,0 +1,174 @@
+{
+  "bundle_upload_commit": {
+    "committed": true,
+    "mode": 384,
+    "reused": false,
+    "sha256": "9aa10404c58ba6e053dec7e7724a92861c033e05518c896d82b00a4a3a2f8085",
+    "size": 4778605,
+    "version": "2050:51044235:4778605:1794059265183995348:1794059269794960317"
+  },
+  "files": [
+    {
+      "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/publication-final-1a14f7d48263/publication-report.json",
+      "sha256": "c01fa016e52b893f3fb849cd8a7b6862b55a6da1f24af63898e45b8ae9025f73",
+      "size": 15742,
+      "version": "2050:53276787:15742:1794059749945145829:1794059749945145829"
+    },
+    {
+      "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/publication-final-1a14f7d48263/pr-identity-before-body.stdout.log",
+      "sha256": "7a2fe60c1a1fb895f46fedf17a60341e57316aedcfce1bd2289262f22d8fc26b",
+      "size": 276,
+      "version": "2050:53276942:276:1794059726384982610:1794059726384982610"
+    },
+    {
+      "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/publication-final-1a14f7d48263/remote-head-readback.stdout.log",
+      "sha256": "f0509ef714f11aebd68674d7fd0bf753845c1a7bad2329cc6ad5fc3c3e63fd4f",
+      "size": 98,
+      "version": "2050:53276929:98:1794059722556855009:1794059722556855009"
+    },
+    {
+      "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/publication-final-1a14f7d48263/normal-hook-push.stdout.log",
+      "sha256": "feb92ae2fdf98c368dc4d5c0a4b1dd3de7924117ae624bd2772a727a84486de7",
+      "size": 177,
+      "version": "2050:53276917:177:1794059719076219428:1794059719076219428"
+    },
+    {
+      "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/publication-final-1a14f7d48263/normal-hook-push.stderr.log",
+      "sha256": "4bc90b82831cc4c0933aec100d3c7bba7af7be8886aa5b4414ec1b82f705cf15",
+      "size": 430,
+      "version": "2050:53276924:430:1794059719076392620:1794059719076392620"
+    },
+    {
+      "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/publication-final-1a14f7d48263/complete-source-check.stderr.log",
+      "sha256": "8c8dcba7dcc6d420b22284ee96460ed85c44d0d4ee40cca801225c35e3afbf22",
+      "size": 781,
+      "version": "2050:53276906:781:1794059703876072408:1794059703876072408"
+    },
+    {
+      "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/publication-final-1a14f7d48263/generated-inventory-check.stdout.log",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "size": 35,
+      "version": "2050:53276823:35:1794059701300680408:1794059701300680408"
+    }
+  ],
+  "schema": "TRNM-W1-PUBLICATION-TRANSFER1",
+  "source_directory": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/publication-final-1a14f7d48263",
+  "source_host": "desktop",
+  "source_job_id": "1a1b649bf53-12894-370",
+  "upload_chunks": [
+    {
+      "bytes": 262144,
+      "next_offset": 262144,
+      "offset": 0,
+      "sha256": "7db0fb5ad297453e6b44583e8e6ba06cd975ab7b2d12c3495802aa9bb4f32495"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 524288,
+      "offset": 262144,
+      "sha256": "2c5c65ce263f4c1e7dd402642d59e707448fda7c305e072f8e2c96a25597d187"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 786432,
+      "offset": 524288,
+      "sha256": "98ea0e0de32192871bcc0544883e71b5326f9c94f51b212071ebfc1d957cde52"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 1048576,
+      "offset": 786432,
+      "sha256": "f1d70a45c9c72ff5340a897a04a7715535d31990649a23846155d74658385592"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 1310720,
+      "offset": 1048576,
+      "sha256": "956a0890ee371ce81f90920e8fd2818e4611d406c05dea0c4f652741f9dc3055"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 1572864,
+      "offset": 1310720,
+      "sha256": "41df2a31675bc0582806dd36911fe828075b9a4dba0638c7e4ae9df66f53f504"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 1835008,
+      "offset": 1572864,
+      "sha256": "09806f0cec86fa6d8585c38278e928bf8dd9df0860772193a2f5466b4aff8367"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 2097152,
+      "offset": 1835008,
+      "sha256": "517aa744afda71724fbabaf04d72787dc2210e7326f43a2a8311c84d92a89f66"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 2359296,
+      "offset": 2097152,
+      "sha256": "847d5271611d16c8044afcabc6b3095e1036b8880d3ebb5854cfa03d7d9a61ef"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 2621440,
+      "offset": 2359296,
+      "sha256": "1ebeb52c1b39cb429a61cd626222f0d3e94fb2552fbd4be763b0a5d6df7b6a75"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 2883584,
+      "offset": 2621440,
+      "sha256": "44fe63dbe2e0480b24e4a819027a6f69a5e965c6cda5fbce399d8e16ce442499"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 3145728,
+      "offset": 2883584,
+      "sha256": "4d77d1a6bf6953989ec79d9c5924cf92f7694ca4ff044fbea19f49d20cd5e5e1"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 3407872,
+      "offset": 3145728,
+      "sha256": "9907a5babbc09e69a87b00dc42c944100ff66119be0206e107fefdaebb2899a1"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 3670016,
+      "offset": 3407872,
+      "sha256": "88cb3bd439380deb2a73df3bb90b450c2c1377aa1ba35584c4729c0ff9d09440"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 3932160,
+      "offset": 3670016,
+      "sha256": "b0c46ff3bf5cc0eb357afddb1179d344e34434b7c4966435ed375b09fd64f9a0"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 4194304,
+      "offset": 3932160,
+      "sha256": "d2c14159f4f3dc83a8b9d3765ebabd12fd00250816740576625133ab48316a38"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 4456448,
+      "offset": 4194304,
+      "sha256": "fd3b2253c862fe295c04f48ed8d3aa3dfdebb0ecf6d5676bc21352668bb06c18"
+    },
+    {
+      "bytes": 262144,
+      "next_offset": 4718592,
+      "offset": 4456448,
+      "sha256": "b944e20696cd2de9dc59cefbfabe69a3198ed2fd41b2f9b84f28f6b6e725b3dc"
+    },
+    {
+      "bytes": 60013,
+      "next_offset": 4778605,
+      "offset": 4718592,
+      "sha256": "caf1c0ab986c9da27232a114056f91b2c05f25509685abc6e5e098ef51b1c60f"
+    }
+  ]
+}

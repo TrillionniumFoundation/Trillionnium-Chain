@@ -1,0 +1,22 @@
+{
+  "tested_source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+  "implementation_source": "f2375a08f4458f842b96d30215adcd5380270f1d",
+  "target_pr": 907,
+  "base_source": "2419777413e44314a4e9e693e81e03bb7590800f",
+  "inputs": {
+    "budget": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+    "integration": "2419777413e44314a4e9e693e81e03bb7590800f",
+    "adoption": "376d82bdeab3b98ebeed92952dfadbbba1eae585",
+    "accounting": "6ab14e5f3cb642e685196a52942d9235eff2f4a0"
+  },
+  "merges": [
+    "01590e2b2065b9a9317d429ad88a9dc062a737bf",
+    "b7798f3dceba81485cb7c41043340caa24f4de50",
+    "9675a51d4c2edb7133d3d9127015c2723d8f71ac"
+  ],
+  "before_subject": "e63427560885b65c57db6bdc478df023111b4733",
+  "before_tree": "10a70f10bf5c64fe4b1d8df42c6463ff17aeba88",
+  "evidence_tree_is_not_claimed_native_tested": true,
+  "main_source_unchanged": true
+}

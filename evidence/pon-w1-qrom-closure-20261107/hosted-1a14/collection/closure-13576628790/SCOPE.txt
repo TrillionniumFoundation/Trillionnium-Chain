@@ -1,0 +1,1 @@
+Named controls, fixed image/AIR reconstruction, and explicit conditional arithmetic only. No complete QROM theorem, real quantum budget, PQ authorization or chain-weight qualification is granted. The full ZKR archive trial is separately retained.

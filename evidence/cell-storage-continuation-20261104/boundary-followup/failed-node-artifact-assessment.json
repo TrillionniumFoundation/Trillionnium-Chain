@@ -1,0 +1,190 @@
+{
+  "schema": "trnm.cell.failed-node-artifact-assessment.v1",
+  "status": "read_only_exact_failed_unit_cleanup_candidates",
+  "observed_utc": "2026-11-05T01:28:57.307496+00:00",
+  "scope": {
+    "task_root": "/workspace/scratch/73305aff6ced",
+    "target_root": "/workspace/scratch/73305aff6ced/target",
+    "failed_unit": "trnm_pon_node-524e9bf7e3b64440",
+    "file_inventory": "Only debug/deps/trnm_pon_node-524e9bf7e3b64440* and its exact Cargo fingerprint directory; no other workspace or successful M09 artifacts were assessed for deletion."
+  },
+  "failed_attempt": {
+    "session_id": 24156,
+    "status": "command_failed",
+    "exit_code": 101,
+    "tests_executed": 0,
+    "started_utc": "2026-11-05T01:16:51.087312+00:00",
+    "elapsed_ns": 427354718975,
+    "source_commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+    "source_tree": "ea600542130341144d697776d92048988d44572b",
+    "before_after_source_identity_equal": true,
+    "receipt": "/workspace/scratch/73305aff6ced/observations/composed-final/composed-node-selected-qualified.json",
+    "receipt_sha256": "29bb31f28cf764f4139783c9d88fa8c8638392e92410b646b2e955a428f90050",
+    "log": "/workspace/scratch/73305aff6ced/observations/composed-final/composed-node-selected-qualified.log",
+    "log_sha256": "61bd1b872ad4413e369038fc0db9d4b4688d18b2493525c694224ea433e873fe",
+    "error": "rustc-LLVM ERROR: IO failure on output stream: No space left on device",
+    "profile_observed": {
+      "opt_level": 3,
+      "debuginfo": 2,
+      "libtest": true
+    },
+    "final_executable_exists": false
+  },
+  "process_and_lock_observation": {
+    "owned_cargo_rustc_or_linker_processes": [],
+    "target_lock_path": "/workspace/scratch/73305aff6ced/target/debug/.cargo-lock",
+    "target_lock_device": 27,
+    "target_lock_inode": 1705643,
+    "matching_kernel_locks": [],
+    "unclassified_processes_due_to_cwd_permissions": [
+      {
+        "pid": 390149,
+        "comm": "cargo",
+        "cwd_readable": false,
+        "argv_contains_task_root": false,
+        "argv_contains_failed_unit": false
+      },
+      {
+        "pid": 395441,
+        "comm": "cargo",
+        "cwd_readable": false,
+        "argv_contains_task_root": false,
+        "argv_contains_failed_unit": false
+      },
+      {
+        "pid": 395813,
+        "comm": "rustc",
+        "cwd_readable": false,
+        "argv_contains_task_root": false,
+        "argv_contains_failed_unit": false
+      },
+      {
+        "pid": 396611,
+        "comm": "rustc",
+        "cwd_readable": false,
+        "argv_contains_task_root": false,
+        "argv_contains_failed_unit": false
+      }
+    ],
+    "limitation": "No build process was identified with this task cwd and no lock was held on this task target. Processes whose cwd was permission-protected are disclosed; their readable argv did not contain this task root or failed unit. This is a point-in-time check, not a claim that no Rust jobs exist elsewhere."
+  },
+  "cleanup_candidates": [
+    {
+      "path": "/workspace/scratch/73305aff6ced/target/debug/deps/trnm_pon_node-524e9bf7e3b64440.trnm_pon_node.71d4407208fc86bc-cgu.02.rcgu.o",
+      "regular_file": true,
+      "size_bytes": 53478104,
+      "allocated_bytes": 53497856,
+      "device": 27,
+      "inode": 1706352,
+      "nlink": 1,
+      "mode_octal": "0o644",
+      "mtime_ns": 1793841772916384763,
+      "mtime_utc": "2026-11-05T01:22:52.916385+00:00",
+      "ctime_ns": 1793841772916384763,
+      "sha256": "6383b78194c28f4b183a539b6995ef7da65f1ac375dbec3a2955f409c8eb3643",
+      "unchanged_during_assessment": true,
+      "reason": "Partial code-generation object of the exact failed libtest compilation unit; its extra-filename and output directory are present in the ENOSPC log, and no final test binary was produced."
+    },
+    {
+      "path": "/workspace/scratch/73305aff6ced/target/debug/deps/trnm_pon_node-524e9bf7e3b64440.trnm_pon_node.71d4407208fc86bc-cgu.13.rcgu.o",
+      "regular_file": true,
+      "size_bytes": 2100896,
+      "allocated_bytes": 2105344,
+      "device": 27,
+      "inode": 1716987,
+      "nlink": 1,
+      "mode_octal": "0o644",
+      "mtime_ns": 1793841833747749289,
+      "mtime_utc": "2026-11-05T01:23:53.747749+00:00",
+      "ctime_ns": 1793841833747749289,
+      "sha256": "daca24bb18767bbb00e279fca0f2418ccad27a1307a07ae3358a27cc249b250f",
+      "unchanged_during_assessment": true,
+      "reason": "Partial code-generation object of the exact failed libtest compilation unit; its extra-filename and output directory are present in the ENOSPC log, and no final test binary was produced."
+    },
+    {
+      "path": "/workspace/scratch/73305aff6ced/target/debug/deps/trnm_pon_node-524e9bf7e3b64440.trnm_pon_node.71d4407208fc86bc-cgu.14.rcgu.o",
+      "regular_file": true,
+      "size_bytes": 59130584,
+      "allocated_bytes": 59166720,
+      "device": 27,
+      "inode": 1716986,
+      "nlink": 1,
+      "mode_octal": "0o644",
+      "mtime_ns": 1793841802020073832,
+      "mtime_utc": "2026-11-05T01:23:22.020074+00:00",
+      "ctime_ns": 1793841802020073832,
+      "sha256": "852c1b32803b095d519d41ca8a9cd06ab7756c05c3d5954c7c2e48c68f9d572d",
+      "unchanged_during_assessment": true,
+      "reason": "Partial code-generation object of the exact failed libtest compilation unit; its extra-filename and output directory are present in the ENOSPC log, and no final test binary was produced."
+    }
+  ],
+  "recommended_delete_paths": [
+    "/workspace/scratch/73305aff6ced/target/debug/deps/trnm_pon_node-524e9bf7e3b64440.trnm_pon_node.71d4407208fc86bc-cgu.02.rcgu.o",
+    "/workspace/scratch/73305aff6ced/target/debug/deps/trnm_pon_node-524e9bf7e3b64440.trnm_pon_node.71d4407208fc86bc-cgu.13.rcgu.o",
+    "/workspace/scratch/73305aff6ced/target/debug/deps/trnm_pon_node-524e9bf7e3b64440.trnm_pon_node.71d4407208fc86bc-cgu.14.rcgu.o"
+  ],
+  "candidate_logical_bytes": 114709584,
+  "candidate_allocated_bytes": 114769920,
+  "candidate_allocated_mib": 109.453,
+  "retained_metadata": [
+    {
+      "path": "/workspace/scratch/73305aff6ced/target/debug/deps/trnm_pon_node-524e9bf7e3b64440.d",
+      "regular_file": true,
+      "size_bytes": 641127,
+      "allocated_bytes": 643072,
+      "device": 27,
+      "inode": 1720250,
+      "nlink": 1,
+      "mode_octal": "0o644",
+      "mtime_ns": 1793841420671474777,
+      "mtime_utc": "2026-11-05T01:17:00.671475+00:00",
+      "ctime_ns": 1793841420671474777,
+      "sha256": "60d0d0732161b7778b3c2654a7f91b14f0c0dacdc446ec87d1436895abc354db",
+      "unchanged_during_assessment": true,
+      "reason_retained": "Small dependency metadata retained; not included in proposed cleanup."
+    },
+    {
+      "path": "/workspace/scratch/73305aff6ced/target/debug/.fingerprint/trnm-pon-node-524e9bf7e3b64440/invoked.timestamp",
+      "regular_file": true,
+      "size_bytes": 48,
+      "allocated_bytes": 4096,
+      "device": 27,
+      "inode": 1720045,
+      "nlink": 1,
+      "mode_octal": "0o644",
+      "mtime_ns": 1793841417895500184,
+      "mtime_utc": "2026-11-05T01:16:57.895500+00:00",
+      "ctime_ns": 1793841417895500184,
+      "sha256": "5a109e6643e8d3e88642e3f35e85d2a83e639d07523aa6e99166c48178e965c3",
+      "unchanged_during_assessment": true,
+      "reason_retained": "Failed invocation/error fingerprint evidence retained."
+    },
+    {
+      "path": "/workspace/scratch/73305aff6ced/target/debug/.fingerprint/trnm-pon-node-524e9bf7e3b64440/output-test-lib-trnm_pon_node",
+      "regular_file": true,
+      "size_bytes": 71,
+      "allocated_bytes": 4096,
+      "device": 27,
+      "inode": 1717002,
+      "nlink": 1,
+      "mode_octal": "0o644",
+      "mtime_ns": 1793841833783748940,
+      "mtime_utc": "2026-11-05T01:23:53.783749+00:00",
+      "ctime_ns": 1793841833783748940,
+      "sha256": "a81eab0938a9662e26d20115c266a7845db9e5f8dce2e60bc35e9ee1dbc8b5ba",
+      "unchanged_during_assessment": true,
+      "reason_retained": "Failed invocation/error fingerprint evidence retained."
+    }
+  ],
+  "filesystem_available_bytes_at_assessment": 0,
+  "execution": {
+    "files_deleted": [],
+    "source_modified": false,
+    "target_modified": false,
+    "rust_started": false,
+    "processes_signaled": false,
+    "local_node_retry_planned": false,
+    "cleanup_owner": "parent after reviewing exact paths and rechecking file identity if needed"
+  },
+  "purpose": "Reclaim only these failed libtest partial objects for evidence preservation and commit work; no successful M09 artifacts or other workspace files are proposed for cleanup."
+}

@@ -1,0 +1,87 @@
+{
+  "prior": "63f3704a26ce2181b66f075a27d5478e18b388e9",
+  "target": "e40d7071c4724e6600deef8a2820bf35c1982289",
+  "head": "ceb1d127ed760b1607f72bdec87e61ee185f52a6",
+  "tree": "79ad1d2ab0748ec41b584c8c5df172e151fbb85b",
+  "workflow_keeps_current_complete_gate": true,
+  "remote_helper_and_new_diagnostic_method_byte_identical": true,
+  "remote_source_roster_assertions_adapted_to_integrated_42": true,
+  "current_kernel_passed_required": 19,
+  "current_history_passed_required": 41,
+  "retained_history_child": 1,
+  "integrated_names_added": [
+    "pon_work::legal_attempt::tests::checked_rank_one_and_bounded_rank_preparation_share_bytes_but_keep_distinct_domains",
+    "pon_work::legal_attempt::tests::checked_rank_one_preparation_matches_dense_sparse_and_independent_replay",
+    "pon_work::legal_attempt::tests::checked_rank_one_preparation_preserves_complete_misses_and_cancellation",
+    "pon_work::legal_attempt::tests::checked_rank_one_preparation_refuses_other_ranks_and_hidden_malformed_words",
+    "pon_work::legal_attempt::tests::checked_rank_one_reuse_rejects_changed_challenge_transcript_and_product",
+    "ingress::history_import::tests::history_page_cannot_decode_past_fixed_tip_before_native_admission"
+  ],
+  "original_failed_composition_log": "/private/tmp/chain-consolidation-20261114-root/merge-concurrent-e40d-roster-v1/completion-controls.log",
+  "steps": [
+    {
+      "label": "preflight",
+      "exit": 0,
+      "seconds": 0.05,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "completion-controls",
+      "exit": 0,
+      "seconds": 4.785,
+      "sha256": "7dab44986be0b246314bb721587ea84bc315323fce9ce2d11dde426ee3f827d7"
+    },
+    {
+      "label": "roster-controls",
+      "exit": 0,
+      "seconds": 0.034,
+      "sha256": "7e76d831528ba7c668c2933c399581c15403ab4b327a7aea82403feec3990c8a"
+    },
+    {
+      "label": "ci-contract",
+      "exit": 0,
+      "seconds": 0.074,
+      "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+    },
+    {
+      "label": "corpus",
+      "exit": 0,
+      "seconds": 0.701,
+      "sha256": "5a471edb004b8ae53a23a0e725c464ea25b8454efdf5cf3c61503aed45e225aa"
+    },
+    {
+      "label": "diff",
+      "exit": 0,
+      "seconds": 0.044,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "precommit",
+      "exit": 0,
+      "seconds": 0.046,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "stage",
+      "exit": 0,
+      "seconds": 0.041,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "commit",
+      "exit": 0,
+      "seconds": 0.065,
+      "sha256": "c383ee0c37a8326c4756515d23e5562dc61cfa56f823a5bede157821b2c61274"
+    }
+  ],
+  "paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/check_w1_native_roster.py",
+    "scripts/ci/test_w1_factorial_native_gate.py",
+    "scripts/ci/w1_native_controls.py",
+    "scripts/ci/w1_native_rosters_v1.json"
+  ],
+  "linux_real_roster_test": "running separately on fixed1897 source",
+  "remote_writes": false
+}

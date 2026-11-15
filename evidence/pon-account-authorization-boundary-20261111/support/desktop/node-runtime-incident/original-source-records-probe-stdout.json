@@ -1,0 +1,62 @@
+{
+  "utc": "2026-11-11T03:48:01Z",
+  "source_head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status": "",
+  "old_target_exists": false,
+  "record_files": {
+    "node-retained-preflight": [
+      {
+        "name": "context.json",
+        "bytes": 4016
+      },
+      {
+        "name": "result.json",
+        "bytes": 875
+      },
+      {
+        "name": "stderr.log",
+        "bytes": 0
+      },
+      {
+        "name": "stdout.log",
+        "bytes": 175
+      }
+    ],
+    "node-retained-all-targets": [
+      {
+        "name": "context.json",
+        "bytes": 4332
+      },
+      {
+        "name": "result.json",
+        "bytes": 0
+      },
+      {
+        "name": "stderr.log",
+        "bytes": 4193
+      },
+      {
+        "name": "stdout.log",
+        "bytes": 0
+      }
+    ],
+    "node-retained-source-after": null
+  },
+  "disks": [
+    {
+      "path": "/home/qian-qi",
+      "device": 2050,
+      "available": 55981068288
+    },
+    {
+      "path": "/data",
+      "device": 2067,
+      "available": 173251186688
+    },
+    {
+      "path": "/dev/shm",
+      "device": 24,
+      "available": 44715040768
+    }
+  ]
+}

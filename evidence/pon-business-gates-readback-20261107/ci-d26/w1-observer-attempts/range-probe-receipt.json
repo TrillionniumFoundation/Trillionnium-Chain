@@ -1,0 +1,54 @@
+{
+  "artifact_id": 13578947026,
+  "metadata": {
+    "id": 13578947026,
+    "node_id": "MDg6QXJ0aWZhY3QxMzU3ODk0NzAyNg==",
+    "name": "w1-false-trace-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+    "size_in_bytes": 5571168,
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578947026",
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578947026/zip",
+    "expired": false,
+    "digest": "sha256:95017dffd112b5cb0c7fdc282e132831e6f286b7a59e470db8a18f80ed7c18a1",
+    "created_at": "2026-11-07T14:56:23Z",
+    "updated_at": "2026-11-07T14:56:23Z",
+    "expires_at": "2026-12-07T14:56:22Z",
+    "workflow_run": {
+      "id": 42383368504,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+    }
+  },
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "--include",
+    "--header",
+    "Range: bytes=5455872-",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578947026/zip"
+  ],
+  "old_attempt": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578947026/readback.json",
+  "old_prefix_bytes": 5455872,
+  "old_prefix_sha256": "f42b5f066588ba66a9367cb0445d7d14b7b6eb3ee0e680e1a70ca13f7713f1e7",
+  "errors": [],
+  "native_gate_validated": false,
+  "exit_code": 0,
+  "response": {
+    "status": 206,
+    "body_bytes": 115296,
+    "body_sha256": "b819cf5eaadebb6d3ba565b06e9213a36f8d5e1c9db7f6f4552d06f5e89ea569",
+    "headers": {
+      "content-length": "115296",
+      "content-range": "bytes 5455872-5571167/5571168",
+      "content-type": "application/zip",
+      "etag": "\"0x8DF3CDF4A9F0762\""
+    }
+  },
+  "range_honored": true,
+  "recovered_full_zip_sha256": "95017dffd112b5cb0c7fdc282e132831e6f286b7a59e470db8a18f80ed7c18a1"
+}

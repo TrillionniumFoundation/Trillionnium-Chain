@@ -1,0 +1,304 @@
+{
+  "before": {
+    "clean": true,
+    "head": "81da33e609cb64b319e8cfcca7059e5c30d39044",
+    "tree": "e5561165ad3b02174b089ce43f93142ab3efd839"
+  },
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+      "duration_seconds": 0.004292,
+      "exit_code": 0,
+      "log": "previous-identity.log",
+      "sha256": "576a99e497a4c9a0912d56ffe31d7882ee1714f47cfab61bc17f1c3ab5183cf9"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+      "duration_seconds": 0.302593,
+      "exit_code": 0,
+      "log": "previous-status.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.hooksPath=/dev/null",
+        "-c",
+        "gc.auto=0",
+        "-c",
+        "maintenance.auto=false",
+        "-c",
+        "fetch.writeCommitGraph=false",
+        "fetch",
+        "--no-tags",
+        "--no-recurse-submodules",
+        "--no-write-fetch-head",
+        "--negotiation-tip=81da33e609cb64b319e8cfcca7059e5c30d39044",
+        "<canonical-origin-url>",
+        "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35"
+      ],
+      "cwd": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+      "duration_seconds": 7.48763,
+      "exit_code": 0,
+      "log": "successor-fetch.log",
+      "sha256": "327b9a41d5a16bb539cebb8b2c1c42b15e8412ab0e71046a110f5629142a8c78"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35^{tree}"
+      ],
+      "cwd": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+      "duration_seconds": 0.001983,
+      "exit_code": 0,
+      "log": "successor-tree.log",
+      "sha256": "7c53e0fdd15b429614213fe878ebe3df25ef2605cb6537ec576883d51130b2e4"
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "81da33e609cb64b319e8cfcca7059e5c30d39044",
+        "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35"
+      ],
+      "cwd": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+      "duration_seconds": 0.001754,
+      "exit_code": 0,
+      "log": "successor-ancestry.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--quiet",
+        "--detach",
+        "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35"
+      ],
+      "cwd": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+      "duration_seconds": 0.290164,
+      "exit_code": 0,
+      "log": "successor-checkout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+      "duration_seconds": 0.003936,
+      "exit_code": 0,
+      "log": "complete-ready-identity.log",
+      "sha256": "c218142ad97e2e1aea8bed9069e326596d2c9477934eba5fdd17a3c848aa478b"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+      "duration_seconds": 0.029844,
+      "exit_code": 0,
+      "log": "complete-ready-status.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+      "duration_seconds": 0.002478,
+      "exit_code": 0,
+      "log": "complete-before-identity.log",
+      "sha256": "c218142ad97e2e1aea8bed9069e326596d2c9477934eba5fdd17a3c848aa478b"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+      "duration_seconds": 0.020441,
+      "exit_code": 0,
+      "log": "complete-before-status.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+        "--output",
+        "/dev/shm/frozen-d9954903-validation/raw-source/head-source-identity.json"
+      ],
+      "cwd": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+      "duration_seconds": 1.373898,
+      "exit_code": 0,
+      "log": "head-source-identity.log",
+      "sha256": "106416a1d5fa485e6f1b6d36c097de6956f97b05eb60de3584f5946066a99813"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+      "duration_seconds": 0.143117,
+      "exit_code": 0,
+      "log": "pq-research-integration.log",
+      "sha256": "c8ad351bbabf07ca40661fe13cd14d2c191ae98d2b0fa4375c85282edd9b5db4"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+      "duration_seconds": 0.003109,
+      "exit_code": 0,
+      "log": "complete-after-identity.log",
+      "sha256": "c218142ad97e2e1aea8bed9069e326596d2c9477934eba5fdd17a3c848aa478b"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+      "duration_seconds": 0.020258,
+      "exit_code": 0,
+      "log": "complete-after-status.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "complete_after": {
+    "clean": true,
+    "head": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+    "tree": "54442c70933c1ea37ebfe725628cbdd8685b746e"
+  },
+  "complete_before": {
+    "clean": true,
+    "head": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+    "tree": "54442c70933c1ea37ebfe725628cbdd8685b746e"
+  },
+  "complete_checkout": "/dev/shm/trnm-frozen-source-81da-822cc50e",
+  "complete_index": {
+    "flag_counts": {
+      "H": 9197
+    },
+    "sha256": "80f6317623078e05a050242f3d7c3fb4187f9b16872d05346d71679c442c7282",
+    "tracked_count": 9197
+  },
+  "disk_based_writes": false,
+  "expected_head": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+  "expected_tree": "54442c70933c1ea37ebfe725628cbdd8685b746e",
+  "finished_utc": "2026-11-05T01:51:45.127055+00:00",
+  "isolated_git_files_bytes_after": 1478282,
+  "limitations": [
+    "Head-mode source identity and research source contract only; no prospective merge identity or security qualification.",
+    "Original 81da receipts are historical; these receipts are bound to corrected d9954903.",
+    "Existing ancestor objects remain read through an alternates file; no independent copy of the object store or host/toolchain integrity proof."
+  ],
+  "network_scope": "Explicit fetch of the one authorized successor commit from the original canonical repository URL; object writes confined to isolated tmpfs metadata. Subsequent checks disable all Git protocols and lazy fetch.",
+  "pq_research_integration_exit_code": 0,
+  "pq_research_integration_result": {
+    "canonical_default_provider_contract_checked": true,
+    "canonical_pnq2_contract_checked": true,
+    "continuous_npq6_combination_accepted": false,
+    "cryptographic_acceptance": false,
+    "exact_source_blobs": 464,
+    "legacy_qtx1_optional_adapter_contract_checked": true,
+    "native_transfer_account_contract_checked": true,
+    "native_transport_contract_checked": true,
+    "node_activated": false,
+    "production_confidentiality_accepted": false,
+    "schema": "trnm-pq-cross-branch-check-v1",
+    "status": "HOLD_NO_GO",
+    "upstream_heads": 6,
+    "whole_native_authorization_migrated": false
+  },
+  "previous_head": "81da33e609cb64b319e8cfcca7059e5c30d39044",
+  "ready": {
+    "clean": true,
+    "head": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+    "tree": "54442c70933c1ea37ebfe725628cbdd8685b746e"
+  },
+  "ready_utc": "2026-11-05T01:50:56.820751+00:00",
+  "remote_identity": {
+    "host": "github.com",
+    "path": "/TrillionniumFoundation/Trillionnium-Chain.git",
+    "scheme": "https"
+  },
+  "report_directory": "/dev/shm/frozen-d9954903-validation/raw-source",
+  "schema": "trnm-frozen-raw-source-validation-v1",
+  "source_checkout": "/workspace/scratch/822cc50e24f0/chain-integration",
+  "source_checkout_mutation": false,
+  "source_identity_exit_code": 0,
+  "source_identity_receipt_sha256": "106416a1d5fa485e6f1b6d36c097de6956f97b05eb60de3584f5946066a99813",
+  "started_utc": "2026-11-05T01:50:48.693298+00:00",
+  "status": "PASS",
+  "tmpfs_available_bytes_after": 1252380672,
+  "tmpfs_available_bytes_at_ready": 1253134336,
+  "tree_inventory": {
+    "git_ls_tree_bytes": 1332078,
+    "git_ls_tree_sha256": "9a46623a0b3f41d8cb96bc163e928b72775546a01060137b76a13affc39ed150",
+    "mode_counts": {
+      "100644": 9187,
+      "100755": 10
+    },
+    "tracked_blob_bytes": 948887514,
+    "tracked_blob_count": 9197,
+    "unique_blob_count": 8096
+  },
+  "validation_controls": {
+    "git_config_overrides": {
+      "core.attributesFile": "/dev/null",
+      "core.autocrlf": "false",
+      "core.eol": "lf",
+      "core.hooksPath": "/dev/null",
+      "core.sparseCheckout": "false",
+      "core.sparseCheckoutCone": "false",
+      "gc.auto": "0",
+      "maintenance.auto": "false",
+      "protocol.allow": "never",
+      "submodule.recurse": "false"
+    },
+    "global_and_system_config": false,
+    "lazy_fetch": false,
+    "python_bytecode_writes": false,
+    "replace_objects": false,
+    "system_attributes": false
+  }
+}

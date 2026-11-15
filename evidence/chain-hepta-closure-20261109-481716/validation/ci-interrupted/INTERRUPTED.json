@@ -1,0 +1,11 @@
+{
+  "schema": "trnm.ci-contract-deferred-review.v1",
+  "recorded_at_utc": "2026-11-09T14:06:50.149327+00:00",
+  "reason": "Root requested waiting for M3 while workflows and corpus were still changing; own exec session was interrupted.",
+  "exec_session_exit_code": 130,
+  "tests_qualification": "NOT_ESTABLISHED_INTERRUPTED",
+  "child_process_observation": "no longer observed",
+  "original_started_record": "STARTED.json",
+  "log_bytes": 1032,
+  "log_sha256_at_interruption": "6d854f86a842045c182c58390f65220051b09581d6424eff3f1a308ae8ffd87c"
+}

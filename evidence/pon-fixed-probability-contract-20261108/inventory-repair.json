@@ -1,0 +1,17 @@
+{
+  "initial_failure": "qa-11-inventory",
+  "original_source": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "added_paths": [
+    "trillionnium/crates/trnm-pon-node/src/research_work_schedule.rs",
+    "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs",
+    "trillionnium/crates/trnm-pon-node/tests/research_work_schedule.rs"
+  ],
+  "removed_paths": [],
+  "generated_only_with_repository_script": true,
+  "unexpected_upstream_entry": {
+    "path": "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs",
+    "same_blob_as_integration_8d538974": "0ad34d092863dd32c5e9793daa618a91cd6c15f8"
+  },
+  "initial_assertion_expected_two_entries": true,
+  "initial_assertion_failed_closed": true
+}

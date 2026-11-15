@@ -1,0 +1,7 @@
+usage: test_read_original_native_campaign.py [-h] --artifact-dir ARTIFACT_DIR
+                                             --expected-manifest-sha256
+                                             EXPECTED_MANIFEST_SHA256
+                                             --expected-head EXPECTED_HEAD
+                                             --expected-tree EXPECTED_TREE
+                                             [--retained-subset]
+test_read_original_native_campaign.py: error: the following arguments are required: --artifact-dir, --expected-manifest-sha256, --expected-head, --expected-tree

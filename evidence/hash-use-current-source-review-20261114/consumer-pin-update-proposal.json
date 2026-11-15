@@ -1,0 +1,25 @@
+{
+  "corpus_modified_here": false,
+  "schema": "hash-use-root-composition-pin-proposal-v1",
+  "soleplan_modified_here": false,
+  "updates": [
+    {
+      "bytes": 72224,
+      "new_git_blob": "986a94eaf6b1c44a11595cc98ac4f9925e7c943e",
+      "path": "config/pon/hash-use-contract-v1.json",
+      "sha256": "9d1e45dacc0717a9418360c0eb1d1652abc0ef7e761f730c978bab160b09c2d5"
+    },
+    {
+      "bytes": 18146,
+      "new_git_blob": "cf55d45678bfb27d9ad9fcf2863a05aa1bc0540b",
+      "path": "scripts/ci/hash_use_contract.py",
+      "sha256": "e7a3b41852509e4fdf9833ce65aadcfb3b749055044175176202276287218230"
+    },
+    {
+      "bytes": 15317,
+      "new_git_blob": "caeef93f9bc11228fc8fe5d18923ffca42a7af16",
+      "path": "docs/security/HASH_USE_CONTRACT_V1.md",
+      "sha256": "216c7cb253fb08010af0e990c691efdce5850da7620d175bb19290e6d8388a50"
+    }
+  ]
+}

@@ -1,0 +1,504 @@
+{
+  "all_retained_api_pages_empty": true,
+  "configuration_changed": false,
+  "polls": [
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-001",
+      "raw_members_retained": [
+        "analysis/poll-001/analyses-1.json",
+        "analysis/poll-001/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-001/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-001/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-002",
+      "raw_members_retained": [
+        "analysis/poll-002/analyses-1.json",
+        "analysis/poll-002/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-002/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-002/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-003",
+      "raw_members_retained": [
+        "analysis/poll-003/analyses-1.json",
+        "analysis/poll-003/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-003/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-003/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-004",
+      "raw_members_retained": [
+        "analysis/poll-004/analyses-1.json",
+        "analysis/poll-004/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-004/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-004/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-005",
+      "raw_members_retained": [
+        "analysis/poll-005/analyses-1.json",
+        "analysis/poll-005/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-005/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-005/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-006",
+      "raw_members_retained": [
+        "analysis/poll-006/analyses-1.json",
+        "analysis/poll-006/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-006/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-006/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-007",
+      "raw_members_retained": [
+        "analysis/poll-007/analyses-1.json",
+        "analysis/poll-007/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-007/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-007/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-008",
+      "raw_members_retained": [
+        "analysis/poll-008/analyses-1.json",
+        "analysis/poll-008/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-008/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-008/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-009",
+      "raw_members_retained": [
+        "analysis/poll-009/analyses-1.json",
+        "analysis/poll-009/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-009/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-009/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-010",
+      "raw_members_retained": [
+        "analysis/poll-010/analyses-1.json",
+        "analysis/poll-010/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-010/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-010/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-011",
+      "raw_members_retained": [
+        "analysis/poll-011/analyses-1.json",
+        "analysis/poll-011/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-011/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-011/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-012",
+      "raw_members_retained": [
+        "analysis/poll-012/analyses-1.json",
+        "analysis/poll-012/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-012/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-012/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-013",
+      "raw_members_retained": [
+        "analysis/poll-013/analyses-1.json",
+        "analysis/poll-013/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-013/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-013/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-014",
+      "raw_members_retained": [
+        "analysis/poll-014/analyses-1.json",
+        "analysis/poll-014/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-014/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-014/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-015",
+      "raw_members_retained": [
+        "analysis/poll-015/analyses-1.json",
+        "analysis/poll-015/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-015/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-015/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-016",
+      "raw_members_retained": [
+        "analysis/poll-016/analyses-1.json",
+        "analysis/poll-016/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-016/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-016/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-017",
+      "raw_members_retained": [
+        "analysis/poll-017/analyses-1.json",
+        "analysis/poll-017/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-017/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-017/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-018",
+      "raw_members_retained": [
+        "analysis/poll-018/analyses-1.json",
+        "analysis/poll-018/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-018/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-018/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-019",
+      "raw_members_retained": [
+        "analysis/poll-019/analyses-1.json",
+        "analysis/poll-019/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-019/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-019/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-020",
+      "raw_members_retained": [
+        "analysis/poll-020/analyses-1.json",
+        "analysis/poll-020/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-020/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-020/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-021",
+      "raw_members_retained": [
+        "analysis/poll-021/analyses-1.json",
+        "analysis/poll-021/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-021/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-021/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-022",
+      "raw_members_retained": [
+        "analysis/poll-022/analyses-1.json",
+        "analysis/poll-022/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-022/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-022/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-023",
+      "raw_members_retained": [
+        "analysis/poll-023/analyses-1.json",
+        "analysis/poll-023/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-023/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-023/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-024",
+      "raw_members_retained": [
+        "analysis/poll-024/analyses-1.json",
+        "analysis/poll-024/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-024/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-024/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-025",
+      "raw_members_retained": [
+        "analysis/poll-025/analyses-1.json",
+        "analysis/poll-025/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-025/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-025/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-026",
+      "raw_members_retained": [
+        "analysis/poll-026/analyses-1.json",
+        "analysis/poll-026/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-026/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-026/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-027",
+      "raw_members_retained": [
+        "analysis/poll-027/analyses-1.json",
+        "analysis/poll-027/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-027/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-027/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-028",
+      "raw_members_retained": [
+        "analysis/poll-028/analyses-1.json",
+        "analysis/poll-028/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-028/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-028/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-029",
+      "raw_members_retained": [
+        "analysis/poll-029/analyses-1.json",
+        "analysis/poll-029/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-029/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-029/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-030",
+      "raw_members_retained": [
+        "analysis/poll-030/analyses-1.json",
+        "analysis/poll-030/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-030/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-030/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-031",
+      "raw_members_retained": [
+        "analysis/poll-031/analyses-1.json",
+        "analysis/poll-031/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-031/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-031/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-032",
+      "raw_members_retained": [
+        "analysis/poll-032/analyses-1.json",
+        "analysis/poll-032/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-032/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-032/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-033",
+      "raw_members_retained": [
+        "analysis/poll-033/analyses-1.json",
+        "analysis/poll-033/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-033/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-033/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-034",
+      "raw_members_retained": [
+        "analysis/poll-034/analyses-1.json",
+        "analysis/poll-034/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-034/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-034/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-035",
+      "raw_members_retained": [
+        "analysis/poll-035/analyses-1.json",
+        "analysis/poll-035/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-035/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-035/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-036",
+      "raw_members_retained": [
+        "analysis/poll-036/analyses-1.json",
+        "analysis/poll-036/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-036/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-036/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-037",
+      "raw_members_retained": [
+        "analysis/poll-037/analyses-1.json",
+        "analysis/poll-037/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-037/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-037/selection.json"
+      ],
+      "ready": false
+    },
+    {
+      "analyses": 0,
+      "head_checks": 0,
+      "merge_checks": 0,
+      "poll": "poll-038",
+      "raw_members_retained": [
+        "analysis/poll-038/analyses-1.json",
+        "analysis/poll-038/checks-31543fb6dde565b62b47436e0b1d399b6d0bd772-1.json",
+        "analysis/poll-038/checks-1301b4596ba79a9b1345c9f0a62d3bc256cc768f-1.json",
+        "analysis/poll-038/selection.json"
+      ],
+      "ready": false
+    }
+  ],
+  "polls_checked": 38,
+  "scope": "Original API responses are empty; this does not establish a completed or clean CodeQL analysis.",
+  "source_commit": "31543fb6dde565b62b47436e0b1d399b6d0bd772",
+  "workflow_rerun_performed": false
+}

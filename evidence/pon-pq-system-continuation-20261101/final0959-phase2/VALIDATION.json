@@ -1,0 +1,41 @@
+{
+  "application_tests_reexecuted": false,
+  "byte_identical_publication_files": 30,
+  "byte_roundtrip": {
+    "all_reconstructed_files_byte_equal_original_full_artifacts": true,
+    "application_tests_reexecuted": false,
+    "delta_all_original_bytes_equal_restored_bytes": true,
+    "delta_bytes": 27995163,
+    "delta_files": 24,
+    "negative_reference_controls": [
+      {
+        "case": "wrong-phase1-manifest",
+        "output_created": false,
+        "reason": "wrong phase1 raw manifest",
+        "result": "REFUSE"
+      },
+      {
+        "case": "changed-referenced-file",
+        "output_created": false,
+        "reason": "source SHA256 mismatch: hosted-0959/pq-controls/controls-x64-head/build.json",
+        "result": "REFUSE"
+      }
+    ],
+    "reconstructed_raw_bytes": 36719561,
+    "reconstructed_raw_files": 584,
+    "schema": "trnm-pq-phase2-byte-validation-v1",
+    "whole_chain_pq_qualified": false
+  },
+  "deterministic_reencoding_from_restored_raw_files": true,
+  "does_not_qualify_later_473_source": true,
+  "gzip_sha256": "63f2d63e50164f9b083bcf8b221dc6fd3fc7bad9589a287d1e60034e06fc5ccb",
+  "manifest_sha256": "309232904e819086a1d1569f4136df607ba7c3d56ff0cc6c85af2022ecb8b608",
+  "phase1_evidence_commit": "c8bc6391409704d6243868d184fa7a2712d25886",
+  "raw_manifest_sha256": "db046ea1a7f3228c3fbc562dbe989880e4ea6914f90c05f5fb99e9a337b18c08",
+  "schema": "trnm-pq-evidence-phase2-validation-v1",
+  "scope": "deterministic archive and complete artifact byte reconstruction only; no native application tests reexecuted",
+  "source_candidate": "0959b694539b2e6427c6bfc2422b45c23b63cde4",
+  "source_tree": "49ffbac079b5c549050b5e876b02f70ce5b37d14",
+  "tar_sha256": "347158e4ec4376e2d3360c5c4ea25f947bf3f5e42ef6282ffc8aa76df1b3bdcf",
+  "whole_chain_pq_qualified": false
+}

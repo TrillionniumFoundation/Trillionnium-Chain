@@ -1,0 +1,243 @@
+{
+  "all_315_original_command_logs_match_their_progress_hashes": true,
+  "archive_members_extracted_or_executed": false,
+  "archive_pass_reclassified_as_native_pass": false,
+  "archive_verification": {
+    "archive_bytes": 30057120,
+    "archive_sha256": "7a57775876306f0eaa0ad720924a48eb1478ab111d6b81eb6ef2d2632cd83794",
+    "index_sha256": "91ef1453209eb3b72eb0f90066ca05e4e5a93e8d1b1b00f5c87855ddcfe1e8ed",
+    "native_tests_executed": 0,
+    "raw_member_bytes": 119411819,
+    "result": "PASS_ARCHIVE_CONTENT_ONLY",
+    "schema": "trnm-curated-evidence-archive-verification-v1",
+    "verified_members": 5574,
+    "verified_parts": 20,
+    "whole_chain_pq_qualified": false
+  },
+  "ca4": {
+    "material_tests": 25,
+    "native_rust_tests_executed": 0,
+    "prior_native_results_transferred": false,
+    "python_observations": 232,
+    "recorded_commands": 20,
+    "strict_native_clippy_executed": false,
+    "tested_commit": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
+    "tree": "ba691b8b5f06a0cfeb062261d6a33f0c086f06b0"
+  },
+  "checked_original_raw_members": {
+    "final-evidence-delivery-v2/README.md": {
+      "bytes": 29821,
+      "sha256": "ab7e0f2fa2f549e6fdb9371d96d163f4915031b9cc00f5abcc8a1e317d51f326"
+    },
+    "final-evidence-delivery-v2/qualification.json": {
+      "bytes": 20057,
+      "sha256": "37c2ff8378620ec94dbec3e56e99fef5b22e39a7b17c3f583a7eba53fb070b26"
+    },
+    "final-evidence-delivery-v2/source-publication-map.json": {
+      "bytes": 5472,
+      "sha256": "f00df89335be2fbff65adba2fcdf622a87ecba9139fc92626dfaa39129a65944"
+    },
+    "late-target-513e92/committed-source-gates/summary.json": {
+      "bytes": 8151,
+      "sha256": "d4c738465330d7e4d665a7608c393511b57fa868bf3bf62750d5ad39dd0e2fb6"
+    },
+    "quantum-readback-cad4c18f/desktop-ebd-auth-cost-failure-v1/manifest.json": {
+      "bytes": 3009,
+      "sha256": "fb6435eb760b7279e89bc9a18bba1d822808e4df750d6b07ba2954a8b82a7d4d"
+    },
+    "quantum-readback-cad4c18f/desktop-ebd-auth-cost-failure-v1/pq-authentication-cost.jsonl": {
+      "bytes": 221468,
+      "sha256": "687f20a939bbe410da78de8bd0b13d44be030958b77f7d11c4cbdafb6450eea7"
+    },
+    "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/manifest.json": {
+      "bytes": 30772,
+      "sha256": "754b565c4994ca01ae5d67abe574d3c66268e77071fdcff5fbadcb0a61e55357"
+    },
+    "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/cost-pq_caller_authentication_complete_cost.log": {
+      "bytes": 342013,
+      "sha256": "8ca9a62c3d49175882b79baba080795fa2a6a01852ca7bc319b82e0ed965337d"
+    },
+    "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/progress.json": {
+      "bytes": 271678,
+      "sha256": "d034be22893a0c3fce980243328ebac6d2e1cdcd5f02dfd1e2a28b31b7db9d26"
+    },
+    "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/reviewed-inputs.json": {
+      "bytes": 31187,
+      "sha256": "759cc7e0cd1dfb10f85636709275186d33f979668d1e147bac7bff1a5adaeaaf"
+    },
+    "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/summary.json": {
+      "bytes": 2263,
+      "sha256": "6665ff2a50f54510fbf402477b85907cd56c5c46b1cf15ceea96efd369386158"
+    },
+    "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/node-full-feature-library.log": {
+      "bytes": 208529,
+      "sha256": "b999aac89b0a37bab93dff12b3e1b076831229c27b01707eaf78053a579d37ed"
+    },
+    "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/progress.json": {
+      "bytes": 1642266,
+      "sha256": "8c0ec12c293e1b6e6349758eaba16f7e36cdcc6a6ad745b21b566050b86d3b32"
+    },
+    "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/summary.json": {
+      "bytes": 2096,
+      "sha256": "91f8f712ad4382bac7ddd523bd650c770818e140766ee09a8220cf43d6f847c0"
+    },
+    "quantum-readback-cad4c18f/desktop-f85-terminal-v2/manifest.json": {
+      "bytes": 108615,
+      "sha256": "e20fc9c30c0fae8102508b12bc9bff6153e85a545f0fe11e2ccc2af7a8c59a3c"
+    }
+  },
+  "desktop_accessed": false,
+  "ebd": {
+    "auth_error": "PUBLIC_MUTATION_CPU_BUDGET",
+    "auth_failed_case": "sixteen-key-churn",
+    "auth_failed_samples": 67,
+    "batch_success": false,
+    "blocked_readers_preserved": true,
+    "control_results": [
+      {
+        "exit_code": 0,
+        "reader_status": "succeeded",
+        "selector": "ingress::public_v3::tests::r4_typed_full_and_poison_keep_lane_body_reservations_atomic",
+        "status": "succeeded"
+      },
+      {
+        "exit_code": 0,
+        "reader_status": "succeeded",
+        "selector": "ingress::public_v3::tests::r4_pending_heads_use_validated_readiness_and_original_expiry_boundaries",
+        "status": "succeeded"
+      },
+      {
+        "exit_code": 0,
+        "reader_status": "succeeded",
+        "selector": "ingress::public_v3::tests::r4_correctly_signed_old_and_new_challenges_are_incompatible_both_directions",
+        "status": "succeeded"
+      },
+      {
+        "exit_code": 0,
+        "reader_status": "succeeded",
+        "selector": "ingress::public_v3::tests::r4_real_paid_fifo_read_service_and_native_admission_after_holder_release",
+        "status": "succeeded"
+      },
+      {
+        "exit_code": 0,
+        "reader_status": "succeeded",
+        "selector": "ingress::public_v3::tests::r4_pending_stage_deadline_error_counts_expiry_once_and_releases_connection",
+        "status": "succeeded"
+      },
+      {
+        "exit_code": 0,
+        "reader_status": "succeeded",
+        "selector": "ingress::public_v3::tests::r4_pending_early_stop_eof_and_cancelled_errors_are_not_expiry",
+        "status": "succeeded"
+      },
+      {
+        "exit_code": 0,
+        "reader_status": "succeeded",
+        "selector": "ingress::public_v3::tests::r4_cookie_time_refusal_counts_expiry_only_after_original_deadline",
+        "status": "succeeded"
+      },
+      {
+        "exit_code": 0,
+        "reader_status": "succeeded",
+        "selector": "ingress::public_v3::tests::r4_unrelated_eof_after_deadline_keeps_its_original_error_class",
+        "status": "succeeded"
+      },
+      {
+        "exit_code": 0,
+        "reader_status": "succeeded",
+        "selector": "ingress::public_v3::tests::r4_paid_pending_eof_original_expiry_and_shutdown_never_create_body_or_work",
+        "status": "succeeded"
+      },
+      {
+        "exit_code": 0,
+        "reader_status": "succeeded",
+        "selector": "ingress::public_v3::tests::r4_challenge_burst_waits_with_existing_read_reserve_and_actual_shutdown",
+        "status": "succeeded"
+      },
+      {
+        "exit_code": 0,
+        "reader_status": "succeeded",
+        "selector": "store::history_page::tests::inline_record_tests::history_inline_record_complete_call_cost",
+        "status": "succeeded"
+      },
+      {
+        "exit_code": 101,
+        "reader_status": "blocked",
+        "selector": "ingress::public_v3::pq_identity::verifier_cache::tests::pq_caller_authentication_complete_cost",
+        "status": "failed"
+      },
+      {
+        "exit_code": 0,
+        "reader_status": "succeeded",
+        "selector": "account_archive_prototype::native_root_digest::tests::native_root_digest_paired_complete_root_cost_observation",
+        "status": "succeeded"
+      },
+      {
+        "exit_code": 0,
+        "reader_status": "succeeded",
+        "selector": "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost",
+        "status": "succeeded"
+      }
+    ],
+    "named_controls_failed": 1,
+    "named_controls_passed": 13,
+    "observations": {
+      "blocked": 3,
+      "failed": 1,
+      "succeeded": 40
+    },
+    "tested_commit": "ebd3c06da7d5f2bd136b7a24f24604508d420279"
+  },
+  "f85": {
+    "batch_success": false,
+    "full_library_exit": -15,
+    "missing_panic_or_parent_summary_fabricated": false,
+    "observations": {
+      "blocked": 1,
+      "succeeded": 269,
+      "timed_out": 1
+    },
+    "original_failed_progress_row_preserved": true,
+    "tested_commit": "f85fea4e8da02404d513d074ceb35ad5292b017b"
+  },
+  "final_documents": {
+    "final-evidence-delivery-v2/README.md": {
+      "bytes": 29821,
+      "sha256": "ab7e0f2fa2f549e6fdb9371d96d163f4915031b9cc00f5abcc8a1e317d51f326"
+    },
+    "final-evidence-delivery-v2/qualification.json": {
+      "bytes": 20057,
+      "sha256": "37c2ff8378620ec94dbec3e56e99fef5b22e39a7b17c3f583a7eba53fb070b26"
+    },
+    "final-evidence-delivery-v2/source-publication-map.json": {
+      "bytes": 5472,
+      "sha256": "f00df89335be2fbff65adba2fcdf622a87ecba9139fc92626dfaa39129a65944"
+    }
+  },
+  "native_tests_executed_by_this_review": 0,
+  "original_terminal_manifest_coverage": [
+    {
+      "declared_files": 580,
+      "every_declared_raw_file_present_with_exact_sha": true,
+      "manifest": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/manifest.json",
+      "sha256": "e20fc9c30c0fae8102508b12bc9bff6153e85a545f0fe11e2ccc2af7a8c59a3c"
+    },
+    {
+      "declared_files": 142,
+      "every_declared_raw_file_present_with_exact_sha": true,
+      "manifest": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/manifest.json",
+      "sha256": "754b565c4994ca01ae5d67abe574d3c66268e77071fdcff5fbadcb0a61e55357"
+    },
+    {
+      "declared_files": 17,
+      "every_declared_raw_file_present_with_exact_sha": true,
+      "manifest": "quantum-readback-cad4c18f/desktop-ebd-auth-cost-failure-v1/manifest.json",
+      "sha256": "fb6435eb760b7279e89bc9a18bba1d822808e4df750d6b07ba2954a8b82a7d4d"
+    }
+  ],
+  "product_disposition": "HOLD",
+  "result": "PASS_ARCHIVE_INTEGRITY_AND_FAILURE_PRESERVATION_ONLY",
+  "schema": "trnm-independent-final-archive-and-source-scope-review-v1",
+  "second_archive_roundtrip": false,
+  "whole_chain_pq_qualified": false
+}

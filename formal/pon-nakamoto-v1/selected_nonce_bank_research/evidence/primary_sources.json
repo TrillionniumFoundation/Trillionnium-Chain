@@ -1,0 +1,15 @@
+{
+  "sources": [
+    {
+      "title": "NIST FIPS 180-4, Secure Hash Standard, August 2015",
+      "url": "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf",
+      "sections": [
+        "5.1.1",
+        "5.2.1",
+        "6.2"
+      ],
+      "used_for": "SHA-256 message padding, 512-bit block iteration and compression semantics; no concrete security or physical lower-bound assertion",
+      "opened_during_this_successor": true
+    }
+  ]
+}

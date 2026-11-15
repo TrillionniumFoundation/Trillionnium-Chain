@@ -1,0 +1,33 @@
+{
+  "schema": "trnm-observer-control-correction-v1",
+  "at": "2026-11-07T16:45:24.864758+00:00",
+  "scope": "pre-delivery derived GATE_CORE family counter only",
+  "problem": "A duplicate dict key overwrote w1_factorial.failure=4 with its explanatory string during initial package construction.",
+  "correction": {
+    "failure": 4,
+    "failure_reason": "strict Clippy drop_non_drop, original native component commands remain separate"
+  },
+  "original_raw_ci_artifacts_unchanged": true,
+  "original_compressed_databases_unchanged": true,
+  "original_business_and_source_results_unchanged": true,
+  "initial_control_files": [
+    {
+      "path": "observer/pre-delivery-control-correction/GATE_CORE.initial.json",
+      "bytes": 12793,
+      "sha256": "7c5cf188aea5a6c77105528e68fb01e160cdbd578395871f6d3300053f4506b9",
+      "original_sha256": "7c5cf188aea5a6c77105528e68fb01e160cdbd578395871f6d3300053f4506b9"
+    },
+    {
+      "path": "observer/pre-delivery-control-correction/COPY_PLAN.initial.json.gz",
+      "bytes": 52987,
+      "sha256": "430ef0bc3a7356753d80aea230e8f4cf25ab167b3e1fe4b7c2b1c05af93a27fd",
+      "original_sha256": "e41ed658f60f23e072902612515e335b4902bd40d61d30a67d1c1672d624534e"
+    },
+    {
+      "path": "observer/pre-delivery-control-correction/preparation-receipt.initial.json",
+      "bytes": 4915,
+      "sha256": "54ebf71c205b215e9f8bac75a9ed0621a20fbc6beba808ba186e05c507ae71a3",
+      "original_sha256": "54ebf71c205b215e9f8bac75a9ed0621a20fbc6beba808ba186e05c507ae71a3"
+    }
+  ]
+}

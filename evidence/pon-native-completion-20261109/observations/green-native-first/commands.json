@@ -1,0 +1,81 @@
+[
+  {
+    "name": "preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+    "timeout_seconds": 30,
+    "exit_code": 0,
+    "elapsed_seconds": 0.21544471895322204,
+    "stdout": {
+      "bytes": 172,
+      "sha256": "4c58882a4134d8adc21e7bcf4a095a3d15d31c83a068667459aa26e612434295"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "green-six",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "ingress::public_v3::scalar_cpu::native_completion_tests::",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+    "timeout_seconds": 2400,
+    "exit_code": 101,
+    "elapsed_seconds": 284.9591166940518,
+    "stdout": {
+      "bytes": 3025,
+      "sha256": "588439e651acc24abe59392e592de2bc8e35f3590fa583ea29350ea34f5f4936"
+    },
+    "stderr": {
+      "bytes": 1980,
+      "sha256": "f1b3a0a99fa9390c4a3b25f6aa541efed08c82b0bfc808f0e7af296f67a7ab3d"
+    }
+  },
+  {
+    "name": "source-after",
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+      "--output",
+      "/data/chain-abg-70ae-20261108/evidence/green-native-first/source-after.json"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+    "timeout_seconds": 90,
+    "exit_code": 0,
+    "elapsed_seconds": 20.471520978957415,
+    "stdout": {
+      "bytes": 423,
+      "sha256": "c2350dc435f247aee1191acf751946f7883d0d21471a3650107496c903ac2330"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

@@ -1,0 +1,135 @@
+{
+  "actions_checkout_or_upload_executed": false,
+  "all_required_shell_blocks_passed": true,
+  "checkout_prerequisite_basis": "preexisting clean local checkout verified by real source blocks",
+  "historical_positive_lanes_executed": false,
+  "job": "qrom-current-implementation",
+  "native_execution_or_security_qualification_inferred": false,
+  "prospective_merge_lane_executed": false,
+  "records": [
+    {
+      "exit_code": 0,
+      "id": "observations",
+      "seconds": 0.006,
+      "shell_sha256": "31e331e8c5279f6f1c582bbfbcad4e4c87fd9f86508b08212d1e22e2393794d6"
+    },
+    {
+      "basis": "existing isolated local clone; not actions/checkout execution",
+      "id": "checkout",
+      "source_identity": {
+        "head": "784274926d97207e9ee94cf76eef22e1006d84e1",
+        "status": "",
+        "tree": "ebe84c04a79dd6bedf75d8b2ba852a87dbfd749f"
+      }
+    },
+    {
+      "exit_code": 0,
+      "id": "source_before",
+      "seconds": 7.033,
+      "shell_sha256": "f9a3c6f9864d499e89a02dd1cface0ca7b2c6dd89d62f595c65a841b06f43b1c"
+    },
+    {
+      "exit_code": 0,
+      "id": "preflight",
+      "seconds": 0.046,
+      "shell_sha256": "ffe04aa7812c6b79b774d6641da5ee5b5f301d41ba2f17049ef218daa259d720"
+    },
+    {
+      "exit_code": 0,
+      "id": "named_tests",
+      "seconds": 2.731,
+      "shell_sha256": "87e2d68d5308b9a7b9da44f99c54efe5bc321c0fcbecbbb30ac1ee8cf576f384"
+    },
+    {
+      "exit_code": 0,
+      "id": "historical_drift",
+      "seconds": 0.137,
+      "shell_sha256": "adc8a6fa567e8e52cb1caa2c6ecf3c21914dcf87e4f5468a220fa2b57fffd65c"
+    },
+    {
+      "exit_code": 0,
+      "id": "implementation",
+      "seconds": 0.28,
+      "shell_sha256": "49827ac0e3a4a21a04ad38620d26cbd76582c821f765ba6c9f55b103438e18d4"
+    },
+    {
+      "exit_code": 0,
+      "id": "source_after",
+      "seconds": 6.507,
+      "shell_sha256": "530ffe18055737ed463577939becf1aa31c577fb131981e65c1a80e7503ae254"
+    },
+    {
+      "exit_code": 0,
+      "id": "status",
+      "seconds": 0.112,
+      "shell_sha256": "21341c0104bdd31f292dbca0715b47beaa410b9808d4a6ba591ce91ba5c9f69a"
+    },
+    {
+      "basis": "not executed locally",
+      "id": null,
+      "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+    }
+  ],
+  "required_shell_blocks": [
+    "observations",
+    "source_before",
+    "preflight",
+    "named_tests",
+    "historical_drift",
+    "implementation",
+    "source_after",
+    "status"
+  ],
+  "schema": "TRNM-LOCAL-ACTUAL-CURRENT-WORKFLOW-BLOCKS1",
+  "scope": "local head source; actual stored shell blocks; not hosted Actions",
+  "source_after": {
+    "head": "784274926d97207e9ee94cf76eef22e1006d84e1",
+    "status": "",
+    "tree": "ebe84c04a79dd6bedf75d8b2ba852a87dbfd749f"
+  },
+  "source_before": {
+    "head": "784274926d97207e9ee94cf76eef22e1006d84e1",
+    "status": "",
+    "tree": "ebe84c04a79dd6bedf75d8b2ba852a87dbfd749f"
+  },
+  "step_results_from_actual_execution": {
+    "checkout": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "historical_drift": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "implementation": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "named_tests": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "observations": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "preflight": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "source_after": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "source_before": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "status": {
+      "conclusion": "success",
+      "outcome": "success"
+    }
+  },
+  "workflow": "pon-w1-qrom-implementation.yml",
+  "workflow_sha256": "051b1a4972d08b10b8fd3a54029da8ac80c946f774cf657d294c1bb7fee1089e"
+}

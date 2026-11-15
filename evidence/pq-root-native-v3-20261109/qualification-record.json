@@ -1,0 +1,279 @@
+{
+  "schema": "trnm-root-native-v3-delivery-evidence",
+  "source_commit": "a44344b25d12328fedd883a335585f03d059060b",
+  "source_tree": "8b294a266c4198fd0a9acd1c3024685f5f333227",
+  "source_tracked_entries": 11347,
+  "source_tracked_bytes": 1117628403,
+  "source_unchanged_during_local_campaign": true,
+  "local_commands_passed": 35,
+  "local_commands_total": 35,
+  "native_component_tests": {
+    "crypto-structure": 10,
+    "crypto-native": 8,
+    "root-kernel": 12,
+    "root-owner": 20
+  },
+  "native_component_execution_passed": true,
+  "python_suite_tests": {
+    "dependency-controls": 41,
+    "native-runner-controls": 11,
+    "ci-contract-controls": 108,
+    "source-integrity-controls": 43,
+    "pq-source-controls": 55,
+    "lifetime-controls": 58,
+    "claim-controls": 49,
+    "authority-controls": 18,
+    "v2-policy": 26,
+    "v2-signature-structure": 17,
+    "v2-provider-structure": 15,
+    "v2-signature-native": 14,
+    "v2-provider-native": 6,
+    "v2-journal-native": 14
+  },
+  "retained_default_rust_tests": {
+    "trnm-crypto-primitives": 175,
+    "trnm-release-bundle": 43
+  },
+  "count_overlap": "The 175 default crypto tests include the 10 V3 structural tests. Counts are suite observations, not an additive number of unique security properties.",
+  "strict_workspace_all_targets_all_features_clippy_passed": true,
+  "full_protocol_lane_executed": false,
+  "full_workspace_tests_executed": false,
+  "initial_attempt": {
+    "source": "1f7ff4106f14e5b514d95a9faf2c5eea1233aea5",
+    "commands_passed": 29,
+    "commands_total": 35,
+    "failed_commands": [
+      {
+        "name": "authority-controls",
+        "exit_code": 1
+      },
+      {
+        "name": "authority-register",
+        "exit_code": 2
+      },
+      {
+        "name": "v3-native",
+        "exit_code": 1
+      },
+      {
+        "name": "v2-signature-native",
+        "exit_code": 5
+      },
+      {
+        "name": "v2-provider-native",
+        "exit_code": 5
+      },
+      {
+        "name": "v2-journal-native",
+        "exit_code": 5
+      }
+    ]
+  },
+  "dependency_snapshot_sha256": "ebbc43cb8a757abb195b208594a54d18ba0f37300c6585062fb8cf344283248a",
+  "declared_root_source_files": 31,
+  "declared_roles": [
+    "root-approval",
+    "successor-possession",
+    "anchor-writer",
+    "anchor-response",
+    "effect-provider"
+  ],
+  "declared_hash_use_groups": 14,
+  "domain_failure_bounds": {
+    "application": null,
+    "commitment": null,
+    "ledger": null,
+    "proof": null,
+    "recovery": null,
+    "release": null,
+    "signature": null,
+    "transport": null
+  },
+  "unknown_lifetime_query_budgets": [
+    "sha256",
+    "sha512",
+    "shake128",
+    "shake256"
+  ],
+  "open_obligations": [
+    "concrete-quantum-multi-user-forgery",
+    "implementation-refinement",
+    "independent-custody",
+    "independently-retained-fresh-anchor",
+    "native-provider-and-effect-owner-integration",
+    "preprocessing-and-initial-advice",
+    "real-external-effect-reconciliation",
+    "resource-and-query-transformations",
+    "shared-oracle-instantiation",
+    "whole-chain-event-coverage"
+  ],
+  "status": "HOLD",
+  "actual_lifetime_failure_bound": null,
+  "whole_chain_pq_qualified": false,
+  "composition_coverage_proved": false,
+  "whole_chain_hash_query_scope_closed": false,
+  "independent_custody_verified": false,
+  "anchor_independence_verified": false,
+  "actual_external_effects_verified": false,
+  "native_m15_production_integration_complete": false,
+  "transitive_dependency_closure_proved": false,
+  "independent_provenance_authenticated": false,
+  "production_activation": false,
+  "evidence_scope": "Local exact-source component execution and source consistency; earlier development observations and all first-campaign failures are retained separately. Hosted workflow outcomes require separate readback.",
+  "hosted_snapshot": {
+    "source": "a44344b25d12328fedd883a335585f03d059060b",
+    "observed_utc": "2026-11-09T03:31:24.507Z",
+    "total_count": 13,
+    "runs": [
+      {
+        "id": 42554940463,
+        "name": "PoN original workspace test-profile CPU acceptance",
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42554940463",
+        "head_sha": "a44344b25d12328fedd883a335585f03d059060b",
+        "run_attempt": 1,
+        "updated_at": "2026-11-09T03:12:47Z"
+      },
+      {
+        "id": 42554940471,
+        "name": "PoN PQ network and rollback witness",
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42554940471",
+        "head_sha": "a44344b25d12328fedd883a335585f03d059060b",
+        "run_attempt": 1,
+        "updated_at": "2026-11-09T03:13:03Z"
+      },
+      {
+        "id": 42554940494,
+        "name": "PoN isolated cloud build inputs",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42554940494",
+        "head_sha": "a44344b25d12328fedd883a335585f03d059060b",
+        "run_attempt": 1,
+        "updated_at": "2026-11-09T03:13:22Z"
+      },
+      {
+        "id": 42554940511,
+        "name": "PoN W1 work security observations",
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42554940511",
+        "head_sha": "a44344b25d12328fedd883a335585f03d059060b",
+        "run_attempt": 1,
+        "updated_at": "2026-11-09T03:13:44Z"
+      },
+      {
+        "id": 42554940415,
+        "name": "PoN owned process cleanup",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42554940415",
+        "head_sha": "a44344b25d12328fedd883a335585f03d059060b",
+        "run_attempt": 1,
+        "updated_at": "2026-11-09T03:14:20Z"
+      },
+      {
+        "id": 42554940374,
+        "name": "PoN priority acceptance",
+        "status": "pending",
+        "conclusion": null,
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42554940374",
+        "head_sha": "a44344b25d12328fedd883a335585f03d059060b",
+        "run_attempt": 1,
+        "updated_at": "2026-11-09T03:10:50Z"
+      },
+      {
+        "id": 42554940439,
+        "name": "trnm-required-baseline",
+        "status": "pending",
+        "conclusion": null,
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42554940439",
+        "head_sha": "a44344b25d12328fedd883a335585f03d059060b",
+        "run_attempt": 1,
+        "updated_at": "2026-11-09T03:10:50Z"
+      },
+      {
+        "id": 42554940442,
+        "name": "CodeQL exact-source analysis export",
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42554940442",
+        "head_sha": "a44344b25d12328fedd883a335585f03d059060b",
+        "run_attempt": 1,
+        "updated_at": "2026-11-09T03:10:59Z"
+      },
+      {
+        "id": 42554940474,
+        "name": "PoN W1 transparent candidate observations",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42554940474",
+        "head_sha": "a44344b25d12328fedd883a335585f03d059060b",
+        "run_attempt": 1,
+        "updated_at": "2026-11-09T03:16:08Z"
+      },
+      {
+        "id": 42554940459,
+        "name": "Release finality reference and native baseline",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42554940459",
+        "head_sha": "a44344b25d12328fedd883a335585f03d059060b",
+        "run_attempt": 1,
+        "updated_at": "2026-11-09T03:17:17Z"
+      },
+      {
+        "id": 42554940456,
+        "name": "PoN original native campaign",
+        "status": "completed",
+        "conclusion": "failure",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42554940456",
+        "head_sha": "a44344b25d12328fedd883a335585f03d059060b",
+        "run_attempt": 1,
+        "updated_at": "2026-11-09T03:20:25Z"
+      },
+      {
+        "id": 42554940383,
+        "name": "PoN baseline diagnostic readback",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42554940383",
+        "head_sha": "a44344b25d12328fedd883a335585f03d059060b",
+        "run_attempt": 1,
+        "updated_at": "2026-11-09T03:20:00Z"
+      },
+      {
+        "id": 42554940411,
+        "name": "PoN original large-state CPU acceptance",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42554940411",
+        "head_sha": "a44344b25d12328fedd883a335585f03d059060b",
+        "run_attempt": 1,
+        "updated_at": "2026-11-09T03:20:57Z"
+      }
+    ],
+    "all_hosted_gates_passed": false
+  },
+  "hosted_original_native_campaign": {
+    "run_id": 42554940456,
+    "job_id": 128958438933,
+    "source_commit": "a44344b25d12328fedd883a335585f03d059060b",
+    "conclusion": "failure",
+    "release_build_passed": true,
+    "original_campaign_runs_passed": 0,
+    "original_campaign_runs_total": 3,
+    "per_run_exit_codes": [
+      101,
+      101,
+      101
+    ],
+    "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+    "underlying_cause_established": false,
+    "acceptance_thresholds_relaxed": false
+  },
+  "all_hosted_gates_passed": false
+}

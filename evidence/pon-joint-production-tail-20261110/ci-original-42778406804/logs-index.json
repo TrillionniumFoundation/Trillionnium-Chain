@@ -1,0 +1,34 @@
+[
+  {
+    "job_id": 129702270227,
+    "path": "job-129702270227.log.gz",
+    "encoding": "deterministic gzip of full decoded GitHub log UTF-8",
+    "decoded_bytes": 576914,
+    "decoded_sha256": "b246cf0aebb10ded74d0e5ae2ed18071e8f455c2f2563fd52761a33d27dbd271",
+    "stored_sha256": "6292fd1d3bf5e9c2de56fc17517b73587a3d05cf8e0ed8f20a04d9ff0c4635ec"
+  },
+  {
+    "job_id": 129702269910,
+    "path": "job-129702269910.log.gz",
+    "encoding": "deterministic gzip of full decoded GitHub log UTF-8",
+    "decoded_bytes": 181348,
+    "decoded_sha256": "02d07ba807ae43546cbe5610b8daafa464c02b5a1ab791c0f4f4af58da61d958",
+    "stored_sha256": "8f61e904cb3e628cee424511ca3f9e9f02d288efbb13974d72834078f3715e9f"
+  },
+  {
+    "job_id": 129702270172,
+    "path": "job-129702270172.log.gz",
+    "encoding": "deterministic gzip of full decoded GitHub log UTF-8",
+    "decoded_bytes": 188367,
+    "decoded_sha256": "61158448e7cc9cd9c8e04cfee57ece5ed9658cf0d13a1abdc75f2064291c5406",
+    "stored_sha256": "4e5370fa717fd921f74752bb51ceb755e1a9d3bdf6d736f7b6165ced1064f991"
+  },
+  {
+    "job_id": 129702270086,
+    "path": "job-129702270086.log.gz",
+    "encoding": "deterministic gzip of full decoded GitHub log UTF-8",
+    "decoded_bytes": 173575,
+    "decoded_sha256": "5c6f7f94e30d003407f14173bc366db515602456227ee18862107f15344e714a",
+    "stored_sha256": "6aa922ec002f946b7132eae1cdffdcd5466dbe3f104ca2aea6e156da772ce5b0"
+  }
+]

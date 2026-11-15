@@ -1,0 +1,294 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "elapsed_ns": 62003671,
+      "exit_code": 0,
+      "expected_exit": 0,
+      "name": "preflight",
+      "started_utc": "2026-11-08T11:53:41.838561+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "a2654c432c1f355eb5276203e6a19200a1f04152f04b152367ddf4d96a1c9fde",
+      "tests_reported": null,
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "f4c7137e63bdcc8a2a06f9c78789390ce0d87997"
+      ],
+      "elapsed_ns": 59957197,
+      "exit_code": 1,
+      "expected_exit": 1,
+      "name": "full-source-gate-sparse",
+      "started_utc": "2026-11-08T11:53:41.900795+00:00",
+      "stderr_sha256": "77fbc42c90e5a3d96e3c1f48807eb2c6cde308ccbaea1d2bf9e4b13388377bf0",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tests_reported": null,
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-native-fullpath-v1",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "elapsed_ns": 3739389128,
+      "exit_code": 0,
+      "expected_exit": 0,
+      "name": "native-reader-tests",
+      "started_utc": "2026-11-08T11:53:41.961277+00:00",
+      "stderr_sha256": "ab0dab9e4c618f9a80b46a0cf47197710e44bc4069a4f8b19bf8277ff6daff09",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tests_reported": 109,
+      "timed_out": false,
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "python3",
+        "formal/throughput-v1/test_proof_cpu_metrics.py",
+        "-v"
+      ],
+      "elapsed_ns": 162572688,
+      "exit_code": 0,
+      "expected_exit": 0,
+      "name": "proof-cpu-tests",
+      "started_utc": "2026-11-08T11:53:45.700972+00:00",
+      "stderr_sha256": "506e284012ab91fae96c989b7b9fd4218403138a10b47575671e9ef1bf0cfd06",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tests_reported": 26,
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "python3",
+        "formal/throughput-v1/test_cell_model_metrics.py",
+        "-v"
+      ],
+      "elapsed_ns": 225832227,
+      "exit_code": 0,
+      "expected_exit": 0,
+      "name": "cell-model-tests",
+      "started_utc": "2026-11-08T11:53:45.863862+00:00",
+      "stderr_sha256": "038266e33f2c4d14545be53bd1138f80abc0e15d8b9a8b00cbc52a4c343256d1",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tests_reported": 32,
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "python3",
+        "formal/throughput-v1/test_reproduce_reports.py",
+        "-v"
+      ],
+      "elapsed_ns": 121269190,
+      "exit_code": 0,
+      "expected_exit": 0,
+      "name": "reproducer-path-tests",
+      "started_utc": "2026-11-08T11:53:46.089997+00:00",
+      "stderr_sha256": "17542364421015d1575074dca5807a2a7a54999d5f534b469aff122177a4b5eb",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tests_reported": 3,
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_smollm_command_receipts.py",
+        "-v"
+      ],
+      "elapsed_ns": 414467106,
+      "exit_code": 0,
+      "expected_exit": 0,
+      "name": "command-receipt-tests",
+      "started_utc": "2026-11-08T11:53:46.211651+00:00",
+      "stderr_sha256": "c6a22ff5a9380887849cb5d11c000311188619fcaf5cc6fc2bdeb71027eb81e7",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tests_reported": 8,
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "python3",
+        "formal/throughput-v1/reproduce_reports.py",
+        "--output",
+        "/workspace/scratch/d570ecfded92/reproduction-final",
+        "--historical-archive",
+        "/workspace/scratch/d570ecfded92/native-historical-archive.tar.gz"
+      ],
+      "elapsed_ns": 339465692,
+      "exit_code": 0,
+      "expected_exit": 0,
+      "name": "report-reproduction",
+      "started_utc": "2026-11-08T11:53:46.626557+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "6a0f9ad1f855c82e2c22f88e15945715eb5fc03de363bc9e1fb1ab6c7695e7bf",
+      "tests_reported": null,
+      "timed_out": false,
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "elapsed_ns": 222091892,
+      "exit_code": 0,
+      "expected_exit": 0,
+      "name": "pq-source-guard",
+      "started_utc": "2026-11-08T11:53:46.966433+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "39abd23a84ec9b917c5237a76b873b0044179b3b75bfed4f7b3c0f87be587ec8",
+      "tests_reported": null,
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "elapsed_ns": 72115748,
+      "exit_code": 0,
+      "expected_exit": 0,
+      "name": "distributed-inventory",
+      "started_utc": "2026-11-08T11:53:47.188900+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "tests_reported": null,
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "elapsed_ns": 96222688,
+      "exit_code": 0,
+      "expected_exit": 0,
+      "name": "ci-contract",
+      "started_utc": "2026-11-08T11:53:47.261374+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+      "tests_reported": null,
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_ci_source_integrity.py",
+        "-v"
+      ],
+      "elapsed_ns": 3394913747,
+      "exit_code": 0,
+      "expected_exit": 0,
+      "name": "source-integrity-tests",
+      "started_utc": "2026-11-08T11:53:47.357970+00:00",
+      "stderr_sha256": "d3b22c5addc9d711d501b3a47ec15b1bab149aac89f22b1a83334025a412cf39",
+      "stdout_sha256": "e702f2bcf258e63267c66d44479ab621b32805c916fafa9d85703d90daa0a1ef",
+      "tests_reported": 43,
+      "timed_out": false,
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_from_zero_host_ci.py",
+        "-v"
+      ],
+      "elapsed_ns": 1442046428,
+      "exit_code": 0,
+      "expected_exit": 0,
+      "name": "original-host-control-tests",
+      "started_utc": "2026-11-08T11:53:50.753364+00:00",
+      "stderr_sha256": "4b72e719dc070ce125a3dd444d820bc3e6ffb0b95e98568a1628231d1424523d",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tests_reported": 79,
+      "timed_out": false,
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_research_integration.py",
+        "-v"
+      ],
+      "elapsed_ns": 24189179903,
+      "exit_code": 0,
+      "expected_exit": 0,
+      "name": "pq-source-guard-tests",
+      "started_utc": "2026-11-08T11:53:52.195952+00:00",
+      "stderr_sha256": "51810d28aa89294e269a61b719ff2871ae5a39c4b694359161a8e8617b5d004d",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tests_reported": 37,
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_ci_contract.py",
+        "-v"
+      ],
+      "elapsed_ns": 8820232379,
+      "exit_code": 0,
+      "expected_exit": 0,
+      "name": "ci-contract-tests",
+      "started_utc": "2026-11-08T11:54:16.385699+00:00",
+      "stderr_sha256": "99f8f75102f2db08f26af5cbb1025177924875b046e612dd52aaf178365c16ec",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tests_reported": 103,
+      "timed_out": false,
+      "timeout_seconds": 180
+    }
+  ],
+  "source_commit": "f4c7137e63bdcc8a2a06f9c78789390ce0d87997"
+}

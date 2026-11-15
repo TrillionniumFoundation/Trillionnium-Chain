@@ -1,0 +1,372 @@
+{
+  "source_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "paths": [
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/adopted_acked.completed-export.json",
+      "bytes": 4725,
+      "sha256": "e92db0d67ffc38ccbe3df053046e843df35b8ce4f8402a0d01f4fd468b4dfce3",
+      "git_blob": "86ea933f661f79d9761aa2a4236a5d9a7f891f13"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/adopted_acked.completed-review.json",
+      "bytes": 7772,
+      "sha256": "082de984911c4e62ebcf232ee5d9ff47f60ff65714235b9738c28da7b4804dc6",
+      "git_blob": "8e5ad36b23cae80eec9b8d267f2c5ab4a62dbb65"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/adopted_acked.completed.bin",
+      "bytes": 2972,
+      "sha256": "d4c34ebcf4d0e37754294402aa175d278188a7a246eb6e07b1d16bc119838f02",
+      "git_blob": "c22dd5c91f737fe8c24de914a4ef06f9d535a213"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/adopted_acked.expected.json",
+      "bytes": 1698,
+      "sha256": "0bc6ca87adecd88ccffd20f6e717d6f4a60c8b093262a40f432fc2c288c473d0",
+      "git_blob": "b864aee9ad3bc61796ba99de12b1edb72098ea1d"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/adopted_acked.freeze.json",
+      "bytes": 3070,
+      "sha256": "2e70907686e0d34256bed244fb08ac949a0618c1ac0d5a3a6e097ae4d30005a0",
+      "git_blob": "34df5c73449631cf429af38a5e2e02618cbc512b"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/adopted_acked.json",
+      "bytes": 13520,
+      "sha256": "7cadb6df6bcda64cc9fc7a21e7850e08265812463da106609b09bfda0934f561",
+      "git_blob": "2f8d6fc43bcf91b4fa95f98baf38693fe462478f"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/adopted_acked.review.json",
+      "bytes": 4994,
+      "sha256": "3c72aa8cadf3b2590f142aba4e6e08bfb1aa800f0eb31c096a704ea43726a92f",
+      "git_blob": "aeed5877378a6ce224beca0333aaa664c06dfa2b"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/adopted_acked.selection-export.json",
+      "bytes": 3965,
+      "sha256": "318faa89ed92e1a12e84b43709f856eb2f470bdd6c5064785b481795a960d8e5",
+      "git_blob": "d46bc4e4e2aefebdcd0e22001755c2873907bd2e"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/adopted_acked.selection.bin",
+      "bytes": 2566,
+      "sha256": "b4580307b7ae1d06d7589eb3df083d4ef8380d9c38d53a1147533af488db25ad",
+      "git_blob": "da0e4dfeb828dcd51dbd0e4318e116194b3ead49"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/adopted_pending.expected.json",
+      "bytes": 1698,
+      "sha256": "8ea929a3d2d4b69d94b59495728d82504c849dde9b5caa01e93d97d274596b86",
+      "git_blob": "1e08c337eb272f8d0fdcf126c424612b3961fff7"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/adopted_pending.freeze.json",
+      "bytes": 3070,
+      "sha256": "2e70907686e0d34256bed244fb08ac949a0618c1ac0d5a3a6e097ae4d30005a0",
+      "git_blob": "34df5c73449631cf429af38a5e2e02618cbc512b"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/adopted_pending.json",
+      "bytes": 13826,
+      "sha256": "c26b9b3031d108a1892760ba88453fa0982c350a669452db09f57ab0de72fe66",
+      "git_blob": "b551768cd9389b02b073ae94fe26ce7205f546e5"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/adopted_pending.review.json",
+      "bytes": 4994,
+      "sha256": "a04e7cac8dfb17ba420836db0aca430094f71b32a1f7f028c6b78b79f12c401d",
+      "git_blob": "3b25d7e26480e489a71c0fdd96e105b309642f8e"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/adopted_pending.selection-export.json",
+      "bytes": 3965,
+      "sha256": "318faa89ed92e1a12e84b43709f856eb2f470bdd6c5064785b481795a960d8e5",
+      "git_blob": "d46bc4e4e2aefebdcd0e22001755c2873907bd2e"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/adopted_pending.selection.bin",
+      "bytes": 2566,
+      "sha256": "b4580307b7ae1d06d7589eb3df083d4ef8380d9c38d53a1147533af488db25ad",
+      "git_blob": "da0e4dfeb828dcd51dbd0e4318e116194b3ead49"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/fixture-manifest.json",
+      "bytes": 5144,
+      "sha256": "20494674f908eb9b2565a561b5a5567abb5666b6fdfa450f8e89daf02dec31e7",
+      "git_blob": "2611f99079ac0fa0a304d7cbab7e146ce23d58c5"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/native.stdout",
+      "bytes": 144143,
+      "sha256": "dd87a08e99c8fd1f9d4aa3fff7032d71f8b429574cc8e590098af22245f4003e",
+      "git_blob": "05036df3f716918412455ebbad4cbafbbac0c091"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/retained_acked.completed-export.json",
+      "bytes": 4414,
+      "sha256": "a992d00e4a081c997754423697e10ca1e078211f1e4e95ab408e1f28c238c9ae",
+      "git_blob": "661f508bf9a00aa7e3258cc8e52d1b894823c6cd"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/retained_acked.completed-review.json",
+      "bytes": 7742,
+      "sha256": "ef38b92edb39e25712395130b9667f82fcc3515b4abf5643caf9ac93c740db8a",
+      "git_blob": "19ebfe1fd8e9bd94ad0f4fd081787c6f6c6fabef"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/retained_acked.completed.bin",
+      "bytes": 2739,
+      "sha256": "82fa9bdbd1813ba3f364667e77fa0c73f1cd9f3e9da2fde7dd1dced27835f32e",
+      "git_blob": "b22c5da156e5c67bf57922b1ffc3b85fa662a64c"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/retained_acked.expected.json",
+      "bytes": 1631,
+      "sha256": "9e4f8c76d5a47e4d9fe8cb8e00862e2e21697c4ffe182e3c03570bb0433d10a1",
+      "git_blob": "2c91695829d1db6a1a983cf36d68b8855a0fd99a"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/retained_acked.freeze.json",
+      "bytes": 3070,
+      "sha256": "2e70907686e0d34256bed244fb08ac949a0618c1ac0d5a3a6e097ae4d30005a0",
+      "git_blob": "34df5c73449631cf429af38a5e2e02618cbc512b"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/retained_acked.json",
+      "bytes": 11838,
+      "sha256": "8174678882f4b60cca9b8eccbc332d3bdfed48013f4ff8642e928310258a9220",
+      "git_blob": "7a44d19925ea1278196c1a24749b68d50950bb80"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/retained_acked.review.json",
+      "bytes": 4973,
+      "sha256": "9621fcce571696fd8a0a81ccb690af1783e72c77f5c57f2c53636f3c88262b89",
+      "git_blob": "e156aa54fc48335431dbe2cd0915629e98fdb22d"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/retained_acked.selection-export.json",
+      "bytes": 3665,
+      "sha256": "4a89b80f336605d64ec4381b9df6ac5fd52a0a1cee3ad2b314cacdbfe1606c07",
+      "git_blob": "b67a4f643b44eff49118609bdf48e66e41943c0e"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/retained_acked.selection.bin",
+      "bytes": 2341,
+      "sha256": "7e61b75aee24347e4d38eaccdba6a67229466cba2bab689510bc6243c5e588aa",
+      "git_blob": "049ae4956465d3529269060ab19b576e27c4ce90"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/retained_pending.expected.json",
+      "bytes": 1631,
+      "sha256": "eb94f15cc0bc802e043b85599a062afacc8ed5e0675f58640978ef83f89167a8",
+      "git_blob": "ac161f484001fd9208b718c0c1aafb008417d46f"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/retained_pending.freeze.json",
+      "bytes": 3070,
+      "sha256": "2e70907686e0d34256bed244fb08ac949a0618c1ac0d5a3a6e097ae4d30005a0",
+      "git_blob": "34df5c73449631cf429af38a5e2e02618cbc512b"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/retained_pending.json",
+      "bytes": 12160,
+      "sha256": "b9e44f11442b3c20ede95f533c9d5a1345469b6df27748029f1601dabc2d4da0",
+      "git_blob": "05314b8f912e190b9271194936d3ab995ac7b54d"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/retained_pending.review.json",
+      "bytes": 4973,
+      "sha256": "55867cc76aa80dcad4015369beba80a42175b24b0a738d5b2eb2588794a3485e",
+      "git_blob": "0a5d1d264e1adc8b1fb0d86101b1bf62cddbe967"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/retained_pending.selection-export.json",
+      "bytes": 3665,
+      "sha256": "4a89b80f336605d64ec4381b9df6ac5fd52a0a1cee3ad2b314cacdbfe1606c07",
+      "git_blob": "b67a4f643b44eff49118609bdf48e66e41943c0e"
+    },
+    {
+      "path": "evidence/cell-learning-completion-20261108/native-readbacks/retained_pending.selection.bin",
+      "bytes": 2341,
+      "sha256": "7e61b75aee24347e4d38eaccdba6a67229466cba2bab689510bc6243c5e588aa",
+      "git_blob": "049ae4956465d3529269060ab19b576e27c4ce90"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/adopted_acked.checkpoint.bin",
+      "bytes": 2566,
+      "sha256": "b4580307b7ae1d06d7589eb3df083d4ef8380d9c38d53a1147533af488db25ad",
+      "git_blob": "da0e4dfeb828dcd51dbd0e4318e116194b3ead49"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/adopted_acked.expected.json",
+      "bytes": 1698,
+      "sha256": "0bc6ca87adecd88ccffd20f6e717d6f4a60c8b093262a40f432fc2c288c473d0",
+      "git_blob": "b864aee9ad3bc61796ba99de12b1edb72098ea1d"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/adopted_acked.freeze.json",
+      "bytes": 3070,
+      "sha256": "2e70907686e0d34256bed244fb08ac949a0618c1ac0d5a3a6e097ae4d30005a0",
+      "git_blob": "34df5c73449631cf429af38a5e2e02618cbc512b"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/adopted_acked.json",
+      "bytes": 13520,
+      "sha256": "7cadb6df6bcda64cc9fc7a21e7850e08265812463da106609b09bfda0934f561",
+      "git_blob": "2f8d6fc43bcf91b4fa95f98baf38693fe462478f"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/adopted_pending.checkpoint.bin",
+      "bytes": 2566,
+      "sha256": "b4580307b7ae1d06d7589eb3df083d4ef8380d9c38d53a1147533af488db25ad",
+      "git_blob": "da0e4dfeb828dcd51dbd0e4318e116194b3ead49"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/adopted_pending.expected.json",
+      "bytes": 1698,
+      "sha256": "8ea929a3d2d4b69d94b59495728d82504c849dde9b5caa01e93d97d274596b86",
+      "git_blob": "1e08c337eb272f8d0fdcf126c424612b3961fff7"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/adopted_pending.freeze.json",
+      "bytes": 3070,
+      "sha256": "2e70907686e0d34256bed244fb08ac949a0618c1ac0d5a3a6e097ae4d30005a0",
+      "git_blob": "34df5c73449631cf429af38a5e2e02618cbc512b"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/adopted_pending.json",
+      "bytes": 13826,
+      "sha256": "c26b9b3031d108a1892760ba88453fa0982c350a669452db09f57ab0de72fe66",
+      "git_blob": "b551768cd9389b02b073ae94fe26ce7205f546e5"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/fixture-manifest.json",
+      "bytes": 5191,
+      "sha256": "597a20d27e48a91dd6b19dc3102952ed7048fc39946bc9d42e84c23a40fc3557",
+      "git_blob": "d489e5ef3f04d453884461f1ccb840c1de73b25a"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/retained_acked.checkpoint.bin",
+      "bytes": 2341,
+      "sha256": "7e61b75aee24347e4d38eaccdba6a67229466cba2bab689510bc6243c5e588aa",
+      "git_blob": "049ae4956465d3529269060ab19b576e27c4ce90"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/retained_acked.expected.json",
+      "bytes": 1631,
+      "sha256": "9e4f8c76d5a47e4d9fe8cb8e00862e2e21697c4ffe182e3c03570bb0433d10a1",
+      "git_blob": "2c91695829d1db6a1a983cf36d68b8855a0fd99a"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/retained_acked.freeze.json",
+      "bytes": 3070,
+      "sha256": "2e70907686e0d34256bed244fb08ac949a0618c1ac0d5a3a6e097ae4d30005a0",
+      "git_blob": "34df5c73449631cf429af38a5e2e02618cbc512b"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/retained_acked.json",
+      "bytes": 11838,
+      "sha256": "8174678882f4b60cca9b8eccbc332d3bdfed48013f4ff8642e928310258a9220",
+      "git_blob": "7a44d19925ea1278196c1a24749b68d50950bb80"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/retained_pending.checkpoint.bin",
+      "bytes": 2341,
+      "sha256": "7e61b75aee24347e4d38eaccdba6a67229466cba2bab689510bc6243c5e588aa",
+      "git_blob": "049ae4956465d3529269060ab19b576e27c4ce90"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/retained_pending.expected.json",
+      "bytes": 1631,
+      "sha256": "eb94f15cc0bc802e043b85599a062afacc8ed5e0675f58640978ef83f89167a8",
+      "git_blob": "ac161f484001fd9208b718c0c1aafb008417d46f"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/retained_pending.freeze.json",
+      "bytes": 3070,
+      "sha256": "2e70907686e0d34256bed244fb08ac949a0618c1ac0d5a3a6e097ae4d30005a0",
+      "git_blob": "34df5c73449631cf429af38a5e2e02618cbc512b"
+    },
+    {
+      "path": "evidence/cell-learning-iteration-20261108/native-readbacks/retained_pending.json",
+      "bytes": 12160,
+      "sha256": "b9e44f11442b3c20ede95f533c9d5a1345469b6df27748029f1601dabc2d4da0",
+      "git_blob": "05314b8f912e190b9271194936d3ab995ac7b54d"
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/completed.bin",
+      "bytes": 3687,
+      "sha256": "49687e0ece90dceb6409978616700c0b32ec342631a1941994ae3b7a886a7496",
+      "git_blob": "3a89dace16756125639e0b3b20717e15c3f3908a"
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/expected.json",
+      "bytes": 1730,
+      "sha256": "1fdc83d8411fa1b9c4e95f1814ae4a32df07b977e754a8676a3ad5ccf351e810",
+      "git_blob": "db31b660a247e1e48f2389ccd4d5de400d4026b8"
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/freeze.json",
+      "bytes": 3489,
+      "sha256": "00667a2e0a60f009702aeb589da642382b1a533ed0ad77f77a807bd3c472511d",
+      "git_blob": "c9eb2cba27979072e3073822aedb8e3c18e513a8"
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/initial.bin",
+      "bytes": 1326,
+      "sha256": "ad8cab25a363c0ef8555c1178edd9fddb202c8f5c916a026285f79b8bec8a124",
+      "git_blob": "8c57267ae3e4b6b43de5015253c266df0bb78ff3"
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/readback.json",
+      "bytes": 26822,
+      "sha256": "a11c43e68721199443ca265c35d5197f6883a732b04ae0f25e480cb9ce6adc5b",
+      "git_blob": "0a2d9284a7f9b450dad54f099bf163bcbffbba4e"
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/selection.bin",
+      "bytes": 3213,
+      "sha256": "3c4060363122831d1279133cedfefcdc9d795d4653ae56287bc962d7a7b67aa9",
+      "git_blob": "28610de9ebc2cbabc52dab94d661b66ab92002d6"
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/completed.bin",
+      "bytes": 3508,
+      "sha256": "c890ca0ba1f5b5190e33bc93a0947c98a5cbfc4f77ad4f65ac8f428274ab222f",
+      "git_blob": "245dbbccd4b3e483077172b6f2d2d8c64316c5c9"
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/expected.json",
+      "bytes": 1671,
+      "sha256": "d670b3094b47e3807c8ab7a093359ef8e16af3edad9368e78f517897e0345f14",
+      "git_blob": "440fac4efb6399c870fd14c8642dda24fd78eb37"
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/freeze.json",
+      "bytes": 3508,
+      "sha256": "ae6fbb4ea59fcf2c9ac2fbba5976501b27a7f5bc34838737a8fa99c05eb6bf69",
+      "git_blob": "c3b4c8ab108ce21aa2163cf090094e2ea4f89c99"
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/initial.bin",
+      "bytes": 1345,
+      "sha256": "0ba9420cae7fce004f4ef9bfcd9f8a0cd06c6a39b20e503320930493216e70ca",
+      "git_blob": "944e551865e9a1d7fbc5bd62f6c764fd07393b79"
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/readback.json",
+      "bytes": 24556,
+      "sha256": "fdfc6d1bd390a2d6f37ac563d7fe49886e2ac0492b4dff47af95e32f403162a9",
+      "git_blob": "bc146179faf07a38459230265c227d7ff9df4612"
+    },
+    {
+      "path": "evidence/hepta-real-native-adoption-20261108/chain-reader/no-update-v9/selection.bin",
+      "bytes": 3018,
+      "sha256": "21ba8a9895ca7ae052dde45d7547b50e3b656e3c99eb50e004e1c60dd3967b62",
+      "git_blob": "77b1eadd9a056e35caca06a2b38f5fb398d3e301"
+    }
+  ],
+  "scope": "61 exact original inputs for three retained reader modules"
+}

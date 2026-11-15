@@ -1,0 +1,16 @@
+{
+  "derived_from": "terminal-original-read.json",
+  "exit_code": 1,
+  "finished_marker_observed": true,
+  "native_tests_executed": 0,
+  "output_complete": true,
+  "output_log_bytes": 1791,
+  "output_log_sha256": "7f9db80fa1adf49e067de60281e79a69f28e6ed21a60af8b85ff0f2123880096",
+  "provider_preparation_executed": false,
+  "qualification_granted": false,
+  "qualified_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "result": "FAIL",
+  "schema": "pon-learning-outcome-terminal-observation-v1",
+  "session_id": "dpty-2bc39aa0bc2aa0c60ecc88c9f533cdea5ad969f9f8d38559a2cc9c552ca48980",
+  "state": "exited"
+}

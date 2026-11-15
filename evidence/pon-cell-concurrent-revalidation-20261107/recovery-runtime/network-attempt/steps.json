@@ -1,0 +1,93 @@
+[
+  {
+    "args": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final",
+    "exit_code": 0,
+    "name": "source-preflight"
+  },
+  {
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final",
+    "exit_code": 0,
+    "name": "base-head",
+    "seconds": 0.0031332969665527344
+  },
+  {
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final",
+    "exit_code": 0,
+    "name": "base-tree",
+    "seconds": 0.0956834820099175
+  },
+  {
+    "args": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final",
+    "exit_code": 0,
+    "name": "base-status",
+    "seconds": 0.032129060942679644
+  },
+  {
+    "args": [
+      "git",
+      "remote",
+      "get-url",
+      "origin"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final",
+    "exit_code": 0,
+    "name": "origin-url",
+    "seconds": 0.0031576850451529026
+  },
+  {
+    "args": [
+      "git",
+      "-c",
+      "credential.helper=",
+      "-c",
+      "credential.helper=!gh auth git-credential",
+      "clone",
+      "--filter=blob:none",
+      "--no-checkout",
+      "--single-branch",
+      "--branch",
+      "fix/chain-six-axis-performance-20261103",
+      "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+      "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-93ddee66-v1"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107",
+    "exit_code": 0,
+    "name": "clone-full-worktree",
+    "seconds": 8.758129087043926
+  },
+  {
+    "args": [
+      "git",
+      "-c",
+      "credential.helper=",
+      "-c",
+      "credential.helper=!gh auth git-credential",
+      "checkout",
+      "--detach",
+      "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030"
+    ],
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-93ddee66-v1",
+    "exit_code": 128,
+    "name": "select-acc2",
+    "seconds": 1176.7378806800116
+  }
+]

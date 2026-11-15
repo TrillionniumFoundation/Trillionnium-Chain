@@ -1,0 +1,75 @@
+{
+  "all_planned_stages_pass": true,
+  "attack_probability_estimated": false,
+  "ended_utc": "2026-11-12T08:09:17.845033+00:00",
+  "exception": null,
+  "network_byte_budget_qualified": false,
+  "new_independent_samples": 0,
+  "new_simulator_executions": 0,
+  "original_campaign_directory": "/home/qian-qi/work/chain-daa-resource-formal-20261112-600e-43e5c9d6b668/campaign",
+  "output_directory": "/home/qian-qi/work/chain-daa-posthoc-600e",
+  "physical_resource_fairness_qualified": false,
+  "production_consensus_activation": false,
+  "release_ready": false,
+  "schema": "trnm-joint-resource-posthoc-execution-v1",
+  "scope": "one posthoc descriptive readback of original retained 128 cases; no simulator execution",
+  "script": {
+    "path": "/home/qian-qi/work/chain-daa-posthoc-600e/analysis.py",
+    "sha256": "9dc5b8f2449349e0a1353f174f3f373c1d2941796a5ac72329862273fdec00e0",
+    "size": 17671
+  },
+  "source": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "stages": [
+    {
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-daa-resource-competition-20261112-600e",
+      "elapsed_wall_seconds": 0.08914592210203409,
+      "ended_utc": "2026-11-12T08:09:17.367307+00:00",
+      "name": "preflight",
+      "returncode": 0,
+      "spawn_error": null,
+      "started_utc": "2026-11-12T08:09:17.278182+00:00",
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-daa-posthoc-600e/preflight.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-daa-posthoc-600e/preflight.stdout.log",
+        "sha256": "b1ddc0b630de7b591067fd83466528a15acf198976c6acb391c6737d88c277bc",
+        "size": 179
+      },
+      "timed_out": false,
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qian-qi/work/chain-daa-posthoc-600e/analysis.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-daa-posthoc-600e",
+      "elapsed_wall_seconds": 0.4233566008042544,
+      "ended_utc": "2026-11-12T08:09:17.834433+00:00",
+      "name": "analysis",
+      "returncode": 0,
+      "spawn_error": null,
+      "started_utc": "2026-11-12T08:09:17.411080+00:00",
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-daa-posthoc-600e/analysis.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-daa-posthoc-600e/analysis.stdout.log",
+        "sha256": "633c4b51e50525bd7ac9d0e67b9308d5adc1d880e4a42fa3a45b24bdb648a979",
+        "size": 5547
+      },
+      "timed_out": false,
+      "timeout_seconds": 180
+    }
+  ],
+  "started_utc": "2026-11-12T08:09:17.278155+00:00"
+}

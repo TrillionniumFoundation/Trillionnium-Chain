@@ -1,0 +1,10 @@
+tree 155213c2468edc411325f4f1853b471a6b25f355
+parent 657bf2a462ff13a6101ebcb4fbe0fb91c515c972
+author Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793870735 -0500
+committer Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793870735 -0500
+
+fix(cell): retain deadlines and bind installed runtime admission
+
+Carry original discovery and delta budgets through contention and cancellation. Bind the ordinary CPU worker to an independently pinned installed-runtime inventory, explicit v2 owner/worker namespaces, and complete project source closure. Preserve concurrent Growth, readback and CI changes.
+
+Native and Python source-bound receipts are recorded separately; model/expert semantics, device ownership, ordinary multi-Cell FinalUse, independent WAN and paid renewal remain HOLD.

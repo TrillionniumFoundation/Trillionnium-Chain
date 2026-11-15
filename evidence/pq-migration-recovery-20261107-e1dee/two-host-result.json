@@ -1,0 +1,159 @@
+{
+  "alternate_pin_record_count": 2,
+  "alternate_pin_root": "c3792dfcebd317de3a3834deed8bc7a08f3c40bee34a3f67951fcf78764a99b3",
+  "coherent_old_world_without_external_freshness_remains_accepted_counterexample": true,
+  "controlled_synthetic_test_data_only": true,
+  "created_unix_ns": 1794010104396018997,
+  "custody_fsync_job": "1a1b34e0fc9-fc05-81e8",
+  "custody_host": "x230",
+  "fresh_pin_record_count": 2,
+  "fresh_pin_returned_after_restore": true,
+  "fresh_pin_root": "9fe3f94caa19cc0d12e78f8ed7fe68eabbe12a26eb2aa88e1ae830b968bcb3ed",
+  "fresh_pin_sha256": "6b1cbc4afafca25b15c40e849f827a387c3a1354be338494f1d2d7fe600e54d3",
+  "full_declared_namespace_restore_verified": true,
+  "independent_administrator_qualified": false,
+  "original_node_binary_preservation": [
+    {
+      "actual_sha256": "4824c32b9de5895789fe8ec65fa62d161c233e82fcc073b327ccda1b694d1f47",
+      "actual_size": 434940256,
+      "expected_sha256": "4824c32b9de5895789fe8ec65fa62d161c233e82fcc073b327ccda1b694d1f47",
+      "expected_size": 434940256,
+      "opened_inode_after": 47868560,
+      "opened_inode_before": 47868560,
+      "preserved_matches_original": true,
+      "retained_path": "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/retained-original-native-205/trnm_pon_node-25583e2178ebfe0a-4824c32b9de5895789fe8ec65fa62d161c233e82fcc073b327ccda1b694d1f47",
+      "source_path": "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/target-fixed/debug/deps/trnm_pon_node-25583e2178ebfe0a"
+    }
+  ],
+  "physical_power_failure_tested": false,
+  "positive_and_negative_commands": [
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "duration_ns_including_source_verification": 1883449263,
+      "expected_exit_code": 0,
+      "label": "preflight",
+      "log_bytes": 181,
+      "log_sha256": "8ad65665b7d42d27d71f3eee15f01ba629c53c87fbab52cf8b34f2296b1d5f33",
+      "record_status": "command_succeeded",
+      "recorded_command_exit": 0,
+      "source": "2058225aa0d50ca57b1eb0d5f520d7f4eefae69b"
+    },
+    {
+      "actual_exit_code": 1,
+      "argv": [
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/retained-checkpoint-fault-domain-probe",
+        "verify",
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/exercise/node/checkpoint.log",
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/exercise/returned-from-x230.bin"
+      ],
+      "duration_ns_including_source_verification": 1352543052,
+      "expected_exit_code": 1,
+      "label": "fresh-independent-pin-rejects-restored-old-world",
+      "log_bytes": 118,
+      "log_sha256": "52900a8b22a4d8e852e38f99c3f893aed39681f9d45837602c6f3a6fffbe3f4c",
+      "record_status": "command_failed",
+      "recorded_command_exit": 1,
+      "source": "2058225aa0d50ca57b1eb0d5f520d7f4eefae69b"
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/retained-checkpoint-fault-domain-probe",
+        "verify",
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/exercise/retained-current-node/checkpoint.log",
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/exercise/returned-from-x230.bin"
+      ],
+      "duration_ns_including_source_verification": 1339641116,
+      "expected_exit_code": 0,
+      "label": "fresh-independent-pin-accepts-current-world",
+      "log_bytes": 103,
+      "log_sha256": "71b7289f5e942b263ff91112f16f529874fa98a3816b3c28de7bec272701d2e9",
+      "record_status": "command_succeeded",
+      "recorded_command_exit": 0,
+      "source": "2058225aa0d50ca57b1eb0d5f520d7f4eefae69b"
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/retained-checkpoint-fault-domain-probe",
+        "verify",
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/alternate-exercise/node/checkpoint.log",
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/alternate-exercise/fresh-export.bin"
+      ],
+      "duration_ns_including_source_verification": 1331866051,
+      "expected_exit_code": 0,
+      "label": "valid-alternate-same-count-world",
+      "log_bytes": 103,
+      "log_sha256": "71b7289f5e942b263ff91112f16f529874fa98a3816b3c28de7bec272701d2e9",
+      "record_status": "command_succeeded",
+      "recorded_command_exit": 0,
+      "source": "2058225aa0d50ca57b1eb0d5f520d7f4eefae69b"
+    },
+    {
+      "actual_exit_code": 1,
+      "argv": [
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/retained-checkpoint-fault-domain-probe",
+        "verify",
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/exercise/retained-current-node/checkpoint.log",
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/alternate-exercise/fresh-export.bin"
+      ],
+      "duration_ns_including_source_verification": 1339645847,
+      "expected_exit_code": 1,
+      "label": "same-count-different-root-refused",
+      "log_bytes": 118,
+      "log_sha256": "52900a8b22a4d8e852e38f99c3f893aed39681f9d45837602c6f3a6fffbe3f4c",
+      "record_status": "command_failed",
+      "recorded_command_exit": 1,
+      "source": "2058225aa0d50ca57b1eb0d5f520d7f4eefae69b"
+    },
+    {
+      "actual_exit_code": 1,
+      "argv": [
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/retained-checkpoint-fault-domain-probe",
+        "verify",
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/exercise/retained-current-node/checkpoint.log",
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/exercise/node/local-pin.bin"
+      ],
+      "duration_ns_including_source_verification": 1336246932,
+      "expected_exit_code": 1,
+      "label": "old-pin-refuses-locally-newer-world",
+      "log_bytes": 118,
+      "log_sha256": "52900a8b22a4d8e852e38f99c3f893aed39681f9d45837602c6f3a6fffbe3f4c",
+      "record_status": "command_failed",
+      "recorded_command_exit": 1,
+      "source": "2058225aa0d50ca57b1eb0d5f520d7f4eefae69b"
+    },
+    {
+      "actual_exit_code": 1,
+      "argv": [
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/retained-checkpoint-fault-domain-probe",
+        "verify",
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/exercise/node/checkpoint.log",
+        "/home/qian-qi/work/chain-pq-migration-recovery-e1dee-20261106/exercise/returned-from-x230.bin"
+      ],
+      "duration_ns_including_source_verification": 1344823664,
+      "expected_exit_code": 1,
+      "label": "known-fresh-pin-unavailable-refuses",
+      "log_bytes": 147,
+      "log_sha256": "0aabff484c9151fd7eba95cb44475dc1e1f77d1a55538cb525648d7a8d151d30",
+      "record_status": "command_failed",
+      "recorded_command_exit": 1,
+      "source": "2058225aa0d50ca57b1eb0d5f520d7f4eefae69b"
+    }
+  ],
+  "probe_sha256": "8151dfced4ed72986279e6bb4404dd9ac96ff0b1ef3ddbe40e62aff249395b70",
+  "production_activation": false,
+  "production_key_custody_qualified": false,
+  "restore_job": "1a1b35132ed-fc05-8201",
+  "restored_files_unchanged_by_refusals": true,
+  "runtime_host": "rog",
+  "same_count_roots_differ": true,
+  "schema": "trnm-two-host-checkpoint-recovery-observation-v1",
+  "source": "2058225aa0d50ca57b1eb0d5f520d7f4eefae69b",
+  "tree": "94f94114935d643a899b8c7c63f87dbb1b4432a1",
+  "whole_node_runtime_effects_qualified": false
+}

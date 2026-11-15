@@ -1,0 +1,44 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 1m 11s
+     Running tests/accepted_task_observation.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain/debug/deps/accepted_task_observation-6f323ed67670d2a7)
+
+running 4 tests
+test altered_current_task_bytes_cannot_become_a_settlement_observation ... ok
+test exact_acceptance_survives_restart_and_cli_readback_without_mutation ... ok
+test receipt_only_and_ambiguous_multi_accept_packets_have_no_upgrade_binding ... ok
+test settlement_in_another_packet_never_rescues_a_reorged_exact_packet ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.03s
+
+     Running tests/evaluation_quorum_cli.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain/debug/deps/evaluation_quorum_cli-99e86fa2916e5200)
+
+running 1 test
+test explicit_cli_profile_has_distinct_context_and_cannot_reopen_a_legacy_store ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.49s
+
+     Running tests/model_composition_v4.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain/debug/deps/model_composition_v4-c6268441febfb346)
+
+running 4 tests
+test quorum_profile_replays_two_composition_generations_and_zero_score_components ... FAILED
+test signed_executor_rejects_unrelated_weak_zero_marginal_and_precommitted_false_weights ... ok
+test native_composition_rewards_reorg_reopen_and_continuity_cleanup has been running for over 60 seconds
+test two_native_generations_use_the_actual_nonzero_parent_once has been running for over 60 seconds
+test two_native_generations_use_the_actual_nonzero_parent_once ... ok
+test native_composition_rewards_reorg_reopen_and_continuity_cleanup ... ok
+
+failures:
+
+---- quorum_profile_replays_two_composition_generations_and_zero_score_components stdout ----
+
+thread 'quorum_profile_replays_two_composition_generations_and_zero_score_components' (84025) panicked at crates/trnm-pon-node/tests/model_composition_v4.rs:479:6:
+called `Result::unwrap()` on an `Err` value: "CONTINUITY_REWARD_QUEUE"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    quorum_profile_replays_two_composition_generations_and_zero_score_components
+
+test result: FAILED. 3 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 608.48s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test model_composition_v4`

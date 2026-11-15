@@ -1,0 +1,109 @@
+{
+  "schema": "ingress-canonical-component-adoption-plan-v1",
+  "declared_before_measurement_utc": "2026-11-07 16:38:05 UTC",
+  "measurements_started": false,
+  "candidate_head": "205ae38ff01bbf968f3fc2ef0297bee986224684",
+  "candidate_tree": "0f4b77d3db7ed718195a212b7d805f9334aab2f5",
+  "native_validation": {
+    "required_tests": 22,
+    "passed_tests": 22,
+    "exact_denominator_checks": 22,
+    "strict_workspace_all_targets_all_features_clippy_exit": 0,
+    "source_manifest_sha256": "57b81d43099e9fc60e5d673599a55e7103cf9c897ca73b191070874eb186e16f"
+  },
+  "test_selector": "ingress::public_v3::canonical_packet::tests::body_packet_decode_component_abba_retains_every_trial",
+  "command": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "--all-features",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "ingress::public_v3::canonical_packet::tests::body_packet_decode_component_abba_retains_every_trial",
+    "--",
+    "--ignored",
+    "--exact",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "fixtures": [
+    "native-empty",
+    "native-transfers-1",
+    "native-transfers-64",
+    "malformed-header",
+    "malformed-count",
+    "truncated-proof"
+  ],
+  "exposures": [
+    "new-body-allocation",
+    "reused-body-allocation"
+  ],
+  "blocks_per_fixture_exposure": 16,
+  "methods_by_slot": [
+    "owned",
+    "borrowed",
+    "borrowed",
+    "owned"
+  ],
+  "expected_trials": 768,
+  "expected_records_per_fixture_exposure_method": 32,
+  "expected_accepted_records": 384,
+  "expected_rejected_records": 384,
+  "statistics": {
+    "median": "mean of the two central sorted samples (n=32); exact rational comparison",
+    "p95": "nearest-rank, sorted index ceil(95*n/100)-1",
+    "report": [
+      "all per-trial wall/thread CPU/error and byte counts",
+      "per fixture/exposure/method median and p95 wall/thread CPU",
+      "candidate/original median and p95 ratios"
+    ]
+  },
+  "adoption_criteria": {
+    "all_fixture_exposure_cpu_median_ratio_max": {
+      "numerator": 21,
+      "denominator": 20
+    },
+    "largest_64_transaction_packet_each_exposure_cpu_median_ratio_max": {
+      "numerator": 9,
+      "denominator": 10
+    },
+    "all_trials_retained": true,
+    "all_original_oracle_matches_required": true,
+    "all_cpu_measurements_present_positive": true,
+    "all_canonical_error_codes_preserved": true,
+    "exact_test_denominator_required": true,
+    "identical_full_tracked_source_before_after_required": true,
+    "stable_same_test_binary_before_after_required": true
+  },
+  "execution_budget": {
+    "rust_test_threads": 1,
+    "calls_sequential": true,
+    "supervisor_timeout_seconds": 180,
+    "cpu_quota_applied": false,
+    "memory_quota_applied": false,
+    "host_window": "wait for root-confirmed absence of competing builds/compression before starting",
+    "repetitions": "one planned 768-trial invocation; preserve any incomplete/infrastructure failures separately; no favorable-run selection"
+  },
+  "scope": {
+    "measurement": "paid-body digest/canonical grammar/cookie validation plus full Packet decode and owned proof/transaction copying",
+    "native_work_or_host_full_checks_in_component_timing": false,
+    "test_profile": "unoptimized, debug info disabled",
+    "fresh_allocation_is_not_hardware_cache_flush": true,
+    "raw_old_dispatch_phase_cost_is_not_predicted_savings": true,
+    "whole_node_tps": false,
+    "original_4_second_16_worker_service_gate": false,
+    "original_history_gate": false
+  },
+  "result_handling": "Apply these exact thresholds once to all complete planned groups. A failed threshold is reported failed; do not revise thresholds after observing results.",
+  "same_binary": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/trnm_pon_node-3d075b189916f208",
+    "bytes": 77931944,
+    "sha256": "60c0bef51679d2eddb570a7f3624c8b709cca540fa3b46f6382655d7807f8b7c"
+  },
+  "native_core_sha256": "a69fdef11904ed5f2320e8e07bb9c3ce1e094c76b1102e972f71e703a6822ad9"
+}

@@ -1,0 +1,41 @@
+{
+  "schema": "pon-native-terminal-readback-v1",
+  "source_commit": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+  "source_tree": "72b106b4458299c37da146b0218b8f5276195b6d",
+  "readback_scope": "exact complete descriptor and result bytes; archive byte verification is separately recorded by reader and final publication checks",
+  "files": {
+    "native-run-d23488c5-v1-archive.json": {
+      "eof": true,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/native-run-d23488c5-v1-archive.json",
+      "sha256": "74dbde813897144c0d220584eb1731c72ccd5f8ff597c0de85924b9eb7939a15",
+      "size": 193,
+      "text": "{\n  \"bytes\": 4657951,\n  \"path\": \"/home/qian-qi/chain-daa-monotone-20261111-7f73/native-run-d23488c5-v1.tar.gz\",\n  \"sha256\": \"6c33da56842862608e365acb7c69d72175538556a2a76b74254f7b0357de9c81\"\n}\n",
+      "version": "2050:55904492:193:1794442940028342679:1794442940028342679",
+      "value": {
+        "bytes": 4657951,
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/native-run-d23488c5-v1.tar.gz",
+        "sha256": "6c33da56842862608e365acb7c69d72175538556a2a76b74254f7b0357de9c81"
+      }
+    },
+    "result.json": {
+      "eof": true,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/native-run-d23488c5-v1/result.json",
+      "sha256": "ce84842f98090d664c6292577ded279e85c0bc46ce08c34ac883d40c74e86837",
+      "size": 474,
+      "text": "{\n  \"failed_steps\": [],\n  \"finished_utc\": \"2026-11-12T00:22:16.647361+00:00\",\n  \"production_activation\": false,\n  \"public_network_qualification\": false,\n  \"required_commands_passed\": true,\n  \"schema\": \"pon-monotone-native-execution-result-v1\",\n  \"scope\": \"finite native fixture, exact source and selected development gates\",\n  \"source_ready\": true,\n  \"tested_commit\": \"d23488c5f9b4a6696c3799b12f14b8af0a1b81fc\",\n  \"tested_tree\": \"72b106b4458299c37da146b0218b8f5276195b6d\"\n}\n",
+      "version": "2050:56166620:474:1794442936647537721:1794442936647537721",
+      "value": {
+        "failed_steps": [],
+        "finished_utc": "2026-11-12T00:22:16.647361+00:00",
+        "production_activation": false,
+        "public_network_qualification": false,
+        "required_commands_passed": true,
+        "schema": "pon-monotone-native-execution-result-v1",
+        "scope": "finite native fixture, exact source and selected development gates",
+        "source_ready": true,
+        "tested_commit": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+        "tested_tree": "72b106b4458299c37da146b0218b8f5276195b6d"
+      }
+    }
+  }
+}

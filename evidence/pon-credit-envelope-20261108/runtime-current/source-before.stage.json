@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "7201ce80bd0acba128c71ffd851b18c219c8b992",
+    "--output",
+    "/home/qian-qi/credit-envelope-f7e62-run2/source-before.json"
+  ],
+  "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+  "elapsed_seconds": 16.261422,
+  "exception": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-08T12:57:58.933459+00:00",
+  "passed": true,
+  "source_receipt_sha256": "4ea9333dc17311066204deb886b5112d737dcc2a461192a3f28032ad4efcf296",
+  "stage": "source-before",
+  "started_utc": "2026-11-08T12:57:42.672047+00:00",
+  "stderr": "source-before.stderr.log",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "source-before.stdout.log",
+  "stdout_sha256": "4ea9333dc17311066204deb886b5112d737dcc2a461192a3f28032ad4efcf296"
+}

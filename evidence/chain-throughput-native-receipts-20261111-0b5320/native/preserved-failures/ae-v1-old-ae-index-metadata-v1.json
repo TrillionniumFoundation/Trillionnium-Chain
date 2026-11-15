@@ -1,0 +1,76 @@
+{
+  "scope": "current metadata only; timestamps cannot establish actor or full sequence",
+  "index": {
+    "path": "/tmp/chain-throughput-0b5320/.git/worktrees/chain-throughput-before-ae-0b5320/index",
+    "exists": true,
+    "bytes": 4715333,
+    "mtime_ns": 1794373572002737270,
+    "ctime_ns": 1794373572004205198,
+    "mtime_utc": "2026-11-11T05:06:12.002737+00:00",
+    "ctime_utc": "2026-11-11T05:06:12.004205+00:00"
+  },
+  "hidden_paths": [
+    {
+      "path": "/tmp/chain-throughput-before-ae-0b5320/evidence/chain-six-full-20261108/archives/github-native-campaign-original-text-f3.tar.xz",
+      "exists": false
+    },
+    {
+      "path": "/tmp/chain-throughput-before-ae-0b5320/evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587313298.zip",
+      "exists": false
+    },
+    {
+      "path": "/tmp/chain-throughput-before-ae-0b5320/evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587353281.zip",
+      "exists": false
+    },
+    {
+      "path": "/tmp/chain-throughput-before-ae-0b5320/evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587604654.zip",
+      "exists": false
+    },
+    {
+      "path": "/tmp/chain-throughput-before-ae-0b5320/evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13588091577.zip",
+      "exists": false
+    },
+    {
+      "path": "/tmp/chain-throughput-before-ae-0b5320/evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/native-campaign-artifact-13610289272/original-artifact-13610289272.zip",
+      "exists": false
+    }
+  ],
+  "prior_receipts": [
+    {
+      "path": "/dev/shm/chain-throughput-0b5320/before-ae-v1/source-before.json",
+      "exists": true,
+      "bytes": 423,
+      "mtime_ns": 1794369501930046108,
+      "ctime_ns": 1794369501930046108,
+      "mtime_utc": "2026-11-11T03:58:21.930046+00:00",
+      "ctime_utc": "2026-11-11T03:58:21.930046+00:00"
+    },
+    {
+      "path": "/dev/shm/chain-throughput-0b5320/before-ae-v1/source-after.json",
+      "exists": true,
+      "bytes": 423,
+      "mtime_ns": 1794370154689338908,
+      "ctime_ns": 1794370154689338908,
+      "mtime_utc": "2026-11-11T04:09:14.689339+00:00",
+      "ctime_utc": "2026-11-11T04:09:14.689339+00:00"
+    },
+    {
+      "path": "/dev/shm/chain-throughput-0b5320/before-ae-v1/artifact-after.json",
+      "exists": true,
+      "bytes": 3087,
+      "mtime_ns": 1794370406770398398,
+      "ctime_ns": 1794370406770398398,
+      "mtime_utc": "2026-11-11T04:13:26.770398+00:00",
+      "ctime_utc": "2026-11-11T04:13:26.770398+00:00"
+    },
+    {
+      "path": "/dev/shm/chain-throughput-0b5320/before-ae-v1/summary.json",
+      "exists": true,
+      "bytes": 10707,
+      "mtime_ns": 1794370154719117999,
+      "ctime_ns": 1794370154719117999,
+      "mtime_utc": "2026-11-11T04:09:14.719118+00:00",
+      "ctime_utc": "2026-11-11T04:09:14.719118+00:00"
+    }
+  ]
+}

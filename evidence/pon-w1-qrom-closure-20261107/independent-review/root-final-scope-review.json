@@ -1,0 +1,49 @@
+{
+  "correction": {
+    "current_scope": "The pinned named test unconditionally reads control-ids-all27.json and zkr-programs.json, checks the saved roster, source provenance, input hashes and rows, native completion/stdout hash, canonical result geometry and Montgomery encoding, catalog IDs, and reconstructs the allowlist root. This is saved-result consistency validation, not another full 27-program native computation.",
+    "large_27_program_native_computation_repeated_by_this_check": false,
+    "missing_saved_report_is_not_skipped": true,
+    "required_test_id": "test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_native_result_requires_root_bytes_normal_words_and_exact_geometry",
+    "seven_lightweight_reports_reproduced_byte_for_byte_is_a_separate_stage": true,
+    "supersedes": "Earlier interleaved review said CI did not consume the saved all27 report."
+  },
+  "qualification": {
+    "post_quantum_soundness_qualified": false,
+    "production_qualified": false,
+    "unconditional_project_security_bits": null
+  },
+  "review_date": "2026-11-07",
+  "review_limit": "Read-only scope/source/roster review plus existing independent small arithmetic and saved-result checks; no new full-source CI execution or second large native run is claimed.",
+  "reviewed_file_sha256": {
+    ".github/workflows/pon-w1-qrom-closure.yml": "41b52424210f48a16a88312613762c9d0ab7470466877ba01d3d8c8d8ef7ba8a",
+    "config/pon/w1-qrom-closure-required-tests-v1.json": "ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f",
+    "docs/security/W1_QROM_CLOSURE_CONTINUATION_20261107.md": "30c8ca40f2c00b0afccd4b8ba47f5bb12fe5373143552a2142c41d75deb14de5",
+    "evidence/pon-w1-qrom-closure-20261107/obligation-disposition.json": "04913db0d754cd66b5d1209d84d798bc49d702f7b3cb18f2c74570b39740ed0b",
+    "scripts/ci/test_w1_zkr_control_id_audit.py": "6df5b2a105fab667c0bb96b6d6ebc1c3f8fd9c9fd824e2e4fc94a28e53550963",
+    "scripts/ci/w1_qrom_closure_controls.py": "71b68fe4cf9486d9d6b6fd6b370a34f3749800a09f7c9dd093767f4b52e1e487"
+  },
+  "roster_review": {
+    "actual_ast_names_and_order_match": true,
+    "module_counts": [
+      19,
+      16,
+      10,
+      22,
+      9,
+      8,
+      21
+    ],
+    "modules": 7,
+    "named_tests": 105,
+    "workflow_pin_matches": true
+  },
+  "schema": "TRNM-W1-ROOT-FINAL-SCOPE-REVIEW1",
+  "scope_review": {
+    "all27_commitment_reconstruction_does_not_prove_compiler_or_program_semantics": true,
+    "blocking_findings": [],
+    "completed_feature_subscope_remains_fixed_7150_release_only": true,
+    "full_security_obligations_discharged": 0,
+    "historical_15_ids_and_report_bytes_preserved": true,
+    "hosted_7150_and_selected_native_records_do_not_certify_a_later_commit": true
+  }
+}

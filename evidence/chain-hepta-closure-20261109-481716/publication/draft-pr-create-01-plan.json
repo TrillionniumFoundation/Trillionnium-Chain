@@ -1,0 +1,17 @@
+{
+  "schema": "chain-hepta-draft-pr-publication-v1",
+  "host": "main",
+  "account": "ProfHepta",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+  "base": "main",
+  "head": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+  "title": "Converge fixed Chain/Hepta closure source and evidence contracts",
+  "draft": true,
+  "body_sha256": "28698b40a554d0b4b18c49a08eebd81d99c0f07bcd0aa639f31fa74e5341475d",
+  "body_bytes": 2112,
+  "remote_body_file": "/Users/qianqi/chain-hepta-closure-481716/draft-pr-body-28698b40a554.md",
+  "prior_pr_reconciliation_job": "1a1c0bc338c-11c5a-49",
+  "prior_pr_result": [],
+  "idempotency_key": "chain-hepta-closure-481716-draft-pr-create-01"
+}

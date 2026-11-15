@@ -1,0 +1,14 @@
+{
+  "job_id": "1a1bb1758d6-13c47-8c",
+  "original_state": "launch_unknown",
+  "status_and_read": "INVALID_ARGUMENT",
+  "same_idempotency_key_retry_reused_original": true,
+  "followup_observations": [
+    "remote job directory absent",
+    "systemd LoadState not-found",
+    "worktree unchanged"
+  ],
+  "retry_only_after_reconciliation": true,
+  "unavailable_launch_claimed_as_success": false,
+  "raw_launch_is_not_test_evidence": true
+}

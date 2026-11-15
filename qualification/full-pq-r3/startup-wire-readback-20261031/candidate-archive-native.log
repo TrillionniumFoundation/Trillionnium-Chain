@@ -1,0 +1,15 @@
+    Finished `release` profile [optimized] target(s) in 0.53s
+     Running unittests src/lib.rs (/tmp/chain-pq-startup-repair-target/release/deps/trnm_pon_node-a8515e07877dcc8f)
+
+running 8 tests
+test authenticated_state_archive::tests::authenticated_archive_abrupt_exit_before_commit_recovers_original_selection ... ok
+test authenticated_state_archive::tests::authenticated_archive_delta_encoding_preserves_present_null_and_exact_before ... ok
+test authenticated_state_archive::tests::authenticated_archive_import_binds_actual_genesis_and_fresh_namespace ... ok
+test authenticated_state_archive::tests::authenticated_archive_pq_application_refuses_before_filesystem_or_retained_writes ... ok
+test authenticated_state_archive::tests::authenticated_archive_publication_rolls_back_cancellation_sql_failure_and_quotas ... ok
+test authenticated_state_archive::tests::authenticated_archive_rejects_missing_tampered_and_forged_stored_sources ... ok
+test authenticated_state_archive::tests::authenticated_archive_signed_native_branches_reopen_and_monotonic_selection ... ok
+test authenticated_state_archive::tests::authenticated_archive_source_and_witness_refusals_publish_no_rows ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 802 filtered out; finished in 0.57s
+

@@ -1,0 +1,209 @@
+{
+  "acceptance_granted": false,
+  "advisory_databases": [
+    {
+      "archive": "advisories-0-28d73fc95e5972af3403225a217def57dcaba3c4.tar.gz",
+      "commit": "28d73fc95e5972af3403225a217def57dcaba3c4",
+      "commit_time": "2026-11-10T14:45:03+01:00",
+      "origin": "https://github.com/RustSec/advisory-db",
+      "tree": "247ffa118a3e073e70825e62bde8c473d4ac6b45"
+    }
+  ],
+  "artifact_sha256": {
+    "advisories-0-28d73fc95e5972af3403225a217def57dcaba3c4.tar.gz": "fcc2e8035756170b2dd9e292dcc8e6ee9194b35b6e50e54eab513269db3ccf4d",
+    "archive-0.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "check-0.jsonl": "8dc748d9c5ff0195d73593b71ddff89efd309ef6dc8aef5938380ee48fc63ab5",
+    "check-1.jsonl": "28655b6589ffb9b2bedc3275be5adcb223ec73007052e2a8cf530d447c8b769f",
+    "fetch-advisories.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fetch-crates-0.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fetch-crates-1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tool-version.log": "1758f5ea93d8ad3585079f05c19358b7bb969cce1bf6c7bdab6659a8cd1ef6b8"
+  },
+  "cargo_deny_sha256": "689a69025ac138f4a5c9d8aa2945dad9534919f116b442f39e83a118a0444555",
+  "input_sha256": {
+    "deny.toml": "c4543ba5da36d0dea6480d39e107b77efe3f4c6dfc6d86723c1c794407472954",
+    "scripts/ci/run_supply_chain.py": "3ba25e784966e4d52efe22d400ddb73657a02550a8d7ac955c2968b652d839f6",
+    "scripts/ci/tool-versions.env": "b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408",
+    "tests/fuzz/Cargo.lock": "0ae65ed15ddc6ffb7ebe13961e0c24c798a6e575aec5e966f59055232de1a3c8",
+    "trillionnium/Cargo.lock": "9e553749f03f3a849af9562d1a62f20181c6ce3594c99283eaadecb918f4a25e"
+  },
+  "observations": [
+    {
+      "command": [
+        "/home/qq/work/chain-sqlite-advisory-20261110-checks/tools/deny-0.20.2/bin/cargo-deny",
+        "--version"
+      ],
+      "cwd": "/home/qq/work/chain-sqlite-advisory-20261110",
+      "elapsed_ns": 3103392174,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "f6edf2d549ab2a6b83bda3945daf71aa0b025c80",
+      "log": "tool-version.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "fetch",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "cwd": "/home/qq/work/chain-sqlite-advisory-20261110",
+      "elapsed_ns": 3213480848,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "f6edf2d549ab2a6b83bda3945daf71aa0b025c80",
+      "log": "fetch-crates-0.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "fetch",
+        "--locked",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml"
+      ],
+      "cwd": "/home/qq/work/chain-sqlite-advisory-20261110",
+      "elapsed_ns": 3159403343,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "f6edf2d549ab2a6b83bda3945daf71aa0b025c80",
+      "log": "fetch-crates-1.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "/home/qq/work/chain-sqlite-advisory-20261110-checks/tools/deny-0.20.2/bin/cargo-deny",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--config",
+        "deny.toml",
+        "--locked",
+        "fetch",
+        "db"
+      ],
+      "cwd": "/home/qq/work/chain-sqlite-advisory-20261110",
+      "elapsed_ns": 8163511304,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "f6edf2d549ab2a6b83bda3945daf71aa0b025c80",
+      "log": "fetch-advisories.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/home/qq/work/chain-sqlite-advisory-20261110-checks/cargo-policy-home/advisory-dbs/advisory-db-3157b0e258782691",
+        "archive",
+        "--format=tar.gz",
+        "--output=/home/qq/work/chain-sqlite-advisory-20261110-checks/wal-frozen-0220/original-policy/supply-chain/advisories-0-28d73fc95e5972af3403225a217def57dcaba3c4.tar.gz",
+        "28d73fc95e5972af3403225a217def57dcaba3c4"
+      ],
+      "cwd": "/home/qq/work/chain-sqlite-advisory-20261110",
+      "elapsed_ns": 3138839712,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "f6edf2d549ab2a6b83bda3945daf71aa0b025c80",
+      "log": "archive-0.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "/home/qq/work/chain-sqlite-advisory-20261110-checks/tools/deny-0.20.2/bin/cargo-deny",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--config",
+        "deny.toml",
+        "--all-features",
+        "--frozen",
+        "--format",
+        "json",
+        "check",
+        "advisories",
+        "licenses",
+        "bans",
+        "sources"
+      ],
+      "cwd": "/home/qq/work/chain-sqlite-advisory-20261110",
+      "elapsed_ns": 3280179946,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "f6edf2d549ab2a6b83bda3945daf71aa0b025c80",
+      "log": "check-0.jsonl",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "/home/qq/work/chain-sqlite-advisory-20261110-checks/tools/deny-0.20.2/bin/cargo-deny",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--config",
+        "deny.toml",
+        "--all-features",
+        "--frozen",
+        "--format",
+        "json",
+        "check",
+        "advisories",
+        "licenses",
+        "bans",
+        "sources"
+      ],
+      "cwd": "/home/qq/work/chain-sqlite-advisory-20261110",
+      "elapsed_ns": 3246895957,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "f6edf2d549ab2a6b83bda3945daf71aa0b025c80",
+      "log": "check-1.jsonl",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    }
+  ],
+  "result": "PASS",
+  "schema": "trnm-supply-chain-v1",
+  "source": {
+    "commit": "f6edf2d549ab2a6b83bda3945daf71aa0b025c80",
+    "source_state": "committed-clean",
+    "tracked_bytes": 2545813729,
+    "tracked_entries": 26642,
+    "tracked_worktree_verified": true,
+    "tree": "143808a1f697539d2a153c99c97421931743a13c"
+  },
+  "source_consistent": true,
+  "source_expected": "f6edf2d549ab2a6b83bda3945daf71aa0b025c80",
+  "tools": {
+    "TRNM_CARGO_DENY_VERSION": "0.20.2",
+    "TRNM_CARGO_FUZZ_VERSION": "0.13.2",
+    "TRNM_FUZZ_TOOLCHAIN": "nightly-2026-10-01"
+  }
+}

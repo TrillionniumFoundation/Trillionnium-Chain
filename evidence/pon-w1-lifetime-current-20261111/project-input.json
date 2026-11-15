@@ -1,0 +1,175 @@
+{
+  "groups": {
+    "mldsa_xof": {
+      "additional_reduction_queries_upper": {
+        "extractor": null,
+        "oracle_simulator": null,
+        "relation_decider": null
+      },
+      "online_mass_upper": {
+        "fiat_shamir_online": null,
+        "vector_commitment_online": null
+      },
+      "queries_per_occurrence_upper": {
+        "accepted_root_attempts": null,
+        "adaptive_restart_batches": null,
+        "cross_protocol_unclassified_batches": null,
+        "delegated_service_batches": null,
+        "failed_aborted_root_attempts": null,
+        "offline_preprocessing": null,
+        "recursive_subproof_nodes": null
+      },
+      "query_bound_reference": null
+    },
+    "other_unmapped": {
+      "additional_reduction_queries_upper": {
+        "extractor": null,
+        "oracle_simulator": null,
+        "relation_decider": null
+      },
+      "online_mass_upper": {
+        "fiat_shamir_online": null,
+        "vector_commitment_online": null
+      },
+      "queries_per_occurrence_upper": {
+        "accepted_root_attempts": null,
+        "adaptive_restart_batches": null,
+        "cross_protocol_unclassified_batches": null,
+        "delegated_service_batches": null,
+        "failed_aborted_root_attempts": null,
+        "offline_preprocessing": null,
+        "recursive_subproof_nodes": null
+      },
+      "query_bound_reference": null
+    },
+    "poseidon2_shared": {
+      "additional_reduction_queries_upper": {
+        "extractor": null,
+        "oracle_simulator": null,
+        "relation_decider": null
+      },
+      "online_mass_upper": {
+        "fiat_shamir_online": null,
+        "vector_commitment_online": null
+      },
+      "queries_per_occurrence_upper": {
+        "accepted_root_attempts": null,
+        "adaptive_restart_batches": null,
+        "cross_protocol_unclassified_batches": null,
+        "delegated_service_batches": null,
+        "failed_aborted_root_attempts": null,
+        "offline_preprocessing": null,
+        "recursive_subproof_nodes": null
+      },
+      "query_bound_reference": null
+    },
+    "sha256_shared": {
+      "additional_reduction_queries_upper": {
+        "extractor": null,
+        "oracle_simulator": null,
+        "relation_decider": null
+      },
+      "online_mass_upper": {
+        "fiat_shamir_online": null,
+        "vector_commitment_online": null
+      },
+      "queries_per_occurrence_upper": {
+        "accepted_root_attempts": null,
+        "adaptive_restart_batches": null,
+        "cross_protocol_unclassified_batches": null,
+        "delegated_service_batches": null,
+        "failed_aborted_root_attempts": null,
+        "offline_preprocessing": null,
+        "recursive_subproof_nodes": null
+      },
+      "query_bound_reference": null
+    },
+    "sha384_shared": {
+      "additional_reduction_queries_upper": {
+        "extractor": null,
+        "oracle_simulator": null,
+        "relation_decider": null
+      },
+      "online_mass_upper": {
+        "fiat_shamir_online": null,
+        "vector_commitment_online": null
+      },
+      "queries_per_occurrence_upper": {
+        "accepted_root_attempts": null,
+        "adaptive_restart_batches": null,
+        "cross_protocol_unclassified_batches": null,
+        "delegated_service_batches": null,
+        "failed_aborted_root_attempts": null,
+        "offline_preprocessing": null,
+        "recursive_subproof_nodes": null
+      },
+      "query_bound_reference": null
+    },
+    "sha512_shared": {
+      "additional_reduction_queries_upper": {
+        "extractor": null,
+        "oracle_simulator": null,
+        "relation_decider": null
+      },
+      "online_mass_upper": {
+        "fiat_shamir_online": null,
+        "vector_commitment_online": null
+      },
+      "queries_per_occurrence_upper": {
+        "accepted_root_attempts": null,
+        "adaptive_restart_batches": null,
+        "cross_protocol_unclassified_batches": null,
+        "delegated_service_batches": null,
+        "failed_aborted_root_attempts": null,
+        "offline_preprocessing": null,
+        "recursive_subproof_nodes": null
+      },
+      "query_bound_reference": null
+    }
+  },
+  "input_kind": "project_unqualified",
+  "lifetime": {
+    "accepted_root_attempts_per_processor_max": null,
+    "adaptive_restart_batches_per_processor_max": null,
+    "cross_protocol_batches_per_processor_max": null,
+    "delegated_service_batches_per_processor_max": null,
+    "failed_aborted_root_attempts_per_processor_max": null,
+    "offline_batches_per_processor_max": null,
+    "online_seconds": null,
+    "processors_max": null,
+    "recursive_nodes_per_root_attempt_max": null
+  },
+  "lifetime_bound_reference": null,
+  "schema": "TRNM-W1-LIFETIME-LEDGER-INPUT1",
+  "scope": {
+    "all_identities_processors_and_reorganizations_share_budget": true,
+    "coverage": "selected_implementation_coverage_not_exhaustive",
+    "pre_deployment_queries_included": true,
+    "protocol_upgrades_do_not_reset_budget": true,
+    "query_unit": "abstract_quantum_oracle_invocation_not_native_permutation_count"
+  },
+  "total_target_error": null,
+  "uniform_event_bounds": {
+    "authorization_admission_opportunities": {
+      "assumed_bound_valid_up_to_joint_queries": null,
+      "bound_reference": null,
+      "conditioning": "all_prior_history_offline_information_quantum_auxiliary_states_and_same_lifetime_query_envelope",
+      "error_per_opportunity_upper": null,
+      "opportunities_max": null
+    },
+    "complete_relation_verification_opportunities": {
+      "assumed_bound_valid_up_to_joint_queries": null,
+      "bound_reference": null,
+      "conditioning": "all_prior_history_offline_information_quantum_auxiliary_states_and_same_lifetime_query_envelope",
+      "error_per_opportunity_upper": null,
+      "opportunities_max": null
+    },
+    "work_weight_acceptance_opportunities": {
+      "assumed_bound_valid_up_to_joint_queries": null,
+      "bound_reference": null,
+      "conditioning": "all_prior_history_offline_information_quantum_auxiliary_states_and_same_lifetime_query_envelope",
+      "error_per_opportunity_upper": null,
+      "opportunities_max": null
+    }
+  }
+}

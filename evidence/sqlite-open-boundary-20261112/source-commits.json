@@ -1,0 +1,19 @@
+{
+  "base": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+  "commits": [
+    {
+      "commit": "52cf278e4c3d08931b3e890c26b2b1af5653d32d",
+      "raw_commit": "tree 35fa4302c4e525733d2d11b9dbe7ae79865912bb\nparent 6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d\nauthor ProfHepta <102159240+ProfHepta@users.noreply.github.com> 1794440117 -0500\ncommitter ProfHepta <102159240+ProfHepta@users.noreply.github.com> 1794440117 -0500\n\ntest(sqlite): expose unresolved sidecar pathname bypasses\n\nSigned-off-by: ProfHepta <102159240+ProfHepta@users.noreply.github.com>\n"
+    },
+    {
+      "commit": "857d661de6265459d4af3323f4000c2c04fb90e1",
+      "raw_commit": "tree 07e2fc802117de694be8ff70852b8f80bc3ebe28\nparent 52cf278e4c3d08931b3e890c26b2b1af5653d32d\nauthor ProfHepta <102159240+ProfHepta@users.noreply.github.com> 1794441072 -0500\ncommitter ProfHepta <102159240+ProfHepta@users.noreply.github.com> 1794441072 -0500\n\ntest(sqlite): exercise all strict sidecar owners and inspection errors\n\nSigned-off-by: ProfHepta <102159240+ProfHepta@users.noreply.github.com>\n"
+    },
+    {
+      "commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+      "raw_commit": "tree 14b7162b997266577a073a4ffe3188dd154adb8e\nparent 857d661de6265459d4af3323f4000c2c04fb90e1\nauthor ProfHepta <102159240+ProfHepta@users.noreply.github.com> 1794442106 -0500\ncommitter ProfHepta <102159240+ProfHepta@users.noreply.github.com> 1794442106 -0500\n\nfix(storage): fail closed on unresolved SQLite sidecar metadata\n\nSigned-off-by: ProfHepta <102159240+ProfHepta@users.noreply.github.com>\n"
+    }
+  ],
+  "original_identities_recovered": true,
+  "fallback_successor_package_applied": false
+}

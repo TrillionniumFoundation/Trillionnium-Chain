@@ -1,0 +1,38 @@
+{
+  "schema": "account-boundary-root-node-data-import-verification-v1",
+  "verified_utc": "2026-11-11T06:37:53.373917+00:00",
+  "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "archive_sha256": "5964496925744cdeae11ee177883ee537b696feefe6ee5c6cb027e64af851238",
+  "archive_bytes": 49417,
+  "manifest_sha256": "3fd826bc86628ce83c57a68a3bb59ca6d2a4a57dd55136c8ba57d290de1887ee",
+  "manifest_entries_verified": 20,
+  "safe_regular_archive_members_verified": 21,
+  "terminal_records": 4,
+  "pass_records": 3,
+  "fail_records": 1,
+  "node_returncode": 101,
+  "outer_suite": {
+    "passed": 1359,
+    "failed": 4,
+    "ignored": 39,
+    "measured": 0,
+    "filtered_out": 0,
+    "elapsed_seconds": 7809.1
+  },
+  "nested_summaries_verbatim": [
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1401 filtered out; finished in 0.00s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1401 filtered out; finished in 0.00s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1401 filtered out; finished in 0.00s"
+  ],
+  "nested_counts_added_to_parent": false,
+  "cargo_running_headers": 1,
+  "remaining_integration_targets_executed": false,
+  "captured_phase_diagnostic_records_stdout": 0,
+  "captured_phase_diagnostic_records_stderr": 0,
+  "inventory_sha256": "b9bda8938371f22a4b48a2af7377afd8a39523ea9d71afb3c2912bc02f3b400e",
+  "inventory_terminal_record_count": 63,
+  "inventory_incomplete_count": 1,
+  "all_import_and_log_checks_passed": true,
+  "full_ci_qualification": false,
+  "production_qualification": false
+}

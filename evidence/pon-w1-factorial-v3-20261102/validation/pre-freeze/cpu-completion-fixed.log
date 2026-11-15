@@ -1,0 +1,19 @@
+
+running 11 tests
+test ingress::public_v3::scalar_cpu::completion_tests::actual_w1_cpu_completion_waits_for_original_refill_and_preserves_balance_identity ... verified completion actual W1 replays=230 cpu_ns=247890466 flow={"schema":"public-v3-local-actual-cpu-flow-v1","initial_credit_ns":0,"credited_refill_ns":250383020,"discarded_refill_ns":0,"booked_reservation_ns":0,"live_debited_cpu_ns":250154582,"settlement_residual_cpu_ns":1142,"settled_full_cpu_ns":250155724,"unsettled_known_live_cpu_ns":0,"paid_cpu_debit_ns":250155724,"settlement_discard_ns":0,"remaining_paid_credit_ns":227296,"balance_identity_verified":true,"stored_credit_ns":227296,"live_owners":0}
+ok
+test ingress::public_v3::scalar_cpu::completion_tests::already_running_probe_cannot_spend_beyond_its_original_quantum_during_completion ... ok
+test ingress::public_v3::scalar_cpu::completion_tests::complete_actual_w1_blocks_new_probes_without_new_credit_and_releases_once ... ok
+test ingress::public_v3::scalar_cpu::completion_tests::completion_identity_survives_cancel_and_unknown_without_invalidating_retry ... ok
+test ingress::public_v3::scalar_cpu::completion_tests::completion_keeps_original_cancellation_deadline_and_unknown_clock_fences ... ok
+test ingress::public_v3::scalar_cpu::completion_tests::completion_work_claim_is_atomic_across_real_verifiers_and_domain_clones ... ok
+test ingress::public_v3::scalar_cpu::completion_tests::exclusive_history_refill_observes_original_resource_cancellation_without_new_credit ... {"flow":{"balance_identity_verified":true,"booked_reservation_ns":0,"credited_refill_ns":182353251,"discarded_refill_ns":0,"initial_credit_ns":0,"live_debited_cpu_ns":182355027,"live_owners":0,"paid_cpu_debit_ns":182355788,"remaining_paid_credit_ns":-2537,"schema":"public-v3-local-actual-cpu-flow-v1","settled_full_cpu_ns":182355788,"settlement_discard_ns":0,"settlement_residual_cpu_ns":761,"stored_credit_ns":-2537,"unsettled_known_live_cpu_ns":0},"receipt":{"accounting_unavailable":false,"finished_workers":0,"known_workers":0,"live_paid_cpu_ns":182355027,"live_refused":false,"owner_cpu_ns":182355788,"residual_cpu_ns":761,"schema":"service-owner-scoped-thread-cpu-settlement-v1","scoped_worker_cpu_ns":0,"spawned_workers":0,"started_workers":0,"total_cpu_ns":182355788},"schema":"history-resource-cancellation-real-refill-v1"}
+ok
+test ingress::public_v3::scalar_cpu::completion_tests::full_completion_registry_keeps_all_markers_and_allows_real_native_admission ... ok
+test ingress::public_v3::scalar_cpu::completion_tests::only_fresh_successful_native_w1_promotes_not_false_product_or_existing_packet ... ok
+test ingress::public_v3::scalar_cpu::completion_tests::same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority ... same genuine W1 acquisition_attempts=3 requests=2 promotions=[1, 0] paid_cpu_ns=4617474
+ok
+test ingress::public_v3::scalar_cpu::completion_tests::same_verified_w1_with_changed_transaction_body_is_rejected_before_promotion ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 828 filtered out; finished in 2.62s
+

@@ -1,0 +1,56 @@
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/e56a2df1ab66/chain/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.65s
+     Running tests/evaluation_quorum_v2.rs (trillionnium/target/debug/deps/evaluation_quorum_v2-4bcc821df407ab4b)
+
+running 2 tests
+test fresh_profile_refuses_attested_models_and_cross_version_replay ... ok
+test independent_reference_vectors_match_native_domains_counts_and_records ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running tests/incremental_prefix.rs (trillionnium/target/debug/deps/incremental_prefix-be341ec23a3c1580)
+
+running 8 tests
+test actual_capacity_rejection_rolls_back_suffix_and_allows_existing_account_transfer ... ok
+test authenticated_mandatory_partition_executes_full_cleanup_refunds_and_maturity ... ok
+test authenticated_mandatory_refusal_prevents_transaction_preparation_and_missing_rows_refuse ... ok
+test changed_actual_parent_bytes_and_forged_root_never_construct_a_prefix ... ok
+test every_suffix_cancellation_and_unwind_restores_the_last_complete_prefix ... ok
+test incremental_signed_prefixes_keep_one_prologue_complete_rewards_receipts_and_roots ... ok
+test invalid_partial_group_and_changed_prefix_leave_prior_nonce_fees_and_state ... ok
+test warm_parent_and_full_root_fallback_keep_the_same_complete_prefix_outputs ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 14.73s
+
+     Running tests/model_evolution_v5.rs (trillionnium/target/debug/deps/model_evolution_v5-185cc2a8154538af)
+
+running 4 tests
+test actual_joint_router_expert_then_base_and_mask_adopt_from_real_successor_parent ... ok
+test external_data_owner_signature_roots_order_and_repeated_content_fail_closed ... ok
+test native_refuses_forged_parent_hash_basis_alias_noop_and_cross_profile ... ok
+test pinned_new_text_windows_select_frozen_roots_and_replay_actual_parent_controls_at_activation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.78s
+
+     Running tests/pon_commitment.rs (trillionnium/target/debug/deps/pon_commitment-55f122940ed279f9)
+
+running 16 tests
+test actual_workspace_charge_exact_minus_plus_one_preserves_complete_large_deltas ... ok
+test branching_stages_and_unknown_parent_reseed_do_not_advance_base ... ok
+test disabled_cache_still_executes_real_full_rules_and_exact_deltas ... ok
+test explicitly_selected_16384_boundary_is_checked_and_16385_remains_a_full_root_fallback ... ok
+test explicitly_selected_8192_key_and_workspace_limits_remain_full_root_fallbacks ... ok
+test full_actual_difference_checks_removals_empty_values_and_late_bad_value ... ok
+test increasing_the_software_key_budget_does_not_permit_invalid_cache_limits ... ok
+test late_invalid_signature_nonce_and_funds_do_not_mutate_parent_or_snapshot ... ok
+test maximum_keys_and_payload_combination_checks_exact_minus_and_plus_one ... ok
+test payload_budget_fallback_is_explicit_and_real_root_is_unchanged ... ok
+test protocol_bounds_canonical_errors_and_full_key_limit_remain_enforced ... ok
+test real_signed_prefixes_parallel_receipts_and_complete_state_are_identical ... ok
+test same_context_changed_actual_state_wrong_root_and_wrong_snapshot_are_rejected ... ok
+test serial_new_accounts_and_reward_maturity_match_each_actual_successor ... ok
+test signed_large_parent_prefixes_keep_full_rules_roots_receipts_and_exact_delta_parity ... ok
+test workspace_budget_still_falls_back_below_key_and_payload_limits ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 43.39s
+

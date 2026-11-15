@@ -1,0 +1,20 @@
+[fix/chain-fixed-probability-contract-20261108-63b38 747a7169f] Add fixed-probability cost contracts and bounded branch schedule research
+ 23 files changed, 6514 insertions(+)
+ create mode 100644 docs/protocol/pon-nakamoto-v1/details/BRANCH_WORK_SCHEDULE_RESEARCH_V1.md
+ create mode 100644 docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md
+ create mode 100644 formal/pon-nakamoto-v1/AMORTIZED_COST_POTENTIAL_V1.md
+ create mode 100644 formal/pon-nakamoto-v1/CREDIT_FEASIBILITY_V1.md
+ create mode 100644 formal/pon-nakamoto-v1/amortized_cost_potential.py
+ create mode 100644 formal/pon-nakamoto-v1/credit_feasibility.py
+ create mode 100644 formal/pon-nakamoto-v1/fixed_probability_contract.py
+ create mode 100644 formal/pon-nakamoto-v1/fixed_probability_contract_v1.json
+ create mode 100644 formal/pon-nakamoto-v1/test_amortized_cost_potential.py
+ create mode 100644 formal/pon-nakamoto-v1/test_amortized_cost_potential_independent.py
+ create mode 100644 formal/pon-nakamoto-v1/test_credit_feasibility.py
+ create mode 100644 formal/pon-nakamoto-v1/test_fixed_probability_contract.py
+ create mode 100644 formal/pon-nakamoto-v1/vectors/fixed-probability-credit/synthetic-linear-sqrt-exact.json
+ create mode 100644 formal/pon-nakamoto-v1/vectors/fixed-probability-credit/synthetic-linear-sqrt-gamma2.json
+ create mode 100644 scripts/ci/test_pon_branch_work_schedule_reader.py
+ create mode 100644 scripts/pon_branch_work_schedule_reader.py
+ create mode 100644 trillionnium/crates/trnm-pon-node/src/research_work_schedule.rs
+ create mode 100644 trillionnium/crates/trnm-pon-node/tests/research_work_schedule.rs

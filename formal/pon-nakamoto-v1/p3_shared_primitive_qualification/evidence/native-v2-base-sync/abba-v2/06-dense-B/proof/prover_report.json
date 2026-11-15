@@ -1,0 +1,108 @@
+{
+  "arith_proof_bytes": 592389,
+  "arith_proof_sha256": "b7f1732b0111a13c18f02a64f26e3963ffb57ba0bf44cb8ea3de5dc6daaa1d53",
+  "arith_trace_height": 16384,
+  "public_bytes": 377290,
+  "security": {
+    "complete_noninteractive_security_bits": null,
+    "concrete_binding_bits": null,
+    "descriptor": "p3=0.8.0;sha3=512;r=576;c=1024;F=18446744069414584321;E=X^2-7;binary;cap=0;log_blowup=2;log_final_poly=0;max_log_arity=1;queries=64;pow=0;zk=0;sha=d13,w7728,p27,q2,next1;carry=d14,w370,p180,q1,next0",
+    "fri": {
+      "all_grinding_bits": 0,
+      "log_blowup": 2,
+      "log_final_poly_len": 0,
+      "max_log_arity": 1,
+      "num_queries": 64
+    },
+    "independent_role_oracle_claim": false,
+    "lifecycle_security_bits": null,
+    "mmcs": {
+      "arity": 2,
+      "branch_payload_bytes": 128,
+      "cap_height": 0,
+      "digest_encoding": "8 raw little-endian u64 words, no field reduction",
+      "leaf_encoding": "canonical Goldilocks u64le stream with byte-length suffix",
+      "matrix_boundary_tagged": false,
+      "position_tagged": false
+    },
+    "new_recursive_sha3_air": false,
+    "open_obligations": [
+      "joint concrete shared-hash binding and Fiat-Shamir analysis",
+      "actual MMCS opening geometry including adversarial sibling digests",
+      "quantum and preprocessing-advice composition",
+      "recursive AIR and in-circuit verification cost"
+    ],
+    "profile_id": "TRNM-W1-P3-SHA3-512-TAGGED-R1",
+    "qualification": "HOLD_NO_GO",
+    "quantum_security_bits": null,
+    "schema": "w1-p3-tagged-sha3-512-research-profile-v1",
+    "sha3": {
+      "capacity_bits": 1024,
+      "digest_bytes": 64,
+      "rate_bits": 576
+    },
+    "shared_primitive": "one concrete FIPS 202 SHA3-512 implementation for leaf, branch, transcript, and statement context",
+    "statement_context_hex": "3469e72a72d3c66659580f0440b3c592ceb165bd5acacecb9e6e0e2d51cf715a07d08a9e5de7a5e7770d4748fe6cdbe6fee61630e8ee509cb71daba8fed21690",
+    "transcript": {
+      "adapter": "P3 0.8.0 HashChallenger<u8, TranscriptHasher,64> with SerializingChallenger64",
+      "application_context": "typed length-framed canonical public statement + independent expected header + independent expected artifacts",
+      "byte_order": "HashChallenger pops output bytes in reverse digest order",
+      "field_sampling": "8-byte little-endian candidates; reject candidates >= Goldilocks modulus; extension coefficients sampled separately",
+      "inherited_state_alias": "HashChallenger does not encode observe-call boundaries or count of bytes already popped within an output block before a new observation; generic transcript-history injectivity is not claimed",
+      "p3_message_schedule": "unchanged frozen P3 transcript order; no new per-message semantic tags",
+      "query_sampling": "mask 8-byte samples as required by P3"
+    },
+    "unchanged_w1_relation": "existing W1 SHA-256 AIR plus five-lane packed carry AIR"
+  },
+  "sha_proof_bytes": 4474469,
+  "sha_proof_sha256": "51789aa5919accd5d8a4a0cb2117413ddb823dbbdcf09504af30354fd7f78d6b",
+  "sha_trace_height": 8192,
+  "statement_sha256": "60940f35c2ee6374d0277f7967ecfc4465a1662ab70f5348dc397d31364f19f0",
+  "status": "TWO_REAL_STARK_PROOFS_GENERATED_NOT_YET_VERIFIED",
+  "timings": [
+    {
+      "elapsed_ms": 18.974346999999998,
+      "phase": "read_decode_and_canonical_plans"
+    },
+    {
+      "elapsed_ms": 4.1167240000000005,
+      "phase": "sha_air_and_chaining_witness"
+    },
+    {
+      "elapsed_ms": 0.011504,
+      "phase": "profile_metadata"
+    },
+    {
+      "elapsed_ms": 42.112671,
+      "phase": "sha_prover_preprocessing_setup"
+    },
+    {
+      "elapsed_ms": 60.464202,
+      "phase": "sha_trace_generation"
+    },
+    {
+      "elapsed_ms": 6188.871233000001,
+      "phase": "sha_stark_prove"
+    },
+    {
+      "elapsed_ms": 141.31671,
+      "phase": "sha_proof_serialize_and_persist"
+    },
+    {
+      "elapsed_ms": 266.473757,
+      "phase": "arith_prover_preprocessing_setup"
+    },
+    {
+      "elapsed_ms": 43.660514,
+      "phase": "arith_trace_generation"
+    },
+    {
+      "elapsed_ms": 560.524182,
+      "phase": "arith_stark_prove"
+    },
+    {
+      "elapsed_ms": 53.750834999999995,
+      "phase": "arith_proof_serialize_and_persist"
+    }
+  ]
+}

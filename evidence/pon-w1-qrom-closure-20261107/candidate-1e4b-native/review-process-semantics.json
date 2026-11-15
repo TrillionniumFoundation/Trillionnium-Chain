@@ -1,0 +1,6 @@
+{
+  "exit_rule": "0 iff independently recomputed narrow gate true; otherwise 2, even when archive review is complete.",
+  "main_runner_exit_rule": "all_observed_command_expectations_met; must read native-summary semantic verdict separately.",
+  "no_test_rerun_performed_by_this_review": true,
+  "observed_narrow_gate": false
+}

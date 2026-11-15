@@ -1,0 +1,31 @@
+{
+  "schema": "trnm-exact-reader-pin-import-addendum-v1",
+  "head": "819309fd312298e099642e1253b1d4ba07113e98",
+  "prior_pin_manifest_preserved": true,
+  "missing_module": "pon_public_v3_phase_read",
+  "actual_source_paths": [
+    "scripts/pon_public_v3_phase_read.py"
+  ],
+  "added_files": [
+    {
+      "path": "scripts/pon_public_v3_phase_read.py",
+      "bytes": 69313,
+      "git_blob": "a463677ca5119c360b4974e1c771c64968d601ff",
+      "sha256": "deeadace0e557298728aa10f7636b340a86fe2bd705b2d0ebd0c9b17773f3482"
+    },
+    {
+      "path": "scripts/pon_public_v3_policy_read.py",
+      "bytes": 7277,
+      "git_blob": "6b2ea6dc2205e5cab740cef2f14b11df409e348a",
+      "sha256": "c7e4bc5450ac1c721cdc9dc5975d2c102bcf4ab5c58fe3b2dc52bcd65b4e6a7b"
+    }
+  ],
+  "original_observer_failure": {
+    "job_id": "1a1b7602d01-12894-a78",
+    "reason": "ModuleNotFoundError before any artifact GET",
+    "stderr_file": "/home/qian-qi/throughput-final-ci-observation-20261107/observer-errors/fresh-read-v1-import.stderr",
+    "stderr_sha256": "263cb2d71f04826d4f03971d984b56921bff476b955242dfba09a4fa9265da7f"
+  },
+  "repository_mutated": false,
+  "native_executed": false
+}

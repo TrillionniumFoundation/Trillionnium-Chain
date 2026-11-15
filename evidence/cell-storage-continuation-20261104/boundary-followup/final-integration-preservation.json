@@ -1,0 +1,13 @@
+{
+  "schema": "trnm-pre-scope-integration-preservation-v1",
+  "historical_delivery": "dfbec36ca8126a8d388218c4fada512e1deabf71",
+  "incoming": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+  "incoming_parent": "81da33e609cb64b319e8cfcca7059e5c30d39044",
+  "common_base": "c57c2432c47ca207d6dd84585dc06dede50a16d0",
+  "historical_nonplan_paths_preserved": 82,
+  "incoming_nonplan_paths_preserved": 188,
+  "plan_union_blob": "f3a78fdae581f9ca61017079aa0a69e2ce450f21",
+  "incoming_native_tree": "a706490dda20cb6093cc27ab3c59b1486aafb5b4",
+  "result": "PASS",
+  "interpretation": "Static exact-object preservation before adding final scope evidence; no native execution."
+}

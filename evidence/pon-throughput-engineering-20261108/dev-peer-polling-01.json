@@ -1,0 +1,17 @@
+{
+  "scope": "development check; not frozen source qualification",
+  "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "peer_polling"
+  ],
+  "exit_code": 0,
+  "elapsed_ns": 53405964799
+}

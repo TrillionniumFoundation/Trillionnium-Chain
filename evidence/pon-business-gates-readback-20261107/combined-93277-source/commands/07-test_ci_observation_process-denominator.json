@@ -1,0 +1,36 @@
+{
+  "command_record": "commands/07-test_ci_observation_process.json",
+  "duplicate_test_names": {},
+  "expected_tests": 7,
+  "missing_expected_test_names": [],
+  "observed_full_test_ids": [
+    "__main__.ObserverProcessOwnershipTests.test_checked_failure_retains_receipt_and_stops_writer",
+    "__main__.ObserverProcessOwnershipTests.test_failure_stops_inherited_log_writer_and_keeps_exit",
+    "__main__.ObserverProcessOwnershipTests.test_last_group_signal_precedes_first_reap",
+    "__main__.ObserverProcessOwnershipTests.test_non_timeout_wait_failure_is_not_relabelled",
+    "__main__.ObserverProcessOwnershipTests.test_signal_exit_keeps_actual_status",
+    "__main__.ObserverProcessOwnershipTests.test_success_stops_inherited_log_writer",
+    "__main__.ObserverProcessOwnershipTests.test_timeout_preserves_cooperative_exit_and_kills_writer"
+  ],
+  "observed_ran_tests": 7,
+  "observed_verbose_test_starts": 7,
+  "original_final_status_rows": [
+    "OK"
+  ],
+  "original_summary_rows": [
+    [
+      "7",
+      "6.017"
+    ]
+  ],
+  "passed": true,
+  "path": "scripts/ci/test_ci_observation_process.py",
+  "process_exit_code": 0,
+  "process_timed_out": false,
+  "raw_log_bytes": 1102,
+  "raw_log_sha256": "6dbc31063242c022d0ad02526c78c224a76d3b30c80be3baa3c8aa8686997826",
+  "scope": "Original unittest CLI output; counts are test methods, not subtests.",
+  "source_sha256": "52cd36b22d529406365b05b431dd943c3b7526ff942a0438555d30467c284720",
+  "strict_zero_failure_skip_expected_failure_success": true,
+  "unexpected_test_names": []
+}

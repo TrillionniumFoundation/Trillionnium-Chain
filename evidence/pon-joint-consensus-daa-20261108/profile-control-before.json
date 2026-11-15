@@ -1,0 +1,18 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-validation/reader-before-profile-binding.py",
+    "--raw-dir",
+    "/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-validation/profile-mislabel-control/pgh2-growth",
+    "--expected-report-sha256",
+    "664ef8549b32794aac16ea884860f1d447e59cae779c0f33dc370ffde13f175c"
+  ],
+  "exit_code": 0,
+  "wall_seconds": 21.31766732200049,
+  "reader_sha256": "c8c4e954d7ec7de27e808e47ea4fa25c6d087ef97c229a1bfeac3750fd5eb791",
+  "report_sha256": "664ef8549b32794aac16ea884860f1d447e59cae779c0f33dc370ffde13f175c",
+  "report_backend": "pnh1-authenticated",
+  "directory_backend": "pgh2-growth",
+  "interpretation": "acceptance here is a profile-coverage false positive, not a W1 validity bypass"
+}

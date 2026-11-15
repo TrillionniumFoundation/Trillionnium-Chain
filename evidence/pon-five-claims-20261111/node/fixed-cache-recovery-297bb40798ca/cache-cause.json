@@ -1,0 +1,31 @@
+{
+  "schema": "trnm-node-cross-worktree-cache-observation-v1",
+  "subject": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "observed_sources": [
+    {
+      "path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "sha256": "30c367d0a8e9c7339f26b00606d9cd8bf3e34dd801ff23875c4c0b9ae5c24c2c",
+      "mtime_ns": 1794391709529136076,
+      "declarations": [
+        {
+          "line": 1144,
+          "text": "    pub fn check_account_profile(&self) -> Result<()> {"
+        }
+      ]
+    },
+    {
+      "path": "/home/qian-qi/work/chain-pon-submit-probe-20261111-d6cb/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "sha256": "e920bccd04d4ef884b9f870515534c036025b0294fce46ea546b40526238d72a",
+      "mtime_ns": 1794391398902649052,
+      "declarations": [
+        {
+          "line": 1138,
+          "text": "    fn check_account_profile(&self) -> Result<()> {"
+        }
+      ]
+    }
+  ],
+  "failed_build_exit_code": 101,
+  "native_tests_invoked": false,
+  "inference": "Cargo reused a fresh=true local mvcc artifact whose private-method diagnostic matches the before source instead of the public method in T. All local path package outputs will be invalidated, not only mvcc."
+}

@@ -1,0 +1,1156 @@
+{
+  "approved_large_files": [],
+  "assembly_notes": [
+    "No fullCI, production or whole-chain PQ qualification can be granted by this helper.",
+    "All original FAIL receipts remain; incomplete contexts are not terminal results.",
+    "The final README must be authored by root after terminal receipts are available and passed via --readme.",
+    "Exact raw file bytes and archive bytes are preserved; no logs, source files or old fixtures are normalized.",
+    "Recorded binary identities are kept as measurements only; no Cargo target or ELF is copied.",
+    "A new evidence-only commit does not retroactively turn source Z tests into tests of the later evidence commit.",
+    "Every desktop archive needs its independently reviewed exact sha256 added to this plan before staging. The helper streams each archive and compares every original member, including its manifest, without extracting or executing it.",
+    "Original full rust-baseline is a genuine FAIL (DA 713 passed / 2 failed). Preserve it and any unexecuted downstream oracle/release scope. The separate Node package follow-up is a distinct 3-record bundle, never a replacement PASS for the original baseline.",
+    "The original Node all-targets zero-byte result is preserved only by an exact host/source/id/input/origin/four-file-hash archival exception. It is not a terminal PASS or FAIL.",
+    "Only that original zero-byte result is projected to result.json.empty in the expanded staging tree; its raw source and frozen tar retain result.json and exact bytes. Record index carries the explicit logical-to-staged mapping.",
+    "Missing original node-retained-source-after is preserved as a missing/unproven execution observation, not a fabricated command receipt. Separate /data retry has four required real terminal records.",
+    "The prior target directory disappearance has unknown cause. No cleanup success or current ELF presence is claimed from that observation."
+  ],
+  "current_source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "delivery_name": "pon-account-authorization-boundary-20261111",
+  "incomplete_record_archive_exceptions": [
+    {
+      "archive_only": true,
+      "classification": "INCOMPLETE_EMPTY_RESULT",
+      "counts_as_terminal": false,
+      "host": "desktop",
+      "id": "node-retained-all-targets",
+      "input_id": "desktop-node-retained",
+      "origin_job_id": "1a1c8980187-135c4-111",
+      "qualification_granted": false,
+      "reason": "Original supervisor outcome is unknown; original result file exists at exactly zero bytes. Preserve raw evidence without synthesizing or repairing a result. Only the staged filename differs; original tar member and input bytes stay unchanged.",
+      "receipts": {
+        "context.json": {
+          "bytes": 4332,
+          "sha256": "326711c660b4386e1b8a96e5e47eb42e75c8f300fb6b810264681063a530e879"
+        },
+        "result.json": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr.log": {
+          "bytes": 4193,
+          "sha256": "493e9415cd00edae5285702fc2c319b647549964a9a79bd7aa24f339424a23f0"
+        },
+        "stdout.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "result_staged_basename": "result.json.empty",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    }
+  ],
+  "inputs": [
+    {
+      "destination": "hosts/local-cloud/sources/90ee47159e32e9014410a1823bed05d84c17b858/validation",
+      "host": "local-cloud",
+      "id": "local-y-retained",
+      "kind": "record-tree",
+      "path": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858",
+      "record_roots": [
+        "."
+      ],
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858"
+    },
+    {
+      "destination": "hosts/local-cloud/sources/cdd984808a088e6c2e13b1e1ae6630a94d500c89/validation",
+      "host": "local-cloud",
+      "id": "local-z-current",
+      "kind": "record-tree",
+      "path": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "record_roots": [
+        "."
+      ],
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "accepted_manifest_schemas": [
+        "desktop-primary-evidence-export-v1"
+      ],
+      "archive": {
+        "destination": "hosts/desktop/sources/cdd984808a088e6c2e13b1e1ae6630a94d500c89/imports/desktop-primary-evidence-v1.tar.gz",
+        "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/desktop-primary-evidence-v1.tar.gz",
+        "sha256": "6325997d4238a8fcdfc3ea59c3a55951d8c77066468111f31813eff418764f9c"
+      },
+      "destination": "hosts/desktop/sources/cdd984808a088e6c2e13b1e1ae6630a94d500c89/packages/primary-evidence-v1",
+      "host": "desktop",
+      "id": "desktop-primary",
+      "kind": "bundle",
+      "manifest": "export-manifest.json",
+      "member_prefix": "",
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1",
+      "record_roots": [
+        "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "transfer_report": {
+        "destination": "hosts/desktop/sources/cdd984808a088e6c2e13b1e1ae6630a94d500c89/imports/primary-transfer-verification.json",
+        "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer-verification.json",
+        "sha256": "021576a10f64435bd8167a8a029a26681244cbe4e2c6f1a0713ea8c2ddbfa97d"
+      }
+    },
+    {
+      "accepted_manifest_schemas": [
+        "trnm-desktop-repository-truth-evidence-v1"
+      ],
+      "archive": {
+        "destination": "hosts/desktop/sources/cdd984808a088e6c2e13b1e1ae6630a94d500c89/packages/repository-truth-evidence-v1/repository-truth-evidence-v1.tar.gz",
+        "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-evidence-v1/repository-truth-evidence-v1.tar.gz",
+        "sha256": "f0499cffadc88c4377305e7b453090a638d513f4859e59cbb93b7a4c57fdc9ba",
+        "transfer_sha256_field": "archive_sha256"
+      },
+      "destination": "hosts/desktop/sources/cdd984808a088e6c2e13b1e1ae6630a94d500c89/packages/repository-truth-evidence-v1",
+      "extra_metadata_members": [
+        "collection.stdout.log",
+        "collection.stderr.log",
+        "transfer-input.json"
+      ],
+      "host": "desktop",
+      "id": "desktop-repository-truth-evidence-v1",
+      "kind": "bundle",
+      "manifest": "manifest.json",
+      "member_prefix": "repository-truth-evidence-v1/",
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-evidence-v1",
+      "receipt_layout_note": "Received and independently verified by pq_local_audit; fixed archive hash retained. Includes original desktop failure, environment repair, targeted control, and terminal full rerun.",
+      "record_roots": [
+        "validation"
+      ],
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "transfer_report": {
+        "destination": "hosts/desktop/sources/cdd984808a088e6c2e13b1e1ae6630a94d500c89/packages/repository-truth-evidence-v1/transfer-verification.json",
+        "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-evidence-v1/transfer-verification.json",
+        "sha256": "f1ecab537a1ff51674f2ed78a9fe19af066ca66038502971ff10dba765c5426e"
+      }
+    },
+    {
+      "accepted_manifest_schemas": [
+        "desktop-primary-evidence-export-v1"
+      ],
+      "archive": {
+        "bytes": 1100360,
+        "destination": "hosts/desktop/sources/cdd984808a088e6c2e13b1e1ae6630a94d500c89/imports/desktop-full-rust-evidence-v1.tar.gz",
+        "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/desktop-full-rust-evidence-v1.tar.gz",
+        "sha256": "096cb2d208ad92dff1b2c39ec04da7579e9f06edba5e44451809ab6e11b66456",
+        "transfer_sha256_field": "archive_sha256"
+      },
+      "destination": "hosts/desktop/sources/cdd984808a088e6c2e13b1e1ae6630a94d500c89/packages/full-rust-evidence-v1",
+      "host": "desktop",
+      "id": "desktop-full-rust",
+      "kind": "bundle",
+      "manifest": "export-manifest.json",
+      "member_prefix": "",
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/full-rust-evidence-v1",
+      "receipt_layout_note": "Received complete original four-record bundle, independently compared fixed archive/manifest/all47 members against extracted bytes and all result stream hashes. 3 PASS / 1 FAIL; original rust-baseline returncode101 preserved; four empty native export directories remain inventory-only.",
+      "record_roots": [
+        "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "transfer_report": {
+        "bytes": 11263,
+        "destination": "hosts/desktop/sources/cdd984808a088e6c2e13b1e1ae6630a94d500c89/imports/full-rust-transfer-verification.json",
+        "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/full-rust-transfer-verification.json",
+        "sha256": "79d0fc647623b4018c9a0bee4fc4cc0f3ed099e1abd9113ce72ad03edb07447d"
+      }
+    },
+    {
+      "accepted_manifest_schemas": [
+        "desktop-node-incomplete-evidence-export-v1"
+      ],
+      "archive": {
+        "bytes": 4900,
+        "destination": "hosts/desktop/sources/cdd984808a088e6c2e13b1e1ae6630a94d500c89/imports/desktop-node-retained-evidence-v1.tar.gz",
+        "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/desktop-node-retained-evidence-v1.tar.gz",
+        "sha256": "ba661f928baba648358ba104bf5e0ffee6f7c92acd5452e0199078a12f56694f",
+        "transfer_sha256_field": "archive_sha256"
+      },
+      "destination": "hosts/desktop/sources/cdd984808a088e6c2e13b1e1ae6630a94d500c89/packages/node-retained-evidence-v1",
+      "host": "desktop",
+      "id": "desktop-node-retained",
+      "kind": "bundle",
+      "manifest": "export-manifest.json",
+      "member_prefix": "",
+      "origin_job": "1a1c8980187-135c4-111",
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-evidence-v1",
+      "receipt_layout_note": "Original 2-record bundle: preflight PASS; original all-targets context/empty result/empty stdout/4193-byte LLVM ENOSPC stderr are preserved as INCOMPLETE_EMPTY_RESULT. Runtime supervisor outcome unknown; source-after directory absent is an observation, not an invented execution receipt. Exact single-record archival exception only.",
+      "record_roots": [
+        "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "transfer_report": {
+        "bytes": 2281,
+        "destination": "hosts/desktop/sources/cdd984808a088e6c2e13b1e1ae6630a94d500c89/imports/node-retained-transfer-verification.json",
+        "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-transfer-verification.json",
+        "sha256": "adc1e06e315d9c4ea48cb3259ddf319bc3034a6c6783ceddbe3b49300e347817"
+      }
+    },
+    {
+      "accepted_manifest_schemas": [
+        "desktop-primary-evidence-export-v1"
+      ],
+      "archive": {
+        "destination": "hosts/desktop/sources/cdd984808a088e6c2e13b1e1ae6630a94d500c89/imports/desktop-node-retained-data-evidence-v1.tar.gz",
+        "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/desktop-node-retained-data-evidence-v1.tar.gz",
+        "transfer_sha256_field": "archive_sha256"
+      },
+      "destination": "hosts/desktop/sources/cdd984808a088e6c2e13b1e1ae6630a94d500c89/packages/node-retained-data-evidence-v1",
+      "host": "desktop",
+      "id": "desktop-node-retained-data",
+      "kind": "bundle",
+      "manifest": "export-manifest.json",
+      "member_prefix": "",
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1",
+      "receipt_layout_note": "Separate retry on /data/chain-pq-a418-node-retained-target-20261111; four actual terminal records required. No result or hash is inferred from launch request. Original unknown/ENOSPC attempt remains separate.",
+      "record_roots": [
+        "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "transfer_report": {
+        "destination": "hosts/desktop/sources/cdd984808a088e6c2e13b1e1ae6630a94d500c89/imports/node-retained-data-transfer-verification.json",
+        "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-transfer-verification.json"
+      }
+    }
+  ],
+  "large_file_policy": "List exact path, bytes and SHA-256 first; a later reviewed plan may approve the exact triple. ELF payloads and Cargo target trees remain forbidden.",
+  "large_file_threshold_bytes": 67108864,
+  "protected_source_roots": [
+    "/workspace/scratch/a4188f5c86b5/chain-pq-profile-boundary",
+    "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final"
+  ],
+  "require_terminal_records": true,
+  "required_records": [
+    {
+      "host": "local-cloud",
+      "id": "m06-retained-tests",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "local-cloud",
+      "id": "source-pq-research-integration-tests",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "local-cloud",
+      "id": "source-ci-integrity-tests",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "local-cloud",
+      "id": "source-w1-lifetime-ledger-tests",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "node-new-tests",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "strict-workspace-clippy",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "repository-truth-runtime-python",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "rust-baseline",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "baseline-preflight",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "pq-feature-off",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "source-after",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "preflight",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "source-before",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "workspace-graph",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "repository-truth",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "llm-runtime-release-python",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "node-retained-preflight",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "node-retained-data-preflight",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "node-retained-data-source-before",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "node-retained-data-all-targets",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "host": "desktop",
+      "id": "node-retained-data-source-after",
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    }
+  ],
+  "schema": "trnm-account-authorization-delivery-plan-v1",
+  "source_trees": {
+    "077ac4f33206de00a178553d9a0c729a20685088": "ce919e362bfbfa742fc4b89c17ec063ceedcef00",
+    "90ee47159e32e9014410a1823bed05d84c17b858": "ee45502fb8ef1b7556751c58d8a3804c450f0962",
+    "cdd984808a088e6c2e13b1e1ae6630a94d500c89": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec"
+  },
+  "support_files": [
+    {
+      "applicable_sources": [
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 7234,
+      "destination": "support/coordination/final-validation-inventory.md",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/final-validation-inventory.md",
+      "required": true,
+      "role": "current-58-terminal-record-inventory-explanation-with-incomplete-followup",
+      "sha256": "a666177dee8f12b14c97065abdd23df194414be5126756cc69c26f36171f481e"
+    },
+    {
+      "applicable_sources": [
+        "90ee47159e32e9014410a1823bed05d84c17b858"
+      ],
+      "destination": "support/local-cloud/source_validation_summary_y.json",
+      "host": "local-cloud",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/source_validation_summary_y.json",
+      "required": true,
+      "role": "historical-source-validation-summary"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/local-cloud/source_validation_summary_z.json",
+      "host": "local-cloud",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/source_validation_summary_z.json",
+      "required": true,
+      "role": "source-validation-summary-snapshot"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/coordination/final-profile-review.md",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/final-profile-review.md",
+      "required": true,
+      "role": "read-only-profile-review"
+    },
+    {
+      "applicable_sources": [
+        "90ee47159e32e9014410a1823bed05d84c17b858"
+      ],
+      "destination": "support/local-cloud/w1_golden_failure_analysis_y.json",
+      "host": "local-cloud",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/w1_golden_failure_analysis_y.json",
+      "required": true,
+      "role": "retained-failure-analysis"
+    },
+    {
+      "applicable_sources": [
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/local-cloud/repository_truth_environment_failure.json",
+      "host": "local-cloud",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/repository_truth_environment_failure.json",
+      "required": true,
+      "role": "retained-environment-failure-analysis"
+    },
+    {
+      "applicable_sources": [
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/local-cloud/build-environment.json",
+      "host": "local-cloud",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/build-environment.json",
+      "required": true,
+      "role": "original-environment-and-repair-snapshot"
+    },
+    {
+      "applicable_sources": [
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/local-cloud/local-build-environment.before-loader-and-tmp.json",
+      "host": "local-cloud",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/local-build-environment.before-loader-and-tmp.json",
+      "required": true,
+      "role": "original-environment-and-repair-snapshot"
+    },
+    {
+      "applicable_sources": [
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/local-cloud/local-build-environment.json",
+      "host": "local-cloud",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/local-build-environment.json",
+      "required": true,
+      "role": "original-environment-and-repair-snapshot"
+    },
+    {
+      "applicable_sources": [
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/local-cloud/official-fuzz-index-20261111/retrieval.json",
+      "host": "local-cloud",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/official-fuzz-index-20261111/retrieval.json",
+      "required": true,
+      "role": "original-environment-and-repair-snapshot"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/desktop/remote-build-environment.json",
+      "host": "desktop",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/remote-build-environment.json",
+      "required": true,
+      "role": "desktop-environment-and-receipt-snapshot"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/desktop/desktop-environment-audit.json",
+      "host": "desktop",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/desktop-environment-audit.json",
+      "required": true,
+      "role": "desktop-environment-and-receipt-snapshot"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/desktop/desktop-preparation-and-validation-readback.json",
+      "host": "desktop",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/desktop-preparation-and-validation-readback.json",
+      "required": true,
+      "role": "desktop-environment-and-receipt-snapshot"
+    },
+    {
+      "applicable_sources": [
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/coordination/run_validation.py",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/run_validation.py",
+      "required": true,
+      "role": "collector-source-snapshot-not-a-reexecution"
+    },
+    {
+      "applicable_sources": [
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/coordination/run_remote_validation.py",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/run_remote_validation.py",
+      "required": true,
+      "role": "collector-source-snapshot-not-a-reexecution"
+    },
+    {
+      "applicable_sources": [
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/coordination/build_final_validation_inventory.py",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/build_final_validation_inventory.py",
+      "required": true,
+      "role": "collector-source-snapshot-not-a-reexecution"
+    },
+    {
+      "applicable_sources": [
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/coordination/collect_desktop_repository_truth_evidence.py",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/collect_desktop_repository_truth_evidence.py",
+      "required": true,
+      "role": "collector-source-snapshot-not-a-reexecution"
+    },
+    {
+      "applicable_sources": [
+        "077ac4f33206de00a178553d9a0c729a20685088",
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/coordination/static_review_m06.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/static_review_m06.json",
+      "required": true,
+      "role": "historical-static-or-source-patch-review"
+    },
+    {
+      "applicable_sources": [
+        "077ac4f33206de00a178553d9a0c729a20685088",
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/coordination/static_review_node.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/static_review_node.json",
+      "required": true,
+      "role": "historical-static-or-source-patch-review"
+    },
+    {
+      "applicable_sources": [
+        "077ac4f33206de00a178553d9a0c729a20685088",
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/coordination/static_review_source_binding_x_y.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/static_review_source_binding_x_y.json",
+      "required": true,
+      "role": "historical-static-or-source-patch-review"
+    },
+    {
+      "applicable_sources": [
+        "077ac4f33206de00a178553d9a0c729a20685088",
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/coordination/static_review_m06_composition_checks.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/static_review_m06_composition_checks.json",
+      "required": true,
+      "role": "historical-static-or-source-patch-review"
+    },
+    {
+      "applicable_sources": [
+        "077ac4f33206de00a178553d9a0c729a20685088",
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/coordination/w1-golden-successor/manifest.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/w1-golden-successor/manifest.json",
+      "required": true,
+      "role": "historical-static-or-source-patch-review"
+    },
+    {
+      "applicable_sources": [
+        "077ac4f33206de00a178553d9a0c729a20685088",
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/coordination/DELIVERY_EVIDENCE_STAGING.md",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/DELIVERY_EVIDENCE_STAGING.md",
+      "required": true,
+      "role": "assembly-procedure"
+    },
+    {
+      "applicable_sources": [
+        "077ac4f33206de00a178553d9a0c729a20685088",
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/coordination/evidence-helper-static-check.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/evidence-helper-static-check.json",
+      "required": true,
+      "role": "assembly-helper-review-not-test-execution"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 12520,
+      "destination": "support/desktop/diagnostic_da_rs46_readonly.json",
+      "host": "desktop",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_da_rs46_readonly.json",
+      "provenance": {
+        "analysis_author": "pq_profile_review",
+        "analysis_created_on": "local-cloud",
+        "comparison_base": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+        "execution_host": "desktop",
+        "new_execution_receipt": false,
+        "observed_source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "scope": "Read-only analysis of original full rust-baseline failure and frozen source. No test rerun or base execution."
+      },
+      "required": true,
+      "role": "read-only-failure-diagnostic-not-reproduction",
+      "sha256": "3913eacb20711ad19c9ed27fb098c0d25a94eb344f3b5952e0324bfb2417174b"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "destination": "support/coordination/evidence-plan-node-followup-static-check.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/evidence-plan-node-followup-static-check.json",
+      "required": true,
+      "role": "assembly-plan-static-review-not-test-execution"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 23224,
+      "destination": "support/desktop/diagnostic_da_baseline_readonly.json",
+      "host": "desktop",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_da_baseline_readonly.json",
+      "provenance": {
+        "analysis_author": "pq_local_audit",
+        "analysis_created_on": "local-cloud",
+        "comparison_base": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+        "execution_host": "desktop",
+        "new_execution_receipt": false,
+        "observed_source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "scope": "Read-only analysis of original full rust-baseline failure and frozen source. No test rerun or base execution."
+      },
+      "required": true,
+      "role": "read-only-failure-diagnostic-not-reproduction",
+      "sha256": "ac8d2d019cffc36eb55837180818d203b390c752642cb42db1224ead7033870e"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 4705,
+      "destination": "support/desktop/full-rust-bundle-independent-readback.json",
+      "host": "desktop",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/full-rust-bundle-independent-readback.json",
+      "required": true,
+      "role": "received-original-bundle-independent-byte-verification",
+      "sha256": "bb3cebc6d2283db2d722c8508953d2d98879e679f20c786931d349bc33730e5f"
+    },
+    {
+      "applicable_sources": [
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 150041,
+      "destination": "support/coordination/historical/final-validation-inventory-before-additional-desktop.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/final-validation-inventory-before-additional-desktop.json",
+      "required": true,
+      "role": "preserved-original-51-record-inventory-snapshot",
+      "sha256": "71faab9525dda048156bae629721840456a9c1ad9e590109c5a05cecd819b682"
+    },
+    {
+      "applicable_sources": [
+        "90ee47159e32e9014410a1823bed05d84c17b858",
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 4665,
+      "destination": "support/coordination/historical/final-validation-inventory-before-additional-desktop.md",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/final-validation-inventory-before-additional-desktop.md",
+      "required": true,
+      "role": "preserved-original-51-record-inventory-snapshot",
+      "sha256": "6d8d202ebaaa3c4cfa09695dcd80fd8aff70a1b60236879fb15a01af1700ec76"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 4234,
+      "destination": "support/desktop/node-incomplete-bundle-independent-readback.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/node-incomplete-bundle-independent-readback.json",
+      "required": true,
+      "role": "original-incomplete-bundle-independent-byte-review",
+      "sha256": "f4c9137e4a87e6061b4564cb3d8caaffd6d3831f15484daf6522b1a6b89b49a8"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 45897,
+      "destination": "support/coordination/historical/prepare_delivery_evidence.before-incomplete.py",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/prepare_delivery_evidence.before-incomplete.py",
+      "required": true,
+      "role": "historical-assembly-before-explicit-incomplete-preservation",
+      "sha256": "352da614ba1eaeb3bf3261f5e1bc1ee3758bd9bf81fe54323f56eef177be46d0"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 27742,
+      "destination": "support/coordination/historical/delivery-evidence-plan.before-incomplete.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/delivery-evidence-plan.before-incomplete.json",
+      "required": true,
+      "role": "historical-assembly-before-explicit-incomplete-preservation",
+      "sha256": "33130abc660cbf3aa5191e0c57ee669c344af169c0e8fd879d0e4ec6cecb7d2c"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 22598,
+      "destination": "support/coordination/final-validation-scope-review.md",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/final-validation-scope-review.md",
+      "required": true,
+      "role": "historical-read-only-review-or-runtime-observation-not-new-test",
+      "sha256": "36ed925ee677134c85faba4e0a1d3e917d149bc492b701a90a27778807d0c6b4"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 10250,
+      "destination": "support/coordination/final-validation-full-rust-readonly.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/final-validation-full-rust-readonly.json",
+      "required": true,
+      "role": "historical-read-only-review-or-runtime-observation-not-new-test",
+      "sha256": "361e6b1cb4c8c788efc86eaa6ef3a262e4dfcdb85c3a4a2a37ca6cd5653f0301"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 449,
+      "destination": "support/coordination/node-supervisor-unknown-status-root.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/node-supervisor-unknown-status-root.json",
+      "required": true,
+      "role": "historical-read-only-review-or-runtime-observation-not-new-test",
+      "sha256": "944ed0967fbaa5957205f128fce34e0a20cb73fbf73bee59591fe73a9f4c5975"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 4863,
+      "destination": "support/coordination/node-enospc-disk-probe-pty-prefix.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/node-enospc-disk-probe-pty-prefix.json",
+      "required": true,
+      "role": "historical-read-only-review-or-runtime-observation-not-new-test",
+      "sha256": "c67285491bfee918ab7723ec435668da7028726adffc22d62f2698b2a24647cf"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 59354,
+      "destination": "support/coordination/desktop-target-inventory-before-enospc-recovery.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/desktop-target-inventory-before-enospc-recovery.json",
+      "required": true,
+      "role": "historical-read-only-review-or-runtime-observation-not-new-test",
+      "sha256": "ee7ae6e78cfd54f26fd30e33816a0d9fb18e03bdb9ac50d19e4a8d7713bc649b"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 1860,
+      "destination": "support/coordination/node-data-retry-launch-args.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/node-data-retry-launch-args.json",
+      "required": true,
+      "role": "actual-request-arguments-not-successful-execution",
+      "sha256": "7f368c0254f99e4467c55e1b28c46e1a58f864939fc9a02b66da94054094274f"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 1323,
+      "destination": "support/coordination/node-source-records-revalidation-args.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/node-source-records-revalidation-args.json",
+      "required": true,
+      "role": "actual-request-arguments-not-successful-execution",
+      "sha256": "d9935f2a181f4428598b8d876aae85adb8445f9da5c89fcfbd2e80cdf5b368e6"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 1730,
+      "destination": "support/coordination/node-enospc-diagnostic-launch-args.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/node-enospc-diagnostic-launch-args.json",
+      "required": true,
+      "role": "actual-request-arguments-not-successful-execution",
+      "sha256": "ab44bece5902d5e0e770d594550243c74488764b256c4245b83a1921cc54b544"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 37799,
+      "destination": "support/coordination/historical/delivery-evidence-plan.incomplete-controls-reviewed.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/delivery-evidence-plan.incomplete-controls-reviewed.json",
+      "required": true,
+      "role": "exact-plan-snapshot-reviewed-by-helper-controls-and-independent-audit",
+      "sha256": "1633f0b86ea2a40e0a8c74b4e0b3152215a58c4edd7bcca63dd92f341ab46204"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 13100,
+      "destination": "support/coordination/check_delivery_incomplete_controls.py",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/check_delivery_incomplete_controls.py",
+      "required": true,
+      "role": "helper-only-negative-control-source-not-project-test",
+      "sha256": "d16c1b24ba3e8325d4dd277caaf0c5616a210dc9cfd89e2f93eafa0f1352b562"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 9175,
+      "destination": "support/coordination/helper-incomplete-controls-report.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/helper-incomplete-controls-v1/report.json",
+      "required": true,
+      "role": "actual-helper-control-observations-not-native-or-project-qualification",
+      "sha256": "ed2558e4682bf9bc6c2f3f7a5fdd68e24f47426633d4b5fea1031fdae83e561c"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 288119,
+      "destination": "support/coordination/helper-incomplete-controls-v1.tar.gz",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/helper-incomplete-controls-v1.tar.gz",
+      "required": true,
+      "role": "synthetic-helper-negative-fixtures-and-inspections-not-native-results",
+      "sha256": "148ab89679aef216665d58d97b77cdaf9e2f623231cb4a19022fcace12c57f35"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 70156,
+      "destination": "support/coordination/helper-incomplete-controls-archive.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/helper-incomplete-controls-archive.json",
+      "required": true,
+      "role": "helper-negative-fixture-archive-file-hashes",
+      "sha256": "e5ec947151e24612d77c56d0562cc5dce02ce528a6770e8fe7057bac8e549836"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 14760,
+      "destination": "support/coordination/independent_incomplete_exception_review.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/independent_incomplete_exception_review.json",
+      "required": true,
+      "role": "independent-read-only-helper-review-snapshot",
+      "sha256": "52b754b2bb076b9e2fd6d176d643644ca865172c11196d68c4b1ff2d853a52d3"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 59354,
+      "destination": "support/desktop/node-runtime-incident/chain-pq-a418-target-inventory-20261111.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/node-runtime-incident/chain-pq-a418-target-inventory-20261111.json",
+      "required": true,
+      "role": "original-runtime-files-or-api-payload-not-native-test-result",
+      "sha256": "ee7ae6e78cfd54f26fd30e33816a0d9fb18e03bdb9ac50d19e4a8d7713bc649b"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 2029,
+      "destination": "support/desktop/node-runtime-incident/chain-pq-a418-mount-capacity.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/node-runtime-incident/chain-pq-a418-mount-capacity.json",
+      "required": true,
+      "role": "original-runtime-files-or-api-payload-not-native-test-result",
+      "sha256": "efc9a84f71a7ae6a48c0955c89a1ae9f4c7d9fe441d01c9fbe86a6a31b15557e"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 1135,
+      "destination": "support/desktop/node-runtime-incident/original-source-records-probe-stdout.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/node-runtime-incident/original-source-records-probe-stdout.json",
+      "required": true,
+      "role": "original-runtime-files-or-api-payload-not-native-test-result",
+      "sha256": "cd78e2f84b77f89cb9e136b6ae6af905b2c29215c55cb6f8a0d9bc2666cd6b1a"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 80087,
+      "destination": "support/desktop/node-runtime-incident/native-read-multiple-files-payload.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/node-runtime-incident/native-read-multiple-files-payload.json",
+      "required": true,
+      "role": "original-runtime-files-or-api-payload-not-native-test-result",
+      "sha256": "1ecf06465c18d2285d6fcb08700dabcd9493c6a6f3ee8abcd481726008bc32cb"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 1934,
+      "destination": "support/desktop/node-runtime-incident/transfer-provenance.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/node-runtime-incident/transfer-provenance.json",
+      "required": true,
+      "role": "original-runtime-files-or-api-payload-not-native-test-result",
+      "sha256": "fe9a6dd94035deea77fc92d607e00c7783ac528281d4ad6b7cd46566551222fb"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 19990,
+      "destination": "support/coordination/prepare_evidence_child_validation.py",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/prepare_evidence_child_validation.py",
+      "provenance": {
+        "future_E_commit_assigned": false,
+        "new_execution_receipt": false,
+        "scope": "Prepared future E validation material or its static review; historical Z observations remain bound to Z and no queued command has executed."
+      },
+      "required": true,
+      "role": "prepared-E-queue-generator-not-executed",
+      "sha256": "503ee850c33cde1656c7f869d414bbe327a73cdc92fa4d525674aaa5ecd83ae3"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 11743,
+      "destination": "support/coordination/verify_evidence_only_child.py",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/verify_evidence_only_child.py",
+      "provenance": {
+        "future_E_commit_assigned": false,
+        "new_execution_receipt": false,
+        "scope": "Prepared future E validation material or its static review; historical Z observations remain bound to Z and no queued command has executed."
+      },
+      "required": true,
+      "role": "prepared-E-source-relation-proof-not-executed",
+      "sha256": "cd6fc57bdc8f206c4345a78c02d938441697cce2f53f85a961d201f92e8a267e"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 11856,
+      "destination": "support/coordination/E_VALIDATION_QUEUE.md",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/E_VALIDATION_QUEUE.md",
+      "provenance": {
+        "future_E_commit_assigned": false,
+        "new_execution_receipt": false,
+        "scope": "Prepared future E validation material or its static review; historical Z observations remain bound to Z and no queued command has executed."
+      },
+      "required": true,
+      "role": "prepared-future-E-validation-scope-not-execution",
+      "sha256": "571044d344fcb1f292fe22aab95a1f13bfe2b60eff6bae92e68292bde33ccdbd"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 19926,
+      "destination": "support/coordination/historical/prepare_evidence_child_validation.before-precondition-wrapper-check.py",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/prepare_evidence_child_validation.before-precondition-wrapper-check.py",
+      "provenance": {
+        "future_E_commit_assigned": false,
+        "new_execution_receipt": false,
+        "scope": "Prepared future E validation material or its static review; historical Z observations remain bound to Z and no queued command has executed."
+      },
+      "required": true,
+      "role": "original-prepared-generator-before-wrapper-status-stop-rule",
+      "sha256": "7f79dbbb2e6cbafce7f172ef1aa1462f50c1cf1d243f4ef25ef1f4b8317d5b7c"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 2274,
+      "destination": "support/coordination/e-validation-precondition-wrapper-review.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/e-validation-precondition-wrapper-review.json",
+      "provenance": {
+        "future_E_commit_assigned": false,
+        "new_execution_receipt": false,
+        "scope": "Prepared future E validation material or its static review; historical Z observations remain bound to Z and no queued command has executed."
+      },
+      "required": true,
+      "role": "single-condition-preparation-repair-and-static-syntax-review",
+      "sha256": "4e0630e7826025b8ce4bde4a0abd0b86cd9e78ca6d29051f837e6c22ce315bbf"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 9554,
+      "destination": "support/desktop/diagnostic_node_recovery_readonly.md",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_node_recovery_readonly.md",
+      "provenance": {
+        "analysis_author": "pq_local_audit",
+        "analysis_created_on": "local-cloud",
+        "complete_log_observed": false,
+        "execution_host": "desktop",
+        "new_execution_receipt": false,
+        "observed_source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "panic_observed": false,
+        "scope": "Frozen pre-panic source and partial-log diagnostic snapshot. Two observed FAIL markers do not provide a terminal command result or establish their cause.",
+        "terminal_suite_or_lane_result_observed": false
+      },
+      "required": true,
+      "role": "pre-panic-partial-log-and-source-diagnostic-not-terminal-result",
+      "sha256": "fa813f91f3e27694258eddcf196a25dbff0df7a1b8f85dee677ee1e249e1d983"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 8356,
+      "destination": "support/desktop/diagnostic_node_recovery_readonly.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_node_recovery_readonly.json",
+      "provenance": {
+        "analysis_author": "pq_local_audit",
+        "analysis_created_on": "local-cloud",
+        "complete_log_observed": false,
+        "execution_host": "desktop",
+        "new_execution_receipt": false,
+        "observed_source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "panic_observed": false,
+        "scope": "Frozen pre-panic source and partial-log diagnostic snapshot. Two observed FAIL markers do not provide a terminal command result or establish their cause.",
+        "terminal_suite_or_lane_result_observed": false
+      },
+      "required": true,
+      "role": "pre-panic-partial-log-and-source-diagnostic-not-terminal-result",
+      "sha256": "04e0ccb41f8e00f6921e52a2bf12b48b805b2a6024a01ab0fc8e45fcac621c64"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 2107,
+      "destination": "support/coordination/delivery-repository-rules-incomplete-projection.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/delivery-repository-rules-incomplete-projection.json",
+      "provenance": {
+        "new_execution_receipt": false,
+        "project_checker_executed": false,
+        "scope": "Historical static review of the prior 425-file projection. It is not an execution or an audit of subsequently added support files."
+      },
+      "required": true,
+      "role": "historical-425-file-static-path-and-text-review-not-project-test",
+      "sha256": "7decb991d836c3b99a32bc9cd008093e53c04b2afa36f9617080fb106511fa79"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 43793,
+      "destination": "support/coordination/historical/delivery-evidence-plan.before-e-preparation-support.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/delivery-evidence-plan.before-e-preparation-support.json",
+      "required": true,
+      "role": "exact-plan-snapshot-before-E-preparation-support-addition",
+      "sha256": "dd113245a56029843c0dbaf6d96996918f73702a27184a2aeeb618a0465adaa0"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 85,
+      "destination": ".gitattributes",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/account-authorization-boundary.gitattributes",
+      "provenance": {
+        "new_execution_receipt": false,
+        "scope": "Applies only under the new delivery evidence directory. Preserve all hash-bound member bytes; disable whitespace checking only for its raw .log files. No root attributes or ignore rule changed."
+      },
+      "required": true,
+      "role": "delivery-scoped-Git-byte-preservation-attributes",
+      "sha256": "b47c8de230d91d583253fc1dfb82d4abfa1648f1771e1b5f0876b1a0d00375fa"
+    },
+    {
+      "applicable_sources": [
+        "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+      ],
+      "bytes": 51355,
+      "destination": "support/coordination/historical/delivery-evidence-plan.before-scoped-attributes.json",
+      "host": "coordination",
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/delivery-evidence-plan.before-scoped-attributes.json",
+      "required": true,
+      "role": "exact-plan-snapshot-before-delivery-scoped-attributes",
+      "sha256": "b59185a8f0b0b77e75475cf0014d6d2127fa1d7f5527e2e9c77622825557002d"
+    }
+  ],
+  "validation_inventory": {
+    "destination": "support/final-validation-inventory.json",
+    "path": "/workspace/scratch/a4188f5c86b5/coordination/final-validation-inventory.json"
+  }
+}

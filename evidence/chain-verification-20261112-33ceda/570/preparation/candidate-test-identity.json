@@ -1,0 +1,6 @@
+{
+  "candidate": "97aa8539aad3ee7f497136c6d2f64e420605c1fa",
+  "completion_defense_function_equal": true,
+  "corrected_frame_eof_assertions": 2,
+  "output_and_auth_complete_files_equal": true
+}

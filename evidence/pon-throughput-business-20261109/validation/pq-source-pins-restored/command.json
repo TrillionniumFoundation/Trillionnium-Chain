@@ -1,0 +1,22 @@
+{
+  "schema": "trnm-local-check-retry-after-input-restore-v1",
+  "name": "pq-source-pins",
+  "argv": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "cwd": "/workspace/scratch/a0d4983b1065/chain-throughput",
+  "environment_overrides": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "started_utc": "2026-11-09T14:08:46.027269+00:00",
+  "source_before_sha256": {
+    "scripts/ci/check_pq_research_integration.py": "deaa477d5216640991de8f08f92b808c130579372c3b18739e3cd91f2f753380",
+    "qualification/full-pq-r3/README.md": "3638848626518b16f78dc48f76dce3e672b511591dbc49f9d7f499e4c6ac8270"
+  },
+  "earlier_failed_attempts": [
+    "validation/python-final-20261109/commands.json",
+    "validation/guard-recheck-20261109/commands.json"
+  ],
+  "retry_scope": "One original check invocation after restoration of its last reported missing tracked input; previous failures are retained."
+}

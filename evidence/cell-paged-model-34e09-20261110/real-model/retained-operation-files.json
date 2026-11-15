@@ -1,0 +1,1629 @@
+{
+  "files": [
+    {
+      "path": "bep52/0000-091387f48aa13a0dae4f19c4baabd8a98abfcf83af6748fbd0517ccb5b5bb058.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0001-0a5f2834077858bba5aa857bdc0eaa9b0c1d13a420043198ccf7c220026732ee.cbm2",
+      "bytes": 116
+    },
+    {
+      "path": "bep52/0002-25a6052a0ea91fbe1770a244f00553e2747ca99dd4d7efaab138c22d296f618e.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0003-26790af07be2580ccbe3016f5749f0dba53f7557a71f4cf08f219bd6b79bed6f.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0004-28d43dc433fbf07d0d8e4f8a604382d6a277070f84f4053ec5d64bf6fe8b988f.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0005-294011cbca8e4cad47f15bd86d3bedfd1c6dd0e2941b73ed12fc8b68a238d9ea.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0006-2c3e6a5099f50cabe4edf0a73a1b8417157ba033a19939cb25a31bf0afc228f0.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0007-2d8790f7d0bd24e82896c6c2ee28282741e80b4e6200846b4686a42549a4cc51.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0008-2f24aa1cf8b40cc3a8d5c9f84f07b68d77fd6e63b731258f9551606aaccf1499.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0009-31206661aec1feb04301ea672a64c2a019c1cfba44b503502877e1695adf728a.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0010-355a628d64abe299107b47689e5a88e68fdae353817350ef7c85598a92d79bce.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0011-4378ec2596a5e7c4f199712ef0e1330fa4393f821891874635a4da71b78dd58e.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0012-491d9c726e12027ee14489f5772bd5bcd5904bbe7346749f720906722fee03d1.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0013-4a92aceadada919912d3d4716c2a8382d54443a53be1ba34e00740c9d46fdd7f.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0014-4cd6d68a13b16ed1241e78dcd21b3d5a3b32bb1903022debb8146fac55ef0ba7.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0015-4e051b281a38456937dc86a6f98994d7df0c8ee55bba5e28e4c2c74226ec89fb.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0016-4ec8c783a332ee6805b02b5c923d63fad4667086a7d8a490784e43834e5917f3.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0017-5fa838f51011dd31ad75c74ffa40b35fa7e95544e8487412c326cc155681f47d.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0018-690700d936547e62905358eb91507703953c9f32f545107c3243acd03fdf4ec9.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0019-7b1f0d023485a807e1b00452cf0a3bb78a708f135d7ca6d5ce64e26b5ed32776.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0020-aae475d2bbdcdb7b3a40ab416d80604fddceeab52ee0c1190f4182d11b0412a7.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0021-b870fe53b30cd8a0e765bbbd3ccf90995507ae20d26339b5653a76981790a6be.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0022-baf6ddc9229b7cca64afd26dfaa5e8a66b15bc4d471384a75dfc950a3dfe7205.cbm2",
+      "bytes": 2132
+    },
+    {
+      "path": "bep52/0023-c102e4118261e977c6d06296734d55f2aa6d4d825b0f8cd3ec1e43471939e2a9.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0024-c464edbd210db63a41e77ae62352218791d6f4f9529a8428a6b0129e090a7432.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0025-cc42f141703f88453c93a37bf6d198aa9c1f2f83c358ca3fe35f34167b7731a3.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0026-dae07e5be9222335c673843cad7cec1877fb3286c161447fb292822dfcdca3a2.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0027-f4e7f401226427609005e7af8e1febd964ffa4824315e854542164b8a2aa3dfc.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0028-f511c48c1438f0dd309912f489cf2a107aa27e6a93341adde909c198eb95221d.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/0029-f9b47b4633df651ff208e6a7ab569c35d315ba22188112bda0826f17765fffd9.cbm2",
+      "bytes": 84
+    },
+    {
+      "path": "bep52/owner-plan.json",
+      "bytes": 14729
+    },
+    {
+      "path": "bep52/owner-version.tcv1",
+      "bytes": 15389
+    },
+    {
+      "path": "bep52-received.sqlite",
+      "bytes": 280621056
+    },
+    {
+      "path": "bep52-received.sqlite-shm",
+      "bytes": 32768
+    },
+    {
+      "path": "bep52-received.sqlite-wal",
+      "bytes": 37112
+    },
+    {
+      "path": "bep52-received.sqlite-writer-lock-v4",
+      "bytes": 0
+    },
+    {
+      "path": "independent-catalog-anchor.cva3",
+      "bytes": 44
+    },
+    {
+      "path": "native-result.json",
+      "bytes": 18973
+    },
+    {
+      "path": "original-paged-source-inputs.json",
+      "bytes": 11644
+    },
+    {
+      "path": "owner-paged-custody.json",
+      "bytes": 923
+    },
+    {
+      "path": "owner-release-snapshot.cts1",
+      "bytes": 39018
+    },
+    {
+      "path": "paged-shard-plan/page-00000.crg2",
+      "bytes": 718510
+    },
+    {
+      "path": "paged-shard-plan/page-00001.crg2",
+      "bytes": 348052
+    },
+    {
+      "path": "paged-shard-plan/root.crr2",
+      "bytes": 32540
+    },
+    {
+      "path": "paged-shard-providers/provider-0/payload.arena",
+      "bytes": 70414336
+    },
+    {
+      "path": "paged-shard-providers/provider-0/retention.sqlite",
+      "bytes": 53248
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/019f4c4ea6a61494ac632eabcc14183e69140ad0c2e59a330c6118f0bff42e1d",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/01cff969fe7fb5580ea44cce3203d7b1638e196313a2e042128754e3b74b1044",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/06fe661758a8e84ff180b961b7142aeeffc6755bfce31ec46c92a6f06fecc969",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/0c505e5ef63a62d67b1989c69037b4c3aa260058e4aed042a0b2d41f57f77a63",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/0d45e3f6878f6ac66bbd6081e5b2ebab990b79ca4eb90fbcfc5b0d6aa836ba55",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/1324bfa6a40550ffbfe375e37b60f8abb5a192a0fc83f08068a68fc7fde265e8",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/1d3513dbb92807cf31356acaa736e76bc213635722d37dfd471b19977c4493a7",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/216f4663e206b826d55682c9af2154a27f15b5a9c9f9255f7e1ac68b36c9687c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/220cb6cb97cc4372eea49b8482fcc419062f0130241584d42b5c7c6d3f3f9c5a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/27531fc3878c5847ea5ed280655a7f9a6e2b028a4ddff063fb37e513b4b93e6d",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/2a65bc02f0a95bbf2e64ae5c5aba343117e592a62121e2f3079e690b334025a8",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/2bd6603006e14939abed65853b8c58b0a7737ea690b148f81b6828f5927a5302",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/2ef2fa95e2396c645458e5db5ba5e784a170d961c0ac6527f20b4c1b3a1c8e92",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/2f8054f02c6b346bafa82808ce550def2c2f595b470541b5516b85f8097c6014",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/2f84ba7955138c5f1a0798304ca430e4df170567a9e58429da34579989dd386b",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/41050ad58300fdbb57e64c67a1ae48a2d9a654541d3185ed2139f7591ddf12b7",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/4c4f924d6f6d4eb224e97125201ef6aeae01ff94e02e4b6d11da864773bb04c5",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/4ec24db080481c3f5af2f238bd783ea314aa5861487d9aee9f22a555772c56f1",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/4f30a09c39b17eb1963782be8e711c8307c7d529782760be515a93a6124d100c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/5510857d1036cdd4d0f8ae23c05a1ef2925f08bb7747b6899e41e12dac987b1e",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/5ae771a935692ce7d275d9671d07924ba285f2bc8e4dd3578a66bdc6bea33564",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/5ff2b005df9b8b97e5b4dccb20344555c8da393046b66c178bf41ba14c48a501",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/61a59e3c7439f0948a5f0e7163d357c2a04394d7eff3dd7758a01a2dce12f4fa",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/6bcf3de65f1a9aabc53d33efeb9063f875175d1aaeb00aecdeaaa0555c9c2adf",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/6efcb8e297d5eb6b5441dcbd31f6ce6c225cf64798c37badd7e8002ac7553030",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/76abf9f055e738acb01b55713cc72ba33b30d23611502de55290c99961ed86ad",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/7e86f85c06603c86c27fc9e0cd53a8dea20492232e048421ef9fb3e5c703ee3f",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/88523cff7c46d52233bf6a33f9bfcda4be8c1da732540c4d950f754e03783b2d",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/89ca18dd3e99759a19f52ed6b02c121339e6a45aff80f88a8a8569a5230cee23",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/8a0837cc6434be7bd2b0196250104cc733266003cc7e64aa1464ca5b8f03c149",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/8a7b51ed4e9489b899f60017571cabcdfd62b3cfc3d728e40932677b1cf87231",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/9390ea099d9b2b1f57d13e436dd5914bb82ac551d47274dc9f63a8ff47479bae",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/988302757dd70907253a8620bd068c6b942bd5a1c892229a6ec5101d99b7a407",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/98dd968aed4b8c0c07d4eb2760e7cd968c4eec434f9383f275a998bd74475f93",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/9c23e4ef1a8449c21d0e07f3fc5876a1603d6e3fd1a30515e7ddb774fa7c2294",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/a0c9365af18d8a88e1f01637a9bcdcc75d77a0ab26c32bfdd22a03585fae1183",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/a8da192520c3062f0f03d7cc4c10f564910a0908aa57f25eb6f477b6bb22bde9",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/a94893368491c272fed8d69ec5aae2f19a38eea80d5c5cbd0aabe2f4bd994263",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/aa6662a34f5b41701a986d2554ec5d3b7924c2ab082a966dc20ca0d630b8e3b9",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/b12b6e4c858ce2601711b95a01094306f74d3a121100ea61825fea2d3e4ae951",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/b434ca39c6693d2df1e828364df9696d25159feed9d1eaabf8f0e9ef45e5cce7",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/ba54da97d85e7ed6234396390192f2cf84d247884b5c9f913af3b1e264ab2510",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/bbd759e320e8616fdfaa32dad1a579570aed50071af8101308fd881c0d596497",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/bfeb8bc51d51b83f03d051f7a00e38aea5dbd27ae5e70b13bd8b3a329465eaf9",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/c52d77520678f2140e1947fe3069aa46f56915031513f33aeb2eb3b488ac94d7",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/ca7c0ca9f700ca96a7c156600d4c9a9017475641e594f68dc165db936d2e1a95",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/caab8836c22f423ef68fe1187e9e7604bc24fa341c057306366ba402f750e208",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/d2cfa772545408941ccf85409b2856f79a0355d531065af214e338b626d6cebe",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/db8f3a02e6db84fc7f6f7654d48535eedae45ce34810652ad0dd0ad0bfbbfefc",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/e679ce9415d0c77158cc5788457a07d545d4c2e3278757986514c73d605ba9a4",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/e833aea8fe2084ec0c3e5cb680f74e0f6648c7a4416618b1f52576dc34e53b96",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/ec2960ed3b128a3be53217a5e0bd6757ee2ac65742d1e906f735fcf07d6535db",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/ee05adec102063acd4a89abd4906f7c8855fa55b720870af46b77b64c298f3f3",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/f1cd5982c5ff8411c300755ea7b4e216772d5fe802eb84388de14e4cc86eb70a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/f99bba0d7cc622ed013bf48db278b0ea4e3902103f55c3d945e6d89ad0b75b97",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/fada356e46497ea5e1ca3b8b026205e6ebc958cb5dc3ac10573322d9d014edf4",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-0/slot-descriptors-v1/fb9967a025b695579b95638a1605e0b7ac9b7711f703d8f5e5960cffdaee6108",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/payload.arena",
+      "bytes": 70414336
+    },
+    {
+      "path": "paged-shard-providers/provider-1/retention.sqlite",
+      "bytes": 53248
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/056124523689d8c30cb7a11e59ac01f2e1c34a63fb2ad90997d737736726facc",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/05f7e983ee3cb714347920dc873a1fd2ab08f8d5916cd11908b0db25cd6078f0",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/07abeb2620ac2ab8d2cafe00fd6c18ea2b0b4ef147301f50e1b6399aadfa51c7",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/0d34b032b7f3907ae24a7db9d1a111143ccb49a8d4705954894ca47dbf8ce754",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/10a4d9a29cb6253a5fe53d93d093a912e4ae734e6ac7150120a2192d672e4939",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/1274ded4c44702f1a6fb158a849a9a32d101aa924bb92f0851d27879c73a834f",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/152fec293a04aa0c1e2b6a88309c2b5c12463a2201ff9e94a824eb2f8b0638c2",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/1a17604c85e1bf8f3bf7e3d9dd920bd17e695ad04025884a23fff63eb919be38",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/1a65df00a2afe2ba46db90a8dc89d7ff9c668d0f5d363e01062a3bd887e942b5",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/1c697549396d84202febb911e547ce84c543f04b1cefedebf1827a7dab903a4a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/262c5e38fc53ad7b7a705eaac899b528ac6dd62ae3fa0b25dbb52d0745e5ea9c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/2a23e8ac77e1c751e153fcf91699baf9566a5ca182eed0fdf46b12e39f3d371d",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/2c9f85031293db9bc9b0235e96b0214dbddddeb817c420bc13142e8e473b417a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/2e3c902dc285b21719eae42053074b7bbb92eee92061dc34cd88b936909add07",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/361deba62db0558d32e03c95dbb02b67ae25140c1ee7e4fb879a590d6511fc54",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/3a9e588a71201bc3cb54628a5bf9057058ac95c6f47ca5d496a65ad864324506",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/3d31a2437bbf9873ad2e0a48a8191542edb299d3b2ff61761232b4d76dc71433",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/45da742ffcd670651cf464b9973a0e4774344c971c21cb2813b5eb54af1f82ce",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/4a99b8748cc7a87620a2d9b2bb2a793e9e86e78063aaf0974e306d4fad7764ac",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/5a0dd1efbbbfa88b1acf8c547d3941c448e7e0fe88f05518daa43929f18d73b2",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/5d85b7662310b9decb5dc3d3bc75ed06456c6383da397462b84cf42ccbc5dd20",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/6529bff7afd1bc7ecb1de1d603edfb105be4054dda9ed84df10693d962c6bb7e",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/663854a360e437b29862f47ddeb4fc22b8af307259e22dcb3fe68852acb418c4",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/68469adf80acfe6ff7c03156c124f90256cf8893af7d25ec4a6ed755b3c7e791",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/71b2be8a936ce292804563d280ee3360a608f92b8871508c16d02c4663b83695",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/723f68087ba7b3acfd097a1e6d09f3eadfda26da0fcd78d2926cbcc7e36aefec",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/76a0f514fbefb2e782fcce29713c85f21b4de9404670a402ce78f59431ea2532",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/857cc65e9bae4042adcff7a2f7e317f404532216c7334ca6d90269ea42d70ab0",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/8698f0fc493bf723d05bf895588b7085fd09aa1fb467cc49089964ccdf47eaf1",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/874aeb8bc2efd447e1a36eebeb4949d3cc1b4d4f05949500f62e28cb017759d5",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/8d2e8dac37493f6c4913eb52b337c133a67c6b247e8a7f82bd8feeba1a3723fa",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/9295e9122ebf81db7567deaace67d52c79c94455c57614a0104b144c833b624e",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/93daef6d22f7e1bf636ab39d3bec20872f0793763b866ad16ce24fd8e64122ae",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/a22c122b957f79f1263233d1b8320c7b78159d7cf362f65516d05b0ea75eadce",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/a3847ebcd181432af6d4c972d293445fe9ac58acbae4dae618f2b47c87dac5bf",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/a71cbdf205129d17dcd98e5e7ddd5cf2f4c2cf4c8e1e34ed7ff08a5ce17c9463",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/a9cf371524c879411e1e7459e52e3962fe37267ca9ce986be7d3fe9217a7e83d",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/abf8efadff1d363c86e32e7165523c16805d338ea1c23a043b1922ebd76fcea7",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/ae91b06fb7758e33e5cb6b6baec715f476fef20287c6002ee03e8e648aa8e8b6",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/aef033244c93c4dd99ce4190b1d343dd4e2778864c4c2b0f00516cacb5f99566",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/b9598ad9498f24bca978ace9e00b77d28dce72918c94d2317cf040c0d64db64c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/be1c4a043687d00b5c2be1a7bc203803f27a1ca1bd710f94eeca6975b59abb3c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/c59f41e1aabbdc70881455543602a2176bf5b9fd0db1a135240756bc141400f3",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/c65182f38f3aa77324cadd61cedbdfdfe169672949033b717c87dc6de3b0f1f7",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/c69dc2192d077d030fbdae9b8e4398d8621d92b072d4d40ce6ebc10ffbffe515",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/cc6f7dc1b6e8927c29d1eec89bec22ab694a331735473bde6bcaba62f2115db7",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/cd95a35c8972425369185c564172f4eb5087ffa0860af6b0ee44b001eeec5ba4",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/d1ff2885deaaa7d30f45c250622e8be10c6f03a1204eaa9e3eefcaeaadfc788a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/d34fe94fe7b33a5714d828d0874a1883a56e70ff79e11fb08482d6e5eb1d39e4",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/da47c46590987895f32b309d124257ace82ce05ff0d6fbf02c76743b8f5c6eb3",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/e260f5797edb6965583d8714e01ca9eac01834356966604966c3a4f846a23240",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/e41fc3c34512e5424e271f5f333f4b9ff50dea0058ad652f0861482520a13ede",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/eeb8a93a87d867c0a1a6b2ea714a7be018a53b892e8b011b44a826f602b351a5",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/ef8027688e30d3075ba77211e13dea8d279954b691a1fa609e55bf8280b6f9b9",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/f1e527b23e8fcc563cdf862b939076ab32aec283fe4370770c38988bf9abc13a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/f2419edd9482e3782f7ab22d360c0912f20898cbdbb35e24bc7416cde176220c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-1/slot-descriptors-v1/fd81b8ea47a657e40903038db26c82ddc2f454059e7ad8adc503ffaaa602d335",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/payload.arena",
+      "bytes": 70414336
+    },
+    {
+      "path": "paged-shard-providers/provider-2/retention.sqlite",
+      "bytes": 53248
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/0077a112c80ab265b18ac59a42b471c707e42425658dc3596143ec43d5e830b0",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/09fd03badcc00adf6bd7bc15c38f4d3195039b67552e733f57c8746d9a133641",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/0c945cb06dd3a148f490d8fe4820279d0ec2792b302e5f11f0ea7896a18d9e29",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/10a1e08fca97e77a7040f310eb13c89928700de9e66479c039009bf41b61b105",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/17dd0498d0bdaa3a0ee97f54d07d5416ef9b066cfac23de34aa6b5f442b6062e",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/1988160b61356df8d502c4cffb485ef303c9981157923004ea9a4c1f91e2a0bf",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/1b57b02457b1d1081f3fa89bddec8df7c4277f14cdcb8b9c2a719b09217b6c81",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/253a51582e34688fa4d8892396c10e30ff00077b40b8e21f96fe83ec2faad9fd",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/260bec599e66ecd7b06ddb55cd4eb633425ec3207c3b8a567e7928a58c1db089",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/2bcc65ffb3d63915ad380f92ab82219a120abcffcde2d25f2bb7e7bc624f2a06",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/2d38b2e7cd9a72e224e2f13c05feb2139bb2b7f370d826203141bd28de0f4ba8",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/31d132b00e4d324efc60cee109c4ccd512bc656103f5cc18e74d26dd6580f5ad",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/36a197b197216f1a582523319331ea15b664e0761f217416b5c7a19c399989f5",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/44ba788e313d0215a08c0a40f732f28613036d8176c14a9110c6c771d91f171d",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/4b2ada78528dc84cb251639629650e381513f04d760952f617098294a8d353b4",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/4cbed303073398f62d7f6bf3cf83b2e56d25def9ab4db1dcf93b312298daa326",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/54e495f43883d35987b5aaeb5f2df882bc9ebeb68f4d8936ba4737cb0d821a67",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/567fe67e45863d865dc2630ad8225acf1432d60da854c3db4435c2e70e69829b",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/5a3ce9b36755cd7858059500b67c175a90b7050c01fc58f2c54c17ce85920294",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/5e509273192d2917c3f8e0c78002d8a6da4d1aed2237389776fee42b155d8251",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/60527b0e4620145ed9726a1057c59fa6d267fd16201c7246ef885125fd0e669a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/613389903efb9dc226e01ff9ee76f5b9958cac2a148b8837a736a5d30bc7aa14",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/67af76f9cf95b53bf156e56be8416b7096506a5657718ab816262163f227f9a2",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/6c3501d95710c630c779f42d1a7442fca0846a11d3788d34edfb5283f4373f5c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/6e523a3585d37ce958267047cfd6ab98485d7a7cca545cfad29b648e3b5bdda9",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/7260a255a9c67cdc5329358f0d301ea088a121945f3c5ce72a1b62372d95106d",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/754d981617e856146b34b008a1d233876fc5614c8392d9b284a645e45077ee49",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/78a17bf9be94d3bf8b74d394aa998342127b80dcaf8c8b308e930667786461b7",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/7b815812f69152e8498d7cf698f1c4a4cea7adcaee46186698ddf59d3f2903d2",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/7c0ffd677b2303e1931a4bdc1a79e3ffa94edf88404a60c8225ded3e677a4d2c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/7cb62f27d8f2999de80ec45e5e8a430a7d1625563f260c9cec5c3109860aefd4",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/7db1ed4fb7530e5c6aff757850e10f02d8b599464f9eefa83beb6b1718429966",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/7f578a81929e5b3158054fdba9641f508907350922c2728690822d9e100f7928",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/8137d263d7f1093ac1654d5ccbeff2c11e45dbd559d2489ad240e63acc0fdac5",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/87d4f1885e557c53b270a252d22f504a248f96d1a0ef60a0eaa0081ba12e024c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/893b00368501fca8f049a4bcf70445898cc1c9e1619db8264d61fa3ae9672aae",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/9ff9780fc4a1bfe902c15c6b4d9ebcfbb57f4dd78e3007e79e154722573f140a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/a547d1ee4527af459fb593cace8ad8a4938f9fc5472a172ee160cd020142994e",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/a59afc22c509f29cde19c261be5f3cc6405cdf8219ba5adf7f5dba53c0d8a8a8",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/a66718928bb129fdd922d3019f0eac0fe955368b63e5e63197c23e9de8723d71",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/a82437447d60144f4b96dc7d0937534566f2c5fc3f7ea34df6cc024d70fb6ba5",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/ac42c1172e7c57b38ca0cdf2f5a7e642b9d54683c58811e579418313bd2b5f16",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/af4329f1480a59ed4c66ce114c99041337e2795e575fca321b09098a3eb9618e",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/bd47738ad920d4fc617df1151169063dc4cb306a5fc2c2ec711b6bdbbd40464e",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/be8cb4fed25b276622dd33e4436a7f03e7b86440f8d84d351377b2d764d582ed",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/bf9ee178e0bc0a21b0a8015b6e1d167263e20e6c3c087df4df4bd7acca4f9f08",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/c010e6179892fa93c27d99663e0656ee7813482118d3813ea842dea796655c1e",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/c15e1c727dfbfe23f3398cd3595f0a790f919dec1361e28ead5a0975e55f44c6",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/c1b3bd8a599604d6cef1ef33c5208db99a1fcd237dd6b333bfb13e892e55655f",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/c7206cb8f694c2a96891f16cae532f2465bbab1f9edf67449f7bf303fd7c1597",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/d0a519eb91ac3061624f3c3d334419abb2053b0fa0699bf02187ec388ea9e1cc",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/d5c0a8c80b040bc09e049412861c1e755dfc4dbc53da22f13b5223c73bec3c69",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/d6e5d1d84c133eb0fa058f3058c590dac78777313fb644319c93eaaad23c0be1",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/ea08d76d7029e8c2411719f8aa23cd9ad5f4c4af3060b1adf9f0f20124d1cb78",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/eb6fafd46c57bab67a6a8bb85c9adbd0ab18f31de4d3e5ddeb18b11504b57748",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/fa836650209b2bf4b31f9f1402c0a64f92c19c7e9fe55abe547be15144c79fdf",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-2/slot-descriptors-v1/fc05d53d8ae97e21534e065cb97cdb6e60dac28a95c387cb291aa6d8fd17f64e",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/payload.arena",
+      "bytes": 70414336
+    },
+    {
+      "path": "paged-shard-providers/provider-3/retention.sqlite",
+      "bytes": 53248
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/0fc536881dc85f48c6f858d9fef2e93e3dd97007d63b66f40055e54c9725d906",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/114e2334c453752a0d76d9b2dad757e818212247463b5e97523d836b431803d6",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/155b9244bfc249f4aeb234627d0315ca4af665699b28aca3ce8db27dd6a95ffd",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/17762dc194921221b8bba4de91a293314b03805189848a0559d953fff4c91409",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/181ccf9a20567a18e0722664856273c0cb141bdb09347f20b7ba062f5f16ba06",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/1917379edf0c13d19f550b9570a3853f2e339afcfd595479e2a1d600d30bfee4",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/1d356c9ad2a1b6b76f88021459623978ce59e10fb8048d304784aa1e3fbf4659",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/287d3fe94ba66ee2f7d09a3a9499ba5fb0007787b4569c0f16010df325a80c0a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/3b76d240c03435c93f331eb770c08e250a46cdd4b057779a6b43c19173e6786a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/3ef01de546458c5dad34f80bc5cf3ac52e879de48b9a7c540cb853bd2401452b",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/4600c4c1413b8656683139409e456f3bc119c59cc69ad5edb5af41037e99cdab",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/477dc443ce86f183b42bb2828dcb69adfdfd7ac0a48fb485abc1ccc727205855",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/4f08841d8dfca8619c2f4f2ced14d8381166320647f8a46afd5bd30a89d5b3a7",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/4fdf61638a5e0dd712b0a9983ff6efe4ebcf81ab304814d9afa9090d88e77cb3",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/57e200725f02361f923057b8ba1ab5d345dfb69685038839370bbe6e57bf0157",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/5c580dac5f942b90c197be405fe890707a3df18979bdb0f55582cc40b9e6e054",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/5c5c92637b51824543417364f08d03df1a1640a3c3942bf9f1ce4e9e755bb774",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/5f70c448ef7cc8f598572569e4fcb45db809944c3d962fa265861325d346028f",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/608f3f3b8633e8d16fc0a930ed2ba3263beb58feaecd1fb9f0aa4bfdf0410942",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/613f479e817c60e2343abf3debfaa7801abb806564fb6d41f002707817084fc6",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/6836d0fc619d0e0258af2551921a215059d86fe6290d208f9357e25c29149ac7",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/6b1d3a577686abbd41caf395f00fada102417be3b7adca2f671b1467d4ba7f86",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/74f0997d01bdfabddaf91a50a1f6d47479e3bb8c06d507c683a80bbba9a1b96d",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/7523a9af85242f131f7d12e00638895362543c68a6ed63a05195231fff5006a5",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/788852bc594148b28be91b4036d1ef6fa1d9ef1458d64ca8dd200f3d4f2500bd",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/7c772f8f33031ee8d9336d9070595c718bf0fd0c3182340b8930248e4b7aad32",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/823f622fd23888d99a9e3e0e728c5bd85314e028537f3a5ff57fc056d4eb9e1d",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/84139b4866ee41c6b6e2e5e29e01eddbaabea20f3444fc36a3a72138ef863158",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/848a563950818abd56ce35f9c03b61a789bf396a9ddb3835d07c31c734ba30e3",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/85fa689f0e49518ca2c72710c58a63ba12ea3905bb921c4163f212000e24b560",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/8a89c1152db2bbe043cc7572dd380fc3b00ebe59bf3e7446db590f3ed5816d95",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/8f10c007c59dc8ce3767cc6124e8a124e34ee7a4c5895c7621fcd0311caa60db",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/91419c4ae98b071d41f3e2ef340b2f982eec1f46ebf25c3b1dbe9fb582988af6",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/93e8ac562ae2c7c6e29c51cb451d9306fc6306ccc1e4216964fbd913bb22f844",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/962d3a0faa903c01a6a5478adf84d1743e717df6e2d373a6de97b054c0c2866b",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/9baa58e4374c490e19ae80405485b505bb995b2ea8e64381adcf0a5fe0ffd906",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/a52a92e54237bf325ed5906e460b493c7b0fb510fe760f24ca8f6ffdcef62645",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/a5c67e4d3256310777ccec0e3df88aa4b6d86551c9c74a0326b8b171ac005989",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/ab7412d8ee21a4a3f054b665eb1b0805aa09ff66787f764d89cbd336850c13dd",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/acfe9a24798900a7b2e9d5e5eb9250c94509d412fe26c7c31e6cfe799aedb3a6",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/b22de1883034938b13a9bea7d45f1d3da9d9cabb7b733b3bfb7c82fdb22cd50c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/d0edee99b890219177ba32f0fdfb1c75809bdd54bff37b4b40e3cd411010d815",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/d396ac6eeeeba70d1056cbfc8934097cd8d696feb861fe8723732d4d5cb8cb9d",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/d451c58fb60d52fc6090a901fce8737b67f9f6713b9aed0ff7c435f7599dd1e6",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/d645216fd34ee6bdba95ba71828990633056c688b986eb7aff689011a1e5f336",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/d95fe66230d53d4c74139c74429c1082ae92d1b696a468e4e8b2e00254ca8ab8",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/dd1d981bab7cb481c56b1d14f94ccc5d2dbffa581584971c03d85601aad4d705",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/e289f8923cf44b5ade7057de2aac6a150b2b66faaf99a362a82e23b607c6b670",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/e550cef390687b040546674ddaea8b845dd72743c76d5bcc49a2d2dee71985fd",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/e6a4206bbf2b95c1f05085ac2b1b1be80bf0694fde62caa8371927470f6d058f",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/e8f29961f690b536301a7589b68e342a5dd155a69a881199f90438ddd36b2dee",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/ed4ace511ad38a528b207f9ae9603b67d42e2febcc36314ef3ce2e64d1d97508",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/ed52139759d91db40ffea80a959c191846ecb59c0c95d72fb62497f5e7a67127",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/efa727147d7eac3dd43b9d4a72bff7956d169017f97c0c259e22cda3eeee9fb1",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/fcc32d6a5ed778acd1374b356925ada3c58725f73de4a34734c0a40a186bed27",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-3/slot-descriptors-v1/ffc169a4c1948178d7511fcecef8fb3f1f3b8010904e3413a2975d24bd3e6a7d",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/payload.arena",
+      "bytes": 70414336
+    },
+    {
+      "path": "paged-shard-providers/provider-4/retention.sqlite",
+      "bytes": 53248
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/0034432561b437e430754427106de48d8d4c80174196cd2e37437a152b1b5328",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/02f44e29d276ed8208f03c5cccd7494a7746aec4cdee2576e03a7c460fc64038",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/031e6f90ecf62087f2355466c75a2b4b5086d39925bdc87a3bce9b6d2ab08ac4",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/069c96894f248108dae6c63ef269092d747c87deb5a5f891825764f2872c5440",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/091978f0dcb34e6357a6463f350e6fd7c1f0ebfa260998d2462444adb0ce81bd",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/0982446fa2fedbfe95c368c7b24eec28e7b1cff3417aee4bc0d1385a8e823d21",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/0eb93e4f344fd30c8c570cf1b9b863598410ca0238197ea2a3810c74d656ab8e",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/139850cec93f6296d93637e43fa0cff1e739c58e2a2403cad8c2a5e8a5123700",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/176a1fb525dac98a40f0000a4689e5afc4804e7b0d79092607581400218360ec",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/270207e3b76834f97cf9c71a06ddc2bb8c6033665ad6fbb14fa2f7861ff4142c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/2d738fc70d8fd27ba095a5bd75feb747fda852e3172fbf73405449234ae3f481",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/30eddcf33bce965bbf2155ecb7887c78b19b6a051a247f7adeea01e020020d58",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/3207a2630933ea055e64778fec4b3cdc89cad0e29267a6ab87d7aae7761d18ca",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/36c8658aaf308c10645169a715cf4894bf0631eb0a66f736e574671f13f4188a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/39c0151ac7757fb5ec54408ec05d5af6bdb83e96ccfac32fcd93dadcc36297fa",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/3e16783bd78d84024840185a8f8afa6de639c76aab8a3ae6f3cb7169cef5631f",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/416e1cf3f02bad8e48c7569790f9787b3243e3f8d5ae440858879d14d6c66903",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/44c8496264b02a20cb3b81592f5bee33fd902b0efaf62ae01683f1de9cf181e0",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/54fef83d7ab9d4aa79ae084cdbb3d25354ce07d2c66c75b17c2d1a21b3a1b3c8",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/56fde8044b781ed4214bf938bf331af560a59e2d17f6518501efff599946d2f8",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/58979b7bd511e7eb8ed585643e915a7ccaacdadda855eaac0798059a0087ba9d",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/5dda1af79ccaad4c7d8ac45b72da7ded6d184e57eb277f26b7bd0b90b8b0f07a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/5e6fa67e28ec4d357f03410dad9fa17f9f6a6c6fe39f2ddf817ecfb610cbb025",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/5f3e629f3d93cf8a94429526dd20da1b48fcb58fd28f25072ce6d78e8e624f61",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/687ad75a8b9e9bdf49f436a56b1c04ee9dbbdbf01a27eadc37c2f41247f7d83a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/6924769bee7ddbf0776e89b83243ae8fb3ac321c2f83527d5746ef1fea3d8b29",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/69ed6a8c0026ceed8367417212d3b643edbbec09ee58f7ac1dfadc4fd7ed4b29",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/6d0fe340e3000ab76f4daab762a669293a2baa0aa038e3eba548221b7ff0fd48",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/77f465bda11818b220f26c27e1c1cf4566118bfb06a87f83d8844cbb82a76e3d",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/7ccbf9a0fa445554e8e273bd757b0e3c9aac269904fc289ef2d5ce5d37b923f6",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/7f7d5d60f1faf3fdfbf81997dccf30d67b5322d0906d6eceec51f2aea9deb3ca",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/89ae246f131f1cf436bd4a197ae915695841431bde3f0f11ba33ebfbe39a0798",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/92727dd74e241c4778eac040853017c26dcf640e15152004cefdca9309ab300c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/95ac3eab30345c4eb59f917ac13d0671a886fbe956815bdc31378678ab6fd552",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/95b8f6003954e9c15fcd2e96d908744d14a97afc1ab24ba8027ddd52f518ed7f",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/95d0a5c9797236c78e366514fbe4c082a8313f9f26771d03afcbd59a5ccf4149",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/9655a6452c703a923c543cc141391f6beaa0f71049559f33a630c00eb1660888",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/9c093e9c516a525372acc6ff54107420884f51f30997e6bcbb33d10c5fa7ef5c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/9c16abc19b27f06bbd263ac2235423f573a76a78ac2b65f7ce1f0c6b1d69164e",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/a225571519d294521ff7a2e9a4cc5b806fd5fd49719173672c152d74eeeebcd8",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/a557fbf50a4bf699143ff553fa7b6ad6c0a78cf2e3d73f99993902a61822faec",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/a5ee57500c6e4808499ce42c7a982bc4facbc1020d9222d76f8ed669787dafc1",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/ad3a65242cbcffc34a6e3e347ce5287707684e2342050df2af116893c76a2dbc",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/b70c16bbe90ed8916ae119eab0beff4aea04c8d62027ef3ca68fe9a29b86800a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/bc12d46ede5aedf10a76f47936231e034f3357de0a4c59cb6d7c0d65cc9907c3",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/ca3f5b6af0f980f1e2e8bc1af4830840107c290d08f5bb25dce6b71981ee4292",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/d1351b34236ae009ffedc12759db8b75eecc90df8141438b14ab48af83c657aa",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/d1f46da20c97fe15b6aeb5fb49c950b9fd667ee5765b774d7c199cabd3215cc3",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/dc660c7c013480800a930c1bde0b08d136cf949472f6d6ee1bc0c727fbcf1e2c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/df239bde4b75f302a5cd4d579bd0de5e602e830523408fa16d7a814ff4ffd95b",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/e7277c389db3ff2b2317e844b2afd13c48fb2dbf0e61497e036949c92ced82ed",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/e9cce963f922cd6e30d19c2e65a5313018f4302d8e48e10f5081b66766620ef3",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/eb52f410f4eb46ea1dbf57c30c57226a25f335bf9708f78225961629bfb13f41",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/eed8f086bbecab782528342658562d0911dbec995b3689d2660bc5ea55fccc3a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/f38e32f7d7f9cb32a17e7087ca38d9dfd5850db37321c80c9ecd76b4b19fdec2",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-4/slot-descriptors-v1/f8bd442876c2147e5ae8fda4ce57b3320e9e34de0fd5d453b657656128b93705",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/payload.arena",
+      "bytes": 70414336
+    },
+    {
+      "path": "paged-shard-providers/provider-5/retention.sqlite",
+      "bytes": 53248
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/0b727f3f56bcbe984264490d663471225b6dbb95ac4532ddcf7776633e63aac3",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/12b41f6e2935ce57747e3df1e0a4b45d739baebc28e1c4d5dd80bbdcd24fbba5",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/1481c8f01880b046f73326c9790a3099bdd6a3590bf11351de73ba8338047b69",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/15658be0564ba7d6fc2fbcf56526baeed851e4e943542b6aa5c7b4746873d38e",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/170ae3c102812a7128bdc7ee1227770be30fc2513fcec9797ed11379b9b735f4",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/1821390daab1a87b5342e97c0f70af2a7ecccac9959a3f653d221a568b06dea7",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/1a2cef7e0986588257dc58beab1604565c60912a486ff2cbf26fc2c743a153a6",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/23cafb49219177b7027507e6a0eb1df7c2574443f6ebadd1e56036e54fa90f8c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/2527147e72e53e89c3d9fdd5e4dab0b454df47375c99b7dd18f1854f833a94f3",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/26199ed2917de433efad723e77af3375bae7c88cd66e1db71b97207e3cdde577",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/27d66043245d0a7b35fb5e25ed7e8eb688e7f7cf0170326b6c18cac271cb554a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/28324600b2174dd10fc9d381ec8a6653431debce6251e060a2d6d1951e76f111",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/2d50e16d1a75a9a9d41cd3276d6d4c4782caf585495c1688895497ada2c2d07e",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/2df5cde04c163a881ed7ff3c38183e8ea4193c88dbbc9d02b4e72105d5f748e4",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/2e6cccc51ddd109f4a19af4cfc51edfa33099c19cea54c723347ba8cc6a82075",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/31a52348664684b72d2b8c0f113dae55b32a25d3945af2420a227093b5ed4859",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/33276c88f8c978d408448b37d9308802b6f97403193ca2a499a37c81c92b53c1",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/34c7e7e74ca58249ea4317d1f5bf13c815fe0bb30c8932e56b23d1c5502fe612",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/3508072d0eade9c1c835038999297af50e82704aa377ae7faee02f6c59015e97",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/50b2b0992892f5bcee7f0af258012f6d8d9f55851544e3583d69246922505367",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/523c0d5b4da227028c52b5c079de4696ba94c04efe51ad2069821bb9fab3acc9",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/538220ceeea75c1b66f0aab1bbc56b33fd8a12e718a8583edfa8d855ae31a26b",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/53c2d81a21d2fedf78ba27a44e0561e5cd7e0bf2755b42108b5d8793b1c14b6e",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/5690c0eaa17db6d56c7e0dcd2db8d44f985f81e19b783e566226ada1bd0e9bcf",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/5fb03761ba1aa1a4223d1705282895fc82a4ce6d529461521dd9c1269c8e7939",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/6a8603c39a76130d751d62ed926cf29507c7607ae68e355f85de68c7fced8d63",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/6c93314b88f12778b109c86d82bd26814e9b6e0ba5817980e0782d599fa50080",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/7336ada28db85ce8ab57b67d3e9551dba5e929010493b1337c0ed119f7dcd722",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/7e6dfb140ae7242a6cfac2f9acf0dcef2fff1250b600748c051e88529e29a7c9",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/843c89bdf52840ffb11b4e874cacf02ff448dd6948539ebd72289553549da11f",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/85b50d7d6feb90397a6376875edcfeb8ceef29bd75603ef6b2eb906c1b027114",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/861cab55b5c281d7cc521fc462df1bdfdae48d2595d649232d3c2563fbd54913",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/905803906b071b5375105084a51429e470d0c4be27a72bd234afda3848a6f9bb",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/9494f6b6d79935a7840c3624b5abd76c83c32c61e3bdd780729047cdf50e082c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/9ea97bfce3b8961aa7d74f89e995e470ee94907279d2efeba434bb2fa69a7131",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/a11b10f1dd7ec936dd5ab3c9e426eb5ac3f381fe65398d64067c579136ca4ec5",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/a19d844b5e02ea1abfac473520a40ead99f5d9db4265fc9897977f685616e764",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/a316192bf8244f4e30d2fd3269731219a5c5cd9f20cfe55d7f3eb8ab769523c7",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/acebaf2c6a826cb13809b6c4a6622772db810e6253aae00d630649e9f344ea68",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/c0fe1342b98168dc7458e159b9911ae1cb29377a67a30120c83d4ea01f467618",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/c412ef33e6eb35f658480e6566ce95ed1bc6a37bd91dd1a2d8331fd8c0974687",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/c7acbb2e919b111e550be30c9fd8750573dc07afb95d8040b6e8c89e00767f52",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/c7dd99f6ac30ab390aad4836847a0c06b18abe41e872e8339ba948af4e124a7c",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/cc59addd871aef5852b17cfcf9357ff58992652a401e85d2b96bba4232df8ad8",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/cca2f476bfdb3b6286930d79cc6a7bb7f4ba65306deeb59181f9542734f0b8c9",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/d4350da5ac709bf74da41917a5aabb7008b3dda65606c4fb5a4e7be4e7807387",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/d99fd33674d4161279b0223bfaac0f61f7ce34d6399678078796ca8b2d339f1a",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/e0ba3a7c4eacee6d3ac10f902d90f1a1e62e53cd601cbcec014871c4aabaf810",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/e3dd677e092e6ecdbf3a3aeef8324510d190c4ec7360cb552ae4f8f70fefcfb3",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/f09661b7e6d60e9b1a76fc9ae12a0ef84094caafb92411df1fd28e8d8cbad4ee",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/f39fe5b813433bb043ff5290323e090072258e4009bbf4b5981943fb816779ad",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/f83d7e9c287021c4fafca3581ea75e3ce5ca1ae155be4ba9b340b3a6354a5bcc",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/fb8777ad94a3fcff0632176e0f311a777b7a5b9a0d69e1aa56a594b93d4cf1be",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/fb896fea67b560c18c0a2fca22243f1cb282d21c9c26d82af843da11ed60292f",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/fed3058541d3c9e553ed719653a43b0dd252fd892754aee8e12ecd31a786a6d4",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-providers/provider-5/slot-descriptors-v1/ffe9ae5b9c5a986b19574ffa2d74411301c783fa5c524a61df3b5e81cefb843f",
+      "bytes": 1829
+    },
+    {
+      "path": "paged-shard-staging.sqlite",
+      "bytes": 230187008
+    },
+    {
+      "path": "paged-shard-staging.sqlite-shm",
+      "bytes": 32768
+    },
+    {
+      "path": "paged-shard-staging.sqlite-wal",
+      "bytes": 1075352
+    },
+    {
+      "path": "paged-shard-staging.sqlite-writer-lock-v4",
+      "bytes": 0
+    },
+    {
+      "path": "publisher.sqlite",
+      "bytes": 280641536
+    },
+    {
+      "path": "publisher.sqlite-shm",
+      "bytes": 32768
+    },
+    {
+      "path": "publisher.sqlite-wal",
+      "bytes": 12392
+    },
+    {
+      "path": "publisher.sqlite-writer-lock-v4",
+      "bytes": 0
+    },
+    {
+      "path": "retained/objects/payload.arena",
+      "bytes": 536870912
+    },
+    {
+      "path": "retained/objects/retention.sqlite",
+      "bytes": 45056
+    },
+    {
+      "path": "retained/versions.sqlite",
+      "bytes": 122880
+    }
+  ],
+  "scope": "Post-terminal metadata inventory only; no fault injection, deletion, replay, refund or payment reconciliation. Original operation and providers remain retained."
+}

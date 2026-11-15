@@ -1,0 +1,41 @@
+[
+  {
+    "name": "reader-final-retained-daa",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/pon_daa_schedule_reader.py",
+      "--raw-dir",
+      "/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-validation/native-retained-final",
+      "--expected-report-sha256",
+      "c08f5c11419656408ee179ea49f41701c2edcb25178dc9b963b995a460cb62db"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 15.004652268020436,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0"
+  },
+  {
+    "name": "reader-final-retained-daa-negative",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/test_pon_daa_schedule_reader.py",
+      "--raw-dir",
+      "/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-validation/native-retained-final"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 29.23431071592495,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0"
+  },
+  {
+    "name": "markdown-controls",
+    "command": [
+      "python3",
+      "-B",
+      "/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-validation/markdown-tools/tree_markdown_check_tests.py"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 5.442329654004425,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0"
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "schema": "TRNM-W1-BATCH-ATTEMPT3-STATIC-REVIEW1",
+  "unix_ns": 1793160987240917044,
+  "wrapper_sha256": "b0d6de899b65a084185b09d37edd2d42b5ecdc1366ae0b53e3867922406763df",
+  "pipeline_sha256": "9e11a9ddbe1f5d55e8012fedf0c7da30c1f6226f1dfa5585180f04ff002af374",
+  "unchanged_sdk_source_sha256": "30a523d2474299139a0616de729a0b034527bf018aaf3b490e72d900b79b88ea",
+  "sdk_source_matches_checksum_bound_crate": true,
+  "sdk_invokes_sanitized_path_cargo": true,
+  "sdk_sets_rustc_and_encoded_flags_after_sanitizing": true,
+  "wrapper_changes_only_four_declared_environment_variables": true,
+  "wrapper_executes_fixed_absolute_cargo_argv_unchanged": true,
+  "compiler_restore_code_absent": true,
+  "network_download_code_absent": true,
+  "ast_parse_pass": true,
+  "native_or_guest_execution_by_review": false,
+  "sdk_excerpt": "/// Build a [Command] with CARGO and RUSTUP_TOOLCHAIN environment variables\n/// removed.\nfn sanitized_cmd(tool: &str) -> Command {\n    let mut cmd = Command::new(tool);\n    for (key, _val) in env::vars().filter(|x| x.0.starts_with(\"CARGO\")) {\n        cmd.env_remove(key);\n    }\n    cmd.env_remove(\"RUSTUP_TOOLCHAIN\");\n    cmd\n    let rustc = rust_toolchain().join(\"bin/rustc\");\n    println!(\"Using rustc: {}\", rustc.display());\n\n    let mut cmd = sanitized_cmd(\"cargo\");\n    let mut args = vec![subcmd, \"--target\", RISC0_TARGET_TRIPLE];\n\n    if !get_env_var(\"RISC0_BUILD_LOCKED\").is_empty() {\n        args.push(\"--locked\");\n    }\n\n    cmd.env(\"RUSTC\", rustc)\n        .env(\"CARGO_ENCODED_RUSTFLAGS\", encoded_rust_flags)\n        .args(args);\n    cmd\n}\n\nfn get_rust_toolchain_version() -> semver::Version {\n    let rzup = rzup::Rzup::new().unwrap();",
+  "review_limit": "source inspection and AST parsing only; no wrapper or Rust executable invoked"
+}

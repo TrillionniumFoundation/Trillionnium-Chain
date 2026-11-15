@@ -1,0 +1,19 @@
+{
+  "schema": "pon-recovered-exact-source-v1",
+  "source_commit": "1a426b6ed3a32745d996be328ec31929660fee5b",
+  "checks": [
+    {
+      "name": "fetch-bundle",
+      "argv": [
+        "git",
+        "fetch",
+        "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/recovered-lifecycle.bundle",
+        "fix/chain-pon-joint-state-risk-ledger-20261107"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout",
+      "exit_code": 128,
+      "elapsed_seconds": 0.008332815952599049
+    }
+  ],
+  "production_qualified": false
+}

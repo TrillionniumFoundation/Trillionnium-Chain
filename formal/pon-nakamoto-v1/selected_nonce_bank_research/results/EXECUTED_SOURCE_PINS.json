@@ -1,0 +1,8 @@
+{
+  "EXPERIMENT_PLAN.json": "d3b8f939533631e58d8b8bcf1fea8e9b7e167532c4d58325552e58f298aea2cf",
+  "SOURCE_PINS.json": "f1cbc85a9aee060f0b2bbcb402ad8c6cc7af8f761956ea4130f43f53a1b0a55e",
+  "research_core.py": "d9224d8e1c943a348f6b5077f3cb704d9fa8faf3649bb992f005b88f88fed82b",
+  "bank_policy.py": "fae13a8a62fa11bd6507de69b4081cba3efd5d402425b1f2d3532434ff6997b6",
+  "run_campaign.py": "3491d267115596dd732d41b9eabefaed0567f488c1e409226f7153804ae1f2a1",
+  "test_research.py": "5bd1da62d6cc9d068835a36717e21a2328458bbb583c6794a6456217b428d151"
+}

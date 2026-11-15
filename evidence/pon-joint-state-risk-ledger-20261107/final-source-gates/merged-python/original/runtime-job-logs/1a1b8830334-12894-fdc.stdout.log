@@ -1,0 +1,16 @@
+{"materialized_fixtures": 13, "total_bytes": 965044, "new_files": 13, "prefetched_blobs": 13}
+{"name": "detailed-contracts", "exit_code": 0, "elapsed_seconds": 50.56938342680223}
+{"name": "applicability", "exit_code": 0, "elapsed_seconds": 60.16850908403285}
+{"name": "current-implementation-check", "exit_code": 0, "elapsed_seconds": 0.15894368709996343}
+{
+  "schema": "materialized-module-contract-fixture-check-v1",
+  "commit": "2d46d8682201bc0619f5b156af50e77fb399322e",
+  "tree": "5ae5317304588cca8295a19dd512c8e853f1ef5b",
+  "fixtures": 13,
+  "fixture_bytes": 965044,
+  "all_commands_zero_exit": true,
+  "source_head_tree_status_unchanged": true,
+  "full_repository_truth_lane_executed": false,
+  "production_qualified": false,
+  "result": "PASS"
+}

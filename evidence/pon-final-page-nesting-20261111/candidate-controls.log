@@ -1,0 +1,28 @@
+test_changed_workload_is_detected_without_inheriting_reported_success (test_inspect_native_campaign_failure.FailureInspectionTests) ... ok
+test_host_checkpoint_cpu_fraction_is_nested_not_a_speedup (test_inspect_native_campaign_failure.FailureInspectionTests) ... ok
+test_missing_duplicate_or_malformed_host_measurement_is_unknown (test_inspect_native_campaign_failure.FailureInspectionTests) ... ok
+test_missing_import_cpu_is_null_not_zero (test_inspect_native_campaign_failure.FailureInspectionTests) ... ok
+test_missing_native_packet_stage_list_is_not_zero_work (test_inspect_native_campaign_failure.FailureInspectionTests) ... ok
+test_missing_runs_remain_in_three_run_denominator (test_inspect_native_campaign_failure.FailureInspectionTests) ... ok
+test_native_admission_and_commit_intervals_are_nested_not_added (test_inspect_native_campaign_failure.FailureInspectionTests) ... ok
+test_nested_timings_remain_separate (test_inspect_native_campaign_failure.FailureInspectionTests) ... ok
+test_report_symlink_and_duplicate_mode_are_refused (test_inspect_native_campaign_failure.FailureInspectionTests) ... ok
+test_terminal_admission_deadline_precedes_nested_commit_deadline (test_inspect_native_campaign_failure.FailureInspectionTests) ... ok
+test_terminal_missing_or_duplicate_stage_does_not_infer_success (test_inspect_native_campaign_failure.FailureInspectionTests) ... ok
+test_terminal_submit_result_deadline_after_accepted_commit (test_inspect_native_campaign_failure.FailureInspectionTests) ... ok
+test_actual_final_page_stage_is_reported_but_not_qualified (test_inspect_native_campaign_failure.FinalPageActivationDiagnosticTests) ... ok
+test_missing_duplicate_or_invalid_confirmation_cannot_create_final_activation (test_inspect_native_campaign_failure.FinalPageActivationDiagnosticTests) ... ok
+test_submit_result_wall_cannot_exceed_its_parent_import (test_inspect_native_campaign_failure.FinalPageNestedWallControls) ... ok
+test_actual_native_depth_six_observation_after_deadline_is_not_a_pass (test_inspect_native_campaign_failure.PostwindowNativeConfirmationTests) ... ok
+test_unknown_or_conflicting_clock_cannot_be_promoted_to_late_success (test_inspect_native_campaign_failure.PostwindowNativeConfirmationTests) ... ok
+test_claimed_success_with_network_failure_is_unknown (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests) ... ok
+test_claimed_success_with_unexecuted_terminal_stage_is_unknown (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests) ... ok
+test_conflicting_import_success_does_not_hide_stage_failure (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests) ... ok
+test_missing_or_nonboolean_terminal_flags_remain_unknown (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests) ... ok
+test_success_with_transport_error_and_ok_status_remains_unknown (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests) ... ok
+test_unreturned_or_unstarted_stage_cannot_be_a_deadline_boundary (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.012s
+
+OK

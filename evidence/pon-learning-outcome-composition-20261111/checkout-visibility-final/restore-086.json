@@ -1,0 +1,24 @@
+{
+  "actual_oid": "e7055254a1067742ee0daf9100203bde8b3e4982",
+  "bytes": 4957587,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "e7055254a1067742ee0daf9100203bde8b3e4982"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 4957587,
+  "expected_oid": "e7055254a1067742ee0daf9100203bde8b3e4982",
+  "finished_at": "2026-11-12T01:55:20.186802+00:00",
+  "path": "evidence/pon-w1-work-security-ci-followup-20261101/initial-ci/service-prospective-merge.zip",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXcxLXdvcmstc2VjdXJpdHktY2ktZm9sbG93dXAtMjAyNjExMDEvaW5pdGlhbC1jaS9zZXJ2aWNlLXByb3NwZWN0aXZlLW1lcmdlLnppcA==",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "8e7e3c44de4a92348b5025ecc42948a73725d43ce6650522ed6a7ccb6df9bae9",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:20.098304+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

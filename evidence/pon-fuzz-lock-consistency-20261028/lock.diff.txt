@@ -1,0 +1,20 @@
+diff --git a/tests/fuzz/Cargo.lock b/tests/fuzz/Cargo.lock
+index 4c2c9cf8b..cf60a8539 100644
+--- a/tests/fuzz/Cargo.lock
++++ b/tests/fuzz/Cargo.lock
+@@ -713,6 +713,7 @@ dependencies = [
+  "hex",
+  "sha2",
+  "trnm-protocol",
++ "zeroize",
+ ]
+ 
+ [[package]]
+@@ -779,6 +780,7 @@ dependencies = [
+  "trnm-protocol",
+  "trnm-service-settlement",
+  "trnm-transport",
++ "zeroize",
+ ]
+ 
+ [[package]]

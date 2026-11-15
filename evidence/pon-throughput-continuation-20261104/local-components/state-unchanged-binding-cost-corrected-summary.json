@@ -1,0 +1,121 @@
+{
+  "schema": "unchanged-snapshot-local-cost-summary-v1",
+  "command_exit": 0,
+  "suite": {
+    "passed": 35,
+    "failed": 0,
+    "ignored": 6,
+    "filtered": 78,
+    "test_seconds": 18.55
+  },
+  "benchmark": {
+    "passed": 1,
+    "failed": 0,
+    "test_seconds": 13.06
+  },
+  "source_head": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+  "source_dirty": true,
+  "profile": "test; M06 opt-level 1, protocol and SHA2 opt-level 3; debug assertions and overflow checks enabled",
+  "public_tps_measured": false,
+  "rows": [
+    {
+      "keys": 128,
+      "value_width": 64,
+      "case": "unchanged",
+      "original_median_ms_per_binding": 0.1324495,
+      "changed_median_ms_per_binding": 0.0780034375,
+      "ratio_new_over_original": 0.5889296486585454,
+      "change_percent": -41.10703513414546
+    },
+    {
+      "keys": 128,
+      "value_width": 64,
+      "case": "same_root_hint_first_value_changed",
+      "original_median_ms_per_binding": 0.142203,
+      "changed_median_ms_per_binding": 0.2181803125,
+      "ratio_new_over_original": 1.5342876908363396,
+      "change_percent": 53.428769083633966
+    },
+    {
+      "keys": 128,
+      "value_width": 64,
+      "case": "same_root_hint_last_value_changed",
+      "original_median_ms_per_binding": 0.1478959375,
+      "changed_median_ms_per_binding": 0.2087073125,
+      "ratio_new_over_original": 1.4111767775906623,
+      "change_percent": 41.117677759066225
+    },
+    {
+      "keys": 1024,
+      "value_width": 512,
+      "case": "unchanged",
+      "original_median_ms_per_binding": 3.3082735,
+      "changed_median_ms_per_binding": 2.46443975,
+      "ratio_new_over_original": 0.7449322886998309,
+      "change_percent": -25.506771130016915
+    },
+    {
+      "keys": 1024,
+      "value_width": 512,
+      "case": "same_root_hint_first_value_changed",
+      "original_median_ms_per_binding": 3.2513918125,
+      "changed_median_ms_per_binding": 5.698122875,
+      "ratio_new_over_original": 1.7525180610634266,
+      "change_percent": 75.25180610634266
+    },
+    {
+      "keys": 1024,
+      "value_width": 512,
+      "case": "same_root_hint_last_value_changed",
+      "original_median_ms_per_binding": 3.1745588125,
+      "changed_median_ms_per_binding": 5.650356125,
+      "ratio_new_over_original": 1.7798870516279024,
+      "change_percent": 77.98870516279024
+    },
+    {
+      "keys": 4096,
+      "value_width": 512,
+      "case": "unchanged",
+      "original_median_ms_per_binding": 13.9286035,
+      "changed_median_ms_per_binding": 9.719267,
+      "ratio_new_over_original": 0.6977919214944988,
+      "change_percent": -30.220807850550123
+    },
+    {
+      "keys": 4096,
+      "value_width": 512,
+      "case": "same_root_hint_first_value_changed",
+      "original_median_ms_per_binding": 13.647925625,
+      "changed_median_ms_per_binding": 24.64794175,
+      "ratio_new_over_original": 1.8059844717244349,
+      "change_percent": 80.59844717244349
+    },
+    {
+      "keys": 4096,
+      "value_width": 512,
+      "case": "same_root_hint_last_value_changed",
+      "original_median_ms_per_binding": 14.1220324375,
+      "changed_median_ms_per_binding": 24.6057205,
+      "ratio_new_over_original": 1.742363969839168,
+      "change_percent": 74.23639698391679
+    }
+  ],
+  "candidate_strategy": "initial full candidate comparison before mismatch; before early-miss refinement",
+  "source_binding_note": "Only the checkout baseline is identified here; the measured candidate was uncommitted. This is component diagnostic evidence, not committed-source or public-service acceptance.",
+  "metadata_corrections": [
+    {
+      "field": "source_head",
+      "original_reported": "44d3def32f515b98fc41f074fe1b88e97f046191",
+      "corrected": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+      "reason": "Parent confirmed isolated checkout base a10; original summary mistakenly repeated earlier 44d3 reference."
+    },
+    {
+      "field": "profile",
+      "original_reported": "test unoptimized",
+      "corrected": "test; M06 opt-level 1, protocol and SHA2 opt-level 3; debug assertions and overflow checks enabled",
+      "reason": "Cargo overall profile label does not override explicit per-package test opt-level settings in trillionnium/Cargo.toml."
+    }
+  ],
+  "original_summary": "state-unchanged-binding-cost-summary.json",
+  "raw_log": "state-unchanged-binding-cost.log"
+}

@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "scripts/ci/test_ci_contract.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+  "end_utc": "2026-11-07T21:53:54.767534+00:00",
+  "exit_code": 0,
+  "log": "logs/09-test_ci_contract.log",
+  "log_bytes": 17181,
+  "log_sha256": "c8c80c099427ec1944101b912c3da1a93d0032af0acef944674c29593b34f969",
+  "name": "09-test_ci_contract",
+  "pid": 1877686,
+  "start_utc": "2026-11-07T21:53:36.736498+00:00",
+  "supervisor_timeout_seconds": 1800,
+  "timed_out": false,
+  "wall_ns": 18031044569
+}

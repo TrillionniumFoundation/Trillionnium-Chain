@@ -1,0 +1,105 @@
+{
+  "tested_source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "expected_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+  "evidence_branch": "fix/chain-pon-five-claims-evidence-20261111-d6cb",
+  "evidence_worktree": "/home/qian-qi/work/chain-pon-five-claims-evidence-20261111-d6cb",
+  "steps": [
+    {
+      "label": "evidence-main-head",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "evidence-main-clean",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "remote-commit-identity",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/297bb40798ca1b4e4a987ef00582067282cda4e9",
+        "--jq",
+        "{sha,tree_sha:.tree.sha,parents:[.parents[].sha]}"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "evidence-preflight-main",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "evidence-worktree-create",
+      "argv": [
+        "git",
+        "worktree",
+        "add",
+        "-b",
+        "fix/chain-pon-five-claims-evidence-20261111-d6cb",
+        "/home/qian-qi/work/chain-pon-five-claims-evidence-20261111-d6cb",
+        "297bb40798ca1b4e4a987ef00582067282cda4e9"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "evidence-head",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "evidence-branch",
+      "argv": [
+        "git",
+        "branch",
+        "--show-current"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "evidence-clean",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "evidence-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "remote_identity": {
+    "parents": [
+      "f2375a08f4458f842b96d30215adcd5380270f1d"
+    ],
+    "sha": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "tree_sha": "129267332b2ef87d3d66d014fddeb894faa9379f"
+  },
+  "status": "evidence_worktree_ready"
+}

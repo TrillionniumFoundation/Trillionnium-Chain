@@ -1,0 +1,79 @@
+{
+  "schema": "pon-original-work-time-parts-pty-readback-v1",
+  "read_only": true,
+  "request": {
+    "host": "desktop",
+    "executable": "/usr/bin/python3",
+    "args": [
+      "-c",
+      "from pathlib import Path\nimport os,stat,hashlib,json\nroot=Path('/home/qian-qi/chain-daa-monotone-20261111-7f73')\nrows=[]\nfor i in range(6):\n p=root/('work-time-recovery-transfer-v1.part%02d'%i)\n row={'index':i,'path':str(p)}\n try:\n  fd=os.open(p,os.O_RDONLY|os.O_NOFOLLOW)\n  with os.fdopen(fd,'rb') as f:\n   before=os.fstat(f.fileno())\n   assert stat.S_ISREG(before.st_mode) and before.st_nlink==1 and before.st_size<=1048576\n   b=f.read(1048577)\n   after=os.fstat(f.fileno())\n   assert (before.st_dev,before.st_ino,before.st_size,before.st_mtime_ns,before.st_ctime_ns)==(after.st_dev,after.st_ino,after.st_size,after.st_mtime_ns,after.st_ctime_ns)\n  row.update(result='READ',bytes=len(b),sha256=hashlib.sha256(b).hexdigest())\n except BaseException as error:\n  row.update(result='ERROR',error=repr(error))\n rows.append(row)\nprint(json.dumps({'schema':'pon-original-work-time-parts-pty-probe-v1','read_only':True,'parts':rows},sort_keys=True))\n"
+    ],
+    "idempotency_key": "daa-original-worktime-parts-readonly-v1-7f73"
+  },
+  "start_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"audit_recorded\":true,\"automatic_retry\":false,\"host\":\"desktop\",\"persistent_across_runtime_restart\":true,\"reused\":false,\"session_id\":\"dpty-ac3cca4fd3596ee0a0b4626747cd980b2993939514dce77d6b1dff67c6ba5dd4\",\"status\":{\"boot\":\"14f92beb-43c6-4786-839e-b57307ae8048\",\"bytes_seen\":1265,\"bytes_stored\":1265,\"capture_error\":null,\"created_unix_ms\":1794446679764,\"output_complete\":false,\"owner_pid\":2822273,\"pid\":2822280,\"state\":\"running\"}}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "read_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"archive_path\":\"/home/qian-qi/.local/state/hepta-runtime-mac-worker/terminals/dpty-ac3cca4fd3596ee0a0b4626747cd980b2993939514dce77d6b1dff67c6ba5dd4/output.log\",\"available_end\":1265,\"bytes_hex\":\"7b227061727473223a205b7b226572726f72223a202246696c654e6f74466f756e644572726f7228322c20274e6f20737563682066696c65206f72206469726563746f72792729222c2022696e646578223a20302c202270617468223a20222f686f6d652f7169616e2d71692f636861696e2d6461612d6d6f6e6f746f6e652d32303236313131312d376637332f776f726b2d74696d652d7265636f766572792d7472616e736665722d76312e706172743030222c2022726573756c74223a20224552524f52227d2c207b226572726f72223a202246696c654e6f74466f756e644572726f7228322c20274e6f20737563682066696c65206f72206469726563746f72792729222c2022696e646578223a20312c202270617468223a20222f686f6d652f7169616e2d71692f636861696e2d6461612d6d6f6e6f746f6e652d32303236313131312d376637332f776f726b2d74696d652d7265636f766572792d7472616e736665722d76312e706172743031222c2022726573756c74223a20224552524f52227d2c207b226572726f72223a202246696c654e6f74466f756e644572726f7228322c20274e6f20737563682066696c65206f72206469726563746f72792729222c2022696e646578223a20322c202270617468223a20222f686f6d652f7169616e2d71692f636861696e2d6461612d6d6f6e6f746f6e652d32303236313131312d376637332f776f726b2d74696d652d7265636f766572792d7472616e736665722d76312e706172743032222c2022726573756c74223a20224552524f52227d2c207b226572726f72223a202246696c654e6f74466f756e644572726f7228322c20274e6f20737563682066696c65206f72206469726563746f72792729222c2022696e646578223a20332c202270617468223a20222f686f6d652f7169616e2d71692f636861696e2d6461612d6d6f6e6f746f6e652d32303236313131312d376637332f776f726b2d74696d652d7265636f766572792d7472616e736665722d76312e706172743033222c2022726573756c74223a20224552524f52227d2c207b226572726f72223a202246696c654e6f74466f756e644572726f7228322c20274e6f20737563682066696c65206f72206469726563746f72792729222c2022696e646578223a20342c202270617468223a20222f686f6d652f7169616e2d71692f636861696e2d6461612d6d6f6e6f746f6e652d32303236313131312d376637332f776f726b2d74696d652d7265636f766572792d7472616e736665722d76312e706172743034222c2022726573756c74223a20224552524f52227d2c207b226279746573223a203338353337382c2022696e646578223a20352c202270617468223a20222f686f6d652f7169616e2d71692f636861696e2d6461612d6d6f6e6f746f6e652d32303236313131312d376637332f776f726b2d74696d652d7265636f766572792d7472616e736665722d76312e706172743035222c2022726573756c74223a202252454144222c2022736861323536223a202236333637316638656262376238656235373736613937653433626262376366376539616233626138323633323538383561333239316463616632623538623430227d5d2c2022726561645f6f6e6c79223a20747275652c2022736368656d61223a2022706f6e2d6f726967696e616c2d776f726b2d74696d652d70617274732d7074792d70726f62652d7631227d0d0a\",\"chunk_sha256\":\"a8439a0c09a4e75e7d2c9f32e42e4b8a7aa11b0b448d2af6ba5be0dca043dfcc\",\"host\":\"desktop\",\"next_offset\":1265,\"offset\":0,\"output_complete\":true,\"persistent_across_runtime_restart\":true,\"session_id\":\"dpty-ac3cca4fd3596ee0a0b4626747cd980b2993939514dce77d6b1dff67c6ba5dd4\",\"status\":{\"boot\":\"14f92beb-43c6-4786-839e-b57307ae8048\",\"bytes_seen\":1265,\"bytes_stored\":1265,\"capture_error\":null,\"closed\":false,\"created_unix_ms\":1794446679764,\"exit_code\":0,\"output_complete\":true,\"owner_pid\":2822273,\"pid\":2822280,\"state\":\"exited\"},\"storage\":\"target_archive\",\"text\":\"{\\\"parts\\\": [{\\\"error\\\": \\\"FileNotFoundError(2, 'No such file or directory')\\\", \\\"index\\\": 0, \\\"path\\\": \\\"/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part00\\\", \\\"result\\\": \\\"ERROR\\\"}, {\\\"error\\\": \\\"FileNotFoundError(2, 'No such file or directory')\\\", \\\"index\\\": 1, \\\"path\\\": \\\"/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part01\\\", \\\"result\\\": \\\"ERROR\\\"}, {\\\"error\\\": \\\"FileNotFoundError(2, 'No such file or directory')\\\", \\\"index\\\": 2, \\\"path\\\": \\\"/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part02\\\", \\\"result\\\": \\\"ERROR\\\"}, {\\\"error\\\": \\\"FileNotFoundError(2, 'No such file or directory')\\\", \\\"index\\\": 3, \\\"path\\\": \\\"/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part03\\\", \\\"result\\\": \\\"ERROR\\\"}, {\\\"error\\\": \\\"FileNotFoundError(2, 'No such file or directory')\\\", \\\"index\\\": 4, \\\"path\\\": \\\"/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part04\\\", \\\"result\\\": \\\"ERROR\\\"}, {\\\"bytes\\\": 385378, \\\"index\\\": 5, \\\"path\\\": \\\"/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part05\\\", \\\"result\\\": \\\"READ\\\", \\\"sha256\\\": \\\"63671f8ebb7b8eb5776a97e43bbb7cf7e9ab3ba826325885a3291dcaf2b58b40\\\"}], \\\"read_only\\\": true, \\\"schema\\\": \\\"pon-original-work-time-parts-pty-probe-v1\\\"}\\r\\n\",\"text_is_lossy\":false,\"truncated_before_offset\":false,\"utf8_pending\":false}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "decoded_observation": {
+    "parts": [
+      {
+        "error": "FileNotFoundError(2, 'No such file or directory')",
+        "index": 0,
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part00",
+        "result": "ERROR"
+      },
+      {
+        "error": "FileNotFoundError(2, 'No such file or directory')",
+        "index": 1,
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part01",
+        "result": "ERROR"
+      },
+      {
+        "error": "FileNotFoundError(2, 'No such file or directory')",
+        "index": 2,
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part02",
+        "result": "ERROR"
+      },
+      {
+        "error": "FileNotFoundError(2, 'No such file or directory')",
+        "index": 3,
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part03",
+        "result": "ERROR"
+      },
+      {
+        "error": "FileNotFoundError(2, 'No such file or directory')",
+        "index": 4,
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part04",
+        "result": "ERROR"
+      },
+      {
+        "bytes": 385378,
+        "index": 5,
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part05",
+        "result": "READ",
+        "sha256": "63671f8ebb7b8eb5776a97e43bbb7cf7e9ab3ba826325885a3291dcaf2b58b40"
+      }
+    ],
+    "read_only": true,
+    "schema": "pon-original-work-time-parts-pty-probe-v1"
+  },
+  "observed_exit_code": 0,
+  "output_complete": true,
+  "interpretation": "Original parts 00 through 04 were absent when opened by this read-only process; part05 matched its expected bytes and SHA256. The original request acknowledgements remain retained separately; no concatenation or target write was performed."
+}

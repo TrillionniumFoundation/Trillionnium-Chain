@@ -1,0 +1,47 @@
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/736a3d6dec1b/chain-architecture/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/736a3d6dec1b/chain-architecture/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 7m 09s
+     Running unittests src/lib.rs (/workspace/scratch/736a3d6dec1b/target/debug/deps/trnm_pon_node-9422a994b50b7962)
+
+running 4 tests
+test ingress::public_v3::pq_identity::tests::pq_authentication_known_refusal_preserves_clean_listener_close ... ok
+test ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_last_history_epoch_close ... FAILED
+test ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_original_listener_close_and_cold_reopen ... FAILED
+test ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_shared_classical_listener_close ... FAILED
+
+failures:
+
+---- ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_last_history_epoch_close stdout ----
+
+thread 'ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_last_history_epoch_close' (100) panicked at crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs:242:17:
+incomplete original authentication interval
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_last_history_epoch_close' (100) panicked at crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs:366:23:
+called `Result::unwrap_err()` on an `Ok` value: ()
+
+---- ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_original_listener_close_and_cold_reopen stdout ----
+
+thread 'ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_original_listener_close_and_cold_reopen' (101) panicked at crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs:242:17:
+incomplete original authentication interval
+
+thread 'ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_original_listener_close_and_cold_reopen' (101) panicked at crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs:324:60:
+called `Result::unwrap_err()` on an `Ok` value: true
+
+---- ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_shared_classical_listener_close stdout ----
+
+thread 'ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_shared_classical_listener_close' (106) panicked at crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs:242:17:
+incomplete original authentication interval
+
+thread 'ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_shared_classical_listener_close' (106) panicked at crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs:324:60:
+called `Result::unwrap_err()` on an `Ok` value: true
+
+
+failures:
+    ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_last_history_epoch_close
+    ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_original_listener_close_and_cold_reopen
+    ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_shared_classical_listener_close
+
+test result: FAILED. 1 passed; 3 failed; 0 ignored; 0 measured; 1375 filtered out; finished in 1.16s
+
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

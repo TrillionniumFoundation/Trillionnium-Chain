@@ -1,0 +1,568 @@
+{
+  "baseline": {
+    "state_backend": "authenticated-v1",
+    "finite_phase_criteria_met": false,
+    "all_signed_rounds_confirmed_in_window": false,
+    "receiver_client_state_equal": false,
+    "observer_complete": true,
+    "full_work_accepted": 18,
+    "full_work_failed": 0,
+    "genuine_budget_depletion_observed": false,
+    "receiver_and_verifier_setup_cpu_ns": 1135611278,
+    "receiver_and_verifier_setup_wall_ns": 4590275817,
+    "whole_parent_phase_cpu_ns": 8384613589,
+    "whole_parent_phase_wall_ns": 34707450286,
+    "verifier_errors": [],
+    "root_checks": {},
+    "rows": {
+      "submissions": {
+        "count": 18,
+        "first_keys": [
+          "calling_process_cpu_ns",
+          "elapsed_wall_ns",
+          "ended_ns",
+          "error",
+          "height",
+          "metrics",
+          "packet_index",
+          "public_request_body_digest",
+          "recorded_request_bytes",
+          "recorded_request_digest",
+          "response",
+          "returned_after_window",
+          "started_ns",
+          "status"
+        ]
+      },
+      "history": {
+        "count": 14,
+        "first_keys": [
+          "calling_process_cpu_ns",
+          "client_import",
+          "elapsed_wall_ns",
+          "ended_ns",
+          "error",
+          "metrics",
+          "public_request_body_digest",
+          "recorded_request_bytes",
+          "recorded_request_digest",
+          "request",
+          "response",
+          "returned_after_window",
+          "started_ns",
+          "status"
+        ]
+      }
+    },
+    "rounds": [
+      {
+        "confirmed_inside_pressure_window": true,
+        "ended_ns": 15102383267,
+        "paid_credit_depletion_observed_during_round": false,
+        "receiver_hostile_work_rejected_during_round": false,
+        "round": 0,
+        "scheduled_offset_ns": 1000000000,
+        "started_ns": 1001387691
+      },
+      {
+        "confirmed_inside_pressure_window": true,
+        "ended_ns": 28812108308,
+        "paid_credit_depletion_observed_during_round": false,
+        "receiver_hostile_work_rejected_during_round": false,
+        "round": 1,
+        "scheduled_offset_ns": 5000000000,
+        "started_ns": 15102405166
+      },
+      {
+        "confirmed_inside_pressure_window": false,
+        "ended_ns": 30004374319,
+        "observation": null,
+        "paid_credit_depletion_observed_during_round": false,
+        "receiver_hostile_work_rejected_during_round": false,
+        "round": 2,
+        "scheduled_offset_ns": 9000000000,
+        "started_ns": 28812126962
+      }
+    ],
+    "stages": {
+      "native_history_arithmetic": [
+        {
+          "stage": "admission",
+          "calls": 18,
+          "cpu_ns": 799258595,
+          "wall_ns": 3170155513
+        },
+        {
+          "stage": "verify_state",
+          "calls": 180,
+          "cpu_ns": 556923209,
+          "wall_ns": 2331420362
+        },
+        {
+          "stage": "account_graph",
+          "calls": 118,
+          "cpu_ns": 479216244,
+          "wall_ns": 1884623483
+        },
+        {
+          "stage": "publish",
+          "calls": 18,
+          "cpu_ns": 327723818,
+          "wall_ns": 1320209185
+        },
+        {
+          "stage": "activation",
+          "calls": 18,
+          "cpu_ns": 293201755,
+          "wall_ns": 1216022142
+        },
+        {
+          "stage": "state_at",
+          "calls": 54,
+          "cpu_ns": 268072459,
+          "wall_ns": 1105503551
+        },
+        {
+          "stage": "read_active",
+          "calls": 36,
+          "cpu_ns": 240690852,
+          "wall_ns": 1078113051
+        },
+        {
+          "stage": "verify_history",
+          "calls": 54,
+          "cpu_ns": 119596983,
+          "wall_ns": 346271287
+        },
+        {
+          "stage": "delta",
+          "calls": 945,
+          "cpu_ns": 83403052,
+          "wall_ns": 310399620
+        },
+        {
+          "stage": "complete_commitment",
+          "calls": 198,
+          "cpu_ns": 74723056,
+          "wall_ns": 575872921
+        },
+        {
+          "stage": "execute",
+          "calls": 18,
+          "cpu_ns": 23889695,
+          "wall_ns": 88936626
+        },
+        {
+          "stage": "packet",
+          "calls": 963,
+          "cpu_ns": 22010928,
+          "wall_ns": 22442502
+        },
+        {
+          "stage": "persisted_state_root",
+          "calls": 144,
+          "cpu_ns": 8509141,
+          "wall_ns": 85487300
+        },
+        {
+          "stage": "record",
+          "calls": 1800,
+          "cpu_ns": 7549758,
+          "wall_ns": 8293662
+        },
+        {
+          "stage": "complete_state_root",
+          "calls": 24,
+          "cpu_ns": 6458599,
+          "wall_ns": 81606701
+        },
+        {
+          "stage": "execution_parent_binding",
+          "calls": 18,
+          "cpu_ns": 2823919,
+          "wall_ns": 2838530
+        }
+      ],
+      "client_native_history_arithmetic": [
+        {
+          "stage": "verify_state",
+          "calls": 168,
+          "cpu_ns": 3964410927,
+          "wall_ns": 16696467688
+        },
+        {
+          "stage": "account_graph",
+          "calls": 124,
+          "cpu_ns": 3738849684,
+          "wall_ns": 15396977190
+        },
+        {
+          "stage": "admission",
+          "calls": 14,
+          "cpu_ns": 3424224411,
+          "wall_ns": 14486087764
+        },
+        {
+          "stage": "publish",
+          "calls": 14,
+          "cpu_ns": 1751352990,
+          "wall_ns": 7197680450
+        },
+        {
+          "stage": "activation",
+          "calls": 2,
+          "cpu_ns": 1541348017,
+          "wall_ns": 6682407941
+        },
+        {
+          "stage": "state_at",
+          "calls": 42,
+          "cpu_ns": 975755608,
+          "wall_ns": 4428487205
+        },
+        {
+          "stage": "read_active",
+          "calls": 6,
+          "cpu_ns": 247419130,
+          "wall_ns": 1090670002
+        },
+        {
+          "stage": "verify_history",
+          "calls": 46,
+          "cpu_ns": 171887033,
+          "wall_ns": 709397290
+        },
+        {
+          "stage": "complete_commitment",
+          "calls": 182,
+          "cpu_ns": 170707677,
+          "wall_ns": 1012958206
+        },
+        {
+          "stage": "delta",
+          "calls": 629,
+          "cpu_ns": 134551554,
+          "wall_ns": 441097418
+        },
+        {
+          "stage": "persisted_state_root",
+          "calls": 142,
+          "cpu_ns": 39879925,
+          "wall_ns": 39981574
+        },
+        {
+          "stage": "execute",
+          "calls": 14,
+          "cpu_ns": 27171066,
+          "wall_ns": 179967853
+        },
+        {
+          "stage": "complete_state_root",
+          "calls": 72,
+          "cpu_ns": 24423567,
+          "wall_ns": 176405284
+        },
+        {
+          "stage": "packet",
+          "calls": 643,
+          "cpu_ns": 19684772,
+          "wall_ns": 94962466
+        },
+        {
+          "stage": "record",
+          "calls": 1180,
+          "cpu_ns": 7713635,
+          "wall_ns": 8211439
+        },
+        {
+          "stage": "execution_parent_binding",
+          "calls": 14,
+          "cpu_ns": 4976127,
+          "wall_ns": 81003778
+        }
+      ]
+    }
+  },
+  "valid-work-root": {
+    "state_backend": "authenticated-v1",
+    "finite_phase_criteria_met": false,
+    "all_signed_rounds_confirmed_in_window": false,
+    "receiver_client_state_equal": false,
+    "observer_complete": true,
+    "full_work_accepted": 350,
+    "full_work_failed": 0,
+    "genuine_budget_depletion_observed": false,
+    "receiver_and_verifier_setup_cpu_ns": 1116432812,
+    "receiver_and_verifier_setup_wall_ns": 4495436141,
+    "whole_parent_phase_cpu_ns": 8710867621,
+    "whole_parent_phase_wall_ns": 34997214955,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "root_checks": {
+      "aggregate_membership_verified": true,
+      "aggregate_scoped_cpu_ns": 0,
+      "checked_acquisitions_complete": true,
+      "cold_state_equal": true,
+      "criteria_met": false,
+      "expected_legal_counts_and_tip": false,
+      "hostile_packets_absent_cold": true,
+      "hostile_packets_absent_live": true,
+      "mutation_owner_cpu_ns": 5180366206,
+      "original_campaign_qualified": false,
+      "whole_domain_paid_reconciled": true
+    },
+    "rows": {
+      "submissions": {
+        "count": 7,
+        "first_keys": [
+          "calling_process_cpu_ns",
+          "elapsed_wall_ns",
+          "ended_ns",
+          "error",
+          "height",
+          "metrics",
+          "packet_index",
+          "public_request_body_digest",
+          "recorded_request_bytes",
+          "recorded_request_digest",
+          "response",
+          "returned_after_window",
+          "started_ns",
+          "status"
+        ]
+      },
+      "history": {
+        "count": 5,
+        "first_keys": [
+          "calling_process_cpu_ns",
+          "client_import",
+          "elapsed_wall_ns",
+          "ended_ns",
+          "error",
+          "metrics",
+          "public_request_body_digest",
+          "recorded_request_bytes",
+          "recorded_request_digest",
+          "request",
+          "response",
+          "returned_after_window",
+          "started_ns",
+          "status"
+        ]
+      }
+    },
+    "rounds": [
+      {
+        "accepted_work_admission_refusal_during_round": true,
+        "confirmed_inside_pressure_window": false,
+        "ended_ns": 30053569951,
+        "observation": null,
+        "paid_credit_depletion_observed_during_round": false,
+        "receiver_hostile_work_rejected_during_round": false,
+        "round": 0,
+        "scheduled_offset_ns": 1000000000,
+        "signed_root_responses_inside_round": 175,
+        "started_ns": 1050950036
+      }
+    ],
+    "stages": {
+      "native_history_arithmetic": [
+        {
+          "stage": "admission",
+          "calls": 323,
+          "cpu_ns": 4017821351,
+          "wall_ns": 27245535928
+        },
+        {
+          "stage": "state_at",
+          "calls": 336,
+          "cpu_ns": 3165793166,
+          "wall_ns": 22060084363
+        },
+        {
+          "stage": "verify_state",
+          "calls": 385,
+          "cpu_ns": 2822236581,
+          "wall_ns": 20135964620
+        },
+        {
+          "stage": "account_graph",
+          "calls": 354,
+          "cpu_ns": 2534630686,
+          "wall_ns": 17894289899
+        },
+        {
+          "stage": "read_active",
+          "calls": 51,
+          "cpu_ns": 490941699,
+          "wall_ns": 2247682575
+        },
+        {
+          "stage": "execute",
+          "calls": 255,
+          "cpu_ns": 453426416,
+          "wall_ns": 2778593545
+        },
+        {
+          "stage": "delta",
+          "calls": 563,
+          "cpu_ns": 157634455,
+          "wall_ns": 744560073
+        },
+        {
+          "stage": "complete_commitment",
+          "calls": 387,
+          "cpu_ns": 129070908,
+          "wall_ns": 775675430
+        },
+        {
+          "stage": "publish",
+          "calls": 7,
+          "cpu_ns": 125334875,
+          "wall_ns": 599399243
+        },
+        {
+          "stage": "activation",
+          "calls": 7,
+          "cpu_ns": 107805405,
+          "wall_ns": 189066461
+        },
+        {
+          "stage": "verify_history",
+          "calls": 21,
+          "cpu_ns": 42812279,
+          "wall_ns": 197993475
+        },
+        {
+          "stage": "execution_parent_binding",
+          "calls": 255,
+          "cpu_ns": 40639878,
+          "wall_ns": 450420498
+        },
+        {
+          "stage": "packet",
+          "calls": 570,
+          "cpu_ns": 24872953,
+          "wall_ns": 25162951
+        },
+        {
+          "stage": "record",
+          "calls": 1090,
+          "cpu_ns": 10804115,
+          "wall_ns": 88698519
+        },
+        {
+          "stage": "complete_state_root",
+          "calls": 24,
+          "cpu_ns": 6726679,
+          "wall_ns": 6769237
+        },
+        {
+          "stage": "persisted_state_root",
+          "calls": 56,
+          "cpu_ns": 3247299,
+          "wall_ns": 158790313
+        }
+      ],
+      "client_native_history_arithmetic": [
+        {
+          "stage": "admission",
+          "calls": 5,
+          "cpu_ns": 1403020135,
+          "wall_ns": 13296540276
+        },
+        {
+          "stage": "verify_state",
+          "calls": 35,
+          "cpu_ns": 1133877249,
+          "wall_ns": 11326646205
+        },
+        {
+          "stage": "account_graph",
+          "calls": 24,
+          "cpu_ns": 1089253706,
+          "wall_ns": 10657761129
+        },
+        {
+          "stage": "publish",
+          "calls": 5,
+          "cpu_ns": 737484127,
+          "wall_ns": 7083348940
+        },
+        {
+          "stage": "state_at",
+          "calls": 13,
+          "cpu_ns": 406605207,
+          "wall_ns": 3894711517
+        },
+        {
+          "stage": "read_active",
+          "calls": 2,
+          "cpu_ns": 89411269,
+          "wall_ns": 801538715
+        },
+        {
+          "stage": "complete_commitment",
+          "calls": 40,
+          "cpu_ns": 35615039,
+          "wall_ns": 479813545
+        },
+        {
+          "stage": "verify_history",
+          "calls": 8,
+          "cpu_ns": 28997574,
+          "wall_ns": 117914902
+        },
+        {
+          "stage": "delta",
+          "calls": 85,
+          "cpu_ns": 26654355,
+          "wall_ns": 205764139
+        },
+        {
+          "stage": "execute",
+          "calls": 5,
+          "cpu_ns": 10720915,
+          "wall_ns": 187824839
+        },
+        {
+          "stage": "complete_state_root",
+          "calls": 13,
+          "cpu_ns": 5746261,
+          "wall_ns": 94598027
+        },
+        {
+          "stage": "packet",
+          "calls": 90,
+          "cpu_ns": 4104248,
+          "wall_ns": 4169611
+        },
+        {
+          "stage": "persisted_state_root",
+          "calls": 20,
+          "cpu_ns": 2318546,
+          "wall_ns": 90292698
+        },
+        {
+          "stage": "execution_parent_binding",
+          "calls": 5,
+          "cpu_ns": 1595779,
+          "wall_ns": 90407127
+        },
+        {
+          "stage": "record",
+          "calls": 159,
+          "cpu_ns": 1593065,
+          "wall_ns": 1681824
+        },
+        {
+          "stage": "activation",
+          "calls": 0,
+          "cpu_ns": 0,
+          "wall_ns": 0
+        }
+      ]
+    }
+  }
+}

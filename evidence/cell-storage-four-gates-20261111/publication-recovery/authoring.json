@@ -1,0 +1,244 @@
+{
+  "schema": "cell-four-gate-publication-authoring-v1",
+  "runtime_head": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "base_head": "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6",
+  "pr": 923,
+  "ci_changes": {
+    "codeql_workflow": ".github/workflows/codeql-real-exact-source.yml",
+    "add_exact_pull_request_base": "fix/chain-cell-paged-release-34e09-20261110",
+    "next_arch_workflow": ".github/workflows/pon-next-architecture-security.yml",
+    "contract": "scripts/ci/test_cell_storage_convergence_ci.py",
+    "change": "In each of the component/owner loops add stem=\"${selector//:/-}\" immediately before run-command; use $stem only in native-storage-component-/native-storage- labels and matching log-reader filenames. Keep cargo \"$selector\", --test \"$selector\", --exact, all guards, deadlines, budgets, complete suites and failure exits unchanged. Change the two exact-body constants and all affected selector-label/log-path negative controls consistently. Do not change run-command.sh or other workflow bodies.",
+    "source_binding_scope": "Refresh exactly the changed two documentation files, two workflow files and one CI contract file in the existing PQ corpus. Preserve the full existing roster and qualification flags."
+  },
+  "evidence_readme": "# Cell storage four-gate continuation — retained observations\n\n**Local native and research observations PASS on runtime C3\n`030de92be05bfd4f73e199098c12dfeaedf29b17`. Production qualification remains HOLD.**\n\nThe complete continuation passed 68/68 candidate commands and 7/7 separate\nobserver/build commands. A fresh actual paged-model operation completed\nwithin its original 300-second operation. Hosted CI is a separate gate:\nsix C3 workflows were observed failed. This record retains the failures and\ndoes not turn successful local execution into production qualification.\n\nThe [sole development plan](../../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)\nand [four-gate contract](../../docs/development/specs/pon/CELL_STORAGE_FOUR_GATE_CONTINUATION_V1.md)\ndefine the implementation and acceptance boundaries. This directory records\nobservations; it is not a second development plan.\n\n## Source identities and attribution\n\n| Source | Exact commit | Meaning |\n| --- | --- | --- |\n| #879 base | 30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6 | Original contracts and resource limits |\n| Test-only before | 6985aca3803debe2945eebbc55e6c495598ae609 | Three unchanged TCP controls on the unmodified #879 scheduling runtime |\n| C1 | 987e248f12760449ca111c12ff03f50be953a324 | Runtime implementation; initial source guard refused sparse entries |\n| C2 | 3592b85b04a2800791c342df6ab3d0cd903072f2 | Complete continuation runner; actual unsupported FIFO-test API failure |\n| C3 | 030de92be05bfd4f73e199098c12dfeaedf29b17 | Pinned mkfifoat(CWD, ...) test API and matching source binding; all recorded current native gates passed |\n\nC3 tree is `21e970bfdb11ab64403d2af5f3c56536a2961f80`.\nThe publication descendant adds documentation/evidence, two narrowly scoped\nCI workflow repairs, the matching strict CI contract and exact source pins.\nIts Rust, Cargo and native/model execution runner bytes remain those of C3.\nNative observations are not retrospectively relabeled with the publication head.\n\n## Implementation and open work\n\n| Direction | Implemented and exercised | Remaining implementation or qualification |\n| --- | --- | --- |\n| Discovery | Bounded time shares reach later pinned bootstrap sources while preserving the original absolute deadline and every connection/byte/signature reservation | Independent bootstrap operation, current authority, permissionless Sybil/eclipse resistance and WAN qualification |\n| Version consistency | One manager-bound revisioned complete-release CAS; both actual closures admitted before assignment; stale/ABA/foreign refusal; paired eviction protection and actual sealed research use | Durable original Hepta CURRENT, crash/revocation ownership and ordinary FinalUse integration |\n| Retention | Existing bounded schema/arena/repair-ledger checks before admission/reconciliation and again before physical copy; original durable debits survive refusal; nonblocking regular-file CPS1 admission | Approved replacement-domain successor owner, independent remote read challenges, actual funded renewal/settlement and sustained custody |\n| Performance | Cold/prefetched/warm/hot byte-path instrumentation, chunk reuse, 1,000 raw hot samples and cumulative real-model milestones | Controlled WAN and independent-load distributions, full inference/first-token latency and target service qualification |\n\nThe inherited authenticated V3 protocol supports at most four explicitly\npinned bootstraps and two rounds, signed provider/query statements, nonce\nbinding, expiry/withdrawal and quotas. This change schedules those sources;\nit does not provide an identity-independence oracle. Six local storage slots\nremain one operational failure domain. Same-provider repair is not a complete\nlost-provider replacement lifecycle. Hashes and funding admission do not\nestablish permanent retention, escrow or a completed paid renewal.\n\n## Native validation on C3\n\n| Execution | Recorded result |\n| --- | --- |\n| Complete DA crate | 785 unit + 34 integration + 16 documentation = **835 passed** |\n| Node storage, default | **44 passed** |\n| Node storage, pq-native-openssl | **44 passed** |\n| Sealed V2 / paged sealed examples | **11 passed each** |\n| Actual sealed-worker Python process | **24 passed**, original exact-roster reader passed |\n| Original required DA controls | **5 exact executions + 5 strict readbacks passed** |\n| Original required Node controls | **13 exact executions + 13 strict readbacks passed** |\n| Discovery / storage CI controls | **5 / 19 passed** |\n| Source-integrity negative controls | **43 passed** |\n| PQ integration controls | **59 passed** |\n| Next-architecture Python controls | **33 passed** |\n| Other original gates | Locked/offline default and all-feature graphs, fmt, inventory, PQ source bindings, repository links, six vectors/fixtures, strict default DA/Node and release workspace/all-target/all-feature Clippy passed |\n\nCounts are separate suite observations, not unique behavior counts. All\n12 added DA controls are present in actual passing output: three discovery,\neight complete-selection and one FIFO/reopen control. Both candidate and\nobserver/build lanes preserve original per-command stdout/stderr and source\nreceipts. The full source receipts agree on all 27,100 tracked entries and\n2,521,527,652 tracked bytes.\n\n### Actual before/after discovery differential\n\nThe test-only predecessor has #879 as its direct parent. Its three-test blob,\n`6244859ea896ff0c729121129660e9d065d429a6`, is identical to C3; its discovery\nruntime is unchanged from #879. Each selected before test really compiled\nand ran, reporting one exact named FAILED case and 775 filtered cases.\n\nThe principal case reports 4.0642586 seconds, withholding-source query counts\n[1, 1, 0], honest-source count 0, two connection attempts, zero response bytes\nand the original discovery absolute-deadline error. Its enclosing libtest\ntime is separately 4.09 seconds. The all-withholding case reports\n2.018328126 seconds, counts [1, 0] and one attempt.\n\nThe exhausted one-connection case also fails at the original deadline\nassertion before its later counter assertions. It does not establish a\nconnection refund or overrun. All three tests pass on C3 under their original\nfour-/two-second windows. Successful suite output suppresses their positive\ndiagnostic timings; no exact after elapsed value is invented.\n\n### Retained failures and incomplete attempts\n\n- Initial C1 and before-lane launches stopped at the unmodified complete-source\n  guard: hidden tracked worktree entries. They did not run native controls.\n  Later complete worktrees were materialized; the guard was not weakened.\n- Local sparse-source diagnostics include missing historical evidence and\n  an incomplete 180-second PQ-control attempt. Local sealed Python execution\n  had 22 successes and two AF_UNIX EPERM errors; its strict reader refused.\n- C2 records 55/68 commands passing and 13 nonzero outcomes. The FIFO test\n  used unavailable rustix::fs::mkfifo, causing E0425; strict required-test\n  readers correctly refused unexecuted cases. C3 changes only that test API\n  to the pinned dependency's mkfifoat(CWD, ...) and its source binding.\n- Synthetic early-abort runner controls check report-state handling only.\n  The retention source-review concern is not an executed metadata-corruption\n  exploit or an atomicity guarantee against noncooperating database writers.\n\nNo later success erases these observations.\n\n## Synthetic first usable-byte and residency observation\n\nEach synthetic version has a 65,536-byte base, 1,024-byte tokenizer and\n4,096-byte adapter, totaling 70,656 bytes. The versions share base/tokenizer\nand differ in the adapter. The fixture does not perform model tensor\nadmission or inference.\n\n| Observation | Milliseconds |\n| --- | ---: |\n| Empty consumer CAS to complete resident closure | 21.510309 |\n| Empty consumer CAS to first fully rehashed selected use | 21.587216 |\n| Successor prefetch to complete residency | 5.503003 |\n| Prefetched selection to first fully rehashed use | 0.101516 |\n| Fresh manager, warm disk, prepare and first verified use | 0.847720 |\n| Exact resident-hit prefetch | 0.051088 |\n| 1,000 hot full-payload checks: min / median / p95 / max | 0.074537 / 0.092747 / 0.098196 / 1.138339 |\n| Enclosing interval for those 1,000 checks | 92.687067 |\n\nCold acquisition downloads six chunks / 70,656 bytes. Successor prefetch\nreuses five chunks and downloads one new 4,096-byte chunk, preserving the\nprevious selection until an explicit switch. Both closures use seven unique\nchunks / 74,752 bytes and four shared base buffers. The provider is stopped\nand joined before warm-disk/hot access. The hot checks rehash 70,656,000 bytes\nwithout provider access.\n\nAll 1,000 samples are retained, and the statistics were independently\nrecomputed. Sequential reads in one process are not independent request-tail\nobservations. Host page-cache temperature is unspecified. These measurements\ncannot substitute for model, WAN or service latency.\n\n## Actual paged-model operation\n\nFresh operation identity:\n`47c6fe65ee2a3e339c07a1c9eee166ecd05b4596bc9fea5050ddcdd447b2c1b3`.\n\nThe run preserves the original 30 files / 280,269,602 bytes / 95 chunks,\nCTS1/TCV1/TCV2 and BEP52 pins, shard subset [0, 2, 4, 5], 300-second operation,\n360-second outer cleanup watchdog, 512-MiB payload ceiling, 8-GiB runtime RSS\nlimit and four runtime threads. All 17 mandatory metadata files were checked.\n\nIt records 570 target publications, 570 logical restore callbacks, 380\nverified shard reads and 190 unavailable callbacks. Original slots 1 and 3\nwere isolated, the catalog payload arena was made unavailable and original\nsource/delivery/staging caches were removed for this fresh operation.\nAll 95 consumer chunks and complete selected-version readback passed.\nThese are local data-removal controls, not independent-provider persistence.\n\n| Milestone | Cumulative seconds from custody-observation entry |\n| --- | ---: |\n| Pinned snapshot ready | 5.454308496 |\n| Transport complete | 15.970244233 |\n| Cold recovery complete | 62.318658435 |\n| Complete selected typed release ready | 66.401049437 |\n| Both sealed model/environment closures ready | 67.697317774 |\n| Verified two-forward receipt | 103.736029521 |\n\nThe origin follows source-spec reading/parsing and output-directory creation,\nbefore verification/packing/transport. Values are cumulative and must not be\nsummed. Typed release readiness is complete byte/type admission, not first\ntoken. Transport and custody are local/loopback.\n\nThe enclosing native wait4 observation is 103.804071986 seconds, exit 0,\n78.940139 user CPU seconds, 14.856832 system CPU seconds and maximum RSS\n1,430,912 KiB. The watchdog did not fire and the operation was not interrupted.\nThis wait4 RSS value is not simultaneous whole-process-tree memory.\nThe worker record retains one exit-time RSS gap, its 33.748335-ms\nkernel-exit-cleanup reconciliation and terminal wait4 reaping; observation\nwas not continuously gap-free.\n\nThe historical #879 evidence records 36.047064473 seconds on runtime\n`8dee97636e2b6932fb7a22b1b54f2cab09ae8406`. The runs are unpaired for host load\nand conditions; neither speedup nor causal regression follows from the\ndifference. Both action outputs favor yes. The second numeric probe,\n8517 > 8518, is incorrect. Completed forwards prove this research execution\npath, not model efficacy or remote computation correctness.\n\n## Provenance and availability incidents\n\nAll complete execution lanes have original source-before/source-after checks.\nThe model runner additionally pins its built binary, frozen candidate and\nobserver outputs, input spec and mandatory metadata.\n\nAfter execution and source-after checks, packaging raised FileNotFoundError\nfor the executed runner and a read-only probe found the whole original source\nroot absent. The cause is unknown. The runner was recovered from immutable\nC3 blob `6d6c55d908f313e059a456363b54a9e6f3bf8060`; all 17,381 bytes match original SHA256\n`2ec4016fd414fb95ea9731f9157a9856fc2ee5b0c49e7457ebd908290c611c5e`.\nRaw packaging failure, absence probe and recovery provenance are retained.\n\nBounded review of task-owned wrappers found no recursive source-root deletion;\nit does not establish the cause or rule out external activity. Before/after\nreceipts are point-in-time observations, not continued-existence guarantees.\nA separate publication checkout later passed the original C3 full physical\nsource verifier with all 27,100 entries, no skip-worktree/assume-unchanged flags\nand sparse checkout disabled. That byte audit is not a new native execution.\n\nThe local review workspace subsequently exhausted shared scratch capacity.\nA planned verified migration was interrupted when the platform marked that\nenvironment unavailable. No completed-migration or unrun CI-control success\nis claimed. Final publication continues on the already verified desktop\ncheckout. Recovered evidence keeps original bytes and hashes; material\nregenerated from original Actions artifacts has its own new archive identity.\nThe original desktop records include one invalid setup/summary.json with a\nliteral backslash-n suffix. Its raw archive is unchanged; an expanded Git copy\nuses a .json.raw suffix with a recorded filename mapping.\n\n## Hosted CI failures and publication repairs\n\nA retained C3 API page observed six failed workflows, twelve successful\nworkflows, two in progress and one queued. The snapshot is not an assertion\nabout the eventual state of every workflow. Final-head hosted results are\nseparate from C3 and must be reported at their actual observed state.\n\n| C3 workflow | Observed cause and scope |\n| --- | --- |\n| W1 QROM implementation | Frozen contract allows a 9,233-byte verifier; unchanged #879/C3 verifier is 11,172 bytes. Original bounded reader refuses before digest comparison. No bound was widened. |\n| W1 QROM closure | Frozen comparison differs at the w1_zkvm/Cargo.lock provenance hash. The related #879/C3 source blobs are identical. No frozen result was rewritten. |\n| CodeQL API exporter | Exact analyses/check selections remain empty through 39 polls and the original 1,200-second deadline. Exact #879 exporter also fails this way. |\n| Original native campaign | Build succeeds; three actual runs exit 101 on finite_experiment_criteria_met, not the 600-second watchdog. All nine phases fail original service criteria. An earlier equivalent runtime also failed; no paired timing or no-regression claim follows. |\n| Next architecture | All four matrix jobs execute native/source/summary stages successfully, then upload-artifact rejects colon-containing Rust-selector filenames. The workflow remains failed. |\n| W1 work security | Two fresh-challenge service jobs fail original four-second/six-depth business criteria. Original native variants exit 0 but finite_target_met is false; fresh variants exit 101. These are real acceptance failures, not outer-timeout substitutes. |\n\nThe CodeQL local-SARIF workflow omitted this stacked PR's exact base branch.\nPublication adds only that branch to its PR trigger. Its three-language,\nhead/prospective-merge matrix, permissions, same-repository/source guards,\nupload: never and retention predicates stay unchanged. The existing 12\nretention controls are validated separately. This local-SARIF lane does not\nsupply the Advanced Security app/API records consumed by the unchanged\nexporter; enabling it does not qualify that exporter.\n\nThe next-architecture repair replaces colon characters only in the\ncomponent/owner log filename stems and matching strict-reader paths.\nThe original Rust selectors, exact executions, full suites, source guards,\nmatrix, resource bounds and failure predicates are preserved. The existing\n19 storage-contract and five discovery-workflow controls must pass on the\nactual publication files. This is a repair to retention of CI artifacts,\nnot relaxation of native acceptance.\n\n## Remaining acceptance\n\nIndependent administration/failure domains and the original 72-hour PN5 WAN\nduty remain open. Approved replacement-domain ownership, actual remote read\nchallenges, paid renewal/settlement and ordinary Hepta CURRENT/FinalUse need\ntheir own implementation and evidence. Deployment and production remain HOLD.\n\nThe BT-like path is used for cold recovery, explicit prefetch and repair.\nNo per-token WAN weight path or Petals-style activation privacy, malicious-worker,\nexecution-correctness or timeout-charging guarantee is introduced.\n",
+  "plan_prefix": "**Cell storage four-gate continuation, 2026-11-12 UTC — local native PASS; qualification HOLD:**\n\nContinue #879 at `30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6` under the\n[four-gate contract](specs/pon/CELL_STORAGE_FOUR_GATE_CONTINUATION_V1.md).\nKeep authenticated V3 discovery, complete identities, original resource\nlimits, funding duties, failed observations and production refusal.\n\nReserve time for later pinned bootstrap sources and downstream byte work\ninside the original absolute deadline. Select one complete resident CTS1\nthrough a manager-bound increasing CAS ticket; validate model/environment,\ntensor schema and current contexts before one assignment. Reject stale,\nABA and foreign tickets, prevent legacy paths from splitting the selection,\nprotect both closures and retain paired admission across actual research\nsealing. This process-local ticket is not durable Hepta CURRENT or FinalUse.\n\nReuse bounded retention schema/arena/repair-ledger checks before admission,\nreconciliation and physical copy. Preserve a durable debit on later refusal.\nOpen CPS1 without blocking on nonregular input while retaining original\nregular-file, pin and deadline checks. These defenses are not an executed\nmetadata-corruption exploit or noncooperating-writer atomicity proof.\n\nRuntime C3 `030de92be05bfd4f73e199098c12dfeaedf29b17` passed 68/68 candidate\ncommands and 7/7 observer/build commands: 835 DA cases; 44 Node storage cases\nin each default and pq-native-openssl configuration; 11 in each sealed\nexample; all 24 actual sealed-worker Python controls and original strict\nreaders, locked graphs, source/link gates and strict Clippy.\nThe same three TCP controls actually failed on the test-only #879 predecessor\nand passed on C3 under original windows. Sparse-source refusals, incomplete\nlocal diagnostics and C2 FIFO-API compilation errors remain recorded in the\n[complete observations](../../evidence/cell-storage-four-gates-20261111/README.md).\n\nThe fresh actual paged-model operation retained 280,269,602 payload bytes,\n95 chunks, all original pins and the 300-second/8-GiB limits. Cumulative cold\nrecovery, complete selected typed release and verified two-forward receipt\noccurred at 62.318658435, 66.401049437 and 103.736029521 seconds.\nNative elapsed time was 103.804071986 seconds without watchdog termination.\nThese are local observations, not first-token/WAN latency. The historical\n36.047064473-second run is unpaired and supports no speedup or causal comparison.\n\nAfter completed native/source-after checks, packaging found the original\ntest source root absent; cause unknown. The used runner was recovered from\nits immutable C3 blob and matched its original SHA256. A separate complete\npublication checkout subsequently passed the original physical source guard\nfor all 27,100 C3 tracked entries. The later local review workspace also\nbecame unavailable during an incomplete space-migration attempt. Preserve\nthese distinct observations and use remote originals for final publication;\ndo not claim a migration or a test completed without its receipt.\n\nPublication adds evidence/documentation and two narrow CI repairs:\nthe exact current base branch in CodeQL local-SARIF triggers, and portable\nnext-architecture log filename stems with corresponding strict CI bindings.\nOriginal native selectors, budgets, guards and failure criteria remain.\nRust/Cargo/native-model runner bytes and native execution attribution stay C3.\nCodeQL upload: never stays unchanged, so local-SARIF cannot qualify the\nseparate Advanced Security API exporter. Six observed C3 hosted failures\nremain failures, including QROM frozen-input inconsistencies, API export,\nnative campaign/fresh-challenge service criteria and artifact upload.\nThe final published head's hosted CI remains a separate gate.\n\nIndependent bootstrap administration, approved replacement-domain repair\nownership, actual remote read challenges, paid renewal/settlement, the\noriginal 72-hour PN5 WAN duty and durable original CURRENT/FinalUse remain\nopen. Local code and research evidence do not promote qualification flags.\n\n",
+  "recorded_spec": "## Recorded execution and publication\n\nRuntime C3 `030de92be05bfd4f73e199098c12dfeaedf29b17` passed all 68 candidate\ncommands and seven observer/build commands. Complete DA execution passed\n785 unit, 34 integration and 16 documentation cases. Default and\npq-native-openssl Node storage each passed 44; each sealed example passed 11;\nall 24 actual sealed-worker Python controls and strict readbacks passed.\nLocked graphs, formatting, original source/CI checks and strict Clippy passed.\nThese suite counts overlap and are not a count of unique behaviors.\n\nIdentical actual TCP tests failed on the test-only #879 predecessor and\npassed on C3 under original four-/two-second windows. The before exhausted\nbudget case fails its deadline assertion before counter assertions and is\nnot evidence of a refund or overrun. C2's unavailable mkfifo test API caused\nreal compile failures; C3 uses pinned mkfifoat(CWD, ...), without relaxed gates.\n\nThe fresh 30-file, 280,269,602-byte, 95-chunk research operation preserved\nall original identities and the 300-second limit. Cold recovery, complete\ntyped release readiness and the two-forward receipt occurred cumulatively\nat 62.318658435, 66.401049437 and 103.736029521 seconds. Native elapsed\nwas 103.804071986 seconds without timeout/interruption. This local run and\nthe different historical 36.047064473-second run are not a paired benchmark.\nThe second numeric probe was wrong; completed execution is not model efficacy.\n\nAfter all source-after checks, packaging found the original source root\nabsent, for unknown cause. Raw failure/probe records and recovery of the\nexact executed runner from its C3 blob are retained. The independent\npublication checkout passed original full physical source verification of\nall 27,100 C3 entries. Later local review-environment loss interrupted a\nplanned space migration; it is not labeled complete. Source receipts remain\npoint-in-time observations, and native execution remains attributed to C3.\n\nThe publication descendant changes only documentation/evidence, two CI\nworkflow seams, the corresponding strict CI contract and source pins.\nIt enables the exact stacked PR base in the existing CodeQL local-SARIF\ntrigger, keeping upload: never, all matrix/permission/source/retention rules.\nThat does not satisfy the separate unchanged Advanced Security API exporter.\nIt also normalizes colons only in next-architecture log filename stems and\nmatching reader paths, preserving exact Rust selectors and acceptance criteria.\n\nSix C3 hosted workflow failures remain separate from the passing continuation:\nQROM verifier/frozen-lock bindings, the API exporter, original native campaign,\nfresh-challenge service criteria and next-architecture artifact upload.\nFinal-head source and hosted-CI observations have their own identities.\nSee the [complete observations](../../../../evidence/cell-storage-four-gates-20261111/README.md)\nfor raw evidence, original failures and measurement boundaries.\n\n",
+  "interrupted_local_review": {
+    "environment": "ccarenv_b64_Y2NhcmVudl82YWVjMjVlZmJiNGM4MTkxYmVjMWM3ZmYwNzdlNTE2Zg",
+    "task_checkout": "/workspace/scratch/2bfb5c18e0f8/chain-cell-storage",
+    "source_head": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+    "native_execution_affected": false,
+    "ci_name_patch_applied_locally": true,
+    "ci_name_controls_attempt": "mkdir failed with ENOSPC before commands were executed",
+    "migration_attempt": "Started copy/inventory operation to /dev/shm/chain-cell-storage-2bfb; no completion receipt. Do not assert completion or deletion.",
+    "tool_failure": "exec-server transport disconnected; failed to resume exec-server session: recovery timed out after 45s",
+    "platform_state": "unavailable",
+    "subsequent_ai395_probe": "h_view ssh://ai395/home/qq/work returned SSH255; Connection closed by configured host",
+    "recovery_policy": "Continue from independently verified desktop C3 and recovered original retained evidence. Any newly assembled archive gets its own observed identity. No native rerun attribution."
+  },
+  "c3_hosted_snapshot": {
+    "workflow_runs": [
+      {
+        "id": 43131212861,
+        "name": "trnm-required-baseline",
+        "status": "queued",
+        "conclusion": null,
+        "run_number": 3116,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212861/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212861/logs",
+        "workflow_id": 345677268
+      },
+      {
+        "id": 43131212902,
+        "name": "PoN work and time contract V1",
+        "status": "completed",
+        "conclusion": "success",
+        "run_number": 167,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212902/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212902/logs",
+        "workflow_id": 411117895
+      },
+      {
+        "id": 43131212869,
+        "name": "W1 QROM proof-chain observations",
+        "status": "completed",
+        "conclusion": "success",
+        "run_number": 152,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212869/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212869/logs",
+        "workflow_id": 410941053
+      },
+      {
+        "id": 43131213029,
+        "name": "PoN W1 QROM implementation observations",
+        "status": "completed",
+        "conclusion": "failure",
+        "run_number": 175,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131213029/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131213029/logs",
+        "workflow_id": 410335087
+      },
+      {
+        "id": 43131212884,
+        "name": "PoN classical and quantum credit contract",
+        "status": "completed",
+        "conclusion": "success",
+        "run_number": 121,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212884/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212884/logs",
+        "workflow_id": 411157687
+      },
+      {
+        "id": 43131212725,
+        "name": "Release finality reference and native baseline",
+        "status": "completed",
+        "conclusion": "success",
+        "run_number": 1101,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212725/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212725/logs",
+        "workflow_id": 384076239
+      },
+      {
+        "id": 43131212985,
+        "name": "PoN PQ network and rollback witness",
+        "status": "in_progress",
+        "conclusion": null,
+        "run_number": 482,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212985/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212985/logs",
+        "workflow_id": 403755130
+      },
+      {
+        "id": 43131212849,
+        "name": "PoN owned process cleanup",
+        "status": "completed",
+        "conclusion": "success",
+        "run_number": 1245,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212849/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212849/logs",
+        "workflow_id": 381802523
+      },
+      {
+        "id": 43131212887,
+        "name": "PoN baseline diagnostic readback",
+        "status": "completed",
+        "conclusion": "success",
+        "run_number": 1262,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212887/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212887/logs",
+        "workflow_id": 379262275
+      },
+      {
+        "id": 43131212842,
+        "name": "PoN priority acceptance",
+        "status": "in_progress",
+        "conclusion": null,
+        "run_number": 1730,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212842/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212842/logs",
+        "workflow_id": 378180520
+      },
+      {
+        "id": 43131212968,
+        "name": "PoN original large-state CPU acceptance",
+        "status": "completed",
+        "conclusion": "success",
+        "run_number": 594,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212968/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212968/logs",
+        "workflow_id": 403449877
+      },
+      {
+        "id": 43131212704,
+        "name": "CodeQL exact-source analysis export",
+        "status": "completed",
+        "conclusion": "failure",
+        "run_number": 1571,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212704/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212704/logs",
+        "workflow_id": 391170411
+      },
+      {
+        "id": 43131213399,
+        "name": "PoN original native campaign",
+        "status": "completed",
+        "conclusion": "failure",
+        "run_number": 1226,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131213399/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131213399/logs",
+        "workflow_id": 391170410
+      },
+      {
+        "id": 43131212752,
+        "name": "CPQ1 complete content bindings",
+        "status": "completed",
+        "conclusion": "success",
+        "run_number": 62,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212752/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212752/logs",
+        "workflow_id": 410926617
+      },
+      {
+        "id": 43131212881,
+        "name": "PoN four-axis throughput evidence controls",
+        "status": "completed",
+        "conclusion": "success",
+        "run_number": 110,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212881/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212881/logs",
+        "workflow_id": 411106656
+      },
+      {
+        "id": 43131212742,
+        "name": "PoN W1 transparent candidate observations",
+        "status": "completed",
+        "conclusion": "success",
+        "run_number": 453,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212742/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212742/logs",
+        "workflow_id": 406945301
+      },
+      {
+        "id": 43131212824,
+        "name": "PoN native full relation and path controls",
+        "status": "completed",
+        "conclusion": "success",
+        "run_number": 148,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212824/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212824/logs",
+        "workflow_id": 410954075
+      },
+      {
+        "id": 43131212890,
+        "name": "PoN W1 QROM closure observations",
+        "status": "completed",
+        "conclusion": "failure",
+        "run_number": 174,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212890/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212890/logs",
+        "workflow_id": 410372663
+      },
+      {
+        "id": 43131212900,
+        "name": "PoN next architecture exact-source observations",
+        "status": "completed",
+        "conclusion": "failure",
+        "run_number": 178,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212900/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212900/logs",
+        "workflow_id": 410936856
+      },
+      {
+        "id": 43131212845,
+        "name": "PoN original workspace test-profile CPU acceptance",
+        "status": "completed",
+        "conclusion": "success",
+        "run_number": 592,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212845/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212845/logs",
+        "workflow_id": 403747290
+      },
+      {
+        "id": 43131212866,
+        "name": "PoN W1 work security observations",
+        "status": "completed",
+        "conclusion": "failure",
+        "run_number": 558,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212866/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212866/logs",
+        "workflow_id": 403419146
+      }
+    ]
+  }
+}

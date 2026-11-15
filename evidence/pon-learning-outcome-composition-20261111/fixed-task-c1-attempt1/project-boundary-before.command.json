@@ -1,0 +1,25 @@
+{
+  "command": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+  "elapsed_seconds": 0.115657,
+  "exact_test_required": false,
+  "exactly_one_test_passed": null,
+  "execution_error": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-12T00:21:40.430062+00:00",
+  "interrupted": false,
+  "label": "project-boundary-before",
+  "observation_accepted": true,
+  "source_report_sha256": null,
+  "sqlite_unqualified_diagnostic": false,
+  "started_utc": "2026-11-12T00:21:40.314414+00:00",
+  "stderr": "project-boundary-before.stderr",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "project-boundary-before.stdout",
+  "stdout_sha256": "83dcff667b9e4be937ae5cc0a8df2bebd5dcd2a38c3c423e0e528ec58e8b2678",
+  "test_harness_counts": [],
+  "timed_out": false
+}

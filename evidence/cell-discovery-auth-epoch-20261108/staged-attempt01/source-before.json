@@ -1,0 +1,110 @@
+{
+  ".github/workflows/pon-next-architecture-security.yml": {
+    "blob": "a64d5abcc09a426404ad87dda75f958e69ae9f5c",
+    "sha256": "69e057ad0448be1b83eb728786894c5cccea13351459dcda30c15f9c6c465f02"
+  },
+  "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+    "blob": "fca177d2a19afd09f3d7092268f232d1759ba721",
+    "sha256": "2d05a9776d09108534bd886f488b63e6258bd65defbf4a95ad51431176413b0e"
+  },
+  "docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_AUTH_PQ_V3.md": {
+    "blob": "44c2243e3960d4eca1b00e0475a359ccccf09570",
+    "sha256": "acc0db86557467388240c58157aa562262d04132cd10ecf2c4a832882a0ef482"
+  },
+  "docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_DEV_V1.md": {
+    "blob": "aa06359f95f52b568af7014fdbbcfda2ab273302",
+    "sha256": "ab3b480e5ac767a7ecf0202504b5bbac5d51004fcb50e997f66362ccce365c33"
+  },
+  "docs/development/specs/pon/CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md": {
+    "blob": "edd0f3942e798f20fd78474f451b28147adce191",
+    "sha256": "9796d49c535de01ea79dd331e1d9c6768326770b6411b76caac0f33d53fdd5a9"
+  },
+  "evidence/cell-discovery-auth-epoch-20261108/README.md": {
+    "blob": "60e90771ca2df75cba59f4310bba62283a0f0abe",
+    "sha256": "78363b60d73f4bdfa019eebf11305d36a3f6ca248426caca9e27264bb47e0480"
+  },
+  "evidence/cell-discovery-auth-epoch-20261108/baseline/native.stderr.log": {
+    "blob": "873f646aedef2c780392c7e5d1e279c2c3bdf7df",
+    "sha256": "fe573475d7b6a7a3d875cb8f04498a41bd682d97a25d6aba357c1aa8f778ad75"
+  },
+  "evidence/cell-discovery-auth-epoch-20261108/baseline/native.stdout.log": {
+    "blob": "5966bff6460c334b72a04c157ccb3e60dc74f0e5",
+    "sha256": "9319cd0719a496d116888591005ea8d3ad1b65e1dd4540a3949fa9244ae8405c"
+  },
+  "evidence/cell-discovery-auth-epoch-20261108/baseline/summary.json": {
+    "blob": "4f449a89d3400ddb565d7beed384bcc6fbb940d4",
+    "sha256": "b8cb430a019792edbba9f0a51ac3be56593dbb9254cc9b963508c8ad2e08d05c"
+  },
+  "evidence/cell-discovery-auth-epoch-20261108/red-controls/classic_prior_operations_expiry_red.rs": {
+    "blob": "0ddaa7cc229d26c064e2d50956f273171c4fb90e",
+    "sha256": "b8cbb61b3ce39512fe851dea30cde55906813e9e5d6f7080c8b1f2771f9ac57a"
+  },
+  "evidence/cell-discovery-auth-epoch-20261108/red-controls/native.stderr.log": {
+    "blob": "4bbfcf0e9ba5fb6f79293fb07c8fb7c145f04b35",
+    "sha256": "bce3eb0efce4acd3597f124ec8aef23004c1392c7e9de9871e5b6eb2cba855ab"
+  },
+  "evidence/cell-discovery-auth-epoch-20261108/red-controls/native.stdout.log": {
+    "blob": "8f266074eb263e39a02ca7d3953f80653c5f637c",
+    "sha256": "205de36b349a839dfd2329685b7bbe079f26fd2586aebf672616d8dc1cc762ce"
+  },
+  "evidence/cell-discovery-auth-epoch-20261108/red-controls/pq_prior_operations_expiry_red.rs": {
+    "blob": "e8e2c98bdf1eefae5f1993790671b0642d718eec",
+    "sha256": "07fbd903def7c011152015ff87b32bbeb4d75ab1a118fe2a544bbd828d257962"
+  },
+  "evidence/cell-discovery-auth-epoch-20261108/red-controls/summary.json": {
+    "blob": "405695c36485269597ccd94230f0297089e4a13d",
+    "sha256": "14ae693be6293b66c6efb2d749b6835e6a911d2dfc357804f6f2edcf437c7073"
+  },
+  "formal/pon-nakamoto-v1/vectors/cell-discovery-epoch-v3.json": {
+    "blob": "6dabf6de8fcbeda8193557f2784d05e6542d9e6f",
+    "sha256": "b563eb566cd1aafaab05eaeb77fd805b2bfca087771dfa04119ce8b26b5d3d55"
+  },
+  "scripts/cell_discovery_epoch_v3_vector.py": {
+    "blob": "c1f58454529bf6d7aa6444b7b11ab20c39158d9c",
+    "sha256": "e4751cfeb43917c4774efb7db90cfe1140be9954eebf0d995b0e7b22a9f5c819"
+  },
+  "scripts/ci/test_cell_discovery_v3_ci.py": {
+    "blob": "46c57b2961333e6000fdde3061d5b9ba3dfdb045",
+    "sha256": "920710c8903df49c9e889d26fb835d9ad0314bc6277cb2c12c193e2e3eefb1c1"
+  },
+  "tests/fuzz/Cargo.lock": {
+    "blob": "5abfb3620cd64f710a4d79ba4e748384151dc992",
+    "sha256": "c13f45dd48faff9011f4adb8fbf9154d748af719679560362109bc3c319a04c1"
+  },
+  "trillionnium/Cargo.lock": {
+    "blob": "79d58dde329d85755a95177bc94f5cb20a117cdb",
+    "sha256": "7d4ca71f97da11a77264ff864be3d4a4681d71072a45e4279947f57ed7566c69"
+  },
+  "trillionnium/crates/trnm-data-availability/Cargo.toml": {
+    "blob": "4b33379fded363dedecb1bb9ffc024ee58471c86",
+    "sha256": "341695be91d792cda4c394e67f5ba7511691a7c67abda61f44ddb1d811326da6"
+  },
+  "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": {
+    "blob": "592218485be74b3f17aa3e37c65462bf4a0aa269",
+    "sha256": "9d7dbb4cd360a4e7100e1f385aac17620822786567f4ddc3766ca90fee39a5bb"
+  },
+  "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": {
+    "blob": "211f2569b48f9292bb19eec40284078cd8f7699d",
+    "sha256": "7214ea4e588a95cb0043d750123d7ad657ed7cba275ba54f1d4e62535ce7a30b"
+  },
+  "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs": {
+    "blob": "676923a1a6220aeeb7ca36c595b5b3ca13ddeb2d",
+    "sha256": "98a6e8935b64fdf6aeaf7c66d864093c31c1606aed85ef71cf81bab7979653a0"
+  },
+  "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/epoch.rs": {
+    "blob": "c0166fa9fc483dd3ca0110330b2cd8342803955b",
+    "sha256": "97e7458abf849a29ff5e27187742500fe776fa29659c3b47914f9b9035681b49"
+  },
+  "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/epoch_directory.rs": {
+    "blob": "be47e0f2cbcd0f44cf6d09601fccad9b61082b8d",
+    "sha256": "0561ca0a471389f5645e143ef12ed0b66568eee0d4f9571ff8d2c158556a6362"
+  },
+  "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/epoch_directory_tests.rs": {
+    "blob": "31729ead49ab2973b8b9bb416db8ec9f8a242162",
+    "sha256": "b891a105e9c7a21c541b98bd8d3dbfb6f588d7c28ea67cf8883ee48042ba593c"
+  },
+  "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/epoch_tests.rs": {
+    "blob": "f5a1c23b692bb7fc47b70efb29c3c054def3760b",
+    "sha256": "38a2396230322b1ba46f9dd42e7eab70f2a78e3238d373fde6d3b269c0d88a28"
+  }
+}

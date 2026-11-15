@@ -1,0 +1,3055 @@
+{
+  "schema": "sealed-template-url-classification-v1",
+  "created_utc": "2026-11-07T22:07:56.261272+00:00",
+  "operation": "classify_only_preexisting_match_offsets_no_new_pattern_scan",
+  "files": 20,
+  "preexisting_matches": 280,
+  "compressed_bytes_read": 1841848,
+  "decoded_prefix_bytes_read": 13629968,
+  "credential_candidates": [],
+  "matches": [
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "matches": 14
+    }
+  ],
+  "details": [
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 91992,
+      "read_decoded_prefix_bytes": 678838,
+      "compressed_sha256": "4cdf93f16a50f34e105d6b228845e57a94dab54f9023c26363ac955cba8b53e8",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4726,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7127,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10699,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 12951,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16199,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 81399,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 90691,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 94910,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 218272,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 264019,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 423084,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 429164,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 432118,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 678775,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 92027,
+      "read_decoded_prefix_bytes": 681055,
+      "compressed_sha256": "e844d084f477226c86ac9c280a8285baf1102d5424484c3a9d43c4b3b08b2af8",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4738,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7148,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10729,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 12990,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16250,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 81882,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 91192,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 95432,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 219265,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 265174,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 425007,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 431096,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 434056,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 680992,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 91992,
+      "read_decoded_prefix_bytes": 678838,
+      "compressed_sha256": "4cdf93f16a50f34e105d6b228845e57a94dab54f9023c26363ac955cba8b53e8",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4726,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7127,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10699,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 12951,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16199,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 81399,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 90691,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 94910,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 218272,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 264019,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 423084,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 429164,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 432118,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 678775,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 91992,
+      "read_decoded_prefix_bytes": 678838,
+      "compressed_sha256": "4cdf93f16a50f34e105d6b228845e57a94dab54f9023c26363ac955cba8b53e8",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4726,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7127,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10699,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 12951,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16199,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 81399,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 90691,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 94910,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 218272,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 264019,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 423084,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 429164,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 432118,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 678775,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 92027,
+      "read_decoded_prefix_bytes": 681055,
+      "compressed_sha256": "e844d084f477226c86ac9c280a8285baf1102d5424484c3a9d43c4b3b08b2af8",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4738,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7148,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10729,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 12990,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16250,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 81882,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 91192,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 95432,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 219265,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 265174,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 425007,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 431096,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 434056,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 680992,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 92027,
+      "read_decoded_prefix_bytes": 681055,
+      "compressed_sha256": "e844d084f477226c86ac9c280a8285baf1102d5424484c3a9d43c4b3b08b2af8",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4738,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7148,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10729,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 12990,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16250,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 81882,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 91192,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 95432,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 219265,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 265174,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 425007,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 431096,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 434056,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 680992,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 92075,
+      "read_decoded_prefix_bytes": 682533,
+      "compressed_sha256": "a001651177c24a8daa3817cbfebfcaee97e8cc38fbf3d319b6b9a6286dada91f",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4746,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7162,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10749,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 13016,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16284,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 82204,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 91526,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 95780,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 219927,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 265944,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 426289,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 432384,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 435348,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 682470,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 91992,
+      "read_decoded_prefix_bytes": 678838,
+      "compressed_sha256": "4cdf93f16a50f34e105d6b228845e57a94dab54f9023c26363ac955cba8b53e8",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4726,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7127,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10699,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 12951,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16199,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 81399,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 90691,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 94910,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 218272,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 264019,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 423084,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 429164,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 432118,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 678775,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 92075,
+      "read_decoded_prefix_bytes": 682533,
+      "compressed_sha256": "a001651177c24a8daa3817cbfebfcaee97e8cc38fbf3d319b6b9a6286dada91f",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4746,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7162,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10749,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 13016,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16284,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 82204,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 91526,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 95780,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 219927,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 265944,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 426289,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 432384,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 435348,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 682470,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 91992,
+      "read_decoded_prefix_bytes": 678838,
+      "compressed_sha256": "4cdf93f16a50f34e105d6b228845e57a94dab54f9023c26363ac955cba8b53e8",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4726,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7127,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10699,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 12951,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16199,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 81399,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 90691,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 94910,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 218272,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 264019,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 423084,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 429164,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 432118,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 678775,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 92075,
+      "read_decoded_prefix_bytes": 682533,
+      "compressed_sha256": "a001651177c24a8daa3817cbfebfcaee97e8cc38fbf3d319b6b9a6286dada91f",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4746,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7162,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10749,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 13016,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16284,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 82204,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 91526,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 95780,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 219927,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 265944,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 426289,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 432384,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 435348,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 682470,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 91992,
+      "read_decoded_prefix_bytes": 678838,
+      "compressed_sha256": "4cdf93f16a50f34e105d6b228845e57a94dab54f9023c26363ac955cba8b53e8",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4726,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7127,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10699,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 12951,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16199,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 81399,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 90691,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 94910,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 218272,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 264019,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 423084,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 429164,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 432118,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 678775,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 92027,
+      "read_decoded_prefix_bytes": 681055,
+      "compressed_sha256": "e844d084f477226c86ac9c280a8285baf1102d5424484c3a9d43c4b3b08b2af8",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4738,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7148,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10729,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 12990,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16250,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 81882,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 91192,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 95432,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 219265,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 265174,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 425007,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 431096,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 434056,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 680992,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 92075,
+      "read_decoded_prefix_bytes": 682533,
+      "compressed_sha256": "a001651177c24a8daa3817cbfebfcaee97e8cc38fbf3d319b6b9a6286dada91f",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4746,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7162,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10749,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 13016,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16284,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 82204,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 91526,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 95780,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 219927,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 265944,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 426289,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 432384,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 435348,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 682470,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 92376,
+      "read_decoded_prefix_bytes": 686228,
+      "compressed_sha256": "8cc0f54ffc149c091b5595e7599d7abdd17b068ebe43663fb4bec5348a8a734d",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4766,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7197,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10799,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 13081,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16369,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 83009,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 92361,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 96650,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 221582,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 267869,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 429494,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 435604,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 438578,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 686165,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 91992,
+      "read_decoded_prefix_bytes": 678838,
+      "compressed_sha256": "4cdf93f16a50f34e105d6b228845e57a94dab54f9023c26363ac955cba8b53e8",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4726,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7127,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10699,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 12951,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16199,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 81399,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 90691,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 94910,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 218272,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 264019,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 423084,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 429164,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 432118,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 678775,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 92376,
+      "read_decoded_prefix_bytes": 686228,
+      "compressed_sha256": "8cc0f54ffc149c091b5595e7599d7abdd17b068ebe43663fb4bec5348a8a734d",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4766,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7197,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10799,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 13081,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16369,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 83009,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 92361,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 96650,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 221582,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 267869,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 429494,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 435604,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 438578,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 686165,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 91992,
+      "read_decoded_prefix_bytes": 678838,
+      "compressed_sha256": "4cdf93f16a50f34e105d6b228845e57a94dab54f9023c26363ac955cba8b53e8",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4726,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7127,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10699,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 12951,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16199,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 81399,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 90691,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 94910,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 218272,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 264019,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 423084,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 429164,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 432118,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 678775,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 92376,
+      "read_decoded_prefix_bytes": 686228,
+      "compressed_sha256": "8cc0f54ffc149c091b5595e7599d7abdd17b068ebe43663fb4bec5348a8a734d",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4766,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7197,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10799,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 13081,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16369,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 83009,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 92361,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 96650,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 221582,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 267869,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 429494,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 435604,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 438578,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 686165,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "compressed_bytes": 92376,
+      "read_decoded_prefix_bytes": 686228,
+      "compressed_sha256": "8cc0f54ffc149c091b5595e7599d7abdd17b068ebe43663fb4bec5348a8a734d",
+      "exact_preexisting_matches": [
+        {
+          "byte_offset": 4766,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 7197,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 10799,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 13081,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 16369,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 83009,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 92361,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "0024fdb65fe9621a56e1b9801d97541a843f80b22aed0da461a8d59fa616be60"
+        },
+        {
+          "byte_offset": 96650,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "e7d2f9389072c4d342669c085ba265da586785d3528b3e64b8cf79039fe5d743"
+        },
+        {
+          "byte_offset": 221582,
+          "matched_bytes": 79,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "8a3a587f15d0d4b2ad5fe554c80b974e1e9bf83bbd9bc13d63250c8f0ccf0342"
+        },
+        {
+          "byte_offset": 267869,
+          "matched_bytes": 77,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "1c0fe9a9f0ec4fe104229d54dc4854bc58c0c636b01d7b31fc134aea236666f1"
+        },
+        {
+          "byte_offset": 429494,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 435604,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 438578,
+          "matched_bytes": 59,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "bbb5890189271e37304fab4f0d1c136d093750e61622d585a3c636ede17975f4"
+        },
+        {
+          "byte_offset": 686165,
+          "matched_bytes": 63,
+          "template_marker_present": true,
+          "url_has_userinfo": false,
+          "has_credential_parameter_name": false,
+          "credential_parameter_names": [],
+          "has_query": false,
+          "matched_fragment_sha256": "975eb8288d33dbc7210f445ecb24670424593ad3175540eda12b11a1755bcd1c"
+        }
+      ]
+    }
+  ],
+  "values_not_retained": true
+}

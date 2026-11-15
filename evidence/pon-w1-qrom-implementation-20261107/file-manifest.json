@@ -1,0 +1,169 @@
+{
+  "files": [
+    {
+      "bytes": 38772,
+      "git_blob_sha1": "735fb437d579d1cb011199374c7b5c33f7a831b8",
+      "path": ".github/workflows/pon-w1-qrom-implementation.yml",
+      "sha256": "e01f7fdc80164b0c7d9874421a2bf44d62602527d9005a392a1c7cdca5f462af"
+    },
+    {
+      "bytes": 6875,
+      "git_blob_sha1": "b8fe1e3f00d171400f57426dc3aa04d7b6faa0ca",
+      "path": "config/pon/w1-qrom-implementation-v1.json",
+      "sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22"
+    },
+    {
+      "bytes": 10677,
+      "git_blob_sha1": "6510d1385154c01e5c4da6a5ef9d3320b081159a",
+      "path": "config/pon/w1-qrom-required-tests-v1.json",
+      "sha256": "ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8"
+    },
+    {
+      "bytes": 621798,
+      "git_blob_sha1": "55da85fa469fb3a008b71fd36372411e674167ed",
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha256": "8895ad4b9a9e8d123f20f018d0db31500a66924f25246f410d734567ee7211b5"
+    },
+    {
+      "bytes": 23072,
+      "git_blob_sha1": "652e4705d2daf6d380ed3e5e1d44960e42ffb9b1",
+      "path": "docs/security/W1_QROM_IMPLEMENTATION_MAP_20261107.md",
+      "sha256": "5a3f182ff59f1b7c75f72409d70654c2c7b59d025f8797b6b1bb71e1587b6922"
+    },
+    {
+      "bytes": 12094,
+      "git_blob_sha1": "1a15253eea44632237a5c8f2c0363f1f9e54d0f6",
+      "path": "docs/security/W1_STARK_REVIEW_20261106.md",
+      "sha256": "233f24f274a072b0a82e3029a67b081d05b9588dc8fff45b9f76afe71c5303c1"
+    },
+    {
+      "bytes": 7176,
+      "git_blob_sha1": "13c695cd0ba0b6c1a2dbc3f1a699fa58f59a8626",
+      "path": "evidence/pon-w1-qrom-implementation-20261107/README.md",
+      "sha256": "30c4c21f2e9ef7fb4f9768fba6dbfae75548c1190d27e146d27d7a485e8168a7"
+    },
+    {
+      "bytes": 10174,
+      "git_blob_sha1": "f433b1a53f5b830a205fd2df78e2b34974656c7b",
+      "path": "evidence/pon-w1-qrom-implementation-20261107/RISC0-LICENSE",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    {
+      "bytes": 5796,
+      "git_blob_sha1": "8e48cd20cbae5882945898cff010b5ba65a5cd3d",
+      "path": "evidence/pon-w1-qrom-implementation-20261107/conditional-example-256.json",
+      "sha256": "446d3f4dfd79691e18fba51ea24f890f5c6eeafa48d58fb05bb9f4f0e27a42ed"
+    },
+    {
+      "bytes": 5947,
+      "git_blob_sha1": "e6253b12d4ac7b4f257a43d2ad0141313492c9c5",
+      "path": "evidence/pon-w1-qrom-implementation-20261107/conditional-example-384.json",
+      "sha256": "5ca0fa2e5479e0375975cf02ffff361756de67eb11e2c7bb9251b7b6874f2bb0"
+    },
+    {
+      "bytes": 3947,
+      "git_blob_sha1": "1cf9da4640e23eb50629a9a4dcb81ec371afb868",
+      "path": "evidence/pon-w1-qrom-implementation-20261107/conditional-unknown.json",
+      "sha256": "286b8fa0b442effb0655f59433ae5cbf9a1deeb50b69fe1260c93c69396e5ce2"
+    },
+    {
+      "bytes": 69290,
+      "git_blob_sha1": "1ce2680af62bb4074a7bb78fba9907f8ac8794de",
+      "path": "evidence/pon-w1-qrom-implementation-20261107/implementation-map.json",
+      "sha256": "eebf074f5f4a77cb7277035300294ef9308cb5ec5d0441336665bafcb6647c8b"
+    },
+    {
+      "bytes": 4598,
+      "git_blob_sha1": "112858300386c2e39abd48921d3b4b8cfd66d442",
+      "path": "evidence/pon-w1-qrom-implementation-20261107/theorem-review.json",
+      "sha256": "f804a408ebaa75fee7fd083956fac68a16e407c2b41f43a40f3a4dd2b79b1351"
+    },
+    {
+      "bytes": 22087,
+      "git_blob_sha1": "de0dfb87c3ac584cf677498f14c83d6d98d94b41",
+      "path": "evidence/pon-w1-qrom-implementation-20261107/transcript-source-review.json",
+      "sha256": "00a45cd0a0a4efc547e0d1528e3eebe87b6d0226898c997478282bcb33d4c348"
+    },
+    {
+      "bytes": 69332,
+      "git_blob_sha1": "bf398d326cce1069beaa1b053ca39ef3e157e386",
+      "path": "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz",
+      "sha256": "f6be3667106df6843f5f29c0954cdce8e2617da36c9c91a7a5198665675e0253"
+    },
+    {
+      "bytes": 26821,
+      "git_blob_sha1": "1263389f625b93bf1b1ec8626395222f45a88444",
+      "path": "evidence/pon-w1-qrom-implementation-20261107/validation.json",
+      "sha256": "7a9c94e3b4057c10e24bcb485d7d828193870a345d109dceb3fd3472571b0028"
+    },
+    {
+      "bytes": 26806,
+      "git_blob_sha1": "dd3e96b94f322d868f3d6e773bb00d9f82cd9bf9",
+      "path": "evidence/pon-w1-qrom-implementation-20261107/validation/index.json",
+      "sha256": "a02da08250662e8f81a4439bea1d4b61c7e7949703495ee7e381d8cca9bac36a"
+    },
+    {
+      "bytes": 129379,
+      "git_blob_sha1": "dd02a0356df58e0af04b41e48e5e502f597664c9",
+      "path": "evidence/pon-w1-qrom-implementation-20261107/validation/raw-observations.tar.gz",
+      "sha256": "e3e196d149bca037737ab04ada3e5ba445c98c6b0c4091f94e20dd59f367d0c9"
+    },
+    {
+      "bytes": 13887,
+      "git_blob_sha1": "5833d6672680847364cc4f9f7ea7833c458e4866",
+      "path": "scripts/ci/test_w1_control_tree_audit.py",
+      "sha256": "6a85b71660aeed309367896e18b35b150cb4c83ec22de2377f53b9b815a451b1"
+    },
+    {
+      "bytes": 6048,
+      "git_blob_sha1": "dec04044e0c390f8d06ade8782806fba7d76fc6d",
+      "path": "scripts/ci/test_w1_fri_transcript_audit.py",
+      "sha256": "4e41bf3d92d9ba1061619d06dd8ae046161abab62ad724ad35385993f501e287"
+    },
+    {
+      "bytes": 11405,
+      "git_blob_sha1": "dd6951263cbbe7fa4d738d7cd5373d6111c8054c",
+      "path": "scripts/ci/test_w1_qrom_conditional_budget.py",
+      "sha256": "2e5c5b736d35122b46f8b3599eeb83c90c9590bb3b728241799f0429ffc2f82f"
+    },
+    {
+      "bytes": 10834,
+      "git_blob_sha1": "4798472b088c4b4ac4b195f01bba6bea2fc3d92d",
+      "path": "scripts/ci/test_w1_qrom_implementation_audit.py",
+      "sha256": "56cb5f923e3082118ac71fee5ead5dedc8bcf29330320333a3d5a1f39eb0faf2"
+    },
+    {
+      "bytes": 18386,
+      "git_blob_sha1": "99e12db01727543e806c148f20bc31c92c291b6d",
+      "path": "scripts/ci/test_w1_qrom_workflow_gate.py",
+      "sha256": "9c787224ef93427688991791016e458f40b03cea2daea62e00569203fcc0ca85"
+    },
+    {
+      "bytes": 18002,
+      "git_blob_sha1": "060613386a4d6ef0357028e2e67e5df22780be53",
+      "path": "scripts/w1_control_tree_audit.py",
+      "sha256": "0e9b8e2fd9f6905f98b3df1a52b4ac2a46481b101b1d1a6afd29c2f5502f4865"
+    },
+    {
+      "bytes": 23660,
+      "git_blob_sha1": "592da9b3d84af7f2d0a34371c90e629f7378fd3f",
+      "path": "scripts/w1_fri_transcript_audit.py",
+      "sha256": "12cc991999f68d925f078888d1e18302739171ee6187bbeb2f3bfb17c19a88fc"
+    },
+    {
+      "bytes": 14985,
+      "git_blob_sha1": "dbc0a7923b003708b0104b517c8c78689558e0a4",
+      "path": "scripts/w1_qrom_conditional_budget.py",
+      "sha256": "7a70aed728c174009d63db7d3269531de0c67964558a680e548d89bcd847efca"
+    },
+    {
+      "bytes": 21678,
+      "git_blob_sha1": "d345b2f2a397a254b44ab0a38c33083f507e206d",
+      "path": "scripts/w1_qrom_implementation_audit.py",
+      "sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354"
+    }
+  ],
+  "schema": "TRNM-W1-QROM-DELIVERABLE-FILES1",
+  "scope": "Changed candidate files, excluding this self-referential manifest. Input fixture/source identities are in the separate fixed contract.",
+  "source_base_commit": "cb114b13bf848a77634e40a08b31b30c7c758e7b"
+}

@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "completed_at_utc": "2026-11-10T07:01:56.785205+00:00",
+  "elapsed_seconds": 6.673110425937921,
+  "exit_code": 0,
+  "failure": null,
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "name": "fmt",
+  "started_at_utc": "2026-11-10T07:01:50.112098+00:00"
+}

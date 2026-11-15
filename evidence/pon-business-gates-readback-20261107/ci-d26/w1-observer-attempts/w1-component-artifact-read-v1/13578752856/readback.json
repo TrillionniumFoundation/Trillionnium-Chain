@@ -1,0 +1,38 @@
+{
+  "artifact_id": 13578752856,
+  "metadata": {
+    "id": 13578752856,
+    "node_id": "MDg6QXJ0aWZhY3QxMzU3ODc1Mjg1Ng==",
+    "name": "w1-legal-strategy-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+    "size_in_bytes": 35971082,
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578752856",
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578752856/zip",
+    "expired": false,
+    "digest": "sha256:9896425d35413be1479c95a10efed59531ff895fdb181da21ca7516d3093977d",
+    "created_at": "2026-11-07T14:58:22Z",
+    "updated_at": "2026-11-07T14:58:22Z",
+    "expires_at": "2026-12-07T14:58:18Z",
+    "workflow_run": {
+      "id": 42383368504,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+    }
+  },
+  "started_utc": "2026-11-07T15:47:12.337577+00:00",
+  "errors": [
+    "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578752856/zip']' timed out after 299.9999797879718 seconds"
+  ],
+  "native_gate_validated": false,
+  "download_argv": [
+    "/usr/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578752856/zip"
+  ],
+  "finished_utc": "2026-11-07T15:52:12.343345+00:00"
+}

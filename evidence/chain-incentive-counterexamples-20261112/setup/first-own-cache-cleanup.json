@@ -1,0 +1,90 @@
+{
+  "scope": "own completed incremental compilation caches only; active Node codegen preserved",
+  "removed": [
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_task_kernel-0uy0z9n72rony",
+      "bytes": 27541310,
+      "latest_mtime": 1794440911.9214208
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_verification_profiles-2wkyoru4kuwmx",
+      "bytes": 11187420,
+      "latest_mtime": 1794440218.743016
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/build_script_build-0v9076x46uws6",
+      "bytes": 6941600,
+      "latest_mtime": 1794440882.9394827
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/pon_execute-0gdr5b5m7s06x",
+      "bytes": 4368800,
+      "latest_mtime": 1794440339.161881
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_data_availability-1opkhmu7254o6",
+      "bytes": 103133659,
+      "latest_mtime": 1794441040.9358952
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_transport-3fmvp7yiq57io",
+      "bytes": 3492287,
+      "latest_mtime": 1794441132.1202824
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_release_bundle-3lv6srwsan0gg",
+      "bytes": 10170612,
+      "latest_mtime": 1794441128.6801379
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_crypto_primitives-2p9cqrk14c5mq",
+      "bytes": 32625225,
+      "latest_mtime": 1794440911.3256505
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_mvcc_fee-0zjly82c90ucu",
+      "bytes": 130117805,
+      "latest_mtime": 1794440334.4580805
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_protocol-12gtqdhgp50yn",
+      "bytes": 25439618,
+      "latest_mtime": 1794440819.5173829
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_verification_profiles-3vmf2umbbriww",
+      "bytes": 6740159,
+      "latest_mtime": 1794440918.6971297
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_service_settlement-11bj0uwcrzqv2",
+      "bytes": 31095371,
+      "latest_mtime": 1794441081.9421399
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_crypto_primitives-01f5ix6qhqcdk",
+      "bytes": 50090471,
+      "latest_mtime": 1794440248.9737234
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_sqlite_io_boundary-15hk4urpd7c6q",
+      "bytes": 10218305,
+      "latest_mtime": 1794441095.9615395
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_mempool-10melkkh6na81",
+      "bytes": 4221223,
+      "latest_mtime": 1794441135.7958326
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_mvcc_fee-3g756ai4vg4vz",
+      "bytes": 81044151,
+      "latest_mtime": 1794441305.9615338
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_protocol-2gh4eh88hd0ns",
+      "bytes": 34266394,
+      "latest_mtime": 1794440187.312363
+    }
+  ]
+}

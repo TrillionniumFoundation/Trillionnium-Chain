@@ -1,0 +1,12 @@
+{
+  "label": "qa2-00-preflight",
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--audit"
+  ],
+  "exit": 0,
+  "source_head": "103cdf67108a667d8570388f9dd402210c160157",
+  "duration_seconds": 0.090137257007882,
+  "unittest_count": []
+}

@@ -1,0 +1,11 @@
+{
+  "files": {
+    "build.log": "d8ef264203aeae4c5f25ca59330843132310f12cc898066590c70adbc17536d3",
+    "execution.json": "ee99fc75b76d209f818524706884707f9c5705849012b90bf5f76c7576bd349d",
+    "prepared-cost.json": "d4e3058d0948954a8875e424a092eb40a1632a51dc9da741d47ac76377ba08af",
+    "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "independent_accepted": false,
+  "production_activation": false,
+  "schema": "pon-paired-cost-artifacts-v1"
+}

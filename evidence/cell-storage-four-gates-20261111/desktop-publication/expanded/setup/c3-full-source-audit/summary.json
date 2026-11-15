@@ -1,0 +1,341 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 0.1208371208049357,
+      "exit_code": 0,
+      "name": "before-head",
+      "pid": 2821341,
+      "started_unix_ns": 1794446649839610345,
+      "status": "completed",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 41,
+      "stdout_sha256": "2a3c779ef6c8106354f2ed1bd8fb24374e5751dedbfeb99a2e1de26f75d3b0fa",
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "symbolic-ref",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 0.005510480143129826,
+      "exit_code": 0,
+      "name": "before-branch",
+      "pid": 2821377,
+      "started_unix_ns": 1794446649989078818,
+      "status": "completed",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 59,
+      "stdout_sha256": "c36d08e7a4bc5676cde4f109ee4181ed3ca0b4838ec85fde84f274d92377a05e",
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 0.6170975540298969,
+      "exit_code": 0,
+      "name": "before-clean",
+      "pid": 2821381,
+      "started_unix_ns": 1794446650040021989,
+      "status": "completed",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 0.1157270350959152,
+      "exit_code": 0,
+      "name": "preflight",
+      "pid": 2821417,
+      "started_unix_ns": 1794446650658824937,
+      "status": "completed",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 180,
+      "stdout_sha256": "64d4a324a23bd14342da6eb90d43634651470c35bb7978b645ef64e9df0b624c",
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "user",
+        "--jq",
+        ".login"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 1.3198412710335106,
+      "exit_code": 0,
+      "name": "github-identity",
+      "pid": 2821426,
+      "started_unix_ns": 1794446650777180637,
+      "status": "completed",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 10,
+      "stdout_sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+      "timed_out": false,
+      "timeout_seconds": 45
+    },
+    {
+      "argv": [
+        "git",
+        "remote",
+        "get-url",
+        "origin"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 0.005645560100674629,
+      "exit_code": 0,
+      "name": "origin",
+      "pid": 2821501,
+      "started_unix_ns": 1794446652099796988,
+      "status": "completed",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 65,
+      "stdout_sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "credential.helper=",
+        "-c",
+        "credential.https://github.com.helper=!/usr/bin/gh auth git-credential",
+        "sparse-checkout",
+        "disable"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 143.6092662080191,
+      "exit_code": 0,
+      "name": "materialize-complete-tree",
+      "pid": 2821502,
+      "started_unix_ns": 1794446652118908352,
+      "status": "completed",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 0.0037507270462810993,
+      "exit_code": 0,
+      "name": "after-head",
+      "pid": 2825487,
+      "started_unix_ns": 1794446795730610628,
+      "status": "completed",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 41,
+      "stdout_sha256": "2a3c779ef6c8106354f2ed1bd8fb24374e5751dedbfeb99a2e1de26f75d3b0fa",
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "symbolic-ref",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 0.00340651604346931,
+      "exit_code": 0,
+      "name": "after-branch",
+      "pid": 2825495,
+      "started_unix_ns": 1794446795736637655,
+      "status": "completed",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 59,
+      "stdout_sha256": "c36d08e7a4bc5676cde4f109ee4181ed3ca0b4838ec85fde84f274d92377a05e",
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 1.0187874508555979,
+      "exit_code": 0,
+      "name": "after-clean",
+      "pid": 2825503,
+      "started_unix_ns": 1794446795742506225,
+      "status": "completed",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "ls-files",
+        "-v",
+        "-z"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 0.018052139086648822,
+      "exit_code": 0,
+      "name": "index-flags",
+      "pid": 2825616,
+      "started_unix_ns": 1794446796764016400,
+      "status": "completed",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 2725005,
+      "stdout_sha256": "600d9af981bf30c963c4961a96f895dbd2048ff9825ef895f8d870d7508193ea",
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "config",
+        "--bool",
+        "--get",
+        "core.sparseCheckout"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 0.005865392973646522,
+      "exit_code": 0,
+      "name": "sparse-disabled",
+      "pid": 2825617,
+      "started_unix_ns": 1794446796843097354,
+      "status": "completed",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 6,
+      "stdout_sha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "030de92be05bfd4f73e199098c12dfeaedf29b17",
+        "--output",
+        "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/source-full.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 9.192548254039139,
+      "exit_code": 0,
+      "name": "full-physical-source",
+      "pid": 2825618,
+      "started_unix_ns": 1794446796851471231,
+      "status": "completed",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 423,
+      "stdout_sha256": "48d910b14e2897b8e9720280bdff823544d2ccbc0c80698dff1a6d06b9a562f7",
+      "timed_out": false,
+      "timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 1.119715346954763,
+      "exit_code": 0,
+      "name": "final-clean",
+      "pid": 2825855,
+      "started_unix_ns": 1794446806047244636,
+      "status": "completed",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 60
+    }
+  ],
+  "completed": true,
+  "disk_after": {
+    "free": 51202039808,
+    "total": 982240026624,
+    "used": 911039713280
+  },
+  "disk_before": {
+    "free": 54687621120,
+    "total": 982240026624,
+    "used": 907554131968
+  },
+  "github_login": "ProfHepta",
+  "index_flags": {
+    "assume_unchanged": 0,
+    "skip_worktree": 0,
+    "tracked_entries": 27100
+  },
+  "minimum_free_bytes": 6442450944,
+  "passed": true,
+  "root": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+  "scope": "desktop full physical C3 publication-source audit; no native execution or remote writes",
+  "source": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "source_receipt": {
+    "base": null,
+    "candidate": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+    "tested_tree": "21e970bfdb11ab64403d2af5f3c56536a2961f80",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2521527652,
+    "tracked_entries": 27100,
+    "tracked_worktree_verified": true
+  },
+  "source_receipt_sha256": "48d910b14e2897b8e9720280bdff823544d2ccbc0c80698dff1a6d06b9a562f7"
+}

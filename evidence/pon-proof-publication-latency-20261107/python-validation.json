@@ -1,0 +1,251 @@
+{
+  "all_commands_passed": true,
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "elapsed_seconds": 0.07017286400059675,
+      "exit_code": 0,
+      "log": "project-preflight.log",
+      "log_bytes": 178,
+      "log_sha256": "689c7b32588fa46500aeb275f362173d71e6bc69f7f8a68ed6a756a13e113c73",
+      "name": "project-preflight"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_pon_proof_latency.py"
+      ],
+      "elapsed_seconds": 0.3043037050001658,
+      "exit_code": 0,
+      "log": "latency-controls.log",
+      "log_bytes": 126,
+      "log_sha256": "b81b1d6b849cb0dff93d0f3d1abfc140f84ec0b536aededece7d314d43f12a48",
+      "name": "latency-controls"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_w1_proof_latency_readback.py"
+      ],
+      "elapsed_seconds": 1.0031757239994477,
+      "exit_code": 0,
+      "log": "historical-latency-controls.log",
+      "log_bytes": 110,
+      "log_sha256": "09567ee1aa00c39c853f67d263840a820de6ab70b54bccbc68c1ba0515cdc82d",
+      "name": "historical-latency-controls"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_w1_full_v2_disposition.py"
+      ],
+      "elapsed_seconds": 0.2954532419998941,
+      "exit_code": 0,
+      "log": "retained-v2-controls.log",
+      "log_bytes": 110,
+      "log_sha256": "de645566d423d768a702db0b767f6c75adb120e33577380129d1743b55266f89",
+      "name": "retained-v2-controls"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "elapsed_seconds": 11.546478057000058,
+      "exit_code": 0,
+      "log": "ci-controls.log",
+      "log_bytes": 17023,
+      "log_sha256": "76adce52818a814cb11c6cecd257282e98ed9af832d2c75e067dbb884eaa439b",
+      "name": "ci-controls"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "elapsed_seconds": 34.80304081199938,
+      "exit_code": 0,
+      "log": "pq-source-controls.log",
+      "log_bytes": 137,
+      "log_sha256": "56c5f8d1ad739a5ff77b63eea9763f1a9fa88f80c478b122757f113ad60160fe",
+      "name": "pq-source-controls"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "elapsed_seconds": 0.3906737299994347,
+      "exit_code": 0,
+      "log": "pq-source-pins.log",
+      "log_bytes": 557,
+      "log_sha256": "34547b48ac463b9ce1ff0efa705294aa02b12f7cdc55287ce5a9980d638071ed",
+      "name": "pq-source-pins"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_repository.py"
+      ],
+      "elapsed_seconds": 184.1871955939996,
+      "exit_code": 0,
+      "log": "repository-controls.log",
+      "log_bytes": 5345,
+      "log_sha256": "43414e64271bc104c57d05e3810bf7d1715f14ff6faef6359a3eb19eeea848f2",
+      "name": "repository-controls"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "elapsed_seconds": 64.72928280800079,
+      "exit_code": 0,
+      "log": "repository-check.log",
+      "log_bytes": 307,
+      "log_sha256": "600e1d756f1478774fbfea1f0c04f5b198b4b86623410d249c746f772b899747",
+      "name": "repository-check"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_project_boundary.py"
+      ],
+      "elapsed_seconds": 4.356995721000203,
+      "exit_code": 0,
+      "log": "project-boundary-controls.log",
+      "log_bytes": 2425,
+      "log_sha256": "7d3bb99ab91cfbba3a5f5d46b18e170267c0e7c0dbc8e911b187e60c60a44f82",
+      "name": "project-boundary-controls"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "elapsed_seconds": 0.06556342900057643,
+      "exit_code": 0,
+      "log": "distributed-inventory.log",
+      "log_bytes": 35,
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "name": "distributed-inventory"
+    },
+    {
+      "command": [
+        "bash",
+        "-n",
+        "scripts/ci/ci_job.sh"
+      ],
+      "elapsed_seconds": 0.003200791999915964,
+      "exit_code": 0,
+      "log": "shell-parse.log",
+      "log_bytes": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "shell-parse"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/pq_chain_claim_guard.py"
+      ],
+      "elapsed_seconds": 0.05354441100007534,
+      "exit_code": 0,
+      "log": "pq-claim-guard.log",
+      "log_bytes": 3333,
+      "log_sha256": "6235b839d36b92351665414a731c9433441f007e727860d0c3bd138e7d731690",
+      "name": "pq-claim-guard"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "elapsed_seconds": 0.013796510000247508,
+      "exit_code": 0,
+      "log": "diff-check.log",
+      "log_bytes": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "diff-check"
+    }
+  ],
+  "collector_reconciliation": {
+    "cause": "Collector wrote per-command metadata to the same JSON filenames as the identity checker output, then compared unequal command metadata. All actual command exits were zero; both original checker stdout logs retain byte-identical full source identities.",
+    "initial_summary_result": false,
+    "original_summary_preserved": "collector-original-validation.json",
+    "resolution": "Verify every retained log digest; compare and parse original source-before.log and source-after.log; retain both identity JSON copies separately. No test outcome or source identity is changed.",
+    "source_identity_stdout_sha256": "9f50259ca71610ade31c77c787659f36e40314bbd5aa6be6ce8f5dd72e329297",
+    "tests_rerun_or_relabelled": false
+  },
+  "consensus_admission": false,
+  "native_business_campaign_executed": false,
+  "new_proofs_generated": 0,
+  "production_activation": false,
+  "schema": "trnm-proof-latency-local-validation-v1",
+  "scope": "Exact committed Python/documentation/source validation; no new proof or native business campaign.",
+  "source_after": {
+    "command": [
+      "python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "baa64498b8bb47198c99f8e9382cb36829f594f4",
+      "--output",
+      "/workspace/scratch/de92d82e166f/latency-validation-python/source-after.json"
+    ],
+    "elapsed_seconds": 4.161256457000491,
+    "exit_code": 0,
+    "log": "source-after.log",
+    "log_bytes": 423,
+    "log_sha256": "9f50259ca71610ade31c77c787659f36e40314bbd5aa6be6ce8f5dd72e329297",
+    "name": "source-after"
+  },
+  "source_before": {
+    "command": [
+      "python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "baa64498b8bb47198c99f8e9382cb36829f594f4",
+      "--output",
+      "/workspace/scratch/de92d82e166f/latency-validation-python/source-before.json"
+    ],
+    "elapsed_seconds": 3.8275389790005647,
+    "exit_code": 0,
+    "log": "source-before.log",
+    "log_bytes": 423,
+    "log_sha256": "9f50259ca71610ade31c77c787659f36e40314bbd5aa6be6ce8f5dd72e329297",
+    "name": "source-before"
+  },
+  "source_commit": "baa64498b8bb47198c99f8e9382cb36829f594f4",
+  "source_identity": {
+    "base": null,
+    "candidate": "baa64498b8bb47198c99f8e9382cb36829f594f4",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "baa64498b8bb47198c99f8e9382cb36829f594f4",
+    "tested_tree": "d7929f82e8e563298adc0aebc673ccac0cd11b47",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1026947729,
+    "tracked_entries": 10692,
+    "tracked_worktree_verified": true
+  },
+  "source_identity_equal": true,
+  "source_tree": "d7929f82e8e563298adc0aebc673ccac0cd11b47",
+  "test_counts": {
+    "ci-controls": 102,
+    "historical-latency-controls": 11,
+    "latency-controls": 27,
+    "pq-source-controls": 37,
+    "project-boundary-controls": 16,
+    "repository-controls": 50,
+    "retained-v2-controls": 11
+  }
+}

@@ -1,0 +1,57 @@
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-pon-learning-outcome-composition-20261111-7612", "remote_policy_mutated": false}
+LOCAL_USE_PRECOMMIT_RESULT {"authority": "DENY_ALL", "base_commit": "c2d67c5cf1ebb4caac525802362d5746b8fd957d", "capture_exit_code": 0, "current_permission": "NOT_EXPORTED", "native_stdout_bytes": 235411, "native_stdout_sha256": "3e7ee2dcd9019949256a2987a3c8612d976952a58503d7050198adaab11a5261", "prior_missing_fixture_original_sha256": "d4c4bef1fd99746476e5a076d615e9771bb042dc3ab1480f30d7ad6c3e648e38", "production_activation": false, "qualification": "HOLD_NO_GO", "source_sha256": {".github/workflows/pon-learning-outcome-composition.yml": "9d9b9cb19054cf6801ffafc14d4ed9da00f44026bb9bb7c80f62af1f988156a2", "scripts/capture_cell_learning_local_use.py": "e7546bf1e936f519af7a31f54b3e29e3fe15cc5f7ebd2eeadc877442f66731ab", "scripts/cell_learning_local_use_join.py": "7af37cdad0913a56ae31484e5fc46975de3a0328fc89197cc0aad9869a8700e4", "scripts/test_cell_learning_local_use_join.py": "fd9241c32e40d065d41a0fd8acdb49805238ed2acef942e21bc1dfd2d7947032"}, "test_exit_code": 0, "tests_ran": 19, "tracked_worktree_source_verification": false}
+{"result": "PASS", "mode": "--staged", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-pon-learning-outcome-composition-20261111-7612", "remote_policy_mutated": false}
+C2_SOURCE_COMMITTED {"source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81", "source_tree": "895c77972eb0a923d10115fbd167209fdd0cd8cc", "parent": "c2d67c5cf1ebb4caac525802362d5746b8fd957d", "branch": "fix/chain-pon-learning-outcome-composition-20261111-7612", "rust_source_unchanged_from_c1": true, "ignored_task_logs_explicitly_staged": ["evidence/heplcp04-completed-use-20261111/validation/cloud-missing-fixture-original.log", "evidence/pon-learning-outcome-composition-20261111/cloud-observations/c1-check-repository.log", "evidence/pon-learning-outcome-composition-20261111/cloud-observations/outcome-role-separation-no-run.log", "evidence/pon-learning-outcome-composition-20261111/cloud-observations/c1-boundary-negative-controls.log", "evidence/pon-learning-outcome-composition-20261111/cloud-observations/c1-workspace-fmt.log", "evidence/pon-learning-outcome-composition-20261111/cloud-observations/outcome-role-separation-no-run-c1.log", "evidence/pon-learning-outcome-composition-20261111/cloud-observations/c1-cargo-metadata.log", "evidence/pon-learning-outcome-composition-20261111/cloud-observations/c1-project-preflight-low-space.log", "evidence/pon-learning-outcome-composition-20261111/cloud-observations/outcome-role-separation-sqlite-build-output-0.log", "evidence/pon-learning-outcome-composition-20261111/cloud-observations/c1-source-negative-controls.log", "evidence/pon-learning-outcome-composition-20261111/commit-preparation/c2-staging-attempt1.log", "evidence/pon-learning-outcome-composition-20261111/native-c1/archive-attempt1-output.log"]}
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-pon-learning-outcome-composition-20261111-7612", "remote_policy_mutated": false}
+C2_GATES_STARTING 04f5b5515774aab6663bb80cf7831fe07367ba81
+BEGIN project-boundary-before 2026-11-12T00:58:25.651405+00:00
+END project-boundary-before 0 accepted True
+BEGIN source-before 2026-11-12T00:58:25.769312+00:00
+END source-before 0 accepted True
+BEGIN locate-rustc 2026-11-12T00:58:58.975496+00:00
+END locate-rustc 0 accepted True
+BEGIN locate-rustdoc 2026-11-12T00:58:58.993872+00:00
+END locate-rustdoc 0 accepted True
+BEGIN toolchain 2026-11-12T00:58:59.012610+00:00
+END toolchain 0 accepted True
+BEGIN cargo-version 2026-11-12T00:58:59.030404+00:00
+END cargo-version 0 accepted True
+BEGIN locked-metadata 2026-11-12T00:58:59.064903+00:00
+END locked-metadata 0 accepted True
+BEGIN format 2026-11-12T00:58:59.466167+00:00
+END format 0 accepted True
+BEGIN source-integrity-negatives 2026-11-12T00:59:21.591029+00:00
+END source-integrity-negatives 0 accepted True
+BEGIN project-boundary-negatives 2026-11-12T00:59:26.371349+00:00
+END project-boundary-negatives 0 accepted True
+BEGIN repository-and-links 2026-11-12T00:59:32.405398+00:00
+END repository-and-links 0 accepted True
+BEGIN reader-cell_adoption_readback 2026-11-12T01:00:02.760320+00:00
+END reader-cell_adoption_readback 0 accepted True
+BEGIN reader-cell_learning_scope_join 2026-11-12T01:00:03.028133+00:00
+END reader-cell_learning_scope_join 0 accepted True
+BEGIN reader-cell_learning_completion_join 2026-11-12T01:00:05.101531+00:00
+END reader-cell_learning_completion_join 0 accepted True
+BEGIN reader-cell_learning_iteration_join 2026-11-12T01:00:05.972633+00:00
+END reader-cell_learning_iteration_join 0 accepted True
+BEGIN reader-cell_learning_local_decision_join 2026-11-12T01:00:06.592134+00:00
+END reader-cell_learning_local_decision_join 0 accepted True
+BEGIN reader-cell_learning_local_use_join 2026-11-12T01:00:07.311535+00:00
+END reader-cell_learning_local_use_join 0 accepted True
+BEGIN adoption-library 2026-11-12T01:00:10.538362+00:00
+END adoption-library 0 accepted True
+BEGIN adoption-cli 2026-11-12T01:00:28.210876+00:00
+END adoption-cli 0 accepted True
+BEGIN outcome-role-separation 2026-11-12T01:00:34.547722+00:00
+END outcome-role-separation 0 accepted True
+BEGIN crypto-fixed-product-meter 2026-11-12T01:01:22.547145+00:00
+END crypto-fixed-product-meter 0 accepted True
+BEGIN node-single-output-owner 2026-11-12T01:01:22.771509+00:00
+END node-single-output-owner 0 accepted True
+BEGIN crypto-fresh-challenge-refusal 2026-11-12T01:01:24.614876+00:00
+END crypto-fresh-challenge-refusal 0 accepted True
+BEGIN workspace-strict-clippy 2026-11-12T01:01:24.842335+00:00
+END workspace-strict-clippy 101 accepted False
+BEGIN source-after 2026-11-12T01:03:01.471618+00:00
+END source-after 0 accepted True
+C2_GATES_FINISHED {"failed_commands": ["workspace-strict-clippy"], "failure": null, "missing_commands": [], "model_efficacy_certified": false, "native_test_total_required": 42, "planned_commands": 25, "production_activation": false, "reader_suites_required": 6, "recorded_commands": 25, "result": "FAIL", "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81"}

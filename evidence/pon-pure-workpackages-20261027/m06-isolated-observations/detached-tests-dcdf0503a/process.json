@@ -1,0 +1,24 @@
+{
+  "command": [
+    "/workspace/scratch/56818e4fba76/target-history/debug/deps/trnm_pon_node-f341fe9d562b1811",
+    "store::detached_admission",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 101,
+  "timed_out": false,
+  "wall_ns": 29725550716,
+  "user_cpu_ns": 29318476000,
+  "system_cpu_ns": 262081000,
+  "cpu_ns": 29580557000,
+  "max_rss_kib": 106816,
+  "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+  "minor_faults": 47377,
+  "major_faults": 0,
+  "voluntary_switches": 970,
+  "involuntary_switches": 169,
+  "cpu_scope": "entire child, not apportioned to nested wall intervals",
+  "wait4_cpu_resolution_ns": 1000,
+  "stdout_sha256": "9ddb959d71376ff939b5665a58be0183e18b54653532a9541cc72e6745aa4c30",
+  "stderr_sha256": "37c9ef6b0be4b2c57279dbc98e561d30ca43dc98e0eb38417d163f04b767c009"
+}

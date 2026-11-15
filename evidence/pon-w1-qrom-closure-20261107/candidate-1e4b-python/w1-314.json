@@ -1,0 +1,31 @@
+{
+  "args": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_w1_*.py",
+    "-v"
+  ],
+  "command_passed": true,
+  "exit_code": 0,
+  "expected_tests": 314,
+  "final_plain_OK": true,
+  "label": "w1-314",
+  "non_ok_verbose_lines": [],
+  "reported_counts": [
+    314
+  ],
+  "seconds": 54.35821815789677,
+  "stderr_bytes": 53599,
+  "stderr_sha256": "b64e20f12569dfe9730c8693752972e280d9ac7838fe805d72a03dca7d88c153",
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "successful_verbose_test_lines": 314,
+  "timed_out": false,
+  "timeout_seconds": 600,
+  "verbose_test_line_count": 314
+}

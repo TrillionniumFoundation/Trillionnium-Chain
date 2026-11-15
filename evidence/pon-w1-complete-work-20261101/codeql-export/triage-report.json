@@ -1,0 +1,415 @@
+{
+  "schema": "pon-codeql-empty-upstream-receipts-readback-v1",
+  "run_id": 41299973434,
+  "job_id": 124828823806,
+  "source_commit": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+  "source_tree": "fef6125b338e5697896c0a32d0488458d8d93244",
+  "failure_step": {
+    "number": 5,
+    "name": "Export exact PR analyses with the existing read-only token"
+  },
+  "classification": "exact_source_export_incomplete_because_no_codeql_check_or_analysis_receipt_was_returned",
+  "upstream_trigger_or_scheduling_root_cause_established": false,
+  "claim_scope": "All retained successful REST response bodies for the original observed interval were empty; this does not establish why upstream supplied no analyses/checks.",
+  "original_error": "CodeQL analyses/checks did not complete and stabilize before the deadline",
+  "original_wait_seconds": 1200,
+  "original_poll_seconds": 30,
+  "observed_export_elapsed_seconds": 1191.644902,
+  "snapshot_count": 39,
+  "printed_wait_count": 38,
+  "all_snapshots_ready": false,
+  "all_head_check_lists_empty": true,
+  "all_merge_check_lists_empty": true,
+  "all_pr_analysis_lists_empty": true,
+  "source_before_and_after": {
+    "base": null,
+    "candidate": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+    "tested_tree": "fef6125b338e5697896c0a32d0488458d8d93244",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 792454453,
+    "tracked_entries": 6852,
+    "tracked_worktree_verified": true
+  },
+  "target": {
+    "base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+    "event": "pull_request",
+    "head": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+    "head_ref": "refs/pull/675/head",
+    "merge": "c2d5f9ad0ed9402a919e4c87be3825f9aa91837d",
+    "pr": 675,
+    "ref": "refs/pull/675/merge"
+  },
+  "ordered_actual_merge_parents_verified": true,
+  "exporter_offline_tests_passed": 16,
+  "exporter_source_files": [
+    {
+      "path": "source/.github/workflows/codeql-analysis-export.yml",
+      "sha256": "b49236cd3dc667ea70598a4410b283186265403b6daf303242cfc6bee1e13136",
+      "unchanged_since_8327": true
+    },
+    {
+      "path": "source/scripts/export_codeql_analysis.py",
+      "sha256": "31217ef028048e8e47ad71257a8978fe4971d9a97c664a96b0d311bb8e7a98bf",
+      "unchanged_since_8327": true
+    }
+  ],
+  "original_result": {
+    "all_branch_historical_alerts": false,
+    "analyses": [],
+    "check_annotations": [],
+    "complete": false,
+    "error": "CodeQL analyses/checks did not complete and stabilize before the deadline",
+    "finished_utc": "2026-11-01T11:21:38.182252+00:00",
+    "full_original_sarif_upload": false,
+    "last_checks": [],
+    "schema": "codeql-exact-source-analysis-export-v2",
+    "scope": "All API-available exact PR source analyses/categories after the existing CodeQL check completes; SARIF is the API-provided subset. Source-only check annotations may lack a PR association; complete export does not qualify the PR security gate.",
+    "security_gate_changed": false,
+    "started_utc": "2026-11-01T11:01:46.537350+00:00",
+    "target": {
+      "base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+      "event": "pull_request",
+      "head": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+      "head_ref": "refs/pull/675/head",
+      "merge": "c2d5f9ad0ed9402a919e4c87be3825f9aa91837d",
+      "pr": 675,
+      "ref": "refs/pull/675/merge"
+    },
+    "target_pr_gate_authenticated": false,
+    "target_pr_gate_verdict": null
+  },
+  "poll_summaries": [
+    {
+      "directory": "analysis/poll-001",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-002",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-003",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-004",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-005",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-006",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-007",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-008",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-009",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-010",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-011",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-012",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-013",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-014",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-015",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-016",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-017",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-018",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-019",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-020",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-021",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-022",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-023",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-024",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-025",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-026",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-027",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-028",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-029",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-030",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-031",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-032",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-033",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-034",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-035",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-036",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-037",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-038",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    },
+    {
+      "directory": "analysis/poll-039",
+      "ready": false,
+      "head_check_count": 0,
+      "merge_check_count": 0,
+      "pr_analysis_count": 0,
+      "frozen_pr_source_matched": true
+    }
+  ],
+  "artifact_id": 13081197356,
+  "artifact_zip_sha256": "18db97198b35e6da6d777862460f4dcbc4d30dd44a65f653b98c3af8c637878b",
+  "artifact_zip_bytes": 293507,
+  "manifest_hash_entries_verified": 402,
+  "compile_or_native_assertion_failure": false,
+  "service_metric_failure": false,
+  "codeql_vulnerability_finding_observed": false,
+  "absence_of_findings_implies_security_pass": false,
+  "api_permission_failure_or_analysis_processing_error_observed": false,
+  "proposed_code_or_gate_change": null,
+  "retry_triggered": false,
+  "budgets_changed": false,
+  "artifact_download_count": 1,
+  "artifact_download_necessity": "Full job log named only incomplete/stability timeout; the single 293507-byte artifact was necessary to distinguish empty upstream receipts from pending analyses, source mismatch, permission errors, or processing errors.",
+  "source_or_workflow_modified": false,
+  "prior_frozen_public_directories_modified": false
+}

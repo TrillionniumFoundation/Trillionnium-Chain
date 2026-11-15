@@ -1,0 +1,54 @@
+[
+  {
+    "name": "fresh-witness",
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--features",
+      "pq-root-v3",
+      "--test",
+      "root_witness_v5_native",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "source": "b7ed54cdb7793ca0a22f85350fecc0162d089fba",
+    "exit_code": 101,
+    "elapsed_seconds": 280.69810767200033,
+    "log": "fresh-witness.log",
+    "bytes": 7200,
+    "sha256": "b089c59d7a8e2c5504bf1ad1ebeff7ca579fee183669418894aeee0950c95f78",
+    "execution": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-root-v3",
+        "--test",
+        "root_witness_v5_native",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/3069292387f3/root-readback",
+      "exit_code": 101,
+      "timed_out": false,
+      "elapsed_ns": 280676324674,
+      "log": "fresh-witness.log",
+      "executed": true,
+      "process_exit_code": 101
+    },
+    "observation": null,
+    "error": "failed command or invalid required-test inventory"
+  }
+]

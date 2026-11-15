@@ -1,0 +1,39 @@
+{
+  "bytes": 8414712,
+  "cargo_artifact": {
+    "executable": "/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/trnm_mvcc_fee-15769a7ae1c1421f",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/trnm_mvcc_fee-15769a7ae1c1421f"
+    ],
+    "fresh": false,
+    "manifest_path": "/workspace/scratch/a0d4983b1065/chain-throughput/trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+    "package_id": "path+file:///workspace/scratch/a0d4983b1065/chain-throughput/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "lib"
+      ],
+      "doc": true,
+      "doctest": true,
+      "edition": "2021",
+      "kind": [
+        "lib"
+      ],
+      "name": "trnm_mvcc_fee",
+      "src_path": "/workspace/scratch/a0d4983b1065/chain-throughput/trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
+      "test": true
+    }
+  },
+  "path": "/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/trnm_mvcc_fee-15769a7ae1c1421f",
+  "sha256": "53bb65f632402701b4d2f8eb25e4e4fb090cc4d11dd01d86af1bbb82dd0483b6"
+}

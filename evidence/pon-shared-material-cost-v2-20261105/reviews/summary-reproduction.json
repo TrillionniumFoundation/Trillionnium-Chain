@@ -1,0 +1,31 @@
+{
+  "absolute_original_paths_dereferenced": false,
+  "byte_identical": true,
+  "command": [
+    "python",
+    "summarize_shared_material_cost_v2.py",
+    "--cost-readback",
+    "cost.json",
+    "--campaign-dir",
+    "campaign",
+    "--security-report",
+    "security-0.json",
+    "--security-report",
+    "security-1.json",
+    "--audit-controls",
+    "audit.json",
+    "--audit-log",
+    "audit.log",
+    "--out",
+    "summary.json"
+  ],
+  "exact_independent_statistic_values_matched": 188,
+  "independent_statistics_crosscheck_sha256": "0250f7320ebaec78b32b3b193745b381398cac168e2df13ab4029fb40e487dab",
+  "repo_imports_required": false,
+  "reproduction": "copied only parameter inputs and standalone script into an unrelated temporary cwd; renamed inputs and relative CLI paths",
+  "result": "PASS",
+  "returncode": 0,
+  "script_sha256": "831838a010931f7c4723e0c372300cc3012e7c1b6e4a6b1f6ee979ee85808432",
+  "summary_bytes": 126872,
+  "summary_sha256": "7e03e5f7b38014ace73bb21b3f50d4a89b87c4b3d90505e6d5697dd4e8e3ce80"
+}

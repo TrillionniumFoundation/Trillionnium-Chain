@@ -1,0 +1,19 @@
+Finality 最终读回：首轮安装失败保留，唯一一次同源码重跑成功
+
+Workflow run 41299973511，source 7c5caf5bce1396976808a0f504c4163fbc1aed44，tree fef6125b338e5697896c0a32d0488458d8d93244。
+
+Attempt 1：ARM64 head job 124828701949 在 rustup toolchain install 1.95.0 --profile minimal 失败。日志明确记录 recovering from a partially installed toolchain，随后因 clippy-preview-aarch64-unknown-linux-gnu 的 bin/cargo-clippy 冲突回滚并退出 1。cargo build 尚未执行；原生 selectors 与 pipeline 步骤 skipped。always() 重算步骤因缺失本来没有生成的 summary 再次退出 1，这是次生失败。前后源码身份一致，Python reference/learning controls 已通过。原失败没有被擦除。
+
+同轮 ARM64 merge job 124828701857 成功，完整日志保留作为定位对照。该 finality workflow 的源码在 8327 与 7c5 完全相同，Rust 源码也未改变。
+
+父任务仅对失败 job 发起一次重跑，没有更改源码、workflow、工具链版本、预算或成功条件。Attempt 2 的 ARM64 head job 124832823723 已完整成功：Rust 1.95.0 安装完成，release build 完成，四个必须实际执行的 native selectors 均有 1 passed; 0 failed 的真实输出；hot/disjoint4/growth 原 pipeline step、原 counter 重算和 source-after 全成功。前后 source JSON 与 attempt1 完全相同。GitHub API 明确保留 attempt1=failure、attempt2=success，当前 workflow conclusion=success。
+
+四个原生 selector：
+- original_reference_signed_fixture_preserves_facts_and_scope
+- native_reader_enforces_adversarial_corpus_without_python
+- unchanged_python_reference_regenerates_exact_fixture_bytes
+- original_python_reader_and_native_reader_agree_on_adversarial_corpus
+
+分类：一次 runner 工具链部分安装冲突，随后一次相同源码的完整成功重跑。没有证据表明本次是 Rust 算法或原生断言回归；无需为这项故障修改共识、安全断言或业务预算。重跑未扩展既有测试能证明的范围。
+
+证据范围：三份完整 job 日志（首次失败、同轮 ARM 成功对照、唯一重跑）、两次 job 元数据、两次 workflow 状态摘要、精简报告及精确 workflow 源码。没有下载任何 artifact，也没有保存任何临时下载/物化 URL 或凭据。此前冻结 public-evidence 保持不变。

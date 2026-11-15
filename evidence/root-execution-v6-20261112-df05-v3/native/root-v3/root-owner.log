@@ -1,0 +1,29 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=["/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib"]; observed=["/data/chain-root-operation-v6-df05-target-v3/debug", "/data/chain-root-operation-v6-df05-target-v3/debug/deps", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"]; allowed=["/data/chain-root-operation-v6-df05-target-v3/debug", "/data/chain-root-operation-v6-df05-target-v3/debug/deps", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"]
+   Compiling trnm-pon-node v0.1.0 (/data/chain-root-operation-owned-20261112-df05-v4/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.90s
+     Running tests/root_recovery_v3_native.rs (/data/chain-root-operation-v6-df05-target-v3/debug/deps/root_recovery_v3_native-88197d982223f718)
+
+running 20 tests
+test native_owner_v3_authenticated_response_still_must_bind_fresh_challenge ... ok
+test native_owner_v3_callback_cannot_replace_original_owner_budget ... ok
+test native_owner_v3_cancellation_after_external_commit_requires_reconciliation ... ok
+test native_owner_v3_changed_current_bytes_and_replaced_database_are_not_authority ... ok
+test native_owner_v3_co_restored_owner_and_anchor_counterexample_remains_accepted ... ok
+test native_owner_v3_corrupt_pending_state_cannot_promote_even_after_real_cas ... ok
+test native_owner_v3_domain_binds_each_independent_identity_without_zero_fallback ... ok
+test native_owner_v3_foreign_sqlite_namespace_is_refused_without_mutating_it ... ok
+test native_owner_v3_last_observation_rechecks_persisted_revocation_and_rotation ... ok
+test native_owner_v3_lost_successful_cas_reply_requires_explicit_exact_completion ... ok
+test native_owner_v3_real_signed_append_reopen_and_exact_intent_observation ... ok
+test native_owner_v3_reopen_reverifies_retained_signature_bytes ... ok
+test native_owner_v3_replay_preserves_nonce_and_refuses_second_exact_operation ... ok
+test native_owner_v3_retained_external_anchor_refuses_whole_local_rollback ... ok
+test native_owner_v3_same_budget_exhaustion_retains_pending_before_cas ... ok
+test native_owner_v3_storage_tamper_schema_alias_and_concurrent_open_fail_closed ... ok
+test native_owner_v3_successor_cannot_reuse_an_anchor_or_writer_key ... ok
+test native_owner_v3_unadvanced_anchor_cannot_clear_pending_or_retry ... ok
+test native_owner_v3_writer_signature_is_verified_before_transport ... ok
+test native_owner_v3_wrong_enrollment_scope_and_service_aliases_are_refused ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 756.10s
+

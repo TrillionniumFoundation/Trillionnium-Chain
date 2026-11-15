@@ -1,0 +1,153 @@
+{
+  "schema": "diagnostics-staging-packaging-check-v2",
+  "observed_utc": "2026-11-03T21:44:28.385238+00:00",
+  "gzip_checks": [
+    {
+      "path": "diagnostics-116-historical-phase.json.gz",
+      "gzip_mtime": 0,
+      "uncompressed_bytes": 4923704,
+      "uncompressed_sha256": "9ccdc68d503c872a666cd1db7a89afdf1891dc6ca4727f00ad495d8bf21778e0"
+    },
+    {
+      "path": "diagnostics-build-static-records.json.gz",
+      "gzip_mtime": 0,
+      "uncompressed_bytes": 1070154,
+      "uncompressed_sha256": "e93831010504e4ad700e6b443deb51f66091889bc294646c99c43ddb8cf5273a",
+      "verified_original_entry_count": 48
+    },
+    {
+      "path": "diagnostics-full-node-native.log.gz",
+      "gzip_mtime": 0,
+      "uncompressed_bytes": 7289275,
+      "uncompressed_sha256": "9873c7d6d319969584be8d7a5e97ce149a8934f2dabbcb2a88deccb97f45ede1"
+    },
+    {
+      "path": "diagnostics-full-node-records.json.gz",
+      "gzip_mtime": 0,
+      "uncompressed_bytes": 410414,
+      "uncompressed_sha256": "f597f4d2dfd8877f0ebcbfb7ae9b8010d95cf08965375f1689d6168db6368a02",
+      "verified_original_entry_count": 4
+    },
+    {
+      "path": "diagnostics-native-records.json.gz",
+      "gzip_mtime": 0,
+      "uncompressed_bytes": 249764,
+      "uncompressed_sha256": "43b2adc9469e9c03f907ba2063e06eb331fd44b74c2917b188529c3b8504de8d",
+      "verified_original_entry_count": 4
+    },
+    {
+      "path": "diagnostics-preparation-snapshot.json.gz",
+      "gzip_mtime": 0,
+      "uncompressed_bytes": 123486,
+      "uncompressed_sha256": "cf93a3d7b1c87d054caa1d91b2b812491683eb5956c2ba45ef2bf11df6e20f96",
+      "verified_original_entry_count": 6
+    },
+    {
+      "path": "diagnostics-review-records.json.gz",
+      "gzip_mtime": 0,
+      "uncompressed_bytes": 488100,
+      "uncompressed_sha256": "e5b6cdb97b9fe4733c8959a1bb30dafe58a63e55f79a06b6b739d2bd35425f9d",
+      "verified_original_entry_count": 37
+    },
+    {
+      "path": "diagnostics-selected-native-logs.json.gz",
+      "gzip_mtime": 0,
+      "uncompressed_bytes": 849038,
+      "uncompressed_sha256": "3160accbd42eca6ceeb30f4237f15280cd2318468ff92b56d75ce9b220aa99c4",
+      "verified_original_entry_count": 61
+    },
+    {
+      "path": "fixture-activation-attempt-records.json.gz",
+      "gzip_mtime": 0,
+      "uncompressed_bytes": 72556,
+      "uncompressed_sha256": "cead7a8f360cc01048059a5eadfa8ea47f404544c59b212c170af71cde24fcf2",
+      "verified_original_entry_count": 38
+    }
+  ],
+  "markdown_links": [
+    {
+      "readme": "README-diagnostics-v2-append.md",
+      "target": "diagnostics-v2-summary.json"
+    },
+    {
+      "readme": "README-diagnostics-v2-append.md",
+      "target": "diagnostics-native-source-manifest.json"
+    },
+    {
+      "readme": "README-diagnostics-v2-append.md",
+      "target": "diagnostics-independent-review.json"
+    },
+    {
+      "readme": "README-diagnostics-v2-append.md",
+      "target": "diagnostics-historical-gap-readback.json"
+    },
+    {
+      "readme": "README-diagnostics-v2-append.md",
+      "target": "diagnostics-116-historical-phase.json.gz"
+    },
+    {
+      "readme": "README-diagnostics-v2-append.md",
+      "target": "diagnostics-interrupted-build-readback.json"
+    },
+    {
+      "readme": "README-diagnostics-v2-append.md",
+      "target": "diagnostics-layout-baseline.json"
+    },
+    {
+      "readme": "README-diagnostics-v2-append.md",
+      "target": "diagnostics-layout-candidate.json"
+    },
+    {
+      "readme": "README-diagnostics-v2-append.md",
+      "target": "diagnostics-review-records.json.gz"
+    },
+    {
+      "readme": "README-diagnostics-v2-append.md",
+      "target": "diagnostics-build-static-records.json.gz"
+    },
+    {
+      "readme": "README-diagnostics-v2-append.md",
+      "target": "diagnostics-selected-native-logs.json.gz"
+    },
+    {
+      "readme": "README-diagnostics-v2-append.md",
+      "target": "diagnostics-native-records.json.gz"
+    },
+    {
+      "readme": "README-diagnostics-v2-append.md",
+      "target": "diagnostics-artifact-index.json"
+    },
+    {
+      "readme": "README-diagnostics-v2-append.md",
+      "target": "diagnostics-full-node-native.log.gz"
+    },
+    {
+      "readme": "README-diagnostics-v2-append.md",
+      "target": "diagnostics-full-node-records.json.gz"
+    },
+    {
+      "readme": "README-diagnostics-v2-append.md",
+      "target": "diagnostics-preparation-snapshot.json.gz"
+    },
+    {
+      "readme": "README-fixture-activation-append.md",
+      "target": "fixture-activation-summary.json"
+    },
+    {
+      "readme": "README-fixture-activation-append.md",
+      "target": "fixture-activation-independent-review-v3.json"
+    },
+    {
+      "readme": "README-fixture-activation-append.md",
+      "target": "fixture-activation-attempt-records.json.gz"
+    }
+  ],
+  "all_passed": true,
+  "full974_terminal_name_sets_verified": true,
+  "all_original_ignored_preserved": true,
+  "native_tests_executed": false,
+  "targets_read": false,
+  "source_modified": false,
+  "full974_native_log_read_after_confirmed_terminal_only": true,
+  "scope": "Lossless packaging and terminal accounting of retained runs; no new native or performance execution."
+}

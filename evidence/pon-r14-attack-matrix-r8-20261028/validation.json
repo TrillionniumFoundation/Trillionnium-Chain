@@ -1,0 +1,97 @@
+{
+  "status": "PASS",
+  "scope": "artifact hashes, executed Python bytes, retained test outputs, all totals and interval records, relative Markdown links; no native execution",
+  "all_original_failures_preserved": true,
+  "archive_members_verified": 14,
+  "diagnostic_controls_passed": 11,
+  "totals": {
+    "attack_calls": 11216,
+    "receiver_digest_matches": 11215,
+    "client_minus_receiver_records": 1,
+    "actors_exit_success": 144,
+    "actors_forced_kill": 0,
+    "actors_attempt_cap": 0,
+    "planned_rounds": 27,
+    "observed_rounds": 9,
+    "confirmed_rounds": 0,
+    "unobserved_rounds": 18,
+    "planned_business_packets": 189,
+    "submitted_packets": 63,
+    "on_time_signed_submissions": 63,
+    "history_attempts": 24,
+    "on_time_history_responses": 24,
+    "history_import_attempts": 24,
+    "history_import_successes": 15,
+    "history_import_failures": 9,
+    "actual_confirmation_calls": 0
+  },
+  "receiver_path_counts": {
+    "W1_rejected_response_complete": 11081,
+    "W1_rejected_no_complete_response": 7,
+    "task_before_dispatch_work": 5,
+    "task_before_dispatch_queue": 15,
+    "connection_before_task_body": 14,
+    "connection_before_task_solution": 85,
+    "connection_before_task_hello": 3,
+    "paid_worker_dispatch_before_W1": 5
+  },
+  "client_errors": {
+    "IO: Resource temporarily unavailable (os error 11)": 125,
+    "FRAME_DEADLINE": 18,
+    "PUBLIC_CLIENT_DEADLINE": 1
+  },
+  "flow_intervals": 3804,
+  "elapsed_seconds": 0.06467876699753106,
+  "user_cpu_seconds": 0.061221,
+  "system_cpu_seconds": 0.003436999999999999,
+  "self_peak_rss_kib": 25192,
+  "verifier_script_sha256": "f190890c787d85ea05b5edb58488779c8a59b93a8ce050a1392d1d7e33c77304",
+  "files_verified": [
+    {
+      "path": "README.md",
+      "bytes": 18726,
+      "sha256": "0fb811f87817289b012bc4964ac0c4e17bc132197ffe5d94d9ce58d63e0d23f5"
+    },
+    {
+      "path": "analyze.py",
+      "bytes": 17542,
+      "sha256": "47649e52411147378c77f922a08491ae1f0d94d1a0d57bbd7c1969a5a9a0911c"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 9466,
+      "sha256": "6d006199423c5e20b760e245da97fa395390a6b439d9da600ed5834df2d64a5c"
+    },
+    {
+      "path": "flow-intervals.jsonl.gz",
+      "bytes": 148408,
+      "sha256": "8970ac84c821da4985150ce3634ad7a682b65af049b3ebb7bade81aa871a323d"
+    },
+    {
+      "path": "matrix.json",
+      "bytes": 206525,
+      "sha256": "2da3fcbdc6f16af1f137c7bf353b011a9506eabb1062179a53ad829f789c9a75"
+    },
+    {
+      "path": "readback-controls.tar.gz",
+      "bytes": 128240,
+      "sha256": "626b9f00211d247d593834dc0a765127e5ae21b5d61a00ddfdf28e7412d2cece"
+    },
+    {
+      "path": "source-binding.json",
+      "bytes": 6643,
+      "sha256": "1aecc2362e9f0ad0c3eac08b1710c6d404e42fb86c8a93941b1f24cffdc06171"
+    },
+    {
+      "path": "test_analyze.py",
+      "bytes": 5032,
+      "sha256": "1464c61e763242c32d4976f52993791c79d981d1a6c5ead57a53031147056970"
+    },
+    {
+      "path": "verify_artifacts.py",
+      "bytes": 5144,
+      "sha256": "f190890c787d85ea05b5edb58488779c8a59b93a8ce050a1392d1d7e33c77304"
+    }
+  ],
+  "work_package_2b_closed": false
+}

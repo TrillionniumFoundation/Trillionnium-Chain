@@ -1,0 +1,53 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "prospective-merge",
+    "--expected-head",
+    "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+    "--expected-base",
+    "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "--expected-merge",
+    "f135eb867d10ead2058073f78d9d82af2e174f29",
+    "--output",
+    "/workspace/scratch/822cc50e24f0/prospective-merge-822cc50e/results/prospective-source.json"
+  ],
+  "cwd": "/workspace/scratch/822cc50e24f0/prospective-merge-822cc50e/checkout",
+  "exit_code": 0,
+  "wall_seconds": 4.057797208000011,
+  "before": {
+    "head": "f135eb867d10ead2058073f78d9d82af2e174f29",
+    "tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+    "status": "",
+    "parents": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0 b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c"
+  },
+  "after": {
+    "head": "f135eb867d10ead2058073f78d9d82af2e174f29",
+    "tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+    "status": ""
+  },
+  "checker_git_blob": "c775290c138c3b41a32e654f56ed5cbe9acec3ee",
+  "checker_sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+  "stdout_sha256": "57586ec6d57912186824fd8c8317674f1cf3b6d422e4285545ab1be3c3d25a15",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "materialization": {
+    "merge": "f135eb867d10ead2058073f78d9d82af2e174f29",
+    "candidate": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+    "tracked_entries": 9587,
+    "tracked_bytes": 954728186,
+    "all_selected_blobs_already_local": true,
+    "ls_tree_sha256": "8b8f98576110301875708858d18a8668cf4b5ad3c544a7fc499b1d75cbb0bb06",
+    "borrowed_objects_read_only": "/workspace/scratch/822cc50e24f0/round2-chain-green/.git/objects",
+    "checkout": "/workspace/scratch/822cc50e24f0/prospective-merge-822cc50e/checkout",
+    "git_version": "git version 2.51.1",
+    "materialization_exit_code": 0,
+    "materialization_wall_seconds": 4.510954044999835,
+    "materialization_and_outer_checker_git_no_lazy_fetch": "1",
+    "selected_objects_verified_local_before_checkout": true,
+    "os_network_isolation_claimed": false
+  },
+  "native_tests_executed": false
+}

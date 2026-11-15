@@ -1,0 +1,229 @@
+{
+  "schema": "p3.pruned-mmcs.runner-only-review.v3",
+  "base_full_gate_source_commit": "70293cec717416ed57a97b0d326909c4227963e6",
+  "commit": "e55f7f84fbaeda2a3a033edd294773db7be3a903",
+  "tree": "81962dcfac38dcf7b158d490588c5d2fe586b840",
+  "changed_paths": [
+    "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/run_qualification_checks.py"
+  ],
+  "full_focused_gate_reexecuted": false,
+  "rust_tests": 79,
+  "required_pruned_tests": [
+    "sha_profile_pruned_mixed_heights_restore_to_native_paths",
+    "carry_profile_pruned_mixed_heights_restore_to_native_paths",
+    "extension_flattening_preserves_exact_rows_and_shared_paths",
+    "deliberately_colliding_leaves_yield_full_framed_collision",
+    "arbitrary_siblings_and_injected_row_conflict_yield_branch_collision",
+    "real_hash_rejects_duplicate_injection_shape_index_and_sibling_controls",
+    "shared_coordinate_is_the_reduced_matrix_row_not_the_global_index",
+    "conflict_search_never_erases_an_earlier_duplicate_value",
+    "a_single_row_conflict_needs_no_authentication_sibling",
+    "disjoint_valid_queries_are_not_reported_as_a_binding_violation",
+    "an_extra_cap_entry_is_outside_the_fixed_profile"
+  ],
+  "named_test_matches": 11,
+  "native_rejection_controls": 11,
+  "source_receipts_equal": true,
+  "upstream_receipts_equal": true,
+  "example_source_sha256": "a1fc0496f4013879f859eaaa9a556ebd9cd308901e8bff2d56f8cfa796c1a22a",
+  "audit_executable_sha256": "10f18b7d11784d1dfdc72b9104f006460b144636ca810364fba90274a43136a4",
+  "native_report_sha256": "06f0ca48a869b2342cf08eb18fdd6dd69a02ccbc46d6044ca9994ccd81875606",
+  "records": [
+    {
+      "stage": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.09121164912357926,
+      "stdout_sha256": "988997c4f2125bb000bfb45d61b8960d29e8705ca460be0adb22cc904f82883b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "runner-syntax",
+      "argv": [
+        "python3",
+        "-B",
+        "-c",
+        "import ast,pathlib; ast.parse(pathlib.Path('formal/pon-nakamoto-v1/p3_shared_primitive_qualification/run_qualification_checks.py').read_text()); print(\"PYTHON_AST_OK\")"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.04905113694258034,
+      "stdout_sha256": "638af00d5323f25de4c83e362106fd22eb9fab7e09e53542677715fe76b7d883",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "source-before",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "e55f7f84fbaeda2a3a033edd294773db7be3a903",
+        "--output",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/runner-review-v3/source-before.json"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 2.9467735460493714,
+      "stdout_sha256": "827a6d9b7617d2b3ccbdfc5e099f3fd0204d128671f572c8e22292ac09099be7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "cargo-metadata",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--manifest-path",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo-runner-v3/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.15841408516280353,
+      "stdout_sha256": "d0d2006ddcd2a6f9a192781df5e4ecd09d37c5a77cf85f01836100df77cdd98c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "upstream-before",
+      "argv": [
+        "python3",
+        "-B",
+        "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/verify_upstream_source.py",
+        "--repository",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo-runner-v3",
+        "--cargo-metadata",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/runner-review-v3/cargo-metadata.stdout.txt"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.18293165788054466,
+      "stdout_sha256": "c924a21dcc76689870bb33ea3a72fab5f926294d85edb5a23be4a0796f2deed5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "fmt",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo-runner-v3/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.23246846394613385,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "clippy",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--manifest-path",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo-runner-v3/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "--release",
+        "--all-targets",
+        "--all-features",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/target-runner-v3",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 15.98961444501765,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e30b23f70f3abf92bfa1d81cd74f18725970dbec9dddc3c4e67dcf79abe5bd68"
+    },
+    {
+      "stage": "rust-tests",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo-runner-v3/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "--release",
+        "--all-targets",
+        "--all-features",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/target-runner-v3"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 141.7921413341537,
+      "stdout_sha256": "9042433c41e42ed76a626fd27ef56cfc1abafb34e0ec63ea7449b408b920e9a7",
+      "stderr_sha256": "c6a180c1ace09c87748cd99c1111825e9ac61c4063b7dab1570390ad08febc9d"
+    },
+    {
+      "stage": "native-report",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "run",
+        "--manifest-path",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo-runner-v3/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "--release",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/target-runner-v3",
+        "--example",
+        "tagged_sha3_mmcs_binding"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 12.841081320075318,
+      "stdout_sha256": "06f0ca48a869b2342cf08eb18fdd6dd69a02ccbc46d6044ca9994ccd81875606",
+      "stderr_sha256": "037aa95c0cb6d649bde7f5173dc165a80de91b3d86696000bdf908a55de2caea"
+    },
+    {
+      "stage": "upstream-after",
+      "argv": [
+        "python3",
+        "-B",
+        "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/verify_upstream_source.py",
+        "--repository",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo-runner-v3",
+        "--cargo-metadata",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/runner-review-v3/cargo-metadata.stdout.txt"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.1574129438959062,
+      "stdout_sha256": "c924a21dcc76689870bb33ea3a72fab5f926294d85edb5a23be4a0796f2deed5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "source-after",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "e55f7f84fbaeda2a3a033edd294773db7be3a903",
+        "--output",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/runner-review-v3/source-after.json"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 2.7120402050204575,
+      "stdout_sha256": "827a6d9b7617d2b3ccbdfc5e099f3fd0204d128671f572c8e22292ac09099be7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "qualification": "HOLD_NO_GO",
+  "concrete_security_bits": null,
+  "complete_repository_ci": false,
+  "production_activation": false
+}

@@ -1,0 +1,198 @@
+{
+  "schema": "TRNM-RISC0-1911-ACQUISITION-PREREG1",
+  "unix_ns": 1793162458838359519,
+  "scope": "One official authenticated full compiler acquisition only; no Cargo/build/prover",
+  "authorization": "Root explicitly authorized fetching, checksum verification, complete safe extraction and version/target metadata checks; network request still subject to normal scoped auto review",
+  "source_commit": "78678915861379508bc0dc77c9ca56fe20eb35b9",
+  "script_sha256": "05354a8f2450572ef38b585e5eda3c1ff9a90df791638bae2bc25c9173492180",
+  "guard_sha256": "9981c3a138c4aefb6c4662f1e2c4c05cf5ef26e302c46763a42a2366a6334217",
+  "exact_official_url": "https://github.com/risc0/rust/releases/download/r0.1.91.1/rust-toolchain-x86_64-unknown-linux-gnu.tar.gz",
+  "archive_bytes": 515330687,
+  "archive_sha256": "e082a1dc44abdef1d95460295a70218eb294ab999b834570ec932d05641cce5d",
+  "free_before_bytes": 3441549312,
+  "projected_complete_extraction_bytes_NOT_ACTUAL_MEASUREMENT": 1744830464,
+  "minimum_free_bytes": 1073741824,
+  "required_pre_download_free_bytes": 3333902975,
+  "actual_complete_archive_header_inventory_before_extraction_required": true,
+  "archive_and_full_install_retained_on_failure": true,
+  "new_resources_root": "/tmp/w1-risc0-1911-resources-r8",
+  "system_HOME_changed": false,
+  "old_archive_or_leaf_changed": false,
+  "automatic_retry_or_resume": false,
+  "cargo_build_authorized": false,
+  "prover_authorized": false,
+  "fetch_limits": {
+    "wall_stop_seconds": 180,
+    "child_cpu_stop_seconds": 120,
+    "sampled_rss_stop_bytes": 268435456,
+    "target_growth_stop_bytes": 629145600,
+    "min_free_bytes": 1073741824
+  },
+  "install_limits": {
+    "wall_stop_seconds": 150,
+    "child_cpu_stop_seconds": 180,
+    "sampled_rss_stop_bytes": 805306368,
+    "target_growth_stop_bytes": 2147483648,
+    "min_free_bytes": 1073741824
+  },
+  "limit_semantics": "Namespace-safe supervisor sampled stop triggers plus independent GNU timeout; sampling and cleanup grace may extend observation duration. They are not cgroup kernel hard caps. Download timeout cannot be restarted. The install has its own explicit smaller bounded stage, no build or guest execution.",
+  "fetch_command": [
+    "python3",
+    "/tmp/w1-batch-phase0-guard-20261028-r8.py",
+    "--out",
+    "/tmp/w1-risc0-1911-fetch-20261028-r8",
+    "--wall-seconds",
+    "180",
+    "--cpu-seconds",
+    "120",
+    "--rss-bytes",
+    "268435456",
+    "--target",
+    "/tmp/w1-risc0-1911-resources-r8",
+    "--target-growth-bytes",
+    "629145600",
+    "--min-free-bytes",
+    "1073741824",
+    "--",
+    "timeout",
+    "--signal=TERM",
+    "--kill-after=3s",
+    "180s",
+    "python3",
+    "/tmp/w1-rust1911-acquire-20261028-r8.py",
+    "fetch",
+    "/tmp/w1-risc0-1911-fetch-20261028-r8"
+  ],
+  "install_command": [
+    "python3",
+    "/tmp/w1-batch-phase0-guard-20261028-r8.py",
+    "--out",
+    "/tmp/w1-risc0-1911-install-20261028-r8",
+    "--wall-seconds",
+    "150",
+    "--cpu-seconds",
+    "180",
+    "--rss-bytes",
+    "805306368",
+    "--target",
+    "/tmp/w1-risc0-1911-resources-r8",
+    "--target-growth-bytes",
+    "2147483648",
+    "--min-free-bytes",
+    "1073741824",
+    "--",
+    "timeout",
+    "--signal=TERM",
+    "--kill-after=3s",
+    "150s",
+    "python3",
+    "/tmp/w1-rust1911-acquire-20261028-r8.py",
+    "install",
+    "/tmp/w1-risc0-1911-install-20261028-r8"
+  ],
+  "prior_phase0_build_attempts": [
+    {
+      "component": "attempt1",
+      "receipt": "/tmp/w1-batch-phase0-20261028-r8/result.json",
+      "sha256": "a3df8f28c13dc78a369289ad9eae672abb07dc046ab13d8c0dba4f324539d09d",
+      "status": "command_failed",
+      "wall_seconds": 1.564829599999939,
+      "child_cpu_seconds": 1.2378079999999998
+    },
+    {
+      "component": "attempt2",
+      "receipt": "/tmp/w1-batch-phase0-attempt2-20261028-r8/result.json",
+      "sha256": "ba2feb7a95295994feb272fdc8f534a7d207de1623b2d22f25f37f52b2ca1a19",
+      "status": "command_failed",
+      "wall_seconds": 27.56534154500696,
+      "child_cpu_seconds": 16.077483
+    },
+    {
+      "component": "attempt3",
+      "receipt": "/tmp/w1-batch-phase0-attempt3-20261028-r8/result.json",
+      "sha256": "9d63f3070f7f83ed4f232623db016f37b705b8cbfd041edaad20a10b636655b4",
+      "status": "command_failed",
+      "wall_seconds": 2.567530654996517,
+      "child_cpu_seconds": 1.9205599999999998
+    }
+  ],
+  "prior_other_measured_setup": [
+    {
+      "component": "exact-approved-dependency-download",
+      "receipt": "/tmp/w1-batch-phase0-attempt2-download-20261028-r8/result.json",
+      "sha256": "7342d528fbb96de7c1703b7982005cd1c34d85195878dfeb9896fad4cc13f2c9",
+      "wall_seconds": 0.10843739499978255,
+      "process_cpu_seconds": 0.045628999999999996
+    },
+    {
+      "component": "read-only-compiler-adoption",
+      "receipt": "/tmp/w1-batch-attempt3-toolchain-adoption-20261028-r8.json",
+      "sha256": "ac0380e20b04dae80ba784ea6e36ad70e8750ee8705569020ac7473f8d816778",
+      "wall_seconds": 0.6570035709883086,
+      "process_cpu_seconds": 0.609292
+    },
+    {
+      "component": "three-exact-offline-resolver-commands",
+      "receipt": "/tmp/w1-batch-guest-lock-fix-20261028-r8/result.json",
+      "sha256": "a407f23ab58594563be41a3e0b158105ce9846b350021fc8186599a0efd101e9",
+      "wall_seconds": 0.4937706549972063,
+      "child_cpu_seconds": 0.405463
+    }
+  ],
+  "additional_measured_setup": [
+    {
+      "component": "fixed-dependency-graph-restoration",
+      "receipt": "/tmp/w1-batch-ruint-security-20261028-r8/restore-fixed-lock/result.json",
+      "sha256": "a611ab9ab6798386285f6f5dda2aff5f12f1a869515d0b17a680f8b17c2660af",
+      "wall_seconds": 0.3848815779929282,
+      "recorded_cpu_seconds": 0.382374,
+      "cpu_scope": "child_cpu_sum_seconds"
+    },
+    {
+      "component": "official-release-metadata-read",
+      "receipt": "/tmp/w1-batch-ruint-security-20261028-r8/official-risc0-rust-releases/result.json",
+      "sha256": "a8a45f841b81545bb1ee8c6de18f1ca2d20b0911feaf43ea9ba965a1dfbc3c03",
+      "wall_seconds": 0.5235562029993162,
+      "recorded_cpu_seconds": 0.007397999999999995,
+      "cpu_scope": "process_cpu_seconds"
+    },
+    {
+      "component": "official-source-target-specs-read",
+      "receipt": "/tmp/w1-risc0-official-target-specs-20261028-r8/result.json",
+      "sha256": "fb6c63fd3124971e3993784550e47e2f8a2ec1e32344b7ab38e9a7b57bcd9539",
+      "wall_seconds": 0.9000484029966174,
+      "recorded_cpu_seconds": 0.013445000000000006,
+      "cpu_scope": "process_cpu_seconds"
+    },
+    {
+      "component": "own-restored-188-compiler-reclaim",
+      "receipt": "/tmp/w1-reclaim-restored-guest-188-20261028-r8/result.json",
+      "sha256": "e3e287049a8b505fe3a1de1d2e8d4dcd5469c31d898cee64aab907fbd371d029",
+      "wall_seconds": 0.6552617480047047,
+      "recorded_cpu_seconds": null,
+      "cpu_scope": "NOT_CAPTURED"
+    },
+    {
+      "component": "read-only-guest-feature-tree",
+      "receipt": "/tmp/w1-batch-ruint-security-20261028-r8/feature-tree-receipt.json",
+      "sha256": "2de27a556587fd1bb09daadaaf468fd3400fd309d150315a09ed7307d085a9d9",
+      "wall_seconds": 0.15463705800357275,
+      "recorded_cpu_seconds": 0.14057799999999998,
+      "cpu_scope": "child_cpu_seconds"
+    }
+  ],
+  "measured_named_setup_and_failed_build_wall_sum_seconds": 35.57529841098585,
+  "known_named_setup_and_failed_build_cpu_sum_seconds": 20.84003,
+  "cost_accounting_limit": "Retains all three actual failed Phase0 attempts, resolver downgrade and reversal, dependency download, compiler adoption, metadata reads and own compiler reclaim. Guard own CPU, reclaimed-tree CPU, uninstrumented source inspections/control CPU are not captured and are not represented as zero. Guard development controls and original complete leaf proof costs remain separate raw evidence; no compiler acquisition or build costs are treated as proof speed measurements.",
+  "attempt4": "NOT_AUTHORIZED_NOT_STARTED_SECURITY_REJECTED; predeclaration remains immutable in earlier evidence",
+  "source_control_receipts": [
+    {
+      "path": "/tmp/w1-rust1911-acquire-review-20261028-r8/controls.json",
+      "sha256": "7bc4d7af512ec3accf1fdf1063eedd620c8cf781f99cb821a8487c7287ce1369"
+    },
+    {
+      "path": "/tmp/w1-rust1911-acquire-review-20261028-r8/reproduced-controls.json",
+      "sha256": "7ce4e60168d75bce2ce98c729a9c65469d5b98630a098482b1cb0609f00af286"
+    }
+  ]
+}

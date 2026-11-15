@@ -1,0 +1,218 @@
+{
+  "schema": "trnm-pr784-hosted-observation-archive-v1",
+  "status": "assembled-for-evidence-only-commit",
+  "candidate_head": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "candidate_tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff",
+  "candidate_pr": 784,
+  "required_baseline_run": 42431209912,
+  "archive_branch": "chore/chain-pon-pr784-hosted-observations-20261108",
+  "new_path_prefix": "evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/",
+  "candidate_source_modified": false,
+  "copied_components": [
+    {
+      "label": "cross-arch-arm",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-cross-arch-arm-review/archive-ready",
+      "archive_relative_directory": "reviews/cross-arch-arm",
+      "file_count": 26,
+      "payload_bytes": 8985616,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:17:33.705608+00:00"
+    },
+    {
+      "label": "repository-truth",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-repository-truth-review",
+      "archive_relative_directory": "reviews/repository-truth",
+      "file_count": 37,
+      "payload_bytes": 59111,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:17:33.774247+00:00"
+    },
+    {
+      "label": "final-pr-readback-05",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-pr-readback-05",
+      "archive_relative_directory": "reviews/final-pr-readback-05",
+      "file_count": 29,
+      "payload_bytes": 1635730,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:17:33.844467+00:00"
+    },
+    {
+      "label": "other-failures",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-other-failures-review",
+      "archive_relative_directory": "reviews/other-failures",
+      "file_count": 34,
+      "payload_bytes": 8009370,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:45.941275+00:00"
+    },
+    {
+      "label": "publication-remote-precheck",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/publication-remote-precheck",
+      "archive_relative_directory": "publication/publication-remote-precheck",
+      "file_count": 14,
+      "payload_bytes": 1772,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:45.953256+00:00"
+    },
+    {
+      "label": "final-publication-attempt-01",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-publication-attempt-01",
+      "archive_relative_directory": "publication/final-publication-attempt-01",
+      "file_count": 31,
+      "payload_bytes": 67859,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:45.976493+00:00"
+    },
+    {
+      "label": "final-publication-link-check",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-publication-link-check",
+      "archive_relative_directory": "publication/final-publication-link-check",
+      "file_count": 43,
+      "payload_bytes": 12236738,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:46.189201+00:00"
+    },
+    {
+      "label": "final-publication-push",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-publication-push",
+      "archive_relative_directory": "publication/final-publication-push",
+      "file_count": 21,
+      "payload_bytes": 2843,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:46.205017+00:00"
+    },
+    {
+      "label": "final-pr-publication",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-pr-publication",
+      "archive_relative_directory": "publication/final-pr-publication",
+      "file_count": 20,
+      "payload_bytes": 9870,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:46.220922+00:00"
+    },
+    {
+      "label": "final-pr-readback-01",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-pr-readback-01",
+      "archive_relative_directory": "publication/final-pr-readback-01",
+      "file_count": 5,
+      "payload_bytes": 25851,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:46.226024+00:00"
+    },
+    {
+      "label": "final-pr-readback-02",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-pr-readback-02",
+      "archive_relative_directory": "publication/final-pr-readback-02",
+      "file_count": 8,
+      "payload_bytes": 402905,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:46.239343+00:00"
+    },
+    {
+      "label": "final-pr-readback-03",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-pr-readback-03",
+      "archive_relative_directory": "publication/final-pr-readback-03",
+      "file_count": 19,
+      "payload_bytes": 706965,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:46.265071+00:00"
+    },
+    {
+      "label": "final-pr-readback-04",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-pr-readback-04",
+      "archive_relative_directory": "publication/final-pr-readback-04",
+      "file_count": 19,
+      "payload_bytes": 714453,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:46.290478+00:00"
+    },
+    {
+      "label": "retained-historical",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-retained-failure-review",
+      "archive_relative_directory": "reviews/retained-historical",
+      "file_count": 45,
+      "payload_bytes": 131481,
+      "source_before_after_equal": true,
+      "selected_destination_exactly_equal": true,
+      "all_source_files_copied": true,
+      "omitted_expanded_file_count": 0,
+      "omitted_expanded_bytes": 0,
+      "copy_completed_at": "2026-11-08T01:31:30.841309+00:00",
+      "selection_receipt": "preparation/retained-historical-copy-receipt.json"
+    },
+    {
+      "label": "w1-fresh-service",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-w1-fresh-service-review",
+      "archive_relative_directory": "reviews/w1-fresh-service",
+      "file_count": 140,
+      "payload_bytes": 12794932,
+      "source_before_after_equal": true,
+      "selected_destination_exactly_equal": true,
+      "all_source_files_copied": false,
+      "omitted_expanded_file_count": 46,
+      "omitted_expanded_bytes": 68085955,
+      "copy_completed_at": "2026-11-08T01:31:31.990237+00:00",
+      "selection_receipt": "preparation/w1-fresh-service-copy-receipt.json"
+    },
+    {
+      "label": "protocol-contract",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-protocol-contract-review",
+      "archive_relative_directory": "reviews/protocol-contract",
+      "file_count": 80,
+      "payload_bytes": 19373496,
+      "source_before_after_equal": true,
+      "selected_destination_exactly_equal": true,
+      "all_source_files_copied": false,
+      "omitted_expanded_file_count": 25,
+      "omitted_expanded_bytes": 34644244,
+      "copy_completed_at": "2026-11-08T01:31:32.746657+00:00",
+      "selection_receipt": "preparation/protocol-contract-copy-receipt.json"
+    }
+  ],
+  "pending_components": [],
+  "copy_rule": "Frozen source before/after inventories are identical. Selected copied files match destination path/size/SHA256 exactly. Every omitted expanded file has an explicit exact member mapping to an unchanged, complete digest-verified ZIP. Original source inventories remain original records.",
+  "security_qualification": {
+    "actual_work_certificate_complete": false,
+    "actual_native_execution_certificate_complete": false,
+    "global_failure_probability": null,
+    "production_activation": false
+  },
+  "publication": {
+    "archive_commit": null,
+    "archive_push": null,
+    "source_defined_push_workflow_match_count": 0
+  },
+  "created_at": "2026-11-08T01:17:33.962062+00:00",
+  "updated_at": "2026-11-08T01:31:32.750264+00:00",
+  "readback_snapshot": {
+    "observed_at": "2026-11-08T01:11:43Z",
+    "head_check_runs": 104,
+    "success": 71,
+    "failure": 12,
+    "in_progress": 18,
+    "skipped": 3,
+    "all_ci_passed": false,
+    "source": "reviews/final-pr-readback-05/"
+  },
+  "protocol_head_artifact": {
+    "path": "reviews/protocol-contract/head-artifact.zip",
+    "bytes": 2177980,
+    "sha256": "4e428d751d7d58c4f0d35cea775012c259b43a749363a0f645dcb23a48a86a4d",
+    "complete": false,
+    "verified_as_complete_artifact": false,
+    "internal_failure_cause": null
+  }
+}

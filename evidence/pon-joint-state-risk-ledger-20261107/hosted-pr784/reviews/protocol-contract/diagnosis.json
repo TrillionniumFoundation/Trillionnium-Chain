@@ -1,0 +1,158 @@
+{
+  "cancelled_any_job": false,
+  "candidate_commit": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "classification": {
+    "action": "Preserve the failing original business gate. Diagnose the honest-client confirmation path under unchanged original budget/deadline and pressure/baseline conditions; do not lower or bypass the target. Complete the head artifact download only if a precise head inner diagnosis is still required; do not infer it from merge or ARM.",
+    "head_inner_cause_established": false,
+    "merge_observation": "documented existing business-confirmation acceptance blocker observed again",
+    "new_certificate_assertion_regression_established": false,
+    "prior_base_plan_blob": "950f0341f3cc9fa711f805d6a300f71ec9a552c3",
+    "prior_base_plan_lines": [
+      76,
+      77,
+      78,
+      381,
+      382,
+      383,
+      384,
+      1130,
+      1131,
+      1132
+    ],
+    "same_underlying_performance_cause_as_historical_observation_proved": false,
+    "selected_gate_and_native_test_sources_unchanged": true
+  },
+  "commit_performed": false,
+  "github_comment_posted": false,
+  "head_job": {
+    "artifact": {
+      "artifact_id": 13597399178,
+      "bytes": 2177980,
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13597399178/zip",
+      "expected_logged_sha256": "965cacdc613d27a1243d8619ce397f1de3bfc35ca0c431ec8c0977bcb148674d",
+      "label": "head",
+      "matches_logged_sha256": false,
+      "returncode": 1,
+      "sha256": "4e428d751d7d58c4f0d35cea775012c259b43a749363a0f645dcb23a48a86a4d"
+    },
+    "first_inner_failure": "UNRESOLVED: incomplete unverified artifact after TCP connection reset",
+    "id": 128580281524,
+    "inner_manifest_observed": false,
+    "matches_merge_or_arm_failure_not_assumed": true,
+    "name": "protocol-contract",
+    "outer_controller": {
+      "failure": null,
+      "final_host_errors": [],
+      "passed": false,
+      "preparation_exit_code": 0,
+      "preparation_timed_out": false,
+      "source_error": null,
+      "systemd_run_exit": 1,
+      "tested_commit": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "tested_tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff"
+    }
+  },
+  "integration_base": "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+  "merge_job": {
+    "acceptance_stages": {
+      "confirmation_report": {
+        "error": "CONFIRMATION_TARGET",
+        "retained_matches_before_validation": true,
+        "status": "failed"
+      },
+      "service_report": {
+        "error": null,
+        "retained_matches_before_validation": true,
+        "status": "passed"
+      },
+      "sustained_report": {
+        "error": null,
+        "retained_matches_before_validation": true,
+        "status": "passed"
+      }
+    },
+    "all_named_tests_passed": true,
+    "artifact": {
+      "artifact_id": 13597751586,
+      "bytes": 5892591,
+      "directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-protocol-contract-review/merge-artifact",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13597751586/zip",
+      "expected_logged_sha256": "b3c76968c20a93663304e958c2a1aa68e791aca204c7715908e7a203fe54dafa",
+      "extracted_files": 78,
+      "label": "merge",
+      "matches_logged_sha256": true,
+      "returncode": 0,
+      "sha256": "b3c76968c20a93663304e958c2a1aa68e791aca204c7715908e7a203fe54dafa",
+      "uncompressed_bytes": 45527330
+    },
+    "execution_finished": false,
+    "failures": [
+      "CONFIRMATION_TARGET"
+    ],
+    "first_failed_acceptance_stage": "confirmation_report",
+    "first_failed_predicate": "CONFIRMATION_TARGET",
+    "format_passed": true,
+    "id": 128580281614,
+    "inner_manifest_observed": true,
+    "manifest_sha256": "e7ac48e16859a1b33392afdc46517dde047b381bf0ebc521d46044ade2323f03",
+    "name": "prospective-merge (protocol-contract)",
+    "named_native_tests": [
+      {
+        "exit_code": 0,
+        "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+        "passed": true,
+        "timed_out": false
+      },
+      {
+        "exit_code": 0,
+        "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+        "passed": true,
+        "timed_out": false
+      },
+      {
+        "exit_code": 0,
+        "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+        "passed": true,
+        "timed_out": false
+      },
+      {
+        "exit_code": 0,
+        "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+        "passed": true,
+        "timed_out": false
+      },
+      {
+        "exit_code": 0,
+        "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+        "passed": true,
+        "timed_out": false
+      }
+    ],
+    "native_execution_completed": true,
+    "outer_controller": {
+      "failure": null,
+      "final_host_errors": [],
+      "passed": false,
+      "preparation_exit_code": 0,
+      "preparation_timed_out": false,
+      "source_error": null,
+      "systemd_run_exit": 1,
+      "tested_commit": "b5adba8cfe5307675aac8482aa569312354bb3e4",
+      "tested_tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff"
+    },
+    "overall_passed": false,
+    "subsequent_ci_steps_observed": false
+  },
+  "push_performed": false,
+  "reviewed_utc": "2026-11-08T01:23:40.468192+00:00",
+  "run_id": 42431209912,
+  "run_or_job_reexecuted": false,
+  "schema": "hosted-pr784-protocol-contract-readonly-review-v1",
+  "source_modified": false,
+  "source_readonly_endpoints": {
+    "git_status_clean_after": true,
+    "git_status_clean_before": true,
+    "head_after": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+    "head_before": "b5c655ebe9611b3d62cf739e61e6867decc053e3"
+  }
+}

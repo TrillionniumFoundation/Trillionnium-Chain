@@ -1,0 +1,43 @@
+{
+  "archive": "python-setup-v0.tar.gz",
+  "archive_bytes": 26096,
+  "archive_sha256": "4866b24aac5bd073c90e111496ef742c0884cc91926a03ba397a0fa4a5670f19",
+  "container_metadata_normalized": true,
+  "member_bytes_unchanged": true,
+  "member_count": 5,
+  "members": [
+    {
+      "bytes": 1740,
+      "mode": "0o600",
+      "path": "python-setup-v0/logs/python-pip-install-v0.log",
+      "sha256": "4c9b5429c3cb2315749180ebbad4d13b53780277f0cb0fa6d44222ba635f03f9"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "python-setup-v0/logs/python-venv-create-v0.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1950,
+      "mode": "0o600",
+      "path": "python-setup-v0/receipts/python-environment-setup-v0.json",
+      "sha256": "a7e81fbe544296acaa3d7596ea94db0ca13d37ffcce92f7e1011fa2b644a8840"
+    },
+    {
+      "bytes": 75530,
+      "mode": "0o600",
+      "path": "python-setup-v0/receipts/python-install-v0.json",
+      "sha256": "bdcc25d89db21c539c2cdb0b09bb877c33dedf1e3aad150ab1ef3a3ad6e17948"
+    },
+    {
+      "bytes": 311,
+      "mode": "0o600",
+      "path": "python-setup-v0/receipts/python-versions-v0.json",
+      "sha256": "5c4b9fb8a38f2c251e3e4773f04b6a71f33b2219d5e2f7c887b8d6469d2ca4cd"
+    }
+  ],
+  "payload_bytes": 79531,
+  "readback_verified": true,
+  "schema": "pon-evidence-archive-members-v0"
+}

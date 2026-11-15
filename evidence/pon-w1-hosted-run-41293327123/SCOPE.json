@@ -1,0 +1,23 @@
+{
+  "schema": "trnm-w1-hosted-run-scope-v1",
+  "measured_code_head": "c041564b8a6bb0b98ca9c30e7871878427e5d9a4",
+  "measured_prospective_merge": "b824293d71a346a3461705b5eb129e7b83ce2920",
+  "measured_tree": "11c25a7d409b6281d3f90dc56f0ebb2c1a96b305",
+  "run_id": 41293327123,
+  "source_branch": "fix/chain-pon-work-security-20261101",
+  "archive_branch": "docs/chain-pon-w1-run-41293327123",
+  "archive_changes_are_evidence_only": true,
+  "original_window_ns": 4000000000,
+  "attack_workers": 16,
+  "confirmation_depth": 6,
+  "host_cpu_max": "25000 100000",
+  "all_reported_confirmation_times_exclude_live_mining_of_preconstructed_packets": true,
+  "service_business_target_met": false,
+  "original_run_preserved_in_parent": "evidence/pon-w1-work-security-ci-followup-20261101",
+  "full_required_baseline_qualified": false,
+  "hardness_accepted": false,
+  "public_wan_accepted": false,
+  "whole_chain_pq_accepted": false,
+  "model_utility_accepted": false,
+  "production_activation": false
+}

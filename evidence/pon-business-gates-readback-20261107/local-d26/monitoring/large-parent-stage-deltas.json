@@ -1,0 +1,475 @@
+{
+  "observed_unix": 1794065631.734583,
+  "source": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/monitoring/large-parent-failure-observations.json",
+  "source_sha256": "bf0ac5f69170f00c80b98ab07545d6bae3f9fc63abb4fbf789ac051495c61a3c",
+  "comparison_scope": "same owner cumulative after-before; nested stages are not additive; zero entered calls is unmeasured, not zero cost",
+  "records": [
+    {
+      "authenticated_backend": false,
+      "before_top_keys": [
+        "account_node_decode_arithmetic",
+        "cache_policy",
+        "charge_is_process_rss_bound",
+        "complete_root_arithmetic",
+        "counters",
+        "deltas",
+        "has_consensus_authority",
+        "history_sql_traversal",
+        "packets",
+        "records",
+        "retained_software_charge_limit_bytes",
+        "schema",
+        "scope",
+        "sql_commit",
+        "stage_observation_failed",
+        "stages"
+      ],
+      "stages": [
+        {
+          "path": "stages",
+          "stage": "record",
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "packet",
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "delta",
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "verify_state",
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "verify_history",
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "publish",
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "read_active",
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "state_at",
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "execute",
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "admission",
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "activation",
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "complete_commitment",
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "complete_state_root",
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "account_graph",
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "persisted_state_root",
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "execution_parent_binding",
+          "delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "after_other_fields": {}
+        }
+      ],
+      "stage_observation_failed_before": false,
+      "stage_observation_failed_after": false
+    },
+    {
+      "authenticated_backend": true,
+      "before_top_keys": [
+        "account_node_decode_arithmetic",
+        "cache_policy",
+        "charge_is_process_rss_bound",
+        "complete_root_arithmetic",
+        "counters",
+        "deltas",
+        "has_consensus_authority",
+        "history_sql_traversal",
+        "packets",
+        "records",
+        "retained_software_charge_limit_bytes",
+        "schema",
+        "scope",
+        "sql_commit",
+        "stage_observation_failed",
+        "stages"
+      ],
+      "stages": [
+        {
+          "path": "stages",
+          "stage": "record",
+          "delta": {
+            "calls": 31,
+            "cpu_known_calls": 31,
+            "cpu_ns": 1052807,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 1089682
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "packet",
+          "delta": {
+            "calls": 19,
+            "cpu_known_calls": 19,
+            "cpu_ns": 75268310,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 75295926
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "delta",
+          "delta": {
+            "calls": 18,
+            "cpu_known_calls": 18,
+            "cpu_ns": 1510255,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 1524166
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "verify_state",
+          "delta": {
+            "calls": 10,
+            "cpu_known_calls": 10,
+            "cpu_ns": 317989864,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 318049132
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "verify_history",
+          "delta": {
+            "calls": 3,
+            "cpu_known_calls": 3,
+            "cpu_ns": 465963840,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 465986042
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "publish",
+          "delta": {
+            "calls": 1,
+            "cpu_known_calls": 1,
+            "cpu_ns": 263206894,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 263212060
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "read_active",
+          "delta": {
+            "calls": 2,
+            "cpu_known_calls": 2,
+            "cpu_ns": 473731227,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 473783723
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "state_at",
+          "delta": {
+            "calls": 3,
+            "cpu_known_calls": 3,
+            "cpu_ns": 712358691,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 712488213
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "execute",
+          "delta": {
+            "calls": 1,
+            "cpu_known_calls": 1,
+            "cpu_ns": 505628210,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 506259131
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "admission",
+          "delta": {
+            "calls": 2,
+            "cpu_known_calls": 2,
+            "cpu_ns": 1859424145,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 2037926197
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "activation",
+          "delta": {
+            "calls": 1,
+            "cpu_known_calls": 1,
+            "cpu_ns": 549112097,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 562322424
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "complete_commitment",
+          "delta": {
+            "calls": 11,
+            "cpu_known_calls": 11,
+            "cpu_ns": 302783963,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 302825911
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "complete_state_root",
+          "delta": {
+            "calls": 11,
+            "cpu_known_calls": 11,
+            "cpu_ns": 140441984,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 140457454
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "account_graph",
+          "delta": {
+            "calls": 7,
+            "cpu_known_calls": 7,
+            "cpu_ns": 1906661,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 1916409
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "persisted_state_root",
+          "delta": {
+            "calls": 8,
+            "cpu_known_calls": 8,
+            "cpu_ns": 101234002,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 101256409
+          },
+          "after_other_fields": {}
+        },
+        {
+          "path": "stages",
+          "stage": "execution_parent_binding",
+          "delta": {
+            "calls": 1,
+            "cpu_known_calls": 1,
+            "cpu_ns": 201528753,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 201554237
+          },
+          "after_other_fields": {}
+        }
+      ],
+      "stage_observation_failed_before": false,
+      "stage_observation_failed_after": false
+    }
+  ],
+  "qualification": false
+}

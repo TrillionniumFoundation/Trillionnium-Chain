@@ -1,0 +1,645 @@
+{
+  "schema": "trnm-final-linked-test-inventory-summary-v1",
+  "commit": "93277a001f4f8a42be65166f6513177b46cddf5b",
+  "integration_targets": 65,
+  "cell_tests": 12,
+  "cell_ignored": 0,
+  "library_tests": 1204,
+  "library_ignored": 33,
+  "all_native_test_targets": 67,
+  "native_test_inventory_total": 1573,
+  "native_default_body_count": 1516,
+  "native_ignored_total": 57,
+  "targets": [
+    {
+      "target_name": "trnm-pon-node",
+      "target_kind": [
+        "bin"
+      ],
+      "test_count": 14,
+      "ignored_count": 0,
+      "expected_default_executions": 14
+    },
+    {
+      "target_name": "trnm_pon_node",
+      "target_kind": [
+        "lib"
+      ],
+      "test_count": 1204,
+      "ignored_count": 33,
+      "expected_default_executions": 1171
+    },
+    {
+      "target_name": "accepted_task_observation",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 4,
+      "ignored_count": 0,
+      "expected_default_executions": 4
+    },
+    {
+      "target_name": "account_archive_execution",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 12,
+      "ignored_count": 0,
+      "expected_default_executions": 12
+    },
+    {
+      "target_name": "account_archive_projection",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 1,
+      "ignored_count": 0,
+      "expected_default_executions": 1
+    },
+    {
+      "target_name": "account_archive_prototype",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 9,
+      "ignored_count": 1,
+      "expected_default_executions": 8
+    },
+    {
+      "target_name": "account_obligation_ranges",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 4,
+      "ignored_count": 0,
+      "expected_default_executions": 4
+    },
+    {
+      "target_name": "ancestry_long_sync",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 1,
+      "ignored_count": 1,
+      "expected_default_executions": 0
+    },
+    {
+      "target_name": "architecture_delivery_compare",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 13,
+      "ignored_count": 0,
+      "expected_default_executions": 13
+    },
+    {
+      "target_name": "authenticated_storage_cli",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 7,
+      "ignored_count": 0,
+      "expected_default_executions": 7
+    },
+    {
+      "target_name": "cell_native_v1",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 12,
+      "ignored_count": 0,
+      "expected_default_executions": 12
+    },
+    {
+      "target_name": "checkpoint_tile_operator",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 4,
+      "ignored_count": 1,
+      "expected_default_executions": 3
+    },
+    {
+      "target_name": "cli_secret_canary",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 1,
+      "ignored_count": 0,
+      "expected_default_executions": 1
+    },
+    {
+      "target_name": "continuity_authenticated",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 1,
+      "ignored_count": 0,
+      "expected_default_executions": 1
+    },
+    {
+      "target_name": "continuity_cli",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 2,
+      "ignored_count": 0,
+      "expected_default_executions": 2
+    },
+    {
+      "target_name": "daa_adversarial_schedule",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 2,
+      "ignored_count": 0,
+      "expected_default_executions": 2
+    },
+    {
+      "target_name": "derived_commitment",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 5,
+      "ignored_count": 0,
+      "expected_default_executions": 5
+    },
+    {
+      "target_name": "distributed_roles",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 4,
+      "ignored_count": 4,
+      "expected_default_executions": 0
+    },
+    {
+      "target_name": "evaluation_observation",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 1,
+      "ignored_count": 0,
+      "expected_default_executions": 1
+    },
+    {
+      "target_name": "evaluation_observation_cli",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 2,
+      "ignored_count": 0,
+      "expected_default_executions": 2
+    },
+    {
+      "target_name": "evaluation_quorum_cli",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 1,
+      "ignored_count": 0,
+      "expected_default_executions": 1
+    },
+    {
+      "target_name": "evaluation_round_observation",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 2,
+      "ignored_count": 1,
+      "expected_default_executions": 1
+    },
+    {
+      "target_name": "evaluation_round_observation_cli",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 2,
+      "ignored_count": 0,
+      "expected_default_executions": 2
+    },
+    {
+      "target_name": "evaluation_sync_observation",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 3,
+      "ignored_count": 0,
+      "expected_default_executions": 3
+    },
+    {
+      "target_name": "evolution_cli",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 4,
+      "ignored_count": 0,
+      "expected_default_executions": 4
+    },
+    {
+      "target_name": "growth_persistence_cancellation",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 2,
+      "ignored_count": 0,
+      "expected_default_executions": 2
+    },
+    {
+      "target_name": "integer_factor_candidate_v2",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 4,
+      "ignored_count": 0,
+      "expected_default_executions": 4
+    },
+    {
+      "target_name": "local_mempool",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 15,
+      "ignored_count": 1,
+      "expected_default_executions": 14
+    },
+    {
+      "target_name": "maintenance_paired_conformance",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 1,
+      "ignored_count": 0,
+      "expected_default_executions": 1
+    },
+    {
+      "target_name": "mining_service_budget",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 2,
+      "ignored_count": 0,
+      "expected_default_executions": 2
+    },
+    {
+      "target_name": "model_composition_v4",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 4,
+      "ignored_count": 0,
+      "expected_default_executions": 4
+    },
+    {
+      "target_name": "model_evidence_v3",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 6,
+      "ignored_count": 0,
+      "expected_default_executions": 6
+    },
+    {
+      "target_name": "native_compact_execution",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 5,
+      "ignored_count": 0,
+      "expected_default_executions": 5
+    },
+    {
+      "target_name": "native_growth_cli",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 5,
+      "ignored_count": 0,
+      "expected_default_executions": 5
+    },
+    {
+      "target_name": "native_growth_public_cli",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 4,
+      "ignored_count": 0,
+      "expected_default_executions": 4
+    },
+    {
+      "target_name": "native_node",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 31,
+      "ignored_count": 1,
+      "expected_default_executions": 30
+    },
+    {
+      "target_name": "nonce_speculation_cost",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 1,
+      "ignored_count": 1,
+      "expected_default_executions": 0
+    },
+    {
+      "target_name": "one_zero_task_preparation_lifecycle",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 1,
+      "ignored_count": 0,
+      "expected_default_executions": 1
+    },
+    {
+      "target_name": "operation_local_parent",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 2,
+      "ignored_count": 0,
+      "expected_default_executions": 2
+    },
+    {
+      "target_name": "operator_actors",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 12,
+      "ignored_count": 0,
+      "expected_default_executions": 12
+    },
+    {
+      "target_name": "pinned_peer_polling",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 1,
+      "ignored_count": 0,
+      "expected_default_executions": 1
+    },
+    {
+      "target_name": "pool_mining",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 10,
+      "ignored_count": 0,
+      "expected_default_executions": 10
+    },
+    {
+      "target_name": "pq_account_native",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 11,
+      "ignored_count": 0,
+      "expected_default_executions": 11
+    },
+    {
+      "target_name": "pq_migration_inventory",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 5,
+      "ignored_count": 0,
+      "expected_default_executions": 5
+    },
+    {
+      "target_name": "protected_ingress",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 13,
+      "ignored_count": 1,
+      "expected_default_executions": 12
+    },
+    {
+      "target_name": "public_cache_modes",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 4,
+      "ignored_count": 0,
+      "expected_default_executions": 4
+    },
+    {
+      "target_name": "public_cli",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 3,
+      "ignored_count": 0,
+      "expected_default_executions": 3
+    },
+    {
+      "target_name": "public_evaluation",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 8,
+      "ignored_count": 0,
+      "expected_default_executions": 8
+    },
+    {
+      "target_name": "public_intake_v2",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 2,
+      "ignored_count": 0,
+      "expected_default_executions": 2
+    },
+    {
+      "target_name": "public_pool_cli",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 5,
+      "ignored_count": 0,
+      "expected_default_executions": 5
+    },
+    {
+      "target_name": "public_pool_v3",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 3,
+      "ignored_count": 0,
+      "expected_default_executions": 3
+    },
+    {
+      "target_name": "public_submit_recovery",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 24,
+      "ignored_count": 0,
+      "expected_default_executions": 24
+    },
+    {
+      "target_name": "public_v3_from_zero",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 6,
+      "ignored_count": 1,
+      "expected_default_executions": 5
+    },
+    {
+      "target_name": "public_v3_multiprocess",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 25,
+      "ignored_count": 8,
+      "expected_default_executions": 17
+    },
+    {
+      "target_name": "public_v3_observation_cli",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 6,
+      "ignored_count": 0,
+      "expected_default_executions": 6
+    },
+    {
+      "target_name": "public_v3_observer",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 2,
+      "ignored_count": 0,
+      "expected_default_executions": 2
+    },
+    {
+      "target_name": "public_v3_request_accounting",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 4,
+      "ignored_count": 0,
+      "expected_default_executions": 4
+    },
+    {
+      "target_name": "public_v3_service_campaign",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 2,
+      "ignored_count": 0,
+      "expected_default_executions": 2
+    },
+    {
+      "target_name": "qualified_tasks",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 4,
+      "ignored_count": 0,
+      "expected_default_executions": 4
+    },
+    {
+      "target_name": "release_finality_v2",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 4,
+      "ignored_count": 2,
+      "expected_default_executions": 2
+    },
+    {
+      "target_name": "task_lifecycle",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 4,
+      "ignored_count": 0,
+      "expected_default_executions": 4
+    },
+    {
+      "target_name": "task_lifecycle_v3",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 3,
+      "ignored_count": 0,
+      "expected_default_executions": 3
+    },
+    {
+      "target_name": "task_lifecycle_v4",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 4,
+      "ignored_count": 1,
+      "expected_default_executions": 3
+    },
+    {
+      "target_name": "task_output_root_parity",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 2,
+      "ignored_count": 0,
+      "expected_default_executions": 2
+    },
+    {
+      "target_name": "work_fuzz_semantics",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 6,
+      "ignored_count": 0,
+      "expected_default_executions": 6
+    },
+    {
+      "target_name": "work_header_binding",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 1,
+      "ignored_count": 0,
+      "expected_default_executions": 1
+    },
+    {
+      "target_name": "zero_task_preparation_lifecycle",
+      "target_kind": [
+        "test"
+      ],
+      "test_count": 1,
+      "ignored_count": 0,
+      "expected_default_executions": 1
+    }
+  ],
+  "required_library_tests": [
+    "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+    "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart",
+    "store::pq_rollback_witness::tests::cached_permission_is_rechecked_after_actual_native_tcp_success",
+    "store::continuity_tests::actual_65536_key_native_chain_rejects_growth_keeps_nonce_and_reopens"
+  ],
+  "cell_test_names": [
+    "seven_python_v2_controls_match_native_complete_values_and_all_five_w1_tiles",
+    "owner_pin_and_foreign_task_never_come_from_the_claim",
+    "rehashed_intermediate_tensor_and_checkpoint_substitution_fail_after_valid_w1",
+    "every_w1_tile_requires_full_material_product_transcript_and_challenge",
+    "historical_is_repeatable_after_expiry_but_live_checks_both_clock_cuts",
+    "two_real_node_stores_and_cold_recovery_agree_on_history_after_active_tip_changes",
+    "malformed_owner_schema_numbers_masks_and_utf8_fail_before_any_proof",
+    "state_counter_weight_and_action_rules_refuse_instead_of_saturation_or_fallback",
+    "maximum_batch_and_raw_source_token_cap_replay_all_columns_and_reject_one_more",
+    "a_following_native_task_really_consumes_the_verified_successor_model_and_state",
+    "ordinary_native_cli_uses_separate_owner_input_and_real_node_parent_for_cold_historical_replay",
+    "native_cli_refuses_writable_symlinked_missing_owner_inputs_and_new_store_creation"
+  ],
+  "inventory": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/inventory.json",
+    "bytes": 407162,
+    "sha256": "d6af58d9fc47d4e0323036a7e19e155d120d0a860492528ce9bfd6d79f2d6533"
+  },
+  "test_bodies_executed": false,
+  "counts_are_prior_to_execution": true
+}

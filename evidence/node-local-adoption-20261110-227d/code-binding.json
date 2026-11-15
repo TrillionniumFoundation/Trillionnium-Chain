@@ -1,0 +1,39 @@
+{
+  "all_recorded_worktree_blobs_match_runtime_commit": true,
+  "code_bytes": 35602388,
+  "code_paths": 2103,
+  "earlier_static_and_release_source": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+  "evidence_only_commit_scope": [
+    "evidence/node-local-adoption-20261110-227d/",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "inventory_compressed_sha256": "f0842dd8b12cc8802e46077ec61a221540ea731a8e55b0cd8a4659e25f342118",
+  "inventory_file": "code-path-hashes.json.gz",
+  "inventory_gzip_mtime": 0,
+  "inventory_original_sha256": "4e673c543868d7a39444e3c0be39ea9ef5d76f02b618054a45699cc9a5fa1fc5",
+  "prior_to_runtime_changed_paths": [
+    "trillionnium/crates/trnm-data-availability/src/cell.rs"
+  ],
+  "publication_status": "not performed by this evidence assembly; actual remote commit/tree belongs in PR/readback",
+  "runtime_commit": "b9a38fd6d245e20849c7edd848dbbe18298cad7e",
+  "runtime_tree": "f471efda78e50876e2169aad7081eb93d9d2084b",
+  "schema": "trnm.node-local-adoption.code-binding.v1",
+  "unchanged_subtrees_and_manifests": {
+    "scripts": {
+      "prior_object": "b5d9c4c7368c3ed86f0813c8ea90709f4c4d164c",
+      "runtime_object": "b5d9c4c7368c3ed86f0813c8ea90709f4c4d164c"
+    },
+    "trillionnium/Cargo.lock": {
+      "prior_object": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+      "runtime_object": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04"
+    },
+    "trillionnium/Cargo.toml": {
+      "prior_object": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "runtime_object": "44df8f8d5eec880d10da42c12a903c03658cfc65"
+    },
+    "trillionnium/crates/trnm-release-bundle": {
+      "prior_object": "43de8c5b786a7a2e794350e32c23705b6bb417b3",
+      "runtime_object": "43de8c5b786a7a2e794350e32c23705b6bb417b3"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "all": [
+    "cli_pins_release_and_shares_budgets_before_create_only_completion",
+    "cli_release_preparation_rejects_incomplete_incompatible_and_over_budget_sets"
+  ],
+  "filter": null,
+  "selected": [
+    "cli_pins_release_and_shares_budgets_before_create_only_completion",
+    "cli_release_preparation_rejects_incomplete_incompatible_and_over_budget_sets"
+  ]
+}

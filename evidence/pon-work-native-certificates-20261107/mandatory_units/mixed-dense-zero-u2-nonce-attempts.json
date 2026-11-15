@@ -1,0 +1,84 @@
+{
+  "attempts": [
+    {
+      "aggregate_ticket": "e68f99035cfffb347d70999e6f1113fa4f0aaf8024f5aa07edd7ba516415aa6f",
+      "constructed_complete_units": 2,
+      "context_hash": "f496a2558509313df2597d95bceba76d2ec0438b7e73214817df196cdaf9569a",
+      "nonce": 0,
+      "outputs_root": "baa615adcc6018e252e419440dd33c98eb5c2d03b753671ed92fae43aa24473b",
+      "packet_sha256": "da73874c49869d1997a6cca0976eba550fdd5e4626c6c12e20a57f6c0b74f988",
+      "unit_proof_sha256": [
+        "b6e5e99220477e5656c173e86cce062236a93f99c6a8aa4939da49544f5f9ef0",
+        "56d7d6836c7c758228a94c9c0f2ea1506f2b2520bde3a2f2cf8174c8effd9f3b"
+      ],
+      "winner": false
+    },
+    {
+      "aggregate_ticket": "9f8438bcffcf20852924f1178e6711a5a3056e940c81f8aae5d15ee0b8350c48",
+      "constructed_complete_units": 2,
+      "context_hash": "3ac8d6bc8d1ebd3b33deb41ac77d764d3718691a25fb9e6eb8bedf1d4b599e39",
+      "nonce": 1,
+      "outputs_root": "b75e8dc6488986e7f11cffd5316072594a775e0f11445370c80c0f99453b6ee0",
+      "packet_sha256": "8637b5b7be01c037cd2bc529be7c07a9f21e4f74647899acc669fa7123d00bd1",
+      "unit_proof_sha256": [
+        "b6a7d21460cb13c00b6668302fd4c6024670800dbc9614fad502e18797d1d685",
+        "1cb87c7916b3b28d291cbdd9e05b3f3481b3a51bc206d26355fa2cade6054464"
+      ],
+      "winner": false
+    },
+    {
+      "aggregate_ticket": "5d5cea96685da36867f5e59e5974f4da6946d38ff1dc8a390bcc2f02c5ef3e7d",
+      "constructed_complete_units": 2,
+      "context_hash": "035f5fc79fd80fbd94523b932a826b21faeb2f5f713e1f9ecef5fd1e9f463d85",
+      "nonce": 2,
+      "outputs_root": "10c4acf9968092e3affa089327c1b9bd51a9ba735d02f8055d55266266f6fb30",
+      "packet_sha256": "e32e5f937c4adc7921bb336a5f7d5cb6b89b8861d40ad4bbfd9e226383b7e789",
+      "unit_proof_sha256": [
+        "9259e6fec420fb4bd234c70ab04137118cdbc3aee4019473e70f1bd655cd414a",
+        "dc4f4ba9e1bd3ce4340abf125c358c4d87cfc206bbd808f26153e9408d29adf1"
+      ],
+      "winner": false
+    },
+    {
+      "aggregate_ticket": "105dcb4997792cb468d791371c8abd80295d305f67a1ada3bf217bf4443a4505",
+      "constructed_complete_units": 2,
+      "context_hash": "a8f76261cfc311ff0213ccef56e34587a6e57750c82fa8ea0c815240054a46aa",
+      "nonce": 3,
+      "outputs_root": "5ab515537c3e8a15872248c55d20e90d580f6bf8751a1d8f414fb100790c5b61",
+      "packet_sha256": "d8033249442a54418defcf7ec85284d76651ae3064a3c790f37fa699d7e02703",
+      "unit_proof_sha256": [
+        "787497da3511c25fa74d20bc4612caca9a34f24aff6b5505223642b0dbe99f14",
+        "8628c812bad18b03dc01ff710bff92897901d0eee6b9f5863c53bc25b880c86c"
+      ],
+      "winner": false
+    },
+    {
+      "aggregate_ticket": "f2c20fd74021a2356cdfc3498673b89a2111b67627a5f735800904bfd9000148",
+      "constructed_complete_units": 2,
+      "context_hash": "594e17c707269a71267773a0f63cd9d28a5240b27596020c195935f956916ba2",
+      "nonce": 4,
+      "outputs_root": "fbf7b1c5944a6c72c517ba8e95fbea0b422ea616064ee04ed33d9310c7795884",
+      "packet_sha256": "af68c8a18413a0e5adb48cd548e89e23c1bb1ba292b219130000fbba15728a32",
+      "unit_proof_sha256": [
+        "7ee320e94a98731d97f03a6af6cd660c336150a5d4538716a62ad536c2088ab9",
+        "1abde7b41bb3b56d917e2868d1d9a43b8a1bec9320c77a946d77bba78b0120dc"
+      ],
+      "winner": false
+    },
+    {
+      "aggregate_ticket": "0222fc6e81aeb583793903ce62fca2e710926c7edf6879d658663b9c5290a74f",
+      "constructed_complete_units": 2,
+      "context_hash": "994ce35ba57d950996b7ac2c99862dccc42b6156aa41f623cc4a09201f5abe20",
+      "nonce": 5,
+      "outputs_root": "75f73d1f9bf19a330b2cb7485ec21863232c145e8d034dbd5dc36ad33032a1a8",
+      "packet_sha256": "ce579904cb6ae2989781cecf967465273974fe20fee0d38e4b9151c693f7467d",
+      "unit_proof_sha256": [
+        "5cb87d1450add345315999d872b5fc6937fa7382778a7365fb01bd1796af8fbc",
+        "0ded34c9f3b1c84adeed0c5f1d1bc933c3ea5f92a3b0ce3f540b2dda52472795"
+      ],
+      "winner": true
+    }
+  ],
+  "statistical_estimate_of_sha_success_probability": false,
+  "stopping_rule": "first aggregate winner, at most 256 sequential nonces"
+}

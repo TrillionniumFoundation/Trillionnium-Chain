@@ -1,0 +1,18 @@
+{
+  "CARGO_BUILD_JOBS": "2",
+  "CARGO_ENCODED_RUSTFLAGS": null,
+  "CARGO_HOME": null,
+  "CARGO_NET_OFFLINE": "true",
+  "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-pon-outcome-7612-qualified-target",
+  "CC": null,
+  "CFLAGS": null,
+  "LD_LIBRARY_PATH": null,
+  "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+  "RUSTC_WRAPPER": null,
+  "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+  "RUSTFLAGS": null,
+  "RUSTUP_TOOLCHAIN": "1.95.0",
+  "cargo_entry": "/home/qian-qi/.cargo/bin/cargo",
+  "lock_sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+  "runner_sha256": "80966e3c930d49fadccd67b30f440f7d010203b1567d921512f99bdf1e9d8d3a"
+}

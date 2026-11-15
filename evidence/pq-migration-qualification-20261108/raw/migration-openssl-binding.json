@@ -1,0 +1,6 @@
+{
+  "TRNM_PQ_OPENSSL": "/usr/bin/openssl",
+  "TRNM_PQ_OPENSSL_SHA256": "acc10176d038aeb7b2a77d9ec972ac2985857a7191f7aecb7c54ef0e2c7e9549",
+  "TRNM_PQ_OPENSSL_VERSION": "3.5.7",
+  "OPENSSL_DIR": "/usr"
+}

@@ -1,0 +1,160 @@
+{
+  "expected_tests": 110,
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "post_quantum_soundness_qualified": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false,
+    "unconditional_project_security_bits": null
+  },
+  "schema": "TRNM-W1-QROM-CLOSURE-CURRENT-REQUIRED-TESTS2",
+  "suites": [
+    {
+      "module": "test_w1_lifetime_current_observation",
+      "tests": [
+        "test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_cli_rejects_changed_source_without_success_report",
+        "test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_cli_reports_new_schema_without_historical_comparison",
+        "test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_current_selected_source_observation_preserves_unknown_security",
+        "test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_historical_reader_and_contract_hashes_are_independently_frozen",
+        "test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_historical_reader_mutation_is_refused",
+        "test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_historical_reader_still_rejects_current_source",
+        "test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_ledger_arithmetic_and_input_semantics_are_not_rewritten",
+        "test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_missing_file_and_symlink_do_not_count_as_source_observations",
+        "test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_noncanonical_paths_and_symlink_roots_are_refused",
+        "test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_only_the_reviewed_store_source_delta_is_present",
+        "test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_other_selected_source_mutation_is_refused",
+        "test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_private_current_context_does_not_change_legacy_function_or_pins",
+        "test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_source_and_manifest_changed_together_do_not_repin_the_reader",
+        "test_w1_lifetime_current_observation.CurrentLifetimeObservationTests.test_store_source_mutation_is_refused"
+      ]
+    },
+    {
+      "module": "test_w1_qrom_composition_budget",
+      "tests": [
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_cli_duplicate_nonfinite_deep_and_oversized_input_fail_structurally",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_cli_example_roundtrip_retains_exact_inputs",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_component_must_cover_shifted_queries_not_only_original_t",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_enlarged_query_points_and_commutator_are_not_simple_error_sum",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_exact_target_boundary_and_large_expression_are_not_clamped",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_input_cannot_override_version_security_or_qualification",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_intermediate_size_requires_common_slice_coverage",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_known_parameter_or_instance_slice_mismatch_is_refused",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_missing_description_blocks_conditional_claim_not_raw_arithmetic",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_numeric_coercion_negative_coefficients_and_unknown_models_are_refused",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_only_dependencies_of_missing_query_cost_are_suppressed",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_strict_relaxed_and_all_oracle_components_must_match",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_unknown_commutativity_does_not_disappear_under_zero_coefficient",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_unknown_inputs_never_become_zero_or_security_bits",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_zero_assumed_errors_never_qualify_three_independent_security_lines",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_zero_envelope_without_domain_or_parameter_scope_stays_unknown"
+      ]
+    },
+    {
+      "module": "test_w1_qrom_joint_oracle_diagnostic",
+      "tests": [
+        "test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_absent_range_or_bytes_remain_unknown",
+        "test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_cardinality_is_explicit_and_no_native_digest_conversion_is_accepted",
+        "test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_cli_examples_roundtrip_with_exact_fractions",
+        "test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_cli_malformed_deep_duplicate_and_oversized_inputs_fail_structurally",
+        "test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_degenerate_one_element_range_does_not_claim_distinguishability",
+        "test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_distinct_encoded_inputs_positive_control_matches_product_law",
+        "test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_empty_encoding_is_an_actual_byte_string_not_unknown",
+        "test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_exhaustive_joint_distribution_has_uniform_marginals_and_nonzero_alias_gap",
+        "test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_gap_and_guess_success_use_distinct_advantage_conventions",
+        "test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_noncanonical_or_unbounded_encoding_is_refused"
+      ]
+    },
+    {
+      "module": "test_w1_qrom_semantics_audit",
+      "tests": [
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_air_bound_responds_to_higher_degree_operation_mutation",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_air_conditional_mix_includes_condition_degree",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_air_public_and_extension_constants_are_fixed_coefficients",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_air_returns_selected_constraint_bound_not_unused_field_maximum",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_air_unknown_operations_forward_refs_and_wrong_input_banks_rejected",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_complete_crate_archive_tamper_rejected_before_member_reads",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_elf_rejects_truncated_tables_segments_and_address_overflow",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_elf_rejects_wrong_class_endian_machine_and_entry",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_elf_resource_limit_rejects_unbounded_memory_expansion",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_fixed_generated_air_dag_degree_and_register_counts",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_fixed_r0bf_reconstructs_exact_v2_image_and_memory_root",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_later_segments_and_user_memory_override_in_source_order",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_loaded_instruction_byte_changes_recomputed_image",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_memory_pair_rejects_malformed_or_noncanonical_field_words",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_nonloaded_elf_byte_changes_file_hash_but_preserves_image_inputs",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_page_word_byte_order_and_child_order_are_observable",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_partial_words_and_bss_follow_little_endian_source_loop",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_r0bf_embedded_kernel_matches_complete_locked_release_archive",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_r0bf_rejects_bad_magic_version_header_and_lengths",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_reconstruction_does_not_promote_compiler_trace_or_qrom_claims",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_shared_poseidon_input_vector_exposes_missing_independence_premise",
+        "test_w1_qrom_semantics_audit.W1SemanticsAuditTests.test_upstream_memory_known_answers_include_nonzero_kernel_image"
+      ]
+    },
+    {
+      "module": "test_w1_zkr_artifact_audit",
+      "tests": [
+        "test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_artifact_digest_pin_rejects_unrelated_content_before_zip_parsing",
+        "test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_missing_duplicate_extra_and_path_shaped_zip_entries_rejected",
+        "test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_noncanonical_field_words_fail_the_lossless_encoding_claim",
+        "test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_over_capacity_and_wrong_exponents_are_rejected",
+        "test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_partial_words_and_partial_rows_are_rejected",
+        "test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_recorded_actual_zip_inventory_has_all_32_and_default_27",
+        "test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_recorded_join_povw_has_only_eight_capacity_rows_remaining",
+        "test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_shape_and_record_do_not_claim_control_id_or_trace_semantics",
+        "test_w1_zkr_artifact_audit.W1ZkrArtifactAuditTests.test_shape_uses_little_endian_canonical_words_and_exact_width"
+      ]
+    },
+    {
+      "module": "test_w1_zkr_control_id_audit",
+      "tests": [
+        "test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_degree_order_roots_match_small_reference_dft_and_inverse",
+        "test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_native_rejects_partial_rows_noncanonical_words_and_bad_limits",
+        "test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_native_result_rejects_boolean_numeric_aliases_and_nonfinite_observations",
+        "test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_native_result_rejects_missing_extra_and_null_payloads",
+        "test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_native_result_requires_root_bytes_normal_words_and_exact_geometry",
+        "test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_native_seven_independent_known_answers_pass",
+        "test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_native_zero_code_commitment_matches_analytic_constant_tree",
+        "test_w1_zkr_control_id_audit.W1ZkrControlIdAuditTests.test_source_integrity_and_requested_roster_fail_before_native_execution"
+      ]
+    },
+    {
+      "module": "test_w1_qrom_closure_current_controls",
+      "tests": [
+        "test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_boolean_test_count_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_complete_actual_named_test_accepted_without_qualification",
+        "test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_completion_overwrite_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_duplicate_and_nonfinite_json_are_refused",
+        "test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_duplicate_success_cannot_replace_missing_started_id",
+        "test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_empty_completion_suites_are_refused",
+        "test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_expected_failure_actual_test_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_extra_unreviewed_actual_test_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_missing_completion_after_zero_exit_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_real_load_tests_system_exit_zero_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_roster_drift_is_refused_before_execution",
+        "test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_scope_upgrade_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_skipped_actual_test_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentClosureControlsTests.test_unregistered_required_test_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_current_lifetime_or_refusal_scope_drift_cannot_pass_completion",
+        "test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_current_roster_digest_matches_workflow_and_preserves_distinct_namespace",
+        "test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_current_workflow_keeps_historical_fixed_source_and_original_roster",
+        "test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_final_status_cannot_overwrite_an_old_completion",
+        "test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_malformed_consumed_json_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_matching_record_cannot_mask_failed_or_missing_stage",
+        "test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_real_fixture_completion_retains_unqualified_scope",
+        "test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_reserves_a_fresh_directory_without_reuse",
+        "test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_source_identity_remains_strict_under_optimization",
+        "test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_zero_exit_without_named_completion_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentSemanticsCorrespondenceTests.test_actual_report_has_only_the_reviewed_lock_provenance_delta",
+        "test_w1_qrom_closure_current_controls.CurrentSemanticsCorrespondenceTests.test_any_other_report_field_change_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentSemanticsCorrespondenceTests.test_changed_current_lock_bytes_cannot_be_relabelled_in_report",
+        "test_w1_qrom_closure_current_controls.CurrentSemanticsCorrespondenceTests.test_changed_other_lock_sha_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentSemanticsCorrespondenceTests.test_historical_report_bytes_are_frozen_even_for_json_whitespace",
+        "test_w1_qrom_closure_current_controls.CurrentSemanticsCorrespondenceTests.test_missing_or_relabelled_reviewed_lock_entry_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentSemanticsCorrespondenceTests.test_real_cli_accepts_actual_observation_and_rejects_scope_change"
+      ]
+    }
+  ]
+}

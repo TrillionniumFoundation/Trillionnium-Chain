@@ -1,0 +1,11 @@
+{
+  "all": [
+    "provider_ready_cli_never_advertises_an_invalid_cache_as_ready",
+    "provider_ready_cli_preserves_the_only_connection_for_actual_payload"
+  ],
+  "filter": null,
+  "selected": [
+    "provider_ready_cli_never_advertises_an_invalid_cache_as_ready",
+    "provider_ready_cli_preserves_the_only_connection_for_actual_payload"
+  ]
+}

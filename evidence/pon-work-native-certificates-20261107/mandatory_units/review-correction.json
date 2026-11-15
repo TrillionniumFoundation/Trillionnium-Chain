@@ -1,0 +1,12 @@
+{
+  "changed_source_hashes": {
+    "formal/pon-nakamoto-v1/MANDATORY_UNITS_RELATION_V1.md": {
+      "current": "29bfa2d9aa76931d7dd01f10a44912ccb2699e46c0eca01822886efb7861bc97",
+      "observed_at_first_run": "aeb4d5c1c19fbcc1d20406e6b0b497ab222a5cd98a5ba19bb2e7e77305f35b6f"
+    }
+  },
+  "executable_sources_unchanged": true,
+  "final_reproduction_directory": "run-02-final",
+  "first_observation_preserved": true,
+  "reason": "Independent review identified that residual-state selected-coordinate sum must run i=0..k, never min(k,N); executable formula already used 0..k. Normative text corrected."
+}

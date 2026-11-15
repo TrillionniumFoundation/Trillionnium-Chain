@@ -1,0 +1,1225 @@
+{
+  "schema": "trnm-submit-ancestry-artifact-index-v1",
+  "root": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb",
+  "fixed_source": {
+    "head": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+    "tracked_entries_verified": 28807,
+    "tracked_bytes_verified": 2615077043,
+    "full_git_blob_equality": true
+  },
+  "before_source": {
+    "head": "e63427560885b65c57db6bdc478df023111b4733",
+    "tree": "10a70f10bf5c64fe4b1d8df42c6463ff17aeba88",
+    "tracked_entries_verified": 28059,
+    "tracked_bytes_verified": 2592592885,
+    "full_git_blob_equality": true
+  },
+  "native_process_image_observation": false,
+  "binary_retention": {
+    "schema": "trnm-node-native-binary-retention-v1",
+    "source_subject": {
+      "head": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+      "tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+      "tracked_entries_verified": 28807,
+      "tracked_bytes_verified": 2615077043,
+      "full_git_blob_equality": true
+    },
+    "before_binary": {
+      "scope": "qualified-before",
+      "source_head": "e63427560885b65c57db6bdc478df023111b4733",
+      "original_path": "/home/qian-qi/work/chain-pon-submit-target-d6cb/release/deps/trnm_pon_node-b9510f5893fe9b62",
+      "retained_path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/native-binaries/before-e63427560885-f9f39f1e2b76.elf",
+      "bytes": 102426520,
+      "sha256": "f9f39f1e2b76c624810ff6e1c863541049db82f9442675865e635bb5cb584f56",
+      "live_proc_image_observation": false,
+      "include_elf_in_git": false
+    },
+    "fixed_binary": {
+      "source_path": "/home/qian-qi/work/chain-pon-submit-target-d6cb/release/deps/trnm_pon_node-b9510f5893fe9b62",
+      "retained_path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/native-binaries/fixed-297bb40798ca-3342d7ba7a71.elf",
+      "bytes": 103019896,
+      "sha256": "3342d7ba7a71afa02dab5af4bcfa66910630d2a0d6354d18d94a4f57ed425159",
+      "copy_started_unix": 1794396098.977523,
+      "copy_verified_unix": 1794396100.0465143,
+      "include_elf_in_git": false
+    },
+    "live_proc_image_observation": false,
+    "binary_binding": "Direct subprocess argv plus file SHA256 before/after. No /proc executable-image observation was collected."
+  },
+  "attempts": [
+    {
+      "directory": "before-native",
+      "outcome": "diagnostic expected native failure; non-absolute RUSTC made SQLite build UNQUALIFIED",
+      "native_exit_code": 101,
+      "native_functions_executed": 1,
+      "case_scope": "first Legacy/public_order=false case only"
+    },
+    {
+      "directory": "before-native-qualified",
+      "outcome": "cancelled known-UNQUALIFIED loader environment before native",
+      "runtime_exit_code": -15,
+      "native_exit_code": null,
+      "native_functions_executed": 0
+    },
+    {
+      "directory": "before-native-rustup-qualified",
+      "outcome": "qualified expected native failure",
+      "native_exit_code": 101,
+      "native_functions_executed": 1,
+      "case_scope": "first Legacy/public_order=false case only"
+    },
+    {
+      "directory": "fixed-native-297bb40798ca",
+      "outcome": "build refused stale cached local mvcc artifact; source T unchanged",
+      "build_exit_code": 101,
+      "native_exit_code": null,
+      "native_functions_executed": 0
+    },
+    {
+      "directory": "fixed-native-rebuilt-297bb40798ca",
+      "outcome": "all 14 exact native controls passed after normal local-package cache invalidation",
+      "native_functions_executed": 14,
+      "local_compilation_origin_verified": true
+    }
+  ],
+  "git_files": [
+    {
+      "relative_path": "before-native/branch.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/branch.stderr.log",
+      "bytes": 74,
+      "sha256": "aaeca596684a3fe235ac62503227b44255969ce79d101a2ffe41ed456995034b"
+    },
+    {
+      "relative_path": "before-native/branch.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/branch.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/build.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/build.stderr.log",
+      "bytes": 4348,
+      "sha256": "06557fddcf3c879bb74562be2540c016258717b2d0ee7188adf91bee65e2ac90"
+    },
+    {
+      "relative_path": "before-native/build.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/build.stdout.log",
+      "bytes": 110012,
+      "sha256": "b3805452850c46aee4468ce0085aa7070b99c43cd0a4ae2f12721783fefa5d6e"
+    },
+    {
+      "relative_path": "before-native/cargo-version.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/cargo-version.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/cargo-version.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/cargo-version.stdout.log",
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    {
+      "relative_path": "before-native/commands.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/commands.json",
+      "bytes": 8289,
+      "sha256": "5020e231f671797e3dbc1b8d2c079d412c8c7b8beb75eb4cba2b4d0f90acd5de"
+    },
+    {
+      "relative_path": "before-native/commit.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/commit.stderr.log",
+      "bytes": 180,
+      "sha256": "22119bdb8e09d1f7d8f4ef21b18f9dc9b31eccc0869900e66a6bca939a02d3bd"
+    },
+    {
+      "relative_path": "before-native/commit.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/commit.stdout.log",
+      "bytes": 253,
+      "sha256": "350e0964a6ae592f57ceaf5381b5359b1dc91467f2d9b7c03798dd0d9ab318cc"
+    },
+    {
+      "relative_path": "before-native/diff-check.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/diff-check.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/diff-check.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/diff-check.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/metadata.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/metadata.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/metadata.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/metadata.stdout.log",
+      "bytes": 854849,
+      "sha256": "b6f2b29e8400ee9354d325c942b3e0e55cb98ada69c18c2f5138ae8782e521e6"
+    },
+    {
+      "relative_path": "before-native/native-probe.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/native-probe.stderr.log",
+      "bytes": 420,
+      "sha256": "b4ffeba922b88b4a8d118d45101beeba0af0d53883fcd3cf6c92850e3e3ed34e"
+    },
+    {
+      "relative_path": "before-native/native-probe.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/native-probe.stdout.log",
+      "bytes": 367,
+      "sha256": "8b717d57b1fcbe36f6a9cac1a0cc81587604ce58d025917d5a612290a588ca7e"
+    },
+    {
+      "relative_path": "before-native/preflight-before-build.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/preflight-before-build.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/preflight-before-build.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/preflight-before-build.stdout.log",
+      "bytes": 177,
+      "sha256": "7ba92de2e86e35bd8f486042978e0f3664c67111645b407ca022a311d6bdd436"
+    },
+    {
+      "relative_path": "before-native/preflight-before-commit.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/preflight-before-commit.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/preflight-before-commit.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/preflight-before-commit.stdout.log",
+      "bytes": 177,
+      "sha256": "7ba92de2e86e35bd8f486042978e0f3664c67111645b407ca022a311d6bdd436"
+    },
+    {
+      "relative_path": "before-native/preflight-before-edit.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/preflight-before-edit.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/preflight-before-edit.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/preflight-before-edit.stdout.log",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    },
+    {
+      "relative_path": "before-native/probe-apply-check.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/probe-apply-check.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/probe-apply-check.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/probe-apply-check.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/probe-apply.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/probe-apply.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/probe-apply.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/probe-apply.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/rustc-version.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/rustc-version.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/rustc-version.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/rustc-version.stdout.log",
+      "bytes": 36,
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    {
+      "relative_path": "before-native/rustfmt-probe.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/rustfmt-probe.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/rustfmt-probe.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/rustfmt-probe.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/source-after.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/source-after.json",
+      "bytes": 222,
+      "sha256": "680b657681b9011137cbee64e365a27c6da4663f5ea55747cbf11ac507248b9e"
+    },
+    {
+      "relative_path": "before-native/source-before.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/source-before.json",
+      "bytes": 222,
+      "sha256": "680b657681b9011137cbee64e365a27c6da4663f5ea55747cbf11ac507248b9e"
+    },
+    {
+      "relative_path": "before-native/stage.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/stage.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/stage.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/stage.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native/summary.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native/summary.json",
+      "bytes": 1390,
+      "sha256": "74bc9df739f749d37f8866dcaf8824279efa156e9b7ebabcef4a64248cc9431d"
+    },
+    {
+      "relative_path": "before-native-qualified/build.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-qualified/build.stderr.log",
+      "bytes": 1034,
+      "sha256": "9b8360ba8f7caa15d88642f50d5b2572c9f3b19a511b89bdc9345c11e2f71bff"
+    },
+    {
+      "relative_path": "before-native-qualified/build.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-qualified/build.stdout.log",
+      "bytes": 109658,
+      "sha256": "e4224fed886e398b6b66519e9be7cbc845c4761881361f5849f5d1aa70fc4f04"
+    },
+    {
+      "relative_path": "before-native-qualified/cancelled-environment-attempt.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-qualified/cancelled-environment-attempt.json",
+      "bytes": 1292,
+      "sha256": "9ae65a7cd00c8c5464835cfaab15950dbb35ff658c46730adc25d5ce1f5d2e4b"
+    },
+    {
+      "relative_path": "before-native-qualified/cargo-version.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-qualified/cargo-version.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native-qualified/cargo-version.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-qualified/cargo-version.stdout.log",
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    {
+      "relative_path": "before-native-qualified/commands.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-qualified/commands.json",
+      "bytes": 2134,
+      "sha256": "3ac8de8d7845e4450720f31436797d679c272f02735c68e5c8e64202ed5dc77b"
+    },
+    {
+      "relative_path": "before-native-qualified/metadata.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-qualified/metadata.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native-qualified/metadata.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-qualified/metadata.stdout.log",
+      "bytes": 854849,
+      "sha256": "b6f2b29e8400ee9354d325c942b3e0e55cb98ada69c18c2f5138ae8782e521e6"
+    },
+    {
+      "relative_path": "before-native-qualified/preflight-before-build.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-qualified/preflight-before-build.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native-qualified/preflight-before-build.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-qualified/preflight-before-build.stdout.log",
+      "bytes": 177,
+      "sha256": "7ba92de2e86e35bd8f486042978e0f3664c67111645b407ca022a311d6bdd436"
+    },
+    {
+      "relative_path": "before-native-qualified/runtime-exit-witness.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-qualified/runtime-exit-witness.json",
+      "bytes": 206,
+      "sha256": "dbd343fed33af06d6e4e1f042ef5d2ac487efc12ff5438c196adda89bb38ce7c"
+    },
+    {
+      "relative_path": "before-native-qualified/runtime-exit.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-qualified/runtime-exit.json",
+      "bytes": 500,
+      "sha256": "1141f8fef40a3d8e7223a6e2a04b0675cf164e2d048e92dec3619516bbf5762f"
+    },
+    {
+      "relative_path": "before-native-qualified/rustc-version.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-qualified/rustc-version.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native-qualified/rustc-version.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-qualified/rustc-version.stdout.log",
+      "bytes": 36,
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    {
+      "relative_path": "before-native-qualified/source-before.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-qualified/source-before.json",
+      "bytes": 222,
+      "sha256": "680b657681b9011137cbee64e365a27c6da4663f5ea55747cbf11ac507248b9e"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/build.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/build.stderr.log",
+      "bytes": 335,
+      "sha256": "a4ebea7062cf82c04899fbf39e9a8f1690da29496f42dc07e760e22dcaef555c"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/build.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/build.stdout.log",
+      "bytes": 110188,
+      "sha256": "20c0dc72326f338ccb2e5032ccbc3a5a44170f23cb7f219a1d6a2707305a68ff"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/cargo-version.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/cargo-version.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/cargo-version.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/cargo-version.stdout.log",
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/commands.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/commands.json",
+      "bytes": 4255,
+      "sha256": "8992b5a2492c4fce9dd665c02c48364fae83e75089a8ecdb7d375d44e2c969ab"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/environment.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/environment.json",
+      "bytes": 933,
+      "sha256": "a0c64e17ece9fe15ca9a54fa628113bd2adc59ecce9927dd4096c1dbfcf36513"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/metadata.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/metadata.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/metadata.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/metadata.stdout.log",
+      "bytes": 854849,
+      "sha256": "b6f2b29e8400ee9354d325c942b3e0e55cb98ada69c18c2f5138ae8782e521e6"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/native-probe.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/native-probe.stderr.log",
+      "bytes": 418,
+      "sha256": "7c5b3b5b211d47f5b4e62f3d32754e412c6e467d939df3ab2e079932c0c48729"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/native-probe.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/native-probe.stdout.log",
+      "bytes": 367,
+      "sha256": "2527577ba1cfe0c137ddaeca377f27b1bc424e0d8014efa6dc00d13a3fc08520"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/preflight-before-build.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/preflight-before-build.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/preflight-before-build.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/preflight-before-build.stdout.log",
+      "bytes": 177,
+      "sha256": "7ba92de2e86e35bd8f486042978e0f3664c67111645b407ca022a311d6bdd436"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/rustc-version.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/rustc-version.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/rustc-version.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/rustc-version.stdout.log",
+      "bytes": 36,
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/source-after.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/source-after.json",
+      "bytes": 222,
+      "sha256": "680b657681b9011137cbee64e365a27c6da4663f5ea55747cbf11ac507248b9e"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/source-before.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/source-before.json",
+      "bytes": 222,
+      "sha256": "680b657681b9011137cbee64e365a27c6da4663f5ea55747cbf11ac507248b9e"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/sqlite-build-script.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/sqlite-build-script.json",
+      "bytes": 801,
+      "sha256": "f613966accdff30defc28bb911b89f9e3babadfcbadd39c796bd695c9db2d4e8"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/sqlite-precheck-build-script.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/sqlite-precheck-build-script.json",
+      "bytes": 853,
+      "sha256": "258a33a12a34d509909b1f0303189beced0353f45b345330fb2b3563ddb531c4"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/sqlite-qualification-build.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/sqlite-qualification-build.stderr.log",
+      "bytes": 446,
+      "sha256": "cf8dc25b51d9dbe75e4c3f1918ae1d62c13545323c48db70707588492350f0ac"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/sqlite-qualification-build.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/sqlite-qualification-build.stdout.log",
+      "bytes": 41389,
+      "sha256": "50b1cb96585e38f04a9ed7b2d33c3ce006b3704c81e6154fc5d3bc07f0f80c62"
+    },
+    {
+      "relative_path": "before-native-rustup-qualified/summary.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified/summary.json",
+      "bytes": 1672,
+      "sha256": "fd1f44f15a3faf3be939ce0ae73a0d386733a16009016f1e847e04205ed39f69"
+    },
+    {
+      "relative_path": "before-subject/before-subject-e6342756.bundle",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/before-subject-e6342756.bundle",
+      "bytes": 2663,
+      "sha256": "c190eb92152cd5714bf4f3d435f5211c598393e4a3ae5339f3f977c78fafdc8e"
+    },
+    {
+      "relative_path": "before-subject/before-subject-e6342756.patch",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/before-subject-e6342756.patch",
+      "bytes": 6762,
+      "sha256": "26939e9978ff72689279a384ff7391466ee14d653cc61591da9e3ca79271bbe0"
+    },
+    {
+      "relative_path": "before-subject/bundle-create.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/bundle-create.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-subject/bundle-create.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/bundle-create.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-subject/bundle-heads.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/bundle-heads.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-subject/bundle-heads.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/bundle-heads.stdout.log",
+      "bytes": 99,
+      "sha256": "cdd32536263c7d5256ebda6c0a5f40b09e9b63d423d7c12d2667b0b519f88446"
+    },
+    {
+      "relative_path": "before-subject/bundle-verify.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/bundle-verify.stderr.log",
+      "bytes": 109,
+      "sha256": "5ffba6e7933461089c0a7a00210a7e733ae3db0b2d7c9f8754fa0c92a8382241"
+    },
+    {
+      "relative_path": "before-subject/bundle-verify.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/bundle-verify.stdout.log",
+      "bytes": 260,
+      "sha256": "9ae82667a991d0b7accaf5e7678f58ca8c476a1d968d69ed6b5847a3a5ee9569"
+    },
+    {
+      "relative_path": "before-subject/commands.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/commands.json",
+      "bytes": 3406,
+      "sha256": "9fe182a71811ea8e41a37b52f23d6693606cf460730f57575660e9b09450c443"
+    },
+    {
+      "relative_path": "before-subject/commit-metadata.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/commit-metadata.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-subject/commit-metadata.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/commit-metadata.stdout.log",
+      "bytes": 318,
+      "sha256": "9a9f3b32cb2349f4fad5bd107cef58b7b4a7b7170b4e8304b32406af229f3018"
+    },
+    {
+      "relative_path": "before-subject/commit-raw.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/commit-raw.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-subject/commit-raw.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/commit-raw.stdout.log",
+      "bytes": 293,
+      "sha256": "6625066c5323ba420514e6203fb7c3b4d8634645afb440e3568a083fd3727d0c"
+    },
+    {
+      "relative_path": "before-subject/format-patch.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/format-patch.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "before-subject/format-patch.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/format-patch.stdout.log",
+      "bytes": 6762,
+      "sha256": "26939e9978ff72689279a384ff7391466ee14d653cc61591da9e3ca79271bbe0"
+    },
+    {
+      "relative_path": "before-subject/manifest.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/manifest.json",
+      "bytes": 2899,
+      "sha256": "261434590795b773857b161c5b93082a6f2470068234ff454b041dfbf108221e"
+    },
+    {
+      "relative_path": "draft-manifest.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/draft-manifest.json",
+      "bytes": 1151,
+      "sha256": "ed93d2a8b46471419847eb45bff642405e2512080b978e814308ba85c42a74a9"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/before-elf-retention.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/before-elf-retention.json",
+      "bytes": 510,
+      "sha256": "148934ba12623e2d524ea568fd3a6ea600d34969a819d6107e31214393493e11"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/cache-cause.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/cache-cause.json",
+      "bytes": 1264,
+      "sha256": "34e0cd1f09bf42285fe84e2fb0741bfc6af2dcf6c44a0aadee803d0fcd7bcaa4"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/clean-all-local-packages.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/clean-all-local-packages.stderr.log",
+      "bytes": 10741,
+      "sha256": "2526f73a6b1204a38acbae75974148ffa5ac35eb166929fe3fae050296b83c13"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/clean-all-local-packages.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/clean-all-local-packages.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/commands.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/commands.json",
+      "bytes": 5873,
+      "sha256": "eed369f6ea2958f919191056d99d0e18bacb0d8d32437a731422bf8d47c67d0c"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/failed-attempt-local-artifacts.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/failed-attempt-local-artifacts.json",
+      "bytes": 13683,
+      "sha256": "4ddeb22114053dd24a10b5958974a6b1c4f51380827b69d66d360661e93308e6"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/local-artifact-survivors.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/local-artifact-survivors.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/local-packages.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/local-packages.json",
+      "bytes": 8257,
+      "sha256": "795c451c52c39189ecc1331acc228de8f4650e214d31c24eebc3c493247e076d"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/metadata.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/metadata.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/metadata.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/metadata.stdout.log",
+      "bytes": 855004,
+      "sha256": "9c8d10bb0ff080d27d492cd74f4aca639b165e63100a148b1210532e96610e1f"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/preflight-before-clean.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/preflight-before-clean.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/preflight-before-clean.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/preflight-before-clean.stdout.log",
+      "bytes": 170,
+      "sha256": "00e765ca46856da074919e97be1c8f5fef4fd068cc69700ccafe6d01a3381278"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/preserve-before-elf.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/preserve-before-elf.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/preserve-before-elf.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/preserve-before-elf.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/source-after.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/source-after.json",
+      "bytes": 222,
+      "sha256": "7ffd206ffa24b21b9382c2be34d4377c276f7c8131a9a407a706dcfa0c238c03"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/source-before.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/source-before.json",
+      "bytes": 222,
+      "sha256": "7ffd206ffa24b21b9382c2be34d4377c276f7c8131a9a407a706dcfa0c238c03"
+    },
+    {
+      "relative_path": "fixed-cache-recovery-297bb40798ca/summary.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca/summary.json",
+      "bytes": 1459,
+      "sha256": "157784d296b32d64ff4ed41293fdb417dff6998734ffb1c11909c7aad31aa11c"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/build.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/build.stderr.log",
+      "bytes": 345,
+      "sha256": "11a4724e826f8618814f4a416d63260b2d7e5c1d61ff2e0966b7853b72fd6156"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/build.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/build.stdout.log",
+      "bytes": 132670,
+      "sha256": "32171eecfff85c32be7d34334f65793d97d210587036767397daea49511f1aa8"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/cargo-version.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/cargo-version.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/cargo-version.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/cargo-version.stdout.log",
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/commands.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/commands.json",
+      "bytes": 3568,
+      "sha256": "c8d784844e7675bfe8436897cc317982301487c955c5ee0beaba521bc96063a0"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/environment.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/environment.json",
+      "bytes": 933,
+      "sha256": "a0c64e17ece9fe15ca9a54fa628113bd2adc59ecce9927dd4096c1dbfcf36513"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/failure.txt",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/failure.txt",
+      "bytes": 664,
+      "sha256": "e38acf3b59aa60bf73f637f578cf1e51250deedb222c8aab0537a6731f5d94f7"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/metadata.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/metadata.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/metadata.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/metadata.stdout.log",
+      "bytes": 855004,
+      "sha256": "9c8d10bb0ff080d27d492cd74f4aca639b165e63100a148b1210532e96610e1f"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/preflight-before-build.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/preflight-before-build.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/preflight-before-build.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/preflight-before-build.stdout.log",
+      "bytes": 170,
+      "sha256": "00e765ca46856da074919e97be1c8f5fef4fd068cc69700ccafe6d01a3381278"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/rustc-version.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/rustc-version.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/rustc-version.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/rustc-version.stdout.log",
+      "bytes": 36,
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/source-before.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/source-before.json",
+      "bytes": 222,
+      "sha256": "7ffd206ffa24b21b9382c2be34d4377c276f7c8131a9a407a706dcfa0c238c03"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/sqlite-precheck-build-script.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/sqlite-precheck-build-script.json",
+      "bytes": 852,
+      "sha256": "25f9485951d83c601802edcf0da281aaf1fd23e02a6033aa152e68414a7742cf"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/sqlite-qualification-build.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/sqlite-qualification-build.stderr.log",
+      "bytes": 62,
+      "sha256": "a70da5408e7a6da7efe97b23011504833b16a7875bda14543f2504b5b8c7d97a"
+    },
+    {
+      "relative_path": "fixed-native-297bb40798ca/sqlite-qualification-build.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-297bb40798ca/sqlite-qualification-build.stdout.log",
+      "bytes": 41370,
+      "sha256": "923cafcfffc668b44f79f0e45f0ba3a1a74d6b548628b63585cc8d48ab2e67b7"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/build.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/build.stderr.log",
+      "bytes": 1683,
+      "sha256": "1a5836b40b56c4a9687b063cabcb37383c17837b3b261406fb68d2471f656650"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/build.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/build.stdout.log",
+      "bytes": 108254,
+      "sha256": "6c730cbe22591fcc6115bb4fc9752b7e79a91eb651044d333f5ddc8dfc9998c3"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/cargo-version.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/cargo-version.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/cargo-version.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/cargo-version.stdout.log",
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/commands.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/commands.json",
+      "bytes": 13512,
+      "sha256": "b3ba803276ba1c4d39ee7de6480033f4d7ebb4a5db2cea19b5795a13beda8711"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/environment.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/environment.json",
+      "bytes": 933,
+      "sha256": "a0c64e17ece9fe15ca9a54fa628113bd2adc59ecce9927dd4096c1dbfcf36513"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/local-compilation-audit.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/local-compilation-audit.json",
+      "bytes": 12079,
+      "sha256": "000472378d5596718ae2f24ba87d489fdd37bdf9e324846f46963a51d8acec9e"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/metadata.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/metadata.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/metadata.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/metadata.stdout.log",
+      "bytes": 855004,
+      "sha256": "9c8d10bb0ff080d27d492cd74f4aca639b165e63100a148b1210532e96610e1f"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-01.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-01.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-01.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-01.stdout.log",
+      "bytes": 230,
+      "sha256": "0d80bae891a77ff6f23054dc8c81cd17382db7ccca2cd7705c3c44fcf007a54b"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-02.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-02.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-02.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-02.stdout.log",
+      "bytes": 228,
+      "sha256": "61224036984cadfd5ca8f3f0327b182ede729b4c38d33690d24c7c5e86be11bd"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-03.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-03.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-03.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-03.stdout.log",
+      "bytes": 236,
+      "sha256": "5812920aaebe377d9fb919bcb2c5b9cf430d7764194c37ea634f9e41f2e3930e"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-04.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-04.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-04.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-04.stdout.log",
+      "bytes": 243,
+      "sha256": "1c32c9f63efd2c9b55375680e451e9e574de3b8ea592bed3c19e50ae025d6d6f"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-05.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-05.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-05.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-05.stdout.log",
+      "bytes": 233,
+      "sha256": "1ebfed9c5a2e44306eee6089545ccc450a6469de231e0aba05937c3784684d69"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-06.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-06.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-06.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-06.stdout.log",
+      "bytes": 236,
+      "sha256": "6ed1dc86f6f5a1f536eeb8d3ede87a016cba5506d94bfa4b0ae31d169d8d9aa5"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-07.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-07.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-07.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-07.stdout.log",
+      "bytes": 244,
+      "sha256": "9e4c846df66e89a9d1cfb9a35058f7dce4f7676a997e4b09b8dc77fbf554f4f9"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-08.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-08.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-08.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-08.stdout.log",
+      "bytes": 224,
+      "sha256": "8066787c5179e811ae55f6bb2780be9b5db2ddaf73f1b7c2f14b3c2d8f6995e1"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-09.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-09.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-09.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-09.stdout.log",
+      "bytes": 192,
+      "sha256": "e9db8cbea30d69c14a3a3fb9bb7c0ec413b47c1caedea047c7eb471f35e2a2d4"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-10.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-10.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-10.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-10.stdout.log",
+      "bytes": 201,
+      "sha256": "92ff891bfa6a00d0be7d183861d8ead36c11aa7265ea4873f5e2c147c662a13f"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-11.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-11.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-11.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-11.stdout.log",
+      "bytes": 218,
+      "sha256": "1daf46fa66d921873276593ad58a4a128799eeb1770bd0d98e816572c8fe6976"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-12.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-12.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-12.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-12.stdout.log",
+      "bytes": 223,
+      "sha256": "9cbbebd9d6b0b92348fd1553a26f806a59baf4832bf20ca827273f099f2fa746"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-13.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-13.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-13.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-13.stdout.log",
+      "bytes": 197,
+      "sha256": "e528ed375e4bc1f7ffa3220040e1a309873f67baeb74eecfe365968f4899e06e"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-14.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-14.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-14.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-14.stdout.log",
+      "bytes": 200,
+      "sha256": "a109318620ad5d2287872743a0657f320894e0952d51e7b72976ae0c9d2de807"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-list.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-list.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/native-list.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/native-list.stdout.log",
+      "bytes": 154149,
+      "sha256": "8c9217d8e750f60f18e85939ba71d6b8725166348affd29e9335a98b6674cfc1"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/preflight-before-build.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/preflight-before-build.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/preflight-before-build.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/preflight-before-build.stdout.log",
+      "bytes": 170,
+      "sha256": "00e765ca46856da074919e97be1c8f5fef4fd068cc69700ccafe6d01a3381278"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/rustc-version.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/rustc-version.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/rustc-version.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/rustc-version.stdout.log",
+      "bytes": 36,
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/source-after.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/source-after.json",
+      "bytes": 222,
+      "sha256": "7ffd206ffa24b21b9382c2be34d4377c276f7c8131a9a407a706dcfa0c238c03"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/source-before.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/source-before.json",
+      "bytes": 222,
+      "sha256": "7ffd206ffa24b21b9382c2be34d4377c276f7c8131a9a407a706dcfa0c238c03"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/sqlite-build-script.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/sqlite-build-script.json",
+      "bytes": 800,
+      "sha256": "2b196782a8a5850deb5253c67e8b69555338a8c830c03c9e635bd41511dbb4c5"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/sqlite-precheck-build-script.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/sqlite-precheck-build-script.json",
+      "bytes": 852,
+      "sha256": "25f9485951d83c601802edcf0da281aaf1fd23e02a6033aa152e68414a7742cf"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/sqlite-qualification-build.stderr.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/sqlite-qualification-build.stderr.log",
+      "bytes": 207,
+      "sha256": "cb09846439ba54a49fa91a9f96d5bd8e2251a928a52bce1e9a47bc45ee95d724"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/sqlite-qualification-build.stdout.log",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/sqlite-qualification-build.stdout.log",
+      "bytes": 41372,
+      "sha256": "11d0c0b5cea2fe5c6c978991e9c71e4bfee3ceef7af269575d3dcd209e0ac655"
+    },
+    {
+      "relative_path": "fixed-native-rebuilt-297bb40798ca/summary.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca/summary.json",
+      "bytes": 5347,
+      "sha256": "8a6f34b101f8d8083d0177f4c62a0b8ce3d372633af6609918c382b067b3e94d"
+    },
+    {
+      "relative_path": "index-native-artifacts.py",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/index-native-artifacts.py",
+      "bytes": 4641,
+      "sha256": "e3874b6601d7ce6784c7808e4163f61a6fbee7db18ceefeb9247e250005fea1f"
+    },
+    {
+      "relative_path": "main-patch-v2-apply.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/main-patch-v2-apply.json",
+      "bytes": 1703,
+      "sha256": "f078459c853beb6039c61db6e3d2a9e0227939a4e9ba4322dd3ba31b43fe7fb8"
+    },
+    {
+      "relative_path": "native-binary-retention.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/native-binary-retention.json",
+      "bytes": 1524,
+      "sha256": "c1c63a92386597e2da48b9a690415f7d14e2950fcc169b63be43ef79b55c16c7"
+    },
+    {
+      "relative_path": "native-tests.rs",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/native-tests.rs",
+      "bytes": 13617,
+      "sha256": "ed1447317257c75ddf4be9f38bf960781177ac155480ca1eb72fd8aaf0277cb4"
+    },
+    {
+      "relative_path": "negative-probe.patch",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/negative-probe.patch",
+      "bytes": 5973,
+      "sha256": "2cf2d01100949a921a7911f4d5fbf76ee5469bbb44303e967e9092e973be5842"
+    },
+    {
+      "relative_path": "negative-probe.rs",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/negative-probe.rs",
+      "bytes": 4968,
+      "sha256": "b6ab023c4ad823674257f7c0e66ba55b99f5234b31e0951457e72c0a383b6d62"
+    },
+    {
+      "relative_path": "preserve-before-subject.py",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/preserve-before-subject.py",
+      "bytes": 2842,
+      "sha256": "1bf81d292a192885e871124a660896f5de2824d57d84d6b17b6d816c2747b51d"
+    },
+    {
+      "relative_path": "recover-local-cache.py",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/recover-local-cache.py",
+      "bytes": 7719,
+      "sha256": "374371cef4c6ae74332d7878179533aa24aaa2bac1e9fd498a26c7324c0dac36"
+    },
+    {
+      "relative_path": "run-fixed-native-rebuilt.py",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/run-fixed-native-rebuilt.py",
+      "bytes": 12517,
+      "sha256": "d29a0821f1471e3822ae3a9e1d07c260eacd5a5ca9d2b2b1b326fbe8cf071af1"
+    },
+    {
+      "relative_path": "run-fixed-native.py",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/run-fixed-native.py",
+      "bytes": 10597,
+      "sha256": "b417e3bbac12ecaf633b71516d1088b645c626c3e5db23aaa20cde710d1425b3"
+    },
+    {
+      "relative_path": "run-negative-original.py",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/run-negative-original.py",
+      "bytes": 7446,
+      "sha256": "de916a09550a1032519d21a33a37e3892f4f988d3d3637d472eac40b95ac1a70"
+    },
+    {
+      "relative_path": "run-negative-qualified.py",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/run-negative-qualified.py",
+      "bytes": 7148,
+      "sha256": "a51b27fcc163371d4ba63c33df5ea2313b06b8d6bb8254628a8ecafc32efe4d3"
+    },
+    {
+      "relative_path": "run-negative-rustup-qualified.py",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/run-negative-rustup-qualified.py",
+      "bytes": 8615,
+      "sha256": "a301803ac77ffea9219d608be297f221be92d8b5c1e90061d92fec7b24d965ab"
+    },
+    {
+      "relative_path": "source-edits.json",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/source-edits.json",
+      "bytes": 23160,
+      "sha256": "6f5665358b161d49692ac1dab1e2703f87d495efebaaf9e3adb2e1498f13e546"
+    },
+    {
+      "relative_path": "submit-activation-history.patch",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/submit-activation-history.patch",
+      "bytes": 18864,
+      "sha256": "6d9878b92826a264c5402010c62f46f65ad6dc1f9fce79a18425204e5aa15208"
+    }
+  ],
+  "local_only_files": [
+    {
+      "relative_path": "native-binaries/before-e63427560885-f9f39f1e2b76.elf",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/native-binaries/before-e63427560885-f9f39f1e2b76.elf",
+      "bytes": 102426520,
+      "sha256": "f9f39f1e2b76c624810ff6e1c863541049db82f9442675865e635bb5cb584f56",
+      "exclude_from_git": true
+    },
+    {
+      "relative_path": "native-binaries/fixed-297bb40798ca-3342d7ba7a71.elf",
+      "path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/native-binaries/fixed-297bb40798ca-3342d7ba7a71.elf",
+      "bytes": 103019896,
+      "sha256": "3342d7ba7a71afa02dab5af4bcfa66910630d2a0d6354d18d94a4f57ed425159",
+      "exclude_from_git": true
+    }
+  ],
+  "index_excludes_itself": true,
+  "git_file_count": 186,
+  "git_total_bytes": 6255907,
+  "local_only_file_count": 2,
+  "local_only_total_bytes": 205446416
+}

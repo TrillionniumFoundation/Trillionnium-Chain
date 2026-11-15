@@ -1,0 +1,19 @@
+55:     python3 scripts/w1_stark_route_audit.py
+56:     # Conditional iid counting does not establish the actual transcript distribution.
+57:     python3 scripts/ci/test_w1_fri_ideal_sampler.py
+58:     python3 scripts/w1_fri_query_replay.py --ideal-sampler-law
+59:     # Current lifetime source observation is separate from historical positive replay.
+60:     python3 scripts/ci/test_w1_lifetime_current_observation.py
+61:     python3 scripts/w1_lifetime_current_observation.py
+62:     python3 scripts/ci/test_w1_qrom_closure_current_controls.py
+63:     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
+64:     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
+65:     python3 scripts/ci/test_hash_use_contract.py
+66:     python3 scripts/ci/hash_use_contract.py
+67:     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
+68:     python3 -m unittest discover -s scripts/ci -p 'test_pq_quantum_daa_scenarios.py' -v
+69:     # Public-input framing only: no seed proof or signature qualification.
+70:     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_seed_recovery_v1.py' -v
+71: 
+72:     # Conditional resource/event models retain unknown W1 hardware and protocol gates.
+

@@ -1,0 +1,997 @@
+........................................................................................FFFFFFE.EEEEEEEEEEEE....EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE.........................................
+======================================================================
+ERROR: test_sustained_report_is_mandatory_even_with_three_native_names (test_run_from_zero_native.ExecutionBoundaryTests.test_sustained_report_is_mandatory_even_with_three_native_names)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 939, in test_sustained_report_is_mandatory_even_with_three_native_names
+    result, _ = self.exercise(missing_sustained=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 585, in exercise
+    result = driver.run(out)
+             ^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 1234, in run
+    save_manifest(out, result)
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 847, in save_manifest
+    stream.flush()
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_sustained_scope_promotion_and_boolean_number_refused (test_run_from_zero_native.ExecutionBoundaryTests.test_sustained_scope_promotion_and_boolean_number_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 1011, in test_sustained_scope_promotion_and_boolean_number_refused
+    self.sustained_refusal(lambda d: d.update(ordinary_hepta_entry=True), 'SUSTAINED_SCOPE')
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 956, in sustained_refusal
+    result, _ = self.exercise(sustained_edit=edit)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 585, in exercise
+    result = driver.run(out)
+             ^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 1234, in run
+    save_manifest(out, result)
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 847, in save_manifest
+    stream.flush()
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_sustained_shortened_window_refused (test_run_from_zero_native.ExecutionBoundaryTests.test_sustained_shortened_window_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 965, in test_sustained_shortened_window_refused
+    self.sustained_refusal(lambda d: d['phases'][0].update(requested_window_ns=1), 'SUSTAINED_WINDOW')
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 956, in sustained_refusal
+    result, _ = self.exercise(sustained_edit=edit)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 585, in exercise
+    result = driver.run(out)
+             ^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 1234, in run
+    save_manifest(out, result)
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 847, in save_manifest
+    stream.flush()
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_sustained_unjoined_work_and_unknown_settlement_refused (test_run_from_zero_native.ExecutionBoundaryTests.test_sustained_unjoined_work_and_unknown_settlement_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 1002, in test_sustained_unjoined_work_and_unknown_settlement_refused
+    self.sustained_refusal(lambda d: d['phases'][0]['service']['metrics'].update(work_finished=4), 'SUSTAINED_UNJOINED_WORK')
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 956, in sustained_refusal
+    result, _ = self.exercise(sustained_edit=edit)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 585, in exercise
+    result = driver.run(out)
+             ^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 1234, in run
+    save_manifest(out, result)
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 847, in save_manifest
+    stream.flush()
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_sustained_unknown_and_double_counted_cpu_refused (test_run_from_zero_native.ExecutionBoundaryTests.test_sustained_unknown_and_double_counted_cpu_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 997, in test_sustained_unknown_and_double_counted_cpu_refused
+    self.sustained_refusal(lambda d: d['phases'][0]['attacks'][0].update(calling_thread_cpu_ns=None), 'SUSTAINED_NUMBER')
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 956, in sustained_refusal
+    result, _ = self.exercise(sustained_edit=edit)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 585, in exercise
+    result = driver.run(out)
+             ^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 1234, in run
+    save_manifest(out, result)
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 847, in save_manifest
+    stream.flush()
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_sustained_valid_exhaustion_is_retained_without_fabricated_connection (test_run_from_zero_native.ExecutionBoundaryTests.test_sustained_valid_exhaustion_is_retained_without_fabricated_connection)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 1045, in test_sustained_valid_exhaustion_is_retained_without_fabricated_connection
+    result, _ = self.exercise(sustained_edit=edit)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 585, in exercise
+    result = driver.run(out)
+             ^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 1234, in run
+    save_manifest(out, result)
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 847, in save_manifest
+    stream.flush()
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_sustained_valid_packet_cannot_be_relabelled_as_exhausted (test_run_from_zero_native.ExecutionBoundaryTests.test_sustained_valid_packet_cannot_be_relabelled_as_exhausted)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 1051, in test_sustained_valid_packet_cannot_be_relabelled_as_exhausted
+    self.sustained_refusal(lambda d: d['phases'][0]['attacks'][0]['calls'].append(
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 956, in sustained_refusal
+    result, _ = self.exercise(sustained_edit=edit)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 585, in exercise
+    result = driver.run(out)
+             ^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 1234, in run
+    save_manifest(out, result)
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 847, in save_manifest
+    stream.flush()
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_timeout_cannot_be_overridden_by_success_text (test_run_from_zero_native.ExecutionBoundaryTests.test_timeout_cannot_be_overridden_by_success_text)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 652, in test_timeout_cannot_be_overridden_by_success_text
+    result, _ = self.exercise(timeout=driver.TESTS[2])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 585, in exercise
+    result = driver.run(out)
+             ^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 1234, in run
+    save_manifest(out, result)
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 847, in save_manifest
+    stream.flush()
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_unjoined_receiver_work_refused (test_run_from_zero_native.ExecutionBoundaryTests.test_unjoined_receiver_work_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 877, in test_unjoined_receiver_work_refused
+    result, _ = self.exercise(report_edit=lambda doc: doc['phases'][0]['service']['metrics'].update(work_finished=8))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 585, in exercise
+    result = driver.run(out)
+             ^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 1234, in run
+    save_manifest(out, result)
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 847, in save_manifest
+    stream.flush()
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_unknown_cpu_cannot_become_zero (test_run_from_zero_native.ExecutionBoundaryTests.test_unknown_cpu_cannot_become_zero)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 867, in test_unknown_cpu_cannot_become_zero
+    result, _ = self.exercise(report_edit=lambda doc: doc['phases'][0].update(attacker_worker_cpu_ns=None))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 585, in exercise
+    result = driver.run(out)
+             ^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 1234, in run
+    save_manifest(out, result)
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 847, in save_manifest
+    stream.flush()
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_validated_log_must_remain_unchanged (test_run_from_zero_native.ExecutionBoundaryTests.test_validated_log_must_remain_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 902, in test_validated_log_must_remain_unchanged
+    result, _ = self.exercise(log_drift=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 585, in exercise
+    result = driver.run(out)
+             ^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 1234, in run
+    save_manifest(out, result)
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 847, in save_manifest
+    stream.flush()
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_validated_report_must_remain_unchanged (test_run_from_zero_native.ExecutionBoundaryTests.test_validated_report_must_remain_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 907, in test_validated_report_must_remain_unchanged
+    result, _ = self.exercise(report_drift=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 585, in exercise
+    result = driver.run(out)
+             ^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 1234, in run
+    save_manifest(out, result)
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 847, in save_manifest
+    stream.flush()
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_zero_match_exit_zero_is_still_failure (test_run_from_zero_native.ExecutionBoundaryTests.test_zero_match_exit_zero_is_still_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 633, in test_zero_match_exit_zero_is_still_failure
+    result, _ = self.exercise(zero=driver.TESTS[0])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_run_from_zero_native.py", line 585, in exercise
+    result = driver.run(out)
+             ^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 1234, in run
+    save_manifest(out, result)
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/run_from_zero_native.py", line 847, in save_manifest
+    stream.flush()
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_booleans_cannot_impersonate_integer_fields_or_grid_values (test_growth_scale_observation.GrowthObservationReaderTests.test_booleans_cannot_impersonate_integer_fields_or_grid_values)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_cancelled_attempt_and_cold_reopen_cannot_be_omitted (test_growth_scale_observation.GrowthObservationReaderTests.test_cancelled_attempt_and_cold_reopen_cannot_be_omitted)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_cannot_claim_native_success_with_no_work_or_commit_checkpoints (test_growth_scale_observation.GrowthObservationReaderTests.test_cannot_claim_native_success_with_no_work_or_commit_checkpoints)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_changed_or_duplicate_actual_owners_are_refused (test_growth_scale_observation.GrowthObservationReaderTests.test_changed_or_duplicate_actual_owners_are_refused)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_complete_fixture_accepts_all_seventy_two_samples_without_qualification (test_growth_scale_observation.GrowthObservationReaderTests.test_complete_fixture_accepts_all_seventy_two_samples_without_qualification)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_distinct_account_counts_may_have_distinct_native_contexts (test_growth_scale_observation.GrowthObservationReaderTests.test_distinct_account_counts_may_have_distinct_native_contexts)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_duplicate_json_keys_and_missing_final_newline_are_refused (test_growth_scale_observation.GrowthObservationReaderTests.test_duplicate_json_keys_and_missing_final_newline_are_refused)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_duplicate_sample_is_refused (test_growth_scale_observation.GrowthObservationReaderTests.test_duplicate_sample_is_refused)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_extra_file_and_trailing_event_are_refused (test_growth_scale_observation.GrowthObservationReaderTests.test_extra_file_and_trailing_event_are_refused)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_fixed_account_histories_cannot_change_native_context (test_growth_scale_observation.GrowthObservationReaderTests.test_fixed_account_histories_cannot_change_native_context)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_inconsistent_or_out_of_range_intervals_are_refused (test_growth_scale_observation.GrowthObservationReaderTests.test_inconsistent_or_out_of_range_intervals_are_refused)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_mandatory_owner_must_be_covered_by_actual_witness (test_growth_scale_observation.GrowthObservationReaderTests.test_mandatory_owner_must_be_covered_by_actual_witness)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_missing_cohort_file_is_refused (test_growth_scale_observation.GrowthObservationReaderTests.test_missing_cohort_file_is_refused)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_missing_required_native_diagnostics_are_refused (test_growth_scale_observation.GrowthObservationReaderTests.test_missing_required_native_diagnostics_are_refused)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_missing_sample_cannot_reduce_the_denominator (test_growth_scale_observation.GrowthObservationReaderTests.test_missing_sample_cannot_reduce_the_denominator)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_missing_warmup_or_incorrect_warmup_index_is_refused (test_growth_scale_observation.GrowthObservationReaderTests.test_missing_warmup_or_incorrect_warmup_index_is_refused)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_nonfinite_and_floating_json_are_refused_even_in_diagnostics (test_growth_scale_observation.GrowthObservationReaderTests.test_nonfinite_and_floating_json_are_refused_even_in_diagnostics)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_original_structural_limits_are_not_relaxed (test_growth_scale_observation.GrowthObservationReaderTests.test_original_structural_limits_are_not_relaxed)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_reference_cancellation_and_cold_failures_are_refused (test_growth_scale_observation.GrowthObservationReaderTests.test_reference_cancellation_and_cold_failures_are_refused)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_reordered_start_completion_and_samples_are_refused (test_growth_scale_observation.GrowthObservationReaderTests.test_reordered_start_completion_and_samples_are_refused)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_repeated_or_unlinked_blocks_are_refused (test_growth_scale_observation.GrowthObservationReaderTests.test_repeated_or_unlinked_blocks_are_refused)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_sql_deltas_history_and_generation_cannot_disagree_with_samples (test_growth_scale_observation.GrowthObservationReaderTests.test_sql_deltas_history_and_generation_cannot_disagree_with_samples)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_summary_median_max_and_planned_totals_are_recomputed (test_growth_scale_observation.GrowthObservationReaderTests.test_summary_median_max_and_planned_totals_are_recomputed)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_symlinked_file_and_directory_are_refused (test_growth_scale_observation.GrowthObservationReaderTests.test_symlinked_file_and_directory_are_refused)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_uniform_invented_owner_set_cannot_hide_declared_transaction_or_mandatory_owners (test_growth_scale_observation.GrowthObservationReaderTests.test_uniform_invented_owner_set_cannot_hide_declared_transaction_or_mandatory_owners)
+----------------------------------------------------------------------
+OSError: [Errno 28] No space left on device
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_activation_failure_keeps_prior_admission_return_and_remains_failure (test_growth_scale_observation.GrowthReturnedStageReaderTests.test_activation_failure_keeps_prior_admission_return_and_remains_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_all_nine_cancellations_need_their_own_return_and_timing (test_growth_scale_observation.GrowthReturnedStageReaderTests.test_all_nine_cancellations_need_their_own_return_and_timing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_cancellation_cannot_be_a_success_or_misnamed_durable_commit_measurement (test_growth_scale_observation.GrowthReturnedStageReaderTests.test_cancellation_cannot_be_a_success_or_misnamed_durable_commit_measurement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_cancellation_return_cannot_disagree_with_atomic_readback_or_summary (test_growth_scale_observation.GrowthReturnedStageReaderTests.test_cancellation_return_cannot_disagree_with_atomic_readback_or_summary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_cancelled_tail_is_not_a_ninth_successful_latency_sample (test_growth_scale_observation.GrowthReturnedStageReaderTests.test_cancelled_tail_is_not_a_ninth_successful_latency_sample)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_completed_sample_cannot_rewrite_already_returned_timings_or_sql_counts (test_growth_scale_observation.GrowthReturnedStageReaderTests.test_completed_sample_cannot_rewrite_already_returned_timings_or_sql_counts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_current_scope_cannot_silently_claim_old_success_only_timing (test_growth_scale_observation.GrowthReturnedStageReaderTests.test_current_scope_cannot_silently_claim_old_success_only_timing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_deliberate_before_commit_cancellation_cannot_erase_ancestor_work (test_growth_scale_observation.GrowthReturnedStageReaderTests.test_deliberate_before_commit_cancellation_cannot_erase_ancestor_work)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_deliberate_before_commit_cancellation_cannot_erase_rolled_back_write_cost (test_growth_scale_observation.GrowthReturnedStageReaderTests.test_deliberate_before_commit_cancellation_cannot_erase_rolled_back_write_cost)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_erased_or_reordered_admission_and_activation_returns_are_refused (test_growth_scale_observation.GrowthReturnedStageReaderTests.test_erased_or_reordered_admission_and_activation_returns_are_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_failure_receipt_requires_real_error_and_consistent_partial_checkpoints (test_growth_scale_observation.GrowthReturnedStageReaderTests.test_failure_receipt_requires_real_error_and_consistent_partial_checkpoints)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_historical_v1_requires_explicit_mode_and_missing_return_timings_stay_unknown (test_growth_scale_observation.GrowthReturnedStageReaderTests.test_historical_v1_requires_explicit_mode_and_missing_return_timings_stay_unknown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_native_return_identity_and_outcome_are_exact (test_growth_scale_observation.GrowthReturnedStageReaderTests.test_native_return_identity_and_outcome_are_exact)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_partial_failed_admission_retains_actual_cost_but_cannot_complete_campaign (test_growth_scale_observation.GrowthReturnedStageReaderTests.test_partial_failed_admission_retains_actual_cost_but_cannot_complete_campaign)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_unmeasured_stage_cpu_cannot_be_filled_with_zero_or_inferred_work (test_growth_scale_observation.GrowthReturnedStageReaderTests.test_unmeasured_stage_cpu_cannot_be_filled_with_zero_or_inferred_work)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_v2_retains_all_returns_and_keeps_cancellation_cost_outside_success_medians (test_growth_scale_observation.GrowthReturnedStageReaderTests.test_v2_retains_all_returns_and_keeps_cancellation_cost_outside_success_medians)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_current_contract_cannot_change_window_size_counter_scope_or_number_types (test_growth_scale_observation.GrowthSingleWindowReaderTests.test_current_contract_cannot_change_window_size_counter_scope_or_number_types)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_historical_v2_requires_explicit_mode_and_preserves_original_six_windows (test_growth_scale_observation.GrowthSingleWindowReaderTests.test_historical_v2_requires_explicit_mode_and_preserves_original_six_windows)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_relabelling_v2_as_v3_or_v3_as_v2_does_not_change_observed_counts (test_growth_scale_observation.GrowthSingleWindowReaderTests.test_relabelling_v2_as_v3_or_v3_as_v2_does_not_change_observed_counts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_v3_cancellation_cannot_retain_old_six_windows_or_erase_actual_work (test_growth_scale_observation.GrowthSingleWindowReaderTests.test_v3_cancellation_cannot_retain_old_six_windows_or_erase_actual_work)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_v3_keeps_failed_cancelled_and_unobserved_returns_in_planned_denominator (test_growth_scale_observation.GrowthSingleWindowReaderTests.test_v3_keeps_failed_cancelled_and_unobserved_returns_in_planned_denominator)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_v3_refuses_wrong_window_counts_in_every_account_history_cohort (test_growth_scale_observation.GrowthSingleWindowReaderTests.test_v3_refuses_wrong_window_counts_in_every_account_history_cohort)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_v3_retains_all_returns_with_exact_three_local_windows (test_growth_scale_observation.GrowthSingleWindowReaderTests.test_v3_retains_all_returns_with_exact_three_local_windows)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 297, in setUp
+    self.write()
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_growth_scale_observation.py", line 301, in write
+    (self.root / name).write_text("".join(json.dumps(row, separators=(",", ":")) + "\n"
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1048, in write_text
+    return f.write(data)
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device
+
+======================================================================
+ERROR: test_actual_bytes_are_checked_even_if_status_reports_clean (test_ci_source_integrity.TrackedSourceTests.test_actual_bytes_are_checked_even_if_status_reports_clean)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_ci_source_integrity.py", line 21, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_ci_source_integrity.py", line 36, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_assume_unchanged_cannot_hide_modified_source (test_ci_source_integrity.TrackedSourceTests.test_assume_unchanged_cannot_hide_modified_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_ci_source_integrity.py", line 21, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_ci_source_integrity.py", line 36, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_executable_mode_checked_even_when_git_ignores_filemode (test_ci_source_integrity.TrackedSourceTests.test_executable_mode_checked_even_when_git_ignores_filemode)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_ci_source_integrity.py", line 21, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_ci_source_integrity.py", line 36, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_graft_file_is_rejected (test_ci_source_integrity.TrackedSourceTests.test_graft_file_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e537ad232c79/chain/scripts/ci/test_ci_source_integrity.py", line 21, in setUp
+    self.git('

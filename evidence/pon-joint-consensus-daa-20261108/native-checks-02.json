@@ -1,0 +1,60 @@
+[
+  {
+    "name": "consensus-unit",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "consensus::tests"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 682.5987602148671
+  },
+  {
+    "name": "native-retained",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "daa_adversarial_schedule",
+      "--test",
+      "native_node"
+    ],
+    "exit_code": 101,
+    "wall_seconds": 303.4211478650104
+  },
+  {
+    "name": "strict-clippy",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "clippy",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit_code": 101,
+    "wall_seconds": 202.40359376114793
+  }
+]

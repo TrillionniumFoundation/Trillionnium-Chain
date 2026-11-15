@@ -1,0 +1,95 @@
+{
+  "current_selection_authorized": false,
+  "end_unix_ns": 1794159772173080507,
+  "frozen_plan": {
+    "path": "/home/qq/chain-learning-d9fb-20261108/frozen-plan.json",
+    "sha256": "c8163c7aaa123660e5c72397e6a528b580261255489bfac6a457af8cc9ef0ddc"
+  },
+  "hepta_final_use_accepted": false,
+  "independent_evaluation": false,
+  "model_training_observed": true,
+  "native_learning_owner_join": false,
+  "operation": "chain-learning-d9fb-20261108",
+  "optimizer_steps": 20,
+  "original_chain_source": "c96022b897c1235fdbdbfcfa32764403511c6aab",
+  "parent_scope": "fresh-explicit-research-bootstrap-not-installed-incumbent",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "result": "PASS_TWO_ACTUAL_RESEARCH_TRAINING_GENERATIONS",
+  "schema": "trnm-smollm-same-run-training-v1",
+  "stages": [
+    {
+      "actual_adapter": "e1a9ce940c9d4b04bb827490708604178d4e2391e7afd81a3ca63008389d1e53",
+      "actual_loaded_parent": "7ed3d918383f8daf2dcf554590df1a3cb8e4562835fd40ff4ca14609b2cbd499",
+      "actual_receipt": {
+        "path": "/home/qq/chain-learning-d9fb-20261108/generation-1/worker/actual-receipt.json",
+        "sha256": "d7fa0b841c6abca0d2b1aa3c83b9b9d77b02973120e0211582e9cae9b8c9f206"
+      },
+      "command": [
+        "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/bin/python",
+        "/home/qq/hepta-smollm2-weight-research-20261103/inputs/source/chain/scripts/llm_inherited_runtime.py",
+        "train",
+        "--materials",
+        "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base",
+        "--output",
+        "/home/qq/chain-learning-d9fb-20261108/generation-1",
+        "--operation-id",
+        "chain-learning-d9fb-20261108-train-1",
+        "--input",
+        "/home/qq/chain-learning-d9fb-20261108/training-input-1.json",
+        "--input-sha256",
+        "b84448b6a0000477e0170f19e443c583d4c7d149118f0901ead486db04931b67",
+        "--threads",
+        "4",
+        "--steps",
+        "10",
+        "--bootstrap"
+      ],
+      "elapsed_seconds": 23.62132302299142,
+      "generation": 1,
+      "parent_material": {
+        "path": "/home/qq/chain-learning-d9fb-20261108/generation-1/worker/parent-material.json",
+        "sha256": "bfc13985c09d0d1f1098e61ad988a109aedd9fc36044c6410f42d11c6650d60b"
+      },
+      "returncode": 0
+    },
+    {
+      "actual_adapter": "6d3ad4295d628df7e5d0927f9044f46dd4375511b2788eeb1606a2cb6d48aa34",
+      "actual_loaded_parent": "e1a9ce940c9d4b04bb827490708604178d4e2391e7afd81a3ca63008389d1e53",
+      "actual_receipt": {
+        "path": "/home/qq/chain-learning-d9fb-20261108/generation-2/worker/actual-receipt.json",
+        "sha256": "8c6c0eb98d068235faf3e8af891b72a526dcf3e3d1a2aab095ab56878508142e"
+      },
+      "command": [
+        "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/bin/python",
+        "/home/qq/hepta-smollm2-weight-research-20261103/inputs/source/chain/scripts/llm_inherited_runtime.py",
+        "train",
+        "--materials",
+        "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base",
+        "--output",
+        "/home/qq/chain-learning-d9fb-20261108/generation-2",
+        "--operation-id",
+        "chain-learning-d9fb-20261108-train-2",
+        "--input",
+        "/home/qq/chain-learning-d9fb-20261108/training-input-2.json",
+        "--input-sha256",
+        "37941edc1981a90fa95039fdbb9e01fff0017708c0bd88f21dc4d432f5e06c21",
+        "--threads",
+        "4",
+        "--steps",
+        "10",
+        "--parent",
+        "/home/qq/chain-learning-d9fb-20261108/generation-1/worker/parent-material.json",
+        "--parent-sha256",
+        "bfc13985c09d0d1f1098e61ad988a109aedd9fc36044c6410f42d11c6650d60b"
+      ],
+      "elapsed_seconds": 23.736459972104058,
+      "generation": 2,
+      "parent_material": {
+        "path": "/home/qq/chain-learning-d9fb-20261108/generation-2/worker/parent-material.json",
+        "sha256": "ba75ca1ad82b5af356a609a3498bb76c96d455ada5f465d3daa733e922d3632a"
+      },
+      "returncode": 0
+    }
+  ]
+}

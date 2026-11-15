@@ -1,0 +1,310 @@
+{
+  "schema": "trnm-python-environment-original-receipts-transfer-v1",
+  "source_host": "rog",
+  "source_directory": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1",
+  "original_file_count": 33,
+  "original_bytes": 77513,
+  "zip_original_member_prefix": "final-python-env-preparation-v1/",
+  "files": [
+    {
+      "name": "base-python-capabilities.log",
+      "zip_member": "final-python-env-preparation-v1/base-python-capabilities.log",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/base-python-capabilities.log",
+      "source_host": "rog",
+      "source_version": "66306:34754992:247:1794632603034098114:1794632603034098114",
+      "bytes": 247,
+      "sha256": "46c87743df26ebea7e733b67e67308111b98921df6e16d52ecb3fbb6f2f189a2"
+    },
+    {
+      "name": "conformance--bin--python.json",
+      "zip_member": "final-python-env-preparation-v1/conformance--bin--python.json",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/conformance--bin--python.json",
+      "source_host": "rog",
+      "source_version": "66306:34755394:135:1794632626162092974:1794632626162092974",
+      "bytes": 135,
+      "sha256": "5d5d2d20dc1b61191d7dc7b32625b52349439c446e0df3542281014c8460b8b5"
+    },
+    {
+      "name": "conformance--bin--python3.12.json",
+      "zip_member": "final-python-env-preparation-v1/conformance--bin--python3.12.json",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/conformance--bin--python3.12.json",
+      "source_host": "rog",
+      "source_version": "66306:34755404:148:1794632626162195817:1794632626162195817",
+      "bytes": 148,
+      "sha256": "7b3263d1a37fab8f9e378ebe714135a1e9da33f9dfe243b2b684a052c8576527"
+    },
+    {
+      "name": "conformance--bin--python3.json",
+      "zip_member": "final-python-env-preparation-v1/conformance--bin--python3.json",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/conformance--bin--python3.json",
+      "source_host": "rog",
+      "source_version": "66306:34755397:136:1794632626162146745:1794632626162146745",
+      "bytes": 136,
+      "sha256": "01a4553f1c0d309ac7f87331884f6d5183557142a7252409860f9f8594d81512"
+    },
+    {
+      "name": "conformance--pyvenv.cfg.json",
+      "zip_member": "final-python-env-preparation-v1/conformance--pyvenv.cfg.json",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/conformance--pyvenv.cfg.json",
+      "source_host": "rog",
+      "source_version": "66306:34755391:197:1794632626162006082:1794632626162006082",
+      "bytes": 197,
+      "sha256": "527839146e04eee2617fac88a26c859bf5097e9047c0e227984ad9e88d71fc31"
+    },
+    {
+      "name": "conformance-exact-versions.log",
+      "zip_member": "final-python-env-preparation-v1/conformance-exact-versions.log",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/conformance-exact-versions.log",
+      "source_host": "rog",
+      "source_version": "66306:34755387:290:1794632626134004263:1794632626134004263",
+      "bytes": 290,
+      "sha256": "7d204674933bfdf3e1861f5133db23f3c3624401cfbf1b60cfa6046116af5d46"
+    },
+    {
+      "name": "conformance-import-isolation-readback.log",
+      "zip_member": "final-python-env-preparation-v1/conformance-import-isolation-readback.log",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/conformance-import-isolation-readback.log",
+      "source_host": "rog",
+      "source_version": "66306:34755492:698:1794632695334233445:1794632695334233445",
+      "bytes": 698,
+      "sha256": "b18cb2bf60b9ada1139454eb7e69458bb97304b47d1bb9a96d3ab823899e0d83"
+    },
+    {
+      "name": "conformance-installed-manifest.log",
+      "zip_member": "final-python-env-preparation-v1/conformance-installed-manifest.log",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/conformance-installed-manifest.log",
+      "source_host": "rog",
+      "source_version": "66306:34755385:5118:1794632626040004645:1794632626040004645",
+      "bytes": 5118,
+      "sha256": "0c9029786de5f305111538328f7b1d744b54c30fd2dfb1e0bdd36bc0581db35c"
+    },
+    {
+      "name": "conformance-pip-check.log",
+      "zip_member": "final-python-env-preparation-v1/conformance-pip-check.log",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/conformance-pip-check.log",
+      "source_host": "rog",
+      "source_version": "66306:34755379:30:1794632625918005140:1794632625918005140",
+      "bytes": 30,
+      "sha256": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09"
+    },
+    {
+      "name": "conformance-pip-version.log",
+      "zip_member": "final-python-env-preparation-v1/conformance-pip-version.log",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/conformance-pip-version.log",
+      "source_host": "rog",
+      "source_version": "66306:34755325:137:1794632604439092403:1794632604439092403",
+      "bytes": 137,
+      "sha256": "edac61a5c657c132b0fb518c39d91ba0367775a5835eca51b1a458616c32cf12"
+    },
+    {
+      "name": "create-conformance-venv.log",
+      "zip_member": "final-python-env-preparation-v1/create-conformance-venv.log",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/create-conformance-venv.log",
+      "source_host": "rog",
+      "source_version": "66306:34754997:0:1794632603040470220:1794632603040470220",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "create-runtime-venv.log",
+      "zip_member": "final-python-env-preparation-v1/create-runtime-venv.log",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/create-runtime-venv.log",
+      "source_host": "rog",
+      "source_version": "66306:34755407:0:1794632626162195817:1794632626162195817",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "environment-readback-v1.json",
+      "zip_member": "final-python-env-preparation-v1/environment-readback-v1.json",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/environment-readback-v1.json",
+      "source_host": "rog",
+      "source_version": "66306:34755501:3626:1794632695378428431:1794632695378428431",
+      "bytes": 3626,
+      "sha256": "a4f7462648e8a345b821eb45a08468611abef55f61758abb22781734f244eb48"
+    },
+    {
+      "name": "input--.github--workflows--trnm-required-baseline.yml",
+      "zip_member": "final-python-env-preparation-v1/input--.github--workflows--trnm-required-baseline.yml",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/input--.github--workflows--trnm-required-baseline.yml",
+      "source_host": "rog",
+      "source_version": "66306:34754976:35462:1794632602934074479:1794632602934074479",
+      "bytes": 35462,
+      "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844"
+    },
+    {
+      "name": "input--AGENTS.md",
+      "zip_member": "final-python-env-preparation-v1/input--AGENTS.md",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/input--AGENTS.md",
+      "source_host": "rog",
+      "source_version": "66306:34754975:1416:1794632602930533562:1794632602930533562",
+      "bytes": 1416,
+      "sha256": "082d3f5d3d134efe1273f3bd1cc28a9d41db41be6f8996de8cc9545386094631"
+    },
+    {
+      "name": "input--formal--pon-nakamoto-v1--requirements.txt",
+      "zip_member": "final-python-env-preparation-v1/input--formal--pon-nakamoto-v1--requirements.txt",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/input--formal--pon-nakamoto-v1--requirements.txt",
+      "source_host": "rog",
+      "source_version": "66306:34754980:128:1794632602938888088:1794632602938888088",
+      "bytes": 128,
+      "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5"
+    },
+    {
+      "name": "input--scripts--ci--runtime-release-requirements.txt",
+      "zip_member": "final-python-env-preparation-v1/input--scripts--ci--runtime-release-requirements.txt",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/input--scripts--ci--runtime-release-requirements.txt",
+      "source_host": "rog",
+      "source_version": "66306:34754982:378:1794632602943781086:1794632602943781086",
+      "bytes": 378,
+      "sha256": "2acf07322b544b1d2318642b59877dd035bc7808590619f3cf23e75eedd0bbe7"
+    },
+    {
+      "name": "install-conformance-requirements.log",
+      "zip_member": "final-python-env-preparation-v1/install-conformance-requirements.log",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/install-conformance-requirements.log",
+      "source_host": "rog",
+      "source_version": "66306:34755364:1532:1794632625701006021:1794632625701006021",
+      "bytes": 1532,
+      "sha256": "fd7843627bd71636c4081e62f3dbe82f3577f69121581b887794f97cc7370526"
+    },
+    {
+      "name": "install-runtime-requirements.log",
+      "zip_member": "final-python-env-preparation-v1/install-runtime-requirements.log",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/install-runtime-requirements.log",
+      "source_host": "rog",
+      "source_version": "66306:34755422:225:1794632629380991078:1794632629380991078",
+      "bytes": 225,
+      "sha256": "737b3a4821a94f66c34abe6baf4d8e5f86047ece29b2a557a3d7d52f65617bc9"
+    },
+    {
+      "name": "intent.json",
+      "zip_member": "final-python-env-preparation-v1/intent.json",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/intent.json",
+      "source_host": "rog",
+      "source_version": "66306:34754985:1470:1794632602943970521:1794632602943970521",
+      "bytes": 1470,
+      "sha256": "9a4b1dee43ee595557eefe0a5845344187e2045c7be03856cdd9700112b1b338"
+    },
+    {
+      "name": "project-preflight.log",
+      "zip_member": "final-python-env-preparation-v1/project-preflight.log",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/project-preflight.log",
+      "source_host": "rog",
+      "source_version": "66306:34754987:175:1794632602977098346:1794632602977098346",
+      "bytes": 175,
+      "sha256": "29aaae57601cc357c22f2d3185d722d324b12d45289c05be50872b794b1a9640"
+    },
+    {
+      "name": "runtime--bin--python.json",
+      "zip_member": "final-python-env-preparation-v1/runtime--bin--python.json",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/runtime--bin--python.json",
+      "source_host": "rog",
+      "source_version": "66306:34755465:141:1794632629764371959:1794632629764371959",
+      "bytes": 141,
+      "sha256": "f88ddc75f65a97ac7e3cfdbd9fd4b497d8baa739920717721a0b1931a358ea65"
+    },
+    {
+      "name": "runtime--bin--python3.12.json",
+      "zip_member": "final-python-env-preparation-v1/runtime--bin--python3.12.json",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/runtime--bin--python3.12.json",
+      "source_host": "rog",
+      "source_version": "66306:34755467:154:1794632629764451147:1794632629764451147",
+      "bytes": 154,
+      "sha256": "b6c11a06ec1dac0ec47978c73513e253a3d27d8e28fb9233e4b5752f3d3d1650"
+    },
+    {
+      "name": "runtime--bin--python3.json",
+      "zip_member": "final-python-env-preparation-v1/runtime--bin--python3.json",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/runtime--bin--python3.json",
+      "source_host": "rog",
+      "source_version": "66306:34755466:142:1794632629764421451:1794632629764421451",
+      "bytes": 142,
+      "sha256": "3b1fb647d53c80a319652c5fcf7b19722953d97624b54098fdaab278b6eda257"
+    },
+    {
+      "name": "runtime--pyvenv.cfg.json",
+      "zip_member": "final-python-env-preparation-v1/runtime--pyvenv.cfg.json",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/runtime--pyvenv.cfg.json",
+      "source_host": "rog",
+      "source_version": "66306:34755464:203:1794632629764281109:1794632629764281109",
+      "bytes": 203,
+      "sha256": "a5161354b69b765de9462ea101c4fa83c6edac17d0843a04e67226751b440f3f"
+    },
+    {
+      "name": "runtime-exact-versions.log",
+      "zip_member": "final-python-env-preparation-v1/runtime-exact-versions.log",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/runtime-exact-versions.log",
+      "source_host": "rog",
+      "source_version": "66306:34755434:248:1794632629734989640:1794632629734989640",
+      "bytes": 248,
+      "sha256": "99bc64b5283a6d27baf75e1843f2aa53ba640c963e93c87aa547d93892d68066"
+    },
+    {
+      "name": "runtime-import-isolation-readback.log",
+      "zip_member": "final-python-env-preparation-v1/runtime-import-isolation-readback.log",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/runtime-import-isolation-readback.log",
+      "source_host": "rog",
+      "source_version": "66306:34755497:537:1794632695378074559:1794632695378074559",
+      "bytes": 537,
+      "sha256": "2707a8aa0a6a62f23e6de840a0e6b2f797b5e4c0c884281faad9736b635370ae"
+    },
+    {
+      "name": "runtime-installed-manifest.log",
+      "zip_member": "final-python-env-preparation-v1/runtime-installed-manifest.log",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/runtime-installed-manifest.log",
+      "source_host": "rog",
+      "source_version": "66306:34755430:2272:1794632629686989835:1794632629686989835",
+      "bytes": 2272,
+      "sha256": "1b2d3155faf12e670426ab23a5acc9b78cfe6e76e811d7c18ef93d16c2e81f57"
+    },
+    {
+      "name": "runtime-pip-check.log",
+      "zip_member": "final-python-env-preparation-v1/runtime-pip-check.log",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/runtime-pip-check.log",
+      "source_host": "rog",
+      "source_version": "66306:34755426:30:1794632629598990192:1794632629598990192",
+      "bytes": 30,
+      "sha256": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09"
+    },
+    {
+      "name": "runtime-pip-version.log",
+      "zip_member": "final-python-env-preparation-v1/runtime-pip-version.log",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/runtime-pip-version.log",
+      "source_host": "rog",
+      "source_version": "66306:34755415:143:1794632627404999102:1794632627404999102",
+      "bytes": 143,
+      "sha256": "2d653a5cf2d1f6ec66050c9d8c0a0b80da350866c588c15ced99b2a0a6080a44"
+    },
+    {
+      "name": "runtime-release-dependencies.json",
+      "zip_member": "final-python-env-preparation-v1/runtime-release-dependencies.json",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/runtime-release-dependencies.json",
+      "source_host": "rog",
+      "source_version": "66306:34755423:4967:1794632629326991297:1794632629326991297",
+      "bytes": 4967,
+      "sha256": "a2baa462ad42b893e69cbee06ed8512d5e21caa0af659d71bc26854f0f772619"
+    },
+    {
+      "name": "steps.json",
+      "zip_member": "final-python-env-preparation-v1/steps.json",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/steps.json",
+      "source_host": "rog",
+      "source_version": "66306:34754990:7653:1794632629763836807:1794632629763836807",
+      "bytes": 7653,
+      "sha256": "e189fa9f8654db51378446d2cdb2d270b881856e6b4c1a15c02771f5d617ce08"
+    },
+    {
+      "name": "summary.json",
+      "zip_member": "final-python-env-preparation-v1/summary.json",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python-env-preparation-v1/summary.json",
+      "source_host": "rog",
+      "source_version": "66306:34755490:9475:1794632629840888678:1794632629840888678",
+      "bytes": 9475,
+      "sha256": "d12b875bf6556d46863bcb6133389d04fd188a84e38fd456ddf336ee6bddfbca"
+    }
+  ],
+  "transfer": "complete versioned filesystem reads, full-byte SHA256 verified before Mac write and after ZIP readback",
+  "environment_installation_repeated": false,
+  "repo_or_lane_or_native_tests_performed_during_transfer": false
+}

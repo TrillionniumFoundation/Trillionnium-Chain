@@ -1,0 +1,11 @@
+test_all_declared_order_eight_points_reject (__main__.StrictSignatureTests.test_all_declared_order_eight_points_reject) ... ok
+test_native_and_reference_reject_weak_sender_without_state_change (__main__.StrictSignatureTests.test_native_and_reference_reject_weak_sender_without_state_change) ... ok
+test_rfc8032_known_vector (__main__.StrictSignatureTests.test_rfc8032_known_vector) ... ok
+test_signature_scalar_and_R_rejections (__main__.StrictSignatureTests.test_signature_scalar_and_R_rejections) ... ok
+test_small_order_and_noncanonical_point_rejections (__main__.StrictSignatureTests.test_small_order_and_noncanonical_point_rejections) ... ok
+test_weak_consumer_cannot_authorize_quota (__main__.StrictSignatureTests.test_weak_consumer_cannot_authorize_quota) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.035s
+
+OK

@@ -1,0 +1,209 @@
+{
+  "head_now": "93277a001f4f8a42be65166f6513177b46cddf5b",
+  "source": {
+    "summary_bytes": 110194,
+    "summary_sha256": "705dd312a9623ce4af33972486041abacf37d986297501507106aff97603d9a7",
+    "completed": true,
+    "all_controls_passed": false,
+    "observed": 665,
+    "successful_suite_methods": 587,
+    "failures": [
+      "06-test_from_zero_host_ci"
+    ],
+    "source_before_after_equal": true,
+    "suites": [
+      {
+        "path": "scripts/ci/test_pq_research_integration.py",
+        "expected": 37,
+        "observed": 37,
+        "passed": true,
+        "process_exit_code": 0
+      },
+      {
+        "path": "scripts/ci/test_ci_source_integrity.py",
+        "expected": 43,
+        "observed": 43,
+        "passed": true,
+        "process_exit_code": 0
+      },
+      {
+        "path": "scripts/ci/test_integration_push_source.py",
+        "expected": 13,
+        "observed": 13,
+        "passed": true,
+        "process_exit_code": 0
+      },
+      {
+        "path": "scripts/ci/test_run_from_zero_native.py",
+        "expected": 149,
+        "observed": 149,
+        "passed": true,
+        "process_exit_code": 0
+      },
+      {
+        "path": "scripts/ci/test_run_w1_fresh_service_v1.py",
+        "expected": 29,
+        "observed": 29,
+        "passed": true,
+        "process_exit_code": 0
+      },
+      {
+        "path": "scripts/ci/test_from_zero_host_ci.py",
+        "expected": 78,
+        "observed": 78,
+        "passed": false,
+        "process_exit_code": 1
+      },
+      {
+        "path": "scripts/ci/test_ci_observation_process.py",
+        "expected": 7,
+        "observed": 7,
+        "passed": true,
+        "process_exit_code": 0
+      },
+      {
+        "path": "scripts/ci/test_record_pq_native_command.py",
+        "expected": 4,
+        "observed": 4,
+        "passed": true,
+        "process_exit_code": 0
+      },
+      {
+        "path": "scripts/ci/test_ci_contract.py",
+        "expected": 103,
+        "observed": 103,
+        "passed": true,
+        "process_exit_code": 0
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py",
+        "expected": 20,
+        "observed": 20,
+        "passed": true,
+        "process_exit_code": 0
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py",
+        "expected": 47,
+        "observed": 47,
+        "passed": true,
+        "process_exit_code": 0
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_useful_cell_execution_v2.py",
+        "expected": 34,
+        "observed": 34,
+        "passed": true,
+        "process_exit_code": 0
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v2.py",
+        "expected": 11,
+        "observed": 11,
+        "passed": true,
+        "process_exit_code": 0
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v2_adversarial.py",
+        "expected": 11,
+        "observed": 11,
+        "passed": true,
+        "process_exit_code": 0
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py",
+        "expected": 20,
+        "observed": 20,
+        "passed": true,
+        "process_exit_code": 0
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_useful_cell_multimodal_execution_v3.py",
+        "expected": 34,
+        "observed": 34,
+        "passed": true,
+        "process_exit_code": 0
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py",
+        "expected": 25,
+        "observed": 25,
+        "passed": true,
+        "process_exit_code": 0
+      }
+    ]
+  },
+  "native": {
+    "manifest_sha256": "b51ccd0618dc61d7004fdd4e0a1d7b0248d207ef2a854705b04b18c170eb34a2",
+    "result": "PREPUSH_NATIVE_CHECKS_PASS",
+    "commit": "93277a001f4f8a42be65166f6513177b46cddf5b",
+    "tree": "3e6cdf8a7532145069c9282f9b59d2fc8a8cd081",
+    "counts": {
+      "integration_targets": 65,
+      "cell_tests": 12,
+      "library_tests": 1204,
+      "library_ignored": 33,
+      "all_native_test_targets": 67,
+      "native_test_inventory_total": 1573,
+      "native_default_body_count": 1516,
+      "native_ignored_total": 57
+    },
+    "source_equal": true
+  },
+  "roots": [
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/93277a001f4f8a42be65166f6513177b46cddf5b",
+      "files": 84,
+      "bytes": 1237820,
+      "largest": [
+        {
+          "name": "logs/cargo-locked-offline-metadata.log",
+          "bytes": 893389
+        },
+        {
+          "name": "summary.json",
+          "bytes": 110194
+        },
+        {
+          "name": "logs/04-test_run_from_zero_native.log",
+          "bytes": 24541
+        },
+        {
+          "name": "logs/09-test_ci_contract.log",
+          "bytes": 17181
+        },
+        {
+          "name": "commands/04-test_run_from_zero_native-denominator.json",
+          "bytes": 16086
+        }
+      ]
+    },
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush",
+      "files": 151,
+      "bytes": 848128,
+      "largest": [
+        {
+          "name": "inventory.json",
+          "bytes": 407162
+        },
+        {
+          "name": "records/node-no-run.log",
+          "bytes": 224303
+        },
+        {
+          "name": "inventory-001-all.log",
+          "bytes": 135825
+        },
+        {
+          "name": "manifest.json",
+          "bytes": 16239
+        },
+        {
+          "name": "inventory-summary.json",
+          "bytes": 15270
+        }
+      ]
+    }
+  ]
+}

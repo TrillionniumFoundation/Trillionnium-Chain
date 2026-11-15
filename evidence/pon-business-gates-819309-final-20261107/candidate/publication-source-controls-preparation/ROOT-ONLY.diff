@@ -1,0 +1,11 @@
+--- /home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/run-final-controls-v3.py
++++ /home/qian-qi/chain-throughput-local-admin-20261107/admission-publication-source-controls-preparation-20261107/run-final-controls-v3-admission-publication.py
+@@ -18,7 +18,7 @@
+ import traceback
+ 
+ BASE = Path("/home/qian-qi/chain-throughput-local-admin-20261107")
+-ROOT = BASE / "work-final-business-20261107"
++ROOT = BASE / "work-admission-publication-20261107"
+ PREP = BASE / "final-source-validation-20261107"
+ ROSTER = PREP / "prepared-test-roster-v3.json"
+ EXPECTED_ROSTER_SHA256 = "950e9ceff839a8c599f4ebdb4a1b6d72bd7719f48557c76c832b74b8518aed72"

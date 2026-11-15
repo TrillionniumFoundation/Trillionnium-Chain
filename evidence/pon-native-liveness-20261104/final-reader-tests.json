@@ -1,0 +1,22 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "final-reader-tests",
+  "command": [
+    "python3",
+    "-c",
+    "import sys,unittest; sys.path.insert(0,\"scripts/ci\"); s=unittest.defaultTestLoader.loadTestsFromNames([\"test_run_from_zero_native\",\"test_growth_scale_observation\"]); r=unittest.TextTestRunner(verbosity=1).run(s); sys.exit(not r.wasSuccessful())"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+  "tree": "72d12bd434055f67c5f6becf2ee480a9ec09b99e",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T13:28:56.705966+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 20813927618,
+  "finished_at": "2026-11-04T13:29:17.520166+00:00",
+  "log_bytes": 261,
+  "log_sha256": "2675b4daae4e4b34f03a9cc7ab5799820c1151fa1291442bd6947811d3dc106c",
+  "final_head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+  "final_dirty_paths": []
+}

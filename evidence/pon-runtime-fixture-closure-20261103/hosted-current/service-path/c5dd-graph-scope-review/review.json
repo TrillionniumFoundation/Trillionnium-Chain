@@ -1,0 +1,561 @@
+{
+  "schema": "trnm-c5dd-current-writer-graph-scope-review-v1",
+  "created_utc": "2026-11-03T22:56:14.440122+00:00",
+  "status": "NO_MISSING_EXISTING_SCOPE_PROPAGATION_FOUND_NO_CORE_PATCH",
+  "source_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "scope": "Actual original artifact13276003536, three baseline phases. Read-only source analysis and original archived database structural extraction; no native execution, compilation, patch, benchmark or additional optimization plan.",
+  "evidence": {
+    "actor_correlated_readback": {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-baseline-critical-path/critical-path-readback.json",
+      "sha256": "57ce0956d1927578cd5b4f1364ca38689a0256bbdba85c981358eb3c3c26e492"
+    },
+    "stored_graph_shapes": {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-scope-review/stored-graph-shapes.json",
+      "sha256": "7cc95fe20ff903280bc6a077e5712e3ace969421f785f194ee4b729bbd4d43db"
+    },
+    "source_bindings": [
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "sha256": "a334ed1aca71058244cfbf42ca8c3b40ccd93cb6e62a063212fe2890828265db",
+        "bytes": 331511
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs",
+        "sha256": "244a18c2db1017c65fbcb4198186554b8635d261792765b142f80f914bca495f",
+        "bytes": 4544
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+        "sha256": "b9f7aa9d535d07abf947612ed05df523f7d29f2faf560cb027cae47856e134e5",
+        "bytes": 94152
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+        "sha256": "d544bd342d3f86ad925f4f8178c557e5be1c48b8419711e0c325ff0626ee04e5",
+        "bytes": 13538
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+        "sha256": "a8bc8608f1a7eb351a871007b53bc99ad495c22bad63742bee8c98d41f99b4c8",
+        "bytes": 17153
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+        "sha256": "ae959fee2acb706962b3add2625ebac946b5435d2632b9d54870e7b4d6a94913",
+        "bytes": 46714
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs",
+        "sha256": "8ce99b8cd82f4a709fd967b8f87cbf04c8084b817b3d77d3681be6d1f69cd35d",
+        "bytes": 11867
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs",
+        "sha256": "8ea7e8594b57054dc96240a0bcd83cfd24153468e30f464171ddb388f2d3b42d",
+        "bytes": 17306
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_readback_tests.rs",
+        "sha256": "78b8541e0d1da0d04239b72137cd99543a0f0882d552e545f3e9fea01bc931d8",
+        "bytes": 26122
+      }
+    ]
+  },
+  "observed_runtime_totals": [
+    {
+      "run": 1,
+      "stages": [
+        {
+          "stage": "verify_state",
+          "delta": {
+            "calls": 95,
+            "cpu_known_calls": 95,
+            "cpu_ns": 4287464589,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 19293388279
+          }
+        },
+        {
+          "stage": "verify_history",
+          "delta": {
+            "calls": 25,
+            "cpu_known_calls": 25,
+            "cpu_ns": 101506973,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 101533914
+          }
+        },
+        {
+          "stage": "publish",
+          "delta": {
+            "calls": 9,
+            "cpu_known_calls": 9,
+            "cpu_ns": 2007545483,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 8778168957
+          }
+        },
+        {
+          "stage": "read_active",
+          "delta": {
+            "calls": 5,
+            "cpu_known_calls": 5,
+            "cpu_ns": 312471520,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 1388722924
+          }
+        },
+        {
+          "stage": "state_at",
+          "delta": {
+            "calls": 25,
+            "cpu_known_calls": 25,
+            "cpu_ns": 1115517752,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 4811670080
+          }
+        },
+        {
+          "stage": "admission",
+          "delta": {
+            "calls": 9,
+            "cpu_known_calls": 9,
+            "cpu_ns": 3839021077,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 16409084083
+          }
+        },
+        {
+          "stage": "activation",
+          "delta": {
+            "calls": 1,
+            "cpu_known_calls": 1,
+            "cpu_ns": 1256802473,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 5492104119
+          }
+        },
+        {
+          "stage": "account_graph",
+          "delta": {
+            "calls": 71,
+            "cpu_known_calls": 71,
+            "cpu_ns": 4158076380,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 18779180476
+          }
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "stages": [
+        {
+          "stage": "verify_state",
+          "delta": {
+            "calls": 95,
+            "cpu_known_calls": 95,
+            "cpu_ns": 4269428505,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 18877992988
+          }
+        },
+        {
+          "stage": "verify_history",
+          "delta": {
+            "calls": 25,
+            "cpu_known_calls": 25,
+            "cpu_ns": 102742736,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 256813811
+          }
+        },
+        {
+          "stage": "publish",
+          "delta": {
+            "calls": 9,
+            "cpu_known_calls": 9,
+            "cpu_ns": 1983288398,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 8514326426
+          }
+        },
+        {
+          "stage": "read_active",
+          "delta": {
+            "calls": 5,
+            "cpu_known_calls": 5,
+            "cpu_ns": 316167344,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 1467665798
+          }
+        },
+        {
+          "stage": "state_at",
+          "delta": {
+            "calls": 25,
+            "cpu_known_calls": 25,
+            "cpu_ns": 1123620021,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 4967250364
+          }
+        },
+        {
+          "stage": "admission",
+          "delta": {
+            "calls": 9,
+            "cpu_known_calls": 9,
+            "cpu_ns": 3829001967,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 16533068404
+          }
+        },
+        {
+          "stage": "activation",
+          "delta": {
+            "calls": 1,
+            "cpu_known_calls": 1,
+            "cpu_ns": 1257191638,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 5495384845
+          }
+        },
+        {
+          "stage": "account_graph",
+          "delta": {
+            "calls": 71,
+            "cpu_known_calls": 71,
+            "cpu_ns": 4138738739,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 18210224050
+          }
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "stages": [
+        {
+          "stage": "verify_state",
+          "delta": {
+            "calls": 95,
+            "cpu_known_calls": 95,
+            "cpu_ns": 4290845195,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 19142250340
+          }
+        },
+        {
+          "stage": "verify_history",
+          "delta": {
+            "calls": 25,
+            "cpu_known_calls": 25,
+            "cpu_ns": 103463856,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 256933220
+          }
+        },
+        {
+          "stage": "publish",
+          "delta": {
+            "calls": 9,
+            "cpu_known_calls": 9,
+            "cpu_ns": 2013221982,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 8708619422
+          }
+        },
+        {
+          "stage": "read_active",
+          "delta": {
+            "calls": 5,
+            "cpu_known_calls": 5,
+            "cpu_ns": 312521754,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 1316310294
+          }
+        },
+        {
+          "stage": "state_at",
+          "delta": {
+            "calls": 25,
+            "cpu_known_calls": 25,
+            "cpu_ns": 1116675299,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 4812105950
+          }
+        },
+        {
+          "stage": "admission",
+          "delta": {
+            "calls": 9,
+            "cpu_known_calls": 9,
+            "cpu_ns": 3852444951,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 16649095784
+          }
+        },
+        {
+          "stage": "activation",
+          "delta": {
+            "calls": 1,
+            "cpu_known_calls": 1,
+            "cpu_ns": 1249637619,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 5479369702
+          }
+        },
+        {
+          "stage": "account_graph",
+          "delta": {
+            "calls": 71,
+            "cpu_known_calls": 71,
+            "cpu_ns": 4161674868,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 18709302395
+          }
+        }
+      ]
+    }
+  ],
+  "measurement_boundary": {
+    "account_graph_entry_source": "src/store/native_authenticated.rs:700-729",
+    "finding": "AccountGraph is entered only when same-scope matches is false. It measures both complete traversal and frontier-assisted partial traversal. Whole-Root matches create no graph-stage entry. Calls and time are recorded without per-call outcome/role or full/partial classification; counters hits/partial_uses/subtree_hits are cfg(test) fields and not exported by this integration runtime. 71 is not71 complete walks, and95-71 alone is not an observed hit count.",
+    "stage_source": "src/store/native_authenticated/history_arithmetic.rs:388-436"
+  },
+  "archived_sql_facts": [
+    "All three original client database snapshots match report.final_client_tip; active height11 generation5 slot5. Height12 is admitted, height13 absent after failed commit. No source DB was modified.",
+    "The retained reorg row is old height4→new height11, generation5, cursor7, done1. Seven steps and seven generation5 events are forward attach heights5..11; no detach.",
+    "All heights0..12 retain actual snapshots. Account Root (node,digest,count,balance) is identical for heights5..11, differs from height4, and changes again at height12. Account deltas occur at5 and12, two rows each; no account deltas at6..11.",
+    "Full stored account graph has2055 nodes/1028 accounts; genesis has7 nodes/4 accounts. Structural comparison with the existing4-bit frontier predicts14 matching subtrees and279 exposed nodes for child5→old4 and child12→old11. Genesis shares no eligible frontier subtree. These are retained-byte shape counts, not runtime node/Host measurements or re-validation."
+  ],
+  "source_data_call_accounting_model": {
+    "status": "RECONSTRUCTION_MATCHES_EXISTING_AGGREGATES_NOT_NEW_RUNTIME_ROLE_TELEMETRY",
+    "rows": [
+      {
+        "part": "accepted import height5",
+        "operations": 1,
+        "verify_state": 8,
+        "verify_history": 2,
+        "state_at": 3,
+        "read_active": 2,
+        "account_graph_entries": 6,
+        "whole_root_omissions_in_model": 2,
+        "graph_sequence": [
+          "fresh admission parent H4",
+          "publish pre-write parent H4",
+          "first post-write child H5",
+          "post-write genesis H0",
+          "post-write actual parent H4, bounded partial shape",
+          "atomic tail actual active H4, same bounded partial shape"
+        ],
+        "scope": "One admission write transaction; pre-admission parent read is outside it."
+      },
+      {
+        "part": "accepted imports heights6..11",
+        "operations": 6,
+        "verify_state": 48,
+        "verify_history": 12,
+        "state_at": 18,
+        "read_active": 0,
+        "account_graph_entries": 30,
+        "whole_root_omissions_in_model": 18,
+        "graph_sequence_per_operation": [
+          "fresh admission parent",
+          "publish pre-write parent",
+          "first post-write child",
+          "post-write genesis",
+          "atomic tail active H4, bounded partial shape"
+        ],
+        "scope": "Six separate admission write transactions. Child/parent account Root is identical; current complete State still differs and is fully checked."
+      },
+      {
+        "part": "accepted import height12",
+        "operations": 1,
+        "verify_state": 8,
+        "verify_history": 2,
+        "state_at": 3,
+        "read_active": 2,
+        "account_graph_entries": 6,
+        "whole_root_omissions_in_model": 2,
+        "graph_sequence": [
+          "fresh admission parent H11",
+          "publish pre-write parent H11",
+          "first post-write child H12",
+          "post-write genesis H0",
+          "post-write actual parent H11, bounded partial shape",
+          "atomic tail actual active H11, same bounded partial shape"
+        ],
+        "scope": "One new admission write transaction after the prior complete-page activation."
+      },
+      {
+        "part": "failed import height13 prefix",
+        "operations": 1,
+        "verify_state": 3,
+        "verify_history": 0,
+        "state_at": 1,
+        "read_active": 0,
+        "account_graph_entries": 3,
+        "whole_root_omissions_in_model": 0,
+        "graph_sequence": [
+          "fresh admission parent H12",
+          "publish pre-write parent H12",
+          "first post-write child attempt, incomplete on deadline"
+        ],
+        "scope": "Source/data reconstruction of the observed failed prefix. The original per-packet phase locates refusal in commit; publish9/verify_history25 and verify_state95 constrain the prefix. No retained failed child Record or runtime role trace exists."
+      },
+      {
+        "part": "height4→11 activation intent",
+        "operations": 1,
+        "verify_state": 3,
+        "verify_history": 1,
+        "state_at": 0,
+        "read_active": 0,
+        "account_graph_entries": 2,
+        "whole_root_omissions_in_model": 1,
+        "graph_sequence": [
+          "staging old H4 first full graph",
+          "genesis H0"
+        ],
+        "scope": "Own BEGIN IMMEDIATE/COMMIT; actual active H4 matches the first checked graph in the same last-write scope."
+      },
+      {
+        "part": "seven forward attach steps heights5..11",
+        "operations": 7,
+        "verify_state": 21,
+        "verify_history": 7,
+        "state_at": 0,
+        "read_active": 0,
+        "account_graph_entries": 21,
+        "whole_root_omissions_in_model": 0,
+        "graph_sequence_per_operation": [
+          "resulting staging State first graph",
+          "actual active old H4, bounded partial shape",
+          "genesis H0"
+        ],
+        "scope": "Seven separate BEGIN IMMEDIATE/COMMIT operations, each with its own post-final-write scope. Equal account roots of H5..H11 do not extend the previous writer proof."
+      },
+      {
+        "part": "height4→11 final publication",
+        "operations": 1,
+        "verify_state": 3,
+        "verify_history": 1,
+        "state_at": 0,
+        "read_active": 0,
+        "account_graph_entries": 2,
+        "whole_root_omissions_in_model": 1,
+        "graph_sequence": [
+          "target H11 first full graph",
+          "genesis H0"
+        ],
+        "scope": "Own BEGIN IMMEDIATE/COMMIT after active/events/lifecycle/final slot writes; actual active H11 already matches same-scope checked target."
+      },
+      {
+        "part": "final first-round confirmation",
+        "operations": 1,
+        "verify_state": 1,
+        "verify_history": 0,
+        "state_at": 0,
+        "read_active": 1,
+        "account_graph_entries": 1,
+        "whole_root_omissions_in_model": 0,
+        "graph_sequence": [
+          "fresh active H11 read/graph"
+        ],
+        "scope": "Separate ordinary confirmation outside the completed publication writer."
+      }
+    ],
+    "totals": {
+      "verify_state": 95,
+      "verify_history": 25,
+      "state_at": 25,
+      "read_active": 5,
+      "account_graph_entries": 71,
+      "whole_root_omissions_in_model": 24
+    },
+    "matches_all_three_original_runtime_totals": true,
+    "interpretation": "The source/data model accounts for every observed95 VerifyState,25 VerifyHistory,25 StateAt,5 ReadActive and71 AccountGraph entries. It predicts24 omitted whole-Root walks, but that number remains a reconstruction; the original runtime did not log each hit. Per-role wall/CPU costs and an exact deadline instruction are not recoverable from this aggregate.",
+    "graph_total_expression": "(6 + 6*5 + 6 + 3) admission entries + (2 + 7*3 + 2) activation entries +1 confirmation =71"
+  },
+  "existing_scope_coverage": [
+    {
+      "source": "src/store.rs:4286-4293,4371-4385,4398-4420; src/store/native_authenticated.rs:902-970",
+      "finding": "Admission captures original writer before writes, validates parent before account/record writes, creates PostWriteReadback only after final save, and threads that same scope through child+genesis, actual parent, actual child, actual active and history/genesis tail. No omitted readback argument found in this measured path."
+    },
+    {
+      "source": "src/store.rs:5228-5288,5480-5498,5516-5573;5024-5073",
+      "finding": "Multi-block activation uses nine distinct original write transactions: one intent, seven cursor advances, one final publication. Each creates readback after its explicit last write and passes it into persisted staging check and the original atomic active/history tail, ending with the unchanged strict last-write and owner fences. The previously rejected direct-append atomic helper is not used for this client activation."
+    },
+    {
+      "source": "src/store/native_authenticated/post_write_readback.rs:95-179,181-218,226-334",
+      "finding": "Original four named roles, first full graph, one16-prefix frontier, current schema/owner/no-write identity and consumed fences already delimit legal reuse. Results do not survive their writer or connection."
+    },
+    {
+      "source": "src/store/historical_commitment.rs:1-7,38-84,90-112; src/store.rs:2558-2588",
+      "finding": "HistoricalCommitments returns only bounded canonical State/tree arithmetic. It still checks complete actual State against fresh SQL root and supplies no authenticated SQL graph proof, State, permission or validity verdict. It cannot fill a PostWriteReadback gap or justify skipping fresh archive rows across writes."
+    }
+  ],
+  "located_same_writer_repetition": {
+    "status": "BOUNDED_SOURCE_DATA_REPETITION_WITH_EXPLICIT_NONPROMOTION_CONTRACT",
+    "cases": [
+      "Accepted height5: post-write parent H4 and later active H4 both use the child5 frontier.",
+      "Accepted height12: post-write parent H11 and later active H11 both use the child12 frontier."
+    ],
+    "structural_cost_scope": "The source/retained-byte model predicts two repeated partial traversals of279 exposed nodes each, not two complete2055-node graph passes. No per-call CPU/wall measurements exist, so no time savings are claimed.",
+    "why_not_a_missing_existing_api_call": "src/store/native_authenticated.rs:746-764 explicitly marks a successful partial use as consumed but forbids a new parent, whole-Root receipt or source frontier. post_write_readback/frontier_tests.rs:127-186 requires a second same-parent partial traversal (partial_uses2, hits0, graphs[2]None). Removing these traversals requires changing that proof contract and cancellation/write-boundary controls; there is no unused existing authorized whole-Root receipt to invoke.",
+    "decision": "No speculative promotion patch or modified retained test."
+  },
+  "work_that_cannot_be_reused_under_existing_scope": [
+    "Fresh pre-admission parent graph is outside the later writer. Its earlier observation cannot authorize later current SQL data.",
+    "publish pre-write parent graph precedes native_store::apply and the new commitment-record save. The post-write scope does not exist yet; carrying it across those writes violates the current no-write epoch.",
+    "The first graph after each of the nine reorg final-write boundaries must establish that transaction-specific source. Equal height5..11 account Roots are not continuity across eight intervening COMMIT/BEGIN/write sequences.",
+    "Final independent confirmation runs after the publication writer ended and has its own fresh active read.",
+    "Whole-Root and partial hits still retain all current full-State/record/delta parsing, nonce/debt checks, root comparison and live/CPU/deadline checkpoints associated with actual remaining work."
+  ],
+  "retained_negative_boundaries": [
+    "Partial no-row UPDATE/failed write, cancellation at first/last boundaries, final callback deletion and outer later-write controls in post_write_readback/frontier_tests.rs:400-507.",
+    "No-row writes, failed SQL, DDL ABA, SAVEPOINT and COMMIT/BEGIN replacement, callback-error source precedence in reorg_readback_tests.rs:530-615.",
+    "Actual reorg row/event parity, fault recovery and cold reopen tests in reorg_readback_tests.rs:167-265 and271ff.",
+    "No descriptor reuse, cached Host authorization, fewer live checks, changed CPU/reserve/deadline, snapshot warm-up or weakened W1."
+  ],
+  "remaining_granularity": "The original71-call/18.779180476s wall/4.158076380s CPU aggregate identifies a real expensive region, but full/partial/whole-hit timings by scope and the exact consumed graph at the final deadline were not recorded. The entire complete-page import has29928 Host checkpoints; those cannot all be assigned to activation or to removable graph work.",
+  "conclusion": "No missed propagation of an already valid same-writer PostWriteReadback was found. Dominant repeated full graph work crosses distinct original write epochs or fresh readers. Two small same-writer partial repetitions exist in the source/data model, but the existing explicit nonpromotion contract blocks treating them as free whole-Root hits. Current evidence supports no safe immediate core patch or claimed service closure.",
+  "all_original_service_failures_preserved": true,
+  "native_executions": 0,
+  "source_changes": 0,
+  "patch_created": false,
+  "performance_acceptance": false
+}

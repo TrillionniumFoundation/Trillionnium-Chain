@@ -1,0 +1,30 @@
+{
+  "canonical_head_at_freeze": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "canonical_source_writes_performed": false,
+  "changed_files": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "scripts/ci/check_ci_contract.py"
+  ],
+  "checker_after_blob": "37505979d7a3ebe7ffc8191965c8edc18e0854c9",
+  "checker_after_sha256": "ef82077cc293dfa84bddf54b6bee715098bd4eb8a4fc993bbc3ef64846dff900",
+  "checker_before_blob": "8c84ca65e93b8cccdbd0311a3c35dd70b366b5fd",
+  "checker_before_sha256": "59c3ca1f073307081485c7565792bbe52e12500630ca85dff63346818eb6848d",
+  "commit": "17449baa42429ac98b55c100b1c523ff0abe40d0",
+  "common_config_sha256_after": "4858d7294d5968678ebdbe69c0b3d7be61bdfaff293fc27f2c44b8498f421859",
+  "common_config_sha256_before": "4858d7294d5968678ebdbe69c0b3d7be61bdfaff293fc27f2c44b8498f421859",
+  "common_config_span": "routine only; pre-worktree-add identity was not recorded",
+  "corpus_after_sha256": "c75e9b022838ae4bf676ed67cb5a6ce482d1727e8666b485eeaf340267b10e5b",
+  "corpus_before_sha256": "42757a26981e761fd3c6cc246ab73bc2effb148345bfef4f5e7f3b290535992d",
+  "development_controls_passed": true,
+  "existing_169_tests_unchanged": true,
+  "frozen_utc": "2026-11-12T08:20:46.917391+00:00",
+  "native_or_formal_execution_source": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "negative_test_sha256_after": "fdb7e9e8abe36faa445893decac3bad0c089f8e9368a5c98169e47930114f3f8",
+  "negative_test_sha256_before": "fdb7e9e8abe36faa445893decac3bad0c089f8e9368a5c98169e47930114f3f8",
+  "parent": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "production_activation": false,
+  "schema": "trnm-daa-ci-guard-repair-freeze-v1",
+  "scope_only_two_files": true,
+  "source_A": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "tree": "30d1f68d13d0eac47fc48a228f3b0cb47fbddc79"
+}

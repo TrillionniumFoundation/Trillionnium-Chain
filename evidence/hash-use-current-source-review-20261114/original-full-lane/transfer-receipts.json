@@ -1,0 +1,1001 @@
+{
+  "pending_write": null,
+  "raw_contents_printed": false,
+  "read_chunks": [
+    {
+      "chunk_sha256": "79d37af0ecec1749098bdfd1cfc7127de2cf9aa928b7271ca4ef8de39cd4061b",
+      "eof": true,
+      "name": "summary.json",
+      "next_offset": 21481,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/summary.json",
+      "size": 21481,
+      "version": "66306:34755868:21481:1794640919346103027:1794640919346103027"
+    },
+    {
+      "chunk_sha256": "f8bdb660a523c7aef3c4b0e70725614ec2a0c95f5b916f07d17b970ea4feb079",
+      "eof": true,
+      "name": "initial-head.stdout",
+      "next_offset": 41,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/initial-head.stdout",
+      "size": 41,
+      "version": "66306:34755869:41:1794640872084408933:1794640872084408933"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "initial-head.stderr",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/initial-head.stderr",
+      "size": 0,
+      "version": "66306:34755871:0:1794640872083235944:1794640872083235944"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "initial-status.stdout",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/initial-status.stdout",
+      "size": 0,
+      "version": "66306:34755873:0:1794640872087330868:1794640872087330868"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "initial-status.stderr",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/initial-status.stderr",
+      "size": 0,
+      "version": "66306:34755874:0:1794640872087330868:1794640872087330868"
+    },
+    {
+      "chunk_sha256": "d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f",
+      "eof": true,
+      "name": "pre-update-preflight.stdout",
+      "next_offset": 177,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/pre-update-preflight.stdout",
+      "size": 177,
+      "version": "66306:34755875:177:1794640872486408269:1794640872486408269"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "pre-update-preflight.stderr",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/pre-update-preflight.stderr",
+      "size": 0,
+      "version": "66306:34755876:0:1794640872453114423:1794640872453114423"
+    },
+    {
+      "chunk_sha256": "0add6ae04a4efae282f2e12bfb4363fbb927b3e4f24e60902e4a41032827fd00",
+      "eof": true,
+      "name": "local-bundle-verify.stdout",
+      "next_offset": 190,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/local-bundle-verify.stdout",
+      "size": 190,
+      "version": "66306:34755879:190:1794640872525408205:1794640872525408205"
+    },
+    {
+      "chunk_sha256": "26f833876fe5871221bacf40f03dee1d36ec7c5f8f0711c1945a264966f030de",
+      "eof": true,
+      "name": "local-bundle-verify.stderr",
+      "next_offset": 142,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/local-bundle-verify.stderr",
+      "size": 142,
+      "version": "66306:34755880:142:1794640872525408205:1794640872525408205"
+    },
+    {
+      "chunk_sha256": "0c5368887443d8873d3842b89a80aae6ca6b082bff8a34a78a51900fb15f8996",
+      "eof": true,
+      "name": "local-bundle-list-heads.stdout",
+      "next_offset": 46,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/local-bundle-list-heads.stdout",
+      "size": 46,
+      "version": "66306:34755881:46:1794640872535408188:1794640872535408188"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "local-bundle-list-heads.stderr",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/local-bundle-list-heads.stderr",
+      "size": 0,
+      "version": "66306:34755882:0:1794640872535149409:1794640872535149409"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "fetch-exact-local-bundle.stdout",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/fetch-exact-local-bundle.stdout",
+      "size": 0,
+      "version": "66306:34755883:0:1794640872537156530:1794640872537156530"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "fetch-exact-local-bundle.stderr",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/fetch-exact-local-bundle.stderr",
+      "size": 0,
+      "version": "66306:34755885:0:1794640872537156530:1794640872537156530"
+    },
+    {
+      "chunk_sha256": "5570446a2dd1de14aa9666cf4cabbc07498b83d8c12c191a85823a46b6d43f6a",
+      "eof": true,
+      "name": "fetched-commit.stdout",
+      "next_offset": 41,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/fetched-commit.stdout",
+      "size": 41,
+      "version": "66306:34755886:41:1794640872904407579:1794640872904407579"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "fetched-commit.stderr",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/fetched-commit.stderr",
+      "size": 0,
+      "version": "66306:34755887:0:1794640872903717362:1794640872903717362"
+    },
+    {
+      "chunk_sha256": "b2fd0823b09a187f15388cad79b3b61411fe1b5d0238ba7d0ab336dccea59f08",
+      "eof": true,
+      "name": "fetched-tree.stdout",
+      "next_offset": 41,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/fetched-tree.stdout",
+      "size": 41,
+      "version": "66306:34755888:41:1794640872908407572:1794640872908407572"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "fetched-tree.stderr",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/fetched-tree.stderr",
+      "size": 0,
+      "version": "66306:34755889:0:1794640872908060781:1794640872908060781"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "fast-forward-ancestry.stdout",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/fast-forward-ancestry.stdout",
+      "size": 0,
+      "version": "66306:34755891:0:1794640872911988322:1794640872911988322"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "fast-forward-ancestry.stderr",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/fast-forward-ancestry.stderr",
+      "size": 0,
+      "version": "66306:34755892:0:1794640872911988322:1794640872911988322"
+    },
+    {
+      "chunk_sha256": "e1aae1d29a566751d7a4b47f84fa5d761d4b8a4514c121495afa9d9d65d92793",
+      "eof": true,
+      "name": "fast-forward.stdout",
+      "next_offset": 16928,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/fast-forward.stdout",
+      "size": 16928,
+      "version": "66306:34755893:16928:1794640872979407455:1794640872979407455"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "fast-forward.stderr",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/fast-forward.stderr",
+      "size": 0,
+      "version": "66306:34755894:0:1794640872915703414:1794640872915703414"
+    },
+    {
+      "chunk_sha256": "d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f",
+      "eof": true,
+      "name": "preflight-audit.stdout",
+      "next_offset": 177,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/preflight-audit.stdout",
+      "size": 177,
+      "version": "66306:34755898:177:1794640873062407318:1794640873062407318"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "preflight-audit.stderr",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/preflight-audit.stderr",
+      "size": 0,
+      "version": "66306:34755899:0:1794640873030347659:1794640873030347659"
+    },
+    {
+      "chunk_sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148",
+      "eof": true,
+      "name": "rust-version.stdout",
+      "next_offset": 36,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/rust-version.stdout",
+      "size": 36,
+      "version": "66306:34755901:36:1794640873154407166:1794640873154407166"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "rust-version.stderr",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/rust-version.stderr",
+      "size": 0,
+      "version": "66306:34755903:0:1794640873095458227:1794640873095458227"
+    },
+    {
+      "chunk_sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "eof": true,
+      "name": "cargo-version.stdout",
+      "next_offset": 36,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/cargo-version.stdout",
+      "size": 36,
+      "version": "66306:34755904:36:1794640873248407011:1794640873248407011"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "cargo-version.stderr",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/cargo-version.stderr",
+      "size": 0,
+      "version": "66306:34755905:0:1794640873210786605:1794640873210786605"
+    },
+    {
+      "chunk_sha256": "6acc4552f9c18025e8dae33743614781bda4d62bd6c81454277d68177c05de79",
+      "eof": true,
+      "name": "conformance-environment.stdout",
+      "next_offset": 223,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/conformance-environment.stdout",
+      "size": 223,
+      "version": "66306:34755906:223:1794640873323406887:1794640873323406887"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "conformance-environment.stderr",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/conformance-environment.stderr",
+      "size": 0,
+      "version": "66306:34755907:0:1794640873277065252:1794640873277065252"
+    },
+    {
+      "chunk_sha256": "aed21f6057d4117e9083c2595e2697e64697c143756e1bd2e6393dec00a56519",
+      "eof": true,
+      "name": "runtime-environment.stdout",
+      "next_offset": 205,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/runtime-environment.stdout",
+      "size": 205,
+      "version": "66306:34755909:205:1794640873382406789:1794640873382406789"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "runtime-environment.stderr",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/runtime-environment.stderr",
+      "size": 0,
+      "version": "66306:34755911:0:1794640873342738966:1794640873342738966"
+    },
+    {
+      "chunk_sha256": "bdad0a592def9d833fcd84a1e3e124cb86e829c7515b542fbbd5ea925e22cf9a",
+      "eof": true,
+      "name": "verify-source-before.stdout",
+      "next_offset": 423,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/verify-source-before.stdout",
+      "size": 423,
+      "version": "66306:34755912:423:1794640884379066804:1794640884379066804"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "verify-source-before.stderr",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/verify-source-before.stderr",
+      "size": 0,
+      "version": "66306:34755913:0:1794640873408193008:1794640873408193008"
+    },
+    {
+      "chunk_sha256": "4954c397ea887807999fe9f9b7cdb2748d8c5e92ba2f2891a730f1f1256b0413",
+      "eof": false,
+      "name": "repository-truth.stdout",
+      "next_offset": 65536,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/repository-truth.stdout",
+      "size": 291195,
+      "version": "66306:34755917:291195:1794640915186337323:1794640915186337323"
+    },
+    {
+      "chunk_sha256": "f9098bca66b62d244add74231e8df067136e82d20a0706ccb9d3c7ebfe6f4f6b",
+      "eof": false,
+      "name": "repository-truth.stdout",
+      "next_offset": 131072,
+      "offset": 65536,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/repository-truth.stdout",
+      "size": 291195,
+      "version": "66306:34755917:291195:1794640915186337323:1794640915186337323"
+    },
+    {
+      "chunk_sha256": "cb213dea551ebb4a15450c22bc4999b42ae593b4ba5b6656e781a1f81d0e41c2",
+      "eof": false,
+      "name": "repository-truth.stdout",
+      "next_offset": 196608,
+      "offset": 131072,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/repository-truth.stdout",
+      "size": 291195,
+      "version": "66306:34755917:291195:1794640915186337323:1794640915186337323"
+    },
+    {
+      "chunk_sha256": "377164f13b1a016d214fe78a8c52c6b556a2bdbd786a8af5e68867564fb367df",
+      "eof": false,
+      "name": "repository-truth.stdout",
+      "next_offset": 262144,
+      "offset": 196608,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/repository-truth.stdout",
+      "size": 291195,
+      "version": "66306:34755917:291195:1794640915186337323:1794640915186337323"
+    },
+    {
+      "chunk_sha256": "86f3bc5540cffb96e0fb925a20a3cc3f71b14bd3971fb787d0ec568e5d7fd853",
+      "eof": true,
+      "name": "repository-truth.stdout",
+      "next_offset": 291195,
+      "offset": 262144,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/repository-truth.stdout",
+      "size": 291195,
+      "version": "66306:34755917:291195:1794640915186337323:1794640915186337323"
+    },
+    {
+      "chunk_sha256": "0d36f984f538709748a8ab60a47376e7457717e4ee17aae7f0c8fbe924e87121",
+      "eof": false,
+      "name": "repository-truth.stderr",
+      "next_offset": 65536,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/repository-truth.stderr",
+      "size": 67670,
+      "version": "66306:34755918:67670:1794640915297337137:1794640915297337137"
+    },
+    {
+      "chunk_sha256": "23d2d4478f5288ddcb61c7205ae2857cb31fcfbd431636160d1dd7a4f1514ff1",
+      "eof": true,
+      "name": "repository-truth.stderr",
+      "next_offset": 67670,
+      "offset": 65536,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/repository-truth.stderr",
+      "size": 67670,
+      "version": "66306:34755918:67670:1794640915297337137:1794640915297337137"
+    },
+    {
+      "chunk_sha256": "bdad0a592def9d833fcd84a1e3e124cb86e829c7515b542fbbd5ea925e22cf9a",
+      "eof": true,
+      "name": "verify-source-after.stdout",
+      "next_offset": 423,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/verify-source-after.stdout",
+      "size": 423,
+      "version": "66306:34755921:423:1794640919315971060:1794640919315971060"
+    },
+    {
+      "chunk_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eof": true,
+      "name": "verify-source-after.stderr",
+      "next_offset": 0,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/verify-source-after.stderr",
+      "size": 0,
+      "version": "66306:34755922:0:1794640915314085567:1794640915314085567"
+    },
+    {
+      "chunk_sha256": "bdad0a592def9d833fcd84a1e3e124cb86e829c7515b542fbbd5ea925e22cf9a",
+      "eof": true,
+      "name": "source-before.json",
+      "next_offset": 423,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/source-before.json",
+      "size": 423,
+      "version": "66306:34755916:423:1794640884379066804:1794640884379066804"
+    },
+    {
+      "chunk_sha256": "bdad0a592def9d833fcd84a1e3e124cb86e829c7515b542fbbd5ea925e22cf9a",
+      "eof": true,
+      "name": "source-after.json",
+      "next_offset": 423,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1/source-after.json",
+      "size": 423,
+      "version": "66306:34755923:423:1794640919315971060:1794640919315971060"
+    }
+  ],
+  "rog_commands_executed": false,
+  "rog_writes": false,
+  "schema": "fixed-original-binary-transfer-receipts-v1",
+  "source_base": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-7d8d4c-v1",
+  "source_host": "rog",
+  "target_base": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1",
+  "target_host": "mac",
+  "writes": [
+    {
+      "name": "initial-head.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/initial-head.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"f8bdb660a523c7aef3c4b0e70725614ec2a0c95f5b916f07d17b970ea4feb079\",\"size\":41,\"version\":\"16777233:606573813:41:1794641223443057786:1794641223443446701\",\"written\":41}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "initial-head.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/initial-head.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606573962:0:1794641239598480479:1794641239598989644\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "initial-status.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/initial-status.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606573982:0:1794641240763151922:1794641240763586753\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "initial-status.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/initial-status.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606574004:0:1794641242221926153:1794641242222377651\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "pre-update-preflight.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/pre-update-preflight.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f\",\"size\":177,\"version\":\"16777233:606574025:177:1794641244355739317:1794641244356153774\",\"written\":177}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "pre-update-preflight.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/pre-update-preflight.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606574078:0:1794641246016441163:1794641246016817328\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "local-bundle-verify.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/local-bundle-verify.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"0add6ae04a4efae282f2e12bfb4363fbb927b3e4f24e60902e4a41032827fd00\",\"size\":190,\"version\":\"16777233:606574144:190:1794641249098355540:1794641249098815497\",\"written\":190}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "local-bundle-verify.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/local-bundle-verify.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"26f833876fe5871221bacf40f03dee1d36ec7c5f8f0711c1945a264966f030de\",\"size\":142,\"version\":\"16777233:606574200:142:1794641251838315008:1794641251838852298\",\"written\":142}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "local-bundle-list-heads.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/local-bundle-list-heads.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"0c5368887443d8873d3842b89a80aae6ca6b082bff8a34a78a51900fb15f8996\",\"size\":46,\"version\":\"16777233:606574220:46:1794641252784145146:1794641252784676060\",\"written\":46}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "local-bundle-list-heads.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/local-bundle-list-heads.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606574284:0:1794641255065320078:1794641255065685285\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "fetch-exact-local-bundle.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/fetch-exact-local-bundle.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606574310:0:1794641255995889769:1794641255996315560\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "fetch-exact-local-bundle.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/fetch-exact-local-bundle.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606574430:0:1794641267850464127:1794641267850787501\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "fetched-commit.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/fetched-commit.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"5570446a2dd1de14aa9666cf4cabbc07498b83d8c12c191a85823a46b6d43f6a\",\"size\":41,\"version\":\"16777233:606574442:41:1794641269067861924:1794641269068498005\",\"written\":41}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "fetched-commit.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/fetched-commit.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606574456:0:1794641271049643462:1794641271050068086\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "fetched-tree.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/fetched-tree.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"b2fd0823b09a187f15388cad79b3b61411fe1b5d0238ba7d0ab336dccea59f08\",\"size\":41,\"version\":\"16777233:606574485:41:1794641272165582037:1794641272166147951\",\"written\":41}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "fetched-tree.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/fetched-tree.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606574497:0:1794641273121232723:1794641273121686054\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "fast-forward-ancestry.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/fast-forward-ancestry.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606574509:0:1794641274063893622:1794641274064325953\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "fast-forward-ancestry.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/fast-forward-ancestry.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606574534:0:1794641275103252427:1794641275103616217\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "fast-forward.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/fast-forward.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e1aae1d29a566751d7a4b47f84fa5d761d4b8a4514c121495afa9d9d65d92793\",\"size\":16928,\"version\":\"16777233:606574546:16928:1794641276291996743:1794641276292635449\",\"written\":16928}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "fast-forward.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/fast-forward.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606574558:0:1794641277332044254:1794641277332511586\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "preflight-audit.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/preflight-audit.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f\",\"size\":177,\"version\":\"16777233:606574570:177:1794641278637938736:1794641278638481568\",\"written\":177}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "preflight-audit.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/preflight-audit.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606574766:0:1794641299310605954:1794641299311000453\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "rust-version.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/rust-version.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148\",\"size\":36,\"version\":\"16777233:606574780:36:1794641300549729299:1794641300550421047\",\"written\":36}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "rust-version.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/rust-version.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606574796:0:1794641302822137845:1794641302822522969\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "cargo-version.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/cargo-version.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5\",\"size\":36,\"version\":\"16777233:606574814:36:1794641304095802192:1794641304096521273\",\"written\":36}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "cargo-version.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/cargo-version.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606574829:0:1794641305056866568:1794641305057239025\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "conformance-environment.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/conformance-environment.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"6acc4552f9c18025e8dae33743614781bda4d62bd6c81454277d68177c05de79\",\"size\":223,\"version\":\"16777233:606574852:223:1794641306594724309:1794641306595370432\",\"written\":223}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "conformance-environment.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/conformance-environment.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606574877:0:1794641309576034503:1794641309576527043\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "runtime-environment.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/runtime-environment.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"aed21f6057d4117e9083c2595e2697e64697c143756e1bd2e6393dec00a56519\",\"size\":205,\"version\":\"16777233:606574889:205:1794641310818492794:1794641310819002875\",\"written\":205}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "runtime-environment.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/runtime-environment.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606574901:0:1794641312347737983:1794641312348166815\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "verify-source-before.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/verify-source-before.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"bdad0a592def9d833fcd84a1e3e124cb86e829c7515b542fbbd5ea925e22cf9a\",\"size\":423,\"version\":\"16777233:606574916:423:1794641313414025900:1794641313414689356\",\"written\":423}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "verify-source-before.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/verify-source-before.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606574970:0:1794641316951458491:1794641316951885156\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "repository-truth.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/repository-truth.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"6e8beb43b947c67e5ef4abd3f6216ca4854b3c5ffd21eb68ad8a4f9e26d59705\",\"size\":291195,\"version\":\"16777233:606575028:291195:1794641323210725782:1794641323211246447\",\"written\":291195}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "repository-truth.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/repository-truth.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"c4772c3a2d25718139f4199171eb432c3b7aff578a75290101d922584812f2ea\",\"size\":67670,\"version\":\"16777233:606575069:67670:1794641325422775043:1794641325423371333\",\"written\":67670}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "verify-source-after.stdout",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/verify-source-after.stdout",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"bdad0a592def9d833fcd84a1e3e124cb86e829c7515b542fbbd5ea925e22cf9a\",\"size\":423,\"version\":\"16777233:606575085:423:1794641326446069447:1794641326446807069\",\"written\":423}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "verify-source-after.stderr",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/verify-source-after.stderr",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"16777233:606575128:0:1794641327704811014:1794641327705390886\",\"written\":0}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "summary.json",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/summary.json",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"79d37af0ecec1749098bdfd1cfc7127de2cf9aa928b7271ca4ef8de39cd4061b\",\"size\":21481,\"version\":\"16777233:606575154:21481:1794641328924973426:1794641328925524424\",\"written\":21481}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "source-before.json",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/source-before.json",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"bdad0a592def9d833fcd84a1e3e124cb86e829c7515b542fbbd5ea925e22cf9a\",\"size\":423,\"version\":\"16777233:606575178:423:1794641329919694431:1794641329920266179\",\"written\":423}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "name": "source-after.json",
+      "path": "/private/tmp/chain-architecture-7d8-repository-truth-failure-20261114-v1/original/source-after.json",
+      "response": {
+        "content": [
+          {
+            "text": "{\"mode\":384,\"sha256\":\"bdad0a592def9d833fcd84a1e3e124cb86e829c7515b542fbbd5ea925e22cf9a\",\"size\":423,\"version\":\"16777233:606575190:423:1794641330819518149:1794641330820179855\",\"written\":423}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    }
+  ]
+}

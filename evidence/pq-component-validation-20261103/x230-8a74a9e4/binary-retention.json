@@ -1,0 +1,16 @@
+{
+  "schema": "trnm-pq-native-binary-retention-v1",
+  "source_commit": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+  "source_tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+  "binary": {
+    "path": "/home/qian/pq-witness-target-6f4fef89e370/debug/deps/trnm_pon_node-4a176b3f1058369c",
+    "bytes": 363681632,
+    "sha256": "1a592635ce27a99b0d34177a992a559c81d5da11bd564557186a05efdeca6fec",
+    "archived": false
+  },
+  "matches_identity_recorded_after_witness_scope": true,
+  "native_profile_opt_level": "3",
+  "native_profile_debuginfo": 2,
+  "binary_archived": false,
+  "whole_chain_quantum_security_qualified": false
+}

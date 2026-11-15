@@ -1,0 +1,31 @@
+
+running 11 tests
+test actual_legacy_and_authenticated_restart_preserve_unadmitted_output_identity ... ok
+test actual_two_branch_process_cut_recovery_and_saved_checkpoint_rollback ... ok
+test dropped_pending_native_activation_blocks_reuse_and_remains_unresolved_after_reopen ... ok
+test input_artifact_budget_refuses_before_any_native_admission_intent ... ok
+test invalid_same_id_packet_never_inherits_another_packets_valid_native_weight ... ok
+test native_journal_process_child ... ignored, owned subprocess helper, actually executed by the process-cut test
+test referenced_packet_corruption_is_refused_and_never_overwritten_on_resume ... ok
+test sidecar_lock_is_exclusive_and_new_namespace_never_claims_fresh_resources ... ok
+test terminal_budget_failure_preserves_real_native_effect_and_unresolved_debt ... ok
+test torn_tail_is_preserved_and_refused_before_reopening_native_store ... ok
+test wrong_prior_checkpoint_refuses_without_appending_an_open_intent ... ok
+
+test result: ok. 10 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 52.64s
+
+
+running 10 tests
+test actual_legacy_and_authenticated_census_replays_full_native_relation_without_persistence ... ok
+test actual_two_owner_execution_covers_hidden_inventory_six_successors_ties_reorg_and_time_maturity ... ok
+test block_byte_limits_and_native_work_cancellation_never_return_a_partial_census ... ok
+test callback_error_text_never_acquires_retained_data_stop_authority ... ok
+test corrupted_retained_product_is_reverified_instead_of_trusting_admitted_metadata ... ok
+test foreign_state_changing_commit_during_read_snapshot_is_detected_after_release ... ok
+test local_view_digest_stable_but_owner_incarnation_and_observation_attempt_are_not_reused ... ok
+test pnp2_growth_is_explicitly_unsupported_without_a_pnp1_fallback ... ok
+test prior_filtering_sql_view_cannot_hide_an_admitted_fork_from_a_complete_census ... ok
+test retained_chainwork_or_missing_packet_cannot_be_certified ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.90s
+

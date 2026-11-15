@@ -1,0 +1,275 @@
+{
+  "schema": "original-native-campaign-depletion-sample-readback-v1",
+  "source": "7d6567b92575d1d84766afd49d0720b6f197b0e0",
+  "reviewed_current_source": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "scope": "Existing source-bound receiver budget samples only; no current-source campaign, inter-sample exclusion proof, TPS or qualification",
+  "artifact_id": 13820807612,
+  "artifact_bytes": 83977458,
+  "artifact_sha256": "f06c618a51693b79fd8d7b7c910b5ce3dad96c1ee73901535688766f57b93b1a",
+  "unchanged_campaign_test": {
+    "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+    "sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf"
+  },
+  "phases": [
+    {
+      "run": 1,
+      "mode": "baseline",
+      "member": "run-1-raw/baseline.json",
+      "raw_bytes": 3184021,
+      "raw_sha256": "8bdd1010a4b3e8c5064bf6cef53741390c57d8afb6a5c0f619821545dd1124d2",
+      "samples": 534,
+      "unknown_meter_samples": 0,
+      "missing_flow_samples": 0,
+      "observed_depleted_samples": 0,
+      "computed_depleted_samples": 0,
+      "debit_above_original_threshold_samples": 0,
+      "minimum_paid_credit": {
+        "sample_at_ns": 1153011633,
+        "paid_credit_ns": 1977384985,
+        "paid_debit_ns": 46240211,
+        "credited_refill_ns": 23625196,
+        "settlement_discard_ns": 0
+      },
+      "maximum_paid_debit": {
+        "sample_at_ns": 20734320046,
+        "paid_credit_ns": 1991557273,
+        "paid_debit_ns": 608211665,
+        "credited_refill_ns": 599768938,
+        "settlement_discard_ns": 0
+      },
+      "balance_or_predicate_mismatches": 0
+    },
+    {
+      "run": 1,
+      "mode": "from-zero",
+      "member": "run-1-raw/from-zero.json",
+      "raw_bytes": 26568358,
+      "raw_sha256": "353a5d5d5231322d741859719f35f61af4dc748e35efd919f4720ac7daa6b6ad",
+      "samples": 405,
+      "unknown_meter_samples": 0,
+      "missing_flow_samples": 0,
+      "observed_depleted_samples": 0,
+      "computed_depleted_samples": 0,
+      "debit_above_original_threshold_samples": 101,
+      "minimum_paid_credit": {
+        "sample_at_ns": 1696976072,
+        "paid_credit_ns": 1984221839,
+        "paid_debit_ns": 225669502,
+        "credited_refill_ns": 209891341,
+        "settlement_discard_ns": 0
+      },
+      "maximum_paid_debit": {
+        "sample_at_ns": 29996956549,
+        "paid_credit_ns": 1994897753,
+        "paid_debit_ns": 2470549457,
+        "credited_refill_ns": 2465447210,
+        "settlement_discard_ns": 0
+      },
+      "balance_or_predicate_mismatches": 0
+    },
+    {
+      "run": 1,
+      "mode": "late-product",
+      "member": "run-1-raw/late-product.json",
+      "raw_bytes": 27216792,
+      "raw_sha256": "714cde9413c9300377a0c712431b9253547da3b114a884c80f2408c1c2794528",
+      "samples": 386,
+      "unknown_meter_samples": 0,
+      "missing_flow_samples": 0,
+      "observed_depleted_samples": 0,
+      "computed_depleted_samples": 0,
+      "debit_above_original_threshold_samples": 106,
+      "minimum_paid_credit": {
+        "sample_at_ns": 1217441905,
+        "paid_credit_ns": 1983160813,
+        "paid_debit_ns": 148699727,
+        "credited_refill_ns": 131860540,
+        "settlement_discard_ns": 0
+      },
+      "maximum_paid_debit": {
+        "sample_at_ns": 29905070283,
+        "paid_credit_ns": 1995447827,
+        "paid_debit_ns": 2577955783,
+        "credited_refill_ns": 2573403610,
+        "settlement_discard_ns": 0
+      },
+      "balance_or_predicate_mismatches": 0
+    },
+    {
+      "run": 2,
+      "mode": "baseline",
+      "member": "run-2-raw/baseline.json",
+      "raw_bytes": 3000844,
+      "raw_sha256": "4a019edf4bbd5bf31147eb4b655cead108bcd579060c6cc78ec2b42d2707f5f6",
+      "samples": 511,
+      "unknown_meter_samples": 0,
+      "missing_flow_samples": 0,
+      "observed_depleted_samples": 0,
+      "computed_depleted_samples": 0,
+      "debit_above_original_threshold_samples": 0,
+      "minimum_paid_credit": {
+        "sample_at_ns": 1152735043,
+        "paid_credit_ns": 1976183348,
+        "paid_debit_ns": 46621275,
+        "credited_refill_ns": 22804623,
+        "settlement_discard_ns": 0
+      },
+      "maximum_paid_debit": {
+        "sample_at_ns": 21329411824,
+        "paid_credit_ns": 1985629282,
+        "paid_debit_ns": 622034755,
+        "credited_refill_ns": 607664037,
+        "settlement_discard_ns": 0
+      },
+      "balance_or_predicate_mismatches": 0
+    },
+    {
+      "run": 2,
+      "mode": "from-zero",
+      "member": "run-2-raw/from-zero.json",
+      "raw_bytes": 27227380,
+      "raw_sha256": "dee5ea9a6d3e8b19fdbdcac124ec5dc824d99f5bad2a743dedd8857f4b44d5f4",
+      "samples": 417,
+      "unknown_meter_samples": 0,
+      "missing_flow_samples": 0,
+      "observed_depleted_samples": 0,
+      "computed_depleted_samples": 0,
+      "debit_above_original_threshold_samples": 113,
+      "minimum_paid_credit": {
+        "sample_at_ns": 1362622351,
+        "paid_credit_ns": 1982717962,
+        "paid_debit_ns": 164701169,
+        "credited_refill_ns": 147419131,
+        "settlement_discard_ns": 0
+      },
+      "maximum_paid_debit": {
+        "sample_at_ns": 29995185885,
+        "paid_credit_ns": 1996400786,
+        "paid_debit_ns": 2494323789,
+        "credited_refill_ns": 2490724575,
+        "settlement_discard_ns": 0
+      },
+      "balance_or_predicate_mismatches": 0
+    },
+    {
+      "run": 2,
+      "mode": "late-product",
+      "member": "run-2-raw/late-product.json",
+      "raw_bytes": 26972578,
+      "raw_sha256": "52d6126dcfe51ec3f3bf48f3093c235c73ce2fe3eeb3e13a74bf6a00c3eb0489",
+      "samples": 412,
+      "unknown_meter_samples": 0,
+      "missing_flow_samples": 0,
+      "observed_depleted_samples": 0,
+      "computed_depleted_samples": 0,
+      "debit_above_original_threshold_samples": 113,
+      "minimum_paid_credit": {
+        "sample_at_ns": 1843944118,
+        "paid_credit_ns": 1983075855,
+        "paid_debit_ns": 269975023,
+        "credited_refill_ns": 253050878,
+        "settlement_discard_ns": 0
+      },
+      "maximum_paid_debit": {
+        "sample_at_ns": 29991563416,
+        "paid_credit_ns": 1999972223,
+        "paid_debit_ns": 2553678530,
+        "credited_refill_ns": 2553650753,
+        "settlement_discard_ns": 0
+      },
+      "balance_or_predicate_mismatches": 0
+    },
+    {
+      "run": 3,
+      "mode": "baseline",
+      "member": "run-3-raw/baseline.json",
+      "raw_bytes": 3086392,
+      "raw_sha256": "6ce00d095a7eb51d3a15ae32beb32d4ca79a30f25a09e49312d60f4f7e53e3f9",
+      "samples": 499,
+      "unknown_meter_samples": 0,
+      "missing_flow_samples": 0,
+      "observed_depleted_samples": 0,
+      "computed_depleted_samples": 0,
+      "debit_above_original_threshold_samples": 0,
+      "minimum_paid_credit": {
+        "sample_at_ns": 1102383810,
+        "paid_credit_ns": 1976229165,
+        "paid_debit_ns": 45903829,
+        "credited_refill_ns": 22132994,
+        "settlement_discard_ns": 0
+      },
+      "maximum_paid_debit": {
+        "sample_at_ns": 20577325070,
+        "paid_credit_ns": 1994653517,
+        "paid_debit_ns": 604318530,
+        "credited_refill_ns": 598972047,
+        "settlement_discard_ns": 0
+      },
+      "balance_or_predicate_mismatches": 0
+    },
+    {
+      "run": 3,
+      "mode": "from-zero",
+      "member": "run-3-raw/from-zero.json",
+      "raw_bytes": 27092089,
+      "raw_sha256": "e96a3bbb02cfc15487ad76e90c79c43f9c2e950cb644456a037de88ad5c60c26",
+      "samples": 421,
+      "unknown_meter_samples": 0,
+      "missing_flow_samples": 0,
+      "observed_depleted_samples": 0,
+      "computed_depleted_samples": 0,
+      "debit_above_original_threshold_samples": 104,
+      "minimum_paid_credit": {
+        "sample_at_ns": 1228712826,
+        "paid_credit_ns": 1980569491,
+        "paid_debit_ns": 143276674,
+        "credited_refill_ns": 123846165,
+        "settlement_discard_ns": 0
+      },
+      "maximum_paid_debit": {
+        "sample_at_ns": 29917117632,
+        "paid_credit_ns": 1998120028,
+        "paid_debit_ns": 2439832771,
+        "credited_refill_ns": 2437952799,
+        "settlement_discard_ns": 0
+      },
+      "balance_or_predicate_mismatches": 0
+    },
+    {
+      "run": 3,
+      "mode": "late-product",
+      "member": "run-3-raw/late-product.json",
+      "raw_bytes": 26510648,
+      "raw_sha256": "5dcf085b969b32a439f2b5d11ab4854a19723eb6879c2a97286568ed28e937ee",
+      "samples": 411,
+      "unknown_meter_samples": 0,
+      "missing_flow_samples": 0,
+      "observed_depleted_samples": 0,
+      "computed_depleted_samples": 0,
+      "debit_above_original_threshold_samples": 130,
+      "minimum_paid_credit": {
+        "sample_at_ns": 1259977315,
+        "paid_credit_ns": 1980587413,
+        "paid_debit_ns": 161707376,
+        "credited_refill_ns": 142294789,
+        "settlement_discard_ns": 0
+      },
+      "maximum_paid_debit": {
+        "sample_at_ns": 29992890376,
+        "paid_credit_ns": 1999868442,
+        "paid_debit_ns": 2584086797,
+        "credited_refill_ns": 2583955239,
+        "settlement_discard_ns": 0
+      },
+      "balance_or_predicate_mismatches": 0
+    }
+  ],
+  "samples": 3996,
+  "unknown_meter_samples": 0,
+  "missing_flow_samples": 0,
+  "observed_depleted_samples": 0,
+  "computed_depleted_samples": 0,
+  "debit_above_original_threshold_samples": 667,
+  "balance_or_predicate_mismatches": 0,
+  "minimum_paid_credit_ns": 1976183348
+}

@@ -1,0 +1,150 @@
+{
+  "actual_chunks": 95,
+  "after_identity": {
+    "head": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "status": "",
+    "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+  },
+  "before_identity": {
+    "head": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "status": "",
+    "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+  },
+  "completed": true,
+  "derived_parent_envelope": {
+    "historical_original_file_claim": false,
+    "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/derived-parent-preparer-envelope.json",
+    "sha256": "4b287b627527e6b931566b2ef4c64e2df26d617144b7e1bdb81e331b020297ed"
+  },
+  "derived_requests": {
+    "original_values_unchanged": true,
+    "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/derived-original-requests.json",
+    "sha256": "8e5c5ee7affb78820b07bab99936f4f669aea26ea25b9441fb7448c5e11a9bf0"
+  },
+  "elapsed_seconds": 0.7646899640094489,
+  "environment_generation": 2,
+  "full_sealed_runtime_import_admission_performed": false,
+  "hepta_final_use": false,
+  "historical_95_chunk_roster_preserved": true,
+  "independent_31_inputs_verified": true,
+  "independent_inputs": 31,
+  "input_audit": {
+    "bytes": 14093,
+    "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/source-inputs.native-v2-env2.verification.json",
+    "sha256": "61f300cf7dd7eb7e455fcec6ada78a1cb392431ac3f8df40a1b36e7aa4781e7c"
+  },
+  "known_prior_operations": [
+    "03aa2878d0d5aa1be7308d719e822ad2a23313489a06010a9f22541609817b07",
+    "47c6fe65ee2a3e339c07a1c9eee166ecd05b4596bc9fea5050ddcdd447b2c1b3"
+  ],
+  "model_efficacy_qualified": false,
+  "model_executed": false,
+  "model_generation": 1,
+  "model_loaded": false,
+  "native_operation_started": false,
+  "observer_sha256": "3ca9e59411bff4b0c7de8f7de124e6a88ec2c86e3b7332f73929bf67c39e3794",
+  "operation": "1d931efd2bdc5a9fe0f1b24ec91681bd18d4ef23a19392a5c6da144d1abef299",
+  "operation_domain": "trnm.bt.private-runtime-projection.operation.v1\u0000",
+  "operation_preimage_hex": "74726e6d2e62742e707269766174652d72756e74696d652d70726f6a656374696f6e2e6f7065726174696f6e2e763100031d442dd0acb693afcfaf42f9cc4db446ba52cbfb6fe559317f7c3cd6ef504581b89e7d8229a7c700d3c71b61099a32d443cec91085538a9d5901bf8e724347c97166669d8dd1ac5815c3e8825cfaa1ba3dd11a0000000000000002",
+  "original_hepta_owner_used": false,
+  "original_preparer_receipt": {
+    "authority": {
+      "hepta_final_use": false,
+      "independent_accepted": false,
+      "installation_authorized": false,
+      "prospective_accepted": false,
+      "public_reward_eligible": false,
+      "selection_authorized": false
+    },
+    "manifest": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/prepared-source-v1.json",
+    "manifest_count": 30,
+    "model_executed": false,
+    "native_executed": false,
+    "payload_bytes": 279627268,
+    "schema": "trnm.cell-sealed-research-input-preparation.v1",
+    "sha256": "4d30ec2cef6772f55f91166c754c9475bc6fa7b33714a03d44a79a33f617e69b"
+  },
+  "original_preparer_sha256": "4b919011b673a3a0ab738628b3c21ee7328a8a66ec86985f5843c5f4429a5ccc",
+  "original_wrapper_input_function_verified": true,
+  "output": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/real-native-env2-1d931efd2bdc5a9f-attempt01",
+  "passed": true,
+  "payload_bytes": 279627268,
+  "payload_files": 30,
+  "preparer_argv": [
+    "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+    "-S",
+    "-B",
+    "-X",
+    "pycache_prefix=/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/unused-original-preparer-bytecode",
+    "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/prepare_cell_sealed_research_v1.py",
+    "--repo",
+    "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b",
+    "--materials",
+    "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base",
+    "--parent",
+    "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/derived-parent-preparer-envelope.json",
+    "--parent-sha256",
+    "4b287b627527e6b931566b2ef4c64e2df26d617144b7e1bdb81e331b020297ed",
+    "--python",
+    "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+    "--python-sha256",
+    "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5",
+    "--runtime-snapshot",
+    "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/runtime-snapshot.projected.v2.json",
+    "--runtime-snapshot-sha256",
+    "1085538a9d5901bf8e724347c97166669d8dd1ac5815c3e8825cfaa1ba3dd11a",
+    "--requests",
+    "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/derived-original-requests.json",
+    "--requests-sha256",
+    "8e5c5ee7affb78820b07bab99936f4f669aea26ea25b9441fb7448c5e11a9bf0",
+    "--operation",
+    "1d931efd2bdc5a9fe0f1b24ec91681bd18d4ef23a19392a5c6da144d1abef299",
+    "--output",
+    "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/real-native-env2-1d931efd2bdc5a9f-attempt01",
+    "--manifest",
+    "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/prepared-source-v1.json",
+    "--material-profile",
+    "smollm2-public-v2-material-runtime-bridge-v1",
+    "--material-plan",
+    "/home/qq/hepta-smollm2-weight-research-20261103/inputs/experiment-plan.json",
+    "--material-plan-sha256",
+    "01ec1a644f37b9fc7a4c6616f589768df97f8eed7a289b5de86afadaa7ce6165",
+    "--seconds",
+    "300",
+    "--max-snapshot-bytes",
+    "536870912",
+    "--runtime-rss-bytes",
+    "8589934592",
+    "--threads",
+    "4",
+    "--environment-generation",
+    "2"
+  ],
+  "preparer_environment": {
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "TMPDIR": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/tmp"
+  },
+  "preparer_exit_code": 0,
+  "previous_source_sha256": "fb6fe559317f7c3cd6ef504581b89e7d8229a7c700d3c71b61099a32d443cec9",
+  "production_activation": false,
+  "projection_summary_sha256": "678b1bd68e857c4811bbf951330c7f6a00b1a5e337b8791eec04edb3780fed53",
+  "python": {
+    "path": "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+    "sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5"
+  },
+  "schema": "trnm.bt-private-runtime-env2-input-preparation.v1",
+  "snapshot": {
+    "bytes": 7097177,
+    "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/runtime-snapshot.projected.v2.json",
+    "sha256": "1085538a9d5901bf8e724347c97166669d8dd1ac5815c3e8825cfaa1ba3dd11a"
+  },
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_and_pins_unchanged": true,
+  "source_input": {
+    "bytes": 10308,
+    "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-inputs/source-inputs.native-v2-env2.json",
+    "sha256": "d2fb314ef4f8d2e4dfd05076ddd7d8e0465880d935cf8812e3b9b8785d1a6bae"
+  },
+  "source_model_parent_preserved": true
+}

@@ -1,0 +1,56 @@
+{
+  "schema": "pon-pq-qtx1-fork-state-local-qualification-v1",
+  "status": "HOLD_NO_GO",
+  "upstream_pr": 424,
+  "parent_commit": "c3d2ea4e9f78a63b89431e1bdc4de7c20bbae5c7",
+  "source_blobs_git_sha1": {
+    "formal/pon-nakamoto-v1/pq_envelope.py": "27e40b04ac8eaa381ad4dc017f23f226f99f3f41",
+    "formal/pon-nakamoto-v1/pq_transaction.py": "c8ac18136ef447eaa958111392eee05f92819aac",
+    "formal/pon-nakamoto-v1/pq_branch_execution.py": "654e45663ef0777ec6fc969f12f483fbf5aea9b2",
+    "formal/pon-nakamoto-v1/test_pq_branch_execution.py": "9bf7c360ad1acce786f30aef233f51bbfcbf1b89"
+  },
+  "source_sha256": {
+    "pq_branch_execution.py": "ca2a6515099af18b5b02387a7455e8a0c881d078b16a5987775e0ec64dceedd0",
+    "test_pq_branch_execution.py": "60c0c8dd3775804598329a25297d8219c7e1479c76dd0274d6b6890ef88479b4"
+  },
+  "command": "PYTHONWARNINGS=error::ResourceWarning python -m unittest -v test_pq_branch_execution",
+  "cwd": "formal/pon-nakamoto-v1 (local exact staged source)",
+  "return_code": 0,
+  "tests_executed": 16,
+  "failures": 0,
+  "errors": 0,
+  "duration_seconds_reported": 12.226,
+  "log": "evidence/pon-pq-qtx1-fork-state-v1/local-unittest.log",
+  "log_sha256": "4de908f05f6842f5c3a01aee3c0e82f60aab761c1d73286214ca4ef36ceb7c07",
+  "environment": {
+    "python": "3.13.5",
+    "openssl": "OpenSSL 3.5.5",
+    "sqlite": "3.46.1",
+    "os": "Linux",
+    "arch": "x86_64",
+    "filesystem": "overlay",
+    "processes": 8,
+    "operator_independence": false
+  },
+  "verified_scope": [
+    "real ML-DSA-65 QTX1 signature verification",
+    "fork-local balance/nonce semantics",
+    "same-tx logical identity under re-sign",
+    "WAL/FULL local crash-after-commit readback",
+    "eight spawned-process same-fork contention",
+    "cold and live SQLite DDL/ancestry verification"
+  ],
+  "unmeasured": [
+    "native Rust PoN runtime",
+    "independent operators",
+    "physical power-loss",
+    "mainnet transaction inclusion",
+    "quantum mining effective-work security",
+    "HSM key custody",
+    "WAN throughput",
+    "real Hepta Final-use"
+  ],
+  "activation": false,
+  "native_node_integrated": false,
+  "independent_accepted": false
+}

@@ -1,0 +1,589 @@
+{
+  "date": "2026-11-05",
+  "evaluation_bundle": "485d1ddac3f10b859599297ede15c5703517952d3f507cdc3efea7f14214429e",
+  "exact_source_files": {
+    "config/pon/devnet-v1.json": {
+      "bytes": 1964,
+      "git_blob": "a60f403b2f0e7343aed61170ca2aef875a787790",
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+    },
+    "config/pon/evaluation-round-v1.json": {
+      "bytes": 890,
+      "git_blob": "23b0861700b07067cdc54e02081e6d4487450f6b",
+      "sha256": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33"
+    },
+    "config/pon/ledger-v1.json": {
+      "bytes": 7793,
+      "git_blob": "f7d8dba05cd0267b716834d76774a7ce94a1276b",
+      "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+    },
+    "config/pon/model-family-v1.json": {
+      "bytes": 1383,
+      "git_blob": "9a931f21ca86563cf7e5c6415acd20a0ced7da68",
+      "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+    },
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "bytes": 91658,
+      "git_blob": "67a9345b7810b308027d8b196f6df245d7d123fc",
+      "sha256": "6d84864aac8a7e397f253ac8856358bf7f9473f4de7db7f0647d5055bad95ee6"
+    },
+    "config/pon/work-profile-v1.json": {
+      "bytes": 1596,
+      "git_blob": "54e43139d3691b62f76f9e8976e1d2a974e8524b",
+      "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "bytes": 527359,
+      "git_blob": "41430a824a0b61f05b722709be65cc34554ad03c",
+      "sha256": "110d1f52824fd2bd60b5637889fb5ac3b020a3fdac4da8adc49ab50dabb1f884"
+    },
+    "docs/development/specs/pon/SHARED_CELL_WORK_V1.md": {
+      "bytes": 12277,
+      "git_blob": "23dbc51f00a7dbe6c13ffc577a5b52a7cf7930ba",
+      "sha256": "2c3d32d51dd3f46fdfcfd62153845c37d915591dfb3c38759eded36aac579b48"
+    },
+    "docs/development/specs/pon/USEFUL_CELL_RELATION_V1.md": {
+      "bytes": 16571,
+      "git_blob": "c13a34b2eb1f8d4a8d1e2273725fcf2dff928468",
+      "sha256": "f8ff3185bb9225000fc2b92093ee74f701719df183f58f8b955466fb191b986e"
+    },
+    "formal/pon-nakamoto-v1/bounded_process.py": {
+      "bytes": 8627,
+      "git_blob": "b8579d1ea76e8c84214570f3f08d84595bfc77b6",
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356"
+    },
+    "formal/pon-nakamoto-v1/contract_wire.py": {
+      "bytes": 8924,
+      "git_blob": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b",
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+    },
+    "formal/pon-nakamoto-v1/evaluation.py": {
+      "bytes": 5485,
+      "git_blob": "71fb186646c1e61672bf4cfdb56bbf46d5d3863a",
+      "sha256": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842"
+    },
+    "formal/pon-nakamoto-v1/evaluation_bundle.py": {
+      "bytes": 15573,
+      "git_blob": "c0d1447b6caec75a64736150e651c127d8385f08",
+      "sha256": "69468989c22369f812a866fde48ed4c8dd16f15306620a222527d4e645f5699f"
+    },
+    "formal/pon-nakamoto-v1/experiments/model_loop.py": {
+      "bytes": 15358,
+      "git_blob": "ada65fe1f2ed5c6deabc128b8c0ebc6d619618dd",
+      "sha256": "d29b4b426825afdd90b3db9e1fbe79f931a543c307b896853a249ae909412fd0"
+    },
+    "formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py": {
+      "bytes": 40071,
+      "git_blob": "1174c2e1b4ca253993feb93f30c42c2f609fbd0d",
+      "sha256": "3eba7b1d04065abd868428936b07bca0033e7f2a087ae792b7a183afd6b020d8"
+    },
+    "formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py": {
+      "bytes": 12808,
+      "git_blob": "b401be0faca27c4664a279947a0dc14373ce6263",
+      "sha256": "1fc467fba748db47dbc03c8306a5ba189e7737648dbc28cbbb16290fdc543a9b"
+    },
+    "formal/pon-nakamoto-v1/ledger.py": {
+      "bytes": 37985,
+      "git_blob": "ea90d7df31a6765302d59ae53a86ed5486dc7618",
+      "sha256": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e"
+    },
+    "formal/pon-nakamoto-v1/model_contract.py": {
+      "bytes": 2416,
+      "git_blob": "eb5f30a1b4f67c9117d696da6233ff90655ae218",
+      "sha256": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd"
+    },
+    "formal/pon-nakamoto-v1/strict_signature.py": {
+      "bytes": 2151,
+      "git_blob": "b0cedca3a0423f2563359a8645ba322f966804dc",
+      "sha256": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e"
+    },
+    "formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py": {
+      "bytes": 15312,
+      "git_blob": "c29bba9dcca10a2e355fc0e2dd0fddc8a2cb5a9c",
+      "sha256": "73358b259307ad1c2bbf2df9ac26853a0cab484e09eda5c240a2a68215a52795"
+    },
+    "formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py": {
+      "bytes": 34803,
+      "git_blob": "93dc70b851c66254ad57ccb941d89ca2e637ad7d",
+      "sha256": "fb629eeb16792e3d3714a9a1ad7c82304a127d394aa861272c259551175e975e"
+    },
+    "formal/pon-nakamoto-v1/useful_cell_numeric_v1.py": {
+      "bytes": 9878,
+      "git_blob": "66025b9708f6fba2d215600a81402790dfb9c662",
+      "sha256": "62f3caec42a7cf8382cfe67bef1de710fcea4f685112e3465a1d52883a87c401"
+    },
+    "formal/pon-nakamoto-v1/useful_cell_relation_v1.py": {
+      "bytes": 28876,
+      "git_blob": "1b8c0d9c09cb1a21e12ffe9c38058c321e26fadc",
+      "sha256": "eb262ac3ec37cdc3b368481dbcc056745db2128e3075de0b7e46e28a9c382670"
+    },
+    "formal/pon-nakamoto-v1/work_backend.py": {
+      "bytes": 1841,
+      "git_blob": "bc2f7ab213bd598c8028030da9907b40b2e20e1b",
+      "sha256": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27"
+    },
+    "formal/pon-nakamoto-v1/work_oracle.py": {
+      "bytes": 2944,
+      "git_blob": "9cbfccd2d50af48fc43522b967ffdfb1f45ec098",
+      "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+    },
+    "scripts/ci/check_ci_contract.py": {
+      "bytes": 60784,
+      "git_blob": "5ac217634b088f77c619402d64c2bf6e76c67c39",
+      "sha256": "25946b7cf2e4b069d5030e343f9ff6b9613541854af3b86082c287d1a77de34a"
+    },
+    "scripts/ci/ci_job.sh": {
+      "bytes": 24200,
+      "git_blob": "cd277e4461bd8cc6fe88212d3fbca2ed4db80288",
+      "sha256": "c3d8358b44972b32ca9a35d4268c30e99116d554b7684b67da4ad7ed0bb9d27b"
+    },
+    "scripts/ci/test_ci_contract.py": {
+      "bytes": 87351,
+      "git_blob": "caf8d83bca729a98e7703f9910e64871514d0425",
+      "sha256": "9a8e314610ab7f93c8e47f19449b13a509d4102cb1e841776426b6d5201de1ce"
+    }
+  },
+  "existing_material_directory": "evidence/pon-native-node-v1/model-current/model",
+  "experiment": {
+    "admission_authority": "local-reproduction-fixture",
+    "batch_offset": 0,
+    "batch_size": 64,
+    "behavior": {
+      "bf16_equivalence": null,
+      "comparison": "same-frozen-integer-model",
+      "numeric": {
+        "all_agree": true,
+        "count": 192,
+        "matches": 192,
+        "max_absolute_error": [
+          0,
+          1
+        ],
+        "mean_absolute_error": [
+          0,
+          1
+        ]
+      },
+      "routes": {
+        "agreement_fraction": [
+          1,
+          1
+        ],
+        "all_agree": true,
+        "count": 64,
+        "matches": 64
+      },
+      "stop_policy": "disabled; agreement is not a STOP-enabled-model experiment",
+      "stops": {
+        "agreement_fraction": [
+          1,
+          1
+        ],
+        "all_agree": true,
+        "count": 64,
+        "matches": 64
+      }
+    },
+    "complete_integer_operator_outputs_compared": 960,
+    "contract_id": "97c4727ab52082c4cd09444319179c3972ced3f6f3a23bb834d5db1d375226c1",
+    "frozen_before_state": {
+      "cell_id": "1111111111111111111111111111111111111111111111111111111111111111",
+      "generation": 0,
+      "model_artifact": "d6ac3f24a43045dda6af862344918688b5fbb047599d423e27c567cf670ccfc2",
+      "state_root": "2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    "frozen_request": {
+      "allowed_use": "research-inference-only",
+      "candidate_artifact": "d6ac3f24a43045dda6af862344918688b5fbb047599d423e27c567cf670ccfc2",
+      "consumer": "research/source-owner-auditor-v1",
+      "deadline_ms": 1793871782209,
+      "mapping": [
+        "M00",
+        "M04",
+        "M10"
+      ],
+      "request_id": "4444444444444444444444444444444444444444444444444444444444444444"
+    },
+    "logits_compared": 192,
+    "raw_pnw1_bytes": 245940,
+    "relation": "pon-useful-cell-int257-v1",
+    "search_attempts_by_tile": [
+      1,
+      2,
+      1,
+      1,
+      1
+    ],
+    "separate_administrator": false,
+    "separate_process_verified": true,
+    "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "tile_widths": [
+      64,
+      64,
+      64,
+      64,
+      1
+    ],
+    "timing": {
+      "freeze": {
+        "process_cpu_ns": 317595065,
+        "wall_ns": 1667419319
+      },
+      "prove": {
+        "process_cpu_ns": 684963950,
+        "wall_ns": 686819110
+      },
+      "quality": {
+        "process_cpu_ns": 1708655998,
+        "wall_ns": 1715536703
+      },
+      "separate_process": {
+        "process_cpu_ns": 6296929,
+        "wall_ns": 2788803249
+      },
+      "verify": {
+        "process_cpu_ns": 505229550,
+        "wall_ns": 506393997
+      }
+    },
+    "timing_scope": "local-Python-reference; parent-process CPU excludes child source replay",
+    "verification": {
+      "bf16_equivalence": null,
+      "calibration_qualified": false,
+      "clock_finish_ms": 1793871185238,
+      "clock_start_ms": 1793871184732,
+      "complete_w1_transcripts_verified": 5,
+      "contract_id": "97c4727ab52082c4cd09444319179c3972ced3f6f3a23bb834d5db1d375226c1",
+      "external_context_matched": true,
+      "integer_decision_verified": true,
+      "model_behavior_preserved": null,
+      "old_task_retention_qualified": false,
+      "ood_qualified": false,
+      "ordinary_hepta_encoder_verified": false,
+      "owner_authorization_verified": false,
+      "production_qualified": false,
+      "public_reward_eligible": false,
+      "read_only_state_verified": true,
+      "relation_valid": true,
+      "schema": "pon-useful-cell-int257-v1/verification",
+      "succinct_proof": false,
+      "upstream_scope": "frozen-public-source-extractor",
+      "upstream_verified": true,
+      "work_security_qualified": false
+    },
+    "w1_full_transcripts_verified": 5,
+    "witness_json_bytes": 557594
+  },
+  "generated_output_hashes": {
+    "admission/expected.json": {
+      "bytes": 700,
+      "sha256": "993154184b0a3e749add45337b4da85baa0a929930b105091b4e19f6a87f2397"
+    },
+    "after-state.json": {
+      "bytes": 257,
+      "sha256": "467a19332e1112aee6ab730c9fbb53774a8b448830ed9aef677ba863580a7892"
+    },
+    "before-state.json": {
+      "bytes": 257,
+      "sha256": "467a19332e1112aee6ab730c9fbb53774a8b448830ed9aef677ba863580a7892"
+    },
+    "behavior.json": {
+      "bytes": 408,
+      "sha256": "8cd67bdfea4b3c367f876fbcc82488e5da2ec8781341f2add1445f562d12de4f"
+    },
+    "contract.json": {
+      "bytes": 24199,
+      "sha256": "bcc594d8b95a64bdd79e81ab02ae7f87a4616c81fd0edd114a2f8331e0f6401b"
+    },
+    "independent-verification.json": {
+      "bytes": 763,
+      "sha256": "866304ed2740150bd4d9c9b79aafd4ee9fca83f3ca7a2188222e330c43e1da2c"
+    },
+    "input-provenance.json": {
+      "bytes": 3730,
+      "sha256": "c3e6f196a2e11049b59e0b26d39b98e16d7d070ee083edf0c468bc807b7666e3"
+    },
+    "output.json": {
+      "bytes": 2911,
+      "sha256": "463233e5e283c3ce02592730a22208e9ec1236f07e63a67362125944a3ae699f"
+    },
+    "preflight.json": {
+      "bytes": 158,
+      "sha256": "f067c39c724f0971d604a450f43a4182ae28151bd11c163e0f93d36e12842c02"
+    },
+    "program-identity.json": {
+      "bytes": 2340,
+      "sha256": "8b5e455c76e24b9c5f21779afee6cf6ef3c62c141b80fb00d83eca4adabb979e"
+    },
+    "quality.json": {
+      "bytes": 5260,
+      "sha256": "bcd94e73cc3f97db6a9cf817af9ca65f3aee095267838079dea22386386065ed"
+    },
+    "verification.json": {
+      "bytes": 763,
+      "sha256": "15ae8b3cc226522880abc115380a1409ceeaf1afae09893486637f985db0c280"
+    },
+    "witness.json": {
+      "bytes": 557594,
+      "sha256": "7e34549ca1d13cb3b6388eb6d469cbd546d73994f3f70465d8474e13e8026aef"
+    }
+  },
+  "input_files": {
+    "calibration.json": {
+      "bytes": 344660,
+      "sha256": "cdf07a1451b1c16df2b78280a444de537b41cea3d65146792800084d5637f0d7"
+    },
+    "consumer.json": {
+      "bytes": 227036,
+      "sha256": "f75d027312966d7316795629ba7ae0dfd82c2ccbaece417db30b8a28b4210051"
+    },
+    "evaluation-bundle.json": {
+      "bytes": 80283,
+      "sha256": "e2a67320971f6620dc4c67c4114eb9fcf3389d4b9925daedfbb471f9936b8570"
+    },
+    "evaluation_a.json": {
+      "bytes": 182219,
+      "sha256": "6a19b5196488a21b9f41391d40c7c92829a388fb632414c0aa726c0d4ba03915"
+    },
+    "evaluation_b.json": {
+      "bytes": 197741,
+      "sha256": "821bc744913c665169f9be089f9c51f8a4e423ec9bfb0d4b4f3dbd496596db00"
+    },
+    "model.json": {
+      "bytes": 14174,
+      "sha256": "d07ae8ce412746b5cc7289f65be3a5fb0e417aa3ad747aa71c2e3d1fd2f3514e"
+    },
+    "report.json": {
+      "bytes": 23662,
+      "sha256": "745d9807703d5310364cb56987ed60ce6189a914b9790ac2fe5e355092072d87"
+    }
+  },
+  "input_source_commit": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+  "integration_branch": "fix/chain-six-axis-performance-20261103",
+  "large_raw_evidence_uploaded": false,
+  "latest_source_reproduction": "latest.json",
+  "original_adoption_replay": {
+    "asset": "test-unit-no-market-value",
+    "chain_clock": "fixed logical timestamps; no live-clock acceptance",
+    "evaluation_bundle": "485d1ddac3f10b859599297ede15c5703517952d3f507cdc3efea7f14214429e",
+    "future_window_accepted": false,
+    "independent_evaluators": false,
+    "model_reward": 0,
+    "observed_evaluation_recomputed": true,
+    "ordinary_hepta_entry": false,
+    "outcome": "not_adopted",
+    "production_activation": false,
+    "reason": "preregistered statistical gate not met",
+    "schema": "pon-observed-artifact-settlement-v1",
+    "source_model": "d6ac3f24a43045dda6af862344918688b5fbb047599d423e27c567cf670ccfc2"
+  },
+  "preserved_failed_observations": [
+    {
+      "correction": "Pass task feature vectors to independent scalar evaluator.",
+      "issue": "Scalar interface wiring",
+      "observed": "INPUT_SHAPE after real freeze and proof generation"
+    },
+    {
+      "correction": "Import snapshot, loaded origin/code and constant/profile expression checks; executed parameters included in program identity.",
+      "issue": "Loaded functions versus disk identity",
+      "observed": "Old loaded function accepted after source changed to unconditional rejection in isolated copy"
+    },
+    {
+      "correction": "Bounded AST container/name/integer-expression interpretation; literal and SCALE*2 regression cases refuse.",
+      "issue": "Mixed numeric-profile constants",
+      "observed": "ACCEPTED_STALE_PROFILE none after disk literal changed to free in isolated copy"
+    },
+    {
+      "correction": "Hydrate tracked tests and retain exact original command sequence with both additional required controls; final 99 tests pass.",
+      "issue": "Initial local CI-control invocation",
+      "observed": "98 tests, 2 failures and 4 errors during incomplete sparse checkout and before the strict expected command sequence was updated"
+    }
+  ],
+  "primary_reference": {
+    "pip3_blob": "6667092c6b66dd11eb011f53c88b26dd7eb5df1a",
+    "pip3_commit": "9dacf7fb6c5fdcec95323d45cdd75fe0083499ff",
+    "status": "Draft"
+  },
+  "production_activation": false,
+  "program_identity": {
+    "parameters_sha256": "0a09e5575ac0c5ac7b461fd5659fb5619907e7654e6a521dcd7f64b42d708722",
+    "program_sha256": "5cc3a91b8d85b0249d38cc479c13b76c6261224faaed5573e27c96149d7a6919",
+    "runtime": {
+      "cryptography": "50.0.0",
+      "implementation": "cpython",
+      "numpy": "2.3.5",
+      "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+      "python_optimization": 0,
+      "unicode": "15.0.0"
+    },
+    "source_manifest": {
+      "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "config/pon/evaluation-round-v1.json": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33",
+      "config/pon/ledger-v1.json": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "config/pon/model-family-v1.json": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+      "config/pon/work-profile-v1.json": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "formal/pon-nakamoto-v1/bounded_process.py": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+      "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+      "formal/pon-nakamoto-v1/evaluation.py": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842",
+      "formal/pon-nakamoto-v1/evaluation_bundle.py": "69468989c22369f812a866fde48ed4c8dd16f15306620a222527d4e645f5699f",
+      "formal/pon-nakamoto-v1/experiments/model_loop.py": "d29b4b426825afdd90b3db9e1fbe79f931a543c307b896853a249ae909412fd0",
+      "formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py": "3eba7b1d04065abd868428936b07bca0033e7f2a087ae792b7a183afd6b020d8",
+      "formal/pon-nakamoto-v1/ledger.py": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e",
+      "formal/pon-nakamoto-v1/model_contract.py": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd",
+      "formal/pon-nakamoto-v1/strict_signature.py": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e",
+      "formal/pon-nakamoto-v1/useful_cell_numeric_v1.py": "62f3caec42a7cf8382cfe67bef1de710fcea4f685112e3465a1d52883a87c401",
+      "formal/pon-nakamoto-v1/useful_cell_relation_v1.py": "eb262ac3ec37cdc3b368481dbcc056745db2128e3075de0b7e46e28a9c382670",
+      "formal/pon-nakamoto-v1/work_backend.py": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27",
+      "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+    }
+  },
+  "public_reward_eligible": false,
+  "published_source_equivalence": {
+    "identical_git_tree": "a7bc2077097e13c7b50d106c74803fdc89122afd",
+    "local_tested_commit": "6541befe89742ea09d928864d0e6581213182382",
+    "published_commit": "74a7d9683c732023879bc75cf392494bfa82a905"
+  },
+  "pull_request": 688,
+  "raw_witness_uploaded": false,
+  "reproduction_commands": [
+    "bash scripts/project-preflight.sh",
+    "PYTHONPATH=formal/pon-nakamoto-v1 python3 -m unittest -v test_useful_cell_numeric_v1 test_useful_cell_relation_v1 test_shared_cell_operator_v1",
+    "python3 scripts/ci/test_ci_contract.py",
+    "python3 formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py --out /tmp/trnm-useful-cell-v1-new-run --batch-size 64",
+    "python3 formal/pon-nakamoto-v1/experiments/settle_model.py --input evidence/pon-native-node-v1/model-current/model --out /tmp/trnm-original-adoption-new-run --bundle-hash 485d1ddac3f10b859599297ede15c5703517952d3f507cdc3efea7f14214429e"
+  ],
+  "reproduction_policy": "Use new output directories and fresh admission deadlines. Historical hashes identify the observed run; a fresh deadline changes contract/challenges/proofs. An expired original request must be rejected under the current verifier clock.",
+  "retrospective_quality": {
+    "consumer": {
+      "candidate_value": [
+        "157298971",
+        "198869580"
+      ],
+      "cluster_gate": false,
+      "clusters": 27,
+      "exploratory_score": 0,
+      "marginal_value": [
+        "-207029",
+        "79547832"
+      ],
+      "reference_value": [
+        "5010049",
+        "6313320"
+      ],
+      "rows": 213,
+      "selected_reference": "mean_merge"
+    },
+    "evaluation_a": {
+      "candidate_value": [
+        "62011",
+        "83875"
+      ],
+      "cluster_gate": false,
+      "clusters": 25,
+      "exploratory_score": 0,
+      "marginal_value": [
+        "-2993",
+        "1677500"
+      ],
+      "reference_value": [
+        "1243213",
+        "1677500"
+      ],
+      "rows": 170,
+      "selected_reference": "mean_merge"
+    },
+    "evaluation_b": {
+      "candidate_value": [
+        "19663576",
+        "25478145"
+      ],
+      "cluster_gate": false,
+      "clusters": 27,
+      "exploratory_score": 0,
+      "marginal_value": [
+        "-2039",
+        "110295"
+      ],
+      "reference_value": [
+        "211943",
+        "268191"
+      ],
+      "rows": 184,
+      "selected_reference": "mean_merge"
+    }
+  },
+  "schema": "pon-useful-cell-reproducibility-v1",
+  "status": "reference-relation-verified-research-only",
+  "tested_source_commit": "6541befe89742ea09d928864d0e6581213182382",
+  "tested_source_parent": "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb",
+  "timezone": "America/New_York",
+  "unclosed_gates": [
+    "ordinary Hepta Encoder/Organ execution and authenticated owner integration",
+    "stateful transitions, enabled STOP/abstention/random policies and durable request consumption",
+    "BF16/FP equivalence and independently frozen model behavior",
+    "confidence calibration, OOD and old-task retention",
+    "succinct proof generation/verification and total end-to-end proof cost",
+    "cheapest legal work, hostile verification cost and quantum/work-security qualification",
+    "independent future utility and production qualification"
+  ],
+  "validation": {
+    "changed_markdown_links": "PASS (274 relative destinations checked against worktree or exact Git tree)",
+    "ci_execution_contract": {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "elapsed_seconds": 5.8134045979968505,
+      "returncode": 0,
+      "source_commit": "6541befe89742ea09d928864d0e6581213182382",
+      "stderr_sha256": "4775d8d917eed89bf4be9056a142bf66fca961e02e8a8a4d977889e8bf3f57a9",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tail": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 99 tests in 5.719s",
+        "",
+        "OK"
+      ],
+      "tests": 99
+    },
+    "distributed_source_inventory": "PASS",
+    "git_diff_check": "PASS",
+    "github_actions_result": "NOT_CLAIMED",
+    "native_cargo_tests_fmt_clippy": {
+      "reason": "Rust/Cargo is not installed in this execution environment; no Rust source changed and no native qualification claimed",
+      "status": "NOT_RUN"
+    },
+    "operator_numeric_relation": {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_useful_cell_numeric_v1",
+        "test_useful_cell_relation_v1",
+        "test_shared_cell_operator_v1"
+      ],
+      "elapsed_seconds": 19.564801854001416,
+      "returncode": 0,
+      "source_commit": "6541befe89742ea09d928864d0e6581213182382",
+      "stderr_sha256": "4b27f09b4ab532b09705fd266ef36984d9a4ffa1e5cc2bb8a40d38d2e92c3ecd",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tail": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 76 tests in 19.347s",
+        "",
+        "OK"
+      ],
+      "tests": 76
+    },
+    "project_preflight": "PASS (26 packages)",
+    "test_breakdown": {
+      "ci_contract": 99,
+      "existing_complete_operator": 9,
+      "new_numeric": 20,
+      "new_relation": 47
+    }
+  }
+}

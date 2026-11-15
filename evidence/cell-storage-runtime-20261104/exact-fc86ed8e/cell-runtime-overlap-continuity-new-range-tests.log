@@ -1,0 +1,9 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running unittests src/lib.rs (/workspace/scratch/0c2d131ac5a9/target/debug/deps/trnm_mvcc_fee-ced44c332612cadc)
+
+running 2 tests
+test continuity_v1::range_tests::complete_liability_ranges_keep_account_proof_calls_in_canonical_order ... ok
+test continuity_v1::range_tests::split_monetary_and_archive_ranges_keep_all_cancellation_cuts ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 144 filtered out; finished in 0.07s
+

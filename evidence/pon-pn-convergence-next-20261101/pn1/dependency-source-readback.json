@@ -1,0 +1,82 @@
+{
+  "schema": "pn1-registry-source-byte-readback-v1",
+  "packages": [
+    {
+      "package": "block-buffer-0.10.4",
+      "archive_available": true,
+      "archive_checksum_matches_lock": true,
+      "source_files_compared": 10,
+      "source_mismatches": []
+    },
+    {
+      "package": "cfg-if-1.0.4",
+      "archive_available": true,
+      "archive_checksum_matches_lock": true,
+      "source_files_compared": 14,
+      "source_mismatches": []
+    },
+    {
+      "package": "cpufeatures-0.2.17",
+      "archive_available": true,
+      "archive_checksum_matches_lock": true,
+      "source_files_compared": 16,
+      "source_mismatches": []
+    },
+    {
+      "package": "crypto-common-0.1.7",
+      "archive_available": true,
+      "archive_checksum_matches_lock": true,
+      "source_files_compared": 9,
+      "source_mismatches": []
+    },
+    {
+      "package": "digest-0.10.7",
+      "archive_available": true,
+      "archive_checksum_matches_lock": true,
+      "source_files_compared": 21,
+      "source_mismatches": []
+    },
+    {
+      "package": "generic-array-0.14.7",
+      "archive_available": true,
+      "archive_checksum_matches_lock": true,
+      "source_files_compared": 16,
+      "source_mismatches": []
+    },
+    {
+      "package": "hex-0.4.3",
+      "archive_available": true,
+      "archive_checksum_matches_lock": true,
+      "source_files_compared": 16,
+      "source_mismatches": []
+    },
+    {
+      "package": "libc-0.2.184",
+      "archive_available": false,
+      "compiled_on_current_x86_64_linux": false,
+      "reason": "libc is target-specific to other cpufeatures architectures"
+    },
+    {
+      "package": "sha2-0.10.9",
+      "archive_available": true,
+      "archive_checksum_matches_lock": true,
+      "source_files_compared": 31,
+      "source_mismatches": []
+    },
+    {
+      "package": "typenum-1.20.1",
+      "archive_available": true,
+      "archive_checksum_matches_lock": true,
+      "source_files_compared": 26,
+      "source_mismatches": []
+    },
+    {
+      "package": "version_check-0.9.5",
+      "archive_available": true,
+      "archive_checksum_matches_lock": true,
+      "source_files_compared": 13,
+      "source_mismatches": []
+    }
+  ],
+  "all_available_archive_and_source_bytes_match": true
+}

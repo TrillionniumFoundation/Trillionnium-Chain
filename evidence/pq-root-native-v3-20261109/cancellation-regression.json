@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "cargo",
+    "test",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--features",
+    "pq-root-v3",
+    "--test",
+    "root_recovery_v3_native",
+    "native_owner_v3_cancellation_after_external_commit_requires_reconciliation",
+    "--",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "seconds": 170.43133727500026,
+  "sha256": "0552168e2e3599a6047ac79ecf6ea736f8d00fdbcbb9acfb8f5eba78eba74d45",
+  "phase": "reviewed working-tree follow-up, before commit"
+}

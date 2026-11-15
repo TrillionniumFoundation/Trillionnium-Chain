@@ -1,0 +1,13 @@
+{
+  "attempt": "qrom-current-validation-3",
+  "completion_observed": false,
+  "explanation": "Execution transport became unavailable; no completion result was recovered. The two original files are preserved byte-for-byte in interrupted-validation-3.tar.gz. This is neither a named-test failure nor a pass. Later current-validation-4 is a separate successful component run.",
+  "local_validation_receipt_present": false,
+  "named_test_completion_present": false,
+  "preserved_files": [
+    "local-qrom-source-before.json",
+    "required-tests.json"
+  ],
+  "schema": "TRNM-QROM-INTERRUPTED-LOCAL-VALIDATION1",
+  "status": "UNKNOWN_EXECUTOR_UNAVAILABLE"
+}

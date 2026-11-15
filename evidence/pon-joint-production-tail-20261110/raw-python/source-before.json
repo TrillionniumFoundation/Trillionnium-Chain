@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "4716bade250f327b012a098418f4eece6b73fcaa",
+    "--output",
+    "/workspace/scratch/8e76272d9258/validation/source-before.report.json"
+  ],
+  "cwd": "/workspace/scratch/8e76272d9258/chain-joint-tail",
+  "elapsed_seconds": 6.030796914999883,
+  "error": null,
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "label": "source-before",
+  "native_probability_qualified": false,
+  "passed": true,
+  "production_activation": false,
+  "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+  "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310",
+  "started_at_utc": "2026-11-10T07:31:04.442283+00:00",
+  "stderr": "source-before.stderr.log",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "source-before.stdout.log",
+  "stdout_sha256": "110ae17e699c03d9214dee7d91677c53b19a5d504dbcf83bf7d48229cdc8344e"
+}

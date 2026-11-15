@@ -1,0 +1,158 @@
+{
+  "schema": "trnm-hosted-archive-copy-batch-v1",
+  "batch": "publication-and-other-failures",
+  "completed_at": "2026-11-08T01:22:46.415913+00:00",
+  "canonical_before": {
+    "HEAD": {
+      "bytes": 63,
+      "sha256": "06102f06952d28e369f7e0fb41c65d716a1c2cf8354f3b1bf29edf9d459851ff"
+    },
+    "config": {
+      "bytes": 531,
+      "sha256": "ca7677847bc641a64f816ecf8d358a0959d006bfba36a4a9399be59fc3634ffd"
+    },
+    "index": {
+      "bytes": 2820109,
+      "sha256": "850772274dc07a14d6e303b538401e7291fcf0ab29e90852ddd7269f3065e191"
+    },
+    "info/sparse-checkout": {
+      "bytes": 287,
+      "sha256": "97f0e78daaf5fb6ded42a831bac8c1e4bb82eaab13b2ac9fadd55cbb33eada66"
+    }
+  },
+  "canonical_after": {
+    "HEAD": {
+      "bytes": 63,
+      "sha256": "06102f06952d28e369f7e0fb41c65d716a1c2cf8354f3b1bf29edf9d459851ff"
+    },
+    "config": {
+      "bytes": 531,
+      "sha256": "ca7677847bc641a64f816ecf8d358a0959d006bfba36a4a9399be59fc3634ffd"
+    },
+    "index": {
+      "bytes": 2820109,
+      "sha256": "850772274dc07a14d6e303b538401e7291fcf0ab29e90852ddd7269f3065e191"
+    },
+    "info/sparse-checkout": {
+      "bytes": 287,
+      "sha256": "97f0e78daaf5fb6ded42a831bac8c1e4bb82eaab13b2ac9fadd55cbb33eada66"
+    }
+  },
+  "canonical_unchanged": true,
+  "archive_head": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "archive_tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff",
+  "tracked_source_changes": false,
+  "preflight": {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"chore/chain-pon-pr784-hosted-observations-20261108\", \"remote_policy_mutated\": false}\n",
+    "stderr": ""
+  },
+  "copied": [
+    {
+      "label": "other-failures",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-other-failures-review",
+      "archive_relative_directory": "reviews/other-failures",
+      "file_count": 34,
+      "payload_bytes": 8009370,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:45.941275+00:00"
+    },
+    {
+      "label": "publication-remote-precheck",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/publication-remote-precheck",
+      "archive_relative_directory": "publication/publication-remote-precheck",
+      "file_count": 14,
+      "payload_bytes": 1772,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:45.953256+00:00"
+    },
+    {
+      "label": "final-publication-attempt-01",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-publication-attempt-01",
+      "archive_relative_directory": "publication/final-publication-attempt-01",
+      "file_count": 31,
+      "payload_bytes": 67859,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:45.976493+00:00"
+    },
+    {
+      "label": "final-publication-link-check",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-publication-link-check",
+      "archive_relative_directory": "publication/final-publication-link-check",
+      "file_count": 43,
+      "payload_bytes": 12236738,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:46.189201+00:00"
+    },
+    {
+      "label": "final-publication-push",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-publication-push",
+      "archive_relative_directory": "publication/final-publication-push",
+      "file_count": 21,
+      "payload_bytes": 2843,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:46.205017+00:00"
+    },
+    {
+      "label": "final-pr-publication",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-pr-publication",
+      "archive_relative_directory": "publication/final-pr-publication",
+      "file_count": 20,
+      "payload_bytes": 9870,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:46.220922+00:00"
+    },
+    {
+      "label": "final-pr-readback-01",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-pr-readback-01",
+      "archive_relative_directory": "publication/final-pr-readback-01",
+      "file_count": 5,
+      "payload_bytes": 25851,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:46.226024+00:00"
+    },
+    {
+      "label": "final-pr-readback-02",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-pr-readback-02",
+      "archive_relative_directory": "publication/final-pr-readback-02",
+      "file_count": 8,
+      "payload_bytes": 402905,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:46.239343+00:00"
+    },
+    {
+      "label": "final-pr-readback-03",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-pr-readback-03",
+      "archive_relative_directory": "publication/final-pr-readback-03",
+      "file_count": 19,
+      "payload_bytes": 706965,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:46.265071+00:00"
+    },
+    {
+      "label": "final-pr-readback-04",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-pr-readback-04",
+      "archive_relative_directory": "publication/final-pr-readback-04",
+      "file_count": 19,
+      "payload_bytes": 714453,
+      "source_before_after_equal": true,
+      "destination_exactly_equal": true,
+      "copy_completed_at": "2026-11-08T01:22:46.290478+00:00"
+    }
+  ],
+  "committed": false,
+  "pushed": false
+}

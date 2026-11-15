@@ -1,0 +1,27 @@
+   Compiling trnm-protocol v0.1.0 (/tmp/trnm-pon-security-final/trillionnium/crates/trnm-protocol)
+    Finished `release` profile [optimized] target(s) in 5.98s
+     Running unittests src/lib.rs (/tmp/trnm-pon-security-target/release/deps/trnm_protocol-d202a15e87917ced)
+
+running 19 tests
+test pon_wire::state_root_arithmetic::tests::complete_inputs_match_original_across_random_changes_and_reordered_rows ... ok
+test pon_wire::state_root_arithmetic::tests::incomplete_sources_and_original_wire_limits_publish_no_partial_material ... ok
+test pon_wire::state_root_arithmetic::tests::large_values_reuse_only_identical_complete_leaf_lists ... ok
+test pon_wire::state_root_arithmetic::tests::retention_refusal_and_eviction_preserve_root_and_existing_budget ... ok
+test pon_wire::state_root_arithmetic::tests::single_partition_forks_collision_checks_and_replacement_use_original_roots ... ok
+test pon_wire::streamed_state_root_tests::state_empty_constants_match_all_depths_and_parallel_callers ... ok
+test pon_wire::streamed_state_root_tests::state_node_and_complete_root_paired_cost_observation ... ignored, explicit complete-root paired observation; not Node or WAN throughput
+test pon_wire::streamed_state_root_tests::state_node_single_buffer_matches_original_wire ... ok
+test pon_wire::streamed_state_root_tests::state_root_constants_do_not_cache_values_or_failures ... ok
+test pon_wire::streamed_state_root_tests::streamed_state_root_drops_each_owned_encoding_before_requesting_the_next ... ok
+test pon_wire::streamed_state_root_tests::streamed_state_root_preserves_original_sparse_tree_for_all_input_orders ... ok
+test pon_wire::streamed_state_root_tests::streamed_state_root_refuses_duplicate_limit_and_truncated_producer_errors ... ok
+test pon_wire::tests::account_archive_reference_root_matches_independent_vectors ... ok
+test pon_wire::tests::contribution_without_signed_round_is_not_revision3_wire ... ok
+test pon_wire::tests::every_header_field_binds_its_wire_bytes_challenge_and_block_identity ... ok
+test pon_wire::tests::every_tx_tag_has_an_exact_payload ... ok
+test pon_wire::tests::header_exact_and_context_bound ... ok
+test pon_wire::tests::release_payload_is_bounded_and_sorted ... ok
+test pon_wire::tests::sparse_root_is_order_independent_and_value_sensitive ... ok
+
+test result: ok. 18 passed; 0 failed; 1 ignored; 0 measured; 32 filtered out; finished in 0.80s
+

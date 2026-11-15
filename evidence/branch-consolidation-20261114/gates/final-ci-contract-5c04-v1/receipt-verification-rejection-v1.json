@@ -1,0 +1,7 @@
+{
+  "previous_receipt_check_session": "dpty-16de33c48ce106ada327139c6cbfa917a8a094ff314a3e6f589381833a820a5a",
+  "exit_code": 1,
+  "before_any_staging_or_commit": true,
+  "reason": "A broad substring assertion matched the word skipped in original negative-test method names; corrected to actual unittest skipped-status syntax. Full suite remains the same recorded successful 225-run execution.",
+  "tests_reexecuted": false
+}

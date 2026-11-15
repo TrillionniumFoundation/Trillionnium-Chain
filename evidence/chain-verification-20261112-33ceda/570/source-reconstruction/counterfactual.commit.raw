@@ -1,0 +1,6 @@
+tree 1c55152a221697e8dd37385b5cb6c85c1f4d33d8
+parent 97aa8539aad3ee7f497136c6d2f64e420605c1fa
+author Codex <codex@openai.com> 1794472698 +0800
+committer Codex <codex@openai.com> 1794472698 +0800
+
+test: retain pre-fix dispatch and output behavior for adversarial comparison

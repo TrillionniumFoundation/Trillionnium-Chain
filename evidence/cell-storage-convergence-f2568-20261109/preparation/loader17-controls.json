@@ -1,0 +1,316 @@
+{
+  "actual_runtime_check": {
+    "ended_unix": 1794207398.68379,
+    "model_executed": false,
+    "owner_sources": {
+      "torch._classes": {
+        "class_initializer_filename": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/lib/python3.12/site-packages/torch/_classes.py",
+        "exact_class": true,
+        "loader_class": "PinnedPythonSource",
+        "loader_expected": "0db3dc302e28fd085065ea2883ce33fa4af406b9fd1439f2a431f053e9a764b9",
+        "loader_path": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/lib/python3.12/site-packages/torch/_classes.py",
+        "origin": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/lib/python3.12/site-packages/torch/_classes.py",
+        "resolved_by_corrected_worker": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/lib/python3.12/site-packages/torch/_classes.py",
+        "same_owner_singleton": true,
+        "same_root_alias": true,
+        "sha256": "0db3dc302e28fd085065ea2883ce33fa4af406b9fd1439f2a431f053e9a764b9",
+        "snapshot_matches": true,
+        "spec_origin": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/lib/python3.12/site-packages/torch/_classes.py"
+      },
+      "torch._ops": {
+        "class_initializer_filename": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/lib/python3.12/site-packages/torch/_ops.py",
+        "exact_class": true,
+        "loader_class": "PinnedPythonSource",
+        "loader_expected": "3b58079d356d15cc73082c20b1279468ee9cfe7f5e1340d329a93b6e877a30d5",
+        "loader_path": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/lib/python3.12/site-packages/torch/_ops.py",
+        "origin": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/lib/python3.12/site-packages/torch/_ops.py",
+        "resolved_by_corrected_worker": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/lib/python3.12/site-packages/torch/_ops.py",
+        "same_owner_singleton": true,
+        "same_root_alias": true,
+        "sha256": "3b58079d356d15cc73082c20b1279468ee9cfe7f5e1340d329a93b6e877a30d5",
+        "snapshot_matches": true,
+        "spec_origin": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/lib/python3.12/site-packages/torch/_ops.py"
+      }
+    },
+    "passed": true,
+    "relative_origins": [
+      {
+        "class_module": "torch._ops",
+        "class_name": "_Ops",
+        "file": "_ops.py",
+        "name": "torch.ops"
+      },
+      {
+        "class_module": "torch._classes",
+        "class_name": "_Classes",
+        "file": "_classes.py",
+        "name": "torch.classes"
+      }
+    ],
+    "schema": "cell-original-pinned-torch-virtual-origin-observation-v1",
+    "started_unix": 1794207390.8359694
+  },
+  "actual_runtime_passed": true,
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109",
+      "ended_unix": 1794207390.2796063,
+      "exit_code": 0,
+      "label": "preflight",
+      "started_unix": 1794207390.2531238,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 180,
+        "path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/preflight.stdout",
+        "sha256": "579c1abf6dbb49074700e3f1d25d6c75bda18b52cf89e838dcabb885b04e0394"
+      },
+      "timed_out": false,
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109",
+      "ended_unix": 1794207390.2803092,
+      "exit_code": 0,
+      "label": "head-before",
+      "started_unix": 1794207390.2796109,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/head-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/head-before.stdout",
+        "sha256": "24306674731824e90866cbd473fd636c26fb3b192098842acc3b14f10d33ff96"
+      },
+      "timed_out": false,
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109",
+      "ended_unix": 1794207390.2813895,
+      "exit_code": 0,
+      "label": "tree-before",
+      "started_unix": 1794207390.280313,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/tree-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/tree-before.stdout",
+        "sha256": "fe5cda1ffff9935b528ba8b08a1a6c3a92c12885900d76471a115338bc3ac9eb"
+      },
+      "timed_out": false,
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109",
+      "ended_unix": 1794207390.318618,
+      "exit_code": 0,
+      "label": "status-before",
+      "started_unix": 1794207390.281392,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/status-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/status-before.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/scripts",
+        "-p",
+        "test_llm_cell_sealed_worker_v1.py",
+        "-v"
+      ],
+      "cwd": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation",
+      "ended_unix": 1794207390.7720485,
+      "exit_code": 0,
+      "label": "fixed24",
+      "started_unix": 1794207390.321649,
+      "stderr": {
+        "bytes": 4701,
+        "path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/fixed24.stderr",
+        "sha256": "c00ce14163f0785a3c646d6e09085f27059d4b06b99c5f49ca4d153f2a814f41"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/fixed24.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "/usr/bin/env",
+        "-i",
+        "PATH=/usr/bin:/bin",
+        "LANG=C.UTF-8",
+        "LC_ALL=C.UTF-8",
+        "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-S",
+        "-B",
+        "-X",
+        "pycache_prefix=/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/unused-bytecode",
+        "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/actual-runtime-origin-check.py"
+      ],
+      "cwd": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation",
+      "ended_unix": 1794207399.2229598,
+      "exit_code": 0,
+      "label": "actual-pinned-runtime-origin",
+      "started_unix": 1794207390.772137,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/actual-pinned-runtime-origin.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 2305,
+        "path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/actual-pinned-runtime-origin.stdout",
+        "sha256": "de7e22e49bf2516d16b08071dfda81fa4f338ad11967a67f16d5f84015ad818e"
+      },
+      "timed_out": false,
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109",
+      "ended_unix": 1794207399.2255354,
+      "exit_code": 0,
+      "label": "head-after",
+      "started_unix": 1794207399.2235057,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/head-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/head-after.stdout",
+        "sha256": "24306674731824e90866cbd473fd636c26fb3b192098842acc3b14f10d33ff96"
+      },
+      "timed_out": false,
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109",
+      "ended_unix": 1794207399.2541144,
+      "exit_code": 0,
+      "label": "status-after",
+      "started_unix": 1794207399.225544,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/status-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/status-after.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 90
+    }
+  ],
+  "ended_unix": 1794207399.2541199,
+  "fixed24_passed": true,
+  "model_executed": false,
+  "native_cargo_executed": false,
+  "original_project_source_after": {
+    "scripts/llm_python_runtime_contract.py": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc",
+    "scripts/llm_runtime_exit_observation.py": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
+    "scripts/llm_runtime_pilot.py": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7",
+    "scripts/llm_runtime_rss_diagnostics.py": "d15f4ddc914475ecc8ab473a16f8916b7dd805d8b39d741e49a9d2f63d8fe320"
+  },
+  "original_project_source_before": {
+    "scripts/llm_python_runtime_contract.py": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc",
+    "scripts/llm_runtime_exit_observation.py": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
+    "scripts/llm_runtime_pilot.py": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7",
+    "scripts/llm_runtime_rss_diagnostics.py": "d15f4ddc914475ecc8ab473a16f8916b7dd805d8b39d741e49a9d2f63d8fe320"
+  },
+  "original_project_source_unchanged": true,
+  "passed": true,
+  "python_version": "3.14.4 (main, Aug 20 2026, 10:41:58) [GCC 15.2.0]",
+  "schema": "cell-sealed-corrective-python-preparation-v1",
+  "source_after": {
+    "scripts/cell_sealed_bootstrap_v1.py": {
+      "bytes": 4640,
+      "sha256": "0f1f10fdae8a60725ff489bac367b31454eda9223a71d358488bed3603ea7962"
+    },
+    "scripts/llm_cell_sealed_worker_v1.py": {
+      "bytes": 45100,
+      "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+    },
+    "scripts/test_llm_cell_sealed_worker_v1.py": {
+      "bytes": 33654,
+      "sha256": "cdaebef047624c2e2d38d72862f668da37aeef5ba611af839d8a42e09efd81aa"
+    }
+  },
+  "source_before": {
+    "scripts/cell_sealed_bootstrap_v1.py": {
+      "bytes": 4640,
+      "sha256": "0f1f10fdae8a60725ff489bac367b31454eda9223a71d358488bed3603ea7962"
+    },
+    "scripts/llm_cell_sealed_worker_v1.py": {
+      "bytes": 45100,
+      "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+    },
+    "scripts/test_llm_cell_sealed_worker_v1.py": {
+      "bytes": 33654,
+      "sha256": "cdaebef047624c2e2d38d72862f668da37aeef5ba611af839d8a42e09efd81aa"
+    }
+  },
+  "source_unchanged": true,
+  "started_unix": 1794207390.2531219,
+  "tree": "6b70f363f9ebe185cf9dc17d35e35d18eb19c1c8"
+}

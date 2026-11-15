@@ -1,0 +1,43 @@
+{
+  "all_rejected": true,
+  "controls": [
+    {
+      "exception": "InvalidSignature",
+      "mutation": "tamper_signature",
+      "reason": "",
+      "rejected": true
+    },
+    {
+      "exception": "ValueError",
+      "mutation": "tamper_complete_model",
+      "reason": "complete derivation",
+      "rejected": true
+    },
+    {
+      "exception": "ValueError",
+      "mutation": "tamper_claim",
+      "reason": "actual claimed payouts",
+      "rejected": true
+    },
+    {
+      "exception": "ValueError",
+      "mutation": "tamper_source_reservation",
+      "reason": "actual source reservations",
+      "rejected": true
+    },
+    {
+      "exception": "ValueError",
+      "mutation": "tamper_account",
+      "reason": "actual account balances",
+      "rejected": true
+    },
+    {
+      "exception": "ValueError",
+      "mutation": "remove_reveal",
+      "reason": "contiguous nonce",
+      "rejected": true
+    }
+  ],
+  "positive_receipt_sha256": "a2651e4b267e4ddc5be1511b1ca98b842239b37bca450ec0c10c800399955560",
+  "schema": "v4-split-independent-checker-negative-controls-v1"
+}

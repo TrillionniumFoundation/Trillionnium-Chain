@@ -1,0 +1,10 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 6.09s
+     Running tests/work_header_binding.rs (/tmp/pon-next-target/release/deps/work_header_binding-6aa12766702f8f64)
+
+running 1 test
+test complete_w1_proofs_cannot_move_between_header_fields_or_growth_domains ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+

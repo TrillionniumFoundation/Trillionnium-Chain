@@ -1,0 +1,441 @@
+{
+  "schema": "def-existing-pure-python-test-commands-v1",
+  "source_repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "frozen_source_commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "source_pr": 821,
+  "prepared_for": "root execution alongside B Cargo work; no new tests added",
+  "commands": [
+    {
+      "id": "test_cost_envelope_contract_v1",
+      "work_packages": "D/E",
+      "purpose": "固定成功率、总预算和deadline下的精确包络、联合批次、终生失败预算。",
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "env": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_cost_envelope_contract_v1.py",
+        "-v"
+      ],
+      "shell_command": "GIT_NO_LAZY_FETCH=1 PYTHONDONTWRITEBYTECODE=1 PYTHONHASHSEED=0 python3 -B -m unittest discover -s formal/pon-nakamoto-v1 -p test_cost_envelope_contract_v1.py -v",
+      "test_source": {
+        "path": "formal/pon-nakamoto-v1/test_cost_envelope_contract_v1.py",
+        "git_blob_sha": "c2c4b4b77c11ae0e0ffcee2b140a0b90a1951a4f"
+      },
+      "implementation_source": {
+        "path": "formal/pon-nakamoto-v1/cost_envelope_contract_v1.py",
+        "git_blob_sha": "e977a45f0fe9d58cd1aa411bd75ced1fbdd49e5c"
+      },
+      "expected_test_count": 29,
+      "expected_process_exit": 0,
+      "expected_skipped_tests": 0,
+      "count_basis": "AST count of declared test methods in unconditional unittest.TestCase classes; no load_tests hooks or skip decorators. Not a runtime pass claim.",
+      "child_processes": "same sys.executable running only the corresponding pure Python module; temporary JSON inputs/reports under tempfile.TemporaryDirectory",
+      "native_builds_or_executions": false,
+      "network_requests": false,
+      "saved_model_training_or_regeneration": false,
+      "output_writes": "temporary test fixtures/reports only; bytecode suppressed by inherited env and -B",
+      "module_failure_semantics": "One child CLI returning 3 is an EXPECTED tested HOLD_NO_GO contract; the unittest parent still expects exit 0. Do not flatten child exit 3 into a suite failure."
+    },
+    {
+      "id": "test_branch_time_daa_v1",
+      "work_packages": "F",
+      "purpose": "精确ASERT、分支anchor、时间规则、激活重组及纯参考冷重放。",
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "env": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_branch_time_daa_v1.py",
+        "-v"
+      ],
+      "shell_command": "GIT_NO_LAZY_FETCH=1 PYTHONDONTWRITEBYTECODE=1 PYTHONHASHSEED=0 python3 -B -m unittest discover -s formal/pon-nakamoto-v1 -p test_branch_time_daa_v1.py -v",
+      "test_source": {
+        "path": "formal/pon-nakamoto-v1/test_branch_time_daa_v1.py",
+        "git_blob_sha": "4c4854ed54bdedb57f20699fceebed653cec857b"
+      },
+      "implementation_source": {
+        "path": "formal/pon-nakamoto-v1/branch_time_daa_v1.py",
+        "git_blob_sha": "386e165d20c8e2fa6df1e4050884f935fddec643"
+      },
+      "expected_test_count": 31,
+      "expected_process_exit": 0,
+      "expected_skipped_tests": 0,
+      "count_basis": "AST count of declared test methods in unconditional unittest.TestCase classes; no load_tests hooks or skip decorators. Not a runtime pass claim.",
+      "child_processes": "none exercised by these tests",
+      "native_builds_or_executions": false,
+      "network_requests": false,
+      "saved_model_training_or_regeneration": false,
+      "output_writes": "temporary test fixtures/reports only; bytecode suppressed by inherited env and -B",
+      "module_failure_semantics": null
+    },
+    {
+      "id": "test_lifecycle_cost_v1",
+      "work_packages": "E",
+      "purpose": "有限状态势能、初始预算、正收益循环与精确尾界。",
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "env": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_lifecycle_cost_v1.py",
+        "-v"
+      ],
+      "shell_command": "GIT_NO_LAZY_FETCH=1 PYTHONDONTWRITEBYTECODE=1 PYTHONHASHSEED=0 python3 -B -m unittest discover -s formal/pon-nakamoto-v1 -p test_lifecycle_cost_v1.py -v",
+      "test_source": {
+        "path": "formal/pon-nakamoto-v1/test_lifecycle_cost_v1.py",
+        "git_blob_sha": "2ad61c854c62cb94e4dc63dae7f591f2e222fa97"
+      },
+      "implementation_source": {
+        "path": "formal/pon-nakamoto-v1/lifecycle_cost_v1.py",
+        "git_blob_sha": "064c8b016adfe6eddf6b48f5c9912c5058d06e49"
+      },
+      "expected_test_count": 31,
+      "expected_process_exit": 0,
+      "expected_skipped_tests": 0,
+      "count_basis": "AST count of declared test methods in unconditional unittest.TestCase classes; no load_tests hooks or skip decorators. Not a runtime pass claim.",
+      "child_processes": "none exercised by these tests",
+      "native_builds_or_executions": false,
+      "network_requests": false,
+      "saved_model_training_or_regeneration": false,
+      "output_writes": "temporary test fixtures/reports only; bytecode suppressed by inherited env and -B",
+      "module_failure_semantics": null
+    },
+    {
+      "id": "test_credit_envelope_contract",
+      "work_packages": "D/E",
+      "purpose": "声明成本包络下共同信用的精确可行性及独立证书核验。",
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "env": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_credit_envelope_contract.py",
+        "-v"
+      ],
+      "shell_command": "GIT_NO_LAZY_FETCH=1 PYTHONDONTWRITEBYTECODE=1 PYTHONHASHSEED=0 python3 -B -m unittest discover -s formal/pon-nakamoto-v1 -p test_credit_envelope_contract.py -v",
+      "test_source": {
+        "path": "formal/pon-nakamoto-v1/test_credit_envelope_contract.py",
+        "git_blob_sha": "ed0f2219b010b8a35d2db62e6cc46bd882a3974e"
+      },
+      "implementation_source": {
+        "path": "formal/pon-nakamoto-v1/credit_envelope_contract.py",
+        "git_blob_sha": "f71b9854686edeed385b478f091d586192a82899"
+      },
+      "expected_test_count": 40,
+      "expected_process_exit": 0,
+      "expected_skipped_tests": 0,
+      "count_basis": "AST count of declared test methods in unconditional unittest.TestCase classes; no load_tests hooks or skip decorators. Not a runtime pass claim.",
+      "child_processes": "same sys.executable running only the corresponding pure Python module; temporary JSON inputs/reports under tempfile.TemporaryDirectory",
+      "native_builds_or_executions": false,
+      "network_requests": false,
+      "saved_model_training_or_regeneration": false,
+      "output_writes": "temporary test fixtures/reports only; bytecode suppressed by inherited env and -B",
+      "module_failure_semantics": null
+    },
+    {
+      "id": "test_normalized_search_cost",
+      "work_packages": "D/E",
+      "purpose": "归一化搜索概率、显式理想模型和无条件renewal期望成本。",
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "env": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_normalized_search_cost.py",
+        "-v"
+      ],
+      "shell_command": "GIT_NO_LAZY_FETCH=1 PYTHONDONTWRITEBYTECODE=1 PYTHONHASHSEED=0 python3 -B -m unittest discover -s formal/pon-nakamoto-v1 -p test_normalized_search_cost.py -v",
+      "test_source": {
+        "path": "formal/pon-nakamoto-v1/test_normalized_search_cost.py",
+        "git_blob_sha": "c39d4490249dacb9ea68599d3e349b4a64bc9e87"
+      },
+      "implementation_source": {
+        "path": "formal/pon-nakamoto-v1/normalized_search_cost.py",
+        "git_blob_sha": "475fd84baf39903b8230b2114a7212404baa7d88"
+      },
+      "expected_test_count": 37,
+      "expected_process_exit": 0,
+      "expected_skipped_tests": 0,
+      "count_basis": "AST count of declared test methods in unconditional unittest.TestCase classes; no load_tests hooks or skip decorators. Not a runtime pass claim.",
+      "child_processes": "none exercised by these tests",
+      "native_builds_or_executions": false,
+      "network_requests": false,
+      "saved_model_training_or_regeneration": false,
+      "output_writes": "temporary test fixtures/reports only; bytecode suppressed by inherited env and -B",
+      "module_failure_semantics": null
+    },
+    {
+      "id": "test_fixed_probability_contract",
+      "work_packages": "D/E",
+      "purpose": "实际MU1四源文件与固定概率合同绑定、未知成本保持未证明。",
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "env": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_fixed_probability_contract.py",
+        "-v"
+      ],
+      "shell_command": "GIT_NO_LAZY_FETCH=1 PYTHONDONTWRITEBYTECODE=1 PYTHONHASHSEED=0 python3 -B -m unittest discover -s formal/pon-nakamoto-v1 -p test_fixed_probability_contract.py -v",
+      "test_source": {
+        "path": "formal/pon-nakamoto-v1/test_fixed_probability_contract.py",
+        "git_blob_sha": "ad5d5f08d3ddeef30be74609b55aca26713a61c8"
+      },
+      "implementation_source": {
+        "path": "formal/pon-nakamoto-v1/fixed_probability_contract.py",
+        "git_blob_sha": "3aa27da56fca0290b4cd580232a5c900472d00c9"
+      },
+      "expected_test_count": 16,
+      "expected_process_exit": 0,
+      "expected_skipped_tests": 0,
+      "count_basis": "AST count of declared test methods in unconditional unittest.TestCase classes; no load_tests hooks or skip decorators. Not a runtime pass claim.",
+      "child_processes": "none exercised by these tests",
+      "native_builds_or_executions": false,
+      "network_requests": false,
+      "saved_model_training_or_regeneration": false,
+      "output_writes": "temporary test fixtures/reports only; bytecode suppressed by inherited env and -B",
+      "module_failure_semantics": null
+    },
+    {
+      "id": "test_credit_feasibility",
+      "work_packages": "E",
+      "purpose": "同一SuccessStandard与scope下信用约束、正证书/负循环及输入拒绝。",
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "env": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_credit_feasibility.py",
+        "-v"
+      ],
+      "shell_command": "GIT_NO_LAZY_FETCH=1 PYTHONDONTWRITEBYTECODE=1 PYTHONHASHSEED=0 python3 -B -m unittest discover -s formal/pon-nakamoto-v1 -p test_credit_feasibility.py -v",
+      "test_source": {
+        "path": "formal/pon-nakamoto-v1/test_credit_feasibility.py",
+        "git_blob_sha": "224d867c02ae8855a304e26c31597ae7af38f4df"
+      },
+      "implementation_source": {
+        "path": "formal/pon-nakamoto-v1/credit_feasibility.py",
+        "git_blob_sha": "4c165e0d2f9fd7c2dd9ed69470f8f63b927ead39"
+      },
+      "expected_test_count": 31,
+      "expected_process_exit": 0,
+      "expected_skipped_tests": 0,
+      "count_basis": "AST count of declared test methods in unconditional unittest.TestCase classes; no load_tests hooks or skip decorators. Not a runtime pass claim.",
+      "child_processes": "same sys.executable running only the corresponding pure Python module; temporary JSON inputs/reports under tempfile.TemporaryDirectory",
+      "native_builds_or_executions": false,
+      "network_requests": false,
+      "saved_model_training_or_regeneration": false,
+      "output_writes": "temporary test fixtures/reports only; bytecode suppressed by inherited env and -B",
+      "module_failure_semantics": null
+    },
+    {
+      "id": "test_amortized_cost_potential",
+      "work_packages": "E",
+      "purpose": "有限摊销势能和占用测度证书，初始势能、eta与跨scale成本。",
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "env": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_amortized_cost_potential.py",
+        "-v"
+      ],
+      "shell_command": "GIT_NO_LAZY_FETCH=1 PYTHONDONTWRITEBYTECODE=1 PYTHONHASHSEED=0 python3 -B -m unittest discover -s formal/pon-nakamoto-v1 -p test_amortized_cost_potential.py -v",
+      "test_source": {
+        "path": "formal/pon-nakamoto-v1/test_amortized_cost_potential.py",
+        "git_blob_sha": "2c74cfced4c08f826db233869c7e7963b2cba420"
+      },
+      "implementation_source": {
+        "path": "formal/pon-nakamoto-v1/amortized_cost_potential.py",
+        "git_blob_sha": "958df75d1aef29bbe5ef291d08cc273d7bb81f19"
+      },
+      "expected_test_count": 34,
+      "expected_process_exit": 0,
+      "expected_skipped_tests": 0,
+      "count_basis": "AST count of declared test methods in unconditional unittest.TestCase classes; no load_tests hooks or skip decorators. Not a runtime pass claim.",
+      "child_processes": "none exercised by these tests",
+      "native_builds_or_executions": false,
+      "network_requests": false,
+      "saved_model_training_or_regeneration": false,
+      "output_writes": "temporary test fixtures/reports only; bytecode suppressed by inherited env and -B",
+      "module_failure_semantics": null
+    },
+    {
+      "id": "test_amortized_cost_potential_independent",
+      "work_packages": "E",
+      "purpose": "独立有限穷举参考，1600个确定模型与2025个随机模型；这些属于6项测试内部子案例。",
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "env": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_amortized_cost_potential_independent.py",
+        "-v"
+      ],
+      "shell_command": "GIT_NO_LAZY_FETCH=1 PYTHONDONTWRITEBYTECODE=1 PYTHONHASHSEED=0 python3 -B -m unittest discover -s formal/pon-nakamoto-v1 -p test_amortized_cost_potential_independent.py -v",
+      "test_source": {
+        "path": "formal/pon-nakamoto-v1/test_amortized_cost_potential_independent.py",
+        "git_blob_sha": "d1cef305cd7329a3b9d786055c96ad7892cfcd40"
+      },
+      "implementation_source": {
+        "path": "formal/pon-nakamoto-v1/amortized_cost_potential.py",
+        "git_blob_sha": "958df75d1aef29bbe5ef291d08cc273d7bb81f19"
+      },
+      "expected_test_count": 6,
+      "expected_process_exit": 0,
+      "expected_skipped_tests": 0,
+      "count_basis": "AST count of declared test methods in unconditional unittest.TestCase classes; no load_tests hooks or skip decorators. Not a runtime pass claim.",
+      "child_processes": "none exercised by these tests",
+      "native_builds_or_executions": false,
+      "network_requests": false,
+      "saved_model_training_or_regeneration": false,
+      "output_writes": "temporary test fixtures/reports only; bytecode suppressed by inherited env and -B",
+      "module_failure_semantics": null
+    }
+  ],
+  "expected_module_count": 9,
+  "expected_total_tests": 255,
+  "selection_status": "Nine inspected existing mathematical suites. Commands have not been executed by this reviewer on the complete h checkout.",
+  "execution_notes": [
+    "从cwd完整源码根目录逐条执行；保留每条argv、env、实际HEAD/tree/dirty源清单、测试源/实现/输入SHA-256、exit code及完整stdout/stderr。不要把不同源码的结果合成同版本PASS。",
+    "运行B baseline与overlay时，测试文件与被测数学模块内容未变也须分别保留实际执行身份。先核验这里的Git blob锚；不能以文件存在代替相同源码。",
+    "预期255是unittest顶层方法计数；1600/2025穷举模型、subTest及多重输入不是额外独立测试数量。",
+    "源读取检查、临时JSON CLI和纯Python有限算术允许；没有native build、native executable调用、网络访问、保存模型重生成或训练入口。",
+    "fixed_probability_contract只读取MU1结构/参数及四个源文件哈希；它虽然导入的mandatory_units_relation含可选native helper，本套测试不调用produce_packet/verify_packet或该helper。",
+    "CLI子进程继承PYTHONDONTWRITEBYTECODE；运行结束保留parent unittest退出码。源码自带的预期负例子退出码不得误当parent失败，也不能隐藏真实异常。",
+    "不要运行整个formal目录的默认discover；其中存在native/PQ/process/runtime与模型相关测试。",
+    "即使255项全通过，也只验证明确的有限模型/合同/输入边界。实际全合法算法L、物理或量子资源成本、生命周期模拟前提、原业务deadline以及混合共识资格继续HOLD。"
+  ],
+  "excluded_candidates": [
+    {
+      "path": "formal/pon-nakamoto-v1/test_work_profile_contract_v1.py",
+      "declared_test_count": 19,
+      "git_blob_sha": "55fee0596ed34e305293267810200954ee3e715c",
+      "reason": "固定BASELINE=b16bae2824e6c8236ef2011fc93a74df3ac7f039及其树的全源合同测试，直接执行默认source_root=当前checkout，会将#821与旧冻结源不一致混入结果；且依赖git ls-tree/历史对象。应由既有run_work_time_contract_v1的独立验证冻结fixture机制单列，禁止重绑旧pins求绿。"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_legal_optimization_catalog_v1.py",
+      "declared_test_count": 25,
+      "git_blob_sha": "c285d2d6e5163cc84a2eb78536885f84164bf3bb",
+      "reason": "setUpClass会重新构建24cohort/96完整reference relation测量报告，使用ThreadPoolExecutor和git source快照；虽不是native build，本次选择限定纯有限数学门，不在此列表重跑成本实验。"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_cell_lottery_cost_audit_v1.py",
+      "declared_test_count": 3,
+      "git_blob_sha": "2bc67f16a5f5839c380fd8e30b55a8b89ea051f2",
+      "reason": "加载已保存public-source模型和consumer/evaluation材料，执行完整Cell V2/reference W1重放并依赖numpy及共享cell实验模块。未发现本测试训练保存模型，但它不是本次纯数学门，因此单列排除。"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_service_work_settlement_v1.py",
+      "declared_test_count": 25,
+      "git_blob_sha": "9f3868e8a6b2dc82954be70ce683761486e82dc5",
+      "reason": "本测试主要为纯Python合成服务/资金/NoUpdate合同，未发现本文件subprocess/网络调用；其被测依赖包含model_contract/ledger/数值执行。为给root严格九模块数学名单，本轮不将未完成全递归副作用核查的服务测试混入255计数。可后续独立既有服务门运行。"
+    },
+    {
+      "path": "scripts/ci/run_work_time_contract_v1.py",
+      "reason": "既有源fixture、成本测量、输出归档综合runner，不等同于本名单纯数学单元门。"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_*native*.py and full-directory discovery",
+      "reason": "未逐项核实，可能调用native后端、编译或其他外部实验。本清单不授权泛化运行。"
+    }
+  ],
+  "inspection_metadata": {
+    "retrieval": "GitHub GET pinned to #821 exact head; AST parsing is done without importing or executing test modules.",
+    "all_selected_test_counts_have_no_skip_decorators": true,
+    "all_selected_test_counts_have_no_load_tests_hooks": true,
+    "native_execution_claim": false,
+    "transient_audit_issue": "Initial combined AST inspection command exceeded executor argument length before any child was created; split into three smaller AST-only commands, all completed successfully. This is not a test failure or source mutation."
+  }
+}

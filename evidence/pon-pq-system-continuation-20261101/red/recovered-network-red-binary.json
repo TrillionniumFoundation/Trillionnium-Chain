@@ -1,0 +1,52 @@
+{
+  "artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///tmp/chain-pq-network-red-recovered/trillionnium/crates/trnm-pon-node#0.1.0",
+    "manifest_path": "/tmp/chain-pq-network-red-recovered/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "target": {
+      "kind": [
+        "lib"
+      ],
+      "crate_types": [
+        "lib"
+      ],
+      "name": "trnm_pon_node",
+      "src_path": "/tmp/chain-pq-network-red-recovered/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "edition": "2021",
+      "doc": true,
+      "doctest": true,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 2,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": true
+    },
+    "features": [
+      "default",
+      "pq-native-openssl"
+    ],
+    "filenames": [
+      "/tmp/chain-pq-native-target/debug/deps/trnm_pon_node-d090c9d17648742e"
+    ],
+    "executable": "/tmp/chain-pq-native-target/debug/deps/trnm_pon_node-d090c9d17648742e",
+    "fresh": false
+  },
+  "sha256": "3ce9c3807c8a3872e5c96bb5a468dcc4c0b787535a020d454acf6beb902401d9",
+  "bytes": 354981104,
+  "source": {
+    "base": null,
+    "candidate": "e34f2d2f63ea0d10232b3440e93ce20e508e8a73",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "e34f2d2f63ea0d10232b3440e93ce20e508e8a73",
+    "tested_tree": "64e27258405f82aa41b80d040a581626c19b0f6b",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 781077330,
+    "tracked_entries": 6776,
+    "tracked_worktree_verified": true
+  }
+}

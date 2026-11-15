@@ -1,0 +1,484 @@
+{
+  "head": "103cdf67108a667d8570388f9dd402210c160157",
+  "checks": [
+    {
+      "label": "final-reconcile-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit": 0,
+      "duration_seconds": 0.09718808112666011,
+      "source_head_before": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "source_head_after": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "native_passed_counts": [],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-02-inventory-check",
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit": 0,
+      "duration_seconds": 0.09801134606823325,
+      "source_head_before": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "source_head_after": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "native_passed_counts": [],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-03-ci-contract-shape",
+      "argv": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit": 0,
+      "duration_seconds": 0.21187023189850152,
+      "source_head_before": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "source_head_after": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "native_passed_counts": [],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-04-diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "duration_seconds": 0.04013487510383129,
+      "source_head_before": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "source_head_after": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "native_passed_counts": [],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-05-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit": 0,
+      "duration_seconds": 0.08838453912176192,
+      "source_head_before": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "source_head_after": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "native_passed_counts": [],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-06-stage",
+      "argv": [
+        "git",
+        "add",
+        "--",
+        "formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py",
+        "scripts/ci/ci_job.sh",
+        "scripts/ci/check_ci_contract.py",
+        "docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+      ],
+      "exit": 0,
+      "duration_seconds": 0.15891679283231497,
+      "source_head_before": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "source_head_after": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "native_passed_counts": [],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-07-commit",
+      "argv": [
+        "git",
+        "commit",
+        "-m",
+        "Complete actual MU1 reuse control and register native research sources",
+        "-m",
+        "Retain a full outer-winning hybrid whose stale unit transcript is refused without new credit, while observing legal prepared-matrix reuse. Keep this separate from any all-algorithm cost bound. Register the two new native research files in the generated distributed inventory; preserve the original failed inventory check."
+      ],
+      "exit": 0,
+      "duration_seconds": 0.20804122718982399,
+      "source_head_before": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-08-format",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "duration_seconds": 20.873503003967926,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-09-actual-reuse",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py",
+        "--out",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/actual-mu1-reuse"
+      ],
+      "exit": 0,
+      "duration_seconds": 2.2275662468746305,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-10-source-identity-before",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "103cdf67108a667d8570388f9dd402210c160157",
+        "--output",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/final-source-identity-before.json"
+      ],
+      "exit": 0,
+      "duration_seconds": 20.36992723494768,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-11-native-schedule",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "research_work_schedule",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "exit": 0,
+      "duration_seconds": 2.435291500063613,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [
+        12
+      ],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-12-pgh2-growth-reader",
+      "argv": [
+        "python3",
+        "scripts/pon_branch_work_schedule_reader.py",
+        "--raw-dir",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/native-final/pgh2-growth",
+        "--report-sha256",
+        "5a80454acc7f899d3440bdfdda2a7856df5030c3bf7ba089e96abe8a405add04"
+      ],
+      "exit": 0,
+      "duration_seconds": 1.30715850321576,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-13-pgh2-growth-controls",
+      "argv": [
+        "python3",
+        "scripts/ci/test_pon_branch_work_schedule_reader.py",
+        "--raw-dir",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/native-final/pgh2-growth",
+        "--report-sha256",
+        "5a80454acc7f899d3440bdfdda2a7856df5030c3bf7ba089e96abe8a405add04",
+        "-v"
+      ],
+      "exit": 0,
+      "duration_seconds": 2.540155066177249,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [],
+      "unittest_counts": [
+        "9"
+      ]
+    },
+    {
+      "label": "final-12-pnh1-authenticated-reader",
+      "argv": [
+        "python3",
+        "scripts/pon_branch_work_schedule_reader.py",
+        "--raw-dir",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/native-final/pnh1-authenticated",
+        "--report-sha256",
+        "e3fd4c236991529124ab5a493c31c0559694403aa57ec570267f8ac7ad0fec6d"
+      ],
+      "exit": 0,
+      "duration_seconds": 1.3158089281059802,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-13-pnh1-authenticated-controls",
+      "argv": [
+        "python3",
+        "scripts/ci/test_pon_branch_work_schedule_reader.py",
+        "--raw-dir",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/native-final/pnh1-authenticated",
+        "--report-sha256",
+        "e3fd4c236991529124ab5a493c31c0559694403aa57ec570267f8ac7ad0fec6d",
+        "-v"
+      ],
+      "exit": 0,
+      "duration_seconds": 2.5445353579707444,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [],
+      "unittest_counts": [
+        "9"
+      ]
+    },
+    {
+      "label": "final-14-retained-joint-native",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "daa_joint_consensus",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "exit": 0,
+      "duration_seconds": 47.042158539174125,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [
+        2
+      ],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-15-pnh1-authenticated-retained-reader",
+      "argv": [
+        "python3",
+        "scripts/pon_joint_daa_reader.py",
+        "--raw-dir",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/retained-joint-native/pnh1-authenticated",
+        "--expected-report-sha256",
+        "664ef8549b32794aac16ea884860f1d447e59cae779c0f33dc370ffde13f175c"
+      ],
+      "exit": 0,
+      "duration_seconds": 19.74509379104711,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-16-pnh1-authenticated-retained-controls",
+      "argv": [
+        "python3",
+        "scripts/ci/test_pon_joint_daa_reader.py",
+        "--raw-dir",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/retained-joint-native/pnh1-authenticated"
+      ],
+      "exit": 0,
+      "duration_seconds": 24.964290260104463,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [],
+      "unittest_counts": [
+        "22"
+      ]
+    },
+    {
+      "label": "final-15-pgh2-growth-retained-reader",
+      "argv": [
+        "python3",
+        "scripts/pon_joint_daa_reader.py",
+        "--raw-dir",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/retained-joint-native/pgh2-growth",
+        "--expected-report-sha256",
+        "d0e548d0a685a6da9e022a6d94576168d959a45c70e45d3c8590d71eca674dda"
+      ],
+      "exit": 0,
+      "duration_seconds": 20.605229596141726,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-16-pgh2-growth-retained-controls",
+      "argv": [
+        "python3",
+        "scripts/ci/test_pon_joint_daa_reader.py",
+        "--raw-dir",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/retained-joint-native/pgh2-growth"
+      ],
+      "exit": 0,
+      "duration_seconds": 26.297814966877922,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [],
+      "unittest_counts": [
+        "22"
+      ]
+    },
+    {
+      "label": "final-17-consensus",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "consensus::tests",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "duration_seconds": 511.1887041099835,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [
+        10
+      ],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-17-legacy-reorg",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "store::legacy_reorg_root_tests",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "duration_seconds": 3.628387085860595,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [
+        5
+      ],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-17-reorg-readback",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "store::reorg_readback_tests",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "duration_seconds": 20.4666974961292,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [
+        6
+      ],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-18-strict-clippy",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "duration_seconds": 158.9843398379162,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [],
+      "unittest_counts": []
+    },
+    {
+      "label": "final-19-source-identity-after",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "103cdf67108a667d8570388f9dd402210c160157",
+        "--output",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/final-source-identity-after.json"
+      ],
+      "exit": 0,
+      "duration_seconds": 65.18869595602155,
+      "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+      "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+      "native_passed_counts": [],
+      "unittest_counts": []
+    }
+  ],
+  "all_passed": true,
+  "all_workspace_tests_executed": false,
+  "native_node_target_rerun": false,
+  "new_native_profile_installed": false,
+  "whole_chain_qualified": false
+}

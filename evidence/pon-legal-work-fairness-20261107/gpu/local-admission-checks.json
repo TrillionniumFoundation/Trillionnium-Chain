@@ -1,0 +1,28 @@
+{
+  "artifact_immutable": true,
+  "invalid_bias": {
+    "code": "BIAS_8",
+    "rejected": true
+  },
+  "invalid_bool": {
+    "code": "MATRIX_INTEGER_RANGE",
+    "rejected": true
+  },
+  "invalid_coefficient": {
+    "code": "MATRIX_INTEGER_RANGE",
+    "rejected": true
+  },
+  "invalid_feature": {
+    "code": "MATRIX_INTEGER_RANGE",
+    "rejected": true
+  },
+  "valid_bounds": {
+    "base_abs_partial_sum_bound": 6695,
+    "delta_abs_partial_sum_bound": 39739,
+    "f64_exact_integer_limit_exclusive": 9007199254740992,
+    "generic_full_logit_bound": 134737904,
+    "merged_abs_partial_sum_bound": 44748,
+    "original_max_coefficient": 778,
+    "router_abs_partial_sum_bound": 39973
+  }
+}

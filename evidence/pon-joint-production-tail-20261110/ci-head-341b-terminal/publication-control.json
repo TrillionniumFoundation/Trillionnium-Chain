@@ -1,0 +1,60 @@
+{
+  "request": {
+    "host": "mac",
+    "executable": "/usr/bin/python3",
+    "args": [
+      "-c",
+      "from pathlib import Path\nimport hashlib,tarfile,runpy\np=Path('/Users/qianqi/work/chain-joint-ci-terminal-20261110-8e76.tar.gz');b=p.read_bytes();assert len(b)==184937 and hashlib.sha256(b).hexdigest()=='ae3e2a3fadce2afaa0feb5b7802c29184c655a106a141e99af327a259e77c378'\nr=Path('/Users/qianqi/work/chain-joint-ci-terminal-publish-20261110-8e76');r.mkdir(mode=0o700,exist_ok=False)\nwith tarfile.open(p,'r:gz') as t:\n assert sorted(t.getnames())==['payload.gz','publish_mac.py']\n for m in t.getmembers():\n  assert m.isfile();q=r/m.name\n  with q.open('xb') as f:f.write(t.extractfile(m).read())\n  q.chmod(0o600)\nrunpy.run_path(str(r/'publish_mac.py'),run_name='__main__')\n"
+    ],
+    "idempotency_key": "joint-ci-terminal-publish-20261110-8e76-v1",
+    "timeout_seconds": 900
+  },
+  "first_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "tool call error: tool call failed for `codex_apps/h.process_start`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+      }
+    ],
+    "isError": true
+  },
+  "recovery_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "tool call error: tool call failed for `codex_apps/h.process_start`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+      }
+    ],
+    "isError": true
+  },
+  "write_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"mode\":384,\"sha256\":\"ae3e2a3fadce2afaa0feb5b7802c29184c655a106a141e99af327a259e77c378\",\"size\":184937,\"version\":\"16777233:600492398:184937:1794322638236011504:1794322638236844802\",\"written\":184937}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "file_info": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"metadata\":{\"acl_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"gid\":20,\"link_count\":1,\"metadata_platform\":\"darwin\",\"mode\":384,\"uid\":501,\"xattr_names\":[],\"xattr_sha256\":{}},\"mode\":384,\"path\":\"/Users/qianqi/work/chain-joint-ci-terminal-20261110-8e76.tar.gz\",\"sha256\":\"ae3e2a3fadce2afaa0feb5b7802c29184c655a106a141e99af327a259e77c378\",\"size\":184937,\"version\":\"16777233:600492398:184937:1794322638236011504:1794322638236844802\"}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "status": "UNKNOWN",
+  "job_id": null,
+  "second_start_was_identical_recovery": true,
+  "bundle": {
+    "bytes": 184937,
+    "sha256": "ae3e2a3fadce2afaa0feb5b7802c29184c655a106a141e99af327a259e77c378"
+  },
+  "primary_attempted_commit": "dda9ab47f93e45bfed99c75bb337f1c7aeac805d",
+  "primary_attempted_tree": "61cee96b3cbbcfa24c6b0b42b03662e22539687d",
+  "fallback_scope": "evidence only; exact ProfHepta/102159240; nonforce expected-head; preserve primary uncertainty"
+}

@@ -1,0 +1,107 @@
+{
+  "before_output_disk": {
+    "free": 190810243072,
+    "total": 983023263744,
+    "used": 752201416704
+  },
+  "before_target_disk": {
+    "free": 190810243072,
+    "total": 983023263744,
+    "used": 752201416704
+  },
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_HOME": "/home/qian-qi/.cargo",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_NET_OFFLINE": "true",
+    "CARGO_TARGET_DIR": "/data/chain-checkpoint-probe-target-20261112-df05-v2",
+    "CARGO_TERM_COLOR": "never",
+    "GIT_TERMINAL_PROMPT": "0",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_DIR": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install",
+    "OPENSSL_INCLUDE_DIR": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/include",
+    "OPENSSL_LIB_DIR": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/lib",
+    "OPENSSL_MODULES": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/lib/ossl-modules",
+    "OPENSSL_NO_VENDOR": "1",
+    "OPENSSL_STATIC": "1",
+    "PATH": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/home/qian-qi/.cargo/bin:/usr/local/bin:/usr/bin:/bin",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPYCACHEPREFIX": "/data/chain-checkpoint-probe-validation-20261112-df05-v2/pycache",
+    "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+    "RUSTUP_TOOLCHAIN": "1.95.0",
+    "TMPDIR": "/data/chain-checkpoint-probe-validation-20261112-df05-v2/tmp",
+    "TRNM_PQ_OPENSSL": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "41d5b79f937beed7f94d9623be504db72c5048fcd952965fc0e13305d2802a33",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "host": "desktop",
+  "isolated_new_target": true,
+  "minimum_free_bytes_before_command": 10737418240,
+  "optimization_or_debug_profile_overrides": false,
+  "parent_evidence": "09e4801308366fac01e55bcbdcf8bdfd4e6d2810",
+  "prior_terminal_basis": "caller-pinned authoritative H runtime terminal projection plus exact native/E1 receipt readback",
+  "provider": [
+    {
+      "bytes": 8933408,
+      "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/bin/openssl",
+      "sha256": "41d5b79f937beed7f94d9623be504db72c5048fcd952965fc0e13305d2802a33"
+    },
+    {
+      "bytes": 3449,
+      "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/include/openssl/opensslv.h",
+      "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+    },
+    {
+      "bytes": 4729,
+      "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/include/openssl/configuration.h",
+      "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+    },
+    {
+      "bytes": 12381424,
+      "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/lib/libcrypto.a",
+      "sha256": "005a0f7d9f6a073e6530cc556c90b3c415df7c6bc2475e333d29aa9bfa409bfb"
+    },
+    {
+      "bytes": 2123138,
+      "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/lib/libssl.a",
+      "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727"
+    }
+  ],
+  "reused_target_after_verified_prior_owner_terminal": false,
+  "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "target_admission": {
+    "absent_before_creation": true,
+    "created_new_empty": true,
+    "creating_euid": 1000,
+    "free_bytes_before_creation": 190810255360,
+    "identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "old_target_recreated": false,
+    "old_target_reused": false,
+    "output_free_bytes_before_creation": 190810255360,
+    "output_required_free_bytes": 1073741824,
+    "parent_device": 2067,
+    "parent_identity_unchanged_during_creation": true,
+    "parent_inode": 2,
+    "path": "/data/chain-checkpoint-probe-target-20261112-df05-v2",
+    "prior_environment_target": "/data/chain-root-operation-v6-df05-target-v3",
+    "requested_mode": 448,
+    "required_free_bytes": 10737418240
+  },
+  "target_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_identity_rechecked_per_command": true,
+  "target_identity_scope": "new empty owned directory created by this invocation; not a reused or recovered prior target",
+  "tree": "2a580a0444f56c0e70e0d73a7fad1120367d1e9e"
+}

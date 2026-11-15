@@ -1,0 +1,20 @@
+{
+  "artifacts": {
+    "fresh": {
+      "bytes": 7720176,
+      "executable": true,
+      "exists": true,
+      "path": "/dev/shm/chain-fresh-work-10a9f8f2cba0-release/examples/grouped_fresh_admission_v0",
+      "sha256": "cb77278cc1d4369996be0045cbfddb768d972790f99c3f992f9d278e2f25b5fe"
+    },
+    "grouped": {
+      "bytes": 770808,
+      "executable": true,
+      "exists": true,
+      "path": "/dev/shm/chain-fresh-work-10a9f8f2cba0-release/examples/pon_routed_int257_grouped",
+      "sha256": "0c819edeab2dd0891985d98b15414e06db8c45b3f8be6b37923967567eb85940"
+    }
+  },
+  "cargo_target_directory": "/workspace/scratch/10a9f8f2cba0/native-target",
+  "status": "PASS"
+}

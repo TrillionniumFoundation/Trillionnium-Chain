@@ -1,0 +1,89 @@
+[
+  {
+    "name": "inventory-refresh",
+    "command": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 0.1414074890781194
+  },
+  {
+    "name": "arithmetic",
+    "command": [
+      "python3",
+      "-B",
+      "formal/pon-nakamoto-v1/test_joint_consensus_boundaries.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 0.4366120370104909
+  },
+  {
+    "name": "arithmetic-report",
+    "command": [
+      "python3",
+      "-B",
+      "formal/pon-nakamoto-v1/joint_consensus_boundaries.py",
+      "--output",
+      "/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-validation/joint-boundaries.json"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 0.08600054890848696
+  },
+  {
+    "name": "ci-shell",
+    "command": [
+      "bash",
+      "-n",
+      "scripts/ci/ci_job.sh"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 0.0052796280942857265
+  },
+  {
+    "name": "ci-contract",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 0.19592120801098645
+  },
+  {
+    "name": "ci-contract-negative",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/test_ci_contract.py"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 351.19263466401026
+  },
+  {
+    "name": "source-integrity-negative",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/test_evidence_sources.py"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 28.49376757792197
+  },
+  {
+    "name": "format",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 20.878390537109226
+  }
+]

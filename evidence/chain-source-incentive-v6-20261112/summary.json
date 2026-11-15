@@ -1,0 +1,123 @@
+{
+  "actual_account_payments_independently_replayed": false,
+  "budget_residual_state": "release escrow remaining; existing expiry rule; refund credit not observed",
+  "economic_security_qualified": false,
+  "native_binary_sha256": "f374c315f104569850e7164af5627abfb86c5ee33efd05c2241d8b5a578bab7b",
+  "native_execution_of_evidence_child": false,
+  "native_observer_status": "PINNED_AND_OBSERVED",
+  "ordinary_node_packets_in_separate_owner_test": 98,
+  "phase2_all_commands_succeeded": true,
+  "phase2_command_count": 19,
+  "phase2_terminal_sha256": "3b3583b3a3cae374145590ea1e72db6bde7a96373f345ab767e3015b3a60f657",
+  "production_activation": false,
+  "protected_entries_sha256": "d55efc80dd7407cbb2357747a34edab9f62bfdbb98de46b6f360349629d86806",
+  "raw_archive_sha256": "5db20537cc9076a673e3f06d59e329efb56acb4775c5438c41a642172d2f8128",
+  "reader_self_tests": {
+    "errors": 0,
+    "failures": 0,
+    "log": "...........\n----------------------------------------------------------------------\nRan 11 tests in 0.004s\n\nOK\n",
+    "native_payment_executed": false,
+    "result": "PASS",
+    "skipped": 0,
+    "synthetic_unit_tests": true,
+    "tests_run": 11
+  },
+  "reader_sha512": "ed7dc94dcf64d53a1ac8b17a25aba34f51293af15a56c62efeed49ce2f03838e2dabbd084ddda2e52605f959669cf822fe65a97bd5d5c481990fd7113f6153eb",
+  "schema": "source-incentive-v6-evidence-summary-v1",
+  "source1": {
+    "command_count": 15,
+    "failed_command": "native-v6",
+    "native_counts": {
+      "failed": 1,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 3,
+      "status": "FAILED"
+    },
+    "successful_commands": 14,
+    "tested_commit": "8cb8b743bccd93a5fac49a072990d18e0d4b4a21",
+    "tested_tree": "ad9301c83be53df1937aa2b7eebf5aee131fbb99"
+  },
+  "source_game_digest": "3a59900aa1b26ff93376dc4f852c59a9677c08a07a38dfe5cfdb2813be4634f2",
+  "status": "PASS_FINITE_PROFILE_EXACT_SOURCE_OBSERVATIONS",
+  "test_counts": {
+    "mvcc-fee-retained": {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 9,
+      "measured": 0,
+      "passed": 164,
+      "status": "ok"
+    },
+    "native-error-registry": {
+      "failed": 0,
+      "filtered": 1333,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 11,
+      "status": "ok"
+    },
+    "native-v4-retained": {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 5,
+      "status": "ok"
+    },
+    "native-v6": {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 4,
+      "status": "ok"
+    },
+    "task-kernel-retained": {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 35,
+      "status": "ok"
+    }
+  },
+  "tested_commit": "214e2224fd4d18134aa9b50dc1467041651112eb",
+  "tested_tree": "b4b02cca0aff2af5603618ffea510743d54a2f2d",
+  "unknown_source_identity_proven": false,
+  "variants": [
+    {
+      "case": "original",
+      "independent_net_account_replay": false,
+      "known_source_gross": 66666,
+      "native_reported_net_account_change": 60051,
+      "other_source_gross": 33333,
+      "unallocated_release_budget": 1
+    },
+    {
+      "case": "aliased",
+      "independent_net_account_replay": false,
+      "known_source_gross": 66666,
+      "native_reported_net_account_change": 60051,
+      "other_source_gross": 33333,
+      "unallocated_release_budget": 1
+    },
+    {
+      "case": "split",
+      "independent_net_account_replay": false,
+      "known_source_gross": 66666,
+      "native_reported_net_account_change": 56980,
+      "other_source_gross": 33333,
+      "unallocated_release_budget": 1
+    },
+    {
+      "case": "permuted",
+      "independent_net_account_replay": false,
+      "known_source_gross": 66666,
+      "native_reported_net_account_change": 56980,
+      "other_source_gross": 33333,
+      "unallocated_release_budget": 1
+    }
+  ]
+}

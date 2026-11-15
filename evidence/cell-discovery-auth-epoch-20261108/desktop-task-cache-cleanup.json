@@ -1,0 +1,28 @@
+{
+  "action": "removed only stopped task-owned reproducible Cargo target after reconciling failed launch",
+  "path": "/home/qian-qi/work/chain-cell-storage-discovery-f2568-target",
+  "file_count": 6562,
+  "logical_bytes": 4056710322,
+  "disk_before": {
+    "total": 982240026624,
+    "used": 941304061952,
+    "free": 20937691136
+  },
+  "disk_after": {
+    "total": 982240026624,
+    "used": 937831067648,
+    "free": 24410685440
+  },
+  "bootstrap_reclaimed_test_binary_bytes": 91209464,
+  "bootstrap_test_binary_sha256": "35bd8ac9d6ab877fa40b37d4eefbe21657524ffc6e54d18811a612a3e1133d9a",
+  "original_failed_launch_unit": {
+    "MainPID": "0",
+    "LoadState": "not-found",
+    "ActiveState": "inactive"
+  },
+  "original_job_directory_absent": true,
+  "source_commit": "d27619a725a6e2969a5bd25d45d5c8514631c320",
+  "source_clean": true,
+  "source_evidence_provider_preserved": true,
+  "preflight_stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-cell-storage-discovery-f2568-20261108\", \"remote_policy_mutated\": false}\n"
+}

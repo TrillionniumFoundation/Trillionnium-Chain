@@ -1,0 +1,36 @@
+{
+  "schema": "trnm.local-adoption.h-channel-recheck.v1",
+  "recorded_at_utc": "2026-11-11T01:03:10.069Z",
+  "agent": "/root/runtime_channel_inventory",
+  "scope": "One exact same-key reconciliation of the prior read-only Mac GitHub identity request; no remote Git write.",
+  "started_at_utc": "2026-11-11T01:02:52.103Z",
+  "finished_at_utc": "2026-11-11T01:02:54.401Z",
+  "tool": "h.process_start",
+  "arguments": {
+    "host": "mac",
+    "executable": "/opt/homebrew/bin/gh",
+    "args": [
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "idempotency_key": "cell-adoption-github-identity-mac-20261111",
+    "timeout_seconds": 20
+  },
+  "same_arguments_as_original": true,
+  "same_idempotency_key_as_original": true,
+  "result": {
+    "is_error": true,
+    "mcp_code": -32603,
+    "message": "Internal error",
+    "job_id": null,
+    "authenticated_login": null,
+    "identity_verdict": "error",
+    "launch_status": "unknown"
+  },
+  "original_probe_record": "validation/h-channel-probes.json",
+  "new_key_retry_performed": false,
+  "remote_git_write_performed": false,
+  "further_h_probes_performed": false
+}

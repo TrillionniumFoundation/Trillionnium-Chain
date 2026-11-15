@@ -1,0 +1,19 @@
+{
+  "reason": "Preserve complete verbatim cargo stdout including trailing blank lines in lossless gzip; the first all-text diff-check refusal is retained.",
+  "files": [
+    {
+      "original_path": "wire-validation-v1/wire-tests.out",
+      "stored_path": "wire-validation-v1/wire-tests.out.gz",
+      "original_sha256": "4c12abfa3ec60f3ac58ffcc98971219d3d51cf39f194f5c311007a60dd97b203",
+      "stored_sha256": "ce5b6310308578dbc5377dd3fa09a94f2049940c2608f5eaa09e8e05502188b6",
+      "lossless": true
+    },
+    {
+      "original_path": "wire-validation-v2/tests.out",
+      "stored_path": "wire-validation-v2/tests.out.gz",
+      "original_sha256": "3dd19c0d538e15488dd0ba13b0458cbfab9a743373e77cc5930832a0c5ba6f5a",
+      "stored_sha256": "ea631987f69e25f34eecc5e2e0a21a4320caef03046cdb031d1091c4915e2f36",
+      "lossless": true
+    }
+  ]
+}

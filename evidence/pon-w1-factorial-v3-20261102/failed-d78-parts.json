@@ -1,0 +1,37 @@
+{
+  "archive": "failed-d78-full-observation.tar.zst",
+  "archive_bytes": 18086107,
+  "sha256": "1145875f1a2d05f45abd5c48284080b9a494f0e199d687b4b1a67d44b65f8cb6",
+  "parts": [
+    {
+      "name": "failed-d78-full-observation.tar.zst.part-00",
+      "bytes": 4194304,
+      "sha256": "4f394ffbc731f8b6fac587d2a35686352903568757015600d457320d1f0859c0",
+      "git_blob": "9f8991460fd7a793612dc94f40c0de3b2cff18d2"
+    },
+    {
+      "name": "failed-d78-full-observation.tar.zst.part-01",
+      "bytes": 4194304,
+      "sha256": "06d6a66b5375d7dace259e6134c2109b1d09f65972816f9e896497c8c016c2da",
+      "git_blob": "f33b3a00943570f77398f15f1571c340245caefb"
+    },
+    {
+      "name": "failed-d78-full-observation.tar.zst.part-02",
+      "bytes": 4194304,
+      "sha256": "ab4d727bdcb89a06302e1e435c17a6d1714056333f1f616405d2d647a7e8ba72",
+      "git_blob": "4284b5b7610e4a6b620868922930976a85b33efc"
+    },
+    {
+      "name": "failed-d78-full-observation.tar.zst.part-03",
+      "bytes": 4194304,
+      "sha256": "f432f1f0c1edaf74f033228fb9d04f7e2d4afdcb9194ef1257ad2e49aa5bd684",
+      "git_blob": "f3ede15c3037394b4b2d4c657ba6f0bce02f9dd1"
+    },
+    {
+      "name": "failed-d78-full-observation.tar.zst.part-04",
+      "bytes": 1308891,
+      "sha256": "0a34eba64ee5d2501f6b42f0db8e42857ac0ddad82e64d6b2150e4340d28d3d4",
+      "git_blob": "31d6162edacf15a107efc0e8b6863ab945e08c18"
+    }
+  ]
+}

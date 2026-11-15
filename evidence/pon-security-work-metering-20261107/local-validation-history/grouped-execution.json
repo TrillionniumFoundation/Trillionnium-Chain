@@ -1,0 +1,22 @@
+{
+  "bytecode_writes_disabled": true,
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "test_grouped*.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/89df848c3501/candidate",
+  "elapsed_seconds": 4.378033580000192,
+  "exit_code": 1,
+  "finished_utc": "2026-11-07T17:31:44.853160+00:00",
+  "label": "grouped",
+  "log": "/workspace/scratch/89df848c3501/evidence/final-local-validation/grouped.log",
+  "started_utc": "2026-11-07T17:31:40.474998+00:00"
+}

@@ -1,0 +1,61 @@
+{
+  "label": "cargo-metadata-default",
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "metadata",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "command": "/home/qian-qi/.cargo/bin/cargo +1.95.0 metadata --offline --locked --manifest-path trillionnium/Cargo.toml --format-version 1",
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "expected_head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+  "expected_tree": "46164cd85fff00e3a080acc29fef25a27751082b",
+  "before": {
+    "head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+    "tree": "46164cd85fff00e3a080acc29fef25a27751082b",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "started_utc": "2026-11-09T03:21:49.001101+00:00",
+  "timeout_seconds": 180,
+  "timeout_scope": "source/graph command wall-time supervisor only; no product deadline changed",
+  "stdout": "/data/chain-abg-70ae-20261108/evidence/candidate-contract-gates/08-cargo-metadata-default.stdout",
+  "stderr": "/data/chain-abg-70ae-20261108/evidence/candidate-contract-gates/08-cargo-metadata-default.stderr",
+  "expected_tests": null,
+  "tests_run": null,
+  "skipped": null,
+  "failures": null,
+  "errors": null,
+  "timed_out": false,
+  "exit_code": 0,
+  "passed": true,
+  "elapsed_seconds": 0.315979,
+  "after": {
+    "head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+    "tree": "46164cd85fff00e3a080acc29fef25a27751082b",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "graph": {
+    "packages": 176,
+    "workspace_members": 26,
+    "resolve_nodes": 176,
+    "workspace_test_targets": 321,
+    "workspace_targets_with_test_enabled": 356,
+    "workspace_dev_dependency_edges": 26,
+    "target_directory": "/data/chain-abg-70ae-20261108/evidence/candidate-contract-gates/cargo-metadata-target",
+    "workspace_root": "/data/chain-abg-70ae-20261108/source/trillionnium"
+  },
+  "finished_utc": "2026-11-09T03:21:49.477376+00:00",
+  "stdout_bytes": 831455,
+  "stderr_bytes": 0,
+  "stdout_sha256": "7a6768cd3e231b3628d4b351c222915d6601c0c2b61313a33588c80ecc04d0cd",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

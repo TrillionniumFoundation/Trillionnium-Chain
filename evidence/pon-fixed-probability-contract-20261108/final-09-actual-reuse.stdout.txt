@@ -1,0 +1,98 @@
+{
+  "all_algorithm_cost_qualified": false,
+  "artifact_manifest": {
+    "hybrid-nonce26.pmh1": {
+      "bytes": 432,
+      "sha256": "c5773dd3bb3b58630330dc646a72fff4de90d4919b984c1afbf4408f4f73ed9c"
+    },
+    "hybrid-nonce26.pmu1": {
+      "bytes": 98882,
+      "sha256": "04d5b00f0e2b73c88a8a5674041077014c322a4021ba9083d43d6f1377256443"
+    },
+    "original-nonce24.pmh1": {
+      "bytes": 432,
+      "sha256": "290a8724dee47e23a9ae258157361cedc8e19b0a7e6b6a0701be1e05d2bc0403"
+    },
+    "original-nonce24.pmu1": {
+      "bytes": 98882,
+      "sha256": "711643c498353dc1a2cdd450ff5b2fdb37e998617ec752418035e382654b4647"
+    }
+  },
+  "attack_profitability_established": false,
+  "checks": {
+    "both_unit_challenges_changed": true,
+    "complete_MU1_rejected_at_transcript": true,
+    "counter_credit_before_hybrid_32": true,
+    "counter_credit_did_not_increase": true,
+    "counter_rejected_at_transcript": true,
+    "first_admission_credit_32": true,
+    "fixed_context_duplicate_credit_zero": true,
+    "fixed_context_last_proof_byte_identical": true,
+    "fixed_context_packet_byte_identical": true,
+    "fixed_context_ticket_and_identity_unchanged": true,
+    "hybrid_keeps_unit_0_byte_for_byte": true,
+    "hybrid_outer_target_passes": true,
+    "hybrid_reproduces_recorded_bytes": true,
+    "hybrid_unit_1_complete_scalar_verification": true,
+    "hybrid_unit_1_matches_constructed_full_proof": true,
+    "independent_context_pin_matches": true,
+    "new_unit_trace_changed": true,
+    "original_complete_scalar_verification": true,
+    "original_packet_pin_matches": true,
+    "prepared_AB_prefix_actually_reused": true,
+    "stale_unit_rejected_at_transcript": true
+  },
+  "fixture_provenance": {
+    "context_path": "evidence/pon-work-native-certificates-20261107/mandatory_units/run-02-final/dense-repeat-u2.pmh1",
+    "context_sha256": "290a8724dee47e23a9ae258157361cedc8e19b0a7e6b6a0701be1e05d2bc0403",
+    "expected_context_origin": "separate pinned PMH1 fixture, not untrusted packet metadata",
+    "packet_path": "evidence/pon-work-native-certificates-20261107/mandatory_units/run-02-final/dense-repeat-u2.pmu1",
+    "packet_sha256": "711643c498353dc1a2cdd450ff5b2fdb37e998617ec752418035e382654b4647",
+    "pin_scope": "previously recorded fixture identity; full scalar verification reruns here"
+  },
+  "hybrid": {
+    "complete_rejection": "W1_TRANSCRIPT",
+    "counter_credit_after_rejection": 32,
+    "counter_rejection": "W1_TRANSCRIPT",
+    "identity": "0c23253b9f4b542ea374b2d1aaf27f77ca60e57ab31eb23dae2d6946daa7bd1c",
+    "nonce": 26,
+    "nonce_selection": "fixed reproducible control; actual outer predicate must pass",
+    "outputs_root": "d98d25e13c4e6dcb1daf0e3fdda6eb784694d4c971d9e671521a4f0daeaca356",
+    "packet_sha256": "04d5b00f0e2b73c88a8a5674041077014c322a4021ba9083d43d6f1377256443",
+    "stale_unit_rejection": "TRANSCRIPT",
+    "ticket": "0946f73e649645045f05b35dd3f84d58cbd54bc4d6e07d59b0caa986a1d05015",
+    "unit_0_source_nonce": 24,
+    "unit_1_source_nonce": 26
+  },
+  "interpretation": {
+    "hash_binding": "assumed for generalization; not proved by fixture checks",
+    "legal_prepared_AB_reuse": "observed and permitted",
+    "native_backend": "not executed; this probe explicitly uses the complete scalar MU1 verifier",
+    "observed": "same-context regeneration is identical; changing the global nonce invalidates the retained full unit proof",
+    "other_preprocessing_batching_or_quantum_costs": "open; no minimum-cost conclusion",
+    "synthetic_MDP_mapping": "none claimed",
+    "whole_context_nonce_bank": "prior preparation for each different context must remain in lifecycle accounting"
+  },
+  "native_consensus_qualified": false,
+  "original": {
+    "credit": 32,
+    "duplicate_added_credit": 0,
+    "identity": "3fd902c5ca3b1b44fe4c147bc0ce6b961a0bd7bcb7d18bec412df4e290750c12",
+    "nonce": 24,
+    "ticket": "097fc5263801e80a4db6ebab4deeba8804f2364eadd3cb1c1590b23d0ca2ebed",
+    "units": 2
+  },
+  "production_qualified": false,
+  "profile": "pon-mandatory-w1-64-research-v1",
+  "quantum_cost_qualified": false,
+  "relation_parameters": "0d25474289a0149ed7c12824f8c06ee703c0c3bf1bc734c4cf765d70ceb732b1",
+  "result": "PASS",
+  "schema": "pon-fixed-probability-reuse-probe-v1",
+  "source_sha256": {
+    "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py": "675f61035c56e3c95c8b6cfa74c597a41ab7da6b135f784f91d8eb1c24686414",
+    "formal/pon-nakamoto-v1/mandatory_units_relation.py": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834",
+    "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+  },
+  "tail_qualified": false
+}

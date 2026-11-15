@@ -1,0 +1,196 @@
+{
+  "bash_syntax": "pass",
+  "new_proofs_generated": 0,
+  "original_58_controls_command_and_120_second_runner_unchanged": true,
+  "original_v2_build_and_three_test_step_unchanged": true,
+  "python_blocks_compiled": 14,
+  "required_steps": [
+    {
+      "accepted": true,
+      "case": "all_success",
+      "exit_code": 0
+    },
+    {
+      "accepted": false,
+      "case": "checkout",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "source",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "toolchain",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "source_controls",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "observer_tests",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "mapper_tests",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "v2_gate_tests",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "staged_tests",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "budget_tests",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "native",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "hardened",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "verifier_v2",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "receipt_controls_v2",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "component_budget",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "source_map",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "profile",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "receipt_controls",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "comparison",
+      "exit_code": 1
+    },
+    {
+      "accepted": false,
+      "case": "source_after",
+      "exit_code": 1
+    }
+  ],
+  "source_map_cmp": "evidence/pon-w1-source-snapshot-20261106/security-map.json",
+  "test_logs": {
+    "mapper_tests": [
+      {
+        "accepted": true,
+        "case": "real_log",
+        "exit_code": 0
+      },
+      {
+        "accepted": false,
+        "case": "missing_named_row",
+        "exit_code": 1
+      },
+      {
+        "accepted": false,
+        "case": "duplicate_named_row",
+        "exit_code": 1
+      },
+      {
+        "accepted": false,
+        "case": "renamed_result",
+        "exit_code": 1
+      },
+      {
+        "accepted": false,
+        "case": "skipped_result",
+        "exit_code": 1
+      },
+      {
+        "accepted": false,
+        "case": "expected_failure_result",
+        "exit_code": 1
+      },
+      {
+        "accepted": false,
+        "case": "expected_failure_summary",
+        "exit_code": 1
+      },
+      {
+        "accepted": false,
+        "case": "duplicate_summary",
+        "exit_code": 1
+      }
+    ],
+    "v2_gate_tests": [
+      {
+        "accepted": true,
+        "case": "real_log",
+        "exit_code": 0
+      },
+      {
+        "accepted": false,
+        "case": "missing_named_row",
+        "exit_code": 1
+      },
+      {
+        "accepted": false,
+        "case": "duplicate_named_row",
+        "exit_code": 1
+      },
+      {
+        "accepted": false,
+        "case": "renamed_result",
+        "exit_code": 1
+      },
+      {
+        "accepted": false,
+        "case": "skipped_result",
+        "exit_code": 1
+      },
+      {
+        "accepted": false,
+        "case": "expected_failure_result",
+        "exit_code": 1
+      },
+      {
+        "accepted": false,
+        "case": "expected_failure_summary",
+        "exit_code": 1
+      },
+      {
+        "accepted": false,
+        "case": "duplicate_summary",
+        "exit_code": 1
+      }
+    ]
+  }
+}

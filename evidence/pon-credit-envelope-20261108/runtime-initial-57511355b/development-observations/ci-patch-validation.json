@@ -1,0 +1,30 @@
+{
+  "applied_bytes_equal_manual_merge": true,
+  "deleted_latest_lines": 0,
+  "patch_sha256": "7462eb97bb3c19955ec0940d6f67db53c3abe13f6b8c3a0447ef1559f964de83",
+  "receipts": [
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--check",
+        "--whitespace=error-all",
+        "/workspace/scratch/f7e62c814d9f/latest-ci.patch"
+      ],
+      "cwd": "/workspace/scratch/f7e62c814d9f/ci-merge-8d/apply-check",
+      "exit_code": 0,
+      "stage": "check"
+    },
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--whitespace=error-all",
+        "/workspace/scratch/f7e62c814d9f/latest-ci.patch"
+      ],
+      "cwd": "/workspace/scratch/f7e62c814d9f/ci-merge-8d/apply-check",
+      "exit_code": 0,
+      "stage": "apply"
+    }
+  ]
+}

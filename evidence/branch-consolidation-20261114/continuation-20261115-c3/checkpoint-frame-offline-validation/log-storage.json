@@ -1,0 +1,9 @@
+{
+  "encoding": "gzip",
+  "note": "Original stdout including trailing blank lines is preserved exactly after decompression; no log bytes were normalized.",
+  "original_filename": "memory-tests.stdout",
+  "original_sha256": "fdbc394a3e496606796e8c7dc9eb1d5106d286b8f86f3a1d57ddf5ecb769ec64",
+  "schema": "lossless-original-log-storage-v1",
+  "stored_filename": "memory-tests.stdout.gz",
+  "stored_sha256": "240007c78b3565ac036a2d13453acf2cfd2ca9b6e2a4a2e738ac7bb2a3eb05f9"
+}

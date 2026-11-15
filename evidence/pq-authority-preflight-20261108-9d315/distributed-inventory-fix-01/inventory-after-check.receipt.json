@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 0.1654087828937918,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794129046.6882522,
+  "label": "inventory-after-check",
+  "logs": {
+    "inventory-after-check.stderr.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/inventory-after-check.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "inventory-after-check.stdout.log": {
+      "bytes": 35,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/inventory-after-check.stdout.log",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    }
+  },
+  "passed": true,
+  "readback": {},
+  "started_unix_seconds": 1794129046.5228438
+}

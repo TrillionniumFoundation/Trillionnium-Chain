@@ -1,0 +1,7 @@
+
+running 2 tests
+test store::append_readback_tests::direct_append_cancellation_at_each_callback_leaves_no_partial_publication ... ok
+test store::append_readback_tests::direct_append_keeps_complete_rows_events_state_and_cold_reopen ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 1191 filtered out; finished in 2.77s
+

@@ -1,0 +1,493 @@
+{
+  "all_command_log_hashes_verified": true,
+  "commands_failed": 0,
+  "commands_not_started": 0,
+  "commands_passed": 24,
+  "commands_planned": 24,
+  "commands_recorded": 24,
+  "commands_timed_out": 0,
+  "gate_command_passes_are_not_test_passes": true,
+  "ignored_tests_not_counted_as_passed": true,
+  "launch_result": {
+    "candidate_head_after": "ed2ed1ba614edb913b22b43b49bc3c7c43a0201f",
+    "candidate_status_after": "",
+    "finished_unix_ns": 1794074806483189006,
+    "launch_log": "/home/qian-qi/work/chain-profile-metering-20261107-89df/logs/validation-source-v2.launch.log",
+    "launch_log_sha256": "41637eaf755dfd568b94d6a9fa803c18405b9841df0105560583b10046011e4c",
+    "original_head_after": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+    "original_status_after": "",
+    "returncode": 0,
+    "source_sha": "ed2ed1ba614edb913b22b43b49bc3c7c43a0201f",
+    "started_unix_ns": 1794074741967830430
+  },
+  "prior_failed_capture": {
+    "bytes": 210154,
+    "manifest_sha256": "4cf860487cf2d10ff27ab95cb3c2013a64f7bcb70ee04c80933542fa2c439abf",
+    "member_hashes_read_back": true,
+    "members": 113,
+    "path": "/home/qian-qi/work/chain-profile-metering-20261107-89df/validation-source-v1.tar.gz",
+    "review_sha256": "49552c79659eedfddf7e3c09b73c98eca285cc5e6b6da1bea25da29c7ce6b300",
+    "schema": "chain-profile-validation-archive-v1",
+    "sha256": "a693cb2d829d978865b1f8ff53f31f1306959df9968ae3adf26ce5ec2c5c82b5",
+    "source_sha": "66b4f5a735d350849267e44526be2e12f1d076b5",
+    "summary_sha256": "3cf0e4f8f9b6bdd94cd70c9e20b66db0cc393a3d6e5efeeb2bed370d68712bcf",
+    "validation_status": "FAIL"
+  },
+  "python": {
+    "ci-contract-controls": {
+      "error_or_failure_lines": [],
+      "log_sha256": "a265e4faa63ee0b34c0863e9b89e50caa77e3cc21020848489eab6d17f41f880",
+      "outcome_summaries": [
+        "OK"
+      ],
+      "run_summaries": [
+        {
+          "seconds": 4.56,
+          "tests": 103
+        }
+      ],
+      "skipped_lines": []
+    },
+    "conditional-query-bound": {
+      "error_or_failure_lines": [],
+      "log_sha256": "245cc821ea37192c9ecf7083d654282ad45b3dbafb6e9e691b84cf80942a5b76",
+      "outcome_summaries": [
+        "OK"
+      ],
+      "run_summaries": [
+        {
+          "seconds": 0.114,
+          "tests": 21
+        }
+      ],
+      "skipped_lines": []
+    },
+    "fresh-query-floor": {
+      "error_or_failure_lines": [],
+      "log_sha256": "30d1ceb574740fc2743dff06905f60741a9a393d2aa783988c29dc7233ffe335",
+      "outcome_summaries": [
+        "OK"
+      ],
+      "run_summaries": [
+        {
+          "seconds": 0.011,
+          "tests": 27
+        }
+      ],
+      "skipped_lines": []
+    },
+    "fresh-resource-transfer": {
+      "error_or_failure_lines": [],
+      "log_sha256": "68fe25ba35fc0ab707799b4c804cc2614953362f752b7678f54255493314b494",
+      "outcome_summaries": [
+        "OK"
+      ],
+      "run_summaries": [
+        {
+          "seconds": 0.037,
+          "tests": 15
+        }
+      ],
+      "skipped_lines": []
+    },
+    "grouped-python-and-native": {
+      "error_or_failure_lines": [],
+      "log_sha256": "4097392881468ef1511a6ec466264fd215a30a7e110b7b964bff449069da9c49",
+      "outcome_summaries": [
+        "OK"
+      ],
+      "run_summaries": [
+        {
+          "seconds": 2.222,
+          "tests": 210
+        }
+      ],
+      "skipped_lines": []
+    },
+    "source-integrity-controls": {
+      "error_or_failure_lines": [],
+      "log_sha256": "30b4ed06dd9f533fb644d6f632a8a7fa51ea241aa11a44918ae588996495d52d",
+      "outcome_summaries": [
+        "OK"
+      ],
+      "run_summaries": [
+        {
+          "seconds": 1.903,
+          "tests": 43
+        }
+      ],
+      "skipped_lines": []
+    }
+  },
+  "runner_bindings": {
+    "artifacts": {
+      "authority": {
+        "bytes": 8147832,
+        "executable": true,
+        "exists": true,
+        "path": "/home/qian-qi/work/chain-profile-metering-20261107-89df/target-canonical-v1/release/examples/grouped_verification_authority_v0",
+        "sha256": "a9ec278ee0896fa599d33dade2c7807edfe6c62162460977b42a3515d828acc8"
+      },
+      "fresh": {
+        "bytes": 7807800,
+        "executable": true,
+        "exists": true,
+        "path": "/home/qian-qi/work/chain-profile-metering-20261107-89df/target-canonical-v1/release/examples/grouped_fresh_admission_v0",
+        "sha256": "f09a620b2adf9cd6c0df062e80f5e4083c27c78b1247b3fe06698e9be7a0e0ae"
+      },
+      "grouped": {
+        "bytes": 771152,
+        "executable": true,
+        "exists": true,
+        "path": "/home/qian-qi/work/chain-profile-metering-20261107-89df/target-canonical-v1/release/examples/pon_routed_int257_grouped",
+        "sha256": "0a1acf80a079e1d3523431a2a38457acdb375701d87cd081d996647f96fa446c"
+      }
+    },
+    "cargo_target_directory": "/home/qian-qi/work/chain-profile-metering-20261107-89df/target-canonical-v1",
+    "status": "PASS"
+  },
+  "rust": {
+    "native-crypto-all-targets": {
+      "ignored_lines": [],
+      "log_sha256": "6ee15cab579f45cf616cf509e74a2cd8d6df4b4f96947067a27067be76b9ab1a",
+      "test_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 160,
+          "seconds": 1.53,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 5,
+          "seconds": 0.12,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4,
+          "seconds": 0.0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 5,
+          "seconds": 0.0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "seconds": 0.0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "seconds": 0.0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4,
+          "seconds": 0.07,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 3,
+          "seconds": 0.01,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 5,
+          "seconds": 0.05,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "seconds": 0.0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "seconds": 0.0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2,
+          "seconds": 0.0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 3,
+          "seconds": 0.01,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 7,
+          "seconds": 0.05,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 9,
+          "seconds": 0.01,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 9,
+          "seconds": 0.03,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "seconds": 0.0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 9,
+          "seconds": 0.03,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "seconds": 0.0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 10,
+          "seconds": 0.04,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "seconds": 0.0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "seconds": 0.0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2,
+          "seconds": 0.0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 6,
+          "seconds": 0.04,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "seconds": 0.0,
+          "status": "ok"
+        }
+      ],
+      "totals": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 243
+      }
+    },
+    "native-fresh-admission": {
+      "ignored_lines": [],
+      "log_sha256": "aa8a72b5bf5b70f50120bde77c2f003a80b63f6aa12dd41cd97da1097e1b1c08",
+      "test_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 14,
+          "seconds": 1.07,
+          "status": "ok"
+        }
+      ],
+      "totals": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 14
+      }
+    },
+    "native-header-binding": {
+      "ignored_lines": [],
+      "log_sha256": "151f5711b301c6dc203a34780b2b99337ee032519948e5d62ab73fb08238b6c7",
+      "test_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "seconds": 0.05,
+          "status": "ok"
+        }
+      ],
+      "totals": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1
+      }
+    },
+    "native-verification-authority": {
+      "ignored_lines": [],
+      "log_sha256": "93e4fd2a7199b5ced34cd3d7f44f1e490f0b3e86458f11c42e495d97ddd74399",
+      "test_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 18,
+          "seconds": 0.51,
+          "status": "ok"
+        }
+      ],
+      "totals": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 18
+      }
+    }
+  },
+  "schema": "chain-profile-validation-readback-v1",
+  "source_after": {
+    "driver_sha256": "f32c38ce97270511783051b48b1249c7ce0e93af0c4e728077cdddfaeef64b64",
+    "source": {
+      "base": null,
+      "candidate": "ed2ed1ba614edb913b22b43b49bc3c7c43a0201f",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "ed2ed1ba614edb913b22b43b49bc3c7c43a0201f",
+      "tested_tree": "f272a84a69b034889413ab901793dffe1a5b591b",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1045516388,
+      "tracked_entries": 10970,
+      "tracked_worktree_verified": true
+    },
+    "status": "PASS"
+  },
+  "source_before": {
+    "driver_sha256": "f32c38ce97270511783051b48b1249c7ce0e93af0c4e728077cdddfaeef64b64",
+    "source": {
+      "base": null,
+      "candidate": "ed2ed1ba614edb913b22b43b49bc3c7c43a0201f",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "ed2ed1ba614edb913b22b43b49bc3c7c43a0201f",
+      "tested_tree": "f272a84a69b034889413ab901793dffe1a5b591b",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1045516388,
+      "tracked_entries": 10970,
+      "tracked_worktree_verified": true
+    },
+    "status": "PASS"
+  },
+  "source_sha": "ed2ed1ba614edb913b22b43b49bc3c7c43a0201f",
+  "status": "PASS",
+  "validation_job": "1a1b7300022-12894-98b"
+}

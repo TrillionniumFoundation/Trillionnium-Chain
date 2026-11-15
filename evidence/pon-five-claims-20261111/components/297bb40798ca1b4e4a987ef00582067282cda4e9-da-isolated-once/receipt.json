@@ -1,0 +1,109 @@
+{
+  "argv": [
+    "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_data_availability-64b25e344716c90a",
+    "--exact",
+    "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "assertions_changed": false,
+  "binary_after": {
+    "bytes": 16411728,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_data_availability-64b25e344716c90a",
+    "sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f"
+  },
+  "binary_before": {
+    "bytes": 16411728,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_data_availability-64b25e344716c90a",
+    "sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f"
+  },
+  "binary_stable": true,
+  "combined_stdout_stderr": {
+    "bytes": 854,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-isolated-once/native-combined.log",
+    "sha256": "c7ab0bca0f9fa4e4e9e704e7b4a920db142186b08d3451dbb44500c7d036a93b"
+  },
+  "counts": {
+    "failed": 1,
+    "filtered_out": 740,
+    "ignored": 0,
+    "measured": 0,
+    "passed": 0
+  },
+  "cwd": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability",
+  "deadline_changed": false,
+  "elapsed_ns": 24132047185,
+  "exit_code": 101,
+  "native_execution": {
+    "build_provenance_verified_by_observer": false,
+    "child_reaped": true,
+    "descendant_execution_verified": false,
+    "dispatch_object": {
+      "bytes": 16411728,
+      "device": 2050,
+      "inode": 56425488,
+      "sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f"
+    },
+    "dispatch_object_after_sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f",
+    "entire_lifetime_image_verified": false,
+    "expected_sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f",
+    "libraries_sha256": null,
+    "loaded_memory_sha256": null,
+    "model_closure_sha256": null,
+    "native_exit_code": 101,
+    "observation": {
+      "bytes": 16411728,
+      "device": 2050,
+      "exe_link": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_data_availability-64b25e344716c90a",
+      "executable_opened_monotonic_ns": 1472803662110820,
+      "hash_finished_monotonic_ns": 1472803719125762,
+      "inode": 56425488,
+      "observation_started_monotonic_ns": 1472803662022350,
+      "process": {
+        "parent_pid": 124532,
+        "pid": 124796,
+        "start_ticks": 147280366
+      },
+      "process_binding_finished_monotonic_ns": 1472803662152445,
+      "sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f",
+      "status": "OBSERVED"
+    },
+    "owned_pid": 124796,
+    "performance_measurement": false,
+    "requested_path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_data_availability-64b25e344716c90a",
+    "schema": "trnm-pinned-native-process-v1",
+    "status": "PINNED_AND_OBSERVED"
+  },
+  "performance_measurement": false,
+  "scope": "one isolated diagnostic; full-suite failure remains",
+  "source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "source_after": {
+    "base": null,
+    "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2615077043,
+    "tracked_entries": 28807,
+    "tracked_worktree_verified": true
+  },
+  "source_before": {
+    "base": null,
+    "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2615077043,
+    "tracked_entries": 28807,
+    "tracked_worktree_verified": true
+  },
+  "source_stable": true,
+  "status": "diagnostic_failed",
+  "whole_suite_passed": false
+}

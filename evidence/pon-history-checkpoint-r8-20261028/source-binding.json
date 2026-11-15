@@ -1,0 +1,34 @@
+{
+  "schema": "history-checkpoint-r8-source-binding-v1",
+  "measured_base_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+  "measured_base_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+  "measurement_form": "base Git commit plus exact per-command source.diff; not a clean committed-source build",
+  "candidate_rust_diff_sha256": "6cfa79e14d3278b8d8eac1616df6fec3def19da47b019b34af953f6d6867c146",
+  "candidate_rust_files": {
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs": {
+      "sha256": "4274d3c6417c1df6261701dfa9f1ecfd46a3b901125a47514778a1448c62a123",
+      "git_blob": "20299f1b6d54d72ca8f1c1370117e2091f28b790"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs": {
+      "sha256": "a46b7ce63ae449080258ce853922dcbd886474eac2014342e4d4daf23751c3d7",
+      "git_blob": "79f7dd3422df8cd997ea59b6c237f1c901f3c3ee"
+    }
+  },
+  "build_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+  "all_1075_native_inputs_still_match_build": true,
+  "binary_sha256": "3aae89ff283f8329625363bbfa95b366b36492e0be5de07354a6a9b696719db4",
+  "cargo_lock_sha256": "5025f35db1903b5670cf03d84b2b88ef93317963340964713995613f99364eb7",
+  "features": [
+    "default"
+  ],
+  "pure_pon_relation_and_chainweight_unchanged": true,
+  "profile_refill_deadlines_and_inputs_unchanged": true,
+  "resource_callbacks_are_fault_injection": true,
+  "real_fixed_host_revocation_measured": false,
+  "fixed_host_campaign_rerun": false,
+  "crash_debt_reconciliation_complete": false,
+  "wp2b_closed": false,
+  "public_network_ready": false,
+  "independent_accepted": false,
+  "production_activation": false
+}

@@ -1,0 +1,34 @@
+{
+  "artifact_id": 13578623077,
+  "preserved_observer_errors": [
+    "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578623077/source.json'"
+  ],
+  "download_exit": 0,
+  "expected_zip_bytes": 45071166,
+  "recorded_zip_bytes": 45071166,
+  "actual_zip_bytes": 45071166,
+  "zip_sha256": "042b5c6b17d7efa7f2ff0d6e350179cdc7d3890db7d2a7a73e4b89f07334ac52",
+  "expected_digest": "sha256:042b5c6b17d7efa7f2ff0d6e350179cdc7d3890db7d2a7a73e4b89f07334ac52",
+  "download_stderr": "",
+  "errors": [],
+  "source_binding": {
+    "kind": "head",
+    "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+    "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+    "before_after_equal": true,
+    "resolver_context_equal": true,
+    "source_before_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578623077/source-before.json",
+    "source_before_sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa"
+  },
+  "manifests": [
+    {
+      "path": "campaign/manifest.json",
+      "schema": "pon-w1-rank-batch-execution-v5",
+      "result": "COMPLETE_COMPONENT_OBSERVATION",
+      "error": null,
+      "observation_denominator": 69,
+      "artifact_file_hashes_verified": 209,
+      "nonzero_or_timedout_observations": []
+    }
+  ]
+}

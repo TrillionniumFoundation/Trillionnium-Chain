@@ -1,0 +1,13 @@
+    Finished `release` profile [optimized] target(s) in 0.08s
+     Running unittests src/lib.rs (/home/runner/work/_temp/target-priority/release/deps/trnm_pon_node-55ae308ca29f5ac1)
+
+running 1 test
+test store::authenticated_replay_tests::authenticated_replay_ack_rechecks_old_gap_and_pending_bytes_after_reservation ... ok
+
+successes:
+
+successes:
+    store::authenticated_replay_tests::authenticated_replay_ack_rechecks_old_gap_and_pending_bytes_after_reservation
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1185 filtered out; finished in 0.04s
+

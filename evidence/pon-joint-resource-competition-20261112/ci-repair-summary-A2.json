@@ -1,0 +1,196 @@
+{
+  "A2": "17449baa42429ac98b55c100b1c523ff0abe40d0",
+  "all_expected_outcomes_observed": true,
+  "canonical_head_after": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "canonical_head_unchanged": true,
+  "canonical_source_writes_performed": false,
+  "common_config_before_add_attested": false,
+  "common_config_sha256_after": "4858d7294d5968678ebdbe69c0b3d7be61bdfaff293fc27f2c44b8498f421859",
+  "common_config_sha256_before": "4858d7294d5968678ebdbe69c0b3d7be61bdfaff293fc27f2c44b8498f421859",
+  "common_config_unchanged_during_routine": true,
+  "controller_error": null,
+  "development_controls": [
+    {
+      "expectation_met": true,
+      "name": "preflight-before-edits"
+    },
+    {
+      "expectation_met": true,
+      "name": "source-before-repair"
+    },
+    {
+      "expectation_met": true,
+      "name": "focused-new-negative-method"
+    },
+    {
+      "expectation_met": true,
+      "name": "actual-ci"
+    },
+    {
+      "expectation_met": true,
+      "name": "current-corpus"
+    }
+  ],
+  "ended_utc": "2026-11-12T08:22:42.638184+00:00",
+  "existing_169_tests_unchanged": true,
+  "native_or_formal_execution_source": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "operation_records": [
+    {
+      "exit_code": 0,
+      "name": "canonical-head-before",
+      "record": "operations/canonical-head-before/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "repair-head-before",
+      "record": "operations/repair-head-before/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "repair-branch-before",
+      "record": "operations/repair-branch-before/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "repair-status-before",
+      "record": "operations/repair-status-before/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "common-directory",
+      "record": "operations/common-directory/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "initial-index",
+      "record": "operations/initial-index/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "initial-tree",
+      "record": "operations/initial-tree/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "unchanged-test-before",
+      "record": "operations/unchanged-test-before/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "approved-diff-paths",
+      "record": "operations/approved-diff-paths/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "approved-diff",
+      "record": "operations/approved-diff/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "unchanged-other-ci",
+      "record": "operations/unchanged-other-ci/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "diff-whitespace",
+      "record": "operations/diff-whitespace/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "canonical-head-before-commit",
+      "record": "operations/canonical-head-before-commit/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "stage-approved-delta",
+      "record": "operations/stage-approved-delta/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "staged-paths",
+      "record": "operations/staged-paths/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "staged-preflight",
+      "record": "operations/staged-preflight/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "freeze-a2",
+      "record": "operations/freeze-a2/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "a2-head",
+      "record": "operations/a2-head/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "a2-tree",
+      "record": "operations/a2-tree/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "a2-parent",
+      "record": "operations/a2-parent/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "a2-delta",
+      "record": "operations/a2-delta/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "a2-clean",
+      "record": "operations/a2-clean/record.json",
+      "state": "completed"
+    },
+    {
+      "exit_code": 0,
+      "name": "canonical-head-final",
+      "record": "operations/canonical-head-final/record.json",
+      "state": "completed"
+    }
+  ],
+  "qualification": "HOLD_NO_GO",
+  "release_ready": false,
+  "schema": "trnm-daa-ci-guard-repair-summary-v1",
+  "scope_only_two_files": true,
+  "source_A": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "started_utc": "2026-11-12T08:20:22.016878+00:00",
+  "status": "PASS",
+  "validation_complete": true,
+  "validation_observed": 7,
+  "validation_planned": 7,
+  "validation_records": [
+    "validation/source-before/record.json",
+    "validation/preflight-audit/record.json",
+    "validation/ci-contract-negatives/record.json",
+    "validation/ci-contract-current/record.json",
+    "validation/pq-corpus-current/record.json",
+    "validation/repository-and-markdown-links/record.json",
+    "validation/source-after/record.json"
+  ]
+}

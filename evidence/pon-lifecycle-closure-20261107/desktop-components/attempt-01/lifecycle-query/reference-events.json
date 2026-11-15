@@ -1,0 +1,673 @@
+[
+  {
+    "details": {
+      "C": 8,
+      "M": 10,
+      "Q": 1,
+      "declared_before_this_owner_first_call": true
+    },
+    "event_hash": "a1ca9ec24617aead7bebee4ff425d157e6a315fdec77cd218c1331739c9c0f24",
+    "kind": "open-reference-scope",
+    "phase": "classical-prefix",
+    "previous": "0000000000000000000000000000000000000000000000000000000000000000",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 1
+  },
+  {
+    "details": {
+      "actor_label": "producer-terminal-query",
+      "context_digest": "d58639eee1e0fc73e0458aec64fc39409362fa56e93d5ef8face218769fcd870",
+      "marked": false,
+      "ordered_root": "860c15a05ad5d292c245798e279be3cbbff84311370f8ea06905b8304ca1f762",
+      "resource_kind": "reference-full-value-terminal-call",
+      "ticket": "9ae4af9f0bf66772c9ccc41a52f99f5f0d8f2fc4ddb82c620913431f55a8d685"
+    },
+    "event_hash": "be8e70d4e6c360ccb0860cc3876fa3588d1d198100052c35229d98a1788c92a9",
+    "kind": "actual-terminal-sha256",
+    "phase": "classical-prefix",
+    "previous": "a1ca9ec24617aead7bebee4ff425d157e6a315fdec77cd218c1331739c9c0f24",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 2
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "output_index": 0,
+      "packet_sha256": "4e1a26af41a0695604ccef7c184c2bdda858d871062ffcb9f338ce8f1ba86d93"
+    },
+    "event_hash": "aea73d3c9a8e4fab8cb231ecc190bf34633be04c5e43e4f5d063830867818bbd",
+    "kind": "complete-output-attempt",
+    "phase": "classical-prefix",
+    "previous": "be8e70d4e6c360ccb0860cc3876fa3588d1d198100052c35229d98a1788c92a9",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 3
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "adds_query_charge": 0,
+      "origin_sequence": 2
+    },
+    "event_hash": "5452fa2f93ea854602ed916052d1f92e7d92bc09ecdc43874ac6d1f4d438c15a",
+    "kind": "shared-cache-read",
+    "phase": "classical-prefix",
+    "previous": "aea73d3c9a8e4fab8cb231ecc190bf34633be04c5e43e4f5d063830867818bbd",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 4
+  },
+  {
+    "details": {
+      "accepted": false,
+      "actor_label": "publisher",
+      "credit_added": 0,
+      "full_native_units_checked": 1,
+      "output_index": 0,
+      "packet_sha256": "4e1a26af41a0695604ccef7c184c2bdda858d871062ffcb9f338ce8f1ba86d93",
+      "reason": "AGGREGATE_TARGET"
+    },
+    "event_hash": "54482cbf835d2239dd88fb0e0dd41028f47c2b1b41bd4165cf9764ee667cc796",
+    "kind": "complete-output-result",
+    "phase": "classical-prefix",
+    "previous": "5452fa2f93ea854602ed916052d1f92e7d92bc09ecdc43874ac6d1f4d438c15a",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 5
+  },
+  {
+    "details": {
+      "actor_label": "producer-terminal-query",
+      "context_digest": "e5c4f0fd72aedea6708f7b09cb0234d0750464caa4532fb38fa22578cdf6fce0",
+      "marked": false,
+      "ordered_root": "0a09a2fc4c93b0e9119e56ed2b2f86919bdfb209b87e8b081b4cd2682a8d0b31",
+      "resource_kind": "reference-full-value-terminal-call",
+      "ticket": "a9b57897b6d328a05a3b672965952ddf14abf5cd5f930bc5630840c0f877490f"
+    },
+    "event_hash": "e185d30993eeabcf96329ffd316eb0a51f7b65bb45ca7fec23f2c4163be04c43",
+    "kind": "actual-terminal-sha256",
+    "phase": "classical-prefix",
+    "previous": "54482cbf835d2239dd88fb0e0dd41028f47c2b1b41bd4165cf9764ee667cc796",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 6
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "output_index": 1,
+      "packet_sha256": "1464f1b0da0e1b57a8af33d92112aba149e824a9012e5f9e4c0df5dc8f9e8f67"
+    },
+    "event_hash": "5c12f1c6a2e6b9d323db7153ce4ce873b7b2a034062fee6e6d8b73940603440e",
+    "kind": "complete-output-attempt",
+    "phase": "classical-prefix",
+    "previous": "e185d30993eeabcf96329ffd316eb0a51f7b65bb45ca7fec23f2c4163be04c43",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 7
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "adds_query_charge": 0,
+      "origin_sequence": 6
+    },
+    "event_hash": "2376f80ee3516dc5e74a392d30fc6707ac65d9557e5c5d6abb9150af9d8711cb",
+    "kind": "shared-cache-read",
+    "phase": "classical-prefix",
+    "previous": "5c12f1c6a2e6b9d323db7153ce4ce873b7b2a034062fee6e6d8b73940603440e",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 8
+  },
+  {
+    "details": {
+      "accepted": false,
+      "actor_label": "publisher",
+      "credit_added": 0,
+      "full_native_units_checked": 1,
+      "output_index": 1,
+      "packet_sha256": "1464f1b0da0e1b57a8af33d92112aba149e824a9012e5f9e4c0df5dc8f9e8f67",
+      "reason": "AGGREGATE_TARGET"
+    },
+    "event_hash": "539edc80b45c4b1d693f0cb6f375986006353ad609a5e53f2aacbff9fd44d1b2",
+    "kind": "complete-output-result",
+    "phase": "classical-prefix",
+    "previous": "2376f80ee3516dc5e74a392d30fc6707ac65d9557e5c5d6abb9150af9d8711cb",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 9
+  },
+  {
+    "details": {
+      "actor_label": "producer-terminal-query",
+      "context_digest": "9cf1bdc08c5838b60d7456ce9a84e0fc5760654d79bbad2461b04fb31194d65a",
+      "marked": false,
+      "ordered_root": "5b64b8631507a861b24cc0cc8a652e107d50853b0088cb57c8f73b91c8e08027",
+      "resource_kind": "reference-full-value-terminal-call",
+      "ticket": "ef569532f8a970fd35426d41191ac8fd101bfd38e1d2a75ceeec6cb55ca16bb0"
+    },
+    "event_hash": "c2a80a4eb5c095b740b090d1ae69df83a765d27242af326e02038349384d7732",
+    "kind": "actual-terminal-sha256",
+    "phase": "classical-prefix",
+    "previous": "539edc80b45c4b1d693f0cb6f375986006353ad609a5e53f2aacbff9fd44d1b2",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 10
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "output_index": 2,
+      "packet_sha256": "b54f2bc0a843221a3336a195f88a2a9efa2a8ffa8775e44c9253a8d8d1e63965"
+    },
+    "event_hash": "122a6937d4c486da59021b1b5c76e9d74f69004c0710f7f1d5ed1c47fd5630e3",
+    "kind": "complete-output-attempt",
+    "phase": "classical-prefix",
+    "previous": "c2a80a4eb5c095b740b090d1ae69df83a765d27242af326e02038349384d7732",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 11
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "adds_query_charge": 0,
+      "origin_sequence": 10
+    },
+    "event_hash": "b8941d375622acd8c00fd59b0f43c316ad9f3016360d87f3aabd27f056d48630",
+    "kind": "shared-cache-read",
+    "phase": "classical-prefix",
+    "previous": "122a6937d4c486da59021b1b5c76e9d74f69004c0710f7f1d5ed1c47fd5630e3",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 12
+  },
+  {
+    "details": {
+      "accepted": false,
+      "actor_label": "publisher",
+      "credit_added": 0,
+      "full_native_units_checked": 1,
+      "output_index": 2,
+      "packet_sha256": "b54f2bc0a843221a3336a195f88a2a9efa2a8ffa8775e44c9253a8d8d1e63965",
+      "reason": "AGGREGATE_TARGET"
+    },
+    "event_hash": "b76093d4c7574587b8b302d78378f1f3a0cc472d6985d459b0b68a63e308be9f",
+    "kind": "complete-output-result",
+    "phase": "classical-prefix",
+    "previous": "b8941d375622acd8c00fd59b0f43c316ad9f3016360d87f3aabd27f056d48630",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 13
+  },
+  {
+    "details": {
+      "actor_label": "producer-terminal-query",
+      "context_digest": "75efde0189f8fc25dc5d7bc303bafa5bbcefaed89937fb6957c5a69078f8588f",
+      "marked": false,
+      "ordered_root": "ed15e0e3024b60113caaba7d16fed7cb8d2110ec5908aea049154e87db2ff381",
+      "resource_kind": "reference-full-value-terminal-call",
+      "ticket": "709363df5534f86d5f190dc250bda3f7015b12434698dc01b6543a1165ffacd3"
+    },
+    "event_hash": "779813da26287220b300495c4f07a30e8b60fd2278b3cef000c428f0717a7f45",
+    "kind": "actual-terminal-sha256",
+    "phase": "classical-prefix",
+    "previous": "b76093d4c7574587b8b302d78378f1f3a0cc472d6985d459b0b68a63e308be9f",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 14
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "output_index": 3,
+      "packet_sha256": "28705b46bbcd5634f11722d50b579bc7fbb67290b2657104f990723e54fb09fc"
+    },
+    "event_hash": "fc73f719f704259408399fee6d2f7a292ea6ae1ede76fe805e209f3e02c2d2a5",
+    "kind": "complete-output-attempt",
+    "phase": "classical-prefix",
+    "previous": "779813da26287220b300495c4f07a30e8b60fd2278b3cef000c428f0717a7f45",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 15
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "adds_query_charge": 0,
+      "origin_sequence": 14
+    },
+    "event_hash": "3881cfaf571c755fae1ff144d3449d2e29fccb94d6337054cf32d17af617ee44",
+    "kind": "shared-cache-read",
+    "phase": "classical-prefix",
+    "previous": "fc73f719f704259408399fee6d2f7a292ea6ae1ede76fe805e209f3e02c2d2a5",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 16
+  },
+  {
+    "details": {
+      "accepted": false,
+      "actor_label": "publisher",
+      "credit_added": 0,
+      "full_native_units_checked": 1,
+      "output_index": 3,
+      "packet_sha256": "28705b46bbcd5634f11722d50b579bc7fbb67290b2657104f990723e54fb09fc",
+      "reason": "AGGREGATE_TARGET"
+    },
+    "event_hash": "edb99dafca88bfd3c1e149906bb72f83d93cd430c4d50374f49e3c5110503a0d",
+    "kind": "complete-output-result",
+    "phase": "classical-prefix",
+    "previous": "3881cfaf571c755fae1ff144d3449d2e29fccb94d6337054cf32d17af617ee44",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 17
+  },
+  {
+    "details": {
+      "actor_label": "producer-terminal-query",
+      "context_digest": "f2993f4a318ec2554ec629d76a3c4b423c65647975e5a3a01d108b504a1eba26",
+      "marked": false,
+      "ordered_root": "5b53c538e42c6a94b5cb535d373d385773716df7bf8f118a66d3201c6babc408",
+      "resource_kind": "reference-full-value-terminal-call",
+      "ticket": "6f646a6353b5df1ebc6295ebd799d05485917872a6539a60a3b91b7b314f8872"
+    },
+    "event_hash": "5e882a7c6266096a6514d905fde14380e4a8404be6b112b474dfe08acae14db2",
+    "kind": "actual-terminal-sha256",
+    "phase": "classical-prefix",
+    "previous": "edb99dafca88bfd3c1e149906bb72f83d93cd430c4d50374f49e3c5110503a0d",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 18
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "output_index": 4,
+      "packet_sha256": "d73d0042c67d44cfb57337b1868eaebcde4bc9770cdccce1e2c96396e1f50572"
+    },
+    "event_hash": "69a427ce6cbb82c699eb56bbaf4434bf831021c39f30a5b9170afd33dfffe25f",
+    "kind": "complete-output-attempt",
+    "phase": "classical-prefix",
+    "previous": "5e882a7c6266096a6514d905fde14380e4a8404be6b112b474dfe08acae14db2",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 19
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "adds_query_charge": 0,
+      "origin_sequence": 18
+    },
+    "event_hash": "126dc67bb7798b74b797a0b58a8974696d3490d176f1db1551dfcbe28024f93b",
+    "kind": "shared-cache-read",
+    "phase": "classical-prefix",
+    "previous": "69a427ce6cbb82c699eb56bbaf4434bf831021c39f30a5b9170afd33dfffe25f",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 20
+  },
+  {
+    "details": {
+      "accepted": false,
+      "actor_label": "publisher",
+      "credit_added": 0,
+      "full_native_units_checked": 1,
+      "output_index": 4,
+      "packet_sha256": "d73d0042c67d44cfb57337b1868eaebcde4bc9770cdccce1e2c96396e1f50572",
+      "reason": "AGGREGATE_TARGET"
+    },
+    "event_hash": "5ed133ddc8135e8affb62ade0aab6daffe710556c99b841b492fb4aec36ed35b",
+    "kind": "complete-output-result",
+    "phase": "classical-prefix",
+    "previous": "126dc67bb7798b74b797a0b58a8974696d3490d176f1db1551dfcbe28024f93b",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 21
+  },
+  {
+    "details": {
+      "actor_label": "producer-terminal-query",
+      "context_digest": "f9c713ac2bfc35afcdd49d398e87e06c51e98e6591c4a046669235e23278853e",
+      "marked": false,
+      "ordered_root": "48df91c7e7115deb2515e852c9e4ba081201d1e9f2d4304238da4ca88fdbc67d",
+      "resource_kind": "reference-full-value-terminal-call",
+      "ticket": "663bb495fc3ddc8a7a523a2c62260a08e92175e11a14631821ce4b702fe115a1"
+    },
+    "event_hash": "b9ab22f0bcc46bd905f668c7f6ca814bab37465f8f53f3d53d638abd09a1ccc9",
+    "kind": "actual-terminal-sha256",
+    "phase": "classical-prefix",
+    "previous": "5ed133ddc8135e8affb62ade0aab6daffe710556c99b841b492fb4aec36ed35b",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 22
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "output_index": 5,
+      "packet_sha256": "33daaf81ecd4f8715f86074f7643ff4cc7911e75e49a71feeaf3b88898d194e8"
+    },
+    "event_hash": "3418ac12c09d745c0a31cd80eaef60cdb48f6c03e465600ecc2aebf800979c33",
+    "kind": "complete-output-attempt",
+    "phase": "classical-prefix",
+    "previous": "b9ab22f0bcc46bd905f668c7f6ca814bab37465f8f53f3d53d638abd09a1ccc9",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 23
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "adds_query_charge": 0,
+      "origin_sequence": 22
+    },
+    "event_hash": "d0b2e1bbc758f339d565b6e3b092bae6a36e6233cb4ffb79b98f0a43b041f251",
+    "kind": "shared-cache-read",
+    "phase": "classical-prefix",
+    "previous": "3418ac12c09d745c0a31cd80eaef60cdb48f6c03e465600ecc2aebf800979c33",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 24
+  },
+  {
+    "details": {
+      "accepted": false,
+      "actor_label": "publisher",
+      "credit_added": 0,
+      "full_native_units_checked": 1,
+      "output_index": 5,
+      "packet_sha256": "33daaf81ecd4f8715f86074f7643ff4cc7911e75e49a71feeaf3b88898d194e8",
+      "reason": "AGGREGATE_TARGET"
+    },
+    "event_hash": "66d85a27dc389b795a78ce8d572a8b271c217551355db562f1417b8ebd08d158",
+    "kind": "complete-output-result",
+    "phase": "classical-prefix",
+    "previous": "d0b2e1bbc758f339d565b6e3b092bae6a36e6233cb4ffb79b98f0a43b041f251",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 25
+  },
+  {
+    "details": {
+      "actor_label": "producer-terminal-query",
+      "context_digest": "4a872dbc9dddbd7f84bdca233543de5b8fd6a70345bbeaf968768c52e79a986d",
+      "marked": true,
+      "ordered_root": "bdb4a7a1a7ee21ce46cdf92243ecebdc1be659c2186f63882f37fb1d31a9f429",
+      "resource_kind": "reference-full-value-terminal-call",
+      "ticket": "0a7b4fe827311b7f684d4353122074e1402af72a35e86465f6e2fa47d0cc0745"
+    },
+    "event_hash": "c75e4535d20805f5e2140132ae043712680302ac6c36e85b0d63e49e4ce0e0b7",
+    "kind": "actual-terminal-sha256",
+    "phase": "classical-prefix",
+    "previous": "66d85a27dc389b795a78ce8d572a8b271c217551355db562f1417b8ebd08d158",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 26
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "output_index": 6,
+      "packet_sha256": "3ef1ec9af68deca7d3144ededb83a6b9037a296c454cffa30eef5a01daab2ba8"
+    },
+    "event_hash": "5b760e9928f7d823dbb0e0297d9ccaa8e156d63c5df4a1ca081a16cfa6fb2354",
+    "kind": "complete-output-attempt",
+    "phase": "classical-prefix",
+    "previous": "c75e4535d20805f5e2140132ae043712680302ac6c36e85b0d63e49e4ce0e0b7",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 27
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "adds_query_charge": 0,
+      "origin_sequence": 26
+    },
+    "event_hash": "445b883e113dbfff097c1bbb1bd73ab3de20a131aad3b677523acebf72e1ae57",
+    "kind": "shared-cache-read",
+    "phase": "classical-prefix",
+    "previous": "5b760e9928f7d823dbb0e0297d9ccaa8e156d63c5df4a1ca081a16cfa6fb2354",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 28
+  },
+  {
+    "details": {
+      "accepted": true,
+      "actor_label": "publisher",
+      "credit_added": 16,
+      "full_native_units_checked": 1,
+      "identity": "6deeb989a375408e491eee9c878777d14a3deaa2ae2c6fab8f51bac60bc796f9",
+      "output_index": 6,
+      "packet_sha256": "3ef1ec9af68deca7d3144ededb83a6b9037a296c454cffa30eef5a01daab2ba8",
+      "reason": "VALID_MU1"
+    },
+    "event_hash": "33179b41be5d7b90a17b5f8cbdc57f94e8f0b0edbc0b16967f314271f4e1dc39",
+    "kind": "complete-output-result",
+    "phase": "classical-prefix",
+    "previous": "445b883e113dbfff097c1bbb1bd73ab3de20a131aad3b677523acebf72e1ae57",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 29
+  },
+  {
+    "details": {
+      "actor_label": "producer-terminal-query",
+      "context_digest": "71073a54539237caebcdfa05708eaafcedf90db460323fb867d81c05b4193ba3",
+      "marked": true,
+      "ordered_root": "321a7312297ff339d6cad037c9756c260303ed72430fab365efb44b192e9cfd1",
+      "resource_kind": "reference-full-value-terminal-call",
+      "ticket": "01cc918d54ca6f8d7a97aba65ebbb6f044596ffd22622f4bb8cf084e222975c4"
+    },
+    "event_hash": "1164f362042bf94b1612d785877f00578fa912ff485555947a2ee224cc9c70f8",
+    "kind": "actual-terminal-sha256",
+    "phase": "classical-prefix",
+    "previous": "33179b41be5d7b90a17b5f8cbdc57f94e8f0b0edbc0b16967f314271f4e1dc39",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 30
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "output_index": 7,
+      "packet_sha256": "31de6f0e1084325f4be8b4a4dafc3ab67eb9c2213bc027f9d57b0fb8767d9a9b"
+    },
+    "event_hash": "e244094289a257b3cf4f104d8f925993b81fbb0005995e0328a3aa190b1ce95f",
+    "kind": "complete-output-attempt",
+    "phase": "classical-prefix",
+    "previous": "1164f362042bf94b1612d785877f00578fa912ff485555947a2ee224cc9c70f8",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 31
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "adds_query_charge": 0,
+      "origin_sequence": 30
+    },
+    "event_hash": "d12b327454c2152c41a893d051a6bf3bc02d99c47d9be7134ee3baad059319e6",
+    "kind": "shared-cache-read",
+    "phase": "classical-prefix",
+    "previous": "e244094289a257b3cf4f104d8f925993b81fbb0005995e0328a3aa190b1ce95f",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 32
+  },
+  {
+    "details": {
+      "accepted": true,
+      "actor_label": "publisher",
+      "credit_added": 16,
+      "full_native_units_checked": 1,
+      "identity": "77cd5c88760cb747ea1d84bc556032ac0afd071b786fddfb94d9915732f66e69",
+      "output_index": 7,
+      "packet_sha256": "31de6f0e1084325f4be8b4a4dafc3ab67eb9c2213bc027f9d57b0fb8767d9a9b",
+      "reason": "VALID_MU1"
+    },
+    "event_hash": "fc0f50fac695878b4542f6b91c96f9c1027f75f89c3cc71eadd4780cfb8610f4",
+    "kind": "complete-output-result",
+    "phase": "classical-prefix",
+    "previous": "d12b327454c2152c41a893d051a6bf3bc02d99c47d9be7134ee3baad059319e6",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 33
+  },
+  {
+    "details": {
+      "actual_quantum_query_observed": false,
+      "world_first_coherent_query_attested": false
+    },
+    "event_hash": "f4346866afd942c5eedd32fee3e3fa2c23b6fd59d95e26dd3a34a760618d9149",
+    "kind": "irreversible-shared-phase-barrier",
+    "phase": "post-prefix",
+    "previous": "fc0f50fac695878b4542f6b91c96f9c1027f75f89c3cc71eadd4780cfb8610f4",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 34
+  },
+  {
+    "details": {
+      "actor_label": "public-helper-cache-transfer",
+      "adds_query_charge": 0,
+      "origin_sequence": 26
+    },
+    "event_hash": "759b67becfa9e465c6b0be0f54dbf99522ac775cc01de6953bdc14b788d95193",
+    "kind": "shared-cache-read",
+    "phase": "post-prefix",
+    "previous": "f4346866afd942c5eedd32fee3e3fa2c23b6fd59d95e26dd3a34a760618d9149",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 35
+  },
+  {
+    "details": {
+      "actor_label": "helper-republication",
+      "output_index": 8,
+      "packet_sha256": "3ef1ec9af68deca7d3144ededb83a6b9037a296c454cffa30eef5a01daab2ba8"
+    },
+    "event_hash": "142b4cb3cd4a25ae3f4209721ca58c1aff90624c37408aad4c11b738104e67a5",
+    "kind": "complete-output-attempt",
+    "phase": "post-prefix",
+    "previous": "759b67becfa9e465c6b0be0f54dbf99522ac775cc01de6953bdc14b788d95193",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 36
+  },
+  {
+    "details": {
+      "actor_label": "helper-republication",
+      "adds_query_charge": 0,
+      "origin_sequence": 26
+    },
+    "event_hash": "b5ca068943e8afaf72904e0724a2cda71ffb3470b6694ac09de921fff9d52183",
+    "kind": "shared-cache-read",
+    "phase": "post-prefix",
+    "previous": "142b4cb3cd4a25ae3f4209721ca58c1aff90624c37408aad4c11b738104e67a5",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 37
+  },
+  {
+    "details": {
+      "accepted": true,
+      "actor_label": "helper-republication",
+      "credit_added": 0,
+      "full_native_units_checked": 1,
+      "identity": "6deeb989a375408e491eee9c878777d14a3deaa2ae2c6fab8f51bac60bc796f9",
+      "output_index": 8,
+      "packet_sha256": "3ef1ec9af68deca7d3144ededb83a6b9037a296c454cffa30eef5a01daab2ba8",
+      "reason": "VALID_MU1"
+    },
+    "event_hash": "e8d66fc9426b238d5a3e0fb3fc2230d50dd38f10bdd2f289cb88f8d8c0bd707b",
+    "kind": "complete-output-result",
+    "phase": "post-prefix",
+    "previous": "b5ca068943e8afaf72904e0724a2cda71ffb3470b6694ac09de921fff9d52183",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 38
+  },
+  {
+    "details": {
+      "actor_label": "producer-terminal-query",
+      "context_digest": "81923988b6ee29af72be16e74f864e235bae01a4864e7646b1879a72f2d43612",
+      "marked": false,
+      "ordered_root": "d1cc1c042e10aa20c2eccad759eb3cf8a829eb071f1e699e33508012c4e879a4",
+      "resource_kind": "reference-full-value-terminal-call",
+      "ticket": "4f6b0d002cd8610046642a789556b5493f260015b7f363c1a24b0f5b61aa4c54"
+    },
+    "event_hash": "0e31d36544f21ac90bc90223ad232ed3e320d3afcab7043f4b7f503ba3260daa",
+    "kind": "actual-terminal-sha256",
+    "phase": "post-prefix",
+    "previous": "e8d66fc9426b238d5a3e0fb3fc2230d50dd38f10bdd2f289cb88f8d8c0bd707b",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 39
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "output_index": 9,
+      "packet_sha256": "8f203b929b9ce5b2076bee030aa18d64f8c01318b9147e81d499eb5e2bd298be"
+    },
+    "event_hash": "af77d19433e415e263521de21eadd184e6023434d93ca61d98f06bb0e8c90749",
+    "kind": "complete-output-attempt",
+    "phase": "post-prefix",
+    "previous": "0e31d36544f21ac90bc90223ad232ed3e320d3afcab7043f4b7f503ba3260daa",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 40
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "adds_query_charge": 0,
+      "origin_sequence": 39
+    },
+    "event_hash": "b87334324b64cf82cb35dd2358313348198308fc69a5373f2d3486925e8d2467",
+    "kind": "shared-cache-read",
+    "phase": "post-prefix",
+    "previous": "af77d19433e415e263521de21eadd184e6023434d93ca61d98f06bb0e8c90749",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 41
+  },
+  {
+    "details": {
+      "accepted": false,
+      "actor_label": "publisher",
+      "credit_added": 0,
+      "full_native_units_checked": 1,
+      "output_index": 9,
+      "packet_sha256": "8f203b929b9ce5b2076bee030aa18d64f8c01318b9147e81d499eb5e2bd298be",
+      "reason": "AGGREGATE_TARGET"
+    },
+    "event_hash": "0e075c039c696918da30cf029eb76ec215df26947ae9dd7b73f007c468cfbc00",
+    "kind": "complete-output-result",
+    "phase": "post-prefix",
+    "previous": "b87334324b64cf82cb35dd2358313348198308fc69a5373f2d3486925e8d2467",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 42
+  },
+  {
+    "details": {
+      "actor": "late-helper",
+      "reason": "QUERY_CAP"
+    },
+    "event_hash": "357620a40f1bf4f5985dd5c3f6bffed17e5f3c02d85749f289e32b15f1204c7d",
+    "kind": "denied-before-hash",
+    "phase": "post-prefix",
+    "previous": "0e075c039c696918da30cf029eb76ec215df26947ae9dd7b73f007c468cfbc00",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 43
+  }
+]

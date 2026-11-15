@@ -1,0 +1,20 @@
+{
+  "label": "qa-03-potential",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "test_amortized_cost_potential*.py",
+    "-v"
+  ],
+  "exit": 0,
+  "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "duration_seconds": 5.834877088898793,
+  "unittest_count": [
+    "40"
+  ]
+}

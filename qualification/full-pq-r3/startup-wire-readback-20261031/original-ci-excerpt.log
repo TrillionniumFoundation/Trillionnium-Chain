@@ -1,0 +1,31 @@
+2026-10-30T14:07:21.6070649Z ---- operator_pq_startup::tests::pq_continuous_original_search_owner_produces_registered_work_and_cannot_replay_allocation stdout ----
+2026-10-30T14:07:21.6071302Z 
+2026-10-30T14:07:21.6072142Z thread 'operator_pq_startup::tests::pq_continuous_original_search_owner_produces_registered_work_and_cannot_replay_allocation' (30576) panicked at crates/trnm-pon-node/src/operator_pq_startup_tests.rs:326:10:
+2026-10-30T14:07:21.6073781Z called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "FUNDS", source: None, request_history_budget: false }
+2026-10-30T14:07:21.6074682Z 
+2026-10-30T14:07:21.6075144Z ---- operator_pq_startup::tests::pq_continuous_real_bootstrap_receiver_and_cold_reopen_keep_state_fees_work_and_local_revocation stdout ----
+2026-10-30T14:07:21.6075710Z 
+2026-10-30T14:07:21.6076439Z thread 'operator_pq_startup::tests::pq_continuous_real_bootstrap_receiver_and_cold_reopen_keep_state_fees_work_and_local_revocation' (30577) panicked at crates/trnm-pon-node/src/operator_pq_startup_tests.rs:326:10:
+2026-10-30T14:07:21.6077899Z called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "FUNDS", source: None, request_history_budget: false }
+2026-10-30T14:07:21.6078747Z 
+2026-10-30T14:07:21.6079144Z ---- operator_pq_startup::tests::pq_continuous_real_controller_nonempty_search_receiver_restart_and_wire_limits stdout ----
+2026-10-30T14:07:21.6079651Z 
+2026-10-30T14:07:21.6080318Z thread 'operator_pq_startup::tests::pq_continuous_real_controller_nonempty_search_receiver_restart_and_wire_limits' (30578) panicked at crates/trnm-pon-node/src/operator_pq_startup_tests.rs:326:10:
+2026-10-30T14:07:21.6081524Z called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "FUNDS", source: None, request_history_budget: false }
+2026-10-30T14:07:21.6082061Z 
+2026-10-30T14:07:21.6082463Z ---- operator_pq_startup::tests::pq_continuous_revoked_actual_task_blocks_cold_restart_without_replaying_bootstrap stdout ----
+2026-10-30T14:07:21.6082978Z 
+2026-10-30T14:07:21.6083659Z thread 'operator_pq_startup::tests::pq_continuous_revoked_actual_task_blocks_cold_restart_without_replaying_bootstrap' (30579) panicked at crates/trnm-pon-node/src/operator_pq_startup_tests.rs:990:10:
+2026-10-30T14:07:21.6084886Z called `Result::unwrap()` on an `Err` value: SqlInputError { error: Error { code: Unknown, extended_code: 1 }, msg: "no such column: id", sql: "SELECT id FROM active", offset: 7 }
+2026-10-30T14:07:21.6085464Z 
+2026-10-30T14:07:21.6085807Z ---- operator_pq_startup::tests::pq_startup_invalid_work_spends_original_journal_and_refuses_automatic_retry stdout ----
+2026-10-30T14:07:21.6086248Z 
+2026-10-30T14:07:21.6086835Z thread 'operator_pq_startup::tests::pq_startup_invalid_work_spends_original_journal_and_refuses_automatic_retry' (30580) panicked at crates/trnm-pon-node/src/operator_pq_startup_tests.rs:326:10:
+2026-10-30T14:07:21.6087897Z called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "FUNDS", source: None, request_history_budget: false }
+2026-10-30T14:07:21.6088648Z 
+2026-10-30T14:07:21.6089017Z ---- operator_pq_startup::tests::pq_startup_strict_genesis_wire_shape_and_signature_boundaries_refuse_mutations stdout ----
+2026-10-30T14:07:21.6089505Z 
+2026-10-30T14:07:21.6090275Z thread 'operator_pq_startup::tests::pq_startup_strict_genesis_wire_shape_and_signature_boundaries_refuse_mutations' (30581) panicked at crates/trnm-pon-node/src/operator_pq_startup_tests.rs:326:10:
+2026-10-30T14:07:21.6091370Z called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "FUNDS", source: None, request_history_budget: false }
+2026-10-30T14:07:21.6091867Z 
+2026-10-30T14:07:21.6290056Z test result: FAILED. 780 passed; 8 failed; 21 ignored; 0 measured; 0 filtered out; finished in 1334.74s

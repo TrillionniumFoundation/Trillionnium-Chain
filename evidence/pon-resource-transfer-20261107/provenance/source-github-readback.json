@@ -1,0 +1,40 @@
+{
+  "schema": "hepta-local-github-source-delivery-summary-v0",
+  "status": "PUBLISHED_GIT_AND_API_READ_BACK",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "branch": "fix/chain-fresh-work-floor-20261107",
+  "head": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+  "tree": "c815d3710d5f7feffc043aed1aa6e003e03d3a10",
+  "parent": "37c1f3fe24c88476f39b0bd6e9ed32453bfc4551",
+  "identity": {
+    "id": 102159240,
+    "login": "ProfHepta"
+  },
+  "channel": "HeptaRuntime mac existing local gh credential helper and ordinary non-force git push",
+  "gate_basis": "Root confirmed exact source e95 full24 gates PASS on ROG job1a1b67f0398-12894-4a0, zero failed/unknown/timed-out and all three runner bindings PASS before this operation.",
+  "preflight_dev_and_push": "PASS",
+  "git_readback_utc": "2026-11-07T14:58:59.043430+00:00",
+  "api_readback_utc": "2026-11-07T15:00:57.796255+00:00",
+  "push_job": {
+    "id": "1a1b6840ddf-12894-4bf",
+    "push_exit_code": 0,
+    "overall_job_exit_code": 1,
+    "reason": "Subsequent read-only gh API request TCP timed out after successful push and exact Git readback. Preserved, not relabelled."
+  },
+  "api_reconciliation": {
+    "job_id": "1a1b686beac-12894-4d3",
+    "exit_code": 0,
+    "read_only": true,
+    "repeat_push": false
+  },
+  "force_push": false,
+  "new_pull_request_created": false,
+  "main_or_integration_updated": false,
+  "hosted_ci_or_merge_claim": false,
+  "production_activation": false,
+  "actual_chainwork": 0,
+  "remote_receipt_sha256": {
+    "publish-source-e95.json": "a9a169a39ef333c213bdc5cd758cf82160b92d1af5f12eebd7cc0f37633114e3",
+    "source-e95-api-readback.json": "22658e70c73db95848a1f2cc8f27548dcd9f6b8f29727311bb2b459f31fc19e1"
+  }
+}

@@ -1,0 +1,4 @@
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/3069292387f3/chain-sqlite/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/3069292387f3/chain-sqlite/trillionnium/crates/trnm-service-settlement)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 22.96s
+     Running unittests src/lib.rs (/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_service_settlement-e8b26e34e4187bec)

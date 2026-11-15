@@ -1,0 +1,77 @@
+{
+  "checkpoint_receipt_counts": [
+    0,
+    5,
+    6
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "/tmp/chain-learning-d9fb/scripts/cell_learning_completion_join.py",
+    "--selection-checkpoint",
+    "/tmp/learning-external-adopt-reader-joins/no-update-v9/selection.bin",
+    "--selection-checkpoint-sha256",
+    "21ba8a9895ca7ae052dde45d7547b50e3b656e3c99eb50e004e1c60dd3967b62",
+    "--completed-checkpoint",
+    "/tmp/learning-external-adopt-reader-joins/no-update-v9/completed.bin",
+    "--completed-checkpoint-sha256",
+    "c890ca0ba1f5b5190e33bc93a0947c98a5cbfc4f77ad4f65ac8f428274ab222f",
+    "--readback",
+    "/tmp/learning-external-adopt-reader-joins/no-update-v9/readback.json",
+    "--readback-sha256",
+    "fdfc6d1bd390a2d6f37ac563d7fe49886e2ac0492b4dff47af95e32f403162a9",
+    "--freeze",
+    "/tmp/learning-external-adopt-reader-joins/no-update-v9/freeze.json",
+    "--freeze-sha256",
+    "ae6fbb4ea59fcf2c9ac2fbba5976501b27a7f5bc34838737a8fa99c05eb6bf69",
+    "--expected",
+    "/tmp/learning-external-adopt-reader-joins/no-update-v9/expected.json",
+    "--expected-sha256",
+    "d670b3094b47e3807c8ab7a093359ef8e16af3edad9368e78f517897e0345f14"
+  ],
+  "exit_code": 0,
+  "expected_pins_kind": "observed-original-research-bytes-not-independent-trust",
+  "files": {
+    "completed.bin": {
+      "bytes": 3508,
+      "sha256": "c890ca0ba1f5b5190e33bc93a0947c98a5cbfc4f77ad4f65ac8f428274ab222f"
+    },
+    "expected.json": {
+      "bytes": 1671,
+      "sha256": "d670b3094b47e3807c8ab7a093359ef8e16af3edad9368e78f517897e0345f14"
+    },
+    "freeze.json": {
+      "bytes": 3508,
+      "sha256": "ae6fbb4ea59fcf2c9ac2fbba5976501b27a7f5bc34838737a8fa99c05eb6bf69"
+    },
+    "initial.bin": {
+      "bytes": 1345,
+      "sha256": "0ba9420cae7fce004f4ef9bfcd9f8a0cd06c6a39b20e503320930493216e70ca"
+    },
+    "readback.json": {
+      "bytes": 24556,
+      "sha256": "fdfc6d1bd390a2d6f37ac563d7fe49886e2ac0492b4dff47af95e32f403162a9"
+    },
+    "selection.bin": {
+      "bytes": 3018,
+      "sha256": "21ba8a9895ca7ae052dde45d7547b50e3b656e3c99eb50e004e1c60dd3967b62"
+    },
+    "stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout.json": {
+      "bytes": 7128,
+      "sha256": "c10249c3dae120636d53ce34eb3b9b38cd11aed586a252ddccb9cca71da81bb8"
+    }
+  },
+  "private_hepta_source": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+  "qualification": "HOLD_NO_GO",
+  "reader_files": {
+    "capture_cell_learning_completion.py": "5eb06b45493b3b0667c028faae29e5aa4e6bb70bbf3d376f5fbca9a7be719f31",
+    "cell_adoption_readback.py": "4574c8ba129eeac23f8c217d2fe3c25d0a8c659f38ec3449b87186a33486d4dc",
+    "cell_learning_completion_join.py": "db90de5c974565c874a8d34679de907d6214bc84a6294c3ec5466c7e28eb4ed0",
+    "cell_learning_iteration_join.py": "b602e6217b9ec2bb143c141ea02e27ec666ef75ddf993eb794c23eb3ded5da7d"
+  },
+  "schema": "hepta-real-model-original-chain-completion-reader-v1",
+  "source": "9129e65b3255439593e44a0ba39578f220c27087"
+}

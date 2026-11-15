@@ -1,0 +1,33 @@
+{
+  "source_commit": "14fcbede085b414a9621aef3f288d2b1ca1839ae",
+  "source_tree": "64b1a7e4072eddac05604d4bb4b1ef713e10d874",
+  "scope": "M06 library native test executable only; this run does not replace the all-target package gate or a Node/deployment binary",
+  "profile_receipt": "native-profile-scope.json",
+  "counts": {
+    "passed": 136,
+    "failed": 0,
+    "ignored": 8
+  },
+  "ignored_test_lines": [
+    "test continuity_v1::capacity_range_tests::capacity_range_full_return_abba_observation ... ignored, paired complete-capacity observation; not original Host or confirmation acceptance",
+    "test pon_commitment::bounded_encoding_tests::actual_state_fallback_encoding_cost ... ignored, explicit whole-test process RSS comparison; no Node or throughput qualification",
+    "test pon_commitment::bounded_encoding_tests::canonical_buffer_reuse_component_timing ... ignored, explicit encoder allocation A/B; excludes SQLite, roots, execution and networking",
+    "test pon_commitment::checked_binding_tests::checked_binding_complete_cost_observation ... ignored, explicit same-operation binding cost; not Node or network throughput",
+    "test pon_commitment::tests::immutable_parent_preview_component_timing ... ignored, explicit component timing; excludes SQLite, M05 and Node lock wait",
+    "test pon_commitment::tests::warm_parent_binding_component_timing ... ignored, explicit binding A/B timing; excludes execution, SQLite and Node locks",
+    "test pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost ... ignored, explicit paired component cost, including adversarial same-root hints; no throughput qualification",
+    "test pon_executor::streaming_root_tests::complete_root_encoding_cost ... ignored, explicit paired complete-root cost; synthetic values, not native ledger growth"
+  ],
+  "binary": {
+    "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
+    "sha256": "42c842540decc5c7e9af82151993fb2f8e4e5c6fdee9ca76ed0ccf41293eebb1",
+    "bytes": 75885544
+  },
+  "resources_after": {
+    "bfree": 9912127488,
+    "bavail": 6459379712,
+    "anon": 5001297920,
+    "file": 2385391616,
+    "events": "low 0\nhigh 0\nmax 7605702\noom 5\noom_kill 5\noom_group_kill 0\n"
+  }
+}

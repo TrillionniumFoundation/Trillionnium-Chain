@@ -1,0 +1,27 @@
+{
+  "assets": {
+    "artifacts": {
+      "bytes": 64,
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+    },
+    "header": {
+      "bytes": 318,
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+    },
+    "receipt": {
+      "bytes": 257014,
+      "sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"
+    }
+  },
+  "binary_source_attestation": "executable bytes pinned for this run; this script does not attest compilation",
+  "journal_location": {
+    "journal_end": 256982,
+    "journal_sha256": "56a5fcd0a18fc4db36aa37583dc8f7f75fe8f811482eec36d9b7121bae6f07ee",
+    "journal_start": 240100,
+    "seal_end": 222680,
+    "seal_words": 55667,
+    "work_id": "ccf544056c6df13a5ab4e6c021e587ff0008d92388270e64f72a6e2168a326cd"
+  },
+  "verifier_path": "/home/runner/work/_temp/pon-w1-transparent-profile-head-x64-42239570130-1/bin/w1-verify-v2",
+  "verifier_sha256": "2db9669a1c9196885da8908bcaf3da8ccea9684a3fe048fbe2f614cbb093d4ba"
+}

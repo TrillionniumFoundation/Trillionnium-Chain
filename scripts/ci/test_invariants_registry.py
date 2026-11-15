@@ -31,4 +31,109 @@ class InvariantRegistryTests(unittest.TestCase):
     def test_duplicate_identity_rejected(self):self.reject(lambda d:d['invariants'].append(d['invariants'][0]))
     def test_binding_cannot_grant_execution(self):self.reject(lambda d:d.update(binding_is_execution=True))
     def test_independence_cannot_be_granted(self):self.reject(lambda d:d.update(independent_accepted=True))
+
+
+class NativeSelectorBindingTests(unittest.TestCase):
+    """Exercise the invariant checker without relying on the live registry snapshot."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory(prefix='pon-invariant-selector-')
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        config = self.root / 'config/pon'
+        config.mkdir(parents=True)
+        (self.root / 'fixture.py').write_text('def test_reference():\n    pass\n')
+        self.native = self.root / 'fixture.rs'
+        self.native.write_text('#[test]\nfn native_case() {}\n')
+        modules = []
+        invariants = []
+        for index, identity in enumerate([
+            'M03.RevokeEntryLinearization', 'M07.OwnedInitialization',
+            'M10.PendingNotHistory', 'M02.RecoveredBestChain',
+        ]):
+            module, name = identity.split('.')
+            selector = 'fixture.rs::native_case' if index == 0 else 'fixture.py::test_reference'
+            document = module + '.md'
+            (self.root / document).write_text(identity + '\n' + selector + '\n')
+            modules.append({'id': module, 'specification': document})
+            invariants.append({
+                'module': module, 'id': name, 'claim': 'Exact source binding',
+                'scope': 'Synthetic checker fixture', 'atomic': 'No runtime execution',
+                'cuts': ['Missing or fake attributed function'], 'tests': [selector],
+                'source': [selector.split('::')[0]], 'limit': 'Source binding only',
+                'threat': 'Comment or string masquerading as a test',
+                'remaining': 'Execution requires separate evidence',
+            })
+        (config / 'module-contracts-v1.json').write_text(json.dumps({'modules': modules}))
+        (config / 'devnet-v1.json').write_text(json.dumps({'consensus_revision': 1}))
+        (config / 'invariants-v2.json').write_text(json.dumps({
+            'schema': 'pon-invariants-v2', 'genesis_revision': 1,
+            'binding_is_execution': False, 'independent_accepted': False,
+            'invariants': invariants,
+        }))
+
+    def assert_binding_only(self, source):
+        self.native.write_text(source)
+        result = validate(self.root)
+        self.assertTrue(result['binding_consistent'])
+        self.assertFalse(result['tests_executed_by_this_checker'])
+        self.assertFalse(result['independent_accepted'])
+
+    def test_ordinary_attributed_native_test_remains_bound(self):
+        self.assert_binding_only('#[test]\nfn native_case() {}\n')
+
+    def test_ignored_native_test_binds_without_claiming_execution(self):
+        for attribute in ['#[ignore]', '#[ignore = "release fixture requires explicit execution"]']:
+            with self.subTest(attribute=attribute):
+                self.assert_binding_only('#[test]\n' + attribute + '\nfn native_case() {}\n')
+
+    def test_intervening_attributes_and_comments_preserve_native_binding(self):
+        self.assert_binding_only('''#[test]
+// An actual test may have additional attributes before its declaration.
+#[ignore = "explicit release run"]
+/* outer /* inner */ comment */
+#[allow(dead_code)]
+fn native_case() {}
+''')
+
+    def test_comment_decoys_do_not_bind_native_test(self):
+        for source in [
+            '// #[test] fn native_case() {}\n',
+            '/* #[test] fn native_case() {} */\n',
+            '/* outer /* inner */ #[test] fn native_case() {} */\n',
+            '/* #[test] */ fn native_case() {}\n',
+        ]:
+            with self.subTest(source=source):
+                self.native.write_text(source)
+                with self.assertRaisesRegex(ValueError, 'missing exact native test'):
+                    validate(self.root)
+
+    def test_string_decoys_do_not_bind_native_test(self):
+        for source in [
+            'const S: &str = "#[test] fn native_case() {}";\n',
+            'const S: &str = r#"#[test] fn native_case() {}"#;\n',
+            'const S: &[u8] = br##"#[test] #[ignore] fn native_case() {}"##;\n',
+            'const S: &str = "#[test]"; fn native_case() {}\n',
+        ]:
+            with self.subTest(source=source):
+                self.native.write_text(source)
+                with self.assertRaisesRegex(ValueError, 'missing exact native test'):
+                    validate(self.root)
+
+    def test_helper_or_different_native_test_cannot_replace_exact_selector(self):
+        for source in [
+            'fn native_case() {}\n',
+            '#[test]\nfn native_case_extra() {}\n',
+            '#[test]\nfn another_case() {}\nfn native_case() {}\n',
+        ]:
+            with self.subTest(source=source):
+                self.native.write_text(source)
+                with self.assertRaisesRegex(ValueError, 'missing exact native test'):
+                    validate(self.root)
+
+    def test_python_class_is_still_not_a_function_binding(self):
+        (self.root / 'fixture.py').write_text('class test_reference:\n    pass\n')
+        with self.assertRaisesRegex(ValueError, 'missing exact Python test'):
+            validate(self.root)
+
 if __name__=='__main__':unittest.main(verbosity=2)

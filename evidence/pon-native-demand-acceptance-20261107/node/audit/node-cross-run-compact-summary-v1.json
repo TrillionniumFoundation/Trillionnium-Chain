@@ -1,0 +1,139 @@
+{
+  "all_targets_have_unambiguous_complete_summary": true,
+  "completed_target_count": 91,
+  "controlled_run_qualification_passed": false,
+  "cross_run_completed_target_totals": {
+    "failed": 15,
+    "filtered_out": 0,
+    "ignored": 55,
+    "measured": 0,
+    "passed": 1548
+  },
+  "errors": [],
+  "full_summary": {
+    "bytes": 31715,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-union-finalization-v1/coverage-summary.json",
+    "sha256": "36f17f8123241259fb76012b8cf70c550c4d7a0a833641bddefc4d037859bf1a"
+  },
+  "inventory_target_count": 91,
+  "native_five_targets": [
+    {
+      "counts": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 2
+      },
+      "name": "no_gain_fees",
+      "run": "remainder",
+      "status": "completed_passed"
+    },
+    {
+      "counts": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 4
+      },
+      "name": "funded_service_contract",
+      "run": "original",
+      "status": "completed_passed"
+    },
+    {
+      "counts": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 2
+      },
+      "name": "native_demand_evidence",
+      "run": "remainder",
+      "status": "completed_passed"
+    },
+    {
+      "counts": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 3
+      },
+      "name": "native_task_operation_v2",
+      "run": "remainder",
+      "status": "completed_passed"
+    },
+    {
+      "counts": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 2
+      },
+      "name": "native_active_anchor",
+      "run": "remainder",
+      "status": "completed_passed"
+    }
+  ],
+  "nested_summaries_added_to_totals": false,
+  "original_assignment_count": 30,
+  "original_completed_target_totals": {
+    "failed": 8,
+    "filtered_out": 0,
+    "ignored": 40,
+    "measured": 0,
+    "passed": 1254
+  },
+  "original_failures_superseded": false,
+  "original_job": "1a1b6390138-12894-305",
+  "original_source_after_present": false,
+  "original_terminal_exit": 124,
+  "original_terminal_state": "timed_out",
+  "qualification": false,
+  "remainder_assignment_count": 61,
+  "remainder_completed_target_totals": {
+    "failed": 7,
+    "filtered_out": 0,
+    "ignored": 15,
+    "measured": 0,
+    "passed": 294
+  },
+  "remainder_diagnosis": {
+    "bytes": 104100,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/remainder-failure-diagnosis-v2.json",
+    "sha256": "fcd2d6662fd287811255316aec063cbff80531cc09969d0dd2f0d99888d1c281"
+  },
+  "remainder_job": "1a1b6b4fa87-12894-60d",
+  "remainder_native_cargo_exit_code": 101,
+  "remainder_source_after_present": true,
+  "remainder_source_before_after_identical": true,
+  "remainder_terminal_exit": 101,
+  "remainder_terminal_state": "failed",
+  "schema": "pon-node-cross-run-compact-summary-v1",
+  "single_complete_cargo_gate": false,
+  "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+  "uncovered_or_ambiguous_targets": [],
+  "union": {
+    "bytes": 918710,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-cross-run-coverage-v1.json",
+    "sha256": "e858131ad9b7e9e0ceb83a57d5c2bb665adbac6b395fedacd59f2d8a3e6ddde2"
+  },
+  "union_field_paths": {
+    "completed_target_count": "$.completed_target_count",
+    "coverage_complete": "$.all_targets_have_unambiguous_complete_summary",
+    "errors": "$.errors",
+    "original_job": "$.original_run.provenance.job_id",
+    "original_terminal_job": "$.original_run.terminal.job_id",
+    "qualification": "$.qualification",
+    "remainder_job": "$.remainder_run.provenance.job_id",
+    "remainder_terminal_job": "$.remainder_run.terminal.job_id",
+    "single_complete_cargo_gate": "$.single_complete_cargo_gate",
+    "source_commit": "$.source_commit",
+    "source_tree": "$.source_tree",
+    "totals": "$.cross_run_completed_target_totals"
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "actual_runtime_argv": [
+    "<independently pinned CPython3.12.16>",
+    "-I",
+    "-S",
+    "-B",
+    "-X",
+    "pycache_prefix=/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/runtime-preflight-02/unused-supervisor-bytecode",
+    "-c",
+    "<exact SHA23fb6b96 helper source>"
+  ],
+  "all_four_gates_passed": false,
+  "build_environment_not_inherited_by_runtime_child": true,
+  "deadline_scope": {
+    "child_wait_timeout_seconds": 180,
+    "helper_elapsed_must_be_below_seconds": 180,
+    "original_model_300_second_acceptance_changed": false,
+    "outer_job_timeout_seconds": 900,
+    "outer_time_includes_before_and_after_physical_source_checks": true,
+    "timed_out_child_can_pass": false
+  },
+  "execution_performed_by_reviewer": false,
+  "files": [
+    {
+      "bytes": 5327,
+      "path": "validation/durable-current-remote/remote_runtime_preflight_v3.py",
+      "sha256": "23fb6b96a204c90ebd080076588047eb5fbdd304d042781083869134c3cdedbb"
+    },
+    {
+      "bytes": 10170,
+      "path": "validation/durable-current-remote/remote_observe_runtime_preflight_v3.py",
+      "sha256": "a7bcd8ed17553e6cf09a52cfe69770652341e19aa4e247e8584e54f4b5550a39"
+    },
+    {
+      "bytes": 1907,
+      "path": "validation/durable-current-remote/remote_start_runtime_preflight_v3.py",
+      "sha256": "9224516460bf355e3e157d778647e3a5b85f257272699df334b1a09d4b459469"
+    },
+    {
+      "bytes": 18676,
+      "path": "validation/durable-current-remote/remote-runtime-preflight02-request.json",
+      "sha256": "937f33cad95802031c37b4e59528767893e91816631ff2a16115416b5c42a529"
+    },
+    {
+      "bytes": 14537,
+      "path": "validation/durable-current-remote/remote_validate_original_tail_v3.py",
+      "sha256": "c986525ef5a25f295f90fc80c452d97dba512e55fc3115a25cc88dd392597135"
+    }
+  ],
+  "freshness": {
+    "all_outputs_required_absent": true,
+    "bytecode": "runtime-preflight-02/unused-supervisor-bytecode",
+    "bytecode_path_is_not_created": true,
+    "bytecode_required_absolute_absent_and_not_symlink_before_child": true,
+    "helper_and_observer_install_create_only": true,
+    "helper_output": "runtime-preflight-02",
+    "helper_report": "runtime-preflight-02.json",
+    "observer_output": "runtime-admission-02",
+    "old_failed_stderr_sha256_bound": "9bee5ee60f083c5c57aab42369a9171b8d4763697ad6c495f57b844fa1484421",
+    "real_model_output_and_wrapper_required_absent_before_and_after": true
+  },
+  "helper_change_only_fresh_attempt_paths": true,
+  "model_and_authority_fields_retained_false": [
+    "cts1_or_chb1_admission_performed",
+    "model_loaded",
+    "model_executed",
+    "native_operation_started",
+    "original_hepta_owner_used",
+    "hepta_final_use",
+    "production_activation",
+    "whole_job_memory_cap_qualified",
+    "aggregate_process_tree_memory_qualified"
+  ],
+  "native_model_run_claimed": false,
+  "original_tail_separation": {
+    "does_not_execute_model": true,
+    "final_model_integration_requirement": "Both the original tail and separate runtime-import observer must actually pass, with exact source/input/pin/result binding; either report alone grants no model admission.",
+    "new_output": "remaining-gates-02",
+    "original_24_controls_and_strict_reader_unchanged": true,
+    "original_failed_summary_sha256_bound": "b7244e43158fa05e40fc376cd79f6af99eb7a2ee21ace05e4345e068b5140ead",
+    "original_rust_tests_exact_readers_and_release_main_checks_unchanged": true
+  },
+  "original_worker_and_contract_logic_changed": false,
+  "runtime_child_environment_exact_keys": [
+    "LANG",
+    "LC_ALL",
+    "TMPDIR"
+  ],
+  "schema": "trnm-bt-runtime-preflight-caller-static-review-v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_and_pins_before_after_checked": true,
+  "source_checks_require_original_physical_digest": true,
+  "source_modified_by_reviewer": false,
+  "verdict": "No blocking static review findings; execution success not claimed"
+}

@@ -1,0 +1,19 @@
+test_all_five_actions_real_current_quorum_and_all_successor_keys (__main__.RootNativeCryptographyTests.test_all_five_actions_real_current_quorum_and_all_successor_keys) ... ok
+test_all_nine_real_quorum_pairs_share_one_semantic_operation (__main__.RootNativeCryptographyTests.test_all_nine_real_quorum_pairs_share_one_semantic_operation) ... ok
+test_cancellation_after_current_quorum_never_returns_success_or_resets_budget (__main__.RootNativeCryptographyTests.test_cancellation_after_current_quorum_never_returns_success_or_resets_budget) ... ok
+test_each_current_family_rejects_same_length_corrupt_signature (__main__.RootNativeCryptographyTests.test_each_current_family_rejects_same_length_corrupt_signature) ... ok
+test_each_successor_family_rejects_one_invalid_possession (__main__.RootNativeCryptographyTests.test_each_successor_family_rejects_one_invalid_possession) ... ok
+test_generic_receipt_signatures_bind_challenge_and_cannot_approve_root (__main__.RootNativeCryptographyTests.test_generic_receipt_signatures_bind_challenge_and_cannot_approve_root) ... ok
+test_mismatched_executable_pin_has_no_fallback (__main__.RootNativeCryptographyTests.test_mismatched_executable_pin_has_no_fallback) ... ok
+test_missing_any_successor_possession_refuses_the_real_transition (__main__.RootNativeCryptographyTests.test_missing_any_successor_possession_refuses_the_real_transition) ... ok
+test_mutation_after_signing_cannot_rebind_current_approval (__main__.RootNativeCryptographyTests.test_mutation_after_signing_cannot_rebind_current_approval) ... ok
+test_new_roster_cannot_self_authorize_old_root_transition (__main__.RootNativeCryptographyTests.test_new_roster_cannot_self_authorize_old_root_transition) ... ok
+test_one_original_budget_covers_both_real_verification_stages (__main__.RootNativeCryptographyTests.test_one_original_budget_covers_both_real_verification_stages) ... ok
+test_possession_and_approval_domains_cannot_be_swapped_even_same_roster (__main__.RootNativeCryptographyTests.test_possession_and_approval_domains_cannot_be_swapped_even_same_roster) ... ok
+test_possession_cannot_move_between_complete_transitions (__main__.RootNativeCryptographyTests.test_possession_cannot_move_between_complete_transitions) ... ok
+test_real_same_length_shake_key_and_signature_are_not_sha2 (__main__.RootNativeCryptographyTests.test_real_same_length_shake_key_and_signature_are_not_sha2) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 23.435s
+
+OK

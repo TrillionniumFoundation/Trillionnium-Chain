@@ -1,0 +1,8 @@
+   Compiling w1-full-public-stark-research v0.1.0 (/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research)
+    Finished `release` profile [optimized] target(s) in 1m 32s
+     Running unittests src/lib.rs (formal/pon-nakamoto-v1/w1_public_stark_research/target/release/deps/w1_full_public_stark_research-8095e9dad21c15f5)
+     Running unittests src/main.rs (formal/pon-nakamoto-v1/w1_public_stark_research/target/release/deps/w1_full_public_stark_research-34f35090cedb62c6)
+     Running tests/proof_smoke.rs (formal/pon-nakamoto-v1/w1_public_stark_research/target/release/deps/proof_smoke-a564e1f5e2e5f139)
+     Running tests/wire_admission.rs (formal/pon-nakamoto-v1/w1_public_stark_research/target/release/deps/wire_admission-17dbc2b4fcf08740)
+     Running unittests examples/mutate_last_query.rs (formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/mutate_last_query-a83f2b3c4fd359be)
+     Running unittests examples/mutate_structure.rs (formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/mutate_structure-f5f42c5cdff7f329)

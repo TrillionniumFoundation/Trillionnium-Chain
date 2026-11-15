@@ -1,0 +1,13 @@
+{
+  "schema": "TRNM-W1-BATCH-ATTEMPT3-TOOLCHAIN-ADOPTION1",
+  "original_archive_sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+  "member": "./bin/rustc",
+  "guest_rustc_sha256_from_original_archive": "895b46e3d37c2265aa6069dd0976918b7dbc55279fbcb397f12e790f56ea959c",
+  "guest_rustc_sha256_on_disk": "895b46e3d37c2265aa6069dd0976918b7dbc55279fbcb397f12e790f56ea959c",
+  "native_cargo_sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66",
+  "native_rustc_sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+  "adopted_from_attempt2_result_sha256": "ba2feb7a95295994feb272fdc8f534a7d207de1623b2d22f25f37f52b2ca1a19",
+  "restoration_repeated": false,
+  "wall_seconds": 0.6570035709883086,
+  "process_cpu_seconds": 0.609292
+}

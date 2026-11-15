@@ -1,0 +1,18 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.23s
+     Running unittests src/lib.rs (/workspace/scratch/73305aff6ced/target/debug/deps/trnm_data_availability-4afa79d63a34aeeb)
+
+running 1 test
+test cell::retention::tests::expired_obligation_cannot_reclaim_a_healthy_target_with_an_unsettled_repair ... 
+thread 'cell::retention::tests::expired_obligation_cannot_reclaim_a_healthy_target_with_an_unsettled_repair' (17) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:711:5:
+retirement reclaimed an unresolved repair target: Ok(CellRetentionReadbackV1 { store_id: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], operation: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], funding_operation: [33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33], manifest: [150, 244, 167, 247, 82, 187, 235, 243, 131, 244, 93, 81, 153, 109, 174, 149, 1, 72, 86, 123, 208, 191, 248, 204, 60, 152, 0, 73, 246, 1, 236, 51], payload_bytes: 5000, reserved_bytes: 8192, physical_arena_bytes: 8192, retain_from_height: 0, retain_until_height: 10, initial_copy_bytes_committed: 5000, repair_bytes_committed: 5000, acknowledged: false, retired: true })
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    cell::retention::tests::expired_obligation_cannot_reclaim_a_healthy_target_with_an_unsettled_repair
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 186 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `-p trnm-data-availability --lib`

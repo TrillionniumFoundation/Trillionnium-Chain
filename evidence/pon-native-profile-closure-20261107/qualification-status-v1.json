@@ -1,0 +1,100 @@
+{
+  "actual_chainwork": 0,
+  "coalition_total_queries": null,
+  "colab_supplement": {
+    "duplicate_tests_added_to_native_total": false,
+    "errors": 0,
+    "failures": 0,
+    "job_id": "0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+    "provider_settled_cost": null,
+    "report_sha256": "6a0226152d11499342a3b159b1a9fb7b9975479e31bb75dde8c9454b802bad81",
+    "scope": "CONTROLLED_PURE_PYTHON_PROFILE_AND_COMPOSITION",
+    "skips": 0,
+    "source_before_after_equal": true,
+    "tests": 82
+  },
+  "complete_physical_cost": null,
+  "conditions": [
+    {
+      "bounded_engineering_evidence": "Actual native seed/step records and bounded original multi-owner evidence composition",
+      "id": "public_query_attribution",
+      "remaining_external_evidence": [
+        "Complete public, offline, preprocessing, delegated and helper-verifier coverage",
+        "Authenticated real control relationships",
+        "Clone and rollback accounting"
+      ],
+      "status": "EXTERNAL_FACTS_NOT_ESTABLISHED"
+    },
+    {
+      "bounded_engineering_evidence": "Original prospective operation fence and exact current native contract/delivery/payment readback",
+      "id": "independent_task_and_target_authority",
+      "remaining_external_evidence": [
+        "Independent task issuers and unbiased assignment",
+        "Trusted prequery target permission",
+        "Current target, task and consumer authority at actual use"
+      ],
+      "status": "EXTERNAL_FACTS_NOT_ESTABLISHED"
+    },
+    {
+      "bounded_engineering_evidence": "Original native delivery and monetary transition replay in controlled fixtures",
+      "id": "genuine_demand",
+      "remaining_external_evidence": [
+        "Independent customers",
+        "External budget and funding origin",
+        "Current external consumer use",
+        "Authentic external funding and settlement proofs"
+      ],
+      "status": "EXTERNAL_FACTS_NOT_ESTABLISHED"
+    },
+    {
+      "bounded_engineering_evidence": "Typed cost containment and consistent payer/beneficiary ancestry; separate native gross debit and credit",
+      "id": "complete_cost_transfer",
+      "remaining_external_evidence": [
+        "Authentic complete physical meters",
+        "All preparation, unsuccessful and uncertain costs",
+        "Machine and network costs",
+        "Actual payer/beneficiary incidence and transfers"
+      ],
+      "status": "EXTERNAL_FACTS_NOT_ESTABLISHED"
+    },
+    {
+      "bounded_engineering_evidence": "Explicit classical-query denomination with cached-business zero lower bound preserved",
+      "id": "adoptable_weight_rule",
+      "remaining_external_evidence": [
+        "Cheapest legal implementation versus physical-cost relation",
+        "Formal native consensus profile registration"
+      ],
+      "status": "EXTERNAL_FACTS_NOT_ESTABLISHED"
+    }
+  ],
+  "consensus_weight_eligible": false,
+  "controlled_native_observation_scope": "CURRENT_PAID_NATIVE_TASK_OBSERVATION",
+  "denomination": "classical-seal-step-oracle-query",
+  "external_customer_demand_established": false,
+  "final_use_authorization_established": false,
+  "fresh_producer_neural_contraction_lower_bound_per_new_ticket": 0,
+  "implementation_source_sha": "732b8ff5e8cae74bb0fb6490550d9984f2f5b0d6",
+  "implementation_tree": "12d3b00a6ce7f6395fb81492a7633ad955e71d95",
+  "input_can_enable_qualification": false,
+  "minimum_legal_physical_cost": null,
+  "prior_failures_superseded": false,
+  "production_activation": false,
+  "public_total_queries": null,
+  "qualification": "HOLD",
+  "schema": "pon-native-profile-qualification-status-v1",
+  "source_validation": {
+    "all_workspace_unit_tests_executed": false,
+    "commands": 33,
+    "failed": 0,
+    "full_91_node_campaign_executed": false,
+    "not_started": 0,
+    "original_24_command_prefix_unchanged": true,
+    "original_public_service_campaign_executed": false,
+    "passed": 33,
+    "source_before_after_equal": true,
+    "summary_sha256": "6f3af6eda4bd188522c6a6e327eb0a1e5465a4ca9d1f0d91564098c40b860a0a",
+    "timed_out": 0,
+    "tracked_bytes": 1084419242,
+    "tracked_entries": 11434
+  }
+}

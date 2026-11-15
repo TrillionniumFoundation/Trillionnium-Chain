@@ -1,0 +1,107 @@
+{
+  "base_commit": "f34f432c6c533c651ab74f69f4f43aef326eedcb",
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "elapsed_seconds": 0.05154299736022949,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "name": "00-project-preflight.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 180,
+          "name": "00-project-preflight.stdout",
+          "sha256": "9e9d4144463e544ae14797fbc46c29aec41551f7019ee04bfd56fd0a461ed3ce"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_lifetime_current_v2.py"
+      ],
+      "elapsed_seconds": 0.24010705947875977,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 124,
+          "name": "01-test_pq_lifetime_current_v2.stderr",
+          "sha256": "4e3b6a58e95dba0e52678f54d8bf91482b42f16175f23f5cad83d0747f863be8"
+        },
+        "stdout": {
+          "bytes": 0,
+          "name": "01-test_pq_lifetime_current_v2.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_lifetime_composition.py"
+      ],
+      "elapsed_seconds": 0.7521262168884277,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 159,
+          "name": "02-test_pq_lifetime_composition.stderr",
+          "sha256": "711fa75f396f4c6200e6361e5100f4338a9f97844198c662cf458c24bc4e7ab8"
+        },
+        "stdout": {
+          "bytes": 0,
+          "name": "02-test_pq_lifetime_composition.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "elapsed_seconds": 257.3988082408905,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 215,
+          "name": "03-test_pq_research_integration.stderr",
+          "sha256": "72be5a9a21ddfebdd9857d3acdb6f3a0308d1de75caa60b4f4f85158f5d8989b"
+        },
+        "stdout": {
+          "bytes": 0,
+          "name": "03-test_pq_research_integration.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_authority_effect_register.py"
+      ],
+      "elapsed_seconds": 0.24898624420166016,
+      "exit_code": 1,
+      "logs": {
+        "stderr": {
+          "bytes": 46385,
+          "name": "04-test_pq_authority_effect_register.stderr",
+          "sha256": "cfbb969c556d27825e17c9a84981c24abb882e5b03786b29fc3528af78531518"
+        },
+        "stdout": {
+          "bytes": 0,
+          "name": "04-test_pq_authority_effect_register.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ],
+  "corpus_sha256": "5765311fa29eb5abb5d0c8f0e446c331e2b6b85db65fdd540aff2ac087829210",
+  "scope": "Final composed runtime, bindings and reviewed CI roster; evidence/documentation may subsequently append completed receipts. Not a full hosted repository-truth or native execution."
+}

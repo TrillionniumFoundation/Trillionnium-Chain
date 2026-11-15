@@ -1,0 +1,24 @@
+{
+  "schema": "p3.parallel-base-sync.v1",
+  "original_reviewed_candidate": "cfef87ff6e09f998cb8fc5d3165fce8ac9eb2da1",
+  "original_research_baseline": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+  "incoming_integration_head": "09fbc0f45151a68a1bf205641171840fbf309882",
+  "preserved_append_only_conflicts": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/src/lib.rs"
+  ],
+  "critical_existing_files_equal_between_bases": {
+    "src/sha_air.rs": true,
+    "src/sha_plan.rs": true,
+    "src/public.rs": true,
+    "src/arith_air.rs": true,
+    "src/arith_carry_air.rs": true,
+    "examples/packed_carry_backend.rs": true,
+    "Cargo.toml": true,
+    "Cargo.lock": true
+  },
+  "production_runtime_config_qualification_unchanged": true,
+  "prior_exact_commit_gates_archived": "evidence/integration-v1/exact-cfef87ff6-v1.tar.gz",
+  "new_profile_hash_and_wire_sources_changed": false,
+  "qualification": "HOLD_NO_GO"
+}

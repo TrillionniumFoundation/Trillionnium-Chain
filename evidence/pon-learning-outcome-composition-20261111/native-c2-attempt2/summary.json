@@ -1,0 +1,41 @@
+{
+  "failed_commands": [
+    "source-before",
+    "source-after"
+  ],
+  "failure": "RuntimeError: required command or execution boundary failed: source-before",
+  "missing_commands": [
+    "locate-rustc",
+    "locate-rustdoc",
+    "toolchain",
+    "cargo-version",
+    "prepare-pq-provider",
+    "locked-metadata",
+    "format",
+    "source-integrity-negatives",
+    "project-boundary-negatives",
+    "repository-and-links",
+    "reader-cell_adoption_readback",
+    "reader-cell_learning_scope_join",
+    "reader-cell_learning_completion_join",
+    "reader-cell_learning_iteration_join",
+    "reader-cell_learning_local_decision_join",
+    "reader-cell_learning_local_use_join",
+    "adoption-library",
+    "adoption-cli",
+    "outcome-role-separation",
+    "crypto-fixed-product-meter",
+    "node-single-output-owner",
+    "crypto-fresh-challenge-refusal",
+    "workspace-strict-clippy"
+  ],
+  "model_efficacy_certified": false,
+  "native_test_total_required": 42,
+  "planned_commands": 26,
+  "production_activation": false,
+  "provider_prepared_and_unchanged": false,
+  "reader_suites_required": 6,
+  "recorded_commands": 3,
+  "result": "FAIL",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81"
+}

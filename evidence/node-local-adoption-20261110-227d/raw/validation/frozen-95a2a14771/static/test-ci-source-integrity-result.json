@@ -1,0 +1,14 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "elapsed_seconds": 4.349076275000698,
+  "exit_code": 0,
+  "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/test-ci-source-integrity.log",
+  "log_sha256": "2d94e001611b2054cdf006e63dc78d1de3fadeabb36fac11cf8c218c1d8d0c6a",
+  "name": "test-ci-source-integrity",
+  "started_utc": "2026-11-11T01:28:21.225863+00:00",
+  "tests": 43
+}

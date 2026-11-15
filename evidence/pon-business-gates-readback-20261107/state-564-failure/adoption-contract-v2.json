@@ -1,0 +1,27 @@
+{
+  "schema": "trnm-same-scan-adoption-contract-v2",
+  "declared_before_measurement": true,
+  "component": "complete SQL slot read and State materialization; each scan starts with no memo; not disk-cold",
+  "samples": "8 ABBA rounds per each of 4 fixed cases, no discarded failure or sample",
+  "conditions": [
+    "all semantic parity and existing storage/cancellation controls pass",
+    "median candidate/reference thread CPU in small_all_miss <=1.05",
+    "median candidate/reference thread CPU in large_all_miss <=1.05",
+    "median candidate/reference thread CPU in large_adjacent <=0.90",
+    "median candidate/reference thread CPU in small_adjacent <=1.05"
+  ],
+  "report_also": [
+    "every raw sample",
+    "wall median and p95",
+    "CPU p95",
+    "all errors"
+  ],
+  "gate_parameters_changed": false,
+  "business_qualification": false,
+  "declared_unix": 1794068645.9480736,
+  "supersedes": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-static-preparation-20261107/adoption-contract.json",
+    "sha256": "1c79188a41ce88951f13eb233c9ec2684d2fc4c36857091420c389e3bfb9804f"
+  },
+  "additional_reason": "Small repeated values also require a nonregression check: exact map lookup replaces parsing and can have a different cost than the large-string fixture."
+}

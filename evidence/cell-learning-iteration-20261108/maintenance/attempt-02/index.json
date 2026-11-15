@@ -1,0 +1,108 @@
+{
+  "all_post_command_source_diffs_empty": true,
+  "archive_preflight_completed_before_copy": true,
+  "attempt": "attempt-02",
+  "changed_test_only_modules": 2,
+  "command_exit_codes": {
+    "post-fmt": 0,
+    "scoped-fix": 0,
+    "strict-clippy": 0
+  },
+  "engineering_controls_only": true,
+  "exit_code": 0,
+  "files": [
+    {
+      "bytes": 11041,
+      "file": "result.json",
+      "sha256": "49401819d4b64d24efaeca2a0a9406fa316d70f2fee96f17543a748fdf873710",
+      "source_file": "native-evidence/maintenance-v2/result.json"
+    },
+    {
+      "bytes": 5082,
+      "file": "start.json",
+      "sha256": "3aabd80ff95a80ef6bf3c811c6f37f72fe41971a880ab6a5ed090b7431ead36d",
+      "source_file": "native-evidence/maintenance-v2/start.json"
+    },
+    {
+      "bytes": 0,
+      "file": "pre-maintenance-source-diff.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_file": "native-evidence/maintenance-v2/pre-maintenance-source-diff.patch"
+    },
+    {
+      "bytes": 21013,
+      "file": "scoped-fix.stdout",
+      "sha256": "795dcac2b294a20286bb6f91852231e0802a57a6d3a7e56260ce8ee49519e97d",
+      "source_file": "native-evidence/maintenance-v2/scoped-fix.log"
+    },
+    {
+      "bytes": 0,
+      "file": "scoped-fix-source-diff.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_file": "native-evidence/maintenance-v2/scoped-fix-source-diff.patch"
+    },
+    {
+      "bytes": 0,
+      "file": "post-fmt.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_file": "native-evidence/maintenance-v2/post-fmt.log"
+    },
+    {
+      "bytes": 0,
+      "file": "post-fmt-source-diff.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_file": "native-evidence/maintenance-v2/post-fmt-source-diff.patch"
+    },
+    {
+      "bytes": 20995,
+      "file": "strict-clippy.stdout",
+      "sha256": "ca34b1b50708b3b1d35d783d847a9ac572fb1c3df4c1f29477804bc670d076b9",
+      "source_file": "native-evidence/maintenance-v2/strict-clippy.log"
+    },
+    {
+      "bytes": 0,
+      "file": "strict-clippy-source-diff.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_file": "native-evidence/maintenance-v2/strict-clippy-source-diff.patch"
+    },
+    {
+      "bytes": 1459,
+      "file": "reviewed-lint-only-delta.patch",
+      "sha256": "ec943d5da03f7be37e8a5e49c9d5a0fe55a0944f9490979d0c66c0aa70bb047f",
+      "source_file": "native-evidence/maintenance-v2/reviewed-lint-only-delta.patch"
+    },
+    {
+      "bytes": 2905,
+      "file": "tested-source-equivalence.json",
+      "sha256": "8e8b72af7fcb24231f9883f9079f2d303a739fb6219583b2b3241a9c92804808",
+      "source_file": "native-evidence/maintenance-v2/tested-source-equivalence.json"
+    },
+    {
+      "bytes": 1770,
+      "file": "launch.json",
+      "sha256": "46c67654812bb79ea674f11bfb81578e49169b560649ddee129eb9731e426702",
+      "source_file": "native-evidence/maintenance-v2-launch.json"
+    },
+    {
+      "bytes": 9653,
+      "file": "runner.py",
+      "sha256": "fb37ca460372c8a165fcf73af04c2ec698f4bb479162fb447da14a336d28baf0",
+      "source_file": "native-evidence/run_lint_only_maintenance.py"
+    }
+  ],
+  "format_base": "f1785ca15e41e4e49509a5b211a659e3cbdbf60e",
+  "format_rust_file_count": 16,
+  "full_changed_path_count": 17,
+  "native_tree": "b710c1c49dc42598b79206dfdd37708da506f114",
+  "original_artifact_bytes_preserved": true,
+  "production_final_use_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "reviewed_added_attribute_lines": 8,
+  "schema": "hepta-maintenance-attempt-archive-v1",
+  "source_commit": "ed1ea5691798a2dbffbbcc8216f2929e67724af7",
+  "source_tree": "a1029394b64ef1f0ac46511716dba6892fdbb261",
+  "source_unchanged": true,
+  "status": "PASSED_ON_REVIEWED_LINT_ONLY_SUCCESSOR",
+  "tested_source_commit": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+  "tests_rerun_after_maintenance": false
+}

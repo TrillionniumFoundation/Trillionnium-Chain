@@ -1,0 +1,34 @@
+{
+  "artifacts": [
+    {
+      "bytes": 24242,
+      "path": "recovery-evidence-tools/run_remaining_node_gate_recovery_v1.py",
+      "sha256": "1611df0f8b814226c19134aabc8f463786774deb7cbf791bb0bda2e4efed7c9b",
+      "validation": "AST only"
+    },
+    {
+      "bytes": 33408,
+      "path": "recovery-evidence-tools/audit_node_union_coverage_recovery_v1.py",
+      "sha256": "5ada449347923c1b51bd85d179e931f73a8af7cae6cfb65765d28f1fbaac4650",
+      "validation": "AST only"
+    },
+    {
+      "bytes": 5512,
+      "path": "recovery-evidence-tools/node-cross-run-coverage-plan-v1.md",
+      "sha256": "b6168432c15a8fe5661349fcbefad893f9f0d222db69687c01374f48cc03a987",
+      "validation": "bytes/hash"
+    }
+  ],
+  "node_live_log_read": false,
+  "observed_unix_seconds": 1794067051.8954597,
+  "qualification": false,
+  "remainder_job_id": "1a1b6b4fa87-12894-60d",
+  "schema": "pon-node-remainder-union-tools-preparation-v1",
+  "selection": {
+    "bytes": 52584,
+    "path": "build-receipts/remaining-node-690f710c-v1/selection.json",
+    "sha256": "9bd89ad1849745b3be329094de6a37571fb680307b868dea2375d3526812cb46"
+  },
+  "tests_started_by_this_preparation": false,
+  "union_auditor_executed": false
+}

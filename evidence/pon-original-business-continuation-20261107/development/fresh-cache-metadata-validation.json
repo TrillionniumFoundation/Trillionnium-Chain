@@ -1,0 +1,43 @@
+{
+  "schema": "fresh-cache-metadata-local-validation-v1",
+  "observed_at": "2026-11-07T12:54:50.756679+00:00",
+  "checkout": "/workspace/scratch/ae364bcbabfb/publication-check",
+  "parent_head": "8b028e49b0d91fd0835e29ffd67ebd5325ae47a3",
+  "scope": "Report metadata, bounded reader coherence and negative controls only; no native original-gate or throughput qualification",
+  "authorized_paths": {
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs": "2e21912f6c285e79e36ccaf995b451613313bfbc6993a510df4307fb2a47f0e9",
+    "scripts/ci/run_w1_fresh_service_v1.py": "f794f72534ff561e691e1151f3ca85635629ada3d7dd2c0a9e33db767d775093",
+    "scripts/ci/test_run_w1_fresh_service_v1.py": "cf9de113c62ea3affdc3f4a7a2056c0b49272013b34f52d015064b66cbf2c31d"
+  },
+  "preflight": {
+    "result": "PASS",
+    "log": "fresh-cache-preflight.log"
+  },
+  "python_controls": {
+    "command": "python3 -B scripts/ci/test_run_w1_fresh_service_v1.py",
+    "tests": 27,
+    "failed": 0,
+    "errors": 0,
+    "log": "fresh-cache-reader-tests-v2.log",
+    "log_sha256": "3544cef8eddbbb5b8d7ca9d0a428cc25ff586d5dda7b056046e0573a7644945b",
+    "earlier_fixture_failure_log": "fresh-cache-reader-tests.log"
+  },
+  "rustfmt": {
+    "command": "/workspace/scratch/62902f6722b7/native-next/rust-1.95.0/bin/rustfmt --check --edition 2021 trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs",
+    "exit_code": 0
+  },
+  "rust_workload_and_original_predicate_unchanged": true,
+  "retained_original_fresh": {
+    "path": "/workspace/scratch/ae364bcbabfb/acceptance-raw/13566551605/fresh-service/fresh/report.json",
+    "sha256": "cde4d4aef0c4dc0224c1f1f78c78778bbe43b8e2d47f6e6ae9603a436392286f",
+    "full_reader": {
+      "accepted": false,
+      "reason": "FRESH_BUSINESS_TARGET"
+    },
+    "legacy_disabled_cache_readback": null
+  },
+  "native_tests_executed": false,
+  "original_github_actions_gate_executed": false,
+  "repository_source_pins_updated": false,
+  "commit_or_push_performed": false
+}

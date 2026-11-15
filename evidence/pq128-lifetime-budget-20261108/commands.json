@@ -1,0 +1,405 @@
+[
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    "cwd": "/workspace/scratch/18ba368826ad/chain-pq-budget",
+    "duration_seconds": 0.044559,
+    "exit_code": 0,
+    "launch_or_timeout_error": null,
+    "logs": {
+      "stderr": {
+        "bytes": 0,
+        "file": "preflight.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 173,
+        "file": "preflight.stdout.log",
+        "sha256": "01d444f8bee39ab2e603923ad0e977e48e956a3bdfa843459123d5b1f8701f18"
+      }
+    },
+    "name": "preflight",
+    "started_utc": "2026-11-08T06:12:30.011835+00:00",
+    "test_count": null
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_lifetime_budget.py",
+      "-v"
+    ],
+    "cwd": "/workspace/scratch/18ba368826ad/chain-pq-budget",
+    "duration_seconds": 0.161723,
+    "exit_code": 0,
+    "launch_or_timeout_error": null,
+    "logs": {
+      "stderr": {
+        "bytes": 7498,
+        "file": "budget-tests.stderr.log",
+        "sha256": "527d9d994831f2b25fcf6c7051ebb5b14f314256724f708fbaed3574d29a1c15"
+      },
+      "stdout": {
+        "bytes": 0,
+        "file": "budget-tests.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "name": "budget-tests",
+    "started_utc": "2026-11-08T06:12:30.056570+00:00",
+    "test_count": 45
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/pq_lifetime_budget.py"
+    ],
+    "cwd": "/workspace/scratch/18ba368826ad/chain-pq-budget",
+    "duration_seconds": 0.033924,
+    "exit_code": 0,
+    "launch_or_timeout_error": null,
+    "logs": {
+      "stderr": {
+        "bytes": 0,
+        "file": "budget-current.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 12650,
+        "file": "budget-current.stdout.log",
+        "sha256": "1824d2c446767317ec9fa09522c40e0942526d95afc7559c2f8719c63587d8a2"
+      }
+    },
+    "name": "budget-current",
+    "started_utc": "2026-11-08T06:12:30.218528+00:00",
+    "test_count": null
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/pq_lifetime_budget.py",
+      "--manifest",
+      "config/pon/pq128-lifetime-example-v1.json"
+    ],
+    "cwd": "/workspace/scratch/18ba368826ad/chain-pq-budget",
+    "duration_seconds": 0.035148,
+    "exit_code": 0,
+    "launch_or_timeout_error": null,
+    "logs": {
+      "stderr": {
+        "bytes": 0,
+        "file": "budget-example.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 16277,
+        "file": "budget-example.stdout.log",
+        "sha256": "da7c39ac326cd36ad91989de8e38695dddc01c640ec82ad8978d2ebc169b529c"
+      }
+    },
+    "name": "budget-example",
+    "started_utc": "2026-11-08T06:12:30.252762+00:00",
+    "test_count": null
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_chain_claim_guard.py",
+      "-v"
+    ],
+    "cwd": "/workspace/scratch/18ba368826ad/chain-pq-budget",
+    "duration_seconds": 0.231914,
+    "exit_code": 0,
+    "launch_or_timeout_error": null,
+    "logs": {
+      "stderr": {
+        "bytes": 5775,
+        "file": "claim-tests.stderr.log",
+        "sha256": "0330b8b64327ef748b5481fb940f26c2049879473e2303cb863e59e5837099f6"
+      },
+      "stdout": {
+        "bytes": 0,
+        "file": "claim-tests.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "name": "claim-tests",
+    "started_utc": "2026-11-08T06:12:30.288161+00:00",
+    "test_count": 46
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/pq_chain_claim_guard.py"
+    ],
+    "cwd": "/workspace/scratch/18ba368826ad/chain-pq-budget",
+    "duration_seconds": 0.040032,
+    "exit_code": 0,
+    "launch_or_timeout_error": null,
+    "logs": {
+      "stderr": {
+        "bytes": 0,
+        "file": "claim-current.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 4429,
+        "file": "claim-current.stdout.log",
+        "sha256": "8eeb97a62c154427d26c6640a4b3f5af526899b7c9ee742cff9df7f1043e1d99"
+      }
+    },
+    "name": "claim-current",
+    "started_utc": "2026-11-08T06:12:30.520351+00:00",
+    "test_count": null
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "cwd": "/workspace/scratch/18ba368826ad/chain-pq-budget",
+    "duration_seconds": 0.068237,
+    "exit_code": 0,
+    "launch_or_timeout_error": null,
+    "logs": {
+      "stderr": {
+        "bytes": 0,
+        "file": "ci-check.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 180,
+        "file": "ci-check.stdout.log",
+        "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+      }
+    },
+    "name": "ci-check",
+    "started_utc": "2026-11-08T06:12:30.560687+00:00",
+    "test_count": null
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_ci_contract.py"
+    ],
+    "cwd": "/workspace/scratch/18ba368826ad/chain-pq-budget",
+    "duration_seconds": 6.118092,
+    "exit_code": 0,
+    "launch_or_timeout_error": null,
+    "logs": {
+      "stderr": {
+        "bytes": 17488,
+        "file": "ci-tests.stderr.log",
+        "sha256": "ca2ecb04f6267fb4c42c832eadcd6daa0e543e93c69f7d52af8f106932ea5b38"
+      },
+      "stdout": {
+        "bytes": 0,
+        "file": "ci-tests.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "name": "ci-tests",
+    "started_utc": "2026-11-08T06:12:30.629242+00:00",
+    "test_count": 105
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "cwd": "/workspace/scratch/18ba368826ad/chain-pq-budget",
+    "duration_seconds": 0.180183,
+    "exit_code": 0,
+    "launch_or_timeout_error": null,
+    "logs": {
+      "stderr": {
+        "bytes": 0,
+        "file": "source-check.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 557,
+        "file": "source-check.stdout.log",
+        "sha256": "06182398f168e3f8966e9258d093406b8096cf0f284585fbbf49d6d7040b2f14"
+      }
+    },
+    "name": "source-check",
+    "started_utc": "2026-11-08T06:12:36.748077+00:00",
+    "test_count": null
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_research_integration.py"
+    ],
+    "cwd": "/workspace/scratch/18ba368826ad/chain-pq-budget",
+    "duration_seconds": 43.094183,
+    "exit_code": 0,
+    "launch_or_timeout_error": null,
+    "logs": {
+      "stderr": {
+        "bytes": 155,
+        "file": "source-tests.stderr.log",
+        "sha256": "8f311eb3f3f665bc978a7b63dead91a2a1dc291e85ec795fb7d3a2e67dc32226"
+      },
+      "stdout": {
+        "bytes": 0,
+        "file": "source-tests.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "name": "source-tests",
+    "started_utc": "2026-11-08T06:12:36.928596+00:00",
+    "test_count": 55
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "cwd": "/workspace/scratch/18ba368826ad/chain-pq-budget",
+    "duration_seconds": 0.6375,
+    "exit_code": 2,
+    "launch_or_timeout_error": null,
+    "logs": {
+      "stderr": {
+        "bytes": 101,
+        "file": "repository-check.stderr.log",
+        "sha256": "f21a68cec32e2446839f927baf7852235385082e1a23060d5e2722259da7efba"
+      },
+      "stdout": {
+        "bytes": 0,
+        "file": "repository-check.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "name": "repository-check",
+    "started_utc": "2026-11-08T06:13:20.023254+00:00",
+    "test_count": null
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/workspace/scratch/18ba368826ad/chain-pq-budget",
+    "duration_seconds": 0.021702,
+    "exit_code": 0,
+    "launch_or_timeout_error": null,
+    "logs": {
+      "stderr": {
+        "bytes": 0,
+        "file": "diff-check.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "file": "diff-check.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "name": "diff-check",
+    "started_utc": "2026-11-08T06:13:20.661135+00:00",
+    "test_count": null
+  },
+  {
+    "argv": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--all-features",
+      "--format-version",
+      "1"
+    ],
+    "cwd": "/workspace/scratch/18ba368826ad/chain-pq-budget",
+    "duration_seconds": 0.000559,
+    "exit_code": null,
+    "launch_or_timeout_error": "FileNotFoundError",
+    "logs": {
+      "stderr": {
+        "bytes": 44,
+        "file": "cargo-metadata.stderr.log",
+        "sha256": "ebadf4ddfb73d00f6c38eb0aad98f44c73ddd8954453600889659343bf795022"
+      },
+      "stdout": {
+        "bytes": 0,
+        "file": "cargo-metadata.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "name": "cargo-metadata",
+    "started_utc": "2026-11-08T06:13:20.683308+00:00",
+    "test_count": null
+  },
+  {
+    "argv": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/workspace/scratch/18ba368826ad/chain-pq-budget",
+    "duration_seconds": 0.000539,
+    "exit_code": null,
+    "launch_or_timeout_error": "FileNotFoundError",
+    "logs": {
+      "stderr": {
+        "bytes": 44,
+        "file": "cargo-format.stderr.log",
+        "sha256": "ebadf4ddfb73d00f6c38eb0aad98f44c73ddd8954453600889659343bf795022"
+      },
+      "stdout": {
+        "bytes": 0,
+        "file": "cargo-format.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "name": "cargo-format",
+    "started_utc": "2026-11-08T06:13:20.684278+00:00",
+    "test_count": null
+  },
+  {
+    "argv": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/workspace/scratch/18ba368826ad/chain-pq-budget",
+    "duration_seconds": 0.000345,
+    "exit_code": null,
+    "launch_or_timeout_error": "FileNotFoundError",
+    "logs": {
+      "stderr": {
+        "bytes": 44,
+        "file": "cargo-clippy.stderr.log",
+        "sha256": "ebadf4ddfb73d00f6c38eb0aad98f44c73ddd8954453600889659343bf795022"
+      },
+      "stdout": {
+        "bytes": 0,
+        "file": "cargo-clippy.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "name": "cargo-clippy",
+    "started_utc": "2026-11-08T06:13:20.685124+00:00",
+    "test_count": null
+  }
+]

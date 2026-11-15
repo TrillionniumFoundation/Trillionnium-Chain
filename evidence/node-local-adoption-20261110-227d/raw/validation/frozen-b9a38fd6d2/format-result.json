@@ -1,0 +1,19 @@
+{
+  "name": "format",
+  "command": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 23.768,
+  "source_commit": "b9a38fd6d245e20849c7edd848dbbe18298cad7e",
+  "source_unchanged": true,
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "profile_overrides": {},
+  "coordination": "Hepta build paused; one Cargo build for this task; -j1"
+}

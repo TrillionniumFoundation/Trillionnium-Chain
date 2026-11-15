@@ -1,0 +1,19 @@
+test_actual_list_requires_all_seven_and_consistent_unique_totals (__main__.BudgetControlsTests.test_actual_list_requires_all_seven_and_consistent_unique_totals) ... ok
+test_before_mining_requires_specific_control_assertion (__main__.BudgetControlsTests.test_before_mining_requires_specific_control_assertion) ... ok
+test_build_uses_original_pin_lock_release_and_lib_once (__main__.BudgetControlsTests.test_build_uses_original_pin_lock_release_and_lib_once) ... ok
+test_capture_retains_separate_raw_streams_and_real_process_status (__main__.BudgetControlsTests.test_capture_retains_separate_raw_streams_and_real_process_status) ... ok
+test_exact_before_and_current_head_pair (__main__.BudgetControlsTests.test_exact_before_and_current_head_pair) ... ok
+test_failed_source_check_is_preserved_and_after_checks_still_run (__main__.BudgetControlsTests.test_failed_source_check_is_preserved_and_after_checks_still_run) ... ok
+test_fixed_requires_named_passes_and_equivalence_passes_in_both_modes (__main__.BudgetControlsTests.test_fixed_requires_named_passes_and_equivalence_passes_in_both_modes) ... ok
+test_history_before_requires_actual_replay_and_paid_deficit (__main__.BudgetControlsTests.test_history_before_requires_actual_replay_and_paid_deficit) ... ok
+test_history_early_fixture_failure_and_wrong_native_phase_are_rejected (__main__.BudgetControlsTests.test_history_early_fixture_failure_and_wrong_native_phase_are_rejected) ... ok
+test_history_fixed_requires_original_refill_and_exact_cancellation (__main__.BudgetControlsTests.test_history_fixed_requires_original_refill_and_exact_cancellation) ... ok
+test_nonzero_signal_missing_summary_and_ignored_never_count_as_controls (__main__.BudgetControlsTests.test_nonzero_signal_missing_summary_and_ignored_never_count_as_controls) ... ok
+test_real_artifact_shape_and_finished_build_are_required (__main__.BudgetControlsTests.test_real_artifact_shape_and_finished_build_are_required) ... ok
+test_release_profile_cannot_be_relabeled (__main__.BudgetControlsTests.test_release_profile_cannot_be_relabeled) ... ok
+test_workflow_keeps_two_sources_separate_and_all_failures (__main__.BudgetControlsTests.test_workflow_keeps_two_sources_separate_and_all_failures) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.066s
+
+OK

@@ -1,0 +1,16 @@
+{
+  "architecture": "x86_64",
+  "build_jobs": 2,
+  "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\n",
+  "kernel": "7.0.0-38-generic",
+  "logical_cpus_visible": 48,
+  "physical_memory_visible_bytes": 134923063296,
+  "profile": "release/default-features",
+  "qualification": "HOLD_NO_GO",
+  "schema": "trnm-next-local-machine-v1",
+  "scope": "shared development host; not original Host root cgroup, independent WAN or product qualification",
+  "source_commit": "bced22f712552302848e3e04f7acf24068af2048",
+  "started_utc": "2026-11-08T05:58:21.950391+00:00",
+  "test_threads": 1,
+  "toolchain": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n"
+}

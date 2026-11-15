@@ -1,0 +1,51 @@
+{
+  "runtime_source": "93fc43f6e87c4514485adcb01a7ffec8ad3b632f",
+  "published_head": "ef3a398d460574813957a25f5455e12c60db6d5d",
+  "pull_request": "https://github.com/TrillionniumFoundation/hepta-private-ci/pull/6062",
+  "first_readonly_verifier_exit": 1,
+  "first_readonly_failure": "desktop gh pr view JSON does not support baseRefOid; preserved original stream",
+  "second_readonly_verifier_exit": 0,
+  "second_readonly_pr_binding": "REST head.sha/base.sha",
+  "original_publisher_optimization_mode_verified": false,
+  "postpublication_verifier_python_optimize": 0,
+  "new_publisher_started": false,
+  "original_git_push_actor_independently_verified": false,
+  "files": {
+    "publication-v1-terminal.log": {
+      "bytes": 2341,
+      "sha256": "9f60f20655447ff52525d94bc94cf19b509565cfadedb38b5f390699a66bc385"
+    },
+    "publication-v1-terminal.json": {
+      "bytes": 940,
+      "sha256": "8813a2c6ccde8337d1d7d5969f538666b7adc0fc1e5e02cd17c9f901f852db8e"
+    },
+    "readonly-verifier-attempt1.log": {
+      "bytes": 1113,
+      "sha256": "69a736ca0918b50d08c538a09abd76ed19d9baa20b556219ffa0b36052ad9e85"
+    },
+    "readonly-verifier-attempt1.json": {
+      "bytes": 940,
+      "sha256": "1a159a5c958caffed8a83a3b2895bed720ec3a599f03290360b0f8e218d07f31"
+    },
+    "readonly-verifier-attempt2.log": {
+      "bytes": 2788,
+      "sha256": "295ca002805b0fa9bef87b5a4b1a9a526f3695634f22dfd989e18f776b96813a"
+    },
+    "readonly-verifier-attempt2.json": {
+      "bytes": 940,
+      "sha256": "ddc3b36d53516c4eb79e06f592912d5ccccebf9ba63accb7aded7a42005cd3c2"
+    },
+    "postpublication-readback.json": {
+      "bytes": 3050,
+      "sha256": "7eadd299e922aaba1446f22d334698747ba3155a0967bb6307f432f924c614f2"
+    },
+    "committed-artifacts-local-verification.json": {
+      "bytes": 810,
+      "sha256": "8441eeae75b7ff56fb66d638fe597cbbaaf221782b8ab970d2f0f0878080ad48"
+    },
+    "../verify_published_hepta_readbacks.py": {
+      "bytes": 17215,
+      "sha256": "a5f149be49778a5a9f8c9136311b21f768b00423f87ee0ed9eab1cf7c87d0324"
+    }
+  }
+}

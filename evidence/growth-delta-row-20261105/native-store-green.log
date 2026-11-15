@@ -1,0 +1,18 @@
+    Blocking waiting for file lock on artifact directory
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/29755d2a47ef/growth-fix/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 49s
+     Running unittests src/lib.rs (/workspace/shared/chain-growth-target/debug/deps/trnm_pon_node-2aaee31106a4dfcc)
+
+running 9 tests
+test account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation ... ignored, explicit constant-table observation; not full-node performance
+test account_archive_prototype::native_store::tests::native_lift_cache_complete_graph_cost_observation ... ignored, explicit bounded-cache complete-graph diagnostic; not a business SLO
+test account_archive_prototype::native_store::tests::native_account_delta_credit_before_debit_preserves_maximum_aggregate ... ok
+test account_archive_prototype::native_store::tests::native_empty_constants_match_wire_and_keep_owned_copy_isolation ... ok
+test account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement ... ok
+test account_archive_prototype::native_store::tests::native_empty_constants_parallel_callers_keep_independent_values ... ok
+test account_archive_prototype::native_store::tests::native_delta_row_decode_matches_complete_parser_without_temporary_state ... ok
+test account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity ... ok
+test account_archive_prototype::native_store::tests::native_complete_account_root_arithmetic_cache_matches_uncached_growth_and_removal ... ok
+
+test result: ok. 7 passed; 0 failed; 2 ignored; 0 measured; 1070 filtered out; finished in 0.13s
+

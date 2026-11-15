@@ -1,0 +1,393 @@
+use super::canonical_tests::{key, setup};
+use super::*;
+use std::sync::mpsc;
+
+fn status(owner: &Mutex<Node>, policy: &PqNetworkPolicy) -> Value {
+    owner.lock().unwrap().pq_network_status(policy).unwrap()
+}
+
+fn client_response_once(
+    client: &PqClient,
+    prepared: &PreparedPqRequest,
+    response: &[u8],
+    budget: Duration,
+) -> Result<PqResponse> {
+    // Exercise the public client's real framing and canonical ML-DSA verifier.
+    // The peer sends an already signed reply; this control makes no claim about
+    // Node execution, durable effects or the separate four-second business gate.
+    let listener = TcpListener::bind("127.0.0.1:0")?;
+    let address = listener.local_addr()?;
+    listener.set_nonblocking(true)?;
+    std::thread::scope(|scope| {
+        let peer = scope.spawn(move || -> Result<()> {
+            let deadline = Instant::now() + Duration::from_secs(10);
+            let mut stream = loop {
+                ensure(Instant::now() < deadline, "TEST_CLIENT_ACCEPT_DEADLINE")?;
+                match listener.accept() {
+                    Ok((stream, _)) => break stream,
+                    Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                        std::thread::sleep(Duration::from_millis(2));
+                    }
+                    Err(error) => return Err(error.into()),
+                }
+            };
+            let observed = super::super::read_frame_deadline(&mut stream, deadline)?;
+            ensure(observed == prepared.wire(), "TEST_CLIENT_REQUEST_CHANGED")?;
+            super::super::write_frame_deadline(&mut stream, response, deadline)
+        });
+        let result = client.send(address, prepared, budget);
+        peer.join().unwrap().unwrap();
+        result
+    })
+}
+
+#[test]
+fn pq_client_completion_keeps_real_signature_and_response_context_checks() {
+    let (_, policy) = setup();
+    let mut client = PqClient::new(policy.clone(), key(72)).unwrap();
+    let prepared = client
+        .prepare(1, super::super::now().unwrap() + 60, Request::Head)
+        .unwrap();
+    let server = PqServer::new(policy, key(71)).unwrap();
+    let response = server
+        .response(&prepared.verified, Ok(json!({"completion_control": true})))
+        .unwrap();
+    let completion_entered = Arc::new(AtomicBool::new(false));
+    let observed = completion_entered.clone();
+    client.before_response_completion = Some(Box::new(move |_| {
+        observed.store(true, Ordering::Release);
+    }));
+    let checked =
+        client_response_once(&client, &prepared, &response, Duration::from_secs(5)).unwrap();
+    assert!(checked.ok);
+    assert_eq!(checked.operation, hex::encode(prepared.operation_id()));
+    assert_eq!(checked.value, json!({"completion_control": true}));
+    assert!(completion_entered.load(Ordering::Acquire));
+
+    completion_entered.store(false, Ordering::Release);
+    let mut invalid = response;
+    invalid[8 + TPQ1_SIGNED_BYTES - 1] ^= 1;
+    let error =
+        client_response_once(&client, &prepared, &invalid, Duration::from_secs(5)).unwrap_err();
+    assert!(error.to_string().contains("SignatureRejected"));
+    assert!(
+        !completion_entered.load(Ordering::Acquire),
+        "a bad signature must never reach the live completion fence"
+    );
+}
+
+#[test]
+fn pq_client_late_verified_response_cannot_renew_original_deadline() {
+    let (_, policy) = setup();
+    let mut client = PqClient::new(policy.clone(), key(72)).unwrap();
+    let prepared = client
+        .prepare(1, super::super::now().unwrap() + 60, Request::Head)
+        .unwrap();
+    let server = PqServer::new(policy, key(71)).unwrap();
+    let response = server
+        .response(&prepared.verified, Ok(json!({"completion_control": true})))
+        .unwrap();
+    let completion_entered = Arc::new(AtomicBool::new(false));
+    let observed = completion_entered.clone();
+    client.before_response_completion = Some(Box::new(move |deadline| {
+        observed.store(true, Ordering::Release);
+        // Simulate descheduling at the actual completion boundary, after the
+        // genuine signature and canonical response have already been checked.
+        // Keep the single original deadline; no guessed verifier timing.
+        while Instant::now() < deadline {
+            std::thread::sleep(deadline.saturating_duration_since(Instant::now()));
+        }
+    }));
+    let error =
+        client_response_once(&client, &prepared, &response, Duration::from_secs(2)).unwrap_err();
+    assert!(completion_entered.load(Ordering::Acquire));
+    assert_eq!(error.to_string(), "PQ_NETWORK_DEADLINE");
+    assert!(error.is(ErrorCode::PqNetworkDeadline));
+}
+
+#[test]
+fn pq_client_verified_response_rechecks_original_signed_expiry() {
+    let (_, policy) = setup();
+    let mut client = PqClient::new(policy.clone(), key(72)).unwrap();
+    let expiry = super::super::now().unwrap() + 2;
+    let prepared = client.prepare(1, expiry, Request::Head).unwrap();
+    let server = PqServer::new(policy, key(71)).unwrap();
+    let response = server
+        .response(&prepared.verified, Ok(json!({"completion_control": true})))
+        .unwrap();
+    let completion_entered = Arc::new(AtomicBool::new(false));
+    let observed = completion_entered.clone();
+    client.before_response_completion = Some(Box::new(move |deadline| {
+        observed.store(true, Ordering::Release);
+        while super::super::now().unwrap() <= expiry {
+            assert!(
+                Instant::now() < deadline,
+                "test clock did not reach the signed expiry in the original interval"
+            );
+            std::thread::sleep(Duration::from_millis(5));
+        }
+    }));
+    let error =
+        client_response_once(&client, &prepared, &response, Duration::from_secs(10)).unwrap_err();
+    assert!(completion_entered.load(Ordering::Acquire));
+    assert_eq!(error.to_string(), "PQ_NETWORK_EXPIRED_UNCONFIRMED");
+}
+
+#[test]
+fn elapsed_deadline_refuses_before_charge_and_cached_replay_stays_live_only() {
+    let (settings, policy) = setup();
+    let directory = tempfile::tempdir().unwrap();
+    let owner = Mutex::new(
+        Node::open_with_pq_network(directory.path(), settings.clone(), 1, &policy).unwrap(),
+    );
+    let client = PqClient::new(policy.clone(), key(72)).unwrap();
+    let prepared = client
+        .prepare(1, super::super::now().unwrap() + 60, Request::Head)
+        .unwrap();
+    let server = PqServer::new(policy.clone(), key(71)).unwrap();
+    let before = status(&owner, &policy);
+    assert_eq!(
+        server
+            .handle(&owner, prepared.wire(), Instant::now())
+            .unwrap_err()
+            .to_string(),
+        "PQ_NETWORK_DEADLINE"
+    );
+    assert_eq!(status(&owner, &policy), before);
+
+    // Refusal must leave the original, unconsumed sequence usable.
+    let response = server
+        .handle(
+            &owner,
+            prepared.wire(),
+            Instant::now() + Duration::from_secs(10),
+        )
+        .unwrap();
+    assert!(
+        policy
+            .verify_response(&response, &prepared.verified, super::super::now().unwrap())
+            .unwrap()
+            .ok
+    );
+    let completed = status(&owner, &policy);
+    assert_eq!(completed["records"], 1);
+    assert_eq!(completed["inbound_signature_attempts"], 1);
+    assert_eq!(
+        server
+            .handle(&owner, prepared.wire(), Instant::now())
+            .unwrap_err()
+            .to_string(),
+        "PQ_NETWORK_DEADLINE"
+    );
+    assert_eq!(status(&owner, &policy), completed);
+    let replay = server
+        .handle(
+            &owner,
+            prepared.wire(),
+            Instant::now() + Duration::from_secs(10),
+        )
+        .unwrap();
+    assert_eq!(replay, response);
+    assert_eq!(status(&owner, &policy)["records"], 1);
+    assert_eq!(status(&owner, &policy)["inbound_signature_attempts"], 2);
+    drop(owner);
+    let reopened = Node::open_with_pq_network(directory.path(), settings, 1, &policy).unwrap();
+    let status = reopened.pq_network_status(&policy).unwrap();
+    assert_eq!(status["records"], 1);
+    assert_eq!(status["inbound_signature_attempts"], 2);
+}
+
+#[test]
+fn deadline_cancels_signature_owner_wait_without_waiting_for_unlock() {
+    let (settings, policy) = setup();
+    let directory = tempfile::tempdir().unwrap();
+    let owner =
+        Mutex::new(Node::open_with_pq_network(directory.path(), settings, 1, &policy).unwrap());
+    let client = PqClient::new(policy.clone(), key(72)).unwrap();
+    let prepared = client
+        .prepare(1, super::super::now().unwrap() + 60, Request::Head)
+        .unwrap();
+    let server = PqServer::new(policy.clone(), key(71)).unwrap();
+    let before = status(&owner, &policy);
+    std::thread::scope(|scope| {
+        let held = owner.lock().unwrap();
+        let (sender, receiver) = mpsc::channel();
+        let (owner, server, prepared) = (&owner, &server, &prepared);
+        scope.spawn(move || {
+            let outcome = server
+                .handle(
+                    owner,
+                    prepared.wire(),
+                    Instant::now() + Duration::from_millis(40),
+                )
+                .map_err(|error| error.to_string());
+            sender.send(outcome).unwrap();
+        });
+        let outcome = receiver.recv_timeout(Duration::from_secs(2));
+        // Always release before asserting so a regression cannot hang the
+        // scoped-thread join. A valid observation arrives while still held.
+        drop(held);
+        assert_eq!(outcome.unwrap().unwrap_err(), "PQ_NETWORK_DEADLINE");
+    });
+    assert_eq!(status(&owner, &policy), before);
+    let response = server
+        .handle(
+            &owner,
+            prepared.wire(),
+            Instant::now() + Duration::from_secs(10),
+        )
+        .unwrap();
+    assert!(
+        policy
+            .verify_response(&response, &prepared.verified, super::super::now().unwrap())
+            .unwrap()
+            .ok
+    );
+    assert_eq!(status(&owner, &policy)["records"], 1);
+}
+
+#[test]
+fn expiry_cancels_signature_owner_wait_and_preserves_unused_sequence() {
+    let (settings, policy) = setup();
+    let directory = tempfile::tempdir().unwrap();
+    let owner =
+        Mutex::new(Node::open_with_pq_network(directory.path(), settings, 1, &policy).unwrap());
+    let client = PqClient::new(policy.clone(), key(72)).unwrap();
+    let expiry = super::super::now().unwrap() + 1;
+    let prepared = client.prepare(1, expiry, Request::Head).unwrap();
+    let server = PqServer::new(policy.clone(), key(71)).unwrap();
+    let before = status(&owner, &policy);
+    std::thread::scope(|scope| {
+        let held = owner.lock().unwrap();
+        let (sender, receiver) = mpsc::channel();
+        let (owner, server, prepared) = (&owner, &server, &prepared);
+        scope.spawn(move || {
+            let outcome = server
+                .handle(
+                    owner,
+                    prepared.wire(),
+                    Instant::now() + Duration::from_secs(10),
+                )
+                .map_err(|error| error.to_string());
+            sender.send(outcome).unwrap();
+        });
+        let outcome = receiver.recv_timeout(Duration::from_secs(5));
+        drop(held);
+        assert_eq!(outcome.unwrap().unwrap_err(), "PQ_NETWORK_EXPIRED");
+    });
+    assert_eq!(status(&owner, &policy), before);
+    let fresh = client
+        .prepare(1, super::super::now().unwrap() + 60, Request::Head)
+        .unwrap();
+    let response = server
+        .handle(
+            &owner,
+            fresh.wire(),
+            Instant::now() + Duration::from_secs(10),
+        )
+        .unwrap();
+    assert!(
+        policy
+            .verify_response(&response, &fresh.verified, super::super::now().unwrap())
+            .unwrap()
+            .ok
+    );
+    assert_eq!(status(&owner, &policy)["records"], 1);
+}
+
+#[test]
+fn cancelled_intake_does_not_allocate_or_spend_connection_credit() {
+    use std::io::Write;
+    let (settings, policy) = setup();
+    let directory = tempfile::tempdir().unwrap();
+    let owner =
+        Mutex::new(Node::open_with_pq_network(directory.path(), settings, 1, &policy).unwrap());
+    let server = PqServer::new(policy.clone(), key(71)).unwrap();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let mut peer = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+    peer.write_all(&(MAX_WIRE as u32).to_be_bytes()).unwrap();
+    let (mut stream, _) = listener.accept().unwrap();
+    let before = status(&owner, &policy);
+    std::thread::scope(|scope| {
+        let held = owner.lock().unwrap();
+        let (sender, receiver) = mpsc::channel();
+        let (owner, server, stream) = (&owner, &server, &mut stream);
+        scope.spawn(move || {
+            let outcome = server
+                .read_request(owner, stream, Instant::now() + Duration::from_millis(40))
+                .map_err(|error| error.to_string());
+            sender.send(outcome).unwrap();
+        });
+        let outcome = receiver.recv_timeout(Duration::from_secs(2));
+        drop(held);
+        assert_eq!(outcome.unwrap().unwrap_err(), "PQ_NETWORK_DEADLINE");
+    });
+    assert_eq!(status(&owner, &policy), before);
+}
+
+#[test]
+fn failed_signature_keeps_charge_then_same_sequence_executes_real_pq_transfer() {
+    let (settings, policy) = setup();
+    let directory = tempfile::tempdir().unwrap();
+    let node = Node::open_with_pq_network(directory.path(), settings.clone(), 1, &policy).unwrap();
+    let packet = node
+        .make_consensus_maintenance(
+            settings.genesis(),
+            vec![super::canonical_tests::transfer(&settings)],
+            key(1).public_key_id(),
+            settings.genesis_time() + 10,
+            4096,
+        )
+        .unwrap();
+    let id = packet.id().unwrap();
+    let owner = Mutex::new(node);
+    let client = PqClient::new(policy.clone(), key(72)).unwrap();
+    let prepared = client
+        .prepare(
+            1,
+            super::super::now().unwrap() + 60,
+            Request::Submit {
+                packet: hex::encode(packet.encode_for_settings(&settings).unwrap()),
+            },
+        )
+        .unwrap();
+    let server = PqServer::new(policy.clone(), key(71)).unwrap();
+    let mut invalid = prepared.wire().to_vec();
+    invalid[8 + TPQ1_UNSIGNED_BYTES + 2] ^= 1;
+    assert!(server
+        .handle(&owner, &invalid, Instant::now() + Duration::from_secs(10),)
+        .is_err());
+    assert_eq!(status(&owner, &policy)["records"], 0);
+    assert_eq!(status(&owner, &policy)["inbound_signature_attempts"], 1);
+    assert_eq!(
+        owner.lock().unwrap().active().unwrap().0,
+        settings.genesis()
+    );
+    let response = server
+        .handle(
+            &owner,
+            prepared.wire(),
+            Instant::now() + Duration::from_secs(10),
+        )
+        .unwrap();
+    assert!(
+        policy
+            .verify_response(&response, &prepared.verified, super::super::now().unwrap())
+            .unwrap()
+            .ok
+    );
+    assert_eq!(status(&owner, &policy)["inbound_signature_attempts"], 2);
+    assert_eq!(status(&owner, &policy)["records"], 1);
+    drop(owner);
+    let reopened = Node::open_with_pq_network(directory.path(), settings, 1, &policy).unwrap();
+    assert_eq!(reopened.active().unwrap().0, id);
+    assert_eq!(
+        reopened.state_at(id).unwrap()[&format!("account:{}", hex::encode(key(2).public_key_id()))]
+            ["balance"],
+        1_000_000_042_u64,
+    );
+    assert_eq!(
+        reopened.pq_network_status(&policy).unwrap()["inbound_signature_attempts"],
+        2,
+    );
+}

@@ -1,0 +1,10 @@
+{
+  "exit_code": 2,
+  "expected_source": "35d57d41cc22ef7380da939f905ad171225eb484",
+  "historical_pins_relaxed": false,
+  "historical_refusal": {
+    "error": "source identity mismatch: trillionnium/crates/trnm-pon-node/src/store.rs",
+    "status": "REFUSED"
+  },
+  "schema": "TRNM-W1-LIFETIME-HISTORICAL-CURRENT-REFUSAL2"
+}

@@ -1,0 +1,195 @@
+{
+  "adaptation": "Expected reviewed revision becomes F1; prior e2a and unknown controls remain; old 2bb revision is an additional explicit refusal.",
+  "changed_method": "test_prior_or_unknown_source_revision_is_refused",
+  "contract_nonmapping_fields_equal": true,
+  "methods": [
+    {
+      "current_AST_sha256": "f82d957995ecb39b9bd79ff090e9791476f6a5ef49fee06985c079cc6db0e26c",
+      "name": "test_current_contract_keeps_all_actual_probabilities_unknown",
+      "old_AST_sha256": "f82d957995ecb39b9bd79ff090e9791476f6a5ef49fee06985c079cc6db0e26c"
+    },
+    {
+      "current_AST_sha256": "6ff366939fdbe4d8eb7eb38c5988579ce29eb6fa81b9ad86c20785956ed9d199",
+      "name": "test_prior_or_unknown_source_revision_is_refused",
+      "old_AST_sha256": "f50f1fa83075d427cae5bcde9052a58dc2dc4860b2762d34a81d6888cb21e6ba"
+    },
+    {
+      "current_AST_sha256": "9ecc62f5d67295f1e5faaff2b4d106b7c7a048b9958dbde35566f14888a5a7d5",
+      "name": "test_both_owner_implementations_and_work_relation_are_bound",
+      "old_AST_sha256": "9ecc62f5d67295f1e5faaff2b4d106b7c7a048b9958dbde35566f14888a5a7d5"
+    },
+    {
+      "current_AST_sha256": "f9a1339115b076489bf7616c3eceb63b918289895957950972ea2fcd86a8076f",
+      "name": "test_every_open_obligation_is_mandatory",
+      "old_AST_sha256": "f9a1339115b076489bf7616c3eceb63b918289895957950972ea2fcd86a8076f"
+    },
+    {
+      "current_AST_sha256": "7d805afb64ebb2c351a3608a87b445ab6f8ea2c84d13ae266d3f385a4a4bafa6",
+      "name": "test_declaring_an_obligation_proved_does_not_promote_it",
+      "old_AST_sha256": "7d805afb64ebb2c351a3608a87b445ab6f8ea2c84d13ae266d3f385a4a4bafa6"
+    },
+    {
+      "current_AST_sha256": "b08657bf5e3ff442f2a81ba923a03be71e9dca5f8d2e9e86c1592d9230c88d0a",
+      "name": "test_all_unknown_environment_inputs_reject_invented_numbers",
+      "old_AST_sha256": "b08657bf5e3ff442f2a81ba923a03be71e9dca5f8d2e9e86c1592d9230c88d0a"
+    },
+    {
+      "current_AST_sha256": "d80a32ab8da88e75da6af9963d5c0fb60eda2e0040b40fa5060093bb6bfe7092",
+      "name": "test_true_is_not_an_authenticated_environment_assumption",
+      "old_AST_sha256": "d80a32ab8da88e75da6af9963d5c0fb60eda2e0040b40fa5060093bb6bfe7092"
+    },
+    {
+      "current_AST_sha256": "3c893af28c8ae9a93c917e53bb3eadb07c2ba60924d0f05e90d62ce2a7b2a0d6",
+      "name": "test_common_prefix_growth_quality_bounds_cannot_be_self_assigned",
+      "old_AST_sha256": "3c893af28c8ae9a93c917e53bb3eadb07c2ba60924d0f05e90d62ce2a7b2a0d6"
+    },
+    {
+      "current_AST_sha256": "70b417d0c4500715d68929f7f2b9d59e9d557b88dcd77c83ceaf13e7a7815592",
+      "name": "test_credit_quality_is_not_count_quality",
+      "old_AST_sha256": "70b417d0c4500715d68929f7f2b9d59e9d557b88dcd77c83ceaf13e7a7815592"
+    },
+    {
+      "current_AST_sha256": "73f7dfbd90cfaa2e49a3f79d819380d271c822b5850bcbc7a0246a0f7c3928e9",
+      "name": "test_chain_growth_is_not_business_liveness",
+      "old_AST_sha256": "73f7dfbd90cfaa2e49a3f79d819380d271c822b5850bcbc7a0246a0f7c3928e9"
+    },
+    {
+      "current_AST_sha256": "a841a2ea5316bd81bb685ed640de70638ad94a9686794056088897af5202a006",
+      "name": "test_native_metrics_cannot_be_silently_changed",
+      "old_AST_sha256": "a841a2ea5316bd81bb685ed640de70638ad94a9686794056088897af5202a006"
+    },
+    {
+      "current_AST_sha256": "c87a67b74a6f6d5f1c78109a4303b5db42808e6048b592319328de202db52410",
+      "name": "test_six_successors_exclude_inclusion_work",
+      "old_AST_sha256": "c87a67b74a6f6d5f1c78109a4303b5db42808e6048b592319328de202db52410"
+    },
+    {
+      "current_AST_sha256": "e11582ea3d9c431a43299047bdab0b44dbcde45204b9f92f60fce15fee9868ef",
+      "name": "test_height_only_confirmation_is_refused",
+      "old_AST_sha256": "e11582ea3d9c431a43299047bdab0b44dbcde45204b9f92f60fce15fee9868ef"
+    },
+    {
+      "current_AST_sha256": "fc47519c03d1d4e8da4eba9d5e4ed82981ca11404d8f8173f8a7120b7e2e6814",
+      "name": "test_header_time_is_not_a_real_cost_clock",
+      "old_AST_sha256": "fc47519c03d1d4e8da4eba9d5e4ed82981ca11404d8f8173f8a7120b7e2e6814"
+    },
+    {
+      "current_AST_sha256": "92267d310ca278cb6bf0b463599640f996ae87894938c7b6a000227144bd7d34",
+      "name": "test_sqrt_credit_cannot_be_substituted",
+      "old_AST_sha256": "92267d310ca278cb6bf0b463599640f996ae87894938c7b6a000227144bd7d34"
+    },
+    {
+      "current_AST_sha256": "a629b451a2ba6da3fff0c5e188951a085a02173e9d24a2507c1020d67cb46b0e",
+      "name": "test_scalar_honest_majority_cannot_be_inserted",
+      "old_AST_sha256": "a629b451a2ba6da3fff0c5e188951a085a02173e9d24a2507c1020d67cb46b0e"
+    },
+    {
+      "current_AST_sha256": "9ed9fbe7452c7752e86145516df3e28b2b2ff5a19e17566e63c45d5f78c7e285",
+      "name": "test_numeric_lifetime_bound_is_refused_even_if_zero",
+      "old_AST_sha256": "9ed9fbe7452c7752e86145516df3e28b2b2ff5a19e17566e63c45d5f78c7e285"
+    },
+    {
+      "current_AST_sha256": "1527e670baf87c0d3473a538ce2263d12f5651e9d92e2f00d76f0cb593103e55",
+      "name": "test_boolean_and_integer_promotions_are_distinct",
+      "old_AST_sha256": "1527e670baf87c0d3473a538ce2263d12f5651e9d92e2f00d76f0cb593103e55"
+    },
+    {
+      "current_AST_sha256": "683118ff491f7c5424001b0a287903f5f09c653a220655e90e1d8ec56ad42b2c",
+      "name": "test_runtime_finality_and_authority_are_not_granted",
+      "old_AST_sha256": "683118ff491f7c5424001b0a287903f5f09c653a220655e90e1d8ec56ad42b2c"
+    },
+    {
+      "current_AST_sha256": "f2e2aa64c5a5101e14004bc8141e0a177a6a3339de0e4690b3f7e200073d59d3",
+      "name": "test_qualified_status_is_refused",
+      "old_AST_sha256": "f2e2aa64c5a5101e14004bc8141e0a177a6a3339de0e4690b3f7e200073d59d3"
+    },
+    {
+      "current_AST_sha256": "bd6c181877a7cfc22447b53f82f73c542b1872f94e1386009d5c57a5f4a0f3ee",
+      "name": "test_unknown_schema_or_extra_claim_is_refused",
+      "old_AST_sha256": "bd6c181877a7cfc22447b53f82f73c542b1872f94e1386009d5c57a5f4a0f3ee"
+    },
+    {
+      "current_AST_sha256": "80c83149638ddc495f8677ad79215a10e3fc6fddedb6d17b0ef92425797d8491",
+      "name": "test_changed_native_owner_is_refused",
+      "old_AST_sha256": "80c83149638ddc495f8677ad79215a10e3fc6fddedb6d17b0ef92425797d8491"
+    },
+    {
+      "current_AST_sha256": "d2f6ba5e25e6b8fe77e133e5d2e662274b8d0629250ae42eac381f9dc0f720f6",
+      "name": "test_missing_owner_pin_or_extra_source_pin_is_refused",
+      "old_AST_sha256": "d2f6ba5e25e6b8fe77e133e5d2e662274b8d0629250ae42eac381f9dc0f720f6"
+    },
+    {
+      "current_AST_sha256": "b4abf149fa068c5e00c3582bfb8c900f019246e9ed5786512b5a6193d01af3e8",
+      "name": "test_source_digest_format_and_missing_file_are_refused",
+      "old_AST_sha256": "b4abf149fa068c5e00c3582bfb8c900f019246e9ed5786512b5a6193d01af3e8"
+    },
+    {
+      "current_AST_sha256": "264325ebafd876ee20de36043d26873a374ba186cc2c97b392e4cff1205c3997",
+      "name": "test_repinning_changed_development_threshold_still_fails",
+      "old_AST_sha256": "264325ebafd876ee20de36043d26873a374ba186cc2c97b392e4cff1205c3997"
+    },
+    {
+      "current_AST_sha256": "d0fce2b3c23daf53dfdb9a58de5cc36f3a71e4de60ab31a17837066c16bb918e",
+      "name": "test_parameter_manifest_cannot_override_installed_policy",
+      "old_AST_sha256": "d0fce2b3c23daf53dfdb9a58de5cc36f3a71e4de60ab31a17837066c16bb918e"
+    },
+    {
+      "current_AST_sha256": "813b40c9490f3682688c099c4c114ecd2a8b67bba31d53d2378d80afef4c1c41",
+      "name": "test_cost_model_remains_unproved_after_joint_source_repin",
+      "old_AST_sha256": "813b40c9490f3682688c099c4c114ecd2a8b67bba31d53d2378d80afef4c1c41"
+    },
+    {
+      "current_AST_sha256": "ee92336e07b2479f2556a730fe9ee857198fc5e65f880f3a7491578e734f4041",
+      "name": "test_cost_scope_cannot_be_promoted_to_native_credit",
+      "old_AST_sha256": "ee92336e07b2479f2556a730fe9ee857198fc5e65f880f3a7491578e734f4041"
+    },
+    {
+      "current_AST_sha256": "18cf4a23f6b534147ba3512274fee5b8b47bdb24c2f29507c73524cfb5b468d1",
+      "name": "test_repinning_native_source_requires_separate_checker_review",
+      "old_AST_sha256": "18cf4a23f6b534147ba3512274fee5b8b47bdb24c2f29507c73524cfb5b468d1"
+    },
+    {
+      "current_AST_sha256": "7831e96ca75212a1946e50472648f066257d6ca2eff4d7d4d69059ce1e5dd525",
+      "name": "test_actual_source_activation_flags_are_independently_checked",
+      "old_AST_sha256": "7831e96ca75212a1946e50472648f066257d6ca2eff4d7d4d69059ce1e5dd525"
+    },
+    {
+      "current_AST_sha256": "7274294c2a9e840dd8cb3bc224e4ad666e8cc8e09438e635bbe2b92deb56a91c",
+      "name": "test_actual_active_owner_cannot_be_created_by_json",
+      "old_AST_sha256": "7274294c2a9e840dd8cb3bc224e4ad666e8cc8e09438e635bbe2b92deb56a91c"
+    },
+    {
+      "current_AST_sha256": "38f943f2ad3b55169849db736f92795a0e268b7ff08f072bc1902824378f90a8",
+      "name": "test_duplicate_json_float_nonfinite_and_oversize_are_refused",
+      "old_AST_sha256": "38f943f2ad3b55169849db736f92795a0e268b7ff08f072bc1902824378f90a8"
+    },
+    {
+      "current_AST_sha256": "ded22ddb09e932a232b7c3df1520fbdfa49bbae6aa41cd55bfdc421df79909e8",
+      "name": "test_incomplete_model_contract_reference_fails",
+      "old_AST_sha256": "ded22ddb09e932a232b7c3df1520fbdfa49bbae6aa41cd55bfdc421df79909e8"
+    },
+    {
+      "current_AST_sha256": "2db25ab72d57d8651137f91657dcbbcfa6b547df66a07cd5f8995c92d1660f9d",
+      "name": "test_bound_scope_is_not_full_binary_closure",
+      "old_AST_sha256": "2db25ab72d57d8651137f91657dcbbcfa6b547df66a07cd5f8995c92d1660f9d"
+    },
+    {
+      "current_AST_sha256": "ea27d2126cc701a6154999f31024d7d79b549d5ccdfbadac3b474c16c8bb5af8",
+      "name": "test_cli_has_distinct_check_and_qualification_exit_codes",
+      "old_AST_sha256": "ea27d2126cc701a6154999f31024d7d79b549d5ccdfbadac3b474c16c8bb5af8"
+    }
+  ],
+  "new_test_file_sha256": "b91c318b3a5edf49a0db8392eb71b50b9740791148b043027796cb168c3e82e0",
+  "original_test_file_sha256": "84ac587d02fae45062fb6b914d50eb478c4fe1df429898cdebb24a95959f879e",
+  "qualification": "HOLD_NO_GO",
+  "reader_functions_all_AST_identical": true,
+  "reader_only_two_anchor_constants_changed": true,
+  "restored_adapter_AST_equals_original": true,
+  "revision_leaf_changes": 1,
+  "runtime_source_changed": false,
+  "schema": "joint-F2-minimal-source-change-proof-v1",
+  "source_map_leaf_changes": 4,
+  "source_paths_roster_unchanged": true,
+  "test_method_count": 35,
+  "unchanged_method_AST_count": 34
+}

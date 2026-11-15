@@ -1,0 +1,117 @@
+{
+  "canonical_json_bytes_without_newline": 66550,
+  "canonical_sha256": "aa45f127e085302cd25ee9dc11518919a97242fabe9f0bbd69cc74dc39058dca",
+  "no_generation_or_cancellation_or_native_transaction_dispatched_by_this_reader": true,
+  "observed_monotonic_ns": 1163802638397214,
+  "observed_output_files": [
+    "native-funded-intent.json",
+    "native-generation-v2.sqlite",
+    "native-independent-process/intent.json",
+    "native-independent-process/result.json",
+    "native-independent-process/stderr.log",
+    "native-independent-process/stdout.log",
+    "native-winner/expected-artifacts.bin",
+    "native-winner/header.bin",
+    "native-winner/input.bin",
+    "native-winner/intent.json",
+    "native-winner/result.json",
+    "native-winner/trials.jsonl",
+    "native-winner-process/intent.json",
+    "native-winner-process/result.json",
+    "native-winner-process/stderr.log",
+    "native-winner-process/stdout.log",
+    "owner-cancel-start/failure.json",
+    "owner-cancel-start/intent.json",
+    "owner-cancel-start-command/intent.json",
+    "owner-cancel-start-command/result.json",
+    "owner-cancel-start-command/stderr.log",
+    "owner-cancel-start-command/stdout.log",
+    "owner-declaration.json",
+    "target-request.json",
+    "winner-owner-process.json",
+    "winner-owner-stderr.log",
+    "winner-owner-stdout.log",
+    "winner-runtime-intent.json",
+    "winner-runtime-result.json"
+  ],
+  "original_databases_opened": false,
+  "original_deadline_renewed": false,
+  "original_declared_deadline_ns": 1164217362239646,
+  "original_scope": {
+    "exists": false,
+    "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b7db09a3-12894-c8e.service"
+  },
+  "original_status": {
+    "at_unix_ms": 1794085964345,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 101,
+    "job_id": "1a1b7db09a3-12894-c8e",
+    "launch_nonce": "1bdbd65982260e203f1bccd703dd8a08",
+    "log_bytes": {
+      "stderr": {
+        "seen": 435,
+        "stored": 435
+      },
+      "stdout": {
+        "seen": 381,
+        "stored": 381
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "failed",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "owner_cancellation_success_claimed": false,
+  "raw_bytes": 68909,
+  "raw_file_untouched": true,
+  "request": {
+    "bytes": 68909,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-run-01/target-request.json",
+    "sha256": "eff76555c5166818cbf7b833e12c43d315f6fd6bb684d8031f09e70982910071"
+  },
+  "request_top_keys": [
+    "argv",
+    "cgroup_parent",
+    "cleanup_grace_ns",
+    "clock_domain",
+    "containment",
+    "cpus",
+    "cwd",
+    "deadline_monotonic_ns",
+    "environment",
+    "execution_source_commitment",
+    "file_pins",
+    "operation",
+    "proof_plan",
+    "provider_namespace",
+    "schema",
+    "statement",
+    "target_backend_sha256",
+    "target_instance",
+    "task_scope",
+    "total_threads",
+    "winner_monotonic_ns"
+  ],
+  "same_original_boot": true,
+  "schema": "TRNM-W1-OWNER-CANCEL-FIRST-FAILURE-READBACK1",
+  "source_commit": "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11",
+  "source_status": "",
+  "target_root_files": []
+}

@@ -1,0 +1,15 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 1m 00s
+     Running unittests examples/pon_w1_legal_strategy_v2.rs (/tmp/pon-next-target/release/examples/pon_w1_legal_strategy_v2-9037c24a8b4e3b1e)
+
+running 6 tests
+test tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments ... ok
+test tests::factorial_search_keeps_every_miss_and_identical_complete_winners ... ok
+test tests::last_product_mutation_wraps_canonically_and_changes_only_that_word ... ok
+test tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity ... ok
+test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok
+test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+

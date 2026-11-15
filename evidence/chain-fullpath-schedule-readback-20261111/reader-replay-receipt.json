@@ -1,0 +1,105 @@
+{
+  "after_reader_source": "5eebce7271a46fb5bb735e53c12ccc0847f50ba4",
+  "after_source_still_matches_saved_reader": true,
+  "before_reader_source": "53e1b98a7955898b9feff4778f7136c0fd0199c8",
+  "dependency_source_files_unchanged_from_measurement_base": true,
+  "executions": [
+    {
+      "command": [
+        "python3",
+        "/workspace/scratch/1cba2f8b51ac/validation/metrics-readback/before-reader.py",
+        "--bundle",
+        "/workspace/scratch/1cba2f8b51ac/validation/metrics-readback/bundle",
+        "--expected-manifest-sha256",
+        "d109aff9ea3dc147ce6703f360849f398e1965c07e58c20f4593bcb54f167325",
+        "--expected-head",
+        "53e1b98a7955898b9feff4778f7136c0fd0199c8",
+        "--expected-tree",
+        "094ccb0afc9e7ffbbcc83f85efb6ca4ad8d54aa0",
+        "--retained-subset"
+      ],
+      "elapsed_ns": 21561720467,
+      "label": "before",
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "85a1250e6ab7c721212bafac6d7ee1830d4538fdb62130f77cd47344db1376c9"
+    },
+    {
+      "command": [
+        "python3",
+        "/workspace/scratch/1cba2f8b51ac/validation/metrics-readback/after-reader.py",
+        "--bundle",
+        "/workspace/scratch/1cba2f8b51ac/validation/metrics-readback/bundle",
+        "--expected-manifest-sha256",
+        "d109aff9ea3dc147ce6703f360849f398e1965c07e58c20f4593bcb54f167325",
+        "--expected-head",
+        "53e1b98a7955898b9feff4778f7136c0fd0199c8",
+        "--expected-tree",
+        "094ccb0afc9e7ffbbcc83f85efb6ca4ad8d54aa0",
+        "--retained-subset"
+      ],
+      "elapsed_ns": 31433991067,
+      "label": "after",
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "b4ce6875d817820ab0429cb369fa10d1b6d0fd4f04e7d8ce8c3438d353bc8b31"
+    }
+  ],
+  "measurement_source": {
+    "head": "53e1b98a7955898b9feff4778f7136c0fd0199c8",
+    "tree": "094ccb0afc9e7ffbbcc83f85efb6ca4ad8d54aa0"
+  },
+  "new_native_experiment": false,
+  "read_only_replay": true,
+  "schema": "metrics-reader-before-after-replay-v1",
+  "source_files": {
+    "config/pon/ledger-v1.json": {
+      "git_base_sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+    },
+    "config/pon/model-family-v1.json": {
+      "git_base_sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+      "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+    },
+    "config/pon/public-resource-profile-vectors-v1.json": {
+      "git_base_sha256": "807037076b2e2c39d044e07ed2bac231b0862355fe623d7975167ae5d7cfa1da",
+      "sha256": "807037076b2e2c39d044e07ed2bac231b0862355fe623d7975167ae5d7cfa1da"
+    },
+    "config/pon/work-profile-v1.json": {
+      "git_base_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+    },
+    "formal/pon-nakamoto-v1/bounded_process.py": {
+      "git_base_sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356"
+    },
+    "formal/pon-nakamoto-v1/contract_wire.py": {
+      "git_base_sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+    },
+    "scripts/pon_public_v3_phase_read.py": {
+      "git_base_sha256": "0b1352d91ddb3258ea6537e53abf9cfdc3069c4b563819a15a535e7ce72c89ee",
+      "sha256": "0b1352d91ddb3258ea6537e53abf9cfdc3069c4b563819a15a535e7ce72c89ee"
+    },
+    "scripts/pon_public_v3_policy_read.py": {
+      "git_base_sha256": "c7e4bc5450ac1c721cdc9dc5975d2c102bcf4ab5c58fe3b2dc52bcd65b4e6a7b",
+      "sha256": "c7e4bc5450ac1c721cdc9dc5975d2c102bcf4ab5c58fe3b2dc52bcd65b4e6a7b"
+    },
+    "scripts/pon_w1_cost_matrix_reader.py": {
+      "git_base_sha256": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa",
+      "sha256": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa"
+    },
+    "scripts/read_original_native_campaign.py": {
+      "git_base_sha256": "4381e3af6dac9ea2301cb78ff1761628a3b0e236750d1f291f4d51118c31b417",
+      "sha256": "4381e3af6dac9ea2301cb78ff1761628a3b0e236750d1f291f4d51118c31b417"
+    },
+    "scripts/read_validated_business_goodput.py": {
+      "git_base_sha256": "bef4ce5a65f346fbd02d74491657b029228a4350eadfd5ddcc131459441e4282",
+      "sha256": "b2c09b1176d9eb44c6212599c100aa7d1b695f92a4485c6200f2e665b606d357"
+    },
+    "scripts/run_pon_w1_native_campaign.py": {
+      "git_base_sha256": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431",
+      "sha256": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431"
+    }
+  }
+}

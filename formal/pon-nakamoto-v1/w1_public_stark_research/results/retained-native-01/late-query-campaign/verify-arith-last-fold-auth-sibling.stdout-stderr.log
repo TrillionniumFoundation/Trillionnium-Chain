@@ -1,0 +1,7 @@
+{"elapsed_ms":17.505720999999998,"phase":"bounded_read_decode_and_proof_shape"}
+{"elapsed_ms":8.268263,"phase":"canonical_plans_and_public_only_sha_air"}
+{"elapsed_ms":47.401516,"phase":"sha_verifier_independent_preprocessing_setup"}
+{"elapsed_ms":285.915697,"phase":"sha_stark_verify"}
+{"elapsed_ms":568.609976,"phase":"arith_verifier_independent_preprocessing_setup"}
+{"elapsed_ms":50.640468,"phase":"arith_stark_verify"}
+{"error":"arithmetic proof rejected: InvalidOpeningArgument(CommitPhaseMmcsError(CapMismatch))","process_wall_ms":980.529047,"qualification":"HOLD_NO_GO","schema":"trnm-w1-complete-public-stark-run-v1","status":"REJECTED_OR_FAILED"}

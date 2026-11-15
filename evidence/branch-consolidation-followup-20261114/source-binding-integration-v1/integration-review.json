@@ -1,0 +1,96 @@
+{
+  "components": {
+    "B1": "341a8b5f751342b51a4aaf9512534853c79d7b5b",
+    "F1": "2d9baf313e54e49a4507c5057578e89ddbe7a1b6",
+    "F2": "6418023d7f60e6e0c42f08c8726085a2b983757b",
+    "H1": "e811c204e039565c06f5bb2cba3543564f510f7b"
+  },
+  "diagnostic_originals": [
+    {
+      "bytes": 180498,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-copy-v1/original-diagnostics-7d8d4c-v1.zip"
+      },
+      "path": "diagnostics.zip",
+      "sha256": "038fb138c75fef1eca35422e08f7d5e2c784bec70fcc739695c4ca71b5637c5a"
+    },
+    {
+      "bytes": 97406,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-copy-v1/EVIDENCE_INDEX.json"
+      },
+      "path": "diagnostics-index.json",
+      "sha256": "4711b610ad6cf1f9711947caece9bc562002a8857d0ce454bc295806ad608ac1"
+    },
+    {
+      "bytes": 8637,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-copy-v1/copy-verification.json"
+      },
+      "path": "diagnostics-copy-verification.json",
+      "sha256": "bc7f7b95bd73b52919ce9e86ffba6e20b8117a896d54d0569687a02494d15a2a"
+    },
+    {
+      "bytes": 202716,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-copy-v1/original-summary.json"
+      },
+      "path": "diagnostics-original-summary.json",
+      "sha256": "d47c5501b2087a4ac8d9b092b51f246450cf57b2f02b5dbaf83b96e63672bef3"
+    }
+  ],
+  "diagnostic_scope": {
+    "commands": 122,
+    "nonzero_units": [
+      1,
+      6,
+      10,
+      22,
+      23,
+      107
+    ],
+    "qualifies_original_full_lane": false,
+    "source": "7d8d4c59fcd01480a12e1c64835b202079091800",
+    "zero_exits": 116
+  },
+  "existing_corpus_pin_updates": {
+    "config/pon/hash-use-contract-v1.json": "986a94eaf6b1c44a11595cc98ac4f9925e7c943e",
+    "config/pon/joint-consensus-qualification-v1.json": "b2ce9946df65598ea1068ee5d2fbdcac131de6c8",
+    "docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_QUALIFICATION_V1.md": "fb577f6b424f19db48e21d0027cf3618e3556bbf",
+    "docs/research/W1_ORACLE_EVIDENCE_SCOPE_V1.md": "bae4d5c9692e451bddb2e46e67facefeb649848b",
+    "docs/security/HASH_USE_CONTRACT_V1.md": "caeef93f9bc11228fc8fe5d18923ffca42a7af16",
+    "formal/pon-nakamoto-v1/joint_consensus_qualification.py": "675a93aef57d928cb7054778b64232e922ca57e4",
+    "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py": "7983a260ff6cfb91c4f2f8ab4b128f0769fa166c",
+    "formal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py": "89bbe4a78c3d258e7799556257f4919cc280e17f",
+    "formal/pon-nakamoto-v1/w1_quantum_native_bridge.py": "61731a92ddf7e5fd27f8712dc204c2d065b22eff",
+    "scripts/ci/check_pq_research_integration.py": "17d6cfd501ce311f3239dc0c9eb53753c255f3be",
+    "scripts/ci/hash_use_contract.py": "cf55d45678bfb27d9ad9fcf2863a05aa1bc0540b",
+    "scripts/ci/test_pq_research_integration.py": "b43c38008095eff5ab7a5cac35c00beddd2803d0"
+  },
+  "full_lane_pass_claimed": false,
+  "historical_carrier": {
+    "bytes": 13956,
+    "current_index_sha256": "03a12b46a774fae2654748ffb59c2ca660577b95b150f1e98beaf1571c852f12",
+    "new_path": "evidence/pon-fixed-joint-source-binding-20261114/historical/JOINT_CONSENSUS_QUALIFICATION_V1-2bb56596.md.original",
+    "old_path": "evidence/pon-fixed-joint-source-binding-20261114/historical/JOINT_CONSENSUS_QUALIFICATION_V1-2bb56596.md",
+    "old_relative_links": 13,
+    "original_bytes_unchanged": true,
+    "original_f2_index_sha256": "9a692e0b337d0a8f75ce0e1cf2e1a509ebccc40b033f0e03190e6f45892d14ea",
+    "sha256": "cd4908e6e71297dd40b76c1703f04ae3430eb80a4850ec851086a3de71ced04b"
+  },
+  "historical_git_object_bodies_compared_to_original_git": 4,
+  "hosted_pass_claimed": false,
+  "integration_parent": "e99fe0e0e48a96185e1d02ac5acc458311814f65",
+  "native_execution": false,
+  "new_required_blob": "421b10241820580efcdabc692ccb1f6dd27b6586",
+  "new_required_path": "formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw",
+  "production_activation": false,
+  "remote_merge_or_deletion_claimed": false,
+  "required_paths_after": 2504,
+  "schema": "trnm-reviewed-source-binding-integration-v1",
+  "source_pins_after": 2600
+}

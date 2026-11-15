@@ -1,0 +1,42 @@
+{
+  "label": "sha-last-fold-extra-query-2-0-baseline",
+  "command": [
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research",
+    "verify",
+    "/home/qian-qi/work/w1-r3-evidence-f16ac5/wire-benchmark-v1/sha-last-fold-extra-query/statement.bin",
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin",
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin",
+    "/home/qian-qi/work/w1-r3-evidence-f16ac5/wire-benchmark-v1/sha-last-fold-extra-query"
+  ],
+  "exit_code": 1,
+  "outer_wall_seconds": 0.15436700521968305,
+  "expected_success": false,
+  "matched_exit_expectation": true,
+  "final": {
+    "error": "sha proof rejected: InvalidOpeningArgument(CommitPhaseQueryCountMismatch { round: 12, expected: 64, got: 65 })",
+    "process_wall_ms": 146.988159,
+    "qualification": "HOLD_NO_GO",
+    "schema": "trnm-w1-complete-public-stark-run-v1",
+    "status": "REJECTED_OR_FAILED"
+  },
+  "phase_events": [
+    {
+      "elapsed_ms": 17.264989,
+      "phase": "bounded_read_decode_and_proof_shape"
+    },
+    {
+      "elapsed_ms": 8.567164,
+      "phase": "canonical_plans_and_public_only_sha_air"
+    },
+    {
+      "elapsed_ms": 47.926853,
+      "phase": "sha_verifier_independent_preprocessing_setup"
+    },
+    {
+      "elapsed_ms": 71.590487,
+      "phase": "sha_stark_verify"
+    }
+  ],
+  "resource_text": "Command exited with non-zero status 1\n\tCommand being timed: \"/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research verify /home/qian-qi/work/w1-r3-evidence-f16ac5/wire-benchmark-v1/sha-last-fold-extra-query/statement.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin /home/qian-qi/work/w1-r3-evidence-f16ac5/wire-benchmark-v1/sha-last-fold-extra-query\"\n\tUser time (seconds): 0.41\n\tSystem time (seconds): 0.03\n\tPercent of CPU this job got: 295%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.15\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 39572\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 11941\n\tVoluntary context switches: 152\n\tInvoluntary context switches: 5\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 0\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 1\n",
+  "combined_log_sha256": "9bf39fdf1c0632a0b235776eaabcfa1eaf97bc87b087670c3034838f9b567442"
+}

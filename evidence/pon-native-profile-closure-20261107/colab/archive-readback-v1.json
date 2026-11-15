@@ -1,0 +1,24 @@
+{
+  "README": {
+    "path": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/cloud/publication-v1/README.md",
+    "sha256": "c9103098a8a7df5bb5e139f88e7f3ce7b29a1d252c715673684196985cdf2fb9",
+    "size_bytes": 5462
+  },
+  "archive": {
+    "path": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/cloud/publication-v1/pon-profile-cloud-public-v1.tar.gz",
+    "sha256": "c569b4cecdd62983cfe18a7279ca462f7d46343a52c1d0a8b1f5c2cdca899591",
+    "size_bytes": 73775
+  },
+  "archive_and_every_manifest_file_readback_verified": true,
+  "file_count_including_manifest": 19,
+  "manifest": {
+    "path": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/cloud/publication-v1/MANIFEST.json",
+    "sha256": "ee920debab8405eb1a9e1576f6cd60a8df4b4c1aea8f07ee04512f32efadcd41",
+    "size_bytes": 3107
+  },
+  "private_adapter_source_included": false,
+  "profile_auth_credentials_included": false,
+  "repo_modified": false,
+  "schema": "pon-profile-colab-publication-readback-v1",
+  "task_kernel_disposition": "IDLE_RETAINED_NOT_RELEASED"
+}

@@ -1,0 +1,11 @@
+
+running 6 tests
+test capacity_observe_refuses_complete_state_reference_before_creating_store ... ok
+test growth_evaluation_cli_observes_actual_tag6_current_generation_without_source_writes ... ok
+test growth_evaluation_cli_validates_before_store_io_and_never_recovers_source ... ok
+test native_growth_v2_cli_current_clock_defers_future_ancestors_and_preserves_packets ... ok
+test native_growth_v2_cli_rejects_ambiguous_or_malformed_inputs_before_creating_store ... ok
+test native_growth_v2_cli_signed_packet_remote_admission_and_cold_current_snapshot ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.06s
+

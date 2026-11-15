@@ -1,0 +1,33 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "strict-clippy",
+  "command": [
+    "bash",
+    "/workspace/scratch/e537ad232c79/run-native.sh",
+    "cargo",
+    "clippy",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-features",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+  "tree": "72d12bd434055f67c5f6becf2ee480a9ec09b99e",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T13:22:18.205916+00:00",
+  "returncode": 101,
+  "completed": true,
+  "wall_ns": 486632132651,
+  "finished_at": "2026-11-04T13:30:24.838336+00:00",
+  "log_bytes": 6585,
+  "log_sha256": "b60fc4d4c42fa2453c839d07cd81f55e37af07b28a2bf3d1321b9dbc47ca1b80",
+  "final_head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+  "final_dirty_paths": []
+}

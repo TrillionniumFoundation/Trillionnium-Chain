@@ -1,0 +1,12 @@
+{
+  "HEAD": {
+    "bytes": 73,
+    "path": "/home/qian-qi/work/chain-pon-outcome-7612-publish/.git/HEAD",
+    "sha256": "48c264a25385742e3b2cea19d115a7a8fa75af918ba55140445f32c9816ea43d"
+  },
+  "index": {
+    "bytes": 4930212,
+    "path": "/home/qian-qi/work/chain-pon-outcome-7612-publish/.git/index",
+    "sha256": "3476be646da317d94d99aa836e86aef82805bd5bd64fa0f9d9fb6d2d27cbc9a7"
+  }
+}

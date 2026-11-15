@@ -1,0 +1,30 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: unknown or duplicate Cargo loader directory: observed="/workspace/scratch/e08750459604/pon-v3-target-682/release"; derived_normal={"/tmp/trnm-original-budget-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib", "/tmp/trnm-original-budget-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib", "/workspace/scratch/e08750459604/pon-v3-target-682/x86_64-unknown-linux-gnu/release", "/workspace/scratch/e08750459604/pon-v3-target-682/x86_64-unknown-linux-gnu/release/deps"}
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 4m 33s
+     Running unittests src/lib.rs (/workspace/scratch/e08750459604/pon-v3-target-682/x86_64-unknown-linux-gnu/release/deps/trnm_pon_node-62418a327cf7d485)
+
+running 21 tests
+test ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced ... ok
+test ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation ... ok
+test ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account ... ok
+test ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account ... ok
+test ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart ... ok
+test ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline ... ok
+test ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account ... ok
+test ingress::history_import::tests::history_kill_cut_child ... ignored, subprocess fixture: parent selects a real SIGKILL cut
+test ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill ... ok
+test ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary ... ok
+test ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account ... ok
+test ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries ... ok
+test ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work ... ok
+test ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch ... ok
+test ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1 ... ok
+test ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one ... ok
+test ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1 ... ok
+test ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks ... ok
+test ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit ... ok
+test ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer ... ok
+test ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer ... ok
+
+test result: ok. 20 passed; 0 failed; 1 ignored; 0 measured; 823 filtered out; finished in 11.81s
+

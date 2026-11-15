@@ -1,0 +1,190 @@
+{
+  "schema": "TRNM-STARK-DOMAIN-SAMPLER-RECOVERY-VALIDATION1",
+  "source_before": {
+    "head": "11e6dc957943868555d022c254a1885b3582683a",
+    "tree": "6111f91f37440f99428c721e7f7402670fc6e5ba",
+    "status": ""
+  },
+  "source_after": {
+    "head": "11e6dc957943868555d022c254a1885b3582683a",
+    "tree": "6111f91f37440f99428c721e7f7402670fc6e5ba",
+    "status": ""
+  },
+  "source_endpoints_equal": true,
+  "commands": [
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.056
+    },
+    {
+      "name": "route-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_w1_stark_route_audit.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.292
+    },
+    {
+      "name": "field-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_w1_stark_field_certificates.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.239
+    },
+    {
+      "name": "ideal-sampler-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_w1_fri_ideal_sampler.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.226
+    },
+    {
+      "name": "replay-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_w1_fri_query_replay.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 9.486
+    },
+    {
+      "name": "ci-contract-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 37.896
+    },
+    {
+      "name": "source-integrity-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.136
+    },
+    {
+      "name": "pq-corpus-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 76.726
+    },
+    {
+      "name": "repository-check",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 16.062
+    },
+    {
+      "name": "pq-corpus-check",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.443
+    },
+    {
+      "name": "inventory-check",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.064
+    },
+    {
+      "name": "field-report",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/w1_stark_field_certificates.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.076
+    },
+    {
+      "name": "route-report",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/w1_stark_route_audit.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.078
+    },
+    {
+      "name": "ideal-sampler-report",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/w1_fri_query_replay.py",
+        "--ideal-sampler-law"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.052
+    },
+    {
+      "name": "named-proof-chain",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/w1_qrom_proof_chain_controls.py",
+        "run",
+        "--output",
+        "/workspace/scratch/be35ba3f1307/domain-sampler-validation/proof-chain"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 9.823
+    },
+    {
+      "name": "cargo-graph",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": null,
+      "elapsed_seconds": 0.001
+    }
+  ],
+  "limits": [
+    "No prior lost-commit results are transferred to this reconstructed source.",
+    "No new native STARK proof, recursive execution, resource qualification or cryptographic closure.",
+    "Local cargo absent; no graph, build, formatting or Clippy pass claimed."
+  ]
+}

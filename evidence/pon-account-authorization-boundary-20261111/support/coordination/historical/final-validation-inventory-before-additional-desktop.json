@@ -1,0 +1,3278 @@
+{
+  "all_result_json_paths_in_scope_included": true,
+  "by_host_and_source_commit": {
+    "desktop": {
+      "cdd984808a088e6c2e13b1e1ae6630a94d500c89": {
+        "fail_ids": [],
+        "host": "desktop",
+        "label": "Z-current",
+        "pass_ids": [
+          "node-new-tests",
+          "preflight",
+          "source-before",
+          "strict-workspace-clippy",
+          "workspace-graph"
+        ],
+        "record_count": 5,
+        "status_counts": {
+          "FAIL": 0,
+          "PASS": 5
+        }
+      }
+    },
+    "local-cloud": {
+      "90ee47159e32e9014410a1823bed05d84c17b858": {
+        "fail_ids": [
+          "fuzz-graph",
+          "node-new-tests",
+          "repository-truth",
+          "rust-baseline",
+          "source-w1-lifetime-ledger-tests"
+        ],
+        "host": "local-cloud",
+        "label": "Y-retained",
+        "pass_ids": [
+          "cargo-graph",
+          "fuzz-graph-official-cache",
+          "m06-new-tests",
+          "m06-test-build",
+          "source-before",
+          "source-ci-integrity-tests",
+          "source-pq-research-integration-check",
+          "source-pq-research-integration-tests",
+          "source-repository-check",
+          "source-w1-lifetime-ledger",
+          "sqlite-loader-seed-check"
+        ],
+        "record_count": 16,
+        "status_counts": {
+          "FAIL": 5,
+          "PASS": 11
+        }
+      },
+      "cdd984808a088e6c2e13b1e1ae6630a94d500c89": {
+        "fail_ids": [
+          "node-new-tests-normal-loader-single-job",
+          "pq-cli-retained-tests",
+          "repository-truth-gnu-time",
+          "repository-truth-same-device",
+          "strict-workspace-clippy"
+        ],
+        "host": "local-cloud",
+        "label": "Z-current",
+        "pass_ids": [
+          "campaign-reader-same-device",
+          "final-format",
+          "final-fuzz-graph",
+          "final-workspace-graph",
+          "m06-retained-tests",
+          "qualification-runtime-gnu-time",
+          "source-ci-integrity-tests",
+          "source-final",
+          "source-pq-research-integration-check",
+          "source-pq-research-integration-tests",
+          "source-w1-composition-example-cmp",
+          "source-w1-composition-example-reproduce",
+          "source-w1-composition-unknown-cmp",
+          "source-w1-composition-unknown-reproduce",
+          "source-w1-joint-oracle-alias-cmp",
+          "source-w1-joint-oracle-alias-reproduce",
+          "source-w1-joint-oracle-separated-cmp",
+          "source-w1-joint-oracle-separated-reproduce",
+          "source-w1-joint-oracle-unknown-cmp",
+          "source-w1-joint-oracle-unknown-reproduce",
+          "source-w1-lifetime-cmp",
+          "source-w1-lifetime-ledger-tests",
+          "source-w1-lifetime-reproduce",
+          "source-w1-semantics-cmp",
+          "source-w1-semantics-reproduce"
+        ],
+        "record_count": 30,
+        "status_counts": {
+          "FAIL": 5,
+          "PASS": 25
+        }
+      }
+    }
+  },
+  "current_source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "desktop_environment_preparation": {
+    "advisory_database": {
+      "archive": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/advisories-28d73fc95e5972af3403225a217def57dcaba3c4.tar.gz",
+      "archive_sha256": "fcc2e8035756170b2dd9e292dcc8e6ee9194b35b6e50e54eab513269db3ccf4d",
+      "commit_time": "2026-11-10T14:45:03+01:00",
+      "head": "28d73fc95e5972af3403225a217def57dcaba3c4",
+      "origin": "https://github.com/RustSec/advisory-db",
+      "path": "/home/qian-qi/chain-pq-a418-final-cargo-home/advisory-dbs/advisory-db-3157b0e258782691",
+      "status": "",
+      "tree": "247ffa118a3e073e70825e62bde8c473d4ac6b45"
+    },
+    "graphs": [
+      {
+        "features": [
+          "--all-features"
+        ],
+        "graph": "main",
+        "metadata_package_count": 182,
+        "metadata_sha256": "a1a6cf2c425c1d16497eba284c30109689c65b69916e67e6fe84d0bfbca0061f",
+        "name_version_source_exactly_equal_to_lock": true,
+        "registry_package_count": 156
+      },
+      {
+        "features": [],
+        "graph": "fuzz",
+        "metadata_package_count": 150,
+        "metadata_sha256": "a3522fdfad824fabf5cd4603efe8218c4262f896f60e11269de5637732a277fa",
+        "name_version_source_exactly_equal_to_lock": true,
+        "registry_package_count": 137
+      }
+    ],
+    "local_official_advisory_archive": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1/tool-preparation/continuation-1/advisories-28d73fc95e5972af3403225a217def57dcaba3c4.tar.gz",
+    "local_report_path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1/tool-preparation/continuation-1/preparation-report.json",
+    "prior_preparation_failure_preserved": true,
+    "report_path": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/preparation-report.json",
+    "report_sha256": "812de8b6bd9b11068543fe0b6e1182b0853835ce4c1c4362e59f4474ff732629",
+    "status": "PREPARED_REAL_TOOL_LOCKED_GRAPHS_AND_CLEAN_OFFICIAL_DB",
+    "supply_chain_policy_pass_claimed": false,
+    "tool": {
+      "bytes": 8802728,
+      "copied_exactly": true,
+      "elf": true,
+      "path": "/home/qian-qi/chain-pq-a418-final-ci-tools/deny-0.20.2/bin/cargo-deny",
+      "rebuilt": false,
+      "sha256": "5c6fbc977c16a36144f91ff4959e14a6e3468be150d6b2ac693bcdbdd591a535",
+      "source": "/home/qian-qi/work/chain-security-tools-20261104/deny-0.20.2/bin/cargo-deny"
+    }
+  },
+  "desktop_full_receipt_archive": {
+    "all_original_members_verified": true,
+    "bytes": 891385,
+    "local_extracted_directory": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1",
+    "local_path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/desktop-primary-evidence-v1.tar.gz",
+    "member_count": 52,
+    "remote_path": "/home/qian-qi/chain-pq-a418-final-ci-tools/desktop-primary-evidence-v1.tar.gz",
+    "sha256": "6325997d4238a8fcdfc3ea59c3a55951d8c77066468111f31813eff418764f9c",
+    "status": "COMPLETE_AND_HASH_VERIFIED",
+    "transfer_report": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer-verification.json",
+    "transfer_report_sha256": "021576a10f64435bd8167a8a029a26681244cbe4e2c6f1a0713ea8c2ddbfa97d"
+  },
+  "desktop_node_test_binary": {
+    "bytes": 534143600,
+    "canonical_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final-target/debug/deps/trnm_pon_node-2cfc25289c60243c",
+    "device": 2050,
+    "elf": true,
+    "executable": true,
+    "identity_scope": "post-run readback of actual reported test executable; no at-execution signature asserted",
+    "inode": 60880238,
+    "mtime_ns": 1794363077753253803,
+    "path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final-target/debug/deps/trnm_pon_node-2cfc25289c60243c",
+    "sha256": "87ca599d29ed8a168694f4ff3b290c2eeefdcba1608804a70d131857a1558cad",
+    "stat_stable_during_hash": true
+  },
+  "generated_utc": "2026-11-11T02:29:21.616996+00:00",
+  "incomplete_context_directories": [],
+  "interpretation": {
+    "full_ci_acceptance_granted": false,
+    "missing_tools_counted_as_pass": false,
+    "original_failures_reclassified_as_pass": false,
+    "production_or_pq_network_qualification_granted": false,
+    "sigkill_diagnosed_as_oom": false,
+    "source_cohorts_combined_for_acceptance": false
+  },
+  "m06_retained_tests": {
+    "all_rust_suites_ok": true,
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-mvcc-fee",
+      "--all-features",
+      "--tests",
+      "--",
+      "--test-threads=1"
+    ],
+    "binary_identity_scope": "Post-run SHA256 of each present regular ELF at its actual Cargo Running path, with stable stat and mtime recorded; not an at-execution signed attestation.",
+    "executed_binary_count": 18,
+    "host": "local-cloud",
+    "ignored_tests_count_as_passed": false,
+    "receipt_hashes": {
+      "context.json": "bef2281ee8a9aa1d731a8bece7e288fa9a02377ca539b412e6916b685b7126ef",
+      "result.json": "ac78af369ed0cded4521f5fbd5e231e8088216ec5dae0eb8d4668232ec8756c8",
+      "stderr.log": "0658c3946af92fa83a595e22c68c039a84d083d6b19dff927b2bd31a4d478056",
+      "stdout.log": "4d38646636e350ab976fe3a11a4a028909e2b4bc396c31f6030eb6e34610c14e"
+    },
+    "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/m06-retained-tests",
+    "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+    "suite_count": 18,
+    "suites": [
+      {
+        "binary": {
+          "bytes": 84365856,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/trnm_mvcc_fee-e21249cb44bc8993",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322026,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361600512691539,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/trnm_mvcc_fee-e21249cb44bc8993",
+          "sha256": "111a5491d8af45b4ad771d82116225216cf71eb5c0d38fa1747efab1cb61dbe8",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "unittests src/lib.rs",
+        "elapsed_reported": "40.88s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 9,
+        "ignored_tests": [
+          {
+            "detail": ", paired complete-capacity observation; not original Host or confirmation acceptance",
+            "name": "continuity_v1::capacity_range_tests::capacity_range_full_return_abba_observation",
+            "status": "ignored"
+          },
+          {
+            "detail": ", explicit whole-test process RSS comparison; no Node or throughput qualification",
+            "name": "pon_commitment::bounded_encoding_tests::actual_state_fallback_encoding_cost",
+            "status": "ignored"
+          },
+          {
+            "detail": ", explicit encoder allocation A/B; excludes SQLite, roots, execution and networking",
+            "name": "pon_commitment::bounded_encoding_tests::canonical_buffer_reuse_component_timing",
+            "status": "ignored"
+          },
+          {
+            "detail": ", explicit same-operation binding cost; not Node or network throughput",
+            "name": "pon_commitment::checked_binding_tests::checked_binding_complete_cost_observation",
+            "status": "ignored"
+          },
+          {
+            "detail": ", explicit component timing; excludes SQLite, M05 and Node lock wait",
+            "name": "pon_commitment::tests::immutable_parent_preview_component_timing",
+            "status": "ignored"
+          },
+          {
+            "detail": ", explicit binding A/B timing; excludes execution, SQLite and Node locks",
+            "name": "pon_commitment::tests::warm_parent_binding_component_timing",
+            "status": "ignored"
+          },
+          {
+            "detail": ", explicit paired component cost, including adversarial same-root hints; no throughput qualification",
+            "name": "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost",
+            "status": "ignored"
+          },
+          {
+            "detail": ", explicit paired complete-block observation; not public-service throughput",
+            "name": "pon_executor::repeated_sender_tests::repeated_sender_complete_block_cost_observation",
+            "status": "ignored"
+          },
+          {
+            "detail": ", explicit paired complete-root cost; synthetic values, not native ledger growth",
+            "name": "pon_executor::streaming_root_tests::complete_root_encoding_cost",
+            "status": "ignored"
+          }
+        ],
+        "measured": 0,
+        "ordinal": 1,
+        "passed": 153,
+        "registered_test_count": 162,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 67236448,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/account_development_scope-4509f85ab0221f5b",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 319780,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794359793342973832,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/account_development_scope-4509f85ab0221f5b",
+          "sha256": "d12211955aab31b8210f28ca6fefd34e17867811f9f3a0530c32cd433cf88ae3",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/account_development_scope.rs",
+        "elapsed_reported": "0.19s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 2,
+        "passed": 5,
+        "registered_test_count": 5,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 63980192,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/capacity_progress-53afa34be980592c",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322183,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361461168711973,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/capacity_progress-53afa34be980592c",
+          "sha256": "238130a421c12504fd3f80b631b7684cabe797967d0b8ea158184fcccf8d2617",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/capacity_progress.rs",
+        "elapsed_reported": "1.17s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 3,
+        "passed": 9,
+        "registered_test_count": 9,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 65518112,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/checkpoint_tile_material_v1-83d86d77795fefa0",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322044,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361442465589877,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/checkpoint_tile_material_v1-83d86d77795fefa0",
+          "sha256": "d96fed3c9e218fe5137b2a2684f3d9bbec68bf5740a0ef04d63a01a9a3e6a96b",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/checkpoint_tile_material_v1.rs",
+        "elapsed_reported": "1.13s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 4,
+        "passed": 5,
+        "registered_test_count": 5,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 63559864,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/checkpoint_tile_policy_v1-b2fc1a932459853a",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322262,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361486355523444,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/checkpoint_tile_policy_v1-b2fc1a932459853a",
+          "sha256": "5ea1961f9a628dd04abc2311e9feeb87b249c7489abe79405b36e49b1e85a796",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/checkpoint_tile_policy_v1.rs",
+        "elapsed_reported": "0.04s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 5,
+        "passed": 1,
+        "registered_test_count": 1,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 65496688,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/continuity_v1-63bfba9799d3b47d",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322217,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361471920207191,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/continuity_v1-63bfba9799d3b47d",
+          "sha256": "edcbed28e635a45543a36c9a8fd46fe78d86263764fe115144f90a9d06fb0cc1",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/continuity_v1.rs",
+        "elapsed_reported": "16.85s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 6,
+        "passed": 6,
+        "registered_test_count": 6,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 64575672,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/evaluation_quorum_v2-c147b1f388e00d8a",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322191,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361464400560250,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/evaluation_quorum_v2-c147b1f388e00d8a",
+          "sha256": "be5d1300a42c9af18fd1c5baa3523c518159ba330db72a155aa582277bcc5ee0",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/evaluation_quorum_v2.rs",
+        "elapsed_reported": "0.36s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 7,
+        "passed": 9,
+        "registered_test_count": 9,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 68152768,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/incremental_prefix-96d44c51a169ae44",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322073,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361449565256669,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/incremental_prefix-96d44c51a169ae44",
+          "sha256": "2e3cdc1b703858165e43d29205e347fb562860369dfcfb809b33eb4a9fb23542",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/incremental_prefix.rs",
+        "elapsed_reported": "18.77s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 8,
+        "passed": 8,
+        "registered_test_count": 8,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 66510520,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/model_evolution_v5-0aafec8df0e27d57",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322243,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361478355904253,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/model_evolution_v5-0aafec8df0e27d57",
+          "sha256": "87837e58395512d4ec0a9ea092327b2ffe870230f9aa9d839f4a0ab5a564b37e",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/model_evolution_v5.rs",
+        "elapsed_reported": "1.06s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 9,
+        "passed": 4,
+        "registered_test_count": 4,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 66870152,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/pon_commitment-67b3a2bbb00ed1b8",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322232,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361475612033411,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/pon_commitment-67b3a2bbb00ed1b8",
+          "sha256": "3df7e7700c3aa6a38f24e36bbc5ceb758186b96dca20e1c84a41b7a640912f1d",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/pon_commitment.rs",
+        "elapsed_reported": "52.09s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 10,
+        "passed": 16,
+        "registered_test_count": 16,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 66752064,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/pq2_authority_capacity-6d3f4736a1f308e3",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322156,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361453501071956,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/pq2_authority_capacity-6d3f4736a1f308e3",
+          "sha256": "5304bd7e27791e23b0a981c673a811600ceb83fafd2a9c80697354807c8fb0b0",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/pq2_authority_capacity.rs",
+        "elapsed_reported": "13.58s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 11,
+        "passed": 2,
+        "registered_test_count": 2,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 66765576,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/pq3_quota_authority-a95d5f4e5528b241",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322206,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361469936300409,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/pq3_quota_authority-a95d5f4e5528b241",
+          "sha256": "f781028300ee9dbd1246fe962f0253160514c6e688753e8b241b4b46296ef60e",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/pq3_quota_authority.rs",
+        "elapsed_reported": "8.34s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 12,
+        "passed": 8,
+        "registered_test_count": 8,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 67035304,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/pq4_task_authority-8a9ac6b59079e864",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322171,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361459024812634,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/pq4_task_authority-8a9ac6b59079e864",
+          "sha256": "4f9cb4e9b88b3deace0fa47831058c69e7a13a0d71bb0f63cb94f25c700508e5",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/pq4_task_authority.rs",
+        "elapsed_reported": "8.30s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 13,
+        "passed": 9,
+        "registered_test_count": 9,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 68301520,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/pq5_task_renewal-2d412361f1d3a340",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322261,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361485583559693,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/pq5_task_renewal-2d412361f1d3a340",
+          "sha256": "5ec14c2afb80b1c7257accfab18423f89ea9cbaf9db1c5b3fb3a9f6600e22019",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/pq5_task_renewal.rs",
+        "elapsed_reported": "19.62s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 14,
+        "passed": 17,
+        "registered_test_count": 17,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 73799416,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/pq_account_owner-c2c3eae28c4d7740",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322295,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361492691224745,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/pq_account_owner-c2c3eae28c4d7740",
+          "sha256": "65433914755f87b641f6ea24e83d5deb8c754c8b7b00c4873fb567072ea1e3c5",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/pq_account_owner.rs",
+        "elapsed_reported": "3.79s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 15,
+        "passed": 8,
+        "registered_test_count": 8,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 65884128,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/qualified_task_lifecycle_v2-60c4b291f61ef4e4",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322283,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361489907356091,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/qualified_task_lifecycle_v2-60c4b291f61ef4e4",
+          "sha256": "894218596b891c080e37ea63ab269d4b1ad712311f5d25ec418b10f87e4749f8",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/qualified_task_lifecycle_v2.rs",
+        "elapsed_reported": "0.27s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 16,
+        "passed": 8,
+        "registered_test_count": 8,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 64105832,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/qualified_task_lifecycle_v3-69b79f556b477ead",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322028,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361436913849831,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/qualified_task_lifecycle_v3-69b79f556b477ead",
+          "sha256": "d0c64a043add02b310a98de89776a989c8b70b75f63f18d626d1c8e76249065c",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/qualified_task_lifecycle_v3.rs",
+        "elapsed_reported": "0.01s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 17,
+        "passed": 1,
+        "registered_test_count": 1,
+        "status": "ok"
+      },
+      {
+        "binary": {
+          "bytes": 64379816,
+          "canonical_path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/qualified_task_lifecycle_v4-d663957f3b0b7c95",
+          "device": 27,
+          "elf": true,
+          "executable": true,
+          "inode": 322275,
+          "mtime_not_after_recorded_run_finish": true,
+          "mtime_ns": 1794361488199436673,
+          "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/qualified_task_lifecycle_v4-d663957f3b0b7c95",
+          "sha256": "667c79ae4fcfad264852223d33b124c13e65e917e687d3ccbaf4f0114002f65b",
+          "stat_stable_during_hash": true
+        },
+        "cargo_running_label": "tests/qualified_task_lifecycle_v4.rs",
+        "elapsed_reported": "0.03s",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "ignored_tests": [],
+        "measured": 0,
+        "ordinal": 18,
+        "passed": 3,
+        "registered_test_count": 3,
+        "status": "ok"
+      }
+    ],
+    "total_registered_test_cases": 281,
+    "totals": {
+      "failed": 0,
+      "filtered_out": 0,
+      "ignored": 9,
+      "measured": 0,
+      "passed": 272
+    }
+  },
+  "records": [
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "cargo-graph",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cargo",
+          "metadata",
+          "--locked",
+          "--offline",
+          "--all-features",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--format-version",
+          "1"
+        ],
+        "elapsed_seconds": 168.98492889499994,
+        "finished_utc": "2026-11-11T00:58:08.206745+00:00",
+        "id": "cargo-graph",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_status_after": "",
+        "stderr_sha256": "4c9eb667b06d15fae0587960059a48122a7acc60b10acd07c1b3eee2e2167a76",
+        "stdout_sha256": "20f09091e2a935165eeb46fd16720238e63b50acb77ae4d1a487fc7c11d64843"
+      },
+      "receipt_hashes": {
+        "context.json": "fb3131cae66450f5bba5b414777a79c6ec4b3bcdd7736aa55f38e7d6c4813fe5",
+        "result.json": "89df19228f6d0131c072e2f6ae6fc783a36d2e02d418e1ba8f514776ae1d68c1",
+        "stderr.log": "4c9eb667b06d15fae0587960059a48122a7acc60b10acd07c1b3eee2e2167a76",
+        "stdout.log": "20f09091e2a935165eeb46fd16720238e63b50acb77ae4d1a487fc7c11d64843"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/cargo-graph",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "FAIL",
+      "computed_pass": false,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [
+        "error: no matching package named `libfuzzer-sys` found"
+      ],
+      "host": "local-cloud",
+      "id": "fuzz-graph",
+      "observed_failure_tags": [
+        "missing_libfuzzer_sparse_entry"
+      ],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cargo",
+          "metadata",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "tests/fuzz/Cargo.toml",
+          "--format-version",
+          "1"
+        ],
+        "elapsed_seconds": 119.24366819099987,
+        "finished_utc": "2026-11-11T00:57:18.439726+00:00",
+        "id": "fuzz-graph",
+        "launch_error": null,
+        "pass": false,
+        "qualification_granted": false,
+        "returncode": 101,
+        "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_status_after": "",
+        "stderr_sha256": "0990ea14d35be37f4df1c30e814b14696ec56a251e8d82f4ae0b3322d7615f00",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "e4ff77339aa737fcd1ac733fdc4cf5d041b0342cf944893bff202b3f8e52d537",
+        "result.json": "5b99330abe0e7276a9585725b52b4c68f3d5e75184ffc854e0a2caa83d3bf90a",
+        "stderr.log": "0990ea14d35be37f4df1c30e814b14696ec56a251e8d82f4ae0b3322d7615f00",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/fuzz-graph",
+      "recorded_pass": false,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "fuzz-graph-official-cache",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "env",
+          "CARGO_HOME=/workspace/scratch/a4188f5c86b5/fuzz-cargo-home",
+          "cargo",
+          "metadata",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "tests/fuzz/Cargo.toml",
+          "--format-version",
+          "1"
+        ],
+        "elapsed_seconds": 6.624458149999555,
+        "finished_utc": "2026-11-11T01:17:42.022663+00:00",
+        "id": "fuzz-graph-official-cache",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "8f785790788434c46288e4c1be0716d7fb80c560eec6f69dee20b523bedc9cfd"
+      },
+      "receipt_hashes": {
+        "context.json": "6f2c01c8e5d6a2115000feee6c8d2770cd218abe909306e8d87af8842c5c7d27",
+        "result.json": "e3075b29e2103f348227f9416b78ac050096409d1d4c12a1e6e737e9d6cfda6c",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "8f785790788434c46288e4c1be0716d7fb80c560eec6f69dee20b523bedc9cfd"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/fuzz-graph-official-cache",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 1,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "m06-new-tests",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-mvcc-fee",
+          "--all-features",
+          "--test",
+          "account_development_scope",
+          "--",
+          "--test-threads=1"
+        ],
+        "elapsed_seconds": 0.6900557250000929,
+        "finished_utc": "2026-11-11T01:20:44.536671+00:00",
+        "id": "m06-new-tests",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_status_after": "",
+        "stderr_sha256": "6f452c7bc6291393adaf9d9de72695f0aa6b72318f165efa576663ba07a6698a",
+        "stdout_sha256": "f46dee14073b03f4b299eef354ff406bef66e4906e0d43f8471d6c0f2c609729"
+      },
+      "receipt_hashes": {
+        "context.json": "eaaf9c4b2de5c17dd429fa0b3c4afdf2f10221fad69cae061dee1c630de2bc54",
+        "result.json": "b1af89536c223b43905d38317884f5436324243c90951d28060bb0ddb84642a4",
+        "stderr.log": "6f452c7bc6291393adaf9d9de72695f0aa6b72318f165efa576663ba07a6698a",
+        "stdout.log": "f46dee14073b03f4b299eef354ff406bef66e4906e0d43f8471d6c0f2c609729"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/m06-new-tests",
+      "recorded_pass": true,
+      "rust_test_summary_count": 1,
+      "source_clean_after": true,
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "m06-test-build",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-mvcc-fee",
+          "--all-features",
+          "--test",
+          "account_development_scope",
+          "--no-run"
+        ],
+        "elapsed_seconds": 974.3198544130005,
+        "finished_utc": "2026-11-11T01:16:38.264816+00:00",
+        "id": "m06-test-build",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_status_after": "",
+        "stderr_sha256": "c993da26968e673f1c36f9a16188f6edbb23558826c8b1217f16b39e34b6b838",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "23182abe8cc4d553ee538b6c172847941d4a8327e21ecf11625de565ced3670d",
+        "result.json": "7cd225a4700d695d78b02bc4ce4174e099c0dbd31a42d9cbc4772c214343847d",
+        "stderr.log": "c993da26968e673f1c36f9a16188f6edbb23558826c8b1217f16b39e34b6b838",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/m06-test-build",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "FAIL",
+      "computed_pass": false,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [
+        "error: could not compile `trnm-pon-node` (lib test)",
+        "  process didn't exit successfully: `/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustc --crate-name trnm_pon_node --edition=2021 crates/trnm-pon-node/src/lib.rs --error ... 917054cf4892abb.rlib -L native=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/build/libsqlite3-sys-10fe53ba697a87a6/out -L native=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/lib` (signal: 9, SIGKILL: kill)"
+      ],
+      "host": "local-cloud",
+      "id": "node-new-tests",
+      "observed_failure_tags": [
+        "child_sigkill_cause_not_established"
+      ],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "store::account_profile_scope_tests::",
+          "--",
+          "--test-threads=1"
+        ],
+        "elapsed_seconds": 221.30557490499996,
+        "finished_utc": "2026-11-11T01:24:26.031946+00:00",
+        "id": "node-new-tests",
+        "launch_error": null,
+        "pass": false,
+        "qualification_granted": false,
+        "returncode": 101,
+        "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_status_after": "",
+        "stderr_sha256": "3d58921cc450d5b402a5575c3fb935997c48c1ce3af31b733f900335fb7e3de8",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "fd7f8727ca88e6427361e92b83c55ddb993d959c9a10639f2e3c90dd1290c18c",
+        "result.json": "a34e6f5ad5f136c1cf34f2f2df4259f8e5135ba288598b4e8eb122d384dfdf9a",
+        "stderr.log": "3d58921cc450d5b402a5575c3fb935997c48c1ce3af31b733f900335fb7e3de8",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/node-new-tests",
+      "recorded_pass": false,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "FAIL",
+      "computed_pass": false,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [
+        "ERROR: test_boolean_exit_status_is_not_integer_success (__main__.ActualArtifactReaderTests.test_boolean_exit_status_is_not_integer_success)",
+        "OSError: [Errno 18] Invalid cross-device link: 'evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963/SCOPE.txt' -> '/tmp/trnm-native-reader-counterexample-bcco5umi/SCOPE.txt'",
+        "ERROR: test_changed_file_symlink_and_nonregular_input_refuse (__main__.ActualArtifactReaderTests.test_changed_file_symlink_and_nonregular_input_refuse)",
+        "OSError: [Errno 18] Invalid cross-device link: 'evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963/SCOPE.txt' -> '/tmp/trnm-native-reader-counterexample-le_9w27_/SCOPE.txt'",
+        "ERROR: test_duplicate_json_and_nonfinite_numbers_refuse (__main__.ActualArtifactReaderTests.test_duplicate_json_and_nonfinite_numbers_refuse)",
+        "OSError: [Errno 18] Invalid cross-device link: 'evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963/SCOPE.txt' -> '/tmp/trnm-native-reader-counterexample-54epayd5/SCOPE.txt'",
+        "ERROR: test_manifest_pin_paths_duplicates_and_limits_cannot_be_repaired_by_self_report (__main__.ActualArtifactReaderTests.test_manifest_pin_paths_duplicates_and_limits_cannot_be_repaired_by_self_report) (control=<function ActualArtifactReaderTests.test_manifest_pin_paths_duplicates_and_limits_cannot_be_repaired_by_self_report.<locals>.<lambda> at 0x7f9f92961800>)",
+        "OSError: [Errno 18] Invalid cross-device link: 'evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963/SCOPE.txt' -> '/tmp/trnm-native-reader-counterexample-rwktgwxw/SCOPE.txt'",
+        "ERROR: test_manifest_pin_paths_duplicates_and_limits_cannot_be_repaired_by_self_report (__main__.ActualArtifactReaderTests.test_manifest_pin_paths_duplicates_and_limits_cannot_be_repaired_by_self_report) (control=<function ActualArtifactReaderTests.test_manifest_pin_paths_duplicates_and_limits_cannot_be_repaired_by_self_report.<locals>.<lambda> at 0x7f9f92961760>)",
+        "OSError: [Errno 18] Invalid cross-device link: 'evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963/SCOPE.txt' -> '/tmp/trnm-native-reader-counterexample-o5fm6m_5/SCOPE.txt'",
+        "ERROR: test_manifest_pin_paths_duplicates_and_limits_cannot_be_repaired_by_self_report (__main__.ActualArtifactReaderTests.test_manifest_pin_paths_duplicates_and_limits_cannot_be_repaired_by_self_report) (control=<function ActualArtifactReaderTests.test_manifest_pin_paths_duplicates_and_limits_cannot_be_repaired_by_self_report.<locals>.<lambda> at 0x7f9f92962020>)",
+        "OSError: [Errno 18] Invalid cross-device link: 'evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963/SCOPE.txt' -> '/tmp/trnm-native-reader-counterexample-pr3ei_6_/SCOPE.txt'"
+      ],
+      "host": "local-cloud",
+      "id": "repository-truth",
+      "observed_failure_tags": [
+        "cross_device_link"
+      ],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "bash",
+          "scripts/ci/ci_job.sh",
+          "repository-truth"
+        ],
+        "elapsed_seconds": 1580.3394632210006,
+        "finished_utc": "2026-11-11T01:29:34.888054+00:00",
+        "id": "repository-truth",
+        "launch_error": null,
+        "pass": false,
+        "qualification_granted": false,
+        "returncode": 1,
+        "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_status_after": "",
+        "stderr_sha256": "5ffd95d773fc907588bd9b91b1be9526523e2bec381e198555fe41a8e2d142d6",
+        "stdout_sha256": "3e451e7a1b86eb9ae75cc17f384154f5ef625853244b64a680e3ab0fd3926aee"
+      },
+      "receipt_hashes": {
+        "context.json": "4b232074472b210f901b814895452ab51849da23ea836f32ce824fa60cdafaab",
+        "result.json": "f0de422e485f4803f1f2243cc206e0e67a049ed40d29798f24e93c942f0f5cda",
+        "stderr.log": "5ffd95d773fc907588bd9b91b1be9526523e2bec381e198555fe41a8e2d142d6",
+        "stdout.log": "3e451e7a1b86eb9ae75cc17f384154f5ef625853244b64a680e3ab0fd3926aee"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/repository-truth",
+      "recorded_pass": false,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "FAIL",
+      "computed_pass": false,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [
+        "[Errno 2] No such file or directory: '/tmp/trnm-ci-tools/deny-0.20.2/bin/cargo-deny'"
+      ],
+      "host": "local-cloud",
+      "id": "rust-baseline",
+      "observed_failure_tags": [
+        "missing_cargo_deny_0_20_2"
+      ],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "bash",
+          "scripts/ci/ci_job.sh",
+          "rust-baseline"
+        ],
+        "elapsed_seconds": 745.0452695019999,
+        "finished_utc": "2026-11-11T01:15:26.768294+00:00",
+        "id": "rust-baseline",
+        "launch_error": null,
+        "pass": false,
+        "qualification_granted": false,
+        "returncode": 1,
+        "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_status_after": "",
+        "stderr_sha256": "63164cd220af9e4d47cee46276506b9a4110c2527e2b00d37840116fa322db9b",
+        "stdout_sha256": "f49ff3d78b9ad220af40462743e4d31e615e869e32bd35686cc3ce30d15d721b"
+      },
+      "receipt_hashes": {
+        "context.json": "4831fcf7ce82f9b83778ecacce8cafb4dc9ee00f572adaf8d45f9a7ee2cac368",
+        "result.json": "2030c548ef15372e0da1c75c88f876a6dd0617d377aee39d7ea4847dfeed1b1e",
+        "stderr.log": "63164cd220af9e4d47cee46276506b9a4110c2527e2b00d37840116fa322db9b",
+        "stdout.log": "f49ff3d78b9ad220af40462743e4d31e615e869e32bd35686cc3ce30d15d721b"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/rust-baseline",
+      "recorded_pass": false,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-before",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "90ee47159e32e9014410a1823bed05d84c17b858",
+          "--output",
+          "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/source-before.json"
+        ],
+        "elapsed_seconds": 935.1203246279997,
+        "finished_utc": "2026-11-11T01:10:54.320572+00:00",
+        "id": "source-before",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "d14f6b1956be6909b16f9312dcc57a60e6442a8dfb3010ba2e00f691d8dda79f"
+      },
+      "receipt_hashes": {
+        "context.json": "69a195007dff2ebbab31583c498214d0dc35645df98315dbd1f259d7ed0e0a95",
+        "result.json": "ff6d35bf25e2252926550ff52fbd5f2e1133ff82775e72231582377f058105b1",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "d14f6b1956be6909b16f9312dcc57a60e6442a8dfb3010ba2e00f691d8dda79f"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/source-before",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-ci-integrity-tests",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "elapsed_seconds": 39.770918911999615,
+        "finished_utc": "2026-11-11T01:17:41.378036+00:00",
+        "id": "source-ci-integrity-tests",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_status_after": "",
+        "stderr_sha256": "600b97037a236b64e7dbe384c046313a0edad4b8e25a8c68ed1bea200322a66c",
+        "stdout_sha256": "4cd538c782f9dca8969a0ace149cfcf3f053f483e6a836efbb81d329508ec074"
+      },
+      "receipt_hashes": {
+        "context.json": "fb15515d2dd6a3b9826bf104c82b9465e56e261461834d37f5689ed8bc32fd57",
+        "result.json": "fd3e1af9a2c0b9d06a78a5f537f456bcae0f59b1a42a5c4c39a2daeb6465c91c",
+        "stderr.log": "600b97037a236b64e7dbe384c046313a0edad4b8e25a8c68ed1bea200322a66c",
+        "stdout.log": "4cd538c782f9dca8969a0ace149cfcf3f053f483e6a836efbb81d329508ec074"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/source-ci-integrity-tests",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-pq-research-integration-check",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "elapsed_seconds": 74.16762118999986,
+        "finished_utc": "2026-11-11T01:06:41.162678+00:00",
+        "id": "source-pq-research-integration-check",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "83e8ef0fcffe54c1a7b9ce8dc6f692a78a0f249712de0d09c767ab802feb6be7"
+      },
+      "receipt_hashes": {
+        "context.json": "6071cdb4019e96c8d88034181472d18341abf34d74ca0553c07aee0dedd78d45",
+        "result.json": "7c4f63d96b1a35d2d62f73119a1ae1aba23adb5c2305970f1f1dbfad7fc2674c",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "83e8ef0fcffe54c1a7b9ce8dc6f692a78a0f249712de0d09c767ab802feb6be7"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/source-pq-research-integration-check",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-pq-research-integration-tests",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_pq_research_integration.py"
+        ],
+        "elapsed_seconds": 411.77582810800004,
+        "finished_utc": "2026-11-11T01:14:41.863792+00:00",
+        "id": "source-pq-research-integration-tests",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_status_after": "",
+        "stderr_sha256": "499bb108756d1ccdccc14504a258eefd62818630f545111230e5b08108967ff7",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "523f970ef12a1347c4a5c3a87098bb8007c99fd43bf244ff0bd4763a0297ef0e",
+        "result.json": "5dd1c6c7c4d6625bbbeb16dec0b2671d4c83126ece26ff4415d4fab751ea0a07",
+        "stderr.log": "499bb108756d1ccdccc14504a258eefd62818630f545111230e5b08108967ff7",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/source-pq-research-integration-tests",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-repository-check",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/ci/check_repository.py"
+        ],
+        "elapsed_seconds": 97.81877459600037,
+        "finished_utc": "2026-11-11T01:16:38.264414+00:00",
+        "id": "source-repository-check",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "769072738a9bf1a9da694a7555375f643fbb5584042bc3b829f9ac7e22795660"
+      },
+      "receipt_hashes": {
+        "context.json": "7641ee899509b7d5cf0194d4558732cccaa08dd49fc1eec4329660d0e369ec47",
+        "result.json": "9b9b9b785c64dce5d6f42081e7826822f28eff0776d898755565224b01d75178",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "769072738a9bf1a9da694a7555375f643fbb5584042bc3b829f9ac7e22795660"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/source-repository-check",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-w1-lifetime-ledger",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/w1_lifetime_ledger.py"
+        ],
+        "elapsed_seconds": 29.73612639500061,
+        "finished_utc": "2026-11-11T01:18:54.099105+00:00",
+        "id": "source-w1-lifetime-ledger",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "b050b861ec172305d708ba7c01ca47d547b1646cc3daee1d6aec9877d2cf3390"
+      },
+      "receipt_hashes": {
+        "context.json": "648901ae06b459279804ab1920022b3e7a92cc1a5f12c5e87817f465f4b7ea2b",
+        "result.json": "744b6d7cebb1199e5870e31e02042917dc932131a52c3a40aea334286df3b45d",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "b050b861ec172305d708ba7c01ca47d547b1646cc3daee1d6aec9877d2cf3390"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/source-w1-lifetime-ledger",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "FAIL",
+      "computed_pass": false,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [
+        "FAIL: test_project_unknowns_do_not_produce_a_target_or_qualification (__main__.LifetimeLedgerTests.test_project_unknowns_do_not_produce_a_target_or_qualification)",
+        "FAILED (failures=1)"
+      ],
+      "host": "local-cloud",
+      "id": "source-w1-lifetime-ledger-tests",
+      "observed_failure_tags": [
+        "retained_w1_golden_source_mismatch"
+      ],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_w1_lifetime_ledger.py"
+        ],
+        "elapsed_seconds": 1.1367294510000647,
+        "finished_utc": "2026-11-11T01:19:32.216744+00:00",
+        "id": "source-w1-lifetime-ledger-tests",
+        "launch_error": null,
+        "pass": false,
+        "qualification_granted": false,
+        "returncode": 1,
+        "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_status_after": "",
+        "stderr_sha256": "21be63299fc3ef865d15cdca17cecd35975f017955d6adf78526f9ce6273fefe",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "cee965ef40f95165cf0fd0f016af44b59eff3ec004803c2ebe596a6d48af58c7",
+        "result.json": "de7504e845b4c88f548d2a9f008defe3da97f505aff9e963b4c7c41aee1d9096",
+        "stderr.log": "21be63299fc3ef865d15cdca17cecd35975f017955d6adf78526f9ce6273fefe",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/source-w1-lifetime-ledger-tests",
+      "recorded_pass": false,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "sqlite-loader-seed-check",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "env",
+          "LD_LIBRARY_PATH=/workspace/scratch/5778f0ffb5d4/toolchain/installed/lib",
+          "CARGO_BUILD_JOBS=1",
+          "cargo",
+          "check",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-sqlite-io-boundary",
+          "-vv"
+        ],
+        "elapsed_seconds": 20.29316171500068,
+        "finished_utc": "2026-11-11T01:28:47.351485+00:00",
+        "id": "sqlite-loader-seed-check",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+        "source_status_after": "",
+        "stderr_sha256": "b74484645ddc68fe27fb60d4e92a1961e50b6f41241e14638f32e77742df32f1",
+        "stdout_sha256": "7f059c285ba6c11bcc68c2f8206e762595938e72effd6130df42959f29261a9d"
+      },
+      "receipt_hashes": {
+        "context.json": "883db29e3fc28bc7f52e03c87e345c8ef9b8f94ef818e34ec9bbf5c8683e2b7d",
+        "result.json": "bb7d30feced343d0bb5b67855064dd5d60ae057ef9b76623f9442a01d3078a7e",
+        "stderr.log": "b74484645ddc68fe27fb60d4e92a1961e50b6f41241e14638f32e77742df32f1",
+        "stdout.log": "7f059c285ba6c11bcc68c2f8206e762595938e72effd6130df42959f29261a9d"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/sqlite-loader-seed-check",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "campaign-reader-same-device",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_read_original_native_campaign.py",
+          "--artifact-dir",
+          "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963",
+          "--expected-manifest-sha256",
+          "12406cc156e57c130fa14af2b50b386031ec3640ce7f0234ed5bc9f0a700aac3",
+          "--expected-head",
+          "9e705ccf75b7318dcc4bda4815956f58beb10e72",
+          "--expected-tree",
+          "521ae87a28060d545979069b189eebbc74a71fd8",
+          "--retained-subset"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 233232,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 1.558576,
+          "user_cpu_seconds": 20.350621
+        },
+        "elapsed_seconds": 22.13316106900038,
+        "finished_utc": "2026-11-11T01:34:35.790260+00:00",
+        "id": "campaign-reader-same-device",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "fe1ac14dcf7a67f4dba9fbc1fe1ac8c6f10e87be5e3dcdc6f339c12c8127e2e6",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "180fbb8aac6b612d3d78d43d1cf986ec986c2dc13270a0d7256aa2d85882cad2",
+        "result.json": "c0f176729e894390224acc916923d0a455a6acbd6ef9529bad0927c1a65898f3",
+        "stderr.log": "fe1ac14dcf7a67f4dba9fbc1fe1ac8c6f10e87be5e3dcdc6f339c12c8127e2e6",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/campaign-reader-same-device",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "final-format",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 175504,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 51.476516,
+          "user_cpu_seconds": 20.050736
+        },
+        "elapsed_seconds": 106.5499083879995,
+        "finished_utc": "2026-11-11T01:57:50.348133+00:00",
+        "id": "final-format",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "2df93c093d36bc7c792f90b6199f964195abcfd44de92e47810a0723aff21cd6",
+        "result.json": "2f5466c404fd0576b317c09c2a320d8bcf9dd329359b9287bd90b9c6c3fec14a",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/final-format",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "final-fuzz-graph",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "env",
+          "CARGO_HOME=/workspace/scratch/a4188f5c86b5/fuzz-cargo-home",
+          "cargo",
+          "metadata",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "tests/fuzz/Cargo.toml",
+          "--format-version",
+          "1"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 48640,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.17394099999999996,
+          "user_cpu_seconds": 0.109376
+        },
+        "elapsed_seconds": 0.7358686949992261,
+        "finished_utc": "2026-11-11T01:57:52.843011+00:00",
+        "id": "final-fuzz-graph",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "8f785790788434c46288e4c1be0716d7fb80c560eec6f69dee20b523bedc9cfd"
+      },
+      "receipt_hashes": {
+        "context.json": "3e2ca391bc554b14bb519acdb52dead9d6025ed86c49a19db3912e46b700bb56",
+        "result.json": "26bbd47bbbc2d1f205c03852ce18d462a28b29c951136a6c6e511b8a83717eb8",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "8f785790788434c46288e4c1be0716d7fb80c560eec6f69dee20b523bedc9cfd"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/final-fuzz-graph",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "final-workspace-graph",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cargo",
+          "metadata",
+          "--locked",
+          "--offline",
+          "--all-features",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--format-version",
+          "1"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 53220,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.159217,
+          "user_cpu_seconds": 0.193427
+        },
+        "elapsed_seconds": 1.1434350699992137,
+        "finished_utc": "2026-11-11T01:57:51.746305+00:00",
+        "id": "final-workspace-graph",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "20f09091e2a935165eeb46fd16720238e63b50acb77ae4d1a487fc7c11d64843"
+      },
+      "receipt_hashes": {
+        "context.json": "983bf04ee649fd8ba0322bc8598d8ad0c2811db5146016435f6c2660c2bad33f",
+        "result.json": "5b7536edd01e2faa8632cd3f02a79c67b70f97babe09003ebb09509ad87dd80f",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "20f09091e2a935165eeb46fd16720238e63b50acb77ae4d1a487fc7c11d64843"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/final-workspace-graph",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 18,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "m06-retained-tests",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-mvcc-fee",
+          "--all-features",
+          "--tests",
+          "--",
+          "--test-threads=1"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 724304,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 18.819587000000002,
+          "user_cpu_seconds": 334.08997
+        },
+        "elapsed_seconds": 357.3789076820003,
+        "finished_utc": "2026-11-11T01:49:48.477847+00:00",
+        "id": "m06-retained-tests",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "0658c3946af92fa83a595e22c68c039a84d083d6b19dff927b2bd31a4d478056",
+        "stdout_sha256": "4d38646636e350ab976fe3a11a4a028909e2b4bc396c31f6030eb6e34610c14e"
+      },
+      "receipt_hashes": {
+        "context.json": "bef2281ee8a9aa1d731a8bece7e288fa9a02377ca539b412e6916b685b7126ef",
+        "result.json": "ac78af369ed0cded4521f5fbd5e231e8088216ec5dae0eb8d4668232ec8756c8",
+        "stderr.log": "0658c3946af92fa83a595e22c68c039a84d083d6b19dff927b2bd31a4d478056",
+        "stdout.log": "4d38646636e350ab976fe3a11a4a028909e2b4bc396c31f6030eb6e34610c14e"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/m06-retained-tests",
+      "recorded_pass": true,
+      "rust_test_summary_count": 18,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "FAIL",
+      "computed_pass": false,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [
+        "error: could not compile `trnm-pon-node` (lib test)",
+        "  process didn't exit successfully: `/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustc --crate-name trnm_pon_node --edition=2021 crates/trnm-pon-node/src/lib.rs --error ... 97a87a6/out -L native=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/build/trnm-sqlite-io-boundary-3720d811cda37126/out -L native=/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/lib` (signal: 9, SIGKILL: kill)"
+      ],
+      "host": "local-cloud",
+      "id": "node-new-tests-normal-loader-single-job",
+      "observed_failure_tags": [
+        "child_sigkill_cause_not_established"
+      ],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "store::account_profile_scope_tests::",
+          "--",
+          "--test-threads=1"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 3292324,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 14.354808,
+          "user_cpu_seconds": 104.950408
+        },
+        "elapsed_seconds": 125.22100881799997,
+        "finished_utc": "2026-11-11T01:37:12.296089+00:00",
+        "id": "node-new-tests-normal-loader-single-job",
+        "launch_error": null,
+        "pass": false,
+        "qualification_granted": false,
+        "returncode": 101,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "6dfdd20b93cffe8f57d9d808cf90704d2ca21935b1bf970dba800acc4c413a52",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "f1c3119bec9f32f70e86d025e3fc37061839d6e0a3c57521b38ff8e611402f13",
+        "result.json": "d05faf93575693d346701a18c41173ce3671f87a08b5bd8bdecc9164dbe37f9f",
+        "stderr.log": "6dfdd20b93cffe8f57d9d808cf90704d2ca21935b1bf970dba800acc4c413a52",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-new-tests-normal-loader-single-job",
+      "recorded_pass": false,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "FAIL",
+      "computed_pass": false,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [
+        "error: could not compile `trnm-pon-node` (lib)",
+        "  process didn't exit successfully: `/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustc --crate-name trnm_pon_node --edition=2021 crates/trnm-pon-node/src/lib.rs --error ... 97a87a6/out -L native=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/build/trnm-sqlite-io-boundary-3720d811cda37126/out -L native=/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/lib` (signal: 9, SIGKILL: kill)"
+      ],
+      "host": "local-cloud",
+      "id": "pq-cli-retained-tests",
+      "observed_failure_tags": [
+        "child_sigkill_cause_not_established"
+      ],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--test",
+          "pq_application_local_cli",
+          "--test",
+          "pq_tls_cli",
+          "--test",
+          "pq_tls_witness_cli",
+          "--",
+          "--test-threads=1"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 1811924,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 27.533638999999994,
+          "user_cpu_seconds": 158.34263199999998
+        },
+        "elapsed_seconds": 200.6301769239999,
+        "finished_utc": "2026-11-11T01:53:09.382947+00:00",
+        "id": "pq-cli-retained-tests",
+        "launch_error": null,
+        "pass": false,
+        "qualification_granted": false,
+        "returncode": 101,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "911de265e4de1873f7c70b37d920c5575a96e400c669df41f447a06bc4910241",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "ea673834af8c0739dec709778bd4379a3fdaa3a82f1072b4f563aa63355e630a",
+        "result.json": "611cd221a047b2134dc66950efb5334c80dbc1906ac8ab63d82f3362bb996069",
+        "stderr.log": "911de265e4de1873f7c70b37d920c5575a96e400c669df41f447a06bc4910241",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/pq-cli-retained-tests",
+      "recorded_pass": false,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "qualification-runtime-gnu-time",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "env",
+          "TRNM_GNU_TIME=/workspace/scratch/a4188f5c86b5/validation-tools/gnu-time-desktop/usr/bin/time",
+          "python3",
+          "scripts/test_qualification_runtime.py"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 22636,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 4.398858,
+          "user_cpu_seconds": 1.079888
+        },
+        "elapsed_seconds": 21.835998301000473,
+        "finished_utc": "2026-11-11T01:57:35.528151+00:00",
+        "id": "qualification-runtime-gnu-time",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "95080cee20b34f6f1810e9511ca85046f1706b4edce59957e01f9b7cb6316818",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "12fd8e632f684d450fa18e5bc29af93e53ff2519bba0408b21670e373f2c54a3",
+        "result.json": "5ee151bdf14e9152040ab6baf56012a9be7fbb35b54317fc99614ba37f400471",
+        "stderr.log": "95080cee20b34f6f1810e9511ca85046f1706b4edce59957e01f9b7cb6316818",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/qualification-runtime-gnu-time",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "FAIL",
+      "computed_pass": false,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [
+        "ERROR: setUpClass (__main__.RepositoryMutants)",
+        "OSError: [Errno 28] No space left on device: '/workspace/scratch/a4188f5c86b5/validation-tmp/trnm-source-mutants-1mipm2jk'",
+        "FAILED (errors=1)"
+      ],
+      "host": "local-cloud",
+      "id": "repository-truth-gnu-time",
+      "observed_failure_tags": [
+        "no_space_left_on_device"
+      ],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "env",
+          "TRNM_GNU_TIME=/workspace/scratch/a4188f5c86b5/validation-tools/gnu-time-desktop/usr/bin/time",
+          "bash",
+          "scripts/ci/ci_job.sh",
+          "repository-truth"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 185640,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 14.288626,
+          "user_cpu_seconds": 180.12931500000002
+        },
+        "elapsed_seconds": 199.96168033499998,
+        "finished_utc": "2026-11-11T02:01:07.685112+00:00",
+        "id": "repository-truth-gnu-time",
+        "launch_error": null,
+        "pass": false,
+        "qualification_granted": false,
+        "returncode": 1,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "72923b1922129f05ab285b1dd1f0b71492b47089ede054b6f0f683a1903d863b",
+        "stdout_sha256": "8097d76f264733b356788e38a7c6c75e657c3d72fee6633f27c457be452a9627"
+      },
+      "receipt_hashes": {
+        "context.json": "e3c6e513aace6309ad8bd1e4d10c87cf9df3708ffe7c3812f30e5fa75aa20e07",
+        "result.json": "35d9f765e310116ab8cc248066d8a592a6f2bba27f372e6587a5f3bc3fa4fa6e",
+        "stderr.log": "72923b1922129f05ab285b1dd1f0b71492b47089ede054b6f0f683a1903d863b",
+        "stdout.log": "8097d76f264733b356788e38a7c6c75e657c3d72fee6633f27c457be452a9627"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-gnu-time",
+      "recorded_pass": false,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "FAIL",
+      "computed_pass": false,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [
+        "ERROR: test_actual_group_timeout_empty_usage_rows (__main__.QualificationRuntimeTests.test_actual_group_timeout_empty_usage_rows) (owner='run_evaluation_qualification.py')",
+        "FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'",
+        "ERROR: test_actual_group_timeout_empty_usage_rows (__main__.QualificationRuntimeTests.test_actual_group_timeout_empty_usage_rows) (owner='run_public_readiness_qualification.py')",
+        "FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'",
+        "ERROR: test_actual_nonzero_exit_rows (__main__.QualificationRuntimeTests.test_actual_nonzero_exit_rows) (owner='run_evaluation_qualification.py')",
+        "FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'",
+        "ERROR: test_actual_nonzero_exit_rows (__main__.QualificationRuntimeTests.test_actual_nonzero_exit_rows) (owner='run_public_readiness_qualification.py')",
+        "FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'",
+        "ERROR: test_actual_normal_exit_rows (__main__.QualificationRuntimeTests.test_actual_normal_exit_rows) (owner='run_evaluation_qualification.py')",
+        "FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'",
+        "ERROR: test_actual_normal_exit_rows (__main__.QualificationRuntimeTests.test_actual_normal_exit_rows) (owner='run_public_readiness_qualification.py')",
+        "FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'"
+      ],
+      "host": "local-cloud",
+      "id": "repository-truth-same-device",
+      "observed_failure_tags": [
+        "missing_usr_bin_time"
+      ],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "bash",
+          "scripts/ci/ci_job.sh",
+          "repository-truth"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 390668,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 187.736468,
+          "user_cpu_seconds": 726.8527760000001
+        },
+        "elapsed_seconds": 1123.8664846390002,
+        "finished_utc": "2026-11-11T01:53:27.628473+00:00",
+        "id": "repository-truth-same-device",
+        "launch_error": null,
+        "pass": false,
+        "qualification_granted": false,
+        "returncode": 1,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "62b62520c3ec2e89929b689aa6b021309272b72a0437243214807f5721e22db7",
+        "stdout_sha256": "0ef1cd607640e1d6677da47bdaad43b1e8eab37478fe39a5e69fd7e19c8ee6c1"
+      },
+      "receipt_hashes": {
+        "context.json": "df25d818bb75fedb14da08caee7349e896f1eb04f51baaff8088e2176ae48aaa",
+        "result.json": "f09d10453344954500839839fa1957e29c29802f3b3de8fbcc27a073746ca94d",
+        "stderr.log": "62b62520c3ec2e89929b689aa6b021309272b72a0437243214807f5721e22db7",
+        "stdout.log": "0ef1cd607640e1d6677da47bdaad43b1e8eab37478fe39a5e69fd7e19c8ee6c1"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth-same-device",
+      "recorded_pass": false,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-ci-integrity-tests",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 21468,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 2.260799,
+          "user_cpu_seconds": 2.452918
+        },
+        "elapsed_seconds": 6.933758772000147,
+        "finished_utc": "2026-11-11T01:36:08.356186+00:00",
+        "id": "source-ci-integrity-tests",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "fa6d227c543119191d3f6a514a1b2bf2bc3f6a2be3fd26be2f84b15b00caf97e",
+        "stdout_sha256": "68c47b83f5c00b2e0353303ac33dfe820b5f086f5cfd71c54c0a65982bcde977"
+      },
+      "receipt_hashes": {
+        "context.json": "cd50b3293795f53f20092d6fae37b3c6054d8ed24eaf7211b33d71fb3a4a19ec",
+        "result.json": "db63e6b4eb1face8ee92870eee48a52b1760bea4ec06853ff97a47c02ede1c81",
+        "stderr.log": "fa6d227c543119191d3f6a514a1b2bf2bc3f6a2be3fd26be2f84b15b00caf97e",
+        "stdout.log": "68c47b83f5c00b2e0353303ac33dfe820b5f086f5cfd71c54c0a65982bcde977"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-ci-integrity-tests",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-final",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+          "--output",
+          "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-final.json"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 175504,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 6.177772999999995,
+          "user_cpu_seconds": 3.614837999999999
+        },
+        "elapsed_seconds": 15.891768985999988,
+        "finished_utc": "2026-11-11T01:58:08.970326+00:00",
+        "id": "source-final",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "318b5e572d587c852ae1829b067e9b1e63f2b2dde33d36b60b5f610c772502d8"
+      },
+      "receipt_hashes": {
+        "context.json": "01427dce02fed54405b3f88b987bb582b21fd5af8cdcdb18bbbf025ff6e5d967",
+        "result.json": "d9bc5a3c9b9c7566f8a6ef73c641570f931b44e48479eb091570d8dbd705075f",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "318b5e572d587c852ae1829b067e9b1e63f2b2dde33d36b60b5f610c772502d8"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-final",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-pq-research-integration-check",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 16008,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.18497999999999998,
+          "user_cpu_seconds": 0.676682
+        },
+        "elapsed_seconds": 1.060375441999895,
+        "finished_utc": "2026-11-11T01:35:18.465105+00:00",
+        "id": "source-pq-research-integration-check",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e21d9aedf7617528ecc6e810f34e92ae9e91368675fd6b453c9cc546f238dee1"
+      },
+      "receipt_hashes": {
+        "context.json": "e80223790f770b43fa956137a34b3f5982324aefb0779c9d5f7d9a2b8bee1c74",
+        "result.json": "274d224e32b6db620f073cb43e867111ee54dd1f5595dd7005f1acde8b50e32f",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "e21d9aedf7617528ecc6e810f34e92ae9e91368675fd6b453c9cc546f238dee1"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-pq-research-integration-check",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-pq-research-integration-tests",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_pq_research_integration.py"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 29504,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 60.834143000000005,
+          "user_cpu_seconds": 194.709753
+        },
+        "elapsed_seconds": 271.16298387200004,
+        "finished_utc": "2026-11-11T01:40:32.585459+00:00",
+        "id": "source-pq-research-integration-tests",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "8560da752d7ffbd824c2d607c1b2a8b6c1930667386e6f59dedacae90834ed7f",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "af64aca29a40f9d6680a3403b2eec1efbcd40e9250f623dc88375d122e4e80da",
+        "result.json": "7ecbdb25530996a00c1fdf5e634b2860f1701eb10c331ba5cb1427e73940487b",
+        "stderr.log": "8560da752d7ffbd824c2d607c1b2a8b6c1930667386e6f59dedacae90834ed7f",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-pq-research-integration-tests",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-w1-composition-example-cmp",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cmp",
+          "evidence/pon-w1-qrom-formal-bridge-20261107/composition-example.json",
+          "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-example-reproduce/stdout.log"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 13708,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.0,
+          "user_cpu_seconds": 0.002026
+        },
+        "elapsed_seconds": 0.15324627699919802,
+        "finished_utc": "2026-11-11T01:36:14.651321+00:00",
+        "id": "source-w1-composition-example-cmp",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "57ae323d7ceb42ec6e7921218e0393fa90abf03a01a9bdd4f8390bcc54f70d79",
+        "result.json": "b8ff6e32a4f418a8bb8ec84084bdc1cee11cbdf1654b4118316644467066ad4c",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-example-cmp",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-w1-composition-example-reproduce",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/w1_qrom_composition_budget.py",
+          "--example"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 13696,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.01261000000000001,
+          "user_cpu_seconds": 0.056068999999999994
+        },
+        "elapsed_seconds": 0.2935612510000283,
+        "finished_utc": "2026-11-11T01:35:36.781205+00:00",
+        "id": "source-w1-composition-example-reproduce",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "afa82237a9ad859193e53e0ebad83652c63c76ea0058c1213e61d81a04aa5457"
+      },
+      "receipt_hashes": {
+        "context.json": "abd4039e393ce170d3995d497fda8e07c5371997523e7155150d1b4e6f9d219b",
+        "result.json": "13c26f2558cacfad790c74fba75fb675601fa4bd12e2a8c6e3f09814e57e9602",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "afa82237a9ad859193e53e0ebad83652c63c76ea0058c1213e61d81a04aa5457"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-example-reproduce",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-w1-composition-unknown-cmp",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cmp",
+          "evidence/pon-w1-qrom-formal-bridge-20261107/composition-unknown.json",
+          "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-unknown-reproduce/stdout.log"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 13716,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.0,
+          "user_cpu_seconds": 0.002744
+        },
+        "elapsed_seconds": 0.19484013999954186,
+        "finished_utc": "2026-11-11T01:36:14.655337+00:00",
+        "id": "source-w1-composition-unknown-cmp",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "c5d48e9ebcc831e5eb42792648467a08215449f82c0c4ce2bd4ef2fa90c0e71e",
+        "result.json": "2916b38fa043c6f4ea424de971b7591cbc59dfe21b6cc5e951a93646f48d955d",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-unknown-cmp",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-w1-composition-unknown-reproduce",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/w1_qrom_composition_budget.py"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 13696,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.019206,
+          "user_cpu_seconds": 0.11768799999999999
+        },
+        "elapsed_seconds": 0.435337693999827,
+        "finished_utc": "2026-11-11T01:35:36.907324+00:00",
+        "id": "source-w1-composition-unknown-reproduce",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e130e7ffb3ef74d9583b8b4ae7a74e50312a729e42688764dfaac157ba4e9041"
+      },
+      "receipt_hashes": {
+        "context.json": "b02e9912f0bc524234ddf788d725639f85cd12daeb01621d1a197699fb444820",
+        "result.json": "a06fa7c7559bd05db4f64efcd1bb09846f6ea0c3a39f14e84edcf787538ad03f",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "e130e7ffb3ef74d9583b8b4ae7a74e50312a729e42688764dfaac157ba4e9041"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-composition-unknown-reproduce",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-w1-joint-oracle-alias-cmp",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cmp",
+          "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-alias.json",
+          "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-alias-reproduce/stdout.log"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 13696,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.0,
+          "user_cpu_seconds": 0.003030999999999999
+        },
+        "elapsed_seconds": 0.18025245999979234,
+        "finished_utc": "2026-11-11T01:36:25.646233+00:00",
+        "id": "source-w1-joint-oracle-alias-cmp",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "d8e0bda4108bc179746cbc8a35fc11f427057a6ca7654d1655cb98f0f0d182e8",
+        "result.json": "7d9f49e103e731a07f06761d9651b395dec903e01d909ffcda4f40919778b32d",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-alias-cmp",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-w1-joint-oracle-alias-reproduce",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/w1_qrom_joint_oracle_diagnostic.py",
+          "--example",
+          "alias"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 13696,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.035727999999999996,
+          "user_cpu_seconds": 0.054223
+        },
+        "elapsed_seconds": 0.3899690289999853,
+        "finished_utc": "2026-11-11T01:36:20.592688+00:00",
+        "id": "source-w1-joint-oracle-alias-reproduce",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "1e427168ad06f93dee645982bd412e58b97ce825132559e7a07a47f2a6530522"
+      },
+      "receipt_hashes": {
+        "context.json": "c54a92272794bcad7519d2c56fd4dbec6e9ba0deab0781329333c193a7e5c152",
+        "result.json": "09386bc47b7a08a36c1937126eb4e01160e74612b5f8739db00759c7d96e5149",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "1e427168ad06f93dee645982bd412e58b97ce825132559e7a07a47f2a6530522"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-alias-reproduce",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-w1-joint-oracle-separated-cmp",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cmp",
+          "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-separated.json",
+          "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-separated-reproduce/stdout.log"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 13556,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.0,
+          "user_cpu_seconds": 0.0021259999999999994
+        },
+        "elapsed_seconds": 0.13386553799955436,
+        "finished_utc": "2026-11-11T01:36:25.664365+00:00",
+        "id": "source-w1-joint-oracle-separated-cmp",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "2c5cd35ffa724eed6a0d815aa3e2ddd42ee7bc2c2de120ae3979cc03119d46fa",
+        "result.json": "382f3da90b2093fbcd414a85db6f1f3ef89bdd95c4f691c1c3330628ecc0ef48",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-separated-cmp",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-w1-joint-oracle-separated-reproduce",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/w1_qrom_joint_oracle_diagnostic.py",
+          "--example",
+          "separated"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 13496,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.017787999999999998,
+          "user_cpu_seconds": 0.027598999999999995
+        },
+        "elapsed_seconds": 0.3948611819996586,
+        "finished_utc": "2026-11-11T01:36:20.537302+00:00",
+        "id": "source-w1-joint-oracle-separated-reproduce",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "0373ec119814b52efeecdff6f654dd1d3d8008908ef7a6eea3ec92b648928d17"
+      },
+      "receipt_hashes": {
+        "context.json": "040d408f02e4749b9ae3f06c250222001e1133079b2e4201c01cabb0187576fe",
+        "result.json": "744804b01e7838d6955db9b83296a1e7f12a72a8b86851c123eae5928295f9f5",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "0373ec119814b52efeecdff6f654dd1d3d8008908ef7a6eea3ec92b648928d17"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-separated-reproduce",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-w1-joint-oracle-unknown-cmp",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cmp",
+          "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-unknown.json",
+          "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-unknown-reproduce/stdout.log"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 13540,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.0019510000000000083,
+          "user_cpu_seconds": 0.0
+        },
+        "elapsed_seconds": 0.12918809999973746,
+        "finished_utc": "2026-11-11T01:36:25.529923+00:00",
+        "id": "source-w1-joint-oracle-unknown-cmp",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "aaaaaa3f1166ff9889af72919d18317435b5fc50671a4d111697d441b66f0034",
+        "result.json": "7cc9e0ff4bc6949a7a9b76c4aecbf7761791cade309cd596c2fe34f3a1bb6014",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-unknown-cmp",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-w1-joint-oracle-unknown-reproduce",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/w1_qrom_joint_oracle_diagnostic.py"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 13708,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.09303800000000001,
+          "user_cpu_seconds": 0.057089999999999995
+        },
+        "elapsed_seconds": 0.40607975399962015,
+        "finished_utc": "2026-11-11T01:36:20.641624+00:00",
+        "id": "source-w1-joint-oracle-unknown-reproduce",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "cac5fa1b09a64207bfde34931de1937894e31739912e9bcea70705b0fac899eb"
+      },
+      "receipt_hashes": {
+        "context.json": "8ef60c7a1db4584140a2b97cb6fba47c11762260ae7c824f8aa7e8101fd6038e",
+        "result.json": "3ad959669f4b6f4bfacf5397c81c3e1791b9ed055361092eb92cc11c6275c80a",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "cac5fa1b09a64207bfde34931de1937894e31739912e9bcea70705b0fac899eb"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-unknown-reproduce",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-w1-lifetime-cmp",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cmp",
+          "evidence/pon-w1-lifetime-account-boundary-20261110/project-report.json",
+          "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-lifetime-reproduce/stdout.log"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 13464,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.0,
+          "user_cpu_seconds": 0.0033240000000000006
+        },
+        "elapsed_seconds": 0.10026294299950678,
+        "finished_utc": "2026-11-11T01:35:17.509167+00:00",
+        "id": "source-w1-lifetime-cmp",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "0fbec61949e4e38d0262575f10672fba0d873838747f0c83a7e73336e3324d4f",
+        "result.json": "65e25bf421c446396dc20c59c49184935a63e95c9d4e1c77b438bb46e41bd476",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-lifetime-cmp",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-w1-lifetime-ledger-tests",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_w1_lifetime_ledger.py"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 19576,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.12163099999999999,
+          "user_cpu_seconds": 0.375712
+        },
+        "elapsed_seconds": 0.603648303999762,
+        "finished_utc": "2026-11-11T01:34:24.951327+00:00",
+        "id": "source-w1-lifetime-ledger-tests",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "f37c1d49fa7eda6c485a713a4a6e2e5171f3209c3dd1dc81660d40fb54bede1e",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "7ff2b4df4db1bef97dad8fde1ef7fd864e3a2ab2329b7da4384ba51019048372",
+        "result.json": "4c9970bf70fe248c2383c0c00f0739c822b3c658104789f497d8beb2a5991ee5",
+        "stderr.log": "f37c1d49fa7eda6c485a713a4a6e2e5171f3209c3dd1dc81660d40fb54bede1e",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-lifetime-ledger-tests",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-w1-lifetime-reproduce",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/w1_lifetime_ledger.py",
+          "--input",
+          "evidence/pon-w1-lifetime-account-boundary-20261110/project-input.json"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 15476,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.011973999999999999,
+          "user_cpu_seconds": 0.078091
+        },
+        "elapsed_seconds": 0.2450381809994724,
+        "finished_utc": "2026-11-11T01:34:46.339110+00:00",
+        "id": "source-w1-lifetime-reproduce",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "b050b861ec172305d708ba7c01ca47d547b1646cc3daee1d6aec9877d2cf3390"
+      },
+      "receipt_hashes": {
+        "context.json": "b1013e6cb9025094a36ca523d9cdbe67ab1c88dc0e0713225f0f221fa97d3e58",
+        "result.json": "fdce8ee078f3a95f61cdba7a13da65082af40cc95099ab4f6922c7a65f6093bc",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "b050b861ec172305d708ba7c01ca47d547b1646cc3daee1d6aec9877d2cf3390"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-lifetime-reproduce",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-w1-semantics-cmp",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cmp",
+          "evidence/pon-w1-qrom-semantics-current-20261109/report.json",
+          "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-semantics-reproduce/report.json"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 13708,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.0,
+          "user_cpu_seconds": 0.003927000000000003
+        },
+        "elapsed_seconds": 0.2136590440004511,
+        "finished_utc": "2026-11-11T01:36:14.708164+00:00",
+        "id": "source-w1-semantics-cmp",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "16f6d273944342df2a6a024c7529dc1f4966991b3e7af392d767b2ebfbbc44e4",
+        "result.json": "3607a5afd1ca2acc2921294dc10166a8949032302665453be1c162c93825eb87",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-semantics-cmp",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [],
+      "host": "local-cloud",
+      "id": "source-w1-semantics-reproduce",
+      "observed_failure_tags": [],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/w1_qrom_semantics_audit.py",
+          "--out",
+          "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-semantics-reproduce/report.json"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 49528,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.22736499999999998,
+          "user_cpu_seconds": 5.217877
+        },
+        "elapsed_seconds": 5.868374550000226,
+        "finished_utc": "2026-11-11T01:35:42.363610+00:00",
+        "id": "source-w1-semantics-reproduce",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "fb836e58e7a500b34a8aa400e15f4a50b414d65395b5f8a8ae85b2c0e26f52ce",
+        "result.json": "e9e274b6b38f2c4814ae479126e1b8a6302ff82ed74bccfda0e038a832c54a28",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-semantics-reproduce",
+      "recorded_pass": true,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "FAIL",
+      "computed_pass": false,
+      "executed_test_binary_lines": 0,
+      "failure_excerpts": [
+        "error: could not compile `trnm-pon-node` (lib)",
+        "  process didn't exit successfully: `/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/clippy-driver /workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustc --crate-nam ... 97a87a6/out -L native=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/build/trnm-sqlite-io-boundary-4d18c5578d894c6b/out -L native=/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/lib` (signal: 9, SIGKILL: kill)"
+      ],
+      "host": "local-cloud",
+      "id": "strict-workspace-clippy",
+      "observed_failure_tags": [
+        "child_sigkill_cause_not_established"
+      ],
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cargo",
+          "clippy",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 905620,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 62.573644,
+          "user_cpu_seconds": 72.98670299999999
+        },
+        "elapsed_seconds": 152.94414531300026,
+        "finished_utc": "2026-11-11T01:43:50.648870+00:00",
+        "id": "strict-workspace-clippy",
+        "launch_error": null,
+        "pass": false,
+        "qualification_granted": false,
+        "returncode": 101,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "bac961cc106c8d43678c9f62e65ac29d3f936cb14f9209651ac2ffec961014a5",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "a0a1f4904f5a07a796a193bd5fbb53f0bc9e2c4dff9545d9a6ead15c4fbd5b26",
+        "result.json": "aca80ab975aecf49b393ff548b29c4ea775017f2d2f2dd827cc94c506015fd13",
+        "stderr.log": "bac961cc106c8d43678c9f62e65ac29d3f936cb14f9209651ac2ffec961014a5",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/strict-workspace-clippy",
+      "recorded_pass": false,
+      "rust_test_summary_count": 0,
+      "source_clean_after": true,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_identity_consistent": true
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "full_local_receipts_reverified": true,
+      "host": "desktop",
+      "local_record_directory": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-new-tests",
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "store::account_profile_scope_tests::",
+          "--",
+          "--test-threads=1"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 4392816,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 44.071145,
+          "user_cpu_seconds": 1403.946457
+        },
+        "elapsed_seconds": 772.564138415968,
+        "finished_utc": "2026-11-11T02:11:19.215212+00:00",
+        "id": "node-new-tests",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "69d3ec1facb02260a16688817ffdebe157fc0e43e43e15217895da1ff863c021",
+        "stdout_sha256": "f922fad0103073414bca80aef215b74c218c2fb579ad49a70cee81fbdad82cda"
+      },
+      "receipt_hashes": {
+        "context.json": "694bbbe4da96dfd144dc124c961510819215257750de43a6a72a0b332d24611e",
+        "result.json": "693986546fbee567828b42e6288b4f5c9623ff911e22cc0b9a7d8a56d18865cd",
+        "stderr.log": "69d3ec1facb02260a16688817ffdebe157fc0e43e43e15217895da1ff863c021",
+        "stdout.log": "f922fad0103073414bca80aef215b74c218c2fb579ad49a70cee81fbdad82cda"
+      },
+      "record_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-new-tests",
+      "recorded_pass": true,
+      "running_binary_lines": [
+        "     Running unittests src/lib.rs (/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final-target/debug/deps/trnm_pon_node-2cfc25289c60243c)"
+      ],
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "stdout_if_short": "\nrunning 4 tests\ntest store::account_profile_scope_tests::cold_open_rechecks_account_scope_without_rewriting_existing_storage ... ok\ntest store::account_profile_scope_tests::growth_owner_rechecks_scope_before_open_recovery_and_noop_activation ... ok\ntest store::account_profile_scope_tests::invalid_account_scope_never_creates_legacy_or_authenticated_namespace ... ok\ntest store::account_profile_scope_tests::warm_owner_rechecks_current_account_scope_before_reads_recovery_and_activation ... ok\n\ntest result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 1398 filtered out; finished in 0.36s\n\n",
+      "test_summary_lines": [
+        "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 1398 filtered out; finished in 0.36s"
+      ]
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "full_local_receipts_reverified": true,
+      "host": "desktop",
+      "local_record_directory": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/preflight",
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 19496,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.022427000000000002,
+          "user_cpu_seconds": 0.07444499999999998
+        },
+        "elapsed_seconds": 0.19411506014876068,
+        "finished_utc": "2026-11-11T01:58:19.139650+00:00",
+        "id": "preflight",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "da31fbe4f4567eebe98e8554d607f4ed5190dc4d3f7f8b4d02de9e9c2ee04f26"
+      },
+      "receipt_hashes": {
+        "context.json": "79397400564ffa6be5296400cd34854e5cbdc58ef02da01a726c031e85b32164",
+        "result.json": "c960752738acc394948d6913915ddc3d6688d9c9f90fa2485a29c6fbbc482471",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "da31fbe4f4567eebe98e8554d607f4ed5190dc4d3f7f8b4d02de9e9c2ee04f26"
+      },
+      "record_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/preflight",
+      "recorded_pass": true,
+      "running_binary_lines": [],
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "stdout_if_short": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-pq-account-boundary-final-20261111\", \"remote_policy_mutated\": false}\n",
+      "test_summary_lines": []
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "full_local_receipts_reverified": true,
+      "host": "desktop",
+      "local_record_directory": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-before",
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "python3",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+          "--output",
+          "/home/qian-qi/chain-pq-a418-final-records/source-before.json"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 119948,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 1.3250069999999998,
+          "user_cpu_seconds": 5.134963000000001
+        },
+        "elapsed_seconds": 6.382058087037876,
+        "finished_utc": "2026-11-11T01:58:25.801513+00:00",
+        "id": "source-before",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "318b5e572d587c852ae1829b067e9b1e63f2b2dde33d36b60b5f610c772502d8"
+      },
+      "receipt_hashes": {
+        "context.json": "751e1902aabfb90ba8fd5ea01d115c4a085113968d33d52cd0a217766a642eeb",
+        "result.json": "32e2167bec660420bd9b178eb2735df8e8da4a9ce87bd74fc9164c8e3f28abc8",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "318b5e572d587c852ae1829b067e9b1e63f2b2dde33d36b60b5f610c772502d8"
+      },
+      "record_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-before",
+      "recorded_pass": true,
+      "running_binary_lines": [],
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "stdout_if_short": "{\n  \"base\": null,\n  \"candidate\": \"cdd984808a088e6c2e13b1e1ae6630a94d500c89\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"cdd984808a088e6c2e13b1e1ae6630a94d500c89\",\n  \"tested_tree\": \"1ed39b6ebe55cb00c238f26f6bfc9361ab93faec\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 2551591940,\n  \"tracked_entries\": 27862,\n  \"tracked_worktree_verified\": true\n}\n",
+      "test_summary_lines": []
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "full_local_receipts_reverified": true,
+      "host": "desktop",
+      "local_record_directory": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/strict-workspace-clippy",
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cargo",
+          "clippy",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 2105656,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 37.001234000000004,
+          "user_cpu_seconds": 282.546416
+        },
+        "elapsed_seconds": 161.89615334803239,
+        "finished_utc": "2026-11-11T02:14:01.428636+00:00",
+        "id": "strict-workspace-clippy",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "a790066df722acc40459c9e231f3a33b9316c4955143a26f78277ad3314d28b3",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt_hashes": {
+        "context.json": "7a0c6dc2cb0f4a7c3d94985c5f2589e43ba8d8f85bc75fc7125c68e15879eb1e",
+        "result.json": "b62d485fd5d3a3113dc8e21dc179e3edc14c50bb7ffe8d63f0c999b8606db0b2",
+        "stderr.log": "a790066df722acc40459c9e231f3a33b9316c4955143a26f78277ad3314d28b3",
+        "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "record_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/strict-workspace-clippy",
+      "recorded_pass": true,
+      "running_binary_lines": [],
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "stdout_if_short": "",
+      "test_summary_lines": []
+    },
+    {
+      "classification": "PASS",
+      "computed_pass": true,
+      "full_local_receipts_reverified": true,
+      "host": "desktop",
+      "local_record_directory": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/workspace-graph",
+      "raw_log_hashes_match_receipt": true,
+      "raw_result": {
+        "argv": [
+          "cargo",
+          "metadata",
+          "--locked",
+          "--offline",
+          "--all-features",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--format-version",
+          "1"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 54868,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.077167,
+          "user_cpu_seconds": 0.135925
+        },
+        "elapsed_seconds": 0.32744893804192543,
+        "finished_utc": "2026-11-11T01:58:26.390649+00:00",
+        "id": "workspace-graph",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "1aaca3cef6a9487b66ce8e67be3d96752ce916973f7819c43cd167642c9e17ed"
+      },
+      "receipt_hashes": {
+        "context.json": "d207948a7f850c826041da6d9b9c2858939b07254172944e62c5ad38412c79cc",
+        "result.json": "30b77da32d5c716fa51134d226e1532e6baa1f3cf2b1cc00e73cb3522d68dc7c",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.log": "1aaca3cef6a9487b66ce8e67be3d96752ce916973f7819c43cd167642c9e17ed"
+      },
+      "record_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/workspace-graph",
+      "recorded_pass": true,
+      "running_binary_lines": [],
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "stdout_if_short": null,
+      "test_summary_lines": []
+    }
+  ],
+  "result_count": 51,
+  "retained_prior_source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "schema": "a418-final-validation-inventory-v2",
+  "scope": "Completed local-cloud and captured desktop validation records; each host and exact source is reported separately.",
+  "snapshots": {
+    "desktop_captured_utc": "2026-11-11T02:15:17.406729+00:00",
+    "desktop_full_raw_receipts_available_locally": true,
+    "desktop_incomplete_context_directories_at_snapshot": [
+      "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/repository-truth"
+    ],
+    "desktop_raw_readback_path": "/workspace/scratch/a4188f5c86b5/coordination/desktop-preparation-and-validation-readback.json",
+    "desktop_raw_readback_sha256": "40eba1a3ae16abe5d18a34ce0cc4093b65367aeaa95c156d1ce6d19d52e1ed6a",
+    "full_rust_baseline_started_later_is_not_counted": true
+  }
+}

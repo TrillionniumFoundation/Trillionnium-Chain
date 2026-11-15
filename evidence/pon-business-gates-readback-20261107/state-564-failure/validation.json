@@ -1,0 +1,598 @@
+{
+  "schema": "trnm-same-scan-native-component-validation-v2",
+  "commit": "564bd23a656061e272c4af22029a4829d71b4f64",
+  "tree": "0ad0ea567056ee523c8e28e09ed32af813aa0dc2",
+  "parent": "d5ccac5691355c3d0616a3cbb45080d273f08c8e",
+  "started_unix": 1794070033.7792473,
+  "result": "COMPONENT_FAILURE_RETAINED",
+  "current_step": null,
+  "driver": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/run-native.py",
+    "sha256": "99a7cd740e80639caac624cefab50f9c2c39669ac6e35899afcba5a22c883fc4"
+  },
+  "original_failed_validation": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-20261107/validation.json",
+    "sha256": "fe3f91f4bc77eb695b3e6e6290d8c53ee064d227119c50323633cabce203fc9f",
+    "result": "COMPONENT_FAILURE_RETAINED",
+    "retained": true
+  },
+  "preparation": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/preparation.json",
+    "sha256": "5ba4391ee613aa1e7e90ea5a0d3a3c7bc5048f99f664155dba2cd9f5dee8224d"
+  },
+  "adoption_contract": {
+    "original_path": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-20261107/adoption-contract-v2.json",
+    "copy_path": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/adoption-contract-v2.json",
+    "sha256": "270d029283f07152da8feff2ceba6f23208289e820c9eb5d77eb5a7fc819279c",
+    "unchanged": true
+  },
+  "build_environment": {
+    "CARGO_HOME": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/cargo",
+    "CARGO_TARGET_DIR": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/followup-target",
+    "CARGO_BUILD_JOBS": "8",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "RUST_TEST_THREADS": "1",
+    "OPENSSL_DIR": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider-temp/trnm-pq-provider-3.5.9.XwCOxz9W/install",
+    "OPENSSL_STATIC": "1",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider-temp/trnm-pq-provider-3.5.9.XwCOxz9W/install/lib/ossl-modules",
+    "TRNM_PQ_OPENSSL": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider-temp/trnm-pq-provider-3.5.9.XwCOxz9W/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "79bd5e815ce341387d8299e66419fb8a56ba952892df8e3edc967cab60e83437",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "RUSTC": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTC_WORKSPACE_WRAPPER": null
+  },
+  "provider_version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+  "planned_steps": [
+    {
+      "label": "preflight-build",
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ]
+    },
+    {
+      "label": "full-source-before",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/source-before.json"
+      ]
+    },
+    {
+      "label": "same-scan-values",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--tested",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records",
+        "--label",
+        "same-scan-values",
+        "--",
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "store::canonical_row_reuse_tests::same_scan_values_match_original_and_never_outlive_actual_rows",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ]
+    },
+    {
+      "label": "same-scan-values-required",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_required_native_test.py",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records/same-scan-values.log",
+        "--test",
+        "store::canonical_row_reuse_tests::same_scan_values_match_original_and_never_outlive_actual_rows"
+      ]
+    },
+    {
+      "label": "same-scan-errors",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--tested",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records",
+        "--label",
+        "same-scan-errors",
+        "--",
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "store::canonical_row_reuse_tests::same_bytes_keep_current_sql_types_grammar_limits_and_error_priority",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ]
+    },
+    {
+      "label": "same-scan-errors-required",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_required_native_test.py",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records/same-scan-errors.log",
+        "--test",
+        "store::canonical_row_reuse_tests::same_bytes_keep_current_sql_types_grammar_limits_and_error_priority"
+      ]
+    },
+    {
+      "label": "same-scan-order",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--tested",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records",
+        "--label",
+        "same-scan-order",
+        "--",
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "store::canonical_row_reuse_tests::same_scan_repeated_keys_and_sql_order_keep_original_overwrite_semantics",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ]
+    },
+    {
+      "label": "same-scan-order-required",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_required_native_test.py",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records/same-scan-order.log",
+        "--test",
+        "store::canonical_row_reuse_tests::same_scan_repeated_keys_and_sql_order_keep_original_overwrite_semantics"
+      ]
+    },
+    {
+      "label": "same-scan-cancellation",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--tested",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records",
+        "--label",
+        "same-scan-cancellation",
+        "--",
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "store::canonical_row_reuse_tests::every_original_scan_cancellation_and_late_corruption_still_refuses",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ]
+    },
+    {
+      "label": "same-scan-cancellation-required",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_required_native_test.py",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records/same-scan-cancellation.log",
+        "--test",
+        "store::canonical_row_reuse_tests::every_original_scan_cancellation_and_late_corruption_still_refuses"
+      ]
+    },
+    {
+      "label": "original-cell-types",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--tested",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records",
+        "--label",
+        "original-cell-types",
+        "--",
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "store::bounded_active_state_tests::live_state_cell_extent_and_type_refuse_before_root_and_keep_exact_repair",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ]
+    },
+    {
+      "label": "original-cell-types-required",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_required_native_test.py",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records/original-cell-types.log",
+        "--test",
+        "store::bounded_active_state_tests::live_state_cell_extent_and_type_refuse_before_root_and_keep_exact_repair"
+      ]
+    },
+    {
+      "label": "original-wire-edges",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--tested",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records",
+        "--label",
+        "original-wire-edges",
+        "--",
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "store::bounded_active_state_tests::live_state_reads_exact_wire_edges_without_normalizing_sql_types",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ]
+    },
+    {
+      "label": "original-wire-edges-required",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_required_native_test.py",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records/original-wire-edges.log",
+        "--test",
+        "store::bounded_active_state_tests::live_state_reads_exact_wire_edges_without_normalizing_sql_types"
+      ]
+    },
+    {
+      "label": "original-count-cancel",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--tested",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records",
+        "--label",
+        "original-count-cancel",
+        "--",
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "store::bounded_active_state_tests::live_state_count_bound_and_cancellation_return_no_partial_state",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ]
+    },
+    {
+      "label": "original-count-cancel-required",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_required_native_test.py",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records/original-count-cancel.log",
+        "--test",
+        "store::bounded_active_state_tests::live_state_count_bound_and_cancellation_return_no_partial_state"
+      ]
+    },
+    {
+      "label": "workspace-clippy",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--tested",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records",
+        "--label",
+        "workspace-clippy",
+        "--",
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    {
+      "label": "full-source-after",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/source-after.json"
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "label": "preflight-build",
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.11468070303089917,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/preflight-build.log",
+      "bytes": 166,
+      "sha256": "81734e4c77b0868eb81396d628fcac16a0e3d6b11ac0d1a71f3cbc977e9f9dce"
+    },
+    {
+      "label": "full-source-before",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/source-before.json"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 2.521612936165184,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/full-source-before.log",
+      "bytes": 423,
+      "sha256": "180eb26b12779750331d7190c6587ce02bfc330f225b6a12960cec2a94253b7f"
+    },
+    {
+      "label": "same-scan-values",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--tested",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records",
+        "--label",
+        "same-scan-values",
+        "--",
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "store::canonical_row_reuse_tests::same_scan_values_match_original_and_never_outlive_actual_rows",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 195.72315541794524,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/same-scan-values.log",
+      "bytes": 188,
+      "sha256": "416b6215daf4d251d941dd13159380b14c759be16442d63de8bb0c2898e22259"
+    },
+    {
+      "label": "same-scan-values-required",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_required_native_test.py",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records/same-scan-values.log",
+        "--test",
+        "store::canonical_row_reuse_tests::same_scan_values_match_original_and_never_outlive_actual_rows"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.06484238593839109,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/same-scan-values-required.log",
+      "bytes": 188,
+      "sha256": "32b054414ac043815027a01b55e2dc95b7ff71716accd98c84c8e291e14db0fb"
+    },
+    {
+      "label": "same-scan-errors",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--tested",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/records",
+        "--label",
+        "same-scan-errors",
+        "--",
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "store::canonical_row_reuse_tests::same_bytes_keep_current_sql_types_grammar_limits_and_error_priority",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 101,
+      "timed_out": false,
+      "seconds": 5.5291803169529885,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/same-scan-errors.log",
+      "bytes": 187,
+      "sha256": "52faa1e9dd103e7d210225427dae84f50aae1bd3eaea74066876e29d7d2783f5"
+    },
+    {
+      "label": "full-source-after",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "564bd23a656061e272c4af22029a4829d71b4f64",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/source-after.json"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 2.5218325599562377,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/full-source-after.log",
+      "bytes": 423,
+      "sha256": "180eb26b12779750331d7190c6587ce02bfc330f225b6a12960cec2a94253b7f"
+    }
+  ],
+  "stop_on_first_failure": true,
+  "command_timeout_seconds": 6600,
+  "concurrency": "Independent component builds may use a different target; no timing comparison or original Host business qualification.",
+  "business_gate_pass_claimed": false,
+  "performance_claimed": false,
+  "benchmark_executed": false,
+  "qualification": false,
+  "full_source_receipts": {
+    "before_sha256": "180eb26b12779750331d7190c6587ce02bfc330f225b6a12960cec2a94253b7f",
+    "after_sha256": "180eb26b12779750331d7190c6587ce02bfc330f225b6a12960cec2a94253b7f",
+    "byte_identical": true
+  },
+  "executed_node_binaries": [
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/followup-target/debug/deps/trnm_pon_node-3d075b189916f208",
+      "bytes": 77968816,
+      "sha256": "9d81a0e0dc45f48ea8e31af842ecd282346a175992f7e9be5eca71c16b5a92e3",
+      "origin": "actual first successful/attempted Cargo Running line"
+    }
+  ],
+  "failed_step": "same-scan-errors",
+  "finished_unix": 1794070240.5533965,
+  "all_seven_exact_and_named_readers_passed": false,
+  "workspace_strict_clippy_passed": false
+}

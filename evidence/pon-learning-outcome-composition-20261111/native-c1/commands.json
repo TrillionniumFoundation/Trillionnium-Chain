@@ -1,0 +1,452 @@
+{
+  "schema": "pon-learning-outcome-command-observation-v1",
+  "source_head": "c2d67c5cf1ebb4caac525802362d5746b8fd957d",
+  "source_root": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+  "scope": "native-component-qualification",
+  "production_activation": false,
+  "model_efficacy_certified": false,
+  "commands": [
+    {
+      "label": "base-project-boundary",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb",
+      "started_utc": "2026-11-12T00:07:14.281265+00:00",
+      "finished_utc": "2026-11-12T00:07:14.396055+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "base-project-boundary.stdout",
+      "stderr": "base-project-boundary.stderr",
+      "stdout_sha256": "00e765ca46856da074919e97be1c8f5fef4fd068cc69700ccafe6d01a3381278",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "clone",
+      "command": [
+        "git",
+        "clone",
+        "--shared",
+        "--no-checkout",
+        "--local",
+        "--template=",
+        "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb",
+        "/home/qian-qi/work/chain-pon-outcome-7612-publish"
+      ],
+      "cwd": "/home/qian-qi/work",
+      "started_utc": "2026-11-12T00:07:14.396524+00:00",
+      "finished_utc": "2026-11-12T00:07:14.429005+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "clone.stdout",
+      "stderr": "clone.stderr",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "98e0cbeb10c884be25ebaf2bae9ee22b632525014ceb3593b5571889656be912"
+    },
+    {
+      "label": "canonical-origin",
+      "command": [
+        "git",
+        "remote",
+        "set-url",
+        "origin",
+        "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:07:14.429499+00:00",
+      "finished_utc": "2026-11-12T00:07:14.433764+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "canonical-origin.stdout",
+      "stderr": "canonical-origin.stderr",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "bundle-verify",
+      "command": [
+        "git",
+        "bundle",
+        "verify",
+        "/home/qian-qi/chain-pon-outcome-c2d67c5c-7612.bundle"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:07:14.434326+00:00",
+      "finished_utc": "2026-11-12T00:07:14.498592+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "bundle-verify.stdout",
+      "stderr": "bundle-verify.stderr",
+      "stdout_sha256": "4b00dcff221374f468a9f55940b0103dd0f76975367a9fbff9ebb2f7ca1a5d5f",
+      "stderr_sha256": "6c01e93f107f57c5f5a4ce9d4059cfc95a9a32f38e14b249c4261ddd3f7d0f83"
+    },
+    {
+      "label": "bundle-import",
+      "command": [
+        "git",
+        "-c",
+        "gc.auto=0",
+        "fetch",
+        "--no-write-fetch-head",
+        "/home/qian-qi/chain-pon-outcome-c2d67c5c-7612.bundle",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:07:14.499281+00:00",
+      "finished_utc": "2026-11-12T00:07:14.764456+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "bundle-import.stdout",
+      "stderr": "bundle-import.stderr",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "checkout",
+      "command": [
+        "git",
+        "checkout",
+        "-b",
+        "fix/chain-pon-learning-outcome-composition-20261111-7612",
+        "c2d67c5cf1ebb4caac525802362d5746b8fd957d"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:07:14.765811+00:00",
+      "finished_utc": "2026-11-12T00:07:30.927792+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "checkout.stdout",
+      "stderr": "checkout.stderr",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "280020f6c4f00947c2f4d3c262a9a138caf220555ef779ce69eb78e00946a2bb"
+    },
+    {
+      "label": "project-boundary-before",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:07:31.758369+00:00",
+      "finished_utc": "2026-11-12T00:07:31.873967+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "project-boundary-before.stdout",
+      "stderr": "project-boundary-before.stderr",
+      "stdout_sha256": "83dcff667b9e4be937ae5cc0a8df2bebd5dcd2a38c3c423e0e528ec58e8b2678",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "source-before",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "c2d67c5cf1ebb4caac525802362d5746b8fd957d",
+        "--output",
+        "/home/qian-qi/work/chain-pon-outcome-7612-qualified-c1/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:07:31.875157+00:00",
+      "finished_utc": "2026-11-12T00:07:38.409158+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "source-before.stdout",
+      "stderr": "source-before.stderr",
+      "stdout_sha256": "70633ed61ecc9d567f520ec023c45662e2d6fded76dd03657586a2dd73bb601a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "toolchain",
+      "command": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "-Vv"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:07:38.429238+00:00",
+      "finished_utc": "2026-11-12T00:07:38.445394+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "toolchain.stdout",
+      "stderr": "toolchain.stderr",
+      "stdout_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "cargo-version",
+      "command": [
+        "cargo",
+        "-Vv"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:07:38.446223+00:00",
+      "finished_utc": "2026-11-12T00:07:38.478798+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "cargo-version.stdout",
+      "stderr": "cargo-version.stderr",
+      "stdout_sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "locked-metadata",
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:07:38.479437+00:00",
+      "finished_utc": "2026-11-12T00:07:38.744424+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "locked-metadata.stdout",
+      "stderr": "locked-metadata.stderr",
+      "stdout_sha256": "c6e2b9744b6196b6dd4139e8f3d187a76f843fab00f12decae4814f346bb391a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:07:38.752615+00:00",
+      "finished_utc": "2026-11-12T00:08:00.376587+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "format.stdout",
+      "stderr": "format.stderr",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "source-integrity-negatives",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:08:00.377828+00:00",
+      "finished_utc": "2026-11-12T00:08:05.605608+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "source-integrity-negatives.stdout",
+      "stderr": "source-integrity-negatives.stderr",
+      "stdout_sha256": "e388fd10f730571f32b4b72cbdd51062df852570e7ca21b006a2d96906936e68",
+      "stderr_sha256": "3b33de9e80849860544f1703b497c8d7e5c6f0a2ca1423f0dd27a1a8dcddba7c"
+    },
+    {
+      "label": "project-boundary-negatives",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_project_boundary.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:08:05.606823+00:00",
+      "finished_utc": "2026-11-12T00:08:11.536423+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "project-boundary-negatives.stdout",
+      "stderr": "project-boundary-negatives.stderr",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "4774fbb9bc081fcd6a8678732aabe5643d51b3da8f9eeb6b121a59d78483192e"
+    },
+    {
+      "label": "repository-and-links",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:08:11.537685+00:00",
+      "finished_utc": "2026-11-12T00:08:42.780055+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "repository-and-links.stdout",
+      "stderr": "repository-and-links.stderr",
+      "stdout_sha256": "1856ad8eaae3d472dd5be8bf8c9fa6de92f3d5b9230917311b379ce6fb5963c4",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "adoption-library",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "cell::adoption::",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:08:42.781265+00:00",
+      "finished_utc": "2026-11-12T00:10:48.229093+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "adoption-library.stdout",
+      "stderr": "adoption-library.stderr",
+      "stdout_sha256": "51c29990c59e6bfacf42f37206199b3ea77a47a8c650d94567d176c486873c73",
+      "stderr_sha256": "ab876ac92ec78d41e548e93b9124f98fe4f4bc491f5c5a4a169a57c0284f3486"
+    },
+    {
+      "label": "adoption-cli",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--test",
+        "cell_adoption_cli",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:10:48.230453+00:00",
+      "finished_utc": "2026-11-12T00:11:19.127791+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "adoption-cli.stdout",
+      "stderr": "adoption-cli.stderr",
+      "stdout_sha256": "8a36c5e33611624ca8f4db51c1c038abcc118636279f74b46f0a872576722e3d",
+      "stderr_sha256": "38ce956e80cf41f7920c7fb98847aa3a48ebef79cd77a42be85b6e31edbdba11"
+    },
+    {
+      "label": "outcome-role-separation",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "outcome_role_separation",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:11:19.129225+00:00",
+      "finished_utc": "2026-11-12T00:17:10.722115+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "outcome-role-separation.stdout",
+      "stderr": "outcome-role-separation.stderr",
+      "stdout_sha256": "9d36952ce45a57f089dd5c58a9c90941ae700ffb2680056b2e007cdd97ffe1a3",
+      "stderr_sha256": "b3e002386d7abb0d5669431d9c51c89c50b9edffd0cb26016ef335c7ad3a0883"
+    },
+    {
+      "label": "adoption-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "--bin",
+        "trnm-cell-adoption",
+        "--test",
+        "cell_adoption_cli",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:17:10.728535+00:00",
+      "finished_utc": "2026-11-12T00:17:35.404971+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "adoption-clippy.stdout",
+      "stderr": "adoption-clippy.stderr",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "5564fa8d179b1cb47f5495a4c726e6713fb3ef8474014c9ec9852c53946d4a86"
+    },
+    {
+      "label": "outcome-role-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "outcome_role_separation",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:17:35.406426+00:00",
+      "finished_utc": "2026-11-12T00:18:30.674205+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "outcome-role-clippy.stdout",
+      "stderr": "outcome-role-clippy.stderr",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "68c74d7be7a2c1e3ab58ed9a42db2f03b2a24addf9346a64a46a1511a686b625"
+    },
+    {
+      "label": "source-after",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "c2d67c5cf1ebb4caac525802362d5746b8fd957d",
+        "--output",
+        "/home/qian-qi/work/chain-pon-outcome-7612-qualified-c1/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+      "started_utc": "2026-11-12T00:18:30.677818+00:00",
+      "finished_utc": "2026-11-12T00:18:59.418545+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": "source-after.stdout",
+      "stderr": "source-after.stderr",
+      "stdout_sha256": "70633ed61ecc9d567f520ec023c45662e2d6fded76dd03657586a2dd73bb601a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

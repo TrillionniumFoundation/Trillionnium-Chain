@@ -1,0 +1,78 @@
+{
+  "actual_git_commit_exit_code": 0,
+  "branch": "fix/chain-pq-live-retry-20261111-fa62381e",
+  "changed_paths_verified_against_existing_admission": 36,
+  "commit_or_replay_performed": false,
+  "current_head_tree_exact_single_parent_and_clean_status_verified": true,
+  "exact_committed_gates_still_required": true,
+  "existing_full_physical_source_receipt_verified": true,
+  "existing_physical_source_command_exit_code": 0,
+  "existing_source_guard": {
+    "base": null,
+    "candidate": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+    "tested_tree": "15fd9e7a2f4121dce861e9e96b78d8196d3892fb",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2578250705,
+    "tracked_entries": 28315,
+    "tracked_worktree_verified": true
+  },
+  "fresh_full_physical_source_check_executed_by_reconciler": false,
+  "native_tests_or_builds_executed": false,
+  "original_failure_reason": "final summary creation collided with existing successful commit command receipt at commit.json",
+  "original_outer_exit_code": 1,
+  "original_outer_failure_preserved": true,
+  "original_outer_timed_out": false,
+  "original_receipts_and_logs": {
+    "admission.json": {
+      "bytes": 17774,
+      "sha256": "4402a2de580fe0e95173ef2d6a89bb14d37c19aa5c8aa9ae5fd5037ee0587161"
+    },
+    "commit.json": {
+      "bytes": 455,
+      "sha256": "75945d2452675662c1f096c717c1d7a945b0c821d8c09f70ccaf3f5669dc4002"
+    },
+    "commit.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit.stdout.log": {
+      "bytes": 3064,
+      "sha256": "aa09a8c4e562df3701e18af86dd249d70eec041f9b6c8a07228775a6a2f6e3c9"
+    },
+    "failure.json": {
+      "bytes": 1084,
+      "sha256": "f83955169a93265fa51da2b3eeeae9baac2d289948d12d35aca785e5a728372c"
+    },
+    "physical-source-check.json": {
+      "bytes": 559,
+      "sha256": "8d3a86f6a70e5b57514a174c99f14478d5cc9d65f7c922d652b51ac6fec417a2"
+    },
+    "physical-source-check.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "physical-source-check.stdout.log": {
+      "bytes": 423,
+      "sha256": "2a0164e9ff47aba8782157e66cb214304f8b5ba9737e1e7710c6941f96aa7307"
+    },
+    "source.json": {
+      "bytes": 423,
+      "sha256": "2a0164e9ff47aba8782157e66cb214304f8b5ba9737e1e7710c6941f96aa7307"
+    }
+  },
+  "original_receipts_overwritten": false,
+  "outer_status_source": "retained durable-controller observation supplied by the parent task",
+  "parent": "454ae116159867ff6cddd91b964523df7f7e16f0",
+  "production_activation": false,
+  "pushed": false,
+  "repository_files_modified": false,
+  "schema": "trnm-c4-source-reconciliation-v1",
+  "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+  "status": "committed-source-reconciled-original-outer-failure-retained",
+  "tree": "15fd9e7a2f4121dce861e9e96b78d8196d3892fb",
+  "whole_chain_quantum_security_qualified": false
+}

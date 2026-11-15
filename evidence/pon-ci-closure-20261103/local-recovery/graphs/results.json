@@ -1,0 +1,87 @@
+[
+  {
+    "name": "main-locked-graph",
+    "command": [
+      "/root/.cargo/bin/cargo",
+      "+1.95.0",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--all-features",
+      "--filter-platform",
+      "x86_64-unknown-linux-gnu",
+      "--format-version",
+      "1",
+      "--manifest-path",
+      "trillionnium/Cargo.toml"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 0.3963518800001111,
+    "stdout_bytes": 642346,
+    "stdout_sha256": "d18cc26d1c5b647583bda461232ef4bda38a315d6196dadc697d899720a77dba",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "workspace_packages": 26,
+    "resolved_nodes": 138,
+    "all_packages": 138
+  },
+  {
+    "name": "fuzz-locked-fetch",
+    "command": [
+      "/root/.cargo/bin/cargo",
+      "+1.95.0",
+      "fetch",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/fuzz/Cargo.toml"
+    ],
+    "exit_code": 101,
+    "wall_seconds": 0.01622478199988109,
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_bytes": 67,
+    "stderr_sha256": "17a729c2449391e7219ef32fc39598b04ec0c6d88420549b4d70b6d440817385"
+  },
+  {
+    "name": "fuzz-locked-fetch-correct-path",
+    "command": [
+      "/root/.cargo/bin/cargo",
+      "+1.95.0",
+      "fetch",
+      "--locked",
+      "--manifest-path",
+      "tests/fuzz/Cargo.toml"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 7.531627083999865,
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_bytes": 149,
+    "stderr_sha256": "08ea8a2d41ce1af28117f7315273884295d0c8f16717dcb4959e16b90b010572"
+  },
+  {
+    "name": "fuzz-locked-graph",
+    "command": [
+      "/root/.cargo/bin/cargo",
+      "+1.95.0",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--filter-platform",
+      "x86_64-unknown-linux-gnu",
+      "--format-version",
+      "1",
+      "--manifest-path",
+      "tests/fuzz/Cargo.toml"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 0.24393014099996435,
+    "stdout_bytes": 519641,
+    "stdout_sha256": "fd018367776178b966b2e1af49860d7f56fe049fe8225cc00db6e7ade95448e9",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "workspace_packages": 1,
+    "resolved_nodes": 106,
+    "all_packages": 106
+  }
+]

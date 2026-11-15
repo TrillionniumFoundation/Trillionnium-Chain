@@ -1,0 +1,21 @@
+{
+  "base_commit": "b173c1f52d927522af67df30dd08ecfb2e3a1bb0",
+  "comparison": "Recorded execution inputs compared to candidate bytes before publication; no new execution or whole-build attestation",
+  "components": {
+    "settlement": {
+      "all_recorded_bytes_match_publication_candidate": true,
+      "mismatches": [],
+      "recorded_files": 8,
+      "scope": "uncommitted candidate owner suite with unchanged original Cargo profile and locked graph; not final committed integration qualification"
+    },
+    "strategy": {
+      "all_recorded_bytes_match_publication_candidate": true,
+      "mismatches": [],
+      "recorded_files": 95,
+      "scope": "explicit sampler/reader and complete crypto/protocol Rust sources plus manifests/lock; no whole-workspace build attestation"
+    }
+  },
+  "same_commit_identity_claimed": false,
+  "schema": "six-workpackages-source-applicability-v1",
+  "whole_candidate_accepted": false
+}

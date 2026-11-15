@@ -1,0 +1,14 @@
+F...
+======================================================================
+FAIL: test_complete_roster_passes (__main__.NativeGateTests.test_complete_roster_passes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-native-rosters-20261110/scripts/ci/test_w1_factorial_native_gate.py", line 49, in test_complete_roster_passes
+    self.assertEqual(self.run_gate(), 0)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.022s
+
+FAILED (failures=1)

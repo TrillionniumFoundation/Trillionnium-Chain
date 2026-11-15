@@ -1,0 +1,19 @@
+
+running 7 tests
+test cell::discovery::pq::epoch_directory::tests::sqlite_writer_and_commit_contention_preserve_deadline_clock_high_water_and_epoch_retirement ... ok
+test cell::retention::tests::repair_intent_and_charge_must_survive_sqlite_suppression_before_payload ... ok
+test cell::retention::tests::sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen ... ok
+test tests::certified_batch_and_da_head_share_one_fresh_sqlite_snapshot ... ok
+test tests::sqlite_dangling_sidecars_refuse_creation_before_database_exists ... FAILED
+test tests::sqlite_dangling_sidecars_refuse_existing_store_without_touching_files ... FAILED
+test tests::sqlite_sidecar_names_preserve_non_utf8_database_bytes ... FAILED
+
+failures:
+
+failures:
+    tests::sqlite_dangling_sidecars_refuse_creation_before_database_exists
+    tests::sqlite_dangling_sidecars_refuse_existing_store_without_touching_files
+    tests::sqlite_sidecar_names_preserve_non_utf8_database_bytes
+
+test result: FAILED. 4 passed; 3 failed; 0 ignored; 0 measured; 711 filtered out; finished in 6.17s
+

@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "python3",
+    "materialize_native_evidence.py",
+    "--output",
+    "/home/qian-qi/work/p3-shared-profile-materialization-check-3acf89-base-sync"
+  ],
+  "exit_code": 0,
+  "stdout": "{\"schema\": \"p3-native-evidence-materialization-v1\", \"result\": \"PASS\", \"files\": 232, \"bytes\": 74402134, \"output\": \"/home/qian-qi/work/p3-shared-profile-materialization-check-3acf89-base-sync\"}\n",
+  "stderr": ""
+}

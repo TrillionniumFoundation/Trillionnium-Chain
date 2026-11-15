@@ -1,0 +1,18 @@
+{
+  "schema": "TRNM-W1-BATCH-PHASE0-ATTEMPT2-DOWNLOAD1",
+  "url": "https://static.crates.io/crates/risc0-build/risc0-build-3.0.6.crate",
+  "expected_sha256": "bd8216cdd9f573808a94769767480b06ad1e74ae60841c9582fdf51b8e29ba53",
+  "maximum_bytes": 2097152,
+  "socket_timeout_seconds": 30,
+  "total_deadline_seconds": 35,
+  "destination": "/tmp/pure-pon-cargo-20261027/registry/cache/index.crates.io-1949cf8c6b5b557f/risc0-build-3.0.6.crate",
+  "started_unix_ns": 1793160530351345450,
+  "source_sha256": "aaede1060f2b58dd01e7d97a0188498d4b14aa4ad8f4ef2d9a01f86796509bc0",
+  "purpose": "explicitly authorized second attempt: repair sandbox-blocked transport only",
+  "prior_attempt_result_sha256": "a3df8f28c13dc78a369289ad9eae672abb07dc046ab13d8c0dba4f324539d09d",
+  "compiler_restored": false,
+  "native_build_started": false,
+  "guest_executed": false,
+  "receipt_verified": false,
+  "prover_executed": false
+}

@@ -1,0 +1,88 @@
+{
+  "all_required_observations_passed": true,
+  "complete_w1_soundness_qualified": false,
+  "consensus_admission": false,
+  "expected_base": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+  "expected_candidate": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+  "expected_source": "f14298a2728b22fda625267e2e4844b70f829b37",
+  "failed_or_skipped_stages": [],
+  "named_test_completion_error": null,
+  "named_test_completion_sha256": "f0f11131bc18fae2c15f24ec5701ccd616785e696523b88da8ca31170e5719ff",
+  "named_test_completion_verified": true,
+  "post_quantum_soundness_qualified": false,
+  "pq_signature_qualification_inferred": false,
+  "production_qualified": false,
+  "quantum_work_qualified": false,
+  "required_stages": [
+    "observations",
+    "checkout",
+    "source_before",
+    "preflight",
+    "named_tests",
+    "implementation",
+    "budget_unknown",
+    "budget_hypothetical",
+    "report_scopes",
+    "source_after"
+  ],
+  "schema": "TRNM-W1-QROM-CI-OBSERVATION1",
+  "scope": "Offline construction and saved-fixture mapping with conditional arithmetic. This workflow does not establish proof or quantum security.",
+  "source_identity_error": null,
+  "source_kind": "prospective-merge",
+  "steps": {
+    "budget_hypothetical": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "budget_unknown": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "checkout": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {
+        "commit": "f14298a2728b22fda625267e2e4844b70f829b37",
+        "ref": ""
+      }
+    },
+    "implementation": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "named_tests": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "observations": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "preflight": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "report_scopes": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "source_after": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "source_before": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    }
+  },
+  "unconditional_project_security_bits": null
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/pq_lifetime_budget.py"
+    ],
+    "declared_source_revision": "b7e38fdc2e43c468692abc52aec03737f2df7f1b",
+    "elapsed_seconds": 0.04703076299847453,
+    "exit_code": 2,
+    "name": "lifetime",
+    "source_revision": "85a905b9e47cea0d76144253abb4a483b58bc2be",
+    "stderr_sha256": "40bcd907f50b1b711e40a3ade2ca2445c8a772de313f328fd990005ee380c625",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/pq_authority_effect_register.py"
+    ],
+    "declared_source_revision": "b7e38fdc2e43c468692abc52aec03737f2df7f1b",
+    "elapsed_seconds": 0.05454955700042774,
+    "exit_code": 2,
+    "name": "authority",
+    "source_revision": "85a905b9e47cea0d76144253abb4a483b58bc2be",
+    "stderr_sha256": "eb709ddcbc094516c23594ab287429ed3c0e44a93a40d46ecbf511a81bf0dd9d",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "declared_source_revision": "b7e38fdc2e43c468692abc52aec03737f2df7f1b",
+    "elapsed_seconds": 0.07147939300011785,
+    "exit_code": 1,
+    "name": "corpus",
+    "source_revision": "85a905b9e47cea0d76144253abb4a483b58bc2be",
+    "stderr_sha256": "50840b5fce9aaf1a3d23ea0a6efb6af9ef48c7e5c77619fcfb7682a6436fd301",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

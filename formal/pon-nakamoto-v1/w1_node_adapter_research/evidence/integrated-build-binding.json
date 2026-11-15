@@ -1,0 +1,33 @@
+{
+  "schema": "node-adapter-r4-integrated-source-binding-v1",
+  "integration_parent": "bd69f2d6b283833e1d5abf4042fe2b3f6116439f",
+  "compiled_source_files": {
+    "formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml": "c64b9a09215a74df5dcebe8e0a153d1b4b633b80b4e5fb61a78af3fb3037e7e2",
+    "formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.lock": "9583c2eb4b81ae16716a71f8bca743c86001fe1a1a62de5ef8bc499ca6f65cf5",
+    "formal/pon-nakamoto-v1/w1_node_adapter_research/src/lib.rs": "69457c74801b2ac7b42d5a95edb4a17c32d1664bc00d14d7235415863e891ec6",
+    "formal/pon-nakamoto-v1/w1_node_adapter_research/src/main.rs": "ec8fc3116c4e5a17f134c1c9c61a0cfaa84a51de7306f9ce46fef9b358494c92",
+    "formal/pon-nakamoto-v1/w1_node_adapter_research/tests/node_bridge.rs": "9035dead75db8b2f66bfd8ce629ef78721647f096bc4d7c85e12fcb9a5ab9d66",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml": "e4abafba6867bf145ddd3f5b8f669ce039a93973d80f7eb3096dd3a7ce1c184c",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_carry_air.rs": "6524719eaa69e1c24e67ff4e82f26676612dcfc9b45da8d4a8ce08885dc56ec1",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/src/lib.rs": "02af0734368cb416dd4ed600254727f32e1c096e33a158b3abad903f5027ade1",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs": "5b7e6c2124f3a00e1a0eeafa586ab40e42d80b67dda4075cd5b48cedcbee7f76",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_wire.rs": "e8660e3b91849f538713b32835035f0eb39425326268dd9302b3c7b01b090921",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_air.rs": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_plan.rs": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_schedule_air.rs": "88557607225e402b6f16ec7edffb7c8b90ddfe14cc7e87a2640042a205011a64"
+  },
+  "node_binary": {
+    "path": "/home/qian-qi/work/chain-w1-node-r4-f16ac/formal/pon-nakamoto-v1/w1_node_adapter_research/target/release/w1-node-adapter-research",
+    "sha256": "271ac45cc709d1d6e91e9ff78c004668e5e4d2a690e3b4e963220e750bcbeb1b"
+  },
+  "proof_generator_commit": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+  "node_core_baseline": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+  "source_scope_note": "staged Node v4 source identified by exact hashes; formal history additions preserve these bytes",
+  "final_commit_checked_separately": true,
+  "qualification": "HOLD_NO_GO",
+  "production_activation": false
+}

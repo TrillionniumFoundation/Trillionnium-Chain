@@ -1,0 +1,10 @@
+test_comments_and_intertoken_whitespace_are_preserved_equivalently (__main__.RustSourceTokenTests.test_comments_and_intertoken_whitespace_are_preserved_equivalently) ... ok
+test_every_joint_operator_refuses_internal_whitespace_or_comment (__main__.RustSourceTokenTests.test_every_joint_operator_refuses_internal_whitespace_or_comment) ... ok
+test_exact_literal_bytes_survive_comments_and_structural_mode_is_explicit (__main__.RustSourceTokenTests.test_exact_literal_bytes_survive_comments_and_structural_mode_is_explicit) ... ok
+test_lifetimes_numbers_and_unterminated_input_do_not_merge (__main__.RustSourceTokenTests.test_lifetimes_numbers_and_unterminated_input_do_not_merge) ... ok
+test_literal_prefixes_cannot_be_split_or_substituted (__main__.RustSourceTokenTests.test_literal_prefixes_cannot_be_split_or_substituted) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.001s
+
+OK

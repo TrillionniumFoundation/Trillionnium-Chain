@@ -1,0 +1,893 @@
+{
+  "schema": "final-native-local-evidence-v1",
+  "versions": {
+    "b811": {
+      "base_commit": "b8116f65789a85148254f870c678a44f895316de",
+      "native_manifest_sha256": "27920633e57be739926218c370ecfbdfea624df71d84b89c2f9e3fc6f48605d2",
+      "native_input_file_count": 1190,
+      "dirty_composed_source": true,
+      "node_binary_sha256": "7cef941c2174339125cbc43d56ed6b79976466ec225388860e1b20415ff889c3",
+      "node_binary_bytes": 395050296,
+      "node_compiler_features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "node_compiler_profile": {
+        "debug_assertions": true,
+        "debuginfo": 2,
+        "opt_level": "3",
+        "overflow_checks": true,
+        "test": true
+      },
+      "registry": {
+        "total": 1019,
+        "ignored": 27,
+        "unignored": 992
+      },
+      "selected_node": {
+        "unique_passed": 118,
+        "failed": 0,
+        "selected_ignored": 5,
+        "groups": {
+          "append-reorg": {
+            "result": "ok",
+            "passed": 8,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 1011,
+            "passed_selectors": [
+              "store::append_readback_tests::direct_append_cancellation_at_each_callback_leaves_no_partial_publication",
+              "store::append_readback_tests::direct_append_keeps_complete_rows_events_state_and_cold_reopen",
+              "store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit",
+              "store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source",
+              "store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+              "store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit",
+              "store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+              "store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen"
+            ],
+            "ignored_selectors": []
+          },
+          "authenticated": {
+            "result": "ok",
+            "passed": 90,
+            "failed": 0,
+            "ignored": 1,
+            "measured": 0,
+            "filtered_out": 928,
+            "passed_selectors": [
+              "store::native_authenticated::arithmetic_cache::large_input_tests::borrowed_complete_partition_preserves_original_commitments_and_error_order",
+              "store::native_authenticated::arithmetic_cache::large_input_tests::large_complete_inputs_keep_actual_accounts_conservation_and_context_checks",
+              "store::native_authenticated::arithmetic_cache::large_input_tests::warmed_large_arithmetic_keeps_actual_sql_rows_cancellation_and_cold_reopen",
+              "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::borrowed_non_account_fallback_keeps_absent_canonical_and_foreign_material",
+              "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::borrowed_non_account_fallback_keeps_shared_and_mutable_borrow_accounting",
+              "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::complete_commitment_keeps_account_error_order_with_root_material",
+              "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::opaque_tree_preserves_original_canonical_and_limit_errors",
+              "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::opaque_tree_recomputes_actual_additions_removals_values_and_namespace",
+              "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::opaque_tree_retention_caps_payload_charge_and_preserves_cold_borrow_behavior",
+              "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::refused_offers_preserve_only_same_context_complete_input_partition_arithmetic",
+              "store::native_authenticated::arithmetic_cache::tests::arithmetic_cache_binds_exact_complete_bytes_context_and_has_fixed_retention",
+              "store::native_authenticated::arithmetic_cache::tests::arithmetic_cache_preserves_exact_numeric_encoding_and_invalid_input_errors",
+              "store::native_authenticated::arithmetic_cache::tests::bounded_complete_input_keeps_exact_limit_for_escaped_and_nested_values",
+              "store::native_authenticated::arithmetic_cache::tests::full_root_reuse_compares_actual_bytes_and_keeps_original_error_order",
+              "store::native_authenticated::arithmetic_cache::tests::initial_root_survives_unactivated_branch_roots_without_whole_tree_churn",
+              "store::native_authenticated::arithmetic_cache::tests::separate_root_arithmetic_entry_survives_complete_eviction_and_is_bounded",
+              "store::native_authenticated::cached_owner_read_tests::cached_block_reads_do_not_hide_genesis_damage_or_rollback",
+              "store::native_authenticated::cached_owner_read_tests::cached_commitment_reads_preserve_limits_missing_and_rollback",
+              "store::native_authenticated::cached_owner_read_tests::cached_genesis_snapshot_is_reread_and_survives_cold_reopen",
+              "store::native_authenticated::cached_owner_read_tests::cached_parent_reads_observe_changed_work_then_exact_restore",
+              "store::native_authenticated::cached_owner_read_tests::warm_genesis_arithmetic_still_compares_current_sql_root_and_initial_bytes",
+              "store::native_authenticated::current_accounts_tests::cold_complete_reuses_actual_account_parse_and_keeps_all_graph_checkpoints",
+              "store::native_authenticated::current_accounts_tests::cold_full_validation_projection_abba_observation_without_timing_gate",
+              "store::native_authenticated::current_accounts_tests::current_projection_is_bound_to_exact_state_and_never_hides_account_changes",
+              "store::native_authenticated::current_accounts_tests::current_projection_preserves_complete_root_and_late_error_priority",
+              "store::native_authenticated::current_accounts_tests::current_projection_rereads_corrupt_sql_and_preserves_every_cancellation",
+              "store::native_authenticated::delta_root_stream_tests::streaming_delta_root_checks_empty_batch_and_final_cancellation",
+              "store::native_authenticated::delta_root_stream_tests::streaming_delta_root_keeps_order_bytes_and_absence_distinct",
+              "store::native_authenticated::delta_root_stream_tests::streaming_delta_root_matches_every_small_padding_shape",
+              "store::native_authenticated::delta_root_stream_tests::streaming_delta_root_matches_full_delta_boundary_without_state_admission_claim",
+              "store::native_authenticated::delta_root_stream_tests::streaming_delta_root_matches_independent_python_vectors",
+              "store::native_authenticated::difference_stream_tests::stream_match_cancellation_returns_no_result_and_keeps_inputs_retryable",
+              "store::native_authenticated::difference_stream_tests::stream_match_refuses_missing_extra_reordered_and_changed_rows",
+              "store::native_authenticated::difference_stream_tests::stream_match_uses_original_byte_rules_for_null_absence_and_signed_zero",
+              "store::native_authenticated::difference_stream_tests::stream_match_visits_equal_keys_and_complete_mismatch_before_result",
+              "store::native_authenticated::difference_tests::sorted_difference_full_key_walk_keeps_late_changes_and_original_state",
+              "store::native_authenticated::difference_tests::sorted_difference_matches_independent_union_for_interleaved_branch_edits",
+              "store::native_authenticated::difference_tests::sorted_difference_preserves_null_absence_signed_zero_and_numeric_bytes",
+              "store::native_authenticated::history_arithmetic::tests::actual_packet_columns_and_parent_work_are_rechecked_after_warm_history",
+              "store::native_authenticated::history_arithmetic::tests::current_record_bytes_namespace_and_long_scans_never_replace_prior_observations",
+              "store::native_authenticated::history_arithmetic::tests::every_history_progress_boundary_keeps_cancellation_identity_and_retry",
+              "store::native_authenticated::history_arithmetic::tests::indexed_leaf_reuse_keeps_padding_current_rows_and_typed_null_errors",
+              "store::native_authenticated::history_arithmetic::tests::nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors",
+              "store::native_authenticated::history_arithmetic::tests::old_delta_and_parent_record_faults_keep_original_error_order",
+              "store::native_authenticated::history_arithmetic::tests::old_history_trigger_rolls_back_new_block_and_cached_codec_cannot_create_it",
+              "store::native_authenticated::history_arithmetic::tests::pinned_initial_arithmetic_keeps_current_genesis_sql_and_cold_open_checks",
+              "store::native_authenticated::history_arithmetic::tests::retained_charge_and_operation_capture_bounds_only_discard_acceleration",
+              "store::native_authenticated::native_fixed_blob_tests::fixed_blob_projection_bounds_owned_bytes_and_preserves_sql_types",
+              "store::native_authenticated::native_fixed_blob_tests::fixed_block_fields_match_original_errors_after_warm_cache_and_rollback",
+              "store::native_authenticated::native_fixed_blob_tests::fixed_fields_genesis_failure_order_and_cold_reopen_keep_state",
+              "store::native_authenticated::native_fixed_blob_tests::fixed_parent_work_matches_original_and_rereads_after_restore",
+              "store::native_authenticated::nullable_blob_tests::nullable_delta_empty_bytes_are_not_absence_after_warm_cache",
+              "store::native_authenticated::nullable_blob_tests::nullable_delta_late_failure_keeps_cancellation_and_cursor_recovery",
+              "store::native_authenticated::nullable_blob_tests::nullable_delta_projection_preserves_null_empty_types_and_bounds",
+              "store::native_authenticated::nullable_blob_tests::nullable_genesis_packet_empty_rejects_and_rollback_restores",
+              "store::native_authenticated::nullable_blob_tests::nullable_real_insertion_empty_preimage_rejects_live_and_cold_owner",
+              "store::native_authenticated::post_write_readback::tests::a_current_child_record_with_another_node_cannot_borrow_the_parent_graph",
+              "store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen",
+              "store::native_authenticated::post_write_readback::tests::actual_original_writer_excludes_an_independent_database_writer",
+              "store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt",
+              "store::native_authenticated::post_write_readback::tests::another_actual_connection_cannot_use_the_original_write_scope",
+              "store::native_authenticated::post_write_readback::tests::changed_schema_or_namespace_never_creates_a_new_scope",
+              "store::native_authenticated::post_write_readback::tests::consumed_active_reader_refuses_a_last_callback_write",
+              "store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks",
+              "store::native_authenticated::post_write_readback::tests::current_complete_state_remains_mandatory_on_a_graph_hit",
+              "store::native_authenticated::post_write_readback::tests::different_current_records_share_only_the_exact_account_graph_in_one_writer",
+              "store::native_authenticated::post_write_readback::tests::fences::cross_record_matches_preserve_boundary_cancellation_and_final_write_fencing",
+              "store::native_authenticated::post_write_readback::tests::fences::final_callback_after_a_first_match_falls_back_to_the_actual_original_graph",
+              "store::native_authenticated::post_write_readback::tests::fences::four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt",
+              "store::native_authenticated::post_write_readback::tests::fences::trusted_reset_exposes_preexisting_catalog_and_prepared_vm_divergence",
+              "store::native_authenticated::post_write_readback::tests::first_graph_callback_write_cannot_mint_a_result_or_reenable_it",
+              "store::native_authenticated::post_write_readback::tests::frontier::final_callback_deletion_and_later_outer_write_cannot_use_partial_availability",
+              "store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences",
+              "store::native_authenticated::post_write_readback::tests::frontier::real_different_roots_use_bounded_subtrees_without_promoting_partial_results",
+              "store::native_authenticated::post_write_readback::tests::frontier::reencoded_frontier_child_ids_cannot_hide_missing_nodes_or_wrong_side_edges",
+              "store::native_authenticated::post_write_readback::tests::no_row_writes_and_reversed_ddl_disable_reuse_without_resetting_the_scope",
+              "store::native_authenticated::post_write_readback::tests::original_cancellation_before_and_after_a_match_is_preserved",
+              "store::native_authenticated::post_write_readback::tests::original_transaction_owner_refuses_commit_begin_and_savepoint_aba",
+              "store::native_authenticated::post_write_readback::tests::prepare_only_schema_reset_preserves_the_normalized_writer",
+              "store::native_authenticated::stored_delta_stream_tests::cached_delta_complete_call_observation_keeps_checks_and_results",
+              "store::native_authenticated::stored_delta_stream_tests::cached_delta_cursor_is_released_after_cancellation",
+              "store::native_authenticated::stored_delta_stream_tests::cached_delta_eviction_or_disabled_cache_keeps_original_results",
+              "store::native_authenticated::stored_delta_stream_tests::cached_delta_failure_then_rollback_does_not_reuse_a_verdict",
+              "store::native_authenticated::stored_delta_stream_tests::cached_delta_reads_rebind_and_observe_committed_mutations",
+              "store::native_authenticated::stored_delta_stream_tests::stored_delta_list_cancellation_does_not_return_a_prefix",
+              "store::native_authenticated::stored_delta_stream_tests::stored_root_stream_cancellation_returns_no_result_and_keeps_original_error",
+              "store::native_authenticated::stored_delta_stream_tests::stored_root_stream_matches_all_original_padding_shapes_and_rows",
+              "store::native_authenticated::stored_delta_stream_tests::stored_root_stream_preserves_corrupt_row_error_identity_and_order",
+              "store::native_authenticated::stored_delta_stream_tests::stored_root_stream_preserves_full_delta_read_limit_and_rejects_next_row",
+              "store::native_authenticated::stored_delta_stream_tests::stored_rows_bound_bytes_before_decode_and_keep_unicode_nul_and_sql_types"
+            ],
+            "ignored_selectors": [
+              "store::native_authenticated::stored_delta_stream_tests::retained_delta_stream_cost_preserves_all_paired_observations"
+            ]
+          },
+          "archive-store": {
+            "result": "ok",
+            "passed": 14,
+            "failed": 0,
+            "ignored": 4,
+            "measured": 0,
+            "filtered_out": 1001,
+            "passed_selectors": [
+              "account_archive_prototype::native_store::batch_tests::batched_paths_cancel_and_sql_refusal_roll_back_partial_writes_and_reopen",
+              "account_archive_prototype::native_store::batch_tests::batched_paths_keep_original_parent_nonce_and_no_deletion_checks",
+              "account_archive_prototype::native_store::batch_tests::batched_paths_match_serial_versions_and_keep_every_insert_reachable",
+              "account_archive_prototype::native_store::node_decode::tests::native_decode_exact_bytes_and_borrow_conflicts_use_original_errors",
+              "account_archive_prototype::native_store::node_decode::tests::native_decode_fixed_slots_collisions_and_charge_are_bounded",
+              "account_archive_prototype::native_store::node_reader::tests::native_node_reader_observes_foreign_unread_leaf_and_schema_changes_inside_progress",
+              "account_archive_prototype::native_store::node_reader::tests::native_node_reader_preserves_cancel_precedence_and_empty_root_without_sql",
+              "account_archive_prototype::native_store::node_reader::tests::native_node_reader_preserves_typed_blob_errors_and_rollback_after_warm_reads",
+              "account_archive_prototype::native_store::tests::native_account_delta_credit_before_debit_preserves_maximum_aggregate",
+              "account_archive_prototype::native_store::tests::native_complete_account_root_arithmetic_cache_matches_uncached_growth_and_removal",
+              "account_archive_prototype::native_store::tests::native_empty_constants_match_wire_and_keep_owned_copy_isolation",
+              "account_archive_prototype::native_store::tests::native_empty_constants_parallel_callers_keep_independent_values",
+              "account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity",
+              "account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement"
+            ],
+            "ignored_selectors": [
+              "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+              "account_archive_prototype::native_store::node_reader::tests::native_node_reader_paired_graph_cost_observation",
+              "account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation",
+              "account_archive_prototype::native_store::tests::native_lift_cache_complete_graph_cost_observation"
+            ]
+          },
+          "tcp-1": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 1018,
+            "passed_selectors": [
+              "ingress::public_v3::tests::completed_input_boundary_rejects_tail_without_consuming_pending_frame"
+            ],
+            "ignored_selectors": []
+          },
+          "tcp-2": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 1018,
+            "passed_selectors": [
+              "ingress::public_v3::tests::early_complete_body_waiting_for_ready_preserves_signed_native_submission"
+            ],
+            "ignored_selectors": []
+          },
+          "tcp-3": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 1018,
+            "passed_selectors": [
+              "ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work"
+            ],
+            "ignored_selectors": []
+          },
+          "tcp-4": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 1018,
+            "passed_selectors": [
+              "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+            ],
+            "ignored_selectors": []
+          },
+          "tcp-5": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 1018,
+            "passed_selectors": [
+              "ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work"
+            ],
+            "ignored_selectors": []
+          },
+          "tcp-6": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 1018,
+            "passed_selectors": [
+              "ingress::tests::cancellation_after_admission_preserves_fact_and_exact_retry_controls_activation"
+            ],
+            "ignored_selectors": []
+          }
+        }
+      },
+      "exact_readers": [
+        {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "ingress::public_v3::tests::completed_input_boundary_rejects_tail_without_consuming_pending_frame"
+        },
+        {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "ingress::public_v3::tests::early_complete_body_waiting_for_ready_preserves_signed_native_submission"
+        },
+        {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work"
+        },
+        {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+        },
+        {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work"
+        },
+        {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "ingress::tests::cancellation_after_admission_preserves_fact_and_exact_retry_controls_activation"
+        }
+      ],
+      "full_node_suite_executed": false,
+      "clippy": {
+        "packages": [
+          "trnm-pon-node",
+          "trnm-mvcc-fee",
+          "trnm-sqlite-io-boundary"
+        ],
+        "lib": true,
+        "tests": true,
+        "all_features": true,
+        "deny_warnings": true,
+        "exit_code": 0
+      }
+    },
+    "69d2": {
+      "base_commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "native_manifest_sha256": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+      "native_input_file_count": 1190,
+      "dirty_composed_source": true,
+      "node_binary_sha256": "5349b31b55279a52dd75b679c5c3a12cb0c0d784dc259098409bb376f056045d",
+      "node_binary_bytes": 395055640,
+      "node_compiler_features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "node_compiler_profile": {
+        "debug_assertions": true,
+        "debuginfo": 2,
+        "opt_level": "3",
+        "overflow_checks": true,
+        "test": true
+      },
+      "registry": {
+        "total": 1019,
+        "ignored": 27,
+        "unignored": 992
+      },
+      "selected_node": {
+        "unique_passed": 118,
+        "failed": 0,
+        "selected_ignored": 5,
+        "groups": {
+          "append-reorg": {
+            "result": "ok",
+            "passed": 8,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 1011,
+            "passed_selectors": [
+              "store::append_readback_tests::direct_append_cancellation_at_each_callback_leaves_no_partial_publication",
+              "store::append_readback_tests::direct_append_keeps_complete_rows_events_state_and_cold_reopen",
+              "store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit",
+              "store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source",
+              "store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+              "store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit",
+              "store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+              "store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen"
+            ],
+            "ignored_selectors": []
+          },
+          "authenticated": {
+            "result": "ok",
+            "passed": 90,
+            "failed": 0,
+            "ignored": 1,
+            "measured": 0,
+            "filtered_out": 928,
+            "passed_selectors": [
+              "store::native_authenticated::arithmetic_cache::large_input_tests::borrowed_complete_partition_preserves_original_commitments_and_error_order",
+              "store::native_authenticated::arithmetic_cache::large_input_tests::large_complete_inputs_keep_actual_accounts_conservation_and_context_checks",
+              "store::native_authenticated::arithmetic_cache::large_input_tests::warmed_large_arithmetic_keeps_actual_sql_rows_cancellation_and_cold_reopen",
+              "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::borrowed_non_account_fallback_keeps_absent_canonical_and_foreign_material",
+              "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::borrowed_non_account_fallback_keeps_shared_and_mutable_borrow_accounting",
+              "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::complete_commitment_keeps_account_error_order_with_root_material",
+              "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::opaque_tree_preserves_original_canonical_and_limit_errors",
+              "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::opaque_tree_recomputes_actual_additions_removals_values_and_namespace",
+              "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::opaque_tree_retention_caps_payload_charge_and_preserves_cold_borrow_behavior",
+              "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::refused_offers_preserve_only_same_context_complete_input_partition_arithmetic",
+              "store::native_authenticated::arithmetic_cache::tests::arithmetic_cache_binds_exact_complete_bytes_context_and_has_fixed_retention",
+              "store::native_authenticated::arithmetic_cache::tests::arithmetic_cache_preserves_exact_numeric_encoding_and_invalid_input_errors",
+              "store::native_authenticated::arithmetic_cache::tests::bounded_complete_input_keeps_exact_limit_for_escaped_and_nested_values",
+              "store::native_authenticated::arithmetic_cache::tests::full_root_reuse_compares_actual_bytes_and_keeps_original_error_order",
+              "store::native_authenticated::arithmetic_cache::tests::initial_root_survives_unactivated_branch_roots_without_whole_tree_churn",
+              "store::native_authenticated::arithmetic_cache::tests::separate_root_arithmetic_entry_survives_complete_eviction_and_is_bounded",
+              "store::native_authenticated::cached_owner_read_tests::cached_block_reads_do_not_hide_genesis_damage_or_rollback",
+              "store::native_authenticated::cached_owner_read_tests::cached_commitment_reads_preserve_limits_missing_and_rollback",
+              "store::native_authenticated::cached_owner_read_tests::cached_genesis_snapshot_is_reread_and_survives_cold_reopen",
+              "store::native_authenticated::cached_owner_read_tests::cached_parent_reads_observe_changed_work_then_exact_restore",
+              "store::native_authenticated::cached_owner_read_tests::warm_genesis_arithmetic_still_compares_current_sql_root_and_initial_bytes",
+              "store::native_authenticated::current_accounts_tests::cold_complete_reuses_actual_account_parse_and_keeps_all_graph_checkpoints",
+              "store::native_authenticated::current_accounts_tests::cold_full_validation_projection_abba_observation_without_timing_gate",
+              "store::native_authenticated::current_accounts_tests::current_projection_is_bound_to_exact_state_and_never_hides_account_changes",
+              "store::native_authenticated::current_accounts_tests::current_projection_preserves_complete_root_and_late_error_priority",
+              "store::native_authenticated::current_accounts_tests::current_projection_rereads_corrupt_sql_and_preserves_every_cancellation",
+              "store::native_authenticated::delta_root_stream_tests::streaming_delta_root_checks_empty_batch_and_final_cancellation",
+              "store::native_authenticated::delta_root_stream_tests::streaming_delta_root_keeps_order_bytes_and_absence_distinct",
+              "store::native_authenticated::delta_root_stream_tests::streaming_delta_root_matches_every_small_padding_shape",
+              "store::native_authenticated::delta_root_stream_tests::streaming_delta_root_matches_full_delta_boundary_without_state_admission_claim",
+              "store::native_authenticated::delta_root_stream_tests::streaming_delta_root_matches_independent_python_vectors",
+              "store::native_authenticated::difference_stream_tests::stream_match_cancellation_returns_no_result_and_keeps_inputs_retryable",
+              "store::native_authenticated::difference_stream_tests::stream_match_refuses_missing_extra_reordered_and_changed_rows",
+              "store::native_authenticated::difference_stream_tests::stream_match_uses_original_byte_rules_for_null_absence_and_signed_zero",
+              "store::native_authenticated::difference_stream_tests::stream_match_visits_equal_keys_and_complete_mismatch_before_result",
+              "store::native_authenticated::difference_tests::sorted_difference_full_key_walk_keeps_late_changes_and_original_state",
+              "store::native_authenticated::difference_tests::sorted_difference_matches_independent_union_for_interleaved_branch_edits",
+              "store::native_authenticated::difference_tests::sorted_difference_preserves_null_absence_signed_zero_and_numeric_bytes",
+              "store::native_authenticated::history_arithmetic::tests::actual_packet_columns_and_parent_work_are_rechecked_after_warm_history",
+              "store::native_authenticated::history_arithmetic::tests::current_record_bytes_namespace_and_long_scans_never_replace_prior_observations",
+              "store::native_authenticated::history_arithmetic::tests::every_history_progress_boundary_keeps_cancellation_identity_and_retry",
+              "store::native_authenticated::history_arithmetic::tests::indexed_leaf_reuse_keeps_padding_current_rows_and_typed_null_errors",
+              "store::native_authenticated::history_arithmetic::tests::nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors",
+              "store::native_authenticated::history_arithmetic::tests::old_delta_and_parent_record_faults_keep_original_error_order",
+              "store::native_authenticated::history_arithmetic::tests::old_history_trigger_rolls_back_new_block_and_cached_codec_cannot_create_it",
+              "store::native_authenticated::history_arithmetic::tests::pinned_initial_arithmetic_keeps_current_genesis_sql_and_cold_open_checks",
+              "store::native_authenticated::history_arithmetic::tests::retained_charge_and_operation_capture_bounds_only_discard_acceleration",
+              "store::native_authenticated::native_fixed_blob_tests::fixed_blob_projection_bounds_owned_bytes_and_preserves_sql_types",
+              "store::native_authenticated::native_fixed_blob_tests::fixed_block_fields_match_original_errors_after_warm_cache_and_rollback",
+              "store::native_authenticated::native_fixed_blob_tests::fixed_fields_genesis_failure_order_and_cold_reopen_keep_state",
+              "store::native_authenticated::native_fixed_blob_tests::fixed_parent_work_matches_original_and_rereads_after_restore",
+              "store::native_authenticated::nullable_blob_tests::nullable_delta_empty_bytes_are_not_absence_after_warm_cache",
+              "store::native_authenticated::nullable_blob_tests::nullable_delta_late_failure_keeps_cancellation_and_cursor_recovery",
+              "store::native_authenticated::nullable_blob_tests::nullable_delta_projection_preserves_null_empty_types_and_bounds",
+              "store::native_authenticated::nullable_blob_tests::nullable_genesis_packet_empty_rejects_and_rollback_restores",
+              "store::native_authenticated::nullable_blob_tests::nullable_real_insertion_empty_preimage_rejects_live_and_cold_owner",
+              "store::native_authenticated::post_write_readback::tests::a_current_child_record_with_another_node_cannot_borrow_the_parent_graph",
+              "store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen",
+              "store::native_authenticated::post_write_readback::tests::actual_original_writer_excludes_an_independent_database_writer",
+              "store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt",
+              "store::native_authenticated::post_write_readback::tests::another_actual_connection_cannot_use_the_original_write_scope",
+              "store::native_authenticated::post_write_readback::tests::changed_schema_or_namespace_never_creates_a_new_scope",
+              "store::native_authenticated::post_write_readback::tests::consumed_active_reader_refuses_a_last_callback_write",
+              "store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks",
+              "store::native_authenticated::post_write_readback::tests::current_complete_state_remains_mandatory_on_a_graph_hit",
+              "store::native_authenticated::post_write_readback::tests::different_current_records_share_only_the_exact_account_graph_in_one_writer",
+              "store::native_authenticated::post_write_readback::tests::fences::cross_record_matches_preserve_boundary_cancellation_and_final_write_fencing",
+              "store::native_authenticated::post_write_readback::tests::fences::final_callback_after_a_first_match_falls_back_to_the_actual_original_graph",
+              "store::native_authenticated::post_write_readback::tests::fences::four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt",
+              "store::native_authenticated::post_write_readback::tests::fences::trusted_reset_exposes_preexisting_catalog_and_prepared_vm_divergence",
+              "store::native_authenticated::post_write_readback::tests::first_graph_callback_write_cannot_mint_a_result_or_reenable_it",
+              "store::native_authenticated::post_write_readback::tests::frontier::final_callback_deletion_and_later_outer_write_cannot_use_partial_availability",
+              "store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences",
+              "store::native_authenticated::post_write_readback::tests::frontier::real_different_roots_use_bounded_subtrees_without_promoting_partial_results",
+              "store::native_authenticated::post_write_readback::tests::frontier::reencoded_frontier_child_ids_cannot_hide_missing_nodes_or_wrong_side_edges",
+              "store::native_authenticated::post_write_readback::tests::no_row_writes_and_reversed_ddl_disable_reuse_without_resetting_the_scope",
+              "store::native_authenticated::post_write_readback::tests::original_cancellation_before_and_after_a_match_is_preserved",
+              "store::native_authenticated::post_write_readback::tests::original_transaction_owner_refuses_commit_begin_and_savepoint_aba",
+              "store::native_authenticated::post_write_readback::tests::prepare_only_schema_reset_preserves_the_normalized_writer",
+              "store::native_authenticated::stored_delta_stream_tests::cached_delta_complete_call_observation_keeps_checks_and_results",
+              "store::native_authenticated::stored_delta_stream_tests::cached_delta_cursor_is_released_after_cancellation",
+              "store::native_authenticated::stored_delta_stream_tests::cached_delta_eviction_or_disabled_cache_keeps_original_results",
+              "store::native_authenticated::stored_delta_stream_tests::cached_delta_failure_then_rollback_does_not_reuse_a_verdict",
+              "store::native_authenticated::stored_delta_stream_tests::cached_delta_reads_rebind_and_observe_committed_mutations",
+              "store::native_authenticated::stored_delta_stream_tests::stored_delta_list_cancellation_does_not_return_a_prefix",
+              "store::native_authenticated::stored_delta_stream_tests::stored_root_stream_cancellation_returns_no_result_and_keeps_original_error",
+              "store::native_authenticated::stored_delta_stream_tests::stored_root_stream_matches_all_original_padding_shapes_and_rows",
+              "store::native_authenticated::stored_delta_stream_tests::stored_root_stream_preserves_corrupt_row_error_identity_and_order",
+              "store::native_authenticated::stored_delta_stream_tests::stored_root_stream_preserves_full_delta_read_limit_and_rejects_next_row",
+              "store::native_authenticated::stored_delta_stream_tests::stored_rows_bound_bytes_before_decode_and_keep_unicode_nul_and_sql_types"
+            ],
+            "ignored_selectors": [
+              "store::native_authenticated::stored_delta_stream_tests::retained_delta_stream_cost_preserves_all_paired_observations"
+            ]
+          },
+          "archive-store": {
+            "result": "ok",
+            "passed": 14,
+            "failed": 0,
+            "ignored": 4,
+            "measured": 0,
+            "filtered_out": 1001,
+            "passed_selectors": [
+              "account_archive_prototype::native_store::batch_tests::batched_paths_cancel_and_sql_refusal_roll_back_partial_writes_and_reopen",
+              "account_archive_prototype::native_store::batch_tests::batched_paths_keep_original_parent_nonce_and_no_deletion_checks",
+              "account_archive_prototype::native_store::batch_tests::batched_paths_match_serial_versions_and_keep_every_insert_reachable",
+              "account_archive_prototype::native_store::node_decode::tests::native_decode_exact_bytes_and_borrow_conflicts_use_original_errors",
+              "account_archive_prototype::native_store::node_decode::tests::native_decode_fixed_slots_collisions_and_charge_are_bounded",
+              "account_archive_prototype::native_store::node_reader::tests::native_node_reader_observes_foreign_unread_leaf_and_schema_changes_inside_progress",
+              "account_archive_prototype::native_store::node_reader::tests::native_node_reader_preserves_cancel_precedence_and_empty_root_without_sql",
+              "account_archive_prototype::native_store::node_reader::tests::native_node_reader_preserves_typed_blob_errors_and_rollback_after_warm_reads",
+              "account_archive_prototype::native_store::tests::native_account_delta_credit_before_debit_preserves_maximum_aggregate",
+              "account_archive_prototype::native_store::tests::native_complete_account_root_arithmetic_cache_matches_uncached_growth_and_removal",
+              "account_archive_prototype::native_store::tests::native_empty_constants_match_wire_and_keep_owned_copy_isolation",
+              "account_archive_prototype::native_store::tests::native_empty_constants_parallel_callers_keep_independent_values",
+              "account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity",
+              "account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement"
+            ],
+            "ignored_selectors": [
+              "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+              "account_archive_prototype::native_store::node_reader::tests::native_node_reader_paired_graph_cost_observation",
+              "account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation",
+              "account_archive_prototype::native_store::tests::native_lift_cache_complete_graph_cost_observation"
+            ]
+          },
+          "tcp-1": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 1018,
+            "passed_selectors": [
+              "ingress::public_v3::tests::completed_input_boundary_rejects_tail_without_consuming_pending_frame"
+            ],
+            "ignored_selectors": []
+          },
+          "tcp-2": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 1018,
+            "passed_selectors": [
+              "ingress::public_v3::tests::early_complete_body_waiting_for_ready_preserves_signed_native_submission"
+            ],
+            "ignored_selectors": []
+          },
+          "tcp-3": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 1018,
+            "passed_selectors": [
+              "ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work"
+            ],
+            "ignored_selectors": []
+          },
+          "tcp-4": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 1018,
+            "passed_selectors": [
+              "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+            ],
+            "ignored_selectors": []
+          },
+          "tcp-5": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 1018,
+            "passed_selectors": [
+              "ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work"
+            ],
+            "ignored_selectors": []
+          },
+          "tcp-6": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 1018,
+            "passed_selectors": [
+              "ingress::tests::cancellation_after_admission_preserves_fact_and_exact_retry_controls_activation"
+            ],
+            "ignored_selectors": []
+          }
+        }
+      },
+      "exact_readers": [
+        {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "ingress::public_v3::tests::completed_input_boundary_rejects_tail_without_consuming_pending_frame"
+        },
+        {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "ingress::public_v3::tests::early_complete_body_waiting_for_ready_preserves_signed_native_submission"
+        },
+        {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work"
+        },
+        {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+        },
+        {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work"
+        },
+        {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "ingress::tests::cancellation_after_admission_preserves_fact_and_exact_retry_controls_activation"
+        }
+      ],
+      "full_node_suite_executed": false,
+      "clippy": {
+        "packages": [
+          "trnm-pon-node",
+          "trnm-mvcc-fee",
+          "trnm-sqlite-io-boundary"
+        ],
+        "lib": true,
+        "tests": true,
+        "all_features": true,
+        "deny_warnings": true,
+        "exit_code": 0
+      },
+      "all_executed_node_unique_passed": 127
+    }
+  },
+  "final_components": {
+    "m06_complete_library": {
+      "result": "ok",
+      "passed": 113,
+      "failed": 0,
+      "ignored": 7,
+      "measured": 0,
+      "filtered_out": 0,
+      "passed_selectors": [
+        "checkpoint_tile_material_v1::tests::all_finite_bf16_patterns_match_independent_exact_f64_powers_and_even_rounding",
+        "checkpoint_tile_material_v1::tests::ieee_integer_rounding_zero_subnormal_ties_clips_and_nonfinite",
+        "deterministic_parallel_v1::tests::canonical_indices_and_unique_transaction_ids_are_required",
+        "deterministic_parallel_v1::tests::fee_limit_and_worker_bounds_fail_closed",
+        "deterministic_parallel_v1::tests::reverted_and_out_of_resource_never_write",
+        "deterministic_parallel_v1::tests::undeclared_access_and_noncanonical_sets_fail_closed",
+        "deterministic_parallel_v1::tests::worker_count_does_not_change_roots_or_receipts",
+        "growth_profile_v2::tests::growth_reference_codec_matches_independent_vector",
+        "growth_profile_v2::tests::growth_reference_independent_full_vectors_and_field_mutations",
+        "growth_profile_v2::tests::growth_reference_keeps_zero_nonce_history_and_working_bound",
+        "growth_profile_v2::tests::growth_reference_root_is_context_bound_and_conserved",
+        "model_composition_v4::oracle_observations::native_arithmetic_observations_for_independent_python",
+        "model_composition_v4::tests::a_rank_three_sum_has_no_rank_three_ilf2_witness_escape",
+        "model_composition_v4::tests::exact_sum_and_ablation_count_a_nonzero_parent_once",
+        "model_composition_v4::tests::exact_zero_subset_is_refused_even_when_full_bundle_is_nonzero",
+        "model_composition_v4::tests::wide_sum_preserves_cancellation_but_checks_every_ablation_range",
+        "pon_commitment::bounded_encoding_tests::bounded_encoder_discards_full_payload_map_but_keeps_exact_old_charges",
+        "pon_commitment::bounded_encoding_tests::bounded_fallback_matches_old_full_map_for_forks_removals_and_every_budget",
+        "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges",
+        "pon_commitment::bounded_encoding_tests::discarded_cache_never_hides_late_canonical_or_wire_errors_or_invalid_limits",
+        "pon_commitment::bounded_encoding_tests::payload_and_workspace_exact_edges_preserve_old_selection_and_root",
+        "pon_commitment::bounded_encoding_tests::reused_encoders_preserve_shrinking_values_deletions_and_late_errors",
+        "pon_commitment::checked_binding_tests::checked_binding_actual_eight_mib_payload_fallback_keeps_all_bytes",
+        "pon_commitment::checked_binding_tests::checked_binding_matches_two_steps_for_cold_warm_and_every_budget_fallback",
+        "pon_commitment::checked_binding_tests::checked_binding_preserves_wrong_roots_late_errors_and_invalid_limits",
+        "pon_commitment::checked_binding_tests::checked_binding_rechecks_actual_values_and_repairs_only_derived_material",
+        "pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks",
+        "pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback",
+        "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root",
+        "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order",
+        "pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot",
+        "pon_commitment::tests::cancelled_panicked_and_partially_started_workers_all_finish_and_join",
+        "pon_commitment::tests::cancelled_prepare_apply_and_staged_root_never_publish_output_or_change_parent",
+        "pon_commitment::tests::checked_binding_signed_execution_errors_and_cancellation_match_two_steps",
+        "pon_commitment::tests::controlled_cancellation_joins_every_started_scoped_worker_before_return",
+        "pon_commitment::tests::controlled_previews_preserve_full_state_receipts_and_canonical_errors_for_all_workers",
+        "pon_commitment::tests::disjoint_delta_exact_and_overflow_preserve_full_state_and_allocation_order",
+        "pon_commitment::tests::immutable_parent_corrupt_tree_fallback_matches_full_execution",
+        "pon_commitment::tests::immutable_parent_previews_match_full_execution_including_failures_and_rebind",
+        "pon_commitment::tests::internal_tree_mismatch_uses_complete_root_without_mutating_snapshot",
+        "pon_commitment::tests::late_canonical_error_precedes_cache_choice_and_all_change_clones",
+        "pon_commitment::tests::resource_fallback_finishes_full_root_before_required_change_clones",
+        "pon_commitment::tests::scoped_accounting_preserves_all_workers_state_receipts_and_late_error_parity",
+        "pon_commitment::tests::warm_parent_binding_cancellation_preserves_shared_bytes_and_successful_retry",
+        "pon_commitment::tests::warm_parent_binding_preserves_late_canonical_limits_and_context_error_order",
+        "pon_commitment::tests::warm_parent_binding_shares_only_after_complete_actual_comparison",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_candidate_early_miss_retains_complete_late_validation",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_empty_delta_still_checks_the_original_tree_root",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_keeps_late_canonical_errors_before_wire_and_cache_limits",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_misleading_root_and_changed_bytes_take_original_repair_path",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_retains_exact_capacity_charges_and_all_budget_boundaries",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_shares_only_after_full_actual_bytes_match",
+        "pon_executor::pq_accounts_v2::application_v6_tests::actual_pq_evaluation_release_and_mature_claim_use_original_economic_owner",
+        "pon_executor::pq_accounts_v2::application_v6_tests::application_v6_tasks_use_both_current_keys_and_exact_selected_domains",
+        "pon_executor::pq_accounts_v2::application_v6_tests::historical_equivocation_survives_rotation_and_retains_bounded_verified_chunks",
+        "pon_executor::pq_accounts_v2::application_v6_tests::invalid_signature_retry_cannot_refill_prefix_verification_capacity",
+        "pon_executor::pq_accounts_v2::application_v6_tests::resource_preflight_counts_inner_proofs_and_underpriced_commands_do_no_crypto",
+        "pon_executor::pq_accounts_v2::application_v6_tests::scope_tests::late_round_conflict_blocks_unexecuted_adoption_without_rewriting_closure",
+        "pon_executor::pq_accounts_v2::application_v6_tests::scope_tests::pq_quorum_ignores_cross_round_bans_but_keeps_its_frozen_denominator",
+        "pon_executor::pq_accounts_v2::application_v6_tests::scope_tests::retired_key_newly_signed_old_evidence_cannot_poison_new_generation_round",
+        "pon_executor::pq_accounts_v2::application_v6_tests::scope_tests::same_generation_other_round_is_live_but_conflicted_round_cannot_vote",
+        "pon_executor::pq_accounts_v2::tasks_v4_tests::prepared_pq4_task_rechecks_actual_lease_and_both_authorities_before_any_fee_patch",
+        "pon_executor::pq_accounts_v2::tasks_v5_tests::prepared_pq5_atomic_renewal_rechecks_revision_prior_source_and_requester_before_fee_patch",
+        "pon_executor::pq_accounts_v2::tests::anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once",
+        "pon_executor::pq_accounts_v2::tests::dual_rotation_keeps_stable_task_permissions_and_actual_key_reads",
+        "pon_executor::pq_accounts_v2::tests::migration_refuses_omissions_ambiguous_ids_untranslated_liabilities_and_unbound_roots",
+        "pon_executor::pq_accounts_v2::tests::real_pq_positive_funding_registration_state_resolved_transfer_and_zero_credit",
+        "pon_executor::prefix_scan_tests::empty_and_nested_prefix_snapshots_revalidate_the_complete_observed_sets",
+        "pon_executor::prefix_scan_tests::prefix_rows_preserve_original_filter_order_values_and_all_string_boundaries",
+        "pon_executor::prefix_scan_tests::prefix_scan_does_not_replace_point_read_or_write_conflict_checks",
+        "pon_executor::prefix_scan_tests::prefix_scan_overlays_writes_and_retains_the_original_snapshot",
+        "pon_executor::prefix_scan_tests::prefix_scan_revalidation_keeps_insert_delete_and_value_conflicts",
+        "pon_executor::repeated_sender_tests::repeated_sender_cancel_and_partial_worker_start_join_all_actual_workers",
+        "pon_executor::repeated_sender_tests::repeated_sender_complete_failures_preserve_canonical_first_error_and_parent",
+        "pon_executor::repeated_sender_tests::repeated_sender_complete_signed_batches_keep_state_receipts_root_and_every_signature",
+        "pon_executor::repeated_sender_tests::repeated_sender_tag11_and_cross_sender_funding_keep_complete_canonical_relation",
+        "pon_executor::root_arithmetic_tests::arithmetic_root_ascii_encoding_matches_independent_serde_reference",
+        "pon_executor::root_arithmetic_tests::arithmetic_root_distinguishes_exact_numeric_values_and_full_non_account_views",
+        "pon_executor::root_arithmetic_tests::arithmetic_root_preserves_complete_grammar_before_all_wire_limits",
+        "pon_executor::root_arithmetic_tests::borrowed_non_account_partition_keeps_actual_rows_changes_and_original_roots",
+        "pon_executor::root_arithmetic_tests::borrowed_non_account_partition_keeps_full_grammar_before_count_and_wire_limits",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
+        "pon_executor::root_arithmetic_tests::exact_string_root_hits_keep_complete_current_grammar_and_original_miss_encoding",
+        "pon_executor::root_arithmetic_tests::shared_string_storage_keeps_cold_encoding_counts_and_full_current_validation",
+        "pon_executor::session_tests::invalid_context_transaction_and_sequence_never_publish_session_state",
+        "pon_executor::session_tests::session_state_and_receipts_equal_existing_complete_builder",
+        "pon_executor::streaming_root_tests::streamed_m06_root_keeps_complete_canonical_value_errors_before_wire_limits",
+        "pon_executor::streaming_root_tests::streamed_m06_root_matches_original_values_removals_and_branch_edits",
+        "store::object_delta_tests::object_delta_detects_committed_parent_drift_before_first_write_v1",
+        "store::object_delta_tests::object_delta_empty_initialization_and_noop_have_exact_write_counts_v1",
+        "store::object_delta_tests::object_delta_insert_update_delete_matches_complete_target_v1",
+        "store::object_delta_tests::object_delta_parent_drift_under_write_lock_rejects_and_rolls_back_v1",
+        "store::object_delta_tests::object_delta_sqlite_full_after_partial_writes_rolls_back_exactly_v1",
+        "store::object_delta_tests::object_delta_unexpected_parent_row_is_not_erased_v1",
+        "tests::committed_sparse_block_writes_only_changed_objects_and_replays_exactly_v1",
+        "tests::conflicts_outcomes_resources_and_fee_reduction_are_deterministic",
+        "tests::crash_outcomes_reopen_to_exact_source_target_or_fence",
+        "tests::exact_replay_and_parent_identity_are_fail_closed",
+        "tests::execution_preview_executes_full_fee_path_without_advancing_the_store",
+        "tests::open_existing_requires_precreated_regular_nonsymlink_store",
+        "tests::parallel_execution_tests::hotspot_revert_and_resource_exhaustion_match_sequential_journal_oracle",
+        "tests::parallel_execution_tests::multiple_speculative_failures_report_the_canonical_transaction_error",
+        "tests::parallel_execution_tests::speculative_insufficient_funds_is_retried_after_predecessor_funds_payer_or_source",
+        "tests::parallel_execution_tests::stale_speculative_success_cannot_publish_when_canonical_payer_is_exhausted",
+        "tests::parallel_execution_tests::workers_compute_program_meter_fees_and_successors_on_immutable_parent",
+        "tests::persistent_parallel_worker_count_bounds_fail_closed",
+        "tests::persistent_parallel_worker_counts_reopen_to_identical_canonical_results",
+        "tests::schema_sidecar_and_self_consistent_row_tamper_fail_closed",
+        "tests::static_access_fee_and_arithmetic_mutants_fail_before_commit",
+        "tests::vector_inventory_matches_executable_candidate_assertions"
+      ],
+      "ignored_selectors": [
+        "pon_commitment::bounded_encoding_tests::actual_state_fallback_encoding_cost",
+        "pon_commitment::bounded_encoding_tests::canonical_buffer_reuse_component_timing",
+        "pon_commitment::checked_binding_tests::checked_binding_complete_cost_observation",
+        "pon_commitment::tests::immutable_parent_preview_component_timing",
+        "pon_commitment::tests::warm_parent_binding_component_timing",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost",
+        "pon_executor::streaming_root_tests::complete_root_encoding_cost"
+      ]
+    },
+    "m06_registry": {
+      "total": 120,
+      "ignored": 7,
+      "unignored": 113
+    },
+    "sqlite_original_transaction_scope_controls": {
+      "result": "ok",
+      "passed": 13,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0,
+      "passed_selectors": [
+        "transaction_scope::tests::actual_readonly_aba_is_not_an_autocommit_changes_or_schema_identity",
+        "transaction_scope::tests::actual_write_snapshot_requires_same_live_main_writer",
+        "transaction_scope::tests::already_prepared_cached_end_is_observed_at_execution_and_reuse",
+        "transaction_scope::tests::dropping_scopes_does_not_drop_or_reinstall_the_connection_observer",
+        "transaction_scope::tests::executed_write_epoch_catches_no_row_failed_and_reversed_schema_writes",
+        "transaction_scope::tests::explain_does_not_execute_a_transaction_control",
+        "transaction_scope::tests::nested_scopes_share_epoch_and_other_connections_do_not_invalidate_reads",
+        "transaction_scope::tests::overflow_wrong_pid_and_wrong_handle_are_sticky_refusals",
+        "transaction_scope::tests::prepared_write_execution_is_counted_but_explain_is_not_a_write",
+        "transaction_scope::tests::replacing_trace_is_detected_by_actual_execution_probe_without_resetting_epoch",
+        "transaction_scope::tests::savepoint_release_and_rollback_to_are_conservatively_refused",
+        "transaction_scope::tests::token_controls_cover_sqlite_space_comments_bom_aliases_and_identifier_boundaries",
+        "transaction_scope::tests::write_snapshot_rejects_savepoint_aba_and_sticky_observer_failures"
+      ],
+      "ignored_selectors": []
+    },
+    "compiler_artifacts": {
+      "trnm_mvcc_fee": {
+        "artifact": {
+          "executable": "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "filenames": [
+            "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_mvcc_fee-5f584199a960bb80"
+          ],
+          "fresh": false,
+          "manifest_path": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+          "package_id": "path+file:///workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": true
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "trnm_mvcc_fee",
+            "src_path": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
+            "test": true
+          }
+        },
+        "binary_after_sha256": "4e411e4057438162f4cc333c384f23931399e0493e86c3d4ed90d1cc6207c43a",
+        "binary_sha256": "4e411e4057438162f4cc333c384f23931399e0493e86c3d4ed90d1cc6207c43a"
+      },
+      "trnm_sqlite_io_boundary": {
+        "artifact": {
+          "executable": "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_sqlite_io_boundary-664efef7e8321112",
+          "features": [],
+          "filenames": [
+            "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_sqlite_io_boundary-664efef7e8321112"
+          ],
+          "fresh": false,
+          "manifest_path": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml",
+          "package_id": "path+file:///workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": true
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "trnm_sqlite_io_boundary",
+            "src_path": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs",
+            "test": true
+          }
+        },
+        "binary_after_sha256": "09b4ae6b01be2f910932542cbd1689fe81f8881353a4d0e9ebd8cbc32b312798",
+        "binary_sha256": "09b4ae6b01be2f910932542cbd1689fe81f8881353a4d0e9ebd8cbc32b312798"
+      }
+    }
+  },
+  "additional_workspace_nine": {
+    "source_manifest_sha256": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+    "node_binary_sha256": "5349b31b55279a52dd75b679c5c3a12cb0c0d784dc259098409bb376f056045d",
+    "passed": 9,
+    "failed": 0,
+    "ignored": 0,
+    "exact_readers_passed": 9,
+    "overlap_with_core_118": [],
+    "selectors": [
+      "account_archive_prototype::native_root_digest::tests::native_root_digest_matches_record_and_sparse_references_after_exact_input_changes",
+      "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_original_traversal_cancellation_and_collision_order",
+      "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_fork_shape_and_all_lift_input_relations",
+      "store::growth::tests::scale_observation::native_growth_scale_retains_rejected_and_cancelled_admission_returns",
+      "store::growth::tests::scale_observation::native_growth_scale_retains_admission_when_activation_returns_error",
+      "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+      "store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback",
+      "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+      "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures"
+    ],
+    "raw_receipt": "69d2/workspace-nine/result.json",
+    "original_receipt_sha256": "590d7318af405dd8bf6196e65a6dc69156ed8e5950aadef2f66f4006f6d143d7"
+  },
+  "public_confirmation_measured": false,
+  "throughput_measured": false,
+  "full_node_suite_executed": false,
+  "new_native_execution_during_packaging": false,
+  "no_candidate_activation": "Parent-carry and rejected M06 successor are absent from this default native source; historical candidate results remain in their separate evidence packages.",
+  "final_distinct_native_passed": {
+    "node": 127,
+    "m06": 113,
+    "sqlite": 13,
+    "total": 253,
+    "identity": "crate test executable plus fully qualified selector; readers and Clippy are not counted as native tests",
+    "full_node_suite_executed": false
+  }
+}

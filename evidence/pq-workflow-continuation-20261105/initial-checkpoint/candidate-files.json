@@ -1,0 +1,156 @@
+[
+  {
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+    "mode": "100644",
+    "bytes": 32174,
+    "git_blob": "d3d158a67e25fef03f035638d3090fdadfbdfd78",
+    "sha256": "8d91d31bee99594a450dc0809d1fecb98a1cb5789c053d5ebac849d719d6fd53"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+    "mode": "100644",
+    "bytes": 31411,
+    "git_blob": "40200a846f6bc19b1bfd03f59d12fe42ddf67ab4",
+    "sha256": "b63257386f21d5b9088807e5170883169f37b5e242363de8ef20b295842f1e26"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/tests/growth_persistence_cancellation.rs",
+    "mode": "100644",
+    "bytes": 9286,
+    "git_blob": "336b191524aeaad6fc9d97e25f9c2f2563e16949",
+    "sha256": "28c49b7211208f3a74269798b1cb34b45c925e158530e516a72e120c82195a37"
+  },
+  {
+    "path": "evidence/pon-growth-persistence-control-20261105/run-bounded.py",
+    "mode": "100644",
+    "bytes": 16876,
+    "git_blob": "8b88ad65a733f293195fa6519b80ce89f343bf43",
+    "sha256": "7f08bfc59b9f439eff5db273127b4c7705c4ee4068a5090e52ad80dea6658e6b"
+  },
+  {
+    "path": "evidence/pon-growth-persistence-control-20261105/test_memory_estimate.py",
+    "mode": "100644",
+    "bytes": 3416,
+    "git_blob": "c536b6b721cfefdc6130317a6c49bdc8412c968b",
+    "sha256": "9997f79462a57eb5ecdacd2e27f3ea92a1fc1ec0915aaaeab42d511f4b35346e"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/quantum_oracle_resources.py",
+    "mode": "100644",
+    "bytes": 27502,
+    "git_blob": "e903407e792b77db97878e29e8c04b1d8994ae0e",
+    "sha256": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/test_quantum_oracle_resources.py",
+    "mode": "100644",
+    "bytes": 18007,
+    "git_blob": "c7e5ebd5111b7e4b303e9d9761c51d072f5fe802",
+    "sha256": "0c930e1f86fd4a3f8534a14fe418c83dfd5099b114272eb5de3e9866f95f54ef"
+  },
+  {
+    "path": "evidence/pon-w1-statement-v2-20261105/continuation/checkpoint-observation-20261105.json",
+    "mode": "100644",
+    "bytes": 9373,
+    "git_blob": "449b4324a16553e47a6d13095a603512e93441fd",
+    "sha256": "05fad0363b74ff278ca3fa47c2824053f7e30c023043644d91bb0a6da702071a"
+  },
+  {
+    "path": "evidence/pon-w1-statement-v2-20261105/continuation/remote-source-projection-20261105.json",
+    "mode": "100644",
+    "bytes": 34350,
+    "git_blob": "f14a2e8498ad24bb63231d78a3b7c416fed56d3a",
+    "sha256": "6111cd9d0d7d84c366d5101848f6bee5500e82b593f11c6409ed55cc613bf4e9"
+  },
+  {
+    "path": "evidence/pon-quantum-exact-resource-budget-20261105/README.md",
+    "mode": "100644",
+    "bytes": 3821,
+    "git_blob": "f130942020b22e0843cab83f9efc20e4366cfc8b",
+    "sha256": "8a7857156246492706b6e566453712e554d5903eda3c7a2c7b2f4ce6c848fe8f"
+  },
+  {
+    "path": "evidence/pon-quantum-exact-resource-budget-20261105/manifest.json",
+    "mode": "100644",
+    "bytes": 4316,
+    "git_blob": "014feeb410218bb6855c543cf067e3039b0a18a2",
+    "sha256": "b855c9088c4265c60fe9cfa0ee810b8dc8e479cca0b9f2c11701242c68bb6b33"
+  },
+  {
+    "path": "evidence/pon-quantum-exact-resource-budget-20261105/before-fix.json",
+    "mode": "100644",
+    "bytes": 4170,
+    "git_blob": "55ac6ed3817054c98e701b017007ffc889360095",
+    "sha256": "f6a3ce21e9ab10df4df276c795433acc7c91b58c014b06081f70c42093e16a9f"
+  },
+  {
+    "path": "evidence/pon-quantum-exact-resource-budget-20261105/red-result.json",
+    "mode": "100644",
+    "bytes": 1320,
+    "git_blob": "b09d24405feee9e7262fbdc8717a3e916e9b0b37",
+    "sha256": "01c556b128bcb60f1dc7292619b606f5855f1a46ae80b3633a5d37a7b3b4d80b"
+  },
+  {
+    "path": "evidence/pon-quantum-exact-resource-budget-20261105/red.stderr.log",
+    "mode": "100644",
+    "bytes": 2063,
+    "git_blob": "c6242e89a31dccf4fee72b089513d2ce95040bcc",
+    "sha256": "3f75db524bcf988df692e1624716af0df9a6525a66f8a5673da9f5057523b9a8"
+  },
+  {
+    "path": "evidence/pon-quantum-exact-resource-budget-20261105/red.stdout.log",
+    "mode": "100644",
+    "bytes": 0,
+    "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "evidence/pon-quantum-exact-resource-budget-20261105/green-result.json",
+    "mode": "100644",
+    "bytes": 1024,
+    "git_blob": "b903b5d708f75589c12f0de460265501c44924de",
+    "sha256": "65c5edfc848898eda3cb08d3afa25ab082aadc85967d5882e0811e5f7344f61f"
+  },
+  {
+    "path": "evidence/pon-quantum-exact-resource-budget-20261105/green.stderr.log",
+    "mode": "100644",
+    "bytes": 4273,
+    "git_blob": "56d792525abf9114f1b1cdd48646d7541db32152",
+    "sha256": "ca437260b76d24fc695ae218e3c63e61f174b7472c8009b487f8e731c045efa5"
+  },
+  {
+    "path": "evidence/pon-quantum-exact-resource-budget-20261105/green.stdout.log",
+    "mode": "100644",
+    "bytes": 0,
+    "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "evidence/pon-quantum-exact-resource-budget-20261105/format-presentation-result.json",
+    "mode": "100644",
+    "bytes": 464,
+    "git_blob": "4f597455e528df47407f39b50f31b8038ede4f59",
+    "sha256": "1c6c1435369fe6ffcc9b84e0c5ed905067498af37ea0d5d61907fc83843b4181"
+  },
+  {
+    "path": "evidence/pon-quantum-exact-resource-budget-20261105/exact-budget.patch",
+    "mode": "100644",
+    "bytes": 7749,
+    "git_blob": "a779c1bf0718b91803ddbffeb9471f0bb9b30480",
+    "sha256": "c2e1c0b22fb0089fd769baf5214aefb9e39fe62df92c505eb9a0e34b33837332"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "mode": "100644",
+    "bytes": 338045,
+    "git_blob": "bd5d00991e49de57a41e3633625f152b2623297d",
+    "sha256": "0b7019da9173407ff73d93fcba4f613ff05f258d2d7e8928c68ee6ccac5ee490"
+  },
+  {
+    "path": "config/pon/pq-cross-branch-corpus-v1.json",
+    "mode": "100644",
+    "bytes": 87854,
+    "git_blob": "4700439dee8965df6b15d798a38b6ab23c756363",
+    "sha256": "f44124fdd360fa52011adbeeb5a0643ba600100c94e0fbdfadf5cb02c8f7414e"
+  }
+]

@@ -1,0 +1,98 @@
+{
+  "schema": "trnm-authoritative-native-terminal-v1",
+  "observed_utc": "2026-11-07T22:33:23.290405+00:00",
+  "phase": "history-supplement",
+  "commit": "ffcb687b43843ec92b3170f8841f92a3dd0a4d3d",
+  "tree": "73dcb40e7021bb7f18d1ddb75fd26a53d0e1201a",
+  "authoritative_status": {
+    "at_unix_ms": 1794090563121,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 1,
+    "job_id": "1a1b820b4f7-12894-d4f",
+    "launch_nonce": "2983c600e6f212bec19683ef4ebf07be",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 6457,
+        "stored": 6457
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "failed",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "manifest": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/history-supplement-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/history-supplement/manifest.json",
+    "bytes": 77335,
+    "sha256": "9b9b4dbc86519ed3e2fe4099baaed374d1afc69584de1680036ace061be3268c"
+  },
+  "source_receipts": {
+    "before": {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/history-supplement-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/history-supplement/source-before.json",
+      "bytes": 423,
+      "sha256": "1bf17f697e533ba4608a576fd5bd7b051980a0887d5e5daf1245ad1b63ed6721"
+    },
+    "after": {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/history-supplement-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/history-supplement/source-after.json",
+      "bytes": 423,
+      "sha256": "1bf17f697e533ba4608a576fd5bd7b051980a0887d5e5daf1245ad1b63ed6721"
+    },
+    "byte_identical": true
+  },
+  "binary_before": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/history-supplement-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/history-supplement/binary-before.json",
+    "bytes": 23021,
+    "sha256": "15ba6b766d6d7ff04ae9de526dbe714afcd71721d2ce74a187b84ff280dc06dd"
+  },
+  "binary_after": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/history-supplement-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/history-supplement/binary-after.json",
+    "bytes": 23021,
+    "sha256": "15ba6b766d6d7ff04ae9de526dbe714afcd71721d2ce74a187b84ff280dc06dd"
+  },
+  "all_binaries_byte_identical": true,
+  "main_preparation_manifest": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/manifest.json",
+    "bytes": 101118,
+    "sha256": "5c6a5e3ef49c9eb162b9f7aafb729c59da5de3311bf84e88e91b4c1f67643f2a"
+  },
+  "integration_result": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/history-supplement-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/history-supplement/integration-result.json",
+    "bytes": 1287,
+    "sha256": "6fc57e0e250a49709dff665fcb5f82fba0aa487e375f935dab5e3dcdea0dbaaa"
+  },
+  "separate_verified_outer_totals": {
+    "passed": 0,
+    "failed": 1,
+    "ignored": 0
+  },
+  "outer_completion_unknown": false,
+  "result": "INDEPENDENT_HISTORY_FAILURE_OR_INCOMPLETE_RETAINED",
+  "qualification": {
+    "original_business_gates": false,
+    "history_4105": false,
+    "four_second_pressure": false,
+    "throughput": false,
+    "whole_chain_quantum_security": false
+  },
+  "no_favorable_rerun": true
+}

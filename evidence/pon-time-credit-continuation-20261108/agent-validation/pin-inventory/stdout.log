@@ -1,0 +1,19 @@
+{
+  "guards": 26,
+  "workflow_counts": {
+    ".github/workflows/pon-branch-encoding-acceptance.yml": 6,
+    ".github/workflows/pon-recent-batch-acceptance.yml": 20
+  },
+  "unsupported": [],
+  "mismatches": [
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "line": 78,
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "expected": "f41b5d8d39fa5a4bcc8e89c6066365ecee227d51",
+      "actual": "29822797bf5e6d7cde68a6dcf4904bbbc7982e15",
+      "changed": true,
+      "base": "f41b5d8d39fa5a4bcc8e89c6066365ecee227d51"
+    }
+  ]
+}

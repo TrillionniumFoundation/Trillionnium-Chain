@@ -1,0 +1,99 @@
+{
+  "archive": {
+    "archive_bytes": 854280,
+    "archive_path": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/recovered-source-gates-20261107-transfer-v1.tar.gz",
+    "archive_sha256": "5fda3a5d87d3a8b5dbd41d40a9f2c613d7866c6af2e4b3bbc82c20d9c88c8829",
+    "manifest_sha256": "be3594c56ba817d94851585eeb22d8bef0d02db54dac10870c691d50344dd416",
+    "schema": "hepta-runtime-evidence-archive-v1",
+    "selected_directories": [
+      "recovered-exact-source-02",
+      "recovered-exact-source",
+      "model-publications"
+    ],
+    "source_bytes": 11647156,
+    "source_file_count": 208
+  },
+  "archive_job_id": "1a1b85c87bb-12894-eb1",
+  "archive_job_status": {
+    "at_unix_ms": 1794094447872,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1b85c87bb-12894-eb1",
+    "launch_nonce": "1d9161c3e938d544cc771e056ca0bddb",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 533,
+        "stored": 533
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "decoded_chunks_record": "transport/chunks.jsonl",
+  "host": "desktop",
+  "model_publications_job_id": "1a1b8563bad-12894-e76",
+  "model_publications_job_status": {
+    "at_unix_ms": 1794094113682,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1b8563bad-12894-e76",
+    "launch_nonce": "3ada80e42443972884ba2cac247f99ad",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 679,
+        "stored": 679
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "pinned_version": "2050:52470213:854280:1794094447814495277:1794094447814495277",
+  "preflight_job_id": "1a1b85b2727-12894-ea6",
+  "schema": "hepta-runtime-evidence-download-v1",
+  "transport_base64_not_retained": true,
+  "transport_bytes_hex_not_retained": true
+}

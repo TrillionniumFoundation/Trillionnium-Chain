@@ -1,0 +1,314 @@
+[
+  {
+    "bytes": 62,
+    "name": "from-zero-native/build/stderr"
+  },
+  {
+    "bytes": 115260,
+    "name": "from-zero-native/build/stdout"
+  },
+  {
+    "bytes": 894,
+    "name": "from-zero-native/build/process.json"
+  },
+  {
+    "bytes": 887,
+    "name": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr"
+  },
+  {
+    "bytes": 189,
+    "name": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout"
+  },
+  {
+    "bytes": 499712,
+    "name": "from-zero-native/confirmation/baseline/independent-client/native.sqlite"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/confirmation/baseline/independent-client/owner.lock"
+  },
+  {
+    "bytes": 499712,
+    "name": "from-zero-native/confirmation/baseline/receiver/native.sqlite"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/confirmation/baseline/receiver/owner.lock"
+  },
+  {
+    "bytes": 196608,
+    "name": "from-zero-native/confirmation/pressure/independent-client/native.sqlite"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/confirmation/pressure/independent-client/owner.lock"
+  },
+  {
+    "bytes": 499712,
+    "name": "from-zero-native/confirmation/pressure/receiver/native.sqlite"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/confirmation/pressure/receiver/owner.lock"
+  },
+  {
+    "bytes": 499712,
+    "name": "from-zero-native/confirmation/producer/native.sqlite"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/confirmation/producer/owner.lock"
+  },
+  {
+    "bytes": 8141082,
+    "name": "from-zero-native/confirmation/report.json"
+  },
+  {
+    "bytes": 793,
+    "name": "from-zero-native/format-check/process.json"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/format-check/stderr"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/format-check/stdout"
+  },
+  {
+    "bytes": 820,
+    "name": "from-zero-native/format-copy/process.json"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/format-copy/stderr"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/format-copy/stdout"
+  },
+  {
+    "bytes": 1035,
+    "name": "from-zero-native/format-copy-source/examples/support/w1_from_zero.rs"
+  },
+  {
+    "bytes": 10907,
+    "name": "from-zero-native/format-copy-source/tests/public_v3_from_zero/fresh_challenge.rs"
+  },
+  {
+    "bytes": 79067,
+    "name": "from-zero-native/format-copy-source/tests/public_v3_from_zero.rs"
+  },
+  {
+    "bytes": 79067,
+    "name": "from-zero-native/formatted.rs"
+  },
+  {
+    "bytes": 899,
+    "name": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr"
+  },
+  {
+    "bytes": 3365,
+    "name": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout"
+  },
+  {
+    "bytes": 893,
+    "name": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr"
+  },
+  {
+    "bytes": 195,
+    "name": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout"
+  },
+  {
+    "bytes": 913,
+    "name": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr"
+  },
+  {
+    "bytes": 915,
+    "name": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout"
+  },
+  {
+    "bytes": 950,
+    "name": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+  },
+  {
+    "bytes": 407,
+    "name": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+  },
+  {
+    "bytes": 65717,
+    "name": "from-zero-native/manifest.json"
+  },
+  {
+    "bytes": 245760,
+    "name": "from-zero-native/native/producer/native.sqlite"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/native/producer/owner.lock"
+  },
+  {
+    "bytes": 245760,
+    "name": "from-zero-native/native/receiver/native.sqlite"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/native/receiver/owner.lock"
+  },
+  {
+    "bytes": 3472886,
+    "name": "from-zero-native/native/report.json"
+  },
+  {
+    "bytes": 245760,
+    "name": "from-zero-native/native/sustained/producer/native.sqlite"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/native/sustained/producer/owner.lock"
+  },
+  {
+    "bytes": 245760,
+    "name": "from-zero-native/native/sustained/receiver/native.sqlite"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native/native/sustained/receiver/owner.lock"
+  },
+  {
+    "bytes": 12433605,
+    "name": "from-zero-native/native/sustained/report.json"
+  },
+  {
+    "bytes": 10970760,
+    "name": "from-zero-native/public_v3_from_zero"
+  },
+  {
+    "bytes": 200,
+    "name": "from-zero-native-host/actual-systemd-parent-after.log"
+  },
+  {
+    "bytes": 200,
+    "name": "from-zero-native-host/actual-systemd-parent.log"
+  },
+  {
+    "bytes": 1630,
+    "name": "from-zero-native-host/after-provision.json"
+  },
+  {
+    "bytes": 2797,
+    "name": "from-zero-native-host/before-provision.json"
+  },
+  {
+    "bytes": 10,
+    "name": "from-zero-native-host/child-final-load-state.log"
+  },
+  {
+    "bytes": 10,
+    "name": "from-zero-native-host/child-load-state.log"
+  },
+  {
+    "bytes": 333,
+    "name": "from-zero-native-host/child-result.json"
+  },
+  {
+    "bytes": 7953,
+    "name": "from-zero-native-host/controller-result.json"
+  },
+  {
+    "bytes": 1703,
+    "name": "from-zero-native-host/inside-after.json"
+  },
+  {
+    "bytes": 1690,
+    "name": "from-zero-native-host/inside-before.json"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native-host/install-reviewed-unit.log"
+  },
+  {
+    "bytes": 1664,
+    "name": "from-zero-native-host/outside-after.json"
+  },
+  {
+    "bytes": 146,
+    "name": "from-zero-native-host/parent-properties.log"
+  },
+  {
+    "bytes": 920,
+    "name": "from-zero-native-host/prepare-build/process.json"
+  },
+  {
+    "bytes": 7084,
+    "name": "from-zero-native-host/prepare-build/stderr"
+  },
+  {
+    "bytes": 115383,
+    "name": "from-zero-native-host/prepare-build/stdout"
+  },
+  {
+    "bytes": 3715,
+    "name": "from-zero-native-host/prepare-build.json"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native-host/seal-parent-directory.log"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native-host/seal-parent-receipt.log"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native-host/start-fixed-parent.log"
+  },
+  {
+    "bytes": 0,
+    "name": "from-zero-native-host/systemd-reload.log"
+  },
+  {
+    "bytes": 6910,
+    "name": "from-zero-native-host/systemd-run.log"
+  },
+  {
+    "bytes": 229,
+    "name": "from-zero-native-host/unprovisioned-parent.json"
+  },
+  {
+    "bytes": 1176188,
+    "name": "pq-provider/build-and-smoke.log"
+  },
+  {
+    "bytes": 2699,
+    "name": "pq-provider/provider.json"
+  },
+  {
+    "bytes": 3293,
+    "name": "public-fixture-parent.json"
+  },
+  {
+    "bytes": 512,
+    "name": "source.json"
+  }
+]

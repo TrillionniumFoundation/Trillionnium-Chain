@@ -1,0 +1,313 @@
+{
+  "schema": "whole-chain-pq-continuation-evidence-v1",
+  "date_utc": "2026-11-04",
+  "whole_chain_qualified": false,
+  "production_activation": false,
+  "chain": {
+    "pr": 698,
+    "native_source": {
+      "commit": "60dae3cf66d1e651af8e61eccf761abf43285e63",
+      "tree": "38d77248282cec7c8fb96a5d9f681cbe6d6cd06c"
+    },
+    "native_host": "x230",
+    "durable_job": "1a1a4739ef8-96a-7ab6",
+    "durable_job_status": "succeeded",
+    "durable_job_exit_code": 0,
+    "command_receipts_succeeded": 55,
+    "required_controls": {
+      "passed": 45,
+      "total": 45,
+      "original_selectors_preserved": 43,
+      "added_controls": 2,
+      "original_exact_name_reader_passed": 45
+    },
+    "node_strict_clippy_exit": 0,
+    "witness_exchange_budget_ms": 250,
+    "budgets_changed": false,
+    "full_node_suite_executed": false,
+    "frozen_optional_verifier": {
+      "sdk": "3.0.6",
+      "hash_function": "poseidon2",
+      "verifier_parameters_digest": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
+      "release_tests_passed": 4,
+      "release_tests_failed": 0,
+      "strict_clippy_exit": 0,
+      "release_build_exit": 0,
+      "existing_complete_w1_outcome": "SAVED_FULL_SUCCINCT_STARK_VERIFIED",
+      "independent_proof_trials": 1,
+      "consensus_admission": false,
+      "production_tail_established": false
+    },
+    "local_source": {
+      "commit": "1257461dabde5cd0f2feddaf3c47617e07eaa5a0",
+      "tree": "38d77248282cec7c8fb96a5d9f681cbe6d6cd06c",
+      "complete_tree_equals_native_source": true
+    },
+    "local_controls": {
+      "source_integrity": 34,
+      "pq_source_integrity": 34,
+      "claim_guard": 22,
+      "provider_controls": 9,
+      "total": 99,
+      "passed": 99
+    },
+    "local_workspace_all_targets_all_features_strict_clippy_exit": 0,
+    "source_pins_verified": 384,
+    "locked_graphs_verified": [
+      "workspace-x86_64",
+      "workspace-aarch64",
+      "fuzz-x86_64"
+    ],
+    "reader_source": {
+      "commit": "30e0cd5940f8cd465636106933c3243f5df7cbd7",
+      "tree": "f4169674698044b08e0a9f183e69407c9093e2c2"
+    },
+    "original_campaign_reader_tests": {
+      "passed": 21,
+      "failed": 0,
+      "historical_receipt_fixture_unchanged": true
+    },
+    "native_inputs_unchanged_between_native_and_reader_sources": true,
+    "native_to_reader_changed_paths": [
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "scripts/ci/test_read_original_native_campaign.py",
+      "scripts/read_original_native_campaign.py"
+    ],
+    "second_main_chain_native_execution_started": false
+  },
+  "hepta": {
+    "schema": "hepta-pq4729-native-evidence-v1",
+    "date_utc": "2026-11-04",
+    "repository": "TrillionniumFoundation/hepta-private-ci",
+    "native_execution_scope": "codex-hepta-contracts on Linux GNU x86_64 main host",
+    "original": {
+      "commit": "5fa90c21dbcd642ff9101951531c5758c683fdac",
+      "tree": "c7af3b5564cff487975cabd4ae0161340e864d3e",
+      "tests_run": 198,
+      "passed": 198,
+      "skipped": 0,
+      "binaries": 4
+    },
+    "pinned_composition": {
+      "commit": "2f04ecfde90a92b9c779540a2c1aa39f584d3e41",
+      "tree": "ee77993e4e94b4faf54d661653527605b222b77e",
+      "parents": [
+        "a6d8ce20bf8f5b6991d2dc5ef7313812944db060",
+        "5fa90c21dbcd642ff9101951531c5758c683fdac"
+      ],
+      "tests_run": 198,
+      "passed": 198,
+      "skipped": 0,
+      "binaries": 4
+    },
+    "later_publication_mapping": {
+      "commit": "ef5723af6a04c7c74fa8a32ab34acdfd49913233",
+      "tree": "40ab7c559dc651a1ff3bd8f849a8fcbd6ec03925",
+      "parents": [
+        "383a8c4150f4d620570a138b817f21960370e43f",
+        "5fa90c21dbcd642ff9101951531c5758c683fdac"
+      ],
+      "exact_complete_tree_native_executed": false,
+      "four_original_pr_blob_identities_confirmed": true,
+      "owner_delta": "four macOS-only test-fixture files outside scoped package"
+    },
+    "runs": [
+      {
+        "receipt": "original/contracts-native.json",
+        "raw_log": "original/contracts-native.log",
+        "label": "contracts-native",
+        "argv": [
+          "just",
+          "test",
+          "-p",
+          "codex-hepta-contracts",
+          "--locked"
+        ],
+        "source": {
+          "commit": "5fa90c21dbcd642ff9101951531c5758c683fdac",
+          "tree": "c7af3b5564cff487975cabd4ae0161340e864d3e",
+          "paths": 11221,
+          "bytes": 142454826,
+          "manifest_sha256": "b0c3c6244c433b96dfac0cad331c5d7a35bedcc6bb1facd5ac954066eb591063",
+          "git_diff_exit": 0
+        },
+        "returncode": 0,
+        "seconds": 89.35251579794567,
+        "bytes": 32445,
+        "sha256": "9077808cb47b73e4f4e9ebe911d7c51b02cc9adc642fedbbe67a34c36c956749",
+        "tracked_source_unchanged": true,
+        "native_attempt_not_retry": true
+      },
+      {
+        "receipt": "original/contracts-strict-clippy.json",
+        "raw_log": "original/contracts-strict-clippy.log",
+        "label": "contracts-strict-clippy",
+        "argv": [
+          "just",
+          "clippy",
+          "-p",
+          "codex-hepta-contracts",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "source": {
+          "commit": "5fa90c21dbcd642ff9101951531c5758c683fdac",
+          "tree": "c7af3b5564cff487975cabd4ae0161340e864d3e",
+          "paths": 11221,
+          "bytes": 142454826,
+          "manifest_sha256": "b0c3c6244c433b96dfac0cad331c5d7a35bedcc6bb1facd5ac954066eb591063",
+          "git_diff_exit": 0
+        },
+        "returncode": 0,
+        "seconds": 37.10740291501861,
+        "bytes": 3608,
+        "sha256": "9270b9ceb150b2aa587c9c001ad334da01f3e9de049e7f3ffa71af64b8dfb609",
+        "tracked_source_unchanged": true,
+        "native_attempt_not_retry": true
+      },
+      {
+        "receipt": "paired-contracts-native.json",
+        "raw_log": "paired-contracts-native.log",
+        "label": "paired-contracts-native",
+        "argv": [
+          "just",
+          "test",
+          "-p",
+          "codex-hepta-contracts",
+          "--locked"
+        ],
+        "source": {
+          "commit": "2f04ecfde90a92b9c779540a2c1aa39f584d3e41",
+          "tree": "ee77993e4e94b4faf54d661653527605b222b77e",
+          "parents": [
+            "a6d8ce20bf8f5b6991d2dc5ef7313812944db060",
+            "5fa90c21dbcd642ff9101951531c5758c683fdac"
+          ],
+          "local_merge_not_github_merge": true,
+          "checkout_exit": 0,
+          "paths": 11249,
+          "bytes": 142686694,
+          "manifest_sha256": "9ee371904b0a252c2299a5823458597379316a2b3306f48c84878ee16f81106a"
+        },
+        "returncode": 0,
+        "seconds": 75.59523173607886,
+        "bytes": 32459,
+        "sha256": "51d9579d8d22843d65fe5838b1f53a4886a91f540d789e3cb3e0ea0ea6fa5dd1",
+        "tracked_source_unchanged": true,
+        "native_attempt_not_retry": true,
+        "source_after": {
+          "commit": "2f04ecfde90a92b9c779540a2c1aa39f584d3e41",
+          "tree": "ee77993e4e94b4faf54d661653527605b222b77e",
+          "parents": [
+            "a6d8ce20bf8f5b6991d2dc5ef7313812944db060",
+            "5fa90c21dbcd642ff9101951531c5758c683fdac"
+          ],
+          "local_merge_not_github_merge": true,
+          "checkout_exit": 0,
+          "paths": 11249,
+          "bytes": 142686694,
+          "manifest_sha256": "9ee371904b0a252c2299a5823458597379316a2b3306f48c84878ee16f81106a"
+        }
+      },
+      {
+        "receipt": "paired-contracts-strict-clippy.json",
+        "raw_log": "paired-contracts-strict-clippy.log",
+        "label": "paired-contracts-strict-clippy",
+        "argv": [
+          "just",
+          "clippy",
+          "-p",
+          "codex-hepta-contracts",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "source": {
+          "commit": "2f04ecfde90a92b9c779540a2c1aa39f584d3e41",
+          "tree": "ee77993e4e94b4faf54d661653527605b222b77e",
+          "parents": [
+            "a6d8ce20bf8f5b6991d2dc5ef7313812944db060",
+            "5fa90c21dbcd642ff9101951531c5758c683fdac"
+          ],
+          "local_merge_not_github_merge": true,
+          "checkout_exit": 0,
+          "paths": 11249,
+          "bytes": 142686694,
+          "manifest_sha256": "9ee371904b0a252c2299a5823458597379316a2b3306f48c84878ee16f81106a"
+        },
+        "returncode": 0,
+        "seconds": 35.983560919063166,
+        "bytes": 3643,
+        "sha256": "b0cb62af073af1e7ce892c6fb0a52f00ebeae0b96dd745fa113cc9b44275cfd8",
+        "tracked_source_unchanged": true,
+        "native_attempt_not_retry": true,
+        "source_after": {
+          "commit": "2f04ecfde90a92b9c779540a2c1aa39f584d3e41",
+          "tree": "ee77993e4e94b4faf54d661653527605b222b77e",
+          "parents": [
+            "a6d8ce20bf8f5b6991d2dc5ef7313812944db060",
+            "5fa90c21dbcd642ff9101951531c5758c683fdac"
+          ],
+          "local_merge_not_github_merge": true,
+          "checkout_exit": 0,
+          "paths": 11249,
+          "bytes": 142686694,
+          "manifest_sha256": "9ee371904b0a252c2299a5823458597379316a2b3306f48c84878ee16f81106a"
+        }
+      }
+    ],
+    "warnings_preserved": {
+      "scoped_nextest_metadata_warnings_per_run": 14,
+      "clippy_unreachable_disallowed_type_config_warnings_per_run": 3
+    },
+    "limits": {
+      "whole_chain_pq_qualified": false,
+      "all_hepta_authority_consumers_qualified": false,
+      "independent_deployment_wan_migration_qualified": false,
+      "macos_fixture_changes_qualified": false,
+      "arm_or_musl_matrix_qualified": false,
+      "new_business_authority_created": false,
+      "source_or_deployed_state_modified_by_validation": false
+    },
+    "failed_preflight_retained": "paired-preflight-failed.json",
+    "remote_base": "/home/qian-qi/worktrees/hepta-pq4729-validation-20261104"
+  },
+  "unqualified_domains": [
+    "all_authorization_roots_and_actual_consumers",
+    "precise_w1_and_optional_succinct_pq128_argument",
+    "complete_quantum_w1_cost_and_effective_work_rate",
+    "whole_chain_and_hepta_migration_rollback_protocol",
+    "original_budget_full_capacity_and_invalid_input_acceptance",
+    "independent_composed_deployment_wan_fault_migration_acceptance"
+  ],
+  "failed_observations_and_evidence_limits": [
+    "Current X230 initial branch preflight failed before native commands; later canonical preflight succeeded.",
+    "Earlier X230 job 1a1a2c21c48-96a-7515 was observed in the session to fail at formatting before native tests; raw output is not archived here. Historical PR description records its earlier unread state only.",
+    "Local Unix-socket EPERM was observed in the session to prevent runtime validation in this executor; raw output is not archived here. Actual selected runtime controls ran on X230.",
+    "Cost-reader regression failure and initial EXDEV fixture-copy failures remain archived; original commands later passed with TMPDIR on the same filesystem.",
+    "Hepta pinned-source preflight lacked one exact promisor blob; exact acquisition and failed preflight are retained before either package command.",
+    "Additional main Chain request was read-only inventory; MCP timeout returned no job id. Its completion is unknown; no native checkout, provider build, or tests were sent.",
+    "Archive-creation acknowledgement timed out after X230 archive existed; identity was reconciled and version-pinned chunks verified without rerunning tests.",
+    "Hepta Nextest and Clippy configuration warnings are retained; successful exit status is not a warning-free claim."
+  ],
+  "archives": [
+    {
+      "path": "local-validation.tar.gz",
+      "bytes": 168494,
+      "sha256": "647287a163d25accb5849a2d96d6881b6be0431c963b4c66209cfe3d16a39bf4"
+    },
+    {
+      "path": "pq-composed-60dae3-20261104-validation-evidence.tar.gz",
+      "bytes": 172084,
+      "sha256": "8c78b54131dff27ae99963aeea9e0b4de2cd605d972c00f91534ca63df5d2f69"
+    },
+    {
+      "path": "hepta-pq4729-native-20261104.tar.xz",
+      "bytes": 783340,
+      "sha256": "b8eb0d77e0befe411087152741bc5cf8f371bcdf77b36a4328d7f1f2689ea88f"
+    }
+  ]
+}

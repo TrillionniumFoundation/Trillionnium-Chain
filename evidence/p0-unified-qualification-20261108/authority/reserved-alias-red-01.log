@@ -1,0 +1,1620 @@
+test_checkout_ancestor_symlink_during_read_is_refused (test_pq_chain_claim_guard.ClaimReaderRaceTests.test_checkout_ancestor_symlink_during_read_is_refused) ... ok
+test_fifo_substitution_cannot_block_before_fstat (test_pq_chain_claim_guard.ClaimReaderRaceTests.test_fifo_substitution_cannot_block_before_fstat) ... ok
+test_growth_during_read_is_bounded (test_pq_chain_claim_guard.ClaimReaderRaceTests.test_growth_during_read_is_bounded) ... ok
+test_leaf_symlink_between_check_and_open_is_refused (test_pq_chain_claim_guard.ClaimReaderRaceTests.test_leaf_symlink_between_check_and_open_is_refused) ... ok
+test_leaf_symlink_during_read_is_refused (test_pq_chain_claim_guard.ClaimReaderRaceTests.test_leaf_symlink_during_read_is_refused) ... ok
+test_missing_after_check_is_wrapped_and_fds_close (test_pq_chain_claim_guard.ClaimReaderRaceTests.test_missing_after_check_is_wrapped_and_fds_close) ... ok
+test_parent_replacement_with_identical_leaf_is_refused (test_pq_chain_claim_guard.ClaimReaderRaceTests.test_parent_replacement_with_identical_leaf_is_refused) ... ok
+test_parent_symlink_to_same_leaf_during_read_is_refused (test_pq_chain_claim_guard.ClaimReaderRaceTests.test_parent_symlink_to_same_leaf_during_read_is_refused) ... ok
+test_regular_file_is_returned_unchanged (test_pq_chain_claim_guard.ClaimReaderRaceTests.test_regular_file_is_returned_unchanged) ... ok
+test_same_length_in_place_rewrite_is_refused (test_pq_chain_claim_guard.ClaimReaderRaceTests.test_same_length_in_place_rewrite_is_refused) ... ok
+test_same_length_leaf_replacement_before_open_is_refused (test_pq_chain_claim_guard.ClaimReaderRaceTests.test_same_length_leaf_replacement_before_open_is_refused) ... ok
+test_same_length_leaf_replacement_during_read_is_refused (test_pq_chain_claim_guard.ClaimReaderRaceTests.test_same_length_leaf_replacement_during_read_is_refused) ... ok
+test_same_length_mmap_rewrite_is_refused (test_pq_chain_claim_guard.ClaimReaderRaceTests.test_same_length_mmap_rewrite_is_refused) ... ok
+test_same_length_rewrite_with_restored_mtime_is_refused (test_pq_chain_claim_guard.ClaimReaderRaceTests.test_same_length_rewrite_with_restored_mtime_is_refused) ... ok
+test_classical_fallback_refused (test_pq_chain_claim_guard.TestClaimGuard.test_classical_fallback_refused) ... ok
+test_corrupt_independent_qualification_refused (test_pq_chain_claim_guard.TestClaimGuard.test_corrupt_independent_qualification_refused) ... ok
+test_duplicate_json_keys_refused (test_pq_chain_claim_guard.TestClaimGuard.test_duplicate_json_keys_refused) ... ok
+test_explicit_false_null_and_nested_hold_claims_stay_unqualified (test_pq_chain_claim_guard.TestClaimGuard.test_explicit_false_null_and_nested_hold_claims_stay_unqualified) ... ok
+test_hepta_final_use_claim_refused (test_pq_chain_claim_guard.TestClaimGuard.test_hepta_final_use_claim_refused) ... ok
+test_history_storage_and_rehearsal_owner_paths_cannot_disappear (test_pq_chain_claim_guard.TestClaimGuard.test_history_storage_and_rehearsal_owner_paths_cannot_disappear) ... ok
+test_hold_is_not_pq_success (test_pq_chain_claim_guard.TestClaimGuard.test_hold_is_not_pq_success) ... ok
+test_missing_authority_surface_inventory_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_authority_surface_inventory_refused) ... ok
+test_missing_external_rollback_oracle_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_external_rollback_oracle_refused) ... ok
+test_missing_or_non_directory_checkout_root_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_or_non_directory_checkout_root_refused) ... ok
+test_missing_pq_hepta_verifier_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_pq_hepta_verifier_refused) ... ok
+test_missing_proof_relation_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_proof_relation_refused) ... ok
+test_missing_quantum_daa_model_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_quantum_daa_model_refused) ... ok
+test_native_witness_and_live_admission_sources_cannot_disappear (test_pq_chain_claim_guard.TestClaimGuard.test_native_witness_and_live_admission_sources_cannot_disappear) ... ok
+test_nonfinite_and_nonstandard_json_numbers_refused (test_pq_chain_claim_guard.TestClaimGuard.test_nonfinite_and_nonstandard_json_numbers_refused) ... ok
+test_pq_128_guest_promotion_refused (test_pq_chain_claim_guard.TestClaimGuard.test_pq_128_guest_promotion_refused) ... ok
+test_production_activation_refused (test_pq_chain_claim_guard.TestClaimGuard.test_production_activation_refused) ... ok
+test_quantum_hardness_claim_refused (test_pq_chain_claim_guard.TestClaimGuard.test_quantum_hardness_claim_refused) ... ok
+test_reserved_boolean_alias_requires_exact_false (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_boolean_alias_requires_exact_false) ... 
+  test_reserved_boolean_alias_requires_exact_false (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_boolean_alias_requires_exact_false) (value=0) ... FAIL
+  test_reserved_boolean_alias_requires_exact_false (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_boolean_alias_requires_exact_false) (value=1) ... FAIL
+  test_reserved_boolean_alias_requires_exact_false (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_boolean_alias_requires_exact_false) (value=None) ... FAIL
+  test_reserved_boolean_alias_requires_exact_false (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_boolean_alias_requires_exact_false) (value='false') ... FAIL
+  test_reserved_boolean_alias_requires_exact_false (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_boolean_alias_requires_exact_false) (value=[]) ... FAIL
+  test_reserved_boolean_alias_requires_exact_false (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_boolean_alias_requires_exact_false) (value={}) ... FAIL
+test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) ... 
+  test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='whole_chain_quantum_security_bits', value=0) ... FAIL
+  test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='whole_chain_quantum_security_bits', value=False) ... FAIL
+  test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='whole_chain_quantum_security_bits', value='') ... FAIL
+  test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='whole_chain_quantum_security_bits', value={}) ... FAIL
+  test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='whole_chain_quantum_security_bits', value=[]) ... FAIL
+  test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='whole_chain_quantum_security_bits', value='unknown') ... FAIL
+  test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='actual_lifetime_failure_bound', value=0) ... FAIL
+  test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='actual_lifetime_failure_bound', value=False) ... FAIL
+  test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='actual_lifetime_failure_bound', value='') ... FAIL
+  test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='actual_lifetime_failure_bound', value={}) ... FAIL
+  test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='actual_lifetime_failure_bound', value=[]) ... FAIL
+  test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='actual_lifetime_failure_bound', value='unknown') ... FAIL
+test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) ... 
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_failure_probability') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_lifetime_failure_probability') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='actual_lifetime_failure_bound') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_quantum_security_bits') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_pq_bits') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_failure_probability') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_lifetime_failure_probability') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='actual_lifetime_failure_bound') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_quantum_security_bits') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_pq_bits') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='whole_chain_failure_probability') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='whole_chain_lifetime_failure_probability') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='actual_lifetime_failure_bound') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='whole_chain_quantum_security_bits') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='whole_chain_pq_bits') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='whole_chain_failure_probability') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='whole_chain_lifetime_failure_probability') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='actual_lifetime_failure_bound') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='whole_chain_quantum_security_bits') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='whole_chain_pq_bits') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='whole_chain_failure_probability') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='whole_chain_lifetime_failure_probability') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='actual_lifetime_failure_bound') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='whole_chain_quantum_security_bits') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='whole_chain_pq_bits') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_failure_probability') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_lifetime_failure_probability') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='actual_lifetime_failure_bound') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_quantum_security_bits') ... FAIL
+  test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_pq_bits') ... FAIL
+test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) ... 
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_pq_qualified', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_pq_qualified', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_pq_qualified', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_quantum_security_bits', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_quantum_security_bits', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_quantum_security_bits', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='actual_lifetime_failure_bound', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='actual_lifetime_failure_bound', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='actual_lifetime_failure_bound', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_pq_qualified', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_pq_qualified', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_pq_qualified', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_quantum_security_bits', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_quantum_security_bits', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_quantum_security_bits', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='actual_lifetime_failure_bound', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='actual_lifetime_failure_bound', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='actual_lifetime_failure_bound', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='whole_chain_pq_qualified', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='whole_chain_pq_qualified', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='whole_chain_pq_qualified', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='whole_chain_quantum_security_bits', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='whole_chain_quantum_security_bits', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='whole_chain_quantum_security_bits', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='actual_lifetime_failure_bound', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='actual_lifetime_failure_bound', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='actual_lifetime_failure_bound', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='whole_chain_pq_qualified', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='whole_chain_pq_qualified', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='whole_chain_pq_qualified', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='whole_chain_quantum_security_bits', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='whole_chain_quantum_security_bits', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='whole_chain_quantum_security_bits', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='actual_lifetime_failure_bound', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='actual_lifetime_failure_bound', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='actual_lifetime_failure_bound', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='whole_chain_pq_qualified', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='whole_chain_pq_qualified', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='whole_chain_pq_qualified', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='whole_chain_quantum_security_bits', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='whole_chain_quantum_security_bits', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='whole_chain_quantum_security_bits', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='actual_lifetime_failure_bound', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='actual_lifetime_failure_bound', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='actual_lifetime_failure_bound', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_pq_qualified', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_pq_qualified', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_pq_qualified', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_quantum_security_bits', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_quantum_security_bits', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_quantum_security_bits', shape='nested_lists') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='actual_lifetime_failure_bound', shape='mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='actual_lifetime_failure_bound', shape='list_mapping') ... FAIL
+  test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='actual_lifetime_failure_bound', shape='nested_lists') ... FAIL
+test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) ... 
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_pq128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_pq_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='pq128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='pq_128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='pq_128_security_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_pq128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_pq_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='pq128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='pq_128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='pq_128_security_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='whole_chain_pq128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='whole_chain_pq_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='pq128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='pq_128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='pq_128_security_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='whole_chain_pq128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='whole_chain_pq_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='pq128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='pq_128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='pq_128_security_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='whole_chain_pq128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='whole_chain_pq_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='pq128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='pq_128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='pq_128_security_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_pq128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_pq_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='pq128_qualified') ... FAIL
+  test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='pq_128_qualified') ... FAIL
+test_rollback_claim_refused (test_pq_chain_claim_guard.TestClaimGuard.test_rollback_claim_refused) ... ok
+test_source_reader_helper_cannot_disappear (test_pq_chain_claim_guard.TestClaimGuard.test_source_reader_helper_cannot_disappear) ... ok
+test_symlink_source_refused (test_pq_chain_claim_guard.TestClaimGuard.test_symlink_source_refused) ... ok
+test_symlinked_checkout_ancestor_refused (test_pq_chain_claim_guard.TestClaimGuard.test_symlinked_checkout_ancestor_refused) ... ok
+test_symlinked_checkout_root_refused (test_pq_chain_claim_guard.TestClaimGuard.test_symlinked_checkout_root_refused) ... ok
+test_unbounded_or_unaccepted_candidate_refused (test_pq_chain_claim_guard.TestClaimGuard.test_unbounded_or_unaccepted_candidate_refused) ... ok
+
+======================================================================
+FAIL: test_reserved_boolean_alias_requires_exact_false (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_boolean_alias_requires_exact_false) (value=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 528, in test_reserved_boolean_alias_requires_exact_false
+    self.check_added_claims(CONFIG, {'whole_chain_pq_qualified': value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_boolean_alias_requires_exact_false (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_boolean_alias_requires_exact_false) (value=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 528, in test_reserved_boolean_alias_requires_exact_false
+    self.check_added_claims(CONFIG, {'whole_chain_pq_qualified': value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_boolean_alias_requires_exact_false (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_boolean_alias_requires_exact_false) (value=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 528, in test_reserved_boolean_alias_requires_exact_false
+    self.check_added_claims(CONFIG, {'whole_chain_pq_qualified': value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_boolean_alias_requires_exact_false (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_boolean_alias_requires_exact_false) (value='false')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 528, in test_reserved_boolean_alias_requires_exact_false
+    self.check_added_claims(CONFIG, {'whole_chain_pq_qualified': value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_boolean_alias_requires_exact_false (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_boolean_alias_requires_exact_false) (value=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 528, in test_reserved_boolean_alias_requires_exact_false
+    self.check_added_claims(CONFIG, {'whole_chain_pq_qualified': value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_boolean_alias_requires_exact_false (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_boolean_alias_requires_exact_false) (value={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 528, in test_reserved_boolean_alias_requires_exact_false
+    self.check_added_claims(CONFIG, {'whole_chain_pq_qualified': value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='whole_chain_quantum_security_bits', value=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 535, in test_reserved_numeric_alias_requires_null_even_for_zero
+    self.check_added_claims(CONFIG, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='whole_chain_quantum_security_bits', value=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 535, in test_reserved_numeric_alias_requires_null_even_for_zero
+    self.check_added_claims(CONFIG, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='whole_chain_quantum_security_bits', value='')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 535, in test_reserved_numeric_alias_requires_null_even_for_zero
+    self.check_added_claims(CONFIG, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='whole_chain_quantum_security_bits', value={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 535, in test_reserved_numeric_alias_requires_null_even_for_zero
+    self.check_added_claims(CONFIG, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='whole_chain_quantum_security_bits', value=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 535, in test_reserved_numeric_alias_requires_null_even_for_zero
+    self.check_added_claims(CONFIG, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='whole_chain_quantum_security_bits', value='unknown')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 535, in test_reserved_numeric_alias_requires_null_even_for_zero
+    self.check_added_claims(CONFIG, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='actual_lifetime_failure_bound', value=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 535, in test_reserved_numeric_alias_requires_null_even_for_zero
+    self.check_added_claims(CONFIG, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='actual_lifetime_failure_bound', value=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 535, in test_reserved_numeric_alias_requires_null_even_for_zero
+    self.check_added_claims(CONFIG, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='actual_lifetime_failure_bound', value='')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 535, in test_reserved_numeric_alias_requires_null_even_for_zero
+    self.check_added_claims(CONFIG, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='actual_lifetime_failure_bound', value={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 535, in test_reserved_numeric_alias_requires_null_even_for_zero
+    self.check_added_claims(CONFIG, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='actual_lifetime_failure_bound', value=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 535, in test_reserved_numeric_alias_requires_null_even_for_zero
+    self.check_added_claims(CONFIG, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_alias_requires_null_even_for_zero (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_alias_requires_null_even_for_zero) (key='actual_lifetime_failure_bound', value='unknown')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 535, in test_reserved_numeric_alias_requires_null_even_for_zero
+    self.check_added_claims(CONFIG, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_failure_probability')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_lifetime_failure_probability')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='actual_lifetime_failure_bound')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_quantum_security_bits')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_pq_bits')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_failure_probability')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_lifetime_failure_probability')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='actual_lifetime_failure_bound')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_quantum_security_bits')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_pq_bits')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='whole_chain_failure_probability')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='whole_chain_lifetime_failure_probability')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='actual_lifetime_failure_bound')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='whole_chain_quantum_security_bits')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='whole_chain_pq_bits')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='whole_chain_failure_probability')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='whole_chain_lifetime_failure_probability')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='actual_lifetime_failure_bound')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='whole_chain_quantum_security_bits')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='whole_chain_pq_bits')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='whole_chain_failure_probability')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='whole_chain_lifetime_failure_probability')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='actual_lifetime_failure_bound')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='whole_chain_quantum_security_bits')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='whole_chain_pq_bits')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_failure_probability')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_lifetime_failure_probability')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='actual_lifetime_failure_bound')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_quantum_security_bits')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_numeric_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_numeric_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_pq_bits')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 505, in test_reserved_numeric_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: value},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_pq_qualified', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_pq_qualified', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_pq_qualified', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_quantum_security_bits', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_quantum_security_bits', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_quantum_security_bits', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='actual_lifetime_failure_bound', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='actual_lifetime_failure_bound', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/post-quantum-transition-v1.json', key='actual_lifetime_failure_bound', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_pq_qualified', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_pq_qualified', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_pq_qualified', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_quantum_security_bits', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_quantum_security_bits', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_quantum_security_bits', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='actual_lifetime_failure_bound', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='actual_lifetime_failure_bound', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/pq-cross-branch-corpus-v1.json', key='actual_lifetime_failure_bound', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='whole_chain_pq_qualified', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='whole_chain_pq_qualified', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='whole_chain_pq_qualified', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='whole_chain_quantum_security_bits', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='whole_chain_quantum_security_bits', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='whole_chain_quantum_security_bits', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='actual_lifetime_failure_bound', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='actual_lifetime_failure_bound', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/consensus-mainline.json', key='actual_lifetime_failure_bound', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='whole_chain_pq_qualified', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='whole_chain_pq_qualified', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='whole_chain_pq_qualified', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='whole_chain_quantum_security_bits', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='whole_chain_quantum_security_bits', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='whole_chain_quantum_security_bits', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='actual_lifetime_failure_bound', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='actual_lifetime_failure_bound', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='config/pon/devnet-v1.json', key='actual_lifetime_failure_bound', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='whole_chain_pq_qualified', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='whole_chain_pq_qualified', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='whole_chain_pq_qualified', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='whole_chain_quantum_security_bits', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='whole_chain_quantum_security_bits', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='whole_chain_quantum_security_bits', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='actual_lifetime_failure_bound', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='actual_lifetime_failure_bound', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='PROJECT_BOUNDARY.json', key='actual_lifetime_failure_bound', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_pq_qualified', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_pq_qualified', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_pq_qualified', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_quantum_security_bits', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_quantum_security_bits', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_quantum_security_bits', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='actual_lifetime_failure_bound', shape='mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='actual_lifetime_failure_bound', shape='list_mapping')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='actual_lifetime_failure_bound', shape='nested_lists')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 523, in test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists
+    self.check_added_claims(path, {'review_observations': nested}, error)
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_pq128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='whole_chain_pq_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='pq128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='pq_128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/post-quantum-transition-v1.json', key='pq_128_security_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_pq128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='whole_chain_pq_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='pq128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='pq_128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/pq-cross-branch-corpus-v1.json', key='pq_128_security_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='whole_chain_pq128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='whole_chain_pq_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='pq128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='pq_128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/consensus-mainline.json', key='pq_128_security_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='whole_chain_pq128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='whole_chain_pq_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='pq128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='pq_128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='config/pon/devnet-v1.json', key='pq_128_security_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='whole_chain_pq128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='whole_chain_pq_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='pq128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='pq_128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='PROJECT_BOUNDARY.json', key='pq_128_security_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_pq128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='whole_chain_pq_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='pq128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+======================================================================
+FAIL: test_reserved_true_claims_refused_in_every_claim_document (test_pq_chain_claim_guard.TestClaimGuard.test_reserved_true_claims_refused_in_every_claim_document) (path='trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json', key='pq_128_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 496, in test_reserved_true_claims_refused_in_every_claim_document
+    self.check_added_claims(path, {key: True},
+  File "/workspace/scratch/99b518ee5e9f/authority-audit/red/scripts/ci/test_pq_chain_claim_guard.py", line 476, in check_added_claims
+    with self.assertRaisesRegex(UnsafePromotion, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UnsafePromotion not raised
+
+----------------------------------------------------------------------
+Ran 43 tests in 0.508s
+
+FAILED (failures=131)

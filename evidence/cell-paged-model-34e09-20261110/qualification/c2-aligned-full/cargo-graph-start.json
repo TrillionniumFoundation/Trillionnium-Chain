@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--format-version",
+    "1",
+    "--features",
+    "trnm-pon-node/pq-native-openssl"
+  ],
+  "commit": "34f16887fe9a9df8416c9f97ef5f3b765b105bbb",
+  "cwd": "/home/qq/work/chain-cell-paged-model-34e09-20261110/trillionnium",
+  "started_at_utc": "2026-11-10T09:54:33.942669+00:00",
+  "tree": "9ec1f69f463688521c867f857bfba1853380be5a"
+}

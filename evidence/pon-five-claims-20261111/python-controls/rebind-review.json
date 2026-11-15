@@ -1,0 +1,131 @@
+{
+  "authority_lock_sha256": "e4e8bc86beb39db4e52aefbb799dc00bb71c42947093af0230ec6d2ce21701fa",
+  "authority_paths": 44,
+  "binding_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "binding_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+  "changed_paths": [
+    "config/pon/pq-authority-effects-v1.json",
+    "scripts/ci/pq_authority_effect_register.py",
+    "scripts/ci/test_pq_authority_effect_register.py",
+    "config/pon/pq128-source-lock-v1.json",
+    "config/pon/pq128-lifetime-budget-v1.json",
+    "scripts/w1_lifetime_ledger.py",
+    "evidence/pon-w1-lifetime-five-claims-20261111/project-input.json",
+    "evidence/pon-w1-lifetime-five-claims-20261111/project-report.json",
+    "evidence/pon-w1-lifetime-five-claims-20261111/README.md",
+    "scripts/ci/test_w1_lifetime_ledger.py",
+    ".github/workflows/pon-w1-qrom-closure.yml",
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json"
+  ],
+  "corpus_pins": 1095,
+  "corpus_updated_pins": {
+    ".github/workflows/pon-recent-batch-acceptance.yml": {
+      "new": "b8ba7e5c6d72696f7c05b554b1e7b3a2a1c6e240",
+      "old": "a23890ad137a14f31b352b7449c61288769692d3"
+    },
+    ".github/workflows/pon-w1-qrom-closure.yml": {
+      "new": "15ffdf5c8d52987eb778a13b0500e467f342826a",
+      "old": "f5b8534fd863587419854e5a8827f8c3a86c3d52"
+    },
+    "config/pon/pq-authority-effects-v1.json": {
+      "new": "92caccdad20f6f6e6eef76e8f4b3720d63b91a4c",
+      "old": "2a5a3c22d48d4f505d4903438ccc3f8589da3476"
+    },
+    "config/pon/pq128-lifetime-budget-v1.json": {
+      "new": "a8cf26342d02a919cea29835b3dba0ed72c51f99",
+      "old": "46618a7f42a6241af105d0eaba271aa49392d5c1"
+    },
+    "config/pon/pq128-source-lock-v1.json": {
+      "new": "1e40c663d5cdb267907101b2109c91768345bedc",
+      "old": "01033e54377261e1a7221502e47a7024229087c7"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "new": "2e94efb60da8c5e0e306b387eea046879e3dd851",
+      "old": "e0b685508abb5ee6b36cafe1dea47270972e49d7"
+    },
+    "scripts/ci/check_ci_contract.py": {
+      "new": "80b9148e484dbce99ada2823a5ab7d9c52dea464",
+      "old": "0f7889e4789c58f2507f396137316ffae67d172c"
+    },
+    "scripts/ci/ci_job.sh": {
+      "new": "4e457e59006e193d6f0950249127bf19d9b75046",
+      "old": "dfcc3ddd4af19ac6b862f47b2a9c8137330afe85"
+    },
+    "scripts/ci/pq_authority_effect_register.py": {
+      "new": "e8a210c485efd4b90c7f4af811ec71670a0a34eb",
+      "old": "be12e9862862e0e7f7b028a8a8586d3025ed6762"
+    },
+    "scripts/ci/test_ci_contract.py": {
+      "new": "623cbadd1d421284ab5f897afd4c3203bed52835",
+      "old": "972b0a7932c16986cce27676105c8ce8745a420f"
+    },
+    "scripts/ci/test_pq_authority_effect_register.py": {
+      "new": "88b1766137822a24316f700c4f851532f4dd863b",
+      "old": "798776e5afe9278c236caf72b626d9872432a7e0"
+    },
+    "scripts/ci/test_w1_lifetime_ledger.py": {
+      "new": "13b145247a5f1c9bde632e0cc926cda7b959b2d1",
+      "old": "8b23d599faa9203aa57d9d1d85e7fd6a59bd8218"
+    },
+    "scripts/w1_lifetime_ledger.py": {
+      "new": "928613c7cb3024e42afd15b8cb08a53fb8e6f34c",
+      "old": "23f300e1feac2c5c1e22e2d669abae298f4b199b"
+    },
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": {
+      "new": "741cbea08d3ac997df3671c414d31b2ce59ee091",
+      "old": "37dfcbad09c6ef1d8e8e3d96288cdaf3e482e57d"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress.rs": {
+      "new": "09a048316519d2d5442c974b8004fbdcb8f5633d",
+      "old": "91d9655c3361aedfe7d16e4f1577aef09c316753"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs": {
+      "new": "f1ee46dd7bf99fc897f416709ecd56ba1d00ffaa",
+      "old": "9b3bd7950a802d3a257fe45481e8a28040952df4"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs": {
+      "new": "3c4765e27886631df6373b0785ab251e6e80e739",
+      "old": "235b2ca72404ac68a90d8626551b3c260ac995d8"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "new": "5b696ca602c757708db60a9a4b8365a1d2bd6b3f",
+      "old": "d162fe28c0abf6bc1f5a2d59dd9dbbfff18f2b7c"
+    }
+  },
+  "historical_digests_preserved": {
+    "evidence/pon-w1-lifetime-account-boundary-20261110/project-input.json": "a6e43a5c55e71154592a3489f566995e7961b91611e15d40a18a948a495f9f89",
+    "evidence/pon-w1-lifetime-account-boundary-20261110/project-report.json": "b050b861ec172305d708ba7c01ca47d547b1646cc3daee1d6aec9877d2cf3390",
+    "evidence/pon-w1-lifetime-current-20261109/project-report.json": "8ee20462d669a0e21b0fe964585f85fa2a49e7e58273459ab2501b4a2e39dfc0"
+  },
+  "implementation_source": "f2375a08f4458f842b96d30215adcd5380270f1d",
+  "lifetime_paths": 20,
+  "pq128_paths": 15,
+  "qrom_local_inputs": 138,
+  "qrom_selected_inputs": 16,
+  "qualification_promoted": false,
+  "required_paths": 1003,
+  "result": "T_BINDINGS_COMPLETE",
+  "source_metadata": {
+    "consensus.rs": {
+      "anchors": {
+        "actual_target_rule": "188",
+        "required_work_formula": "141"
+      },
+      "bytes": "20510",
+      "git_blob": "2213a39b14c03d9476c35b80a30fcb8414d459f0",
+      "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d"
+    },
+    "store.rs": {
+      "anchors": {
+        "cumulative_weight": "5159",
+        "native_work_verifier": "1124"
+      },
+      "bytes": "384863",
+      "git_blob": "5b696ca602c757708db60a9a4b8365a1d2bd6b3f",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "fd638ddde61e9d91e639b859be5e514913d54e4f33e51853e6a4271da80357a5"
+    }
+  }
+}

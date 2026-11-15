@@ -1,0 +1,26 @@
+test_cli_reproduces_view_and_refuses_changed_proven_flag (__main__.FourPropositionsTests.test_cli_reproduces_view_and_refuses_changed_proven_flag) ... ok
+test_dependency_byte_drift_refuses_before_import (__main__.FourPropositionsTests.test_dependency_byte_drift_refuses_before_import) ... ok
+test_duplicate_content_and_all_attempt_costs_are_replayed (__main__.FourPropositionsTests.test_duplicate_content_and_all_attempt_costs_are_replayed) ... ok
+test_empty_utility_container_has_no_cost_observation (__main__.FourPropositionsTests.test_empty_utility_container_has_no_cost_observation) ... ok
+test_full_positive_replay_grants_none_of_the_four_propositions (__main__.FourPropositionsTests.test_full_positive_replay_grants_none_of_the_four_propositions) ... ok
+test_historical_checker_is_not_run_on_current_tree (__main__.FourPropositionsTests.test_historical_checker_is_not_run_on_current_tree) ... ok
+test_input_identity_cannot_silently_change (__main__.FourPropositionsTests.test_input_identity_cannot_silently_change) ... ok
+test_malformed_nested_containers_and_missing_event_fields_refuse (__main__.FourPropositionsTests.test_malformed_nested_containers_and_missing_event_fields_refuse) ... ok
+test_missing_raw_rows_cannot_borrow_evaluation_summary (__main__.FourPropositionsTests.test_missing_raw_rows_cannot_borrow_evaluation_summary) ... ok
+test_missing_reports_remain_missing_without_total_pass (__main__.FourPropositionsTests.test_missing_reports_remain_missing_without_total_pass) ... ok
+test_modified_signature_refuses_before_projection (__main__.FourPropositionsTests.test_modified_signature_refuses_before_projection) ... ok
+test_no_gain_keeps_service_fee_observation_separate (__main__.FourPropositionsTests.test_no_gain_keeps_service_fee_observation_separate) ... ok
+test_original_net_arithmetic_retains_negative_cost_result (__main__.FourPropositionsTests.test_original_net_arithmetic_retains_negative_cost_result) ... ok
+test_report_qualification_boolean_cannot_override_reader (__main__.FourPropositionsTests.test_report_qualification_boolean_cannot_override_reader) ... ok
+test_signed_delivery_alone_is_not_computation_proof_or_net_benefit (__main__.FourPropositionsTests.test_signed_delivery_alone_is_not_computation_proof_or_net_benefit) ... ok
+test_source_scope_profile_and_units_are_bound (__main__.FourPropositionsTests.test_source_scope_profile_and_units_are_bound) ... ok
+test_strict_json_and_numeric_alias_refuse (__main__.FourPropositionsTests.test_strict_json_and_numeric_alias_refuse) ... ok
+test_tampered_cost_summary_and_unknown_gpu_refuse (__main__.FourPropositionsTests.test_tampered_cost_summary_and_unknown_gpu_refuse) ... ok
+test_timeout_noupdate_is_not_completed_evaluation (__main__.FourPropositionsTests.test_timeout_noupdate_is_not_completed_evaluation) ... ok
+test_unknown_authority_field_refuses_even_when_repinned (__main__.FourPropositionsTests.test_unknown_authority_field_refuses_even_when_repinned) ... ok
+test_zero_denominator_and_excessive_integer_text_refuse (__main__.FourPropositionsTests.test_zero_denominator_and_excessive_integer_text_refuse) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 2.201s
+
+OK

@@ -1,0 +1,27 @@
+{
+  "id": "repository-truth-runtime-python",
+  "argv": [
+    "env",
+    "TRNM_RUNTIME_RELEASE_PYTHON=/home/qian-qi/chain-pq-a418-final-python-venv/bin/python",
+    "bash",
+    "scripts/ci/ci_job.sh",
+    "repository-truth"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 1085.2464238810353,
+  "finished_utc": "2026-11-11T02:44:19.940646+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "5b85e578374f5375c0220615193f6382d45751b1190530637207cd4c393511b1",
+  "stderr_sha256": "6f3975318b61be63249e285757208e12cf2ff0ffc52d2401efbc4ed31494a798",
+  "pass": true,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 948.803618,
+    "system_cpu_seconds": 88.921899,
+    "maximum_rss_kib": 397388,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

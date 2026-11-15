@@ -1,0 +1,9 @@
+
+running 4 tests
+test cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget ... ok
+test cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial ... ok
+test cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication ... ok
+test cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 464 filtered out; finished in 1.90s
+

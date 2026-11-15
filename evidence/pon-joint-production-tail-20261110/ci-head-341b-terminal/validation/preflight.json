@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "exit_code": 0,
+  "base_head": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+  "scope": "evidence-only working tree validation; not fresh native qualification",
+  "stdout": {
+    "bytes": 176,
+    "sha256": "ec1af41e091359fe11862d78759e947167d0a66909331e3ce06d8908a69da442"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

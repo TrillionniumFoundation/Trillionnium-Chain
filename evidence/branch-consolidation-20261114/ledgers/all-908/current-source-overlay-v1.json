@@ -1,0 +1,590 @@
+{
+  "schema": "all908-current-source-and-validation-overlay-v1",
+  "observed_utc": "2026-11-14T04:53:04.289704+00:00",
+  "current_head": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+  "current_tree": "8f26631e80c14a3c750210019606df13327d633f",
+  "worktree_clean": true,
+  "original_component_review_revisions_not_rewritten": true,
+  "concurrent_remote_tip_changes": [
+    {
+      "name": "fix/chain-hepta-closure-candidate-20261109-481716",
+      "baseline_sha": "332d7f723d71707d88a2cffa52b3754579a46926",
+      "remote0170_sha": "e40d7071c4724e6600deef8a2820bf35c1982289",
+      "ancestor_of_current": true
+    }
+  ],
+  "remote_candidate_is_ancestor": true,
+  "T03_commit": "898532d47f11c1a4cf92d769b7bb7264fb23ce36",
+  "T03_integrated": true,
+  "selected_port_ancestry_checks": [
+    {
+      "commit": "022b3dcd2f9bc553a847135cae27b81dfcfd327f",
+      "referenced_by": [
+        "ci6.N01",
+        "ci6.S02"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "056071f364e02efb71f787d6603f144244e46123",
+      "referenced_by": [
+        "first80.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "05aadef33b9b0b20d83f5c12262f79309c6205f1",
+      "referenced_by": [
+        "ci6.S03"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "09f9303b834d41b4446b13dda64ddb2ead81e244",
+      "referenced_by": [
+        "first80.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "0ad7558736db041377061937085622c3c269a986",
+      "referenced_by": [
+        "ci81.34a0f509145607746a1e6b156709bd5680213227",
+        "ci81.61a39cde4a9604f68140388caa8a92fd3d8e4585",
+        "ci81.7573e3ae83fd6090a1005a29fe716b0402b090ff",
+        "ci81.83ecbbd361c15fb11df26d2abbc544bbf530bef7",
+        "ci81.c1ad6e0033ebe8441ee7ecf783954f87f3f72e6c",
+        "production20.port_commit_table"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "0d584032b2727a52105efbeb1407d7a92abbad18",
+      "referenced_by": [
+        "ci81.additional",
+        "first80.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "0df2ed65e25436a5bce77cd2e686e9275860d648",
+      "referenced_by": [
+        "ci81.b6f26452d060bf167cd10aa2343844f4e5712bb6"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "14c6021cb9186e69d8101837c4a4b228f104489d",
+      "referenced_by": [
+        "production20.port_commit_table"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "182c3925d0ac0a65512b8c7419b670f3c847a902",
+      "referenced_by": [
+        "production20.port_commit_table"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "19940a6653df0d88aba02f264f295a40ee047f96",
+      "referenced_by": [
+        "first80.selected_ports",
+        "latter80.ports",
+        "production20.port_commit_table"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "226638ec84bd27e8aa8f4e3418ada296bbcb5fd7",
+      "referenced_by": [
+        "ci81.additional",
+        "first80.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "283981a062158f3b41eea42d52f56eaee457ba97",
+      "referenced_by": [
+        "prci11.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "2a29b228aea13dc6486f616c18d0ff128bab3c9f",
+      "referenced_by": [
+        "ci6.N12"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "2f2dec9de8bd464c83d5c7769abf2f76a2ca950a",
+      "referenced_by": [
+        "ci81.83fe531fb3520bddb83940c8c94838fe3324be77"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "319be2400b1a77a827614d6a876ec273db32103d",
+      "referenced_by": [
+        "ci6.N07",
+        "ci6.N08",
+        "ci6.N09",
+        "ci6.O05"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "3a0f3c6da82890be8bf134d688fc41f387fee75d",
+      "referenced_by": [
+        "prci11.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "3e9fc12e724a40d1d6c880706a9c2bd3eccb0eb5",
+      "referenced_by": [
+        "latter80.ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "43633f6e7f4cb03aae02c1d7f2a6c76d2a70cf07",
+      "referenced_by": [
+        "latter80.ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "43ca94da9df03740af9d668e200e5189b0f5ea0a",
+      "referenced_by": [
+        "ci6.S03"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "50759539544c78a16aa66c2b1a6d8a51acdeace1",
+      "referenced_by": [
+        "latter80.ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "51b95f5784deb22bcf2c7f60c127df16acf1f05e",
+      "referenced_by": [
+        "prci11.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "6159b8ef0d334230e2b34071104ba94f9e835f5a",
+      "referenced_by": [
+        "ci81.additional",
+        "latter80.ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "6210a45b39205d4c76f46fefe1f1edf9adc4b610",
+      "referenced_by": [
+        "ci81.additional",
+        "first80.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "687141e74aca9249ac8bec79d2b4116999683cae",
+      "referenced_by": [
+        "ci6.N03"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "6cfd867096d301fbe55cb0e6bee8c2a6acecaf0d",
+      "referenced_by": [
+        "production20.port_commit_table"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "6e06401819a40ffb8a6cb21f1a1bfd40d9018fcc",
+      "referenced_by": [
+        "architecture10.95939e1380f21dcf3209acaee70e29fcf0141d6c"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "757b8829fb5477c133326aac4f93a34897ce6a2e",
+      "referenced_by": [
+        "latter80.ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "83612992abd90de344be699e8cf1a90e609480f5",
+      "referenced_by": [
+        "first80.selected_ports",
+        "latter80.ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "886d917c8be47482a7206e1d22e23acbb6c8b386",
+      "referenced_by": [
+        "first80.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "898532d47f11c1a4cf92d769b7bb7264fb23ce36",
+      "referenced_by": [
+        "finite_tail",
+        "prci11.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "8fac1d44fb0280fc0cdceb8b1586b4f66f2ed474",
+      "referenced_by": [
+        "latter80.ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "9f117782ec0b4cb02bee29b063975b5f069d2cf8",
+      "referenced_by": [
+        "ci81.35b4e135949fb069d6d0082a5a7b8c2ce4e38376"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "a06fab1ec850e103ead9fee7ed7bc42cb4267165",
+      "referenced_by": [
+        "prci11.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "a0fa27a8160a339fbcf9315beabc5e4f6d2c17d8",
+      "referenced_by": [
+        "first80.selected_ports",
+        "latter80.ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "b89f78cdb702ede1f2a4a98502667929a5f77a2d",
+      "referenced_by": [
+        "production20.port_commit_table"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "b98ef2436bdef513daa44b8eb96f0f164b1f2067",
+      "referenced_by": [
+        "latter80.ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "ba8a5e1fad3ea0cc2012da329667792684802db2",
+      "referenced_by": [
+        "production20.port_commit_table"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "bc24ed14f01167233f9a53306a4d82ba77049c42",
+      "referenced_by": [
+        "finite_tail",
+        "prci11.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "bc5f9d4bf9ceebd2ba0e91b2e8c9d7358a964736",
+      "referenced_by": [
+        "first80.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "c28b6005d9d0bb9e94e275296f2adef8f85b0da9",
+      "referenced_by": [
+        "ci81.cecee753c785b1a1ceb511c75ba85b1996b8bd13"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "c2cc34f4f637467b3c8fcaa246d8a5bff9192ed4",
+      "referenced_by": [
+        "production20.port_commit_table"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "c34a729ac27da5787398a646457256fdddab132f",
+      "referenced_by": [
+        "finite_tail",
+        "prci11.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "caeb2b0cb5542add3be9cedf74212dc594783c0d",
+      "referenced_by": [
+        "prci11.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "ce28801d9499f0c1befe733d9a604ea8473cf191",
+      "referenced_by": [
+        "ci6.N10"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "cf4449916f7a9b0ea63e31c5974e1a3fbf7de157",
+      "referenced_by": [
+        "ci6.N02"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "d81418ff49c3290c1abdb0e0fa0dec3ebe22aeb4",
+      "referenced_by": [
+        "prci11.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "d9325f20b8bab14e080d9516f8274b728e376269",
+      "referenced_by": [
+        "latter80.ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "e180c52b881955c3da054b59e6025d9292a4a4d3",
+      "referenced_by": [
+        "first80.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "e1a996703a7a1ff9734c9cbeb562dee054c77a0d",
+      "referenced_by": [
+        "production20.port_commit_table"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "e82419698aa3fd527c6f828da11cc8749dcb007b",
+      "referenced_by": [
+        "prci11.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "ea649f1802a2330fff2a4a618a88c1856b4d17bd",
+      "referenced_by": [
+        "latter80.ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "eb3a02048eb219558697dffa710e41de8e471899",
+      "referenced_by": [
+        "finite_tail",
+        "prci11.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "ef6df12a042912664df64f2112c2b1c600dce9fa",
+      "referenced_by": [
+        "ci81.83fe531fb3520bddb83940c8c94838fe3324be77"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "ef76e8bf849ed551a4b3154963a837d065d6d644",
+      "referenced_by": [
+        "first80.selected_ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "efb2997a71574f7e2cc3541b211dc2eb6d25ce02",
+      "referenced_by": [
+        "ci6.S01"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "f051715831ea180979c392b29a081ce2fdffa7fc",
+      "referenced_by": [
+        "ci6.S05"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "f2339e75647b816c9884c5b2758de186ed5f0b91",
+      "referenced_by": [
+        "production20.port_commit_table"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "f631c8908898090fe941a438b039939c18a097ee",
+      "referenced_by": [
+        "ci6.N06"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "f66df9b7324daaf7171d6e9f940f562c1a244633",
+      "referenced_by": [
+        "latter80.ports"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    },
+    {
+      "commit": "f71a99cca1489ecb19b116301f47ee62a2dd8412",
+      "referenced_by": [
+        "production20.port_commit_table"
+      ],
+      "ancestor_of_current": true,
+      "ancestry_is_not_byte_identity_or_execution": true
+    }
+  ],
+  "port_commits_not_ancestor": [],
+  "validation": {
+    "root_native_dba": {
+      "source_head": "dba81d56be6598cec9df2774446ca3ab7fccca98",
+      "passed": 321,
+      "original_ignored": 2,
+      "groups": {
+        "PublicV3": 275,
+        "Cell": 44,
+        "MTP": 2
+      },
+      "strict_Node_DA_all_target_all_feature_clippy": true,
+      "fmt": true,
+      "source_entries": 2241,
+      "source_inventory_sha256": "38b9cb01715ac961dbf07cd2237f68bf4037d73aa6d2277f04117cd9d02bf651",
+      "summary_input": "root_dba_native_summary",
+      "raw_input": "root_dba_native_original",
+      "index_input": "root_dba_native_index",
+      "terminal_input": "root_dba_native_terminal",
+      "not_a_whole_current_head_test_claim": true
+    },
+    "T03": {
+      "source_commit": "898532d47f11c1a4cf92d769b7bb7264fb23ce36",
+      "linux_methods_passed": 59,
+      "original_pending_methods": 36,
+      "current_worker_methods": 23,
+      "original_method_AST_exact": 34,
+      "approved_frozen_pilot_digest_adapters": 2,
+      "raw_input": "T03_original_execution",
+      "index_input": "T03_raw_receipt_index",
+      "prior_driver_errors_and_once_refusals_preserved": true
+    },
+    "Cell_MTP": {
+      "raw_input": "Cell_MTP_original_execution",
+      "index_input": "Cell_MTP_original_receipt_index",
+      "members": 39,
+      "initial_Mac_availability_12_pass_1_fail_preserved": true,
+      "isolated_baseline_and_patch_both_pass_not_explanation": true
+    }
+  },
+  "archive_verified": false,
+  "old_local_archive_readback": [
+    {
+      "args": [
+        "show-ref",
+        "--verify",
+        "refs/tags/archive/branches-before-consolidation-20261113-5954"
+      ],
+      "exit_code": 128,
+      "stdout": "",
+      "stderr": "fatal: 'refs/tags/archive/branches-before-consolidation-20261113-5954' - not a valid ref"
+    },
+    {
+      "args": [
+        "cat-file",
+        "-e",
+        "b9cc24f76617e28015ee890635ece8449b52ee7c^{commit}"
+      ],
+      "exit_code": 128,
+      "stdout": "",
+      "stderr": "fatal: Not a valid object name b9cc24f76617e28015ee890635ece8449b52ee7c^{commit}"
+    }
+  ],
+  "new_remote_archive_creation_and_verification": "pending coordinator",
+  "current_source_bindings": "coordinator final binding pass pending at this captured revision; not promoted from historical locks",
+  "required_hosted_four_second_gate": "original failures remain blockers; exact published head and prospective merge runs still required",
+  "qualification_granted": false,
+  "branch_deletion_authorized": false
+}

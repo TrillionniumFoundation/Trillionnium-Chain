@@ -1,0 +1,182 @@
+[
+  {
+    "artifact": 13263326083,
+    "original_43_control_records_and_logs_unchanged": true,
+    "records": {
+      "node-lib.json": {
+        "source": "45962558a7133375b16c0ac2600f2edb4a115585",
+        "tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+        "kind": "head",
+        "exit_code": 101,
+        "elapsed_seconds": 1179.434584015,
+        "summaries": [
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 963 filtered out; finished in 0.00s",
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 963 filtered out; finished in 0.00s",
+          "test result: FAILED. 940 passed; 1 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1177.51s"
+        ],
+        "new_tests": [
+          "test pq_rollback_witness::tests::known_checkpoint_preserves_exact_retry_and_unobserved_other_writer_progress ... ok",
+          "test pq_rollback_witness::tests::known_checkpoint_refuses_local_cas_conflicts_before_signing_or_transport ... ok"
+        ],
+        "failures": [
+          "test store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse ... FAILED"
+        ]
+      },
+      "clippy.json": {
+        "source": "45962558a7133375b16c0ac2600f2edb4a115585",
+        "tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+        "kind": "head",
+        "exit_code": 0,
+        "elapsed_seconds": 35.33485388,
+        "summaries": [],
+        "new_tests": [],
+        "failures": []
+      },
+      "build.json": {
+        "source": "45962558a7133375b16c0ac2600f2edb4a115585",
+        "tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+        "kind": "head",
+        "exit_code": 0,
+        "elapsed_seconds": 269.740118827,
+        "summaries": [],
+        "new_tests": [],
+        "failures": []
+      }
+    }
+  },
+  {
+    "artifact": 13263262338,
+    "original_43_control_records_and_logs_unchanged": true,
+    "records": {
+      "node-lib.json": {
+        "source": "45962558a7133375b16c0ac2600f2edb4a115585",
+        "tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+        "kind": "head",
+        "exit_code": 101,
+        "elapsed_seconds": 2159.921991918,
+        "summaries": [
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 963 filtered out; finished in 0.00s",
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 963 filtered out; finished in 0.00s",
+          "test result: FAILED. 940 passed; 1 failed; 23 ignored; 0 measured; 0 filtered out; finished in 2158.07s"
+        ],
+        "new_tests": [
+          "test pq_rollback_witness::tests::known_checkpoint_preserves_exact_retry_and_unobserved_other_writer_progress ... ok",
+          "test pq_rollback_witness::tests::known_checkpoint_refuses_local_cas_conflicts_before_signing_or_transport ... ok"
+        ],
+        "failures": [
+          "test store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse ... FAILED"
+        ]
+      },
+      "clippy.json": {
+        "source": "45962558a7133375b16c0ac2600f2edb4a115585",
+        "tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+        "kind": "head",
+        "exit_code": 0,
+        "elapsed_seconds": 40.839168508,
+        "summaries": [],
+        "new_tests": [],
+        "failures": []
+      },
+      "build.json": {
+        "source": "45962558a7133375b16c0ac2600f2edb4a115585",
+        "tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+        "kind": "head",
+        "exit_code": 0,
+        "elapsed_seconds": 364.274100731,
+        "summaries": [],
+        "new_tests": [],
+        "failures": []
+      }
+    }
+  },
+  {
+    "artifact": 13263163201,
+    "original_43_control_records_and_logs_unchanged": true,
+    "records": {
+      "node-lib.json": {
+        "source": "9762e8e5c0485d148a01cf0810790497cb21968f",
+        "tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+        "kind": "prospective-merge",
+        "exit_code": 101,
+        "elapsed_seconds": 2157.860058856,
+        "summaries": [
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 963 filtered out; finished in 0.00s",
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 963 filtered out; finished in 0.00s",
+          "test result: FAILED. 940 passed; 1 failed; 23 ignored; 0 measured; 0 filtered out; finished in 2156.03s"
+        ],
+        "new_tests": [
+          "test pq_rollback_witness::tests::known_checkpoint_preserves_exact_retry_and_unobserved_other_writer_progress ... ok",
+          "test pq_rollback_witness::tests::known_checkpoint_refuses_local_cas_conflicts_before_signing_or_transport ... ok"
+        ],
+        "failures": [
+          "test store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse ... FAILED"
+        ]
+      },
+      "clippy.json": {
+        "source": "9762e8e5c0485d148a01cf0810790497cb21968f",
+        "tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+        "kind": "prospective-merge",
+        "exit_code": 0,
+        "elapsed_seconds": 39.455824167,
+        "summaries": [],
+        "new_tests": [],
+        "failures": []
+      },
+      "build.json": {
+        "source": "9762e8e5c0485d148a01cf0810790497cb21968f",
+        "tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+        "kind": "prospective-merge",
+        "exit_code": 0,
+        "elapsed_seconds": 354.990763802,
+        "summaries": [],
+        "new_tests": [],
+        "failures": []
+      }
+    }
+  },
+  {
+    "artifact": 13261143324,
+    "original_43_control_records_and_logs_unchanged": true,
+    "records": {
+      "node-lib.json": {
+        "source": "9762e8e5c0485d148a01cf0810790497cb21968f",
+        "tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+        "kind": "prospective-merge",
+        "exit_code": 101,
+        "elapsed_seconds": 941.203027313,
+        "summaries": [
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 963 filtered out; finished in 0.00s",
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 963 filtered out; finished in 0.00s",
+          "test result: FAILED. 940 passed; 1 failed; 23 ignored; 0 measured; 0 filtered out; finished in 939.55s"
+        ],
+        "new_tests": [
+          "test pq_rollback_witness::tests::known_checkpoint_preserves_exact_retry_and_unobserved_other_writer_progress ... ok",
+          "test pq_rollback_witness::tests::known_checkpoint_refuses_local_cas_conflicts_before_signing_or_transport ... ok"
+        ],
+        "failures": [
+          "test store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse ... FAILED"
+        ]
+      },
+      "clippy.json": {
+        "source": "9762e8e5c0485d148a01cf0810790497cb21968f",
+        "tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+        "kind": "prospective-merge",
+        "exit_code": 0,
+        "elapsed_seconds": 31.220295951,
+        "summaries": [],
+        "new_tests": [],
+        "failures": []
+      },
+      "build.json": {
+        "source": "9762e8e5c0485d148a01cf0810790497cb21968f",
+        "tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+        "kind": "prospective-merge",
+        "exit_code": 0,
+        "elapsed_seconds": 248.188520274,
+        "summaries": [],
+        "new_tests": [],
+        "failures": []
+      }
+    }
+  }
+]

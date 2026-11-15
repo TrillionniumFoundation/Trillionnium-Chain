@@ -1,0 +1,10 @@
+{
+  "schema": "validation-retarget-observation-v1",
+  "time_utc": "2026-11-05T09:30:44.349687+00:00",
+  "old_tested_commit": "bbc940cbdbdd6092158f735565004812ee834281",
+  "concurrent_candidate": "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb",
+  "stop_method": "exec session write_stdin Ctrl-C",
+  "session_exit_code": 130,
+  "tests_observed_complete": 0,
+  "reason": "The candidate advanced with architecture test and ELF/research changes. Preserve the completed exact-source static checks and strict workspace Clippy. Stop the still-compiling Node test invocation, merge the new source and publish it before starting final native validation. The incomplete native receipt remains unmodified and is not a passing test result."
+}

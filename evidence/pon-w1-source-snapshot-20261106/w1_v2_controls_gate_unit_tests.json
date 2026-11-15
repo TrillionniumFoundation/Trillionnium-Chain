@@ -1,0 +1,20 @@
+{
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_w1_v2_controls_gate.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+  "exit_code": 0,
+  "source_sha256": {
+    "scripts/ci/w1_v2_controls_gate.py": "49ef8c18ac19a3cce763d24aa3743ea11586b0cce3bd36ffd9390d450a7b175a",
+    "scripts/ci/test_w1_v2_controls_gate.py": "7bcc0ae8816e3156d354b467b003d90ed131b31aba1653003c0fae2bdddb750f"
+  },
+  "log": "w1_v2_controls_gate_unit_tests.log"
+}

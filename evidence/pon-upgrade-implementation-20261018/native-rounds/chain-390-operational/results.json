@@ -1,0 +1,216 @@
+{
+  "head": "390617cbe7b169843f60c5622ec26d2531f385d3",
+  "tree": "f2817209ce22b41fdffda284d37c9381edcd6dae",
+  "scope": "finite single-host native development campaigns; not independent operators or WAN; compilation included in command durations",
+  "steps": [
+    {
+      "name": "preflight",
+      "command": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.09236546797910705,
+      "child_user_seconds": 0.076067,
+      "child_system_seconds": 0.016218999999999997,
+      "waited_child_peak_rss_bytes": 36139008
+    },
+    {
+      "name": "task-fixture-plan",
+      "command": [
+        "/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/examples/hepta_task_fixture",
+        "plan",
+        "1792330177"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.005415388965047896,
+      "child_user_seconds": 0.0038839999999999986,
+      "child_system_seconds": 0.0009709999999999996,
+      "waited_child_peak_rss_bytes": 36139008
+    },
+    {
+      "name": "task-fixture-prepare",
+      "command": [
+        "/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/examples/hepta_task_fixture",
+        "prepare",
+        "/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-390-operational/task-fixture",
+        "1792330177",
+        "authenticated-v1",
+        "ca86e5456c6983525449d7a5acf55eccd2a6c16666553324419e0cc104783e03"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.4124383819871582,
+      "child_user_seconds": 0.332808,
+      "child_system_seconds": 0.007995000000000002,
+      "waited_child_peak_rss_bytes": 36139008
+    },
+    {
+      "name": "continuous-growth-100-blocks",
+      "command": [
+        "/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/examples/continuous_pipeline",
+        "/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-390-operational/continuous-growth",
+        "100",
+        "8",
+        "1000",
+        "growth",
+        "protected"
+      ],
+      "returncode": 2,
+      "elapsed_seconds": 168.2497984180227,
+      "child_user_seconds": 148.912755,
+      "child_system_seconds": 5.919706,
+      "waited_child_peak_rss_bytes": 36139008
+    },
+    {
+      "name": "public-v3-mixed",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_v3_service_campaign",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 101,
+      "elapsed_seconds": 4.074581020977348,
+      "child_user_seconds": 8.500551999999999,
+      "child_system_seconds": 0.7234620000000005,
+      "waited_child_peak_rss_bytes": 246079488
+    },
+    {
+      "name": "public-v3-multiprocess",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_v3_multiprocess",
+        "separate_process_work_and_signed_confirmation_campaign",
+        "--",
+        "--ignored",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 101,
+      "elapsed_seconds": 144.8158232960268,
+      "child_user_seconds": 95.0712,
+      "child_system_seconds": 9.221564,
+      "waited_child_peak_rss_bytes": 277053440
+    },
+    {
+      "name": "public-roles-restart",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "distributed_roles",
+        "public_producer_and_confirmer_resume_exact_packets_without_guest_session_authority",
+        "--",
+        "--ignored",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 23.306719700980466,
+      "child_user_seconds": 9.678932000000003,
+      "child_system_seconds": 1.6766129999999997,
+      "waited_child_peak_rss_bytes": 277053440
+    },
+    {
+      "name": "submit-recovery",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_submit_recovery",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 35.47866280796006,
+      "child_user_seconds": 12.302600999999981,
+      "child_system_seconds": 2.0533959999999993,
+      "waited_child_peak_rss_bytes": 277053440
+    },
+    {
+      "name": "native-process-cuts",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "native_node",
+        "process_cut",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 10.551947539963294,
+      "child_user_seconds": 12.054446999999982,
+      "child_system_seconds": 0.7019280000000023,
+      "waited_child_peak_rss_bytes": 277053440
+    },
+    {
+      "name": "data-availability",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 17.415440540004056,
+      "child_user_seconds": 18.053707999999972,
+      "child_system_seconds": 1.0151280000000007,
+      "waited_child_peak_rss_bytes": 289624064
+    }
+  ]
+}

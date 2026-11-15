@@ -1,0 +1,30 @@
+{
+  "schema": "native-cache-terminal-recovery-v1",
+  "observed_utc": "2026-11-05T01:11:02.044979+00:00",
+  "test_result": "UNKNOWN",
+  "session_recovery": "Unknown process id 60786",
+  "result_json_present": false,
+  "cargo_log_bytes": 0,
+  "cargo_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "preflight_log_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+  "last_observed_runner_elapsed_seconds": 136,
+  "compiler_started": null,
+  "exit_code": null,
+  "timeout_observed": false,
+  "oom_observed": false,
+  "termination_cause": "UNKNOWN_EXECUTOR_DISCONNECTION",
+  "owned_processes_with_private_cwd": [],
+  "private_target_exists": false,
+  "private_target_entries": [],
+  "changed_file_sha256": {
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "27f4a2228657e4bc2e664008a84670b93ca311a3dc7dbe941e365b27a7bacda7",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs": "0424c5063e8a8eadb5b32e09fc38b3c455e0ae9488f4a26288d9b58be59b6e1d",
+    "trillionnium/crates/trnm-pon-node/tests/public_cache_modes.rs": "64722f31d663a63ef250b57bcdb160d0c636531c7033c72889107eb84de1775f"
+  },
+  "initial_reproduction_sha256_matches": true,
+  "production_activation": false,
+  "declared_expected_base_commit": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+  "recovered_private_checkout_head": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+  "declared_and_recovered_base_match": false,
+  "source_binding_limit": "Changed file hashes match initial and integrated copies; original runner did not verify declared base against Git HEAD. No whole-tree test-source identity or native test result is established."
+}

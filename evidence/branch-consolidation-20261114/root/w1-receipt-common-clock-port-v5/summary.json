@@ -1,0 +1,112 @@
+{
+  "prior": "20225691ec9f0cffd84884f6f21cd15db3cbe401",
+  "code_commit": "05aadef33b9b0b20d83f5c12262f79309c6205f1",
+  "head": "43ca94da9df03740af9d668e200e5189b0f5ea0a",
+  "tree": "94b7aed09ffeabfde9df72fc04d26448f4edd92c",
+  "steps": [
+    {
+      "label": "preflight",
+      "exit": 0,
+      "seconds": 0.044,
+      "sha256": "56375c21df596b70348e1b7c230e4d64c2a5cb1de197572d8ae9fe5cb8b94789"
+    },
+    {
+      "label": "stage-immutable-original-fixture",
+      "exit": 0,
+      "seconds": 0.021,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "commit-immutable-original-fixture",
+      "exit": 0,
+      "seconds": 0.057,
+      "sha256": "5a37276d838de87f2028c37d779bba06dd020305bb5d46b66cbf8e674640fd56"
+    }
+  ],
+  "prior_validation_steps": [
+    {
+      "label": "preflight",
+      "exit": 0,
+      "seconds": 0.047,
+      "sha256": "56375c21df596b70348e1b7c230e4d64c2a5cb1de197572d8ae9fe5cb8b94789"
+    },
+    {
+      "label": "historical-and-hosted-readonly-25",
+      "exit": 0,
+      "seconds": 3.15,
+      "sha256": "c32b540059e0aea68cfd07c0c04c8b2851de243e74763a2b348faf2fc5d90bfd"
+    },
+    {
+      "label": "ci-lane-controls",
+      "exit": 0,
+      "seconds": 2.128,
+      "sha256": "765d9dbba7fecaf547db91a9b30d080479040780d47a9a3e545be96b140eb2e8"
+    },
+    {
+      "label": "source-guards",
+      "exit": 0,
+      "seconds": 3.405,
+      "sha256": "c1fd757d43f81c5f871a0d60c8529661b49f78693b946f637862d8e3ebbbc75f"
+    },
+    {
+      "label": "corpus",
+      "exit": 0,
+      "seconds": 0.651,
+      "sha256": "a4af2ae613b2e869123109a9eb1299fa33309dea759d4a22cf0bf482b48cb718"
+    },
+    {
+      "label": "ci-contract",
+      "exit": 0,
+      "seconds": 0.068,
+      "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+    },
+    {
+      "label": "diff",
+      "exit": 0,
+      "seconds": 0.045,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "precommit",
+      "exit": 0,
+      "seconds": 0.048,
+      "sha256": "56375c21df596b70348e1b7c230e4d64c2a5cb1de197572d8ae9fe5cb8b94789"
+    },
+    {
+      "label": "stage",
+      "exit": 0,
+      "seconds": 0.065,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "commit",
+      "exit": 0,
+      "seconds": 0.067,
+      "sha256": "d259912adb20be3656e2872e7742a44d510e302eaac760b8699a897d6cef8a6a"
+    }
+  ],
+  "pure_historical_and_hosted_controls": 25,
+  "original_historical_methods_unchanged": 23,
+  "new_original_methods_with_documented_api_adaptation": 8,
+  "separate_current_stage_methods_unchanged": 10,
+  "linux_process_validation": "pending full 31 plus separate current-stage 10",
+  "retained_archive": {
+    "path": "evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz",
+    "git_blob": "7f2ef519a6dbe09424fd1719f91ba8a58a43c025",
+    "sha256": "e5f2e58908889961a0198a273ea2c5aab0a70c679ea46c5b06d92a0012fab028",
+    "unchanged_original_failed_gate_outcome": true
+  },
+  "patch_sha256": "fb61827ead9b7a82bb079663a38474d4ac2f0776f3b701fa1f96b1ededf90336",
+  "paths": [
+    ".github/workflows/pon-w1-transparent-profile.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/test_ci_contract.py",
+    "scripts/ci/test_pq_research_integration.py",
+    "scripts/ci/test_w1_v2_controls_gate.py",
+    "scripts/ci/w1_v2_controls_gate.py"
+  ]
+}

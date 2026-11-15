@@ -1,0 +1,94 @@
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/b9454e263603/chain_obligations/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/b9454e263603/chain_obligations/trillionnium/crates/trnm-pon-node)
+error[E0603]: module `store` is private
+  --> crates/trnm-pon-node/tests/../examples/support/native_owner_scenario.rs:6:20
+   |
+ 6 | use trnm_pon_node::store::native_owner_observation::{OwnerCensusLimits, OwnerCensusProgress};
+   |                    ^^^^^  ------------------------ module `native_owner_observation` is not publicly re-exported
+   |                    |
+   |                    private module
+   |
+note: the module `store` is defined here
+  --> crates/trnm-pon-node/src/lib.rs:31:1
+   |
+31 | mod store;
+   | ^^^^^^^^^
+
+error[E0603]: module `store` is private
+  --> crates/trnm-pon-node/tests/../examples/support/native_owner_scenario.rs:6:20
+   |
+ 6 | use trnm_pon_node::store::native_owner_observation::{OwnerCensusLimits, OwnerCensusProgress};
+   |                    ^^^^^ private module                                 ------------------- enum `OwnerCensusProgress` is not publicly re-exported
+   |
+note: the module `store` is defined here
+  --> crates/trnm-pon-node/src/lib.rs:31:1
+   |
+31 | mod store;
+   | ^^^^^^^^^
+
+error[E0603]: module `store` is private
+  --> crates/trnm-pon-node/tests/native_owner_observation.rs:12:20
+   |
+12 | use trnm_pon_node::store::native_owner_observation::{OwnerCensusLimits, OwnerCensusProgress};
+   |                    ^^^^^  ------------------------ module `native_owner_observation` is not publicly re-exported
+   |                    |
+   |                    private module
+   |
+note: the module `store` is defined here
+  --> crates/trnm-pon-node/src/lib.rs:31:1
+   |
+31 | mod store;
+   | ^^^^^^^^^
+
+error[E0603]: module `store` is private
+  --> crates/trnm-pon-node/tests/native_owner_observation.rs:12:20
+   |
+12 | use trnm_pon_node::store::native_owner_observation::{OwnerCensusLimits, OwnerCensusProgress};
+   |                    ^^^^^ private module                                 ------------------- enum `OwnerCensusProgress` is not publicly re-exported
+   |
+note: the module `store` is defined here
+  --> crates/trnm-pon-node/src/lib.rs:31:1
+   |
+31 | mod store;
+   | ^^^^^^^^^
+
+error[E0603]: function `digest_bytes` is private
+   --> crates/trnm-pon-node/tests/../examples/support/native_owner_scenario.rs:22:42
+    |
+ 22 |     trnm_pon_node::operator_task_policy::digest_bytes(bytes)
+    |                                          ^^^^^^^^^^^^ private function
+    |
+note: the function `digest_bytes` is defined here
+   --> crates/trnm-pon-node/src/operator_task_policy.rs:305:1
+    |
+305 | pub(crate) fn digest_bytes(raw: &[u8]) -> String {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0277]: `?` couldn't convert the error to `trnm_pon_node::Error`
+   --> crates/trnm-pon-node/tests/../examples/support/native_owner_scenario.rs:146:7
+    |
+126 |   fn signed_transfer(settings: &Settings) -> Result<Vec<u8>> {
+    |                                              --------------- expected `trnm_pon_node::Error` because of this
+...
+141 |       transaction.signature = hex::decode(sign_hex(
+    |  _____________________________-
+142 | |         &key,
+143 | |         &transaction
+144 | |             .signing_digest()
+145 | |             .map_err(|e| Error::from(format!("TEST_SIGN:{e:?}")))?,
+146 | |     ))?
+    | |      -^ the trait `From<FromHexError>` is not implemented for `trnm_pon_node::Error`
+    | |______|
+    |        this can't be annotated with `?` because it has type `Result<_, FromHexError>`
+    |
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+    = help: the following other types implement trait `From<T>`:
+              `trnm_pon_node::Error` implements `From<&str>`
+              `trnm_pon_node::Error` implements `From<rusqlite::Error>`
+              `trnm_pon_node::Error` implements `From<serde_json::Error>`
+              `trnm_pon_node::Error` implements `From<std::io::Error>`
+              `trnm_pon_node::Error` implements `From<std::string::String>`
+
+Some errors have detailed explanations: E0277, E0603.
+For more information about an error, try `rustc --explain E0277`.
+error: could not compile `trnm-pon-node` (test "native_owner_observation") due to 6 previous errors

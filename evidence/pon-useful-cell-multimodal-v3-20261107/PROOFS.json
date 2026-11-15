@@ -1,0 +1,1560 @@
+{
+  "earlier_group_not_added_to_final_count": true,
+  "final_unique_complete_w1_proofs": 96,
+  "groups": {
+    "controls-attempt1": {
+      "entries": [
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "image_projection",
+          "ordinal": 0,
+          "sha256": "ea758593431c01900cbd7c80588cb408b5ad388432fb54d709a5c53903911582"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "audio_projection",
+          "ordinal": 1,
+          "sha256": "b5c3600c965b12ef2ace0b9022601e138db87a210103ed229245ed927f2439ed"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "base_up",
+          "ordinal": 2,
+          "sha256": "ff5f35dc67cbd105425c83f04ada682c8a6e81f3a729945100e5b739ab7b812f"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "base_down",
+          "ordinal": 3,
+          "sha256": "2bfd1cf7726a8464ab9b38624b4f148f4d08ed7cf7935a75bccf9cf35783dbca"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "router",
+          "ordinal": 4,
+          "sha256": "bf1752546f3e777a4e8374578b1c073ab0895d384435ebb5cb5d426f997b6687"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "adapter_0_down",
+          "ordinal": 5,
+          "sha256": "404fd52353c7fbfd88c662765fc8f800eb8ae156d308903b6c131a261cff3a84"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "adapter_0_up",
+          "ordinal": 6,
+          "sha256": "7cd103716effd701db9fc2b56c1a1ef58db521c6eacefe0b5666cdc4e0597423"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "adapter_1_down",
+          "ordinal": 7,
+          "sha256": "bb57ab538b3efb97064e1d5efb498e6066403a5a6de72958c96eb887d381486d"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "adapter_1_up",
+          "ordinal": 8,
+          "sha256": "e4d7d5c9f209258066ed7ec3cf14b956461a11359f7ff389b016dd6131c863ba"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "adapter_2_down",
+          "ordinal": 9,
+          "sha256": "0ceff42e2ff47ceaf807018253ef8044e0c130fef7bd2428abde32ef54e8f215"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "adapter_2_up",
+          "ordinal": 10,
+          "sha256": "4d246d316a3d03b8b69a6ab012ab72fa3f668f46df5487d696e69caf5177eff3"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "head",
+          "ordinal": 11,
+          "sha256": "f26481a34401d042d00cab9efdfcf347f6b8c8cc29f07108544954256212df08"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "image_projection",
+          "ordinal": 0,
+          "sha256": "023b2e5fc81eaa6e923c0c17ffc53511e60fdf8c43a6f0e93244f46996493400"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "audio_projection",
+          "ordinal": 1,
+          "sha256": "f0105635d7976830a48ec8911b5834f1fdf5c3f82ac4206ba0958de2e04708af"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "base_up",
+          "ordinal": 2,
+          "sha256": "d1bb853ed11f645de984d57e10493b0547d9438276e34d7a3d263a88d9cd48e2"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "base_down",
+          "ordinal": 3,
+          "sha256": "69082078d2f2e2c35572eca6f033b36383261a8f552c572bf9871f4da09392e2"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "router",
+          "ordinal": 4,
+          "sha256": "5ee78a32129b73dbdde72a5693eb46db6515d35ab7d88f7d420d6beae438cd3a"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "adapter_0_down",
+          "ordinal": 5,
+          "sha256": "57b6ccc37bcf3dc4875ede5312b9ac1658a1914cd2481249ffc21868e214e67a"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "adapter_0_up",
+          "ordinal": 6,
+          "sha256": "eefe82e8db3376947897e4892d393c04658c3d3139257128420d2fb0e7b8b4f2"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "adapter_1_down",
+          "ordinal": 7,
+          "sha256": "f9990e08dd32159df54dffd85762a5e8d42f0f8f6d7f5a4add22cbd09720b10f"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "adapter_1_up",
+          "ordinal": 8,
+          "sha256": "fdb4abe67e69c3c92d9647991182e48afbc14d2352bac74556ed07d896c02608"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "adapter_2_down",
+          "ordinal": 9,
+          "sha256": "8a1e1450314e37e49a797298d47e6bfbf4573c8722f846749032c87aea236312"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "adapter_2_up",
+          "ordinal": 10,
+          "sha256": "db0f67e0e982f30a351ec23242fbef998816291da42780832eb1b8e5f9c516a0"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "head",
+          "ordinal": 11,
+          "sha256": "17c2e65b8ac391ff621b12e98d744ac55e7ab8d85f7d24ca1887d2fef98e3dd7"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "image_projection",
+          "ordinal": 0,
+          "sha256": "2f798595d543baf97b5e148d02ecb8557621a2081f15056c8991def4950b8c94"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "audio_projection",
+          "ordinal": 1,
+          "sha256": "b08ab11dda21bb00211dea94dc2f84fcb16b6a69f8274b7da54e3d90a109f0e5"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "base_up",
+          "ordinal": 2,
+          "sha256": "99d417c735a24932504701f73701cbdad948e8c782c6f014c03fe0c66553d4f7"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "base_down",
+          "ordinal": 3,
+          "sha256": "569bf96bbcd7fab793dc42317aa47a48488fbf32b29bb0e3b648f6d1201cdb15"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "router",
+          "ordinal": 4,
+          "sha256": "8284e1c260613eb99c01fa1b7a55338dd36ec87177862a5997959af29d13ebf3"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "adapter_0_down",
+          "ordinal": 5,
+          "sha256": "275615aa161b3e0f7a3c3ab44072737f6f208b80f88d3587d69bdf233095d42f"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "adapter_0_up",
+          "ordinal": 6,
+          "sha256": "1d3608307b9bfd96f9480655bfdad8858f8df48729c3d1806c67f889bca28be6"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "adapter_1_down",
+          "ordinal": 7,
+          "sha256": "fe7cf1bbb0cb2a5dd9d9b449a4e3a5d3fb14263066095fd6e468e40b26f1911b"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "adapter_1_up",
+          "ordinal": 8,
+          "sha256": "2dff9cd4dc773b6467f23c6de2c4593a8695d1302d396f64be2e871ff8a682c7"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "adapter_2_down",
+          "ordinal": 9,
+          "sha256": "f66658819738b1829bd5d32c94cbd40fc1699217fd86484b9956d3a31f068d88"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "adapter_2_up",
+          "ordinal": 10,
+          "sha256": "3e009442881b13c0c4637fac5f8d9bd4c9a4d31c08d44fc7f66f2bc8d0d8439d"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "head",
+          "ordinal": 11,
+          "sha256": "bbdce3568f979c26a7e7cfea906b672fba55cdf00f09c84d1b4b000f89dad119"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "image_projection",
+          "ordinal": 0,
+          "sha256": "a8d11c485c12b2f446d13a2f7dcd8c5e0273213b506709692429b23cec0ed18f"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "audio_projection",
+          "ordinal": 1,
+          "sha256": "d5b7eb88de0346026d69d074534d649a2dd4789a2b1da08db2ed317b9003db19"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "base_up",
+          "ordinal": 2,
+          "sha256": "c730879e9ce34eb623346d825502b53ea79ae9499fea15f048e2e6f411676cbe"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "base_down",
+          "ordinal": 3,
+          "sha256": "0c309ac4e20b34a311b6b66a64dd8ef59705ef94dddd19e44439bf330ee41f04"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "router",
+          "ordinal": 4,
+          "sha256": "5d8138d9e22c0ffdeccc63d22f1f28dc0483dd927598efbb2071badd3e242d8b"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "adapter_0_down",
+          "ordinal": 5,
+          "sha256": "2a2666554a96f40c8352dfa875c363ead936d7668c284a4f959e356341339fcf"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "adapter_0_up",
+          "ordinal": 6,
+          "sha256": "29dbab7d6b7128a291c6104695f08eb58468a0ba6074dd7dc5fa31df5130a991"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "adapter_1_down",
+          "ordinal": 7,
+          "sha256": "9c18e2e3b8f5695c3e4682dedd8de4c90a7f5b80ece783d2cce6a40f3eee43fc"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "adapter_1_up",
+          "ordinal": 8,
+          "sha256": "26ec066a3720c89a339353aa4bc94b6d207567eab2a6672c3f7595e14f79a9e6"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "adapter_2_down",
+          "ordinal": 9,
+          "sha256": "b45348db14f1b79ac9d7a8d90705cba8ee9885ff20a5ef0819c057e2ec246bbd"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "adapter_2_up",
+          "ordinal": 10,
+          "sha256": "14fa86783d33d0b92ea0e70bcd7d0599ae9ae9220b36758f5b3fa64fad417e8b"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "head",
+          "ordinal": 11,
+          "sha256": "9a6f3c40313564a679ffad14ec915282865b26703d7eac643e4db1d161546e59"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "image_projection",
+          "ordinal": 0,
+          "sha256": "d76c6f14b69cf803e8e6467e4239f69b48888f0abdbde4894162fccfe28e5968"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "audio_projection",
+          "ordinal": 1,
+          "sha256": "49ebf9f637825cfe83c3dffefea414a61b455adec030bc87e482310845c8e343"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "base_up",
+          "ordinal": 2,
+          "sha256": "16ec72d40248717c764a03f3151b61855dc52fbe29948743848d91309f0368a7"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "base_down",
+          "ordinal": 3,
+          "sha256": "a507943ce287af0968934ed5021d4b41e598b2558df9e5d9b646a977d66a745e"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "router",
+          "ordinal": 4,
+          "sha256": "7e6059489e4815a38866cb6b03cddfd5798709cc59af636877496df1541a9b58"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "adapter_0_down",
+          "ordinal": 5,
+          "sha256": "4d33a0b6a041ba6b2199d3d29380a04b46972cb27659af578cdf43e2d7fe1820"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "adapter_0_up",
+          "ordinal": 6,
+          "sha256": "896fd61436fe42edddb1199e8ac9a49ccf5592493582da3cde17847b8b079843"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "adapter_1_down",
+          "ordinal": 7,
+          "sha256": "edeee2452f221e0af5d760f8e9d368c530348cb993936855c57a651b7c74f6c9"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "adapter_1_up",
+          "ordinal": 8,
+          "sha256": "e27186564041ec45bab4c8a4c197e129033e8a388331805770cccf79d83f7bb5"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "adapter_2_down",
+          "ordinal": 9,
+          "sha256": "803d0b3fba1ad42e4cc8dd94031a547840dad095adc4e06e9d29531d311bbaec"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "adapter_2_up",
+          "ordinal": 10,
+          "sha256": "a2635ccaf1ecdf8118e07b61be2abd3bfed602391e918f77c6a5d9b54cbfcc19"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "head",
+          "ordinal": 11,
+          "sha256": "aac728e3e8e4e8ca2130fceecc33dbe6caf6fb043fc0d741be984cc483d853ef"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "image_projection",
+          "ordinal": 0,
+          "sha256": "c87eb03a7be0b1ee8b606f59692ee1ff931805f9320e00a67ffe40d688c1b6f7"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "audio_projection",
+          "ordinal": 1,
+          "sha256": "4bfc854f00b4c53dc711373746f0d41f3456e3f932457be927720c6f8ab764e6"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "base_up",
+          "ordinal": 2,
+          "sha256": "ec355fc3f1197a29e1321756a6eaf014ca1a8cf38270cf66e57dec6c3ff5be4f"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "base_down",
+          "ordinal": 3,
+          "sha256": "f80249a6cb9aa3e3d57952ee6a02606499d2f67f0aa3f0a11802b19cd37bce30"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "router",
+          "ordinal": 4,
+          "sha256": "0be432f7e3347496e7c9053d6b411101d72116acf6f40803439aad446a443e2f"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "adapter_0_down",
+          "ordinal": 5,
+          "sha256": "2322744b2e4df160f5fc771f4a37692b28d7b45b457741be335d08b937902339"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "adapter_0_up",
+          "ordinal": 6,
+          "sha256": "a93722fb880d2b4554b15f43998f56d14763b0a7f8eb36b61e6b038265f83832"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "adapter_1_down",
+          "ordinal": 7,
+          "sha256": "2036bd623b6e2476dec9a40edfea43d74f27639475de2a4cb551017fb27a3bcb"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "adapter_1_up",
+          "ordinal": 8,
+          "sha256": "04a8a6f32f100d2fdb10303d25f6b0e42915c5e026bd6c63b3d0501326fc0888"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "adapter_2_down",
+          "ordinal": 9,
+          "sha256": "04e2fd7009476497f7c66b507ada59014fefcaf499ba037c92d05402b30f50e7"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "adapter_2_up",
+          "ordinal": 10,
+          "sha256": "15d0e9969ca1f83a92f574c1aa895e7ff561392a5fe5ca388d33c8450b7509b4"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "head",
+          "ordinal": 11,
+          "sha256": "9b821bae3edcfa7392a1e2fe5c9bc0ae19701133ac84b0c09ea03117ec14ef28"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "image_projection",
+          "ordinal": 0,
+          "sha256": "5277e30dca1546230841b016d1fc0411cf4a32305b665d2b6e180d75b76ea496"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "audio_projection",
+          "ordinal": 1,
+          "sha256": "c22369c07f94d0be795f23c441bc60d1886272a82f9ce4e09595c5b9ccf01337"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "base_up",
+          "ordinal": 2,
+          "sha256": "b20525b1bd9733aacc5f9ea13b7a743d14733ab77c979a534bc3147e87b4b31e"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "base_down",
+          "ordinal": 3,
+          "sha256": "06620486460f97aef8734e2ff9b175e877cab638357f3604423ee34d63338b83"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "router",
+          "ordinal": 4,
+          "sha256": "42d73960852209cab0f8367a585cf8fdb7cb5a82d8381c3619d8eccf2400ae7e"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "adapter_0_down",
+          "ordinal": 5,
+          "sha256": "2e00fb82a8df7763e8e6ff2c662df8d161557634c7ec6f77e218958ebb3d6189"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "adapter_0_up",
+          "ordinal": 6,
+          "sha256": "a3b5c1aff7f7784fde30e83edc2ecd14ae103a63df9d562503a41f0b840d99f0"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "adapter_1_down",
+          "ordinal": 7,
+          "sha256": "656a7ba5e4d08d6d25ba7cef7343079ed1a335be5b2bb8a719f1e7037565112b"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "adapter_1_up",
+          "ordinal": 8,
+          "sha256": "0ec318ecd3907e8606aa54c1bf8db4062fafdfb16ccaaca62e0bc7637a39c6f3"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "adapter_2_down",
+          "ordinal": 9,
+          "sha256": "b9ed86424d1b4771c671d9f1188cfd022b3353a6e807f13e3f259e5bf017e705"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "adapter_2_up",
+          "ordinal": 10,
+          "sha256": "4cc8fa8050eb573df787c5b541e2b0553118ce1a1812ae3b21b8e6ee7b26369e"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "head",
+          "ordinal": 11,
+          "sha256": "8e7a917af360adf951e645e776910113b45eab4c884f1d3777cf0ff96b3aad64"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "image_projection",
+          "ordinal": 0,
+          "sha256": "0578d49c8c302062d512ed04ed380ba1e2808c6296a693f39032ed3a194905d3"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "audio_projection",
+          "ordinal": 1,
+          "sha256": "f513a2e61a4ac765f830c1418a9f1eaf7b4c192d0f316be40ba00ed8375d672c"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "base_up",
+          "ordinal": 2,
+          "sha256": "6bb239c7a8b2462b791b37d1190380234bfaa0ad7361db9d261e4c89ecdd440b"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "base_down",
+          "ordinal": 3,
+          "sha256": "37b614503ae66e3820a16986275952145617fe6021cd5aeda49d5384ae1e0604"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "router",
+          "ordinal": 4,
+          "sha256": "6fa77c6325f7b81a6199e9fd3cb738c60245b1218d60e2a341838a6ff3848a67"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "adapter_0_down",
+          "ordinal": 5,
+          "sha256": "8fa4e2af61510dfb72fc2edb09ace3f7bd17f0b8c4cf0ac9122e6957938bec7f"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "adapter_0_up",
+          "ordinal": 6,
+          "sha256": "bf7e22cd332bf4d789a9b39e6aae5e3b932bd1ecf1cfaef08637261dc8b5faf7"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "adapter_1_down",
+          "ordinal": 7,
+          "sha256": "630d655075feef9529468addf9f5434bc18f1313836407210024bf333825c8c6"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "adapter_1_up",
+          "ordinal": 8,
+          "sha256": "5a69b2de2c0f1f0179fc04dfbb4c96bc4b636512099d998f8706522d191b713d"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "adapter_2_down",
+          "ordinal": 9,
+          "sha256": "634831db070d7459fdde7e4861d7f51c58e6fa4184f89f9de1c53d144b960978"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "adapter_2_up",
+          "ordinal": 10,
+          "sha256": "5544fb383f4249249fa1d8718b9414c66f5ad3c965e94f716d7be61805045e18"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "head",
+          "ordinal": 11,
+          "sha256": "d10bd847f1cb1dc128ab0a026d43b40960a0eb1e4ff1aae4dd71e19e5682f52d"
+        }
+      ],
+      "full_proof_count": 96,
+      "program_sha256": "bfba421a366ce47f19431c0aa41cc050fca7ffbde7c43e903819e07420475f2c",
+      "unique_proof_sha256_count": 96
+    },
+    "controls-owner-snapshot": {
+      "entries": [
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "image_projection",
+          "ordinal": 0,
+          "sha256": "5b5d6aa36e67f1dfd1b924f06683f9c90d405a6324f9ed72daf84edd3a74f3b4"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "audio_projection",
+          "ordinal": 1,
+          "sha256": "675e24759332a209e0b888e85d56f576c48993c36c4fc19a4b225432b1690e7d"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "base_up",
+          "ordinal": 2,
+          "sha256": "6c0fd7152438cdc055b03f95e94d030e8870fcd71d9d394983e895ec9c886592"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "base_down",
+          "ordinal": 3,
+          "sha256": "ae0a1b6c5e5dd03c3ca5c894ceba74bce46c1d208c302324bc2795f871c7bf87"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "router",
+          "ordinal": 4,
+          "sha256": "3dba364c5d89fd4af77100e4302db0eac6cf08fa2ef980dbb10d948a0194613d"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "adapter_0_down",
+          "ordinal": 5,
+          "sha256": "48848199c6849deab643694acbfdc210e7e077763b0959c9e6a75c75eb64a412"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "adapter_0_up",
+          "ordinal": 6,
+          "sha256": "8f1354da0497c448b7a25a314111151e89f427a8e35cb42bb0d1a4d8779a8323"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "adapter_1_down",
+          "ordinal": 7,
+          "sha256": "2d722ebf9847ec4be137d18808e4061a03a0845bf6bce55206961d20e00aa09d"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "adapter_1_up",
+          "ordinal": 8,
+          "sha256": "2afa988fc129237a30a10bfb96361ac74d48df091f7df1f5c1779e4881250438"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "adapter_2_down",
+          "ordinal": 9,
+          "sha256": "276597ba66d97d3041f909861ca3b14b47c33113c14a37cb7cda8599a5474ab0"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "adapter_2_up",
+          "ordinal": 10,
+          "sha256": "885a87e7526401ff7e873d28aab4d06a65280f0730d0a356e21c53c4c8d60010"
+        },
+        {
+          "bytes": 49188,
+          "case": "sampled",
+          "nonce": 0,
+          "operation_id": "head",
+          "ordinal": 11,
+          "sha256": "48cb18cd75dc43e6ea37cd82ce06f7c7edb57097f4fc187d9ba7b5e219ce0531"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "image_projection",
+          "ordinal": 0,
+          "sha256": "adfddee027b7304a066c0edcf18c6cf744572ad14772f997cc0c610d87d7639c"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "audio_projection",
+          "ordinal": 1,
+          "sha256": "eef15c795b8b55dd0fc8c958bffc5004373f8c53425624eef927d1a5a86281f9"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "base_up",
+          "ordinal": 2,
+          "sha256": "a2044dbdcf64e93ce056c98cb27571fffcaaa55bca2c2c42fd0c3e2c9bdff6eb"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "base_down",
+          "ordinal": 3,
+          "sha256": "1c5d64d59bcab18170020068d33b85428a9ed537c86a9d805cc957ed1c8182ce"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "router",
+          "ordinal": 4,
+          "sha256": "eb289670ce5b302cdad49a0d479373f33fc54f0b8afdcfdfa0af75d06edd5e72"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "adapter_0_down",
+          "ordinal": 5,
+          "sha256": "096d1ed1202ad824408e855d0ef815a4edd34b51d5de127d9594753f94e46ce5"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "adapter_0_up",
+          "ordinal": 6,
+          "sha256": "ab4f9ee789703f78a30c99912ffb7730241892047c123458877231b787045ee0"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "adapter_1_down",
+          "ordinal": 7,
+          "sha256": "cb6ab055405d9115eaee9103804dfc2ed6107de5a34ca41166ed81d6b37007c5"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "adapter_1_up",
+          "ordinal": 8,
+          "sha256": "c8f49826192b89e70e9af455a4022d15f724c128076e3818895648ce088c42be"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "adapter_2_down",
+          "ordinal": 9,
+          "sha256": "574eb523496da242bdcb3760a4a8bec396468b1ba69bc3a4f01ad5953bb8594c"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "adapter_2_up",
+          "ordinal": 10,
+          "sha256": "65dbf1c40497a4e6aca9512c3e13984406114ca9a3a43f1c252ee05e4891b27d"
+        },
+        {
+          "bytes": 49188,
+          "case": "masked",
+          "nonce": 0,
+          "operation_id": "head",
+          "ordinal": 11,
+          "sha256": "e96749132ccec74a068a6e78a63152ce8b4119f2bbe4d16e4d686604c09632ae"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "image_projection",
+          "ordinal": 0,
+          "sha256": "298355c9a415e301b53f7f567d5ba24238604c0fc6b97000d586a3e7397b4019"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "audio_projection",
+          "ordinal": 1,
+          "sha256": "5a56a100b47743ef1863e20ed355b79432e8f0efd1d75b1b95a48ef3621a2c39"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "base_up",
+          "ordinal": 2,
+          "sha256": "d2b5e93cf13a0bdf65b1ea8063d22ceca522aff4905e3cd192cdc2950625ff1b"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "base_down",
+          "ordinal": 3,
+          "sha256": "4848d351c955461332503548357d8b477c4b369a37447f57a42294c767b34e1e"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "router",
+          "ordinal": 4,
+          "sha256": "5a0e3b528c85ac5abe144f1a5882d1af62f4fad0a5580b5685fe68f3e544f7c4"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "adapter_0_down",
+          "ordinal": 5,
+          "sha256": "7103ab627c96f209e75def29e1f34f54655528a628635a66e66f198cb29d2884"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "adapter_0_up",
+          "ordinal": 6,
+          "sha256": "f9504d40ff9d8b7c4803ccd3821e1ba29e8d8c03a38fd65ffe708e160be126aa"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "adapter_1_down",
+          "ordinal": 7,
+          "sha256": "c24823447cd5e063a04a06f7432466c4226e6466dba20f62c250caa50289aa7d"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "adapter_1_up",
+          "ordinal": 8,
+          "sha256": "08e186238e64cab4659939eb92d285b2e8aad2392dc4dcdd3eecff4a35531aa9"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "adapter_2_down",
+          "ordinal": 9,
+          "sha256": "4cb2eea61b50918bb811ed5a4f177d7b1ba595148cedd20e61f3264e56ea7fcc"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "adapter_2_up",
+          "ordinal": 10,
+          "sha256": "f3f0d2312b2b9a63faa30a7cbf1808b2ec56cf88e4789ac73935b1d67490e760"
+        },
+        {
+          "bytes": 49188,
+          "case": "training",
+          "nonce": 0,
+          "operation_id": "head",
+          "ordinal": 11,
+          "sha256": "efbdb644772010e9480cf4b957440d6ee4d67144ac48150d76c8e7e1428ee469"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "image_projection",
+          "ordinal": 0,
+          "sha256": "10177d5cebe9f5e09fd09c8c3f53f4796147d9e5cd568f251ab7ff89ca58331e"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "audio_projection",
+          "ordinal": 1,
+          "sha256": "5dbbe9d0afa54bfd2ad7d6b99a7a0a4f164f8811eea337503aa1781ea108d6f4"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "base_up",
+          "ordinal": 2,
+          "sha256": "894575ef559720a985ec031e1991d3ffdfca6d8f546e03a2dac2dfb9b52f51cb"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "base_down",
+          "ordinal": 3,
+          "sha256": "7605ec247a7250ff15dd82f4ccd28feaeeaef713caeb58d13b81de57a4bc6339"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "router",
+          "ordinal": 4,
+          "sha256": "e3ffa8ee2e086a9cbb099b1f10def1c2d950352aa75368493bb3d11def861534"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "adapter_0_down",
+          "ordinal": 5,
+          "sha256": "6beb4f93dafc0ff1b876b094aa53815203a7ae01265dcad25dcd1ac6c967d43d"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "adapter_0_up",
+          "ordinal": 6,
+          "sha256": "ee64721147f7d61cf54984b81b9608d529e72a47b430943b867fbebd551aeb58"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "adapter_1_down",
+          "ordinal": 7,
+          "sha256": "04162d88961d07c17f07f82e717ed57243f0bbf982163938c369ee68e755dbff"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "adapter_1_up",
+          "ordinal": 8,
+          "sha256": "a8406821c430ea4362187cacc3b557e5d3ed46cdf2780d067024cdffd5509c6d"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "adapter_2_down",
+          "ordinal": 9,
+          "sha256": "737952dfcb043edbf45e2cd5cdc4330abf3c74dfe4911c0f1f696bdba1d91773"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "adapter_2_up",
+          "ordinal": 10,
+          "sha256": "f2b37f0801bf506e427b3f674e26bc7fd2712a00291a91f39501a4fcf68d7bc6"
+        },
+        {
+          "bytes": 49188,
+          "case": "tool-proposals",
+          "nonce": 0,
+          "operation_id": "head",
+          "ordinal": 11,
+          "sha256": "dc57d69fb61870bd478b3a81b524c49fcdebd39f514067d97f7ceb482cf64dcd"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "image_projection",
+          "ordinal": 0,
+          "sha256": "ef1b93b4f8d205aa56cc8ab2403520386721d64d87142e0c170a40dba87e654c"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "audio_projection",
+          "ordinal": 1,
+          "sha256": "b22337b31519b76c606979181d41f2494cd884ad749ebd0631081b2f19d26584"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "base_up",
+          "ordinal": 2,
+          "sha256": "095f1b3ede67612ff071c689e542a0204d157683de7e38dad964170dd3d25eba"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "base_down",
+          "ordinal": 3,
+          "sha256": "a4e20651249eb10db5a92e7105500b4ce56c63368ce98a95c6076f4f3d062646"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "router",
+          "ordinal": 4,
+          "sha256": "37fc29eddb2eb4f5897a5b008591f4762df7cea07653c11f9754f26309e6ca2d"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "adapter_0_down",
+          "ordinal": 5,
+          "sha256": "2346f43966f8fbadd1ea628e34c15c9afd952df7375c637ecad37a13e924a582"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "adapter_0_up",
+          "ordinal": 6,
+          "sha256": "6fdf1354c732548ac9e6578aec57f6d3e4d0a13b0b9908886362cc78822e2a79"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "adapter_1_down",
+          "ordinal": 7,
+          "sha256": "e5a750d62d3ced82dde0f5ccf9666a6a32c412bd0547007fcd6917ebc3960490"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "adapter_1_up",
+          "ordinal": 8,
+          "sha256": "cf6daa26eb8a3f23af01f4044e7f58899fc0ea581288066157c894b7b683929c"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "adapter_2_down",
+          "ordinal": 9,
+          "sha256": "9f84a803540366b3755c93c74fcd2ae56607ac730df7b1601179104ebc6f9b6d"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "adapter_2_up",
+          "ordinal": 10,
+          "sha256": "9dbb7a4dcde28f72dd0eda9bcbeba44f9375d3b87664bb1d420f5d718605fb85"
+        },
+        {
+          "bytes": 49188,
+          "case": "abstain",
+          "nonce": 0,
+          "operation_id": "head",
+          "ordinal": 11,
+          "sha256": "b11f0751701eadabc19b978c267aa5c8910e48e1bbb5132f9fc61209fb1a7d46"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "image_projection",
+          "ordinal": 0,
+          "sha256": "ee1fff317fe50c8c3053c72a13638d391f5a482d6cb317ee41fb9caf28512d27"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "audio_projection",
+          "ordinal": 1,
+          "sha256": "e22abc1150ed4f7aa23a948dec3e2de361b069546a6389e2198feee0ac17acd4"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "base_up",
+          "ordinal": 2,
+          "sha256": "f002d57175031496097836d35738c3109a9c9be2f6fb6730a7ec8806623fff2b"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "base_down",
+          "ordinal": 3,
+          "sha256": "5d39b361e7adfea2eb4aa058d6fff391366a9fa96bcbc1f6cdb98dae51eed645"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "router",
+          "ordinal": 4,
+          "sha256": "4526fd4c973ed7d406ef1b50938a36b7e4ef01fdeeb2a00f37c657b135c7cc30"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "adapter_0_down",
+          "ordinal": 5,
+          "sha256": "f46451048fbb60ffe1c9c298a5452511f6fbdcd96932a7b1b8cda795ab74491c"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "adapter_0_up",
+          "ordinal": 6,
+          "sha256": "22b2210d65b6fa74d3da18914040165d00fa2cbb922eb2e103b0878b525ac61a"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "adapter_1_down",
+          "ordinal": 7,
+          "sha256": "7d2fa4c3759678b4f948be453c9983a70decb4a6662b3e789d767a5156fc9de7"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "adapter_1_up",
+          "ordinal": 8,
+          "sha256": "2865c8d00302bfe5d5649575e53f26a625bc34a12df427e0fcabc4c6c8dacb9b"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "adapter_2_down",
+          "ordinal": 9,
+          "sha256": "5e366610f74e76172ec2a6f84a522a15aaf534fa544bdad4cc1afa26c4d63ea6"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "adapter_2_up",
+          "ordinal": 10,
+          "sha256": "f3ea176ccee972da93639887baaa556767818473ec36b06f00f2345a64fdb35c"
+        },
+        {
+          "bytes": 49188,
+          "case": "stopped",
+          "nonce": 0,
+          "operation_id": "head",
+          "ordinal": 11,
+          "sha256": "4f035209caf0f8d93995a281bb09ea7596320d3be9df959495390ad2dd2cf50f"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "image_projection",
+          "ordinal": 0,
+          "sha256": "efd4d6eb780cb4d4b0f67c05107e97c99a8b125c3fd08519fe2e1cb504881822"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "audio_projection",
+          "ordinal": 1,
+          "sha256": "dcf052514a2ac777f60289cd1c1ef5b1dd78115ed4ab771e78565d7c3ffbd13d"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "base_up",
+          "ordinal": 2,
+          "sha256": "9ade204c62e88cf1993c9c632a8396b18f69996ad6f1695139c15130b4a5e12d"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "base_down",
+          "ordinal": 3,
+          "sha256": "47f684c32f735c11e1815198a1b44b8c1584d72a06970e61423f0da2d163cfbb"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "router",
+          "ordinal": 4,
+          "sha256": "156116317541cf163e80e2796219220e11d841c4468005cc4fa40f0b00657512"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "adapter_0_down",
+          "ordinal": 5,
+          "sha256": "d043c7190535d83be00dad4bd50b958f20e66e8ebfacdd145063541f6ad3bb02"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "adapter_0_up",
+          "ordinal": 6,
+          "sha256": "5191e55943a5583facc6ef97f74c042cc4e7def7403c023158cf58eec53a8024"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "adapter_1_down",
+          "ordinal": 7,
+          "sha256": "f1df2b89e0c7a7dfcfcd1b76f7e0df9ce964ae15ba17e6f99fd4f93012ef986c"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "adapter_1_up",
+          "ordinal": 8,
+          "sha256": "48e4ca2adfe181b0d4bf6723e1b22ae4ca9f955744aa76ce750f29b3a55f159d"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "adapter_2_down",
+          "ordinal": 9,
+          "sha256": "23fc3313a79fb2d209051d7c2ef70b68e56d124b0367385aac7ce3b56a25fa8f"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "adapter_2_up",
+          "ordinal": 10,
+          "sha256": "51d5fd7282cc159d3b3392e7cb03c4ddfe033c4852da3ad0373aacc07a82c311"
+        },
+        {
+          "bytes": 49188,
+          "case": "exhausted-prefix",
+          "nonce": 0,
+          "operation_id": "head",
+          "ordinal": 11,
+          "sha256": "e0184369b9e7f06b4e786cdae874175ac92f0d5e976212c908efc15da21dd91f"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "image_projection",
+          "ordinal": 0,
+          "sha256": "3e63c903f13a8053dd4f9cac25c0141b8fe5afe6d7d721d2884d88f7533f3a8c"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "audio_projection",
+          "ordinal": 1,
+          "sha256": "820cd75db6e8614c44a1f7527058353fbef9615e4540c42103c39b23f39e4fdf"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "base_up",
+          "ordinal": 2,
+          "sha256": "f0712f3c5c003f0edc297e0990e9a5b25e6f1357eeb25163b3b949fffd66166d"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "base_down",
+          "ordinal": 3,
+          "sha256": "e7d2abaf08d853f1e76eb1323dedbf615cc650f6b6d2a730ae555e3e5f19edd5"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "router",
+          "ordinal": 4,
+          "sha256": "36dd11d104906a344f74c6f6de0ba4b80c573af2078565a6d36122e17b30afe8"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "adapter_0_down",
+          "ordinal": 5,
+          "sha256": "6443b43df45cc6cd4e82e8efcf241d2351f55830263e6ca30d6e0c50123186c4"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "adapter_0_up",
+          "ordinal": 6,
+          "sha256": "6c0dd7de5b07162f6d5ece0e8c656b3e2325998560d610fec02aa37937ccafd0"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "adapter_1_down",
+          "ordinal": 7,
+          "sha256": "8adc926f18640c5fdc60aec0e48ca189e13be42aad9193a011af4b7c27c0b272"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "adapter_1_up",
+          "ordinal": 8,
+          "sha256": "ab4d90f3245996077d56b114479607a7a98c82e563a1fc0d4b7babd488f954f2"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "adapter_2_down",
+          "ordinal": 9,
+          "sha256": "859d3ff097220855d463713f057c0d7bb25674e987e579ebeec76dd8a46a05dd"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "adapter_2_up",
+          "ordinal": 10,
+          "sha256": "ca54021a8fee97f08318848a2d57a118e75b5c13a0aa2cc6e1f4e0aa4ef5f261"
+        },
+        {
+          "bytes": 49188,
+          "case": "successor-model-next-input",
+          "nonce": 0,
+          "operation_id": "head",
+          "ordinal": 11,
+          "sha256": "5fdad1c6907b97d9fa6d16fb1f0ab0de01d6b0724613b07db09dbe84ad4b1309"
+        }
+      ],
+      "full_proof_count": 96,
+      "program_sha256": "f111c873f7df1e9b440072bc8776e2ba4e34228ae1c106149cf83eca77c6e357",
+      "unique_proof_sha256_count": 96
+    }
+  },
+  "historical_live_cold_rechecks_are_not_new_proofs": true,
+  "schema": "multimodal-v3/proof-inventory",
+  "selected_qualification_group": "controls-owner-snapshot",
+  "unit_test_proofs_not_counted_as_retained_controls": true
+}

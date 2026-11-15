@@ -1,0 +1,318 @@
+{
+  "head": "54fae446d956be1e3095537aa02035e310ad03b0",
+  "tree": "4ebc5dd78d6f4727cc5c1c08ec06e4d758dfd69a",
+  "native": true,
+  "operator_count": 1,
+  "independent_operator_qualification": false,
+  "steps": [
+    {
+      "name": "preflight",
+      "command": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.09006703004706651
+    },
+    {
+      "name": "source-inventory",
+      "command": [
+        "/usr/bin/python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.09169709199341014
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 15.469415895990096
+    },
+    {
+      "name": "quorum-native",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--test",
+        "evaluation_quorum_v2"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 13.823566636012401
+    },
+    {
+      "name": "two-generation-quorum",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "model_composition_v4",
+        "quorum_profile_replays_two_composition_generations_and_zero_score_components",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 78.89803105499595
+    },
+    {
+      "name": "model-evidence-native",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "model_evidence_v3"
+      ],
+      "returncode": 101,
+      "elapsed_seconds": 424.02834316296503
+    },
+    {
+      "name": "public-evaluation-native",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_evaluation",
+        "--test",
+        "evaluation_quorum_cli",
+        "--test",
+        "accepted_task_observation"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 14.317761577025522
+    },
+    {
+      "name": "unpaid-shared64-native",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "real_shared64_unpaid_pressure",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 101,
+      "elapsed_seconds": 116.79927810101071
+    },
+    {
+      "name": "intake-native",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::intake"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 1.0710757949855179
+    },
+    {
+      "name": "public-services-native",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_v3_from_zero",
+        "--test",
+        "public_pool_v3",
+        "--test",
+        "public_pool_cli",
+        "--test",
+        "public_intake_v2"
+      ],
+      "returncode": 101,
+      "elapsed_seconds": 50.47224712499883
+    },
+    {
+      "name": "strict-clippy",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "-p",
+        "trnm-pon-node",
+        "-p",
+        "trnm-llm-task-worker",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 101,
+      "elapsed_seconds": 0.2578211790532805
+    },
+    {
+      "name": "w1-seed1",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "run",
+        "--offline",
+        "--release",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--example",
+        "pon_w1_budget_report",
+        "--",
+        "--samples",
+        "3",
+        "--attempts",
+        "32",
+        "--receiver-replays",
+        "1",
+        "--target",
+        "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "--seed",
+        "1"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 61.55600511498051,
+      "target_dir": "/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance",
+      "stdout_bytes": 160318
+    },
+    {
+      "name": "w1-seed2",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "run",
+        "--offline",
+        "--release",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--example",
+        "pon_w1_budget_report",
+        "--",
+        "--samples",
+        "3",
+        "--attempts",
+        "32",
+        "--receiver-replays",
+        "1",
+        "--target",
+        "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "--seed",
+        "2"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.604967896011658,
+      "target_dir": "/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance",
+      "stdout_bytes": 161970
+    },
+    {
+      "name": "w1-exhausted",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "run",
+        "--offline",
+        "--release",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--example",
+        "pon_w1_budget_report",
+        "--",
+        "--samples",
+        "1",
+        "--attempts",
+        "2",
+        "--receiver-replays",
+        "1",
+        "--target",
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        "--seed",
+        "1"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.19374496897216886,
+      "target_dir": "/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance",
+      "stdout_bytes": 20517
+    },
+    {
+      "name": "w1-receiver-budget",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "run",
+        "--offline",
+        "--release",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--example",
+        "pon_w1_budget_report",
+        "--",
+        "--samples",
+        "1",
+        "--attempts",
+        "1",
+        "--receiver-replays",
+        "1024",
+        "--target",
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "--seed",
+        "1"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 2.9447038890211843,
+      "target_dir": "/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance",
+      "stdout_bytes": 7545247
+    }
+  ]
+}

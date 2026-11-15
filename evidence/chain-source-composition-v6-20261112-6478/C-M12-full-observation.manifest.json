@@ -1,0 +1,351 @@
+{
+  "all_canonical_observation_members_included": true,
+  "archive": {
+    "all_members_verified": true,
+    "bytes": 1530744,
+    "members": 41,
+    "path": "/workspace/scratch/6478cdf21f8e/source-composition-observations/remote-m12/chain-m12-native-c-b5c193a-complete.tar.xz",
+    "sha256": "10f7ef87e6eb38714061f0b2fd3bc233b656d5fc44eaa62604f08e9cb7514bfd",
+    "within_original_4mib_file_limit": true
+  },
+  "canonical_observation_member_counts": {
+    "native-r2": 9,
+    "preparation-r1": 5
+  },
+  "exact_byte_inventory_recovery": {
+    "bytes_each": 9639722,
+    "entries_each": 28789,
+    "members": [
+      "preparation-r1/before.physical-sources.json",
+      "native-r2/after-preflight.physical-sources.json",
+      "native-r2/after.physical-sources.json",
+      "native-r2/before.physical-sources.json"
+    ],
+    "native_logs_exit_records_and_timestamps_reconstructed": false,
+    "procedure_record": "recovery/inventory-recovery.json",
+    "sha256": "790d926dbf76c374397546f1503bdccc6ee88ccd17a2276ec61ea54774aa7183"
+  },
+  "files": {
+    "drivers/published-c-driver-r2.py": {
+      "bytes": 7096,
+      "method": "original file or explicitly labelled observation/recovery record",
+      "sha256": "b8f436f8a2d5b4e58735fd88adfae03ac159aa6081227da8e7168d528e970c4b"
+    },
+    "drivers/published-c-driver.py": {
+      "bytes": 6907,
+      "method": "original file or explicitly labelled observation/recovery record",
+      "sha256": "89b7e8df1db1c9a4dea09aa787cf529e75610f114bd47ce4d73729c320a8764a"
+    },
+    "environment/exit.json": {
+      "bytes": 498,
+      "method": "original file or explicitly labelled observation/recovery record",
+      "sha256": "f47b11e389d05e8b83ad0ec2c1a296539f4636eed6f403907f32d0f49784ec8b"
+    },
+    "environment/stderr.log": {
+      "bytes": 0,
+      "method": "original file or explicitly labelled observation/recovery record",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "environment/stdout.log": {
+      "bytes": 605,
+      "method": "original file or explicitly labelled observation/recovery record",
+      "sha256": "4152ee6e3fa00a6c834d6d4844e7f11cdb615a6356faad9f41dc6865f7151d77"
+    },
+    "native-r2-job/child.json": {
+      "bytes": 117,
+      "method": "original remote job file/byte-cursor readback; no reconstructed records",
+      "sha256": "617b709c34378172190804bc4dace527cabddeed8e567cf6edfa2310b23b402a"
+    },
+    "native-r2-job/exit.json": {
+      "bytes": 500,
+      "method": "original remote job file/byte-cursor readback; no reconstructed records",
+      "sha256": "0ce428c89129c681252bad9e450870b21e1c719852c0fc8a5b62e8a21d907c18"
+    },
+    "native-r2-job/exit.witness.json": {
+      "bytes": 207,
+      "method": "original remote job file/byte-cursor readback; no reconstructed records",
+      "sha256": "1b6ce111c6bb3dec8076b4b09c4886d158e23ec869c492b2286df2e37a9f41ec"
+    },
+    "native-r2-job/launch.json": {
+      "bytes": 96,
+      "method": "original remote job file/byte-cursor readback; no reconstructed records",
+      "sha256": "22b03743fddc200cf3d8634f788cb796f550ce834c833b9ba03ab1df5011d608"
+    },
+    "native-r2-job/request.json": {
+      "bytes": 847,
+      "method": "original remote job file/byte-cursor readback; no reconstructed records",
+      "sha256": "7d8b59f65b9ad5c4b2465dd927ffaa85e9f7b4b3634fb8253836e5765ce00f5a"
+    },
+    "native-r2-job/started.json": {
+      "bytes": 331,
+      "method": "original remote job file/byte-cursor readback; no reconstructed records",
+      "sha256": "8c6a5bbe45616d261f7435569bdb769019cba158b1a3bf7853b37ae03df089f6"
+    },
+    "native-r2-job/stderr.log": {
+      "bytes": 0,
+      "method": "original remote job file/byte-cursor readback; no reconstructed records",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-r2-job/stdout.log": {
+      "bytes": 4012,
+      "method": "original remote job file/byte-cursor readback; no reconstructed records",
+      "sha256": "09168b1726e6d2646a5cbf1488593eb83fcaa5a5cdf8119d5d429dbe16985860"
+    },
+    "native-r2/AGENTS.reviewed.txt": {
+      "bytes": 1416,
+      "method": "original remote file readback; byte/hash verified",
+      "sha256": "082d3f5d3d134efe1273f3bd1cc28a9d41db41be6f8996de8cc9545386094631"
+    },
+    "native-r2/after-preflight.physical-sources.json": {
+      "bytes": 9639722,
+      "method": "deterministic exact-byte C inventory recovery; equality to sealed remote receipt",
+      "sha256": "790d926dbf76c374397546f1503bdccc6ee88ccd17a2276ec61ea54774aa7183"
+    },
+    "native-r2/after.physical-sources.json": {
+      "bytes": 9639722,
+      "method": "deterministic exact-byte C inventory recovery; equality to sealed remote receipt",
+      "sha256": "790d926dbf76c374397546f1503bdccc6ee88ccd17a2276ec61ea54774aa7183"
+    },
+    "native-r2/before.physical-sources.json": {
+      "bytes": 9639722,
+      "method": "deterministic exact-byte C inventory recovery; equality to sealed remote receipt",
+      "sha256": "790d926dbf76c374397546f1503bdccc6ee88ccd17a2276ec61ea54774aa7183"
+    },
+    "native-r2/preflight.stderr.log": {
+      "bytes": 0,
+      "method": "original remote file readback; byte/hash verified",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-r2/preflight.stdout.log": {
+      "bytes": 169,
+      "method": "original remote file readback; byte/hash verified",
+      "sha256": "5f0eb2181781e7336bcbccb8b642caee3106f81adb6b91f78aad7106e22119ee"
+    },
+    "native-r2/settlement-79.receipt.json": {
+      "bytes": 8679,
+      "method": "original remote file readback; byte/hash verified",
+      "sha256": "9f8d28c5572877d50e58a897c20cd2d109a31af8c01bb234431e6c10b9eaafb7"
+    },
+    "native-r2/settlement-79.stderr.log": {
+      "bytes": 2365,
+      "method": "original remote file readback; byte/hash verified",
+      "sha256": "b37bc4f50a520266bcdd559aa246bff712367cce0139e17725350c694f17729d"
+    },
+    "native-r2/settlement-79.stdout.log": {
+      "bytes": 8536,
+      "method": "original remote file readback; byte/hash verified",
+      "sha256": "22be963a8d11bba3ae5ab1eac8ea0f0f0319a37a61f2e35646d4ba8e7a114fd1"
+    },
+    "observations/metadata-field-review.json": {
+      "bytes": 4432,
+      "method": "original file or explicitly labelled observation/recovery record",
+      "sha256": "9c866e24f75782614e43e3feaade46567d5c1ff9edf3240657f20d697ba15cc2"
+    },
+    "observations/original-final-files-read-payload.json": {
+      "bytes": 17837,
+      "method": "original file or explicitly labelled observation/recovery record",
+      "sha256": "bb5bac98fb0100161d870caea25abe92ba574f308baf7d3ed2eb4596b7e57220"
+    },
+    "observations/original-native-read-payload.json": {
+      "bytes": 24951,
+      "method": "original file or explicitly labelled observation/recovery record",
+      "sha256": "f35dd71f5ed9e873c78f88e994346308e4780608894068fb69ccc2ce0dca5832"
+    },
+    "observations/readback-and-unknowns.json": {
+      "bytes": 12371,
+      "method": "original file or explicitly labelled observation/recovery record",
+      "sha256": "722432efca456d179679ac9d274d7472d86d238b0f468c56c9b43caa717d5bda"
+    },
+    "preparation-r1-job/child.json": {
+      "bytes": 117,
+      "method": "original remote job file/byte-cursor readback; no reconstructed records",
+      "sha256": "1fd5bfed6d681674b7c69adecd7b4f0a059811c2c9ed177912be21a192b227ff"
+    },
+    "preparation-r1-job/exit.json": {
+      "bytes": 504,
+      "method": "original remote job file/byte-cursor readback; no reconstructed records",
+      "sha256": "37880cd6502e64bd81ce34021e36187424bcbf8d36c845fbfc68b4424b30d476"
+    },
+    "preparation-r1-job/exit.witness.json": {
+      "bytes": 207,
+      "method": "original remote job file/byte-cursor readback; no reconstructed records",
+      "sha256": "9a57e121fc6c7ba42851ce3074aadafc254996d47cabbe5b1bad51070ab87d89"
+    },
+    "preparation-r1-job/launch.json": {
+      "bytes": 96,
+      "method": "original remote job file/byte-cursor readback; no reconstructed records",
+      "sha256": "4e1ca4845a7a108f1af1af269b6757ff2e53d66885a1c9f7b7c5cbbb2443ed32"
+    },
+    "preparation-r1-job/request.json": {
+      "bytes": 844,
+      "method": "original remote job file/byte-cursor readback; no reconstructed records",
+      "sha256": "db05cf7157aa37f02b13003718328edc6a348b40b0c2d91050b51eeadd04c7c1"
+    },
+    "preparation-r1-job/started.json": {
+      "bytes": 331,
+      "method": "original remote job file/byte-cursor readback; no reconstructed records",
+      "sha256": "0c17e61e2cb8bbbd8237454105083a702fa06987e7aefa0e2315ba4f0be7f817"
+    },
+    "preparation-r1-job/stderr.log": {
+      "bytes": 277,
+      "method": "original remote job file/byte-cursor readback; no reconstructed records",
+      "sha256": "b40c4b7f5e8087de7df4d3c33705744fde745766b2667be6ead82810f09b6c59"
+    },
+    "preparation-r1-job/stdout.log": {
+      "bytes": 3091,
+      "method": "original remote job file/byte-cursor readback; no reconstructed records",
+      "sha256": "25958bd7aee6a8c4bc169cd966f495c508292f220cdf2487e3572455a5488b2a"
+    },
+    "preparation-r1/AGENTS.reviewed.txt": {
+      "bytes": 1416,
+      "method": "original remote file readback; byte/hash verified",
+      "sha256": "082d3f5d3d134efe1273f3bd1cc28a9d41db41be6f8996de8cc9545386094631"
+    },
+    "preparation-r1/before.physical-sources.json": {
+      "bytes": 9639722,
+      "method": "deterministic exact-byte C inventory recovery; equality to sealed remote receipt",
+      "sha256": "790d926dbf76c374397546f1503bdccc6ee88ccd17a2276ec61ea54774aa7183"
+    },
+    "preparation-r1/preflight.stderr.log": {
+      "bytes": 59,
+      "method": "original remote file readback; byte/hash verified",
+      "sha256": "1e85d4622435cd769c79fc3bdd3ac3cef3c643c135889988e8479a1ffc4e893e"
+    },
+    "preparation-r1/preflight.stdout.log": {
+      "bytes": 0,
+      "method": "original remote file readback; byte/hash verified",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preparation-r1/settlement-79.receipt.json": {
+      "bytes": 6171,
+      "method": "original remote file readback; byte/hash verified",
+      "sha256": "b81f4faac26e9433d3fc4051ba0b61ddef3206e4b58690fdb9bb420bd4d767dc"
+    },
+    "recovery/inventory-recovery.json": {
+      "bytes": 800,
+      "method": "original file or explicitly labelled observation/recovery record",
+      "sha256": "1c4582c2b60690ba5651761f4e6ec1f01e3d36a56735046a61c822c887d0c18d"
+    }
+  },
+  "metadata_review": {
+    "credential_payload_fields_found": [],
+    "env_objects_empty": true,
+    "field_only_observations": [
+      {
+        "classification": "empty",
+        "field": "env",
+        "file": "preparation-r1-job/request.json",
+        "nonempty": false
+      },
+      {
+        "classification": "process-instance identity, not an authentication credential",
+        "field": "launch_nonce",
+        "file": "preparation-r1-job/request.json",
+        "nonempty": true
+      },
+      {
+        "classification": "process-instance identity, not an authentication credential",
+        "field": "launch_nonce",
+        "file": "preparation-r1-job/started.json",
+        "nonempty": true
+      },
+      {
+        "classification": "process-instance identity, not an authentication credential",
+        "field": "launch_nonce",
+        "file": "preparation-r1-job/exit.json",
+        "nonempty": true
+      },
+      {
+        "classification": "process-instance identity, not an authentication credential",
+        "field": "launch_nonce",
+        "file": "preparation-r1-job/exit.witness.json",
+        "nonempty": true
+      },
+      {
+        "classification": "empty",
+        "field": "env",
+        "file": "native-r2-job/request.json",
+        "nonempty": false
+      },
+      {
+        "classification": "process-instance identity, not an authentication credential",
+        "field": "launch_nonce",
+        "file": "native-r2-job/request.json",
+        "nonempty": true
+      },
+      {
+        "classification": "process-instance identity, not an authentication credential",
+        "field": "launch_nonce",
+        "file": "native-r2-job/started.json",
+        "nonempty": true
+      },
+      {
+        "classification": "process-instance identity, not an authentication credential",
+        "field": "launch_nonce",
+        "file": "native-r2-job/exit.json",
+        "nonempty": true
+      },
+      {
+        "classification": "process-instance identity, not an authentication credential",
+        "field": "launch_nonce",
+        "file": "native-r2-job/exit.witness.json",
+        "nonempty": true
+      },
+      {
+        "classification": "process-instance identity, not an authentication credential",
+        "field": "launch_nonce",
+        "file": "environment/exit.json",
+        "nonempty": true
+      }
+    ],
+    "known_nonce_fields": "process identity and terminal witness binding; not login/API credentials",
+    "redactions": []
+  },
+  "native_result": {
+    "failed": 0,
+    "filtered_out": 0,
+    "ignored": 0,
+    "job_id": "1a1cee872f6-2564-1901",
+    "native_exit_code": 0,
+    "passed": 79,
+    "raw_stdout_stderr_read_back": true,
+    "seconds": 30.58,
+    "supervisor_exit_code": 0,
+    "terminal_witness_verified": true
+  },
+  "packaging": {
+    "created_locally_from_original_readback_and_explicit_exact_byte_inventory_recovery": true,
+    "no_omitted_original_observation_members": true,
+    "tar_header_mtime": 0,
+    "tar_header_mtime_is_not_a_remote_timestamp": true
+  },
+  "preparation_failure": {
+    "job_exit_code": 1,
+    "job_id": "1a1cee343d7-2564-18dc",
+    "native_tests_started": false,
+    "preflight_exit_code": 2,
+    "reason": "detached HEAD rejected by original development-branch gate"
+  },
+  "release_qualification": false,
+  "remote_original_gzip_archives_preserved": [
+    {
+      "bytes": 2068115,
+      "path": "/home/qian-qi/work/chain-m12-runtime-c-20261112-6478-observations.tar.gz",
+      "sha256": "f1ced094ff9387465a2764e99ee922f6c08d6f9dce45701ca780e6780d0669c1"
+    },
+    {
+      "bytes": 6200600,
+      "path": "/home/qian-qi/work/chain-m12-runtime-c-20261112-6478-observations-r2.tar.gz",
+      "sha256": "5aa6b1d477f1587ba502996b4b878f82d6a1d81246d94394b611f550d7ee0ee1"
+    }
+  ],
+  "schema": "chain-m12-native-c-complete-local-evidence-v1",
+  "scope": "original default-feature trnm-service-settlement --lib; Rust1.95.0; original Cargo profile; test threads1",
+  "source": "b5c193ad6695bd883c0554da3bc9365364bb4478",
+  "tree": "9c62b7aa114f1f3cf68b8136b75de3ccb64c0490",
+  "unresolved": {
+    "old_A_prepare": "Unknown; separate historical key retained in observations/readback-and-unknowns.json",
+    "original_cloud_A": "78 passed,1 AF_UNIX EPERM remains retained historical failure; missing old logs are not reconstructed",
+    "remote_archive_job": "Unknown; local await stopped, no remote cancel or new-key replay; this local archive does not assert remote archive completion"
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "schema": "p3.pruned-mmcs.final-runner-delta-review.v4",
+  "result": "PASS",
+  "baseline_commit": "1fe2f31c70977a030aec73b63fe0617f34d15a77",
+  "full_gate_commit": "70293cec717416ed57a97b0d326909c4227963e6",
+  "rust_rerun_commit": "e55f7f84fbaeda2a3a033edd294773db7be3a903",
+  "commit": "5747946c5e87ee601f20c640c0a4b0973f7f17b8",
+  "tree": "ae3ac43e02ee68d8adcb864b0cf4d21ef21864d7",
+  "changed_since_v3": [
+    "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/run_qualification_checks.py"
+  ],
+  "changed_since_v2": [
+    "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/run_qualification_checks.py"
+  ],
+  "full_focused_gate_reexecuted": false,
+  "rust_tests_reexecuted": false,
+  "inherited_v3_rust_tests": 79,
+  "inherited_new_named_rust_tests": 11,
+  "parser_original_log_pass": true,
+  "parser_rejected_mutations": 2,
+  "native_report_reexecuted": true,
+  "native_rejection_controls": 11,
+  "example_source_sha256": "a1fc0496f4013879f859eaaa9a556ebd9cd308901e8bff2d56f8cfa796c1a22a",
+  "audit_executable_sha256": "10f18b7d11784d1dfdc72b9104f006460b144636ca810364fba90274a43136a4",
+  "native_report_sha256": "06f0ca48a869b2342cf08eb18fdd6dd69a02ccbc46d6044ca9994ccd81875606",
+  "source_receipts_equal": true,
+  "records": [
+    {
+      "stage": "preflight-before-edit",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.09184929006733,
+      "stdout_sha256": "988997c4f2125bb000bfb45d61b8960d29e8705ca460be0adb22cc904f82883b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "preflight-staged",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--staged"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.2868544028606266,
+      "stdout_sha256": "c8cf56f5c0785bc1c76714ff9e3b1ddc78e1eabecb48727caef3da8273d8caed",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "commit-final-runner",
+      "argv": [
+        "git",
+        "commit",
+        "-m",
+        "test(p3): match complete native test names in qualification gate"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.05420402390882373,
+      "stdout_sha256": "0f88be8706ee8de7928264012832a391f5ad99ec1156de73c010d283db7c824a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "preflight-final",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.09348027594387531,
+      "stdout_sha256": "988997c4f2125bb000bfb45d61b8960d29e8705ca460be0adb22cc904f82883b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "source-before",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "5747946c5e87ee601f20c640c0a4b0973f7f17b8",
+        "--output",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/runner-review-v4/source-before.json"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 5.573216038988903,
+      "stdout_sha256": "ea0a17dfb2ad30b7c5000a420ad9329df94092e77d8d1457801c442117ec540c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "native-report",
+      "argv": [
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/target-runner-v3/release/examples/tagged_sha3_mmcs_binding"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.014414110919460654,
+      "stdout_sha256": "06f0ca48a869b2342cf08eb18fdd6dd69a02ccbc46d6044ca9994ccd81875606",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "source-after",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "5747946c5e87ee601f20c640c0a4b0973f7f17b8",
+        "--output",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/runner-review-v4/source-after.json"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 2.9532720879651606,
+      "stdout_sha256": "ea0a17dfb2ad30b7c5000a420ad9329df94092e77d8d1457801c442117ec540c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "files": [
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "mode": "100644",
+      "git_blob_sha1": "250229cf9a3d12be97f454339e32533069d7b2f3",
+      "sha256": "48dba6d2f6f6652bd5d2120aa7af1fd36e453c25405fb92e386cefab1ff8e5e7",
+      "bytes": 578161
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/README.md",
+      "mode": "100644",
+      "git_blob_sha1": "1184d6c93ea3e3c5c32674e5fda27b11783ebace",
+      "sha256": "8a43cd0659832a86412200c3f344436d49786919c41f0dfef3e2bf3c8ec64538",
+      "bytes": 15434
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/SECURITY_CONTRACT.md",
+      "mode": "100644",
+      "git_blob_sha1": "ff526f5d612b07469df6d475285b2bd489789b0c",
+      "sha256": "623ef99d27da7cff918a72395b58738fa76fef40363e84a3c4acfbc70a9830e4",
+      "bytes": 12938
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/BINDING_REDUCTION.md",
+      "mode": "100644",
+      "git_blob_sha1": "8d1b86aefcac7bd1ce5f98fea5db69ea143ee8b3",
+      "sha256": "1d4eeeb61ae206a765b509c3757be4f797989871cbd6a50eeed35b0d12b7f764",
+      "bytes": 11939
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/verify_upstream_source.py",
+      "mode": "100644",
+      "git_blob_sha1": "416d58d6b847b06238b340ee4c5a6440c04b36f2",
+      "sha256": "8e4b1d223c70736f267278a3636e39303db0b38485846b1e90538e2c03151be2",
+      "bytes": 4828
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/run_qualification_checks.py",
+      "mode": "100644",
+      "git_blob_sha1": "0b303e29e57d08badad3c48471c26a9408cc8d86",
+      "sha256": "410d5c2fccf0b131fec24cbfc5f68bceaaafbd693d5c55e0e6444e37641bf1e5",
+      "bytes": 12242
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_public_stark_research/examples/tagged_sha3_mmcs_binding.rs",
+      "mode": "100644",
+      "git_blob_sha1": "08fbc040648646871c7b27d8a7fa009eabf70ebd",
+      "sha256": "a1fc0496f4013879f859eaaa9a556ebd9cd308901e8bff2d56f8cfa796c1a22a",
+      "bytes": 28311
+    }
+  ],
+  "qualification": "HOLD_NO_GO",
+  "concrete_security_bits": null,
+  "complete_repository_ci": false,
+  "production_activation": false
+}

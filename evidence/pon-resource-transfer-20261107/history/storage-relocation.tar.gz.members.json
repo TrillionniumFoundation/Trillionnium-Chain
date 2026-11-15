@@ -1,0 +1,31 @@
+{
+  "archive": "storage-relocation.tar.gz",
+  "archive_bytes": 552735,
+  "archive_sha256": "533770160c11b348d0987d67c9d62a0976547331dbfaa0469523984a6c6dedd2",
+  "container_metadata_normalized": true,
+  "member_bytes_unchanged": true,
+  "member_count": 3,
+  "members": [
+    {
+      "bytes": 2721346,
+      "mode": "0o644",
+      "path": "storage-relocation/checkout-relocation.json",
+      "sha256": "c71fd0da689f478369736692765a236e75c23c41f39fd9d905f444569e399533"
+    },
+    {
+      "bytes": 325,
+      "mode": "0o644",
+      "path": "storage-relocation/debug-cache-cleanup.json",
+      "sha256": "905a6eb83383792e4c4dd7a59a99eaf42c97847ee58961e266a96c86392dfc7c"
+    },
+    {
+      "bytes": 507,
+      "mode": "0o644",
+      "path": "storage-relocation/scope.json",
+      "sha256": "38f4d01c21c38741e650745b5e699b36ef4285c0eba7b8b30e78e96887757154"
+    }
+  ],
+  "payload_bytes": 2722178,
+  "readback_verified": true,
+  "schema": "pon-evidence-archive-members-v0"
+}

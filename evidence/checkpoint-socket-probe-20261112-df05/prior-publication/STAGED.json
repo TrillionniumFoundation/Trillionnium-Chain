@@ -1,0 +1,15 @@
+{
+  "commit_push_pr_performed": false,
+  "helper_sha256": "6afcd7904ee6d45b84f27e82237e1b44242b1af9d84bf0890ee745c4f9ebc6e5",
+  "ignored_logs_staged": 62,
+  "index_after_sha256": "6f3359cb6d737d29b1114de0b71717d0060d5db117c1b0a2412a292ed8536b3c",
+  "index_before_sha256": "526c6cc23d084d4a93952bd05732fa27b2a8707b9dede926bb152c400cd5eeb1",
+  "original_operation_key": "root-operation-20261112-df05-native-publication-v2",
+  "original_publisher_sha256": "6b42ffccdd9ff216d1ec786813ba3059e0c89550ffbc8c6af6304f415884c40c",
+  "sealed_files": 167,
+  "source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "source_or_test_qualification_changed": false,
+  "tests_rerun": false,
+  "tracked_source_index_unchanged": true,
+  "worktree_payload_mutation_performed": false
+}

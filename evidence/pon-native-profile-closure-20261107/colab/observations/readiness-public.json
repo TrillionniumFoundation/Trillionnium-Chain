@@ -1,0 +1,184 @@
+{
+  "evidence_kind": "CONTROLLED_OBSERVATION",
+  "observation": {
+    "allocation_requested": false,
+    "global_profile_modified": false,
+    "job_submitted": false,
+    "records": [
+      {
+        "command": [
+          "<HOST_HOME>/.local/bin/hepta-colab-manage",
+          "--state-dir",
+          "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/manage",
+          "account"
+        ],
+        "elapsed_seconds": 3.0339016914367676,
+        "exit_code": 0,
+        "observation": {
+          "account_email": {
+            "identity_sha256": "73e2555a13ef0c08791b37180c1675c440782648c53a8ec07a431d5ac4f7cea6"
+          },
+          "authenticated_at": "2026-11-07T23:49:53.118832+00:00",
+          "sdk_version": "0.1.dev1+gd2d977949",
+          "status": "authorized"
+        }
+      },
+      {
+        "command": [
+          "<HOST_HOME>/.local/bin/hepta-colab-manage",
+          "--state-dir",
+          "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/manage",
+          "inventory"
+        ],
+        "elapsed_seconds": 7.627733469009399,
+        "exit_code": 0,
+        "observation": {
+          "account": {
+            "account_email": {
+              "identity_sha256": "73e2555a13ef0c08791b37180c1675c440782648c53a8ec07a431d5ac4f7cea6"
+            },
+            "authenticated_at": "2026-11-07T23:49:55.849425+00:00",
+            "sdk_version": "0.1.dev1+gd2d977949",
+            "status": "authorized"
+          },
+          "assignments": {
+            "runtimes": [
+              {
+                "accelerator": "NONE",
+                "endpoint": "m-s-ase1a9-20dxgsojl5rhi",
+                "shape": "STANDARD",
+                "variant": "DEFAULT"
+              }
+            ],
+            "status": "available"
+          },
+          "consumption": {
+            "assignments_count": 1,
+            "consumption_rate_hourly": 0.08,
+            "paid_compute_units_balance": 0.0,
+            "status": "available"
+          },
+          "eligibility": {
+            "runtime_specs": [
+              {
+                "accelerator": "NONE",
+                "eligible": false,
+                "shape": "HIGH_RAM",
+                "variant": "DEFAULT"
+              },
+              {
+                "accelerator": "NONE",
+                "eligible": true,
+                "shape": "STANDARD",
+                "variant": "DEFAULT"
+              },
+              {
+                "accelerator": "A100",
+                "eligible": false,
+                "shape": "HIGH_RAM",
+                "variant": "GPU"
+              },
+              {
+                "accelerator": "T4",
+                "eligible": false,
+                "shape": "HIGH_RAM",
+                "variant": "GPU"
+              },
+              {
+                "accelerator": "A100",
+                "eligible": false,
+                "shape": "STANDARD",
+                "variant": "GPU"
+              },
+              {
+                "accelerator": "G4",
+                "eligible": false,
+                "shape": "STANDARD",
+                "variant": "GPU"
+              },
+              {
+                "accelerator": "H100",
+                "eligible": false,
+                "shape": "STANDARD",
+                "variant": "GPU"
+              },
+              {
+                "accelerator": "L4",
+                "eligible": false,
+                "shape": "STANDARD",
+                "variant": "GPU"
+              },
+              {
+                "accelerator": "T4",
+                "eligible": true,
+                "shape": "STANDARD",
+                "variant": "GPU"
+              },
+              {
+                "accelerator": "V5E1",
+                "eligible": true,
+                "shape": "STANDARD",
+                "variant": "TPU"
+              },
+              {
+                "accelerator": "V6E1",
+                "eligible": false,
+                "shape": "STANDARD",
+                "variant": "TPU"
+              }
+            ],
+            "status": "available"
+          },
+          "observed_at": "2026-11-07T23:49:59.471836+00:00",
+          "status": "observed",
+          "subscription": {
+            "status": "available",
+            "tier": "SUBSCRIPTION_TIER_FREE"
+          }
+        }
+      },
+      {
+        "command": [
+          "<HOST_HOME>/.local/bin/hepta-colab-manage",
+          "--state-dir",
+          "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/manage",
+          "select",
+          "--kind",
+          "cpu",
+          "--accelerator",
+          "NONE",
+          "--shape",
+          "standard"
+        ],
+        "elapsed_seconds": 6.6169092655181885,
+        "exit_code": 0,
+        "observation": {
+          "eligibility_evidence": "currently_assigned_to_verified_account",
+          "endpoint": "m-s-ase1a9-20dxgsojl5rhi",
+          "source": "existing_assignment",
+          "spec": {
+            "accelerator": "NONE",
+            "shape": "STANDARD",
+            "variant": "DEFAULT"
+          }
+        }
+      }
+    ]
+  },
+  "original": {
+    "file_label": "readiness-v1.json",
+    "sha256": "543d449f5ffc0171df2849675fa0f17a4c0525b45faae98ea49828cb41f76a44",
+    "size_bytes": 6059
+  },
+  "projection": {
+    "not_original_bytes": true,
+    "omitted_fields": [
+      "account credential_storage, expires_in_seconds, refresh_token_persistence_verified, scopes; including nested inventory account"
+    ],
+    "replacements": [
+      "Host home paths replaced by <HOST_HOME>",
+      "Task private state root replaced by <TASK_PRIVATE_STATE_ROOT>"
+    ]
+  },
+  "schema": "pon-cloud-public-projection-v1"
+}

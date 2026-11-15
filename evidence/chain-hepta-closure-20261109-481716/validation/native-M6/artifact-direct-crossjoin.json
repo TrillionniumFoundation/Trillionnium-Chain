@@ -1,0 +1,368 @@
+{
+  "all_five_equal": true,
+  "joins": [
+    {
+      "cohort_bound": true,
+      "compiler_artifact": {
+        "bytes": 67326704,
+        "cargo_profile": {
+          "debug_assertions": true,
+          "debuginfo": 2,
+          "opt_level": "3",
+          "overflow_checks": true,
+          "test": true
+        },
+        "cfg_test": true,
+        "compiler_artifact_features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "expected_test_cwd": "/home/qian-qi/chain-hepta-481716-native-check/source/trillionnium/crates/trnm-crypto-primitives",
+        "fingerprint_features": "[\"default\", \"pq-native-openssl\"]",
+        "fingerprint_json_path": "fingerprints/trnm-crypto-primitives-a8181f6305c7ebfe/test-lib-trnm_crypto_primitives.json",
+        "fingerprint_json_sha256": "8c3fb477f6281de7b5d05fb5b551d47cfe6c9a200373a8df407d09acbda2f866",
+        "manifest_path": "/home/qian-qi/chain-hepta-481716-native-check/source/trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+        "ordinary_daemon_build_identity": null,
+        "ordinary_daemon_load_identity": null,
+        "package": "trnm-crypto-primitives",
+        "package_metadata": {
+          "authors": [],
+          "description": null,
+          "homepage": null,
+          "license": "MIT",
+          "license_file": null,
+          "manifest_path": "/home/qian-qi/chain-hepta-481716-native-check/source/trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+          "name": "trnm-crypto-primitives",
+          "readme": "README.md",
+          "repository": null,
+          "rust_version": null,
+          "version": "0.1.0"
+        },
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe",
+        "sha256": "011e6ed77e28710b873ee0a0309aee7cdfa7c1af008941ff69c41581804709c5"
+      },
+      "context_argv_and_cwd_bound": true,
+      "direct_after": {
+        "bytes": 67326704,
+        "cargo_profile": "test",
+        "cfg_test": true,
+        "ordinary_daemon_build_identity": null,
+        "ordinary_daemon_load_identity": null,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe",
+        "sha256": "011e6ed77e28710b873ee0a0309aee7cdfa7c1af008941ff69c41581804709c5"
+      },
+      "direct_before": {
+        "bytes": 67326704,
+        "cargo_profile": "test",
+        "cfg_test": true,
+        "ordinary_daemon_build_identity": null,
+        "ordinary_daemon_load_identity": null,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe",
+        "sha256": "011e6ed77e28710b873ee0a0309aee7cdfa7c1af008941ff69c41581804709c5"
+      },
+      "equal": true,
+      "identity_fields_equal": {
+        "bytes": true,
+        "cfg_test": true,
+        "path": true,
+        "sha256": true
+      },
+      "package": "trnm-crypto-primitives",
+      "provider_bound": true,
+      "source_bound": true,
+      "test_profile_bound": true
+    },
+    {
+      "cohort_bound": true,
+      "compiler_artifact": {
+        "bytes": 136048936,
+        "cargo_profile": {
+          "debug_assertions": true,
+          "debuginfo": 2,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": true
+        },
+        "cfg_test": true,
+        "compiler_artifact_features": [
+          "default"
+        ],
+        "expected_test_cwd": "/home/qian-qi/chain-hepta-481716-native-check/source/trillionnium/crates/trnm-data-availability",
+        "fingerprint_features": "[\"default\"]",
+        "fingerprint_json_path": "fingerprints/trnm-data-availability-68d57059a66fd7c3/test-lib-trnm_data_availability.json",
+        "fingerprint_json_sha256": "65136d8e5c93b6c531288335f576fb0d005ff5054662b21f5ee63b4365043180",
+        "manifest_path": "/home/qian-qi/chain-hepta-481716-native-check/source/trillionnium/crates/trnm-data-availability/Cargo.toml",
+        "ordinary_daemon_build_identity": null,
+        "ordinary_daemon_load_identity": null,
+        "package": "trnm-data-availability",
+        "package_metadata": {
+          "authors": [
+            "Trillionnium Contributors"
+          ],
+          "description": null,
+          "homepage": null,
+          "license": "MIT",
+          "license_file": null,
+          "manifest_path": "/home/qian-qi/chain-hepta-481716-native-check/source/trillionnium/crates/trnm-data-availability/Cargo.toml",
+          "name": "trnm-data-availability",
+          "readme": "README.md",
+          "repository": null,
+          "rust_version": null,
+          "version": "0.1.0"
+        },
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3",
+        "sha256": "e99f7030260577c8063e27006baf361eacb6d24f3e7a3f9b2b14ad48865d00a1"
+      },
+      "context_argv_and_cwd_bound": true,
+      "direct_after": {
+        "bytes": 136048936,
+        "cargo_profile": "test",
+        "cfg_test": true,
+        "ordinary_daemon_build_identity": null,
+        "ordinary_daemon_load_identity": null,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3",
+        "sha256": "e99f7030260577c8063e27006baf361eacb6d24f3e7a3f9b2b14ad48865d00a1"
+      },
+      "direct_before": {
+        "bytes": 136048936,
+        "cargo_profile": "test",
+        "cfg_test": true,
+        "ordinary_daemon_build_identity": null,
+        "ordinary_daemon_load_identity": null,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3",
+        "sha256": "e99f7030260577c8063e27006baf361eacb6d24f3e7a3f9b2b14ad48865d00a1"
+      },
+      "equal": true,
+      "identity_fields_equal": {
+        "bytes": true,
+        "cfg_test": true,
+        "path": true,
+        "sha256": true
+      },
+      "package": "trnm-data-availability",
+      "provider_bound": true,
+      "source_bound": true,
+      "test_profile_bound": true
+    },
+    {
+      "cohort_bound": true,
+      "compiler_artifact": {
+        "bytes": 576819920,
+        "cargo_profile": {
+          "debug_assertions": true,
+          "debuginfo": 2,
+          "opt_level": "3",
+          "overflow_checks": true,
+          "test": true
+        },
+        "cfg_test": true,
+        "compiler_artifact_features": [
+          "default",
+          "pq-native-openssl",
+          "pq-root-v3"
+        ],
+        "expected_test_cwd": "/home/qian-qi/chain-hepta-481716-native-check/source/trillionnium/crates/trnm-pon-node",
+        "fingerprint_features": "[\"default\", \"pq-native-openssl\", \"pq-root-v3\"]",
+        "fingerprint_json_path": "fingerprints/trnm-pon-node-1b9e88419cc32a23/test-lib-trnm_pon_node.json",
+        "fingerprint_json_sha256": "e7aebcc5c4d27ac6159c97a7a1a44b3df70433158abc2d4eef2c17bed3788feb",
+        "manifest_path": "/home/qian-qi/chain-hepta-481716-native-check/source/trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "ordinary_daemon_build_identity": null,
+        "ordinary_daemon_load_identity": null,
+        "package": "trnm-pon-node",
+        "package_metadata": {
+          "authors": [
+            "Trillionnium Contributors"
+          ],
+          "description": null,
+          "homepage": null,
+          "license": "MIT",
+          "license_file": null,
+          "manifest_path": "/home/qian-qi/chain-hepta-481716-native-check/source/trillionnium/crates/trnm-pon-node/Cargo.toml",
+          "name": "trnm-pon-node",
+          "readme": "README.md",
+          "repository": null,
+          "rust_version": null,
+          "version": "0.1.0"
+        },
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_pon_node-1b9e88419cc32a23",
+        "sha256": "905779facac297c3ce3387d4142ea11dd20db397a73969043dc72cb520909ee3"
+      },
+      "context_argv_and_cwd_bound": true,
+      "direct_after": {
+        "bytes": 576819920,
+        "cargo_profile": "test",
+        "cfg_test": true,
+        "ordinary_daemon_build_identity": null,
+        "ordinary_daemon_load_identity": null,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_pon_node-1b9e88419cc32a23",
+        "sha256": "905779facac297c3ce3387d4142ea11dd20db397a73969043dc72cb520909ee3"
+      },
+      "direct_before": {
+        "bytes": 576819920,
+        "cargo_profile": "test",
+        "cfg_test": true,
+        "ordinary_daemon_build_identity": null,
+        "ordinary_daemon_load_identity": null,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_pon_node-1b9e88419cc32a23",
+        "sha256": "905779facac297c3ce3387d4142ea11dd20db397a73969043dc72cb520909ee3"
+      },
+      "equal": true,
+      "identity_fields_equal": {
+        "bytes": true,
+        "cfg_test": true,
+        "path": true,
+        "sha256": true
+      },
+      "package": "trnm-pon-node",
+      "provider_bound": true,
+      "source_bound": true,
+      "test_profile_bound": true
+    },
+    {
+      "cohort_bound": true,
+      "compiler_artifact": {
+        "bytes": 24337264,
+        "cargo_profile": {
+          "debug_assertions": true,
+          "debuginfo": 2,
+          "opt_level": "3",
+          "overflow_checks": true,
+          "test": true
+        },
+        "cfg_test": true,
+        "compiler_artifact_features": [],
+        "expected_test_cwd": "/home/qian-qi/chain-hepta-481716-native-check/source/trillionnium/crates/trnm-protocol",
+        "fingerprint_features": "[]",
+        "fingerprint_json_path": "fingerprints/trnm-protocol-d8b25a80c1197ac9/test-lib-trnm_protocol.json",
+        "fingerprint_json_sha256": "c6bbe0d641fc8b19f1647e744fb4daabfd37b8d372299ac0f6b4471cbf3ea32d",
+        "manifest_path": "/home/qian-qi/chain-hepta-481716-native-check/source/trillionnium/crates/trnm-protocol/Cargo.toml",
+        "ordinary_daemon_build_identity": null,
+        "ordinary_daemon_load_identity": null,
+        "package": "trnm-protocol",
+        "package_metadata": {
+          "authors": [
+            "Trillionnium Contributors"
+          ],
+          "description": null,
+          "homepage": null,
+          "license": "MIT",
+          "license_file": null,
+          "manifest_path": "/home/qian-qi/chain-hepta-481716-native-check/source/trillionnium/crates/trnm-protocol/Cargo.toml",
+          "name": "trnm-protocol",
+          "readme": "README.md",
+          "repository": null,
+          "rust_version": null,
+          "version": "0.1.0"
+        },
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_protocol-d8b25a80c1197ac9",
+        "sha256": "bb1f1f5530c29fce07616debe545460c58bbd4df021843a39eb287297ff8e413"
+      },
+      "context_argv_and_cwd_bound": true,
+      "direct_after": {
+        "bytes": 24337264,
+        "cargo_profile": "test",
+        "cfg_test": true,
+        "ordinary_daemon_build_identity": null,
+        "ordinary_daemon_load_identity": null,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_protocol-d8b25a80c1197ac9",
+        "sha256": "bb1f1f5530c29fce07616debe545460c58bbd4df021843a39eb287297ff8e413"
+      },
+      "direct_before": {
+        "bytes": 24337264,
+        "cargo_profile": "test",
+        "cfg_test": true,
+        "ordinary_daemon_build_identity": null,
+        "ordinary_daemon_load_identity": null,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_protocol-d8b25a80c1197ac9",
+        "sha256": "bb1f1f5530c29fce07616debe545460c58bbd4df021843a39eb287297ff8e413"
+      },
+      "equal": true,
+      "identity_fields_equal": {
+        "bytes": true,
+        "cfg_test": true,
+        "path": true,
+        "sha256": true
+      },
+      "package": "trnm-protocol",
+      "provider_bound": true,
+      "source_bound": true,
+      "test_profile_bound": true
+    },
+    {
+      "cohort_bound": true,
+      "compiler_artifact": {
+        "bytes": 46747168,
+        "cargo_profile": {
+          "debug_assertions": true,
+          "debuginfo": 2,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": true
+        },
+        "cfg_test": true,
+        "compiler_artifact_features": [
+          "default",
+          "pq-root-v3"
+        ],
+        "expected_test_cwd": "/home/qian-qi/chain-hepta-481716-native-check/source/trillionnium/crates/trnm-release-bundle",
+        "fingerprint_features": "[\"default\", \"pq-root-v3\"]",
+        "fingerprint_json_path": "fingerprints/trnm-release-bundle-a057cb68931339ff/test-lib-trnm_release_bundle.json",
+        "fingerprint_json_sha256": "921daa13b80cd40b928905417017bd471dfa3e8c746b4803c063bec888928ed7",
+        "manifest_path": "/home/qian-qi/chain-hepta-481716-native-check/source/trillionnium/crates/trnm-release-bundle/Cargo.toml",
+        "ordinary_daemon_build_identity": null,
+        "ordinary_daemon_load_identity": null,
+        "package": "trnm-release-bundle",
+        "package_metadata": {
+          "authors": [
+            "Trillionnium Contributors"
+          ],
+          "description": null,
+          "homepage": null,
+          "license": "MIT",
+          "license_file": null,
+          "manifest_path": "/home/qian-qi/chain-hepta-481716-native-check/source/trillionnium/crates/trnm-release-bundle/Cargo.toml",
+          "name": "trnm-release-bundle",
+          "readme": "README.md",
+          "repository": null,
+          "rust_version": null,
+          "version": "0.1.0"
+        },
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_release_bundle-a057cb68931339ff",
+        "sha256": "c83235f198923321f530f662ffbf4251f87eac22ea24ef2e466daa0ee9946395"
+      },
+      "context_argv_and_cwd_bound": true,
+      "direct_after": {
+        "bytes": 46747168,
+        "cargo_profile": "test",
+        "cfg_test": true,
+        "ordinary_daemon_build_identity": null,
+        "ordinary_daemon_load_identity": null,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_release_bundle-a057cb68931339ff",
+        "sha256": "c83235f198923321f530f662ffbf4251f87eac22ea24ef2e466daa0ee9946395"
+      },
+      "direct_before": {
+        "bytes": 46747168,
+        "cargo_profile": "test",
+        "cfg_test": true,
+        "ordinary_daemon_build_identity": null,
+        "ordinary_daemon_load_identity": null,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_release_bundle-a057cb68931339ff",
+        "sha256": "c83235f198923321f530f662ffbf4251f87eac22ea24ef2e466daa0ee9946395"
+      },
+      "equal": true,
+      "identity_fields_equal": {
+        "bytes": true,
+        "cfg_test": true,
+        "path": true,
+        "sha256": true
+      },
+      "package": "trnm-release-bundle",
+      "provider_bound": true,
+      "source_bound": true,
+      "test_profile_bound": true
+    }
+  ],
+  "ordinary_daemon_identity_claimed": false,
+  "schema": "m6-five-library-artifact-direct-crossjoin-v1",
+  "source_head": "4dbeae12fa756fd662cc074390fcb628abe970ad"
+}

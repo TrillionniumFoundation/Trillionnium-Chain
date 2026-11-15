@@ -1,0 +1,17 @@
+test_existing_parseable_files_are_read_without_rewriting_or_synthesizing (__main__.CodeqlRetentionTests.test_existing_parseable_files_are_read_without_rewriting_or_synthesizing) ... ok
+test_failure_retention_does_not_hide_or_skip_real_analysis (__main__.CodeqlRetentionTests.test_failure_retention_does_not_hide_or_skip_real_analysis) ... ok
+test_full_matrix_and_failed_source_outcomes_are_preserved (__main__.CodeqlRetentionTests.test_full_matrix_and_failed_source_outcomes_are_preserved) ... ok
+test_malformed_or_incomplete_file_refuses_the_whole_set (__main__.CodeqlRetentionTests.test_malformed_or_incomplete_file_refuses_the_whole_set) ... ok
+test_missing_original_output_is_explicit_failure_without_a_replacement (__main__.CodeqlRetentionTests.test_missing_original_output_is_explicit_failure_without_a_replacement) ... ok
+test_changed_before_receipt_fails_cmp_even_with_unchanged_source (__main__.CodeqlSourceIdentityTests.test_changed_before_receipt_fails_cmp_even_with_unchanged_source) ... ok
+test_changed_tracked_bytes_fail_after_check_and_preserve_before_record (__main__.CodeqlSourceIdentityTests.test_changed_tracked_bytes_fail_after_check_and_preserve_before_record) ... ok
+test_exact_ordered_prospective_merge_is_checked_before_and_after (__main__.CodeqlSourceIdentityTests.test_exact_ordered_prospective_merge_is_checked_before_and_after) ... ok
+test_outcome_record_preserves_analysis_and_source_failure_states (__main__.CodeqlSourceIdentityTests.test_outcome_record_preserves_analysis_and_source_failure_states) ... ok
+test_reversed_merge_parents_refuse_before_analysis (__main__.CodeqlSourceIdentityTests.test_reversed_merge_parents_refuse_before_analysis) ... ok
+test_unchanged_head_produces_identical_deterministic_receipts (__main__.CodeqlSourceIdentityTests.test_unchanged_head_produces_identical_deterministic_receipts) ... ok
+test_worktree_observations_retain_dirty_paths_without_waiving_after_check (__main__.CodeqlSourceIdentityTests.test_worktree_observations_retain_dirty_paths_without_waiving_after_check) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 3.316s
+
+OK

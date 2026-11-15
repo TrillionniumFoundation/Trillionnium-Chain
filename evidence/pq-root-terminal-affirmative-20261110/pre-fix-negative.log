@@ -1,0 +1,28 @@
+======================================================================
+FAIL: test_claimed_success_with_network_failure_is_unknown (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_claimed_success_with_network_failure_is_unknown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/pqroot-terminal-affirmative-evidence-20261110-automation11/test_inspect_native_campaign_failure.py", line 284, in test_claimed_success_with_network_failure_is_unknown
+    self.assertEqual(result["boundary_status"], "unknown")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'no_terminal_import_failure' != 'unknown'
+- no_terminal_import_failure
++ unknown
+
+
+======================================================================
+FAIL: test_claimed_success_with_unexecuted_terminal_stage_is_unknown (test_inspect_native_campaign_failure.TerminalBoundaryIntegrityTests.test_claimed_success_with_unexecuted_terminal_stage_is_unknown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/pqroot-terminal-affirmative-evidence-20261110-automation11/test_inspect_native_campaign_failure.py", line 272, in test_claimed_success_with_unexecuted_terminal_stage_is_unknown
+    self.assertEqual(result["boundary_status"], "unknown")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'no_terminal_import_failure' != 'unknown'
+- no_terminal_import_failure
++ unknown
+
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.004s
+
+FAILED (failures=2)

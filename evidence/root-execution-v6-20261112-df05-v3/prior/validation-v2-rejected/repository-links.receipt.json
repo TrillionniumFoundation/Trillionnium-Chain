@@ -1,0 +1,22 @@
+{
+  "bytes": 307,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/home/qian-qi/work/chain-root-operation-recovered-20261112-df05",
+  "elapsed_ns": 41477850834,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "log": "repository-links.log",
+  "name": "repository-links",
+  "process_exit_code": 0,
+  "sha256": "73665105fdddc34ce284fcd0da993aa26622d1412cd4d7a8ff8d91573fef4bd1",
+  "source": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

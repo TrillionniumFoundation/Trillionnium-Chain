@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "bash",
+    "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+    "cargo",
+    "test",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-mvcc-fee",
+    "-p",
+    "trnm-sqlite-io-boundary",
+    "--lib",
+    "--all-features",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "child_system_seconds": 2.3372900000000003,
+  "child_user_seconds": 70.550492,
+  "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+  "exit_code": 0,
+  "finished_at": "2026-11-04T08:55:16.228042+00:00",
+  "label": "build-components",
+  "max_child_rss_kib": 1508176,
+  "started_at": "2026-11-04T08:54:34.466138+00:00",
+  "stderr_sha256": "b69bdfa9507c5a61e80a870f36ed310e7916a4cb286f25f149623a496e3d3699",
+  "stdout_sha256": "cb274442a405686593820cff6f017985c3af2958c08746f36f3ec5718702fba6",
+  "wall_ns": 41762067440
+}

@@ -1,0 +1,101 @@
+{
+  "commands": [
+    {
+      "exit_code": 0,
+      "name": "identity-before"
+    },
+    {
+      "exit_code": 0,
+      "name": "status-before"
+    },
+    {
+      "exit_code": 0,
+      "name": "sparse-paths"
+    },
+    {
+      "exit_code": 0,
+      "name": "preflight"
+    },
+    {
+      "exit_code": 0,
+      "name": "tree-before"
+    },
+    {
+      "exit_code": 0,
+      "name": "index-before"
+    },
+    {
+      "exit_code": 0,
+      "name": "unchanged-source-integrity-dependencies"
+    },
+    {
+      "exit_code": 0,
+      "name": "affected-ci-diff"
+    },
+    {
+      "exit_code": 0,
+      "name": "check-ci-contract"
+    },
+    {
+      "exit_code": 0,
+      "name": "test-ci-contract"
+    },
+    {
+      "exit_code": 0,
+      "name": "test-integration-push-source"
+    },
+    {
+      "exit_code": 0,
+      "name": "tree-after"
+    },
+    {
+      "exit_code": 0,
+      "name": "index-after"
+    },
+    {
+      "exit_code": 0,
+      "name": "identity-after"
+    },
+    {
+      "exit_code": 0,
+      "name": "status-after"
+    }
+  ],
+  "commit": "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030",
+  "failure": null,
+  "integration_context_files": 44,
+  "integration_guard_refusal_is_test_failure": false,
+  "materialized_source_files": 2322,
+  "native_retested_by_this_runner": false,
+  "production_or_consensus_activation": false,
+  "result": "PASS",
+  "schema": "concurrent-cell-ci-acc2ec24-v1",
+  "scope": "exact commit/tree; raw-byte verification of all materialized tracked entries; sparse absent paths explicitly retained",
+  "source_before_after_identical": true,
+  "source_edits": 0,
+  "source_integrity_43_rerun": false,
+  "sparse_absent_files": 8748,
+  "tests": {
+    "test-ci-contract": {
+      "expected": 103,
+      "observed": [
+        [
+          "103",
+          "15.820"
+        ]
+      ]
+    },
+    "test-integration-push-source": {
+      "expected": 13,
+      "observed": [
+        [
+          "13",
+          "3.748"
+        ]
+      ]
+    }
+  },
+  "tree": "e59270db7fe6ea77e01362b591dd98e4e93d62fe",
+  "v3_computation_rerun": false,
+  "whole_tree_materialized": false
+}

@@ -1,0 +1,3 @@
+{"archive": "failed-d78-full-observation.tar.zst", "byte_integrity": "PASS", "bytes": 18086107, "members": 71}
+{"archive": "successful-2b250859-observations.tar.zst", "byte_integrity": "PASS", "bytes": 30711098, "members": 84}
+Byte checks only: no W1 replay, clock authentication, cost lower bound or qualification.

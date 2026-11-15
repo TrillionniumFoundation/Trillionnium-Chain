@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/ci/test_cell_storage_convergence_ci.py", line 604, in <module>
+    print(json.dumps(exact_sealed_python_execution(Path(sys.argv[2]).read_text()), sort_keys=True))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/ci/test_cell_storage_convergence_ci.py", line 317, in exact_sealed_python_execution
+    require(False, "unexpected sealed Python output: " + line)
+  File "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/ci/test_cell_storage_convergence_ci.py", line 156, in require
+    raise ValueError(message)
+ValueError: unexpected sealed Python output: test_failed_supervisor_cancels_connector_before_handshake (test_llm_cell_sealed_worker_v1.SealedHandoffControls.test_failed_supervisor_cancels_connector_before_handshake) ... ERROR

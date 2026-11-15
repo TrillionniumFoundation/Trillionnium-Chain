@@ -1,0 +1,42 @@
+{
+  "schema": "native-integer-factor-candidate-v2",
+  "profile": "linear-factor-witness-dev-v2",
+  "consensus_revision": 11,
+  "tag": 23,
+  "magic": "ILF2",
+  "rank_min": 1,
+  "rank_max": 2,
+  "scale": 1024,
+  "coefficient_min": -32767,
+  "coefficient_max": 32767,
+  "payload_bytes": [
+    762,
+    1282
+  ],
+  "envelope_bytes": [
+    921,
+    1441
+  ],
+  "artifact_exact_bytes": 7756,
+  "artifact_max_bytes": 65536,
+  "chunk_bytes": 1024,
+  "chunk_count_max": 64,
+  "base_fee_units": 200,
+  "no_op_rejected": true,
+  "duplicate_scope": [
+    "network",
+    "parameters",
+    "family",
+    "current_parent_reference",
+    "loaded_parent_artifact",
+    "round",
+    "slot",
+    "numeric",
+    "complete_BA"
+  ],
+  "marker_lifetime": "retain throughout same parent and round; remove only when either changes; branch state rollback applies",
+  "source_budget_enforced": false,
+  "quality_qualified": false,
+  "general_model_equivalence": false,
+  "production_activation": false
+}

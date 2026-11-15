@@ -1,0 +1,5 @@
+{"stage": "m06-test-inventory", "state": "started"}
+{"stage": "m06-test-inventory", "state": "returned", "exit_code": 0}
+{"stage": "m06-clippy", "state": "started"}
+{"stage": "m06-clippy", "state": "returned", "exit_code": 0}
+{"status": "PASS", "source": "f388f46d9df150a3599b9d961b48918b3ff1fb48", "report": "/dev/shm/trnm-model-owner-f4976366a32a-native-evidence/native-frozen-f388f46d9df1/reconciled-verification.json", "tests": {"failed": 0, "filtered_out": 0, "ignored": 7, "measured": 0, "passed": 236}}

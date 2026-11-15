@@ -1,0 +1,122 @@
+{
+  "archive": "observations.tar.gz",
+  "archive_bytes": 2113947,
+  "archive_sha256": "3e896af8114d5dfd3b5ae3f80b2151bd70845e11079609561e990e6c1024594c",
+  "file_count": 22,
+  "files": [
+    {
+      "bytes": 6698,
+      "path": "initial-check/executed-controller.py",
+      "sha256": "e369a120cb242759025a3aa0ab26a20f138f91be2eb496821b6b12028d8d5d9b"
+    },
+    {
+      "bytes": 1220,
+      "path": "initial-check/report.json",
+      "sha256": "8872cf44c0ca1497d808158c369e95d762dd96be9a4efba1612a0bb0c3b6e2cd"
+    },
+    {
+      "bytes": 624,
+      "path": "initial-check/repository-check.json",
+      "sha256": "f19af324112d6014c7a9d39a1672e650e7c366fdd7320af8b16088977afe9153"
+    },
+    {
+      "bytes": 158,
+      "path": "initial-check/repository-check.stderr.log",
+      "sha256": "8df0cc04c894ff23b61527f455916dcc6ef5a70b451aa32bae11809b5f1d4749"
+    },
+    {
+      "bytes": 0,
+      "path": "initial-check/repository-check.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 39467,
+      "path": "initial-check/selected-source-after-status.bin",
+      "sha256": "664521c664dcefdd5b34da603581853c83329c2b75501e782ef28d38f62b429b"
+    },
+    {
+      "bytes": 850640,
+      "path": "initial-check/selected-source-after.json",
+      "sha256": "ac2cd2d542f867fb9eeaac7857af3b2bea7b1ac9312dc7216b63c9f1c26832f7"
+    },
+    {
+      "bytes": 39467,
+      "path": "initial-check/selected-source-before-status.bin",
+      "sha256": "664521c664dcefdd5b34da603581853c83329c2b75501e782ef28d38f62b429b"
+    },
+    {
+      "bytes": 850640,
+      "path": "initial-check/selected-source-before.json",
+      "sha256": "ac2cd2d542f867fb9eeaac7857af3b2bea7b1ac9312dc7216b63c9f1c26832f7"
+    },
+    {
+      "bytes": 186,
+      "path": "link-restoration/complete.json",
+      "sha256": "46b3c4a95b8effb8d822ea8d2f325241fb69c470bc7af09bf908d196c4d36ed1"
+    },
+    {
+      "bytes": 5161,
+      "path": "link-restoration/executed-controller.py",
+      "sha256": "e271018dba40c718155fb48abef8bde9e80555022b6d81761664ffd576f3f2cc"
+    },
+    {
+      "bytes": 326,
+      "path": "link-restoration/process-terminal.json",
+      "sha256": "fe3b3616da5b5457e29b02f9641a0a513c218303c3bf0002980dc5d98fbefd12"
+    },
+    {
+      "bytes": 126386,
+      "path": "link-restoration/report.json",
+      "sha256": "a3458ed22cb2bd6683d46ddae633b1146f9eed0b26a297f178a723d2c007b64c"
+    },
+    {
+      "bytes": 7922,
+      "path": "restored-check/executed-controller.py",
+      "sha256": "31f145c99ed03a713367996b79c2ca93661df54f823ccf7ee90c440ba7f9603f"
+    },
+    {
+      "bytes": 1531,
+      "path": "restored-check/report.json",
+      "sha256": "d2ff9226bd587fe3079299931458f13475296083e399fe10097648b0f84fbd8a"
+    },
+    {
+      "bytes": 624,
+      "path": "restored-check/repository-check.json",
+      "sha256": "ed550fc364f4bf2cd1757fdd43e0282c53b28c62cc9e5f69308619ead322e2f7"
+    },
+    {
+      "bytes": 0,
+      "path": "restored-check/repository-check.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 307,
+      "path": "restored-check/repository-check.stdout.log",
+      "sha256": "e051a0fbc95a4a0d98484da43ece1b2b9349f27cd48ffa4981c2f0f54df31735"
+    },
+    {
+      "bytes": 29960,
+      "path": "restored-check/selected-source-after-status.bin",
+      "sha256": "25c8fb7deee0e7cfbb19e3815b5e0c8d26ed845006aef37b4715d1561482f947"
+    },
+    {
+      "bytes": 3378602,
+      "path": "restored-check/selected-source-after.json",
+      "sha256": "6dc27c578309b650e946dc1bf9f046d4f3732d00e9505d6cb4552fa4b1d27118"
+    },
+    {
+      "bytes": 29960,
+      "path": "restored-check/selected-source-before-status.bin",
+      "sha256": "25c8fb7deee0e7cfbb19e3815b5e0c8d26ed845006aef37b4715d1561482f947"
+    },
+    {
+      "bytes": 3378602,
+      "path": "restored-check/selected-source-before.json",
+      "sha256": "6dc27c578309b650e946dc1bf9f046d4f3732d00e9505d6cb4552fa4b1d27118"
+    }
+  ],
+  "schema": "TRNM-W1-A-RAW-PACKET1",
+  "scope": "Complete files in the explicitly named source directories, retaining original successes, failures, pending fields and selected source boundaries. This is ordinary observation evidence, not cryptographic attestation.",
+  "tested_source": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+  "tested_tree": "23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0"
+}

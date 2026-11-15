@@ -1,0 +1,49 @@
+{
+  "branch": "fix/chain-cell-capacity-release-dc0357-20261109",
+  "build_jobs": 2,
+  "cargo_version": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+  "command": [
+    "/workspace/scratch/a6fe7c2e72c7/pq-validation/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "--",
+    "--test-threads=2"
+  ],
+  "cwd": "/workspace/scratch/dc0357cf2d6c/chain-capacity/trillionnium",
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_HOME": "/workspace/scratch/a6fe7c2e72c7/pq-validation/cargo",
+    "CARGO_TARGET_DIR": "/workspace/scratch/dc0357cf2d6c/target",
+    "RUSTC": "/workspace/scratch/a6fe7c2e72c7/pq-validation/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/workspace/scratch/a6fe7c2e72c7/pq-validation/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc"
+  },
+  "git_status": "M docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\n M trillionnium/crates/trnm-data-availability/src/cell.rs\n M trillionnium/crates/trnm-data-availability/src/cell/bep52_peer.rs\n M trillionnium/crates/trnm-data-availability/src/cell/erasure.rs\n M trillionnium/crates/trnm-data-availability/src/cell/erasure/provider/admission.rs\n M trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs\n M trillionnium/crates/trnm-data-availability/src/cell/retention.rs\n M trillionnium/crates/trnm-data-availability/src/cell/retention/payload_read.rs\n M trillionnium/crates/trnm-data-availability/src/cell/retention/payload_read/tests.rs\n M trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs\n M trillionnium/crates/trnm-data-availability/src/cell/version_retention.rs\n M trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/shard_plan_capacity.rs\n M trillionnium/crates/trnm-pon-node/src/lib.rs\n M trillionnium/crates/trnm-pon-node/src/store/storage_service.rs\n M trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs\n M trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs\n M trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs\n?? docs/development/specs/pon/CELL_RELEASE_SNAPSHOT_V1.md\n?? docs/development/specs/pon/CELL_STORAGE_CAPACITY_V2.md\n?? trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_next_use_v2.rs\n?? trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/\n?? trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/release.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/release/\n?? trillionnium/crates/trnm-data-availability/src/cell/bep52_storage.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/bep52_storage/\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/\n?? trillionnium/crates/trnm-data-availability/src/cell/release_snapshot.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/release_snapshot/\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/reservation_preflight.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/version_retention/chunk_read.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/shard_plan_paged.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs",
+  "head": "0746a462e80067b78317597f2fa4bacf5e3db958",
+  "lib_input_source_roots": [
+    "trillionnium/crates/trnm-data-availability/src/",
+    "trillionnium/crates/trnm-crypto-primitives/src/",
+    "trillionnium/crates/trnm-protocol/src/"
+  ],
+  "provider_cli_sha256_actual": "f2a00a03fc000a464cdadb915e894e381cc67f7ce309ff5b0de658148e8233ce",
+  "provider_environment": {
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_DIR": "/workspace/scratch/a6fe7c2e72c7/pq-validation/provider-run/trnm-pq-provider-3.5.9.Uv4EkAot/install",
+    "OPENSSL_MODULES": "/workspace/scratch/a6fe7c2e72c7/pq-validation/provider-run/trnm-pq-provider-3.5.9.Uv4EkAot/install/lib/ossl-modules",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/workspace/scratch/a6fe7c2e72c7/pq-validation/provider-run/trnm-pq-provider-3.5.9.Uv4EkAot/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "f2a00a03fc000a464cdadb915e894e381cc67f7ce309ff5b0de658148e8233ce",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "rustc_version": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "source_files": 1506,
+  "source_manifest": "/workspace/scratch/dc0357cf2d6c/validation/da-lib-attempt01-sources-start.json",
+  "source_manifest_sha256": "f817a948c74f2a70f9e995b6d449a5948bb78ab933c7a2667596bb8703f8a402",
+  "started_at_utc": "2026-11-09T14:15:51.464523+00:00",
+  "test_threads": 2
+}

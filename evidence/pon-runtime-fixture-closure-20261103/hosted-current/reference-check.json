@@ -1,0 +1,1875 @@
+{
+  "required_handoff_edges": [
+    {
+      "from": "current-business-terminal-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/source-binding.json",
+      "bytes": 6701,
+      "sha256": "87c48a4bc8e240ab88d87477bd9c834a7577589a9d61b02257a6dd47d9103b81",
+      "resolved_to": "c5dd/source-binding.json"
+    },
+    {
+      "from": "current-business-terminal-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/w1-history-four-lane-terminal-readback.json",
+      "bytes": 26283,
+      "sha256": "5ddbe69482b7f73bf356dc686cd30bf85aeec35a2ae10752588b2e7f8e7d6994",
+      "resolved_to": "c5dd/w1-history-four-lane-terminal-readback.json"
+    },
+    {
+      "from": "current-business-terminal-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/w1-history-four-lane-original-job-logs.json.gz",
+      "bytes": 153596,
+      "sha256": "e80d46c15d6f8d24fe5d1f74d6e069490288be0e02bc4c61f8b6741843a794c7",
+      "resolved_to": "c5dd/w1-history-four-lane-original-job-logs.json.gz"
+    },
+    {
+      "from": "current-business-terminal-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/original-three-campaign-compact-terminal-readback.json",
+      "bytes": 39725,
+      "sha256": "1b8a0f24294a8d66377b34d99c8063ad59e430b855a43b1f12deafcaeb74bf69",
+      "resolved_to": "c5dd/original-three-campaign-compact-terminal-readback.json"
+    },
+    {
+      "from": "current-business-terminal-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/original-three-campaign-selected-records.json.gz",
+      "bytes": 6069186,
+      "sha256": "009de88d176c549718e4d89bd67f0a2ff2fee358f5c4df8c28ceeb8c38e89182",
+      "resolved_to": "c5dd/original-three-campaign-selected-records.json.gz"
+    },
+    {
+      "from": "current-business-terminal-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/f0-two-phase-terminal-readback.json",
+      "bytes": 32980,
+      "sha256": "fa6f486400e6745ecc6f418e242a32559cbbd9c608af25e2ead28a2855aa609f",
+      "resolved_to": "c5dd/f0-two-phase-terminal-readback.json"
+    },
+    {
+      "from": "current-business-terminal-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/f0-selected-original-records.json.gz",
+      "bytes": 1835912,
+      "sha256": "9d8f0cb98c8b66fee9f60277c011bd69f4ce06af9754035b43d46ef22adcefd9",
+      "resolved_to": "c5dd/f0-selected-original-records.json.gz"
+    },
+    {
+      "from": "current-business-terminal-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-merge-fromzero-terminal-readback.json",
+      "bytes": 46841,
+      "sha256": "00e523f20dc26a018ce2116220ab3a2e5a943e140d348010b863b0c37b305019",
+      "resolved_to": "c5dd/protocol-merge-fromzero-terminal-readback.json"
+    },
+    {
+      "from": "current-business-terminal-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-merge-selected-original-records.json.gz",
+      "bytes": 876521,
+      "sha256": "c2965e0d0fc2e15b0cbb9367545c57a6d639679535de5ef12817a865c7425438",
+      "resolved_to": "c5dd/protocol-merge-selected-original-records.json.gz"
+    },
+    {
+      "from": "current-terminal-supplement-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-head-fromzero-terminal-readback.json",
+      "bytes": 73173,
+      "sha256": "d107a9fe5c54823fd441b7c2c15e2c547d0bf3ecdc0f82de34c30297a9316b06",
+      "resolved_to": "c5dd/protocol-head-fromzero-terminal-readback.json"
+    },
+    {
+      "from": "current-terminal-supplement-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-head-fromzero-original-records.json.gz",
+      "bytes": 1024873,
+      "sha256": "4a69ce849e1c8aaec37e9921e9cc321ddb22fb4d991a3bbf25cda455a72cb0a2",
+      "resolved_to": "c5dd/protocol-head-fromzero-original-records.json.gz"
+    },
+    {
+      "from": "current-terminal-supplement-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/cost-x64-fromzero-terminal-readback.json",
+      "bytes": 72847,
+      "sha256": "b3d0228ce580cf2445c542e0121bc965a574c36266a51a397bda4788b161503e",
+      "resolved_to": "c5dd/cost-x64-fromzero-terminal-readback.json"
+    },
+    {
+      "from": "current-terminal-supplement-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/cost-x64-fromzero-original-records.json.gz",
+      "bytes": 767226,
+      "sha256": "1e23545944c52d745311e422d5d1b7cfbb5b428f1ef88a5ad8edba89638482b6",
+      "resolved_to": "c5dd/cost-x64-fromzero-original-records.json.gz"
+    },
+    {
+      "from": "current-terminal-supplement-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/cost-arm64-fromzero-terminal-readback.json",
+      "bytes": 72935,
+      "sha256": "16fc14aca64337a3bc92da8f6561c9039b1f2181e6a301cbb88a8fc2ab09a8b2",
+      "resolved_to": "c5dd/cost-arm64-fromzero-terminal-readback.json"
+    },
+    {
+      "from": "current-terminal-supplement-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/cost-arm64-fromzero-original-records.json.gz",
+      "bytes": 776787,
+      "sha256": "1832c212ca2f60c1813fc846a07d9a2e3547cf8433cffd0d6405483597c3bcf9",
+      "resolved_to": "c5dd/cost-arm64-fromzero-original-records.json.gz"
+    },
+    {
+      "from": "current-terminal-supplement-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-head-13277997507-readback.json",
+      "bytes": 288846,
+      "sha256": "373388ded2c97d4ccb0f96836e7e72614f7ac48f648ca92428018dd5f2e078eb",
+      "resolved_to": "c5dd/pq-node-x64-head-13277997507-readback.json"
+    },
+    {
+      "from": "current-terminal-supplement-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-head-13277997507-original-records.json.gz",
+      "bytes": 956062,
+      "sha256": "3a0d2471046cdc2bb389538eafb681ec4366ec6c32d47ce4353ae8e887cbb9fe",
+      "resolved_to": "c5dd/pq-node-x64-head-13277997507-original-records.json.gz"
+    },
+    {
+      "from": "current-terminal-supplement-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-merge-13277323560-readback.json",
+      "bytes": 289305,
+      "sha256": "26b222d70d91c01cca9485d875abe28e882f1d4c93a0a8efd95c982e5e96b87e",
+      "resolved_to": "c5dd/pq-node-x64-merge-13277323560-readback.json"
+    },
+    {
+      "from": "current-terminal-supplement-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-merge-13277323560-original-records.json.gz",
+      "bytes": 957673,
+      "sha256": "984601525c9c9c92e7937c9c5745abd514be195b4be34ce76cbb9d3ea58bf0c1",
+      "resolved_to": "c5dd/pq-node-x64-merge-13277323560-original-records.json.gz"
+    },
+    {
+      "from": "current-terminal-supplement-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/runtime-original-deadline-readback.json",
+      "bytes": 4065,
+      "sha256": "48f2378335f489979d645409e748e559ba023ce4beccf79ac240de629d87ed74",
+      "resolved_to": "c5dd/runtime-original-deadline-readback.json"
+    },
+    {
+      "from": "current-terminal-supplement-handoff.json/prior_frozen_handoff",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/current-business-terminal-handoff.json",
+      "bytes": 3666,
+      "sha256": "b811562aabceb2712acd7d0dd3f48ea038d0d5a624f58003b844c1c9ef1652c0",
+      "resolved_to": "c5dd/current-business-terminal-handoff.json"
+    },
+    {
+      "from": "current-terminal-small-records-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/source-binding.json",
+      "bytes": 6561,
+      "sha256": "0ee84001eb8410e88cbb46a45e3c838ffc07509cbd1429e4cbc86ba2d7c7fb10",
+      "resolved_to": "b4bdf/source-binding.json"
+    },
+    {
+      "from": "current-terminal-small-records-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-head-terminal-readback.json",
+      "bytes": 65475,
+      "sha256": "de81c882e8326fcde096379ea8447451291d30ef1c16423ad1775e607c1501a3",
+      "resolved_to": "b4bdf/w1-fresh-head-terminal-readback.json"
+    },
+    {
+      "from": "current-terminal-small-records-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-head-selected-original-records.json.gz",
+      "bytes": 586184,
+      "sha256": "6a0e7b09ad2fa5d934d1be3bea582715cab37d4723d30212a383a4c7307ef97b",
+      "resolved_to": "b4bdf/w1-fresh-head-selected-original-records.json.gz"
+    },
+    {
+      "from": "current-terminal-small-records-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-merge-terminal-readback.json",
+      "bytes": 65603,
+      "sha256": "3e41bd1ed21c105971a9f898704bf5b2e409ae4494e57bf6a1f758ff4abe0a82",
+      "resolved_to": "b4bdf/w1-fresh-merge-terminal-readback.json"
+    },
+    {
+      "from": "current-terminal-small-records-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-merge-selected-original-records.json.gz",
+      "bytes": 585192,
+      "sha256": "675b6f08c059e9d1e0275ce0fe8c31124b98a821ebaa4cb1ee10203db7cb967e",
+      "resolved_to": "b4bdf/w1-fresh-merge-selected-original-records.json.gz"
+    },
+    {
+      "from": "current-terminal-small-records-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/f0-two-phase-terminal-readback.json",
+      "bytes": 116400,
+      "sha256": "f343bdcacca720e13e962cc1a7ba30cf27cfe0c539eb20669ba20bf188ec1cfd",
+      "resolved_to": "b4bdf/f0-two-phase-terminal-readback.json"
+    },
+    {
+      "from": "current-terminal-small-records-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/f0-selected-original-records.json.gz",
+      "bytes": 1862302,
+      "sha256": "565fba925680ceafaaff48a8d5207a3e20b4e7fca52b7ce49e5bfd57a06ee135",
+      "resolved_to": "b4bdf/f0-selected-original-records.json.gz"
+    },
+    {
+      "from": "current-terminal-small-records-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/original-three-campaign-compact-terminal-readback.json",
+      "bytes": 39654,
+      "sha256": "d37120c9043672bb4d461adb24b439c7a190c32161a5a187abdf025a6c723a52",
+      "resolved_to": "b4bdf/original-three-campaign-compact-terminal-readback.json"
+    },
+    {
+      "from": "current-terminal-small-records-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/original-three-campaign-selected-records.json.gz",
+      "bytes": 6035838,
+      "sha256": "c12419f067220378b1e285fbe49e27bc5387c47c4df1ae4c8449c0b87e67056e",
+      "resolved_to": "b4bdf/original-three-campaign-selected-records.json.gz"
+    },
+    {
+      "from": "current-terminal-small-records-handoff.json/reader_refusal_records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/f0-reader-native-derived-shape-refusal.json",
+      "bytes": 1495,
+      "sha256": "3f888b67fddd33c35b59fc81d5298634cf6d71258c97543d2ec69922371e7da4",
+      "resolved_to": "b4bdf/f0-reader-native-derived-shape-refusal.json"
+    },
+    {
+      "from": "current-terminal-small-records-handoff.json/reader_refusal_records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/f0-controller-readback-refusal.json",
+      "bytes": 7735,
+      "sha256": "60f59e22c6c99ddcdb78410509555339b9182f788e706a6f0bfd19a83bdd9211",
+      "resolved_to": "b4bdf/f0-controller-readback-refusal.json"
+    },
+    {
+      "from": "pq-original-node-four-lane-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-head-13277997507-readback.json",
+      "bytes": 288846,
+      "sha256": "373388ded2c97d4ccb0f96836e7e72614f7ac48f648ca92428018dd5f2e078eb",
+      "resolved_to": "c5dd/pq-node-x64-head-13277997507-readback.json"
+    },
+    {
+      "from": "pq-original-node-four-lane-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-head-13277997507-original-records.json.gz",
+      "bytes": 956062,
+      "sha256": "3a0d2471046cdc2bb389538eafb681ec4366ec6c32d47ce4353ae8e887cbb9fe",
+      "resolved_to": "c5dd/pq-node-x64-head-13277997507-original-records.json.gz"
+    },
+    {
+      "from": "pq-original-node-four-lane-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-merge-13277323560-readback.json",
+      "bytes": 289305,
+      "sha256": "26b222d70d91c01cca9485d875abe28e882f1d4c93a0a8efd95c982e5e96b87e",
+      "resolved_to": "c5dd/pq-node-x64-merge-13277323560-readback.json"
+    },
+    {
+      "from": "pq-original-node-four-lane-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-merge-13277323560-original-records.json.gz",
+      "bytes": 957673,
+      "sha256": "984601525c9c9c92e7937c9c5745abd514be195b4be34ce76cbb9d3ea58bf0c1",
+      "resolved_to": "c5dd/pq-node-x64-merge-13277323560-original-records.json.gz"
+    },
+    {
+      "from": "pq-original-node-four-lane-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-arm64-head-13277434557-readback.json",
+      "bytes": 288856,
+      "sha256": "8d190c22d93dd1cc42b254fdce3a6730917275a70d2bae8575a6198151c3a219",
+      "resolved_to": "c5dd/pq-node-arm64-head-13277434557-readback.json"
+    },
+    {
+      "from": "pq-original-node-four-lane-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-arm64-head-13277434557-original-records.json.gz",
+      "bytes": 953366,
+      "sha256": "343ec5e56195ebf6dae672f4ad9290ef63a0a5a164616b3b1107b7d92b84553d",
+      "resolved_to": "c5dd/pq-node-arm64-head-13277434557-original-records.json.gz"
+    },
+    {
+      "from": "pq-original-node-four-lane-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-arm64-merge-13280090271-readback.json",
+      "bytes": 289315,
+      "sha256": "a18b70dcfcce45affc0831c27b5e5a4d66935541debbf1b87c805c226f58c913",
+      "resolved_to": "c5dd/pq-node-arm64-merge-13280090271-readback.json"
+    },
+    {
+      "from": "pq-original-node-four-lane-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-arm64-merge-13280090271-original-records.json.gz",
+      "bytes": 955308,
+      "sha256": "0975a80368bcfbe2a78d611a23058fc13faa06c17919c0db8037a8179eacce07",
+      "resolved_to": "c5dd/pq-node-arm64-merge-13280090271-original-records.json.gz"
+    },
+    {
+      "from": "pq-original-node-four-lane-handoff.json/aggregate",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-original-node-four-lane-readback.json",
+      "bytes": 16589,
+      "sha256": "f9744015c6390c6725cf42fbc0507f158f4d139036fd4814d7a831626c0e3a7a",
+      "resolved_to": "c5dd/pq-original-node-four-lane-readback.json"
+    },
+    {
+      "from": "pq-original-node-four-lane-handoff.json/metadata",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/20261103T230901764Z-pq-final-jobs.json",
+      "bytes": 33906,
+      "sha256": "ce047dfe5d41a91d3a20e20d5c4cda92a653dd6c122a636e592d8105cc88f78d",
+      "resolved_to": "c5dd/20261103T230901764Z-pq-final-jobs.json"
+    },
+    {
+      "from": "w1-history-small-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/current-terminal-small-records-handoff.json",
+      "bytes": 4429,
+      "sha256": "6791432d16cb348666a75c6a31f09ab7e39188f03f246bdcdc18b974233e3b63",
+      "resolved_to": "b4bdf/current-terminal-small-records-handoff.json"
+    },
+    {
+      "from": "w1-history-small-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-history-four-lane-terminal-readback.json",
+      "bytes": 26299,
+      "sha256": "c7edcbc14e68d890f7c375af99fc8afe8a4aad702a990e98cd918cdffb358b34",
+      "resolved_to": "b4bdf/w1-history-four-lane-terminal-readback.json"
+    },
+    {
+      "from": "w1-history-small-handoff.json/records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-history-four-lane-original-job-logs.json.gz",
+      "bytes": 153240,
+      "sha256": "9faab61fd3b7ebc114faca5edcea21067419ee988aeac9b85f2d4c1d177c825a",
+      "resolved_to": "b4bdf/w1-history-four-lane-original-job-logs.json.gz"
+    }
+  ],
+  "required_handoff_edges_resolved": 45,
+  "structured_provenance_references": [
+    {
+      "from": "b4bdf/current-terminal-small-records-handoff.json",
+      "pointer": "/records/0",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/source-binding.json",
+      "sha256": "0ee84001eb8410e88cbb46a45e3c838ffc07509cbd1429e4cbc86ba2d7c7fb10",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/source-binding.json"
+    },
+    {
+      "from": "b4bdf/current-terminal-small-records-handoff.json",
+      "pointer": "/records/1",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-head-terminal-readback.json",
+      "sha256": "de81c882e8326fcde096379ea8447451291d30ef1c16423ad1775e607c1501a3",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/w1-fresh-head-terminal-readback.json"
+    },
+    {
+      "from": "b4bdf/current-terminal-small-records-handoff.json",
+      "pointer": "/records/2",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-head-selected-original-records.json.gz",
+      "sha256": "6a0e7b09ad2fa5d934d1be3bea582715cab37d4723d30212a383a4c7307ef97b",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/w1-fresh-head-selected-original-records.json.gz"
+    },
+    {
+      "from": "b4bdf/current-terminal-small-records-handoff.json",
+      "pointer": "/records/3",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-merge-terminal-readback.json",
+      "sha256": "3e41bd1ed21c105971a9f898704bf5b2e409ae4494e57bf6a1f758ff4abe0a82",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/w1-fresh-merge-terminal-readback.json"
+    },
+    {
+      "from": "b4bdf/current-terminal-small-records-handoff.json",
+      "pointer": "/records/4",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-merge-selected-original-records.json.gz",
+      "sha256": "675b6f08c059e9d1e0275ce0fe8c31124b98a821ebaa4cb1ee10203db7cb967e",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/w1-fresh-merge-selected-original-records.json.gz"
+    },
+    {
+      "from": "b4bdf/current-terminal-small-records-handoff.json",
+      "pointer": "/records/5",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/f0-two-phase-terminal-readback.json",
+      "sha256": "f343bdcacca720e13e962cc1a7ba30cf27cfe0c539eb20669ba20bf188ec1cfd",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/f0-two-phase-terminal-readback.json"
+    },
+    {
+      "from": "b4bdf/current-terminal-small-records-handoff.json",
+      "pointer": "/records/6",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/f0-selected-original-records.json.gz",
+      "sha256": "565fba925680ceafaaff48a8d5207a3e20b4e7fca52b7ce49e5bfd57a06ee135",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/f0-selected-original-records.json.gz"
+    },
+    {
+      "from": "b4bdf/current-terminal-small-records-handoff.json",
+      "pointer": "/records/7",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/original-three-campaign-compact-terminal-readback.json",
+      "sha256": "d37120c9043672bb4d461adb24b439c7a190c32161a5a187abdf025a6c723a52",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/original-three-campaign-compact-terminal-readback.json"
+    },
+    {
+      "from": "b4bdf/current-terminal-small-records-handoff.json",
+      "pointer": "/records/8",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/original-three-campaign-selected-records.json.gz",
+      "sha256": "c12419f067220378b1e285fbe49e27bc5387c47c4df1ae4c8449c0b87e67056e",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/original-three-campaign-selected-records.json.gz"
+    },
+    {
+      "from": "b4bdf/current-terminal-small-records-handoff.json",
+      "pointer": "/reader_refusal_records/0",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/f0-reader-native-derived-shape-refusal.json",
+      "sha256": "3f888b67fddd33c35b59fc81d5298634cf6d71258c97543d2ec69922371e7da4",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/f0-reader-native-derived-shape-refusal.json"
+    },
+    {
+      "from": "b4bdf/current-terminal-small-records-handoff.json",
+      "pointer": "/reader_refusal_records/1",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/f0-controller-readback-refusal.json",
+      "sha256": "60f59e22c6c99ddcdb78410509555339b9182f788e706a6f0bfd19a83bdd9211",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/f0-controller-readback-refusal.json"
+    },
+    {
+      "from": "b4bdf/f0-two-phase-terminal-readback.json",
+      "pointer": "/binary",
+      "source_path": "/home/runner/work/_temp/pon-fixed-host-root-f0-41732369850-1/prepared/public_v3_multiprocess.bin",
+      "sha256": "809fcd2165f5e77a3bf093f78e1b2af63f993302932524f25f29d240d7054249",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "b4bdf/source-binding.json",
+      "pointer": "/receipts/0",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/20261103T223820048Z-candidate-commit.json",
+      "sha256": "84c68b00ba3a1f7570f99e2d4d0fc923b95eb9837108f9339df12a5e4151dbfb",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "b4bdf/source-binding.json",
+      "pointer": "/receipts/1",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/w1-source-publication/actual-merge-commit.json",
+      "sha256": "436f223393fda2cab5de37d77fb2c4eb5e7877a1c06f651039990ea4d9e0b429",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "b4bdf/w1-fresh-head-terminal-readback.json",
+      "pointer": "/controller/final_parent_lease/parent_identity/unit_file",
+      "source_path": "/run/systemd/system/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "b4bdf/w1-fresh-head-terminal-readback.json",
+      "pointer": "/controller/final_parent_lease/seal_file",
+      "source_path": "/run/trnm-public-fixture-41732369770-1-fresh-challenge-service/parent.json",
+      "sha256": "a9175c9153ba10574f8f326ac57130b57b2a675edc6f7cd940de3595cffd9846",
+      "status": "original_record_content_preserved_inside_bundle",
+      "resolved_to": [
+        {
+          "bundle": "b4bdf/w1-fresh-head-selected-original-records.json.gz",
+          "member": "public-fixture-parent.json"
+        }
+      ]
+    },
+    {
+      "from": "b4bdf/w1-fresh-head-terminal-readback.json",
+      "pointer": "/controller/parent_lease/parent_identity/unit_file",
+      "source_path": "/run/systemd/system/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "b4bdf/w1-fresh-head-terminal-readback.json",
+      "pointer": "/controller/parent_lease/seal_file",
+      "source_path": "/run/trnm-public-fixture-41732369770-1-fresh-challenge-service/parent.json",
+      "sha256": "a9175c9153ba10574f8f326ac57130b57b2a675edc6f7cd940de3595cffd9846",
+      "status": "original_record_content_preserved_inside_bundle",
+      "resolved_to": [
+        {
+          "bundle": "b4bdf/w1-fresh-head-selected-original-records.json.gz",
+          "member": "public-fixture-parent.json"
+        }
+      ]
+    },
+    {
+      "from": "b4bdf/w1-fresh-merge-terminal-readback.json",
+      "pointer": "/controller/final_parent_lease/parent_identity/unit_file",
+      "source_path": "/run/systemd/system/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "b4bdf/w1-fresh-merge-terminal-readback.json",
+      "pointer": "/controller/final_parent_lease/seal_file",
+      "source_path": "/run/trnm-public-fixture-41732369770-1-fresh-challenge-service/parent.json",
+      "sha256": "880d11764c056a769c65ecccad432500578b1e40b4d9da8955a6a337c4fe6780",
+      "status": "original_record_content_preserved_inside_bundle",
+      "resolved_to": [
+        {
+          "bundle": "b4bdf/w1-fresh-merge-selected-original-records.json.gz",
+          "member": "public-fixture-parent.json"
+        }
+      ]
+    },
+    {
+      "from": "b4bdf/w1-fresh-merge-terminal-readback.json",
+      "pointer": "/controller/parent_lease/parent_identity/unit_file",
+      "source_path": "/run/systemd/system/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "b4bdf/w1-fresh-merge-terminal-readback.json",
+      "pointer": "/controller/parent_lease/seal_file",
+      "source_path": "/run/trnm-public-fixture-41732369770-1-fresh-challenge-service/parent.json",
+      "sha256": "880d11764c056a769c65ecccad432500578b1e40b4d9da8955a6a337c4fe6780",
+      "status": "original_record_content_preserved_inside_bundle",
+      "resolved_to": [
+        {
+          "bundle": "b4bdf/w1-fresh-merge-selected-original-records.json.gz",
+          "member": "public-fixture-parent.json"
+        }
+      ]
+    },
+    {
+      "from": "b4bdf/w1-history-small-handoff.json",
+      "pointer": "/records/0",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/current-terminal-small-records-handoff.json",
+      "sha256": "6791432d16cb348666a75c6a31f09ab7e39188f03f246bdcdc18b974233e3b63",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/current-terminal-small-records-handoff.json"
+    },
+    {
+      "from": "b4bdf/w1-history-small-handoff.json",
+      "pointer": "/records/1",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-history-four-lane-terminal-readback.json",
+      "sha256": "c7edcbc14e68d890f7c375af99fc8afe8a4aad702a990e98cd918cdffb358b34",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/w1-history-four-lane-terminal-readback.json"
+    },
+    {
+      "from": "b4bdf/w1-history-small-handoff.json",
+      "pointer": "/records/2",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-history-four-lane-original-job-logs.json.gz",
+      "sha256": "9faab61fd3b7ebc114faca5edcea21067419ee988aeac9b85f2d4c1d177c825a",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/w1-history-four-lane-original-job-logs.json.gz"
+    },
+    {
+      "from": "c5dd/cost-arm64-fromzero-terminal-readback.json",
+      "pointer": "/host_controller/final_parent_lease/parent_identity/unit_file",
+      "source_path": "/run/systemd/system/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/cost-arm64-fromzero-terminal-readback.json",
+      "pointer": "/host_controller/final_parent_lease/seal_file",
+      "source_path": "/run/trnm-public-fixture-41728500537-1-cross-arch-cost/parent.json",
+      "sha256": "cc008f9fd2980d7d5cc707baf8f1d06a868f1ab3d3cb28d1f6567419af12a632",
+      "status": "original_record_content_preserved_inside_bundle",
+      "resolved_to": [
+        {
+          "bundle": "c5dd/cost-arm64-fromzero-original-records.json.gz",
+          "member": "public-fixture-parent.json"
+        }
+      ]
+    },
+    {
+      "from": "c5dd/cost-arm64-fromzero-terminal-readback.json",
+      "pointer": "/host_controller/parent_lease/parent_identity/unit_file",
+      "source_path": "/run/systemd/system/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/cost-arm64-fromzero-terminal-readback.json",
+      "pointer": "/host_controller/parent_lease/seal_file",
+      "source_path": "/run/trnm-public-fixture-41728500537-1-cross-arch-cost/parent.json",
+      "sha256": "cc008f9fd2980d7d5cc707baf8f1d06a868f1ab3d3cb28d1f6567419af12a632",
+      "status": "original_record_content_preserved_inside_bundle",
+      "resolved_to": [
+        {
+          "bundle": "c5dd/cost-arm64-fromzero-original-records.json.gz",
+          "member": "public-fixture-parent.json"
+        }
+      ]
+    },
+    {
+      "from": "c5dd/cost-x64-fromzero-terminal-readback.json",
+      "pointer": "/host_controller/final_parent_lease/parent_identity/unit_file",
+      "source_path": "/run/systemd/system/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/cost-x64-fromzero-terminal-readback.json",
+      "pointer": "/host_controller/final_parent_lease/seal_file",
+      "source_path": "/run/trnm-public-fixture-41728500537-1-cross-arch-cost/parent.json",
+      "sha256": "1723bb02a975c8e20892453c9fcb20c22df4ab78e610cc13f5de0bdba4cc6f59",
+      "status": "original_record_content_preserved_inside_bundle",
+      "resolved_to": [
+        {
+          "bundle": "c5dd/cost-x64-fromzero-original-records.json.gz",
+          "member": "public-fixture-parent.json"
+        }
+      ]
+    },
+    {
+      "from": "c5dd/cost-x64-fromzero-terminal-readback.json",
+      "pointer": "/host_controller/parent_lease/parent_identity/unit_file",
+      "source_path": "/run/systemd/system/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/cost-x64-fromzero-terminal-readback.json",
+      "pointer": "/host_controller/parent_lease/seal_file",
+      "source_path": "/run/trnm-public-fixture-41728500537-1-cross-arch-cost/parent.json",
+      "sha256": "1723bb02a975c8e20892453c9fcb20c22df4ab78e610cc13f5de0bdba4cc6f59",
+      "status": "original_record_content_preserved_inside_bundle",
+      "resolved_to": [
+        {
+          "bundle": "c5dd/cost-x64-fromzero-original-records.json.gz",
+          "member": "public-fixture-parent.json"
+        }
+      ]
+    },
+    {
+      "from": "c5dd/current-business-terminal-handoff.json",
+      "pointer": "/records/0",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/source-binding.json",
+      "sha256": "87c48a4bc8e240ab88d87477bd9c834a7577589a9d61b02257a6dd47d9103b81",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/source-binding.json"
+    },
+    {
+      "from": "c5dd/current-business-terminal-handoff.json",
+      "pointer": "/records/1",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/w1-history-four-lane-terminal-readback.json",
+      "sha256": "5ddbe69482b7f73bf356dc686cd30bf85aeec35a2ae10752588b2e7f8e7d6994",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/w1-history-four-lane-terminal-readback.json"
+    },
+    {
+      "from": "c5dd/current-business-terminal-handoff.json",
+      "pointer": "/records/2",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/w1-history-four-lane-original-job-logs.json.gz",
+      "sha256": "e80d46c15d6f8d24fe5d1f74d6e069490288be0e02bc4c61f8b6741843a794c7",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/w1-history-four-lane-original-job-logs.json.gz"
+    },
+    {
+      "from": "c5dd/current-business-terminal-handoff.json",
+      "pointer": "/records/3",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/original-three-campaign-compact-terminal-readback.json",
+      "sha256": "1b8a0f24294a8d66377b34d99c8063ad59e430b855a43b1f12deafcaeb74bf69",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/original-three-campaign-compact-terminal-readback.json"
+    },
+    {
+      "from": "c5dd/current-business-terminal-handoff.json",
+      "pointer": "/records/4",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/original-three-campaign-selected-records.json.gz",
+      "sha256": "009de88d176c549718e4d89bd67f0a2ff2fee358f5c4df8c28ceeb8c38e89182",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/original-three-campaign-selected-records.json.gz"
+    },
+    {
+      "from": "c5dd/current-business-terminal-handoff.json",
+      "pointer": "/records/5",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/f0-two-phase-terminal-readback.json",
+      "sha256": "fa6f486400e6745ecc6f418e242a32559cbbd9c608af25e2ead28a2855aa609f",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/f0-two-phase-terminal-readback.json"
+    },
+    {
+      "from": "c5dd/current-business-terminal-handoff.json",
+      "pointer": "/records/6",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/f0-selected-original-records.json.gz",
+      "sha256": "9d8f0cb98c8b66fee9f60277c011bd69f4ce06af9754035b43d46ef22adcefd9",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/f0-selected-original-records.json.gz"
+    },
+    {
+      "from": "c5dd/current-business-terminal-handoff.json",
+      "pointer": "/records/7",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-merge-fromzero-terminal-readback.json",
+      "sha256": "00e523f20dc26a018ce2116220ab3a2e5a943e140d348010b863b0c37b305019",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/protocol-merge-fromzero-terminal-readback.json"
+    },
+    {
+      "from": "c5dd/current-business-terminal-handoff.json",
+      "pointer": "/records/8",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-merge-selected-original-records.json.gz",
+      "sha256": "c2965e0d0fc2e15b0cbb9367545c57a6d639679535de5ef12817a865c7425438",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/protocol-merge-selected-original-records.json.gz"
+    },
+    {
+      "from": "c5dd/current-terminal-supplement-handoff.json",
+      "pointer": "/prior_frozen_handoff",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/current-business-terminal-handoff.json",
+      "sha256": "b811562aabceb2712acd7d0dd3f48ea038d0d5a624f58003b844c1c9ef1652c0",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/current-business-terminal-handoff.json"
+    },
+    {
+      "from": "c5dd/current-terminal-supplement-handoff.json",
+      "pointer": "/records/0",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-head-fromzero-terminal-readback.json",
+      "sha256": "d107a9fe5c54823fd441b7c2c15e2c547d0bf3ecdc0f82de34c30297a9316b06",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/protocol-head-fromzero-terminal-readback.json"
+    },
+    {
+      "from": "c5dd/current-terminal-supplement-handoff.json",
+      "pointer": "/records/1",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-head-fromzero-original-records.json.gz",
+      "sha256": "4a69ce849e1c8aaec37e9921e9cc321ddb22fb4d991a3bbf25cda455a72cb0a2",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/protocol-head-fromzero-original-records.json.gz"
+    },
+    {
+      "from": "c5dd/current-terminal-supplement-handoff.json",
+      "pointer": "/records/2",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/cost-x64-fromzero-terminal-readback.json",
+      "sha256": "b3d0228ce580cf2445c542e0121bc965a574c36266a51a397bda4788b161503e",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/cost-x64-fromzero-terminal-readback.json"
+    },
+    {
+      "from": "c5dd/current-terminal-supplement-handoff.json",
+      "pointer": "/records/3",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/cost-x64-fromzero-original-records.json.gz",
+      "sha256": "1e23545944c52d745311e422d5d1b7cfbb5b428f1ef88a5ad8edba89638482b6",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/cost-x64-fromzero-original-records.json.gz"
+    },
+    {
+      "from": "c5dd/current-terminal-supplement-handoff.json",
+      "pointer": "/records/4",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/cost-arm64-fromzero-terminal-readback.json",
+      "sha256": "16fc14aca64337a3bc92da8f6561c9039b1f2181e6a301cbb88a8fc2ab09a8b2",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/cost-arm64-fromzero-terminal-readback.json"
+    },
+    {
+      "from": "c5dd/current-terminal-supplement-handoff.json",
+      "pointer": "/records/5",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/cost-arm64-fromzero-original-records.json.gz",
+      "sha256": "1832c212ca2f60c1813fc846a07d9a2e3547cf8433cffd0d6405483597c3bcf9",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/cost-arm64-fromzero-original-records.json.gz"
+    },
+    {
+      "from": "c5dd/current-terminal-supplement-handoff.json",
+      "pointer": "/records/6",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-head-13277997507-readback.json",
+      "sha256": "373388ded2c97d4ccb0f96836e7e72614f7ac48f648ca92428018dd5f2e078eb",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-x64-head-13277997507-readback.json"
+    },
+    {
+      "from": "c5dd/current-terminal-supplement-handoff.json",
+      "pointer": "/records/7",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-head-13277997507-original-records.json.gz",
+      "sha256": "3a0d2471046cdc2bb389538eafb681ec4366ec6c32d47ce4353ae8e887cbb9fe",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-x64-head-13277997507-original-records.json.gz"
+    },
+    {
+      "from": "c5dd/current-terminal-supplement-handoff.json",
+      "pointer": "/records/8",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-merge-13277323560-readback.json",
+      "sha256": "26b222d70d91c01cca9485d875abe28e882f1d4c93a0a8efd95c982e5e96b87e",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-x64-merge-13277323560-readback.json"
+    },
+    {
+      "from": "c5dd/current-terminal-supplement-handoff.json",
+      "pointer": "/records/9",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-merge-13277323560-original-records.json.gz",
+      "sha256": "984601525c9c9c92e7937c9c5745abd514be195b4be34ce76cbb9d3ea58bf0c1",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-x64-merge-13277323560-original-records.json.gz"
+    },
+    {
+      "from": "c5dd/current-terminal-supplement-handoff.json",
+      "pointer": "/records/10",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/runtime-original-deadline-readback.json",
+      "sha256": "48f2378335f489979d645409e748e559ba023ce4beccf79ac240de629d87ed74",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/runtime-original-deadline-readback.json"
+    },
+    {
+      "from": "c5dd/f0-two-phase-terminal-readback.json",
+      "pointer": "/binary",
+      "source_path": "/home/runner/work/_temp/pon-fixed-host-root-f0-41728500288-1/prepared/public_v3_multiprocess.bin",
+      "sha256": "809fcd2165f5e77a3bf093f78e1b2af63f993302932524f25f29d240d7054249",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/pq-node-arm64-head-13277434557-readback.json",
+      "pointer": "/frozen_registry",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/full-node-fixture-diagnostics/plan.json",
+      "sha256": "c85222711cb8ef0a65c11a828d8471cfc6f7faa7bd9b9a6228f745530171e27d",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/pq-node-arm64-head-13277434557-readback.json",
+      "pointer": "/reader",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/new-candidate-preparation/read-pq-node-lane.py",
+      "sha256": "72967ea2d640199241d339ff5b0477f22c91b0480c622ec79bf1116b91b2d9b1",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/pq-node-arm64-merge-13280090271-readback.json",
+      "pointer": "/frozen_registry",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/full-node-fixture-diagnostics/plan.json",
+      "sha256": "c85222711cb8ef0a65c11a828d8471cfc6f7faa7bd9b9a6228f745530171e27d",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/pq-node-arm64-merge-13280090271-readback.json",
+      "pointer": "/reader",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/new-candidate-preparation/read-pq-node-lane.py",
+      "sha256": "72967ea2d640199241d339ff5b0477f22c91b0480c622ec79bf1116b91b2d9b1",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/pq-node-x64-head-13277997507-readback.json",
+      "pointer": "/frozen_registry",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/full-node-fixture-diagnostics/plan.json",
+      "sha256": "c85222711cb8ef0a65c11a828d8471cfc6f7faa7bd9b9a6228f745530171e27d",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/pq-node-x64-head-13277997507-readback.json",
+      "pointer": "/reader",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/new-candidate-preparation/read-pq-node-lane.py",
+      "sha256": "72967ea2d640199241d339ff5b0477f22c91b0480c622ec79bf1116b91b2d9b1",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/pq-node-x64-merge-13277323560-readback.json",
+      "pointer": "/frozen_registry",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/full-node-fixture-diagnostics/plan.json",
+      "sha256": "c85222711cb8ef0a65c11a828d8471cfc6f7faa7bd9b9a6228f745530171e27d",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/pq-node-x64-merge-13277323560-readback.json",
+      "pointer": "/reader",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/new-candidate-preparation/read-pq-node-lane.py",
+      "sha256": "72967ea2d640199241d339ff5b0477f22c91b0480c622ec79bf1116b91b2d9b1",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-handoff.json",
+      "pointer": "/aggregate",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-original-node-four-lane-readback.json",
+      "sha256": "f9744015c6390c6725cf42fbc0507f158f4d139036fd4814d7a831626c0e3a7a",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-original-node-four-lane-readback.json"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-handoff.json",
+      "pointer": "/records/0",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-head-13277997507-readback.json",
+      "sha256": "373388ded2c97d4ccb0f96836e7e72614f7ac48f648ca92428018dd5f2e078eb",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-x64-head-13277997507-readback.json"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-handoff.json",
+      "pointer": "/records/1",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-head-13277997507-original-records.json.gz",
+      "sha256": "3a0d2471046cdc2bb389538eafb681ec4366ec6c32d47ce4353ae8e887cbb9fe",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-x64-head-13277997507-original-records.json.gz"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-handoff.json",
+      "pointer": "/records/2",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-merge-13277323560-readback.json",
+      "sha256": "26b222d70d91c01cca9485d875abe28e882f1d4c93a0a8efd95c982e5e96b87e",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-x64-merge-13277323560-readback.json"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-handoff.json",
+      "pointer": "/records/3",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-merge-13277323560-original-records.json.gz",
+      "sha256": "984601525c9c9c92e7937c9c5745abd514be195b4be34ce76cbb9d3ea58bf0c1",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-x64-merge-13277323560-original-records.json.gz"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-handoff.json",
+      "pointer": "/records/4",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-arm64-head-13277434557-readback.json",
+      "sha256": "8d190c22d93dd1cc42b254fdce3a6730917275a70d2bae8575a6198151c3a219",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-arm64-head-13277434557-readback.json"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-handoff.json",
+      "pointer": "/records/5",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-arm64-head-13277434557-original-records.json.gz",
+      "sha256": "343ec5e56195ebf6dae672f4ad9290ef63a0a5a164616b3b1107b7d92b84553d",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-arm64-head-13277434557-original-records.json.gz"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-handoff.json",
+      "pointer": "/records/6",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-arm64-merge-13280090271-readback.json",
+      "sha256": "a18b70dcfcce45affc0831c27b5e5a4d66935541debbf1b87c805c226f58c913",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-arm64-merge-13280090271-readback.json"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-handoff.json",
+      "pointer": "/records/7",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-arm64-merge-13280090271-original-records.json.gz",
+      "sha256": "0975a80368bcfbe2a78d611a23058fc13faa06c17919c0db8037a8179eacce07",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-arm64-merge-13280090271-original-records.json.gz"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-handoff.json",
+      "pointer": "/metadata",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/20261103T230901764Z-pq-final-jobs.json",
+      "sha256": "ce047dfe5d41a91d3a20e20d5c4cda92a653dd6c122a636e592d8105cc88f78d",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/20261103T230901764Z-pq-final-jobs.json"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-readback.json",
+      "pointer": "/source_binding",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/source-binding.json",
+      "sha256": "87c48a4bc8e240ab88d87477bd9c834a7577589a9d61b02257a6dd47d9103b81",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/source-binding.json"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-readback.json",
+      "pointer": "/terminal_job_metadata",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/20261103T230901764Z-pq-final-jobs.json",
+      "sha256": "ce047dfe5d41a91d3a20e20d5c4cda92a653dd6c122a636e592d8105cc88f78d",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/20261103T230901764Z-pq-final-jobs.json"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-readback.json",
+      "pointer": "/registry_reference",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/full-node-fixture-diagnostics/plan.json",
+      "sha256": "c85222711cb8ef0a65c11a828d8471cfc6f7faa7bd9b9a6228f745530171e27d",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-readback.json",
+      "pointer": "/lanes/0/readback",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-head-13277997507-readback.json",
+      "sha256": "373388ded2c97d4ccb0f96836e7e72614f7ac48f648ca92428018dd5f2e078eb",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-x64-head-13277997507-readback.json"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-readback.json",
+      "pointer": "/lanes/0/complete_original_records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-head-13277997507-original-records.json.gz",
+      "sha256": "3a0d2471046cdc2bb389538eafb681ec4366ec6c32d47ce4353ae8e887cbb9fe",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-x64-head-13277997507-original-records.json.gz"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-readback.json",
+      "pointer": "/lanes/1/readback",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-merge-13277323560-readback.json",
+      "sha256": "26b222d70d91c01cca9485d875abe28e882f1d4c93a0a8efd95c982e5e96b87e",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-x64-merge-13277323560-readback.json"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-readback.json",
+      "pointer": "/lanes/1/complete_original_records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-merge-13277323560-original-records.json.gz",
+      "sha256": "984601525c9c9c92e7937c9c5745abd514be195b4be34ce76cbb9d3ea58bf0c1",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-x64-merge-13277323560-original-records.json.gz"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-readback.json",
+      "pointer": "/lanes/2/readback",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-arm64-head-13277434557-readback.json",
+      "sha256": "8d190c22d93dd1cc42b254fdce3a6730917275a70d2bae8575a6198151c3a219",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-arm64-head-13277434557-readback.json"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-readback.json",
+      "pointer": "/lanes/2/complete_original_records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-arm64-head-13277434557-original-records.json.gz",
+      "sha256": "343ec5e56195ebf6dae672f4ad9290ef63a0a5a164616b3b1107b7d92b84553d",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-arm64-head-13277434557-original-records.json.gz"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-readback.json",
+      "pointer": "/lanes/3/readback",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-arm64-merge-13280090271-readback.json",
+      "sha256": "a18b70dcfcce45affc0831c27b5e5a4d66935541debbf1b87c805c226f58c913",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-arm64-merge-13280090271-readback.json"
+    },
+    {
+      "from": "c5dd/pq-original-node-four-lane-readback.json",
+      "pointer": "/lanes/3/complete_original_records",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-arm64-merge-13280090271-original-records.json.gz",
+      "sha256": "0975a80368bcfbe2a78d611a23058fc13faa06c17919c0db8037a8179eacce07",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/pq-node-arm64-merge-13280090271-original-records.json.gz"
+    },
+    {
+      "from": "c5dd/protocol-head-fromzero-terminal-readback.json",
+      "pointer": "/host_controller/final_parent_lease/parent_identity/unit_file",
+      "source_path": "/run/systemd/system/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/protocol-head-fromzero-terminal-readback.json",
+      "pointer": "/host_controller/final_parent_lease/seal_file",
+      "source_path": "/run/trnm-public-fixture-41728500537-1-protocol-contract/parent.json",
+      "sha256": "c0373287bf47fd801bd559ab4384d0ecdb2721554671b1504c364222aa37466e",
+      "status": "original_record_content_preserved_inside_bundle",
+      "resolved_to": [
+        {
+          "bundle": "c5dd/protocol-head-fromzero-original-records.json.gz",
+          "member": "public-fixture-parent.json"
+        }
+      ]
+    },
+    {
+      "from": "c5dd/protocol-head-fromzero-terminal-readback.json",
+      "pointer": "/host_controller/parent_lease/parent_identity/unit_file",
+      "source_path": "/run/systemd/system/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/protocol-head-fromzero-terminal-readback.json",
+      "pointer": "/host_controller/parent_lease/seal_file",
+      "source_path": "/run/trnm-public-fixture-41728500537-1-protocol-contract/parent.json",
+      "sha256": "c0373287bf47fd801bd559ab4384d0ecdb2721554671b1504c364222aa37466e",
+      "status": "original_record_content_preserved_inside_bundle",
+      "resolved_to": [
+        {
+          "bundle": "c5dd/protocol-head-fromzero-original-records.json.gz",
+          "member": "public-fixture-parent.json"
+        }
+      ]
+    },
+    {
+      "from": "c5dd/protocol-merge-fromzero-terminal-readback.json",
+      "pointer": "/host_controller/final_parent_lease/parent_identity/unit_file",
+      "source_path": "/run/systemd/system/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/protocol-merge-fromzero-terminal-readback.json",
+      "pointer": "/host_controller/final_parent_lease/seal_file",
+      "source_path": "/run/trnm-public-fixture-41728500537-1-prospective-merge/parent.json",
+      "sha256": "aa3af729c4bbcfc3951c9e3ab0b7f76d5826e12b5f7152541ecf10882c2021f4",
+      "status": "original_record_content_preserved_inside_bundle",
+      "resolved_to": [
+        {
+          "bundle": "c5dd/protocol-merge-selected-original-records.json.gz",
+          "member": "public-fixture-parent.json"
+        }
+      ]
+    },
+    {
+      "from": "c5dd/protocol-merge-fromzero-terminal-readback.json",
+      "pointer": "/host_controller/parent_lease/parent_identity/unit_file",
+      "source_path": "/run/systemd/system/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/protocol-merge-fromzero-terminal-readback.json",
+      "pointer": "/host_controller/parent_lease/seal_file",
+      "source_path": "/run/trnm-public-fixture-41728500537-1-prospective-merge/parent.json",
+      "sha256": "aa3af729c4bbcfc3951c9e3ab0b7f76d5826e12b5f7152541ecf10882c2021f4",
+      "status": "original_record_content_preserved_inside_bundle",
+      "resolved_to": [
+        {
+          "bundle": "c5dd/protocol-merge-selected-original-records.json.gz",
+          "member": "public-fixture-parent.json"
+        }
+      ]
+    },
+    {
+      "from": "c5dd/runtime-original-deadline-readback.json",
+      "pointer": "/raw_metadata",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/20261103T230153427Z-runtime-timed-jobs-via-run-subresource.json",
+      "sha256": "9ea7faa43299ef2d7a9d39f961d629584221dd81e089f0eb9f2c7460c36b746f",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/runtime-original-deadline-readback.json",
+      "pointer": "/source_records/0",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/source-c5dd7c/.github/workflows/trnm-required-baseline.yml",
+      "sha256": "8df781f1d5416aaa1426864aac2bd9f196b87b1283d81f630928872d763c479a",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/runtime-original-deadline-readback.json",
+      "pointer": "/source_records/1",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/source-c5dd7c/scripts/ci/rust_baseline_shards.py",
+      "sha256": "3a2a0f960c0f58dd8dbe8a5b9c889fee963c9bba8ecadb9c751af6def4c543e5",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/runtime-original-deadline-readback.json",
+      "pointer": "/source_records/2",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/source-c5dd7c/scripts/ci/run_public_fixture_native.py",
+      "sha256": "23e7a41ab61e0266483b51e51e58cac80be6d06fd2977835bd76c50c76f35df8",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "c5dd/runtime-original-deadline-readback.json",
+      "pointer": "/source_records/3",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/source-c5dd7c/scripts/ci/ci_job.sh",
+      "sha256": "e20c602e1a378b391f6f37ed289041a70ea377a69b06e9f2911cf36ba910cb60",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "diagnostics/draft-v1/readback.json",
+      "pointer": "/scopes/0/bundle",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/f0-selected-original-records.json.gz",
+      "sha256": "9d8f0cb98c8b66fee9f60277c011bd69f4ce06af9754035b43d46ef22adcefd9",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/f0-selected-original-records.json.gz"
+    },
+    {
+      "from": "diagnostics/draft-v1/readback.json",
+      "pointer": "/scopes/0/compact",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/f0-two-phase-terminal-readback.json",
+      "sha256": "fa6f486400e6745ecc6f418e242a32559cbbd9c608af25e2ead28a2855aa609f",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/f0-two-phase-terminal-readback.json"
+    },
+    {
+      "from": "diagnostics/draft-v1/readback.json",
+      "pointer": "/scopes/0/archive",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/c5dd7c-f0-13278235080.zip",
+      "sha256": "733d30784e290779e9dc8f74a1f384712de681b4135e15859a7c2e5cadf067a3",
+      "status": "intentionally_external_binary_database_or_archive_identity"
+    },
+    {
+      "from": "diagnostics/draft-v1/readback.json",
+      "pointer": "/scopes/1/bundle",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/original-three-campaign-selected-records.json.gz",
+      "sha256": "009de88d176c549718e4d89bd67f0a2ff2fee358f5c4df8c28ceeb8c38e89182",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/original-three-campaign-selected-records.json.gz"
+    },
+    {
+      "from": "diagnostics/draft-v1/readback.json",
+      "pointer": "/scopes/1/compact",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/original-three-campaign-compact-terminal-readback.json",
+      "sha256": "1b8a0f24294a8d66377b34d99c8063ad59e430b855a43b1f12deafcaeb74bf69",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/original-three-campaign-compact-terminal-readback.json"
+    },
+    {
+      "from": "diagnostics/draft-v1/readback.json",
+      "pointer": "/scopes/1/archive",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/c5dd7c-original-campaign-13276003536.zip",
+      "sha256": "78e1b41ced06d6b77568a132d60623a1a7b5059ef9791dd43cc8ed4110efaacb",
+      "status": "intentionally_external_binary_database_or_archive_identity"
+    },
+    {
+      "from": "diagnostics/draft-v1/readback.json",
+      "pointer": "/scopes/2/bundle",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-head-selected-original-records.json.gz",
+      "sha256": "6a0e7b09ad2fa5d934d1be3bea582715cab37d4723d30212a383a4c7307ef97b",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/w1-fresh-head-selected-original-records.json.gz"
+    },
+    {
+      "from": "diagnostics/draft-v1/readback.json",
+      "pointer": "/scopes/2/compact",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-head-terminal-readback.json",
+      "sha256": "de81c882e8326fcde096379ea8447451291d30ef1c16423ad1775e607c1501a3",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/w1-fresh-head-terminal-readback.json"
+    },
+    {
+      "from": "diagnostics/draft-v1/readback.json",
+      "pointer": "/scopes/2/archive",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/b4bdf-w1-fresh-head-13276469587.zip",
+      "sha256": "fcaa3fba41c7fa24959834243e438d195abfd75bd09a27ddf3eca361b798b3c6",
+      "status": "intentionally_external_binary_database_or_archive_identity"
+    },
+    {
+      "from": "diagnostics/draft-v1/readback.json",
+      "pointer": "/scopes/3/bundle",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-merge-selected-original-records.json.gz",
+      "sha256": "675b6f08c059e9d1e0275ce0fe8c31124b98a821ebaa4cb1ee10203db7cb967e",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/w1-fresh-merge-selected-original-records.json.gz"
+    },
+    {
+      "from": "diagnostics/draft-v1/readback.json",
+      "pointer": "/scopes/3/compact",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-merge-terminal-readback.json",
+      "sha256": "3e41bd1ed21c105971a9f898704bf5b2e409ae4494e57bf6a1f758ff4abe0a82",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/w1-fresh-merge-terminal-readback.json"
+    },
+    {
+      "from": "diagnostics/draft-v1/readback.json",
+      "pointer": "/scopes/3/archive",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/b4bdf-w1-fresh-merge-13276414311.zip",
+      "sha256": "85ee9307b5afdefc3c9a9a1bcc90064d6dfbced40de4ba28d549f7d8435e2d16",
+      "status": "intentionally_external_binary_database_or_archive_identity"
+    },
+    {
+      "from": "diagnostics/readback.json",
+      "pointer": "/scopes/0/bundle",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/f0-selected-original-records.json.gz",
+      "sha256": "9d8f0cb98c8b66fee9f60277c011bd69f4ce06af9754035b43d46ef22adcefd9",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/f0-selected-original-records.json.gz"
+    },
+    {
+      "from": "diagnostics/readback.json",
+      "pointer": "/scopes/0/compact",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/f0-two-phase-terminal-readback.json",
+      "sha256": "fa6f486400e6745ecc6f418e242a32559cbbd9c608af25e2ead28a2855aa609f",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/f0-two-phase-terminal-readback.json"
+    },
+    {
+      "from": "diagnostics/readback.json",
+      "pointer": "/scopes/0/archive",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/c5dd7c-f0-13278235080.zip",
+      "sha256": "733d30784e290779e9dc8f74a1f384712de681b4135e15859a7c2e5cadf067a3",
+      "status": "intentionally_external_binary_database_or_archive_identity"
+    },
+    {
+      "from": "diagnostics/readback.json",
+      "pointer": "/scopes/1/bundle",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/original-three-campaign-selected-records.json.gz",
+      "sha256": "009de88d176c549718e4d89bd67f0a2ff2fee358f5c4df8c28ceeb8c38e89182",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/original-three-campaign-selected-records.json.gz"
+    },
+    {
+      "from": "diagnostics/readback.json",
+      "pointer": "/scopes/1/compact",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/original-three-campaign-compact-terminal-readback.json",
+      "sha256": "1b8a0f24294a8d66377b34d99c8063ad59e430b855a43b1f12deafcaeb74bf69",
+      "status": "staged_exact_source_path",
+      "resolved_to": "c5dd/original-three-campaign-compact-terminal-readback.json"
+    },
+    {
+      "from": "diagnostics/readback.json",
+      "pointer": "/scopes/1/archive",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/c5dd7c-original-campaign-13276003536.zip",
+      "sha256": "78e1b41ced06d6b77568a132d60623a1a7b5059ef9791dd43cc8ed4110efaacb",
+      "status": "intentionally_external_binary_database_or_archive_identity"
+    },
+    {
+      "from": "diagnostics/readback.json",
+      "pointer": "/scopes/2/bundle",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-head-selected-original-records.json.gz",
+      "sha256": "6a0e7b09ad2fa5d934d1be3bea582715cab37d4723d30212a383a4c7307ef97b",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/w1-fresh-head-selected-original-records.json.gz"
+    },
+    {
+      "from": "diagnostics/readback.json",
+      "pointer": "/scopes/2/compact",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-head-terminal-readback.json",
+      "sha256": "de81c882e8326fcde096379ea8447451291d30ef1c16423ad1775e607c1501a3",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/w1-fresh-head-terminal-readback.json"
+    },
+    {
+      "from": "diagnostics/readback.json",
+      "pointer": "/scopes/2/archive",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/b4bdf-w1-fresh-head-13276469587.zip",
+      "sha256": "fcaa3fba41c7fa24959834243e438d195abfd75bd09a27ddf3eca361b798b3c6",
+      "status": "intentionally_external_binary_database_or_archive_identity"
+    },
+    {
+      "from": "diagnostics/readback.json",
+      "pointer": "/scopes/3/bundle",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-merge-selected-original-records.json.gz",
+      "sha256": "675b6f08c059e9d1e0275ce0fe8c31124b98a821ebaa4cb1ee10203db7cb967e",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/w1-fresh-merge-selected-original-records.json.gz"
+    },
+    {
+      "from": "diagnostics/readback.json",
+      "pointer": "/scopes/3/compact",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-merge-terminal-readback.json",
+      "sha256": "3e41bd1ed21c105971a9f898704bf5b2e409ae4494e57bf6a1f758ff4abe0a82",
+      "status": "staged_exact_source_path",
+      "resolved_to": "b4bdf/w1-fresh-merge-terminal-readback.json"
+    },
+    {
+      "from": "diagnostics/readback.json",
+      "pointer": "/scopes/3/archive",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/b4bdf-w1-fresh-merge-13276414311.zip",
+      "sha256": "85ee9307b5afdefc3c9a9a1bcc90064d6dfbced40de4ba28d549f7d8435e2d16",
+      "status": "intentionally_external_binary_database_or_archive_identity"
+    },
+    {
+      "from": "service-path/c5dd-baseline-critical-path/critical-path-readback.json",
+      "pointer": "/archive",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/c5dd7c-original-campaign-13276003536.zip",
+      "sha256": "78e1b41ced06d6b77568a132d60623a1a7b5059ef9791dd43cc8ed4110efaacb",
+      "status": "intentionally_external_binary_database_or_archive_identity"
+    },
+    {
+      "from": "service-path/c5dd-baseline-critical-path/critical-path-readback.json",
+      "pointer": "/reader",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-baseline-critical-path/read_baseline.py",
+      "sha256": "b2d9184d53b17a02bfeba1c55702bcb8ac4944a2d092a6001857e91bb7568730",
+      "status": "staged_exact_source_path",
+      "resolved_to": "service-path/c5dd-baseline-critical-path/read_baseline.py"
+    },
+    {
+      "from": "service-path/c5dd-baseline-critical-path/critical-path-readback.json",
+      "pointer": "/sources/0",
+      "source_path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-baseline-critical-path/critical-path-readback.json",
+      "pointer": "/sources/1",
+      "source_path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_support.rs",
+      "sha256": "cbe45e3260db576700f84277683c293099968fae6b63031c9ba4e4dd197d71d9",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-baseline-critical-path/critical-path-readback.json",
+      "pointer": "/sources/2",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "sha256": "8f4469372d3a91fd5df3f0345638f15a4a4843c6b4e4be8440f09a87cf8c368b",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-baseline-critical-path/critical-path-readback.json",
+      "pointer": "/sources/3",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "sha256": "bcb8fd081fcb7e73712ba057aa8015a4e99756f8f24bd47af088719d3a713ce4",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-baseline-critical-path/critical-path-readback.json",
+      "pointer": "/sources/4",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "sha256": "d1990f3312f2bd3b17aac1cc668c70bf513825314e3ec2a7fcb004ac0097c4aa",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-baseline-critical-path/critical-path-readback.json",
+      "pointer": "/runs/0/source_entry",
+      "source_path": "run-1-raw/baseline.json",
+      "sha256": "d17a1694f595f030c052d7d943ef36ec90f48868e02864b93596803723ad8fa5",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-baseline-critical-path/critical-path-readback.json",
+      "pointer": "/runs/1/source_entry",
+      "source_path": "run-2-raw/baseline.json",
+      "sha256": "cc1916952acbc79e632b258a65eb36ada97ec850178c3dc18e1fae9a21485425",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-baseline-critical-path/critical-path-readback.json",
+      "pointer": "/runs/2/source_entry",
+      "source_path": "run-3-raw/baseline.json",
+      "sha256": "fb11939f6909f30effa8f340b727ec69e25aed3e36934ca139063088314e1252",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "pointer": "/archive",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/c5dd7c-original-campaign-13276003536.zip",
+      "sha256": "78e1b41ced06d6b77568a132d60623a1a7b5059ef9791dd43cc8ed4110efaacb",
+      "status": "intentionally_external_binary_database_or_archive_identity"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "pointer": "/reader",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-internal-review/read_internal_evidence.py",
+      "sha256": "e134d6ef86ce6f085d4a1c1c2e14ef3ea6d8f65d868b12a10eec3e9862a440a7",
+      "status": "staged_exact_source_path",
+      "resolved_to": "service-path/c5dd-graph-internal-review/read_internal_evidence.py"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "pointer": "/source_bindings/0",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "sha256": "ae959fee2acb706962b3add2625ebac946b5435d2632b9d54870e7b4d6a94913",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "pointer": "/source_bindings/1",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "sha256": "5253bd06d8b677652bc5be227c9d7ce1d3dc16dc70e5a569b42ceb7f0fa1ec6b",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "pointer": "/source_bindings/2",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_reader.rs",
+      "sha256": "ec5350aff6e8ea735e9bcc5d941e39850e60df0ae64e87a48db55c2ed193a554",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "pointer": "/source_bindings/3",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_decode.rs",
+      "sha256": "3dd44667ea0181d804a50977add6b9e1995127060e685ccd0ba18be7d59641b0",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "pointer": "/source_bindings/4",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs",
+      "sha256": "8ce99b8cd82f4a709fd967b8f87cbf04c8084b817b3d77d3681be6d1f69cd35d",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "pointer": "/source_bindings/5",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+      "sha256": "152565e9f09ac2c8dfee7958b3fb6012c81fc5f246978e82954e337f66eaf072",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "pointer": "/source_bindings/6",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "sha256": "b9f7aa9d535d07abf947612ed05df523f7d29f2faf560cb027cae47856e134e5",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "pointer": "/source_bindings/7",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "sha256": "2300f470a2c6fed43ba7f9e9e49782332f52a0cf45fe27f39c7a201bbbac4e92",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "pointer": "/source_bindings/8",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "sha256": "e91b5f6fbdefff92d02d670b8d04ca9d4c7b3d2fdc598e450324fe89b513f6ec",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "pointer": "/source_bindings/9",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "sha256": "d544bd342d3f86ad925f4f8178c557e5be1c48b8419711e0c325ff0626ee04e5",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "pointer": "/source_bindings/10",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "a334ed1aca71058244cfbf42ca8c3b40ccd93cb6e62a063212fe2890828265db",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "pointer": "/source_bindings/11",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "sha256": "a9d22ca6982afe6677c4d799a137c9e730a54d38d640ef551f9c4e02c4e5df4e",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "pointer": "/source_bindings/12",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation/tests.rs",
+      "sha256": "2b914cba0efefed6368a5fc9a659380bfe9b2a4d15379df3cdc9ec72cd5db902",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "pointer": "/source_bindings/13",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/reorg_readback_tests.rs",
+      "sha256": "78b8541e0d1da0d04239b72137cd99543a0f0882d552e545f3e9fea01bc931d8",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/raw",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "sha256": "18814413f21bf6ab89a803b44290d8e4ab8b9659986158c3fdd8f175caaf534d",
+      "status": "staged_exact_source_path",
+      "resolved_to": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/prior_graph_scope",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-scope-review/review.json",
+      "sha256": "0985533fa71a2470c02f74bfa2e8f1d6ae0db0a1670f03abaf7917315c2075ec",
+      "status": "staged_exact_source_path",
+      "resolved_to": "service-path/c5dd-graph-scope-review/review.json"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/prior_actor_chain",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-baseline-critical-path/critical-path-readback.json",
+      "sha256": "57ce0956d1927578cd5b4f1364ca38689a0256bbdba85c981358eb3c3c26e492",
+      "status": "staged_exact_source_path",
+      "resolved_to": "service-path/c5dd-baseline-critical-path/critical-path-readback.json"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/source_bindings/0",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "sha256": "ae959fee2acb706962b3add2625ebac946b5435d2632b9d54870e7b4d6a94913",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/source_bindings/1",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "sha256": "5253bd06d8b677652bc5be227c9d7ce1d3dc16dc70e5a569b42ceb7f0fa1ec6b",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/source_bindings/2",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_reader.rs",
+      "sha256": "ec5350aff6e8ea735e9bcc5d941e39850e60df0ae64e87a48db55c2ed193a554",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/source_bindings/3",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_decode.rs",
+      "sha256": "3dd44667ea0181d804a50977add6b9e1995127060e685ccd0ba18be7d59641b0",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/source_bindings/4",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs",
+      "sha256": "8ce99b8cd82f4a709fd967b8f87cbf04c8084b817b3d77d3681be6d1f69cd35d",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/source_bindings/5",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+      "sha256": "152565e9f09ac2c8dfee7958b3fb6012c81fc5f246978e82954e337f66eaf072",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/source_bindings/6",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "sha256": "b9f7aa9d535d07abf947612ed05df523f7d29f2faf560cb027cae47856e134e5",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/source_bindings/7",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "sha256": "2300f470a2c6fed43ba7f9e9e49782332f52a0cf45fe27f39c7a201bbbac4e92",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/source_bindings/8",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "sha256": "e91b5f6fbdefff92d02d670b8d04ca9d4c7b3d2fdc598e450324fe89b513f6ec",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/source_bindings/9",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "sha256": "d544bd342d3f86ad925f4f8178c557e5be1c48b8419711e0c325ff0626ee04e5",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/source_bindings/10",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "a334ed1aca71058244cfbf42ca8c3b40ccd93cb6e62a063212fe2890828265db",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/source_bindings/11",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "sha256": "a9d22ca6982afe6677c4d799a137c9e730a54d38d640ef551f9c4e02c4e5df4e",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/source_bindings/12",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation/tests.rs",
+      "sha256": "2b914cba0efefed6368a5fc9a659380bfe9b2a4d15379df3cdc9ec72cd5db902",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-internal-review/review.json",
+      "pointer": "/evidence/source_bindings/13",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/reorg_readback_tests.rs",
+      "sha256": "78b8541e0d1da0d04239b72137cd99543a0f0882d552e545f3e9fea01bc931d8",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/review.json",
+      "pointer": "/evidence/actor_correlated_readback",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-baseline-critical-path/critical-path-readback.json",
+      "sha256": "57ce0956d1927578cd5b4f1364ca38689a0256bbdba85c981358eb3c3c26e492",
+      "status": "staged_exact_source_path",
+      "resolved_to": "service-path/c5dd-baseline-critical-path/critical-path-readback.json"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/review.json",
+      "pointer": "/evidence/stored_graph_shapes",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-scope-review/stored-graph-shapes.json",
+      "sha256": "7cc95fe20ff903280bc6a077e5712e3ace969421f785f194ee4b729bbd4d43db",
+      "status": "staged_exact_source_path",
+      "resolved_to": "service-path/c5dd-graph-scope-review/stored-graph-shapes.json"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/review.json",
+      "pointer": "/evidence/source_bindings/0",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "a334ed1aca71058244cfbf42ca8c3b40ccd93cb6e62a063212fe2890828265db",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/review.json",
+      "pointer": "/evidence/source_bindings/1",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs",
+      "sha256": "244a18c2db1017c65fbcb4198186554b8635d261792765b142f80f914bca495f",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/review.json",
+      "pointer": "/evidence/source_bindings/2",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "sha256": "b9f7aa9d535d07abf947612ed05df523f7d29f2faf560cb027cae47856e134e5",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/review.json",
+      "pointer": "/evidence/source_bindings/3",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "sha256": "d544bd342d3f86ad925f4f8178c557e5be1c48b8419711e0c325ff0626ee04e5",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/review.json",
+      "pointer": "/evidence/source_bindings/4",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "sha256": "a8bc8608f1a7eb351a871007b53bc99ad495c22bad63742bee8c98d41f99b4c8",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/review.json",
+      "pointer": "/evidence/source_bindings/5",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "sha256": "ae959fee2acb706962b3add2625ebac946b5435d2632b9d54870e7b4d6a94913",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/review.json",
+      "pointer": "/evidence/source_bindings/6",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs",
+      "sha256": "8ce99b8cd82f4a709fd967b8f87cbf04c8084b817b3d77d3681be6d1f69cd35d",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/review.json",
+      "pointer": "/evidence/source_bindings/7",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs",
+      "sha256": "8ea7e8594b57054dc96240a0bcd83cfd24153468e30f464171ddb388f2d3b42d",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/review.json",
+      "pointer": "/evidence/source_bindings/8",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/reorg_readback_tests.rs",
+      "sha256": "78b8541e0d1da0d04239b72137cd99543a0f0882d552e545f3e9fea01bc931d8",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/stored-graph-shapes.json",
+      "pointer": "/archive",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/c5dd7c-original-campaign-13276003536.zip",
+      "sha256": "78e1b41ced06d6b77568a132d60623a1a7b5059ef9791dd43cc8ed4110efaacb",
+      "status": "intentionally_external_binary_database_or_archive_identity"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/stored-graph-shapes.json",
+      "pointer": "/prior_actor_readback",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-baseline-critical-path/critical-path-readback.json",
+      "sha256": "57ce0956d1927578cd5b4f1364ca38689a0256bbdba85c981358eb3c3c26e492",
+      "status": "staged_exact_source_path",
+      "resolved_to": "service-path/c5dd-baseline-critical-path/critical-path-readback.json"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/stored-graph-shapes.json",
+      "pointer": "/reader",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-scope-review/read_stored_graph_shapes.py",
+      "sha256": "09411a646846e465ac8a0c725b4977e571fd6826bc4cceb129dfc3e72a75117b",
+      "status": "staged_exact_source_path",
+      "resolved_to": "service-path/c5dd-graph-scope-review/read_stored_graph_shapes.py"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/stored-graph-shapes.json",
+      "pointer": "/source_bindings/0",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "a334ed1aca71058244cfbf42ca8c3b40ccd93cb6e62a063212fe2890828265db",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/stored-graph-shapes.json",
+      "pointer": "/source_bindings/1",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs",
+      "sha256": "244a18c2db1017c65fbcb4198186554b8635d261792765b142f80f914bca495f",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/stored-graph-shapes.json",
+      "pointer": "/source_bindings/2",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "sha256": "b9f7aa9d535d07abf947612ed05df523f7d29f2faf560cb027cae47856e134e5",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/stored-graph-shapes.json",
+      "pointer": "/source_bindings/3",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "sha256": "d544bd342d3f86ad925f4f8178c557e5be1c48b8419711e0c325ff0626ee04e5",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/stored-graph-shapes.json",
+      "pointer": "/source_bindings/4",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "sha256": "a8bc8608f1a7eb351a871007b53bc99ad495c22bad63742bee8c98d41f99b4c8",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/stored-graph-shapes.json",
+      "pointer": "/source_bindings/5",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "sha256": "ae959fee2acb706962b3add2625ebac946b5435d2632b9d54870e7b4d6a94913",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/stored-graph-shapes.json",
+      "pointer": "/source_bindings/6",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs",
+      "sha256": "8ce99b8cd82f4a709fd967b8f87cbf04c8084b817b3d77d3681be6d1f69cd35d",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/stored-graph-shapes.json",
+      "pointer": "/source_bindings/7",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs",
+      "sha256": "8ea7e8594b57054dc96240a0bcd83cfd24153468e30f464171ddb388f2d3b42d",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/c5dd-graph-scope-review/stored-graph-shapes.json",
+      "pointer": "/source_bindings/8",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/store/reorg_readback_tests.rs",
+      "sha256": "78b8541e0d1da0d04239b72137cd99543a0f0882d552e545f3e9fea01bc931d8",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/host-checkpoint-cost-review/host-checkpoint-readback.json",
+      "pointer": "/source_bindings/0",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "sha256": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/host-checkpoint-cost-review/host-checkpoint-readback.json",
+      "pointer": "/source_bindings/1",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "sha256": "8f4469372d3a91fd5df3f0345638f15a4a4843c6b4e4be8440f09a87cf8c368b",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/host-checkpoint-cost-review/host-checkpoint-readback.json",
+      "pointer": "/source_bindings/2",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "sha256": "bcb8fd081fcb7e73712ba057aa8015a4e99756f8f24bd47af088719d3a713ce4",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/host-checkpoint-cost-review/host-checkpoint-readback.json",
+      "pointer": "/source_bindings/3",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs",
+      "sha256": "7b222125f809b371afb830fe3cfe727dbbaafb725bb6eabedd50539df55a5b6c",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/host-checkpoint-cost-review/host-checkpoint-readback.json",
+      "pointer": "/source_bindings/4",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "sha256": "d1990f3312f2bd3b17aac1cc668c70bf513825314e3ec2a7fcb004ac0097c4aa",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/host-checkpoint-cost-review/host-checkpoint-readback.json",
+      "pointer": "/source_bindings/5",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "sha256": "3c42247c342773efbe6524d2a19533049217096f05aecdd24c62780b558e8808",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/host-checkpoint-cost-review/host-checkpoint-readback.json",
+      "pointer": "/source_bindings/6",
+      "source_path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "sha256": "caaf3a4a3247e84d0c2f8b2a86c83545a54df70dfdf88b07ea7c7a9eee2d71f3",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/host-checkpoint-cost-review/host-checkpoint-readback.json",
+      "pointer": "/source_bindings/7",
+      "source_path": "docs/protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md",
+      "sha256": "a58b411677d5fed87287aae5a2f8133319c53443b89b8174e6dabaaaa4d7668e",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/host-checkpoint-cost-review/host-checkpoint-readback.json",
+      "pointer": "/artifact",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/c5dd7c-original-campaign-13276003536.zip",
+      "sha256": "78e1b41ced06d6b77568a132d60623a1a7b5059ef9791dd43cc8ed4110efaacb",
+      "status": "intentionally_external_binary_database_or_archive_identity"
+    },
+    {
+      "from": "service-path/host-checkpoint-cost-review/review-draft-v1.json",
+      "pointer": "/artifact",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/c5dd7c-original-campaign-13276003536.zip",
+      "sha256": "78e1b41ced06d6b77568a132d60623a1a7b5059ef9791dd43cc8ed4110efaacb",
+      "status": "intentionally_external_binary_database_or_archive_identity"
+    },
+    {
+      "from": "service-path/host-checkpoint-cost-review/review-draft-v1.json",
+      "pointer": "/source_binding",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "sha256": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    },
+    {
+      "from": "service-path/host-checkpoint-cost-review/review.json",
+      "pointer": "/artifact",
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/c5dd7c-original-campaign-13276003536.zip",
+      "sha256": "78e1b41ced06d6b77568a132d60623a1a7b5059ef9791dd43cc8ed4110efaacb",
+      "status": "intentionally_external_binary_database_or_archive_identity"
+    },
+    {
+      "from": "service-path/host-checkpoint-cost-review/review.json",
+      "pointer": "/source_binding",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "sha256": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d",
+      "status": "external_provenance_reference_not_a_required_bundle_record"
+    }
+  ],
+  "scope": "Original source path strings are preserved, not rewritten. This manifest maps frozen files and embedded raw content. External code/archive/database identities are not fabricated as local staged artifacts."
+}

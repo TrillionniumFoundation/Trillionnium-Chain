@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "bytes": 11809,
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_tests.rs",
+      "sha256": "1b47a8384fa20bfd7c2a15c41f4a693eb8cede29c8100f45885d8ac80e66fee0"
+    },
+    {
+      "bytes": 10775,
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs",
+      "sha256": "7c34a71f0180c740fd7a4cef9bcd196ff09ed5d479c3153899ddc4d7331b96d6"
+    },
+    {
+      "bytes": 6444,
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/clock_contract.rs",
+      "sha256": "c3316e46b63ee47a2467dfe5a31d9ab934881d2d4dde0137b93a51f09b158b92"
+    },
+    {
+      "bytes": 3396,
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_clock.rs",
+      "sha256": "702f582374706400530529bce619acd86228222152eb1e5d34bb453b1e169e60"
+    },
+    {
+      "bytes": 8222,
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_store.rs",
+      "sha256": "b4a3a5c375db867241d3df56a78f0347af4853d785be285c77f92d0adfde89d8"
+    },
+    {
+      "bytes": 5931,
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/frontier_service.rs",
+      "sha256": "ebce1d727a1e8c89327b53b345d7e4da9b3329dbeb955b1a7356214b541c3273"
+    }
+  ],
+  "head": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53"
+}

@@ -1,0 +1,1784 @@
+{
+  "cargo_target_args": [
+    "--example",
+    "account_archive_vectors",
+    "--example",
+    "account_execution_vectors",
+    "--example",
+    "continuous_pipeline",
+    "--example",
+    "distributed_pipeline",
+    "--example",
+    "hepta_task_fixture",
+    "--example",
+    "history_state_cost",
+    "--example",
+    "lifecycle_atomic_continuity",
+    "--example",
+    "lifecycle_continuity",
+    "--example",
+    "llm_zero_gain_round",
+    "--example",
+    "native_reorg_query_cost",
+    "--example",
+    "operator_owned_finite_mining",
+    "--example",
+    "operator_pool_fixture",
+    "--example",
+    "pon_w1_budget_report",
+    "--example",
+    "pon_w1_cost_matrix_v2",
+    "--example",
+    "pon_w1_false_trace_reuse_v1",
+    "--example",
+    "pon_w1_legal_strategy_v1",
+    "--example",
+    "pon_w1_legal_strategy_v3",
+    "--example",
+    "pon_w1_preparation_strategy_v4",
+    "--example",
+    "pon_w1_reused_cost_v3",
+    "--example",
+    "public_pool_fixture",
+    "--test",
+    "model_composition_v4",
+    "--test",
+    "model_evidence_v3",
+    "--test",
+    "native_active_anchor",
+    "--test",
+    "native_compact_execution",
+    "--test",
+    "native_demand_evidence",
+    "--test",
+    "native_growth_cli",
+    "--test",
+    "native_growth_public_cli",
+    "--test",
+    "native_node",
+    "--test",
+    "native_task_operation_v2",
+    "--test",
+    "no_gain_fees",
+    "--test",
+    "nonce_speculation_cost",
+    "--test",
+    "one_zero_task_preparation_lifecycle",
+    "--test",
+    "operation_local_parent",
+    "--test",
+    "operator_actors",
+    "--test",
+    "pinned_peer_polling",
+    "--test",
+    "pool_mining",
+    "--test",
+    "pq_account_native",
+    "--test",
+    "pq_migration_inventory",
+    "--test",
+    "protected_ingress",
+    "--test",
+    "public_cache_modes",
+    "--test",
+    "public_cli",
+    "--test",
+    "public_evaluation",
+    "--test",
+    "public_intake_v2",
+    "--test",
+    "public_pool_cli",
+    "--test",
+    "public_pool_v3",
+    "--test",
+    "public_submit_recovery",
+    "--test",
+    "public_v3_from_zero",
+    "--test",
+    "public_v3_multiprocess",
+    "--test",
+    "public_v3_observation_cli",
+    "--test",
+    "public_v3_observer",
+    "--test",
+    "public_v3_request_accounting",
+    "--test",
+    "public_v3_service_campaign",
+    "--test",
+    "qualified_tasks",
+    "--test",
+    "release_finality_v2",
+    "--test",
+    "task_lifecycle",
+    "--test",
+    "task_lifecycle_v3",
+    "--test",
+    "task_lifecycle_v4",
+    "--test",
+    "task_output_root_parity",
+    "--test",
+    "work_fuzz_semantics",
+    "--test",
+    "work_header_binding",
+    "--test",
+    "zero_task_preparation_lifecycle"
+  ],
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--example",
+    "account_archive_vectors",
+    "--example",
+    "account_execution_vectors",
+    "--example",
+    "continuous_pipeline",
+    "--example",
+    "distributed_pipeline",
+    "--example",
+    "hepta_task_fixture",
+    "--example",
+    "history_state_cost",
+    "--example",
+    "lifecycle_atomic_continuity",
+    "--example",
+    "lifecycle_continuity",
+    "--example",
+    "llm_zero_gain_round",
+    "--example",
+    "native_reorg_query_cost",
+    "--example",
+    "operator_owned_finite_mining",
+    "--example",
+    "operator_pool_fixture",
+    "--example",
+    "pon_w1_budget_report",
+    "--example",
+    "pon_w1_cost_matrix_v2",
+    "--example",
+    "pon_w1_false_trace_reuse_v1",
+    "--example",
+    "pon_w1_legal_strategy_v1",
+    "--example",
+    "pon_w1_legal_strategy_v3",
+    "--example",
+    "pon_w1_preparation_strategy_v4",
+    "--example",
+    "pon_w1_reused_cost_v3",
+    "--example",
+    "public_pool_fixture",
+    "--test",
+    "model_composition_v4",
+    "--test",
+    "model_evidence_v3",
+    "--test",
+    "native_active_anchor",
+    "--test",
+    "native_compact_execution",
+    "--test",
+    "native_demand_evidence",
+    "--test",
+    "native_growth_cli",
+    "--test",
+    "native_growth_public_cli",
+    "--test",
+    "native_node",
+    "--test",
+    "native_task_operation_v2",
+    "--test",
+    "no_gain_fees",
+    "--test",
+    "nonce_speculation_cost",
+    "--test",
+    "one_zero_task_preparation_lifecycle",
+    "--test",
+    "operation_local_parent",
+    "--test",
+    "operator_actors",
+    "--test",
+    "pinned_peer_polling",
+    "--test",
+    "pool_mining",
+    "--test",
+    "pq_account_native",
+    "--test",
+    "pq_migration_inventory",
+    "--test",
+    "protected_ingress",
+    "--test",
+    "public_cache_modes",
+    "--test",
+    "public_cli",
+    "--test",
+    "public_evaluation",
+    "--test",
+    "public_intake_v2",
+    "--test",
+    "public_pool_cli",
+    "--test",
+    "public_pool_v3",
+    "--test",
+    "public_submit_recovery",
+    "--test",
+    "public_v3_from_zero",
+    "--test",
+    "public_v3_multiprocess",
+    "--test",
+    "public_v3_observation_cli",
+    "--test",
+    "public_v3_observer",
+    "--test",
+    "public_v3_request_accounting",
+    "--test",
+    "public_v3_service_campaign",
+    "--test",
+    "qualified_tasks",
+    "--test",
+    "release_finality_v2",
+    "--test",
+    "task_lifecycle",
+    "--test",
+    "task_lifecycle_v3",
+    "--test",
+    "task_lifecycle_v4",
+    "--test",
+    "task_output_root_parity",
+    "--test",
+    "work_fuzz_semantics",
+    "--test",
+    "work_header_binding",
+    "--test",
+    "zero_task_preparation_lifecycle",
+    "--all-features",
+    "--no-fail-fast",
+    "--",
+    "--test-threads=1"
+  ],
+  "inventory_target_count": 91,
+  "original_audit": {
+    "bytes": 189970,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/original-node-failed-inventory-v1.json",
+    "sha256": "d906a690639ee78b6b38e1a97e27904e1a1b7a540f9206cadbde03aa40adbc70"
+  },
+  "original_completed_target_totals": {
+    "failed": 8,
+    "filtered_out": 0,
+    "ignored": 40,
+    "measured": 0,
+    "passed": 1254
+  },
+  "original_terminal": {
+    "bytes": 735,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/original-node-terminal-status.json",
+    "sha256": "1ad19471b75c6b97570592289ebabe6bd1d486dca60d6bcb794a9dd40137e949"
+  },
+  "policy": "Run every incomplete or not-observed-started target exactly once. Never replace an original completed failure.",
+  "previous_completed": [
+    {
+      "label": "unittests src/lib.rs",
+      "status": "completed_with_failures",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "5106.26",
+        "failed": 5,
+        "filtered_out": 0,
+        "ignored": 31,
+        "line": 1366,
+        "measured": 0,
+        "passed": 1139,
+        "raw": "test result: FAILED. 1139 passed; 5 failed; 31 ignored; 0 measured; 0 filtered out; finished in 5106.26s",
+        "status": "FAILED",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "unittests src/main.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "0.04",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1387,
+        "measured": 0,
+        "passed": 14,
+        "raw": "test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/accepted_task_observation.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "2.97",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1397,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.97s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/account_archive_execution.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "15.16",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1415,
+        "measured": 0,
+        "passed": 12,
+        "raw": "test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.16s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/account_archive_projection.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "29.09",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1422,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.09s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/account_archive_prototype.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "1.11",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1437,
+        "measured": 0,
+        "passed": 8,
+        "raw": "test result: ok. 8 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.11s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/account_obligation_ranges.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "97.08",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1447,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 97.08s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/ancestry_long_sync.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "0.00",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1454,
+        "measured": 0,
+        "passed": 0,
+        "raw": "test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/architecture_delivery_compare.rs",
+      "status": "completed_with_failures",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "37.00",
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1504,
+        "measured": 0,
+        "passed": 12,
+        "raw": "test result: FAILED. 12 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 37.00s",
+        "status": "FAILED",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/authenticated_storage_cli.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "2.04",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1518,
+        "measured": 0,
+        "passed": 7,
+        "raw": "test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.04s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/checkpoint_tile_operator.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "4.63",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1528,
+        "measured": 0,
+        "passed": 3,
+        "raw": "test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 4.63s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/cli_secret_canary.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "6.94",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1535,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.94s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/continuity_authenticated.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "7.54",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1542,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.54s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/continuity_cli.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "0.74",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1550,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.74s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/daa_adversarial_schedule.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "26.07",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1558,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 26.07s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/derived_commitment.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "185.70",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1569,
+        "measured": 0,
+        "passed": 5,
+        "raw": "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 185.70s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/distributed_roles.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "0.00",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 4,
+        "line": 1579,
+        "measured": 0,
+        "passed": 0,
+        "raw": "test result: ok. 0 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/evaluation_observation.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "64.80",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1586,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 64.80s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/evaluation_observation_cli.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "28.28",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1594,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 28.28s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/evaluation_quorum_cli.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "1.45",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1601,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.45s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/evaluation_round_observation.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "6.73",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1609,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 6.73s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/evaluation_round_observation_cli.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "32.28",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1617,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 32.28s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/evaluation_sync_observation.rs",
+      "status": "completed_with_failures",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "12.80",
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1640,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.80s",
+        "status": "FAILED",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/evolution_cli.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "4.53",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1651,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.53s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/funded_service_contract.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "5.80",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1661,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.80s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/growth_persistence_cancellation.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "8.29",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1669,
+        "measured": 0,
+        "passed": 2,
+        "raw": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.29s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/integer_factor_candidate_v2.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "130.15",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1679,
+        "measured": 0,
+        "passed": 4,
+        "raw": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 130.15s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/local_mempool.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "8.76",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 1,
+        "line": 1700,
+        "measured": 0,
+        "passed": 14,
+        "raw": "test result: ok. 14 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 8.76s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/maintenance_paired_conformance.rs",
+      "status": "completed_passed",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "0.88",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1707,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.88s",
+        "status": "ok",
+        "whole_line": true
+      }
+    },
+    {
+      "label": "tests/mining_service_budget.rs",
+      "status": "completed_with_failures",
+      "summary": {
+        "column": 1,
+        "elapsed_seconds": "16.64",
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 0,
+        "line": 1728,
+        "measured": 0,
+        "passed": 1,
+        "raw": "test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.64s",
+        "status": "FAILED",
+        "whole_line": true
+      }
+    }
+  ],
+  "previous_completed_target_count": 30,
+  "qualification": false,
+  "same_single_cargo_run": false,
+  "schema": "pon-node-remaining-target-selection-v1",
+  "selected": [
+    {
+      "label": "unittests examples/account_archive_vectors.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "account_archive_vectors",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/account_archive_vectors.rs",
+        "source_sha256": "4c3d0772c5073eff831ee29697bdea315a768f8b34b4ff30fe7d832024657eaf",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/account_execution_vectors.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "account_execution_vectors",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/account_execution_vectors.rs",
+        "source_sha256": "d01324aa4982d10fd9c1f72cbc1add00f3e69451635807839aa64ac92ecc72df",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/continuous_pipeline.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "continuous_pipeline",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs",
+        "source_sha256": "de13825b4acbae4a4b16402f76021dd96b0c300092f9c79c052a7c53868ba58e",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/distributed_pipeline.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "distributed_pipeline",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/distributed_pipeline.rs",
+        "source_sha256": "5cc1c812019127ad5ae27a63b2a94acd0a486c5d61a917d324594280977bcd45",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/hepta_task_fixture.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "hepta_task_fixture",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/hepta_task_fixture.rs",
+        "source_sha256": "916a4d045d05e8664fd272cb7ca984225e6f0c0bbfd939cfdef180cba3140bdb",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/history_state_cost.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "history_state_cost",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/history_state_cost.rs",
+        "source_sha256": "43fce5600d39321a0486827891c6951243f49ab20d58212c1025551e4c1f24b8",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/lifecycle_atomic_continuity.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "lifecycle_atomic_continuity",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/lifecycle_atomic_continuity.rs",
+        "source_sha256": "a1eec9969170f3e6d3072d84bad4aa8f804425a762e16191c5763d34987ec3b7",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/lifecycle_continuity.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "lifecycle_continuity",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/lifecycle_continuity.rs",
+        "source_sha256": "da12b1d617be4a82a48d4911d5e4feee2aeb9cdd1bb585bf8c88cf6142d59159",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/llm_zero_gain_round.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "llm_zero_gain_round",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/llm_zero_gain_round.rs",
+        "source_sha256": "4de646e753f35b215e6d15a5d6f0c2ccadd8164f901ba5c8bfbb81ee21bb3f35",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/native_reorg_query_cost.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "native_reorg_query_cost",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/native_reorg_query_cost.rs",
+        "source_sha256": "fa0fb60feb71c09043a72a8806bc689a366782697c2935dd39810a8f4a1ca7cb",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/operator_owned_finite_mining.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "operator_owned_finite_mining",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/operator_owned_finite_mining.rs",
+        "source_sha256": "2acdb77a62b283e0940e365cfcfa8ec396d702b260b9646acd9745545c747872",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/operator_pool_fixture.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "operator_pool_fixture",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/operator_pool_fixture.rs",
+        "source_sha256": "7fac39093cf2176a3c39a7de5c2ac91b39941568e9d547fa8210067f3e891ab7",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/pon_w1_budget_report.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "pon_w1_budget_report",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/pon_w1_budget_report.rs",
+        "source_sha256": "de213fce7cbd227da188a137abe71fa2f9f13eae7faa2ba59661d2d2eec81a48",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/pon_w1_cost_matrix_v2.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "pon_w1_cost_matrix_v2",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/pon_w1_cost_matrix_v2.rs",
+        "source_sha256": "1ec1866e6f52fd3b916a968bbffd1979c0a1dd0b09263f01b59a8372f80fc545",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/pon_w1_false_trace_reuse_v1.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "pon_w1_false_trace_reuse_v1",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/pon_w1_false_trace_reuse_v1.rs",
+        "source_sha256": "5afe2f1f1578b4264f79d8ce56a6d0abeb51b0be987eca22438f59e01bf3033e",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/pon_w1_legal_strategy_v1.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "pon_w1_legal_strategy_v1",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/pon_w1_legal_strategy_v1.rs",
+        "source_sha256": "6f95f053557c17d90011236eb0e2d079787844aba6065655331fe41c19c08776",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/pon_w1_legal_strategy_v3.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "pon_w1_legal_strategy_v3",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/pon_w1_legal_strategy_v3.rs",
+        "source_sha256": "fd22b893e8459b4eb374aedc774b8a267f56c194642b5ed29d2555ee2b3388c3",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/pon_w1_preparation_strategy_v4.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "pon_w1_preparation_strategy_v4",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/pon_w1_preparation_strategy_v4.rs",
+        "source_sha256": "95ef26992da9126e328007375bce91e94be8647705828a1975cbd03afa1dbfc8",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/pon_w1_reused_cost_v3.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "pon_w1_reused_cost_v3",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/pon_w1_reused_cost_v3.rs",
+        "source_sha256": "7027516cdb2c2fafa6c68d7051e965bc7bb573f395466974fc09c8dd3187b20a",
+        "test": false
+      }
+    },
+    {
+      "label": "unittests examples/public_pool_fixture.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "example"
+        ],
+        "name": "public_pool_fixture",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/examples/public_pool_fixture.rs",
+        "source_sha256": "e399c829a193f793811562ddad48bc3f33b747e94091234c5948b90f986039ac",
+        "test": false
+      }
+    },
+    {
+      "label": "tests/model_composition_v4.rs",
+      "original_summary": null,
+      "reason": "incomplete_at_termination",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "model_composition_v4",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+        "source_sha256": "de7112a67873598d89cac1ff87288e5802253eeb4dda8012da5241e0ccc6e2e1",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/model_evidence_v3.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "model_evidence_v3",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+        "source_sha256": "c906e671037440ba1d61e5a32a703274405eaa4fd259543ab344bf0de19862ef",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/native_active_anchor.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_active_anchor",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_active_anchor.rs",
+        "source_sha256": "1fb2c4f51e8d68d78e3d78b633f7a6442a00da920fad2cacebf90ef9e963ba7f",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/native_compact_execution.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_compact_execution",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_compact_execution.rs",
+        "source_sha256": "a071cad52f313bfb79205246bb6cb234fab033e459acbc326d6399bf8a9e904b",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/native_demand_evidence.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_demand_evidence",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_demand_evidence.rs",
+        "source_sha256": "35943ab69cd524bee84afb09527b9b5a020aa0bbdc172b87cbb845ba07913259",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/native_growth_cli.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_growth_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_growth_cli.rs",
+        "source_sha256": "39ca70a1262980a02931809f82ee3b08d4bf18bbbd9a8af62669ae003d26a298",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/native_growth_public_cli.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_growth_public_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_growth_public_cli.rs",
+        "source_sha256": "d922c5978f541415d223915251d4a1207d315b24684dbf24c21eccbd28a67b90",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/native_node.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_node",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+        "source_sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/native_task_operation_v2.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_task_operation_v2",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_task_operation_v2.rs",
+        "source_sha256": "5ce148eb993dcd0a5a5c6cce3e996d67f0cfa8124122729a31d1fafdcadec5f4",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/no_gain_fees.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "no_gain_fees",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/no_gain_fees.rs",
+        "source_sha256": "0fb22858cb974053ea9f1028734f449ce0b84f86b020471c1a3b40e007007a2d",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/nonce_speculation_cost.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "nonce_speculation_cost",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/nonce_speculation_cost.rs",
+        "source_sha256": "6f790bb65d043149e5a2e0a9a52af3287efcec71686c0187ac92e63580e7e912",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/one_zero_task_preparation_lifecycle.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "one_zero_task_preparation_lifecycle",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/one_zero_task_preparation_lifecycle.rs",
+        "source_sha256": "9710856571d12d03a36a2a28d870b524f8be7dc43e7e79d3581ae186e8756ce9",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/operation_local_parent.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "operation_local_parent",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/operation_local_parent.rs",
+        "source_sha256": "50e32cb82d9e31027b57fc19e3602f48c0ef9e0af5f8d6cbda2cb26fb1b035b1",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/operator_actors.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "operator_actors",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/operator_actors.rs",
+        "source_sha256": "01c979c9e072f68bd81819ee47157a252df33235082050e741d45c1c64eb9f94",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/pinned_peer_polling.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "pinned_peer_polling",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/pinned_peer_polling.rs",
+        "source_sha256": "0f07820acea72e4e552297d82c22b1918653e2e8673c8f90b23e9317dc4e9b0e",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/pool_mining.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "pool_mining",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/pool_mining.rs",
+        "source_sha256": "97d5430115e575d518e1d3b4e2f8c3abc8b00704e3421aa6c2d6990317a2e552",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/pq_account_native.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "pq_account_native",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs",
+        "source_sha256": "2b70c0c0aa2ff27ebd951590faf34125cb878b0e6d1a5e4c35fbcc59f855c10d",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/pq_migration_inventory.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "pq_migration_inventory",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/pq_migration_inventory.rs",
+        "source_sha256": "63d879e2f2e47ddb0e4b4c2f6078397a83b7f82026b1f99112671d0e8876aa3b",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/protected_ingress.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "protected_ingress",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/protected_ingress.rs",
+        "source_sha256": "2c84d6c39d7568f0a3c7cdddfaee2721de0f7784ad05fce61d5434c74fd2db1a",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_cache_modes.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_cache_modes",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_cache_modes.rs",
+        "source_sha256": "64722f31d663a63ef250b57bcdb160d0c636531c7033c72889107eb84de1775f",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_cli.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_cli.rs",
+        "source_sha256": "376d26752b617c7dac4b0d35ee1fb95cc78cdc096fac790149376de69c25890b",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_evaluation.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_evaluation",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_evaluation.rs",
+        "source_sha256": "bbd1bbcf8ea78e0b7d656a4b2f4f5afaf0891758df59d6d67c73f3b5c6ef0274",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_intake_v2.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_intake_v2",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+        "source_sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_pool_cli.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_pool_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+        "source_sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_pool_v3.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_pool_v3",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_pool_v3.rs",
+        "source_sha256": "b2b4523a27d4b3c8067eb2587e8ef320323d4dbbadd1e613c173f6e9d3ffd359",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_submit_recovery.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_submit_recovery",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs",
+        "source_sha256": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_v3_from_zero.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_v3_from_zero",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+        "source_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_v3_multiprocess.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_v3_multiprocess",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+        "source_sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_v3_observation_cli.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_v3_observation_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_v3_observation_cli.rs",
+        "source_sha256": "b9c8b2afe362578e5c71c3d939c1b96be189bae150281d07298ee3f905a9c550",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_v3_observer.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_v3_observer",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_v3_observer.rs",
+        "source_sha256": "8a4e47dd0175bb16d240152b5991120abcf21b6bcd199844ed22aedbde2bf238",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_v3_request_accounting.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_v3_request_accounting",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_v3_request_accounting.rs",
+        "source_sha256": "4633f293d089caf91297b035a8f7e2d503b324b477605bb2c32ffc395710c7dc",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/public_v3_service_campaign.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_v3_service_campaign",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_v3_service_campaign.rs",
+        "source_sha256": "0e2e0792a2ab95d1098787496de2ea13c2dad7f73154ac8b7abe0445bd06067f",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/qualified_tasks.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "qualified_tasks",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs",
+        "source_sha256": "23b8b4ecb40b7ec517b13f2543d491f481e0ef7b561e8d3e03b0c1729964330d",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/release_finality_v2.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "release_finality_v2",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/release_finality_v2.rs",
+        "source_sha256": "d34da033529f65c73ae687d8436f338963883f3139350429ac2b65d2b923fe1f",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/task_lifecycle.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "task_lifecycle",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/task_lifecycle.rs",
+        "source_sha256": "5bde9c75d6906fb6974be4f0e4f347919609cf7e49932e84ddeb8af211b5da2d",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/task_lifecycle_v3.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "task_lifecycle_v3",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/task_lifecycle_v3.rs",
+        "source_sha256": "158b1d16a7a30cc780381bba63f4819026c83b246a15f47707786e316a745f2b",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/task_lifecycle_v4.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "task_lifecycle_v4",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/task_lifecycle_v4.rs",
+        "source_sha256": "81e42e028b63d5829613bf632c72807b3e3b284aad65114a5380f3e4cbfba5a8",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/task_output_root_parity.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "task_output_root_parity",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/task_output_root_parity.rs",
+        "source_sha256": "0a5d7982b8e6f2dad33dc1519d2e61717361d6d3cf2a9d530d2385f584d53d01",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/work_fuzz_semantics.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "work_fuzz_semantics",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/work_fuzz_semantics.rs",
+        "source_sha256": "b3cba63661911a423f8f8adb7ed210db97496d079d7d81dd3c14021408870445",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/work_header_binding.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "work_header_binding",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/work_header_binding.rs",
+        "source_sha256": "1807d604aea126a994b9bc5df3619902fba73af18f52ae67e23d6caf39b5d3ac",
+        "test": true
+      }
+    },
+    {
+      "label": "tests/zero_task_preparation_lifecycle.rs",
+      "original_summary": null,
+      "reason": "not_observed_started",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "zero_task_preparation_lifecycle",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs",
+        "source_sha256": "01f1a27fd5dbaff7232a53f8b15a573737b5f68bf27a78a91f9b8d2810bff53b",
+        "test": true
+      }
+    }
+  ],
+  "selected_kind_counts": {
+    "bin": 0,
+    "example": 20,
+    "lib": 0,
+    "test": 41
+  },
+  "selected_target_count": 61,
+  "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+}

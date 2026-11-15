@@ -1,0 +1,10 @@
+{
+  "schema": "trnm-wrapper-invocation-observation-v1",
+  "commit": "b72d44476a12ed1b0dbf0891556adf280eba661b",
+  "command_prefix": "/workspace/scratch/73305aff6ced/runtime/run-storage-runtime.sh python3 scripts/ci/record_pq_native_command.py",
+  "exit_code": 126,
+  "stderr": "/bin/bash: line 1: /workspace/scratch/73305aff6ced/runtime/run-storage-runtime.sh: Permission denied",
+  "source_recorder_entered": false,
+  "native_tests_executed": 0,
+  "correction": "Invoke the unchanged shell script through bash; do not change source, permissions, runtime profile, test selection or acceptance conditions."
+}

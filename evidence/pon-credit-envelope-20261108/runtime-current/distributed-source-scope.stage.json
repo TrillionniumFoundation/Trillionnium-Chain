@@ -1,0 +1,41 @@
+{
+  "argv": [
+    "cargo",
+    "+1.95.0",
+    "test",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--no-default-features",
+    "--example",
+    "distributed_pipeline",
+    "tests::source_scope_and_campaign_bounds_reject",
+    "--",
+    "--exact",
+    "--test-threads=1"
+  ],
+  "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+  "elapsed_seconds": 265.441064,
+  "exact_test_line": "test tests::source_scope_and_campaign_bounds_reject ... ok",
+  "exact_test_name": "tests::source_scope_and_campaign_bounds_reject",
+  "exception": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-08T13:07:08.088986+00:00",
+  "native_test_counts": {
+    "failed": 0,
+    "filtered_out": 8,
+    "ignored": 0,
+    "measured": 0,
+    "passed": 1
+  },
+  "passed": true,
+  "stage": "distributed-source-scope",
+  "started_utc": "2026-11-08T13:02:42.647931+00:00",
+  "stderr": "distributed-source-scope.stderr.log",
+  "stderr_sha256": "bbdb122f59e16dece8de9a58ec17cbdb4749f5ce4ff791795402046a51ab5d7a",
+  "stdout": "distributed-source-scope.stdout.log",
+  "stdout_sha256": "ae9d8ca2cfa97377db181a74d26e30605a72564b320cc3e5873dab71f20295ab"
+}

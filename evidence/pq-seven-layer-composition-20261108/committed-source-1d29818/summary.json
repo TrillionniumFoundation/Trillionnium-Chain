@@ -1,0 +1,749 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138711.8315072,
+      "label": "preflight",
+      "passed": true,
+      "started_unix_seconds": 1794138711.7165308,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 182,
+        "sha256": "25149fad129e04a157b6c504027844a5fd1b64ee0ce2014007a2e6f98610cb40"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "1d29818ad927f549f43d74a06f51e91771feac70",
+        "--output",
+        "/home/qian-qi/work/chain-pq-seven-layer-composition-20261108-21690/validation-source-1d29818-v2/source-before.json"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138714.4554439,
+      "label": "source-before",
+      "passed": true,
+      "started_unix_seconds": 1794138711.8335485,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 423,
+        "sha256": "312dbb0ff1048a48e3e4b7290b2e3e698c2988cc9f06eedeacd39ae8fccc401e"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_lifetime_budget.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138715.5910478,
+      "label": "lifetime-tests",
+      "passed": true,
+      "started_unix_seconds": 1794138714.6238277,
+      "stderr": {
+        "bytes": 9494,
+        "sha256": "cd35261705574305dd248f268b826fac7155ab420c454ccb79a0ab2fb7c7bfdd"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "unittest_summaries": [
+        {
+          "result": "OK",
+          "tests": 58
+        }
+      ]
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_chain_claim_guard.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138716.5114026,
+      "label": "claim-tests",
+      "passed": true,
+      "started_unix_seconds": 1794138715.6331093,
+      "stderr": {
+        "bytes": 6148,
+        "sha256": "ea166eb3bd7c75fe30e13076ed29cd1de620730d5ba80a28818197fddbbffd31"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "unittest_summaries": [
+        {
+          "result": "OK",
+          "tests": 49
+        }
+      ]
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_authority_effect_register.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138717.5810432,
+      "label": "effect-register-tests",
+      "passed": true,
+      "started_unix_seconds": 1794138716.5129917,
+      "stderr": {
+        "bytes": 3019,
+        "sha256": "3878298db3e70ed67662e0e98cbaeb16bf0d114e055c7f3c540fb64f7047a5dc"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "unittest_summaries": [
+        {
+          "result": "OK",
+          "tests": 18
+        }
+      ]
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_pq_root_recovery_policy_v1.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138717.8480067,
+      "label": "root-policy-tests",
+      "passed": true,
+      "started_unix_seconds": 1794138717.5824833,
+      "stderr": {
+        "bytes": 5281,
+        "sha256": "4057fef3e2e4d0c6d54bfce62cfa0a7a0ee8fa95a1e08ac5da7d46d1e43b3b55"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "unittest_summaries": [
+        {
+          "result": "OK",
+          "tests": 26
+        }
+      ]
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/pq_lifetime_budget.py"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138717.96429,
+      "label": "lifetime-report",
+      "passed": true,
+      "started_unix_seconds": 1794138717.8493829,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 12824,
+        "sha256": "5ec6d9237665c7c7500b3f63b35a4380b397dada80668b3804913be008c09b90"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/pq_chain_claim_guard.py"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138718.0805016,
+      "label": "claim-report",
+      "passed": true,
+      "started_unix_seconds": 1794138717.965745,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 4835,
+        "sha256": "1071e58361cfdbc4b70e270822fc6984fe5f82331614be861ea41db0b9d6b7ec"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/pq_authority_effect_register.py"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138718.196657,
+      "label": "effect-register-report",
+      "passed": true,
+      "started_unix_seconds": 1794138718.0819304,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 13223,
+        "sha256": "0deea7a4eb4b75986c30c90e0d04247d45f817e4777a43ab41e26deddc1390ab"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "formal/pon-nakamoto-v1/pq_root_recovery_policy_v1.py",
+        "--example"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138718.262799,
+      "label": "root-policy-example",
+      "passed": true,
+      "started_unix_seconds": 1794138718.198236,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1298,
+        "sha256": "fbf8889ff8ed18bee29936437ae41446c54009a57368fb639e0bf078825b8c53"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138718.72975,
+      "label": "pq-source-integration",
+      "passed": true,
+      "started_unix_seconds": 1794138718.264255,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 557,
+        "sha256": "ca45054e85acee439a5eb75ba4b6f65d8cbaa52bf81b7a1973683c80301be99e"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138849.1427927,
+      "label": "pq-source-negatives",
+      "passed": true,
+      "started_unix_seconds": 1794138718.7313926,
+      "stderr": {
+        "bytes": 7769,
+        "sha256": "3e2f4e4684d80393c3ec1ecfd0b5ab4bfcc6d6f3b945556bd6822112c6387f04"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "unittest_summaries": [
+        {
+          "result": "OK",
+          "tests": 55
+        }
+      ]
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_authority_surface_scan.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138849.710604,
+      "label": "authority-scanner-negatives",
+      "passed": true,
+      "started_unix_seconds": 1794138849.144652,
+      "stderr": {
+        "bytes": 2454,
+        "sha256": "066de801af6938af114155555056bef0cb9c9d64764d6e9f31194e6095f87c46"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "unittest_summaries": [
+        {
+          "result": "OK",
+          "tests": 15
+        }
+      ]
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138849.9274104,
+      "label": "ci-contract",
+      "passed": true,
+      "started_unix_seconds": 1794138849.7122834,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 180,
+        "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138863.1264758,
+      "label": "ci-contract-negatives",
+      "passed": true,
+      "started_unix_seconds": 1794138849.9290438,
+      "stderr": {
+        "bytes": 17489,
+        "sha256": "212f3a297a3c19c68e3afc8c25577406e591eef5ca52cc09f1a8e2e1be776439"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "unittest_summaries": [
+        {
+          "result": "OK",
+          "tests": 105
+        }
+      ]
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138867.7554407,
+      "label": "source-integrity-negatives",
+      "passed": true,
+      "started_unix_seconds": 1794138863.12863,
+      "stderr": {
+        "bytes": 6414,
+        "sha256": "b86eb911a0805d3bcaccc55e608cdc698392ff9e9443c9096df66182a743789d"
+      },
+      "stdout": {
+        "bytes": 484,
+        "sha256": "9701391c450e93904e3268d4305ef13e0849cf7d43cfb374af2910eb15dff25a"
+      },
+      "unittest_summaries": [
+        {
+          "result": "OK",
+          "tests": 43
+        }
+      ]
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794138967.4900842,
+      "label": "repository",
+      "passed": true,
+      "started_unix_seconds": 1794138867.7579374,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 307,
+        "sha256": "2268896456950419e7ff92726335118a641c51b81d448651b10fbe13a64737d5"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_repository.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794139224.5094745,
+      "label": "repository-negatives",
+      "passed": true,
+      "started_unix_seconds": 1794138967.492014,
+      "stderr": {
+        "bytes": 5345,
+        "sha256": "c96b2f5d0140574a393299c96f2fae253e9f4b1630304bdfc2b452360c1370fd"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "unittest_summaries": [
+        {
+          "result": "OK",
+          "tests": 50
+        }
+      ]
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794139224.6769853,
+      "label": "distributed-inventory",
+      "passed": true,
+      "started_unix_seconds": 1794139224.5117166,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 35,
+        "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794139224.69588,
+      "label": "diff-check",
+      "passed": true,
+      "started_unix_seconds": 1794139224.6791446,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "--version"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794139224.7062817,
+      "label": "cargo-version",
+      "passed": true,
+      "started_unix_seconds": 1794139224.697941,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 36,
+        "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794139224.9229672,
+      "label": "metadata-default",
+      "passed": true,
+      "started_unix_seconds": 1794139224.708093,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 852308,
+        "sha256": "5b34ca197b2396d48ec0a92ff5691761e09b86070df07accc25c0d69b17d7a28"
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794139225.1503947,
+      "label": "metadata-all-features",
+      "passed": true,
+      "started_unix_seconds": 1794139224.9352884,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 867107,
+        "sha256": "984b28c6aeffac547f276adfb082a694b98643c18e541937479c5783d0bc8cc6"
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794139225.3771749,
+      "label": "metadata-fuzz",
+      "passed": true,
+      "started_unix_seconds": 1794139225.1621022,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 733815,
+        "sha256": "a77a36ed059dac37d10cd6e3d37ed525e0827cccad101e5a1c8a82d2229eb7e6"
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794139245.0548956,
+      "label": "formatting",
+      "passed": true,
+      "started_unix_seconds": 1794139225.3866036,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794139275.857739,
+      "label": "strict-workspace-clippy",
+      "passed": true,
+      "started_unix_seconds": 1794139245.0573874,
+      "stderr": {
+        "bytes": 325,
+        "sha256": "5af4dd32833cfaabcc95641a8825d8b4eb8a8ed66c0354a35861fb2792fa3590"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794139288.1060977,
+      "label": "native-crypto-default",
+      "native_summaries": [
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 165,
+          "result": "ok"
+        }
+      ],
+      "passed": true,
+      "started_unix_seconds": 1794139275.8603017,
+      "stderr": {
+        "bytes": 234,
+        "sha256": "cb05dd43ecf7862f75b7e27984bd1c5288be5b492b94fde7dd6eb92962d38dcd"
+      },
+      "stdout": {
+        "bytes": 17642,
+        "sha256": "514b3d926f27985ac8c6c58685af95efb587d207e298114932c5ce8c8ae52120"
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-research-protocol",
+        "--test",
+        "hepta_handoff_pq",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794139289.1102328,
+      "label": "native-hepta-pq-comparator",
+      "native_summaries": [
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 6,
+          "result": "ok"
+        }
+      ],
+      "passed": true,
+      "started_unix_seconds": 1794139288.1429076,
+      "stderr": {
+        "bytes": 233,
+        "sha256": "38a48a7bbf85b300087dbdd55d61609823a022d412ea0986a44c403b63f635a4"
+      },
+      "stdout": {
+        "bytes": 546,
+        "sha256": "3caa965ac60faeee55a66cb0cef96bf59ca1772b0fe07d4d395385b931dae2d0"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "1d29818ad927f549f43d74a06f51e91771feac70",
+        "--output",
+        "/home/qian-qi/work/chain-pq-seven-layer-composition-20261108-21690/validation-source-1d29818-v2/source-after.json"
+      ],
+      "exit_code": 0,
+      "finished_unix_seconds": 1794139291.7358336,
+      "label": "source-after",
+      "passed": true,
+      "started_unix_seconds": 1794139289.1136224,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 423,
+        "sha256": "312dbb0ff1048a48e3e4b7290b2e3e698c2988cc9f06eedeacd39ae8fccc401e"
+      }
+    }
+  ],
+  "commands_completed": 29,
+  "commands_expected": 29,
+  "complete_node_suite_executed": false,
+  "expected_head": "1d29818ad927f549f43d74a06f51e91771feac70",
+  "failed_commands": [],
+  "finished_unix_seconds": 1794139291.7386043,
+  "hosted_ci_accepted": false,
+  "native_checks_requested": true,
+  "production_activation": false,
+  "result": "PASS",
+  "root": "/home/qian-qi/work/chain-pq-seven-layer-composition-20261108-21690/repo-worktree",
+  "runner": {
+    "bytes": 8871,
+    "sha256": "080dc1c54fb7f9a9990fcdcbdb83baf74e7065ab78c32534f65e8717990ce638"
+  },
+  "schema": "trnm-pq-composition-validation-v1",
+  "started_unix_seconds": 1794138711.7160642,
+  "whole_chain_pq_qualified": false
+}

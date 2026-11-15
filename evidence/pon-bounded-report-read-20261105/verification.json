@@ -1,0 +1,22 @@
+{
+  "base": "84179f7b0f74bdc0152f904ffbf0b11709eec036",
+  "local_validated_source": "aceafd9cce6471bc52c7647f1529cc3c900b2811",
+  "source_tree": "7f3ebaa4066eda20fab5f1d11e459b08361143b8",
+  "python_phase_reader_tests": 56,
+  "policy_reader_tests": 7,
+  "source_controls": 37,
+  "ci_controls": 100,
+  "source_pins": 522,
+  "inventory_changed": false,
+  "strict_workspace_all_target_all_feature_clippy": "PASS",
+  "format": "PASS",
+  "rust_runtime_rerun": false,
+  "raw_files": {
+    "report-bounded-tests.txt": "db3af22044aada39acc2cb8487601fb9698d162cd883c9650291dedaf4e75583",
+    "report-bounded-final-static.txt": "68c3321ac971b52c6f7486215a74453f8257dc52ea21c2d3548e4cd3df4ea67a",
+    "report-bounded-clippy.txt": "a6489a835fb8885e6bfef2ef6476c2d83469a565d38766dbc28db7a4e1b3bbe8",
+    "report-bounded-fmt.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "validated-source.patch": "cbe6499709631fdd3312f35a0a25e973fc357f8f5bed16f892ba8180d0c857cd"
+  },
+  "archive_sha256": "e358f727499a32d5234b9e1ebedb8aa31ce01f19cfe1c0712f7e48d31b884143"
+}

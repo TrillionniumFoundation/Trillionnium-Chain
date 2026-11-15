@@ -1,0 +1,622 @@
+{
+  "schema": "TRNM-W1-V2-CURRENT-READONLY-PREFLIGHT1",
+  "started": {
+    "unix_ns": 1793855262170773043,
+    "utc": "2026-11-05T05:07:42.170773+00:00"
+  },
+  "repo": "/workspace/scratch/8de1bcb09af8/chain",
+  "inspector": {
+    "path": "/workspace/scratch/8de1bcb09af8/proof-audit/inspect_v2_current_preflight.py",
+    "sha256": "42c765d983ba492abcba792fac688c5c08153d8215857693178b5ffa3a24af56"
+  },
+  "proof_started": false,
+  "new_proof_generated": false,
+  "full_v2_proof_observed": false,
+  "saved_receipt_controls_run": false,
+  "dependency_download_performed": false,
+  "compilation_started": false,
+  "original_guard_lowered": false,
+  "stage_receipt_created": false,
+  "locked_metadata": {
+    "started": {
+      "unix_ns": 1793855262170968278,
+      "utc": "2026-11-05T05:07:42.170968+00:00"
+    },
+    "finished": {
+      "unix_ns": 1793855262173507372,
+      "utc": "2026-11-05T05:07:42.173507+00:00"
+    },
+    "sources": [
+      "/workspace/scratch/8de1bcb09af8/frozen-v2-locked-dependency-resolution.json",
+      "/workspace/scratch/8de1bcb09af8/frozen-v2-locked-dependency-resolution.log"
+    ],
+    "observation_succeeded": true,
+    "data": {
+      "record": {
+        "command": [
+          "cargo",
+          "metadata",
+          "--locked",
+          "--format-version",
+          "1",
+          "--manifest-path",
+          "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml"
+        ],
+        "returncode": 0,
+        "wall_ns": 14181737157,
+        "lockfile_relaxed": false,
+        "proof_started": false
+      },
+      "record_sha256": "f6c25ed27e6e08ce56f1d8352b5a1d94313fdea3c7b3830de8e42317a5257e13",
+      "raw_log_exists": true,
+      "raw_log_sha256": "9e9902addbfe0fea389b661b1a7ee6366340e6c1e9a16a29b67299b52dc7e0c0",
+      "locked_metadata_succeeded": true,
+      "metadata_rerun_by_this_inspector": false,
+      "original_command_start_time_available_in_record": false,
+      "timestamp_scope": "Current read of retained real command evidence; not its original execution time."
+    }
+  },
+  "current_source": {
+    "started": {
+      "unix_ns": 1793855262173536056,
+      "utc": "2026-11-05T05:07:42.173536+00:00"
+    },
+    "finished": {
+      "unix_ns": 1793855262202679097,
+      "utc": "2026-11-05T05:07:42.202679+00:00"
+    },
+    "sources": [
+      "/workspace/scratch/8de1bcb09af8/chain",
+      "/workspace/scratch/8de1bcb09af8/frozen-source-checks.json"
+    ],
+    "observation_succeeded": true,
+    "data": {
+      "head": {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "cwd": "/workspace/scratch/8de1bcb09af8/chain",
+        "started": {
+          "unix_ns": 1793855262173539341,
+          "utc": "2026-11-05T05:07:42.173539+00:00"
+        },
+        "finished": {
+          "unix_ns": 1793855262175545951,
+          "utc": "2026-11-05T05:07:42.175546+00:00"
+        },
+        "returncode": 0,
+        "succeeded": true,
+        "stdout": "90fa328265b73adc87b4ece23e2c797cd8982982\n",
+        "stderr": ""
+      },
+      "status": {
+        "argv": [
+          "git",
+          "status",
+          "--porcelain",
+          "--untracked-files=normal"
+        ],
+        "cwd": "/workspace/scratch/8de1bcb09af8/chain",
+        "started": {
+          "unix_ns": 1793855262175554083,
+          "utc": "2026-11-05T05:07:42.175554+00:00"
+        },
+        "finished": {
+          "unix_ns": 1793855262200546436,
+          "utc": "2026-11-05T05:07:42.200547+00:00"
+        },
+        "returncode": 0,
+        "succeeded": true,
+        "stdout": "",
+        "stderr": ""
+      },
+      "merge_head": {
+        "argv": [
+          "git",
+          "rev-parse",
+          "-q",
+          "--verify",
+          "MERGE_HEAD"
+        ],
+        "cwd": "/workspace/scratch/8de1bcb09af8/chain",
+        "started": {
+          "unix_ns": 1793855262200580878,
+          "utc": "2026-11-05T05:07:42.200581+00:00"
+        },
+        "finished": {
+          "unix_ns": 1793855262202409179,
+          "utc": "2026-11-05T05:07:42.202409+00:00"
+        },
+        "returncode": 1,
+        "succeeded": false,
+        "stdout": "",
+        "stderr": ""
+      },
+      "current_git_status_clean_observed": true,
+      "merge_pending_observed": false,
+      "current_raw_source_verification_run": false,
+      "snapshot_is_atomic": false,
+      "historical_frozen_source_commit": "59321c326313b78640b2df11122e00b3c7cfd71f",
+      "historical_frozen_source_checks_sha256": "3c22b441101f4a5094e5a71df74202acf4d2f06a3898fdb529999924efc964bc",
+      "historical_checks_are_current_clean_source_attestation": false
+    }
+  },
+  "tool_inventory": {
+    "started": {
+      "unix_ns": 1793855262202691005,
+      "utc": "2026-11-05T05:07:42.202691+00:00"
+    },
+    "finished": {
+      "unix_ns": 1793855262904544608,
+      "utc": "2026-11-05T05:07:42.904545+00:00"
+    },
+    "sources": [
+      "/root/.cargo/bin",
+      "/root/.rustup/toolchains",
+      "/root/.risc0",
+      "/workspace/scratch",
+      "/opt",
+      "/tmp"
+    ],
+    "observation_succeeded": true,
+    "data": {
+      "path_lookup": {
+        "cargo": null,
+        "rustc": null,
+        "rustup": null,
+        "rzup": null,
+        "r0vm": null,
+        "cargo-risczero": null
+      },
+      "host_cargo_absolute_exists": true,
+      "host_toolchains": {
+        "argv": [
+          "/root/.cargo/bin/rustup",
+          "toolchain",
+          "list"
+        ],
+        "cwd": "/workspace/scratch/8de1bcb09af8/chain",
+        "started": {
+          "unix_ns": 1793855262867222024,
+          "utc": "2026-11-05T05:07:42.867222+00:00"
+        },
+        "finished": {
+          "unix_ns": 1793855262903972324,
+          "utc": "2026-11-05T05:07:42.903972+00:00"
+        },
+        "returncode": 0,
+        "succeeded": true,
+        "stdout": "1.95.0-x86_64-unknown-linux-gnu (active, default)\n1.96.0-x86_64-unknown-linux-gnu\n",
+        "stderr": ""
+      },
+      "filename_scan": {
+        "argv": [
+          "rg",
+          "--files",
+          "--hidden",
+          "--no-ignore",
+          "-g",
+          "r0vm",
+          "-g",
+          "w1-staged-prover-v2",
+          "-g",
+          "w1-verify-v2",
+          "-g",
+          "cargo-risczero",
+          "-g",
+          "rzup",
+          "-g",
+          "rustc",
+          "/root",
+          "/workspace/scratch",
+          "/opt",
+          "/tmp"
+        ],
+        "cwd": "/workspace/scratch/8de1bcb09af8/chain",
+        "started": {
+          "unix_ns": 1793855262202698606,
+          "utc": "2026-11-05T05:07:42.202698+00:00"
+        },
+        "finished": {
+          "unix_ns": 1793855262867031386,
+          "utc": "2026-11-05T05:07:42.867031+00:00"
+        },
+        "returncode": 0,
+        "succeeded": true,
+        "stdout": "/root/.cargo/registry/index/index.crates.io-1949cf8c6b5b557f/.cache/rz/up/rzup\n/root/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/bin/rustc\n/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc\n",
+        "stderr": ""
+      },
+      "scan_complete_without_reported_errors": true,
+      "executable_matches": {
+        "rustc": [
+          "/root/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/bin/rustc",
+          "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc"
+        ]
+      },
+      "r0vm_executable_found": false,
+      "v2_staged_runner_executable_found": false,
+      "v2_fresh_verifier_executable_found": false,
+      "risc0_guest_rustc_candidate_found": false,
+      "risc0_guest_rustc_candidates": [],
+      "configured_risc0_home": "/root/.risc0",
+      "configured_risc0_home_exists": false,
+      "configured_risc0_toolchain_directory_exists": false,
+      "guest_candidate_executed_or_authenticated": false,
+      "scope": "Executable filename inventory of listed roots and configured toolchain directory; no download or installation."
+    }
+  },
+  "official_pins": {
+    "started": {
+      "unix_ns": 1793855262904572861,
+      "utc": "2026-11-05T05:07:42.904573+00:00"
+    },
+    "finished": {
+      "unix_ns": 1793855262905084563,
+      "utc": "2026-11-05T05:07:42.905085+00:00"
+    },
+    "sources": [
+      "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-statement-v2-20261105",
+      "/workspace/scratch/8de1bcb09af8/chain/formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-staged-prover.rs"
+    ],
+    "observation_succeeded": true,
+    "data": {
+      "archive_pins": [
+        {
+          "started": {
+            "unix_ns": 1793855262904587493,
+            "utc": "2026-11-05T05:07:42.904588+00:00"
+          },
+          "finished": {
+            "unix_ns": 1793855262904712502,
+            "utc": "2026-11-05T05:07:42.904712+00:00"
+          },
+          "sources": [
+            "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-statement-v2-20261105/risc0-rust-1.88.0.tar.gz.json"
+          ],
+          "observation_succeeded": true,
+          "data": {
+            "record_sha256": "db0b388aa4db2d7f7e1330e4824e7803e60fbcb7b31e9537f7742c9ad959bf38",
+            "retained_record": {
+              "url": "https://github.com/risc0/rust/releases/download/r0.1.88.0/rust-toolchain-x86_64-unknown-linux-gnu.tar.gz",
+              "bytes": 490849318,
+              "sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+              "expected_sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+              "wall_seconds": 20.850651948999996
+            },
+            "download_performed_now": false,
+            "remote_availability_checked_now": false
+          }
+        },
+        {
+          "started": {
+            "unix_ns": 1793855262904726102,
+            "utc": "2026-11-05T05:07:42.904726+00:00"
+          },
+          "finished": {
+            "unix_ns": 1793855262904765391,
+            "utc": "2026-11-05T05:07:42.904765+00:00"
+          },
+          "sources": [
+            "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-statement-v2-20261105/cargo-risczero-v3.0.3.tgz.json"
+          ],
+          "observation_succeeded": true,
+          "data": {
+            "record_sha256": "7bc677770f6cfc28418ae6f47bc04a852fe8fe6ff76e75e81b1ff6d2c4220461",
+            "retained_record": {
+              "url": "https://github.com/risc0/risc0/releases/download/v3.0.3/cargo-risczero-x86_64-unknown-linux-gnu.tgz",
+              "bytes": 72795381,
+              "sha256": "71a0adaa64235be13e9b8471bea5c4ded64bf97c6bd1eb9c2285b966c0b62fee",
+              "expected_sha256": "71a0adaa64235be13e9b8471bea5c4ded64bf97c6bd1eb9c2285b966c0b62fee",
+              "wall_seconds": 11.558085705999986
+            },
+            "download_performed_now": false,
+            "remote_availability_checked_now": false
+          }
+        }
+      ],
+      "r0vm_sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6",
+      "r0vm_pin_found_in_actual_runner_source": true,
+      "r0vm_historical_bytes": 108764424,
+      "guest_rust_version": "1.88.0",
+      "host_rust_version": "1.95.0",
+      "host_guest_sdk_version": "3.0.3",
+      "independent_verifier_sdk_version": "3.0.6",
+      "historical_binaries_recovered_now": false
+    }
+  },
+  "fixtures": [
+    {
+      "started": {
+        "unix_ns": 1793855262905357726,
+        "utc": "2026-11-05T05:07:42.905358+00:00"
+      },
+      "finished": {
+        "unix_ns": 1793855262905683738,
+        "utc": "2026-11-05T05:07:42.905684+00:00"
+      },
+      "sources": [
+        "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-complete-succinct-20261028/full-proof/input.bin",
+        "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-statement-v2-20261105/input-declaration.json"
+      ],
+      "observation_succeeded": true,
+      "data": {
+        "exists": true,
+        "bytes": 49506,
+        "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+        "declared_sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+        "expected_bytes": 49506,
+        "matches_retained_input_declaration": true,
+        "cryptographic_receipt_verification_performed": false
+      }
+    },
+    {
+      "started": {
+        "unix_ns": 1793855262905702036,
+        "utc": "2026-11-05T05:07:42.905702+00:00"
+      },
+      "finished": {
+        "unix_ns": 1793855262905732983,
+        "utc": "2026-11-05T05:07:42.905733+00:00"
+      },
+      "sources": [
+        "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-statement-v2-20261105/expected-artifacts.bin",
+        "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-statement-v2-20261105/input-declaration.json"
+      ],
+      "observation_succeeded": true,
+      "data": {
+        "exists": true,
+        "bytes": 64,
+        "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+        "declared_sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+        "expected_bytes": 64,
+        "matches_retained_input_declaration": true,
+        "cryptographic_receipt_verification_performed": false
+      }
+    }
+  ],
+  "resource_guard": {
+    "started": {
+      "unix_ns": 1793855262905751010,
+      "utc": "2026-11-05T05:07:42.905751+00:00"
+    },
+    "finished": {
+      "unix_ns": 1793855262914177245,
+      "utc": "2026-11-05T05:07:42.914177+00:00"
+    },
+    "sources": [
+      "/workspace/scratch/8de1bcb09af8/chain/formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+      "/workspace/scratch/8de1bcb09af8",
+      "/workspace/scratch/8de1bcb09af8/v2-full-checkpoint"
+    ],
+    "observation_succeeded": true,
+    "data": {
+      "coordinator_sha256": "d2605dcdca2fe01b199dda2c97b1763f3deefc07050979d0901fb3ddb11a72c9",
+      "actual_condition": "free >= 1024**3 and size[\"allocated_bytes\"] <= 256 * 1024**2",
+      "condition_function": "main.<locals>.stage",
+      "condition_line": 254,
+      "condition_evaluation_uses_actual_coordinator_ast": true,
+      "footprint_uses_actual_coordinator_function": true,
+      "disk_sample_time": {
+        "unix_ns": 1793855262913460443,
+        "utc": "2026-11-05T05:07:42.913460+00:00"
+      },
+      "disk_sample_path": "/workspace/scratch/8de1bcb09af8",
+      "disk_free_bytes": 0,
+      "checkpoint_path": "/workspace/scratch/8de1bcb09af8/v2-full-checkpoint",
+      "checkpoint_exists": false,
+      "checkpoint_footprint": {
+        "files": 0,
+        "logical_bytes": 0,
+        "allocated_bytes": 0
+      },
+      "free_disk_floor_bytes": 1073741824,
+      "checkpoint_disk_cap_bytes": 268435456,
+      "original_disk_guard_satisfied": false,
+      "disk_floor_satisfied": false,
+      "checkpoint_cap_satisfied": true,
+      "stage_invoked": false,
+      "stage_receipt_created": false,
+      "interpretation": "Read-only evaluation of actual stage admission condition; not an invoked proof stage or a failed cryptographic proof."
+    }
+  },
+  "memory": {
+    "memory.current": {
+      "started": {
+        "unix_ns": 1793855262914201321,
+        "utc": "2026-11-05T05:07:42.914201+00:00"
+      },
+      "finished": {
+        "unix_ns": 1793855262914253821,
+        "utc": "2026-11-05T05:07:42.914254+00:00"
+      },
+      "sources": [
+        "/sys/fs/cgroup/memory.current"
+      ],
+      "observation_succeeded": true,
+      "data": {
+        "exists": true,
+        "value": "8582311936"
+      }
+    },
+    "memory.max": {
+      "started": {
+        "unix_ns": 1793855262914266720,
+        "utc": "2026-11-05T05:07:42.914267+00:00"
+      },
+      "finished": {
+        "unix_ns": 1793855262914314622,
+        "utc": "2026-11-05T05:07:42.914315+00:00"
+      },
+      "sources": [
+        "/sys/fs/cgroup/memory.max"
+      ],
+      "observation_succeeded": true,
+      "data": {
+        "exists": true,
+        "value": "8589934592"
+      }
+    },
+    "memory.peak": {
+      "started": {
+        "unix_ns": 1793855262914330186,
+        "utc": "2026-11-05T05:07:42.914330+00:00"
+      },
+      "finished": {
+        "unix_ns": 1793855262914351368,
+        "utc": "2026-11-05T05:07:42.914351+00:00"
+      },
+      "sources": [
+        "/sys/fs/cgroup/memory.peak"
+      ],
+      "observation_succeeded": true,
+      "data": {
+        "exists": true,
+        "value": "8595808256"
+      }
+    },
+    "memory.events": {
+      "started": {
+        "unix_ns": 1793855262914359771,
+        "utc": "2026-11-05T05:07:42.914360+00:00"
+      },
+      "finished": {
+        "unix_ns": 1793855262914375134,
+        "utc": "2026-11-05T05:07:42.914375+00:00"
+      },
+      "sources": [
+        "/sys/fs/cgroup/memory.events"
+      ],
+      "observation_succeeded": true,
+      "data": {
+        "exists": true,
+        "value": "low 0\nhigh 0\nmax 7867034\noom 5\noom_kill 5\noom_group_kill 0"
+      }
+    },
+    "cpu.max": {
+      "started": {
+        "unix_ns": 1793855262914382836,
+        "utc": "2026-11-05T05:07:42.914383+00:00"
+      },
+      "finished": {
+        "unix_ns": 1793855262914397568,
+        "utc": "2026-11-05T05:07:42.914398+00:00"
+      },
+      "sources": [
+        "/sys/fs/cgroup/cpu.max"
+      ],
+      "observation_succeeded": true,
+      "data": {
+        "exists": true,
+        "value": "800000 100000"
+      }
+    },
+    "scope": "Shared cgroup, not this task allocation or an aggregate proof-only resource measurement.",
+    "coordinator_has_separate_ram_admission_guard": false,
+    "oom_events_attributed_to_this_task": false
+  },
+  "original_execution_budget": {
+    "source_path": "/workspace/scratch/8de1bcb09af8/chain/formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+    "total_wall_seconds": 7200,
+    "per_new_segment_wall_seconds": 300,
+    "prepare_wall_seconds": 180,
+    "free_disk_floor_bytes": 1073741824,
+    "checkpoint_disk_cap_bytes": 268435456,
+    "budget_changed": false,
+    "rayon_num_threads": 8,
+    "receipt_controls_source_path": "/workspace/scratch/8de1bcb09af8/chain/scripts/w1_v2_receipt_controls.py",
+    "receipt_controls_separate_total_wall_seconds": 120,
+    "receipt_controls_expected_total": 58,
+    "receipt_controls_expected_positive": 1,
+    "receipt_controls_expected_negative": 57
+  },
+  "installation_space_preconditions": {
+    "original_disk_floor_must_remain_satisfied": true,
+    "pinned_guest_archive_bytes": 490849318,
+    "pinned_backend_archive_bytes": 72795381,
+    "floor_plus_both_retained_archives_bytes": 1637386523,
+    "expanded_guest_toolchain_bytes": null,
+    "cargo_build_working_set_bytes": null,
+    "sufficient_installation_space_established": false,
+    "scope": "Archive lower bound excludes extraction, build caches, binaries, logs and checkpoints. Do not download or build while the original free-space floor is unsatisfied."
+  },
+  "reproduction": {
+    "inspector_command": [
+      "python3",
+      "/workspace/scratch/8de1bcb09af8/proof-audit/inspect_v2_current_preflight.py"
+    ],
+    "inspector_output_create_new_only": true,
+    "planned_runtime_paths_currently_installed": false,
+    "build_commands": [
+      [
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "build",
+        "--locked",
+        "--release",
+        "--jobs",
+        "1",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "-p",
+        "trnm-w1-zk-host-v2",
+        "--bin",
+        "w1-staged-prover-v2"
+      ],
+      [
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "build",
+        "--locked",
+        "--release",
+        "--jobs",
+        "1",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--bin",
+        "w1-verify-v2"
+      ]
+    ],
+    "build_environment_after_pinned_installation": {
+      "RISC0_HOME": "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0",
+      "CARGO_TARGET_DIR": "/workspace/scratch/8de1bcb09af8/v2-runtime/target",
+      "CARGO_BUILD_JOBS": "1",
+      "RISC0_BUILD_LOCKED": "1"
+    },
+    "proof_environment": {
+      "RAYON_NUM_THREADS": "8",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "proof_command_after_all_prerequisites": [
+      "python3",
+      "/workspace/scratch/8de1bcb09af8/chain/formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+      "--runner",
+      "/workspace/scratch/8de1bcb09af8/v2-runtime/target/release/w1-staged-prover-v2",
+      "--r0vm",
+      "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/bin/r0vm",
+      "--fresh-verifier",
+      "/workspace/scratch/8de1bcb09af8/v2-runtime/target/release/w1-verify-v2",
+      "--statement-version",
+      "2",
+      "--prepare-input",
+      "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-complete-succinct-20261028/full-proof/input.bin",
+      "--expected-artifacts",
+      "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-statement-v2-20261105/expected-artifacts.bin",
+      "--checkpoint",
+      "/workspace/scratch/8de1bcb09af8/v2-full-checkpoint",
+      "--out",
+      "/workspace/scratch/8de1bcb09af8/v2-full-observation",
+      "--total-wall-seconds",
+      "7200",
+      "--local-bytes-per-second",
+      "1000000"
+    ],
+    "commands_executed_by_inspector": false,
+    "preflight_and_clean_frozen_source_required_before_build_and_proof": true
+  },
+  "finished": {
+    "unix_ns": 1793855262914498039,
+    "utc": "2026-11-05T05:07:42.914498+00:00"
+  }
+}

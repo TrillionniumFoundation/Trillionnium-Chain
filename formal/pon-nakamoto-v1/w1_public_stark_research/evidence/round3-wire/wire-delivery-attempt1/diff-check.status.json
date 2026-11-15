@@ -1,0 +1,13 @@
+{
+  "label": "diff-check",
+  "argv": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "exit_code": 2,
+  "wall_seconds": 0.038472135085612535,
+  "stdout_sha256": "78f6e6d696fdacfc65057f5ac785483ae5dd06c7de4c76b519dc9240286a72fd",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

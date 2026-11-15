@@ -1,0 +1,92 @@
+{
+  "schema": "trnm-c2-native-launch-prerequisite-v1",
+  "created_utc": "2026-11-07T22:12:33.477982+00:00",
+  "commit": "ffcb687b43843ec92b3170f8841f92a3dd0a4d3d",
+  "tree": "73dcb40e7021bb7f18d1ddb75fd26a53d0e1201a",
+  "source_status": {
+    "at_unix_ms": 1794089356831,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1b808555c-12894-d0f",
+    "launch_nonce": "d7aba1863f2ef97fd6ff2aa7d498e535",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 6984,
+        "stored": 6984
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "source_summary": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/admission-fence/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/summary.json",
+    "bytes": 110537,
+    "sha256": "88cc1143023b50fbcb6f6470df53eac6643f547bf788de5c21fe6c0b1505acdc"
+  },
+  "source_before": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/admission-fence/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/source-before.json",
+    "bytes": 423,
+    "sha256": "1bf17f697e533ba4608a576fd5bd7b051980a0887d5e5daf1245ad1b63ed6721"
+  },
+  "source_after": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/admission-fence/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/source-after.json",
+    "bytes": 423,
+    "sha256": "1bf17f697e533ba4608a576fd5bd7b051980a0887d5e5daf1245ad1b63ed6721"
+  },
+  "source_byte_identical": true,
+  "source_controls": {
+    "suites": 17,
+    "passed": 666,
+    "expected": 666,
+    "failures": []
+  },
+  "frozen_drivers_and_requirements": [
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/run-targeted-native-v2.py",
+      "bytes": 17019,
+      "sha256": "2a6ecccef6e51cc110165e3debf9a07a1803c3959452cf8db896fc66aad2398f"
+    },
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/requirements-v2.json",
+      "bytes": 11795,
+      "sha256": "2aee4a85af649777966c2d3a57e7252e35e48ba2ea70da4608e6a0bfa7ad4f42"
+    },
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/history-supplement-validation/run-history-supplement-v1.py",
+      "bytes": 18940,
+      "sha256": "830c0147fc10422e0753c78506594bbe93487597943470f7f146079845d1cae7"
+    },
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/history-supplement-validation/requirements.json",
+      "bytes": 2380,
+      "sha256": "4f2b1988ca8045daa3215d4e4d9311eda568d65db79c6f10100463d0772e99b0"
+    }
+  ],
+  "acceptance_scan_confirmation": "Root authorization and acceptance terminal confirmation for job 1a1b7feb04e-12894-cf2; no scanning task running.",
+  "qualification": {
+    "native_pass": false,
+    "business_pass": false
+  }
+}

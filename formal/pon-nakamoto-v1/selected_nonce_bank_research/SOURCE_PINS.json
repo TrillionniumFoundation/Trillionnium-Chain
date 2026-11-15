@@ -1,0 +1,55 @@
+{
+  "schema": "selected-nonce-bank-source-pins-r4-v1",
+  "published_baseline": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+  "native_cargo_recovered_from_round1": true,
+  "files": {
+    "upstream/exact_cost.py": {
+      "sha256": "47380c811fe49d14daa13315b7ad03dc2e0f2e823e7070c2ceb74c54d4d62118",
+      "source": "/workspace/scratch/f16ac5871196/physical_cost/upstream/exact_cost.py"
+    },
+    "upstream/sha256_prefix.py": {
+      "sha256": "9893fbfac7c96a6bec3f746a662408abdee08772ac8616a4ac8f9a39beae6776",
+      "source": "/workspace/scratch/f16ac5871196/physical_cost/upstream/sha256_prefix.py"
+    },
+    "upstream/reference/selected_event_reference.py": {
+      "sha256": "39575219c2adf0cf73bc58f58acf8ede934d073cbb0a02fc552d9dd4f5963357",
+      "source": "/workspace/scratch/f16ac5871196/physical_cost/upstream/reference/selected_event_reference.py"
+    },
+    "upstream/reference/structured-a.bin": {
+      "sha256": "f3694144d1f5c261fd1e7ac798d58983c5eb5a89b4e3554f41f46ec615bc7787",
+      "source": "/workspace/scratch/f16ac5871196/physical_cost/upstream/reference/structured-a.bin"
+    },
+    "upstream/reference/structured-b.bin": {
+      "sha256": "ad53173acd55b78366ee0fd4de3c5c38fd95889ae8846efe8b9d394d197721b5",
+      "source": "/workspace/scratch/f16ac5871196/physical_cost/upstream/reference/structured-b.bin"
+    },
+    "upstream/reference/real_lottery_hit_p_1_64.expected.bin": {
+      "sha256": "16eea862f5955a0cb8b52a3eb1c8299d595446863c476571186b1837145bf474",
+      "source": "/workspace/scratch/f16ac5871196/physical_cost/upstream/reference/real_lottery_hit_p_1_64.expected.bin"
+    },
+    "upstream/reference/real_lottery_hit_p_1_64.witness.bin": {
+      "sha256": "59f4a1c43f11b3e7245c699b59f4031ef6d458e4cc416168ec96392eae1fe318",
+      "source": "/workspace/scratch/f16ac5871196/physical_cost/upstream/reference/real_lottery_hit_p_1_64.witness.bin"
+    },
+    "upstream/selector_policy_r3.py": {
+      "sha256": "6c49e2144db3207a74076df68b8fa7c32487e35ee281f949b1edec5dece61cdd",
+      "source": "/workspace/scratch/f16ac5871196/physical_cost/selector_policy.py"
+    },
+    "native_selected/Cargo.toml": {
+      "sha256": "01c5359788e35f6a44306e56853f329838ec74cb6aa26e6ba66ad32055c675f4",
+      "source": "/workspace/scratch/89f4ddbb3fd2/recovery/round1/PoN_W1_Continuation_2026-11-07/native_selected/Cargo.toml"
+    },
+    "native_selected/Cargo.lock": {
+      "sha256": "c8d66fe14008ffeb39a78f6d802ecac2255fe1eb1de58a423aa5d5824a31717c",
+      "source": "/workspace/scratch/89f4ddbb3fd2/recovery/round1/PoN_W1_Continuation_2026-11-07/native_selected/Cargo.lock"
+    },
+    "native_selected/src/lib.rs": {
+      "sha256": "4cf25237ed76dcd9bc0a10f4d4e3875f1ed2d6af32a7af1dbae83ee64f840f07",
+      "source": "/workspace/scratch/89f4ddbb3fd2/recovery/round1/PoN_W1_Continuation_2026-11-07/native_selected/src/lib.rs"
+    },
+    "native_selected/src/main.rs": {
+      "sha256": "3f14876f7f706149823fd686d868c9919e4ed571365a466fa6357c6fc6561431",
+      "source": "/workspace/scratch/89f4ddbb3fd2/recovery/round1/PoN_W1_Continuation_2026-11-07/native_selected/src/main.rs"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+test_actual_selected_profile_is_bound_without_security_promotion (__main__.ProofProfileBindingTests.test_actual_selected_profile_is_bound_without_security_promotion) ... ok
+test_arithmetic_example_cannot_be_used_as_research_register (__main__.ProofProfileBindingTests.test_arithmetic_example_cannot_be_used_as_research_register) ... ok
+test_boolean_is_not_a_descriptor_digest (__main__.ProofProfileBindingTests.test_boolean_is_not_a_descriptor_digest) ... ok
+test_boolean_is_not_an_input_byte_count (__main__.ProofProfileBindingTests.test_boolean_is_not_an_input_byte_count) ... ok
+test_candidate_can_require_one_exact_profile_descriptor (__main__.ProofProfileBindingTests.test_candidate_can_require_one_exact_profile_descriptor) ... ok
+test_changed_guest_pin_is_refused (__main__.ProofProfileBindingTests.test_changed_guest_pin_is_refused) ... ok
+test_duplicate_selected_obligation_is_refused (__main__.ProofProfileBindingTests.test_duplicate_selected_obligation_is_refused) ... ok
+test_duplicate_selected_profile_key_is_refused (__main__.ProofProfileBindingTests.test_duplicate_selected_profile_key_is_refused) ... ok
+test_excluded_profile_must_keep_its_actual_source_identifier (__main__.ProofProfileBindingTests.test_excluded_profile_must_keep_its_actual_source_identifier) ... ok
+test_expected_v1_guest_cannot_replace_v2_identity (__main__.ProofProfileBindingTests.test_expected_v1_guest_cannot_replace_v2_identity) ... ok
+test_foreign_qrom_contract_cannot_replace_selected_mapping (__main__.ProofProfileBindingTests.test_foreign_qrom_contract_cannot_replace_selected_mapping) ... ok
+test_jointly_relabelled_system_terms_still_do_not_cover_selected_profile (__main__.ProofProfileBindingTests.test_jointly_relabelled_system_terms_still_do_not_cover_selected_profile) ... ok
+test_mapping_cannot_self_promote (__main__.ProofProfileBindingTests.test_mapping_cannot_self_promote) ... ok
+test_missing_saved_receipt_has_no_source_or_git_fallback (__main__.ProofProfileBindingTests.test_missing_saved_receipt_has_no_source_or_git_fallback) ... ok
+test_missing_selected_obligation_is_refused (__main__.ProofProfileBindingTests.test_missing_selected_obligation_is_refused) ... ok
+test_native_register_cannot_be_relabelled_as_selected_budget (__main__.ProofProfileBindingTests.test_native_register_cannot_be_relabelled_as_selected_budget) ... ok
+test_native_system_experiment_is_reported_as_not_covering_risc0 (__main__.ProofProfileBindingTests.test_native_system_experiment_is_reported_as_not_covering_risc0) ... ok
+test_numeric_native_bounds_do_not_become_risc0_bounds (__main__.ProofProfileBindingTests.test_numeric_native_bounds_do_not_become_risc0_bounds) ... ok
+test_p3_cannot_replace_selected_profile_label (__main__.ProofProfileBindingTests.test_p3_cannot_replace_selected_profile_label) ... ok
+test_p3_goldilocks_and_tagged_sha3_remain_distinct_exclusions (__main__.ProofProfileBindingTests.test_p3_goldilocks_and_tagged_sha3_remain_distinct_exclusions) ... ok
+test_paper_metadata_does_not_verify_revision_equivalence (__main__.ProofProfileBindingTests.test_paper_metadata_does_not_verify_revision_equivalence) ... ok
+test_reused_v1_library_does_not_replace_the_v2_entry_image (__main__.ProofProfileBindingTests.test_reused_v1_library_does_not_replace_the_v2_entry_image) ... ok
+test_selected_numeric_budget_requires_a_separate_reviewed_schema (__main__.ProofProfileBindingTests.test_selected_numeric_budget_requires_a_separate_reviewed_schema) ... ok
+test_truncated_recorded_snapshot_has_a_structured_reader_error (__main__.ProofProfileBindingTests.test_truncated_recorded_snapshot_has_a_structured_reader_error) ... ok
+test_unknown_activation_field_is_refused (__main__.ProofProfileBindingTests.test_unknown_activation_field_is_refused) ... ok
+test_wrong_candidate_profile_descriptor_is_refused (__main__.ProofProfileBindingTests.test_wrong_candidate_profile_descriptor_is_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 15.847s
+
+OK

@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "-V"
+  ],
+  "cwd": "/data/chain-root-operation-owned-20261112-df05-v4",
+  "elapsed_ns": 13020415085,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "log": "cargo-version.log",
+  "process_exit_code": 0,
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

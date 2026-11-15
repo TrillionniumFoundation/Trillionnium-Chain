@@ -1,0 +1,40 @@
+{
+  "schema": "pon-six-axis-measurement-execution-v1",
+  "declared_utc": "2026-11-05T02:14:34.490807+00:00",
+  "source_checkpoint": "2d529aa0a1c65df9c43a5fd278c72ab0c0be3814",
+  "measurement_plan_sha256": "e2714a9b9976bfb83658af5e8aab7efa2d16017c7a726d68042ed1cc8342efeb",
+  "analysis_helper_sha256": "1044cb7eb885dc0837b4008c97345f70b8234243ac5dba17a1e91472222a936d",
+  "whole_command_resource_observer": [
+    "python3",
+    "evidence/pon-six-axis-execution-v1/observe_resources.py"
+  ],
+  "whole_command_resource_scope": "includes cargo startup, test setup, warmup, assertions, all native returns and output/journal writes; compilation if any must be disclosed; not per-stage CPU or ordinary-binary performance",
+  "maximum_rss_scope": "Linux RUSAGE_CHILDREN maximum in KiB; not a simultaneous aggregate of all process memory",
+  "profile": "unchanged repository test package profiles (Node opt3, debug assertions and overflow checks enabled), all features, locked/offline, build jobs1; CARGO_INCREMENTAL=0 as in the original required CI workflow",
+  "source_or_workload_changes_for_measurement": false,
+  "hardware": {
+    "kernel": "6.18.57",
+    "machine": "x86_64",
+    "logical_cpus": 9,
+    "affinity_count": 9,
+    "cgroup_cpu_max": "800000 100000",
+    "cgroup_memory_max_bytes": 8589934592,
+    "original_acceptance_host": false,
+    "shared_with_other_sessions": true
+  },
+  "sample_storage": "original overlay filesystem; no tmpfs database substitution",
+  "result": null,
+  "supersedes_declaration": "measurement-execution-declaration-v2.json",
+  "prior_observer_unavailable": "GNU /usr/bin/time does not exist; no measurement command was started",
+  "resource_observer_sha256": "dc70719af44b12a3bc507cc21d0b91a8f141a8b39bf6c54cbf59591fae61dbb6",
+  "source_checkpoint_change": "Native regression test import corrected and its current source pin refreshed; production parser, matrix, workload and registered decision rule unchanged",
+  "CARGO_INCREMENTAL": "0",
+  "incremental_setting_source": {
+    "path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+    "sha256": "28bdbe712b26e6e6f12ba67b5dc5d1fe43e5fbdf8a81b3d8a3d86c8a937642c9",
+    "setting": "CARGO_INCREMENTAL: 0"
+  },
+  "earlier_build_attempts": "No timing samples or native Node test returns were produced by the failed local default-incremental builds; their failures stay separately recorded",
+  "same_binary_component_comparison_required": true,
+  "tmpfs_migration_effective": false
+}

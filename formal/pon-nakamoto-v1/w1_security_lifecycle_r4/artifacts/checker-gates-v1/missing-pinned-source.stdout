@@ -1,0 +1,284 @@
+{
+  "schema": "trnm-w1-shared-permutation-lifecycle-v1",
+  "status": "SOURCE_REFUSED",
+  "sources": {
+    "ok": false,
+    "checked": [
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "sha256": "e4abafba6867bf145ddd3f5b8f669ce039a93973d80f7eb3096dd3a7ce1c184c"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock",
+        "sha256": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/lib.rs",
+        "sha256": "558c88cb7ef72aba1fbc95ea5a9aeb0e811ebaeb11485d1c7cb2a67c83e817e9"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs",
+        "sha256": "b39c2405e8c2263cfd52fc162e6a92ccfdc7c83ce8ebaca179b32e2187b8137d"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_wire.rs",
+        "sha256": "5933e95cc02e35ca33348728ca57cbca87ac52bc4c3e2ee6a39045aba85cc70b"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs",
+        "sha256": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_air.rs",
+        "sha256": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_plan.rs",
+        "sha256": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs",
+        "sha256": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363"
+      },
+      {
+        "root": "repo",
+        "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_carry_air.rs",
+        "sha256": "6524719eaa69e1c24e67ff4e82f26676612dcfc9b45da8d4a8ce08885dc56ec1"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "sha256": "e4abafba6867bf145ddd3f5b8f669ce039a93973d80f7eb3096dd3a7ce1c184c"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock",
+        "sha256": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/lib.rs",
+        "sha256": "02af0734368cb416dd4ed600254727f32e1c096e33a158b3abad903f5027ade1"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs",
+        "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_wire.rs",
+        "sha256": "e8660e3b91849f538713b32835035f0eb39425326268dd9302b3c7b01b090921"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs",
+        "sha256": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_air.rs",
+        "sha256": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_plan.rs",
+        "sha256": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs",
+        "sha256": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_carry_air.rs",
+        "sha256": "6524719eaa69e1c24e67ff4e82f26676612dcfc9b45da8d4a8ce08885dc56ec1"
+      },
+      {
+        "root": "repo",
+        "revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_schedule_air.rs",
+        "sha256": "88557607225e402b6f16ec7edffb7c8b90ddfe14cc7e87a2640042a205011a64"
+      },
+      {
+        "root": "repo",
+        "revision": null,
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/examples/r4_lifecycle_probe.rs",
+        "sha256": "1d2deb4e6e79877de6a21ab2fcc2d0dedb7fcf86fa92c0f808a48ebc980c096e"
+      }
+    ],
+    "failures": [
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-symmetric-0.8.0/src/sponge.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-symmetric-0.8.0/src/sponge.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-symmetric-0.8.0/src/compression.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-symmetric-0.8.0/src/compression.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-commit-0.8.0/src/adapters/extension_mmcs.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-commit-0.8.0/src/adapters/extension_mmcs.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-fri-0.8.0/src/prover.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-fri-0.8.0/src/prover.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-fri-0.8.0/src/verifier.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-fri-0.8.0/src/verifier.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-fri-0.8.0/src/proof.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-fri-0.8.0/src/proof.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-fri-0.8.0/src/transcript.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-fri-0.8.0/src/transcript.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-fri-0.8.0/src/pcs_transcript.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-fri-0.8.0/src/pcs_transcript.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-fri-0.8.0/src/two_adic_pcs.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-fri-0.8.0/src/two_adic_pcs.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-uni-stark-0.8.0/src/transcript.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-uni-stark-0.8.0/src/transcript.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-uni-stark-0.8.0/src/verifier.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-uni-stark-0.8.0/src/verifier.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-uni-stark-0.8.0/src/proof.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-uni-stark-0.8.0/src/proof.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/duplex_challenger.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/duplex_challenger.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/grinding_challenger.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/grinding_challenger.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/fs/domain_separator.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/fs/domain_separator.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/fs/transcript_field.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/fs/transcript_field.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/fs/pattern/sequence.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/fs/pattern/sequence.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/fs/pattern/step.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/fs/pattern/step.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/fs/codecs/field_to_field.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/fs/codecs/field_to_field.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/fs/codecs/extension.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/fs/codecs/extension.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/fs/state/verifier.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-challenger-0.8.0/src/fs/state/verifier.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-goldilocks-0.8.0/src/poseidon2.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-goldilocks-0.8.0/src/poseidon2.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-sha256-air-0.8.0/src/air.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-sha256-air-0.8.0/src/air.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-sha256-air-0.8.0/src/generation.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-sha256-air-0.8.0/src/generation.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-sha256-air-0.8.0/src/columns.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-sha256-air-0.8.0/src/columns.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/hiding_mmcs.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/hiding_mmcs.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/lib.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/lib.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/merkle_tree.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/merkle_tree.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/mmcs/batch.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/mmcs/batch.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/mmcs/error.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/mmcs/error.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/mmcs/geometry.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/mmcs/geometry.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/mmcs/mod.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/mmcs/mod.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/mmcs/pruned.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/mmcs/pruned.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/packed_row_tests.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/packed_row_tests.rs'"
+      },
+      {
+        "path": "/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/pruning.rs",
+        "error": "[Errno 2] No such file or directory: '/home/qian-qi/work/w1-security-r4-evidence-f16ac/nonexistent-registry/p3-merkle-tree-0.8.0/src/pruning.rs'"
+      }
+    ]
+  },
+  "qualification": "HOLD_NO_GO"
+}

@@ -1,0 +1,420 @@
+{
+  "schema": "trnm-external-observer-synthetic-controls-v1",
+  "created_utc": "2026-11-07T20:47:07.884047+00:00",
+  "driver": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/run-targeted-native-v2.py",
+    "bytes": 17019,
+    "sha256": "2a6ecccef6e51cc110165e3debf9a07a1803c3959452cf8db896fc66aad2398f"
+  },
+  "engine": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/run-final-native-v2.py",
+    "bytes": 36640,
+    "sha256": "22e1e8df08ca0d9417586ad333c06b2a09e652d11ade204bab732af0b156cdff"
+  },
+  "requirements": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/requirements-v2.json",
+    "bytes": 11795,
+    "sha256": "2aee4a85af649777966c2d3a57e7252e35e48ba2ea70da4608e6a0bfa7ad4f42"
+  },
+  "execution_boundary": "Only the exact_result function AST and two regex assignments were loaded; no driver module import, main, subprocess, Cargo or native body executed.",
+  "cases": [
+    {
+      "case": "normal_pass",
+      "expected_outer_status": "ok",
+      "result": {
+        "selector": "synthetic_exact_selector",
+        "native_effective_exit_code": 0,
+        "required_reader_exit_code": 0,
+        "actual_running_paths": [
+          "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/not-a-native-executable.txt"
+        ],
+        "running_matches_unique_inventory_binary": true,
+        "all_summaries": [
+          {
+            "line": 4,
+            "status": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered": 1204,
+            "seconds": 0.01
+          }
+        ],
+        "outer_summary": {
+          "line": 4,
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 1204,
+          "seconds": 0.01
+        },
+        "abnormal_process_diagnostics": [],
+        "supervised_interruption": false,
+        "verified_named_pass": true,
+        "raw": {
+          "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/normal_pass.txt",
+          "bytes": 340,
+          "sha256": "5e726d854633711ef8aad0f1304e4c09906d67b50502c5f1833c594296e97578"
+        },
+        "child_or_ambiguous_summaries_are_not_outer_totals": true
+      }
+    },
+    {
+      "case": "normal_failed_outer",
+      "expected_outer_status": "FAILED",
+      "result": {
+        "selector": "synthetic_exact_selector",
+        "native_effective_exit_code": 101,
+        "required_reader_exit_code": 1,
+        "actual_running_paths": [
+          "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/not-a-native-executable.txt"
+        ],
+        "running_matches_unique_inventory_binary": true,
+        "all_summaries": [
+          {
+            "line": 4,
+            "status": "FAILED",
+            "passed": 0,
+            "failed": 1,
+            "ignored": 0,
+            "measured": 0,
+            "filtered": 1204,
+            "seconds": 0.01
+          }
+        ],
+        "outer_summary": {
+          "line": 4,
+          "status": "FAILED",
+          "passed": 0,
+          "failed": 1,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 1204,
+          "seconds": 0.01
+        },
+        "abnormal_process_diagnostics": [],
+        "supervised_interruption": false,
+        "verified_named_pass": false,
+        "raw": {
+          "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/normal_failed_outer.txt",
+          "bytes": 570,
+          "sha256": "ded193f8fb58bc8319142c02a118a7f73532e2d2c2aa16c192a4a101b8e837ce"
+        },
+        "child_or_ambiguous_summaries_are_not_outer_totals": true
+      }
+    },
+    {
+      "case": "child_ok_then_nonzero",
+      "expected_outer_status": null,
+      "result": {
+        "selector": "synthetic_exact_selector",
+        "native_effective_exit_code": 101,
+        "required_reader_exit_code": 1,
+        "actual_running_paths": [
+          "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/not-a-native-executable.txt"
+        ],
+        "running_matches_unique_inventory_binary": true,
+        "all_summaries": [
+          {
+            "line": 4,
+            "status": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered": 1204,
+            "seconds": 0.01
+          }
+        ],
+        "outer_summary": null,
+        "abnormal_process_diagnostics": [],
+        "supervised_interruption": false,
+        "verified_named_pass": false,
+        "raw": {
+          "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/child_ok_then_nonzero.txt",
+          "bytes": 572,
+          "sha256": "050839782e099ed9aed098c11d67cf1768198b9707c05221d68b507bef4e2c7e"
+        },
+        "child_or_ambiguous_summaries_are_not_outer_totals": true
+      }
+    },
+    {
+      "case": "child_failed_then_signal",
+      "expected_outer_status": null,
+      "result": {
+        "selector": "synthetic_exact_selector",
+        "native_effective_exit_code": 101,
+        "required_reader_exit_code": 1,
+        "actual_running_paths": [
+          "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/not-a-native-executable.txt"
+        ],
+        "running_matches_unique_inventory_binary": true,
+        "all_summaries": [
+          {
+            "line": 4,
+            "status": "FAILED",
+            "passed": 0,
+            "failed": 1,
+            "ignored": 0,
+            "measured": 0,
+            "filtered": 1204,
+            "seconds": 0.01
+          }
+        ],
+        "outer_summary": null,
+        "abnormal_process_diagnostics": [
+          "error: process didn't exit successfully: `/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/not-a-native-executable.txt` (signal: 9, SIGKILL: kill)"
+        ],
+        "supervised_interruption": false,
+        "verified_named_pass": false,
+        "raw": {
+          "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/child_failed_then_signal.txt",
+          "bytes": 584,
+          "sha256": "df9d3e2281d561acfc65416d2145cdc47813687d2eb14695b99298acbbcb1261"
+        },
+        "child_or_ambiguous_summaries_are_not_outer_totals": true
+      }
+    },
+    {
+      "case": "child_failed_then_status17",
+      "expected_outer_status": null,
+      "result": {
+        "selector": "synthetic_exact_selector",
+        "native_effective_exit_code": 101,
+        "required_reader_exit_code": 1,
+        "actual_running_paths": [
+          "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/not-a-native-executable.txt"
+        ],
+        "running_matches_unique_inventory_binary": true,
+        "all_summaries": [
+          {
+            "line": 4,
+            "status": "FAILED",
+            "passed": 0,
+            "failed": 1,
+            "ignored": 0,
+            "measured": 0,
+            "filtered": 1204,
+            "seconds": 0.01
+          }
+        ],
+        "outer_summary": null,
+        "abnormal_process_diagnostics": [
+          "error: process didn't exit successfully: `/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/not-a-native-executable.txt` (exit status: 17)"
+        ],
+        "supervised_interruption": false,
+        "verified_named_pass": false,
+        "raw": {
+          "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/child_failed_then_status17.txt",
+          "bytes": 575,
+          "sha256": "b14a10d6023baae0e025e233c36aef62832df3c19c4850bf9e7ddb8b5f6794a6"
+        },
+        "child_or_ambiguous_summaries_are_not_outer_totals": true
+      }
+    },
+    {
+      "case": "child_failed_then_timeout124",
+      "expected_outer_status": null,
+      "result": {
+        "selector": "synthetic_exact_selector",
+        "native_effective_exit_code": 124,
+        "required_reader_exit_code": 1,
+        "actual_running_paths": [
+          "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/not-a-native-executable.txt"
+        ],
+        "running_matches_unique_inventory_binary": true,
+        "all_summaries": [
+          {
+            "line": 4,
+            "status": "FAILED",
+            "passed": 0,
+            "failed": 1,
+            "ignored": 0,
+            "measured": 0,
+            "filtered": 1204,
+            "seconds": 0.01
+          }
+        ],
+        "outer_summary": null,
+        "abnormal_process_diagnostics": [],
+        "supervised_interruption": true,
+        "verified_named_pass": false,
+        "raw": {
+          "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/child_failed_then_timeout124.txt",
+          "bytes": 354,
+          "sha256": "373b3f430485c5db9068ece3aaaac0f8372502e5fb804278e0ba5774be0573fe"
+        },
+        "child_or_ambiguous_summaries_are_not_outer_totals": true
+      }
+    },
+    {
+      "case": "child_failed_then_supervisor137",
+      "expected_outer_status": null,
+      "result": {
+        "selector": "synthetic_exact_selector",
+        "native_effective_exit_code": 137,
+        "required_reader_exit_code": 1,
+        "actual_running_paths": [
+          "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/not-a-native-executable.txt"
+        ],
+        "running_matches_unique_inventory_binary": true,
+        "all_summaries": [
+          {
+            "line": 4,
+            "status": "FAILED",
+            "passed": 0,
+            "failed": 1,
+            "ignored": 0,
+            "measured": 0,
+            "filtered": 1204,
+            "seconds": 0.01
+          }
+        ],
+        "outer_summary": null,
+        "abnormal_process_diagnostics": [],
+        "supervised_interruption": true,
+        "verified_named_pass": false,
+        "raw": {
+          "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/child_failed_then_supervisor137.txt",
+          "bytes": 354,
+          "sha256": "373b3f430485c5db9068ece3aaaac0f8372502e5fb804278e0ba5774be0573fe"
+        },
+        "child_or_ambiguous_summaries_are_not_outer_totals": true
+      }
+    },
+    {
+      "case": "child_failed_then_supervisor143",
+      "expected_outer_status": null,
+      "result": {
+        "selector": "synthetic_exact_selector",
+        "native_effective_exit_code": 143,
+        "required_reader_exit_code": 1,
+        "actual_running_paths": [
+          "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/not-a-native-executable.txt"
+        ],
+        "running_matches_unique_inventory_binary": true,
+        "all_summaries": [
+          {
+            "line": 4,
+            "status": "FAILED",
+            "passed": 0,
+            "failed": 1,
+            "ignored": 0,
+            "measured": 0,
+            "filtered": 1204,
+            "seconds": 0.01
+          }
+        ],
+        "outer_summary": null,
+        "abnormal_process_diagnostics": [],
+        "supervised_interruption": true,
+        "verified_named_pass": false,
+        "raw": {
+          "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/child_failed_then_supervisor143.txt",
+          "bytes": 354,
+          "sha256": "373b3f430485c5db9068ece3aaaac0f8372502e5fb804278e0ba5774be0573fe"
+        },
+        "child_or_ambiguous_summaries_are_not_outer_totals": true
+      }
+    },
+    {
+      "case": "child_failed_then_signal_code",
+      "expected_outer_status": null,
+      "result": {
+        "selector": "synthetic_exact_selector",
+        "native_effective_exit_code": -9,
+        "required_reader_exit_code": 1,
+        "actual_running_paths": [
+          "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/not-a-native-executable.txt"
+        ],
+        "running_matches_unique_inventory_binary": true,
+        "all_summaries": [
+          {
+            "line": 4,
+            "status": "FAILED",
+            "passed": 0,
+            "failed": 1,
+            "ignored": 0,
+            "measured": 0,
+            "filtered": 1204,
+            "seconds": 0.01
+          }
+        ],
+        "outer_summary": null,
+        "abnormal_process_diagnostics": [],
+        "supervised_interruption": true,
+        "verified_named_pass": false,
+        "raw": {
+          "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/child_failed_then_signal_code.txt",
+          "bytes": 354,
+          "sha256": "373b3f430485c5db9068ece3aaaac0f8372502e5fb804278e0ba5774be0573fe"
+        },
+        "child_or_ambiguous_summaries_are_not_outer_totals": true
+      }
+    },
+    {
+      "case": "child_failed_then_real_pass",
+      "expected_outer_status": "ok",
+      "result": {
+        "selector": "synthetic_exact_selector",
+        "native_effective_exit_code": 0,
+        "required_reader_exit_code": 0,
+        "actual_running_paths": [
+          "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/not-a-native-executable.txt"
+        ],
+        "running_matches_unique_inventory_binary": true,
+        "all_summaries": [
+          {
+            "line": 4,
+            "status": "FAILED",
+            "passed": 0,
+            "failed": 1,
+            "ignored": 0,
+            "measured": 0,
+            "filtered": 1204,
+            "seconds": 0.01
+          },
+          {
+            "line": 6,
+            "status": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered": 1204,
+            "seconds": 0.01
+          }
+        ],
+        "outer_summary": {
+          "line": 6,
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 1204,
+          "seconds": 0.01
+        },
+        "abnormal_process_diagnostics": [],
+        "supervised_interruption": false,
+        "verified_named_pass": true,
+        "raw": {
+          "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/observer-controls-v2/child_failed_then_real_pass.txt",
+          "bytes": 465,
+          "sha256": "5f657c15099e652b3591dc4c21551e95306d6824d438856602c768ccad00db5e"
+        },
+        "child_or_ambiguous_summaries_are_not_outer_totals": true
+      }
+    }
+  ],
+  "controls_passed": 10,
+  "controls_failed": 0,
+  "qualification": {
+    "native_tests": false,
+    "business": false,
+    "performance": false
+  }
+}

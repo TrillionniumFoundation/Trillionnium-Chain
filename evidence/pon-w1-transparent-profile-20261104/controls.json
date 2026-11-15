@@ -1,0 +1,523 @@
+{
+  "all_passed": true,
+  "cases": [
+    {
+      "elapsed_ns": 29759385,
+      "expected": "ACCEPT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "valid",
+      "observed": {
+        "outcome": "ACCEPT"
+      },
+      "passed": true,
+      "receipt_sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+    },
+    {
+      "elapsed_ns": 171048,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "trailing",
+      "observed": {
+        "error": "Slice had bytes remaining after deserialization",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "82740202b1365db177a3c2aca833d5b52229c5c395fafee455fbcde82a2571a6"
+    },
+    {
+      "elapsed_ns": 104108,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "truncated",
+      "observed": {
+        "error": "io error: unexpected end of file",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "43ab6a037957e589d16d6ff502792bc34e1e95610232d2e1db00a127d319e1c8"
+    },
+    {
+      "elapsed_ns": 4327,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "declared_seal_length_overflow",
+      "observed": {
+        "error": "impossible seal length",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "20ab8431809e5afca4a601e6d793ac86f6e0544ed63ed760336face040e365f3"
+    },
+    {
+      "elapsed_ns": 3225,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "composite_tag",
+      "observed": {
+        "error": "succinct receipt wire tag required",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "840fef1d7e9c0da0595d4dad6cda6ddecea7e8f154f9aed98294be947d87464e"
+    },
+    {
+      "elapsed_ns": 4046,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "groth16_tag",
+      "observed": {
+        "error": "succinct receipt wire tag required",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "a399280160276e9a9d65a4bba5666ede7010c7567f26ceebe672d3e7b353cf02"
+    },
+    {
+      "elapsed_ns": 4236,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "fake_tag",
+      "observed": {
+        "error": "succinct receipt wire tag required",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "042ba14f91d85cc04fd8607af3b3dcf0cecf8d54e2a19258ad5e693ccfbc1074"
+    },
+    {
+      "elapsed_ns": 85289,
+      "expected": "REJECT",
+      "header_sha256": "3d030777fddfd359577f77e93256680298ed1903c949da24df79867ddade133c",
+      "name": "wrong_header",
+      "observed": {
+        "error": "public header mismatch",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+    },
+    {
+      "elapsed_ns": 80942,
+      "expected": "REJECT",
+      "header_sha256": "60ddbd0c614352d831422fce2ed9c1123102f31ec95432b2e3a3f294993228e0",
+      "name": "wrong_header_network",
+      "observed": {
+        "error": "public header mismatch",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+    },
+    {
+      "elapsed_ns": 79831,
+      "expected": "REJECT",
+      "header_sha256": "f0686309dbfadae4aad9eac88dad06b5379473c99bee33d7374807037cc03899",
+      "name": "wrong_header_parameters",
+      "observed": {
+        "error": "public header mismatch",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+    },
+    {
+      "elapsed_ns": 107112,
+      "expected": "REJECT",
+      "header_sha256": "678960e2df83a54dc4923d6be6fd053a2b09940acf3ade2c616a08c428ca8ae2",
+      "name": "wrong_header_parent",
+      "observed": {
+        "error": "public header mismatch",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+    },
+    {
+      "elapsed_ns": 165009,
+      "expected": "REJECT",
+      "header_sha256": "af21f9209164557a18bbc62e2c3b87921cb121526424655d4cbaae3103ed7477",
+      "name": "wrong_header_height",
+      "observed": {
+        "error": "public header mismatch",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+    },
+    {
+      "elapsed_ns": 122646,
+      "expected": "REJECT",
+      "header_sha256": "50f05a48b8988205432c53ea42a7a704a438bc29995f37910e283fb01c8e24f6",
+      "name": "wrong_header_timestamp",
+      "observed": {
+        "error": "public header mismatch",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+    },
+    {
+      "elapsed_ns": 120191,
+      "expected": "REJECT",
+      "header_sha256": "15f8d49591609174cbdaf7ec19c852fca3678bc8780bf6aacf7b7c7839e52d02",
+      "name": "wrong_header_target",
+      "observed": {
+        "error": "public header mismatch",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+    },
+    {
+      "elapsed_ns": 148544,
+      "expected": "REJECT",
+      "header_sha256": "057a5b6c10f17939bd6cb9509478961a62208fc5b6b81024f5d20e81c97224cb",
+      "name": "wrong_header_miner",
+      "observed": {
+        "error": "public header mismatch",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+    },
+    {
+      "elapsed_ns": 147723,
+      "expected": "REJECT",
+      "header_sha256": "0e99a6c0fec0ca3078a2ee9ba4ad1869fd5caa218483abf9e761cfa2cff28e86",
+      "name": "wrong_header_transactions",
+      "observed": {
+        "error": "public header mismatch",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+    },
+    {
+      "elapsed_ns": 152110,
+      "expected": "REJECT",
+      "header_sha256": "88aed193f0543547a82ddea4635a053eb97bcbf836a4af6c9cad87c24772e1b4",
+      "name": "wrong_header_state",
+      "observed": {
+        "error": "public header mismatch",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+    },
+    {
+      "elapsed_ns": 165230,
+      "expected": "REJECT",
+      "header_sha256": "d577df1464aee2c989a818a72113eb5f8e5889ed635c5e2273d5fc19cd02a8ed",
+      "name": "wrong_header_receipts",
+      "observed": {
+        "error": "public header mismatch",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+    },
+    {
+      "elapsed_ns": 126782,
+      "expected": "REJECT",
+      "header_sha256": "e0903f6e32a33b965bbe192e079b4582be3ed3ff5d1996f4184fe4b6c2c141c3",
+      "name": "wrong_header_work_task",
+      "observed": {
+        "error": "public header mismatch",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+    },
+    {
+      "elapsed_ns": 93902,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "unapproved_supported_hash_sha-256",
+      "observed": {
+        "error": "proof hash suite outside frozen profile",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "08412e7d628e43c3fe43dbd29c5339833a2e8ae942539329beca2321d9b47af6"
+    },
+    {
+      "elapsed_ns": 151609,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "unapproved_supported_hash_blake2b",
+      "observed": {
+        "error": "proof hash suite outside frozen profile",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "0c0ffdb4b43dac6972e516ab344a3da141848bc68fced8d442a17e51972fd11e"
+    },
+    {
+      "elapsed_ns": 158239,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "outer_verifier_parameters",
+      "observed": {
+        "error": "receipt verifier parameters outside frozen profile",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "4ebbdc49ebddd7e7030330874a80f565fb7fb12ce7cad8aac90ae8747b5735b5"
+    },
+    {
+      "elapsed_ns": 140793,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "journal_byte_0",
+      "observed": {
+        "error": "journal bound/domain",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "3606b05b5d2920d25026b73297aebdd8521e4fb25a3ac8b0a53b59d074cd684d"
+    },
+    {
+      "elapsed_ns": 99480,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "journal_byte_20",
+      "observed": {
+        "error": "public header mismatch",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "66daf744f4dc87b7f3320950d802b67434cda6f5b49b97edc0eb4345335a9040"
+    },
+    {
+      "elapsed_ns": 91348,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "journal_byte_338",
+      "observed": {
+        "error": "ticket binding",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "dda1a87c529a1541338851ecf804aedbc75e7648646f49e60a1744d83e76bcd7"
+    },
+    {
+      "elapsed_ns": 92199,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "journal_byte_370",
+      "observed": {
+        "error": "ticket binding",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "7f98ba7c1edf91e18a589bfdf40e49adb8c113e34af9ee771980e7960df4ba4e"
+    },
+    {
+      "elapsed_ns": 91658,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "journal_byte_402",
+      "observed": {
+        "error": "unique work identity",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "ab20eff37056719dd3b1b0e5e1411da9f231417d438f30cd9a8801fe8bfefbfd"
+    },
+    {
+      "elapsed_ns": 37923480,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "journal_byte_16817",
+      "observed": {
+        "error": "full frozen image proof: claim digest does not match the expected digest deafd64bc422833babb6cbc7050f7f768c88ee92e941a8b383ad376b0a258afc; expected 9854893cb3f9faea36ecc3bf079813c7372b0dba4ba2b4834b3131187b957f00",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "2b2bd63e27cf5b92e5d1b7c3fc6df00eef3c16c4444b9c9274b593d25eb54cf8"
+    },
+    {
+      "elapsed_ns": 90317,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "control_id",
+      "observed": {
+        "error": "final recursion control outside frozen profile",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "668757f81eeffffa4d6b5ca04f250ab02c9c28bcb5e4903701f9e256f440689c"
+    },
+    {
+      "elapsed_ns": 91859,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "verifier_parameters",
+      "observed": {
+        "error": "receipt verifier parameters outside frozen profile",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "d7839c347d9b94af0f1cd595bc781aff296eba5119712223871511178810e912"
+    },
+    {
+      "elapsed_ns": 82495,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "hash_function",
+      "observed": {
+        "error": "proof hash suite outside frozen profile",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "21e4a4329a62b46e462e57c2bcdf5e736186254704a0ca1b80d180702fcec7f3"
+    },
+    {
+      "elapsed_ns": 46016706,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "claim_digest",
+      "observed": {
+        "error": "full frozen image proof: journal digest mismatch detected",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "6ae71d08db93384e449706dd438038a69a7fea9a35ee334930586ce19c65cf6a"
+    },
+    {
+      "elapsed_ns": 1290932,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "seal_first",
+      "observed": {
+        "error": "full frozen image proof: verification indicates proof is invalid",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "6271b3e9b1e3a4371581c275af85deb2767607f8e424109faeb3d118bbc0c734"
+    },
+    {
+      "elapsed_ns": 18806285,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "seal_body",
+      "observed": {
+        "error": "full frozen image proof: verification indicates proof is invalid",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "58c150be1fae9de449c2eff3d46cf5062353d42eed461d4bd20159b741e6bfbc"
+    },
+    {
+      "elapsed_ns": 47802059,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "seal_last",
+      "observed": {
+        "error": "full frozen image proof: verification indicates proof is invalid",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "9abd8978751871ff88344d7f2216ac208f51376585e8e670151abbc5672cf6aa"
+    },
+    {
+      "elapsed_ns": 8312,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "seal_empty",
+      "observed": {
+        "error": "impossible seal length",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "5bc05055a02f0d0bc95e04f62447bd3d0e1b3a5704ede191e8ffbdbc03bdda2f"
+    },
+    {
+      "elapsed_ns": 91078,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "seal_short",
+      "observed": {
+        "error": "full frozen image proof: invalid receipt format",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "aad0078cce80c8be15de37e40a84bc52fa5ee4c8603fa19231c628e812a7d8ae"
+    },
+    {
+      "elapsed_ns": 197588,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "seal_invalid_field",
+      "observed": {
+        "error": "full frozen image proof: invalid receipt format",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "8858fbb1e7c94a098a0dea812d0c44bc57b1a956537905721d03ffe6a4ffb600"
+    },
+    {
+      "elapsed_ns": 199882,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "control_inclusion_noncanonical_digest",
+      "observed": {
+        "error": "noncanonical control inclusion digest",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "430fd9164e26c6ca58685e3f464672dff163416593eede4f2f074b73a7b02ce2"
+    },
+    {
+      "elapsed_ns": 161955,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "control_inclusion_index_high_bits",
+      "observed": {
+        "error": "noncanonical control inclusion path",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "3a2b5a9940b7d98df1321b473d4cfaf314f4322e60f58104ab026bbfaf692f8a"
+    },
+    {
+      "elapsed_ns": 134273,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "control_inclusion_path_short",
+      "observed": {
+        "error": "noncanonical control inclusion path",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "a4c9fc4ef0e9d4b2fbe783f86d14d4015531100dda9abaa04d186550b603e874"
+    },
+    {
+      "elapsed_ns": 161675,
+      "expected": "REJECT",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "name": "control_inclusion_path_long",
+      "observed": {
+        "error": "noncanonical control inclusion path",
+        "outcome": "REJECT"
+      },
+      "passed": true,
+      "receipt_sha256": "b09b6688f35e266c5d6c9af98f66e63fbbc7821e90d0386d5f2de5b3b8b59efb"
+    }
+  ],
+  "consensus_admission": false,
+  "fake_proofs_used": false,
+  "image_id": [
+    4203990569,
+    1706128024,
+    889896351,
+    2751765305,
+    3434005897,
+    1411617246,
+    870515685,
+    3215144349
+  ],
+  "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v1",
+  "schema": "TRNM-W1-HARDENED-VERIFIER-CONTROLS2",
+  "sdk": "3.0.6"
+}

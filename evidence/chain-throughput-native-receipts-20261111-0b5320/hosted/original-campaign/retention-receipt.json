@@ -1,0 +1,47 @@
+{
+  "artifact": {
+    "id": 13833660378,
+    "name": "pon-native-campaign-x64-head-release-11e242dbaaae14a9d16282fe8deaf36827e98395-1",
+    "bytes": 81779634,
+    "sha256": "96b801074e063222a807a75a012da57f3255f95f3cc0301b7eb012f8188aec78"
+  },
+  "original_text_manifest": {
+    "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/original-text-manifest.json",
+    "bytes": 921390,
+    "sha256": "bda048160c169725984bf07326301114be96ce0468a5bb71c480a6a78b7f57e9"
+  },
+  "original_text_archive": {
+    "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/original-text.tar.gz",
+    "bytes": 42958086,
+    "sha256": "bc65c57bf9692fdfb4d5ec2470711562af3a23243b496aa0813ad30634b7d3fb"
+  },
+  "cohort_reports": [
+    {
+      "zip_member": "run-1-raw/report.json",
+      "role": "original hosted campaign JSON/text",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/original-text/run-1-raw/report.json",
+      "bytes": 53733948,
+      "sha256": "20b0610468fa9b781e69f80a1210442cbfc8536a99b28c567ed6ee2b0b0bc08f"
+    },
+    {
+      "zip_member": "run-2-raw/report.json",
+      "role": "original hosted campaign JSON/text",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/original-text/run-2-raw/report.json",
+      "bytes": 54506951,
+      "sha256": "5d56f8557c165a8ed326c54f329767ad60d28b2c366ba17b1dff404042cace86"
+    },
+    {
+      "zip_member": "run-3-raw/report.json",
+      "role": "original hosted campaign JSON/text",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/original-text/run-3-raw/report.json",
+      "bytes": 55257612,
+      "sha256": "4866a9ed85a261de4b7d4fa427b719e40009dd9b930fb62cfde8aaa22dc49327"
+    }
+  ],
+  "component_fourth_reader_returncode": 0,
+  "native_binary_validated_in_zip_not_reextracted": {
+    "member": "public_v3_multiprocess.bin",
+    "bytes": 12677144,
+    "sha256": "96ef1d21f60fdffa1658a917e58e4f8dff7c0dd25c695abf9d940da921aec9da"
+  }
+}

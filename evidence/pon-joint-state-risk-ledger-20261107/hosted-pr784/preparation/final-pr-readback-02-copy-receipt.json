@@ -1,0 +1,137 @@
+{
+  "label": "final-pr-readback-02",
+  "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-pr-readback-02",
+  "archive_relative_directory": "publication/final-pr-readback-02",
+  "source_before": [
+    {
+      "path": "actor.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "actor.stdout",
+      "bytes": 10,
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+    },
+    {
+      "path": "body-diagnosis.json",
+      "bytes": 673,
+      "sha256": "abda6681050e788d64e60eb70ad9fc61f02cc756a9ff459becdfe20e3a5303ed"
+    },
+    {
+      "path": "check-runs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "check-runs.stdout",
+      "bytes": 376151,
+      "sha256": "d025026209a040b2b9ba3c6011fe37bac77ce73c8d036c23d40c3a470c86936e"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 531,
+      "sha256": "c81aba3b03613dde902f4b8170b9e7a08510815a83ad501e0771ad6e996fda51"
+    },
+    {
+      "path": "pr.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pr.stdout",
+      "bytes": 25540,
+      "sha256": "8c8fa7f44d9e591aad7e771f183f7b0f01f4ab61eb29f1fc843d48b761b6234d"
+    }
+  ],
+  "source_after": [
+    {
+      "path": "actor.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "actor.stdout",
+      "bytes": 10,
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+    },
+    {
+      "path": "body-diagnosis.json",
+      "bytes": 673,
+      "sha256": "abda6681050e788d64e60eb70ad9fc61f02cc756a9ff459becdfe20e3a5303ed"
+    },
+    {
+      "path": "check-runs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "check-runs.stdout",
+      "bytes": 376151,
+      "sha256": "d025026209a040b2b9ba3c6011fe37bac77ce73c8d036c23d40c3a470c86936e"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 531,
+      "sha256": "c81aba3b03613dde902f4b8170b9e7a08510815a83ad501e0771ad6e996fda51"
+    },
+    {
+      "path": "pr.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pr.stdout",
+      "bytes": 25540,
+      "sha256": "8c8fa7f44d9e591aad7e771f183f7b0f01f4ab61eb29f1fc843d48b761b6234d"
+    }
+  ],
+  "destination": [
+    {
+      "path": "actor.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "actor.stdout",
+      "bytes": 10,
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+    },
+    {
+      "path": "body-diagnosis.json",
+      "bytes": 673,
+      "sha256": "abda6681050e788d64e60eb70ad9fc61f02cc756a9ff459becdfe20e3a5303ed"
+    },
+    {
+      "path": "check-runs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "check-runs.stdout",
+      "bytes": 376151,
+      "sha256": "d025026209a040b2b9ba3c6011fe37bac77ce73c8d036c23d40c3a470c86936e"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 531,
+      "sha256": "c81aba3b03613dde902f4b8170b9e7a08510815a83ad501e0771ad6e996fda51"
+    },
+    {
+      "path": "pr.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pr.stdout",
+      "bytes": 25540,
+      "sha256": "8c8fa7f44d9e591aad7e771f183f7b0f01f4ab61eb29f1fc843d48b761b6234d"
+    }
+  ],
+  "file_count": 8,
+  "payload_bytes": 402905,
+  "source_before_after_equal": true,
+  "destination_exactly_equal": true,
+  "copy_completed_at": "2026-11-08T01:22:46.239343+00:00",
+  "meaning": "Exact raw byte copies at the retained endpoints; incomplete or failed original artifacts remain incomplete or failed."
+}

@@ -1,0 +1,14 @@
+{
+  "phase": "candidate preparation, before first commit",
+  "job_id": "1a1bc5547bf-138b0-1c5",
+  "job_exit_code": 1,
+  "failed_command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "command_exit_code": 2,
+  "reason": "Unmodified native Cargo stdout ends in blank lines. Original exact log bytes are retained. Authored-source whitespace checking excludes only raw evidence .log files; full Rust formatting already passed. This optional preparation check is not a native semantic failure or one of the final 19 gates.",
+  "input_bundle_sha256": "9510af13590952baf865d5dd954d9d32c6c71153a76c7c0b8253c4e812671db2"
+}

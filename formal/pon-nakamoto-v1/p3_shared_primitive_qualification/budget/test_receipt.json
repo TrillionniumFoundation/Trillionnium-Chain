@@ -1,0 +1,64 @@
+{
+  "execution": {
+    "all_tests_passed": true,
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      ".",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "cwd": "/workspace/scratch/3acf892fe0ad/model_budget",
+    "elapsed_ns": 197220668,
+    "finished_utc": "2026-11-08T06:02:49.301127+00:00",
+    "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "return_code": 0,
+    "started_utc": "2026-11-08T06:02:49.103893+00:00",
+    "tests_run": 40,
+    "unittest_reported_seconds": "0.124"
+  },
+  "qualified": false,
+  "raw_output_files": [
+    {
+      "bytes": 0,
+      "path": "test.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 5887,
+      "path": "test.stderr.txt",
+      "sha256": "d4d7b41cb6e02fcc2de2be544cd3ac5b17ffd78bdc6bad812416a5231e6aae06"
+    }
+  ],
+  "receipt_kind": "self_reported_local_run_not_cryptographic_attestation",
+  "schema": "p3.sponge.query_budget.test_receipt.v1",
+  "scope": "Conditional arithmetic, accounting and refusal tests only.",
+  "source_files": [
+    {
+      "bytes": 15844,
+      "path": "sponge_query_budget.py",
+      "sha256": "7f4cf1dfbc77343396d5e65dc67851cbf74efe957f1314160e65f6b51938c961"
+    },
+    {
+      "bytes": 19732,
+      "path": "test_sponge_query_budget.py",
+      "sha256": "6a70a9abbbdaca1d98eba55c839ccae03e465e2918f6ab8d0362df2991834e83"
+    },
+    {
+      "bytes": 2024,
+      "path": "example_sha3_512.json",
+      "sha256": "2884ba585e9e7f60e66b45508605a3a642f82bd2707342e649af3f122b7994cc"
+    },
+    {
+      "bytes": 7100,
+      "path": "README.md",
+      "sha256": "e02079e8240f7e83e169318fe950bcf7783a0a9985a92a223b56dbf3c0fad10e"
+    }
+  ],
+  "source_hashes_unchanged_during_run": true,
+  "source_url": "https://arxiv.org/html/2609.28469v1"
+}

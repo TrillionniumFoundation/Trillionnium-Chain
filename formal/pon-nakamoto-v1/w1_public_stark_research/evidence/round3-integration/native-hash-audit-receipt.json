@@ -1,0 +1,66 @@
+{
+  "schema": "trnm-p3-native-hash-audit-receipt-v1",
+  "probe": {
+    "schema": "trnm-p3-hash-role-probe-v1",
+    "actual_p3_api": true,
+    "p3_version": "0.8.0",
+    "arbitrary_compressor_collision": true,
+    "h4_compressor_overlap": true,
+    "h2_h4_overlap": true,
+    "merkle_or_w1_forgery": false,
+    "qualification": "HOLD_NO_GO"
+  },
+  "python_tests_passed": true,
+  "primary_registry_files": [
+    {
+      "path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/p3-goldilocks-0.8.0/src/poseidon2.rs",
+      "sha256": "f6154a75152391481a44d6bd9ed3dc540ed2001bbdba323c278c2ff61430faa4"
+    },
+    {
+      "path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/p3-poseidon2-0.8.0/src/external.rs",
+      "sha256": "4f2dc9c69280c5a8ecd78cbee84c95a0029f16c8c7a19444c9a9371be115f754"
+    },
+    {
+      "path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/p3-poseidon2-0.8.0/src/internal.rs",
+      "sha256": "952644bcdcefcb5792a29187dfef95ad1149c1bde1f598459991394d603b73fd"
+    },
+    {
+      "path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/p3-symmetric-0.8.0/src/sponge.rs",
+      "sha256": "2f74ff9049e96a23d3d26aa1c0dc6cffb471b5b271bfe37af8dc34ff75d6ac97"
+    },
+    {
+      "path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/p3-symmetric-0.8.0/src/compression.rs",
+      "sha256": "fb4ddd15d6808ed240efdfb838607de2fda18cb7825749fd96f025ba410ee84b"
+    },
+    {
+      "path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/p3-commit-0.8.0/src/adapters/extension_mmcs.rs",
+      "sha256": "84c93692a9955aa2ee9aed5f756dc460d24d9f6eca3076b7cf99935dc06fca07"
+    },
+    {
+      "path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/p3-uni-stark-0.8.0/src/prover.rs",
+      "sha256": "30e23c852abc4a2d88b953be80754d851144eed921e022ae98a159f668a298f3"
+    },
+    {
+      "path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/p3-uni-stark-0.8.0/src/proof.rs",
+      "sha256": "73aa8cd250bdd7ebc8045bbdbcea883d79a391dd44a22be46a733765e3932aec"
+    },
+    {
+      "path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/p3-fri-0.8.0/src/prover.rs",
+      "sha256": "26c595b377a25947fbabe132653947cf2f56b0a2fe78f6c7187fe697fde0878a"
+    },
+    {
+      "path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/p3-fri-0.8.0/src/proof.rs",
+      "sha256": "9c6efe2f05ec8f89f43ea1f2e706bf0fd826d9191d20d12b24ea2da10ad494a6"
+    },
+    {
+      "path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/p3-commit-0.8.0/src/pcs/univariate.rs",
+      "sha256": "4f149de68f6c6d6a32c78a1c845e66ed0cc40d25543a922982d55565a4613771"
+    }
+  ],
+  "archived_sources_match_Cargo_lock": true,
+  "historical_proof_config_matches_actual_git_commit": true,
+  "source_before_after_equal": true,
+  "probe_source_sha256": "93072125eca6661bd2b2f8ee44d3209d1ac8b13f17f7e69569dccca90aea8144",
+  "probe_binary_sha256": "e1d637b4e31cc0379b2cd22957ca075cc28400234255a25a34062053385a5707",
+  "qualification": "HOLD_NO_GO"
+}

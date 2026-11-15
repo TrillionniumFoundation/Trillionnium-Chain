@@ -1,0 +1,179 @@
+{
+  "schema": "trnm-d26-late-observer-copy-plan-v1",
+  "files": [
+    {
+      "path": "download/process-status.json",
+      "bytes": 732,
+      "sha256": "ee2c973a1ddd1057039cfb66a6dd07764162afd3b01780e66ecad2d90c0ae5db",
+      "source": null
+    },
+    {
+      "path": "download/process.stdout",
+      "bytes": 4075,
+      "sha256": "e7f2c9a0438559a32e3c26147834d5be397238aa3a6a1e35075d2fdcfbc1e737",
+      "source": null
+    },
+    {
+      "path": "download/process.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": null
+    },
+    {
+      "path": "range/process-status.json",
+      "bytes": 732,
+      "sha256": "63e147c0c370ee82694ce3e2dfccf060f986635a9f63d9308dd1a2b221c44438",
+      "source": null
+    },
+    {
+      "path": "range/process.stdout",
+      "bytes": 1357,
+      "sha256": "5a74385725f43794c78004046402704d9b02634229cf455e4296e68c4937bf61",
+      "source": null
+    },
+    {
+      "path": "range/process.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": null
+    },
+    {
+      "path": "download/summary.json",
+      "bytes": 97834,
+      "sha256": "dfdfdbe6de5883e2a894d915850d272a25924844c4e3a0c4dab2a4769ad88be4",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/summary.json"
+    },
+    {
+      "path": "download/13578524978/readback.json",
+      "bytes": 1585,
+      "sha256": "e711e8c50a74e7cd0c38c7c15ed3e7d89220b2be70b97957ce63f5f1d68e09d1",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578524978/readback.json"
+    },
+    {
+      "path": "download/13578524978/download.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578524978/download.stderr"
+    },
+    {
+      "path": "download/13578719689/readback.json",
+      "bytes": 1530,
+      "sha256": "a67df86fe3656d9f4873a86213974e09260a4d10fb0d8a4a823c21c769a210ba",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578719689/readback.json"
+    },
+    {
+      "path": "download/13578719689/download.stderr",
+      "bytes": 72,
+      "sha256": "b9595dc9d1ae5a59d5a33ca36bfb7dd8e036696b058c9b1e099cd0df0adcf93b",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578719689/download.stderr"
+    },
+    {
+      "path": "download/13578752856/readback.json",
+      "bytes": 1536,
+      "sha256": "2408ad9bd8ec8101aa739338e69c45a02aaec6976f3db21b32232a140ec2b6d4",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578752856/readback.json"
+    },
+    {
+      "path": "download/13578752856/download.stderr",
+      "bytes": 772,
+      "sha256": "d681a26d1f5a50974785339a7bb654725e5d0c08021a2aa0be1a2321c00f1d1c",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578752856/download.stderr"
+    },
+    {
+      "path": "download/13578807518/readback.json",
+      "bytes": 1537,
+      "sha256": "a057bd3d22418b6d7543c5c3f3ccd6f3251b370f618ba48b4d168588b2aee5ba",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578807518/readback.json"
+    },
+    {
+      "path": "download/13578807518/download.stderr",
+      "bytes": 144,
+      "sha256": "96ad2f8e984867e846f4ca8df75475a59ef480b64823b4cb00f305bcfa1c5430",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578807518/download.stderr"
+    },
+    {
+      "path": "download/13578842636/readback.json",
+      "bytes": 20682,
+      "sha256": "1a7a146535704584fc91c5918163c81df6f2a3f352dfb3772eeae60d41847ba5",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578842636/readback.json"
+    },
+    {
+      "path": "download/13578842636/download.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578842636/download.stderr"
+    },
+    {
+      "path": "download/13578922475/readback.json",
+      "bytes": 1544,
+      "sha256": "b243ac3483052ede3a07d3623386bba60f707fcc2334368c2e6798daeb8fa468",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578922475/readback.json"
+    },
+    {
+      "path": "download/13578922475/download.stderr",
+      "bytes": 75,
+      "sha256": "7bc985fdb43083d3c35a030f767d54f83103c33042cb5b509ef0e3a0c7a189de",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578922475/download.stderr"
+    },
+    {
+      "path": "download/13578947026/readback.json",
+      "bytes": 11194,
+      "sha256": "4cfee1c4f957c5c6456b640bfaabf19036f093a771d0e1f022ed44767b1c657b",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578947026/readback.json"
+    },
+    {
+      "path": "download/13578947026/download.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578947026/download.stderr"
+    },
+    {
+      "path": "download/13579025854/readback.json",
+      "bytes": 43468,
+      "sha256": "1d8fc434854c3a79eb15c98c408655365a09c8517199f344410b395ffa6bd2b6",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13579025854/readback.json"
+    },
+    {
+      "path": "download/13579025854/download.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13579025854/download.stderr"
+    },
+    {
+      "path": "download/13579071557/readback.json",
+      "bytes": 1598,
+      "sha256": "a87b6cc147d3146e383a384898e1d7b08f1341a7e12cc1e1c4253f0d5952ec5a",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13579071557/readback.json"
+    },
+    {
+      "path": "download/13579071557/download.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13579071557/download.stderr"
+    },
+    {
+      "path": "range/range-recovery-receipt.json",
+      "bytes": 7761,
+      "sha256": "47c16df80ee9872fb51a07ca421f0ebd6db3848852e79eecc99d22aff145a111",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-range-recovery-v2/13579071557/range-recovery-receipt.json"
+    },
+    {
+      "path": "SUMMARY.json",
+      "bytes": 10635,
+      "sha256": "6c5fb40e692d041340f6bc364ed7f9ca68b40b5d7eb8b088af6e67954b440164",
+      "source": null
+    },
+    {
+      "path": "README.md",
+      "bytes": 494,
+      "sha256": "4ed851943b61f652b2d18c714ae87fb00010e780f229f5edfa6220791432ce2b",
+      "source": null
+    }
+  ],
+  "payload_bytes": 209357,
+  "source_jobs": [
+    "1a1b6c68e87-12894-6ad",
+    "1a1b6d51e4c-12894-72a"
+  ],
+  "fixed_v2_unchanged": true
+}

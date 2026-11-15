@@ -1,0 +1,1116 @@
+{
+  "archive": {
+    "bytes": 144452,
+    "path": "/home/qq/work/chain-cell-storage-convergence-preparations05-package-f2568-20261109/preparations05.tar.xz",
+    "sha256": "330f5de46a758cc5a341350edd7f2e1e553a4b639a44034250d35b785517164c",
+    "version": "66306:52470646:144452:1794207966480791405:1794207966480791405"
+  },
+  "archive_reopened_and_all_members_verified": true,
+  "created_unix": 1794207966.4914215,
+  "direct_source_set_versions_and_bytes_unchanged": true,
+  "excluded_members": [
+    {
+      "bytes": 0,
+      "reason": "binary owner descriptor, catalog anchor, database, arena, or writer lock; public archive contains only original JSON/logs from this execution directory",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/consumer.sqlite-writer-lock-v4"
+    },
+    {
+      "bytes": 44,
+      "reason": "binary owner descriptor, catalog anchor, database, arena, or writer lock; public archive contains only original JSON/logs from this execution directory",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/independent-catalog-anchor.cva3"
+    },
+    {
+      "bytes": 3573,
+      "reason": "binary owner descriptor, catalog anchor, database, arena, or writer lock; public archive contains only original JSON/logs from this execution directory",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/owner-authorization.cpv4"
+    },
+    {
+      "bytes": 24479,
+      "reason": "binary owner descriptor, catalog anchor, database, arena, or writer lock; public archive contains only original JSON/logs from this execution directory",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/owner-content.tcv2"
+    },
+    {
+      "bytes": 537,
+      "reason": "binary owner descriptor, catalog anchor, database, arena, or writer lock; public archive contains only original JSON/logs from this execution directory",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/owner-handoff.chb1"
+    },
+    {
+      "bytes": 0,
+      "reason": "binary owner descriptor, catalog anchor, database, arena, or writer lock; public archive contains only original JSON/logs from this execution directory",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/publisher.sqlite-writer-lock-v4"
+    },
+    {
+      "bytes": 81920,
+      "reason": "binary owner descriptor, catalog anchor, database, arena, or writer lock; public archive contains only original JSON/logs from this execution directory",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/retained/versions.sqlite"
+    },
+    {
+      "bytes": 536870912,
+      "reason": "binary owner descriptor, catalog anchor, database, arena, or writer lock; public archive contains only original JSON/logs from this execution directory",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/retained/objects/payload.arena"
+    },
+    {
+      "bytes": 45056,
+      "reason": "binary owner descriptor, catalog anchor, database, arena, or writer lock; public archive contains only original JSON/logs from this execution directory",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/retained/objects/retention.sqlite"
+    }
+  ],
+  "excluded_scope": [
+    "private Hepta producer/material-audit",
+    "full runtime snapshots",
+    "model and adapter payloads",
+    "arenas and databases",
+    "keys and credentials",
+    "bytecode caches",
+    "future commits, models, or gates"
+  ],
+  "format": "USTAR/XZ; regular files only; zero archive ownership/timestamps; original modes",
+  "groups": {
+    "committed-release02": {
+      "bytes": 798106,
+      "members": 5
+    },
+    "loader-fix17-preparation": {
+      "bytes": 220263,
+      "members": 31
+    },
+    "model-execution-observation-02": {
+      "bytes": 788584,
+      "members": 20
+    },
+    "native-attempt-02": {
+      "bytes": 22636,
+      "members": 10
+    },
+    "provenance": {
+      "bytes": 4694,
+      "members": 1
+    },
+    "virtual-origin17-observation": {
+      "bytes": 2281,
+      "members": 1
+    }
+  },
+  "member_count": 68,
+  "members": [
+    {
+      "bytes": 211,
+      "mode": 384,
+      "path": "committed-release02/build-sealed-research-example.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-committed-release02/build-sealed-research-example.stderr",
+        "version_after": "66306:46273827:211:1794206633414602973:1794206633414602973",
+        "version_before": "66306:46273827:211:1794206633414602973:1794206633414602973"
+      },
+      "sha256": "22d92771d9745ca91ba1855e9cecf8584347b99d3d55a24482e5db06e6a95191"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "committed-release02/build-sealed-research-example.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-committed-release02/build-sealed-research-example.stdout",
+        "version_after": "66306:46273825:0:1794206618039168514:1794206618039168514",
+        "version_before": "66306:46273825:0:1794206618039168514:1794206618039168514"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 387930,
+      "mode": 384,
+      "path": "committed-release02/source-after.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-committed-release02/source-after.json",
+        "version_after": "66306:46273826:387930:1794206633480600546:1794206633480600546",
+        "version_before": "66306:46273826:387930:1794206633480600546:1794206633480600546"
+      },
+      "sha256": "c301e991db7387719c5435ada2199ba432b7501639e53990bff61a2e6a285bdc"
+    },
+    {
+      "bytes": 387930,
+      "mode": 384,
+      "path": "committed-release02/source-before.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-committed-release02/source-before.json",
+        "version_after": "66306:46273823:387930:1794206618038570684:1794206618038570684",
+        "version_before": "66306:46273823:387930:1794206618038570684:1794206618038570684"
+      },
+      "sha256": "c301e991db7387719c5435ada2199ba432b7501639e53990bff61a2e6a285bdc"
+    },
+    {
+      "bytes": 22035,
+      "mode": 384,
+      "path": "committed-release02/summary.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-committed-release02/summary.json",
+        "version_after": "66306:46273829:22035:1794206633531032808:1794206633531032808",
+        "version_before": "66306:46273829:22035:1794206633531032808:1794206633531032808"
+      },
+      "sha256": "b1d3ca0a70e3ed61818a0407f89ef8301a7929a39a8a5a507833886d7d64cac9"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "loader-fix17-preparation/actual-pinned-runtime-origin.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/actual-pinned-runtime-origin.stderr",
+        "version_after": "66306:46273890:0:1794207399222057426:1794207399222057426",
+        "version_before": "66306:46273890:0:1794207399222057426:1794207399222057426"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2305,
+      "mode": 384,
+      "path": "loader-fix17-preparation/actual-pinned-runtime-origin.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/actual-pinned-runtime-origin.stdout",
+        "version_after": "66306:46273889:2305:1794207399222057426:1794207399222057426",
+        "version_before": "66306:46273889:2305:1794207399222057426:1794207399222057426"
+      },
+      "sha256": "de7e22e49bf2516d16b08071dfda81fa4f338ad11967a67f16d5f84015ad818e"
+    },
+    {
+      "bytes": 2561,
+      "mode": 384,
+      "path": "loader-fix17-preparation/actual-runtime-observation/receipt.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/actual-runtime-observation/receipt.json",
+        "version_after": "66306:46273822:2561:1794207398683928196:1794207398683928196",
+        "version_before": "66306:46273822:2561:1794207398683928196:1794207398683928196"
+      },
+      "sha256": "f2e83b490aa889838f651ab758067ecdd493b1c346ab2d637dfc98ecd0534553"
+    },
+    {
+      "bytes": 3130,
+      "mode": 384,
+      "path": "loader-fix17-preparation/actual-runtime-origin-check.py",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/actual-runtime-origin-check.py",
+        "version_after": "66306:46273886:3130:1794207390772122377:1794207390772122377",
+        "version_before": "66306:46273886:3130:1794207390772122377:1794207390772122377"
+      },
+      "sha256": "0cb6b13b2e01945ebd2fc70a9a36e5f7a919449513c2d35395ba18d960216d81"
+    },
+    {
+      "bytes": 4640,
+      "mode": 384,
+      "path": "loader-fix17-preparation/before/cell_sealed_bootstrap_v1.py",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/before/cell_sealed_bootstrap_v1.py",
+        "version_after": "66306:46273870:4640:1794207390320556911:1794207390320556911",
+        "version_before": "66306:46273870:4640:1794207390320556911:1794207390320556911"
+      },
+      "sha256": "0f1f10fdae8a60725ff489bac367b31454eda9223a71d358488bed3603ea7962"
+    },
+    {
+      "bytes": 42225,
+      "mode": 384,
+      "path": "loader-fix17-preparation/before/llm_cell_sealed_worker_v1.py",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/before/llm_cell_sealed_worker_v1.py",
+        "version_after": "66306:46273871:42225:1794207390320641189:1794207390320641189",
+        "version_before": "66306:46273871:42225:1794207390320641189:1794207390320641189"
+      },
+      "sha256": "cd9218492db7cb272772cf4dd4379e535fd7e865b42e9f7d670b3cdb40a8acf2"
+    },
+    {
+      "bytes": 26998,
+      "mode": 384,
+      "path": "loader-fix17-preparation/before/test_llm_cell_sealed_worker_v1.py",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/before/test_llm_cell_sealed_worker_v1.py",
+        "version_after": "66306:46273872:26998:1794207390320694167:1794207390320694167",
+        "version_before": "66306:46273872:26998:1794207390320694167:1794207390320694167"
+      },
+      "sha256": "7da9c70cf7837af07574fcbdc5c22742de0223fbdc4785931566892b25ac570a"
+    },
+    {
+      "bytes": 4701,
+      "mode": 384,
+      "path": "loader-fix17-preparation/fixed24.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/fixed24.stderr",
+        "version_after": "66306:46273885:4701:1794207390772011141:1794207390772011141",
+        "version_before": "66306:46273885:4701:1794207390772011141:1794207390772011141"
+      },
+      "sha256": "c00ce14163f0785a3c646d6e09085f27059d4b06b99c5f49ca4d153f2a814f41"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "loader-fix17-preparation/fixed24.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/fixed24.stdout",
+        "version_after": "66306:46273884:0:1794207390770309329:1794207390770309329",
+        "version_before": "66306:46273884:0:1794207390770309329:1794207390770309329"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "loader-fix17-preparation/head-after.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/head-after.stderr",
+        "version_after": "66306:46273892:0:1794207399225446823:1794207399225446823",
+        "version_before": "66306:46273892:0:1794207399225446823:1794207399225446823"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "loader-fix17-preparation/head-after.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/head-after.stdout",
+        "version_after": "66306:46273891:41:1794207399225446823:1794207399225446823",
+        "version_before": "66306:46273891:41:1794207399225446823:1794207399225446823"
+      },
+      "sha256": "24306674731824e90866cbd473fd636c26fb3b192098842acc3b14f10d33ff96"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "loader-fix17-preparation/head-before.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/head-before.stderr",
+        "version_after": "66306:46273864:0:1794207390280261893:1794207390280261893",
+        "version_before": "66306:46273864:0:1794207390280261893:1794207390280261893"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "loader-fix17-preparation/head-before.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/head-before.stdout",
+        "version_after": "66306:46273863:41:1794207390280261893:1794207390280261893",
+        "version_before": "66306:46273863:41:1794207390280261893:1794207390280261893"
+      },
+      "sha256": "24306674731824e90866cbd473fd636c26fb3b192098842acc3b14f10d33ff96"
+    },
+    {
+      "bytes": 33575,
+      "mode": 384,
+      "path": "loader-fix17-preparation/local-control-attempt01-test-source.py",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/local-control-attempt01-test-source.py",
+        "version_after": "66306:46273873:33575:1794207390320739986:1794207390320739986",
+        "version_before": "66306:46273873:33575:1794207390320739986:1794207390320739986"
+      },
+      "sha256": "0aeee8b7f886d08453c30d5c5a30186429d5792c33a19c63dbf2e9c59b625803"
+    },
+    {
+      "bytes": 669,
+      "mode": 384,
+      "path": "loader-fix17-preparation/local-control-attempt01.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/local-control-attempt01.json",
+        "version_after": "66306:46273874:669:1794207390320767925:1794207390320767925",
+        "version_before": "66306:46273874:669:1794207390320767925:1794207390320767925"
+      },
+      "sha256": "483af205025956f5c3965a347a3ddaf52eb13e0b20682a187d0f6b879a471428"
+    },
+    {
+      "bytes": 1408,
+      "mode": 384,
+      "path": "loader-fix17-preparation/local-control-attempt01.output.txt",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/local-control-attempt01.output.txt",
+        "version_after": "66306:46273875:1408:1794207390320790285:1794207390320790285",
+        "version_before": "66306:46273875:1408:1794207390320790285:1794207390320790285"
+      },
+      "sha256": "444ca725d5db85572eb968fd3f6a6274d83357b537c5cb8c46576706826a55f2"
+    },
+    {
+      "bytes": 646,
+      "mode": 384,
+      "path": "loader-fix17-preparation/local-control-attempt02/controls.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/local-control-attempt02/controls.stderr",
+        "version_after": "66306:46273877:646:1794207390320818614:1794207390320818614",
+        "version_before": "66306:46273877:646:1794207390320818614:1794207390320818614"
+      },
+      "sha256": "7f941d86ff6626d1aa645c13225b67cd6b55c8486b73c7f5c9d0d4c6da5caf50"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "loader-fix17-preparation/local-control-attempt02/controls.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/local-control-attempt02/controls.stdout",
+        "version_after": "66306:46273878:0:1794207390320818614:1794207390320818614",
+        "version_before": "66306:46273878:0:1794207390320818614:1794207390320818614"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1052,
+      "mode": 384,
+      "path": "loader-fix17-preparation/local-control-attempt02/receipt.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/local-control-attempt02/receipt.json",
+        "version_after": "66306:46273879:1052:1794207390320857213:1794207390320857213",
+        "version_before": "66306:46273879:1052:1794207390320857213:1794207390320857213"
+      },
+      "sha256": "3522c04149a2b1b2dc760bd5a510f22401ff48c4773ccec01c626a36c84da267"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "loader-fix17-preparation/preflight.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/preflight.stderr",
+        "version_after": "66306:46273862:0:1794207390279512895:1794207390279512895",
+        "version_before": "66306:46273862:0:1794207390279512895:1794207390279512895"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 180,
+      "mode": 384,
+      "path": "loader-fix17-preparation/preflight.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/preflight.stdout",
+        "version_after": "66306:46273861:180:1794207390279512895:1794207390279512895",
+        "version_before": "66306:46273861:180:1794207390279512895:1794207390279512895"
+      },
+      "sha256": "579c1abf6dbb49074700e3f1d25d6c75bda18b52cf89e838dcabb885b04e0394"
+    },
+    {
+      "bytes": 12656,
+      "mode": 384,
+      "path": "loader-fix17-preparation/receipt.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/receipt.json",
+        "version_after": "66306:46273896:12656:1794207399254356939:1794207399254356939",
+        "version_before": "66306:46273896:12656:1794207399254356939:1794207399254356939"
+      },
+      "sha256": "cc1c24ff98e9f066d6f1aa0cc4a49d742cacde3b3fc4f794d2c9e09c5c19ce81"
+    },
+    {
+      "bytes": 4640,
+      "mode": 384,
+      "path": "loader-fix17-preparation/scripts/cell_sealed_bootstrap_v1.py",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/scripts/cell_sealed_bootstrap_v1.py",
+        "version_after": "66306:46273881:4640:1794207390321069856:1794207390321069856",
+        "version_before": "66306:46273881:4640:1794207390321069856:1794207390321069856"
+      },
+      "sha256": "0f1f10fdae8a60725ff489bac367b31454eda9223a71d358488bed3603ea7962"
+    },
+    {
+      "bytes": 45100,
+      "mode": 384,
+      "path": "loader-fix17-preparation/scripts/llm_cell_sealed_worker_v1.py",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/scripts/llm_cell_sealed_worker_v1.py",
+        "version_after": "66306:46273882:45100:1794207390321113205:1794207390321113205",
+        "version_before": "66306:46273882:45100:1794207390321113205:1794207390321113205"
+      },
+      "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+    },
+    {
+      "bytes": 33654,
+      "mode": 384,
+      "path": "loader-fix17-preparation/scripts/test_llm_cell_sealed_worker_v1.py",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/scripts/test_llm_cell_sealed_worker_v1.py",
+        "version_after": "66306:46273883:33654:1794207390321156764:1794207390321156764",
+        "version_before": "66306:46273883:33654:1794207390321156764:1794207390321156764"
+      },
+      "sha256": "cdaebef047624c2e2d38d72862f668da37aeef5ba611af839d8a42e09efd81aa"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "loader-fix17-preparation/status-after.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/status-after.stderr",
+        "version_after": "66306:46273895:0:1794207399253056500:1794207399253056500",
+        "version_before": "66306:46273895:0:1794207399253056500:1794207399253056500"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "loader-fix17-preparation/status-after.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/status-after.stdout",
+        "version_after": "66306:46273893:0:1794207399253056500:1794207399253056500",
+        "version_before": "66306:46273893:0:1794207399253056500:1794207399253056500"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "loader-fix17-preparation/status-before.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/status-before.stderr",
+        "version_after": "66306:46273868:0:1794207390317322806:1794207390317322806",
+        "version_before": "66306:46273868:0:1794207390317322806:1794207390317322806"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "loader-fix17-preparation/status-before.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/status-before.stdout",
+        "version_after": "66306:46273867:0:1794207390317322806:1794207390317322806",
+        "version_before": "66306:46273867:0:1794207390317322806:1794207390317322806"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "loader-fix17-preparation/tree-before.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/tree-before.stderr",
+        "version_after": "66306:46273866:0:1794207390281356811:1794207390281356811",
+        "version_before": "66306:46273866:0:1794207390281356811:1794207390281356811"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "loader-fix17-preparation/tree-before.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/tree-before.stdout",
+        "version_after": "66306:46273865:41:1794207390281356811:1794207390281356811",
+        "version_before": "66306:46273865:41:1794207390281356811:1794207390281356811"
+      },
+      "sha256": "fe5cda1ffff9935b528ba8b08a1a6c3a92c12885900d76471a115338bc3ac9eb"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-02/head-after.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/head-after.stderr",
+        "version_after": "66306:56907092:0:1794206746342124531:1794206746342124531",
+        "version_before": "66306:56907092:0:1794206746342124531:1794206746342124531"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "model-execution-observation-02/head-after.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/head-after.stdout",
+        "version_after": "66306:56907085:41:1794206746342124531:1794206746342124531",
+        "version_before": "66306:56907085:41:1794206746342124531:1794206746342124531"
+      },
+      "sha256": "24306674731824e90866cbd473fd636c26fb3b192098842acc3b14f10d33ff96"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-02/head.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/head.stderr",
+        "version_after": "66306:56907035:0:1794206731541205342:1794206731541205342",
+        "version_before": "66306:56907035:0:1794206731541205342:1794206731541205342"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "model-execution-observation-02/head.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/head.stdout",
+        "version_after": "66306:56905714:41:1794206731541205342:1794206731541205342",
+        "version_before": "66306:56905714:41:1794206731541205342:1794206731541205342"
+      },
+      "sha256": "24306674731824e90866cbd473fd636c26fb3b192098842acc3b14f10d33ff96"
+    },
+    {
+      "bytes": 85,
+      "mode": 384,
+      "path": "model-execution-observation-02/native.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/native.stderr",
+        "version_after": "66306:56907051:85:1794206746234455001:1794206746234455001",
+        "version_before": "66306:56907051:85:1794206746234455001:1794206746234455001"
+      },
+      "sha256": "f2c417782e51cafce959ea0b34cbe99e5a11176466c64096f9323d568ccce2ac"
+    },
+    {
+      "bytes": 1776,
+      "mode": 384,
+      "path": "model-execution-observation-02/native.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/native.stdout",
+        "version_after": "66306:56907050:1776:1794206746234455001:1794206746234455001",
+        "version_before": "66306:56907050:1776:1794206746234455001:1794206746234455001"
+      },
+      "sha256": "30fa477976964b7fb5a8aa453d89bc94fbe03050ff7146bf8b199d7398e3e26f"
+    },
+    {
+      "bytes": 2523,
+      "mode": 384,
+      "path": "model-execution-observation-02/observation.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/observation.json",
+        "version_after": "66306:56907095:2523:1794206746342932392:1794206746342932392",
+        "version_before": "66306:56907095:2523:1794206746342932392:1794206746342932392"
+      },
+      "sha256": "8f8f8d2e8368ed895272d4a30c9e6f4dc0c58866e3c5b299aca03cf310f0a3bf"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-02/preflight.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/preflight.stderr",
+        "version_after": "66306:56905713:0:1794206731539905119:1794206731539905119",
+        "version_before": "66306:56905713:0:1794206731539905119:1794206731539905119"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 180,
+      "mode": 384,
+      "path": "model-execution-observation-02/preflight.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/preflight.stdout",
+        "version_after": "66306:56905712:180:1794206731539905119:1794206731539905119",
+        "version_before": "66306:56905712:180:1794206731539905119:1794206731539905119"
+      },
+      "sha256": "579c1abf6dbb49074700e3f1d25d6c75bda18b52cf89e838dcabb885b04e0394"
+    },
+    {
+      "bytes": 387930,
+      "mode": 384,
+      "path": "model-execution-observation-02/source-after.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/source-after.json",
+        "version_after": "66306:56907057:387930:1794206746302828319:1794206746302828319",
+        "version_before": "66306:56907057:387930:1794206746302828319:1794206746302828319"
+      },
+      "sha256": "c301e991db7387719c5435ada2199ba432b7501639e53990bff61a2e6a285bdc"
+    },
+    {
+      "bytes": 387930,
+      "mode": 384,
+      "path": "model-execution-observation-02/source-before.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/source-before.json",
+        "version_after": "66306:56907047:387930:1794206731634977408:1794206731634977408",
+        "version_before": "66306:56907047:387930:1794206731634977408:1794206731634977408"
+      },
+      "sha256": "c301e991db7387719c5435ada2199ba432b7501639e53990bff61a2e6a285bdc"
+    },
+    {
+      "bytes": 7996,
+      "mode": 384,
+      "path": "model-execution-observation-02/source-inputs.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/source-inputs.json",
+        "version_after": "66306:56907048:7996:1794206731635068364:1794206731635068364",
+        "version_before": "66306:56907048:7996:1794206731635068364:1794206731635068364"
+      },
+      "sha256": "6880af9a86ce9abf9a19c5abb03eba6706cbec80a29ae45f431ec960e6e40f82"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-02/status-after.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/status-after.stderr",
+        "version_after": "66306:56907068:0:1794206746339451142:1794206746339451142",
+        "version_before": "66306:56907068:0:1794206746339451142:1794206746339451142"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-02/status-after.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/status-after.stdout",
+        "version_after": "66306:56907062:0:1794206746339451142:1794206746339451142",
+        "version_before": "66306:56907062:0:1794206746339451142:1794206746339451142"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-02/status-before.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/status-before.stderr",
+        "version_after": "66306:56907046:0:1794206731568994031:1794206731568994031",
+        "version_before": "66306:56907046:0:1794206731568994031:1794206731568994031"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-02/status-before.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/status-before.stdout",
+        "version_after": "66306:56907045:0:1794206731568994031:1794206731568994031",
+        "version_before": "66306:56907045:0:1794206731568994031:1794206731568994031"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-02/tree-after.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/tree-after.stderr",
+        "version_after": "66306:56907094:0:1794206746342835935:1794206746342835935",
+        "version_before": "66306:56907094:0:1794206746342835935:1794206746342835935"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "model-execution-observation-02/tree-after.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/tree-after.stdout",
+        "version_after": "66306:56907093:41:1794206746342835935:1794206746342835935",
+        "version_before": "66306:56907093:41:1794206746342835935:1794206746342835935"
+      },
+      "sha256": "fe5cda1ffff9935b528ba8b08a1a6c3a92c12885900d76471a115338bc3ac9eb"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "model-execution-observation-02/tree.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/tree.stderr",
+        "version_after": "66306:56907043:0:1794206731542571243:1794206731542571243",
+        "version_before": "66306:56907043:0:1794206731542571243:1794206731542571243"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "model-execution-observation-02/tree.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-02/tree.stdout",
+        "version_after": "66306:56907042:41:1794206731542571243:1794206731542571243",
+        "version_before": "66306:56907042:41:1794206731542571243:1794206731542571243"
+      },
+      "sha256": "fe5cda1ffff9935b528ba8b08a1a6c3a92c12885900d76471a115338bc3ac9eb"
+    },
+    {
+      "bytes": 3623,
+      "mode": 384,
+      "path": "native-attempt-02/independent-execution-inputs.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/independent-execution-inputs.json",
+        "version_after": "66306:56907071:3623:1794206737092790998:1794206737092790998",
+        "version_before": "66306:56907071:3623:1794206737092790998:1794206737092790998"
+      },
+      "sha256": "c8e2656e33509da99de6b8f126f14d976a0149c948ddcb53f0ddb9cdeb56f8c5"
+    },
+    {
+      "bytes": 2017,
+      "mode": 384,
+      "path": "native-attempt-02/native-result.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/native-result.json",
+        "version_after": "66306:56907055:2017:1794206746233455038:1794206746233455038",
+        "version_before": "66306:56907055:2017:1794206746233455038:1794206746233455038"
+      },
+      "sha256": "1f71d3a2e1d6d8d5b36d856aa62dcaaad2aa8247a2a6d45713300de0e05fb187"
+    },
+    {
+      "bytes": 3,
+      "mode": 384,
+      "path": "native-attempt-02/next-use-observations.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/next-use-observations.json",
+        "version_after": "66306:56907090:3:1794206746201034852:1794206746201034852",
+        "version_before": "66306:56907090:3:1794206746201034852:1794206746201034852"
+      },
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "bytes": 3601,
+      "mode": 384,
+      "path": "native-attempt-02/next-use-result.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/next-use-result.json",
+        "version_after": "66306:56907091:3601:1794206746202292937:1794206746202292937",
+        "version_before": "66306:56907091:3601:1794206746202292937:1794206746202292937"
+      },
+      "sha256": "dcdba7b164537c4b6e014fc66a410e5d1d83c35c85b3a8ff1f09aa9a24a1e9ec"
+    },
+    {
+      "bytes": 7996,
+      "mode": 384,
+      "path": "native-attempt-02/original-source-inputs.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/original-source-inputs.json",
+        "version_after": "66306:56907053:7996:1794206731635991568:1794206731635991568",
+        "version_before": "66306:56907053:7996:1794206731635991568:1794206731635991568"
+      },
+      "sha256": "6880af9a86ce9abf9a19c5abb03eba6706cbec80a29ae45f431ec960e6e40f82"
+    },
+    {
+      "bytes": 371,
+      "mode": 384,
+      "path": "native-attempt-02/supervisor.stderr",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/supervisor.stderr",
+        "version_after": "66306:56907074:371:1794206746202456177:1794206746202456177",
+        "version_before": "66306:56907074:371:1794206746202456177:1794206746202456177"
+      },
+      "sha256": "2f37b55213af66118274766411d7ac98c34f95ed9659f19a99bcbccf0b8e3fd2"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "native-attempt-02/supervisor.stdout",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/supervisor.stdout",
+        "version_after": "66306:56907072:0:1794206737093790961:1794206737093790961",
+        "version_before": "66306:56907072:0:1794206737093790961:1794206737093790961"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1439,
+      "mode": 384,
+      "path": "native-attempt-02/worker/cost-events.jsonl",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/worker/cost-events.jsonl",
+        "version_after": "66306:56907088:1439:1794206745563479662:1794206745563479662",
+        "version_before": "66306:56907088:1439:1794206745563479662:1794206745563479662"
+      },
+      "sha256": "6ea23b7a6385953fc6389b60c436257cfffe64dce254a11096ecf677af47cbf3"
+    },
+    {
+      "bytes": 752,
+      "mode": 384,
+      "path": "native-attempt-02/worker/process.log",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/worker/process.log",
+        "version_after": "66306:56907087:752:1794206745582478963:1794206745582478963",
+        "version_before": "66306:56907087:752:1794206745582478963:1794206745582478963"
+      },
+      "sha256": "7c012d029ff344b201f22378d4a015c834257bcd6e007531c0e8d6236e8a517f"
+    },
+    {
+      "bytes": 2834,
+      "mode": 384,
+      "path": "native-attempt-02/worker/supervisor.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-02/worker/supervisor.json",
+        "version_after": "66306:56907089:2834:1794206746200763642:1794206746200763642",
+        "version_before": "66306:56907089:2834:1794206746200763642:1794206746200763642"
+      },
+      "sha256": "4aa57310f6605465c28276d8cd5e92afe45cccddf811157b8fedb269845386d2"
+    },
+    {
+      "bytes": 4694,
+      "mode": 384,
+      "path": "provenance/loader-fix17-controls.py",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-loader-fix17-controls.py",
+        "version_after": "66306:46179422:4694:1794207376133949667:1794207376144743244",
+        "version_before": "66306:46179422:4694:1794207376133949667:1794207376144743244"
+      },
+      "sha256": "a32043f636262f74b0a449d9268219cbd88c3e8fcdaf34cc9de937cae2b43ed5"
+    },
+    {
+      "bytes": 2281,
+      "mode": 384,
+      "path": "virtual-origin17-observation/receipt.json",
+      "provenance": {
+        "host": "ai395",
+        "source_path": "/home/qq/work/chain-cell-storage-convergence-virtual-origin17-observation/receipt.json",
+        "version_after": "66306:46273859:2281:1794207047646384982:1794207047646384982",
+        "version_before": "66306:46273859:2281:1794207047646384982:1794207047646384982"
+      },
+      "sha256": "954ed7a1802b8fae9ef93bfac3fe8617c41b1788385765f6dea1d8a0c4c11c64"
+    }
+  ],
+  "native_model_or_test_commands_executed": 0,
+  "no_canonical_mutations": true,
+  "notes": [
+    "All original failed outcomes and empty original streams remain unchanged.",
+    "Model02 completed seven loading stages, then failed before any next-use observation; the stored next-use observation list contains zero observations.",
+    "The build, 24 unit controls, and real pinned Torch import check do not imply a subsequent model run or final committed-gate success.",
+    "Source lists and input manifests contain original paths, sizes, hashes, and research parameters; private payload bytes are excluded.",
+    "The archive contains no native/model/test commands executed by this packaging job."
+  ],
+  "observed_original_outcomes": {
+    "committed_release02": {
+      "model_executed": false,
+      "native_tests_executed": 0,
+      "passed": true
+    },
+    "fix17": {
+      "actual_runtime_import_check_passed": true,
+      "control_names": [
+        "test_actual_scm_rights_keeps_seals_bytes_and_original_deadline",
+        "test_both_sha256_and_stronger_payload_domain_are_checked",
+        "test_complete_pair_reads_same_sealed_bytes_without_any_model_path",
+        "test_complete_snapshot_ram_and_original_generation_refuse_before_read",
+        "test_descriptor_bootstrap_and_owner_pin_cannot_be_replaced",
+        "test_expiry_is_checked_before_input_use_and_is_not_reset",
+        "test_explicit_material_bridge_uses_sealed_original_pair_and_complete_loaded_contract",
+        "test_failed_supervisor_cancels_connector_before_handshake",
+        "test_failed_supervisor_cancels_ready_wait_after_sealed_handoff",
+        "test_fixed_bootstrap_executes_actual_independently_pinned_sealed_worker_bytes",
+        "test_fixed_bootstrap_refuses_substituted_worker_before_any_entry",
+        "test_fixed_bootstrap_refuses_unsealed_worker_before_any_entry",
+        "test_independent_environment_pin_cannot_follow_supplied_new_bytes",
+        "test_kernel_write_seals_and_cloexec_are_required",
+        "test_missing_scope_or_swapped_role_refuses_the_complete_admission",
+        "test_observation_publish_is_complete_before_visibility_and_cannot_replace",
+        "test_original_modules_and_configurations_execute_only_same_admitted_fd_bytes",
+        "test_project_source_compiler_preserves_original_annotation_semantics",
+        "test_runtime_module_origin_refuses_other_relative_paths",
+        "test_runtime_virtual_namespace_refuses_source_or_loader_drift",
+        "test_runtime_virtual_namespace_requires_exact_pinned_singleton",
+        "test_same_length_substituted_fd_fails_actual_content_digest",
+        "test_unfinished_publication_remains_pending_without_successful_ready",
+        "test_unknown_file_and_metadata_role_never_open_ambient_payload"
+      ],
+      "corrected_local_controls": 3,
+      "earlier_local_fixture": {
+        "errors": 1,
+        "exit_code": 1,
+        "passed": 2
+      },
+      "fixed24_passed": true,
+      "model_executed": false
+    },
+    "model02": {
+      "binary_unchanged": true,
+      "connector_complete": true,
+      "elapsed_seconds": 14.601523399353027,
+      "exit_code": 1,
+      "failure": "FileNotFoundError for virtual torch.ops origin '_ops.py'",
+      "head": "46ab510c21088d8b4bccee34fe142d327294dc28",
+      "manifest_unchanged": true,
+      "next_use_observations": 0,
+      "source_unchanged": true,
+      "successful_cost_stages": [
+        "sealed-base-capture",
+        "sealed-parent-verification",
+        "runtime-import",
+        "sealed-tokenizer-load",
+        "sealed-base-load",
+        "actual-backbone-tokenizer-verification",
+        "actual-sealed-parent-load"
+      ],
+      "wait4_reaped": true
+    }
+  },
+  "original_fix17_job_observation": {
+    "status": {
+      "at_unix_ms": 1794207399311,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1bf181684-5e21-3cc",
+      "launch_nonce": "2e58859f6ca8d58361532e792a8ed11c",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 169,
+          "stored": 169
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "stderr": "",
+    "stdout": "{\"passed\": true, \"fixed24_passed\": true, \"actual_runtime_passed\": true, \"receipt\": \"/home/qq/work/chain-cell-storage-convergence-loader-fix17-preparation/receipt.json\"}\n"
+  },
+  "payload_bytes": 1836564,
+  "read_only_preparation_attempts": [
+    {
+      "explanation": "The read-only inventory summarizer initially assumed source snapshot JSON was a dictionary. The actual original snapshot is a list; no source or original evidence was changed.",
+      "job_id": "1a1bf1d8f14-5e21-3df",
+      "status": {
+        "at_unix_ms": 1794207760463,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 1,
+        "job_id": "1a1bf1d8f14-5e21-3df",
+        "launch_nonce": "cd7bf495c109382d0c483f558e5addb8",
+        "log_bytes": {
+          "stderr": {
+            "seen": 113,
+            "stored": 113
+          },
+          "stdout": {
+            "seen": 0,
+            "stored": 0
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "failed",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 57, in <module>\nValueError: unexpected source metadata\n",
+      "stdout": ""
+    },
+    {
+      "explanation": "Corrected read-only inspection supports the original list of source-path/size/hash records; all 68 selected regular UTF-8 files were hashed and validated. No test, model, or Cargo command was run.",
+      "job_id": "1a1bf1ea2d8-5e21-3e7",
+      "status": {
+        "at_unix_ms": 1794207831094,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1bf1ea2d8-5e21-3e7",
+        "launch_nonce": "42c6febe6eda57e075a28649a69e79ee",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 26837,
+            "stored": 26837
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    }
+  ],
+  "schema": "cell-storage-preparations05-member-manifest-v1"
+}

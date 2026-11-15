@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--audit"
+  ],
+  "child_reaped": true,
+  "cwd": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb",
+  "elapsed_ns": 89495797,
+  "exit_code": 0,
+  "label": "preflight",
+  "owned_pid": 74884,
+  "performance_measurement": false,
+  "started_unix_ns": 1794394260872370805,
+  "status": "command_succeeded",
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/preflight.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 172,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/preflight.stdout.log",
+    "sha256": "784eb6312d77d96e7bf1104b42b6fa980b5da12100befd8ba6c1606f49d165fc"
+  }
+}

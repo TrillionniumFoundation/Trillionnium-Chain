@@ -1,0 +1,14 @@
+{
+  "archive": "w7-v6-source-slice-observation.tar.gz",
+  "archive_found_in_runtime_A": [],
+  "initial_A_native_archive_in_this_agent_store": false,
+  "new_execution_claimed": false,
+  "original_archive_unavailable": true,
+  "previously_recorded_bytes": 2064,
+  "previously_recorded_sha256": "f009bca529b7dc60c6999d6aab5705da9e3c6da0bcb610d311711777a2abec2f",
+  "prior_B_complete_commit_recovered_by_this_agent": false,
+  "prior_B_tests_substituted": false,
+  "raw_logs_recreated": false,
+  "reported_prior_tests": 3,
+  "schema": "trnm-recovered-evidence-loss-record-v1"
+}

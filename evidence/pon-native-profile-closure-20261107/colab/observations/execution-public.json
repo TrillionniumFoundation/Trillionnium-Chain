@@ -1,0 +1,488 @@
+{
+  "evidence_kind": "CONTROLLED_OBSERVATION",
+  "observation": {
+    "account_identity_sha256": "73e2555a13ef0c08791b37180c1675c440782648c53a8ec07a431d5ac4f7cea6",
+    "cleanup_status": "DEDICATED_KERNEL_RETAINED_PENDING_EXACT_OWNERSHIP_CLEANUP_SHARED_RUNTIME_NOT_RELEASED",
+    "controller_wall_seconds": 67.42408299446106,
+    "dedicated_kernel_id": "a2ec9817-d269-4a37-a134-dad4a584ba9e",
+    "evidence_kind": "CONTROLLED_FIXTURE",
+    "fetched_artifacts": [
+      {
+        "artifact": "stdout",
+        "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/colab-stdout-v1.log",
+        "sha256": "e7cde80e79dbcd612107768648a877cc5427d6a670d14136763cdf0d5d7e1ac4",
+        "size_bytes": 15749
+      },
+      {
+        "artifact": "stderr",
+        "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/colab-stderr-v1.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size_bytes": 0
+      },
+      {
+        "artifact": "profile-composition-report.json",
+        "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/colab-profile-composition-report-v1.json",
+        "sha256": "6a0226152d11499342a3b159b1a9fb7b9975479e31bb75dde8c9454b802bad81",
+        "size_bytes": 11999
+      }
+    ],
+    "foreign_kernels_modified": false,
+    "full_cost_transfer_proven": false,
+    "global_profile_modified": false,
+    "job_id": "0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+    "native_gate_qualification": false,
+    "outcome": "TERMINAL_PROVIDER_OBSERVED",
+    "physical_meter_proven": false,
+    "provider_before": {
+      "assignment": {
+        "accelerator": "NONE",
+        "endpoint": "m-s-ase1a9-20dxgsojl5rhi",
+        "shape": "STANDARD",
+        "variant": "DEFAULT"
+      },
+      "kernels": [
+        {
+          "connections": 1,
+          "execution_state": "idle",
+          "id": "e5b396bb-f180-4fe1-97bc-4e639259415c",
+          "name": "python3"
+        }
+      ]
+    },
+    "provider_job_receipt": {
+      "artifacts": {
+        "profile-composition-report.json": {
+          "remote_path": "/content/hepta_jobs/0d953d8a-81fa-40d8-ab90-8f4e23f5c909/work/profile-composition-report.json",
+          "sha256": "6a0226152d11499342a3b159b1a9fb7b9975479e31bb75dde8c9454b802bad81",
+          "size": 11999
+        },
+        "stderr": {
+          "remote_path": "/content/hepta_jobs/0d953d8a-81fa-40d8-ab90-8f4e23f5c909/stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size": 0
+        },
+        "stdout": {
+          "remote_path": "/content/hepta_jobs/0d953d8a-81fa-40d8-ab90-8f4e23f5c909/stdout.bin",
+          "sha256": "e7cde80e79dbcd612107768648a877cc5427d6a670d14136763cdf0d5d7e1ac4",
+          "size": 15749
+        }
+      },
+      "cancel_requested_at": null,
+      "cloud_execution_stopped": true,
+      "cloud_observation": "fresh",
+      "cloud_receipt": {
+        "artifact_manifest_sha256": "0bb93bb484abaa79b020a6469868dda78d4ee845a7f010caa637df64ed77b935",
+        "artifact_manifest_size": 897,
+        "cloud_execution_stopped": true,
+        "cloud_pid": 10598,
+        "cloud_process_group": 10598,
+        "cloud_process_group_alive": false,
+        "endpoint": "m-s-ase1a9-20dxgsojl5rhi",
+        "execution_started": true,
+        "exit_code": 0,
+        "finished_at": 1794096215.1222677,
+        "job_id": "0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+        "kernel_id": "a2ec9817-d269-4a37-a134-dad4a584ba9e",
+        "payload_sha256": "10b58751df2ec45d8383fbde35e65ba531a6e3d68a8c802ae16f89fbd065d58a",
+        "reason": null,
+        "session_id": "93be0864-382c-4385-9f6e-60641430ecb4",
+        "started_at": 1794096213.5951567,
+        "state": "succeeded"
+      },
+      "code_sha256": "0c0cef95c1d710138eccf20cd4a63734ace5b9f46e08b87f3279f433d6b2a7bf",
+      "created_at": 1794096208.553786,
+      "dispatched_at": 1794096209.8602808,
+      "endpoint": "m-s-ase1a9-20dxgsojl5rhi",
+      "error_code": null,
+      "job_id": "0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+      "kernel_id": "a2ec9817-d269-4a37-a134-dad4a584ba9e",
+      "local_only_cancel": false,
+      "payload_sha256": "10b58751df2ec45d8383fbde35e65ba531a6e3d68a8c802ae16f89fbd065d58a",
+      "refresh_error": null,
+      "remote_dir": "/content/hepta_jobs/0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+      "session_id": "93be0864-382c-4385-9f6e-60641430ecb4",
+      "state": "succeeded",
+      "submit_attempts": 1,
+      "updated_at": 1794096243.3993506,
+      "worker_pid": 3191356,
+      "worker_start_ticks": "42641780"
+    },
+    "provider_job_state": "succeeded",
+    "records": [
+      {
+        "adapter_exit_code": 0,
+        "argv_redacted": [
+          "<HOST_HOME>/.local/share/hepta-colab/releases/20261107-d2d977949417/venv/bin/python",
+          "<HOST_HOME>/.local/share/hepta-colab/releases/20261107-d2d977949417/manage_colab.py",
+          "--state-dir",
+          "<TASK_PRIVATE_STATE_ROOT>/manage",
+          "--expected-email",
+          "73e2555a13ef0c08791b37180c1675c440782648c53a8ec07a431d5ac4f7cea6",
+          "create",
+          "--key",
+          "pon-profile-closure-89df-python-20261107-v1",
+          "--kind",
+          "cpu",
+          "--accelerator",
+          "NONE",
+          "--shape",
+          "standard"
+        ],
+        "elapsed_wall_seconds": 7.901748180389404,
+        "operation": "create",
+        "result": {
+          "account_email_sha256": "73e2555a13ef0c08791b37180c1675c440782648c53a8ec07a431d5ac4f7cea6",
+          "actual_spec": {
+            "accelerator": "NONE",
+            "shape": "STANDARD",
+            "variant": "DEFAULT"
+          },
+          "client_session_id": "93be0864-382c-4385-9f6e-60641430ecb4",
+          "created_at": "2026-11-08T00:03:16.415886+00:00",
+          "endpoint": "m-s-ase1a9-20dxgsojl5rhi",
+          "kernel_submit_attempts": 0,
+          "key": "pon-profile-closure-89df-python-20261107-v1",
+          "notebook_hash": "cd230b1f-5ca9-4fb4-9abb-b6b7b953be87",
+          "owned_kernel": false,
+          "owned_runtime": false,
+          "phase": "runtime_ready",
+          "requested_spec": {
+            "accelerator": "NONE",
+            "shape": "STANDARD",
+            "variant": "DEFAULT"
+          },
+          "runtime_submit_attempts": 0,
+          "session_name": "hepta-49d18b5624074d07a34d2d37c119ee5b",
+          "updated_at": "2026-11-08T00:03:16.977096+00:00"
+        },
+        "retained": {
+          "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/operation-create-v1.json",
+          "sha256": "94a4e130ad97b65eef7a3e11499f48afff03366a96a5a23a710d11127558e401",
+          "size_bytes": 1408
+        },
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "adapter_exit_code": 0,
+        "argv_redacted": [
+          "<HOST_HOME>/.local/share/hepta-colab/releases/20261107-d2d977949417/venv/bin/python",
+          "<HOST_HOME>/.local/share/hepta-colab/releases/20261107-d2d977949417/manage_colab.py",
+          "--state-dir",
+          "<TASK_PRIVATE_STATE_ROOT>/manage",
+          "--expected-email",
+          "73e2555a13ef0c08791b37180c1675c440782648c53a8ec07a431d5ac4f7cea6",
+          "bind",
+          "--key",
+          "pon-profile-closure-89df-python-20261107-v1",
+          "--profile",
+          "<TASK_PRIVATE_STATE_ROOT>/profile.json",
+          "--name",
+          "pon-profile-closure-89df-python-20261107-v1",
+          "--jobs-state-dir",
+          "<TASK_PRIVATE_STATE_ROOT>/jobs"
+        ],
+        "elapsed_wall_seconds": 11.463642120361328,
+        "operation": "bind",
+        "result": {
+          "account_email_sha256": "73e2555a13ef0c08791b37180c1675c440782648c53a8ec07a431d5ac4f7cea6",
+          "actual_spec": {
+            "accelerator": "NONE",
+            "shape": "STANDARD",
+            "variant": "DEFAULT"
+          },
+          "client_session_id": "93be0864-382c-4385-9f6e-60641430ecb4",
+          "created_at": "2026-11-08T00:03:16.415886+00:00",
+          "endpoint": "m-s-ase1a9-20dxgsojl5rhi",
+          "jobs_state_dir": "<TASK_PRIVATE_STATE_ROOT>/jobs",
+          "kernel_id": "a2ec9817-d269-4a37-a134-dad4a584ba9e",
+          "kernel_submit_attempts": 1,
+          "key": "pon-profile-closure-89df-python-20261107-v1",
+          "notebook_hash": "cd230b1f-5ca9-4fb4-9abb-b6b7b953be87",
+          "owned_kernel": true,
+          "owned_runtime": false,
+          "phase": "bound",
+          "profile_hash": "0c9cd83ac095d9c70e400ede32db28d3d73b3d5a69599e56298e3a094d2b7b13",
+          "profile_path": "<TASK_PRIVATE_STATE_ROOT>/profile.json",
+          "requested_spec": {
+            "accelerator": "NONE",
+            "shape": "STANDARD",
+            "variant": "DEFAULT"
+          },
+          "runtime_submit_attempts": 0,
+          "server_session_id": "7e252d8c-b119-4528-85bf-a87f42da51b6",
+          "session_name": "hepta-49d18b5624074d07a34d2d37c119ee5b",
+          "updated_at": "2026-11-08T00:03:28.440860+00:00"
+        },
+        "retained": {
+          "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/operation-bind-v1.json",
+          "sha256": "6158b572ce448a28112c5f66e6d42f2e9e809b7db5b694d9b8c9a8111335e17b",
+          "size_bytes": 1943
+        },
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "adapter_exit_code": 0,
+        "argv_redacted": [
+          "<HOST_HOME>/.local/share/hepta-colab/releases/20261107-d2d977949417/venv/bin/python",
+          "<HOST_HOME>/.local/share/hepta-colab/releases/20261107-d2d977949417/hepta_colab.py",
+          "--profile",
+          "<TASK_PRIVATE_STATE_ROOT>/profile.json",
+          "--state-dir",
+          "<TASK_PRIVATE_STATE_ROOT>/jobs",
+          "submit",
+          "--key",
+          "pon-profile-closure-89df-python-20261107-v1",
+          "--code-file",
+          "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/colab-profile-composition-payload-v1.py",
+          "--artifact",
+          "profile-composition-report.json",
+          "--wall-seconds",
+          "300"
+        ],
+        "elapsed_wall_seconds": 0.05169844627380371,
+        "operation": "submit",
+        "result": {
+          "artifacts": {},
+          "cancel_requested_at": null,
+          "cloud_execution_stopped": false,
+          "cloud_receipt": null,
+          "code_sha256": "0c0cef95c1d710138eccf20cd4a63734ace5b9f46e08b87f3279f433d6b2a7bf",
+          "created_at": 1794096208.553786,
+          "dispatched_at": null,
+          "endpoint": "m-s-ase1a9-20dxgsojl5rhi",
+          "error_code": null,
+          "job_id": "0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+          "kernel_id": "a2ec9817-d269-4a37-a134-dad4a584ba9e",
+          "local_only_cancel": false,
+          "payload_sha256": "10b58751df2ec45d8383fbde35e65ba531a6e3d68a8c802ae16f89fbd065d58a",
+          "remote_dir": "/content/hepta_jobs/0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+          "session_id": "93be0864-382c-4385-9f6e-60641430ecb4",
+          "state": "queued",
+          "submit_attempts": 0,
+          "updated_at": 1794096208.553786,
+          "worker_pid": null,
+          "worker_start_ticks": null
+        },
+        "retained": {
+          "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/operation-submit-v1.json",
+          "sha256": "b27641571354ee173cd9266828310a01b17cd44aeae1bd26b29d78221f2e0d26",
+          "size_bytes": 1596
+        },
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "adapter_exit_code": 0,
+        "argv_redacted": [
+          "<HOST_HOME>/.local/share/hepta-colab/releases/20261107-d2d977949417/venv/bin/python",
+          "<HOST_HOME>/.local/share/hepta-colab/releases/20261107-d2d977949417/hepta_colab.py",
+          "--profile",
+          "<TASK_PRIVATE_STATE_ROOT>/profile.json",
+          "--state-dir",
+          "<TASK_PRIVATE_STATE_ROOT>/jobs",
+          "run",
+          "--job-id",
+          "0d953d8a-81fa-40d8-ab90-8f4e23f5c909"
+        ],
+        "elapsed_wall_seconds": 41.17804574966431,
+        "operation": "run",
+        "result": {
+          "artifacts": {
+            "profile-composition-report.json": {
+              "remote_path": "/content/hepta_jobs/0d953d8a-81fa-40d8-ab90-8f4e23f5c909/work/profile-composition-report.json",
+              "sha256": "6a0226152d11499342a3b159b1a9fb7b9975479e31bb75dde8c9454b802bad81",
+              "size": 11999
+            },
+            "stderr": {
+              "remote_path": "/content/hepta_jobs/0d953d8a-81fa-40d8-ab90-8f4e23f5c909/stderr.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "size": 0
+            },
+            "stdout": {
+              "remote_path": "/content/hepta_jobs/0d953d8a-81fa-40d8-ab90-8f4e23f5c909/stdout.bin",
+              "sha256": "e7cde80e79dbcd612107768648a877cc5427d6a670d14136763cdf0d5d7e1ac4",
+              "size": 15749
+            }
+          },
+          "cancel_requested_at": null,
+          "cloud_execution_stopped": true,
+          "cloud_observation": "fresh",
+          "cloud_receipt": {
+            "artifact_manifest_sha256": "0bb93bb484abaa79b020a6469868dda78d4ee845a7f010caa637df64ed77b935",
+            "artifact_manifest_size": 897,
+            "cloud_execution_stopped": true,
+            "cloud_pid": 10598,
+            "cloud_process_group": 10598,
+            "cloud_process_group_alive": false,
+            "endpoint": "m-s-ase1a9-20dxgsojl5rhi",
+            "execution_started": true,
+            "exit_code": 0,
+            "finished_at": 1794096215.1222677,
+            "job_id": "0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+            "kernel_id": "a2ec9817-d269-4a37-a134-dad4a584ba9e",
+            "payload_sha256": "10b58751df2ec45d8383fbde35e65ba531a6e3d68a8c802ae16f89fbd065d58a",
+            "reason": null,
+            "session_id": "93be0864-382c-4385-9f6e-60641430ecb4",
+            "started_at": 1794096213.5951567,
+            "state": "succeeded"
+          },
+          "code_sha256": "0c0cef95c1d710138eccf20cd4a63734ace5b9f46e08b87f3279f433d6b2a7bf",
+          "created_at": 1794096208.553786,
+          "dispatched_at": 1794096209.8602808,
+          "endpoint": "m-s-ase1a9-20dxgsojl5rhi",
+          "error_code": null,
+          "job_id": "0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+          "kernel_id": "a2ec9817-d269-4a37-a134-dad4a584ba9e",
+          "local_only_cancel": false,
+          "payload_sha256": "10b58751df2ec45d8383fbde35e65ba531a6e3d68a8c802ae16f89fbd065d58a",
+          "refresh_error": null,
+          "remote_dir": "/content/hepta_jobs/0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+          "session_id": "93be0864-382c-4385-9f6e-60641430ecb4",
+          "state": "succeeded",
+          "submit_attempts": 1,
+          "updated_at": 1794096243.3993506,
+          "worker_pid": 3191356,
+          "worker_start_ticks": "42641780"
+        },
+        "retained": {
+          "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/operation-run-v1.json",
+          "sha256": "ffbd6d912122aac71e0aeabe9442451b33f60b1f459ccf6d7f6ee4b9b745e7d7",
+          "size_bytes": 2661
+        },
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "adapter_exit_code": 0,
+        "argv_redacted": [
+          "<HOST_HOME>/.local/share/hepta-colab/releases/20261107-d2d977949417/venv/bin/python",
+          "<HOST_HOME>/.local/share/hepta-colab/releases/20261107-d2d977949417/hepta_colab.py",
+          "--profile",
+          "<TASK_PRIVATE_STATE_ROOT>/profile.json",
+          "--state-dir",
+          "<TASK_PRIVATE_STATE_ROOT>/jobs",
+          "fetch",
+          "--job-id",
+          "0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+          "--artifact",
+          "stdout",
+          "--destination",
+          "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/colab-stdout-v1.log"
+        ],
+        "elapsed_wall_seconds": 0.04638814926147461,
+        "operation": "fetch-stdout",
+        "result": {
+          "artifact": "stdout",
+          "job_id": "0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+          "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/colab-stdout-v1.log",
+          "sha256": "e7cde80e79dbcd612107768648a877cc5427d6a670d14136763cdf0d5d7e1ac4",
+          "size": 15749,
+          "source": "retained_verified_artifact",
+          "verified": true
+        },
+        "retained": {
+          "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/operation-fetch-stdout-v1.json",
+          "sha256": "4aa5dda73f81fb13b3052cd2fd2b4d5a0175758bfd54feb03dda0dc337263a3f",
+          "size_bytes": 1154
+        },
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "adapter_exit_code": 0,
+        "argv_redacted": [
+          "<HOST_HOME>/.local/share/hepta-colab/releases/20261107-d2d977949417/venv/bin/python",
+          "<HOST_HOME>/.local/share/hepta-colab/releases/20261107-d2d977949417/hepta_colab.py",
+          "--profile",
+          "<TASK_PRIVATE_STATE_ROOT>/profile.json",
+          "--state-dir",
+          "<TASK_PRIVATE_STATE_ROOT>/jobs",
+          "fetch",
+          "--job-id",
+          "0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+          "--artifact",
+          "stderr",
+          "--destination",
+          "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/colab-stderr-v1.log"
+        ],
+        "elapsed_wall_seconds": 0.04134559631347656,
+        "operation": "fetch-stderr",
+        "result": {
+          "artifact": "stderr",
+          "job_id": "0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+          "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/colab-stderr-v1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size": 0,
+          "source": "retained_verified_artifact",
+          "verified": true
+        },
+        "retained": {
+          "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/operation-fetch-stderr-v1.json",
+          "sha256": "a3c2bcac8ced42ab8bcf5e48da3e2773bbed152db17999f00c038eed4e68d0ff",
+          "size_bytes": 1150
+        },
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "adapter_exit_code": 0,
+        "argv_redacted": [
+          "<HOST_HOME>/.local/share/hepta-colab/releases/20261107-d2d977949417/venv/bin/python",
+          "<HOST_HOME>/.local/share/hepta-colab/releases/20261107-d2d977949417/hepta_colab.py",
+          "--profile",
+          "<TASK_PRIVATE_STATE_ROOT>/profile.json",
+          "--state-dir",
+          "<TASK_PRIVATE_STATE_ROOT>/jobs",
+          "fetch",
+          "--job-id",
+          "0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+          "--artifact",
+          "profile-composition-report.json",
+          "--destination",
+          "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/colab-profile-composition-report-v1.json"
+        ],
+        "elapsed_wall_seconds": 0.04343557357788086,
+        "operation": "fetch-profile-composition-report-json",
+        "result": {
+          "artifact": "profile-composition-report.json",
+          "job_id": "0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+          "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/colab-profile-composition-report-v1.json",
+          "sha256": "6a0226152d11499342a3b159b1a9fb7b9975479e31bb75dde8c9454b802bad81",
+          "size": 11999,
+          "source": "retained_verified_artifact",
+          "verified": true
+        },
+        "retained": {
+          "path": "<HOST_HOME>/work/chain-native-profile-closure-20261107-89df/cloud/pon-profile-closure-89df-python-20261107-v1/operation-fetch-profile-composition-report-json-v1.json",
+          "sha256": "01edca8ad2a0808d4deb48ff04f86bfa94d27469087fc27de8b61e347caf192f",
+          "size_bytes": 1271
+        },
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "schema": "pon-profile-colab-execution-controller-v1",
+    "settled_provider_cost": "UNKNOWN",
+    "source_payload_sha256": "0c0cef95c1d710138eccf20cd4a63734ace5b9f46e08b87f3279f433d6b2a7bf",
+    "task_key": "pon-profile-closure-89df-python-20261107-v1"
+  },
+  "original": {
+    "file_label": "controller-execution-v1.json",
+    "sha256": "8803d63872f4d175bf48abfaddd6c443b9fb348273f7c60066cf06731acc8f67",
+    "size_bytes": 17391
+  },
+  "projection": {
+    "not_original_bytes": true,
+    "omitted_fields": [
+      "private_state_root",
+      "installed_source_hashes (listed separately as bindings)"
+    ],
+    "replacements": [
+      "Host home paths replaced by <HOST_HOME>",
+      "Task private state root replaced by <TASK_PRIVATE_STATE_ROOT>"
+    ]
+  },
+  "schema": "pon-cloud-public-projection-v1"
+}

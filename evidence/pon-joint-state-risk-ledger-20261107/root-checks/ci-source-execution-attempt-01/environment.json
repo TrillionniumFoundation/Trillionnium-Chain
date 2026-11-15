@@ -1,0 +1,9 @@
+{
+  "git_version": "git version 2.52.0",
+  "only_environment_override": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+  "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+}

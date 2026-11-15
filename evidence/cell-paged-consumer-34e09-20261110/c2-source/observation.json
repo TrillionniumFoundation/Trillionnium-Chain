@@ -1,0 +1,90 @@
+{
+  "changed_source_files": [],
+  "completed_at_utc": "2026-11-10T07:03:50.229766+00:00",
+  "gates": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "completed_at_utc": "2026-11-10T07:03:38.267024+00:00",
+      "elapsed_seconds": 0.031948366202414036,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "36c8637ff55ce54add2460834c3dbe765fad6b123aeca60500a1a7ecf687454a",
+      "name": "preflight",
+      "started_at_utc": "2026-11-10T07:03:38.235081+00:00"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "804b4290856629c27b215750254616b3e0da4b4c"
+      ],
+      "completed_at_utc": "2026-11-10T07:03:39.869718+00:00",
+      "elapsed_seconds": 1.5741367938462645,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "32fb89e0d95ba5c2c02e1f03e430c6e6e0dc91818acc912ff90fe211c3629d66",
+      "name": "exact-source",
+      "started_at_utc": "2026-11-10T07:03:38.295578+00:00"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "completed_at_utc": "2026-11-10T07:03:41.770793+00:00",
+      "elapsed_seconds": 1.8722952548414469,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "d850c74be4dc5229b312fa6708ba6c825392665d34bb15a53ec17bef782804f9",
+      "name": "source-integrity-negatives",
+      "started_at_utc": "2026-11-10T07:03:39.898499+00:00"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "completed_at_utc": "2026-11-10T07:03:48.510771+00:00",
+      "elapsed_seconds": 6.707121314946562,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "1fc5253bd8c85db2ff8b5e64690093fa17a8a5b2634a110e06141c640c406e00",
+      "name": "repository-and-links",
+      "started_at_utc": "2026-11-10T07:03:41.803659+00:00"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "804b4290856629c27b215750254616b3e0da4b4c"
+      ],
+      "completed_at_utc": "2026-11-10T07:03:50.110915+00:00",
+      "elapsed_seconds": 1.568893832154572,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "32fb89e0d95ba5c2c02e1f03e430c6e6e0dc91818acc912ff90fe211c3629d66",
+      "name": "exact-source-end",
+      "started_at_utc": "2026-11-10T07:03:48.542033+00:00"
+    }
+  ],
+  "identity": {
+    "commit": "804b4290856629c27b215750254616b3e0da4b4c",
+    "status": "",
+    "tree": "f5a19e6ece2910d6b990c6e964c802e28760e7f6"
+  },
+  "passed": true,
+  "phase": "source",
+  "source_end_manifest_sha256": "f7b170e8d9b620f1c6c411d6982d6405ef920c00908f15da85bdcbba4caf8149",
+  "source_start_manifest_sha256": "f7b170e8d9b620f1c6c411d6982d6405ef920c00908f15da85bdcbba4caf8149",
+  "sources_unchanged": true,
+  "started_at_utc": "2026-11-10T07:03:38.203680+00:00"
+}

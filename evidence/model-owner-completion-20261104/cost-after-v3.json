@@ -1,0 +1,96 @@
+{
+  "cases": [
+    {
+      "error": "RUNTIME_COST_WALL_CONTAINMENT",
+      "error_type": "ValueError",
+      "expected_rejection": "RUNTIME_COST_WALL_CONTAINMENT",
+      "expected_rejection_observed": true,
+      "field": "process_wall_ns",
+      "injected": 5000,
+      "name": "child-wall-exceeds-supervisor",
+      "original": 800,
+      "outcome": "REFUSED",
+      "phase": "evaluate-candidate",
+      "stage_index": null
+    },
+    {
+      "error": "RUNTIME_COST_CPU_CONTAINMENT",
+      "error_type": "ValueError",
+      "expected_rejection": "RUNTIME_COST_CPU_CONTAINMENT",
+      "expected_rejection_observed": true,
+      "field": "process_cpu_ns",
+      "injected": 5000,
+      "name": "child-cpu-exceeds-wait4",
+      "original": 150,
+      "outcome": "REFUSED",
+      "phase": "evaluate-candidate",
+      "stage_index": null
+    },
+    {
+      "error": "RUNTIME_COST_STAGE_WALL_CONTAINMENT",
+      "error_type": "ValueError",
+      "expected_rejection": "RUNTIME_COST_STAGE_WALL_CONTAINMENT",
+      "expected_rejection_observed": true,
+      "field": "wall_ns",
+      "injected": 5000,
+      "name": "stage-wall-exceeds-child",
+      "original": 2,
+      "outcome": "REFUSED",
+      "phase": "evaluate-candidate",
+      "stage_index": 0
+    },
+    {
+      "error": "RUNTIME_COST_STAGE_CPU_CONTAINMENT",
+      "error_type": "ValueError",
+      "expected_rejection": "RUNTIME_COST_STAGE_CPU_CONTAINMENT",
+      "expected_rejection_observed": true,
+      "field": "cpu_ns",
+      "injected": 5000,
+      "name": "stage-cpu-exceeds-child",
+      "original": 1,
+      "outcome": "REFUSED",
+      "phase": "evaluate-candidate",
+      "stage_index": 0
+    },
+    {
+      "error": "RUNTIME_COST_STAGE_RSS_CONTAINMENT",
+      "error_type": "ValueError",
+      "expected_rejection": "RUNTIME_COST_STAGE_RSS_CONTAINMENT",
+      "expected_rejection_observed": true,
+      "field": "memory_peak_bytes",
+      "injected": 1048576,
+      "name": "stage-rss-exceeds-final-child",
+      "original": 32768,
+      "outcome": "REFUSED",
+      "phase": "evaluate-candidate",
+      "stage_index": 0
+    },
+    {
+      "error": "RUNTIME_COST_RSS_CONTAINMENT",
+      "error_type": "ValueError",
+      "expected_rejection": "RUNTIME_COST_RSS_CONTAINMENT",
+      "expected_rejection_observed": true,
+      "field": "process_peak_rss_bytes",
+      "injected": 1048576,
+      "name": "child-rss-exceeds-waited-final",
+      "original": 32768,
+      "outcome": "REFUSED",
+      "phase": "evaluate-candidate",
+      "stage_index": null
+    }
+  ],
+  "label": "final-v3-containment-controls",
+  "model_executed": false,
+  "observed_at_ns": 1793839359879431873,
+  "python": "3.12.14",
+  "schema": "local-pilot-cost-containment-counterexamples-v1",
+  "scope": "synthetic-declared-receipt-controls-no-model-no-trial-no-release-qualification",
+  "source_commit": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+  "source_sha256": {
+    "scripts/llm_runtime_assessment.py": "10045ea089335c96d351dcdc710f47f3f7b31fbe49c0ca91675b92ae3526149c",
+    "scripts/llm_runtime_pilot.py": "83c02578857447ff9a8366d3fe29cd00a57ce436ff6f94c37e5a21d42623301b",
+    "scripts/test_llm_runtime_assessment.py": "4114a838513dbcb5cc78c477cfb6fae804157b5e0844e501d54c75d36ff1f4d5"
+  },
+  "trial_initialized": false,
+  "trial_reserved": false
+}

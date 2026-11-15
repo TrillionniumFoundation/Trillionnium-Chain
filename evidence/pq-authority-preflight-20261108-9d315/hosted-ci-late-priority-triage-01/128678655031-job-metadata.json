@@ -1,0 +1,220 @@
+{
+  "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678655031",
+  "completed_at": "2026-11-08T08:58:20Z",
+  "conclusion": "failure",
+  "created_at": "2026-11-08T08:39:00Z",
+  "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+  "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+  "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825143/job/128678655031",
+  "id": 128678655031,
+  "labels": [
+    "ubuntu-24.04"
+  ],
+  "name": "native priorities (ubuntu-24.04, head, service-model)",
+  "node_id": "CR_kwDOTty1_c8AAAAd9dh0Nw",
+  "run_attempt": 1,
+  "run_id": 42463825143,
+  "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825143",
+  "runner_group_id": 0,
+  "runner_group_name": "GitHub Actions",
+  "runner_id": 1000045184,
+  "runner_name": "GitHub Actions 1000045184",
+  "started_at": "2026-11-08T08:39:03Z",
+  "status": "completed",
+  "steps": [
+    {
+      "completed_at": "2026-11-08T08:39:05Z",
+      "conclusion": "success",
+      "name": "Set up job",
+      "number": 1,
+      "started_at": "2026-11-08T08:39:04Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:39:44Z",
+      "conclusion": "success",
+      "name": "Checkout the exact candidate or the actual PR target merge",
+      "number": 2,
+      "started_at": "2026-11-08T08:39:05Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:39:46Z",
+      "conclusion": "success",
+      "name": "Verify source and original project boundary",
+      "number": 3,
+      "started_at": "2026-11-08T08:39:44Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:39:55Z",
+      "conclusion": "success",
+      "name": "Install the source-pinned native toolchain",
+      "number": 4,
+      "started_at": "2026-11-08T08:39:46Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:40:06Z",
+      "conclusion": "success",
+      "name": "Execute original window owner and context-bound consumer controls",
+      "number": 5,
+      "started_at": "2026-11-08T08:39:55Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:44:11Z",
+      "conclusion": "failure",
+      "name": "Execute original release from-zero controls",
+      "number": 6,
+      "started_at": "2026-11-08T08:40:06Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:44:41Z",
+      "conclusion": "success",
+      "name": "Execute actual CLI observation boundaries and retain every child result",
+      "number": 7,
+      "started_at": "2026-11-08T08:44:11Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:47:35Z",
+      "conclusion": "success",
+      "name": "Execute isolated original debug pressure regression",
+      "number": 8,
+      "started_at": "2026-11-08T08:44:41Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:53:09Z",
+      "conclusion": "success",
+      "name": "Execute original public service cancellation and actual CPU accounting controls",
+      "number": 9,
+      "started_at": "2026-11-08T08:47:35Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:53:18Z",
+      "conclusion": "success",
+      "name": "Reject valid W1 state-root replay without durable admission",
+      "number": 10,
+      "started_at": "2026-11-08T08:53:09Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:53:25Z",
+      "conclusion": "success",
+      "name": "Require actual shared CPU depletion and native public recovery",
+      "number": 11,
+      "started_at": "2026-11-08T08:53:18Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:54:35Z",
+      "conclusion": "success",
+      "name": "Execute real native model lifecycle and adverse decisions",
+      "number": 12,
+      "started_at": "2026-11-08T08:53:25Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:58:12Z",
+      "conclusion": "success",
+      "name": "Require native replay, packet encoding and admissible DAA controls",
+      "number": 13,
+      "started_at": "2026-11-08T08:54:35Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:58:14Z",
+      "conclusion": "success",
+      "name": "Observe complete native history and packet response cost",
+      "number": 14,
+      "started_at": "2026-11-08T08:58:12Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:58:14Z",
+      "conclusion": "skipped",
+      "name": "Execute original large-state CPU-budget tests",
+      "number": 15,
+      "started_at": "2026-11-08T08:58:14Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:58:14Z",
+      "conclusion": "skipped",
+      "name": "Execute original native full-capacity test",
+      "number": 16,
+      "started_at": "2026-11-08T08:58:14Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:58:14Z",
+      "conclusion": "skipped",
+      "name": "Execute original source-preserving migration tests",
+      "number": 17,
+      "started_at": "2026-11-08T08:58:14Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:58:14Z",
+      "conclusion": "skipped",
+      "name": "Execute actual obligation ranges and native reorganization regressions",
+      "number": 18,
+      "started_at": "2026-11-08T08:58:14Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:58:14Z",
+      "conclusion": "skipped",
+      "name": "Build the original long-history test separately from measurement",
+      "number": 19,
+      "started_at": "2026-11-08T08:58:14Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:58:14Z",
+      "conclusion": "skipped",
+      "name": "Execute 4105 real work blocks and paid public full sync",
+      "number": 20,
+      "started_at": "2026-11-08T08:58:14Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:58:15Z",
+      "conclusion": "success",
+      "name": "Reverify exact unchanged source",
+      "number": 21,
+      "started_at": "2026-11-08T08:58:14Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:58:17Z",
+      "conclusion": "success",
+      "name": "Retain successes, failures and unqualified external boundaries",
+      "number": 22,
+      "started_at": "2026-11-08T08:58:15Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:58:17Z",
+      "conclusion": "success",
+      "name": "Post Checkout the exact candidate or the actual PR target merge",
+      "number": 44,
+      "started_at": "2026-11-08T08:58:17Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-08T08:58:17Z",
+      "conclusion": "success",
+      "name": "Complete job",
+      "number": 45,
+      "started_at": "2026-11-08T08:58:17Z",
+      "status": "completed"
+    }
+  ],
+  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678655031",
+  "workflow_name": "PoN priority acceptance"
+}

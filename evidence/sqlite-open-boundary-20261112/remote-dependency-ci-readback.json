@@ -1,0 +1,3583 @@
+{
+  "observed_at_utc": "2026-11-12T00:13:53.335Z",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "kind": "read-only GitHub immutable-head lockfile and Actions status readback",
+  "new_remote_native_execution": false,
+  "source_qualification_not_inferred_from_status": true,
+  "records": [
+    {
+      "label": "main",
+      "head": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "state": "branch",
+      "draft": null,
+      "merged": null,
+      "lock": {
+        "key": "main",
+        "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/dd6e1c3cbeacbdc532b0679297835b3a0aac78f0/trillionnium/Cargo.lock",
+        "git_blob_sha": "8709493b3bc9506b03df7ede871bdcaa368cc536",
+        "versions": {
+          "libsqlite3-sys": [
+            {
+              "version": "0.30.1",
+              "checksum": "2e99fb7a497b1e3339bc746195567ed8d3e24945ecd636e3619d20b9de9e9149"
+            }
+          ],
+          "rusqlite": [
+            {
+              "version": "0.32.1",
+              "checksum": "7753b721174eb8ff87a9a0e799e2d7bc3749323e773db92e0984debb00019d6e"
+            }
+          ],
+          "rustix": [
+            {
+              "version": "1.1.4",
+              "checksum": "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
+            }
+          ]
+        }
+      },
+      "workflow_query_total": 5,
+      "workflow_returned": 5,
+      "workflow_runs": [
+        {
+          "id": 42670225666,
+          "name": "Scheduled",
+          "path": "dynamic/github-code-scanning/codeql",
+          "head_sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "event": "dynamic",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42670225666",
+          "created_at": "2026-11-09T18:01:20Z"
+        },
+        {
+          "id": 42467590648,
+          "name": "github_actions in /. - Update #1687395399",
+          "path": "dynamic/dependabot/dependabot-updates",
+          "head_sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "event": "dynamic",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42467590648",
+          "created_at": "2026-11-08T09:32:11Z"
+        },
+        {
+          "id": 41496516281,
+          "name": "Scheduled",
+          "path": "dynamic/github-code-scanning/codeql",
+          "head_sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "event": "dynamic",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41496516281",
+          "created_at": "2026-11-02T18:00:53Z"
+        },
+        {
+          "id": 41293861384,
+          "name": "github_actions in /. - Update #1669911294",
+          "path": "dynamic/dependabot/dependabot-updates",
+          "head_sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "event": "dynamic",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41293861384",
+          "created_at": "2026-11-01T09:36:26Z"
+        },
+        {
+          "id": 40985446374,
+          "name": "Push on main",
+          "path": "dynamic/github-code-scanning/codeql",
+          "head_sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "event": "dynamic",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40985446374",
+          "created_at": "2026-10-30T01:22:20Z"
+        }
+      ]
+    },
+    {
+      "label": "900",
+      "head": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "lock": {
+        "key": "900",
+        "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/64e540ad4603aaf5a2677bd080995fc4ef296bbb/trillionnium/Cargo.lock",
+        "git_blob_sha": "4fed494e300e5e8b63396e676752c985d7b7189b",
+        "versions": {
+          "libsqlite3-sys": [
+            {
+              "version": "0.39.1",
+              "checksum": "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
+            }
+          ],
+          "rusqlite": [
+            {
+              "version": "0.41.1",
+              "checksum": "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
+            }
+          ],
+          "rustix": [
+            {
+              "version": "1.1.4",
+              "checksum": "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
+            }
+          ]
+        }
+      },
+      "workflow_query_total": 23,
+      "workflow_returned": 23,
+      "workflow_runs": [
+        {
+          "id": 42989235746,
+          "name": "PoN W1 QROM closure observations",
+          "path": ".github/workflows/pon-w1-qrom-closure.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235746",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235558,
+          "name": "PoN W1 QROM implementation observations",
+          "path": ".github/workflows/pon-w1-qrom-implementation.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235558",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989236108,
+          "name": "W1 QROM proof-chain observations",
+          "path": ".github/workflows/pon-w1-qrom-proof-chain.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989236108",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235670,
+          "name": "PoN four-axis throughput evidence controls",
+          "path": ".github/workflows/pon-throughput-evidence.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235670",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235906,
+          "name": "PoN isolated cloud build inputs",
+          "path": ".github/workflows/pon-cloud-build-inputs.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235906",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235713,
+          "name": "PoN classical and quantum credit contract",
+          "path": ".github/workflows/pon-credit-envelope.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235713",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235593,
+          "name": "PoN work and time contract V1",
+          "path": ".github/workflows/pon-work-time-contract-v1.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235593",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235585,
+          "name": "PoN owned process cleanup",
+          "path": ".github/workflows/pon-owned-process-cleanup.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235585",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235773,
+          "name": "PoN original large-state CPU acceptance",
+          "path": ".github/workflows/pon-original-large-state-cpu.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235773",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235596,
+          "name": "PoN baseline diagnostic readback",
+          "path": ".github/workflows/pon-baseline-diagnostic-readback.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235596",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235590,
+          "name": "PoN native full relation and path controls",
+          "path": ".github/workflows/pon-native-fullpath.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235590",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235881,
+          "name": "PoN W1 transparent candidate observations",
+          "path": ".github/workflows/pon-w1-transparent-profile.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235881",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235594,
+          "name": "Release finality reference and native baseline",
+          "path": ".github/workflows/release-finality-reference.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235594",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235617,
+          "name": "PoN original native campaign",
+          "path": ".github/workflows/pon-native-campaign-qualification.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235617",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235606,
+          "name": "PoN next architecture exact-source observations",
+          "path": ".github/workflows/pon-next-architecture-security.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235606",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235582,
+          "name": "CPQ1 complete content bindings",
+          "path": ".github/workflows/cpq1-full-content.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235582",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235798,
+          "name": "PoN W1 work security observations",
+          "path": ".github/workflows/pon-w1-work-security.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235798",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235539,
+          "name": "CodeQL exact-source analysis export",
+          "path": ".github/workflows/codeql-analysis-export.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235539",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235678,
+          "name": "PoN branch encoding exact-source acceptance",
+          "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235678",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235763,
+          "name": "PoN original workspace test-profile CPU acceptance",
+          "path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235763",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989236410,
+          "name": "PoN PQ network and rollback witness",
+          "path": ".github/workflows/pon-pq-system-continuation.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989236410",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235807,
+          "name": "trnm-required-baseline",
+          "path": ".github/workflows/trnm-required-baseline.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235807",
+          "created_at": "2026-11-11T08:43:03Z"
+        },
+        {
+          "id": 42989235921,
+          "name": "PoN priority acceptance",
+          "path": ".github/workflows/pon-priority-acceptance.yml",
+          "head_sha": "64e540ad4603aaf5a2677bd080995fc4ef296bbb",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42989235921",
+          "created_at": "2026-11-11T08:43:03Z"
+        }
+      ]
+    },
+    {
+      "label": "901",
+      "head": "6c35f94d9387fac41c1547f05742d70150320b2e",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "lock": {
+        "key": "901",
+        "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/6c35f94d9387fac41c1547f05742d70150320b2e/trillionnium/Cargo.lock",
+        "git_blob_sha": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+        "versions": {
+          "libsqlite3-sys": [
+            {
+              "version": "0.39.0",
+              "checksum": "b0e7f1cd558a82cc3af091ed13f0f03846f89851c60a10713ce5cfd484195494"
+            }
+          ],
+          "rusqlite": [
+            {
+              "version": "0.41.0",
+              "checksum": "9c026b4444579e8d754556c6c75d040d69c4a44283cdb648ab8a8d5965c2cfa8"
+            }
+          ],
+          "rustix": [
+            {
+              "version": "1.1.4",
+              "checksum": "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
+            }
+          ]
+        }
+      },
+      "workflow_query_total": 25,
+      "workflow_returned": 25,
+      "workflow_runs": [
+        {
+          "id": 42983166339,
+          "name": "PoN priority acceptance",
+          "path": ".github/workflows/pon-priority-acceptance.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166339",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166433,
+          "name": "PoN W1 work security observations",
+          "path": ".github/workflows/pon-w1-work-security.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166433",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166457,
+          "name": "PoN original workspace test-profile CPU acceptance",
+          "path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166457",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166326,
+          "name": "CodeQL exact-source analysis and SARIF retention",
+          "path": ".github/workflows/codeql-real-exact-source.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166326",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166434,
+          "name": "CodeQL exact-source analysis export",
+          "path": ".github/workflows/codeql-analysis-export.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166434",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166420,
+          "name": "PoN next architecture exact-source observations",
+          "path": ".github/workflows/pon-next-architecture-security.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166420",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166321,
+          "name": "PoN recent batch exact-source acceptance",
+          "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166321",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166312,
+          "name": "PoN branch encoding exact-source acceptance",
+          "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166312",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166506,
+          "name": "CPQ1 complete content bindings",
+          "path": ".github/workflows/cpq1-full-content.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166506",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166536,
+          "name": "Release finality reference and native baseline",
+          "path": ".github/workflows/release-finality-reference.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166536",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166387,
+          "name": "PoN native full relation and path controls",
+          "path": ".github/workflows/pon-native-fullpath.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166387",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166558,
+          "name": "PoN W1 transparent candidate observations",
+          "path": ".github/workflows/pon-w1-transparent-profile.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166558",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166664,
+          "name": "PoN baseline diagnostic readback",
+          "path": ".github/workflows/pon-baseline-diagnostic-readback.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166664",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166341,
+          "name": "PoN original large-state CPU acceptance",
+          "path": ".github/workflows/pon-original-large-state-cpu.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166341",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166696,
+          "name": "PoN original native campaign",
+          "path": ".github/workflows/pon-native-campaign-qualification.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166696",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166656,
+          "name": "PoN PQ network and rollback witness",
+          "path": ".github/workflows/pon-pq-system-continuation.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166656",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166358,
+          "name": "trnm-required-baseline",
+          "path": ".github/workflows/trnm-required-baseline.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166358",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166332,
+          "name": "W1 QROM proof-chain observations",
+          "path": ".github/workflows/pon-w1-qrom-proof-chain.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166332",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166470,
+          "name": "Chain Hepta closure evidence contracts",
+          "path": ".github/workflows/chain-hepta-closure-candidate.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166470",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166352,
+          "name": "PoN W1 QROM implementation observations",
+          "path": ".github/workflows/pon-w1-qrom-implementation.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166352",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166619,
+          "name": "PoN four-axis throughput evidence controls",
+          "path": ".github/workflows/pon-throughput-evidence.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166619",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166666,
+          "name": "PoN W1 QROM closure observations",
+          "path": ".github/workflows/pon-w1-qrom-closure.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166666",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166529,
+          "name": "PoN work and time contract V1",
+          "path": ".github/workflows/pon-work-time-contract-v1.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166529",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166552,
+          "name": "PoN classical and quantum credit contract",
+          "path": ".github/workflows/pon-credit-envelope.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166552",
+          "created_at": "2026-11-11T07:56:33Z"
+        },
+        {
+          "id": 42983166597,
+          "name": "PoN owned process cleanup",
+          "path": ".github/workflows/pon-owned-process-cleanup.yml",
+          "head_sha": "6c35f94d9387fac41c1547f05742d70150320b2e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42983166597",
+          "created_at": "2026-11-11T07:56:33Z"
+        }
+      ],
+      "baseline_jobs": [
+        {
+          "id": 130442492261,
+          "name": "fuzz-smoke",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actual fuzz-smoke checks",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442492433,
+          "name": "cross-arch-cost (x64)",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native release setup and repeated-search costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native zero-matrix locality costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native one-zero rank-one locality costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native fixed maintenance producer and preparation costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native legal and late-rejection verifier costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute exact native from-zero service controls",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain native cost successes and failures",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442492458,
+          "name": "prospective-merge (external-evidence-contract)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge identity and exact ordered parents",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442492481,
+          "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check original repository boundary before native V3 build",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain V3 costs including all failed observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442492501,
+          "name": "repository-truth",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check original public Host CI ownership and failure controls",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actual repository-truth checks",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442492508,
+          "name": "rust-baseline shard (runtime)",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated signed-state oracle Python environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run retained Rust shard",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain lightweight exact Rust shard proof",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442492592,
+          "name": "rust-baseline shard (quality)",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated signed-state oracle Python environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run retained Rust shard",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain lightweight exact Rust shard proof",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442492606,
+          "name": "prospective Rust shard (quality)",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated signed-state oracle Python environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run retained Rust shard",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain lightweight exact Rust shard proof",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442492631,
+          "name": "protocol-contract",
+          "conclusion": "cancelled",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated conformance-only Python environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actual protocol-contract checks",
+              "conclusion": "cancelled"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442492664,
+          "name": "prospective-merge (protocol-contract)",
+          "conclusion": "cancelled",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge identity and exact ordered parents",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "conclusion": "cancelled"
+            },
+            {
+              "name": "Verify merge source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442492666,
+          "name": "prospective-merge (repository-truth)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge identity and exact ordered parents",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442492683,
+          "name": "W1 actual reuse V3 (x64, prospective-merge)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check original repository boundary before native V3 build",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain V3 costs including all failed observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442492719,
+          "name": "cross-arch-cost (arm64)",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native release setup and repeated-search costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native zero-matrix locality costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native one-zero rank-one locality costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native fixed maintenance producer and preparation costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native legal and late-rejection verifier costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute exact native from-zero service controls",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain native cost successes and failures",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442492756,
+          "name": "prospective Rust shard (runtime)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated signed-state oracle Python environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run retained Rust shard",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain lightweight exact Rust shard proof",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442492822,
+          "name": "W1 actual reuse V3 (arm64, head)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check original repository boundary before native V3 build",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain V3 costs including all failed observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442492885,
+          "name": "external-evidence-contract",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated evidence-replay Python environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actual external-evidence-contract checks",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442492899,
+          "name": "prospective-merge (fuzz-smoke)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge identity and exact ordered parents",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130442493052,
+          "name": "W1 actual reuse V3 (x64, head)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check original repository boundary before native V3 build",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain V3 costs including all failed observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130446428892,
+          "name": "cross-arch-cost-consistency",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retrieve both actual cost observations from this run",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check actual streams and source identity without a speed threshold",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check zero-matrix streams and exact source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check one-zero rank-one streams and exact source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check fixed maintenance streams and exact source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check actual rejection stages and paired native architectures",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain comparison result including missing or failed architectures",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130466776817,
+          "name": "rust-baseline",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact tested source",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retrieve both current-run Rust shard observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require both successful exact-source Rust shards",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain failed and successful Rust fan-in observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact tested source",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130499919174,
+          "name": "prospective-merge (rust-baseline)",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact tested source",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retrieve both current-run Rust shard observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require both successful exact-source Rust shards",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain failed and successful Rust fan-in observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact tested source",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "908",
+      "head": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "lock": {
+        "key": "908",
+        "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d/trillionnium/Cargo.lock",
+        "git_blob_sha": "f3f53a76db2867c8906f0aea49ad83a6954d3ef4",
+        "versions": {
+          "libsqlite3-sys": [
+            {
+              "version": "0.39.0",
+              "checksum": "b0e7f1cd558a82cc3af091ed13f0f03846f89851c60a10713ce5cfd484195494"
+            }
+          ],
+          "rusqlite": [
+            {
+              "version": "0.41.0",
+              "checksum": "9c026b4444579e8d754556c6c75d040d69c4a44283cdb648ab8a8d5965c2cfa8"
+            }
+          ],
+          "rustix": [
+            {
+              "version": "1.1.6",
+              "checksum": "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa"
+            }
+          ]
+        }
+      },
+      "workflow_query_total": 24,
+      "workflow_returned": 24,
+      "workflow_runs": [
+        {
+          "id": 43085845219,
+          "name": "PoN classical and quantum credit contract",
+          "path": ".github/workflows/pon-credit-envelope.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845219",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085845078,
+          "name": "PoN work and time contract V1",
+          "path": ".github/workflows/pon-work-time-contract-v1.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845078",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085844791,
+          "name": "PoN W1 QROM closure observations",
+          "path": ".github/workflows/pon-w1-qrom-closure.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085844791",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085845398,
+          "name": "PoN four-axis throughput evidence controls",
+          "path": ".github/workflows/pon-throughput-evidence.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845398",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085845420,
+          "name": "Chain Hepta closure evidence contracts",
+          "path": ".github/workflows/chain-hepta-closure-candidate.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845420",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085845129,
+          "name": "W1 QROM proof-chain observations",
+          "path": ".github/workflows/pon-w1-qrom-proof-chain.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845129",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085845246,
+          "name": "PoN W1 QROM implementation observations",
+          "path": ".github/workflows/pon-w1-qrom-implementation.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845246",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085845059,
+          "name": "PoN isolated cloud build inputs",
+          "path": ".github/workflows/pon-cloud-build-inputs.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845059",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085844898,
+          "name": "PoN W1 transparent candidate observations",
+          "path": ".github/workflows/pon-w1-transparent-profile.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085844898",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085845288,
+          "name": "Release finality reference and native baseline",
+          "path": ".github/workflows/release-finality-reference.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845288",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085845350,
+          "name": "PoN baseline diagnostic readback",
+          "path": ".github/workflows/pon-baseline-diagnostic-readback.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845350",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085845267,
+          "name": "PoN original native campaign",
+          "path": ".github/workflows/pon-native-campaign-qualification.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845267",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085844872,
+          "name": "CPQ1 complete content bindings",
+          "path": ".github/workflows/cpq1-full-content.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085844872",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085845032,
+          "name": "PoN original workspace test-profile CPU acceptance",
+          "path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845032",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085844727,
+          "name": "PoN original large-state CPU acceptance",
+          "path": ".github/workflows/pon-original-large-state-cpu.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085844727",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085845337,
+          "name": "PoN native full relation and path controls",
+          "path": ".github/workflows/pon-native-fullpath.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845337",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085844781,
+          "name": "PoN owned process cleanup",
+          "path": ".github/workflows/pon-owned-process-cleanup.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085844781",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085844832,
+          "name": "PoN next architecture exact-source observations",
+          "path": ".github/workflows/pon-next-architecture-security.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085844832",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085845475,
+          "name": "CodeQL exact-source analysis export",
+          "path": ".github/workflows/codeql-analysis-export.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845475",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085845395,
+          "name": "PoN W1 work security observations",
+          "path": ".github/workflows/pon-w1-work-security.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845395",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085845266,
+          "name": "PoN priority acceptance",
+          "path": ".github/workflows/pon-priority-acceptance.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845266",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085845156,
+          "name": "PoN PQ network and rollback witness",
+          "path": ".github/workflows/pon-pq-system-continuation.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845156",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085844779,
+          "name": "trnm-required-baseline",
+          "path": ".github/workflows/trnm-required-baseline.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085844779",
+          "created_at": "2026-11-11T19:17:42Z"
+        },
+        {
+          "id": 43085845154,
+          "name": "CodeQL exact-source analysis and SARIF retention",
+          "path": ".github/workflows/codeql-real-exact-source.yml",
+          "head_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43085845154",
+          "created_at": "2026-11-11T19:17:42Z"
+        }
+      ],
+      "baseline_jobs": [
+        {
+          "id": 130749881842,
+          "name": "prospective Rust shard (runtime)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated signed-state oracle Python environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run retained Rust shard",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain lightweight exact Rust shard proof",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749881865,
+          "name": "prospective-merge (repository-truth)",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge identity and exact ordered parents",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Verify merge source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749881868,
+          "name": "protocol-contract",
+          "conclusion": "cancelled",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated conformance-only Python environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actual protocol-contract checks",
+              "conclusion": "cancelled"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749881958,
+          "name": "external-evidence-contract",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated evidence-replay Python environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actual external-evidence-contract checks",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749881977,
+          "name": "prospective-merge (external-evidence-contract)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge identity and exact ordered parents",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749881985,
+          "name": "prospective-merge (protocol-contract)",
+          "conclusion": "cancelled",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge identity and exact ordered parents",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "conclusion": "cancelled"
+            },
+            {
+              "name": "Verify merge source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749882022,
+          "name": "rust-baseline shard (quality)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated signed-state oracle Python environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run retained Rust shard",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain lightweight exact Rust shard proof",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749882040,
+          "name": "cross-arch-cost (x64)",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native release setup and repeated-search costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native zero-matrix locality costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native one-zero rank-one locality costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native fixed maintenance producer and preparation costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native legal and late-rejection verifier costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute exact native from-zero service controls",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain native cost successes and failures",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749882048,
+          "name": "prospective-merge (fuzz-smoke)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge identity and exact ordered parents",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify merge source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact prospective merge",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749882055,
+          "name": "repository-truth",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check original public Host CI ownership and failure controls",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actual repository-truth checks",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749882103,
+          "name": "cross-arch-cost (arm64)",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native release setup and repeated-search costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native zero-matrix locality costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native one-zero rank-one locality costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native fixed maintenance producer and preparation costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute native legal and late-rejection verifier costs",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute exact native from-zero service controls",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain native cost successes and failures",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749882116,
+          "name": "prospective Rust shard (quality)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated signed-state oracle Python environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run retained Rust shard",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain lightweight exact Rust shard proof",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749882160,
+          "name": "W1 actual reuse V3 (arm64, head)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check original repository boundary before native V3 build",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain V3 costs including all failed observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749882176,
+          "name": "rust-baseline shard (runtime)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated signed-state oracle Python environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run retained Rust shard",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain lightweight exact Rust shard proof",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749882179,
+          "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check original repository boundary before native V3 build",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain V3 costs including all failed observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749882182,
+          "name": "W1 actual reuse V3 (x64, prospective-merge)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check original repository boundary before native V3 build",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain V3 costs including all failed observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749882285,
+          "name": "W1 actual reuse V3 (x64, head)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check original repository boundary before native V3 build",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching native formatter",
+              "conclusion": "success"
+            },
+            {
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain V3 costs including all failed observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130749882511,
+          "name": "fuzz-smoke",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actual fuzz-smoke checks",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130754970172,
+          "name": "cross-arch-cost-consistency",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retrieve both actual cost observations from this run",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check actual streams and source identity without a speed threshold",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check zero-matrix streams and exact source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check one-zero rank-one streams and exact source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check fixed maintenance streams and exact source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check actual rejection stages and paired native architectures",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain comparison result including missing or failed architectures",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130790317639,
+          "name": "prospective-merge (rust-baseline)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact tested source",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retrieve both current-run Rust shard observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require both successful exact-source Rust shards",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain failed and successful Rust fan-in observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact tested source",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 130800469242,
+          "name": "rust-baseline",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout exact tested source",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retrieve both current-run Rust shard observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require both successful exact-source Rust shards",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain failed and successful Rust fan-in observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout exact tested source",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

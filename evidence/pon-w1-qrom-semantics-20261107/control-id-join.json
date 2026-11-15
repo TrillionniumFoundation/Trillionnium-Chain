@@ -1,0 +1,346 @@
+{
+  "completed_programs": 1,
+  "control_root_from_computed_ids": null,
+  "default_named_count": 27,
+  "limits": {
+    "per_program_timeout_seconds": 120,
+    "threads": 4
+  },
+  "native_build": {
+    "binary_sha256": "35e645eac7f0681cefa8b98f068d89b9fc2c9dcafd3c994a97d0eccb6ed5adc5",
+    "compilation": {
+      "command": [
+        "/usr/bin/cc",
+        "-O3",
+        "-std=c11",
+        "-fopenmp",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/semantics-zkr/native-join-v1/w1_zkr_control_id.c",
+        "-o",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/semantics-zkr/native-join-v1/w1-zkr-control-id"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "wall_seconds": 0.4468136311043054
+    },
+    "compiler_identity": {
+      "command": [
+        "/usr/bin/cc",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+      "stdout_bytes": 245,
+      "stdout_sha256": "3e8cc208c40f60832f67377aa1b03c3e7e858f20cd5d365464944700c0bd7ad1",
+      "timed_out": false,
+      "timeout_seconds": 20,
+      "wall_seconds": 0.0024760570377111435
+    },
+    "self_test": {
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/semantics-zkr/native-join-v1/w1-zkr-control-id",
+        "--self-test"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "{\"self_test\":\"PASS\",\"checks\":7,\"arithmetic\":\"normal BabyBear\"}\n",
+      "stdout_bytes": 63,
+      "stdout_sha256": "38356fad939aea122286ffbb49e2e58c8c01ea77f703e1676084f9d0d43ae8ff",
+      "timed_out": false,
+      "timeout_seconds": 20,
+      "wall_seconds": 0.003168707014992833
+    }
+  },
+  "official_zip": {
+    "bytes": 59768781,
+    "sha256": "744b999f0a35b3c86753311c7efb2a0054be21727095cf105af6ee7d3f4d8849"
+  },
+  "programs": [
+    {
+      "bytecode_sha256": "730afd6be910247584675f02e0a578951118c141e37cfd0605afa3e112ef2361",
+      "computed_control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+      "declared_control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+      "geometry": {
+        "all_code_words_zero": false,
+        "available_code_rows": 261120,
+        "bytecode_execution_or_reachable_trace_verified": false,
+        "bytes": 23884304,
+        "code_columns": 23,
+        "code_rows": 259612,
+        "declared_control_id_recomputed_from_bytecode": false,
+        "evaluated_capacity_po2": 18,
+        "maximum_word": 2013265919,
+        "minimum_po2_from_capacity_inequality_only": 18,
+        "noncanonical_word_count": 0,
+        "reserved_zk_rows": 1024,
+        "sha256": "730afd6be910247584675f02e0a578951118c141e37cfd0605afa3e112ef2361",
+        "total_trace_rows": 262144,
+        "u32_word_encoding": "little endian, canonical normal-form BabyBear inputs",
+        "u32_words": 5971076,
+        "unused_code_rows_at_evaluated_capacity": 1508
+      },
+      "matches_fixed_catalog": true,
+      "native_run": {
+        "command": [
+          "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/semantics-zkr/native-join-v1/w1-zkr-control-id",
+          "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/semantics-zkr/native-join-v1/join.zkr",
+          "18",
+          "4"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout": "{\"control_id\":\"7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e\",\"code_rows\":259612,\"trace_po2\":18,\"domain_rows\":1048576,\"threads\":4,\"root_normal_words\":[305585343,763416460,422796034,1632446276,846477895,742227897,1645697550,1455559286],\"lde_samples_normal\":[706337263,736076512,1013069523,1376075560,1675609852,338374921,1168008172,464932249,1648696206,947354798,1969382883,770746343,1344912290,502556875,729701247,1774706001],\"phase_seconds\":{\"lde\":1.073541,\"leaves\":5.471608,\"tree\":2.843351}}\n",
+        "stdout_bytes": 513,
+        "stdout_sha256": "6e6f56d0a119f3561d8fbeabbae072f97e09f047eb03432f4ba4c26105038139",
+        "timed_out": false,
+        "timeout_seconds": 120,
+        "wall_seconds": 9.454286637948826
+      },
+      "program": "join.zkr"
+    }
+  ],
+  "qualification": {
+    "all_27_default_named_control_ids_recomputed": false,
+    "default_control_root_recomputed_from_bytecode": false,
+    "end_to_end_qrom_bound_established": false,
+    "every_reachable_trace_certified": false,
+    "fresh_receipt_cryptographically_verified": false,
+    "intended_recursive_program_semantics_proved": false,
+    "quantum_work_to_chain_weight_correspondence_proved": false,
+    "recursion_source_to_bytecode_compilation_reproduced": false,
+    "requested_bytecode_to_fri_control_ids_recomputed": true,
+    "valid_code_zero_control_digest_excluded": false
+  },
+  "requested_programs": [
+    "join.zkr"
+  ],
+  "schema": "TRNM-W1-ZKR-CONTROL-ID-AUDIT1",
+  "source_provenance": {
+    "artifact_shape_helper": {
+      "path": "scripts/w1_zkr_artifact_audit.py",
+      "sha256": "6931e8241fcc63d6531b110fbf7b0e029a39deb676b5fb60746e4e1d47d5e799"
+    },
+    "catalog_helper": {
+      "path": "scripts/w1_control_tree_audit.py",
+      "sha256": "0e9b8e2fd9f6905f98b3df1a52b4ac2a46481b101b1d1a6afd29c2f5502f4865"
+    },
+    "catalog_snapshot": {
+      "path": "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz",
+      "sha256": "f6be3667106df6843f5f29c0954cdce8e2617da36c9c91a7a5198665675e0253"
+    },
+    "generated_constants_header_sha256": "505d0ba904b6acb1e7e3aeb05378d8f5bc1a1fc5b24e54d39cd05baa7dcfee06",
+    "merkle_convention": "23 columns in source order; normal-form internal arithmetic; output raw Montgomery digest words serialized little endian",
+    "native_self_test_count": 7,
+    "native_template": {
+      "path": "scripts/w1_zkr_control_id.c",
+      "sha256": "b388eeea5ae14ae2595acb1c6c241141d435fca91f72285e43969554dd3d6813"
+    },
+    "ntt_and_hash_source_members": [
+      {
+        "archive_sha256": "21c0c921e5e2d44197940d387a45e29c6165e318b5a168fdfdbd50f50ba03678",
+        "bytes": 14765,
+        "crate": "risc0-zkp-3.0.5",
+        "member": "src/core/ntt.rs",
+        "sha256": "5e363e48f97bbeb17642fa1829e56488747921cf5923c010ef533d2130b2cb1f"
+      },
+      {
+        "archive_sha256": "21c0c921e5e2d44197940d387a45e29c6165e318b5a168fdfdbd50f50ba03678",
+        "bytes": 22840,
+        "crate": "risc0-zkp-3.0.5",
+        "member": "src/hal/cpu.rs",
+        "sha256": "9ba53d264f00ac3a7a253f67792bf7dd6c2b9bf919ef59e551c67aaed010990a"
+      },
+      {
+        "archive_sha256": "21c0c921e5e2d44197940d387a45e29c6165e318b5a168fdfdbd50f50ba03678",
+        "bytes": 3532,
+        "crate": "risc0-zkp-3.0.5",
+        "member": "src/prove/poly_group.rs",
+        "sha256": "874d5e09e7de3ccc67cd2f61bbf39be1886be35ddf687341732eb34bbd3abc16"
+      },
+      {
+        "archive_sha256": "21c0c921e5e2d44197940d387a45e29c6165e318b5a168fdfdbd50f50ba03678",
+        "bytes": 13647,
+        "crate": "risc0-zkp-3.0.5",
+        "member": "src/prove/merkle.rs",
+        "sha256": "2e8b3a2368720df8a27d475efb9c6e30158539397707d879449e5a0608d5bbc1"
+      },
+      {
+        "archive_sha256": "21c0c921e5e2d44197940d387a45e29c6165e318b5a168fdfdbd50f50ba03678",
+        "bytes": 13790,
+        "crate": "risc0-zkp-3.0.5",
+        "member": "src/core/hash/poseidon2/mod.rs",
+        "sha256": "a2993a2e29fa33345a6a9ce0b4f192efe7412746b92b172b0eed8ce78ee8471f"
+      }
+    ],
+    "ntt_convention": "natural coefficients: inverse DFT with ROU_REV/N; multiply coefficient k by 3^k; zero pad to 4N; forward DFT with ROU_FWD",
+    "reference_known_answers": {
+      "KAT_HASH23": [
+        21214693,
+        1309192198,
+        1358660697,
+        1128212006,
+        110002074,
+        1356513880,
+        1301692169,
+        1369406975
+      ],
+      "KAT_IFFT8": [
+        1006632965,
+        247018960,
+        1149063664,
+        1975423473,
+        1006632960,
+        37842447,
+        864202256,
+        1766246960
+      ],
+      "KAT_LDE32": [
+        313215528,
+        1279427784,
+        1093256194,
+        742674195,
+        738823641,
+        855455262,
+        1074788723,
+        738184687,
+        1658149204,
+        1163040150,
+        1198233669,
+        435928816,
+        1952958124,
+        847195501,
+        968122175,
+        1149975769,
+        1952959765,
+        297292304,
+        1515036166,
+        1767882799,
+        1021531450,
+        1606666157,
+        502269526,
+        1362503268,
+        102207201,
+        1360408393,
+        377573918,
+        1345334830,
+        313218807,
+        643578169,
+        1323783349,
+        510579356
+      ],
+      "KAT_NTT8": [
+        36,
+        37114233,
+        873820285,
+        302739576,
+        2013265917,
+        1710526337,
+        1139445628,
+        1976151680
+      ],
+      "KAT_PAIR": [
+        1749308481,
+        879447913,
+        499502012,
+        1842374203,
+        1869354733,
+        71489094,
+        19273002,
+        690566044
+      ],
+      "KAT_PERM": [
+        785637949,
+        311566256,
+        241540729,
+        1641553353,
+        851108667,
+        1648913123,
+        510139232,
+        616108837,
+        707720633,
+        1357404478,
+        1539840236,
+        275323287,
+        899761440,
+        732341189,
+        664618988,
+        1426148993,
+        1498654335,
+        792736017,
+        1804085503,
+        402731039,
+        659103866,
+        1036635937,
+        1016617890,
+        1470732388
+      ],
+      "KAT_TINY_ROOT": [
+        1245555808,
+        1364264266,
+        1701414544,
+        1970877974,
+        1243679654,
+        1418036329,
+        883489405,
+        117970679
+      ]
+    },
+    "sdk_equivalence": "SDK bit-reversed coefficients with repeated expansion and skipped butterflies implement the same natural-order LDE; tiny references check the ordering, and catalog comparisons are recorded per requested program",
+    "selected_source_members": [
+      {
+        "archive_sha256": "40dd640122abcc67d4d4e4f055c68cbc3ad2efb8589c65c2b23d354632971b60",
+        "crate": "risc0-circuit-recursion-4.0.5",
+        "member": "build.rs",
+        "member_bytes": 2721,
+        "member_sha256": "70c331d6727f8b0aaa2ab10b6291cf70916e53b1154ecaa2258a110d24bf4f22"
+      },
+      {
+        "archive_sha256": "40dd640122abcc67d4d4e4f055c68cbc3ad2efb8589c65c2b23d354632971b60",
+        "crate": "risc0-circuit-recursion-4.0.5",
+        "member": "src/prove/mod.rs",
+        "member_bytes": 8269,
+        "member_sha256": "f064718a6313551ded8c94309eba67cadd4c40fbab9d3738d675c90098822908"
+      },
+      {
+        "archive_sha256": "40dd640122abcc67d4d4e4f055c68cbc3ad2efb8589c65c2b23d354632971b60",
+        "crate": "risc0-circuit-recursion-4.0.5",
+        "member": "src/prove/program.rs",
+        "member_bytes": 4028,
+        "member_sha256": "f5df75716dc28d5076c3812b9efdfda696c05c0c0aec2f86590f416f4b678dd2"
+      },
+      {
+        "archive_sha256": "40dd640122abcc67d4d4e4f055c68cbc3ad2efb8589c65c2b23d354632971b60",
+        "crate": "risc0-circuit-recursion-4.0.5",
+        "member": "src/prove/zkr.rs",
+        "member_bytes": 2136,
+        "member_sha256": "e29b79ac69c68b31ea8f0c3ed61735964da807b9cb4c8539295cfa3cc166b847"
+      },
+      {
+        "archive_sha256": "21c0c921e5e2d44197940d387a45e29c6165e318b5a168fdfdbd50f50ba03678",
+        "crate": "risc0-zkp-3.0.5",
+        "member": "src/lib.rs",
+        "member_bytes": 1762,
+        "member_sha256": "107521d2426442fbc9358b7b9ae5650be92d670ea85e9a34aec7b9e9cc27dc6d"
+      }
+    ],
+    "upstream_commit": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9"
+  },
+  "status": "RECOMPUTED_CONTROL_IDS_MATCH_FIXED_CATALOG",
+  "zero_digest_padding_leaf_count": 229
+}

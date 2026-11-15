@@ -1,0 +1,10 @@
+{
+  "schema": "TRNM-W1-BATCH-PHASE0-ATTEMPT5-INDEPENDENT-TERMINAL-READBACK1",
+  "unix_ns": 1793163576747864386,
+  "supervisor_result_sha256": "a438f65f6814752b4265317a146d0ca4899e66e86870c765852f81108382833d",
+  "checked_host_pid_birth_identities": 108,
+  "same_birth_processes_remaining": [],
+  "unreadable": [],
+  "numeric_local_pid_assumed_equal_to_proc_pid": false,
+  "signals_sent_by_readback": false
+}

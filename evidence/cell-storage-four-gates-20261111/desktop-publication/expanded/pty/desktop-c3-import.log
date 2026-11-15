@@ -1,0 +1,14 @@
+{"command": "before-head", "exit_code": 0, "timed_out": false}
+{"command": "before-branch", "exit_code": 0, "timed_out": false}
+{"command": "before-status", "exit_code": 0, "timed_out": false}
+{"command": "before-preflight", "exit_code": 0, "timed_out": false}
+{"command": "bundle-verify", "exit_code": 0, "timed_out": false}
+{"command": "bundle-heads", "exit_code": 0, "timed_out": false}
+{"command": "bundle-fetch", "exit_code": 0, "timed_out": false}
+{"command": "fetched-head", "exit_code": 0, "timed_out": false}
+{"command": "fast-forward", "exit_code": 0, "timed_out": false}
+{"command": "candidate-preflight", "exit_code": 0, "timed_out": false}
+{"command": "candidate-head", "exit_code": 0, "timed_out": false}
+{"command": "candidate-branch", "exit_code": 0, "timed_out": false}
+{"command": "candidate-status", "exit_code": 0, "timed_out": false}
+{"imported": "030de92be05bfd4f73e199098c12dfeaedf29b17", "root": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish", "receipt": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/summary.json", "bundle": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/candidate.bundle", "body": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/pr-body.md", "push_executed": false}

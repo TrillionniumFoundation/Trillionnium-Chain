@@ -1,0 +1,166 @@
+{
+  "all_blob_ids_recomputed": true,
+  "commit": "2d46d8682201bc0619f5b156af50e77fb399322e",
+  "fixtures": [
+    {
+      "action": "materialized-exact-committed-blob",
+      "blob": "fb5c47628a0b9c022170a9839dbce6e4b17a13d4",
+      "bytes": 7929,
+      "materialized_before": false,
+      "mode": "100644",
+      "packages": [
+        "client_confirmation"
+      ],
+      "path": "evidence/pon-client-confirmation-v1/manifest.json",
+      "sha256": "51dc20f9272786ccb515097fa424867f87b8989d1679e3d92b5033de624ba197"
+    },
+    {
+      "action": "materialized-exact-committed-blob",
+      "blob": "f0d2cd45d82c00234a115783d37491b06ac9b2f5",
+      "bytes": 127917,
+      "materialized_before": false,
+      "mode": "100644",
+      "packages": [
+        "client_confirmation"
+      ],
+      "path": "evidence/pon-client-confirmation-v1/qualification.json",
+      "sha256": "854ad8635d7b72ac24a09552471bf3c0ba0aba4cdd4b88001588f01de85c38ab"
+    },
+    {
+      "action": "materialized-exact-committed-blob",
+      "blob": "9103b00e49c8344528ec0dfde5d87a0e2bab2ade",
+      "bytes": 12456,
+      "materialized_before": false,
+      "mode": "100644",
+      "packages": [
+        "e3"
+      ],
+      "path": "evidence/pon-evaluation-bundle-v1/manifest.json",
+      "sha256": "e19feae902111144122233a1c3d87df5b1e85b8d2b22b00706ab163b57470daa"
+    },
+    {
+      "action": "materialized-exact-committed-blob",
+      "blob": "19485f7be45b5239b875c3ad747205f4d680672d",
+      "bytes": 125965,
+      "materialized_before": false,
+      "mode": "100644",
+      "packages": [
+        "e3"
+      ],
+      "path": "evidence/pon-evaluation-bundle-v1/qualification.json",
+      "sha256": "0a981c45dd383cb03785c31cc71ff943a40b13fb3a4b4c825b0c9c67ba67b236"
+    },
+    {
+      "action": "materialized-exact-committed-blob",
+      "blob": "e040a798bd75c453af3d7df4b504b001c0aec2e0",
+      "bytes": 19020,
+      "materialized_before": false,
+      "mode": "100644",
+      "packages": [
+        "native_node"
+      ],
+      "path": "evidence/pon-native-node-v1/manifest.json",
+      "sha256": "47e85f19c611f03603da46e154fb9659e35b2d23a67d8808932c163adbdb4a9d"
+    },
+    {
+      "action": "materialized-exact-committed-blob",
+      "blob": "3788e3df4e6fbf297a8b7cb7e814df458a8d3cd8",
+      "bytes": 138401,
+      "materialized_before": false,
+      "mode": "100644",
+      "packages": [
+        "native_node"
+      ],
+      "path": "evidence/pon-native-node-v1/qualification.json",
+      "sha256": "3731cf8676f10ee3a7a3eabe4f5b838fb72f946ad6f0c7d0ed1e539c163056cc"
+    },
+    {
+      "action": "materialized-exact-committed-blob",
+      "blob": "9ff3a0040311a0afabef8084ad8bb801abc72b0b",
+      "bytes": 25244,
+      "materialized_before": false,
+      "mode": "100644",
+      "packages": [
+        "native_session"
+      ],
+      "path": "evidence/pon-native-session-v1/manifest.json",
+      "sha256": "eb44dba1760646e527a7dca011845e48eaa0ae6a7f88933dd889d36945ad4a51"
+    },
+    {
+      "action": "materialized-exact-committed-blob",
+      "blob": "ba47e223927a8e689fb76159a20231937700d0ba",
+      "bytes": 135370,
+      "materialized_before": false,
+      "mode": "100644",
+      "packages": [
+        "native_session"
+      ],
+      "path": "evidence/pon-native-session-v1/qualification.json",
+      "sha256": "d10f36925390ece01c137cd4db48bb0ff5f5c8b8967c3707251134c3d6f59043"
+    },
+    {
+      "action": "materialized-exact-committed-blob",
+      "blob": "1b2dba58b6a5f5ebdeb06dd55304443612d91d2f",
+      "bytes": 109837,
+      "materialized_before": false,
+      "mode": "100644",
+      "packages": [
+        "v1"
+      ],
+      "path": "evidence/pon-v1/manifest.json",
+      "sha256": "b0d8d0e3ffdd9a11b554384380e1b337e3caf463abd121b4531555d63ade3eeb"
+    },
+    {
+      "action": "materialized-exact-committed-blob",
+      "blob": "bb11c22b649174b05aae83f5c79a393884041210",
+      "bytes": 8008,
+      "materialized_before": false,
+      "mode": "100644",
+      "packages": [
+        "v3"
+      ],
+      "path": "evidence/pon-v3/manifest.json",
+      "sha256": "ae24a1be50ee493bcaa438ee1561f9321d996cae3912bb1ecc60c41aaaba6357"
+    },
+    {
+      "action": "materialized-exact-committed-blob",
+      "blob": "b6d0623e0f4d984bdaff1fac53f6962980dcce82",
+      "bytes": 122812,
+      "materialized_before": false,
+      "mode": "100644",
+      "packages": [
+        "v3"
+      ],
+      "path": "evidence/pon-v3/qualification/report.json",
+      "sha256": "259090b26c6e125c112a55bce4106b61cbbb6ba446d97a96bff737aa899098dc"
+    },
+    {
+      "action": "materialized-exact-committed-blob",
+      "blob": "3563ad5ef0435a209e15caa8c4a26ac03f713294",
+      "bytes": 4902,
+      "materialized_before": false,
+      "mode": "100644",
+      "packages": [
+        "v4"
+      ],
+      "path": "evidence/pon-v4/manifest.json",
+      "sha256": "2e3150087f03ca3d3903253c8a5a496110e9e370eb951d749f7306b0ec982537"
+    },
+    {
+      "action": "materialized-exact-committed-blob",
+      "blob": "b25adf6ed73b53016e649b77e8d12a2e623509af",
+      "bytes": 127183,
+      "materialized_before": false,
+      "mode": "100644",
+      "packages": [
+        "v4"
+      ],
+      "path": "evidence/pon-v4/qualification/report.json",
+      "sha256": "6841a58160616acbcd4285698b3436955af3a293a3f76970adc8fb6b023ddea8"
+    }
+  ],
+  "refs_or_index_modified": false,
+  "stub_files_created": false,
+  "total_bytes": 965044,
+  "tree": "5ae5317304588cca8295a19dd512c8e853f1ef5b"
+}

@@ -1,0 +1,12 @@
+{
+  "fence_lines": [
+    "cargo:rustc-check-cfg=cfg(trnm_sqlite_layout_witness)",
+    "cargo:rerun-if-changed=unix_layout_witness.c",
+    "cargo:rustc-link-lib=static=trnm_sqlite_layout_witness",
+    "cargo:rustc-cfg=trnm_sqlite_layout_witness",
+    "cargo:rustc-env=TRNM_SQLITE3_BUILD_FENCE=sqlite-3.54.1-normal-native-linux-layout-v4"
+  ],
+  "mtime_ns": 1794730120271610946,
+  "path": "/workspace/scratch/b333277443cf/build-target/debug/build/trnm-sqlite-io-boundary-f737dfeac06c1a5d/output",
+  "sha256": "0c463380969e573416d6a57bf03b39d30b368985fc03cedfbb9b960cb529dca6"
+}

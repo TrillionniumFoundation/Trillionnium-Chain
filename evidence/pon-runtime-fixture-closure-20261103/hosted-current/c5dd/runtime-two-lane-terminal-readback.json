@@ -1,0 +1,1448 @@
+{
+  "schema": "c1-runtime-nine-host-pass-later-workspace-abort-v1",
+  "observed_utc": "2026-11-03T23:45:32.465855+00:00",
+  "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "actual_merge": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+  "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+  "run_id": 41728500537,
+  "source_binding": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/source-binding.json",
+    "bytes": 6701,
+    "sha256": "87c48a4bc8e240ab88d87477bd9c834a7577589a9d61b02257a6dd47d9103b81"
+  },
+  "terminal_metadata": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/20261103T234204327Z-baseline-final-full-jobs.json",
+    "bytes": 156718,
+    "sha256": "1f77e7f01c7dd0eb762794929b287d68148f7ee1093043b8f3ba4aa9025354d2"
+  },
+  "public_submit_source": {
+    "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "path": "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs",
+    "git_blob": "5c3ead2d2652c9a65c5f194f46f6daaf3e6dbdb1",
+    "bytes": 59663,
+    "sha256": "a3b25beed3c39d304de96a735dc6efd888e85643fd72d539789b9deca49dc96a"
+  },
+  "profile_scope": {
+    "original_command_uses_release": false,
+    "actual_command": "cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features",
+    "tracked_cargo_manifest": {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/source-c5dd7c/trillionnium/Cargo.toml",
+      "bytes": 2204,
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    "declared_trnm_pon_node_test_override": {
+      "opt_level": 3,
+      "debug_assertions": true,
+      "overflow_checks": true
+    },
+    "scope": "Original workspace cargo test command and tracked package test override retained. Per-fixture actual hosted ELF observations and build environment are in lane records. No compiler-artifact JSON is fabricated for this runtime artifact."
+  },
+  "lanes": [
+    {
+      "lane": "head",
+      "job_id": 126245171748,
+      "source": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+      "job_started_at": "2026-11-03T22:22:16Z",
+      "job_completed_at": "2026-11-03T23:39:30Z",
+      "native_step_started_at": "2026-11-03T22:30:32Z",
+      "native_step_completed_at": "2026-11-03T23:39:20Z",
+      "artifact_id": 13280768301,
+      "artifact_bytes": 7047986,
+      "artifact_sha256": "b7178f38763aa9d0e84988e8808d10ca377e3faeb28e83562fd278e92720759a",
+      "readback": {
+        "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/runtime-head-13280768301-readback.json",
+        "bytes": 155924,
+        "sha256": "3cb6f05a97dfa991d096f965965d62f77b7060cd61928f7c59c25ea7d3102c93"
+      },
+      "full_original_records": {
+        "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/runtime-head-13280768301-original-records.json.gz",
+        "bytes": 947729,
+        "sha256": "1046e355c96dc116963bfa37344a4f1a831257131964499889606f31ceaf13e3"
+      },
+      "original_workspace_command": "cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features",
+      "original_script_sha256": "d2862f4fc7477983a3b6877e4f310a8bfeb6d663d419b577da210d3ea62e55ea",
+      "workspace_log_bytes": 402016,
+      "workspace_log_sha256": "72ebc26d7ead75bcb9005ee469fa744fab9d80abb4340e042e5a4bbf711d2142",
+      "rust_shard_exit_code": 101,
+      "original_source_after_verified": true,
+      "all_nine_host_selectors_pass": true,
+      "host_selectors": [
+        {
+          "target": "architecture_delivery_compare",
+          "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 83.58s",
+          "native_binary": {
+            "ctime_ns": 1793745544562064209,
+            "device": 2049,
+            "inode": 9456758,
+            "mtime_ns": 1793745544523064692,
+            "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/architecture_delivery_compare-9fbba0de5d17ee58",
+            "sha256": "7999c43603a95dcdc77060a21797f9d8490ea98c860c8117015884088ed91bf9",
+            "size_bytes": 193954896
+          },
+          "cli_binary": null,
+          "source_identity": {
+            "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "test_sha256": "101c3e33f9378f959a9aace7c80f910f8f28654967b0ee2f54117f60d520d72d",
+            "tracked_source_identity": {
+              "base": null,
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "7999c43603a95dcdc77060a21797f9d8490ea98c860c8117015884088ed91bf9",
+            "business_reader_failure": null,
+            "business_reader_passed": true,
+            "cli_binary_sha256": null,
+            "manifest_sha256": "e466531398d131516dd42b63295703c9f64519a545a6d72d22b82656ad365d8e",
+            "performance_acceptance": false,
+            "report_sha256": "62cf02f8d193ae758d3905a36519b536fbb8f55c44bb19651495f78d7b85f143",
+            "samples": 18,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+            "source_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "target": "architecture_delivery_compare"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": 120,
+          "native_execution_authenticated_scope_flag": false
+        },
+        {
+          "target": "public_intake_v2",
+          "selector": "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 1.10s",
+          "native_binary": {
+            "ctime_ns": 1793745474670949896,
+            "device": 2049,
+            "inode": 9456683,
+            "mtime_ns": 1793745474629950422,
+            "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/public_intake_v2-eea393d8c060a86f",
+            "sha256": "2acf78d54e3a8ba131104071ab00f8a23564bc91517ad49776fe32ffff1ff115",
+            "size_bytes": 189901952
+          },
+          "cli_binary": null,
+          "source_identity": {
+            "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "test_sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+            "tracked_source_identity": {
+              "base": null,
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "2acf78d54e3a8ba131104071ab00f8a23564bc91517ad49776fe32ffff1ff115",
+            "cli_binary_sha256": null,
+            "manifest_sha256": "662b080f1a172c18a4914b346ccab79df1d9625b143e3a7e398360448d6c68a2",
+            "performance_acceptance": false,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+            "source_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "target": "public_intake_v2"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": null,
+          "native_execution_authenticated_scope_flag": false
+        },
+        {
+          "target": "public_intake_v2",
+          "selector": "one_packet_history_preserves_partial_progress_and_independent_validation",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 1.79s",
+          "native_binary": {
+            "ctime_ns": 1793745474670949896,
+            "device": 2049,
+            "inode": 9456683,
+            "mtime_ns": 1793745474629950422,
+            "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/public_intake_v2-eea393d8c060a86f",
+            "sha256": "2acf78d54e3a8ba131104071ab00f8a23564bc91517ad49776fe32ffff1ff115",
+            "size_bytes": 189901952
+          },
+          "cli_binary": null,
+          "source_identity": {
+            "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "test_sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+            "tracked_source_identity": {
+              "base": null,
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "2acf78d54e3a8ba131104071ab00f8a23564bc91517ad49776fe32ffff1ff115",
+            "cli_binary_sha256": null,
+            "manifest_sha256": "4a2fa925772c6f178d159be7ff34c29755bea1261fe8c173daec00617cad8f4b",
+            "performance_acceptance": false,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "one_packet_history_preserves_partial_progress_and_independent_validation",
+            "source_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "target": "public_intake_v2"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": null,
+          "native_execution_authenticated_scope_flag": false
+        },
+        {
+          "target": "public_cli",
+          "selector": "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 12.41s",
+          "native_binary": {
+            "ctime_ns": 1793745573866687783,
+            "device": 2049,
+            "inode": 9456796,
+            "mtime_ns": 1793745573823688327,
+            "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/public_cli-7be16e3963964655",
+            "sha256": "79347f939c43983f2371220872ac5f423e1a122d3dfc55776e243dff420628c6",
+            "size_bytes": 188275888
+          },
+          "cli_binary": {
+            "ctime_ns": 1793745456446067507,
+            "device": 2049,
+            "inode": 9456670,
+            "mtime_ns": 1793745456366068159,
+            "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/trnm-pon-node",
+            "sha256": "9c255704d40bec9445ad3e40d49600aa0016f2a3968c2e216a76e54155eef604",
+            "size_bytes": 200442440
+          },
+          "source_identity": {
+            "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "test_sha256": "376d26752b617c7dac4b0d35ee1fb95cc78cdc096fac790149376de69c25890b",
+            "tracked_source_identity": {
+              "base": null,
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "79347f939c43983f2371220872ac5f423e1a122d3dfc55776e243dff420628c6",
+            "cli_binary_sha256": "9c255704d40bec9445ad3e40d49600aa0016f2a3968c2e216a76e54155eef604",
+            "manifest_sha256": "c6908f5c68216b402a48a9ca9fd3eae39ab5e3d84d00869148d283e90d25ebd5",
+            "performance_acceptance": false,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+            "source_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "target": "public_cli"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": null,
+          "native_execution_authenticated_scope_flag": false
+        },
+        {
+          "target": "public_pool_cli",
+          "selector": "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 38.12s",
+          "native_binary": {
+            "ctime_ns": 1793745651036800750,
+            "device": 2049,
+            "inode": 9456830,
+            "mtime_ns": 1793745650997801223,
+            "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/public_pool_cli-d7e1393d3eb7691d",
+            "sha256": "26f818158b3614b848695e3a2df514ede604c9448056abe6061a4b9f279c324c",
+            "size_bytes": 189662488
+          },
+          "cli_binary": {
+            "ctime_ns": 1793745456446067507,
+            "device": 2049,
+            "inode": 9456670,
+            "mtime_ns": 1793745456366068159,
+            "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/trnm-pon-node",
+            "sha256": "9c255704d40bec9445ad3e40d49600aa0016f2a3968c2e216a76e54155eef604",
+            "size_bytes": 200442440
+          },
+          "source_identity": {
+            "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "test_sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db",
+            "tracked_source_identity": {
+              "base": null,
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "26f818158b3614b848695e3a2df514ede604c9448056abe6061a4b9f279c324c",
+            "cli_binary_sha256": "9c255704d40bec9445ad3e40d49600aa0016f2a3968c2e216a76e54155eef604",
+            "manifest_sha256": "869fca33ba3c4c75fc0961414498364ae51cc4b7c66d3cc1f41587361f8703ba",
+            "performance_acceptance": false,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+            "source_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "target": "public_pool_cli"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": null,
+          "native_execution_authenticated_scope_flag": false
+        },
+        {
+          "target": "public_pool_cli",
+          "selector": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 6.14s",
+          "native_binary": {
+            "ctime_ns": 1793745651036800750,
+            "device": 2049,
+            "inode": 9456830,
+            "mtime_ns": 1793745650997801223,
+            "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/public_pool_cli-d7e1393d3eb7691d",
+            "sha256": "26f818158b3614b848695e3a2df514ede604c9448056abe6061a4b9f279c324c",
+            "size_bytes": 189662488
+          },
+          "cli_binary": {
+            "ctime_ns": 1793745456446067507,
+            "device": 2049,
+            "inode": 9456670,
+            "mtime_ns": 1793745456366068159,
+            "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/trnm-pon-node",
+            "sha256": "9c255704d40bec9445ad3e40d49600aa0016f2a3968c2e216a76e54155eef604",
+            "size_bytes": 200442440
+          },
+          "source_identity": {
+            "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "test_sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db",
+            "tracked_source_identity": {
+              "base": null,
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "26f818158b3614b848695e3a2df514ede604c9448056abe6061a4b9f279c324c",
+            "cli_binary_sha256": "9c255704d40bec9445ad3e40d49600aa0016f2a3968c2e216a76e54155eef604",
+            "manifest_sha256": "b8554128bd37b5e96b7ee96af83116cf5653d8c7e5190c7573a5e5435e34a107",
+            "performance_acceptance": false,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+            "source_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "target": "public_pool_cli"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": null,
+          "native_execution_authenticated_scope_flag": false
+        },
+        {
+          "target": "mining_service_budget",
+          "selector": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 32.28s",
+          "native_binary": {
+            "ctime_ns": 1793745664416541631,
+            "device": 2049,
+            "inode": 9456843,
+            "mtime_ns": 1793745664361542267,
+            "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/mining_service_budget-590fedbdb41a9b2f",
+            "sha256": "8cd7cd7cf71cd33c30bd8241046376ba718f811b8b010c0a82df179e6c69cc64",
+            "size_bytes": 189116376
+          },
+          "cli_binary": {
+            "ctime_ns": 1793745456446067507,
+            "device": 2049,
+            "inode": 9456670,
+            "mtime_ns": 1793745456366068159,
+            "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/trnm-pon-node",
+            "sha256": "9c255704d40bec9445ad3e40d49600aa0016f2a3968c2e216a76e54155eef604",
+            "size_bytes": 200442440
+          },
+          "source_identity": {
+            "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "test_sha256": "de77046e05414963efb186e10c4ae9795ef69033f9a4bfd662537412bbafa8b2",
+            "tracked_source_identity": {
+              "base": null,
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "8cd7cd7cf71cd33c30bd8241046376ba718f811b8b010c0a82df179e6c69cc64",
+            "cli_binary_sha256": "9c255704d40bec9445ad3e40d49600aa0016f2a3968c2e216a76e54155eef604",
+            "manifest_sha256": "1a8e00bb4dadf409803311e3e3c3a178549aaef22227b6afc8da03c723325c6b",
+            "performance_acceptance": false,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+            "source_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "target": "mining_service_budget"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": null,
+          "native_execution_authenticated_scope_flag": false
+        },
+        {
+          "target": "evaluation_sync_observation",
+          "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 623.11s",
+          "native_binary": {
+            "ctime_ns": 1793745426514898993,
+            "device": 2049,
+            "inode": 9456645,
+            "mtime_ns": 1793745426475899410,
+            "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/evaluation_sync_observation-380cf5a6202e5679",
+            "sha256": "720f0c644ce1c9f76f49c5d17dd94ac6aebca816b5bdde7c00e69673a821a8f9",
+            "size_bytes": 192891824
+          },
+          "cli_binary": {
+            "ctime_ns": 1793745456446067507,
+            "device": 2049,
+            "inode": 9456670,
+            "mtime_ns": 1793745456366068159,
+            "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/trnm-pon-node",
+            "sha256": "9c255704d40bec9445ad3e40d49600aa0016f2a3968c2e216a76e54155eef604",
+            "size_bytes": 200442440
+          },
+          "source_identity": {
+            "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "test_sha256": "402f29fa7ef75e4ba3b406290890a960db335d084620125d95c9cc539e857b04",
+            "tracked_source_identity": {
+              "base": null,
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "720f0c644ce1c9f76f49c5d17dd94ac6aebca816b5bdde7c00e69673a821a8f9",
+            "cli_binary_sha256": "9c255704d40bec9445ad3e40d49600aa0016f2a3968c2e216a76e54155eef604",
+            "manifest_sha256": "635618fa8558784f4ce9c6359cc5cf3a8f37eb0c1706c6a310d22a3d5bfa563b",
+            "performance_acceptance": false,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+            "source_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "target": "evaluation_sync_observation"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": null,
+          "native_execution_authenticated_scope_flag": false
+        },
+        {
+          "target": "native_node",
+          "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 4.11s",
+          "native_binary": {
+            "ctime_ns": 1793745319786940911,
+            "device": 2049,
+            "inode": 9456493,
+            "mtime_ns": 1793745319741941490,
+            "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/native_node-69b7210cd40e17ed",
+            "sha256": "ea4c8353838f183a676370d5986fc792e6a89f515b9dd2392e6cf884348f43a0",
+            "size_bytes": 193354584
+          },
+          "cli_binary": {
+            "ctime_ns": 1793745456446067507,
+            "device": 2049,
+            "inode": 9456670,
+            "mtime_ns": 1793745456366068159,
+            "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/trnm-pon-node",
+            "sha256": "9c255704d40bec9445ad3e40d49600aa0016f2a3968c2e216a76e54155eef604",
+            "size_bytes": 200442440
+          },
+          "source_identity": {
+            "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "test_sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+            "tracked_source_identity": {
+              "base": null,
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "ea4c8353838f183a676370d5986fc792e6a89f515b9dd2392e6cf884348f43a0",
+            "cli_binary_sha256": "9c255704d40bec9445ad3e40d49600aa0016f2a3968c2e216a76e54155eef604",
+            "manifest_sha256": "59601bb283dc89d42c9d96ed80e2c75bba5ddcfca8fe70e2b8450d907c87d3f3",
+            "performance_acceptance": false,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+            "source_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+            "target": "native_node"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": null,
+          "native_execution_authenticated_scope_flag": false
+        }
+      ],
+      "public_submit_recovery": {
+        "registered_tests": 24,
+        "registered_names": [
+          "actual_absolute_epoch_call_cap_and_current_clock_fail_closed",
+          "actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack",
+          "actual_budget_absence_with_two_call_cap_stops_without_another_submit",
+          "actual_caps_context_and_mutated_same_id_refuse_without_relabeling_duplicates",
+          "actual_cli_bad_combinations_and_limits_precede_store_creation",
+          "actual_cli_default_reply_is_unchanged_and_opt_in_reports_duplicate_membership",
+          "actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership",
+          "actual_eof_before_admission_keeps_same_packet_and_all_failed_attempts",
+          "actual_eof_recovery_keeps_short_pause_instead_of_budget_wait_schedule",
+          "actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies",
+          "actual_lost_native_ack_is_resolved_by_full_membership_without_fabricated_ack",
+          "actual_membership_readiness_does_not_replace_installed_confirmation",
+          "actual_missing_parent_is_restored_before_child_and_reopens_byte_exact",
+          "actual_native_admission_without_response_at_deadline_is_uncertain_and_not_retried",
+          "actual_nonpreemptive_local_full_root_late_return_is_not_reported_on_time",
+          "actual_repeated_exact_eof_stops_after_three_identical_submits",
+          "actual_signed_cpu_budget_absent_membership_retries_same_bytes_within_original_limits",
+          "actual_signed_cpu_budget_different_branch_and_changed_generation_do_not_advance",
+          "actual_signed_cpu_budget_inactive_equal_work_and_forged_history_do_not_advance",
+          "actual_signed_cpu_budget_read_and_retry_obey_original_call_cap_and_epoch",
+          "actual_signed_cpu_budget_refusal_resolves_known_membership_without_an_ack",
+          "actual_signed_cpu_budget_without_membership_retains_all_three_refusals",
+          "actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity",
+          "actual_two_signed_budget_absences_spread_attempts_and_keep_real_final_ack"
+        ],
+        "pass_names": [
+          "actual_absolute_epoch_call_cap_and_current_clock_fail_closed",
+          "actual_cli_bad_combinations_and_limits_precede_store_creation",
+          "actual_cli_default_reply_is_unchanged_and_opt_in_reports_duplicate_membership",
+          "actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership",
+          "actual_eof_before_admission_keeps_same_packet_and_all_failed_attempts",
+          "actual_eof_recovery_keeps_short_pause_instead_of_budget_wait_schedule"
+        ],
+        "failed_names": [
+          "actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack",
+          "actual_budget_absence_with_two_call_cap_stops_without_another_submit",
+          "actual_caps_context_and_mutated_same_id_refuse_without_relabeling_duplicates"
+        ],
+        "started_then_process_aborted": [
+          "actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies"
+        ],
+        "unobserved_after_abort_names": [
+          "actual_lost_native_ack_is_resolved_by_full_membership_without_fabricated_ack",
+          "actual_membership_readiness_does_not_replace_installed_confirmation",
+          "actual_missing_parent_is_restored_before_child_and_reopens_byte_exact",
+          "actual_native_admission_without_response_at_deadline_is_uncertain_and_not_retried",
+          "actual_nonpreemptive_local_full_root_late_return_is_not_reported_on_time",
+          "actual_repeated_exact_eof_stops_after_three_identical_submits",
+          "actual_signed_cpu_budget_absent_membership_retries_same_bytes_within_original_limits",
+          "actual_signed_cpu_budget_different_branch_and_changed_generation_do_not_advance",
+          "actual_signed_cpu_budget_inactive_equal_work_and_forged_history_do_not_advance",
+          "actual_signed_cpu_budget_read_and_retry_obey_original_call_cap_and_epoch",
+          "actual_signed_cpu_budget_refusal_resolves_known_membership_without_an_ack",
+          "actual_signed_cpu_budget_without_membership_retains_all_three_refusals",
+          "actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity",
+          "actual_two_signed_budget_absences_spread_attempts_and_keep_real_final_ack"
+        ],
+        "final_libtest_summary": null,
+        "target_log": {
+          "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/runtime-head-public-submit-recovery.log",
+          "bytes": 15223,
+          "sha256": "25faf7c985d21edf112d0970d9a7560033e961ffe287c61dd05fd5bc6826826d"
+        },
+        "first_reported_failure_name": "actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack",
+        "first_three_panic_details_available": false,
+        "actual_error_target": "actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies",
+        "actual_error_source": "public_submit_recovery.rs:225:61",
+        "actual_error": "Error { code: Some(OwnerReorgTerminationCpuRequired), kind: DependencyUnavailable, message: \"OWNER_REORG_TERMINATION_CPU_REQUIRED\", source: None, request_history_budget: false }",
+        "followup_assertion_source": "public_submit_recovery.rs:1229:5",
+        "actual_assertion_left": "IO: Connection refused (os error 111)",
+        "actual_assertion_right": "SUBMIT_RECOVERY_STALE_BRANCH",
+        "cleanup_panic_source": "public_submit_recovery.rs:381:42",
+        "process_signal": "6/SIGABRT",
+        "binary_sha256": null,
+        "binary_hash_scope": "This target's ELF hash is not present in retained artifact records; do not substitute a Host-selector ELF hash."
+      }
+    },
+    {
+      "lane": "actual-merge",
+      "job_id": 126245171763,
+      "source": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+      "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+      "job_started_at": "2026-11-03T22:22:15Z",
+      "job_completed_at": "2026-11-03T23:38:14Z",
+      "native_step_started_at": "2026-11-03T22:33:04Z",
+      "native_step_completed_at": "2026-11-03T23:38:05Z",
+      "artifact_id": 13280868776,
+      "artifact_bytes": 7050027,
+      "artifact_sha256": "e462e0d08bc69123cc7bf8678cbbf9ece812bd0a18c57c03f5f83b3fd989c0d1",
+      "readback": {
+        "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/runtime-actual-merge-13280868776-readback.json",
+        "bytes": 159064,
+        "sha256": "a53b79fadc6b17ca017716f5eecd31463bcc88117f49c786e4835139e0dfc61d"
+      },
+      "full_original_records": {
+        "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/runtime-actual-merge-13280868776-original-records.json.gz",
+        "bytes": 948051,
+        "sha256": "e821a0ee43a4710896b05091832893b4d8876e9387f83ffe6e56618c344b8b24"
+      },
+      "original_workspace_command": "cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features",
+      "original_script_sha256": "d2862f4fc7477983a3b6877e4f310a8bfeb6d663d419b577da210d3ea62e55ea",
+      "workspace_log_bytes": 402889,
+      "workspace_log_sha256": "2c71a081c8aedf4b312038315ff14039931185b32efa12be162767064e14254e",
+      "rust_shard_exit_code": 101,
+      "original_source_after_verified": true,
+      "all_nine_host_selectors_pass": true,
+      "host_selectors": [
+        {
+          "target": "architecture_delivery_compare",
+          "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 79.19s",
+          "native_binary": {
+            "ctime_ns": 1793745739908354008,
+            "device": 2049,
+            "inode": 9456666,
+            "mtime_ns": 1793745739871354199,
+            "path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/deps/architecture_delivery_compare-9fbba0de5d17ee58",
+            "sha256": "a5ec77d61807138b436e94a51117825b0f1f661cae37fe239d92370e2efd1c88",
+            "size_bytes": 193958224
+          },
+          "cli_binary": null,
+          "source_identity": {
+            "commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "test_sha256": "101c3e33f9378f959a9aace7c80f910f8f28654967b0ee2f54117f60d520d72d",
+            "tracked_source_identity": {
+              "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "prospective-merge",
+              "prospective_merge": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "a5ec77d61807138b436e94a51117825b0f1f661cae37fe239d92370e2efd1c88",
+            "business_reader_failure": null,
+            "business_reader_passed": true,
+            "cli_binary_sha256": null,
+            "manifest_sha256": "f3e1865fb46f1d32fd894a712c69f8ee5c0ff93e5a6cf6481744167fa3cc61b9",
+            "performance_acceptance": false,
+            "report_sha256": "709096169b3f0745548fbab09f0f59d0501c656dc6fbe31264806450bc316816",
+            "samples": 18,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+            "source_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "target": "architecture_delivery_compare"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": 120,
+          "native_execution_authenticated_scope_flag": false
+        },
+        {
+          "target": "public_intake_v2",
+          "selector": "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 1.09s",
+          "native_binary": {
+            "ctime_ns": 1793745528291450192,
+            "device": 2049,
+            "inode": 9456490,
+            "mtime_ns": 1793745528251450389,
+            "path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/deps/public_intake_v2-eea393d8c060a86f",
+            "sha256": "84f2b6f3ad85e4fe8a0ce6536a8bc7ba7232fa7b4d63e23cbfc81555976aa8ba",
+            "size_bytes": 189905632
+          },
+          "cli_binary": null,
+          "source_identity": {
+            "commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "test_sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+            "tracked_source_identity": {
+              "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "prospective-merge",
+              "prospective_merge": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "84f2b6f3ad85e4fe8a0ce6536a8bc7ba7232fa7b4d63e23cbfc81555976aa8ba",
+            "cli_binary_sha256": null,
+            "manifest_sha256": "a93bfebfbc69956dd11c7a509af4f9a0a48b933d2d828fbbcffc38fb963ff43b",
+            "performance_acceptance": false,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+            "source_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "target": "public_intake_v2"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": null,
+          "native_execution_authenticated_scope_flag": false
+        },
+        {
+          "target": "public_intake_v2",
+          "selector": "one_packet_history_preserves_partial_progress_and_independent_validation",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 1.61s",
+          "native_binary": {
+            "ctime_ns": 1793745528291450192,
+            "device": 2049,
+            "inode": 9456490,
+            "mtime_ns": 1793745528251450389,
+            "path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/deps/public_intake_v2-eea393d8c060a86f",
+            "sha256": "84f2b6f3ad85e4fe8a0ce6536a8bc7ba7232fa7b4d63e23cbfc81555976aa8ba",
+            "size_bytes": 189905632
+          },
+          "cli_binary": null,
+          "source_identity": {
+            "commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "test_sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+            "tracked_source_identity": {
+              "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "prospective-merge",
+              "prospective_merge": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "84f2b6f3ad85e4fe8a0ce6536a8bc7ba7232fa7b4d63e23cbfc81555976aa8ba",
+            "cli_binary_sha256": null,
+            "manifest_sha256": "bed5908370f69d9c7917fd9ff03912ba04db655bced4c480b3adced434ca372a",
+            "performance_acceptance": false,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "one_packet_history_preserves_partial_progress_and_independent_validation",
+            "source_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "target": "public_intake_v2"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": null,
+          "native_execution_authenticated_scope_flag": false
+        },
+        {
+          "target": "public_cli",
+          "selector": "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 12.40s",
+          "native_binary": {
+            "ctime_ns": 1793745647297832287,
+            "device": 2049,
+            "inode": 9456589,
+            "mtime_ns": 1793745647260832478,
+            "path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/deps/public_cli-7be16e3963964655",
+            "sha256": "f9766e46325d0fa52feb0725e806d528ed31a47212f16586ba81242cc8b24741",
+            "size_bytes": 188279672
+          },
+          "cli_binary": {
+            "ctime_ns": 1793745641994859908,
+            "device": 2049,
+            "inode": 9456583,
+            "mtime_ns": 1793745641891860499,
+            "path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/trnm-pon-node",
+            "sha256": "f58f518c6255c67dd6e14954fb88d7215d1b490b17ad0569909f7912db410169",
+            "size_bytes": 200445936
+          },
+          "source_identity": {
+            "commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "test_sha256": "376d26752b617c7dac4b0d35ee1fb95cc78cdc096fac790149376de69c25890b",
+            "tracked_source_identity": {
+              "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "prospective-merge",
+              "prospective_merge": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "f9766e46325d0fa52feb0725e806d528ed31a47212f16586ba81242cc8b24741",
+            "cli_binary_sha256": "f58f518c6255c67dd6e14954fb88d7215d1b490b17ad0569909f7912db410169",
+            "manifest_sha256": "df46830918691146784af9d5cce09a284fbf61c3bf495ec8bdc14429e025bf88",
+            "performance_acceptance": false,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+            "source_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "target": "public_cli"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": null,
+          "native_execution_authenticated_scope_flag": false
+        },
+        {
+          "target": "public_pool_cli",
+          "selector": "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 38.12s",
+          "native_binary": {
+            "ctime_ns": 1793745594606102996,
+            "device": 2049,
+            "inode": 9456563,
+            "mtime_ns": 1793745594559103242,
+            "path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/deps/public_pool_cli-d7e1393d3eb7691d",
+            "sha256": "7b11f029819207e182025305c87277cc0a0c07d4b96206ad67b1e95679d7840f",
+            "size_bytes": 189666200
+          },
+          "cli_binary": {
+            "ctime_ns": 1793745641994859908,
+            "device": 2049,
+            "inode": 9456583,
+            "mtime_ns": 1793745641891860499,
+            "path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/trnm-pon-node",
+            "sha256": "f58f518c6255c67dd6e14954fb88d7215d1b490b17ad0569909f7912db410169",
+            "size_bytes": 200445936
+          },
+          "source_identity": {
+            "commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "test_sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db",
+            "tracked_source_identity": {
+              "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "prospective-merge",
+              "prospective_merge": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "7b11f029819207e182025305c87277cc0a0c07d4b96206ad67b1e95679d7840f",
+            "cli_binary_sha256": "f58f518c6255c67dd6e14954fb88d7215d1b490b17ad0569909f7912db410169",
+            "manifest_sha256": "332c235729dbbbe5505eb8272cfeb79536a8f09e45de4d3f5544be6abf6fedf6",
+            "performance_acceptance": false,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+            "source_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "target": "public_pool_cli"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": null,
+          "native_execution_authenticated_scope_flag": false
+        },
+        {
+          "target": "public_pool_cli",
+          "selector": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 6.14s",
+          "native_binary": {
+            "ctime_ns": 1793745594606102996,
+            "device": 2049,
+            "inode": 9456563,
+            "mtime_ns": 1793745594559103242,
+            "path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/deps/public_pool_cli-d7e1393d3eb7691d",
+            "sha256": "7b11f029819207e182025305c87277cc0a0c07d4b96206ad67b1e95679d7840f",
+            "size_bytes": 189666200
+          },
+          "cli_binary": {
+            "ctime_ns": 1793745641994859908,
+            "device": 2049,
+            "inode": 9456583,
+            "mtime_ns": 1793745641891860499,
+            "path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/trnm-pon-node",
+            "sha256": "f58f518c6255c67dd6e14954fb88d7215d1b490b17ad0569909f7912db410169",
+            "size_bytes": 200445936
+          },
+          "source_identity": {
+            "commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "test_sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db",
+            "tracked_source_identity": {
+              "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "prospective-merge",
+              "prospective_merge": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "7b11f029819207e182025305c87277cc0a0c07d4b96206ad67b1e95679d7840f",
+            "cli_binary_sha256": "f58f518c6255c67dd6e14954fb88d7215d1b490b17ad0569909f7912db410169",
+            "manifest_sha256": "3e6cb68315c48bcd45c4340a8d21f8cdd217e7ef8213eb7dc53556e583d052e3",
+            "performance_acceptance": false,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+            "source_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "target": "public_pool_cli"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": null,
+          "native_execution_authenticated_scope_flag": false
+        },
+        {
+          "target": "mining_service_budget",
+          "selector": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 32.19s",
+          "native_binary": {
+            "ctime_ns": 1793745836455860254,
+            "device": 2049,
+            "inode": 9456800,
+            "mtime_ns": 1793745836412860479,
+            "path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/deps/mining_service_budget-590fedbdb41a9b2f",
+            "sha256": "34c3a3f15ac33cabe3653116edb49d7247a2503c09c1eb3d7a966f8db0b88bf6",
+            "size_bytes": 189120184
+          },
+          "cli_binary": {
+            "ctime_ns": 1793745641994859908,
+            "device": 2049,
+            "inode": 9456583,
+            "mtime_ns": 1793745641891860499,
+            "path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/trnm-pon-node",
+            "sha256": "f58f518c6255c67dd6e14954fb88d7215d1b490b17ad0569909f7912db410169",
+            "size_bytes": 200445936
+          },
+          "source_identity": {
+            "commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "test_sha256": "de77046e05414963efb186e10c4ae9795ef69033f9a4bfd662537412bbafa8b2",
+            "tracked_source_identity": {
+              "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "prospective-merge",
+              "prospective_merge": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "34c3a3f15ac33cabe3653116edb49d7247a2503c09c1eb3d7a966f8db0b88bf6",
+            "cli_binary_sha256": "f58f518c6255c67dd6e14954fb88d7215d1b490b17ad0569909f7912db410169",
+            "manifest_sha256": "c28ba01ddf087841ee6faa5b58401a4a8f3c803f2351bf48731a7e86bce6e5ab",
+            "performance_acceptance": false,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+            "source_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "target": "mining_service_budget"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": null,
+          "native_execution_authenticated_scope_flag": false
+        },
+        {
+          "target": "evaluation_sync_observation",
+          "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 584.11s",
+          "native_binary": {
+            "ctime_ns": 1793745702718546555,
+            "device": 2049,
+            "inode": 9456641,
+            "mtime_ns": 1793745702676546775,
+            "path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/deps/evaluation_sync_observation-380cf5a6202e5679",
+            "sha256": "d89dd79bc41a5509f24ef2dbc7c1c8fc82f32d05a95e7ee2d6460bcb22dcc566",
+            "size_bytes": 192895280
+          },
+          "cli_binary": {
+            "ctime_ns": 1793745641994859908,
+            "device": 2049,
+            "inode": 9456583,
+            "mtime_ns": 1793745641891860499,
+            "path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/trnm-pon-node",
+            "sha256": "f58f518c6255c67dd6e14954fb88d7215d1b490b17ad0569909f7912db410169",
+            "size_bytes": 200445936
+          },
+          "source_identity": {
+            "commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "test_sha256": "402f29fa7ef75e4ba3b406290890a960db335d084620125d95c9cc539e857b04",
+            "tracked_source_identity": {
+              "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "prospective-merge",
+              "prospective_merge": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "d89dd79bc41a5509f24ef2dbc7c1c8fc82f32d05a95e7ee2d6460bcb22dcc566",
+            "cli_binary_sha256": "f58f518c6255c67dd6e14954fb88d7215d1b490b17ad0569909f7912db410169",
+            "manifest_sha256": "71de917f9777b097707eae7e5c9bf2da8b71b6b96458b9fa89c3b6c9ae3f4f0f",
+            "performance_acceptance": false,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+            "source_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "target": "evaluation_sync_observation"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": null,
+          "native_execution_authenticated_scope_flag": false
+        },
+        {
+          "target": "native_node",
+          "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+          "named_pass": true,
+          "native_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 4.11s",
+          "native_binary": {
+            "ctime_ns": 1793745538587398552,
+            "device": 2049,
+            "inode": 9456501,
+            "mtime_ns": 1793745538550398740,
+            "path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/deps/native_node-69b7210cd40e17ed",
+            "sha256": "95cee309c3243fa19ddb01ad305ea7e34b3569c4efab1fddb43d32a71e14bbce",
+            "size_bytes": 193358536
+          },
+          "cli_binary": {
+            "ctime_ns": 1793745641994859908,
+            "device": 2049,
+            "inode": 9456583,
+            "mtime_ns": 1793745641891860499,
+            "path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/trnm-pon-node",
+            "sha256": "f58f518c6255c67dd6e14954fb88d7215d1b490b17ad0569909f7912db410169",
+            "size_bytes": 200445936
+          },
+          "source_identity": {
+            "commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "test_sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+            "tracked_source_identity": {
+              "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+              "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+              "kind": "prospective-merge",
+              "prospective_merge": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+              "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 882506480,
+              "tracked_entries": 7723,
+              "tracked_worktree_verified": true
+            },
+            "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+          },
+          "controller_binding": {
+            "binary_sha256": "95cee309c3243fa19ddb01ad305ea7e34b3569c4efab1fddb43d32a71e14bbce",
+            "cli_binary_sha256": "f58f518c6255c67dd6e14954fb88d7215d1b490b17ad0569909f7912db410169",
+            "manifest_sha256": "991d85432a43fe4b685e74939dc80f6950f89e1d44108487b7f4e564e2441a30",
+            "performance_acceptance": false,
+            "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+            "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+            "source_commit": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+            "target": "native_node"
+          },
+          "original_limits_verified": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "empty_after_verified": {
+            "pids.current": "0",
+            "cgroup.events": "populated 0\nfrozen 0"
+          },
+          "cleanup": "already-collected",
+          "native_timeout_seconds": null,
+          "native_execution_authenticated_scope_flag": false
+        }
+      ],
+      "public_submit_recovery": {
+        "registered_tests": 24,
+        "registered_names": [
+          "actual_absolute_epoch_call_cap_and_current_clock_fail_closed",
+          "actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack",
+          "actual_budget_absence_with_two_call_cap_stops_without_another_submit",
+          "actual_caps_context_and_mutated_same_id_refuse_without_relabeling_duplicates",
+          "actual_cli_bad_combinations_and_limits_precede_store_creation",
+          "actual_cli_default_reply_is_unchanged_and_opt_in_reports_duplicate_membership",
+          "actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership",
+          "actual_eof_before_admission_keeps_same_packet_and_all_failed_attempts",
+          "actual_eof_recovery_keeps_short_pause_instead_of_budget_wait_schedule",
+          "actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies",
+          "actual_lost_native_ack_is_resolved_by_full_membership_without_fabricated_ack",
+          "actual_membership_readiness_does_not_replace_installed_confirmation",
+          "actual_missing_parent_is_restored_before_child_and_reopens_byte_exact",
+          "actual_native_admission_without_response_at_deadline_is_uncertain_and_not_retried",
+          "actual_nonpreemptive_local_full_root_late_return_is_not_reported_on_time",
+          "actual_repeated_exact_eof_stops_after_three_identical_submits",
+          "actual_signed_cpu_budget_absent_membership_retries_same_bytes_within_original_limits",
+          "actual_signed_cpu_budget_different_branch_and_changed_generation_do_not_advance",
+          "actual_signed_cpu_budget_inactive_equal_work_and_forged_history_do_not_advance",
+          "actual_signed_cpu_budget_read_and_retry_obey_original_call_cap_and_epoch",
+          "actual_signed_cpu_budget_refusal_resolves_known_membership_without_an_ack",
+          "actual_signed_cpu_budget_without_membership_retains_all_three_refusals",
+          "actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity",
+          "actual_two_signed_budget_absences_spread_attempts_and_keep_real_final_ack"
+        ],
+        "pass_names": [
+          "actual_absolute_epoch_call_cap_and_current_clock_fail_closed",
+          "actual_cli_bad_combinations_and_limits_precede_store_creation",
+          "actual_cli_default_reply_is_unchanged_and_opt_in_reports_duplicate_membership",
+          "actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership",
+          "actual_eof_before_admission_keeps_same_packet_and_all_failed_attempts",
+          "actual_eof_recovery_keeps_short_pause_instead_of_budget_wait_schedule"
+        ],
+        "failed_names": [
+          "actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack",
+          "actual_budget_absence_with_two_call_cap_stops_without_another_submit",
+          "actual_caps_context_and_mutated_same_id_refuse_without_relabeling_duplicates"
+        ],
+        "started_then_process_aborted": [
+          "actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies"
+        ],
+        "unobserved_after_abort_names": [
+          "actual_lost_native_ack_is_resolved_by_full_membership_without_fabricated_ack",
+          "actual_membership_readiness_does_not_replace_installed_confirmation",
+          "actual_missing_parent_is_restored_before_child_and_reopens_byte_exact",
+          "actual_native_admission_without_response_at_deadline_is_uncertain_and_not_retried",
+          "actual_nonpreemptive_local_full_root_late_return_is_not_reported_on_time",
+          "actual_repeated_exact_eof_stops_after_three_identical_submits",
+          "actual_signed_cpu_budget_absent_membership_retries_same_bytes_within_original_limits",
+          "actual_signed_cpu_budget_different_branch_and_changed_generation_do_not_advance",
+          "actual_signed_cpu_budget_inactive_equal_work_and_forged_history_do_not_advance",
+          "actual_signed_cpu_budget_read_and_retry_obey_original_call_cap_and_epoch",
+          "actual_signed_cpu_budget_refusal_resolves_known_membership_without_an_ack",
+          "actual_signed_cpu_budget_without_membership_retains_all_three_refusals",
+          "actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity",
+          "actual_two_signed_budget_absences_spread_attempts_and_keep_real_final_ack"
+        ],
+        "final_libtest_summary": null,
+        "target_log": {
+          "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/runtime-actual-merge-public-submit-recovery.log",
+          "bytes": 15229,
+          "sha256": "ad27f88438f9c36a598732a12ca864f1a4fc9c7aeee73cf16ddd70ecc086955c"
+        },
+        "first_reported_failure_name": "actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack",
+        "first_three_panic_details_available": false,
+        "actual_error_target": "actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies",
+        "actual_error_source": "public_submit_recovery.rs:225:61",
+        "actual_error": "Error { code: Some(OwnerReorgTerminationCpuRequired), kind: DependencyUnavailable, message: \"OWNER_REORG_TERMINATION_CPU_REQUIRED\", source: None, request_history_budget: false }",
+        "followup_assertion_source": "public_submit_recovery.rs:1229:5",
+        "actual_assertion_left": "IO: Connection refused (os error 111)",
+        "actual_assertion_right": "SUBMIT_RECOVERY_STALE_BRANCH",
+        "cleanup_panic_source": "public_submit_recovery.rs:381:42",
+        "process_signal": "6/SIGABRT",
+        "binary_sha256": null,
+        "binary_hash_scope": "This target's ELF hash is not present in retained artifact records; do not substitute a Host-selector ELF hash."
+      }
+    }
+  ],
+  "original_job_logs": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/runtime-two-lane-original-job-logs.json.gz",
+    "bytes": 268797,
+    "sha256": "a288040436ea0065f37f33347abeeed622358064f611ce6372fbd44df61f3390"
+  },
+  "reader_refusal": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/runtime-aggregate-reader-flag-refusal.json",
+    "bytes": 5858,
+    "sha256": "b099151dac8a43dc79f4b997253ce4a29b0aaaeeb9cd3b86ca3db6cf49737b77"
+  },
+  "reader_refusal_resolution": {
+    "producer_source": {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/source-c5dd7c/scripts/ci/run_public_fixture_native.py",
+      "bytes": 29037,
+      "sha256": "23e7a41ab61e0266483b51e51e58cac80be6d06fd2977835bd76c50c76f35df8"
+    },
+    "original_contract": "execution initializes native_execution_authenticated=False at line362; bind_execution explicitly requires it to remain False at lines428-434. The initial local aggregate assertion expected True incorrectly. Corrected to the exact original contract; original artifacts, lane readbacks and native results were not changed.",
+    "literal_flag_preserved": false,
+    "additional_native_execution": false
+  },
+  "claims": {
+    "all_nine_host_selectors_pass_in_both_c1_lanes": true,
+    "evaluation_cpu_fixture_fix_observed_in_both_c1_lanes": true,
+    "whole_workspace_pass": false,
+    "public_submit_recovery_pass": false,
+    "original_service_performance_acceptance_pass": false,
+    "c2_or_future_source_runtime_qualified": false,
+    "first_three_failed_tests_share_proven_cause": false,
+    "release_or_activation_authorized": false
+  },
+  "counts_scope": "Nine unique original Host selector names executed independently in two exact source lanes. Later public_submit_recovery starts 24 registered tests but aborts after six named passes, three named failures and one entered selector; fourteen remain unobserved in each lane. No target-final summary exists. Architecture has 18 complete business-reader samples per lane while performance_acceptance remains false.",
+  "reader": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/build-runtime-final-readback.py",
+    "bytes": 14975,
+    "sha256": "568a068b678768d011dc180722ae6be6720c6bee4a80561e1eafd3c2231f5430"
+  }
+}

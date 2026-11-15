@@ -1,0 +1,14 @@
+$ cargo test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks
+    Finished `release` profile [optimized] target(s) in 0.15s
+     Running tests/qualified_tasks.rs (trillionnium/target/release/deps/qualified_tasks-5f0688967a0021be)
+
+running 4 tests
+test source_nonce_demand_withdrawal_and_historical_profile_are_checked_atomically ... ok
+test registered_task_mines_real_work_and_counts_one_output_across_fresh_challenges ... ok
+test expiry_precedes_expensive_proof_and_a_heavier_branch_removes_registration_and_meter ... ok
+test validator_rejects_signed_false_recipe_even_with_manually_constructed_valid_work_and_state ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+
+exit_code=0

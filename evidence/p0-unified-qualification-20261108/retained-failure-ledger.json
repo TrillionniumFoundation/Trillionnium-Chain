@@ -1,0 +1,132 @@
+{
+  "schema": "trnm-unified-retained-failure-ledger-v1",
+  "qualification": "HOLD_NO_GO",
+  "scope": "Pre-freeze historical and integration failures. Fresh final-candidate attempts are additional external receipts, never replacements for these entries.",
+  "entries": [
+    {
+      "id": "historical-authority-release-owner",
+      "scope": "historical-native-component",
+      "source": "Original PR 796 authority evidence; not the final unified commit",
+      "passed": 38,
+      "failed": 2,
+      "ignored": 1,
+      "filtered": 1244,
+      "failures": [
+        "clock_reply_then_real_elapsed_expiry_refuses_without_cas: TimedOut at fixture construction",
+        "durable_preparation_then_real_elapsed_expiry_refuses_without_cas: expected PermissionDenied, observed TimedOut"
+      ],
+      "deadline_relaxed": false
+    },
+    {
+      "id": "historical-joint-consensus-native-node",
+      "scope": "historical-native-component",
+      "chain_sha": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0",
+      "native_exit": 101,
+      "native_node": {
+        "passed": 28,
+        "failed": 2,
+        "ignored": 1
+      },
+      "separate_daa_adversarial_schedule": {
+        "passed": 2
+      },
+      "failures": [
+        "authenticated_cli_push_and_sync_share_one_durable_outbox_owner: PUBLIC_HOST_KERNEL_PARENT",
+        "full_transaction_pages_use_byte_limits_and_recover_all_native_state: PUBLIC_MUTATION_CPU_BUDGET"
+      ]
+    },
+    {
+      "id": "historical-w1-owner-campaign",
+      "scope": "historical-native-component",
+      "source": "Original PR 782 retained campaign; no result substitution into the final unified commit",
+      "commands": 77,
+      "passed": 696,
+      "failed": 1,
+      "ignored": 4,
+      "failure": "Original staged 0.2-second deadline reached before Spawn",
+      "deadline_relaxed": false
+    },
+    {
+      "id": "historical-hepta-pq-fleet",
+      "scope": "excluded-source-history",
+      "hepta_sha": "7758798f628ebe86e0cbf3c177559edab96cf5ab",
+      "daemon_timeout_attempts": 2,
+      "daemon_original_timeout_seconds": 60,
+      "daemon_native_exit": 100,
+      "integration_attempts": 2,
+      "per_integration_attempt": {
+        "passed": 15,
+        "failed": 1,
+        "ignored": 4,
+        "native_exit": 100
+      },
+      "other_retained_failure": "Readiness frontier/checkpoint mismatch is not reclassified as a timeout."
+    },
+    {
+      "id": "reserved-claim-alias-bypass",
+      "scope": "engineering-negative-controls",
+      "initial_status": "FAIL",
+      "initial_tests": 43,
+      "initial_failed_methods": 5,
+      "initial_failed_subtests": 131,
+      "correction": "Strict recursive boolean and quantitative alias refusal; original red output retained."
+    },
+    {
+      "id": "daa-head-context-bypass",
+      "scope": "engineering-negative-controls",
+      "initial_status": "FAIL",
+      "original_report_sha256": "c08f5c11419656408ee179ea49f41701c2edcb25178dc9b963b995a460cb62db",
+      "failure": "Reader accepted context-substituted snapshots despite complete genuine packet evidence.",
+      "correction": "Bind exact head fields and actual trace context; retain the original raw counterexample."
+    },
+    {
+      "id": "integration-control-and-source-failures",
+      "scope": "integration-controls",
+      "retained": [
+        "PR 782 CI suite: 130 methods, 129 pass and one missing-fixture error before the required W1 workflow fixture was added.",
+        "PR 794 CI template and shell contract mismatch before exact new command/template union was installed.",
+        "PR 789 duplicate identical Cargo dependency caused preflight exit 2; only the duplicate declaration was removed.",
+        "PR 790 CI template omitted two lifetime-control commands before their exact inclusion.",
+        "PR 791 first v2 CI check: 145 methods, 142 pass and three errors against the still-unresolved store source pin.",
+        "PR 791 initial proposed enum rename was rejected before writing because an existing PQ owner test constructs the old field directly.",
+        "Partial-clone merge/fetch failures and the isolated merge-tree timeout remain observations, not successful merges.",
+        "PR 795 complete staged whitespace check exits 2 on inherited immutable native logs; the original log bytes remain retained.",
+        "PR 795 resolved merge index has identical runtime scopes before source-manifest refresh; its changed canonical plan requires a separately disclosed corpus pin update."
+      ]
+    },
+    {
+      "id": "hepta-native-attempt01",
+      "scope": "native-component-with-failed-collector",
+      "hepta_sha": "f1785ca15e41e4e49509a5b211a659e3cbdbf60e",
+      "chain_sha": null,
+      "native_selected_unique_passed": 12,
+      "native_selected_failed": 0,
+      "registry_cases": 796,
+      "registry_unselected": 784,
+      "registry_ignored": 60,
+      "collector_status": "FAIL",
+      "independent_collector_exit": 1,
+      "os_loaded_identity": "NOT_OBSERVED",
+      "failures": [
+        "The first two original JUnit files were lost by overwrite before collection.",
+        "The operations-only command produced a third actual executable distinct from the combined registry executable.",
+        "The OS process observer captured zero executable identities."
+      ],
+      "archive_sha256": "3928025df5bf71c23a11db5cf2e37c056eb9171c90e4ea62680a2254a056db8f"
+    },
+    {
+      "id": "extra-native-parser-review01",
+      "scope": "independent-engineering-negative-controls",
+      "runner_sha256": "ed81accfe464050817571c94950ceb4874410406316c659a258a897f1365f01c",
+      "initial_status": "FAIL",
+      "counterexamples": [
+        "Multiple unittest terminal outcomes could mask a FAILED outcome with an OK line.",
+        "A failed libtest row after the final complete harness could remain outside the counted harnesses."
+      ],
+      "corrected_runner_sha256": "d9ac98937cb23992e554bbd6b0bf5748de4e7e575cddb5fa26541445a7e0d731",
+      "corrected_local_controls_passed": 34,
+      "unchanged_independent_probes_rejected": 7,
+      "native_execution_claimed": false
+    }
+  ]
+}

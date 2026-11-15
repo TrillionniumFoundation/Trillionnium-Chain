@@ -1,0 +1,36 @@
+{
+  "backend_controls": {
+    "final_passed": 13,
+    "original_pre_review_passed": 12,
+    "provider_alias_refusal_cases": 48
+  },
+  "child_budget_controls": 2,
+  "complete_authorization_migration": false,
+  "host_environment_controls": 20,
+  "hosted_candidate_qualification": false,
+  "independent_cryptographic_implementation_claim": false,
+  "m06_tests": {
+    "failed": 0,
+    "ignored": 0,
+    "passed": 8
+  },
+  "production_activation": false,
+  "provider_ci_controls": 9,
+  "reference_tests": {
+    "failed": 0,
+    "passed": 72,
+    "skipped": 0,
+    "suites": {
+      "envelope": 9,
+      "genesis": 23,
+      "pql4": 12,
+      "pql5": 18,
+      "pql6": 10
+    }
+  },
+  "runtime_receipts_and_raw_log_digests_verified": true,
+  "same_openssl_implementation_in_rust_and_python": true,
+  "schema": "pon-r8-pq-backend-readback-v1",
+  "scope": "Original offline synthetic fixtures and real protocol reference tests; dirty source digests are retained.",
+  "whole_chain_quantum_security": false
+}

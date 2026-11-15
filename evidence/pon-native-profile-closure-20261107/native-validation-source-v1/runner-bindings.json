@@ -1,0 +1,27 @@
+{
+  "artifacts": {
+    "authority": {
+      "bytes": 8742072,
+      "executable": true,
+      "exists": true,
+      "path": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/target-canonical-v1/release/examples/grouped_verification_authority_v0",
+      "sha256": "1f594585e170fde0ed55f888c0d13ab80a68fc118e3b7643799c214ef040b742"
+    },
+    "fresh": {
+      "bytes": 8331288,
+      "executable": true,
+      "exists": true,
+      "path": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/target-canonical-v1/release/examples/grouped_fresh_admission_v0",
+      "sha256": "4f7f63ccd8079476452884032dca04ea443e78bfb9aaf1663304e1a1f13baea0"
+    },
+    "grouped": {
+      "bytes": 771760,
+      "executable": true,
+      "exists": true,
+      "path": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/target-canonical-v1/release/examples/pon_routed_int257_grouped",
+      "sha256": "c4dc841aa3ca28bb484e5e943d64d2635ef16b3751c98b5de381e8c4b0fa3669"
+    }
+  },
+  "cargo_target_directory": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/target-canonical-v1",
+  "status": "PASS"
+}

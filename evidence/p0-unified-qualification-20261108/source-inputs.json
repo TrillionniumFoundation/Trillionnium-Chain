@@ -1,0 +1,36 @@
+{
+  "schema": "trnm-unified-source-inputs-v1",
+  "campaign": "chain-p0-unified-qualification-20261108-99b5",
+  "qualification": "HOLD_NO_GO",
+  "production_activation": false,
+  "final_use_qualified": false,
+  "historical_results_are_final_candidate_results": false,
+  "chain_repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "chain_inputs": {
+    "796": "01e2c4c010c3cf65d1cf094368961efc1abab445",
+    "782": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "793": "812589d9bb189b6abbf33b916a424121199dee75",
+    "794": "b16bae2824e6c8236ef2011fc93a74df3ac7f039",
+    "787": "e02126dabef04f13792dec45d96ac5d6916d0651",
+    "789": "2ce6bc75adae7582b17607a389b0b38cab1eda53",
+    "790": "88568e2511fcf166e6824947ac97b06b72104385",
+    "791": "9f54b05c643185a5041fc1f78cef77e95877f52a",
+    "795": "1fe2f31c70977a030aec73b63fe0617f34d15a77",
+    "792": "2e5150c41484a8b3196b33de2e997794145edd7c"
+  },
+  "hepta_repository": "TrillionniumFoundation/hepta-private-ci",
+  "hepta_sha": "f1785ca15e41e4e49509a5b211a659e3cbdbf60e",
+  "hepta_tree": "f07e40dbf570539eba6b683f7569804b0eb9ae5e",
+  "excluded_hepta_result_substitution": {
+    "pr": 5045,
+    "hepta_sha": "7758798f628ebe86e0cbf3c177559edab96cf5ab",
+    "chain_dependency": "a4b2de3c35e4e688db3e93c73a46eb957632c0b5",
+    "reason": "Separate PQ Fleet source and dependency; its results cannot establish properties of f178."
+  },
+  "immutable_observation_contracts": {
+    "original_32_command_runner_sha256": "d81437a1cef461666b9103cc3f9e8f8ab0c67a90903b5802f582d2c52cd82710",
+    "original_52_case_manifest_sha256": "a359086820e876a3806acdd1225689ff072ebfe10d455ac3a96d8d7060680693",
+    "hepta_nextest_profile_sha256": "63f832eabf890a5f3cd7c0e4ee1856b1ca99d4db8952de71b81282265668dc8c"
+  },
+  "freeze_rule": "Read the exact final Chain commit, complete lock manifests and real build/load observations from fresh external run receipts. Do not retroactively populate missing source identities in older attempts."
+}

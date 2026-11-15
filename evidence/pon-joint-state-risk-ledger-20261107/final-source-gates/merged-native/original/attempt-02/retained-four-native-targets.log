@@ -1,0 +1,81 @@
+   Compiling trnm-mempool v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-transport)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-verification-profiles)
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-protocol)
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 25s
+     Running tests/cell_native_v1.rs (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/deps/cell_native_v1-7e4acc24f712ce42)
+
+running 12 tests
+test a_following_native_task_really_consumes_the_verified_successor_model_and_state ... ok
+test every_w1_tile_requires_full_material_product_transcript_and_challenge ... ok
+test historical_is_repeatable_after_expiry_but_live_checks_both_clock_cuts ... ok
+test malformed_owner_schema_numbers_masks_and_utf8_fail_before_any_proof ... ok
+test maximum_batch_and_raw_source_token_cap_replay_all_columns_and_reject_one_more ... ok
+test native_cli_refuses_writable_symlinked_missing_owner_inputs_and_new_store_creation ... ok
+test ordinary_native_cli_uses_separate_owner_input_and_real_node_parent_for_cold_historical_replay ... ok
+test owner_pin_and_foreign_task_never_come_from_the_claim ... ok
+test rehashed_intermediate_tensor_and_checkpoint_substitution_fail_after_valid_w1 ... ok
+test seven_python_v2_controls_match_native_complete_values_and_all_five_w1_tiles ... ok
+test state_counter_weight_and_action_rules_refuse_instead_of_saturation_or_fallback ... ok
+test two_real_node_stores_and_cold_recovery_agree_on_history_after_active_tip_changes ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 56.84s
+
+     Running tests/native_owner_journal.rs (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/deps/native_owner_journal-11ae6f188e60cef8)
+
+running 11 tests
+test actual_legacy_and_authenticated_restart_preserve_unadmitted_output_identity ... ok
+test actual_two_branch_process_cut_recovery_and_saved_checkpoint_rollback ... ok
+test dropped_pending_native_activation_blocks_reuse_and_remains_unresolved_after_reopen ... ok
+test input_artifact_budget_refuses_before_any_native_admission_intent ... ok
+test invalid_same_id_packet_never_inherits_another_packets_valid_native_weight ... ok
+test native_journal_process_child ... ignored, owned subprocess helper, actually executed by the process-cut test
+test referenced_packet_corruption_is_refused_and_never_overwritten_on_resume ... ok
+test sidecar_lock_is_exclusive_and_new_namespace_never_claims_fresh_resources ... ok
+test terminal_budget_failure_preserves_real_native_effect_and_unresolved_debt ... ok
+test torn_tail_is_preserved_and_refused_before_reopening_native_store ... ok
+test wrong_prior_checkpoint_refuses_without_appending_an_open_intent ... ok
+
+test result: ok. 10 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 131.03s
+
+     Running tests/native_owner_observation.rs (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/deps/native_owner_observation-0e260fab5dedc11d)
+
+running 10 tests
+test actual_legacy_and_authenticated_census_replays_full_native_relation_without_persistence ... ok
+test actual_two_owner_execution_covers_hidden_inventory_six_successors_ties_reorg_and_time_maturity ... ok
+test block_byte_limits_and_native_work_cancellation_never_return_a_partial_census ... ok
+test callback_error_text_never_acquires_retained_data_stop_authority ... ok
+test corrupted_retained_product_is_reverified_instead_of_trusting_admitted_metadata ... ok
+test foreign_state_changing_commit_during_read_snapshot_is_detected_after_release ... ok
+test local_view_digest_stable_but_owner_incarnation_and_observation_attempt_are_not_reused ... ok
+test pnp2_growth_is_explicitly_unsupported_without_a_pnp1_fallback ... ok
+test prior_filtering_sql_view_cannot_hide_an_admitted_fork_from_a_complete_census ... ok
+test retained_chainwork_or_missing_packet_cannot_be_certified ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 61.54s
+
+     Running tests/native_risk_ledger.rs (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/deps/native_risk_ledger-66b309f1fcce5d0a)
+
+running 12 tests
+test a_new_bank_cannot_reset_a_native_journal_with_previous_confirmation_intents ... ok
+test bank_capacity_refusal_precedes_native_dispatch_and_torn_tail_is_not_repaired ... ok
+test dropped_pre_dispatch_start_is_spent_pending_and_never_automatically_replayed ... ok
+test exclusive_bank_lock_and_supplied_checkpoint_refuse_competing_or_stale_bank ... ok
+test forwarded_native_failure_reports_its_effective_stop_condition ... ok
+test full_native_suffix_rejects_a_confirmation_outside_the_risk_wrapper ... ok
+test incomplete_native_observation_keeps_charge_and_native_stop_before_recovery ... ok
+test native_risk_process_child ... ignored, owned subprocess helper, actually executed twice by the process-cut test
+test real_confirmed_unconfirmed_error_and_two_process_cuts_keep_all_eight_charges ... ok
+test real_native_errors_spend_and_caps_survive_legacy_and_authenticated_reopen ... ok
+test recovery_rejects_registration_after_closed_or_incomplete_native_prefix ... ok
+test rejected_scope_has_no_native_call_and_bank_scope_and_budget_are_immutable ... ok
+
+test result: ok. 11 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 123.49s
+

@@ -1,0 +1,13 @@
+{
+  "command": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "completed_at_utc": "2026-11-10T10:01:12.552512+00:00",
+  "elapsed_seconds": 0.031649149022996426,
+  "exit_code": 0,
+  "failure": null,
+  "log_sha256": "ff54581654e0f832cc74bee0c819644e1663993a00ca5bb835ce58462675886c",
+  "name": "preflight",
+  "started_at_utc": "2026-11-10T10:01:12.520858+00:00"
+}

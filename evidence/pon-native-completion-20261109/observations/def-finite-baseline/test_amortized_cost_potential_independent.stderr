@@ -1,0 +1,13 @@
+test_delimiter_collision_cannot_alias_distinct_constraint_rows (test_amortized_cost_potential_independent.AdversarialInputRegressions.test_delimiter_collision_cannot_alias_distinct_constraint_rows)
+Old action:a:b:c labels merged two distinct state/action identities. ... ok
+test_iterators_cannot_erase_actions_outcomes_or_credit (test_amortized_cost_potential_independent.AdversarialInputRegressions.test_iterators_cannot_erase_actions_outcomes_or_credit)
+Reject before iteration, so validation cannot consume the declaration. ... ok
+test_model_name_boolean_and_integer_are_rejected (test_amortized_cost_potential_independent.AdversarialInputRegressions.test_model_name_boolean_and_integer_are_rejected) ... ok
+test_typed_positive_credit_loop_has_an_exact_contradiction (test_amortized_cost_potential_independent.AdversarialInputRegressions.test_typed_positive_credit_loop_has_an_exact_contradiction) ... ok
+test_1600_deterministic_models_against_complete_integer_grid (test_amortized_cost_potential_independent.IndependentFiniteOracles.test_1600_deterministic_models_against_complete_integer_grid) ... ok
+test_2025_stochastic_models_against_exact_difference_interval (test_amortized_cost_potential_independent.IndependentFiniteOracles.test_2025_stochastic_models_against_exact_difference_interval) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 4.686s
+
+OK

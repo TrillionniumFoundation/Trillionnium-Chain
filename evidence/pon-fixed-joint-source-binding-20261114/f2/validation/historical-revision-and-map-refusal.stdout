@@ -1,0 +1,1 @@
+{"controls": [{"actual_error": "REVIEWED_SOURCE", "case": "old-revision", "refused": true}, {"actual_error": "REVIEWED_SOURCE_MAP", "case": "old-map-with-current-revision", "refused": true}], "production_reader_used": true, "qualification_granted": false, "schema": "joint-old-revision-and-map-refusal-v1"}

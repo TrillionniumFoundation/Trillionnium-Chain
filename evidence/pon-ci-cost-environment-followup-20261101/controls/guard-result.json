@@ -1,0 +1,67 @@
+[
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "cwd": "/workspace/scratch/295b0f1bca6b/chain",
+    "exit_code": 0,
+    "started_utc": "2026-11-01T08:26:34.955246+00:00",
+    "wall_ns": 2885423146,
+    "stdout": "guard-01.stdout",
+    "stderr": "guard-01.stderr"
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_cross_arch_cost.py"
+    ],
+    "cwd": "/workspace/scratch/295b0f1bca6b/chain",
+    "exit_code": 0,
+    "started_utc": "2026-11-01T08:26:37.841030+00:00",
+    "wall_ns": 1018154910,
+    "stdout": "guard-02.stdout",
+    "stderr": "guard-02.stderr"
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_run_w1_reused_cost_v3.py"
+    ],
+    "cwd": "/workspace/scratch/295b0f1bca6b/chain",
+    "exit_code": 0,
+    "started_utc": "2026-11-01T08:26:38.859614+00:00",
+    "wall_ns": 157405110,
+    "stdout": "guard-03.stdout",
+    "stderr": "guard-03.stderr"
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "cwd": "/workspace/scratch/295b0f1bca6b/chain",
+    "exit_code": 0,
+    "started_utc": "2026-11-01T08:26:39.017251+00:00",
+    "wall_ns": 128326995,
+    "stdout": "guard-04.stdout",
+    "stderr": "guard-04.stderr"
+  },
+  {
+    "argv": [
+      "bash",
+      "-n",
+      "scripts/ci/ci_job.sh"
+    ],
+    "cwd": "/workspace/scratch/295b0f1bca6b/chain",
+    "exit_code": 0,
+    "started_utc": "2026-11-01T08:26:39.145891+00:00",
+    "wall_ns": 2773422,
+    "stdout": "guard-05.stdout",
+    "stderr": "guard-05.stderr"
+  }
+]

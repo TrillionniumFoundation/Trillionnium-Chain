@@ -1,0 +1,41 @@
+{
+  "command": [
+    "/workspace/scratch/a6fe7c2e72c7/pq-validation/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-data-availability",
+    "--example",
+    "cell_sealed_research_next_use_v2",
+    "--",
+    "--nocapture"
+  ],
+  "cwd": "/workspace/scratch/dc0357cf2d6c/chain-capacity/trillionnium",
+  "completed": true,
+  "provider": {
+    "OPENSSL_DIR": "/workspace/scratch/a6fe7c2e72c7/pq-validation/provider-run/trnm-pq-provider-3.5.9.Uv4EkAot/install",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/workspace/scratch/a6fe7c2e72c7/pq-validation/provider-run/trnm-pq-provider-3.5.9.Uv4EkAot/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "f2a00a03fc000a464cdadb915e894e381cc67f7ce309ff5b0de658148e8233ce",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/workspace/scratch/a6fe7c2e72c7/pq-validation/provider-run/trnm-pq-provider-3.5.9.Uv4EkAot/install/lib/ossl-modules"
+  },
+  "cargo_incremental": false,
+  "real_model_run": "NOT_RUN",
+  "started_utc": "2026-11-09T14:24:23.026993+00:00",
+  "source_sha256": {
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/bep52.rs": "da8052153733abbeb489289c9b2217e9bb6a8eec4a595aa161df5462c8ca0dfa",
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs": "d7b30b482c1e9628b5387d1944064e2a53c69225314bc1050fb0ad69921d1f3b",
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/snapshot.rs": "e56326e1a432c5008cbbd28a90cd2422ef170dfe90de79730283697da9f2df1c",
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_next_use_v2.rs": "ae0f7a3dfbdf320ba2adc890a644bcc4d9b2992c3c8724959c08343473e626cc"
+  },
+  "preflight_exit_code": 0,
+  "exit_code": 0,
+  "elapsed_seconds": 47.85570309799914,
+  "finished_utc": "2026-11-09T14:25:10.883361+00:00",
+  "source_unchanged": true
+}

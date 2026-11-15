@@ -1,0 +1,33 @@
+{
+  "revision": "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66",
+  "scope": "literal names in trillionnium only",
+  "call_graph_proved": false,
+  "runtime_reachability_proved": false,
+  "references": {
+    "TransferTx": [
+      "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66:trillionnium/crates/trnm-types/src/lib.rs",
+      "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66:trillionnium/crates/trnm-types/src/transfer.rs"
+    ],
+    "ConsumptionSettlementStoreV1": [
+      "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66:trillionnium/crates/trnm-service-settlement/src/lib.rs",
+      "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66:trillionnium/crates/trnm-service-settlement/src/store.rs",
+      "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66:trillionnium/crates/trnm-service-settlement/src/tests.rs"
+    ],
+    "ResearchProtocolState": [
+      "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66:trillionnium/crates/trnm-research-protocol/src/lib.rs",
+      "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66:trillionnium/crates/trnm-research-protocol/src/state.rs",
+      "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66:trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs",
+      "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66:trillionnium/crates/trnm-research-protocol/tests/protocol_v1/security_cases.rs"
+    ],
+    "SignedHeptaAdmissionV1": [
+      "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66:trillionnium/crates/trnm-research-protocol/README.md",
+      "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66:trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+      "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66:trillionnium/crates/trnm-research-protocol/src/lib.rs",
+      "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66:trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs",
+      "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66:trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs"
+    ],
+    "hepta_handoff::": [
+      "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66:trillionnium/crates/trnm-research-protocol/src/lib.rs"
+    ]
+  }
+}

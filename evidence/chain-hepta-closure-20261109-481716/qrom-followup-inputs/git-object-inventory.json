@@ -1,0 +1,101 @@
+{
+  "source_revision": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+  "tracked_path_count": 27208,
+  "relevant_tracked_paths": [
+    "evidence/crypto-profile-20261104/continuation-59f75acd/current-source-comparison.json",
+    "evidence/crypto-profile-20261104/continuation-59f75acd/current-to-publication-comparison.json",
+    "evidence/pon-closed-round-v1/comparison/report.json",
+    "evidence/pon-closed-round-v1/comparison/requests.json",
+    "evidence/pon-complete-cost-continuation-20261104/comparison-preregistration.json",
+    "evidence/pon-full-integration-20261104/lift-cache-comparison.json",
+    "evidence/pon-history-checkpoint-r8-20261028/honest-page-comparison.json",
+    "evidence/pon-lifecycle-closure-20261107/desktop-components/attempt-01/lifecycle-query/ideal-model-comparisons.json",
+    "evidence/pon-native-node-v1/comparison/report.json",
+    "evidence/pon-native-node-v1/comparison/requests.json",
+    "evidence/pon-native-session-v1/comparison/report.json",
+    "evidence/pon-native-session-v1/comparison/requests.json",
+    "evidence/pon-native-session-v1/failures/initial-candidate/selected-matrix/comparison/report.json",
+    "evidence/pon-native-session-v1/failures/initial-candidate/selected-matrix/comparison/requests.json",
+    "evidence/pon-public-readiness-v1/baseline/comparison/report.json",
+    "evidence/pon-public-readiness-v1/baseline/comparison/requests.json",
+    "evidence/pon-public-readiness-v1/observations/pre-correction-b/baseline/comparison/report.json",
+    "evidence/pon-public-readiness-v1/observations/pre-correction-b/baseline/comparison/requests.json",
+    "evidence/pon-public-readiness-v1/observations/pre-correction-c/baseline/comparison/report.json",
+    "evidence/pon-public-readiness-v1/observations/pre-correction-c/baseline/comparison/requests.json",
+    "evidence/pon-public-readiness-v1/observations/pre-correction-d/baseline/comparison/report.json",
+    "evidence/pon-public-readiness-v1/observations/pre-correction-d/baseline/comparison/requests.json",
+    "evidence/pon-source-publication-20261027/side-head-delta-comparison.json",
+    "evidence/pon-throughput-20261108/cell-model/originals/actual/frozen-comparison.json",
+    "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/comparison-preregistration.json",
+    "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-494-final-native/expanded-results/chain-494-authenticated-multiprocess/comparison-context.json",
+    "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-494-final-native/expanded-results/chain-a51-auth-comparison-v2/results.json",
+    "evidence/pon-v4/comparison/report.json",
+    "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/selected-source-comparison.json",
+    "evidence/pon-w1-qrom-closure-20261107/hosted-gate-source-comparison-42374726461.json",
+    "evidence/pon-w1-qrom-closure-20261107/native-selected/official-image-comparison.json",
+    "evidence/pon-w1-qrom-proof-chain-20261108/manuscript-comparison.json",
+    "evidence/pon-w1-runtime-recovery-20261107/receiver-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/intent.json",
+    "evidence/pon-w1-runtime-recovery-20261107/receiver-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/operation-cancellation.json",
+    "evidence/pon-w1-runtime-recovery-20261107/receiver-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/result.json",
+    "evidence/pon-w1-runtime-recovery-20261107/receiver-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/row-0000-native/declaration.json",
+    "evidence/pon-w1-runtime-recovery-20261107/receiver-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/row-0000-native/result.json",
+    "evidence/pon-w1-runtime-recovery-20261107/receiver-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/row-0000-observation.json",
+    "evidence/pon-w1-runtime-recovery-20261107/receiver-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/row-0001-observation.json",
+    "evidence/pon-w1-runtime-recovery-20261107/receiver-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/row-0001-proof/declaration.json",
+    "evidence/pon-w1-runtime-recovery-20261107/receiver-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/row-0001-proof/result.json",
+    "evidence/pon-w1-runtime-recovery-20261107/receiver-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/row-0002-observation.json",
+    "evidence/pon-w1-runtime-recovery-20261107/receiver-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/row-0002-proof/declaration.json",
+    "evidence/pon-w1-runtime-recovery-20261107/receiver-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/row-0002-proof/result.json",
+    "evidence/pon-w1-runtime-recovery-20261107/receiver-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/row-0003-native/declaration.json",
+    "evidence/pon-w1-runtime-recovery-20261107/receiver-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/row-0003-native/result.json",
+    "evidence/pon-w1-runtime-recovery-20261107/receiver-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/row-0003-observation.json",
+    "evidence/pon-w1-transparent-profile-20261104/comparison-declaration.json",
+    "evidence/pon-w1-transparent-profile-20261104/comparison.json",
+    "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-contract-triage-01/protocol-crossarch-source-comparison.json",
+    "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/native-campaign-artifact-13610289272/baseline-path-comparison.json",
+    "evidence/pq-root-native-v3-20261109/hosted-a44344b2/selected-source-comparison.json",
+    "evidence/smollm-cell-replica-research-v1/actual/frozen-comparison.json",
+    "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/v1-v2-payload-comparison.json",
+    "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/v1-v2-source-comparison.json",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/results/native-baseline/frozen_to_current_source_comparison.json",
+    "scripts/w1_cdhz_revision_compare.py"
+  ],
+  "review_evidence_references": [
+    {
+      "line": 47,
+      "text": "retrieval attempt; they no longer describe the available evidence in this"
+    },
+    {
+      "line": 107,
+      "text": "a JSON manifest. It does not write the manuscript PDFs to the repository or"
+    },
+    {
+      "line": 111,
+      "text": "python3 scripts/w1_cdhz_revision_compare.py cdhz-january.pdf cdhz-march.pdf --output comparison.json"
+    },
+    {
+      "line": 118,
+      "text": "sha256sum cdhz-january.pdf cdhz-march.pdf"
+    },
+    {
+      "line": 119,
+      "text": "pdftotext -layout cdhz-january.pdf january-layout.txt"
+    },
+    {
+      "line": 120,
+      "text": "pdftotext -layout cdhz-march.pdf march-layout.txt"
+    },
+    {
+      "line": 122,
+      "text": "pdftotext -raw cdhz-january.pdf january-raw.txt"
+    },
+    {
+      "line": 123,
+      "text": "pdftotext -raw cdhz-march.pdf march-raw.txt"
+    },
+    {
+      "line": 398,
+      "text": "| W1 interface | Paper evidence | Remaining concrete artifact |"
+    }
+  ]
+}

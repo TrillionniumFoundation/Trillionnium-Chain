@@ -1,0 +1,16 @@
+{
+  "scope": "archive integrity and readback only; no new native build/test",
+  "packaging_attempt": 2,
+  "earlier_packaging_reader_failure": "failures/packaging-validator-attempt-1.txt",
+  "copied_payloads_verified": 80,
+  "readme_local_links_checked": 41,
+  "missing_links": [],
+  "node_final_selectors_verified": 13,
+  "node_final_ordinary_passed_in_historical_stdout": 12,
+  "node_final_cost_selector_ignored_in_module_and_passed_separately": true,
+  "three_original_E0425_diagnostics_retained": true,
+  "launcher_failure_not_a_native_run": true,
+  "both_cost_source_and_binary_before_after_match": true,
+  "restoration_receipt_present": true,
+  "boundary_final_execution_qualified": false
+}

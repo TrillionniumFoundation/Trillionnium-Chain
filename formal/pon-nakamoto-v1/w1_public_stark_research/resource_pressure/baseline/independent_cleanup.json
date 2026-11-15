@@ -1,0 +1,112 @@
+{
+  "schema": "w1-pressure-postcleanup-independent-read-v1",
+  "observed_utc": "2026-11-08T03:54:43.362041+00:00",
+  "monotonic_ns": 1187749354375895,
+  "unit": "w1-pressure-f16ac5-af10bab60751.service",
+  "query_exit_code": 0,
+  "query_stdout": "MainPID=0\nControlGroup=\nLoadState=not-found\nActiveState=inactive\nSubState=dead\n",
+  "query_stderr": "",
+  "cgroup_path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+  "cgroup_exists": false,
+  "known_pid_identities": [
+    {
+      "pid": 2939684,
+      "original_starttime_ticks": 118731648,
+      "current_starttime_ticks": null,
+      "same_process_still_present": false
+    },
+    {
+      "pid": 2939685,
+      "original_starttime_ticks": 118731648,
+      "current_starttime_ticks": null,
+      "same_process_still_present": false
+    },
+    {
+      "pid": 2939686,
+      "original_starttime_ticks": 118731648,
+      "current_starttime_ticks": null,
+      "same_process_still_present": false
+    },
+    {
+      "pid": 2939687,
+      "original_starttime_ticks": 118731648,
+      "current_starttime_ticks": null,
+      "same_process_still_present": false
+    },
+    {
+      "pid": 2939688,
+      "original_starttime_ticks": 118731648,
+      "current_starttime_ticks": null,
+      "same_process_still_present": false
+    },
+    {
+      "pid": 2939689,
+      "original_starttime_ticks": 118731649,
+      "current_starttime_ticks": null,
+      "same_process_still_present": false
+    },
+    {
+      "pid": 2939690,
+      "original_starttime_ticks": 118731649,
+      "current_starttime_ticks": null,
+      "same_process_still_present": false
+    },
+    {
+      "pid": 2939691,
+      "original_starttime_ticks": 118731649,
+      "current_starttime_ticks": null,
+      "same_process_still_present": false
+    },
+    {
+      "pid": 2939692,
+      "original_starttime_ticks": 118731649,
+      "current_starttime_ticks": null,
+      "same_process_still_present": false
+    },
+    {
+      "pid": 2939693,
+      "original_starttime_ticks": 118731649,
+      "current_starttime_ticks": null,
+      "same_process_still_present": false
+    },
+    {
+      "pid": 2939694,
+      "original_starttime_ticks": 118731649,
+      "current_starttime_ticks": null,
+      "same_process_still_present": false
+    },
+    {
+      "pid": 2939695,
+      "original_starttime_ticks": 118731650,
+      "current_starttime_ticks": null,
+      "same_process_still_present": false
+    },
+    {
+      "pid": 2939696,
+      "original_starttime_ticks": 118731650,
+      "current_starttime_ticks": null,
+      "same_process_still_present": false
+    },
+    {
+      "pid": 2939697,
+      "original_starttime_ticks": 118731650,
+      "current_starttime_ticks": null,
+      "same_process_still_present": false
+    },
+    {
+      "pid": 2939698,
+      "original_starttime_ticks": 118731650,
+      "current_starttime_ticks": null,
+      "same_process_still_present": false
+    },
+    {
+      "pid": 2939699,
+      "original_starttime_ticks": 118731650,
+      "current_starttime_ticks": null,
+      "same_process_still_present": false
+    }
+  ],
+  "active_exact_verifier_copy_pids": [],
+  "original_result_sha256": "50488314e765fb2225c02e630fc09afb0edb8973ebabf8fa7672e022917c1e79",
+  "cleanup_confirmed": true
+}

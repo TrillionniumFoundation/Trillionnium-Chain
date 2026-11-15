@@ -1,0 +1,2 @@
+[fix/chain-local-state-cell-20261107 5fdf7c236] test(store): exercise NULL decoding with a damaged nullable fixture
+ 2 files changed, 28 insertions(+), 2 deletions(-)

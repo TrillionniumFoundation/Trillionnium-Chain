@@ -1,0 +1,202 @@
+[
+  {
+    "path": "HOSTED_SUMMARY.json",
+    "bytes": 5538,
+    "sha256": "210a99a318794ca4f793f04dd45addf9cae7e4dbcf48fcc82da059686a92e4bb"
+  },
+  {
+    "path": "README.md",
+    "bytes": 9711,
+    "sha256": "90cd75c2473b4da4840c377cccd7fc3d415925a5ad41e724c4059ecd4040566a"
+  },
+  {
+    "path": "SCOPE.json",
+    "bytes": 842,
+    "sha256": "21a76a937907ca7e0b83a9c42fe4d43dcf7b2c44010339f7eeb861dbdce1a2f8"
+  },
+  {
+    "path": "api-and-readiness/api-and-readiness-c09dbbe992.tar.xz",
+    "bytes": 257600,
+    "sha256": "d95c5b9cfff7ca64a29d2bed6a8d621c3f64b06d02bf2ae7e428e9435ac22fd3"
+  },
+  {
+    "path": "api-and-readiness/archive-index.json",
+    "bytes": 8339,
+    "sha256": "94b7a949211f674407c1b569e3ef3173455960edc050e93598501c994ea2d6b4"
+  },
+  {
+    "path": "bounded/bounded-readback-c09dbbe992.tar.xz",
+    "bytes": 719180,
+    "sha256": "9f7f152885e9eb54725a5fe8909ce90ee5ac23a62facff20f39d0702d2fd22a8"
+  },
+  {
+    "path": "bounded/bounded-readback-receipt.json",
+    "bytes": 241,
+    "sha256": "4b1bcd786778be6ebe3a2e7e8f47dff9561d21e635ff0133b7e7b96fce52314d"
+  },
+  {
+    "path": "bounded/bounded-refresh-summary.json",
+    "bytes": 14582,
+    "sha256": "8762784862329caa62ab9a53a6537182ce01679f740bed156229cff6035581fd"
+  },
+  {
+    "path": "bounded/fresh-service-summary.json",
+    "bytes": 33940,
+    "sha256": "e4b5af74227f328cd644a97ceb5969d5f6be2c3ff6db1d7291934ac4fa48df47"
+  },
+  {
+    "path": "bounded/local-codeql-summary.json",
+    "bytes": 34786,
+    "sha256": "a9b63490b4ba8ae9f75454070eb67f40f937c1d4baed541b01f4f5a69297719e"
+  },
+  {
+    "path": "native/NATIVE_DIAGNOSTICS.md",
+    "bytes": 9705,
+    "sha256": "0896c0f645945b4e425f1fd46b3a59466c4be874dc800aac35f9f427bfb4d5f2"
+  },
+  {
+    "path": "native/campaign-preartifact-observation.json",
+    "bytes": 10818,
+    "sha256": "6bacb5a14c6f0fa84dd8ba05d9839ac2335ca9f1a9faeb34d6a171b0bfc8954b"
+  },
+  {
+    "path": "native/cross-arch-arm64-host-result-from-log.json",
+    "bytes": 7644,
+    "sha256": "1cf487205293b22ec6be89cb1ede6d06b89d59a91701a98c7d099ff63eec744f"
+  },
+  {
+    "path": "native/cross-arch-preartifact-observation.json",
+    "bytes": 2751,
+    "sha256": "9a27cf0cda26cc5b622a6f44b3f76362bad14a6d41a93ebddbe7612fcac4da8a"
+  },
+  {
+    "path": "native/cross-arch-x64-host-result-from-log.json",
+    "bytes": 7645,
+    "sha256": "821f0e8037600f5d7ef05feaebdcc7354f47534ea7994e3d02066d1317df0511"
+  },
+  {
+    "path": "native/extract_c1_native_artifacts.py",
+    "bytes": 20687,
+    "sha256": "914054765dd52e14b15ced2ad408efd2e6c8bbd7cb67d67c4711d07c35b0f4e3"
+  },
+  {
+    "path": "native/native-diagnosis-c09dbbe992.json",
+    "bytes": 87512,
+    "sha256": "37eace6f03efb7a00b221d53de9556891e51d77155c02b419ae12b236a43646b"
+  },
+  {
+    "path": "native/original-campaign-artifacts-42955583039.json",
+    "bytes": 1029,
+    "sha256": "77a3fb4b1d6cc527dd469f2c2dfd87742f4683ace332446377be0613b05153c8"
+  },
+  {
+    "path": "native/original-campaign-job-130309763995.log",
+    "bytes": 222380,
+    "sha256": "6dc0a643141ff01f614828b0239dd023af0c63b4088c100b4416ecd66e83e2b1"
+  },
+  {
+    "path": "native/original-campaign-jobs-42955583039.json",
+    "bytes": 4360,
+    "sha256": "cfd2431a7e805764f3d610fc82b11f20309da18423ee99c0cbb598615eaaebd6"
+  },
+  {
+    "path": "native/original-campaign-result-from-log.json",
+    "bytes": 8560,
+    "sha256": "27dea2cd8c5b8ccf53e070ab218b14b696e9fa5b8fb680f302b171dc5f2102d1"
+  },
+  {
+    "path": "native/original-campaign-run-42955583039.json",
+    "bytes": 16704,
+    "sha256": "45ebf2207b240c902c7edd5baaf5b71a08e09264f02530d78c9f1dbe40e810c4"
+  },
+  {
+    "path": "native/packet-independent-verification.json",
+    "bytes": 531,
+    "sha256": "93d76a4bedba3baae4312c4425c1bd998014147203821ec346a119d0fec5073b"
+  },
+  {
+    "path": "native/readback-1.tar.xz",
+    "bytes": 1850508,
+    "sha256": "90f8da399cda835849001e5c65a49d0d8cc2a4b09e191e6c8b73dddbfb275456"
+  },
+  {
+    "path": "native/readback-1.tar.xz.sha256",
+    "bytes": 84,
+    "sha256": "c7acd766c3acf4e95ac354dc42f17039401604abe59d2c26305181c5b64d8379"
+  },
+  {
+    "path": "native/required-baseline-artifacts-42955583052.json",
+    "bytes": 5848,
+    "sha256": "21ebb0f8c20c1188a961b37ec8043c52688206f8eb6791c9038c9f8ba067b998"
+  },
+  {
+    "path": "native/source-c09dbbe992/.github/workflows/pon-native-campaign-qualification.yml",
+    "bytes": 22343,
+    "sha256": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a"
+  },
+  {
+    "path": "native/source-c09dbbe992/scripts/ci/run_from_zero_host.py",
+    "bytes": 25031,
+    "sha256": "4b33ee64dfd418e1439a26ac5ec19d4b34b18c3b3c35b8a302c162d4bb91d63f"
+  },
+  {
+    "path": "native/source-c09dbbe992/scripts/ci/run_from_zero_native.py",
+    "bytes": 110854,
+    "sha256": "baa7cba8096a3908c9b7ebe0705949b95061191ec78846006527fd80e6a5a0c8"
+  },
+  {
+    "path": "native/source-c09dbbe992/trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+    "bytes": 79067,
+    "sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+  },
+  {
+    "path": "native/source-c09dbbe992/trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+    "bytes": 111313,
+    "sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf"
+  },
+  {
+    "path": "native/source-c09dbbe992-from-zero-index.json",
+    "bytes": 289,
+    "sha256": "4a2a1034f9b0d63ee683b7d200098810b522e4f31066fcfcd5b717a31689c3f6"
+  },
+  {
+    "path": "native/source-c09dbbe992-index.json",
+    "bytes": 1175,
+    "sha256": "e5f1e83c355689089a3fec27f4ff63604c56e2071bb70bfed3eca2e65ca93a43"
+  },
+  {
+    "path": "native/verify_c1_hosted_readback.py",
+    "bytes": 12109,
+    "sha256": "cb206d6aab63729d8f9678255aeaf7bfaddc1236b3d7ce513d87b1fda9a84a53"
+  },
+  {
+    "path": "reviews/py-redos-bounded-review.json",
+    "bytes": 2367,
+    "sha256": "411f6aa6f924ed2b8e089c2387fe76ec7f3a8b4d33376e2723e97a0210602bcf"
+  },
+  {
+    "path": "source-c09dbbe992/.github/workflows/codeql-real-exact-source.yml",
+    "bytes": 10514,
+    "sha256": "3c675d8bff0cb5418b43697aa7f046be64086c5da795cfbe19f9bd03744dd888"
+  },
+  {
+    "path": "source-c09dbbe992/scripts/ci/run_w1_fresh_service_v1.py",
+    "bytes": 28537,
+    "sha256": "143b0f26f914798fc6650afc08d2f73379bcf82b7fd84cc318ca2fb83299d324"
+  },
+  {
+    "path": "source-c09dbbe992/trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs",
+    "bytes": 11911,
+    "sha256": "2e21912f6c285e79e36ccaf995b451613313bfbc6993a510df4307fb2a47f0e9"
+  },
+  {
+    "path": "source-c09dbbe992-index.json",
+    "bytes": 896,
+    "sha256": "34c6cbce455e1dc122be097c779155b8252e65d1c7aee830d26bfeeb4f109fd9"
+  },
+  {
+    "path": "verify.py",
+    "bytes": 14451,
+    "sha256": "ea2a8b1a9d84476da02b43808f6a638040db2efbc7f64e6b8b294ad080245833"
+  }
+]

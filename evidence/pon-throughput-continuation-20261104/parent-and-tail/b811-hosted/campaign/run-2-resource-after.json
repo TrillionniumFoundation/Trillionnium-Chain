@@ -1,0 +1,37 @@
+{
+  "cgroup": "/system.slice/trnm-native-campaign-41795899819-1.service",
+  "cpu_affinity": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "limits": [
+    {
+      "cpu.max": "400000 100000",
+      "cpu.stat": "usage_usec 274378467\nuser_usec 251796830\nsystem_usec 22581636\nnice_usec 251143000\ncore_sched.force_idle_usec 0\nnr_periods 3409\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "cpuset.cpus.effective": "0-3",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "memory.max": "17179869184",
+      "path": "/sys/fs/cgroup/system.slice/trnm-native-campaign-41795899819-1.service"
+    },
+    {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 319458796\nuser_usec 286209835\nsystem_usec 33248960\nnice_usec 251153000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "cpuset.cpus.effective": "0-3",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "memory.max": "max",
+      "path": "/sys/fs/cgroup/system.slice"
+    },
+    {
+      "cpu.max": null,
+      "cpu.stat": "usage_usec 377036000\nuser_usec 310954000\nsystem_usec 66082000\nnice_usec 274632000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "cpuset.cpus.effective": "0-3",
+      "memory.events": null,
+      "memory.max": null,
+      "path": "/sys/fs/cgroup"
+    }
+  ],
+  "nice": 10,
+  "schema": "trnm.resource-observation.v1"
+}

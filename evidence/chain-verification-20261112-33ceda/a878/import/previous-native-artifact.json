@@ -1,0 +1,43 @@
+{
+  "bytes": 581908832,
+  "compiler_artifact": {
+    "executable": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/trnm_pon_node-9fe55435fd19c94a",
+    "features": [
+      "default",
+      "pq-native-openssl",
+      "pq-root-v3"
+    ],
+    "filenames": [
+      "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/trnm_pon_node-9fe55435fd19c94a"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qq/chain-verification-33ceda-20261112/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "package_id": "path+file:///home/qq/chain-verification-33ceda-20261112/trillionnium/crates/trnm-pon-node#0.1.0",
+    "profile": {
+      "debug_assertions": true,
+      "debuginfo": 2,
+      "opt_level": "3",
+      "overflow_checks": true,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "lib"
+      ],
+      "doc": true,
+      "doctest": true,
+      "edition": "2021",
+      "kind": [
+        "lib"
+      ],
+      "name": "trnm_pon_node",
+      "src_path": "/home/qq/chain-verification-33ceda-20261112/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "test": true
+    }
+  },
+  "executable": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/trnm_pon_node-9fe55435fd19c94a",
+  "original_profiles_retained": true,
+  "sha256": "107247ac5e7075cb5b5941935ac2f8586fe23b81389a6e3e562c11740e646a22",
+  "source": "e974fd617e0e2c0d1fc88584b1301a7ffb714a73"
+}

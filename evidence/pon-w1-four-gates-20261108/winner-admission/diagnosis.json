@@ -1,0 +1,355 @@
+{
+  "conclusion": {
+    "existing_two_proofs_can_close_growth_node_admission": false,
+    "existing_two_proofs_can_close_legacy_node_admission_from_retained_material": false,
+    "new_legal_node_statement_required_before_another_admission_experiment": true,
+    "retained_math_proof_claim_changed": false,
+    "scope_limit": "This is a source/material blocker, not an observed rejection transaction and not a proof that no mathematically possible matching state exists."
+  },
+  "disposition": "HOLD_EXISTING_STATEMENT_NOT_NODE_QUALIFIED",
+  "gates": {
+    "complete_cryptographic_security": "HOLD",
+    "production_qualified": false,
+    "same_winner_node_admission": "HOLD"
+  },
+  "growth_blocker": {
+    "actual_refusal_observed": false,
+    "can_rewrap_retained_proof_without_new_statement": false,
+    "canonical_pnh1_packet_on_growth_backend_source_refusal": "GROWTH_PACKET_REQUIRED",
+    "challenge_domain": "permanent-account-growth-challenge-v2",
+    "current_encoding": "PGH2 || PNH1(318) || witness(32)",
+    "current_header_bytes": 354,
+    "current_node_entry": "Node::admit_growth / GrowthWorkCheckedPacket::verify_with_progress",
+    "missing_inputs": [
+      "actual original parent record and audited growth state",
+      "complete PNP2 transaction/account witness body",
+      "witness commitment",
+      "matching PGH2 work relation"
+    ],
+    "retained_challenge_domain": "challenge",
+    "retained_encoding": "PNH1 v1",
+    "retained_header_bytes": 318
+  },
+  "header": {
+    "bytes": 318,
+    "computed_pnh1_challenge_sha256_domain_hash": "75d855619e387368c74253c9afb0265fa85b51f6df9abd410b4c25b982cf6461",
+    "fields": [
+      {
+        "encoding": "ascii",
+        "end_exclusive": 4,
+        "name": "magic",
+        "start_inclusive": 0,
+        "value": "PNH1"
+      },
+      {
+        "encoding": "u16le",
+        "end_exclusive": 6,
+        "name": "version",
+        "start_inclusive": 4,
+        "value": 1
+      },
+      {
+        "encoding": "hash32",
+        "end_exclusive": 38,
+        "name": "network",
+        "start_inclusive": 6,
+        "value": "416ff8626a7844ea1e5e1bc4c6a5d9a6ea663e3795dea102212055ce6a9d051f"
+      },
+      {
+        "encoding": "hash32",
+        "end_exclusive": 70,
+        "name": "parameters",
+        "start_inclusive": 38,
+        "value": "43d40200a0b6f7fe8b1d1cd58848ddc497515f1b28643224441fe031833885e6"
+      },
+      {
+        "encoding": "hash32",
+        "end_exclusive": 102,
+        "name": "parent",
+        "start_inclusive": 70,
+        "value": "0505050505050505050505050505050505050505050505050505050505050505"
+      },
+      {
+        "encoding": "u64le",
+        "end_exclusive": 110,
+        "name": "height",
+        "start_inclusive": 102,
+        "value": 1
+      },
+      {
+        "encoding": "u64le",
+        "end_exclusive": 118,
+        "name": "timestamp",
+        "start_inclusive": 110,
+        "value": 1
+      },
+      {
+        "encoding": "hash32",
+        "end_exclusive": 150,
+        "name": "target",
+        "start_inclusive": 118,
+        "value": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      {
+        "encoding": "hash32",
+        "end_exclusive": 182,
+        "name": "miner",
+        "start_inclusive": 150,
+        "value": "0707070707070707070707070707070707070707070707070707070707070707"
+      },
+      {
+        "encoding": "hash32",
+        "end_exclusive": 214,
+        "name": "transactions",
+        "start_inclusive": 182,
+        "value": "0808080808080808080808080808080808080808080808080808080808080808"
+      },
+      {
+        "encoding": "hash32",
+        "end_exclusive": 246,
+        "name": "state",
+        "start_inclusive": 214,
+        "value": "0909090909090909090909090909090909090909090909090909090909090909"
+      },
+      {
+        "encoding": "hash32",
+        "end_exclusive": 278,
+        "name": "receipts",
+        "start_inclusive": 246,
+        "value": "0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a"
+      },
+      {
+        "encoding": "hash32",
+        "end_exclusive": 310,
+        "name": "work_task",
+        "start_inclusive": 278,
+        "value": "ec934f3a9f196a9d5d4555a6361d8d200ea4e95145db4bf19db1eca84f15ff6a"
+      },
+      {
+        "encoding": "u64le",
+        "end_exclusive": 318,
+        "name": "nonce",
+        "start_inclusive": 310,
+        "value": 0
+      }
+    ],
+    "hex": "504e48310100416ff8626a7844ea1e5e1bc4c6a5d9a6ea663e3795dea102212055ce6a9d051f43d40200a0b6f7fe8b1d1cd58848ddc497515f1b28643224441fe031833885e6050505050505050505050505050505050505050505050505050505050505050501000000000000000100000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0707070707070707070707070707070707070707070707070707070707070707080808080808080808080808080808080808080808080808080808080808080809090909090909090909090909090909090909090909090909090909090909090a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0aec934f3a9f196a9d5d4555a6361d8d200ea4e95145db4bf19db1eca84f15ff6a0000000000000000",
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-fresh-runtime-20261107/fresh-full/header.bin",
+    "reencoded_bytes_equal": true,
+    "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+  },
+  "input": {
+    "bytes": 49506,
+    "first_318_bytes_equal_header": true,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-fresh-runtime-20261107/fresh-full/input.bin",
+    "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+  },
+  "inspection_source": {
+    "base_commit": "abab79dac0cb89eb2753d3f579119ac135650eb5",
+    "qualification": "per-file readback pins only; not a final committed source attestation",
+    "source_pins": "source-pins.json",
+    "worktree": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b"
+  },
+  "legacy_blocker": {
+    "actual_node_submission_performed": false,
+    "checks": [
+      {
+        "fact": "parent is 05 repeated 32 bytes; height is 1",
+        "missing_from_compared_retained_material": "matching parent block, state and ancestry",
+        "required": "real blocks row at that exact parent, with height 0 and authenticated parent State",
+        "source_refusal_if_parent_absent": "UNKNOWN_PARENT"
+      },
+      {
+        "fact": "target is ff repeated 32 bytes and timestamp is 1",
+        "qualification": "not checked by native_winner; no claim that the literal values are intrinsically invalid",
+        "required": "target_from_recent on that original branch and check_time against its ancestors and observed_now"
+      },
+      {
+        "fact": "transactions commitment is 08 repeated 32 bytes",
+        "missing_from_compared_retained_material": "transaction body/preimage and original Node construction evidence",
+        "required": "complete canonical Packet.transactions whose sequence_root equals the fixed commitment",
+        "source_refusal_if_mismatch": "ROOT"
+      },
+      {
+        "fact": "state is 09 repeated 32 bytes; receipts is 0a repeated 32 bytes",
+        "missing_from_compared_retained_material": "the original Node execution transition establishing those fields",
+        "required": "matching legitimate parent state and resulting execution/state/receipt commitments"
+      },
+      {
+        "fact": "work_task is ec934f3a9f196a9d5d4555a6361d8d200ea4e95145db4bf19db1eca84f15ff6a",
+        "missing_from_compared_retained_material": "original branch task eligibility/manifest/lease context",
+        "required": "eligible task in the original parent State and the actual material commitments required by its manifest"
+      }
+    ],
+    "entry": "Node::admit(&Packet, observed_now)",
+    "predicted_first_refusal": null
+  },
+  "native_winner_scope": {
+    "changed_field": "nonce only, bytes [310,318)",
+    "checks_native_work_and_target": true,
+    "node_admission": false,
+    "parent_eligibility_checked": false,
+    "production_qualified": false,
+    "template_bytes": 318,
+    "validates_material_task_and_external_A_B_commitments": true
+  },
+  "new_material_recipe": [
+    {
+      "action": "Choose the actual intended Node backend/profile before search. Current Growth uses PGH2/PNP2, while this retained proving interface accepts a 318-byte PNH1 header. Do not wrap one dialect inside the other and reuse its work relation.",
+      "step": 1
+    },
+    {
+      "action": "Use a new isolated research Node created through its normal APIs. Retain source/config pins, its actual parent block and parent State, branch ancestry/target and permitted timestamp, plus the complete candidate body.",
+      "step": 2
+    },
+    {
+      "action": "Construct the candidate inside the original Node owner. Existing entry points are make_growth_consensus_maintenance for Growth, or the supported legacy prepare_with_task/make_with_task or explicit make_consensus_maintenance route. Preserve any required signed task registration and material/lease eligibility in the actual parent.",
+      "step": 3
+    },
+    {
+      "action": "Export the original canonical candidate after actual transaction execution and root construction, before nonce search. Pin exact header bytes, full packet body, A/B bytes and independently selected expected-artifacts. A pre-search export would be a future small owner-side addition; it was not implemented by this diagnosis.",
+      "step": 4
+    },
+    {
+      "action": "Declare the research deadline and resource envelope before the actual search. Preserve the original parent clock and real winner event; include any builder search and preparation work instead of concealing it as uncharged setup.",
+      "step": 5
+    },
+    {
+      "action": "Establish actual same-candidate native Node admission with the complete packet and the actual state/clock recheck before spending on an expensive zkVM run. Record the admitted block/header identity and terminal observation. This establishes native admission only, not replacement of Node native replay by a zkVM receipt.",
+      "step": 6
+    },
+    {
+      "action": "Generate a new full proof for that exact new statement using a genuinely compatible header/challenge profile, then independently receive and verify it under the original clock. For Growth, first implement and qualify the PGH2 witness-bound proving interface; the present 318-byte interface cannot serve as it.",
+      "step": 7
+    }
+  ],
+  "observations": {
+    "database_connections_opened": 0,
+    "negative_node_admission_events_observed": 0,
+    "new_cryptographic_verifications": 0,
+    "new_native_work_searches": 0,
+    "new_proof_generations": 0,
+    "node_admission_attempts": 0,
+    "original_proof_artifacts_modified": false,
+    "source_files_modified_by_diagnosis": false
+  },
+  "retained_generation_source_commit": "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+  "retained_proofs": [
+    {
+      "arm": "funded-balanced",
+      "fresh_full_proof_trials_observed": 1,
+      "new_joins": 42,
+      "new_lifts": 43,
+      "new_segment_seals": 43,
+      "pin_provenance": "retained summary, not a new receipt verification",
+      "receipt_bytes": 257014,
+      "receipt_sha256": "585808f32353a272c310595fa31b33f1ba160add53490c1673bf7fa6c6bc2e57"
+    },
+    {
+      "arm": "sequential-unfunded",
+      "fresh_full_proof_trials_observed": 1,
+      "new_joins": 42,
+      "new_lifts": 43,
+      "new_segment_seals": 43,
+      "pin_provenance": "retained summary, not a new receipt verification",
+      "receipt_bytes": 257014,
+      "receipt_sha256": "033586595c7c203acc48b48e16d969b1376a833244fa82f3b64edfdcc35033c2"
+    }
+  ],
+  "retained_summary": {
+    "bytes": 47508,
+    "path": "evidence/pon-w1-fresh-runtime-20261107/summary.json",
+    "sha256": "7f051ad3b5598e4ee6cde5c0acb6d6b75f44d537c645b239b47955d8c499e251"
+  },
+  "schema": "TRNM-W1-RETAINED-HEADER-ADMISSION-DIAGNOSIS1",
+  "scope": "read-only retained bytes and exact source inspection; no Node submission and no new proof",
+  "source_references": {
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_native_winner_v2.rs": {
+      "native_challenge": [
+        165
+      ],
+      "native_header_bytes": [
+        16
+      ],
+      "native_nonce_change": [
+        164
+      ],
+      "native_parent_flag": [
+        143,
+        200
+      ]
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "growth_backend_rejects_pnh1_packet": [
+        4309,
+        4312
+      ],
+      "legacy_admit": [
+        4277
+      ],
+      "legacy_header_context": [
+        4118,
+        4184,
+        4203
+      ],
+      "legacy_maintenance_builder": [
+        5221
+      ],
+      "legacy_parent_task_artifacts": [
+        4247,
+        4267,
+        4268
+      ],
+      "legacy_registered_task_prepare": [
+        5279
+      ],
+      "parent_record": [
+        2953,
+        2966
+      ]
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs": {
+      "growth_admit": [
+        205
+      ],
+      "growth_builder": [
+        80
+      ],
+      "growth_context": [
+        163
+      ]
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked.rs": {
+      "growth_work_verify": [
+        23
+      ]
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_growth.rs": {
+      "challenge": [
+        34
+      ],
+      "header_decode": [
+        20
+      ],
+      "header_encode": [
+        13
+      ]
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_wire.rs": {
+      "challenge": [
+        170
+      ],
+      "header_decode": [
+        147,
+        297
+      ],
+      "header_encode": [
+        125,
+        286
+      ],
+      "native_header_bytes": [
+        9
+      ]
+    }
+  }
+}

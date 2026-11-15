@@ -1,0 +1,78 @@
+{
+  "schema": "pon-hepta-accounting-remote-archive-recovery-v1",
+  "host": "ai395",
+  "files": [
+    {
+      "name": "PR_BODY_C1.md",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/PR_BODY_C1.md",
+      "size": 5707,
+      "sha256": "6abf1eae3d66bfa0d460db3f55580c7d34217952b80b2c3d8eb0933c84f9700b",
+      "packet_path": "observations-before-recovery/PR_BODY_C1.md.txt"
+    },
+    {
+      "name": "observed-validation-summary-c1.json",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/observed-validation-summary-c1.json",
+      "size": 6864,
+      "sha256": "bd450ef04c9f66514f44bdd52115f825c29e5785909928971a9d2d9373695bdb",
+      "packet_path": "observations-before-recovery/observed-validation-summary-c1.json"
+    },
+    {
+      "name": "failure-and-gate-status-c1.json",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/failure-and-gate-status-c1.json",
+      "size": 3632,
+      "sha256": "2ee3c1d0916b81503c36f202c986a4269aac06dc8184475d47bcccdef6621445",
+      "packet_path": "observations-before-recovery/failure-and-gate-status-c1.json"
+    },
+    {
+      "name": "remote-setup-02-process-read.json",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/remote-setup-02-process-read.json",
+      "size": 3954,
+      "sha256": "04bdac98dd1349e3c33bbc6bf83caa4c8cbe68bc82b5d275e317dddf2437c784",
+      "packet_path": "raw/remote-setup/remote-setup-02-process-read.json"
+    },
+    {
+      "name": "remote-setup-02-status.json",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/remote-setup-02-status.json",
+      "size": 732,
+      "sha256": "0f5e446694e22d50ab47756a109d038f3d54a0f7115e3c35cf44d5e51c64e57b",
+      "packet_path": "raw/remote-setup/remote-setup-02-status.json"
+    },
+    {
+      "name": "remote-setup-03-process-read.json",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/remote-setup-03-process-read.json",
+      "size": 2401,
+      "sha256": "c1c6584cfc4a143312d8ebb180031447c9a1451bc2cfa554daabd78712a5b39c",
+      "packet_path": "raw/remote-setup/remote-setup-03-process-read.json"
+    },
+    {
+      "name": "remote-setup-03-status.json",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/remote-setup-03-status.json",
+      "size": 733,
+      "sha256": "c77b688b0c023c3482169a331c49b1f6e64ae96fd461778a2cf9e42baea18951",
+      "packet_path": "raw/remote-setup/remote-setup-03-status.json"
+    },
+    {
+      "name": "source-inputs-c1-copy.json",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/source-inputs-c1-copy.json",
+      "size": 4073,
+      "sha256": "bc53319e019624efec86e8f8a4228035dd231b229dd9c61613349bc3f4a0c7c6",
+      "packet_path": "observations-before-recovery/source-inputs-c1-copy.json"
+    },
+    {
+      "name": "delivery-index-c1.json",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/delivery-index-c1.json",
+      "size": 5445,
+      "sha256": "4863b88de876df6019a07091ce97ed34b68c4bfd2b978df2b78fe6de315ea4ac",
+      "packet_path": "observations-before-recovery/delivery-index-c1.json"
+    },
+    {
+      "name": "closure-pack-c1.json",
+      "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/closure-pack-c1.json",
+      "size": 35131,
+      "sha256": "31ea1bba3407894e90c308ea227a515ad771748f062be84ff7b64a3d7194cac3",
+      "packet_path": "observations-before-recovery/closure-pack-c1.json"
+    }
+  ],
+  "all_bytes_hash_verified": true,
+  "tests_executed_by_this_copy_and_hash_operation": false
+}

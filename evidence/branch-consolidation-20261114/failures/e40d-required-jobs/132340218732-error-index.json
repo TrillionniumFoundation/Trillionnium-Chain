@@ -1,0 +1,18 @@
+[
+  {
+    "line": 4321,
+    "text": "ERROR: setUpClass (__main__.CurrentCiTests)"
+  },
+  {
+    "line": 4323,
+    "text": "Traceback (most recent call last):"
+  },
+  {
+    "line": 4338,
+    "text": "FAILED (errors=1)"
+  },
+  {
+    "line": 4339,
+    "text": "##[error]Process completed with exit code 5."
+  }
+]

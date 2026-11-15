@@ -1,0 +1,117 @@
+{
+  "schema": "fixed-peer-w1-evidence-integrity-observation-v1",
+  "observed_utc": "2026-11-05T11:33:34.164460+00:00",
+  "source_commit": "549c5a26616113c6aeee76a62f34dd780d729b75",
+  "source_tree": "3b3371727893db6789a50f18300307f63ea99b84",
+  "assets": [
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/controls-3.tar.gz",
+      "bytes": 1089,
+      "sha256": "fa9f84a3b7fa44e5b1e8ea2f8776a6e4b37adbca7d799c1c00a82b0516e40df5",
+      "matches": true
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/controls-result.json",
+      "bytes": 216585,
+      "sha256": "11c684ed2a1e3dd63a6076b85bd6a21417a02d882f097e411eb0959301726d44",
+      "matches": true
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/executed-source.bundle",
+      "bytes": 23795,
+      "sha256": "3fec57ad77fd68dc922d5aa24a7d4b9ffcac5b45b77992e598f8b39418ab08d5",
+      "matches": true
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+      "bytes": 64,
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+      "matches": true
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/guest.bin",
+      "bytes": 375928,
+      "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+      "matches": true
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/header.bin",
+      "bytes": 318,
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "matches": true
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/input.bin",
+      "bytes": 49506,
+      "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+      "matches": true
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/observation-3.tar.gz",
+      "bytes": 942985,
+      "sha256": "9d5a1bad69a6279c64986c690f1e23ac6a38eed1c9e16f52b33fae15d83a450a",
+      "matches": true
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/original-controls-failure.log",
+      "bytes": 145,
+      "sha256": "dc2186516e340c4f1bf95fbbdab3f462ebfc205703eb0b79117a6e7f631fabf0",
+      "matches": true
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/proof-result.json",
+      "bytes": 198014,
+      "sha256": "a2bbd9ed141b87823ea6d50322c0d65f706e32aca028d1b5ab19f1327c1194cc",
+      "matches": true
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/raw-index.json",
+      "bytes": 129365,
+      "sha256": "1dac23ede827023ef16156a91c8b46b0c1349170f1ead02577c89da310c0406d",
+      "matches": true
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/succinct.bin",
+      "bytes": 257014,
+      "sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+      "matches": true
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/controls-3-repaired.tar.xz",
+      "bytes": 269452,
+      "sha256": "0bdc390cd790f9e6493690db22658f12f40f4eb086c0499ba490623e8c16b1b1",
+      "matches": true
+    }
+  ],
+  "all_asset_hashes_match": true,
+  "proof_reported": {
+    "complete_proof_claim": true,
+    "independent_full_proof_trials_observed": 1,
+    "cumulative_bounded_wall_seconds": 6253.711474144,
+    "total_wall_budget_seconds": 7200.0,
+    "fresh_proof_pipeline_seconds": 6248.484106799,
+    "fresh_proof_pipeline_scope": "preparation, full execution, all segments, recursion, source/checkpoint checks, controller pauses, and fresh strict verification; starts after fixture availability; excludes build/setup",
+    "input_fixture_construction_included": false,
+    "consensus_admission": false,
+    "production_qualification": false,
+    "prover_p99_established": false,
+    "prover_resource_completeness_established": false,
+    "real_network_propagation_seconds": null,
+    "confirmation_seconds": null
+  },
+  "controls_reported": {
+    "all_controls_passed": true,
+    "completed_controls": 58,
+    "positive_controls_passed": 1,
+    "negative_controls_passed": 57,
+    "elapsed_wall_seconds": 4.6291970610000135,
+    "total_wall_budget_seconds": 120,
+    "quantum_security_qualified": false,
+    "parent_eligibility_checked": false,
+    "new_proofs_generated": 0,
+    "verifier_sha256": "9c3e3f321a24e1acb66638058fd77f67906824593422692f9e296e70a688fe65"
+  },
+  "actual_proof_verification_executed_by_this_observer": false,
+  "new_proof_trials_executed_by_this_observer": 0,
+  "scope": "Read-only hash and report-shape check of fixed concurrent evidence; no native test, prover, receipt verification, qualification, index/ref/worktree mutation, or transfer to source 1d6a9f9."
+}

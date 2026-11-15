@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="nextest-run" tests="1" failures="0" errors="0" uuid="cf32254e-d127-46d7-b559-224d8fd2a667" timestamp="2026-11-09T05:00:14.546+08:00" time="44.443">
+    <testsuite name="codex-hepta-agentd" tests="1" disabled="0" errors="0" failures="0">
+        <testcase name="neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback" classname="codex-hepta-agentd" timestamp="2026-11-09T05:00:14.549+08:00" time="44.440">
+        </testcase>
+    </testsuite>
+</testsuites>

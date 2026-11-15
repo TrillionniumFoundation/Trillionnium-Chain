@@ -1,0 +1,395 @@
+{
+  "artifact_index": {
+    "after_files": 500,
+    "before_files": 499,
+    "only_new_entry": "authority-final-validation-runner.py",
+    "validated_commits_unchanged": true
+  },
+  "changed_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/security/PQ_AUTHORITY_PREFLIGHT_20261108.md",
+    "evidence/pq-authority-preflight-20261108-9d315/artifact-index.json",
+    "evidence/pq-authority-preflight-20261108-9d315/authority-final-validation-runner.py",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.5165559130255133,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794129046.0911906,
+      "label": "preflight-before-edit",
+      "logs": {
+        "preflight-before-edit.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/preflight-before-edit.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "preflight-before-edit.stdout.log": {
+          "bytes": 178,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/preflight-before-edit.stdout.log",
+          "sha256": "3e9e970d160b66960d5566a0f7e262756d1bd8d7873459da8c146b0d8ee8a6d9"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+        "mode": "--dev",
+        "packages": 26,
+        "project": "trillionnium-chain",
+        "remote_policy_mutated": false,
+        "result": "PASS"
+      },
+      "started_unix_seconds": 1794129045.5746357
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.1148931251373142,
+      "exit_code": 1,
+      "finished_unix_seconds": 1794129046.2810595,
+      "label": "inventory-before-check",
+      "logs": {
+        "inventory-before-check.stderr.log": {
+          "bytes": 76,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/inventory-before-check.stderr.log",
+          "sha256": "3060c11e06f46d1cbf92fbb40b0ecf6bfd5482816a73a13c7267e2efa34b28fb"
+        },
+        "inventory-before-check.stdout.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/inventory-before-check.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "passed": false,
+      "started_unix_seconds": 1794129046.1661665
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.16586155607365072,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794129046.4486082,
+      "label": "refresh-inventory",
+      "logs": {
+        "refresh-inventory.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/refresh-inventory.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "refresh-inventory.stdout.log": {
+          "bytes": 35,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/refresh-inventory.stdout.log",
+          "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+        }
+      },
+      "passed": true,
+      "readback": {},
+      "started_unix_seconds": 1794129046.282746
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.1654087828937918,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794129046.6882522,
+      "label": "inventory-after-check",
+      "logs": {
+        "inventory-after-check.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/inventory-after-check.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "inventory-after-check.stdout.log": {
+          "bytes": 35,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/inventory-after-check.stdout.log",
+          "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+        }
+      },
+      "passed": true,
+      "readback": {},
+      "started_unix_seconds": 1794129046.5228438
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.7169556750450283,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794129047.4518561,
+      "label": "ci-contract",
+      "logs": {
+        "ci-contract.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/ci-contract.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ci-contract.stdout.log": {
+          "bytes": 378,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/ci-contract.stdout.log",
+          "sha256": "7b1446921b5f46ba5d957c2a60eedaabfbc802f215cd14ec62c1f6fb099c9795"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "artifact_comparison_jobs": 1,
+        "head_jobs": 5,
+        "inline_source_pins": 26,
+        "merge_lanes": 5,
+        "native_cost_architectures": 2,
+        "pq_release_authority_controls": {
+          "complete_release": 52,
+          "groups": {
+            "initial_root_material": 6,
+            "original_release": 37,
+            "quorum_preflight": 9
+          },
+          "python_test_doubles": 18,
+          "tests_executed": false
+        },
+        "tests_executed": false,
+        "w1_actual_reuse_v3_cells": 4
+      },
+      "started_unix_seconds": 1794129046.7349014
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.9173792209476233,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794129048.3711476,
+      "label": "pq-integration",
+      "logs": {
+        "pq-integration.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/pq-integration.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "pq-integration.stdout.log": {
+          "bytes": 557,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/pq-integration.stdout.log",
+          "sha256": "afb95edb12b07e6cceed197c7b453d05420569360c40d7bbcdd5e586563e21bc"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "canonical_default_provider_contract_checked": true,
+        "canonical_pnq2_contract_checked": true,
+        "continuous_npq6_combination_accepted": false,
+        "cryptographic_acceptance": false,
+        "exact_source_blobs": 724,
+        "legacy_qtx1_optional_adapter_contract_checked": true,
+        "native_transfer_account_contract_checked": true,
+        "native_transport_contract_checked": true,
+        "node_activated": false,
+        "production_confidentiality_accepted": false,
+        "schema": "trnm-pq-cross-branch-check-v1",
+        "status": "HOLD_NO_GO",
+        "upstream_heads": 6,
+        "whole_native_authorization_migrated": false
+      },
+      "started_unix_seconds": 1794129047.4537685
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "add",
+        "--",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "docs/security/PQ_AUTHORITY_PREFLIGHT_20261108.md",
+        "evidence/pq-authority-preflight-20261108-9d315/artifact-index.json",
+        "evidence/pq-authority-preflight-20261108-9d315/authority-final-validation-runner.py",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.21565589890815318,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794129048.6216784,
+      "label": "stage-reviewed-paths",
+      "logs": {
+        "stage-reviewed-paths.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/stage-reviewed-paths.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stage-reviewed-paths.stdout.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/stage-reviewed-paths.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "passed": true,
+      "readback": {},
+      "started_unix_seconds": 1794129048.406023
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.03289615595713258,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794129048.6657436,
+      "label": "staged-diff-check",
+      "logs": {
+        "staged-diff-check.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/staged-diff-check.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "staged-diff-check.stdout.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/staged-diff-check.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "passed": true,
+      "readback": {},
+      "started_unix_seconds": 1794129048.6328485
+    },
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh",
+        "--staged"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.36570412502624094,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794129049.03356,
+      "label": "preflight-before-commit",
+      "logs": {
+        "preflight-before-commit.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/preflight-before-commit.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "preflight-before-commit.stdout.log": {
+          "bytes": 181,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/preflight-before-commit.stdout.log",
+          "sha256": "ae09ebb285e9ecd2dcfbecf6c7d3a0ccd01904ab6244fecd1cefa632c67935d7"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+        "mode": "--staged",
+        "packages": 26,
+        "project": "trillionnium-chain",
+        "remote_policy_mutated": false,
+        "result": "PASS"
+      },
+      "started_unix_seconds": 1794129048.6678565
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "commit",
+        "-m",
+        "fix(ci): refresh native source inventory and retain its gate"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.1654050899669528,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794129049.2246826,
+      "label": "commit-inventory-fix",
+      "logs": {
+        "commit-inventory-fix.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/commit-inventory-fix.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "commit-inventory-fix.stdout.log": {
+          "bytes": 277,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/commit-inventory-fix.stdout.log",
+          "sha256": "47577cf047dfe2651816402faa80611dab6d333de6ac308d0125dcc95fdf10ae"
+        }
+      },
+      "passed": true,
+      "readback": {},
+      "started_unix_seconds": 1794129049.0592775
+    }
+  ],
+  "corpus": {
+    "all_eight_assertions_false": true,
+    "new_pins": [
+      "evidence/pq-authority-preflight-20261108-9d315/authority-final-validation-runner.py",
+      "scripts/refresh_distributed_source_inventory.py"
+    ],
+    "pinned_blobs": 724,
+    "refreshed_pins": [
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "docs/security/PQ_AUTHORITY_PREFLIGHT_20261108.md"
+    ],
+    "required_paths": 643
+  },
+  "declared_final_gates": 32,
+  "expected_red_label": "inventory-before-check",
+  "failures": [],
+  "finished_unix_seconds": 1794129049.4324706,
+  "hosted_ci_passed": false,
+  "inventory": {
+    "added_paths": [
+      "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs"
+    ],
+    "after": {
+      "bytes": 380547,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/inventory-after.raw",
+      "sha256": "36a8bb4a6d77a3b212c88de2f8af66cb1def7fac4a0db9638d1e64167b6e8c5b"
+    },
+    "after_paths": 1369,
+    "before": {
+      "bytes": 380253,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/inventory-before.raw",
+      "sha256": "f834d8c2b0f49811ff8930898e01c65b40801d8fbef550a8662457bbbdea02e8"
+    },
+    "before_paths": 1368,
+    "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "removed_paths": []
+  },
+  "native_signature_implementation_changed": false,
+  "native_validation_executed": false,
+  "original_31_commands_preserved": true,
+  "parent_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+  "production_activation": false,
+  "result": "PASS",
+  "schema": "trnm-distributed-source-inventory-fix-v1",
+  "source_commit": "ca3c4f88afc70399000b18fc7d68cfa62e57fb2f",
+  "source_tree": "c06c28dbbb16bb30a4f568408913313ab533c47e",
+  "validation_runner": {
+    "bytes": 25774,
+    "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo/evidence/pq-authority-preflight-20261108-9d315/authority-final-validation-runner.py",
+    "sha256": "d81437a1cef461666b9103cc3f9e8f8ab0c67a90903b5802f582d2c52cd82710"
+  },
+  "whole_chain_pq_qualified": false
+}

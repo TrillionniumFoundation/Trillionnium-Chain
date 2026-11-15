@@ -1,0 +1,17 @@
+{
+  "command": [
+    "cargo",
+    "+1.95.0",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "source": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+  "exit_code": 0,
+  "lock_sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+  "graph_sha256": "7d370cb98a5e3d4243c689689b6c51e2da13a2641435604561226f9a01a76c91"
+}

@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "tests/fuzz/Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 0.3893688968382776,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794120534.9352407,
+  "label": "metadata-fuzz",
+  "logs": {
+    "metadata-fuzz.stderr.log": {
+      "bytes": 52,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/metadata-fuzz.stderr.log",
+      "sha256": "4c9eb667b06d15fae0587960059a48122a7acc60b10acd07c1b3eee2e2167a76"
+    },
+    "metadata-fuzz.stdout.log": {
+      "bytes": 723480,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/metadata-fuzz.stdout.log",
+      "sha256": "ffa63d43b456244e9a7b6cf758f3c556684b5cda558ff2c143ee3dd13aef5ab2"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "packages": 149,
+    "resolved_nodes": 149,
+    "workspace_members": 1
+  },
+  "started_unix_seconds": 1794120534.5458717
+}

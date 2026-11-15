@@ -1,0 +1,50 @@
+{
+  "artifacts": [
+    {
+      "bytes": 16062,
+      "path": "README.md",
+      "sha256": "142dd51287e6fdee14f4564b637a60dfe2ef028f4ba4aeb662cfacec2e95995a"
+    },
+    {
+      "bytes": 1649,
+      "path": "authentication-green.log",
+      "sha256": "5373b51f5d9c20c258e577e47f6a25adb894cce75aaa5cb29e37c26593768c94"
+    },
+    {
+      "bytes": 3449,
+      "path": "authentication-red.log",
+      "sha256": "85cdf38c244c21709dbc51e8f35f2cda78966ae2916c979513e797a1eef3322d"
+    },
+    {
+      "bytes": 2855,
+      "path": "parent-controls.log",
+      "sha256": "9ad1b226be89ca037837eb3795d948b2215ffe4ecead8d059dc75360e41bba68"
+    },
+    {
+      "bytes": 960,
+      "path": "pq-cli-controls.log",
+      "sha256": "34c82f67bcf3b38fa979d97ba88871957047aedb688649fc4d08137fbe9f3e20"
+    },
+    {
+      "bytes": 1316547,
+      "path": "raw-observations.tar.gz",
+      "sha256": "2dd43f99893ba82f9072d2c0e4b817153a3fc9d7ab6845daae9016ab1c614c05"
+    },
+    {
+      "bytes": 21867,
+      "path": "validation-summary.json",
+      "sha256": "fb2226f47d00109e379430ce46bfcfd4f6474f02773379e4d464b9264ed0580e"
+    }
+  ],
+  "full_hosted_acceptance": false,
+  "manifest_self_hash_excluded": true,
+  "production_activation": false,
+  "publication_scope": "Evidence-only successor; native execution remains bound to tested_commit.",
+  "raw_member_bytes": 17145097,
+  "raw_members_including_manifest": 431,
+  "schema": "trnm-architecture-evidence-publication-v1",
+  "tested_commit": "34bffa42461e746a602cfd687b8efb082df926c8",
+  "tested_tree": "b692872dfd441a3ee89a6604ec51556fd1f6bddf",
+  "transport_archives_excluded": 2,
+  "whole_chain_pq_qualified": false
+}

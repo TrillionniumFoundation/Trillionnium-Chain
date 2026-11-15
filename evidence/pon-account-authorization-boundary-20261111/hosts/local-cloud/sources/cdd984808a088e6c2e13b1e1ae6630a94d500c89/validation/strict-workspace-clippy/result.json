@@ -1,0 +1,34 @@
+{
+  "id": "strict-workspace-clippy",
+  "argv": [
+    "cargo",
+    "clippy",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "returncode": 101,
+  "launch_error": null,
+  "elapsed_seconds": 152.94414531300026,
+  "finished_utc": "2026-11-11T01:43:50.648870+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "bac961cc106c8d43678c9f62e65ac29d3f936cb14f9209651ac2ffec961014a5",
+  "pass": false,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 72.98670299999999,
+    "system_cpu_seconds": 62.573644,
+    "maximum_rss_kib": 905620,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

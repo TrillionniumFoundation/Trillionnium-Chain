@@ -1,0 +1,66 @@
+{
+  "files_changed": false,
+  "observations": [
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "--",
+        "/dev/null",
+        "/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-integration-20261111/hosted-315/campaign/run-1.stdout.log"
+      ],
+      "exit_code": 3,
+      "path": "pq-closure-integration-20261111/hosted-315/campaign/run-1.stdout.log",
+      "stderr": "",
+      "stdout": "/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-integration-20261111/hosted-315/campaign/run-1.stdout.log:11: new blank line at EOF.\n"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "--",
+        "/dev/null",
+        "/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-integration-20261111/hosted-315/campaign/run-2.stdout.log"
+      ],
+      "exit_code": 3,
+      "path": "pq-closure-integration-20261111/hosted-315/campaign/run-2.stdout.log",
+      "stderr": "",
+      "stdout": "/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-integration-20261111/hosted-315/campaign/run-2.stdout.log:11: new blank line at EOF.\n"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "--",
+        "/dev/null",
+        "/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-integration-20261111/hosted-315/campaign/run-3.stdout.log"
+      ],
+      "exit_code": 3,
+      "path": "pq-closure-integration-20261111/hosted-315/campaign/run-3.stdout.log",
+      "stderr": "",
+      "stdout": "/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-integration-20261111/hosted-315/campaign/run-3.stdout.log:11: new blank line at EOF.\n"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "--",
+        "/dev/null",
+        "/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-hosted-c09dbbe992/native/original-campaign-job-130309763995.log"
+      ],
+      "exit_code": 3,
+      "path": "pq-closure-hosted-c09dbbe992/native/original-campaign-job-130309763995.log",
+      "stderr": "",
+      "stdout": "/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-hosted-c09dbbe992/native/original-campaign-job-130309763995.log:1113: trailing whitespace.\n+2026-11-11T04:21:26.5308604Z \n/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-hosted-c09dbbe992/native/original-campaign-job-130309763995.log:1117: trailing whitespace.\n+2026-11-11T04:21:26.5310967Z \n/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-hosted-c09dbbe992/native/original-campaign-job-130309763995.log:1120: trailing whitespace.\n+2026-11-11T04:21:26.5312657Z \n/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-hosted-c09dbbe992/native/original-campaign-job-130309763995.log:1122: trailing whitespace.\n+2026-11-11T04:21:26.5313050Z \n/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-hosted-c09dbbe992/native/original-campaign-job-130309763995.log:1124: trailing whitespace.\n+2026-11-11T04:21:26.5313418Z \n/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-hosted-c09dbbe992/native/original-campaign-job-130309763995.log:1126: trailing whitespace.\n+2026-11-11T04:21:26.5313703Z \n/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-hosted-c09dbbe992/native/original-campaign-job-130309763995.log:1128: trailing whitespace.\n+2026-11-11T04:21:26.5314455Z \n/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-hosted-c09dbbe992/native/original-campaign-job-130309763995.log:1251: trailing whitespace.\n+2026-11-11T04:21:31.4529568Z \n/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-hosted-c09dbbe992/native/original-campaign-job-130309763995.log:1254: trailing whitespace.\n+2026-11-11T04:21:31.4539221Z \n/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-hosted-c09dbbe992/native/original-campaign-job-130309763995.log:1278: trailing whitespace.\n+2026-11-11T04:21:39.4805636Z \n/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-hosted-c09dbbe992/native/original-campaign-job-130309763995.log:1280: trailing whitespace.\n+2026-11-11T04:21:39.4894508Z \n"
+    }
+  ],
+  "schema": "TRNM-RAW-EVIDENCE-WHITESPACE1"
+}

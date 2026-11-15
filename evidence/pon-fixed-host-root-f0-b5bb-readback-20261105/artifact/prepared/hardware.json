@@ -1,0 +1,15 @@
+{
+  "affinity": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "ceiling_is_not_reserved_physical_memory_or_cpu": true,
+  "controller_memory_max_bytes": 17179869184,
+  "kernel": "7.0.0-1017-azure",
+  "logical_cpu_count": 4,
+  "machine": "x86_64",
+  "meminfo": "MemTotal:       16366508 kB\nMemFree:        11215760 kB\nMemAvailable:   14842064 kB\nBuffers:           70996 kB\nCached:          3796132 kB\nSwapCached:            0 kB\nActive:           769392 kB\nInactive:        3398624 kB\nActive(anon):     355496 kB\nInactive(anon):        0 kB\nActive(file):     413896 kB\nInactive(file):  3398624 kB\nUnevictable:       46728 kB\nMlocked:           43656 kB\nSwapTotal:       3145724 kB\nSwapFree:        3145724 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:           1446172 kB\nWriteback:             0 kB\nAnonPages:        347844 kB\nMapped:           329536 kB\nShmem:             45872 kB\nKReclaimable:     150240 kB\nSlab:             236796 kB\nSReclaimable:     150240 kB\nSUnreclaim:        86556 kB\nKernelStack:        4176 kB\nPageTables:         6528 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    11328976 kB\nCommitted_AS:    2147972 kB\nVmallocTotal:   13743895347199 kB\nVmallocUsed:       39000 kB\nVmallocChunk:          0 kB\nPercpu:             2336 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:    583680 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         1474560 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:             0 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      117888 kB\nDirectMap2M:     3022848 kB\nDirectMap1G:    15728640 kB\n",
+  "physical_memtotal_bytes": 16759304192
+}

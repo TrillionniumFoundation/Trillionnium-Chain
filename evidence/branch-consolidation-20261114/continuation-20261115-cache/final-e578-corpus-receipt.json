@@ -1,0 +1,156 @@
+{
+  "schema": "trnm-final-tree-corpus-independent-validation-v1",
+  "tree": "e5785f836110110fff9f8569f2e737c3ea72ce29",
+  "head": "f34f432c6c533c651ab74f69f4f43aef326eedcb",
+  "steps": [
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "started_utc": "2026-11-15T08:35:52.119132+00:00",
+      "elapsed_seconds": 0.055189290003909264,
+      "exit_code": 0
+    },
+    {
+      "name": "corpus-113",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py",
+        "-v"
+      ],
+      "started_utc": "2026-11-15T08:35:52.174614+00:00",
+      "elapsed_seconds": 289.6023748200023,
+      "exit_code": 0
+    }
+  ],
+  "source_before": [
+    {
+      "path": "scripts/project-preflight.sh",
+      "sha256": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f",
+      "bytes": 242,
+      "matches_reviewed_tree": true
+    },
+    {
+      "path": "scripts/ci/project_boundary.py",
+      "sha256": "5845b10022c1ce625e864c38a9c69ba1982a1d1efad1dc934cc06f3d8dafda47",
+      "bytes": 4485,
+      "matches_reviewed_tree": true
+    },
+    {
+      "path": "scripts/ci/test_pq_research_integration.py",
+      "sha256": "3e28aa336967d1916612d9a62d2ea0726e1b7211cbdfdac58d0a3219b17ea3d0",
+      "bytes": 145132,
+      "matches_reviewed_tree": true
+    },
+    {
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "sha256": "912314a9c13ce8d882ec88ee52926de9aa02613b5f8225b3aa09f5b59885221f",
+      "bytes": 114309,
+      "matches_reviewed_tree": true
+    },
+    {
+      "path": "scripts/ci/test_pq_chain_claim_guard.py",
+      "sha256": "d7d5b4a1982de7151384567e509f0a96ac20945592e6be9f45491e4a63ab42e9",
+      "bytes": 30140,
+      "matches_reviewed_tree": true
+    },
+    {
+      "path": "scripts/ci/pq_chain_claim_guard.py",
+      "sha256": "ae1c9d908115aac21f3b7f1c91ba37ba58b3e653eba645579af66a5ef9c8efb8",
+      "bytes": 14458,
+      "matches_reviewed_tree": true
+    },
+    {
+      "path": "scripts/ci/pq_source_reader.py",
+      "sha256": "b3eb3f23b42c012dc1a5a07daa479db5e2982b2a20006f047552c9f13e1a65cb",
+      "bytes": 5569,
+      "matches_reviewed_tree": true
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "sha256": "1d111ea8fa290ab883c21f06e5c7e11c1c9dcb18d269c7cc4bdbe5017f8535d9",
+      "bytes": 525351,
+      "matches_reviewed_tree": true
+    }
+  ],
+  "source_after": [
+    {
+      "path": "scripts/project-preflight.sh",
+      "sha256": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f",
+      "bytes": 242,
+      "matches_reviewed_tree": true
+    },
+    {
+      "path": "scripts/ci/project_boundary.py",
+      "sha256": "5845b10022c1ce625e864c38a9c69ba1982a1d1efad1dc934cc06f3d8dafda47",
+      "bytes": 4485,
+      "matches_reviewed_tree": true
+    },
+    {
+      "path": "scripts/ci/test_pq_research_integration.py",
+      "sha256": "3e28aa336967d1916612d9a62d2ea0726e1b7211cbdfdac58d0a3219b17ea3d0",
+      "bytes": 145132,
+      "matches_reviewed_tree": true
+    },
+    {
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "sha256": "912314a9c13ce8d882ec88ee52926de9aa02613b5f8225b3aa09f5b59885221f",
+      "bytes": 114309,
+      "matches_reviewed_tree": true
+    },
+    {
+      "path": "scripts/ci/test_pq_chain_claim_guard.py",
+      "sha256": "d7d5b4a1982de7151384567e509f0a96ac20945592e6be9f45491e4a63ab42e9",
+      "bytes": 30140,
+      "matches_reviewed_tree": true
+    },
+    {
+      "path": "scripts/ci/pq_chain_claim_guard.py",
+      "sha256": "ae1c9d908115aac21f3b7f1c91ba37ba58b3e653eba645579af66a5ef9c8efb8",
+      "bytes": 14458,
+      "matches_reviewed_tree": true
+    },
+    {
+      "path": "scripts/ci/pq_source_reader.py",
+      "sha256": "b3eb3f23b42c012dc1a5a07daa479db5e2982b2a20006f047552c9f13e1a65cb",
+      "bytes": 5569,
+      "matches_reviewed_tree": true
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "sha256": "1d111ea8fa290ab883c21f06e5c7e11c1c9dcb18d269c7cc4bdbe5017f8535d9",
+      "bytes": 525351,
+      "matches_reviewed_tree": true
+    }
+  ],
+  "source_unchanged": true,
+  "index_bytes_unchanged": true,
+  "index_sha256": "7d9dfe9b5717c48be583297deb3762e75da524e3d4c8f5d796830dff2e74be43",
+  "no_network_or_rust_build": true,
+  "scope": "Original corpus negative-control Python suite on reviewed test/reader bytes; filesystem fixtures are temporary. Not a production or cryptographic qualification.",
+  "logs": [
+    {
+      "name": "corpus-113.stderr",
+      "bytes": 16782,
+      "sha256": "8846ac58b7480e51aefb73123db340a758569821895550a016484aa99c071c01"
+    },
+    {
+      "name": "corpus-113.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "preflight.stdout",
+      "bytes": 180,
+      "sha256": "9e9d4144463e544ae14797fbc46c29aec41551f7019ee04bfd56fd0a461ed3ce"
+    }
+  ]
+}

@@ -1,0 +1,275 @@
+{
+  "CI_repair_execution_source": "17449baa42429ac98b55c100b1c523ff0abe40d0",
+  "PR_body": {
+    "all_bytes_unchanged": true,
+    "bytes": 5404,
+    "sha256": "9165fb202a8d455fd7a978a8926ccdd4ed71fc0421a4963cce0c1ee34cc7fa5d"
+  },
+  "README_change": {
+    "after": {
+      "bytes": 14155,
+      "sha256": "933d7e65dc60718f81f87ac417c5f6e533f35eb2fdd43fde03a39c932fdbf22f"
+    },
+    "all_other_bytes_identical": true,
+    "before": {
+      "bytes": 14156,
+      "sha256": "3d561abbd684c62b3e08feff575ec03525502142a4d1efcc0cbf218bd49fb24c"
+    },
+    "operation": "rstrip(b'\\n') + b'\\n'",
+    "removed_terminal_lf_bytes": 1
+  },
+  "added_packet_files": [
+    "original-attempts/publication-whitespace-failed.tar.gz",
+    "publication-packaging-provenance.json",
+    "publication-index-recovery.json"
+  ],
+  "changed_original_packet_files": [
+    "README.md",
+    "manifest.json"
+  ],
+  "created_utc": "2026-11-12T10:14:59.659722+00:00",
+  "derivation": "DERIVED_PACKAGING_ONLY_FROM_VERIFIED_V2",
+  "failed_publication": {
+    "archive": {
+      "archive_metadata": "regular files; uid/gid 0; mode 0644; tar/gzip mtime 0",
+      "bytes": 6262,
+      "full_member_readback_passed": true,
+      "member_bytes_preserved": true,
+      "member_prefix": "publication-whitespace-failed/",
+      "path": "original-attempts/publication-whitespace-failed.tar.gz",
+      "sha256": "93053b795611730021612dfe1af15cc7e9250a858b40b405f02c33892dae868d"
+    },
+    "command_exit_codes": [
+      {
+        "exit_code": 0,
+        "name": "01-administrator"
+      },
+      {
+        "exit_code": 0,
+        "name": "02-fast-forward-reviewed-ci"
+      },
+      {
+        "exit_code": 0,
+        "name": "03-source-before-publication"
+      },
+      {
+        "exit_code": 0,
+        "name": "04-stage-reviewed-evidence"
+      },
+      {
+        "exit_code": 0,
+        "name": "05-staged-preflight"
+      },
+      {
+        "exit_code": 2,
+        "name": "06-evidence-whitespace"
+      }
+    ],
+    "commit_or_push_reached": false,
+    "first_preflight_raw_logs_retained_without_invented_exit_record": true,
+    "member_bytes": 78450,
+    "member_count": 22,
+    "members": [
+      {
+        "bytes": 0,
+        "path": "00-preflight.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 179,
+        "path": "00-preflight.stdout.log",
+        "sha256": "b1ddc0b630de7b591067fd83466528a15acf198976c6acb391c6737d88c277bc"
+      },
+      {
+        "bytes": 763,
+        "path": "01-administrator.record.json",
+        "sha256": "e9e2db1f00c7e1b60940729edf47c436f2cca5a78ee35e5e7a6750ffcee345dc"
+      },
+      {
+        "bytes": 0,
+        "path": "01-administrator.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 10,
+        "path": "01-administrator.stdout.log",
+        "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+      },
+      {
+        "bytes": 827,
+        "path": "02-fast-forward-reviewed-ci.record.json",
+        "sha256": "5ae3b8a22e5b0c9073172c48f9ffcbb9006ed86037a9379e8842dbda4d5f730a"
+      },
+      {
+        "bytes": 0,
+        "path": "02-fast-forward-reviewed-ci.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 202,
+        "path": "02-fast-forward-reviewed-ci.stdout.log",
+        "sha256": "fed162292aff9a43936bd57809a98cb2645d538fe6a437b54dfaaecaeaa1781a"
+      },
+      {
+        "bytes": 991,
+        "path": "03-source-before-publication.record.json",
+        "sha256": "2c8064538ae748f8598cb69c695baf89cdd504f823cfa4fbc234c1f666f415f7"
+      },
+      {
+        "bytes": 0,
+        "path": "03-source-before-publication.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 423,
+        "path": "03-source-before-publication.stdout.log",
+        "sha256": "cc052b23513aca7192005ae2325722803b06a23c7624b2238b8a33ba6b5e33a8"
+      },
+      {
+        "bytes": 33118,
+        "path": "04-stage-reviewed-evidence.record.json",
+        "sha256": "b217f335c47ee1cd60b136da81c6f1998e32b70a08ec372ac86ba493f90c1526"
+      },
+      {
+        "bytes": 0,
+        "path": "04-stage-reviewed-evidence.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "path": "04-stage-reviewed-evidence.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 779,
+        "path": "05-staged-preflight.record.json",
+        "sha256": "a5d64c7bf3b0713c4f9d2f615bcf7b3b3460059039b63ea3f801a677844d4674"
+      },
+      {
+        "bytes": 0,
+        "path": "05-staged-preflight.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 182,
+        "path": "05-staged-preflight.stdout.log",
+        "sha256": "ad7651b6719d20abedfba1f8559aff12a03fe46b7f93a0466a9392738c1a46de"
+      },
+      {
+        "bytes": 777,
+        "path": "06-evidence-whitespace.record.json",
+        "sha256": "69574652297dfe7444fd076b7b405a04d7b711617a48055e11323e5dd189301f"
+      },
+      {
+        "bytes": 0,
+        "path": "06-evidence-whitespace.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 87,
+        "path": "06-evidence-whitespace.stdout.log",
+        "sha256": "36d98a903c18adc0850139af2813c9cf8216fd12bc2046f5f385b522f021edcf"
+      },
+      {
+        "bytes": 39689,
+        "path": "publication.json",
+        "sha256": "4bf4d0e656fa839f86377008c2a0480a3f83839dcb36392ab867c8e399bed558"
+      },
+      {
+        "bytes": 423,
+        "path": "source-before-publication.json",
+        "sha256": "cc052b23513aca7192005ae2325722803b06a23c7624b2238b8a33ba6b5e33a8"
+      }
+    ],
+    "original_directory": "/home/qian-qi/work/chain-daa-publication-600e",
+    "original_error": {
+      "message": "06-evidence-whitespace failed, original logs retained",
+      "type": "RuntimeError"
+    },
+    "original_finished_utc": "2026-11-12T09:20:40.650649+00:00",
+    "original_result": "FAILED_OR_UNRESOLVED",
+    "prior_five_recorded_commands_passed": true,
+    "receipt": {
+      "bytes": 39689,
+      "path": "publication.json",
+      "sha256": "4bf4d0e656fa839f86377008c2a0480a3f83839dcb36392ab867c8e399bed558"
+    },
+    "terminated_at": "06-evidence-whitespace",
+    "whitespace_stdout": {
+      "bytes": 87,
+      "path": "06-evidence-whitespace.stdout.log",
+      "sha256": "36d98a903c18adc0850139af2813c9cf8216fd12bc2046f5f385b522f021edcf",
+      "text": "evidence/pon-joint-resource-competition-20261112/README.md:148: new blank line at EOF.\n"
+    }
+  },
+  "formal_execution_source": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "git_mutations": false,
+  "inherited_results_not_reexecuted": true,
+  "native_execution_source": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "native_or_formal_relabelled_as_A2": false,
+  "new_archive_inventory_location": "failed_publication.members in this provenance",
+  "new_independent_samples": 0,
+  "new_packet_root": "/home/qian-qi/work/chain-daa-evidence-final-v3-600e/packet",
+  "new_tests_or_simulator_executions": 0,
+  "original_input_snapshots_reverified_unchanged": true,
+  "original_summary_and_research_archive_inventory_preserved": true,
+  "original_summary_scope": "v2 retained research observations; it has no packet file-count or byte-total fields",
+  "parent_packet": {
+    "manifest": {
+      "bytes": 55509,
+      "sha256": "ee0b038d25e05e470ed4cbb5417b8f87965a13f3e541e88a5ade00eb8c21a7db"
+    },
+    "physical_bytes": 13587396,
+    "physical_files": 294,
+    "root": "/home/qian-qi/work/chain-daa-evidence-final-v2-600e/packet"
+  },
+  "parent_review": {
+    "bytes": 2853,
+    "path": "/home/qian-qi/work/chain-daa-evidence-final-v2-600e/review-summary.json",
+    "result": "PASS",
+    "sha256": "4317e220a3415f75f683bb2d3656c2a1d97c53e9a8eae6a4e60889f359c7cfba"
+  },
+  "production_activation": false,
+  "publication_index_recovery": {
+    "bytes": 250402,
+    "cause_of_skip_flags_inferred": false,
+    "common_config_before_failure_attested": false,
+    "common_config_unchanged_during_recovery": true,
+    "earlier_native_formal_or_CI_results_relabelled": false,
+    "index_after": {
+      "flags": {
+        "H": 27005
+      },
+      "tracked_entries": 27005
+    },
+    "index_before": {
+      "flags": {
+        "H": 26893,
+        "S": 112
+      },
+      "tracked_entries": 27005
+    },
+    "observed_diagnostic_original": {
+      "bytes": 6939,
+      "path": "/home/qian-qi/work/chain-daa-publication-preconditions-600e.json",
+      "sha256": "6338aa0b3315d036afc59e7e3f5f6a05ec506862086f9b7aca87aa838deb7335"
+    },
+    "original_receipt_path": "/home/qian-qi/work/chain-daa-publication-final-600e/index-recovery.json",
+    "packet_receipt_path": "publication-index-recovery.json",
+    "physical_source_A2_passed": true,
+    "receipt_copied_without_reencoding": true,
+    "scope": "later publication index check and exact materialization; prior experiment results unchanged",
+    "second_failed_publication_original_files_embedded": 5,
+    "sha256": "7f74173315f4fda89450ba25ac4474c141cc55581deebb216f046972f684bca2",
+    "staged_scope_unchanged": true
+  },
+  "qualification": "HOLD_NO_GO",
+  "release_ready": false,
+  "schema": "trnm-joint-resource-publication-packaging-provenance-v1",
+  "source_A": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "source_A2": "17449baa42429ac98b55c100b1c523ff0abe40d0",
+  "source_A2_tree": "30d1f68d13d0eac47fc48a228f3b0cb47fbddc79",
+  "source_mutations": false,
+  "started_utc": "2026-11-12T10:14:58.881532+00:00",
+  "unchanged_whitespace_gate_must_pass_before_publication": true
+}

@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/workspace/scratch/4eec83b6ae24/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "info",
+    "libfuzzer-sys@0.4.10",
+    "--registry",
+    "crates-io",
+    "--locked",
+    "--config",
+    "net.retry=0",
+    "--config",
+    "http.timeout=20"
+  ],
+  "exit_code": 101,
+  "stdout": "",
+  "stderr": "error: the option `--locked` can only be used within a workspace\n"
+}

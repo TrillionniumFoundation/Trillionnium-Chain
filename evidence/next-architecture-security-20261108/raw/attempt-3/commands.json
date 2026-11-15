@@ -1,0 +1,60 @@
+[
+  {
+    "args": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+      "--output",
+      "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-validation/attempt-3/source-before.json"
+    ],
+    "elapsed_wall_ns": 600008790603,
+    "exit_code": -15,
+    "name": "source-before",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T06:24:48.630978+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "source-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "source-before.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timeout": true
+  },
+  {
+    "args": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+      "--output",
+      "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-validation/attempt-3/source-after.json"
+    ],
+    "elapsed_wall_ns": 364024537959,
+    "exit_code": 0,
+    "name": "source-after",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T06:34:48.653711+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "source-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "path": "source-after.stdout",
+      "sha256": "e75735e4c04118bd8d20acb997ac04a04a28280749ca4d4aa27c4e8537d4c4e0"
+    },
+    "timeout": false
+  }
+]

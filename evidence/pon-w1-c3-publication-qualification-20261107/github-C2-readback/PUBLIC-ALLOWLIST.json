@@ -1,0 +1,542 @@
+{
+  "allowlist_itself_not_self_hashed": true,
+  "binary_archives_executables_databases_excluded": true,
+  "candidate_source_commit": "cc4dd8bdd89309c635831db30b508af2f89419d7",
+  "candidate_source_tree": "161d3a4e8ab8c865869352339ec8c66f6609449a",
+  "file_count": 76,
+  "files": [
+    {
+      "bytes": 6102,
+      "kind": "authored_readback_report",
+      "path": "README.md",
+      "sha256": "a6ad4f42bfba179d003e277c37dc783ebf5568a4dd0a17e1039ccd4724dfe8f1"
+    },
+    {
+      "bytes": 6927,
+      "kind": "exact_JSON_payload_extracted_from_retained_log",
+      "path": "derived/original-campaign-results-from-log.json",
+      "sha256": "91bf5fe913f2cf4a31da024f489a63e96885e4ec3638b3319320c048886b232e"
+    },
+    {
+      "bytes": 3135,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-arm64-artifact-protocol-triage-05/02-protocol-head-job.stdout",
+      "sha256": "efa63e60153eab3ec122d1a372f00348b2592f604d9daad0c2841b5c90180f13",
+      "source_relative_path": "github-arm64-artifact-protocol-triage-05/02-protocol-head-job.stdout"
+    },
+    {
+      "bytes": 156736,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-arm64-artifact-protocol-triage-05/03-protocol-head-log.stdout",
+      "sha256": "3f3ae96d9b2797b6f3424b014e5ede3ba39b5f3dcbd727730f0ef8ed6fbf8104",
+      "source_relative_path": "github-arm64-artifact-protocol-triage-05/03-protocol-head-log.stdout"
+    },
+    {
+      "bytes": 3747,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-arm64-artifact-protocol-triage-05/04-protocol-head-check.stdout",
+      "sha256": "ccf1dd6e9cafbcb9859975efd25504c45cc2fe297be6c0440937c2160596b259",
+      "source_relative_path": "github-arm64-artifact-protocol-triage-05/04-protocol-head-check.stdout"
+    },
+    {
+      "bytes": 956,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-arm64-artifact-protocol-triage-05/05-protocol-head-annotations.stdout",
+      "sha256": "7ddcfba97d8f37c17ac6a4831422ab4ab9a4378158489f6c114b1bf0213f41ac",
+      "source_relative_path": "github-arm64-artifact-protocol-triage-05/05-protocol-head-annotations.stdout"
+    },
+    {
+      "bytes": 1192,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-arm64-artifact-protocol-triage-05/artifact-metadata.json",
+      "sha256": "f8a5eafa486dbdfcd9a298433a3e7a807281961ea0cadf52096d0559923aca14",
+      "source_relative_path": "github-arm64-artifact-protocol-triage-05/artifact-metadata.json"
+    },
+    {
+      "bytes": 23963,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-arm64-artifact-protocol-triage-05/manifest.json",
+      "sha256": "fbb41fc30e8ab05d591d35e2a3e56cb933da4cd7d4db6b8a98221785aa9112e8",
+      "source_relative_path": "github-arm64-artifact-protocol-triage-05/manifest.json"
+    },
+    {
+      "bytes": 333,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-arm64-artifact-protocol-triage-05/selected/from-zero-native-host/child-result.json",
+      "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321",
+      "source_relative_path": "github-arm64-artifact-protocol-triage-05/selected/from-zero-native-host/child-result.json"
+    },
+    {
+      "bytes": 7644,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-arm64-artifact-protocol-triage-05/selected/from-zero-native-host/controller-result.json",
+      "sha256": "5a8235838fd42a19973b6ae10a28439d7b1d6fe2e8fc4f0dae33ca06a85a29d2",
+      "source_relative_path": "github-arm64-artifact-protocol-triage-05/selected/from-zero-native-host/controller-result.json"
+    },
+    {
+      "bytes": 6904,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-arm64-artifact-protocol-triage-05/selected/from-zero-native-host/systemd-run.log",
+      "sha256": "cf93d9dace98f7493cf56d646d1d2047b3be83097ce8ccba4411e53c43021d51",
+      "source_relative_path": "github-arm64-artifact-protocol-triage-05/selected/from-zero-native-host/systemd-run.log"
+    },
+    {
+      "bytes": 948,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-arm64-artifact-protocol-triage-05/selected/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "sha256": "85ed8c2933165cce65c61d9e373a5bd8aeae5c959ce4e393b350b6e5676b554e",
+      "source_relative_path": "github-arm64-artifact-protocol-triage-05/selected/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+    },
+    {
+      "bytes": 0,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-arm64-artifact-protocol-triage-05/selected/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_relative_path": "github-arm64-artifact-protocol-triage-05/selected/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+    },
+    {
+      "bytes": 407,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-arm64-artifact-protocol-triage-05/selected/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "sha256": "d82b888feb4cdcedea3de3194ec397d13490dfcdda0b60d11a34f024809dbc52",
+      "source_relative_path": "github-arm64-artifact-protocol-triage-05/selected/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+    },
+    {
+      "bytes": 72839,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-arm64-artifact-protocol-triage-05/selected/from-zero-native/manifest.json",
+      "sha256": "93fa399e68164c4bf1754d64e4ea841319fd5a4b120f9a97508b6ff14396ca70",
+      "source_relative_path": "github-arm64-artifact-protocol-triage-05/selected/from-zero-native/manifest.json"
+    },
+    {
+      "bytes": 20183,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-arm64-artifact-protocol-triage-05/zip-inventory.json",
+      "sha256": "39bbe5086179e260e33b31c50c2e0449b66d4e81a1d8c05287b338d24d7bbc00",
+      "source_relative_path": "github-arm64-artifact-protocol-triage-05/zip-inventory.json"
+    },
+    {
+      "bytes": 40101,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-arm64-inner-readback-07/readback-tool-records.json",
+      "sha256": "83bc347e10c66e581b3946ca62ec9d3ea2b6f592474620a1b56b433ac02a69c0",
+      "source_relative_path": "github-arm64-inner-readback-07/readback-tool-records.json"
+    },
+    {
+      "bytes": 25883,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-arm64-inner-readback-07/summary.json",
+      "sha256": "50468096f54f857a4ce3cc78571bc780d48b49c7f322c0e9804542df6d373874",
+      "source_relative_path": "github-arm64-inner-readback-07/summary.json"
+    },
+    {
+      "bytes": 37698,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-cross-arch-triage-04/07-pr-current.stdout",
+      "sha256": "e3f5a583ad20c1aaff22cb348e6cdfd83e3ab33db4385550564102d9c5fe196c",
+      "source_relative_path": "github-cross-arch-triage-04/07-pr-current.stdout"
+    },
+    {
+      "bytes": 4112,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-failure-triage-02/02-retained-job-log-api.stdout",
+      "sha256": "b1dd56b5e8fc74b218ef3ee06c73a54a5775239b7754b61caba39def07436a66",
+      "source_relative_path": "github-failure-triage-02/02-retained-job-log-api.stdout"
+    },
+    {
+      "bytes": 0,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-original-campaign-triage-01/00-user.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_relative_path": "github-original-campaign-triage-01/00-user.stderr"
+    },
+    {
+      "bytes": 10,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-original-campaign-triage-01/00-user.stdout",
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+      "source_relative_path": "github-original-campaign-triage-01/00-user.stdout"
+    },
+    {
+      "bytes": 0,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-original-campaign-triage-01/01-run.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_relative_path": "github-original-campaign-triage-01/01-run.stderr"
+    },
+    {
+      "bytes": 15528,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-original-campaign-triage-01/01-run.stdout",
+      "sha256": "70e2904966e305a12f2f22fcc3d0b95abd3700c06b0802ca5aee080f0b46fb99",
+      "source_relative_path": "github-original-campaign-triage-01/01-run.stdout"
+    },
+    {
+      "bytes": 0,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-original-campaign-triage-01/02-job.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_relative_path": "github-original-campaign-triage-01/02-job.stderr"
+    },
+    {
+      "bytes": 3119,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-original-campaign-triage-01/02-job.stdout",
+      "sha256": "1b6bb3acbc1ac9844185132d1b26c792f1e0865f1f0748cf8905fe165ecb416a",
+      "source_relative_path": "github-original-campaign-triage-01/02-job.stdout"
+    },
+    {
+      "bytes": 0,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-original-campaign-triage-01/03-job-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_relative_path": "github-original-campaign-triage-01/03-job-log.stderr"
+    },
+    {
+      "bytes": 199263,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-original-campaign-triage-01/03-job-log.stdout",
+      "sha256": "5b2d98263a3b9c996c783204b11c225a09285d7956dc16db852aebbaf74612e0",
+      "source_relative_path": "github-original-campaign-triage-01/03-job-log.stdout"
+    },
+    {
+      "bytes": 35124,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-original-campaign-triage-01/log-focus.json",
+      "sha256": "72a28bcf56563f6ced1bd5ef9d7d5d482f366c3b6863bccf62b53afc2182ff12",
+      "source_relative_path": "github-original-campaign-triage-01/log-focus.json"
+    },
+    {
+      "bytes": 4200,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-original-campaign-triage-01/manifest.json",
+      "sha256": "5cf914e9ea9c7c670881adc391b41ab666cbbab06815244937b99c351c3734c9",
+      "source_relative_path": "github-original-campaign-triage-01/manifest.json"
+    },
+    {
+      "bytes": 25,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-retained-artifact-triage-03/01-fixed-artifact.stderr",
+      "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6",
+      "source_relative_path": "github-retained-artifact-triage-03/01-fixed-artifact.stderr"
+    },
+    {
+      "bytes": 123,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-retained-artifact-triage-03/01-fixed-artifact.stdout",
+      "sha256": "706afc3b2c7b96e18bb0e38cba9855b65a4d7417718585377e793912fe51b1a2",
+      "source_relative_path": "github-retained-artifact-triage-03/01-fixed-artifact.stdout"
+    },
+    {
+      "bytes": 0,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-retained-artifact-triage-03/02-historical-run.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_relative_path": "github-retained-artifact-triage-03/02-historical-run.stderr"
+    },
+    {
+      "bytes": 15615,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-retained-artifact-triage-03/02-historical-run.stdout",
+      "sha256": "f3b053260f8fa180509afb93a1ec8ada172926914f8f9702adfc1e8d7f44f08a",
+      "source_relative_path": "github-retained-artifact-triage-03/02-historical-run.stdout"
+    },
+    {
+      "bytes": 0,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-retained-artifact-triage-03/03-historical-artifacts.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_relative_path": "github-retained-artifact-triage-03/03-historical-artifacts.stderr"
+    },
+    {
+      "bytes": 32,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-retained-artifact-triage-03/03-historical-artifacts.stdout",
+      "sha256": "244563f989470892c537c9a4622920af0d228ee4528f7d00c64a06d6cd95856c",
+      "source_relative_path": "github-retained-artifact-triage-03/03-historical-artifacts.stdout"
+    },
+    {
+      "bytes": 0,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-retained-artifact-triage-03/04-current-artifact-list-control.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_relative_path": "github-retained-artifact-triage-03/04-current-artifact-list-control.stderr"
+    },
+    {
+      "bytes": 9908,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-retained-artifact-triage-03/04-current-artifact-list-control.stdout",
+      "sha256": "3fecf477855b983f60f93de2b28c5d4824abf0c40a4029100920013aa1ff4c19",
+      "source_relative_path": "github-retained-artifact-triage-03/04-current-artifact-list-control.stdout"
+    },
+    {
+      "bytes": 0,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-retained-artifact-triage-03/05-repo-permissions.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_relative_path": "github-retained-artifact-triage-03/05-repo-permissions.stderr"
+    },
+    {
+      "bytes": 69,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-retained-artifact-triage-03/05-repo-permissions.stdout",
+      "sha256": "c10a73ecb56b04daced6816512948552fce786081cee7b5f27f0b5d7efc80153",
+      "source_relative_path": "github-retained-artifact-triage-03/05-repo-permissions.stdout"
+    },
+    {
+      "bytes": 0,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-retained-artifact-triage-03/06-fixed-id-source-references.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_relative_path": "github-retained-artifact-triage-03/06-fixed-id-source-references.stderr"
+    },
+    {
+      "bytes": 47511,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-retained-artifact-triage-03/06-fixed-id-source-references.stdout",
+      "sha256": "996f83c08ad5b74a06373eed9c792b9623dd17974c5c506f4c693349aee53ef2",
+      "source_relative_path": "github-retained-artifact-triage-03/06-fixed-id-source-references.stdout"
+    },
+    {
+      "bytes": 36468,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-retained-artifact-triage-03/manifest.json",
+      "sha256": "b994ac273d3ab7d669fe561e664140c6391af9f7e8ac8c3e0871bad1cd08f371",
+      "source_relative_path": "github-retained-artifact-triage-03/manifest.json"
+    },
+    {
+      "bytes": 2746,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/final-evidence-01/README.md",
+      "sha256": "2650c07a60b9b98a1cd0840b6e53560c80ea39edcc98e5328033e465874d7004",
+      "source_relative_path": "github-w1-service-triage-01/final-evidence-01/README.md"
+    },
+    {
+      "bytes": 6086,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/final-evidence-01/connector-receipts/w1_fresh_head_artifact_start-0.txt",
+      "sha256": "f234457f77966b5ad2afe5733dbe4ae02a1a3e589751cf8f7f57cf8f914d0b58",
+      "source_relative_path": "github-w1-service-triage-01/final-evidence-01/connector-receipts/w1_fresh_head_artifact_start-0.txt"
+    },
+    {
+      "bytes": 733,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/final-evidence-01/connector-receipts/w1_fresh_head_artifact_status_02-0.txt",
+      "sha256": "5eb98b03a149d2716a12c8aae94989a6fd6e05cbc9b3365945cff4b2b014c51e",
+      "source_relative_path": "github-w1-service-triage-01/final-evidence-01/connector-receipts/w1_fresh_head_artifact_status_02-0.txt"
+    },
+    {
+      "bytes": 3216,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/final-evidence-01/connector-receipts/w1_fresh_internal_read_start-0.txt",
+      "sha256": "06f2f7147d4ad47f7eafea17c038cea34024552af6a65c20daf156622576eb52",
+      "source_relative_path": "github-w1-service-triage-01/final-evidence-01/connector-receipts/w1_fresh_internal_read_start-0.txt"
+    },
+    {
+      "bytes": 731,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/final-evidence-01/connector-receipts/w1_fresh_internal_read_status-0.txt",
+      "sha256": "963d85526b5e04223351c14dc315200f55de7f7fe7fcdbb2daefc0495f9ef305",
+      "source_relative_path": "github-w1-service-triage-01/final-evidence-01/connector-receipts/w1_fresh_internal_read_status-0.txt"
+    },
+    {
+      "bytes": 3942,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/final-evidence-01/connector-receipts/w1_fresh_phase_start-0.txt",
+      "sha256": "072b7161b4b6bde85e2ea99243b52eccbee2d77c2a21760800c490ae5e49325d",
+      "source_relative_path": "github-w1-service-triage-01/final-evidence-01/connector-receipts/w1_fresh_phase_start-0.txt"
+    },
+    {
+      "bytes": 733,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/final-evidence-01/connector-receipts/w1_fresh_phase_terminal-0.txt",
+      "sha256": "d68442421c46f76ae3161288ad8adb7e27bbb94b43de376dfac020f9986ce333",
+      "source_relative_path": "github-w1-service-triage-01/final-evidence-01/connector-receipts/w1_fresh_phase_terminal-0.txt"
+    },
+    {
+      "bytes": 78,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/final-evidence-01/connector-receipts/w1_fresh_triage_initial_read-0.txt",
+      "sha256": "d4401312c819d78d0071f7abd60038e11b3b4cf60672fcb82c517423b866056d",
+      "source_relative_path": "github-w1-service-triage-01/final-evidence-01/connector-receipts/w1_fresh_triage_initial_read-0.txt"
+    },
+    {
+      "bytes": 9694,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/final-evidence-01/manifest.json",
+      "sha256": "1f145bc27e8439124b33f6b906d0dbe96ebe3992219917fef2a6d3d8f45fff3a",
+      "source_relative_path": "github-w1-service-triage-01/final-evidence-01/manifest.json"
+    },
+    {
+      "bytes": 11357,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/final-evidence-01/root-cause.json",
+      "sha256": "a941762979bb3beda430cde153a2ea23a4039fae5e7c9b98422aed35e1ba6f4c",
+      "source_relative_path": "github-w1-service-triage-01/final-evidence-01/root-cause.json"
+    },
+    {
+      "bytes": 10,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/head-artifact-01/00-identity.stdout",
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+      "source_relative_path": "github-w1-service-triage-01/head-artifact-01/00-identity.stdout"
+    },
+    {
+      "bytes": 811,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/head-artifact-01/01-artifact-metadata.stdout",
+      "sha256": "019f054c00f9ec14aa6dd47a982fc3f6ca6a27e8bf94f7a4afcb857357ae00d9",
+      "source_relative_path": "github-w1-service-triage-01/head-artifact-01/01-artifact-metadata.stdout"
+    },
+    {
+      "bytes": 541,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/head-artifact-01/internal-small-01/fresh-service-host__systemd-run.log",
+      "sha256": "8f9820b23be9022ae250543ba95ed09cf9dec0116c884b2146f35ffed87352b6",
+      "source_relative_path": "github-w1-service-triage-01/head-artifact-01/internal-small-01/fresh-service-host__systemd-run.log"
+    },
+    {
+      "bytes": 914,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/head-artifact-01/internal-small-01/fresh-service__fresh.log",
+      "sha256": "31e8059dd96a44de6ea02b6fb24801af290a17ebc86dfc6ebcdf7ad17ce836fc",
+      "source_relative_path": "github-w1-service-triage-01/head-artifact-01/internal-small-01/fresh-service__fresh.log"
+    },
+    {
+      "bytes": 420,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/head-artifact-01/internal-small-01/fresh-service__original.log",
+      "sha256": "aae7aaa3174e6e486163f331e59263532fbb49625d9ab8a7f81d6dc1df835a6d",
+      "source_relative_path": "github-w1-service-triage-01/head-artifact-01/internal-small-01/fresh-service__original.log"
+    },
+    {
+      "bytes": 5491,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/head-artifact-01/internal-small-01/readback.json",
+      "sha256": "1b3b852ccfe3209684fd50797175f03eba504f1de680202520e4f77af07773a5",
+      "source_relative_path": "github-w1-service-triage-01/head-artifact-01/internal-small-01/readback.json"
+    },
+    {
+      "bytes": 19008,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/head-artifact-01/manifest.json",
+      "sha256": "4bacc1b098445e4b05bc97ea8b3b066866bfeb8497d444c0b2bee3cd31c27baa",
+      "source_relative_path": "github-w1-service-triage-01/head-artifact-01/manifest.json"
+    },
+    {
+      "bytes": 353,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service-host/child-result.json",
+      "sha256": "7a883b0c765493318c236c586de94295c5d78bfa7c4e951de9994f54d86449da",
+      "source_relative_path": "github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service-host/child-result.json"
+    },
+    {
+      "bytes": 7701,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service-host/controller-result.json",
+      "sha256": "9656d13659363510dc249756875c6270e81ef8ab4634e47d3017df98b8e52283",
+      "source_relative_path": "github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service-host/controller-result.json"
+    },
+    {
+      "bytes": 8919,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service/manifest.json",
+      "sha256": "82a69278cf62c643a808149bdc5a62ef9a7fdccd54c79192ce6f17b679ce2ae0",
+      "source_relative_path": "github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service/manifest.json"
+    },
+    {
+      "bytes": 423,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/head-artifact-01/selected-text/source-after.json",
+      "sha256": "863fe8c81b74365a4a69b65eec394208068feb304d8fe1ed13db9294eeba0738",
+      "source_relative_path": "github-w1-service-triage-01/head-artifact-01/selected-text/source-after.json"
+    },
+    {
+      "bytes": 423,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/head-artifact-01/selected-text/source.json",
+      "sha256": "863fe8c81b74365a4a69b65eec394208068feb304d8fe1ed13db9294eeba0738",
+      "source_relative_path": "github-w1-service-triage-01/head-artifact-01/selected-text/source.json"
+    },
+    {
+      "bytes": 46523,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/head-artifact-01/source-and-phases-01/phase-projection.json",
+      "sha256": "ff1c9dba8f1292c9aa89557f10ecd2580c00962f29ebc2b4ea1a41d70d283561",
+      "source_relative_path": "github-w1-service-triage-01/head-artifact-01/source-and-phases-01/phase-projection.json"
+    },
+    {
+      "bytes": 5167,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/initial-readback.json",
+      "sha256": "e9551e7cfddcfbcd7e864a0a7814d59db1281d08ca6aa75904a0f0db7e2c43fb",
+      "source_relative_path": "github-w1-service-triage-01/initial-readback.json"
+    },
+    {
+      "bytes": 26444,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/log-focus.txt",
+      "sha256": "faf3bc6ca6fdc1228d01057703b410c21ebf9adbf8c53a1720d5f3159a422652",
+      "source_relative_path": "github-w1-service-triage-01/log-focus.txt"
+    },
+    {
+      "bytes": 17229,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/log-tail-120.txt",
+      "sha256": "05c9a4b484a4076baaa03a30634ef2e31205839cacf82ff9d099e1dba99427be",
+      "source_relative_path": "github-w1-service-triage-01/log-tail-120.txt"
+    },
+    {
+      "bytes": 3233,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/original-job.json",
+      "sha256": "a772844769f147ead70404002362af04f93cd253978ccce9bcc6d2c5dc1fe872",
+      "source_relative_path": "github-w1-service-triage-01/original-job.json"
+    },
+    {
+      "bytes": 183150,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/original-job.log",
+      "sha256": "b725a6ac6c7c908fece9191ca5cc94261c0d0be0fd3cdadaf30442e994f8d945",
+      "source_relative_path": "github-w1-service-triage-01/original-job.log"
+    },
+    {
+      "bytes": 15517,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/github-w1-service-triage-01/original-run.json",
+      "sha256": "71bbbca6a7aa6adfba08548123a406a820e175018878699071cc8bf13e63dffd",
+      "source_relative_path": "github-w1-service-triage-01/original-run.json"
+    },
+    {
+      "bytes": 2044,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/publication-C2-github-readback-support-01/collector-terminal-texts.json",
+      "sha256": "19450879fb0f3c332476d2146a3d680a96ed5be2aa4c7131c2ab6b9edad5d2e1",
+      "source_relative_path": "publication-C2-github-readback-support-01/collector-terminal-texts.json"
+    },
+    {
+      "bytes": 37123,
+      "kind": "exact_existing_text_copy",
+      "path": "raw/publication-github-final-readback-01/pr.stdout.json",
+      "sha256": "f8643e9a59e4f9b0fc4e04f74870c5a47543d149f7f131b96a43780c75dbcf7d",
+      "source_relative_path": "publication-github-final-readback-01/pr.stdout.json"
+    },
+    {
+      "bytes": 26002,
+      "kind": "derived_readback_metadata",
+      "path": "report.json",
+      "sha256": "52f358cb769532987f8d7b85ae49e991154cb73b895695b6bdb8a01507ff916c"
+    },
+    {
+      "bytes": 13916,
+      "kind": "derived_readback_metadata",
+      "path": "source-copy-inventory.json",
+      "sha256": "84595c63379512e7989e8a2145823b45851c55cad4f5efd51d439d5379d6f766"
+    }
+  ],
+  "full_raw_archive_closure_claimed": false,
+  "publish_allowlist_itself_also": true,
+  "schema": "TRNM-PUBLIC-C2-GITHUB-READBACK-ALLOWLIST1",
+  "source_directories_must_not_be_recursively_published": true,
+  "total_bytes": 1247483
+}

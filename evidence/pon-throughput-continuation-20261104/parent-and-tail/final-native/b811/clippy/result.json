@@ -1,0 +1,62 @@
+{
+  "action": "lint",
+  "all_commands_succeeded": true,
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "child_system_seconds": 0.003467000000000109,
+      "child_user_seconds": 0.048911000000003924,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:40:20.857052+00:00",
+      "label": "preflight",
+      "max_child_rss_kib": 90760,
+      "started_at": "2026-11-04T08:40:20.804498+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+      "wall_ns": 52558288
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "cargo",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "-p",
+        "trnm-mvcc-fee",
+        "-p",
+        "trnm-sqlite-io-boundary",
+        "--lib",
+        "--tests",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "child_system_seconds": 5.042881,
+      "child_user_seconds": 72.70017899999999,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:41:01.306488+00:00",
+      "label": "clippy",
+      "max_child_rss_kib": 1506948,
+      "started_at": "2026-11-04T08:40:20.857384+00:00",
+      "stderr_sha256": "29ce67e969790d887b4661c1c9d43056a4749e714d436f44a117d2bce6ac0a90",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_ns": 40449121904
+    }
+  ],
+  "full_node_suite_executed": false,
+  "public_confirmation_measured": false,
+  "schema": "final-composed-local-native-observation-v1",
+  "source_manifest_sha256": "27920633e57be739926218c370ecfbdfea624df71d84b89c2f9e3fc6f48605d2",
+  "source_unchanged": true
+}

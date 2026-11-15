@@ -1,0 +1,34 @@
+{
+  "argv": [
+    "git",
+    "rev-parse",
+    "--verify",
+    "HEAD"
+  ],
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "elapsed_seconds": 0.004944334039464593,
+  "env_overrides": {
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_TERMINAL_PROMPT": "0",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONHASHSEED": "0"
+  },
+  "expected_source_commit": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+  "expected_source_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+  "finished_utc": "2026-11-09T04:03:05.873450+00:00",
+  "label": "suite-02-source-commit",
+  "launch_error": null,
+  "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite/suite-02-source-commit",
+  "outer_process_exit": 0,
+  "started_utc": "2026-11-09T04:03:05.868230+00:00",
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 41,
+    "sha256": "3f80b0be9d67a749a195ff52a9ebd629c5ffbc5ebde840a47dfb027ce41439e6"
+  },
+  "timed_out": false,
+  "timeout_seconds": 60
+}

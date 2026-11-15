@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "scripts/ci/test_w1_lifecycle_cost_v4.py",
+    "-v"
+  ],
+  "cwd": "/tmp/pon-cost-replay-work-_xx02ntd/before-fix-overlay",
+  "exit_code": 1,
+  "expected_exit_code": 1,
+  "expected_failure_subtests": 76,
+  "expected_test_methods": 15,
+  "name": "lifecycle-before",
+  "native_executed": false,
+  "observed_failure_summaries": [
+    "failures=76"
+  ],
+  "observed_test_methods": [
+    15
+  ],
+  "reader_or_control_wall_ns": 8804423208,
+  "stderr_bytes": 70219,
+  "stderr_sha256": "5d3492cc062a69d024c89b6c061e7c1086848d52f7e1675220f00a13cec2570c",
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

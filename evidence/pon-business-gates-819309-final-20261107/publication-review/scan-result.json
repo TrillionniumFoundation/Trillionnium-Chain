@@ -1,0 +1,2122 @@
+{
+  "schema": "sealed-publication-secret-review-v1",
+  "started_utc": "2026-11-07T21:51:26.968081+00:00",
+  "finished_utc": "2026-11-07T22:04:46.181509+00:00",
+  "scope_roots": [
+    "/home/qian-qi/throughput-final-ci-observation-20261107/core-14-package-v1",
+    "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-metadata-package-v1",
+    "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-transport-v2-package",
+    "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package"
+  ],
+  "stats": {
+    "outer_files": 1422,
+    "outer_bytes": 351650752,
+    "archive_members": 17854,
+    "archive_member_bytes": 2866265853,
+    "gzip_decoded_streams": 53,
+    "gzip_decoded_bytes": 147309255,
+    "streams": 19329,
+    "scanned_bytes": 3365225860
+  },
+  "packages": [
+    {
+      "name": "core-14-package-v1",
+      "outer_files": 812,
+      "outer_bytes": 309985457,
+      "manifest_payload_files": 810
+    },
+    {
+      "name": "w1-components-metadata-package-v1",
+      "outer_files": 402,
+      "outer_bytes": 18307518,
+      "manifest_payload_files": 400
+    },
+    {
+      "name": "w1-components-transport-v2-package",
+      "outer_files": 152,
+      "outer_bytes": 16697336,
+      "manifest_payload_files": 150
+    },
+    {
+      "name": "w1-range-v3-package",
+      "outer_files": 56,
+      "outer_bytes": 6660441,
+      "manifest_payload_files": 54
+    }
+  ],
+  "finding_count": 284,
+  "by_category": {
+    "url": 282,
+    "authorization_literal": 2
+  },
+  "by_classification": {
+    "template_or_environment_reference": 280,
+    "synthetic_response_control_requires_source_check": 4
+  },
+  "errors": [],
+  "unscanned": [],
+  "seal_checks": [
+    {
+      "package": "core-14-package-v1",
+      "controls": {
+        "SHA256SUMS": {
+          "before": "755057ab2921548ad291f46dbb847918cf7d13157a474ffa814de87e6a3afd2d",
+          "after": "755057ab2921548ad291f46dbb847918cf7d13157a474ffa814de87e6a3afd2d",
+          "unchanged": true
+        },
+        "SEAL.json": {
+          "before": "51115cf32e88fb1f4f52d584d47bd8a8ca8cebea46614fd0e6642cee576b2c0c",
+          "after": "51115cf32e88fb1f4f52d584d47bd8a8ca8cebea46614fd0e6642cee576b2c0c",
+          "unchanged": true
+        }
+      }
+    },
+    {
+      "package": "w1-components-metadata-package-v1",
+      "controls": {
+        "SHA256SUMS": {
+          "before": "90b8dc544c3ae1c3bd4c8d1c779b9a0a0742133936084c7376dbd134742cd5f5",
+          "after": "90b8dc544c3ae1c3bd4c8d1c779b9a0a0742133936084c7376dbd134742cd5f5",
+          "unchanged": true
+        },
+        "SEAL.json": {
+          "before": "c44f24f7f219a41d9a613b06e84a322ab052bd1a091e9d9c9bb8202ab94bd215",
+          "after": "c44f24f7f219a41d9a613b06e84a322ab052bd1a091e9d9c9bb8202ab94bd215",
+          "unchanged": true
+        }
+      }
+    },
+    {
+      "package": "w1-components-transport-v2-package",
+      "controls": {
+        "SHA256SUMS": {
+          "before": "3599d9306ef108b8afc305709d1603a0f33cb683f730dfeb9ba489e661bf3b50",
+          "after": "3599d9306ef108b8afc305709d1603a0f33cb683f730dfeb9ba489e661bf3b50",
+          "unchanged": true
+        },
+        "SEAL.json": {
+          "before": "f2952e394846e5f15d4f016bc00895b283872111ebe29ee2f09b468401d79edc",
+          "after": "f2952e394846e5f15d4f016bc00895b283872111ebe29ee2f09b468401d79edc",
+          "unchanged": true
+        }
+      }
+    },
+    {
+      "package": "w1-range-v3-package",
+      "controls": {
+        "SHA256SUMS": {
+          "before": "6bb8cb82fde10ab661607385552e8d7bc100db6878848ebaaeb698a67baa7aa7",
+          "after": "6bb8cb82fde10ab661607385552e8d7bc100db6878848ebaaeb698a67baa7aa7",
+          "unchanged": true
+        },
+        "SEAL.json": {
+          "before": "fb81f7917cb0a2e19c342c7abea8c2af87fa3ac7fc8d4dd9735979c6815c7805",
+          "after": "fb81f7917cb0a2e19c342c7abea8c2af87fa3ac7fc8d4dd9735979c6815c7805",
+          "unchanged": true
+        }
+      }
+    }
+  ],
+  "complete_scan": true,
+  "scan_only_no_validity_test": true,
+  "limits": {
+    "total_bytes": 8589934592,
+    "item_bytes": 1073741824,
+    "nested_archive_bytes": 134217728,
+    "nested_depth": 2
+  },
+  "findings": [
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4726,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7127,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10699,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 12951,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16199,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 81399,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 90691,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 94910,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 218272,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 264019,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 423084,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 429164,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 432118,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13585554366/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 678775,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4738,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7148,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10729,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 12990,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16250,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 81882,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 91192,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 95432,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 219265,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 265174,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 425007,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 431096,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 434056,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586043542/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 680992,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4726,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7127,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10699,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 12951,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16199,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 81399,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 90691,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 94910,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 218272,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 264019,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 423084,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 429164,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 432118,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586108382/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 678775,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4726,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7127,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10699,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 12951,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16199,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 81399,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 90691,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 94910,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 218272,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 264019,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 423084,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 429164,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 432118,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586257049/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 678775,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4738,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7148,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10729,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 12990,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16250,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 81882,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 91192,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 95432,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 219265,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 265174,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 425007,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 431096,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 434056,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586332713/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 680992,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4738,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7148,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10729,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 12990,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16250,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 81882,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 91192,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 95432,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 219265,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 265174,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 425007,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 431096,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 434056,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586462531/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 680992,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4746,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7162,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10749,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 13016,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16284,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 82204,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 91526,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 95780,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 219927,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 265944,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 426289,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 432384,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 435348,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586467463/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 682470,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4726,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7127,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10699,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 12951,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16199,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 81399,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 90691,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 94910,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 218272,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 264019,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 423084,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 429164,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 432118,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586482467/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 678775,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4746,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7162,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10749,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 13016,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16284,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 82204,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 91526,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 95780,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 219927,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 265944,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 426289,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 432384,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 435348,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586536526/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 682470,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4726,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7127,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10699,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 12951,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16199,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 81399,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 90691,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 94910,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 218272,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 264019,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 423084,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 429164,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 432118,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616185/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 678775,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4746,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7162,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10749,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 13016,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16284,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 82204,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 91526,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 95780,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 219927,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 265944,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 426289,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 432384,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 435348,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586616233/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 682470,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4726,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7127,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10699,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 12951,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16199,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 81399,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 90691,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 94910,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 218272,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 264019,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 423084,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 429164,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 432118,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586660807/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 678775,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4738,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7148,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10729,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 12990,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16250,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 81882,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 91192,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 95432,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 219265,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 265174,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 425007,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 431096,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 434056,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586686618/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 680992,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4746,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7162,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10749,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 13016,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16284,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 82204,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 91526,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 95780,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 219927,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 265944,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 426289,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 432384,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 435348,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-metadata-package-v1/artifacts/13586691635/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 682470,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4766,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7197,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10799,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 13081,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16369,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 83009,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 92361,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 96650,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 221582,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 267869,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 429494,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 435604,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 438578,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586134600/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 686165,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4726,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7127,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10699,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 12951,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16199,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 81399,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 90691,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 94910,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 218272,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 264019,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 423084,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 429164,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 432118,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586253351/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 678775,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4766,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7197,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10799,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 13081,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16369,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 83009,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 92361,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 96650,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 221582,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 267869,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 429494,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 435604,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 438578,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586459476/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 686165,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4726,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7127,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10699,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 12951,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16199,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 81399,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 90691,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 94910,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 218272,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 264019,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 423084,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 429164,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 432118,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13586791050/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 678775,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4766,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7197,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10799,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 13081,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16369,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 83009,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 92361,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 96650,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 221582,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 267869,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 429494,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 435604,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 438578,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-components-transport-v2-package/artifacts/13587135201/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 686165,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 4766,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 7197,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 10799,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 13081,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 16369,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 83009,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 92361,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 96650,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 221582,
+      "matched_bytes": 79
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 267869,
+      "matched_bytes": 77
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 429494,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 435604,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 438578,
+      "matched_bytes": 59
+    },
+    {
+      "path": "w1-range-v3-package/artifact/members/cargo-graph.json.gz!gzip-content",
+      "category": "url",
+      "classification": "template_or_environment_reference",
+      "byte_offset": 686165,
+      "matched_bytes": 63
+    },
+    {
+      "path": "w1-range-v3-package/observer/test_range_v3_response_controls.py",
+      "category": "url",
+      "classification": "synthetic_response_control_requires_source_check",
+      "byte_offset": 2184,
+      "matched_bytes": 40,
+      "line": 33
+    },
+    {
+      "path": "w1-range-v3-package/observer/test_range_v3_response_controls.py",
+      "category": "authorization_literal",
+      "classification": "synthetic_response_control_requires_source_check",
+      "byte_offset": 2232,
+      "matched_bytes": 31,
+      "line": 33
+    },
+    {
+      "path": "w1-range-v3-package/observer/test_range_v3_response_controls_b.py",
+      "category": "url",
+      "classification": "synthetic_response_control_requires_source_check",
+      "byte_offset": 2186,
+      "matched_bytes": 40,
+      "line": 33
+    },
+    {
+      "path": "w1-range-v3-package/observer/test_range_v3_response_controls_b.py",
+      "category": "authorization_literal",
+      "classification": "synthetic_response_control_requires_source_check",
+      "byte_offset": 2234,
+      "matched_bytes": 31,
+      "line": 33
+    }
+  ]
+}

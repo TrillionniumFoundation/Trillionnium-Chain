@@ -1,0 +1,193 @@
+{
+  "schema": "local-native-publish-abba-readback-v1",
+  "qualification": "debug libtest component-only; excludes actual Host/ingress/independent W1 replay/COMMIT/network/business",
+  "summary": [
+    {
+      "funded_accounts": 64,
+      "actual_accounts": 68,
+      "changed": false,
+      "samples_per_arm": [
+        6,
+        6
+      ],
+      "callback_counts": [
+        [
+          313
+        ],
+        [
+          178
+        ]
+      ],
+      "partial_uses": [
+        [
+          0
+        ],
+        [
+          0
+        ]
+      ],
+      "whole_root_hits": [
+        [
+          0
+        ],
+        [
+          1
+        ]
+      ],
+      "median_low_process_cpu_ns": [
+        4815061,
+        4503657
+      ],
+      "median_low_process_cpu_ns_change_percent": -6.467290860904984,
+      "median_low_wall_ns": [
+        4813554,
+        4502303
+      ],
+      "median_low_wall_ns_change_percent": -6.466137078757194,
+      "all_sql_equal": true
+    },
+    {
+      "funded_accounts": 64,
+      "actual_accounts": 68,
+      "changed": true,
+      "samples_per_arm": [
+        6,
+        6
+      ],
+      "callback_counts": [
+        [
+          339
+        ],
+        [
+          249
+        ]
+      ],
+      "partial_uses": [
+        [
+          0
+        ],
+        [
+          1
+        ]
+      ],
+      "whole_root_hits": [
+        [
+          0
+        ],
+        [
+          0
+        ]
+      ],
+      "median_low_process_cpu_ns": [
+        5868209,
+        7957110
+      ],
+      "median_low_process_cpu_ns_change_percent": 35.596908699059625,
+      "median_low_wall_ns": [
+        5866444,
+        7955110
+      ],
+      "median_low_wall_ns_change_percent": 35.60361268257226,
+      "all_sql_equal": true
+    },
+    {
+      "funded_accounts": 1024,
+      "actual_accounts": 1028,
+      "changed": false,
+      "samples_per_arm": [
+        6,
+        6
+      ],
+      "callback_counts": [
+        [
+          4217
+        ],
+        [
+          2162
+        ]
+      ],
+      "partial_uses": [
+        [
+          0
+        ],
+        [
+          0
+        ]
+      ],
+      "whole_root_hits": [
+        [
+          0
+        ],
+        [
+          1
+        ]
+      ],
+      "median_low_process_cpu_ns": [
+        30917453,
+        21398808
+      ],
+      "median_low_process_cpu_ns_change_percent": -30.78728703816579,
+      "median_low_wall_ns": [
+        30915445,
+        21396401
+      ],
+      "median_low_wall_ns_change_percent": -30.790577331168933,
+      "all_sql_equal": true
+    },
+    {
+      "funded_accounts": 1024,
+      "actual_accounts": 1028,
+      "changed": true,
+      "samples_per_arm": [
+        6,
+        6
+      ],
+      "callback_counts": [
+        [
+          4263
+        ],
+        [
+          2485
+        ]
+      ],
+      "partial_uses": [
+        [
+          0
+        ],
+        [
+          1
+        ]
+      ],
+      "whole_root_hits": [
+        [
+          0
+        ],
+        [
+          0
+        ]
+      ],
+      "median_low_process_cpu_ns": [
+        25664611,
+        23492646
+      ],
+      "median_low_process_cpu_ns_change_percent": -8.462879098381816,
+      "median_low_wall_ns": [
+        25662577,
+        23490395
+      ],
+      "median_low_wall_ns_change_percent": -8.4643954502309,
+      "all_sql_equal": true
+    }
+  ],
+  "files": {
+    "after.json": "4e56d0001a220acbff90d3251227fd43f7f3bdd6c1df3ef4321f8ea5aeb871d5",
+    "command.json": "da23e6085af60a21411a711dfbc122a96a7a2ab76f59a53b1dd3d1739c0b6f49",
+    "before.json": "4e56d0001a220acbff90d3251227fd43f7f3bdd6c1df3ef4321f8ea5aeb871d5",
+    "stdout.txt": "f8f91dda5021008adf414c679728ce507617d1836409edbb00aa3dc4aeb8d7fc",
+    "cost.jsonl": "00ec88a443c3ea22e346b64b78e013a4cd638596a0a44dbf1a5f3f2dbdad9466",
+    "run-cost.py": "3572d5735eae71bbaadfd54e569545c3f98ee335ed342648c84f4d812bb4a25d",
+    "source-manifest.json": "a6328a50145e1cd86bd9b73696524869a0ea37475423ce2eccd073bdd18c8f7b",
+    "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "result.json": "940e60fb6cf7812feb345e142df2b502025209e874c6fa909b821c3436ffd4b9"
+  }
+}

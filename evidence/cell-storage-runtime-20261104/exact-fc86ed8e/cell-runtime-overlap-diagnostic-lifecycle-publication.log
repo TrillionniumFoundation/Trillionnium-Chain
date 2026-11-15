@@ -1,0 +1,11 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running unittests src/lib.rs (/workspace/scratch/0c2d131ac5a9/target/debug/deps/trnm_pon_node-2aaee31106a4dfcc)
+
+running 4 tests
+test ingress::public_v3::request_observation::tests::lifecycle_keeps_task_and_connection_closure_order_independent ... ok
+test ingress::public_v3::request_observation::tests::lifecycle_retains_disconnect_until_actual_task_owner_exits ... ok
+test ingress::public_v3::request_observation::tests::lifecycle_snapshot_hides_clocks_until_their_close_publication_is_observed ... ok
+test ingress::public_v3::request_observation::tests::lifecycle_unknown_clock_is_not_zero_and_snapshot_cannot_block_closure ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 1071 filtered out; finished in 0.00s
+

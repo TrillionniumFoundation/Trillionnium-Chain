@@ -1,0 +1,32 @@
+{
+  "schema": "trnm-owned-native-cache-cleanup-v1",
+  "observed_utc": "2026-11-05T02:57:14.410338+00:00",
+  "source": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1",
+  "reason": "Native test and strict Clippy complete; free owned reproducible cache for final CI contract full-checkout fixture. Raw logs and depfiles retained separately.",
+  "owned_paths": [
+    {
+      "path": "/dev/shm/trnm-model-owner-f4976366a32a-native-target",
+      "file_count": 1621,
+      "logical_bytes": 392414908,
+      "reproducible_build_cache_only": true
+    },
+    {
+      "path": "/dev/shm/trnm-model-owner-f4976366a32a-native-tmp",
+      "file_count": 0,
+      "logical_bytes": 0,
+      "reproducible_build_cache_only": true
+    }
+  ],
+  "live_native_processes": [],
+  "depfile_readback_sha256": "8fb71a04769e747d13a44dee16ced730edb17ce77526682c53d510e347bd6350",
+  "free_before": {
+    "total": 5225713664,
+    "used": 4108304384,
+    "free": 1117409280
+  },
+  "free_after": {
+    "total": 5225713664,
+    "used": 3726979072,
+    "free": 1498734592
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/usr/bin/bash",
+    "scripts/project-preflight.sh",
+    "--audit"
+  ],
+  "exit_code": 0,
+  "stderr": {
+    "bytes": 0,
+    "path": "preflight.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 133,
+    "path": "preflight.stdout.log",
+    "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+  }
+}

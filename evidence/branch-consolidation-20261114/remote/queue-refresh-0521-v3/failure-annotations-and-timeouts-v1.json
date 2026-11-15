@@ -1,0 +1,222 @@
+{
+  "observed_at": "2026-11-14T05:26:35.772736+00:00",
+  "run_and_jobs_snapshot_time": "2026-11-14T05:23:52.877030+00:00",
+  "correction": "05:21:31 was only the previous nominal upper bound for old e35 runtime jobs. The old run actually finished at 05:03:25 and e40d jobs started at 05:03:28. New candidates must follow existing uncancelled concurrency.",
+  "required_workflow_sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844",
+  "failed_jobs": [
+    {
+      "job_id": 132340218555,
+      "name": "prospective-merge (repository-truth)",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43551533528/job/132340218555",
+      "started_at": "2026-11-14T05:03:28Z",
+      "completed_at": "2026-11-14T05:04:49Z",
+      "failed_steps": [
+        {
+          "number": 12,
+          "name": "Execute the same lane on the prospective merge",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-14T05:04:25Z",
+          "completed_at": "2026-11-14T05:04:43Z"
+        }
+      ],
+      "annotations": [
+        {
+          "path": ".github",
+          "start_line": 2,
+          "end_line": 2,
+          "level": "warning",
+          "title": "",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+        },
+        {
+          "path": ".github",
+          "start_line": 3079,
+          "end_line": 3079,
+          "level": "failure",
+          "title": "",
+          "message": "Process completed with exit code 5."
+        }
+      ],
+      "annotation_count_read": 2,
+      "page_limit_reached": false,
+      "raw_annotations": {
+        "path": "/private/tmp/chain-ci-required-pr-trigger-review-20261114/queue-refresh-0521-v3/annotations-132340218555.json",
+        "bytes": 960,
+        "sha256": "75fe9bbc18472ebc5afd22024b409ca7dd4876440fd840c0ba9c50a96d681a52"
+      }
+    },
+    {
+      "job_id": 132340218585,
+      "name": "cross-arch-cost (arm64)",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43551533528/job/132340218585",
+      "started_at": "2026-11-14T05:03:30Z",
+      "completed_at": "2026-11-14T05:11:52Z",
+      "failed_steps": [
+        {
+          "number": 12,
+          "name": "Execute exact native from-zero service controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-14T05:06:26Z",
+          "completed_at": "2026-11-14T05:11:44Z"
+        }
+      ],
+      "annotations": [
+        {
+          "path": ".github",
+          "start_line": 2,
+          "end_line": 2,
+          "level": "warning",
+          "title": "",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+        },
+        {
+          "path": ".github",
+          "start_line": 18,
+          "end_line": 18,
+          "level": "failure",
+          "title": "",
+          "message": "Process completed with exit code 1."
+        }
+      ],
+      "annotation_count_read": 2,
+      "page_limit_reached": false,
+      "raw_annotations": {
+        "path": "/private/tmp/chain-ci-required-pr-trigger-review-20261114/queue-refresh-0521-v3/annotations-132340218585.json",
+        "bytes": 956,
+        "sha256": "5024145d994552008212ab8ba07cca6a14e1da6da75f1af4c2ff449ded6b05d9"
+      }
+    },
+    {
+      "job_id": 132340218732,
+      "name": "repository-truth",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43551533528/job/132340218732",
+      "started_at": "2026-11-14T05:03:29Z",
+      "completed_at": "2026-11-14T05:05:08Z",
+      "failed_steps": [
+        {
+          "number": 8,
+          "name": "Run actual repository-truth checks",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-14T05:04:38Z",
+          "completed_at": "2026-11-14T05:04:59Z"
+        }
+      ],
+      "annotations": [
+        {
+          "path": ".github",
+          "start_line": 2,
+          "end_line": 2,
+          "level": "warning",
+          "title": "",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+        },
+        {
+          "path": ".github",
+          "start_line": 3077,
+          "end_line": 3077,
+          "level": "failure",
+          "title": "",
+          "message": "Process completed with exit code 5."
+        }
+      ],
+      "annotation_count_read": 2,
+      "page_limit_reached": false,
+      "raw_annotations": {
+        "path": "/private/tmp/chain-ci-required-pr-trigger-review-20261114/queue-refresh-0521-v3/annotations-132340218732.json",
+        "bytes": 960,
+        "sha256": "63519905e0ca9d915e42f52150deaa7ee7be168d5c7996c9b5f73a281a4824b4"
+      }
+    },
+    {
+      "job_id": 132340219408,
+      "name": "cross-arch-cost (x64)",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43551533528/job/132340219408",
+      "started_at": "2026-11-14T05:03:30Z",
+      "completed_at": "2026-11-14T05:12:57Z",
+      "failed_steps": [
+        {
+          "number": 12,
+          "name": "Execute exact native from-zero service controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-14T05:07:09Z",
+          "completed_at": "2026-11-14T05:12:45Z"
+        }
+      ],
+      "annotations": [
+        {
+          "path": ".github",
+          "start_line": 2,
+          "end_line": 2,
+          "level": "warning",
+          "title": "",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+        },
+        {
+          "path": ".github",
+          "start_line": 18,
+          "end_line": 18,
+          "level": "failure",
+          "title": "",
+          "message": "Process completed with exit code 1."
+        }
+      ],
+      "annotation_count_read": 2,
+      "page_limit_reached": false,
+      "raw_annotations": {
+        "path": "/private/tmp/chain-ci-required-pr-trigger-review-20261114/queue-refresh-0521-v3/annotations-132340219408.json",
+        "bytes": 956,
+        "sha256": "5024145d994552008212ab8ba07cca6a14e1da6da75f1af4c2ff449ded6b05d9"
+      }
+    }
+  ],
+  "remaining_jobs_original_timeouts": [
+    {
+      "job_id": 132340218496,
+      "name": "prospective-merge (protocol-contract)",
+      "started_at": "2026-11-14T05:03:28Z",
+      "original_timeout_minutes": 240,
+      "nominal_deadline": "2026-11-14T09:03:28+00:00"
+    },
+    {
+      "job_id": 132340218524,
+      "name": "rust-baseline shard (quality)",
+      "started_at": "2026-11-14T05:03:28Z",
+      "original_timeout_minutes": 180,
+      "nominal_deadline": "2026-11-14T08:03:28+00:00"
+    },
+    {
+      "job_id": 132340218551,
+      "name": "prospective Rust shard (runtime)",
+      "started_at": "2026-11-14T05:03:28Z",
+      "original_timeout_minutes": 180,
+      "nominal_deadline": "2026-11-14T08:03:28+00:00"
+    },
+    {
+      "job_id": 132340218588,
+      "name": "protocol-contract",
+      "started_at": "2026-11-14T05:03:28Z",
+      "original_timeout_minutes": 240,
+      "nominal_deadline": "2026-11-14T09:03:28+00:00"
+    },
+    {
+      "job_id": 132340218643,
+      "name": "rust-baseline shard (runtime)",
+      "started_at": "2026-11-14T05:03:28Z",
+      "original_timeout_minutes": 180,
+      "nominal_deadline": "2026-11-14T08:03:28+00:00"
+    },
+    {
+      "job_id": 132340218661,
+      "name": "prospective Rust shard (quality)",
+      "started_at": "2026-11-14T05:03:29Z",
+      "original_timeout_minutes": 180,
+      "nominal_deadline": "2026-11-14T08:03:29+00:00"
+    }
+  ],
+  "remote_mutations": false,
+  "logs_downloaded_or_gate_retried": false
+}

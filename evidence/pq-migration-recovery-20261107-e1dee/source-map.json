@@ -1,0 +1,149 @@
+{
+  "schema": "trnm-pq-migration-recovery-source-map-v1",
+  "versions": {
+    "baseline": {
+      "commit": "840522d0b65b4989f1a2a1d09c0ad51af1a1956d",
+      "tree": "70377cc0a9c8d029907f6c49bbb8dee1435a6cd1"
+    },
+    "red_regression": {
+      "commit": "555d2e5bb338fa67d8b08f77f2bd86d68850fbf5",
+      "tree": "0f04d01f3ec071a37714ef6901f01474184438e0"
+    },
+    "checkpoint_and_two_host": {
+      "commit": "2058225aa0d50ca57b1eb0d5f520d7f4eefae69b",
+      "tree": "94f94114935d643a899b8c7c63f87dbb1b4432a1"
+    },
+    "corrected_migration": {
+      "commit": "37ef49311db7e62df1b152b8a7b0fc9104d56c17",
+      "tree": "15f31d721e62f0766d0a9b13b42e163c93267d22"
+    },
+    "concurrent_candidate": {
+      "commit": "f943c23b041532eec7d1c5dc0546f393fb33d45e",
+      "tree": "4abb86637ff07c4ebe11d1382986b153b873748a"
+    },
+    "current_pr_base": {
+      "commit": "0ca272d09d1522b0ffd740e441b6d3de1ed81de6",
+      "tree": "8c3417aa4bfec4c8ed068d615bba83583360a632"
+    },
+    "integrated_candidate": {
+      "commit": "9fb011c4af1f9f54353207f9ad9fbc54ab6235e3",
+      "tree": "5f4f1730e0f5218e4db9706e6daf2c25cde5c182"
+    },
+    "concurrent_base_merge": {
+      "commit": "dfffc5b2447cbf81a8a656ec8e0cdd2e2af6a422",
+      "tree": "a32206a5ef237d7a2bda5507f14963821304689f"
+    },
+    "history_preserving_parent": {
+      "commit": "b35b6a7c2a7f140f73506b29486b984ba7a54d1e",
+      "tree": "5f4f1730e0f5218e4db9706e6daf2c25cde5c182"
+    },
+    "first_evidence_candidate": {
+      "commit": "b0dadfdc0d906d35f19a1ba79df2ddbb8bbfba25",
+      "tree": "f05bd4edc080e447e467d9de23d6c36cb42ebb0c"
+    },
+    "concurrent_m15_head": {
+      "commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+      "tree": "cd446a4dc02d94f446134e9fd441bab04a672a2c"
+    },
+    "reintegrated_candidate": {
+      "commit": "2c51e15e5b4f57b133b53cc9c386431e29563db5",
+      "tree": "3f62762d719765b920cb7c7f1c1621440f98818e"
+    }
+  },
+  "public_regression_blob_identical_on_red_and_green": "623013c6d93589d120b9b6eec58698f60156294c",
+  "red_checkpoint_production_source_unchanged_from_baseline": true,
+  "file_blobs": [
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+      "checkpoint_commit_blob": "246eeb548a5b0736b023381bbf04d0a960ed3126",
+      "corrected_commit_blob": "246eeb548a5b0736b023381bbf04d0a960ed3126",
+      "unchanged_between_frozen_commits": true,
+      "integrated_commit_blob": "246eeb548a5b0736b023381bbf04d0a960ed3126",
+      "unchanged_corrected_to_integrated": true,
+      "reintegrated_commit_blob": "246eeb548a5b0736b023381bbf04d0a960ed3126",
+      "unchanged_integrated_to_reintegrated": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/src/socket_owner_v1.rs",
+      "checkpoint_commit_blob": "e11768412c987143ab797382a1d47b74b5fb6080",
+      "corrected_commit_blob": "e11768412c987143ab797382a1d47b74b5fb6080",
+      "unchanged_between_frozen_commits": true,
+      "integrated_commit_blob": "e11768412c987143ab797382a1d47b74b5fb6080",
+      "unchanged_corrected_to_integrated": true,
+      "reintegrated_commit_blob": "e11768412c987143ab797382a1d47b74b5fb6080",
+      "unchanged_integrated_to_reintegrated": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/tests/socket_ownership.rs",
+      "checkpoint_commit_blob": "623013c6d93589d120b9b6eec58698f60156294c",
+      "corrected_commit_blob": "623013c6d93589d120b9b6eec58698f60156294c",
+      "unchanged_between_frozen_commits": true,
+      "integrated_commit_blob": "623013c6d93589d120b9b6eec58698f60156294c",
+      "unchanged_corrected_to_integrated": true,
+      "reintegrated_commit_blob": "623013c6d93589d120b9b6eec58698f60156294c",
+      "unchanged_integrated_to_reintegrated": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/examples/checkpoint_fault_domain_probe.rs",
+      "checkpoint_commit_blob": "bbdd8fd6aeeedd3bcd84c4619301c07f27d6d208",
+      "corrected_commit_blob": "bbdd8fd6aeeedd3bcd84c4619301c07f27d6d208",
+      "unchanged_between_frozen_commits": true,
+      "integrated_commit_blob": "bbdd8fd6aeeedd3bcd84c4619301c07f27d6d208",
+      "unchanged_corrected_to_integrated": true,
+      "reintegrated_commit_blob": "bbdd8fd6aeeedd3bcd84c4619301c07f27d6d208",
+      "unchanged_integrated_to_reintegrated": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_migration_inventory.rs",
+      "checkpoint_commit_blob": "d04024453a1441c78f0768b708aa01bfb189c277",
+      "corrected_commit_blob": "d04024453a1441c78f0768b708aa01bfb189c277",
+      "unchanged_between_frozen_commits": true,
+      "integrated_commit_blob": "d04024453a1441c78f0768b708aa01bfb189c277",
+      "unchanged_corrected_to_integrated": true,
+      "reintegrated_commit_blob": "d04024453a1441c78f0768b708aa01bfb189c277",
+      "unchanged_integrated_to_reintegrated": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_migration_handoff_tests.rs",
+      "checkpoint_commit_blob": "0684a7ab36ec74789107bcdaf8fcc7119a16c88c",
+      "corrected_commit_blob": "2a21b664b9c6c9f92fef14c308bbe3f09107966f",
+      "unchanged_between_frozen_commits": false,
+      "integrated_commit_blob": "2a21b664b9c6c9f92fef14c308bbe3f09107966f",
+      "unchanged_corrected_to_integrated": true,
+      "reintegrated_commit_blob": "2a21b664b9c6c9f92fef14c308bbe3f09107966f",
+      "unchanged_integrated_to_reintegrated": true
+    }
+  ],
+  "changed_paths_after_checkpoint_and_probe_execution": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md",
+    "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_migration_handoff_tests.rs"
+  ],
+  "publication_commit_is_native_execution_source": false,
+  "all_three_input_histories_preserved": true,
+  "integration_resolved_paths": [
+    ".github/workflows/pon-pq-system-continuation.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json"
+  ],
+  "integration_resolution": "Retain both complete CI additions, union required paths, regenerate embedded inventory and verify actual source pins; all qualification flags stay false.",
+  "integrated_source_pins": 694,
+  "integrated_runtime_execution_status": "recorded separately in qualification.json",
+  "concurrent_base_merge_preserved_with_identical_entire_tree": true,
+  "reintegrated_source_delta_from_first_evidence_candidate": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/proof_wire.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs"
+  ],
+  "reintegrated_production_rust_delta": [
+    "trillionnium/crates/trnm-pon-node/src/release_owner/proof_wire.rs"
+  ],
+  "reintegrated_entire_tree_matches_9fb011c": false,
+  "prior_native_receipts_are_not_relabelled": true,
+  "changed_paths_after_checkpoint_and_probe_execution_range": {
+    "from": "2058225aa0d50ca57b1eb0d5f520d7f4eefae69b",
+    "to": "37ef49311db7e62df1b152b8a7b0fc9104d56c17",
+    "is_final_publication_delta": false
+  }
+}

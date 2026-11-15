@@ -1,0 +1,122 @@
+{
+  "parent": "3898f6a6dc65105bd4e3b52c94cc7625102f66da",
+  "parent_tree": "9c5df9c0ec1d223ec0a189a61644b099d9a72b46",
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+      "blob": "9434a12dca6b66da00c0862a07ece1a2b26166ce"
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "blob": "cffec940123200bd7a7e55ff4a22d6bf2ea0cf01"
+    }
+  ],
+  "commands": [
+    {
+      "name": "fetch",
+      "argv": [
+        "git",
+        "fetch",
+        "--no-tags",
+        "origin",
+        "3898f6a6dc65105bd4e3b52c94cc7625102f66da"
+      ],
+      "exit_code": 0,
+      "seconds": 3.1766297817230225,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "9df433a870128f21a59feaf3d4cc73d764c5f2490afd933fc4563987d26b44b5"
+    },
+    {
+      "name": "worktree",
+      "argv": [
+        "git",
+        "worktree",
+        "add",
+        "-b",
+        "fix/chain-pq-witness-test-contract-20261103",
+        "/home/qian/pq-witness-repair-final-6f4fef89e370",
+        "3898f6a6dc65105bd4e3b52c94cc7625102f66da"
+      ],
+      "exit_code": 0,
+      "seconds": 3.185513973236084,
+      "stdout_sha256": "d4171629a23d7d49063b45903ab4a71e8de76f51fffb45f75aafe584af02421e",
+      "stderr_sha256": "69681df683ef43fa260c92542fa03d8565b73d2b550d24b1b3b9749fb1edfeaf"
+    },
+    {
+      "name": "preflight-before",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.08561968803405762,
+      "stdout_sha256": "3f9bfc32f6552b93cbc1fbfe8de692aa49d3f6c7769dc6e001897db76a2f78f9",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "preflight-after",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.07887983322143555,
+      "stdout_sha256": "3f9bfc32f6552b93cbc1fbfe8de692aa49d3f6c7769dc6e001897db76a2f78f9",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "claim-guard",
+      "argv": [
+        "python3",
+        "scripts/ci/pq_chain_claim_guard.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.06681489944458008,
+      "stdout_sha256": "6235b839d36b92351665414a731c9433441f007e727860d0c3bd138e7d731690",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "source-corpus",
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.35231709480285645,
+      "stdout_sha256": "01f8b236ffd929a5c12078cda4c44c61a86978b1de4077bace21058d2484b054",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.01714038848876953,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "format",
+      "argv": [
+        "/home/qian/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 19.910402297973633,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "patch_unchanged": true,
+  "unchanged_other_pins": 375,
+  "all_succeeded": true
+}

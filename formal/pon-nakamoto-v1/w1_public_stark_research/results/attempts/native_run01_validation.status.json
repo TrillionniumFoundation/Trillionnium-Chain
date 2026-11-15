@@ -1,0 +1,26 @@
+{
+  "phase": "native_final_validation",
+  "host": "desktop",
+  "job_id": "1a1b8567762-12894-e78",
+  "state": "succeeded",
+  "exit_code": 0,
+  "output_complete": true,
+  "output_durable": true,
+  "timed_out": false,
+  "cancelled": false,
+  "log_truncated": {
+    "stderr": false,
+    "stdout": false
+  },
+  "log_bytes": {
+    "stderr": {
+      "seen": 4968,
+      "stored": 4968
+    },
+    "stdout": {
+      "seen": 12373,
+      "stored": 12373
+    }
+  },
+  "qualification": "HOLD_NO_GO"
+}

@@ -1,0 +1,41 @@
+{
+  "actual_token_schedule_verified": false,
+  "adoption": false,
+  "counterexamples": {
+    "exact_a9_history_upgrade": "historical-upgrade-a9/result.json",
+    "training_original": "training-counterexample-before-fix/result.json"
+  },
+  "current_assessment_schema": "llm-runtime-actual-pilot-assessment-v3",
+  "diff_check": "PASS",
+  "independent_antirollback": false,
+  "independent_custody": false,
+  "no_update": false,
+  "preflight": "PASS",
+  "qualification": false,
+  "real_model_attempt": false,
+  "repository_head_at_report": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+  "reward": false,
+  "schema": "llm-trial-ledger-audit-validation-v1",
+  "scope": "Validator and real-SQLite control-fixture regressions only; root owns integrated validation and real model attempt",
+  "source_sha256": {
+    "scripts/llm_runtime_assessment.py": "10045ea089335c96d351dcdc710f47f3f7b31fbe49c0ca91675b92ae3526149c",
+    "scripts/llm_runtime_trial_ledger.py": "fc61ecbfba09a3bccd7c1ba1c8862ff684e24a866cd6f8bf4e0e14b87ff7806f",
+    "scripts/test_llm_runtime_assessment.py": "4114a838513dbcb5cc78c477cfb6fae804157b5e0844e501d54c75d36ff1f4d5",
+    "scripts/test_llm_runtime_trial_replay.py": "8db662e19f9ecc0fafef2077d83dcacf82a449fd7030df517ede9a7d97505ecb"
+  },
+  "tests": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=scripts python3 -m unittest test_llm_runtime_assessment test_llm_runtime_trial_ledger test_llm_runtime_trial_review",
+      "reported_elapsed_seconds": 14.147,
+      "result": "PASS",
+      "tests": 60
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=scripts python3 -m unittest test_llm_runtime_trial_replay",
+      "reported_elapsed_seconds": 44.146,
+      "result": "PASS",
+      "tests": 20
+    }
+  ],
+  "training_steps_and_reported_token_counts_validated": true
+}

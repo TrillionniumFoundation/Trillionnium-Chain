@@ -1,0 +1,5 @@
+selector	native_exit	log_exit	reader_exit
+store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner	101	0	1
+store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator	101	0	1
+ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop	0	0	0
+ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read	0	0	0

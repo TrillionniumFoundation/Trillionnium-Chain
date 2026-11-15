@@ -1,0 +1,154 @@
+{
+  "argv": [
+    "/home/qian-qi/work/p3-shared-profile-target-3acf89/release/examples/tagged_sha3_backend",
+    "verify",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89/abba-v1/05-dense-B/prepared/statement.bin",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89/input-fixtures/dense.expected-header.bin",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89/input-fixtures/dense.artifacts.bin",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89/abba-v1/05-dense-B/proof"
+  ],
+  "exit_code": 0,
+  "timeout": false,
+  "outer_wall_s": 0.767507045,
+  "peak_rss_kib": 133384,
+  "report": {
+    "arith_proof_bytes": 592389,
+    "arith_proof_sha256": "b7f1732b0111a13c18f02a64f26e3963ffb57ba0bf44cb8ea3de5dc6daaa1d53",
+    "preprocessing_source": "canonical public statement plus independent expected inputs; rebuilt in this process",
+    "process_wall_ms": 700.78359,
+    "public_bytes": 377290,
+    "qualification": "HOLD_NO_GO",
+    "schema": "trnm-w1-complete-public-tagged-sha3-stark-run-v1",
+    "security": {
+      "complete_noninteractive_security_bits": null,
+      "concrete_binding_bits": null,
+      "descriptor": "p3=0.8.0;sha3=512;r=576;c=1024;F=18446744069414584321;E=X^2-7;binary;cap=0;log_blowup=2;log_final_poly=0;max_log_arity=1;queries=64;pow=0;zk=0;sha=d13,w7728,p27,q2,next1;carry=d14,w370,p180,q1,next0",
+      "fri": {
+        "all_grinding_bits": 0,
+        "log_blowup": 2,
+        "log_final_poly_len": 0,
+        "max_log_arity": 1,
+        "num_queries": 64
+      },
+      "independent_role_oracle_claim": false,
+      "lifecycle_security_bits": null,
+      "mmcs": {
+        "arity": 2,
+        "branch_payload_bytes": 128,
+        "cap_height": 0,
+        "digest_encoding": "8 raw little-endian u64 words, no field reduction",
+        "leaf_encoding": "canonical Goldilocks u64le stream with byte-length suffix",
+        "matrix_boundary_tagged": false,
+        "position_tagged": false
+      },
+      "new_recursive_sha3_air": false,
+      "open_obligations": [
+        "joint concrete shared-hash binding and Fiat-Shamir analysis",
+        "actual MMCS opening geometry including adversarial sibling digests",
+        "quantum and preprocessing-advice composition",
+        "recursive AIR and in-circuit verification cost"
+      ],
+      "profile_id": "TRNM-W1-P3-SHA3-512-TAGGED-R1",
+      "qualification": "HOLD_NO_GO",
+      "quantum_security_bits": null,
+      "schema": "w1-p3-tagged-sha3-512-research-profile-v1",
+      "sha3": {
+        "capacity_bits": 1024,
+        "digest_bytes": 64,
+        "rate_bits": 576
+      },
+      "shared_primitive": "one concrete FIPS 202 SHA3-512 implementation for leaf, branch, transcript, and statement context",
+      "statement_context_hex": "3469e72a72d3c66659580f0440b3c592ceb165bd5acacecb9e6e0e2d51cf715a07d08a9e5de7a5e7770d4748fe6cdbe6fee61630e8ee509cb71daba8fed21690",
+      "transcript": {
+        "adapter": "P3 0.8.0 HashChallenger<u8, TranscriptHasher,64> with SerializingChallenger64",
+        "application_context": "typed length-framed canonical public statement + independent expected header + independent expected artifacts",
+        "byte_order": "HashChallenger pops output bytes in reverse digest order",
+        "field_sampling": "8-byte little-endian candidates; reject candidates >= Goldilocks modulus; extension coefficients sampled separately",
+        "inherited_state_alias": "HashChallenger does not encode observe-call boundaries or count of bytes already popped within an output block before a new observation; generic transcript-history injectivity is not claimed",
+        "p3_message_schedule": "unchanged frozen P3 transcript order; no new per-message semantic tags",
+        "query_sampling": "mask 8-byte samples as required by P3"
+      },
+      "unchanged_w1_relation": "existing W1 SHA-256 AIR plus five-lane packed carry AIR"
+    },
+    "security_claim": "research execution only; one shared concrete SHA3-512, no complete noninteractive or quantum security qualification",
+    "sha_proof_bytes": 4474469,
+    "sha_proof_sha256": "51789aa5919accd5d8a4a0cb2117413ddb823dbbdcf09504af30354fd7f78d6b",
+    "statement_sha256": "60940f35c2ee6374d0277f7967ecfc4465a1662ab70f5348dc397d31364f19f0",
+    "status": "VERIFIED_COMPLETE_W1_RESEARCH_ONLY",
+    "timings": [
+      {
+        "elapsed_ms": 18.095153,
+        "phase": "bounded_read_decode_and_proof_shape"
+      },
+      {
+        "elapsed_ms": 17.531042,
+        "phase": "canonical_plans_and_public_only_sha_air"
+      },
+      {
+        "elapsed_ms": 32.800117,
+        "phase": "sha_verifier_independent_preprocessing_setup"
+      },
+      {
+        "elapsed_ms": 106.948453,
+        "phase": "sha_stark_verify"
+      },
+      {
+        "elapsed_ms": 283.060765,
+        "phase": "arith_verifier_independent_preprocessing_setup"
+      },
+      {
+        "elapsed_ms": 18.601115,
+        "phase": "arith_stark_verify"
+      }
+    ],
+    "wire_admission": {
+      "arithmetic": {
+        "field_elements": 38243,
+        "maximum_bytes": 1001733,
+        "merkle_siblings": 4292,
+        "vector_headers": 1339
+      },
+      "global_rejection_cost_bound": false,
+      "schema": "w1-fixed-p3-tagged-sha3-wire-admission-v1",
+      "sha": {
+        "field_elements": 529232,
+        "maximum_bytes": 4855845,
+        "merkle_siblings": 3577,
+        "vector_headers": 1338
+      },
+      "structural_admission_only": true
+    }
+  },
+  "before": {
+    "monotonic_ns": 1196394615611495,
+    "utc_unix_ns": 1794118728623299951,
+    "loadavg": "29.04 22.43 18.12 6/4535 3460175",
+    "cpu_pressure": "some avg10=0.00 avg60=0.02 avg300=0.00 total=9271466724\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+    "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669332974\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1602491913",
+    "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9cb4c70-12894-16eb.service\n",
+    "cgroup_values": {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 817732146\nuser_usec 797415403\nsystem_usec 20316742\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "memory.max": "max",
+      "memory.current": "219680768",
+      "memory.peak": "2308648960",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+    }
+  },
+  "after": {
+    "monotonic_ns": 1196395383827043,
+    "utc_unix_ns": 1794118729391516168,
+    "loadavg": "28.95 22.52 18.17 14/4532 3460210",
+    "cpu_pressure": "some avg10=0.00 avg60=0.02 avg300=0.00 total=9271468947\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+    "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669332974\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1602491913",
+    "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9cb4c70-12894-16eb.service\n",
+    "cgroup_values": {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 820241882\nuser_usec 799799979\nsystem_usec 20441903\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "memory.max": "max",
+      "memory.current": "219901952",
+      "memory.peak": "2308648960",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+    }
+  }
+}

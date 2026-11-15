@@ -1,0 +1,224 @@
+{
+  "canonical_tmpdir": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T",
+  "binary_sha256": "89f09c4cc0e39866f83eaed9785dadbfbbd3d0f33b2addfaa98ae17d0f83fb64",
+  "exit": 0,
+  "rows": [
+    {
+      "mode": "retention-v1",
+      "trial": 0,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "retention-v1",
+      "trial": 1,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "retention-v1",
+      "trial": 2,
+      "result": "cell: retention physical capacity",
+      "length": 8388608,
+      "allocated_bytes": 7602176,
+      "blocks": 14848,
+      "physical_ok": false
+    },
+    {
+      "mode": "retention-v1",
+      "trial": 3,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "retention-v1",
+      "trial": 4,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "retention-v1",
+      "trial": 5,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "retention-v1",
+      "trial": 6,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "retention-v1",
+      "trial": 7,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "retention-v1",
+      "trial": 8,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "retention-v1",
+      "trial": 9,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "retention-v1",
+      "trial": 10,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "retention-v1",
+      "trial": 11,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "version-retention-v3",
+      "trial": 0,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "version-retention-v3",
+      "trial": 1,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "version-retention-v3",
+      "trial": 2,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "version-retention-v3",
+      "trial": 3,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "version-retention-v3",
+      "trial": 4,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "version-retention-v3",
+      "trial": 5,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "version-retention-v3",
+      "trial": 6,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "version-retention-v3",
+      "trial": 7,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "version-retention-v3",
+      "trial": 8,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "version-retention-v3",
+      "trial": 9,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "version-retention-v3",
+      "trial": 10,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    },
+    {
+      "mode": "version-retention-v3",
+      "trial": 11,
+      "result": "ok",
+      "length": 8388608,
+      "allocated_bytes": 8388608,
+      "blocks": 16384,
+      "physical_ok": true
+    }
+  ],
+  "stderr": ""
+}

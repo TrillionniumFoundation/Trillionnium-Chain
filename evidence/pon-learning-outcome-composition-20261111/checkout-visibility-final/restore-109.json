@@ -1,0 +1,24 @@
+{
+  "actual_oid": "6ed442c651783bc03340d3485196fa59adf1c093",
+  "bytes": 2944501,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "6ed442c651783bc03340d3485196fa59adf1c093"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 2944501,
+  "expected_oid": "6ed442c651783bc03340d3485196fa59adf1c093",
+  "finished_at": "2026-11-12T01:55:21.686487+00:00",
+  "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/node-pressure-evidence-final.tar.gz",
+  "path_base64": "Zm9ybWFsL3Bvbi1uYWthbW90by12MS93MV9ub2RlX2FkYXB0ZXJfcmVzZWFyY2gvcmVzb3VyY2VfcHJlc3N1cmUvbm9kZS1wcmVzc3VyZS1ldmlkZW5jZS1maW5hbC50YXIuZ3o=",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "c928d3bbac5d2bfb47e3f2e9dcd7be0989b2b8f631e5d3b85793c60c483c0bf7",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:21.648681+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

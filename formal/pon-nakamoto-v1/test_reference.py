@@ -1,7 +1,69 @@
 """Run with Python; covers mathematical examples, not real neural work/security."""
 import unittest
 from copy import deepcopy
+import json
+from pathlib import Path
 from reference import Branch, ChainState, LocalEffects, ReorgExample, allocate, claim, preferred, retarget, timestamp_state, work
+
+
+def native_consensus_arithmetic_vectors():
+    """Python integer expectations consumed by the actual native core tests.
+
+    Unlike the native restoring-division comparison, this oracle does not share
+    a fixed-width subtraction, carry, or shift implementation. These are local
+    arithmetic checks, not work-hardness or production qualification.
+    """
+    maximum = (1 << 512) - 1
+    target_maximum = (1 << 256) - 1
+    rows = []
+
+    def result(operation, value, **inputs):
+        row = dict(operation=operation, **inputs)
+        if value < 0:
+            row['error'] = 'CHAINWORK_UNDERFLOW'
+        elif value > maximum:
+            row['error'] = 'CHAINWORK_OVERFLOW'
+        else:
+            row['expected'] = f'{value:0128x}'
+        rows.append(row)
+
+    for bit in (1, 63, 64, 127, 128, 191, 192, 255, 256, 319, 383, 447, 511):
+        numerator = maximum - (1 << bit) + 1
+        denominator = (1 << bit) + 1
+        result('divide', numerator // denominator,
+               left=f'{numerator:0128x}', right=f'{denominator:0128x}')
+    rows.append(dict(operation='divide', left=f'{maximum:0128x}',
+                     right='00' * 64, error='DIVISION_BY_ZERO'))
+    for bit in range(63, 512, 64):
+        left, right = (1 << (bit + 1)) - 1, 1
+        result('add', left + right, left=f'{left:0128x}', right=f'{right:0128x}')
+        left = 1 << bit
+        result('subtract', left - right, left=f'{left:0128x}', right=f'{right:0128x}')
+        result('multiply', left * ((1 << 64) - 1),
+               left=f'{left:0128x}', factor=(1 << 64) - 1)
+    result('subtract', -1, left='00' * 64, right=f'{1:0128x}')
+    for target in (1, 2, (1 << 64) - 1, 1 << 64, (1 << 128) + 1,
+                   (1 << 192) - 1, (1 << 255) - 2, (1 << 255) - 1,
+                   1 << 255, target_maximum):
+        result('required_work', work(target), target=f'{target:064x}')
+    rows.append(dict(operation='required_work', target='00' * 32, error='TARGET'))
+    for target in (1, (1 << 128) + 1, (1 << 255) - 1, target_maximum):
+        for first, last in ((100, 0), (0, 38), (0, 149), (0, 150), (0, 151), (0, 601)):
+            result('retarget', retarget(target, first, last, 16, 10, target_maximum),
+                   target=f'{target:064x}', first=first, last=last, interval=16,
+                   spacing=10, pow_limit=f'{target_maximum:064x}')
+    # A 320-bit intermediate and the largest valid 4*desired time bound.
+    spacing = ((1 << 64) - 1) // 60
+    result('retarget', retarget(target_maximum, 0, (1 << 64) - 1, 16, spacing, target_maximum),
+           target=f'{target_maximum:064x}', first=0, last=(1 << 64) - 1,
+           interval=16, spacing=spacing, pow_limit=f'{target_maximum:064x}')
+    return dict(schema='pon-native-consensus-integer-vectors-v1', rows=rows)
+
+
+class NativeArithmeticExamples(unittest.TestCase):
+    def test_native_vectors_match_independent_python_integer_arithmetic(self):
+        path = Path(__file__).parent / 'vectors' / 'consensus-arithmetic-v1.json'
+        self.assertEqual(json.loads(path.read_text()), native_consensus_arithmetic_vectors())
 
 
 class WorkExamples(unittest.TestCase):

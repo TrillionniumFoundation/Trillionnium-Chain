@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+  "elapsed_seconds": 0.11640634620562196,
+  "exit_code": 0,
+  "name": "source-inventory",
+  "started_at_utc": "2026-11-08T00:11:38.862869+00:00",
+  "streams": {
+    "stderr": {
+      "bytes": 0,
+      "file": "source-inventory.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 35,
+      "file": "source-inventory.stdout.log",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    }
+  },
+  "test_summary_lines": []
+}

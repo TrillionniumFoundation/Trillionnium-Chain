@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--audit"
+  ],
+  "cwd": "/home/qq/work/chain-cell-four-gates-20261111-2bfb",
+  "elapsed_ns": 115143500,
+  "exit_code": 0,
+  "scope": "outside native operation",
+  "started_unix_ns": 1794445178249794493,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 180,
+  "stdout_sha256": "64d4a324a23bd14342da6eb90d43634651470c35bb7978b645ef64e9df0b624c",
+  "timeout_seconds": 300
+}

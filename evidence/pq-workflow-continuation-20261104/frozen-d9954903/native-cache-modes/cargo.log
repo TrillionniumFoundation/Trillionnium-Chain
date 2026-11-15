@@ -1,0 +1,23 @@
+   Compiling trnm-protocol v0.1.0 (/dev/shm/trnm-frozen-source-81da-822cc50e/trillionnium/crates/trnm-protocol)
+   Compiling trnm-crypto-primitives v0.1.0 (/dev/shm/trnm-frozen-source-81da-822cc50e/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/dev/shm/trnm-frozen-source-81da-822cc50e/trillionnium/crates/trnm-sqlite-io-boundary)
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute
+   Compiling trnm-task-kernel v0.1.0 (/dev/shm/trnm-frozen-source-81da-822cc50e/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/dev/shm/trnm-frozen-source-81da-822cc50e/trillionnium/crates/trnm-verification-profiles)
+   Compiling trnm-mvcc-fee v0.1.0 (/dev/shm/trnm-frozen-source-81da-822cc50e/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/dev/shm/trnm-frozen-source-81da-822cc50e/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-service-settlement v0.1.0 (/dev/shm/trnm-frozen-source-81da-822cc50e/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-mempool v0.1.0 (/dev/shm/trnm-frozen-source-81da-822cc50e/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/dev/shm/trnm-frozen-source-81da-822cc50e/trillionnium/crates/trnm-transport)
+   Compiling trnm-pon-node v0.1.0 (/dev/shm/trnm-frozen-source-81da-822cc50e/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 1m 37s
+     Running tests/public_cache_modes.rs (/dev/shm/trnm-cache-modes-44ebe1a-822cc50e-target/debug/deps/public_cache_modes-4cc489d247634233)
+
+running 4 tests
+test arithmetic_profile_then_rejection_cache_is_refused ... ok
+test either_cache_alone_preserves_original_cold_cpu_budget_and_profile ... ok
+test rejection_cache_owner_cannot_be_replaced_by_repeated_setup ... ok
+test rejection_cache_then_arithmetic_profile_is_refused ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

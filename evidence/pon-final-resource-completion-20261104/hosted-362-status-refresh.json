@@ -1,0 +1,299 @@
+{
+  "schema": "round4-hosted-once-status-refresh-v1",
+  "recorded_at_utc": "2026-11-04T01:06:01.568Z",
+  "candidate_commit": "362fbebe5027d731f16c88f710bfef7e922cd230",
+  "read_only": true,
+  "workflow_dispatches": 0,
+  "reruns_requested": 0,
+  "recurring_poll": false,
+  "endpoints_read_once": [
+    "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs?head_sha=362fbebe5027d731f16c88f710bfef7e922cd230&per_page=100",
+    "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463238/jobs?per_page=100",
+    "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463373/jobs?per_page=100"
+  ],
+  "workflow_status_at_initial_snapshot": [
+    {
+      "id": 41746463373,
+      "name": "PoN PQ network and rollback witness",
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "362fbebe5027d731f16c88f710bfef7e922cd230",
+      "run_attempt": 1,
+      "created_at": "2026-11-04T00:23:31Z",
+      "updated_at": "2026-11-04T00:23:38Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463373"
+    },
+    {
+      "id": 41746463238,
+      "name": "trnm-required-baseline",
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "362fbebe5027d731f16c88f710bfef7e922cd230",
+      "run_attempt": 1,
+      "created_at": "2026-11-04T00:23:31Z",
+      "updated_at": "2026-11-04T00:46:51Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463238"
+    }
+  ],
+  "jobs": [
+    {
+      "run_id": 41746463238,
+      "id": 126307453978,
+      "name": "prospective Rust shard (runtime)",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha_metadata": "362fbebe5027d731f16c88f710bfef7e922cd230",
+      "started_at": "2026-11-04T00:40:00Z",
+      "completed_at": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463238/job/126307453978",
+      "steps": [
+        {
+          "number": 9,
+          "name": "Run retained Rust shard",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-04T00:44:16Z",
+          "completed_at": null
+        },
+        {
+          "number": 10,
+          "name": "Verify source remained unchanged",
+          "status": "pending",
+          "conclusion": null,
+          "started_at": null,
+          "completed_at": null
+        }
+      ]
+    },
+    {
+      "run_id": 41746463238,
+      "id": 126307454181,
+      "name": "rust-baseline shard (runtime)",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha_metadata": "362fbebe5027d731f16c88f710bfef7e922cd230",
+      "started_at": "2026-11-04T00:40:00Z",
+      "completed_at": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463238/job/126307454181",
+      "steps": [
+        {
+          "number": 9,
+          "name": "Run retained Rust shard",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-04T00:44:42Z",
+          "completed_at": null
+        },
+        {
+          "number": 10,
+          "name": "Verify source remained unchanged",
+          "status": "pending",
+          "conclusion": null,
+          "started_at": null,
+          "completed_at": null
+        }
+      ]
+    },
+    {
+      "run_id": 41746463238,
+      "id": 126307454184,
+      "name": "rust-baseline shard (quality)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha_metadata": "362fbebe5027d731f16c88f710bfef7e922cd230",
+      "started_at": "2026-11-04T00:40:00Z",
+      "completed_at": "2026-11-04T00:51:06Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463238/job/126307454184",
+      "steps": [
+        {
+          "number": 9,
+          "name": "Run retained Rust shard",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-04T00:46:21Z",
+          "completed_at": "2026-11-04T00:50:59Z"
+        },
+        {
+          "number": 10,
+          "name": "Verify source remained unchanged",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-04T00:50:59Z",
+          "completed_at": "2026-11-04T00:51:00Z"
+        }
+      ]
+    },
+    {
+      "run_id": 41746463238,
+      "id": 126307455305,
+      "name": "prospective Rust shard (quality)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha_metadata": "362fbebe5027d731f16c88f710bfef7e922cd230",
+      "started_at": "2026-11-04T00:40:00Z",
+      "completed_at": "2026-11-04T00:49:33Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463238/job/126307455305",
+      "steps": [
+        {
+          "number": 9,
+          "name": "Run retained Rust shard",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-04T00:44:55Z",
+          "completed_at": "2026-11-04T00:49:25Z"
+        },
+        {
+          "number": 10,
+          "name": "Verify source remained unchanged",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-04T00:49:25Z",
+          "completed_at": "2026-11-04T00:49:26Z"
+        }
+      ]
+    },
+    {
+      "run_id": 41746463373,
+      "id": 126300605279,
+      "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha_metadata": "362fbebe5027d731f16c88f710bfef7e922cd230",
+      "started_at": "2026-11-04T00:23:35Z",
+      "completed_at": "2026-11-04T00:47:14Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463373/job/126300605279",
+      "steps": [
+        {
+          "number": 10,
+          "name": "Preserve the complete original Node library regression suite",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-04T00:31:46Z",
+          "completed_at": "2026-11-04T00:46:43Z"
+        },
+        {
+          "number": 11,
+          "name": "Check strict Clippy without rewriting source",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-04T00:46:43Z",
+          "completed_at": "2026-11-04T00:47:09Z"
+        }
+      ]
+    },
+    {
+      "run_id": 41746463373,
+      "id": 126300605711,
+      "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha_metadata": "362fbebe5027d731f16c88f710bfef7e922cd230",
+      "started_at": "2026-11-04T00:23:37Z",
+      "completed_at": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463373/job/126300605711",
+      "steps": [
+        {
+          "number": 10,
+          "name": "Preserve the complete original Node library regression suite",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-04T00:35:19Z",
+          "completed_at": null
+        },
+        {
+          "number": 11,
+          "name": "Check strict Clippy without rewriting source",
+          "status": "pending",
+          "conclusion": null,
+          "started_at": null,
+          "completed_at": null
+        }
+      ]
+    },
+    {
+      "run_id": 41746463373,
+      "id": 126300605830,
+      "name": "PQ network and witness (ubuntu-24.04, head)",
+      "status": "completed",
+      "conclusion": "failure",
+      "head_sha_metadata": "362fbebe5027d731f16c88f710bfef7e922cd230",
+      "started_at": "2026-11-04T00:23:36Z",
+      "completed_at": "2026-11-04T00:54:55Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463373/job/126300605830",
+      "steps": [
+        {
+          "number": 10,
+          "name": "Preserve the complete original Node library regression suite",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-04T00:34:16Z",
+          "completed_at": "2026-11-04T00:54:15Z"
+        },
+        {
+          "number": 11,
+          "name": "Check strict Clippy without rewriting source",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-04T00:54:15Z",
+          "completed_at": "2026-11-04T00:54:51Z"
+        }
+      ]
+    },
+    {
+      "run_id": 41746463373,
+      "id": 126300605895,
+      "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha_metadata": "362fbebe5027d731f16c88f710bfef7e922cd230",
+      "started_at": "2026-11-04T00:23:38Z",
+      "completed_at": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463373/job/126300605895",
+      "steps": [
+        {
+          "number": 10,
+          "name": "Preserve the complete original Node library regression suite",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-04T00:35:25Z",
+          "completed_at": null
+        },
+        {
+          "number": 11,
+          "name": "Check strict Clippy without rewriting source",
+          "status": "pending",
+          "conclusion": null,
+          "started_at": null,
+          "completed_at": null
+        }
+      ]
+    }
+  ],
+  "ordinary_failure_inspected": {
+    "run_id": 41746463373,
+    "job_id": 126300605830,
+    "artifact_id": 13284469302,
+    "terminal_readback": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/node-head-terminal-readback.json",
+    "failed_test": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+    "native_exit_code": 101,
+    "reported_full_suite": {
+      "total": 974,
+      "passed": 950,
+      "failed": 1,
+      "ignored": 23,
+      "filtered": 0,
+      "libtest_seconds": 1196.51
+    },
+    "actual_before_after_commit": "362fbebe5027d731f16c88f710bfef7e922cd230",
+    "actual_before_after_tree": "5a7a2eadfcfb75b9fdf38fa0e8a05c6a503d776d"
+  },
+  "limitations": [
+    "These endpoint reads form one finite refresh, not an atomic common-clock observation.",
+    "Job head_sha is workflow metadata. Actual before/after checkout receipts were independently read only for the newly failed x64 head Node job.",
+    "The x64 prospective-merge success is not inherited by head; no full named-registry counts are invented for uninspected successful jobs.",
+    "Both runtime and both ARM Node jobs were still in_progress at this snapshot; completion and final source after receipts remain unknown.",
+    "No preserved scripts or executables were run; no workflow was dispatched or retried."
+  ]
+}

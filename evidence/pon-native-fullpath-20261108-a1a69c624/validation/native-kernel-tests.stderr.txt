@@ -1,0 +1,14 @@
+   Compiling syn v2.0.117
+   Compiling rustix v1.1.4
+   Compiling linux-raw-sys v0.12.1
+   Compiling thiserror-impl v1.0.69
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling serde_derive v1.0.228
+   Compiling thiserror v1.0.69
+   Compiling curve25519-dalek v4.1.3
+   Compiling serde v1.0.228
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/work/chain-native-fullpath-20261108-3dfc/trillionnium/crates/trnm-protocol)
+   Compiling ed25519-dalek v2.2.0
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-native-fullpath-20261108-3dfc/trillionnium/crates/trnm-crypto-primitives)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 39s
+     Running unittests src/lib.rs (/home/qian-qi/work/chain-native-fullpath-20261108-3dfc-target/debug/deps/trnm_crypto_primitives-8f8a8dc3fae55648)

@@ -1,0 +1,3 @@
+[fix/chain-root-final-python-ports-20261114 43ca94da9] Retain exact hosted W1 receipt fixture required by clock controls
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz

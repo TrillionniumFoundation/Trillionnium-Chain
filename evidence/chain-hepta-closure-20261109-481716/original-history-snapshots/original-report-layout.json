@@ -1,0 +1,872 @@
+[
+  {
+    "baseline_objects": [
+      {
+        "fields": {
+          "actor_reports_successful_without_cap_or_kill": {
+            "type": "bool",
+            "value": true
+          },
+          "address": {
+            "length": 15,
+            "type": "str",
+            "value": "127.0.0.1:45683"
+          },
+          "all_signed_rounds_confirmed_in_window": {
+            "type": "bool",
+            "value": false
+          },
+          "attack_calls_overlapping_each_signed_round": {
+            "compact_json_bytes": 5,
+            "length": 2,
+            "type": "list"
+          },
+          "attacker_processes_ready": {
+            "type": "int",
+            "value": 0
+          },
+          "attacker_processes_requested": {
+            "type": "int",
+            "value": 0
+          },
+          "budget_samples": {
+            "compact_json_bytes": 1296535,
+            "length": 466,
+            "type": "list"
+          },
+          "business_started_ns": {
+            "type": "int",
+            "value": 1001661948
+          },
+          "children": {
+            "compact_json_bytes": 2,
+            "length": 0,
+            "type": "list"
+          },
+          "children_os_usage_after": {
+            "compact_json_bytes": 204,
+            "length": 4,
+            "type": "dict"
+          },
+          "children_os_usage_before": {
+            "compact_json_bytes": 204,
+            "length": 4,
+            "type": "dict"
+          },
+          "client_native_history_arithmetic_after": {
+            "compact_json_bytes": 8252,
+            "length": 16,
+            "type": "dict"
+          },
+          "client_native_history_arithmetic_before": {
+            "compact_json_bytes": 8153,
+            "length": 16,
+            "type": "dict"
+          },
+          "client_observation_scope": {
+            "length": 193,
+            "type": "str",
+            "value": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive"
+          },
+          "completion_work_observation": {
+            "compact_json_bytes": 429,
+            "length": 12,
+            "type": "dict"
+          },
+          "confirmations": {
+            "compact_json_bytes": 2883,
+            "length": 2,
+            "type": "list"
+          },
+          "depletion_at_ns": {
+            "type": "NoneType",
+            "value": null
+          },
+          "depletion_meter": {
+            "type": "NoneType",
+            "value": null
+          },
+          "duration_seconds": {
+            "type": "int",
+            "value": 30
+          },
+          "external_controller_observation": {
+            "compact_json_bytes": 461,
+            "length": 10,
+            "type": "dict"
+          },
+          "final_actual_flow": {
+            "compact_json_bytes": 472,
+            "length": 15,
+            "type": "dict"
+          },
+          "final_client_tip": {
+            "length": 64,
+            "type": "str",
+            "value": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96"
+          },
+          "final_meter": {
+            "compact_json_bytes": 225,
+            "length": 8,
+            "type": "dict"
+          },
+          "final_receiver_tip": {
+            "length": 64,
+            "type": "str",
+            "value": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400"
+          },
+          "finite_phase_criteria_met": {
+            "type": "bool",
+            "value": false
+          },
+          "full_work_accepted": {
+            "type": "int",
+            "value": 14
+          },
+          "full_work_failed": {
+            "type": "int",
+            "value": 0
+          },
+          "genuine_budget_depletion_observed": {
+            "type": "bool",
+            "value": false
+          },
+          "history": {
+            "compact_json_bytes": 1106270,
+            "length": 10,
+            "type": "list"
+          },
+          "initial_meter": {
+            "compact_json_bytes": 225,
+            "length": 8,
+            "type": "dict"
+          },
+          "initial_tip": {
+            "length": 64,
+            "type": "str",
+            "value": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369"
+          },
+          "mode": {
+            "length": 8,
+            "type": "str",
+            "value": "baseline"
+          },
+          "native_history_arithmetic_after": {
+            "compact_json_bytes": 8232,
+            "length": 16,
+            "type": "dict"
+          },
+          "native_history_arithmetic_before": {
+            "compact_json_bytes": 8156,
+            "length": 16,
+            "type": "dict"
+          },
+          "observer_complete": {
+            "type": "bool",
+            "value": true
+          },
+          "phase_process_context": {
+            "compact_json_bytes": 787,
+            "length": 12,
+            "type": "dict"
+          },
+          "public_phase_children_os_usage_after": {
+            "compact_json_bytes": 182,
+            "length": 4,
+            "type": "dict"
+          },
+          "public_phase_children_os_usage_before": {
+            "compact_json_bytes": 182,
+            "length": 4,
+            "type": "dict"
+          },
+          "public_resource_policy": {
+            "compact_json_bytes": 228,
+            "length": 5,
+            "type": "dict"
+          },
+          "receiver_and_verifier_setup_cpu_ns": {
+            "type": "int",
+            "value": 921522609
+          },
+          "receiver_and_verifier_setup_wall_ns": {
+            "type": "int",
+            "value": 3698098311
+          },
+          "receiver_client_state_equal": {
+            "type": "bool",
+            "value": false
+          },
+          "receiver_observation": {
+            "compact_json_bytes": 150092,
+            "length": 18,
+            "type": "dict"
+          },
+          "rss": {
+            "compact_json_bytes": 251,
+            "length": 4,
+            "type": "dict"
+          },
+          "service_outcome": {
+            "compact_json_bytes": 2478,
+            "length": 1,
+            "type": "dict"
+          },
+          "state_backend": {
+            "length": 16,
+            "type": "str",
+            "value": "authenticated-v1"
+          },
+          "submissions": {
+            "compact_json_bytes": 13786,
+            "length": 14,
+            "type": "list"
+          },
+          "verifier_errors": {
+            "compact_json_bytes": 27,
+            "length": 1,
+            "type": "list"
+          },
+          "whole_parent_phase_cpu_ns": {
+            "type": "int",
+            "value": 8193815246
+          },
+          "whole_parent_phase_wall_ns": {
+            "type": "int",
+            "value": 33888192672
+          }
+        },
+        "json_pointer": "/phases/0"
+      }
+    ],
+    "bytes": 48614177,
+    "sha256": "39c4098846dbbb802f962989a0774d09c95a80c0db3b04a69923adfce8b5c307",
+    "snapshot_owners": [
+      {
+        "json_pointer": "/phases/2",
+        "keys_present": [
+          "client_native_history_arithmetic_before",
+          "client_native_history_arithmetic_after"
+        ],
+        "mode": "late-product"
+      },
+      {
+        "json_pointer": "/phases/1",
+        "keys_present": [
+          "client_native_history_arithmetic_before",
+          "client_native_history_arithmetic_after"
+        ],
+        "mode": "from-zero"
+      },
+      {
+        "json_pointer": "/phases/0",
+        "keys_present": [
+          "client_native_history_arithmetic_before",
+          "client_native_history_arithmetic_after"
+        ],
+        "mode": "baseline"
+      }
+    ],
+    "top_level_keys": [
+      "best_observed_cold_legal_method",
+      "cryptographic_hardness_qualified",
+      "economics",
+      "economics_complete",
+      "finite_experiment_criteria_met",
+      "independent_operators",
+      "phases",
+      "preparation",
+      "production_candidate",
+      "public_resource_policy",
+      "release_ready",
+      "schema",
+      "scope",
+      "selection_candidates_cpu_ns",
+      "settings_profile",
+      "state_backend",
+      "wan_qualified",
+      "work_profile_qualified"
+    ],
+    "zip_member": "run-1-raw/report.json"
+  },
+  {
+    "baseline_objects": [
+      {
+        "fields": {
+          "actor_reports_successful_without_cap_or_kill": {
+            "type": "bool",
+            "value": true
+          },
+          "address": {
+            "length": 15,
+            "type": "str",
+            "value": "127.0.0.1:39599"
+          },
+          "all_signed_rounds_confirmed_in_window": {
+            "type": "bool",
+            "value": false
+          },
+          "attack_calls_overlapping_each_signed_round": {
+            "compact_json_bytes": 5,
+            "length": 2,
+            "type": "list"
+          },
+          "attacker_processes_ready": {
+            "type": "int",
+            "value": 0
+          },
+          "attacker_processes_requested": {
+            "type": "int",
+            "value": 0
+          },
+          "budget_samples": {
+            "compact_json_bytes": 1502801,
+            "length": 540,
+            "type": "list"
+          },
+          "business_started_ns": {
+            "type": "int",
+            "value": 1000171352
+          },
+          "children": {
+            "compact_json_bytes": 2,
+            "length": 0,
+            "type": "list"
+          },
+          "children_os_usage_after": {
+            "compact_json_bytes": 204,
+            "length": 4,
+            "type": "dict"
+          },
+          "children_os_usage_before": {
+            "compact_json_bytes": 204,
+            "length": 4,
+            "type": "dict"
+          },
+          "client_native_history_arithmetic_after": {
+            "compact_json_bytes": 8253,
+            "length": 16,
+            "type": "dict"
+          },
+          "client_native_history_arithmetic_before": {
+            "compact_json_bytes": 8155,
+            "length": 16,
+            "type": "dict"
+          },
+          "client_observation_scope": {
+            "length": 193,
+            "type": "str",
+            "value": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive"
+          },
+          "completion_work_observation": {
+            "compact_json_bytes": 429,
+            "length": 12,
+            "type": "dict"
+          },
+          "confirmations": {
+            "compact_json_bytes": 2883,
+            "length": 2,
+            "type": "list"
+          },
+          "depletion_at_ns": {
+            "type": "NoneType",
+            "value": null
+          },
+          "depletion_meter": {
+            "type": "NoneType",
+            "value": null
+          },
+          "duration_seconds": {
+            "type": "int",
+            "value": 30
+          },
+          "external_controller_observation": {
+            "compact_json_bytes": 461,
+            "length": 10,
+            "type": "dict"
+          },
+          "final_actual_flow": {
+            "compact_json_bytes": 472,
+            "length": 15,
+            "type": "dict"
+          },
+          "final_client_tip": {
+            "length": 64,
+            "type": "str",
+            "value": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96"
+          },
+          "final_meter": {
+            "compact_json_bytes": 225,
+            "length": 8,
+            "type": "dict"
+          },
+          "final_receiver_tip": {
+            "length": 64,
+            "type": "str",
+            "value": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400"
+          },
+          "finite_phase_criteria_met": {
+            "type": "bool",
+            "value": false
+          },
+          "full_work_accepted": {
+            "type": "int",
+            "value": 14
+          },
+          "full_work_failed": {
+            "type": "int",
+            "value": 0
+          },
+          "genuine_budget_depletion_observed": {
+            "type": "bool",
+            "value": false
+          },
+          "history": {
+            "compact_json_bytes": 1106318,
+            "length": 10,
+            "type": "list"
+          },
+          "initial_meter": {
+            "compact_json_bytes": 225,
+            "length": 8,
+            "type": "dict"
+          },
+          "initial_tip": {
+            "length": 64,
+            "type": "str",
+            "value": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369"
+          },
+          "mode": {
+            "length": 8,
+            "type": "str",
+            "value": "baseline"
+          },
+          "native_history_arithmetic_after": {
+            "compact_json_bytes": 8233,
+            "length": 16,
+            "type": "dict"
+          },
+          "native_history_arithmetic_before": {
+            "compact_json_bytes": 8157,
+            "length": 16,
+            "type": "dict"
+          },
+          "observer_complete": {
+            "type": "bool",
+            "value": true
+          },
+          "phase_process_context": {
+            "compact_json_bytes": 804,
+            "length": 12,
+            "type": "dict"
+          },
+          "public_phase_children_os_usage_after": {
+            "compact_json_bytes": 182,
+            "length": 4,
+            "type": "dict"
+          },
+          "public_phase_children_os_usage_before": {
+            "compact_json_bytes": 182,
+            "length": 4,
+            "type": "dict"
+          },
+          "public_resource_policy": {
+            "compact_json_bytes": 228,
+            "length": 5,
+            "type": "dict"
+          },
+          "receiver_and_verifier_setup_cpu_ns": {
+            "type": "int",
+            "value": 917136381
+          },
+          "receiver_and_verifier_setup_wall_ns": {
+            "type": "int",
+            "value": 3696563275
+          },
+          "receiver_client_state_equal": {
+            "type": "bool",
+            "value": false
+          },
+          "receiver_observation": {
+            "compact_json_bytes": 150095,
+            "length": 18,
+            "type": "dict"
+          },
+          "rss": {
+            "compact_json_bytes": 251,
+            "length": 4,
+            "type": "dict"
+          },
+          "service_outcome": {
+            "compact_json_bytes": 2477,
+            "length": 1,
+            "type": "dict"
+          },
+          "state_backend": {
+            "length": 16,
+            "type": "str",
+            "value": "authenticated-v1"
+          },
+          "submissions": {
+            "compact_json_bytes": 13780,
+            "length": 14,
+            "type": "list"
+          },
+          "verifier_errors": {
+            "compact_json_bytes": 27,
+            "length": 1,
+            "type": "list"
+          },
+          "whole_parent_phase_cpu_ns": {
+            "type": "int",
+            "value": 8160305730
+          },
+          "whole_parent_phase_wall_ns": {
+            "type": "int",
+            "value": 33889349733
+          }
+        },
+        "json_pointer": "/phases/0"
+      }
+    ],
+    "bytes": 48774711,
+    "sha256": "43c8fb8fa28c560522be595b58e98e483c62631a76766f42efa24f088e366822",
+    "snapshot_owners": [
+      {
+        "json_pointer": "/phases/2",
+        "keys_present": [
+          "client_native_history_arithmetic_before",
+          "client_native_history_arithmetic_after"
+        ],
+        "mode": "late-product"
+      },
+      {
+        "json_pointer": "/phases/1",
+        "keys_present": [
+          "client_native_history_arithmetic_before",
+          "client_native_history_arithmetic_after"
+        ],
+        "mode": "from-zero"
+      },
+      {
+        "json_pointer": "/phases/0",
+        "keys_present": [
+          "client_native_history_arithmetic_before",
+          "client_native_history_arithmetic_after"
+        ],
+        "mode": "baseline"
+      }
+    ],
+    "top_level_keys": [
+      "best_observed_cold_legal_method",
+      "cryptographic_hardness_qualified",
+      "economics",
+      "economics_complete",
+      "finite_experiment_criteria_met",
+      "independent_operators",
+      "phases",
+      "preparation",
+      "production_candidate",
+      "public_resource_policy",
+      "release_ready",
+      "schema",
+      "scope",
+      "selection_candidates_cpu_ns",
+      "settings_profile",
+      "state_backend",
+      "wan_qualified",
+      "work_profile_qualified"
+    ],
+    "zip_member": "run-2-raw/report.json"
+  },
+  {
+    "baseline_objects": [
+      {
+        "fields": {
+          "actor_reports_successful_without_cap_or_kill": {
+            "type": "bool",
+            "value": true
+          },
+          "address": {
+            "length": 15,
+            "type": "str",
+            "value": "127.0.0.1:34353"
+          },
+          "all_signed_rounds_confirmed_in_window": {
+            "type": "bool",
+            "value": false
+          },
+          "attack_calls_overlapping_each_signed_round": {
+            "compact_json_bytes": 5,
+            "length": 2,
+            "type": "list"
+          },
+          "attacker_processes_ready": {
+            "type": "int",
+            "value": 0
+          },
+          "attacker_processes_requested": {
+            "type": "int",
+            "value": 0
+          },
+          "budget_samples": {
+            "compact_json_bytes": 1477268,
+            "length": 531,
+            "type": "list"
+          },
+          "business_started_ns": {
+            "type": "int",
+            "value": 1000701687
+          },
+          "children": {
+            "compact_json_bytes": 2,
+            "length": 0,
+            "type": "list"
+          },
+          "children_os_usage_after": {
+            "compact_json_bytes": 204,
+            "length": 4,
+            "type": "dict"
+          },
+          "children_os_usage_before": {
+            "compact_json_bytes": 204,
+            "length": 4,
+            "type": "dict"
+          },
+          "client_native_history_arithmetic_after": {
+            "compact_json_bytes": 8253,
+            "length": 16,
+            "type": "dict"
+          },
+          "client_native_history_arithmetic_before": {
+            "compact_json_bytes": 8155,
+            "length": 16,
+            "type": "dict"
+          },
+          "client_observation_scope": {
+            "length": 193,
+            "type": "str",
+            "value": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive"
+          },
+          "completion_work_observation": {
+            "compact_json_bytes": 429,
+            "length": 12,
+            "type": "dict"
+          },
+          "confirmations": {
+            "compact_json_bytes": 2883,
+            "length": 2,
+            "type": "list"
+          },
+          "depletion_at_ns": {
+            "type": "NoneType",
+            "value": null
+          },
+          "depletion_meter": {
+            "type": "NoneType",
+            "value": null
+          },
+          "duration_seconds": {
+            "type": "int",
+            "value": 30
+          },
+          "external_controller_observation": {
+            "compact_json_bytes": 461,
+            "length": 10,
+            "type": "dict"
+          },
+          "final_actual_flow": {
+            "compact_json_bytes": 472,
+            "length": 15,
+            "type": "dict"
+          },
+          "final_client_tip": {
+            "length": 64,
+            "type": "str",
+            "value": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96"
+          },
+          "final_meter": {
+            "compact_json_bytes": 225,
+            "length": 8,
+            "type": "dict"
+          },
+          "final_receiver_tip": {
+            "length": 64,
+            "type": "str",
+            "value": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400"
+          },
+          "finite_phase_criteria_met": {
+            "type": "bool",
+            "value": false
+          },
+          "full_work_accepted": {
+            "type": "int",
+            "value": 14
+          },
+          "full_work_failed": {
+            "type": "int",
+            "value": 0
+          },
+          "genuine_budget_depletion_observed": {
+            "type": "bool",
+            "value": false
+          },
+          "history": {
+            "compact_json_bytes": 1106261,
+            "length": 10,
+            "type": "list"
+          },
+          "initial_meter": {
+            "compact_json_bytes": 225,
+            "length": 8,
+            "type": "dict"
+          },
+          "initial_tip": {
+            "length": 64,
+            "type": "str",
+            "value": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369"
+          },
+          "mode": {
+            "length": 8,
+            "type": "str",
+            "value": "baseline"
+          },
+          "native_history_arithmetic_after": {
+            "compact_json_bytes": 8231,
+            "length": 16,
+            "type": "dict"
+          },
+          "native_history_arithmetic_before": {
+            "compact_json_bytes": 8156,
+            "length": 16,
+            "type": "dict"
+          },
+          "observer_complete": {
+            "type": "bool",
+            "value": true
+          },
+          "phase_process_context": {
+            "compact_json_bytes": 805,
+            "length": 12,
+            "type": "dict"
+          },
+          "public_phase_children_os_usage_after": {
+            "compact_json_bytes": 182,
+            "length": 4,
+            "type": "dict"
+          },
+          "public_phase_children_os_usage_before": {
+            "compact_json_bytes": 182,
+            "length": 4,
+            "type": "dict"
+          },
+          "public_resource_policy": {
+            "compact_json_bytes": 228,
+            "length": 5,
+            "type": "dict"
+          },
+          "receiver_and_verifier_setup_cpu_ns": {
+            "type": "int",
+            "value": 925874854
+          },
+          "receiver_and_verifier_setup_wall_ns": {
+            "type": "int",
+            "value": 3788875075
+          },
+          "receiver_client_state_equal": {
+            "type": "bool",
+            "value": false
+          },
+          "receiver_observation": {
+            "compact_json_bytes": 150089,
+            "length": 18,
+            "type": "dict"
+          },
+          "rss": {
+            "compact_json_bytes": 251,
+            "length": 4,
+            "type": "dict"
+          },
+          "service_outcome": {
+            "compact_json_bytes": 2477,
+            "length": 1,
+            "type": "dict"
+          },
+          "state_backend": {
+            "length": 16,
+            "type": "str",
+            "value": "authenticated-v1"
+          },
+          "submissions": {
+            "compact_json_bytes": 13773,
+            "length": 14,
+            "type": "list"
+          },
+          "verifier_errors": {
+            "compact_json_bytes": 27,
+            "length": 1,
+            "type": "list"
+          },
+          "whole_parent_phase_cpu_ns": {
+            "type": "int",
+            "value": 8168967403
+          },
+          "whole_parent_phase_wall_ns": {
+            "type": "int",
+            "value": 33906978756
+          }
+        },
+        "json_pointer": "/phases/0"
+      }
+    ],
+    "bytes": 48449148,
+    "sha256": "5699de385790f39f3e5684140b97fb81ebba892036442295a3628591de9e0156",
+    "snapshot_owners": [
+      {
+        "json_pointer": "/phases/2",
+        "keys_present": [
+          "client_native_history_arithmetic_before",
+          "client_native_history_arithmetic_after"
+        ],
+        "mode": "late-product"
+      },
+      {
+        "json_pointer": "/phases/1",
+        "keys_present": [
+          "client_native_history_arithmetic_before",
+          "client_native_history_arithmetic_after"
+        ],
+        "mode": "from-zero"
+      },
+      {
+        "json_pointer": "/phases/0",
+        "keys_present": [
+          "client_native_history_arithmetic_before",
+          "client_native_history_arithmetic_after"
+        ],
+        "mode": "baseline"
+      }
+    ],
+    "top_level_keys": [
+      "best_observed_cold_legal_method",
+      "cryptographic_hardness_qualified",
+      "economics",
+      "economics_complete",
+      "finite_experiment_criteria_met",
+      "independent_operators",
+      "phases",
+      "preparation",
+      "production_candidate",
+      "public_resource_policy",
+      "release_ready",
+      "schema",
+      "scope",
+      "selection_candidates_cpu_ns",
+      "settings_profile",
+      "state_backend",
+      "wan_qualified",
+      "work_profile_qualified"
+    ],
+    "zip_member": "run-3-raw/report.json"
+  }
+]

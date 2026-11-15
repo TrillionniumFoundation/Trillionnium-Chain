@@ -1,0 +1,22 @@
+{
+  "actual_bytes": 2482176,
+  "actual_git_blob_sha1": "fae9730a3628f101ae40dabbabfbfc87fd5768d1",
+  "command": [
+    "/usr/bin/gh",
+    "api",
+    "-H",
+    "Accept: application/vnd.github.raw+json",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/fae9730a3628f101ae40dabbabfbfc87fd5768d1"
+  ],
+  "elapsed_seconds": 7.617300748825073,
+  "exit_code": 0,
+  "expected_blob": "fae9730a3628f101ae40dabbabfbfc87fd5768d1",
+  "expected_bytes": 2482176,
+  "import_exit_code": 0,
+  "import_stderr": "",
+  "import_stdout": "fae9730a3628f101ae40dabbabfbfc87fd5768d1\n",
+  "imported": true,
+  "path": "evidence/pon-public-readiness-v1/observations/pre-correction-d/pipeline-hot-protected/validator/native.sqlite",
+  "raw_sha256": "dc59b08cddd9da25a61e498830763485c976d0951a5d464c8883b8446c53a56b",
+  "timed_out": false
+}

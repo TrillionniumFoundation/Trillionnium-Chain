@@ -1,0 +1,4 @@
+#!/bin/sh
+printf "%s\n" "$0" >> "$TRNM_SYNTHETIC_EXEC_AUDIT"
+printf "%s\n" "native Rust tool forbidden in synthetic tmpfs control" >&2
+exit 125

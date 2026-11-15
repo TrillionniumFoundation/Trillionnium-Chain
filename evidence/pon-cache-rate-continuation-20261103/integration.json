@@ -1,0 +1,27 @@
+{
+  "schema": "pon-cache-rate-concurrent-integration-v1",
+  "observation_baseline": "e1a41026a1b93a6cd3926a60e8af3d97f713ebb6",
+  "publication_parent": "c39c65b15cde72c30d69dec62ae630a7ebffa3da",
+  "publication_parent_tree": "04525f5777c53736be56683358c413813022f49f",
+  "remote_tree_and_commit_reconstructed_and_checked": true,
+  "preserved_concurrent_blobs": {
+    ".github/workflows/pon-recent-batch-acceptance.yml": "108e7b5717546943a55f4b194484bb068b16e1f8",
+    ".github/workflows/pon-w1-work-security.yml": "ab04c80c6c05403e4abfcb261541755f8ba9ca2a",
+    "scripts/ci/check_ci_contract.py": "3138da98830aa551715a0e395fd8cf34dd0be27d",
+    "scripts/ci/test_ci_contract.py": "359be6893f6036123d04fec33c4ecd927a9fc44c",
+    "trillionnium/crates/trnm-data-availability/src/cell/cache_wal_tests.rs": "dbc41d111e9254bccc69495130c2ebedf06d8601",
+    "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "ba1e16aa810b036eb4014ad5d72973fc07ce47fb",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention.rs": "124093660d2fa26ebf9e9210b4f6a60a8abf73a0",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs": "b91331180f80b3cd238f7039c37c1e915b7178c3",
+    "trillionnium/crates/trnm-data-availability/src/cell/store.rs": "3dad5633231a5c708d0546d3e368c3cb5b348331"
+  },
+  "source_manifest_resolution": "three-way merge of disjoint pinned_blobs entries; all other fields unchanged",
+  "checks": [
+    "combined-strict-clippy",
+    "combined-pq-source-pins",
+    "combined-ci-contract"
+  ],
+  "native_primitive_and_model_inputs_unchanged": true,
+  "public_service_qualification": false,
+  "production_activation": false
+}

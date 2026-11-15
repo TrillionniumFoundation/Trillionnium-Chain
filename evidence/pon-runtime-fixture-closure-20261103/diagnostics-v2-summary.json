@@ -1,0 +1,676 @@
+{
+  "schema": "diagnostics-v2-staged-validation-v1",
+  "prepared_utc": "2026-11-03T21:33:21.737304+00:00",
+  "status": "COMPLETED_ORIGINAL_PROFILE_974_WITH_ONE_RETAINED_NATIVE_FAILURE",
+  "source": {
+    "design_base_head": "b28098c092dca72165c0d26054fce95a8636d777",
+    "application_parent": "af570eaef44870ba3ec1f3d5be2cbdde2981931d",
+    "recovery_build_base_commit": "8ebded733d90bf74e7d8e3adbd2458ad8b572159",
+    "scope": "Recorded base commit plus diagnostic v2 and retained History CI count correction; not a clean committed base-only execution.",
+    "working_tree_diff_sha256": "477eb0f8fd847119220bce55372a67ca9378d6c33aef13ffbd30b3edc28813d4",
+    "native_source_manifest_sha256": "22cd64ab7427e49ed5d844b2fe7c6b8d7ca11799b25b78d4cea8eccfa5e54af3",
+    "node_test_elf_sha256": "a937d88d3858e89b1583b870e5bde458ff024bd5034c3a38abb966b94d2c24b9",
+    "diagnostics_patch_sha256": "45c21442c0ccf4254533c1f2b208a47626945f70d7295251590758042e5395fe",
+    "four_candidate_files": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+        "base_sha256": "201844a3dcd51fc837d9c4e69dcf008a76cb98349f1685fabd0159cb7f72e076",
+        "candidate_sha256": "3c42247c342773efbe6524d2a19533049217096f05aecdd24c62780b558e8808",
+        "candidate_bytes": 64625
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/root_rejection_cache_tests.rs",
+        "base_sha256": "02486164a4e45cb72c83aaf0bd5dd17820c12cd6e841395ed84413416003e288",
+        "candidate_sha256": "7e4263668c449aef922a4da5490ad8d70b9e7295ec0e2a355bf9acafbd143612",
+        "candidate_bytes": 19651
+      },
+      {
+        "path": "scripts/pon_public_v3_phase_read.py",
+        "base_sha256": "d135137255eb9b4b55c47547b341f65049b85774fd5d24e14d90e0948c93dc19",
+        "candidate_sha256": "0e7f29dabe06d93f81bf75d9df92af553e5e4e61a58308fc59e42c356a5744ca",
+        "candidate_bytes": 49098
+      },
+      {
+        "path": "scripts/ci/test_pon_public_v3_phase_read.py",
+        "base_sha256": "5c97503bfc319b551e6d6880c4551f45638189f4c02e1e6b1b6c4182b8c71b03",
+        "candidate_sha256": "ace05c98205adcdf1d1e1c6343c9b9100789bdf0517cf42d840a887e8ec56017",
+        "candidate_bytes": 48636
+      }
+    ],
+    "one_existing_observer_source_pin": {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "old": "1e6c69b252e04576bdf663b82338b4969455c01e",
+      "new": "435baefdf9d38fb4959f006bfe6dd9f1c3476214"
+    },
+    "build_manifests_before_after_final_identical": true,
+    "future_fixture_source_or_later_commit_qualified": false,
+    "build_manifests_before_after_final_terminal_identical": true
+  },
+  "changes_and_limits": {
+    "bounded_error_attachment": "Independent dispatch/terminal diagnostic attachment stores actual kind, bounded existing Display prefix and truncation without assigning a typed ErrorCode to legacy text.",
+    "legacy_root_remains_untyped": true,
+    "historical_nulls_backfilled": false,
+    "reader_scope": "Version/kind/UTF-8 bounds and a narrow set of statically impossible code-kind combinations; not a complete ErrorCode registry or authenticated owner-stop origin.",
+    "acceptance_authorization_retry_or_cache_semantics_changed": false,
+    "existing_v4_phase_count": 19,
+    "phase_and_wait_shapes_preserved": true,
+    "timing_limit": "Existing finish call locations and clock/deadline rules remain; added capture before terminal wait.finish can contribute real measured timing cost.",
+    "parent_task_split_implemented": false,
+    "full_partial_graph_split_implemented": false,
+    "performance_benefit_measured": false
+  },
+  "reader_attempts": [
+    {
+      "version": "v1-incomplete-external-fixture",
+      "passed": 32,
+      "errors": 2,
+      "total": 34,
+      "receipt": {
+        "started_utc": "2026-11-03T20:23:46.603716+00:00",
+        "tests_run": 34,
+        "failures": 0,
+        "errors": 2,
+        "skipped": 0,
+        "successful": false,
+        "elapsed_seconds": 0.09679948399934801,
+        "source_sha256": "1333851e0b550ca16d0368aaae09a7d878ea4c666f4ddc4a8cb1aaad5e0096b1",
+        "controls_sha256": "8cb4d13506342d6e1391ffccb1baaae56e7587c1dc63b1049a38058ca4a2562e",
+        "scope": "Python reader control suite only, including synthetic diagnostic controls; no Rust compilation/native or performance evidence"
+      },
+      "retained": true
+    },
+    {
+      "version": "v1-complete-original-fixtures",
+      "passed": 34,
+      "errors": 0,
+      "total": 34,
+      "receipt": {
+        "started_utc": "2026-11-03T20:24:07.778116+00:00",
+        "tests_run": 34,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "successful": true,
+        "elapsed_seconds": 0.2876189140006318,
+        "source_sha256": "1333851e0b550ca16d0368aaae09a7d878ea4c666f4ddc4a8cb1aaad5e0096b1",
+        "controls_sha256": "8cb4d13506342d6e1391ffccb1baaae56e7587c1dc63b1049a38058ca4a2562e",
+        "scope": "Python reader control suite only; original unmodified dependencies copied to external fixture; initial incomplete-copy failure retained separately; no Rust compilation/native or performance evidence"
+      },
+      "retained": true
+    },
+    {
+      "version": "v2",
+      "passed": 35,
+      "errors": 0,
+      "total": 35,
+      "receipt": {
+        "started_utc": "2026-11-03T20:32:49.018540+00:00",
+        "tests_run": 35,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "successful": true,
+        "elapsed_seconds": 0.2907325249980204,
+        "source_sha256": "0e7f29dabe06d93f81bf75d9df92af553e5e4e61a58308fc59e42c356a5744ca",
+        "controls_sha256": "ace05c98205adcdf1d1e1c6343c9b9100789bdf0517cf42d840a887e8ec56017",
+        "scope": "v2 Python reader controls; synthetic diagnostic data not native evidence; v1 prior results retained; no Rust compilation/native or performance evidence"
+      },
+      "retained": true
+    }
+  ],
+  "historical116": {
+    "source_commit": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+    "source_tree": "e07dee8cad7727845063ced35933c9408341945d",
+    "run_id": 41686753078,
+    "job_id": 126094409217,
+    "artifact_id": 13256002955,
+    "artifact_sha256": "73b8b79ee7c4007c19a671c42deccba0a44291afb2b6d8cbd99617abfd5bde7b",
+    "server_records": 406,
+    "dispatch_rejections_without_typed_code": 295,
+    "all_295_are_root": null,
+    "actual_signed_root_refusals": 229,
+    "old_new_reader_retained_summary_equal": true,
+    "retained_summary_sha256": "0b3c0959edfc17b3bc7949855457fed74408b0622aaab9a21746b28c759aed41",
+    "historical_null_backfill": false,
+    "new_attachment_in_historical_output": false,
+    "raw_phase": "diagnostics-116-historical-phase.json.gz",
+    "original_raw_phase_sha256": "9ccdc68d503c872a666cd1db7a89afdf1891dc6ca4727f00ad495d8bf21778e0",
+    "b280_306_typed_null_cohort_not_conflated": true
+  },
+  "layout": {
+    "type": "trnm_pon_node::ingress::public_v3::PublicRequestObservation",
+    "baseline_bytes": 2376,
+    "candidate_bytes": 2664,
+    "alignment_bytes_both": 8,
+    "delta_bytes": 288,
+    "same_helper_sha256": "c0d25acbbdc7618a2c22fd2a637c5b7dab20e0b652e89deefad33144e3b9c47f",
+    "same_compiler_sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+    "capacity16384_arithmetic_bytes": 4718592,
+    "capacity16384_arithmetic_mib": 4.5,
+    "rss_measured": false,
+    "private_task_or_cell_layout_measured": false,
+    "scope": "Exact native non-test rlibs and tiny size_of/align_of probe only; separate from library test body execution and memory-pressure/service performance."
+  },
+  "first_build_attempt": {
+    "schema": "trnm-diagnostics-interrupted-build-v1",
+    "observed_utc": "2026-11-03T21:04:58.014443+00:00",
+    "status": "UNKNOWN_NO_TERMINAL_RESULT",
+    "tool_reported_error": "write_stdin failed: Unknown process id 40410",
+    "native_tests_started": false,
+    "build_exit_code": null,
+    "no_compiler_or_oom_cause_inferred": true,
+    "files": [
+      {
+        "name": "build.stderr",
+        "bytes": 117,
+        "sha256": "3592f1a7c5a7a4f4ff73de96dac554df609b75afa5e200ad7aa87e087ff00a57",
+        "mtime_ns": 1793739019920906689
+      },
+      {
+        "name": "build.stdout",
+        "bytes": 117817,
+        "sha256": "46b70058388b612a759b74c131f2e90861c46210159847441e7bedea85140a69",
+        "mtime_ns": 1793739324819515601
+      },
+      {
+        "name": "invocation.json",
+        "bytes": 594,
+        "sha256": "91e1daa97c015e469f4f09a75b825f6e17e18efb85c178c4354aeca60ac91d51",
+        "mtime_ns": 1793739019358702894
+      },
+      {
+        "name": "native-source.before.json",
+        "bytes": 173233,
+        "sha256": "22cd64ab7427e49ed5d844b2fe7c6b8d7ca11799b25b78d4cea8eccfa5e54af3",
+        "mtime_ns": 1793739019579165199
+      },
+      {
+        "name": "phase.json",
+        "bytes": 644,
+        "sha256": "176b0af039b7048b974b25e9d882361e1bd2ad0fa7fde34cb04376d14b38faf5",
+        "mtime_ns": 1793739019633705610
+      },
+      {
+        "name": "preflight.json",
+        "bytes": 308,
+        "sha256": "c0215af4ab0e6fed33168bbae70d6e31ad411f3660e076b46b21f30b8795c164",
+        "mtime_ns": 1793739019633538158
+      },
+      {
+        "name": "preflight.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "mtime_ns": 1793739019582555388
+      },
+      {
+        "name": "preflight.stdout",
+        "bytes": 170,
+        "sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+        "mtime_ns": 1793739019624900715
+      }
+    ],
+    "completed_executable_names": [
+      "trnm-pon-node",
+      "pinned_peer_polling",
+      "mining_service_budget",
+      "architecture_delivery_compare",
+      "native_node",
+      "public_cli",
+      "public_pool_cli",
+      "public_intake_v2",
+      "evaluation_sync_observation"
+    ],
+    "build_finished_messages": [],
+    "missing_terminal_files": [
+      "build.json",
+      "artifacts.json",
+      "result.json",
+      "fmt.json",
+      "clippy.json",
+      "verification.json",
+      "terminal.json"
+    ]
+  },
+  "recovery_build": {
+    "invocation": {
+      "started_utc": "2026-11-03T21:04:58.052177+00:00",
+      "source_commit": "8ebded733d90bf74e7d8e3adbd2458ad8b572159",
+      "cargo_build_jobs": "1",
+      "cargo_incremental": "0",
+      "cargo_target_dir": "/workspace/scratch/b5a148b09b11/target",
+      "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+      "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+      "validation_scope": "af570 docs parent plus reviewed diagnostics v2 and exact History CI count correction",
+      "working_tree_diff_sha256": "477eb0f8fd847119220bce55372a67ca9378d6c33aef13ffbd30b3edc28813d4",
+      "prior_unknown_attempt": "composed-diagnostics-j1-build; Unknown process id 40410; no build terminal",
+      "profiles_and_native_budgets_changed": false
+    },
+    "commands": {
+      "build": {
+        "name": "build",
+        "command": [
+          "cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--test",
+          "architecture_delivery_compare",
+          "--test",
+          "public_intake_v2",
+          "--test",
+          "public_cli",
+          "--test",
+          "public_pool_cli",
+          "--test",
+          "mining_service_budget",
+          "--test",
+          "evaluation_sync_observation",
+          "--test",
+          "native_node",
+          "--test",
+          "pinned_peer_polling",
+          "--all-features",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "exit_code": 0,
+        "wall_ns": 594291232640,
+        "stdout_sha256": "425648bc8819d9214a94471fb65c0d4aa47f7c5f5ea0a4eaa1bd5fe6595a8e5e",
+        "stderr_sha256": "f2a19e976c359ecb9d4c0f6bee146c1af587d0291c3d8f2a4da949429770b851"
+      },
+      "fmt": {
+        "name": "fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "wall_ns": 13814496202,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "clippy": {
+        "name": "clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "wall_ns": 67253522297,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "339f5fb856cdd0eaabf0aca913db49e999a8dff983fc397f2820358787406537"
+      }
+    },
+    "verification": {
+      "fmt_exit": 0,
+      "clippy_exit": 0,
+      "source_unchanged": true
+    },
+    "artifact_count": 10,
+    "node_profile": {
+      "opt_level": "3",
+      "debuginfo": 2,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": true
+    },
+    "node_features": [
+      "default",
+      "pq-native-openssl"
+    ],
+    "node_elf_sha256": "a937d88d3858e89b1583b870e5bde458ff024bd5034c3a38abb966b94d2c24b9",
+    "native_source_unchanged": true
+  },
+  "python_controls": {
+    "passed": 201,
+    "suite_counts": [
+      35,
+      98,
+      34,
+      34
+    ],
+    "commands": [
+      {
+        "name": "phase-reader",
+        "command": [
+          "python3",
+          "scripts/ci/test_pon_public_v3_phase_read.py"
+        ],
+        "exit_code": 0,
+        "wall_ns": 410714949,
+        "summaries": [
+          [
+            "35",
+            "0.325"
+          ]
+        ],
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "f544dba9a6f089d33cc809cffcc2435cf4fa2860cadd5340edcff54d70b71b2e"
+      },
+      {
+        "name": "ci-contract",
+        "command": [
+          "python3",
+          "scripts/ci/test_ci_contract.py"
+        ],
+        "exit_code": 0,
+        "wall_ns": 7982962871,
+        "summaries": [
+          [
+            "98",
+            "7.904"
+          ]
+        ],
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "1f84c371188797490b53bd5b005b96563cdd05f43627f766dbc1323d212a8456"
+      },
+      {
+        "name": "source-pin-controls",
+        "command": [
+          "python3",
+          "scripts/ci/test_pq_research_integration.py"
+        ],
+        "exit_code": 0,
+        "wall_ns": 14724964828,
+        "summaries": [
+          [
+            "34",
+            "14.662"
+          ]
+        ],
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "0eeaa859a76e5bc290509063048905ccd462771babb9a8c87d6d78c3f56cc6e6"
+      },
+      {
+        "name": "source-integrity",
+        "command": [
+          "python3",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "exit_code": 0,
+        "wall_ns": 2896729928,
+        "summaries": [
+          [
+            "34",
+            "2.784"
+          ]
+        ],
+        "stdout_sha256": "b6c4ff21ddc244b663d7078b30b1a90197ac9bf82f0e04f0e6ca05fc5968d7a1",
+        "stderr_sha256": "7f7ad77f20c24a6219e96319b264aef3a7a6c43fda44fbb8faca8b7fb1c64e7c"
+      }
+    ],
+    "old_v2_35_not_additional_unique_controls": true
+  },
+  "selected_native": {
+    "selected": 57,
+    "passed": 56,
+    "failed": 1,
+    "timed_out": 0,
+    "failed_selectors": [
+      "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart"
+    ],
+    "original43_preserved": true,
+    "selected_names_all_in_frozen974_registry": true,
+    "composition": "Original53 plus three new diagnostic names plus one retained TCP ROOT selector; the retained TCP selector is already in the original971.",
+    "diagnostic_and_tcp_root_rows": [
+      {
+        "selector": "ingress::public_v3::request_observation::tests::error_diagnostics_preserve_typed_identity_origin_and_bounded_utf8",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+          "ingress::public_v3::request_observation::tests::error_diagnostics_preserve_typed_identity_origin_and_bounded_utf8",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 3941259,
+        "log": "pq-53.log",
+        "log_sha256": "92f6b01d7bcfa2d516ee39d27fc5fbf5b126d81dd9d615340e2d04a9955f976d",
+        "reader": {
+          "result": "PASS",
+          "test": "ingress::public_v3::request_observation::tests::error_diagnostics_preserve_typed_identity_origin_and_bounded_utf8",
+          "executed_tests": 1,
+          "scope": "named-libtest-execution-only"
+        },
+        "reader_error": null
+      },
+      {
+        "selector": "ingress::public_v3::request_observation::tests::dispatch_diagnostic_survives_distinct_terminal_cancellation_without_changing_codes",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+          "ingress::public_v3::request_observation::tests::dispatch_diagnostic_survives_distinct_terminal_cancellation_without_changing_codes",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 3721102,
+        "log": "pq-54.log",
+        "log_sha256": "2f3a591d50c1fda89ba4040526cb8b6ecf10fb25b81492c084b1a6f285cfb480",
+        "reader": {
+          "result": "PASS",
+          "test": "ingress::public_v3::request_observation::tests::dispatch_diagnostic_survives_distinct_terminal_cancellation_without_changing_codes",
+          "executed_tests": 1,
+          "scope": "named-libtest-execution-only"
+        },
+        "reader_error": null
+      },
+      {
+        "selector": "ingress::public_v3::request_observation::tests::error_diagnostic_contention_does_not_block_or_reclassify_rejection",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+          "ingress::public_v3::request_observation::tests::error_diagnostic_contention_does_not_block_or_reclassify_rejection",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 7854131,
+        "log": "pq-55.log",
+        "log_sha256": "ab0b02c9e7d50ba9d2c4a2c54c4b95ae5123542b7a112681234ad09e138ee68b",
+        "reader": {
+          "result": "PASS",
+          "test": "ingress::public_v3::request_observation::tests::error_diagnostic_contention_does_not_block_or_reclassify_rejection",
+          "executed_tests": 1,
+          "scope": "named-libtest-execution-only"
+        },
+        "reader_error": null
+      },
+      {
+        "selector": "store::root_rejection_cache_tests::root_rejection_public_replays_keep_signed_root_full_work_and_actual_paid_cpu",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+          "store::root_rejection_cache_tests::root_rejection_public_replays_keep_signed_root_full_work_and_actual_paid_cpu",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 64420608,
+        "log": "pq-56.log",
+        "log_sha256": "11b8b24245ab4718f965cd35745ffda68232831b4d73ef087858c335cf09c0b6",
+        "reader": {
+          "result": "PASS",
+          "test": "store::root_rejection_cache_tests::root_rejection_public_replays_keep_signed_root_full_work_and_actual_paid_cpu",
+          "executed_tests": 1,
+          "scope": "named-libtest-execution-only"
+        },
+        "reader_error": null
+      }
+    ],
+    "history": {
+      "command": [
+        "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+        "ingress::history_import::tests::",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "wall_ns": 18478463580,
+      "log_sha256": "cff21de4efcc8644bf9677ebcf33d35549c449627abbcd620d77a2dc4966be4d",
+      "summaries": [
+        "test result: ok. 25 passed; 0 failed; 1 ignored; 0 measured; 948 filtered out; finished in 18.43s"
+      ],
+      "all_26_named_entries_seen": true
+    },
+    "integration": [
+      {
+        "target": "pinned_peer_polling",
+        "selector": "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/pinned_peer_polling-4d64eee6f480ca80",
+          "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "wall_ns": 515505057,
+        "binary_sha256": "e300bf5da396c8e0c99833fa174aab33e28b1bc85460e073ee8b18d679540a57",
+        "binary_unchanged": true,
+        "log_sha256": "a3d6759d3e310cfb0b882bec5e6439d09f02d45e27f6dd9e6a34c1035ba83d43",
+        "expectation_met": true,
+        "real_fixed_host_positive": false,
+        "reader": {
+          "result": "PASS",
+          "test": "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission",
+          "executed_tests": 1,
+          "scope": "named-libtest-execution-only"
+        }
+      },
+      {
+        "target": "architecture_delivery_compare",
+        "selector": "reference_dag_rejects_withheld_body_equivocation_and_changed_signed_history",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/architecture_delivery_compare-d79010039403b74c",
+          "reference_dag_rejects_withheld_body_equivocation_and_changed_signed_history",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "wall_ns": 32943747,
+        "binary_sha256": "1561f4eab52bf94b341052bc7281e8dd329716c624a3957813c9ed1efc00e5bc",
+        "binary_unchanged": true,
+        "log_sha256": "87b95131cb596c05d6e754856cde908301d9a99a219c1b5efdb8270dff361833",
+        "expectation_met": true,
+        "real_fixed_host_positive": false,
+        "reader": {
+          "result": "PASS",
+          "test": "reference_dag_rejects_withheld_body_equivocation_and_changed_signed_history",
+          "executed_tests": 1,
+          "scope": "named-libtest-execution-only"
+        }
+      },
+      {
+        "target": "architecture_delivery_compare",
+        "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/architecture_delivery_compare-d79010039403b74c",
+          "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "exit_code": 101,
+        "expected_exit": 101,
+        "wall_ns": 4105117,
+        "binary_sha256": "1561f4eab52bf94b341052bc7281e8dd329716c624a3957813c9ed1efc00e5bc",
+        "binary_unchanged": true,
+        "log_sha256": "1063b4c32745ab130214ba3a718b3f921274ca8b4008e1fc8081b0fcedeea95f",
+        "expectation_met": true,
+        "real_fixed_host_positive": false,
+        "original_kernel_refusal_seen": true
+      }
+    ],
+    "binary_unchanged": true,
+    "all_blockers_closed": false
+  },
+  "full_node": {
+    "status": "COMPLETE_NATIVE_FAILED",
+    "completed_utc": "2026-11-03T21:41:09.351600+00:00",
+    "command": [
+      "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "registered": 974,
+    "original_registered": 971,
+    "new_registered": [
+      "ingress::public_v3::request_observation::tests::error_diagnostics_preserve_typed_identity_origin_and_bounded_utf8",
+      "ingress::public_v3::request_observation::tests::dispatch_diagnostic_survives_distinct_terminal_cancellation_without_changing_codes",
+      "ingress::public_v3::request_observation::tests::error_diagnostic_contention_does_not_block_or_reclassify_rejection"
+    ],
+    "original_ignored_count": 23,
+    "passed": 950,
+    "failed": 1,
+    "ignored": 23,
+    "native_exit_code": 101,
+    "outer_driver_exit_code_parent_reported": 0,
+    "outer_driver_scope": "Parent observed session2859 exit0; this is recording-driver completion, not the native library verdict.",
+    "timed_out": false,
+    "wall_ns": 1416814817035,
+    "native_terminal": "test result: FAILED. 950 passed; 1 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1416.77s",
+    "native_reported_seconds": 1416.77,
+    "binary_sha256": "a937d88d3858e89b1583b870e5bde458ff024bd5034c3a38abb966b94d2c24b9",
+    "binary_unchanged": true,
+    "native_source_manifest_sha256": "22cd64ab7427e49ed5d844b2fe7c6b8d7ca11799b25b78d4cea8eccfa5e54af3",
+    "before_after_final_terminal_manifests_identical": true,
+    "reader_error": null,
+    "complete_original_registry": true,
+    "disjoint_pass_fail_ignored_union_equals_frozen974": true,
+    "original_ignored_identity_unchanged": true,
+    "all_three_new_diagnostic_tests_passed": true,
+    "failed_selectors": [
+      "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart"
+    ],
+    "failure_evidence": "Actual native log retains UnixListener EPERM/Operation not permitted for the same original selected control. No passing substitution or supervisor timeout.",
+    "reader_driver_sha256": "36f9ee0e8ade3c5a1a0772d3a0ce1cb6f90ec0202c5a78e8391a40c5035ed97f",
+    "supervisor_seconds": 2700,
+    "native_budgets_changed": false,
+    "log_bytes": 7289275,
+    "log_sha256": "9873c7d6d319969584be8d7a5e97ce149a8934f2dabbcb2a88deccb97f45ede1",
+    "log_bundle": "diagnostics-full-node-native.log.gz",
+    "complete_records": "diagnostics-full-node-records.json.gz",
+    "sorted_success_names_sha256_newline_utf8": "3f13ee4ad96fc651eb18d84ebb7e1315d58ea0ec664a0196ca364c209dbf5741",
+    "later_fixture_composed_source_or_elf_results_inferred": false
+  },
+  "qualification": {
+    "full_native_pass": false,
+    "actual_fixed_host_qualified": false,
+    "service_performance_acceptance": false,
+    "whole_chain_pq": false,
+    "all_blockers_closed": false,
+    "activation_authorized": false,
+    "full_native_accounting_complete": true,
+    "reason": "Original974 accounting is complete, with one real EPERM failure. Diagnostic and retained ROOT controls pass in their stated scope; no later fixture, actual Host, original service, campaign or scientific/operator qualification is inferred."
+  },
+  "completed_evidence_integrated_utc": "2026-11-03T21:44:28.385238+00:00",
+  "preparation_snapshot": "diagnostics-preparation-snapshot.json.gz"
+}

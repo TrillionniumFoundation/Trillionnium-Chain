@@ -1,0 +1,21 @@
+{
+  "schema": "TRNM-W1-VALIDATED-V2-BINARIES1",
+  "proofs_generated": 0,
+  "artifacts": [
+    {
+      "name": "w1-staged-prover-v2",
+      "bytes": 44926256,
+      "sha256": "00f082a35de398d4d2ba59d26f213d8f72eacbd5e7103545d1c113bd9dd53f51"
+    },
+    {
+      "name": "w1-verify-v2",
+      "bytes": 18851240,
+      "sha256": "574f604838be7f9dd9b8edeb68e77349534917d256506b388d8b70959a880e9d"
+    },
+    {
+      "name": "trnm-w1-full-guest-v2.bin",
+      "bytes": 375928,
+      "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f"
+    }
+  ]
+}

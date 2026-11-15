@@ -1,0 +1,35 @@
+{
+  "available_bytes_after": 860442624,
+  "independent_roundtrip_may_start_now": true,
+  "index": {
+    "bytes": 1510225,
+    "path": "/workspace/scratch/8a6ecb667c1e/terminal-evidence-curated-final-20261106-v1/publication/archive-index.json",
+    "sha256": "91ef1453209eb3b72eb0f90066ca05e4e5a93e8d1b1b00f5c87855ddcfe1e8ed"
+  },
+  "native_tests_executed": 0,
+  "original_native_failures_reclassified": false,
+  "plan": {
+    "bytes": 3308604,
+    "path": "/workspace/scratch/8a6ecb667c1e/terminal-evidence-preparation-v1/frozen-selection-ready-v5.json",
+    "sha256": "a13a654264d6409f40d642c8f04976fb6ed1f146403b45ed42f4217778b047fa"
+  },
+  "receipts": [
+    {
+      "bytes": 1542,
+      "path": "/workspace/scratch/8a6ecb667c1e/terminal-evidence-review-supplement-final-20261106-v1/limited-sensitive-pattern-scan.receipt.json",
+      "sha256": "f34cca0a02ec97435f61c6a19cad02efb2b2991ee909b6d94fde399fdf9f0c78"
+    },
+    {
+      "bytes": 1527,
+      "path": "/workspace/scratch/8a6ecb667c1e/terminal-evidence-review-supplement-final-20261106-v1/frozen-input-collection-and-package.receipt.json",
+      "sha256": "2041c6a80395aaf4683427f4975e266be5cd27ab2117a47c59c2460022f4d3bd"
+    }
+  ],
+  "state": "SCAN_AND_COLLECTION_COMPLETE_ARCHIVE_INTEGRITY_ONLY",
+  "verification": {
+    "bytes": 460,
+    "path": "/workspace/scratch/8a6ecb667c1e/terminal-evidence-curated-final-20261106-v1/publication/archive-verification.json",
+    "sha256": "5870c0ac23e9bc0e383ae30cc52efd3b19f072fb6c6492d9fde3c6ca6d6bfddf"
+  },
+  "whole_chain_pq_qualified": false
+}

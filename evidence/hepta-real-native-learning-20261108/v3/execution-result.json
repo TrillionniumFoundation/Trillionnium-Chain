@@ -1,0 +1,14 @@
+{
+  "error": "AssertionError('archive list failed before actual model test')",
+  "model_test_started": false,
+  "operation": "learning-d9fb-native-v3",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "recorded_unix_ns": 1794164772931293740,
+  "result": "FAIL",
+  "schema": "hepta-real-model-native-archived-run-v1",
+  "source": "4f559bfe1ff226251f42f2d2f1fbc87f615bcb11",
+  "traceback": "Traceback (most recent call last):\n  File \"<string>\", line 47, in <module>\n    assert listing.returncode==0,\"archive list failed before actual model test\"\n           ^^^^^^^^^^^^^^^^^^^^^\nAssertionError: archive list failed before actual model test\n",
+  "tracked_before": 11207,
+  "tree": "be7b966d2bfb15f326fa36ff3617f76718bd44ac"
+}

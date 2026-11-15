@@ -1,0 +1,97 @@
+{
+  "job_id": 126307454181,
+  "log_endpoint": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126307454181/logs",
+  "command_lines": [],
+  "ordinary_positive_failure": [
+    {
+      "line": 7822,
+      "text": "2026-11-04T01:41:00.7070410Z ERROR: test_full_reconstruction_roots_nodes_snapshots_reorg_and_immutable_bytes (__main__.NativeAuthenticatedStorageOracle.test_full_reconstruction_roots_nodes_snapshots_reorg_and_immutable_bytes)"
+    },
+    {
+      "line": 7823,
+      "text": "2026-11-04T01:41:00.7071192Z ----------------------------------------------------------------------"
+    },
+    {
+      "line": 7824,
+      "text": "2026-11-04T01:41:00.7071534Z Traceback (most recent call last):"
+    },
+    {
+      "line": 7825,
+      "text": "2026-11-04T01:41:00.7072236Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py\", line 163, in test_full_reconstruction_roots_nodes_snapshots_reorg_and_immutable_bytes"
+    },
+    {
+      "line": 7826,
+      "text": "2026-11-04T01:41:00.7072984Z     result = self.inspect()"
+    },
+    {
+      "line": 7827,
+      "text": "2026-11-04T01:41:00.7073204Z              ^^^^^^^^^^^^^^"
+    },
+    {
+      "line": 7828,
+      "text": "2026-11-04T01:41:00.7073819Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py\", line 150, in inspect"
+    },
+    {
+      "line": 7829,
+      "text": "2026-11-04T01:41:00.7074508Z     return oracle.inspect_sqlite(path or self.path, self.context_json, self.initial,"
+    },
+    {
+      "line": 7830,
+      "text": "2026-11-04T01:41:00.7074908Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+    },
+    {
+      "line": 7831,
+      "text": "2026-11-04T01:41:00.7075514Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py\", line 459, in inspect_sqlite"
+    },
+    {
+      "line": 7832,
+      "text": "2026-11-04T01:41:00.7076084Z     tables = table_rows(db)"
+    },
+    {
+      "line": 7833,
+      "text": "2026-11-04T01:41:00.7076294Z              ^^^^^^^^^^^^^^"
+    },
+    {
+      "line": 7834,
+      "text": "2026-11-04T01:41:00.7076809Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py\", line 266, in table_rows"
+    },
+    {
+      "line": 7835,
+      "text": "2026-11-04T01:41:00.7077432Z     require(re.fullmatch('[a-z_]+', name) is not None, 'TABLE_NAME')"
+    },
+    {
+      "line": 7836,
+      "text": "2026-11-04T01:41:00.7078057Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py\", line 58, in require"
+    },
+    {
+      "line": 7837,
+      "text": "2026-11-04T01:41:00.7078627Z     raise ValueError('NATIVE_STORAGE_' + code)"
+    },
+    {
+      "line": 7838,
+      "text": "2026-11-04T01:41:00.7078906Z ValueError: NATIVE_STORAGE_TABLE_NAME"
+    },
+    {
+      "line": 7839,
+      "text": "2026-11-04T01:41:00.7079067Z "
+    },
+    {
+      "line": 7840,
+      "text": "2026-11-04T01:41:00.7079181Z ======================================================================"
+    }
+  ],
+  "oracle_terminal": [
+    {
+      "line": 8077,
+      "text": "2026-11-04T01:41:00.7478364Z Ran 28 tests in 3.049s"
+    },
+    {
+      "line": 8079,
+      "text": "2026-11-04T01:41:00.7478691Z FAILED (failures=15, errors=9)"
+    },
+    {
+      "line": 8080,
+      "text": "2026-11-04T01:41:01.8634394Z ##[error]Process completed with exit code 1."
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "source_revision": "f6247df765bb82d18247ed7d492635d09d2bb403",
+  "registry_count": 39,
+  "independently_parsed_count": 39,
+  "registry_duplicates": [],
+  "missing_from_registry": [],
+  "extra_in_registry": [],
+  "files": [
+    {
+      "source": "hepta-learning-artifacts/src/learning_iteration_tests.rs",
+      "module": "learning_iteration::tests",
+      "count": 7,
+      "sha256": "73369974cd5f7f2b6a23add004fc071fc2b472f476ee2836c9d89e322058463c"
+    },
+    {
+      "source": "hepta-learning-artifacts/src/learning_iteration_retained_tests.rs",
+      "module": "learning_iteration::retained_tests",
+      "count": 3,
+      "sha256": "0ab1991c8d5f08a6b550910cfc9978d122267433a9bb06e4a75835a2a0c524fc"
+    },
+    {
+      "source": "hepta-learning-artifacts/src/learning_iteration_profile_tests.rs",
+      "module": "learning_iteration::profile_tests",
+      "count": 2,
+      "sha256": "11efd919d4c4f0b7cd4baa0334e1b7a205ac6f4b0c65c3b71d538356a7b20de7"
+    },
+    {
+      "source": "hepta-agentd/src/learning_iteration_checkpoint_tests.rs",
+      "module": "learning_iteration_checkpoint::tests",
+      "count": 6,
+      "sha256": "943bfc097c726c86e4fc13160738f88210b76ecaba1c785c33c75d5ca6e4b4fe"
+    },
+    {
+      "source": "hepta-agentd/src/learning_iteration_checkpoint_profile_tests.rs",
+      "module": "learning_iteration_checkpoint::profile_tests",
+      "count": 3,
+      "sha256": "4569299dd92372fddb51de6234db6c290114210c57a1939817923ffc39bd3087"
+    },
+    {
+      "source": "hepta-agentd/src/learning_iteration_runtime_tests.rs",
+      "module": "plasticity_runtime::lifetime_tests::learning_iteration_tests",
+      "count": 6,
+      "sha256": "411725ce78d74a6a83ee156b6adbf1b7eec47dfd60e259f669bddfb8dfb371ff"
+    },
+    {
+      "source": "hepta-agentd/src/learning_iteration_recovery_tests.rs",
+      "module": "plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests",
+      "count": 6,
+      "sha256": "bc3fc22f35edba017020b80d2599b055fa02865972a6bf3287a41010d966e4a6"
+    },
+    {
+      "source": "hepta-agentd/src/learning_iteration_profile_tests.rs",
+      "module": "plasticity_runtime::lifetime_tests::learning_iteration_tests::profile_tests",
+      "count": 1,
+      "sha256": "91b303af5f94b4196123798bccf549635234e98fece513b45942fc356ff7b1e8"
+    },
+    {
+      "source": "hepta-agentd/src/neuron_generation_learning_runtime_tests.rs",
+      "module": "neuron_generation_runtime::tests::update::learning",
+      "count": 3,
+      "sha256": "8f8f44fac0b5272dc4aaa4ed252341e2900993e8b5ee6eea2d553a7a55971cad"
+    },
+    {
+      "source": "hepta-agentd/src/neuron_generation_adopted_learning_tests.rs",
+      "module": "neuron_generation_runtime::tests::update::adopted_learning",
+      "count": 2,
+      "sha256": "bf5abca68515d38df5ea19490ad3396670125f689553381010799d113996d8f4"
+    }
+  ],
+  "extra_tests": [
+    "neuron_generation_update_bootstrap::learning::tests::actual_same_model_use_cold_reopens_without_new_nonce_or_journal_work",
+    "neuron_generation_update_bootstrap::learning::tests::retained_use_rejects_failed_cancelled_rejected_and_late_work",
+    "neuron_generation_update_bootstrap::learning::tests::current_withdrawal_and_revocation_refuse_new_learning_observations_and_recovery"
+  ],
+  "extra_count": 3,
+  "scope": "Source-name audit only; no native test result is implied."
+}

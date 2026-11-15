@@ -1,0 +1,132 @@
+{
+  "actual_original_failure_reference": {
+    "canonical_bytes": 66550,
+    "file_pin_count": 339,
+    "old_request_not_rewritten_or_redispatched": true,
+    "raw_sha256": "eff76555c5166818cbf7b833e12c43d315f6fd6bb684d8031f09e70982910071",
+    "read_only_state_report": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/failed-C1-owner-state-readback-01/state-readback.json",
+    "read_only_state_report_sha256": "93374756a3ca5e5e9b5ff18ec641a3c2304c1a8a64579c57179d2c089604de16",
+    "request_raw_bytes": 68909
+  },
+  "author_reported_validation": {
+    "actual_short_test_counts_reported": [
+      13,
+      7,
+      7
+    ],
+    "author_reported_terminal": "succeeded exit0 complete/durable",
+    "job_id": "1a1b7ed482f-12894-cb7",
+    "manifest_bytes": 15387,
+    "manifest_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-capacity-repair-01/candidate-tests-01/manifest.json",
+    "manifest_sha256": "befc16bb6c00b676356daa17a8fbea3bc839ca62e0ffb8e7157c4e06edb7f0f7",
+    "not_independently_reexecuted_by_reviewer": true,
+    "old_request_outcome_scope": "Old raw bytes and canonical SHA retained; new full loader rejects old target source pin, not claimed newly executable.",
+    "old_request_reader_sha256": "4892524889c16e165414698e21e8a51a567d6dea37a2ad47837d12a075c68517"
+  },
+  "baseline_commit": "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11",
+  "baseline_tree": "7971aca2ff432ec8907bb69545a2c58d70b4a215",
+  "candidate_frozen_by_author": true,
+  "deployment_or_full_owner_cancellation_qualified": false,
+  "files": [
+    {
+      "baseline": {
+        "bytes": 25002,
+        "path": "/workspace/scratch/7d418660d6e8/owner-capacity-proposal/baseline/scripts/w1_generation_target_v2.py",
+        "sha256": "fa67f19f6a5d2cf1a13f339aa14fb8cf2fcbb6eab70ce9749bb027e4399aba29"
+      },
+      "candidate": {
+        "bytes": 26876,
+        "path": "/workspace/scratch/7d418660d6e8/owner-capacity-proposal/candidate/scripts/w1_generation_target_v2.py",
+        "sha256": "b82961b18d5ea15b05a8763008456e818766d24304442cb7a93ba3be527335ee"
+      }
+    },
+    {
+      "baseline": {
+        "bytes": 38913,
+        "path": "/workspace/scratch/7d418660d6e8/owner-capacity-proposal/baseline/scripts/w1_owned_generation_runtime_v2.py",
+        "sha256": "500f2712942ff2e5f46e82cb2fb1a5d514be55a9ca6e851b7cede79374c15119"
+      },
+      "candidate": {
+        "bytes": 38944,
+        "path": "/workspace/scratch/7d418660d6e8/owner-capacity-proposal/candidate/scripts/w1_owned_generation_runtime_v2.py",
+        "sha256": "f2bc49081a0bc08d88e7c1337c2c8bc512f9b968f0334cd6c5d68f9e2e052297"
+      }
+    },
+    {
+      "baseline": {
+        "bytes": 19812,
+        "path": "/workspace/scratch/7d418660d6e8/owner-capacity-proposal/baseline/scripts/w1_owner_cancellation_v1.py",
+        "sha256": "b3ba7bfe226e66cc18419e89eec87ef8e383cab434970d4e1ca4b50003ffcf2b"
+      },
+      "candidate": {
+        "bytes": 20764,
+        "path": "/workspace/scratch/7d418660d6e8/owner-capacity-proposal/candidate/scripts/w1_owner_cancellation_v1.py",
+        "sha256": "94f0a3f6de92ee6fa1abba41097da7bae4b44b3328487f7a7a8f43943f448207"
+      }
+    },
+    {
+      "baseline": {
+        "bytes": 11180,
+        "path": "/workspace/scratch/7d418660d6e8/owner-capacity-proposal/baseline/scripts/test_w1_generation_target_v2.py",
+        "sha256": "d654e737aaec99cfa8928bb8fa1fe04706c43894f53bad9be52ebc94038de5d9"
+      },
+      "candidate": {
+        "bytes": 21466,
+        "path": "/workspace/scratch/7d418660d6e8/owner-capacity-proposal/candidate/scripts/test_w1_generation_target_v2.py",
+        "sha256": "ececf1fbe647358c4ef0efc531e85df02d3820fb2827d4d4762d45d831ec2138"
+      }
+    },
+    {
+      "baseline": {
+        "bytes": 5979,
+        "path": "/workspace/scratch/7d418660d6e8/owner-capacity-proposal/baseline/scripts/test_w1_owned_generation_runtime_v2.py",
+        "sha256": "e17cbe7edc2bfa86599e90c6405a852eb023a6eb65642bd9fdffc65558528701"
+      },
+      "candidate": {
+        "bytes": 8831,
+        "path": "/workspace/scratch/7d418660d6e8/owner-capacity-proposal/candidate/scripts/test_w1_owned_generation_runtime_v2.py",
+        "sha256": "fc14dca6a2e950b8d404b2fea6a6b72754a97972778e69a5f4422d181248f442"
+      }
+    },
+    {
+      "baseline": {
+        "bytes": 6394,
+        "path": "/workspace/scratch/7d418660d6e8/owner-capacity-proposal/baseline/scripts/test_w1_owner_cancellation_v1.py",
+        "sha256": "523d0cbcf5f8de5e7c28ce3308c5480004b695c85ff44a04fa1ea01a0b6521ff"
+      },
+      "candidate": {
+        "bytes": 12184,
+        "path": "/workspace/scratch/7d418660d6e8/owner-capacity-proposal/candidate/scripts/test_w1_owner_cancellation_v1.py",
+        "sha256": "8bb29370073d9681a9a6393b0b8ce8f08dc9ee554ecfa01c612228a8badf4d80"
+      }
+    }
+  ],
+  "formal_security_proof": false,
+  "namespace_conclusion": {
+    "applicable_rule": "Changed signed domains and stored schemas require fresh namespaces and exact tests.",
+    "keep_request_and_storage_V2": true,
+    "new_canonical_blob_cap_added": false,
+    "new_raw_cap": 131072,
+    "old_binary_accepts_new_large_request": false,
+    "old_operation_retry_or_migration_authorized": false,
+    "original_raw_cap": 65536,
+    "reason": "The change is an explicit local raw UTF-8 admission cap and strict parser correction. The capacity was not encoded in V2 fields, signed domains, canonical bytes, SHA computation, SQLite SQL, application_id or user_version. Valid legacy canonical encodings and retained BLOB read policy remain unchanged.",
+    "requires_new_source_pins_configuration_and_operation": true
+  },
+  "new_high_confidence_blockers": [],
+  "next_required_scope": "Exact committed successor qualification and a separately authorized new operation/Node/output/deadline trial; previous C1 failure and reservations remain untouched.",
+  "review_type": "independent bounded static code and test design review",
+  "reviewed_constraints": [
+    "One target.load_request reads at most MAX_REQUEST+1 and is used by target preflight/dispatch, normal runtime generate and cancel original_request.",
+    "UTF-8 decoding, all-level duplicate-key rejection, nonfinite constants and overflowing float exponents (including 1e999) are rejected before intent/dispatch.",
+    "Original target canonical sorting/separators/ensure_ascii=False, namespace, application ID, SQLite schema/version and retained BLOB reader remain unchanged.",
+    "start enables the original current-deadline check; reconcile disables only dispatch-time expiry and keeps original recorded deadline/clock, source pins and exact binding.",
+    "Cancel helper binds raw config SHA plus original funded statement, operation, winner/deadline and normalized/full request digests; the normalization matches Rust heavy before/after insertion of statement.",
+    "339 actual hashed fixture files exercise preflight then one finite child and same-operation replay with exactly one invocation; neither that child nor synthetic funded/cgroup records are represented as W1 proof or real owner settlement.",
+    "Boundary controls cover raw exactly 131072, plus one and a 2MiB actual file with one bounded read, malformed top level, invalid shapes and replaced identity/source/deadline.",
+    "Legacy non-ASCII canonical bytes and unchanged retained large BLOB read policy have distinct narrow controls; no canonical-size migration is introduced."
+  ],
+  "reviewer_edited_repository": false,
+  "reviewer_executed_tests_or_proofs": false,
+  "schema": "TRNM-W1-LOCAL-REQUEST-CAPACITY-STATIC-REVIEW1"
+}

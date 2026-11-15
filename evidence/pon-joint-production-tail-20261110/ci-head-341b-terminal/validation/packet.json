@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "python3",
+    "evidence/pon-joint-production-tail-20261110/ci-head-341b-terminal/verify.py"
+  ],
+  "exit_code": 0,
+  "base_head": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+  "scope": "evidence-only working tree validation; not fresh native qualification",
+  "stdout": {
+    "bytes": 253,
+    "sha256": "c3cd1d61cce89aae815a929ffad1c7d84f90e08dc7a748225b7874182e012935"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

@@ -1,0 +1,1725 @@
+{
+  "branch_pushed": false,
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+      "elapsed_seconds": 0.005120269954204559,
+      "exit_code": 0,
+      "name": "old-head",
+      "started_unix_ns": 1794480073975435340,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-head.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480073985640250,
+          "st_dev": 2050,
+          "st_ino": 16159310,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480073985640250,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-head.stdout",
+        "sha256": "50a0774bf07d03186a3eecdd9dff7509427dd503bf464f50d789d25998423a14",
+        "stat": {
+          "st_ctime_ns": 1794480073990640102,
+          "st_dev": 2050,
+          "st_ino": 16159302,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480073990640102,
+          "st_size": 41
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+      "elapsed_seconds": 0.01684093987569213,
+      "exit_code": 0,
+      "name": "old-tree",
+      "started_unix_ns": 1794480074003506009,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-tree.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480074015639365,
+          "st_dev": 2050,
+          "st_ino": 16159312,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480074015639365,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-tree.stdout",
+        "sha256": "f93ffcfc812235fdb976da9aaa3754bc9cd207e322284189f7882dca8406ee8e",
+        "stat": {
+          "st_ctime_ns": 1794480074027639011,
+          "st_dev": 2050,
+          "st_ino": 16159311,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480074027639011,
+          "st_size": 41
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "refs/heads/fix/chain-bt-owner-convergence-20261112-4a0b"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+      "elapsed_seconds": 0.004662908846512437,
+      "exit_code": 0,
+      "name": "old-task-ref",
+      "started_unix_ns": 1794480074063784934,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-task-ref.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480074074637624,
+          "st_dev": 2050,
+          "st_ino": 16159314,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480074074637624,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-task-ref.stdout",
+        "sha256": "50a0774bf07d03186a3eecdd9dff7509427dd503bf464f50d789d25998423a14",
+        "stat": {
+          "st_ctime_ns": 1794480074078637506,
+          "st_dev": 2050,
+          "st_ino": 16159313,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480074078637506,
+          "st_size": 41
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+      "elapsed_seconds": 0.2656070089433342,
+      "exit_code": 0,
+      "name": "old-status-observation",
+      "started_unix_ns": 1794480074091610962,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-status-observation.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480074134635854,
+          "st_dev": 2050,
+          "st_ino": 16159316,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480074134635854,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-status-observation.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480074134635854,
+          "st_dev": 2050,
+          "st_ino": 16159315,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480074134635854,
+          "st_size": 0
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "for-each-ref",
+        "--format=%(refname) %(objectname)"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+      "elapsed_seconds": 0.008646742906421423,
+      "exit_code": 0,
+      "name": "old-refs-before",
+      "started_unix_ns": 1794480074412035094,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-refs-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480074422627358,
+          "st_dev": 2050,
+          "st_ino": 16159318,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480074422627358,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 404,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-refs-before.stdout",
+        "sha256": "3491f0cc5b316816e8fe5996f455e14bc6b01a4eb837fc85941af7b910c538de",
+        "stat": {
+          "st_ctime_ns": 1794480074427627211,
+          "st_dev": 2050,
+          "st_ino": 16159317,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480074427627211,
+          "st_size": 404
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "--git-path",
+        "index"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+      "elapsed_seconds": 0.004435122944414616,
+      "exit_code": 0,
+      "name": "old-index-path",
+      "started_unix_ns": 1794480074446090100,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-index-path.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480074486625470,
+          "st_dev": 2050,
+          "st_ino": 16159320,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480074486625470,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 11,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-index-path.stdout",
+        "sha256": "742e1586a644af64934a892663d03c75415bfb01edafdfdd924a8627573bfb9c",
+        "stat": {
+          "st_ctime_ns": 1794480074489625382,
+          "st_dev": 2050,
+          "st_ino": 16159319,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480074489625382,
+          "st_size": 11
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "ls-files",
+        "-v",
+        "-z"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+      "elapsed_seconds": 0.03297555004246533,
+      "exit_code": 0,
+      "name": "old-index-flags-before",
+      "started_unix_ns": 1794480074720422133,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-index-flags-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480074783616709,
+          "st_dev": 2050,
+          "st_ino": 16159323,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480074783616709,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 2786146,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-index-flags-before.stdout",
+        "sha256": "8f705d65a3bbf353827db59f581525005126b5db5cc9d0688d0e640d32560498",
+        "stat": {
+          "st_ctime_ns": 1794480074801070750,
+          "st_dev": 2050,
+          "st_ino": 16159321,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480074801070750,
+          "st_size": 2786146
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "config",
+        "--show-origin",
+        "--show-scope",
+        "--get-regexp",
+        "^(core\\.(ignorestat|ignorecase|trustctime|checkstat|fsmonitor|splitindex|sparsecheckout|untrackedcache)|index\\.sparse|extensions\\.)"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+      "elapsed_seconds": 0.004675550851970911,
+      "exit_code": 1,
+      "name": "old-relevant-config",
+      "started_unix_ns": 1794480074854037318,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-relevant-config.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480074865614290,
+          "st_dev": 2050,
+          "st_ino": 16159325,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480074865614290,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-relevant-config.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480074865614290,
+          "st_dev": 2050,
+          "st_ino": 16159324,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480074865614290,
+          "st_size": 0
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "ls-tree",
+        "-r",
+        "-l",
+        "-z",
+        "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+      "elapsed_seconds": 1.0179547960869968,
+      "exit_code": 0,
+      "name": "old-head-tree-inventory",
+      "started_unix_ns": 1794480074950918365,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-head-tree-inventory.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480074962611429,
+          "st_dev": 2050,
+          "st_ino": 16159327,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480074962611429,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 4419673,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-head-tree-inventory.stdout",
+        "sha256": "f75d29a86614fc26a78c3f581b6ae2ab68cbafcbb2117c2daba9a8d4295c936a",
+        "stat": {
+          "st_ctime_ns": 1794480075970735045,
+          "st_dev": 2050,
+          "st_ino": 16159326,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480075970735045,
+          "st_size": 4419673
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "--git-path",
+        "objects"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+      "elapsed_seconds": 0.00435055885463953,
+      "exit_code": 0,
+      "name": "old-object-directory",
+      "started_unix_ns": 1794480076204644519,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-object-directory.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480076214574496,
+          "st_dev": 2050,
+          "st_ino": 16159330,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480076214574496,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 13,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-object-directory.stdout",
+        "sha256": "d47773290b580aae76650999a1e916227528f0075499b9dac795e6fe8b119532",
+        "stat": {
+          "st_ctime_ns": 1794480076217574407,
+          "st_dev": 2050,
+          "st_ino": 16159329,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480076217574407,
+          "st_size": 13
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "count-objects",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+      "elapsed_seconds": 0.008071152959018946,
+      "exit_code": 0,
+      "name": "old-object-storage",
+      "started_unix_ns": 1794480076231001231,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-object-storage.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480076241573699,
+          "st_dev": 2050,
+          "st_ino": 16159332,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480076241573699,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 105,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-object-storage.stdout",
+        "sha256": "bd48d6d820a672296c3aa452651118856f2c970cb0456e7d2946e9f1487257ec",
+        "stat": {
+          "st_ctime_ns": 1794480076246573552,
+          "st_dev": 2050,
+          "st_ino": 16159331,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480076246573552,
+          "st_size": 105
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "clone",
+        "--no-local",
+        "--no-hardlinks",
+        "--no-checkout",
+        "--single-branch",
+        "--no-tags",
+        "--branch",
+        "fix/chain-bt-owner-convergence-20261112-4a0b",
+        "--config",
+        "core.ignoreStat=false",
+        "--config",
+        "core.sparseCheckout=false",
+        "--config",
+        "core.sparseCheckoutCone=false",
+        "--config",
+        "index.sparse=false",
+        "--config",
+        "core.splitIndex=false",
+        "--config",
+        "core.fsmonitor=false",
+        "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+        "/home/qian-qi/work/chain-bt-4a0b-publication02"
+      ],
+      "cwd": "/home/qian-qi/work",
+      "elapsed_seconds": 47.03232375904918,
+      "exit_code": 0,
+      "name": "independent-object-clone",
+      "started_unix_ns": 1794480076318751442,
+      "status": "completed",
+      "stderr": {
+        "bytes": 65,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/independent-object-clone.stderr",
+        "sha256": "f2cf187e9bae036ef8958747e1ea7ed8707ca1112d2b5ec3a795f6379bac31d2",
+        "stat": {
+          "st_ctime_ns": 1794480076332571015,
+          "st_dev": 2050,
+          "st_ino": 16159334,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480076332571015,
+          "st_size": 65
+        }
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/independent-object-clone.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480076330571074,
+          "st_dev": 2050,
+          "st_ino": 16159328,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480076330571074,
+          "st_size": 0
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "--absolute-git-dir"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.005064549157395959,
+      "exit_code": 0,
+      "name": "new-git-directory",
+      "started_unix_ns": 1794480123536635735,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-git-directory.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480123603176414,
+          "st_dev": 2050,
+          "st_ino": 16159356,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480123603176414,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 52,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-git-directory.stdout",
+        "sha256": "87d82cac8a03f7b07f58338e604d1885364a75073e20904ef805c90d483ec3f2",
+        "stat": {
+          "st_ctime_ns": 1794480123606176325,
+          "st_dev": 2050,
+          "st_ino": 16159355,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480123606176325,
+          "st_size": 52
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "--shared-index-path"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.004882557084783912,
+      "exit_code": 0,
+      "name": "new-shared-index-before",
+      "started_unix_ns": 1794480123688293293,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-shared-index-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480123808170365,
+          "st_dev": 2050,
+          "st_ino": 16159358,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480123808170365,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-shared-index-before.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480123808170365,
+          "st_dev": 2050,
+          "st_ino": 16159357,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480123808170365,
+          "st_size": 0
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "refs/heads/fix/chain-bt-owner-convergence-20261112-4a0b"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.0046208270359784365,
+      "exit_code": 0,
+      "name": "new-task-ref",
+      "started_unix_ns": 1794480123864013063,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-task-ref.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480123887168035,
+          "st_dev": 2050,
+          "st_ino": 16159360,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480123887168035,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-task-ref.stdout",
+        "sha256": "50a0774bf07d03186a3eecdd9dff7509427dd503bf464f50d789d25998423a14",
+        "stat": {
+          "st_ctime_ns": 1794480123890167946,
+          "st_dev": 2050,
+          "st_ino": 16159359,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480123890167946,
+          "st_size": 41
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "031d442dd0acb693afcfaf42f9cc4db446ba52cb^{tree}"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.004748675040900707,
+      "exit_code": 0,
+      "name": "new-tree-before-checkout",
+      "started_unix_ns": 1794480123940522035,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-tree-before-checkout.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480123962165822,
+          "st_dev": 2050,
+          "st_ino": 16159362,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480123962165822,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-tree-before-checkout.stdout",
+        "sha256": "f93ffcfc812235fdb976da9aaa3754bc9cd207e322284189f7882dca8406ee8e",
+        "stat": {
+          "st_ctime_ns": 1794480123966563177,
+          "st_dev": 2050,
+          "st_ino": 16159361,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480123966563177,
+          "st_size": 41
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "remote",
+        "set-url",
+        "origin",
+        "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.004299463937059045,
+      "exit_code": 0,
+      "name": "canonical-origin",
+      "started_unix_ns": 1794480124012980484,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/canonical-origin.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480124027163904,
+          "st_dev": 2050,
+          "st_ino": 16159364,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480124027163904,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/canonical-origin.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480124027163904,
+          "st_dev": 2050,
+          "st_ino": 16159363,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480124027163904,
+          "st_size": 0
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "checkout",
+        "fix/chain-bt-owner-convergence-20261112-4a0b"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 16.751976900035515,
+      "exit_code": 0,
+      "name": "full-checkout",
+      "started_unix_ns": 1794480124046437546,
+      "status": "completed",
+      "stderr": {
+        "bytes": 60,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/full-checkout.stderr",
+        "sha256": "060cab8ce46849922a0afb82530b4eee9ad7c0aa8aeed6e9fbab3cff487b28fd",
+        "stat": {
+          "st_ctime_ns": 1794480140730671060,
+          "st_dev": 2050,
+          "st_ino": 16159366,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480140730671060,
+          "st_size": 60
+        }
+      },
+      "stdout": {
+        "bytes": 92,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/full-checkout.stdout",
+        "sha256": "ace2d398ac19542f60dff831695ddec2f0258658e252b7e047434607b0bc0c72",
+        "stat": {
+          "st_ctime_ns": 1794480140730671060,
+          "st_dev": 2050,
+          "st_ino": 16159365,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480140730671060,
+          "st_size": 92
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.004569930024445057,
+      "exit_code": 0,
+      "name": "new-head",
+      "started_unix_ns": 1794480141138547146,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-head.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480141310653947,
+          "st_dev": 2050,
+          "st_ino": 16165836,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480141310653947,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-head.stdout",
+        "sha256": "50a0774bf07d03186a3eecdd9dff7509427dd503bf464f50d789d25998423a14",
+        "stat": {
+          "st_ctime_ns": 1794480141313653858,
+          "st_dev": 2050,
+          "st_ino": 16165835,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480141313653858,
+          "st_size": 41
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "branch",
+        "--show-current"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.03326888685114682,
+      "exit_code": 0,
+      "name": "new-branch",
+      "started_unix_ns": 1794480141582750910,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-branch.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480142033632614,
+          "st_dev": 2050,
+          "st_ino": 16165841,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480142033632614,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 45,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-branch.stdout",
+        "sha256": "3dbec6b918c436d5921570595a9ead16d583798575b875166e8c852222923042",
+        "stat": {
+          "st_ctime_ns": 1794480142037632496,
+          "st_dev": 2050,
+          "st_ino": 16165840,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480142037632496,
+          "st_size": 45
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "remote",
+        "get-url",
+        "origin"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.005089703015983105,
+      "exit_code": 0,
+      "name": "new-origin",
+      "started_unix_ns": 1794480142549677113,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-origin.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480142775610721,
+          "st_dev": 2050,
+          "st_ino": 16165845,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480142775610721,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 65,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-origin.stdout",
+        "sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+        "stat": {
+          "st_ctime_ns": 1794480142779610603,
+          "st_dev": 2050,
+          "st_ino": 16165844,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480142779610603,
+          "st_size": 65
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "remote",
+        "get-url",
+        "--push",
+        "--all",
+        "origin"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.005496792029589415,
+      "exit_code": 0,
+      "name": "new-push-urls",
+      "started_unix_ns": 1794480142943641485,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-push-urls.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480143077601811,
+          "st_dev": 2050,
+          "st_ino": 16165853,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480143077601811,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 65,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-push-urls.stdout",
+        "sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+        "stat": {
+          "st_ctime_ns": 1794480143080601722,
+          "st_dev": 2050,
+          "st_ino": 16165852,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480143080601722,
+          "st_size": 65
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "config",
+        "--local",
+        "--get",
+        "core.ignoreStat"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.004022644134238362,
+      "exit_code": 0,
+      "name": "new-local-config-0",
+      "started_unix_ns": 1794480143362661466,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-local-config-0.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480143464590392,
+          "st_dev": 2050,
+          "st_ino": 16165855,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480143464590392,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 6,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-local-config-0.stdout",
+        "sha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+        "stat": {
+          "st_ctime_ns": 1794480143466590333,
+          "st_dev": 2050,
+          "st_ino": 16165854,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480143466590333,
+          "st_size": 6
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "config",
+        "--local",
+        "--get",
+        "core.sparseCheckout"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.004619066137820482,
+      "exit_code": 0,
+      "name": "new-local-config-1",
+      "started_unix_ns": 1794480143578728338,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-local-config-1.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480143742582189,
+          "st_dev": 2050,
+          "st_ino": 16165857,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480143742582189,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 6,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-local-config-1.stdout",
+        "sha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+        "stat": {
+          "st_ctime_ns": 1794480143746582071,
+          "st_dev": 2050,
+          "st_ino": 16165856,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480143746582071,
+          "st_size": 6
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "config",
+        "--local",
+        "--get",
+        "core.sparseCheckoutCone"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.004635811084881425,
+      "exit_code": 0,
+      "name": "new-local-config-2",
+      "started_unix_ns": 1794480144002330694,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-local-config-2.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480144130570741,
+          "st_dev": 2050,
+          "st_ino": 16165859,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480144130570741,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 6,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-local-config-2.stdout",
+        "sha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+        "stat": {
+          "st_ctime_ns": 1794480144132570682,
+          "st_dev": 2050,
+          "st_ino": 16165858,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480144132570682,
+          "st_size": 6
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "config",
+        "--local",
+        "--get",
+        "index.sparse"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.004195671062916517,
+      "exit_code": 0,
+      "name": "new-local-config-3",
+      "started_unix_ns": 1794480144259865404,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-local-config-3.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480144351564221,
+          "st_dev": 2050,
+          "st_ino": 16165861,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480144351564221,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 6,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-local-config-3.stdout",
+        "sha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+        "stat": {
+          "st_ctime_ns": 1794480144353564162,
+          "st_dev": 2050,
+          "st_ino": 16165860,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480144353564162,
+          "st_size": 6
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "config",
+        "--local",
+        "--get",
+        "core.splitIndex"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.004561099922284484,
+      "exit_code": 0,
+      "name": "new-local-config-4",
+      "started_unix_ns": 1794480144463538712,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-local-config-4.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480144539558674,
+          "st_dev": 2050,
+          "st_ino": 16165863,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480144539558674,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 6,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-local-config-4.stdout",
+        "sha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+        "stat": {
+          "st_ctime_ns": 1794480144542558585,
+          "st_dev": 2050,
+          "st_ino": 16165862,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480144542558585,
+          "st_size": 6
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "config",
+        "--local",
+        "--get",
+        "core.fsmonitor"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.004725839011371136,
+      "exit_code": 0,
+      "name": "new-local-config-5",
+      "started_unix_ns": 1794480144621326210,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-local-config-5.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480144665554956,
+          "st_dev": 2050,
+          "st_ino": 16165865,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480144665554956,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 6,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-local-config-5.stdout",
+        "sha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+        "stat": {
+          "st_ctime_ns": 1794480144668554867,
+          "st_dev": 2050,
+          "st_ino": 16165864,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480144668554867,
+          "st_size": 6
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "ls-files",
+        "-v",
+        "-z"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.03306295117363334,
+      "exit_code": 0,
+      "name": "new-index-flags",
+      "started_unix_ns": 1794480144734104538,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-index-flags.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480144838549851,
+          "st_dev": 2050,
+          "st_ino": 16165867,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480144838549851,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 2786146,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-index-flags.stdout",
+        "sha256": "10922c14795fcda19a689a1ed05a31e9e28d2c94e04088aad99097509164990b",
+        "stat": {
+          "st_ctime_ns": 1794480144856103315,
+          "st_dev": 2050,
+          "st_ino": 16165866,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480144856103315,
+          "st_size": 2786146
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.11477894498966634,
+      "exit_code": 0,
+      "name": "project-preflight",
+      "started_unix_ns": 1794480144975388578,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/project-preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480145066543124,
+          "st_dev": 2050,
+          "st_ino": 16165869,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480145066543124,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 175,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/project-preflight.stdout",
+        "sha256": "bae1200b490be725f9f1a05aa7c7df2242759ea68bb3abebc8cef19d81001902",
+        "stat": {
+          "st_ctime_ns": 1794480145156540469,
+          "st_dev": 2050,
+          "st_ino": 16165868,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480145156540469,
+          "st_size": 175
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 6.833991803927347,
+      "exit_code": 0,
+      "name": "full-physical-source",
+      "started_unix_ns": 1794480145252083861,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/full-physical-source.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480145352534685,
+          "st_dev": 2050,
+          "st_ino": 16165871,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480145352534685,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 423,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/full-physical-source.stdout",
+        "sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902",
+        "stat": {
+          "st_ctime_ns": 1794480152161333779,
+          "st_dev": 2050,
+          "st_ino": 16165870,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480152161333779,
+          "st_size": 423
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.31525362911634147,
+      "exit_code": 0,
+      "name": "new-status-after",
+      "started_unix_ns": 1794480152256417732,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-status-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480152268330622,
+          "st_dev": 2050,
+          "st_ino": 16165875,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480152268330622,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-status-after.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480152268330622,
+          "st_dev": 2050,
+          "st_ino": 16165874,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480152268330622,
+          "st_size": 0
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "ls-files",
+        "-v",
+        "-z"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.03260680893436074,
+      "exit_code": 0,
+      "name": "new-index-flags-after",
+      "started_unix_ns": 1794480152597617654,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-index-flags-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480152609320560,
+          "st_dev": 2050,
+          "st_ino": 16165877,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480152609320560,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 2786146,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-index-flags-after.stdout",
+        "sha256": "10922c14795fcda19a689a1ed05a31e9e28d2c94e04088aad99097509164990b",
+        "stat": {
+          "st_ctime_ns": 1794480152626248104,
+          "st_dev": 2050,
+          "st_ino": 16165876,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480152626248104,
+          "st_size": 2786146
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "--shared-index-path"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+      "elapsed_seconds": 0.017609755974262953,
+      "exit_code": 0,
+      "name": "new-shared-index-after",
+      "started_unix_ns": 1794480152698055201,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-shared-index-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480152710317580,
+          "st_dev": 2050,
+          "st_ino": 16165879,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480152710317580,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/new-shared-index-after.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480152710317580,
+          "st_dev": 2050,
+          "st_ino": 16165878,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480152710317580,
+          "st_size": 0
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "for-each-ref",
+        "--format=%(refname) %(objectname)"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+      "elapsed_seconds": 0.004407772095873952,
+      "exit_code": 0,
+      "name": "old-refs-after",
+      "started_unix_ns": 1794480152917516930,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-refs-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480152963310115,
+          "st_dev": 2050,
+          "st_ino": 16165882,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480152963310115,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 404,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-refs-after.stdout",
+        "sha256": "3491f0cc5b316816e8fe5996f455e14bc6b01a4eb837fc85941af7b910c538de",
+        "stat": {
+          "st_ctime_ns": 1794480152966310026,
+          "st_dev": 2050,
+          "st_ino": 16165880,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480152966310026,
+          "st_size": 404
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+      "elapsed_seconds": 0.004349542083218694,
+      "exit_code": 0,
+      "name": "old-head-after",
+      "started_unix_ns": 1794480152982024374,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-head-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480152994309200,
+          "st_dev": 2050,
+          "st_ino": 16165884,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480152994309200,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-head-after.stdout",
+        "sha256": "50a0774bf07d03186a3eecdd9dff7509427dd503bf464f50d789d25998423a14",
+        "stat": {
+          "st_ctime_ns": 1794480152996309141,
+          "st_dev": 2050,
+          "st_ino": 16165883,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480152996309141,
+          "st_size": 41
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "ls-files",
+        "-v",
+        "-z"
+      ],
+      "cwd": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+      "elapsed_seconds": 0.03253351990133524,
+      "exit_code": 0,
+      "name": "old-index-flags-after",
+      "started_unix_ns": 1794480153012650681,
+      "status": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-index-flags-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stat": {
+          "st_ctime_ns": 1794480153048307607,
+          "st_dev": 2050,
+          "st_ino": 16165886,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480153048307607,
+          "st_size": 0
+        }
+      },
+      "stdout": {
+        "bytes": 2786146,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-index-flags-after.stdout",
+        "sha256": "8f705d65a3bbf353827db59f581525005126b5db5cc9d0688d0e640d32560498",
+        "stat": {
+          "st_ctime_ns": 1794480153065978674,
+          "st_dev": 2050,
+          "st_ino": 16165885,
+          "st_mode": 33152,
+          "st_mtime_ns": 1794480153065978674,
+          "st_size": 2786146
+        }
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    }
+  ],
+  "completed": true,
+  "completed_unix_ns": 1794480153151011828,
+  "configuration_scope": "Fresh independent checkout only; original full source guard remains mandatory",
+  "disk_admission": {
+    "estimate": "full checkout plus two source-object storage copies plus 1GiB reserve",
+    "expected_checkout_bytes": 2552660560,
+    "free_bytes": 15001387008,
+    "old_files_deleted": false,
+    "old_object_storage_bytes": 1139474432,
+    "required_free_bytes": 5905351248,
+    "target_parent": "/home/qian-qi/work"
+  },
+  "full_physical_source": {
+    "base": null,
+    "candidate": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "tested_tree": "a897ba4c74897a05ceb364f098b1bfe32c850213",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2552660560,
+    "tracked_entries": 27686,
+    "tracked_worktree_verified": true
+  },
+  "github_write_performed": false,
+  "new_local_configuration": {
+    "core.fsmonitor": "false",
+    "core.ignoreStat": "false",
+    "core.sparseCheckout": "false",
+    "core.sparseCheckoutCone": "false",
+    "core.splitIndex": "false",
+    "index.sparse": "false"
+  },
+  "observer_sha256": "f7903f66beac8c8f671a947306d3981062f57c3420c730f672a32e3cdaf3f605",
+  "old_head_refs_index_flags_hidden_observations_and_failure_originals_unchanged": true,
+  "old_hidden_after": {
+    "bytes": 61542,
+    "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-hidden-observations.after.json",
+    "sha256": "ef640c79201cc63ea1a73a03dae279ef5704b7abc5364cc016c3ca4b5b178f53"
+  },
+  "old_hidden_before": {
+    "bytes": 61542,
+    "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-hidden-observations.before.json",
+    "sha256": "ef640c79201cc63ea1a73a03dae279ef5704b7abc5364cc016c3ca4b5b178f53"
+  },
+  "old_hidden_cause_or_writer_identified": false,
+  "old_hidden_entry_count": 104,
+  "old_hidden_matching_head_count": 0,
+  "old_hidden_missing_count": 104,
+  "old_hidden_present_count": 0,
+  "old_index_after": {
+    "bytes": 4668177,
+    "path": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication/.git/index",
+    "sha256": "84c7967135da00a1661596cd5337609aa31a3eb4efd8d93e51f11d40e506c90f",
+    "stat": {
+      "st_ctime_ns": 1794476275133257865,
+      "st_dev": 2050,
+      "st_ino": 51842021,
+      "st_mode": 33152,
+      "st_mtime_ns": 1794476275132257892,
+      "st_size": 4668177
+    }
+  },
+  "old_index_before": {
+    "bytes": 4668177,
+    "path": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication/.git/index",
+    "sha256": "84c7967135da00a1661596cd5337609aa31a3eb4efd8d93e51f11d40e506c90f",
+    "stat": {
+      "st_ctime_ns": 1794476275133257865,
+      "st_dev": 2050,
+      "st_ino": 51842021,
+      "st_mode": 33152,
+      "st_mtime_ns": 1794476275132257892,
+      "st_size": 4668177
+    }
+  },
+  "old_index_snapshot_after": {
+    "bytes": 4668177,
+    "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-index.after",
+    "sha256": "84c7967135da00a1661596cd5337609aa31a3eb4efd8d93e51f11d40e506c90f"
+  },
+  "old_index_snapshot_before": {
+    "bytes": 4668177,
+    "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/old-index.before",
+    "sha256": "84c7967135da00a1661596cd5337609aa31a3eb4efd8d93e51f11d40e506c90f"
+  },
+  "old_root": "/home/qian-qi/work/chain-bt-owner-convergence-20261112-4a0b-publication",
+  "old_worktree_or_index_modified_by_this_helper": false,
+  "passed": true,
+  "preserved_prestage_failure": [
+    {
+      "bytes": 1926,
+      "copy": {
+        "bytes": 1926,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/prior-prestage/report.json",
+        "sha256": "32934e747ebf16a23fddaedf5b5bff1cb1a28bf2629b77edbc47fb960a0faf5c"
+      },
+      "original_path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/prestage-source-01/report.json",
+      "sha256": "32934e747ebf16a23fddaedf5b5bff1cb1a28bf2629b77edbc47fb960a0faf5c"
+    },
+    {
+      "bytes": 175,
+      "copy": {
+        "bytes": 175,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/prior-prestage/preflight.stdout",
+        "sha256": "bae1200b490be725f9f1a05aa7c7df2242759ea68bb3abebc8cef19d81001902"
+      },
+      "original_path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/prestage-source-01/preflight.stdout",
+      "sha256": "bae1200b490be725f9f1a05aa7c7df2242759ea68bb3abebc8cef19d81001902"
+    },
+    {
+      "bytes": 0,
+      "copy": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/prior-prestage/preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/prestage-source-01/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "copy": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/prior-prestage/full-physical-source.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/prestage-source-01/full-physical-source.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 883,
+      "copy": {
+        "bytes": 883,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/prior-prestage/full-physical-source.stderr",
+        "sha256": "d4f6fddbd5f1b8ed9acc687adf92f113038381534319d9482ffac7d9008008ce"
+      },
+      "original_path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/prestage-source-01/full-physical-source.stderr",
+      "sha256": "d4f6fddbd5f1b8ed9acc687adf92f113038381534319d9482ffac7d9008008ce"
+    }
+  ],
+  "production_activation": false,
+  "root": "/home/qian-qi/work/chain-bt-4a0b-publication02",
+  "schema": "trnm.bt-independent-publication02-source-preparation.v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_guard_modified": false,
+  "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+}

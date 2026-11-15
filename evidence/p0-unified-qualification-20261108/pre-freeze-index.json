@@ -1,0 +1,163 @@
+{
+  "schema": "trnm-pre-freeze-evidence-index-v1",
+  "code_parent": "af2b8661d049549f9d67e33c5aa69c5220dea0b5",
+  "files": [
+    {
+      "path": "EXTRA_NATIVE_RUNNER.md",
+      "bytes": 8471,
+      "sha256": "ee3b38945cf44d694179702a188c16b3ac9c2cf2882aef75bae1e84a479c9a73"
+    },
+    {
+      "path": "README.md",
+      "bytes": 10849,
+      "sha256": "bcebaaac90387f545de57448bff7511b3e447c222ae9dca15fd63992fd873d20"
+    },
+    {
+      "path": "authority/reserved-alias-green-01.json",
+      "bytes": 19017,
+      "sha256": "ef41cfc789afe561cf5a9b2b25dc77a221c1328dff7be9a5f41d17935f89c5c5"
+    },
+    {
+      "path": "authority/reserved-alias-green-01.log",
+      "bytes": 6311,
+      "sha256": "e40319677fc8e7d2d94b246d38aa7e5f8ac131af63a0782a93982b9d6917b42b"
+    },
+    {
+      "path": "authority/reserved-alias-provenance.json",
+      "bytes": 3077,
+      "sha256": "a7120f5ab741cb0f25feca24ec8c92134153f808bd67b776bd62bb72f8c4411c"
+    },
+    {
+      "path": "authority/reserved-alias-red-01.json",
+      "bytes": 19018,
+      "sha256": "c77c7fd74609694a8a7cc4d5a8badc9d706167b748d4782e36db46d18fda28fa"
+    },
+    {
+      "path": "authority/reserved-alias-red-01.log",
+      "bytes": 166681,
+      "sha256": "437da698cbef7b8a9684072debf986931aa56faf6ee93487e5fc2fb60c3d5ebf"
+    },
+    {
+      "path": "extra-parser-reviews.tar.gz",
+      "bytes": 57463,
+      "sha256": "5a93e528d50f8fa296ad42b99123d0c493ba2a7341edd5c086eccdfc8515d443"
+    },
+    {
+      "path": "extra-review-01/independent-parser-probes.json",
+      "bytes": 3421,
+      "sha256": "115285a42ed160e51fa1c280870c18cf84d17fd57234a7fb8ffd18f559e274d8"
+    },
+    {
+      "path": "extra-review-01/independent_parser_probes.py",
+      "bytes": 3417,
+      "sha256": "b0c112ce784671f341218b5466e4837a95e936e4ee050001886b1f3903e7272a"
+    },
+    {
+      "path": "extra-review-01/review.json",
+      "bytes": 5492,
+      "sha256": "ba0f27956b1fb16c18c3f1d3824a7393fb600d166569011e3c5fb32d73bb1ad3"
+    },
+    {
+      "path": "extra-review-02/independent-parser-probes.json",
+      "bytes": 4320,
+      "sha256": "b0f785586b2d4936cec4c9f28f405077cb5f0f0146cf2acf8577ce6101417aa3"
+    },
+    {
+      "path": "extra-review-02/independent_parser_probes.py",
+      "bytes": 3417,
+      "sha256": "b0c112ce784671f341218b5466e4837a95e936e4ee050001886b1f3903e7272a"
+    },
+    {
+      "path": "extra-review-02/review.json",
+      "bytes": 2502,
+      "sha256": "ce1745ac266530fbf0245560eb21a73e0ac01c44afc20e37cb5b8fa3a05b762b"
+    },
+    {
+      "path": "hepta/hepta-native-plan.json",
+      "bytes": 13951,
+      "sha256": "2ff911aedd238af432ff2b65e8e55a6fcd90f9743022c7a0216d5115b1d8a3e6"
+    },
+    {
+      "path": "hepta/hepta-stage-trace.json",
+      "bytes": 38725,
+      "sha256": "ff73b0ad6e25b508cbb55215cd70727a7e67398774abf895a60017fa0fab6a0d"
+    },
+    {
+      "path": "hepta/independent-791-conflict-review.json",
+      "bytes": 1142,
+      "sha256": "7e8674dd2a3067016c9028b85de7ef3306305293519a0988934ab0378f4a52e0"
+    },
+    {
+      "path": "hepta/native-result-summary.md",
+      "bytes": 6847,
+      "sha256": "e2863da6c7ad03b58177c99f1f351b078e92c13cda5c92873b29b133bf9abe58"
+    },
+    {
+      "path": "hepta-native-evidence-text-attempt01.tar.gz",
+      "bytes": 222492,
+      "sha256": "3928025df5bf71c23a11db5cf2e37c056eb9171c90e4ea62680a2254a056db8f"
+    },
+    {
+      "path": "integration/merge791-root-resolution.json",
+      "bytes": 1526,
+      "sha256": "f591cede80bc771c81be339059301957c601830c86a81819d3059594f3ba7de4"
+    },
+    {
+      "path": "integration/merge792-commit.json",
+      "bytes": 203,
+      "sha256": "5be18bdbffde0836e866d896ce01dc15a10aff8c19f706cd42549097188b8c5f"
+    },
+    {
+      "path": "integration/merge792-footer-correction.json",
+      "bytes": 385,
+      "sha256": "7ba29d9a78395486c44ba5d1618242e7bad22d5c820be221c9604d1d146cbe80"
+    },
+    {
+      "path": "integration/merge792-format-correction.json",
+      "bytes": 658,
+      "sha256": "44b53fff8c8c1fe5833a9da237a90f69cac3733518df1d911dc1452a2f5d1f2d"
+    },
+    {
+      "path": "integration/merge792-pin-refresh.json",
+      "bytes": 1903,
+      "sha256": "5280b7f25ee725a4b740eae57dea6aa02c3bbe0d18622de79fc78465a2d3b185"
+    },
+    {
+      "path": "integration/merge795-commit.json",
+      "bytes": 195,
+      "sha256": "83745a505170ec9b0dac750fefdec58ccfa8bd79f9d21c4e4b4ace5a33982134"
+    },
+    {
+      "path": "integration/merge795-manifest-maintenance.json",
+      "bytes": 617,
+      "sha256": "81ca147627066cb7378a93a3d22e66881101cd72e08572207711c4c8f750f201"
+    },
+    {
+      "path": "integration/merge795-runtime-equality.json",
+      "bytes": 767,
+      "sha256": "2a153765da575dded4ae2e6e46f3b74f66800611b765cf4c914bfc8f8ff9e9f8"
+    },
+    {
+      "path": "retained-failure-ledger.json",
+      "bytes": 6091,
+      "sha256": "06e2e7723a62a27d36d1fea643b7c52fd7bab5a8b88cf59cbb8d0579eae34a8a"
+    },
+    {
+      "path": "run-extra-native.py",
+      "bytes": 36996,
+      "sha256": "d9ac98937cb23992e554bbd6b0bf5748de4e7e575cddb5fa26541445a7e0d731"
+    },
+    {
+      "path": "source-inputs.json",
+      "bytes": 1976,
+      "sha256": "32a49c2a85e4f6fbce4091505b933c34af7abf66fbc704e666d09f6ead299a93"
+    },
+    {
+      "path": "test_run_extra_native.py",
+      "bytes": 20668,
+      "sha256": "7a805710365608762386ec3607ddc817a6ff2e970beceab68eb98e1cda25cb0c"
+    }
+  ],
+  "final_source_identity": "External frozen-source and actual native run receipts; no historical result is transferred.",
+  "qualification": "HOLD_NO_GO"
+}

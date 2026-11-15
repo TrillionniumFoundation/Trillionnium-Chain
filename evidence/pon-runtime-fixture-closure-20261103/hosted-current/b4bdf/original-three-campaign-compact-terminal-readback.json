@@ -1,0 +1,844 @@
+{
+  "schema": "b4bdf-original-three-campaign-terminal-readback-v1",
+  "observed_utc": "2026-11-03T22:58:03.566586+00:00",
+  "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+  "tested_tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+  "run_id": 41732370139,
+  "job_id": 126252722836,
+  "artifact_receipt": {
+    "schema": "artifact-download-digest-check-v1",
+    "observed_utc": "2026-11-03T22:56:50.237926+00:00",
+    "artifact_id": 13278690602,
+    "file_name": "b4bdf-original-campaign-13278690602.zip",
+    "file_id": "file_00000000a29c81fb990c02a4d99b20a8",
+    "metadata": {
+      "id": 13278690602,
+      "name": "pon-native-campaign-x64-head-release-b4bdf142f513081715ecc8d1f9674291e85302cc-1",
+      "size_in_bytes": 60738751,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13278690602",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13278690602/zip",
+      "expired": false,
+      "created_at": "2026-11-03T22:52:03Z",
+      "expires_at": "2026-12-03T22:51:57Z",
+      "updated_at": "2026-11-03T22:52:03Z",
+      "digest": "sha256:2836824a4ab5b8b25e207310d57845a0b59df2a4685893d2831b64d9deb527b2",
+      "workflow_run": {
+        "id": 41732370139,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "b4bdf142f513081715ecc8d1f9674291e85302cc"
+      }
+    },
+    "matched": true,
+    "data_only": true,
+    "executed": false,
+    "actual_bytes": 60738751,
+    "actual_sha256": "2836824a4ab5b8b25e207310d57845a0b59df2a4685893d2831b64d9deb527b2"
+  },
+  "source": {
+    "base": null,
+    "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+    "tested_tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 884109821,
+    "tracked_entries": 7757,
+    "tracked_worktree_verified": true
+  },
+  "source_before_after_equal": true,
+  "binary": {
+    "actual_compiler_artifact_profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "build_artifact": "/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-64e29df06cf605a6",
+    "build_separate_from_measured_campaign": true,
+    "bytes": 11570592,
+    "execution": "original cargo test command using the checked build artifact",
+    "retained": "public_v3_multiprocess.bin",
+    "sha256_after": "73ad93b9ac7231a41f7edcf3103bc34db11a7d99645fb39edef24607364a8aaf",
+    "sha256_before": "73ad93b9ac7231a41f7edcf3103bc34db11a7d99645fb39edef24607364a8aaf"
+  },
+  "profile_verified_from_cargo_artifact": {
+    "opt_level": "3",
+    "debuginfo": 0,
+    "debug_assertions": false,
+    "overflow_checks": false,
+    "test": true
+  },
+  "original_inputs": {
+    "attacker_processes": [
+      0,
+      24,
+      24
+    ],
+    "business_blocks": 21,
+    "modes": [
+      "baseline",
+      "from-zero",
+      "late-product"
+    ],
+    "phase_seconds": 30,
+    "seed_blocks": 4,
+    "seed_transfers": 1024
+  },
+  "runs": [
+    {
+      "number": 1,
+      "native_step": {
+        "command": [
+          "/home/runner/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_multiprocess",
+          "separate_process_work_and_signed_confirmation_campaign",
+          "--",
+          "--exact",
+          "--ignored",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "complete_success": false,
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "elapsed_ns": 110955966061,
+        "elapsed_seconds": 110.955966061,
+        "error": null,
+        "name": "run-1",
+        "outer_stage_timeout_seconds": 600,
+        "returncode": 101,
+        "stderr": "run-1.stderr.log",
+        "stderr_bytes": 1615,
+        "stderr_sha256": "74572acc61abf368456425cb15d677096f54523af407557c137114a32c83e5e7",
+        "stderr_truncated": false,
+        "stdout": "run-1.stdout.log",
+        "stdout_bytes": 271,
+        "stdout_sha256": "3923da286d460ac84747469d57365fdeb868812be3299bfff6efa2082c95e08f",
+        "stdout_truncated": false
+      },
+      "named_selector": "separate_process_work_and_signed_confirmation_campaign",
+      "native_summary": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 24 filtered out; finished in 110.88s",
+      "native_stderr": "    Finished `release` profile [optimized] target(s) in 0.06s\n     Running tests/public_v3_multiprocess.rs (/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-64e29df06cf605a6)\nP0 native campaign: honest 1024 signed transfers and 21 business blocks\nP0 native campaign: observed producer prepared-generic\nP0 native campaign: observed producer tiled-classical\nP0 native campaign: observed producer tiled-strassen-one-level\nP0 native campaign: observed producer paired-product\nP0 native campaign: observed producer maintenance-periodic\nP0 native campaign: observed producer maintenance-integer-paired\nP0 native campaign: observed producer maintenance-prefix\nP0 native campaign: observed producer maintenance-limb\nP0 native campaign: phase baseline 30s / 0 attacker processes\nP0 native campaign: phase from-zero 30s / 24 attacker processes\nP0 native campaign: phase late-product 30s / 24 attacker processes\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (4636) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1765:5:\nfinite experiment criteria failed; full counterexample retained at /home/runner/work/_temp/pon-native-campaign-41732370139-1/run-1-raw\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (4636) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1541:9:\ncampaign failed; retained /home/runner/work/_temp/pon-native-campaign-41732370139-1/run-1-raw\nerror: test failed, to rerun pass `-p trnm-pon-node --test public_v3_multiprocess`\n",
+      "report_bytes": 26120613,
+      "report_sha256": "3e3dcee3c8c8f3fb68f8313d5c1ffa592a67a44b0bf692b0126467080bfff925",
+      "report_criteria_met": false,
+      "economics_complete": true,
+      "phases": [
+        {
+          "mode": "baseline",
+          "fixed_confirmation_denominator": 3,
+          "confirmed_inside_window": 1,
+          "observed_confirmation_rows": 2,
+          "unobserved_scheduled_rounds": 1,
+          "criteria_met": false,
+          "receiver_client_state_equal": false,
+          "full_work_accepted": 14,
+          "full_work_failed": 0,
+          "budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "remaining_paid_credit_ns": 1995829479,
+          "actor_reports_complete": true,
+          "observer_complete": true,
+          "host_controller_passed": true,
+          "host_failure": null,
+          "host_cleanup": "already-collected",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "host_outside_counters": {
+            "cgroup.events": "populated 0\nfrozen 0",
+            "cpu.stat": "usage_usec 8333397\nuser_usec 2900094\nsystem_usec 5433303\nnice_usec 2901000\ncore_sched.force_idle_usec 0\nnr_periods 347\nnr_throttled 330\nthrottled_usec 37762457\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "10723328",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "0"
+          },
+          "phase_process_context": {
+            "attackers_launched_by_external_controller": true,
+            "controller_cgroup": "/system.slice/trnm-native-campaign-41732370139-1.service",
+            "host_after": {
+              "cpu_nr_periods": 346,
+              "cpu_nr_throttled": 329,
+              "cpu_throttled_usec": 37719489,
+              "cpu_usage_usec": 8301662,
+              "memory_current_bytes": 87056384,
+              "pids_current": 3
+            },
+            "host_before": {
+              "cpu_nr_periods": 4,
+              "cpu_nr_throttled": 3,
+              "cpu_throttled_usec": 205365,
+              "cpu_usage_usec": 89430,
+              "memory_current_bytes": 19333120,
+              "pids_current": 3
+            },
+            "independent_administration": false,
+            "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41732370139-1-original-campaign-4653.service",
+            "phase_pid": 4725,
+            "runtime_business_deadline_changed": false,
+            "same_original_receiver_and_verifier_owners": true,
+            "scalar_policy_changed": false,
+            "schema": "fixed-public-phase-external-actors-v1",
+            "wan_qualified": false
+          }
+        },
+        {
+          "mode": "from-zero",
+          "fixed_confirmation_denominator": 3,
+          "confirmed_inside_window": 0,
+          "observed_confirmation_rows": 1,
+          "unobserved_scheduled_rounds": 2,
+          "criteria_met": false,
+          "receiver_client_state_equal": false,
+          "full_work_accepted": 7,
+          "full_work_failed": 1493,
+          "budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "remaining_paid_credit_ns": 1999394937,
+          "actor_reports_complete": true,
+          "observer_complete": true,
+          "host_controller_passed": true,
+          "host_failure": null,
+          "host_cleanup": "already-collected",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "host_outside_counters": {
+            "cgroup.events": "populated 0\nfrozen 0",
+            "cpu.stat": "usage_usec 17173708\nuser_usec 7785535\nsystem_usec 9388173\nnice_usec 7729000\ncore_sched.force_idle_usec 0\nnr_periods 707\nnr_throttled 681\nthrottled_usec 126586523\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "29421568",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "0"
+          },
+          "phase_process_context": {
+            "attackers_launched_by_external_controller": true,
+            "controller_cgroup": "/system.slice/trnm-native-campaign-41732370139-1.service",
+            "host_after": {
+              "cpu_nr_periods": 701,
+              "cpu_nr_throttled": 678,
+              "cpu_throttled_usec": 126396562,
+              "cpu_usage_usec": 17075047,
+              "memory_current_bytes": 190111744,
+              "pids_current": 3
+            },
+            "host_before": {
+              "cpu_nr_periods": 352,
+              "cpu_nr_throttled": 333,
+              "cpu_throttled_usec": 37986243,
+              "cpu_usage_usec": 8422367,
+              "memory_current_bytes": 30048256,
+              "pids_current": 3
+            },
+            "independent_administration": false,
+            "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41732370139-1-original-campaign-4746.service",
+            "phase_pid": 4751,
+            "runtime_business_deadline_changed": false,
+            "same_original_receiver_and_verifier_owners": true,
+            "scalar_policy_changed": false,
+            "schema": "fixed-public-phase-external-actors-v1",
+            "wan_qualified": false
+          }
+        },
+        {
+          "mode": "late-product",
+          "fixed_confirmation_denominator": 3,
+          "confirmed_inside_window": 0,
+          "observed_confirmation_rows": 1,
+          "unobserved_scheduled_rounds": 2,
+          "criteria_met": false,
+          "receiver_client_state_equal": false,
+          "full_work_accepted": 7,
+          "full_work_failed": 1355,
+          "budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "remaining_paid_credit_ns": 1999255401,
+          "actor_reports_complete": true,
+          "observer_complete": true,
+          "host_controller_passed": true,
+          "host_failure": null,
+          "host_cleanup": "already-collected",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "host_outside_counters": {
+            "cgroup.events": "populated 0\nfrozen 0",
+            "cpu.stat": "usage_usec 25984894\nuser_usec 12687469\nsystem_usec 13297424\nnice_usec 12626000\ncore_sched.force_idle_usec 0\nnr_periods 1063\nnr_throttled 1029\nthrottled_usec 216287247\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "46907392",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "0"
+          },
+          "phase_process_context": {
+            "attackers_launched_by_external_controller": true,
+            "controller_cgroup": "/system.slice/trnm-native-campaign-41732370139-1.service",
+            "host_after": {
+              "cpu_nr_periods": 1059,
+              "cpu_nr_throttled": 1026,
+              "cpu_throttled_usec": 216161464,
+              "cpu_usage_usec": 25892968,
+              "memory_current_bytes": 200364032,
+              "pids_current": 3
+            },
+            "host_before": {
+              "cpu_nr_periods": 712,
+              "cpu_nr_throttled": 683,
+              "cpu_throttled_usec": 126733768,
+              "cpu_usage_usec": 17264199,
+              "memory_current_bytes": 48750592,
+              "pids_current": 3
+            },
+            "independent_administration": false,
+            "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41732370139-1-original-campaign-4815.service",
+            "phase_pid": 4820,
+            "runtime_business_deadline_changed": false,
+            "same_original_receiver_and_verifier_owners": true,
+            "scalar_policy_changed": false,
+            "schema": "fixed-public-phase-external-actors-v1",
+            "wan_qualified": false
+          }
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "native_step": {
+        "command": [
+          "/home/runner/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_multiprocess",
+          "separate_process_work_and_signed_confirmation_campaign",
+          "--",
+          "--exact",
+          "--ignored",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "complete_success": false,
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "elapsed_ns": 109324732345,
+        "elapsed_seconds": 109.324732345,
+        "error": null,
+        "name": "run-2",
+        "outer_stage_timeout_seconds": 600,
+        "returncode": 101,
+        "stderr": "run-2.stderr.log",
+        "stderr_bytes": 1615,
+        "stderr_sha256": "95dea61c43771d14270d67196ce9b3d291df545a23d6ed7062d32a9368524f32",
+        "stderr_truncated": false,
+        "stdout": "run-2.stdout.log",
+        "stdout_bytes": 271,
+        "stdout_sha256": "600d0b76c1c08b3a94d9a71d06ba75eab0f1e17bf5dee88d3c14863af192f197",
+        "stdout_truncated": false
+      },
+      "named_selector": "separate_process_work_and_signed_confirmation_campaign",
+      "native_summary": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 24 filtered out; finished in 109.25s",
+      "native_stderr": "    Finished `release` profile [optimized] target(s) in 0.06s\n     Running tests/public_v3_multiprocess.rs (/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-64e29df06cf605a6)\nP0 native campaign: honest 1024 signed transfers and 21 business blocks\nP0 native campaign: observed producer prepared-generic\nP0 native campaign: observed producer tiled-classical\nP0 native campaign: observed producer tiled-strassen-one-level\nP0 native campaign: observed producer paired-product\nP0 native campaign: observed producer maintenance-periodic\nP0 native campaign: observed producer maintenance-integer-paired\nP0 native campaign: observed producer maintenance-prefix\nP0 native campaign: observed producer maintenance-limb\nP0 native campaign: phase baseline 30s / 0 attacker processes\nP0 native campaign: phase from-zero 30s / 24 attacker processes\nP0 native campaign: phase late-product 30s / 24 attacker processes\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (4934) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1765:5:\nfinite experiment criteria failed; full counterexample retained at /home/runner/work/_temp/pon-native-campaign-41732370139-1/run-2-raw\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (4934) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1541:9:\ncampaign failed; retained /home/runner/work/_temp/pon-native-campaign-41732370139-1/run-2-raw\nerror: test failed, to rerun pass `-p trnm-pon-node --test public_v3_multiprocess`\n",
+      "report_bytes": 26102111,
+      "report_sha256": "0377222a4b407704aac31f9c2f8332f2e533d75b3553b942333bf03df9d60c5f",
+      "report_criteria_met": false,
+      "economics_complete": true,
+      "phases": [
+        {
+          "mode": "baseline",
+          "fixed_confirmation_denominator": 3,
+          "confirmed_inside_window": 1,
+          "observed_confirmation_rows": 2,
+          "unobserved_scheduled_rounds": 1,
+          "criteria_met": false,
+          "receiver_client_state_equal": false,
+          "full_work_accepted": 14,
+          "full_work_failed": 0,
+          "budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "remaining_paid_credit_ns": 1989558590,
+          "actor_reports_complete": true,
+          "observer_complete": true,
+          "host_controller_passed": true,
+          "host_failure": null,
+          "host_cleanup": "already-collected",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "host_outside_counters": {
+            "cgroup.events": "populated 0\nfrozen 0",
+            "cpu.stat": "usage_usec 34317665\nuser_usec 15698293\nsystem_usec 18619372\nnice_usec 15671000\ncore_sched.force_idle_usec 0\nnr_periods 1410\nnr_throttled 1358\nthrottled_usec 253275587\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "57630720",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "0"
+          },
+          "phase_process_context": {
+            "attackers_launched_by_external_controller": true,
+            "controller_cgroup": "/system.slice/trnm-native-campaign-41732370139-1.service",
+            "host_after": {
+              "cpu_nr_periods": 1409,
+              "cpu_nr_throttled": 1357,
+              "cpu_throttled_usec": 253235592,
+              "cpu_usage_usec": 34286239,
+              "memory_current_bytes": 134234112,
+              "pids_current": 3
+            },
+            "host_before": {
+              "cpu_nr_periods": 1068,
+              "cpu_nr_throttled": 1032,
+              "cpu_throttled_usec": 216480425,
+              "cpu_usage_usec": 26074506,
+              "memory_current_bytes": 66228224,
+              "pids_current": 3
+            },
+            "independent_administration": false,
+            "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41732370139-1-original-campaign-4951.service",
+            "phase_pid": 4956,
+            "runtime_business_deadline_changed": false,
+            "same_original_receiver_and_verifier_owners": true,
+            "scalar_policy_changed": false,
+            "schema": "fixed-public-phase-external-actors-v1",
+            "wan_qualified": false
+          }
+        },
+        {
+          "mode": "from-zero",
+          "fixed_confirmation_denominator": 3,
+          "confirmed_inside_window": 0,
+          "observed_confirmation_rows": 1,
+          "unobserved_scheduled_rounds": 2,
+          "criteria_met": false,
+          "receiver_client_state_equal": false,
+          "full_work_accepted": 7,
+          "full_work_failed": 1491,
+          "budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "remaining_paid_credit_ns": 1999947335,
+          "actor_reports_complete": true,
+          "observer_complete": true,
+          "host_controller_passed": true,
+          "host_failure": null,
+          "host_cleanup": "already-collected",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "host_outside_counters": {
+            "cgroup.events": "populated 0\nfrozen 0",
+            "cpu.stat": "usage_usec 43133985\nuser_usec 20502353\nsystem_usec 22631632\nnice_usec 20413000\ncore_sched.force_idle_usec 0\nnr_periods 1766\nnr_throttled 1710\nthrottled_usec 343050589\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "76288000",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "0"
+          },
+          "phase_process_context": {
+            "attackers_launched_by_external_controller": true,
+            "controller_cgroup": "/system.slice/trnm-native-campaign-41732370139-1.service",
+            "host_after": {
+              "cpu_nr_periods": 1762,
+              "cpu_nr_throttled": 1706,
+              "cpu_throttled_usec": 342844266,
+              "cpu_usage_usec": 43041293,
+              "memory_current_bytes": 236527616,
+              "pids_current": 3
+            },
+            "host_before": {
+              "cpu_nr_periods": 1415,
+              "cpu_nr_throttled": 1361,
+              "cpu_throttled_usec": 253497312,
+              "cpu_usage_usec": 34408721,
+              "memory_current_bytes": 76959744,
+              "pids_current": 3
+            },
+            "independent_administration": false,
+            "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41732370139-1-original-campaign-4971.service",
+            "phase_pid": 4976,
+            "runtime_business_deadline_changed": false,
+            "same_original_receiver_and_verifier_owners": true,
+            "scalar_policy_changed": false,
+            "schema": "fixed-public-phase-external-actors-v1",
+            "wan_qualified": false
+          }
+        },
+        {
+          "mode": "late-product",
+          "fixed_confirmation_denominator": 3,
+          "confirmed_inside_window": 0,
+          "observed_confirmation_rows": 1,
+          "unobserved_scheduled_rounds": 2,
+          "criteria_met": false,
+          "receiver_client_state_equal": false,
+          "full_work_accepted": 7,
+          "full_work_failed": 1344,
+          "budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "remaining_paid_credit_ns": 1999853252,
+          "actor_reports_complete": true,
+          "observer_complete": true,
+          "host_controller_passed": true,
+          "host_failure": null,
+          "host_cleanup": "already-collected",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "host_outside_counters": {
+            "cgroup.events": "populated 0\nfrozen 0",
+            "cpu.stat": "usage_usec 51924470\nuser_usec 25342759\nsystem_usec 26581711\nnice_usec 25221000\ncore_sched.force_idle_usec 0\nnr_periods 2122\nnr_throttled 2058\nthrottled_usec 432095940\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "93732864",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "0"
+          },
+          "phase_process_context": {
+            "attackers_launched_by_external_controller": true,
+            "controller_cgroup": "/system.slice/trnm-native-campaign-41732370139-1.service",
+            "host_after": {
+              "cpu_nr_periods": 2118,
+              "cpu_nr_throttled": 2055,
+              "cpu_throttled_usec": 431936153,
+              "cpu_usage_usec": 51835130,
+              "memory_current_bytes": 247492608,
+              "pids_current": 3
+            },
+            "host_before": {
+              "cpu_nr_periods": 1771,
+              "cpu_nr_throttled": 1713,
+              "cpu_throttled_usec": 343222535,
+              "cpu_usage_usec": 43220794,
+              "memory_current_bytes": 95617024,
+              "pids_current": 3
+            },
+            "independent_administration": false,
+            "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41732370139-1-original-campaign-5036.service",
+            "phase_pid": 5041,
+            "runtime_business_deadline_changed": false,
+            "same_original_receiver_and_verifier_owners": true,
+            "scalar_policy_changed": false,
+            "schema": "fixed-public-phase-external-actors-v1",
+            "wan_qualified": false
+          }
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "native_step": {
+        "command": [
+          "/home/runner/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_multiprocess",
+          "separate_process_work_and_signed_confirmation_campaign",
+          "--",
+          "--exact",
+          "--ignored",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "complete_success": false,
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "elapsed_ns": 109779327800,
+        "elapsed_seconds": 109.7793278,
+        "error": null,
+        "name": "run-3",
+        "outer_stage_timeout_seconds": 600,
+        "returncode": 101,
+        "stderr": "run-3.stderr.log",
+        "stderr_bytes": 1615,
+        "stderr_sha256": "dc168702fc4850c786aa6288918cbbacfc962177ea2909f14ac7e54947626c4b",
+        "stderr_truncated": false,
+        "stdout": "run-3.stdout.log",
+        "stdout_bytes": 271,
+        "stdout_sha256": "60b326385f13bd7312ce46104d54965343d8a1ab3c78e863a2db66f106b97fe9",
+        "stdout_truncated": false
+      },
+      "named_selector": "separate_process_work_and_signed_confirmation_campaign",
+      "native_summary": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 24 filtered out; finished in 109.69s",
+      "native_stderr": "    Finished `release` profile [optimized] target(s) in 0.06s\n     Running tests/public_v3_multiprocess.rs (/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-64e29df06cf605a6)\nP0 native campaign: honest 1024 signed transfers and 21 business blocks\nP0 native campaign: observed producer prepared-generic\nP0 native campaign: observed producer tiled-classical\nP0 native campaign: observed producer tiled-strassen-one-level\nP0 native campaign: observed producer paired-product\nP0 native campaign: observed producer maintenance-periodic\nP0 native campaign: observed producer maintenance-integer-paired\nP0 native campaign: observed producer maintenance-prefix\nP0 native campaign: observed producer maintenance-limb\nP0 native campaign: phase baseline 30s / 0 attacker processes\nP0 native campaign: phase from-zero 30s / 24 attacker processes\nP0 native campaign: phase late-product 30s / 24 attacker processes\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (5154) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1765:5:\nfinite experiment criteria failed; full counterexample retained at /home/runner/work/_temp/pon-native-campaign-41732370139-1/run-3-raw\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (5154) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1541:9:\ncampaign failed; retained /home/runner/work/_temp/pon-native-campaign-41732370139-1/run-3-raw\nerror: test failed, to rerun pass `-p trnm-pon-node --test public_v3_multiprocess`\n",
+      "report_bytes": 25832327,
+      "report_sha256": "2e90cab4a9c5d0be66e7f84958559d89559a61c626a79bb6bee015183868b0e8",
+      "report_criteria_met": false,
+      "economics_complete": true,
+      "phases": [
+        {
+          "mode": "baseline",
+          "fixed_confirmation_denominator": 3,
+          "confirmed_inside_window": 1,
+          "observed_confirmation_rows": 2,
+          "unobserved_scheduled_rounds": 1,
+          "criteria_met": false,
+          "receiver_client_state_equal": false,
+          "full_work_accepted": 14,
+          "full_work_failed": 0,
+          "budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "remaining_paid_credit_ns": 1990354288,
+          "actor_reports_complete": true,
+          "observer_complete": true,
+          "host_controller_passed": true,
+          "host_failure": null,
+          "host_cleanup": "already-collected",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "host_outside_counters": {
+            "cgroup.events": "populated 0\nfrozen 0",
+            "cpu.stat": "usage_usec 60278294\nuser_usec 28337579\nsystem_usec 31940715\nnice_usec 28250000\ncore_sched.force_idle_usec 0\nnr_periods 2468\nnr_throttled 2389\nthrottled_usec 470948658\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "104419328",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "0"
+          },
+          "phase_process_context": {
+            "attackers_launched_by_external_controller": true,
+            "controller_cgroup": "/system.slice/trnm-native-campaign-41732370139-1.service",
+            "host_after": {
+              "cpu_nr_periods": 2467,
+              "cpu_nr_throttled": 2388,
+              "cpu_throttled_usec": 470902679,
+              "cpu_usage_usec": 60246938,
+              "memory_current_bytes": 180920320,
+              "pids_current": 3
+            },
+            "host_before": {
+              "cpu_nr_periods": 2126,
+              "cpu_nr_throttled": 2061,
+              "cpu_throttled_usec": 432269728,
+              "cpu_usage_usec": 52013442,
+              "memory_current_bytes": 113106944,
+              "pids_current": 3
+            },
+            "independent_administration": false,
+            "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41732370139-1-original-campaign-5171.service",
+            "phase_pid": 5176,
+            "runtime_business_deadline_changed": false,
+            "same_original_receiver_and_verifier_owners": true,
+            "scalar_policy_changed": false,
+            "schema": "fixed-public-phase-external-actors-v1",
+            "wan_qualified": false
+          }
+        },
+        {
+          "mode": "from-zero",
+          "fixed_confirmation_denominator": 3,
+          "confirmed_inside_window": 0,
+          "observed_confirmation_rows": 1,
+          "unobserved_scheduled_rounds": 2,
+          "criteria_met": false,
+          "receiver_client_state_equal": false,
+          "full_work_accepted": 7,
+          "full_work_failed": 1465,
+          "budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "remaining_paid_credit_ns": 1996910855,
+          "actor_reports_complete": true,
+          "observer_complete": true,
+          "host_controller_passed": true,
+          "host_failure": null,
+          "host_cleanup": "already-collected",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "host_outside_counters": {
+            "cgroup.events": "populated 0\nfrozen 0",
+            "cpu.stat": "usage_usec 69128077\nuser_usec 33209629\nsystem_usec 35918447\nnice_usec 33077000\ncore_sched.force_idle_usec 0\nnr_periods 2824\nnr_throttled 2741\nthrottled_usec 560527586\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "122912768",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "0"
+          },
+          "phase_process_context": {
+            "attackers_launched_by_external_controller": true,
+            "controller_cgroup": "/system.slice/trnm-native-campaign-41732370139-1.service",
+            "host_after": {
+              "cpu_nr_periods": 2821,
+              "cpu_nr_throttled": 2738,
+              "cpu_throttled_usec": 560383656,
+              "cpu_usage_usec": 69032576,
+              "memory_current_bytes": 281849856,
+              "pids_current": 3
+            },
+            "host_before": {
+              "cpu_nr_periods": 2473,
+              "cpu_nr_throttled": 2392,
+              "cpu_throttled_usec": 471146039,
+              "cpu_usage_usec": 60366654,
+              "memory_current_bytes": 123752448,
+              "pids_current": 3
+            },
+            "independent_administration": false,
+            "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41732370139-1-original-campaign-5189.service",
+            "phase_pid": 5194,
+            "runtime_business_deadline_changed": false,
+            "same_original_receiver_and_verifier_owners": true,
+            "scalar_policy_changed": false,
+            "schema": "fixed-public-phase-external-actors-v1",
+            "wan_qualified": false
+          }
+        },
+        {
+          "mode": "late-product",
+          "fixed_confirmation_denominator": 3,
+          "confirmed_inside_window": 0,
+          "observed_confirmation_rows": 1,
+          "unobserved_scheduled_rounds": 2,
+          "criteria_met": false,
+          "receiver_client_state_equal": false,
+          "full_work_accepted": 7,
+          "full_work_failed": 1318,
+          "budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "remaining_paid_credit_ns": 1999075155,
+          "actor_reports_complete": true,
+          "observer_complete": true,
+          "host_controller_passed": true,
+          "host_failure": null,
+          "host_cleanup": "already-collected",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "host_outside_counters": {
+            "cgroup.events": "populated 0\nfrozen 0",
+            "cpu.stat": "usage_usec 77955991\nuser_usec 37928393\nsystem_usec 40027598\nnice_usec 37744000\ncore_sched.force_idle_usec 0\nnr_periods 3180\nnr_throttled 3093\nthrottled_usec 650058162\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "140447744",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "0"
+          },
+          "phase_process_context": {
+            "attackers_launched_by_external_controller": true,
+            "controller_cgroup": "/system.slice/trnm-native-campaign-41732370139-1.service",
+            "host_after": {
+              "cpu_nr_periods": 3176,
+              "cpu_nr_throttled": 3089,
+              "cpu_throttled_usec": 649855239,
+              "cpu_usage_usec": 77864230,
+              "memory_current_bytes": 292409344,
+              "pids_current": 3
+            },
+            "host_before": {
+              "cpu_nr_periods": 2830,
+              "cpu_nr_throttled": 2744,
+              "cpu_throttled_usec": 560752519,
+              "cpu_usage_usec": 69216819,
+              "memory_current_bytes": 142245888,
+              "pids_current": 3
+            },
+            "independent_administration": false,
+            "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41732370139-1-original-campaign-5256.service",
+            "phase_pid": 5261,
+            "runtime_business_deadline_changed": false,
+            "same_original_receiver_and_verifier_owners": true,
+            "scalar_policy_changed": false,
+            "schema": "fixed-public-phase-external-actors-v1",
+            "wan_qualified": false
+          }
+        }
+      ]
+    }
+  ],
+  "native_invocations": 3,
+  "unique_named_selectors": 1,
+  "failed_invocations": 3,
+  "actual_phase_count": 9,
+  "all_nine_host_resource_receipts_pass": true,
+  "original_campaign_acceptance_pass": false,
+  "newer_source_qualified": false,
+  "scope": "Exact b4bdf head, original AuthV1 release 3x3 campaigns. Host readiness success does not imply service, confirmation or depletion success. Preserve fixed confirmation denominator 3 per phase. Compact report excludes copied nested client observations only; all original reports remain complete in lossless bundle.",
+  "original_records": {
+    "file": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/original-three-campaign-selected-records.json.gz",
+    "bytes": 6035838,
+    "sha256": "c12419f067220378b1e285fbe49e27bc5387c47c4df1ae4c8449c0b87e67056e",
+    "record_count": 94
+  },
+  "reader": {
+    "file": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/check-original-campaign.py",
+    "sha256": "b9e6f819f18377fc93bfd72ded67acf3fe962261e5db09ad403b5012e6358e2d",
+    "executes_native_code": false
+  },
+  "expanded_readback": {
+    "file": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/original-three-campaign-terminal-readback.json",
+    "bytes": 1562786,
+    "sha256": "73e40cc7c0c67091e4431d135ba1068a32440cbd7168fe983f8e1c2ca713f0d9"
+  }
+}

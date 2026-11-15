@@ -1,0 +1,14 @@
+
+running 3 tests
+test store::object_delta_tests::object_delta_sqlite_full_after_partial_writes_rolls_back_exactly_v1 ... ok
+test tests::sqlite_sidecar_inspection_error_refuses_before_database_creation ... FAILED
+test tests::sqlite_sidecar_objects_refuse_creation_and_reopen_without_file_effects ... FAILED
+
+failures:
+
+failures:
+    tests::sqlite_sidecar_inspection_error_refuses_before_database_creation
+    tests::sqlite_sidecar_objects_refuse_creation_and_reopen_without_file_effects
+
+test result: FAILED. 1 passed; 2 failed; 0 ignored; 0 measured; 161 filtered out; finished in 0.06s
+

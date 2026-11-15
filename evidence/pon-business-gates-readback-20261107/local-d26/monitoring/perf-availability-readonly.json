@@ -1,0 +1,89 @@
+{
+  "schema": "readonly-perf-availability-v1",
+  "observed_unix": 1794065854.3393815,
+  "perf_path": "/usr/bin/perf",
+  "kernel_release": "7.0.0-38-generic",
+  "architecture": "x86_64",
+  "effective_uid": 1000,
+  "system_settings_changed": false,
+  "perf_event_collection_attempted": false,
+  "native_test_rerun": false,
+  "qualification": false,
+  "perf_event_paranoid": "4",
+  "kptr_restrict": "1",
+  "perf_event_max_sample_rate": "24000",
+  "process_capability_status": [
+    "CapInh:\t0000000000000000",
+    "CapPrm:\t0000000000000000",
+    "CapEff:\t0000000000000000",
+    "CapBnd:\t000001ffffffffff",
+    "CapAmb:\t0000000000000000",
+    "NoNewPrivs:\t0",
+    "Seccomp:\t0"
+  ],
+  "version_probe": {
+    "argv": [
+      "/usr/bin/perf",
+      "--version"
+    ],
+    "exit_code": 0,
+    "stdout": "perf version 7.0.14\n",
+    "stderr": ""
+  },
+  "permission_assessment_scope": "read-only settings/capabilities and version only; actual perf_event_open authorization not probed",
+  "selected_native_test_progress": [
+    {
+      "test": "store::legacy_admission_readback::tests::legacy_pair_cancellation_at_every_commit_callback_rolls_back_all_rows",
+      "observed_status": "ok",
+      "section_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+    },
+    {
+      "test": "store::legacy_admission_readback::tests::legacy_pair_child_snapshot_and_active_parent_keep_distinct_sql_sources",
+      "observed_status": "ok",
+      "section_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+    },
+    {
+      "test": "store::legacy_admission_readback::tests::legacy_pair_ineligible_schema_keeps_original_reads_and_refuses_bad_delta_writes",
+      "observed_status": "ok",
+      "section_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+    },
+    {
+      "test": "store::legacy_admission_readback::tests::legacy_pair_matches_full_replays_snapshot_cadence_and_cold_publication",
+      "observed_status": "ok",
+      "section_sha256": "78f01f5dd9ab0944ab8116a216514e8e855bca17c0ec5b70c426900d5c5e600b"
+    },
+    {
+      "test": "store::legacy_admission_readback::tests::legacy_pair_rejects_writes_ddl_and_transaction_aba_through_last_callback",
+      "observed_status": "ok",
+      "section_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+    },
+    {
+      "test": "store::legacy_admission_readback::tests::legacy_pair_rereads_snapshot_and_every_intermediate_delta_after_warm_use",
+      "observed_status": "ok",
+      "section_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+    },
+    {
+      "test": "store::legacy_admission_readback::tests::legacy_pair_selection_excludes_authenticated_and_growth_state_relations",
+      "observed_status": "ok",
+      "section_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+    },
+    {
+      "test": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+      "observed_status": "ok",
+      "section_sha256": "2f1e3d13725e9e2caf91fdc8a996c8bf04992c3f8f930ff3d3222e578d58a3da"
+    },
+    {
+      "test": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics",
+      "observed_status": "ok",
+      "section_sha256": "e6951fa3b9032d68c05f3249655c40bddbce623a84a5ec068b8e687e41bdc6ba"
+    },
+    {
+      "test": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart",
+      "observed_status": "FAILED",
+      "section_sha256": "29f934440187dac896a0645a716c177e82d2f1e7d5085530665e2381da5c15d6"
+    }
+  ],
+  "last_announced_test": "store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen",
+  "original_job_deadline_unix": 1794074775.28,
+  "remaining_original_seconds": 8920.940618515015
+}

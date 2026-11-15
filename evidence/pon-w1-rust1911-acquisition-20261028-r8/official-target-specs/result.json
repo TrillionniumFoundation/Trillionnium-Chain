@@ -1,0 +1,48 @@
+{
+  "schema": "TRNM-RISC0-OFFICIAL-TARGET-SOURCE-READ1",
+  "status": "READ_PUBLIC_TARGET_SOURCES",
+  "error": null,
+  "records": [
+    {
+      "path": "1.88.0-tag.json",
+      "url": "https://api.github.com/repos/risc0/rust/git/ref/tags/r0.1.88.0",
+      "final_url": "https://api.github.com/repos/risc0/rust/git/ref/tags/r0.1.88.0",
+      "http_status": 200,
+      "bytes": 331,
+      "sha256": "9363c8620f26b5f53eaf480e48a685bc9597413fb765720a7753119b0e4458f6"
+    },
+    {
+      "path": "1.88.0-riscv32im-risc0-zkvm-elf.rs",
+      "url": "https://raw.githubusercontent.com/risc0/rust/de85b1d3d7f48a865174798819d943994ed23a37/compiler/rustc_target/src/spec/targets/riscv32im_risc0_zkvm_elf.rs",
+      "final_url": "https://raw.githubusercontent.com/risc0/rust/de85b1d3d7f48a865174798819d943994ed23a37/compiler/rustc_target/src/spec/targets/riscv32im_risc0_zkvm_elf.rs",
+      "http_status": 200,
+      "bytes": 1547,
+      "sha256": "26a5cdf1813f117cec590d529f537e916f0a39e921b872e5dd0e8c53ed8bda8e"
+    },
+    {
+      "path": "1.91.1-tag.json",
+      "url": "https://api.github.com/repos/risc0/rust/git/ref/tags/r0.1.91.1",
+      "final_url": "https://api.github.com/repos/risc0/rust/git/ref/tags/r0.1.91.1",
+      "http_status": 200,
+      "bytes": 331,
+      "sha256": "fdd48fa98cbd35d4186e35cfdeae6e6c81419384bde171a3e599b27240bc84ba"
+    },
+    {
+      "path": "1.91.1-riscv32im-risc0-zkvm-elf.rs",
+      "url": "https://raw.githubusercontent.com/risc0/rust/30e2186d00badadc7c66ee5e72a38d0b767491b9/compiler/rustc_target/src/spec/targets/riscv32im_risc0_zkvm_elf.rs",
+      "final_url": "https://raw.githubusercontent.com/risc0/rust/30e2186d00badadc7c66ee5e72a38d0b767491b9/compiler/rustc_target/src/spec/targets/riscv32im_risc0_zkvm_elf.rs",
+      "http_status": 200,
+      "bytes": 1547,
+      "sha256": "26a5cdf1813f117cec590d529f537e916f0a39e921b872e5dd0e8c53ed8bda8e"
+    }
+  ],
+  "total_bytes": 3756,
+  "max_response_bytes": 131072,
+  "max_total_bytes": 786432,
+  "wall_seconds": 0.9000484029966174,
+  "process_cpu_seconds": 0.013445000000000006,
+  "source_sha256": "ee578b3c82eaa1820cc3ff3c654799533eef34dcd1b1c51c7755330a4a82abdd",
+  "compiler_downloaded": false,
+  "source_executed": false,
+  "compiler_installed_or_executed": false
+}

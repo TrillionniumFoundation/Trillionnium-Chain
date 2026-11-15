@@ -1,0 +1,713 @@
+{
+  "network_capacity_qualified": false,
+  "original_gate_validated": false,
+  "original_gate_validation_error": "CONFIRMATION_TARGET",
+  "phases": [
+    {
+      "business": {
+        "business_start_delay_ns": 217759,
+        "business_started_before_original_window_end": true,
+        "independent_confirmed_transactions_per_window_second": 0.0,
+        "lower_bound_reaches_original_window_end": false,
+        "observed_success_latency_ns": null,
+        "original_window_remaining_at_business_start_ns": 3999782241,
+        "pre_business_window_overrun_ns": 0,
+        "reported_finite_business_target_met": false,
+        "reported_independently_confirmed_in_window": 0,
+        "required_signed_transactions": 1,
+        "successful_latency": {
+          "max_ns": null,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": null,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": null,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 0
+        },
+        "unconfirmed": 1,
+        "unconfirmed_latency_lower_bound_ns": 3981335005,
+        "unknown": 0
+      },
+      "head_response": {
+        "attempts": 79,
+        "calling_thread_cpu": {
+          "max_ns": 1752139,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 408619,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": 602958,
+          "p95_ns": 1065273,
+          "p99_ns": null,
+          "samples": 79
+        },
+        "failed_or_late": 0,
+        "failed_or_late_terminal_duration": {
+          "max_ns": null,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": null,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": null,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 0
+        },
+        "successful_in_original_window": 79,
+        "successful_latency": {
+          "max_ns": 14632626,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 9359082,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": 10529321,
+          "p95_ns": 12824032,
+          "p99_ns": null,
+          "samples": 79
+        }
+      },
+      "history_response": {
+        "attempts": 16,
+        "calling_thread_cpu": {
+          "max_ns": 1144424,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 658169,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": 848503,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 16
+        },
+        "failed_or_late": 0,
+        "failed_or_late_terminal_duration": {
+          "max_ns": null,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": null,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": null,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 0
+        },
+        "successful_in_original_window": 16,
+        "successful_latency": {
+          "max_ns": 15001689,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 10714961,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": 13532088,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 16
+        }
+      },
+      "independent_page_replay": {
+        "accepted_in_original_window": 0,
+        "accepted_wall": {
+          "max_ns": null,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": null,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": null,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 0
+        },
+        "attempts": 16,
+        "calling_thread_cpu": {
+          "max_ns": 108232,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 31346,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": 35903,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 16
+        },
+        "cpu_scope": "caller thread only; excludes separately owned worker CPU",
+        "failed_or_late": 16,
+        "failed_or_late_wall": {
+          "max_ns": 108354,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 31417,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": 36135,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 16
+        },
+        "known_calling_thread_cpu_sum_ns": 696236,
+        "native_stage_scope": "optional local snapshots; old absence remains unknown; Host/native/packet intervals are nested, not added to replay CPU",
+        "native_stage_snapshots_missing": 0,
+        "native_stage_snapshots_retained": 16
+      },
+      "mode": "attack-free-baseline",
+      "service_totals": {
+        "abandoned_tasks": 0,
+        "accepted_connections": 102,
+        "body_bytes_received": 697354,
+        "capacity_refusals": 0,
+        "challenge_budget_refusals": 0,
+        "cleanup_scans": 193,
+        "completed_pool_status": 0,
+        "completed_pool_submit": 0,
+        "completed_read": 95,
+        "completed_submit": 7,
+        "connections_closed_on_shutdown": 0,
+        "delivered_response_frames": 102,
+        "disconnected_await_requests": 0,
+        "disconnected_before_enqueue": 0,
+        "enqueued_after_backpressure": 0,
+        "executor_refusals": 0,
+        "expired_connections": 0,
+        "expired_phase_counts": {},
+        "issued_challenges": 102,
+        "lane_capacity_refusals": 0,
+        "mutating_grants_after_shutdown": 0,
+        "mutation_body_decode_cpu_ns": 2027260,
+        "mutation_cpu_charged_ns": 50970164,
+        "mutation_cpu_clock_failures": 0,
+        "mutation_cpu_credit_ns_after_shutdown": 1986326224,
+        "mutation_cpu_debt_ns_after_shutdown": 0,
+        "mutation_cpu_in_flight_after_shutdown": 0,
+        "mutation_cpu_refusals": 0,
+        "mutation_cpu_reservations": 7,
+        "mutation_cpu_unavailable_after_shutdown": false,
+        "mutation_dispatch_excluding_work_cpu_ns": 44164602,
+        "mutation_full_work_cpu_ns": 6805562,
+        "mutation_response_cpu_ns": 433808,
+        "output_reserved_bytes_after_shutdown": 0,
+        "output_serialization_failures": 0,
+        "paid_body_capacity_refusals": 0,
+        "paid_body_reserved_bytes_after_shutdown": 0,
+        "parse_refusals": 0,
+        "peak_connections": 2,
+        "peak_mutating_grants": 1,
+        "peak_output_reserved_bytes": 8470528,
+        "peak_paid_body_bytes": 298374,
+        "peak_pending_challenge": 2,
+        "peak_pending_enqueue": 1,
+        "peak_pending_grant": 2,
+        "peak_read_grants": 2,
+        "peak_spent": 63,
+        "pending_challenge_closed": 0,
+        "pending_challenge_entered": 102,
+        "pending_challenge_granted": 102,
+        "pending_challenge_wait_ns": 130024915,
+        "pending_grant_closed": 0,
+        "pending_grant_entered": 102,
+        "pending_grant_granted": 102,
+        "pending_grant_wait_ns": 119139346,
+        "pool_submit_failed": 0,
+        "pool_submit_finished": 0,
+        "pool_submit_ns": 0,
+        "pool_submit_started": 0,
+        "pq_authentication_attempts": 0,
+        "pq_authentication_bytes": 0,
+        "pq_authentication_thread_cpu_ns": 0,
+        "pq_authentication_unavailable": false,
+        "preface_refusals": 0,
+        "queue_backpressure_events": 0,
+        "queue_refusals": 0,
+        "queue_wait_ns": 113403474,
+        "read_grants_after_shutdown": 0,
+        "replay_refusals": 0,
+        "response_bytes_written": 1732056,
+        "response_write_failures": 0,
+        "retained_phase_errors": {},
+        "signature_refusals": 0,
+        "spent_capacity_refusals": 0,
+        "spent_reservations": 102,
+        "tasks_dequeued": 102,
+        "tasks_enqueued": 102,
+        "tasks_skipped_before_dispatch": 0,
+        "ticket_refusals": 0,
+        "unknown_caller_durable_rows": 0,
+        "unpaid_pressure_cancel_requests": 0,
+        "unpaid_pressure_connections_closed": 0,
+        "work_failed": 0,
+        "work_finished": 7,
+        "work_ns": 7658344,
+        "work_started": 7
+      },
+      "service_totals_scope": "whole service including shutdown; not per-request p99 or in-window proof/s",
+      "signed_submit_ack": {
+        "acknowledgements_per_window_second": 1.75,
+        "attempts": 7,
+        "calling_thread_cpu": {
+          "max_ns": 1055892,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 799921,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": 953119,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 7
+        },
+        "failed_or_late": 0,
+        "failed_or_late_terminal_duration": {
+          "max_ns": null,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": null,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": null,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 0
+        },
+        "successful_in_original_window": 7,
+        "successful_latency": {
+          "max_ns": 26915301,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 20385273,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": 21329030,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 7
+        }
+      },
+      "verification_errors": [
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "window_ns": 4000000000,
+      "workers": 0
+    },
+    {
+      "business": {
+        "business_start_delay_ns": 20417172,
+        "business_started_before_original_window_end": true,
+        "independent_confirmed_transactions_per_window_second": 0.0,
+        "lower_bound_reaches_original_window_end": true,
+        "observed_success_latency_ns": null,
+        "original_window_remaining_at_business_start_ns": 3979582828,
+        "pre_business_window_overrun_ns": 0,
+        "reported_finite_business_target_met": false,
+        "reported_independently_confirmed_in_window": 0,
+        "required_signed_transactions": 1,
+        "successful_latency": {
+          "max_ns": null,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": null,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": null,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 0
+        },
+        "unconfirmed": 1,
+        "unconfirmed_latency_lower_bound_ns": 3979582828,
+        "unknown": 0
+      },
+      "head_response": {
+        "attempts": 77,
+        "calling_thread_cpu": {
+          "max_ns": 2871197,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 155481,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": 517880,
+          "p95_ns": 1313357,
+          "p99_ns": null,
+          "samples": 77
+        },
+        "failed_or_late": 1,
+        "failed_or_late_terminal_duration": {
+          "max_ns": 11715409,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 11715409,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": null,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 1
+        },
+        "successful_in_original_window": 76,
+        "successful_latency": {
+          "max_ns": 40138177,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 9740078,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": 11542698,
+          "p95_ns": 17375335,
+          "p99_ns": null,
+          "samples": 76
+        }
+      },
+      "history_response": {
+        "attempts": 16,
+        "calling_thread_cpu": {
+          "max_ns": 5789213,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 603339,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": 744508,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 16
+        },
+        "failed_or_late": 0,
+        "failed_or_late_terminal_duration": {
+          "max_ns": null,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": null,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": null,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 0
+        },
+        "successful_in_original_window": 16,
+        "successful_latency": {
+          "max_ns": 21725009,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 12249289,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": 13820840,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 16
+        }
+      },
+      "independent_page_replay": {
+        "accepted_in_original_window": 0,
+        "accepted_wall": {
+          "max_ns": null,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": null,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": null,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 0
+        },
+        "attempts": 16,
+        "calling_thread_cpu": {
+          "max_ns": 56614,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 30706,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": 36114,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 16
+        },
+        "cpu_scope": "caller thread only; excludes separately owned worker CPU",
+        "failed_or_late": 16,
+        "failed_or_late_wall": {
+          "max_ns": 56756,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 30777,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": 36195,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 16
+        },
+        "known_calling_thread_cpu_sum_ns": 607643,
+        "native_stage_scope": "optional local snapshots; old absence remains unknown; Host/native/packet intervals are nested, not added to replay CPU",
+        "native_stage_snapshots_missing": 0,
+        "native_stage_snapshots_retained": 16
+      },
+      "mode": "from-zero-pressure",
+      "service_totals": {
+        "abandoned_tasks": 0,
+        "accepted_connections": 550,
+        "body_bytes_received": 43781020,
+        "capacity_refusals": 0,
+        "challenge_budget_refusals": 0,
+        "cleanup_scans": 193,
+        "completed_pool_status": 0,
+        "completed_pool_submit": 0,
+        "completed_read": 92,
+        "completed_submit": 7,
+        "connections_closed_on_shutdown": 0,
+        "delivered_response_frames": 534,
+        "disconnected_await_requests": 0,
+        "disconnected_before_enqueue": 0,
+        "enqueued_after_backpressure": 4,
+        "executor_refusals": 435,
+        "expired_connections": 0,
+        "expired_phase_counts": {},
+        "issued_challenges": 536,
+        "lane_capacity_refusals": 0,
+        "mutating_grants_after_shutdown": 0,
+        "mutation_body_decode_cpu_ns": 134542161,
+        "mutation_cpu_charged_ns": 856111751,
+        "mutation_cpu_clock_failures": 0,
+        "mutation_cpu_credit_ns_after_shutdown": 1996601510,
+        "mutation_cpu_debt_ns_after_shutdown": 0,
+        "mutation_cpu_in_flight_after_shutdown": 0,
+        "mutation_cpu_refusals": 0,
+        "mutation_cpu_reservations": 442,
+        "mutation_cpu_unavailable_after_shutdown": false,
+        "mutation_dispatch_excluding_work_cpu_ns": 490510845,
+        "mutation_full_work_cpu_ns": 365600906,
+        "mutation_response_cpu_ns": 23702516,
+        "output_reserved_bytes_after_shutdown": 0,
+        "output_serialization_failures": 0,
+        "paid_body_capacity_refusals": 0,
+        "paid_body_reserved_bytes_after_shutdown": 0,
+        "parse_refusals": 1,
+        "peak_connections": 18,
+        "peak_mutating_grants": 8,
+        "peak_output_reserved_bytes": 8470528,
+        "peak_paid_body_bytes": 2378238,
+        "peak_pending_challenge": 17,
+        "peak_pending_enqueue": 4,
+        "peak_pending_grant": 3,
+        "peak_read_grants": 2,
+        "peak_spent": 281,
+        "pending_challenge_closed": 14,
+        "pending_challenge_entered": 550,
+        "pending_challenge_granted": 536,
+        "pending_challenge_wait_ns": 58732511269,
+        "pending_grant_closed": 0,
+        "pending_grant_entered": 535,
+        "pending_grant_granted": 535,
+        "pending_grant_wait_ns": 708865967,
+        "pool_submit_failed": 0,
+        "pool_submit_finished": 0,
+        "pool_submit_ns": 0,
+        "pool_submit_started": 0,
+        "pq_authentication_attempts": 0,
+        "pq_authentication_bytes": 0,
+        "pq_authentication_thread_cpu_ns": 0,
+        "pq_authentication_unavailable": false,
+        "preface_refusals": 14,
+        "queue_backpressure_events": 8,
+        "queue_refusals": 0,
+        "queue_wait_ns": 664189160,
+        "read_grants_after_shutdown": 0,
+        "replay_refusals": 0,
+        "response_bytes_written": 2070936,
+        "response_write_failures": 0,
+        "retained_phase_errors": {
+          "body": 1,
+          "hello": 14,
+          "solution": 1
+        },
+        "signature_refusals": 0,
+        "spent_capacity_refusals": 0,
+        "spent_reservations": 535,
+        "tasks_dequeued": 534,
+        "tasks_enqueued": 534,
+        "tasks_skipped_before_dispatch": 0,
+        "ticket_refusals": 0,
+        "unknown_caller_durable_rows": 0,
+        "unpaid_pressure_cancel_requests": 0,
+        "unpaid_pressure_connections_closed": 0,
+        "work_failed": 435,
+        "work_finished": 442,
+        "work_ns": 375959096,
+        "work_started": 442
+      },
+      "service_totals_scope": "whole service including shutdown; not per-request p99 or in-window proof/s",
+      "signed_submit_ack": {
+        "acknowledgements_per_window_second": 1.75,
+        "attempts": 7,
+        "calling_thread_cpu": {
+          "max_ns": 1146916,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 704659,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": 872469,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 7
+        },
+        "failed_or_late": 0,
+        "failed_or_late_terminal_duration": {
+          "max_ns": null,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": null,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": null,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 0
+        },
+        "successful_in_original_window": 7,
+        "successful_latency": {
+          "max_ns": 162094964,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 37455783,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": 155770632,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 7
+        }
+      },
+      "verification_errors": [
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT",
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "window_ns": 4000000000,
+      "workers": 16
+    }
+  ],
+  "production_activation": false,
+  "schema": "trnm-original-confirmation-observation-v1",
+  "scope": "same original finite offer, 1 signed transaction per 4s phase; not saturated chain TPS; reported native observations only, no independent proof/state oracle",
+  "sha256": "a8dfce1f27c3f164131aae98ba001e7bf466693f78075e84738419a0c75d5f5c",
+  "simulated_control": false,
+  "tail_latency_qualified": false
+}

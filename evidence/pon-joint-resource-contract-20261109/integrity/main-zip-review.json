@@ -1,0 +1,119 @@
+{
+  "actions": {
+    "archives_modified": false,
+    "artifact_members_executed": false,
+    "credential_values_output": false,
+    "members_extracted_to_disk": false,
+    "scan_scope_expanded": false,
+    "source_modified": false
+  },
+  "all_archive_and_member_integrity_checks_pass": true,
+  "archives": [
+    {
+      "all_member_sha256_recorded": true,
+      "all_member_size_and_crc_checks_pass": true,
+      "archive": "original-campaign-42553751914.zip",
+      "binary_members_ascii_pattern_scanned": 22,
+      "binary_members_hashed": 22,
+      "bytes": 76217297,
+      "download_receipt": "original-campaign-42553751914.zip.download.json",
+      "download_receipt_sha256": "45cc39959f351e3c0afed9b7b71923f3fffe375c7e783c9bdd21c0103b2a8e8f",
+      "duplicate_member_paths": [],
+      "errors": [],
+      "member_inventory": {
+        "bytes": 931292,
+        "path": "original-campaign-42553751914-files.json",
+        "sha256": "535178d0f3d33321cdc5458804ca14a70ab61aaf0b99e93ebcef1471bfd52084"
+      },
+      "non_directory_members": 1766,
+      "nonregular_members": [],
+      "outer_bytes_and_sha256_match_download_receipt": true,
+      "outer_identity_unchanged_after_review": true,
+      "sha256": "4568b72cd9ab324e7d63eda766785efb61c754810267529ca3af82863064abed",
+      "text_bytes_scanned": 494486780,
+      "text_members_scanned": 1744,
+      "uncompressed_bytes": 582864636,
+      "unsafe_member_paths": []
+    },
+    {
+      "all_member_sha256_recorded": true,
+      "all_member_size_and_crc_checks_pass": true,
+      "archive": "worktime-head-42553751985.zip",
+      "binary_members_ascii_pattern_scanned": 0,
+      "binary_members_hashed": 0,
+      "bytes": 1812700,
+      "download_receipt": "worktime-head-42553751985.zip.download.json",
+      "download_receipt_sha256": "8606ed6c8be906097baca453adb8df84cde1f6a85bec69815ba735e3c9b10361",
+      "duplicate_member_paths": [],
+      "errors": [],
+      "member_inventory": {
+        "bytes": 10446,
+        "path": "worktime-head-42553751985-files.json",
+        "sha256": "bde8f1cfc8f11eb6d2382a1727719715a341dc7c267abb856ab5f38d8f12ef00"
+      },
+      "non_directory_members": 19,
+      "nonregular_members": [],
+      "outer_bytes_and_sha256_match_download_receipt": true,
+      "outer_identity_unchanged_after_review": true,
+      "sha256": "738c55807bd4e26b9b7f635d7fffbfbcb9240440856c992127c0e9ca2df51f81",
+      "text_bytes_scanned": 4994276,
+      "text_members_scanned": 19,
+      "uncompressed_bytes": 4994276,
+      "unsafe_member_paths": []
+    },
+    {
+      "all_member_sha256_recorded": true,
+      "all_member_size_and_crc_checks_pass": true,
+      "archive": "worktime-merge-42553751985.zip",
+      "binary_members_ascii_pattern_scanned": 0,
+      "binary_members_hashed": 0,
+      "bytes": 1812824,
+      "download_receipt": "worktime-merge-42553751985.zip.download.json",
+      "download_receipt_sha256": "346ff790745a4ed50e74a2df1bddab9780c731d24fac52ea37d2560a3488e489",
+      "duplicate_member_paths": [],
+      "errors": [],
+      "member_inventory": {
+        "bytes": 10447,
+        "path": "worktime-merge-42553751985-files.json",
+        "sha256": "d04d8225d1975604acfe515f096529b43455205458c6af7ea944aa2293cbe032"
+      },
+      "non_directory_members": 19,
+      "nonregular_members": [],
+      "outer_bytes_and_sha256_match_download_receipt": true,
+      "outer_identity_unchanged_after_review": true,
+      "sha256": "5ac4c7720c6a2eb2786c8a2257d62cb19e5fc3131032bcf39d84d7c9567e1379",
+      "text_bytes_scanned": 4994410,
+      "text_members_scanned": 19,
+      "uncompressed_bytes": 4994410,
+      "unsafe_member_paths": []
+    }
+  ],
+  "binary_ascii_pattern_review": {
+    "bytes": 7737,
+    "members": 22,
+    "path": "binary-ascii-pattern-supplement.json",
+    "pattern_findings": 0,
+    "scanned_member_bytes": 88377856,
+    "sha256": "c4eab2ccd4270d751180fb1881ab3465b580098c0b5bf3f2a9b47ade2a50d1bb"
+  },
+  "checks": [
+    "Outer ZIP bytes/SHA-256 against its .download.json",
+    "Every non-directory member path, expected and observed bytes, SHA-256 and CRC32",
+    "Obvious prefixed GitHub tokens, Authorization Basic/Bearer/Token values and private-key PEM markers in text members, plus the same ASCII patterns in binary members."
+  ],
+  "completed_utc": "2026-11-09T03:51:59.165021+00:00",
+  "desktop_selected_extraction_denominator_used": false,
+  "findings": [],
+  "limitations": "Bounded recognizable credential-pattern scan across every member; no claim of absence of arbitrary secret formats or decoded binary key material. W1 proof/packet bytes and generic hexadecimal strings are not treated as credentials.",
+  "original_campaign_full_zip_denominator": 1766,
+  "recorded_utc": "2026-11-09T03:48:50.147580+00:00",
+  "result": "NO_OBVIOUS_UNREDACTED_CREDENTIAL_PATTERN_FOUND_IN_SCANNED_MEMBERS",
+  "schema": "pon-joint-complete-main-zip-independent-review-v1",
+  "scope": "Exactly the three complete retained ZIPs listed below; all non-directory members streamed. No selected-extraction count substituted for original ZIP membership.",
+  "total_members_credential_pattern_scanned": 1804,
+  "total_non_directory_members": 1804,
+  "total_text_bytes_scanned": 504475466,
+  "total_text_members_scanned": 1782,
+  "total_uncompressed_bytes": 592853322,
+  "unresolved_credential_findings": []
+}

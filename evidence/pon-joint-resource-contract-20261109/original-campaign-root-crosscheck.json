@@ -1,0 +1,286 @@
+{
+  "schema": "pon-root-original-campaign-crosscheck-v1",
+  "archive_bytes": 76217297,
+  "archive_sha256": "4568b72cd9ab324e7d63eda766785efb61c754810267529ca3af82863064abed",
+  "source": "11791e2da79b69322271be2cffe03725165151d1",
+  "tree": "162552848110fda532504b78865a16930bc6d9bb",
+  "build_returncode": 0,
+  "complete_campaigns": 0,
+  "actual_campaigns": 3,
+  "planned_campaigns": 3,
+  "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+  "all_reports_valid": true,
+  "finalization_failures": [],
+  "measured_public_phase_placement": {
+    "attacker_processes_remain_in_original_controller_domain": true,
+    "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+    "original_3x3_workload_and_depletion_predicates_changed": false,
+    "profile": "fixed-public-phase-external-actors-v1",
+    "receiver_and_verifier_cpu_max": "25000 100000",
+    "receiver_and_verifier_memory_max": "2147483648"
+  },
+  "controller_resources": {
+    "cpu_max": "400000 100000",
+    "memory_max": "17179869184",
+    "nice": 10
+  },
+  "binary": {
+    "actual_compiler_artifact_profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "build_artifact": "/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-f2ec8cfbb025f448",
+    "build_separate_from_measured_campaign": true,
+    "bytes": 12601856,
+    "execution": "original cargo test command using the checked build artifact",
+    "retained": "public_v3_multiprocess.bin",
+    "sha256_after": "f9cd85c7b053746cea0610aa184bd4993def306bd6bb8aeb875583c803dfa619",
+    "sha256_before": "f9cd85c7b053746cea0610aa184bd4993def306bd6bb8aeb875583c803dfa619"
+  },
+  "phases": [
+    {
+      "run": 1,
+      "mode": "baseline",
+      "phase_readback_member": "run-1-phase-readback.json",
+      "phase_readback_sha256": "56e4fec157dc464e2a2a301c4b75e1b51791851a79019bc4fbe5862fa2f9cc17",
+      "window_seconds": 30,
+      "attackers_requested": 0,
+      "attackers_ready": 0,
+      "scheduled_confirmation_rounds": 3,
+      "observed_confirmation_rounds": 2,
+      "confirmed_rounds": 1,
+      "unobserved_scheduled_rounds": 1,
+      "submission_attempts": 14,
+      "submission_acks_on_time": 14,
+      "submission_acks_after_window": 0,
+      "native_phase_criteria_met": false,
+      "genuine_budget_depletion_observed": false,
+      "receiver_client_state_equal": false,
+      "native_verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "observed_import_outcomes": {
+        "accepted": 9,
+        "rejected": 1
+      }
+    },
+    {
+      "run": 1,
+      "mode": "from-zero",
+      "phase_readback_member": "run-1-phase-readback.json",
+      "phase_readback_sha256": "56e4fec157dc464e2a2a301c4b75e1b51791851a79019bc4fbe5862fa2f9cc17",
+      "window_seconds": 30,
+      "attackers_requested": 24,
+      "attackers_ready": 24,
+      "scheduled_confirmation_rounds": 3,
+      "observed_confirmation_rounds": 1,
+      "confirmed_rounds": 0,
+      "unobserved_scheduled_rounds": 2,
+      "submission_attempts": 7,
+      "submission_acks_on_time": 7,
+      "submission_acks_after_window": 0,
+      "native_phase_criteria_met": false,
+      "genuine_budget_depletion_observed": false,
+      "receiver_client_state_equal": false,
+      "native_verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "observed_import_outcomes": {
+        "accepted": 5,
+        "rejected": 1
+      }
+    },
+    {
+      "run": 1,
+      "mode": "late-product",
+      "phase_readback_member": "run-1-phase-readback.json",
+      "phase_readback_sha256": "56e4fec157dc464e2a2a301c4b75e1b51791851a79019bc4fbe5862fa2f9cc17",
+      "window_seconds": 30,
+      "attackers_requested": 24,
+      "attackers_ready": 24,
+      "scheduled_confirmation_rounds": 3,
+      "observed_confirmation_rounds": 1,
+      "confirmed_rounds": 0,
+      "unobserved_scheduled_rounds": 2,
+      "submission_attempts": 7,
+      "submission_acks_on_time": 7,
+      "submission_acks_after_window": 0,
+      "native_phase_criteria_met": false,
+      "genuine_budget_depletion_observed": false,
+      "receiver_client_state_equal": false,
+      "native_verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "observed_import_outcomes": {
+        "accepted": 5,
+        "rejected": 1
+      }
+    },
+    {
+      "run": 2,
+      "mode": "baseline",
+      "phase_readback_member": "run-2-phase-readback.json",
+      "phase_readback_sha256": "ae5b5064dd1d9cdd868041033c02ac51a04dbccb13401a15515d65a4bdaa052d",
+      "window_seconds": 30,
+      "attackers_requested": 0,
+      "attackers_ready": 0,
+      "scheduled_confirmation_rounds": 3,
+      "observed_confirmation_rounds": 2,
+      "confirmed_rounds": 1,
+      "unobserved_scheduled_rounds": 1,
+      "submission_attempts": 14,
+      "submission_acks_on_time": 14,
+      "submission_acks_after_window": 0,
+      "native_phase_criteria_met": false,
+      "genuine_budget_depletion_observed": false,
+      "receiver_client_state_equal": false,
+      "native_verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "observed_import_outcomes": {
+        "accepted": 9,
+        "rejected": 1
+      }
+    },
+    {
+      "run": 2,
+      "mode": "from-zero",
+      "phase_readback_member": "run-2-phase-readback.json",
+      "phase_readback_sha256": "ae5b5064dd1d9cdd868041033c02ac51a04dbccb13401a15515d65a4bdaa052d",
+      "window_seconds": 30,
+      "attackers_requested": 24,
+      "attackers_ready": 24,
+      "scheduled_confirmation_rounds": 3,
+      "observed_confirmation_rounds": 1,
+      "confirmed_rounds": 0,
+      "unobserved_scheduled_rounds": 2,
+      "submission_attempts": 7,
+      "submission_acks_on_time": 7,
+      "submission_acks_after_window": 0,
+      "native_phase_criteria_met": false,
+      "genuine_budget_depletion_observed": false,
+      "receiver_client_state_equal": false,
+      "native_verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "observed_import_outcomes": {
+        "accepted": 5,
+        "rejected": 1
+      }
+    },
+    {
+      "run": 2,
+      "mode": "late-product",
+      "phase_readback_member": "run-2-phase-readback.json",
+      "phase_readback_sha256": "ae5b5064dd1d9cdd868041033c02ac51a04dbccb13401a15515d65a4bdaa052d",
+      "window_seconds": 30,
+      "attackers_requested": 24,
+      "attackers_ready": 24,
+      "scheduled_confirmation_rounds": 3,
+      "observed_confirmation_rounds": 1,
+      "confirmed_rounds": 0,
+      "unobserved_scheduled_rounds": 2,
+      "submission_attempts": 7,
+      "submission_acks_on_time": 7,
+      "submission_acks_after_window": 0,
+      "native_phase_criteria_met": false,
+      "genuine_budget_depletion_observed": false,
+      "receiver_client_state_equal": false,
+      "native_verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "observed_import_outcomes": {
+        "accepted": 5,
+        "rejected": 1
+      }
+    },
+    {
+      "run": 3,
+      "mode": "baseline",
+      "phase_readback_member": "run-3-phase-readback.json",
+      "phase_readback_sha256": "f62c1211f325e3a3e031cee0653b592b4061cf6be99c51d495c3eeb65efe8f96",
+      "window_seconds": 30,
+      "attackers_requested": 0,
+      "attackers_ready": 0,
+      "scheduled_confirmation_rounds": 3,
+      "observed_confirmation_rounds": 2,
+      "confirmed_rounds": 1,
+      "unobserved_scheduled_rounds": 1,
+      "submission_attempts": 14,
+      "submission_acks_on_time": 14,
+      "submission_acks_after_window": 0,
+      "native_phase_criteria_met": false,
+      "genuine_budget_depletion_observed": false,
+      "receiver_client_state_equal": false,
+      "native_verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "observed_import_outcomes": {
+        "accepted": 8,
+        "rejected": 1
+      }
+    },
+    {
+      "run": 3,
+      "mode": "from-zero",
+      "phase_readback_member": "run-3-phase-readback.json",
+      "phase_readback_sha256": "f62c1211f325e3a3e031cee0653b592b4061cf6be99c51d495c3eeb65efe8f96",
+      "window_seconds": 30,
+      "attackers_requested": 24,
+      "attackers_ready": 24,
+      "scheduled_confirmation_rounds": 3,
+      "observed_confirmation_rounds": 1,
+      "confirmed_rounds": 0,
+      "unobserved_scheduled_rounds": 2,
+      "submission_attempts": 7,
+      "submission_acks_on_time": 7,
+      "submission_acks_after_window": 0,
+      "native_phase_criteria_met": false,
+      "genuine_budget_depletion_observed": false,
+      "receiver_client_state_equal": false,
+      "native_verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "observed_import_outcomes": {
+        "accepted": 5,
+        "rejected": 1
+      }
+    },
+    {
+      "run": 3,
+      "mode": "late-product",
+      "phase_readback_member": "run-3-phase-readback.json",
+      "phase_readback_sha256": "f62c1211f325e3a3e031cee0653b592b4061cf6be99c51d495c3eeb65efe8f96",
+      "window_seconds": 30,
+      "attackers_requested": 24,
+      "attackers_ready": 24,
+      "scheduled_confirmation_rounds": 3,
+      "observed_confirmation_rounds": 1,
+      "confirmed_rounds": 0,
+      "unobserved_scheduled_rounds": 2,
+      "submission_attempts": 7,
+      "submission_acks_on_time": 7,
+      "submission_acks_after_window": 0,
+      "native_phase_criteria_met": false,
+      "genuine_budget_depletion_observed": false,
+      "receiver_client_state_equal": false,
+      "native_verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "observed_import_outcomes": {
+        "accepted": 5,
+        "rejected": 1
+      }
+    }
+  ],
+  "totals": {
+    "scheduled_confirmation_rounds": 27,
+    "observed_confirmation_rounds": 12,
+    "confirmed_rounds": 3,
+    "unobserved_scheduled_rounds": 15
+  },
+  "scope": "Read-only arithmetic over retained original reports. Does not replace the original acceptance validator, reproduce a campaign, authenticate a device or assign zero cost to unobserved rounds."
+}

@@ -1,0 +1,358 @@
+{
+  "pin": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+  "base": "adebe0bd78e6e1bdb55a599179ffe2313997170e",
+  "files": [
+    {
+      "path": "formal/pon-nakamoto-v1/WORK_SCALE_SECURITY_CONTRACT_V1.md",
+      "bytes": 27428,
+      "sha256": "29c128cf14ea9b85da419f3885f505f8c417a6a3ca34b058ee061fd620439201",
+      "runtime_equal_to_688_base": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/formal/pon-nakamoto-v1/WORK_SCALE_SECURITY_CONTRACT_V1.md",
+      "git_blob_sha": "39f7256e3b74e69cdf4fd2b8e032395df124b0ac",
+      "integration_blob_sha": null
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_scale_contract.py",
+      "bytes": 19623,
+      "sha256": "0b51443181541cd6319b7f5dbbd6de6a61a986f49e8cf309b04791e56ce75068",
+      "runtime_equal_to_688_base": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/formal/pon-nakamoto-v1/work_scale_contract.py",
+      "git_blob_sha": "670c1e50b2c1167c933d045937efa73349628b47",
+      "integration_blob_sha": null
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/CONSENSUS.md",
+      "bytes": 9306,
+      "sha256": "44b2c5c395d6c73803bc59931d1e8d69a211138424dd5bb578b6cac007dc03f2",
+      "runtime_equal_to_688_base": true,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/docs/protocol/pon-nakamoto-v1/CONSENSUS.md",
+      "git_blob_sha": "f67905813b819ba19a97dcacb357aac97b8c9318",
+      "integration_blob_sha": "f67905813b819ba19a97dcacb357aac97b8c9318"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/WORK_PROFILE.md",
+      "bytes": 22065,
+      "sha256": "15807ea892ba388799d5a9b8c2eccea97e9390e4ca67af74e6c470073d57abba",
+      "runtime_equal_to_688_base": true,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/docs/protocol/pon-nakamoto-v1/details/WORK_PROFILE.md",
+      "git_blob_sha": "288e7ef3fe2ac8edc0280703c76660b16ce3ad48",
+      "integration_blob_sha": "288e7ef3fe2ac8edc0280703c76660b16ce3ad48"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md",
+      "bytes": 30704,
+      "sha256": "084fdda6dd2c789e4d51d520b2a3bc18076e32a0d0be8a833843de4f3ff72f9f",
+      "runtime_equal_to_688_base": true,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md",
+      "git_blob_sha": "411242a4a73dab0bdc0453ac864e04ec3821940c",
+      "integration_blob_sha": "411242a4a73dab0bdc0453ac864e04ec3821940c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "bytes": 104121,
+      "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "runtime_equal_to_688_base": true,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "git_blob_sha": "ce1608248d2ee67ed8f5d82a2c5f15942689139b",
+      "integration_blob_sha": "ce1608248d2ee67ed8f5d82a2c5f15942689139b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "bytes": 32354,
+      "sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd",
+      "runtime_equal_to_688_base": true,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "git_blob_sha": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+      "integration_blob_sha": "9333ce92c6ba130dd182538bfd8f69ec289acc83"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "bytes": 20098,
+      "sha256": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62",
+      "runtime_equal_to_688_base": true,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "git_blob_sha": "989ac5f08b8e4f707cda613617fd5245eb6a6463",
+      "integration_blob_sha": "989ac5f08b8e4f707cda613617fd5245eb6a6463"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 366948,
+      "sha256": "8e65b358f83e7be4863879dd719fd7bf17af7ff78dae60e7b8ebb30c64605541",
+      "runtime_equal_to_688_base": true,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "git_blob_sha": "5f6f16ddabde5d7fa67d0c993e9d508e804ef3b7",
+      "integration_blob_sha": "5f6f16ddabde5d7fa67d0c993e9d508e804ef3b7"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/mining.rs",
+      "bytes": 42706,
+      "sha256": "a11fb5266e2a8f76403b7de0fe90adae28014e2b2a57c763893ff42bda2c4a28",
+      "runtime_equal_to_688_base": true,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/trillionnium/crates/trnm-pon-node/src/mining.rs",
+      "git_blob_sha": "4615e6b0c7fa5d088266a378400fa459e9d09c19",
+      "integration_blob_sha": "4615e6b0c7fa5d088266a378400fa459e9d09c19"
+    },
+    {
+      "path": "config/pon/devnet-v1.json",
+      "bytes": 1964,
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "runtime_equal_to_688_base": true,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/config/pon/devnet-v1.json",
+      "git_blob_sha": "a60f403b2f0e7343aed61170ca2aef875a787790",
+      "integration_blob_sha": "a60f403b2f0e7343aed61170ca2aef875a787790"
+    }
+  ],
+  "schema": "pon-work-tail-native-source-audit-v1",
+  "audit_kind": "read-only exact-source structural audit",
+  "facts": [
+    {
+      "id": "native_header_has_no_u",
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "function": "Header; Header::encode; Header::challenge",
+      "statement": "The exact PNH1 header field list has no unit count; the full encoding enters the challenge.",
+      "anchors": [
+        "pub struct Header {",
+        "pub nonce: u64,",
+        "hash(b\"challenge\", &[&self.encode()])"
+      ],
+      "check": "header_fields",
+      "expected_fields": [
+        "network",
+        "parameters",
+        "parent",
+        "height",
+        "timestamp",
+        "target",
+        "miner",
+        "transactions",
+        "state",
+        "receipts",
+        "work_task",
+        "nonce"
+      ],
+      "anchor_line_numbers": [
+        90,
+        102,
+        171
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    },
+    {
+      "id": "native_w1_fixed_geometry",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "function": "PROFILE; N; R; CELLS; PROOF_BYTES; evaluate_transcript_with_progress",
+      "statement": "W1 fixes N=64,R=8 and 512 transcript tiles; no variable-u composition is defined by this grammar.",
+      "anchors": [
+        "pub const PROFILE: &str = \"pon-matmul-transcript-64-v1\";",
+        "pub const N: usize = 64;",
+        "pub const R: usize = 8;",
+        "pub const PROOF_BYTES: usize = 4 + 3 * CELLS * 4 + 32;",
+        "for bi in 0..N / R {",
+        "for bj in 0..N / R {",
+        "for bk in 0..N / R {"
+      ],
+      "anchor_line_numbers": [
+        20,
+        21,
+        22,
+        25,
+        336,
+        337,
+        338
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+    },
+    {
+      "id": "native_preparation_reuse",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "function": "PreparedTask::new; PreparedTask::prove_with_progress",
+      "statement": "The useful AB product and A/B/C prefix are cached and reused across fresh challenge transcripts; per-attempt AB recomputation is not mandatory.",
+      "anchors": [
+        "pub struct PreparedTask {",
+        "let product = producer_mul(a, b, N, N, N);",
+        "let mut out = self.prefix.clone();",
+        "out.extend_from_slice(&transcript.finalize());"
+      ],
+      "anchor_line_numbers": [
+        1210,
+        1251,
+        1361,
+        1362
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+    },
+    {
+      "id": "native_weight_formula",
+      "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "function": "required_work",
+      "statement": "Native weight is floor(2^256/(T+1)); T=0 is refused. The representational T>=1 maximum is 2^255, not a calibrated security cap.",
+      "anchors": [
+        "pub fn required_work(target: [u8; 32]) -> Result<Work> {",
+        "ensure(target != [0; 32], \"TARGET\")?;",
+        "let denominator = Work::from_target(target).checked_add(Work::small(1))?;",
+        "numerator.0[4] = 1;",
+        "numerator.divided(denominator)"
+      ],
+      "anchor_line_numbers": [
+        141,
+        142,
+        143,
+        145,
+        146
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/trillionnium/crates/trnm-pon-node/src/consensus.rs"
+    },
+    {
+      "id": "native_weight_addition",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "function": "admission persistence",
+      "statement": "Admission adds parent weight and target-derived required_work, with no unit count multiplier.",
+      "anchors": [
+        "let work = parent\n            .work\n            .checked_add(consensus::required_work(h.target)?)?;"
+      ],
+      "anchor_line_numbers": [
+        4872
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "id": "local_strict_weight_adoption",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "function": "activate_with_fault_and_progress",
+      "statement": "The native local activation path keeps old on target.work<=old.work, so a local successful replacement requires strict >.",
+      "anchors": [
+        "if self.record(target)?.work <= self.record(old)?.work {\n            return Ok(old);\n        }"
+      ],
+      "anchor_line_numbers": [
+        5819
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "id": "timestamp_daa",
+      "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "function": "BranchTargetHeight::window; retarget; check_time",
+      "statement": "Targets use candidate-branch endpoint history and bounded ratio; timestamps require MTP11 and a receiver-clock future bound, not adjacent monotonicity or a lower bound on elapsed physical production time.",
+      "anchors": [
+        "let first = recent.get(index).ok_or(\"UNKNOWN_PARENT\")?.0;",
+        "let observed = last.saturating_sub(first).max(1).clamp(lower, upper);",
+        "let count = ancestors.len().min(11);",
+        "ensure(candidate > recent[recent.len() / 2], \"TIME\")?;",
+        "candidate as u128 <= now as u128 + skew as u128"
+      ],
+      "anchor_line_numbers": [
+        179,
+        205,
+        218,
+        223,
+        225
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/trillionnium/crates/trnm-pon-node/src/consensus.rs"
+    },
+    {
+      "id": "six_successors_and_weight",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "function": "confirmations_with_progress",
+      "statement": "Native confirmation requires inclusion on current active ancestry, successor depth >=6 and successor delta >=6*weight(included target) under devnet config; delta excludes included block; it is not a measured lead over a hidden fork.",
+      "anchors": [
+        "let delta = present\n                .then(|| observed.work.checked_sub(row.work))",
+        "let depth = present\n                .then(|| observed.height.checked_sub(row.height).ok_or(\"HEIGHT\"))",
+        "let threshold = consensus::required_work(*target)?.mul_small(multiplier)?;",
+        "confirmed: depth.is_some_and(|d| d >= depth_required)\n                    && delta.is_some_and(|w| w >= threshold),",
+        "finalized: false,",
+        "execution_authority: false,",
+        "ensure(self.active()? == (tip, generation), \"STALE_VIEW\")?;"
+      ],
+      "anchor_line_numbers": [
+        6412,
+        6415,
+        6418,
+        6434,
+        6437,
+        6438,
+        6442
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "id": "devnet_parameters",
+      "path": "config/pon/devnet-v1.json",
+      "function": "genesis parameter fixture",
+      "statement": "Devnet selects interval16,spacing10,MTP11,future skew120,confirmation depth6 and work multiplier6; these are experimental values.",
+      "anchors": [
+        "\"confirmation_depth\": 6",
+        "\"confirmation_work_multiplier\": 6",
+        "\"future_skew_seconds\": 120",
+        "\"retarget_interval\": 16",
+        "\"target_spacing_seconds\": 10"
+      ],
+      "anchor_line_numbers": [
+        14,
+        15,
+        12,
+        9,
+        8
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/config/pon/devnet-v1.json"
+    },
+    {
+      "id": "available_valid_chain_scope",
+      "path": "docs/protocol/pon-nakamoto-v1/CONSENSUS.md",
+      "function": "C3; C4; C6",
+      "statement": "Only fully validated available branches can activate; equal weight keeps local tip; six descendants do not prohibit a heavier reorg.",
+      "anchors": [
+        "A proof-valid header can be retained as header-only progress",
+        "Among fully validated branches, adopt one with strictly greatest chainwork. At equal",
+        "A valid heavier chain is never rejected merely because its reorg crosses a local"
+      ],
+      "anchor_line_numbers": [
+        59,
+        86,
+        123
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/docs/protocol/pon-nakamoto-v1/CONSENSUS.md"
+    },
+    {
+      "id": "prior_scientific_gates",
+      "path": "formal/pon-nakamoto-v1/WORK_SCALE_SECURITY_CONTRACT_V1.md",
+      "function": "Sections5,8",
+      "statement": "The preceding work already contains the abstract crossing lemma; both actual relation tail and native fork witness are explicitly open.",
+      "anchors": [
+        "**Gate A: complete accepted-work tail.**",
+        "**Gate B: native weighted fork witness.**",
+        "current native rule's six descendants and weight-depth check"
+      ],
+      "anchor_line_numbers": [
+        522,
+        528,
+        531
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2789e9d9999920d858c1b65d3bff29122079cb4e/formal/pon-nakamoto-v1/WORK_SCALE_SECURITY_CONTRACT_V1.md"
+    }
+  ],
+  "mathematical_deductions": [
+    {
+      "id": "cross_node_nonstrict_boundary",
+      "statement": "When a rival branch is already eligible at the same observation, maximality gives >=, with equality permitted by local tie retention. A branch not yet delivered/validated cannot be included in this comparison. This is a deduction from the rule, not an executable cross-node safety test."
+    },
+    {
+      "id": "hidden_inventory_not_measured",
+      "statement": "The six-successor weight delta does not subtract any competing private-fork weight; assigning it as initial lead requires a separate hidden-inventory bound and fork accounting."
+    }
+  ],
+  "claim_flags": {
+    "native_execution_tested": false,
+    "minimum_work_cost_proved": false,
+    "actual_resource_tail_proved": false,
+    "native_common_prefix_proved": false,
+    "six_confirmation_risk_certified": false,
+    "production_qualified": false
+  },
+  "provenance": {
+    "local_repository": "/workspace/scratch/489948aff410/Trillionnium-Chain",
+    "live_connector_pins_observed": true,
+    "runtime_files_equal_to_integration_head": true,
+    "authenticated_read_later_failed": "GitHub 403 Sorry. Your account was suspended; no further retries/writes",
+    "source_worktree_edited": false
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "command": [
+    "python3",
+    "evidence/smollm-same-iteration-20261108/verify_originals.py"
+  ],
+  "private_worker_source_included": false,
+  "readme_local_links_checked": true,
+  "recorded_unix_ns": 1794165426404187057,
+  "result": {
+    "actual_runtime_rerun": false,
+    "cell_chunks": 17,
+    "cell_payload_bytes": 1011315,
+    "decision": "NoUpdate",
+    "independently_authenticated": false,
+    "new_optimizer_steps_recorded": 30,
+    "original_files_verified": {
+      "cell-transfer": 34,
+      "initial": 105,
+      "no-update": 94
+    },
+    "production_activation": false,
+    "qualification": "HOLD_NO_GO",
+    "quality_observation": "parent-3-of-4-candidate-1-of-4",
+    "result": "PASS",
+    "schema": "trnm-smollm-original-evidence-replay-v1"
+  },
+  "schema": "trnm-smollm-originals-local-verification-v1",
+  "verifier_sha256": "9084bfba788dd0e294104b7cdf046ea7f576cc9f3e3c07eb55de517bc0630e26"
+}

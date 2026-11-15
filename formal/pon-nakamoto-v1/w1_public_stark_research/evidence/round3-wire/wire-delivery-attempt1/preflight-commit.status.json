@@ -1,0 +1,11 @@
+{
+  "label": "preflight-commit",
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "exit_code": 0,
+  "wall_seconds": 0.09537256695330143,
+  "stdout_sha256": "880e0875591d85d38be5a813ae2ae71cdc32bee760d482e88465e8321b200f84",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

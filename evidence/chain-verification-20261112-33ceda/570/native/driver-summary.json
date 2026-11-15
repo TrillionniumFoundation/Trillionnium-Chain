@@ -1,0 +1,219 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "elapsed_ns": 479041612731,
+      "label": "node-all-feature-test-build",
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/counterfactual-v4-native-v1/trnm_pon_node-libtest",
+        "ingress::tests::authenticated_activation_recovery::authenticated_context_retry_requires_exact_local_identity_and_kind",
+        "--exact",
+        "--list",
+        "--format",
+        "pretty"
+      ],
+      "elapsed_ns": 3218072081,
+      "label": "auth-kind-list",
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/counterfactual-v4-native-v1/trnm_pon_node-libtest",
+        "ingress::tests::authenticated_activation_recovery::authenticated_context_retry_requires_exact_local_identity_and_kind",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1",
+        "--format",
+        "pretty"
+      ],
+      "elapsed_ns": 3217904356,
+      "label": "auth-kind",
+      "recorder_exit_code": 101,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/counterfactual-v4-native-v1/trnm_pon_node-libtest",
+        "ingress::tests::authenticated_activation_recovery::signed_socket_missing_parent_preserves_exact_nonce_until_parent_arrives",
+        "--exact",
+        "--list",
+        "--format",
+        "pretty"
+      ],
+      "elapsed_ns": 3218268183,
+      "label": "auth-socket-list",
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/counterfactual-v4-native-v1/trnm_pon_node-libtest",
+        "ingress::tests::authenticated_activation_recovery::signed_socket_missing_parent_preserves_exact_nonce_until_parent_arrives",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1",
+        "--format",
+        "pretty"
+      ],
+      "elapsed_ns": 3268827810,
+      "label": "auth-socket",
+      "recorder_exit_code": 101,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/counterfactual-v4-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::output_reservation_tests::full_output_pool_closes_without_signed_response_and_recovers_after_release",
+        "--exact",
+        "--list",
+        "--format",
+        "pretty"
+      ],
+      "elapsed_ns": 3218826393,
+      "label": "output-full-list",
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/counterfactual-v4-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::output_reservation_tests::full_output_pool_closes_without_signed_response_and_recovers_after_release",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1",
+        "--format",
+        "pretty"
+      ],
+      "elapsed_ns": 3217758612,
+      "label": "output-full",
+      "recorder_exit_code": 101,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/counterfactual-v4-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::output_reservation_tests::refusal_borrows_only_bounded_original_headroom_and_preserves_control_service",
+        "--exact",
+        "--list",
+        "--format",
+        "pretty"
+      ],
+      "elapsed_ns": 3219587846,
+      "label": "output-refusal-list",
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/counterfactual-v4-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::output_reservation_tests::refusal_borrows_only_bounded_original_headroom_and_preserves_control_service",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1",
+        "--format",
+        "pretty"
+      ],
+      "elapsed_ns": 3268809652,
+      "label": "output-refusal",
+      "recorder_exit_code": 101,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/counterfactual-v4-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::completion_deadline_tests::unreserved_completion_bytes_close_without_output_or_native_outcome_rewrite",
+        "--exact",
+        "--list",
+        "--format",
+        "pretty"
+      ],
+      "elapsed_ns": 3218587762,
+      "label": "completion-defense-list",
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/counterfactual-v4-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::completion_deadline_tests::unreserved_completion_bytes_close_without_output_or_native_outcome_rewrite",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1",
+        "--format",
+        "pretty"
+      ],
+      "elapsed_ns": 3219153521,
+      "label": "completion-defense",
+      "recorder_exit_code": 101,
+      "timed_out": false
+    }
+  ],
+  "counterfactual_behavior_qualified": false,
+  "source": "570801af9995a65f3f6c12a339bbca935e32282b",
+  "status": "NATIVE_OBSERVATIONS_COMPLETE_ASSERTION_REVIEW_REQUIRED",
+  "tests": [
+    {
+      "assertion_site_review_pending": true,
+      "executed_tests": 1,
+      "label": "auth-kind",
+      "name": "ingress::tests::authenticated_activation_recovery::authenticated_context_retry_requires_exact_local_identity_and_kind",
+      "native_exit_code": 101,
+      "observed_failure": true,
+      "summary_line": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1425 filtered out; finished in 0.00s"
+    },
+    {
+      "assertion_site_review_pending": true,
+      "executed_tests": 1,
+      "label": "auth-socket",
+      "name": "ingress::tests::authenticated_activation_recovery::signed_socket_missing_parent_preserves_exact_nonce_until_parent_arrives",
+      "native_exit_code": 101,
+      "observed_failure": true,
+      "summary_line": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1425 filtered out; finished in 0.02s"
+    },
+    {
+      "assertion_site_review_pending": true,
+      "executed_tests": 1,
+      "label": "output-full",
+      "name": "ingress::public_v3::output_reservation_tests::full_output_pool_closes_without_signed_response_and_recovers_after_release",
+      "native_exit_code": 101,
+      "observed_failure": true,
+      "summary_line": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1425 filtered out; finished in 0.02s"
+    },
+    {
+      "assertion_site_review_pending": true,
+      "executed_tests": 1,
+      "label": "output-refusal",
+      "name": "ingress::public_v3::output_reservation_tests::refusal_borrows_only_bounded_original_headroom_and_preserves_control_service",
+      "native_exit_code": 101,
+      "observed_failure": true,
+      "summary_line": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1425 filtered out; finished in 0.02s"
+    },
+    {
+      "assertion_site_review_pending": true,
+      "executed_tests": 1,
+      "label": "completion-defense",
+      "name": "ingress::public_v3::completion_deadline_tests::unreserved_completion_bytes_close_without_output_or_native_outcome_rewrite",
+      "native_exit_code": 101,
+      "observed_failure": true,
+      "summary_line": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1425 filtered out; finished in 0.00s"
+    }
+  ]
+}

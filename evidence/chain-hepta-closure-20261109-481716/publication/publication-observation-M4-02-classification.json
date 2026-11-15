@@ -1,0 +1,116 @@
+{
+  "observed_at_utc": "2026-11-09T15:04:02.102516+00:00",
+  "pr": {
+    "base_ref": "main",
+    "base_sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "body_sha256": "28698b40a554d0b4b18c49a08eebd81d99c0f07bcd0aa639f31fa74e5341475d",
+    "draft": true,
+    "head_ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+    "head_sha": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+    "merge_commit_sha": "158f72cb097703926853c1e25c71c216b9c0d672",
+    "mergeable": true,
+    "mergeable_state": "blocked",
+    "number": 847,
+    "state": "open",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847"
+  },
+  "check_run_count": 149,
+  "check_status_counts": {
+    "completed": 9,
+    "queued": 140
+  },
+  "check_conclusion_counts": {
+    "None": 140,
+    "cancelled": 2,
+    "skipped": 3,
+    "success": 4
+  },
+  "reader_workflow_runs": [
+    {
+      "conclusion": null,
+      "created_at": "2026-11-09T14:37:57Z",
+      "event": "pull_request",
+      "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+      "head_sha": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42636582468",
+      "id": 42636582468,
+      "name": "Chain Hepta closure evidence contracts",
+      "path": ".github/workflows/chain-hepta-closure-candidate.yml",
+      "run_attempt": 1,
+      "status": "queued",
+      "updated_at": "2026-11-09T14:37:57Z"
+    }
+  ],
+  "reader_lanes": [
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42636582468/job/129226200788",
+      "head_sha": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "id": 129226200788,
+      "name": "contracts (proof-profile, head)",
+      "started_at": "2026-11-09T14:37:58Z",
+      "status": "queued"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42636582468/job/129226200787",
+      "head_sha": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "id": 129226200787,
+      "name": "contracts (scope, prospective-merge)",
+      "started_at": "2026-11-09T14:37:58Z",
+      "status": "queued"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42636582468/job/129226200762",
+      "head_sha": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "id": 129226200762,
+      "name": "contracts (scope, head)",
+      "started_at": "2026-11-09T14:37:58Z",
+      "status": "queued"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42636582468/job/129226200622",
+      "head_sha": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "id": 129226200622,
+      "name": "contracts (proof-profile, prospective-merge)",
+      "started_at": "2026-11-09T14:37:58Z",
+      "status": "queued"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42636582468/job/129226200608",
+      "head_sha": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "id": 129226200608,
+      "name": "contracts (campaign-reader, prospective-merge)",
+      "started_at": "2026-11-09T14:37:58Z",
+      "status": "queued"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42636582468/job/129226200297",
+      "head_sha": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "id": 129226200297,
+      "name": "contracts (campaign-reader, head)",
+      "started_at": "2026-11-09T14:37:58Z",
+      "status": "queued"
+    }
+  ],
+  "reader_lane_count": 6,
+  "failed_checks": [],
+  "workflow_run_count": 29,
+  "all_observed_check_heads_match": true,
+  "all_observed_workflow_heads_match": true,
+  "retention": {
+    "retained_file": "/Users/qianqi/chain-hepta-closure-481716/publication-observation-M4-02.json",
+    "bytes": 79783,
+    "sha256": "8699c36ffcd4710f9ad71eee08e5bdd1a33d07c876c647a2b234672411ae7a3a"
+  }
+}

@@ -1,0 +1,45 @@
+   Compiling typenum v1.20.1
+   Compiling rustix v1.1.6
+   Compiling fs2 v0.4.3
+   Compiling generic-array v0.14.7
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling trnm-checkpoint-types v0.1.0 (/data/chain-root-operation-owned-20261112-df05-v4/trillionnium/crates/trnm-checkpoint-types)
+   Compiling trnm-checkpoint-store v0.1.0 (/data/chain-root-operation-owned-20261112-df05-v4/trillionnium/crates/trnm-checkpoint-store)
+   Compiling getrandom v0.4.2
+   Compiling tempfile v3.27.0
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.76s
+     Running tests/socket_ownership.rs (/data/chain-root-operation-v6-df05-target-v3/debug/deps/socket_ownership-ed85e28f440e306d)
+
+running 3 tests
+test copied_lease_record_cannot_replace_a_live_checkpoint_endpoint ... FAILED
+test different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint ... ok
+test rejected_nonprivate_socket_parent_does_not_unlink_existing_listener ... ok
+
+successes:
+
+successes:
+    different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint
+    rejected_nonprivate_socket_parent_does_not_unlink_existing_listener
+
+failures:
+
+---- copied_lease_record_cannot_replace_a_live_checkpoint_endpoint stdout ----
+
+thread 'copied_lease_record_cannot_replace_a_live_checkpoint_endpoint' (1096190) panicked at crates/trnm-checkpoint-store/tests/socket_ownership.rs:204:5:
+assertion failed: first.child.try_wait().unwrap().is_none()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+checkpoint daemon /data/chain-root-validation-20261112-df05-v3/tmp/.tmpfdVZtc/second.stderr: external node-checkpoint authority failed: node-checkpoint I/O at lock checkpoint socket owner: checkpoint socket listener is still live
+
+checkpoint daemon /data/chain-root-validation-20261112-df05-v3/tmp/.tmpfdVZtc/first.stderr: external node-checkpoint authority failed: node-checkpoint log rejected: checkpoint endpoint pathname identity changed
+
+
+
+failures:
+    copied_lease_record_cannot_replace_a_live_checkpoint_endpoint
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.43s
+
+error: test failed, to rerun pass `-p trnm-checkpoint-store --test socket_ownership`

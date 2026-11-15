@@ -1,0 +1,9 @@
+    Finished `release` profile [optimized] target(s) in 0.06s
+     Running tests/native_node.rs (/home/runner/work/_temp/target-next-architecture/release/deps/native_node-57d19a3156b78f71)
+
+running 1 test
+test test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner ... {"schema": "trnm-ci-public-fixture-host-launch-v1", "passed": true, "failures": [], "receipt": "/home/runner/work/_temp/next-architecture-head-42456517352-1/public-fixtures/native_node/test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner"}
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 40.14s
+

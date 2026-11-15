@@ -1,0 +1,197 @@
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling generic-array v0.14.7
+   Compiling libc v0.2.184
+   Compiling cfg-if v1.0.4
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling rustix v1.1.6
+   Compiling getrandom v0.4.2
+   Compiling trnm-checkpoint-types v0.1.0 (/data/chain-checkpoint-probe-20261112-df05/trillionnium/crates/trnm-checkpoint-types)
+   Compiling fs2 v0.4.3
+   Compiling bitflags v2.11.0
+   Compiling linux-raw-sys v0.12.1
+   Compiling fastrand v2.3.0
+   Compiling once_cell v1.21.4
+   Compiling trnm-checkpoint-store v0.1.0 (/data/chain-checkpoint-probe-20261112-df05/trillionnium/crates/trnm-checkpoint-store)
+   Compiling tempfile v3.27.0
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.70s
+     Running unittests src/lib.rs (/data/chain-checkpoint-probe-target-20261112-df05-v2/debug/deps/trnm_checkpoint_store-bc9015287cdfeed3)
+
+running 18 tests
+test socket_owner_v1::tests::endpoint_lease_prevents_live_socket_replacement_and_permits_owner_restart ... ok
+test socket_owner_v1::tests::fresh_lease_never_authorizes_removing_an_unleased_socket ... ok
+test socket_owner_v1::tests::live_owner_rejects_replaced_lease_path ... ok
+test socket_owner_v1::tests::live_owner_rejects_replaced_socket_path ... ok
+test socket_owner_v1::tests::live_owner_rejects_same_inode_lease_record_rewrite ... ok
+test socket_owner_v1::tests::malformed_lease_is_refused_without_recreating_a_socket ... ok
+test socket_owner_v1::tests::rejected_socket_parent_preserves_existing_listener ... ok
+test tests::activation_and_key_boundaries_remain_closed ... ok
+test tests::authority_exact_cas_rejects_replay_and_reopens ... ok
+test tests::bound_anchor_replacement_fails_closed_before_load ... ok
+test tests::bound_lock_replacement_fails_closed_before_load ... ok
+test tests::bound_log_replacement_fails_closed_before_load ... ok
+test tests::bound_parent_directory_replacement_fails_closed_before_load ... ok
+test tests::journal_truncation_and_byte_edit_fail_closed ... ok
+test tests::oversized_checkpoint_head_read_is_bounded_and_refused ... ok
+test tests::pinned_recovery_rejects_head_deleted_after_precheck ... ok
+test tests::replayed_record_fails_closed ... ok
+test tests::unix_client_round_trip_uses_separate_thread_authority ... ok
+
+successes:
+
+successes:
+    socket_owner_v1::tests::endpoint_lease_prevents_live_socket_replacement_and_permits_owner_restart
+    socket_owner_v1::tests::fresh_lease_never_authorizes_removing_an_unleased_socket
+    socket_owner_v1::tests::live_owner_rejects_replaced_lease_path
+    socket_owner_v1::tests::live_owner_rejects_replaced_socket_path
+    socket_owner_v1::tests::live_owner_rejects_same_inode_lease_record_rewrite
+    socket_owner_v1::tests::malformed_lease_is_refused_without_recreating_a_socket
+    socket_owner_v1::tests::rejected_socket_parent_preserves_existing_listener
+    tests::activation_and_key_boundaries_remain_closed
+    tests::authority_exact_cas_rejects_replay_and_reopens
+    tests::bound_anchor_replacement_fails_closed_before_load
+    tests::bound_lock_replacement_fails_closed_before_load
+    tests::bound_log_replacement_fails_closed_before_load
+    tests::bound_parent_directory_replacement_fails_closed_before_load
+    tests::journal_truncation_and_byte_edit_fail_closed
+    tests::oversized_checkpoint_head_read_is_bounded_and_refused
+    tests::pinned_recovery_rejects_head_deleted_after_precheck
+    tests::replayed_record_fails_closed
+    tests::unix_client_round_trip_uses_separate_thread_authority
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running unittests src/main.rs (/data/chain-checkpoint-probe-target-20261112-df05-v2/debug/deps/trnm_external_node_checkpoint_v2-34bfab50a201a3aa)
+
+running 15 tests
+test node_commit_ledger_v1::tests::abandoned_partial_temp_converges_to_source ... ok
+test node_commit_ledger_v1::tests::coherent_rewritten_prefix_with_higher_head_is_rejected_v1 ... ok
+test node_commit_ledger_v1::tests::cold_rollback_below_supplied_expected_source_is_rejected_v1 ... ok
+test node_commit_ledger_v1::tests::corrupted_older_record_fences_owner_without_cleanup_v1 ... ok
+test node_commit_ledger_v1::tests::durable_successor_reopens_exactly ... ok
+test node_commit_ledger_v1::tests::exact_target_retry_is_read_only_and_does_not_append_v1 ... ok
+test node_commit_ledger_v1::tests::expected_context_mismatch_preserves_journal_ahead_and_temp_evidence_v1 ... ok
+test node_commit_ledger_v1::tests::journal_ahead_of_head_recovers_to_exact_target ... ok
+test node_commit_ledger_v1::tests::live_coherent_anchor_rewrite_and_head_rollback_are_rejected_v1 ... ok
+test node_commit_ledger_v1::tests::live_root_records_lock_and_anchor_replacements_fail_closed_v1 ... ok
+test node_commit_ledger_v1::tests::missing_record_and_head_ahead_fail_before_repair_v1 ... ok
+test node_commit_ledger_v1::tests::record_and_temp_links_are_rejected_without_deleting_targets_v1 ... ok
+test node_commit_ledger_v1::tests::third_state_is_rejected ... ok
+test node_commit_ledger_v1::tests::unknown_root_and_noncanonical_temp_names_are_retained_and_rejected_v1 ... ok
+test node_commit_ledger_v1::tests::valid_extension_preserves_the_observed_live_prefix_v1 ... ok
+
+successes:
+
+successes:
+    node_commit_ledger_v1::tests::abandoned_partial_temp_converges_to_source
+    node_commit_ledger_v1::tests::coherent_rewritten_prefix_with_higher_head_is_rejected_v1
+    node_commit_ledger_v1::tests::cold_rollback_below_supplied_expected_source_is_rejected_v1
+    node_commit_ledger_v1::tests::corrupted_older_record_fences_owner_without_cleanup_v1
+    node_commit_ledger_v1::tests::durable_successor_reopens_exactly
+    node_commit_ledger_v1::tests::exact_target_retry_is_read_only_and_does_not_append_v1
+    node_commit_ledger_v1::tests::expected_context_mismatch_preserves_journal_ahead_and_temp_evidence_v1
+    node_commit_ledger_v1::tests::journal_ahead_of_head_recovers_to_exact_target
+    node_commit_ledger_v1::tests::live_coherent_anchor_rewrite_and_head_rollback_are_rejected_v1
+    node_commit_ledger_v1::tests::live_root_records_lock_and_anchor_replacements_fail_closed_v1
+    node_commit_ledger_v1::tests::missing_record_and_head_ahead_fail_before_repair_v1
+    node_commit_ledger_v1::tests::record_and_temp_links_are_rejected_without_deleting_targets_v1
+    node_commit_ledger_v1::tests::third_state_is_rejected
+    node_commit_ledger_v1::tests::unknown_root_and_noncanonical_temp_names_are_retained_and_rejected_v1
+    node_commit_ledger_v1::tests::valid_extension_preserves_the_observed_live_prefix_v1
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+
+     Running tests/cold_recovery.rs (/data/chain-checkpoint-probe-target-20261112-df05-v2/debug/deps/cold_recovery-509618aec01083ba)
+
+running 15 tests
+test cold_recovery_rejects_self_consistent_old_complete_image ... ok
+test export_is_exact_new_domain_and_cannot_overwrite_an_external_pin ... ok
+test external_mismatch_is_rejected_before_stale_local_head_repair ... ok
+test extra_record_is_rejected_before_hash_replay ... ok
+test full_journal_pin_covers_removal_of_another_scope ... ok
+test healthy_existing_journal_reopens_with_exact_external_checkpoint ... ok
+test impossible_external_count_is_rejected_without_replay_or_repair ... ok
+test live_same_inode_head_rollback_is_rejected_without_repair ... ok
+test live_same_inode_rollback_cannot_export_or_extend_cached_history ... ok
+test live_same_length_prefix_edit_cannot_export_a_cached_journal_pin ... ok
+test pinned_reopen_never_reseeds_missing_existing_files ... ok
+test register_new_rejects_existing_even_empty_namespaces ... ok
+test same_count_different_root_is_not_a_fresh_recovery ... ok
+test structural_open_cannot_serve_or_export_a_freshness_claim ... ok
+test structural_reopen_cannot_bypass_recovery_through_direct_owner_methods ... ok
+
+successes:
+
+successes:
+    cold_recovery_rejects_self_consistent_old_complete_image
+    export_is_exact_new_domain_and_cannot_overwrite_an_external_pin
+    external_mismatch_is_rejected_before_stale_local_head_repair
+    extra_record_is_rejected_before_hash_replay
+    full_journal_pin_covers_removal_of_another_scope
+    healthy_existing_journal_reopens_with_exact_external_checkpoint
+    impossible_external_count_is_rejected_without_replay_or_repair
+    live_same_inode_head_rollback_is_rejected_without_repair
+    live_same_inode_rollback_cannot_export_or_extend_cached_history
+    live_same_length_prefix_edit_cannot_export_a_cached_journal_pin
+    pinned_reopen_never_reseeds_missing_existing_files
+    register_new_rejects_existing_even_empty_namespaces
+    same_count_different_root_is_not_a_fresh_recovery
+    structural_open_cannot_serve_or_export_a_freshness_claim
+    structural_reopen_cannot_bypass_recovery_through_direct_owner_methods
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running tests/cross_process.rs (/data/chain-checkpoint-probe-target-20261112-df05-v2/debug/deps/cross_process-5756566e60a8d8e4)
+
+running 6 tests
+test cli_missing_expected_and_legacy_implicit_start_fail_without_repair ... ok
+test cli_rejects_complete_old_image_before_attempting_transport ... ok
+test cli_second_process_cannot_open_while_the_owner_holds_its_lock ... ok
+test competing_owner_cannot_reopen_or_reregister_a_live_namespace ... ok
+test daemon_cold_restart_requires_external_pin_and_rejects_complete_snapshot_rollback ... ok
+test standalone_daemon_is_cross_process_and_rejects_truncated_log ... ok
+
+successes:
+
+successes:
+    cli_missing_expected_and_legacy_implicit_start_fail_without_repair
+    cli_rejects_complete_old_image_before_attempting_transport
+    cli_second_process_cannot_open_while_the_owner_holds_its_lock
+    competing_owner_cannot_reopen_or_reregister_a_live_namespace
+    daemon_cold_restart_requires_external_pin_and_rejects_complete_snapshot_rollback
+    standalone_daemon_is_cross_process_and_rejects_truncated_log
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+
+     Running tests/socket_ownership.rs (/data/chain-checkpoint-probe-target-20261112-df05-v2/debug/deps/socket_ownership-ed85e28f440e306d)
+
+running 4 tests
+test complete_checkpoint_request_rejects_a_copied_lease_replacement ... ok
+test copied_lease_record_cannot_replace_a_live_checkpoint_endpoint ... ok
+test different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint ... ok
+test rejected_nonprivate_socket_parent_does_not_unlink_existing_listener ... ok
+
+successes:
+
+successes:
+    complete_checkpoint_request_rejects_a_copied_lease_replacement
+    copied_lease_record_cannot_replace_a_live_checkpoint_endpoint
+    different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint
+    rejected_nonprivate_socket_parent_does_not_unlink_existing_listener
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+   Doc-tests trnm_checkpoint_store
+
+running 0 tests
+
+successes:
+
+successes:
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

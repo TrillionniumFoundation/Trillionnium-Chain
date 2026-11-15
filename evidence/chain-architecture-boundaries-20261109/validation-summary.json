@@ -1,0 +1,353 @@
+{
+  "baseline_commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "binary_observations": [
+    {
+      "bytes": 185292904,
+      "path": "/workspace/scratch/736a3d6dec1b/target/debug/deps/trnm_pon_node-a836e0af78a05d55",
+      "retained_binary_bytes": false,
+      "sha256": "09ac817b03960044ee74248b6894733178a8c11829fcc8c13745ea28aa497a22"
+    },
+    {
+      "bytes": 24636600,
+      "path": "/workspace/scratch/736a3d6dec1b/target/debug/deps/pq_application_local_cli-c997779fb8a4d639",
+      "retained_binary_bytes": false,
+      "sha256": "26bf8ac5e2d1338ba9758d4473c50a7de9b01a8992f3e40f9dfcef04ffb4cfce"
+    },
+    {
+      "bytes": 45357856,
+      "path": "/workspace/scratch/736a3d6dec1b/target/debug/trnm-pon-node",
+      "retained_binary_bytes": false,
+      "role": "integration-test child executable",
+      "sha256": "a3029aec79c14259c769f7e68e7824773cd31eebe7e7e4c7c409e973a10abb32"
+    }
+  ],
+  "current_candidate_goodput": {
+    "definitive_phase_rates_null": 9,
+    "execution_receipt": "raw/local/goodput-checks/current-candidate-reader-execution.json",
+    "historical_successful_imports_without_work_observation": 0,
+    "hosted_binary_bytes_republished": false,
+    "hosted_retained_binary_bytes_verified": true,
+    "manifest_members_verified": 1765,
+    "manifest_sha256": "05abff726bbdd8dd1d9a6451eec81303f275a7172029503e6aea2ff59f68dcac",
+    "original_campaign_complete_success": false,
+    "original_process_exit_codes": [
+      101,
+      101,
+      101
+    ],
+    "per_attempt_baseline": {
+      "planned_rounds": 3,
+      "unknown_rounds": 1,
+      "unobserved_rounds": 1,
+      "validated_business": 1
+    },
+    "per_attempt_each_pressure_phase": {
+      "planned_rounds": 3,
+      "unknown_rounds": 1,
+      "unobserved_rounds": 2,
+      "validated_business": 0
+    },
+    "readback": "raw/local/goodput-checks/current-candidate-readback.json",
+    "reset_replay_observation": {
+      "aggregate_goodput": null,
+      "distinct_transaction_ids": 1,
+      "validated_records": 3
+    },
+    "scope": "full-artifact readback; no binary execution or campaign repeat",
+    "summary": "raw/local/goodput-checks/current-candidate-summary.json",
+    "throughput_improvement_qualified": false
+  },
+  "failure_retention": {
+    "first_frozen_native_group": "FAIL: missing fuzz cache, compiler SIGKILL and no-space failure; exact source unchanged",
+    "first_frozen_static_group": "FAIL: stale live source pin and missing GNU time; exact source unchanged",
+    "formatter_bootstrap": "initial missing cargo-fmt PATH invocation retained",
+    "gnu_time_bootstrap": "APT lookup refusal and configure no-space failure retained",
+    "original_opt3_builds": "SIGKILL; no tests executed",
+    "pre_fix_authentication_diagnostic": "1 known-refusal pass; 3 expected unknown-close failures"
+  },
+  "gnu_time_receipt": "raw/environment/gnu-time/build-receipt.json",
+  "historical_goodput": {
+    "PR327": "all 9 definitive phase rates remain null; missing full Work observations",
+    "PR821_F3": "original 3 exit-101 failures and missing planned rounds retained; selected-member diagnostic only"
+  },
+  "hosted_latest_observation": {
+    "additional_failures_audit": "raw/local/validation/hosted-additional-failures/failure-summary.json",
+    "codeql": "39 polls: empty PR CodeQL analyses and zero matching CodeQL checks on head and prospective merge; deadline exit 1; upstream cause unestablished; no clean-analysis qualification",
+    "codeql_audit": "raw/local/validation/hosted-codeql-failure/audit.json",
+    "failed_workflow_runs": [
+      42553753080,
+      42553752939,
+      42553752948,
+      42553753001,
+      42553753007
+    ],
+    "full_hosted_acceptance": false,
+    "native_campaign": "release build passed; all 3 original campaign executions exited 101 at original finite-experiment criteria; all 9 phase criteria false",
+    "native_campaign_verifier_errors": "PUBLIC_REQUEST_DEADLINE in all nine original phases",
+    "next_architecture": "3 lanes passed; x64 prospective-merge lane failed original TCP-announcement-budget control (449 passed, 1 failed)",
+    "raw_snapshot": "raw/local/validation/publication-snapshots/final-source-ci-before-evidence.json",
+    "source": "34bffa42461e746a602cfd687b8efb082df926c8",
+    "utc_window": {
+      "finished": "2026-11-09 03:21:24 UTC",
+      "started": "2026-11-09 03:21:23 UTC"
+    },
+    "workflow_counts": {
+      "failure": 5,
+      "success": 11,
+      "total": 22,
+      "unfinished": 6
+    }
+  },
+  "hosted_snapshot": {
+    "failed_qrom_workflow_runs": [
+      42553753080,
+      42553752939
+    ],
+    "failure_audit": "raw/local/validation/hosted-current-failures/failure-summary.json",
+    "full_hosted_acceptance": false,
+    "passed_affected_workflow_runs": [
+      42553753016,
+      42553752932
+    ],
+    "refused_inputs_and_contracts_unchanged_from_baseline": true,
+    "source": "34bffa42461e746a602cfd687b8efb082df926c8",
+    "utc": "2026-11-09 03:07:48 UTC"
+  },
+  "implementation_commit": "8072b10ec06ae308660dfcbe3ae121575cb890cd",
+  "local_command_groups": {
+    "native": 15,
+    "static": 14
+  },
+  "locked_dependency_graphs": [
+    "default",
+    "all-features",
+    "fuzz-all-features"
+  ],
+  "locks": [
+    {
+      "path": "trillionnium/Cargo.lock",
+      "sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+      "unchanged_from_baseline": true
+    },
+    {
+      "path": "tests/fuzz/Cargo.lock",
+      "sha256": "93cdc50ae55389e4f90f919ab7c29d3c4c3a7ed5567e80a8436b9a7c2c4357ab",
+      "unchanged_from_baseline": true
+    }
+  ],
+  "native_ignored": 2,
+  "native_passed": 106,
+  "native_scope": "local mechanism diagnostic: node opt0, codegen-units256, debug0, jobs1; no original runtime limit changes",
+  "native_tests": [
+    {
+      "failed": 0,
+      "ignored": 0,
+      "passed": 14,
+      "required_executed_tests": [
+        "store::operator_continuous_owner::tests::continuous_owner_keeps_original_authenticated_journal_not_ordinary_marker",
+        "store::operator_continuous_owner::tests::continuous_owner_packet_reads_preserve_gates_errors_and_journal",
+        "store::operator_continuous_owner::tests::mode4_actual_receiver_binding_rejects_wrong_declared_lease_model_input_and_ab",
+        "store::operator_continuous_owner::tests::mode4_dropped_control_frame_persists_unknown_without_a_refund",
+        "store::operator_continuous_owner::tests::mode4_original_pool_and_unscoped_activation_recovery_remain_hold",
+        "store::operator_continuous_owner::tests::mode4_packet_encoding_precheck_precedes_actual_parent_task_lookup",
+        "store::operator_continuous_owner::tests::mode4_persistent_mode_marker_refuses_unrestricted_reopen",
+        "store::operator_continuous_owner::tests::mode4_receiver_uses_exact_owner_cpu_domain_and_epoch_cancel_stays_installed",
+        "store::operator_continuous_owner::tests::mode4_unknown_packet_is_rejected_before_missing_parent_state_or_work",
+        "store::operator_continuous_owner::tests::mode5_unknown_pool_bundle_is_refused_before_native_state_and_claim_without_borrowing_search",
+        "store::operator_continuous_owner::tests::ordinary_public_v3_clean_sole_or_last_listener_removes_original_sqlite_marker",
+        "store::operator_continuous_owner::tests::ordinary_public_v3_one_listener_close_while_other_cpu_is_in_flight_does_not_poison_epoch",
+        "store::operator_continuous_owner::tests::ordinary_public_v3_unclean_open_retains_one_durable_unknown_cpu_epoch",
+        "store::operator_continuous_owner::tests::ordinary_public_v3_unknown_clock_and_corrupt_marker_never_clear_on_restart"
+      ],
+      "suite": "native-ordinary-owner"
+    },
+    {
+      "failed": 0,
+      "ignored": 1,
+      "passed": 19,
+      "required_executed_tests": [
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+        "store::detached_admission::tests::completed_artifact_refuses_wrong_owner_reopen_and_late_owner_stop",
+        "store::detached_admission::tests::current_clock_target_and_unsupported_owner_are_rechecked_after_m06",
+        "store::detached_admission::tests::detached_result_cannot_bypass_real_pending_reorganization",
+        "store::detached_admission::tests::final_sqlite_writer_fence_rejects_write_and_restore_after_last_context_check",
+        "store::detached_admission::tests::foreign_write_and_restore_cannot_reuse_original_database_epoch",
+        "store::detached_admission::tests::held_parent_continuation_checks_original_owner_epoch_and_current_clock",
+        "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+        "store::detached_admission::tests::legal_concurrent_append_revalidates_parent_and_preserves_competing_branch",
+        "store::detached_admission::tests::native_m06_runs_without_writer_and_matches_held_owner_on_both_backends",
+        "store::detached_admission::tests::one_original_snapshot_lease_is_bounded_and_cannot_move_to_another_node",
+        "store::detached_admission::tests::original_transaction_readback_rejects_trigger_corruption_and_rolls_back",
+        "store::detached_admission::tests::parent_qualification_requires_committed_state_after_w1_and_m06",
+        "store::detached_admission::tests::parent_qualification_survives_cancelled_write_and_restart",
+        "store::detached_admission::tests::real_w1_wrong_root_and_original_m06_cancellation_create_no_commit",
+        "store::detached_admission::tests::snapshot_payload_capacity_is_a_private_schedule_hint_and_preserves_control_errors",
+        "store::detached_admission::tests::snapshot_payload_count_keeps_exact_json_bytes_and_serialization_errors",
+        "store::detached_admission::tests::snapshot_payload_count_preserves_exact_capacity_and_cancellation_boundaries"
+      ],
+      "suite": "native-parent"
+    },
+    {
+      "failed": 0,
+      "ignored": 0,
+      "passed": 11,
+      "required_executed_tests": [
+        "ingress::public_v3::pq_identity::tests::pq_authentication_known_refusal_preserves_clean_listener_close",
+        "ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_last_history_epoch_close",
+        "ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_original_listener_close_and_cold_reopen",
+        "ingress::public_v3::pq_identity::tests::pq_authentication_unknown_survives_shared_classical_listener_close",
+        "ingress::public_v3::pq_identity::tests::pq_history_failure_budget_and_listener_reconstruction_share_the_original_epoch",
+        "ingress::public_v3::pq_identity::tests::pq_history_native_application_account_packet_uses_the_same_paid_history_owner",
+        "ingress::public_v3::pq_identity::tests::pq_history_original_listener_reads_real_owner_and_classical_clients_cannot_downgrade",
+        "ingress::public_v3::pq_identity::tests::pq_history_real_three_party_messages_are_strict_and_old_wire_is_refused",
+        "ingress::public_v3::pq_identity::tests::pq_only_account_profile_rejects_classical_public_v3_client_before_connection",
+        "ingress::public_v3::pq_identity::tests::pq_response_cancellation_between_encoding_and_signing_stops_new_work",
+        "ingress::public_v3::pq_identity::tests::pq_response_expiry_stop_and_cancel_do_not_start_signing"
+      ],
+      "suite": "native-pq-authentication"
+    },
+    {
+      "failed": 0,
+      "ignored": 1,
+      "passed": 4,
+      "required_executed_tests": [
+        "ordinary_npq6_configuration_rejects_missing_null_extra_and_mixed_bindings",
+        "ordinary_npq6_invalid_packet_encoding_cannot_fall_back_to_classical_settings",
+        "ordinary_npq6_refuses_existing_owner_context_and_never_creates_a_missing_owner",
+        "ordinary_npq6_submit_and_cold_status_execute_current_task_and_evaluator_roles"
+      ],
+      "suite": "native-pq-cli"
+    },
+    {
+      "failed": 0,
+      "ignored": 0,
+      "passed": 58,
+      "required_executed_tests": [
+        "ingress::public_v3::scalar_cpu::completion_tests::actual_w1_cpu_completion_waits_for_original_refill_and_preserves_balance_identity",
+        "ingress::public_v3::scalar_cpu::completion_tests::already_running_probe_cannot_spend_beyond_its_original_quantum_during_completion",
+        "ingress::public_v3::scalar_cpu::completion_tests::complete_actual_w1_blocks_new_probes_without_new_credit_and_releases_once",
+        "ingress::public_v3::scalar_cpu::completion_tests::completion_identity_survives_cancel_and_unknown_without_invalidating_retry",
+        "ingress::public_v3::scalar_cpu::completion_tests::completion_keeps_original_cancellation_deadline_and_unknown_clock_fences",
+        "ingress::public_v3::scalar_cpu::completion_tests::completion_work_claim_is_atomic_across_real_verifiers_and_domain_clones",
+        "ingress::public_v3::scalar_cpu::completion_tests::exclusive_history_refill_observes_original_resource_cancellation_without_new_credit",
+        "ingress::public_v3::scalar_cpu::completion_tests::full_completion_registry_keeps_all_markers_and_allows_real_native_admission",
+        "ingress::public_v3::scalar_cpu::completion_tests::only_fresh_successful_native_w1_promotes_not_false_product_or_existing_packet",
+        "ingress::public_v3::scalar_cpu::completion_tests::same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority",
+        "ingress::public_v3::scalar_cpu::completion_tests::same_verified_w1_with_changed_transaction_body_is_rejected_before_promotion",
+        "ingress::public_v3::scalar_cpu::final_samples_tests::actual_final_measurement_keeps_known_components_and_closes_new_starts",
+        "ingress::public_v3::scalar_cpu::final_samples_tests::continuing_checkpoint_still_requires_a_live_reservation",
+        "ingress::public_v3::scalar_cpu::final_samples_tests::final_debit_cannot_forgive_prior_uncertainty_or_numeric_overflow",
+        "ingress::public_v3::scalar_cpu::final_samples_tests::lost_reservation_final_debit_fences_without_refill_repair_or_refund",
+        "ingress::public_v3::scalar_cpu::flow_tests::actual_cpu_flow_measures_credited_refill_and_cap_discard",
+        "ingress::public_v3::scalar_cpu::flow_tests::actual_cpu_flow_optional_read_preserves_old_observation_json_and_credit",
+        "ingress::public_v3::scalar_cpu::flow_tests::actual_cpu_flow_tracks_two_owned_reserves_extension_and_finish_once",
+        "ingress::public_v3::scalar_cpu::flow_tests::actual_cpu_flow_unknown_clock_and_lost_reserve_do_not_fabricate_identity",
+        "ingress::public_v3::scalar_cpu::flow_tests::actual_cpu_flow_unknown_overflow_does_not_modify_original_policy",
+        "ingress::public_v3::scalar_cpu::flow_tests::actual_cpu_flow_wrong_attribution_and_balance_stay_unknown",
+        "ingress::public_v3::scalar_cpu::flow_tests::freshness_matches_original_refill_with_debt_and_outstanding_reserves",
+        "ingress::public_v3::scalar_cpu::flow_tests::freshness_separates_paid_stored_depletion_from_later_scalar_start_eligibility",
+        "ingress::public_v3::scalar_cpu::flow_tests::freshness_unknown_clock_or_flow_never_fabricates_refill_or_changes_budget",
+        "ingress::public_v3::scalar_cpu::flow_tests::public_freshness_read_is_optional_and_preserves_original_schema_and_flow",
+        "ingress::public_v3::scalar_cpu::metered_fact_network_tests::two_real_listeners_confirm_signed_work_while_bad_cached_request_is_in_flight",
+        "ingress::public_v3::scalar_cpu::metered_fact_tests::a_foreign_cpu_domain_is_refused_before_m05_work_and_any_reservation",
+        "ingress::public_v3::scalar_cpu::metered_fact_tests::cancellation_keeps_spent_cpu_and_retry_does_not_reset_domain",
+        "ingress::public_v3::scalar_cpu::metered_fact_tests::continuously_distinct_bad_products_exhaust_one_original_prepaid_domain",
+        "ingress::public_v3::scalar_cpu::metered_fact_tests::exhausted_domain_refuses_before_cold_or_warm_math_and_state",
+        "ingress::public_v3::scalar_cpu::metered_fact_tests::failed_product_and_warm_retry_each_pay_exact_cpu_without_poisoning",
+        "ingress::public_v3::scalar_cpu::metered_fact_tests::paid_cached_native_execution_registers_all_real_m06_workers",
+        "ingress::public_v3::scalar_cpu::metered_fact_tests::panic_fences_shared_budget_without_rewriting_native_history",
+        "ingress::public_v3::scalar_cpu::metered_fact_tests::read_request_cannot_consume_the_mutation_budget_via_this_entry",
+        "ingress::public_v3::scalar_cpu::metered_fact_tests::shared_listener_reconstruction_never_refills_debt_or_replaces_domain",
+        "ingress::public_v3::scalar_cpu::metered_fact_tests::two_reserved_real_owners_block_a_third_cache_entry_then_release_normally",
+        "ingress::public_v3::scalar_cpu::request_owned_reserve_tests::a_live_quantum_cannot_forgive_unknown_or_manufacture_an_unowned_start",
+        "ingress::public_v3::scalar_cpu::request_owned_reserve_tests::actual_cpu_extension_uses_its_own_reserve_and_settles_exact_total",
+        "ingress::public_v3::scalar_cpu::request_owned_reserve_tests::both_owned_quanta_are_separate_and_one_extra_nanosecond_remains_debt",
+        "ingress::public_v3::scalar_cpu::request_owned_reserve_tests::extended_request_cannot_spend_the_other_owned_quantum",
+        "ingress::public_v3::scalar_cpu::request_owned_reserve_tests::finite_interleavings_conserve_live_and_residual_cpu_without_refill",
+        "ingress::public_v3::scalar_cpu::request_owned_reserve_tests::owned_quantum_remains_credited_when_request_crosses_its_first_quantum",
+        "ingress::public_v3::scalar_cpu::request_owned_reserve_tests::owned_start_quantum_pays_termination_without_extra_free_credit",
+        "ingress::public_v3::scalar_cpu::request_owned_reserve_tests::purchased_start_quantum_is_spendable_without_a_second_free_reserve",
+        "ingress::public_v3::scalar_cpu::request_owned_reserve_tests::termination_cannot_borrow_another_live_owners_start_quantum",
+        "ingress::public_v3::scalar_cpu::tests::actual_owner_thread_mismatch_preserves_unknown_without_zero_refund",
+        "ingress::public_v3::scalar_cpu::tests::cloned_shared_domain_preserves_two_actual_owner_start_ceiling",
+        "ingress::public_v3::scalar_cpu::tests::extra_settlement_cannot_return_an_unowned_reservation",
+        "ingress::public_v3::scalar_cpu::tests::finish_reports_shared_settlement_uncertainty_without_erasing_known_cpu",
+        "ingress::public_v3::scalar_cpu::tests::missing_or_impossible_reservation_preserves_credit_and_marks_unknown",
+        "ingress::public_v3::scalar_cpu::tests::observing_budget_never_refills_or_returns_an_outstanding_reserve",
+        "ingress::public_v3::scalar_cpu::tests::repeated_real_scopes_and_worker_panic_join_before_single_settlement",
+        "ingress::public_v3::scalar_cpu::tests::settlement_result_distinguishes_known_debt_unknown_sample_and_unowned_return",
+        "ingress::public_v3::scalar_cpu::tests::shared_operation_real_partial_owner_debit_settles_only_residual",
+        "ingress::public_v3::scalar_cpu::tests::stale_refill_keeps_watermark_and_cannot_credit_the_same_interval_twice",
+        "ingress::public_v3::scalar_cpu::tests::stale_reserve_and_settle_match_the_non_decreasing_clock_trace",
+        "ingress::public_v3::scalar_cpu::tests::two_legitimate_reservations_return_once_and_keep_live_cpu_nested",
+        "ingress::public_v3::scalar_cpu::tests::unknown_live_clock_and_unclosed_operation_disable_all_shared_starts"
+      ],
+      "suite": "native-scalar"
+    }
+  ],
+  "original_profile_hosted_status": "Some original-profile workflows passed; original native campaign failed and required baseline/other checks remain unfinished in latest retained snapshot. No full original-profile qualification.",
+  "pre_post_source": {
+    "base": null,
+    "candidate": "34bffa42461e746a602cfd687b8efb082df926c8",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "34bffa42461e746a602cfd687b8efb082df926c8",
+    "tested_tree": "b692872dfd441a3ee89a6604ec51556fd1f6bddf",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2485372142,
+    "tracked_entries": 26123,
+    "tracked_worktree_verified": true
+  },
+  "provider_receipt": "raw/local/validation/provider/pq-provider/provider.json",
+  "python_passed": 414,
+  "python_suites": [
+    {
+      "suite": "ci-contract-tests",
+      "tests_passed": 164
+    },
+    {
+      "suite": "pq-source-controls",
+      "tests_passed": 57
+    },
+    {
+      "suite": "readiness-controls",
+      "tests_passed": 71
+    },
+    {
+      "suite": "source-negative-controls",
+      "tests_passed": 43
+    },
+    {
+      "suite": "goodput-controls",
+      "tests_passed": 29
+    },
+    {
+      "suite": "repository-controls",
+      "tests_passed": 50
+    }
+  ],
+  "qualification": {
+    "application_savings_measured": false,
+    "cell_families_automatically_work_eligible": false,
+    "committed_parent_controls_passed": true,
+    "complete_hidden_progress_lifecycle_proved": false,
+    "complete_persistent_resource_contract": false,
+    "final_use_granted": false,
+    "honest_task_tail_qualified": false,
+    "independent_operators_qualified": false,
+    "minimum_legal_work_cost_proved": false,
+    "model_benefit_measured": false,
+    "original_public_resource_campaign_qualified": false,
+    "production_activation": false,
+    "public_validated_goodput_improvement_measured": false,
+    "unknown_ordinary_auth_close_controls_passed": true,
+    "whole_chain_pq_qualified": false
+  },
+  "schema": "trnm-architecture-boundaries-observation-v1",
+  "status": "HOLD_NO_GO",
+  "strict_clippy_all_workspace_targets_features": true,
+  "tested_commit": "34bffa42461e746a602cfd687b8efb082df926c8",
+  "tested_tree": "b692872dfd441a3ee89a6604ec51556fd1f6bddf"
+}

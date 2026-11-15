@@ -1,0 +1,396 @@
+{
+  "actual_lifetime_failure_bound": null,
+  "additional_loss_accounting": {
+    "known_budget_headroom_is_not_a_security_bound": true,
+    "placement_in_eight_domains": "unproved",
+    "total": null
+  },
+  "composition_coverage_proved": false,
+  "conditional_root_arithmetic": {
+    "combiner": "common-plus-shared-plus-min-complete-family-bounds",
+    "experiment_id": "trnm-proposed-joint-lifetime-experiment-v2",
+    "family_population": {
+      "corruption_model": "unqualified",
+      "required_by_role": {
+        "anchor-response": {
+          "required": 2,
+          "roster_size": 3
+        },
+        "anchor-writer": {
+          "required": 2,
+          "roster_size": 3
+        },
+        "effect-provider": {
+          "required": 2,
+          "roster_size": 3
+        },
+        "root-approval": {
+          "required": 2,
+          "roster_size": 3
+        },
+        "successor-possession": {
+          "required": 3,
+          "roster_size": 3
+        },
+        "witness-response": {
+          "required": 2,
+          "roster_size": 3
+        }
+      },
+      "roles": [
+        "root-approval",
+        "successor-possession",
+        "anchor-writer",
+        "anchor-response",
+        "effect-provider",
+        "witness-response"
+      ],
+      "scope": "all-keys-all-epochs-including-retired-authority",
+      "threshold_to_forgery_reduction": "uninstantiated"
+    },
+    "game_id": "uninstantiated-common-root-game-v2",
+    "inputs": {
+      "common_failure": {
+        "bound": null,
+        "experiment_id": "trnm-proposed-joint-lifetime-experiment-v2",
+        "game_id": "uninstantiated-common-root-game-v2",
+        "model": "quantum-adaptive-lifetime",
+        "profile": "joint-root",
+        "resource_instance_id": "common",
+        "scope": "root-common-failure-whole-lifetime",
+        "status": "unknown",
+        "theorem": null
+      },
+      "ml_event": {
+        "bound": null,
+        "experiment_id": "trnm-proposed-joint-lifetime-experiment-v2",
+        "game_id": "uninstantiated-common-root-game-v2",
+        "model": "quantum-adaptive-lifetime",
+        "profile": "ML-DSA-87",
+        "resource_instance_id": "ml",
+        "scope": "threshold-family-whole-lifetime",
+        "status": "unknown",
+        "theorem": null
+      },
+      "ml_loss": {
+        "bound": null,
+        "experiment_id": "trnm-proposed-joint-lifetime-experiment-v2",
+        "game_id": "uninstantiated-common-root-game-v2",
+        "model": "quantum-adaptive-lifetime",
+        "profile": "ML-DSA-87",
+        "resource_instance_id": "ml",
+        "scope": "family-reduction-whole-lifetime",
+        "status": "unknown",
+        "theorem": null
+      },
+      "shared_game_loss": {
+        "bound": null,
+        "experiment_id": "trnm-proposed-joint-lifetime-experiment-v2",
+        "game_id": "uninstantiated-common-root-game-v2",
+        "model": "quantum-adaptive-lifetime",
+        "profile": "joint-root",
+        "resource_instance_id": "shared",
+        "scope": "common-game-replacement-whole-lifetime",
+        "status": "unknown",
+        "theorem": null
+      },
+      "slh_event": {
+        "bound": null,
+        "experiment_id": "trnm-proposed-joint-lifetime-experiment-v2",
+        "game_id": "uninstantiated-common-root-game-v2",
+        "model": "quantum-adaptive-lifetime",
+        "profile": "SLH-DSA-SHA2-256s",
+        "resource_instance_id": "slh",
+        "scope": "threshold-family-whole-lifetime",
+        "status": "unknown",
+        "theorem": null
+      },
+      "slh_loss": {
+        "bound": null,
+        "experiment_id": "trnm-proposed-joint-lifetime-experiment-v2",
+        "game_id": "uninstantiated-common-root-game-v2",
+        "model": "quantum-adaptive-lifetime",
+        "profile": "SLH-DSA-SHA2-256s",
+        "resource_instance_id": "slh",
+        "scope": "family-reduction-whole-lifetime",
+        "status": "unknown",
+        "theorem": null
+      }
+    },
+    "purpose": "research-model",
+    "schema": "trnm-pq128-root-composition-arithmetic-v2"
+  },
+  "experiment": {
+    "authority_after_retirement_included": true,
+    "horizon": null,
+    "id": "trnm-proposed-joint-lifetime-experiment-v2",
+    "initial_state_and_advice": "unqualified",
+    "joint_corruption_and_custody_model": "unqualified",
+    "model": "quantum-adaptive-lifetime",
+    "prior_preprocessing_included": true,
+    "profile": "proposed-native-pnw1-with-root-v2-v3-v4",
+    "status": "uninstantiated",
+    "stopping_rule": null
+  },
+  "input_manifests": {
+    "legacy": {
+      "declared_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "path": "config/pon/pq128-lifetime-budget-v1.json",
+      "revision_semantics": "declared-event-source-revision",
+      "sha256": "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd"
+    },
+    "root": {
+      "declared_revision": "975af9eb4a7f15b405de602552fa05021a176c11",
+      "path": "config/pon/pq-root-dependency-register-v3.json",
+      "revision_semantics": "review-base-context-not-all-source-revision",
+      "sha256": "d973cb827537c5b852370da6e4e916afc0f52ccdadb2f2c051ed2b9e041f40c8"
+    }
+  },
+  "primitive_scope_bridge": {
+    "sha256": {
+      "budget_identity": "one-shared-lifetime-scope-across-both-registers",
+      "maximum": null,
+      "merge_rule": "identity-union-no-budget-sum-or-min",
+      "public_parameter_id": "FIPS180-4/SHA-256",
+      "query_unit": null,
+      "reset_at_register_key_epoch_role_recovery": false
+    },
+    "sha512": {
+      "budget_identity": "one-shared-lifetime-scope-across-both-registers",
+      "maximum": null,
+      "merge_rule": "identity-union-no-budget-sum-or-min",
+      "public_parameter_id": "FIPS180-4/SHA-512",
+      "query_unit": null,
+      "reset_at_register_key_epoch_role_recovery": false
+    },
+    "shake128": {
+      "budget_identity": "one-shared-lifetime-scope-across-both-registers",
+      "maximum": null,
+      "merge_rule": "identity-union-no-budget-sum-or-min",
+      "public_parameter_id": "FIPS202/SHAKE128",
+      "query_unit": null,
+      "reset_at_register_key_epoch_role_recovery": false
+    },
+    "shake256": {
+      "budget_identity": "one-shared-lifetime-scope-across-both-registers",
+      "maximum": null,
+      "merge_rule": "identity-union-no-budget-sum-or-min",
+      "public_parameter_id": "FIPS202/SHAKE256",
+      "query_unit": null,
+      "reset_at_register_key_epoch_role_recovery": false
+    }
+  },
+  "production_activation": false,
+  "purpose": "research-obligation-bridge",
+  "resource_instances": {
+    "common": {
+      "advice_generation_scope": "unknown",
+      "auxiliary_state_kind": "unknown",
+      "coverage_labels": [
+        "online",
+        "offline",
+        "preprocessing",
+        "failed",
+        "cancelled",
+        "rejected",
+        "unpublished",
+        "helpers",
+        "recursive",
+        "all-keys",
+        "all-epochs",
+        "shared-uses",
+        "authority-surviving-retirement"
+      ],
+      "coverage_labels_are_disjoint_buckets": false,
+      "honest_simulator_extractor_inclusion": "theorem-dependent-uninstantiated",
+      "node_limits_bound_external_queries": false,
+      "quantum_access_model": null,
+      "query_unit": null,
+      "status": "uninstantiated",
+      "theorem_reference": null,
+      "theorem_resource_transform": null,
+      "variables": {
+        "adversary_total_queries": null,
+        "classical_advice_bits": null,
+        "extractor_queries": null,
+        "honest_queries": null,
+        "offline_search_queries": null,
+        "online_queries": null,
+        "preprocessing_queries": null,
+        "quantum_advice_qubits": null,
+        "signing_queries": null,
+        "simulator_queries": null,
+        "total_epochs": null,
+        "total_keys": null,
+        "total_rosters": null,
+        "verification_attempts": null
+      }
+    },
+    "ml": {
+      "advice_generation_scope": "unknown",
+      "auxiliary_state_kind": "unknown",
+      "coverage_labels": [
+        "online",
+        "offline",
+        "preprocessing",
+        "failed",
+        "cancelled",
+        "rejected",
+        "unpublished",
+        "helpers",
+        "recursive",
+        "all-keys",
+        "all-epochs",
+        "shared-uses",
+        "authority-surviving-retirement"
+      ],
+      "coverage_labels_are_disjoint_buckets": false,
+      "honest_simulator_extractor_inclusion": "theorem-dependent-uninstantiated",
+      "node_limits_bound_external_queries": false,
+      "quantum_access_model": null,
+      "query_unit": null,
+      "status": "uninstantiated",
+      "theorem_reference": null,
+      "theorem_resource_transform": null,
+      "variables": {
+        "adversary_total_queries": null,
+        "classical_advice_bits": null,
+        "extractor_queries": null,
+        "honest_queries": null,
+        "offline_search_queries": null,
+        "online_queries": null,
+        "preprocessing_queries": null,
+        "quantum_advice_qubits": null,
+        "signing_queries": null,
+        "simulator_queries": null,
+        "total_epochs": null,
+        "total_keys": null,
+        "total_rosters": null,
+        "verification_attempts": null
+      }
+    },
+    "shared": {
+      "advice_generation_scope": "unknown",
+      "auxiliary_state_kind": "unknown",
+      "coverage_labels": [
+        "online",
+        "offline",
+        "preprocessing",
+        "failed",
+        "cancelled",
+        "rejected",
+        "unpublished",
+        "helpers",
+        "recursive",
+        "all-keys",
+        "all-epochs",
+        "shared-uses",
+        "authority-surviving-retirement"
+      ],
+      "coverage_labels_are_disjoint_buckets": false,
+      "honest_simulator_extractor_inclusion": "theorem-dependent-uninstantiated",
+      "node_limits_bound_external_queries": false,
+      "quantum_access_model": null,
+      "query_unit": null,
+      "status": "uninstantiated",
+      "theorem_reference": null,
+      "theorem_resource_transform": null,
+      "variables": {
+        "adversary_total_queries": null,
+        "classical_advice_bits": null,
+        "extractor_queries": null,
+        "honest_queries": null,
+        "offline_search_queries": null,
+        "online_queries": null,
+        "preprocessing_queries": null,
+        "quantum_advice_qubits": null,
+        "signing_queries": null,
+        "simulator_queries": null,
+        "total_epochs": null,
+        "total_keys": null,
+        "total_rosters": null,
+        "verification_attempts": null
+      }
+    },
+    "slh": {
+      "advice_generation_scope": "unknown",
+      "auxiliary_state_kind": "unknown",
+      "coverage_labels": [
+        "online",
+        "offline",
+        "preprocessing",
+        "failed",
+        "cancelled",
+        "rejected",
+        "unpublished",
+        "helpers",
+        "recursive",
+        "all-keys",
+        "all-epochs",
+        "shared-uses",
+        "authority-surviving-retirement"
+      ],
+      "coverage_labels_are_disjoint_buckets": false,
+      "honest_simulator_extractor_inclusion": "theorem-dependent-uninstantiated",
+      "node_limits_bound_external_queries": false,
+      "quantum_access_model": null,
+      "query_unit": null,
+      "status": "uninstantiated",
+      "theorem_reference": null,
+      "theorem_resource_transform": null,
+      "variables": {
+        "adversary_total_queries": null,
+        "classical_advice_bits": null,
+        "extractor_queries": null,
+        "honest_queries": null,
+        "offline_search_queries": null,
+        "online_queries": null,
+        "preprocessing_queries": null,
+        "quantum_advice_qubits": null,
+        "signing_queries": null,
+        "simulator_queries": null,
+        "total_epochs": null,
+        "total_keys": null,
+        "total_rosters": null,
+        "verification_attempts": null
+      }
+    }
+  },
+  "review_base_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+  "root_event_relation": {
+    "common_failure_obligations": [
+      "same-complete-statement-purpose-and-current-roster",
+      "thresholds-distinct-signers-and-successor-possession",
+      "implementation-refinement-and-owner-authority",
+      "corruption-custody-revocation-and-all-state-recovery",
+      "actual-external-effects-and-surviving-liabilities"
+    ],
+    "statement": "Bad_root subset C union (B_ML intersection B_SLH)",
+    "status": "unproved-for-project"
+  },
+  "schema": "trnm-pq128-lifetime-composition-v2",
+  "scope_mappings": {
+    "joint_bound_derived": false,
+    "legacy_domains_to_current_candidate": "unproved",
+    "root_is_added_to_legacy_sum": false,
+    "root_replaces_legacy_signature_term": false,
+    "root_to_legacy_domains": "unproved"
+  },
+  "shared_substrates": {
+    "keccak-p1600-24": {
+      "independent_oracles_proved": false,
+      "interface_level": "xof-to-permutation-mapping-uninstantiated",
+      "interfaces": [
+        "shake128",
+        "shake256"
+      ],
+      "joint_oracle_replacement_bound": null,
+      "maximum_queries": null,
+      "other_sha3_profiles_included": false,
+      "reference": "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf",
+      "resource_transform": null
+    }
+  },
+  "whole_chain_hash_query_scope_closed": false,
+  "whole_chain_pq_qualified": false
+}

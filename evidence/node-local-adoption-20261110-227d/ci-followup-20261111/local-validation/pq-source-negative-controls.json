@@ -1,0 +1,23 @@
+{
+  "name": "pq-source-negative-controls",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_pq_research_integration.py"
+  ],
+  "started_utc": "2026-11-11T04:11:39.955089+00:00",
+  "elapsed_seconds": 152.88091149000138,
+  "exit_code": 0,
+  "source_before": {
+    "head": "eb32162449eab623f69bbd7016b694600cb382c5",
+    "tree": "c15f37e3f64456c9817019e8aec5d723a29549f0",
+    "status": ""
+  },
+  "source_after": {
+    "head": "eb32162449eab623f69bbd7016b694600cb382c5",
+    "tree": "c15f37e3f64456c9817019e8aec5d723a29549f0",
+    "status": ""
+  },
+  "log_bytes": 160,
+  "log_sha256": "36dc291a88838d823da8a7b7f1be7fa228b496540f7ff103ada57dcb49ecdfbe"
+}

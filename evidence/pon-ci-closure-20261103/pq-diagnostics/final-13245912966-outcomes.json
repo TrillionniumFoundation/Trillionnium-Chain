@@ -1,0 +1,193 @@
+{
+  "artifact": {
+    "id": 13245912966,
+    "name": "pq-system-ubuntu-24.04-arm-head-bebb1f3289cd7050fefde89ea8f2cf33c6c37588-1",
+    "bytes": 1049918,
+    "sha256": "d5be1c0bb014f3322849993b30a0d693560021e263bd80e7cc845d3cffd92996",
+    "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13245912966/zip",
+    "run_id": 41658914755,
+    "job_id": 125996625779,
+    "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+    "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7"
+  },
+  "archive_path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/pq/final-13245912966.zip",
+  "commands": {
+    "node-lib": {
+      "metadata": {
+        "after": {
+          "base": null,
+          "candidate": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+          "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 862029405,
+          "tracked_entries": 7315,
+          "tracked_worktree_verified": true
+        },
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--all-features",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "before": {
+          "base": null,
+          "candidate": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+          "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 862029405,
+          "tracked_entries": 7315,
+          "tracked_worktree_verified": true
+        },
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "elapsed_ns": 2183045300213,
+        "environment": {
+          "CARGO_BUILD_JOBS": "2",
+          "CARGO_ENCODED_RUSTFLAGS": null,
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/home/runner/work/_temp/pq-system-target",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_RUN_ID": "41658914755",
+          "OPENSSL_DIR": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.3mjijLdm/install",
+          "OPENSSL_STATIC": "1",
+          "RUNNER_ARCH": "ARM64",
+          "RUSTC": null,
+          "RUSTC_WORKSPACE_WRAPPER": null,
+          "RUSTC_WRAPPER": null,
+          "RUSTFLAGS": null,
+          "RUST_TEST_THREADS": "1",
+          "TRNM_PQ_OPENSSL": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.3mjijLdm/install/bin/openssl",
+          "TRNM_PQ_OPENSSL_SHA256": "dfd23584f0cf1066d81ba9c8af134d846aae9eaee27f71f0072c422797fec57b",
+          "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+        },
+        "exit_code": 101,
+        "log_bytes": 7282027,
+        "log_file": "node-lib.log",
+        "log_sha256": "c3b73d5e7ffbcf0a38c154b83c58f93d28dc5b00aabc0ef2fc29c5aa1b0e24da",
+        "schema": "trnm-pq-native-command-v1",
+        "started_utc": "2026-11-03T15:10:15.475364+00:00",
+        "status": "command_failed",
+        "whole_chain_quantum_security_qualified": false
+      },
+      "summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 956 filtered out; finished in 0.00s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 956 filtered out; finished in 0.00s",
+        "test result: FAILED. 932 passed; 2 failed; 23 ignored; 0 measured; 0 filtered out; finished in 2181.23s"
+      ],
+      "top_level_test_summary": "test result: FAILED. 932 passed; 2 failed; 23 ignored; 0 measured; 0 filtered out; finished in 2181.23s",
+      "preceding_child_summary_count": 2,
+      "diagnostic_helper_tests": [
+        "test pq_rollback_witness::test_observation::tests::abandoned_phases_and_overwritten_rows_remain_explicit_and_bounded ... ok",
+        "test pq_rollback_witness::test_observation::tests::disabled_observation_and_failures_never_supply_authority_or_error_text ... ok"
+      ],
+      "errors": [
+        "error: test failed, to rerun pass `-p trnm-pon-node --lib`"
+      ],
+      "phase_log_limit_markers": 1
+    },
+    "clippy": {
+      "metadata": {
+        "after": {
+          "base": null,
+          "candidate": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+          "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 862029405,
+          "tracked_entries": 7315,
+          "tracked_worktree_verified": true
+        },
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--tests",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "before": {
+          "base": null,
+          "candidate": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+          "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 862029405,
+          "tracked_entries": 7315,
+          "tracked_worktree_verified": true
+        },
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "elapsed_ns": 41806025878,
+        "environment": {
+          "CARGO_BUILD_JOBS": "2",
+          "CARGO_ENCODED_RUSTFLAGS": null,
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/home/runner/work/_temp/pq-system-target",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_RUN_ID": "41658914755",
+          "OPENSSL_DIR": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.3mjijLdm/install",
+          "OPENSSL_STATIC": "1",
+          "RUNNER_ARCH": "ARM64",
+          "RUSTC": null,
+          "RUSTC_WORKSPACE_WRAPPER": null,
+          "RUSTC_WRAPPER": null,
+          "RUSTFLAGS": null,
+          "RUST_TEST_THREADS": "1",
+          "TRNM_PQ_OPENSSL": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.3mjijLdm/install/bin/openssl",
+          "TRNM_PQ_OPENSSL_SHA256": "dfd23584f0cf1066d81ba9c8af134d846aae9eaee27f71f0072c422797fec57b",
+          "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+        },
+        "exit_code": 101,
+        "log_bytes": 4527,
+        "log_file": "clippy.log",
+        "log_sha256": "363ab74bff727ff0e0ad854e3f9b885e2ccbe1a23f8ea202ca77b3c3a053122e",
+        "schema": "trnm-pq-native-command-v1",
+        "started_utc": "2026-11-03T15:46:38.585071+00:00",
+        "status": "command_failed",
+        "whole_chain_quantum_security_qualified": false
+      },
+      "summaries": [],
+      "top_level_test_summary": null,
+      "preceding_child_summary_count": 0,
+      "diagnostic_helper_tests": [],
+      "errors": [
+        "error: try not to call a closure in the expression where it is declared",
+        "   --> crates/trnm-pon-node/src/pq_rollback_witness.rs:56:41",
+        "    = note: `-D clippy::redundant-closure-call` implied by `-D warnings`",
+        "    = help: to override `-D warnings` add `#[allow(clippy::redundant_closure_call)]`",
+        "error: could not compile `trnm-pon-node` (lib test) due to 1 previous error"
+      ],
+      "phase_log_limit_markers": 0
+    }
+  },
+  "interpretation": "Use the last top-level libtest summary; preceding child summaries are not additional top-level test executions. Strict Clippy is a separate conclusion."
+}

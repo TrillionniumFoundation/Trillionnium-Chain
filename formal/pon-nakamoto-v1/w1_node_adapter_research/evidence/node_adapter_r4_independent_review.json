@@ -1,0 +1,19 @@
+{
+  "schema": "node-adapter-r4-focused-independent-source-review-v1",
+  "generated_utc": "2026-11-08T05:39:11.044026+00:00",
+  "source_sha256": {
+    "src/lib.rs": "69457c74801b2ac7b42d5a95edb4a17c32d1664bc00d14d7235415863e891ec6",
+    "src/main.rs": "ec8fc3116c4e5a17f134c1c9c61a0cfaa84a51de7306f9ce46fef9b358494c92",
+    "tests/node_bridge.rs": "9035dead75db8b2f66bfd8ce629ef78721647f096bc4d7c85e12fcb9a5ab9d66"
+  },
+  "readme_snapshot_sha256": "a2cb1e9e3925662767759ac9977d592ee5729b1aaf8d3e8e5cc6e6ab0defed1e",
+  "underlying_node_baseline": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+  "underlying_node_store_rs_sha256": "07de31f9bece7ea41b0a608a04fc01cec33409bfc610094fc38294257bb1dbf1",
+  "review_report_sha256": "b11a927329be305764719ead7502227e7b5c87838adea017eb261712517b758e",
+  "code_edits_by_reviewer": false,
+  "new_test_or_pressure_execution_by_reviewer": false,
+  "disposition": "NO_REMAINING_BLOCKING_FINDING_IN_FOCUSED_SOURCE_SCOPE",
+  "production_qualification": false,
+  "reported_runtime_checks_owner": "coordinator; not independently rerun in this review",
+  "remaining_nonblocking_editorial_note": "README names Node::maintenance; implementation calls trnm_pon_node::maintenance free function"
+}

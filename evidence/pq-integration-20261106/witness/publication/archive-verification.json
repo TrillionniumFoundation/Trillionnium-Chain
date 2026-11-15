@@ -1,0 +1,12 @@
+{
+  "archive_bytes": 1121155,
+  "archive_sha256": "9f84ba375daa13b11650e173133bb042183bc4ed8570ff040aacc93c8e23027a",
+  "index_sha256": "88d098f87c21e7e5170aa7f2440d0f73ec48f11b66081b9e67dca765825969ad",
+  "native_tests_executed": 0,
+  "raw_member_bytes": 21817264,
+  "result": "PASS_ARCHIVE_CONTENT_ONLY",
+  "schema": "trnm-curated-evidence-archive-verification-v1",
+  "verified_members": 971,
+  "verified_parts": 1,
+  "whole_chain_pq_qualified": false
+}

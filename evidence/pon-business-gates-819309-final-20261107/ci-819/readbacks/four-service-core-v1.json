@@ -1,0 +1,700 @@
+{
+  "schema": "trnm-final819-four-service-core-v1",
+  "expected_lanes": 4,
+  "rows": [
+    {
+      "artifact_id": 13586194181,
+      "job_id": 128493671778,
+      "artifact_name": "priority-ubuntu-24.04-prospective-merge-service-model-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "errors": [],
+      "source_binding": {
+        "kind": "prospective-merge",
+        "tested_commit": "28df21f965e0348690836c9c854dab645827a03d",
+        "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "log_source_identity_count": 2
+      },
+      "manifest_files_verified": 50,
+      "manifest": {
+        "passed": false,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "execution_finished": false,
+        "all_named_tests_passed": true,
+        "source_before_after_equal": true
+      },
+      "terminal": {
+        "schema": "trnm-from-zero-native-terminal-v1",
+        "scope": "child process terminals and original sequential report acceptance; diagnostic readback grants no acceptance or subsequent CI execution",
+        "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+        "native_execution_completed": true,
+        "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+        "native_invocations": [
+          {
+            "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          },
+          {
+            "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          },
+          {
+            "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          },
+          {
+            "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          },
+          {
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          }
+        ],
+        "unexecuted_native_tests": [],
+        "acceptance_stages": {
+          "service_report": {
+            "path": "native/report.json",
+            "status": "passed",
+            "error": null,
+            "before_validation": {
+              "state": "present",
+              "bytes": 3472848,
+              "sha256": "e1506897bf9fc032076dda4ecb964fe58af81b1e5d0ff8162446c9b26deb365f"
+            },
+            "retained_report": {
+              "state": "present",
+              "bytes": 3472848,
+              "sha256": "e1506897bf9fc032076dda4ecb964fe58af81b1e5d0ff8162446c9b26deb365f"
+            },
+            "retained_matches_before_validation": true
+          },
+          "sustained_report": {
+            "path": "native/sustained/report.json",
+            "status": "passed",
+            "error": null,
+            "before_validation": {
+              "state": "present",
+              "bytes": 19827436,
+              "sha256": "bf1cb89b859988674b504f2385ac376a5025f61a593503c88de5e512da1a7fe0"
+            },
+            "retained_report": {
+              "state": "present",
+              "bytes": 19827436,
+              "sha256": "bf1cb89b859988674b504f2385ac376a5025f61a593503c88de5e512da1a7fe0"
+            },
+            "retained_matches_before_validation": true
+          },
+          "confirmation_report": {
+            "path": "confirmation/report.json",
+            "status": "failed",
+            "error": "CONFIRMATION_TARGET",
+            "before_validation": {
+              "state": "present",
+              "bytes": 12666866,
+              "sha256": "44afacbb1d64f50053926a483feee888e49b322be8d9d8dd0dadc3f8c35a2379"
+            },
+            "retained_report": {
+              "state": "present",
+              "bytes": 12666866,
+              "sha256": "44afacbb1d64f50053926a483feee888e49b322be8d9d8dd0dadc3f8c35a2379"
+            },
+            "retained_matches_before_validation": true
+          }
+        },
+        "unexecuted_acceptance_stages": [],
+        "acceptance_passed": false,
+        "finalization_completed": true,
+        "subsequent_ci_steps_observed": false
+      },
+      "native_exits": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "host": {
+        "from-zero-native-host/child-result.json": {
+          "host_errors": [],
+          "final_host_errors": null,
+          "native_child_exit": 1,
+          "systemd_run_exit": null
+        },
+        "from-zero-native-host/controller-result.json": {
+          "host_errors": null,
+          "final_host_errors": [],
+          "native_child_exit": null,
+          "systemd_run_exit": 1
+        }
+      },
+      "confirmation_report": {
+        "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T185919Z-819309fd3122-f4da8b5c/service-artifact-read-v1/13586194181/from-zero-native/confirmation/report.json",
+        "sha256": "44afacbb1d64f50053926a483feee888e49b322be8d9d8dd0dadc3f8c35a2379",
+        "strict_pure_error": "ValueError: CONFIRMATION_TARGET"
+      },
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 2379932989,
+          "attack_calls": 0,
+          "honest_submissions": 7,
+          "honest_history": 7,
+          "verification_errors": [],
+          "honest_submit_status_counts": {
+            "ok": 7
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "attack_calls": 457,
+          "honest_submissions": 7,
+          "honest_history": 6,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "honest_submit_status_counts": {
+            "ok": 7
+          }
+        }
+      ],
+      "derived_from": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T185919Z-819309fd3122-f4da8b5c/service-artifact-read-v1/summary.json"
+    },
+    {
+      "artifact_id": 13586980357,
+      "job_id": 128493671825,
+      "artifact_name": "priority-ubuntu-24.04-arm-head-service-model-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "errors": [],
+      "source_binding": {
+        "kind": "head",
+        "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+        "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "log_source_identity_count": 2
+      },
+      "manifest_files_verified": 50,
+      "manifest": {
+        "passed": false,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "execution_finished": false,
+        "all_named_tests_passed": true,
+        "source_before_after_equal": true
+      },
+      "terminal": {
+        "schema": "trnm-from-zero-native-terminal-v1",
+        "scope": "child process terminals and original sequential report acceptance; diagnostic readback grants no acceptance or subsequent CI execution",
+        "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+        "native_execution_completed": true,
+        "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+        "native_invocations": [
+          {
+            "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          },
+          {
+            "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          },
+          {
+            "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          },
+          {
+            "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          },
+          {
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          }
+        ],
+        "unexecuted_native_tests": [],
+        "acceptance_stages": {
+          "service_report": {
+            "path": "native/report.json",
+            "status": "passed",
+            "error": null,
+            "before_validation": {
+              "state": "present",
+              "bytes": 3477731,
+              "sha256": "5111ba84758dee8477375a6d03f2518af6a543dc8caec34f4b9bb7e6b91fca0b"
+            },
+            "retained_report": {
+              "state": "present",
+              "bytes": 3477731,
+              "sha256": "5111ba84758dee8477375a6d03f2518af6a543dc8caec34f4b9bb7e6b91fca0b"
+            },
+            "retained_matches_before_validation": true
+          },
+          "sustained_report": {
+            "path": "native/sustained/report.json",
+            "status": "passed",
+            "error": null,
+            "before_validation": {
+              "state": "present",
+              "bytes": 19823572,
+              "sha256": "60b9e26cb8b782fae8a1ecf1e31c49a48df4813cc09621a913277240cf6b242c"
+            },
+            "retained_report": {
+              "state": "present",
+              "bytes": 19823572,
+              "sha256": "60b9e26cb8b782fae8a1ecf1e31c49a48df4813cc09621a913277240cf6b242c"
+            },
+            "retained_matches_before_validation": true
+          },
+          "confirmation_report": {
+            "path": "confirmation/report.json",
+            "status": "failed",
+            "error": "CONFIRMATION_TARGET",
+            "before_validation": {
+              "state": "present",
+              "bytes": 12103036,
+              "sha256": "68b31b4495ab7102a324f2e8d68b759b58418ae12964207b2fc0c4d1e5e52e7b"
+            },
+            "retained_report": {
+              "state": "present",
+              "bytes": 12103036,
+              "sha256": "68b31b4495ab7102a324f2e8d68b759b58418ae12964207b2fc0c4d1e5e52e7b"
+            },
+            "retained_matches_before_validation": true
+          }
+        },
+        "unexecuted_acceptance_stages": [],
+        "acceptance_passed": false,
+        "finalization_completed": true,
+        "subsequent_ci_steps_observed": false
+      },
+      "native_exits": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "host": {
+        "from-zero-native-host/child-result.json": {
+          "host_errors": [],
+          "final_host_errors": null,
+          "native_child_exit": 1,
+          "systemd_run_exit": null
+        },
+        "from-zero-native-host/controller-result.json": {
+          "host_errors": null,
+          "final_host_errors": [],
+          "native_child_exit": null,
+          "systemd_run_exit": 1
+        }
+      },
+      "confirmation_report": {
+        "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T190954Z-819309fd3122-2881e25e/service-artifact-read-remaining-v1/13586980357/from-zero-native/confirmation/report.json",
+        "sha256": "68b31b4495ab7102a324f2e8d68b759b58418ae12964207b2fc0c4d1e5e52e7b",
+        "strict_pure_error": "ValueError: CONFIRMATION_TARGET"
+      },
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 1810381926,
+          "attack_calls": 0,
+          "honest_submissions": 7,
+          "honest_history": 7,
+          "verification_errors": [],
+          "honest_submit_status_counts": {
+            "ok": 7
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "attack_calls": 428,
+          "honest_submissions": 7,
+          "honest_history": 6,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "honest_submit_status_counts": {
+            "ok": 7
+          }
+        }
+      ],
+      "derived_from": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T190954Z-819309fd3122-2881e25e/service-artifact-read-remaining-v1/summary.json"
+    },
+    {
+      "artifact_id": 13586309794,
+      "job_id": 128493671759,
+      "artifact_name": "priority-ubuntu-24.04-arm-prospective-merge-service-model-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "errors": [],
+      "source_binding": {
+        "kind": "prospective-merge",
+        "tested_commit": "28df21f965e0348690836c9c854dab645827a03d",
+        "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "log_source_identity_count": 2
+      },
+      "manifest_files_verified": 50,
+      "manifest": {
+        "passed": false,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "execution_finished": false,
+        "all_named_tests_passed": true,
+        "source_before_after_equal": true
+      },
+      "terminal": {
+        "schema": "trnm-from-zero-native-terminal-v1",
+        "scope": "child process terminals and original sequential report acceptance; diagnostic readback grants no acceptance or subsequent CI execution",
+        "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+        "native_execution_completed": true,
+        "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+        "native_invocations": [
+          {
+            "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          },
+          {
+            "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          },
+          {
+            "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          },
+          {
+            "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          },
+          {
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          }
+        ],
+        "unexecuted_native_tests": [],
+        "acceptance_stages": {
+          "service_report": {
+            "path": "native/report.json",
+            "status": "passed",
+            "error": null,
+            "before_validation": {
+              "state": "present",
+              "bytes": 3474032,
+              "sha256": "011eb972663659fb7b8ec1801ce8bfe4f127edad4d9f75f988076b3e766cbc2b"
+            },
+            "retained_report": {
+              "state": "present",
+              "bytes": 3474032,
+              "sha256": "011eb972663659fb7b8ec1801ce8bfe4f127edad4d9f75f988076b3e766cbc2b"
+            },
+            "retained_matches_before_validation": true
+          },
+          "sustained_report": {
+            "path": "native/sustained/report.json",
+            "status": "passed",
+            "error": null,
+            "before_validation": {
+              "state": "present",
+              "bytes": 19836268,
+              "sha256": "3d22ceadf764077971887d7c671bb9e128a8cac660bf0e9db99beaf98ea7d6eb"
+            },
+            "retained_report": {
+              "state": "present",
+              "bytes": 19836268,
+              "sha256": "3d22ceadf764077971887d7c671bb9e128a8cac660bf0e9db99beaf98ea7d6eb"
+            },
+            "retained_matches_before_validation": true
+          },
+          "confirmation_report": {
+            "path": "confirmation/report.json",
+            "status": "failed",
+            "error": "CONFIRMATION_TARGET",
+            "before_validation": {
+              "state": "present",
+              "bytes": 12236680,
+              "sha256": "c6f6af775512a7af67f4c6c7f527f64e741da6f7210ca7744efbcfeeb7df8057"
+            },
+            "retained_report": {
+              "state": "present",
+              "bytes": 12236680,
+              "sha256": "c6f6af775512a7af67f4c6c7f527f64e741da6f7210ca7744efbcfeeb7df8057"
+            },
+            "retained_matches_before_validation": true
+          }
+        },
+        "unexecuted_acceptance_stages": [],
+        "acceptance_passed": false,
+        "finalization_completed": true,
+        "subsequent_ci_steps_observed": false
+      },
+      "native_exits": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "host": {
+        "from-zero-native-host/child-result.json": {
+          "host_errors": [],
+          "final_host_errors": null,
+          "native_child_exit": 1,
+          "systemd_run_exit": null
+        },
+        "from-zero-native-host/controller-result.json": {
+          "host_errors": null,
+          "final_host_errors": [],
+          "native_child_exit": null,
+          "systemd_run_exit": 1
+        }
+      },
+      "confirmation_report": {
+        "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T190954Z-819309fd3122-2881e25e/service-artifact-read-remaining-v1/13586309794/from-zero-native/confirmation/report.json",
+        "sha256": "c6f6af775512a7af67f4c6c7f527f64e741da6f7210ca7744efbcfeeb7df8057",
+        "strict_pure_error": "ValueError: CONFIRMATION_TARGET"
+      },
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 1781689543,
+          "attack_calls": 0,
+          "honest_submissions": 7,
+          "honest_history": 7,
+          "verification_errors": [],
+          "honest_submit_status_counts": {
+            "ok": 7
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "attack_calls": 427,
+          "honest_submissions": 7,
+          "honest_history": 7,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "honest_submit_status_counts": {
+            "ok": 7
+          }
+        }
+      ],
+      "derived_from": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T190954Z-819309fd3122-2881e25e/service-artifact-read-remaining-v1/summary.json"
+    },
+    {
+      "artifact_id": 13586249872,
+      "job_id": 128493671830,
+      "artifact_name": "priority-ubuntu-24.04-head-service-model-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "errors": [],
+      "source_binding": {
+        "kind": "head",
+        "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+        "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "log_source_identity_count": 2
+      },
+      "manifest_files_verified": 50,
+      "manifest": {
+        "passed": false,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "execution_finished": false,
+        "all_named_tests_passed": true,
+        "source_before_after_equal": true
+      },
+      "terminal": {
+        "schema": "trnm-from-zero-native-terminal-v1",
+        "scope": "child process terminals and original sequential report acceptance; diagnostic readback grants no acceptance or subsequent CI execution",
+        "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+        "native_execution_completed": true,
+        "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+        "native_invocations": [
+          {
+            "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          },
+          {
+            "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          },
+          {
+            "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          },
+          {
+            "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          },
+          {
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "status": "returned",
+            "exit_code": 0,
+            "timed_out": false
+          }
+        ],
+        "unexecuted_native_tests": [],
+        "acceptance_stages": {
+          "service_report": {
+            "path": "native/report.json",
+            "status": "passed",
+            "error": null,
+            "before_validation": {
+              "state": "present",
+              "bytes": 3476034,
+              "sha256": "1719f040460e4440e3f258680a9d9d31bd819f85c1981ca6b07ef6d01f9f8296"
+            },
+            "retained_report": {
+              "state": "present",
+              "bytes": 3476034,
+              "sha256": "1719f040460e4440e3f258680a9d9d31bd819f85c1981ca6b07ef6d01f9f8296"
+            },
+            "retained_matches_before_validation": true
+          },
+          "sustained_report": {
+            "path": "native/sustained/report.json",
+            "status": "passed",
+            "error": null,
+            "before_validation": {
+              "state": "present",
+              "bytes": 18860057,
+              "sha256": "689c780f7b0de14b15e9edb7aac7d85a7476e1854db4092e086a08331641faeb"
+            },
+            "retained_report": {
+              "state": "present",
+              "bytes": 18860057,
+              "sha256": "689c780f7b0de14b15e9edb7aac7d85a7476e1854db4092e086a08331641faeb"
+            },
+            "retained_matches_before_validation": true
+          },
+          "confirmation_report": {
+            "path": "confirmation/report.json",
+            "status": "failed",
+            "error": "CONFIRMATION_TARGET",
+            "before_validation": {
+              "state": "present",
+              "bytes": 10029611,
+              "sha256": "78e453f7a8f7bb28d0db3d80cd282d870cf9683416dd41536ee016d3c6ac5bae"
+            },
+            "retained_report": {
+              "state": "present",
+              "bytes": 10029611,
+              "sha256": "78e453f7a8f7bb28d0db3d80cd282d870cf9683416dd41536ee016d3c6ac5bae"
+            },
+            "retained_matches_before_validation": true
+          }
+        },
+        "unexecuted_acceptance_stages": [],
+        "acceptance_passed": false,
+        "finalization_completed": true,
+        "subsequent_ci_steps_observed": false
+      },
+      "native_exits": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "host": {
+        "from-zero-native-host/child-result.json": {
+          "host_errors": [],
+          "final_host_errors": null,
+          "native_child_exit": 1,
+          "systemd_run_exit": null
+        },
+        "from-zero-native-host/controller-result.json": {
+          "host_errors": null,
+          "final_host_errors": [],
+          "native_child_exit": null,
+          "systemd_run_exit": 1
+        }
+      },
+      "confirmation_report": {
+        "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T190954Z-819309fd3122-2881e25e/service-artifact-read-remaining-v1/13586249872/from-zero-native/confirmation/report.json",
+        "sha256": "78e453f7a8f7bb28d0db3d80cd282d870cf9683416dd41536ee016d3c6ac5bae",
+        "strict_pure_error": "ValueError: CONFIRMATION_TARGET"
+      },
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 2998398221,
+          "attack_calls": 0,
+          "honest_submissions": 7,
+          "honest_history": 7,
+          "verification_errors": [],
+          "honest_submit_status_counts": {
+            "ok": 7
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "attack_calls": 334,
+          "honest_submissions": 7,
+          "honest_history": 3,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "honest_submit_status_counts": {
+            "ok": 7
+          }
+        }
+      ],
+      "derived_from": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T190954Z-819309fd3122-2881e25e/service-artifact-read-remaining-v1/summary.json"
+    }
+  ],
+  "four_unique_lanes": true,
+  "native_gate_validated": false
+}

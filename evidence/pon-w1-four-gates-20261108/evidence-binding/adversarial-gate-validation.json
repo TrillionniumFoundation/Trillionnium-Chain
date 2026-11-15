@@ -1,0 +1,56 @@
+{
+  "schema": "TRNM-W1-EVIDENCE-BINDING-PROPOSAL1",
+  "base_commit": "abab79dac0cb89eb2753d3f579119ac135650eb5",
+  "source_files": [
+    {
+      "path": "scripts/run_w1_deployment_comparison.py",
+      "base_sha256": "20298a5836fb7322a713304be407e7f09238d24d758fdcd9bf2ec49fe8d7eae0",
+      "new_sha256": "9e40acb2b522845aab5b1354a61f1bfdc4f27e5cad6a033cb37c7183b3d44d1e",
+      "new_bytes": 16897
+    },
+    {
+      "path": "scripts/run_w1_receiver.py",
+      "base_sha256": "7aa0e50c494a41e03eddb6312b558884978f152d6e02d2bfa69d4a0e7cc73066",
+      "new_sha256": "20daa1cc843b18efe9ff25741f273fda9059effd240d6398ee934d2a55437765",
+      "new_bytes": 7912
+    },
+    {
+      "path": "scripts/ci/test_w1_receiver_real.py",
+      "base_sha256": "827bf2df21403c8c60c137838c3501c590b8d6a69515c3b98de603dbc9cd9e14",
+      "new_sha256": "004180bb5804e665eaae20ecae2aa47282f5602740274588a615622338b3a8c5",
+      "new_bytes": 12893
+    },
+    {
+      "path": "scripts/ci/test_w1_deployment_evidence_binding.py",
+      "base_sha256": null,
+      "new_sha256": "be8058818d874e81c618dc00ad89588fe474929457b52cdfc64c7a2396547731",
+      "new_bytes": 7756
+    }
+  ],
+  "patch_sha256": "a78135b0ed2fb7a3333f3e296c41bb2311459ddfeafcaac75b55a5523fdf63c8",
+  "base_attack_reproduction": {
+    "old_reader_accepted_rewritten_inner_ns": 1,
+    "original_inner_ns": 33114440,
+    "original_observer_stdout_sha256": "d240e500aa7a93cbe0a4b9f091fe84729eec76bcabf4e778f0ad2b0fd4250221",
+    "rewritten_stdout_sha256": "39b62753e2e8642647fb395d403e59aacf64f49422a2373266fed3282b382877",
+    "new_cryptographic_verifications": 0,
+    "new_proofs": 0,
+    "scope": "deterministic evidence acceptance attack on actual retained measured row; not a new verifier invocation"
+  },
+  "unit_exit": 0,
+  "unit_tests": 9,
+  "actual_retained_ABBA_rows": 80,
+  "compile_exit": 0,
+  "real_controls_defined": 11,
+  "real_controls_executed_here": 0,
+  "real_new_attack_controls": 4,
+  "partial_checkout_cancellation_regression": "not evaluated: import failed because w1_full_staged_run.py is absent from partial proposal; root full worktree must run",
+  "production_qualified": false,
+  "admission_authorized": false,
+  "gates": [
+    "HOLD",
+    "HOLD",
+    "HOLD",
+    "HOLD"
+  ]
+}

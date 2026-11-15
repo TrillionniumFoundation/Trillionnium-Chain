@@ -1,0 +1,19 @@
+     Running tests/mining_service_budget.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/final-target/debug/deps/mining_service_budget-d6d75bc805461e0a)
+
+running 2 tests
+test invalid_or_unused_mining_runtime_refuses_before_store_creation ... ok
+test mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain ... 
+thread 'mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain' (1630641) panicked at crates/trnm-pon-node/tests/mining_service_budget.rs:102:5:
+None status=exit status: 2 stderr=PUBLIC_HOST_KERNEL_PARENT
+ stdout=
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 17.76s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test mining_service_budget`

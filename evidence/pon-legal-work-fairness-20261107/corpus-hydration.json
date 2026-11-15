@@ -1,0 +1,112 @@
+{
+  "source_commit": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+  "missing_blobs": 15,
+  "verified_blobs": [
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/lib.rs",
+      "sha": "523c91846a53e509a8d83d8d13db4444bc45036c",
+      "bytes": 15425,
+      "sha256": "03018856633755682c3fa7e4b04df288763c50ff551b2b53ccfa06291f4228d9",
+      "source": "GitHub plugin git blob GET"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "sha": "4ea8e30cb15880c6e645b2f7950f6cf3d94cd9f9",
+      "bytes": 11202,
+      "sha256": "14afff86a223c1907ca16af9b0e4411c19ef1e1f883b575b82d0897d88c50964",
+      "source": "GitHub plugin git blob GET"
+    },
+    {
+      "path": "trillionnium/crates/trnm-research-protocol/src/command.rs",
+      "sha": "518b49ce93861966e8cf239c9651e5d02a1fd6c8",
+      "bytes": 9577,
+      "sha256": "6ce11e6a8ed0dbd3d8fd786089840e78d69f4c48db1d08d4562cf0826aa3ccf0",
+      "source": "GitHub plugin git blob GET"
+    },
+    {
+      "path": "trillionnium/crates/trnm-research-protocol/src/lib.rs",
+      "sha": "cec078765580cd1f3008721ef9a0b9b96f3a7d6a",
+      "bytes": 1463,
+      "sha256": "2b4ac3c16c650f9d0307cf7e42aea1bd0ccf1da65abdd130c99906bbdb0b66bc",
+      "source": "GitHub plugin git blob GET"
+    },
+    {
+      "path": "trillionnium/crates/trnm-research-protocol/src/state.rs",
+      "sha": "bce4fcf5894150681b2a5ff27d251b753673fdfd",
+      "bytes": 44749,
+      "sha256": "dd9eeed804b60725efd867245ea93ea0946a932d45f67f8dee9802a72450466d",
+      "source": "GitHub plugin git blob GET"
+    },
+    {
+      "path": "trillionnium/crates/trnm-research-protocol/src/types.rs",
+      "sha": "ade501df57ff576cb1a6b71ff7444cfc794806f5",
+      "bytes": 44815,
+      "sha256": "e34e0e6be523ad02c08e399fe9485e1c1df6aa802b168af84fcaccdc0c328697",
+      "source": "GitHub plugin git blob GET"
+    },
+    {
+      "path": "trillionnium/crates/trnm-types/src/relay.rs",
+      "sha": "443998a11f439439805b9df68919901ac0013a0a",
+      "bytes": 29118,
+      "sha256": "1ad2214c17c5b703dc0721c28bc7b33ed8c49cd41fb904655db6a39b03bb4ba9",
+      "source": "GitHub plugin git blob GET"
+    },
+    {
+      "path": "trillionnium/crates/trnm-worker-agent/src/assigned.rs",
+      "sha": "52defb0c01c615c79cd9229e527f9fd65de352eb",
+      "bytes": 10571,
+      "sha256": "86126bfb14fec44df303da9f52222b2b404aa0dbb341659002285edd90c4ae50",
+      "source": "GitHub plugin git blob GET"
+    },
+    {
+      "path": "trillionnium/crates/trnm-worker-agent/src/assigned_runner.rs",
+      "sha": "1589a526485ffb99980543082163f2c2a0e657df",
+      "bytes": 5396,
+      "sha256": "49f59011ba492655c02b94acc11f98799d1da91447391cc944f4138412508cfa",
+      "source": "GitHub plugin git blob GET"
+    },
+    {
+      "path": "trillionnium/crates/trnm-worker-agent/src/command_runtime_exec.rs",
+      "sha": "d5093abb169471997b5382137c589bba88a4bcb5",
+      "bytes": 11404,
+      "sha256": "9f42ca8281f633e348a7afdef110dbff4f0f3b8cbd4087e72450778945fa3c1a",
+      "source": "GitHub plugin git blob GET"
+    },
+    {
+      "path": "trillionnium/crates/trnm-worker-agent/src/flush.rs",
+      "sha": "92b75fdb36219981cfbca130eaa10229bcbba3b9",
+      "bytes": 2299,
+      "sha256": "f1f7b4ad6f6b5a9a76cd595734819c61a2b72e70bfba0622c112e3fbbed61e9b",
+      "source": "GitHub plugin git blob GET"
+    },
+    {
+      "path": "trillionnium/crates/trnm-worker-agent/src/flush_submission.rs",
+      "sha": "a262bb210150438afa83fe2dddd9fb1f9169284c",
+      "bytes": 22996,
+      "sha256": "1db189fd7c9af776f0de6a009be948cb0efd03af8e31c93fda1fbb4f9425ce5e",
+      "source": "GitHub plugin git blob GET"
+    },
+    {
+      "path": "trillionnium/crates/trnm-worker-agent/src/main.rs",
+      "sha": "e87d5db3e89f2e4b33cda8b03ad3073e3d15a06f",
+      "bytes": 69655,
+      "sha256": "6a5875f645d576abb33c2aee09da743c4955ea6719dd6bf231355d833444d15a",
+      "source": "GitHub plugin git blob GET"
+    },
+    {
+      "path": "trillionnium/crates/trnm-worker-agent/src/workflow.rs",
+      "sha": "d879967334f98ac5c9130b797d4821dc3788926b",
+      "bytes": 2347,
+      "sha256": "c0d941629c3bcadda4e5f349fdddb3bd1cb2ad70d9d34d01892956ca299da429",
+      "source": "GitHub plugin git blob GET"
+    },
+    {
+      "path": "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs",
+      "sha": "d081f4381bf831aecd99130a5ddc50491f588e3b",
+      "bytes": 3735,
+      "sha256": "fcccdd423517338c35b0151a822c0c0f4b7137b3dbb43c5d0988ac7b09492f0d",
+      "source": "GitHub plugin git blob GET"
+    }
+  ],
+  "initial_observation": "Source replay failed because required old blobs absent. First API parser expected JSON but endpoint delivered decoded UTF-8. Oversized command failed before execution; temporary JSON file used. No source bytes substituted."
+}

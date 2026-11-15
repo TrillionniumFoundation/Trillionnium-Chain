@@ -1,0 +1,40 @@
+{
+  "analysis_only_no_native_execution": true,
+  "script": {
+    "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/independent-report-auditor-v1.py",
+    "bytes": 31280,
+    "sha256": "f6a7d8ede32d3cfb5c4420d069f8f505f913cc55f13078f688b73290ed13852c"
+  },
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/independent-report-auditor-v1.py",
+    "--receipt",
+    "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/retention-receipt.json",
+    "--output",
+    "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/independent-report-audit-v1.json"
+  ],
+  "started_utc": "2026-11-11T06:53:24.978371+00:00",
+  "returncode": 0,
+  "completed_utc": "2026-11-11T06:53:30.316956+00:00",
+  "stdout": {
+    "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/independent-report-audit-v1.stdout",
+    "bytes": 1648,
+    "sha256": "56f8a5a462379b04c87f0250a4c9b6b620c3c68f6974c03c66df772a480498a2"
+  },
+  "stderr": {
+    "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/independent-report-audit-v1.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "output": {
+    "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/independent-report-audit-v1.json",
+    "bytes": 86633,
+    "sha256": "9705f222f1841d3074e8468c4b70f1deccbfd28e77b9797a81f15cac673bcfb7"
+  },
+  "output_gzip": {
+    "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/independent-report-audit-v1.json.gz",
+    "bytes": 10371,
+    "sha256": "ac0708ab180f1168d03b71b31212690c33cbdaf0438107858b484d78b12e93b0"
+  }
+}

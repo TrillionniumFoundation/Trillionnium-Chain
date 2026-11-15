@@ -1,0 +1,16 @@
+[
+  {
+    "all_members_match_manifest_and_retained_originals": true,
+    "archive": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc/observations.tar.gz",
+    "bytes": 1066112,
+    "payload_files": 134,
+    "sha256": "787ecdea6f3dfb11f03b61dd20f2484b763453f390b3d9802ca37e0cc5ec89c0"
+  },
+  {
+    "all_members_match_manifest_and_retained_originals": true,
+    "archive": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-failure-diagnostic/observations.tar.gz",
+    "bytes": 561619,
+    "payload_files": 20,
+    "sha256": "413a6c7bf5a589b876cf05dd72855379b1643b9da2cbe19d64bacc3a5d5a9d09"
+  }
+]

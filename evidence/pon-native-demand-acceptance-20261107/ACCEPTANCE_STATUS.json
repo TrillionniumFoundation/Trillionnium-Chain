@@ -1,0 +1,238 @@
+{
+  "acceptance_obligations": [
+    {
+      "id": 1,
+      "mechanism": "Native sealed owner readback, funding/receipt/payment replay, durable V1/V2 journals and active-anchor/chronology checks",
+      "mechanism_scope": "Controlled native fixtures; consumer epochs do not prove network epochs",
+      "missing": "Authorized production owners, authentic durable target receipts and auditable operational recovery/control assumptions",
+      "real_business_accepted": false
+    },
+    {
+      "id": 2,
+      "mechanism": "TSC1/TSD1 funded contract admission, original escrow, delivery, payer acceptance, arbitrator payout/refund and expiry",
+      "mechanism_scope": "Explicit Legacy/Authenticated development profile; PQ/permanent Growth unsupported; legacy Task not silently migrated",
+      "missing": "Real funded contracts, independent dispute operation and production qualification",
+      "real_business_accepted": false
+    },
+    {
+      "id": 3,
+      "mechanism": "Separate signed declarations, funding origin and independent acceptance claims",
+      "missing": "Auditable beneficial control, external budget origin and independent evaluators/data; distinct keys or self-payment are insufficient",
+      "real_business_accepted": false
+    },
+    {
+      "id": 4,
+      "mechanism": "Prospective frozen operation/evaluation references, bounded cost declarations and separate HonestNoGain service fees",
+      "missing": "Independent physical cost measurements, prospective matched controls, all attempts and validated net benefit",
+      "real_business_accepted": false
+    },
+    {
+      "id": 5,
+      "mechanism": "Ordinary Hepta owner fixture continuation and complete Node target inventory observations",
+      "missing": "Passing original Node gates on the required host; production canary, install, next-task use, withdrawal, rollback and cross-repository deployment",
+      "real_business_accepted": false
+    }
+  ],
+  "authorities": {
+    "external_customer_independence_established": false,
+    "external_funding_independence_established": false,
+    "force_push": false,
+    "independent_evaluator_qualification_established": false,
+    "main_merge": false,
+    "model_improvement_bonus_qualified": false,
+    "network_epoch_proof_established": false,
+    "physical_cost_measurement_established": false,
+    "production_adoption_established": false
+  },
+  "chain_pull_request": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/779",
+  "complete_node_qualification": false,
+  "compute": {
+    "colab_or_kaggle_invoked": false,
+    "reason": "No configured callable Colab/Kaggle entry found in available tools and scoped tracked metadata; current checks are CPU execution.",
+    "selected_host": "HeptaRuntime desktop"
+  },
+  "core": {
+    "failed": 0,
+    "formatting_passed": true,
+    "fuzz_cargo_graph": {
+      "packages": 147,
+      "workspace_members": 1
+    },
+    "ignored": 10,
+    "passed": 388,
+    "root_cargo_graph": {
+      "packages": 180,
+      "workspace_members": 26
+    },
+    "scope": "Three selected crates, all targets and features",
+    "summary_sha256": "7ae138b863ab5c0469fb6a635d43e9ebd5b8f9109daa36e1de52363f719c23d9",
+    "targets": 32,
+    "workspace_clippy_warnings_as_errors_passed": true
+  },
+  "execution_source_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+  "frozen_source_checks": {
+    "negative_repository_passed": 50,
+    "negative_research_integration_passed": 37,
+    "negative_source_integrity_passed": 43,
+    "repository_links_passed": true,
+    "source_blobs_verified": 580,
+    "source_contract_status": "HOLD_NO_GO",
+    "summary_sha256": "f9ee0b54b47049a06a737cfade1f66c7e1a06860971d98c638d960bd9cbc40bd"
+  },
+  "hepta": {
+    "clippy_fixer_exit": 0,
+    "clippy_warnings_as_errors_claimed": false,
+    "cross_repository_qualification": false,
+    "engineering_fixtures": true,
+    "helper_build_exit": 0,
+    "outside_selector": 662,
+    "production_product_acceptance": false,
+    "published_head": "9c352c77d21923eb7c2022c96496228ee428d278",
+    "published_tree": "25d16999e4bdf0adc1ab7f9875cd4c4575e725df",
+    "pull_request": "https://github.com/TrillionniumFoundation/hepta-private-ci/pull/5318",
+    "selected_tests_failed": 0,
+    "selected_tests_passed": 60,
+    "tested_source": "e0a3bd2bde77c58a0ae7d211214f326371a72a4a",
+    "tested_tree": "a28ed8f9dbc3569b8108e7f5fe5096b16c881792"
+  },
+  "implementation_source": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "implementation_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+  "independent_business_acceptance": false,
+  "node": {
+    "all_targets_have_unambiguous_complete_summary": true,
+    "completed_target_count": 91,
+    "cross_run_completed_target_totals": {
+      "failed": 15,
+      "filtered_out": 0,
+      "ignored": 55,
+      "measured": 0,
+      "passed": 1548
+    },
+    "failure_diagnosis": {
+      "cpu_budget_refusals": 3,
+      "direct_fixed_parent_failures": 8,
+      "last_case_emitting_child_and_sole_cause_established": false,
+      "last_case_kernel_marker_observed": true,
+      "pq_witness_failures": 3,
+      "receiver_readiness_channel_failures": 1,
+      "remainder_diagnosis_sha256": "fcd2d6662fd287811255316aec063cbff80531cc09969d0dd2f0d99888d1c281"
+    },
+    "interpretation": "Complete counting coverage across two independent invocations. Passing individual targets does not upgrade failed or missing original provenance.",
+    "inventory_targets": 91,
+    "native_five_targets": [
+      {
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2
+        },
+        "name": "no_gain_fees",
+        "run": "remainder",
+        "status": "completed_passed"
+      },
+      {
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4
+        },
+        "name": "funded_service_contract",
+        "run": "original",
+        "status": "completed_passed"
+      },
+      {
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2
+        },
+        "name": "native_demand_evidence",
+        "run": "remainder",
+        "status": "completed_passed"
+      },
+      {
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 3
+        },
+        "name": "native_task_operation_v2",
+        "run": "remainder",
+        "status": "completed_passed"
+      },
+      {
+        "counts": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2
+        },
+        "name": "native_active_anchor",
+        "run": "remainder",
+        "status": "completed_passed"
+      }
+    ],
+    "nested_summaries_added_to_totals": false,
+    "node_union_sha256": "e858131ad9b7e9e0ceb83a57d5c2bb665adbac6b395fedacd59f2d8a3e6ddde2",
+    "original": {
+      "completed_targets": 30,
+      "exit_code": 124,
+      "job_id": "1a1b6390138-12894-305",
+      "source_after_present": false,
+      "timed_out": true,
+      "totals": {
+        "failed": 8,
+        "filtered_out": 0,
+        "ignored": 40,
+        "measured": 0,
+        "passed": 1254
+      }
+    },
+    "original_failures_superseded": false,
+    "qualification": false,
+    "remainder": {
+      "completed_targets": 61,
+      "exit_code": 101,
+      "job_id": "1a1b6b4fa87-12894-60d",
+      "source_after_present": true,
+      "source_before_after_identical": true,
+      "timed_out": false,
+      "totals": {
+        "failed": 7,
+        "filtered_out": 0,
+        "ignored": 15,
+        "measured": 0,
+        "passed": 294
+      }
+    },
+    "single_complete_cargo_gate": false,
+    "union_summary_sha256": "36f17f8123241259fb76012b8cf70c550c4d7a0a833641bddefc4d037859bf1a"
+  },
+  "production_activation": false,
+  "publication_changes": "Evidence and the sole development-plan checkpoint only; runtime implementation remains the pinned commit.",
+  "python": {
+    "ci_contract_passed": 103,
+    "failed": 0,
+    "new_demand_upgrade_passed": 52,
+    "retained_model_evaluation_reward_passed": 131,
+    "skipped": 0
+  },
+  "report_date": "2026-11-07",
+  "report_timezone": "America/New_York",
+  "schema": "pon-native-demand-acceptance-status-v1",
+  "unavailable_history": {
+    "new_H_runs_are_distinct": true,
+    "old_local_raw_logs_used_for_this_qualification": false,
+    "original_cloud_directory_retrieved": false,
+    "unpublished_cloud_evidence_commits_retrieved": false
+  }
+}

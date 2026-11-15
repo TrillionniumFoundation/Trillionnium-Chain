@@ -1,0 +1,47 @@
+[
+  {
+    "path": "config/pon/pq-authority-effects-v1.json",
+    "before": "b0026de87a476f6d290ecf7d58f50884a326635d",
+    "after": "5591bd202ee6a6136ccbd8c6728fb7a981fe4c0d"
+  },
+  {
+    "path": "config/pon/pq-root-dependency-register-v3.json",
+    "before": "a25230f48e5fbd19ce5e82395405d9e7e5d1c2a3",
+    "after": "5787b9b77797b4cd72bfc46419c59fc2e7396063"
+  },
+  {
+    "path": "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+    "before": "8ee00106a86103828f29f24aeb4102109d95bde4",
+    "after": "6af8df4eb47eac81fc707c8929a6e90290010a31"
+  },
+  {
+    "path": "docs/security/PQ_ROOT_RECOVERY_NATIVE_V3.md",
+    "before": "704f2a66904067bb698e2ea497f03388d3107cc9",
+    "after": "ee83c7277db6142446f59081ea41958ae2ff59f6"
+  },
+  {
+    "path": "scripts/ci/pq_authority_effect_register.py",
+    "before": "850e1e32db89efd477c716692c920eab4289b3e1",
+    "after": "6f22e1e529b97faf3553d25bb17240835b6973a6"
+  },
+  {
+    "path": "scripts/ci/pq_root_dependency_register.py",
+    "before": "99628d572186c1e8f8e80ada4046a14db403c878",
+    "after": "250274ceb05b143d84a0f592ca23050a6548e367"
+  },
+  {
+    "path": "scripts/ci/test_pq_authority_effect_register.py",
+    "before": "027ae4556270dc113e616f785dbb4bfd10965212",
+    "after": "4b92e729564295ef470fac6fc44b674db3a07514"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs",
+    "before": "701867b3c40276148007f6365a251ad1246e7eb5",
+    "after": "e9b9c6b322feed68926392675fdd30fea56ae53a"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/tests/root_recovery_v3_native.rs",
+    "before": "701abe4109407944ca9d5fc4a45d2f1f8cc8cd72",
+    "after": "8b0b04d3a092ea0cbbcd6634780afc71ca96dfdd"
+  }
+]

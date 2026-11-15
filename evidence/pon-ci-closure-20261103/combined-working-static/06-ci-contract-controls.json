@@ -1,0 +1,38 @@
+{
+  "label": "06-ci-contract-controls",
+  "command": [
+    "python3",
+    "scripts/ci/test_ci_contract.py"
+  ],
+  "cwd": "/workspace/scratch/abae1861b451/chain-post-ci",
+  "started_at": "2026-11-03T16:36:08.548422+00:00",
+  "elapsed_seconds": 10.057368124999812,
+  "exit_code": 0,
+  "stdout": {
+    "path": "/workspace/scratch/abae1861b451/post-ci-static-validation/06-ci-contract-controls.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "/workspace/scratch/abae1861b451/post-ci-static-validation/06-ci-contract-controls.stderr",
+    "bytes": 16317,
+    "sha256": "9b33fc6eef1a5bb6ed12d216bf4abde9b2f70c1bb1c15e29bdd656f47fbb1b43"
+  },
+  "actual_unittest_count": 98,
+  "unittest_harness_seconds": 9.927,
+  "skipped_lines": [
+    "test_maintenance_comparison_cannot_be_removed_skipped_or_substituted (__main__.CiContractTests.test_maintenance_comparison_cannot_be_removed_skipped_or_substituted) ... ok",
+    "test_maintenance_native_execution_cannot_be_removed_skipped_or_substituted (__main__.CiContractTests.test_maintenance_native_execution_cannot_be_removed_skipped_or_substituted) ... ok",
+    "test_one_zero_comparison_cannot_be_removed_skipped_or_relabelled (__main__.CiContractTests.test_one_zero_comparison_cannot_be_removed_skipped_or_relabelled) ... ok",
+    "test_one_zero_native_execution_cannot_be_removed_skipped_or_replaced (__main__.CiContractTests.test_one_zero_native_execution_cannot_be_removed_skipped_or_replaced) ... ok",
+    "test_paired_work_oracle_cannot_be_removed_skipped_or_reuse_historical_output (__main__.CiContractTests.test_paired_work_oracle_cannot_be_removed_skipped_or_reuse_historical_output) ... ok",
+    "test_workspace_test_cannot_be_replaced_skipped_or_duplicated (__main__.CiContractTests.test_workspace_test_cannot_be_replaced_skipped_or_duplicated) ... ok",
+    "test_zero_native_execution_cannot_be_removed_skipped_or_replaced (__main__.CiContractTests.test_zero_native_execution_cannot_be_removed_skipped_or_replaced) ... ok",
+    "test_new_evolution_and_cost_checks_cannot_be_removed_skipped_duplicated_or_moved (__main__.EvaluationQuorumLaneTests.test_new_evolution_and_cost_checks_cannot_be_removed_skipped_duplicated_or_moved) ... ok",
+    "test_parent_commands_cannot_be_skipped_by_false_shell_branch (__main__.EvaluationQuorumLaneTests.test_parent_commands_cannot_be_skipped_by_false_shell_branch) ... ok",
+    "test_quorum_checks_cannot_be_removed_duplicated_skipped_or_rewrite_vectors (__main__.EvaluationQuorumLaneTests.test_quorum_checks_cannot_be_removed_duplicated_skipped_or_rewrite_vectors) ... ok"
+  ],
+  "source_before_receipt": "/workspace/scratch/abae1861b451/post-ci-static-validation/source-before.json",
+  "source_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "scope": "Original read-only candidate gate; test mutations, if any, confined by the original test to temporary fixtures. Not native runtime acceptance."
+}

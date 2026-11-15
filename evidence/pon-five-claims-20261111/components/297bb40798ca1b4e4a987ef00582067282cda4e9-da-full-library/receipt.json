@@ -1,0 +1,108 @@
+{
+  "argv": [
+    "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_data_availability-64b25e344716c90a",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "assertions_changed": false,
+  "binary_after": {
+    "bytes": 16411728,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_data_availability-64b25e344716c90a",
+    "sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f"
+  },
+  "binary_before": {
+    "bytes": 16411728,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_data_availability-64b25e344716c90a",
+    "sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f"
+  },
+  "binary_stable": true,
+  "combined_stdout_stderr": {
+    "bytes": 97047,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-full-library/native-combined.log",
+    "sha256": "c0d8e29a365bfa2ee29906cf1f44bb959e4f37ad869d9ba17d305b954b0fe241"
+  },
+  "counts": {
+    "failed": 1,
+    "filtered_out": 0,
+    "ignored": 0,
+    "measured": 0,
+    "passed": 740
+  },
+  "cwd": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability",
+  "deadline_changed": false,
+  "elapsed_ns": 228485649201,
+  "exit_code": 101,
+  "library_suite_passed": false,
+  "native_execution": {
+    "build_provenance_verified_by_observer": false,
+    "child_reaped": true,
+    "descendant_execution_verified": false,
+    "dispatch_object": {
+      "bytes": 16411728,
+      "device": 2050,
+      "inode": 56425488,
+      "sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f"
+    },
+    "dispatch_object_after_sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f",
+    "entire_lifetime_image_verified": false,
+    "expected_sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f",
+    "libraries_sha256": null,
+    "loaded_memory_sha256": null,
+    "model_closure_sha256": null,
+    "native_exit_code": 101,
+    "observation": {
+      "bytes": 16411728,
+      "device": 2050,
+      "exe_link": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_data_availability-64b25e344716c90a",
+      "executable_opened_monotonic_ns": 1473347077134607,
+      "hash_finished_monotonic_ns": 1473347127808641,
+      "inode": 56425488,
+      "observation_started_monotonic_ns": 1473347077046381,
+      "process": {
+        "parent_pid": 140894,
+        "pid": 141084,
+        "start_ticks": 147334707
+      },
+      "process_binding_finished_monotonic_ns": 1473347077173438,
+      "sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f",
+      "status": "OBSERVED"
+    },
+    "owned_pid": 141084,
+    "performance_measurement": false,
+    "requested_path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_data_availability-64b25e344716c90a",
+    "schema": "trnm-pinned-native-process-v1",
+    "status": "PINNED_AND_OBSERVED"
+  },
+  "original_failure_preserved": true,
+  "performance_measurement": false,
+  "scope": "full-library",
+  "source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "source_after": {
+    "base": null,
+    "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2615077043,
+    "tracked_entries": 28807,
+    "tracked_worktree_verified": true
+  },
+  "source_before": {
+    "base": null,
+    "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2615077043,
+    "tracked_entries": 28807,
+    "tracked_worktree_verified": true
+  },
+  "source_stable": true,
+  "status": "diagnostic_failed"
+}

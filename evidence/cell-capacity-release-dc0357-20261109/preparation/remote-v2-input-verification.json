@@ -1,0 +1,877 @@
+{
+  "base_weight_bytes": 269060552,
+  "cargo_started": false,
+  "deduplicated_storage_chunk_records": 95,
+  "environment_members": 19,
+  "input_verification": "PASS",
+  "inputs": [
+    {
+      "category": "model",
+      "logical": "adapter/artifact.safetensors",
+      "original_location_read": true,
+      "original_path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent/artifact.safetensors",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": false,
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent/artifact.safetensors",
+      "sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba",
+      "size": 933664,
+      "storage_chunks": [
+        {
+          "sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba",
+          "size": 933664
+        }
+      ]
+    },
+    {
+      "category": "model",
+      "logical": "adapter/target-contract.json",
+      "original_location_read": true,
+      "original_path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent/target-contract.json",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": false,
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent/target-contract.json",
+      "sha256": "ebc8ac84999a91acb823d1bf8959a7dbc61fe20d7ba137f11affe426605d9852",
+      "size": 56809,
+      "storage_chunks": [
+        {
+          "sha256": "ebc8ac84999a91acb823d1bf8959a7dbc61fe20d7ba137f11affe426605d9852",
+          "size": 56809
+        }
+      ]
+    },
+    {
+      "category": "model",
+      "logical": "adapter/wrapped-adapter.json",
+      "original_location_read": true,
+      "original_path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent/wrapped-adapter.json",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": false,
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent/wrapped-adapter.json",
+      "sha256": "b66cf58fc47319e4f7a54a47b952a51f13d98ba8c448651122d485b5ad2d6d1d",
+      "size": 20962,
+      "storage_chunks": [
+        {
+          "sha256": "b66cf58fc47319e4f7a54a47b952a51f13d98ba8c448651122d485b5ad2d6d1d",
+          "size": 20962
+        }
+      ]
+    },
+    {
+      "category": "model",
+      "logical": "base/README.md",
+      "original_location_read": true,
+      "original_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/README.md",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": false,
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/README.md",
+      "sha256": "4f97533ad95b1b2fea15fbc075c01b94578ebdd7c8138888fa43fa3abd530dc4",
+      "size": 6772,
+      "storage_chunks": [
+        {
+          "sha256": "4f97533ad95b1b2fea15fbc075c01b94578ebdd7c8138888fa43fa3abd530dc4",
+          "size": 6772
+        }
+      ]
+    },
+    {
+      "category": "model",
+      "logical": "base/config.json",
+      "original_location_read": true,
+      "original_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/config.json",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": false,
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/config.json",
+      "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+      "size": 861,
+      "storage_chunks": [
+        {
+          "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+          "size": 861
+        }
+      ]
+    },
+    {
+      "category": "model",
+      "logical": "base/generation_config.json",
+      "original_location_read": true,
+      "original_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/generation_config.json",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": false,
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/generation_config.json",
+      "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+      "size": 132,
+      "storage_chunks": [
+        {
+          "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+          "size": 132
+        }
+      ]
+    },
+    {
+      "category": "model",
+      "logical": "base/material-manifest.json",
+      "original_location_read": true,
+      "original_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/material-manifest.json",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": false,
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/material-manifest.json",
+      "sha256": "6e6a76d478f28906566c1cc8db9ef767922b7a215c9f795da8d845e965c59f0c",
+      "size": 1263,
+      "storage_chunks": [
+        {
+          "sha256": "6e6a76d478f28906566c1cc8db9ef767922b7a215c9f795da8d845e965c59f0c",
+          "size": 1263
+        }
+      ]
+    },
+    {
+      "category": "model",
+      "logical": "base/model.safetensors",
+      "original_location_read": true,
+      "original_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/model.safetensors",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": false,
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/model.safetensors",
+      "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+      "size": 269060552,
+      "storage_chunks": [
+        {
+          "sha256": "276e7a122ee2915df57f3363431a0ad45556ff58c3668902d3818f014582e4c1",
+          "size": 4194304
+        },
+        {
+          "sha256": "6f90fe3378067ff996ed83543346555cc66723cf2ddb60b9d2824159fb643c11",
+          "size": 4194304
+        },
+        {
+          "sha256": "f05fa66187431ab47e247549d7cac9e80955ef2ff0d1f7c719bdac51ce4870af",
+          "size": 4194304
+        },
+        {
+          "sha256": "6901013c0662dfd5e56a9d60baf3057288ad9c4a1c1fe4cfac6d3b0480537e37",
+          "size": 4194304
+        },
+        {
+          "sha256": "f3a24e0ce2dfcd0ee1384ee3f32c7ca1c60a5c33fe12b8bbc0a63efc04d3339e",
+          "size": 4194304
+        },
+        {
+          "sha256": "bb0e620750a0351950e011cd32e2de212067eab9852923aea4604ba00063dcc1",
+          "size": 4194304
+        },
+        {
+          "sha256": "65bdf015cae934768f70e80c7c84c848e76a874905413ba9c16e7aa42ff028e1",
+          "size": 4194304
+        },
+        {
+          "sha256": "c21ce2b36761b1e2f62e05dd66a374040b39369d21673484c932509675bd1149",
+          "size": 4194304
+        },
+        {
+          "sha256": "12df23b013c2b7ebc1729d8f0ad471ed3dd67fb463daade66f76d348096908a8",
+          "size": 4194304
+        },
+        {
+          "sha256": "c62d2accce80af25a07ecff1557554b1c2fe2011e208e594159e0b1a00c384df",
+          "size": 4194304
+        },
+        {
+          "sha256": "715b29a15c386f06cff12ad2d34911b097aac2c4254e02e97c0d21528c4a244c",
+          "size": 4194304
+        },
+        {
+          "sha256": "fb5c5804a75e80a70da81420c2ecce9c4af2f4bc64364fbdbea896c291fa981d",
+          "size": 4194304
+        },
+        {
+          "sha256": "e31bbd865750080cb8b36924b2b0d0e8e521ebc4ea283cd4cf998bc2c2506f72",
+          "size": 4194304
+        },
+        {
+          "sha256": "ab16046c9ebbb18ac69c7b709400b9e5908888cbbeb09b7a992cb9a11e1b315f",
+          "size": 4194304
+        },
+        {
+          "sha256": "726fc24fc4df7286db800410abe48cdb074163321fba2e106b6e4c6af4c65cb8",
+          "size": 4194304
+        },
+        {
+          "sha256": "f946ae4ee4b99d591a0bcd6bdcd6474b2c3829add56a105f9d73851c92f355e3",
+          "size": 4194304
+        },
+        {
+          "sha256": "1a580e83dfb6affd7a9faddbd8da824e6857ee1b04d500044b86536600d9222e",
+          "size": 4194304
+        },
+        {
+          "sha256": "a9f03c716fb149210e61c3bbd80b2c0d277e5bf96fe671c1454f96d54b550a22",
+          "size": 4194304
+        },
+        {
+          "sha256": "61a0be7ce038c4ea4cae8e45fec0830ed018fb40e35ad2354a3bfd5219789887",
+          "size": 4194304
+        },
+        {
+          "sha256": "39e5044f1fdb1d2c958b1957481d7c8cb6c680103dc39933186c5d825a5567a7",
+          "size": 4194304
+        },
+        {
+          "sha256": "f445ba088b2daf7f1ee4c15460c75d050e307a3299dc58b834ef02c79a079bef",
+          "size": 4194304
+        },
+        {
+          "sha256": "c36dbd2fb564f438212caf4c10bff813a115c5f8ba9e8188b929c732580b33d4",
+          "size": 4194304
+        },
+        {
+          "sha256": "37468858378799b1975e5a1e933f886c14964b2c1dce8923022fe3021449d8f1",
+          "size": 4194304
+        },
+        {
+          "sha256": "10553720f97e4462c5f28d8a45481aa4e2f03559def82e71f9104c4a069e0c04",
+          "size": 4194304
+        },
+        {
+          "sha256": "baaa1c8584add05f166c2bd4657dd3b387948c7e0bc33d03ed823da9090ad356",
+          "size": 4194304
+        },
+        {
+          "sha256": "ce7dd86423bfa1d09b8cf3f7516f15ca8d54bd080061cd73185cb2ac7fae5559",
+          "size": 4194304
+        },
+        {
+          "sha256": "c7aedaa1bb7cca04f40656152838ff8fa78bfc1f4051f5c38a42073075f75b4a",
+          "size": 4194304
+        },
+        {
+          "sha256": "61b0af410424f13e041963cd8992c434559b11f36ca6b6aa32b16dba500906ef",
+          "size": 4194304
+        },
+        {
+          "sha256": "8964cebb842be8121879c781905d6c9d58b11ca6a271eb8c40853fb36ec62c1c",
+          "size": 4194304
+        },
+        {
+          "sha256": "e7d01b8542db96c4a48996e80736d95dd1ada3ef2847d7a86f046b685d8b0295",
+          "size": 4194304
+        },
+        {
+          "sha256": "ea8beeddcaa0d1b99c4a4303292c2d9e361af53b25df8188028b7542e9220219",
+          "size": 4194304
+        },
+        {
+          "sha256": "efb16773b9dfe0e5d327266466eb952d254c0cc2e3530d59c0f484b78809d120",
+          "size": 4194304
+        },
+        {
+          "sha256": "2b9e60099022f1b677db25d4328f58f05feef8b2c873a72a2c3f1a74bd005476",
+          "size": 4194304
+        },
+        {
+          "sha256": "a614f7208c96244c6dd9e33dd98c2f44b36d792c5a77132af9213611836f81cd",
+          "size": 4194304
+        },
+        {
+          "sha256": "a78d30ae5841d9ce94742c868c0539bb0a882bcc68bc00cdb1f2c670a736a387",
+          "size": 4194304
+        },
+        {
+          "sha256": "f03e5718cec3e0c5772a45ec839d5017d0b3bfbe7c8b9c4d6556c2a3069dc332",
+          "size": 4194304
+        },
+        {
+          "sha256": "622a5618de1cc9d9e6a3a392a8126ce596120747277d89503008df3d5fef0e69",
+          "size": 4194304
+        },
+        {
+          "sha256": "7ae3e30a11d05d2970a747350f107c082703f8d12bd62e616a2581bab5799d46",
+          "size": 4194304
+        },
+        {
+          "sha256": "bb87783f90ae3bda0e5d96f2ab38a5dac16b22205a16a9092c8e0dc74b296e64",
+          "size": 4194304
+        },
+        {
+          "sha256": "71496c148e7cdba619d93a696865ab361596ca1a0e473a84ca0acdc5c6f92400",
+          "size": 4194304
+        },
+        {
+          "sha256": "3e3a1662ec707b2a594b496c64945894bea141ff01de7eb13fb89728d4872735",
+          "size": 4194304
+        },
+        {
+          "sha256": "2db19757958ebbc9969cc3080ef8e2468a271c0cdaa728192103fdfe6ea4b270",
+          "size": 4194304
+        },
+        {
+          "sha256": "46bf5209dd545750696d42688d5fa8f33b9adf627c35ab74f9c4fb974d23204a",
+          "size": 4194304
+        },
+        {
+          "sha256": "cd9b380cff48825ba4983cc8fb6b95468c5a86451ba2bf95942c5fa904610ac3",
+          "size": 4194304
+        },
+        {
+          "sha256": "1173b21200691952bb8b1610664edbf16a64556ad799952de2722fe7175f7ba8",
+          "size": 4194304
+        },
+        {
+          "sha256": "15834230b1685a7edcca78edc1fd9e077cf2ed3d7ccef599f39f498ff4ff5b61",
+          "size": 4194304
+        },
+        {
+          "sha256": "1df6fb5d001e5d946dec13ec57e511f43adb741bd533fc03e1c2f94dd78a6fce",
+          "size": 4194304
+        },
+        {
+          "sha256": "8c313eebeff176f3e1c724776ea4dea8ffec2e9697fecd5a15db8432e959738c",
+          "size": 4194304
+        },
+        {
+          "sha256": "2d28a6231f20b47b7db9fa06eb33cbbff4d897d3f0b7bae15050777f99c26084",
+          "size": 4194304
+        },
+        {
+          "sha256": "25b465560df61f671c4c17730bc75377a84da7894d2701be3b189dda54d6186c",
+          "size": 4194304
+        },
+        {
+          "sha256": "39a377378a7a8e7384f210831dc423022dfc7badf68b0f483b67984da8bb0163",
+          "size": 4194304
+        },
+        {
+          "sha256": "23c3a7e3fdaba7a10e64fab4884f5f92edcabbd60432194dc169412e8b5007d4",
+          "size": 4194304
+        },
+        {
+          "sha256": "1d431859a2247d01dd09d69af2dd31ab3f36603dee33b4351cf1b58eb4244187",
+          "size": 4194304
+        },
+        {
+          "sha256": "fa444e1cf6bd0d969bdf8f1761fcdec44bdc46e7c912d90126f4a13f2afa895f",
+          "size": 4194304
+        },
+        {
+          "sha256": "12b11d6b41a56cef831e8f1924eef065372a2362c1d879c5b5d899509e4a8184",
+          "size": 4194304
+        },
+        {
+          "sha256": "c1c75c535d079e03a575b52e564c147558136307fe644a957495eb7bfef1ce90",
+          "size": 4194304
+        },
+        {
+          "sha256": "a25002a9d57d927dede56b953772dc922d443af22d2300729541cf9fdeae266d",
+          "size": 4194304
+        },
+        {
+          "sha256": "43301104feaac41eb3f2abe056e533aba38876cdc54698bae2f893cb43050d94",
+          "size": 4194304
+        },
+        {
+          "sha256": "fe0c609db9b261074cbd0715f626312216d9dc1b391584e9040a5986f062daf7",
+          "size": 4194304
+        },
+        {
+          "sha256": "98d772a95d4d6d82eba48757876017bf67fcacb721419164376f1362768e6313",
+          "size": 4194304
+        },
+        {
+          "sha256": "a564aadf3e0e24a270afe4a375c27c90ab456d65424b9c25aef1a7a1f4ce509a",
+          "size": 4194304
+        },
+        {
+          "sha256": "7bce8f061b5aa12b179e63c1bbb0874cfaa209ba41713e730a5f8c228dfd8952",
+          "size": 4194304
+        },
+        {
+          "sha256": "a4597c16ea0754f7f749588d09288da2997d4a39a52d4567b38ade1e878d8ac6",
+          "size": 4194304
+        },
+        {
+          "sha256": "ef7bb5d9709c178acf4e7e65bf8c1a166c3c3d40ae271b7eeaa17eade078e97c",
+          "size": 4194304
+        },
+        {
+          "sha256": "f6e0dceb01f464173fe06b6e71b5cc52b37203a5206984c55c94523eddec8a30",
+          "size": 625096
+        }
+      ]
+    },
+    {
+      "category": "model",
+      "logical": "base/special_tokens_map.json",
+      "original_location_read": true,
+      "original_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/special_tokens_map.json",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": false,
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/special_tokens_map.json",
+      "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+      "size": 655,
+      "storage_chunks": [
+        {
+          "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+          "size": 655
+        }
+      ]
+    },
+    {
+      "category": "model",
+      "logical": "base/tokenizer.json",
+      "original_location_read": true,
+      "original_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/tokenizer.json",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": false,
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/tokenizer.json",
+      "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+      "size": 2104556,
+      "storage_chunks": [
+        {
+          "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+          "size": 2104556
+        }
+      ]
+    },
+    {
+      "category": "model",
+      "logical": "base/tokenizer_config.json",
+      "original_location_read": true,
+      "original_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/tokenizer_config.json",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": false,
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/tokenizer_config.json",
+      "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+      "size": 3764,
+      "storage_chunks": [
+        {
+          "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+          "size": 3764
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "config/pon/devnet-v1.json",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/config/pon/devnet-v1.json",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/config/pon/devnet-v1.json",
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "size": 1964,
+      "storage_chunks": [
+        {
+          "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+          "size": 1964
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "config/pon/ledger-v1.json",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/config/pon/ledger-v1.json",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/config/pon/ledger-v1.json",
+      "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "size": 7793,
+      "storage_chunks": [
+        {
+          "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+          "size": 7793
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "config/pon/model-family-smollm2-135m-v1.json",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/config/pon/model-family-smollm2-135m-v1.json",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/config/pon/model-family-smollm2-135m-v1.json",
+      "sha256": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52",
+      "size": 5293,
+      "storage_chunks": [
+        {
+          "sha256": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52",
+          "size": 5293
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "config/pon/model-family-v1.json",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/config/pon/model-family-v1.json",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/config/pon/model-family-v1.json",
+      "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+      "size": 1383,
+      "storage_chunks": [
+        {
+          "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+          "size": 1383
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "config/pon/work-profile-v1.json",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/config/pon/work-profile-v1.json",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/config/pon/work-profile-v1.json",
+      "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "size": 1596,
+      "storage_chunks": [
+        {
+          "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+          "size": 1596
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "formal/pon-nakamoto-v1/contract_wire.py",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/formal/pon-nakamoto-v1/contract_wire.py",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/formal/pon-nakamoto-v1/contract_wire.py",
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+      "size": 8924,
+      "storage_chunks": [
+        {
+          "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+          "size": 8924
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "formal/pon-nakamoto-v1/llm_adapter_contract.py",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/formal/pon-nakamoto-v1/llm_adapter_contract.py",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/formal/pon-nakamoto-v1/llm_adapter_contract.py",
+      "sha256": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5",
+      "size": 27789,
+      "storage_chunks": [
+        {
+          "sha256": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5",
+          "size": 27789
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "runtime/material-plan.json",
+      "original_location_read": true,
+      "original_path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/experiment-plan.json",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": false,
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/experiment-plan.json",
+      "sha256": "01ec1a644f37b9fc7a4c6616f589768df97f8eed7a289b5de86afadaa7ce6165",
+      "size": 10739,
+      "storage_chunks": [
+        {
+          "sha256": "01ec1a644f37b9fc7a4c6616f589768df97f8eed7a289b5de86afadaa7ce6165",
+          "size": 10739
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "runtime/runtime-snapshot.json",
+      "original_location_read": true,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/runtime-snapshot.v2.json",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": false,
+      "selected_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/runtime-snapshot.v2.json",
+      "sha256": "e87a3658675836c130ba2a97a805bc6d86cc435135e72f4b6e40747e9271b9eb",
+      "size": 7739511,
+      "storage_chunks": [
+        {
+          "sha256": "56a0a5d217fffa753ab50bdf078fae1bd27fcb1d6111eb4ed206601f0148f9c5",
+          "size": 4194304
+        },
+        {
+          "sha256": "b97739b26424ace53a1e8e5e203f3cc9794f6cfde5539d678f43a2348e8aa7d6",
+          "size": 3545207
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/cell_sealed_bootstrap_v1.py",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/scripts/cell_sealed_bootstrap_v1.py",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/scripts/cell_sealed_bootstrap_v1.py",
+      "sha256": "0f1f10fdae8a60725ff489bac367b31454eda9223a71d358488bed3603ea7962",
+      "size": 4640,
+      "storage_chunks": [
+        {
+          "sha256": "0f1f10fdae8a60725ff489bac367b31454eda9223a71d358488bed3603ea7962",
+          "size": 4640
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_base_material.py",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/scripts/llm_base_material.py",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/scripts/llm_base_material.py",
+      "sha256": "10d4c21419dd297dcdee6bd128c7cc1fdc1d343e1a62017da61bc1787fde113b",
+      "size": 10405,
+      "storage_chunks": [
+        {
+          "sha256": "10d4c21419dd297dcdee6bd128c7cc1fdc1d343e1a62017da61bc1787fde113b",
+          "size": 10405
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_cell_sealed_worker_v1.py",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/scripts/llm_cell_sealed_worker_v1.py",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/scripts/llm_cell_sealed_worker_v1.py",
+      "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b",
+      "size": 45100,
+      "storage_chunks": [
+        {
+          "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b",
+          "size": 45100
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_inherited_runtime.py",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/scripts/llm_inherited_runtime.py",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/scripts/llm_inherited_runtime.py",
+      "sha256": "069ad93e4adde21761a3e5343a181128b36fe7697e881d2d41c5a6fbc06f155b",
+      "size": 16320,
+      "storage_chunks": [
+        {
+          "sha256": "069ad93e4adde21761a3e5343a181128b36fe7697e881d2d41c5a6fbc06f155b",
+          "size": 16320
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_neural_read_worker.py",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/scripts/llm_neural_read_worker.py",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/scripts/llm_neural_read_worker.py",
+      "sha256": "242cc3ce99b3187a2ee1de25dba77b6f0f699d5427b6e4198e6c77684b4963e9",
+      "size": 24515,
+      "storage_chunks": [
+        {
+          "sha256": "242cc3ce99b3187a2ee1de25dba77b6f0f699d5427b6e4198e6c77684b4963e9",
+          "size": 24515
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_parent_material.py",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/scripts/llm_parent_material.py",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/scripts/llm_parent_material.py",
+      "sha256": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a",
+      "size": 8041,
+      "storage_chunks": [
+        {
+          "sha256": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a",
+          "size": 8041
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_python_runtime_contract.py",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/scripts/llm_python_runtime_contract.py",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/scripts/llm_python_runtime_contract.py",
+      "sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc",
+      "size": 22751,
+      "storage_chunks": [
+        {
+          "sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc",
+          "size": 22751
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_runtime_exit_observation.py",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/scripts/llm_runtime_exit_observation.py",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/scripts/llm_runtime_exit_observation.py",
+      "sha256": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
+      "size": 10742,
+      "storage_chunks": [
+        {
+          "sha256": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
+          "size": 10742
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_runtime_pilot.py",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/scripts/llm_runtime_pilot.py",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/scripts/llm_runtime_pilot.py",
+      "sha256": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7",
+      "size": 125239,
+      "storage_chunks": [
+        {
+          "sha256": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7",
+          "size": 125239
+        }
+      ]
+    },
+    {
+      "category": "environment",
+      "logical": "scripts/llm_runtime_rss_diagnostics.py",
+      "original_location_read": false,
+      "original_path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/scripts/llm_runtime_rss_diagnostics.py",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": true,
+      "selected_path": "/home/qq/work/chain-cell-capacity-dc0357-20261109/scripts/llm_runtime_rss_diagnostics.py",
+      "sha256": "d15f4ddc914475ecc8ab473a16f8916b7dd805d8b39d741e49a9d2f63d8fe320",
+      "size": 6867,
+      "storage_chunks": [
+        {
+          "sha256": "d15f4ddc914475ecc8ab473a16f8916b7dd805d8b39d741e49a9d2f63d8fe320",
+          "size": 6867
+        }
+      ]
+    },
+    {
+      "category": "python",
+      "logical": "python",
+      "original_path": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+      "original_pin_verified": true,
+      "pin_matches": true,
+      "relocated_after_pin_verification": false,
+      "selected_path": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+      "sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5",
+      "size": 31028464
+    }
+  ],
+  "logical_inputs_verified": 31,
+  "material_profile": "smollm2-public-v2-material-runtime-bridge-v1",
+  "model_members": 11,
+  "model_worker_started": false,
+  "native_erasure_shard_recovery": false,
+  "operation": "fad809b14a2ef0814d5cb125ac4c2713ca81d962797e038857416a838c0c5cc2",
+  "original_pins_preserved": true,
+  "original_request_content_preserved": true,
+  "original_source": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/source-inputs.attempt-03.v1.json",
+  "original_source_sha256": "e509695eb9ad60320ea1ed75efa35b28d254bcd9ca868153bd5f8869fb269280",
+  "output": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01",
+  "output_created": false,
+  "payload_bytes": 280269602,
+  "physical_files_hashed": 31,
+  "preparation_id": "chain-capacity-dc0357-v2-spec-prep-20261109-02",
+  "previous_preparation": {
+    "exit_code": 1,
+    "job_id": "1a1c0baab60-11c5a-42",
+    "reason": "original native02 location absent; no output created"
+  },
+  "real_model_run": "NOT_RUN",
+  "recovery_profile": "TCA3 complete physical retention and anchored catalog recovery",
+  "relocated_environment_members": 17,
+  "request_ids": [
+    "chain-capacity-dc0357-v2-fad809b14a2e-1",
+    "chain-capacity-dc0357-v2-fad809b14a2e-2"
+  ],
+  "schema": "trnm.cell-sealed-research-source-verification.v2",
+  "seconds": 300,
+  "source": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/source-inputs.v2.json",
+  "source_bytes": 10219,
+  "source_sha256": "488b838dfdf05ab9768fff18ee81c0874b7bb471cbceeefdf15ab42c5dde6d48",
+  "storage_chunk_records": 95,
+  "tensor_headers": {
+    "adapter/artifact.safetensors": {
+      "data_bytes": 921600,
+      "dtype_counts": {
+        "F32": 120
+      },
+      "header_bytes": 12056,
+      "header_sha256": "fd757f8de795870802477dcd626dfa0186fe8728d83f16f31d872cd2f89bbdb0",
+      "quantization": "none",
+      "tensor_count": 120
+    },
+    "base/model.safetensors": {
+      "data_bytes": 269030016,
+      "dtype_counts": {
+        "BF16": 272
+      },
+      "header_bytes": 30528,
+      "header_sha256": "05594b15679d772617048271ce61f74473539658d1b161c687e5c69ec8ab2b22",
+      "quantization": "none",
+      "tensor_count": 272
+    }
+  },
+  "verified_at_utc": "2026-11-09T14:36:10.963243+00:00",
+  "worker_sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+}

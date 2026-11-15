@@ -1,0 +1,24 @@
+{
+  "actual_oid": "357cf930c240c2cfa1fa9bb71bcff8d2add40294",
+  "bytes": 2592028,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "357cf930c240c2cfa1fa9bb71bcff8d2add40294"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 2592028,
+  "expected_oid": "357cf930c240c2cfa1fa9bb71bcff8d2add40294",
+  "finished_at": "2026-11-12T01:41:56.629628+00:00",
+  "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963/run-3-report.json.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXVwZ3JhZGUtaW1wbGVtZW50YXRpb24tMjAyNjEwMTgvbmF0aXZlLXJvdW5kcy9jaGFpbi1wcjMyNy1vcmlnaW5hbC1jYW1wYWlnbi0zOTY5NDU4Nzk2My9ydW4tMy1yZXBvcnQuanNvbi5neg==",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "bee4ff00c33015e7c760716010667f2131dc1f3473489eea156abb47f59e3db1",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:56.566476+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

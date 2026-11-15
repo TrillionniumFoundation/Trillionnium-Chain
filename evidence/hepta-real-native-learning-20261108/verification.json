@@ -1,0 +1,35 @@
+{
+  "actual_optimizer_steps": 10,
+  "automatic_retries": 0,
+  "candidate_correct": 1,
+  "cold_worker_pids": [
+    203339,
+    203366
+  ],
+  "disposition": "NoUpdate",
+  "forward_count_kind": "source-bound-live-worker-ledger-delta-inference",
+  "independent_operator_custody": false,
+  "native_daemon_os_restart": false,
+  "native_test_seconds": 44.615,
+  "original_failed_operations_retained": [
+    "v3",
+    "v4",
+    "v5",
+    "v6",
+    "v7"
+  ],
+  "original_files": 517,
+  "original_watchdog_seconds": 60,
+  "parent_correct": 3,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "real_new_candidate_adoption": false,
+  "result": "PASS_ORIGINAL_RESEARCH_RECORDS",
+  "schema": "hepta-real-native-original-record-review-v1",
+  "successful_native_source": "27849cbdcfc0d4afc69764d6c1742af22c41c293",
+  "successful_native_tree": "af50e58bf382891fb41861810cbf5425ca0da5a9",
+  "unchanged_chain_reader_join_pass": [
+    "v7-hot-completion",
+    "v8-complete-recovery"
+  ]
+}

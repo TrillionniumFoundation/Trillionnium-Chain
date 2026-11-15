@@ -1,0 +1,24 @@
+{
+  "actual_oid": "cd764fab940091a450bea244683d7bc96cff7b8b",
+  "bytes": 8861501,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "cd764fab940091a450bea244683d7bc96cff7b8b"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 8861501,
+  "expected_oid": "cd764fab940091a450bea244683d7bc96cff7b8b",
+  "finished_at": "2026-11-12T01:55:19.065483+00:00",
+  "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-494-final-native/observations.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXVwZ3JhZGUtaW1wbGVtZW50YXRpb24tMjAyNjEwMTgvbmF0aXZlLXJvdW5kcy9jaGFpbi00OTQtZmluYWwtbmF0aXZlL29ic2VydmF0aW9ucy50YXIuZ3o=",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "aa5869a304be8dd4e3bb873df4e88a785642e65526160d7ef130b652e9524925",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:18.914048+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

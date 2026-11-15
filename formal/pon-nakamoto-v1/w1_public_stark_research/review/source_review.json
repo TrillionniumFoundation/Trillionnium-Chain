@@ -1,0 +1,73 @@
+{
+  "schema": "w1-stark-component-independent-source-review-reconstructed-v3",
+  "status": "FINAL_SOURCE_NATIVE_GATES_18_PLUS_3_AND_COMPLETE_W1_3_POSITIVE_11_NEGATIVE_4_LATE_OBSERVED",
+  "qualification": "HOLD_NO_GO",
+  "recovery_note": "New reconstructed review after scratch loss. Original relation files and historical durable logs were recovered and matched to historical identities; current canonical-format source and new execution evidence are recorded separately in runner_review.json.",
+  "historical_reviewed_source_sha256": {
+    "round2_w1_stark/src/sha_air.rs": "ccf2f7b52b0ad2a8de95289a1c4f6c3d56b497cd1da9141eb121f0c6bea5a2a5",
+    "round2_w1_stark/src/sha_plan.rs": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3",
+    "round2_w1_stark/src/arith_air.rs": "58b449817db1b1f9575d9ce64651469ecfe6d6e4e165db26be2ecef5bada0882",
+    "round2_w1_stark/src/public.rs": "36e04e65fdeb843e309b688d5203a61a164b3e4d795d8361ea4ea925ce2f8e85",
+    "round2_w1_stark/Cargo.lock": "9e28bf0b3912ca692b0f80842a3f20323b212b2a1c5bbaa85d7503654c069c2e"
+  },
+  "shape": {
+    "public_bytes": 377290,
+    "sha_messages": 519,
+    "sha_real_rows": 4114,
+    "sha_padded_rows": 8192,
+    "sha_main_columns": 7728,
+    "sha_preprocessed_columns": 27,
+    "arithmetic_real_rows": 81920,
+    "arithmetic_padded_rows": 131072,
+    "arithmetic_main_columns": 516,
+    "arithmetic_preprocessed_columns": 18
+  },
+  "historical_execution_evidence": {
+    "job_id": "1a1b62108c7-12894-288",
+    "host": "desktop",
+    "toolchain": "1.95.0",
+    "p3_version": "0.8.0",
+    "cargo_check_lib": "PASS",
+    "cargo_test_lib": "18 passed, 0 failed, 0 ignored",
+    "test_execution_seconds": 0.04,
+    "full_trace_built": false,
+    "full_proof_run": false,
+    "logs_independently_read_before_scratch_loss": true,
+    "log_sha256": {
+      "small_lib_check_test.stdout.log": "d924c5033272fedcb57219a5346a591c3a62c872406e6566cf57dfd057c0044e",
+      "small_lib_check_test.stderr.log": "0c862b4ed5ce4e7442103a02fc43e1a90a1a8632d3bcfc630558b82be443d5f5",
+      "small_lib_check_test.status.json": "e549c0c8bd86e12babef6a05849d7fcac87049a449deea5901a57a884b9ca6bf"
+    },
+    "cargo_flags": [
+      "--locked",
+      "--offline",
+      "--lib",
+      "--jobs",
+      "2"
+    ]
+  },
+  "open_obligations": [
+    "Complete nested decoder/PCS shape resource audit; wire caps are not a hard RSS/time bound",
+    "Concrete noninteractive ROM/PCS soundness instantiation, fixed-shape hash binding and compiler loss; QROM remains separate"
+  ],
+  "restored_relation_source_matches": {
+    "round2_w1_stark/src/sha_air.rs": true,
+    "round2_w1_stark/src/sha_plan.rs": true,
+    "round2_w1_stark/src/arith_air.rs": true,
+    "round2_w1_stark/src/public.rs": true
+  },
+  "current_source_snapshot": "runner_review.json",
+  "source_review_completed_scope": [
+    "Canonical runner decode/plans(Expected) and independent preprocessing-key rebuild reviewed",
+    "Fixed configuration and bounded envelope decoding reviewed; limitations retained",
+    "New generic release check and 18 library plus 3 real-proof integration tests independently observed",
+    "Final frozen 13-file source manifest matched locally to actual native strict gates, full trace/proof generation, three fresh verifications, eleven original negatives and four typed late controls",
+    "Actual FRI low-bit sampling path and exact conditional density correction reviewed separately from cryptographic randomness or ROM compilation"
+  ],
+  "current_execution_summary": "Final-source run02 complete; see runner_review.run02.json. Historical run01, run01 late and pre-format records remain separate and immutable. HOLD_NO_GO remains for the concrete security, resource and qualification obligations.",
+  "final_run_review": {
+    "file": "runner_review.run02.json",
+    "sha256": "f82922893187e03ebd417ffad7417a919f39fd579da7f205f27900e4808a8621",
+    "preserve_identity": true
+  }
+}

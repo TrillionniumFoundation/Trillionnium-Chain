@@ -1,0 +1,28 @@
+test_complete_file_inventory_includes_failed_member (__main__.ArtifactControls.test_complete_file_inventory_includes_failed_member) ... ok
+test_individually_inconsistent_member_is_refused (__main__.ArtifactControls.test_individually_inconsistent_member_is_refused) ... ok
+test_noncanonical_or_duplicate_json_is_refused (__main__.ArtifactControls.test_noncanonical_or_duplicate_json_is_refused) ... ok
+test_unlisted_member_is_refused (__main__.ArtifactControls.test_unlisted_member_is_refused) ... ok
+test_wrong_archive_pin_is_refused (__main__.ArtifactControls.test_wrong_archive_pin_is_refused) ... ok
+test_wrong_manifest_pin_is_refused (__main__.ArtifactControls.test_wrong_manifest_pin_is_refused) ... ok
+test_boolean_is_not_a_count (__main__.ObservationControls.test_boolean_is_not_a_count) ... ok
+test_claimed_confirmation_cannot_hide_unobserved_round (__main__.ObservationControls.test_claimed_confirmation_cannot_hide_unobserved_round) ... ok
+test_client_clock_unavailability_is_preserved_separately (__main__.ObservationControls.test_client_clock_unavailability_is_preserved_separately) ... ok
+test_incomplete_page_or_packet_span_keeps_complete_host_cpu_unknown (__main__.ObservationControls.test_incomplete_page_or_packet_span_keeps_complete_host_cpu_unknown) ... ok
+test_live_host_call_preserves_started_completed_and_pending_counts (__main__.ObservationControls.test_live_host_call_preserves_started_completed_and_pending_counts) ... ok
+test_measurement_failure_or_missing_failure_count_keeps_complete_cpu_unknown (__main__.ObservationControls.test_measurement_failure_or_missing_failure_count_keeps_complete_cpu_unknown) ... ok
+test_missing_or_inconsistent_host_count_is_not_a_complete_measurement (__main__.ObservationControls.test_missing_or_inconsistent_host_count_is_not_a_complete_measurement) ... ok
+test_missing_page_measurements_keep_complete_cpu_unknown (__main__.ObservationControls.test_missing_page_measurements_keep_complete_cpu_unknown) ... ok
+test_nested_native_and_client_cpu_are_not_added_to_host_cpu (__main__.ObservationControls.test_nested_native_and_client_cpu_are_not_added_to_host_cpu) ... ok
+test_no_observed_host_calls_do_not_create_measured_zero (__main__.ObservationControls.test_no_observed_host_calls_do_not_create_measured_zero) ... ok
+test_planned_rounds_are_not_replaced_by_observed_prefix (__main__.ObservationControls.test_planned_rounds_are_not_replaced_by_observed_prefix) ... ok
+test_repeated_round_identity_cannot_inflate_denominator (__main__.ObservationControls.test_repeated_round_identity_cannot_inflate_denominator) ... ok
+test_returned_failure_can_still_have_complete_cpu_observation (__main__.ObservationControls.test_returned_failure_can_still_have_complete_cpu_observation) ... ok
+test_successful_service_return_cannot_change_phase_verdict (__main__.ObservationControls.test_successful_service_return_cannot_change_phase_verdict) ... ok
+test_unentered_host_slot_remains_null_and_does_not_erase_other_measured_calls (__main__.ObservationControls.test_unentered_host_slot_remains_null_and_does_not_erase_other_measured_calls) ... ok
+test_unknown_cpu_retains_known_subtotal_without_complete_zero (__main__.ObservationControls.test_unknown_cpu_retains_known_subtotal_without_complete_zero) ... ok
+test_unwound_host_call_preserves_measured_part_without_complete_total (__main__.ObservationControls.test_unwound_host_call_preserves_measured_part_without_complete_total) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.029s
+
+OK

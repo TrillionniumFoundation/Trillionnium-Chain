@@ -1,0 +1,233 @@
+{
+  "before": {
+    "base": null,
+    "candidate": "f03be25066fefa1674b104f22cbc6aea09652a80",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "f03be25066fefa1674b104f22cbc6aea09652a80",
+    "tested_tree": "155213c2468edc411325f4f1853b471a6b25f355",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 963585205,
+    "tracked_entries": 10032,
+    "tracked_worktree_verified": true
+  },
+  "branch_publication_receipt": "Recorded separately after successful branch readback",
+  "discovery_selectors_passed": 12,
+  "executables": [
+    {
+      "bytes": 46699152,
+      "path": "/workspace/scratch/42d46a663b73/target/debug/deps/cell_cache_wal_cli-b1a90c2238f1bc1b",
+      "sha256": "c5465a321358f2ad08c6b04426a869a8c6f83f050266bde4eb5f0708d7e10ea2"
+    },
+    {
+      "bytes": 47299160,
+      "path": "/workspace/scratch/42d46a663b73/target/debug/deps/cell_closure_cli-4fa2438fe2280e37",
+      "sha256": "aa5683c34b310ba40f62243621e5d5895f41ea1a9a586bc36a63cfe14e7ee02f"
+    },
+    {
+      "bytes": 47475008,
+      "path": "/workspace/scratch/42d46a663b73/target/debug/deps/cell_discovery_cli-20d73d00fbb693bb",
+      "sha256": "208896cfb5cba0f60aabf6249befa10f38b76f2609608b50be046573dae49be5"
+    },
+    {
+      "bytes": 46876744,
+      "path": "/workspace/scratch/42d46a663b73/target/debug/deps/cell_fetch_deadline_cli-c109e258526a9f6e",
+      "sha256": "8933122c48fe691e0a1573a2a9eae03c591dfa283f1a1b8126934fa01df834a6"
+    },
+    {
+      "bytes": 46608312,
+      "path": "/workspace/scratch/42d46a663b73/target/debug/deps/cell_persistent_cli-41f277f79dfd338d",
+      "sha256": "ae970ff3a82bfed62ccdaea5e9f5c2899d18737ffcddf460c8b3cf552dd44f83"
+    },
+    {
+      "bytes": 47298576,
+      "path": "/workspace/scratch/42d46a663b73/target/debug/deps/cell_provider_ready_cli-15d3b59fd111b983",
+      "sha256": "b4cec01e5724bd2a68a900ff3dbeb39bae9144f183cf13bd568a451ab2cb29b6"
+    },
+    {
+      "bytes": 46824024,
+      "path": "/workspace/scratch/42d46a663b73/target/debug/deps/cell_release_cli-d69bc10bfaf656fb",
+      "sha256": "825f2fb7f345cebfa8121cc40503b7f3fd8359470cb8fcc3fbd81b87cafecd71"
+    },
+    {
+      "bytes": 47494312,
+      "path": "/workspace/scratch/42d46a663b73/target/debug/deps/cell_tensor_cli-a390a9d34380fb69",
+      "sha256": "67941142ee39a37b914282f3bb69e01d21ecd9f8873243719a90dc0b4f677545"
+    },
+    {
+      "bytes": 46316504,
+      "path": "/workspace/scratch/42d46a663b73/target/debug/deps/pq_cell_cli-0d8b9a18db4df54d",
+      "sha256": "5b189d061ffa9d205c90c61c12cbb5da04c2766ea4c8bf0fb8eb558a62edaeff"
+    },
+    {
+      "bytes": 6881352,
+      "path": "/workspace/scratch/42d46a663b73/target/debug/deps/trnm_cell-449f70c2efb460d1",
+      "sha256": "e3a574f4ed1cdd8a6f8dcd23fe28da3e18bafafa9d05467cd961b4dce2823a56"
+    },
+    {
+      "bytes": 6881432,
+      "path": "/workspace/scratch/42d46a663b73/target/debug/deps/trnm_cell_discovery-fef54fcc3cbc532b",
+      "sha256": "3ecf12befefff01e9dad69d2b8910bc1337aca59217f4f4b6f1a20d261e66e69"
+    },
+    {
+      "bytes": 79379744,
+      "path": "/workspace/scratch/42d46a663b73/target/debug/deps/trnm_data_availability-4afa79d63a34aeeb",
+      "sha256": "842d2c7cbec47053c6f5ae672f5f360d34727b6733344fd89952b84485c81ae2"
+    },
+    {
+      "bytes": 6881496,
+      "path": "/workspace/scratch/42d46a663b73/target/debug/examples/cell_delta_workload_observer-5480be3c254e1fe4",
+      "sha256": "d6dbb4b44ff6e50d3ee0e3a27a5e81ea718ed040854103a8e0e756781fb03318"
+    },
+    {
+      "bytes": 6881464,
+      "path": "/workspace/scratch/42d46a663b73/target/debug/examples/cell_residency_observer-40d07d2f5074d39a",
+      "sha256": "eb9ecf39846887bc926abb1fbe9131f24e37c74d2b7576c0c203156d5fbc109a"
+    },
+    {
+      "bytes": 6881464,
+      "path": "/workspace/scratch/42d46a663b73/target/debug/examples/cell_serving_ab_observer-b903c634f0072e9a",
+      "sha256": "f63ec26b9156b685570e64540a3b62f7fcdd29c06f8556c1c95e189dade773d6"
+    },
+    {
+      "bytes": 47005704,
+      "path": "/workspace/scratch/42d46a663b73/target/debug/trnm-cell",
+      "sha256": "f0beb729c2a786e4808d743422eb2e80566647c0f1a53e082229305b24298abc"
+    }
+  ],
+  "github_source_object_commit": "cfa57cd04751427451302b5c10539b3984d7f8db",
+  "local_tested_commit": "f03be25066fefa1674b104f22cbc6aea09652a80",
+  "native_failed": 0,
+  "native_ignored": 0,
+  "native_passed": 378,
+  "native_suite_counts": [
+    [
+      337,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      5,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      5,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      5,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      3,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      2,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      2,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      6,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      2,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      10,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "python_passed": 220,
+  "python_suite_counts": [
+    7,
+    4,
+    8,
+    14,
+    5,
+    6,
+    43,
+    35,
+    98
+  ],
+  "runtime_source_profile": "hepta-integrated-chain-execution-v11",
+  "same_exact_tree": "155213c2468edc411325f4f1853b471a6b25f355",
+  "same_tree_scope": "Only f03be250 tested source and cfa57cd GitHub source object; not later concurrent integration heads"
+}

@@ -1,0 +1,514 @@
+{
+  "baseRefName": "fix/chain-w1-v2-proof-ci-20261106",
+  "checks": [
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726496/job/128409876374",
+      "name": "export",
+      "status": "COMPLETED",
+      "workflowName": "CodeQL exact-source analysis export"
+    },
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726475/job/128409876339",
+      "name": "original native campaign (x64, head, release)",
+      "status": "COMPLETED",
+      "workflowName": "PoN original native campaign"
+    },
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726477/job/128409876410",
+      "name": "retained-pressure-failure",
+      "status": "COMPLETED",
+      "workflowName": "PoN priority acceptance"
+    },
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876811",
+      "name": "repository-truth",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726537/job/128409876603",
+      "name": "W1 QROM implementation (head, x64)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 QROM implementation observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726448/job/128409876055",
+      "name": "W1 transparent candidate (head, x64)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 transparent candidate observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876569",
+      "name": "W1 false trace reuse (x64, head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726558/job/128409877147",
+      "name": "original state and exit (ubuntu-24.04, head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN original large-state CPU acceptance"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726470/job/128409876617",
+      "name": "original workspace test CPU (ubuntu-24.04, head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN original workspace test-profile CPU acceptance"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726435/job/128409876312",
+      "name": "aggregate-owner-controls (head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN owned process cleanup"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726537/job/128409876694",
+      "name": "W1 QROM implementation (prospective-merge, x64)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 QROM implementation observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726448/job/128409876202",
+      "name": "W1 transparent candidate (prospective-merge, x64)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 transparent candidate observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876619",
+      "name": "W1 false trace reuse (x64, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726558/job/128409877197",
+      "name": "original state and exit (ubuntu-24.04, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN original large-state CPU acceptance"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726470/job/128409876846",
+      "name": "original workspace test CPU (ubuntu-24.04, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN original workspace test-profile CPU acceptance"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726435/job/128409876167",
+      "name": "aggregate-owner-controls (prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN owned process cleanup"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876510",
+      "name": "W1 false trace reuse (arm64, head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726558/job/128409877203",
+      "name": "original state and exit (ubuntu-24.04-arm, head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN original large-state CPU acceptance"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726470/job/128409876728",
+      "name": "original workspace test CPU (ubuntu-24.04-arm, head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN original workspace test-profile CPU acceptance"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876533",
+      "name": "W1 false trace reuse (arm64, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726558/job/128409877018",
+      "name": "original state and exit (ubuntu-24.04-arm, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN original large-state CPU acceptance"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726470/job/128409876807",
+      "name": "original workspace test CPU (ubuntu-24.04-arm, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN original workspace test-profile CPU acceptance"
+    },
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726477/job/128409876675",
+      "name": "native priorities (ubuntu-24.04, head, service-model)",
+      "status": "COMPLETED",
+      "workflowName": "PoN priority acceptance"
+    },
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876823",
+      "name": "cross-arch-cost (x64)",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876609",
+      "name": "W1 complete legal strategies (v1, x64, head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726435/job/128409876446",
+      "name": "cleanup (ubuntu-24.04, head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN owned process cleanup"
+    },
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876841",
+      "name": "cross-arch-cost (arm64)",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726477/job/128409876661",
+      "name": "native priorities (ubuntu-24.04, head, state)",
+      "status": "IN_PROGRESS",
+      "workflowName": "PoN priority acceptance"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876577",
+      "name": "W1 complete legal strategies (v2, x64, head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726435/job/128409876401",
+      "name": "cleanup (ubuntu-24.04, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN owned process cleanup"
+    },
+    {
+      "conclusion": "",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726477/job/128409876714",
+      "name": "native priorities (ubuntu-24.04, head, history)",
+      "status": "IN_PROGRESS",
+      "workflowName": "PoN priority acceptance"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876498",
+      "name": "W1 complete legal strategies (v1, x64, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726435/job/128409876255",
+      "name": "cleanup (ubuntu-24.04-arm, head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN owned process cleanup"
+    },
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726477/job/128409876629",
+      "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+      "status": "COMPLETED",
+      "workflowName": "PoN priority acceptance"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876633",
+      "name": "W1 complete legal strategies (v2, x64, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726435/job/128409876323",
+      "name": "cleanup (ubuntu-24.04-arm, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN owned process cleanup"
+    },
+    {
+      "conclusion": "",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726477/job/128409876627",
+      "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+      "status": "IN_PROGRESS",
+      "workflowName": "PoN priority acceptance"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876596",
+      "name": "W1 complete legal strategies (v1, arm64, head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726435/job/128409876381",
+      "name": "cleanup (macos-15, head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN owned process cleanup"
+    },
+    {
+      "conclusion": "",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726477/job/128409876616",
+      "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+      "status": "IN_PROGRESS",
+      "workflowName": "PoN priority acceptance"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876540",
+      "name": "W1 complete legal strategies (v2, arm64, head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726435/job/128409876305",
+      "name": "cleanup (macos-15, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN owned process cleanup"
+    },
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726477/job/128409876608",
+      "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+      "status": "COMPLETED",
+      "workflowName": "PoN priority acceptance"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876571",
+      "name": "W1 complete legal strategies (v1, arm64, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726477/job/128409876724",
+      "name": "native priorities (ubuntu-24.04-arm, head, state)",
+      "status": "IN_PROGRESS",
+      "workflowName": "PoN priority acceptance"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876458",
+      "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726477/job/128409876573",
+      "name": "native priorities (ubuntu-24.04-arm, head, history)",
+      "status": "IN_PROGRESS",
+      "workflowName": "PoN priority acceptance"
+    },
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726477/job/128409876564",
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+      "status": "COMPLETED",
+      "workflowName": "PoN priority acceptance"
+    },
+    {
+      "conclusion": "",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726477/job/128409876681",
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+      "status": "IN_PROGRESS",
+      "workflowName": "PoN priority acceptance"
+    },
+    {
+      "conclusion": "",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726477/job/128409876706",
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+      "status": "IN_PROGRESS",
+      "workflowName": "PoN priority acceptance"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876444",
+      "name": "W1 factorial legal strategies v3 (x64, head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876774",
+      "name": "W1 actual reuse V3 (x64, head)",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876552",
+      "name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876886",
+      "name": "W1 actual reuse V3 (x64, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876495",
+      "name": "W1 factorial legal strategies v3 (arm64, head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876765",
+      "name": "W1 actual reuse V3 (arm64, head)",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876524",
+      "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876978",
+      "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876445",
+      "name": "W1 fresh challenge service (x64, head)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876693",
+      "name": "protocol-contract",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726422/job/128409876316",
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "status": "COMPLETED",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876896",
+      "name": "fuzz-smoke",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876810",
+      "name": "rust-baseline shard (runtime)",
+      "status": "IN_PROGRESS",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876777",
+      "name": "rust-baseline shard (quality)",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876991",
+      "name": "prospective Rust shard (runtime)",
+      "status": "IN_PROGRESS",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876958",
+      "name": "prospective Rust shard (quality)",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876821",
+      "name": "external-evidence-contract",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876992",
+      "name": "prospective-merge (repository-truth)",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876960",
+      "name": "prospective-merge (protocol-contract)",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876856",
+      "name": "prospective-merge (fuzz-smoke)",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128409876864",
+      "name": "prospective-merge (external-evidence-contract)",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726461/job/128411326013",
+      "name": "cross-arch-cost-consistency",
+      "status": "COMPLETED",
+      "workflowName": "trnm-required-baseline"
+    }
+  ],
+  "headRefName": "fix/chain-w1-qrom-implementation-map-20261107",
+  "headRefOid": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "isDraft": true,
+  "state": "OPEN",
+  "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/778"
+}

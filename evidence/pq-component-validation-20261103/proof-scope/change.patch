@@ -1,0 +1,57 @@
+diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json
+index effab14..c47f214 100644
+--- a/config/pon/pq-cross-branch-corpus-v1.json
++++ b/config/pon/pq-cross-branch-corpus-v1.json
+@@ -369,7 +369,7 @@
+     "docs/security/PQ_QTX1_TRANSACTION_RESEARCH_V1.md": "70e52355411497df5f7087a53031ffbf9b540b27",
+     "docs/security/PQ_TPQ1_CANONICAL_PEM_RESEARCH_V1.md": "66c839a01462b6b4b03ae54549f28140ad0c7fd0",
+     "docs/security/PQ_TPQ1_NATIVE_SIGNATURE_VERIFIER_V1.md": "56856ea54ae5d515f8cbaa0e8f13adc62d0faf85",
+-    "docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md": "a03e07f47f017522c71251ec8214cba077e7b199",
++    "docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md": "10ba17f811da67dc4716b33d2c08eff35a3e6c9f",
+     "evidence/pon-pq-account-native-20261028/README.md": "2885a560883ff59e67411e8bec5813d2f132587a",
+     "evidence/pon-pq-cell-deadline-native-v1/README.md": "76b74547693d7ee09845776b440c24cd960417a8",
+     "evidence/pon-pq-cell-deadline-native-v1/baseline-real-tcp.log": "f8c5894587a4a239d7b83b36d8062682c4e4bb90",
+@@ -667,7 +667,7 @@
+     "config/pon/pq-system-required-tests-v1.json": "2980d9848b78cb8ecdf879b61f69ecf1d4f6dba6",
+     "docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md": "75323e14a469d97e77088d1a911f3126545de38b",
+     "docs/security/PQ_NETWORK_WITNESS_RECONSTRUCTED_REVIEW_20261101.md": "fa286a735bd4616cca4c10de4454d8c9a6995e4e",
+-    "docs/security/PQ_SYSTEM_CONTINUATION_20261101.md": "587f555ef12b690863ef0076c6853e723e411d38",
++    "docs/security/PQ_SYSTEM_CONTINUATION_20261101.md": "d200a232d4cc65f3066aba61a294f3ef1ed8a1e3",
+     "scripts/ci/record_pq_native_command.py": "e4bed61ed08424f663c15f4c58a421899dd56632",
+     "scripts/ci/test_record_pq_native_command.py": "b28a845d4aa742e0a56b30189b76398d13576f1c",
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs": "aea70d3ee9b74aebbaba3d89896dd18509e54aad",
+diff --git a/docs/security/PQ_SYSTEM_CONTINUATION_20261101.md b/docs/security/PQ_SYSTEM_CONTINUATION_20261101.md
+index 587f555..d200a23 100644
+--- a/docs/security/PQ_SYSTEM_CONTINUATION_20261101.md
++++ b/docs/security/PQ_SYSTEM_CONTINUATION_20261101.md
+@@ -162,7 +162,7 @@ and complete-system failures remain separate unclosed gates.
+ | Gate | This continuation supplies | Still required for a whole-system claim |
+ | --- | --- | --- |
+ | Complete authorization | Live PNQ2 admission, policy-bound Hepta renewal and the pinned explicit canonical PQ Cell/initial FinalUse and Codex turn/start routes | Every effect-bearing owner, upgrade, revocation and recovery, plus the final composed Chain/Hepta deployment under the same protected PQ profile |
+-| Proof PQ-128 | No change to proof acceptance or claimed security level | Exact full relation and verifier parameters, quantum soundness, recursive composition and independent cryptographic review |
++| Proof PQ-128 | Current Node uses complete native PNW1 validation; this continuation does not adopt the isolated succinct-proof experiment or change the claimed security level | Exact native relation, actual verifier and per-purpose hash security assumptions, with independent review. Any future accepted succinct backend additionally requires fixed commitments, FRI/Fiat–Shamir, guest/compiler and final-verifier parameters, quantum soundness and recursive-composition analysis |
+ | Quantum work and fork choice | No change to W1, difficulty or chainwork | Complete reversible W1 cost, amortization and cheapest valid work, quantum search, DAA/timestamps, forks and propagation under original budgets |
+ | Migration and rollback | Explicit native witness for three PNQ2 tables | Historical assets and liabilities, all effect-bearing state, independently administered monotonic trust, conflict recovery and actual deployed cold-restoration acceptance |
+ | Capacity and invalid input | Original ingress budgets and real invalid/valid controls retained | Original full-state/History/work/service budgets, adversarial load, memory and latency, sustained authenticated confidential network service where private data requires it |
+diff --git a/docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md b/docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md
+index a03e07f..10ba17f 100644
+--- a/docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md
++++ b/docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md
+@@ -18,7 +18,7 @@ The guard checks actual negative authority and activation assertions in the sour
+ | Gate | Current boundary | Evidence needed to close |
+ | --- | --- | --- |
+ | Authorization | NPQ6 account/task and PNQ2 transport are separate. [Hepta #4497 at f28af9b](https://github.com/TrillionniumFoundation/hepta-private-ci/commit/f28af9b7700a61fbbcdcc121521cb879297d5e31) routes explicitly configured `ml_dsa65_v2` ordinary Cell/initial FinalUse consumers and Codex turn/start through canonical PQ authority. Untagged compatibility remains classical; complete governance, release, recovery and composed deployment are unqualified. The earlier [ML-DSA V2 research verifier](HEPTA_PQ_HANDOFF_V2_20261031.md) has separate historical scope; Cell provider discovery V2 is ML-DSA. | Trace every authority-producing entry, including governance, release and recovery, to a current externally pinned PQ trust root; reject cross-profile downgrade and revoked generations on real effect paths. |
+-| Proof PQ-128 | No production-qualified W1 security parameter proof in the active candidate. | Freeze exact relation, verifier, guest/compiler hashes, commitment/FRI/Fiat–Shamir settings, recursion and security model; obtain independent quantum-soundness argument and worst-invalid-input cost. Groth16/fake receipts cannot satisfy PQ-128. |
++| Proof PQ-128 | Current Node acceptance uses the complete [native PNW1 verifier](../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs); the [isolated succinct-proof experiment](../../formal/pon-nakamoto-v1/w1_zkvm/README.md) is not a Node backend. Neither establishes whole-chain PQ-128 qualification. | For the native path, fix the complete relation, actual verifier and per-purpose hash assumptions, assess worst-invalid-input cost and obtain independent cryptographic review. Before accepting any succinct-proof backend, additionally pin guest/compiler hashes, commitment/FRI/Fiat–Shamir parameters, recursion, final verifier and a quantum-soundness argument. Groth16/fake receipts cannot satisfy PQ-128. |
+ | Quantum mining and fork choice | Current cumulative-work/DAA incentives have no full adversarial quantum lower bound. | Test cheapest valid complete W1, data loads, reversible oracle/uncompute, challenge amortization, Grover advantage, retarget/timestamp manipulation, reorganization and propagation on equal attack budgets. |
+ | Migration and rollback | Classical ownership transition and local durable ledgers do not automatically resist total database rollback. The [research reference](PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md) and the explicit [native PNQ2 witness component](PQ_NETWORK_DURABLE_WITNESS_V1.md) have separate evidence. The native component covers three PNQ2 tables under an independent-witness-state assumption; it does not cover all Node/Hepta state or provide a trusted deployed remote service. | Bind early PQ ownership, historic liabilities, old nonce floors, all effect-bearing state, cross-reorg recovery, an independently administered monotonic anchor and independent cold-restart adversarial tests. |
+ | Capacity and invalid input | Research TPQ1 signature frame is 3487 bytes; original devnet maximum transaction remains 2048 bytes. | Full native NPQ6 block and mempool capacity, invalid-signature CPU cost, wire/relay amplification, p95/p99, RSS and recovery under fixed hardware/traffic constraints. |
+@@ -26,7 +26,7 @@ The guard checks actual negative authority and activation assertions in the sour
+ 
+ This guard does not create permission, switch profiles, sign an artifact, accept a proof, change chainwork or modify the consensus rules. All six gates remain UNQUALIFIED. This research-only v1 guard must not be weakened to force a green release; any later upgrade requires a reviewed new security schema and independently verifiable evidence.
+ 
+-References: NIST FIPS 204 (ML-DSA); RISC Zero 3.0 cryptographic security model (RISC-V 96-bit, recursion 99-bit, Groth16 not quantum-safe); Bailey & Sattath (2024) quantum miner / difficulty adjustment research. None is a proof of full Trillionnium-Chain security.
++References: NIST FIPS 204 (ML-DSA); RISC Zero 3.0 cryptographic security model (RISC-V 96-bit, recursion 99-bit, Groth16 not quantum-safe); Bailey & Sattath (2024) quantum miner / difficulty adjustment research. Those RISC Zero component estimates do not assign a security-bit level to the current native Node. None is a proof of full Trillionnium-Chain security.
+ 
+ 
+ ## Convergence owner coverage

@@ -1,0 +1,6 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running unittests src/lib.rs (/data/chain-abg-70ae-20261108/target-green/debug/deps/trnm_pon_node-571a85d65bb41857)
+
+thread '<unnamed>' (3450873) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_tests.rs:83:17:
+controlled actual worker unwind
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

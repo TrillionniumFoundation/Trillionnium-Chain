@@ -1,0 +1,10 @@
+{
+  "cpu_models": [
+    "AMD EPYC 7763 64-Core Processor"
+  ],
+  "kernel": "7.0.0-1017-azure",
+  "logical_cpu_count": 4,
+  "machine": "x86_64",
+  "meminfo": "MemTotal:       16367524 kB\nMemFree:         9732576 kB\nMemAvailable:   14991544 kB\nBuffers:           72092 kB\nCached:          5387296 kB\nSwapCached:            0 kB\nActive:           730012 kB\nInactive:        4989476 kB\nActive(anon):     315504 kB\nInactive(anon):        0 kB\nActive(file):     414508 kB\nInactive(file):  4989476 kB\nUnevictable:       46760 kB\nMlocked:           43688 kB\nSwapTotal:       3145724 kB\nSwapFree:        3145724 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:            362760 kB\nWriteback:             0 kB\nAnonPages:        306900 kB\nMapped:           329524 kB\nShmem:             46672 kB\nKReclaimable:     200912 kB\nSlab:             294228 kB\nSReclaimable:     200912 kB\nSUnreclaim:        93316 kB\nKernelStack:        4352 kB\nPageTables:         6584 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    11329484 kB\nCommitted_AS:    2121832 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:       42836 kB\nVmallocChunk:          0 kB\nPercpu:             2336 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:    559104 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         1478656 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:             0 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      154752 kB\nDirectMap2M:     5083136 kB\nDirectMap1G:    13631488 kB\n",
+  "physical_resources_are_observations_not_reservations": true
+}

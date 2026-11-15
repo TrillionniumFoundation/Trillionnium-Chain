@@ -1,0 +1,18 @@
+{
+  "schema": "pn1-w1-module-regression-v1",
+  "scope": "complete native pon_work source module only",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "/workspace/scratch/295b0f1bca6b/pn1-w1-harness/Cargo.toml",
+    "--lib"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 28.565617561340332,
+  "workspace_or_pq_qualified": false,
+  "stubs": false,
+  "cargo_build_jobs": 2
+}

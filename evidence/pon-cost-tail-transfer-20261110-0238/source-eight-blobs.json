@@ -1,0 +1,47 @@
+{
+  "commit": "6fac9cddd982ce4e26197ca23e39490604422370",
+  "files": {
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "bytes": 811879,
+      "git_blob": "f2390f9186dd9727a7a5de205ec18e657482de41",
+      "sha256": "0c62c52ed79db3898cfabd9450b8491a28890816f239cf481f55daf9cab19d65"
+    },
+    "docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md": {
+      "bytes": 16085,
+      "git_blob": "54892a69899dada9b963a0acbea58014ca9049ff",
+      "sha256": "004588e9152ba7a38aeb7a7a0dcd53d4ce16fcb5b15a33ae29e42a13a513a8e4"
+    },
+    "formal/pon-nakamoto-v1/COST_TAIL_TRANSFER_V1.md": {
+      "bytes": 12884,
+      "git_blob": "3b7e41b0f359d6d810d553911a801a86c8e34a11",
+      "sha256": "1a0defa36117fb030d58a7ca218256bbb306378f39fa40ccf5fd2d31c09a09ce"
+    },
+    "formal/pon-nakamoto-v1/cost_tail_transfer.py": {
+      "bytes": 8496,
+      "git_blob": "80fd7d2e132094270043c61cea9d21bb8d2fa1aa",
+      "sha256": "ed2f9a9d07759f7fbf78278241945b814471ad227afdede2548db435744794c0"
+    },
+    "formal/pon-nakamoto-v1/test_cost_tail_transfer.py": {
+      "bytes": 17730,
+      "git_blob": "b4b5859228be568826d0434d3556c45b0a1eebca",
+      "sha256": "6470930f45d773e65c2e5ce7eeb30fd7bd90ec3e13e2ef149047ddfc7ca5bb32"
+    },
+    "scripts/ci/check_ci_contract.py": {
+      "bytes": 149728,
+      "git_blob": "3492963301a239e7a63a7d9809af851322b06d03",
+      "sha256": "58cb670fb203758d2ecff5218fed57b45a7231bed2065836d77184238b1a3a36"
+    },
+    "scripts/ci/ci_job.sh": {
+      "bytes": 39107,
+      "git_blob": "1c7b5f8351b76f03c225a34d65fc75d911e522a9",
+      "sha256": "2c3826d04ffa6897e4cffa23b8399ea0b6afe99573d5162d7e05bae5d70d6c72"
+    },
+    "scripts/ci/test_ci_contract.py": {
+      "bytes": 173750,
+      "git_blob": "d3deb33cdfe064376aabf712d4b8d2db5a35cbf4",
+      "sha256": "13c051b501c3df2e88afb6b451a883461db5ff259861aecd4b7d70d991c4b5f1"
+    }
+  },
+  "scope": "eight PR changed files matched GitHub blob readback; local checkout sparse",
+  "tree": "c5d38dbd45d13fa0f591cc925076836fd38b84b6"
+}

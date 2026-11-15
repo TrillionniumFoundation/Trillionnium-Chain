@@ -1,0 +1,15 @@
+{
+  "command": [
+    "python3",
+    "formal/pon-nakamoto-v1/test_native_owner_score_bridge.py",
+    "-v"
+  ],
+  "environment": {
+    "TRNM_NATIVE_OWNER_OBSERVATION": "/workspace/scratch/b9454e263603/native_w1_target/debug/examples/native_owner_observation_v1",
+    "TRNM_NATIVE_OWNER_RECORD_DIR": "evidence/pon-actual-certificates-20261107/native_score_bridge/attempt-01/run"
+  },
+  "exit_code": 0,
+  "elapsed_seconds": 2.9223817639976915,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "15e68b6ab09d829b2291bdf9d19deb17bdeba058ac641c83652b721038ff8828"
+}

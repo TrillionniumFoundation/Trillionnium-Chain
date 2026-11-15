@@ -1,0 +1,38 @@
+{
+  "gate_sha256": "c3a868b5feb6c8d4aa4d848f387291ce9b07b453ecb2c420dadd53a804ad9c3d",
+  "scope": "saved observation internal consistency only, not a verifier or runner bypass",
+  "cases": [
+    {
+      "case": "known_groups_exclude_child_pid",
+      "old": {
+        "status": "ACCEPTED",
+        "returncode": 0,
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed.",
+        "stderr": ""
+      },
+      "new": {
+        "status": "ACCEPTED"
+      },
+      "mutated_pid": 8775,
+      "mutated_groups": [
+        1008775
+      ]
+    },
+    {
+      "case": "pid_boolean_false",
+      "old": {
+        "status": "ACCEPTED",
+        "returncode": 0,
+        "stdout": "All 58 original saved-v2 controls passed; no new proof or qualification is claimed.",
+        "stderr": ""
+      },
+      "new": {
+        "status": "ACCEPTED"
+      },
+      "mutated_pid": false,
+      "mutated_groups": [
+        8775
+      ]
+    }
+  ]
+}

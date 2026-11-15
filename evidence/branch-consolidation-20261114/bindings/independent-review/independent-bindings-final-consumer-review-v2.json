@@ -1,0 +1,151 @@
+{
+  "adapted_status_methods": [
+    "test_status_independently_rechecks_named_ids_and_boolean_scope",
+    "test_status_rejects_exit_zero_without_named_completion",
+    "test_status_requires_every_step_outcome_and_conclusion"
+  ],
+  "all33nonself_corpus_pins_exact": true,
+  "all_original_report_mutators_AST_unchanged": true,
+  "assessment": "APPROVED_WITHIN_CURRENT_SOURCE_BINDING_AND_GATE_SCOPE",
+  "base": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+  "current_independent_stages": [
+    "observations",
+    "checkout",
+    "source_before",
+    "preflight",
+    "named_tests",
+    "historical_drift",
+    "implementation",
+    "supplemental_historical_controls",
+    "supplemental_historical_mapping",
+    "supplemental_current_mapping",
+    "supplemental_budget_unknown",
+    "supplemental_budget_hypothetical",
+    "supplemental_report_scopes",
+    "source_after"
+  ],
+  "current_named77_supplemental24_historical8_counts_unchanged": true,
+  "final_patch": {
+    "bytes": 131127,
+    "sha256": "ecc22eb95d7b85ca5f60981eb593abb596a64a42243b76fa4485ad04aa669c41"
+  },
+  "final_routing_delta": {
+    "bytes": 14417,
+    "sha256": "8f2fd33ab592501673a8c4a1c1211ebc5f43ddd294df06a8a2361ba90ca355b5"
+  },
+  "historical_job_sha256": "f88c5e041b943ea39be2de6665e9621b0b6a0c056c44dcae2a6215615eb6b130",
+  "method_consumer_mapping": [
+    {
+      "body_AST_unchanged": true,
+      "consumer": "fixed historical job named_tests; original supplemental.run_suite refusal controls where present",
+      "test": "test_named_roster_executes_exactly_once_without_recursing_into_real_suites"
+    },
+    {
+      "body_AST_unchanged": true,
+      "consumer": "fixed historical job named_tests; original supplemental.run_suite refusal controls where present",
+      "test": "test_named_import_system_exit_zero_is_rejected"
+    },
+    {
+      "body_AST_unchanged": true,
+      "consumer": "fixed historical job named_tests; original supplemental.run_suite refusal controls where present",
+      "test": "test_named_load_tests_system_exit_zero_is_rejected"
+    },
+    {
+      "body_AST_unchanged": true,
+      "consumer": "fixed historical job named_tests; original supplemental.run_suite refusal controls where present",
+      "test": "test_named_missing_duplicate_and_skipped_controls_are_rejected"
+    },
+    {
+      "body_AST_unchanged": false,
+      "consumer": "actual current w1_qrom_current_ci.main verify; current namespace and nested supplemental receipts",
+      "test": "test_status_rejects_exit_zero_without_named_completion"
+    },
+    {
+      "body_AST_unchanged": false,
+      "consumer": "actual current w1_qrom_current_ci.main verify; current namespace and nested supplemental receipts",
+      "test": "test_status_independently_rechecks_named_ids_and_boolean_scope"
+    },
+    {
+      "body_AST_unchanged": false,
+      "consumer": "actual current w1_qrom_current_ci.main verify; current namespace and nested supplemental receipts",
+      "test": "test_status_requires_every_step_outcome_and_conclusion"
+    },
+    {
+      "body_AST_unchanged": true,
+      "consumer": "actual current job supplemental_report_scopes embedded Python",
+      "test": "test_actual_unknown_and_hypothetical_reports_pass_the_scope_gate"
+    },
+    {
+      "body_AST_unchanged": true,
+      "consumer": "actual current job supplemental_report_scopes embedded Python",
+      "test": "test_unknown_report_requires_all_input_and_component_names"
+    },
+    {
+      "body_AST_unchanged": true,
+      "consumer": "actual current job supplemental_report_scopes embedded Python",
+      "test": "test_unknown_report_cannot_infer_derived_values_or_comparisons"
+    },
+    {
+      "body_AST_unchanged": true,
+      "consumer": "actual current job supplemental_report_scopes embedded Python",
+      "test": "test_hypothetical_report_requires_nonnull_component_results"
+    },
+    {
+      "body_AST_unchanged": true,
+      "consumer": "actual current job supplemental_report_scopes embedded Python",
+      "test": "test_hypothetical_report_rejects_wrong_fractions_and_numeric_booleans"
+    },
+    {
+      "body_AST_unchanged": true,
+      "consumer": "actual current job supplemental_report_scopes embedded Python",
+      "test": "test_hypothetical_report_rejects_inexact_fraction_input"
+    },
+    {
+      "body_AST_unchanged": true,
+      "consumer": "actual current job supplemental_report_scopes embedded Python",
+      "test": "test_report_scope_rejects_qualification_escalation_and_false_as_zero"
+    }
+  ],
+  "method_name_count": 14,
+  "observed_execution": {
+    "actual_named_methods": [
+      "test_actual_unknown_and_hypothetical_reports_pass_the_scope_gate",
+      "test_hypothetical_report_rejects_inexact_fraction_input",
+      "test_hypothetical_report_rejects_wrong_fractions_and_numeric_booleans",
+      "test_hypothetical_report_requires_nonnull_component_results",
+      "test_named_import_system_exit_zero_is_rejected",
+      "test_named_load_tests_system_exit_zero_is_rejected",
+      "test_named_missing_duplicate_and_skipped_controls_are_rejected",
+      "test_named_roster_executes_exactly_once_without_recursing_into_real_suites",
+      "test_report_scope_rejects_qualification_escalation_and_false_as_zero",
+      "test_status_independently_rechecks_named_ids_and_boolean_scope",
+      "test_status_rejects_exit_zero_without_named_completion",
+      "test_status_requires_every_step_outcome_and_conclusion",
+      "test_unknown_report_cannot_infer_derived_values_or_comparisons",
+      "test_unknown_report_requires_all_input_and_component_names"
+    ],
+    "owner": "architecture",
+    "raw_stderr": "/private/tmp/chain-final-current-bindings-evidence-20261114/workflow-routing-fix-v1/14-controls.stderr",
+    "reported_final_status": "OK",
+    "reported_tests_run": 14,
+    "rerun_by_reviewer": false,
+    "sha256": "2866228db9c48ca19b49bbffa21b383db680d09d67c6e181e158e06eae4e8c5d"
+  },
+  "previous_static_receipt_sha256": "b9053c2570ef1b7a2d7f9a814e1999f80aef0e829f1b667afd8b6003ef6420b5",
+  "prior_consumer_correction_retained_sha256": "7908971d4130d095b74f9ece5c72bd054a5f8c96b92405b9be62df1cb689583d",
+  "reason": "All original mutation methods now target their actual unchanged production consumers; current final CLI is selected by exact workflow command and independent fourteen-stage roster. Original26failedsubtests retained as prior evidence; no mutations dropped.",
+  "reviewed_actual_workflow_bytes": 70342,
+  "same232source_pins": true,
+  "same4_substitution_and_reorder_controls_retained": true,
+  "same5frozenfiles": true,
+  "schema": "independent-final-bindings-consumer-review-v2",
+  "scope_limits": {
+    "all_tests_executed_by_reviewer": false,
+    "native_or_hosted_confirmation_gate_approved": false,
+    "new_security_qualification": false,
+    "no_other_worktree_edit": true,
+    "no_remote_write": true
+  },
+  "whole_method_AST_unchanged": 11,
+  "workflow_consumer_closed": true
+}

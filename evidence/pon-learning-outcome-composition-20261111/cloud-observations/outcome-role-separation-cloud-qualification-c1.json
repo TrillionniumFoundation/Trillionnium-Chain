@@ -1,0 +1,57 @@
+{
+  "schema": "chain-outcome-role-separation-cloud-qualification-attempt-v1",
+  "recorded_utc": "2026-11-12T00:06:07.081930+00:00",
+  "repository": "/workspace/scratch/761295b7d149/chain-work",
+  "source": "c2d67c5cf1ebb4caac525802362d5746b8fd957d",
+  "worktree_clean": true,
+  "lock_sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+  "test_sha256": "040b7940bf5105e771ded911bc6387615ad6be4f3ae6fad27e28b5df9b25f25d",
+  "toolchain": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2",
+  "offline": true,
+  "locked": true,
+  "cargo_build_jobs": 2,
+  "cargo_home": "/workspace/scratch/761295b7d149/chain-cargo-home",
+  "cargo_target_dir": "/workspace/scratch/761295b7d149/chain-target",
+  "target_allocated_bytes": 940916736,
+  "target_cleanup_authorized": true,
+  "original_preflight": "PASS (26 packages; original --dev gate)",
+  "rustfmt_single_test": "PASS",
+  "native_no_run_passed": false,
+  "native_test_run": false,
+  "qualified_sqlite_boundary": false,
+  "warning": "trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute",
+  "interrupt_observed_available_bytes": 558034944,
+  "after_interrupt_observed_available_bytes": 357519360,
+  "logs": [
+    {
+      "path": "/workspace/scratch/761295b7d149/outcome-role-separation-no-run.log",
+      "sha256": "48b2fcf5fe3849318c495cfc3e2e231e3b4d441335025e266510592772720b50",
+      "exit_code": 101,
+      "outcome": "offline-cache-missing-rustix-1.1.4"
+    },
+    {
+      "path": "/workspace/scratch/761295b7d149/outcome-role-separation-no-run-c1.log",
+      "sha256": "70017c1c51fdb52b3356c7515e9340f04f57900c3b4bfc28976238c21a422c35",
+      "exit_code": 130,
+      "outcome": "interrupted-owned-build-at-low-disk-threshold"
+    }
+  ],
+  "sqlite_build_outputs": [
+    {
+      "path": "/workspace/scratch/761295b7d149/outcome-role-separation-sqlite-build-output-0.log",
+      "sha256": "6450522b6c67fdc62b3f00dbe38657f20fccc1d33a07cd2658c3c72c364e435e",
+      "qualified": false
+    }
+  ],
+  "test_artifacts": [],
+  "next_qualified_tool_configuration": {
+    "RUSTC": "/workspace/scratch/976f20cefa32/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/workspace/scratch/976f20cefa32/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc"
+  },
+  "remaining": "Root runs qualified role test, DA adoption module and CLI integration in independent desktop checkout. This cloud attempt certifies neither test success nor model efficacy.",
+  "target_removed_utc": "2026-11-12T00:06:15.990002+00:00",
+  "available_bytes_after_owned_target_cleanup": 3809849344,
+  "complete_checkout": false,
+  "low_space_gates_record": "/workspace/scratch/761295b7d149/c1-low-space-gates.json",
+  "low_space_gates_sha256": "e323fb89239262dcd8e0dd223376329648a5fbfb09a457b6ab3ed2a9fc039e35"
+}

@@ -1,0 +1,32 @@
+{
+  "name": "frozen-strict-clippy-single-job",
+  "argv": [
+    "/home/agent/.cargo/bin/cargo",
+    "clippy",
+    "--offline",
+    "--locked",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/workspace/scratch/678905e225be/chain-lifetime/trillionnium",
+  "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+  "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+  "started_utc": "2026-11-09T14:07:39.893053+00:00",
+  "openssl_dir": "/workspace/scratch/a6fe7c2e72c7/pq-validation/provider-run/trnm-pq-provider-3.5.9.Uv4EkAot/install",
+  "cargo_build_jobs": 1,
+  "rustc": "/home/agent/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+  "rustdoc": "/home/agent/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+  "reason_for_retry": "Prior two-job Clippy ended with SIGKILL; canonical compiler binary corrects the observed rustup-shim build identity warning. Strict command and source unchanged.",
+  "state": "completed",
+  "exit_code": 101,
+  "elapsed_seconds": 63.06811365199974,
+  "finished_utc": "2026-11-09T14:08:42.962895+00:00",
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_bytes": 4608,
+  "stderr_sha256": "b85dbc545d379c8d639ca0a813d88c64f0761af25cf0d657b35cfd6130d610f2"
+}

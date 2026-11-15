@@ -1,0 +1,214 @@
+{
+  "mode": "python",
+  "observations": [
+    {
+      "command": [
+        "python",
+        "scripts/ci/test_pon_w1_legal_strategy_reader_v1.py"
+      ],
+      "cwd": "/tmp/trnm-pon-security-final",
+      "elapsed_ns": 7543228615,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+      "label": "v1-reader",
+      "log": "v1-reader.log",
+      "log_sha256": "07f54bbb6ebcb784146a942802e829c0b89a726f8aca0e2b4e818d8e8a40328d",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python",
+        "scripts/ci/test_pon_w1_legal_strategy_reader_v2.py"
+      ],
+      "cwd": "/tmp/trnm-pon-security-final",
+      "elapsed_ns": 72347504145,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+      "label": "v2-reader",
+      "log": "v2-reader.log",
+      "log_sha256": "0d581dfb7576dbc7e2efc977061677b266fb42eb1b37c90e67716cbd5c806076",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python",
+        "scripts/ci/test_run_w1_false_trace_reuse_v1.py"
+      ],
+      "cwd": "/tmp/trnm-pon-security-final",
+      "elapsed_ns": 9306030264,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+      "label": "cost-runner",
+      "log": "cost-runner.log",
+      "log_sha256": "934735ea0e26d3615b35f8af7b2768f75a13d2790e0072a9b495ae5235731622",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "cwd": "/tmp/trnm-pon-security-final",
+      "elapsed_ns": 11081724970,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+      "label": "source-negatives",
+      "log": "source-negatives.log",
+      "log_sha256": "d8a5cc870a98632c6b697ec93e10481e20c649fab3a6b3e55f4f1b03fad668f1",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "cwd": "/tmp/trnm-pon-security-final",
+      "elapsed_ns": 18051156611,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+      "label": "pq-negatives",
+      "log": "pq-negatives.log",
+      "log_sha256": "40df403847e3e7da19e6b5bcf70618768dedafa6e69d3fb65a65e2116072bc5c",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "cwd": "/tmp/trnm-pon-security-final",
+      "elapsed_ns": 8349327944,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+      "label": "ci-contract",
+      "log": "ci-contract.log",
+      "log_sha256": "cdd334b1f55a306fbd5c75824eb67f102cebcb48e35692a77b34248926a8d03b",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python",
+        "formal/pon-nakamoto-v1/test_work_query_bound.py"
+      ],
+      "cwd": "/tmp/trnm-pon-security-final",
+      "elapsed_ns": 2120073271,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+      "label": "query-bound",
+      "log": "query-bound.log",
+      "log_sha256": "ec07d4d726baa7294dfc85b30151f42dffdd3ebb9904f158a6f538c4b6b7204c",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/tmp/trnm-pon-security-final",
+      "elapsed_ns": 1720330882,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+      "label": "pq-source-positive",
+      "log": "pq-source-positive.log",
+      "log_sha256": "0c693e64e1f86fc235194f12f687db50ef83fafbdd1ccf58157887dee40555c1",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "cwd": "/tmp/trnm-pon-security-final",
+      "elapsed_ns": 1951726812,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+      "label": "ci-positive",
+      "log": "ci-positive.log",
+      "log_sha256": "88d7c7d834083181b3f7925dc3fa34d3ea78e122da3c2001e4927173c80d2b24",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "python",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "cwd": "/tmp/trnm-pon-security-final",
+      "elapsed_ns": 1995887633,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+      "label": "inventory",
+      "log": "inventory.log",
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    }
+  ],
+  "result": "PASS",
+  "source_after": {
+    "commit": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+    "source_state": "committed-clean",
+    "tracked_bytes": 792504967,
+    "tracked_entries": 6856,
+    "tracked_worktree_verified": true,
+    "tree": "f52299288ca23426e5186f37fb3a58788e40dbee"
+  },
+  "source_before": {
+    "commit": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+    "source_state": "committed-clean",
+    "tracked_bytes": 792504967,
+    "tracked_entries": 6856,
+    "tracked_worktree_verified": true,
+    "tree": "f52299288ca23426e5186f37fb3a58788e40dbee"
+  },
+  "source_changed": false
+}

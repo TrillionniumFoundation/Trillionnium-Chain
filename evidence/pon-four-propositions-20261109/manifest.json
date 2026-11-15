@@ -1,0 +1,374 @@
+{
+  "schema": "pon-four-propositions-validation-publication-v1",
+  "recorded_utc": "2026-11-09T14:05:11.128636+00:00",
+  "tested_implementation_commit": "10562694eab721f273d217c33d6eba12cf32a639",
+  "tested_implementation_tree": "d1578a15c15beade4991c16369531e00b7e38188",
+  "ordered_parents": [
+    "e2a02f9271b49f146e70806c8a66e161b5973971",
+    "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e"
+  ],
+  "native_tree": "d44a52ab659ea75577669df322f923e2c0012fac",
+  "native_tree_unchanged_from_first_parent": true,
+  "source_identity": {
+    "base": null,
+    "candidate": "10562694eab721f273d217c33d6eba12cf32a639",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "10562694eab721f273d217c33d6eba12cf32a639",
+    "tested_tree": "d1578a15c15beade4991c16369531e00b7e38188",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2501233489,
+    "tracked_entries": 26168,
+    "tracked_worktree_verified": true
+  },
+  "commands": [
+    {
+      "label": "accounting-selected-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_valid_no_update_pays_base_only_and_keeps_all_authority_closed",
+        "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_measured_improvement_has_separate_beneficiary_and_funding",
+        "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_retention_loss_blocks_bonus_but_not_completed_evaluation_fee",
+        "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_unknown_keeps_money_resources_and_exact_original_claims",
+        "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_unknown_can_finish_once_without_new_reservation",
+        "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_failure_and_cancellation_are_not_successful_no_update",
+        "test_service_work_settlement_v1.ServiceWorkResolutionTests.test_exact_terminal_reapplication_preserves_costs_and_external_intent",
+        "test_service_work_settlement_v1.ServiceWorkResolutionTests.test_unknown_is_retained_but_can_reconcile_to_one_terminal_outcome",
+        "test_grouped_fresh_deployment_cost_v0.FanoutAccountingTests.test_receiver_multiplicity_does_not_create_new_tickets_or_demand",
+        "test_grouped_fresh_deployment_cost_v0.FanoutEvidenceIntegrityTests.test_legacy_valid_fixture_emits_fresh_schema_with_preserved_totals",
+        "test_grouped_fresh_deployment_cost_v0.FixedPacketIdentityTests.test_valid_anchored_counts_preserve_costs_and_legacy_scope_is_explicit",
+        "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_raw_workers_recompute_counts_and_preserve_original_source_metadata",
+        "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_original_failure_is_retained_without_automatic_upgrade"
+      ],
+      "receipt": "source-10562694/accounting-selected-tests.json",
+      "log": "source-10562694/accounting-selected-tests.log",
+      "exit_code": 0,
+      "unittest_methods": 13,
+      "source_before_after_identical": true,
+      "log_sha256": "1b58c0970950110ebc2478cf333c81e7262e39761bf7a20ea7e36b83c86b3878"
+    },
+    {
+      "label": "ci-contract-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py",
+        "-v"
+      ],
+      "receipt": "source-10562694/ci-contract-tests.json",
+      "log": "source-10562694/ci-contract-tests.log",
+      "exit_code": 0,
+      "unittest_methods": 166,
+      "source_before_after_identical": true,
+      "log_sha256": "b9de54c6aadd6a102d3e85f9b41f76827c10a6ed46fe6e62b50ff62172329067"
+    },
+    {
+      "label": "ci-contract",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "receipt": "source-10562694/ci-contract.json",
+      "log": "source-10562694/ci-contract.log",
+      "exit_code": 0,
+      "unittest_methods": null,
+      "source_before_after_identical": true,
+      "log_sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+    },
+    {
+      "label": "demand-evidence-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "formal/pon-nakamoto-v1/test_demand_evidence.py",
+        "-v"
+      ],
+      "receipt": "source-10562694/demand-evidence-tests.json",
+      "log": "source-10562694/demand-evidence-tests.log",
+      "exit_code": 0,
+      "unittest_methods": 29,
+      "source_before_after_identical": true,
+      "log_sha256": "dc6b5d3d4704dc619788c9be620cc96a985700d5f3fdafa43cc145a6eb5af712"
+    },
+    {
+      "label": "distributed-source-inventory",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "receipt": "source-10562694/distributed-source-inventory.json",
+      "log": "source-10562694/distributed-source-inventory.log",
+      "exit_code": 0,
+      "unittest_methods": null,
+      "source_before_after_identical": true,
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "label": "four-propositions",
+      "argv": [
+        "python3",
+        "-B",
+        "formal/pon-nakamoto-v1/test_four_propositions_v1.py",
+        "-v"
+      ],
+      "receipt": "source-10562694/four-propositions.json",
+      "log": "source-10562694/four-propositions.log",
+      "exit_code": 0,
+      "unittest_methods": 21,
+      "source_before_after_identical": true,
+      "log_sha256": "f5ec1a9552cadcb5b1835d1ec3629c927ef0a3d5ef0949fc85f90db5e90ea56f"
+    },
+    {
+      "label": "pq-source-integration",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "receipt": "source-10562694/pq-source-integration.json",
+      "log": "source-10562694/pq-source-integration.log",
+      "exit_code": 0,
+      "unittest_methods": null,
+      "source_before_after_identical": true,
+      "log_sha256": "75f23516231237f6a4d9a9ca9bfb9f666f2e0d9be02872bdd865a16e7d5d5ee1"
+    },
+    {
+      "label": "repository-links",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "receipt": "source-10562694/repository-links.json",
+      "log": "source-10562694/repository-links.log",
+      "exit_code": 0,
+      "unittest_methods": null,
+      "source_before_after_identical": true,
+      "log_sha256": "037768ea757416e0290999a0319bb1a9f77a2c8edc3f2232c4a8040b5a7ffdee"
+    },
+    {
+      "label": "source-integrity-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py",
+        "-v"
+      ],
+      "receipt": "source-10562694/source-integrity-tests.json",
+      "log": "source-10562694/source-integrity-tests.log",
+      "exit_code": 0,
+      "unittest_methods": 43,
+      "source_before_after_identical": true,
+      "log_sha256": "2cb709c3a46bb00d51047c6ab063a0a39d6820fff5e1d6e0609f6f5dbdd3f1f2"
+    },
+    {
+      "label": "upgrade-policy-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "formal/pon-nakamoto-v1/test_upgrade_policy.py",
+        "-v"
+      ],
+      "receipt": "source-10562694/upgrade-policy-tests.json",
+      "log": "source-10562694/upgrade-policy-tests.log",
+      "exit_code": 0,
+      "unittest_methods": 23,
+      "source_before_after_identical": true,
+      "log_sha256": "c57de6e845a7b6773ca6a6d106620f840f433eeaf058d317aed455f3ca4c0f3a"
+    },
+    {
+      "label": "work-utility-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "formal/pon-nakamoto-v1/test_work_utility.py",
+        "-v"
+      ],
+      "receipt": "source-10562694/work-utility-tests.json",
+      "log": "source-10562694/work-utility-tests.log",
+      "exit_code": 0,
+      "unittest_methods": 15,
+      "source_before_after_identical": true,
+      "log_sha256": "38ad21c299e6802ea8d0a756abb66bc69fa94eca8b91ce5037040f0add156284"
+    }
+  ],
+  "executed_unittest_methods": 310,
+  "test_scope": "local Python reference readers, synthetic fixtures, ordinary selected accounting controls and source/CI integrity; no native Rust execution or real customer/model experiment",
+  "accounting_suite_scope": "13 named ordinary reference methods, not the whole grouped/native campaign",
+  "ci_suite_scope": "complete original test_ci_contract.py; native log doubles remain synthetic",
+  "publication_scope": "Receipts bind only the implementation commit above. Later evidence publication and PR heads have their own source identity.",
+  "local_native_execution": "NOT_RUN",
+  "hosted_execution_at_retained_observation": "MIXED_NOT_ALL_PASS",
+  "propositions_proven": {
+    "computation": false,
+    "demand": false,
+    "utility": false,
+    "sybil": false
+  },
+  "qualification": "HOLD_NO_GO",
+  "payment_authorized": false,
+  "adoption_authorized": false,
+  "consensus_credit_authorized": false,
+  "production_activation": false,
+  "all_algorithm_cost_bound": null,
+  "retained_files": [
+    {
+      "path": "environment.json",
+      "bytes": 903,
+      "sha256": "b604598290bf147933ac83764c0358d413f763ea28cfdb5213624b480197580e"
+    },
+    {
+      "path": "hosted-closure-job-129200219404.log",
+      "bytes": 185663,
+      "sha256": "52db65716bfd962529d0b0ccf16f213af7fc5bf274ed43940ef9f52b5d7f6223"
+    },
+    {
+      "path": "hosted-qrom-job-129200219654.log",
+      "bytes": 211452,
+      "sha256": "623133e5ea2b21f01a4ea0ca8c933838e72cb6f715f8618fc2a38e3d90022444"
+    },
+    {
+      "path": "hosted-qrom-job-129200220224.log",
+      "bytes": 210609,
+      "sha256": "9863e4918d9195159009b45d1b977c3c24199d2b96cb16997ccda278655bd3f9"
+    },
+    {
+      "path": "hosted-results.json",
+      "bytes": 7097,
+      "sha256": "4f2eb3fcc2abc40c02b42aebdbd627c22eaf4873461df3a47ec6dcce00035702"
+    },
+    {
+      "path": "local-merge.log",
+      "bytes": 378,
+      "sha256": "83e55f77b774edfcb2927667e930866a415bea91a858fe5208330e0252ab1c25"
+    },
+    {
+      "path": "merge-review.json",
+      "bytes": 1161,
+      "sha256": "08e58a0c80a04e260a9b816c814c553bb7539f92bd9864f2fe80bc63e6dbfd1b"
+    },
+    {
+      "path": "remote-observation.json",
+      "bytes": 7255,
+      "sha256": "f2744048c6d295a69ec67400f4d93bd48263adce2e3e2cdbb8ccc525a7f98436"
+    },
+    {
+      "path": "source-10562694/accounting-selected-tests.json",
+      "bytes": 3660,
+      "sha256": "7b6ab618b8ec5992e5f3ae349bac9779948dc5c8c761a7f544e5bd2abcce41f5"
+    },
+    {
+      "path": "source-10562694/accounting-selected-tests.log",
+      "bytes": 2672,
+      "sha256": "1b58c0970950110ebc2478cf333c81e7262e39761bf7a20ea7e36b83c86b3878"
+    },
+    {
+      "path": "source-10562694/ci-contract-tests.json",
+      "bytes": 1959,
+      "sha256": "ca332855fbb7d5b1d2aa2e65dbd3439793d94e2a648282c6c0b1017c31f923a5"
+    },
+    {
+      "path": "source-10562694/ci-contract-tests.log",
+      "bytes": 28575,
+      "sha256": "b9de54c6aadd6a102d3e85f9b41f76827c10a6ed46fe6e62b50ff62172329067"
+    },
+    {
+      "path": "source-10562694/ci-contract.json",
+      "bytes": 1942,
+      "sha256": "5ebe0b59790bcc1bf19b4bc6691d812b9861c455cbe89515069ed4226b5bcb14"
+    },
+    {
+      "path": "source-10562694/ci-contract.log",
+      "bytes": 431,
+      "sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+    },
+    {
+      "path": "source-10562694/demand-evidence-tests.json",
+      "bytes": 1977,
+      "sha256": "3b8f48413609bf154acf1f8ebdf36577c9e654d533d138fa131f06239d634a56"
+    },
+    {
+      "path": "source-10562694/demand-evidence-tests.log",
+      "bytes": 4827,
+      "sha256": "dc6b5d3d4704dc619788c9be620cc96a985700d5f3fdafa43cc145a6eb5af712"
+    },
+    {
+      "path": "source-10562694/distributed-source-inventory.json",
+      "bytes": 1988,
+      "sha256": "0a16cf6d4e320c9742617596aefe6372526056e159efd69c3f0c070de7b59314"
+    },
+    {
+      "path": "source-10562694/distributed-source-inventory.log",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "path": "source-10562694/four-propositions.json",
+      "bytes": 1979,
+      "sha256": "aecd466e69d7d11e09e585be665a8509a568883d7c756d48b66e4320dcbb7f34"
+    },
+    {
+      "path": "source-10562694/four-propositions.log",
+      "bytes": 3205,
+      "sha256": "f5ec1a9552cadcb5b1835d1ec3629c927ef0a3d5ef0949fc85f90db5e90ea56f"
+    },
+    {
+      "path": "source-10562694/pq-source-integration.json",
+      "bytes": 1964,
+      "sha256": "df38dc0d38ed7d36f87b001323a81e65f3c4941f7ba1dac7cad34b098aab6620"
+    },
+    {
+      "path": "source-10562694/pq-source-integration.log",
+      "bytes": 557,
+      "sha256": "75f23516231237f6a4d9a9ca9bfb9f666f2e0d9be02872bdd865a16e7d5d5ee1"
+    },
+    {
+      "path": "source-10562694/repository-links.json",
+      "bytes": 1946,
+      "sha256": "03837c40bfd766b10305c194e43bcde1f3baf808a732909ebf0cae1df5792a17"
+    },
+    {
+      "path": "source-10562694/repository-links.log",
+      "bytes": 307,
+      "sha256": "037768ea757416e0290999a0319bb1a9f77a2c8edc3f2232c4a8040b5a7ffdee"
+    },
+    {
+      "path": "source-10562694/source-integrity-tests.json",
+      "bytes": 1971,
+      "sha256": "8ba650c81eece92523405284a8b3b35cb452a42db9077b0767d363ceae7cbc4b"
+    },
+    {
+      "path": "source-10562694/source-integrity-tests.log",
+      "bytes": 6923,
+      "sha256": "2cb709c3a46bb00d51047c6ab063a0a39d6820fff5e1d6e0609f6f5dbdd3f1f2"
+    },
+    {
+      "path": "source-10562694/upgrade-policy-tests.json",
+      "bytes": 1975,
+      "sha256": "272483dfdffd043c0bc43a7e3959b5fb9a990454bbbfab50ade56d99133891fc"
+    },
+    {
+      "path": "source-10562694/upgrade-policy-tests.log",
+      "bytes": 3762,
+      "sha256": "c57de6e845a7b6773ca6a6d106620f840f433eeaf058d317aed455f3ca4c0f3a"
+    },
+    {
+      "path": "source-10562694/work-utility-tests.json",
+      "bytes": 1971,
+      "sha256": "196528360bed1ac5c41757eef30979d1bdaaf2a1bd137e70ba4e88b466ab0910"
+    },
+    {
+      "path": "source-10562694/work-utility-tests.log",
+      "bytes": 2441,
+      "sha256": "38ad21c299e6802ea8d0a756abb66bc69fa94eca8b91ce5037040f0add156284"
+    }
+  ]
+}

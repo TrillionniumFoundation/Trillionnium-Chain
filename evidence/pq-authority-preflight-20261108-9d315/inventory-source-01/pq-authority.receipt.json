@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/pq_authority_surface_scan.py",
+    "--summary-only"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 6.530279214959592,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794129735.8843448,
+  "label": "pq-authority",
+  "logs": {
+    "pq-authority.stderr.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/inventory-source-01/pq-authority.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pq-authority.stdout.log": {
+      "bytes": 383,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/inventory-source-01/pq-authority.stdout.log",
+      "sha256": "27b5943eb7c518b74514951a9a0f1218de17f20227ccb9135bfba37db4d40cef"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "reviewed_roles_mapped": 23,
+    "schema": "trnm-pq-rust-source-authority-inventory-v1",
+    "scope": "All Rust files beneath trillionnium/crates, including build scripts, examples, tests and nonstandard directories; no reachability or runtime-effect proof",
+    "source_files_read": 1286,
+    "status": "HOLD_INCOMPLETE_AUTHORITY_TRACING",
+    "unreviewed_indicator_files": 120,
+    "whole_chain_pq_qualified": false
+  },
+  "started_unix_seconds": 1794129729.3540664
+}

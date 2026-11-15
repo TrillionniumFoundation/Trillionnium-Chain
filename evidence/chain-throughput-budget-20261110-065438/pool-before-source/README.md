@@ -1,0 +1,7 @@
+# Ordinary-pool before source and checkpoint scope
+
+The immutable before source is [db93026b9314bfd8bc4350945036998f1b7d34aa](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/db93026b9314bfd8bc4350945036998f1b7d34aa), tree `379f05bda52b20130e5d895788f0613aa680472c`, with G2 as parent. It preserves G2 production and adds only the exact shared seven-test file and nine cfg(test) observation hook calls. This source is a negative-control subject; native outcomes are not inferred from the patch.
+
+The fixed candidate carries only the run's existing lightweight stop/end control across new parent/group checkpoints. The shared reconciliation core is byte-identical to G2; existing owner/Host checks stay at their original preview and persistence sites. Cancellation cannot reclassify a group as blocked or hide an unrelated SQL/native failure. The durable admission/activation/final-reconcile sequence retains its existing completion behavior.
+
+`source-packet.tar.xz` retains the original source copies, exact test bytes, reconstructing script, literal patch, SHA256 inventory, assertions and actual apply/byte-comparison results. Extract it into an empty directory to reproduce the preparation. The literal patch is inside the lossless archive so its required context spaces remain intact without violating the repository's staged text-whitespace check. `archive-manifest.json` verifies all delivery members. The earlier G2-input snapshot inside the packet remains historical; it does not claim later History test bytes are unchanged.

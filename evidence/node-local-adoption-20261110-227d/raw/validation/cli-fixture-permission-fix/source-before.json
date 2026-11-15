@@ -1,0 +1,27 @@
+{
+  "git_head": "4668fd87f1c4c7f6f4e206572e817a0c22201582",
+  "git_tree": "f1f9dc8718566410e958e0dba600b6be890b7c3b",
+  "working_patch_sha256": "58871b2baaea351744cd66b8cbc31841304ef86c1bd925fa3a25834bd8bf5a2a",
+  "files": {
+    "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-adoption.rs": "1b4d9b55753bb3a041d895ce12681d00f1ba40f4b43dfee9f64e9def12bf619c",
+    "trillionnium/crates/trnm-data-availability/tests/cell_adoption_cli.rs": "b4fc808164993a0b24b364c0696b4d43260fade88adbe2e6d5965320b2adf695",
+    "trillionnium/Cargo.lock": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+    "trillionnium/crates/trnm-data-availability/Cargo.toml": "accc03186bcce41954ccb5062b6530862833eade096a2d70bc38262d85730cf6"
+  },
+  "profile": "repository test profile; no debug/profile overrides",
+  "command": [
+    "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-j",
+    "1",
+    "-p",
+    "trnm-data-availability",
+    "--test",
+    "cell_adoption_cli"
+  ],
+  "started_utc": "2026-11-11T00:51:16.474638+00:00"
+}

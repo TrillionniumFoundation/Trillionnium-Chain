@@ -1,0 +1,53 @@
+{
+  "argv": [
+    "/home/qq/work/chain-cell-storage-convergence-f2568-target/release/examples/cell_sealed_research_next_use_v1",
+    "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/source-inputs.attempt-03.v1.json",
+    "e509695eb9ad60320ea1ed75efa35b28d254bcd9ca868153bd5f8869fb269280"
+  ],
+  "base_head": "097f59f505f8ec42f72e3b8255e6cb7822a70646",
+  "base_tree": "4b1eb80fa88b0b8f98d216247f7b8bce2df73f20",
+  "binary_before": {
+    "bytes": 4257760,
+    "path": "/home/qq/work/chain-cell-storage-convergence-f2568-target/release/examples/cell_sealed_research_next_use_v1",
+    "sha256": "fcd9e6e44db6aa7eab6c9bc077c5655d9b1226ee7d0e25a9d75370bef4dc29d5"
+  },
+  "binary_unchanged": true,
+  "committed_source_unchanged": true,
+  "completed": true,
+  "execution_succeeded": true,
+  "final_head": "097f59f505f8ec42f72e3b8255e6cb7822a70646",
+  "final_tree": "4b1eb80fa88b0b8f98d216247f7b8bce2df73f20",
+  "input": {
+    "max_snapshot_bytes": 536870912,
+    "operation": "44e5dcf5e9ce62bdfeb12de88a8ec27e089db4a552cd5320d1a6f7ba3aa28cee",
+    "output": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-03",
+    "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/source-inputs.attempt-03.v1.json",
+    "runtime_rss_bytes": 8589934592,
+    "seconds": 300,
+    "sha256": "e509695eb9ad60320ea1ed75efa35b28d254bcd9ca868153bd5f8869fb269280",
+    "threads": 4
+  },
+  "manifest_unchanged": true,
+  "model_elapsed_seconds": 17.552772521972656,
+  "model_ended_unix": 1794209668.9599602,
+  "model_exit_code": 0,
+  "model_started_unix": 1794209651.4071877,
+  "provider_binary_unchanged": true,
+  "schema": "cell-sealed-research-native-attempt-observation-v1",
+  "scope": "real-model research execution on exact clean committed source; no ordinary Hepta FinalUse/M12/service qualification",
+  "source_unchanged": true,
+  "started_unix": 1794209651.2851355,
+  "status_after": "",
+  "status_before": "",
+  "status_unchanged": true,
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/native.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 5212,
+    "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-03/native.stdout",
+    "sha256": "6f3e8e5b898d9dcc33e053879f1aa3abf46f66ae70dfd62de2ec392eb891b577"
+  }
+}

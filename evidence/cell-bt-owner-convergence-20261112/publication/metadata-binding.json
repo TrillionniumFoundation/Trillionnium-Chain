@@ -1,0 +1,24 @@
+{
+  "corpus_assertions_unchanged": true,
+  "corpus_paths_added": 0,
+  "corpus_paths_removed": 0,
+  "corpus_pins_changed": [
+    {
+      "new_blob": "e1d51b25f3141f71f231b02934ada94151f0cb99",
+      "old_blob": "3d534e78642fe82eef2bfd18f50d0af0ebf048bd",
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    }
+  ],
+  "corpus_required_paths_unchanged": true,
+  "new_corpus_sha256": "c2dade8eeac3fa5ef6576d0a4258bbee357183b0d9a7e0bc8208c65ea6a8bfef",
+  "new_plan_sha256": "1abae6247eb07f6c9ce021b0181481f02bc5be57098fb67ea8f95643c6911b88",
+  "old_corpus_sha256": "73f5a0b6cc8d2a10b35e14fbd442bb4a7639b8cb9e5aa279fc7ea77b79b3e9c6",
+  "old_plan_sha256": "f16b368598120fc86b3bdf5062c054f7bded9ac11af32526af4f883cdcfad3f3",
+  "plan_suffix_preserved": true,
+  "plan_suffix_sha256": "df244e9e3bb16175bde633c4b11c1f9541b80c32a936f0363bef463b17e81166",
+  "production_activation": false,
+  "runtime_execution_relabelled": false,
+  "runtime_source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "runtime_source_tree": "a897ba4c74897a05ceb364f098b1bfe32c850213",
+  "schema": "trnm.bt-publication-metadata-binding.v1"
+}

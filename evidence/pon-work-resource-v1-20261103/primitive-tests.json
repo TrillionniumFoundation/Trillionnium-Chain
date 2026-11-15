@@ -1,0 +1,18 @@
+{
+  "command": [
+    "cargo",
+    "+1.95.0",
+    "test",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-crypto-primitives",
+    "--lib",
+    "pon_work::",
+    "--",
+    "--nocapture"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 40.81009865500164
+}

@@ -1,0 +1,450 @@
+[
+  {
+    "name": "preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 165,
+    "stdout_sha256": "29b61c42040e1e669ec5c9a06b9fb2ed17888dc79bee5d627119da1c1b921e53",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "ci-contract",
+    "argv": [
+      "python3",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 431,
+    "stdout_sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "repository",
+    "argv": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 307,
+    "stdout_sha256": "064ad173dbebf4020b044bbabe8a03b56e4feb5115e45ea30a1e98dc164b5e2e",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "source-integrity",
+    "argv": [
+      "python3",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 808,
+    "stdout_sha256": "ddd51fa2049cc061431096c4841d104fbab78aaf3a08e1ba559d8c0ef58ec5c7",
+    "stderr_bytes": 6414,
+    "stderr_sha256": "bdb12b4e988e30492b5b4b356391610cadf971e83bd6983da61aa8edcdf6d100"
+  },
+  {
+    "name": "workspace-graph",
+    "argv": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 855542,
+    "stdout_sha256": "b3c8f80c84a52ad6dd9df46c25e6ea724901fe6c4e53f826a094d7fc88af6197",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "fuzz-graph",
+    "argv": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "tests/fuzz/Cargo.toml",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 728637,
+    "stdout_sha256": "1c94c1ee072087d38fd6f38efa932ffbfac5db2f80965b596287fa190f4fa4fd",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "workspace-check",
+    "argv": [
+      "cargo",
+      "check",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--locked",
+      "--offline"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_bytes": 321,
+    "stderr_sha256": "d41610ec00cb7279185c0dee3fdc9723ed1a58c8621ba7e698bc03c14c7252da"
+  },
+  {
+    "name": "workspace-fmt",
+    "argv": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--check"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "workspace-clippy",
+    "argv": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_bytes": 321,
+    "stderr_sha256": "97fe6d278e7f71366a032ab9d8bde6ce4d2e330be210e463f939563d5e8c672f"
+  },
+  {
+    "name": "trace-interval-controls",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "sqlite_hook_trace_",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 402,
+    "stdout_sha256": "1f251ee6af34833a01692f2690a0c4a63f9e4ac78595b642724a053d0f84e714",
+    "stderr_bytes": 466,
+    "stderr_sha256": "033a35d19a54346c83b490de83b1291a38e4b28bbdeaa6756c5b0197c664cef3"
+  },
+  {
+    "name": "apply-reader-regressions",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "native_apply_reader_",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 1531,
+    "stdout_sha256": "6197b77c58c2396de83e130ceab694d876e166a3f47dc8baefba74026072b000",
+    "stderr_bytes": 217,
+    "stderr_sha256": "f71b11f1ba694e357a6798cbaab2a1c3db1bae6bbbc4c760cd324915f093bcb0"
+  },
+  {
+    "name": "reorg-cancellation-regressions",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "store::reorg_cancellation::tests::",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 2174,
+    "stdout_sha256": "3daebeedbe760bae93938dcb23017b9354bb16bc29203a7bf1c0975c951ce190",
+    "stderr_bytes": 217,
+    "stderr_sha256": "d25f6644c0a804225aba329e356868d3c62bbe6e2040c6c25ec37d5531b4f5c0"
+  },
+  {
+    "name": "witness-owner-regressions",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "pq_rollback_witness::tests::",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 5305,
+    "stdout_sha256": "39df614e16ca5c53423ffffdd1e084226ca8fcd60c46205469521a3071e07477",
+    "stderr_bytes": 217,
+    "stderr_sha256": "d25f6644c0a804225aba329e356868d3c62bbe6e2040c6c25ec37d5531b4f5c0"
+  },
+  {
+    "name": "growth-epoch-regressions",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "store::growth::tests::read_epoch::",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 825,
+    "stdout_sha256": "ef53825f9028ec01f31e9b8663015627cf6996b97bb05a85f35802decd7774a7",
+    "stderr_bytes": 217,
+    "stderr_sha256": "2ca921f795375e3655499dd5f35d7be72ac8f2af4543565b090bbd3f5aeb4c61"
+  },
+  {
+    "name": "growth-snapshot-regression",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "native_growth_v2_nonce_batch_uses_one_snapshot_without_complete_state_reads",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 225,
+    "stdout_sha256": "0b44859b699cab5a75d179ee93e88024af6ba92366dcd0bd99fda581880102a2",
+    "stderr_bytes": 217,
+    "stderr_sha256": "d25f6644c0a804225aba329e356868d3c62bbe6e2040c6c25ec37d5531b4f5c0"
+  },
+  {
+    "name": "history-authorizer-regression",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 239,
+    "stdout_sha256": "a1b0d61275363c2cc877d1061acfc941905c75e16ee9302e9bbc97902520e8d8",
+    "stderr_bytes": 217,
+    "stderr_sha256": "d25f6644c0a804225aba329e356868d3c62bbe6e2040c6c25ec37d5531b4f5c0"
+  },
+  {
+    "name": "component-trnm-data-availability",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-data-availability",
+      "--lib",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 48702,
+    "stdout_sha256": "10d655b7701a26223782a4947795fc575c387de450c37e296baed318439b1c35",
+    "stderr_bytes": 553,
+    "stderr_sha256": "ff1ea2c14c7f8ee9d4d746f818fa89aed2fc10246b89767c54db0905cbbbb81f"
+  },
+  {
+    "name": "component-trnm-mvcc-fee",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-mvcc-fee",
+      "--lib",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 19287,
+    "stdout_sha256": "ec85699d8725217c9dda30efd1c566a10e9d1d3b70928d88e4b19fd406628931",
+    "stderr_bytes": 558,
+    "stderr_sha256": "06f4d1d3620bf6bf9cb08d5b29a77ef7e3edeee219412551e2ef436eed0cccea"
+  },
+  {
+    "name": "component-trnm-service-settlement",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-service-settlement",
+      "--lib",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 7610,
+    "stdout_sha256": "2be4c44b6d58274d8ae262b0f4ff5502191d8770c4fbf4a8832c0b3d315d2844",
+    "stderr_bytes": 921,
+    "stderr_sha256": "52e0244f3ce05edb08c755d80a1549296d690a21f094e8b26ddf948b23e56f37"
+  },
+  {
+    "name": "component-trnm-sqlite-io-boundary",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-sqlite-io-boundary",
+      "--lib",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 1454,
+    "stdout_sha256": "01db57fc5dd8d2d7fa881743468ff3a1b08b5f2873489ed454ffddec1716ba2f",
+    "stderr_bytes": 227,
+    "stderr_sha256": "f71b675407e6a487d67c69677fea065783af1efdc56ee296167b3299be6a1087"
+  },
+  {
+    "name": "component-trnm-state-import",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-state-import",
+      "--lib",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 1458,
+    "stdout_sha256": "40d80deac529827d74b160c6497ebb0561b3754097bbb2b1e1b0d67ba765f37d",
+    "stderr_bytes": 344,
+    "stderr_sha256": "6f2c563e7bfbeb10865b0c23c8ed1f8a4ee5a2a87adae7a56ae3c3f32d28097e"
+  },
+  {
+    "name": "component-trnm-task-kernel",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-task-kernel",
+      "--lib",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 2557,
+    "stdout_sha256": "9423c02da74b6b0e59e7d92e87919597f4ad389834b1b1dc745111f27dacc2a7",
+    "stderr_bytes": 341,
+    "stderr_sha256": "f346e8607da60fcb51204f3463ea656a6ec0c83e824b1a8a45dc5de881be113d"
+  },
+  {
+    "name": "original-supply-policy",
+    "argv": [
+      "python3",
+      "scripts/ci/run_supply_chain.py"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 130,
+    "stdout_sha256": "124e3c799f6ad51ee34de0141508dccc0715d9bbbbece1bbc84a45a3bba42429",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

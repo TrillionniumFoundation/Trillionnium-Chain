@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/run_native_phase_host.py", line 563, in <module>
+    raise SystemExit(outer(options.job, options.binary))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/run_native_phase_host.py", line 310, in outer
+    require(
+  File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/run_native_phase_host.py", line 64, in require
+    raise ValueError(message)
+ValueError: ORIGINAL_UNPRIVILEGED_CONTROLLER

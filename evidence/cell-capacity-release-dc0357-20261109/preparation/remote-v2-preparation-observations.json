@@ -1,0 +1,141 @@
+{
+  "schema": "trnm.cell-sealed-research-v2-preparation-observations.v1",
+  "host": "ai395",
+  "attempt01": {
+    "job_id": "1a1c0baab60-11c5a-42",
+    "status": {
+      "at_unix_ms": 1794234822864,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 1,
+      "job_id": "1a1c0baab60-11c5a-42",
+      "launch_nonce": "8b34414094f76903c0600a3459830adf",
+      "log_bytes": {
+        "stderr": {
+          "seen": 447,
+          "stored": 447
+        },
+        "stdout": {
+          "seen": 335,
+          "stored": 335
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "failed",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "log": {
+      "audit_recorded": true,
+      "job_id": "1a1c0baab60-11c5a-42",
+      "stderr": {
+        "eof": true,
+        "next_offset": 447,
+        "offset": 0,
+        "size": 447,
+        "text": "Traceback (most recent call last):\n  File \"<string>\", line 262, in <module>\n    main()\n    ~~~~^^\n  File \"<string>\", line 149, in main\n    info = digest_file(old_path)\n  File \"<string>\", line 36, in digest_file\n    fd = os.open(path, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK)\nFileNotFoundError: [Errno 2] No such file or directory: '/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/config/pon/devnet-v1.json'\n"
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 335,
+        "offset": 0,
+        "size": 335,
+        "text": "{\"cargo_started\": false, \"error\": \"[Errno 2] No such file or directory: '/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native02/config/pon/devnet-v1.json'\", \"error_type\": \"FileNotFoundError\", \"input_verification\": \"FAIL\", \"model_worker_started\": false, \"preparation_id\": \"chain-capacity-dc0357-v2-spec-prep-20261109-01\"}\n"
+      }
+    }
+  },
+  "attempt02": {
+    "job_id": "1a1c0bcee0a-11c5a-4b",
+    "status": {
+      "at_unix_ms": 1794234970974,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1c0bcee0a-11c5a-4b",
+      "launch_nonce": "e01f38edea8c8827cc0f44d9649d4fd1",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 1561,
+          "stored": 1561
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "log": {
+      "audit_recorded": true,
+      "job_id": "1a1c0bcee0a-11c5a-4b",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 1561,
+        "offset": 0,
+        "size": 1561,
+        "text": "{\"base_weight_bytes\": 269060552, \"cargo_started\": false, \"deduplicated_storage_chunk_records\": 95, \"input_verification\": \"PASS\", \"logical_inputs_verified\": 31, \"model_worker_started\": false, \"operation\": \"fad809b14a2ef0814d5cb125ac4c2713ca81d962797e038857416a838c0c5cc2\", \"original_pins_preserved\": true, \"output\": \"/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01\", \"output_created\": false, \"payload_bytes\": 280269602, \"physical_files_hashed\": 31, \"preparation_id\": \"chain-capacity-dc0357-v2-spec-prep-20261109-02\", \"real_model_run\": \"NOT_RUN\", \"recovery_profile\": \"TCA3 complete physical retention and anchored catalog recovery\", \"relocated_environment_members\": 17, \"request_ids\": [\"chain-capacity-dc0357-v2-fad809b14a2e-1\", \"chain-capacity-dc0357-v2-fad809b14a2e-2\"], \"seconds\": 300, \"source\": \"/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/source-inputs.v2.json\", \"source_bytes\": 10219, \"source_sha256\": \"488b838dfdf05ab9768fff18ee81c0874b7bb471cbceeefdf15ab42c5dde6d48\", \"storage_chunk_records\": 95, \"tensor_headers\": {\"adapter/artifact.safetensors\": {\"data_bytes\": 921600, \"dtype_counts\": {\"F32\": 120}, \"header_bytes\": 12056, \"header_sha256\": \"fd757f8de795870802477dcd626dfa0186fe8728d83f16f31d872cd2f89bbdb0\", \"quantization\": \"none\", \"tensor_count\": 120}, \"base/model.safetensors\": {\"data_bytes\": 269030016, \"dtype_counts\": {\"BF16\": 272}, \"header_bytes\": 30528, \"header_sha256\": \"05594b15679d772617048271ce61f74473539658d1b161c687e5c69ec8ab2b22\", \"quantization\": \"none\", \"tensor_count\": 272}}}\n"
+      }
+    }
+  },
+  "independent_readback": [
+    {
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/source-inputs.v2.json",
+      "size": 10219,
+      "sha256": "488b838dfdf05ab9768fff18ee81c0874b7bb471cbceeefdf15ab42c5dde6d48",
+      "eof": true
+    },
+    {
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/source-inputs.v2.verification.json",
+      "size": 34252,
+      "sha256": "da304270715cd5791ef1791fefeb279bee9c023f9003e2f0064c2b92480f9db6",
+      "eof": true
+    },
+    {
+      "path": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/source-inputs.v2.sha256",
+      "size": 88,
+      "sha256": "0ecc07d1aa61093ddd1f9cad125b4c28400addab6d85a5a5274bece9fa76e10e",
+      "eof": true
+    }
+  ],
+  "real_model_run": "NOT_RUN"
+}

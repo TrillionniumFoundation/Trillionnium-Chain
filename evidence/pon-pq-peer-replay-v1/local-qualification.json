@@ -1,0 +1,59 @@
+{
+  "schema": "trnm-pq-m04-peer-replay-observation-v1",
+  "parent_pr": 417,
+  "parent_sha": "c3b2e4c79c463f782f2785134da4c1e929e655e2",
+  "research_only": true,
+  "production_activation": false,
+  "independent_security_acceptance": false,
+  "whole_chain_post_quantum": false,
+  "tested_git_blob_sha1": {
+    "formal/pon-nakamoto-v1/pq_mtls_probe.c": "2c80e77764b1ef66d2e39ed6fc062f0c69e1412d",
+    "formal/pon-nakamoto-v1/pq_peer_session.py": "0137fd0c9ba0bb4be961fda7400f1b2df681f85e",
+    "formal/pon-nakamoto-v1/test_pq_mtls_probe.py": "f94257acc3f1335b658b56d4e2fadb4d5324b7bd",
+    "formal/pon-nakamoto-v1/pq_peer_replay.py": "1b18853fda0729cd9597583dec8a606fb982b15b",
+    "formal/pon-nakamoto-v1/test_pq_peer_replay.py": "b3d2d4dfe38ff8b5a367099d8c4820bb2fd82b60",
+    "formal/pon-nakamoto-v1/pq_envelope.py": "27e40b04ac8eaa381ad4dc017f23f226f99f3f41"
+  },
+  "executed_command": [
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_pq_mtls_probe.py",
+    "test_pq_peer_replay.py"
+  ],
+  "working_directory": "formal/pon-nakamoto-v1",
+  "environment": {
+    "python": "3.13.5",
+    "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+    "sqlite": "3.46.1",
+    "cc": "cc (Debian 14.2.0-19) 14.2.0",
+    "os": "Linux",
+    "arch": "x86_64"
+  },
+  "executed_results": {
+    "tests": 19,
+    "failures": 0,
+    "run_time_seconds": 17.323,
+    "raw_log_sha256": "f953dcd6a9d86b8918928a638cb590795dc14977355c20c92a6fd96ff9999668"
+  },
+  "real_case_results": {
+    "eight_processes": "one FIRST_RECORD, seven ALREADY_RECORDED",
+    "crash_after_commit_before_ack": "ALREADY_RECORDED on cold open",
+    "foreign_schema": "rejected",
+    "symlink_db": "rejected",
+    "same_generation_new_nonce": "rejected",
+    "historical_generation": "rejected",
+    "clone_double_first": "both separate clones report FIRST_RECORD; global anti-replay NOT established"
+  },
+  "risk_limits": {
+    "native_rust_p2p_integrated": false,
+    "real_on_wire_pph1_exchange": false,
+    "wan_independent_operators": false,
+    "independent_rollback_anchor": false,
+    "peer_membership_or_revocation_owner": false,
+    "post_quantum_whole_chain": false,
+    "quantum_work_hardness_qualified": false
+  },
+  "raw_log_path": "evidence/pon-pq-peer-replay-v1/local-unittest.log"
+}

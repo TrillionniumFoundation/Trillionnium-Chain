@@ -1,0 +1,30 @@
+{"disk_free_bytes": 54687621120, "required_free_bytes": 6442450944}
+{"started": "before-head"}
+{"completed": "before-head", "exit_code": 0, "timed_out": false}
+{"started": "before-branch"}
+{"completed": "before-branch", "exit_code": 0, "timed_out": false}
+{"started": "before-clean"}
+{"completed": "before-clean", "exit_code": 0, "timed_out": false}
+{"started": "preflight"}
+{"completed": "preflight", "exit_code": 0, "timed_out": false}
+{"started": "github-identity"}
+{"completed": "github-identity", "exit_code": 0, "timed_out": false}
+{"started": "origin"}
+{"completed": "origin", "exit_code": 0, "timed_out": false}
+{"started": "materialize-complete-tree"}
+{"completed": "materialize-complete-tree", "exit_code": 0, "timed_out": false}
+{"started": "after-head"}
+{"completed": "after-head", "exit_code": 0, "timed_out": false}
+{"started": "after-branch"}
+{"completed": "after-branch", "exit_code": 0, "timed_out": false}
+{"started": "after-clean"}
+{"completed": "after-clean", "exit_code": 0, "timed_out": false}
+{"started": "index-flags"}
+{"completed": "index-flags", "exit_code": 0, "timed_out": false}
+{"started": "sparse-disabled"}
+{"completed": "sparse-disabled", "exit_code": 0, "timed_out": false}
+{"started": "full-physical-source"}
+{"completed": "full-physical-source", "exit_code": 0, "timed_out": false}
+{"started": "final-clean"}
+{"completed": "final-clean", "exit_code": 0, "timed_out": false}
+{"passed": true, "source": "030de92be05bfd4f73e199098c12dfeaedf29b17", "index_flags": {"tracked_entries": 27100, "skip_worktree": 0, "assume_unchanged": 0}, "source_receipt": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/source-full.json", "summary": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/summary.json", "summary_sha256": "58a0ad6211ec1c870579ad37415369cc3755f7ccf2b106a51d46ef23daf2d995", "disk_free_after": 51202039808}

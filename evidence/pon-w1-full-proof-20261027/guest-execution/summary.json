@@ -1,0 +1,59 @@
+{
+  "consensus_admission": false,
+  "cryptographic_proof_generated": false,
+  "rows": [
+    {
+      "child_peak_rss_bytes": 110678016,
+      "child_system_cpu_seconds": 0.128744,
+      "child_user_cpu_seconds": 0.5347919999999999,
+      "elapsed_wall_seconds": 0.5524099140002363,
+      "mode": "valid",
+      "resource_source": "Linux wait4 rusage; peak RSS is not a production budget authority",
+      "returncode": 0,
+      "sigkill_after_timeout": false,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "d15b32f0839fdfb5ce4b5cbd5236589b6e876bfe25c73a5c3af506081944c9ee",
+      "timed_out": false
+    },
+    {
+      "child_peak_rss_bytes": 110678016,
+      "child_system_cpu_seconds": 0.073061,
+      "child_user_cpu_seconds": 0.10453499999999999,
+      "elapsed_wall_seconds": 0.2010624780004946,
+      "mode": "wrong-task",
+      "resource_source": "Linux wait4 rusage; peak RSS is not a production budget authority",
+      "returncode": 1,
+      "sigkill_after_timeout": false,
+      "stderr_sha256": "82d5b0ae5ba43ac028a497a47dd7f66685dfccabab99fc825ad80d8ee25d3d7f",
+      "stdout_sha256": "f02e2861cab18efac0ae0cd87c43589af18f2f995e37ea233cd276dd10b3e9f8",
+      "timed_out": false
+    },
+    {
+      "child_peak_rss_bytes": 110678016,
+      "child_system_cpu_seconds": 0.08359899999999999,
+      "child_user_cpu_seconds": 0.42675199999999996,
+      "elapsed_wall_seconds": 0.45258732000002055,
+      "mode": "wrong-product",
+      "resource_source": "Linux wait4 rusage; peak RSS is not a production budget authority",
+      "returncode": 1,
+      "sigkill_after_timeout": false,
+      "stderr_sha256": "8d52d4ae768228215bc4beb8133f21d9f1de426f48f1f352226a7c62ad5f2b46",
+      "stdout_sha256": "0ae9c35c6830f717335ad91324d3f52297c62c82feaec778586b702930f1a7b0",
+      "timed_out": false
+    },
+    {
+      "child_peak_rss_bytes": 110678016,
+      "child_system_cpu_seconds": 0.097324,
+      "child_user_cpu_seconds": 0.332934,
+      "elapsed_wall_seconds": 0.40172901099958835,
+      "mode": "wrong-transcript",
+      "resource_source": "Linux wait4 rusage; peak RSS is not a production budget authority",
+      "returncode": 1,
+      "sigkill_after_timeout": false,
+      "stderr_sha256": "65f3bf3f2ab3033735051f378351341e704191d246abfaeedf430ecd66ac7666",
+      "stdout_sha256": "577c2a1a8aaf0a79a970b3a2c862228fd09bbee489c7851ba548fca5ef3fba3b",
+      "timed_out": false
+    }
+  ],
+  "schema": "trnm-w1-real-guest-controls-process-v1"
+}

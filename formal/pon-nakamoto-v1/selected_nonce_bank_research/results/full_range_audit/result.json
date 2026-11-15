@@ -1,0 +1,39 @@
+{
+  "nonce_start": 512,
+  "nonce_end": 1024,
+  "full_range_dense_candidates": 512,
+  "all_full_range_dense_against_frozen_producer": true,
+  "strategy_complete_witness_byte_comparisons": 164,
+  "accepted_nonces": [
+    561,
+    605,
+    644,
+    654,
+    764,
+    770,
+    775,
+    790,
+    835,
+    863,
+    918,
+    946,
+    998
+  ],
+  "prepared_dense_audit_counts": {
+    "sha256_calls": 20734,
+    "sha256_input_bytes": 2573222,
+    "sha256_compression_blocks": 50298,
+    "scalar_multiplications": 1048576,
+    "scalar_additions": 983040
+  },
+  "original_unprepared_audit_counts": {
+    "sha256_calls": 148480,
+    "sha256_input_bytes": 36744192,
+    "sha256_compression_blocks": 625664,
+    "scalar_multiplications": 1048576,
+    "scalar_additions": 983040
+  },
+  "instrumented_audit_ns": 1481779843,
+  "audit_work_included_in_mining_costs": false,
+  "audit_results_read_by_strategy": false
+}

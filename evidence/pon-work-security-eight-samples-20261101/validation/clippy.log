@@ -1,0 +1,26 @@
+   Compiling getrandom v0.4.2
+    Checking rand_core v0.10.1
+    Checking const-oid v0.10.2
+    Checking crypto-common v0.2.2
+    Checking digest v0.11.3
+    Checking shake v0.1.0
+    Checking signature v3.0.0
+    Checking trnm-protocol v0.1.0 (/tmp/trnm-pon-security-final/trillionnium/crates/trnm-protocol)
+    Checking der v0.8.3
+   Compiling openssl-sys v0.9.117
+   Compiling openssl v0.10.81
+    Checking spki v0.8.1
+    Checking pkcs8 v0.11.0
+    Checking ml-dsa v0.1.1
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/tmp/trnm-pon-security-final/trillionnium/crates/trnm-sqlite-io-boundary)
+    Checking trnm-crypto-primitives v0.1.0 (/tmp/trnm-pon-security-final/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-task-kernel v0.1.0 (/tmp/trnm-pon-security-final/trillionnium/crates/trnm-task-kernel)
+    Checking trnm-verification-profiles v0.1.0 (/tmp/trnm-pon-security-final/trillionnium/crates/trnm-verification-profiles)
+    Checking tempfile v3.27.0
+    Checking trnm-mvcc-fee v0.1.0 (/tmp/trnm-pon-security-final/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-data-availability v0.1.0 (/tmp/trnm-pon-security-final/trillionnium/crates/trnm-data-availability)
+    Checking trnm-service-settlement v0.1.0 (/tmp/trnm-pon-security-final/trillionnium/crates/trnm-service-settlement)
+    Checking trnm-transport v0.1.0 (/tmp/trnm-pon-security-final/trillionnium/crates/trnm-transport)
+    Checking trnm-mempool v0.1.0 (/tmp/trnm-pon-security-final/trillionnium/crates/trnm-mempool)
+    Checking trnm-pon-node v0.1.0 (/tmp/trnm-pon-security-final/trillionnium/crates/trnm-pon-node)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 17s

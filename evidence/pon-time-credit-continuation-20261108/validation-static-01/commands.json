@@ -1,0 +1,152 @@
+[
+  {
+    "name": "preflight",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 0.098,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "preflight.stdout",
+    "stderr": "preflight.stderr"
+  },
+  {
+    "name": "source-before",
+    "command": [
+      "python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "bd696c35f8b838823fad7ccf2868582554f33559",
+      "--output",
+      "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-static-01/source-before.json"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 11.993,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "source-before.stdout",
+    "stderr": "source-before.stderr"
+  },
+  {
+    "name": "format",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 19.811,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "format.stdout",
+    "stderr": "format.stderr"
+  },
+  {
+    "name": "graph-workspace",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1",
+      "--manifest-path",
+      "trillionnium/Cargo.toml"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 0.203,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "graph-workspace.stdout",
+    "stderr": "graph-workspace.stderr"
+  },
+  {
+    "name": "graph-fuzz",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1",
+      "--manifest-path",
+      "tests/fuzz/Cargo.toml"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 0.152,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "graph-fuzz.stdout",
+    "stderr": "graph-fuzz.stderr"
+  },
+  {
+    "name": "source-negative-controls",
+    "command": [
+      "python3",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 4.82,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "source-negative-controls.stdout",
+    "stderr": "source-negative-controls.stderr"
+  },
+  {
+    "name": "repository-truth",
+    "command": [
+      "bash",
+      "scripts/ci/ci_job.sh",
+      "repository-truth"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 2242.919,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "repository-truth.stdout",
+    "stderr": "repository-truth.stderr"
+  },
+  {
+    "name": "quantum-source-report",
+    "command": [
+      "python3",
+      "formal/pon-nakamoto-v1/quantum_bernoulli_source_audit.py"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 0.066,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "quantum-source-report.stdout",
+    "stderr": "quantum-source-report.stderr"
+  },
+  {
+    "name": "source-after",
+    "command": [
+      "python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "bd696c35f8b838823fad7ccf2868582554f33559",
+      "--output",
+      "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-static-01/source-after.json"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 5.337,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "source-after.stdout",
+    "stderr": "source-after.stderr"
+  }
+]

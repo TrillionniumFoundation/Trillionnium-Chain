@@ -1,0 +1,4 @@
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.83s
+     Running tests/native_node.rs (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-target/debug/deps/native_node-48599506fecb2cce)
+error: test failed, to rerun pass `-p trnm-pon-node --test native_node`

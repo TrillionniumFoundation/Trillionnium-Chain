@@ -1,0 +1,92 @@
+{
+  "schema": "local-read-only-fixed-host-feasibility-v1",
+  "observed_at_utc": "2026-11-04T12:25:08.578216+00:00",
+  "reads": [
+    {
+      "path": "/proc/1/comm",
+      "contents": "supervisord\n",
+      "writable": true
+    },
+    {
+      "path": "/proc/self/cgroup",
+      "contents": "0::/\n",
+      "writable": false
+    },
+    {
+      "path": "/sys/fs/cgroup/cgroup.controllers",
+      "contents": "cpuset cpu io memory hugetlb pids\n",
+      "writable": false
+    },
+    {
+      "path": "/sys/fs/cgroup/cgroup.subtree_control",
+      "contents": "",
+      "writable": false
+    },
+    {
+      "path": "/sys/fs/cgroup/cpu.max",
+      "contents": "800000 100000\n",
+      "writable": false
+    },
+    {
+      "path": "/sys/fs/cgroup/cpu.max.burst",
+      "contents": "0\n",
+      "writable": false
+    },
+    {
+      "path": "/sys/fs/cgroup/memory.max",
+      "contents": "8589934592\n",
+      "writable": false
+    },
+    {
+      "path": "/sys/fs/cgroup/memory.swap.max",
+      "contents": "max\n",
+      "writable": false
+    },
+    {
+      "path": "/sys/fs/cgroup/pids.max",
+      "contents": "max\n",
+      "writable": false
+    },
+    {
+      "path": "/sys/fs/cgroup/cgroup.type",
+      "contents": "domain\n",
+      "writable": false
+    }
+  ],
+  "commands": [
+    {
+      "command": [
+        "systemctl",
+        "is-system-running"
+      ],
+      "exit": 0,
+      "stdout": "\n\"systemd\" is not running in this container due to its overhead.\nUse the \"service\" command to start services instead. e.g.: \n\nservice --status-all\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "systemctl",
+        "--user",
+        "is-system-running"
+      ],
+      "exit": 0,
+      "stdout": "\n\"systemd\" is not running in this container due to its overhead.\nUse the \"service\" command to start services instead. e.g.: \n\nservice --status-all\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "id"
+      ],
+      "exit": 0,
+      "stdout": "uid=0(root) gid=0(root) groups=0(root)\n",
+      "stderr": ""
+    }
+  ],
+  "cgroup_mounts": [
+    "cgroup2 /sys/fs/cgroup cgroup2 ro,nosuid,nodev,noexec,relatime,nsdelegate 0 0"
+  ],
+  "required_parent_exists": false,
+  "writes_to_host_configuration": false,
+  "native_tests_executed": false,
+  "fixed_host_qualified": false
+}

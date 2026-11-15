@@ -1,0 +1,478 @@
+{
+  "schema": "b280-runtime-head-terminal-failure-v1",
+  "observed_utc": "2026-11-03T21:18:22.135305+00:00",
+  "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+  "job_id": 126173966811,
+  "run_id": 41708487030,
+  "artifact": {
+    "schema": "artifact-download-digest-check-v1",
+    "observed_utc": "2026-11-03T21:17:32.647882+00:00",
+    "artifact_id": 13271043247,
+    "file_name": "b280-runtime-head-13271043247.zip",
+    "file_id": "file_0000000082d881fbae0c380824385e62",
+    "actual_bytes": 6852133,
+    "actual_sha256": "5d7963dd19e8c758e6e564c8a9165040f0bab94a86d264eceafffb21bea8fb59",
+    "metadata": {
+      "id": 13271043247,
+      "name": "rust-observations-head-b28098c092dca72165c0d26054fce95a8636d777-1-runtime",
+      "size_in_bytes": 6852133,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13271043247",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13271043247/zip",
+      "expired": false,
+      "created_at": "2026-11-03T21:08:14Z",
+      "expires_at": "2026-12-03T21:08:12Z",
+      "updated_at": "2026-11-03T21:08:14Z",
+      "digest": "sha256:5d7963dd19e8c758e6e564c8a9165040f0bab94a86d264eceafffb21bea8fb59",
+      "workflow_run": {
+        "id": 41708487030,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "b28098c092dca72165c0d26054fce95a8636d777"
+      }
+    },
+    "matched": true,
+    "data_only": true,
+    "executed": false
+  },
+  "rust_shard": {
+    "schema": "trnm-rust-baseline-shard-v1",
+    "shard": "runtime",
+    "status": "failed",
+    "exit_code": 101,
+    "command_sha256": "d2862f4fc7477983a3b6877e4f310a8bfeb6d663d419b577da210d3ea62e55ea",
+    "run": {
+      "GITHUB_RUN_ID": "41708487030",
+      "GITHUB_RUN_ATTEMPT": "1"
+    },
+    "before": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "head",
+      "tested_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+      "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+      "base": null,
+      "prospective_merge": null,
+      "tracked_worktree_verified": true,
+      "tracked_entries": 7563,
+      "tracked_bytes": 872904508,
+      "tests_executed_by_identity_check": false
+    },
+    "after": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "head",
+      "tested_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+      "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+      "base": null,
+      "prospective_merge": null,
+      "tracked_worktree_verified": true,
+      "tracked_entries": 7563,
+      "tracked_bytes": 872904508,
+      "tests_executed_by_identity_check": false
+    }
+  },
+  "first_native_failure": {
+    "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+    "target": "evaluation_sync_observation",
+    "panic_lines": [
+      "thread 'actual_public_full_sync_query_partial_refusals_reorg_and_retirement' (33598) panicked at crates/trnm-pon-node/tests/evaluation_sync_observation.rs:551:46:",
+      "called `Result::unwrap()` on an `Err` value: Error { code: Some(OwnerReorgTerminationCpuRequired), kind: DependencyUnavailable, message: \"OWNER_REORG_TERMINATION_CPU_REQUIRED\", source: None, request_history_budget: false }",
+      "note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+      ""
+    ],
+    "terminal_result_lines": [
+      "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1 filtered out; finished in 45.79s"
+    ],
+    "native_error_message": "OWNER_REORG_TERMINATION_CPU_REQUIRED",
+    "host_failure_is_wrapper_only": true,
+    "native_manifest": {
+      "architecture_report_required": false,
+      "binary_after": {
+        "ctime_ns": 1793738716707956831,
+        "device": 66305,
+        "inode": 9215090,
+        "mtime_ns": 1793738716685956641,
+        "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/evaluation_sync_observation-380cf5a6202e5679",
+        "sha256": "ae1feb2396ffb2e31bf55d128b908ac6bda162cbd0886b046fdbb63f560a81aa",
+        "size_bytes": 190920376
+      },
+      "binary_before": {
+        "ctime_ns": 1793738716707956831,
+        "device": 66305,
+        "inode": 9215090,
+        "mtime_ns": 1793738716685956641,
+        "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/evaluation_sync_observation-380cf5a6202e5679",
+        "sha256": "ae1feb2396ffb2e31bf55d128b908ac6bda162cbd0886b046fdbb63f560a81aa",
+        "size_bytes": 190920376
+      },
+      "cli_binary_after": {
+        "ctime_ns": 1793738713812931858,
+        "device": 66305,
+        "inode": 9215084,
+        "mtime_ns": 1793738713730931153,
+        "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/trnm-pon-node",
+        "sha256": "218eec04be6c859632f3f9310d0c5c2accc85cb778732c2b89035fde9024bc4d",
+        "size_bytes": 200172392
+      },
+      "cli_binary_before": {
+        "ctime_ns": 1793738713812931858,
+        "device": 66305,
+        "inode": 9215084,
+        "mtime_ns": 1793738713730931153,
+        "path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/trnm-pon-node",
+        "sha256": "218eec04be6c859632f3f9310d0c5c2accc85cb778732c2b89035fde9024bc4d",
+        "size_bytes": 200172392
+      },
+      "cli_required": true,
+      "failures": [
+        "ValueError:PUBLIC_FIXTURE_NATIVE_PROCESS_REQUIRED",
+        "ValueError:required-native-test: expected one passed, zero failed/ignored/measured"
+      ],
+      "job": {
+        "GITHUB_JOB": "rust-baseline-shards",
+        "GITHUB_RUN_ATTEMPT": "1",
+        "GITHUB_RUN_ID": "41708487030"
+      },
+      "log": {
+        "ctime_ns": 1793740085286824757,
+        "device": 66305,
+        "inode": 9217085,
+        "mtime_ns": 1793740085286824757,
+        "path": "/home/runner/work/_temp/ci-observations/public-fixtures/evaluation_sync_observation/actual_public_full_sync_query_partial_refusals_reorg_and_retirement/native.log",
+        "sha256": "3bb2e9b7d98de0c529df21c7242947fca4ebd1cc78ee4d832f7af5ef8bb0d12d",
+        "size_bytes": 27848
+      },
+      "named_execution": null,
+      "native_execution_authenticated": false,
+      "nested_cargo_invoked": false,
+      "passed": false,
+      "preparation_sha256": "be95e4c6bf02a50cc63a81dc8718669ccbc519d62bea0ecebacc0b6ad7ff71c2",
+      "process": {
+        "cleanup_errors": [],
+        "command": [
+          "/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/evaluation_sync_observation-380cf5a6202e5679",
+          "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node",
+        "exit_code": 101,
+        "failure": null,
+        "pid": 33597,
+        "reaped": true,
+        "started": true,
+        "supervisor_exit": null,
+        "supervisors": [
+          {
+            "process": {
+              "device": 25,
+              "gid": 1001,
+              "inode": 141889,
+              "parent_pid": 15612,
+              "pid": 33284,
+              "start_ticks": 256408,
+              "uid": 1001
+            },
+            "role": "libtest"
+          },
+          {
+            "process": {
+              "device": 25,
+              "gid": 1001,
+              "inode": 145088,
+              "parent_pid": 33284,
+              "pid": 33286,
+              "start_ticks": 256408,
+              "uid": 1001
+            },
+            "role": "launcher"
+          }
+        ],
+        "supervisors_bound": true,
+        "timed_out": false,
+        "timeout_seconds": null,
+        "wall_ns": 45788733758
+      },
+      "report": null,
+      "report_file": null,
+      "runtime_limits_or_deadlines_changed": false,
+      "schema": "trnm-ci-public-fixture-host-execution-v1",
+      "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+      "source": "trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+      "source_after": {
+        "commit": "b28098c092dca72165c0d26054fce95a8636d777",
+        "test_sha256": "bd2a3c2886d4a866e71a0f5579c5c2d054ecebb40c9fc60ed379cb8e400c8b21",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+          "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 872904508,
+          "tracked_entries": 7563,
+          "tracked_worktree_verified": true
+        },
+        "tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069"
+      },
+      "source_before": {
+        "commit": "b28098c092dca72165c0d26054fce95a8636d777",
+        "test_sha256": "bd2a3c2886d4a866e71a0f5579c5c2d054ecebb40c9fc60ed379cb8e400c8b21",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+          "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 872904508,
+          "tracked_entries": 7563,
+          "tracked_worktree_verified": true
+        },
+        "tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069"
+      },
+      "target": "evaluation_sync_observation",
+      "timeout_seconds": null
+    }
+  },
+  "host_controller": {
+    "failure": null,
+    "final_host_errors": [],
+    "cleanup": "already-collected",
+    "parent_reused": true,
+    "passed": false,
+    "systemd_run_exit": 1,
+    "outside_after_counters": {
+      "cgroup.events": "populated 0\nfrozen 0",
+      "cpu.stat": "usage_usec 29774048\nuser_usec 14970877\nsystem_usec 14803171\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 1261\nnr_throttled 1160\nthrottled_usec 109883244\nnr_bursts 0\nburst_usec 0",
+      "memory.current": "34467840",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "pids.current": "0"
+    },
+    "original_limits": {
+      "cpu.max": "25000 100000",
+      "cpu.max.burst": "0",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    }
+  },
+  "observed_public_fixtures": [
+    {
+      "member": "public-fixtures/architecture_delivery_compare/signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract/manifest.json",
+      "target": "architecture_delivery_compare",
+      "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+      "passed": true,
+      "failures": [],
+      "native_execution_authenticated": false,
+      "named_execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract"
+      },
+      "process": {
+        "cleanup_errors": [],
+        "command": [
+          "/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/architecture_delivery_compare-9fbba0de5d17ee58",
+          "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node",
+        "exit_code": 0,
+        "failure": null,
+        "pid": 32573,
+        "reaped": true,
+        "started": true,
+        "supervisor_exit": null,
+        "supervisors": [
+          {
+            "process": {
+              "device": 25,
+              "gid": 1001,
+              "inode": 93639,
+              "parent_pid": 15612,
+              "pid": 32140,
+              "start_ticks": 242663,
+              "uid": 1001
+            },
+            "role": "libtest"
+          },
+          {
+            "process": {
+              "device": 25,
+              "gid": 1001,
+              "inode": 95600,
+              "parent_pid": 32140,
+              "pid": 32144,
+              "start_ticks": 242664,
+              "uid": 1001
+            },
+            "role": "launcher"
+          }
+        ],
+        "supervisors_bound": true,
+        "timed_out": false,
+        "timeout_seconds": 120,
+        "wall_ns": 56298270108
+      }
+    },
+    {
+      "member": "public-fixtures/evaluation_sync_observation/actual_public_full_sync_query_partial_refusals_reorg_and_retirement/manifest.json",
+      "target": "evaluation_sync_observation",
+      "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+      "passed": false,
+      "failures": [
+        "ValueError:PUBLIC_FIXTURE_NATIVE_PROCESS_REQUIRED",
+        "ValueError:required-native-test: expected one passed, zero failed/ignored/measured"
+      ],
+      "native_execution_authenticated": false,
+      "named_execution": null,
+      "process": {
+        "cleanup_errors": [],
+        "command": [
+          "/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/evaluation_sync_observation-380cf5a6202e5679",
+          "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node",
+        "exit_code": 101,
+        "failure": null,
+        "pid": 33597,
+        "reaped": true,
+        "started": true,
+        "supervisor_exit": null,
+        "supervisors": [
+          {
+            "process": {
+              "device": 25,
+              "gid": 1001,
+              "inode": 141889,
+              "parent_pid": 15612,
+              "pid": 33284,
+              "start_ticks": 256408,
+              "uid": 1001
+            },
+            "role": "libtest"
+          },
+          {
+            "process": {
+              "device": 25,
+              "gid": 1001,
+              "inode": 145088,
+              "parent_pid": 33284,
+              "pid": 33286,
+              "start_ticks": 256408,
+              "uid": 1001
+            },
+            "role": "launcher"
+          }
+        ],
+        "supervisors_bound": true,
+        "timed_out": false,
+        "timeout_seconds": null,
+        "wall_ns": 45788733758
+      }
+    }
+  ],
+  "workspace_log": {
+    "member": "workspace-tests.log",
+    "bytes": 366232,
+    "sha256": "9939588d517d2dfaec7588cee103a118a9d25c17c143a7f408474c911452e7ef",
+    "terminal": [
+      "",
+      "",
+      "failures:",
+      "    actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+      "",
+      "test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 62.20s",
+      "",
+      "error: test failed, to rerun pass `-p trnm-pon-node --test evaluation_sync_observation`"
+    ]
+  },
+  "selected_raw_receipts": [
+    {
+      "member": "public-fixtures/evaluation_sync_observation/actual_public_full_sync_query_partial_refusals_reorg_and_retirement/execution-start.json",
+      "file": "runtime-head-failure/execution-start.json",
+      "bytes": 78,
+      "sha256": "8339cd3c6c670a7a52c4a2e22a7a19ef5129613492772232d0e399d872fdebac"
+    },
+    {
+      "member": "public-fixtures/evaluation_sync_observation/actual_public_full_sync_query_partial_refusals_reorg_and_retirement/launch.json",
+      "file": "runtime-head-failure/launch.json",
+      "bytes": 189,
+      "sha256": "c7689a50018e989e1369238d43d68a142b952e97e7ff166287c56c1e1a430137"
+    },
+    {
+      "member": "public-fixtures/evaluation_sync_observation/actual_public_full_sync_query_partial_refusals_reorg_and_retirement/manifest.json",
+      "file": "runtime-head-failure/manifest.json",
+      "bytes": 5488,
+      "sha256": "929a57878ecc0cc36ec07edda0bfb3f110e3c5e7869d05c6231391da2717dad6"
+    },
+    {
+      "member": "public-fixtures/evaluation_sync_observation/actual_public_full_sync_query_partial_refusals_reorg_and_retirement/native.log",
+      "file": "runtime-head-failure/native.log",
+      "bytes": 27848,
+      "sha256": "3bb2e9b7d98de0c529df21c7242947fca4ebd1cc78ee4d832f7af5ef8bb0d12d"
+    },
+    {
+      "member": "public-fixtures/evaluation_sync_observation/actual_public_full_sync_query_partial_refusals_reorg_and_retirement/preparation.json",
+      "file": "runtime-head-failure/preparation.json",
+      "bytes": 4395,
+      "sha256": "be95e4c6bf02a50cc63a81dc8718669ccbc519d62bea0ecebacc0b6ad7ff71c2"
+    },
+    {
+      "member": "public-fixtures/evaluation_sync_observation/actual_public_full_sync_query_partial_refusals_reorg_and_retirement-host/child-result.json",
+      "file": "runtime-head-failure/host-child-result.json",
+      "bytes": 433,
+      "sha256": "ea96361ad3d653fcf5c2257960ddcc1cc2269a3c996757181007226098454513"
+    },
+    {
+      "member": "public-fixtures/evaluation_sync_observation/actual_public_full_sync_query_partial_refusals_reorg_and_retirement-host/controller-result.json",
+      "file": "runtime-head-failure/host-controller-result.json",
+      "bytes": 8811,
+      "sha256": "c506f9bf5ba1bb0433fc4b467da2e46d527dc137106dcadcf9306c421a1b1a52"
+    },
+    {
+      "member": "public-fixtures/evaluation_sync_observation/actual_public_full_sync_query_partial_refusals_reorg_and_retirement-host/inside-before.json",
+      "file": "runtime-head-failure/host-inside-before.json",
+      "bytes": 1709,
+      "sha256": "c6ff1ba40bafa35e7a6cc66f6b4e98a196727c137102c2aaca532dce6177f08f"
+    },
+    {
+      "member": "public-fixtures/evaluation_sync_observation/actual_public_full_sync_query_partial_refusals_reorg_and_retirement-host/inside-after.json",
+      "file": "runtime-head-failure/host-inside-after.json",
+      "bytes": 1713,
+      "sha256": "0363f48b94e2199fd89c1d93e8b0b1a6f25b97f46c3d25505a7ae43b040902f6"
+    },
+    {
+      "member": "public-fixtures/evaluation_sync_observation/actual_public_full_sync_query_partial_refusals_reorg_and_retirement-host/outside-after.json",
+      "file": "runtime-head-failure/host-outside-after.json",
+      "bytes": 1671,
+      "sha256": "eb76d1f651915e5886b3d852d5bc4117040af981f42dda5d3bbb98831c3b0bc4"
+    },
+    {
+      "member": "public-fixtures/evaluation_sync_observation/actual_public_full_sync_query_partial_refusals_reorg_and_retirement-host/systemd-run.log",
+      "file": "runtime-head-failure/host-systemd-run.log",
+      "bytes": 648,
+      "sha256": "86205b3b444d22fb6b8c269c2cd88784faa60a54886261cd313a19351797a10d"
+    }
+  ],
+  "claims": {
+    "whole_workspace_pass": false,
+    "nine_positive_host_selectors_pass": false,
+    "public_service_acceptance_pass": false,
+    "activation_authorized": false,
+    "later_head_qualified": false
+  }
+}

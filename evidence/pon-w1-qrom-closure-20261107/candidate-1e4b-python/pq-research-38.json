@@ -1,0 +1,27 @@
+{
+  "args": [
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_pq_research_integration"
+  ],
+  "command_passed": true,
+  "exit_code": 0,
+  "expected_tests": 38,
+  "final_plain_OK": true,
+  "label": "pq-research-38",
+  "non_ok_verbose_lines": [],
+  "reported_counts": [
+    38
+  ],
+  "seconds": 109.13920947210863,
+  "stderr_bytes": 6259,
+  "stderr_sha256": "35b550beecbf0df75c20f62b709571d3a5b00899fa0d030c1415b6ba0bb36d51",
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "successful_verbose_test_lines": 38,
+  "timed_out": false,
+  "timeout_seconds": 300,
+  "verbose_test_line_count": 38
+}

@@ -1,0 +1,202 @@
+{
+  "component": "crosshost-parent",
+  "excluded": [],
+  "full_host_raw_archive": false,
+  "records": [
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/funded-balanced/.hepta-lock-c603a2ea0fea49c90d9a1dc4",
+      "relative": "crosshost-observation-01/funded-balanced/.hepta-lock-c603a2ea0fea49c90d9a1dc4",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 8395,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/funded-balanced/connector-receipts.json",
+      "relative": "crosshost-observation-01/funded-balanced/connector-receipts.json",
+      "sha256": "026520538a059ea28ac66e89635c01c38d1cc5803c574e536fb72e8d145c8449"
+    },
+    {
+      "bytes": 35869,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/funded-balanced/incoming/received-bundle.json",
+      "relative": "crosshost-observation-01/funded-balanced/incoming/received-bundle.json",
+      "sha256": "5456cd159263d6f2566a73e09da7bc0e27b7690b5f9670e1758cbd19e83be69a"
+    },
+    {
+      "bytes": 559,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/funded-balanced/original-job-terminal.json",
+      "relative": "crosshost-observation-01/funded-balanced/original-job-terminal.json",
+      "sha256": "a6bc0a0cb56b703e32bb86a26e9ffb179e1e5df751945b9e7e5c19719d6a6f93"
+    },
+    {
+      "bytes": 318,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/funded-balanced/outgoing/header.bin",
+      "relative": "crosshost-observation-01/funded-balanced/outgoing/header.bin",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+    },
+    {
+      "bytes": 1101,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/funded-balanced/outgoing/request.json",
+      "relative": "crosshost-observation-01/funded-balanced/outgoing/request.json",
+      "sha256": "1b0110b5714e8660436067311ef2cd7ef3a47b826aa7f0fbde7ba6a4e41b24fb"
+    },
+    {
+      "bytes": 257014,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/funded-balanced/outgoing/succinct.bin",
+      "relative": "crosshost-observation-01/funded-balanced/outgoing/succinct.bin",
+      "sha256": "585808f32353a272c310595fa31b33f1ba160add53490c1673bf7fa6c6bc2e57"
+    },
+    {
+      "bytes": 858,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/funded-balanced/outgoing/winner-intent.json",
+      "relative": "crosshost-observation-01/funded-balanced/outgoing/winner-intent.json",
+      "sha256": "e5e749764706780a645cd630dfc907bd0362711a5505893ed5cabadcd188c67f"
+    },
+    {
+      "bytes": 1067,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/funded-balanced/outgoing/winner-result.json",
+      "relative": "crosshost-observation-01/funded-balanced/outgoing/winner-result.json",
+      "sha256": "93eaa2f08367708b9239e467e5575a4dd6b47c5a8bbdf2713746e5e63d92cab5"
+    },
+    {
+      "bytes": 1622,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/funded-balanced/parent-observation.json",
+      "relative": "crosshost-observation-01/funded-balanced/parent-observation.json",
+      "sha256": "6cba0521e2793f6a7d1ed92e08289686b2afe777c818032318e70467dfbc730f"
+    },
+    {
+      "bytes": 4065,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/funded-balanced/prepared.json",
+      "relative": "crosshost-observation-01/funded-balanced/prepared.json",
+      "sha256": "ee672ca8d96e54fdfc085450ed99d14a9b8263533b6b71a9c207ba34c5578239"
+    },
+    {
+      "bytes": 17755,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/operator-transport-records-01/records.json",
+      "relative": "crosshost-observation-01/operator-transport-records-01/records.json",
+      "sha256": "501e1ce0ce0b6a72fe875e290dcc4a21be771eb6d5dade8c28b0c319c43a974d"
+    },
+    {
+      "bytes": 27546,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/sequential-unfunded/incoming/received-bundle.json",
+      "relative": "crosshost-observation-01/sequential-unfunded/incoming/received-bundle.json",
+      "sha256": "c6ff4504d10e877b08e3443f6db43953145916779f62da3b0b036ef160a9cf6e"
+    },
+    {
+      "bytes": 559,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/sequential-unfunded/original-job-terminal.json",
+      "relative": "crosshost-observation-01/sequential-unfunded/original-job-terminal.json",
+      "sha256": "4448efaddb52cd28f4539467c6711861ece02dcf77fc463c8a2daf5f5a3055b8"
+    },
+    {
+      "bytes": 318,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/sequential-unfunded/outgoing/header.bin",
+      "relative": "crosshost-observation-01/sequential-unfunded/outgoing/header.bin",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+    },
+    {
+      "bytes": 1105,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/sequential-unfunded/outgoing/request.json",
+      "relative": "crosshost-observation-01/sequential-unfunded/outgoing/request.json",
+      "sha256": "75b6d85dd1b34f34ef2ce52b1a58f36a5523c4b6e6a81873ee526e036e83dee4"
+    },
+    {
+      "bytes": 257014,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/sequential-unfunded/outgoing/succinct.bin",
+      "relative": "crosshost-observation-01/sequential-unfunded/outgoing/succinct.bin",
+      "sha256": "033586595c7c203acc48b48e16d969b1376a833244fa82f3b64edfdcc35033c2"
+    },
+    {
+      "bytes": 858,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/sequential-unfunded/outgoing/winner-intent.json",
+      "relative": "crosshost-observation-01/sequential-unfunded/outgoing/winner-intent.json",
+      "sha256": "c8bff97973302713511268c853afb7a8491c72f5cde590a4d0977968963ba203"
+    },
+    {
+      "bytes": 1067,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/sequential-unfunded/outgoing/winner-result.json",
+      "relative": "crosshost-observation-01/sequential-unfunded/outgoing/winner-result.json",
+      "sha256": "4fcd30695a2b20242f41dac0745aa6bbe71bc8eeb73df40119923c88cae825df"
+    },
+    {
+      "bytes": 1679,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/sequential-unfunded/parent-observation.json",
+      "relative": "crosshost-observation-01/sequential-unfunded/parent-observation.json",
+      "sha256": "77810d48bd6fdbfe044a3e25c0febe5887ef596cc807c3d101836fc79ab4805c"
+    },
+    {
+      "bytes": 4164,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/sequential-unfunded/prepared.json",
+      "relative": "crosshost-observation-01/sequential-unfunded/prepared.json",
+      "sha256": "6e778643c2edfcf899b9a0f190dca8cd95a6d9ef08d993cb858966b41dd8a9a5"
+    },
+    {
+      "bytes": 15832,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-tools-02/crosshost-parent-observer.py",
+      "relative": "crosshost-tools-02/crosshost-parent-observer.py",
+      "sha256": "3763d40779e37fada702a7de3184549b29b4eaf70271a9edf86250d757745dca"
+    },
+    {
+      "bytes": 985,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-tools-02/installation.json",
+      "relative": "crosshost-tools-02/installation.json",
+      "sha256": "0a26c881f7bde12f07a0ca4e775c19676814a947eda21ef83074133e5ae59061"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-tools-02/preflight.stderr",
+      "relative": "crosshost-tools-02/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 177,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-tools-02/preflight.stdout",
+      "relative": "crosshost-tools-02/preflight.stdout",
+      "sha256": "a26394e63148ca29966ef3c4a4c28c5b86285d39ac6948d20087e0005c94b47f"
+    },
+    {
+      "bytes": 4475,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-tools-02/rog-receiver-launch.py",
+      "relative": "crosshost-tools-02/rog-receiver-launch.py",
+      "sha256": "c435ec8357861952eea6f6a1cdda6ae822baf198d8baef47cb608191d6522c20"
+    },
+    {
+      "bytes": 10446,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-tools-02/rog-terminal-readback.py",
+      "relative": "crosshost-tools-02/rog-terminal-readback.py",
+      "sha256": "a2c7d84cbf69b9ec668290aeccef0498365dce17c3d34f0b05fdcfacc96ff5b0"
+    }
+  ],
+  "roots": [
+    "crosshost-observation-01",
+    "crosshost-tools-02"
+  ],
+  "schema": "TRNM-W1-PUBLIC-COMPONENT-RAW-INDEX1",
+  "source_bytes_unchanged": true
+}

@@ -1,0 +1,20 @@
+{
+  "adversarial_source_bindings_match_c1_git_objects": {
+    "config/pon/w1-qrom-supplemental-tests-v1.json": "33bdae599edc3ef8f54efd84245d24b90b0b4effdb2f71b2cdae52a71d4001c4",
+    "scripts/ci/test_w1_qrom_workflow_gate.py": "9974811ec1252498df88727e6e9e07e4aa61bbd39d4006fee1157d78a001bc15",
+    "scripts/ci/w1_qrom_supplemental_controls.py": "42364a64d05995b20391911f26d9db3f9273fe04e7aa9372ce991393dc7cd561",
+    "scripts/w1_qrom_current_implementation_audit.py": "f27bb39eedbf799b8d36b638f47fe8e795c82793dc523618fc49a4c6758c84b4",
+    "scripts/w1_qrom_historical_fixture.py": "ecd8a99a207082a37548a6e38068d02156316e96da6da8af807a7787d73ab20e",
+    "scripts/w1_qrom_implementation_audit.py": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354"
+  },
+  "candidate_commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+  "candidate_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+  "parent_report_scope": "Parent-agent observation only; no native execution log is inferred.",
+  "parent_reported_at_packaging": "Desktop storage was full before native tests started; not a failed native test result.",
+  "precommit_observations_are_not_c1_full_validation": true,
+  "production_qualified": false,
+  "repaired_gate_bytes_match_c1_git_object": true,
+  "scope": "This package does not contain a completed C1 suite, native, Clippy or hosted-CI verdict.",
+  "status": "PENDING_NO_C1_VALIDATION_VERDICT_INCLUDED",
+  "whole_chain_post_quantum_qualified": false
+}

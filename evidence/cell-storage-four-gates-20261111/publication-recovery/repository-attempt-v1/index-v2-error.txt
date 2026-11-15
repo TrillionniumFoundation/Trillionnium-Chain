@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/qian-qi/work/chain-cell-four-gates-2bfb-final-index-v2.py", line 86, in <module>
+    out,err,item=run('repository-precommit',[sys.executable,'-B','scripts/ci/check_repository.py'],300)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/work/chain-cell-four-gates-2bfb-final-index-v2.py", line 25, in run
+    s['commands'].append(item);save();assert code==0 and not timed,(name,code)
+                                             ^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('repository-precommit', 2)

@@ -1,0 +1,82 @@
+{
+  "schema": "trnm-exact-source-reader-pin-v1",
+  "head": "819309fd312298e099642e1253b1d4ba07113e98",
+  "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+  "git_no_lazy_fetch": true,
+  "git_no_replace_objects": true,
+  "source_repository": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+  "files": [
+    {
+      "path": ".github/workflows/pon-priority-acceptance.yml",
+      "bytes": 24989,
+      "git_blob": "d44a2288c0ee0a20778df24cd69e9cc300fd8a75",
+      "sha256": "6a7eeb14bc2fe1a005d0ee7403e1c6d2e5ba41e941c51892baf35002ecdd62fb"
+    },
+    {
+      "path": ".github/workflows/pon-w1-work-security.yml",
+      "bytes": 43822,
+      "git_blob": "c9ab642e0f23194b32a7b283107d215deb534c7a",
+      "sha256": "739854d721f5be0f2055bf211a9ebf929b64e8a3a5047a777fea4ab4166b3490"
+    },
+    {
+      "path": "scripts/ci/check_required_native_test.py",
+      "bytes": 2928,
+      "git_blob": "277137b9e6ced74e9ec81061040ebfbb3949ffaf",
+      "sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28"
+    },
+    {
+      "path": "scripts/ci/ci_observation.py",
+      "bytes": 8837,
+      "git_blob": "9ee54850767a1fce3848483660860dd8d976c777",
+      "sha256": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a"
+    },
+    {
+      "path": "scripts/ci/integration_push_source.py",
+      "bytes": 14458,
+      "git_blob": "54d44ae6f63d1fb45be9495ca1cbbdd73b9939e7",
+      "sha256": "d72d6106fa4bad0f82d88d2c98b06f5cad0c8823e98a7dbda72d4977d0e610d3"
+    },
+    {
+      "path": "scripts/ci/public_host_ci_observation.py",
+      "bytes": 5452,
+      "git_blob": "245b5b905e32446ed20f39398619553c4dccead0",
+      "sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de"
+    },
+    {
+      "path": "scripts/ci/replay_pinned_native.py",
+      "bytes": 18571,
+      "git_blob": "2e633556e2b6f5cc4278491d5c4c8edf437fab81",
+      "sha256": "d14d2f61ab98bb30b5932530437064dce5d3a330c05a9530988fe776cefea44a"
+    },
+    {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "bytes": 110854,
+      "git_blob": "9d97dfadd5bad55383475b7583f384ea572f180c",
+      "sha256": "baa7cba8096a3908c9b7ebe0705949b95061191ec78846006527fd80e6a5a0c8"
+    },
+    {
+      "path": "scripts/ci/run_history_native.py",
+      "bytes": 21380,
+      "git_blob": "fd305e7735a9bf4969bdf7166b435dfeed46b0f2",
+      "sha256": "35ca32bbf23d33242b88a2edf994739ff804fbd7b33b5b7ac2e090b4ffce4797"
+    },
+    {
+      "path": "scripts/ci/run_w1_fresh_service_v1.py",
+      "bytes": 28537,
+      "git_blob": "e3f68e023a9f958cb5fbf43e4584377a86cbcd03",
+      "sha256": "143b0f26f914798fc6650afc08d2f73379bcf82b7fd84cc318ca2fb83299d324"
+    },
+    {
+      "path": "scripts/ci/verify_ci_source.py",
+      "bytes": 11231,
+      "git_blob": "c775290c138c3b41a32e654f56ed5cbe9acec3ee",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    }
+  ],
+  "files_count": 11,
+  "bytes": 291059,
+  "native_executed": false,
+  "repository_mutated": false,
+  "github_calls": 0,
+  "errors": []
+}

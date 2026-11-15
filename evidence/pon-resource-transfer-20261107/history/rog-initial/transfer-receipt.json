@@ -1,0 +1,160 @@
+{
+  "archive_job": "1a1b69066ca-12894-510",
+  "files": [
+    {
+      "chunks": [
+        {
+          "eof": false,
+          "next_offset": 65536,
+          "offset": 0,
+          "sha256": "965e9430a3f2164978dace6dc9f1f35ea74a2d47448761a9b5ba037e891e3724"
+        },
+        {
+          "eof": false,
+          "next_offset": 131072,
+          "offset": 65536,
+          "sha256": "55744401b9e4fcebb043e407da8efa5213b9b6b31f634b787b1b2291d23d886c"
+        },
+        {
+          "eof": true,
+          "next_offset": 165490,
+          "offset": 131072,
+          "sha256": "d6359713d358835f91c411361528d8a72b28cebbff024bb2aeb87adb68b143ee"
+        }
+      ],
+      "name": "validation-initial-v0.tar.gz",
+      "remote": {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-initial-v0/validation-initial-v0.tar.gz",
+        "sha256": "207b0e36339fe33e6fd01071878cf4b98698820b1b99bb2edca08d26276f0e97",
+        "size": 165490,
+        "version": "66306:48262870:165490:1794064288687543176:1794064288687543176"
+      }
+    },
+    {
+      "chunks": [
+        {
+          "eof": true,
+          "next_offset": 12039,
+          "offset": 0,
+          "sha256": "7737db30af954472e756feced5d53065d45fefe84eb85f52fe8766f27b39ccca"
+        }
+      ],
+      "name": "validation-initial-v0.tar.gz.members.json",
+      "remote": {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-initial-v0/validation-initial-v0.tar.gz.members.json",
+        "sha256": "7737db30af954472e756feced5d53065d45fefe84eb85f52fe8766f27b39ccca",
+        "size": 12039,
+        "version": "66306:48262871:12039:1794064288694846284:1794064288694846284"
+      }
+    },
+    {
+      "chunks": [
+        {
+          "eof": true,
+          "next_offset": 26096,
+          "offset": 0,
+          "sha256": "4866b24aac5bd073c90e111496ef742c0884cc91926a03ba397a0fa4a5670f19"
+        }
+      ],
+      "name": "python-setup-v0.tar.gz",
+      "remote": {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-initial-v0/python-setup-v0.tar.gz",
+        "sha256": "4866b24aac5bd073c90e111496ef742c0884cc91926a03ba397a0fa4a5670f19",
+        "size": 26096,
+        "version": "66306:48262872:26096:1794064288697543001:1794064288697543001"
+      }
+    },
+    {
+      "chunks": [
+        {
+          "eof": true,
+          "next_offset": 1404,
+          "offset": 0,
+          "sha256": "37659d39e17c196517a9d29df553fa3b19665d38f14a85f5a143fa80c8717472"
+        }
+      ],
+      "name": "python-setup-v0.tar.gz.members.json",
+      "remote": {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-initial-v0/python-setup-v0.tar.gz.members.json",
+        "sha256": "37659d39e17c196517a9d29df553fa3b19665d38f14a85f5a143fa80c8717472",
+        "size": 1404,
+        "version": "66306:48262873:1404:1794064288699817131:1794064288699817131"
+      }
+    },
+    {
+      "chunks": [
+        {
+          "eof": true,
+          "next_offset": 7588,
+          "offset": 0,
+          "sha256": "6a218a0d6b8e35113dc90d8da8d21f79598dc9b8bad828a098a6278f9335f1f8"
+        }
+      ],
+      "name": "capture-review.json",
+      "remote": {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-initial-v0/capture-review.json",
+        "sha256": "6a218a0d6b8e35113dc90d8da8d21f79598dc9b8bad828a098a6278f9335f1f8",
+        "size": 7588,
+        "version": "66306:48262874:7588:1794064288705272709:1794064288705272709"
+      }
+    }
+  ],
+  "host": "rog",
+  "local_root": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-initial-history",
+  "schema": "pon-rog-initial-history-transfer-v0"
+}

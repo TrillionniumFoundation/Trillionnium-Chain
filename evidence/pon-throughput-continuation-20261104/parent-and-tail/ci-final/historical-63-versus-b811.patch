@@ -1,0 +1,96 @@
+diff --git a/.github/workflows/pon-original-workspace-large-state-cpu.yml b/.github/workflows/pon-original-workspace-large-state-cpu.yml
+index 490ec2b916..8f40aabfe1 100644
+--- a/.github/workflows/pon-original-workspace-large-state-cpu.yml
++++ b/.github/workflows/pon-original-workspace-large-state-cpu.yml
+@@ -334,6 +334,15 @@ jobs:
+             "pon_commitment::unchanged_snapshot_tests::unchanged_candidate_early_miss_retains_complete_late_validation",
+             "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_empty_delta_still_checks_the_original_tree_root",
+         ])
++        exact("m06", "canonical-comparison", [
++            "pon_executor::canonical_comparison_tests::canonical_comparison_matches_independent_serde_bytes_and_every_json_kind",
++            "pon_executor::canonical_comparison_tests::canonical_comparison_keeps_complete_value_error_order_before_byte_mismatch",
++            "pon_executor::canonical_comparison_tests::canonical_comparison_distinguishes_number_spellings_under_the_actual_serde_features",
++        ])
++        exact("m06", "compared-prefix-continuation", [
++            "pon_commitment::unchanged_snapshot_tests::compared_prefix_continuation_keeps_exact_original_capacities_roots_and_budgets",
++            "pon_commitment::unchanged_snapshot_tests::compared_nonempty_prefix_cannot_hide_late_canonical_wire_or_cache_errors",
++        ])
+         exact("node", "account-root-digest", [
+             "account_archive_prototype::native_root_digest::tests::native_root_digest_matches_record_and_sparse_references_after_exact_input_changes",
+             "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_original_traversal_cancellation_and_collision_order",
+@@ -353,6 +362,10 @@ jobs:
+             "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges",
+         ])
+         prefix("node", "reorg-tail", "store::reorg_readback_tests::", 6)
++        exact("node", "direct-append-readback", [
++            "store::append_readback_tests::direct_append_keeps_complete_rows_events_state_and_cold_reopen",
++            "store::append_readback_tests::direct_append_cancellation_at_each_callback_leaves_no_partial_publication",
++        ])
+         exact("node", "current-sql-root", [
+             "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+         ])
+diff --git a/.github/workflows/pon-pq-system-continuation.yml b/.github/workflows/pon-pq-system-continuation.yml
+index b7ca2f3015..d0e0353682 100644
+--- a/.github/workflows/pon-pq-system-continuation.yml
++++ b/.github/workflows/pon-pq-system-continuation.yml
+@@ -127,6 +127,47 @@ jobs:
+             fi
+           done < "$PQ_OUT/required-tests.tsv"
+           test "$failed" = 0
++      - name: Require actual transaction scopes and canonical prefix continuation controls
++        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
++        shell: bash
++        run: |
++          set -euo pipefail
++          failed=0
++          for selector in \
++            transaction_scope::tests::token_controls_cover_sqlite_space_comments_bom_aliases_and_identifier_boundaries \
++            transaction_scope::tests::actual_readonly_aba_is_not_an_autocommit_changes_or_schema_identity \
++            transaction_scope::tests::already_prepared_cached_end_is_observed_at_execution_and_reuse \
++            transaction_scope::tests::savepoint_release_and_rollback_to_are_conservatively_refused \
++            transaction_scope::tests::nested_scopes_share_epoch_and_other_connections_do_not_invalidate_reads \
++            transaction_scope::tests::explain_does_not_execute_a_transaction_control \
++            transaction_scope::tests::replacing_trace_is_detected_by_actual_execution_probe_without_resetting_epoch \
++            transaction_scope::tests::overflow_wrong_pid_and_wrong_handle_are_sticky_refusals \
++            transaction_scope::tests::dropping_scopes_does_not_drop_or_reinstall_the_connection_observer \
++            transaction_scope::tests::actual_write_snapshot_requires_same_live_main_writer \
++            transaction_scope::tests::executed_write_epoch_catches_no_row_failed_and_reversed_schema_writes \
++            transaction_scope::tests::prepared_write_execution_is_counted_but_explain_is_not_a_write \
++            transaction_scope::tests::write_snapshot_rejects_savepoint_aba_and_sticky_observer_failures; do
++            label="scope-${selector##*::}"
++            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-sqlite-io-boundary --lib --all-features "$selector" -- --exact --show-output --test-threads=1; then
++              failed=1
++            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
++              failed=1
++            fi
++          done
++          for selector in \
++            pon_executor::canonical_comparison_tests::canonical_comparison_matches_independent_serde_bytes_and_every_json_kind \
++            pon_executor::canonical_comparison_tests::canonical_comparison_keeps_complete_value_error_order_before_byte_mismatch \
++            pon_executor::canonical_comparison_tests::canonical_comparison_distinguishes_number_spellings_under_the_actual_serde_features \
++            pon_commitment::unchanged_snapshot_tests::compared_prefix_continuation_keeps_exact_original_capacities_roots_and_budgets \
++            pon_commitment::unchanged_snapshot_tests::compared_nonempty_prefix_cannot_hide_late_canonical_wire_or_cache_errors; do
++            label="m06-${selector##*::}"
++            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-mvcc-fee --lib --all-features "$selector" -- --exact --show-output --test-threads=1; then
++              failed=1
++            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
++              failed=1
++            fi
++          done
++          test "$failed" = 0
+       - name: Preserve native control records before the complete regression
+         if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+diff --git a/.github/workflows/pon-recent-batch-acceptance.yml b/.github/workflows/pon-recent-batch-acceptance.yml
+index 0cfbce4937..d915bcab94 100644
+--- a/.github/workflows/pon-recent-batch-acceptance.yml
++++ b/.github/workflows/pon-recent-batch-acceptance.yml
+@@ -66,7 +66,7 @@ jobs:
+             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+           fi
+           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
+-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 900b9dc8034856c6ee04caf0e1fd99bdbda6fc76
++          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = a7035222bc51cfe7f60e891398230c3179accc82
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = aa6c50f60f631574b341632be63d6cf20f40a8d1
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = e99453b1abe6ce589f003be199b5553241cba398

@@ -145,7 +145,13 @@ impl MvccFeeStoreV1 {
         validate_worker_count_v1(worker_count)?;
         let path = path.into();
         reject_sidecars(&path)?;
-        if path.exists() {
+        let store_exists = match fs::symlink_metadata(&path) {
+            Ok(_) => true,
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => false,
+            Err(cause) => return Err(error(MvccFeeErrorCodeV1::StoreFailure, cause.to_string())),
+        };
+        if store_exists {
+            require_existing_regular_store(&path)?;
             let connection = open_ro(&path)?;
             verify_schema(&connection)?;
             audit(&connection, &genesis)?;
@@ -513,11 +519,23 @@ fn reject_sidecars(path: &Path) -> MvccFeeResultV1<()> {
     for suffix in ["-wal", "-shm", "-journal"] {
         let mut sidecar: OsString = path.as_os_str().to_os_string();
         sidecar.push(suffix);
-        if Path::new(&sidecar).exists() {
-            return Err(error(
-                MvccFeeErrorCodeV1::SidecarPresent,
-                "SQLite sidecar present",
-            ));
+        match fs::symlink_metadata(Path::new(&sidecar)) {
+            Ok(_) => {
+                return Err(error(
+                    MvccFeeErrorCodeV1::SidecarPresent,
+                    "SQLite sidecar present",
+                ))
+            }
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => {}
+            Err(cause) => {
+                return Err(error(
+                    MvccFeeErrorCodeV1::StoreFailure,
+                    format!(
+                        "cannot inspect SQLite sidecar {}: {cause}",
+                        Path::new(&sidecar).display()
+                    ),
+                ))
+            }
         }
     }
     Ok(())

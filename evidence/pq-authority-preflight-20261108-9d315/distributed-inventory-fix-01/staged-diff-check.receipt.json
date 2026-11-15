@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 0.03289615595713258,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794129048.6657436,
+  "label": "staged-diff-check",
+  "logs": {
+    "staged-diff-check.stderr.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/staged-diff-check.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "staged-diff-check.stdout.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/staged-diff-check.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "passed": true,
+  "readback": {},
+  "started_unix_seconds": 1794129048.6328485
+}

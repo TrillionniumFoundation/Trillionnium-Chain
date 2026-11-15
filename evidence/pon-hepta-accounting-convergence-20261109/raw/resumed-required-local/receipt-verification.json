@@ -1,0 +1,55 @@
+{
+  "schema": "chain-c1-resumed-gate-receipt-audit-v1",
+  "record_kind": "postrun_byte_and_receipt_crosscheck",
+  "session_id": 82764,
+  "session_terminal_exit_code": 0,
+  "source": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+  "results": [
+    {
+      "label": "source-negatives",
+      "test_counts": [
+        "43"
+      ],
+      "log_sha256": "5264fe9aba0784a5cfa90e1c1825410255363f412e27420d2ffa46ab9fec7052",
+      "log_bytes": 6898,
+      "before_after_identical": true
+    },
+    {
+      "label": "ci-negatives",
+      "test_counts": [
+        "164"
+      ],
+      "log_sha256": "11637fac81390f157b102a3d410404d1703c09e04c8b0ddfbb1167482293dcde",
+      "log_bytes": 28147,
+      "before_after_identical": true
+    },
+    {
+      "label": "corpus-negatives",
+      "test_counts": [
+        "57"
+      ],
+      "log_sha256": "f1e11d517a7931415a9a26f70801c7cf0419d53c046d8edd1280831214455dec",
+      "log_bytes": 157,
+      "before_after_identical": true
+    },
+    {
+      "label": "corpus-identity",
+      "test_counts": [],
+      "log_sha256": "049ea5dda28da5d075f30488ec5359d5e6a69dc1fbc81c3d62af17ad211911de",
+      "log_bytes": 557,
+      "before_after_identical": true
+    },
+    {
+      "label": "repository-links",
+      "test_counts": [],
+      "log_sha256": "51827eab02a908a4d427a50ef3db1142d72be4aa65cac1b4a2a9cf18c0032634",
+      "log_bytes": 307,
+      "before_after_identical": true
+    }
+  ],
+  "old_session_terminal_claimed": false,
+  "strict_clippy_in_this_packet": false,
+  "qualification": "HOLD_NO_GO",
+  "verified_utc": "2026-11-09T04:44:52.484356+00:00"
+}

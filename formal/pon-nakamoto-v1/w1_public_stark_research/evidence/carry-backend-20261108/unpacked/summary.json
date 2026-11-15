@@ -1,0 +1,112 @@
+{
+  "source_commit": "ac4927c52266e7bd1fae547f92a1d0753f4f96d6",
+  "source_archive_sha256": "52feb8dd3094eb7a1a53ed0b25d573ab7b00b9778ffa417b8e92c834d458fda8",
+  "runs": [
+    {
+      "index": 0,
+      "variant": "A",
+      "accepted": true,
+      "pipeline_s": 44.058102799,
+      "prepare_s": 0.041733204,
+      "prove_s": 43.01071998,
+      "verify_s": 1.005649615,
+      "rss_prove_kib": 2383652,
+      "bytes": 5264276
+    },
+    {
+      "index": 1,
+      "variant": "B",
+      "accepted": true,
+      "pipeline_s": 15.640798903,
+      "prepare_s": 0.103751225,
+      "prove_s": 14.292164052,
+      "verify_s": 1.244883626,
+      "rss_prove_kib": 2036092,
+      "bytes": 5039604
+    },
+    {
+      "index": 2,
+      "variant": "B",
+      "accepted": true,
+      "pipeline_s": 16.656072564,
+      "prepare_s": 0.021512165,
+      "prove_s": 15.169448628,
+      "verify_s": 1.465111771,
+      "rss_prove_kib": 2037168,
+      "bytes": 5039604
+    },
+    {
+      "index": 3,
+      "variant": "A",
+      "accepted": true,
+      "pipeline_s": 32.511755344,
+      "prepare_s": 0.07753952,
+      "prove_s": 29.810886462,
+      "verify_s": 2.623329362,
+      "rss_prove_kib": 2383828,
+      "bytes": 5264276
+    },
+    {
+      "index": 4,
+      "variant": "A",
+      "accepted": true,
+      "pipeline_s": 32.145081198,
+      "prepare_s": 0.043576366,
+      "prove_s": 31.171163965,
+      "verify_s": 0.930340867,
+      "rss_prove_kib": 2384056,
+      "bytes": 5264276
+    },
+    {
+      "index": 5,
+      "variant": "B",
+      "accepted": true,
+      "pipeline_s": 15.442370036,
+      "prepare_s": 0.0247315,
+      "prove_s": 14.159465125,
+      "verify_s": 1.258173411,
+      "rss_prove_kib": 2038620,
+      "bytes": 5039604
+    },
+    {
+      "index": 6,
+      "variant": "B",
+      "accepted": true,
+      "pipeline_s": 15.037993577,
+      "prepare_s": 0.031060382,
+      "prove_s": 13.803678571,
+      "verify_s": 1.203254624,
+      "rss_prove_kib": 2039136,
+      "bytes": 5039604
+    },
+    {
+      "index": 7,
+      "variant": "A",
+      "accepted": true,
+      "pipeline_s": 23.805702891,
+      "prepare_s": 0.020192734,
+      "prove_s": 22.862359626,
+      "verify_s": 0.923150531,
+      "rss_prove_kib": 2384436,
+      "bytes": 5264276
+    }
+  ],
+  "groups": {
+    "A": {
+      "pipeline_s": 32.328418271000004,
+      "prepare_s": 0.042654785,
+      "prove_s": 30.491025213500002,
+      "verify_s": 0.967995241,
+      "rss_prove_kib": 2383942.0,
+      "bytes": 5264276.0
+    },
+    "B": {
+      "pipeline_s": 15.5415844695,
+      "prepare_s": 0.027895941,
+      "prove_s": 14.2258145885,
+      "verify_s": 1.2515285185,
+      "rss_prove_kib": 2037894.0,
+      "bytes": 5039604.0
+    }
+  }
+}

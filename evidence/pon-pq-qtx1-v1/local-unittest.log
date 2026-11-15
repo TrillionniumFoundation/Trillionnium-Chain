@@ -1,0 +1,17 @@
+test_change_any_canonical_body_byte_fails (test_pq_transaction.PQTransferTests.test_change_any_canonical_body_byte_fails) ... ok
+test_cross_purpose_signed_payload_cannot_be_used_for_transactions (test_pq_transaction.PQTransferTests.test_cross_purpose_signed_payload_cannot_be_used_for_transactions) ... ok
+test_fee_balance_expiry_and_no_integer_wrap (test_pq_transaction.PQTransferTests.test_fee_balance_expiry_and_no_integer_wrap) ... ok
+test_memo_512_bytes_roundtrip_without_signature (test_pq_transaction.PQTransferTests.test_memo_512_bytes_roundtrip_without_signature) ... ok
+test_noncanonical_or_missing_key_binding_reject (test_pq_transaction.PQTransferTests.test_noncanonical_or_missing_key_binding_reject) ... ok
+test_public_key_and_full_signature_are_mandatory (test_pq_transaction.PQTransferTests.test_public_key_and_full_signature_are_mandatory) ... ok
+test_real_pq_size_cannot_fit_unmodified_legacy_wire (test_pq_transaction.PQTransferTests.test_real_pq_size_cannot_fit_unmodified_legacy_wire) ... ok
+test_real_signature_and_transfer_preflight (test_pq_transaction.PQTransferTests.test_real_signature_and_transfer_preflight) ... ok
+test_reject_unexpected_frames_and_memo_size (test_pq_transaction.PQTransferTests.test_reject_unexpected_frames_and_memo_size) ... ok
+test_replay_account_generation_and_nonce_reject (test_pq_transaction.PQTransferTests.test_replay_account_generation_and_nonce_reject) ... ok
+test_signed_identity_does_not_use_signature_randomness (test_pq_transaction.PQTransferTests.test_signed_identity_does_not_use_signature_randomness) ... ok
+test_true_bool_float_and_out_of_range_rejected (test_pq_transaction.PQTransferTests.test_true_bool_float_and_out_of_range_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 1.282s
+
+OK

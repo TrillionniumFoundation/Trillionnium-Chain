@@ -1,0 +1,139 @@
+{
+  "schema": "trnm-layout-candidate-result-v1",
+  "completed_utc": "2026-11-03T20:59:14.720353+00:00",
+  "candidate_source_identity": {
+    "parent_commit": "af570eaef44870ba3ec1f3d5be2cbdde2981931d",
+    "diagnostics_patch_sha256": "45c21442c0ccf4254533c1f2b208a47626945f70d7295251590758042e5395fe",
+    "native_source_manifest_sha256": "22cd64ab7427e49ed5d844b2fe7c6b8d7ca11799b25b78d4cea8eccfa5e54af3",
+    "working_tree_diff_sha256": "477eb0f8fd847119220bce55372a67ca9378d6c33aef13ffbd30b3edc28813d4",
+    "applied_receipt_sha256": "ee4b5d7b5bdd6afad14aa88e3f5f0dfa418702bd30d1fba9d7d132d216dc8f62"
+  },
+  "plan_sha256": "9c0985789e0c4438fe8af6ea8a8636a1c61e152f87d2ad527aff924df5db8413",
+  "completed": true,
+  "measured_type": {
+    "schema": "trnm-public-request-observation-layout-v1",
+    "type_path": "trnm_pon_node::ingress::public_v3::PublicRequestObservation",
+    "size_bytes": 2664,
+    "align_bytes": 8
+  },
+  "baseline_measured_type": {
+    "schema": "trnm-public-request-observation-layout-v1",
+    "type_path": "trnm_pon_node::ingress::public_v3::PublicRequestObservation",
+    "size_bytes": 2376,
+    "align_bytes": 8
+  },
+  "public_record_delta_bytes": 288,
+  "public_record_align_delta_bytes": 0,
+  "public_record_capacity_16384_delta_bytes": 4718592,
+  "public_record_capacity_16384_delta_mib": 4.5,
+  "compiler_artifact_profile": {
+    "opt_level": "3",
+    "debuginfo": 2,
+    "debug_assertions": true,
+    "overflow_checks": true,
+    "test": false
+  },
+  "compiler_artifact_features": [
+    "default",
+    "pq-native-openssl"
+  ],
+  "compiler_artifact_fresh": false,
+  "compile": {
+    "argv": [
+      "/workspace/scratch/b5a148b09b11/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "--edition=2021",
+      "--crate-name",
+      "public_request_observation_layout",
+      "--crate-type",
+      "bin",
+      "-C",
+      "opt-level=3",
+      "-C",
+      "debuginfo=2",
+      "-C",
+      "debug-assertions=yes",
+      "-C",
+      "overflow-checks=yes",
+      "--error-format=json",
+      "-L",
+      "dependency=/workspace/scratch/b5a148b09b11/target/debug/deps",
+      "--extern",
+      "trnm_pon_node=/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_pon_node-8f385318f2b1b47b.rlib",
+      "-L",
+      "native=/workspace/scratch/b5a148b09b11/target/debug/build/libsqlite3-sys-0b4e9332de508ef1/out",
+      "-L",
+      "native=/workspace/scratch/b5a148b09b11/provider/trnm-pq-provider-3.5.9.Dd13QuZx/install/lib",
+      "-L",
+      "native=/workspace/scratch/b5a148b09b11/target/debug/build/trnm-sqlite-io-boundary-1f7024ebc7559ac9/out",
+      "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/layout-candidate/layout_probe.rs",
+      "-o",
+      "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/layout-candidate/layout-probe"
+    ],
+    "cwd": "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/layout-candidate",
+    "exit_code": 0,
+    "timed_out": false,
+    "wall_ns": 332697097,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "probe_execution": {
+    "argv": [
+      "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/layout-candidate/layout-probe"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "wall_ns": 1390639,
+    "stdout_sha256": "61e081d047437422cc3f3b386ea9f3bc05008b130fafd1d8e1d422fb562b9163",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "rlib_path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_pon_node-8f385318f2b1b47b.rlib",
+  "rlib_before": {
+    "device": 27,
+    "inode": 1859617,
+    "size": 237516804,
+    "mtime_ns": 1793739246797465576,
+    "sha256": "9b2aaf11dd36e7eb89820214e0bb39841abcd1922f79fe934cfe3a52b65ada45"
+  },
+  "rlib_after": {
+    "device": 27,
+    "inode": 1859617,
+    "size": 237516804,
+    "mtime_ns": 1793739246797465576,
+    "sha256": "9b2aaf11dd36e7eb89820214e0bb39841abcd1922f79fe934cfe3a52b65ada45"
+  },
+  "probe_elf_path": "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/layout-candidate/layout-probe",
+  "probe_elf_before": {
+    "device": 27,
+    "inode": 1625866,
+    "size": 4339992,
+    "mtime_ns": 1793739554449118383,
+    "sha256": "1e3e398b0fe5eb8572fe568a3469e8d19a2f386455f7f923a0d2d66ae9430968"
+  },
+  "probe_elf_after": {
+    "device": 27,
+    "inode": 1625866,
+    "size": 4339992,
+    "mtime_ns": 1793739554449118383,
+    "sha256": "1e3e398b0fe5eb8572fe568a3469e8d19a2f386455f7f923a0d2d66ae9430968"
+  },
+  "helper_source_sha256": "c0d25acbbdc7618a2c22fd2a637c5b7dab20e0b652e89deefad33144e3b9c47f",
+  "helper_identical_to_baseline": true,
+  "compiler_sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+  "compiler_identical_to_baseline": true,
+  "source_bound_files_unchanged": true,
+  "native_source_manifest_unchanged": true,
+  "build_stdout_prefix_preserved": true,
+  "build_stdout_bytes_after": 117817,
+  "overall_build_qualified": false,
+  "native_test_bodies_executed": 0,
+  "native_suite_qualified": false,
+  "task_cell_layout_measured": false,
+  "performance_qualified": false,
+  "limits": [
+    "Only the public record layout and its baseline-to-candidate delta are actually measured.",
+    "Private TaskProgress and Cell sizes and total observer memory remain estimates; a public record delta is not a total Cell delta.",
+    "Capacity multiplication is a size arithmetic projection, not a process RSS or heap-pressure measurement.",
+    "This completed non-test artifact and tiny probe do not certify the overall build, lint gates, original native test suite, Host or service acceptance.",
+    "The build stdout copy is an immutable observed prefix; later successful or failed build terminal status belongs to the main validation."
+  ]
+}

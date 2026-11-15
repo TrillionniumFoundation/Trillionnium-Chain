@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/workspace/scratch/8e76272d9258/chain-joint-tail",
+  "elapsed_seconds": 14.84547546000067,
+  "error": null,
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "label": "repository",
+  "native_probability_qualified": false,
+  "passed": true,
+  "production_activation": false,
+  "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+  "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310",
+  "started_at_utc": "2026-11-10T07:31:46.051378+00:00",
+  "stderr": "repository.stderr.log",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "repository.stdout.log",
+  "stdout_sha256": "fb936d18b3ce7d445c3a840a34af276de472811a242593e75a282afc46038093"
+}

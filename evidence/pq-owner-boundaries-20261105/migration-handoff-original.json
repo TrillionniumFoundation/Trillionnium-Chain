@@ -1,0 +1,221 @@
+{
+  "schema": "chain-migration-owner-handoff-v1",
+  "source_candidate": {
+    "commit": "14fcbede085b414a9621aef3f288d2b1ca1839ae",
+    "tree": "64b1a7e4072eddac05604d4bb4b1ef713e10d874",
+    "parent": "04be5f02c84cf5cb626a53f34bc03a5bd6ff5137",
+    "clean": true
+  },
+  "original_fix_commit": "36f5d18a93834792025326cfb178415d78103e42",
+  "original_base_commit": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+  "fix_scope": "TrustedPqPrecommitments::pin_checkpoint now refuses unprojected nonmonetary source rows, all quota/release lifecycle rows even when zero, and missing/null/nonzero current model before creating a new-genesis trusted import anchor. Existing nonzero liability error and supported account/task/reward import behavior are retained.",
+  "current_native_results": {
+    "targets": 25,
+    "passed": 246,
+    "failed": 0,
+    "ignored": 8,
+    "filtered_out": 0,
+    "all_features": true,
+    "strict_clippy": "PASS",
+    "workspace_fmt_check": "PASS",
+    "elapsed_full_package_seconds": 299.1644940376282,
+    "elapsed_clippy_seconds": 20.80440068244934,
+    "elapsed_fmt_seconds": 15.088303089141846
+  },
+  "original_results_scope": {
+    "red_source": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155 plus exact receipts/migration-red-tests.patch",
+    "red_passed": 9,
+    "red_failed": 3,
+    "green_source": "36f5d18a93834792025326cfb178415d78103e42",
+    "green_passed": 239,
+    "green_failed": 0,
+    "green_ignored": 7,
+    "preserved_materialization_failures": [
+      "migration-red-build-missing-vector",
+      "migration-package-build-missing-quorum-vector"
+    ]
+  },
+  "binary_scope": "Native M06 test executables only, not a Node or deployment binary. Current 14f artifacts replace rebuildable prior target outputs; prior observations/hashes and all command logs retain their original source scope.",
+  "remaining_open": [
+    "historically authenticated PQ precommitment and prior-compromise accounting",
+    "canonical/final source checkpoint and activation/reorg rules",
+    "real source write retirement and independent read-only archive",
+    "explicit preservation or retirement of unsupported debt/revocation/settlement/execution owners",
+    "external monotonic consumption and rollback-resistant recovery owners",
+    "single deployment binary/config pair plus full hostile W1/WAN/fault/independent acceptance"
+  ],
+  "remote_writes_by_this_agent": false,
+  "evidence": [
+    {
+      "path": "migration-source-scope.json",
+      "bytes": 949,
+      "sha256": "36adfcff745eca863a7800ebaa13cece2edf321702e83c508d84eba1250c7699"
+    },
+    {
+      "path": "migration-source-scope.patch",
+      "bytes": 8943,
+      "sha256": "64ac5ddd4a4c2bc05151d2237b031a3c0c99765cacb16f8f18a439fe0d04ba46"
+    },
+    {
+      "path": "native-env.json",
+      "bytes": 805,
+      "sha256": "4d51c60d6f7408e873a4c6ad71055adc70a4a4a6cd7ebf70e164db95907abb6e"
+    },
+    {
+      "path": "receipts/cache-cleanup-14f.json",
+      "bytes": 6941,
+      "sha256": "f944c1e578695be23573f2c9e410b30fccf123cb2cb640ad1154591a8f298e33"
+    },
+    {
+      "path": "receipts/cache-cleanup-36f.json",
+      "bytes": 7693,
+      "sha256": "367d9f2534f214532eb4217022a5f2a97a2e179fcdb7303f7f6242bddd6dc226"
+    },
+    {
+      "path": "receipts/merged-format.json",
+      "bytes": 1611,
+      "sha256": "af27e8fb3a4c54d348e83730e382eec6d554c210b5d5b73c96d64c64203439a8"
+    },
+    {
+      "path": "receipts/merged-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "receipts/merged-m06-clippy.json",
+      "bytes": 1718,
+      "sha256": "ff19adad65cc3ed1ff3871610ff6197de546cd2a02f207d02cbb51e431c6d869"
+    },
+    {
+      "path": "receipts/merged-m06-clippy.log",
+      "bytes": 195,
+      "sha256": "312d16b080aad914893980bbf8c5d32756e7afd96ca2f4f2d7a105938cfd2089"
+    },
+    {
+      "path": "receipts/merged-m06-lib-artifact.json",
+      "bytes": 2275,
+      "sha256": "f862d13531f15305244bf82f8d60133e6ad320caad36e5e775d3cd47ed15f993"
+    },
+    {
+      "path": "receipts/merged-m06-lib.json",
+      "bytes": 1673,
+      "sha256": "cd79f4adedb651c32ec836410f4ce711722b950b0c7b9c25e1906e32f01b696a"
+    },
+    {
+      "path": "receipts/merged-m06-lib.log",
+      "bytes": 17530,
+      "sha256": "ea809eb1fddd281e78f77c5215665a2eb8b1cd2ef8d040b73d77463a131456a8"
+    },
+    {
+      "path": "receipts/merged-m06-native-artifacts.json",
+      "bytes": 8035,
+      "sha256": "1a22da87bceb9cead0365abf9898b055f451d7d6b3d429a0b802af0ea8ba93ff"
+    },
+    {
+      "path": "receipts/merged-m06-package.json",
+      "bytes": 1680,
+      "sha256": "7c1cbc6620d40d456ac6cf74992f1fc1eb5b00387ae91a921768afa9489c470c"
+    },
+    {
+      "path": "receipts/merged-m06-package.log",
+      "bytes": 33562,
+      "sha256": "e8c07e12c47cdb8018fc3595dfcb0abb01fb449b03c12c1deb07d1b7b5f1c375"
+    },
+    {
+      "path": "receipts/merged-materialization.json",
+      "bytes": 691,
+      "sha256": "be5582c7d484b8d9f3e36a2d854aa90e36edd2112cc974ede678fd2e60822b05"
+    },
+    {
+      "path": "receipts/migration-clippy.json",
+      "bytes": 1718,
+      "sha256": "3aac077b635e622141ffc46fc9b28e541193afac3e33df7e6581bf640f68faf8"
+    },
+    {
+      "path": "receipts/migration-clippy.log",
+      "bytes": 2495,
+      "sha256": "279fe5bfc63997312277930f37d2983198e33283e8a2764a9da1ea64295f27ea"
+    },
+    {
+      "path": "receipts/migration-format.json",
+      "bytes": 1611,
+      "sha256": "2ccbdd8f0a88633fd2d8d4046720792f54ded5eaf3054582fe623272c2bdadc4"
+    },
+    {
+      "path": "receipts/migration-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "receipts/migration-native-artifacts.json",
+      "bytes": 9081,
+      "sha256": "51c2e83af9b0dbb768de323cc62cc992ab177c51cbc73b43bb9c9b838691c892"
+    },
+    {
+      "path": "receipts/migration-package-build-missing-quorum-vector.json",
+      "bytes": 1683,
+      "sha256": "65b863299b3e32baeeb03f3f69524703d674948f4f7d4052c83d2e0d75d93fc6"
+    },
+    {
+      "path": "receipts/migration-package-build-missing-quorum-vector.log",
+      "bytes": 638,
+      "sha256": "ed3d1065b06b0f183fe5666855733f3cf70f7b1bd1a455b547590439037d3ca2"
+    },
+    {
+      "path": "receipts/migration-package-green.json",
+      "bytes": 1681,
+      "sha256": "59923af80863efe43534e71fb1eb756736f1f5b84f6531fcc726b0800c312a71"
+    },
+    {
+      "path": "receipts/migration-package-green.log",
+      "bytes": 32573,
+      "sha256": "36ed66b2028edb292d3327c4c6afc44666b55273a88f85e9044e74b6932b772d"
+    },
+    {
+      "path": "receipts/migration-red-build-missing-vector.json",
+      "bytes": 443,
+      "sha256": "669022544bafd14a1237748228ab578b6f3d17584d45ceeb21bfcc169a4e166e"
+    },
+    {
+      "path": "receipts/migration-red-build-missing-vector.log",
+      "bytes": 3882,
+      "sha256": "d844e45c8c694c58d7bc2944fd928ad392f725240ce359561b3649be23f161c0"
+    },
+    {
+      "path": "receipts/migration-red-tests.patch",
+      "bytes": 3734,
+      "sha256": "e353835c39396e742a3c0b9ae1ca247ba366da57358f9339f67ad1c4a262615b"
+    },
+    {
+      "path": "receipts/migration-red.json",
+      "bytes": 2192,
+      "sha256": "7495f943d701d54d9724417ca9df97e6108c8b963f3a0da1170d21a6cbcaae0c"
+    },
+    {
+      "path": "receipts/migration-red.log",
+      "bytes": 3509,
+      "sha256": "3332481009a579dcab45ccc1ee7c3760939a34f753977d63040bff2f8f714320"
+    },
+    {
+      "path": "receipts/native-profile-scope.json",
+      "bytes": 1739,
+      "sha256": "096fc8d33809f2bf47b17f997d7a766cccae84437f8ed5a6a36f2eb18e32bd64"
+    },
+    {
+      "path": "receipts/toolchain-provider.json",
+      "bytes": 2250,
+      "sha256": "c7490e9de7b17ec8d60eac5b89f9d10c4da60a11a79098df949d5fd354f85439"
+    },
+    {
+      "path": "run-native.py",
+      "bytes": 2110,
+      "sha256": "a11009176b4f329e031f6284160361cab4b272cfbab44e4790054b43578b529f"
+    }
+  ],
+  "retained_current_binary": {
+    "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
+    "sha256": "42c842540decc5c7e9af82151993fb2f8e4e5c6fdee9ca76ed0ccf41293eebb1",
+    "bytes": 75885544
+  },
+  "cache_cleanup": "receipts/cache-cleanup-14f.json; all native gates completed before reclaiming 24 auxiliary executables"
+}

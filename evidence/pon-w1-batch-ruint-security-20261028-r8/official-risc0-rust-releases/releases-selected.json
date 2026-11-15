@@ -1,0 +1,242 @@
+[
+  {
+    "tag_name": "r0.1.97.0",
+    "name": "r0.1.97.0",
+    "published_at": "2026-07-16T17:25:10Z",
+    "prerelease": false,
+    "draft": false,
+    "html_url": "https://github.com/risc0/rust/releases/tag/r0.1.97.0",
+    "target_commitish": "risc0-1.97.0",
+    "body": "Rust version 1.97.0",
+    "assets": [
+      {
+        "name": "rust-toolchain-aarch64-apple-darwin.tar.gz",
+        "size": 442966921,
+        "digest": "sha256:85070d82aebbe8e1027e75f2cd0c781f5c82c0ae7e06697218be9d8b71dec15d",
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.97.0/rust-toolchain-aarch64-apple-darwin.tar.gz"
+      },
+      {
+        "name": "rust-toolchain-x86_64-unknown-linux-gnu.tar.gz",
+        "size": 528796425,
+        "digest": "sha256:100b597d605b706bec94e1d32bfaaf5851df8d75173f986d4b56a3e90916be53",
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.97.0/rust-toolchain-x86_64-unknown-linux-gnu.tar.gz"
+      }
+    ]
+  },
+  {
+    "tag_name": "r0.1.94.1",
+    "name": "r0.1.94.1",
+    "published_at": "2026-04-09T20:53:12Z",
+    "prerelease": false,
+    "draft": false,
+    "html_url": "https://github.com/risc0/rust/releases/tag/r0.1.94.1",
+    "target_commitish": "risc0-1.94.1",
+    "body": "Rust version 1.94.1",
+    "assets": [
+      {
+        "name": "rust-toolchain-aarch64-apple-darwin.tar.gz",
+        "size": 424869259,
+        "digest": "sha256:98e3a91ff4a709814e04aaeb92757731a01bd0e8f0f864a5ec19b528a22f7955",
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.94.1/rust-toolchain-aarch64-apple-darwin.tar.gz"
+      },
+      {
+        "name": "rust-toolchain-x86_64-unknown-linux-gnu.tar.gz",
+        "size": 512619537,
+        "digest": "sha256:e88d823762fc06e8911fb6b310ffe2fca8fcd7af2438572f7aa90aaf3e84ea02",
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.94.1/rust-toolchain-x86_64-unknown-linux-gnu.tar.gz"
+      }
+    ]
+  },
+  {
+    "tag_name": "r0.1.91.1",
+    "name": "r0.1.91.1",
+    "published_at": "2025-11-25T18:43:46Z",
+    "prerelease": false,
+    "draft": false,
+    "html_url": "https://github.com/risc0/rust/releases/tag/r0.1.91.1",
+    "target_commitish": "risc0-1.91.1",
+    "body": "Rust version 1.91.1",
+    "assets": [
+      {
+        "name": "rust-toolchain-aarch64-apple-darwin.tar.gz",
+        "size": 427954586,
+        "digest": "sha256:53cb7bcb2e5ac21a283ad4dffc944220806ad15e1141da181d135fac1ef2a4e4",
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.91.1/rust-toolchain-aarch64-apple-darwin.tar.gz"
+      },
+      {
+        "name": "rust-toolchain-x86_64-unknown-linux-gnu.tar.gz",
+        "size": 515330687,
+        "digest": "sha256:e082a1dc44abdef1d95460295a70218eb294ab999b834570ec932d05641cce5d",
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.91.1/rust-toolchain-x86_64-unknown-linux-gnu.tar.gz"
+      }
+    ]
+  },
+  {
+    "tag_name": "r0.1.88.0",
+    "name": "r0.1.88.0",
+    "published_at": "2025-06-27T06:33:01Z",
+    "prerelease": false,
+    "draft": false,
+    "html_url": "https://github.com/risc0/rust/releases/tag/r0.1.88.0",
+    "target_commitish": "risc0-1.88.0",
+    "body": "Rust version 1.88.0",
+    "assets": [
+      {
+        "name": "rust-toolchain-aarch64-apple-darwin.tar.gz",
+        "size": 406152725,
+        "digest": "sha256:f3d6a3dbe09536f7166cff53fd5ded632a0b5409b7cfaa5202423f6c3323c04c",
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.88.0/rust-toolchain-aarch64-apple-darwin.tar.gz"
+      },
+      {
+        "name": "rust-toolchain-x86_64-unknown-linux-gnu.tar.gz",
+        "size": 490849318,
+        "digest": "sha256:222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.88.0/rust-toolchain-x86_64-unknown-linux-gnu.tar.gz"
+      }
+    ]
+  },
+  {
+    "tag_name": "r0.1.85.0",
+    "name": "r0.1.85.0",
+    "published_at": "2025-03-13T00:02:39Z",
+    "prerelease": false,
+    "draft": false,
+    "html_url": "https://github.com/risc0/rust/releases/tag/r0.1.85.0",
+    "target_commitish": "risc0-1.85.0",
+    "body": "rust version 1.85.0",
+    "assets": [
+      {
+        "name": "rust-toolchain-aarch64-apple-darwin.tar.gz",
+        "size": 370473314,
+        "digest": null,
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.85.0/rust-toolchain-aarch64-apple-darwin.tar.gz"
+      },
+      {
+        "name": "rust-toolchain-x86_64-unknown-linux-gnu.tar.gz",
+        "size": 531064850,
+        "digest": null,
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.85.0/rust-toolchain-x86_64-unknown-linux-gnu.tar.gz"
+      }
+    ]
+  },
+  {
+    "tag_name": "r0.1.81.0",
+    "name": "r0.1.81.0",
+    "published_at": "2024-10-30T21:43:58Z",
+    "prerelease": false,
+    "draft": false,
+    "html_url": "https://github.com/risc0/rust/releases/tag/r0.1.81.0",
+    "target_commitish": "risc0-1.81.0",
+    "body": "zkvm version: 1.1.2\r\nrust version: 1.81.0",
+    "assets": [
+      {
+        "name": "rust-toolchain-aarch64-apple-darwin.tar.gz",
+        "size": 356021943,
+        "digest": null,
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.81.0/rust-toolchain-aarch64-apple-darwin.tar.gz"
+      },
+      {
+        "name": "rust-toolchain-x86_64-unknown-linux-gnu.tar.gz",
+        "size": 428594112,
+        "digest": null,
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.81.0/rust-toolchain-x86_64-unknown-linux-gnu.tar.gz"
+      }
+    ]
+  },
+  {
+    "tag_name": "r0.1.79.0-2",
+    "name": "r0.1.79.0-2",
+    "published_at": "2024-08-21T18:40:59Z",
+    "prerelease": false,
+    "draft": false,
+    "html_url": "https://github.com/risc0/rust/releases/tag/r0.1.79.0-2",
+    "target_commitish": "erik/risc0-1.79.0",
+    "body": "1.79.0 toolchain with `thread_local` + use release runners to build the toolchain",
+    "assets": [
+      {
+        "name": "rust-toolchain-aarch64-apple-darwin.tar.gz",
+        "size": 397194658,
+        "digest": null,
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.79.0-2/rust-toolchain-aarch64-apple-darwin.tar.gz"
+      },
+      {
+        "name": "rust-toolchain-x86_64-unknown-linux-gnu.tar.gz",
+        "size": 504142871,
+        "digest": null,
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.79.0-2/rust-toolchain-x86_64-unknown-linux-gnu.tar.gz"
+      }
+    ]
+  },
+  {
+    "tag_name": "r0.1.80.1-1",
+    "name": "r0.1.80.1-1",
+    "published_at": "2024-08-20T21:00:11Z",
+    "prerelease": true,
+    "draft": false,
+    "html_url": "https://github.com/risc0/rust/releases/tag/r0.1.80.1-1",
+    "target_commitish": "erik/risc0-1.80.1",
+    "body": "This is the rust 1.80.1 toolchain with the thread local fix\r\n\r\n**Full Changelog**: https://github.com/risc0/rust/compare/r0.1.80.1...r0.1.80.1-1",
+    "assets": [
+      {
+        "name": "rust-toolchain-aarch64-apple-darwin.tar.gz",
+        "size": 399121734,
+        "digest": null,
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.80.1-1/rust-toolchain-aarch64-apple-darwin.tar.gz"
+      },
+      {
+        "name": "rust-toolchain-x86_64-unknown-linux-gnu.tar.gz",
+        "size": 492448670,
+        "digest": null,
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.80.1-1/rust-toolchain-x86_64-unknown-linux-gnu.tar.gz"
+      }
+    ]
+  },
+  {
+    "tag_name": "r0.1.79.0-1",
+    "name": "r0.1.79.0-1",
+    "published_at": "2024-08-20T20:45:05Z",
+    "prerelease": true,
+    "draft": false,
+    "html_url": "https://github.com/risc0/rust/releases/tag/r0.1.79.0-1",
+    "target_commitish": "erik/risc0-1.79.0",
+    "body": "This is the rust 1.79.0 toolchain with a fix for thread_local.\r\n\r\n## What's Changed\r\n* rust 1.79: Use static impl for thread_local by @flaub in https://github.com/risc0/rust/pull/17\r\n\r\n\r\n**Full Changelog**: https://github.com/risc0/rust/compare/r0.1.79.0...r0.1.79.0-1",
+    "assets": [
+      {
+        "name": "rust-toolchain-aarch64-apple-darwin.tar.gz",
+        "size": 395539191,
+        "digest": null,
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.79.0-1/rust-toolchain-aarch64-apple-darwin.tar.gz"
+      },
+      {
+        "name": "rust-toolchain-x86_64-unknown-linux-gnu.tar.gz",
+        "size": 503907843,
+        "digest": null,
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.79.0-1/rust-toolchain-x86_64-unknown-linux-gnu.tar.gz"
+      }
+    ]
+  },
+  {
+    "tag_name": "r0.1.78.0-1",
+    "name": "r0.1.78.0-1",
+    "published_at": "2024-08-20T20:43:34Z",
+    "prerelease": true,
+    "draft": false,
+    "html_url": "https://github.com/risc0/rust/releases/tag/r0.1.78.0-1",
+    "target_commitish": "erik/risc0-1.78.0",
+    "body": "This is the rust 1.78.0 tool chain with a fix for thread local storage.\r\n\r\n## What's Changed\r\n* rust 1.78: Use static impl for thread_local by @flaub in https://github.com/risc0/rust/pull/18\r\n\r\n\r\n**Full Changelog**: https://github.com/risc0/rust/compare/r0.1.78.0...r0.1.78.0-1",
+    "assets": [
+      {
+        "name": "rust-toolchain-aarch64-apple-darwin.tar.gz",
+        "size": 394404895,
+        "digest": null,
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.78.0-1/rust-toolchain-aarch64-apple-darwin.tar.gz"
+      },
+      {
+        "name": "rust-toolchain-x86_64-unknown-linux-gnu.tar.gz",
+        "size": 502422613,
+        "digest": null,
+        "browser_download_url": "https://github.com/risc0/rust/releases/download/r0.1.78.0-1/rust-toolchain-x86_64-unknown-linux-gnu.tar.gz"
+      }
+    ]
+  }
+]

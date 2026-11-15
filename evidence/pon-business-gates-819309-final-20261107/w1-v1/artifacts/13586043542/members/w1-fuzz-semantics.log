@@ -1,0 +1,70 @@
+   Compiling libc v0.2.184
+   Compiling syn v2.0.117
+   Compiling vcpkg v0.2.15
+   Compiling pkg-config v0.3.32
+   Compiling libsqlite3-sys v0.37.0
+   Compiling cpufeatures v0.2.17
+   Compiling hashbrown v0.16.1
+   Compiling winnow v1.0.4
+   Compiling equivalent v1.0.2
+   Compiling indexmap v2.13.1
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling sha2 v0.10.9
+   Compiling generic-array v0.14.7
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling foldhash v0.2.0
+   Compiling typenum v1.20.1
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling cfg_aliases v0.2.2
+   Compiling borsh v1.8.0
+   Compiling proc-macro-crate v3.5.0
+   Compiling hashlink v0.11.1
+   Compiling serde_derive v1.0.228
+   Compiling cpufeatures v0.3.1
+   Compiling once_cell v1.21.4
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling smallvec v1.15.1
+   Compiling fallible-iterator v0.3.0
+   Compiling borsh-derive v1.8.0
+   Compiling keccak v0.2.2
+   Compiling serde v1.0.228
+   Compiling ed25519-dalek v2.2.0
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling thiserror-impl v1.0.69
+   Compiling shake v0.1.0
+   Compiling thiserror v1.0.69
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.4
+   Compiling rustix v1.1.4
+   Compiling trnm-protocol v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol)
+   Compiling ml-dsa v0.1.1
+   Compiling getrandom v0.4.2
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-crypto-primitives v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-verification-profiles v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles)
+   Compiling fs2 v0.4.3
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-transport v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport)
+   Compiling trnm-mempool v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mempool)
+   Compiling rusqlite v0.39.0
+   Compiling trnm-task-kernel v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-service-settlement v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 2m 59s
+     Running tests/work_fuzz_semantics.rs (/home/runner/work/_temp/target-w1-security/release/deps/work_fuzz_semantics-56f4febaa61f9b26)
+
+running 6 tests
+test cancellation_is_identical_at_early_middle_and_last_observation ... ok
+test canonical_product_mutations_reach_product_without_verification_authority ... ok
+test challenge_and_transcript_mutations_reject_before_product ... ok
+test raw_malformed_certificates_are_not_replaced_by_semantic_fixtures ... ok
+test retained_winner_accepts_at_its_exact_ticket ... ok
+test target_predecessor_and_wrong_task_reject_before_replay ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+

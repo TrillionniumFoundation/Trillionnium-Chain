@@ -1,0 +1,8 @@
+{
+  "command": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "returncode": 0,
+  "elapsed_ns": 49249052
+}

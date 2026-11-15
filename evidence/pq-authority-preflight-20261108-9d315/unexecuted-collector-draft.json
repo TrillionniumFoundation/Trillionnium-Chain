@@ -1,0 +1,8 @@
+{
+  "bytes": 57497,
+  "executed": false,
+  "filename": "finalize-authority-followup-evidence.py",
+  "reason": "The actual 32-command run failed; no PASS-only collector was executed.",
+  "sha256": "d540116532977cdf3aa7cf14480bc3968cd934e2eb28978fd3ad9f60f9cce0f7",
+  "superseded_by": "retain-authority-hold-evidence.py"
+}

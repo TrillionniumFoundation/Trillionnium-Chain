@@ -1,0 +1,864 @@
+[
+  {
+    "run": 1,
+    "criteria": false,
+    "phases": [
+      {
+        "mode": "baseline",
+        "native_phase_criteria_met": true,
+        "confirmed_rounds": 3,
+        "genuine_budget_depletion_observed": false,
+        "actor_reports_successful_without_cap_or_kill": true,
+        "native_verifier_errors": [],
+        "rounds": [
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 2301690520,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": false,
+            "round": 0,
+            "started_ns": 1001479374
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 6244800255,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": false,
+            "round": 1,
+            "started_ns": 5000889946
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 10285270220,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": false,
+            "round": 2,
+            "started_ns": 9001270844
+          }
+        ],
+        "paid_cpu_ns": 1488638207,
+        "keys": [
+          "actor_reports_successful_without_cap_or_kill",
+          "attack_calls",
+          "attacker_processes_ready",
+          "attacker_processes_requested",
+          "completion_work_observation",
+          "confirmation_rounds",
+          "confirmed_rounds",
+          "final_actual_flow",
+          "final_cpu_meter",
+          "genuine_budget_depletion_observed",
+          "history",
+          "mode",
+          "native_phase_criteria_met",
+          "native_service_outcome",
+          "native_verifier_errors",
+          "observations_available",
+          "observed_confirmation_rounds",
+          "public_resource_policy",
+          "receiver",
+          "receiver_and_verifier_setup_cpu_ns",
+          "receiver_and_verifier_setup_wall_ns",
+          "receiver_client_state_equal",
+          "scheduled_confirmation_rounds",
+          "startup_or_campaign_error",
+          "state_backend",
+          "submissions",
+          "unobserved_scheduled_rounds",
+          "whole_parent_phase_cpu_ns",
+          "whole_parent_phase_wall_ns",
+          "window_seconds"
+        ],
+        "submissions": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 21,
+          "attempts": 21,
+          "errors": {},
+          "refusals": {},
+          "status_counts": {
+            "ok": 21
+          }
+        },
+        "attack_calls": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 0,
+          "attempts": 0,
+          "errors": {},
+          "refusals": {},
+          "status_counts": {}
+        },
+        "native_errors": {}
+      },
+      {
+        "mode": "from-zero",
+        "native_phase_criteria_met": false,
+        "confirmed_rounds": 3,
+        "genuine_budget_depletion_observed": false,
+        "actor_reports_successful_without_cap_or_kill": true,
+        "native_verifier_errors": [],
+        "rounds": [
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 3176358848,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 0,
+            "started_ns": 1001450254
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 7106060332,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 1,
+            "started_ns": 5000381446
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 11153497661,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 2,
+            "started_ns": 9000706155
+          }
+        ],
+        "paid_cpu_ns": 7529655303,
+        "keys": [
+          "actor_reports_successful_without_cap_or_kill",
+          "attack_calls",
+          "attacker_processes_ready",
+          "attacker_processes_requested",
+          "completion_work_observation",
+          "confirmation_rounds",
+          "confirmed_rounds",
+          "final_actual_flow",
+          "final_cpu_meter",
+          "genuine_budget_depletion_observed",
+          "history",
+          "mode",
+          "native_phase_criteria_met",
+          "native_service_outcome",
+          "native_verifier_errors",
+          "observations_available",
+          "observed_confirmation_rounds",
+          "public_resource_policy",
+          "receiver",
+          "receiver_and_verifier_setup_cpu_ns",
+          "receiver_and_verifier_setup_wall_ns",
+          "receiver_client_state_equal",
+          "scheduled_confirmation_rounds",
+          "startup_or_campaign_error",
+          "state_backend",
+          "submissions",
+          "unobserved_scheduled_rounds",
+          "whole_parent_phase_cpu_ns",
+          "whole_parent_phase_wall_ns",
+          "window_seconds"
+        ],
+        "submissions": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 21,
+          "attempts": 21,
+          "errors": {},
+          "refusals": {},
+          "status_counts": {
+            "ok": 21
+          }
+        },
+        "attack_calls": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 0,
+          "attempts": 3843,
+          "errors": {
+            "FRAME_DEADLINE": 3,
+            "IO: Resource temporarily unavailable (os error 11)": 21
+          },
+          "refusals": {
+            "WORK:Transcript": 3819
+          },
+          "status_counts": {
+            "error": 24,
+            "refused": 3819
+          }
+        },
+        "native_errors": {
+          "body": 1,
+          "hello": 20,
+          "solution": 3
+        }
+      },
+      {
+        "mode": "late-product",
+        "native_phase_criteria_met": false,
+        "confirmed_rounds": 3,
+        "genuine_budget_depletion_observed": false,
+        "actor_reports_successful_without_cap_or_kill": true,
+        "native_verifier_errors": [],
+        "rounds": [
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 3245063414,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 0,
+            "started_ns": 1000400330
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 7253223319,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 1,
+            "started_ns": 5001570125
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 11269720060,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 2,
+            "started_ns": 9000791681
+          }
+        ],
+        "paid_cpu_ns": 9004829149,
+        "keys": [
+          "actor_reports_successful_without_cap_or_kill",
+          "attack_calls",
+          "attacker_processes_ready",
+          "attacker_processes_requested",
+          "completion_work_observation",
+          "confirmation_rounds",
+          "confirmed_rounds",
+          "final_actual_flow",
+          "final_cpu_meter",
+          "genuine_budget_depletion_observed",
+          "history",
+          "mode",
+          "native_phase_criteria_met",
+          "native_service_outcome",
+          "native_verifier_errors",
+          "observations_available",
+          "observed_confirmation_rounds",
+          "public_resource_policy",
+          "receiver",
+          "receiver_and_verifier_setup_cpu_ns",
+          "receiver_and_verifier_setup_wall_ns",
+          "receiver_client_state_equal",
+          "scheduled_confirmation_rounds",
+          "startup_or_campaign_error",
+          "state_backend",
+          "submissions",
+          "unobserved_scheduled_rounds",
+          "whole_parent_phase_cpu_ns",
+          "whole_parent_phase_wall_ns",
+          "window_seconds"
+        ],
+        "submissions": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 21,
+          "attempts": 21,
+          "errors": {},
+          "refusals": {},
+          "status_counts": {
+            "ok": 21
+          }
+        },
+        "attack_calls": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 0,
+          "attempts": 3842,
+          "errors": {
+            "FRAME_DEADLINE": 3,
+            "IO: Resource temporarily unavailable (os error 11)": 21
+          },
+          "refusals": {
+            "WORK:Product": 3818
+          },
+          "status_counts": {
+            "error": 24,
+            "refused": 3818
+          }
+        },
+        "native_errors": {
+          "hello": 20,
+          "solution": 3
+        }
+      }
+    ]
+  },
+  {
+    "run": 2,
+    "criteria": false,
+    "phases": [
+      {
+        "mode": "baseline",
+        "native_phase_criteria_met": true,
+        "confirmed_rounds": 3,
+        "genuine_budget_depletion_observed": false,
+        "actor_reports_successful_without_cap_or_kill": true,
+        "native_verifier_errors": [],
+        "rounds": [
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 2221467221,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": false,
+            "round": 0,
+            "started_ns": 1000245577
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 6183596482,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": false,
+            "round": 1,
+            "started_ns": 5001514009
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 10252547393,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": false,
+            "round": 2,
+            "started_ns": 9000928180
+          }
+        ],
+        "paid_cpu_ns": 1399058857,
+        "keys": [
+          "actor_reports_successful_without_cap_or_kill",
+          "attack_calls",
+          "attacker_processes_ready",
+          "attacker_processes_requested",
+          "completion_work_observation",
+          "confirmation_rounds",
+          "confirmed_rounds",
+          "final_actual_flow",
+          "final_cpu_meter",
+          "genuine_budget_depletion_observed",
+          "history",
+          "mode",
+          "native_phase_criteria_met",
+          "native_service_outcome",
+          "native_verifier_errors",
+          "observations_available",
+          "observed_confirmation_rounds",
+          "public_resource_policy",
+          "receiver",
+          "receiver_and_verifier_setup_cpu_ns",
+          "receiver_and_verifier_setup_wall_ns",
+          "receiver_client_state_equal",
+          "scheduled_confirmation_rounds",
+          "startup_or_campaign_error",
+          "state_backend",
+          "submissions",
+          "unobserved_scheduled_rounds",
+          "whole_parent_phase_cpu_ns",
+          "whole_parent_phase_wall_ns",
+          "window_seconds"
+        ],
+        "submissions": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 21,
+          "attempts": 21,
+          "errors": {},
+          "refusals": {},
+          "status_counts": {
+            "ok": 21
+          }
+        },
+        "attack_calls": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 0,
+          "attempts": 0,
+          "errors": {},
+          "refusals": {},
+          "status_counts": {}
+        },
+        "native_errors": {}
+      },
+      {
+        "mode": "from-zero",
+        "native_phase_criteria_met": false,
+        "confirmed_rounds": 3,
+        "genuine_budget_depletion_observed": false,
+        "actor_reports_successful_without_cap_or_kill": true,
+        "native_verifier_errors": [],
+        "rounds": [
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 3122276022,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 0,
+            "started_ns": 1000439248
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 7178939201,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 1,
+            "started_ns": 5001355197
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 11207304599,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 2,
+            "started_ns": 9000384450
+          }
+        ],
+        "paid_cpu_ns": 7789375425,
+        "keys": [
+          "actor_reports_successful_without_cap_or_kill",
+          "attack_calls",
+          "attacker_processes_ready",
+          "attacker_processes_requested",
+          "completion_work_observation",
+          "confirmation_rounds",
+          "confirmed_rounds",
+          "final_actual_flow",
+          "final_cpu_meter",
+          "genuine_budget_depletion_observed",
+          "history",
+          "mode",
+          "native_phase_criteria_met",
+          "native_service_outcome",
+          "native_verifier_errors",
+          "observations_available",
+          "observed_confirmation_rounds",
+          "public_resource_policy",
+          "receiver",
+          "receiver_and_verifier_setup_cpu_ns",
+          "receiver_and_verifier_setup_wall_ns",
+          "receiver_client_state_equal",
+          "scheduled_confirmation_rounds",
+          "startup_or_campaign_error",
+          "state_backend",
+          "submissions",
+          "unobserved_scheduled_rounds",
+          "whole_parent_phase_cpu_ns",
+          "whole_parent_phase_wall_ns",
+          "window_seconds"
+        ],
+        "submissions": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 21,
+          "attempts": 21,
+          "errors": {},
+          "refusals": {},
+          "status_counts": {
+            "ok": 21
+          }
+        },
+        "attack_calls": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 0,
+          "attempts": 3843,
+          "errors": {
+            "FRAME_DEADLINE": 2,
+            "IO: Resource temporarily unavailable (os error 11)": 22
+          },
+          "refusals": {
+            "WORK:Transcript": 3819
+          },
+          "status_counts": {
+            "error": 24,
+            "refused": 3819
+          }
+        },
+        "native_errors": {
+          "hello": 21,
+          "queue": 1,
+          "solution": 2
+        }
+      },
+      {
+        "mode": "late-product",
+        "native_phase_criteria_met": false,
+        "confirmed_rounds": 3,
+        "genuine_budget_depletion_observed": false,
+        "actor_reports_successful_without_cap_or_kill": true,
+        "native_verifier_errors": [],
+        "rounds": [
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 3179776674,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 0,
+            "started_ns": 1001465450
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 7209206785,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 1,
+            "started_ns": 5000559700
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 11223586796,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 2,
+            "started_ns": 9000101650
+          }
+        ],
+        "paid_cpu_ns": 8765798936,
+        "keys": [
+          "actor_reports_successful_without_cap_or_kill",
+          "attack_calls",
+          "attacker_processes_ready",
+          "attacker_processes_requested",
+          "completion_work_observation",
+          "confirmation_rounds",
+          "confirmed_rounds",
+          "final_actual_flow",
+          "final_cpu_meter",
+          "genuine_budget_depletion_observed",
+          "history",
+          "mode",
+          "native_phase_criteria_met",
+          "native_service_outcome",
+          "native_verifier_errors",
+          "observations_available",
+          "observed_confirmation_rounds",
+          "public_resource_policy",
+          "receiver",
+          "receiver_and_verifier_setup_cpu_ns",
+          "receiver_and_verifier_setup_wall_ns",
+          "receiver_client_state_equal",
+          "scheduled_confirmation_rounds",
+          "startup_or_campaign_error",
+          "state_backend",
+          "submissions",
+          "unobserved_scheduled_rounds",
+          "whole_parent_phase_cpu_ns",
+          "whole_parent_phase_wall_ns",
+          "window_seconds"
+        ],
+        "submissions": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 21,
+          "attempts": 21,
+          "errors": {},
+          "refusals": {},
+          "status_counts": {
+            "ok": 21
+          }
+        },
+        "attack_calls": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 0,
+          "attempts": 3842,
+          "errors": {
+            "FRAME_DEADLINE": 2,
+            "IO: Resource temporarily unavailable (os error 11)": 21,
+            "PUBLIC_CLIENT_DEADLINE": 1
+          },
+          "refusals": {
+            "WORK:Product": 3818
+          },
+          "status_counts": {
+            "error": 24,
+            "refused": 3818
+          }
+        },
+        "native_errors": {
+          "body": 1,
+          "hello": 21,
+          "solution": 1
+        }
+      }
+    ]
+  },
+  {
+    "run": 3,
+    "criteria": false,
+    "phases": [
+      {
+        "mode": "baseline",
+        "native_phase_criteria_met": true,
+        "confirmed_rounds": 3,
+        "genuine_budget_depletion_observed": false,
+        "actor_reports_successful_without_cap_or_kill": true,
+        "native_verifier_errors": [],
+        "rounds": [
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 2243418820,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": false,
+            "round": 0,
+            "started_ns": 1001051860
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 6253557742,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": false,
+            "round": 1,
+            "started_ns": 5001285249
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 10322577017,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": false,
+            "round": 2,
+            "started_ns": 9001514927
+          }
+        ],
+        "paid_cpu_ns": 1478995302,
+        "keys": [
+          "actor_reports_successful_without_cap_or_kill",
+          "attack_calls",
+          "attacker_processes_ready",
+          "attacker_processes_requested",
+          "completion_work_observation",
+          "confirmation_rounds",
+          "confirmed_rounds",
+          "final_actual_flow",
+          "final_cpu_meter",
+          "genuine_budget_depletion_observed",
+          "history",
+          "mode",
+          "native_phase_criteria_met",
+          "native_service_outcome",
+          "native_verifier_errors",
+          "observations_available",
+          "observed_confirmation_rounds",
+          "public_resource_policy",
+          "receiver",
+          "receiver_and_verifier_setup_cpu_ns",
+          "receiver_and_verifier_setup_wall_ns",
+          "receiver_client_state_equal",
+          "scheduled_confirmation_rounds",
+          "startup_or_campaign_error",
+          "state_backend",
+          "submissions",
+          "unobserved_scheduled_rounds",
+          "whole_parent_phase_cpu_ns",
+          "whole_parent_phase_wall_ns",
+          "window_seconds"
+        ],
+        "submissions": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 21,
+          "attempts": 21,
+          "errors": {},
+          "refusals": {},
+          "status_counts": {
+            "ok": 21
+          }
+        },
+        "attack_calls": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 0,
+          "attempts": 0,
+          "errors": {},
+          "refusals": {},
+          "status_counts": {}
+        },
+        "native_errors": {}
+      },
+      {
+        "mode": "from-zero",
+        "native_phase_criteria_met": false,
+        "confirmed_rounds": 3,
+        "genuine_budget_depletion_observed": false,
+        "actor_reports_successful_without_cap_or_kill": true,
+        "native_verifier_errors": [],
+        "rounds": [
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 3122756793,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 0,
+            "started_ns": 1001113750
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 7114881885,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 1,
+            "started_ns": 5001349581
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 11175602063,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 2,
+            "started_ns": 9000121044
+          }
+        ],
+        "paid_cpu_ns": 7654852567,
+        "keys": [
+          "actor_reports_successful_without_cap_or_kill",
+          "attack_calls",
+          "attacker_processes_ready",
+          "attacker_processes_requested",
+          "completion_work_observation",
+          "confirmation_rounds",
+          "confirmed_rounds",
+          "final_actual_flow",
+          "final_cpu_meter",
+          "genuine_budget_depletion_observed",
+          "history",
+          "mode",
+          "native_phase_criteria_met",
+          "native_service_outcome",
+          "native_verifier_errors",
+          "observations_available",
+          "observed_confirmation_rounds",
+          "public_resource_policy",
+          "receiver",
+          "receiver_and_verifier_setup_cpu_ns",
+          "receiver_and_verifier_setup_wall_ns",
+          "receiver_client_state_equal",
+          "scheduled_confirmation_rounds",
+          "startup_or_campaign_error",
+          "state_backend",
+          "submissions",
+          "unobserved_scheduled_rounds",
+          "whole_parent_phase_cpu_ns",
+          "whole_parent_phase_wall_ns",
+          "window_seconds"
+        ],
+        "submissions": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 21,
+          "attempts": 21,
+          "errors": {},
+          "refusals": {},
+          "status_counts": {
+            "ok": 21
+          }
+        },
+        "attack_calls": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 0,
+          "attempts": 3842,
+          "errors": {
+            "FRAME_DEADLINE": 3,
+            "IO: Resource temporarily unavailable (os error 11)": 21
+          },
+          "refusals": {
+            "WORK:Transcript": 3818
+          },
+          "status_counts": {
+            "error": 24,
+            "refused": 3818
+          }
+        },
+        "native_errors": {
+          "hello": 21,
+          "solution": 2
+        }
+      },
+      {
+        "mode": "late-product",
+        "native_phase_criteria_met": false,
+        "confirmed_rounds": 3,
+        "genuine_budget_depletion_observed": false,
+        "actor_reports_successful_without_cap_or_kill": true,
+        "native_verifier_errors": [],
+        "rounds": [
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 3242705027,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 0,
+            "started_ns": 1000467872
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 7255210445,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 1,
+            "started_ns": 5000378067
+          },
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 11215579887,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 2,
+            "started_ns": 9000763871
+          }
+        ],
+        "paid_cpu_ns": 8855907818,
+        "keys": [
+          "actor_reports_successful_without_cap_or_kill",
+          "attack_calls",
+          "attacker_processes_ready",
+          "attacker_processes_requested",
+          "completion_work_observation",
+          "confirmation_rounds",
+          "confirmed_rounds",
+          "final_actual_flow",
+          "final_cpu_meter",
+          "genuine_budget_depletion_observed",
+          "history",
+          "mode",
+          "native_phase_criteria_met",
+          "native_service_outcome",
+          "native_verifier_errors",
+          "observations_available",
+          "observed_confirmation_rounds",
+          "public_resource_policy",
+          "receiver",
+          "receiver_and_verifier_setup_cpu_ns",
+          "receiver_and_verifier_setup_wall_ns",
+          "receiver_client_state_equal",
+          "scheduled_confirmation_rounds",
+          "startup_or_campaign_error",
+          "state_backend",
+          "submissions",
+          "unobserved_scheduled_rounds",
+          "whole_parent_phase_cpu_ns",
+          "whole_parent_phase_wall_ns",
+          "window_seconds"
+        ],
+        "submissions": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 21,
+          "attempts": 21,
+          "errors": {},
+          "refusals": {},
+          "status_counts": {
+            "ok": 21
+          }
+        },
+        "attack_calls": {
+          "acknowledged_after_window": 0,
+          "acknowledged_on_time": 0,
+          "attempts": 3843,
+          "errors": {
+            "FRAME_DEADLINE": 1,
+            "IO: Resource temporarily unavailable (os error 11)": 23
+          },
+          "refusals": {
+            "WORK:Product": 3819
+          },
+          "status_counts": {
+            "error": 24,
+            "refused": 3819
+          }
+        },
+        "native_errors": {
+          "hello": 20,
+          "solution": 3
+        }
+      }
+    ]
+  }
+]

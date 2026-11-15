@@ -1,0 +1,90 @@
+{
+  "actual_binary_readback_matches": true,
+  "findings": [],
+  "h_called": false,
+  "interpretation": "Both original forward observations score the yes action higher than no. The first comparison is correct; the second 8517 > 8518 comparison is incorrect. These choices are derived from recorded Q32 action scores, not additional generated text or new executions.",
+  "model_quality_improvement_proven": false,
+  "new_model_execution": false,
+  "observations": [
+    {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "arithmetic_correct_action": "yes",
+      "canonical_full_request_sha256": "fa02475d145785b5a890da77ae33906453ac1f4268e181137b5d875d1e9974ed",
+      "derived_argmax_action": "yes",
+      "derived_choice_correct": true,
+      "execution_ns": 71103460,
+      "input_tokens": 51,
+      "logits_sha256": "29730e6c15d3147b0641d772b6d7d6121f61ed17b81bf0926163a05a9c7afa14",
+      "observed_rss_bytes": 1462104064,
+      "prompt": "Answer with only yes or no. Is 8517 greater than 8516?",
+      "request_id": "chain-capacity-dc0357-v2-fad809b14a2e-1",
+      "scores_q32": [
+        116005421056,
+        124107309056
+      ]
+    },
+    {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "arithmetic_correct_action": "no",
+      "canonical_full_request_sha256": "f500cab06315f2e2f345b54e40656524a8e3a52543d07f1b509504179bf02515",
+      "derived_argmax_action": "yes",
+      "derived_choice_correct": false,
+      "execution_ns": 67700023,
+      "input_tokens": 51,
+      "logits_sha256": "90d35f1c7ee4cb95c9bce20969b19818fefe5ac0268dde664cc4fd9c72b0de42",
+      "observed_rss_bytes": 1462104064,
+      "prompt": "Answer with only yes or no. Is 8517 greater than 8518?",
+      "request_id": "chain-capacity-dc0357-v2-fad809b14a2e-2",
+      "scores_q32": [
+        115107659776,
+        122971414528
+      ]
+    }
+  ],
+  "original_authority_fields_all_false": true,
+  "original_input_binding_rule": "Original pinned worker constructs dict(schema=hepta-smollm-inference-input-v1, **original_request), canonicalizes with sorted keys and compact separators, then compares input_sha256. Hashing only the two-field source request would omit the original schema and is not this contract.",
+  "remote_path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/real-native-env2-bf34a669dc4b3617-attempt01/next-use-observations.json",
+  "remote_version": "66306:48807035:2354:1794479462641028048:1794479462651664403",
+  "reviewed_at_utc": "2026-11-12T10:45:00.863174+00:00",
+  "reviewer": "release_acceptance",
+  "schema": "release_acceptance_actual_forward_output_review_v1",
+  "scope_notes": [
+    "Per-observation execution_ns follows the original worker interval around tokenization and model forward/response preparation; it excludes complete model loading and cold storage recovery.",
+    "observed_rss_bytes is the original process ru_maxrss high-water and must not replace whole-job cgroup memory.peak.",
+    "This supplement completes the per-question content review left pending in actual-native-result-review-v1.json; that earlier review remains unchanged."
+  ],
+  "source_contract_sha_matches_actual_native_source": true,
+  "sources": {
+    "actual_native_result": {
+      "bytes": 82443,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-native-result-readback/native-result.json",
+      "sha256": "7e69ad30d35e984cf8e7d871bce91f7ec50f5e7c530a29c584454eab79c262a0"
+    },
+    "actual_original_observations": {
+      "bytes": 2354,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-forward-observations-readback/next-use-observations.json",
+      "sha256": "5cc5bf2bdd55158d6636689de9f72840b88cbc072a21dfd0ea70eb9a5768a097"
+    },
+    "frozen_B_worker_source": {
+      "bytes": 45100,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/discovery-reviewer/pinned-source/llm_cell_sealed_worker_v1.py.txt",
+      "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+    },
+    "original_binary_read_response": {
+      "bytes": 3641,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-forward-observations-readback/read.response.json",
+      "sha256": "2ea15fe24f13e5ba14695b65f0a2b162b1f44a17da60a6474f210b0cd974ddf4"
+    },
+    "source_contract_content_addressed_expected_bytes": {
+      "bytes": 9984,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/discovery-reviewer/frozen02-independent-expectations/source-inputs.native-v2-env2.expected.json",
+      "sha256": "3d4b4bbd30f1c37dc9986a5e512d13ae4d93a330a00fde904bd9b3fcf381083e"
+    }
+  }
+}

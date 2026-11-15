@@ -1,0 +1,185 @@
+{
+  "byte_chain_verified": {
+    "native_json_equal": true,
+    "sdk_complete": true,
+    "stderr_empty": true,
+    "stdout_hex_and_text_equal_local_file": true,
+    "stdout_offsets_and_eof_complete": true
+  },
+  "frozen_b_schema_and_generation": {
+    "Input_Context_Spec_exactly_equal_to_040": {
+      "Context": true,
+      "Input": true,
+      "Spec": true
+    },
+    "deny_unknown_fields": true,
+    "environment_closure_binding": "B lines 528-534 use spec.environment_generation and actual environment manifests.",
+    "fresh_research_pool": "B line 829 creates CellResidencyV1; local selection/admission precedes paired loader sealing; report at 857-860 explicitly says durable_current=false and execution_authorized=false.",
+    "handoff_binding": "B lines 878-896 bind both generation fields, closure IDs, full version commitment and actual runtime snapshot SHA.",
+    "model_binding": "B lines 535-553 set model_context.runtime to environment.id(); model closure generation remains spec.parent.generation.",
+    "native_requires_positive": true,
+    "new_dto_field_needed": false,
+    "original_source_preparer_requires_positive_below_2_pow_63": true,
+    "parent_semantics": "The source parent is the original model parent material descriptor, not a field for previous complete release root. Preserve it for an environment-only update.",
+    "persistent_current_upgrade_claimed": false,
+    "proposed_value": 2,
+    "supported_field": "environment_generation",
+    "type": "u64"
+  },
+  "inventory_observation": {
+    "attribution": "The retained evidence identifies the six additional files and their timestamps; it does not identify their writer or establish why they appeared.",
+    "byte_changed": [],
+    "expected_count": 22421,
+    "extra_bytes": 48941,
+    "extra_count": 6,
+    "extra_paths": [
+      "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/ensurepip/__pycache__/__init__.cpython-312.pyc",
+      "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/ensurepip/__pycache__/__main__.cpython-312.pyc",
+      "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/sqlite3/__pycache__/__init__.cpython-312.pyc",
+      "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/sqlite3/__pycache__/dbapi2.cpython-312.pyc",
+      "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/venv/__pycache__/__init__.cpython-312.pyc",
+      "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/venv/__pycache__/__main__.cpython-312.pyc"
+    ],
+    "inventory_after_sha256": "0e5065a4c2cac7a4ff5e545a841335834dc90c7ca8b5fe174cb505afb12bedbe",
+    "inventory_before_sha256": "0e5065a4c2cac7a4ff5e545a841335834dc90c7ca8b5fe174cb505afb12bedbe",
+    "inventory_stable_during_diagnostic": true,
+    "missing": [],
+    "observed_count": 22427,
+    "read_errors": [],
+    "remote_original_file_digest_verified_count": 22435,
+    "remote_original_file_digest_verified_total_bytes": 1112520241,
+    "reviewer_rehashed_remote_runtime_files": false,
+    "reviewer_verified_retained_remote_raw_bytes": true
+  },
+  "new_environment_review_requirements": {
+    "copy_all_original_committed_runtime_members_with_exact_digests": true,
+    "do_not_pad_or_delete_members_to_force_roster": true,
+    "keep_31_logical_inputs_and_300_seconds_8GiB_4CPU": true,
+    "keep_original_observer_tuple": [
+      79,
+      760,
+      791,
+      36,
+      12
+    ],
+    "new_environment_snapshot_path_hash_generation_and_operation": true,
+    "new_snapshot_generation_or_model_result_observed_by_this_record": false,
+    "original_model_bytes_unchanged": true,
+    "preserve_old_runtime_snapshot_spec_and_failures": true,
+    "verify_actual_new_byte_and_chunk_graph": true
+  },
+  "old_03aa_payload_roster": {
+    "audit": {
+      "bytes": 13496,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/async-materials-read-01/source-inputs.native-v2.verification.json",
+      "sha256": "59f49b99968bb41e6fa44c0cf59a18f08a5fce36bedb3fd5fcafec7487edfce6"
+    },
+    "categories": {
+      "environment": {
+        "bytes": 8079612,
+        "count": 19
+      },
+      "model": {
+        "bytes": 272189990,
+        "count": 11
+      },
+      "python": {
+        "bytes": 31028464,
+        "count": 1
+      }
+    },
+    "note": "The packed environment contains declared source files and runtime-snapshot metadata. Runtime files referenced by that snapshot are separately pinned local dependencies; the observed payload total does not mean 1.1 GB of runtime dependency bytes was distributed through the packed release.",
+    "payload_bytes_excluding_python": 280269602,
+    "runtime_snapshot_bytes": 7739511,
+    "runtime_snapshot_sha256": "e87a3658675836c130ba2a97a805bc6d86cc435135e72f4b6e40747e9271b9eb"
+  },
+  "original_guard_semantics": {
+    "includes_regular_pyc": true,
+    "inventory_file": "llm_python_runtime_contract.py",
+    "inventory_lines": [
+      130,
+      143
+    ],
+    "old_snapshot_admission_passed": false,
+    "original_symlink_semantics": "file_digest resolves an input path strictly, then opens the resolved regular target without following another link; this is not a blanket prohibition on all input symlinks.",
+    "refusal_line": 148,
+    "skips_only_site_packages_subtree_when_scanning_stdlib": true
+  },
+  "original_source_preparer": {
+    "captures_runtime_snapshot_itself": false,
+    "consumes_existing_pinned_runtime_snapshot": true,
+    "fresh_output_and_create_only_manifest": true,
+    "native_model_executed": false,
+    "produces_schema": "trnm.cell-sealed-research-source.v1",
+    "required_v2_boundary": "Any orchestration to v2 must retain the actual captured v1 values, add the previously admitted v2 snapshot/network profiles, and disclose the transformation. Do not call the preparer a runtime snapshot capture implementation.",
+    "sha256": "4b919011b673a3a0ab738628b3c21ee7328a8a66ec86985f5843c5f4429a5ccc",
+    "supports_environment_generation_cli": true
+  },
+  "qualification": {
+    "all_four_gates_passed": false,
+    "hepta_final_use": false,
+    "independent_operators": false,
+    "native_model_run_claimed": false,
+    "new_runtime_admitted": false,
+    "performance_qualification_inherited": false,
+    "production_activation": false
+  },
+  "raw_evidence": [
+    {
+      "bytes": 14385,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/runtime-inventory-diagnostic-01/original-native-sdk-payload.json",
+      "sha256": "8f44f9b35e27992c8a1cdba78048245c1c22070c02355eec81a7d76a4e9b970b"
+    },
+    {
+      "bytes": 13869,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/runtime-inventory-diagnostic-01/native-process-read.json",
+      "sha256": "20830a901186b48614a6236cb2ac862e3a7407c4bbf17a3e35ece28258d38083"
+    },
+    {
+      "bytes": 4452,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/runtime-inventory-diagnostic-01/diagnostic.stdout",
+      "sha256": "bcddce663e3bff7dc301d8a1db2ee6456006497b80053ecac4d98f13aadc538e"
+    },
+    {
+      "bytes": 3578,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/runtime-inventory-diagnostic-01/diagnostic-summary.json",
+      "sha256": "b0af871c20cdcf30c791d05fceb227d9d7b7bca46959d7e39ceddb1680577cb9"
+    }
+  ],
+  "review_mode": "read-only source and retained raw observation review; new derived evidence only",
+  "schema": "trnm.independent-runtime-inventory-and-release-generation-review.v1",
+  "source_commit": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_files": [
+    {
+      "bytes": 45417,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/shared-mod-frozen-B.rs",
+      "sha256": "eea76e23fa3151bbbf673aa60cbd3b330ad9f6043ff2cd077bb8504bd96ac92d"
+    },
+    {
+      "bytes": 42088,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/shared-mod-923.rs",
+      "sha256": "4d266c2a94b0ef383a6ee2459976ee43ee290b97c30c6cc6328ea64e892b1bbc"
+    },
+    {
+      "bytes": 12784,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/shared-mod-923-to-B.diff",
+      "sha256": "a6625c096e8ad4f449aadb539a6b09a0f086408c321f63dcc81d6bde14c2f1ac"
+    },
+    {
+      "bytes": 1269,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/shared-mod-recovery-provenance.json",
+      "sha256": "e69417c0a6a6af3b2b197e5264881d4ee23a2955aeb3a7f762a129ea07a854c3"
+    },
+    {
+      "bytes": 8620,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/discovery-reviewer/pinned-source/prepare_cell_sealed_research_v1.py.txt",
+      "sha256": "4b919011b673a3a0ab738628b3c21ee7328a8a66ec86985f5843c5f4429a5ccc"
+    },
+    {
+      "bytes": 22751,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/discovery-reviewer/pinned-source/llm_python_runtime_contract.py.txt",
+      "sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc"
+    }
+  ],
+  "source_tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+}

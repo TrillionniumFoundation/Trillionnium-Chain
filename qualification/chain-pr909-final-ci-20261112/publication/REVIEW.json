@@ -1,0 +1,407 @@
+{
+  "schema": "chain-pr909-final-ci-body-draft-review-v1",
+  "status": "prepared-not-published-root-review-and-evidence-head-resolution-pending",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "pr": 909,
+  "pr_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/909",
+  "scope": "One PR body section replacement only; no source, ref, PR state or CI execution change.",
+  "observed_runs_at_utc": "2026-11-12 06:44:13 UTC",
+  "original_pr": {
+    "state": "open",
+    "draft": true,
+    "title": "feat(chain): add HEPLCP04 local-decision structural readback",
+    "updated_at": "2026-11-11T15:17:05Z",
+    "head": {
+      "sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+      "ref": "fix/chain-heplcp04-local-decision-20261111-af52"
+    },
+    "base": {
+      "sha": "c84162378f34b9284e90587df4c466dfee3e193b",
+      "ref": "fix/chain-pon-five-claims-20261111-d6cb"
+    },
+    "body": {
+      "bytes": 6643,
+      "sha256": "83a282e34d95d0d34a1feea8f518fa5fe5a3c391e8e7f5d252c4b24f2851395b",
+      "git_blob": "3b06628f7f1c9ab69d42ddeb882a8fd65bb0075c"
+    }
+  },
+  "proposed_body": {
+    "bytes": 12035,
+    "sha256": "afb00a8e6652ae704f7d91e0eaaa1844ad641403dcd350b16c868040fde61ce5",
+    "git_blob": "4b65843c22ecc9a0b970d1b972f27593d6762773"
+  },
+  "replacement": {
+    "count": 1,
+    "old_heading": "## Broader CI snapshot (2026-11-11 15:16 UTC)",
+    "new_heading": "## Broader CI snapshot (2026-11-12 06:44 UTC)",
+    "original_byte_start": 5550,
+    "original_byte_end_exclusive": 6643,
+    "before": {
+      "bytes": 1093,
+      "sha256": "f73319a1ad6639a44c50f9db25601f99eab838718eb4ee8974ed3466ae15b59e",
+      "git_blob": "d3b3c119538bbf2437b7672383cd7a5931d973e1"
+    },
+    "after": {
+      "bytes": 6485,
+      "sha256": "f9390dc330b9331aaa69f74c494fa5e83c9039d94206245b16582f4823647989",
+      "git_blob": "2ccaee2c937511d0c8681e24e21d8b6623da738b"
+    },
+    "before_text": "## Broader CI snapshot (2026-11-11 15:16 UTC)\n\nThe HEPLCP04 structural workflow on this evidence head completed successfully. The work/time and closure-evidence contracts, original large-state CPU acceptance and original workspace test-profile CPU acceptance also completed successfully. These are separate gates and are not added into an ordinary adoption/FinalUse count.\n\nThe complete repository CI is not green: [CodeQL export run 43030977440](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977440) failed after polling, with the original log reporting `GitHub GET /pulls/909: transport failure; no fallback`; its post-run source guard still verified e338c000 / tree 876aa62d. [Owned cleanup run 43030977513](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977513) retained successful Linux head/prospective-merge jobs and cancelled macOS jobs; the cancelled macOS log endpoint did not provide a log, so no cause or execution PASS is inferred. Priority acceptance and the required baseline were still running at this snapshot.\n",
+    "after_text": "## Broader CI snapshot (2026-11-12 06:44 UTC)\n\nAll nine pull-request workflow runs for the unchanged head `e338c000f26e9357ed33213624da787a3a009ed9` are now completed: **5 success, 4 failure**. The complete repository CI is not green. The following are workflow conclusions; job counts are identified separately and do not change the structural or ordinary-loop acceptance totals above.\n\n| Workflow | Run | Terminal conclusion |\n| --- | --- | --- |\n| PoN work and time contract V1 | [43030977425](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977425) | success |\n| Chain Hepta closure evidence contracts | [43030977436](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977436) | success |\n| HEPLCP04 structural readback | [43030977516](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977516) | success |\n| PoN original large-state CPU acceptance | [43030977477](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977477) | success |\n| PoN original workspace test-profile CPU acceptance | [43030977526](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977526) | success |\n| PoN priority acceptance | [43030977438](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438) | failure: 7 failed / 6 succeeded / 1 skipped jobs |\n| trnm-required-baseline | [43030977601](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601) | failure: 11 failed / 10 succeeded jobs |\n| PoN owned process cleanup | [43030977513](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977513) | failure: 6 succeeded / 2 cancelled jobs |\n| CodeQL exact-source analysis export | [43030977440](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977440) | failure; previously archived transport refusal |\n\nFor the source-bound failures below, **H** means actual checkout `e338c000f26e9357ed33213624da787a3a009ed9` / tree `876aa62d1ab49458d29e9168f4c69e7b47b8884b`; **M** means actual prospective merge `bfa5cf58953a67dd9b9a27ce52b63524933a029d` / tree `4b08c77fd511466c8f2e5bc46307e0d6fd629063`, with fixed base `c84162378f34b9284e90587df4c466dfee3e193b` and H as parents. Run-level `head_sha` is not substituted for a job's actual checkout.\n\n### Priority acceptance\n\nThe historical-artifact job `130582693678` performed no checkout. It requested artifact `11531476198` from historical run `37730166589`, found zero artifacts and failed. The reason that artifact is absent remains unknown.\n\nThe service-model jobs failed in both H (`130582694482`, `130582694747`) and M (`130582694472`, `130582694530`); the x64 history jobs also failed in H (`130582694631`) and M (`130582694539`). Their original control steps exited 1, with host summaries reporting `systemd_run_exit=1`, `failure=null` and `final_host_errors=[]`. These are actual child failures, but the retained job summaries do not expose the child assertion/stderr, so a product/environment cause or timeout is not inferred. The ARM history lanes are successful in metadata; those results do not erase the x64 failures.\n\n### Required baseline\n\n- **From-zero controls:** the cross-architecture H jobs `130598327693` and `130598327905`, and protocol-contract jobs H `130598327819` / M `130598328085`, failed in the original from-zero control step with the same incomplete child-error summary. Earlier successful protocol groups do not make these jobs successful.\n- **Dependency policy:** quality jobs H `130598327708` / M `130598327796` refused one or more dependency graphs and retained a `supply-chain` failure. Specific graph/advisory details are not printed in the original logs; no particular dependency or vulnerability is asserted.\n- **External evidence:** jobs H `130598327976` / M `130598328088` hit the original `selected_body` hash check in `check_public_readiness_evidence.py:501`, reporting `ValueError: durable backend selected implementation`. Repeated invocations each report 71 methods, 46 failures and 22 errors, many because this earlier rejection replaces the negative control's intended later schema error. This is one observed hash-gate rejection pattern, not 68 independent root causes; repeated invocations and lanes are not summed. The logs do not establish whether the current source or reviewed reference is responsible. No reference hash was refreshed.\n- **Runtime:** only the **M** runtime job `130598328213` failed: `ordinary_npq6_witness_selection_dispatches_account_packet_without_owner_downgrade` unwrapped a transport `Connection reset by peer (os error 104)`; that binary reports 5 passed / 1 failed, with Cargo exit 101. The server-side reset cause remains unresolved. The **H** runtime job `130598327706` is successful in the original job metadata; the M failure is not attributed to H.\n- **Aggregation:** H `130669194540` / M `130649216164` rejected the unsuccessful Rust shard set. These aggregation refusals are not additional independent native failures.\n\n### Cleanup and previously archived CodeQL\n\nCleanup's two macOS jobs (`130557620566` prospective, `130557620949` head) have metadata reporting cancellation, zero steps and no assigned runner. Both original log requests returned `404 BlobNotFound`. Their checkout, execution and cancellation reason remain unestablished; the six other cleanup jobs succeeded.\n\nThe previously archived CodeQL failure remains `GitHub GET /pulls/909: transport failure; no fallback`; its post-run source guard verified H. This update does not reread or reclassify that log.\n\nThe complete source-bound index and original failure bytes are retained on a separate evidence commit: [README](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/__CHAIN_FINAL_CI_EVIDENCE_HEAD__/qualification/chain-pr909-final-ci-20261112/README.md) · [INDEX.json](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/__CHAIN_FINAL_CI_EVIDENCE_HEAD__/qualification/chain-pr909-final-ci-20261112/INDEX.json). Length/hash/base64 containers preserve original BOMs, line endings and meaningful whitespace without trimming. The evidence commit does not advance this PR's tested code head.\n\nThe earlier structural qualification remains scoped to its exact sources and methods. These broader CI results add no ordinary business closure, independent C adoption or ordinary NoUpdateRollback; this PR remains open Draft.\n",
+    "prefix": {
+      "bytes": 5550,
+      "sha256": "6c4a4316afe6da136d849334512a3220d19005ec516cf2887f59e2ff6cc53192",
+      "git_blob": "ffd2bd30f4dc1223f2cec12e0cf746d75534994f"
+    },
+    "suffix": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "prefix_and_suffix_byte_identical": true,
+    "unique_old_section": true,
+    "reverse_replacement_recovers_original_exactly": true
+  },
+  "placeholder": {
+    "token": "__CHAIN_FINAL_CI_EVIDENCE_HEAD__",
+    "occurrences": 2,
+    "paths": [
+      "qualification/chain-pr909-final-ci-20261112/README.md",
+      "qualification/chain-pr909-final-ci-20261112/INDEX.json"
+    ],
+    "meaning": "Root must replace both tokens with the actual independently reviewed evidence commit before publishing the body. This draft does not create or move that commit/ref."
+  },
+  "workflow_snapshot": {
+    "query": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs?head_sha=e338c000f26e9357ed33213624da787a3a009ed9&event=pull_request&per_page=100",
+    "total_count": 9,
+    "returned": 9,
+    "completed": 9,
+    "success": 5,
+    "failure": 4,
+    "runs": [
+      {
+        "id": 43030977425,
+        "name": "PoN work and time contract V1",
+        "path": ".github/workflows/pon-work-time-contract-v1.yml",
+        "event": "pull_request",
+        "head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+        "status": "completed",
+        "conclusion": "success",
+        "updated_at": "2026-11-11T13:40:54Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977425"
+      },
+      {
+        "id": 43030977436,
+        "name": "Chain Hepta closure evidence contracts",
+        "path": ".github/workflows/chain-hepta-closure-candidate.yml",
+        "event": "pull_request",
+        "head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+        "status": "completed",
+        "conclusion": "success",
+        "updated_at": "2026-11-11T13:40:05Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977436"
+      },
+      {
+        "id": 43030977516,
+        "name": "HEPLCP04 structural readback",
+        "path": ".github/workflows/cell-learning-local-decision-readback.yml",
+        "event": "pull_request",
+        "head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+        "status": "completed",
+        "conclusion": "success",
+        "updated_at": "2026-11-11T13:39:32Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977516"
+      },
+      {
+        "id": 43030977477,
+        "name": "PoN original large-state CPU acceptance",
+        "path": ".github/workflows/pon-original-large-state-cpu.yml",
+        "event": "pull_request",
+        "head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+        "status": "completed",
+        "conclusion": "success",
+        "updated_at": "2026-11-11T13:46:48Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977477"
+      },
+      {
+        "id": 43030977513,
+        "name": "PoN owned process cleanup",
+        "path": ".github/workflows/pon-owned-process-cleanup.yml",
+        "event": "pull_request",
+        "head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+        "status": "completed",
+        "conclusion": "failure",
+        "updated_at": "2026-11-11T13:53:42Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977513"
+      },
+      {
+        "id": 43030977440,
+        "name": "CodeQL exact-source analysis export",
+        "path": ".github/workflows/codeql-analysis-export.yml",
+        "event": "pull_request",
+        "head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+        "status": "completed",
+        "conclusion": "failure",
+        "updated_at": "2026-11-11T13:59:41Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977440"
+      },
+      {
+        "id": 43030977526,
+        "name": "PoN original workspace test-profile CPU acceptance",
+        "path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+        "event": "pull_request",
+        "head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+        "status": "completed",
+        "conclusion": "success",
+        "updated_at": "2026-11-11T14:31:39Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977526"
+      },
+      {
+        "id": 43030977438,
+        "name": "PoN priority acceptance",
+        "path": ".github/workflows/pon-priority-acceptance.yml",
+        "event": "pull_request",
+        "head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+        "status": "completed",
+        "conclusion": "failure",
+        "updated_at": "2026-11-11T15:29:35Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438"
+      },
+      {
+        "id": 43030977601,
+        "name": "trnm-required-baseline",
+        "path": ".github/workflows/trnm-required-baseline.yml",
+        "event": "pull_request",
+        "head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+        "status": "completed",
+        "conclusion": "failure",
+        "updated_at": "2026-11-11T16:54:13Z",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601"
+      }
+    ],
+    "interpretation": "Workflow and job counts are not test-method or ordinary-acceptance counts."
+  },
+  "evidence_sources": {
+    "source_index": {
+      "git_blob": "5075184f6a4ef9db4ac9f47547b16f00b76ae2b1",
+      "bytes": 125072,
+      "sha256": "81a687ebf188e0e16e3e189d5e1e8ec32930b408ad9eaa5aa2d668597319fa67"
+    },
+    "source_review": {
+      "git_blob": "1f7433264e41581affbbd636e1e19b1da7fb1cdb",
+      "bytes": 7736,
+      "sha256": "87798b80939b109f15d8c86232fc41ff0fbe7503795539f3a21a35ae5928f7f5"
+    },
+    "representation_v2_index": "695b6fd88c9f8cebd02368574d6b094c545c789c",
+    "representation_v2_readme": "b7ceeb361a3664ee861a026cd2190405d15da06d",
+    "codeql": "Existing current-PR statement and prior retained CodeQL evidence only. This preparation refreshed run metadata but did not fetch a CodeQL log.",
+    "detailed_log_review_window_utc": [
+      "2026-11-12 06:00:57 UTC",
+      "2026-11-12 06:08:30 UTC"
+    ]
+  },
+  "failure_source_groups": [
+    {
+      "label": "priority historical retrieval",
+      "no_checkout": true,
+      "jobs": [
+        130582693678
+      ]
+    },
+    {
+      "label": "priority service-model H",
+      "source": "H",
+      "jobs": [
+        130582694482,
+        130582694747
+      ]
+    },
+    {
+      "label": "priority service-model M",
+      "source": "M",
+      "jobs": [
+        130582694472,
+        130582694530
+      ]
+    },
+    {
+      "label": "priority x64 history H",
+      "source": "H",
+      "jobs": [
+        130582694631
+      ]
+    },
+    {
+      "label": "priority x64 history M",
+      "source": "M",
+      "jobs": [
+        130582694539
+      ]
+    },
+    {
+      "label": "baseline from-zero cross-architecture H",
+      "source": "H",
+      "jobs": [
+        130598327693,
+        130598327905
+      ]
+    },
+    {
+      "label": "baseline protocol H",
+      "source": "H",
+      "jobs": [
+        130598327819
+      ]
+    },
+    {
+      "label": "baseline protocol M",
+      "source": "M",
+      "jobs": [
+        130598328085
+      ]
+    },
+    {
+      "label": "baseline quality H",
+      "source": "H",
+      "jobs": [
+        130598327708
+      ]
+    },
+    {
+      "label": "baseline quality M",
+      "source": "M",
+      "jobs": [
+        130598327796
+      ]
+    },
+    {
+      "label": "baseline external-evidence H",
+      "source": "H",
+      "jobs": [
+        130598327976
+      ]
+    },
+    {
+      "label": "baseline external-evidence M",
+      "source": "M",
+      "jobs": [
+        130598328088
+      ]
+    },
+    {
+      "label": "baseline runtime M",
+      "source": "M",
+      "jobs": [
+        130598328213
+      ]
+    },
+    {
+      "label": "baseline aggregation H",
+      "source": "H",
+      "jobs": [
+        130669194540
+      ]
+    },
+    {
+      "label": "baseline aggregation M",
+      "source": "M",
+      "jobs": [
+        130649216164
+      ]
+    },
+    {
+      "label": "cleanup macOS cancelled",
+      "no_observed_checkout": true,
+      "jobs": [
+        130557620566,
+        130557620949
+      ]
+    }
+  ],
+  "scope_checks": {
+    "original_first_5550_bytes_identical": true,
+    "original_structural_and_legacy_execution_table_unchanged": true,
+    "original_acceptance_boundary_unchanged": true,
+    "existing_source_and_test_counts_unchanged": true,
+    "no_repeated_lanes_summed": true,
+    "runtime_head_success_is_metadata_only": true,
+    "runtime_merge_failure_not_attributed_to_head": true,
+    "no_68_independent_causes_claim": true,
+    "no_dependency_or_child_root_cause_invented": true,
+    "no_macOS_execution_or_cancellation_cause_inferred": true,
+    "no_whole_repo_green_claim": true,
+    "no_ordinary_closure_or_independent_C_or_NoUpdateRollback_acceptance_added": true,
+    "original_log_whitespace_preservation_retained": true
+  },
+  "unknowns_retained": [
+    "Why historical artifact 11531476198 is absent.",
+    "Actual child assertion/stderr behind the failed from-zero and history controller summaries.",
+    "Specific dependency graph/advisory details behind quality-policy refusal.",
+    "Whether selected_body's source or the reviewed reference should change; no baseline/source comparison here resolves that.",
+    "Server-side cause of the prospective-merge NPQ6 connection reset.",
+    "macOS cancelled jobs' checkout, execution and cancellation cause."
+  ],
+  "artifacts": [
+    {
+      "path": "BEFORE.md",
+      "bytes": 6643,
+      "sha256": "83a282e34d95d0d34a1feea8f518fa5fe5a3c391e8e7f5d252c4b24f2851395b",
+      "git_blob": "3b06628f7f1c9ab69d42ddeb882a8fd65bb0075c",
+      "meaning": "Exact current PR body returned by the GitHub API; no normalization."
+    },
+    {
+      "path": "AFTER.md",
+      "bytes": 12035,
+      "sha256": "afb00a8e6652ae704f7d91e0eaaa1844ad641403dcd350b16c868040fde61ce5",
+      "git_blob": "4b65843c22ecc9a0b970d1b972f27593d6762773",
+      "meaning": "Complete proposed body. Only the final Broader CI snapshot section changes; evidence commit placeholder unresolved."
+    },
+    {
+      "path": "PR_API_READ.json",
+      "bytes": 25683,
+      "sha256": "79954cc91cad5d457bc7cbba57c45b2aa2335b797bbb2c71b4447b762545c231",
+      "git_blob": "3415f6684ebf01fc66583ad1f5cc964bfc4b350e",
+      "meaning": "Exact decoded API response string before parsing."
+    },
+    {
+      "path": "RUNS_API_READ.json",
+      "bytes": 138508,
+      "sha256": "7f1726114e4fe34134550fd7a241260dfc391155384ac6553068a157b9a8d4e9",
+      "git_blob": "2d40b381e7168ac6430023bfd0be0b8b31c1df8a",
+      "meaning": "Exact decoded API response for nine PR workflows on the fixed head."
+    }
+  ],
+  "verification": {
+    "method": "Pure V8 exact UTF-8 byte/hash and unique text replacement checks; formal Git GET readback of all four preparation objects; independent current PR re-read.",
+    "all_four_artifact_git_responses_match_computed_ids": true,
+    "all_four_artifact_formal_get_readback_exact": true,
+    "fresh_pr_recheck": {
+      "state": true,
+      "draft": true,
+      "head": true,
+      "base": true,
+      "body": true
+    },
+    "body_new_trailing_space_lines": 0,
+    "tests_executed": false,
+    "codeql_log_fetched": false,
+    "new_success_job_logs_fetched": false
+  },
+  "publish_preconditions": [
+    "Root reviews the complete AFTER.md and this exact single-section operation.",
+    "The PR still has the same original body SHA256, open Draft state, head e338c000f26e9357ed33213624da787a3a009ed9 and base c84162378f34b9284e90587df4c466dfee3e193b.",
+    "Both evidence placeholders are replaced with the actual evidence commit containing the specified README.md and INDEX.json.",
+    "Only the approved body is written; no draft/state/head/base/ref transition is part of this proposal."
+  ],
+  "mutations": {
+    "github_blobs_created": true,
+    "pull_request_written": false,
+    "refs_changed": false,
+    "branch_created": false,
+    "source_changed": false,
+    "CI_rerun": false,
+    "h_called": false,
+    "native_executed": false
+  },
+  "suggested_artifact_directory": "qualification/chain-pr909-final-ci-20261112/pr-body-draft"
+}

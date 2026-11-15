@@ -1,0 +1,72 @@
+{
+  "schema": "throughput-prepublication-format-check-v1",
+  "scope": "local dirty maintenance tree based on b7e38fdc2e43c468692abc52aec03737f2df7f1b; not an immutable-head native qualification",
+  "command": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--check",
+    "--manifest-path",
+    "trillionnium/Cargo.toml"
+  ],
+  "PATH_prepend": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "initial_setup_attempt": {
+    "command": [
+      "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/cargo",
+      "fmt",
+      "--all",
+      "--check",
+      "--manifest-path",
+      "trillionnium/Cargo.toml"
+    ],
+    "exit_code": 101,
+    "reason": "cargo-fmt was not on PATH; rerun used the existing installed cargo-fmt directory, without changing source or formatting policy"
+  },
+  "current_affected_rust_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/mining.rs",
+      "bytes": 43243,
+      "sha256": "b54aff8426ceeb113bedffdbf6afe32d334448483d1729ef74c9aabd27f6d31a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 382877,
+      "sha256": "9029e9a362aab349916a6ad417d962aeef3307a3d2e0c724b16d78ffaf1278e3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "bytes": 217889,
+      "sha256": "d291364d058f443c38b7cfee84710daa3fd53f07a757a7939599aca3fcf9182d"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "bytes": 26558,
+      "sha256": "fcbcab16ad5083ff65b64288d55a6829084955826bfc5399a3234b93c3bf432c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+      "bytes": 65652,
+      "sha256": "8b9d20cd7a22f3701837c0be9bba47c4c6e1b16a991173ae5d97c4ceb6572640"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs",
+      "bytes": 8100,
+      "sha256": "1a9c0cda28f890313978cad908dd85172e1e71f0e1badacd09a3c29db7d29d01"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/mining_prepare_control_tests.rs",
+      "bytes": 12211,
+      "sha256": "007b286214ac7554e67fa0fb40c99f6eefa58a1e505f4a441a5bf73b045c1ecc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "bytes": 437719,
+      "sha256": "487bdef23dc0b4e15330f2a8f4f732df46bdad446fc0e7c594f79808d2635992"
+    }
+  ],
+  "native_tests_executed": false,
+  "throughput_measured": false
+}

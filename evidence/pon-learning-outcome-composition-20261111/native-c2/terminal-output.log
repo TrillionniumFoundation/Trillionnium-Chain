@@ -1,0 +1,60 @@
+FINAL_INDEX_TAG_COUNTS {"H": 28932, "S": 109}
+CHECKOUT_VISIBILITY_REPAIR_STARTING 6c8ae308445f6b42078be33fd3fc133db4984fa024e4012ec785f60677911fec
+CHECKOUT_VISIBILITY_REPAIR_EXIT 0
+CHECKOUT_VISIBILITY_VERIFIED {"entries": 29041, "bytes": 2618950502, "restored_files": 109, "hidden_paths_cleared": 109}
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-pon-learning-outcome-composition-20261111-7612", "remote_policy_mutated": false}
+CHECKOUT_VISIBILITY_ARCHIVED fe5774ce0b2f9ad4cc502105f37612ddd22f00ce0644e0f9823aeecb0a99b6f2
+C2_PROVIDER3_STARTING 04f5b5515774aab6663bb80cf7831fe07367ba81
+BEGIN project-boundary-before 2026-11-12T01:42:19.238058+00:00
+END project-boundary-before 0 accepted True
+BEGIN source-before 2026-11-12T01:42:19.354999+00:00
+END source-before 0 accepted True
+BEGIN locate-rustc 2026-11-12T01:42:25.912663+00:00
+END locate-rustc 0 accepted True
+BEGIN locate-rustdoc 2026-11-12T01:42:26.080399+00:00
+END locate-rustdoc 0 accepted True
+BEGIN toolchain 2026-11-12T01:42:26.154513+00:00
+END toolchain 0 accepted True
+BEGIN cargo-version 2026-11-12T01:42:26.272052+00:00
+END cargo-version 0 accepted True
+BEGIN prepare-pq-provider 2026-11-12T01:42:26.338956+00:00
+END prepare-pq-provider 0 accepted True
+BEGIN locked-metadata 2026-11-12T01:45:25.884560+00:00
+END locked-metadata 0 accepted True
+BEGIN format 2026-11-12T01:45:26.248014+00:00
+END format 0 accepted True
+BEGIN source-integrity-negatives 2026-11-12T01:45:45.918289+00:00
+END source-integrity-negatives 0 accepted True
+BEGIN project-boundary-negatives 2026-11-12T01:45:50.999178+00:00
+END project-boundary-negatives 0 accepted True
+BEGIN repository-and-links 2026-11-12T01:45:56.882231+00:00
+END repository-and-links 0 accepted True
+BEGIN reader-cell_adoption_readback 2026-11-12T01:46:24.977184+00:00
+END reader-cell_adoption_readback 0 accepted True
+BEGIN reader-cell_learning_scope_join 2026-11-12T01:46:25.296218+00:00
+END reader-cell_learning_scope_join 0 accepted True
+BEGIN reader-cell_learning_completion_join 2026-11-12T01:46:27.169831+00:00
+END reader-cell_learning_completion_join 0 accepted True
+BEGIN reader-cell_learning_iteration_join 2026-11-12T01:46:27.989434+00:00
+END reader-cell_learning_iteration_join 0 accepted True
+BEGIN reader-cell_learning_local_decision_join 2026-11-12T01:46:28.609035+00:00
+END reader-cell_learning_local_decision_join 0 accepted True
+BEGIN reader-cell_learning_local_use_join 2026-11-12T01:46:29.379859+00:00
+END reader-cell_learning_local_use_join 0 accepted True
+BEGIN adoption-library 2026-11-12T01:46:32.406927+00:00
+END adoption-library 0 accepted True
+BEGIN adoption-cli 2026-11-12T01:46:39.244778+00:00
+END adoption-cli 0 accepted True
+BEGIN outcome-role-separation 2026-11-12T01:46:42.277449+00:00
+END outcome-role-separation 0 accepted True
+BEGIN crypto-fixed-product-meter 2026-11-12T01:46:53.528353+00:00
+END crypto-fixed-product-meter 0 accepted True
+BEGIN node-single-output-owner 2026-11-12T01:46:53.752936+00:00
+END node-single-output-owner 0 accepted True
+BEGIN crypto-fresh-challenge-refusal 2026-11-12T01:46:54.682901+00:00
+END crypto-fresh-challenge-refusal 0 accepted True
+BEGIN workspace-strict-clippy 2026-11-12T01:46:54.909260+00:00
+END workspace-strict-clippy 0 accepted True
+BEGIN source-after 2026-11-12T01:49:08.109844+00:00
+END source-after 0 accepted True
+C2_GATES_FINISHED {"failed_commands": [], "failure": null, "missing_commands": [], "model_efficacy_certified": false, "native_test_total_required": 42, "planned_commands": 26, "production_activation": false, "provider_prepared_and_unchanged": true, "reader_suites_required": 6, "recorded_commands": 26, "result": "PASS", "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81"}

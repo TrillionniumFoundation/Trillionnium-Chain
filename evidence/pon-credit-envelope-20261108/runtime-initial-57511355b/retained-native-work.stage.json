@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "cargo",
+    "+1.95.0",
+    "test",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-crypto-primitives",
+    "--lib",
+    "pon_work::",
+    "--",
+    "--test-threads=1"
+  ],
+  "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+  "elapsed_seconds": 100.24429,
+  "exception": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-08T12:35:17.476135+00:00",
+  "native_test_results": [
+    [
+      "135",
+      "0",
+      "0"
+    ]
+  ],
+  "passed": true,
+  "stage": "retained-native-work",
+  "started_utc": "2026-11-08T12:33:37.231858+00:00",
+  "stderr": "retained-native-work.stderr.log",
+  "stderr_sha256": "c648dc3a23dfb53a0a60f8c7f500043d404f2faaeafb310c27048ebb6d2bb32d",
+  "stdout": "retained-native-work.stdout.log",
+  "stdout_sha256": "4acdc73f28919c2a9f1720b4814b2018486ab6b1cbb551529b270cb6ed8123a5"
+}

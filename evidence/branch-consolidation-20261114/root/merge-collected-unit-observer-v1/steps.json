@@ -1,0 +1,80 @@
+[
+  {
+    "label": "preflight",
+    "exit": 0,
+    "seconds": 0.075,
+    "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+  },
+  {
+    "label": "merge",
+    "exit": 1,
+    "seconds": 0.181,
+    "sha256": "09b397241ff8c12520ba1eb3ccef1de78db0034cc97985400118eff464da9ca7"
+  },
+  {
+    "label": "stage-resolved",
+    "exit": 0,
+    "seconds": 0.043,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "collected-original-and-current-controls",
+    "exit": 0,
+    "seconds": 2.269,
+    "sha256": "9f010bbf61bf6e933dbc9b80f5e34a3abc45e0e99f6c75e9fccdfade02012e9f"
+  },
+  {
+    "label": "source-negative",
+    "exit": 0,
+    "seconds": 2.834,
+    "sha256": "7caf4ef38422fdc6d672d509f5bb617b720767b282d509962cee1c4aef5dbf77"
+  },
+  {
+    "label": "independent-ci-command-negative",
+    "exit": 0,
+    "seconds": 0.303,
+    "sha256": "13ae8b0ab36b7875b0e73eed238b4abf96b352a870ded9bc034427f455927d64"
+  },
+  {
+    "label": "current-corpus",
+    "exit": 0,
+    "seconds": 0.707,
+    "sha256": "71aed34d9edb446af3d80e4c11b307559118597ddc10f4b6e0d8ae8f14b0096e"
+  },
+  {
+    "label": "current-ci-contract",
+    "exit": 0,
+    "seconds": 0.068,
+    "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+  },
+  {
+    "label": "shell",
+    "exit": 0,
+    "seconds": 0.008,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "fmt",
+    "exit": 0,
+    "seconds": 5.426,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "diff-check",
+    "exit": 0,
+    "seconds": 0.022,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "precommit-preflight",
+    "exit": 0,
+    "seconds": 0.052,
+    "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+  },
+  {
+    "label": "commit",
+    "exit": 0,
+    "seconds": 0.069,
+    "sha256": "a29386604bc9dcd1528fb1815bfd1c752b06ceeb0a1fc1544f20caa4f51bdbd0"
+  }
+]

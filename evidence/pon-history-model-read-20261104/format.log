@@ -1,0 +1,24 @@
+Diff in /workspace/scratch/e56a2df1ab66/chain/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs:56:
+     }
+     for prefix in prefixes {
+         let original = original_rows(&state, prefix);
+-        assert!(prefix_rows(&state, prefix).eq(original.iter()), "{prefix:?}");
++        assert!(
++            prefix_rows(&state, prefix).eq(original.iter()),
++            "{prefix:?}"
++        );
+         for (key, value) in prefix_rows(&state, prefix) {
+             let (source_key, source_value) = state.get_key_value(key).unwrap();
+             assert!(std::ptr::eq(key, source_key));
+Diff in /workspace/scratch/e56a2df1ab66/chain/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs:1273:
+                 .collect()
+         });
+         let mut rows = self.scans[prefix].clone();
+-        rows.extend(
+-            prefix_rows(&self.writes, prefix)
+-                .map(|(k, v)| (k.clone(), v.clone())),
+-        );
++        rows.extend(prefix_rows(&self.writes, prefix).map(|(k, v)| (k.clone(), v.clone())));
+         rows
+     }
+     fn account(&mut self, who: &str) -> Result<Value> {

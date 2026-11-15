@@ -1,0 +1,255 @@
+{
+  "schema": "desktop-dense-native-validation-v1",
+  "started_unix": 1794060385.1839538,
+  "commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+  "steps": [
+    {
+      "label": "preflight-before-checkout",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794060385.4503977,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/preflight-before-checkout-driver.log",
+      "state": "passed",
+      "exit_code": 0,
+      "finished_unix": 1794060385.56802,
+      "elapsed_seconds": 0.11762332916259766,
+      "driver_log_sha256": "f17d39e260ff2e037df9d916ad7fc05301ab443190c6f5bbcb60425c7e71a10a"
+    },
+    {
+      "label": "import-candidate",
+      "argv": [
+        "git",
+        "--git-dir",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/repo.git",
+        "-c",
+        "gc.auto=0",
+        "fetch",
+        "--no-write-fetch-head",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-ci-20261107.bundle",
+        "HEAD:refs/heads/local/candidate-d26"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107",
+      "started_unix": 1794060386.4457324,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/import-candidate-driver.log",
+      "state": "passed",
+      "exit_code": 0,
+      "finished_unix": 1794060386.6904125,
+      "elapsed_seconds": 0.24468064308166504,
+      "driver_log_sha256": "ab1f09a62c5f02680d8ff917c2378af51d2e76b4c11df9ac91ee9e46bbf8a098"
+    },
+    {
+      "label": "fast-forward",
+      "argv": [
+        "git",
+        "-c",
+        "gc.auto=0",
+        "merge",
+        "--ff-only",
+        "refs/heads/local/candidate-d26"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794060386.6976013,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/fast-forward-driver.log",
+      "state": "passed",
+      "exit_code": 0,
+      "finished_unix": 1794060386.775658,
+      "elapsed_seconds": 0.07805752754211426,
+      "driver_log_sha256": "1c6af1a9849bdb6fd7e6122cfe49d2d6aaf242f236a2ba97ff1b55a15feb4e06"
+    },
+    {
+      "label": "dense-checkout",
+      "argv": [
+        "git",
+        "-c",
+        "gc.auto=0",
+        "sparse-checkout",
+        "disable"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794060386.7770772,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/dense-checkout-driver.log",
+      "state": "passed",
+      "exit_code": 0,
+      "finished_unix": 1794060419.3276649,
+      "elapsed_seconds": 32.55058813095093,
+      "driver_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794060426.127048,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/preflight-driver.log",
+      "state": "passed",
+      "exit_code": 0,
+      "finished_unix": 1794060427.9074783,
+      "elapsed_seconds": 1.7804310321807861,
+      "driver_log_sha256": "f17d39e260ff2e037df9d916ad7fc05301ab443190c6f5bbcb60425c7e71a10a"
+    },
+    {
+      "label": "source-before",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794060428.002096,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/source-before-driver.log",
+      "state": "passed",
+      "exit_code": 0,
+      "finished_unix": 1794060444.5651999,
+      "elapsed_seconds": 16.5631046295166,
+      "driver_log_sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa"
+    },
+    {
+      "label": "rustc-version",
+      "argv": [
+        "rustc",
+        "+1.95.0",
+        "--version",
+        "--verbose"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794060444.618624,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/rustc-version-driver.log",
+      "state": "passed",
+      "exit_code": 0,
+      "finished_unix": 1794060444.6445172,
+      "elapsed_seconds": 0.025893688201904297,
+      "driver_log_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "label": "cargo-version",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "--version",
+        "--verbose"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794060444.6457863,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/cargo-version-driver.log",
+      "state": "passed",
+      "exit_code": 0,
+      "finished_unix": 1794060444.6800191,
+      "elapsed_seconds": 0.03423357009887695,
+      "driver_log_sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e"
+    },
+    {
+      "label": "provider-version",
+      "argv": [
+        "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider-temp/trnm-pq-provider-3.5.9.XwCOxz9W/install/bin/openssl",
+        "version",
+        "-a"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794060444.6808558,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/provider-version-driver.log",
+      "state": "passed",
+      "exit_code": 0,
+      "finished_unix": 1794060444.6850333,
+      "elapsed_seconds": 0.00417780876159668,
+      "driver_log_sha256": "3931f03911aa6957b4265e8fd148beffaf5858e10a5b2c8910f43990f4c21583"
+    },
+    {
+      "label": "node-lib-allfeatures",
+      "argv": [
+        "python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "--tested",
+        "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "--label",
+        "node-lib-allfeatures",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/records",
+        "--",
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--all-features",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/build-native",
+      "started_unix": 1794060444.6858013,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/node-lib-allfeatures-driver.log",
+      "state": "failed",
+      "exit_code": 101,
+      "finished_unix": 1794065952.3201141,
+      "elapsed_seconds": 5507.63431429863,
+      "driver_log_sha256": "e48724cec8ec0565a6c0446db9797256449225ef54a5815a75f378c0f4f6000c"
+    }
+  ],
+  "qualification": {
+    "original_history_business_gate": false,
+    "original_attack_pressure_gate": false,
+    "production_activation": false,
+    "release": false
+  },
+  "prior_component_failure_preserved": true,
+  "build_environment": {
+    "CARGO_HOME": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/cargo",
+    "CARGO_TARGET_DIR": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target",
+    "CARGO_BUILD_JOBS": "8",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "RUST_TEST_THREADS": "1",
+    "OPENSSL_DIR": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider-temp/trnm-pq-provider-3.5.9.XwCOxz9W/install",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider-temp/trnm-pq-provider-3.5.9.XwCOxz9W/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "79bd5e815ce341387d8299e66419fb8a56ba952892df8e3edc967cab60e83437",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider-temp/trnm-pq-provider-3.5.9.XwCOxz9W/install/lib/ossl-modules"
+  },
+  "object_prefetch_summary_sha256": "96c5d41529a8be54a24e58692c2659780ede1fb925726f2f74360dce9901ce11",
+  "bundle_sha256": "d598b9fb88e4e5a51e6dc8a4c030a873821a6f60912f4c04b4eccabe3e2391a0",
+  "preserved_failed_component_binary": {
+    "source_commit": "9ce78655b574a638c54a0ee9c88d58ffdec74df7",
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-9ce/failed-node-test-binary",
+    "size": 78139480,
+    "sha256": "8b849ad65d496202bb0ad16145f3dfe259c0390e93691b5bbe4002f57fec5f0a"
+  },
+  "source_before": {
+    "base": null,
+    "candidate": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+    "tested_tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1031001045,
+    "tracked_entries": 11017,
+    "tracked_worktree_verified": true
+  },
+  "result": "FAILED",
+  "error": "RuntimeError('node-lib-allfeatures failed with exit 101')",
+  "finished_unix": 1794065952.3835523
+}

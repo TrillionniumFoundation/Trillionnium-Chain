@@ -1,0 +1,66 @@
+{
+  "all_selected_v1_sources_unchanged": true,
+  "base": "e4abb172147e941b62483652b0ceabaae4317624",
+  "preserved_v1_sources": [
+    {
+      "new_blob": "f8a14f707e8088488470cd0b2d211ba30aa01676",
+      "original_blob": "f8a14f707e8088488470cd0b2d211ba30aa01676",
+      "path": "formal/pon-nakamoto-v1/w1_quantum_oracle.py",
+      "unchanged": true
+    },
+    {
+      "new_blob": "e903407e792b77db97878e29e8c04b1d8994ae0e",
+      "original_blob": "e903407e792b77db97878e29e8c04b1d8994ae0e",
+      "path": "formal/pon-nakamoto-v1/quantum_oracle_resources.py",
+      "unchanged": true
+    },
+    {
+      "new_blob": "ec1cfc9178e8fc8d37cce43cf6f8dfa95089fb8c",
+      "original_blob": "ec1cfc9178e8fc8d37cce43cf6f8dfa95089fb8c",
+      "path": "formal/pon-nakamoto-v1/quantum_adversarial_search.py",
+      "unchanged": true
+    },
+    {
+      "new_blob": "50cc314bd4e15232889d752fb70b59289f1418d2",
+      "original_blob": "50cc314bd4e15232889d752fb70b59289f1418d2",
+      "path": "formal/pon-nakamoto-v1/quantum_resource_clock.py",
+      "unchanged": true
+    },
+    {
+      "new_blob": "2326123599c31f55e9b957967591bc4caf3a4fa6",
+      "original_blob": "2326123599c31f55e9b957967591bc4caf3a4fa6",
+      "path": "formal/pon-nakamoto-v1/w1_quantum_primitives.py",
+      "unchanged": true
+    },
+    {
+      "new_blob": "9cbfccd2d50af48fc43522b967ffdfb1f45ec098",
+      "original_blob": "9cbfccd2d50af48fc43522b967ffdfb1f45ec098",
+      "path": "formal/pon-nakamoto-v1/work_oracle.py",
+      "unchanged": true
+    },
+    {
+      "new_blob": "721f7efbbf9a7626b7f2971bcd3e8985da79a31c",
+      "original_blob": "721f7efbbf9a7626b7f2971bcd3e8985da79a31c",
+      "path": "formal/pon-nakamoto-v1/reversible_components.py",
+      "unchanged": true
+    }
+  ],
+  "schema": "trnm-w1-source-change-review-v1",
+  "source_changes": [
+    "M\tconfig/pon/pq-cross-branch-corpus-v1.json",
+    "M\tdocs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "A\tdocs/research/W1_ORACLE_EVIDENCE_SCOPE_V1.md",
+    "A\tevidence/pon-w1-oracle-scope-20261110/README.md",
+    "A\tevidence/pon-w1-oracle-scope-20261110/native-artifact.json",
+    "A\tevidence/pon-w1-oracle-scope-20261110/native-fullpath-e4abb172.zip",
+    "A\tformal/pon-nakamoto-v1/test_w1_quantum_evidence_scope.py",
+    "A\tformal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py",
+    "A\tformal/pon-nakamoto-v1/w1_quantum_evidence_scope.py",
+    "A\tformal/pon-nakamoto-v1/w1_quantum_native_bridge.py",
+    "M\tscripts/ci/check_ci_contract.py",
+    "M\tscripts/ci/ci_job.sh",
+    "M\tscripts/ci/test_ci_contract.py"
+  ],
+  "source_commit": "6e39f27357ce7c030f5662ada3d524fecb58d63e",
+  "source_tree": "f36683afd74fa9811bddf21787ab2386900ea70b"
+}

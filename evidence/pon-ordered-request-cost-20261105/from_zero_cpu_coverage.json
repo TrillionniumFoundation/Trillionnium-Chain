@@ -1,0 +1,1072 @@
+{
+  "schema": "original-public-v3-cpu-settlement-coverage-audit-v1",
+  "source_commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+  "source_tree": "7ce7ac50f788dd421e7cc0c9ddb957ade3e8df73",
+  "input_report": "/workspace/scratch/add353b13222/validation/from-zero-native-final/confirmation/report.json",
+  "input_report_sha256": "3e7ca3825361fe9df23d3827c92af5f6411316c2e42f1a4085fcc05a2aef024d",
+  "input_report_unchanged_after_read": true,
+  "reader_path": "/workspace/scratch/add353b13222/chain/scripts/pon_public_v3_phase_read.py",
+  "reader_sha256": "8c12e3e894b842d4f8b2ca80ca4059bca0cae372deb90b2538eeb29f2f33f0dc",
+  "reader_functions": [
+    "cpu_settlement_summary",
+    "request_owner_lifecycle_summary",
+    "stats"
+  ],
+  "native_program_or_test_rerun": false,
+  "original_records_modified": false,
+  "scope": {
+    "unit": "retained receiver connection record within its own original phase",
+    "combined_cohort_does_not_join_clock_epochs": true,
+    "unknown_total_reconstructed": false,
+    "missing_extension_is_zero": false,
+    "known_scoped_worker_zero_is_an_actual_observed_value": true,
+    "total_is_whole_request_cpu": false,
+    "includes_reactor_cpu": false,
+    "includes_later_budget_or_journal_tail": false,
+    "cpu_settle_phase_can_be_added": false,
+    "positive_post_disconnect_cpu_cohort_observed": false,
+    "nonzero_scoped_worker_cpu_observed_in_this_campaign": false,
+    "whole_request_population_p99_ns": null,
+    "confirmation_tps": null
+  },
+  "phases": [
+    {
+      "cohort": "attack-free-baseline",
+      "retained_receiver_records": 95,
+      "cpu_settlement_schema_counts": {
+        "missing_extension": 88,
+        "public-v3-cpu-settlement-observation-v2": 7
+      },
+      "v2_records": 7,
+      "legacy_v1_records": 0,
+      "missing_extension_records": 88,
+      "numeric_coverage": {
+        "owner_cpu_ns": {
+          "known_count": 7,
+          "unknown_count": 88,
+          "sum_known_ns": 37930700,
+          "v2_known_count": 7,
+          "v2_unknown_count": 0
+        },
+        "scoped_worker_cpu_ns": {
+          "known_count": 7,
+          "unknown_count": 88,
+          "sum_known_ns": 0,
+          "v2_known_count": 7,
+          "v2_unknown_count": 0
+        },
+        "total_cpu_ns": {
+          "known_count": 7,
+          "unknown_count": 88,
+          "sum_known_ns": 37930700,
+          "v2_known_count": 7,
+          "v2_unknown_count": 0
+        },
+        "live_paid_cpu_ns": {
+          "known_count": 7,
+          "unknown_count": 88,
+          "sum_known_ns": 37927495,
+          "v2_known_count": 7,
+          "v2_unknown_count": 0
+        },
+        "residual_cpu_ns": {
+          "known_count": 7,
+          "unknown_count": 88,
+          "sum_known_ns": 3205,
+          "v2_known_count": 7,
+          "v2_unknown_count": 0
+        }
+      },
+      "by_dispatch_outcome": {
+        "accepted": {
+          "records": 95,
+          "total_cpu_ns": {
+            "known_count": 7,
+            "unknown_count": 88,
+            "sum_known_ns": 37930700,
+            "min_ns": 4416521,
+            "p50_nearest_rank_ns": 5074522,
+            "p95_nearest_rank_ns": 7068212,
+            "max_ns": 7068212,
+            "mean_known_ns": {
+              "numerator": 37930700,
+              "denominator": 7
+            }
+          }
+        },
+        "rejected": {
+          "records": 0,
+          "total_cpu_ns": {
+            "known_count": 0,
+            "unknown_count": 0,
+            "sum_known_ns": 0,
+            "min_ns": null,
+            "p50_nearest_rank_ns": null,
+            "p95_nearest_rank_ns": null,
+            "max_ns": null,
+            "mean_known_ns": null
+          }
+        },
+        "unknown": {
+          "records": 0,
+          "total_cpu_ns": {
+            "known_count": 0,
+            "unknown_count": 0,
+            "sum_known_ns": 0,
+            "min_ns": null,
+            "p50_nearest_rank_ns": null,
+            "p95_nearest_rank_ns": null,
+            "max_ns": null,
+            "mean_known_ns": null
+          }
+        }
+      },
+      "settlement_successes": 7,
+      "settlement_failures": 0,
+      "continuous_journal": {
+        "persisted": 0,
+        "failed": 0,
+        "no_scope": 7
+      },
+      "lifecycle_cohort": {
+        "connection_closed_with_created_task": 95,
+        "task_closed_at_snapshot": 95,
+        "task_still_open_at_snapshot": 0,
+        "no_task_created": 0,
+        "task_closed_strictly_after_connection": 0,
+        "task_closed_at_or_before_connection": 95,
+        "closed_task_pairs_with_missing_clock": 0,
+        "wall_tail_stats_from_original_reader": {
+          "known_count": 95,
+          "unknown_count": 0,
+          "sum_known_ns": 0,
+          "min_ns": 0,
+          "p50_nearest_rank_ns": 0,
+          "p95_nearest_rank_ns": 0,
+          "max_ns": 0,
+          "mean_known_ns": {
+            "numerator": 0,
+            "denominator": 95
+          }
+        },
+        "positive_tail_cpu_cohort_status": "no_qualifying_records",
+        "post_disconnect_only_cpu_ns": null,
+        "cancellation_signal_time_measured": false
+      },
+      "original_reader_cpu_summary": {
+        "observed_records": 7,
+        "records_without_settlement_extension": 88,
+        "succeeded": 7,
+        "failed": 0,
+        "cpu_known_counts": {
+          "owner_cpu_known": 7,
+          "scoped_worker_cpu_known": 7,
+          "live_paid_cpu_known": 7,
+          "residual_cpu_known": 7
+        },
+        "budget_settled": 7,
+        "budget_not_settled": 0,
+        "continuous_journal": {
+          "persisted": 0,
+          "failed": 0,
+          "no_scope": 7
+        },
+        "scope": {
+          "has_control_authority": false,
+          "native_dispatch_outcome_is_independent": true,
+          "missing_extension_is_unknown": true,
+          "journal_null_means_no_continuous_scope": true,
+          "interval_overlaps_dispatch_cpu": true,
+          "interval_is_additive_to_dispatch_cpu": false,
+          "interval_extends_through_budget_and_journal": true,
+          "phase_thread_cpu_excludes_scoped_workers": true
+        },
+        "original_cpu_samples": {
+          "schema": "public-v3-original-cpu-settlement-samples-v1",
+          "retained_records": 95,
+          "settlements_with_values": 7,
+          "legacy_settlements_without_values": 0,
+          "records_without_settlement": 88,
+          "values_ns": {
+            "owner_cpu_ns": {
+              "known_count": 7,
+              "unknown_count": 88,
+              "sum_known_ns": 37930700,
+              "min_ns": 4416521,
+              "p50_nearest_rank_ns": 5074522,
+              "p95_nearest_rank_ns": 7068212,
+              "max_ns": 7068212,
+              "mean_known_ns": {
+                "numerator": 37930700,
+                "denominator": 7
+              }
+            },
+            "scoped_worker_cpu_ns": {
+              "known_count": 7,
+              "unknown_count": 88,
+              "sum_known_ns": 0,
+              "min_ns": 0,
+              "p50_nearest_rank_ns": 0,
+              "p95_nearest_rank_ns": 0,
+              "max_ns": 0,
+              "mean_known_ns": {
+                "numerator": 0,
+                "denominator": 7
+              }
+            },
+            "total_cpu_ns": {
+              "known_count": 7,
+              "unknown_count": 88,
+              "sum_known_ns": 37930700,
+              "min_ns": 4416521,
+              "p50_nearest_rank_ns": 5074522,
+              "p95_nearest_rank_ns": 7068212,
+              "max_ns": 7068212,
+              "mean_known_ns": {
+                "numerator": 37930700,
+                "denominator": 7
+              }
+            },
+            "live_paid_cpu_ns": {
+              "known_count": 7,
+              "unknown_count": 88,
+              "sum_known_ns": 37927495,
+              "min_ns": 4416120,
+              "p50_nearest_rank_ns": 5074092,
+              "p95_nearest_rank_ns": 7067591,
+              "max_ns": 7067591,
+              "mean_known_ns": {
+                "numerator": 37927495,
+                "denominator": 7
+              }
+            },
+            "residual_cpu_ns": {
+              "known_count": 7,
+              "unknown_count": 88,
+              "sum_known_ns": 3205,
+              "min_ns": 401,
+              "p50_nearest_rank_ns": 440,
+              "p95_nearest_rank_ns": 621,
+              "max_ns": 621,
+              "mean_known_ns": {
+                "numerator": 3205,
+                "denominator": 7
+              }
+            }
+          },
+          "by_dispatch_outcome": {
+            "accepted": {
+              "records": 95,
+              "total_cpu_ns": {
+                "known_count": 7,
+                "unknown_count": 88,
+                "sum_known_ns": 37930700,
+                "min_ns": 4416521,
+                "p50_nearest_rank_ns": 5074522,
+                "p95_nearest_rank_ns": 7068212,
+                "max_ns": 7068212,
+                "mean_known_ns": {
+                  "numerator": 37930700,
+                  "denominator": 7
+                }
+              }
+            },
+            "rejected": {
+              "records": 0,
+              "total_cpu_ns": {
+                "known_count": 0,
+                "unknown_count": 0,
+                "sum_known_ns": 0,
+                "min_ns": null,
+                "p50_nearest_rank_ns": null,
+                "p95_nearest_rank_ns": null,
+                "max_ns": null,
+                "mean_known_ns": null
+              }
+            },
+            "unknown": {
+              "records": 0,
+              "total_cpu_ns": {
+                "known_count": 0,
+                "unknown_count": 0,
+                "sum_known_ns": 0,
+                "min_ns": null,
+                "p50_nearest_rank_ns": null,
+                "p95_nearest_rank_ns": null,
+                "max_ns": null,
+                "mean_known_ns": null
+              }
+            }
+          },
+          "scope": {
+            "original_owner_plus_joined_scoped_worker_samples": true,
+            "live_paid_plus_residual_equals_original_total_when_known": true,
+            "actual_values_are_additional_debits": false,
+            "cancelled_and_rejected_work_retained": true,
+            "missing_scope_or_clock_is_not_zero": true,
+            "includes_reactor_cpu": false,
+            "includes_settlement_tail_after_original_owner_sample": false,
+            "includes_durable_journal_after_original_owner_sample": false,
+            "total_is_whole_request_cpu": false,
+            "cpu_settle_phase_is_additive_to_original_total": false
+          }
+        }
+      },
+      "original_reader_lifecycle_summary": {
+        "schema": "public-v3-request-owner-completion-v1",
+        "retained_records": 95,
+        "records_with_lifecycle": 95,
+        "records_without_lifecycle": 0,
+        "measurement_failed_records": 0,
+        "owners_closed_records": 95,
+        "connection_closed_task_still_open": 0,
+        "no_task_created_records": 0,
+        "accept_to_all_owners_closed_wall_ns": {
+          "known_count": 95,
+          "unknown_count": 0,
+          "sum_known_ns": 1319851506,
+          "min_ns": 8868940,
+          "p50_nearest_rank_ns": 9953224,
+          "p95_nearest_rank_ns": 19883329,
+          "max_ns": 194818962,
+          "mean_known_ns": {
+            "numerator": 1319851506,
+            "denominator": 95
+          }
+        },
+        "task_ownership_after_connection_close_wall_ns": {
+          "known_count": 95,
+          "unknown_count": 0,
+          "sum_known_ns": 0,
+          "min_ns": 0,
+          "p50_nearest_rank_ns": 0,
+          "p95_nearest_rank_ns": 0,
+          "max_ns": 0,
+          "mean_known_ns": {
+            "numerator": 0,
+            "denominator": 95
+          }
+        },
+        "original_total_cpu_for_completed_post_disconnect_owners_ns": {
+          "known_count": 0,
+          "unknown_count": 0,
+          "sum_known_ns": 0,
+          "min_ns": null,
+          "p50_nearest_rank_ns": null,
+          "p95_nearest_rank_ns": null,
+          "max_ns": null,
+          "mean_known_ns": null
+        },
+        "scope": {
+          "closed_owners_do_not_establish_native_success": true,
+          "closed_owners_do_not_establish_independent_confirmation": true,
+          "local_monotonic_epoch_only": true,
+          "post_disconnect_tail_is_a_wall_interval": true,
+          "post_disconnect_tail_is_cpu_cost": false,
+          "cancellation_signal_time_measured": false,
+          "task_owner_includes_buffered_completion": true,
+          "original_total_cpu_includes_work_before_connection_close": true,
+          "missing_or_unfinished_terminal_duration_is_not_zero": true,
+          "whole_request_population_p99_ns": null,
+          "business_tps_capacity": null
+        }
+      }
+    },
+    {
+      "cohort": "from-zero-pressure",
+      "retained_receiver_records": 549,
+      "cpu_settlement_schema_counts": {
+        "missing_extension": 107,
+        "public-v3-cpu-settlement-observation-v2": 442
+      },
+      "v2_records": 442,
+      "legacy_v1_records": 0,
+      "missing_extension_records": 107,
+      "numeric_coverage": {
+        "owner_cpu_ns": {
+          "known_count": 442,
+          "unknown_count": 107,
+          "sum_known_ns": 978043461,
+          "v2_known_count": 442,
+          "v2_unknown_count": 0
+        },
+        "scoped_worker_cpu_ns": {
+          "known_count": 442,
+          "unknown_count": 107,
+          "sum_known_ns": 0,
+          "v2_known_count": 442,
+          "v2_unknown_count": 0
+        },
+        "total_cpu_ns": {
+          "known_count": 442,
+          "unknown_count": 107,
+          "sum_known_ns": 978043461,
+          "v2_known_count": 442,
+          "v2_unknown_count": 0
+        },
+        "live_paid_cpu_ns": {
+          "known_count": 442,
+          "unknown_count": 107,
+          "sum_known_ns": 977681021,
+          "v2_known_count": 442,
+          "v2_unknown_count": 0
+        },
+        "residual_cpu_ns": {
+          "known_count": 442,
+          "unknown_count": 107,
+          "sum_known_ns": 362440,
+          "v2_known_count": 442,
+          "v2_unknown_count": 0
+        }
+      },
+      "by_dispatch_outcome": {
+        "accepted": {
+          "records": 99,
+          "total_cpu_ns": {
+            "known_count": 7,
+            "unknown_count": 92,
+            "sum_known_ns": 123321239,
+            "min_ns": 5750819,
+            "p50_nearest_rank_ns": 9508700,
+            "p95_nearest_rank_ns": 68971680,
+            "max_ns": 68971680,
+            "mean_known_ns": {
+              "numerator": 123321239,
+              "denominator": 7
+            }
+          }
+        },
+        "rejected": {
+          "records": 435,
+          "total_cpu_ns": {
+            "known_count": 435,
+            "unknown_count": 0,
+            "sum_known_ns": 854722222,
+            "min_ns": 1164756,
+            "p50_nearest_rank_ns": 1601746,
+            "p95_nearest_rank_ns": 3094835,
+            "max_ns": 64266546,
+            "mean_known_ns": {
+              "numerator": 854722222,
+              "denominator": 435
+            }
+          }
+        },
+        "unknown": {
+          "records": 15,
+          "total_cpu_ns": {
+            "known_count": 0,
+            "unknown_count": 15,
+            "sum_known_ns": 0,
+            "min_ns": null,
+            "p50_nearest_rank_ns": null,
+            "p95_nearest_rank_ns": null,
+            "max_ns": null,
+            "mean_known_ns": null
+          }
+        }
+      },
+      "settlement_successes": 442,
+      "settlement_failures": 0,
+      "continuous_journal": {
+        "persisted": 0,
+        "failed": 0,
+        "no_scope": 442
+      },
+      "lifecycle_cohort": {
+        "connection_closed_with_created_task": 534,
+        "task_closed_at_snapshot": 534,
+        "task_still_open_at_snapshot": 0,
+        "no_task_created": 15,
+        "task_closed_strictly_after_connection": 0,
+        "task_closed_at_or_before_connection": 534,
+        "closed_task_pairs_with_missing_clock": 0,
+        "wall_tail_stats_from_original_reader": {
+          "known_count": 534,
+          "unknown_count": 0,
+          "sum_known_ns": 0,
+          "min_ns": 0,
+          "p50_nearest_rank_ns": 0,
+          "p95_nearest_rank_ns": 0,
+          "max_ns": 0,
+          "mean_known_ns": {
+            "numerator": 0,
+            "denominator": 534
+          }
+        },
+        "positive_tail_cpu_cohort_status": "no_qualifying_records",
+        "post_disconnect_only_cpu_ns": null,
+        "cancellation_signal_time_measured": false
+      },
+      "original_reader_cpu_summary": {
+        "observed_records": 442,
+        "records_without_settlement_extension": 107,
+        "succeeded": 442,
+        "failed": 0,
+        "cpu_known_counts": {
+          "owner_cpu_known": 442,
+          "scoped_worker_cpu_known": 442,
+          "live_paid_cpu_known": 442,
+          "residual_cpu_known": 442
+        },
+        "budget_settled": 442,
+        "budget_not_settled": 0,
+        "continuous_journal": {
+          "persisted": 0,
+          "failed": 0,
+          "no_scope": 442
+        },
+        "scope": {
+          "has_control_authority": false,
+          "native_dispatch_outcome_is_independent": true,
+          "missing_extension_is_unknown": true,
+          "journal_null_means_no_continuous_scope": true,
+          "interval_overlaps_dispatch_cpu": true,
+          "interval_is_additive_to_dispatch_cpu": false,
+          "interval_extends_through_budget_and_journal": true,
+          "phase_thread_cpu_excludes_scoped_workers": true
+        },
+        "original_cpu_samples": {
+          "schema": "public-v3-original-cpu-settlement-samples-v1",
+          "retained_records": 549,
+          "settlements_with_values": 442,
+          "legacy_settlements_without_values": 0,
+          "records_without_settlement": 107,
+          "values_ns": {
+            "owner_cpu_ns": {
+              "known_count": 442,
+              "unknown_count": 107,
+              "sum_known_ns": 978043461,
+              "min_ns": 1164756,
+              "p50_nearest_rank_ns": 1607506,
+              "p95_nearest_rank_ns": 3309511,
+              "max_ns": 68971680,
+              "mean_known_ns": {
+                "numerator": 978043461,
+                "denominator": 442
+              }
+            },
+            "scoped_worker_cpu_ns": {
+              "known_count": 442,
+              "unknown_count": 107,
+              "sum_known_ns": 0,
+              "min_ns": 0,
+              "p50_nearest_rank_ns": 0,
+              "p95_nearest_rank_ns": 0,
+              "max_ns": 0,
+              "mean_known_ns": {
+                "numerator": 0,
+                "denominator": 442
+              }
+            },
+            "total_cpu_ns": {
+              "known_count": 442,
+              "unknown_count": 107,
+              "sum_known_ns": 978043461,
+              "min_ns": 1164756,
+              "p50_nearest_rank_ns": 1607506,
+              "p95_nearest_rank_ns": 3309511,
+              "max_ns": 68971680,
+              "mean_known_ns": {
+                "numerator": 978043461,
+                "denominator": 442
+              }
+            },
+            "live_paid_cpu_ns": {
+              "known_count": 442,
+              "unknown_count": 107,
+              "sum_known_ns": 977681021,
+              "min_ns": 1164425,
+              "p50_nearest_rank_ns": 1607135,
+              "p95_nearest_rank_ns": 3309161,
+              "max_ns": 68880804,
+              "mean_known_ns": {
+                "numerator": 977681021,
+                "denominator": 442
+              }
+            },
+            "residual_cpu_ns": {
+              "known_count": 442,
+              "unknown_count": 107,
+              "sum_known_ns": 362440,
+              "min_ns": 280,
+              "p50_nearest_rank_ns": 381,
+              "p95_nearest_rank_ns": 601,
+              "max_ns": 90876,
+              "mean_known_ns": {
+                "numerator": 362440,
+                "denominator": 442
+              }
+            }
+          },
+          "by_dispatch_outcome": {
+            "accepted": {
+              "records": 99,
+              "total_cpu_ns": {
+                "known_count": 7,
+                "unknown_count": 92,
+                "sum_known_ns": 123321239,
+                "min_ns": 5750819,
+                "p50_nearest_rank_ns": 9508700,
+                "p95_nearest_rank_ns": 68971680,
+                "max_ns": 68971680,
+                "mean_known_ns": {
+                  "numerator": 123321239,
+                  "denominator": 7
+                }
+              }
+            },
+            "rejected": {
+              "records": 435,
+              "total_cpu_ns": {
+                "known_count": 435,
+                "unknown_count": 0,
+                "sum_known_ns": 854722222,
+                "min_ns": 1164756,
+                "p50_nearest_rank_ns": 1601746,
+                "p95_nearest_rank_ns": 3094835,
+                "max_ns": 64266546,
+                "mean_known_ns": {
+                  "numerator": 854722222,
+                  "denominator": 435
+                }
+              }
+            },
+            "unknown": {
+              "records": 15,
+              "total_cpu_ns": {
+                "known_count": 0,
+                "unknown_count": 15,
+                "sum_known_ns": 0,
+                "min_ns": null,
+                "p50_nearest_rank_ns": null,
+                "p95_nearest_rank_ns": null,
+                "max_ns": null,
+                "mean_known_ns": null
+              }
+            }
+          },
+          "scope": {
+            "original_owner_plus_joined_scoped_worker_samples": true,
+            "live_paid_plus_residual_equals_original_total_when_known": true,
+            "actual_values_are_additional_debits": false,
+            "cancelled_and_rejected_work_retained": true,
+            "missing_scope_or_clock_is_not_zero": true,
+            "includes_reactor_cpu": false,
+            "includes_settlement_tail_after_original_owner_sample": false,
+            "includes_durable_journal_after_original_owner_sample": false,
+            "total_is_whole_request_cpu": false,
+            "cpu_settle_phase_is_additive_to_original_total": false
+          }
+        }
+      },
+      "original_reader_lifecycle_summary": {
+        "schema": "public-v3-request-owner-completion-v1",
+        "retained_records": 549,
+        "records_with_lifecycle": 549,
+        "records_without_lifecycle": 0,
+        "measurement_failed_records": 0,
+        "owners_closed_records": 549,
+        "connection_closed_task_still_open": 0,
+        "no_task_created_records": 15,
+        "accept_to_all_owners_closed_wall_ns": {
+          "known_count": 549,
+          "unknown_count": 0,
+          "sum_known_ns": 65249550661,
+          "min_ns": 8959868,
+          "p50_nearest_rank_ns": 145872449,
+          "p95_nearest_rank_ns": 234699411,
+          "max_ns": 304132663,
+          "mean_known_ns": {
+            "numerator": 65249550661,
+            "denominator": 549
+          }
+        },
+        "task_ownership_after_connection_close_wall_ns": {
+          "known_count": 534,
+          "unknown_count": 0,
+          "sum_known_ns": 0,
+          "min_ns": 0,
+          "p50_nearest_rank_ns": 0,
+          "p95_nearest_rank_ns": 0,
+          "max_ns": 0,
+          "mean_known_ns": {
+            "numerator": 0,
+            "denominator": 534
+          }
+        },
+        "original_total_cpu_for_completed_post_disconnect_owners_ns": {
+          "known_count": 0,
+          "unknown_count": 0,
+          "sum_known_ns": 0,
+          "min_ns": null,
+          "p50_nearest_rank_ns": null,
+          "p95_nearest_rank_ns": null,
+          "max_ns": null,
+          "mean_known_ns": null
+        },
+        "scope": {
+          "closed_owners_do_not_establish_native_success": true,
+          "closed_owners_do_not_establish_independent_confirmation": true,
+          "local_monotonic_epoch_only": true,
+          "post_disconnect_tail_is_a_wall_interval": true,
+          "post_disconnect_tail_is_cpu_cost": false,
+          "cancellation_signal_time_measured": false,
+          "task_owner_includes_buffered_completion": true,
+          "original_total_cpu_includes_work_before_connection_close": true,
+          "missing_or_unfinished_terminal_duration_is_not_zero": true,
+          "whole_request_population_p99_ns": null,
+          "business_tps_capacity": null
+        }
+      }
+    }
+  ],
+  "combined": {
+    "cohort": "both_retained_phase_cohorts",
+    "retained_receiver_records": 644,
+    "cpu_settlement_schema_counts": {
+      "missing_extension": 195,
+      "public-v3-cpu-settlement-observation-v2": 449
+    },
+    "v2_records": 449,
+    "legacy_v1_records": 0,
+    "missing_extension_records": 195,
+    "numeric_coverage": {
+      "owner_cpu_ns": {
+        "known_count": 449,
+        "unknown_count": 195,
+        "sum_known_ns": 1015974161,
+        "v2_known_count": 449,
+        "v2_unknown_count": 0
+      },
+      "scoped_worker_cpu_ns": {
+        "known_count": 449,
+        "unknown_count": 195,
+        "sum_known_ns": 0,
+        "v2_known_count": 449,
+        "v2_unknown_count": 0
+      },
+      "total_cpu_ns": {
+        "known_count": 449,
+        "unknown_count": 195,
+        "sum_known_ns": 1015974161,
+        "v2_known_count": 449,
+        "v2_unknown_count": 0
+      },
+      "live_paid_cpu_ns": {
+        "known_count": 449,
+        "unknown_count": 195,
+        "sum_known_ns": 1015608516,
+        "v2_known_count": 449,
+        "v2_unknown_count": 0
+      },
+      "residual_cpu_ns": {
+        "known_count": 449,
+        "unknown_count": 195,
+        "sum_known_ns": 365645,
+        "v2_known_count": 449,
+        "v2_unknown_count": 0
+      }
+    },
+    "by_dispatch_outcome": {
+      "accepted": {
+        "records": 194,
+        "total_cpu_ns": {
+          "known_count": 14,
+          "unknown_count": 180,
+          "sum_known_ns": 161251939,
+          "min_ns": 4416521,
+          "p50_nearest_rank_ns": 6616559,
+          "p95_nearest_rank_ns": 68971680,
+          "max_ns": 68971680,
+          "mean_known_ns": {
+            "numerator": 161251939,
+            "denominator": 14
+          }
+        }
+      },
+      "rejected": {
+        "records": 435,
+        "total_cpu_ns": {
+          "known_count": 435,
+          "unknown_count": 0,
+          "sum_known_ns": 854722222,
+          "min_ns": 1164756,
+          "p50_nearest_rank_ns": 1601746,
+          "p95_nearest_rank_ns": 3094835,
+          "max_ns": 64266546,
+          "mean_known_ns": {
+            "numerator": 854722222,
+            "denominator": 435
+          }
+        }
+      },
+      "unknown": {
+        "records": 15,
+        "total_cpu_ns": {
+          "known_count": 0,
+          "unknown_count": 15,
+          "sum_known_ns": 0,
+          "min_ns": null,
+          "p50_nearest_rank_ns": null,
+          "p95_nearest_rank_ns": null,
+          "max_ns": null,
+          "mean_known_ns": null
+        }
+      }
+    },
+    "settlement_successes": 449,
+    "settlement_failures": 0,
+    "continuous_journal": {
+      "persisted": 0,
+      "failed": 0,
+      "no_scope": 449
+    },
+    "lifecycle_cohort": {
+      "connection_closed_with_created_task": 629,
+      "task_closed_at_snapshot": 629,
+      "task_still_open_at_snapshot": 0,
+      "no_task_created": 15,
+      "task_closed_strictly_after_connection": 0,
+      "task_closed_at_or_before_connection": 629,
+      "closed_task_pairs_with_missing_clock": 0,
+      "wall_tail_stats_from_original_reader": {
+        "known_count": 629,
+        "unknown_count": 0,
+        "sum_known_ns": 0,
+        "min_ns": 0,
+        "p50_nearest_rank_ns": 0,
+        "p95_nearest_rank_ns": 0,
+        "max_ns": 0,
+        "mean_known_ns": {
+          "numerator": 0,
+          "denominator": 629
+        }
+      },
+      "positive_tail_cpu_cohort_status": "no_qualifying_records",
+      "post_disconnect_only_cpu_ns": null,
+      "cancellation_signal_time_measured": false
+    },
+    "original_reader_cpu_summary": {
+      "observed_records": 449,
+      "records_without_settlement_extension": 195,
+      "succeeded": 449,
+      "failed": 0,
+      "cpu_known_counts": {
+        "owner_cpu_known": 449,
+        "scoped_worker_cpu_known": 449,
+        "live_paid_cpu_known": 449,
+        "residual_cpu_known": 449
+      },
+      "budget_settled": 449,
+      "budget_not_settled": 0,
+      "continuous_journal": {
+        "persisted": 0,
+        "failed": 0,
+        "no_scope": 449
+      },
+      "scope": {
+        "has_control_authority": false,
+        "native_dispatch_outcome_is_independent": true,
+        "missing_extension_is_unknown": true,
+        "journal_null_means_no_continuous_scope": true,
+        "interval_overlaps_dispatch_cpu": true,
+        "interval_is_additive_to_dispatch_cpu": false,
+        "interval_extends_through_budget_and_journal": true,
+        "phase_thread_cpu_excludes_scoped_workers": true
+      },
+      "original_cpu_samples": {
+        "schema": "public-v3-original-cpu-settlement-samples-v1",
+        "retained_records": 644,
+        "settlements_with_values": 449,
+        "legacy_settlements_without_values": 0,
+        "records_without_settlement": 195,
+        "values_ns": {
+          "owner_cpu_ns": {
+            "known_count": 449,
+            "unknown_count": 195,
+            "sum_known_ns": 1015974161,
+            "min_ns": 1164756,
+            "p50_nearest_rank_ns": 1616108,
+            "p95_nearest_rank_ns": 3660233,
+            "max_ns": 68971680,
+            "mean_known_ns": {
+              "numerator": 1015974161,
+              "denominator": 449
+            }
+          },
+          "scoped_worker_cpu_ns": {
+            "known_count": 449,
+            "unknown_count": 195,
+            "sum_known_ns": 0,
+            "min_ns": 0,
+            "p50_nearest_rank_ns": 0,
+            "p95_nearest_rank_ns": 0,
+            "max_ns": 0,
+            "mean_known_ns": {
+              "numerator": 0,
+              "denominator": 449
+            }
+          },
+          "total_cpu_ns": {
+            "known_count": 449,
+            "unknown_count": 195,
+            "sum_known_ns": 1015974161,
+            "min_ns": 1164756,
+            "p50_nearest_rank_ns": 1616108,
+            "p95_nearest_rank_ns": 3660233,
+            "max_ns": 68971680,
+            "mean_known_ns": {
+              "numerator": 1015974161,
+              "denominator": 449
+            }
+          },
+          "live_paid_cpu_ns": {
+            "known_count": 449,
+            "unknown_count": 195,
+            "sum_known_ns": 1015608516,
+            "min_ns": 1164425,
+            "p50_nearest_rank_ns": 1615547,
+            "p95_nearest_rank_ns": 3659903,
+            "max_ns": 68880804,
+            "mean_known_ns": {
+              "numerator": 1015608516,
+              "denominator": 449
+            }
+          },
+          "residual_cpu_ns": {
+            "known_count": 449,
+            "unknown_count": 195,
+            "sum_known_ns": 365645,
+            "min_ns": 280,
+            "p50_nearest_rank_ns": 381,
+            "p95_nearest_rank_ns": 611,
+            "max_ns": 90876,
+            "mean_known_ns": {
+              "numerator": 365645,
+              "denominator": 449
+            }
+          }
+        },
+        "by_dispatch_outcome": {
+          "accepted": {
+            "records": 194,
+            "total_cpu_ns": {
+              "known_count": 14,
+              "unknown_count": 180,
+              "sum_known_ns": 161251939,
+              "min_ns": 4416521,
+              "p50_nearest_rank_ns": 6616559,
+              "p95_nearest_rank_ns": 68971680,
+              "max_ns": 68971680,
+              "mean_known_ns": {
+                "numerator": 161251939,
+                "denominator": 14
+              }
+            }
+          },
+          "rejected": {
+            "records": 435,
+            "total_cpu_ns": {
+              "known_count": 435,
+              "unknown_count": 0,
+              "sum_known_ns": 854722222,
+              "min_ns": 1164756,
+              "p50_nearest_rank_ns": 1601746,
+              "p95_nearest_rank_ns": 3094835,
+              "max_ns": 64266546,
+              "mean_known_ns": {
+                "numerator": 854722222,
+                "denominator": 435
+              }
+            }
+          },
+          "unknown": {
+            "records": 15,
+            "total_cpu_ns": {
+              "known_count": 0,
+              "unknown_count": 15,
+              "sum_known_ns": 0,
+              "min_ns": null,
+              "p50_nearest_rank_ns": null,
+              "p95_nearest_rank_ns": null,
+              "max_ns": null,
+              "mean_known_ns": null
+            }
+          }
+        },
+        "scope": {
+          "original_owner_plus_joined_scoped_worker_samples": true,
+          "live_paid_plus_residual_equals_original_total_when_known": true,
+          "actual_values_are_additional_debits": false,
+          "cancelled_and_rejected_work_retained": true,
+          "missing_scope_or_clock_is_not_zero": true,
+          "includes_reactor_cpu": false,
+          "includes_settlement_tail_after_original_owner_sample": false,
+          "includes_durable_journal_after_original_owner_sample": false,
+          "total_is_whole_request_cpu": false,
+          "cpu_settle_phase_is_additive_to_original_total": false
+        }
+      }
+    },
+    "original_reader_lifecycle_summary": {
+      "schema": "public-v3-request-owner-completion-v1",
+      "retained_records": 644,
+      "records_with_lifecycle": 644,
+      "records_without_lifecycle": 0,
+      "measurement_failed_records": 0,
+      "owners_closed_records": 644,
+      "connection_closed_task_still_open": 0,
+      "no_task_created_records": 15,
+      "accept_to_all_owners_closed_wall_ns": {
+        "known_count": 644,
+        "unknown_count": 0,
+        "sum_known_ns": 66569402167,
+        "min_ns": 8868940,
+        "p50_nearest_rank_ns": 142482512,
+        "p95_nearest_rank_ns": 210883418,
+        "max_ns": 304132663,
+        "mean_known_ns": {
+          "numerator": 66569402167,
+          "denominator": 644
+        }
+      },
+      "task_ownership_after_connection_close_wall_ns": {
+        "known_count": 629,
+        "unknown_count": 0,
+        "sum_known_ns": 0,
+        "min_ns": 0,
+        "p50_nearest_rank_ns": 0,
+        "p95_nearest_rank_ns": 0,
+        "max_ns": 0,
+        "mean_known_ns": {
+          "numerator": 0,
+          "denominator": 629
+        }
+      },
+      "original_total_cpu_for_completed_post_disconnect_owners_ns": {
+        "known_count": 0,
+        "unknown_count": 0,
+        "sum_known_ns": 0,
+        "min_ns": null,
+        "p50_nearest_rank_ns": null,
+        "p95_nearest_rank_ns": null,
+        "max_ns": null,
+        "mean_known_ns": null
+      },
+      "scope": {
+        "closed_owners_do_not_establish_native_success": true,
+        "closed_owners_do_not_establish_independent_confirmation": true,
+        "local_monotonic_epoch_only": true,
+        "post_disconnect_tail_is_a_wall_interval": true,
+        "post_disconnect_tail_is_cpu_cost": false,
+        "cancellation_signal_time_measured": false,
+        "task_owner_includes_buffered_completion": true,
+        "original_total_cpu_includes_work_before_connection_close": true,
+        "missing_or_unfinished_terminal_duration_is_not_zero": true,
+        "whole_request_population_p99_ns": null,
+        "business_tps_capacity": null
+      }
+    }
+  }
+}

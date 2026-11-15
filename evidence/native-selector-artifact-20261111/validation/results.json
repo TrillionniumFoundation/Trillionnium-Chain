@@ -1,0 +1,84 @@
+[
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_cell_storage_convergence_ci.py",
+      "-v"
+    ],
+    "label": "selector-artifact-and-retained-controls",
+    "returncode": 0,
+    "seconds": 1.663080142000581
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_cell_discovery_v3_ci.py",
+      "-v"
+    ],
+    "label": "discovery-workflow-controls",
+    "returncode": 0,
+    "seconds": 0.09219882800061896
+  },
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "execution_timeout_seconds": 60,
+    "label": "preflight",
+    "returncode": 0,
+    "seconds": 0.11476435599979595
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "execution_timeout_seconds": 120,
+    "label": "corpus-inspector",
+    "returncode": 0,
+    "seconds": 1.3303050160002385
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_research_integration.py",
+      "-v"
+    ],
+    "execution_timeout_seconds": 900,
+    "label": "corpus-controls",
+    "returncode": 0,
+    "seconds": 207.65228281600048
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/pq_chain_claim_guard.py"
+    ],
+    "execution_timeout_seconds": 120,
+    "label": "claim-guard",
+    "returncode": 0,
+    "seconds": 0.12121959700016305
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "execution_timeout_seconds": 120,
+    "label": "ci-contract",
+    "returncode": 0,
+    "seconds": 0.2664384930003507
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "execution_timeout_seconds": 60,
+    "label": "diff-check",
+    "returncode": 0,
+    "seconds": 0.16551187000004575
+  }
+]

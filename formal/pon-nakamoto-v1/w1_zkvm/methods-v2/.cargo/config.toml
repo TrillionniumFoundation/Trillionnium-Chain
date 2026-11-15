@@ -1,0 +1,4 @@
+# SDK 3.0.3 removes CARGO_BUILD_JOBS before invoking guest cargo from this
+# package directory. Keep the nested compiler bounded on the shared host.
+[build]
+jobs = 1

@@ -1,0 +1,90 @@
+{
+  "base_commit": "88bce414d7ba7f7f6a60dba03943ee20dc501ed7",
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "sha256": "0a343ef1e32620e5a27b48f51d73ce813ca031793d0a30649a99ed92a028897f",
+      "old_sha256": "b14b76f090a9fa02d6f437ec93f44dd017664e038b30d42bca4e4c5e4d209501"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs",
+      "sha256": "a28e781cb05be0e1d904891dee31a63a9cf7d1cedf7bf93a212452a377985f45",
+      "old_sha256": null
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs",
+      "sha256": "94327f6b793a19da99a750a53b9912e27938207fb6a9443928b66b1defe9f764",
+      "old_sha256": null
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/native_owner_journal_v1.rs",
+      "sha256": "ed69ab659a8537cf5201e4789cf2c7524a1f341247b9949feb137b844fe09c07",
+      "old_sha256": null
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs",
+      "sha256": "c089b0e70fb65780e4ab65ca6250201a86eefb8a12bbfc72481cc0abf41391ad",
+      "old_sha256": null
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "sha256": "aca084905c81b191c8df71d780a71be483f19c87fcef57b764963f2cd8a64ec7",
+      "old_sha256": "f166ced8ff633073031f5bc0ffce35769696678abd0bbdefca2e71c8ee47f8a8"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/CERTIFICATE_COMPOSITION_V1.md",
+      "sha256": "6a197ea5639f94bbe44317049926cddc4cf4dd402d5887cda4cb922e559b940b",
+      "old_sha256": null
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/certificate_composition.py",
+      "sha256": "32fa7d9da1326f95d6ef5829d74e748a3fc7f5af110d235d1db179bffe5805de",
+      "old_sha256": null
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/certificate_composition_evidence.py",
+      "sha256": "f7ec7ef066a4383b403ad95c8f416041d821d79c2528d9bc04cca443e830ffd6",
+      "old_sha256": null
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/certificate_composition_tests.py",
+      "sha256": "6a7fe756f08b2333cc19d01f91741e4fc43b4d24d257de0338e5ddb8133191f0",
+      "old_sha256": null
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/lifecycle_query_bound.py",
+      "sha256": "db93ca64dbd1110d529c7f89228adf4eeafdbeb3deb249eec334bcb5f23047bd",
+      "old_sha256": null
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/lifecycle_query_charging_v1.md",
+      "sha256": "fef5815e3f4061049d72b5dd4ea7b83b6d2a79826e6eab481bfbb33240de1350",
+      "old_sha256": null
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/lifecycle_query_evidence.py",
+      "sha256": "fbac486812badc8ec8590fbabb2da9f10c73e334704f7a0ba84f767fd70e1bda",
+      "old_sha256": null
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/lifecycle_query_runtime.py",
+      "sha256": "3517c866eb270a5ac5edac4ca8fee847f1b1728e8853fe2caed908f82b26cec2",
+      "old_sha256": null
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/lifecycle_query_tests.py",
+      "sha256": "4999d65014e15f87a1c6d901d20663840bbb296906fdc2c18122891ba027b3a1",
+      "old_sha256": null
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/native_owner_journal.py",
+      "sha256": "ddd0810d7de2dff623576493314aad5eaa846dad1a5d864a14e4f2528f48e5d5",
+      "old_sha256": null
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_native_owner_journal.py",
+      "sha256": "ae88e381127649f9fdd20e55c775752de7464a5b30101938f579ecedbf5c661e",
+      "old_sha256": null
+    }
+  ]
+}

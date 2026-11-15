@@ -1,0 +1,455 @@
+{
+  "actual_scoped_control_counts": {
+    "authority-scan-controls": 11,
+    "pq-controls": 57,
+    "quantum-models": 118,
+    "source-integrity": 47
+  },
+  "amendment_review": {
+    "previous_files": [
+      {
+        "git_blob": "44cd4f460f1d9700a28eaf84dc7a55723a699270",
+        "relative_path": "README.md",
+        "sha256": "c98807035ad1a20210547e7c24ba362bfb926a2adbd107f97b8ebf5172c74d66"
+      },
+      {
+        "git_blob": "66af81d3fe346ac39e7b9bba6dad1c9eaeba36d3",
+        "relative_path": "fixed-pair.json",
+        "sha256": "2a3441145f45577110f561c50aa8f2641eb3126fbcf84dbf9f744846d920bd00"
+      },
+      {
+        "git_blob": "0bb0a0d666236db166151e7312c68f8c504e8805",
+        "relative_path": "gate-ledger.json",
+        "sha256": "ccf3dcb444c7ae2ddfa1bdca7d043763c6606bb08aff50de6b37a7c2f3b6e1c5"
+      }
+    ],
+    "prior_two_phrase_review_preserved": true,
+    "reasons": [
+      "Single bounded scheduler wait ended before native launch with new shared OOM events.",
+      "Corrected explicit source scope for four historical Growth RED attempts.",
+      "Concurrent 04be code/configuration delta kept separate from frozen b5bb/367e evidence."
+    ],
+    "supersedes_review_git_blob": "4918e08bb2e115f147d76c5c5e0c7cc55373610f",
+    "supersedes_review_sha256": "a40f0338864b52c1d4c1de4ffeddd43af42774a5251d6750c44691674b3e6772"
+  },
+  "blocking_findings": [],
+  "bounded_wait_review": {
+    "actual_native_started": false,
+    "checkpoint": {
+      "bytes": 2698,
+      "git_blob": "4d41126f13066bd9da965d874ec42cc58f0d7802",
+      "path": "/workspace/scratch/822cc50e24f0/state-scheduling-restored/checkpoint-resource-waiter-retry2.json",
+      "sha256": "ea5f56ed2aaa524dd7f101fd6cb82547202434621d49b169588af88d8644584b"
+    },
+    "counts_as_native_attempt": false,
+    "elapsed_seconds": 160.16535,
+    "initial_shared_events": {
+      "oom": 4,
+      "oom_kill": 4
+    },
+    "new_native_attempt_count": 0,
+    "new_native_test_count": 0,
+    "oom_victim_attributed": false,
+    "outcome_record": {
+      "bytes": 1628,
+      "git_blob": "67299fca917104bbb0ce5fdaedde29fd72097973",
+      "path": "/workspace/scratch/822cc50e24f0/state-scheduling-restored/resource-waiter-retry2-outcome.json",
+      "sha256": "e728551ec4c41188ee626b2d0e9aa420e03a4bb2761f1a2e97cbc9dd2fdbbdf6"
+    },
+    "previous_attempt_events_rewritten": false,
+    "state": "OOM_DURING_WAIT",
+    "terminal_shared_events": {
+      "oom": 5,
+      "oom_kill": 5
+    }
+  },
+  "conclusion": "CONSISTENT_HOLD_EVIDENCE",
+  "consistency_findings": [
+    {
+      "id": "same_selected_identity",
+      "observation": "README, fixed-pair and embedded ledger select the same Chain b5bb / Hepta 367e commits and trees.",
+      "result": "CONSISTENT"
+    },
+    {
+      "id": "ledger_embedded_pair_exact",
+      "observation": "Embedded code_pair equals the complete final fixed-pair JSON object.",
+      "result": "CONSISTENT"
+    },
+    {
+      "id": "all_requested_workstreams_present",
+      "observation": "All ten requested workstreams occur once.",
+      "result": "CONSISTENT"
+    },
+    {
+      "id": "no_workstream_closed",
+      "observation": "All ten workstreams remain open/partial/HOLD, independently of implemented source changes.",
+      "result": "CONSISTENT"
+    },
+    {
+      "id": "no_activation_or_security_promotion",
+      "observation": "No global security, proof-backend or activation gate is promoted.",
+      "result": "CONSISTENT"
+    },
+    {
+      "id": "scoped_count_233",
+      "observation": "Actual raw counts total 233; resource25 is contained in quantum118 and is not counted again.",
+      "result": "CONSISTENT"
+    },
+    {
+      "id": "historical_pair_preserved",
+      "observation": "The original Chain-only controls remain bound to b5bb with then-selected runtime29; no combined final-pair native acceptance is asserted.",
+      "result": "CONSISTENT"
+    },
+    {
+      "id": "narrow_numerical_defects_only",
+      "observation": "Only the demonstrated exact-arithmetic defect is marked fixed; C2 remains OPEN_RESEARCH_WITH_NUMERICAL_DEFECTS_FIXED.",
+      "result": "CONSISTENT"
+    },
+    {
+      "id": "f0_denominator_and_failure",
+      "observation": "The completed F0 failure retains 6/42 denominators and 0/6 SLOs; finalizer failure is not labelled a cleanup/parser defect.",
+      "result": "CONSISTENT"
+    },
+    {
+      "id": "f0_backend_and_original_gate_separate",
+      "observation": "F0 remains AuthenticatedV1/RawR14, 24 producers/two 30-second phases; it neither validates GrowthV2 nor replaces original #639 4-second/16-producer acceptance.",
+      "result": "CONSISTENT"
+    },
+    {
+      "id": "w1_unknown_not_success_or_known_termination",
+      "observation": "W1 retains last-known 1/43, executor loss, unknown complete result/termination and 58 controls NOT_RUN; no recovered raw proof or complete proof is claimed.",
+      "result": "CONSISTENT"
+    },
+    {
+      "id": "frozen_pair_remains_observation_pair",
+      "observation": "The selected pair remains b5bb/367e; the ledger embeds the exact updated fixed-pair object. New branch source is a separate boundary observation.",
+      "result": "CONSISTENT"
+    },
+    {
+      "id": "late_exact_commit_metadata_and_eight_paths",
+      "observation": "An independent read-only GitHub commit request confirmed exact 04be head/tree, sole parent ef1fa and all eight path/status/addition/deletion entries. This checks the delta identity, not patch safety or native behavior.",
+      "result": "CONSISTENT"
+    },
+    {
+      "id": "no_historical_results_transferred_to_late_source",
+      "observation": "No 233 controls, Growth RED, F0 or prospective-merge source result is relabelled as 04be or later-head acceptance; current combined-head acceptance remains OPEN.",
+      "result": "CONSISTENT"
+    },
+    {
+      "id": "growth_red_four_attempt_source_corrected",
+      "observation": "All four actual RED attempts are tied to ffb plus the recorded enum/test overlay; two observed assertion REDs remain unqualified, two canonical compilations aborted before tests, and b5bb GREEN2/B1 remain NOT_RUN.",
+      "result": "CONSISTENT"
+    },
+    {
+      "id": "bounded_wait_is_not_native_attempt",
+      "observation": "The one finite scheduler wait ended OOM_DURING_WAIT after 160.165350 seconds, counters 4/4 to 5/5, before any new native process/test. It is not a fifth native attempt or retrospective OOM attribution to previous attempts.",
+      "result": "CONSISTENT"
+    },
+    {
+      "id": "closure_state_after_late_update",
+      "observation": "All ten requested workstreams remain open/partial/HOLD and no security, proof or production gate is closed.",
+      "result": "CONSISTENT"
+    }
+  ],
+  "files": [
+    {
+      "bytes": 19694,
+      "git_blob": "13bb3b35c2b33f6dc42d28afe712a48d59dcd558",
+      "path": "/workspace/scratch/822cc50e24f0/round2-evidence/final/README.md",
+      "relative_path": "README.md",
+      "sha256": "edbeb0b5880b68020ff30f0b0cd85cdc55dd902d22f5aab300c2853fdd14b062"
+    },
+    {
+      "bytes": 3375,
+      "git_blob": "77216e9966bfdb3e4881e4f5e75d557714f9910d",
+      "path": "/workspace/scratch/822cc50e24f0/round2-evidence/final/fixed-pair.json",
+      "relative_path": "fixed-pair.json",
+      "sha256": "eb4dc5af8271f27f61f643ed4d0af267fb23a4150d14bc0dbbeb11b87de2b342"
+    },
+    {
+      "bytes": 14081,
+      "git_blob": "b6814823662976c973277c86d77ba4c4d6b3aea5",
+      "path": "/workspace/scratch/822cc50e24f0/round2-evidence/final/gate-ledger.json",
+      "relative_path": "gate-ledger.json",
+      "sha256": "3a2140d7df79701121d7df3fc3fde0d3dacc8480e04405eeea315d3316be31ef"
+    },
+    {
+      "bytes": 2834,
+      "git_blob": "ef2652c643d464ca724e79b5a54d768a32f7826c",
+      "path": "/workspace/scratch/822cc50e24f0/round2-evidence/final/late-integration.json",
+      "relative_path": "late-integration.json",
+      "sha256": "f6935cf13d56c58564c74c10cf3dca262471718942f378b5e17a45a321030a29"
+    }
+  ],
+  "growth_red_source_review": {
+    "attempts": [
+      {
+        "actual_head_after": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+        "actual_head_before": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+        "bindings_unchanged": true,
+        "git_status_unchanged": true,
+        "head_unchanged": true,
+        "name": "native-red",
+        "native_inputs_unchanged": true,
+        "qualification": "HOLD",
+        "record": {
+          "bytes": 9780,
+          "git_blob": "9c2b7b32d3c079a572750512385f3fb4727e032e",
+          "path": "/workspace/scratch/822cc50e24f0/state-scheduling-restored/native-red/result.json",
+          "sha256": "c3bee8621c057e4886fb63faaa6144397a324db6c5f17e51d76438e7618c1f30"
+        },
+        "result": "EXPECTED_REGRESSION_REPRODUCED",
+        "source_mode": "recorded_working_tree_overlay",
+        "test_result_lines": [
+          "test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.52s"
+        ]
+      },
+      {
+        "actual_head_after": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+        "actual_head_before": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+        "bindings_unchanged": true,
+        "git_status_unchanged": true,
+        "head_unchanged": true,
+        "name": "native-red-rustup",
+        "native_inputs_unchanged": true,
+        "qualification": "HOLD",
+        "record": {
+          "bytes": 9689,
+          "git_blob": "16bef2902363edc610bcc01bfd0502de9a3a6c3c",
+          "path": "/workspace/scratch/822cc50e24f0/state-scheduling-restored/native-red-rustup/result.json",
+          "sha256": "14a592564e6371d5f696612112d931312b74a9b1af0520d1edc2dfeff337675a"
+        },
+        "result": "EXPECTED_REGRESSION_REPRODUCED",
+        "source_mode": "recorded_working_tree_overlay",
+        "test_result_lines": [
+          "test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s"
+        ]
+      },
+      {
+        "actual_head_after": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+        "actual_head_before": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+        "bindings_unchanged": true,
+        "git_status_unchanged": true,
+        "head_unchanged": true,
+        "name": "native-red-canonical",
+        "native_inputs_unchanged": true,
+        "qualification": "HOLD",
+        "record": {
+          "bytes": 9824,
+          "git_blob": "2a9b26c76d7830a868de18684077755df34eb48d",
+          "path": "/workspace/scratch/822cc50e24f0/state-scheduling-restored/native-red-canonical/result.json",
+          "sha256": "9688b62a762cdbd1542127f437ad00c52412d3a79ba5b228b36a139650c22b33"
+        },
+        "result": "ABORTED_RESOURCE",
+        "source_mode": "recorded_working_tree_overlay",
+        "test_result_lines": []
+      },
+      {
+        "actual_head_after": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+        "actual_head_before": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+        "bindings_unchanged": true,
+        "git_status_unchanged": true,
+        "head_unchanged": true,
+        "name": "native-red-canonical-retry1",
+        "native_inputs_unchanged": true,
+        "qualification": "HOLD",
+        "record": {
+          "bytes": 9824,
+          "git_blob": "a98a897b845bcd59081f3f0aef5148e2e2079a89",
+          "path": "/workspace/scratch/822cc50e24f0/state-scheduling-restored/native-red-canonical-retry1/result.json",
+          "sha256": "1484ea3b792e9284537ba458f177eac1fa3fc7b6993972322fc1242672084c2b"
+        },
+        "result": "ABORTED_RESOURCE",
+        "source_mode": "recorded_working_tree_overlay",
+        "test_result_lines": []
+      }
+    ],
+    "b1_native_result": "NOT_RUN",
+    "native_green2_result": "NOT_RUN",
+    "overlay_record": {
+      "bytes": 740,
+      "git_blob": "bb6ab78787a9eb09a6919f91129ec82fdf6ccb35",
+      "path": "/workspace/scratch/822cc50e24f0/state-scheduling-restored/red-overlay.json",
+      "sha256": "65ee268cd30aaaf43f0cd17b588847ca36dd13dea5bf22280ea4419893d9c588"
+    },
+    "source_head": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+    "source_pristine_tree": "acef282613e9f6d61ab4bfc5d27b3b1c55257018"
+  },
+  "late_integration_review": {
+    "changes_match_final_boundary_file": true,
+    "immutable_commit_readback": {
+      "files": [
+        {
+          "additions": 3,
+          "blob": "af9037a79d085160518c117c79ed35573fe178e4",
+          "deletions": 3,
+          "path": "config/pon/pq-cross-branch-corpus-v1.json",
+          "status": "modified"
+        },
+        {
+          "additions": 57,
+          "blob": "4533c7df972c32779f3c181e0a98bdfaa62c74e3",
+          "deletions": 4,
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+          "status": "modified"
+        },
+        {
+          "additions": 361,
+          "blob": "06a662ce91bcc85d8172738b1fbe0f6029356df5",
+          "deletions": 0,
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1/capacity_range_tests.rs",
+          "status": "added"
+        },
+        {
+          "additions": 10,
+          "blob": "abd64c5146305aa55370a5f5990c6758c8314694",
+          "deletions": 1,
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+          "status": "modified"
+        },
+        {
+          "additions": 80,
+          "blob": "754d6e8b24affd801d3652f333447d114af73222",
+          "deletions": 0,
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs",
+          "status": "modified"
+        },
+        {
+          "additions": 7,
+          "blob": "99729b294940703694d01ff00c5932edb45ebfe2",
+          "deletions": 0,
+          "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+          "status": "modified"
+        },
+        {
+          "additions": 6,
+          "blob": "a41c51973eb5291a84d5620ab17c39fefc2049d1",
+          "deletions": 0,
+          "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+          "status": "modified"
+        },
+        {
+          "additions": 174,
+          "blob": "4f33694201a1c3da9e090be494c50da7ade19dd1",
+          "deletions": 0,
+          "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+          "status": "modified"
+        }
+      ],
+      "parents": [
+        "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155"
+      ],
+      "sha": "04be5f02c84cf5cb626a53f34bc03a5bd6ff5137",
+      "tree": "d4f4a85c439982d8decec9265c1993408f3577cf",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/04be5f02c84cf5cb626a53f34bc03a5bd6ff5137"
+    },
+    "native_or_static_tests_of_late_head_executed": false,
+    "prior_results_transferred": false,
+    "semantics_of_patch_reviewed": false
+  },
+  "limitations": [
+    "No Cargo, native/model suite, CI job or proof attempt was executed during this review.",
+    "No complete authority call graph, independent operator review, deployment/PQ/quantum qualification or performance closure is established.",
+    "This review binds the hashes listed above; subsequent document or code edits require their own scope check.",
+    "Runtime367e commit/tree identity is checked for consistency across the final records; this review did not repeat the separate runtime workflow-source audit."
+  ],
+  "quantum_suite_counts": {
+    "test_quantum_adversarial_search": 12,
+    "test_quantum_candidate_check_clock": 6,
+    "test_quantum_daa_model": 18,
+    "test_quantum_network_sim": 39,
+    "test_quantum_oracle_resources": 25,
+    "test_quantum_resource_clock": 18
+  },
+  "review_activity": {
+    "ci_dispatched_or_rerun": false,
+    "model_tests_executed": false,
+    "native_tests_executed": false,
+    "only_review_artifact_created": true,
+    "remote_refs_modified": false,
+    "reviewed_files_modified": false,
+    "source_files_modified": false
+  },
+  "reviewed_at_utc": "2026-11-05T04:53:24.272596+00:00",
+  "reviewed_inputs_unchanged_at_completion": {
+    "README.md": true,
+    "fixed-pair.json": true,
+    "gate-ledger.json": true,
+    "late-integration.json": true
+  },
+  "reviewer": "/root/work_proofs",
+  "schema": "trnm-final-evidence-independent-consistency-review-v1",
+  "scope": "Read-only consistency and evidence-scope review of the three final records plus their late-integration boundary file. Includes actual historical records and immutable GitHub commit metadata readback. No new native/security/performance acceptance or permission to close a workstream.",
+  "selected_pair": {
+    "chain_sha": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+    "chain_tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+    "runtime_sha": "367e27fb6bf30443641b9e23a063d24e49eda9f7",
+    "runtime_tree": "6a2465606f0270eeecec83c2b7d9dbef5dc96076"
+  },
+  "supporting_observations": {
+    "f0_analysis_git_blob": "ab774d5bb8b532dcd08dc069c23e8e877c6d0a00",
+    "f0_artifact_manifest_git_blob": "fbd7e8f73017c7804f90cb54b8c5864bb45c91f1",
+    "quantum_records": "/workspace/scratch/822cc50e24f0/round2-evidence/quantum/checks.json",
+    "runtime_29_to_d206_source_map_git_blob": "93aeb3b81e7b4f7ffe420dc4a41a78bc7d1f9296",
+    "source_control_records": "/workspace/scratch/822cc50e24f0/round2-evidence/source-controls/checks.json",
+    "source_trace_git_blob": "659dd12d19b303350583283841f3d4c5dfbbeb78",
+    "w1_original_observation_git_blob": "449b4324a16553e47a6d13095a603512e93441fd"
+  },
+  "workflow_closure_review": {
+    "closed": 0,
+    "demonstrated_defect_is_not_workstream_closure": true,
+    "gates": [
+      {
+        "closed": false,
+        "id": "P0",
+        "status": "PARTIAL_SOURCE_BINDING"
+      },
+      {
+        "closed": false,
+        "id": "A1",
+        "status": "OPEN_ENGINEERING_AND_ACCEPTANCE"
+      },
+      {
+        "closed": false,
+        "id": "A2",
+        "status": "OPEN_ENGINEERING_AND_ACCEPTANCE"
+      },
+      {
+        "closed": false,
+        "id": "A3",
+        "status": "OPEN_NATIVE_AND_INDEPENDENT_GATES"
+      },
+      {
+        "closed": false,
+        "id": "B1",
+        "status": "OPEN_NATIVE_AND_PERFORMANCE"
+      },
+      {
+        "closed": false,
+        "id": "B2",
+        "status": "OPEN_NATIVE_AND_PERFORMANCE"
+      },
+      {
+        "closed": false,
+        "id": "C1",
+        "status": "OPEN_RESEARCH"
+      },
+      {
+        "closed": false,
+        "id": "C2",
+        "status": "OPEN_RESEARCH_WITH_NUMERICAL_DEFECTS_FIXED"
+      },
+      {
+        "closed": false,
+        "id": "D",
+        "status": "HOLD_DISABLED"
+      },
+      {
+        "closed": false,
+        "id": "E",
+        "status": "OPEN_INDEPENDENT_AND_COMBINED_GATES"
+      }
+    ],
+    "requested": 10
+  }
+}

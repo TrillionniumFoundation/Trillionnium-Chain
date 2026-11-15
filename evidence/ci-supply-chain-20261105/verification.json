@@ -1,0 +1,244 @@
+{
+  "source": {
+    "commit": "7ae0d1b227853fc75e02334b497f69dd52d50235",
+    "source_state": "committed-clean",
+    "tracked_bytes": 984541779,
+    "tracked_entries": 10319,
+    "tracked_worktree_verified": true,
+    "tree": "f59e2f42ce5fb6740806ef99d60e3396397de10a"
+  },
+  "result": "PASS",
+  "advisory_databases": [
+    {
+      "archive": "advisories-0-26fd2d43f7280a1fb925a3743ec463017afe7119.tar.gz",
+      "commit": "26fd2d43f7280a1fb925a3743ec463017afe7119",
+      "commit_time": "2026-11-05T09:50:49+01:00",
+      "origin": "https://github.com/RustSec/advisory-db",
+      "tree": "6cec6aa884aba1df6d5c62888f21760f4bd1d1de"
+    }
+  ],
+  "category_results": {
+    "0": {
+      "advisories": {
+        "errors": 0,
+        "helps": 0,
+        "notes": 0,
+        "warnings": 0
+      },
+      "bans": {
+        "errors": 0,
+        "helps": 0,
+        "notes": 0,
+        "warnings": 3
+      },
+      "licenses": {
+        "errors": 0,
+        "helps": 130,
+        "notes": 0,
+        "warnings": 5
+      },
+      "sources": {
+        "errors": 0,
+        "helps": 0,
+        "notes": 0,
+        "warnings": 0
+      }
+    },
+    "1": {
+      "advisories": {
+        "errors": 0,
+        "helps": 0,
+        "notes": 0,
+        "warnings": 0
+      },
+      "bans": {
+        "errors": 0,
+        "helps": 0,
+        "notes": 0,
+        "warnings": 3
+      },
+      "licenses": {
+        "errors": 0,
+        "helps": 94,
+        "notes": 0,
+        "warnings": 4
+      },
+      "sources": {
+        "errors": 0,
+        "helps": 0,
+        "notes": 0,
+        "warnings": 0
+      }
+    }
+  },
+  "observations": [
+    {
+      "command": [
+        "/workspace/shared/chain-ci-tools/deny-0.20.2/bin/cargo-deny",
+        "--version"
+      ],
+      "cwd": "/workspace/scratch/29755d2a47ef/chain-hex-current",
+      "elapsed_ns": 2964452094,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7ae0d1b227853fc75e02334b497f69dd52d50235",
+      "log": "tool-version.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "fetch",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "cwd": "/workspace/scratch/29755d2a47ef/chain-hex-current",
+      "elapsed_ns": 3275413686,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7ae0d1b227853fc75e02334b497f69dd52d50235",
+      "log": "fetch-crates-0.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "fetch",
+        "--locked",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml"
+      ],
+      "cwd": "/workspace/scratch/29755d2a47ef/chain-hex-current",
+      "elapsed_ns": 3099808251,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7ae0d1b227853fc75e02334b497f69dd52d50235",
+      "log": "fetch-crates-1.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "/workspace/shared/chain-ci-tools/deny-0.20.2/bin/cargo-deny",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--config",
+        "deny.toml",
+        "--locked",
+        "fetch",
+        "db"
+      ],
+      "cwd": "/workspace/scratch/29755d2a47ef/chain-hex-current",
+      "elapsed_ns": 7948253620,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7ae0d1b227853fc75e02334b497f69dd52d50235",
+      "log": "fetch-advisories.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/workspace/shared/chain-cargo/advisory-dbs/advisory-db-3157b0e258782691",
+        "archive",
+        "--format=tar.gz",
+        "--output=/workspace/shared/supply-current-original/supply-chain/advisories-0-26fd2d43f7280a1fb925a3743ec463017afe7119.tar.gz",
+        "26fd2d43f7280a1fb925a3743ec463017afe7119"
+      ],
+      "cwd": "/workspace/scratch/29755d2a47ef/chain-hex-current",
+      "elapsed_ns": 4951838266,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7ae0d1b227853fc75e02334b497f69dd52d50235",
+      "log": "archive-0.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "/workspace/shared/chain-ci-tools/deny-0.20.2/bin/cargo-deny",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--config",
+        "deny.toml",
+        "--all-features",
+        "--frozen",
+        "--format",
+        "json",
+        "check",
+        "advisories",
+        "licenses",
+        "bans",
+        "sources"
+      ],
+      "cwd": "/workspace/scratch/29755d2a47ef/chain-hex-current",
+      "elapsed_ns": 3721940434,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7ae0d1b227853fc75e02334b497f69dd52d50235",
+      "log": "check-0.jsonl",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "/workspace/shared/chain-ci-tools/deny-0.20.2/bin/cargo-deny",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--config",
+        "deny.toml",
+        "--all-features",
+        "--frozen",
+        "--format",
+        "json",
+        "check",
+        "advisories",
+        "licenses",
+        "bans",
+        "sources"
+      ],
+      "cwd": "/workspace/scratch/29755d2a47ef/chain-hex-current",
+      "elapsed_ns": 3495398247,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7ae0d1b227853fc75e02334b497f69dd52d50235",
+      "log": "check-1.jsonl",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    }
+  ],
+  "all_artifact_hashes_verified": 8,
+  "archive_sha256": "d82801a3884069c101566d0a50046880ff15f072b4f2261a899b7b55ab30237d",
+  "historical_archive_sha256": "d41dfb91d620ca350c97c1854ccdb0b83bb51ff412f03e7744bd46ede8237e5a",
+  "historical_artifact_id": 13411537198,
+  "policy_changed": false,
+  "lockfiles_changed_during_run": false,
+  "full_quality_lane_claimed": false,
+  "acceptance_granted": false
+}

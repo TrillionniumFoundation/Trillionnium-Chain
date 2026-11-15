@@ -1,0 +1,20 @@
+[
+  {
+    "label": "preflight",
+    "exit": 0,
+    "seconds": 0.044,
+    "sha256": "56375c21df596b70348e1b7c230e4d64c2a5cb1de197572d8ae9fe5cb8b94789"
+  },
+  {
+    "label": "stage-immutable-original-fixture",
+    "exit": 0,
+    "seconds": 0.021,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "commit-immutable-original-fixture",
+    "exit": 0,
+    "seconds": 0.057,
+    "sha256": "5a37276d838de87f2028c37d779bba06dd020305bb5d46b66cbf8e674640fd56"
+  }
+]

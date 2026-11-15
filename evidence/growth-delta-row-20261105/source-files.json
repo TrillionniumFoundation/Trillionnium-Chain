@@ -1,0 +1,14 @@
+{
+  "base_commit": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+  "source_sha256": {
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs": "73a8dceef766adc49bd3b56c70d7909f964e2f5073dc6993f4013d24db5a54e1",
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs": "1a8d85f51142eac3bc84fa45410c74ec2f661064604c63124f2c5ea3e904b4f8",
+    "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth/account_prefix_tests.rs": "e759d9c65d8203ba25d0b6f354c242909a6bcc5a42af5db5be32f2102a064bb5",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+  },
+  "baseline_binary_sha256": "28368f3a4faa7d3bb5e708cd4224e0d8c48c291761a43d2a4d208edbf3727e5a",
+  "production_activation": false,
+  "pq_128_qualified": false
+}

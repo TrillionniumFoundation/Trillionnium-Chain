@@ -1,0 +1,129 @@
+[
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qq/work/chain-hepta-accounting-d9bb-20261109",
+    "exit_code": 0,
+    "label": "preflight",
+    "stderr": {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 183,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/preflight.stdout",
+      "sha256": "118d30aadf0b69f8e01a98ce46f2eef79d0a32bbff3663d771d11bbbb3a564c6"
+    },
+    "wall_seconds": 0.02815712196752429
+  },
+  {
+    "argv": [
+      "rustc",
+      "+1.95.0",
+      "-Vv"
+    ],
+    "cwd": "/home/qq/work/chain-hepta-accounting-d9bb-20261109",
+    "exit_code": 0,
+    "label": "rustc-identity",
+    "stderr": {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/rustc-identity.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 196,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/rustc-identity.stdout",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    "wall_seconds": 0.013882318045943975
+  },
+  {
+    "argv": [
+      "cargo",
+      "+1.95.0",
+      "-Vv"
+    ],
+    "cwd": "/home/qq/work/chain-hepta-accounting-d9bb-20261109",
+    "exit_code": 0,
+    "label": "cargo-identity",
+    "stderr": {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/cargo-identity.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 339,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/cargo-identity.stdout",
+      "sha256": "c034ed37e1ee0ec102326f27e9b3b8fe6a481f8c8ad28df58a2e117b241c0f0e"
+    },
+    "wall_seconds": 0.0114442128688097
+  },
+  {
+    "argv": [
+      "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/bin/openssl",
+      "version"
+    ],
+    "cwd": "/home/qq/work/chain-hepta-accounting-d9bb-20261109",
+    "exit_code": 0,
+    "label": "provider-version",
+    "stderr": {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/provider-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 63,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/provider-version.stdout",
+      "sha256": "ce02e695a9cdef937642d2397d874af20e0dbca21e9f43e0395d6809813a0547"
+    },
+    "wall_seconds": 0.0009749659802764654
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/record_pq_native_command.py",
+      "--kind",
+      "head",
+      "--candidate",
+      "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+      "--tested",
+      "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+      "--label",
+      "strict-clippy",
+      "--output",
+      "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01",
+      "--",
+      "cargo",
+      "+1.95.0",
+      "clippy",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/home/qq/work/chain-hepta-accounting-d9bb-20261109",
+    "exit_code": 0,
+    "label": "strict-clippy-recorder",
+    "stderr": {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/strict-clippy-recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 137,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/strict-clippy-recorder.stdout",
+      "sha256": "f3118af02c9fd0e01089c3dc6ef202c991cb6557eaa2e114b0ddff0986a122f8"
+    },
+    "wall_seconds": 141.0969366580248
+  }
+]

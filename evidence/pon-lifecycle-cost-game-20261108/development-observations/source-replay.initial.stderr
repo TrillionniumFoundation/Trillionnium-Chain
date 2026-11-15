@@ -1,0 +1,16 @@
+fatal: bad object 9fedf7ecbbe07177069c030592b4e03dcffebb81:trillionnium/crates/trnm-protocol/src/lib.rs
+Traceback (most recent call last):
+  File "/workspace/scratch/68dd104c2e6a/chain-lifecycle/formal/pon-nakamoto-v1/useful_cell_relation_v1.py", line 574, in <module>
+    _source_worker(sys.argv[2])
+  File "/workspace/scratch/68dd104c2e6a/chain-lifecycle/formal/pon-nakamoto-v1/useful_cell_relation_v1.py", line 565, in _source_worker
+    rows = source_model.corpus(source)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/68dd104c2e6a/chain-lifecycle/formal/pon-nakamoto-v1/experiments/model_loop.py", line 40, in corpus
+    text=subprocess.check_output(['git','show',source+':'+path],cwd=ROOT,text=True)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'show', '9fedf7ecbbe07177069c030592b4e03dcffebb81:trillionnium/crates/trnm-protocol/src/lib.rs']' returned non-zero exit status 128.

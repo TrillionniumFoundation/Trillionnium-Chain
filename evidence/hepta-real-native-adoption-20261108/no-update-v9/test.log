@@ -1,0 +1,18 @@
+RUST_MIN_STACK=8388608 NEXTEST_PROFILE=local python3 ../scripts/run-nextest.py "$@"
+  Extracting 1 binary and 9 linked paths to /home/qq/hepta-learning-native-edf03ec-d9fb-20261108/extracted
+   Extracted 139 files to /home/qq/hepta-learning-native-edf03ec-d9fb-20261108/extracted in 0.90s
+────────────
+ Nextest run ID cf32254e-d127-46d7-b559-224d8fd2a667 with nextest profile: local
+    Starting 1 test across 1 binary (763 tests skipped)
+       START             codex-hepta-agentd neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback
+
+running 1 test
+        SLOW [> 30.000s] codex-hepta-agentd neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback
+HEPTA_REAL_MODEL_NATIVE_COMPLETION_V1 {"actual_evaluation_forward_calls":8,"actual_next_task_forward_calls":1,"actual_source_forward_calls":1,"actual_training_optimizer_steps":10,"checkpoint_sha256":"c890ca0ba1f5b5190e33bc93a0947c98a5cbfc4f77ad4f65ac8f428274ab222f","disposition":"NoUpdate","evaluation_profile":"275aca9dd69af76f834081001f8cf3cad874d994e0248ab5f32bb282b8b369f2","frozen_plan_sha256":"052ea9fda3ce1eeb668905b6c534711049a7a58730af3508d49f3f8ce73d2169","generation_owner_reopened":true,"independent_operator_custody":false,"initial_learning_head":"bdd3ecfe1426c5450d74e5335f2284472ed92f9c7e93fde9e6500186a4f477de","learning_head":"4007e852d565a0163d74291c9ec0b2e34f9f2c58b44d03a7cc0c821819503ed9","learning_owner_reopened":true,"native_daemon_os_restart":false,"native_fleet_lifecycle_recreated":true,"native_iteration_complete":true,"native_proposal_update_candidates":false,"operation":"learning-d9fb-native-no-update-v9","original_checkpoint_codec":true,"original_generation_actor":true,"original_learning_signature_verifier":true,"original_parameter_v3_qualified":false,"positive_adoption_rejection":null,"positive_adoption_validation":null,"product_ope_qualified":false,"production_activation":false,"production_final_use":false,"production_root_capability":false,"qualification":"HOLD_NO_GO","real_new_candidate_adoption":false,"reexecuted_after_recovery":false,"research_keys_and_custody":true,"result":"PASS","retained_artifact_sha256":"a946c2cd7073092e607fb5ee3fd9b2dc78053ba5dc3d357a0a27c273ebbf95e2","schema":"hepta.research.real-model-native-completion.v1","selected_adapter":"e1a9ce940c9d4b04bb827490708604178d4e2391e7afd81a3ca63008389d1e53","selected_artifact_sha256":"a946c2cd7073092e607fb5ee3fd9b2dc78053ba5dc3d357a0a27c273ebbf95e2","worker_process_restarted":true}
+test neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 763 filtered out; finished in 44.43s
+
+        PASS [  44.440s] codex-hepta-agentd neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback
+────────────
+     Summary [  44.443s] 1 test run: 1 passed (1 slow), 763 skipped

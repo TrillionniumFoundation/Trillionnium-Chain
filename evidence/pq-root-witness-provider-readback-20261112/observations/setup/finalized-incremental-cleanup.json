@@ -1,0 +1,51 @@
+{
+  "utc": "2026-11-12T00:16:13.692480+00:00",
+  "scope": "owned finalized incremental caches with exclusive nonblocking session locks held; .lock files and all linked rlibs/test ELFs retained",
+  "removed": [
+    {
+      "path": "/workspace/scratch/3069292387f3/root-target/debug/incremental/trnm_crypto_primitives-22x2z7kvr75zb/s-ho2raz8fhc-1mahpu2-4javitl2oe4jk7cpxazfxglg1",
+      "allocated_bytes_before": 73232384
+    },
+    {
+      "path": "/workspace/scratch/3069292387f3/root-target/debug/incremental/trnm_data_availability-0avbqd6j7wtno/s-ho2rc83ukg-0a1a0ig-27f22jk41yn50f02pmvwucfgp",
+      "allocated_bytes_before": 179519488
+    },
+    {
+      "path": "/workspace/scratch/3069292387f3/root-target/debug/incremental/trnm_mempool-2iw2qmznfblk9/s-ho2rgapn0z-081nu2q-dzvmwff6mmc4egz467q6b1g78",
+      "allocated_bytes_before": 5771264
+    },
+    {
+      "path": "/workspace/scratch/3069292387f3/root-target/debug/incremental/trnm_protocol-3n49sxd3qyd3n/s-ho2ra9z567-182gz1w-2yq02cb1ik22sriohbpp71wxt",
+      "allocated_bytes_before": 42311680
+    },
+    {
+      "path": "/workspace/scratch/3069292387f3/root-target/debug/incremental/trnm_release_bundle-3sqjn5vb00l0s/s-ho2rg4q2j8-1bntum3-e4urttfdku30bt4izkakfi9cl",
+      "allocated_bytes_before": 27246592
+    },
+    {
+      "path": "/workspace/scratch/3069292387f3/root-target/debug/incremental/trnm_service_settlement-1zydgmosv1tgx/s-ho2rflmdn3-17ob77l-2xgk19cbnh0fvwzuh1nljw01j",
+      "allocated_bytes_before": 49508352
+    },
+    {
+      "path": "/workspace/scratch/3069292387f3/root-target/debug/incremental/trnm_sqlite_io_boundary-2wnrjgcd8ugew/s-ho2rfhe1w1-1j9k87d-1tigyvcsgzmp56f3xhtu46dsw",
+      "allocated_bytes_before": 16719872
+    },
+    {
+      "path": "/workspace/scratch/3069292387f3/root-target/debug/incremental/trnm_task_kernel-31uw3ss6q437s/s-ho2rbog63h-0yps9qt-0kfp4pb33txj2bh1j87xxd94y",
+      "allocated_bytes_before": 40882176
+    },
+    {
+      "path": "/workspace/scratch/3069292387f3/root-target/debug/incremental/trnm_transport-1drhta1uy1qe9/s-ho2rgc86s9-15hkmx3-06a1lfdoycwrxa09t7tipckc6",
+      "allocated_bytes_before": 5890048
+    },
+    {
+      "path": "/workspace/scratch/3069292387f3/root-target/debug/incremental/trnm_verification_profiles-260fv11q4f14a/s-ho2rc2cfdl-0z2y69o-7u6l4y7xh0m9p4lf2kponhy4o",
+      "allocated_bytes_before": 11399168
+    }
+  ],
+  "skipped": [],
+  "freed_allocated_bytes": 452481024,
+  "active_node_and_working_sessions_modified": false,
+  "profiles_modified": false,
+  "source_modified": false
+}

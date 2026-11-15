@@ -1,0 +1,22 @@
+{
+  "actual_bytes": 1206890,
+  "actual_git_blob_sha1": "d613fe9a72381ce49019f8fdf7e219dc48bbd3ef",
+  "command": [
+    "/usr/bin/gh",
+    "api",
+    "-H",
+    "Accept: application/vnd.github.raw+json",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/d613fe9a72381ce49019f8fdf7e219dc48bbd3ef"
+  ],
+  "elapsed_seconds": 15.971562147140503,
+  "exit_code": 0,
+  "expected_blob": "d613fe9a72381ce49019f8fdf7e219dc48bbd3ef",
+  "expected_bytes": 1206890,
+  "import_exit_code": 0,
+  "import_stderr": "",
+  "import_stdout": "d613fe9a72381ce49019f8fdf7e219dc48bbd3ef\n",
+  "imported": true,
+  "path": "evidence/pon-hepta-682-pair-host-readback-r8-20261028/readback.json",
+  "raw_sha256": "a0483c9f7fc5cf36a8154fd74005e56ff227ac8248d201431fad87f52b0ceb67",
+  "timed_out": false
+}

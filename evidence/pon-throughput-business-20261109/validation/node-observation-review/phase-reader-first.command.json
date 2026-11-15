@@ -1,0 +1,21 @@
+{
+  "schema": "development-tool-transcript-capture-v1",
+  "command": ["python3", "-B", "scripts/ci/test_pon_public_v3_phase_read.py", "-v"],
+  "cwd": "/workspace/scratch/a0d4983b1065/chain-throughput",
+  "tool": "exec_command/write_stdin",
+  "session_id": 11179,
+  "output_chunks": ["adf205", "4cff0a"],
+  "exit_code": 1,
+  "tests_executed": 73,
+  "tests_passed": 72,
+  "errors": 1,
+  "failures": 0,
+  "skipped": 0,
+  "combined_output": "phase-reader-first.combined.log",
+  "stdout": null,
+  "stderr": null,
+  "stream_separation_observed": false,
+  "source": "working tree during development; not a frozen-source receipt",
+  "retention": "Exact combined output returned in the two original tool chunks was concatenated from the retained tool transcript. The original command did not separately capture stdout/stderr.",
+  "error": "FileNotFoundError for an original tracked historical report omitted by sparse checkout; no test was skipped or reclassified."
+}

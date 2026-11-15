@@ -1,0 +1,11 @@
+tree 121923cce94535a01ffde024134653f4a770e4cb
+parent dba49c2f66d8a72d6845c70958c4a24d6c4e7e89
+parent e59ea10336f7c379abcc9a975c167bee25bafd59
+author Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793856776 -0500
+committer Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793856776 -0500
+
+docs(pon): compose v2 setup observation with current integration
+
+Preserve all concurrent PQ, Growth, Cell and request-accounting changes. Add only the four shared-material evidence updates: pinned tool recovery, unchanged-floor build admission refusal and refreshed raw-archive integrity.
+
+All native cost and correctness claims remain bound to their actually executed source. No full-v2, production-service, model-adoption or payment qualification is added.

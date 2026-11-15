@@ -1,0 +1,2417 @@
+{
+  "schema": "trnm-final819-history-sql-schema-v1",
+  "artifact_id": 13587313298,
+  "mode": "ro immutable query_only; no Node open/recovery",
+  "databases": [
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T193549Z-819309fd3122-d649433e/history-artifact-read-v1/13587313298/history-native/long-history/confirmer/native.sqlite",
+      "bytes": 220811264,
+      "sha256_before": "576cf87c5386dbdd7cdf99e24af1a29b7043a4fa89ba64fcf9cc8f654fd297bd",
+      "sha256_after": "576cf87c5386dbdd7cdf99e24af1a29b7043a4fa89ba64fcf9cc8f654fd297bd",
+      "companions": [],
+      "sqlite_master": [
+        [
+          "index",
+          "sqlite_autoindex_blocks_1",
+          "blocks",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_deltas_1",
+          "deltas",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_events_1",
+          "events",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_kv_1",
+          "kv",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_local_pool_groups_1",
+          "local_pool_groups",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_local_pool_removals_1",
+          "local_pool_removals",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_local_pool_rows_1",
+          "local_pool_rows",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_local_pool_rows_2",
+          "local_pool_rows",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_metadata_1",
+          "metadata",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_peer_outbox_1",
+          "peer_outbox",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_peer_replay_1",
+          "peer_replay",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_peer_request_audit_1",
+          "peer_request_audit",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_snapshots_1",
+          "snapshots",
+          null
+        ],
+        [
+          "index",
+          "work_order",
+          "blocks",
+          "CREATE INDEX work_order ON blocks(chainwork DESC,height,id)"
+        ],
+        [
+          "table",
+          "active",
+          "active",
+          "CREATE TABLE active(singleton INTEGER PRIMARY KEY CHECK(singleton=1),tip BLOB NOT NULL,generation INTEGER NOT NULL,state_slot INTEGER NOT NULL)"
+        ],
+        [
+          "table",
+          "ancestry_jump",
+          "ancestry_jump",
+          "CREATE TABLE ancestry_jump(block BLOB NOT NULL CHECK(length(block)=32),level INTEGER NOT NULL CHECK(level>=0 AND level<63),ancestor BLOB NOT NULL CHECK(length(ancestor)=32),ancestor_height INTEGER NOT NULL CHECK(ancestor_height>=0),left_seal BLOB NOT NULL CHECK(length(left_seal)=32),right_seal BLOB NOT NULL CHECK(length(right_seal)=32),seal BLOB NOT NULL CHECK(length(seal)=32),PRIMARY KEY(block,level),FOREIGN KEY(block) REFERENCES blocks(id),FOREIGN KEY(ancestor) REFERENCES blocks(id)) WITHOUT ROWID"
+        ],
+        [
+          "table",
+          "blocks",
+          "blocks",
+          "CREATE TABLE blocks(id BLOB PRIMARY KEY,parent BLOB,height INTEGER NOT NULL,chainwork BLOB NOT NULL,packet BLOB,state_root BLOB NOT NULL)"
+        ],
+        [
+          "table",
+          "deltas",
+          "deltas",
+          "CREATE TABLE deltas(block BLOB NOT NULL,key TEXT NOT NULL,before BLOB,after BLOB,PRIMARY KEY(block,key))"
+        ],
+        [
+          "table",
+          "events",
+          "events",
+          "CREATE TABLE events(generation INTEGER NOT NULL,ordinal INTEGER NOT NULL,kind INTEGER NOT NULL,block BLOB NOT NULL,PRIMARY KEY(generation,ordinal))"
+        ],
+        [
+          "table",
+          "kv",
+          "kv",
+          "CREATE TABLE kv(slot INTEGER NOT NULL,key TEXT NOT NULL,value BLOB NOT NULL,PRIMARY KEY(slot,key))"
+        ],
+        [
+          "table",
+          "local_pool_groups",
+          "local_pool_groups",
+          "CREATE TABLE local_pool_groups(ordinal INTEGER PRIMARY KEY AUTOINCREMENT,id BLOB UNIQUE NOT NULL CHECK(length(id)=32),status INTEGER NOT NULL CHECK(status IN (0,1,2,3)),reason TEXT NOT NULL)"
+        ],
+        [
+          "table",
+          "local_pool_metadata",
+          "local_pool_metadata",
+          "CREATE TABLE local_pool_metadata(singleton INTEGER PRIMARY KEY CHECK(singleton=1),context BLOB NOT NULL CHECK(length(context)=32),limits BLOB NOT NULL,gc_groups BLOB NOT NULL DEFAULT X'0000000000000000' CHECK(length(gc_groups)=8),gc_records BLOB NOT NULL DEFAULT X'0000000000000000' CHECK(length(gc_records)=8),gc_bytes BLOB NOT NULL DEFAULT X'0000000000000000' CHECK(length(gc_bytes)=8),gc_head BLOB NOT NULL DEFAULT X'0000000000000000000000000000000000000000000000000000000000000000' CHECK(length(gc_head)=32),checked_parent BLOB,checked_generation INTEGER,CHECK((checked_parent IS NULL AND checked_generation IS NULL) OR (length(checked_parent)=32 AND checked_generation>=0)))"
+        ],
+        [
+          "table",
+          "local_pool_removals",
+          "local_pool_removals",
+          "CREATE TABLE local_pool_removals(ordinal INTEGER PRIMARY KEY AUTOINCREMENT,id BLOB UNIQUE NOT NULL CHECK(length(id)=32),group_id BLOB NOT NULL CHECK(length(group_id)=32),reason TEXT NOT NULL)"
+        ],
+        [
+          "table",
+          "local_pool_rows",
+          "local_pool_rows",
+          "CREATE TABLE local_pool_rows(group_id BLOB NOT NULL,position INTEGER NOT NULL CHECK(position>=0 AND position<16),digest BLOB UNIQUE NOT NULL CHECK(length(digest)=32),sender BLOB NOT NULL CHECK(length(sender)=32),nonce BLOB NOT NULL CHECK(length(nonce)=8),expiry BLOB NOT NULL CHECK(length(expiry)=8),fee_limit BLOB NOT NULL CHECK(length(fee_limit)=8),raw BLOB NOT NULL CHECK(length(raw)>0 AND length(raw)<=2048),PRIMARY KEY(group_id,position),FOREIGN KEY(group_id) REFERENCES local_pool_groups(id) ON DELETE CASCADE)"
+        ],
+        [
+          "table",
+          "metadata",
+          "metadata",
+          "CREATE TABLE metadata(key TEXT PRIMARY KEY,value BLOB NOT NULL)"
+        ],
+        [
+          "table",
+          "peer_outbox",
+          "peer_outbox",
+          "CREATE TABLE peer_outbox(session_id BLOB PRIMARY KEY,chain_id BLOB NOT NULL,protocol_digest BLOB NOT NULL,peer_id BLOB NOT NULL,profile_digest BLOB NOT NULL,generation INTEGER NOT NULL CHECK(generation>0),highest_ack INTEGER NOT NULL CHECK(highest_ack>=0),pending_nonce INTEGER,pending_digest BLOB,pending_bytes INTEGER,pending_payload BLOB,pending_wire BLOB,pending_wire_digest BLOB,CHECK((pending_nonce IS NULL AND pending_digest IS NULL AND pending_bytes IS NULL AND pending_payload IS NULL AND pending_wire IS NULL AND pending_wire_digest IS NULL) OR (pending_nonce IS NOT NULL AND pending_nonce>0 AND pending_digest IS NOT NULL AND pending_bytes>0 AND pending_payload IS NOT NULL AND pending_wire IS NOT NULL AND pending_wire_digest IS NOT NULL)))"
+        ],
+        [
+          "table",
+          "peer_replay",
+          "peer_replay",
+          "CREATE TABLE peer_replay(session_id BLOB PRIMARY KEY,chain_id BLOB NOT NULL,protocol_digest BLOB NOT NULL,peer_id BLOB NOT NULL,profile_digest BLOB NOT NULL,generation INTEGER NOT NULL CHECK(generation>0),highest_ack INTEGER NOT NULL CHECK(highest_ack>=0),pending_nonce INTEGER,pending_digest BLOB,pending_bytes INTEGER, CHECK((pending_nonce IS NULL AND pending_digest IS NULL AND pending_bytes IS NULL) OR (pending_nonce IS NOT NULL AND pending_nonce>0 AND pending_digest IS NOT NULL AND pending_bytes>0)))"
+        ],
+        [
+          "table",
+          "peer_request_audit",
+          "peer_request_audit",
+          "CREATE TABLE peer_request_audit(session_id BLOB NOT NULL,nonce INTEGER NOT NULL CHECK(nonce>0),payload_digest BLOB NOT NULL,payload BLOB,response_digest BLOB,response BLOB,status INTEGER NOT NULL CHECK(status IN (0,1,2)),PRIMARY KEY(session_id,nonce),FOREIGN KEY(session_id) REFERENCES peer_replay(session_id))"
+        ],
+        [
+          "table",
+          "reorg",
+          "reorg",
+          "CREATE TABLE reorg(singleton INTEGER PRIMARY KEY CHECK(singleton=1),old_tip BLOB NOT NULL,new_tip BLOB NOT NULL,generation INTEGER NOT NULL,cursor INTEGER NOT NULL,done INTEGER NOT NULL)"
+        ],
+        [
+          "table",
+          "reorg_lifecycle_v1",
+          "reorg_lifecycle_v1",
+          "CREATE TABLE reorg_lifecycle_v1(operation INTEGER PRIMARY KEY AUTOINCREMENT,old_tip BLOB NOT NULL CHECK(length(old_tip)=32),new_tip BLOB NOT NULL CHECK(length(new_tip)=32),generation INTEGER NOT NULL CHECK(generation>0),old_slot INTEGER NOT NULL CHECK(old_slot>=0),old_root BLOB NOT NULL CHECK(length(old_root)=32),owner_context BLOB NOT NULL CHECK(length(owner_context)=32),outcome INTEGER NOT NULL CHECK(outcome IN (0,1,2)),cancelled_cursor INTEGER,reason TEXT NOT NULL CHECK(length(reason)<=96),CHECK((outcome IN (0,1) AND cancelled_cursor IS NULL AND reason='') OR (outcome=2 AND cancelled_cursor>=0 AND length(reason)>0)))"
+        ],
+        [
+          "table",
+          "snapshots",
+          "snapshots",
+          "CREATE TABLE snapshots(block BLOB PRIMARY KEY,state BLOB NOT NULL)"
+        ],
+        [
+          "table",
+          "sqlite_sequence",
+          "sqlite_sequence",
+          "CREATE TABLE sqlite_sequence(name,seq)"
+        ],
+        [
+          "table",
+          "steps",
+          "steps",
+          "CREATE TABLE steps(ordinal INTEGER PRIMARY KEY,kind INTEGER NOT NULL,block BLOB NOT NULL)"
+        ]
+      ],
+      "table_info": {
+        "active": [
+          [
+            0,
+            "singleton",
+            "INTEGER",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "tip",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "generation",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "state_slot",
+            "INTEGER",
+            1,
+            null,
+            0
+          ]
+        ],
+        "ancestry_jump": [
+          [
+            0,
+            "block",
+            "BLOB",
+            1,
+            null,
+            1
+          ],
+          [
+            1,
+            "level",
+            "INTEGER",
+            1,
+            null,
+            2
+          ],
+          [
+            2,
+            "ancestor",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "ancestor_height",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            4,
+            "left_seal",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            5,
+            "right_seal",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            6,
+            "seal",
+            "BLOB",
+            1,
+            null,
+            0
+          ]
+        ],
+        "blocks": [
+          [
+            0,
+            "id",
+            "BLOB",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "parent",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            2,
+            "height",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "chainwork",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            4,
+            "packet",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            5,
+            "state_root",
+            "BLOB",
+            1,
+            null,
+            0
+          ]
+        ],
+        "deltas": [
+          [
+            0,
+            "block",
+            "BLOB",
+            1,
+            null,
+            1
+          ],
+          [
+            1,
+            "key",
+            "TEXT",
+            1,
+            null,
+            2
+          ],
+          [
+            2,
+            "before",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            3,
+            "after",
+            "BLOB",
+            0,
+            null,
+            0
+          ]
+        ],
+        "events": [
+          [
+            0,
+            "generation",
+            "INTEGER",
+            1,
+            null,
+            1
+          ],
+          [
+            1,
+            "ordinal",
+            "INTEGER",
+            1,
+            null,
+            2
+          ],
+          [
+            2,
+            "kind",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "block",
+            "BLOB",
+            1,
+            null,
+            0
+          ]
+        ],
+        "kv": [
+          [
+            0,
+            "slot",
+            "INTEGER",
+            1,
+            null,
+            1
+          ],
+          [
+            1,
+            "key",
+            "TEXT",
+            1,
+            null,
+            2
+          ],
+          [
+            2,
+            "value",
+            "BLOB",
+            1,
+            null,
+            0
+          ]
+        ],
+        "local_pool_groups": [
+          [
+            0,
+            "ordinal",
+            "INTEGER",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "id",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "status",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "reason",
+            "TEXT",
+            1,
+            null,
+            0
+          ]
+        ],
+        "local_pool_metadata": [
+          [
+            0,
+            "singleton",
+            "INTEGER",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "context",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "limits",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "gc_groups",
+            "BLOB",
+            1,
+            "X'0000000000000000'",
+            0
+          ],
+          [
+            4,
+            "gc_records",
+            "BLOB",
+            1,
+            "X'0000000000000000'",
+            0
+          ],
+          [
+            5,
+            "gc_bytes",
+            "BLOB",
+            1,
+            "X'0000000000000000'",
+            0
+          ],
+          [
+            6,
+            "gc_head",
+            "BLOB",
+            1,
+            "X'0000000000000000000000000000000000000000000000000000000000000000'",
+            0
+          ],
+          [
+            7,
+            "checked_parent",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            8,
+            "checked_generation",
+            "INTEGER",
+            0,
+            null,
+            0
+          ]
+        ],
+        "local_pool_removals": [
+          [
+            0,
+            "ordinal",
+            "INTEGER",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "id",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "group_id",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "reason",
+            "TEXT",
+            1,
+            null,
+            0
+          ]
+        ],
+        "local_pool_rows": [
+          [
+            0,
+            "group_id",
+            "BLOB",
+            1,
+            null,
+            1
+          ],
+          [
+            1,
+            "position",
+            "INTEGER",
+            1,
+            null,
+            2
+          ],
+          [
+            2,
+            "digest",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "sender",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            4,
+            "nonce",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            5,
+            "expiry",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            6,
+            "fee_limit",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            7,
+            "raw",
+            "BLOB",
+            1,
+            null,
+            0
+          ]
+        ],
+        "metadata": [
+          [
+            0,
+            "key",
+            "TEXT",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "value",
+            "BLOB",
+            1,
+            null,
+            0
+          ]
+        ],
+        "peer_outbox": [
+          [
+            0,
+            "session_id",
+            "BLOB",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "chain_id",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "protocol_digest",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "peer_id",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            4,
+            "profile_digest",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            5,
+            "generation",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            6,
+            "highest_ack",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            7,
+            "pending_nonce",
+            "INTEGER",
+            0,
+            null,
+            0
+          ],
+          [
+            8,
+            "pending_digest",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            9,
+            "pending_bytes",
+            "INTEGER",
+            0,
+            null,
+            0
+          ],
+          [
+            10,
+            "pending_payload",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            11,
+            "pending_wire",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            12,
+            "pending_wire_digest",
+            "BLOB",
+            0,
+            null,
+            0
+          ]
+        ],
+        "peer_replay": [
+          [
+            0,
+            "session_id",
+            "BLOB",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "chain_id",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "protocol_digest",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "peer_id",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            4,
+            "profile_digest",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            5,
+            "generation",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            6,
+            "highest_ack",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            7,
+            "pending_nonce",
+            "INTEGER",
+            0,
+            null,
+            0
+          ],
+          [
+            8,
+            "pending_digest",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            9,
+            "pending_bytes",
+            "INTEGER",
+            0,
+            null,
+            0
+          ]
+        ],
+        "peer_request_audit": [
+          [
+            0,
+            "session_id",
+            "BLOB",
+            1,
+            null,
+            1
+          ],
+          [
+            1,
+            "nonce",
+            "INTEGER",
+            1,
+            null,
+            2
+          ],
+          [
+            2,
+            "payload_digest",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "payload",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            4,
+            "response_digest",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            5,
+            "response",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            6,
+            "status",
+            "INTEGER",
+            1,
+            null,
+            0
+          ]
+        ],
+        "reorg": [
+          [
+            0,
+            "singleton",
+            "INTEGER",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "old_tip",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "new_tip",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "generation",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            4,
+            "cursor",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            5,
+            "done",
+            "INTEGER",
+            1,
+            null,
+            0
+          ]
+        ],
+        "reorg_lifecycle_v1": [
+          [
+            0,
+            "operation",
+            "INTEGER",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "old_tip",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "new_tip",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "generation",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            4,
+            "old_slot",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            5,
+            "old_root",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            6,
+            "owner_context",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            7,
+            "outcome",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            8,
+            "cancelled_cursor",
+            "INTEGER",
+            0,
+            null,
+            0
+          ],
+          [
+            9,
+            "reason",
+            "TEXT",
+            1,
+            null,
+            0
+          ]
+        ],
+        "snapshots": [
+          [
+            0,
+            "block",
+            "BLOB",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "state",
+            "BLOB",
+            1,
+            null,
+            0
+          ]
+        ],
+        "sqlite_sequence": [
+          [
+            0,
+            "name",
+            "",
+            0,
+            null,
+            0
+          ],
+          [
+            1,
+            "seq",
+            "",
+            0,
+            null,
+            0
+          ]
+        ],
+        "steps": [
+          [
+            0,
+            "ordinal",
+            "INTEGER",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "kind",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "block",
+            "BLOB",
+            1,
+            null,
+            0
+          ]
+        ]
+      },
+      "counts": {
+        "active": 1,
+        "ancestry_jump": 45187,
+        "blocks": 4106,
+        "deltas": 16388,
+        "events": 0,
+        "kv": 36,
+        "local_pool_groups": 0,
+        "local_pool_metadata": 0,
+        "local_pool_removals": 0,
+        "local_pool_rows": 0,
+        "metadata": 3,
+        "peer_outbox": 0,
+        "peer_replay": 0,
+        "peer_request_audit": 0,
+        "reorg": 1,
+        "reorg_lifecycle_v1": 1,
+        "snapshots": 33,
+        "sqlite_sequence": 1,
+        "steps": 4105
+      },
+      "small_actual_tables": {
+        "active": [
+          {
+            "singleton": 1,
+            "tip": {
+              "kind": "blob",
+              "bytes": 32,
+              "hex": "83e4257b863a3ea04e1e24ec8f3948df57e696a42fc81669db45f5319e31c744",
+              "sha256": "94e4f58d281463625344c41d6a3fb61fea81562e16cc1ae4f2a245f06026d10d"
+            },
+            "generation": 0,
+            "state_slot": 0
+          }
+        ],
+        "local_pool_metadata": [],
+        "metadata": [
+          {
+            "key": "schema",
+            "value": {
+              "kind": "blob",
+              "bytes": 32,
+              "hex": "9cfc36489e0ae98abd0110a9974d5c4f388cab91ebd701f93fba401830fb6658",
+              "sha256": "6d805e52bfac06a13e9b616a16972944c30976150b646f1d50a0da99cab51c27"
+            }
+          },
+          {
+            "key": "parameters",
+            "value": {
+              "kind": "blob",
+              "bytes": 32,
+              "hex": "47adfd40c0b9a14978b2b7bf3a38d250a8ad269c90baf1e5eff31a07d5a6a740",
+              "sha256": "24d77d94337405e1acce7836366e7d12f6a4efebdbcf320a058ceb4085728e05"
+            }
+          },
+          {
+            "key": "genesis",
+            "value": {
+              "kind": "blob",
+              "bytes": 32,
+              "hex": "83e4257b863a3ea04e1e24ec8f3948df57e696a42fc81669db45f5319e31c744",
+              "sha256": "94e4f58d281463625344c41d6a3fb61fea81562e16cc1ae4f2a245f06026d10d"
+            }
+          }
+        ],
+        "reorg": [
+          {
+            "singleton": 1,
+            "old_tip": {
+              "kind": "blob",
+              "bytes": 32,
+              "hex": "83e4257b863a3ea04e1e24ec8f3948df57e696a42fc81669db45f5319e31c744",
+              "sha256": "94e4f58d281463625344c41d6a3fb61fea81562e16cc1ae4f2a245f06026d10d"
+            },
+            "new_tip": {
+              "kind": "blob",
+              "bytes": 32,
+              "hex": "4bcafe93fa0b539868152f82e2f0443267a3afdb183e0443a219629292b484a8",
+              "sha256": "692e3527bf4e2f17fa470e039d11f950ecec1cd6354188db93238b8edc26b77e"
+            },
+            "generation": 1,
+            "cursor": 3782,
+            "done": 2
+          }
+        ],
+        "reorg_lifecycle_v1": [
+          {
+            "operation": 1,
+            "old_tip": {
+              "kind": "blob",
+              "bytes": 32,
+              "hex": "83e4257b863a3ea04e1e24ec8f3948df57e696a42fc81669db45f5319e31c744",
+              "sha256": "94e4f58d281463625344c41d6a3fb61fea81562e16cc1ae4f2a245f06026d10d"
+            },
+            "new_tip": {
+              "kind": "blob",
+              "bytes": 32,
+              "hex": "4bcafe93fa0b539868152f82e2f0443267a3afdb183e0443a219629292b484a8",
+              "sha256": "692e3527bf4e2f17fa470e039d11f950ecec1cd6354188db93238b8edc26b77e"
+            },
+            "generation": 1,
+            "old_slot": 0,
+            "old_root": {
+              "kind": "blob",
+              "bytes": 32,
+              "hex": "5a4111196e3226c927aeec8d1ebe8f4a6a115d62cde9a27b832047e1d58c2f4b",
+              "sha256": "39bae52b3b58ee9cd3a12976f2bf64e14bd3bb0fcce7cf292cdd4086b0143973"
+            },
+            "owner_context": {
+              "kind": "blob",
+              "bytes": 32,
+              "hex": "896e45b74c98fdbbf207713aaa729eead459c798b424df4539538795017c27e8",
+              "sha256": "385011919c059e39cb9d0cdaf10a4c728b3b43357750867ae73c86b48a271894"
+            },
+            "outcome": 2,
+            "cancelled_cursor": 3782,
+            "reason": "PUBLIC_REQUEST_DEADLINE"
+          }
+        ]
+      }
+    },
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T193549Z-819309fd3122-d649433e/history-artifact-read-v1/13587313298/history-native/long-history/validator/native.sqlite",
+      "bytes": 220663808,
+      "sha256_before": "79c21445f6260b2c9fa86c6cade8839ab3aec246ec1035f1c144db151ccb8239",
+      "sha256_after": "79c21445f6260b2c9fa86c6cade8839ab3aec246ec1035f1c144db151ccb8239",
+      "companions": [],
+      "sqlite_master": [
+        [
+          "index",
+          "sqlite_autoindex_blocks_1",
+          "blocks",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_deltas_1",
+          "deltas",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_events_1",
+          "events",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_kv_1",
+          "kv",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_local_pool_groups_1",
+          "local_pool_groups",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_local_pool_removals_1",
+          "local_pool_removals",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_local_pool_rows_1",
+          "local_pool_rows",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_local_pool_rows_2",
+          "local_pool_rows",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_metadata_1",
+          "metadata",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_peer_outbox_1",
+          "peer_outbox",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_peer_replay_1",
+          "peer_replay",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_peer_request_audit_1",
+          "peer_request_audit",
+          null
+        ],
+        [
+          "index",
+          "sqlite_autoindex_snapshots_1",
+          "snapshots",
+          null
+        ],
+        [
+          "index",
+          "work_order",
+          "blocks",
+          "CREATE INDEX work_order ON blocks(chainwork DESC,height,id)"
+        ],
+        [
+          "table",
+          "active",
+          "active",
+          "CREATE TABLE active(singleton INTEGER PRIMARY KEY CHECK(singleton=1),tip BLOB NOT NULL,generation INTEGER NOT NULL,state_slot INTEGER NOT NULL)"
+        ],
+        [
+          "table",
+          "ancestry_jump",
+          "ancestry_jump",
+          "CREATE TABLE ancestry_jump(block BLOB NOT NULL CHECK(length(block)=32),level INTEGER NOT NULL CHECK(level>=0 AND level<63),ancestor BLOB NOT NULL CHECK(length(ancestor)=32),ancestor_height INTEGER NOT NULL CHECK(ancestor_height>=0),left_seal BLOB NOT NULL CHECK(length(left_seal)=32),right_seal BLOB NOT NULL CHECK(length(right_seal)=32),seal BLOB NOT NULL CHECK(length(seal)=32),PRIMARY KEY(block,level),FOREIGN KEY(block) REFERENCES blocks(id),FOREIGN KEY(ancestor) REFERENCES blocks(id)) WITHOUT ROWID"
+        ],
+        [
+          "table",
+          "blocks",
+          "blocks",
+          "CREATE TABLE blocks(id BLOB PRIMARY KEY,parent BLOB,height INTEGER NOT NULL,chainwork BLOB NOT NULL,packet BLOB,state_root BLOB NOT NULL)"
+        ],
+        [
+          "table",
+          "deltas",
+          "deltas",
+          "CREATE TABLE deltas(block BLOB NOT NULL,key TEXT NOT NULL,before BLOB,after BLOB,PRIMARY KEY(block,key))"
+        ],
+        [
+          "table",
+          "events",
+          "events",
+          "CREATE TABLE events(generation INTEGER NOT NULL,ordinal INTEGER NOT NULL,kind INTEGER NOT NULL,block BLOB NOT NULL,PRIMARY KEY(generation,ordinal))"
+        ],
+        [
+          "table",
+          "kv",
+          "kv",
+          "CREATE TABLE kv(slot INTEGER NOT NULL,key TEXT NOT NULL,value BLOB NOT NULL,PRIMARY KEY(slot,key))"
+        ],
+        [
+          "table",
+          "local_pool_groups",
+          "local_pool_groups",
+          "CREATE TABLE local_pool_groups(ordinal INTEGER PRIMARY KEY AUTOINCREMENT,id BLOB UNIQUE NOT NULL CHECK(length(id)=32),status INTEGER NOT NULL CHECK(status IN (0,1,2,3)),reason TEXT NOT NULL)"
+        ],
+        [
+          "table",
+          "local_pool_metadata",
+          "local_pool_metadata",
+          "CREATE TABLE local_pool_metadata(singleton INTEGER PRIMARY KEY CHECK(singleton=1),context BLOB NOT NULL CHECK(length(context)=32),limits BLOB NOT NULL,gc_groups BLOB NOT NULL DEFAULT X'0000000000000000' CHECK(length(gc_groups)=8),gc_records BLOB NOT NULL DEFAULT X'0000000000000000' CHECK(length(gc_records)=8),gc_bytes BLOB NOT NULL DEFAULT X'0000000000000000' CHECK(length(gc_bytes)=8),gc_head BLOB NOT NULL DEFAULT X'0000000000000000000000000000000000000000000000000000000000000000' CHECK(length(gc_head)=32),checked_parent BLOB,checked_generation INTEGER,CHECK((checked_parent IS NULL AND checked_generation IS NULL) OR (length(checked_parent)=32 AND checked_generation>=0)))"
+        ],
+        [
+          "table",
+          "local_pool_removals",
+          "local_pool_removals",
+          "CREATE TABLE local_pool_removals(ordinal INTEGER PRIMARY KEY AUTOINCREMENT,id BLOB UNIQUE NOT NULL CHECK(length(id)=32),group_id BLOB NOT NULL CHECK(length(group_id)=32),reason TEXT NOT NULL)"
+        ],
+        [
+          "table",
+          "local_pool_rows",
+          "local_pool_rows",
+          "CREATE TABLE local_pool_rows(group_id BLOB NOT NULL,position INTEGER NOT NULL CHECK(position>=0 AND position<16),digest BLOB UNIQUE NOT NULL CHECK(length(digest)=32),sender BLOB NOT NULL CHECK(length(sender)=32),nonce BLOB NOT NULL CHECK(length(nonce)=8),expiry BLOB NOT NULL CHECK(length(expiry)=8),fee_limit BLOB NOT NULL CHECK(length(fee_limit)=8),raw BLOB NOT NULL CHECK(length(raw)>0 AND length(raw)<=2048),PRIMARY KEY(group_id,position),FOREIGN KEY(group_id) REFERENCES local_pool_groups(id) ON DELETE CASCADE)"
+        ],
+        [
+          "table",
+          "metadata",
+          "metadata",
+          "CREATE TABLE metadata(key TEXT PRIMARY KEY,value BLOB NOT NULL)"
+        ],
+        [
+          "table",
+          "peer_outbox",
+          "peer_outbox",
+          "CREATE TABLE peer_outbox(session_id BLOB PRIMARY KEY,chain_id BLOB NOT NULL,protocol_digest BLOB NOT NULL,peer_id BLOB NOT NULL,profile_digest BLOB NOT NULL,generation INTEGER NOT NULL CHECK(generation>0),highest_ack INTEGER NOT NULL CHECK(highest_ack>=0),pending_nonce INTEGER,pending_digest BLOB,pending_bytes INTEGER,pending_payload BLOB,pending_wire BLOB,pending_wire_digest BLOB,CHECK((pending_nonce IS NULL AND pending_digest IS NULL AND pending_bytes IS NULL AND pending_payload IS NULL AND pending_wire IS NULL AND pending_wire_digest IS NULL) OR (pending_nonce IS NOT NULL AND pending_nonce>0 AND pending_digest IS NOT NULL AND pending_bytes>0 AND pending_payload IS NOT NULL AND pending_wire IS NOT NULL AND pending_wire_digest IS NOT NULL)))"
+        ],
+        [
+          "table",
+          "peer_replay",
+          "peer_replay",
+          "CREATE TABLE peer_replay(session_id BLOB PRIMARY KEY,chain_id BLOB NOT NULL,protocol_digest BLOB NOT NULL,peer_id BLOB NOT NULL,profile_digest BLOB NOT NULL,generation INTEGER NOT NULL CHECK(generation>0),highest_ack INTEGER NOT NULL CHECK(highest_ack>=0),pending_nonce INTEGER,pending_digest BLOB,pending_bytes INTEGER, CHECK((pending_nonce IS NULL AND pending_digest IS NULL AND pending_bytes IS NULL) OR (pending_nonce IS NOT NULL AND pending_nonce>0 AND pending_digest IS NOT NULL AND pending_bytes>0)))"
+        ],
+        [
+          "table",
+          "peer_request_audit",
+          "peer_request_audit",
+          "CREATE TABLE peer_request_audit(session_id BLOB NOT NULL,nonce INTEGER NOT NULL CHECK(nonce>0),payload_digest BLOB NOT NULL,payload BLOB,response_digest BLOB,response BLOB,status INTEGER NOT NULL CHECK(status IN (0,1,2)),PRIMARY KEY(session_id,nonce),FOREIGN KEY(session_id) REFERENCES peer_replay(session_id))"
+        ],
+        [
+          "table",
+          "reorg",
+          "reorg",
+          "CREATE TABLE reorg(singleton INTEGER PRIMARY KEY CHECK(singleton=1),old_tip BLOB NOT NULL,new_tip BLOB NOT NULL,generation INTEGER NOT NULL,cursor INTEGER NOT NULL,done INTEGER NOT NULL)"
+        ],
+        [
+          "table",
+          "reorg_lifecycle_v1",
+          "reorg_lifecycle_v1",
+          "CREATE TABLE reorg_lifecycle_v1(operation INTEGER PRIMARY KEY AUTOINCREMENT,old_tip BLOB NOT NULL CHECK(length(old_tip)=32),new_tip BLOB NOT NULL CHECK(length(new_tip)=32),generation INTEGER NOT NULL CHECK(generation>0),old_slot INTEGER NOT NULL CHECK(old_slot>=0),old_root BLOB NOT NULL CHECK(length(old_root)=32),owner_context BLOB NOT NULL CHECK(length(owner_context)=32),outcome INTEGER NOT NULL CHECK(outcome IN (0,1,2)),cancelled_cursor INTEGER,reason TEXT NOT NULL CHECK(length(reason)<=96),CHECK((outcome IN (0,1) AND cancelled_cursor IS NULL AND reason='') OR (outcome=2 AND cancelled_cursor>=0 AND length(reason)>0)))"
+        ],
+        [
+          "table",
+          "snapshots",
+          "snapshots",
+          "CREATE TABLE snapshots(block BLOB PRIMARY KEY,state BLOB NOT NULL)"
+        ],
+        [
+          "table",
+          "sqlite_sequence",
+          "sqlite_sequence",
+          "CREATE TABLE sqlite_sequence(name,seq)"
+        ],
+        [
+          "table",
+          "steps",
+          "steps",
+          "CREATE TABLE steps(ordinal INTEGER PRIMARY KEY,kind INTEGER NOT NULL,block BLOB NOT NULL)"
+        ]
+      ],
+      "table_info": {
+        "active": [
+          [
+            0,
+            "singleton",
+            "INTEGER",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "tip",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "generation",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "state_slot",
+            "INTEGER",
+            1,
+            null,
+            0
+          ]
+        ],
+        "ancestry_jump": [
+          [
+            0,
+            "block",
+            "BLOB",
+            1,
+            null,
+            1
+          ],
+          [
+            1,
+            "level",
+            "INTEGER",
+            1,
+            null,
+            2
+          ],
+          [
+            2,
+            "ancestor",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "ancestor_height",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            4,
+            "left_seal",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            5,
+            "right_seal",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            6,
+            "seal",
+            "BLOB",
+            1,
+            null,
+            0
+          ]
+        ],
+        "blocks": [
+          [
+            0,
+            "id",
+            "BLOB",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "parent",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            2,
+            "height",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "chainwork",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            4,
+            "packet",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            5,
+            "state_root",
+            "BLOB",
+            1,
+            null,
+            0
+          ]
+        ],
+        "deltas": [
+          [
+            0,
+            "block",
+            "BLOB",
+            1,
+            null,
+            1
+          ],
+          [
+            1,
+            "key",
+            "TEXT",
+            1,
+            null,
+            2
+          ],
+          [
+            2,
+            "before",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            3,
+            "after",
+            "BLOB",
+            0,
+            null,
+            0
+          ]
+        ],
+        "events": [
+          [
+            0,
+            "generation",
+            "INTEGER",
+            1,
+            null,
+            1
+          ],
+          [
+            1,
+            "ordinal",
+            "INTEGER",
+            1,
+            null,
+            2
+          ],
+          [
+            2,
+            "kind",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "block",
+            "BLOB",
+            1,
+            null,
+            0
+          ]
+        ],
+        "kv": [
+          [
+            0,
+            "slot",
+            "INTEGER",
+            1,
+            null,
+            1
+          ],
+          [
+            1,
+            "key",
+            "TEXT",
+            1,
+            null,
+            2
+          ],
+          [
+            2,
+            "value",
+            "BLOB",
+            1,
+            null,
+            0
+          ]
+        ],
+        "local_pool_groups": [
+          [
+            0,
+            "ordinal",
+            "INTEGER",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "id",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "status",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "reason",
+            "TEXT",
+            1,
+            null,
+            0
+          ]
+        ],
+        "local_pool_metadata": [
+          [
+            0,
+            "singleton",
+            "INTEGER",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "context",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "limits",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "gc_groups",
+            "BLOB",
+            1,
+            "X'0000000000000000'",
+            0
+          ],
+          [
+            4,
+            "gc_records",
+            "BLOB",
+            1,
+            "X'0000000000000000'",
+            0
+          ],
+          [
+            5,
+            "gc_bytes",
+            "BLOB",
+            1,
+            "X'0000000000000000'",
+            0
+          ],
+          [
+            6,
+            "gc_head",
+            "BLOB",
+            1,
+            "X'0000000000000000000000000000000000000000000000000000000000000000'",
+            0
+          ],
+          [
+            7,
+            "checked_parent",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            8,
+            "checked_generation",
+            "INTEGER",
+            0,
+            null,
+            0
+          ]
+        ],
+        "local_pool_removals": [
+          [
+            0,
+            "ordinal",
+            "INTEGER",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "id",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "group_id",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "reason",
+            "TEXT",
+            1,
+            null,
+            0
+          ]
+        ],
+        "local_pool_rows": [
+          [
+            0,
+            "group_id",
+            "BLOB",
+            1,
+            null,
+            1
+          ],
+          [
+            1,
+            "position",
+            "INTEGER",
+            1,
+            null,
+            2
+          ],
+          [
+            2,
+            "digest",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "sender",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            4,
+            "nonce",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            5,
+            "expiry",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            6,
+            "fee_limit",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            7,
+            "raw",
+            "BLOB",
+            1,
+            null,
+            0
+          ]
+        ],
+        "metadata": [
+          [
+            0,
+            "key",
+            "TEXT",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "value",
+            "BLOB",
+            1,
+            null,
+            0
+          ]
+        ],
+        "peer_outbox": [
+          [
+            0,
+            "session_id",
+            "BLOB",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "chain_id",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "protocol_digest",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "peer_id",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            4,
+            "profile_digest",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            5,
+            "generation",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            6,
+            "highest_ack",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            7,
+            "pending_nonce",
+            "INTEGER",
+            0,
+            null,
+            0
+          ],
+          [
+            8,
+            "pending_digest",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            9,
+            "pending_bytes",
+            "INTEGER",
+            0,
+            null,
+            0
+          ],
+          [
+            10,
+            "pending_payload",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            11,
+            "pending_wire",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            12,
+            "pending_wire_digest",
+            "BLOB",
+            0,
+            null,
+            0
+          ]
+        ],
+        "peer_replay": [
+          [
+            0,
+            "session_id",
+            "BLOB",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "chain_id",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "protocol_digest",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "peer_id",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            4,
+            "profile_digest",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            5,
+            "generation",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            6,
+            "highest_ack",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            7,
+            "pending_nonce",
+            "INTEGER",
+            0,
+            null,
+            0
+          ],
+          [
+            8,
+            "pending_digest",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            9,
+            "pending_bytes",
+            "INTEGER",
+            0,
+            null,
+            0
+          ]
+        ],
+        "peer_request_audit": [
+          [
+            0,
+            "session_id",
+            "BLOB",
+            1,
+            null,
+            1
+          ],
+          [
+            1,
+            "nonce",
+            "INTEGER",
+            1,
+            null,
+            2
+          ],
+          [
+            2,
+            "payload_digest",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "payload",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            4,
+            "response_digest",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            5,
+            "response",
+            "BLOB",
+            0,
+            null,
+            0
+          ],
+          [
+            6,
+            "status",
+            "INTEGER",
+            1,
+            null,
+            0
+          ]
+        ],
+        "reorg": [
+          [
+            0,
+            "singleton",
+            "INTEGER",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "old_tip",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "new_tip",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "generation",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            4,
+            "cursor",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            5,
+            "done",
+            "INTEGER",
+            1,
+            null,
+            0
+          ]
+        ],
+        "reorg_lifecycle_v1": [
+          [
+            0,
+            "operation",
+            "INTEGER",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "old_tip",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "new_tip",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            3,
+            "generation",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            4,
+            "old_slot",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            5,
+            "old_root",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            6,
+            "owner_context",
+            "BLOB",
+            1,
+            null,
+            0
+          ],
+          [
+            7,
+            "outcome",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            8,
+            "cancelled_cursor",
+            "INTEGER",
+            0,
+            null,
+            0
+          ],
+          [
+            9,
+            "reason",
+            "TEXT",
+            1,
+            null,
+            0
+          ]
+        ],
+        "snapshots": [
+          [
+            0,
+            "block",
+            "BLOB",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "state",
+            "BLOB",
+            1,
+            null,
+            0
+          ]
+        ],
+        "sqlite_sequence": [
+          [
+            0,
+            "name",
+            "",
+            0,
+            null,
+            0
+          ],
+          [
+            1,
+            "seq",
+            "",
+            0,
+            null,
+            0
+          ]
+        ],
+        "steps": [
+          [
+            0,
+            "ordinal",
+            "INTEGER",
+            0,
+            null,
+            1
+          ],
+          [
+            1,
+            "kind",
+            "INTEGER",
+            1,
+            null,
+            0
+          ],
+          [
+            2,
+            "block",
+            "BLOB",
+            1,
+            null,
+            0
+          ]
+        ]
+      },
+      "counts": {
+        "active": 1,
+        "ancestry_jump": 45187,
+        "blocks": 4106,
+        "deltas": 16388,
+        "events": 4105,
+        "kv": 28,
+        "local_pool_groups": 0,
+        "local_pool_metadata": 0,
+        "local_pool_removals": 0,
+        "local_pool_rows": 0,
+        "metadata": 3,
+        "peer_outbox": 0,
+        "peer_replay": 0,
+        "peer_request_audit": 0,
+        "reorg": 0,
+        "reorg_lifecycle_v1": 0,
+        "snapshots": 33,
+        "sqlite_sequence": 0,
+        "steps": 0
+      },
+      "small_actual_tables": {
+        "active": [
+          {
+            "singleton": 1,
+            "tip": {
+              "kind": "blob",
+              "bytes": 32,
+              "hex": "4bcafe93fa0b539868152f82e2f0443267a3afdb183e0443a219629292b484a8",
+              "sha256": "692e3527bf4e2f17fa470e039d11f950ecec1cd6354188db93238b8edc26b77e"
+            },
+            "generation": 4105,
+            "state_slot": 0
+          }
+        ],
+        "local_pool_metadata": [],
+        "metadata": [
+          {
+            "key": "schema",
+            "value": {
+              "kind": "blob",
+              "bytes": 32,
+              "hex": "9cfc36489e0ae98abd0110a9974d5c4f388cab91ebd701f93fba401830fb6658",
+              "sha256": "6d805e52bfac06a13e9b616a16972944c30976150b646f1d50a0da99cab51c27"
+            }
+          },
+          {
+            "key": "parameters",
+            "value": {
+              "kind": "blob",
+              "bytes": 32,
+              "hex": "47adfd40c0b9a14978b2b7bf3a38d250a8ad269c90baf1e5eff31a07d5a6a740",
+              "sha256": "24d77d94337405e1acce7836366e7d12f6a4efebdbcf320a058ceb4085728e05"
+            }
+          },
+          {
+            "key": "genesis",
+            "value": {
+              "kind": "blob",
+              "bytes": 32,
+              "hex": "83e4257b863a3ea04e1e24ec8f3948df57e696a42fc81669db45f5319e31c744",
+              "sha256": "94e4f58d281463625344c41d6a3fb61fea81562e16cc1ae4f2a245f06026d10d"
+            }
+          }
+        ],
+        "reorg": [],
+        "reorg_lifecycle_v1": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "audit_recorded": true,
+  "job": {
+    "args": [
+      "-B",
+      "-c",
+      "from pathlib import Path,PurePosixPath\nimport json,hashlib,os,stat,shutil,subprocess,sys,zipfile,re\nR=Path(\"/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery\");out=R/\"github-w1-service-triage-01/head-artifact-01\";out.mkdir(mode=0o700,exist_ok=False)\nsource=json.load(sys.stdin)[\"source\"];(out/\"collector.py\").write_text(source)\nexpected_sha=\"ea3bbb909bd39ad5935f206298114e9bfed77b03c5ab26f1142e39f4f9e6f4f4\"\nrecord={\"schema\":\"TRNM-W1-FRESH-SERVICE-ARTIFACT-READONLY1\",\"artifact_id\":13594760529,\"run_id\":42422952132,\"job_id\":128555111370,\"head_sha\":\"cc4dd8bdd89309c635831db30b508af2f89419d7\",\"completed\":False,\"errors\":[],\"commands\":[],\"executed_artifact_content\":False,\"source_or_gate_modified\":False,\"rerun_or_cancel\":False}\ndef sha(p):\n h=hashlib.sha256()\n with Path(p).open(\"rb\") as f:\n  for block in iter(lambda:f.read(1024*1024),b\"\"):h.update(block)\n return h.hexdigest()\ndef pin(p):return {\"path\":str(p),\"bytes\":p.stat().st_size,\"sha256\":sha(p)}\ndef run(label,args):\n so=out/(label+\".stdout\");se=out/(label+\".stderr\")\n with so.open(\"xb\") as a,se.open(\"xb\") as b:\n  p=subprocess.run(args,stdout=a,stderr=b,stdin=subprocess.DEVNULL,timeout=150)\n  a.flush();os.fsync(a.fileno());b.flush();os.fsync(b.fileno())\n record[\"commands\"].append({\"label\":label,\"argv\":args,\"exit\":p.returncode,\"stdout\":pin(so),\"stderr\":pin(se)})\n if p.returncode!=0:raise ValueError(label+\" nonzero \"+str(p.returncode))\n return so\ntry:\n gh=shutil.which(\"gh\");assert gh\n user=run(\"00-identity\",[gh,\"api\",\"user\",\"--jq\",\".login\"]);assert user.read_text().strip()==\"ProfHepta\"\n meta_path=run(\"01-artifact-metadata\",[gh,\"api\",\"repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13594760529\"])\n meta=json.loads(meta_path.read_bytes())\n assert meta[\"id\"]==13594760529 and meta[\"workflow_run\"][\"id\"]==42422952132 and meta[\"workflow_run\"][\"head_sha\"]==record[\"head_sha\"] and meta[\"expired\"] is False\n assert meta[\"name\"]==\"w1-fresh-service-head-\"+record[\"head_sha\"]+\"-1\"\n archive=run(\"02-original-artifact-zip\",[gh,\"api\",\"repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13594760529/zip\"])\n assert archive.stat().st_size==5630716 and sha(archive)==expected_sha\n record[\"archive\"]=pin(archive);record[\"api_digest\"]=meta.get(\"digest\");record[\"api_size_in_bytes\"]=meta[\"size_in_bytes\"]\n if meta.get(\"digest\") is not None:assert meta[\"digest\"]==\"sha256:\"+expected_sha\n entries=[];selected=[];total=0;selected_total=0;names=set();findings=[]\n with zipfile.ZipFile(archive) as z:\n  infos=z.infolist();assert len(infos)<=128\n  files=[i for i in infos if not i.is_dir()];assert len(files)==57\n  for i in infos:\n   p=PurePosixPath(i.filename);assert not p.is_absolute() and \"..\" not in p.parts and \"\\\\\" not in i.filename\n   assert i.filename not in names;names.add(i.filename)\n   mode=i.external_attr>>16;assert not stat.S_ISLNK(mode) and not (i.flag_bits&1)\n   total+=i.file_size;assert total<=256*1024*1024\n   entries.append({\"path\":i.filename,\"bytes\":i.file_size,\"compressed_bytes\":i.compress_size,\"crc32\":i.CRC,\"directory\":i.is_dir()})\n  for i in files:\n   name=i.filename;lower=name.lower()\n   choose=lower.endswith(\".json\") or \"stderr\" in lower or (\"stdout\" in lower and \"fresh-service\" in lower)\n   if not choose or i.file_size>8*1024*1024:continue\n   assert selected_total+i.file_size<=32*1024*1024\n   raw=z.read(i);assert len(raw)==i.file_size\n   text=raw.decode(\"utf-8\");target=out/\"selected-text\"/name;target.parent.mkdir(parents=True,exist_ok=True)\n   with target.open(\"xb\") as f:f.write(raw);f.flush();os.fsync(f.fileno())\n   selected.append({\"member\":name,**pin(target)});selected_total+=len(raw)\n   for n,line in enumerate(text.splitlines(),1):\n    if re.search(r\"(?i)(panic|error|failed|failure|assertion|timeout|timed_out|passed|exit_code|conclusion)\",line):\n     findings.append({\"member\":name,\"line\":n,\"text\":line[:1800]})\n record.update(completed=True,member_count=len(files),zip_entries=len(infos),uncompressed_bytes=total,members=entries,selected_text=selected,selected_uncompressed_bytes=selected_total,all_members_decompressed=False)\n (out/\"selected-error-lines.json\").write_text(json.dumps(findings,indent=2,sort_keys=True)+\"\\n\")\nexcept BaseException as exc:record[\"errors\"].append({\"type\":type(exc).__name__,\"message\":str(exc)})\n(out/\"manifest.json\").write_text(json.dumps(record,indent=2,sort_keys=True)+\"\\n\")\nprint(json.dumps({\"completed\":record[\"completed\"],\"errors\":record[\"errors\"],\"manifest\":pin(out/\"manifest.json\"),\"members\":record.get(\"members\"),\"selected_files\":record.get(\"selected_text\"),\"error_lines\":pin(out/\"selected-error-lines.json\") if (out/\"selected-error-lines.json\").exists() else None}),flush=True)\nraise SystemExit(0 if record[\"completed\"] else 1)\n"
+    ],
+    "created_unix_ms": 1794093081462,
+    "cwd": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo",
+    "env_keys": [
+      "PYTHONDONTWRITEBYTECODE"
+    ],
+    "executable": "/usr/bin/python3",
+    "execution_mode": "operator",
+    "host": "desktop",
+    "id": "1a1b847e376-12894-df6",
+    "idempotency_key": "trnm-pr782-fresh-service-head-artifact13594760529-readonly-01",
+    "launch_error": null,
+    "launch_state": "launched",
+    "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b847e376-12894-df6",
+    "request_digest": "41d8f8a9d8fd84cf89a72a80da7b360d7cab64714c197bfd09a268b6d5f8e71b",
+    "request_fingerprint": 4744815615808472271,
+    "ssh_target": "desktop-ts",
+    "system_jobctl": false,
+    "unit": "hepta-runtime-job-1a1b847e376-12894-df6"
+  },
+  "launch": {
+    "backend": "systemd",
+    "launcher_pid": null,
+    "ok": true,
+    "unit": "hepta-runtime-job-1a1b847e376-12894-df6"
+  },
+  "local_record_pending": false,
+  "reused": false
+}

@@ -1,0 +1,56 @@
+[
+  {
+    "name": "reader-pnh1-authenticated",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/pon_joint_daa_reader.py",
+      "--raw-dir",
+      "/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-validation/native-run-02/pnh1-authenticated",
+      "--expected-report-sha256",
+      "664ef8549b32794aac16ea884860f1d447e59cae779c0f33dc370ffde13f175c"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 26.271746506216004
+  },
+  {
+    "name": "reader-negative-pnh1-authenticated",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/test_pon_joint_daa_reader.py",
+      "--raw-dir",
+      "/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-validation/native-run-02/pnh1-authenticated",
+      "-v"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 25.36472748988308
+  },
+  {
+    "name": "reader-pgh2-growth",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/pon_joint_daa_reader.py",
+      "--raw-dir",
+      "/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-validation/native-run-02/pgh2-growth",
+      "--expected-report-sha256",
+      "d0e548d0a685a6da9e022a6d94576168d959a45c70e45d3c8590d71eca674dda"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 26.44680381193757
+  },
+  {
+    "name": "reader-negative-pgh2-growth",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/test_pon_joint_daa_reader.py",
+      "--raw-dir",
+      "/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-validation/native-run-02/pgh2-growth",
+      "-v"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 27.934544174931943
+  }
+]

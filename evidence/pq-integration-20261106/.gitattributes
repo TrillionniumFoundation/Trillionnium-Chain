@@ -1,0 +1,5 @@
+# Preserve the already hash-bound Markdown layout in these three frozen files.
+# These exact paths keep every other default whitespace check; source rules stay unchanged.
+/README.md whitespace=-blank-at-eof
+retained/publication/README.md whitespace=-blank-at-eol
+terminal/publication/README.md whitespace=-blank-at-eol

@@ -1,0 +1,40 @@
+{
+  "child_max_rss_kib": 1718516,
+  "child_system_cpu_seconds": 34.071209,
+  "child_user_cpu_seconds": 257.710378,
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "clippy",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "elapsed_seconds": 156.94725704193115,
+  "exit_code": 0,
+  "independent_business_acceptance": false,
+  "label": "workspace-clippy",
+  "logs": {
+    "stderr.log": {
+      "bytes": 6935,
+      "sha256": "c3945a3ff5f5fd14dede7c8e82eaab0a51c308e3003cf53ec771424824669898"
+    },
+    "stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "schema": "pon-h-core-reexecution-v1",
+  "source_after_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+  "source_before_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+  "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+  "source_unchanged": true,
+  "started_unix_seconds": 1794066361.4568417
+}

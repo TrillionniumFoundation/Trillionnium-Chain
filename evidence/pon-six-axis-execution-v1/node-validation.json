@@ -1,0 +1,909 @@
+{
+  "schema": "node-complete-execution-ledger-v1",
+  "assembled_from_verified_receipts_utc": "2026-11-05T02:38:42.803053+00:00",
+  "status": "HOLD_RESOURCE_BLOCKED",
+  "artifact_base": "/workspace/scratch/fee7901564fd/validation-node",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "validated_source_scope_commit": "2d529aa0a1c65df9c43a5fd278c72ab0c0be3814",
+  "summary": {
+    "cargo_attempts": 7,
+    "strict_clippy_passes": 1,
+    "source_compile_failures_fixed": 1,
+    "enospc_attempts": 3,
+    "sigkill_attempts": 2,
+    "unit_test_cases_executed": 0,
+    "integration_test_cases_executed": 0,
+    "unit_test_cases_passed": 0,
+    "integration_test_cases_passed": 0,
+    "test_case_failures_observed": 0,
+    "cost_samples": 0,
+    "actual_observer_snapshots_or_reports": 0,
+    "completed_original_plan_commands": 1,
+    "original_plan_commands": 13,
+    "pending_lib_selectors": 10,
+    "pending_integration_targets": 2,
+    "runtime_acceptance": "HOLD",
+    "cost_acceptance": "HOLD"
+  },
+  "source_contexts": {
+    "hash_algorithm": "Sort repo-relative paths; concatenate UTF-8 path, NUL, raw SHA-256(file bytes); SHA-256 the concatenation.",
+    "full_scope": "trillionnium/, scripts/, config/, tracked/untracked .cargo/ if any, root rust-toolchain/manifests if present",
+    "pre_import_fix_38cf": {
+      "immutable_content_commit": "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0",
+      "full_scope_file_count": 1508,
+      "full_scope_sha256": "b87aafdc601faad0e1602510030628be3c5610d8487bff954ff84cac9260e236",
+      "wrapper_scope_sha256": "a1c5c81c26b78565b926388c8b13cf83e2b49343e0facc77f6acde929527c383",
+      "before_snapshot": {
+        "path": "telemetry-node-frozen38-before.json",
+        "sha256": "47291fc8bfc109b0974ccc596702df7130fa3d0ecafe9cdb2526906bdbbccb76",
+        "bytes": 304560
+      }
+    },
+    "import_fix1_content_2d529": {
+      "immutable_content_commit": "2d529aa0a1c65df9c43a5fd278c72ab0c0be3814",
+      "full_scope_file_count": 1508,
+      "full_scope_sha256": "f64bd00d86d906960418313170b21291babdade76374fc5f96a0075969a9096e",
+      "strict_trillionnium_scripts_config_file_count": 1507,
+      "strict_trillionnium_scripts_config_sha256": "b3aee16d92cf4fd0cb02c2a9ffdcde18f0c71d7442fbe47ed5c69c1248bdb9ea",
+      "wrapper_scope_sha256": "cbab71f8f7537ef31db035ed3ebfaa285f24ce03adc1417dee73608d364e9076",
+      "extra_full_scope_path": "rust-toolchain.toml",
+      "before_snapshot": {
+        "path": "telemetry-node-import-fix1-before.json",
+        "sha256": "72d4ec72f56c814aa18575b2cd4701ffa570d6f93d6092fb4fb4e22ea9190919",
+        "bytes": 305501
+      },
+      "after_final_running_attempt_comparison": {
+        "path": "telemetry-node-after-integration1-source-comparison.json",
+        "sha256": "f73311c4c6995330cefc4facfad64f9c44a7ec8b9ca5fdb8e37390a7d98bb996",
+        "bytes": 1457
+      },
+      "comparison_observed_utc": "2026-11-05T02:34:39.855713+00:00",
+      "all_1508_frozen_bytes_unchanged_at_end_of_attempts": true,
+      "diff_vs_immutable_2d529_at_end_of_attempts": "",
+      "start_head_caveat": "Clippy attempt3 and first account_prefix_tests attempt started at HEAD38cf with import-fix1 working bytes. Do not rewrite their recorded HEAD to 2d529."
+    },
+    "checkout_at_ledger_creation": {
+      "observed_utc": "2026-11-05T02:38:42.803053+00:00",
+      "head": "23a56123e3112de06d7c684ef2057578759176ff",
+      "file_count": 1509,
+      "changed_paths": [
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "scripts/ci/ci_job.sh",
+        "scripts/ci/test_ci_source_integrity.py",
+        "scripts/ci/verify_ci_source.py",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs",
+        "trillionnium/crates/trnm-pon-node/tests/public_cache_modes.rs"
+      ],
+      "all_1508_frozen_bytes_unchanged": false,
+      "source_paths_sha256": "3b41e5ee97e1e54600c267ade822cc750e2f2bf111010f456742eb922db3349e",
+      "strict_trillionnium_scripts_config_sha256": "d4a4b792c5356cc58f514d0d7af08eddde1bf36b9857be14b55312e839784caf",
+      "wrapper_source_paths_sha256": "12dcc4d639010ae2ac8a835301e12177824bf9181e7c599c882f6a55dd60afa2",
+      "diff_vs_immutable_2d529": " config/pon/pq-cross-branch-corpus-v1.json          |   6 +-\n scripts/ci/ci_job.sh                               |   1 +\n scripts/ci/test_ci_source_integrity.py             | 132 +++++++++++++++++++++\n scripts/ci/verify_ci_source.py                     |  56 +++++++++\n .../support/distributed_source_inventory.rs        |   7 ++\n .../crates/trnm-pon-node/src/ingress/public_v3.rs  |   5 +-\n .../src/ingress/public_v3/work_arithmetic.rs       |   5 +-\n .../trnm-pon-node/tests/public_cache_modes.rs      |  77 ++++++++++++\n 8 files changed, 284 insertions(+), 5 deletions(-)\n",
+      "resources": {
+        "bfree_bytes": 95055872,
+        "bavail_bytes": 0,
+        "anon_bytes": 406847488,
+        "shmem_bytes": 3800428544,
+        "anon_plus_shmem_bytes": 4207276032,
+        "memory_current": 8588218368,
+        "memory_events": "low 0\nhigh 0\nmax 41503839\noom 13\noom_kill 4\noom_group_kill 0\n"
+      },
+      "scope_note": "Root fast-forwarded only after all native attempts exited and the 2d529 final source comparison was complete. This later checkout is not the source of the seven attempts. Prior Clippy PASS is not attributed to this new HEAD; no new Node build or test was run for it by this ledger task."
+    }
+  },
+  "build_contexts": {
+    "shared_wrapper_environment": {
+      "CARGO_HOME": "/workspace/scratch/fee7901564fd/cargo-cell",
+      "CARGO_TARGET_DIR": "/workspace/scratch/fee7901564fd/target-cell",
+      "CARGO_BUILD_JOBS": "1",
+      "OPENSSL_DIR": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install",
+      "OPENSSL_STATIC": "1",
+      "TRNM_PQ_OPENSSL": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/bin/openssl",
+      "TRNM_PQ_OPENSSL_SHA256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+      "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+      "OPENSSL_CONF": "/dev/null",
+      "OPENSSL_MODULES": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/lib/ossl-modules"
+    },
+    "wrapper_sha256": "02a929b9ae2fddd1903d4e96ba928aafbbaf99eeecca08971252ba0b5ba21489",
+    "default_unset": {
+      "CARGO_INCREMENTAL": null,
+      "meaning": "Environment unset; earlier local default incremental context. Kept separate from original-CI-zero results.",
+      "attempt_ordinals": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "original_ci_zero": {
+      "CARGO_INCREMENTAL": "0",
+      "attempt_ordinals": [
+        6,
+        7
+      ],
+      "original_ci_context": {
+        "path": "node-ci-incremental-zero-context.json",
+        "sha256": "e716013ec3a14cf3310d3cd4914624db9bae599738c5adb8f15acba200e5473e",
+        "bytes": 2424
+      },
+      "actual_rustc_arguments": {
+        "path": "node-ci-incremental-zero-rustc-observation.json",
+        "sha256": "dc4b19125f1638351af84d774dbbc3c2a07bec785cac621f85706e02a0a8f1ac",
+        "bytes": 4906
+      },
+      "node_test_opt_level": 3,
+      "debuginfo": 2,
+      "debug_assertions": true,
+      "profile_or_other_rust_flags_or_deadlines_changed": false
+    },
+    "wrapper_receipt_limit": "run_check.py omits extra inherited CARGO_INCREMENTAL/TRNM_CI_RECEIPT_DIR from its environment list; the supplemental records preserve those exact values.",
+    "filesystem_note": "Native databases and Cargo target stayed on original overlay. No successful tmpfs cache migration is claimed."
+  },
+  "attempts": [
+    {
+      "ordinal": 1,
+      "name": "node-38cf428103f4-01-clippy-attempt1",
+      "kind": "clippy",
+      "outcome": "FAIL_ENOSPC",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "recorded_start_head": "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0",
+      "source_content_context": "pre_import_fix_38cf",
+      "wrapper_source_paths_sha256": "a1c5c81c26b78565b926388c8b13cf83e2b49343e0facc77f6acde929527c383",
+      "incremental_context": "default_unset",
+      "explicit_extra_environment": {},
+      "started_utc": null,
+      "wrapper_exit_code": 1,
+      "cargo_exit_code": null,
+      "compiler_termination_signal": null,
+      "timeout_seconds": null,
+      "timed_out": null,
+      "wall_seconds": null,
+      "test_harness_started": false,
+      "test_cases_executed": 0,
+      "cost_samples": 0,
+      "observer_reports": 0,
+      "receipt": {
+        "path": "node-38cf428103f4-01-clippy-attempt1.json",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "complete": false
+      },
+      "log": {
+        "path": "node-38cf428103f4-01-clippy-attempt1.log",
+        "bytes": 1674,
+        "sha256": "aed5dc4e557777b03a2cbddd8208fc564357de8e790c91ace946dea9218a1e0c"
+      },
+      "supplemental_artifacts": [
+        {
+          "path": "node-38cf428103f4-01-clippy-attempt1-enospc-observation.json",
+          "sha256": "e65d36308f8bdede603960ce68920c6d607f5d3177fb35726e675c586eda2114",
+          "bytes": 2784
+        }
+      ],
+      "note": "Compiler could not create example public_pool_fixture temp dir. Final receipt rewrite also hit ENOSPC and truncated the receipt; Cargo exit code was not recovered."
+    },
+    {
+      "ordinal": 2,
+      "name": "node-38cf428103f4-01-clippy-attempt2",
+      "kind": "clippy",
+      "outcome": "FAIL_SOURCE_IMPORT",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "recorded_start_head": "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0",
+      "source_content_context": "pre_import_fix_38cf",
+      "wrapper_source_paths_sha256": "a1c5c81c26b78565b926388c8b13cf83e2b49343e0facc77f6acde929527c383",
+      "incremental_context": "default_unset",
+      "explicit_extra_environment": {},
+      "started_utc": "2026-11-05T01:50:29.358094+00:00",
+      "wrapper_exit_code": 101,
+      "cargo_exit_code": 101,
+      "compiler_termination_signal": null,
+      "timeout_seconds": null,
+      "timed_out": false,
+      "wall_seconds": 38.85324973800016,
+      "test_harness_started": false,
+      "test_cases_executed": 0,
+      "cost_samples": 0,
+      "observer_reports": 0,
+      "receipt": {
+        "path": "node-38cf428103f4-01-clippy-attempt2.json",
+        "bytes": 1688,
+        "sha256": "8aed9a2203e3842bb96a8917b907e6442d3839046bcb92fc8607b5d278db6030",
+        "complete": true
+      },
+      "log": {
+        "path": "node-38cf428103f4-01-clippy-attempt2.log",
+        "bytes": 589,
+        "sha256": "7cefd554c721f2191a887008af9ab61caba8457515d23a769de3640da6e16011"
+      },
+      "supplemental_artifacts": [],
+      "note": "E0432: account_prefix_tests imported sequence_root from trnm_protocol::pon_wire. Root fixed the import and its source pin before attempt 3."
+    },
+    {
+      "ordinal": 3,
+      "name": "node-38cf428103f4-01-clippy-attempt3",
+      "kind": "clippy",
+      "outcome": "PASS",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "recorded_start_head": "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0",
+      "source_content_context": "import_fix1_content_2d529",
+      "wrapper_source_paths_sha256": "cbab71f8f7537ef31db035ed3ebfaa285f24ce03adc1417dee73608d364e9076",
+      "incremental_context": "default_unset",
+      "explicit_extra_environment": {},
+      "started_utc": "2026-11-05T01:52:31.042730+00:00",
+      "wrapper_exit_code": 0,
+      "cargo_exit_code": 0,
+      "compiler_termination_signal": null,
+      "timeout_seconds": null,
+      "timed_out": false,
+      "wall_seconds": 43.92929118899974,
+      "test_harness_started": false,
+      "test_cases_executed": 0,
+      "cost_samples": 0,
+      "observer_reports": 0,
+      "receipt": {
+        "path": "node-38cf428103f4-01-clippy-attempt3.json",
+        "bytes": 1686,
+        "sha256": "f4321d0d8d7b619bd149c5b7aa81bdb6e2ca1391c6a16e79aee180fb82c6fbad",
+        "complete": true
+      },
+      "log": {
+        "path": "node-38cf428103f4-01-clippy-attempt3.log",
+        "bytes": 181,
+        "sha256": "2acceebb2cefc84b425a73b6b0e727e986be08b7f870ea5fb11eae9b209671cf"
+      },
+      "supplemental_artifacts": [],
+      "note": "Strict all-target/all-feature Clippy passed. Recorded start HEAD remained 38cf; the source bytes already contained the import fix later committed as 2d529. This is not a Clippy result for the later 23a checkout."
+    },
+    {
+      "ordinal": 4,
+      "name": "node-38cf428103f4-02-lib-account_prefix_tests-attempt1",
+      "kind": "unit_test_command_build_failed",
+      "outcome": "FAIL_ENOSPC",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--lib",
+        "account_prefix_tests",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "recorded_start_head": "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0",
+      "source_content_context": "import_fix1_content_2d529",
+      "wrapper_source_paths_sha256": "cbab71f8f7537ef31db035ed3ebfaa285f24ce03adc1417dee73608d364e9076",
+      "incremental_context": "default_unset",
+      "explicit_extra_environment": {},
+      "started_utc": "2026-11-05T01:53:26.794820+00:00",
+      "wrapper_exit_code": 101,
+      "cargo_exit_code": 101,
+      "compiler_termination_signal": null,
+      "timeout_seconds": null,
+      "timed_out": false,
+      "wall_seconds": 251.68850249700063,
+      "test_harness_started": false,
+      "test_cases_executed": 0,
+      "cost_samples": 0,
+      "observer_reports": 0,
+      "receipt": {
+        "path": "node-38cf428103f4-02-lib-account_prefix_tests-attempt1.json",
+        "bytes": 1761,
+        "sha256": "a910f572264c9efc9fa52df51314279678f7b22159e80e3ccbf2a7503e476e6a",
+        "complete": true
+      },
+      "log": {
+        "path": "node-38cf428103f4-02-lib-account_prefix_tests-attempt1.log",
+        "bytes": 4928,
+        "sha256": "261d875e22f34f56f8595a0c3a22724f375f678ccef131563dab0033adcb56d5"
+      },
+      "supplemental_artifacts": [],
+      "note": "account_prefix_tests command failed while building the unit ELF; no test harness ran. Recorded start HEAD was 38cf with the fixed source content later committed as 2d529."
+    },
+    {
+      "ordinal": 5,
+      "name": "node-2d529-lib-build-attempt2",
+      "kind": "unit_build_only",
+      "outcome": "FAIL_ENOSPC",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--lib",
+        "account_prefix_tests",
+        "--no-run",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "recorded_start_head": "2d529aa0a1c65df9c43a5fd278c72ab0c0be3814",
+      "source_content_context": "import_fix1_content_2d529",
+      "wrapper_source_paths_sha256": "cbab71f8f7537ef31db035ed3ebfaa285f24ce03adc1417dee73608d364e9076",
+      "incremental_context": "default_unset",
+      "explicit_extra_environment": {},
+      "started_utc": "2026-11-05T02:01:17.342667+00:00",
+      "wrapper_exit_code": 101,
+      "cargo_exit_code": 101,
+      "compiler_termination_signal": null,
+      "timeout_seconds": null,
+      "timed_out": false,
+      "wall_seconds": 567.5452241470002,
+      "test_harness_started": false,
+      "test_cases_executed": 0,
+      "cost_samples": 0,
+      "observer_reports": 0,
+      "receipt": {
+        "path": "node-2d529-lib-build-attempt2.json",
+        "bytes": 1726,
+        "sha256": "7607ec87f0af2dd28502f4d416054a133b7fb8faa5addf43b73c4f3a97565621",
+        "complete": true
+      },
+      "log": {
+        "path": "node-2d529-lib-build-attempt2.log",
+        "bytes": 3725,
+        "sha256": "47530611b90cf5e0b819e19281bf8db458906634b045fb6cfeb3e65ec2ef9eca"
+      },
+      "supplemental_artifacts": [
+        {
+          "path": "node-2d529-lib-build-attempt2-resource-location.json",
+          "sha256": "165e341557092f14cda202cc1dfca9075ef2659715e1c637e97893065173c613",
+          "bytes": 1360
+        }
+      ],
+      "note": "--no-run build failed with rustc-LLVM output ENOSPC. Planned incremental symlink migration did not take effect; the actual cache stayed on the original overlay. Metadata symlink assertion failed before the build was started; root subsequently confirmed continuation on the actual original filesystem."
+    },
+    {
+      "ordinal": 6,
+      "name": "node-2d529-lib-build-attempt3",
+      "kind": "unit_build_only",
+      "outcome": "FAIL_SIGKILL",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--lib",
+        "account_prefix_tests",
+        "--no-run",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "recorded_start_head": "2d529aa0a1c65df9c43a5fd278c72ab0c0be3814",
+      "source_content_context": "import_fix1_content_2d529",
+      "wrapper_source_paths_sha256": "cbab71f8f7537ef31db035ed3ebfaa285f24ce03adc1417dee73608d364e9076",
+      "incremental_context": "original_ci_zero",
+      "explicit_extra_environment": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "started_utc": "2026-11-05T02:14:34.423056+00:00",
+      "wrapper_exit_code": 101,
+      "cargo_exit_code": 101,
+      "compiler_termination_signal": 9,
+      "timeout_seconds": null,
+      "timed_out": false,
+      "wall_seconds": 271.8560505839996,
+      "test_harness_started": false,
+      "test_cases_executed": 0,
+      "cost_samples": 0,
+      "observer_reports": 0,
+      "receipt": {
+        "path": "node-2d529-lib-build-attempt3.json",
+        "bytes": 1726,
+        "sha256": "dff6dd4fbd5a2a4e8c1094cbc462c2a995ea91a3e0e3642595dad0ab78f60f94",
+        "complete": true
+      },
+      "log": {
+        "path": "node-2d529-lib-build-attempt3.log",
+        "bytes": 4773,
+        "sha256": "ae54bc85e2b0dad7a7020aafdaa9439b06058d77da663a39751e100a726339b5"
+      },
+      "supplemental_artifacts": [
+        {
+          "path": "node-ci-incremental-zero-context.json",
+          "sha256": "e716013ec3a14cf3310d3cd4914624db9bae599738c5adb8f15acba200e5473e",
+          "bytes": 2424
+        },
+        {
+          "path": "node-ci-incremental-zero-rustc-observation.json",
+          "sha256": "dc4b19125f1638351af84d774dbbc3c2a07bec785cac621f85706e02a0a8f1ac",
+          "bytes": 4906
+        },
+        {
+          "path": "node-2d529-lib-build-attempt3-resource-termination.json",
+          "sha256": "7383e0051d2a7d86f784086eca6df9ef9c3224ce5b49cb5cf18f87afe3bbe302",
+          "bytes": 2924
+        }
+      ],
+      "note": "--no-run unit rustc was terminated by signal 9. Original CI CARGO_INCREMENTAL=0 and unchanged opt3/debuginfo2/debug assertions were confirmed from actual rustc argv. No unit ELF or test run completed."
+    },
+    {
+      "ordinal": 7,
+      "name": "node-2d529-integration-public_v3_request_accounting-attempt1",
+      "kind": "integration_command_build_failed",
+      "outcome": "FAIL_SIGKILL",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "public_v3_request_accounting",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "recorded_start_head": "2d529aa0a1c65df9c43a5fd278c72ab0c0be3814",
+      "source_content_context": "import_fix1_content_2d529",
+      "wrapper_source_paths_sha256": "cbab71f8f7537ef31db035ed3ebfaa285f24ce03adc1417dee73608d364e9076",
+      "incremental_context": "original_ci_zero",
+      "explicit_extra_environment": {
+        "CARGO_INCREMENTAL": "0",
+        "TRNM_CI_RECEIPT_DIR": "/workspace/scratch/fee7901564fd/validation-public-node-2d529-attempt1"
+      },
+      "started_utc": "2026-11-05T02:22:03.776115+00:00",
+      "wrapper_exit_code": 101,
+      "cargo_exit_code": 101,
+      "compiler_termination_signal": 9,
+      "timeout_seconds": null,
+      "timed_out": false,
+      "wall_seconds": 649.3678053060012,
+      "test_harness_started": false,
+      "test_cases_executed": 0,
+      "cost_samples": 0,
+      "observer_reports": 0,
+      "receipt": {
+        "path": "node-2d529-integration-public_v3_request_accounting-attempt1.json",
+        "bytes": 1781,
+        "sha256": "6a8d9c911e280f7f777acb1c81c508a3869be0657fb6b5d6818623203f3f6fde",
+        "complete": true
+      },
+      "log": {
+        "path": "node-2d529-integration-public_v3_request_accounting-attempt1.log",
+        "bytes": 3618,
+        "sha256": "3a2ab350764c64468da85796c52d6ac089d14885108bfdb15d6eb01b9c7fd8fa"
+      },
+      "supplemental_artifacts": [
+        {
+          "path": "node-2d529-integration-public_v3_request_accounting-attempt1-extra-env.json",
+          "sha256": "e3f61e21195e3284b0b6741c937795943ca63b9cc491db41dc83a01d892b9836",
+          "bytes": 1476
+        },
+        {
+          "path": "node-2d529-integration-public_v3_request_accounting-attempt1-resource-failure.json",
+          "sha256": "fa175d492530b1b148af46a91b2b2fb96a17183613b898dfeb1bde32f8f6c677",
+          "bytes": 2812
+        }
+      ],
+      "note": "Production Node lib rustc was terminated by signal 9 before integration tests started. Exclusive output parent exists but is empty: zero snapshots/reports and zero cost samples. Shared cgroup OOM counters rose; multiple kills cannot all be attributed to this single process."
+    }
+  ],
+  "original_plan": {
+    "plan_file": {
+      "path": "telemetry-node-plan-2d529-ci.json",
+      "sha256": "2b9d25601e15e8cda1db986ee2ede85e0b38682cd286bf5d8ee9deedbbcaa411",
+      "bytes": 10973
+    },
+    "strict_clippy_status": "PASS on import-fix1/2d529 content in default-unset incremental context",
+    "remaining_commands": [
+      {
+        "original_plan_ordinal": 2,
+        "kind": "lib_selector",
+        "selector_or_target": "account_prefix_tests",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "account_prefix_tests",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "status": "PENDING_RUNTIME_VERIFICATION",
+        "attempt_history": "command attempted; build failed before tests",
+        "required_future_CARGO_INCREMENTAL": "0",
+        "test_threads": 1
+      },
+      {
+        "original_plan_ordinal": 3,
+        "kind": "lib_selector",
+        "selector_or_target": "current_accounts_tests",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "current_accounts_tests",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "status": "PENDING_RUNTIME_VERIFICATION",
+        "attempt_history": "not started",
+        "required_future_CARGO_INCREMENTAL": "0",
+        "test_threads": 1
+      },
+      {
+        "original_plan_ordinal": 4,
+        "kind": "lib_selector",
+        "selector_or_target": "parallel_preparation",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "parallel_preparation",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "status": "PENDING_RUNTIME_VERIFICATION",
+        "attempt_history": "not started",
+        "required_future_CARGO_INCREMENTAL": "0",
+        "test_threads": 1
+      },
+      {
+        "original_plan_ordinal": 5,
+        "kind": "lib_selector",
+        "selector_or_target": "growth_paid_dispatch_charges_joined_preparation_workers_and_fences_unknown_cpu",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "growth_paid_dispatch_charges_joined_preparation_workers_and_fences_unknown_cpu",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "status": "PENDING_RUNTIME_VERIFICATION",
+        "attempt_history": "not started",
+        "required_future_CARGO_INCREMENTAL": "0",
+        "test_threads": 1
+      },
+      {
+        "original_plan_ordinal": 6,
+        "kind": "lib_selector",
+        "selector_or_target": "paid_settlement_consistency_tests",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "paid_settlement_consistency_tests",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "status": "PENDING_RUNTIME_VERIFICATION",
+        "attempt_history": "not started",
+        "required_future_CARGO_INCREMENTAL": "0",
+        "test_threads": 1
+      },
+      {
+        "original_plan_ordinal": 7,
+        "kind": "lib_selector",
+        "selector_or_target": "cpu_budget_signed_native_success_survives_clock_failure_and_reads_survive_debt",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "cpu_budget_signed_native_success_survives_clock_failure_and_reads_survive_debt",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "status": "PENDING_RUNTIME_VERIFICATION",
+        "attempt_history": "not started",
+        "required_future_CARGO_INCREMENTAL": "0",
+        "test_threads": 1
+      },
+      {
+        "original_plan_ordinal": 8,
+        "kind": "lib_selector",
+        "selector_or_target": "write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "status": "PENDING_RUNTIME_VERIFICATION",
+        "attempt_history": "not started",
+        "required_future_CARGO_INCREMENTAL": "0",
+        "test_threads": 1
+      },
+      {
+        "original_plan_ordinal": 9,
+        "kind": "lib_selector",
+        "selector_or_target": "native_growth_v2_cold_journal_streams_real_history_and_deep_reorg",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "native_growth_v2_cold_journal_streams_real_history_and_deep_reorg",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "status": "PENDING_RUNTIME_VERIFICATION",
+        "attempt_history": "not started",
+        "required_future_CARGO_INCREMENTAL": "0",
+        "test_threads": 1
+      },
+      {
+        "original_plan_ordinal": 10,
+        "kind": "lib_selector",
+        "selector_or_target": "native_growth_v2_signed_branches_nonce_obligations_and_cold_reopen",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "native_growth_v2_signed_branches_nonce_obligations_and_cold_reopen",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "status": "PENDING_RUNTIME_VERIFICATION",
+        "attempt_history": "not started",
+        "required_future_CARGO_INCREMENTAL": "0",
+        "test_threads": 1
+      },
+      {
+        "original_plan_ordinal": 11,
+        "kind": "lib_selector",
+        "selector_or_target": "native_growth_v2_reorg_",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "native_growth_v2_reorg_",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "status": "PENDING_RUNTIME_VERIFICATION",
+        "attempt_history": "not started",
+        "required_future_CARGO_INCREMENTAL": "0",
+        "test_threads": 1
+      },
+      {
+        "original_plan_ordinal": 12,
+        "kind": "integration_target",
+        "selector_or_target": "public_v3_request_accounting",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--test",
+          "public_v3_request_accounting",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "status": "PENDING_RUNTIME_VERIFICATION",
+        "attempt_history": "command attempted; production lib build failed before tests",
+        "required_future_CARGO_INCREMENTAL": "0",
+        "test_threads": 1,
+        "report_output_policy": "create a fresh exclusive TRNM_CI_RECEIPT_DIR for any future attempt; do not reuse the existing attempt1 parent",
+        "previous_attempt_output_parent": "/workspace/scratch/fee7901564fd/validation-public-node-2d529-attempt1"
+      },
+      {
+        "original_plan_ordinal": 13,
+        "kind": "integration_target",
+        "selector_or_target": "native_growth_public_cli",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--test",
+          "native_growth_public_cli",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "status": "PENDING_RUNTIME_VERIFICATION",
+        "attempt_history": "not started",
+        "required_future_CARGO_INCREMENTAL": "0",
+        "test_threads": 1
+      }
+    ],
+    "reordering_note": "After unit ELF SIGKILL, root prioritized the two original integration commands; no planned test was removed. Only accounting integration was attempted and it failed before test execution; native_growth_public_cli was not started."
+  },
+  "observed_resource_limits": {
+    "memory_max_bytes": 8589934592,
+    "post_integration_source_comparison_resources": {
+      "anon_bytes": 177123328,
+      "shmem_bytes": 3929305088,
+      "anon_plus_shmem_bytes": 4106428416,
+      "memory_current": 8586067968,
+      "memory_max": 8589934592,
+      "memory_events": "low 0\nhigh 0\nmax 41426100\noom 13\noom_kill 4\noom_group_kill 0\n",
+      "bfree_bytes": 16912384,
+      "bavail_bytes": 0
+    },
+    "shared_oom_attribution_limit": "Counters belong to a shared cgroup. Actual rustc SIGKILL is directly observed; cumulative OOM increases do not identify every killed PID.",
+    "owned_processes_at_final_comparison": [],
+    "all_owned_cargo_rustc_wrapper_processes_exited": true
+  },
+  "preserved_acceptance_gates": {
+    "hostile_w1_budget_seconds": 4,
+    "hostile_w1_count": 16,
+    "history_recovery_boundary": 4105,
+    "original_ignored_tests_modified": false,
+    "gates_relaxed": false,
+    "these_gates_newly_measured_by_this_ledger": false
+  },
+  "hold_reason": "Repeated compilation resource failures prevent runtime evidence. Keep actual failures and all pending selectors; do not substitute static review, synthetic observations, build durations, or repeated same-condition compilation for execution/cost samples.",
+  "ledger_operation_scope": {
+    "cargo_started": false,
+    "repository_files_modified": false,
+    "creation": "atomic create-only scratch JSON; full serialized fallback retained in functions.store"
+  }
+}

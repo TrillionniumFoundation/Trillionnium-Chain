@@ -1,0 +1,27 @@
+{
+  "artifacts": {
+    "authority": {
+      "bytes": 8147832,
+      "executable": true,
+      "exists": true,
+      "path": "/home/qian-qi/work/chain-profile-metering-20261107-89df/target-canonical-v1/release/examples/grouped_verification_authority_v0",
+      "sha256": "a9ec278ee0896fa599d33dade2c7807edfe6c62162460977b42a3515d828acc8"
+    },
+    "fresh": {
+      "bytes": 7807800,
+      "executable": true,
+      "exists": true,
+      "path": "/home/qian-qi/work/chain-profile-metering-20261107-89df/target-canonical-v1/release/examples/grouped_fresh_admission_v0",
+      "sha256": "f09a620b2adf9cd6c0df062e80f5e4083c27c78b1247b3fe06698e9be7a0e0ae"
+    },
+    "grouped": {
+      "bytes": 771152,
+      "executable": true,
+      "exists": true,
+      "path": "/home/qian-qi/work/chain-profile-metering-20261107-89df/target-canonical-v1/release/examples/pon_routed_int257_grouped",
+      "sha256": "0a1acf80a079e1d3523431a2a38457acdb375701d87cd081d996647f96fa446c"
+    }
+  },
+  "cargo_target_directory": "/home/qian-qi/work/chain-profile-metering-20261107-89df/target-canonical-v1",
+  "status": "PASS"
+}

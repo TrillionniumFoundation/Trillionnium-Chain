@@ -1,0 +1,9 @@
+{
+  "schema": "readonly-hash-use-diagnostic-failure-v1",
+  "project_tests_run": false,
+  "source_modified": false,
+  "reason": "The broad byte anchor occurs in more than one function; the read-only diagnostic stopped at its uniqueness assertion. The next diagnostic scopes the anchor to the named verifier function.",
+  "pty_session": "dpty-2ccc25866aa3141e352cdca4800551e42ba4fa653a99c9db4ad043e9fe05ebe0",
+  "pty_exit": 1,
+  "original_pty_text": "Traceback (most recent call last):\r\n  File \u001b[35m\"<string>\"\u001b[0m, line \u001b[35m74\u001b[0m, in \u001b[35m<module>\u001b[0m\r\n    assert \u001b[1;31mold.count(anchor)==new.count(anchor)==1\u001b[0m\r\n           \u001b[1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\u001b[0m\r\n\u001b[1;35mAssertionError\u001b[0m\r\n"
+}

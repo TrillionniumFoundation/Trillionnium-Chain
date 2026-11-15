@@ -1,0 +1,232 @@
+{
+  "schema": "original-failed-lane-byte-copy-v1",
+  "original_summary_sha256": "9a4bc9c021e80adff3d2c7d5500e1aed3f9eda519efb3942cbd42a2e34c5eab2",
+  "original_file_count": 37,
+  "original_bytes": 164028,
+  "separate_steps_json_exists": false,
+  "steps_location": "summary.json steps array (17 original steps)",
+  "files": [
+    {
+      "path": "cargo-version.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/cargo-version.stderr"
+    },
+    {
+      "path": "cargo-version.stdout",
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/cargo-version.stdout"
+    },
+    {
+      "path": "conformance-environment.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/conformance-environment.stderr"
+    },
+    {
+      "path": "conformance-environment.stdout",
+      "bytes": 223,
+      "sha256": "6acc4552f9c18025e8dae33743614781bda4d62bd6c81454277d68177c05de79",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/conformance-environment.stdout"
+    },
+    {
+      "path": "fast-forward-ancestry.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/fast-forward-ancestry.stderr"
+    },
+    {
+      "path": "fast-forward-ancestry.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/fast-forward-ancestry.stdout"
+    },
+    {
+      "path": "fast-forward.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/fast-forward.stderr"
+    },
+    {
+      "path": "fast-forward.stdout",
+      "bytes": 98485,
+      "sha256": "4aca0b94566d810d3327c7e491869f4968bbf9a328839f1035f01b3d5d8037a2",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/fast-forward.stdout"
+    },
+    {
+      "path": "fetch-exact-published-commit.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/fetch-exact-published-commit.stderr"
+    },
+    {
+      "path": "fetch-exact-published-commit.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/fetch-exact-published-commit.stdout"
+    },
+    {
+      "path": "fetched-commit.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/fetched-commit.stderr"
+    },
+    {
+      "path": "fetched-commit.stdout",
+      "bytes": 41,
+      "sha256": "f8bdb660a523c7aef3c4b0e70725614ec2a0c95f5b916f07d17b970ea4feb079",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/fetched-commit.stdout"
+    },
+    {
+      "path": "fetched-tree.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/fetched-tree.stderr"
+    },
+    {
+      "path": "fetched-tree.stdout",
+      "bytes": 41,
+      "sha256": "535022a9639e04a7109e0a6753fcb3cead06ced8c986b2550ad9babb99c48821",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/fetched-tree.stdout"
+    },
+    {
+      "path": "initial-head.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/initial-head.stderr"
+    },
+    {
+      "path": "initial-head.stdout",
+      "bytes": 41,
+      "sha256": "7b0a5f94ba1fcc6aa6977bc48befa0d8d2db3decf0a278220c06809dad322b06",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/initial-head.stdout"
+    },
+    {
+      "path": "initial-status.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/initial-status.stderr"
+    },
+    {
+      "path": "initial-status.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/initial-status.stdout"
+    },
+    {
+      "path": "pre-update-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/pre-update-preflight.stderr"
+    },
+    {
+      "path": "pre-update-preflight.stdout",
+      "bytes": 177,
+      "sha256": "d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/pre-update-preflight.stdout"
+    },
+    {
+      "path": "preflight-audit.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/preflight-audit.stderr"
+    },
+    {
+      "path": "preflight-audit.stdout",
+      "bytes": 177,
+      "sha256": "d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/preflight-audit.stdout"
+    },
+    {
+      "path": "published-candidate-readback.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/published-candidate-readback.stderr"
+    },
+    {
+      "path": "published-candidate-readback.stdout",
+      "bytes": 102,
+      "sha256": "44ab440a07f89eb6db9802975d04bf3e865603e5b5d7b7ee661dd7c083058c74",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/published-candidate-readback.stdout"
+    },
+    {
+      "path": "repository-truth.stderr",
+      "bytes": 44648,
+      "sha256": "9fb0f8bd337049bc9ceff3ba128290b0b53116a4aea0044a85ae2eae6b68d924",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/repository-truth.stderr"
+    },
+    {
+      "path": "repository-truth.stdout",
+      "bytes": 177,
+      "sha256": "d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/repository-truth.stdout"
+    },
+    {
+      "path": "runtime-environment.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/runtime-environment.stderr"
+    },
+    {
+      "path": "runtime-environment.stdout",
+      "bytes": 205,
+      "sha256": "aed21f6057d4117e9083c2595e2697e64697c143756e1bd2e6393dec00a56519",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/runtime-environment.stdout"
+    },
+    {
+      "path": "rust-version.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/rust-version.stderr"
+    },
+    {
+      "path": "rust-version.stdout",
+      "bytes": 36,
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/rust-version.stdout"
+    },
+    {
+      "path": "source-after.json",
+      "bytes": 423,
+      "sha256": "c4891be8e0dc6ac1d45fffd793b0a08a90fa806f2863d132e27c6f578836babd",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/source-after.json"
+    },
+    {
+      "path": "source-before.json",
+      "bytes": 423,
+      "sha256": "c4891be8e0dc6ac1d45fffd793b0a08a90fa806f2863d132e27c6f578836babd",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/source-before.json"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 17947,
+      "sha256": "9a4bc9c021e80adff3d2c7d5500e1aed3f9eda519efb3942cbd42a2e34c5eab2",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/summary.json"
+    },
+    {
+      "path": "verify-source-after.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/verify-source-after.stderr"
+    },
+    {
+      "path": "verify-source-after.stdout",
+      "bytes": 423,
+      "sha256": "c4891be8e0dc6ac1d45fffd793b0a08a90fa806f2863d132e27c6f578836babd",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/verify-source-after.stdout"
+    },
+    {
+      "path": "verify-source-before.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/verify-source-before.stderr"
+    },
+    {
+      "path": "verify-source-before.stdout",
+      "bytes": 423,
+      "sha256": "c4891be8e0dc6ac1d45fffd793b0a08a90fa806f2863d132e27c6f578836babd",
+      "original_mac_path": "/private/tmp/chain-architecture-dc42-repository-truth-failure-20261114-v1/original/verify-source-before.stdout"
+    }
+  ]
+}

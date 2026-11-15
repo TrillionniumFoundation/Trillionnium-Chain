@@ -1,0 +1,54 @@
+{
+  "observed_utc": "2026-11-14T04:07:38.570192+00:00",
+  "actor": "ProfHepta",
+  "repository": {
+    "allow_merge_commit": true,
+    "allow_rebase_merge": true,
+    "allow_squash_merge": true,
+    "archived": false,
+    "default_branch": "main",
+    "delete_branch_on_merge": true,
+    "disabled": false,
+    "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+    "permissions": {
+      "admin": true,
+      "maintain": true,
+      "pull": true,
+      "push": true,
+      "triage": true
+    },
+    "private": false,
+    "visibility": "public"
+  },
+  "branches": 908,
+  "unique_tips": 892,
+  "main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "candidate": "e40d7071c4724e6600deef8a2820bf35c1982289",
+  "candidate_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+  "pr_state": "open",
+  "pr_draft": true,
+  "pr_updated_at": "2026-11-14T03:23:13Z",
+  "mergeable": true,
+  "mergeable_state": "blocked",
+  "prospective_merge": "7b8c580981d6fed6323ec968df660831759030bf",
+  "check_counts": {
+    "skipped": 3,
+    "in_progress": 12,
+    "failure": 17,
+    "success": 110
+  },
+  "required_contexts": [
+    "repository-truth",
+    "protocol-contract",
+    "fuzz-smoke",
+    "external-evidence-contract",
+    "rust-baseline"
+  ],
+  "required_head_checks": [],
+  "main_linear_history": true,
+  "side_allow_deletions": false,
+  "rulesets": [],
+  "changed_since_0151": [],
+  "branches_sha256": "e52bb1c8c0963b2ddd303761ffe7ba949c080b3a0f72983f508978f8971e7734",
+  "remote_writes": false
+}

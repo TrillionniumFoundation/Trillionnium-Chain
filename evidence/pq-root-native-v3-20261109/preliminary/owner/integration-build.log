@@ -1,0 +1,7 @@
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/5faaca703596/chain-root/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/5faaca703596/chain-root/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-release-bundle v0.1.0 (/workspace/scratch/5faaca703596/chain-root/trillionnium/crates/trnm-release-bundle)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/5faaca703596/chain-root/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/5faaca703596/chain-root/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 39s
+  Executable tests/root_recovery_v3_native.rs (/workspace/scratch/5faaca703596/cargo-target/debug/deps/root_recovery_v3_native-e4ed7b6e40bb6e05)

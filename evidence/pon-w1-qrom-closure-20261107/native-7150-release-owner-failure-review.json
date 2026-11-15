@@ -1,0 +1,325 @@
+{
+  "aggregate_boundary": {
+    "aggregate_failed_zero_certifies_no_test_failures": false,
+    "method": "Aggregate fields sum only emitted complete test result blocks. named_failed_tests is parsed separately from exact FAILED lines.",
+    "packager_source": "package_native.py",
+    "reported_test_count_is_deduplicated_top_level_roster": false,
+    "workspace_summary_fields": {
+      "aggregate": {
+        "failed": 0,
+        "filtered_out": 3602,
+        "ignored": 8,
+        "measured": 0,
+        "passed": 1863
+      },
+      "command_exit_code": -9,
+      "named_failed_tests": [
+        "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+        "release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay",
+        "release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement"
+      ],
+      "reported_test_result_blocks": 225,
+      "timed_out": true
+    }
+  },
+  "archive": {
+    "path": "evidence/pon-w1-qrom-closure-20261107/native-7150-observations.tar.gz",
+    "selected_members": [
+      {
+        "archive_member": "chain-workspace-tests.stdout.log",
+        "bytes": 292446,
+        "equals_unpacked_bytes": true,
+        "sha256": "2ceabd7fed48450effe04219c991d4601d0ef7b4079cddfc4c50ed25d0c6bbaa"
+      },
+      {
+        "archive_member": "chain-workspace-tests.stderr.log",
+        "bytes": 55517,
+        "equals_unpacked_bytes": true,
+        "sha256": "bce799f158d802ae915bf633e41ad2f665b89eab127c3bea2cde4cd41725d2f9"
+      },
+      {
+        "archive_member": "chain-workspace-tests.json",
+        "bytes": 867,
+        "equals_unpacked_bytes": true,
+        "sha256": "2daca4cc3bddfb3e84735f78ba9bad642b2bb67750277afbdcd597ac27467e3e"
+      },
+      {
+        "archive_member": "native-summary.json",
+        "bytes": 87387,
+        "equals_unpacked_bytes": true,
+        "sha256": "0bc3b45874dae5ee7c9d385737c44d13f79566e704793eded96e688129af3cb0"
+      },
+      {
+        "archive_member": "package_native.py",
+        "bytes": 18759,
+        "equals_unpacked_bytes": true,
+        "sha256": "532eebb7eb41bdb3a0172b3dcca8af068cce094a12e91788e771e871f3e18413"
+      },
+      {
+        "archive_member": "test-result-count-interpretation.json",
+        "bytes": 1153,
+        "equals_unpacked_bytes": true,
+        "sha256": "5503f049c267b6e63af4d192acd81c48db13ed9a56fab073721925b033f324cd"
+      }
+    ],
+    "sha256": "e11d0f9d28621b459795e5c692ed05636275cf7d4461bda2cc7cbe5960a60e3e"
+  },
+  "child_mechanism_crosscheck": {
+    "helper_source_identities": [
+      {
+        "bytes": 2150,
+        "commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "path": "trillionnium/crates/trnm-pon-node/src/release_owner/proof_test_keys.rs",
+        "sha256": "6a05ef8499bbf323d14a6dfa917b56198b001531c3cb6b8faa161da5fd23b163"
+      },
+      {
+        "bytes": 548,
+        "commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "path": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_faults.rs",
+        "sha256": "7f95870ef7447f73234bb4ee4b21d2af5b36952cbe79f62075772d0fc5f61e72"
+      },
+      {
+        "bytes": 14162,
+        "commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "path": "trillionnium/crates/trnm-pon-node/src/release_owner/native_consumer_tests.rs",
+        "sha256": "19f8dd3a69cb240b8c5ee269632b1033185413fc9f28258a15af02cc0c30bbc5"
+      }
+    ],
+    "neighboring_actual_child_example": [
+      {
+        "line": 3569,
+        "text": "test operator_task_policy::file_tests::held_file_substitution_child ... ignored, run only by the bounded subprocess regression"
+      },
+      {
+        "line": 3570,
+        "text": ""
+      },
+      {
+        "line": 3571,
+        "text": "running 1 test"
+      },
+      {
+        "line": 3572,
+        "text": "test operator_task_policy::file_tests::held_file_substitution_child ... ok"
+      },
+      {
+        "line": 3573,
+        "text": ""
+      },
+      {
+        "line": 3574,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1200 filtered out; finished in 0.00s"
+      },
+      {
+        "line": 3575,
+        "text": ""
+      },
+      {
+        "line": 3576,
+        "text": "test operator_task_policy::file_tests::held_file_substitutions_reject_without_blocking ... ok"
+      }
+    ],
+    "release_owner_isolated_native_suite": {
+      "environment_key": "TRNM_M15_ISOLATED_SUITE",
+      "helper_command_arguments_include": [
+        "--exact",
+        "--ignored",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "helper_environment_key": "TRNM_M15_FIXTURE_HELPER",
+      "ignored_attribute_line": 152,
+      "inference": "This distinct ignored test owns the isolated child mechanism; it does not explain the two ordinary FAILED markers.",
+      "original_log_observation": {
+        "line": 3642,
+        "text": "test release_owner::native_consumer_tests::isolated_fixed_root_static_node_claim_refresh_and_revocation ... ignored, requires reviewed static Node/test artifacts and a fresh rootless user/mount/PID namespace"
+      },
+      "source_path": "trillionnium/crates/trnm-pon-node/src/release_owner/native_consumer_tests.rs",
+      "test": "isolated_fixed_root_static_node_claim_refresh_and_revocation"
+    },
+    "sealing_fault_hook": "sealed_faults uses a thread_local one-shot source-mutation closure, not a subprocess or test-harness reentry branch."
+  },
+  "command_identity": {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--locked",
+      "--",
+      "--test-threads=2"
+    ],
+    "consensus_admission": false,
+    "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+    "elapsed_seconds": 2700.0664454959333,
+    "exit_code": -9,
+    "expectation_met": false,
+    "expected_exit": 0,
+    "launch_error": null,
+    "name": "chain-workspace-tests",
+    "post_quantum_soundness_qualified": false,
+    "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+    "started_utc": "2026-11-07T13:10:39.050812+00:00",
+    "stderr_bytes": 55517,
+    "stderr_sha256": "bce799f158d802ae915bf633e41ad2f665b89eab127c3bea2cde4cd41725d2f9",
+    "stdout_bytes": 292446,
+    "stdout_sha256": "2ceabd7fed48450effe04219c991d4601d0ef7b4079cddfc4c50ed25d0c6bbaa",
+    "timed_out": true,
+    "timeout_seconds": 2700
+  },
+  "harness": {
+    "final_stdout_lines": [
+      {
+        "line": 3757,
+        "text": "test store::continuity_tests::actual_65536_key_native_chain_rejects_growth_keeps_nonce_and_reopens has been running for over 60 seconds"
+      },
+      {
+        "line": 3758,
+        "text": "test store::continuity_tests::actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes has been running for over 60 seconds"
+      }
+    ],
+    "node_binary": "trnm_pon_node-d0b5619ab979ee7c",
+    "node_binary_launch_stderr_line": 340,
+    "node_binary_launch_text": "     Running unittests src/lib.rs (/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/debug/deps/trnm_pon_node-d0b5619ab979ee7c)",
+    "node_harness_failure_detail_section_retained": false,
+    "node_harness_final_result_retained": false,
+    "outer_harness_start": {
+      "line": 2985,
+      "text": "running 1201 tests"
+    }
+  },
+  "minimal_future_diagnostic": {
+    "acceptance_promotion_from_diagnostic": false,
+    "executed_in_this_review": false,
+    "requires_workspace_rerun": false,
+    "suggestion": "If separately authorized, invoke each already-built exact 7150 test separately with --exact, --nocapture and --test-threads=1, preserve the original runtime environment and bounded timeout, and retain stdout/stderr/exit before changing implementation.",
+    "tests": [
+      "release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay",
+      "release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement"
+    ]
+  },
+  "qualification": {
+    "archive_modified": false,
+    "full_workspace_passed": false,
+    "native_reexecuted": false,
+    "original_records_modified": false,
+    "post_quantum_soundness_qualified": false,
+    "source_or_tests_modified": false,
+    "test_failure_reclassified_as_expected_without_evidence": false
+  },
+  "review_scope": "Independent read-only classification of two release_owner FAILED markers; ingress classification is owned by the main review. No native rerun or causal diagnosis.",
+  "reviewed_utc": "2026-11-07T14:08:50.625176+00:00",
+  "reviews": [
+    {
+      "basis": "The ordinary test body performs direct unwrap/assert checks and has no expected-panic or child reentry branch. The single FAILED marker occurs in the ongoing 1201-test node harness, with no corresponding passing parent result.",
+      "classification": "actual_top_level_test_failure_observed",
+      "classification_confidence": "high_from_source_and_harness_context",
+      "exact_failed_assertion": null,
+      "expected_child_negative_control": false,
+      "log": {
+        "context": [
+          {
+            "line": 3642,
+            "text": "test release_owner::native_consumer_tests::isolated_fixed_root_static_node_claim_refresh_and_revocation ... ignored, requires reviewed static Node/test artifacts and a fresh rootless user/mount/PID namespace"
+          },
+          {
+            "line": 3643,
+            "text": "test pq_rollback_witness::tests::signed_current_cannot_regress_or_change_an_observed_generation ... ok"
+          },
+          {
+            "line": 3644,
+            "text": "test release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay ... FAILED"
+          },
+          {
+            "line": 3645,
+            "text": "test release_owner::root_separation_tests::all_three_service_keys_are_excluded_from_offline_root_and_every_online_role ... ok"
+          },
+          {
+            "line": 3646,
+            "text": "test release_owner::root_separation_tests::valid_dual_quorum_successor_cannot_reuse_an_independent_service_key ... ok"
+          }
+        ],
+        "exact_failed_marker": "test release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay ... FAILED",
+        "failed_marker_line": 3644,
+        "file": "chain-workspace-tests.stdout.log",
+        "full_test_name_occurrences": 1,
+        "name_present_in_stderr": false
+      },
+      "panic_message": null,
+      "security_implication_determined": false,
+      "source": {
+        "attribute": "#[test]",
+        "bytes": 5619,
+        "child_environment_or_subprocess_reentry_in_test_body": false,
+        "commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "expected_panic_attribute": false,
+        "function_declaration_line": 69,
+        "git_blob_sha1": "747eff7f36a40cd3cbc5fd00b758f6ecfd789883",
+        "ignored_attribute": false,
+        "path": "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+        "sha256": "34b062ac9ced40d9c90de4dca6ac7e636095ab71b81fb2884f2adb8ee09e034e"
+      },
+      "test": "release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay",
+      "underlying_cause": null
+    },
+    {
+      "basis": "The ordinary test body performs direct unwrap/assert checks and has no expected-panic or child reentry branch. The single FAILED marker occurs in the ongoing 1201-test node harness, with no corresponding passing parent result.",
+      "classification": "actual_top_level_test_failure_observed",
+      "classification_confidence": "high_from_source_and_harness_context",
+      "exact_failed_assertion": null,
+      "expected_child_negative_control": false,
+      "log": {
+        "context": [
+          {
+            "line": 3647,
+            "text": "test release_owner::sealed_tests::inherited_fifo_without_writer_is_refused_before_any_blocking_open ... ok"
+          },
+          {
+            "line": 3648,
+            "text": "test release_owner::sealed_tests::native_elf_profile_rejects_interpreter_dependencies_search_paths_and_wrong_machine ... ok"
+          },
+          {
+            "line": 3649,
+            "text": "test release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement ... FAILED"
+          },
+          {
+            "line": 3650,
+            "text": "test release_owner::sealed_tests::source_rewrite_or_path_exchange_during_sealing_refuses_authentication ... ok"
+          },
+          {
+            "line": 3651,
+            "text": "test release_owner::sealed_tests::unsealed_regular_input_and_a_different_sealed_descriptor_are_rejected ... ok"
+          }
+        ],
+        "exact_failed_marker": "test release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement ... FAILED",
+        "failed_marker_line": 3649,
+        "file": "chain-workspace-tests.stdout.log",
+        "full_test_name_occurrences": 1,
+        "name_present_in_stderr": false
+      },
+      "panic_message": null,
+      "security_implication_determined": false,
+      "source": {
+        "attribute": "#[test]",
+        "bytes": 6119,
+        "child_environment_or_subprocess_reentry_in_test_body": false,
+        "commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "expected_panic_attribute": false,
+        "function_declaration_line": 10,
+        "git_blob_sha1": "fa193407085124d8fb4f1329b4b4b22cf2207a13",
+        "ignored_attribute": false,
+        "path": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs",
+        "sha256": "8ae3a8be2c166f99918e46b69b66b80a5ccabf9549a1061dd93e538d61acd191"
+      },
+      "test": "release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement",
+      "underlying_cause": null
+    }
+  ],
+  "schema": "trnm-w1-native-release-owner-failure-review-v1",
+  "unknowns": [
+    "The exact panic message and failing assertion are absent from the retained output.",
+    "The underlying cause of either failure is not determined.",
+    "The killed outer node harness has no final aggregate result; uncompleted test outcomes are unknown."
+  ]
+}

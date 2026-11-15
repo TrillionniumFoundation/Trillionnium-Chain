@@ -1,0 +1,1190 @@
+{
+  "artifacts": {
+    "campaign": {
+      "artifact_id": 13598547220,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42433029746/artifacts/13598547220",
+      "workflow_run_id": 42433029746,
+      "zip_bytes": 70256249,
+      "zip_sha256": "ef0d55c5b0a5ed2b57d5bb848cc7e5a7437849c52b84d14e00279c253daed668"
+    },
+    "fresh": {
+      "artifact_id": 13598253920,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42433029674/artifacts/13598253920",
+      "workflow_run_id": 42433029674,
+      "zip_bytes": 5617790,
+      "zip_sha256": "4067ef4aede73de57f49370c87ef2653246a738848c02d2bfb00f23839f68e69"
+    },
+    "protocol": {
+      "artifact_id": 13598537139,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42433029659/artifacts/13598537139",
+      "workflow_run_id": 42433029659,
+      "zip_bytes": 5997415,
+      "zip_sha256": "8c7fa04540912d6e5514893da14e369c729131e8bc3700a66d79d6f4a6aea538"
+    }
+  },
+  "campaigns": [
+    {
+      "actual_signed_seed_transfers": 1024,
+      "business_blocks": 21,
+      "finite_experiment_criteria_met": false,
+      "number": 1,
+      "phases": [
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "attacker_processes_ready": 0,
+          "attacker_processes_requested": 0,
+          "completed_packet_phase_measurements": {
+            "admission": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 3470513593,
+              "wall_ns": 15502229037
+            },
+            "admission_prepare": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 949345430,
+              "wall_ns": 4283418613
+            },
+            "commit": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 2509758237,
+              "wall_ns": 11207397464
+            },
+            "context": {
+              "completed_spans_with_known_cpu": 8,
+              "thread_cpu_ns": 9709723,
+              "wall_ns": 9707849
+            },
+            "cpu_settle": {
+              "completed_spans_with_known_cpu": 8,
+              "thread_cpu_ns": 36998,
+              "wall_ns": 39214
+            },
+            "cpu_wait": {
+              "completed_spans_with_known_cpu": 8,
+              "thread_cpu_ns": 552471,
+              "wall_ns": 2609735
+            },
+            "execution": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 11007855,
+              "wall_ns": 11008500
+            },
+            "history_import": {
+              "completed_spans_with_known_cpu": 8,
+              "thread_cpu_ns": 5348526762,
+              "wall_ns": 23741942222
+            },
+            "root_commitment": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 4149676,
+              "wall_ns": 4150070
+            },
+            "submit_result": {
+              "completed_spans_with_known_cpu": 1,
+              "thread_cpu_ns": 1429704319,
+              "wall_ns": 6313720815
+            },
+            "work": {
+              "completed_spans_with_known_cpu": 8,
+              "thread_cpu_ns": 436708162,
+              "wall_ns": 1912333124
+            }
+          },
+          "confirmation_rounds": [
+            {
+              "confirmed_inside_pressure_window": true,
+              "ended_ns": 27699557083,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": false,
+              "round": 0,
+              "started_ns": 1000523075
+            },
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30000864811,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": false,
+              "round": 1,
+              "started_ns": 27699605494
+            }
+          ],
+          "confirmed_rounds": 1,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_call_wall_ns": 94359487,
+          "history_calls": 8,
+          "mode": "baseline",
+          "native_verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "observed_confirmation_rounds": 2,
+          "receiver_client_state_equal": false,
+          "scheduled_confirmation_rounds": 3,
+          "submission_status_counts": {
+            "ok": 14
+          },
+          "window_seconds": 30
+        },
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "completed_packet_phase_measurements": {
+            "admission": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2400541401,
+              "wall_ns": 21995225682
+            },
+            "admission_prepare": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 670897195,
+              "wall_ns": 6095186672
+            },
+            "commit": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 1721496896,
+              "wall_ns": 15891644150
+            },
+            "context": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 5314449,
+              "wall_ns": 164997210
+            },
+            "cpu_settle": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 17123,
+              "wall_ns": 17984
+            },
+            "cpu_wait": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 379417,
+              "wall_ns": 2436100
+            },
+            "execution": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 7879171,
+              "wall_ns": 8125384
+            },
+            "history_import": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2705813129,
+              "wall_ns": 24674318902
+            },
+            "root_commitment": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2968834,
+              "wall_ns": 3209534
+            },
+            "work": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 298754084,
+              "wall_ns": 2510834528
+            }
+          },
+          "confirmation_rounds": [
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30030481620,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": true,
+              "round": 0,
+              "started_ns": 1028769690
+            }
+          ],
+          "confirmed_rounds": 0,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_call_wall_ns": 145345134,
+          "history_calls": 4,
+          "mode": "from-zero",
+          "native_verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "observed_confirmation_rounds": 1,
+          "receiver_client_state_equal": false,
+          "scheduled_confirmation_rounds": 3,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "window_seconds": 30
+        },
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "completed_packet_phase_measurements": {
+            "admission": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2365372291,
+              "wall_ns": 21608950023
+            },
+            "admission_prepare": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 665927356,
+              "wall_ns": 6008078632
+            },
+            "commit": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 1690869586,
+              "wall_ns": 15504216392
+            },
+            "context": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 5581286,
+              "wall_ns": 87460488
+            },
+            "cpu_settle": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 17393,
+              "wall_ns": 18435
+            },
+            "cpu_wait": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 269292,
+              "wall_ns": 269376
+            },
+            "execution": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 8275540,
+              "wall_ns": 96354075
+            },
+            "history_import": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2676833564,
+              "wall_ns": 24489180661
+            },
+            "root_commitment": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 3498121,
+              "wall_ns": 3498757
+            },
+            "work": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 304833016,
+              "wall_ns": 2710450304
+            }
+          },
+          "confirmation_rounds": [
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30086238837,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": true,
+              "round": 0,
+              "started_ns": 1000399452
+            }
+          ],
+          "confirmed_rounds": 0,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_call_wall_ns": 327200126,
+          "history_calls": 4,
+          "mode": "late-product",
+          "native_verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "observed_confirmation_rounds": 1,
+          "receiver_client_state_equal": false,
+          "scheduled_confirmation_rounds": 3,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "window_seconds": 30
+        }
+      ],
+      "raw_path": "campaign/run-1-raw/report.json",
+      "state_backend": "authenticated-v1"
+    },
+    {
+      "actual_signed_seed_transfers": 1024,
+      "business_blocks": 21,
+      "finite_experiment_criteria_met": false,
+      "number": 2,
+      "phases": [
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "attacker_processes_ready": 0,
+          "attacker_processes_requested": 0,
+          "completed_packet_phase_measurements": {
+            "admission": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 3477720894,
+              "wall_ns": 15596387353
+            },
+            "admission_prepare": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 950348704,
+              "wall_ns": 4287898538
+            },
+            "commit": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 2515872860,
+              "wall_ns": 11296986941
+            },
+            "context": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 8291710,
+              "wall_ns": 8290285
+            },
+            "cpu_settle": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 35626,
+              "wall_ns": 37431
+            },
+            "cpu_wait": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 409777,
+              "wall_ns": 409641
+            },
+            "execution": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 11020137,
+              "wall_ns": 11020968
+            },
+            "history_import": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 5366077775,
+              "wall_ns": 23993801797
+            },
+            "root_commitment": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 4048448,
+              "wall_ns": 4048831
+            },
+            "submit_result": {
+              "completed_spans_with_known_cpu": 1,
+              "thread_cpu_ns": 1440757949,
+              "wall_ns": 6488594455
+            },
+            "work": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 437566277,
+              "wall_ns": 1898786546
+            }
+          },
+          "confirmation_rounds": [
+            {
+              "confirmed_inside_pressure_window": true,
+              "ended_ns": 27885689819,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": false,
+              "round": 0,
+              "started_ns": 1000331701
+            },
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30002044289,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": false,
+              "round": 1,
+              "started_ns": 27885775099
+            }
+          ],
+          "confirmed_rounds": 1,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_call_wall_ns": 83584097,
+          "history_calls": 7,
+          "mode": "baseline",
+          "native_verifier_errors": [],
+          "observed_confirmation_rounds": 2,
+          "receiver_client_state_equal": false,
+          "scheduled_confirmation_rounds": 3,
+          "submission_status_counts": {
+            "error": 1,
+            "ok": 13
+          },
+          "window_seconds": 30
+        },
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "completed_packet_phase_measurements": {
+            "admission": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2417126776,
+              "wall_ns": 22178954255
+            },
+            "admission_prepare": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 676022523,
+              "wall_ns": 6294664290
+            },
+            "commit": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 1733692975,
+              "wall_ns": 15784845963
+            },
+            "context": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 5531052,
+              "wall_ns": 6532997
+            },
+            "cpu_settle": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 17533,
+              "wall_ns": 18444
+            },
+            "cpu_wait": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 238013,
+              "wall_ns": 238317
+            },
+            "execution": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 7098375,
+              "wall_ns": 7187472
+            },
+            "history_import": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2726402244,
+              "wall_ns": 24867128618
+            },
+            "root_commitment": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2795542,
+              "wall_ns": 2815604
+            },
+            "work": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 302685560,
+              "wall_ns": 2680579519
+            }
+          },
+          "confirmation_rounds": [
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30082041717,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": true,
+              "round": 0,
+              "started_ns": 1001040267
+            }
+          ],
+          "confirmed_rounds": 0,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_call_wall_ns": 399221824,
+          "history_calls": 4,
+          "mode": "from-zero",
+          "native_verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "observed_confirmation_rounds": 1,
+          "receiver_client_state_equal": false,
+          "scheduled_confirmation_rounds": 3,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "window_seconds": 30
+        },
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "completed_packet_phase_measurements": {
+            "admission": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2426837245,
+              "wall_ns": 21901947385
+            },
+            "admission_prepare": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 665000316,
+              "wall_ns": 5982523852
+            },
+            "commit": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 1754053748,
+              "wall_ns": 15911556942
+            },
+            "context": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 5422381,
+              "wall_ns": 92521509
+            },
+            "cpu_settle": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 17042,
+              "wall_ns": 17963
+            },
+            "cpu_wait": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 354311,
+              "wall_ns": 2425091
+            },
+            "execution": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 7496006,
+              "wall_ns": 7577768
+            },
+            "history_import": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2732956299,
+              "wall_ns": 24586027165
+            },
+            "root_commitment": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2908872,
+              "wall_ns": 2990252
+            },
+            "work": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 299408543,
+              "wall_ns": 2588197581
+            }
+          },
+          "confirmation_rounds": [
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30079947927,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": true,
+              "round": 0,
+              "started_ns": 1076569822
+            }
+          ],
+          "confirmed_rounds": 0,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_call_wall_ns": 408038761,
+          "history_calls": 4,
+          "mode": "late-product",
+          "native_verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "observed_confirmation_rounds": 1,
+          "receiver_client_state_equal": false,
+          "scheduled_confirmation_rounds": 3,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "window_seconds": 30
+        }
+      ],
+      "raw_path": "campaign/run-2-raw/report.json",
+      "state_backend": "authenticated-v1"
+    },
+    {
+      "actual_signed_seed_transfers": 1024,
+      "business_blocks": 21,
+      "finite_experiment_criteria_met": false,
+      "number": 3,
+      "phases": [
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "attacker_processes_ready": 0,
+          "attacker_processes_requested": 0,
+          "completed_packet_phase_measurements": {
+            "admission": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 3475771983,
+              "wall_ns": 15510988473
+            },
+            "admission_prepare": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 944169306,
+              "wall_ns": 4202828066
+            },
+            "commit": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 2520529681,
+              "wall_ns": 11297084321
+            },
+            "context": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 8168862,
+              "wall_ns": 8167406
+            },
+            "cpu_settle": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 30396,
+              "wall_ns": 32132
+            },
+            "cpu_wait": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 469074,
+              "wall_ns": 2525368
+            },
+            "execution": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 10648794,
+              "wall_ns": 10649564
+            },
+            "history_import": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 5372997421,
+              "wall_ns": 23923091711
+            },
+            "root_commitment": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 3945077,
+              "wall_ns": 3945558
+            },
+            "submit_result": {
+              "completed_spans_with_known_cpu": 1,
+              "thread_cpu_ns": 1454350244,
+              "wall_ns": 6498190393
+            },
+            "work": {
+              "completed_spans_with_known_cpu": 7,
+              "thread_cpu_ns": 432939792,
+              "wall_ns": 1901921071
+            }
+          },
+          "confirmation_rounds": [
+            {
+              "confirmed_inside_pressure_window": true,
+              "ended_ns": 27906213388,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": false,
+              "round": 0,
+              "started_ns": 1001853450
+            },
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30001362144,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": false,
+              "round": 1,
+              "started_ns": 27906280474
+            }
+          ],
+          "confirmed_rounds": 1,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_call_wall_ns": 157937378,
+          "history_calls": 7,
+          "mode": "baseline",
+          "native_verifier_errors": [],
+          "observed_confirmation_rounds": 2,
+          "receiver_client_state_equal": false,
+          "scheduled_confirmation_rounds": 3,
+          "submission_status_counts": {
+            "error": 1,
+            "ok": 13
+          },
+          "window_seconds": 30
+        },
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "completed_packet_phase_measurements": {
+            "admission": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2415016382,
+              "wall_ns": 21715157908
+            },
+            "admission_prepare": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 670218045,
+              "wall_ns": 6100528507
+            },
+            "commit": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 1737154027,
+              "wall_ns": 15518384720
+            },
+            "context": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 5651047,
+              "wall_ns": 6106794
+            },
+            "cpu_settle": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 18174,
+              "wall_ns": 19426
+            },
+            "cpu_wait": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 383694,
+              "wall_ns": 2627083
+            },
+            "execution": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 7358009,
+              "wall_ns": 95956641
+            },
+            "history_import": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2727017828,
+              "wall_ns": 24502374621
+            },
+            "root_commitment": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2799478,
+              "wall_ns": 91397978
+            },
+            "work": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 305106489,
+              "wall_ns": 2777620008
+            }
+          },
+          "confirmation_rounds": [
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30005508214,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": true,
+              "round": 0,
+              "started_ns": 1001087703
+            }
+          ],
+          "confirmed_rounds": 0,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_call_wall_ns": 411400510,
+          "history_calls": 4,
+          "mode": "from-zero",
+          "native_verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "observed_confirmation_rounds": 1,
+          "receiver_client_state_equal": false,
+          "scheduled_confirmation_rounds": 3,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "window_seconds": 30
+        },
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "completed_packet_phase_measurements": {
+            "admission": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2425937315,
+              "wall_ns": 22085596966
+            },
+            "admission_prepare": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 672574823,
+              "wall_ns": 6204249403
+            },
+            "commit": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 1745851600,
+              "wall_ns": 15783169893
+            },
+            "context": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 5282878,
+              "wall_ns": 88008488
+            },
+            "cpu_settle": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 19958,
+              "wall_ns": 20770
+            },
+            "cpu_wait": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 372303,
+              "wall_ns": 2576715
+            },
+            "execution": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 7204351,
+              "wall_ns": 97870129
+            },
+            "history_import": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2731495399,
+              "wall_ns": 24684964897
+            },
+            "root_commitment": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 2905287,
+              "wall_ns": 3636001
+            },
+            "work": {
+              "completed_spans_with_known_cpu": 4,
+              "thread_cpu_ns": 299085372,
+              "wall_ns": 2507962517
+            }
+          },
+          "confirmation_rounds": [
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30005722117,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": true,
+              "round": 0,
+              "started_ns": 1000222620
+            }
+          ],
+          "confirmed_rounds": 0,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_call_wall_ns": 218641397,
+          "history_calls": 4,
+          "mode": "late-product",
+          "native_verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "observed_confirmation_rounds": 1,
+          "receiver_client_state_equal": false,
+          "scheduled_confirmation_rounds": 3,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "window_seconds": 30
+        }
+      ],
+      "raw_path": "campaign/run-3-raw/report.json",
+      "state_backend": "authenticated-v1"
+    }
+  ],
+  "confirmation_reports": [
+    {
+      "finite_target_met": false,
+      "phases": [
+        {
+          "confirmation_ended_ns": 3077597534,
+          "confirmed_before_original_window_end": true,
+          "confirmed_transactions": 1,
+          "history_calls": 7,
+          "history_replays": [
+            {
+              "history_call_index": 0,
+              "replay_accepted": true,
+              "replay_ended_ns": 975954836,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 1,
+              "replay_accepted": true,
+              "replay_ended_ns": 1281694913,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 2,
+              "replay_accepted": true,
+              "replay_ended_ns": 1588369052,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 3,
+              "replay_accepted": true,
+              "replay_ended_ns": 1974303036,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 4,
+              "replay_accepted": true,
+              "replay_ended_ns": 2282238204,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 5,
+              "replay_accepted": true,
+              "replay_ended_ns": 2591470300,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 6,
+              "replay_accepted": true,
+              "replay_ended_ns": 3076618798,
+              "replay_error": null
+            }
+          ],
+          "mode": "attack-free-baseline",
+          "original_window_ns": 4000000000,
+          "submission_statuses": [
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok"
+          ],
+          "submissions": 7,
+          "verification_errors": []
+        },
+        {
+          "confirmation_ended_ns": null,
+          "confirmed_before_original_window_end": false,
+          "confirmed_transactions": 0,
+          "history_calls": 3,
+          "history_replays": [
+            {
+              "history_call_index": 0,
+              "replay_accepted": true,
+              "replay_ended_ns": 2701582840,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 1,
+              "replay_accepted": true,
+              "replay_ended_ns": 3604438339,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 2,
+              "replay_accepted": false,
+              "replay_ended_ns": 4001143450,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            }
+          ],
+          "mode": "from-zero-pressure",
+          "original_window_ns": 4000000000,
+          "submission_statuses": [
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok"
+          ],
+          "submissions": 7,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ],
+      "raw_path": "protocol/from-zero-native/confirmation/report.json"
+    },
+    {
+      "finite_target_met": false,
+      "phases": [
+        {
+          "confirmation_ended_ns": 3000361471,
+          "confirmed_before_original_window_end": true,
+          "confirmed_transactions": 1,
+          "history_calls": 7,
+          "history_replays": [
+            {
+              "history_call_index": 0,
+              "replay_accepted": true,
+              "replay_ended_ns": 1106555140,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 1,
+              "replay_accepted": true,
+              "replay_ended_ns": 1404397242,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 2,
+              "replay_accepted": true,
+              "replay_ended_ns": 1703541634,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 3,
+              "replay_accepted": true,
+              "replay_ended_ns": 2003729475,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 4,
+              "replay_accepted": true,
+              "replay_ended_ns": 2302233904,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 5,
+              "replay_accepted": true,
+              "replay_ended_ns": 2603543333,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 6,
+              "replay_accepted": true,
+              "replay_ended_ns": 2999475769,
+              "replay_error": null
+            }
+          ],
+          "mode": "attack-free-baseline",
+          "original_window_ns": 4000000000,
+          "submission_statuses": [
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok"
+          ],
+          "submissions": 7,
+          "verification_errors": []
+        },
+        {
+          "confirmation_ended_ns": null,
+          "confirmed_before_original_window_end": false,
+          "confirmed_transactions": 0,
+          "history_calls": 4,
+          "history_replays": [
+            {
+              "history_call_index": 0,
+              "replay_accepted": true,
+              "replay_ended_ns": 2488256781,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 1,
+              "replay_accepted": true,
+              "replay_ended_ns": 3194560447,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 2,
+              "replay_accepted": true,
+              "replay_ended_ns": 3989895778,
+              "replay_error": null
+            }
+          ],
+          "mode": "from-zero-pressure",
+          "original_window_ns": 4000000000,
+          "submission_statuses": [
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok"
+          ],
+          "submissions": 7,
+          "verification_errors": []
+        }
+      ],
+      "raw_path": "fresh/fresh-service/original/report.json"
+    },
+    {
+      "finite_target_met": false,
+      "phases": [
+        {
+          "confirmation_ended_ns": 2696681331,
+          "confirmed_before_original_window_end": true,
+          "confirmed_transactions": 1,
+          "history_calls": 7,
+          "history_replays": [
+            {
+              "history_call_index": 0,
+              "replay_accepted": true,
+              "replay_ended_ns": 798336989,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 1,
+              "replay_accepted": true,
+              "replay_ended_ns": 1098002980,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 2,
+              "replay_accepted": true,
+              "replay_ended_ns": 1397578787,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 3,
+              "replay_accepted": true,
+              "replay_ended_ns": 1696387350,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 4,
+              "replay_accepted": true,
+              "replay_ended_ns": 1995450316,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 5,
+              "replay_accepted": true,
+              "replay_ended_ns": 2297908951,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 6,
+              "replay_accepted": true,
+              "replay_ended_ns": 2695819415,
+              "replay_error": null
+            }
+          ],
+          "mode": "attack-free-baseline",
+          "original_window_ns": 4000000000,
+          "submission_statuses": [
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok"
+          ],
+          "submissions": 7,
+          "verification_errors": []
+        },
+        {
+          "confirmation_ended_ns": null,
+          "confirmed_before_original_window_end": false,
+          "confirmed_transactions": 0,
+          "history_calls": 2,
+          "history_replays": [
+            {
+              "history_call_index": 0,
+              "replay_accepted": true,
+              "replay_ended_ns": 3300892867,
+              "replay_error": null
+            },
+            {
+              "history_call_index": 1,
+              "replay_accepted": false,
+              "replay_ended_ns": 4000670525,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            }
+          ],
+          "mode": "from-zero-pressure",
+          "original_window_ns": 4000000000,
+          "submission_statuses": [
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok",
+            "ok"
+          ],
+          "submissions": 7,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ],
+      "raw_path": "fresh/fresh-service/fresh/report.json"
+    }
+  ],
+  "manifest_failures": {
+    "fresh": [
+      "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+      "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+    ],
+    "protocol": [
+      "CONFIRMATION_TARGET"
+    ]
+  },
+  "measured_head": "abab79dac0cb89eb2753d3f579119ac135650eb5",
+  "measured_tree": "194808f4a0db5d642aa746beb251ca9e9532cebb",
+  "schema": "TRNM-W1-C3-CI-DIAGNOSTIC-READBACK1",
+  "scope": {
+    "causal_speedup_established": false,
+    "completed_known_spans_exclude_unknown_and_unfinished_spans": true,
+    "cpu_is_calling_thread_only_not_full_process_tree": true,
+    "current_source_qualification": false,
+    "deployment_wan_measured": false,
+    "new_native_campaigns": 0,
+    "new_proofs": 0,
+    "phase_intervals_are_inclusive_and_must_not_be_added_across_names": true,
+    "population_tail_established": false,
+    "production_qualified": false,
+    "retained_phase_readback_is_a_CI_derivation_not_an_independent_attestation": true
+  }
+}

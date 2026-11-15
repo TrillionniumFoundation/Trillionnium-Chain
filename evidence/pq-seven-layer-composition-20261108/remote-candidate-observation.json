@@ -1,0 +1,95 @@
+{
+  "schema": "trnm-pq-seven-layer-remote-observation-v1",
+  "observed_at_utc": "2026-11-08 11:17:40 UTC",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "snapshot_is_atomic": false,
+  "scope": "Read-only candidate metadata. Independent branch results are not composed deployment evidence.",
+  "selected_local_base": "88568e2511fcf166e6824947ac97b06b72104385",
+  "remote_main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "candidates": [
+    {
+      "number": 796,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/796",
+      "head": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "01e2c4c010c3cf65d1cf094368961efc1abab445",
+      "base": "fix/chain-pq-integrated-20261105-df8969",
+      "base_sha": "8d8f05566b2a1612a3bf4a6c6c71635df454d397",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "integrated_by_this_observation": false
+    },
+    {
+      "number": 795,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/795",
+      "head": "fix/chain-p3-shared-profile-20261108-3acf89",
+      "head_sha": "1fe2f31c70977a030aec73b63fe0617f34d15a77",
+      "base": "fix/chain-w1-stark-selected-20261107-89f4dd",
+      "base_sha": "09fbc0f45151a68a1bf205641171840fbf309882",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "integrated_by_this_observation": false
+    },
+    {
+      "number": 794,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/794",
+      "head": "fix/chain-joint-consensus-daa-20261108",
+      "head_sha": "b16bae2824e6c8236ef2011fc93a74df3ac7f039",
+      "base": "fix/chain-six-axis-performance-20261103",
+      "base_sha": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "integrated_by_this_observation": false
+    },
+    {
+      "number": 792,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/792",
+      "head": "fix/chain-w1-qrom-proof-chain-20261108",
+      "head_sha": "2e5150c41484a8b3196b33de2e997794145edd7c",
+      "base": "fix/chain-w1-qrom-implementation-map-20261107",
+      "base_sha": "0c830e0be8939ce80c8443c9ad68021b87343a00",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "integrated_by_this_observation": false
+    },
+    {
+      "number": 790,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/790",
+      "head": "fix/chain-pq128-lifetime-budget-20261108",
+      "head_sha": "88568e2511fcf166e6824947ac97b06b72104385",
+      "base": "fix/chain-pq-integrated-20261105-df8969",
+      "base_sha": "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "integrated_by_this_observation": false
+    },
+    {
+      "number": 789,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/789",
+      "head": "feature/chain-cpq1-content-commitments-20261108",
+      "head_sha": "2ce6bc75adae7582b17607a389b0b38cab1eda53",
+      "base": "fix/chain-pq-integrated-20261105-df8969",
+      "base_sha": "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "integrated_by_this_observation": false
+    },
+    {
+      "number": 788,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/788",
+      "head": "audit/recovery-release-anti-rollback-v1",
+      "head_sha": "0edc3d54cdf071a2ec625504402880f3b67180df",
+      "base": "main",
+      "base_sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "draft": false,
+      "state": "open",
+      "merged": false,
+      "integrated_by_this_observation": false
+    }
+  ]
+}

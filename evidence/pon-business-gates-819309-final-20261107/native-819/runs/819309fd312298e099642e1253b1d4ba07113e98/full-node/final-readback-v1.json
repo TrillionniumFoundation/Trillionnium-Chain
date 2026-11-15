@@ -1,0 +1,2145 @@
+{
+  "schema": "trnm-full-node-final-readback-v1",
+  "observed_utc": "2026-11-07T20:42:58.535950+00:00",
+  "commit": "819309fd312298e099642e1253b1d4ba07113e98",
+  "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+  "authoritative_terminal": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/819309fd312298e099642e1253b1d4ba07113e98/full-node/authoritative-terminal.json",
+    "bytes": 3301,
+    "sha256": "8c7b2b8ea9a16082b5e96ef9e28239b28790c7120f262a79000f56c633a8dc4d"
+  },
+  "manifest": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/819309fd312298e099642e1253b1d4ba07113e98/full-node/manifest.json",
+    "bytes": 13751,
+    "sha256": "2305dc74830423e697eb291f70713f1ffc36b923983e7d0b84450bbb5260abf7"
+  },
+  "raw_log": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/819309fd312298e099642e1253b1d4ba07113e98/full-node/records/node-full.log",
+    "bytes": 7509531,
+    "sha256": "ebb47cb5562e58b5e9b11058a6878802db8347109a9beb15d66fef3020031b7a"
+  },
+  "original_parser_result": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/819309fd312298e099642e1253b1d4ba07113e98/full-node/node-results.json",
+    "bytes": 339353,
+    "sha256": "25dd6f84c7ed8abd2435280852bedceb3b575e6f92c80fb70cfef36d989b9063"
+  },
+  "native_command_exit_code": 101,
+  "outer_command_seconds": 6656.16272416804,
+  "complete_package_coverage": true,
+  "coverage_errors": [],
+  "groups": {
+    "library": {
+      "targets": 1,
+      "passed": 1169,
+      "failed": 2,
+      "ignored": 33,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    "binary_unit": {
+      "targets": 1,
+      "passed": 14,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    "integration": {
+      "targets": 65,
+      "passed": 321,
+      "failed": 10,
+      "ignored": 24,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    "doctest": {
+      "targets": 1,
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    }
+  },
+  "native_outer_totals": {
+    "passed": 1504,
+    "failed": 12,
+    "ignored": 57,
+    "measured": 0,
+    "filtered_out": 0
+  },
+  "doctest_outer_totals": {
+    "passed": 4,
+    "failed": 0,
+    "ignored": 0,
+    "measured": 0,
+    "filtered_out": 0
+  },
+  "nested_child_summaries_added_to_totals": false,
+  "all_target_summaries": [
+    {
+      "group": "library",
+      "description": "unittests src/lib.rs",
+      "target_name": "trnm_pon_node",
+      "original_lines": [
+        2,
+        1551
+      ],
+      "outer_summary": {
+        "status": "FAILED",
+        "passed": 1169,
+        "failed": 2,
+        "ignored": 33,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 4914.94,
+        "log_line": 1549
+      },
+      "nested_or_unattributed_summaries_not_added": 3,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": [],
+      "failure_names": [
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation"
+      ],
+      "named_failure_panics": [
+        {
+          "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "location": "crates/trnm-pon-node/src/store/detached_admission/tests.rs:877:31:",
+          "first_message": "called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }"
+        },
+        {
+          "selector": "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+          "location": "crates/trnm-pon-node/src/native_authenticated_tests.rs:834:24:",
+          "first_message": "called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }"
+        }
+      ]
+    },
+    {
+      "group": "binary_unit",
+      "description": "unittests src/main.rs",
+      "target_name": "trnm-pon-node",
+      "original_lines": [
+        1552,
+        1571
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 14,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.04,
+        "log_line": 1570
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/accepted_task_observation.rs",
+      "target_name": "accepted_task_observation",
+      "original_lines": [
+        1572,
+        1589
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 1.82,
+        "log_line": 1588
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/account_archive_execution.rs",
+      "target_name": "account_archive_execution",
+      "original_lines": [
+        1590,
+        1607
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 12,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 12.87,
+        "log_line": 1606
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/account_archive_projection.rs",
+      "target_name": "account_archive_projection",
+      "original_lines": [
+        1608,
+        1615
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 30.38,
+        "log_line": 1614
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/account_archive_prototype.rs",
+      "target_name": "account_archive_prototype",
+      "original_lines": [
+        1616,
+        1630
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 8,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 1.04,
+        "log_line": 1629
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/account_obligation_ranges.rs",
+      "target_name": "account_obligation_ranges",
+      "original_lines": [
+        1631,
+        1644
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 87.22,
+        "log_line": 1643
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/ancestry_long_sync.rs",
+      "target_name": "ancestry_long_sync",
+      "original_lines": [
+        1645,
+        1651
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.0,
+        "log_line": 1650
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/architecture_delivery_compare.rs",
+      "target_name": "architecture_delivery_compare",
+      "original_lines": [
+        1652,
+        1699
+      ],
+      "outer_summary": {
+        "status": "FAILED",
+        "passed": 12,
+        "failed": 1,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 26.37,
+        "log_line": 1697
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": [],
+      "failure_names": [
+        "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract"
+      ],
+      "named_failure_panics": [
+        {
+          "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+          "location": "crates/trnm-pon-node/tests/architecture_delivery_compare.rs:834:5:",
+          "first_message": "retained native delivery/replay invariants failed"
+        }
+      ]
+    },
+    {
+      "group": "integration",
+      "description": "tests/authenticated_storage_cli.rs",
+      "target_name": "authenticated_storage_cli",
+      "original_lines": [
+        1700,
+        1712
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 1.64,
+        "log_line": 1711
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/cell_native_v1.rs",
+      "target_name": "cell_native_v1",
+      "original_lines": [
+        1713,
+        1730
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 12,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 5.86,
+        "log_line": 1729
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/checkpoint_tile_operator.rs",
+      "target_name": "checkpoint_tile_operator",
+      "original_lines": [
+        1731,
+        1740
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 4.83,
+        "log_line": 1739
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/cli_secret_canary.rs",
+      "target_name": "cli_secret_canary",
+      "original_lines": [
+        1741,
+        1748
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 6.4,
+        "log_line": 1747
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/continuity_authenticated.rs",
+      "target_name": "continuity_authenticated",
+      "original_lines": [
+        1749,
+        1756
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 6.78,
+        "log_line": 1755
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/continuity_cli.rs",
+      "target_name": "continuity_cli",
+      "original_lines": [
+        1757,
+        1764
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.49,
+        "log_line": 1763
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/daa_adversarial_schedule.rs",
+      "target_name": "daa_adversarial_schedule",
+      "original_lines": [
+        1765,
+        1773
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 23.98,
+        "log_line": 1772
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/derived_commitment.rs",
+      "target_name": "derived_commitment",
+      "original_lines": [
+        1774,
+        1784
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 200.76,
+        "log_line": 1783
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/distributed_roles.rs",
+      "target_name": "distributed_roles",
+      "original_lines": [
+        1785,
+        1794
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 4,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.0,
+        "log_line": 1793
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/evaluation_observation.rs",
+      "target_name": "evaluation_observation",
+      "original_lines": [
+        1795,
+        1801
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 43.73,
+        "log_line": 1800
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/evaluation_observation_cli.rs",
+      "target_name": "evaluation_observation_cli",
+      "original_lines": [
+        1802,
+        1809
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 27.93,
+        "log_line": 1808
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/evaluation_quorum_cli.rs",
+      "target_name": "evaluation_quorum_cli",
+      "original_lines": [
+        1810,
+        1816
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 1.15,
+        "log_line": 1815
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/evaluation_round_observation.rs",
+      "target_name": "evaluation_round_observation",
+      "original_lines": [
+        1817,
+        1824
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 4.63,
+        "log_line": 1823
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/evaluation_round_observation_cli.rs",
+      "target_name": "evaluation_round_observation_cli",
+      "original_lines": [
+        1825,
+        1832
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 25.11,
+        "log_line": 1831
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/evaluation_sync_observation.rs",
+      "target_name": "evaluation_sync_observation",
+      "original_lines": [
+        1833,
+        1853
+      ],
+      "outer_summary": {
+        "status": "FAILED",
+        "passed": 2,
+        "failed": 1,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 6.83,
+        "log_line": 1851
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": [],
+      "failure_names": [
+        "actual_public_full_sync_query_partial_refusals_reorg_and_retirement"
+      ],
+      "named_failure_panics": [
+        {
+          "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+          "location": "crates/trnm-pon-node/tests/evaluation_sync_observation.rs:475:17:",
+          "first_message": "PUBLIC_HOST_KERNEL_PARENT"
+        }
+      ]
+    },
+    {
+      "group": "integration",
+      "description": "tests/evolution_cli.rs",
+      "target_name": "evolution_cli",
+      "original_lines": [
+        1854,
+        1863
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 2.28,
+        "log_line": 1862
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/growth_persistence_cancellation.rs",
+      "target_name": "growth_persistence_cancellation",
+      "original_lines": [
+        1864,
+        1871
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 6.9,
+        "log_line": 1870
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/integer_factor_candidate_v2.rs",
+      "target_name": "integer_factor_candidate_v2",
+      "original_lines": [
+        1872,
+        1881
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 85.81,
+        "log_line": 1880
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/local_mempool.rs",
+      "target_name": "local_mempool",
+      "original_lines": [
+        1882,
+        1902
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 14,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 3.16,
+        "log_line": 1901
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/maintenance_paired_conformance.rs",
+      "target_name": "maintenance_paired_conformance",
+      "original_lines": [
+        1903,
+        1909
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.47,
+        "log_line": 1908
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/mining_service_budget.rs",
+      "target_name": "mining_service_budget",
+      "original_lines": [
+        1910,
+        1928
+      ],
+      "outer_summary": {
+        "status": "FAILED",
+        "passed": 1,
+        "failed": 1,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 17.76,
+        "log_line": 1926
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": [],
+      "failure_names": [
+        "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain"
+      ],
+      "named_failure_panics": [
+        {
+          "selector": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+          "location": "crates/trnm-pon-node/tests/mining_service_budget.rs:102:5:",
+          "first_message": "None status=exit status: 2 stderr=PUBLIC_HOST_KERNEL_PARENT"
+        }
+      ]
+    },
+    {
+      "group": "integration",
+      "description": "tests/model_composition_v4.rs",
+      "target_name": "model_composition_v4",
+      "original_lines": [
+        1929,
+        1961
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 497.84,
+        "log_line": 1960
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/model_evidence_v3.rs",
+      "target_name": "model_evidence_v3",
+      "original_lines": [
+        1962,
+        1983
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 356.56,
+        "log_line": 1982
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/native_compact_execution.rs",
+      "target_name": "native_compact_execution",
+      "original_lines": [
+        1984,
+        1994
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 5.11,
+        "log_line": 1993
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/native_growth_cli.rs",
+      "target_name": "native_growth_cli",
+      "original_lines": [
+        1995,
+        2005
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 2.98,
+        "log_line": 2004
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/native_growth_public_cli.rs",
+      "target_name": "native_growth_public_cli",
+      "original_lines": [
+        2006,
+        2015
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 10.63,
+        "log_line": 2014
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/native_node.rs",
+      "target_name": "native_node",
+      "original_lines": [
+        2016,
+        2084
+      ],
+      "outer_summary": {
+        "status": "FAILED",
+        "passed": 28,
+        "failed": 2,
+        "ignored": 1,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 47.58,
+        "log_line": 2082
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": [],
+      "failure_names": [
+        "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+        "test_full_transaction_pages_use_byte_limits_and_recover_all_native_state"
+      ],
+      "named_failure_panics": [
+        {
+          "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+          "location": "crates/trnm-pon-node/tests/native_node.rs:1590:5:",
+          "first_message": "PUBLIC_HOST_KERNEL_PARENT"
+        },
+        {
+          "selector": "test_full_transaction_pages_use_byte_limits_and_recover_all_native_state",
+          "location": "crates/trnm-pon-node/tests/native_node.rs:1407:37:",
+          "first_message": "called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }"
+        },
+        {
+          "selector": "test_full_transaction_pages_use_byte_limits_and_recover_all_native_state",
+          "location": "crates/trnm-pon-node/tests/native_node.rs:1432:12:",
+          "first_message": "called `Result::unwrap()` on an `Err` value: Any { .. }"
+        }
+      ]
+    },
+    {
+      "group": "integration",
+      "description": "tests/nonce_speculation_cost.rs",
+      "target_name": "nonce_speculation_cost",
+      "original_lines": [
+        2085,
+        2091
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.0,
+        "log_line": 2090
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/one_zero_task_preparation_lifecycle.rs",
+      "target_name": "one_zero_task_preparation_lifecycle",
+      "original_lines": [
+        2092,
+        2098
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 1.26,
+        "log_line": 2097
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/operation_local_parent.rs",
+      "target_name": "operation_local_parent",
+      "original_lines": [
+        2099,
+        2117
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.82,
+        "log_line": 2116
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/operator_actors.rs",
+      "target_name": "operator_actors",
+      "original_lines": [
+        2118,
+        2135
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 12,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 5.5,
+        "log_line": 2134
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/pinned_peer_polling.rs",
+      "target_name": "pinned_peer_polling",
+      "original_lines": [
+        2136,
+        2142
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 1.23,
+        "log_line": 2141
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/pool_mining.rs",
+      "target_name": "pool_mining",
+      "original_lines": [
+        2143,
+        2158
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 10,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 7.61,
+        "log_line": 2157
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/pq_account_native.rs",
+      "target_name": "pq_account_native",
+      "original_lines": [
+        2159,
+        2178
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 11,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 10.34,
+        "log_line": 2177
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/pq_migration_inventory.rs",
+      "target_name": "pq_migration_inventory",
+      "original_lines": [
+        2179,
+        2189
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 1.98,
+        "log_line": 2188
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/protected_ingress.rs",
+      "target_name": "protected_ingress",
+      "original_lines": [
+        2190,
+        2210
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 12,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 7.75,
+        "log_line": 2209
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/public_cache_modes.rs",
+      "target_name": "public_cache_modes",
+      "original_lines": [
+        2211,
+        2220
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.0,
+        "log_line": 2219
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/public_cli.rs",
+      "target_name": "public_cli",
+      "original_lines": [
+        2221,
+        2240
+      ],
+      "outer_summary": {
+        "status": "FAILED",
+        "passed": 2,
+        "failed": 1,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 1.14,
+        "log_line": 2238
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": [],
+      "failure_names": [
+        "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history"
+      ],
+      "named_failure_panics": [
+        {
+          "selector": "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+          "location": "crates/trnm-pon-node/tests/public_cli.rs:38:5:",
+          "first_message": "PUBLIC_HOST_KERNEL_PARENT"
+        }
+      ]
+    },
+    {
+      "group": "integration",
+      "description": "tests/public_evaluation.rs",
+      "target_name": "public_evaluation",
+      "original_lines": [
+        2241,
+        2254
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 8,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 6.79,
+        "log_line": 2253
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/public_intake_v2.rs",
+      "target_name": "public_intake_v2",
+      "original_lines": [
+        2255,
+        2276
+      ],
+      "outer_summary": {
+        "status": "FAILED",
+        "passed": 0,
+        "failed": 2,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.66,
+        "log_line": 2274
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": [],
+      "failure_names": [
+        "one_packet_history_preserves_partial_progress_and_independent_validation",
+        "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work"
+      ],
+      "named_failure_panics": [
+        {
+          "selector": "one_packet_history_preserves_partial_progress_and_independent_validation",
+          "location": "crates/trnm-pon-node/tests/public_intake_v2.rs:316:14:",
+          "first_message": "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PUBLIC_HOST_KERNEL_PARENT\", source: None, request_history_budget: false }"
+        },
+        {
+          "selector": "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+          "location": "crates/trnm-pon-node/tests/public_intake_v2.rs:202:6:",
+          "first_message": "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PUBLIC_HOST_KERNEL_PARENT\", source: None, request_history_budget: false }"
+        }
+      ]
+    },
+    {
+      "group": "integration",
+      "description": "tests/public_pool_cli.rs",
+      "target_name": "public_pool_cli",
+      "original_lines": [
+        2277,
+        2308
+      ],
+      "outer_summary": {
+        "status": "FAILED",
+        "passed": 3,
+        "failed": 2,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 14.92,
+        "log_line": 2306
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": [],
+      "failure_names": [
+        "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+        "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver"
+      ],
+      "named_failure_panics": [
+        {
+          "selector": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+          "location": "crates/trnm-pon-node/tests/public_pool_cli.rs:722:80:",
+          "first_message": "called `Result::unwrap()` on an `Err` value: Disconnected"
+        },
+        {
+          "selector": "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+          "location": "crates/trnm-pon-node/tests/public_pool_cli.rs:153:5:",
+          "first_message": "first independent full-native sync: stderr=PUBLIC_HOST_KERNEL_PARENT"
+        }
+      ],
+      "additional_unnamed_panics": [
+        {
+          "thread": "<unnamed>",
+          "location": "crates/trnm-pon-node/tests/public_pool_cli.rs:582:30:",
+          "first_message": "called `Option::unwrap()` on a `None` value"
+        }
+      ]
+    },
+    {
+      "group": "integration",
+      "description": "tests/public_pool_v3.rs",
+      "target_name": "public_pool_v3",
+      "original_lines": [
+        2309,
+        2317
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.59,
+        "log_line": 2316
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/public_submit_recovery.rs",
+      "target_name": "public_submit_recovery",
+      "original_lines": [
+        2318,
+        2347
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 24,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 23.2,
+        "log_line": 2346
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/public_v3_from_zero.rs",
+      "target_name": "public_v3_from_zero",
+      "original_lines": [
+        2348,
+        2363
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 5,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 19.46,
+        "log_line": 2362
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/public_v3_multiprocess.rs",
+      "target_name": "public_v3_multiprocess",
+      "original_lines": [
+        2364,
+        2415
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 17,
+        "failed": 0,
+        "ignored": 8,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.86,
+        "log_line": 2414
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/public_v3_observation_cli.rs",
+      "target_name": "public_v3_observation_cli",
+      "original_lines": [
+        2416,
+        2427
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 29.04,
+        "log_line": 2426
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/public_v3_observer.rs",
+      "target_name": "public_v3_observer",
+      "original_lines": [
+        2428,
+        2435
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.1,
+        "log_line": 2434
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/public_v3_request_accounting.rs",
+      "target_name": "public_v3_request_accounting",
+      "original_lines": [
+        2436,
+        2448
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 12.39,
+        "log_line": 2447
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/public_v3_service_campaign.rs",
+      "target_name": "public_v3_service_campaign",
+      "original_lines": [
+        2449,
+        2458
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 8.06,
+        "log_line": 2457
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/qualified_tasks.rs",
+      "target_name": "qualified_tasks",
+      "original_lines": [
+        2459,
+        2468
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 2.04,
+        "log_line": 2467
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/release_finality_v2.rs",
+      "target_name": "release_finality_v2",
+      "original_lines": [
+        2469,
+        2479
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 2,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.17,
+        "log_line": 2478
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/task_lifecycle.rs",
+      "target_name": "task_lifecycle",
+      "original_lines": [
+        2480,
+        2489
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 1.48,
+        "log_line": 2488
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/task_lifecycle_v3.rs",
+      "target_name": "task_lifecycle_v3",
+      "original_lines": [
+        2490,
+        2498
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 1.27,
+        "log_line": 2497
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/task_lifecycle_v4.rs",
+      "target_name": "task_lifecycle_v4",
+      "original_lines": [
+        2499,
+        2508
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 1.77,
+        "log_line": 2507
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/task_output_root_parity.rs",
+      "target_name": "task_output_root_parity",
+      "original_lines": [
+        2509,
+        2516
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 1.05,
+        "log_line": 2515
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/work_fuzz_semantics.rs",
+      "target_name": "work_fuzz_semantics",
+      "original_lines": [
+        2517,
+        2528
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.18,
+        "log_line": 2527
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/work_header_binding.rs",
+      "target_name": "work_header_binding",
+      "original_lines": [
+        2529,
+        2535
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.53,
+        "log_line": 2534
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "integration",
+      "description": "tests/zero_task_preparation_lifecycle.rs",
+      "target_name": "zero_task_preparation_lifecycle",
+      "original_lines": [
+        2536,
+        2542
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 2.41,
+        "log_line": 2541
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": []
+    },
+    {
+      "group": "doctest",
+      "description": "Doc-tests trnm_pon_node",
+      "target_name": null,
+      "original_lines": [
+        2543,
+        2638
+      ],
+      "outer_summary": {
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.74,
+        "log_line": 2628
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": null,
+      "required_names_missing_from_transcript": []
+    }
+  ],
+  "failed_targets": [
+    {
+      "group": "library",
+      "description": "unittests src/lib.rs",
+      "target_name": "trnm_pon_node",
+      "original_lines": [
+        2,
+        1551
+      ],
+      "outer_summary": {
+        "status": "FAILED",
+        "passed": 1169,
+        "failed": 2,
+        "ignored": 33,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 4914.94,
+        "log_line": 1549
+      },
+      "nested_or_unattributed_summaries_not_added": 3,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": [],
+      "failure_names": [
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation"
+      ],
+      "named_failure_panics": [
+        {
+          "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "location": "crates/trnm-pon-node/src/store/detached_admission/tests.rs:877:31:",
+          "first_message": "called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }"
+        },
+        {
+          "selector": "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+          "location": "crates/trnm-pon-node/src/native_authenticated_tests.rs:834:24:",
+          "first_message": "called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }"
+        }
+      ]
+    },
+    {
+      "group": "integration",
+      "description": "tests/architecture_delivery_compare.rs",
+      "target_name": "architecture_delivery_compare",
+      "original_lines": [
+        1652,
+        1699
+      ],
+      "outer_summary": {
+        "status": "FAILED",
+        "passed": 12,
+        "failed": 1,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 26.37,
+        "log_line": 1697
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": [],
+      "failure_names": [
+        "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract"
+      ],
+      "named_failure_panics": [
+        {
+          "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+          "location": "crates/trnm-pon-node/tests/architecture_delivery_compare.rs:834:5:",
+          "first_message": "retained native delivery/replay invariants failed"
+        }
+      ]
+    },
+    {
+      "group": "integration",
+      "description": "tests/evaluation_sync_observation.rs",
+      "target_name": "evaluation_sync_observation",
+      "original_lines": [
+        1833,
+        1853
+      ],
+      "outer_summary": {
+        "status": "FAILED",
+        "passed": 2,
+        "failed": 1,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 6.83,
+        "log_line": 1851
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": [],
+      "failure_names": [
+        "actual_public_full_sync_query_partial_refusals_reorg_and_retirement"
+      ],
+      "named_failure_panics": [
+        {
+          "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+          "location": "crates/trnm-pon-node/tests/evaluation_sync_observation.rs:475:17:",
+          "first_message": "PUBLIC_HOST_KERNEL_PARENT"
+        }
+      ]
+    },
+    {
+      "group": "integration",
+      "description": "tests/mining_service_budget.rs",
+      "target_name": "mining_service_budget",
+      "original_lines": [
+        1910,
+        1928
+      ],
+      "outer_summary": {
+        "status": "FAILED",
+        "passed": 1,
+        "failed": 1,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 17.76,
+        "log_line": 1926
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": [],
+      "failure_names": [
+        "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain"
+      ],
+      "named_failure_panics": [
+        {
+          "selector": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+          "location": "crates/trnm-pon-node/tests/mining_service_budget.rs:102:5:",
+          "first_message": "None status=exit status: 2 stderr=PUBLIC_HOST_KERNEL_PARENT"
+        }
+      ]
+    },
+    {
+      "group": "integration",
+      "description": "tests/native_node.rs",
+      "target_name": "native_node",
+      "original_lines": [
+        2016,
+        2084
+      ],
+      "outer_summary": {
+        "status": "FAILED",
+        "passed": 28,
+        "failed": 2,
+        "ignored": 1,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 47.58,
+        "log_line": 2082
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": [],
+      "failure_names": [
+        "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+        "test_full_transaction_pages_use_byte_limits_and_recover_all_native_state"
+      ],
+      "named_failure_panics": [
+        {
+          "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+          "location": "crates/trnm-pon-node/tests/native_node.rs:1590:5:",
+          "first_message": "PUBLIC_HOST_KERNEL_PARENT"
+        },
+        {
+          "selector": "test_full_transaction_pages_use_byte_limits_and_recover_all_native_state",
+          "location": "crates/trnm-pon-node/tests/native_node.rs:1407:37:",
+          "first_message": "called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }"
+        },
+        {
+          "selector": "test_full_transaction_pages_use_byte_limits_and_recover_all_native_state",
+          "location": "crates/trnm-pon-node/tests/native_node.rs:1432:12:",
+          "first_message": "called `Result::unwrap()` on an `Err` value: Any { .. }"
+        }
+      ]
+    },
+    {
+      "group": "integration",
+      "description": "tests/public_cli.rs",
+      "target_name": "public_cli",
+      "original_lines": [
+        2221,
+        2240
+      ],
+      "outer_summary": {
+        "status": "FAILED",
+        "passed": 2,
+        "failed": 1,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 1.14,
+        "log_line": 2238
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": [],
+      "failure_names": [
+        "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history"
+      ],
+      "named_failure_panics": [
+        {
+          "selector": "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+          "location": "crates/trnm-pon-node/tests/public_cli.rs:38:5:",
+          "first_message": "PUBLIC_HOST_KERNEL_PARENT"
+        }
+      ]
+    },
+    {
+      "group": "integration",
+      "description": "tests/public_intake_v2.rs",
+      "target_name": "public_intake_v2",
+      "original_lines": [
+        2255,
+        2276
+      ],
+      "outer_summary": {
+        "status": "FAILED",
+        "passed": 0,
+        "failed": 2,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 0.66,
+        "log_line": 2274
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": [],
+      "failure_names": [
+        "one_packet_history_preserves_partial_progress_and_independent_validation",
+        "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work"
+      ],
+      "named_failure_panics": [
+        {
+          "selector": "one_packet_history_preserves_partial_progress_and_independent_validation",
+          "location": "crates/trnm-pon-node/tests/public_intake_v2.rs:316:14:",
+          "first_message": "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PUBLIC_HOST_KERNEL_PARENT\", source: None, request_history_budget: false }"
+        },
+        {
+          "selector": "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+          "location": "crates/trnm-pon-node/tests/public_intake_v2.rs:202:6:",
+          "first_message": "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PUBLIC_HOST_KERNEL_PARENT\", source: None, request_history_budget: false }"
+        }
+      ]
+    },
+    {
+      "group": "integration",
+      "description": "tests/public_pool_cli.rs",
+      "target_name": "public_pool_cli",
+      "original_lines": [
+        2277,
+        2308
+      ],
+      "outer_summary": {
+        "status": "FAILED",
+        "passed": 3,
+        "failed": 2,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "seconds": 14.92,
+        "log_line": 2306
+      },
+      "nested_or_unattributed_summaries_not_added": 0,
+      "binary_unchanged": true,
+      "required_names_missing_from_transcript": [],
+      "failure_names": [
+        "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+        "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver"
+      ],
+      "named_failure_panics": [
+        {
+          "selector": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+          "location": "crates/trnm-pon-node/tests/public_pool_cli.rs:722:80:",
+          "first_message": "called `Result::unwrap()` on an `Err` value: Disconnected"
+        },
+        {
+          "selector": "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+          "location": "crates/trnm-pon-node/tests/public_pool_cli.rs:153:5:",
+          "first_message": "first independent full-native sync: stderr=PUBLIC_HOST_KERNEL_PARENT"
+        }
+      ],
+      "additional_unnamed_panics": [
+        {
+          "thread": "<unnamed>",
+          "location": "crates/trnm-pon-node/tests/public_pool_cli.rs:582:30:",
+          "first_message": "called `Option::unwrap()` on a `None` value"
+        }
+      ]
+    }
+  ],
+  "live_captured_excerpt_eof_verification": [
+    {
+      "manifest": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-architecture-delivery-v1/manifest.json",
+        "bytes": 2092,
+        "sha256": "6dd00605d78d47c622f1126e927bb63e6f99550c5213cb6411ac9839ae223c87"
+      },
+      "excerpt": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-architecture-delivery-v1/original-target.log",
+        "bytes": 7346,
+        "sha256": "7e2c7aa71828c1197b2236e99b195638c7b06631f94dee97ba08a728189e404f"
+      },
+      "original_byte_start": 7227436,
+      "original_byte_end_exclusive": 7234782,
+      "matches_final_eof_log": true,
+      "capture_prefix_matches_final_log": true
+    },
+    {
+      "manifest": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-large-parent-v1/manifest.json",
+        "bytes": 14873,
+        "sha256": "47ad1096236f99d1bc3802d6dfdecf1a5376fca4e61d0771ecbc7482c5d66c0a"
+      },
+      "excerpt": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-large-parent-v1/large-state-growth.log",
+        "bytes": 106,
+        "sha256": "46f56fb1177e0ad887cc7a93c7c842731764ba099c23ae09ca94ef1ece80077e"
+      },
+      "original_byte_start": 6673869,
+      "original_byte_end_exclusive": 6673975,
+      "matches_final_eof_log": true,
+      "capture_prefix_matches_final_log": true
+    },
+    {
+      "manifest": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-large-parent-v1/manifest.json",
+        "bytes": 14873,
+        "sha256": "47ad1096236f99d1bc3802d6dfdecf1a5376fca4e61d0771ecbc7482c5d66c0a"
+      },
+      "excerpt": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-large-parent-v1/large-state-reclamation.log",
+        "bytes": 233,
+        "sha256": "5dceff6fce1de80fc53bf390cb7728d994e26f3361e77e055f898a8d04c07be7"
+      },
+      "original_byte_start": 6673975,
+      "original_byte_end_exclusive": 6674208,
+      "matches_final_eof_log": true,
+      "capture_prefix_matches_final_log": true
+    },
+    {
+      "manifest": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-large-parent-v1/manifest.json",
+        "bytes": 14873,
+        "sha256": "47ad1096236f99d1bc3802d6dfdecf1a5376fca4e61d0771ecbc7482c5d66c0a"
+      },
+      "excerpt": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-large-parent-v1/large-parent-original.log",
+        "bytes": 34546,
+        "sha256": "d03574f97eb45f800cbf964bc110248c8dc5568c3d318cc3a06bbcb428e47464"
+      },
+      "original_byte_start": 6674733,
+      "original_byte_end_exclusive": 6709279,
+      "matches_final_eof_log": true,
+      "capture_prefix_matches_final_log": true
+    },
+    {
+      "manifest": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-large-parent-v1/manifest.json",
+        "bytes": 14873,
+        "sha256": "47ad1096236f99d1bc3802d6dfdecf1a5376fca4e61d0771ecbc7482c5d66c0a"
+      },
+      "excerpt": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-large-parent-v1/large-parent-auth-supplementary.log",
+        "bytes": 36355,
+        "sha256": "9f956c72773dc0fc895c3bc1b1f723ea0b8fbbdf3bd6a13c784b3f8cfe28ff3f"
+      },
+      "original_byte_start": 6709279,
+      "original_byte_end_exclusive": 6745634,
+      "matches_final_eof_log": true,
+      "capture_prefix_matches_final_log": true
+    },
+    {
+      "manifest": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-more-integration-failures-v1/manifest.json",
+        "bytes": 4851,
+        "sha256": "76cf4e4254eb165e85709278ecc7d6d4ce1495d5f94d8e374f65df1d4fbe4db0"
+      },
+      "excerpt": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-more-integration-failures-v1/evaluation_sync_observation.log",
+        "bytes": 4289,
+        "sha256": "5b769a33f67d10a878e5e6fe8d0d02ddeaaf20b90beca5bf6fdaf6ae6964b757"
+      },
+      "original_byte_start": 7413683,
+      "original_byte_end_exclusive": 7417972,
+      "matches_final_eof_log": true,
+      "capture_prefix_matches_final_log": true
+    },
+    {
+      "manifest": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-more-integration-failures-v1/manifest.json",
+        "bytes": 4851,
+        "sha256": "76cf4e4254eb165e85709278ecc7d6d4ce1495d5f94d8e374f65df1d4fbe4db0"
+      },
+      "excerpt": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-more-integration-failures-v1/mining_service_budget.log",
+        "bytes": 971,
+        "sha256": "01e5e2b3ce8d644968784a753d2009602183a7ed6fbedf4c8ac79833ffca3e32"
+      },
+      "original_byte_start": 7421798,
+      "original_byte_end_exclusive": 7422769,
+      "matches_final_eof_log": true,
+      "capture_prefix_matches_final_log": true
+    },
+    {
+      "manifest": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-native-inactive-page-v1/manifest.json",
+        "bytes": 7910,
+        "sha256": "22a7c8c5467354eb28b07d78780a5e2f4a9f7a525f9593df9e21c0dd14974916"
+      },
+      "excerpt": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-native-inactive-page-v1/original.log",
+        "bytes": 5937,
+        "sha256": "19ed1a82e3795468790eb85f460129283948203c3d3cff4ee5a4486fbac0253f"
+      },
+      "original_byte_start": 6836539,
+      "original_byte_end_exclusive": 6842476,
+      "matches_final_eof_log": true,
+      "capture_prefix_matches_final_log": true
+    }
+  ],
+  "source_byte_identical": true,
+  "source_receipts": {
+    "before": {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/819309fd312298e099642e1253b1d4ba07113e98/full-node/source-before.json",
+      "bytes": 423,
+      "sha256": "5759d06c351357aa4d7b24e1b56c03607da60870788f30139a8e10460744c6b6"
+    },
+    "after": {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/819309fd312298e099642e1253b1d4ba07113e98/full-node/source-after.json",
+      "bytes": 423,
+      "sha256": "5759d06c351357aa4d7b24e1b56c03607da60870788f30139a8e10460744c6b6"
+    },
+    "byte_identical": true
+  },
+  "all_binaries_byte_identical": true,
+  "qualification": {
+    "original_business_gates": false,
+    "history_4105": false,
+    "four_second_pressure": false,
+    "throughput": false
+  },
+  "classification_limits": [
+    "Expected caught panics in passing tests are not failures.",
+    "Three actual failed tests report PUBLIC_MUTATION_CPU_BUDGET.",
+    "Eight actual failed tests have direct PUBLIC_HOST_KERNEL_PARENT diagnostics.",
+    "One public_pool_cli failure has unnamed Option::unwrap(None) followed by named Disconnected; its cause is not assigned to Host.",
+    "Current unoptimized local results are not paired performance comparisons or substitutes for release CI business gates."
+  ]
+}

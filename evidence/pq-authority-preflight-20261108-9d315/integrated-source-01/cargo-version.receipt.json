@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "-V"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 0.008654043078422546,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794123688.9369287,
+  "label": "cargo-version",
+  "logs": {
+    "cargo-version.stderr.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-01/cargo-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "cargo-version.stdout.log": {
+      "bytes": 36,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-01/cargo-version.stdout.log",
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "version": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)"
+  },
+  "started_unix_seconds": 1794123688.9282749
+}

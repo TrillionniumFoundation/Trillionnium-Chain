@@ -1,0 +1,14 @@
+{
+  "draft": true,
+  "evidence_commit": "09e4801308366fac01e55bcbdcf8bdfd4e6d2810",
+  "native_all_commands_passed": false,
+  "native_source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "native_tree": "5d2538f404e32319ea1084a6c79f37c52503546f",
+  "operation_key": "root-operation-20261112-df05-native-publication-v2",
+  "pr": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/945",
+  "production_activation": false,
+  "publication_complete": true,
+  "status": "HOLD",
+  "supplement_complete_success": false,
+  "tests_relabelled_to_evidence_commit": false
+}

@@ -1,0 +1,58 @@
+{
+  "actual_model_execution_accepted": false,
+  "after": {
+    "head": "27849cbdcfc0d4afc69764d6c1742af22c41c293",
+    "tracked_entries_verified": 11207,
+    "tree": "af50e58bf382891fb41861810cbf5425ca0da5a9"
+  },
+  "before": {
+    "head": "27849cbdcfc0d4afc69764d6c1742af22c41c293",
+    "tracked_entries_verified": 11207,
+    "tree": "af50e58bf382891fb41861810cbf5425ca0da5a9"
+  },
+  "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bcade85a-138b0-3fc.service\n",
+  "command": [
+    "/home/qian-qi/work/chain-hepta-native-1f3ba4601505/tools/bin/just",
+    "test",
+    "-p",
+    "codex-hepta-agentd",
+    "--lib",
+    "--locked",
+    "--offline",
+    "--no-capture",
+    "-E",
+    "test(ordinary_actor_reads_actual_use_and_cold_recovery_without_reexecution) | test(updated_candidate_uses_original_actor_and_recovers_without_another_reset) | test(running_actor_refuses_current_withdrawal_and_revocation) | test(updated_actor_rechecks_current_withdrawal_and_revocation) | test(unpublished_actor_refuses_learning_readback_and_keeps_transport_errors)"
+  ],
+  "elapsed_seconds": 41.0884940699907,
+  "end_unix_ns": 1794166918888770525,
+  "engineering_controls_only": true,
+  "exit_code": 0,
+  "junit_sha256": "7b08e0a9ea7afe004136dba4b11d7dc071175e45257c5a7e765dda51fed1cde5",
+  "log_bytes": 96489,
+  "log_sha256": "e2f7a9b9b926cf618db1ebd8962429c5aece8b047fb4c622162d9b6727408819",
+  "native_tests_failed": 0,
+  "native_tests_passed": 5,
+  "native_tests_skipped": 0,
+  "new_empty_target": false,
+  "observed_names": [
+    "neuron_generation_runtime::tests::update::adopted_learning::updated_actor_rechecks_current_withdrawal_and_revocation",
+    "neuron_generation_runtime::tests::update::adopted_learning::updated_candidate_uses_original_actor_and_recovers_without_another_reset",
+    "neuron_generation_runtime::tests::update::learning::ordinary_actor_reads_actual_use_and_cold_recovery_without_reexecution",
+    "neuron_generation_runtime::tests::update::learning::running_actor_refuses_current_withdrawal_and_revocation",
+    "neuron_generation_runtime::tests::update::learning::unpublished_actor_refuses_learning_readback_and_keeps_transport_errors"
+  ],
+  "process_id": 638774,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "result": "PASS",
+  "schema": "hepta-real-model-bridge-native-controls-v1",
+  "selectors": [
+    "ordinary_actor_reads_actual_use_and_cold_recovery_without_reexecution",
+    "updated_candidate_uses_original_actor_and_recovers_without_another_reset",
+    "running_actor_refuses_current_withdrawal_and_revocation",
+    "updated_actor_rechecks_current_withdrawal_and_revocation",
+    "unpublished_actor_refuses_learning_readback_and_keeps_transport_errors"
+  ],
+  "source": "27849cbdcfc0d4afc69764d6c1742af22c41c293",
+  "start_unix_ns": 1794166877799196905
+}

@@ -1,0 +1,341 @@
+{
+  "schema": "pon-native-lift-cache-comparison-v1",
+  "scope": "Same real full-account graph, generic sha2 base6f dependencies, same local host; cache-only delta. This is not original hardware/attack/deadline business qualification or touched-state complexity closure.",
+  "limitations": [
+    "Baseline then candidate, not randomized crossover; 100 warm traversals are repeated observations, not independent deployment trials.",
+    "SQLite is in-memory; cold refers to new arithmetic/decode caches after seeding and an uncached oracle pass. It does not mean cold physical storage or process startup.",
+    "Both simultaneously live cache instances use identical graph data and separate exact caches.",
+    "Unrelated prefill is synthetic exact mathematical keys at capacity followed by the real complete graph, not an authenticated history campaign.",
+    "The bounded eight-way index and deterministic victim sampler can be adversarially collided; correctness falls back to the original lift math and cache speed must not reduce security cost bounds.",
+    "Fixed lift slab is allocated lazily on first nonidentity lift and costs more than a partially filled BTreeMap for small graphs.",
+    "RSS/HWM are entire process values with allocator retention across cases, not memory charged solely to the caches.",
+    "Complete account verification still scans all nodes and state. Host quota checks, PQ, networking, and business confirmation are outside these timings."
+  ],
+  "validated": {
+    "source_account_archive_identical": true,
+    "traversals_per_arm": 510,
+    "all_roots_identical": true,
+    "all_sql_reads_equal_nodes": true,
+    "all_progress_checks_equal_nodes": true,
+    "all_lift_instances_bounded_8192": true
+  },
+  "sources": {
+    "baseline": {
+      "account_archive_sha256": "2edad490035fa2193e4222e00048e8f847bde8bd61b10b9f02c6148abd686d7f",
+      "cache_limit_per_instance": 8192,
+      "debug_assertions": true,
+      "kind": "source",
+      "native_store_sha256": "9e6a2c39f6c32df6a7aaecda5516ff5b37daa26487d4aa4dbc8d1f4d0ab46ffa",
+      "samples": "two independent cold caches and 100 warm traversals per size; p99 uses nearest rank and is descriptive only",
+      "schema": "pon-native-lift-cache-full-graph-cost-v1",
+      "scope": "real native complete account graph including fresh SQL reads, actual account parsing and every original progress checkpoint; excludes Host checks, PQ authorization, complete State commitment, business confirmation and network",
+      "simultaneously_live_cache_instances": 2
+    },
+    "candidate": {
+      "account_archive_sha256": "2edad490035fa2193e4222e00048e8f847bde8bd61b10b9f02c6148abd686d7f",
+      "cache_limit_per_instance": 8192,
+      "debug_assertions": true,
+      "kind": "source",
+      "lift_software_charge_per_instance_bytes": 983080,
+      "native_store_sha256": "9ad7b72aa9b8a8a54a1e48e7d92b936e411256a4ab54fcf862c17512637a044a",
+      "samples": "two independent cold caches and 100 warm traversals per size; p99 uses nearest rank and is descriptive only",
+      "schema": "pon-native-lift-cache-full-graph-cost-v1",
+      "scope": "real native complete account graph including fresh SQL reads, actual account parsing and every original progress checkpoint; excludes Host checks, PQ authorization, complete State commitment, business confirmation and network",
+      "simultaneously_live_cache_instances": 2
+    }
+  },
+  "raw_files": {
+    "baseline": {
+      "file": "/workspace/scratch/8a53368149fe/lift-clear-baseline.jsonl",
+      "bytes": 175486,
+      "sha256": "5f589dc9031a314776a0b40ea1c2319d4b60e782b741f934a11fc404f23e73d3"
+    },
+    "candidate": {
+      "file": "/workspace/scratch/8a53368149fe/lift-replacement-candidate.jsonl",
+      "bytes": 175635,
+      "sha256": "c83fc05dd76ba2a5af575e1c3c5f0b91891e68e845ca5d4d156b90b365efb98b"
+    }
+  },
+  "rows": [
+    {
+      "accounts": 1024,
+      "unrelated_math_prefill": false,
+      "root": "5483f76d1b3459d2d873398e939327de845dd07bcda884e76e06ae4765c9b0c6",
+      "samples_per_arm": {
+        "cold": 2,
+        "warm": 100
+      },
+      "baseline": {
+        "accounts": 1024,
+        "cold_elapsed_ns": [
+          43367608,
+          49561257
+        ],
+        "kind": "summary",
+        "live_lift_entries_total": 2538,
+        "memory_scope": "payload byte count excludes BTreeMap allocator/node overhead; VmRSS/VmHWM cover this whole test process, not a cache-only charge",
+        "proc_memory": [
+          "VmHWM:\t   22152 kB",
+          "VmRSS:\t   22152 kB"
+        ],
+        "unrelated_prefill": false,
+        "warm_max_ns": 10514974,
+        "warm_p50_ns": 6148140,
+        "warm_p99_ns": 8117856,
+        "warm_samples": 100,
+        "root": "5483f76d1b3459d2d873398e939327de845dd07bcda884e76e06ae4765c9b0c6",
+        "traversal_count": 102
+      },
+      "candidate": {
+        "accounts": 1024,
+        "cold_elapsed_ns": [
+          41572736,
+          41325073
+        ],
+        "kind": "summary",
+        "live_lift_entries_total": 2538,
+        "memory_scope": "retained payload excludes unoccupied slots and allocator bookkeeping; VmRSS/VmHWM cover this whole test process, not a cache-only charge",
+        "proc_memory": [
+          "VmHWM:\t   22668 kB",
+          "VmRSS:\t   22668 kB"
+        ],
+        "unrelated_prefill": false,
+        "warm_max_ns": 7286149,
+        "warm_p50_ns": 5879404,
+        "warm_p99_ns": 7266139,
+        "warm_samples": 100,
+        "root": "5483f76d1b3459d2d873398e939327de845dd07bcda884e76e06ae4765c9b0c6",
+        "traversal_count": 102
+      },
+      "candidate_over_baseline": {
+        "warm_p50_ns": 0.9562898697817551,
+        "warm_p99_ns": 0.8950810411024783,
+        "warm_max_ns": 0.692930767113642
+      }
+    },
+    {
+      "accounts": 9216,
+      "unrelated_math_prefill": false,
+      "root": "48fcf3cc640912bad5a9b0069914073b8130408a6ee1b8a4971db0fd6bd137af",
+      "samples_per_arm": {
+        "cold": 2,
+        "warm": 100
+      },
+      "baseline": {
+        "accounts": 9216,
+        "cold_elapsed_ns": [
+          451383037,
+          466468060
+        ],
+        "kind": "summary",
+        "live_lift_entries_total": 10756,
+        "memory_scope": "payload byte count excludes BTreeMap allocator/node overhead; VmRSS/VmHWM cover this whole test process, not a cache-only charge",
+        "proc_memory": [
+          "VmHWM:\t   38060 kB",
+          "VmRSS:\t   38060 kB"
+        ],
+        "unrelated_prefill": false,
+        "warm_max_ns": 522586876,
+        "warm_p50_ns": 422658438,
+        "warm_p99_ns": 521235804,
+        "warm_samples": 100,
+        "root": "48fcf3cc640912bad5a9b0069914073b8130408a6ee1b8a4971db0fd6bd137af",
+        "traversal_count": 102
+      },
+      "candidate": {
+        "accounts": 9216,
+        "cold_elapsed_ns": [
+          384559325,
+          403191167
+        ],
+        "kind": "summary",
+        "live_lift_entries_total": 15970,
+        "memory_scope": "retained payload excludes unoccupied slots and allocator bookkeeping; VmRSS/VmHWM cover this whole test process, not a cache-only charge",
+        "proc_memory": [
+          "VmHWM:\t   35788 kB",
+          "VmRSS:\t   35788 kB"
+        ],
+        "unrelated_prefill": false,
+        "warm_max_ns": 305649315,
+        "warm_p50_ns": 245134870,
+        "warm_p99_ns": 299723802,
+        "warm_samples": 100,
+        "root": "48fcf3cc640912bad5a9b0069914073b8130408a6ee1b8a4971db0fd6bd137af",
+        "traversal_count": 102
+      },
+      "candidate_over_baseline": {
+        "warm_p50_ns": 0.5799833812852921,
+        "warm_p99_ns": 0.5750253526329131,
+        "warm_max_ns": 0.5848775180492669
+      }
+    },
+    {
+      "accounts": 32768,
+      "unrelated_math_prefill": false,
+      "root": "d2805589ddfb10e27039516de628f7891dbb2355952356ec3c41a316a388e0be",
+      "samples_per_arm": {
+        "cold": 2,
+        "warm": 100
+      },
+      "baseline": {
+        "accounts": 32768,
+        "cold_elapsed_ns": [
+          1661377060,
+          1711723574
+        ],
+        "kind": "summary",
+        "live_lift_entries_total": 13286,
+        "memory_scope": "payload byte count excludes BTreeMap allocator/node overhead; VmRSS/VmHWM cover this whole test process, not a cache-only charge",
+        "proc_memory": [
+          "VmHWM:\t   73992 kB",
+          "VmRSS:\t   73992 kB"
+        ],
+        "unrelated_prefill": false,
+        "warm_max_ns": 1932286090,
+        "warm_p50_ns": 1582465392,
+        "warm_p99_ns": 1827871696,
+        "warm_samples": 100,
+        "root": "d2805589ddfb10e27039516de628f7891dbb2355952356ec3c41a316a388e0be",
+        "traversal_count": 102
+      },
+      "candidate": {
+        "accounts": 32768,
+        "cold_elapsed_ns": [
+          1458715399,
+          1503033490
+        ],
+        "kind": "summary",
+        "live_lift_entries_total": 16384,
+        "memory_scope": "retained payload excludes unoccupied slots and allocator bookkeeping; VmRSS/VmHWM cover this whole test process, not a cache-only charge",
+        "proc_memory": [
+          "VmHWM:\t   70744 kB",
+          "VmRSS:\t   70528 kB"
+        ],
+        "unrelated_prefill": false,
+        "warm_max_ns": 1679368256,
+        "warm_p50_ns": 1468463374,
+        "warm_p99_ns": 1678709691,
+        "warm_samples": 100,
+        "root": "d2805589ddfb10e27039516de628f7891dbb2355952356ec3c41a316a388e0be",
+        "traversal_count": 102
+      },
+      "candidate_over_baseline": {
+        "warm_p50_ns": 0.9279592346370884,
+        "warm_p99_ns": 0.9183958013429406,
+        "warm_max_ns": 0.8691095302559467
+      }
+    },
+    {
+      "accounts": 1024,
+      "unrelated_math_prefill": true,
+      "root": "5483f76d1b3459d2d873398e939327de845dd07bcda884e76e06ae4765c9b0c6",
+      "samples_per_arm": {
+        "cold": 2,
+        "warm": 100
+      },
+      "baseline": {
+        "accounts": 1024,
+        "cold_elapsed_ns": [
+          50358429,
+          51401295
+        ],
+        "kind": "summary",
+        "live_lift_entries_total": 2538,
+        "memory_scope": "payload byte count excludes BTreeMap allocator/node overhead; VmRSS/VmHWM cover this whole test process, not a cache-only charge",
+        "proc_memory": [
+          "VmHWM:\t   73992 kB",
+          "VmRSS:\t   73992 kB"
+        ],
+        "unrelated_prefill": true,
+        "warm_max_ns": 17064836,
+        "warm_p50_ns": 7390949,
+        "warm_p99_ns": 14571825,
+        "warm_samples": 100,
+        "root": "5483f76d1b3459d2d873398e939327de845dd07bcda884e76e06ae4765c9b0c6",
+        "traversal_count": 102
+      },
+      "candidate": {
+        "accounts": 1024,
+        "cold_elapsed_ns": [
+          43252885,
+          41212061
+        ],
+        "kind": "summary",
+        "live_lift_entries_total": 16384,
+        "memory_scope": "retained payload excludes unoccupied slots and allocator bookkeeping; VmRSS/VmHWM cover this whole test process, not a cache-only charge",
+        "proc_memory": [
+          "VmHWM:\t   70744 kB",
+          "VmRSS:\t   70656 kB"
+        ],
+        "unrelated_prefill": true,
+        "warm_max_ns": 15682703,
+        "warm_p50_ns": 6053775,
+        "warm_p99_ns": 9936652,
+        "warm_samples": 100,
+        "root": "5483f76d1b3459d2d873398e939327de845dd07bcda884e76e06ae4765c9b0c6",
+        "traversal_count": 102
+      },
+      "candidate_over_baseline": {
+        "warm_p50_ns": 0.8190795255115412,
+        "warm_p99_ns": 0.6819085461155346,
+        "warm_max_ns": 0.9190069567618464
+      }
+    },
+    {
+      "accounts": 9216,
+      "unrelated_math_prefill": true,
+      "root": "48fcf3cc640912bad5a9b0069914073b8130408a6ee1b8a4971db0fd6bd137af",
+      "samples_per_arm": {
+        "cold": 2,
+        "warm": 100
+      },
+      "baseline": {
+        "accounts": 9216,
+        "cold_elapsed_ns": [
+          442060526,
+          462239974
+        ],
+        "kind": "summary",
+        "live_lift_entries_total": 10756,
+        "memory_scope": "payload byte count excludes BTreeMap allocator/node overhead; VmRSS/VmHWM cover this whole test process, not a cache-only charge",
+        "proc_memory": [
+          "VmHWM:\t   73992 kB",
+          "VmRSS:\t   73992 kB"
+        ],
+        "unrelated_prefill": true,
+        "warm_max_ns": 519785290,
+        "warm_p50_ns": 433126833,
+        "warm_p99_ns": 513848361,
+        "warm_samples": 100,
+        "root": "48fcf3cc640912bad5a9b0069914073b8130408a6ee1b8a4971db0fd6bd137af",
+        "traversal_count": 102
+      },
+      "candidate": {
+        "accounts": 9216,
+        "cold_elapsed_ns": [
+          398092810,
+          391556854
+        ],
+        "kind": "summary",
+        "live_lift_entries_total": 16384,
+        "memory_scope": "retained payload excludes unoccupied slots and allocator bookkeeping; VmRSS/VmHWM cover this whole test process, not a cache-only charge",
+        "proc_memory": [
+          "VmHWM:\t   70744 kB",
+          "VmRSS:\t   70656 kB"
+        ],
+        "unrelated_prefill": true,
+        "warm_max_ns": 321874965,
+        "warm_p50_ns": 243816893,
+        "warm_p99_ns": 319352939,
+        "warm_samples": 100,
+        "root": "48fcf3cc640912bad5a9b0069914073b8130408a6ee1b8a4971db0fd6bd137af",
+        "traversal_count": 102
+      },
+      "candidate_over_baseline": {
+        "warm_p50_ns": 0.562922623175369,
+        "warm_p99_ns": 0.6214925710349789,
+        "warm_max_ns": 0.619246006365436
+      }
+    }
+  ]
+}

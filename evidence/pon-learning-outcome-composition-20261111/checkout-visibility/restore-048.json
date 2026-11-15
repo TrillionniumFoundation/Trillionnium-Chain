@@ -1,0 +1,24 @@
+{
+  "actual_oid": "6933e9c627aa11c3fa26673d814fe99f187f7b5d",
+  "bytes": 2483660,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "6933e9c627aa11c3fa26673d814fe99f187f7b5d"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 2483660,
+  "expected_oid": "6933e9c627aa11c3fa26673d814fe99f187f7b5d",
+  "finished_at": "2026-11-12T01:41:54.869438+00:00",
+  "path": "evidence/pon-history-checkpoint-r8-20261028/raw-observations.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLWhpc3RvcnktY2hlY2twb2ludC1yOC0yMDI2MTAyOC9yYXctb2JzZXJ2YXRpb25zLnRhci5neg==",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "d9c0d724126b10b8b44263f69d8aca210d463ca0ba1351107de1e76878559697",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:54.812037+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

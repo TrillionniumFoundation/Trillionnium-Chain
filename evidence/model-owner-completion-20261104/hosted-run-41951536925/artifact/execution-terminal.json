@@ -1,0 +1,1 @@
+{"automatic_retry_allowed":false,"error":"HOSTED_COMMAND_EXIT:original-pilot:1","error_type":"Refused","git_intent_spent":true,"outcome":"failed","pilot_returned":true,"pilot_started":true,"qualifications":{"authenticated_inference_accepted":false,"independent_accepted":false,"prospective_accepted":false,"public_network_ready":false,"public_reward_eligible":false}}

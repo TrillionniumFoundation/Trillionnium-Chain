@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="nextest-run" tests="14" failures="0" errors="0" uuid="8c1688c3-6fba-4a3b-9cbf-b9c9351bd151" timestamp="2026-11-08T15:57:51.032-05:00" time="14.901">
+    <testsuite name="codex-hepta-agentd" tests="14" disabled="0" errors="0" failures="0">
+        <testcase name="learning_iteration_research_external_material::tests::research_material_canonicalization_sorts_every_object_level" classname="codex-hepta-agentd" timestamp="2026-11-08T15:57:51.035-05:00" time="0.006">
+        </testcase>
+        <testcase name="learning_iteration_research_external_material::tests::research_material_reads_reject_leaf_ancestor_and_hardlink_aliases" classname="codex-hepta-agentd" timestamp="2026-11-08T15:57:51.041-05:00" time="0.005">
+        </testcase>
+        <testcase name="learning_iteration_research_external_material::tests::research_material_rejects_duplicate_json_keys_at_any_depth" classname="codex-hepta-agentd" timestamp="2026-11-08T15:57:51.046-05:00" time="0.004">
+        </testcase>
+        <testcase name="learning_iteration_research_external_material::tests::research_material_size_reference_and_mutation_checks_use_actual_bytes" classname="codex-hepta-agentd" timestamp="2026-11-08T15:57:51.050-05:00" time="0.005">
+        </testcase>
+        <testcase name="learning_iteration_research_external_material::tests::research_material_tensors_reject_overlap_holes_trailing_and_nonfinite" classname="codex-hepta-agentd" timestamp="2026-11-08T15:57:51.055-05:00" time="0.004">
+        </testcase>
+        <testcase name="learning_iteration_research_external_material::tests::research_owner_concurrent_handles_cas_has_exactly_one_retained_winner" classname="codex-hepta-agentd" timestamp="2026-11-08T15:57:51.059-05:00" time="0.004">
+        </testcase>
+        <testcase name="learning_iteration_research_external_material::tests::research_owner_initial_freeze_rejects_existing_training_or_evaluation" classname="codex-hepta-agentd" timestamp="2026-11-08T15:57:51.063-05:00" time="0.004">
+        </testcase>
+        <testcase name="learning_iteration_research_external_material::tests::research_owner_partial_entries_are_observable_and_never_replaced" classname="codex-hepta-agentd" timestamp="2026-11-08T15:57:51.067-05:00" time="0.004">
+        </testcase>
+        <testcase name="learning_iteration_research_external_material::tests::research_owner_publication_is_create_only_and_detects_directory_replacement" classname="codex-hepta-agentd" timestamp="2026-11-08T15:57:51.071-05:00" time="0.004">
+        </testcase>
+        <testcase name="neuron_generation_runtime::tests::update::adopted_learning::updated_actor_rechecks_current_withdrawal_and_revocation" classname="codex-hepta-agentd" timestamp="2026-11-08T15:57:51.075-05:00" time="3.637">
+        </testcase>
+        <testcase name="neuron_generation_runtime::tests::update::adopted_learning::updated_candidate_uses_original_actor_and_recovers_without_another_reset" classname="codex-hepta-agentd" timestamp="2026-11-08T15:57:54.712-05:00" time="3.277">
+        </testcase>
+        <testcase name="neuron_generation_runtime::tests::update::learning::ordinary_actor_reads_actual_use_and_cold_recovery_without_reexecution" classname="codex-hepta-agentd" timestamp="2026-11-08T15:57:57.989-05:00" time="3.103">
+        </testcase>
+        <testcase name="neuron_generation_runtime::tests::update::learning::running_actor_refuses_current_withdrawal_and_revocation" classname="codex-hepta-agentd" timestamp="2026-11-08T15:58:01.092-05:00" time="4.553">
+        </testcase>
+        <testcase name="neuron_generation_runtime::tests::update::learning::unpublished_actor_refuses_learning_readback_and_keeps_transport_errors" classname="codex-hepta-agentd" timestamp="2026-11-08T15:58:05.645-05:00" time="0.288">
+        </testcase>
+    </testsuite>
+</testsuites>

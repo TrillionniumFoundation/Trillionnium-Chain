@@ -1,0 +1,4 @@
+ingress::public_v3::output_reservation_tests::full_output_pool_closes_without_signed_response_and_recovers_after_release: test
+ingress::public_v3::output_reservation_tests::refusal_borrows_only_bounded_original_headroom_and_preserves_control_service: test
+
+2 tests, 0 benchmarks

@@ -1,0 +1,10 @@
+OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)
+built on: Mon Nov  9 13:14:12 2026 UTC
+platform: linux-x86_64
+options:  bn(64,64)
+compiler: gcc -fPIC -pthread -m64 -Wa,--noexecstack -Wall -O3 -DOPENSSL_USE_NODELETE -DL_ENDIAN -DOPENSSL_PIC -DOPENSSL_BUILDING_OPENSSL -DNDEBUG
+OPENSSLDIR: "/workspace/scratch/a6fe7c2e72c7/pq-validation/provider-run/trnm-pq-provider-3.5.9.Uv4EkAot/install/ssl"
+ENGINESDIR: "/workspace/scratch/a6fe7c2e72c7/pq-validation/provider-run/trnm-pq-provider-3.5.9.Uv4EkAot/install/lib/engines-3"
+MODULESDIR: "/workspace/scratch/a6fe7c2e72c7/pq-validation/provider-run/trnm-pq-provider-3.5.9.Uv4EkAot/install/lib/ossl-modules"
+Seeding source: os-specific
+CPUINFO: OPENSSL_ia32cap=0xfffa32035f8bffff:0x1a415f66f1bf2fbb:0x00001c3020814010:0x0000000000000000:0x0000000000000000

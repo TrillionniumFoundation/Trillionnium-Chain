@@ -1,0 +1,85 @@
+[
+  {
+    "name": "preflight-before-overlay",
+    "argv": [
+      "/bin/bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.09033824992366135
+  },
+  {
+    "name": "journal-reader-tests",
+    "argv": [
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/pon-nakamoto-v1",
+      "-p",
+      "test_native_owner_journal.py",
+      "-v"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 1.305221405113116
+  },
+  {
+    "name": "journal-independent-reader",
+    "argv": [
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+      "formal/pon-nakamoto-v1/native_owner_journal.py",
+      "--run",
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/attempt-02/native-owner-journal/run.json",
+      "--output",
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/attempt-03/journal-checked.json"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.35566684580408037
+  },
+  {
+    "name": "certificate-composition",
+    "argv": [
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+      "formal/pon-nakamoto-v1/certificate_composition_evidence.py",
+      "--native-run",
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/attempt-02/native-owner-journal/run.json",
+      "--output-dir",
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/attempt-03/certificate-composition"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 1.2092026721220464
+  },
+  {
+    "name": "strict-new-native-clippy",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo-clippy",
+      "clippy",
+      "--profile",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--test",
+      "native_owner_journal",
+      "--test",
+      "native_owner_observation",
+      "--example",
+      "native_owner_journal_v1",
+      "--example",
+      "native_owner_observation_v1",
+      "--config",
+      "profile.test.package.trnm-pon-node.opt-level=0",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 54.94041131413542
+  }
+]

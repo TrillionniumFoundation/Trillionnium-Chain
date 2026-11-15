@@ -1,0 +1,11 @@
+test_cancel_after_exact_readout_end_retains_started_check (test_quantum_candidate_check_clock.CandidateCheckClockTests.test_cancel_after_exact_readout_end_retains_started_check) ... ok
+test_cancel_before_exact_readout_end_does_not_invent_check (test_quantum_candidate_check_clock.CandidateCheckClockTests.test_cancel_before_exact_readout_end_does_not_invent_check) ... ok
+test_completed_failed_trial_pays_full_check_for_every_processor (test_quantum_candidate_check_clock.CandidateCheckClockTests.test_completed_failed_trial_pays_full_check_for_every_processor) ... ok
+test_exact_binary_phase_boundary_has_no_positive_elapsed_check (test_quantum_candidate_check_clock.CandidateCheckClockTests.test_exact_binary_phase_boundary_has_no_positive_elapsed_check) ... ok
+test_horizon_after_readout_retains_censored_check (test_quantum_candidate_check_clock.CandidateCheckClockTests.test_horizon_after_readout_retains_censored_check) ... ok
+test_nonzero_search_start_is_included_in_elapsed_accounting (test_quantum_candidate_check_clock.CandidateCheckClockTests.test_nonzero_search_start_is_included_in_elapsed_accounting) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.011s
+
+OK

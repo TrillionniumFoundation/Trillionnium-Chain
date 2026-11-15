@@ -1,0 +1,12 @@
+   Compiling openssl-sys v0.9.117
+   Compiling openssl v0.10.81
+   Compiling foreign-types-shared v0.1.1
+   Compiling foreign-types v0.3.2
+   Compiling openssl-macros v0.1.1
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-release-bundle v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-release-bundle)
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 3m 17s
+     Running unittests src/lib.rs (/home/qq/work/chain-cell-four-gates-2bfb-target-c1/release/deps/trnm_pon_node-cc717d329a234622)

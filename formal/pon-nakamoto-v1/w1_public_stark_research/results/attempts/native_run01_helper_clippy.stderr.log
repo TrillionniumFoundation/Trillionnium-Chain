@@ -1,0 +1,21 @@
+   Compiling w1-full-public-stark-research v0.1.0 (/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research)
+    Finished `release` profile [optimized] target(s) in 7.58s
+    Checking w1-full-public-stark-research v0.1.0 (/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research)
+error: the loop variable `word` is used to index `preprocessed`
+   --> src/sha_air.rs:170:21
+    |
+170 |         for word in 0..16 {
+    |                     ^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#needless_range_loop
+    = note: `-D clippy::needless-range-loop` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::needless_range_loop)]`
+help: consider using an iterator and enumerate()
+    |
+170 -         for word in 0..16 {
+170 +         for (word, <item>) in preprocessed.iter().enumerate().take(16) {
+    |
+
+error: could not compile `w1-full-public-stark-research` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `w1-full-public-stark-research` (lib test) due to 1 previous error

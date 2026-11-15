@@ -1,0 +1,28 @@
+{
+  "args": [
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_ci_contract",
+    "test_ci_source_integrity"
+  ],
+  "command_passed": true,
+  "exit_code": 0,
+  "expected_tests": 147,
+  "final_plain_OK": true,
+  "label": "ci-contract-source-147",
+  "non_ok_verbose_lines": [],
+  "reported_counts": [
+    147
+  ],
+  "seconds": 22.072453716071323,
+  "stderr_bytes": 25174,
+  "stderr_sha256": "a43671617680ec9bbc9d366f6bc90a5e884360efcc9f62dab9f752f48b3afb30",
+  "stdout_bytes": 484,
+  "stdout_sha256": "609e2768bafa3d535e2c6a155beb96f01d65a283cfc4868c6182860c72c8fe5c",
+  "successful_verbose_test_lines": 147,
+  "timed_out": false,
+  "timeout_seconds": 300,
+  "verbose_test_line_count": 147
+}

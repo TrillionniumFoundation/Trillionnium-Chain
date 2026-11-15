@@ -1,0 +1,194 @@
+{
+  "schema": "trnm-independent-resolver-source-binding-v1",
+  "head": "819309fd312298e099642e1253b1d4ba07113e98",
+  "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "merge": "28df21f965e0348690836c9c854dab645827a03d",
+  "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+  "contexts": [
+    {
+      "artifact_id": 13584974949,
+      "run_id": 42402618462,
+      "context_sha256": "678a1768cc75832a716458b6c3ba08a635edf6730a8480da34ed0ae3e0b6aa3f",
+      "canonical_context_digest": "3cf8bf4118fd81e0bb91053b9a98835c5d918396dcd5f29d9c44ff194394aa0d",
+      "source_before_after_equal": true,
+      "source_head": {
+        "base": null,
+        "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+        "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1277471450,
+        "tracked_entries": 12639,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "artifact_id": 13585647797,
+      "run_id": 42402618518,
+      "context_sha256": "0dac94a9be42d186f6f66b49d46818d3a478c5dec98f4679fe38fdf4d66dd441",
+      "canonical_context_digest": "062c87e2c20ad150f8b85186f663b2c1344c02abcb7791ec305b8f45e583a022",
+      "source_before_after_equal": true,
+      "source_head": {
+        "base": null,
+        "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+        "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1277471450,
+        "tracked_entries": 12639,
+        "tracked_worktree_verified": true
+      }
+    }
+  ],
+  "same_H_B_M": true,
+  "same_event_payload_digest": true,
+  "raw_event_payload_independently_available": false,
+  "independent_local_merge": {
+    "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+    "merge": "28df21f965e0348690836c9c854dab645827a03d",
+    "parents": [
+      "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "819309fd312298e099642e1253b1d4ba07113e98"
+    ],
+    "private_bare_only": true,
+    "github_fetch": false,
+    "source_repository_mutated": false
+  },
+  "pinned_reader_blobs_rehashed": 11,
+  "initial_source_related_step_counts": [
+    {
+      "name": "Checkout exact measured source",
+      "status": "completed",
+      "conclusion": "success",
+      "count": 20
+    },
+    {
+      "name": "Checkout exact observed source",
+      "status": "completed",
+      "conclusion": "success",
+      "count": 2
+    },
+    {
+      "name": "Execute original and fresh service with original Host resources",
+      "status": "in_progress",
+      "conclusion": "None",
+      "count": 2
+    },
+    {
+      "name": "Execute original source-preserving migration tests",
+      "status": "completed",
+      "conclusion": "skipped",
+      "count": 4
+    },
+    {
+      "name": "Execute original source-preserving migration tests",
+      "status": "pending",
+      "conclusion": "None",
+      "count": 8
+    },
+    {
+      "name": "Execute original window owner and context-bound consumer controls",
+      "status": "completed",
+      "conclusion": "skipped",
+      "count": 8
+    },
+    {
+      "name": "Execute original window owner and context-bound consumer controls",
+      "status": "completed",
+      "conclusion": "success",
+      "count": 4
+    },
+    {
+      "name": "Install the source-pinned native toolchain",
+      "status": "completed",
+      "conclusion": "success",
+      "count": 12
+    },
+    {
+      "name": "Post Checkout exact measured source",
+      "status": "pending",
+      "conclusion": "None",
+      "count": 20
+    },
+    {
+      "name": "Post Checkout exact observed source",
+      "status": "pending",
+      "conclusion": "None",
+      "count": 2
+    },
+    {
+      "name": "Preserve resolved and failed push context",
+      "status": "completed",
+      "conclusion": "success",
+      "count": 2
+    },
+    {
+      "name": "Preserve this lane's actual push source context",
+      "status": "pending",
+      "conclusion": "None",
+      "count": 34
+    },
+    {
+      "name": "Reproduce the frozen integration-push source",
+      "status": "completed",
+      "conclusion": "success",
+      "count": 34
+    },
+    {
+      "name": "Require source-context refusal controls and unchanged resolver bytes",
+      "status": "completed",
+      "conclusion": "success",
+      "count": 2
+    },
+    {
+      "name": "Reserve observations and verify ordered source identity",
+      "status": "completed",
+      "conclusion": "success",
+      "count": 18
+    },
+    {
+      "name": "Reserve records and verify ordered source identity",
+      "status": "completed",
+      "conclusion": "success",
+      "count": 4
+    },
+    {
+      "name": "Reverify exact unchanged source",
+      "status": "pending",
+      "conclusion": "None",
+      "count": 12
+    },
+    {
+      "name": "Verify measured source after execution",
+      "status": "pending",
+      "conclusion": "None",
+      "count": 20
+    },
+    {
+      "name": "Verify observed source after execution",
+      "status": "pending",
+      "conclusion": "None",
+      "count": 2
+    },
+    {
+      "name": "Verify source and original project boundary",
+      "status": "completed",
+      "conclusion": "success",
+      "count": 12
+    }
+  ],
+  "historical_retention_failure_lines": [
+    "2026-11-07T18:42:39.9715947Z   artifact-ids: 11531476198",
+    "2026-11-07T18:42:39.9716386Z   run-id: 37730166589",
+    "2026-11-07T18:42:40.5197066Z Found 0 artifact(s)",
+    "2026-11-07T18:42:40.5217950Z ##[error]Unable to download artifact(s): None of the provided artifact IDs were found"
+  ],
+  "native_materialization_and_source_after": "PENDING per-lane original artifacts/logs",
+  "native_gate_validated": false
+}

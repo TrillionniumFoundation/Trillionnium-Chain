@@ -1,0 +1,82 @@
+{
+  "binding_commit": "b84568a714e24070d9554008660f1382e2c1b1b5",
+  "counts_overlap": true,
+  "documentation": {
+    "path": "/private/tmp/chain-final-current-bindings-evidence-20261114/final-evidence-v1/FINAL_BINDING_EVIDENCE.md",
+    "sha256": "4aefcee8704de6eb4865e448953a783857dc3288f025d0efee968f1bf7a669b3"
+  },
+  "final_consumer_controls_passed": true,
+  "independent_review_refs": [
+    {
+      "path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/authority44-lifetime20-exact-source-delta-v1.json",
+      "sha256": "6e49ee214849fa900595d946342069fc9b4dfa834493c6e7e822bb2f1f8ebde9"
+    },
+    {
+      "path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/authority44-lifetime20-consumer-and-negative-review-v1.json",
+      "sha256": "04b2430b9d7fdaa43f3ce16a043af63e8b7d20da7ec6feecf433f7dcaed44c2d"
+    },
+    {
+      "path": "/private/tmp/chain-ci-final-source-binding-and-gates-review-20261114/authority44-lifetime20-final-5c04-overlay-v1.json",
+      "sha256": "e8659e3e41a3933db8d0ec1de94c6f26f9f63c7d0bfaff59f8d329f0e657c6a6"
+    },
+    {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/final-bindings-independent-review-v1/independent-bindings-review-v1.json",
+      "sha256": "a759c30c87abd17ca4412a4b832f3566902365d570ba552c51a79ddf028b034e"
+    },
+    {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/final-bindings-independent-review-v1/independent-static-source-bindings-v1.json",
+      "sha256": "75adf22d995d97304202027cff3a73507b6a47ea9dc6b93d8bbf07c60344cadf"
+    },
+    {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/final-bindings-independent-review-v1/independent-profile-and-history-v1.json",
+      "sha256": "14763fb067fdce64c98372a1388ebd6d90bf93bccb4e5906203076797c154882"
+    },
+    {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/final-bindings-independent-review-v1/independent-runtime-delta-and-crate-closure-v1.json",
+      "sha256": "dbee7546c2bc6f627705dde2b826247e4dee73128122200b6130467dbd7c690b"
+    },
+    {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/final-bindings-independent-review-v1/four-path-independent-counterexamples-v1.json",
+      "sha256": "a23a9abda503012dae2a1fb5dd12fff4b5eb4e94243aea7d3322f0c23fc324be"
+    },
+    {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/final-bindings-independent-review-v1/old-current-pin-consumer-search-v1.json",
+      "sha256": "22b1955e7eb9aed9f12da11d5907f344ace23942677362b8d6c4190f04bd107f"
+    },
+    {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/final-bindings-independent-review-v1/final-34path-delta-review-v1.json",
+      "sha256": "b9053c2570ef1b7a2d7f9a814e1999f80aef0e829f1b667afd8b6003ef6420b5"
+    },
+    {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/final-bindings-independent-review-v1/independent-bindings-final-consumer-review-v2.json",
+      "sha256": "3699631ecaa31b8462076bfee625f75f33f43b3ba7c1d73a5d5390ffe4f37566"
+    }
+  ],
+  "original_failures_retained": true,
+  "qualification_escalation": false,
+  "reviewed_source": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+  "selected_inputs": {
+    "bytes": 82363,
+    "count": 232,
+    "path": "/private/tmp/chain-final-current-bindings-evidence-20261114/final-evidence-v1/final-selected-inputs.json",
+    "sha256": "891f9148c37479fda46f34750c1463ce7cc45dd7660d371c42b8c7a36c705418"
+  },
+  "shared_git_writes_during_packaging": false,
+  "test_counts": {
+    "authority": 18,
+    "closure_named": 110,
+    "corpus": 112,
+    "current_named": 77,
+    "native_c": 8,
+    "profile": 39,
+    "root_dependency": 51,
+    "route": 28,
+    "strengthened_current_ci": 13,
+    "supplemental_current": 16,
+    "supplemental_historical": 8,
+    "upstream": 14,
+    "workflow_gate": 14
+  },
+  "tree": "96197879781b8f77e53a9f044129fc938edb0a9e",
+  "whole_linux_ci_executed_by_this_package": false
+}

@@ -1,0 +1,260 @@
+{
+  "checks": [
+    {
+      "check": "raw_manifest_full_coverage_and_hashes",
+      "details": {
+        "bytes": 836653,
+        "files": 230,
+        "mismatches": []
+      },
+      "pass": true
+    },
+    {
+      "check": "completed_status_retains_hold",
+      "pass": true
+    },
+    {
+      "check": "exact_source_before_after",
+      "pass": true
+    },
+    {
+      "check": "committed_source_bytes_and_tree",
+      "details": {
+        "files": 31,
+        "mismatches": [],
+        "tree": "e7ddee5ecf6f9844b728a34c0fe6d6e06bb4ee56"
+      },
+      "pass": true
+    },
+    {
+      "check": "pre_registered_fixed_population",
+      "pass": true
+    },
+    {
+      "check": "primary_complete_attempt_log_population",
+      "pass": true
+    },
+    {
+      "check": "primary_saved_rows_match_bucket",
+      "pass": true
+    },
+    {
+      "check": "expired_complete_attempt_log_population",
+      "pass": true
+    },
+    {
+      "check": "expired_saved_rows_match_bucket",
+      "pass": true
+    },
+    {
+      "check": "carrier_complete_attempt_log_population",
+      "pass": true
+    },
+    {
+      "check": "carrier_saved_rows_match_bucket",
+      "pass": true
+    },
+    {
+      "check": "context_complete_attempt_log_population",
+      "pass": true
+    },
+    {
+      "check": "context_saved_rows_match_bucket",
+      "pass": true
+    },
+    {
+      "check": "primary_report_counts_match_raw",
+      "pass": true
+    },
+    {
+      "check": "expired_report_counts_match_raw",
+      "pass": true
+    },
+    {
+      "check": "carrier_report_counts_match_raw",
+      "pass": true
+    },
+    {
+      "check": "context_report_counts_match_raw",
+      "pass": true
+    },
+    {
+      "check": "global_query_dedup_and_flags",
+      "details": {
+        "distinct_ticket_inputs": 69,
+        "duplicate_evaluations": 73,
+        "logical_producer_attempts": 142
+      },
+      "pass": true
+    },
+    {
+      "check": "primary_nonces_all_including_repeat",
+      "pass": true
+    },
+    {
+      "check": "primary_ticket_flags_are_actual_comparisons",
+      "pass": true
+    },
+    {
+      "check": "expired_queries_all_refused_and_not_new_global_inputs",
+      "pass": true
+    },
+    {
+      "check": "carrier_all_one_existing_ticket_and_receipt",
+      "pass": true
+    },
+    {
+      "check": "all_carrier_raw_transports_bound",
+      "pass": true
+    },
+    {
+      "check": "five_context_reuse_variants_new_tickets_zero_new_producer_arithmetic",
+      "pass": true
+    },
+    {
+      "check": "all_observed_actual_credit_zero",
+      "pass": true
+    },
+    {
+      "check": "native_input_matches_same_full_16_requests_and_original_model",
+      "pass": true
+    },
+    {
+      "check": "native_all_product_fields_equal_cached_reference",
+      "pass": true
+    },
+    {
+      "check": "native_full_canonical_statement_independently_rehashed",
+      "pass": true
+    },
+    {
+      "check": "candidate_wire_challenge_and_ticket_independently_rehashed",
+      "pass": true
+    },
+    {
+      "check": "native_process_and_verification_not_shortcut_or_stub",
+      "pass": true
+    },
+    {
+      "check": "native_raw_input_sha256",
+      "pass": true
+    },
+    {
+      "check": "native_raw_stdout_sha256",
+      "pass": true
+    },
+    {
+      "check": "native_raw_stderr_sha256",
+      "pass": true
+    },
+    {
+      "check": "actual_retained_consumer_zero_to_sixteen",
+      "pass": true
+    },
+    {
+      "check": "preregistration_and_candidate_precede_observed_queries",
+      "pass": true
+    },
+    {
+      "check": "all_observed_stages_completed",
+      "pass": true
+    }
+  ],
+  "counts": {
+    "actual_chainwork_awarded": 0,
+    "all_logical_producer_attempts": 142,
+    "carrier_attempts": 64,
+    "carrier_distinct_input": 1,
+    "carrier_new_global_inputs": 0,
+    "context_attempts": 5,
+    "context_new_global_inputs": 5,
+    "expired_attempts": 8,
+    "expired_new_global_inputs": 0,
+    "expired_raw_target_hits": 1,
+    "expired_raw_target_misses": 7,
+    "expired_refusals": 8,
+    "global_distinct_inputs": 69,
+    "global_duplicate_evaluations": 73,
+    "hit_nonces": [
+      5,
+      44
+    ],
+    "primary_attempts": 65,
+    "primary_distinct_hits": 2,
+    "primary_distinct_inputs": 64,
+    "primary_distinct_misses": 62,
+    "primary_target_hits_including_repeat": 2,
+    "primary_target_misses_including_repeat": 63,
+    "refused_attempts": 8,
+    "verified_relation_attempts": 134
+  },
+  "groups": {
+    "carrier": {
+      "attempts": 64,
+      "distinct_in_group": 1,
+      "new_global_inputs": 0,
+      "raw_target_hits": 0,
+      "raw_target_misses": 64,
+      "refused": 0,
+      "verified": 64,
+      "verified_target_hits": 0,
+      "verified_target_misses": 64
+    },
+    "context": {
+      "attempts": 5,
+      "distinct_in_group": 5,
+      "new_global_inputs": 5,
+      "raw_target_hits": 0,
+      "raw_target_misses": 5,
+      "refused": 0,
+      "verified": 5,
+      "verified_target_hits": 0,
+      "verified_target_misses": 5
+    },
+    "expired": {
+      "attempts": 8,
+      "distinct_in_group": 8,
+      "new_global_inputs": 0,
+      "raw_target_hits": 1,
+      "raw_target_misses": 7,
+      "refused": 8,
+      "verified": 0,
+      "verified_target_hits": 0,
+      "verified_target_misses": 0
+    },
+    "primary": {
+      "attempts": 65,
+      "distinct_in_group": 64,
+      "new_global_inputs": 64,
+      "raw_target_hits": 2,
+      "raw_target_misses": 63,
+      "refused": 0,
+      "verified": 65,
+      "verified_target_hits": 2,
+      "verified_target_misses": 63
+    }
+  },
+  "interpretation_notes": [
+    "Expired rows retain raw tickets and CPU costs but intentionally have no target_hit field because the current-request verifier rejects first. Their raw target comparison is derived separately here; do not present the report's expired hit=0/miss=0 as eight unobserved tickets.",
+    "69 global distinct inputs equals64 primary plus5 context. The expired8 and carrier64 groups add zero distinct inputs. All142 logical producer attempts remain in the denominator of attempted operations.",
+    "All credit remains zero. Binding/correctness tests and finite cost observations do not establish minimum fresh work, PoW hardness, quantum safety, real demand, or production qualification.",
+    "The runner records the native binary digest and relevant committed source. It explicitly does not provide a binary build attestation; a separate root build receipt is needed for that provenance claim."
+  ],
+  "issues": [],
+  "manifest_sha256": "669bd20610b34ebbfea9b0307e234724f41165a3ddf8ac98bab16fdf48857249",
+  "native": {
+    "full_verifier_dense_positions": 37008,
+    "native_process_returncode": 0,
+    "native_selected_full_verifier_wall_ns": 51197,
+    "native_selected_producer_and_full_verify_wall_ns": 98629,
+    "same_full_16_request_product": true,
+    "statement_commitment": "b70b021e3724d4f05e822afc39cf21069b36efac79e3361a948ba6c01e1f90c4",
+    "whole_native_process_wall_ns": 4910859
+  },
+  "report_sha256": "41e93c3c4707b28d15b1ae03363633da49ebf85db88aac10b5bb531e78eddb85",
+  "review_scope": "read-only raw evidence, source object and commitment audit; no benchmark or matrix-inference rerun",
+  "schema": "pon-grouped-lottery-independent-final-review-v0",
+  "source_sha": "a4302cbf401d59391bcd38978ce3e2c68f60e49e",
+  "source_tree": "e7ddee5ecf6f9844b728a34c0fe6d6e06bb4ee56",
+  "status": "PASS_EVIDENCE_CONSISTENCY_RESEARCH_HOLD"
+}

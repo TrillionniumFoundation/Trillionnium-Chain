@@ -1,0 +1,73 @@
+{
+  "archive": {
+    "bytes": 468104,
+    "path": "required-gates-raw-c09dbbe992.tar.xz",
+    "sha256": "49db230a0ab93e81c28d6e26fbeed840a8b0f66712b93048911805e26f4c78c6"
+  },
+  "file_count": 10,
+  "files": [
+    {
+      "bytes": 4033853,
+      "original_mtime_ns": 1794371277940189220,
+      "path": "python-required-supplement-c09dbbe992/source-after.json",
+      "sha256": "81966162e2ae881348ae09cb94879b8b705fd309fba1d79b1d30aeb86f676b1f"
+    },
+    {
+      "bytes": 4033853,
+      "original_mtime_ns": 1794371247154017365,
+      "path": "python-required-supplement-c09dbbe992/source-before.json",
+      "sha256": "81966162e2ae881348ae09cb94879b8b705fd309fba1d79b1d30aeb86f676b1f"
+    },
+    {
+      "bytes": 2360,
+      "original_mtime_ns": 1794371278005466496,
+      "path": "python-required-supplement-c09dbbe992/summary.json",
+      "sha256": "09bbf64d97311b5bfd89171982abc91e1331d8c518b5f7a35033a1baa051550b"
+    },
+    {
+      "bytes": 860,
+      "original_mtime_ns": 1794371273974295549,
+      "path": "python-required-supplement-c09dbbe992/test_ci_execution.receipt.json",
+      "sha256": "7c9248d373bf7de5442ab06fc4c3e1a0c7e2cae97dbe15dd6a7272834c8ec7b3"
+    },
+    {
+      "bytes": 12414,
+      "original_mtime_ns": 1794371273880721896,
+      "path": "python-required-supplement-c09dbbe992/test_ci_execution.stderr.log",
+      "sha256": "bbb43380be24bc53f374628695ed5125a9a36989456c8a1d4b9391c8250d930d"
+    },
+    {
+      "bytes": 484,
+      "original_mtime_ns": 1794371273881195515,
+      "path": "python-required-supplement-c09dbbe992/test_ci_execution.stdout.log",
+      "sha256": "22d9a1270187c56d04d73b2f32337d770ed07046e1ca0834847a52392493bec7"
+    },
+    {
+      "bytes": 891,
+      "original_mtime_ns": 1794371248009151922,
+      "path": "python-required-supplement-c09dbbe992/test_pq_chain_claim_guard.receipt.json",
+      "sha256": "51bfcdc3eb63c46eddeec9604c75b681a2791d23e560a2d540e0a2cebe436996"
+    },
+    {
+      "bytes": 154,
+      "original_mtime_ns": 1794371247896560887,
+      "path": "python-required-supplement-c09dbbe992/test_pq_chain_claim_guard.stderr.log",
+      "sha256": "f468a1cf2faffa3562900d5cbdb0159d46dcc1bff8f8f0208a64afb3b0f17975"
+    },
+    {
+      "bytes": 0,
+      "original_mtime_ns": 1794371247188815231,
+      "path": "python-required-supplement-c09dbbe992/test_pq_chain_claim_guard.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 6867,
+      "original_mtime_ns": 1794371242533573396,
+      "path": "validate_required_supplement.py",
+      "sha256": "95cdef8b5b5002312ee1da84acda8ec98455f169398c0c9697ce92e3f42383cc"
+    }
+  ],
+  "schema": "TRNM-C1-REQUIRED-GATES-RAW-INDEX1",
+  "scope": "Original regular-file bytes only; archive does not execute the retained harness. Empty original qrom-observations directory contains no evidence files.",
+  "total_original_bytes": 8091736
+}

@@ -1,0 +1,55 @@
+{
+  "ci_job_sha256": "0b8f849a0d798c298c92e9a959815a86c9247cf8bd5dd9b6be206913810d2093",
+  "commit": "2d46d8682201bc0619f5b156af50e77fb399322e",
+  "evidence_tree": {
+    "cached_blob_bytes_by_path": 53840902,
+    "cached_blob_paths": 3036,
+    "materialized_blob_paths": 1252,
+    "materialized_bytes": 49457785,
+    "missing_worktree_blob_paths": 12646,
+    "missing_worktree_known_cached_bytes": 4383117,
+    "tracked_blob_paths": 13898,
+    "uncached_blob_paths_with_unknown_size": 10862,
+    "unique_uncached_blob_oids": 9425
+  },
+  "explicit_command_or_module_fixture_references": 15,
+  "fixture_closure_is_complete": false,
+  "full_lane_can_run_on_current_materialization": false,
+  "full_lane_executed": false,
+  "full_lane_pass_claimed": false,
+  "full_tracked_source": {
+    "cached_blob_bytes_by_path": 92243800,
+    "cached_blob_paths": 5451,
+    "materialized_blob_paths": 3667,
+    "materialized_bytes": 87860683,
+    "missing_worktree_blob_paths": 12646,
+    "missing_worktree_known_cached_bytes": 4383117,
+    "tracked_blob_paths": 16313,
+    "uncached_blob_paths_with_unknown_size": 10862,
+    "unique_uncached_blob_oids": 9425
+  },
+  "lane_commands": 69,
+  "limits": [
+    "Static fixture superset follows local Python imports and folds literal/global Path expressions; conditional, dynamically named and JSON-indirect read paths may need more inputs.",
+    "The canonical workflow calls verify_ci_source.py before and after the lane; its raw tracked-worktree equality gate requires every committed tracked file, including historical evidence, to be present.",
+    "Uncached blob sizes are unknown without reading/fetching them; cached byte counts are lower bounds, not total download estimates.",
+    "No code, checker, fixture content, Git index or ref is changed by this dependency analysis."
+  ],
+  "production_qualified": false,
+  "python_entry_sources": 71,
+  "schema": "repository-truth-static-dependency-analysis-v1",
+  "static_fixture_superset": {
+    "cached_blob_bytes_by_path": 976631,
+    "cached_blob_paths": 24,
+    "materialized_blob_paths": 13,
+    "materialized_bytes": 965044,
+    "missing_worktree_blob_paths": 156,
+    "missing_worktree_known_cached_bytes": 11587,
+    "tracked_blob_paths": 169,
+    "uncached_blob_paths_with_unknown_size": 145,
+    "unique_uncached_blob_oids": 136
+  },
+  "statically_followed_import_sources": 165,
+  "tracked_static_fixture_paths_or_prefixes": 22,
+  "tree": "5ae5317304588cca8295a19dd512c8e853f1ef5b"
+}

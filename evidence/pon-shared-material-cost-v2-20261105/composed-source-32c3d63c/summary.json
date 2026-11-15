@@ -1,0 +1,136 @@
+{
+  "all_commands_zero_exit": true,
+  "cargo_graph": {
+    "locked": true,
+    "lockfile_sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "offline": true,
+    "resolved_packages": 175,
+    "workspace_members": 26
+  },
+  "checked_source": "32c3d63c907d0060a5b02cd678c74b01e54ec0f9",
+  "checked_tree": "f35ca28e45ff563aac85164e971b7c1ae4d71def",
+  "ci_contract_tests": 98,
+  "command_count": 15,
+  "default_feature_crypto_lib_tests": 149,
+  "distributed_source_inventory": "PASS",
+  "exact_source_pins": 505,
+  "gate_status": "HOLD_NO_GO",
+  "limits": [
+    "Every check applies to 32c3d63c, not later descendant source.",
+    "The measured 31-case campaign remains bound to eeedfe33. No later source is relabeled as measured.",
+    "Full Cargo metadata is retained as deterministic gzip; decompressed bytes match static-validation.json stdout SHA256.",
+    "Test receipts do not grant model efficacy, independent network verification, full-system economics, original service-budget qualification, or activation."
+  ],
+  "logs": {
+    "logs/rust/example-tests.log": {
+      "bytes": 1183,
+      "sha256": "ce55a5850c06bc6cc67f5db2ea3b86befb30d112337f5abbc2b6673cd18005c4"
+    },
+    "logs/rust/lib-tests.log": {
+      "bytes": 17756,
+      "sha256": "4546f3475ba8bdf2fc1e242972cedd6767e34ec13b1b69385560957aa09097d8"
+    },
+    "logs/rust/preflight.log": {
+      "bytes": 171,
+      "sha256": "3c1113869b4a71da70382f07293851668e729b74f34a0aaa8a47764ec0d12886"
+    },
+    "logs/rust/strict-clippy.log": {
+      "bytes": 186,
+      "sha256": "28d8a6a5cb15afb1d09341a3dc7babf8f45ccc6c5f2230e3c00d8b323b3876b0"
+    },
+    "logs/rust/workspace-fmt.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "logs/static/cargo-metadata.json.gz": {
+      "bytes": 65821,
+      "sha256": "01364967683a49e159a998e5219d0dacdab8da1529c557d8db36af0a781136d3"
+    },
+    "logs/static/ci-contract-tests.log": {
+      "bytes": 16318,
+      "sha256": "de6d80dc4c6cb169b1edbf06c36f3ffdf8bdf25a3f4fd0293ede464c46fa9a1b"
+    },
+    "logs/static/ci-contract.log": {
+      "bytes": 180,
+      "sha256": "9e1991fcbac915b303bd1a6b9db2ce04a4094fa15bb6f05e83d57504313bf975"
+    },
+    "logs/static/distributed-source-inventory.log": {
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    "logs/static/exact-head-source.log": {
+      "bytes": 422,
+      "sha256": "9cb90899c2f94527d2b3269904988f61cdad2b3042e9c823a9b3dc851f61b596"
+    },
+    "logs/static/pq-integration-tests.log": {
+      "bytes": 5326,
+      "sha256": "95badbb4446dbf34612af3a3dcb8ecb8c7bee90ca59c334ef67cc177f691e21e"
+    },
+    "logs/static/pq-source-gate.log": {
+      "bytes": 557,
+      "sha256": "641eb6ec3d7f216485f37620658762802b9b5afe9338a57e4269f989f46f2345"
+    },
+    "logs/static/preflight.log": {
+      "bytes": 171,
+      "sha256": "3c1113869b4a71da70382f07293851668e729b74f34a0aaa8a47764ec0d12886"
+    },
+    "logs/static/repository-and-links.log": {
+      "bytes": 307,
+      "sha256": "120f56e4052c88eef3037f1b7bc4acfd10bc53d735d0a687c6081e5a2fd3ec92"
+    },
+    "logs/static/source-integrity-negative-tests.log": {
+      "bytes": 7390,
+      "sha256": "355942250ccdf49ec5d9fd29e3a94055c4759ca5d361f3efc906b82f25ee2c22"
+    }
+  },
+  "measured_source": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+  "measurement_archive_changed": false,
+  "measurement_archive_sha256": "d8493fb0d03f536f3d80012d65a7a1ac33a36f8254e7ed8e9a0830a2b9236cdb",
+  "pq_integration_tests": 37,
+  "prior_138_library_test_ids_retained": true,
+  "production_activation": false,
+  "publication": {
+    "activation": false,
+    "comparison": {
+      "ahead_by": 4,
+      "behind_by": 0,
+      "changed_files": [
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "docs/development/specs/pon/SHARED_CELL_WORK_V1.md",
+        "docs/development/specs/pon/USEFUL_CELL_RELATION_V1.md",
+        "evidence/pon-useful-cell-relation-v1-20261105/README.md",
+        "evidence/pon-useful-cell-relation-v1-20261105/composition.json",
+        "evidence/pon-useful-cell-relation-v1-20261105/latest.json",
+        "evidence/pon-useful-cell-relation-v1-20261105/manifest.json",
+        "formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py",
+        "formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py",
+        "formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py",
+        "formal/pon-nakamoto-v1/useful_cell_numeric_v1.py",
+        "formal/pon-nakamoto-v1/useful_cell_relation_v1.py",
+        "scripts/ci/check_ci_contract.py",
+        "scripts/ci/ci_job.sh",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "status": "ahead"
+    },
+    "publication_parent": "f3a597f274833121d5ec408cb6a1cad83996d7f2",
+    "publication_parent_tree": "86ca08c321e0866d2f49811c74e77c9dedb0c06a",
+    "qualification": false,
+    "scope": "Evidence-only publication on a descendant; every check remains bound to 32c3d63c. Later concurrent runtime/CI changes are not certified by these checks.",
+    "source_tree": "f35ca28e45ff563aac85164e971b7c1ae4d71def",
+    "source_validated": "32c3d63c907d0060a5b02cd678c74b01e54ec0f9"
+  },
+  "qualification": false,
+  "release_binary_sha256": "5e9ad2da5319b645dc6325d4466c4e822cf7ebc07ab116cdc04c18d3c14fcf7f",
+  "repository_local_links": 3076,
+  "result": "PASS",
+  "runtime_benchmark_rerun": false,
+  "schema": "pon-shared-material-composed-source-checks-v2",
+  "shared_material_example_tests": 9,
+  "source_before_and_after_clean": true,
+  "source_integrity_negative_tests": 43,
+  "strict_clippy_scope": "--lib --tests --example pon_shared_material_v1 -- -D warnings",
+  "test_skips": 0,
+  "workspace_fmt": "PASS"
+}

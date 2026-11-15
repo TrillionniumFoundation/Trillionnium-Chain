@@ -1,0 +1,271 @@
+{
+  "source": "2bb2c89dc2dd8cd530ff00eff878bf75c510431a",
+  "at_utc": "2026-11-11T04:10:18.635611+00:00",
+  "exact_git_blob_inputs_only": true,
+  "files": [
+    {
+      "path": "evidence/cell-storage-convergence-f2568-20261109/controls/original-auth-server-tests.rs",
+      "bytes": 68436,
+      "git_blob": "f1437702e48775bf2fc5a9266b26512a8bf0fe52",
+      "sha256": "288a2403fdcc8182f392fcc9e8f76b2b9de684fe69235e401199f22e34f564ce"
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/recompute_benchmark.py",
+      "bytes": 7180,
+      "git_blob": "e9a873baa73d60f578b9723a9cf11cdf84a44c15",
+      "sha256": "dda1656c265a9436f6e902cb5d760eec152fbbc1c3a0e2e255dd35e02636220b"
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/recompute_profile_ids.py",
+      "bytes": 10500,
+      "git_blob": "ca5334fba301046c9f89132b62a4e10872c8d5cd",
+      "sha256": "530c8b6eaa29a25f09bace18ec10e0ce993bf93b9dedbfc8e7455d1c7c5f2977"
+    },
+    {
+      "path": "evidence/pon-pq-account-native-20261028/README.md",
+      "bytes": 6743,
+      "git_blob": "2885a560883ff59e67411e8bec5813d2f132587a",
+      "sha256": "26d81c2637f34a717f05cfcd3ff6c1b509083ec3fe3dea90df0eacbc83c08f2f"
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/README.md",
+      "bytes": 1833,
+      "git_blob": "76b74547693d7ee09845776b440c24cd960417a8",
+      "sha256": "8ecf5d93720c32d01221f1ca53aba98ab66147059376e1811e41166153b890f2"
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/baseline-real-tcp.log",
+      "bytes": 1963,
+      "git_blob": "f8c5894587a4a239d7b83b36d8062682c4e4bb90",
+      "sha256": "dd41360db03cf391879eddaba046a8ea7150b35206cd85d5a4379e2cb6e316db"
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/fixed-python.log",
+      "bytes": 7409,
+      "git_blob": "b7223a755a4b6b588451e7da94393daaa4a6be4c",
+      "sha256": "659f884e81dd7c6fae7a6f2b4afbd1d7a84223cc495f29e037a0a653410143cd"
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/local-qualification.json",
+      "bytes": 6618,
+      "git_blob": "7da5272cb6423fa6da8a65d02a77f511cba77632",
+      "sha256": "be7ed18b97574d8b7cba0de0f276c059e5835577597875c8eda731c611cfa371"
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/native-clippy.log",
+      "bytes": 72,
+      "git_blob": "8ab4f9d11c6ea18011ce29d32c20dbf2b8460341",
+      "sha256": "c92508a29848820f033cd2ea015c85dde0953c88b07cc967ce34b7c08f610549"
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/native-format.log",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/native-rust.log",
+      "bytes": 2110,
+      "git_blob": "703250081e72cbb28635d4d76e2eccf26b763e85",
+      "sha256": "fc0587f0b1d8985ab8d04a4d530a52d1eed0200959fb2bd0ba02f300bf69b4f9"
+    },
+    {
+      "path": "evidence/pon-pq-pql10-pem-source-v1/combined-test.log",
+      "bytes": 1839,
+      "git_blob": "1d8cd4234d1ae143434d024c8629aaf81014c62a",
+      "sha256": "403e429b0674226352111f4831227b51b11070bcdf9f7bb4b3f14ecbd368e9e7"
+    },
+    {
+      "path": "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json",
+      "bytes": 2348,
+      "git_blob": "596aa94783e6b029c73a05696fb8bdfc32b25c74",
+      "sha256": "8efbe1b90cd2aedddba82272f95a355fac9d659ec1a6f4c49da4978eaefc5c1e"
+    },
+    {
+      "path": "evidence/pon-pq-pql10-pem-source-v1/normal-test.log",
+      "bytes": 1018,
+      "git_blob": "4768863acadbe03d793e615763cf2fe006a3332a",
+      "sha256": "6c3381eee38110efa3694efd323bac009e726c19695d3febc89f740884dd2d71"
+    },
+    {
+      "path": "evidence/pon-pq-pql10-pem-source-v1/sanitizer-test.log",
+      "bytes": 1018,
+      "git_blob": "2ada9806d35604801ab9a01d289d8a60867a0cac",
+      "sha256": "bdf034afe82095775018c81e24a725dffda6acef83e1343b71aeab37404de026"
+    },
+    {
+      "path": "evidence/pon-pq-pql11b-source-guard-v1/local-qualification.json",
+      "bytes": 1507,
+      "git_blob": "afaf66bc3269ae2d09230e67253462252d5da4dc",
+      "sha256": "1420d1315d2fb305c015c2314b42a88dfb5053caaa6bb553b77ff22e28f6ad01"
+    },
+    {
+      "path": "evidence/pon-pq-spki-v1/README.md",
+      "bytes": 1247,
+      "git_blob": "5d9e67e90cf335e5b0f8350577bed539e6fb1ad7",
+      "sha256": "04d8bb81b7e2cd5847cd03c1650ac3f2196ec366f82a5ce4301e86214ec8fe02"
+    },
+    {
+      "path": "evidence/pon-pq-tpq1-native-v1/README.md",
+      "bytes": 2239,
+      "git_blob": "29384ad0a2cfbfd987334d12de93a0a912837512",
+      "sha256": "fb06b2417358bb3980623bab397ed02400b407d7c493f3f204de0da6fb6aec1f"
+    },
+    {
+      "path": "evidence/pon-pq-tpq1-native-v1/native-sanitizer-test.log",
+      "bytes": 918,
+      "git_blob": "f7092477840b5139380251e6ec396c98b60a2143",
+      "sha256": "fd22a9937c871ab25da96b08324a4ff0c7ddcc6580620e630a7928ff9b43b948"
+    },
+    {
+      "path": "evidence/pon-pq-tpq1-native-v1/native-test.log",
+      "bytes": 918,
+      "git_blob": "08a3ee020dc978572c56c81b0ea1f834a6ebf4f7",
+      "sha256": "cc7b39ae4ed56c3c292026c0a20826e7445bead87884932ea7b6ada648586fbc"
+    },
+    {
+      "path": "evidence/pon-six-workpackages-20261106/next/service/ABBA_PROTOCOL.md",
+      "bytes": 3977,
+      "git_blob": "6db7eee0430976d8a4378451138fc22b48542d52",
+      "sha256": "db2739d98bc189b805ec674486c50e19ce79024928c99ecda2b6682b53cbe91f"
+    },
+    {
+      "path": "evidence/pon-six-workpackages-20261106/next/service/run_reorg_abba.py",
+      "bytes": 14923,
+      "git_blob": "7d6677b44033b70cbcf3f68200b451d39da42972",
+      "sha256": "f7f97027956ea976bec2a7f932b1a9059fbc8ca5e1939323cbe31223cb590339"
+    },
+    {
+      "path": "evidence/pon-six-workpackages-20261106/next/service/test_run_reorg_abba.py",
+      "bytes": 4853,
+      "git_blob": "0d68a86ada09f73624fbc2fe157d7a6a78ca6484",
+      "sha256": "b23149df0fa4579fff7950245f2d86b86396f8fd1f2acf6da86992e146b6e7f7"
+    },
+    {
+      "path": "evidence/pon-six-workpackages-20261106/strategy/package_raw.py",
+      "bytes": 13018,
+      "git_blob": "12c295b27d2f71549d360150c7be0bd088ce2403",
+      "sha256": "4354476022738ff8df431ff44f31667c16c70453bff4e58f433ecd1e32358df5"
+    },
+    {
+      "path": "evidence/pon-six-workpackages-20261106/strategy/run_campaign.py",
+      "bytes": 13233,
+      "git_blob": "49b1c04ff3fd30ad0b21cb9ebcdb55f4290b50be",
+      "sha256": "bbb65dcbb16b0ccd944c054291526df3668e5ab0567c0b38437fba371254cebf"
+    },
+    {
+      "path": "evidence/pon-six-workpackages-20261106/strategy/summarize_costs.py",
+      "bytes": 6893,
+      "git_blob": "35a27f3c775fb2edb1ed8e38203cf479d03927a8",
+      "sha256": "850314c9f92dab9a6483a79fd85f636b2e246dd43036d69c771b7f3c7b36ecdf"
+    },
+    {
+      "path": "evidence/pon-w1-backend-sdk-20261107/fixed-sdk-contract.json",
+      "bytes": 10921,
+      "git_blob": "eee044682f5924d876f8cb44379f0dd93978b4db",
+      "sha256": "123506a4d8fed44c533b9a3d085e3cc93a43cca55aaeec3aac37e2b42134316d"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/asset-sha256.json",
+      "bytes": 1711,
+      "git_blob": "3c95ecd1a031600a27493eaefcd01a58c7d60d8b",
+      "sha256": "7d2c18644129310e9816b89a49b586be252dee8d17c84ca71fcf70b2a00f366f"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+      "bytes": 64,
+      "git_blob": "8a1e552cc362202bb9829e49912f241497bfd4f8",
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/guest.bin",
+      "bytes": 375928,
+      "git_blob": "7452c0d2f180eb2a88719aaf09da74f1e03b52a8",
+      "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/header.bin",
+      "bytes": 318,
+      "git_blob": "7e84b7b2e9c47b23569d6c98916e25a172b3e7ec",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/input.bin",
+      "bytes": 49506,
+      "git_blob": "d4a4d2f9af938e85df5f3b85a8ad8764b1f7420a",
+      "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/succinct.bin",
+      "bytes": 257014,
+      "git_blob": "b406d90892c277fede192978af9811f4d12e62d0",
+      "sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"
+    },
+    {
+      "path": "evidence/pon-w1-lifetime-current-20261109/README.md",
+      "bytes": 4309,
+      "git_blob": "e6f1e716204ad128f202d23f16795c163578e43b",
+      "sha256": "3e98b612e89cdb7691f2f3c97318d32d9b1ed9dafa4e9b8a7463b33e0aad5d59"
+    },
+    {
+      "path": "evidence/pon-w1-lifetime-current-20261109/project-input.json",
+      "bytes": 6107,
+      "git_blob": "ddcc9d4bbb7cdee3dd7e114bd4467dcf21a6cf73",
+      "sha256": "a6e43a5c55e71154592a3489f566995e7961b91611e15d40a18a948a495f9f89"
+    },
+    {
+      "path": "evidence/pon-w1-lifetime-current-20261109/project-report.json",
+      "bytes": 31311,
+      "git_blob": "c09b433cae86b0dcb2971a4a5ddd988f0e8d253d",
+      "sha256": "8ee20462d669a0e21b0fe964585f85fa2a49e7e58273459ab2501b4a2e39dfc0"
+    },
+    {
+      "path": "evidence/pon-w1-qrom-semantics-20261107/report.json",
+      "bytes": 76729,
+      "git_blob": "f590ab9e27080cfb0fb7eb58ccc0f83fff5f08c5",
+      "sha256": "66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221"
+    },
+    {
+      "path": "evidence/pon-w1-qrom-semantics-current-20261109/README.md",
+      "bytes": 4886,
+      "git_blob": "944d39fb9140b1640ad4927ac7eedc114d1801ee",
+      "sha256": "e9236e57400e2c338108905968d95872213ddb39af679e44281eab64a7f00a9a"
+    },
+    {
+      "path": "evidence/pon-w1-qrom-semantics-current-20261109/report.json",
+      "bytes": 76729,
+      "git_blob": "7aa36e4b17a2ec911b801c75a06f2b361f07bc67",
+      "sha256": "129e7b8bc1b6d34ef55acc25bd12cae273bdc65bdeee9649b1b43e214a4e9ebe"
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/expected-artifacts.bin",
+      "bytes": 64,
+      "git_blob": "8a1e552cc362202bb9829e49912f241497bfd4f8",
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/input-declaration.json",
+      "bytes": 661,
+      "git_blob": "c4110b5e0e2e3462bd621a345990c310d88d408b",
+      "sha256": "b8b4ef8affd9ac0ef7b4f5ee23a7aa2f3ca81e7816ec184e121ae3edb3301f70"
+    },
+    {
+      "path": "evidence/pq-authority-preflight-20261108-9d315/authority-final-validation-runner.py",
+      "bytes": 25774,
+      "git_blob": "1e1955540157c0b5378d3ab708199fa81678933e",
+      "sha256": "d81437a1cef461666b9103cc3f9e8f8ab0c67a90903b5802f582d2c52cd82710"
+    },
+    {
+      "path": "evidence/pq-authority-preflight-20261108-9d315/authority-integrated-validation-runner.py",
+      "bytes": 25660,
+      "git_blob": "a0aab9f8210303b433295f940c306cad366de144",
+      "sha256": "f5fc66625c09cfccf5054ec705a49c2a88f234c0620e6e6426aa4b7efcb71b86"
+    },
+    {
+      "path": "evidence/pq-authority-preflight-20261108-9d315/authority-validation-runner.py",
+      "bytes": 24795,
+      "git_blob": "4b14a2fec1cd044a7cca3123b11ab3137b1d8d93",
+      "sha256": "f8651497d18f875bed1e1728d67c7b06d3f7b3efc28a3a5bc97bc0ae596cddfc"
+    }
+  ]
+}

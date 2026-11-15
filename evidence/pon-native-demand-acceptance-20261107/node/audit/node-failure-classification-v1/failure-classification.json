@@ -1,0 +1,2851 @@
+{
+  "case_count": 15,
+  "cases": [
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 183264,
+          "start_inclusive": 148719
+        },
+        "block_bytes": 34545,
+        "block_sha256": "467ef69bcd74cb6501313c2a5b45831db16ada79ad2f8ac4c854947c1b7a63ae",
+        "first_line": 1316,
+        "log": {
+          "bytes": 268168,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+          "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 1321,
+            "raw_line_including_newline_sha256": "adee3ecf5ee2f886f5a34b6e1f2b7573193626b1d18635f1ba98646409cf1ced",
+            "text": "thread 'store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner' (484510) panicked at crates/trnm-pon-node/src/store/detached_admission/tests.rs:877:31:"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "cpu_budget",
+      "classification_scope": "sealed original read-only diagnosis",
+      "confirmed": [
+        "First authenticated=false iteration reached a settled native PublicMutationCpuBudget Capacity refusal.",
+        "Same original held-fallback CPU owner; outer 10 second deadline was not consumed.",
+        "Accounting was available, active state unchanged on refusal, and owner counts settled to zero."
+      ],
+      "fixed": false,
+      "original_diagnosis_id": "lib-large-genesis",
+      "original_observations": {
+        "backend_authenticated": false,
+        "complete_key_value_bytes": 8625548,
+        "credited_refill_ns": 676052562,
+        "dispatch_wall_ns": 2718308382,
+        "initial_credit_ns": 2000000000,
+        "log_lines": [
+          1317,
+          1319,
+          1321,
+          1322
+        ],
+        "paid_cpu_ns": 2686699580,
+        "settled_credit_ns": -10647018
+      },
+      "original_panic": [
+        {
+          "line": 1321,
+          "raw_line_including_newline_sha256": "adee3ecf5ee2f886f5a34b6e1f2b7573193626b1d18635f1ba98646409cf1ced",
+          "text": "thread 'store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner' (484510) panicked at crates/trnm-pon-node/src/store/detached_admission/tests.rs:877:31:"
+        },
+        {
+          "line": 1322,
+          "raw_line_including_newline_sha256": "369c1900d156364013d315d8c49fa4a3a997671fb95171183c98fb03acdcb429",
+          "text": "called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }"
+        }
+      ],
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-a20974e529510774",
+          "label": "unittests src/lib.rs",
+          "line": 97,
+          "raw": "     Running unittests src/lib.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-a20974e529510774)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-targets",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6390138-12894-305",
+        "raw_log": {
+          "bytes": 268168,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+          "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+        },
+        "run_id": "original",
+        "segment_byte_span": {
+          "end_exclusive": 237010,
+          "start_inclusive": 4614
+        },
+        "source_after_canonical_sha256": null,
+        "source_after_present": false,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 236950,
+          "start_inclusive": 236845
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "source_sha256": "7da3267fd7769c80715f2c82d89dcee040afc14a6c50b889e9727dcf43076db6",
+          "test": true
+        },
+        "target_key": "[\"lib\",\"trnm_pon_node\",\"trillionnium/crates/trnm-pon-node/src/lib.rs\"]"
+      },
+      "qualification": false,
+      "run": "original",
+      "target": {
+        "harness": null,
+        "kind": [
+          "lib"
+        ],
+        "name": "trnm_pon_node",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "source_sha256": "7da3267fd7769c80715f2c82d89dcee040afc14a6c50b889e9727dcf43076db6",
+        "test": true
+      },
+      "target_key": "[\"lib\",\"trnm_pon_node\",\"trillionnium/crates/trnm-pon-node/src/lib.rs\"]",
+      "test_name": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "uncertainty": [
+        "This failure does not prove failure of the later authenticated=true iteration.",
+        "No cost-reducing patch or unique expensive inner stage is qualified by this diagnosis."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 189200,
+          "start_inclusive": 183264
+        },
+        "block_bytes": 5936,
+        "block_sha256": "4574f754b1ded0e82f44e365beb8acaa3e67da5a0364dcf17621d9e603ffef74",
+        "first_line": 1324,
+        "log": {
+          "bytes": 268168,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+          "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 1333,
+            "raw_line_including_newline_sha256": "6a328e0a8b45b62fe2dc26d3536abc22d31fc197026ba1ca10ef11af291d0ae7",
+            "text": "thread 'store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation' (535262) panicked at crates/trnm-pon-node/src/native_authenticated_tests.rs:834:24:"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "cpu_budget",
+      "classification_scope": "sealed original read-only diagnosis",
+      "confirmed": [
+        "Six earlier one-packet pages succeeded without early activation; final page 6 refused PUBLIC_MUTATION_CPU_BUDGET within the original 30 second page budget.",
+        "Fixture builds a straight seven-successor history, not an explicit equal-work tie.",
+        "Final activation retains the original CPU operation; reserve gate requires stored credit plus that operation remaining start principal to reach 25ms."
+      ],
+      "fixed": false,
+      "original_diagnosis_id": "lib-history-final-page",
+      "original_observations": {
+        "elapsed_ns": 523714353,
+        "log_lines": [
+          1325,
+          1331,
+          1333,
+          1334
+        ],
+        "original_page_budget_seconds": 30,
+        "page_index": 6,
+        "paid_cpu_ns": 816953332,
+        "settled_credit_ns": 13429683,
+        "start_principal_ns": 100000000,
+        "termination_reserve_ns": 25000000
+      },
+      "original_panic": [
+        {
+          "line": 1333,
+          "raw_line_including_newline_sha256": "6a328e0a8b45b62fe2dc26d3536abc22d31fc197026ba1ca10ef11af291d0ae7",
+          "text": "thread 'store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation' (535262) panicked at crates/trnm-pon-node/src/native_authenticated_tests.rs:834:24:"
+        },
+        {
+          "line": 1334,
+          "raw_line_including_newline_sha256": "369c1900d156364013d315d8c49fa4a3a997671fb95171183c98fb03acdcb429",
+          "text": "called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }"
+        }
+      ],
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-a20974e529510774",
+          "label": "unittests src/lib.rs",
+          "line": 97,
+          "raw": "     Running unittests src/lib.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-a20974e529510774)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-targets",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6390138-12894-305",
+        "raw_log": {
+          "bytes": 268168,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+          "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+        },
+        "run_id": "original",
+        "segment_byte_span": {
+          "end_exclusive": 237010,
+          "start_inclusive": 4614
+        },
+        "source_after_canonical_sha256": null,
+        "source_after_present": false,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 236950,
+          "start_inclusive": 236845
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "source_sha256": "7da3267fd7769c80715f2c82d89dcee040afc14a6c50b889e9727dcf43076db6",
+          "test": true
+        },
+        "target_key": "[\"lib\",\"trnm_pon_node\",\"trillionnium/crates/trnm-pon-node/src/lib.rs\"]"
+      },
+      "qualification": false,
+      "run": "original",
+      "target": {
+        "harness": null,
+        "kind": [
+          "lib"
+        ],
+        "name": "trnm_pon_node",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "source_sha256": "7da3267fd7769c80715f2c82d89dcee040afc14a6c50b889e9727dcf43076db6",
+        "test": true
+      },
+      "target_key": "[\"lib\",\"trnm_pon_node\",\"trillionnium/crates/trnm-pon-node/src/lib.rs\"]",
+      "test_name": "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+      "uncertainty": [
+        "Post-settlement 13.43ms is not the instantaneous reserve allowance; settlement samples, refills and returns start principal.",
+        "No distinct reserve-time snapshot or error code identifies whether refusal came from reserve, its initial checkpoint or an earlier activation progress check.",
+        "No final-activation wait-logic patch is claimed."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 219755,
+          "start_inclusive": 189200
+        },
+        "block_bytes": 30555,
+        "block_sha256": "41e3275e7de611c9016f9da97396e8810b73a21e68f2a6cbed94b7ab16781864",
+        "first_line": 1336,
+        "log": {
+          "bytes": 268168,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+          "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 1340,
+            "raw_line_including_newline_sha256": "abbac8ccfd651f831bdee53ebf6196c6f51e17ad94c8e75a26f43a3d43fc3fa4",
+            "text": "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart' (540836) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:586:6:"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "npq6_transport",
+      "classification_scope": "sealed original read-only diagnosis",
+      "confirmed": [
+        "First legitimate send at line586 returned ConnectionReset.",
+        "Parent phase diagnostic explicitly records mutation_commit/advance_cas/client_cas transport PQ_WITNESS_DEADLINE at the original 250ms exchange bound, then tcp_read_request PQ_WITNESS_UNAVAILABLE.",
+        "The transport-entered failure latches the witness client unavailable; the original store owner invalidates its execution epoch.",
+        "Original cleanup observed node worker joined, witness child successful exit and preserved primary error."
+      ],
+      "fixed": false,
+      "original_diagnosis_id": "lib-npq6-after-rejected-signature",
+      "original_observations": {
+        "client_cas_wall_ns": 250112753,
+        "effective_exchange_remaining_ns": 249999716,
+        "exchange_cap_ns": 250000000,
+        "log_lines": [
+          1337,
+          1338,
+          1340,
+          1341,
+          1342
+        ],
+        "original_outer_remaining_ns": 9523544026,
+        "request_sign_self_verify_wall_ns": 65846557,
+        "transport_wall_ns": 184198728
+      },
+      "original_panic": [
+        {
+          "line": 1340,
+          "raw_line_including_newline_sha256": "abbac8ccfd651f831bdee53ebf6196c6f51e17ad94c8e75a26f43a3d43fc3fa4",
+          "text": "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart' (540836) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:586:6:"
+        },
+        {
+          "line": 1341,
+          "raw_line_including_newline_sha256": "609c0f1caa0af5e5f88532da46b0287f1f9ecdd2fef7da4e3872afa7d8a966c8",
+          "text": "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection reset by peer (os error 104)\", source: Some(Os { code: 104, kind: ConnectionReset, message: \"Connection reset by peer\" }), request_history_budget: false }"
+        }
+      ],
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-a20974e529510774",
+          "label": "unittests src/lib.rs",
+          "line": 97,
+          "raw": "     Running unittests src/lib.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-a20974e529510774)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-targets",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6390138-12894-305",
+        "raw_log": {
+          "bytes": 268168,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+          "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+        },
+        "run_id": "original",
+        "segment_byte_span": {
+          "end_exclusive": 237010,
+          "start_inclusive": 4614
+        },
+        "source_after_canonical_sha256": null,
+        "source_after_present": false,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 236950,
+          "start_inclusive": 236845
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "source_sha256": "7da3267fd7769c80715f2c82d89dcee040afc14a6c50b889e9727dcf43076db6",
+          "test": true
+        },
+        "target_key": "[\"lib\",\"trnm_pon_node\",\"trillionnium/crates/trnm-pon-node/src/lib.rs\"]"
+      },
+      "qualification": false,
+      "run": "original",
+      "target": {
+        "harness": null,
+        "kind": [
+          "lib"
+        ],
+        "name": "trnm_pon_node",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "source_sha256": "7da3267fd7769c80715f2c82d89dcee040afc14a6c50b889e9727dcf43076db6",
+        "test": true
+      },
+      "target_key": "[\"lib\",\"trnm_pon_node\",\"trillionnium/crates/trnm-pon-node/src/lib.rs\"]",
+      "test_name": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+      "uncertainty": [
+        "Process-local operation IDs are not a cross-process correlation key.",
+        "From the fixture order and two TCP phase outcomes, the earlier bad-frame handling encountered the witness deadline before the later legitimate request hit unavailable; this is an inference, not successful signature-rejection recovery."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 235487,
+          "start_inclusive": 219755
+        },
+        "block_bytes": 15732,
+        "block_sha256": "f2c0e4e32ea7390a44ec6fca998edbde083f23101246ae32832c20158641bfac",
+        "first_line": 1344,
+        "log": {
+          "bytes": 268168,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+          "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 1348,
+            "raw_line_including_newline_sha256": "5e85be9c9c93e457c90fb6ea4b6322a4cba5d20272948eb5df769efbdd688df0",
+            "text": "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics' (540936) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:586:6:"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "npq6_transport",
+      "classification_scope": "sealed original read-only diagnosis",
+      "confirmed": [
+        "First legitimate send returned FRAME_EOF before the cleanup sentinel branch.",
+        "Child last service_cas records actual commit; its final reply write failed with broken_pipe.",
+        "Original cleanup observed successful child exit, joined worker and preserved primary error."
+      ],
+      "fixed": false,
+      "original_diagnosis_id": "lib-npq6-cleanup",
+      "original_observations": {
+        "child_cas_committed": true,
+        "child_connection_wall_ns": 338837482,
+        "child_reply_sign_self_verify_wall_ns": 107920234,
+        "child_service_commit_wall_ns": 160469737,
+        "child_witness_handle_wall_ns": 276398694,
+        "log_lines": [
+          1345,
+          1346,
+          1348,
+          1349,
+          1350
+        ]
+      },
+      "original_panic": [
+        {
+          "line": 1348,
+          "raw_line_including_newline_sha256": "5e85be9c9c93e457c90fb6ea4b6322a4cba5d20272948eb5df769efbdd688df0",
+          "text": "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics' (540936) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:586:6:"
+        },
+        {
+          "line": 1349,
+          "raw_line_including_newline_sha256": "e5cdd73839a8b80a936e3e28df09f07ff613e73fc649e8845a48f6e9265ccb01",
+          "text": "called `Result::unwrap()` on an `Err` value: Error { code: Some(FrameEof), kind: Transport, message: \"FRAME_EOF\", source: None, request_history_budget: false }"
+        }
+      ],
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-a20974e529510774",
+          "label": "unittests src/lib.rs",
+          "line": 97,
+          "raw": "     Running unittests src/lib.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-a20974e529510774)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-targets",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6390138-12894-305",
+        "raw_log": {
+          "bytes": 268168,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+          "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+        },
+        "run_id": "original",
+        "segment_byte_span": {
+          "end_exclusive": 237010,
+          "start_inclusive": 4614
+        },
+        "source_after_canonical_sha256": null,
+        "source_after_present": false,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 236950,
+          "start_inclusive": 236845
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "source_sha256": "7da3267fd7769c80715f2c82d89dcee040afc14a6c50b889e9727dcf43076db6",
+          "test": true
+        },
+        "target_key": "[\"lib\",\"trnm_pon_node\",\"trillionnium/crates/trnm-pon-node/src/lib.rs\"]"
+      },
+      "qualification": false,
+      "run": "original",
+      "target": {
+        "harness": null,
+        "kind": [
+          "lib"
+        ],
+        "name": "trnm_pon_node",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "source_sha256": "7da3267fd7769c80715f2c82d89dcee040afc14a6c50b889e9727dcf43076db6",
+        "test": true
+      },
+      "target_key": "[\"lib\",\"trnm_pon_node\",\"trillionnium/crates/trnm-pon-node/src/lib.rs\"]",
+      "test_name": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics",
+      "uncertainty": [
+        "Parent phase diagnostic was suppressed by the original process log cap; a unique parent refusal site is not available.",
+        "The observed child latency is consistent with the 250ms client cap, but this diagnosis does not transfer the first test cause to this test.",
+        "Witness CAS commit alone is not a successful authenticated business response."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 236220,
+          "start_inclusive": 235487
+        },
+        "block_bytes": 733,
+        "block_sha256": "16210cc2e96891854da59d7dc47907c5cbb2c2eb2a55e39b5020a668772ba09d",
+        "first_line": 1352,
+        "log": {
+          "bytes": 268168,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+          "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 1355,
+            "raw_line_including_newline_sha256": "9cc00e9399d0f708e158b5423e7841c9f7dceadfd179e0d5ba1522ad0693a487",
+            "text": "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart' (541117) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:586:6:"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "npq6_transport",
+      "classification_scope": "sealed original read-only diagnosis",
+      "confirmed": [
+        "First legitimate send returned FRAME_EOF before replay and restart assertions.",
+        "Original cleanup recorded worker join, successful witness child exit, complete cleanup and preserved primary error."
+      ],
+      "fixed": false,
+      "original_diagnosis_id": "lib-npq6-replay-restart",
+      "original_observations": {
+        "log_lines": [
+          1350,
+          1353,
+          1355,
+          1356
+        ]
+      },
+      "original_panic": [
+        {
+          "line": 1355,
+          "raw_line_including_newline_sha256": "9cc00e9399d0f708e158b5423e7841c9f7dceadfd179e0d5ba1522ad0693a487",
+          "text": "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart' (541117) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:586:6:"
+        },
+        {
+          "line": 1356,
+          "raw_line_including_newline_sha256": "e5cdd73839a8b80a936e3e28df09f07ff613e73fc649e8845a48f6e9265ccb01",
+          "text": "called `Result::unwrap()` on an `Err` value: Error { code: Some(FrameEof), kind: Transport, message: \"FRAME_EOF\", source: None, request_history_budget: false }"
+        }
+      ],
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-a20974e529510774",
+          "label": "unittests src/lib.rs",
+          "line": 97,
+          "raw": "     Running unittests src/lib.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_pon_node-a20974e529510774)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-targets",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6390138-12894-305",
+        "raw_log": {
+          "bytes": 268168,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+          "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+        },
+        "run_id": "original",
+        "segment_byte_span": {
+          "end_exclusive": 237010,
+          "start_inclusive": 4614
+        },
+        "source_after_canonical_sha256": null,
+        "source_after_present": false,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 236950,
+          "start_inclusive": 236845
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "source_sha256": "7da3267fd7769c80715f2c82d89dcee040afc14a6c50b889e9727dcf43076db6",
+          "test": true
+        },
+        "target_key": "[\"lib\",\"trnm_pon_node\",\"trillionnium/crates/trnm-pon-node/src/lib.rs\"]"
+      },
+      "qualification": false,
+      "run": "original",
+      "target": {
+        "harness": null,
+        "kind": [
+          "lib"
+        ],
+        "name": "trnm_pon_node",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "source_sha256": "7da3267fd7769c80715f2c82d89dcee040afc14a6c50b889e9727dcf43076db6",
+        "test": true
+      },
+      "target_key": "[\"lib\",\"trnm_pon_node\",\"trillionnium/crates/trnm-pon-node/src/lib.rs\"]",
+      "test_name": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart",
+      "uncertainty": [
+        "No retained parent or child phase detail identifies the internal refusal site for this test after the process log cap was reached.",
+        "The other NPQ6 failures cannot be substituted as proof of this test cause."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 250419,
+          "start_inclusive": 244637
+        },
+        "block_bytes": 5782,
+        "block_sha256": "239d163f1563c2e6e24e98bced6c125ad6bdfc3bcdde8cd53dba5131c4ac52c4",
+        "first_line": 1475,
+        "log": {
+          "bytes": 268168,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+          "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 1477,
+            "raw_line_including_newline_sha256": "f677c08682ad96bd48ac180a1c9f85ebea85e6ff9ccf322c5e53b09f3d0d7f2b",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"serial-signed-batches\",\"native_state_equal\":false,\"position\":0,\"sample\":0,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1478,
+            "raw_line_including_newline_sha256": "5621163e909114a9f04c71c36a5f5d341c9e9beb03fdfd21981f965ba84935ac",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"concurrent-proposer-batches\",\"native_state_equal\":false,\"position\":1,\"sample\":0,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1479,
+            "raw_line_including_newline_sha256": "8bca32f5ebc87a5e86f76b6ab38c649493c2cac23eab52e77639737c2460f40e",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"signed-reference-dag\",\"native_state_equal\":false,\"position\":2,\"sample\":0,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1480,
+            "raw_line_including_newline_sha256": "f0c17d87aa2fb9bb8f9d12c94142208fd895703bc39c8aed235af1aa0d62dc85",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"concurrent-proposer-batches\",\"native_state_equal\":false,\"position\":0,\"sample\":1,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1481,
+            "raw_line_including_newline_sha256": "753e0d84a9fcd476e68bd370afac4eb632f5cd457e737b4aa24c85353bd274be",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"signed-reference-dag\",\"native_state_equal\":false,\"position\":1,\"sample\":1,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1482,
+            "raw_line_including_newline_sha256": "818384d453f799ab2ed36b8c1823e047af9274f0cd92fea424241c8966e57b85",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"serial-signed-batches\",\"native_state_equal\":false,\"position\":2,\"sample\":1,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1483,
+            "raw_line_including_newline_sha256": "9aef126280bbc9d77010722b6eab96f08dde28e7ed20964c0927f37d48b62524",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"signed-reference-dag\",\"native_state_equal\":false,\"position\":0,\"sample\":2,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1484,
+            "raw_line_including_newline_sha256": "740824396acbd83d55a0333240020b46fe3ddfe204b08d30de58ea0c6c3e29f6",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"serial-signed-batches\",\"native_state_equal\":false,\"position\":1,\"sample\":2,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1485,
+            "raw_line_including_newline_sha256": "b7746bc6f03d6ce35a8ca82af189acbaea20e5ae3bb725885954795ebd82a328",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"concurrent-proposer-batches\",\"native_state_equal\":false,\"position\":2,\"sample\":2,\"scenario\":\"disjoint-recipients\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1486,
+            "raw_line_including_newline_sha256": "d505205ab8dc7d0e75a99f073819cb82fc77174be2fb6118383aa9954bb6aa44",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"serial-signed-batches\",\"native_state_equal\":false,\"position\":0,\"sample\":0,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1487,
+            "raw_line_including_newline_sha256": "2201820240aa19b69a00c319b1df3621b446809a42a145690550713d1c355eff",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"concurrent-proposer-batches\",\"native_state_equal\":false,\"position\":1,\"sample\":0,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1488,
+            "raw_line_including_newline_sha256": "52f73ebb0623a8164201da2400eceae0b28727b2a465df231d350bdaad6b4fdf",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"signed-reference-dag\",\"native_state_equal\":false,\"position\":2,\"sample\":0,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1489,
+            "raw_line_including_newline_sha256": "0114e6d90853dca385ed09e89700d40970a5813432db8d52b58b77f7eed1d5cc",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"concurrent-proposer-batches\",\"native_state_equal\":false,\"position\":0,\"sample\":1,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1490,
+            "raw_line_including_newline_sha256": "42485fe872b8ff857c0a04659d1b4fe75bf2fc39719fc5458963b0c7b606837b",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"signed-reference-dag\",\"native_state_equal\":false,\"position\":1,\"sample\":1,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1491,
+            "raw_line_including_newline_sha256": "41bb900d1860a3fdf9f6fc62efda201baa78bde2585c1572501af53893a989de",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"serial-signed-batches\",\"native_state_equal\":false,\"position\":2,\"sample\":1,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1492,
+            "raw_line_including_newline_sha256": "9fe70ab8bff9480432441b43186d69b14392829cd2f868da2f3de14ef04b4e6b",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"signed-reference-dag\",\"native_state_equal\":false,\"position\":0,\"sample\":2,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1493,
+            "raw_line_including_newline_sha256": "f1ca1bfd867a16c8f143ab8210871fe8fb33afdb817f79d0d0e5a4bf1e6c1899",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"serial-signed-batches\",\"native_state_equal\":false,\"position\":1,\"sample\":2,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1494,
+            "raw_line_including_newline_sha256": "0983ec0fe7f83646b33a467d83faa9bd8e42ee80c75b4c1e0c17f70898bcf632",
+            "text": "{\"cold_reopen_equal\":true,\"error_count\":1,\"error_limit\":4,\"error_text_limit_chars\":96,\"errors\":[\"PUBLIC_HOST_KERNEL_PARENT\"],\"mode\":\"concurrent-proposer-batches\",\"native_state_equal\":false,\"position\":2,\"sample\":2,\"scenario\":\"hot-recipient\",\"schema\":\"native-signed-dag-delivery-failure-v1\"}"
+          },
+          {
+            "line": 1496,
+            "raw_line_including_newline_sha256": "a5250abad122c2819258f69106c675afccf79377a5f876829e13bccf64de6b97",
+            "text": "thread 'signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract' (569248) panicked at crates/trnm-pon-node/tests/architecture_delivery_compare.rs:834:5:"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "host_kernel_prerequisite",
+      "classification_scope": "sealed original read-only diagnosis",
+      "confirmed": [
+        "All 18 bounded original failure rows report PUBLIC_HOST_KERNEL_PARENT. cold_reopen_equal is true in every row. The failing all-samples predicate requires both cold reopen equality and an empty errors array; the recorded non-empty error arrays violate it.",
+        "All finite business targets were reported false; no winner or protocol switch was declared."
+      ],
+      "fixed": false,
+      "original_diagnosis_id": "architecture",
+      "original_observations": {
+        "all_cold_reopen_equal": true,
+        "all_errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "all_native_state_equal": false,
+        "log_lines": [
+          1476,
+          1477,
+          1478,
+          1479,
+          1480,
+          1481,
+          1482,
+          1483,
+          1484,
+          1485,
+          1486,
+          1487,
+          1488,
+          1489,
+          1490,
+          1491,
+          1492,
+          1493,
+          1494,
+          1495,
+          1496,
+          1497
+        ],
+        "samples": 18
+      },
+      "original_panic": [
+        {
+          "line": 1496,
+          "raw_line_including_newline_sha256": "a5250abad122c2819258f69106c675afccf79377a5f876829e13bccf64de6b97",
+          "text": "thread 'signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract' (569248) panicked at crates/trnm-pon-node/tests/architecture_delivery_compare.rs:834:5:"
+        },
+        {
+          "line": 1497,
+          "raw_line_including_newline_sha256": "f8913041e08ea92d67aef7e926c743922570138b61a41119fa6843008affeb86",
+          "text": "retained native delivery/replay invariants failed"
+        }
+      ],
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/architecture_delivery_compare-f13b1e5812a3d91d",
+          "label": "tests/architecture_delivery_compare.rs",
+          "line": 1456,
+          "raw": "     Running tests/architecture_delivery_compare.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/architecture_delivery_compare-f13b1e5812a3d91d)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-targets",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6390138-12894-305",
+        "raw_log": {
+          "bytes": 268168,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+          "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+        },
+        "run_id": "original",
+        "segment_byte_span": {
+          "end_exclusive": 250708,
+          "start_inclusive": 243259
+        },
+        "source_after_canonical_sha256": null,
+        "source_after_present": false,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 250617,
+          "start_inclusive": 250517
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "architecture_delivery_compare",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+          "source_sha256": "a247c14aa7213a93275fc6a6089f37ebb7841da70d0ed08f4a62deb2d34de661",
+          "test": true
+        },
+        "target_key": "[\"test\",\"architecture_delivery_compare\",\"trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs\"]"
+      },
+      "qualification": false,
+      "run": "original",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "architecture_delivery_compare",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+        "source_sha256": "a247c14aa7213a93275fc6a6089f37ebb7841da70d0ed08f4a62deb2d34de661",
+        "test": true
+      },
+      "target_key": "[\"test\",\"architecture_delivery_compare\",\"trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs\"]",
+      "test_name": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+      "uncertainty": [
+        "No architecture winner, protocol switch, WAN qualification, independent operator acceptance or production activation is established.",
+        "The complete temporary report advertised in stdout is not reconstructed here; this extract preserves actual retained stdout observations.",
+        "The separate later host-prerequisite probe is not a per-sample cgroup trace."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 262076,
+          "start_inclusive": 258432
+        },
+        "block_bytes": 3644,
+        "block_sha256": "541555137f0d4dffb72b58ed3b1e3e91454ce66965b0682e2c9e9d1d184b6bb0",
+        "first_line": 1628,
+        "log": {
+          "bytes": 268168,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+          "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 1629,
+            "raw_line_including_newline_sha256": "98d2fa426ee95612d49b694a6189df3368cf37d567cc4e2a68d69246e34b21e0",
+            "text": "sync phase=full-sync elapsed=195.905696ms command=\"/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/trnm-pon-node\" \"sync\" \"--development\" \"--genesis-time\" \"1794060525\" \"--evaluation-policy\" \"native-public-evaluation-dev-v1\" \"--store\" \"/tmp/.tmplBehra/receiver\" \"--admission-profile\" \"public-protected-development-v3\" \"--peer\" \"127.0.0.1:39917\" \"--server-public\" \"6b734a8eff246fe734b38d4046c148eee5f04fe87b3a0a423955a77956de066b\" \"--admission-bits\" \"8\" \"--tip\" \"f7a323ae905f468847365fc4d0c18c431240f13c796d093759efafc3c972bf80\" \"--auth-secret\" \"/tmp/.tmplBehra/development-caller.key\" \"--evaluation-candidate\" \"a0595d6541a9865f2cbecfae58b9772976486e0b8b3b6d159be8d29d09ebcaa8\" \"--evaluation-round-blocks\" \"64\" address=127.0.0.1:39917 server_exited_before_stop=false server_result=Ok(Ok(PublicMetrics { mutation_cpu_reservations: 0, mutation_cpu_refusals: 0, mutation_cpu_clock_failures: 0, mutation_cpu_charged_ns: 0, mutation_full_work_cpu_ns: 0, mutation_dispatch_excluding_work_cpu_ns: 0, mutation_body_decode_cpu_ns: 0, mutation_response_cpu_ns: 0, mutation_cpu_in_flight_after_shutdown: 0, mutation_cpu_credit_ns_after_shutdown: 2000000000, mutation_cpu_debt_ns_after_shutdown: 0, mutation_cpu_unavailable_after_shutdown: false, accepted_connections: 0, capacity_refusals: 0, unpaid_pressure_cancel_requests: 0, unpaid_pressure_connections_closed: 0, preface_refusals: 0, challenge_budget_refusals: 0, pending_challenge_entered: 0, pending_challenge_granted: 0, pending_challenge_closed: 0, pending_challenge_wait_ns: 0, peak_pending_challenge: 0, issued_challenges: 0, ticket_refusals: 0, signature_refusals: 0, pq_authentication_attempts: 0, pq_authentication_bytes: 0, pq_authentication_thread_cpu_ns: 0, pq_authentication_unavailable: false, spent_capacity_refusals: 0, paid_body_capacity_refusals: 0, lane_capacity_refusals: 0, pending_grant_entered: 0, pending_grant_granted: 0, pending_grant_closed: 0, pending_grant_wait_ns: 0, peak_pending_grant: 0, disconnected_await_requests: 0, tasks_skipped_before_dispatch: 0, abandoned_tasks: 0, tasks_enqueued: 0, tasks_dequeued: 0, replay_refusals: 0, queue_refusals: 0, queue_backpressure_events: 0, enqueued_after_backpressure: 0, queue_wait_ns: 0, peak_pending_enqueue: 0, disconnected_before_enqueue: 0, parse_refusals: 0, work_started: 0, work_finished: 0, work_failed: 0, work_ns: 0, executor_refusals: 0, completed_submit: 0, completed_pool_submit: 0, completed_pool_status: 0, pool_submit_started: 0, pool_submit_finished: 0, pool_submit_failed: 0, pool_submit_ns: 0, completed_read: 0, expired_connections: 0, expired_phase_counts: {}, connections_closed_on_shutdown: 0, response_write_failures: 0, output_serialization_failures: 0, peak_connections: 0, peak_paid_body_bytes: 0, peak_mutating_grants: 0, peak_read_grants: 0, peak_spent: 0, spent_reservations: 0, peak_output_reserved_bytes: 0, delivered_response_frames: 0, retained_phase_errors: {}, body_bytes_received: 0, response_bytes_written: 0, cleanup_scans: 6, unknown_caller_durable_rows: 0, paid_body_reserved_bytes_after_shutdown: 0, output_reserved_bytes_after_shutdown: 0, mutating_grants_after_shutdown: 0, read_grants_after_shutdown: 0 })) child=Ok((ExitStatus(unix_wait_status(512)), \"\", \"PUBLIC_HOST_KERNEL_PARENT\\n\"))"
+          },
+          {
+            "line": 1631,
+            "raw_line_including_newline_sha256": "eb9f4d8dc0281dd79bf7d366a2ad7370e2345981dbe74902917f0fa98b86a3e9",
+            "text": "thread 'actual_public_full_sync_query_partial_refusals_reorg_and_retirement' (606701) panicked at crates/trnm-pon-node/tests/evaluation_sync_observation.rs:475:17:"
+          },
+          {
+            "line": 1632,
+            "raw_line_including_newline_sha256": "e8553bfbaca5b582511f6325d0532481a3697b029c84bddfe1665605c5827708",
+            "text": "PUBLIC_HOST_KERNEL_PARENT"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "host_kernel_prerequisite",
+      "classification_scope": "sealed original read-only diagnosis",
+      "confirmed": [
+        "Original test panic reports PUBLIC_HOST_KERNEL_PARENT from the real full-sync CLI invocation."
+      ],
+      "fixed": false,
+      "original_diagnosis_id": "evaluation-sync",
+      "original_observations": {
+        "log_lines": [
+          1629,
+          1631,
+          1632
+        ]
+      },
+      "original_panic": [
+        {
+          "line": 1631,
+          "raw_line_including_newline_sha256": "eb9f4d8dc0281dd79bf7d366a2ad7370e2345981dbe74902917f0fa98b86a3e9",
+          "text": "thread 'actual_public_full_sync_query_partial_refusals_reorg_and_retirement' (606701) panicked at crates/trnm-pon-node/tests/evaluation_sync_observation.rs:475:17:"
+        },
+        {
+          "line": 1632,
+          "raw_line_including_newline_sha256": "e8553bfbaca5b582511f6325d0532481a3697b029c84bddfe1665605c5827708",
+          "text": "PUBLIC_HOST_KERNEL_PARENT"
+        }
+      ],
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_sync_observation-3fa018be36885f45",
+          "label": "tests/evaluation_sync_observation.rs",
+          "line": 1619,
+          "raw": "     Running tests/evaluation_sync_observation.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_sync_observation-3fa018be36885f45)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-targets",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6390138-12894-305",
+        "raw_log": {
+          "bytes": 268168,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+          "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+        },
+        "run_id": "original",
+        "segment_byte_span": {
+          "end_exclusive": 262347,
+          "start_inclusive": 257966
+        },
+        "source_after_canonical_sha256": null,
+        "source_after_present": false,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 262258,
+          "start_inclusive": 262159
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "evaluation_sync_observation",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+          "source_sha256": "402f29fa7ef75e4ba3b406290890a960db335d084620125d95c9cc539e857b04",
+          "test": true
+        },
+        "target_key": "[\"test\",\"evaluation_sync_observation\",\"trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs\"]"
+      },
+      "qualification": false,
+      "run": "original",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "evaluation_sync_observation",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+        "source_sha256": "402f29fa7ef75e4ba3b406290890a960db335d084620125d95c9cc539e857b04",
+        "test": true
+      },
+      "target_key": "[\"test\",\"evaluation_sync_observation\",\"trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs\"]",
+      "test_name": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+      "uncertainty": [
+        "The later read-only host probe supports the missing prerequisite; it is not a reconstructed original per-process kernel snapshot."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 267628,
+          "start_inclusive": 267210
+        },
+        "block_bytes": 418,
+        "block_sha256": "649f02ba34b7d77413c6f40708b929075055361ddb3ea046a8a78f55ffc0bb6d",
+        "first_line": 1717,
+        "log": {
+          "bytes": 268168,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+          "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 1719,
+            "raw_line_including_newline_sha256": "0392d5b4d37abd6e6bfa9e241815b9fec1cbc6d527c2ff2ca1255dfe45aaae82",
+            "text": "thread 'mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain' (619637) panicked at crates/trnm-pon-node/tests/mining_service_budget.rs:102:5:"
+          },
+          {
+            "line": 1720,
+            "raw_line_including_newline_sha256": "864cd8140835136d124bf38ae5536ad631b5ca123ca89fd57fd7b25373d7565b",
+            "text": "None status=exit status: 2 stderr=PUBLIC_HOST_KERNEL_PARENT"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "host_kernel_prerequisite",
+      "classification_scope": "sealed original read-only diagnosis",
+      "confirmed": [
+        "Original panic explicitly records child exit status2 and stderr PUBLIC_HOST_KERNEL_PARENT."
+      ],
+      "fixed": false,
+      "original_diagnosis_id": "mining-service-budget",
+      "original_observations": {
+        "child_exit_code": 2,
+        "log_lines": [
+          1719,
+          1720,
+          1721
+        ]
+      },
+      "original_panic": [
+        {
+          "line": 1719,
+          "raw_line_including_newline_sha256": "0392d5b4d37abd6e6bfa9e241815b9fec1cbc6d527c2ff2ca1255dfe45aaae82",
+          "text": "thread 'mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain' (619637) panicked at crates/trnm-pon-node/tests/mining_service_budget.rs:102:5:"
+        },
+        {
+          "line": 1720,
+          "raw_line_including_newline_sha256": "864cd8140835136d124bf38ae5536ad631b5ca123ca89fd57fd7b25373d7565b",
+          "text": "None status=exit status: 2 stderr=PUBLIC_HOST_KERNEL_PARENT"
+        }
+      ],
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/mining_service_budget-c5d23289fc9a9ead",
+          "label": "tests/mining_service_budget.rs",
+          "line": 1709,
+          "raw": "     Running tests/mining_service_budget.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/mining_service_budget-c5d23289fc9a9ead)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-targets",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6390138-12894-305",
+        "raw_log": {
+          "bytes": 268168,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+          "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+        },
+        "run_id": "original",
+        "segment_byte_span": {
+          "end_exclusive": 267906,
+          "start_inclusive": 266834
+        },
+        "source_after_canonical_sha256": null,
+        "source_after_present": false,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 267823,
+          "start_inclusive": 267724
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "mining_service_budget",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs",
+          "source_sha256": "de77046e05414963efb186e10c4ae9795ef69033f9a4bfd662537412bbafa8b2",
+          "test": true
+        },
+        "target_key": "[\"test\",\"mining_service_budget\",\"trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs\"]"
+      },
+      "qualification": false,
+      "run": "original",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "mining_service_budget",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs",
+        "source_sha256": "de77046e05414963efb186e10c4ae9795ef69033f9a4bfd662537412bbafa8b2",
+        "test": true
+      },
+      "target_key": "[\"test\",\"mining_service_budget\",\"trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs\"]",
+      "test_name": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+      "uncertainty": [
+        "The later read-only host probe supports the missing prerequisite; it is not a reconstructed original per-process kernel snapshot."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 7536,
+          "start_inclusive": 7196
+        },
+        "block_bytes": 340,
+        "block_sha256": "7f1e06fbf78ad1882a1d62ab95492d62389597ab28d4db193ea4cfab15e01c22",
+        "first_line": 109,
+        "log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 111,
+            "raw_line_including_newline_sha256": "95146c9055e58415bc6bdbbb9790f17c8b0badce29f988145bb692cfdedb4998",
+            "text": "thread 'test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner' (809581) panicked at crates/trnm-pon-node/tests/native_node.rs:1590:5:"
+          },
+          {
+            "line": 112,
+            "raw_line_including_newline_sha256": "e8553bfbaca5b582511f6325d0532481a3697b029c84bddfe1665605c5827708",
+            "text": "PUBLIC_HOST_KERNEL_PARENT"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "host_kernel_prerequisite_reported",
+      "classification_scope": "explicit retained marker or unclassified symptom; no source repair",
+      "confirmed": [
+        "The retained primary panic context contains PUBLIC_HOST_KERNEL_PARENT."
+      ],
+      "fixed": false,
+      "primary_excerpt_truncated": false,
+      "primary_panic_tail_excerpt": "thread 'test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner' (809581) panicked at crates/trnm-pon-node/tests/native_node.rs:1590:5:\nPUBLIC_HOST_KERNEL_PARENT\n\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\n",
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/native_node-5936921b7f3bbf53",
+          "label": "tests/native_node.rs",
+          "line": 72,
+          "raw": "     Running tests/native_node.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/native_node-5936921b7f3bbf53)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "account_archive_vectors",
+          "--example",
+          "account_execution_vectors",
+          "--example",
+          "continuous_pipeline",
+          "--example",
+          "distributed_pipeline",
+          "--example",
+          "hepta_task_fixture",
+          "--example",
+          "history_state_cost",
+          "--example",
+          "lifecycle_atomic_continuity",
+          "--example",
+          "lifecycle_continuity",
+          "--example",
+          "llm_zero_gain_round",
+          "--example",
+          "native_reorg_query_cost",
+          "--example",
+          "operator_owned_finite_mining",
+          "--example",
+          "operator_pool_fixture",
+          "--example",
+          "pon_w1_budget_report",
+          "--example",
+          "pon_w1_cost_matrix_v2",
+          "--example",
+          "pon_w1_false_trace_reuse_v1",
+          "--example",
+          "pon_w1_legal_strategy_v1",
+          "--example",
+          "pon_w1_legal_strategy_v3",
+          "--example",
+          "pon_w1_preparation_strategy_v4",
+          "--example",
+          "pon_w1_reused_cost_v3",
+          "--example",
+          "public_pool_fixture",
+          "--test",
+          "model_composition_v4",
+          "--test",
+          "model_evidence_v3",
+          "--test",
+          "native_active_anchor",
+          "--test",
+          "native_compact_execution",
+          "--test",
+          "native_demand_evidence",
+          "--test",
+          "native_growth_cli",
+          "--test",
+          "native_growth_public_cli",
+          "--test",
+          "native_node",
+          "--test",
+          "native_task_operation_v2",
+          "--test",
+          "no_gain_fees",
+          "--test",
+          "nonce_speculation_cost",
+          "--test",
+          "one_zero_task_preparation_lifecycle",
+          "--test",
+          "operation_local_parent",
+          "--test",
+          "operator_actors",
+          "--test",
+          "pinned_peer_polling",
+          "--test",
+          "pool_mining",
+          "--test",
+          "pq_account_native",
+          "--test",
+          "pq_migration_inventory",
+          "--test",
+          "protected_ingress",
+          "--test",
+          "public_cache_modes",
+          "--test",
+          "public_cli",
+          "--test",
+          "public_evaluation",
+          "--test",
+          "public_intake_v2",
+          "--test",
+          "public_pool_cli",
+          "--test",
+          "public_pool_v3",
+          "--test",
+          "public_submit_recovery",
+          "--test",
+          "public_v3_from_zero",
+          "--test",
+          "public_v3_multiprocess",
+          "--test",
+          "public_v3_observation_cli",
+          "--test",
+          "public_v3_observer",
+          "--test",
+          "public_v3_request_accounting",
+          "--test",
+          "public_v3_service_campaign",
+          "--test",
+          "qualified_tasks",
+          "--test",
+          "release_finality_v2",
+          "--test",
+          "task_lifecycle",
+          "--test",
+          "task_lifecycle_v3",
+          "--test",
+          "task_lifecycle_v4",
+          "--test",
+          "task_output_root_parity",
+          "--test",
+          "work_fuzz_semantics",
+          "--test",
+          "work_header_binding",
+          "--test",
+          "zero_task_preparation_lifecycle",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6b4fa87-12894-60d",
+        "raw_log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "run_id": "remainder",
+        "segment_byte_span": {
+          "end_exclusive": 8518,
+          "start_inclusive": 4531
+        },
+        "source_after_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_after_present": true,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 8445,
+          "start_inclusive": 8345
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "native_node",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+          "source_sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+          "test": true
+        },
+        "target_key": "[\"test\",\"native_node\",\"trillionnium/crates/trnm-pon-node/tests/native_node.rs\"]"
+      },
+      "qualification": false,
+      "run": "remainder",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_node",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+        "source_sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+        "test": true
+      },
+      "target_key": "[\"test\",\"native_node\",\"trillionnium/crates/trnm-pon-node/tests/native_node.rs\"]",
+      "test_name": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+      "uncertainty": [
+        "No guard was changed. A missing fixed parent observed separately does not reconstruct per-process membership at the original event."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 8185,
+          "start_inclusive": 7536
+        },
+        "block_bytes": 649,
+        "block_sha256": "d66e8802a142c20c81ab541711f1e98bb761ecc03cf8ac6f8399badb477aafdb",
+        "first_line": 116,
+        "log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 118,
+            "raw_line_including_newline_sha256": "c87b102ac302cd806239f79bbcf8f6c60fbae64a764cfb18d6ea2f54e022a193",
+            "text": "thread 'test_full_transaction_pages_use_byte_limits_and_recover_all_native_state' (811108) panicked at crates/trnm-pon-node/tests/native_node.rs:1407:37:"
+          },
+          {
+            "line": 121,
+            "raw_line_including_newline_sha256": "fb4f6f432ee6ebbe923bb37ab766b6467e69919475f424e2251b6086381e3187",
+            "text": "thread 'test_full_transaction_pages_use_byte_limits_and_recover_all_native_state' (811108) panicked at crates/trnm-pon-node/tests/native_node.rs:1432:12:"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "unclassified_failure",
+      "classification_scope": "explicit retained marker or unclassified symptom; no source repair",
+      "confirmed": [
+        "The complete target summary reports a failed test; retained capture is referenced."
+      ],
+      "fixed": false,
+      "primary_excerpt_truncated": false,
+      "primary_panic_tail_excerpt": "thread 'test_full_transaction_pages_use_byte_limits_and_recover_all_native_state' (811108) panicked at crates/trnm-pon-node/tests/native_node.rs:1432:12:\ncalled `Result::unwrap()` on an `Err` value: Any { .. }\n\n\n",
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/native_node-5936921b7f3bbf53",
+          "label": "tests/native_node.rs",
+          "line": 72,
+          "raw": "     Running tests/native_node.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/native_node-5936921b7f3bbf53)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "account_archive_vectors",
+          "--example",
+          "account_execution_vectors",
+          "--example",
+          "continuous_pipeline",
+          "--example",
+          "distributed_pipeline",
+          "--example",
+          "hepta_task_fixture",
+          "--example",
+          "history_state_cost",
+          "--example",
+          "lifecycle_atomic_continuity",
+          "--example",
+          "lifecycle_continuity",
+          "--example",
+          "llm_zero_gain_round",
+          "--example",
+          "native_reorg_query_cost",
+          "--example",
+          "operator_owned_finite_mining",
+          "--example",
+          "operator_pool_fixture",
+          "--example",
+          "pon_w1_budget_report",
+          "--example",
+          "pon_w1_cost_matrix_v2",
+          "--example",
+          "pon_w1_false_trace_reuse_v1",
+          "--example",
+          "pon_w1_legal_strategy_v1",
+          "--example",
+          "pon_w1_legal_strategy_v3",
+          "--example",
+          "pon_w1_preparation_strategy_v4",
+          "--example",
+          "pon_w1_reused_cost_v3",
+          "--example",
+          "public_pool_fixture",
+          "--test",
+          "model_composition_v4",
+          "--test",
+          "model_evidence_v3",
+          "--test",
+          "native_active_anchor",
+          "--test",
+          "native_compact_execution",
+          "--test",
+          "native_demand_evidence",
+          "--test",
+          "native_growth_cli",
+          "--test",
+          "native_growth_public_cli",
+          "--test",
+          "native_node",
+          "--test",
+          "native_task_operation_v2",
+          "--test",
+          "no_gain_fees",
+          "--test",
+          "nonce_speculation_cost",
+          "--test",
+          "one_zero_task_preparation_lifecycle",
+          "--test",
+          "operation_local_parent",
+          "--test",
+          "operator_actors",
+          "--test",
+          "pinned_peer_polling",
+          "--test",
+          "pool_mining",
+          "--test",
+          "pq_account_native",
+          "--test",
+          "pq_migration_inventory",
+          "--test",
+          "protected_ingress",
+          "--test",
+          "public_cache_modes",
+          "--test",
+          "public_cli",
+          "--test",
+          "public_evaluation",
+          "--test",
+          "public_intake_v2",
+          "--test",
+          "public_pool_cli",
+          "--test",
+          "public_pool_v3",
+          "--test",
+          "public_submit_recovery",
+          "--test",
+          "public_v3_from_zero",
+          "--test",
+          "public_v3_multiprocess",
+          "--test",
+          "public_v3_observation_cli",
+          "--test",
+          "public_v3_observer",
+          "--test",
+          "public_v3_request_accounting",
+          "--test",
+          "public_v3_service_campaign",
+          "--test",
+          "qualified_tasks",
+          "--test",
+          "release_finality_v2",
+          "--test",
+          "task_lifecycle",
+          "--test",
+          "task_lifecycle_v3",
+          "--test",
+          "task_lifecycle_v4",
+          "--test",
+          "task_output_root_parity",
+          "--test",
+          "work_fuzz_semantics",
+          "--test",
+          "work_header_binding",
+          "--test",
+          "zero_task_preparation_lifecycle",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6b4fa87-12894-60d",
+        "raw_log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "run_id": "remainder",
+        "segment_byte_span": {
+          "end_exclusive": 8518,
+          "start_inclusive": 4531
+        },
+        "source_after_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_after_present": true,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 8445,
+          "start_inclusive": 8345
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "native_node",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+          "source_sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+          "test": true
+        },
+        "target_key": "[\"test\",\"native_node\",\"trillionnium/crates/trnm-pon-node/tests/native_node.rs\"]"
+      },
+      "qualification": false,
+      "run": "remainder",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_node",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+        "source_sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+        "test": true
+      },
+      "target_key": "[\"test\",\"native_node\",\"trillionnium/crates/trnm-pon-node/tests/native_node.rs\"]",
+      "test_name": "test_full_transaction_pages_use_byte_limits_and_recover_all_native_state",
+      "uncertainty": [
+        "No unique cause is established by this extractor."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 18473,
+          "start_inclusive": 18119
+        },
+        "block_bytes": 354,
+        "block_sha256": "26ffeb9eb873ce0eb23946ca527fb9729c32ae634332d1b390c1d665e73e7a49",
+        "first_line": 278,
+        "log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 280,
+            "raw_line_including_newline_sha256": "17ddd7f3141e158d84f9d82bdaa22e3c8028ee6c3b43ac718fa2d76572fd3987",
+            "text": "thread 'actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history' (820950) panicked at crates/trnm-pon-node/tests/public_cli.rs:38:5:"
+          },
+          {
+            "line": 281,
+            "raw_line_including_newline_sha256": "e8553bfbaca5b582511f6325d0532481a3697b029c84bddfe1665605c5827708",
+            "text": "PUBLIC_HOST_KERNEL_PARENT"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "host_kernel_prerequisite_reported",
+      "classification_scope": "explicit retained marker or unclassified symptom; no source repair",
+      "confirmed": [
+        "The retained primary panic context contains PUBLIC_HOST_KERNEL_PARENT."
+      ],
+      "fixed": false,
+      "primary_excerpt_truncated": false,
+      "primary_panic_tail_excerpt": "thread 'actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history' (820950) panicked at crates/trnm-pon-node/tests/public_cli.rs:38:5:\nPUBLIC_HOST_KERNEL_PARENT\n\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\n\n",
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_cli-91fff1936f900ea0",
+          "label": "tests/public_cli.rs",
+          "line": 269,
+          "raw": "     Running tests/public_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_cli-91fff1936f900ea0)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "account_archive_vectors",
+          "--example",
+          "account_execution_vectors",
+          "--example",
+          "continuous_pipeline",
+          "--example",
+          "distributed_pipeline",
+          "--example",
+          "hepta_task_fixture",
+          "--example",
+          "history_state_cost",
+          "--example",
+          "lifecycle_atomic_continuity",
+          "--example",
+          "lifecycle_continuity",
+          "--example",
+          "llm_zero_gain_round",
+          "--example",
+          "native_reorg_query_cost",
+          "--example",
+          "operator_owned_finite_mining",
+          "--example",
+          "operator_pool_fixture",
+          "--example",
+          "pon_w1_budget_report",
+          "--example",
+          "pon_w1_cost_matrix_v2",
+          "--example",
+          "pon_w1_false_trace_reuse_v1",
+          "--example",
+          "pon_w1_legal_strategy_v1",
+          "--example",
+          "pon_w1_legal_strategy_v3",
+          "--example",
+          "pon_w1_preparation_strategy_v4",
+          "--example",
+          "pon_w1_reused_cost_v3",
+          "--example",
+          "public_pool_fixture",
+          "--test",
+          "model_composition_v4",
+          "--test",
+          "model_evidence_v3",
+          "--test",
+          "native_active_anchor",
+          "--test",
+          "native_compact_execution",
+          "--test",
+          "native_demand_evidence",
+          "--test",
+          "native_growth_cli",
+          "--test",
+          "native_growth_public_cli",
+          "--test",
+          "native_node",
+          "--test",
+          "native_task_operation_v2",
+          "--test",
+          "no_gain_fees",
+          "--test",
+          "nonce_speculation_cost",
+          "--test",
+          "one_zero_task_preparation_lifecycle",
+          "--test",
+          "operation_local_parent",
+          "--test",
+          "operator_actors",
+          "--test",
+          "pinned_peer_polling",
+          "--test",
+          "pool_mining",
+          "--test",
+          "pq_account_native",
+          "--test",
+          "pq_migration_inventory",
+          "--test",
+          "protected_ingress",
+          "--test",
+          "public_cache_modes",
+          "--test",
+          "public_cli",
+          "--test",
+          "public_evaluation",
+          "--test",
+          "public_intake_v2",
+          "--test",
+          "public_pool_cli",
+          "--test",
+          "public_pool_v3",
+          "--test",
+          "public_submit_recovery",
+          "--test",
+          "public_v3_from_zero",
+          "--test",
+          "public_v3_multiprocess",
+          "--test",
+          "public_v3_observation_cli",
+          "--test",
+          "public_v3_observer",
+          "--test",
+          "public_v3_request_accounting",
+          "--test",
+          "public_v3_service_campaign",
+          "--test",
+          "qualified_tasks",
+          "--test",
+          "release_finality_v2",
+          "--test",
+          "task_lifecycle",
+          "--test",
+          "task_lifecycle_v3",
+          "--test",
+          "task_lifecycle_v4",
+          "--test",
+          "task_output_root_parity",
+          "--test",
+          "work_fuzz_semantics",
+          "--test",
+          "work_header_binding",
+          "--test",
+          "zero_task_preparation_lifecycle",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6b4fa87-12894-60d",
+        "raw_log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "run_id": "remainder",
+        "segment_byte_span": {
+          "end_exclusive": 18734,
+          "start_inclusive": 17678
+        },
+        "source_after_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_after_present": true,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 18662,
+          "start_inclusive": 18564
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "public_cli",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/public_cli.rs",
+          "source_sha256": "376d26752b617c7dac4b0d35ee1fb95cc78cdc096fac790149376de69c25890b",
+          "test": true
+        },
+        "target_key": "[\"test\",\"public_cli\",\"trillionnium/crates/trnm-pon-node/tests/public_cli.rs\"]"
+      },
+      "qualification": false,
+      "run": "remainder",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_cli.rs",
+        "source_sha256": "376d26752b617c7dac4b0d35ee1fb95cc78cdc096fac790149376de69c25890b",
+        "test": true
+      },
+      "target_key": "[\"test\",\"public_cli\",\"trillionnium/crates/trnm-pon-node/tests/public_cli.rs\"]",
+      "test_name": "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+      "uncertainty": [
+        "No guard was changed. A missing fixed parent observed separately does not reconstruct per-process membership at the original event."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 20576,
+          "start_inclusive": 20079
+        },
+        "block_bytes": 497,
+        "block_sha256": "de8f9513a38ca85186462ad4f0cd8730e5508694c33cc9237933ab0a64da926f",
+        "first_line": 314,
+        "log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 316,
+            "raw_line_including_newline_sha256": "8c41bc941cdb15cb7b921d219462c493fef04baeee93ce9510a322a27aa55d01",
+            "text": "thread 'one_packet_history_preserves_partial_progress_and_independent_validation' (821762) panicked at crates/trnm-pon-node/tests/public_intake_v2.rs:316:14:"
+          },
+          {
+            "line": 317,
+            "raw_line_including_newline_sha256": "757d492f60e05142fdc3ea045fe4bf5b2d180d74af5e023fb1f0d37a2c6b88cd",
+            "text": "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PUBLIC_HOST_KERNEL_PARENT\", source: None, request_history_budget: false }"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "host_kernel_prerequisite_reported",
+      "classification_scope": "explicit retained marker or unclassified symptom; no source repair",
+      "confirmed": [
+        "The retained primary panic context contains PUBLIC_HOST_KERNEL_PARENT."
+      ],
+      "fixed": false,
+      "primary_excerpt_truncated": false,
+      "primary_panic_tail_excerpt": "thread 'one_packet_history_preserves_partial_progress_and_independent_validation' (821762) panicked at crates/trnm-pon-node/tests/public_intake_v2.rs:316:14:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PUBLIC_HOST_KERNEL_PARENT\", source: None, request_history_budget: false }\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\n",
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_intake_v2-986a187331701696",
+          "label": "tests/public_intake_v2.rs",
+          "line": 306,
+          "raw": "     Running tests/public_intake_v2.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_intake_v2-986a187331701696)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "account_archive_vectors",
+          "--example",
+          "account_execution_vectors",
+          "--example",
+          "continuous_pipeline",
+          "--example",
+          "distributed_pipeline",
+          "--example",
+          "hepta_task_fixture",
+          "--example",
+          "history_state_cost",
+          "--example",
+          "lifecycle_atomic_continuity",
+          "--example",
+          "lifecycle_continuity",
+          "--example",
+          "llm_zero_gain_round",
+          "--example",
+          "native_reorg_query_cost",
+          "--example",
+          "operator_owned_finite_mining",
+          "--example",
+          "operator_pool_fixture",
+          "--example",
+          "pon_w1_budget_report",
+          "--example",
+          "pon_w1_cost_matrix_v2",
+          "--example",
+          "pon_w1_false_trace_reuse_v1",
+          "--example",
+          "pon_w1_legal_strategy_v1",
+          "--example",
+          "pon_w1_legal_strategy_v3",
+          "--example",
+          "pon_w1_preparation_strategy_v4",
+          "--example",
+          "pon_w1_reused_cost_v3",
+          "--example",
+          "public_pool_fixture",
+          "--test",
+          "model_composition_v4",
+          "--test",
+          "model_evidence_v3",
+          "--test",
+          "native_active_anchor",
+          "--test",
+          "native_compact_execution",
+          "--test",
+          "native_demand_evidence",
+          "--test",
+          "native_growth_cli",
+          "--test",
+          "native_growth_public_cli",
+          "--test",
+          "native_node",
+          "--test",
+          "native_task_operation_v2",
+          "--test",
+          "no_gain_fees",
+          "--test",
+          "nonce_speculation_cost",
+          "--test",
+          "one_zero_task_preparation_lifecycle",
+          "--test",
+          "operation_local_parent",
+          "--test",
+          "operator_actors",
+          "--test",
+          "pinned_peer_polling",
+          "--test",
+          "pool_mining",
+          "--test",
+          "pq_account_native",
+          "--test",
+          "pq_migration_inventory",
+          "--test",
+          "protected_ingress",
+          "--test",
+          "public_cache_modes",
+          "--test",
+          "public_cli",
+          "--test",
+          "public_evaluation",
+          "--test",
+          "public_intake_v2",
+          "--test",
+          "public_pool_cli",
+          "--test",
+          "public_pool_v3",
+          "--test",
+          "public_submit_recovery",
+          "--test",
+          "public_v3_from_zero",
+          "--test",
+          "public_v3_multiprocess",
+          "--test",
+          "public_v3_observation_cli",
+          "--test",
+          "public_v3_observer",
+          "--test",
+          "public_v3_request_accounting",
+          "--test",
+          "public_v3_service_campaign",
+          "--test",
+          "qualified_tasks",
+          "--test",
+          "release_finality_v2",
+          "--test",
+          "task_lifecycle",
+          "--test",
+          "task_lifecycle_v3",
+          "--test",
+          "task_lifecycle_v4",
+          "--test",
+          "task_output_root_parity",
+          "--test",
+          "work_fuzz_semantics",
+          "--test",
+          "work_header_binding",
+          "--test",
+          "zero_task_preparation_lifecycle",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6b4fa87-12894-60d",
+        "raw_log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "run_id": "remainder",
+        "segment_byte_span": {
+          "end_exclusive": 21378,
+          "start_inclusive": 19693
+        },
+        "source_after_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_after_present": true,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 21300,
+          "start_inclusive": 21202
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "public_intake_v2",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+          "source_sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+          "test": true
+        },
+        "target_key": "[\"test\",\"public_intake_v2\",\"trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs\"]"
+      },
+      "qualification": false,
+      "run": "remainder",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_intake_v2",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+        "source_sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+        "test": true
+      },
+      "target_key": "[\"test\",\"public_intake_v2\",\"trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs\"]",
+      "test_name": "one_packet_history_preserves_partial_progress_and_independent_validation",
+      "uncertainty": [
+        "No guard was changed. A missing fixed parent observed separately does not reconstruct per-process membership at the original event."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 21023,
+          "start_inclusive": 20576
+        },
+        "block_bytes": 447,
+        "block_sha256": "d9a941f0c16bbcd52b1cb65b497f4f3224aeb36669dd65b72138cfaf87a73780",
+        "first_line": 320,
+        "log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 322,
+            "raw_line_including_newline_sha256": "6c7c2a81e5656a2ab6e22b1e1ada6fa106031f4b83e5417e9192e610cf0c445d",
+            "text": "thread 'unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work' (821769) panicked at crates/trnm-pon-node/tests/public_intake_v2.rs:202:6:"
+          },
+          {
+            "line": 323,
+            "raw_line_including_newline_sha256": "757d492f60e05142fdc3ea045fe4bf5b2d180d74af5e023fb1f0d37a2c6b88cd",
+            "text": "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PUBLIC_HOST_KERNEL_PARENT\", source: None, request_history_budget: false }"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "host_kernel_prerequisite_reported",
+      "classification_scope": "explicit retained marker or unclassified symptom; no source repair",
+      "confirmed": [
+        "The retained primary panic context contains PUBLIC_HOST_KERNEL_PARENT."
+      ],
+      "fixed": false,
+      "primary_excerpt_truncated": false,
+      "primary_panic_tail_excerpt": "thread 'unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work' (821769) panicked at crates/trnm-pon-node/tests/public_intake_v2.rs:202:6:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PUBLIC_HOST_KERNEL_PARENT\", source: None, request_history_budget: false }\n\n\n",
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_intake_v2-986a187331701696",
+          "label": "tests/public_intake_v2.rs",
+          "line": 306,
+          "raw": "     Running tests/public_intake_v2.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_intake_v2-986a187331701696)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "account_archive_vectors",
+          "--example",
+          "account_execution_vectors",
+          "--example",
+          "continuous_pipeline",
+          "--example",
+          "distributed_pipeline",
+          "--example",
+          "hepta_task_fixture",
+          "--example",
+          "history_state_cost",
+          "--example",
+          "lifecycle_atomic_continuity",
+          "--example",
+          "lifecycle_continuity",
+          "--example",
+          "llm_zero_gain_round",
+          "--example",
+          "native_reorg_query_cost",
+          "--example",
+          "operator_owned_finite_mining",
+          "--example",
+          "operator_pool_fixture",
+          "--example",
+          "pon_w1_budget_report",
+          "--example",
+          "pon_w1_cost_matrix_v2",
+          "--example",
+          "pon_w1_false_trace_reuse_v1",
+          "--example",
+          "pon_w1_legal_strategy_v1",
+          "--example",
+          "pon_w1_legal_strategy_v3",
+          "--example",
+          "pon_w1_preparation_strategy_v4",
+          "--example",
+          "pon_w1_reused_cost_v3",
+          "--example",
+          "public_pool_fixture",
+          "--test",
+          "model_composition_v4",
+          "--test",
+          "model_evidence_v3",
+          "--test",
+          "native_active_anchor",
+          "--test",
+          "native_compact_execution",
+          "--test",
+          "native_demand_evidence",
+          "--test",
+          "native_growth_cli",
+          "--test",
+          "native_growth_public_cli",
+          "--test",
+          "native_node",
+          "--test",
+          "native_task_operation_v2",
+          "--test",
+          "no_gain_fees",
+          "--test",
+          "nonce_speculation_cost",
+          "--test",
+          "one_zero_task_preparation_lifecycle",
+          "--test",
+          "operation_local_parent",
+          "--test",
+          "operator_actors",
+          "--test",
+          "pinned_peer_polling",
+          "--test",
+          "pool_mining",
+          "--test",
+          "pq_account_native",
+          "--test",
+          "pq_migration_inventory",
+          "--test",
+          "protected_ingress",
+          "--test",
+          "public_cache_modes",
+          "--test",
+          "public_cli",
+          "--test",
+          "public_evaluation",
+          "--test",
+          "public_intake_v2",
+          "--test",
+          "public_pool_cli",
+          "--test",
+          "public_pool_v3",
+          "--test",
+          "public_submit_recovery",
+          "--test",
+          "public_v3_from_zero",
+          "--test",
+          "public_v3_multiprocess",
+          "--test",
+          "public_v3_observation_cli",
+          "--test",
+          "public_v3_observer",
+          "--test",
+          "public_v3_request_accounting",
+          "--test",
+          "public_v3_service_campaign",
+          "--test",
+          "qualified_tasks",
+          "--test",
+          "release_finality_v2",
+          "--test",
+          "task_lifecycle",
+          "--test",
+          "task_lifecycle_v3",
+          "--test",
+          "task_lifecycle_v4",
+          "--test",
+          "task_output_root_parity",
+          "--test",
+          "work_fuzz_semantics",
+          "--test",
+          "work_header_binding",
+          "--test",
+          "zero_task_preparation_lifecycle",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6b4fa87-12894-60d",
+        "raw_log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "run_id": "remainder",
+        "segment_byte_span": {
+          "end_exclusive": 21378,
+          "start_inclusive": 19693
+        },
+        "source_after_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_after_present": true,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 21300,
+          "start_inclusive": 21202
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "public_intake_v2",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+          "source_sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+          "test": true
+        },
+        "target_key": "[\"test\",\"public_intake_v2\",\"trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs\"]"
+      },
+      "qualification": false,
+      "run": "remainder",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_intake_v2",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+        "source_sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+        "test": true
+      },
+      "target_key": "[\"test\",\"public_intake_v2\",\"trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs\"]",
+      "test_name": "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+      "uncertainty": [
+        "No guard was changed. A missing fixed parent observed separately does not reconstruct per-process membership at the original event."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 22529,
+          "start_inclusive": 22013
+        },
+        "block_bytes": 516,
+        "block_sha256": "ed1262a4fd2c5884b80fb9839ea983024884dec6913d6e3097e88cb1b8368301",
+        "first_line": 345,
+        "log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 347,
+            "raw_line_including_newline_sha256": "a1b43836ec21c431bb95d8280e48b5623269c8db760e119e957906a46d8e1ded",
+            "text": "thread '<unnamed>' (821789) panicked at crates/trnm-pon-node/tests/public_pool_cli.rs:582:30:"
+          },
+          {
+            "line": 351,
+            "raw_line_including_newline_sha256": "eefc9e53812701c15779492a1a57373b5160bf85a34afd544b88da23c6355ecd",
+            "text": "thread 'actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner' (821784) panicked at crates/trnm-pon-node/tests/public_pool_cli.rs:722:80:"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "unclassified_failure",
+      "classification_scope": "explicit retained marker or unclassified symptom; no source repair",
+      "confirmed": [
+        "The complete target summary reports a failed test; retained capture is referenced."
+      ],
+      "fixed": false,
+      "primary_excerpt_truncated": false,
+      "primary_panic_tail_excerpt": "thread 'actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner' (821784) panicked at crates/trnm-pon-node/tests/public_pool_cli.rs:722:80:\ncalled `Result::unwrap()` on an `Err` value: Disconnected\n\n",
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_pool_cli-b49faaebc1ed30ab",
+          "label": "tests/public_pool_cli.rs",
+          "line": 333,
+          "raw": "     Running tests/public_pool_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_pool_cli-b49faaebc1ed30ab)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "account_archive_vectors",
+          "--example",
+          "account_execution_vectors",
+          "--example",
+          "continuous_pipeline",
+          "--example",
+          "distributed_pipeline",
+          "--example",
+          "hepta_task_fixture",
+          "--example",
+          "history_state_cost",
+          "--example",
+          "lifecycle_atomic_continuity",
+          "--example",
+          "lifecycle_continuity",
+          "--example",
+          "llm_zero_gain_round",
+          "--example",
+          "native_reorg_query_cost",
+          "--example",
+          "operator_owned_finite_mining",
+          "--example",
+          "operator_pool_fixture",
+          "--example",
+          "pon_w1_budget_report",
+          "--example",
+          "pon_w1_cost_matrix_v2",
+          "--example",
+          "pon_w1_false_trace_reuse_v1",
+          "--example",
+          "pon_w1_legal_strategy_v1",
+          "--example",
+          "pon_w1_legal_strategy_v3",
+          "--example",
+          "pon_w1_preparation_strategy_v4",
+          "--example",
+          "pon_w1_reused_cost_v3",
+          "--example",
+          "public_pool_fixture",
+          "--test",
+          "model_composition_v4",
+          "--test",
+          "model_evidence_v3",
+          "--test",
+          "native_active_anchor",
+          "--test",
+          "native_compact_execution",
+          "--test",
+          "native_demand_evidence",
+          "--test",
+          "native_growth_cli",
+          "--test",
+          "native_growth_public_cli",
+          "--test",
+          "native_node",
+          "--test",
+          "native_task_operation_v2",
+          "--test",
+          "no_gain_fees",
+          "--test",
+          "nonce_speculation_cost",
+          "--test",
+          "one_zero_task_preparation_lifecycle",
+          "--test",
+          "operation_local_parent",
+          "--test",
+          "operator_actors",
+          "--test",
+          "pinned_peer_polling",
+          "--test",
+          "pool_mining",
+          "--test",
+          "pq_account_native",
+          "--test",
+          "pq_migration_inventory",
+          "--test",
+          "protected_ingress",
+          "--test",
+          "public_cache_modes",
+          "--test",
+          "public_cli",
+          "--test",
+          "public_evaluation",
+          "--test",
+          "public_intake_v2",
+          "--test",
+          "public_pool_cli",
+          "--test",
+          "public_pool_v3",
+          "--test",
+          "public_submit_recovery",
+          "--test",
+          "public_v3_from_zero",
+          "--test",
+          "public_v3_multiprocess",
+          "--test",
+          "public_v3_observation_cli",
+          "--test",
+          "public_v3_observer",
+          "--test",
+          "public_v3_request_accounting",
+          "--test",
+          "public_v3_service_campaign",
+          "--test",
+          "qualified_tasks",
+          "--test",
+          "release_finality_v2",
+          "--test",
+          "task_lifecycle",
+          "--test",
+          "task_lifecycle_v3",
+          "--test",
+          "task_lifecycle_v4",
+          "--test",
+          "task_output_root_parity",
+          "--test",
+          "work_fuzz_semantics",
+          "--test",
+          "work_header_binding",
+          "--test",
+          "zero_task_preparation_lifecycle",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6b4fa87-12894-60d",
+        "raw_log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "run_id": "remainder",
+        "segment_byte_span": {
+          "end_exclusive": 23205,
+          "start_inclusive": 21378
+        },
+        "source_after_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_after_present": true,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 23128,
+          "start_inclusive": 23029
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "public_pool_cli",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+          "source_sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db",
+          "test": true
+        },
+        "target_key": "[\"test\",\"public_pool_cli\",\"trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs\"]"
+      },
+      "qualification": false,
+      "run": "remainder",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_pool_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+        "source_sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db",
+        "test": true
+      },
+      "target_key": "[\"test\",\"public_pool_cli\",\"trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs\"]",
+      "test_name": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+      "uncertainty": [
+        "No unique cause is established by this extractor."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 22864,
+          "start_inclusive": 22529
+        },
+        "block_bytes": 335,
+        "block_sha256": "14e214dec3635118158f41e952e2ff3300634b2189f053c09f036534fa86252d",
+        "first_line": 354,
+        "log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 356,
+            "raw_line_including_newline_sha256": "1652df6c578d7cc7cc14e883bbc3d320ebbb97a0396f3c491091dd636662b0e0",
+            "text": "thread 'actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver' (821793) panicked at crates/trnm-pon-node/tests/public_pool_cli.rs:153:5:"
+          },
+          {
+            "line": 357,
+            "raw_line_including_newline_sha256": "cdcc9f8a4c19ad2167b96372a1dbaa1ef0bc0e9d9e6df88c6689d1a069c26817",
+            "text": "first independent full-native sync: stderr=PUBLIC_HOST_KERNEL_PARENT"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "host_kernel_prerequisite_reported",
+      "classification_scope": "explicit retained marker or unclassified symptom; no source repair",
+      "confirmed": [
+        "The retained primary panic context contains PUBLIC_HOST_KERNEL_PARENT."
+      ],
+      "fixed": false,
+      "primary_excerpt_truncated": false,
+      "primary_panic_tail_excerpt": "thread 'actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver' (821793) panicked at crates/trnm-pon-node/tests/public_pool_cli.rs:153:5:\nfirst independent full-native sync: stderr=PUBLIC_HOST_KERNEL_PARENT\n stdout=\n\n\n",
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_pool_cli-b49faaebc1ed30ab",
+          "label": "tests/public_pool_cli.rs",
+          "line": 333,
+          "raw": "     Running tests/public_pool_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_pool_cli-b49faaebc1ed30ab)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "account_archive_vectors",
+          "--example",
+          "account_execution_vectors",
+          "--example",
+          "continuous_pipeline",
+          "--example",
+          "distributed_pipeline",
+          "--example",
+          "hepta_task_fixture",
+          "--example",
+          "history_state_cost",
+          "--example",
+          "lifecycle_atomic_continuity",
+          "--example",
+          "lifecycle_continuity",
+          "--example",
+          "llm_zero_gain_round",
+          "--example",
+          "native_reorg_query_cost",
+          "--example",
+          "operator_owned_finite_mining",
+          "--example",
+          "operator_pool_fixture",
+          "--example",
+          "pon_w1_budget_report",
+          "--example",
+          "pon_w1_cost_matrix_v2",
+          "--example",
+          "pon_w1_false_trace_reuse_v1",
+          "--example",
+          "pon_w1_legal_strategy_v1",
+          "--example",
+          "pon_w1_legal_strategy_v3",
+          "--example",
+          "pon_w1_preparation_strategy_v4",
+          "--example",
+          "pon_w1_reused_cost_v3",
+          "--example",
+          "public_pool_fixture",
+          "--test",
+          "model_composition_v4",
+          "--test",
+          "model_evidence_v3",
+          "--test",
+          "native_active_anchor",
+          "--test",
+          "native_compact_execution",
+          "--test",
+          "native_demand_evidence",
+          "--test",
+          "native_growth_cli",
+          "--test",
+          "native_growth_public_cli",
+          "--test",
+          "native_node",
+          "--test",
+          "native_task_operation_v2",
+          "--test",
+          "no_gain_fees",
+          "--test",
+          "nonce_speculation_cost",
+          "--test",
+          "one_zero_task_preparation_lifecycle",
+          "--test",
+          "operation_local_parent",
+          "--test",
+          "operator_actors",
+          "--test",
+          "pinned_peer_polling",
+          "--test",
+          "pool_mining",
+          "--test",
+          "pq_account_native",
+          "--test",
+          "pq_migration_inventory",
+          "--test",
+          "protected_ingress",
+          "--test",
+          "public_cache_modes",
+          "--test",
+          "public_cli",
+          "--test",
+          "public_evaluation",
+          "--test",
+          "public_intake_v2",
+          "--test",
+          "public_pool_cli",
+          "--test",
+          "public_pool_v3",
+          "--test",
+          "public_submit_recovery",
+          "--test",
+          "public_v3_from_zero",
+          "--test",
+          "public_v3_multiprocess",
+          "--test",
+          "public_v3_observation_cli",
+          "--test",
+          "public_v3_observer",
+          "--test",
+          "public_v3_request_accounting",
+          "--test",
+          "public_v3_service_campaign",
+          "--test",
+          "qualified_tasks",
+          "--test",
+          "release_finality_v2",
+          "--test",
+          "task_lifecycle",
+          "--test",
+          "task_lifecycle_v3",
+          "--test",
+          "task_lifecycle_v4",
+          "--test",
+          "task_output_root_parity",
+          "--test",
+          "work_fuzz_semantics",
+          "--test",
+          "work_header_binding",
+          "--test",
+          "zero_task_preparation_lifecycle",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6b4fa87-12894-60d",
+        "raw_log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "run_id": "remainder",
+        "segment_byte_span": {
+          "end_exclusive": 23205,
+          "start_inclusive": 21378
+        },
+        "source_after_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_after_present": true,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 23128,
+          "start_inclusive": 23029
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "public_pool_cli",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+          "source_sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db",
+          "test": true
+        },
+        "target_key": "[\"test\",\"public_pool_cli\",\"trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs\"]"
+      },
+      "qualification": false,
+      "run": "remainder",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_pool_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+        "source_sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db",
+        "test": true
+      },
+      "target_key": "[\"test\",\"public_pool_cli\",\"trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs\"]",
+      "test_name": "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+      "uncertainty": [
+        "No guard was changed. A missing fixed parent observed separately does not reconstruct per-process membership at the original event."
+      ]
+    }
+  ],
+  "counts_by_run_and_classification": {
+    "original": {
+      "cpu_budget": 2,
+      "host_kernel_prerequisite": 3,
+      "npq6_transport": 3
+    },
+    "remainder": {
+      "host_kernel_prerequisite_reported": 5,
+      "unclassified_failure": 2
+    }
+  },
+  "cpu_or_deadline_or_guard_modified": false,
+  "errors": [],
+  "fixed": false,
+  "inputs": {
+    "logs": {
+      "original": {
+        "bytes": 268168,
+        "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+        "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+      },
+      "remainder": {
+        "bytes": 50255,
+        "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+        "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+      }
+    },
+    "original_diagnosis": {
+      "bytes": 33222,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-690f-diagnosis-v1.json",
+      "sha256": "99dddd4fe1ec2249b02bd20da57b4a1a62803d7d108769be7e23ec4dbf6ea358"
+    },
+    "union": {
+      "bytes": 918710,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-cross-run-coverage-v1.json",
+      "sha256": "e858131ad9b7e9e0ceb83a57d5c2bb665adbac6b395fedacd59f2d8a3e6ddde2"
+    }
+  },
+  "qualification": false,
+  "schema": "pon-node-cross-run-failure-classification-v1",
+  "scope": "All original failures retained. New causes remain marker observations unless separately established; no shared-cause inference.",
+  "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "source_modified": false,
+  "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+  "total_failed": 15,
+  "unresolved_failed_test_count": 0,
+  "unresolved_target_captures": []
+}

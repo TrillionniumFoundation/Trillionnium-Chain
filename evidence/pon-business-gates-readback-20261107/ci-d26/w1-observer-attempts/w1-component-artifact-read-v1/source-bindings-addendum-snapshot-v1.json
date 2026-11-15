@@ -1,0 +1,544 @@
+{
+  "expected_component_artifacts": 20,
+  "completed_download_attempt_records_seen": 20,
+  "source_bindings_read": 11,
+  "results": [
+    {
+      "artifact_id": 13578024702,
+      "preserved_observer_errors": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578024702/source.json'"
+      ],
+      "download_exit": 0,
+      "expected_zip_bytes": 174171610,
+      "recorded_zip_bytes": 174171610,
+      "actual_zip_bytes": 174171610,
+      "zip_sha256": "a751bf30e315ebd0a794236ce7258d7e5849645dae23ef43ebfb73d9e5657e78",
+      "expected_digest": "sha256:a751bf30e315ebd0a794236ce7258d7e5849645dae23ef43ebfb73d9e5657e78",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": {
+        "kind": "prospective-merge",
+        "tested_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "source_before_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578024702/source-before.json",
+        "source_before_sha256": "c8e153632d905fd608093cc8b787ccd0d8dcd0a2026601288d585cbf5e9de18c"
+      },
+      "manifests": [
+        {
+          "path": "w1-legal-strategy-v3/manifest.json",
+          "schema": "trnm-w1-legal-strategy-execution-v3",
+          "result": "PASS",
+          "error": null,
+          "observation_denominator": 34,
+          "artifact_file_hashes_verified": 70,
+          "nonzero_or_timedout_observations": []
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578223381,
+      "preserved_observer_errors": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578223381/source.json'"
+      ],
+      "download_exit": 0,
+      "expected_zip_bytes": 140612389,
+      "recorded_zip_bytes": 140612389,
+      "actual_zip_bytes": 140612389,
+      "zip_sha256": "7f993726d5845d1136af559666cb85b761244ad04e7c157bceee7e1b69793d8f",
+      "expected_digest": "sha256:7f993726d5845d1136af559666cb85b761244ad04e7c157bceee7e1b69793d8f",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": {
+        "kind": "prospective-merge",
+        "tested_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "source_before_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578223381/source-before.json",
+        "source_before_sha256": "c8e153632d905fd608093cc8b787ccd0d8dcd0a2026601288d585cbf5e9de18c"
+      },
+      "manifests": [
+        {
+          "path": "w1-legal-strategy-v2/manifest.json",
+          "schema": "trnm-w1-legal-strategy-execution-v2",
+          "result": "PASS",
+          "error": null,
+          "observation_denominator": 34,
+          "artifact_file_hashes_verified": 70,
+          "nonzero_or_timedout_observations": []
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578254252,
+      "preserved_observer_errors": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578254252/source.json'"
+      ],
+      "download_exit": 0,
+      "expected_zip_bytes": 174189052,
+      "recorded_zip_bytes": 174189052,
+      "actual_zip_bytes": 174189052,
+      "zip_sha256": "6ec5e8b5d47a992ed47333dfa4bbc9399bd57ed308cc7d5afb2fc14ab185f700",
+      "expected_digest": "sha256:6ec5e8b5d47a992ed47333dfa4bbc9399bd57ed308cc7d5afb2fc14ab185f700",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": {
+        "kind": "prospective-merge",
+        "tested_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "source_before_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578254252/source-before.json",
+        "source_before_sha256": "c8e153632d905fd608093cc8b787ccd0d8dcd0a2026601288d585cbf5e9de18c"
+      },
+      "manifests": [
+        {
+          "path": "w1-legal-strategy-v3/manifest.json",
+          "schema": "trnm-w1-legal-strategy-execution-v3",
+          "result": "PASS",
+          "error": null,
+          "observation_denominator": 34,
+          "artifact_file_hashes_verified": 70,
+          "nonzero_or_timedout_observations": []
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578383843,
+      "preserved_observer_errors": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578383843/source.json'"
+      ],
+      "download_exit": 0,
+      "expected_zip_bytes": 35957567,
+      "recorded_zip_bytes": 35957567,
+      "actual_zip_bytes": 35957567,
+      "zip_sha256": "a647f82c1cb766915ec3e9ee458abf6f4d4565646796e26027c6af72c9185957",
+      "expected_digest": "sha256:a647f82c1cb766915ec3e9ee458abf6f4d4565646796e26027c6af72c9185957",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": {
+        "kind": "head",
+        "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "source_before_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578383843/source-before.json",
+        "source_before_sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa"
+      },
+      "manifests": [
+        {
+          "path": "w1-legal-strategy-v1/manifest.json",
+          "schema": "trnm-w1-legal-strategy-execution-v1",
+          "result": "PASS",
+          "error": null,
+          "observation_denominator": 34,
+          "artifact_file_hashes_verified": 70,
+          "nonzero_or_timedout_observations": []
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578407453,
+      "preserved_observer_errors": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578407453/source.json'"
+      ],
+      "download_exit": 0,
+      "expected_zip_bytes": 5555057,
+      "recorded_zip_bytes": 5555057,
+      "actual_zip_bytes": 5555057,
+      "zip_sha256": "ec9ba72ba6d6927509e2cae9c84bb9f732a2a94393582e89bb9256ddcade39ea",
+      "expected_digest": "sha256:ec9ba72ba6d6927509e2cae9c84bb9f732a2a94393582e89bb9256ddcade39ea",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": {
+        "kind": "head",
+        "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "source_before_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578407453/source-before.json",
+        "source_before_sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa"
+      },
+      "manifests": [
+        {
+          "path": "w1-false-trace-reuse-v1/manifest.json",
+          "schema": "trnm-w1-false-trace-reuse-execution-v1",
+          "result": "PASS",
+          "error": null,
+          "observation_denominator": 5,
+          "artifact_file_hashes_verified": 12,
+          "nonzero_or_timedout_observations": []
+        },
+        {
+          "path": "w1-full-limb-reuse-v1/manifest.json",
+          "schema": "trnm-w1-full-limb-reuse-execution-v1",
+          "result": "PASS",
+          "error": null,
+          "observation_denominator": 5,
+          "artifact_file_hashes_verified": 12,
+          "nonzero_or_timedout_observations": []
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578418855,
+      "preserved_observer_errors": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578418855/source.json'"
+      ],
+      "download_exit": 0,
+      "expected_zip_bytes": 5554955,
+      "recorded_zip_bytes": 5554955,
+      "actual_zip_bytes": 5554955,
+      "zip_sha256": "d8862f291bd17cd600865d2e646d4b68d8d5336a401b1d35fb11e5aaa597284d",
+      "expected_digest": "sha256:d8862f291bd17cd600865d2e646d4b68d8d5336a401b1d35fb11e5aaa597284d",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": {
+        "kind": "prospective-merge",
+        "tested_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "source_before_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578418855/source-before.json",
+        "source_before_sha256": "c8e153632d905fd608093cc8b787ccd0d8dcd0a2026601288d585cbf5e9de18c"
+      },
+      "manifests": [
+        {
+          "path": "w1-false-trace-reuse-v1/manifest.json",
+          "schema": "trnm-w1-false-trace-reuse-execution-v1",
+          "result": "PASS",
+          "error": null,
+          "observation_denominator": 5,
+          "artifact_file_hashes_verified": 12,
+          "nonzero_or_timedout_observations": []
+        },
+        {
+          "path": "w1-full-limb-reuse-v1/manifest.json",
+          "schema": "trnm-w1-full-limb-reuse-execution-v1",
+          "result": "PASS",
+          "error": null,
+          "observation_denominator": 5,
+          "artifact_file_hashes_verified": 12,
+          "nonzero_or_timedout_observations": []
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578458532,
+      "preserved_observer_errors": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578458532/source.json'"
+      ],
+      "download_exit": 0,
+      "expected_zip_bytes": 45034611,
+      "recorded_zip_bytes": 45034611,
+      "actual_zip_bytes": 45034611,
+      "zip_sha256": "cb395850fdee8cf09d7766701acea37fef46032fcfee75e1d83a9cf97ff4e773",
+      "expected_digest": "sha256:cb395850fdee8cf09d7766701acea37fef46032fcfee75e1d83a9cf97ff4e773",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": {
+        "kind": "head",
+        "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "source_before_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578458532/source-before.json",
+        "source_before_sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa"
+      },
+      "manifests": [
+        {
+          "path": "campaign/manifest.json",
+          "schema": "pon-w1-rank-batch-execution-v5",
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null,
+          "observation_denominator": 69,
+          "artifact_file_hashes_verified": 209,
+          "nonzero_or_timedout_observations": []
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578524978,
+      "preserved_observer_errors": [
+        "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578524978/zip']' timed out after 299.99998698104173 seconds"
+      ],
+      "download_exit": null,
+      "expected_zip_bytes": 174186741,
+      "recorded_zip_bytes": null,
+      "actual_zip_bytes": 132628480,
+      "zip_sha256": null,
+      "expected_digest": "sha256:ce9a5390df8aadc7c4d08e2584f27bdac7b1574dc3c184cc7d7e7ed26ca79e29",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": null
+    },
+    {
+      "artifact_id": 13578583134,
+      "preserved_observer_errors": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578583134/source.json'"
+      ],
+      "download_exit": 0,
+      "expected_zip_bytes": 140615000,
+      "recorded_zip_bytes": 140615000,
+      "actual_zip_bytes": 140615000,
+      "zip_sha256": "0f56fed42c70fb760b372b77bb5bd8809ae4062a68c9e3c2299f671b0af4a816",
+      "expected_digest": "sha256:0f56fed42c70fb760b372b77bb5bd8809ae4062a68c9e3c2299f671b0af4a816",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": {
+        "kind": "head",
+        "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "source_before_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578583134/source-before.json",
+        "source_before_sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa"
+      },
+      "manifests": [
+        {
+          "path": "w1-legal-strategy-v2/manifest.json",
+          "schema": "trnm-w1-legal-strategy-execution-v2",
+          "result": "PASS",
+          "error": null,
+          "observation_denominator": 34,
+          "artifact_file_hashes_verified": 70,
+          "nonzero_or_timedout_observations": []
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578623077,
+      "preserved_observer_errors": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578623077/source.json'"
+      ],
+      "download_exit": 0,
+      "expected_zip_bytes": 45071166,
+      "recorded_zip_bytes": 45071166,
+      "actual_zip_bytes": 45071166,
+      "zip_sha256": "042b5c6b17d7efa7f2ff0d6e350179cdc7d3890db7d2a7a73e4b89f07334ac52",
+      "expected_digest": "sha256:042b5c6b17d7efa7f2ff0d6e350179cdc7d3890db7d2a7a73e4b89f07334ac52",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": {
+        "kind": "head",
+        "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "source_before_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578623077/source-before.json",
+        "source_before_sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa"
+      },
+      "manifests": [
+        {
+          "path": "campaign/manifest.json",
+          "schema": "pon-w1-rank-batch-execution-v5",
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null,
+          "observation_denominator": 69,
+          "artifact_file_hashes_verified": 209,
+          "nonzero_or_timedout_observations": []
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578719689,
+      "preserved_observer_errors": [
+        "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578719689/zip']' timed out after 299.99998456495814 seconds"
+      ],
+      "download_exit": null,
+      "expected_zip_bytes": 174302954,
+      "recorded_zip_bytes": null,
+      "actual_zip_bytes": 41385984,
+      "zip_sha256": null,
+      "expected_digest": "sha256:bf1491af933216e66db32afc786139e76989907cdb6ee465482ac9632d60a4c2",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": null
+    },
+    {
+      "artifact_id": 13578752856,
+      "preserved_observer_errors": [
+        "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578752856/zip']' timed out after 299.9999797879718 seconds"
+      ],
+      "download_exit": null,
+      "expected_zip_bytes": 35971082,
+      "recorded_zip_bytes": null,
+      "actual_zip_bytes": 25100288,
+      "zip_sha256": null,
+      "expected_digest": "sha256:9896425d35413be1479c95a10efed59531ff895fdb181da21ca7516d3093977d",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": null
+    },
+    {
+      "artifact_id": 13578793210,
+      "preserved_observer_errors": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578793210/source.json'"
+      ],
+      "download_exit": 0,
+      "expected_zip_bytes": 140623469,
+      "recorded_zip_bytes": 140623469,
+      "actual_zip_bytes": 140623469,
+      "zip_sha256": "735652334fa116597213d1854c4f4faea1f8e7cef48670680b74b51f89ba9aaa",
+      "expected_digest": "sha256:735652334fa116597213d1854c4f4faea1f8e7cef48670680b74b51f89ba9aaa",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": {
+        "kind": "head",
+        "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "source_before_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578793210/source-before.json",
+        "source_before_sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa"
+      },
+      "manifests": [
+        {
+          "path": "w1-legal-strategy-v2/manifest.json",
+          "schema": "trnm-w1-legal-strategy-execution-v2",
+          "result": "PASS",
+          "error": null,
+          "observation_denominator": 34,
+          "artifact_file_hashes_verified": 70,
+          "nonzero_or_timedout_observations": []
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578807518,
+      "preserved_observer_errors": [
+        "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578807518/zip']' timed out after 299.9999813870527 seconds"
+      ],
+      "download_exit": null,
+      "expected_zip_bytes": 45040010,
+      "recorded_zip_bytes": null,
+      "actual_zip_bytes": 7094272,
+      "zip_sha256": null,
+      "expected_digest": "sha256:e18888d094dd08928d146253b4485877fbd6ad2010049aaada5d0a0d8cb59dda",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": null
+    },
+    {
+      "artifact_id": 13578842636,
+      "preserved_observer_errors": [
+        "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578842636/zip']' timed out after 299.9999793721363 seconds"
+      ],
+      "download_exit": null,
+      "expected_zip_bytes": 35964573,
+      "recorded_zip_bytes": null,
+      "actual_zip_bytes": 5324800,
+      "zip_sha256": null,
+      "expected_digest": "sha256:1e9c0632c92ae029f509ff6b6385a527a884e2abaa07b746f21468f55d0b2b09",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": null
+    },
+    {
+      "artifact_id": 13578922475,
+      "preserved_observer_errors": [
+        "ValueError: ZIP metadata digest mismatch"
+      ],
+      "download_exit": 1,
+      "expected_zip_bytes": 35956683,
+      "recorded_zip_bytes": 12779520,
+      "actual_zip_bytes": 12779520,
+      "zip_sha256": "d0baaa7724d3c2b18d7d5e66ddce31fcd2ae7c6c3b4805c11a5012e08b037f31",
+      "expected_digest": "sha256:bddfba898cbb65140c16d3e906788d78dd0aa7b9c93b76039b23d1fa6553c097",
+      "download_stderr": "read tcp 10.96.0.24:39438->20.209.226.129:443: read: connection reset by peer\n",
+      "errors": [],
+      "source_binding": null
+    },
+    {
+      "artifact_id": 13578947026,
+      "preserved_observer_errors": [
+        "ValueError: ZIP metadata digest mismatch"
+      ],
+      "download_exit": 1,
+      "expected_zip_bytes": 5571168,
+      "recorded_zip_bytes": 5455872,
+      "actual_zip_bytes": 5455872,
+      "zip_sha256": "f42b5f066588ba66a9367cb0445d7d14b7b6eb3ee0e680e1a70ca13f7713f1e7",
+      "expected_digest": "sha256:95017dffd112b5cb0c7fdc282e132831e6f286b7a59e470db8a18f80ed7c18a1",
+      "download_stderr": "read tcp 10.96.0.24:60674->20.209.226.129:443: read: connection reset by peer\n",
+      "errors": [],
+      "source_binding": null
+    },
+    {
+      "artifact_id": 13579025854,
+      "preserved_observer_errors": [
+        "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579025854/zip']' timed out after 299.99997234903276 seconds"
+      ],
+      "download_exit": null,
+      "expected_zip_bytes": 45021233,
+      "recorded_zip_bytes": null,
+      "actual_zip_bytes": 36585472,
+      "zip_sha256": null,
+      "expected_digest": "sha256:1e875ea6579e1eeadcfa36916c200057de84ace18e816fa41a889fc517af5b24",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": null
+    },
+    {
+      "artifact_id": 13579071557,
+      "preserved_observer_errors": [
+        "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip']' timed out after 299.99997315602377 seconds"
+      ],
+      "download_exit": null,
+      "expected_zip_bytes": 140617119,
+      "recorded_zip_bytes": null,
+      "actual_zip_bytes": 31768576,
+      "zip_sha256": null,
+      "expected_digest": "sha256:878bb7120c04dd9e10c0159df975c92995187c88940322c02e24917654cf4fbd",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": null
+    },
+    {
+      "artifact_id": 13579090794,
+      "preserved_observer_errors": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13579090794/source.json'"
+      ],
+      "download_exit": 0,
+      "expected_zip_bytes": 5571548,
+      "recorded_zip_bytes": 5571548,
+      "actual_zip_bytes": 5571548,
+      "zip_sha256": "2ebdaf94cac1d234f6160d18c25bcbd60a09379160c6dd9c0fe65db6be269ff3",
+      "expected_digest": "sha256:2ebdaf94cac1d234f6160d18c25bcbd60a09379160c6dd9c0fe65db6be269ff3",
+      "download_stderr": "",
+      "errors": [],
+      "source_binding": {
+        "kind": "prospective-merge",
+        "tested_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "source_before_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13579090794/source-before.json",
+        "source_before_sha256": "c8e153632d905fd608093cc8b787ccd0d8dcd0a2026601288d585cbf5e9de18c"
+      },
+      "manifests": [
+        {
+          "path": "w1-false-trace-reuse-v1/manifest.json",
+          "schema": "trnm-w1-false-trace-reuse-execution-v1",
+          "result": "PASS",
+          "error": null,
+          "observation_denominator": 5,
+          "artifact_file_hashes_verified": 12,
+          "nonzero_or_timedout_observations": []
+        },
+        {
+          "path": "w1-full-limb-reuse-v1/manifest.json",
+          "schema": "trnm-w1-full-limb-reuse-execution-v1",
+          "result": "PASS",
+          "error": null,
+          "observation_denominator": 5,
+          "artifact_file_hashes_verified": 12,
+          "nonzero_or_timedout_observations": []
+        }
+      ]
+    }
+  ],
+  "native_gate_validated": false
+}

@@ -1,0 +1,200 @@
+{
+  "binary": {
+    "basename": "trnm_pon_node-05b4ed99663833c1",
+    "before_after_equal": true,
+    "binary_payload_included": false,
+    "sha256": "dd6a1dee07568ba26022ccd690933af13788696e1925e442fe3ba471927f856f"
+  },
+  "builds": [
+    {
+      "attempt": 1,
+      "errors": "native/build-attempt-1/error-diagnostics.json",
+      "exit_code": 101,
+      "native_tests_executed": 0,
+      "reason": "Missing crate::ensure import in pre_write_tests.rs; three E0425 diagnostics.",
+      "result": "native/build-attempt-1/build-result.json",
+      "source_unchanged": true,
+      "stderr": "native/build-attempt-1/build.stderr",
+      "stdout_gzip": "native/build-attempt-1/build.stdout.jsonl.gz"
+    },
+    {
+      "attempt": 2,
+      "exit_code": 0,
+      "finished_at": "2026-11-04T07:40:07.279031+00:00",
+      "result": "native/build-attempt-2/build-result.json",
+      "scope": "Complete trnm-pon-node library test ELF, --all-features, --no-run, original Cargo test profile.",
+      "source_unchanged": true,
+      "started_at": "2026-11-04T07:34:44.422249+00:00",
+      "stderr": "native/build-attempt-2/build.stderr",
+      "stdout_gzip": "native/build-attempt-2/build.stdout.jsonl.gz"
+    }
+  ],
+  "hosted_40a5_context": {
+    "artifact_zip_downloaded_or_locally_hash_verified_for_these_four_jobs": false,
+    "jobs": [
+      {
+        "job_conclusion": "success",
+        "job_id": 126427665244,
+        "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41785836298/job/126427665244",
+        "lane": "head",
+        "node_failed": 0,
+        "node_filtered_out": 0,
+        "node_ignored": 27,
+        "node_passed": 983,
+        "runner": "ubuntu-24.04",
+        "strict_clippy_step": "success",
+        "suite_seconds": 1366.62
+      },
+      {
+        "job_conclusion": "success",
+        "job_id": 126427664953,
+        "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41785836298/job/126427664953",
+        "lane": "prospective-merge",
+        "node_failed": 0,
+        "node_filtered_out": 0,
+        "node_ignored": 27,
+        "node_passed": 983,
+        "runner": "ubuntu-24.04",
+        "strict_clippy_step": "success",
+        "suite_seconds": 929.66
+      },
+      {
+        "job_conclusion": "success",
+        "job_id": 126427665192,
+        "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41785836298/job/126427665192",
+        "lane": "head",
+        "node_failed": 0,
+        "node_filtered_out": 0,
+        "node_ignored": 27,
+        "node_passed": 983,
+        "runner": "ubuntu-24.04-arm",
+        "strict_clippy_step": "success",
+        "suite_seconds": 1337.3
+      },
+      {
+        "job_conclusion": "success",
+        "job_id": 126427665343,
+        "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41785836298/job/126427665343",
+        "lane": "prospective-merge",
+        "node_failed": 0,
+        "node_filtered_out": 0,
+        "node_ignored": 27,
+        "node_passed": 983,
+        "runner": "ubuntu-24.04-arm",
+        "strict_clippy_step": "success",
+        "suite_seconds": 1332.41
+      }
+    ],
+    "observed_at_utc": "2026-11-04T07:13:32Z",
+    "pr_head": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+    "run_id": 41785836298,
+    "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41785836298",
+    "source": "GitHub job logs and job-step metadata read in-session; official links retained below. The prospective-merge SHA is not asserted by this compact packet."
+  },
+  "integrity": {
+    "compressed_files_preserve_original_decoded_bytes": true,
+    "copied_artifacts": "copy-verification.json",
+    "evidence_packaging_did_not_execute_builds_or_tests": true,
+    "stored_file_hashes": "SHA256SUMS"
+  },
+  "native_execution": {
+    "failed": 0,
+    "finished_at": "2026-11-04T07:41:01.331413+00:00",
+    "passed": 5,
+    "profile": "The five network controls use ordinary development classical V3 fixtures and real signed native submissions; no PQ handshake or hosted F0/campaign was executed in this selection.",
+    "raw_results": "native/test-results.json",
+    "receipt": "native/receipt.json",
+    "source_and_executable_unchanged": true,
+    "tests": [
+      {
+        "exit_code": 0,
+        "reader_stdout": "native/tests/test-1-required.stdout",
+        "required_selector_reader_exit": 0,
+        "selector": "ingress::public_v3::tests::completed_input_boundary_rejects_tail_without_consuming_pending_frame",
+        "stderr": "native/tests/test-1.stderr",
+        "stdout": "native/tests/test-1.stdout"
+      },
+      {
+        "exit_code": 0,
+        "reader_stdout": "native/tests/test-2-required.stdout",
+        "required_selector_reader_exit": 0,
+        "selector": "ingress::public_v3::tests::early_complete_body_waiting_for_ready_preserves_signed_native_submission",
+        "stderr": "native/tests/test-2.stderr",
+        "stdout": "native/tests/test-2.stdout"
+      },
+      {
+        "exit_code": 0,
+        "reader_stdout": "native/tests/test-3-required.stdout",
+        "required_selector_reader_exit": 0,
+        "selector": "ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work",
+        "stderr": "native/tests/test-3.stderr",
+        "stdout": "native/tests/test-3.stdout"
+      },
+      {
+        "exit_code": 0,
+        "reader_stdout": "native/tests/test-4-required.stdout",
+        "required_selector_reader_exit": 0,
+        "selector": "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+        "stderr": "native/tests/test-4.stderr",
+        "stdout": "native/tests/test-4.stdout"
+      },
+      {
+        "exit_code": 0,
+        "reader_stdout": "native/tests/test-5-required.stdout",
+        "required_selector_reader_exit": 0,
+        "selector": "ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work",
+        "stderr": "native/tests/test-5.stderr",
+        "stdout": "native/tests/test-5.stdout"
+      }
+    ],
+    "tests_executed": 5
+  },
+  "old_helper": {
+    "commands": "old-helper/commands.json",
+    "commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+    "compile_exit": 0,
+    "function": "caller_write_half_open",
+    "function_sha256": "05d73f62f6fe1887a70fe2f7b0583e493f2e8b341f29cdf02b70d291b2326657",
+    "harness_sha256": "283de3e084a95885f674ae3ebea7d7311db11058fbddc7d756c8a9d8f9f78fef",
+    "negative_exit": 101,
+    "negative_log": "old-helper/negative.log",
+    "receipt": "old-helper/receipt.json",
+    "scope": "Exact original function with a std Result alias, standalone real localhost TCP; no full old Node or old admission-suite red control.",
+    "source": "old-helper/original-half-close.rs"
+  },
+  "packaged_at_utc": "2026-11-04T07:57:26.242552+00:00",
+  "purpose": "Retain the original standalone TCP counterexample, actual compilation failure, and five successful native transport controls over a precisely bound historical dirty candidate.",
+  "registry": {
+    "all_gzip": "native/registry-all.txt.gz",
+    "all_listed": 1029,
+    "counts": "native/registry-counts.json",
+    "full_1001_suite_executed": false,
+    "ignored": "native/registry-ignored.txt",
+    "ignored_listed": 28,
+    "unignored_listed": 1001
+  },
+  "schema": "trnm-parent-and-tail-tcp-evidence-v1",
+  "scope_limits": {
+    "four_second_slo_qualification": false,
+    "hosted_campaign_rerun": false,
+    "hosted_f0_rerun": false,
+    "results_transfer_to_later_changed_native_inputs_or_elf": false,
+    "wan_throughput_qualification": false,
+    "whole_chain_quantum_security_qualification": false
+  },
+  "source": {
+    "base_commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+    "candidate_patch": "native/tested-native-from-73ab.patch.gz",
+    "dirty_candidate": true,
+    "failed_candidate_delta": "native/attempt2-to-attempt1.patch.gz",
+    "failed_manifest": "native/source-attempt-1.json.gz",
+    "failed_native_input_map_sha256": "e11653cd7fb5633c85bf9d6e4cb4f478e094fcbad0aad81d8f93b573f2a92950",
+    "native_input_file_count": 1194,
+    "not_a_test_of_bare_base_commit": true,
+    "observed_equalities": "native/source-observations.json",
+    "patch_verification": "native/patch-verification.json",
+    "scope": "All recorded workspace native inputs/fixtures plus direct source includes, exact Cargo features and observed compiler environment; not a whole-repository source freeze.",
+    "successful_manifest": "native/source-attempt-2.json.gz",
+    "successful_native_input_map_sha256": "f56cc35bd9c9462c931776cc4e08fedeeaa7c73df5f00b2907cc2a057bc81381"
+  }
+}

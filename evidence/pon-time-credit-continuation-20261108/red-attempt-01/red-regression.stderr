@@ -1,0 +1,97 @@
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling generic-array v0.14.7
+   Compiling shlex v1.3.0
+   Compiling find-msvc-tools v0.1.9
+   Compiling proc-macro2 v1.0.106
+   Compiling cc v1.2.59
+   Compiling cfg-if v1.0.4
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+   Compiling syn v2.0.117
+   Compiling zeroize v1.8.2
+   Compiling cpufeatures v0.2.17
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling sha2-asm v0.6.4
+   Compiling cmov v0.5.4
+   Compiling ctutils v0.4.6
+   Compiling digest v0.10.7
+   Compiling pkg-config v0.3.32
+   Compiling semver v1.0.27
+   Compiling serde_core v1.0.228
+   Compiling vcpkg v0.2.15
+   Compiling libsqlite3-sys v0.37.0
+   Compiling rustc_version v0.4.1
+   Compiling hybrid-array v0.4.15
+   Compiling hashbrown v0.16.1
+   Compiling winnow v1.0.4
+   Compiling equivalent v1.0.2
+   Compiling indexmap v2.13.1
+   Compiling sha2 v0.10.9
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling curve25519-dalek v4.1.3
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling bitflags v2.11.0
+   Compiling autocfg v1.5.1
+   Compiling foldhash v0.2.0
+   Compiling num-traits v0.2.19
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling crypto-common v0.2.2
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling cfg_aliases v0.2.2
+   Compiling zmij v1.0.21
+   Compiling libc v0.2.184
+   Compiling signature v2.2.0
+   Compiling serde v1.0.228
+   Compiling subtle v2.6.1
+   Compiling ed25519 v2.2.3
+   Compiling borsh v1.8.0
+   Compiling digest v0.11.3
+   Compiling proc-macro-crate v3.5.0
+   Compiling hashlink v0.11.1
+   Compiling serde_derive v1.0.228
+   Compiling once_cell v1.21.4
+   Compiling smallvec v1.15.1
+   Compiling fallible-iterator v0.3.0
+   Compiling serde_json v1.0.149
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling thiserror v1.0.69
+   Compiling rusqlite v0.39.0
+   Compiling borsh-derive v1.8.0
+   Compiling ed25519-dalek v2.2.0
+   Compiling thiserror-impl v1.0.69
+   Compiling keccak v0.2.2
+   Compiling sponge-cursor v0.1.0
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.0
+   Compiling anyhow v1.0.103
+   Compiling shake v0.1.0
+   Compiling module-lattice v0.2.3
+   Compiling signature v3.0.0
+   Compiling hex v0.4.3
+   Compiling rustix v1.1.4
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/work/chain-time-credit-red-20261108-qf01/trillionnium/crates/trnm-protocol)
+   Compiling ml-dsa v0.1.1
+   Compiling getrandom v0.4.2
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-time-credit-red-20261108-qf01/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/work/chain-time-credit-red-20261108-qf01/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/work/chain-time-credit-red-20261108-qf01/trillionnium/crates/trnm-task-kernel)
+   Compiling fs2 v0.4.3
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/work/chain-time-credit-red-20261108-qf01/trillionnium/crates/trnm-verification-profiles)
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/chain-time-credit-red-20261108-qf01/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/work/chain-time-credit-red-20261108-qf01/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/work/chain-time-credit-red-20261108-qf01/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-mempool v0.1.0 (/home/qian-qi/work/chain-time-credit-red-20261108-qf01/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/work/chain-time-credit-red-20261108-qf01/trillionnium/crates/trnm-transport)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-time-credit-red-20261108-qf01/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10m 32s
+     Running unittests src/lib.rs (/home/qian-qi/work/chain-time-credit-20261108-qf01-target/debug/deps/trnm_pon_node-fc27c767cf2f262e)
+
+thread 'ingress::public_v3::growth::tests::public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work' (3137265) panicked at crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs:780:9:
+future ancestor reached public activation: existing=false, future=1794195689, expected_block=b2f3b7282e620dedd2092838b63891607782d828c2cb8bee6f3109143cca68d1, reply={"active":"b2f3b7282e620dedd2092838b63891607782d828c2cb8bee6f3109143cca68d1","admitted":true,"block":"b2f3b7282e620dedd2092838b63891607782d828c2cb8bee6f3109143cca68d1","generation":1,"genesis":"5fc0e8e84bad83bd778fd2e14a7f23336eb0d852fe1c4d37a7417ae03cfbf125","network":"48c9851f4e5d570df57536e67e64f32dfd0265935428b34eb4b153cc1ba679b8","packet_profile":"PNP2","parameters":"b3ecd3cfa9f48b434c96b59455a8482f35fd133c5574e6dd8b8ec964c0bfca40","physical_execution":false,"production_activation":false,"schema":"pon-native-growth-submit-v1","state_profile":"permanent-account-growth-native-v2"}
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

@@ -1,0 +1,16 @@
+[
+  {
+    "file": "campaign-894.zip",
+    "archive_sha256": "43a748dd6ed47f2e28f63e550028a65ed54895f5951ba94a01f81f4640b558e7",
+    "declared_manifest_members": 1765,
+    "sha256_and_declared_sizes_verified": true,
+    "method": "read original ZIP members and original embedded manifest; no extraction or execution"
+  },
+  {
+    "file": "codeql-894.zip",
+    "archive_sha256": "678f3257bac1c7c592210d60351f09d46831d9dc00c1628dda1c00d10e5752cb",
+    "declared_manifest_members": 198,
+    "sha256_and_declared_sizes_verified": true,
+    "method": "read original ZIP members and original embedded manifest; no extraction or execution"
+  }
+]

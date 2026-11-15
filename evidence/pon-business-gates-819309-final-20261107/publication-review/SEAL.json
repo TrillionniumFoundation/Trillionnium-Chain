@@ -1,0 +1,9 @@
+{
+  "schema": "secret-review-seal-v1",
+  "sealed_utc": "2026-11-07T22:10:32.913172+00:00",
+  "payload_files": 24,
+  "payload_bytes": 5964975,
+  "manifest_sha256": "d4618aed31ef98288daac08353954b7da85d6ae7d323778c7d6da9fcbd4731e2",
+  "core_sha256": "10aef5efdaead99be654318290a6b9c604686aebe4421ba1073a4bc941d47839",
+  "scope": "external review only; does not alter the four original sealed packages"
+}

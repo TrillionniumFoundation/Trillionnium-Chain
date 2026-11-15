@@ -1,0 +1,550 @@
+{
+  "result": "PASS",
+  "scope": "Exact selected registry and execution coverage only; no complete Node or public-service verdict.",
+  "source_kind": "dirty composed 69d2 source",
+  "head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+  "native_manifest_sha256": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+  "node_elf_sha256": "5349b31b55279a52dd75b679c5c3a12cb0c0d784dc259098409bb376f056045d",
+  "m06_elf_sha256": "4e411e4057438162f4cc333c384f23931399e0493e86c3d4ed90d1cc6207c43a",
+  "node_registry": 1019,
+  "node_registry_ignored": 27,
+  "m06_registry": 120,
+  "m06_registry_ignored": 7,
+  "node_selected_registered_and_passed": 40,
+  "node_selected_from_original_execution": 31,
+  "node_selected_from_additional_nine": 9,
+  "m06_selected_registered_and_passed": 18,
+  "selected_unique_passed": 58,
+  "all_original_b811_56_selections_preserved": true,
+  "node_original_passed": 118,
+  "node_additional_unique_passed": 9,
+  "m06_complete_library_passed": 113,
+  "m06_complete_library_ignored": 7,
+  "original_sqlite_scopes_passed": 13,
+  "full_node_suite_executed": false,
+  "public_confirmation_measured": false,
+  "mapping": [
+    {
+      "crate": "m06",
+      "group": "full-root-arithmetic",
+      "selector": "pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "full-root-arithmetic",
+      "selector": "pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "full-root-arithmetic",
+      "selector": "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "full-root-arithmetic",
+      "selector": "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "full-root-arithmetic",
+      "selector": "pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "unchanged-canonical-map",
+      "selector": "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_shares_only_after_full_actual_bytes_match",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "unchanged-canonical-map",
+      "selector": "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_retains_exact_capacity_charges_and_all_budget_boundaries",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "unchanged-canonical-map",
+      "selector": "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_misleading_root_and_changed_bytes_take_original_repair_path",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "unchanged-canonical-map",
+      "selector": "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_keeps_late_canonical_errors_before_wire_and_cache_limits",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "unchanged-canonical-map",
+      "selector": "pon_commitment::unchanged_snapshot_tests::unchanged_candidate_early_miss_retains_complete_late_validation",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "unchanged-canonical-map",
+      "selector": "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_empty_delta_still_checks_the_original_tree_root",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "account-root-digest",
+      "selector": "account_archive_prototype::native_root_digest::tests::native_root_digest_matches_record_and_sparse_references_after_exact_input_changes",
+      "execution_key": "nine_1",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/workspace-nine/test-1.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "account-root-digest",
+      "selector": "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_original_traversal_cancellation_and_collision_order",
+      "execution_key": "nine_2",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/workspace-nine/test-2.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "account-root-digest",
+      "selector": "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_fork_shape_and_all_lift_input_relations",
+      "execution_key": "nine_3",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/workspace-nine/test-3.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "growth-return-observations",
+      "selector": "store::growth::tests::scale_observation::native_growth_scale_retains_rejected_and_cancelled_admission_returns",
+      "execution_key": "nine_4",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/workspace-nine/test-4.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "growth-return-observations",
+      "selector": "store::growth::tests::scale_observation::native_growth_scale_retains_admission_when_activation_returns_error",
+      "execution_key": "nine_5",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/workspace-nine/test-5.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "canonical-ascii",
+      "selector": "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "canonical-ascii",
+      "selector": "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "canonical-ascii",
+      "selector": "pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "canonical-ascii",
+      "selector": "pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "canonical-ascii",
+      "selector": "pon_executor::root_arithmetic_tests::arithmetic_root_ascii_encoding_matches_independent_serde_reference",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "canonical-ascii",
+      "selector": "pon_executor::root_arithmetic_tests::arithmetic_root_preserves_complete_grammar_before_all_wire_limits",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "m06",
+      "group": "canonical-ascii",
+      "selector": "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges",
+      "execution_key": "m06_library",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/components/m06-complete-library.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "reorg-tail",
+      "selector": "store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit",
+      "execution_key": "node_core_append_reorg",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/append-reorg.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "reorg-tail",
+      "selector": "store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source",
+      "execution_key": "node_core_append_reorg",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/append-reorg.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "reorg-tail",
+      "selector": "store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+      "execution_key": "node_core_append_reorg",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/append-reorg.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "reorg-tail",
+      "selector": "store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit",
+      "execution_key": "node_core_append_reorg",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/append-reorg.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "reorg-tail",
+      "selector": "store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+      "execution_key": "node_core_append_reorg",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/append-reorg.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "reorg-tail",
+      "selector": "store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen",
+      "execution_key": "node_core_append_reorg",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/append-reorg.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "direct-append-readback",
+      "selector": "store::append_readback_tests::direct_append_keeps_complete_rows_events_state_and_cold_reopen",
+      "execution_key": "node_core_append_reorg",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/append-reorg.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "direct-append-readback",
+      "selector": "store::append_readback_tests::direct_append_cancellation_at_each_callback_leaves_no_partial_publication",
+      "execution_key": "node_core_append_reorg",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/append-reorg.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "current-sql-root",
+      "selector": "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+      "execution_key": "nine_6",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/workspace-nine/test-6.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "prepared-current-history",
+      "selector": "store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback",
+      "execution_key": "nine_7",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/workspace-nine/test-7.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "prepared-current-history",
+      "selector": "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+      "execution_key": "nine_8",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/workspace-nine/test-8.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "prepared-current-history",
+      "selector": "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures",
+      "execution_key": "nine_9",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/workspace-nine/test-9.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::a_current_child_record_with_another_node_cannot_borrow_the_parent_graph",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::actual_original_writer_excludes_an_independent_database_writer",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::another_actual_connection_cannot_use_the_original_write_scope",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::changed_schema_or_namespace_never_creates_a_new_scope",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::consumed_active_reader_refuses_a_last_callback_write",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::current_complete_state_remains_mandatory_on_a_graph_hit",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::different_current_records_share_only_the_exact_account_graph_in_one_writer",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::fences::cross_record_matches_preserve_boundary_cancellation_and_final_write_fencing",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::fences::final_callback_after_a_first_match_falls_back_to_the_actual_original_graph",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::fences::four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::fences::trusted_reset_exposes_preexisting_catalog_and_prepared_vm_divergence",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::first_graph_callback_write_cannot_mint_a_result_or_reenable_it",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::frontier::final_callback_deletion_and_later_outer_write_cannot_use_partial_availability",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::frontier::real_different_roots_use_bounded_subtrees_without_promoting_partial_results",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::frontier::reencoded_frontier_child_ids_cannot_hide_missing_nodes_or_wrong_side_edges",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::no_row_writes_and_reversed_ddl_disable_reuse_without_resetting_the_scope",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::original_cancellation_before_and_after_a_match_is_preserved",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::original_transaction_owner_refuses_commit_begin_and_savepoint_aba",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    },
+    {
+      "crate": "node",
+      "group": "postwrite-readback",
+      "selector": "store::native_authenticated::post_write_readback::tests::prepare_only_schema_reset_preserves_the_normalized_writer",
+      "execution_key": "node_core_authenticated",
+      "registered": true,
+      "passed": true,
+      "log": "../../final-native/69d2/native/authenticated.stdout"
+    }
+  ]
+}

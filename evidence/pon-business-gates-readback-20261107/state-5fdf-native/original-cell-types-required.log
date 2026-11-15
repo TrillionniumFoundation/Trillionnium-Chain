@@ -1,0 +1,1 @@
+{"executed_tests": 1, "result": "PASS", "scope": "named-libtest-execution-only", "test": "store::bounded_active_state_tests::live_state_cell_extent_and_type_refuse_before_root_and_keep_exact_repair"}

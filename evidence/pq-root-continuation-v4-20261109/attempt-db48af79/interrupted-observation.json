@@ -1,0 +1,20 @@
+{
+  "schema": "trnm-root-v4-interrupted-campaign-observation",
+  "source": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+  "recorded_completed_commands": 39,
+  "recorded_failed_commands": [],
+  "last_completed_command": "retained-release-default",
+  "planned_commands": 41,
+  "campaign_completed": false,
+  "summary_available": false,
+  "source_after_available": false,
+  "clippy_frontend_sigkill_observed": true,
+  "clippy_outer_exit_code": null,
+  "underlying_sigkill_cause_established": false,
+  "environment_became_unavailable_during_clippy": true,
+  "full_protocol_lane_executed": false,
+  "full_workspace_tests_executed": false,
+  "status": "HOLD",
+  "production_activation": false,
+  "actual_lifetime_failure_bound": null
+}

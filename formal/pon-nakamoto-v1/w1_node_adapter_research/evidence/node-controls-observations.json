@@ -1,0 +1,558 @@
+[
+  {
+    "case": "none",
+    "exercise": {
+      "active_before": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+      "error": null,
+      "generation_before": 0,
+      "native_observation": {
+        "accepted_task": null,
+        "active_chain_member": true,
+        "active_depth": 0,
+        "active_membership_sql_budget": 1024,
+        "active_membership_sql_lookups": 4,
+        "active_tip": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+        "active_tip_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+        "active_tip_height": 1,
+        "active_work_depth_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+        "block_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+        "block_height": 1,
+        "confirmation_authority": false,
+        "execution_authority": false,
+        "finality_authority": false,
+        "generation": 1,
+        "global_absence_authority": false,
+        "local_target_only": true,
+        "production_activation": false,
+        "schema": "pon-native-exact-packet-observation-v3",
+        "stored_exact": true
+      },
+      "native_observation_error": null,
+      "next_work_start_refused": true,
+      "node_opened": true,
+      "operation_directory": "/home/qian-qi/work/w1-r4-evidence-f16ac5/node-independent-controls-v1/case-none/bundles/644b8a137bcc27681ff191d72e928652383c02192649a70484f32d2983041485",
+      "outcome": {
+        "activation_error": null,
+        "activation_requested": true,
+        "active_before": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+        "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+        "both_real_proofs_verified": true,
+        "generation_before": 0,
+        "late_cancellation": null,
+        "native_admission_path_invoked": true,
+        "native_admission_seconds": 0.02704152,
+        "native_admitted": true,
+        "native_observation": {
+          "accepted_task": null,
+          "active_chain_member": true,
+          "active_depth": 0,
+          "active_membership_sql_budget": 1024,
+          "active_membership_sql_lookups": 4,
+          "active_tip": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+          "active_tip_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+          "active_tip_height": 1,
+          "active_work_depth_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+          "block_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+          "block_height": 1,
+          "confirmation_authority": false,
+          "execution_authority": false,
+          "finality_authority": false,
+          "generation": 1,
+          "global_absence_authority": false,
+          "local_target_only": true,
+          "production_activation": false,
+          "schema": "pon-native-exact-packet-observation-v3",
+          "stored_exact": true
+        },
+        "native_observation_error": null,
+        "native_work_policy": "fresh packets execute native W1; exact duplicates reuse original admitted state",
+        "operation": "644b8a137bcc27681ff191d72e928652383c02192649a70484f32d2983041485",
+        "production_activation": false,
+        "profile": "w1-pnh1-native-node-scheduled-p3-research-v1",
+        "proof_phases": [
+          {
+            "stage": "sha_independent_preprocessing",
+            "wall_seconds": 0.201910612
+          },
+          {
+            "stage": "sha_proof_verification",
+            "wall_seconds": 0.202477825
+          },
+          {
+            "stage": "arithmetic_independent_preprocessing",
+            "wall_seconds": 0.548935601
+          },
+          {
+            "stage": "arithmetic_proof_verification",
+            "wall_seconds": 0.040709197
+          }
+        ],
+        "qualification": "HOLD_NO_GO",
+        "schema": "trnm-w1-node-adapter-admission-v2"
+      },
+      "production_activation": false,
+      "qualification": "HOLD_NO_GO",
+      "requested_cancellation": "none",
+      "schema": "trnm-w1-node-adapter-exercise-v1",
+      "work_starts_spent": 1
+    },
+    "cold_reopen": {
+      "admission_performed": false,
+      "both_real_proofs_reverified": true,
+      "native_observation": {
+        "accepted_task": null,
+        "active_chain_member": true,
+        "active_depth": 0,
+        "active_membership_sql_budget": 1024,
+        "active_membership_sql_lookups": 4,
+        "active_tip": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+        "active_tip_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+        "active_tip_height": 1,
+        "active_work_depth_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+        "block_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+        "block_height": 1,
+        "confirmation_authority": false,
+        "execution_authority": false,
+        "finality_authority": false,
+        "generation": 1,
+        "global_absence_authority": false,
+        "local_target_only": true,
+        "production_activation": false,
+        "schema": "pon-native-exact-packet-observation-v3",
+        "stored_exact": true
+      },
+      "operation": "644b8a137bcc27681ff191d72e928652383c02192649a70484f32d2983041485",
+      "production_activation": false,
+      "proof_phases": [
+        {
+          "stage": "sha_independent_preprocessing",
+          "wall_seconds": 0.194791891
+        },
+        {
+          "stage": "sha_proof_verification",
+          "wall_seconds": 0.237130688
+        },
+        {
+          "stage": "arithmetic_independent_preprocessing",
+          "wall_seconds": 0.56404458
+        },
+        {
+          "stage": "arithmetic_proof_verification",
+          "wall_seconds": 0.046197857
+        }
+      ],
+      "qualification": "HOLD_NO_GO",
+      "schema": "trnm-w1-node-adapter-reopen-v1"
+    }
+  },
+  {
+    "case": "BeforeProof",
+    "exercise": {
+      "active_before": null,
+      "error": "REQUEST_CANCELLED:BeforeProof",
+      "generation_before": null,
+      "native_observation": null,
+      "native_observation_error": null,
+      "next_work_start_refused": true,
+      "node_opened": false,
+      "operation_directory": "/home/qian-qi/work/w1-r4-evidence-f16ac5/node-independent-controls-v1/case-BeforeProof/bundles/644b8a137bcc27681ff191d72e928652383c02192649a70484f32d2983041485",
+      "outcome": null,
+      "production_activation": false,
+      "qualification": "HOLD_NO_GO",
+      "requested_cancellation": "BeforeProof",
+      "schema": "trnm-w1-node-adapter-exercise-v1",
+      "work_starts_spent": 1
+    }
+  },
+  {
+    "case": "BeforeNodeAdmission",
+    "exercise": {
+      "active_before": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+      "error": "REQUEST_CANCELLED:BeforeNodeAdmission",
+      "generation_before": 0,
+      "native_observation": {
+        "accepted_task": null,
+        "active_chain_member": false,
+        "active_depth": null,
+        "active_membership_sql_budget": 1024,
+        "active_membership_sql_lookups": null,
+        "active_tip": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+        "active_tip_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "active_tip_height": 0,
+        "active_work_depth_hex": null,
+        "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+        "block_chainwork_hex": null,
+        "block_height": null,
+        "confirmation_authority": false,
+        "execution_authority": false,
+        "finality_authority": false,
+        "generation": 0,
+        "global_absence_authority": false,
+        "local_target_only": true,
+        "production_activation": false,
+        "schema": "pon-native-exact-packet-observation-v3",
+        "stored_exact": false
+      },
+      "native_observation_error": null,
+      "next_work_start_refused": true,
+      "node_opened": true,
+      "operation_directory": "/home/qian-qi/work/w1-r4-evidence-f16ac5/node-independent-controls-v1/case-BeforeNodeAdmission/bundles/644b8a137bcc27681ff191d72e928652383c02192649a70484f32d2983041485",
+      "outcome": null,
+      "production_activation": false,
+      "qualification": "HOLD_NO_GO",
+      "requested_cancellation": "BeforeNodeAdmission",
+      "schema": "trnm-w1-node-adapter-exercise-v1",
+      "work_starts_spent": 1
+    },
+    "cold_reopen": {
+      "admission_performed": false,
+      "both_real_proofs_reverified": true,
+      "native_observation": {
+        "accepted_task": null,
+        "active_chain_member": false,
+        "active_depth": null,
+        "active_membership_sql_budget": 1024,
+        "active_membership_sql_lookups": null,
+        "active_tip": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+        "active_tip_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "active_tip_height": 0,
+        "active_work_depth_hex": null,
+        "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+        "block_chainwork_hex": null,
+        "block_height": null,
+        "confirmation_authority": false,
+        "execution_authority": false,
+        "finality_authority": false,
+        "generation": 0,
+        "global_absence_authority": false,
+        "local_target_only": true,
+        "production_activation": false,
+        "schema": "pon-native-exact-packet-observation-v3",
+        "stored_exact": false
+      },
+      "operation": "644b8a137bcc27681ff191d72e928652383c02192649a70484f32d2983041485",
+      "production_activation": false,
+      "proof_phases": [
+        {
+          "stage": "sha_independent_preprocessing",
+          "wall_seconds": 0.18931435
+        },
+        {
+          "stage": "sha_proof_verification",
+          "wall_seconds": 0.224318689
+        },
+        {
+          "stage": "arithmetic_independent_preprocessing",
+          "wall_seconds": 0.51085748
+        },
+        {
+          "stage": "arithmetic_proof_verification",
+          "wall_seconds": 0.046618988
+        }
+      ],
+      "qualification": "HOLD_NO_GO",
+      "schema": "trnm-w1-node-adapter-reopen-v1"
+    }
+  },
+  {
+    "case": "NodeCommitted",
+    "exercise": {
+      "active_before": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+      "error": null,
+      "generation_before": 0,
+      "native_observation": {
+        "accepted_task": null,
+        "active_chain_member": false,
+        "active_depth": null,
+        "active_membership_sql_budget": 1024,
+        "active_membership_sql_lookups": 3,
+        "active_tip": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+        "active_tip_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "active_tip_height": 0,
+        "active_work_depth_hex": null,
+        "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+        "block_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+        "block_height": 1,
+        "confirmation_authority": false,
+        "execution_authority": false,
+        "finality_authority": false,
+        "generation": 0,
+        "global_absence_authority": false,
+        "local_target_only": true,
+        "production_activation": false,
+        "schema": "pon-native-exact-packet-observation-v3",
+        "stored_exact": true
+      },
+      "native_observation_error": null,
+      "next_work_start_refused": true,
+      "node_opened": true,
+      "operation_directory": "/home/qian-qi/work/w1-r4-evidence-f16ac5/node-independent-controls-v1/case-NodeCommitted/bundles/644b8a137bcc27681ff191d72e928652383c02192649a70484f32d2983041485",
+      "outcome": {
+        "activation_error": null,
+        "activation_requested": true,
+        "active_before": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+        "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+        "both_real_proofs_verified": true,
+        "generation_before": 0,
+        "late_cancellation": "REQUEST_CANCELLED:NodeCommitted",
+        "native_admission_path_invoked": true,
+        "native_admission_seconds": 0.016934369,
+        "native_admitted": true,
+        "native_observation": {
+          "accepted_task": null,
+          "active_chain_member": false,
+          "active_depth": null,
+          "active_membership_sql_budget": 1024,
+          "active_membership_sql_lookups": 3,
+          "active_tip": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+          "active_tip_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "active_tip_height": 0,
+          "active_work_depth_hex": null,
+          "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+          "block_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+          "block_height": 1,
+          "confirmation_authority": false,
+          "execution_authority": false,
+          "finality_authority": false,
+          "generation": 0,
+          "global_absence_authority": false,
+          "local_target_only": true,
+          "production_activation": false,
+          "schema": "pon-native-exact-packet-observation-v3",
+          "stored_exact": true
+        },
+        "native_observation_error": null,
+        "native_work_policy": "fresh packets execute native W1; exact duplicates reuse original admitted state",
+        "operation": "644b8a137bcc27681ff191d72e928652383c02192649a70484f32d2983041485",
+        "production_activation": false,
+        "profile": "w1-pnh1-native-node-scheduled-p3-research-v1",
+        "proof_phases": [
+          {
+            "stage": "sha_independent_preprocessing",
+            "wall_seconds": 0.202515058
+          },
+          {
+            "stage": "sha_proof_verification",
+            "wall_seconds": 0.23228783
+          },
+          {
+            "stage": "arithmetic_independent_preprocessing",
+            "wall_seconds": 0.537815289
+          },
+          {
+            "stage": "arithmetic_proof_verification",
+            "wall_seconds": 0.026678411
+          }
+        ],
+        "qualification": "HOLD_NO_GO",
+        "schema": "trnm-w1-node-adapter-admission-v2"
+      },
+      "production_activation": false,
+      "qualification": "HOLD_NO_GO",
+      "requested_cancellation": "NodeCommitted",
+      "schema": "trnm-w1-node-adapter-exercise-v1",
+      "work_starts_spent": 1
+    },
+    "cold_reopen": {
+      "admission_performed": false,
+      "both_real_proofs_reverified": true,
+      "native_observation": {
+        "accepted_task": null,
+        "active_chain_member": true,
+        "active_depth": 0,
+        "active_membership_sql_budget": 1024,
+        "active_membership_sql_lookups": 4,
+        "active_tip": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+        "active_tip_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+        "active_tip_height": 1,
+        "active_work_depth_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+        "block_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+        "block_height": 1,
+        "confirmation_authority": false,
+        "execution_authority": false,
+        "finality_authority": false,
+        "generation": 1,
+        "global_absence_authority": false,
+        "local_target_only": true,
+        "production_activation": false,
+        "schema": "pon-native-exact-packet-observation-v3",
+        "stored_exact": true
+      },
+      "operation": "644b8a137bcc27681ff191d72e928652383c02192649a70484f32d2983041485",
+      "production_activation": false,
+      "proof_phases": [
+        {
+          "stage": "sha_independent_preprocessing",
+          "wall_seconds": 0.191270203
+        },
+        {
+          "stage": "sha_proof_verification",
+          "wall_seconds": 0.214705966
+        },
+        {
+          "stage": "arithmetic_independent_preprocessing",
+          "wall_seconds": 0.532025761
+        },
+        {
+          "stage": "arithmetic_proof_verification",
+          "wall_seconds": 0.05284782
+        }
+      ],
+      "qualification": "HOLD_NO_GO",
+      "schema": "trnm-w1-node-adapter-reopen-v1"
+    }
+  },
+  {
+    "case": "BeforeActivation",
+    "exercise": {
+      "active_before": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+      "error": null,
+      "generation_before": 0,
+      "native_observation": {
+        "accepted_task": null,
+        "active_chain_member": false,
+        "active_depth": null,
+        "active_membership_sql_budget": 1024,
+        "active_membership_sql_lookups": 3,
+        "active_tip": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+        "active_tip_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "active_tip_height": 0,
+        "active_work_depth_hex": null,
+        "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+        "block_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+        "block_height": 1,
+        "confirmation_authority": false,
+        "execution_authority": false,
+        "finality_authority": false,
+        "generation": 0,
+        "global_absence_authority": false,
+        "local_target_only": true,
+        "production_activation": false,
+        "schema": "pon-native-exact-packet-observation-v3",
+        "stored_exact": true
+      },
+      "native_observation_error": null,
+      "next_work_start_refused": true,
+      "node_opened": true,
+      "operation_directory": "/home/qian-qi/work/w1-r4-evidence-f16ac5/node-independent-controls-v1/case-BeforeActivation/bundles/644b8a137bcc27681ff191d72e928652383c02192649a70484f32d2983041485",
+      "outcome": {
+        "activation_error": "REQUEST_CANCELLED:BeforeActivation",
+        "activation_requested": true,
+        "active_before": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+        "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+        "both_real_proofs_verified": true,
+        "generation_before": 0,
+        "late_cancellation": null,
+        "native_admission_path_invoked": true,
+        "native_admission_seconds": 0.018863235,
+        "native_admitted": true,
+        "native_observation": {
+          "accepted_task": null,
+          "active_chain_member": false,
+          "active_depth": null,
+          "active_membership_sql_budget": 1024,
+          "active_membership_sql_lookups": 3,
+          "active_tip": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+          "active_tip_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "active_tip_height": 0,
+          "active_work_depth_hex": null,
+          "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+          "block_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+          "block_height": 1,
+          "confirmation_authority": false,
+          "execution_authority": false,
+          "finality_authority": false,
+          "generation": 0,
+          "global_absence_authority": false,
+          "local_target_only": true,
+          "production_activation": false,
+          "schema": "pon-native-exact-packet-observation-v3",
+          "stored_exact": true
+        },
+        "native_observation_error": null,
+        "native_work_policy": "fresh packets execute native W1; exact duplicates reuse original admitted state",
+        "operation": "644b8a137bcc27681ff191d72e928652383c02192649a70484f32d2983041485",
+        "production_activation": false,
+        "profile": "w1-pnh1-native-node-scheduled-p3-research-v1",
+        "proof_phases": [
+          {
+            "stage": "sha_independent_preprocessing",
+            "wall_seconds": 0.195802966
+          },
+          {
+            "stage": "sha_proof_verification",
+            "wall_seconds": 0.220230502
+          },
+          {
+            "stage": "arithmetic_independent_preprocessing",
+            "wall_seconds": 0.496449059
+          },
+          {
+            "stage": "arithmetic_proof_verification",
+            "wall_seconds": 0.038255004
+          }
+        ],
+        "qualification": "HOLD_NO_GO",
+        "schema": "trnm-w1-node-adapter-admission-v2"
+      },
+      "production_activation": false,
+      "qualification": "HOLD_NO_GO",
+      "requested_cancellation": "BeforeActivation",
+      "schema": "trnm-w1-node-adapter-exercise-v1",
+      "work_starts_spent": 1
+    },
+    "cold_reopen": {
+      "admission_performed": false,
+      "both_real_proofs_reverified": true,
+      "native_observation": {
+        "accepted_task": null,
+        "active_chain_member": true,
+        "active_depth": 0,
+        "active_membership_sql_budget": 1024,
+        "active_membership_sql_lookups": 4,
+        "active_tip": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+        "active_tip_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+        "active_tip_height": 1,
+        "active_work_depth_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+        "block_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+        "block_height": 1,
+        "confirmation_authority": false,
+        "execution_authority": false,
+        "finality_authority": false,
+        "generation": 1,
+        "global_absence_authority": false,
+        "local_target_only": true,
+        "production_activation": false,
+        "schema": "pon-native-exact-packet-observation-v3",
+        "stored_exact": true
+      },
+      "operation": "644b8a137bcc27681ff191d72e928652383c02192649a70484f32d2983041485",
+      "production_activation": false,
+      "proof_phases": [
+        {
+          "stage": "sha_independent_preprocessing",
+          "wall_seconds": 0.193647989
+        },
+        {
+          "stage": "sha_proof_verification",
+          "wall_seconds": 0.227144898
+        },
+        {
+          "stage": "arithmetic_independent_preprocessing",
+          "wall_seconds": 0.507735432
+        },
+        {
+          "stage": "arithmetic_proof_verification",
+          "wall_seconds": 0.046629261
+        }
+      ],
+      "qualification": "HOLD_NO_GO",
+      "schema": "trnm-w1-node-adapter-reopen-v1"
+    }
+  }
+]

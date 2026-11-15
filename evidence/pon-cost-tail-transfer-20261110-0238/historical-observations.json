@@ -1,0 +1,16 @@
+{
+  "cargo_commands_not_launched_reported": 3,
+  "distinct_test_methods_reported": 331,
+  "independent_owner_attestation": false,
+  "kind": "historical tool observations; original local streams unavailable after workspace recreation",
+  "launched_commands_passed_reported": 16,
+  "mac_receipt_sha256": "3e340e76d0ec869438e99b50a22e0c1c343ef108a9fabe83c0a36863d96088a2",
+  "original_local_streams_reconstructed": false,
+  "original_local_streams_recovered": false,
+  "original_publication_key": "cost-tail-transfer-publish-source-20261109-0238",
+  "publication_ack_timed_out": true,
+  "publication_confirmed_by_github_and_original_mac_receipt": true,
+  "repeated_source_integrity_methods": 43,
+  "source": "6fac9cddd982ce4e26197ca23e39490604422370",
+  "test_invocations_reported": 374
+}

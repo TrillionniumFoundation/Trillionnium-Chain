@@ -1,0 +1,36 @@
+{
+  "executed_local_commit": "57b3968753b1d4ae0f6b98e1c7ce8f288e700a97",
+  "git_diff_exit_zero": true,
+  "local_commit_object": "execution-source-commit.txt",
+  "parent": "4e42b620ed1ce306bca6e7d5da3819417aa0f397",
+  "publication_is_another_execution": false,
+  "published_same_tree_commit": "96ae5fb7d599368366672f97e7401e075a65dd85",
+  "schema": "pon-work-expensive-source-publication-v1",
+  "tree": "4240037a0901e70ef05e9edbc17641ee1382ae1f",
+  "whole_tree_after": {
+    "base": null,
+    "candidate": "57b3968753b1d4ae0f6b98e1c7ce8f288e700a97",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "57b3968753b1d4ae0f6b98e1c7ce8f288e700a97",
+    "tested_tree": "4240037a0901e70ef05e9edbc17641ee1382ae1f",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 965604565,
+    "tracked_entries": 10034,
+    "tracked_worktree_verified": true
+  },
+  "whole_tree_before": {
+    "base": null,
+    "candidate": "57b3968753b1d4ae0f6b98e1c7ce8f288e700a97",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "57b3968753b1d4ae0f6b98e1c7ce8f288e700a97",
+    "tested_tree": "4240037a0901e70ef05e9edbc17641ee1382ae1f",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 965604565,
+    "tracked_entries": 10034,
+    "tracked_worktree_verified": true
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "local-component-host-observation-v1",
+  "observed_utc": "2026-11-03T12:47:40.767988+00:00",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "logical_cpus": 9,
+  "affinity_cpus": 9,
+  "cpu_models": [
+    "AMD EPYC 9V74 80-Core Processor"
+  ],
+  "filesystem": "overlayfs",
+  "cpu_quota_observation": "800000 100000",
+  "not_original_public_host": true
+}

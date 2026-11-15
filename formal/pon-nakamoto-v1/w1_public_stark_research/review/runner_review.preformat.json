@@ -1,0 +1,34 @@
+{
+  "schema": "w1-recovered-runner-independent-source-review-v1",
+  "qualification": "HOLD_NO_GO",
+  "scope": "New static review of recovered relation and new runner/config/smoke source; not an execution result",
+  "current_source_sha256": {
+    "round2_w1_stark/src/arith_air.rs": "58b449817db1b1f9575d9ce64651469ecfe6d6e4e165db26be2ecef5bada0882",
+    "round2_w1_stark/src/lib.rs": "556ddf2d7c74c000399c5d190ebcb57d9eb27f8019b143143b5756686376e6c2",
+    "round2_w1_stark/src/main.rs": "c0a825df7362b8119406a9b67d92f3eadbf5b9829c7c5e3cc4c6c649c6c0b99f",
+    "round2_w1_stark/src/proof_config.rs": "4880d81c6548e831714cb9f42dc3d98705b8f3dee07be665744ba49418efe81f",
+    "round2_w1_stark/src/public.rs": "36e04e65fdeb843e309b688d5203a61a164b3e4d795d8361ea4ea925ce2f8e85",
+    "round2_w1_stark/src/sha_air.rs": "ccf2f7b52b0ad2a8de95289a1c4f6c3d56b497cd1da9141eb121f0c6bea5a2a5",
+    "round2_w1_stark/src/sha_plan.rs": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3",
+    "round2_w1_stark/tests/proof_smoke.rs": "b88e678f7b4aa3d6e4fd26f027b8273d54b9d953938053577e0d35dcd54671c3",
+    "round2_w1_stark/Cargo.toml": "e4abafba6867bf145ddd3f5b8f669ce039a93973d80f7eb3096dd3a7ce1c184c",
+    "round2_w1_stark/Cargo.lock": "9e28bf0b3912ca692b0f80842a3f20323b212b2a1c5bbaa85d7503654c069c2e",
+    "round2_w1_stark/run_campaign.py": "3ee33ef097d3b1f63c368726ff02beacb5333729d061e8be5801f0694141c39d"
+  },
+  "source_review_outcome": "NO_STATEMENT_OR_VK_BYPASS_FOUND_IN_REVIEWED_PATH",
+  "new_config_and_smoke_compilation": "PENDING_REMOTE_RESULT",
+  "full_w1_proof_run": "NOT_OBSERVED",
+  "corrections_confirmed_in_source": [
+    "actual commitment digest mutation preserves first cap length",
+    "negative controls require expected error prefixes",
+    "late arithmetic rejection requires SHA/arith phases",
+    "failed verifier phases are timed before errors propagate",
+    "security metadata has an explicit timed phase"
+  ],
+  "remaining_limits": [
+    "complete concrete noninteractive bound unresolved",
+    "PaddingFreeSponge requires fixed hash input lengths; 128-bit collision level is an assumption",
+    "wire caps and panic containment are not worst-case memory/time bounds",
+    "sampled negative costs do not establish a global latest-rejection bound"
+  ]
+}

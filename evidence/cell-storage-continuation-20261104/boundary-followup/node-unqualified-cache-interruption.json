@@ -1,0 +1,16 @@
+{
+  "schema": "trnm-cell-node-unqualified-cache-interruption-v1",
+  "observed_utc": "2026-11-05T01:15:43.263353+00:00",
+  "source_commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+  "status": "INTERRUPTED_UNQUALIFIED_CACHED_BUILD",
+  "tool_exit_code": 130,
+  "cargo_test_harnesses_started": 0,
+  "native_tests_executed": 0,
+  "raw_recorder_status": "running",
+  "raw_recorder_exit_code": null,
+  "raw_receipt_complete_before_after": false,
+  "log_sha256": "cc6a3a4d0fd95f1db174c889bf984cb658ac846cee2a2fcc8d206c6dfa486220",
+  "log_bytes": 1021,
+  "reason": "Observed test-profile SQLite boundary library reused the initial unqualified build-script fingerprint. Stop this own attempt, preserve it, invalidate only this package in own target and rerun original tests with the unchanged corrected Rustup launcher. No qualification guard or test condition is changed.",
+  "qualification_pass_claimed": false
+}

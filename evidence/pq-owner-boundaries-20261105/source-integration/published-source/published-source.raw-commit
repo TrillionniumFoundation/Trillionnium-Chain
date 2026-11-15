@@ -1,0 +1,15 @@
+tree ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855
+parent 160b6f91e39708454d1edd200ab9ef2b4192192e
+parent 14fcbede085b414a9621aef3f288d2b1ca1839ae
+author Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793857557 -0500
+committer Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793857557 -0500
+
+fix(pq): reject unpreserved historical rights at trusted import
+
+Reject unknown source owners, zero-valued quota/release lifecycle records, and missing, null or nonempty current-model metadata before pinning a trusted PQ migration checkpoint. Retain supported account/task/reward projection and existing nonzero-liability rejection.
+
+Preserve all concurrent Cell, Growth, continuity, ingress, release/checkpoint and research work through 160b6f9. Reconcile only the two repaired source pins and retain every shared development-plan entry. Include original red/green logs and exact source identities.
+
+The reachable tested parent 14fcbede retains its actual 246 passed / 0 failed / 8 ignored M06 result, strict Clippy and formatting checks. The later combined code tree has separate source-only checks; no new native qualification is claimed. Research outcomes remain bound to their original inputs.
+
+HOLD: complete deployment binaries, root custody, full rights retirement, external effect monotonicity, complete QROM/quantum-work reasoning, original WAN/capacity acceptance and activation remain open.

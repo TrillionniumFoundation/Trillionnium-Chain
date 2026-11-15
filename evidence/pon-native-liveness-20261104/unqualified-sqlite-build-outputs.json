@@ -1,0 +1,7 @@
+[
+  {
+    "path": "/workspace/scratch/e537ad232c79/target/debug/build/trnm-sqlite-io-boundary-982669bcdc0605d4/output",
+    "sha256": "66fa1a473d34e8f99c0b9dbc50f22123ed0d49245327c25c6e2a007f8de9e3f0",
+    "output": "cargo:rustc-check-cfg=cfg(trnm_sqlite_layout_witness)\ncargo:rerun-if-changed=build.rs\ncargo:rerun-if-changed=build_loader_paths.rs\ncargo:rerun-if-changed=unix_layout_witness.c\ncargo:rerun-if-env-changed=DEP_SQLITE3_INCLUDE\ncargo:rerun-if-env-changed=HOST\ncargo:rerun-if-env-changed=TARGET\ncargo:warning=trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete\ncargo:rustc-env=TRNM_SQLITE3_UNQUALIFIED_REASON=normal Cargo loader directory set incomplete\n"
+  }
+]

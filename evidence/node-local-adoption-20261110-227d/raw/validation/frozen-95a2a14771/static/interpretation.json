@@ -1,0 +1,29 @@
+{
+  "all_static_checks_passed": false,
+  "cargo_build_test_clippy_executed": false,
+  "cargo_metadata_packages": 177,
+  "cargo_workspace_members": 26,
+  "earlier_native_or_strict_clippy_failures_overridden": false,
+  "file_sha256_unchanged": true,
+  "formatting_difference": "cell.rs requires the one-line CellAdoptionUseV1/CellResidentVersionV1/CellResidentVersionViewV1 residency re-export before the multi-line residency re-export",
+  "full_tracked_source_guard_runs": 1,
+  "head_unchanged": true,
+  "learning_reader_python_tests": 51,
+  "lock_sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+  "nonzero_commands": [
+    {
+      "exit_code": 1,
+      "name": "cargo-fmt-check"
+    }
+  ],
+  "python_total": 94,
+  "scope": "exact-95a2-static-contracts-not-native-runtime-pass",
+  "sha256_files": 29,
+  "source_commit": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+  "source_integrity_python_tests": 43,
+  "task_changed_files": 18,
+  "tracked_bytes": 2551682835,
+  "tracked_entries": 27867,
+  "tree": "3fba36baa1682fd5b4cbd5e49e07204464c26ed4",
+  "worktree_clean_before_after": true
+}

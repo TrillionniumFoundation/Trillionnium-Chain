@@ -1,0 +1,3 @@
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-data-availability)
+    Finished `release` profile [optimized] target(s) in 2.98s
+     Running unittests examples/cell_sealed_research_next_use_v2.rs (/home/qq/work/chain-cell-four-gates-2bfb-target-c1/release/examples/cell_sealed_research_next_use_v2-33678dec0482139b)

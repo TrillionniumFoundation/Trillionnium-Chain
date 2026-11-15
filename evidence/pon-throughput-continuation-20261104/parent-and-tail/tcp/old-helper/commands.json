@@ -1,0 +1,18 @@
+{
+  "compile": [
+    "rustc",
+    "+1.95.0",
+    "--edition=2021",
+    "old-helper/original-half-close.rs",
+    "-o",
+    "<fresh-output>/original-half-close"
+  ],
+  "historical_function_verified_against_git_object": "40a5ba25e40fd5eda5b04fc1c3811320d438de11:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+  "observed_compile_exit": 0,
+  "observed_environment": "Original run used the existing normal rustup shim through a local environment wrapper; no Cargo target or Node suite was used.",
+  "observed_negative_exit": 101,
+  "run": [
+    "<fresh-output>/original-half-close"
+  ],
+  "scope": "Portable equivalent of the recorded standalone function experiment; not a whole-Node red control."
+}

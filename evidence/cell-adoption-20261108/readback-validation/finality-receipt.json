@@ -1,0 +1,49 @@
+{
+  "schema": "release-finality-local-conformance-v2",
+  "passed": true,
+  "tests": 120,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "duration_seconds": 0.855213887989521,
+  "python": "3.14.4",
+  "cryptography": "46.0.5",
+  "sqlite": "3.46.1",
+  "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.43",
+  "sources": {
+    "formal/release-finality-v2/campaign_gate.py": "915242d079bf3d43f7d18e347e4c32c0a424de3282522a14435b86efa539908a",
+    "formal/release-finality-v2/check_existing_learning_owner.py": "9a00b4c80ac1a94d5232a102ac33e31d7b39523f17499e0b1a090a5589ccc9b4",
+    "formal/release-finality-v2/control_separation.py": "27f7f5a71612d657a9eafd7fd922fbf0d4af286ff3a5c2948c475b049cf4f386",
+    "formal/release-finality-v2/protocol.py": "f91a5e61ce796217a7ea862cfcc8ceb0369a5512280b113b21175fd65618f961",
+    "formal/release-finality-v2/run_conformance.py": "21412e895f1b9ed9ef5147c74e19089774f66ec2b6962c693ac681eac66f360e",
+    "formal/release-finality-v2/test_campaign_gate.py": "9c18970de54e4c905e7a83ff1c83269303196281f2c568963d0e4eaa6e37c8c0",
+    "formal/release-finality-v2/test_control_separation.py": "2636bb1895996ed7769563afd888bf434479b00acbabe7e3503504d288bc5abe",
+    "formal/release-finality-v2/test_learning_control_join.py": "bea663ab6f379842566f03efd9a4b1c93e2ba2da4443caf8bc74950081116727",
+    "formal/release-finality-v2/test_protocol.py": "92eb95463d81a7626bb634a8079eacce90b90aac9206e1cf3704194bcf5034e5",
+    "formal/release-finality-v2/test_strict_bindings.py": "f6ea1f59234f6545f8ceadd2e7732405b35b479b01a128a771b110ad1e91284e",
+    "formal/release-finality-v2/verify_certificate.py": "11a734fb9c3a6931f801a5d4a97ba45aae5b6310b07016d94d0673397d720169",
+    "formal/pon-nakamoto-v1/strict_signature.py": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e"
+  },
+  "vectors": [
+    {
+      "n": 4,
+      "q": 3,
+      "value": "f176746b38ba34d43e50c02f7d9edaff953cef8939e453a9dcaf2d80f59a4ff1",
+      "accepted": true
+    },
+    {
+      "n": 5,
+      "q": 4,
+      "value": "da77c5545cfdd59364ad2c1eb241b2770fe422c7e23e6d934620d1a1dd84435a",
+      "accepted": true
+    }
+  ],
+  "scope": "controlled same-author reference and separate-reader tests",
+  "native_tests_executed": false,
+  "full_checkout_verified": false,
+  "independent_review": false,
+  "physical_power_loss": false,
+  "real_neural_generations": 0,
+  "wan_tps_measured": false,
+  "activation": false
+}

@@ -1,0 +1,424 @@
+{
+  "schema": "pon-frozen-evidence-byte-verification-v1",
+  "result": "PASS",
+  "started_utc": "2026-11-01T17:48:54.877124+00:00",
+  "script": {
+    "name": "verify_evidence.py",
+    "bytes": 25378,
+    "sha256": "ee96dd6aebf2817762831393d687f3b650c93545a3ea18ddf6f17f7d8a1c68b6"
+  },
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "read_chunk_bytes": 1048576,
+  "archive_extraction_performed": false,
+  "temporary_archive_reassembly_bytes": 0,
+  "native_execution_performed": false,
+  "semantic_work_or_service_qualification": false,
+  "receipt_excluded_from_its_own_hashes": true,
+  "sections": {
+    "hosted-cost": {
+      "result": "PASS",
+      "index_sha256": "4565022514441340b0ab5b1b2a6c97860a9d94813f9aa58ee3fb3d3434cf1c39",
+      "saved_api_sha256": "4fc8da495ff5dd9e7a6a777e979450eee035df3782cde40dcd816365d1256a24",
+      "archives": [
+        {
+          "artifact_id": 13093136677,
+          "artifact_name": "w1-false-trace-head-arm64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1",
+          "archive_name": "13093136677.tar.xz",
+          "archive_bytes": 897420,
+          "archive_sha256": "decbf18ed9695234457b6c8e910563925b8244101c2a5099663ff50cd9c723e2",
+          "parts_verified": 1,
+          "part_paths_in_concatenation_order": [
+            "13093136677.tar.xz"
+          ],
+          "original_zip_metadata_matches_saved_api": true,
+          "original_zip_container_reverified": false,
+          "regular_members": 40,
+          "uncompressed_bytes": 62562561,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        },
+        {
+          "artifact_id": 13093301643,
+          "artifact_name": "w1-legal-strategy-v2-prospective-merge-x64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1",
+          "archive_name": "13093301643.tar.xz",
+          "archive_bytes": 35123028,
+          "archive_sha256": "a4cd0a5a7437a03526e6c322005462593119b0f9f2851c2f5c7cf25dabf774d4",
+          "parts_verified": 5,
+          "part_paths_in_concatenation_order": [
+            "13093301643.tar.xz.part01",
+            "13093301643.tar.xz.part02",
+            "13093301643.tar.xz.part03",
+            "13093301643.tar.xz.part04",
+            "13093301643.tar.xz.part05"
+          ],
+          "original_zip_metadata_matches_saved_api": true,
+          "original_zip_container_reverified": false,
+          "regular_members": 81,
+          "uncompressed_bytes": 699714672,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        },
+        {
+          "artifact_id": 13093396655,
+          "artifact_name": "w1-false-trace-head-x64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1",
+          "archive_name": "13093396655.tar.xz",
+          "archive_bytes": 955060,
+          "archive_sha256": "32b84b9fbc0400bc76baab3e26628edc8bd555f95e416c43728076a315809d0e",
+          "parts_verified": 1,
+          "part_paths_in_concatenation_order": [
+            "13093396655.tar.xz"
+          ],
+          "original_zip_metadata_matches_saved_api": true,
+          "original_zip_container_reverified": false,
+          "regular_members": 40,
+          "uncompressed_bytes": 62527586,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        },
+        {
+          "artifact_id": 13093416862,
+          "artifact_name": "w1-legal-strategy-head-x64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1",
+          "archive_name": "13093416862.tar.xz",
+          "archive_bytes": 9062256,
+          "archive_sha256": "24bc1fa78e55c845e917d52e0f6f2aebff6d722d37edae10b72f244ab61a42ae",
+          "parts_verified": 2,
+          "part_paths_in_concatenation_order": [
+            "13093416862.tar.xz.part01",
+            "13093416862.tar.xz.part02"
+          ],
+          "original_zip_metadata_matches_saved_api": true,
+          "original_zip_container_reverified": false,
+          "regular_members": 81,
+          "uncompressed_bytes": 178416230,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        },
+        {
+          "artifact_id": 13093421854,
+          "artifact_name": "w1-legal-strategy-prospective-merge-arm64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1",
+          "archive_name": "13093421854.tar.xz",
+          "archive_bytes": 9037500,
+          "archive_sha256": "87426f9af7bad74220bb129f51d299a3812119693ef251c09854baea657c64be",
+          "parts_verified": 2,
+          "part_paths_in_concatenation_order": [
+            "13093421854.tar.xz.part01",
+            "13093421854.tar.xz.part02"
+          ],
+          "original_zip_metadata_matches_saved_api": true,
+          "original_zip_container_reverified": false,
+          "regular_members": 81,
+          "uncompressed_bytes": 178416522,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        },
+        {
+          "artifact_id": 13093436001,
+          "artifact_name": "w1-false-trace-prospective-merge-x64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1",
+          "archive_name": "13093436001.tar.xz",
+          "archive_bytes": 955420,
+          "archive_sha256": "73ce99b0b5b057b26c522a055539bf6ddc6b8879e404b1701e69ab9b9a820680",
+          "parts_verified": 1,
+          "part_paths_in_concatenation_order": [
+            "13093436001.tar.xz"
+          ],
+          "original_zip_metadata_matches_saved_api": true,
+          "original_zip_container_reverified": false,
+          "regular_members": 40,
+          "uncompressed_bytes": 62527767,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        },
+        {
+          "artifact_id": 13093480950,
+          "artifact_name": "w1-legal-strategy-head-arm64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1",
+          "archive_name": "13093480950.tar.xz",
+          "archive_bytes": 9037380,
+          "archive_sha256": "54136b0407753470b768b6d488f4511347d0c8939fddcc27edbfe754784a99cd",
+          "parts_verified": 2,
+          "part_paths_in_concatenation_order": [
+            "13093480950.tar.xz.part01",
+            "13093480950.tar.xz.part02"
+          ],
+          "original_zip_metadata_matches_saved_api": true,
+          "original_zip_container_reverified": false,
+          "regular_members": 81,
+          "uncompressed_bytes": 178416336,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        },
+        {
+          "artifact_id": 13093776046,
+          "artifact_name": "w1-legal-strategy-prospective-merge-x64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1",
+          "archive_name": "13093776046.tar.xz",
+          "archive_bytes": 9062448,
+          "archive_sha256": "3eb07c7579099f52dcf1a940569a3825cca21c5b6895e62f47ed9202a45bd5a1",
+          "parts_verified": 2,
+          "part_paths_in_concatenation_order": [
+            "13093776046.tar.xz.part01",
+            "13093776046.tar.xz.part02"
+          ],
+          "original_zip_metadata_matches_saved_api": true,
+          "original_zip_container_reverified": false,
+          "regular_members": 81,
+          "uncompressed_bytes": 178416378,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        },
+        {
+          "artifact_id": 13093880577,
+          "artifact_name": "w1-false-trace-prospective-merge-arm64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1",
+          "archive_name": "13093880577.tar.xz",
+          "archive_bytes": 897348,
+          "archive_sha256": "2c1948e87e141c0a18205b30f8892ac31062a9cb3727fc0fc34e610a1092227f",
+          "parts_verified": 1,
+          "part_paths_in_concatenation_order": [
+            "13093880577.tar.xz"
+          ],
+          "original_zip_metadata_matches_saved_api": true,
+          "original_zip_container_reverified": false,
+          "regular_members": 40,
+          "uncompressed_bytes": 62562709,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        },
+        {
+          "artifact_id": 13093891287,
+          "artifact_name": "w1-legal-strategy-v2-prospective-merge-arm64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1",
+          "archive_name": "13093891287.tar.xz",
+          "archive_bytes": 35104256,
+          "archive_sha256": "babec93649d193ba446a76189aa924bba5c486e3d113bb1ee19b0073e22b4587",
+          "parts_verified": 5,
+          "part_paths_in_concatenation_order": [
+            "13093891287.tar.xz.part01",
+            "13093891287.tar.xz.part02",
+            "13093891287.tar.xz.part03",
+            "13093891287.tar.xz.part04",
+            "13093891287.tar.xz.part05"
+          ],
+          "original_zip_metadata_matches_saved_api": true,
+          "original_zip_container_reverified": false,
+          "regular_members": 81,
+          "uncompressed_bytes": 699752966,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        },
+        {
+          "artifact_id": 13093926141,
+          "artifact_name": "w1-legal-strategy-v2-head-arm64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1",
+          "archive_name": "13093926141.tar.xz",
+          "archive_bytes": 35098464,
+          "archive_sha256": "95bb38cdc3477d0d1fe8d62cc106c520f626069472ef7201185c752fbb86f9a7",
+          "parts_verified": 5,
+          "part_paths_in_concatenation_order": [
+            "13093926141.tar.xz.part01",
+            "13093926141.tar.xz.part02",
+            "13093926141.tar.xz.part03",
+            "13093926141.tar.xz.part04",
+            "13093926141.tar.xz.part05"
+          ],
+          "original_zip_metadata_matches_saved_api": true,
+          "original_zip_container_reverified": false,
+          "regular_members": 81,
+          "uncompressed_bytes": 699752745,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        },
+        {
+          "artifact_id": 13094025188,
+          "artifact_name": "w1-legal-strategy-v2-head-x64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1",
+          "archive_name": "13094025188.tar.xz",
+          "archive_bytes": 35120652,
+          "archive_sha256": "0a6fe770a4cdc23c660a523bc0d01d64fa605c2a610b36a825df93252d213464",
+          "parts_verified": 5,
+          "part_paths_in_concatenation_order": [
+            "13094025188.tar.xz.part01",
+            "13094025188.tar.xz.part02",
+            "13094025188.tar.xz.part03",
+            "13094025188.tar.xz.part04",
+            "13094025188.tar.xz.part05"
+          ],
+          "original_zip_metadata_matches_saved_api": true,
+          "original_zip_container_reverified": false,
+          "regular_members": 81,
+          "uncompressed_bytes": 699714632,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        }
+      ],
+      "scope": "Recompressed TAR/XZ containers and exact indexed members verified. Original cost ZIP bytes are not stored here; only their metadata is compared with the saved API."
+    },
+    "local-v2": {
+      "result": "PASS",
+      "index_sha256": "faccdc9ff653257c44aadb5e1dad21a80ae3f543354ca4e5beaa02d2892a0090",
+      "source": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+      "raw_files_verified": 71,
+      "exact_disjoint_archive_partition": true,
+      "archives": [
+        {
+          "archive": "raw-part-01.tar.xz",
+          "bytes": 4677924,
+          "sha256": "401b117dbc25b5c1eef21b9c999fcef78c85ac1a7d3c2b69ad80124ff92dfb09",
+          "regular_members": 12,
+          "uncompressed_bytes": 138509201,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        },
+        {
+          "archive": "raw-part-02.tar.xz",
+          "bytes": 4464448,
+          "sha256": "447c50e161756a0c4a7b4b9f7c7cd2d0277e53063da434db5325e5e28de572ef",
+          "regular_members": 12,
+          "uncompressed_bytes": 138337485,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        },
+        {
+          "archive": "raw-part-03.tar.xz",
+          "bytes": 4528584,
+          "sha256": "f9fab679ab58f0c71ab2dc42db481e2fbb632d73267b31f28aa97e9a6e2f2be3",
+          "regular_members": 12,
+          "uncompressed_bytes": 138623075,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        },
+        {
+          "archive": "raw-part-04.tar.xz",
+          "bytes": 4503868,
+          "sha256": "f3e5d833d821515497172c76745fae12679deec668b51c15cdb5899444957752",
+          "regular_members": 12,
+          "uncompressed_bytes": 138520210,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        },
+        {
+          "archive": "raw-part-05.tar.xz",
+          "bytes": 4532336,
+          "sha256": "19abc392a51dc91e164c89768ce6a48c9383d19c39f1d73e92ea858030307877",
+          "regular_members": 12,
+          "uncompressed_bytes": 138501088,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        },
+        {
+          "archive": "execution-metadata-and-binary.tar.xz",
+          "bytes": 912092,
+          "sha256": "a7db2319b1003ed0c44c26a3d5e96e9ebc7a75aa23abd472e54ff588078ca946",
+          "regular_members": 11,
+          "uncompressed_bytes": 6398613,
+          "exact_member_set": true,
+          "every_member_sha256_and_size_verified": true,
+          "extracted_files": 0
+        }
+      ]
+    },
+    "cache-benchmark": {
+      "result": "PASS",
+      "index_sha256": "f33646f2dac2f851f007f38bf8e196375109bae8f44056127bea2b5a6d3be9b4",
+      "files_verified": 45,
+      "command_receipts_verified": 10,
+      "archive": {
+        "regular_members": 43,
+        "uncompressed_bytes": 1984251,
+        "exact_member_set": true,
+        "every_member_sha256_and_size_verified": true,
+        "extracted_files": 0
+      }
+    },
+    "hosted-service": {
+      "result": "PASS",
+      "saved_api_sha256": "4fc8da495ff5dd9e7a6a777e979450eee035df3782cde40dcd816365d1256a24",
+      "archives": [
+        {
+          "lane": "head",
+          "artifact_id": 13093520419,
+          "artifact_name": "w1-fresh-service-head-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1",
+          "receipt_sha256": "5760a2945c0c0ddb1ef2e4791bf1371e0658aee0a7927059d7bb16f3e3c90b79",
+          "container": {
+            "path": "13093520419.zip",
+            "bytes": 5092958,
+            "sha256": "9b62f0ed279bd90219cc11a7c1e98ef45a87d4e759c84c51f06d3133c8cfaf68"
+          },
+          "regular_members": 53,
+          "uncompressed_bytes": 25651830,
+          "every_member_payload_crc32_verified": true,
+          "exact_member_set": true,
+          "embedded_manifest_sha256_files_verified": 26,
+          "source_before_and_after": {
+            "base": null,
+            "candidate": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+            "tested_tree": "f52299288ca23426e5186f37fb3a58788e40dbee",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 792504967,
+            "tracked_entries": 6856,
+            "tracked_worktree_verified": true
+          },
+          "binary_sha256": "aabb0484e94022a28bde90107bd5070a376255e7befe18c9d0a5cb86ae1972e3",
+          "extracted_files": 0
+        },
+        {
+          "lane": "prospective-merge",
+          "artifact_id": 13092834210,
+          "artifact_name": "w1-fresh-service-prospective-merge-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1",
+          "receipt_sha256": "29b74865976b93a4b30cca56eedcbba240732adec17bf191738ca378017d91fa",
+          "container": {
+            "path": "13092834210.zip",
+            "bytes": 4980739,
+            "sha256": "6671cf1a9c599965da5a341abf898d1f8362260929fd02a2a99c5b4cfab5b360"
+          },
+          "regular_members": 53,
+          "uncompressed_bytes": 23679860,
+          "every_member_payload_crc32_verified": true,
+          "exact_member_set": true,
+          "embedded_manifest_sha256_files_verified": 26,
+          "source_before_and_after": {
+            "base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+            "candidate": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+            "kind": "prospective-merge",
+            "prospective_merge": "ea43b65fdd91b741b8f9e577061710dd2aebbb2e",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "ea43b65fdd91b741b8f9e577061710dd2aebbb2e",
+            "tested_tree": "f52299288ca23426e5186f37fb3a58788e40dbee",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 792504967,
+            "tracked_entries": 6856,
+            "tracked_worktree_verified": true
+          },
+          "binary_sha256": "aabb0484e94022a28bde90107bd5070a376255e7befe18c9d0a5cb86ae1972e3",
+          "extracted_files": 0
+        }
+      ]
+    },
+    "top-level-index": {
+      "result": "PASS",
+      "present": false,
+      "checked": false,
+      "scope": "All requested existing subindexes verified; complete top-level inventory was not available."
+    }
+  },
+  "failures": [],
+  "complete_top_level_inventory_verified": false,
+  "verification_scope": "requested existing subindexes; top-level completeness not established",
+  "finished_utc": "2026-11-01T17:49:38.558947+00:00",
+  "elapsed_ns": 43686066232
+}

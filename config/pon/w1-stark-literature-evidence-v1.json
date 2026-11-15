@@ -1,0 +1,149 @@
+{
+  "schema": "TRNM-W1-STARK-LITERATURE-EVIDENCE1",
+  "observation_date": "2026-11-09",
+  "repository_baseline": "e2a02f9271b49f146e70806c8a66e161b5973971",
+  "scope": "Primary-source metadata and selected-section review. This manifest grants no implementation, production or consensus qualification.",
+  "sources": [
+    {
+      "id": "cdhz_2025_2166",
+      "title": "How to Prove Post-Quantum Security for Succinct Non-Interactive Reductions",
+      "authors": ["Alessandro Chiesa", "Zijing Di", "Zihan Hu", "Yuxi Zheng"],
+      "landing_url": "https://eprint.iacr.org/2025/2166",
+      "publisher_url": "https://link.springer.com/chapter/10.1007/978-3-032-25336-1_14",
+      "latest_revision_date_on_landing_page": "2026-03-02",
+      "revision_count_on_landing_page": 3,
+      "publisher_publication_date": "2026-05-09",
+      "read_scope_this_review": ["official landing-page revision metadata", "publisher preview notes", "repository historical manuscript and theorem-review records"],
+      "latest_pdf_bytes_retrieved_this_review": false,
+      "latest_pdf_sha256_computed_this_review": null,
+      "ordinary_https_observation": {"url": "https://eprint.iacr.org/archive/2025/2166/1772467621.pdf", "result": "HTTP_403"},
+      "historical_pdf_identity": {
+        "provenance": "Recorded in the repository manifest at repository_baseline; not a new byte retrieval or hash computation.",
+        "path": "evidence/pon-w1-qrom-proof-chain-20261108/manuscript-pdf-manifest.json",
+        "version_id": "20260302:160701",
+        "bytes": 927435,
+        "pages": 102,
+        "sha256": "2cfb88c76732d9f39f4b1943b4aabc0390dd3d17830d91d910c38e16e4bb5a30"
+      },
+      "historical_review_timeline": [
+        {
+          "date": "2026-11-07",
+          "path": "evidence/pon-w1-qrom-formal-bridge-20261107/theorem-review.json",
+          "scope": "Selected January statements from indexed text and conditional arithmetic; latest PDF unavailable then. This was already more than abstract-only reading."
+        },
+        {
+          "date": "2026-11-08",
+          "path": "evidence/pon-w1-qrom-proof-chain-20261108/manuscript-comparison.json",
+          "scope": "Historical record compares complete official January and March PDFs by two text modes and page text/render identities.",
+          "compared_pages": 102,
+          "different_pages": [1, 4, 100, 101, 102],
+          "matching_formal_body_pages": [5, 99],
+          "pinned_version_correspondence_recorded_closed": true,
+          "independent_mathematical_proof_certification": false,
+          "implementation_security_certification": false
+        },
+        {
+          "date": "2026-11-09",
+          "scope": "Official metadata and historical records re-read; fresh archived PDF retrieval returned 403. No new complete-proof review or future-revision equivalence is claimed."
+        }
+      ],
+      "implementation_obligations_retained": ["exact strict and relaxed relations", "full round-by-round knowledge and state-restoration hypotheses", "coherent admissible quantum commitment extraction", "compatible joint oracle and actual transcript", "compiler refinement", "recursive composition with enlarged query domains", "adopted lifetime budget and total error"]
+    },
+    {
+      "id": "dktz_tr26_237_revision_1",
+      "title": "Counterexamples to Beyond-Johnson Proximity Gaps over Binary Fields",
+      "authors": ["Quang Dao", "Scott Duke Kominers", "Justin Thaler", "Kai Zhe Zheng"],
+      "landing_url": "https://eccc.weizmann.ac.il/report/2026/237/",
+      "pdf_url": "https://eccc.weizmann.ac.il/report/2026/237/revision/1/download",
+      "revision": 1,
+      "revision_date": "2026-11-03",
+      "pages_reported_by_document_reader": 68,
+      "revision_note": "Exposition changed; results and theorem numbering retained; deployment comparisons moved to Section 7.",
+      "pdf_text_accessed_via_web_reader": true,
+      "sections_checked": ["Theorem 4.1", "Theorem 4.5", "Theorem 4.7", "Theorem 5.1", "Theorem 6.10", "Section 6.4"],
+      "complete_mathematical_proof_independently_audited": false,
+      "pdf_bytes_retrieved_this_review": false,
+      "pdf_sha256_computed_this_review": null,
+      "ordinary_https_observation": {"result": "ConnectionResetError"},
+      "required_scope": {
+        "scope": "Only the selected binary-domain theorems in sections_checked; not every result in DKTZ revision 1.",
+        "characteristic": 2,
+        "evaluation_domain": "Binary additive domain, or the affine translates explicitly covered by the selected theorem.",
+        "additional_parameters": ["rate", "domain size", "containing subfield", "challenge extension", "agreement threshold", "density requirement for the Gold counting bound"]
+      },
+      "profile_triage_rule": "An independently established odd characteristic excludes only these selected binary-domain theorem hypotheses. Theorem 5.22 also includes constructions over other characteristics and requires a separate mapping to the fixed profiles; it is not excluded by this triage. This does not prove FRI soundness or discharge other literature obligations. Extension degree does not change characteristic.",
+      "fixed_profile_break_demonstrated": false
+    },
+    {
+      "id": "fenzi_sanso_cic_20261026",
+      "title": "Small-field hash-based SNARGs are less sound than conjectured",
+      "authors": ["Giacomo Fenzi", "Antonio Sanso"],
+      "landing_url": "https://cic.iacr.org/p/3/3/44",
+      "pdf_url": "https://cic.iacr.org/p/3/3/44/pdf",
+      "doi": "10.62056/akdkmpxqi",
+      "publication_date": "2026-10-26",
+      "accepted_date": "2026-09-25",
+      "pages_reported_by_document_reader": 18,
+      "earlier_eprint_url": "https://eprint.iacr.org/2025/2197",
+      "earlier_eprint_revision_date_on_landing_page": "2026-04-09",
+      "journal_and_eprint_byte_equivalence_claimed": false,
+      "pdf_text_accessed_via_web_reader": true,
+      "sections_checked": ["Section 1.2", "Corollary 3", "Corollary 4", "Section 4.3", "Table 2"],
+      "complete_mathematical_proof_independently_audited": false,
+      "pdf_bytes_retrieved_this_review": false,
+      "pdf_sha256_computed_this_review": null,
+      "ordinary_https_observation": {"result": "HTTP_403"},
+      "required_scope": {
+        "characteristic_two_required": false,
+        "code": "An extension code of a linear code over a smaller base field; Reed-Solomon evaluation domains in that base field are relevant.",
+        "mapping_obligations": ["base code and extension-code correspondence", "actual evaluation domain", "list-size and distance-preservation bounds", "FRI-specific reduction, rather than only the toy protocol", "actual rate, query count, size, sampling, grinding and compilation"]
+      },
+      "published_risc_zero_table_example": {
+        "source_location": "Table 2, printed page 14",
+        "base_field": "BabyBear",
+        "extension_degree": 4,
+        "rate": {"numerator": 1, "denominator": 4},
+        "queries": 50,
+        "block_length_used_for_table": 2097152,
+        "conjectured_query_phase_bits": "100",
+        "query_phase_bits_from_reported_information_theoretic_lower_bound": "92.5",
+        "reported_loss_bits": "7.5",
+        "grinding_included": false,
+        "is_full_system_or_quantum_security_estimate": false,
+        "is_new_repository_parameter_recomputation": false
+      },
+      "operational_boundary": "The paper does not give an efficient practical attack on a compiled SNARG. Its information-theoretic limitation nevertheless prevents using an unsupported list-size premise as a soundness theorem.",
+      "fixed_profile_security_bits": null
+    },
+    {
+      "id": "kkh_eprint_2026_782",
+      "title": "Failure of proximity gaps close to capacity",
+      "authors": ["Dmitry Krachun", "Stepan Kazanin", "Ulrich Habock"],
+      "landing_url": "https://eprint.iacr.org/2026/782",
+      "revision_date_on_landing_page": "2026-04-24",
+      "read_scope_this_review": "Official abstract and revision metadata only; no full-proof or fixed-profile instantiation claim.",
+      "required_scope": "Prime fields and particular multiplicative-subgroup Reed-Solomon parameter families near capacity; rate-dependent slack of order 1/log(n).",
+      "inference_boundary": "Excluding a characteristic-two counterexample does not exclude this different line of results. Its fixed-family hypotheses must be checked separately.",
+      "fixed_profile_instantiation_completed": false
+    }
+  ],
+  "historical_obligation_accounting": {
+    "implementation_contract": "config/pon/w1-qrom-implementation-current-v2.json",
+    "implementation_contract_roster_count": 15,
+    "later_disposition": "evidence/pon-w1-qrom-proof-chain-20261108/proof-chain-status.json",
+    "later_disposition_roster_count": 15,
+    "pinned_version_subobligations_closed": 1,
+    "other_historical_obligations_remaining": 14,
+    "full_security_obligations_discharged": 0,
+    "interpretation": "The closed pinned-version sub-obligation is real progress. It neither deletes a historical roster entry nor certifies the associated cryptographic implementation obligation."
+  },
+  "qualification": {
+    "qrom_theorem_instantiated": false,
+    "complete_w1_soundness_qualified": false,
+    "post_quantum_soundness_qualified": false,
+    "production_qualified": false,
+    "consensus_admission": false,
+    "unconditional_project_security_bits": null,
+    "whole_lifetime_failure_bound": null
+  }
+}

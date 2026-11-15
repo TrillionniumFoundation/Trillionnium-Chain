@@ -1,0 +1,14 @@
+{
+  "binary": "/home/qq/work/chain-cell-paged-model-34e09-20261110-target/debug/examples/cell_sealed_research_paged_next_use_v1",
+  "binary_sha256": "a4da96eec14fa23d148a86244bec2b31d359ca8328afd0d1febbf31fa75137ad",
+  "external_cleanup_watchdog_seconds": 360,
+  "identity": {
+    "commit": "c57a384abe3edf88e79ca7ecbd0de645df4934c6",
+    "status": "",
+    "tree": "a3e6a456d9dd6ae1c6242413611ea1648f66fe46"
+  },
+  "internal_original_seconds": 300,
+  "output": "/home/qq/work/chain-cell-paged-model-34e09-20261110-operation-01",
+  "source_sha256": "42b7580309ed1b664114116f82c434cedea34958cb6d893cf22bb665a2bb01f5",
+  "started_unix_ns": 1794305506669763440
+}

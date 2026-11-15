@@ -1,0 +1,35 @@
+{
+  "cargo_input_count": 55,
+  "cargo_inputs_unchanged": true,
+  "commands": [
+    {
+      "exit_code": 0,
+      "name": "preflight",
+      "status": "COMPLETED"
+    },
+    {
+      "exit_code": 0,
+      "name": "fmt",
+      "status": "COMPLETED"
+    },
+    {
+      "exit_code": 0,
+      "name": "graph-default",
+      "status": "COMPLETED"
+    },
+    {
+      "exit_code": 0,
+      "name": "graph-all-features",
+      "status": "COMPLETED"
+    },
+    {
+      "exit_code": 0,
+      "name": "graph-fuzz",
+      "status": "COMPLETED"
+    }
+  ],
+  "native_test_result": null,
+  "original_025_cpu_profile_qualified": false,
+  "schema": "trnm-cargo-noncompiling-checks-summary-v1",
+  "strict_clippy_result": null
+}

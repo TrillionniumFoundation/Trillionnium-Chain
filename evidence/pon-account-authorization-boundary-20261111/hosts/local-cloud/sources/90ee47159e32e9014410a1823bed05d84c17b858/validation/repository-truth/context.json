@@ -1,0 +1,74 @@
+{
+  "source_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_tree": "ee45502fb8ef1b7556751c58d8a3804c450f0962",
+  "cwd": "/workspace/scratch/a4188f5c86b5/chain-pq-profile-boundary",
+  "argv": [
+    "bash",
+    "scripts/ci/ci_job.sh",
+    "repository-truth"
+  ],
+  "environment": {
+    "RUSTC": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustc",
+    "RUSTDOC": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustdoc",
+    "CARGO_HOME": "/workspace/scratch/5778f0ffb5d4/cargo-home",
+    "CARGO_TARGET_DIR": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_NET_OFFLINE": "true",
+    "CARGO_TERM_COLOR": "never",
+    "RUST_TEST_THREADS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "OPENSSL_DIR": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install",
+    "OPENSSL_LIB_DIR": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/lib",
+    "OPENSSL_INCLUDE_DIR": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/include",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "602358804a2befa2964a1095be46d0c0b8ec18178961ebc632ad72080e4f49ad",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/lib/ossl-modules",
+    "PATH_prefix": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin",
+    "TRNM_CI_RECEIPT_DIR": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/repository-truth/native-receipts"
+  },
+  "inherited_build_overrides": {
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "RUSTUP_TOOLCHAIN": null,
+    "CARGO_PROFILE_TEST_DEBUG": null,
+    "CARGO_PROFILE_DEV_DEBUG": null
+  },
+  "provider_files": [
+    {
+      "path": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/bin/openssl",
+      "relative_path": "bin/openssl",
+      "bytes": 8839432,
+      "sha256": "602358804a2befa2964a1095be46d0c0b8ec18178961ebc632ad72080e4f49ad"
+    },
+    {
+      "path": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/include/openssl/opensslv.h",
+      "relative_path": "include/openssl/opensslv.h",
+      "bytes": 3449,
+      "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+    },
+    {
+      "path": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/include/openssl/configuration.h",
+      "relative_path": "include/openssl/configuration.h",
+      "bytes": 4729,
+      "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+    },
+    {
+      "path": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/lib/libcrypto.a",
+      "relative_path": "lib/libcrypto.a",
+      "bytes": 12103400,
+      "sha256": "ec499d61988d09df156ed06032de58525c4cc89d19c6be9c05e672ec68b05000"
+    },
+    {
+      "path": "/workspace/scratch/5778f0ffb5d4/provider/trnm-pq-provider-3.5.9.UR5uAIng/install/lib/libssl.a",
+      "relative_path": "lib/libssl.a",
+      "bytes": 2073650,
+      "sha256": "ce766975e2748030cdcab09302cae4a2e774130dff9376e42e1bef4f9918a490"
+    }
+  ],
+  "started_utc": "2026-11-11T01:03:13.234895+00:00",
+  "native_result_claimed_before_execution": false
+}

@@ -1,0 +1,14 @@
+   Compiling trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 3m 56s
+     Running unittests src/lib.rs (/home/runner/work/_temp/target-priority/release/deps/trnm_pon_node-10ac2862d4ea8e0a)
+
+running 1 test
+test packet_encoding_tests::bounded_packet_reservation_preserves_bytes_and_first_error ... ok
+
+successes:
+
+successes:
+    packet_encoding_tests::bounded_packet_reservation_preserves_bytes_and_first_error
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1185 filtered out; finished in 0.06s
+

@@ -1,0 +1,10 @@
+{
+  "job_id": "1a1be292587-138b0-8e2",
+  "execution_program": "/usr/bin/python3",
+  "arguments": [
+    "-c",
+    "import subprocess,json,os\nenv=dict(os.environ);env[\"PYTHONDONTWRITEBYTECODE\"]=\"1\"\nfor command in [[\"bash\",\"scripts/project-preflight.sh\"],[\"rg\",\"-n\",\"check_inline_source_pins|inline source pin\",\"scripts\",\"docs\"],[\"rg\",\"-n\",\"git hash-object|sha256sum|b3sum\",\"\\.github/workflows\"]]:\n p=subprocess.run(command,text=True,capture_output=True,env=env)\n print(json.dumps({\"command\":command,\"exit_code\":p.returncode,\"stdout\":p.stdout,\"stderr\":p.stderr}))\n"
+  ],
+  "cwd": "/home/qian-qi/work/chain-time-credit-20261108-qf01",
+  "idempotency_key": null
+}

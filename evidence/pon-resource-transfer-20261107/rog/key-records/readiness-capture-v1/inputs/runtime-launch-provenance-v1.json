@@ -1,0 +1,529 @@
+{
+  "schema": "rog-runtime-launch-provenance-v1",
+  "source_sha": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+  "environment_scope": "Only explicit task-safe executable/provider/path/toolchain values; no inherited environment dump or credential values.",
+  "first_validation_preserved": {
+    "job": "1a1b67f0398-12894-4a0",
+    "directory": "validation-exact-rog",
+    "status": "24/24 PASS with SQLite UNQUALIFIED warnings",
+    "separately_archived_by": "budget_native"
+  },
+  "canonical_validation": {
+    "job": "1a1b687b49a-12894-4da",
+    "command": {
+      "host": "rog",
+      "executable": "/home/qian-qi/.cargo/bin/rustup",
+      "args": [
+        "run",
+        "1.95.0",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin/python",
+        "-B",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/repo/formal/pon-nakamoto-v1/experiments/validate_grouped_fresh_work_v0.py",
+        "--repo",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/repo",
+        "--source-sha",
+        "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+        "--out",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/validation-canonical-v1",
+        "--runner",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/pon_routed_int257_grouped",
+        "--fresh-runner",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_fresh_admission_v0",
+        "--authority-runner",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_verification_authority_v0",
+        "--fuzz-cargo-home",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-fuzz"
+      ],
+      "cwd": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/repo",
+      "env": {
+        "PATH": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin:/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/usr/bin:/bin",
+        "CARGO_HOME": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace",
+        "RUSTUP_HOME": "/home/qian-qi/.rustup",
+        "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+        "RUSTFLAGS": "",
+        "CARGO_ENCODED_RUSTFLAGS": "",
+        "RUSTC_WRAPPER": "",
+        "RUSTC_WORKSPACE_WRAPPER": "",
+        "OPENSSL_DIR": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install",
+        "OPENSSL_STATIC": "1",
+        "OPENSSL_CONF": "/dev/null",
+        "OPENSSL_MODULES": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/lib/ossl-modules",
+        "TRNM_PQ_OPENSSL": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "253724b900b96c194ce4da7c59b158ea477eba0be651df8c72ab899c65cca93d",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+        "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "4",
+        "RUST_TEST_THREADS": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONNOUSERSITE": "1",
+        "TMPDIR": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/tmp",
+        "GIT_NO_REPLACE_OBJECTS": "1",
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "RUSTUP_TOOLCHAIN": "1.95.0"
+      },
+      "timeout_seconds": 7200,
+      "idempotency_key": "chain-resource-transfer-e95-rog-original-24-gates-canonical-v1"
+    },
+    "status": {
+      "at_unix_ms": 1794063952247,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b687b49a-12894-4da",
+      "launch_nonce": "2dde2c9a6f659ab6da89994b35d662ab",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 25469,
+          "stored": 25469
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "stdout": "{\"command\": [\"bash\", \"scripts/project-preflight.sh\"], \"command_sha256\": \"95b3e503315c692ad8430a97c1f54191248ed54f3f49dc88072d994977f2b8a7\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 0.051619567966554314, \"ended_utc\": \"2026-11-07T15:02:01.067351+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"preflight\", \"log\": \"preflight.log\", \"log_bytes\": 166, \"log_sha256\": \"3257b704aab1fd961970ea1c10998c6953598793ac377482599afed0cad6f56c\", \"ordinal\": 1, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2613948, \"prior_fresh_floor_gate\": true, \"process_group\": 2613948, \"process_started\": true, \"started_utc\": \"2026-11-07T15:02:01.015713+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"cargo\", \"--version\"], \"command_sha256\": \"d8d19f039becbaebb7c8d26c1de4c2453a4030d9bdc4226eb6a7d94ec5cb03f9\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 0.05131382500985637, \"ended_utc\": \"2026-11-07T15:02:01.119774+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"cargo-version\", \"log\": \"cargo-version.log\", \"log_bytes\": 36, \"log_sha256\": \"c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5\", \"ordinal\": 2, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2613953, \"prior_fresh_floor_gate\": true, \"process_group\": 2613953, \"process_started\": true, \"started_utc\": \"2026-11-07T15:02:01.068457+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"rustc\", \"--version\"], \"command_sha256\": \"10aae9243cd6c57a6a10a1181f43f6ac26741a85dfcaa1e3556a159d52d7e3a5\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 0.051331548020243645, \"ended_utc\": \"2026-11-07T15:02:01.172197+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"rustc-version\", \"log\": \"rustc-version.log\", \"log_bytes\": 36, \"log_sha256\": \"f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148\", \"ordinal\": 3, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2613954, \"prior_fresh_floor_gate\": true, \"process_group\": 2613954, \"process_started\": true, \"started_utc\": \"2026-11-07T15:02:01.120864+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/bin/openssl\", \"version\"], \"command_sha256\": \"7c10157132d4c4377f5e65e847b40ded00400ce578bee00d510a906f89a41839\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 0.05155711300903931, \"ended_utc\": \"2026-11-07T15:02:01.224841+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"openssl-version\", \"log\": \"openssl-version.log\", \"log_bytes\": 63, \"log_sha256\": \"ce02e695a9cdef937642d2397d874af20e0dbca21e9f43e0395d6809813a0547\", \"ordinal\": 4, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2613957, \"prior_fresh_floor_gate\": true, \"process_group\": 2613957, \"process_started\": true, \"started_utc\": \"2026-11-07T15:02:01.173281+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"cargo\", \"metadata\", \"--offline\", \"--locked\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"--all-features\", \"--format-version\", \"1\"], \"command_sha256\": \"d3c75a55cdc0d233af45f68e00093e479ded8ca52d2811cf2eecdd029f43d7c3\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 0.10351003502728418, \"ended_utc\": \"2026-11-07T15:02:01.329431+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"locked-workspace-graph\", \"log\": \"locked-workspace-graph.log\", \"log_bytes\": 885189, \"log_sha256\": \"2ba0dfd902c75f7606f0a009a88cd735a945c319423b566a0e7a0030c958150e\", \"ordinal\": 5, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2613958, \"prior_fresh_floor_gate\": true, \"process_group\": 2613958, \"process_started\": true, \"started_utc\": \"2026-11-07T15:02:01.225943+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"cargo\", \"metadata\", \"--offline\", \"--locked\", \"--manifest-path\", \"tests/fuzz/Cargo.toml\", \"--all-features\", \"--format-version\", \"1\"], \"command_sha256\": \"aec4c5a61b6ccc021ee91ce3d3ff46aff7641fb0bdb06426cfd2d6b388b26346\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-fuzz\", \"elapsed_seconds\": 0.1534338400233537, \"ended_utc\": \"2026-11-07T15:02:01.485134+00:00\", \"environment_overrides\": {\"CARGO_HOME\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-fuzz\"}, \"exit_code\": 0, \"label\": \"locked-fuzz-graph\", \"log\": \"locked-fuzz-graph.log\", \"log_bytes\": 743481, \"log_sha256\": \"709df18718dfcec5659c1449079971c1622d58cbd92446f2151ba489b9ac7f6a\", \"ordinal\": 6, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2613968, \"prior_fresh_floor_gate\": true, \"process_group\": 2613968, \"process_started\": true, \"started_utc\": \"2026-11-07T15:02:01.331708+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"cargo\", \"fmt\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"--all\", \"--\", \"--check\"], \"command_sha256\": \"791f7c1a16e8caca1d92e6e9ecb5757379ab653c30ba23397bbfe7b4c2de0de9\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 6.225900096993428, \"ended_utc\": \"2026-11-07T15:02:07.713058+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"format\", \"log\": \"format.log\", \"log_bytes\": 0, \"log_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"ordinal\": 7, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2613977, \"prior_fresh_floor_gate\": true, \"process_group\": 2613977, \"process_started\": true, \"started_utc\": \"2026-11-07T15:02:01.487175+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"built_runner\": {\"bytes\": 771136, \"executable\": true, \"exists\": true, \"path\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/pon_routed_int257_grouped\", \"sha256\": \"2e976435d71e921925f1a1bab08311e050045693ee9a704307168e20baec3cc2\"}, \"command\": [\"cargo\", \"build\", \"--offline\", \"--locked\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-crypto-primitives\", \"--example\", \"pon_routed_int257_grouped\"], \"command_sha256\": \"4695eb04465271de097f6ded282f6f682456f324c2f0fc8b86f1c227728ec919\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 6.921656793972943, \"ended_utc\": \"2026-11-07T15:02:14.636247+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"native-build\", \"log\": \"native-build.log\", \"log_bytes\": 1959, \"log_sha256\": \"194266caf9d8413e012d20f4befa6d255c8f9052b72c6c10e2d2ee49e2306a17\", \"ordinal\": 8, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2614300, \"prior_fresh_floor_gate\": true, \"process_group\": 2614300, \"process_started\": true, \"started_utc\": \"2026-11-07T15:02:07.714599+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"built_runner\": {\"bytes\": 7807888, \"executable\": true, \"exists\": true, \"path\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_fresh_admission_v0\", \"sha256\": \"d76a3d713149f9ed9660a54c5310244677150fed440f8be730076eb25a2bf1ef\"}, \"command\": [\"cargo\", \"build\", \"--offline\", \"--locked\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--example\", \"grouped_fresh_admission_v0\"], \"command_sha256\": \"e620dddfb6c65b75997a1850e9898b9f21c07d5ebd968ca36c4eb0f9ec9d9e2f\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 68.84658771299291, \"ended_utc\": \"2026-11-07T15:03:23.484473+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"fresh-native-build\", \"log\": \"fresh-native-build.log\", \"log_bytes\": 3051, \"log_sha256\": \"e33548706c32bca283a79189391abed8eb8a0c2e38e3141a55252b6f6487c976\", \"ordinal\": 9, \"original_gate\": false, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2615723, \"prior_fresh_floor_gate\": true, \"process_group\": 2615723, \"process_started\": true, \"started_utc\": \"2026-11-07T15:02:14.637900+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"built_runner\": {\"bytes\": 8147856, \"executable\": true, \"exists\": true, \"path\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_verification_authority_v0\", \"sha256\": \"895c08811f5ddfc99470915d4d6cd236dfea29afa4064daabe044fb9f58963ec\"}, \"command\": [\"cargo\", \"build\", \"--offline\", \"--locked\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--example\", \"grouped_verification_authority_v0\"], \"command_sha256\": \"be9079d79c6aa4d63b7386b1e4c99a9ad0bc87e19712a8182e327293cf27075d\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 1.5063692759722471, \"ended_utc\": \"2026-11-07T15:03:24.996473+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"authority-native-build\", \"log\": \"authority-native-build.log\", \"log_bytes\": 194, \"log_sha256\": \"afedb83890de89198738b2a953c060fd92df6f040ddc0fef119621447f1601e2\", \"ordinal\": 10, \"original_gate\": false, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2618152, \"prior_fresh_floor_gate\": false, \"process_group\": 2618152, \"process_started\": true, \"started_utc\": \"2026-11-07T15:03:23.490101+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin/python\", \"-B\", \"-m\", \"unittest\", \"discover\", \"-s\", \"formal/pon-nakamoto-v1\", \"-p\", \"test_grouped*.py\", \"-v\"], \"command_sha256\": \"bf012f306c3ea5a6a5dcdb517040106bac6ed7a545087146d1d5df2be7567ec9\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 3.4071174719720148, \"ended_utc\": \"2026-11-07T15:03:28.408669+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"grouped-python-and-native\", \"log\": \"grouped-python-and-native.log\", \"log_bytes\": 24362, \"log_sha256\": \"ad7f8acc7ccde89c301af2154c78e1ce371636e098b225ad096d0c4f8a7889bc\", \"ordinal\": 11, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2618234, \"prior_fresh_floor_gate\": true, \"process_group\": 2618234, \"process_started\": true, \"started_utc\": \"2026-11-07T15:03:25.001567+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin/python\", \"-B\", \"-m\", \"unittest\", \"discover\", \"-s\", \"formal/pon-nakamoto-v1\", \"-p\", \"test_work_query_bound.py\", \"-v\"], \"command_sha256\": \"ca4ba08f89c2160c3b4ddfe055654192c5ea9d90b53d5ade320b00d99571c19e\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 0.15429482597392052, \"ended_utc\": \"2026-11-07T15:03:28.564385+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"conditional-query-bound\", \"log\": \"conditional-query-bound.log\", \"log_bytes\": 3353, \"log_sha256\": \"9454b4d276040f6ab20536ba33191a12ebc0b0d5323ccfe45579bf147720b489\", \"ordinal\": 12, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2618830, \"prior_fresh_floor_gate\": true, \"process_group\": 2618830, \"process_started\": true, \"started_utc\": \"2026-11-07T15:03:28.410103+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin/python\", \"-B\", \"-m\", \"unittest\", \"discover\", \"-s\", \"formal/pon-nakamoto-v1\", \"-p\", \"test_fresh_work_query_floor_v0.py\", \"-v\"], \"command_sha256\": \"4332f5eaf0c0c774429660658139b69a92f8e5cde329fedc27da73a1f9936a63\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 0.051978625007905066, \"ended_utc\": \"2026-11-07T15:03:28.617721+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"fresh-query-floor\", \"log\": \"fresh-query-floor.log\", \"log_bytes\": 4912, \"log_sha256\": \"fb6a359b05cabef969cacd638046cfa36c1783d1ea154a0de8cac554f67198ef\", \"ordinal\": 13, \"original_gate\": false, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2618833, \"prior_fresh_floor_gate\": true, \"process_group\": 2618833, \"process_started\": true, \"started_utc\": \"2026-11-07T15:03:28.565753+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin/python\", \"-B\", \"-m\", \"unittest\", \"discover\", \"-s\", \"formal/pon-nakamoto-v1\", \"-p\", \"test_fresh_work_resource_transfer_v0.py\", \"-v\"], \"command_sha256\": \"4c655688a9260302fc04bc9da54fc6b3791c6cbe22efd985973c8927ac22cf02\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 0.1373065389925614, \"ended_utc\": \"2026-11-07T15:03:28.756383+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"fresh-resource-transfer\", \"log\": \"fresh-resource-transfer.log\", \"log_bytes\": 2930, \"log_sha256\": \"4d1d7a9fc540150edf2f8092da19f0bbd6a8df886b3018ff25f66fe7ca3f95a4\", \"ordinal\": 14, \"original_gate\": false, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2618834, \"prior_fresh_floor_gate\": false, \"process_group\": 2618834, \"process_started\": true, \"started_utc\": \"2026-11-07T15:03:28.619092+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"cargo\", \"test\", \"--offline\", \"--locked\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-crypto-primitives\", \"--all-targets\", \"--all-features\"], \"command_sha256\": \"873fa450af6058cde559f5a4650defd7f7a16e4f86b956d32993e452ca57dc75\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 29.50953220104566, \"ended_utc\": \"2026-11-07T15:03:58.267467+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"native-crypto-all-targets\", \"log\": \"native-crypto-all-targets.log\", \"log_bytes\": 33534, \"log_sha256\": \"3e4b89a920b4f0e1da484ba022b7f57ce21b6ce4698d0c09ab613ec5263fc1cb\", \"ordinal\": 15, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2618835, \"prior_fresh_floor_gate\": true, \"process_group\": 2618835, \"process_started\": true, \"started_utc\": \"2026-11-07T15:03:28.757949+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"cargo\", \"test\", \"--offline\", \"--locked\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--all-features\", \"--test\", \"work_header_binding\"], \"command_sha256\": \"60b109435e559943ba966dddcf6d2f1d0217600a89a4c7b6a8cec708c94eb2d9\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 48.1981006040005, \"ended_utc\": \"2026-11-07T15:04:46.467089+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"native-header-binding\", \"log\": \"native-header-binding.log\", \"log_bytes\": 3333, \"log_sha256\": \"68aa0fc90a6e95d7fa39571b125cca53f5a4ce95e5a1c16ce884d51e6da97c02\", \"ordinal\": 16, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2621930, \"prior_fresh_floor_gate\": true, \"process_group\": 2621930, \"process_started\": true, \"started_utc\": \"2026-11-07T15:03:58.268998+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"cargo\", \"test\", \"--offline\", \"--locked\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--all-features\", \"--test\", \"grouped_fresh_admission_v0\"], \"command_sha256\": \"4a9e48a6d282173d2c865efa7f3301835834a1bd53a587e6926b6c0d7c280f86\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 1.9553130560088903, \"ended_utc\": \"2026-11-07T15:04:48.423920+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"native-fresh-admission\", \"log\": \"native-fresh-admission.log\", \"log_bytes\": 1684, \"log_sha256\": \"0e64c01940bad09033221a1b135a9aba68daa61eaa49ff7adeba322a86c5deab\", \"ordinal\": 17, \"original_gate\": false, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2623694, \"prior_fresh_floor_gate\": true, \"process_group\": 2623694, \"process_started\": true, \"started_utc\": \"2026-11-07T15:04:46.468623+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"cargo\", \"test\", \"--offline\", \"--locked\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--all-features\", \"--test\", \"grouped_verification_authority_v0\"], \"command_sha256\": \"8247f98a672dbfb24246362372b1455a026265a7ec14f7f50511429ce03a0299\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 1.554946560994722, \"ended_utc\": \"2026-11-07T15:04:49.980360+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"native-verification-authority\", \"log\": \"native-verification-authority.log\", \"log_bytes\": 1700, \"log_sha256\": \"f42acbc8de72375f1194eb70d4fb0f2c7aecad865d25d6f99e94eddce5a4b356\", \"ordinal\": 18, \"original_gate\": false, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2623771, \"prior_fresh_floor_gate\": false, \"process_group\": 2623771, \"process_started\": true, \"started_utc\": \"2026-11-07T15:04:48.425428+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin/python\", \"-B\", \"scripts/ci/test_ci_source_integrity.py\"], \"command_sha256\": \"283db6f59844cee76f88724085be7e80fafbe70cb02e23c9bef2c2c1f36c642f\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 1.8550980719737709, \"ended_utc\": \"2026-11-07T15:04:51.836909+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"source-integrity-controls\", \"log\": \"source-integrity-controls.log\", \"log_bytes\": 7234, \"log_sha256\": \"eeab3956452dbbccdb5cdaead79a5e3703b0260a5d2b6e0ee9a09a20e1f45a9a\", \"ordinal\": 19, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2623853, \"prior_fresh_floor_gate\": true, \"process_group\": 2623853, \"process_started\": true, \"started_utc\": \"2026-11-07T15:04:49.981818+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin/python\", \"-B\", \"scripts/ci/test_ci_contract.py\"], \"command_sha256\": \"86640f7e3e943e990a7b9bbbc9efd75e8cce3faac6aaa042b5c5af1d059bc26e\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 6.612046616966836, \"ended_utc\": \"2026-11-07T15:04:58.450306+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"ci-contract-controls\", \"log\": \"ci-contract-controls.log\", \"log_bytes\": 17246, \"log_sha256\": \"b6a09bb5166f012f262c23bf99e7359fe63ad88af4b55a9fa1aeb9dd17bf0d00\", \"ordinal\": 20, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2624917, \"prior_fresh_floor_gate\": true, \"process_group\": 2624917, \"process_started\": true, \"started_utc\": \"2026-11-07T15:04:51.838277+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin/python\", \"-B\", \"scripts/refresh_distributed_source_inventory.py\", \"--check\"], \"command_sha256\": \"d2dab7a781cd586cbd5197099041d59d4104be6482a5ec4a512bd9ac84073c1e\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 0.05214355996577069, \"ended_utc\": \"2026-11-07T15:04:58.504011+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"source-inventory\", \"log\": \"source-inventory.log\", \"log_bytes\": 35, \"log_sha256\": \"8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a\", \"ordinal\": 21, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2625453, \"prior_fresh_floor_gate\": true, \"process_group\": 2625453, \"process_started\": true, \"started_utc\": \"2026-11-07T15:04:58.451878+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin/python\", \"-B\", \"scripts/ci/check_repository.py\"], \"command_sha256\": \"afa8c984192c503a7ef3928560535f5448f0957a6a7aa90d97cd18a9dc5f4f90\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 26.896022037020884, \"ended_utc\": \"2026-11-07T15:05:25.401277+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"repository-and-links\", \"log\": \"repository-and-links.log\", \"log_bytes\": 307, \"log_sha256\": \"336d77de176564fb322f92af35b408027bcb3a7649031f7e7e4ac33f29e09b33\", \"ordinal\": 22, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2625468, \"prior_fresh_floor_gate\": true, \"process_group\": 2625468, \"process_started\": true, \"started_utc\": \"2026-11-07T15:04:58.505271+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"cargo\", \"clippy\", \"--offline\", \"--locked\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"--workspace\", \"--all-targets\", \"--all-features\", \"--\", \"-D\", \"warnings\"], \"command_sha256\": \"4fc108273cfbc0b25456bbf5c9b60c4acfdc249d36f62810151c3c8d3a8442e8\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 25.65552828501677, \"ended_utc\": \"2026-11-07T15:05:51.058169+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"strict-workspace-clippy\", \"log\": \"strict-workspace-clippy.log\", \"log_bytes\": 6117, \"log_sha256\": \"dabc03b1f2b95d4775baaca68e111ce342df574eb4bcd08be530716b0e4bd059\", \"ordinal\": 23, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2625735, \"prior_fresh_floor_gate\": true, \"process_group\": 2625735, \"process_started\": true, \"started_utc\": \"2026-11-07T15:05:25.402655+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"command\": [\"git\", \"diff\", \"--check\"], \"command_sha256\": \"05aefb213dfe1bd0f276509a9446150ef72f5b6fb829f8894cb1f38be8add42d\", \"effective_cargo_home\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace\", \"elapsed_seconds\": 0.10362880700267851, \"ended_utc\": \"2026-11-07T15:05:51.163081+00:00\", \"environment_overrides\": {}, \"exit_code\": 0, \"label\": \"whitespace\", \"log\": \"whitespace.log\", \"log_bytes\": 0, \"log_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"ordinal\": 24, \"original_gate\": true, \"owned_process_group_cleanup\": \"SIGKILL\", \"pid\": 2628339, \"prior_fresh_floor_gate\": true, \"process_group\": 2628339, \"process_started\": true, \"started_utc\": \"2026-11-07T15:05:51.059467+00:00\", \"status\": \"PASS\", \"timed_out\": false, \"timeout_seconds\": 1800}\n{\"authority_native_runner_sha256\": \"895c08811f5ddfc99470915d4d6cd236dfea29afa4064daabe044fb9f58963ec\", \"chainwork_awarded\": 0, \"commands_failed\": 0, \"commands_not_started\": 0, \"commands_passed\": 24, \"commands_planned\": 24, \"commands_recorded\": 24, \"commands_timed_out\": 0, \"driver_sha256\": \"f32c38ce97270511783051b48b1249c7ce0e93af0c4e728077cdddfaeef64b64\", \"expected_source_sha\": \"e95e2eb9f456a37ec8841def69db79f49fbba7cb\", \"fresh_native_runner_sha256\": \"d76a3d713149f9ed9660a54c5310244677150fed440f8be730076eb25a2bf1ef\", \"full_workspace_unit_tests_executed\": false, \"minimum_legal_cost_proved\": false, \"native_runner_sha256\": \"2e976435d71e921925f1a1bab08311e050045693ee9a704307168e20baec3cc2\", \"original_service_campaign_executed\": false, \"physical_resource_lower_bound_proved\": false, \"pow_qualified\": false, \"production_activation\": false, \"runner_bindings\": {\"artifacts\": {\"authority\": {\"bytes\": 8147856, \"executable\": true, \"exists\": true, \"path\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_verification_authority_v0\", \"sha256\": \"895c08811f5ddfc99470915d4d6cd236dfea29afa4064daabe044fb9f58963ec\"}, \"fresh\": {\"bytes\": 7807888, \"executable\": true, \"exists\": true, \"path\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_fresh_admission_v0\", \"sha256\": \"d76a3d713149f9ed9660a54c5310244677150fed440f8be730076eb25a2bf1ef\"}, \"grouped\": {\"bytes\": 771136, \"executable\": true, \"exists\": true, \"path\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/pon_routed_int257_grouped\", \"sha256\": \"2e976435d71e921925f1a1bab08311e050045693ee9a704307168e20baec3cc2\"}}, \"cargo_target_directory\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1\", \"status\": \"PASS\"}, \"schema\": \"pon-grouped-fresh-local-validation-v1\", \"source\": {\"base\": null, \"candidate\": \"e95e2eb9f456a37ec8841def69db79f49fbba7cb\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"e95e2eb9f456a37ec8841def69db79f49fbba7cb\", \"tested_tree\": \"c815d3710d5f7feffc043aed1aa6e003e03d3a10\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 1038667372, \"tracked_entries\": 10856, \"tracked_worktree_verified\": true}, \"source_failures\": [], \"status\": \"PASS\"}\n"
+  },
+  "rustup_loader_probe": {
+    "audit_recorded": true,
+    "job_id": "1a1b686ffd4-12894-4d5",
+    "stderr": {
+      "eof": true,
+      "next_offset": 0,
+      "offset": 0,
+      "size": 0,
+      "text": ""
+    },
+    "stdout": {
+      "eof": true,
+      "next_offset": 429,
+      "offset": 0,
+      "size": 429,
+      "text": "{\"all_components_canonical\": true, \"cargo_version\": \"cargo 1.95.0 (f2d3ce0bd 2026-03-21)\", \"launcher\": \"rustup run 1.95.0\", \"ld_library_path_components\": [\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\"], \"required_present\": true, \"rustc_version\": \"rustc 1.95.0 (59807616e 2026-04-14)\", \"schema\": \"chain-normal-rustup-loader-environment-v1\", \"source_unchanged\": \"e95e2eb9f456a37ec8841def69db79f49fbba7cb\"}\n"
+    }
+  },
+  "sqlite_review": {
+    "job": "1a1b68dcffc-12894-4ff",
+    "status": {
+      "at_unix_ms": 1794064110598,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b68dcffc-12894-4ff",
+      "launch_nonce": "a0a9b73c21eb82ee765a7d2ec8e2a654",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 954,
+          "stored": 954
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "result": {
+      "audit_recorded": true,
+      "job_id": "1a1b68dcffc-12894-4ff",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 954,
+        "offset": 0,
+        "size": 954,
+        "text": "{\"status\": \"PASS\", \"qualified_outputs\": 3, \"warnings\": [], \"failures\": [], \"runner_recheck\": [{\"name\": \"authority\", \"path\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_verification_authority_v0\", \"bytes\": 8147856, \"sha256\": \"895c08811f5ddfc99470915d4d6cd236dfea29afa4064daabe044fb9f58963ec\"}, {\"name\": \"fresh\", \"path\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_fresh_admission_v0\", \"bytes\": 7807888, \"sha256\": \"d76a3d713149f9ed9660a54c5310244677150fed440f8be730076eb25a2bf1ef\"}, {\"name\": \"grouped\", \"path\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/pon_routed_int257_grouped\", \"bytes\": 771136, \"sha256\": \"2e976435d71e921925f1a1bab08311e050045693ee9a704307168e20baec3cc2\"}], \"receipt\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-review-v1.json\"}\n"
+      }
+    }
+  },
+  "fanout": {
+    "job": "1a1b68ec286-12894-505",
+    "command": {
+      "host": "rog",
+      "executable": "/home/qian-qi/.cargo/bin/rustup",
+      "args": [
+        "run",
+        "1.95.0",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin/python",
+        "-B",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/repo/formal/pon-nakamoto-v1/experiments/grouped_fresh_fanout_v0.py",
+        "--out",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/fanout-exact-rog",
+        "--runner",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_fresh_admission_v0",
+        "--runner-sha256",
+        "d76a3d713149f9ed9660a54c5310244677150fed440f8be730076eb25a2bf1ef",
+        "--source-sha",
+        "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+        "--replay-source"
+      ],
+      "cwd": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/repo",
+      "env": {
+        "PATH": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin:/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/usr/bin:/bin",
+        "CARGO_HOME": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace",
+        "RUSTUP_HOME": "/home/qian-qi/.rustup",
+        "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+        "RUSTFLAGS": "",
+        "CARGO_ENCODED_RUSTFLAGS": "",
+        "RUSTC_WRAPPER": "",
+        "RUSTC_WORKSPACE_WRAPPER": "",
+        "OPENSSL_DIR": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install",
+        "OPENSSL_STATIC": "1",
+        "OPENSSL_CONF": "/dev/null",
+        "OPENSSL_MODULES": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/lib/ossl-modules",
+        "TRNM_PQ_OPENSSL": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "253724b900b96c194ce4da7c59b158ea477eba0be651df8c72ab899c65cca93d",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+        "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "4",
+        "RUST_TEST_THREADS": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONNOUSERSITE": "1",
+        "TMPDIR": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/tmp",
+        "GIT_NO_REPLACE_OBJECTS": "1",
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "RUSTUP_TOOLCHAIN": "1.95.0"
+      },
+      "idempotency_key": "chain-10a9-formal-fanout-e95-rog-v1",
+      "timeout_seconds": 1800
+    },
+    "status": {
+      "at_unix_ms": 1794064180075,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b68ec286-12894-505",
+      "launch_nonce": "9662d4b579f83b446a6bdf99529cbff5",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 159,
+          "stored": 159
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "result": {
+      "audit_recorded": true,
+      "job_id": "1a1b68ec286-12894-505",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 159,
+        "offset": 0,
+        "size": 159,
+        "text": "{\"failures\": [], \"out\": \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/fanout-exact-rog\", \"status\": \"PASS\", \"topologies\": [\"PASS\", \"PASS\", \"PASS\"]}\n"
+      }
+    }
+  },
+  "owner": {
+    "job": "1a1b68fd9f0-12894-50d",
+    "command": {
+      "host": "rog",
+      "executable": "/home/qian-qi/.cargo/bin/rustup",
+      "args": [
+        "run",
+        "1.95.0",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin/python",
+        "-B",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/repo/formal/pon-nakamoto-v1/experiments/grouped_verification_authority_v0.py",
+        "--out",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/owner-exact-rog",
+        "--runner",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_verification_authority_v0",
+        "--source-sha",
+        "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+        "--replay-source"
+      ],
+      "cwd": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/repo",
+      "env": {
+        "PATH": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin:/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/usr/bin:/bin",
+        "CARGO_HOME": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace",
+        "RUSTUP_HOME": "/home/qian-qi/.rustup",
+        "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+        "RUSTFLAGS": "",
+        "CARGO_ENCODED_RUSTFLAGS": "",
+        "RUSTC_WRAPPER": "",
+        "RUSTC_WORKSPACE_WRAPPER": "",
+        "OPENSSL_DIR": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install",
+        "OPENSSL_STATIC": "1",
+        "OPENSSL_CONF": "/dev/null",
+        "OPENSSL_MODULES": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/lib/ossl-modules",
+        "TRNM_PQ_OPENSSL": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "253724b900b96c194ce4da7c59b158ea477eba0be651df8c72ab899c65cca93d",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+        "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "4",
+        "RUST_TEST_THREADS": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONNOUSERSITE": "1",
+        "TMPDIR": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/tmp",
+        "GIT_NO_REPLACE_OBJECTS": "1",
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "RUSTUP_TOOLCHAIN": "1.95.0"
+      },
+      "idempotency_key": "chain-10a9-formal-owner-e95-rog-v1",
+      "timeout_seconds": 1800
+    },
+    "status": {
+      "at_unix_ms": 1794064254120,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b68fd9f0-12894-50d",
+      "launch_nonce": "dbc7f3cda5222dca91c6ffcdac1da128",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 59,
+          "stored": 59
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "result": {
+      "audit_recorded": true,
+      "job_id": "1a1b68fd9f0-12894-50d",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 59,
+        "offset": 0,
+        "size": 59,
+        "text": "{\"chainwork_awarded\": 0, \"failures\": [], \"status\": \"PASS\"}\n"
+      }
+    }
+  },
+  "independent_audit": {
+    "job": "1a1b691171c-12894-517",
+    "command": {
+      "host": "rog",
+      "executable": "/home/qian-qi/.cargo/bin/rustup",
+      "args": [
+        "run",
+        "1.95.0",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin/python",
+        "-B",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/inputs/owner-independent-audit-portable-v2.py",
+        "--repo",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/repo",
+        "--campaign",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/owner-exact-rog",
+        "--out",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/owner-independent-audit-v2.json",
+        "--source-sha",
+        "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+        "--validation-dir",
+        "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/validation-canonical-v1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/repo",
+      "env": {
+        "PATH": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin:/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/usr/bin:/bin",
+        "CARGO_HOME": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace",
+        "RUSTUP_HOME": "/home/qian-qi/.rustup",
+        "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+        "RUSTFLAGS": "",
+        "CARGO_ENCODED_RUSTFLAGS": "",
+        "RUSTC_WRAPPER": "",
+        "RUSTC_WORKSPACE_WRAPPER": "",
+        "OPENSSL_DIR": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install",
+        "OPENSSL_STATIC": "1",
+        "OPENSSL_CONF": "/dev/null",
+        "OPENSSL_MODULES": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/lib/ossl-modules",
+        "TRNM_PQ_OPENSSL": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "253724b900b96c194ce4da7c59b158ea477eba0be651df8c72ab899c65cca93d",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+        "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "4",
+        "RUST_TEST_THREADS": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONNOUSERSITE": "1",
+        "TMPDIR": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/tmp",
+        "GIT_NO_REPLACE_OBJECTS": "1",
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "RUSTUP_TOOLCHAIN": "1.95.0"
+      },
+      "idempotency_key": "chain-10a9-owner-independent-audit-e95-rog-v2",
+      "timeout_seconds": 600
+    },
+    "status": {
+      "at_unix_ms": 1794064325529,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b691171c-12894-517",
+      "launch_nonce": "90975587ac7faa92be1f0facf6f7353f",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 494,
+          "stored": 494
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "result": {
+      "audit_recorded": true,
+      "job_id": "1a1b691171c-12894-517",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 494,
+        "offset": 0,
+        "size": 494,
+        "text": "{\n  \"status\": \"PASS\",\n  \"checks_passed\": 325,\n  \"independent_capsule_signatures\": 2,\n  \"independent_receiver_signatures\": 30,\n  \"independent_owner_response_signatures\": 30,\n  \"post_campaign_audit_chain_step_queries\": 384,\n  \"campaign_native_cpu_seconds_by_role\": {\n    \"owner\": 0.061911999999999995,\n    \"receiver\": 0.014775,\n    \"prepare\": 0.013057\n  },\n  \"startup_direct_business_macs\": 1973760,\n  \"outcomes\": {\n    \"relation_rejected\": 8,\n    \"verified_miss\": 1,\n    \"verified_hit\": 2\n  }\n}\n"
+      }
+    }
+  },
+  "source_preparation_corrections": [
+    "Initial git clone --shared intent and event label did not establish effective shared object borrowing: new repo had no alternates and lacked base9602. The successful source path was ordinary GitHub depth-1 exact-base fetch, SHA-verified parent/source bundles, then exact e95 checkout.",
+    "Old shallow promisor repo could report historical 9fed commit but lacked a required blob. The GIT_NO_LAZY_FETCH=1 local fetch failed without changing old repo; the generic corruption wording is not a proven corruption diagnosis. Bounded ordinary GitHub exact9fed fetch then supplied full source material.",
+    "The first direct-toolchain cargo 24-gate PASS is preserved with SQLite loader UNQUALIFIED observations. Normal rustup run 1.95.0 supplied the genuine canonical sysroot/lib loader path for the complete original 24-gate rerun in a new target. No qualification guard or source was changed.",
+    "Both official remote campaign runs are independent budgets and observations from root's earlier local campaign; counts must not be pooled as one K. The independent audit's 384 step queries are additional audit work.",
+    "All source, task and authority keys used in experiments are public controlled fixtures. Independent external demand/operators, global public-network cap and minimum neural/physical resource cost remain unproved. Chainwork 0; no activation."
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "scripts/test_cell_learning_scope_join.py",
+    "-v"
+  ],
+  "elapsed_seconds": 3.266972524999801,
+  "exit_code": 0,
+  "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-4668fd87f1/static/learning-scope.log",
+  "log_sha256": "7faa5053afe3bb1f19cab42158b5fa958c9e4ebfb498067db72cea38dbb6c720",
+  "name": "learning-scope",
+  "started_utc": "2026-11-11T00:51:51.143745+00:00",
+  "tests": 13
+}

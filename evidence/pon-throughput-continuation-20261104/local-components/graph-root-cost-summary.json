@@ -1,0 +1,117 @@
+{
+  "schema": "pon-native-root-digest-cost-summary-v1",
+  "raw_sha256": "860da28d8439b50919f78640dad97a438b3e2fdca39190b8f119d8774b0653bf",
+  "raw_bytes": 97507,
+  "raw_records": 413,
+  "root_calculations": 408,
+  "compiled_source_matches_all_four_current_files": true,
+  "debug_assertions": true,
+  "source": {
+    "prototype_sha256": "0569202aef2d858c9ed7d85473cb4d084a5616137655f31f67e73b7cc6432078",
+    "native_store_sha256": "08528bfeee465e653f48b84492bfe2aecb1dcfe7cd1bde917c07fde710a93ea0",
+    "digest_builder_sha256": "c9533dc8a42b320fa2547c3372490366f2eb01e4cf494d992f2147db708fe080",
+    "test_source_sha256": "c41936fbc7d4b4e9fbc562eab55faa3eba9bb3edd964277c7ea8d46a630d8b84"
+  },
+  "scope": "same complete current-account math and exact hash/cache grammar; excludes account State parsing, SQL graph verification, Host, PQ, full State root, networking and business confirmation",
+  "qualification": "SQLite I/O binary unqualified; pure math only, no SQL/runtime/business claim",
+  "cases": [
+    {
+      "accounts": 1024,
+      "root": "060d9d8f123803c80ed383a26a74bda90839ecf6373f1420bfa88cfcce87a57d",
+      "arms": [
+        {
+          "arm": 0,
+          "label": "record-building-reference",
+          "warm_samples": 100,
+          "cold_elapsed_ms": [
+            40.989797,
+            42.814944
+          ],
+          "warm_wall_ms": {
+            "p50": 1.657644,
+            "p95": 2.150919,
+            "p99": 2.202558,
+            "max": 2.203218
+          },
+          "known_cpu_samples": 100,
+          "warm_cpu_ms": {
+            "p50": 1.656607,
+            "p99": 2.201279
+          }
+        },
+        {
+          "arm": 1,
+          "label": "root-digest",
+          "warm_samples": 100,
+          "cold_elapsed_ms": [
+            41.544816,
+            41.558307
+          ],
+          "warm_wall_ms": {
+            "p50": 0.637343,
+            "p95": 0.804275,
+            "p99": 0.844726,
+            "max": 0.846078
+          },
+          "known_cpu_samples": 100,
+          "warm_cpu_ms": {
+            "p50": 0.636258,
+            "p99": 0.843766
+          }
+        }
+      ],
+      "wall_p50_reduction_percent": 61.5512739768008,
+      "cpu_p50_reduction_percent": 61.59270122606026,
+      "median_paired_wall_ratio": 0.37215309893595006
+    },
+    {
+      "accounts": 9216,
+      "root": "41b627ac6f8ad98bc3a716895f1a8e6e130a0da0f37f64705d3312ecdcbea8d9",
+      "arms": [
+        {
+          "arm": 0,
+          "label": "record-building-reference",
+          "warm_samples": 100,
+          "cold_elapsed_ms": [
+            391.323796,
+            322.291794
+          ],
+          "warm_wall_ms": {
+            "p50": 197.926345,
+            "p95": 216.959985,
+            "p99": 222.76117,
+            "max": 226.131315
+          },
+          "known_cpu_samples": 100,
+          "warm_cpu_ms": {
+            "p50": 197.903389,
+            "p99": 222.754157
+          }
+        },
+        {
+          "arm": 1,
+          "label": "root-digest",
+          "warm_samples": 100,
+          "cold_elapsed_ms": [
+            379.627937,
+            349.817659
+          ],
+          "warm_wall_ms": {
+            "p50": 191.064928,
+            "p95": 211.504973,
+            "p99": 220.779349,
+            "max": 223.584955
+          },
+          "known_cpu_samples": 100,
+          "warm_cpu_ms": {
+            "p50": 191.058805,
+            "p99": 220.723731
+          }
+        }
+      ],
+      "wall_p50_reduction_percent": 3.466651698135481,
+      "cpu_p50_reduction_percent": 3.458548150481644,
+      "median_paired_wall_ratio": 0.9652058940533705
+    }
+  ]
+}

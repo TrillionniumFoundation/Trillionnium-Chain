@@ -1,0 +1,12 @@
+{
+  "actual_canary_trace": false,
+  "alternate_home_code_executed": false,
+  "alternate_launch_exit": 0,
+  "alternate_zip_under_declared_prefix_or_stdlib": false,
+  "declared_inventory_unchanged": true,
+  "declared_launch_exit": 0,
+  "helper_sha256": "650927fe80d3d9b07689261a861b06878cf76488ad4b6571be25dfb5ecebe855",
+  "host_source_sha256": "f793909ab2d4d349e533417118e0d1a0846f1ad5a35977ff18409d375ba29f17",
+  "same_canonical_interpreter": true,
+  "scope": "actual alternate launch-path canary, no Rust guard invocation or model admission"
+}

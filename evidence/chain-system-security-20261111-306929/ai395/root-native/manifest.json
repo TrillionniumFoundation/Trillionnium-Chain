@@ -1,0 +1,55 @@
+{
+  "schema": "trnm-root-native-two-stage-evidence-v1",
+  "source": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+  "tree": "371c3f55de7940e276496efe2008b537ba4d8268",
+  "archives": {
+    "initial": {
+      "file": "root-native-original-observations.tar.gz",
+      "bytes": 17803,
+      "sha256": "7a9b68550e584ac4868e6682ce2269df9d6191e0ac92debb1f7363a56f6982d1",
+      "driver_member": "drivers/root-native-driver.py",
+      "driver_sha256": "d4535f4e9e61192f280d25ccf0341c1543fd4d2fd905644b5692d992e350fc3f"
+    },
+    "full_v4": {
+      "file": "root-v4-full-original-observations.tar.gz",
+      "bytes": 9153,
+      "sha256": "52ad50744d78a873f6b770b975b8abb62c6f9ecd99d183862ee40c20e5cc9d11",
+      "driver_member": "drivers/root-full-v4-driver.py",
+      "driver_sha256": "77f3ba3d3595f49c28d29d86969dc15b355fa07697db35986b3548c0a972d21f"
+    }
+  },
+  "initial_methods": 51,
+  "full_v4_methods": 29,
+  "method_executions": 80,
+  "repeated_methods": 14,
+  "unique_methods": 66,
+  "initial_v4_complete_inventory_field_means_selected_provider14_only": true,
+  "initial_selected_provider_outer_1200_timeout_enforced": false,
+  "complete_original_v4_timeout_seconds_per_target": 1200,
+  "original_v4_runner_sha256": "5487c9904110ffe3662bbeb4b802ee26c56bc6ccad698902d61512404839dfb6",
+  "workspace_all_targets_all_features_strict_clippy_passed": true,
+  "source_entries": 28327,
+  "source_bytes": 2578801275,
+  "provider_preparation_receipt_sha256": "509219f0ebd60c563342a509a9751a98222b44890a28552c8003e751924a9eeb",
+  "provider_cli_sha256": "09362cd9a4f5ef29e9cdd9fe26092a706ffe589f1e52c8c5572bd74df7ccdc1d",
+  "native_qualification_applies_only_to": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+  "known_external_archive_review_references": [
+    {
+      "sha256": "9dcd0931b133db97c86cb7f88ad86bede76e6bd6d00f28c935a669e329228006",
+      "scope": "earlier cloud stream revalidation of initial archive",
+      "original_file_included": false
+    },
+    {
+      "sha256": "4ab0f718c027c326fb06c6bf032aa6cf94e5e4be32be599ef33c75d9856bb50c",
+      "scope": "parent-reported independent initial archive reparse; original cloud file unavailable when staging",
+      "original_file_included": false
+    }
+  ],
+  "six_unique_native_elf_copies_preserved_on_ai395": true,
+  "binary_hashes_recorded_after_execution_not_live_inode_attestation": true,
+  "status": "HOLD",
+  "production_activation": false,
+  "actual_external_effects_verified": false,
+  "independent_custody_verified": false,
+  "native_m15_production_integration_complete": false
+}

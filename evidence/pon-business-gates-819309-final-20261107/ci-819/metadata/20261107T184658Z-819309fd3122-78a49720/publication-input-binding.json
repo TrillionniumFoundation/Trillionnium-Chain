@@ -1,0 +1,11 @@
+{
+  "publication_receipt_source": "/home/qian-qi/chain-throughput-local-admin-20261107/publication-819309f-20261107/receipt.json",
+  "publication_sha256": "da104c7e3a3c7f10682ee59d65fe5fcbbf165664270c07fa7fcc5e49a33b50ae",
+  "publication_head": "819309fd312298e099642e1253b1d4ba07113e98",
+  "publication_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+  "publication_main_before": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "publication_main_after": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "publication_native_pass_claimed": false,
+  "publication_business_pass_claimed": false,
+  "ci_resolver_base_and_merge": "PENDING independent artifact read"
+}

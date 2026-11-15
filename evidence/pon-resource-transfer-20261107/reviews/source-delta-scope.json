@@ -1,0 +1,74 @@
+{
+  "schema": "pon-resource-transfer-source-delta-scope-v0",
+  "base": "37c1f3fe24c88476f39b0bd6e9ed32453bfc4551",
+  "source": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+  "changed_paths": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/development/specs/pon/GROUPED_FRESH_WORK_FLOOR_V0.md",
+    "docs/development/specs/pon/GROUPED_RESOURCE_TRANSFER_V0.md",
+    "formal/pon-nakamoto-v1/experiments/grouped_fresh_fanout_v0.py",
+    "formal/pon-nakamoto-v1/experiments/grouped_verification_authority_v0.py",
+    "formal/pon-nakamoto-v1/experiments/validate_grouped_fresh_work_v0.py",
+    "formal/pon-nakamoto-v1/fresh_work_resource_transfer_v0.py",
+    "formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py",
+    "formal/pon-nakamoto-v1/test_fresh_work_resource_transfer_v0.py",
+    "formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/ci_job.sh",
+    "scripts/ci/test_ci_contract.py",
+    "trillionnium/crates/trnm-pon-node/examples/grouped_verification_authority_v0.rs",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/src/grouped_verification_authority_v0.rs",
+    "trillionnium/crates/trnm-pon-node/src/lib.rs",
+    "trillionnium/crates/trnm-pon-node/tests/grouped_verification_authority_v0.rs"
+  ],
+  "changed_path_count": 18,
+  "retained_source_checks": [
+    {
+      "path": "config/pon/work-profile-v1.json",
+      "same_bytes": true,
+      "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+    },
+    {
+      "path": "config/pon/devnet-v1.json",
+      "same_bytes": true,
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+    },
+    {
+      "path": "config/pon/parameters-v1.json",
+      "exists_at_either_source": false
+    },
+    {
+      "path": "trillionnium/Cargo.toml",
+      "same_bytes": true,
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "same_bytes": true,
+      "sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be"
+    },
+    {
+      "path": "tests/fuzz/Cargo.lock",
+      "same_bytes": true,
+      "sha256": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/grouped_fresh_admission_v0.rs",
+      "same_bytes": true,
+      "sha256": "1497aad78223415b90f86c0562121acfed8b6263b7995ecc4bb9f50ba294a161"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_grouped_fresh_seal_v0.rs",
+      "same_bytes": true,
+      "sha256": "e76b14e338e8de3a4a5dce5f7d420c18418329ef58bc7cc1e58988a703fbadda"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_routed_int257_grouped.rs",
+      "same_bytes": true,
+      "sha256": "3081b617eefd9277540c11b0468865b54ee97c473e438b93a5087cd847e3ddd0"
+    }
+  ],
+  "interpretation": "Source delta and unchanged tracked configuration checks, not proof of production safety or independent authorization",
+  "actual_chainwork_awarded_by_research": 0
+}

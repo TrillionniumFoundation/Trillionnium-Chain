@@ -1,0 +1,22 @@
+{
+  "label": "scope-full-test-pq-research-integration-attempt1",
+  "command": [
+    "python3",
+    "scripts/ci/test_pq_research_integration.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/678905e225be/chain-lifetime",
+  "head_before": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+  "index_diff_sha256_before": "63b13f3bcc64e81084ff393be2d04f179860773eb55129f5bdde51791bb60f5d",
+  "started_utc": "2026-11-09T13:44:33.724919+00:00",
+  "state": "completed",
+  "returncode": 0,
+  "elapsed_seconds": 136.26861077300055,
+  "finished_utc": "2026-11-09T13:46:49.994022+00:00",
+  "head_after": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+  "index_diff_sha256_after": "63b13f3bcc64e81084ff393be2d04f179860773eb55129f5bdde51791bb60f5d",
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_bytes": 7769,
+  "stderr_sha256": "018c19bbf4cc60e8d5cfccd49d9bcf4bc816d53e3c7c11c1b2c693624655169b"
+}

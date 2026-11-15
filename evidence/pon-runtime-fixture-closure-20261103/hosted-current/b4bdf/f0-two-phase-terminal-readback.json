@@ -1,0 +1,3026 @@
+{
+  "schema": "b4bdf-f0-two-phase-terminal-readback-v1",
+  "observed_utc": "2026-11-03T23:00:26.334235+00:00",
+  "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+  "tested_tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+  "run_id": 41732369850,
+  "job_id": 126252721548,
+  "artifact_receipt": {
+    "schema": "artifact-download-digest-check-v1",
+    "observed_utc": "2026-11-03T22:56:50.190763+00:00",
+    "artifact_id": 13277437328,
+    "file_name": "b4bdf-f0-13277437328.zip",
+    "file_id": "file_000000002c0881f5b692ab5e100f7ffc",
+    "metadata": {
+      "id": 13277437328,
+      "name": "pon-fixed-host-root-f0-x64-head-b4bdf142f513081715ecc8d1f9674291e85302cc-1",
+      "size_in_bytes": 16624440,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13277437328",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13277437328/zip",
+      "expired": false,
+      "created_at": "2026-11-03T22:43:56Z",
+      "expires_at": "2026-12-03T22:43:54Z",
+      "updated_at": "2026-11-03T22:43:56Z",
+      "digest": "sha256:f8e353840b8c694e6215edf03a47341889e78687662e1e88a369206c5700ef0e",
+      "workflow_run": {
+        "id": 41732369850,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "b4bdf142f513081715ecc8d1f9674291e85302cc"
+      }
+    },
+    "matched": true,
+    "data_only": true,
+    "executed": false,
+    "actual_bytes": 16624440,
+    "actual_sha256": "f8e353840b8c694e6215edf03a47341889e78687662e1e88a369206c5700ef0e"
+  },
+  "source_before_after": {
+    "base": null,
+    "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+    "tested_tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 884109821,
+    "tracked_entries": 7757,
+    "tracked_worktree_verified": true
+  },
+  "binary": {
+    "build_artifact": "/home/runner/work/_temp/target-fixed-host-root-f0/release/deps/public_v3_multiprocess-64e29df06cf605a6",
+    "bytes": 11570832,
+    "compiler_profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "path": "/home/runner/work/_temp/pon-fixed-host-root-f0-41732369850-1/prepared/public_v3_multiprocess.bin",
+    "sha256": "809fcd2165f5e77a3bf093f78e1b2af63f993302932524f25f29d240d7054249"
+  },
+  "compiler_artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node#0.1.0",
+    "manifest_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "target": {
+      "kind": [
+        "test"
+      ],
+      "crate_types": [
+        "bin"
+      ],
+      "name": "public_v3_multiprocess",
+      "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "edition": "2021",
+      "doc": false,
+      "doctest": false,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": true
+    },
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/runner/work/_temp/target-fixed-host-root-f0/release/deps/public_v3_multiprocess-64e29df06cf605a6"
+    ],
+    "executable": "/home/runner/work/_temp/target-fixed-host-root-f0/release/deps/public_v3_multiprocess-64e29df06cf605a6",
+    "fresh": false
+  },
+  "build": {
+    "command": [
+      "/home/runner/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--jobs",
+      "2",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "public_v3_multiprocess",
+      "--no-run",
+      "--message-format=json"
+    ],
+    "complete_success": true,
+    "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+    "elapsed_ns": 109621852318,
+    "elapsed_seconds": 109.621852318,
+    "error": null,
+    "name": "build",
+    "outer_stage_timeout_seconds": 1800,
+    "returncode": 0,
+    "stderr": "build.stderr.log",
+    "stderr_bytes": 3165,
+    "stderr_sha256": "9d4907f81746071d6a9a97517887fabe3a4a5bcf6fc9e3c8c2285ffed7068cab",
+    "stderr_truncated": false,
+    "stdout": "build.stdout.log",
+    "stdout_bytes": 110638,
+    "stdout_sha256": "bf6bfd85634d4db553966f6119266cbd8812796ec801a2ca031ca8cbab9eaa1a",
+    "stdout_truncated": false
+  },
+  "prepared_sha256": "320257594dc9fbc072d382bae9efdab407bbe5401b4d67c9b5d16880ccc4f357",
+  "native_step": {
+    "command": [
+      "/home/runner/work/_temp/pon-fixed-host-root-f0-41732369850-1/prepared/public_v3_multiprocess.bin",
+      "--exact",
+      "fixed_public_host_root_rejection_and_signed_confirmation_diagnostic",
+      "--ignored",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "complete_success": false,
+    "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+    "elapsed_ns": 73436059125,
+    "elapsed_seconds": 73.436059125,
+    "error": null,
+    "name": "supplement",
+    "outer_stage_timeout_seconds": 540,
+    "returncode": 101,
+    "stderr": "supplement.stderr.log",
+    "stderr_bytes": 374,
+    "stderr_sha256": "38bdbc1ff869f4851bcd6edf9760f79eb23301e654395b30914dbb483a08befe",
+    "stderr_truncated": false,
+    "stdout": "supplement.stdout.log",
+    "stdout_bytes": 296,
+    "stdout_sha256": "153e327a77d67bbbff03dd10efa1a39191ecb5e4c4405fc1108f1f395b8e002e",
+    "stdout_truncated": false
+  },
+  "native_summary": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 24 filtered out; finished in 73.43s",
+  "native_logs": {
+    "stdout": {
+      "member": "execution/supplement.stdout.log",
+      "bytes": 296,
+      "sha256": "153e327a77d67bbbff03dd10efa1a39191ecb5e4c4405fc1108f1f395b8e002e",
+      "text": "\nrunning 1 test\ntest fixed_public_host_root_rejection_and_signed_confirmation_diagnostic ... FAILED\n\nfailures:\n\nfailures:\n    fixed_public_host_root_rejection_and_signed_confirmation_diagnostic\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 24 filtered out; finished in 73.43s\n\n"
+    },
+    "stderr": {
+      "member": "execution/supplement.stderr.log",
+      "bytes": 374,
+      "sha256": "38bdbc1ff869f4851bcd6edf9760f79eb23301e654395b30914dbb483a08befe",
+      "text": "\nthread 'fixed_public_host_root_rejection_and_signed_confirmation_diagnostic' (5256) panicked at crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs:1423:5:\nF0 criteria failed; all raw evidence retained at /home/runner/work/_temp/pon-fixed-host-root-f0-41732369850-1/execution/raw\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n"
+    }
+  },
+  "all_execution_files_verified": [
+    {
+      "member": "execution/controller-live.json",
+      "bytes": 789,
+      "sha256": "1d18a5b84d1ef0d31e020b57a75f864fd029291e6d7e2bf04eadc9d146a52f50"
+    },
+    {
+      "member": "execution/predeclared.json",
+      "bytes": 11325,
+      "sha256": "31bc840ee2d5c5e766d52df03613aa1d1688c8450c85e6ce36c5cb9faf991750"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/controller-resource-after-reap.json",
+      "bytes": 2089,
+      "sha256": "558899000316d2d3ba7f50dce0d5de77e95636356a36b18befe9cf168e9eb63f"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/controller-resource-before-launch.json",
+      "bytes": 2090,
+      "sha256": "0370d90755e454b8a6eb3bf57eadf3a5a5bde26ff22a5567af417ac8cf9cc609"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/child-load-state.log",
+      "bytes": 10,
+      "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/child-result.json",
+      "bytes": 2495,
+      "sha256": "cfa90ecf32abce61905a2bf6bf3a8486bb8112262931524fb46bdae3c499cd49"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/controller-result.json",
+      "bytes": 5959,
+      "sha256": "e9fa534f701150799d50a705a8b1504ca0e409713bad913824508122fb829a1a"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/inside-after.json",
+      "bytes": 1725,
+      "sha256": "39b69cb3f61e311f2c703f1a6d6b6d8ae8132baed0299854edee3972a435141f"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/inside-before.json",
+      "bytes": 1712,
+      "sha256": "0b5353acfe42d841e70aca3aa47ded32118251bebf1f536e3c5867ffecc6c315"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/install-reviewed-unit.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/native.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/native.stdout.txt",
+      "bytes": 168,
+      "sha256": "437cef0c49d0ed92fbab182a189784ee7be5ea1ecc52b773e6fd022f5602f0b0"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/outside-after.json",
+      "bytes": 1727,
+      "sha256": "37bfcd3970227fe76f15bc6447982ac5b9021a7fff286d2892e61bb9726a3802"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/outside-before.json",
+      "bytes": 1686,
+      "sha256": "fc944ec4f031fe3a1800ee146d852b73c63f7361e76d15f741542dd52ed1f413"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/owned-service-live.json",
+      "bytes": 813,
+      "sha256": "c9dfc3394e11aab0d4baa76dc8a3474fc5177b02fe989e4f2721bf5e4716ab42"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/owned-service-manager.log",
+      "bytes": 561,
+      "sha256": "638273229d56705bf9832ce18ead295229f3957c24c5f2d542594268a5ae42b9"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/owned-service.json",
+      "bytes": 1722,
+      "sha256": "816ff403f218528e78b4395cf94300ce188d7e147027299ea5f7eeb6565bc0eb"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/reload.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/start-fixed-parent.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/systemd-run.log",
+      "bytes": 311,
+      "sha256": "6dfcd6cf4be3619debefb85c28165b1183b81dd6dcb97dbf5c70516c8bed115e"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/unprovisioned-parent.json",
+      "bytes": 229,
+      "sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/unprovisioned-parent.log",
+      "bytes": 146,
+      "sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/manager-after.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/manager-after.stdout.log",
+      "bytes": 335,
+      "sha256": "2bd9113352e039e597525600e7c0d8d45c9238d3f2b20b11822752cd2629e3ce"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/manager-after.step.json",
+      "bytes": 912,
+      "sha256": "599b7a1d7521ad309a060ec0defbe9934af246058465e1388db34e81b044d370"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/manager-before.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/manager-before.stdout.log",
+      "bytes": 335,
+      "sha256": "2bd9113352e039e597525600e7c0d8d45c9238d3f2b20b11822752cd2629e3ce"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/manager-before.step.json",
+      "bytes": 915,
+      "sha256": "7411812a997a46464a03bac9d03e8f7fa261c6ffccec3e27071c82041579df05"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/result.json",
+      "bytes": 1923,
+      "sha256": "942473b2bbc6025ede8c60ea36d3cbe3212351429febfcf3c8ff4fa9f677aa91"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/phase-launcher.log",
+      "bytes": 90,
+      "sha256": "2176e61c51f52a8fa29d944fecb5285c48d6aa037074bd502ad363333d01addf"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/phase-result.json",
+      "bytes": 2606601,
+      "sha256": "6450ff5aa20b35e0fdf5a71d0dc523dd9597a220d53dbaaa3d60174568711326"
+    },
+    {
+      "member": "execution/raw/baseline-fixed-root-host-control/root-phase-job.json",
+      "bytes": 2889070,
+      "sha256": "d1ed27f10cb7b7b643b971801fa694d4af050e6360e9a455a95caa6dbe4e3ce7"
+    },
+    {
+      "member": "execution/raw/baseline.json",
+      "bytes": 2615584,
+      "sha256": "a09958ffe6c0c59dc4ab7f7867ef8a669ef58746215b4a1b78dca4e489db6b5a"
+    },
+    {
+      "member": "execution/raw/baseline/independent-client/native.sqlite",
+      "bytes": 3506176,
+      "sha256": "dcdcbd6b7711ed9f8eed5d81b2827bb1cd99d12a862c2ab733b8a5a9a871bf63"
+    },
+    {
+      "member": "execution/raw/baseline/independent-client/owner.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/raw/baseline/receiver/native.sqlite",
+      "bytes": 4317184,
+      "sha256": "001f1cf2e787e020c1841ba182e3d9223ed9d8ed56b345334d9341f554635e89"
+    },
+    {
+      "member": "execution/raw/baseline/receiver/owner.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/raw/baseline/start.json",
+      "bytes": 47,
+      "sha256": "0b611a3a091cbc7cf002b4b1b35e8c7f0a049938ece69e54a6047bbfe3b3b0bf"
+    },
+    {
+      "member": "execution/raw/honest-miner/native.sqlite",
+      "bytes": 5505024,
+      "sha256": "e1ab6b2ef79151bec8ecf295a68ebac4023933713f5351bb66996626fc477566"
+    },
+    {
+      "member": "execution/raw/honest-miner/owner.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/raw/predeclared-denominators.json",
+      "bytes": 8061,
+      "sha256": "633a84a7a4c9a4ddb499c2abb2877e30926f5e6d854aa4efb4ffad0d85b105ab"
+    },
+    {
+      "member": "execution/raw/preparation.json",
+      "bytes": 3107280,
+      "sha256": "f18ca1fd7f86d554e739715b01e5dfc29ca2e82a18c46bdda4d320bcfc0237ea"
+    },
+    {
+      "member": "execution/raw/report.json",
+      "bytes": 10905698,
+      "sha256": "91cc366eb0b48d3b677f4739b659cd7380a38d6b1eb935169252492b26d3305f"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/controller-resource-after-reap.json",
+      "bytes": 2091,
+      "sha256": "9cbf52a39f94f3d5da9ac527b65bda7b6b06ad0a0cb027668d217f722bae7fd8"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/controller-resource-before-launch.json",
+      "bytes": 2092,
+      "sha256": "34880dc314e5106f445d1eb5c07f8098710c43b841905550de92640f694a83bb"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-00-ack.json",
+      "bytes": 15513,
+      "sha256": "1547c6ace1eae0f98337c8fc4b3340171adc71a858b4c1b191bd13836710136c"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-00.json",
+      "bytes": 68,
+      "sha256": "83c380bc01c4bb40986c531c035dffd3877f3965d54a8824cbadfde1cc6821a5"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-01-ack.json",
+      "bytes": 16385,
+      "sha256": "6f92bab94bb511241aea4dd2b7b509eff7e39c9dd821d6a25ee809347a716033"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-01.json",
+      "bytes": 68,
+      "sha256": "778413907f7fcaf4eed25bf03e2091cbea74ba82d97b5759a82d2e43b8d1dd4b"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-02-ack.json",
+      "bytes": 16505,
+      "sha256": "d9400445865bca39407af6b46cc7fed499aa20e6d2a129b48820670fb47dce3c"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-02.json",
+      "bytes": 68,
+      "sha256": "739ec4752fc57cde21a0676ccbd4cfdbb84af0d27c5a72b25995a8265c463d23"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-03-ack.json",
+      "bytes": 16363,
+      "sha256": "29ee6ede450288402564e5f6f29914ca08ed1f95a37735380e5a6eef9e574254"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-03.json",
+      "bytes": 68,
+      "sha256": "8121c659d5a757654b25d09270692ed3940e93c17694a9065c557a30051acbdc"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-04-ack.json",
+      "bytes": 16038,
+      "sha256": "9dc257d1759d3ea3f58d297fe8309bc9a680f453aa99601784b04326a6fb59ae"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-04.json",
+      "bytes": 68,
+      "sha256": "c9f74f1ae9f66ff41846e47f7d79a5018b7533367b24300849d845e0feafb343"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-05-ack.json",
+      "bytes": 16456,
+      "sha256": "79d54a420237707a6347d06f54b5550a7915afb1e7df27234cb3a35ca0933ec9"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-05.json",
+      "bytes": 68,
+      "sha256": "dc40fe3967b233621171f24d9d2e1eb1f41055bb7beb06a07b3218a3074ef22a"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-06-ack.json",
+      "bytes": 16617,
+      "sha256": "7527a005ea4aba3112a740da4af53ad85027db8976251f2a2c10d6bff999fdfa"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-06.json",
+      "bytes": 68,
+      "sha256": "8d3858f7fbef32b6ab857f6f02cd6cb17a850395e03dcb3a43d001439075f569"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-07-ack.json",
+      "bytes": 16519,
+      "sha256": "c05c628e5e197a7e3aea532ad38da26025e23e5feb9344daa13b40656f3267de"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-07.json",
+      "bytes": 68,
+      "sha256": "e7ee4bc11639c8da7cb36e16e6ca792b31bae18c130e34df22ad0b52158b5465"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-08-ack.json",
+      "bytes": 15851,
+      "sha256": "064a66c976b5f400a8ed04193aacb16f4bfb6b868ccf37d14b6067a66ab031a9"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-08.json",
+      "bytes": 68,
+      "sha256": "5c5e141ac8822b9d875ab05a66dd2d23e159d85529aeb7f5686b11b005f4c0b3"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-09-ack.json",
+      "bytes": 16895,
+      "sha256": "edec6fe8836930b2bd0bf042926aa34f2acfd1d7d9d37c044914699738ce00ab"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-09.json",
+      "bytes": 68,
+      "sha256": "e1113565d31a438e4680f8a772a682ea8ded3093aea59655fca94d0b56223e26"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-10-ack.json",
+      "bytes": 16505,
+      "sha256": "9ce2a0f405c9453f5d47d0c4f68578bd12ad7203e6ed726abee9e91551d63dff"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-10.json",
+      "bytes": 69,
+      "sha256": "7f60dfc4ac3b94d52bf5e28e082d2ab4395e102eb9f85904a429a9d0623bb595"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-11-ack.json",
+      "bytes": 16537,
+      "sha256": "a701ea019699b4c0c8517c0650030406817dacc8d8060d4bb5cb27eb37db0b13"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-11.json",
+      "bytes": 69,
+      "sha256": "3aac42cce4cfad4f9cd5fa872d8a83c91f9a7cbc540eb55beeee25f6a7f91355"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-12-ack.json",
+      "bytes": 15622,
+      "sha256": "83cd231d6edb01e4e92472fa4a2e9cb06cc15b7baafab9e1c3ec7e98acfd1e4f"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-12.json",
+      "bytes": 69,
+      "sha256": "f317b0de03029c8fafe69258fc286e1f4f5e6c953333c67b62d62395450cf7a7"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-13-ack.json",
+      "bytes": 15867,
+      "sha256": "ff19e7df890b4819da183afceac4c5edc7c6c4dbc94b6ca0ddc33a31e9d296bc"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-13.json",
+      "bytes": 69,
+      "sha256": "f31ac62ad7bf90aa3124bfa3a8c25bc1441f070565d286d6e28b6c4f04be4ab9"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-14-ack.json",
+      "bytes": 15447,
+      "sha256": "b484c89eacc46789dc63b9fdb96ec921a1ab835d9817ac0878d08786a7a8dc38"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-14.json",
+      "bytes": 69,
+      "sha256": "6374a25c21539794f38848e6f004cd0dde20af12055e535919fe2da420ff03ed"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-15-ack.json",
+      "bytes": 15550,
+      "sha256": "58a235eeb728581232c383f1bde17cae1fc8cf63d6c8196cffcfe633eda0a92a"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-15.json",
+      "bytes": 69,
+      "sha256": "c94262462a6b89bfd9a62ed52dadca669406dae5fe030e0a63ca484de97acd2c"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-16-ack.json",
+      "bytes": 15851,
+      "sha256": "b412796775ae11fca08759d454c1881675fd103d44a2fe8acddce3e537611db3"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-16.json",
+      "bytes": 69,
+      "sha256": "61dc05cf51dfd088a3894b406738270b8e3f76a27cbadfec14c34c83f8afa565"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-17-ack.json",
+      "bytes": 15418,
+      "sha256": "1f37a77f47cffc9773650c2f4728c5ff476b5e1ae081337f11ed8df6c83b049c"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-17.json",
+      "bytes": 69,
+      "sha256": "55d1c398bbd835e01fd70eb79417f340c5f6815707d52e97af569b4edfb74497"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-18-ack.json",
+      "bytes": 16405,
+      "sha256": "cc0a93ef511c7e6b8d5c3a54fdd5301061ca27651f6dc7ce9c84936c38c4292d"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-18.json",
+      "bytes": 69,
+      "sha256": "8680fc16462ab7fb721cec22503e9cfeffb175d1d5f66e1c07a8561e2acd5f3e"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-19-ack.json",
+      "bytes": 17377,
+      "sha256": "a676926598584094233242ec279e13d362a76a8a9eaf23a5664d6848e6082dd5"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-19.json",
+      "bytes": 69,
+      "sha256": "b84ec834840172e1b5ceed03136768dc8fce695a41be848476d42154b8f2d426"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-20-ack.json",
+      "bytes": 15319,
+      "sha256": "d0f88bdcdf8a32209f3acd2c335c7b9e515499ab6cf6e25e0fd795e6b7f3227b"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-20.json",
+      "bytes": 69,
+      "sha256": "832b79a2d0ccebd629a28bb5abdbfd5ce38473c32d8640630803b86d8ae94918"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-21-ack.json",
+      "bytes": 17632,
+      "sha256": "740b67673bbe57e44528c1473bd51f85b4bc01566e92c016bf5b1418d5a202de"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-21.json",
+      "bytes": 69,
+      "sha256": "4f4e27938ff0687660896092ee92a5c8bf9c0393caf30acd542e0b7e5bdb78e9"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-22-ack.json",
+      "bytes": 15454,
+      "sha256": "297b9659f3cb1b81d4ccf559655cc8bc17765f00a376d35c03e4151671671751"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-22.json",
+      "bytes": 69,
+      "sha256": "20d901746340e672659684c29205f593fc5b0df4236686db6ccaaea8eaa5d375"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-23-ack.json",
+      "bytes": 15482,
+      "sha256": "15736cc7c095922264f34430e1d4a34d3e71a0967407bc64ff4a6524f93df396"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/finish-23.json",
+      "bytes": 69,
+      "sha256": "d6b1327d4ba7e803e85b2c7876a9860adf6db70e236509fc35acb33d56d3ab85"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/child-load-state.log",
+      "bytes": 10,
+      "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/child-result.json",
+      "bytes": 2495,
+      "sha256": "a077fc4a562782d74ab47cb7480c9162fb2635fa5dbc5005be7a455ab829854d"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/controller-result.json",
+      "bytes": 6042,
+      "sha256": "43160c62584a2502799c6c5eba6506aaa7c4476613e7530d6537375b60bf7121"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/inside-after.json",
+      "bytes": 1740,
+      "sha256": "48c88cbc5a0dd841f2df540e5cb32eea94ed2b522cbaf759ff38094f8de5cf0e"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/inside-before.json",
+      "bytes": 1740,
+      "sha256": "655ab1e7ff746c57b18f5f6992c9df03ce63a3480ee284e92704a71fc6abc975"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/native.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/native.stdout.txt",
+      "bytes": 168,
+      "sha256": "97334e73718d5ad59b9ed8643926a49ac9e11ed976b341327c37f8281f08a3e5"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/outside-after.json",
+      "bytes": 1735,
+      "sha256": "f1e6ff1334efe2d082d97f84d0615026aaa989fc6508115f6e6b41726c551410"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/outside-before.json",
+      "bytes": 1735,
+      "sha256": "926875922acf35b3bae1af6b73fd5ec3bff0dbc58aaec9e710bf4f432a3a6de9"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/owned-service-live.json",
+      "bytes": 834,
+      "sha256": "86f76aa83e830b81a463bf5c65543358dbb1c7a556fb6955fbd8c98295bb1611"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/owned-service-manager.log",
+      "bytes": 575,
+      "sha256": "26d685fb66339c9e74d1daaadf656045f94e9e6905592bbd14126d41f98250fb"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/owned-service.json",
+      "bytes": 1750,
+      "sha256": "82ae95204a446fba7b8dfa811e1bc8d26a675b7627c1e1614ad4f9c83c7581d4"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/systemd-run.log",
+      "bytes": 269,
+      "sha256": "933b118c805bfd7076a37dbf499675f92baab59efa45375458faa8e6a059d6c4"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/manager-after.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/manager-after.stdout.log",
+      "bytes": 349,
+      "sha256": "e8cc03c6982f0a54ecae3caea9eb6474719b5f99e4fb0117209546bcddb7d4fa"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/manager-after.step.json",
+      "bytes": 919,
+      "sha256": "14f5cd090de850b51d9d6bcae7ae11dad6327bb22c706b169fd67c29a1b565c0"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/manager-before.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/manager-before.stdout.log",
+      "bytes": 349,
+      "sha256": "e8cc03c6982f0a54ecae3caea9eb6474719b5f99e4fb0117209546bcddb7d4fa"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/manager-before.step.json",
+      "bytes": 922,
+      "sha256": "9f71778e528e3f9ee1c875e703b302915f980d0639157e4b488f06b7e8639823"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/result.json",
+      "bytes": 1979,
+      "sha256": "907d8780a3011fe570226b98730f804a1034a91f4f01851f9e5ed7d9d4cbf78b"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/phase-launcher.log",
+      "bytes": 90,
+      "sha256": "2176e61c51f52a8fa29d944fecb5285c48d6aa037074bd502ad363333d01addf"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/phase-result.json",
+      "bytes": 5125912,
+      "sha256": "1acb28eda8aec3c6e8f5c9f1e0d83c7faa569205fbe26eb9b8220fc8ef33cd66"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/root-phase-job.json",
+      "bytes": 2889090,
+      "sha256": "5986bb72c173d173b799d0353d1416937649f06d0cef94bc1e485aedbefd866a"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-00-ack.json",
+      "bytes": 12,
+      "sha256": "d8da3554411697a62c183577a5aaead984c6857f8b5fd855f3c334a928ebb954"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-00-observation.json",
+      "bytes": 441,
+      "sha256": "29bcf69ac8332f5daafdf52d965a6140c2a67716624653e8775748c3a7caab3a"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-00.json",
+      "bytes": 1409,
+      "sha256": "b22ab396abf7927d1d67109bf3092625f152dc28a23a02c06dd9beb1c9111f08"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-01-ack.json",
+      "bytes": 12,
+      "sha256": "8d68c96079036597bc819857ca32fb6ceb733bac5f96ac29b42657cfb92b9b31"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-01-observation.json",
+      "bytes": 441,
+      "sha256": "847136937bc8b868f9b5e08481ffc5e1236a01d14fcfd2a0f09e0d7f2dc0149b"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-01.json",
+      "bytes": 1409,
+      "sha256": "43610398251aa6d544c8548e632961a172a2acac871bd71499e8d39c6f192cac"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-02-ack.json",
+      "bytes": 12,
+      "sha256": "f43af4a917b385e1bf032bdebf45465b21f8ed2d25e4b7aa0b2e98590c6b8ecc"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-02-observation.json",
+      "bytes": 441,
+      "sha256": "cf43c4c2bbd522a4ac6c46c8246f83dfcb08c214a7ba738c4d8954f125d099c5"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-02.json",
+      "bytes": 1409,
+      "sha256": "52762eecf5dc57f61dbe42c14f9b68ac938a29eb2f1dc29393a84740156c0a53"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-03-ack.json",
+      "bytes": 12,
+      "sha256": "1c76779e484b0c0a0de6fdfd6948915152ce1bcb25d6ae83815f8f5f4d1fa21c"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-03-observation.json",
+      "bytes": 441,
+      "sha256": "8a79f7d38bfb92e47c0273e6bd29b4ab795a52b7e0a4c0e21b744750255d6712"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-03.json",
+      "bytes": 1409,
+      "sha256": "6934b81a09bc31b51666b0726286f47bcc4adc4570ea81fb972b3d6e079afd3e"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-04-ack.json",
+      "bytes": 12,
+      "sha256": "31d1ef5d8bdbd5496b9e1c28dc583b36f8ca0a3ba7cdecbd9d3ef5f0736d5873"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-04-observation.json",
+      "bytes": 441,
+      "sha256": "cf78135502094fcfa838c258e8b468501a04008726931d8a1f48beb46f6cb038"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-04.json",
+      "bytes": 1409,
+      "sha256": "c13f11e0ee46ba848f9d4ec8ac94b4827fc17d2660151f1013206ebbe9b91ba1"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-05-ack.json",
+      "bytes": 12,
+      "sha256": "b84fa7d345513c162bb13417dc8f4c5c8a246bb9ee6f5e59add6976b8ab5da8e"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-05-observation.json",
+      "bytes": 441,
+      "sha256": "6f7cc7b08f2f1ecb0e34a9cf01862ef19739519d8b081e221c7e5f29d15cabe0"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-05.json",
+      "bytes": 1409,
+      "sha256": "c3fdf02d685c568cf5e3f0fb85db3aa7ed63280d0b1b520b9078c5609024b541"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-06-ack.json",
+      "bytes": 12,
+      "sha256": "17d4e4b7ae5affe3117b6338674e4cc01c3956eb2c33fb60d4fcdb7606c7b859"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-06-observation.json",
+      "bytes": 441,
+      "sha256": "48f30f76e46ea8dcb17e9c7798a655923d60d7278ebf5f0af025d49b5f1ed6fe"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-06.json",
+      "bytes": 1409,
+      "sha256": "9bd8c565e745645c74e5894a1e8e64491857d17fa892a7e61ec3c7739e3a2bcb"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-07-ack.json",
+      "bytes": 12,
+      "sha256": "f2edf884797ba8f62b930c4739741b9c06be820f497ff38e7086a787cb6c699b"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-07-observation.json",
+      "bytes": 441,
+      "sha256": "d6cd8bdf2d0c8a9e7a9f6bd6c339a43cecbad806fe7853d7389935fa4617f29c"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-07.json",
+      "bytes": 1409,
+      "sha256": "c7ef3cf191ea4a2a0f102335d20c632293096edceeff5b402099ee2ad2f5685c"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-08-ack.json",
+      "bytes": 12,
+      "sha256": "fe766a94f590a566a9a4ea974837471d2af4fb4f5b7ff7bf69a1b3003edc92f1"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-08-observation.json",
+      "bytes": 441,
+      "sha256": "e6068587c348cfd70b1aefed72798e1a358399dd79378406f4bb46549b259b19"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-08.json",
+      "bytes": 1409,
+      "sha256": "c7476a6c1e9235136b0c727a5fc032e4ce7706b1c50b99b583561a5f2507adde"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-09-ack.json",
+      "bytes": 12,
+      "sha256": "33770c028c7ec79395c02c0549bca3ac21aecb2827bde531b4057ee9b502a10a"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-09-observation.json",
+      "bytes": 441,
+      "sha256": "8d9c42dd165afd82e08fa121216f51672147b20f6677b1645677fc8358f2ff6f"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-09.json",
+      "bytes": 1409,
+      "sha256": "9bc8b57494990f6efab048ebd1dd4f2c8bfb032de96eaec2ca4a09e3b350ac91"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-10-ack.json",
+      "bytes": 12,
+      "sha256": "fc5ce22e8a0c1dfb03f0188eaf89fba030ce5dd1b696c5846d41704b85090f42"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-10-observation.json",
+      "bytes": 442,
+      "sha256": "7f384f6e8fb1f110eb54c95b29490ca196b4da962bdef0502524c863afc67916"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-10.json",
+      "bytes": 1411,
+      "sha256": "54e425456ea5f6051a74ba7cd51a012bd21cf0aaacdb177d4bb37b9109b4c025"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-11-ack.json",
+      "bytes": 12,
+      "sha256": "05e050585180a06545a19274503ef3011d54dc0443b991da62fede1dd91da3bf"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-11-observation.json",
+      "bytes": 442,
+      "sha256": "69ae263f0289211b8fa05a9417355596fd2660f31ba035932e9eb70f74a5905e"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-11.json",
+      "bytes": 1411,
+      "sha256": "7d8c1a7a98842e087a2aae9c39d7bc190e8853db737c330a818c56afea33c11e"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-12-ack.json",
+      "bytes": 12,
+      "sha256": "9e3d3ae51dff9137f03fbc2e01048bfbf265163f26f1803a3c87252e7cdfeacc"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-12-observation.json",
+      "bytes": 442,
+      "sha256": "07711c2bfe05670f707fbf5c1c9b362b2fea77b69d3ee33f8a0370b0aafce750"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-12.json",
+      "bytes": 1411,
+      "sha256": "aa7ec79773c673974f9bb451128c049dad3ce02c70c0b6536ee5a86256ee15b7"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-13-ack.json",
+      "bytes": 12,
+      "sha256": "9f7feac140cf448b8f9209bb7c4d56b48f52dade215a3494e2aeca2431d81d58"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-13-observation.json",
+      "bytes": 442,
+      "sha256": "ae81718bf7b517d0c589e3011b076da7c81e04fa867979804028589493390744"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-13.json",
+      "bytes": 1411,
+      "sha256": "874e5cdaf6387ef7ed1a265fa0e7f554d84e072955b21a91577e7fbffb93a18c"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-14-ack.json",
+      "bytes": 12,
+      "sha256": "d85692fe13eb92f5ced96453d5a9bb0e9f9575a1b15d75c03009d8d827aeb84b"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-14-observation.json",
+      "bytes": 442,
+      "sha256": "1d5c32393a443f7645b89ffd559b6ba0b064b1de3d4e5565fe20c49dede500c8"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-14.json",
+      "bytes": 1411,
+      "sha256": "02e8410d61e371593777dff401efb46849e9c9e83ac595d2b36ea4a74780c28f"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-15-ack.json",
+      "bytes": 12,
+      "sha256": "eafeb5752feb56c420d89a52bbb17e724551ded0757667576ee927ce1f43c673"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-15-observation.json",
+      "bytes": 442,
+      "sha256": "a8c8fbffa8675b0716980d295b6909974acbf737a0ba84e9af5a17eb2d6a2384"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-15.json",
+      "bytes": 1411,
+      "sha256": "1fa20216d36e63a9c741439ad6569b9bd3fa35a08d79f6982be8b43f9daef10b"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-16-ack.json",
+      "bytes": 12,
+      "sha256": "f07e2239680a136de3dfdbfa6ce48de7bf759f0e0f2128932a01aa8aa0f62723"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-16-observation.json",
+      "bytes": 442,
+      "sha256": "a9ab802fb826113fa1116f128583b8b97571bf02b9bb9715403a9100b92e028e"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-16.json",
+      "bytes": 1411,
+      "sha256": "d89059b1919d9a74553a8b7257c5c521d8773c0b62c484d00837c13253199f2d"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-17-ack.json",
+      "bytes": 12,
+      "sha256": "df0506eb100bae0db55a4933738e400b693f327ac0c4add2451a78bf24a789e9"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-17-observation.json",
+      "bytes": 442,
+      "sha256": "ae291d8f3af800bc8b93ae148576c04a359cb44351d969baf1b6f520664e93fe"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-17.json",
+      "bytes": 1411,
+      "sha256": "e15a2997eec7c647df811456108679d9d2df6100136c99a8bf80453a00dcc9d4"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-18-ack.json",
+      "bytes": 12,
+      "sha256": "a385bfc7fab387889a6c988059b7ad02f8ca6a0a999d2ac06a01b3de73492c8b"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-18-observation.json",
+      "bytes": 442,
+      "sha256": "b9f711062eb5815e41ada385b1e5324483ed876ef5962d6e7a74ede8cb3c50e4"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-18.json",
+      "bytes": 1411,
+      "sha256": "3d4b99b493e244e5814d6b27d5ef5b717a90e76d0bc6f4457ea262224d21eb80"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-19-ack.json",
+      "bytes": 12,
+      "sha256": "cc8a2fe44095198b9dbeaf12f91b8e14116b59d10dbf8c136bd28a65eb9967dc"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-19-observation.json",
+      "bytes": 442,
+      "sha256": "2a6d4a1eae262fc3e90c1d865752a25924187738d6f5a81ded931512fa0a9955"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-19.json",
+      "bytes": 1411,
+      "sha256": "c0e71b959d33d1de8be53af7ca666ebf5d96f37a1f915cdf3129ddfdf4daa2f0"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-20-ack.json",
+      "bytes": 12,
+      "sha256": "7450ff775fc155f88aa73f832530b867545bca1a113695656a92cc3ab9afad89"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-20-observation.json",
+      "bytes": 442,
+      "sha256": "f2ade54b0b4cf539063da98fee8ec9b5de579012dab7183c0caa626fc543512d"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-20.json",
+      "bytes": 1411,
+      "sha256": "2048acb92d2d420249a1b3c7cd878b0af20720c5a236b9179d3fb18444b56104"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-21-ack.json",
+      "bytes": 12,
+      "sha256": "5c3986c0c20e90f4d85aba4e87bc18fe30acd25284cf427bbdbb9167b8e39974"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-21-observation.json",
+      "bytes": 442,
+      "sha256": "566d5d0a6c2be8b533ca25dac98f2607cdb292cb0106b1b57570b764a16c3ae8"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-21.json",
+      "bytes": 1411,
+      "sha256": "768348c514560ede76c0dcc36322d35922a5f4161d89b1161adad052a2d7aac9"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-22-ack.json",
+      "bytes": 12,
+      "sha256": "8ed13e53cb2a627ac31fe148f4e7d7c5dbc1458612cb9815dc87c1948e1a48dc"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-22-observation.json",
+      "bytes": 442,
+      "sha256": "512ade6d4d2ee1a04f2902a60d99987b16ee017d389fb37f616ce8c8b045814c"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-22.json",
+      "bytes": 1411,
+      "sha256": "963499dfc9e1ca7cb110782b95401118c39b72bcb2c331bb5439f14a3640c198"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-23-ack.json",
+      "bytes": 12,
+      "sha256": "40ab922d8a04c1c0dcd33390fe65c3202349d1faea0882fe2f8845e37a6f79ca"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-23-observation.json",
+      "bytes": 442,
+      "sha256": "02c23367b9a24e583c3db6ce515d3d800dcade84b946f30c865421383ca95d0a"
+    },
+    {
+      "member": "execution/raw/valid-work-root-fixed-root-host-control/spawn-23.json",
+      "bytes": 1411,
+      "sha256": "46d147f1cbd46fc67c70aae9142fefbe3123ffd7886a5a929d9b9fad98096ec1"
+    },
+    {
+      "member": "execution/raw/valid-work-root.json",
+      "bytes": 5173317,
+      "sha256": "287b6c772d31e077efb1b2de248899de2641e02d7b565fbea14bbd3b2bb4bbba"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-00/acquisition.json",
+      "bytes": 2172,
+      "sha256": "7c24abdd75ae29d85f5c589d4cd8d43ffd39f4450f387d6bdfc85c3d72628f32"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-00/actor.log",
+      "bytes": 151,
+      "sha256": "708063ab5e55ffe34d4c05261a8291ba8ebcc9e7c179ba3225192f8397ddc7b4"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-00/job.json",
+      "bytes": 1277,
+      "sha256": "602d64fcaed8f9d3ca914b25a38990e5ddd79cd57a6e52238e8a30b434793f2a"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-00/ready.json",
+      "bytes": 122,
+      "sha256": "3404f35e93078dc1957e284247ffe35c423626833965b47bbd27b12d93750308"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-00/report.json",
+      "bytes": 15125,
+      "sha256": "ea69bb493d7f57f8bc39586cb0ac3f775db5603b9210591e26f3bc4166d4778e"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-01/acquisition.json",
+      "bytes": 2172,
+      "sha256": "91779c511dd6b759ea038d3564c2259813d8d10b30d042090722d47c6072943a"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-01/actor.log",
+      "bytes": 151,
+      "sha256": "3a452d486514812439a6ae985939045a0ff937f7a8b3d23bf441425e5fe3bf1c"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-01/job.json",
+      "bytes": 1277,
+      "sha256": "9e94996c1dbd47022b1b15aaa43366e63bf637184f30ccbfa497320b7ce7dcac"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-01/ready.json",
+      "bytes": 122,
+      "sha256": "78f3e5e4a093d640e70a56a9d0605d5367639cb980631a965b29640855237310"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-01/report.json",
+      "bytes": 15997,
+      "sha256": "57816c4b18f6472fda25059b7b52e7cd093c70f5918f72542641d72d07ec4148"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-02/acquisition.json",
+      "bytes": 2360,
+      "sha256": "2ac864100cb56ff71473efbd94f476c0003437697476166f5adcabe365cbc2e6"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-02/actor.log",
+      "bytes": 151,
+      "sha256": "708063ab5e55ffe34d4c05261a8291ba8ebcc9e7c179ba3225192f8397ddc7b4"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-02/job.json",
+      "bytes": 1277,
+      "sha256": "8bbba0b822d793202e52e23683546f59144730b66c865b8821672ca371d9123d"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-02/ready.json",
+      "bytes": 122,
+      "sha256": "7fa780d3683452df4aeeb290e1149221644b68fc140927a02e62739c4deb27fb"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-02/report.json",
+      "bytes": 16117,
+      "sha256": "4eb99ff6c95aad332acca722cdd5ad3a8199019c894df156ca475085725c0f2f"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-03/acquisition.json",
+      "bytes": 2360,
+      "sha256": "323e1c0904256fa3a7e97603844550da8ef2567eb15e37a9a9aaf3e5ae7a8313"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-03/actor.log",
+      "bytes": 151,
+      "sha256": "8c2856aa440dc0e9ea93f9a78ada3046a3c578f8a9c636a824d7714643346301"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-03/job.json",
+      "bytes": 1277,
+      "sha256": "cdf0c4e66253ae22117256e833c9c3afa3b53b0ec62ff2646cdd1341494197c6"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-03/ready.json",
+      "bytes": 122,
+      "sha256": "5b00c7b7dc46f03c369e05c37a85ff9ac09ae940463696f9693ab6d639c4496e"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-03/report.json",
+      "bytes": 15975,
+      "sha256": "2fc8b1690deeb91af1d68f4dc9f2d811ff261426e49adb94ee733ba9cb39e97d"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-04/acquisition.json",
+      "bytes": 2736,
+      "sha256": "da7f61c2976bc304cdce4053e41cde328583bdc50c1aa2e0b0fae79dba83d7f2"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-04/actor.log",
+      "bytes": 151,
+      "sha256": "33cc250c7eb8a4cad518710997674216bef2b572ddb863d205dfaa6090576b39"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-04/job.json",
+      "bytes": 1277,
+      "sha256": "3c4cd96bd1fd76cbd2f828585405e615c8c4e6ee5198a266cc99186701a43b5a"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-04/ready.json",
+      "bytes": 122,
+      "sha256": "168f60a464d467380d771f489028604c4dfbc5942c34780c2579b6326164e8a5"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-04/report.json",
+      "bytes": 15650,
+      "sha256": "4b92755f0b8fe8a67f666904df74667a9a393ca0133462f80991ce9b8b0e1dbd"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-05/acquisition.json",
+      "bytes": 2360,
+      "sha256": "fc41edbd2941ecf64d6eca24535e2e642dafcaa865dd6747c349b35a778c2564"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-05/actor.log",
+      "bytes": 151,
+      "sha256": "33cc250c7eb8a4cad518710997674216bef2b572ddb863d205dfaa6090576b39"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-05/job.json",
+      "bytes": 1277,
+      "sha256": "32cf976e334579406678e0798c6f42dced353748d5ad21ec4d7593221422d134"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-05/ready.json",
+      "bytes": 122,
+      "sha256": "09b9c0949b81c9b21b75a6ed1325aa5a770e38557b069758e42ea72c81ec0aba"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-05/report.json",
+      "bytes": 16068,
+      "sha256": "f1636edc38013e18cad389da9ec55e67b7203de01aaa1c9c8cadebbe3778f75f"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-06/acquisition.json",
+      "bytes": 2172,
+      "sha256": "887fe29f3cc3f7025aa57703ba5b2517501c7681ed7faf5fdd40d4fa532dfcff"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-06/actor.log",
+      "bytes": 151,
+      "sha256": "f4bf211e8c03bfdd219e27709891f699d381bd7126234f2c5b8bcc7a86931c32"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-06/job.json",
+      "bytes": 1277,
+      "sha256": "b44cea79697ece65b949547b99d62db978c5c6a4aa0366bc018436cac602aef0"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-06/ready.json",
+      "bytes": 122,
+      "sha256": "b9dd92fa9c83d6b4c358f3631e9847b0797949b0432f7f803756e59706e961e7"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-06/report.json",
+      "bytes": 16229,
+      "sha256": "bedd1ba715cb8a57b7c79465e03c18d17e2e37546db8b4fa361ba023fa2d4102"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-07/acquisition.json",
+      "bytes": 3300,
+      "sha256": "17baff3c8cefe555802bc484878ba73157c8cd772291376a75f3ab75056659b6"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-07/actor.log",
+      "bytes": 151,
+      "sha256": "f343fc84c525574b239949fb73f1de5f04e7046a9aa9e65a7bcf7549d460be36"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-07/job.json",
+      "bytes": 1277,
+      "sha256": "2e9094171794d9d318bd7ebe9177890ba124745974a459e324d69c48237fa446"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-07/ready.json",
+      "bytes": 122,
+      "sha256": "478c915b4adc24f40be08b428abe1e5e6c163d88c53847b31e739c73e1fe2b4c"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-07/report.json",
+      "bytes": 16131,
+      "sha256": "7ad88f71b8dda05a1d5e5b274f72780bbcfbde1a05f04839df42cbe0ac9fb20b"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-08/acquisition.json",
+      "bytes": 2360,
+      "sha256": "6d5ce81d7afe7fb85bc8b305184925347dad61711d17f1c7015927389ca5d78b"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-08/actor.log",
+      "bytes": 151,
+      "sha256": "3a452d486514812439a6ae985939045a0ff937f7a8b3d23bf441425e5fe3bf1c"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-08/job.json",
+      "bytes": 1277,
+      "sha256": "55793149b25fb8780779f903c5064e55105e3a2bf65b41695ec34bf950db9d5e"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-08/ready.json",
+      "bytes": 122,
+      "sha256": "64f646ba6425f53852cd679c0d56882d6b7f6427f959b21c98f93a4ef63c7d9f"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-08/report.json",
+      "bytes": 15463,
+      "sha256": "6ac8e21857f9af12d4f0741fe6427815c2e27f63c24415a2c0dfe1d54fb1b6d8"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-09/acquisition.json",
+      "bytes": 2548,
+      "sha256": "f36aef88377b510670fc63f44eb90000927e8c4f8e28d3a35f800977b7cee6ec"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-09/actor.log",
+      "bytes": 151,
+      "sha256": "c65bf28e4607979481d7c8bbccc67c784aacb5c69e25d8d0ac38a7c9377b8100"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-09/job.json",
+      "bytes": 1277,
+      "sha256": "bf18a76306de85ce3282c506401aecfd073f5cb29bf0f3fcd2aed92412f555f6"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-09/ready.json",
+      "bytes": 122,
+      "sha256": "378fe6b2ae99fd7931e9adca2c09615498be2b579b5fdef41a4cb6a1d8b92e5e"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-09/report.json",
+      "bytes": 16507,
+      "sha256": "b3e96924492fa9a281e53543f649a6137046cf779b2a3ec3f78368882ad04336"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-10/acquisition.json",
+      "bytes": 2173,
+      "sha256": "d7f2618f160582e4f79ece07e57d96e185b375396e00ca306612c970b3a691ab"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-10/actor.log",
+      "bytes": 151,
+      "sha256": "708063ab5e55ffe34d4c05261a8291ba8ebcc9e7c179ba3225192f8397ddc7b4"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-10/job.json",
+      "bytes": 1278,
+      "sha256": "247dab622e9c3d9ce5fb3dee4de31b878e3aa2eb5d4c4d53bd34cbcb8fff548e"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-10/ready.json",
+      "bytes": 122,
+      "sha256": "d26b42824845b3c955cc993851e73d9ecddf470418b835b0264a15daebf12277"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-10/report.json",
+      "bytes": 16117,
+      "sha256": "e5abaffbd2e668a58782ce56f2a7bf529fcf7644b0874b97df55f152030c8367"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-11/acquisition.json",
+      "bytes": 2361,
+      "sha256": "a6bcd4d052f7a98584d1b241022f093c58a47ca598b44b2c0e006500853d8417"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-11/actor.log",
+      "bytes": 151,
+      "sha256": "708063ab5e55ffe34d4c05261a8291ba8ebcc9e7c179ba3225192f8397ddc7b4"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-11/job.json",
+      "bytes": 1278,
+      "sha256": "ccf2b5da19dc6b75f3b4f3a8e2d53098abe29cac6460a2fa144cf8ed999e8a66"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-11/ready.json",
+      "bytes": 122,
+      "sha256": "5c3ba147d8935695befbb2102b691ee0b4c92e28053ac08a7de98b2ad889dbd1"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-11/report.json",
+      "bytes": 16149,
+      "sha256": "5d5f9c7eaa80a9e921866aa1b63a093b701604df25fdfdb1e48f42adb8cbed2a"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-12/acquisition.json",
+      "bytes": 2173,
+      "sha256": "e73e1f2402f97e275917d81e943f4f8ddb90a62af08a5c687baccfb99e9438f3"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-12/actor.log",
+      "bytes": 151,
+      "sha256": "4d48418c9e251270df7711fee3e053a4e32822d873464cc80439f9ac969d4ab5"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-12/job.json",
+      "bytes": 1278,
+      "sha256": "08001ec9b662684ce0d0d8e1a55669559b776c8cd18ee459f40a5cf706c4cb6b"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-12/ready.json",
+      "bytes": 122,
+      "sha256": "374de1dd0154aaa9afbf9dc4de770594b12159397eaccfdda9ff88da60d7f549"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-12/report.json",
+      "bytes": 15234,
+      "sha256": "58b6ce651dd685a823619cf1fddf27a85235be141890080651ad196fd2bc04d8"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-13/acquisition.json",
+      "bytes": 2361,
+      "sha256": "4266800d9c0fa715943b3ddc59103fdc52b8b543cd51ef54a7b7c860e2b1fc85"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-13/actor.log",
+      "bytes": 151,
+      "sha256": "98ab1c7b08f91ebccb585c92a34bf07f9cc990690f6cbbfbfebf6a895f2cd2c8"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-13/job.json",
+      "bytes": 1278,
+      "sha256": "9b8e369b0d592b82640b006be908420c3493a0a503ea62018bfce13178583f3a"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-13/ready.json",
+      "bytes": 122,
+      "sha256": "d552b42c19eb2f87fa2380e091aedd54776ac7e82c4174329f58bc40acda3680"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-13/report.json",
+      "bytes": 15479,
+      "sha256": "a6bacd211c4cdfb99ee20fb5eb65e49723d3fd9805187815c0a775bf1fb7d134"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-14/acquisition.json",
+      "bytes": 2173,
+      "sha256": "00d9704970ba9535504c944c1990a048f3cfa1cb348e3dcee40d8d1b8bb2e753"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-14/actor.log",
+      "bytes": 151,
+      "sha256": "f343fc84c525574b239949fb73f1de5f04e7046a9aa9e65a7bcf7549d460be36"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-14/job.json",
+      "bytes": 1278,
+      "sha256": "581e0f06a0b7b767ded532a27d709d553c44e67a4e3937f81008b77b89617391"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-14/ready.json",
+      "bytes": 122,
+      "sha256": "f7d0fc6b41ccbf5fe81957a3b80c0dceb93140555925c8fd149f1db1ddd8c469"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-14/report.json",
+      "bytes": 15059,
+      "sha256": "2de8d7956bc00b421ff792ec8c5e26b606b0d275ae1633b4c150058120783290"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-15/acquisition.json",
+      "bytes": 2361,
+      "sha256": "45d4b4303b86d10edee21b4083a4fd4fd74f45c11951063ed09609634f869769"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-15/actor.log",
+      "bytes": 151,
+      "sha256": "98ab1c7b08f91ebccb585c92a34bf07f9cc990690f6cbbfbfebf6a895f2cd2c8"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-15/job.json",
+      "bytes": 1278,
+      "sha256": "de4cc6a042de97d72506db54684a1d0777515fb5f603526abc39c58fa272993f"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-15/ready.json",
+      "bytes": 122,
+      "sha256": "72149a9d51231e9e49f276aabdac1c8cba64b8a6809cf539d39bc67e93d020d2"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-15/report.json",
+      "bytes": 15162,
+      "sha256": "d718895dad196079c3005858bc87cabcdf7335a7fb49b3e083c02477662d1f72"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-16/acquisition.json",
+      "bytes": 2549,
+      "sha256": "2597a6ad4037b52e1223661576eaa7fb832285d712fe1c1352dfed1db67a29b6"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-16/actor.log",
+      "bytes": 151,
+      "sha256": "98ab1c7b08f91ebccb585c92a34bf07f9cc990690f6cbbfbfebf6a895f2cd2c8"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-16/job.json",
+      "bytes": 1278,
+      "sha256": "4f3a4a4cf6d564d8c63d30bdaf4c7445f7b92775445bc4731f3cd4cbffbedd47"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-16/ready.json",
+      "bytes": 122,
+      "sha256": "29a25793f9bccaf122ec8a76bd4a7fcfc1bc15d021f9a16bec39cb8b7698824c"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-16/report.json",
+      "bytes": 15463,
+      "sha256": "d626c01696e2b03a38d32d0db2b238f78ba902c58d21d2f16750fcb5d1b99a54"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-17/acquisition.json",
+      "bytes": 2361,
+      "sha256": "78b761a2fff981532379d4be1ad6ac3d7cc657889891a31763fbc186c9205ca7"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-17/actor.log",
+      "bytes": 151,
+      "sha256": "fc9f3b5d22b8b60426fab975a6ce84044c44aa51771255a2bfe11a16e64238b3"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-17/job.json",
+      "bytes": 1278,
+      "sha256": "c4496dd8e4f14c884b1788b55d89a0b53da6d1c827a1993abc0763b49afabf32"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-17/ready.json",
+      "bytes": 122,
+      "sha256": "cb6bda5ab42d812db454a326744850573fcfa4e2c300ca748ee3c4dd9285d63a"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-17/report.json",
+      "bytes": 15030,
+      "sha256": "dda3c13a9eccb36bfba43b66a1ba7859f9d5233e4685d41984816dd166bf5444"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-18/acquisition.json",
+      "bytes": 2173,
+      "sha256": "c7ec4bb451aaf6107349cbb3901ebc740b532b03e0027447db16e436d330b0c9"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-18/actor.log",
+      "bytes": 151,
+      "sha256": "5208dc8f2126566f7f3143c21ab12161b40bb4d665d26c9290310702f549545f"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-18/job.json",
+      "bytes": 1278,
+      "sha256": "f7bcdbbdb4f0c9436b29607dacb91e63b89c3daeec0f4e478e09ee707c80a755"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-18/ready.json",
+      "bytes": 122,
+      "sha256": "459625616f496bff2ab66c2b87c3c13392462bcb83a494dd0f85b90a9a502a07"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-18/report.json",
+      "bytes": 16017,
+      "sha256": "5f157899f51ad6679bda199b88a1754815cc8b28f3ba2e8a9f256d7772556e4f"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-19/acquisition.json",
+      "bytes": 3113,
+      "sha256": "83a52f723769a6641b340726ba3e1a67714fa8530e894e7e846e313b7bb18b91"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-19/actor.log",
+      "bytes": 151,
+      "sha256": "7de847d4ae17d64583ace5f472460c0d6f5f268ba087ee97b8017a75a5aa9d5f"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-19/job.json",
+      "bytes": 1278,
+      "sha256": "90fdd7efd575d2b361c5f047f7599107160651937cec71b3c66ab8de588992bc"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-19/ready.json",
+      "bytes": 122,
+      "sha256": "88de18a1b87fcda790694ffcb28aba2bd884eea84d4bbb666dab858ded3f4ec6"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-19/report.json",
+      "bytes": 16989,
+      "sha256": "240e915ea23a3b652193e25ef5eaa3dbd97af1325856d432d198a03ca40c0744"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-20/acquisition.json",
+      "bytes": 2173,
+      "sha256": "ba0639cbf41954fe93ada495fa697241bb732c5810740f7799a122d63c1f4653"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-20/actor.log",
+      "bytes": 151,
+      "sha256": "c65bf28e4607979481d7c8bbccc67c784aacb5c69e25d8d0ac38a7c9377b8100"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-20/job.json",
+      "bytes": 1278,
+      "sha256": "9cf689015aade586d90802a5a66c4866a5da5807acb8abddae7e371127734b36"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-20/ready.json",
+      "bytes": 122,
+      "sha256": "3febf62f746a9191e549713a1edf892f38d054272f6b51f164451d3c0dbe3b3a"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-20/report.json",
+      "bytes": 14931,
+      "sha256": "7b4ffea7ce7416cbbf4fbcae1de0c859f5ebd8acb8fef27ad08ba6c72d9591a8"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-21/acquisition.json",
+      "bytes": 3301,
+      "sha256": "3d2b89a7695e3a124df92cb0e9171da0c772c171e41cbdce066778a9665b7c8f"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-21/actor.log",
+      "bytes": 151,
+      "sha256": "7b335848a92ad1a38ee5047ba19621321efbc38788ec3bf14c9a465cd2ece1a2"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-21/job.json",
+      "bytes": 1278,
+      "sha256": "964aea17cab3c4c304e534aa4b61a9e6ba287db663d620fc5f3dfad868984213"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-21/ready.json",
+      "bytes": 122,
+      "sha256": "4afd55e35958861f6683a25ac38c1412c03ad4b53bcd40638616788cdfcecbab"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-21/report.json",
+      "bytes": 17244,
+      "sha256": "306c63c7ffd24108736f066f64ab67a2933beef938bc23f3b5e62e3dee744d69"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-22/acquisition.json",
+      "bytes": 2173,
+      "sha256": "c1014db31b005d66dd26489003aee214ba0a5313312c76e6280f709f8121c45b"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-22/actor.log",
+      "bytes": 151,
+      "sha256": "0467dcc8fbd94e5305bb0d019aca65df6dfdcf523fe2cc7729b00575b5f9e69e"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-22/job.json",
+      "bytes": 1278,
+      "sha256": "c8d63d986c7fe6fc7dd81781f98845ccc52a5a21ec3a55ef059e1a7dbac8a2aa"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-22/ready.json",
+      "bytes": 122,
+      "sha256": "6a8d645508e7a7b5ff0210f6b6dfb8bc61f3cf80bb53ceb5e8f256a78fcc2628"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-22/report.json",
+      "bytes": 15066,
+      "sha256": "bf1d362f5874a60114559979118bc65ae71440a72d41b0a46ea8249b7aca832d"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-23/acquisition.json",
+      "bytes": 2173,
+      "sha256": "ce24010a4c93c994290d15d9d5a39f779841188fa635d9694f42ce244b710350"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-23/actor.log",
+      "bytes": 151,
+      "sha256": "0467dcc8fbd94e5305bb0d019aca65df6dfdcf523fe2cc7729b00575b5f9e69e"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-23/job.json",
+      "bytes": 1278,
+      "sha256": "839373935dc96e033ff039828fe3d7b3f50081410d9d3e1f5379ba4cdab4f309"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-23/ready.json",
+      "bytes": 122,
+      "sha256": "c06038e86abcb4dec2630a03be414d80a3a7f092ed79ae3934a87a5fc5a65c0e"
+    },
+    {
+      "member": "execution/raw/valid-work-root/attacker-23/report.json",
+      "bytes": 15094,
+      "sha256": "ef93583f9063901b6abbdd0308151b44e1b2924db3b4cb4406be0f84e14c9c8a"
+    },
+    {
+      "member": "execution/raw/valid-work-root/independent-client/native.sqlite",
+      "bytes": 2002944,
+      "sha256": "fb94579f46b7ff347619c4e89d13ac3634bd62df2e720767dbf5f639454d361d"
+    },
+    {
+      "member": "execution/raw/valid-work-root/independent-client/owner.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/raw/valid-work-root/receiver/native.sqlite",
+      "bytes": 2506752,
+      "sha256": "6fe8460992ff9eb635ecf9f553a39e62e2d442c5d626aceee617860c541e6893"
+    },
+    {
+      "member": "execution/raw/valid-work-root/receiver/owner.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/raw/valid-work-root/start.json",
+      "bytes": 47,
+      "sha256": "94f3e40776610b88b9f955ea3908bcc8a164e1e93c3030f5aecadfd74238e5ce"
+    },
+    {
+      "member": "execution/resource-after.json",
+      "bytes": 1586,
+      "sha256": "2d573fddb49a189c4166b62c146a0ef8a3d8d264481eb7ff32ade7ee6e5ae986"
+    },
+    {
+      "member": "execution/resource-before.json",
+      "bytes": 1572,
+      "sha256": "db94a53a6e0db72bc5e5e102d067c41d379128ef6ead14d47c5a3f2ee061ab4d"
+    },
+    {
+      "member": "execution/service-identity.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/service-identity.stdout.log",
+      "bytes": 582,
+      "sha256": "c1af285f8ee3707edc31cc137468443cbd6021d633d65ef996f566946e5b3622"
+    },
+    {
+      "member": "execution/service-identity.step.json",
+      "bytes": 909,
+      "sha256": "bb94ce6801fcaef67e0ca50fbb92016f7247e1f4b645d59af389e3cf48206d6c"
+    },
+    {
+      "member": "execution/service-runtime.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/service-runtime.stdout.log",
+      "bytes": 6,
+      "sha256": "83eebea40b568a94f15cb4b979671afe4cb578c2d22efc198dd2198541872a59"
+    },
+    {
+      "member": "execution/service-runtime.step.json",
+      "bytes": 781,
+      "sha256": "c3cad1dddec0aaf1707652bac6740a5c5db42bd422a4559a6a4936a472709642"
+    },
+    {
+      "member": "execution/source-after.json",
+      "bytes": 421,
+      "sha256": "d83ec35f8052cdc0c4b3ac9d41943e2daaaba2c9473ea1095b808e7f120803ee"
+    },
+    {
+      "member": "execution/source-after.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/source-after.stdout.log",
+      "bytes": 421,
+      "sha256": "d83ec35f8052cdc0c4b3ac9d41943e2daaaba2c9473ea1095b808e7f120803ee"
+    },
+    {
+      "member": "execution/source-after.step.json",
+      "bytes": 902,
+      "sha256": "97c80eda3574fa701bcaa28cac51ce753df966c8f4e8ee8f24f89d0fa21ee716"
+    },
+    {
+      "member": "execution/source-before.json",
+      "bytes": 421,
+      "sha256": "d83ec35f8052cdc0c4b3ac9d41943e2daaaba2c9473ea1095b808e7f120803ee"
+    },
+    {
+      "member": "execution/source-before.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "execution/source-before.stdout.log",
+      "bytes": 421,
+      "sha256": "d83ec35f8052cdc0c4b3ac9d41943e2daaaba2c9473ea1095b808e7f120803ee"
+    },
+    {
+      "member": "execution/source-before.step.json",
+      "bytes": 908,
+      "sha256": "52d07b1a4cd57f2ebaf3a573641870c4df1d2ca4eef274363121c8658e616de3"
+    },
+    {
+      "member": "execution/supplement.stderr.log",
+      "bytes": 374,
+      "sha256": "38bdbc1ff869f4851bcd6edf9760f79eb23301e654395b30914dbb483a08befe"
+    },
+    {
+      "member": "execution/supplement.stdout.log",
+      "bytes": 296,
+      "sha256": "153e327a77d67bbbff03dd10efa1a39191ecb5e4c4405fc1108f1f395b8e002e"
+    },
+    {
+      "member": "execution/supplement.step.json",
+      "bytes": 889,
+      "sha256": "13be19e3140266758805923828445d9de2595269410c25d518e059e918a601b7"
+    }
+  ],
+  "original_report": {
+    "member": "execution/raw/report.json",
+    "bytes": 10905698,
+    "sha256": "91cc366eb0b48d3b677f4739b659cd7380a38d6b1eb935169252492b26d3305f"
+  },
+  "failure": "NATIVE_F0_FAILED",
+  "report_validation_failure": "BASELINE_MUST_PASS",
+  "post_checks": {
+    "binary": {
+      "complete_success": true,
+      "failure": null
+    },
+    "resources": {
+      "complete_success": true,
+      "failure": null
+    },
+    "source": {
+      "complete_success": true,
+      "failure": null
+    }
+  },
+  "inputs": {
+    "actor_call_cap": 480,
+    "attackers": 24,
+    "business_blocks": 21,
+    "confirmation_depth": 6,
+    "controller_resource_boundary_samples": 6,
+    "controller_resource_schema": "fixed-host-root-controller-resources-v1",
+    "cpu_burst_ns": 2000000000,
+    "cpu_refill_ns_per_second": 250000000,
+    "f1_implemented": false,
+    "four_second_slo_ns": 4000000000,
+    "legacy_four_second_from_zero_epoch_changed": false,
+    "m06_workers": 1,
+    "phase_profile": "fixed-public-root-phase-external-actors-v1",
+    "phase_seconds": 30,
+    "planned_business_packets": 42,
+    "planned_complete_runs": 1,
+    "planned_confirmations": 6,
+    "planned_phases": [
+      "baseline",
+      "valid-work-root"
+    ],
+    "round_start_seconds": [
+      1,
+      5,
+      9
+    ],
+    "seed_blocks": 4,
+    "seed_transfers": 1024,
+    "slo_starts_at_scheduled_offset": true,
+    "start_reserve_ns": 100000000
+  },
+  "phases": [
+    {
+      "mode": "baseline",
+      "planned_rounds": 3,
+      "observed_rounds": 2,
+      "unobserved_rounds": 1,
+      "original_30s_confirmed": 1,
+      "four_second_slo_successes": 0,
+      "all_planned_rounds": [
+        {
+          "actual_ended_ns": 22304593197,
+          "actual_started_ns": 1000084461,
+          "confirmed_inside_original_window": true,
+          "elapsed_from_scheduled_ns": 21304593197,
+          "end_lateness_from_four_second_deadline_ns": 17304593197,
+          "four_second_slo_met": false,
+          "observed_exactly_once": true,
+          "phase": "baseline",
+          "round": 0,
+          "scheduled_offset_ns": 1000000000,
+          "start_lateness_from_schedule_ns": 84461
+        },
+        {
+          "actual_ended_ns": 30001636032,
+          "actual_started_ns": 22304605906,
+          "confirmed_inside_original_window": false,
+          "elapsed_from_scheduled_ns": 25001636032,
+          "end_lateness_from_four_second_deadline_ns": 21001636032,
+          "four_second_slo_met": false,
+          "observed_exactly_once": true,
+          "phase": "baseline",
+          "round": 1,
+          "scheduled_offset_ns": 5000000000,
+          "start_lateness_from_schedule_ns": 17304605906
+        },
+        {
+          "actual_ended_ns": null,
+          "actual_started_ns": null,
+          "confirmed_inside_original_window": false,
+          "elapsed_from_scheduled_ns": null,
+          "end_lateness_from_four_second_deadline_ns": null,
+          "four_second_slo_met": false,
+          "observed_exactly_once": false,
+          "phase": "baseline",
+          "round": 2,
+          "scheduled_offset_ns": 9000000000,
+          "start_lateness_from_schedule_ns": null
+        }
+      ],
+      "native_phase_criteria_met": false,
+      "receiver_client_state_equal": false,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "budget_depletion_observed": false,
+      "host_controller": {
+        "binary_sha256": "809fcd2165f5e77a3bf093f78e1b2af63f993302932524f25f29d240d7054249",
+        "cleanup": {
+          "after": {
+            "group": {
+              "empty": true,
+              "evidence": "exact cgroup path absent after same-boot ownership validation",
+              "exists": false,
+              "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service"
+            },
+            "manager": {
+              "ActiveState": "inactive",
+              "ControlGroup": "",
+              "Description": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+              "Group": "",
+              "Id": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+              "InvocationID": "",
+              "KillMode": "control-group",
+              "LoadState": "not-found",
+              "MainPID": "0",
+              "Restart": "no",
+              "Slice": "",
+              "SubState": "dead",
+              "Transient": "no",
+              "User": "",
+              "WorkingDirectory": ""
+            }
+          },
+          "before": {
+            "group": {
+              "empty": true,
+              "evidence": "exact cgroup path absent after same-boot ownership validation",
+              "exists": false,
+              "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service"
+            },
+            "manager": {
+              "ActiveState": "inactive",
+              "ControlGroup": "",
+              "Description": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+              "Group": "",
+              "Id": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+              "InvocationID": "",
+              "KillMode": "control-group",
+              "LoadState": "not-found",
+              "MainPID": "0",
+              "Restart": "no",
+              "Slice": "",
+              "SubState": "dead",
+              "Transient": "no",
+              "User": "",
+              "WorkingDirectory": ""
+            }
+          },
+          "cleanup_attempted": false,
+          "failure": null,
+          "known_empty": true,
+          "ownership_validated": true,
+          "phase": "baseline",
+          "remaining": "observed-empty",
+          "service": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+          "stop_step": null
+        },
+        "consensus_or_model_authority": false,
+        "controller_after": {
+          "actual_parent_required": true,
+          "identity": {
+            "cgroup": {
+              "device": 31,
+              "gid": 0,
+              "inode": 7343,
+              "mode": 493,
+              "uid": 0
+            },
+            "process": {
+              "boot_id": "a0f3eb17-9fb8-48b2-a056-cb0130d6afef",
+              "cgroup": "/system.slice/trnm-fixed-root-f0-41732369850-1-fixed-host-root-f0.service",
+              "executable": {
+                "bytes": 11570832,
+                "device": 66305,
+                "inode": 9455425,
+                "modified_nanoseconds": 226941063,
+                "modified_seconds": 1793745755
+              },
+              "parent_pid": 5169,
+              "pid": 5255,
+              "start_ticks": 39878
+            }
+          },
+          "limits": {
+            "cpu.max": "400000 100000",
+            "memory.max": "17179869184"
+          },
+          "scope": "live external controller only; phase Host checked separately"
+        },
+        "controller_before": {
+          "actual_parent_required": true,
+          "identity": {
+            "cgroup": {
+              "device": 31,
+              "gid": 0,
+              "inode": 7343,
+              "mode": 493,
+              "uid": 0
+            },
+            "process": {
+              "boot_id": "a0f3eb17-9fb8-48b2-a056-cb0130d6afef",
+              "cgroup": "/system.slice/trnm-fixed-root-f0-41732369850-1-fixed-host-root-f0.service",
+              "executable": {
+                "bytes": 11570832,
+                "device": 66305,
+                "inode": 9455425,
+                "modified_nanoseconds": 226941063,
+                "modified_seconds": 1793745755
+              },
+              "parent_pid": 5169,
+              "pid": 5255,
+              "start_ticks": 39878
+            }
+          },
+          "limits": {
+            "cpu.max": "400000 100000",
+            "memory.max": "17179869184"
+          },
+          "scope": "live external controller only; phase Host checked separately"
+        },
+        "failure": null,
+        "final_host_errors": [],
+        "host_readiness_only": true,
+        "job_sha256": "d1ed27f10cb7b7b643b971801fa694d4af050e6360e9a455a95caa6dbe4e3ce7",
+        "parent_preexisting": false,
+        "passed": true,
+        "schema": "fixed-public-root-phase-external-actors-v1",
+        "service": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+        "service_or_depletion_criteria_met": false,
+        "systemd_argv": [
+          "sudo",
+          "-n",
+          "systemd-run",
+          "--unit=trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+          "--description=Trillionnium F0 ROOT job d1ed27f10cb7b7b643b971801fa694d4af050e6360e9a455a95caa6dbe4e3ce7",
+          "--wait",
+          "--pipe",
+          "--collect",
+          "--service-type=exec",
+          "--expand-environment=no",
+          "--slice=trnmponpublic.slice",
+          "--uid=1001",
+          "--gid=1001",
+          "--working-directory=/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "--property=KillMode=control-group",
+          "--property=TimeoutStopSec=20s",
+          "--property=RuntimeMaxSec=300s",
+          "--property=Nice=10",
+          "--property=Delegate=no",
+          "--property=NoNewPrivileges=yes",
+          "--property=CapabilityBoundingSet=",
+          "--setenv=PATH=/snap/bin:/home/runner/.local/bin:/opt/pipx_bin:/home/runner/.cargo/bin:/home/runner/.config/composer/vendor/bin:/usr/local/.ghcup/bin:/home/runner/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+          "--setenv=PYTHONDONTWRITEBYTECODE=1",
+          "/usr/bin/python3",
+          "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/run_fixed_root_phase_host.py",
+          "--inside",
+          "--job",
+          "/home/runner/work/_temp/pon-fixed-host-root-f0-41732369850-1/execution/raw/baseline-fixed-root-host-control/root-phase-job.json",
+          "--binary",
+          "/home/runner/work/_temp/pon-fixed-host-root-f0-41732369850-1/prepared/public_v3_multiprocess.bin",
+          "--service",
+          "trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+          "--uid",
+          "1001",
+          "--gid",
+          "1001"
+        ],
+        "systemd_run_exit": 0
+      },
+      "host_snapshots": {
+        "inside-before": {
+          "boot_id": "a0f3eb17-9fb8-48b2-a056-cb0130d6afef",
+          "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+          "consensus_or_model_authority": false,
+          "counters": {
+            "cgroup.events": "populated 1\nfrozen 0",
+            "cpu.stat": "usage_usec 57456\nuser_usec 44577\nsystem_usec 12878\nnice_usec 45000\ncore_sched.force_idle_usec 0\nnr_periods 3\nnr_throttled 2\nthrottled_usec 148428\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "14684160",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "1"
+          },
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "gid": 1001,
+          "host_readiness_only": true,
+          "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "observed_utc": "2026-11-03T22:42:40.413794+00:00",
+          "parent": {
+            "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+            "device": 31,
+            "directory": true,
+            "gid": 0,
+            "inode": 7405,
+            "mode": 493,
+            "symlink": false,
+            "uid": 0
+          },
+          "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+          "phase": "public-phase-before",
+          "pid": 5328,
+          "read_errors": {},
+          "schema": "trnm-ci-original-public-host-observation-v1",
+          "service": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+          "thread_cgroup": "0::/trnmponpublic.slice/trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+          "thread_privileges": {
+            "CapBnd": "0000000000000000",
+            "NoNewPrivs": "1"
+          },
+          "uid": 1001
+        },
+        "inside-after": {
+          "boot_id": "a0f3eb17-9fb8-48b2-a056-cb0130d6afef",
+          "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+          "consensus_or_model_authority": false,
+          "counters": {
+            "cgroup.events": "populated 1\nfrozen 0",
+            "cpu.stat": "usage_usec 8320339\nuser_usec 2823209\nsystem_usec 5497129\nnice_usec 2761000\ncore_sched.force_idle_usec 0\nnr_periods 344\nnr_throttled 330\nthrottled_usec 38279386\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "25849856",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "1"
+          },
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "gid": 1001,
+          "host_readiness_only": true,
+          "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "observed_utc": "2026-11-03T22:43:14.564901+00:00",
+          "parent": {
+            "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+            "device": 31,
+            "directory": true,
+            "gid": 0,
+            "inode": 7405,
+            "mode": 493,
+            "symlink": false,
+            "uid": 0
+          },
+          "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+          "phase": "public-phase-after",
+          "pid": 5328,
+          "read_errors": {},
+          "schema": "trnm-ci-original-public-host-observation-v1",
+          "service": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+          "thread_cgroup": "0::/trnmponpublic.slice/trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+          "thread_privileges": {
+            "CapBnd": "0000000000000000",
+            "NoNewPrivs": "1"
+          },
+          "uid": 1001
+        },
+        "outside-after": {
+          "boot_id": "a0f3eb17-9fb8-48b2-a056-cb0130d6afef",
+          "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+          "consensus_or_model_authority": false,
+          "counters": {
+            "cgroup.events": "populated 0\nfrozen 0",
+            "cpu.stat": "usage_usec 8337278\nuser_usec 2836351\nsystem_usec 5500926\nnice_usec 2774000\ncore_sched.force_idle_usec 0\nnr_periods 346\nnr_throttled 331\nthrottled_usec 38322595\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "10813440",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "0"
+          },
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "gid": 1001,
+          "host_readiness_only": true,
+          "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "observed_utc": "2026-11-03T22:43:14.726398+00:00",
+          "parent": {
+            "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+            "device": 31,
+            "directory": true,
+            "gid": 0,
+            "inode": 7405,
+            "mode": 493,
+            "symlink": false,
+            "uid": 0
+          },
+          "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+          "phase": "external-controller-after-public-phase",
+          "pid": 5257,
+          "read_errors": {},
+          "schema": "trnm-ci-original-public-host-observation-v1",
+          "service": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+          "thread_cgroup": "0::/system.slice/trnm-fixed-root-f0-41732369850-1-fixed-host-root-f0.service",
+          "thread_privileges": {
+            "CapBnd": "000001ffffffffff",
+            "NoNewPrivs": "0"
+          },
+          "uid": 1001
+        }
+      }
+    },
+    {
+      "mode": "valid-work-root",
+      "planned_rounds": 3,
+      "observed_rounds": 1,
+      "unobserved_rounds": 2,
+      "original_30s_confirmed": 0,
+      "four_second_slo_successes": 0,
+      "all_planned_rounds": [
+        {
+          "actual_ended_ns": 30071978926,
+          "actual_started_ns": 1071349559,
+          "confirmed_inside_original_window": false,
+          "elapsed_from_scheduled_ns": 29071978926,
+          "end_lateness_from_four_second_deadline_ns": 25071978926,
+          "four_second_slo_met": false,
+          "observed_exactly_once": true,
+          "phase": "valid-work-root",
+          "round": 0,
+          "scheduled_offset_ns": 1000000000,
+          "start_lateness_from_schedule_ns": 71349559
+        },
+        {
+          "actual_ended_ns": null,
+          "actual_started_ns": null,
+          "confirmed_inside_original_window": false,
+          "elapsed_from_scheduled_ns": null,
+          "end_lateness_from_four_second_deadline_ns": null,
+          "four_second_slo_met": false,
+          "observed_exactly_once": false,
+          "phase": "valid-work-root",
+          "round": 1,
+          "scheduled_offset_ns": 5000000000,
+          "start_lateness_from_schedule_ns": null
+        },
+        {
+          "actual_ended_ns": null,
+          "actual_started_ns": null,
+          "confirmed_inside_original_window": false,
+          "elapsed_from_scheduled_ns": null,
+          "end_lateness_from_four_second_deadline_ns": null,
+          "four_second_slo_met": false,
+          "observed_exactly_once": false,
+          "phase": "valid-work-root",
+          "round": 2,
+          "scheduled_offset_ns": 9000000000,
+          "start_lateness_from_schedule_ns": null
+        }
+      ],
+      "native_phase_criteria_met": false,
+      "receiver_client_state_equal": false,
+      "verifier_errors": [],
+      "budget_depletion_observed": false,
+      "host_controller": {
+        "binary_sha256": "809fcd2165f5e77a3bf093f78e1b2af63f993302932524f25f29d240d7054249",
+        "cleanup": {
+          "after": {
+            "group": {
+              "empty": true,
+              "evidence": "exact cgroup path absent after same-boot ownership validation",
+              "exists": false,
+              "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service"
+            },
+            "manager": {
+              "ActiveState": "inactive",
+              "ControlGroup": "",
+              "Description": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+              "Group": "",
+              "Id": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+              "InvocationID": "",
+              "KillMode": "control-group",
+              "LoadState": "not-found",
+              "MainPID": "0",
+              "Restart": "no",
+              "Slice": "",
+              "SubState": "dead",
+              "Transient": "no",
+              "User": "",
+              "WorkingDirectory": ""
+            }
+          },
+          "before": {
+            "group": {
+              "empty": true,
+              "evidence": "exact cgroup path absent after same-boot ownership validation",
+              "exists": false,
+              "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service"
+            },
+            "manager": {
+              "ActiveState": "inactive",
+              "ControlGroup": "",
+              "Description": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+              "Group": "",
+              "Id": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+              "InvocationID": "",
+              "KillMode": "control-group",
+              "LoadState": "not-found",
+              "MainPID": "0",
+              "Restart": "no",
+              "Slice": "",
+              "SubState": "dead",
+              "Transient": "no",
+              "User": "",
+              "WorkingDirectory": ""
+            }
+          },
+          "cleanup_attempted": false,
+          "failure": null,
+          "known_empty": true,
+          "ownership_validated": true,
+          "phase": "valid-work-root",
+          "remaining": "observed-empty",
+          "service": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+          "stop_step": null
+        },
+        "consensus_or_model_authority": false,
+        "controller_after": {
+          "actual_parent_required": true,
+          "identity": {
+            "cgroup": {
+              "device": 31,
+              "gid": 0,
+              "inode": 7343,
+              "mode": 493,
+              "uid": 0
+            },
+            "process": {
+              "boot_id": "a0f3eb17-9fb8-48b2-a056-cb0130d6afef",
+              "cgroup": "/system.slice/trnm-fixed-root-f0-41732369850-1-fixed-host-root-f0.service",
+              "executable": {
+                "bytes": 11570832,
+                "device": 66305,
+                "inode": 9455425,
+                "modified_nanoseconds": 226941063,
+                "modified_seconds": 1793745755
+              },
+              "parent_pid": 5169,
+              "pid": 5255,
+              "start_ticks": 39878
+            }
+          },
+          "limits": {
+            "cpu.max": "400000 100000",
+            "memory.max": "17179869184"
+          },
+          "scope": "live external controller only; phase Host checked separately"
+        },
+        "controller_before": {
+          "actual_parent_required": true,
+          "identity": {
+            "cgroup": {
+              "device": 31,
+              "gid": 0,
+              "inode": 7343,
+              "mode": 493,
+              "uid": 0
+            },
+            "process": {
+              "boot_id": "a0f3eb17-9fb8-48b2-a056-cb0130d6afef",
+              "cgroup": "/system.slice/trnm-fixed-root-f0-41732369850-1-fixed-host-root-f0.service",
+              "executable": {
+                "bytes": 11570832,
+                "device": 66305,
+                "inode": 9455425,
+                "modified_nanoseconds": 226941063,
+                "modified_seconds": 1793745755
+              },
+              "parent_pid": 5169,
+              "pid": 5255,
+              "start_ticks": 39878
+            }
+          },
+          "limits": {
+            "cpu.max": "400000 100000",
+            "memory.max": "17179869184"
+          },
+          "scope": "live external controller only; phase Host checked separately"
+        },
+        "failure": null,
+        "final_host_errors": [],
+        "host_readiness_only": true,
+        "job_sha256": "5986bb72c173d173b799d0353d1416937649f06d0cef94bc1e485aedbefd866a",
+        "parent_preexisting": true,
+        "passed": true,
+        "schema": "fixed-public-root-phase-external-actors-v1",
+        "service": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+        "service_or_depletion_criteria_met": false,
+        "systemd_argv": [
+          "sudo",
+          "-n",
+          "systemd-run",
+          "--unit=trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+          "--description=Trillionnium F0 ROOT job 5986bb72c173d173b799d0353d1416937649f06d0cef94bc1e485aedbefd866a",
+          "--wait",
+          "--pipe",
+          "--collect",
+          "--service-type=exec",
+          "--expand-environment=no",
+          "--slice=trnmponpublic.slice",
+          "--uid=1001",
+          "--gid=1001",
+          "--working-directory=/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "--property=KillMode=control-group",
+          "--property=TimeoutStopSec=20s",
+          "--property=RuntimeMaxSec=300s",
+          "--property=Nice=10",
+          "--property=Delegate=no",
+          "--property=NoNewPrivileges=yes",
+          "--property=CapabilityBoundingSet=",
+          "--setenv=PATH=/snap/bin:/home/runner/.local/bin:/opt/pipx_bin:/home/runner/.cargo/bin:/home/runner/.config/composer/vendor/bin:/usr/local/.ghcup/bin:/home/runner/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+          "--setenv=PYTHONDONTWRITEBYTECODE=1",
+          "/usr/bin/python3",
+          "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/run_fixed_root_phase_host.py",
+          "--inside",
+          "--job",
+          "/home/runner/work/_temp/pon-fixed-host-root-f0-41732369850-1/execution/raw/valid-work-root-fixed-root-host-control/root-phase-job.json",
+          "--binary",
+          "/home/runner/work/_temp/pon-fixed-host-root-f0-41732369850-1/prepared/public_v3_multiprocess.bin",
+          "--service",
+          "trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+          "--uid",
+          "1001",
+          "--gid",
+          "1001"
+        ],
+        "systemd_run_exit": 0
+      },
+      "host_snapshots": {
+        "inside-before": {
+          "boot_id": "a0f3eb17-9fb8-48b2-a056-cb0130d6afef",
+          "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+          "consensus_or_model_authority": false,
+          "counters": {
+            "cgroup.events": "populated 1\nfrozen 0",
+            "cpu.stat": "usage_usec 8395627\nuser_usec 2881013\nsystem_usec 5514614\nnice_usec 2818000\ncore_sched.force_idle_usec 0\nnr_periods 349\nnr_throttled 332\nthrottled_usec 38396666\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "25665536",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "1"
+          },
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "gid": 1001,
+          "host_readiness_only": true,
+          "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "observed_utc": "2026-11-03T22:43:15.023463+00:00",
+          "parent": {
+            "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+            "device": 31,
+            "directory": true,
+            "gid": 0,
+            "inode": 7405,
+            "mode": 493,
+            "symlink": false,
+            "uid": 0
+          },
+          "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+          "phase": "public-phase-before",
+          "pid": 5352,
+          "read_errors": {},
+          "schema": "trnm-ci-original-public-host-observation-v1",
+          "service": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+          "thread_cgroup": "0::/trnmponpublic.slice/trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+          "thread_privileges": {
+            "CapBnd": "0000000000000000",
+            "NoNewPrivs": "1"
+          },
+          "uid": 1001
+        },
+        "inside-after": {
+          "boot_id": "a0f3eb17-9fb8-48b2-a056-cb0130d6afef",
+          "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+          "consensus_or_model_authority": false,
+          "counters": {
+            "cgroup.events": "populated 1\nfrozen 0",
+            "cpu.stat": "usage_usec 17257130\nuser_usec 8648084\nsystem_usec 8609045\nnice_usec 8418000\ncore_sched.force_idle_usec 0\nnr_periods 704\nnr_throttled 686\nthrottled_usec 92349519\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "36020224",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "1"
+          },
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "gid": 1001,
+          "host_readiness_only": true,
+          "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "observed_utc": "2026-11-03T22:43:50.566604+00:00",
+          "parent": {
+            "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+            "device": 31,
+            "directory": true,
+            "gid": 0,
+            "inode": 7405,
+            "mode": 493,
+            "symlink": false,
+            "uid": 0
+          },
+          "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+          "phase": "public-phase-after",
+          "pid": 5352,
+          "read_errors": {},
+          "schema": "trnm-ci-original-public-host-observation-v1",
+          "service": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+          "thread_cgroup": "0::/trnmponpublic.slice/trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+          "thread_privileges": {
+            "CapBnd": "0000000000000000",
+            "NoNewPrivs": "1"
+          },
+          "uid": 1001
+        },
+        "outside-after": {
+          "boot_id": "a0f3eb17-9fb8-48b2-a056-cb0130d6afef",
+          "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+          "consensus_or_model_authority": false,
+          "counters": {
+            "cgroup.events": "populated 0\nfrozen 0",
+            "cpu.stat": "usage_usec 17273898\nuser_usec 8660578\nsystem_usec 8613320\nnice_usec 8430000\ncore_sched.force_idle_usec 0\nnr_periods 706\nnr_throttled 687\nthrottled_usec 92385716\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "21069824",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "0"
+          },
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "gid": 1001,
+          "host_readiness_only": true,
+          "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "observed_utc": "2026-11-03T22:43:50.720234+00:00",
+          "parent": {
+            "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+            "device": 31,
+            "directory": true,
+            "gid": 0,
+            "inode": 7405,
+            "mode": 493,
+            "symlink": false,
+            "uid": 0
+          },
+          "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+          "phase": "external-controller-after-public-phase",
+          "pid": 5348,
+          "read_errors": {},
+          "schema": "trnm-ci-original-public-host-observation-v1",
+          "service": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+          "thread_cgroup": "0::/system.slice/trnm-fixed-root-f0-41732369850-1-fixed-host-root-f0.service",
+          "thread_privileges": {
+            "CapBnd": "000001ffffffffff",
+            "NoNewPrivs": "0"
+          },
+          "uid": 1001
+        }
+      }
+    }
+  ],
+  "planned_confirmations": 6,
+  "observed_rounds": 3,
+  "original_30s_confirmed_total": 1,
+  "four_second_slo_successes": 0,
+  "planned_business_packet_exposures": 42,
+  "native_all_planned_rounds_with_original_enforcement_scope": [
+    {
+      "actual_ended_ns": 22304593197,
+      "actual_started_ns": 1000084461,
+      "confirmed_inside_original_window": true,
+      "elapsed_from_scheduled_ns": 21304593197,
+      "end_lateness_from_four_second_deadline_ns": 17304593197,
+      "four_second_slo_met": false,
+      "observed_exactly_once": true,
+      "old_root_code_already_enforced_four_second_slo": false,
+      "phase": "baseline",
+      "round": 0,
+      "scheduled_offset_ns": 1000000000,
+      "start_lateness_from_schedule_ns": 84461
+    },
+    {
+      "actual_ended_ns": 30001636032,
+      "actual_started_ns": 22304605906,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": 25001636032,
+      "end_lateness_from_four_second_deadline_ns": 21001636032,
+      "four_second_slo_met": false,
+      "observed_exactly_once": true,
+      "old_root_code_already_enforced_four_second_slo": false,
+      "phase": "baseline",
+      "round": 1,
+      "scheduled_offset_ns": 5000000000,
+      "start_lateness_from_schedule_ns": 17304605906
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": null,
+      "end_lateness_from_four_second_deadline_ns": null,
+      "four_second_slo_met": false,
+      "observed_exactly_once": false,
+      "old_root_code_already_enforced_four_second_slo": false,
+      "phase": "baseline",
+      "round": 2,
+      "scheduled_offset_ns": 9000000000,
+      "start_lateness_from_schedule_ns": null
+    },
+    {
+      "actual_ended_ns": 30071978926,
+      "actual_started_ns": 1071349559,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": 29071978926,
+      "end_lateness_from_four_second_deadline_ns": 25071978926,
+      "four_second_slo_met": false,
+      "observed_exactly_once": true,
+      "old_root_code_already_enforced_four_second_slo": false,
+      "phase": "valid-work-root",
+      "round": 0,
+      "scheduled_offset_ns": 1000000000,
+      "start_lateness_from_schedule_ns": 71349559
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": null,
+      "end_lateness_from_four_second_deadline_ns": null,
+      "four_second_slo_met": false,
+      "observed_exactly_once": false,
+      "old_root_code_already_enforced_four_second_slo": false,
+      "phase": "valid-work-root",
+      "round": 1,
+      "scheduled_offset_ns": 5000000000,
+      "start_lateness_from_schedule_ns": null
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": null,
+      "end_lateness_from_four_second_deadline_ns": null,
+      "four_second_slo_met": false,
+      "observed_exactly_once": false,
+      "old_root_code_already_enforced_four_second_slo": false,
+      "phase": "valid-work-root",
+      "round": 2,
+      "scheduled_offset_ns": 9000000000,
+      "start_lateness_from_schedule_ns": null
+    }
+  ],
+  "all_planned_business_packets": [
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 0,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 1,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 2,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 3,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 4,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 5,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 6,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 7,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 8,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 9,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 10,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 11,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 12,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 13,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 14,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 15,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 16,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 17,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 18,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 19,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 20,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 5,
+      "packet_index": 0,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 4,
+      "packet_index": 1,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 5,
+      "packet_index": 2,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 3,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 4,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 5,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 6,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 7,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 8,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 9,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 10,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 11,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 12,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 13,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 14,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 15,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 16,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 17,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 18,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 19,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 20,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    }
+  ],
+  "all_services_known_empty": true,
+  "finalization_complete_success": false,
+  "controller_resources_complete": true,
+  "scope": "Original 30-second confirmations and scheduled four-second SLO counts remain separate; unobserved planned rounds retained. Actual native failure and known-empty cleanup are distinct. No qualification inherited from C1."
+}

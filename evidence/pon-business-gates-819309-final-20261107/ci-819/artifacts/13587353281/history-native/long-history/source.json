@@ -1,0 +1,10 @@
+{
+  "hardness_accepted": false,
+  "independent_accepted": false,
+  "index_source": "5f0a7abe1138b8bcada8ee2af7774473ce85cb79fe6f99e4ca0585db78a801e4",
+  "integration_lineage_base": "56a7dfea51669cd829df95c64cbecbe2c4080e56",
+  "public_network_ready": false,
+  "schema": "native-ancestry-long-sync-source-v1",
+  "source_scope": "compiled native observation; exact executed source and binary must be bound by the external runner",
+  "test_source": "3f4387b87331245656333e66747dec7a8edfacec32227d7fdc6ad0d149c4e7b3"
+}

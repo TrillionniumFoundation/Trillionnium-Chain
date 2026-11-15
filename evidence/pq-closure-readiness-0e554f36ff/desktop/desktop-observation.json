@@ -1,0 +1,50 @@
+{
+  "c1_native_results_reclassified_as_c2": false,
+  "packing_job_id": "1a1c90c7cf9-135c4-3a8",
+  "primary_job_id": "1a1c9047868-135c4-37f",
+  "production_activation": false,
+  "push_or_pr_operation_included": false,
+  "retained_observation_boundary": "The original primary failure and separate supplemental success remain distinct; no test execution or source rescan occurred during packet verification.",
+  "schema": "TRNM-C2-DESKTOP-PACKET-OBSERVATION1",
+  "supplemental_job_id": "1a1c908b0f1-135c4-39d",
+  "verification": {
+    "actual_unique_outer_tests_passed": 71,
+    "all_four_source_observations_identical": true,
+    "archive_bytes": 46844,
+    "archive_sha256": "3827db21e693108967c13af7d6c79fcd287aa0d591c2e31fb177b62ff5a7c82a",
+    "git_source_roster_rechecked": true,
+    "native_tests_executed_by_this_packet": 0,
+    "original_c1_identity_unchanged": true,
+    "primary_all_commands_passed": false,
+    "primary_commands": 18,
+    "primary_failed_commands": [
+      "distributed-inventory"
+    ],
+    "raw_bytes": 167957,
+    "raw_files": 110,
+    "skipped_outer_tests": 0,
+    "source_commit": "0e554f36ffdde3053a5eb1756eb5e526b1935032",
+    "source_roster_matches_actual_ids": true,
+    "source_tree": "753cdbad6714f00d8ccb9ddbb47f0fd71280ee62",
+    "supplemental_all_commands_passed": true,
+    "supplemental_commands": 3,
+    "tracked_bytes": 2554108569,
+    "tracked_entries": 27912,
+    "verified": true,
+    "whole_chain_pq_qualified": false
+  },
+  "verification_command": [
+    "python3",
+    "-B",
+    "/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-readiness-0e554f36ff/desktop/verify_desktop.py",
+    "--repo",
+    "/workspace/scratch/d4d2da8133e2/chain-pq-closure"
+  ],
+  "verification_exit_code": 0,
+  "verification_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "verification_stderr_utf8": "",
+  "verification_stdout_sha256": "8b6cd47da286886dc5d292aa8239f313c98e8d4261fc282275215bcce660fbb9",
+  "verification_stdout_utf8": "{\n  \"actual_unique_outer_tests_passed\": 71,\n  \"all_four_source_observations_identical\": true,\n  \"archive_bytes\": 46844,\n  \"archive_sha256\": \"3827db21e693108967c13af7d6c79fcd287aa0d591c2e31fb177b62ff5a7c82a\",\n  \"git_source_roster_rechecked\": true,\n  \"native_tests_executed_by_this_packet\": 0,\n  \"original_c1_identity_unchanged\": true,\n  \"primary_all_commands_passed\": false,\n  \"primary_commands\": 18,\n  \"primary_failed_commands\": [\n    \"distributed-inventory\"\n  ],\n  \"raw_bytes\": 167957,\n  \"raw_files\": 110,\n  \"skipped_outer_tests\": 0,\n  \"source_commit\": \"0e554f36ffdde3053a5eb1756eb5e526b1935032\",\n  \"source_roster_matches_actual_ids\": true,\n  \"source_tree\": \"753cdbad6714f00d8ccb9ddbb47f0fd71280ee62\",\n  \"supplemental_all_commands_passed\": true,\n  \"supplemental_commands\": 3,\n  \"tracked_bytes\": 2554108569,\n  \"tracked_entries\": 27912,\n  \"verified\": true,\n  \"whole_chain_pq_qualified\": false\n}\n",
+  "verified_at_utc": "2026-11-11T05:27:19.115741+00:00",
+  "whole_chain_pq_qualified": false
+}

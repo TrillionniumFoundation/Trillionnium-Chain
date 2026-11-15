@@ -1,0 +1,304 @@
+{
+  "schema": "trnm-pq-owner-composition-local-evidence-v1",
+  "date_utc": "2026-11-03",
+  "application_parent_commit": "87ee23243dbfa97c9e6cb7681da6510be3715d05",
+  "application_parent_tree": "eb6bfbec239c51aa278812e4b1e09e6b08527c02",
+  "followup_source_scope": "Diagnostic-only child stderr reporting in the existing combined test; exact corpus pin update. Product runtime unchanged from application parent.",
+  "native_features": "default; canonical RustCrypto ML-DSA; optional OpenSSL differential feature NOT enabled",
+  "native_required_controls": {
+    "expected": 43,
+    "passed": 42,
+    "failed": 1,
+    "not_run": 0,
+    "ignored": 0,
+    "subprocess_harness_excluded": 1,
+    "results": {
+      "pq_rollback_witness::tests::active_owner_requires_its_known_head_for_current_and_cas": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "pq_rollback_witness::tests::authenticated_matching_late_cas_is_known_success_and_client_stays_usable": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "pq_rollback_witness::tests::cancellation_after_signing_before_send_preserves_same_client": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "pq_rollback_witness::tests::durable_predecessor_shape_distinguishes_registration_from_advancement": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "pq_rollback_witness::tests::failed_local_commit_fences_owner_until_explicit_reopen": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "pq_rollback_witness::tests::independent_clients_accept_other_writers_advances_and_cold_reopen": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "pq_rollback_witness::tests::malformed_local_checkpoints_never_enter_transport_or_poison_client": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "pq_rollback_witness::tests::same_keys_under_different_binding_generation_cannot_authorize_current": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "pq_rollback_witness::tests::schema_rejects_extra_sqlite_objects_and_oversized_sql_text": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "pq_rollback_witness::tests::signed_current_cannot_regress_or_change_an_observed_generation": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "pq_rollback_witness::tests::slow_drip_read_obeys_one_absolute_deadline": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "pq_rollback_witness::tests::slow_drip_write_obeys_one_absolute_deadline": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::authenticated_cas_receipt_after_original_deadline_still_aligns_local_commit": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::authenticated_successful_cas_commits_before_late_live_cancellation": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::binding_generation_policy_and_distinct_identity_are_mandatory": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::cached_permission_is_rechecked_after_actual_native_tcp_success": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::captured_signed_reply_cannot_answer_a_new_random_challenge": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::cold_reopen_rejects_oversized_metadata_and_accepts_exact_operator_repair": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::committed_expiry_retirement_publishes_epoch_even_when_live_callback_refuses": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::expired_before_current_transport_does_not_poison_guarded_owner": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::guarded_charge_pending_revocation_survive_service_cold_restart": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::guarded_namespace_requires_explicit_guarded_open_and_existing_node": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::live_cancellation_after_current_prevents_pending_insert_and_owner_can_resume": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::local_commit_failure_after_external_cas_is_permanently_detectable": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::lost_retirement_cas_reply_preserves_terminal_zero_epoch": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::lost_successful_cas_reply_never_revives_old_local_authority": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::missing_external_state_is_not_enrolled_on_open_and_registration_is_exclusive": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::non_system_trigger_with_sqlitex_prefix_cannot_hide_from_schema_check": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::oversized_external_binding_and_roots_are_rejected_before_blob_copy": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::oversized_local_binding_and_checkpoint_are_rejected_before_blob_copy": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::oversized_restored_fixed_blob_is_rejected_before_hashing_and_external_advance": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::pending_permission_and_revocation_are_rechecked_under_fresh_predecessor": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::replacing_external_database_path_is_rejected_while_old_descriptor_is_locked": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::uncertain_revocation_invalidates_epoch_of_already_admitted_work": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::whole_node_old_sqlite_and_checkpoint_restore_is_rejected": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "store::pq_rollback_witness::tests::witness_outage_latches_owner_without_refunding_or_charging_quota": {
+        "status": "PASS",
+        "log": "native-first.log"
+      },
+      "ingress::pq_network::live_admission_tests::cancelled_intake_does_not_allocate_or_spend_connection_credit": {
+        "status": "PASS",
+        "log": "live-admission.log"
+      },
+      "ingress::pq_network::live_admission_tests::deadline_cancels_signature_owner_wait_without_waiting_for_unlock": {
+        "status": "PASS",
+        "log": "live-admission.log"
+      },
+      "ingress::pq_network::live_admission_tests::elapsed_deadline_refuses_before_charge_and_cached_replay_stays_live_only": {
+        "status": "PASS",
+        "log": "live-admission.log"
+      },
+      "ingress::pq_network::live_admission_tests::expiry_cancels_signature_owner_wait_and_preserves_unused_sequence": {
+        "status": "PASS",
+        "log": "live-admission.log"
+      },
+      "ingress::pq_network::live_admission_tests::failed_signature_keeps_charge_then_same_sequence_executes_real_pq_transfer": {
+        "status": "PASS",
+        "log": "live-admission.log"
+      },
+      "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart": {
+        "status": "FAIL",
+        "log": "native-combined-diagnostic.log",
+        "first_failure_log": "native-first.log",
+        "classification": "ENVIRONMENT_BLOCKED_NOT_PASSED",
+        "reason": "UnixListener::bind returned EPERM before independent-witness service became ready",
+        "diagnostic_exit_code": 101
+      }
+    }
+  },
+  "new_runtime_controls_passed": [
+    "pq_rollback_witness::tests::malformed_local_checkpoints_never_enter_transport_or_poison_client",
+    "pq_rollback_witness::tests::signed_current_cannot_regress_or_change_an_observed_generation",
+    "pq_rollback_witness::tests::independent_clients_accept_other_writers_advances_and_cold_reopen",
+    "pq_rollback_witness::tests::active_owner_requires_its_known_head_for_current_and_cas",
+    "pq_rollback_witness::tests::failed_local_commit_fences_owner_until_explicit_reopen",
+    "pq_rollback_witness::tests::durable_predecessor_shape_distinguishes_registration_from_advancement"
+  ],
+  "validation": {
+    "strict_clippy": {
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--tests",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "absolute_rustc_used": true,
+      "log": "clippy.log"
+    },
+    "source_control_tests": {
+      "passed": 67,
+      "suite_counts": [
+        34,
+        22,
+        11
+      ],
+      "receipt": "source-checks.json"
+    },
+    "cargo_graph": {
+      "workspace_members": 26,
+      "resolved_packages": 174,
+      "lockfile_changed": false,
+      "metadata_command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ]
+    },
+    "fmt_and_diff_check": "PASS"
+  },
+  "preserved_limitations": [
+    "The native test build reports the optional SQLite I/O boundary UNQUALIFIED because its initial RUSTC setting was not absolute. Passing a later explicit-RUSTC clippy check does not retroactively qualify that binary.",
+    "Historical retained evidence blobs were not all materialized in the local sparse checkout; this is not an all-files source-byte or full independent acceptance run.",
+    "These local tests do not cover the workflow all-feature x64/ARM and prospective-merge matrix.",
+    "PqWitnessV4 covers its three PNQ2 tables, not balances, History, CURRENT, FinalUse, installation, settlement or governance.",
+    "Cold restoration of the independent external witness remains an external monotonic-state assumption."
+  ],
+  "source_bindings": {
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": {
+      "git_blob_sha1": "8c6fcefe166f88d15d6f1302b1deb421347a3662",
+      "sha256": "c0e019c57d3811338dc7d0dc32bbdf795527e4939b44839db82a658a891ba38b"
+    },
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs": {
+      "git_blob_sha1": "32b91971a8203e5cdcc22241cdd9a505a83582f5",
+      "sha256": "1e01c39440d90fed6ba4dd00a6fd72eaac67c8c7093aee62f23e6f08893e6014"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs": {
+      "git_blob_sha1": "5e6ba28d0331379c9ae067c7cd276bb6b5f12c98",
+      "sha256": "c95c70624b06b8191cfebfd756482df4ecac7877fd6952fcad733eedcbbb67ff"
+    },
+    "config/pon/pq-system-required-tests-v1.json": {
+      "git_blob_sha1": "2980d9848b78cb8ecdf879b61f69ecf1d4f6dba6",
+      "sha256": "1061054781de305654bf391a6293b7158b835cfbd350a192888104740753bcdc"
+    },
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "git_blob_sha1": "eeaa0ee16b4211b7f063bff63f84750618158fd2",
+      "sha256": "8ecd7c53149f5b304cb40000ef5974c3dcf6c76032506db987d39fa06e68ae78"
+    },
+    ".github/workflows/pon-pq-system-continuation.yml": {
+      "git_blob_sha1": "229e5bfaa9fd619b0c21031a0d6fee26d6c6c715",
+      "sha256": "d931e90315cef8054b25523e051376bb1c52ae43768aeb31a2251900ed2a7e97"
+    },
+    "trillionnium/Cargo.lock": {
+      "git_blob_sha1": "7a298d02ad14470a8c45094b4791c24109fc4519",
+      "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69"
+    }
+  },
+  "log_sha256": {
+    "authority-surface-tests.log": "d5b72dbeeaa76e59457c5bf3a3b379023d084a5c5915e933d266e2f2be3f936b",
+    "claim-guard-tests.log": "a18c9f253a21926082b153a05065a023c1e0b57cbd9e80765d6553ce205a150e",
+    "claim-guard.log": "6235b839d36b92351665414a731c9433441f007e727860d0c3bd138e7d731690",
+    "clippy.log": "3187fdcbc132d0231a0a02145875ec705c5861b83ce7771384c2dd78646a9b8a",
+    "inventory.log": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+    "live-admission.json": "aba186f247b9f46e67b49484610bdb52a0138f61f87c35e9bd4811c93bef49e5",
+    "live-admission.log": "c9294f7fcd98c7be3027e3baa5589d253dc47efbc4fdde511aed063a3ece69bb",
+    "native-combined-diagnostic.log": "b1543d2572025f08e5e413b11b2df9acd456b8abe63eb05a9752e8380997ea57",
+    "native-first.json": "9cf42611f874b0705485f38a01179a37e84b57c44616fc8759b43251a9c5e41b",
+    "native-first.log": "31517fe03759218a5a73f28659a3a0eba80d6e855c2e4f3d405c2228c9cf0932",
+    "source-checks.json": "24f61feb83bf53d13e91132c4723743f93f5d8d06de8a8b8dade1d9df11f9d0a",
+    "source-contract-tests.log": "f2395bfba0e0a701191603a166008d1898d4cdb2069829b286ad021f291aa014",
+    "source-contract.log": "1c4509d6888e318cd297b7da9788ea5fcbc548118f521225308fb42f8fef9e0f"
+  },
+  "original_exchange_limit_ms": 250,
+  "business_budgets_changed": false,
+  "whole_chain_quantum_security_qualified": false,
+  "production_activation": false
+}

@@ -1,0 +1,20 @@
+{
+  "observed_at": "2026-11-04T08:03:42.490754+00:00",
+  "origin_build_result": {
+    "binary": "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+    "binary_bytes": 392471696,
+    "binary_sha256": "65d283d519c942230a44b99db1b05308f226d5bca9706f8a1db059a7b852e144",
+    "child_system_seconds": 14.448311,
+    "child_user_seconds": 598.2946489999999,
+    "exit_code": 0,
+    "max_child_rss_kib": 3098936,
+    "source_manifest_sha256": "0e9dd2812f4ae9388e5bba175934ee71632c4e053f5f94906d0dd21a22209c88",
+    "source_unchanged": true,
+    "wall_ns": 334724750667
+  },
+  "origin_readback_directory": "prewrite-73ab-trimmed-schema-build-attempt-1",
+  "origin_result_sha256": "e880df9d20b2c43feea9d1dd09320081642deeabded5da82d7719cc106697c6b",
+  "origin_source_after_sha256": "ad713acd4dcea8e5cb57b187498f8e95ff502c416cca04d913a40c5d2927a0c5",
+  "origin_source_before_sha256": "ad713acd4dcea8e5cb57b187498f8e95ff502c416cca04d913a40c5d2927a0c5",
+  "scope": "Read-only adoption of existing graph-agent all-features Node lib test ELF; no Cargo invocation in this control run"
+}

@@ -1,0 +1,92 @@
+{
+  "label": "final-pr-readback-01",
+  "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-pr-readback-01",
+  "archive_relative_directory": "publication/final-pr-readback-01",
+  "source_before": [
+    {
+      "path": "actor.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "actor.stdout",
+      "bytes": 10,
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 301,
+      "sha256": "cbc673e5cd60acb1954722eab18bb3651a5f7a751506fb80a33a154a6c62d5eb"
+    },
+    {
+      "path": "pr.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pr.stdout",
+      "bytes": 25540,
+      "sha256": "8c8fa7f44d9e591aad7e771f183f7b0f01f4ab61eb29f1fc843d48b761b6234d"
+    }
+  ],
+  "source_after": [
+    {
+      "path": "actor.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "actor.stdout",
+      "bytes": 10,
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 301,
+      "sha256": "cbc673e5cd60acb1954722eab18bb3651a5f7a751506fb80a33a154a6c62d5eb"
+    },
+    {
+      "path": "pr.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pr.stdout",
+      "bytes": 25540,
+      "sha256": "8c8fa7f44d9e591aad7e771f183f7b0f01f4ab61eb29f1fc843d48b761b6234d"
+    }
+  ],
+  "destination": [
+    {
+      "path": "actor.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "actor.stdout",
+      "bytes": 10,
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 301,
+      "sha256": "cbc673e5cd60acb1954722eab18bb3651a5f7a751506fb80a33a154a6c62d5eb"
+    },
+    {
+      "path": "pr.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pr.stdout",
+      "bytes": 25540,
+      "sha256": "8c8fa7f44d9e591aad7e771f183f7b0f01f4ab61eb29f1fc843d48b761b6234d"
+    }
+  ],
+  "file_count": 5,
+  "payload_bytes": 25851,
+  "source_before_after_equal": true,
+  "destination_exactly_equal": true,
+  "copy_completed_at": "2026-11-08T01:22:46.226024+00:00",
+  "meaning": "Exact raw byte copies at the retained endpoints; incomplete or failed original artifacts remain incomplete or failed."
+}

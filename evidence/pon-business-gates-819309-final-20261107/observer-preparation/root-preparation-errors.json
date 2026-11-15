@@ -1,0 +1,19 @@
+{
+  "schema": "trnm-root-preparation-errors-v1",
+  "native_or_ci_failures": false,
+  "observations": [
+    {
+      "job": "1a1b79dcafe-12894-ba7",
+      "exit": 1,
+      "error": "FileNotFoundError: guessed scripts/ci/refresh_distributed_source_inventory.py",
+      "resolution": "rg --files located scripts/refresh_distributed_source_inventory.py; read-only v2 completed",
+      "source_mutation": false
+    },
+    {
+      "phase": "functions.exec documentation preparation before dispatch",
+      "error": "JavaScript SyntaxError from unescaped template delimiter near FullRootArithmetic",
+      "remote_process_started": false,
+      "resolution": "corrected literal composition; first actual documentation job1a1b7d8f416-12894-c85 completed"
+    }
+  ]
+}

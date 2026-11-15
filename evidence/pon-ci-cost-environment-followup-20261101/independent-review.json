@@ -1,0 +1,64 @@
+{
+  "reviewer": "wan_acceptance",
+  "reviewed_at_utc": "2026-11-01T08:27:35.786186+00:00",
+  "source_parent": "acd8f79f2dcc22ecdee1d1a5fd88d619d06f37c9",
+  "source_parent_tree": "4e83d2d4ba6b15ddd962ef08652dbeb24858c533",
+  "result": "NO_MUST_FIX_FOUND",
+  "must_fix_findings": [],
+  "checks": {
+    "workflow_exactly_five_prefix_insertions": true,
+    "checker_exactly_five_matching_prefix_insertions": true,
+    "inverse_prefix_substitution_reproduces_original_workflow_and_checker_bytes": true,
+    "global_environment_other_jobs_matrix_and_budgets_preserved": true,
+    "existing_mutations_preserve_original_skip_and_substitution_rejections": true,
+    "existing_mutations_add_missing_unset_and_excess_RUSTFLAGS_unset_cases": true,
+    "corpus_changed_only_three_matching_git_blobs": true,
+    "inventory_complete_tree_entries": 1127,
+    "inventory_added_entries": 19,
+    "inventory_removed_entries": 0,
+    "inventory_exact_original_generator_output": true,
+    "other_selected_tree_bytes_unchanged_except_inventory_and_corpus": true
+  },
+  "unchanged_source_files_verified_byte_for_byte": [
+    "scripts/ci/run_cross_arch_cost.py",
+    "scripts/ci/run_w1_reused_cost_v3.py",
+    "scripts/ci/check_cross_arch_cost.py",
+    "trillionnium/Cargo.toml",
+    "scripts/ci/ci_job.sh",
+    "scripts/ci/run_from_zero_host.py",
+    "scripts/ci/run_from_zero_native.py",
+    "scripts/pon_work_rejection_report.py",
+    "scripts/refresh_distributed_source_inventory.py"
+  ],
+  "source_files": {
+    ".github/workflows/trnm-required-baseline.yml": {
+      "sha256": "8df781f1d5416aaa1426864aac2bd9f196b87b1283d81f630928872d763c479a",
+      "git_blob": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
+      "bytes": 34136
+    },
+    "scripts/ci/check_ci_contract.py": {
+      "sha256": "33b60896c8ec38905b546a1133e8c4c36efaee1e8ddd35bff2ccafc1f3d945f0",
+      "git_blob": "5fb225abfbcd43afef71eb01a4f602596a4b5eff",
+      "bytes": 57139
+    },
+    "scripts/ci/test_ci_contract.py": {
+      "sha256": "04f524dbfddef5225698620720e6ca696e78bb46a34efda7603064ca1df75b6c",
+      "git_blob": "706b3c69548aab53e684fa151b048b8f54a12d42",
+      "bytes": 81912
+    },
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "sha256": "1049f43fd5752faa92e6f1441111822ead830d51c181dfbd47e8121f24913ed9",
+      "git_blob": "f6f70b5ba77c8e38752185e51c050558deb6ded3",
+      "bytes": 63347
+    },
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": {
+      "sha256": "7e441f33cafc4e44dda73dc7103d217576872f6f53612d45d3efe5d71f672eff",
+      "git_blob": "28c54fe84d958d3cc32586d5b1db8d391944533a",
+      "bytes": 313643
+    }
+  },
+  "test_suites_executed_by_this_review": false,
+  "native_cost_execution_accepted": false,
+  "independent_wan_accepted": false,
+  "production_activation": false
+}

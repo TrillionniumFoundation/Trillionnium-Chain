@@ -1,0 +1,1309 @@
+{
+  "actual_lifetime_failure_bound": null,
+  "application_receipt": {
+    "base": "8970e2c81abbf48e2a4d3f0802d79624ab20fadd",
+    "ingress_source": "de7acc8a59d77f11be4c17c380cc9c2bca91905c",
+    "native_tests_executed_on_candidate": false,
+    "production_activation": false,
+    "runtime_revision": "e6aed30916d244a0e60ac06c90e1b97abd53225b",
+    "source": "946c2acfe1f9ecbc34d0971a498d36fda8441082",
+    "whole_chain_pq_qualified": false
+  },
+  "archive": {
+    "bytes": 1882944,
+    "name": "raw-evidence.tar.gz",
+    "sha256": "10e0c40303b11894271f110bd3c7316e8bda66e722c073fff87991891995acb1"
+  },
+  "archive_files": 1043,
+  "component_observations": {
+    "all_requested_component_checks_passed": true,
+    "checkpoint_four_method_acceptance_checked": true,
+    "checkpoint_native_summaries": [
+      {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 18,
+        "result": "ok"
+      },
+      {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 15,
+        "result": "ok"
+      },
+      {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 15,
+        "result": "ok"
+      },
+      {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 6,
+        "result": "ok"
+      },
+      {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 4,
+        "result": "ok"
+      }
+    ],
+    "checkpoint_record_consistency_checked": true,
+    "commands": 90,
+    "current_checkpoint_socket_names_observed": {
+      "copied_lease_probe_fences_owner_before_lease_restoration": [
+        "ok"
+      ],
+      "copied_lease_record_cannot_replace_a_live_checkpoint_endpoint": [
+        "ok"
+      ],
+      "different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint": [
+        "ok"
+      ],
+      "rejected_nonprivate_socket_parent_does_not_unlink_existing_listener": [
+        "ok"
+      ]
+    },
+    "current_da_required_successful_executions": 58,
+    "current_da_required_unique_methods": 29,
+    "da_library_lanes": [
+      {
+        "current_peer_lifecycle_names_observed": {
+          "cell::bep52_peer::tests::tcp_peer_without_connection_has_bounded_cleanup": [
+            "ok"
+          ],
+          "cell::bep52_peer::tests::tcp_slow_fragmented_fetch_peer_preserves_original_deadline": [
+            "ok"
+          ],
+          "cell::bep52_peer::tests::tcp_slow_fragmented_handshake_does_not_renew_original_deadline": [
+            "ok"
+          ],
+          "cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication": [
+            "ok"
+          ]
+        },
+        "current_retained_cache_names_observed": {
+          "cell::erasure::provider::tests::provider_six_shard_cache_batch_rejects_late_bad_pins_and_wires_before_any_write": [
+            "ok"
+          ],
+          "cell::retention::tests::retained_origin_bytes_rehydrate_existing_peer_protocol_after_cache_loss": [
+            "ok"
+          ],
+          "cell::retention::tests::retention_population_preserves_original_deadline_during_cache_writer_contention": [
+            "ok"
+          ],
+          "cell::store::wal_tests::held_reader_refuses_entire_eight_chunk_batch_then_original_retry_survives_cold_reopen": [
+            "ok"
+          ],
+          "cell::store::wal_tests::paired_manifest_chunk_batch_obeys_member_and_byte_bounds": [
+            "ok"
+          ],
+          "cell::store::wal_tests::paired_manifest_chunk_batch_preserves_original_deadline_atomicity": [
+            "ok"
+          ],
+          "cell::store::wal_tests::paired_manifest_chunk_batch_reader_refusal_and_cold_reopen": [
+            "ok"
+          ],
+          "cell::store::wal_tests::paired_manifest_chunk_batch_rejects_invalid_late_member_without_prefix": [
+            "ok"
+          ],
+          "cell::store::wal_tests::paired_manifest_chunk_batch_rolls_back_late_quota_failure": [
+            "ok"
+          ],
+          "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs": [
+            "ok"
+          ]
+        },
+        "full_library_check_passed": true,
+        "label": "da-default-lib",
+        "mentions_cache_writer_busy": false,
+        "mentions_cell_absolute_deadline": false,
+        "peer_lifecycle_acceptance_checked": true,
+        "peer_lifecycle_record_consistency_checked": true,
+        "retained_cache_acceptance_checked": true,
+        "retained_cache_record_consistency_checked": true,
+        "summaries": [
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 742,
+            "result": "ok"
+          }
+        ],
+        "tcv3_roster_methods": 15,
+        "tcv3_successful_executions": 15,
+        "underlying_failure_cause_independently_proved": false
+      },
+      {
+        "current_peer_lifecycle_names_observed": {
+          "cell::bep52_peer::tests::tcp_peer_without_connection_has_bounded_cleanup": [
+            "ok"
+          ],
+          "cell::bep52_peer::tests::tcp_slow_fragmented_fetch_peer_preserves_original_deadline": [
+            "ok"
+          ],
+          "cell::bep52_peer::tests::tcp_slow_fragmented_handshake_does_not_renew_original_deadline": [
+            "ok"
+          ],
+          "cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication": [
+            "ok"
+          ]
+        },
+        "current_retained_cache_names_observed": {
+          "cell::erasure::provider::tests::provider_six_shard_cache_batch_rejects_late_bad_pins_and_wires_before_any_write": [
+            "ok"
+          ],
+          "cell::retention::tests::retained_origin_bytes_rehydrate_existing_peer_protocol_after_cache_loss": [
+            "ok"
+          ],
+          "cell::retention::tests::retention_population_preserves_original_deadline_during_cache_writer_contention": [
+            "ok"
+          ],
+          "cell::store::wal_tests::held_reader_refuses_entire_eight_chunk_batch_then_original_retry_survives_cold_reopen": [
+            "ok"
+          ],
+          "cell::store::wal_tests::paired_manifest_chunk_batch_obeys_member_and_byte_bounds": [
+            "ok"
+          ],
+          "cell::store::wal_tests::paired_manifest_chunk_batch_preserves_original_deadline_atomicity": [
+            "ok"
+          ],
+          "cell::store::wal_tests::paired_manifest_chunk_batch_reader_refusal_and_cold_reopen": [
+            "ok"
+          ],
+          "cell::store::wal_tests::paired_manifest_chunk_batch_rejects_invalid_late_member_without_prefix": [
+            "ok"
+          ],
+          "cell::store::wal_tests::paired_manifest_chunk_batch_rolls_back_late_quota_failure": [
+            "ok"
+          ],
+          "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs": [
+            "ok"
+          ]
+        },
+        "full_library_check_passed": true,
+        "label": "da-all-features-lib",
+        "mentions_cache_writer_busy": false,
+        "mentions_cell_absolute_deadline": false,
+        "peer_lifecycle_acceptance_checked": true,
+        "peer_lifecycle_record_consistency_checked": true,
+        "retained_cache_acceptance_checked": true,
+        "retained_cache_record_consistency_checked": true,
+        "summaries": [
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 742,
+            "result": "ok"
+          }
+        ],
+        "tcv3_roster_methods": 15,
+        "tcv3_successful_executions": 15,
+        "underlying_failure_cause_independently_proved": false
+      }
+    ],
+    "failed_command_labels_without_operator_interruption": [],
+    "failed_commands": [],
+    "full_validation_manifest_and_original_logs_rechecked": true,
+    "harness_basis": "repository CI RUST_TEST_THREADS=1; business deadlines unchanged",
+    "operator_interruptions": [],
+    "passed_commands": 90,
+    "pq_native_commands": 63,
+    "pq_retained_unique_methods": 52,
+    "pq_successful_exact_executions": 63,
+    "pq_supplemental_unique_methods": 11,
+    "runtime_test_threads": 1,
+    "strict_clippy_passed": true,
+    "tcv3_successful_executions": 30,
+    "tcv3_unique_roster_methods": 15,
+    "validator_sha256": "32c62906c12f636f91ba00f2d192da8a7aacd8010a4af21e113eb0a02f94d9b9"
+  },
+  "composition_coverage_proved": false,
+  "current_final_use_authority_granted": false,
+  "declared_lifetime_source_files": 21,
+  "evidence_E": {
+    "binding": "first owning evidence-only Git child of C; exact E and its full source receipt are recorded externally after commit",
+    "native_tests_executed_on_E": false
+  },
+  "historical_campaign": {
+    "classification": "inherited-historical-failure-not-retested-on-C",
+    "compact_archive": {
+      "bytes": 5719,
+      "sha256": "4c2dd851828e0fedaf4f7196f5e212a21545942208ec243b1a8d0b2e41c34bd6"
+    },
+    "compact_members": {
+      "pq-budget-campaign-43161361291-compact/artifact-provenance.json": {
+        "bytes": 3633,
+        "sha256": "a8b8e3aa047fd35820c8f0ad6582e82807959cef74db3c9ce67d75d86ee18329"
+      },
+      "pq-budget-campaign-43161361291-compact/files.json": {
+        "bytes": 2356,
+        "sha256": "e609a0dcf19ad326c8729dbf063deb2209b8d01cc3f93f0df58575b421442080"
+      },
+      "pq-budget-campaign-43161361291-compact/original-results.json": {
+        "bytes": 8561,
+        "sha256": "bc6f3762e09c184e1ac2ddef8041c0189a350b116002d3ea76840c7cf29f307d"
+      },
+      "pq-budget-campaign-43161361291-compact/run-1-source-after.json": {
+        "bytes": 423,
+        "sha256": "8ff28da7a9007bd868b0aa121e039997459f541d4f54c8e8615b3fb41441323a"
+      },
+      "pq-budget-campaign-43161361291-compact/run-1.stderr.log": {
+        "bytes": 1615,
+        "sha256": "95113c85ba3303b3d27e28d5039e4d215d36996386af7e9a21de1a7d7f80600c"
+      },
+      "pq-budget-campaign-43161361291-compact/run-2-source-after.json": {
+        "bytes": 423,
+        "sha256": "8ff28da7a9007bd868b0aa121e039997459f541d4f54c8e8615b3fb41441323a"
+      },
+      "pq-budget-campaign-43161361291-compact/run-2.stderr.log": {
+        "bytes": 1615,
+        "sha256": "7383e27651cf67c3d9b3cbf0333330b6417e2f09925f2b415a204a2a01d563e6"
+      },
+      "pq-budget-campaign-43161361291-compact/run-3-source-after.json": {
+        "bytes": 423,
+        "sha256": "8ff28da7a9007bd868b0aa121e039997459f541d4f54c8e8615b3fb41441323a"
+      },
+      "pq-budget-campaign-43161361291-compact/run-3.stderr.log": {
+        "bytes": 1615,
+        "sha256": "702d6baf680a172594a70e040f9c87c7e1f2309383cedf21f15c7b4c5be2b770"
+      },
+      "pq-budget-campaign-43161361291-compact/source-after.json": {
+        "bytes": 423,
+        "sha256": "8ff28da7a9007bd868b0aa121e039997459f541d4f54c8e8615b3fb41441323a"
+      },
+      "pq-budget-campaign-43161361291-compact/source-before.json": {
+        "bytes": 423,
+        "sha256": "8ff28da7a9007bd868b0aa121e039997459f541d4f54c8e8615b3fb41441323a"
+      },
+      "pq-budget-campaign-43161361291-compact/summary.json": {
+        "bytes": 14314,
+        "sha256": "4f5eccfb1d5673404f0887dbc9d335fd8253224e076970d32d5ec6db94813498"
+      }
+    },
+    "failed_attempt_exit_codes": [
+      101,
+      101,
+      101
+    ],
+    "new_candidate_campaign_executed": false,
+    "original_artifact": {
+      "artifact_api_archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13922513442/zip",
+      "artifact_id": 13922513442,
+      "artifact_name": "pon-native-campaign-x64-head-release-8970e2c81abbf48e2a4d3f0802d79624ab20fadd-1",
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43161361291/artifacts/13922513442",
+      "download_archive_sha256_independently_checked": true,
+      "original_archive_bytes": 70260101,
+      "original_archive_included_in_compact_package": false,
+      "original_archive_sha256": "c5aed8edbdfee0f34303895b552d6348d344b43ffe6e7672615e0726938f5d8f",
+      "raw_copies_are_byte_identical_to_original_members": true,
+      "report_members_not_included": [
+        {
+          "path": "run-1-raw/report.json",
+          "sha256": "4ec60a2e50b196babc5fc25df5a1d52024fc61f01109ec75ce146caa7f521f21"
+        },
+        {
+          "path": "run-2-raw/report.json",
+          "sha256": "2d49327e672a19cac96b4b10bb1838bede9e6484226ea1a66049fa844ab59b1b"
+        },
+        {
+          "path": "run-3-raw/report.json",
+          "sha256": "6dc6aff6f716ebb1b05d12f68a02919c392913e76ce3e89d778370f74c83b0a6"
+        }
+      ],
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "retained_original_members": [
+        {
+          "bytes": 8561,
+          "original_artifact_member": "results.json",
+          "path": "original-results.json",
+          "sha256": "bc6f3762e09c184e1ac2ddef8041c0189a350b116002d3ea76840c7cf29f307d"
+        },
+        {
+          "bytes": 423,
+          "original_artifact_member": "source-before.json",
+          "path": "source-before.json",
+          "sha256": "8ff28da7a9007bd868b0aa121e039997459f541d4f54c8e8615b3fb41441323a"
+        },
+        {
+          "bytes": 423,
+          "original_artifact_member": "source-after.json",
+          "path": "source-after.json",
+          "sha256": "8ff28da7a9007bd868b0aa121e039997459f541d4f54c8e8615b3fb41441323a"
+        },
+        {
+          "bytes": 423,
+          "original_artifact_member": "run-1-source-after.json",
+          "path": "run-1-source-after.json",
+          "sha256": "8ff28da7a9007bd868b0aa121e039997459f541d4f54c8e8615b3fb41441323a"
+        },
+        {
+          "bytes": 423,
+          "original_artifact_member": "run-2-source-after.json",
+          "path": "run-2-source-after.json",
+          "sha256": "8ff28da7a9007bd868b0aa121e039997459f541d4f54c8e8615b3fb41441323a"
+        },
+        {
+          "bytes": 423,
+          "original_artifact_member": "run-3-source-after.json",
+          "path": "run-3-source-after.json",
+          "sha256": "8ff28da7a9007bd868b0aa121e039997459f541d4f54c8e8615b3fb41441323a"
+        },
+        {
+          "bytes": 1615,
+          "original_artifact_member": "run-1.stderr.log",
+          "path": "run-1.stderr.log",
+          "sha256": "95113c85ba3303b3d27e28d5039e4d215d36996386af7e9a21de1a7d7f80600c"
+        },
+        {
+          "bytes": 1615,
+          "original_artifact_member": "run-2.stderr.log",
+          "path": "run-2.stderr.log",
+          "sha256": "7383e27651cf67c3d9b3cbf0333330b6417e2f09925f2b415a204a2a01d563e6"
+        },
+        {
+          "bytes": 1615,
+          "original_artifact_member": "run-3.stderr.log",
+          "path": "run-3.stderr.log",
+          "sha256": "702d6baf680a172594a70e040f9c87c7e1f2309383cedf21f15c7b4c5be2b770"
+        }
+      ],
+      "schema": "trnm-inherited-campaign-artifact-provenance-v1",
+      "source_note": "The actual receipts record head 8970e2c81abbf48e2a4d3f0802d79624ab20fadd and tree fbd1a451b911d218bbb48548892fc8cd53eaf66b; this is not a prospective-merge observation.",
+      "workflow_job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43161361291/job/130993084166",
+      "workflow_run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43161361291"
+    },
+    "original_large_zip_and_three_raw_reports_included": false,
+    "retained_original_stderr_files": 3,
+    "source": {
+      "base": null,
+      "candidate": "8970e2c81abbf48e2a4d3f0802d79624ab20fadd",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "8970e2c81abbf48e2a4d3f0802d79624ab20fadd",
+      "tested_tree": "fbd1a451b911d218bbb48548892fc8cd53eaf66b",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2596950279,
+      "tracked_entries": 28774,
+      "tracked_worktree_verified": true
+    }
+  },
+  "historical_migration_authenticated": false,
+  "independent_custody_proved": false,
+  "ingress_observations": {
+    "baseline_failed_methods": [
+      "ingress::account_scope_tests::changed_native_pq_configuration_refuses_network_entry",
+      "ingress::account_scope_tests::invalid_account_scope_never_connects_pq_history_client",
+      "ingress::account_scope_tests::invalid_account_scope_refuses_pq_network_policy"
+    ],
+    "baseline_source": "05f75684b1ef4d60a36cfcda7a84b6f32542ca0c",
+    "baseline_summary": {
+      "failed": 3,
+      "filtered_out": 1338,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 6,
+      "result": "FAILED"
+    },
+    "baseline_tree": "eefde48b8fa6f15a9d2ae8769380874e76a82bda",
+    "repair_observations": [
+      {
+        "lane": "default",
+        "log": "ingress/fix/fixed-default.stdout",
+        "source": "de7acc8a59d77f11be4c17c380cc9c2bca91905c",
+        "summary": {
+          "failed": 0,
+          "filtered_out": 1338,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 9,
+          "result": "ok"
+        }
+      },
+      {
+        "lane": "all-features",
+        "log": "ingress/fix/fixed-all-features.stdout",
+        "source": "de7acc8a59d77f11be4c17c380cc9c2bca91905c",
+        "summary": {
+          "failed": 0,
+          "filtered_out": 1416,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 9,
+          "result": "ok"
+        }
+      }
+    ],
+    "repair_source": "de7acc8a59d77f11be4c17c380cc9c2bca91905c",
+    "repair_tree": "73350c21ce1a9f826450aef0b73fc5ec317dc931",
+    "scope": "past separate source observations; not live executable attestation",
+    "source_and_provider_before_after_equal": true,
+    "unique_methods": 9
+  },
+  "lifetime_domains": [
+    {
+      "bound": null,
+      "covers": [
+        "signature"
+      ],
+      "status": "unknown"
+    },
+    {
+      "bound": null,
+      "covers": [
+        "commitment"
+      ],
+      "status": "unknown"
+    },
+    {
+      "bound": null,
+      "covers": [
+        "proof"
+      ],
+      "status": "unknown"
+    },
+    {
+      "bound": null,
+      "covers": [
+        "ledger"
+      ],
+      "status": "unknown"
+    },
+    {
+      "bound": null,
+      "covers": [
+        "transport"
+      ],
+      "status": "unknown"
+    },
+    {
+      "bound": null,
+      "covers": [
+        "recovery"
+      ],
+      "status": "unknown"
+    },
+    {
+      "bound": null,
+      "covers": [
+        "release"
+      ],
+      "status": "unknown"
+    },
+    {
+      "bound": null,
+      "covers": [
+        "application"
+      ],
+      "status": "unknown"
+    }
+  ],
+  "new_candidate_campaign_executed": false,
+  "ordinary_caller_switched": false,
+  "prior_applications": [
+    {
+      "archive_label": "prior-apply-01",
+      "candidate_receipt": {
+        "base": "8970e2c81abbf48e2a4d3f0802d79624ab20fadd",
+        "ingress_source": "de7acc8a59d77f11be4c17c380cc9c2bca91905c",
+        "native_tests_executed_on_candidate": false,
+        "production_activation": false,
+        "runtime_revision": "65a223f011d61cbb0e5d4178394b6f07321c95b7",
+        "source": "921acc94fa7af15cb1728ab2718c62f48ad93c89",
+        "whole_chain_pq_qualified": false
+      },
+      "directory": "/home/qian-qi/work/pq-boundary-candidate-20261112-4150",
+      "matching_prior_validation_labels": [
+        "prior-validation-01"
+      ],
+      "new_native_execution_claimed": false,
+      "runtime_receipt": {
+        "base": "8970e2c81abbf48e2a4d3f0802d79624ab20fadd",
+        "ingress_source": "de7acc8a59d77f11be4c17c380cc9c2bca91905c",
+        "source": "65a223f011d61cbb0e5d4178394b6f07321c95b7"
+      }
+    },
+    {
+      "archive_label": "prior-apply-02",
+      "candidate_receipt": {
+        "base": "8970e2c81abbf48e2a4d3f0802d79624ab20fadd",
+        "ingress_source": "de7acc8a59d77f11be4c17c380cc9c2bca91905c",
+        "native_tests_executed_on_candidate": false,
+        "production_activation": false,
+        "runtime_revision": "25268d40b214cdae072ebb34f6c44cc1f058bccb",
+        "source": "13bdc38023d57607a9ba81f52e123f7fb556bec3",
+        "whole_chain_pq_qualified": false
+      },
+      "directory": "/home/qian-qi/work/pq-boundary-candidate-20261112-4150-v2",
+      "matching_prior_validation_labels": [
+        "prior-validation-02"
+      ],
+      "new_native_execution_claimed": false,
+      "runtime_receipt": {
+        "base": "8970e2c81abbf48e2a4d3f0802d79624ab20fadd",
+        "ingress_source": "de7acc8a59d77f11be4c17c380cc9c2bca91905c",
+        "source": "25268d40b214cdae072ebb34f6c44cc1f058bccb"
+      }
+    },
+    {
+      "archive_label": "prior-apply-03",
+      "candidate_receipt": {
+        "base": "8970e2c81abbf48e2a4d3f0802d79624ab20fadd",
+        "ingress_source": "de7acc8a59d77f11be4c17c380cc9c2bca91905c",
+        "native_tests_executed_on_candidate": false,
+        "production_activation": false,
+        "runtime_revision": "01d765e3c2636779ddc0982dff7e6e13f8a2e197",
+        "source": "f0fa8c3c0372d0c5dafccd2683b31fda322e42f2",
+        "whole_chain_pq_qualified": false
+      },
+      "directory": "/home/qian-qi/work/pq-boundary-candidate-20261112-4150-v3",
+      "matching_prior_validation_labels": [
+        "prior-validation-03"
+      ],
+      "new_native_execution_claimed": false,
+      "runtime_receipt": {
+        "base": "8970e2c81abbf48e2a4d3f0802d79624ab20fadd",
+        "ingress_source": "de7acc8a59d77f11be4c17c380cc9c2bca91905c",
+        "source": "01d765e3c2636779ddc0982dff7e6e13f8a2e197"
+      }
+    }
+  ],
+  "prior_failure_results_replaced_by_current_passes": false,
+  "prior_validations": [
+    {
+      "all_requested_component_checks_passed": false,
+      "archive_label": "prior-validation-01",
+      "classification": "separate-prior-batch-original-verdict-retained",
+      "completed": true,
+      "component_observations": {
+        "all_requested_component_checks_passed": false,
+        "checkpoint_four_method_acceptance_checked": false,
+        "checkpoint_native_summaries": [
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 18,
+            "result": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 15,
+            "result": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 15,
+            "result": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 6,
+            "result": "ok"
+          },
+          {
+            "failed": 1,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 2,
+            "result": "FAILED"
+          }
+        ],
+        "checkpoint_record_consistency_checked": false,
+        "commands": 90,
+        "current_checkpoint_socket_names_observed": {
+          "copied_lease_probe_fences_owner_before_lease_restoration": [],
+          "copied_lease_record_cannot_replace_a_live_checkpoint_endpoint": [
+            "FAILED"
+          ],
+          "different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint": [
+            "ok"
+          ],
+          "rejected_nonprivate_socket_parent_does_not_unlink_existing_listener": [
+            "ok"
+          ]
+        },
+        "current_da_required_successful_executions": null,
+        "current_da_required_unique_methods": null,
+        "da_library_lanes": [
+          {
+            "current_peer_lifecycle_names_observed": {
+              "cell::bep52_peer::tests::tcp_peer_without_connection_has_bounded_cleanup": [],
+              "cell::bep52_peer::tests::tcp_slow_fragmented_fetch_peer_preserves_original_deadline": [],
+              "cell::bep52_peer::tests::tcp_slow_fragmented_handshake_does_not_renew_original_deadline": [
+                "ok"
+              ]
+            },
+            "current_retained_cache_names_observed": {
+              "cell::erasure::provider::tests::provider_six_shard_cache_batch_rejects_late_bad_pins_and_wires_before_any_write": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_obeys_member_and_byte_bounds": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_preserves_original_deadline_atomicity": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_reader_refusal_and_cold_reopen": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_rejects_invalid_late_member_without_prefix": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_rolls_back_late_quota_failure": [],
+              "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs": [
+                "FAILED"
+              ]
+            },
+            "full_library_check_passed": false,
+            "label": "da-default-lib",
+            "mentions_cache_writer_busy": false,
+            "mentions_cell_absolute_deadline": true,
+            "peer_lifecycle_acceptance_checked": false,
+            "peer_lifecycle_record_consistency_checked": false,
+            "retained_cache_acceptance_checked": false,
+            "retained_cache_record_consistency_checked": false,
+            "summaries": [
+              {
+                "failed": 1,
+                "filtered_out": 0,
+                "ignored": 0,
+                "measured": 0,
+                "passed": 733,
+                "result": "FAILED"
+              }
+            ],
+            "tcv3_roster_methods": 15,
+            "tcv3_successful_executions": 15,
+            "underlying_failure_cause_independently_proved": false
+          },
+          {
+            "current_peer_lifecycle_names_observed": {
+              "cell::bep52_peer::tests::tcp_peer_without_connection_has_bounded_cleanup": [],
+              "cell::bep52_peer::tests::tcp_slow_fragmented_fetch_peer_preserves_original_deadline": [],
+              "cell::bep52_peer::tests::tcp_slow_fragmented_handshake_does_not_renew_original_deadline": [
+                "ok"
+              ]
+            },
+            "current_retained_cache_names_observed": {
+              "cell::erasure::provider::tests::provider_six_shard_cache_batch_rejects_late_bad_pins_and_wires_before_any_write": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_obeys_member_and_byte_bounds": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_preserves_original_deadline_atomicity": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_reader_refusal_and_cold_reopen": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_rejects_invalid_late_member_without_prefix": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_rolls_back_late_quota_failure": [],
+              "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs": [
+                "FAILED"
+              ]
+            },
+            "full_library_check_passed": false,
+            "label": "da-all-features-lib",
+            "mentions_cache_writer_busy": false,
+            "mentions_cell_absolute_deadline": false,
+            "peer_lifecycle_acceptance_checked": false,
+            "peer_lifecycle_record_consistency_checked": false,
+            "retained_cache_acceptance_checked": false,
+            "retained_cache_record_consistency_checked": false,
+            "summaries": [
+              {
+                "failed": 1,
+                "filtered_out": 0,
+                "ignored": 0,
+                "measured": 0,
+                "passed": 733,
+                "result": "FAILED"
+              }
+            ],
+            "tcv3_roster_methods": 15,
+            "tcv3_successful_executions": 15,
+            "underlying_failure_cause_independently_proved": false
+          }
+        ],
+        "failed_command_labels_without_operator_interruption": [
+          "da-default-lib",
+          "da-all-features-lib",
+          "checkpoint-tests"
+        ],
+        "failed_commands": [
+          "da-default-lib",
+          "da-all-features-lib",
+          "checkpoint-tests"
+        ],
+        "full_validation_manifest_and_original_logs_rechecked": true,
+        "harness_basis": "not explicitly pinned by the original validator",
+        "operator_interruptions": [],
+        "passed_commands": 87,
+        "pq_native_commands": 63,
+        "pq_retained_unique_methods": 52,
+        "pq_successful_exact_executions": 63,
+        "pq_supplemental_unique_methods": 11,
+        "runtime_test_threads": null,
+        "strict_clippy_passed": true,
+        "tcv3_successful_executions": 30,
+        "tcv3_unique_roster_methods": 15,
+        "validator_sha256": "ee6019a69aa1e54bda384690906035c83d47606aed3c12dde84e0f051bd74453"
+      },
+      "directory": "/home/qian-qi/work/pq-boundary-validation-20261112-4150-v1",
+      "failures": [
+        "da-default-lib",
+        "da-all-features-lib",
+        "checkpoint-tests"
+      ],
+      "new_native_execution_claimed": false,
+      "source": {
+        "base": null,
+        "candidate": "921acc94fa7af15cb1728ab2718c62f48ad93c89",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "921acc94fa7af15cb1728ab2718c62f48ad93c89",
+        "tested_tree": "f033723031857335d8b393946f78c68ace48c825",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2597010007,
+        "tracked_entries": 28777,
+        "tracked_worktree_verified": true
+      },
+      "validation_file": {
+        "bytes": 119821,
+        "sha256": "bda4dc5cb282c191eb5ace39d80b5657d57da0075be3b22743306826a22d1b07"
+      }
+    },
+    {
+      "all_requested_component_checks_passed": false,
+      "archive_label": "prior-validation-02",
+      "classification": "separate-prior-batch-original-verdict-retained",
+      "completed": true,
+      "component_observations": {
+        "all_requested_component_checks_passed": false,
+        "checkpoint_four_method_acceptance_checked": false,
+        "checkpoint_native_summaries": [
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 18,
+            "result": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 15,
+            "result": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 15,
+            "result": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 6,
+            "result": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 4,
+            "result": "ok"
+          }
+        ],
+        "checkpoint_record_consistency_checked": false,
+        "commands": 90,
+        "current_checkpoint_socket_names_observed": {
+          "copied_lease_probe_fences_owner_before_lease_restoration": [
+            "ok"
+          ],
+          "copied_lease_record_cannot_replace_a_live_checkpoint_endpoint": [
+            "ok"
+          ],
+          "different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint": [
+            "ok"
+          ],
+          "rejected_nonprivate_socket_parent_does_not_unlink_existing_listener": [
+            "ok"
+          ]
+        },
+        "current_da_required_successful_executions": null,
+        "current_da_required_unique_methods": null,
+        "da_library_lanes": [
+          {
+            "current_peer_lifecycle_names_observed": {
+              "cell::bep52_peer::tests::tcp_peer_without_connection_has_bounded_cleanup": [],
+              "cell::bep52_peer::tests::tcp_slow_fragmented_fetch_peer_preserves_original_deadline": [],
+              "cell::bep52_peer::tests::tcp_slow_fragmented_handshake_does_not_renew_original_deadline": []
+            },
+            "current_retained_cache_names_observed": {
+              "cell::erasure::provider::tests::provider_six_shard_cache_batch_rejects_late_bad_pins_and_wires_before_any_write": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_obeys_member_and_byte_bounds": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_preserves_original_deadline_atomicity": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_reader_refusal_and_cold_reopen": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_rejects_invalid_late_member_without_prefix": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_rolls_back_late_quota_failure": [],
+              "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs": []
+            },
+            "full_library_check_passed": false,
+            "label": "da-default-lib",
+            "mentions_cache_writer_busy": false,
+            "mentions_cell_absolute_deadline": false,
+            "peer_lifecycle_acceptance_checked": false,
+            "peer_lifecycle_record_consistency_checked": false,
+            "retained_cache_acceptance_checked": false,
+            "retained_cache_record_consistency_checked": false,
+            "summaries": [],
+            "tcv3_roster_methods": 15,
+            "tcv3_successful_executions": 0,
+            "underlying_failure_cause_independently_proved": false
+          },
+          {
+            "current_peer_lifecycle_names_observed": {
+              "cell::bep52_peer::tests::tcp_peer_without_connection_has_bounded_cleanup": [],
+              "cell::bep52_peer::tests::tcp_slow_fragmented_fetch_peer_preserves_original_deadline": [],
+              "cell::bep52_peer::tests::tcp_slow_fragmented_handshake_does_not_renew_original_deadline": [
+                "ok"
+              ]
+            },
+            "current_retained_cache_names_observed": {
+              "cell::erasure::provider::tests::provider_six_shard_cache_batch_rejects_late_bad_pins_and_wires_before_any_write": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_obeys_member_and_byte_bounds": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_preserves_original_deadline_atomicity": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_reader_refusal_and_cold_reopen": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_rejects_invalid_late_member_without_prefix": [],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_rolls_back_late_quota_failure": [],
+              "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs": [
+                "FAILED"
+              ]
+            },
+            "full_library_check_passed": false,
+            "label": "da-all-features-lib",
+            "mentions_cache_writer_busy": true,
+            "mentions_cell_absolute_deadline": false,
+            "peer_lifecycle_acceptance_checked": false,
+            "peer_lifecycle_record_consistency_checked": false,
+            "retained_cache_acceptance_checked": false,
+            "retained_cache_record_consistency_checked": false,
+            "summaries": [
+              {
+                "failed": 1,
+                "filtered_out": 0,
+                "ignored": 0,
+                "measured": 0,
+                "passed": 733,
+                "result": "FAILED"
+              }
+            ],
+            "tcv3_roster_methods": 15,
+            "tcv3_successful_executions": 15,
+            "underlying_failure_cause_independently_proved": false
+          }
+        ],
+        "failed_command_labels_without_operator_interruption": [
+          "da-all-features-lib",
+          "pq-native-41"
+        ],
+        "failed_commands": [
+          "da-default-lib",
+          "da-all-features-lib",
+          "pq-native-41"
+        ],
+        "full_validation_manifest_and_original_logs_rechecked": true,
+        "harness_basis": "repository CI RUST_TEST_THREADS=1; business deadlines unchanged",
+        "operator_interruptions": [
+          {
+            "automatic_timeout_expired": false,
+            "classification": "operator-interruption",
+            "complete_native_command_observation": false,
+            "declared_outer_timeout_seconds": 1800,
+            "elapsed_ns": 565064897502,
+            "exit_code": -15,
+            "intent": {
+              "bytes": 970,
+              "path": "operator-interruption-da-default-intent.json",
+              "sha256": "08d37fcc4c901eaa46e8171ac652bfa12f250bf58e2e61eba30b71bf53f172c3"
+            },
+            "label": "da-default-lib",
+            "native_assertion_failure_claimed": false,
+            "operator_record": {
+              "argv": [
+                "timeout",
+                "--kill-after=20",
+                "1800",
+                "cargo",
+                "+1.95.0",
+                "test",
+                "--locked",
+                "--offline",
+                "--manifest-path",
+                "trillionnium/Cargo.toml",
+                "-p",
+                "trnm-data-availability",
+                "--lib",
+                "--",
+                "--format",
+                "pretty",
+                "--test-threads",
+                "1"
+              ],
+              "automatic_timeout_expired": false,
+              "dispatched_unix_seconds": 1794473055.3159845,
+              "label": "da-default-lib",
+              "native_assertion_failure_claimed": false,
+              "observed_unix_seconds": 1794473055.3155656,
+              "parent_pid": 199470,
+              "production_process": false,
+              "reason": "Observed test/server join-accept wait beyond six minutes; unchanged test peer helper has unbounded accept and join after a permitted pre-dial client error. Stop this owned test command only to prepare a bounded test harness.",
+              "schema": "pq-operator-test-interruption-v1",
+              "signal": "SIGTERM via pidfd",
+              "signal_dispatched": true,
+              "source": "13bdc38023d57607a9ba81f52e123f7fb556bec3",
+              "target_pid": 229929,
+              "target_start_ticks": 155015624
+            },
+            "readonly_process_snapshots": [
+              {
+                "bytes": 2286,
+                "path": "operator-readonly-process-observation.json",
+                "sha256": "f1e602074a3d9c81d0cf56456c8d442cb1311ecb6dab408f0d1b4747bf857936"
+              }
+            ],
+            "result": {
+              "bytes": 1048,
+              "path": "operator-interruption-da-default-result.json",
+              "sha256": "f258ca29695c1cfde530041280fbbabf45ceeff5418c38b53da43ab66ff187bb"
+            },
+            "root_cause_independently_proved": false,
+            "scope": "retained operator intent, confirmed dispatch and corresponding command termination; no live process revalidation",
+            "source": "13bdc38023d57607a9ba81f52e123f7fb556bec3"
+          }
+        ],
+        "passed_commands": 87,
+        "pq_native_commands": 63,
+        "pq_retained_unique_methods": 52,
+        "pq_successful_exact_executions": 62,
+        "pq_supplemental_unique_methods": 11,
+        "runtime_test_threads": 1,
+        "strict_clippy_passed": true,
+        "tcv3_successful_executions": 15,
+        "tcv3_unique_roster_methods": 15,
+        "validator_sha256": "c452e455a1a9e18a3867fdff4a10fa6cf7877aa510f5a46012ab28ecd7b0ff5f"
+      },
+      "directory": "/home/qian-qi/work/pq-boundary-validation-20261112-4150-v2",
+      "failures": [
+        "da-default-lib",
+        "da-all-features-lib",
+        "pq-native-41"
+      ],
+      "new_native_execution_claimed": false,
+      "source": {
+        "base": null,
+        "candidate": "13bdc38023d57607a9ba81f52e123f7fb556bec3",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "13bdc38023d57607a9ba81f52e123f7fb556bec3",
+        "tested_tree": "65e181ffd83118579ccd898259b252d5e6ccd4f5",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2597026990,
+        "tracked_entries": 28777,
+        "tracked_worktree_verified": true
+      },
+      "validation_file": {
+        "bytes": 120352,
+        "sha256": "42efd7039031ada68472ed2907a01b1714482d65edd8b2f921ee35f3ae64003c"
+      }
+    },
+    {
+      "all_requested_component_checks_passed": false,
+      "archive_label": "prior-validation-03",
+      "classification": "separate-prior-batch-original-verdict-retained",
+      "completed": true,
+      "component_observations": {
+        "all_requested_component_checks_passed": false,
+        "checkpoint_four_method_acceptance_checked": false,
+        "checkpoint_native_summaries": [
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 18,
+            "result": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 15,
+            "result": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 15,
+            "result": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 6,
+            "result": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 4,
+            "result": "ok"
+          }
+        ],
+        "checkpoint_record_consistency_checked": true,
+        "commands": 90,
+        "current_checkpoint_socket_names_observed": {
+          "copied_lease_probe_fences_owner_before_lease_restoration": [
+            "ok"
+          ],
+          "copied_lease_record_cannot_replace_a_live_checkpoint_endpoint": [
+            "ok"
+          ],
+          "different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint": [
+            "ok"
+          ],
+          "rejected_nonprivate_socket_parent_does_not_unlink_existing_listener": [
+            "ok"
+          ]
+        },
+        "current_da_required_successful_executions": null,
+        "current_da_required_unique_methods": null,
+        "da_library_lanes": [
+          {
+            "current_peer_lifecycle_names_observed": {
+              "cell::bep52_peer::tests::tcp_peer_without_connection_has_bounded_cleanup": [
+                "ok"
+              ],
+              "cell::bep52_peer::tests::tcp_slow_fragmented_fetch_peer_preserves_original_deadline": [
+                "ok"
+              ],
+              "cell::bep52_peer::tests::tcp_slow_fragmented_handshake_does_not_renew_original_deadline": [
+                "ok"
+              ]
+            },
+            "current_retained_cache_names_observed": {
+              "cell::erasure::provider::tests::provider_six_shard_cache_batch_rejects_late_bad_pins_and_wires_before_any_write": [
+                "ok"
+              ],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_obeys_member_and_byte_bounds": [
+                "ok"
+              ],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_preserves_original_deadline_atomicity": [
+                "FAILED"
+              ],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_reader_refusal_and_cold_reopen": [
+                "ok"
+              ],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_rejects_invalid_late_member_without_prefix": [
+                "ok"
+              ],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_rolls_back_late_quota_failure": [
+                "ok"
+              ],
+              "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs": [
+                "ok"
+              ]
+            },
+            "full_library_check_passed": false,
+            "label": "da-default-lib",
+            "mentions_cache_writer_busy": false,
+            "mentions_cell_absolute_deadline": true,
+            "peer_lifecycle_acceptance_checked": false,
+            "peer_lifecycle_record_consistency_checked": true,
+            "retained_cache_acceptance_checked": false,
+            "retained_cache_record_consistency_checked": true,
+            "summaries": [
+              {
+                "failed": 1,
+                "filtered_out": 0,
+                "ignored": 0,
+                "measured": 0,
+                "passed": 741,
+                "result": "FAILED"
+              }
+            ],
+            "tcv3_roster_methods": 15,
+            "tcv3_successful_executions": 15,
+            "underlying_failure_cause_independently_proved": false
+          },
+          {
+            "current_peer_lifecycle_names_observed": {
+              "cell::bep52_peer::tests::tcp_peer_without_connection_has_bounded_cleanup": [
+                "ok"
+              ],
+              "cell::bep52_peer::tests::tcp_slow_fragmented_fetch_peer_preserves_original_deadline": [
+                "ok"
+              ],
+              "cell::bep52_peer::tests::tcp_slow_fragmented_handshake_does_not_renew_original_deadline": [
+                "ok"
+              ]
+            },
+            "current_retained_cache_names_observed": {
+              "cell::erasure::provider::tests::provider_six_shard_cache_batch_rejects_late_bad_pins_and_wires_before_any_write": [
+                "ok"
+              ],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_obeys_member_and_byte_bounds": [
+                "ok"
+              ],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_preserves_original_deadline_atomicity": [
+                "FAILED"
+              ],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_reader_refusal_and_cold_reopen": [
+                "ok"
+              ],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_rejects_invalid_late_member_without_prefix": [
+                "ok"
+              ],
+              "cell::store::wal_tests::paired_manifest_chunk_batch_rolls_back_late_quota_failure": [
+                "ok"
+              ],
+              "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs": [
+                "FAILED"
+              ]
+            },
+            "full_library_check_passed": false,
+            "label": "da-all-features-lib",
+            "mentions_cache_writer_busy": false,
+            "mentions_cell_absolute_deadline": true,
+            "peer_lifecycle_acceptance_checked": false,
+            "peer_lifecycle_record_consistency_checked": true,
+            "retained_cache_acceptance_checked": false,
+            "retained_cache_record_consistency_checked": true,
+            "summaries": [
+              {
+                "failed": 3,
+                "filtered_out": 0,
+                "ignored": 0,
+                "measured": 0,
+                "passed": 739,
+                "result": "FAILED"
+              }
+            ],
+            "tcv3_roster_methods": 15,
+            "tcv3_successful_executions": 15,
+            "underlying_failure_cause_independently_proved": false
+          }
+        ],
+        "failed_command_labels_without_operator_interruption": [
+          "da-default-lib",
+          "da-all-features-lib"
+        ],
+        "failed_commands": [
+          "da-default-lib",
+          "da-all-features-lib"
+        ],
+        "full_validation_manifest_and_original_logs_rechecked": true,
+        "harness_basis": "repository CI RUST_TEST_THREADS=1; business deadlines unchanged",
+        "operator_interruptions": [],
+        "passed_commands": 88,
+        "pq_native_commands": 63,
+        "pq_retained_unique_methods": 52,
+        "pq_successful_exact_executions": 63,
+        "pq_supplemental_unique_methods": 11,
+        "runtime_test_threads": 1,
+        "strict_clippy_passed": true,
+        "tcv3_successful_executions": 30,
+        "tcv3_unique_roster_methods": 15,
+        "validator_sha256": "4b0a3e514509d51984a022a5841b0dd3bc4386c345ef9847d61a16840866c7d0"
+      },
+      "directory": "/home/qian-qi/work/pq-boundary-validation-20261112-4150-v3",
+      "failures": [
+        "da-default-lib",
+        "da-all-features-lib"
+      ],
+      "new_native_execution_claimed": false,
+      "source": {
+        "base": null,
+        "candidate": "f0fa8c3c0372d0c5dafccd2683b31fda322e42f2",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "f0fa8c3c0372d0c5dafccd2683b31fda322e42f2",
+        "tested_tree": "8e82bfc7ff1219f7c86c2d381181ac8b06744ed3",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2597057527,
+        "tracked_entries": 28777,
+        "tracked_worktree_verified": true
+      },
+      "validation_file": {
+        "bytes": 123716,
+        "sha256": "5377cd204a07538e86afdc8ecc2154d925a24cd79d2a426920930b68b961e65e"
+      }
+    }
+  ],
+  "production_activation": false,
+  "provider_before_after_equal": true,
+  "qualification": "HOLD",
+  "required_prior_sources": [
+    "13bdc38023d57607a9ba81f52e123f7fb556bec3",
+    "921acc94fa7af15cb1728ab2718c62f48ad93c89",
+    "f0fa8c3c0372d0c5dafccd2683b31fda322e42f2"
+  ],
+  "runtime_R": {
+    "commit": "e6aed30916d244a0e60ac06c90e1b97abd53225b",
+    "parents": [
+      "f0fa8c3c0372d0c5dafccd2683b31fda322e42f2"
+    ],
+    "tree": "74f2bcc633237fb864ccc1ee1040117ab691f35d"
+  },
+  "schema": "trnm-pq-boundary-closure-observations-v4",
+  "source_C": {
+    "base": null,
+    "candidate": "946c2acfe1f9ecbc34d0971a498d36fda8441082",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "946c2acfe1f9ecbc34d0971a498d36fda8441082",
+    "tested_tree": "a80f4ada4490aafcbe61c0c418a9425138dc8e0c",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2597062923,
+    "tracked_entries": 28777,
+    "tracked_worktree_verified": true
+  },
+  "source_before_after_equal": true,
+  "source_observation_scope": "complete batch before and after; not live executable attestation",
+  "transitive_implementation_graph_coverage_proved": false,
+  "undeclared_semantic_dependency_closure_proved": false,
+  "validator_validation_sha256": "ca8b9eddad9a7e46d8c3969a299693cae0ec80de337898ed67808952a74b94c6",
+  "whole_chain_pq_qualified": false
+}

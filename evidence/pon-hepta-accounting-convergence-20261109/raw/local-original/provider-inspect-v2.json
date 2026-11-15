@@ -1,0 +1,7 @@
+{
+  "idempotency_key": "hepta-accounting-d9bb-provider-inspect-20261109-v2",
+  "tool_error": "MCP request timed out",
+  "job_id_observed": null,
+  "action": "read-only existing provider receipt discovery",
+  "process_outcome": "unknown"
+}

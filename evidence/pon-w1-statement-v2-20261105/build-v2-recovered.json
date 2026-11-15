@@ -1,0 +1,28 @@
+{
+  "schema": "TRNM-W1-V2-RECOVERED-HOST-COMMAND1",
+  "command": [
+    "cargo",
+    "build",
+    "--locked",
+    "--release",
+    "--manifest-path",
+    "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+    "-p",
+    "trnm-w1-zk-host-v2"
+  ],
+  "cwd": "/workspace/scratch/79360d3567d1/chain",
+  "started_utc": "2026-11-05T01:05:48.006036+00:00",
+  "wall_seconds": 56.21758586499982,
+  "exit_code": 0,
+  "log": "/workspace/scratch/79360d3567d1/continuation-runtime/build-v2-recovered.log",
+  "log_sha256": "cb72f52641dcaa3e948204204bbe9935924edf9e6e0c465eb6f740944287d321",
+  "environment": {
+    "CARGO_HOME": "/workspace/scratch/79360d3567d1/cargo",
+    "RUSTUP_HOME": "/workspace/scratch/79360d3567d1/rustup",
+    "RISC0_HOME": "/workspace/scratch/79360d3567d1/risc0",
+    "CARGO_TARGET_DIR": "/workspace/scratch/79360d3567d1/target-v2",
+    "CARGO_BUILD_JOBS": "1",
+    "RISC0_BUILD_LOCKED": "1"
+  },
+  "source_modified_by_command": false
+}

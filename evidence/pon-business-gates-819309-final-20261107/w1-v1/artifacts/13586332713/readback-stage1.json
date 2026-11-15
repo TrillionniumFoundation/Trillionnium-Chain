@@ -1,0 +1,373 @@
+{
+  "artifact_id": 13586332713,
+  "metadata": {
+    "id": 13586332713,
+    "name": "w1-false-trace-head-x64-819309fd312298e099642e1253b1d4ba07113e98-1",
+    "size_in_bytes": 5571925,
+    "digest": "sha256:b827fdd429d518b24a53c7dd7ace1d65bf43a874eb932bb0860c9f94ac959bf3",
+    "expired": false,
+    "created_at": "2026-11-07T18:50:38Z",
+    "updated_at": "2026-11-07T18:50:38Z",
+    "workflow_run": {
+      "id": 42402618462,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "archive_authenticated": true,
+  "source_bound": true,
+  "manifest_hashes_complete": true,
+  "pure_read_status": "NOT_RUN",
+  "business_qualification": false,
+  "family": "false-trace",
+  "arch": "x64",
+  "source_kind": "head",
+  "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+  "job": {
+    "id": 128493695647,
+    "name": "W1 false trace reuse (x64, head)",
+    "family": "false-trace",
+    "arch": "x64",
+    "source": "head",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "download": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586332713/zip"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "error": null,
+    "bytes": 5571925,
+    "sha256": "b827fdd429d518b24a53c7dd7ace1d65bf43a874eb932bb0860c9f94ac959bf3"
+  },
+  "archive_inventory": [
+    {
+      "name": "cargo-graph.json",
+      "bytes": 841183,
+      "sha256": "73ea25d09d5a8fbad28a4a2fd409b5a31292480be37d47c46edf5074f33b1526",
+      "retained_expanded": true
+    },
+    {
+      "name": "format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "preflight.log",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "retained_expanded": true
+    },
+    {
+      "name": "push-source-context.json",
+      "bytes": 2267,
+      "sha256": "5a1ea114d87384bb6b4674126366592d707c77414861a79f91691e7454c7a225",
+      "retained_expanded": true
+    },
+    {
+      "name": "query-work-controls.log",
+      "bytes": 3080,
+      "sha256": "0a5c571db6182f0d3bb34ed13e531cef72e2a61e8011d1f81df2d0d6263df610",
+      "retained_expanded": true
+    },
+    {
+      "name": "reader-controls.log",
+      "bytes": 119,
+      "sha256": "2525c244c2976c624a979078f6180f62e260893c65223992d28fee5c75d29db4",
+      "retained_expanded": true
+    },
+    {
+      "name": "retained-rejection-clippy.log",
+      "bytes": 216,
+      "sha256": "dd12ab796ae4cf0a3b4d90d3417eed21344210d40d680f34f342839b61cb1dbf",
+      "retained_expanded": true
+    },
+    {
+      "name": "retained-rejection-reader-controls.log",
+      "bytes": 192,
+      "sha256": "1682179abdf61eab69acadbf8491eca06c47e55dba880fd93914a498164d3e7d",
+      "retained_expanded": true
+    },
+    {
+      "name": "retained-rejection-tests.log",
+      "bytes": 729,
+      "sha256": "1e75de909da1598a59fb2d588d85edbd8ee7ce5afa2b13d1969df6e2ccc644b9",
+      "retained_expanded": true
+    },
+    {
+      "name": "runner-controls.log",
+      "bytes": 148,
+      "sha256": "8542a7e7930eb1694ee04d2bbee4ea7a3066f097ce5523cb93bbe91724c49880",
+      "retained_expanded": true
+    },
+    {
+      "name": "source-after.json",
+      "bytes": 423,
+      "sha256": "5759d06c351357aa4d7b24e1b56c03607da60870788f30139a8e10460744c6b6",
+      "retained_expanded": true
+    },
+    {
+      "name": "source-before.json",
+      "bytes": 423,
+      "sha256": "5759d06c351357aa4d7b24e1b56c03607da60870788f30139a8e10460744c6b6",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-clippy.log",
+      "bytes": 1958,
+      "sha256": "1d849d33475397c5fa98559c71f204d63531ad50b2b478b394ba6fc0b1299585",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/build.stderr",
+      "bytes": 3738,
+      "sha256": "e05ec8ff0b8fa6588bb2d5d8f8b3e6d612b8e7b0e4a54a0cbb05cd55844fa2eb",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/build.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/campaign.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/campaign.stdout",
+      "bytes": 30021508,
+      "sha256": "f0d20cb599144bfe6b643c970323e59378402198516f158054d6405773effdc3",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/cargo.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/cargo.stdout",
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/cpuinfo.txt",
+      "bytes": 5832,
+      "sha256": "a3bd4715ed2ac20cfac0f927cee7e6297b8fc70dcc3202037e79def3aa84c7a2",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/manifest.json",
+      "bytes": 24130,
+      "sha256": "7e5e7190a044a5a5e0a8c6efbf70c69d4ed839ac5d970ad9fa59d831856ac5fa",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/pon_w1_false_trace_reuse_v1",
+      "bytes": 715040,
+      "sha256": "6710c4e478105a15144e9f64d28387feab28871e6a62888352516e074b6b9ceb",
+      "retained_expanded": false,
+      "elf_machine": 62
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/rustc.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/rustc.stdout",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/uname.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/build.stderr",
+      "bytes": 606,
+      "sha256": "a4221a1ccb64a915049b09ba4271d73b494f26c96cfb7b57123092408a389d12",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/uname.stdout",
+      "bytes": 128,
+      "sha256": "2437786a005300b4d25ddff7c65a91bdfe873d85b22086b4a7b863f333197732",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/build.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/campaign.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/campaign.stdout",
+      "bytes": 30174246,
+      "sha256": "be7ac0fbb62bc5f9cbeeeddbcd75792001ac149cfdc0a792265a0422eae1cbad",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/cargo.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/cargo.stdout",
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/cpuinfo.txt",
+      "bytes": 5832,
+      "sha256": "6903df756d6ca4e409dafff06b0bea3f3c57ab9ad75b5037a2376778280c63a6",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/manifest.json",
+      "bytes": 26478,
+      "sha256": "1a2f46d119ff9f95f9f8aad8a4edec1b325f0ea70566fdfa4ca89e938b106951",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/pon_w1_false_trace_reuse_v1",
+      "bytes": 715040,
+      "sha256": "6710c4e478105a15144e9f64d28387feab28871e6a62888352516e074b6b9ceb",
+      "retained_expanded": false,
+      "elf_machine": 62
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/rustc.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/rustc.stdout",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/uname.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/uname.stdout",
+      "bytes": 128,
+      "sha256": "2437786a005300b4d25ddff7c65a91bdfe873d85b22086b4a7b863f333197732",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-fuzz-semantics.log",
+      "bytes": 3664,
+      "sha256": "fb971307c96ba8f7d2890be78aa58fead3756803077d2f2994cd11aa5d83a41d",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-tests.log",
+      "bytes": 16932,
+      "sha256": "ef7e7ded3c2a162735099fdffb3556562bb08d687212cc3304f833d97713354f",
+      "retained_expanded": true
+    }
+  ],
+  "source_before": {
+    "base": null,
+    "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+    "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1277471450,
+    "tracked_entries": 12639,
+    "tracked_worktree_verified": true
+  },
+  "source_after": {
+    "base": null,
+    "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+    "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1277471450,
+    "tracked_entries": 12639,
+    "tracked_worktree_verified": true
+  },
+  "manifests": [
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586332713/members/w1-false-trace-reuse-v1/manifest.json",
+      "member": "w1-false-trace-reuse-v1/manifest.json",
+      "schema": "trnm-w1-false-trace-reuse-execution-v1",
+      "result": "PASS",
+      "file_hashes_verified": 12,
+      "observations": 5,
+      "planned_shards": 0,
+      "shards": 0,
+      "manifest_sha256": "7e5e7190a044a5a5e0a8c6efbf70c69d4ed839ac5d970ad9fa59d831856ac5fa"
+    },
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586332713/members/w1-full-limb-reuse-v1/manifest.json",
+      "member": "w1-full-limb-reuse-v1/manifest.json",
+      "schema": "trnm-w1-full-limb-reuse-execution-v1",
+      "result": "PASS",
+      "file_hashes_verified": 12,
+      "observations": 5,
+      "planned_shards": 0,
+      "shards": 0,
+      "manifest_sha256": "1a2f46d119ff9f95f9f8aad8a4edec1b325f0ea70566fdfa4ca89e938b106951"
+    }
+  ],
+  "job_log": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128493695647/logs"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "error": null,
+    "bytes": 209184,
+    "sha256": "3c9cc4f51d66cd9a360158e4b3eb014075cbaf66ca9ff89554177527e98421bb"
+  },
+  "coverage_status": "ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING",
+  "finished_utc": "2026-11-07T20:05:04.750900+00:00"
+}

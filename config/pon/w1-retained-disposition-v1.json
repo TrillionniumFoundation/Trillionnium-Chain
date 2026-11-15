@@ -1,0 +1,61 @@
+{
+  "inputs": {
+    "evidence/pon-w1-full-v2-20261105/controls-result.json": {
+      "bytes": 216585,
+      "sha256": "11c684ed2a1e3dd63a6076b85bd6a21417a02d882f097e411eb0959301726d44"
+    },
+    "evidence/pon-w1-full-v2-20261105/expected-artifacts.bin": {
+      "bytes": 64,
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+    },
+    "evidence/pon-w1-full-v2-20261105/guest.bin": {
+      "bytes": 375928,
+      "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f"
+    },
+    "evidence/pon-w1-full-v2-20261105/header.bin": {
+      "bytes": 318,
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+    },
+    "evidence/pon-w1-full-v2-20261105/input.bin": {
+      "bytes": 49506,
+      "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+    },
+    "evidence/pon-w1-full-v2-20261105/observation-3.tar.gz": {
+      "bytes": 942985,
+      "sha256": "9d5a1bad69a6279c64986c690f1e23ac6a38eed1c9e16f52b33fae15d83a450a"
+    },
+    "evidence/pon-w1-full-v2-20261105/original-controls-failure.log": {
+      "bytes": 145,
+      "sha256": "dc2186516e340c4f1bf95fbbdab3f462ebfc205703eb0b79117a6e7f631fabf0"
+    },
+    "evidence/pon-w1-full-v2-20261105/proof-result.json": {
+      "bytes": 198014,
+      "sha256": "a2bbd9ed141b87823ea6d50322c0d65f706e32aca028d1b5ab19f1327c1194cc"
+    },
+    "evidence/pon-w1-full-v2-20261105/raw-index.json": {
+      "bytes": 129365,
+      "sha256": "1dac23ede827023ef16156a91c8b46b0c1349170f1ead02577c89da310c0406d"
+    },
+    "evidence/pon-w1-full-v2-20261105/succinct.bin": {
+      "bytes": 257014,
+      "sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"
+    },
+    "evidence/pon-w1-statement-v2-20261105/continuation/checkpoint-observation-20261105.json": {
+      "bytes": 9373,
+      "sha256": "05fad0363b74ff278ca3fa47c2824053f7e30c023043644d91bb0a6da702071a"
+    },
+    "evidence/pon-w1-v2-deadline-20261105/result.json.gz": {
+      "bytes": 13741,
+      "sha256": "032dffd0241d6ddd183b41e4353e154dd9787cef69d208eff4a8edda903773ff"
+    },
+    "evidence/pon-w1-v2-deadline-20261105/summary.json": {
+      "bytes": 1295,
+      "sha256": "33f202f7530f7ea35287df99be29564f33b2325db824820a130e11813b3e7636"
+    }
+  },
+  "observation_source_commit": "2810f7c2b1b5e549302b3fdb2cf41b2a6ee19bff",
+  "original_confirmation_deadline_seconds": 4,
+  "publication_source_tree": "7e6ba31424eb17617d217cfe4eebe9c62b95ad97",
+  "schema": "trnm-w1-retained-disposition-inputs-v1",
+  "screen": "necessary single-proof latency screen against unchanged original four-second confirmation gate; not a new consensus deadline"
+}

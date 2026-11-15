@@ -1,0 +1,26 @@
+{
+  "phase": "frozen_baseline_prepare",
+  "host": "desktop",
+  "job_id": "1a1b857ec09-12894-e84",
+  "state": "succeeded",
+  "exit_code": 0,
+  "output_complete": true,
+  "output_durable": true,
+  "timed_out": false,
+  "cancelled": false,
+  "log_truncated": {
+    "stderr": false,
+    "stdout": false
+  },
+  "log_bytes": {
+    "stderr": {
+      "seen": 1082,
+      "stored": 1082
+    },
+    "stdout": {
+      "seen": 15435,
+      "stored": 15435
+    }
+  },
+  "qualification": "HOLD_NO_GO"
+}

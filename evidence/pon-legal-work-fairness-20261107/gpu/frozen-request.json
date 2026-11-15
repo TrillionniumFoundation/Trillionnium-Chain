@@ -1,0 +1,22 @@
+{
+  "accelerator": "T4",
+  "account_alias": "qiqian",
+  "campaign": "pon-legal-gpu-10a9-20261107-01",
+  "gpu_job_submitted": false,
+  "host": "rog",
+  "manager_key": "pon-legal-gpu-10a9-20261107-01",
+  "payload_bytes": 32313,
+  "payload_sha256": "475c1583a1059ddd1acc5d58c81390f4fb3ebfe7045f5cf73f5ea0692c334142",
+  "pow_qualified": false,
+  "production_activation": false,
+  "profile": "pon-routed-int257-grouped-research-v0",
+  "provider": "colab",
+  "schema": "pon-grouped-gpu-frozen-request-v0",
+  "shape": "standard",
+  "source_file": "formal/pon-nakamoto-v1/experiments/grouped_gpu_legal_v0.py",
+  "source_sha256": "8c0bb9efdfd5bdf1f73f1c057ba806e15c38b9c53ab8ee3915b768bf9465df32",
+  "submitted_script_bytes": 69609,
+  "submitted_script_sha256": "5a63bfeeae1ff764dd49004af099346935c102f269663444f5a1ee7dd7f592f1",
+  "wall_seconds": 300,
+  "workload_key": "pon-legal-batch16-10a9-20261107-01"
+}

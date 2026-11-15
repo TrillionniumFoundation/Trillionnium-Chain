@@ -1,0 +1,49 @@
+{
+  "schema": "TRNM-W1-PINNED-GUEST-REPRODUCTION1",
+  "executed_source_commit": "2810f7c2b1b5e549302b3fdb2cf41b2a6ee19bff",
+  "published_tree_equivalent_commit": "a635200956843f0d2f335f929977d602b48b36ec",
+  "source_tree": "7e6ba31424eb17617d217cfe4eebe9c62b95ad97",
+  "source_root": "/workspace/scratch/79360d3567d1/chain",
+  "build_environment": {
+    "HOME": "/workspace/shared/w1-home",
+    "CARGO_HOME": "/workspace/shared/chain-cargo",
+    "RUSTUP_HOME": "/workspace/shared/chain-rustup",
+    "RISC0_HOME": "/workspace/shared/w1-tools",
+    "CARGO_TARGET_DIR": "/workspace/shared/w1-host-target",
+    "CARGO_BUILD_JOBS": "2",
+    "RISC0_BUILD_LOCKED": "1"
+  },
+  "host_toolchain": "1.95.0",
+  "guest_toolchain": "rustc 1.88.0-dev (de85b1d3d 2025-06-26)",
+  "argv": [
+    "/workspace/shared/chain-cargo/bin/cargo",
+    "build",
+    "--locked",
+    "--release",
+    "--manifest-path",
+    "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+    "-p",
+    "trnm-w1-zk-host-v2"
+  ],
+  "additional_guest_rustflags": [
+    "--remap-path-prefix=/workspace/shared/w1-home/.cargo=/root/.cargo"
+  ],
+  "source_remap_only_attempt_guest_sha256": "eed90a4478ddfe159076fbf53a3fb5753feafa87bc46957a3c8f6373b5f772e5",
+  "source_remap_only_attempt_guest_bytes": 375912,
+  "exact_guest_bytes": 375928,
+  "matches_historical_guest_sha256": true,
+  "fixed_profile_or_image_changed": false,
+  "guest_source_or_lock_changed": false,
+  "full_v2_proof_observed_at_checkpoint": false,
+  "binaries": {
+    "r0vm": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6",
+    "trnm-w1-full-guest-v2.bin": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+    "w1-staged-prover-v2": "7c6557cd8f8e87762aff35e8fe973286b6b28a419b295e3435a159be1c8ca844",
+    "w1-verify-v2": "9c3e3f321a24e1acb66638058fd77f67906824593422692f9e296e70a688fe65"
+  },
+  "logs": {
+    "source-remap-attempt.log": "fb5d196accfb26f682a3c911f9cc2735dfb0bf9cb777407fd9f501c2f476a4d8",
+    "cargo-wrapper.py": "5c4451fbca557209f91de1a957056ce40922c60a72a135ddaceb4f904f7f91fd",
+    "exact-source-path-build.log": "dca5e5900a535b095830e582eee7101288188400074ac42a2ff55023a2cb719e"
+  }
+}

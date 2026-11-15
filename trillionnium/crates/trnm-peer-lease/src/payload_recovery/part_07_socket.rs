@@ -141,6 +141,11 @@ impl PayloadReplayRecoveryDaemonV1 {
     /// removed implicitly; an operator must clean a stale endpoint after a
     /// hard kill, which prevents deleting another process's listener.
     pub fn run(&self) -> Result<(), PayloadReplayRecoveryErrorV1> {
+        if self.operation_timeout.is_zero() {
+            return Err(PayloadReplayRecoveryErrorV1::InvalidRequest(
+                "recovery operation timeout must be nonzero",
+            ));
+        }
         validate_socket_configuration(
             &self.socket_path,
             &self.payload_path,
@@ -1370,5 +1375,35 @@ mod socket_tests {
         std::os::unix::fs::symlink(root.path().join("displaced"), &parent).unwrap();
         assert!(verify_bound_directory_identity(&parent, &parent_file, identity).is_err());
         drop(listener);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn zero_timeout_refuses_before_configuration_and_owner_open() {
+        let namespace = PayloadReplayNamespaceV1::new([1; 32], 7, [2; 32], [3; 32], [4; 32])
+            .expect("nonzero namespace");
+        let target = PayloadReplayRecoveryTargetV1::new(
+            1,
+            [5; 32],
+            [6; 32],
+            PayloadReplayDirectionV1::Outbound,
+            [7; 32],
+            1,
+            1,
+            1,
+            0,
+            [8; 32],
+        )
+        .expect("complete target");
+        // Empty paths would fail the next configuration check, so a missing
+        // timeout preflight cannot open owner state or bind a listener.
+        let daemon = PayloadReplayRecoveryDaemonV1::new("", "", "", namespace, target)
+            .with_timeout(Duration::ZERO);
+        assert!(matches!(
+            daemon.run(),
+            Err(PayloadReplayRecoveryErrorV1::InvalidRequest(
+                "recovery operation timeout must be nonzero"
+            ))
+        ));
     }
 }

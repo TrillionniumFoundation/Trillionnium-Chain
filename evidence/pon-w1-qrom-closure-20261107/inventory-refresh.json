@@ -1,0 +1,27 @@
+{
+  "added": [
+    "config/pon/w1-qrom-closure-required-tests-v1.json",
+    "config/pon/w1-qrom-implementation-v1.json",
+    "config/pon/w1-qrom-required-tests-v1.json"
+  ],
+  "after_count": 1361,
+  "after_sha256": "b64c0889f80a67b37459db6440ef4f4d8cac67f7f85f02ebe6f407a2042a1d85",
+  "before_count": 1358,
+  "before_sha256": "876d745cd0c421c8cfe68ed70b3bfd3edfe5087580de116a721e7268f7ef15e9",
+  "command": [
+    "python3",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "complete_current_hosted_ci_passed": false,
+  "exit_code": 0,
+  "git_fallback_render_matches": true,
+  "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+  "previous_commit": "5c3a3c5b54f43dd1c2005c2eb744e9bcbeba6794",
+  "removed": [],
+  "rustfmt_workspace_check_exit_code": 0,
+  "schema": "TRNM-W1-QROM-INVENTORY-REFRESH1",
+  "scope": "Refresh generated embedded source roster to include all existing QROM configuration files. No verifier, proof parameter, authorization or acceptance guard is changed. Original failing hosted record remains attached to 7150.",
+  "stderr": "",
+  "stdout": "distributed source inventory: PASS\n"
+}

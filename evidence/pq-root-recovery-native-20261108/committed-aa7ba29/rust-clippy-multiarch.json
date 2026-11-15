@@ -1,0 +1,30 @@
+{
+  "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+  "argv": [
+    "cargo",
+    "clippy",
+    "--locked",
+    "--offline",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/workspace/scratch/5faaca703596/chain-root",
+  "started_utc": "2026-11-08T17:30:40.263457+00:00",
+  "elapsed_seconds": 46.45378136300019,
+  "exit_code": 0,
+  "log": "rust-clippy-multiarch.log",
+  "bytes": 996,
+  "sha256": "094df19ffc9d5bd258297db74b74ef5cf1c25dce7e7360b45e7ae070f8b3c1fd",
+  "environment_correction": {
+    "OPENSSL_LIB_DIR": "/usr/lib/x86_64-linux-gnu",
+    "OPENSSL_INCLUDE_DIR": "/usr/include"
+  },
+  "retained_original_failure": "rust-05.log",
+  "scope": "same source and command; explicit installed multiarch library directory; no source, dependency, feature or budget change"
+}

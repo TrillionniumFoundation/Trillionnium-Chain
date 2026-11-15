@@ -1,0 +1,33 @@
+{
+  "commit_performed": false,
+  "created_utc": "2026-11-08T00:14:41.564157+00:00",
+  "directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/delivery-staging/merge-review",
+  "file_count": 4,
+  "files": [
+    {
+      "bytes": 3496,
+      "path": "README.md",
+      "sha256": "cf49867f4a6a7f605d762bf034aaf4ebce988350e2f060fee182273bfa003a81"
+    },
+    {
+      "bytes": 2641,
+      "path": "audit-summary.json",
+      "sha256": "afa18979aa97bc2b1b55b5c68145143e230b44be80efd5c4481e3ce866c5e412"
+    },
+    {
+      "bytes": 6269719,
+      "path": "final-merge-audit-2d46.tar.gz",
+      "sha256": "824b243b25579796382dc9da5b1873cfe1b03ea0009ea76c31b61e695652539d"
+    },
+    {
+      "bytes": 647,
+      "path": "manifest.json",
+      "sha256": "8541545cc40976db962ab8437dbc9c0c8ae82509d360e6d6595ea9ccfe5d4912"
+    }
+  ],
+  "original_archive_unchanged": true,
+  "push_performed": false,
+  "schema": "merge-review-delivery-receipt-v1",
+  "source_repository_written": false,
+  "total_bytes": 6276503
+}

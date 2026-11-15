@@ -1,0 +1,13 @@
+{
+  "schema": "trnm-pq-startup-baseline-resource-observation-v1",
+  "source": "/sys/fs/cgroup/memory.events observed before and after original-native execution",
+  "memory_limit_bytes": 8589934592,
+  "oom_before": 38,
+  "oom_kill_before": 8,
+  "oom_after": 38,
+  "oom_kill_after": 8,
+  "build_jobs": 1,
+  "incremental": false,
+  "attribution": "Counters were already nonzero before this execution; no OOM or OOM-kill increment was observed for the baseline run.",
+  "original_execution": "original-native.json"
+}

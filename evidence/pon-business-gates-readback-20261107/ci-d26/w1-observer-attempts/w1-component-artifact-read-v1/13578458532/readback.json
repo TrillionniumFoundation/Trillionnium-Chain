@@ -1,0 +1,1795 @@
+{
+  "artifact_id": 13578458532,
+  "metadata": {
+    "id": 13578458532,
+    "node_id": "MDg6QXJ0aWZhY3QxMzU3ODQ1ODUzMg==",
+    "name": "w1-rank-batch-v5-head-arm64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+    "size_in_bytes": 45034611,
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578458532",
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578458532/zip",
+    "expired": false,
+    "digest": "sha256:cb395850fdee8cf09d7766701acea37fef46032fcfee75e1d83a9cf97ff4e773",
+    "created_at": "2026-11-07T14:57:27Z",
+    "updated_at": "2026-11-07T14:57:27Z",
+    "expires_at": "2026-12-07T14:57:23Z",
+    "workflow_run": {
+      "id": 42383368504,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+    }
+  },
+  "started_utc": "2026-11-07T15:53:50.333274+00:00",
+  "errors": [
+    "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578458532/source.json'"
+  ],
+  "native_gate_validated": false,
+  "download_argv": [
+    "/usr/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578458532/zip"
+  ],
+  "download_exit": 0,
+  "zip_bytes": 45034611,
+  "zip_sha256": "cb395850fdee8cf09d7766701acea37fef46032fcfee75e1d83a9cf97ff4e773",
+  "archive_inventory": [
+    {
+      "path": "batch-tests.log",
+      "bytes": 1297,
+      "compressed_bytes": 621
+    },
+    {
+      "path": "campaign/build.stderr",
+      "bytes": 1560,
+      "compressed_bytes": 531
+    },
+    {
+      "path": "campaign/build.stdout",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-00.json",
+      "bytes": 28020,
+      "compressed_bytes": 3524
+    },
+    {
+      "path": "campaign/campaign-00.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-00.stdout",
+      "bytes": 489709,
+      "compressed_bytes": 27180
+    },
+    {
+      "path": "campaign/campaign-01.json",
+      "bytes": 84086,
+      "compressed_bytes": 7734
+    },
+    {
+      "path": "campaign/campaign-01.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-01.stdout",
+      "bytes": 2898885,
+      "compressed_bytes": 224710
+    },
+    {
+      "path": "campaign/campaign-02.json",
+      "bytes": 28121,
+      "compressed_bytes": 3527
+    },
+    {
+      "path": "campaign/campaign-02.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-02.stdout",
+      "bytes": 1727893,
+      "compressed_bytes": 102946
+    },
+    {
+      "path": "campaign/campaign-03.json",
+      "bytes": 84175,
+      "compressed_bytes": 7779
+    },
+    {
+      "path": "campaign/campaign-03.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-03.stdout",
+      "bytes": 13076161,
+      "compressed_bytes": 4347294
+    },
+    {
+      "path": "campaign/campaign-04.json",
+      "bytes": 27044,
+      "compressed_bytes": 3245
+    },
+    {
+      "path": "campaign/campaign-04.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-04.stdout",
+      "bytes": 336266,
+      "compressed_bytes": 16543
+    },
+    {
+      "path": "campaign/campaign-05.json",
+      "bytes": 28007,
+      "compressed_bytes": 3484
+    },
+    {
+      "path": "campaign/campaign-05.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-05.stdout",
+      "bytes": 450207,
+      "compressed_bytes": 24925
+    },
+    {
+      "path": "campaign/campaign-06.json",
+      "bytes": 26294,
+      "compressed_bytes": 3402
+    },
+    {
+      "path": "campaign/campaign-06.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-06.stdout",
+      "bytes": 426514,
+      "compressed_bytes": 45245
+    },
+    {
+      "path": "campaign/campaign-07.json",
+      "bytes": 72926,
+      "compressed_bytes": 7297
+    },
+    {
+      "path": "campaign/campaign-07.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-07.stdout",
+      "bytes": 2358043,
+      "compressed_bytes": 184888
+    },
+    {
+      "path": "campaign/campaign-08.json",
+      "bytes": 26359,
+      "compressed_bytes": 3419
+    },
+    {
+      "path": "campaign/campaign-08.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-08.stdout",
+      "bytes": 988118,
+      "compressed_bytes": 72195
+    },
+    {
+      "path": "campaign/campaign-09.json",
+      "bytes": 72994,
+      "compressed_bytes": 7334
+    },
+    {
+      "path": "campaign/campaign-09.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-09.stdout",
+      "bytes": 9158891,
+      "compressed_bytes": 2978496
+    },
+    {
+      "path": "campaign/campaign-10.json",
+      "bytes": 25488,
+      "compressed_bytes": 3140
+    },
+    {
+      "path": "campaign/campaign-10.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-10.stdout",
+      "bytes": 306188,
+      "compressed_bytes": 35870
+    },
+    {
+      "path": "campaign/campaign-11.json",
+      "bytes": 26288,
+      "compressed_bytes": 3373
+    },
+    {
+      "path": "campaign/campaign-11.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-11.stdout",
+      "bytes": 404715,
+      "compressed_bytes": 42707
+    },
+    {
+      "path": "campaign/campaign-12.json",
+      "bytes": 25454,
+      "compressed_bytes": 3336
+    },
+    {
+      "path": "campaign/campaign-12.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-12.stdout",
+      "bytes": 414288,
+      "compressed_bytes": 76402
+    },
+    {
+      "path": "campaign/campaign-13.json",
+      "bytes": 67420,
+      "compressed_bytes": 7102
+    },
+    {
+      "path": "campaign/campaign-13.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-13.stdout",
+      "bytes": 2199782,
+      "compressed_bytes": 215714
+    },
+    {
+      "path": "campaign/campaign-14.json",
+      "bytes": 25543,
+      "compressed_bytes": 3351
+    },
+    {
+      "path": "campaign/campaign-14.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-14.stdout",
+      "bytes": 1527207,
+      "compressed_bytes": 404809
+    },
+    {
+      "path": "campaign/campaign-15.json",
+      "bytes": 67487,
+      "compressed_bytes": 7141
+    },
+    {
+      "path": "campaign/campaign-15.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-15.stdout",
+      "bytes": 9171716,
+      "compressed_bytes": 3062902
+    },
+    {
+      "path": "campaign/campaign-16.json",
+      "bytes": 24722,
+      "compressed_bytes": 3114
+    },
+    {
+      "path": "campaign/campaign-16.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-16.stdout",
+      "bytes": 291037,
+      "compressed_bytes": 66790
+    },
+    {
+      "path": "campaign/campaign-17.json",
+      "bytes": 25440,
+      "compressed_bytes": 3327
+    },
+    {
+      "path": "campaign/campaign-17.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-17.stdout",
+      "bytes": 381693,
+      "compressed_bytes": 72221
+    },
+    {
+      "path": "campaign/campaign-18.json",
+      "bytes": 25457,
+      "compressed_bytes": 3340
+    },
+    {
+      "path": "campaign/campaign-18.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-18.stdout",
+      "bytes": 414282,
+      "compressed_bytes": 76235
+    },
+    {
+      "path": "campaign/campaign-19.json",
+      "bytes": 67424,
+      "compressed_bytes": 7087
+    },
+    {
+      "path": "campaign/campaign-19.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-19.stdout",
+      "bytes": 2245920,
+      "compressed_bytes": 224649
+    },
+    {
+      "path": "campaign/campaign-20.json",
+      "bytes": 25511,
+      "compressed_bytes": 3363
+    },
+    {
+      "path": "campaign/campaign-20.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-20.stdout",
+      "bytes": 997568,
+      "compressed_bytes": 108273
+    },
+    {
+      "path": "campaign/campaign-21.json",
+      "bytes": 67484,
+      "compressed_bytes": 7151
+    },
+    {
+      "path": "campaign/campaign-21.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-21.stdout",
+      "bytes": 7897894,
+      "compressed_bytes": 2569891
+    },
+    {
+      "path": "campaign/campaign-22.json",
+      "bytes": 24725,
+      "compressed_bytes": 3124
+    },
+    {
+      "path": "campaign/campaign-22.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-22.stdout",
+      "bytes": 291042,
+      "compressed_bytes": 66570
+    },
+    {
+      "path": "campaign/campaign-23.json",
+      "bytes": 25444,
+      "compressed_bytes": 3342
+    },
+    {
+      "path": "campaign/campaign-23.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-23.stdout",
+      "bytes": 381716,
+      "compressed_bytes": 72109
+    },
+    {
+      "path": "campaign/campaign-24.json",
+      "bytes": 25460,
+      "compressed_bytes": 3348
+    },
+    {
+      "path": "campaign/campaign-24.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-24.stdout",
+      "bytes": 416664,
+      "compressed_bytes": 75377
+    },
+    {
+      "path": "campaign/campaign-25.json",
+      "bytes": 67423,
+      "compressed_bytes": 7124
+    },
+    {
+      "path": "campaign/campaign-25.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-25.stdout",
+      "bytes": 2133520,
+      "compressed_bytes": 206882
+    },
+    {
+      "path": "campaign/campaign-26.json",
+      "bytes": 25573,
+      "compressed_bytes": 3364
+    },
+    {
+      "path": "campaign/campaign-26.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-26.stdout",
+      "bytes": 2021022,
+      "compressed_bytes": 599314
+    },
+    {
+      "path": "campaign/campaign-27.json",
+      "bytes": 67495,
+      "compressed_bytes": 7126
+    },
+    {
+      "path": "campaign/campaign-27.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-27.stdout",
+      "bytes": 10217662,
+      "compressed_bytes": 3455383
+    },
+    {
+      "path": "campaign/campaign-28.json",
+      "bytes": 24728,
+      "compressed_bytes": 3139
+    },
+    {
+      "path": "campaign/campaign-28.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-28.stdout",
+      "bytes": 291044,
+      "compressed_bytes": 66092
+    },
+    {
+      "path": "campaign/campaign-29.json",
+      "bytes": 25446,
+      "compressed_bytes": 3340
+    },
+    {
+      "path": "campaign/campaign-29.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-29.stdout",
+      "bytes": 381729,
+      "compressed_bytes": 71460
+    },
+    {
+      "path": "campaign/campaign-30.json",
+      "bytes": 25533,
+      "compressed_bytes": 3366
+    },
+    {
+      "path": "campaign/campaign-30.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-30.stdout",
+      "bytes": 441862,
+      "compressed_bytes": 78345
+    },
+    {
+      "path": "campaign/campaign-31.json",
+      "bytes": 67498,
+      "compressed_bytes": 7103
+    },
+    {
+      "path": "campaign/campaign-31.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-31.stdout",
+      "bytes": 2196710,
+      "compressed_bytes": 217446
+    },
+    {
+      "path": "campaign/campaign-32.json",
+      "bytes": 25596,
+      "compressed_bytes": 3376
+    },
+    {
+      "path": "campaign/campaign-32.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-32.stdout",
+      "bytes": 1133568,
+      "compressed_bytes": 115693
+    },
+    {
+      "path": "campaign/campaign-33.json",
+      "bytes": 67563,
+      "compressed_bytes": 7169
+    },
+    {
+      "path": "campaign/campaign-33.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-33.stdout",
+      "bytes": 9439077,
+      "compressed_bytes": 3154167
+    },
+    {
+      "path": "campaign/campaign-34.json",
+      "bytes": 24800,
+      "compressed_bytes": 3157
+    },
+    {
+      "path": "campaign/campaign-34.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-34.stdout",
+      "bytes": 291430,
+      "compressed_bytes": 66796
+    },
+    {
+      "path": "campaign/campaign-35.json",
+      "bytes": 25518,
+      "compressed_bytes": 3342
+    },
+    {
+      "path": "campaign/campaign-35.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-35.stdout",
+      "bytes": 382076,
+      "compressed_bytes": 72075
+    },
+    {
+      "path": "campaign/campaign-36.json",
+      "bytes": 25524,
+      "compressed_bytes": 3347
+    },
+    {
+      "path": "campaign/campaign-36.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-36.stdout",
+      "bytes": 411922,
+      "compressed_bytes": 74812
+    },
+    {
+      "path": "campaign/campaign-37.json",
+      "bytes": 67493,
+      "compressed_bytes": 7107
+    },
+    {
+      "path": "campaign/campaign-37.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-37.stdout",
+      "bytes": 2186846,
+      "compressed_bytes": 213106
+    },
+    {
+      "path": "campaign/campaign-38.json",
+      "bytes": 25616,
+      "compressed_bytes": 3386
+    },
+    {
+      "path": "campaign/campaign-38.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-38.stdout",
+      "bytes": 1531088,
+      "compressed_bytes": 445173
+    },
+    {
+      "path": "campaign/campaign-39.json",
+      "bytes": 67554,
+      "compressed_bytes": 7148
+    },
+    {
+      "path": "campaign/campaign-39.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-39.stdout",
+      "bytes": 8859098,
+      "compressed_bytes": 2946206
+    },
+    {
+      "path": "campaign/campaign-40.json",
+      "bytes": 24798,
+      "compressed_bytes": 3150
+    },
+    {
+      "path": "campaign/campaign-40.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-40.stdout",
+      "bytes": 291601,
+      "compressed_bytes": 66120
+    },
+    {
+      "path": "campaign/campaign-41.json",
+      "bytes": 25513,
+      "compressed_bytes": 3329
+    },
+    {
+      "path": "campaign/campaign-41.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-41.stdout",
+      "bytes": 382255,
+      "compressed_bytes": 71422
+    },
+    {
+      "path": "campaign/campaign-42.json",
+      "bytes": 25531,
+      "compressed_bytes": 3357
+    },
+    {
+      "path": "campaign/campaign-42.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-42.stdout",
+      "bytes": 426862,
+      "compressed_bytes": 77845
+    },
+    {
+      "path": "campaign/campaign-43.json",
+      "bytes": 67496,
+      "compressed_bytes": 7105
+    },
+    {
+      "path": "campaign/campaign-43.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-43.stdout",
+      "bytes": 2207296,
+      "compressed_bytes": 219826
+    },
+    {
+      "path": "campaign/campaign-44.json",
+      "bytes": 25602,
+      "compressed_bytes": 3351
+    },
+    {
+      "path": "campaign/campaign-44.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-44.stdout",
+      "bytes": 1210083,
+      "compressed_bytes": 228257
+    },
+    {
+      "path": "campaign/campaign-45.json",
+      "bytes": 67565,
+      "compressed_bytes": 7148
+    },
+    {
+      "path": "campaign/campaign-45.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-45.stdout",
+      "bytes": 9933136,
+      "compressed_bytes": 3357499
+    },
+    {
+      "path": "campaign/campaign-46.json",
+      "bytes": 24798,
+      "compressed_bytes": 3137
+    },
+    {
+      "path": "campaign/campaign-46.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-46.stdout",
+      "bytes": 291694,
+      "compressed_bytes": 68198
+    },
+    {
+      "path": "campaign/campaign-47.json",
+      "bytes": 25517,
+      "compressed_bytes": 3341
+    },
+    {
+      "path": "campaign/campaign-47.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-47.stdout",
+      "bytes": 382470,
+      "compressed_bytes": 73521
+    },
+    {
+      "path": "campaign/campaign-48.json",
+      "bytes": 26389,
+      "compressed_bytes": 3389
+    },
+    {
+      "path": "campaign/campaign-48.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-48.stdout",
+      "bytes": 448838,
+      "compressed_bytes": 26448
+    },
+    {
+      "path": "campaign/campaign-49.json",
+      "bytes": 73018,
+      "compressed_bytes": 7330
+    },
+    {
+      "path": "campaign/campaign-49.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-49.stdout",
+      "bytes": 2435241,
+      "compressed_bytes": 181933
+    },
+    {
+      "path": "campaign/campaign-50.json",
+      "bytes": 26469,
+      "compressed_bytes": 3428
+    },
+    {
+      "path": "campaign/campaign-50.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-50.stdout",
+      "bytes": 1308815,
+      "compressed_bytes": 69852
+    },
+    {
+      "path": "campaign/campaign-51.json",
+      "bytes": 73090,
+      "compressed_bytes": 7335
+    },
+    {
+      "path": "campaign/campaign-51.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-51.stdout",
+      "bytes": 10577559,
+      "compressed_bytes": 3502753
+    },
+    {
+      "path": "campaign/campaign-52.json",
+      "bytes": 25573,
+      "compressed_bytes": 3169
+    },
+    {
+      "path": "campaign/campaign-52.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-52.stdout",
+      "bytes": 306618,
+      "compressed_bytes": 16134
+    },
+    {
+      "path": "campaign/campaign-53.json",
+      "bytes": 26375,
+      "compressed_bytes": 3387
+    },
+    {
+      "path": "campaign/campaign-53.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-53.stdout",
+      "bytes": 405139,
+      "compressed_bytes": 23188
+    },
+    {
+      "path": "campaign/campaign-54.json",
+      "bytes": 27192,
+      "compressed_bytes": 3458
+    },
+    {
+      "path": "campaign/campaign-54.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-54.stdout",
+      "bytes": 453872,
+      "compressed_bytes": 41851
+    },
+    {
+      "path": "campaign/campaign-55.json",
+      "bytes": 78540,
+      "compressed_bytes": 7656
+    },
+    {
+      "path": "campaign/campaign-55.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-55.stdout",
+      "bytes": 2556911,
+      "compressed_bytes": 187364
+    },
+    {
+      "path": "campaign/campaign-56.json",
+      "bytes": 27302,
+      "compressed_bytes": 3498
+    },
+    {
+      "path": "campaign/campaign-56.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-56.stdout",
+      "bytes": 1877026,
+      "compressed_bytes": 275007
+    },
+    {
+      "path": "campaign/campaign-57.json",
+      "bytes": 78621,
+      "compressed_bytes": 7699
+    },
+    {
+      "path": "campaign/campaign-57.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-57.stdout",
+      "bytes": 11921465,
+      "compressed_bytes": 3975724
+    },
+    {
+      "path": "campaign/campaign-58.json",
+      "bytes": 26298,
+      "compressed_bytes": 3225
+    },
+    {
+      "path": "campaign/campaign-58.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-58.stdout",
+      "bytes": 321143,
+      "compressed_bytes": 31690
+    },
+    {
+      "path": "campaign/campaign-59.json",
+      "bytes": 27184,
+      "compressed_bytes": 3453
+    },
+    {
+      "path": "campaign/campaign-59.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-59.stdout",
+      "bytes": 427268,
+      "compressed_bytes": 39596
+    },
+    {
+      "path": "campaign/campaign-60.json",
+      "bytes": 29045,
+      "compressed_bytes": 3607
+    },
+    {
+      "path": "campaign/campaign-60.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-60.stdout",
+      "bytes": 516563,
+      "compressed_bytes": 43962
+    },
+    {
+      "path": "campaign/campaign-61.json",
+      "bytes": 89884,
+      "compressed_bytes": 8171
+    },
+    {
+      "path": "campaign/campaign-61.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-61.stdout",
+      "bytes": 3081373,
+      "compressed_bytes": 214747
+    },
+    {
+      "path": "campaign/campaign-62.json",
+      "bytes": 29106,
+      "compressed_bytes": 3641
+    },
+    {
+      "path": "campaign/campaign-62.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-63.json",
+      "bytes": 89977,
+      "compressed_bytes": 8215
+    },
+    {
+      "path": "campaign/campaign-63.stdout",
+      "bytes": 11706723,
+      "compressed_bytes": 3817286
+    },
+    {
+      "path": "campaign/campaign-62.stdout",
+      "bytes": 939521,
+      "compressed_bytes": 61675
+    },
+    {
+      "path": "campaign/campaign-63.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-64.json",
+      "bytes": 27994,
+      "compressed_bytes": 3338
+    },
+    {
+      "path": "campaign/campaign-64.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-64.stdout",
+      "bytes": 351959,
+      "compressed_bytes": 32669
+    },
+    {
+      "path": "campaign/campaign-65.json",
+      "bytes": 29030,
+      "compressed_bytes": 3606
+    },
+    {
+      "path": "campaign/campaign-65.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/campaign-65.stdout",
+      "bytes": 473771,
+      "compressed_bytes": 41672
+    },
+    {
+      "path": "campaign/cargo.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/cargo.stdout",
+      "bytes": 36,
+      "compressed_bytes": 38
+    },
+    {
+      "path": "campaign/commands.jsonl",
+      "bytes": 78227,
+      "compressed_bytes": 6616
+    },
+    {
+      "path": "campaign/cpuinfo.txt",
+      "bytes": 1596,
+      "compressed_bytes": 276
+    },
+    {
+      "path": "campaign/declaration.json",
+      "bytes": 6163,
+      "compressed_bytes": 1353
+    },
+    {
+      "path": "campaign/manifest.json",
+      "bytes": 6065140,
+      "compressed_bytes": 476759
+    },
+    {
+      "path": "campaign/meminfo.txt",
+      "bytes": 1588,
+      "compressed_bytes": 563
+    },
+    {
+      "path": "campaign/pon_w1_rank_batch_v5",
+      "bytes": 967008,
+      "compressed_bytes": 411641
+    },
+    {
+      "path": "campaign/rustc.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "campaign/rustc.stdout",
+      "bytes": 197,
+      "compressed_bytes": 150
+    },
+    {
+      "path": "cargo-graph.json",
+      "bytes": 842485,
+      "compressed_bytes": 67135
+    },
+    {
+      "path": "clippy.log",
+      "bytes": 1973,
+      "compressed_bytes": 681
+    },
+    {
+      "path": "format.log",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "kernel-tests.log",
+      "bytes": 3861,
+      "compressed_bytes": 1322
+    },
+    {
+      "path": "preflight.log",
+      "bytes": 133,
+      "compressed_bytes": 114
+    },
+    {
+      "path": "push-source-context.json",
+      "bytes": 2267,
+      "compressed_bytes": 821
+    },
+    {
+      "path": "reader-controls.log",
+      "bytes": 111,
+      "compressed_bytes": 37
+    },
+    {
+      "path": "runner-controls.log",
+      "bytes": 104,
+      "compressed_bytes": 36
+    },
+    {
+      "path": "source-after.json",
+      "bytes": 423,
+      "compressed_bytes": 240
+    },
+    {
+      "path": "source-before.json",
+      "bytes": 423,
+      "compressed_bytes": 240
+    }
+  ],
+  "selected_files": {
+    "campaign/manifest.json": {
+      "bytes": 6065140,
+      "sha256": "480214b91c7ca5537a06857e2dd8108d7efa3ef79764badf687586d0da9438a3"
+    },
+    "push-source-context.json": {
+      "bytes": 2267,
+      "sha256": "d14f01c3f77b6e73b043f77bd26f933e4d47ea71142651574cad78aa5139af72"
+    },
+    "source-after.json": {
+      "bytes": 423,
+      "sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa"
+    }
+  },
+  "manifests": [
+    {
+      "schema": "pon-w1-rank-batch-execution-v5",
+      "result": "COMPLETE_COMPONENT_OBSERVATION",
+      "error": null,
+      "final_check_error": null,
+      "expected_source_commit": null,
+      "expected_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "execution_context": "local-component-research",
+      "architecture": "arm64",
+      "source_changed": null,
+      "binary_sha256_before": "ac9a42ce40831dd83917458b0f272fea99d0a28676c1d35e813a8515cab49b87",
+      "binary_sha256_after": "ac9a42ce40831dd83917458b0f272fea99d0a28676c1d35e813a8515cab49b87",
+      "retained_binary_sha256_before": "ac9a42ce40831dd83917458b0f272fea99d0a28676c1d35e813a8515cab49b87",
+      "retained_binary_sha256_after": "ac9a42ce40831dd83917458b0f272fea99d0a28676c1d35e813a8515cab49b87",
+      "failed_commands": 0,
+      "commands_without_wait4_usage": 0,
+      "production_activation": false,
+      "public_network_ready": null,
+      "work_profile_qualified": false,
+      "resource_fairness_qualified": null,
+      "path": "campaign/manifest.json",
+      "source_before_after_equal": true,
+      "source_before": {
+        "commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "source_state": "committed-clean",
+        "tracked_bytes": 1031001045,
+        "tracked_entries": 11017,
+        "tracked_worktree_verified": true,
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906"
+      },
+      "runner_context": null,
+      "observation_denominator": 69,
+      "nonzero_or_timedout_observations": [],
+      "shards": [
+        {
+          "configuration": {
+            "class": "zero",
+            "horizon": 1,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "zero",
+            "horizon": 8,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "zero",
+            "horizon": 1,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "zero",
+            "horizon": 8,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "zero",
+            "horizon": 1,
+            "target_index": 2
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "zero",
+            "horizon": 1,
+            "target_index": 3
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-one",
+            "horizon": 1,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-one",
+            "horizon": 8,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-one",
+            "horizon": 1,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-one",
+            "horizon": 8,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-one",
+            "horizon": 1,
+            "target_index": 2
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-one",
+            "horizon": 1,
+            "target_index": 3
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-two-left",
+            "horizon": 1,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-two-left",
+            "horizon": 8,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-two-left",
+            "horizon": 1,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-two-left",
+            "horizon": 8,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-two-left",
+            "horizon": 1,
+            "target_index": 2
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-two-left",
+            "horizon": 1,
+            "target_index": 3
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-four-left",
+            "horizon": 1,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-four-left",
+            "horizon": 8,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-four-left",
+            "horizon": 1,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-four-left",
+            "horizon": 8,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-four-left",
+            "horizon": 1,
+            "target_index": 2
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-four-left",
+            "horizon": 1,
+            "target_index": 3
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-eight-left",
+            "horizon": 1,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-eight-left",
+            "horizon": 8,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-eight-left",
+            "horizon": 1,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-eight-left",
+            "horizon": 8,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-eight-left",
+            "horizon": 1,
+            "target_index": 2
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-eight-left",
+            "horizon": 1,
+            "target_index": 3
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-four-right",
+            "horizon": 1,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-four-right",
+            "horizon": 8,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-four-right",
+            "horizon": 1,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-four-right",
+            "horizon": 8,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-four-right",
+            "horizon": 1,
+            "target_index": 2
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-four-right",
+            "horizon": 1,
+            "target_index": 3
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-nine-left",
+            "horizon": 1,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-nine-left",
+            "horizon": 8,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-nine-left",
+            "horizon": 1,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-nine-left",
+            "horizon": 8,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-nine-left",
+            "horizon": 1,
+            "target_index": 2
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "rank-nine-left",
+            "horizon": 1,
+            "target_index": 3
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "full-rank-field",
+            "horizon": 1,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "full-rank-field",
+            "horizon": 8,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "full-rank-field",
+            "horizon": 1,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "full-rank-field",
+            "horizon": 8,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "full-rank-field",
+            "horizon": 1,
+            "target_index": 2
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "full-rank-field",
+            "horizon": 1,
+            "target_index": 3
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "sparse-diagonal",
+            "horizon": 1,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "sparse-diagonal",
+            "horizon": 8,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "sparse-diagonal",
+            "horizon": 1,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "sparse-diagonal",
+            "horizon": 8,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "sparse-diagonal",
+            "horizon": 1,
+            "target_index": 2
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "sparse-diagonal",
+            "horizon": 1,
+            "target_index": 3
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "one-zero-rank-one",
+            "horizon": 1,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "one-zero-rank-one",
+            "horizon": 8,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "one-zero-rank-one",
+            "horizon": 1,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "one-zero-rank-one",
+            "horizon": 8,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "one-zero-rank-one",
+            "horizon": 1,
+            "target_index": 2
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "one-zero-rank-one",
+            "horizon": 1,
+            "target_index": 3
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "continuity-maintenance-v1",
+            "horizon": 1,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "continuity-maintenance-v1",
+            "horizon": 8,
+            "target_index": 0
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "continuity-maintenance-v1",
+            "horizon": 1,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "continuity-maintenance-v1",
+            "horizon": 8,
+            "target_index": 1
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "continuity-maintenance-v1",
+            "horizon": 1,
+            "target_index": 2
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        },
+        {
+          "configuration": {
+            "class": "continuity-maintenance-v1",
+            "horizon": 1,
+            "target_index": 3
+          },
+          "result": "COMPLETE_COMPONENT_OBSERVATION",
+          "error": null
+        }
+      ],
+      "artifact_file_hashes_verified": 209
+    }
+  ],
+  "finished_utc": "2026-11-07T15:55:26.705484+00:00"
+}

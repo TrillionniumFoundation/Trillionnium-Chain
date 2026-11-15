@@ -1,0 +1,63 @@
+{
+  "head": "96643a2dd8a90cded0059216cae15e2cd620c77b",
+  "tree": "b3adb2552cf47b7dbd6956b3b23cdac3f588c4cb",
+  "prior": "51c215b45c41180fc044ec806fde39c7ceffb75c",
+  "target": "b84568a714e24070d9554008660f1382e2c1b1b5",
+  "binding_patch_paths": 34,
+  "generated_inventory_addition": "trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs",
+  "production_runtime_logic_changed": false,
+  "ci225_fixture_retained": true,
+  "original_inventory_refusal_preserved": "../merge-final-current-bindings-v1",
+  "inventory_before_sha256": "041a32bf9cb42033c8f0b53a76e64a308e22e89ca706e9f3b7f80bbfe56f2dac",
+  "inventory_after_sha256": "8e7c95a728d2c98558b52c5dda15b5c8a2966ee8b6153b2ffa9f71564ad24435",
+  "steps": [
+    {
+      "label": "preflight-audit",
+      "exit": 0,
+      "seconds": 0.05,
+      "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+    },
+    {
+      "label": "refresh-generated-inventory",
+      "exit": 0,
+      "seconds": 0.051,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "label": "stage-derived-metadata",
+      "exit": 0,
+      "seconds": 0.03,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "distributed-inventory-check",
+      "exit": 0,
+      "seconds": 0.05,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "label": "diff-check",
+      "exit": 0,
+      "seconds": 0.02,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "fmt",
+      "exit": 0,
+      "seconds": 5.791,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "precommit-preflight",
+      "exit": 0,
+      "seconds": 0.052,
+      "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+    },
+    {
+      "label": "commit-bindings",
+      "exit": 0,
+      "seconds": 0.064,
+      "sha256": "e32c4ee8605afdfc51616b4305697b86f520fd658b841a64ec307a98e50f4c0b"
+    }
+  ]
+}

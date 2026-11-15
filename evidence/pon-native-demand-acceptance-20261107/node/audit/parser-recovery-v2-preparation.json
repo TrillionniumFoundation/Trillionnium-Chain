@@ -1,0 +1,32 @@
+{
+  "changes": [
+    "Strict integer fields exclude Python bool/float equality coercion.",
+    "All same-sized nested starts retain attribution ambiguity, even if a prior greedy match consumed them."
+  ],
+  "complete_node_result_parsed": false,
+  "created_unix_seconds": 1794064799.126963,
+  "files": {
+    "parse_complete_node_log_recovery_v1.py": {
+      "bytes": 25955,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/parse_complete_node_log_recovery_v1.py",
+      "sha256": "d6878878e290fe414a2c208fb9f0300b59a4595572f187edf90f733b96770be0",
+      "validation": "AST only; parser not executed"
+    },
+    "parse_complete_node_log_recovery_v2.py": {
+      "bytes": 28389,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/parse_complete_node_log_recovery_v2.py",
+      "sha256": "f95cb9167909866d1a355c10dd1587a7a5034c233fe9caa1d40a4ac81209c05f",
+      "validation": "AST only; parser not executed"
+    }
+  },
+  "original_node_job_modified": false,
+  "original_recorder_modified": false,
+  "original_scratch_artifacts_recovered": false,
+  "production_activation": false,
+  "review_scope": "Read-only reasoning and AST parse; no functional parser tests or final Node log parsing.",
+  "schema": "pon-parser-recovery-v2-preparation-v1",
+  "source_clean": true,
+  "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+  "v1_preserved": true
+}

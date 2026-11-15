@@ -1,0 +1,189 @@
+{
+  "schema": "trnm-cell-published-source-observation-v1",
+  "observed_utc": "2026-11-05T01:08:10.816Z",
+  "candidate": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+  "push_result": {
+    "success": true
+  },
+  "pr": {
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/688",
+    "head_sha": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+    "base_sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "draft": true,
+    "merged": false
+  },
+  "workflow_runs": [
+    {
+      "id": 41946194232,
+      "name": "PoN original workspace test-profile CPU acceptance",
+      "status": "pending",
+      "conclusion": null,
+      "run_number": 95,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194232/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194232/logs",
+      "workflow_id": 403747290
+    },
+    {
+      "id": 41946194214,
+      "name": "trnm-required-baseline",
+      "status": "pending",
+      "conclusion": null,
+      "run_number": 2606,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194214/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194214/logs",
+      "workflow_id": 345677268
+    },
+    {
+      "id": 41946194530,
+      "name": "PoN priority acceptance",
+      "status": "pending",
+      "conclusion": null,
+      "run_number": 1219,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194530/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194530/logs",
+      "workflow_id": 378180520
+    },
+    {
+      "id": 41946194220,
+      "name": "PoN W1 work security observations",
+      "status": "pending",
+      "conclusion": null,
+      "run_number": 105,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194220/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194220/logs",
+      "workflow_id": 403419146
+    },
+    {
+      "id": 41946194344,
+      "name": "PoN W1 transparent candidate observations",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_number": 13,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194344/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194344/logs",
+      "workflow_id": 406945301
+    },
+    {
+      "id": 41946194196,
+      "name": "CodeQL exact-source analysis export",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_number": 1070,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194196/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194196/logs",
+      "workflow_id": 391170411
+    },
+    {
+      "id": 41946194226,
+      "name": "PoN fixed Host ROOT F0 diagnostic",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_number": 65,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194226/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194226/logs",
+      "workflow_id": 399731485
+    },
+    {
+      "id": 41946194286,
+      "name": "PoN isolated cloud build inputs",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_number": 177,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194286/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194286/logs",
+      "workflow_id": 394876294
+    },
+    {
+      "id": 41946194370,
+      "name": "PoN original native campaign",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_number": 825,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194370/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194370/logs",
+      "workflow_id": 391170410
+    },
+    {
+      "id": 41946194182,
+      "name": "PoN owned process cleanup",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_number": 845,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194182/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194182/logs",
+      "workflow_id": 381802523
+    },
+    {
+      "id": 41946194330,
+      "name": "PoN original large-state CPU acceptance",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_number": 97,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194330/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194330/logs",
+      "workflow_id": 403449877
+    },
+    {
+      "id": 41946194343,
+      "name": "PoN parent-bound model evidence",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_number": 628,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194343/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194343/logs",
+      "workflow_id": 381968354
+    },
+    {
+      "id": 41946194387,
+      "name": "PoN recent batch exact-source acceptance",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_number": 398,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194387/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194387/logs",
+      "workflow_id": 379339707
+    },
+    {
+      "id": 41946194276,
+      "name": "PoN PQ network and rollback witness",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_number": 90,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194276/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194276/logs",
+      "workflow_id": 403755130
+    },
+    {
+      "id": 41946194174,
+      "name": "PoN baseline diagnostic readback",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_number": 936,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194174/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194174/logs",
+      "workflow_id": 379262275
+    },
+    {
+      "id": 41946194217,
+      "name": "PoN branch encoding exact-source acceptance",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_number": 384,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194217/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194217/logs",
+      "workflow_id": 379587106
+    },
+    {
+      "id": 41946194324,
+      "name": "Release finality reference and native baseline",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_number": 783,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194324/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41946194324/logs",
+      "workflow_id": 384076239
+    }
+  ],
+  "remote_success_claimed": false,
+  "waiting_for_remote_ci": false
+}

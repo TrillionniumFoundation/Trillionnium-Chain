@@ -1,0 +1,28 @@
+{
+  "command": [
+    "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/debug/deps/trnm_pon_node-fdf9d65ae4c07bb3",
+    "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "consensus_admission": false,
+  "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+  "elapsed_seconds": 3.526498616905883,
+  "exit_code": 0,
+  "expectation_met": true,
+  "expected_exit": 0,
+  "launch_error": null,
+  "name": "service-exact-test",
+  "post_quantum_soundness_qualified": false,
+  "process_group": 457412,
+  "source_commit_after_command": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+  "source_commit_before_command": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+  "started_utc": "2026-11-07T15:03:16.925155+00:00",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 239,
+  "stdout_sha256": "3f5cb75229475635bd5f2e16f44ef41792e819838eebe5c5b30db9d67670c677",
+  "timed_out": false,
+  "timeout_seconds": 90
+}

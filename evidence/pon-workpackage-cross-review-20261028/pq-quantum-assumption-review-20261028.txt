@@ -1,0 +1,82 @@
+纯 PoN 全链量子安全：声明边界与未关闭假设
+日期：2026-10-28
+性质：原始文献与既有项目证据审阅；没有运行密码、重放、native、量子硬件或攻击测试，没有修改项目源码。
+
+结论
+
+现有证据不足以声明整个 Trillionnium Chain 抗量子。ML-DSA-65 的真实实现、账户与网络候选接线、RISC0 验证器修补、纯 PoN 量子/DAA 模型各自有价值，但不能互相替代验收。对外适宜的表述是：存在采用标准后量子签名的实验路径；完整生产授权迁移、完整 W1 证明的量子 soundness、量子有效工作与计权、公开网络端到端运行仍为未关闭门槛。
+
+本报告区分三种依据：文献结论标 [S1]—[S4]；父任务提供的运行记录标“既有运行证据”；对这些资料的工程推论明确标“审阅推论”。这些推论不是量子攻击实现或安全定理。
+
+一、签名层：ML-DSA-65 真实实现不等于整个授权图迁移
+
+[S1] FIPS 204 的表 1 将 ML-DSA-65 列为 security category 3；表 2 的公钥为 1,952 字节、签名为 3,309 字节。类别不是可不加计算模型地换算为一个“量子安全位数”。标准明确指出，算法符合标准不保证具体实现安全，更不保证包含它的整个系统安全。官方页面现有 2026-07-31 的潜在勘误提示，应随依赖与构建来源一并跟踪。
+
+既有源码与证据盘点位于同目录 pq-e642-authorization-inventory.txt / .json，冻结源 e6429b9a226ac43682f11ecb5f760ef0243c35a7，文档后继 7745eb9777f392dee134878d6346e05914d00bfa。它支持进程内真实 ML-DSA-65、TPQ1/QTX1 与 PNQ1/PNP1 候选存在，以及选中 PQ 账户配置时直接入口拒绝旧 PNX1。它也明确记录默认经典路径、task/operator/Cell/DA/Hepta 等大量授权 owner 尚未迁移，产品 CLI、公开 key lifecycle、完整负债结算、公开网络服务尚未完成。PQ 传输外壳并不会把内部经典账户交易变为 PQ 授权。
+
+postpatch e642 原生运行没有完成；严格 Clippy 通过不能替代运行验收。此前跨导入 QTX1 重放反例是真实经典执行结果，后续新 network 绑定是可检查源码修复，不能继承为已运行通过。本项不重新执行此前被自动检查停止的工作。
+
+审阅推论：迁移必须在旧身份失守之前固定可独立认证的目标 PQ key mapping，或明确另一可信迁移授权。攻击者若已能伪造旧钥匙签名，也能自选 PQ 钥匙并给出两份数学上有效的签名。只有旧余额快照和双签，无法辨认真正 owner 对应的新钥匙。签名也不自动提供网络机密性、DoS 抵抗或数据持久可用性。
+
+二、SHA-256 的用途必须分开声明
+
+1. PoN ticket 是带上下文的阈值搜索。设每个合格且唯一工作的接受概率为 p；经典独立试验的期望次数为 1/p。理想相干黑盒搜索具有约 1/sqrt(p) 的查询尺度，但每次 oracle 必须完成该 PoN 接受关系及必要反计算。不能把 SHA-256 的完整预像搜索数直接当成当前难度 ticket 的成本，也不能只计最后一次 SHA 而漏掉 W1、拒绝采样、内存与唯一工作身份。
+
+2. Cell 内容地址、Merkle 承诺、work ID 与上下文摘要关心绑定性质。对一个已经可信固定的对象根进行替换，与攻击者能同时选择两份对象造成碰撞，不是同一个安全游戏。编码唯一性、长度与域分离、根的授权来源、对象总量和多目标选择自由度也必须进入声明。没有必要也不能把这些用途统一叫“SHA-256 等于 128 位 PQ”。
+
+3. Fiat–Shamir 将哈希用于自适应挑战；需要说明量子随机预言机模型、完整 transcript、挑战域、轮次、承诺绑定、grinding 自由度和递归组合。SHA-256 的名称本身不能证明非交互证明在 QROM 下 sound。
+
+[S4] Amy 等的 SHA-256 完整预像示例，在其 2016 年 surface-code 成本模型中估计约 2^153.8 个代码周期深度、2^12.6 个逻辑量子比特、总计 2^166.4 logical-qubit-cycles。其黑盒查询量级仍是 2^128。这个例子说明查询次数与实现资源不可混用；它不是今日最优电路、不可改善下界、具体设备工期，更不是完整 W1 oracle 的资源估计。
+
+既有项目的可逆 Fq/SHA 组件网表及经典计算基模拟可作为组件实现证据；没有相干量子硬件执行，也没有完整 W1 phase oracle、拒绝采样与反计算、最优预处理或纠错物理资源模型。即使 scratch 在经典基测试中清零，也不能据此发布实际量子攻击或完整资源上界。
+
+三、RISC0 3.0.6 hardening 与 QROM soundness 是两项门槛
+
+既有运行证据：独立 verifier 在原真实 lift 正例上接受；同一份改变外部 control_id 元数据的负例，3.0.3 接受、3.0.6 拒绝。这支持特定元数据与 seal/control 关联修补有效。它不是任意虚假 W1 statement 已被伪造的演示，也不是升级后全部证明参数具备 QROM soundness 的证明。
+
+既有参数日志：segment proven 45.3014 bits / conjectured 98.64242 bits；lift proven 46.018375 / conjectured 99.75871。应完整保留这些标签与输入参数。它们是单 argument 的经典 calculator 输出，不是完整 59 段、递归合并、lift、Fiat–Shamir、所有自适应尝试与哈希假设组成后的量子安全定理。保守界较低不等于发现了同等复杂度攻击；conjectured 较高也不能替代证明。不应写成“已实现 45-bit 攻击”“全链只有 45-bit 安全”或“已有 99-bit PQ”。
+
+[S2] Don–Fehr–Majenz–Schaffner 研究公开随机、三轮 Σ-protocol 的 Fiat–Shamir 变换；其 QROM 归约与对应安全定义、底层量子安全性及相应附加条件相关，并有 O(q^2) 的归约损失。它说明具体定理和参数必须追踪，不能直接拿来替完整多轮 STARK/IOP 与 RISC0 递归系统背书。
+
+审阅推论：应要求精确版本与参数的 proof-system 安全账本，包括 FRI 以外的 lookup/permutation 等独立误差项、各层挑战熵、提交与递归组合、可适用的 QROM 定理及资源限制。不能只增加 FRI queries，便假定独立的非 FRI 误差项改善。也不能在缺乏组合定理时机械地将单段位数乘以 59，或减去 log2(59) 后宣称整条链安全。
+
+四、纯 PoN：DAA 修整不能替代量子成本与计权关系
+
+[S3] Bailey–Sattath 的模型指出：若一个分叉利用时间戳使难度增为 c 倍、chainwork 每块记 c 倍，而量子矿工相应搜索成本只增长约 sqrt(c)，就会出现计权与量子成本增长不一致。文中 r 指相对于诚实网络的量子产块能力，并非物理量子机器所占硬件比例。论文同时明确攻击要求极快、可容错量子计算机，不能解读为现实可立即执行。
+
+审阅推论：ASERT 可以改变难度变化轨迹与某些时间戳策略的代价；仅替换 DAA 公式不能证明消除了量子相对扩率。论文并非当前 PoN/ASERT 实现的专门安全或攻击定理。现有 current DAA / ASERT / fixed-p-variable-work 场景是明示速率假设下的模型结果，必须保留所有失败、时间域与分母，不能命名为已实施量子攻击。
+
+固定 p、改变实际 neural 工作量 m 是可继续研究的纯 PoN 候选。若每个新 challenge 的最优成本 C_best(m) 确实至少按所计权量线性增长，固定 p 可避免仅通过压低中奖概率造成额外 sqrt(difficulty) 扩率。但这需要跨实例的直接和/摊销成本假设：预处理、矩阵/前缀复用、缓存、并行、GPU/ASIC、量子内存与相干算法均包含在攻击者能力中。
+
+条件反例：若链权重按 m，而攻击者在相关范围内可实现 C_best(m) = Theta(m^alpha)，alpha < 1，则单位成本获得权重的优势按 m^(1-alpha) 增长。这个式子是说明需要成本假设的反例族，不是对 W1 已存在某种具体亚线性算法的声称。固定概率也没有消除任何固定的量子/专用硬件速度优势，更没有证明整个共识的 common prefix、chain quality 或活性。
+
+不得借研究困难引入 PoS/BFT/hash-only/TEE/evaluator 计权 fallback；身份、签名、存储、评价和 operator 批准都不增加纯 PoN chainwork。
+
+五、发布“全链抗量子”之前最低还缺什么
+
+A. 完整授权图：每个非测试状态 owner 的 wire、key/generation、domain、nonce/reorg、撤销/恢复和迁移目标真实性；选中 PQ 网络/账户配置分别核验，经典路径与降级条件显式闭合。新源原生回归缺项仍写未执行。
+B. 完整证明安全账本：完整 W1 等价关系与唯一 work identity；冻结实际 proof 参数、所有层次与非 FRI 误差；给出适用 QROM/组合论证及其明确资源模型。版本补丁单列。
+C. 完整量子工作模型：challenge 到完整 phase oracle 的构造、反计算、查询/门/深度/逻辑量子比特、纠错与物理参数分层；最佳已知预处理/硬件/量子算法的上界与假设，不能把组件网表当完整成本下界。
+D. DAA 与 fork-choice：在同一冻结成本假设和计权下比较当前 DAA、ASERT 与 fixed-p/variable-work；包含长时间域、合法时间戳、难度边界、诚实网络变化与攻击者持有分叉。模型结果与实际测量分别标识。
+E. 端到端工程：完成全部授权迁移之后，公开网络负载、CPU/持久预算、重启与 reorg、数据取回与模型权限、独立管理方 WAN 的真实失败分母。密码选择不能代替这些服务与安全验收。
+
+原始来源（仅四项；检索日期 2026-10-28）
+
+[S1] NIST, FIPS 204, Module-Lattice-Based Digital Signature Standard, 2024-08-13.
+官方页 https://csrc.nist.gov/pubs/fips/204/final
+正文 https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf
+定位：正文印刷页 ii 的 Qualifications；印刷页 15–16 的表 1–2 与安全类别说明；官网 2026-07-31 planning note。
+
+[S2] Jelle Don, Serge Fehr, Christian Majenz, Christian Schaffner, Security of the Fiat-Shamir Transformation in the Quantum Random-Oracle Model, CRYPTO 2019; arXiv v4 2020-07-27.
+https://arxiv.org/abs/1902.07556
+https://arxiv.org/html/1902.07556v4
+定位：摘要；Introduction 的 Application to the Fiat-Shamir transformation；Section 3 的 Σ-protocol 定义和归约。
+
+[S3] Bolton Bailey, Or Sattath, 51% Attack via Difficulty Increase with a Small Quantum Miner, arXiv v2 2024-09-30.
+https://arxiv.org/abs/2403.08023
+https://arxiv.org/html/2403.08023v2
+定位：摘要；Introduction/Remark 1；Section 2.3 对有限调难幅度的攻击变体。论文中没有 ASERT 专门分析。
+
+[S4] Matthew Amy, Olivia Di Matteo, Vlad Gheorghiu, Michele Mosca, Alex Parent, John Schanck, Estimating the cost of generic quantum pre-image attacks on SHA-2 and SHA-3, SAC 2016; arXiv v3 2016-11-30.
+https://arxiv.org/abs/1603.09383
+定位：摘要明确 cost model、logical-qubit-cycles、SHA-256 实例资源与黑盒 query 的区别。

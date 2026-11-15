@@ -1,0 +1,37 @@
+{
+  "evidence_target_exists": true,
+  "files_type": "list",
+  "first_files": [
+    {
+      "archive_path": "cell-four-2bfb-discovery-test-only.patch",
+      "bytes": 12347,
+      "mode": 432,
+      "mtime_ns": 1794440853012504364,
+      "sha256": "f7087de6996642c28e7ed3dd4bafd4574a8aeeb0d346311ed391d220a52d6521",
+      "source_path": "/home/qq/work/cell-four-2bfb-discovery-test-only.patch"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/authenticated_v3_all_withholding_sources_refuse_with_original_deadline_and_counters.stderr",
+      "bytes": 1169,
+      "mode": 384,
+      "mtime_ns": 1794442070701198384,
+      "sha256": "d771281f8f9a13bea60eb092b77c93cb4870c46af6f9f0f6edeb61e7f409d76f",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/authenticated_v3_all_withholding_sources_refuse_with_original_deadline_and_counters.stderr"
+    }
+  ],
+  "head": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "keys": [
+    "created_at_utc",
+    "directories",
+    "excluded_directories",
+    "exclusion_rule",
+    "extra_files",
+    "files",
+    "original_files_unchanged",
+    "schema",
+    "source_bytes",
+    "source_file_count",
+    "source_host"
+  ],
+  "status": ""
+}

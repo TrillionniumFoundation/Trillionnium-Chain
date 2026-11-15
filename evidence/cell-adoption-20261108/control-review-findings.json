@@ -1,0 +1,68 @@
+{
+  "schema": "cell-control-material-review-findings-v1",
+  "scope": "synthetic-input-review-and-disclosure-regression-not-real-independence-or-adoption",
+  "reviewed_publication": {
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "pull_request": 787,
+    "commit": "b3ff1d3c7428a6a080650d3fc754075c3ab6f4b2",
+    "control_module_blob": "581d975cf6428358f5059936f221ddbc76e980ba",
+    "state_observed": "open-draft",
+    "production_activation": false
+  },
+  "findings": [
+    {
+      "id": "reviewer-role-signer-controller-alias",
+      "observed_before_fix": true,
+      "original_observation_time": null,
+      "timing_note": "Observed in this review session before the cross-set alias guard was added; no exact wall-clock timestamp was retained.",
+      "preconditions": "Use the explicit synthetic fixture; re-pin the modified policy and manifest, retaining original role-owner bindings. No real keys, authorities or models are used.",
+      "reproduction_python": "from protocol import canonical\nfrom control_separation import review_control_separation\nfrom test_control_separation import fixture, refresh\nm,p,t=fixture()\ntrainer=next(r for r in m['bindings'] if r['role']=='trainer')\nold=p['reviewers'][0]['authority']\np['reviewers'][0]['authority']=trainer['signer']\nfor section in ('inventories','common_control','separation_reviews'):\n    for row in m[section]:\n        if row['evidence']['authority']==old:\n            row['evidence']['authority']=trainer['signer']\nt=refresh(m,p)\nr=review_control_separation(canonical(m),canonical(p),**t)\nprint({k:r[k] for k in ('status','conflicts','unresolved','independent_control_accepted')})",
+      "reproduction_directory": "formal/release-finality-v2 at the reviewed_publication commit",
+      "observed_old_result": {
+        "status": "MATERIAL_REVIEW_COMPLETE",
+        "conflicts": [],
+        "unresolved": [],
+        "trainer_controller": "e52a2921c59c995ac8229053963825ebd782fe926b4bd03bc99902436126a6fd",
+        "reviewer_controller": "ac566baf0e0f391aa54a888866b0ee7e859375be12953194099b0d25f0febded",
+        "independent_control_accepted": false
+      },
+      "interpretation": "A material-review false completion caused by inconsistent controller assignments for the same signing-key digest across two inputs. It was not a real-independence, native-adoption or production-authority acceptance.",
+      "expected_after_local_fix": "protocol.Refusal: CONTROL_REVIEWER_SIGNER_CONTROLLER_ALIAS",
+      "regression_tests": [
+        "test_role_signing_key_cannot_acquire_another_controller_as_reviewer",
+        "test_same_role_key_and_controller_are_excluded_from_self_review"
+      ]
+    },
+    {
+      "id": "learning-actors-not-bound-to-extra-control-materials",
+      "observed_before_fix": true,
+      "original_observation_time": null,
+      "observed_old_result": {
+        "control_material_status": "MATERIAL_REVIEW_COMPLETE",
+        "qualification": "HOLD_NO_GO",
+        "hepta_final_use": false
+      },
+      "interpretation": "The existing join is a conjunction under the same pinned campaign/source pair; it does not establish the original learning actor-to-control association. The fixture control identities are independent synthetic material, not genuine native actor mappings.",
+      "local_disclosure_fix": {
+        "learning_actor_control_binding_verified": false,
+        "missing_external_acceptance_added": "original learning actor-to-control binding"
+      },
+      "regression_test": "test_complete_materials_do_not_assert_control_bindings_for_signed_learning_actors",
+      "native_actor_binding_still_open": true
+    }
+  ],
+  "local_validation": {
+    "command": "python3 -B -m unittest discover -v",
+    "working_directory": "/workspace/scratch/3279e72edff2/chain-adoption/formal/release-finality-v2",
+    "tests_run": 120,
+    "failures": 0,
+    "errors": 0,
+    "control_tests": 46,
+    "learning_control_join_tests": 6,
+    "diff_check_passed": true,
+    "fixed_publication_commit": null,
+    "production_activation": false,
+    "authentic_independent_operator_observation": false,
+    "actual_model_adoption": false
+  }
+}

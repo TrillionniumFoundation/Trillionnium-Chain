@@ -1,0 +1,112 @@
+{
+  "schema": "trnm-w1-original-ci-workflow-readback-v1",
+  "source_commit": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+  "scope": "Previously completed runs on the original source, not validation of the new continuation or advancing integration branch.",
+  "total_runs": 11,
+  "success": 5,
+  "non_success": 6,
+  "workflows": [
+    {
+      "id": 42239570328,
+      "name": "PoN parent-bound model evidence",
+      "path": ".github/workflows/pon-model-parent-acceptance.yml",
+      "source_commit": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570328"
+    },
+    {
+      "id": 42239570168,
+      "name": "PoN original native campaign",
+      "path": ".github/workflows/pon-native-campaign-qualification.yml",
+      "source_commit": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570168"
+    },
+    {
+      "id": 42239570266,
+      "name": "PoN original large-state CPU acceptance",
+      "path": ".github/workflows/pon-original-large-state-cpu.yml",
+      "source_commit": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570266"
+    },
+    {
+      "id": 42239570355,
+      "name": "CodeQL exact-source analysis export",
+      "path": ".github/workflows/codeql-analysis-export.yml",
+      "source_commit": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570355"
+    },
+    {
+      "id": 42239570181,
+      "name": "PoN owned process cleanup",
+      "path": ".github/workflows/pon-owned-process-cleanup.yml",
+      "source_commit": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570181"
+    },
+    {
+      "id": 42239570139,
+      "name": "PoN original workspace test-profile CPU acceptance",
+      "path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      "source_commit": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570139"
+    },
+    {
+      "id": 42239570271,
+      "name": "PoN PQ network and rollback witness",
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "source_commit": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570271"
+    },
+    {
+      "id": 42239570130,
+      "name": "PoN W1 transparent candidate observations",
+      "path": ".github/workflows/pon-w1-transparent-profile.yml",
+      "source_commit": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570130"
+    },
+    {
+      "id": 42239570104,
+      "name": "PoN W1 work security observations",
+      "path": ".github/workflows/pon-w1-work-security.yml",
+      "source_commit": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570104"
+    },
+    {
+      "id": 42239570106,
+      "name": "PoN priority acceptance",
+      "path": ".github/workflows/pon-priority-acceptance.yml",
+      "source_commit": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570106"
+    },
+    {
+      "id": 42239570278,
+      "name": "trnm-required-baseline",
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "source_commit": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570278"
+    }
+  ],
+  "full_required_ci_passed": false,
+  "whole_chain_pq_qualified": false,
+  "production_activation": false
+}

@@ -1,0 +1,72 @@
+{
+  "argv": [
+    "/home/qian-qi/work/p3-shared-profile-target-3acf89/release/examples/packed_carry_backend",
+    "prepare",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89/input-fixtures/retained.input.bin",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89/input-fixtures/retained.prefix.bin",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89/input-fixtures/retained.expected-header.bin",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89/input-fixtures/retained.artifacts.bin",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89/abba-v1/03-retained-A/prepared"
+  ],
+  "exit_code": 0,
+  "timeout": false,
+  "outer_wall_s": 0.215407525,
+  "peak_rss_kib": 9800,
+  "report": {
+    "arith_real_rows": 81920,
+    "hash_messages": 519,
+    "process_wall_ms": 175.15825500000003,
+    "public_bytes": 377290,
+    "qualification": "HOLD_NO_GO",
+    "schema": "trnm-w1-complete-public-packed-carry-stark-run-v3",
+    "sha_real_compressions": 4114,
+    "statement_sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+    "status": "PUBLIC_WITNESS_PREPARED_NOT_PROVED",
+    "timings": [
+      {
+        "elapsed_ms": 0.29781,
+        "phase": "fixture_and_expected_read"
+      },
+      {
+        "elapsed_ms": 5.058833000000001,
+        "phase": "honest_public_witness_and_encoding"
+      },
+      {
+        "elapsed_ms": 6.356572,
+        "phase": "canonical_relation_planning"
+      }
+    ]
+  },
+  "before": {
+    "monotonic_ns": 1196345519305760,
+    "utc_unix_ns": 1794118679526995019,
+    "loadavg": "27.97 21.18 17.52 14/4562 3453954",
+    "cpu_pressure": "some avg10=0.02 avg60=0.04 avg300=0.00 total=9271327969\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+    "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669273335\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1602432379",
+    "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9cb4c70-12894-16eb.service\n",
+    "cgroup_values": {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 488594241\nuser_usec 475136927\nsystem_usec 13457313\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "memory.max": "max",
+      "memory.current": "204267520",
+      "memory.peak": "2287554560",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+    }
+  },
+  "after": {
+    "monotonic_ns": 1196345736336839,
+    "utc_unix_ns": 1794118679744025942,
+    "loadavg": "27.97 21.18 17.52 18/4567 3453966",
+    "cpu_pressure": "some avg10=0.02 avg60=0.04 avg300=0.00 total=9271328400\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+    "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669273335\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1602432379",
+    "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9cb4c70-12894-16eb.service\n",
+    "cgroup_values": {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 488616717\nuser_usec 475151414\nsystem_usec 13465303\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "memory.max": "max",
+      "memory.current": "204083200",
+      "memory.peak": "2287554560",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+    }
+  }
+}

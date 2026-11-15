@@ -1,0 +1,6 @@
+remote: 
+remote: GitHub found 7 vulnerabilities on TrillionniumFoundation/Trillionnium-Chain's default branch (4 high, 2 moderate, 1 low). To find out more, visit:        
+remote:      https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot        
+remote: 
+To https://github.com/TrillionniumFoundation/Trillionnium-Chain.git
+   628ec7f..6615ffa  HEAD -> fix/chain-pon-joint-state-risk-ledger-20261107

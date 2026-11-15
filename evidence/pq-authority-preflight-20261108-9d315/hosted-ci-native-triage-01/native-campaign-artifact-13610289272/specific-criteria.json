@@ -1,0 +1,3020 @@
+[
+  {
+    "attempt": 1,
+    "phases": [
+      {
+        "actor_reports_successful_without_cap_or_kill": true,
+        "all_signed_rounds_confirmed_in_window": false,
+        "confirmations": {
+          "count": 2,
+          "distinct": 2,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "confirmed_inside_pressure_window": true,
+                "ended_ns": 20091530310,
+                "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": false,
+                "round": 0,
+                "started_ns": 1000256158,
+                "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30001484839,
+                "included_block": "cb491d5dd5071dbec06dfe4f018c7340e130051c4c701054973a035fa39be709",
+                "observation": null,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": false,
+                "round": 1,
+                "started_ns": 20091575919,
+                "tip": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400",
+                "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+              }
+            }
+          ]
+        },
+        "final_client_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+        "final_receiver_tip": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400",
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "history": {
+          "count": 12,
+          "distinct": 12,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 2384081,
+                "elapsed_wall_ns": 78718177,
+                "ended_ns": 2490948386,
+                "error": null,
+                "public_request_body_digest": "0d77e1fd4ec6627e3ebaf6949da8a0b284c8a7102f6fa36442938758b7ed9e85",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "9d9d71e32e945a89361e46c79d82bf15dd4eeaeaada4424b838843ac577a0901",
+                "returned_after_window": false,
+                "started_ns": 2412238722,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1737282,
+                "elapsed_wall_ns": 12273687,
+                "ended_ns": 4805978405,
+                "error": null,
+                "public_request_body_digest": "0afb46d76a62b5aba0f4e4e31356d23480ec75f18a6a6c62398ab3fa5d008ba8",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "033657dc10e8fddad396c73adee4246e7c3a066b21d743f58a6a4a340f4d9d6e",
+                "returned_after_window": false,
+                "started_ns": 4793712149,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1536063,
+                "elapsed_wall_ns": 10473889,
+                "ended_ns": 6518226910,
+                "error": null,
+                "public_request_body_digest": "129eff51a41d43562e889ad1c3ebe6ddc7b65a2d8f0fc6d354f4d44813c85eac",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4c1be786555f5a73bcb414a3400a8d152cfd2eebca89a9c304bc79da9fb8d27d",
+                "returned_after_window": false,
+                "started_ns": 6507760062,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1624555,
+                "elapsed_wall_ns": 10403513,
+                "ended_ns": 8301246032,
+                "error": null,
+                "public_request_body_digest": "cf9bbdad6a08a1a6904038849e1e2288179c30e9d948cf4c334c98c7ae1d882b",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "b06dbb7190b58b119fdf9f70d01aae728f6e0991acefc42820922515d635ae52",
+                "returned_after_window": false,
+                "started_ns": 8290847767,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1601045,
+                "elapsed_wall_ns": 11432316,
+                "ended_ns": 10014527077,
+                "error": null,
+                "public_request_body_digest": "2a74d7db2d961f49843fd8821fe1ede3b6c7bd79112fae0cd57d04bcda71f236",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "29a94131c311af864ab20a404c6d92c2277c092bb09bc02f24b108ea470e8a1c",
+                "returned_after_window": false,
+                "started_ns": 10003101341,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1547771,
+                "elapsed_wall_ns": 10456723,
+                "ended_ns": 11804983924,
+                "error": null,
+                "public_request_body_digest": "192ab3fe2e8969be044c38dd1038eef8728f265d4f9cd297d72ef5341cd02813",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4bdec6d113a4fb325b9726fdcdcdda4cca97264b3ddcc126724e0b68965bfa52",
+                "returned_after_window": false,
+                "started_ns": 11794533471,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1496050,
+                "elapsed_wall_ns": 11781426,
+                "ended_ns": 13701772720,
+                "error": null,
+                "public_request_body_digest": "a54a0fa54030c662585eff56f577e1caed290b8c0b61c7586fd664194273c9f0",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "73784577f811fa9950dddc21b0ee0178694f108cf7a79de9fc430835d88ea337",
+                "returned_after_window": false,
+                "started_ns": 13689996853,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1555297,
+                "elapsed_wall_ns": 10721942,
+                "ended_ns": 21614538855,
+                "error": null,
+                "public_request_body_digest": "5e4f8dd9ae9f855479dc220ace6473f453003fc779e02c5b63f0234612181b18",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "230651af483850417db7b43c31620818d10dab91f4628678eaa49e1bc24d4058",
+                "returned_after_window": false,
+                "started_ns": 21603827288,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1858623,
+                "elapsed_wall_ns": 11209089,
+                "ended_ns": 23511921382,
+                "error": null,
+                "public_request_body_digest": "3acba3f4098aa7311e8e2840c86ac9720715b2b87a237b2b7d0799281daf2b1a",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "99e2c25dd057a4a0ac4fcc1a7a004cb5b31fd9157fee304db6c9cdf5a385e3ab",
+                "returned_after_window": false,
+                "started_ns": 23500724923,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1677913,
+                "elapsed_wall_ns": 10309379,
+                "ended_ns": 25306020766,
+                "error": null,
+                "public_request_body_digest": "259a14053ffd9be086dbee19c7759842024d9df2d4040742df7d98523bfe5371",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "84bcd13e3d26d15c9b06f46950a4d7c43969c41ab29dc38ef3b69930df6c4437",
+                "returned_after_window": false,
+                "started_ns": 25295721852,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1605498,
+                "elapsed_wall_ns": 11928635,
+                "ended_ns": 27115082895,
+                "error": null,
+                "public_request_body_digest": "cdc71c49256ca077f893d8412575445e3cc1260e05798e69f3d82bd00064f5a0",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "149ecbee03f8e58dcbcaccfcf2d71dba02d6fed5e80526f35f2123df2b42cda0",
+                "returned_after_window": false,
+                "started_ns": 27103162182,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1596299,
+                "elapsed_wall_ns": 12125466,
+                "ended_ns": 28915447500,
+                "error": null,
+                "public_request_body_digest": "2ff1d874f2e1701807b28e54f87652c6a306d763f327d805698e50e06c73b197",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "27f21b9ae97d43aabe1cf79b78dce9a8f9455629d0a60f45f9e6f4186b87210c",
+                "returned_after_window": false,
+                "started_ns": 28903327824,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+        "mode": "baseline",
+        "observer_complete": true,
+        "receiver_client_state_equal": false,
+        "service_outcome": {},
+        "submissions": {
+          "count": 14,
+          "distinct": 14,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 57809283,
+                "elapsed_wall_ns": 195794971,
+                "ended_ns": 1196217901,
+                "error": null,
+                "height": 5,
+                "packet_index": 0,
+                "public_request_body_digest": "3575beaba6b44fd103cd18a20a14f3645859b3310608ca062fdd27130fca1ac1",
+                "recorded_request_bytes": 99445,
+                "recorded_request_digest": "595625067806ed25a7e7d7ed4702c04447f37f699990409b6471435bd17549ac",
+                "returned_after_window": false,
+                "started_ns": 1000458854,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 55366259,
+                "elapsed_wall_ns": 205648174,
+                "ended_ns": 1402151305,
+                "error": null,
+                "height": 6,
+                "packet_index": 1,
+                "public_request_body_digest": "83a76e1064668b636b3f2f1bf56a73e1bdb12b1cc06e58dd84176866a873ab39",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "fdc73dd98cceac9d37cbc3f9d6e210182f6310b283317544f7b2af828f039869",
+                "returned_after_window": false,
+                "started_ns": 1196543873,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 49278058,
+                "elapsed_wall_ns": 200078490,
+                "ended_ns": 1602511781,
+                "error": null,
+                "height": 7,
+                "packet_index": 2,
+                "public_request_body_digest": "d9a96911f9ad6c9dcb19fffba90eb6321a2049c6717d632810cbad05058b9a6a",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "a85f8f7b052127397cac70db89b4ad55dd430dffaf46499890c498ad594b45fa",
+                "returned_after_window": false,
+                "started_ns": 1402473872,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 50109912,
+                "elapsed_wall_ns": 200766640,
+                "ended_ns": 1803566486,
+                "error": null,
+                "height": 8,
+                "packet_index": 3,
+                "public_request_body_digest": "a476d40bc04a793c3d116ab3f90630fada9fe65a86c2cb111f1b4074564b91f3",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5d854e850a35cc563dec7822bd18210ee2fcaa993e5a07b7918f6290045e8683",
+                "returned_after_window": false,
+                "started_ns": 1602837774,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 50936004,
+                "elapsed_wall_ns": 200789606,
+                "ended_ns": 2004637016,
+                "error": null,
+                "height": 9,
+                "packet_index": 4,
+                "public_request_body_digest": "5eaece200390ad38fe6e90fb6ff17a9388139415d85dd6c7ab59536a14cc7632",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5b9f398cfebce64b06fb504d58a0cbad9ca83f51aa64ff2db65b8ab8e468af31",
+                "returned_after_window": false,
+                "started_ns": 1803887812,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 56079868,
+                "elapsed_wall_ns": 206736636,
+                "ended_ns": 2211673756,
+                "error": null,
+                "height": 10,
+                "packet_index": 5,
+                "public_request_body_digest": "5c390a2190b40a33698920c7ec5fb819d3cc00a6f2ba945c81f538ee0d971117",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "35d2e2bf217d728f38cb09b6fbd61ee88343799e61721be5274c3a98103d9527",
+                "returned_after_window": false,
+                "started_ns": 2004976599,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 51292091,
+                "elapsed_wall_ns": 200126213,
+                "ended_ns": 2412081484,
+                "error": null,
+                "height": 11,
+                "packet_index": 6,
+                "public_request_body_digest": "38b753d958eabd7fdc5fa490f49f488ff6e40d9df498671a83de564573c188f6",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5898c0cfea2dbfcb4fa1848e3c563f349991294dd3d141ec64b40159514630bd",
+                "returned_after_window": false,
+                "started_ns": 2211997014,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 57953752,
+                "elapsed_wall_ns": 209723115,
+                "ended_ns": 20301470543,
+                "error": null,
+                "height": 12,
+                "packet_index": 7,
+                "public_request_body_digest": "b8d4868f587c6f1ef479311e045826a9aa36781fe9ebac95013ed4bbcd337fd1",
+                "recorded_request_bytes": 99445,
+                "recorded_request_digest": "84dc69a9edd50c4ff14e07ea666c0f019f143e3c81c488657875a04ce67365f9",
+                "returned_after_window": false,
+                "started_ns": 20091790653,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 53449670,
+                "elapsed_wall_ns": 204708542,
+                "ended_ns": 20506466209,
+                "error": null,
+                "height": 13,
+                "packet_index": 8,
+                "public_request_body_digest": "1dff163d28c64ee8d5c48ea8a27f14bc82a0f981a5d5de7d67ba441a58ee74d3",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "db6a244c4f2b6873d37594154537dd18eacff52d7e90b95decd05b1f3c6869fa",
+                "returned_after_window": false,
+                "started_ns": 20301802374,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 51884117,
+                "elapsed_wall_ns": 200124469,
+                "ended_ns": 20706879505,
+                "error": null,
+                "height": 14,
+                "packet_index": 9,
+                "public_request_body_digest": "c9e7b811d6268cb6475f9cac619813c3f111a8110ffb6db9d9a26017a42de74b",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "a25d742b93cd63d105160fa8960c28dba1faae7ac4cd68efcccca0e5992e6615",
+                "returned_after_window": false,
+                "started_ns": 20506798561,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 53860800,
+                "elapsed_wall_ns": 205052663,
+                "ended_ns": 20912220464,
+                "error": null,
+                "height": 15,
+                "packet_index": 10,
+                "public_request_body_digest": "8524547482a8f5c575928b3bf52baa00655fc0f5cc4efa65d4d0505098fc6def",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "78783b2b571e47775886cbd8a3c9eb96bf5ddd795285d02ddfc02a2613c2e3ab",
+                "returned_after_window": false,
+                "started_ns": 20707227751,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 55739720,
+                "elapsed_wall_ns": 280420337,
+                "ended_ns": 21192949978,
+                "error": null,
+                "height": 16,
+                "packet_index": 11,
+                "public_request_body_digest": "e292942e28e5723d7f6372810b9f1146dc3f618b0c41d007c513ff01120d0187",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "b616f7d16e424a9c554d1762fe4e1e296d67cb591737b6eaf5087e98d951041a",
+                "returned_after_window": false,
+                "started_ns": 20912572716,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "verifier_errors": {
+          "count": 1,
+          "distinct": 1,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": "PUBLIC_REQUEST_DEADLINE"
+            }
+          ]
+        }
+      },
+      {
+        "actor_reports_successful_without_cap_or_kill": true,
+        "all_signed_rounds_confirmed_in_window": false,
+        "confirmations": {
+          "count": 1,
+          "distinct": 1,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30071282022,
+                "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                "observation": null,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": true,
+                "round": 0,
+                "started_ns": 1001647789,
+                "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+              }
+            }
+          ]
+        },
+        "final_client_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+        "final_receiver_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "history": {
+          "count": 6,
+          "distinct": 6,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 25805934,
+                "elapsed_wall_ns": 94143673,
+                "ended_ns": 3977138567,
+                "error": null,
+                "public_request_body_digest": "0d77e1fd4ec6627e3ebaf6949da8a0b284c8a7102f6fa36442938758b7ed9e85",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "9d9d71e32e945a89361e46c79d82bf15dd4eeaeaada4424b838843ac577a0901",
+                "returned_after_window": false,
+                "started_ns": 3883006401,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 19243401,
+                "elapsed_wall_ns": 13384371,
+                "ended_ns": 9184963901,
+                "error": null,
+                "public_request_body_digest": "0afb46d76a62b5aba0f4e4e31356d23480ec75f18a6a6c62398ab3fa5d008ba8",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "033657dc10e8fddad396c73adee4246e7c3a066b21d743f58a6a4a340f4d9d6e",
+                "returned_after_window": false,
+                "started_ns": 9171585740,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 20023792,
+                "elapsed_wall_ns": 100748152,
+                "ended_ns": 13879113109,
+                "error": null,
+                "public_request_body_digest": "129eff51a41d43562e889ad1c3ebe6ddc7b65a2d8f0fc6d354f4d44813c85eac",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4c1be786555f5a73bcb414a3400a8d152cfd2eebca89a9c304bc79da9fb8d27d",
+                "returned_after_window": false,
+                "started_ns": 13778374793,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 22921386,
+                "elapsed_wall_ns": 103479446,
+                "ended_ns": 18679126343,
+                "error": null,
+                "public_request_body_digest": "cf9bbdad6a08a1a6904038849e1e2288179c30e9d948cf4c334c98c7ae1d882b",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "b06dbb7190b58b119fdf9f70d01aae728f6e0991acefc42820922515d635ae52",
+                "returned_after_window": false,
+                "started_ns": 18575656242,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 18302755,
+                "elapsed_wall_ns": 98996132,
+                "ended_ns": 23375340890,
+                "error": null,
+                "public_request_body_digest": "2a74d7db2d961f49843fd8821fe1ede3b6c7bd79112fae0cd57d04bcda71f236",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "29a94131c311af864ab20a404c6d92c2277c092bb09bc02f24b108ea470e8a1c",
+                "returned_after_window": false,
+                "started_ns": 23276353271,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 18719644,
+                "elapsed_wall_ns": 99549537,
+                "ended_ns": 28074631762,
+                "error": null,
+                "public_request_body_digest": "192ab3fe2e8969be044c38dd1038eef8728f265d4f9cd297d72ef5341cd02813",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4bdec6d113a4fb325b9726fdcdcdda4cca97264b3ddcc126724e0b68965bfa52",
+                "returned_after_window": false,
+                "started_ns": 27975093711,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+        "mode": "from-zero",
+        "observer_complete": true,
+        "receiver_client_state_equal": false,
+        "service_outcome": {},
+        "submissions": {
+          "count": 7,
+          "distinct": 7,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 107790524,
+                "elapsed_wall_ns": 473865894,
+                "ended_ns": 1475922019,
+                "error": null,
+                "height": 5,
+                "packet_index": 0,
+                "public_request_body_digest": "3575beaba6b44fd103cd18a20a14f3645859b3310608ca062fdd27130fca1ac1",
+                "recorded_request_bytes": 99445,
+                "recorded_request_digest": "595625067806ed25a7e7d7ed4702c04447f37f699990409b6471435bd17549ac",
+                "returned_after_window": false,
+                "started_ns": 1002091639,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 101175067,
+                "elapsed_wall_ns": 402388620,
+                "ended_ns": 1878607508,
+                "error": null,
+                "height": 6,
+                "packet_index": 1,
+                "public_request_body_digest": "83a76e1064668b636b3f2f1bf56a73e1bdb12b1cc06e58dd84176866a873ab39",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "fdc73dd98cceac9d37cbc3f9d6e210182f6310b283317544f7b2af828f039869",
+                "returned_after_window": false,
+                "started_ns": 1476255553,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 100226073,
+                "elapsed_wall_ns": 398655631,
+                "ended_ns": 2277526246,
+                "error": null,
+                "height": 7,
+                "packet_index": 2,
+                "public_request_body_digest": "d9a96911f9ad6c9dcb19fffba90eb6321a2049c6717d632810cbad05058b9a6a",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "a85f8f7b052127397cac70db89b4ad55dd430dffaf46499890c498ad594b45fa",
+                "returned_after_window": false,
+                "started_ns": 1878907932,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 96369299,
+                "elapsed_wall_ns": 398251173,
+                "ended_ns": 2676052475,
+                "error": null,
+                "height": 8,
+                "packet_index": 3,
+                "public_request_body_digest": "a476d40bc04a793c3d116ab3f90630fada9fe65a86c2cb111f1b4074564b91f3",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5d854e850a35cc563dec7822bd18210ee2fcaa993e5a07b7918f6290045e8683",
+                "returned_after_window": false,
+                "started_ns": 2277839770,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 98770555,
+                "elapsed_wall_ns": 400706050,
+                "ended_ns": 3077033751,
+                "error": null,
+                "height": 9,
+                "packet_index": 4,
+                "public_request_body_digest": "5eaece200390ad38fe6e90fb6ff17a9388139415d85dd6c7ab59536a14cc7632",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5b9f398cfebce64b06fb504d58a0cbad9ca83f51aa64ff2db65b8ab8e468af31",
+                "returned_after_window": false,
+                "started_ns": 2676368452,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 103991606,
+                "elapsed_wall_ns": 404037262,
+                "ended_ns": 3481511118,
+                "error": null,
+                "height": 10,
+                "packet_index": 5,
+                "public_request_body_digest": "5c390a2190b40a33698920c7ec5fb819d3cc00a6f2ba945c81f538ee0d971117",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "35d2e2bf217d728f38cb09b6fbd61ee88343799e61721be5274c3a98103d9527",
+                "returned_after_window": false,
+                "started_ns": 3077513536,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 100519008,
+                "elapsed_wall_ns": 401078013,
+                "ended_ns": 3882850635,
+                "error": null,
+                "height": 11,
+                "packet_index": 6,
+                "public_request_body_digest": "38b753d958eabd7fdc5fa490f49f488ff6e40d9df498671a83de564573c188f6",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5898c0cfea2dbfcb4fa1848e3c563f349991294dd3d141ec64b40159514630bd",
+                "returned_after_window": false,
+                "started_ns": 3481813334,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "verifier_errors": {
+          "count": 1,
+          "distinct": 1,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": "PUBLIC_REQUEST_DEADLINE"
+            }
+          ]
+        }
+      },
+      {
+        "actor_reports_successful_without_cap_or_kill": true,
+        "all_signed_rounds_confirmed_in_window": false,
+        "confirmations": {
+          "count": 1,
+          "distinct": 1,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30028392861,
+                "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                "observation": null,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": true,
+                "round": 0,
+                "started_ns": 1027254002,
+                "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+              }
+            }
+          ]
+        },
+        "final_client_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+        "final_receiver_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "history": {
+          "count": 6,
+          "distinct": 6,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 19784554,
+                "elapsed_wall_ns": 94800766,
+                "ended_ns": 4027758672,
+                "error": null,
+                "public_request_body_digest": "0d77e1fd4ec6627e3ebaf6949da8a0b284c8a7102f6fa36442938758b7ed9e85",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "9d9d71e32e945a89361e46c79d82bf15dd4eeaeaada4424b838843ac577a0901",
+                "returned_after_window": false,
+                "started_ns": 3932986389,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 20667165,
+                "elapsed_wall_ns": 100698145,
+                "ended_ns": 9435238102,
+                "error": null,
+                "public_request_body_digest": "0afb46d76a62b5aba0f4e4e31356d23480ec75f18a6a6c62398ab3fa5d008ba8",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "033657dc10e8fddad396c73adee4246e7c3a066b21d743f58a6a4a340f4d9d6e",
+                "returned_after_window": false,
+                "started_ns": 9334549241,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 25308909,
+                "elapsed_wall_ns": 102056005,
+                "ended_ns": 14136098907,
+                "error": null,
+                "public_request_body_digest": "129eff51a41d43562e889ad1c3ebe6ddc7b65a2d8f0fc6d354f4d44813c85eac",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4c1be786555f5a73bcb414a3400a8d152cfd2eebca89a9c304bc79da9fb8d27d",
+                "returned_after_window": false,
+                "started_ns": 14034052737,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 21580944,
+                "elapsed_wall_ns": 98100940,
+                "ended_ns": 19032719950,
+                "error": null,
+                "public_request_body_digest": "cf9bbdad6a08a1a6904038849e1e2288179c30e9d948cf4c334c98c7ae1d882b",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "b06dbb7190b58b119fdf9f70d01aae728f6e0991acefc42820922515d635ae52",
+                "returned_after_window": false,
+                "started_ns": 18934640492,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 28339731,
+                "elapsed_wall_ns": 101707096,
+                "ended_ns": 24033845459,
+                "error": null,
+                "public_request_body_digest": "2a74d7db2d961f49843fd8821fe1ede3b6c7bd79112fae0cd57d04bcda71f236",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "29a94131c311af864ab20a404c6d92c2277c092bb09bc02f24b108ea470e8a1c",
+                "returned_after_window": false,
+                "started_ns": 23932149110,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 24900088,
+                "elapsed_wall_ns": 107424677,
+                "ended_ns": 28743355707,
+                "error": null,
+                "public_request_body_digest": "192ab3fe2e8969be044c38dd1038eef8728f265d4f9cd297d72ef5341cd02813",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4bdec6d113a4fb325b9726fdcdcdda4cca97264b3ddcc126724e0b68965bfa52",
+                "returned_after_window": false,
+                "started_ns": 28635939333,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+        "mode": "late-product",
+        "observer_complete": true,
+        "receiver_client_state_equal": false,
+        "service_outcome": {},
+        "submissions": {
+          "count": 7,
+          "distinct": 7,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 105168314,
+                "elapsed_wall_ns": 406056118,
+                "ended_ns": 1433911619,
+                "error": null,
+                "height": 5,
+                "packet_index": 0,
+                "public_request_body_digest": "3575beaba6b44fd103cd18a20a14f3645859b3310608ca062fdd27130fca1ac1",
+                "recorded_request_bytes": 99445,
+                "recorded_request_digest": "595625067806ed25a7e7d7ed4702c04447f37f699990409b6471435bd17549ac",
+                "returned_after_window": false,
+                "started_ns": 1027893769,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 106062323,
+                "elapsed_wall_ns": 406097270,
+                "ended_ns": 1840299728,
+                "error": null,
+                "height": 6,
+                "packet_index": 1,
+                "public_request_body_digest": "83a76e1064668b636b3f2f1bf56a73e1bdb12b1cc06e58dd84176866a873ab39",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "fdc73dd98cceac9d37cbc3f9d6e210182f6310b283317544f7b2af828f039869",
+                "returned_after_window": false,
+                "started_ns": 1434241337,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 101768319,
+                "elapsed_wall_ns": 403061881,
+                "ended_ns": 2243628091,
+                "error": null,
+                "height": 7,
+                "packet_index": 2,
+                "public_request_body_digest": "d9a96911f9ad6c9dcb19fffba90eb6321a2049c6717d632810cbad05058b9a6a",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "a85f8f7b052127397cac70db89b4ad55dd430dffaf46499890c498ad594b45fa",
+                "returned_after_window": false,
+                "started_ns": 1840603597,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 98660048,
+                "elapsed_wall_ns": 398565178,
+                "ended_ns": 2642478090,
+                "error": null,
+                "height": 8,
+                "packet_index": 3,
+                "public_request_body_digest": "a476d40bc04a793c3d116ab3f90630fada9fe65a86c2cb111f1b4074564b91f3",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5d854e850a35cc563dec7822bd18210ee2fcaa993e5a07b7918f6290045e8683",
+                "returned_after_window": false,
+                "started_ns": 2243950107,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 100159401,
+                "elapsed_wall_ns": 400694384,
+                "ended_ns": 3043464074,
+                "error": null,
+                "height": 9,
+                "packet_index": 4,
+                "public_request_body_digest": "5eaece200390ad38fe6e90fb6ff17a9388139415d85dd6c7ab59536a14cc7632",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5b9f398cfebce64b06fb504d58a0cbad9ca83f51aa64ff2db65b8ab8e468af31",
+                "returned_after_window": false,
+                "started_ns": 2642808048,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 105233768,
+                "elapsed_wall_ns": 414675507,
+                "ended_ns": 3458417521,
+                "error": null,
+                "height": 10,
+                "packet_index": 5,
+                "public_request_body_digest": "5c390a2190b40a33698920c7ec5fb819d3cc00a6f2ba945c81f538ee0d971117",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "35d2e2bf217d728f38cb09b6fbd61ee88343799e61721be5274c3a98103d9527",
+                "returned_after_window": false,
+                "started_ns": 3043781363,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 105560853,
+                "elapsed_wall_ns": 474161963,
+                "ended_ns": 3932813077,
+                "error": null,
+                "height": 11,
+                "packet_index": 6,
+                "public_request_body_digest": "38b753d958eabd7fdc5fa490f49f488ff6e40d9df498671a83de564573c188f6",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5898c0cfea2dbfcb4fa1848e3c563f349991294dd3d141ec64b40159514630bd",
+                "returned_after_window": false,
+                "started_ns": 3458719207,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "verifier_errors": {
+          "count": 1,
+          "distinct": 1,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": "PUBLIC_REQUEST_DEADLINE"
+            }
+          ]
+        }
+      }
+    ],
+    "returncode": 101,
+    "streams": {
+      "stderr": {
+        "record": {
+          "bytes": 1615,
+          "sha256": "24f1e6b62f79a4a3f8494b52a1b968fa208515d7fef77632da28d4b5d9080954"
+        },
+        "text": "    Finished `release` profile [optimized] target(s) in 0.05s\n     Running tests/public_v3_multiprocess.rs (/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-f2ec8cfbb025f448)\nP0 native campaign: honest 1024 signed transfers and 21 business blocks\nP0 native campaign: observed producer prepared-generic\nP0 native campaign: observed producer tiled-classical\nP0 native campaign: observed producer tiled-strassen-one-level\nP0 native campaign: observed producer paired-product\nP0 native campaign: observed producer maintenance-periodic\nP0 native campaign: observed producer maintenance-integer-paired\nP0 native campaign: observed producer maintenance-prefix\nP0 native campaign: observed producer maintenance-limb\nP0 native campaign: phase baseline 30s / 0 attacker processes\nP0 native campaign: phase from-zero 30s / 24 attacker processes\nP0 native campaign: phase late-product 30s / 24 attacker processes\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (4698) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1765:5:\nfinite experiment criteria failed; full counterexample retained at /home/runner/work/_temp/pon-native-campaign-42463825169-1/run-1-raw\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (4698) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1541:9:\ncampaign failed; retained /home/runner/work/_temp/pon-native-campaign-42463825169-1/run-1-raw\nerror: test failed, to rerun pass `-p trnm-pon-node --test public_v3_multiprocess`\n"
+      },
+      "stdout": {
+        "record": {
+          "bytes": 271,
+          "sha256": "4501fc5f03237db865100ef919a2e6dd2975feda364246ec33ed0e6e89c69aec"
+        },
+        "text": "\nrunning 1 test\ntest separate_process_work_and_signed_confirmation_campaign ... FAILED\n\nfailures:\n\nfailures:\n    separate_process_work_and_signed_confirmation_campaign\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 24 filtered out; finished in 106.35s\n\n"
+      }
+    }
+  },
+  {
+    "attempt": 2,
+    "phases": [
+      {
+        "actor_reports_successful_without_cap_or_kill": true,
+        "all_signed_rounds_confirmed_in_window": false,
+        "confirmations": {
+          "count": 2,
+          "distinct": 2,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "confirmed_inside_pressure_window": true,
+                "ended_ns": 19690246915,
+                "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": false,
+                "round": 0,
+                "started_ns": 1001889108,
+                "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30001572529,
+                "included_block": "cb491d5dd5071dbec06dfe4f018c7340e130051c4c701054973a035fa39be709",
+                "observation": null,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": false,
+                "round": 1,
+                "started_ns": 19690292344,
+                "tip": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400",
+                "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+              }
+            }
+          ]
+        },
+        "final_client_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+        "final_receiver_tip": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400",
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "history": {
+          "count": 12,
+          "distinct": 12,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1726106,
+                "elapsed_wall_ns": 11743355,
+                "ended_ns": 2417696028,
+                "error": null,
+                "public_request_body_digest": "0d77e1fd4ec6627e3ebaf6949da8a0b284c8a7102f6fa36442938758b7ed9e85",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "9d9d71e32e945a89361e46c79d82bf15dd4eeaeaada4424b838843ac577a0901",
+                "returned_after_window": false,
+                "started_ns": 2405959774,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1631226,
+                "elapsed_wall_ns": 11880302,
+                "ended_ns": 4600759730,
+                "error": null,
+                "public_request_body_digest": "0afb46d76a62b5aba0f4e4e31356d23480ec75f18a6a6c62398ab3fa5d008ba8",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "033657dc10e8fddad396c73adee4246e7c3a066b21d743f58a6a4a340f4d9d6e",
+                "returned_after_window": false,
+                "started_ns": 4588886119,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1546318,
+                "elapsed_wall_ns": 10163428,
+                "ended_ns": 6298697625,
+                "error": null,
+                "public_request_body_digest": "129eff51a41d43562e889ad1c3ebe6ddc7b65a2d8f0fc6d354f4d44813c85eac",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4c1be786555f5a73bcb414a3400a8d152cfd2eebca89a9c304bc79da9fb8d27d",
+                "returned_after_window": false,
+                "started_ns": 6288540007,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1606415,
+                "elapsed_wall_ns": 10929432,
+                "ended_ns": 8003976043,
+                "error": null,
+                "public_request_body_digest": "cf9bbdad6a08a1a6904038849e1e2288179c30e9d948cf4c334c98c7ae1d882b",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "b06dbb7190b58b119fdf9f70d01aae728f6e0991acefc42820922515d635ae52",
+                "returned_after_window": false,
+                "started_ns": 7993052279,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 2220089,
+                "elapsed_wall_ns": 10958506,
+                "ended_ns": 9707584273,
+                "error": null,
+                "public_request_body_digest": "2a74d7db2d961f49843fd8821fe1ede3b6c7bd79112fae0cd57d04bcda71f236",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "29a94131c311af864ab20a404c6d92c2277c092bb09bc02f24b108ea470e8a1c",
+                "returned_after_window": false,
+                "started_ns": 9696633108,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1472959,
+                "elapsed_wall_ns": 11998458,
+                "ended_ns": 11503964014,
+                "error": null,
+                "public_request_body_digest": "192ab3fe2e8969be044c38dd1038eef8728f265d4f9cd297d72ef5341cd02813",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4bdec6d113a4fb325b9726fdcdcdda4cca97264b3ddcc126724e0b68965bfa52",
+                "returned_after_window": false,
+                "started_ns": 11491975141,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1553985,
+                "elapsed_wall_ns": 10939377,
+                "ended_ns": 13226254801,
+                "error": null,
+                "public_request_body_digest": "a54a0fa54030c662585eff56f577e1caed290b8c0b61c7586fd664194273c9f0",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "73784577f811fa9950dddc21b0ee0178694f108cf7a79de9fc430835d88ea337",
+                "returned_after_window": false,
+                "started_ns": 13215323996,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1546166,
+                "elapsed_wall_ns": 11743603,
+                "ended_ns": 21201858518,
+                "error": null,
+                "public_request_body_digest": "5e4f8dd9ae9f855479dc220ace6473f453003fc779e02c5b63f0234612181b18",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "230651af483850417db7b43c31620818d10dab91f4628678eaa49e1bc24d4058",
+                "returned_after_window": false,
+                "started_ns": 21190121224,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1559382,
+                "elapsed_wall_ns": 10535438,
+                "ended_ns": 23006115972,
+                "error": null,
+                "public_request_body_digest": "3acba3f4098aa7311e8e2840c86ac9720715b2b87a237b2b7d0799281daf2b1a",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "99e2c25dd057a4a0ac4fcc1a7a004cb5b31fd9157fee304db6c9cdf5a385e3ab",
+                "returned_after_window": false,
+                "started_ns": 22995599804,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1477655,
+                "elapsed_wall_ns": 10852317,
+                "ended_ns": 24717708607,
+                "error": null,
+                "public_request_body_digest": "259a14053ffd9be086dbee19c7759842024d9df2d4040742df7d98523bfe5371",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "84bcd13e3d26d15c9b06f46950a4d7c43969c41ab29dc38ef3b69930df6c4437",
+                "returned_after_window": false,
+                "started_ns": 24706863221,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1551847,
+                "elapsed_wall_ns": 11392452,
+                "ended_ns": 26518349332,
+                "error": null,
+                "public_request_body_digest": "cdc71c49256ca077f893d8412575445e3cc1260e05798e69f3d82bd00064f5a0",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "149ecbee03f8e58dcbcaccfcf2d71dba02d6fed5e80526f35f2123df2b42cda0",
+                "returned_after_window": false,
+                "started_ns": 26506962689,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1483843,
+                "elapsed_wall_ns": 11053319,
+                "ended_ns": 28304625396,
+                "error": null,
+                "public_request_body_digest": "2ff1d874f2e1701807b28e54f87652c6a306d763f327d805698e50e06c73b197",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "27f21b9ae97d43aabe1cf79b78dce9a8f9455629d0a60f45f9e6f4186b87210c",
+                "returned_after_window": false,
+                "started_ns": 28293577214,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+        "mode": "baseline",
+        "observer_complete": true,
+        "receiver_client_state_equal": false,
+        "service_outcome": {},
+        "submissions": {
+          "count": 14,
+          "distinct": 14,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 57660488,
+                "elapsed_wall_ns": 192966506,
+                "ended_ns": 1195008687,
+                "error": null,
+                "height": 5,
+                "packet_index": 0,
+                "public_request_body_digest": "3575beaba6b44fd103cd18a20a14f3645859b3310608ca062fdd27130fca1ac1",
+                "recorded_request_bytes": 99445,
+                "recorded_request_digest": "595625067806ed25a7e7d7ed4702c04447f37f699990409b6471435bd17549ac",
+                "returned_after_window": false,
+                "started_ns": 1002090295,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 50847732,
+                "elapsed_wall_ns": 199973440,
+                "ended_ns": 1395274463,
+                "error": null,
+                "height": 6,
+                "packet_index": 1,
+                "public_request_body_digest": "83a76e1064668b636b3f2f1bf56a73e1bdb12b1cc06e58dd84176866a873ab39",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "fdc73dd98cceac9d37cbc3f9d6e210182f6310b283317544f7b2af828f039869",
+                "returned_after_window": false,
+                "started_ns": 1195339001,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 54015050,
+                "elapsed_wall_ns": 203961533,
+                "ended_ns": 1599501392,
+                "error": null,
+                "height": 7,
+                "packet_index": 2,
+                "public_request_body_digest": "d9a96911f9ad6c9dcb19fffba90eb6321a2049c6717d632810cbad05058b9a6a",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "a85f8f7b052127397cac70db89b4ad55dd430dffaf46499890c498ad594b45fa",
+                "returned_after_window": false,
+                "started_ns": 1395578477,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 49869025,
+                "elapsed_wall_ns": 199734749,
+                "ended_ns": 1799500049,
+                "error": null,
+                "height": 8,
+                "packet_index": 3,
+                "public_request_body_digest": "a476d40bc04a793c3d116ab3f90630fada9fe65a86c2cb111f1b4074564b91f3",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5d854e850a35cc563dec7822bd18210ee2fcaa993e5a07b7918f6290045e8683",
+                "returned_after_window": false,
+                "started_ns": 1599802537,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 50954714,
+                "elapsed_wall_ns": 200896079,
+                "ended_ns": 2000654488,
+                "error": null,
+                "height": 9,
+                "packet_index": 4,
+                "public_request_body_digest": "5eaece200390ad38fe6e90fb6ff17a9388139415d85dd6c7ab59536a14cc7632",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5b9f398cfebce64b06fb504d58a0cbad9ca83f51aa64ff2db65b8ab8e468af31",
+                "returned_after_window": false,
+                "started_ns": 1799800323,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 53662593,
+                "elapsed_wall_ns": 209752376,
+                "ended_ns": 2210687759,
+                "error": null,
+                "height": 10,
+                "packet_index": 5,
+                "public_request_body_digest": "5c390a2190b40a33698920c7ec5fb819d3cc00a6f2ba945c81f538ee0d971117",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "35d2e2bf217d728f38cb09b6fbd61ee88343799e61721be5274c3a98103d9527",
+                "returned_after_window": false,
+                "started_ns": 2000975223,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 50316786,
+                "elapsed_wall_ns": 194832671,
+                "ended_ns": 2405819041,
+                "error": null,
+                "height": 11,
+                "packet_index": 6,
+                "public_request_body_digest": "38b753d958eabd7fdc5fa490f49f488ff6e40d9df498671a83de564573c188f6",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5898c0cfea2dbfcb4fa1848e3c563f349991294dd3d141ec64b40159514630bd",
+                "returned_after_window": false,
+                "started_ns": 2211023646,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 55480119,
+                "elapsed_wall_ns": 206503287,
+                "ended_ns": 19896938847,
+                "error": null,
+                "height": 12,
+                "packet_index": 7,
+                "public_request_body_digest": "b8d4868f587c6f1ef479311e045826a9aa36781fe9ebac95013ed4bbcd337fd1",
+                "recorded_request_bytes": 99445,
+                "recorded_request_digest": "84dc69a9edd50c4ff14e07ea666c0f019f143e3c81c488657875a04ce67365f9",
+                "returned_after_window": false,
+                "started_ns": 19690473507,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 51382365,
+                "elapsed_wall_ns": 202265115,
+                "ended_ns": 20099498636,
+                "error": null,
+                "height": 13,
+                "packet_index": 8,
+                "public_request_body_digest": "1dff163d28c64ee8d5c48ea8a27f14bc82a0f981a5d5de7d67ba441a58ee74d3",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "db6a244c4f2b6873d37594154537dd18eacff52d7e90b95decd05b1f3c6869fa",
+                "returned_after_window": false,
+                "started_ns": 19897275625,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 52315864,
+                "elapsed_wall_ns": 202999167,
+                "ended_ns": 20302772698,
+                "error": null,
+                "height": 14,
+                "packet_index": 9,
+                "public_request_body_digest": "c9e7b811d6268cb6475f9cac619813c3f111a8110ffb6db9d9a26017a42de74b",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "a25d742b93cd63d105160fa8960c28dba1faae7ac4cd68efcccca0e5992e6615",
+                "returned_after_window": false,
+                "started_ns": 20099812870,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 52882764,
+                "elapsed_wall_ns": 201554703,
+                "ended_ns": 20504597059,
+                "error": null,
+                "height": 15,
+                "packet_index": 10,
+                "public_request_body_digest": "8524547482a8f5c575928b3bf52baa00655fc0f5cc4efa65d4d0505098fc6def",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "78783b2b571e47775886cbd8a3c9eb96bf5ddd795285d02ddfc02a2613c2e3ab",
+                "returned_after_window": false,
+                "started_ns": 20303081804,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 52047311,
+                "elapsed_wall_ns": 202050692,
+                "ended_ns": 20706916345,
+                "error": null,
+                "height": 16,
+                "packet_index": 11,
+                "public_request_body_digest": "e292942e28e5723d7f6372810b9f1146dc3f618b0c41d007c513ff01120d0187",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "b616f7d16e424a9c554d1762fe4e1e296d67cb591737b6eaf5087e98d951041a",
+                "returned_after_window": false,
+                "started_ns": 20504905323,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "verifier_errors": {
+          "count": 1,
+          "distinct": 1,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": "PUBLIC_REQUEST_DEADLINE"
+            }
+          ]
+        }
+      },
+      {
+        "actor_reports_successful_without_cap_or_kill": true,
+        "all_signed_rounds_confirmed_in_window": false,
+        "confirmations": {
+          "count": 1,
+          "distinct": 1,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30086172510,
+                "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                "observation": null,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": true,
+                "round": 0,
+                "started_ns": 1001103578,
+                "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+              }
+            }
+          ]
+        },
+        "final_client_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+        "final_receiver_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "history": {
+          "count": 6,
+          "distinct": 6,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 26400345,
+                "elapsed_wall_ns": 95370626,
+                "ended_ns": 3895562551,
+                "error": null,
+                "public_request_body_digest": "0d77e1fd4ec6627e3ebaf6949da8a0b284c8a7102f6fa36442938758b7ed9e85",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "9d9d71e32e945a89361e46c79d82bf15dd4eeaeaada4424b838843ac577a0901",
+                "returned_after_window": false,
+                "started_ns": 3800201540,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 21510006,
+                "elapsed_wall_ns": 102863623,
+                "ended_ns": 9298869970,
+                "error": null,
+                "public_request_body_digest": "0afb46d76a62b5aba0f4e4e31356d23480ec75f18a6a6c62398ab3fa5d008ba8",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "033657dc10e8fddad396c73adee4246e7c3a066b21d743f58a6a4a340f4d9d6e",
+                "returned_after_window": false,
+                "started_ns": 9196015380,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 22306785,
+                "elapsed_wall_ns": 104700783,
+                "ended_ns": 13797247363,
+                "error": null,
+                "public_request_body_digest": "129eff51a41d43562e889ad1c3ebe6ddc7b65a2d8f0fc6d354f4d44813c85eac",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4c1be786555f5a73bcb414a3400a8d152cfd2eebca89a9c304bc79da9fb8d27d",
+                "returned_after_window": false,
+                "started_ns": 13692554652,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 22521553,
+                "elapsed_wall_ns": 99322645,
+                "ended_ns": 18286943829,
+                "error": null,
+                "public_request_body_digest": "cf9bbdad6a08a1a6904038849e1e2288179c30e9d948cf4c334c98c7ae1d882b",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "b06dbb7190b58b119fdf9f70d01aae728f6e0991acefc42820922515d635ae52",
+                "returned_after_window": false,
+                "started_ns": 18187631229,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 18819631,
+                "elapsed_wall_ns": 100739106,
+                "ended_ns": 22891707717,
+                "error": null,
+                "public_request_body_digest": "2a74d7db2d961f49843fd8821fe1ede3b6c7bd79112fae0cd57d04bcda71f236",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "29a94131c311af864ab20a404c6d92c2277c092bb09bc02f24b108ea470e8a1c",
+                "returned_after_window": false,
+                "started_ns": 22790980720,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 20499071,
+                "elapsed_wall_ns": 14499011,
+                "ended_ns": 27700248567,
+                "error": null,
+                "public_request_body_digest": "192ab3fe2e8969be044c38dd1038eef8728f265d4f9cd297d72ef5341cd02813",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4bdec6d113a4fb325b9726fdcdcdda4cca97264b3ddcc126724e0b68965bfa52",
+                "returned_after_window": false,
+                "started_ns": 27685756327,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+        "mode": "from-zero",
+        "observer_complete": true,
+        "receiver_client_state_equal": false,
+        "service_outcome": {},
+        "submissions": {
+          "count": 7,
+          "distinct": 7,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 104732646,
+                "elapsed_wall_ns": 400874356,
+                "ended_ns": 1402508976,
+                "error": null,
+                "height": 5,
+                "packet_index": 0,
+                "public_request_body_digest": "3575beaba6b44fd103cd18a20a14f3645859b3310608ca062fdd27130fca1ac1",
+                "recorded_request_bytes": 99445,
+                "recorded_request_digest": "595625067806ed25a7e7d7ed4702c04447f37f699990409b6471435bd17549ac",
+                "returned_after_window": false,
+                "started_ns": 1001698536,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 92909002,
+                "elapsed_wall_ns": 392571918,
+                "ended_ns": 1795515630,
+                "error": null,
+                "height": 6,
+                "packet_index": 1,
+                "public_request_body_digest": "83a76e1064668b636b3f2f1bf56a73e1bdb12b1cc06e58dd84176866a873ab39",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "fdc73dd98cceac9d37cbc3f9d6e210182f6310b283317544f7b2af828f039869",
+                "returned_after_window": false,
+                "started_ns": 1403005635,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 93282520,
+                "elapsed_wall_ns": 397388716,
+                "ended_ns": 2193342968,
+                "error": null,
+                "height": 7,
+                "packet_index": 2,
+                "public_request_body_digest": "d9a96911f9ad6c9dcb19fffba90eb6321a2049c6717d632810cbad05058b9a6a",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "a85f8f7b052127397cac70db89b4ad55dd430dffaf46499890c498ad594b45fa",
+                "returned_after_window": false,
+                "started_ns": 1795991678,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 96958610,
+                "elapsed_wall_ns": 397593395,
+                "ended_ns": 2591208554,
+                "error": null,
+                "height": 8,
+                "packet_index": 3,
+                "public_request_body_digest": "a476d40bc04a793c3d116ab3f90630fada9fe65a86c2cb111f1b4074564b91f3",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5d854e850a35cc563dec7822bd18210ee2fcaa993e5a07b7918f6290045e8683",
+                "returned_after_window": false,
+                "started_ns": 2193652144,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 99658464,
+                "elapsed_wall_ns": 402965496,
+                "ended_ns": 2994434964,
+                "error": null,
+                "height": 9,
+                "packet_index": 4,
+                "public_request_body_digest": "5eaece200390ad38fe6e90fb6ff17a9388139415d85dd6c7ab59536a14cc7632",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5b9f398cfebce64b06fb504d58a0cbad9ca83f51aa64ff2db65b8ab8e468af31",
+                "returned_after_window": false,
+                "started_ns": 2591508837,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 106029225,
+                "elapsed_wall_ns": 412665419,
+                "ended_ns": 3407368389,
+                "error": null,
+                "height": 10,
+                "packet_index": 5,
+                "public_request_body_digest": "5c390a2190b40a33698920c7ec5fb819d3cc00a6f2ba945c81f538ee0d971117",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "35d2e2bf217d728f38cb09b6fbd61ee88343799e61721be5274c3a98103d9527",
+                "returned_after_window": false,
+                "started_ns": 2994743560,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 98463505,
+                "elapsed_wall_ns": 392409422,
+                "ended_ns": 3800037582,
+                "error": null,
+                "height": 11,
+                "packet_index": 6,
+                "public_request_body_digest": "38b753d958eabd7fdc5fa490f49f488ff6e40d9df498671a83de564573c188f6",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5898c0cfea2dbfcb4fa1848e3c563f349991294dd3d141ec64b40159514630bd",
+                "returned_after_window": false,
+                "started_ns": 3407671115,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "verifier_errors": {
+          "count": 1,
+          "distinct": 1,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": "PUBLIC_REQUEST_DEADLINE"
+            }
+          ]
+        }
+      },
+      {
+        "actor_reports_successful_without_cap_or_kill": true,
+        "all_signed_rounds_confirmed_in_window": false,
+        "confirmations": {
+          "count": 1,
+          "distinct": 1,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30001329020,
+                "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                "observation": null,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": true,
+                "round": 0,
+                "started_ns": 1001388476,
+                "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+              }
+            }
+          ]
+        },
+        "final_client_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+        "final_receiver_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "history": {
+          "count": 6,
+          "distinct": 6,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 23457755,
+                "elapsed_wall_ns": 93702451,
+                "ended_ns": 3904269876,
+                "error": null,
+                "public_request_body_digest": "0d77e1fd4ec6627e3ebaf6949da8a0b284c8a7102f6fa36442938758b7ed9e85",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "9d9d71e32e945a89361e46c79d82bf15dd4eeaeaada4424b838843ac577a0901",
+                "returned_after_window": false,
+                "started_ns": 3810579313,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 26334512,
+                "elapsed_wall_ns": 101429440,
+                "ended_ns": 9597877057,
+                "error": null,
+                "public_request_body_digest": "0afb46d76a62b5aba0f4e4e31356d23480ec75f18a6a6c62398ab3fa5d008ba8",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "033657dc10e8fddad396c73adee4246e7c3a066b21d743f58a6a4a340f4d9d6e",
+                "returned_after_window": false,
+                "started_ns": 9496455549,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 20161821,
+                "elapsed_wall_ns": 97899709,
+                "ended_ns": 14295516956,
+                "error": null,
+                "public_request_body_digest": "129eff51a41d43562e889ad1c3ebe6ddc7b65a2d8f0fc6d354f4d44813c85eac",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4c1be786555f5a73bcb414a3400a8d152cfd2eebca89a9c304bc79da9fb8d27d",
+                "returned_after_window": false,
+                "started_ns": 14197626561,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 28184515,
+                "elapsed_wall_ns": 190098781,
+                "ended_ns": 19195573500,
+                "error": null,
+                "public_request_body_digest": "cf9bbdad6a08a1a6904038849e1e2288179c30e9d948cf4c334c98c7ae1d882b",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "b06dbb7190b58b119fdf9f70d01aae728f6e0991acefc42820922515d635ae52",
+                "returned_after_window": false,
+                "started_ns": 19005488209,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 17641643,
+                "elapsed_wall_ns": 97234420,
+                "ended_ns": 23895574794,
+                "error": null,
+                "public_request_body_digest": "2a74d7db2d961f49843fd8821fe1ede3b6c7bd79112fae0cd57d04bcda71f236",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "29a94131c311af864ab20a404c6d92c2277c092bb09bc02f24b108ea470e8a1c",
+                "returned_after_window": false,
+                "started_ns": 23798349637,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 16366254,
+                "elapsed_wall_ns": 95484443,
+                "ended_ns": 28595479626,
+                "error": null,
+                "public_request_body_digest": "192ab3fe2e8969be044c38dd1038eef8728f265d4f9cd297d72ef5341cd02813",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4bdec6d113a4fb325b9726fdcdcdda4cca97264b3ddcc126724e0b68965bfa52",
+                "returned_after_window": false,
+                "started_ns": 28500003545,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+        "mode": "late-product",
+        "observer_complete": true,
+        "receiver_client_state_equal": false,
+        "service_outcome": {},
+        "submissions": {
+          "count": 7,
+          "distinct": 7,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 104182010,
+                "elapsed_wall_ns": 411087891,
+                "ended_ns": 1413619669,
+                "error": null,
+                "height": 5,
+                "packet_index": 0,
+                "public_request_body_digest": "3575beaba6b44fd103cd18a20a14f3645859b3310608ca062fdd27130fca1ac1",
+                "recorded_request_bytes": 99445,
+                "recorded_request_digest": "595625067806ed25a7e7d7ed4702c04447f37f699990409b6471435bd17549ac",
+                "returned_after_window": false,
+                "started_ns": 1002568503,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 96308164,
+                "elapsed_wall_ns": 395572301,
+                "ended_ns": 1809444551,
+                "error": null,
+                "height": 6,
+                "packet_index": 1,
+                "public_request_body_digest": "83a76e1064668b636b3f2f1bf56a73e1bdb12b1cc06e58dd84176866a873ab39",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "fdc73dd98cceac9d37cbc3f9d6e210182f6310b283317544f7b2af828f039869",
+                "returned_after_window": false,
+                "started_ns": 1413933162,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 98680964,
+                "elapsed_wall_ns": 398620553,
+                "ended_ns": 2208487212,
+                "error": null,
+                "height": 7,
+                "packet_index": 2,
+                "public_request_body_digest": "d9a96911f9ad6c9dcb19fffba90eb6321a2049c6717d632810cbad05058b9a6a",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "a85f8f7b052127397cac70db89b4ad55dd430dffaf46499890c498ad594b45fa",
+                "returned_after_window": false,
+                "started_ns": 1809929835,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 94667390,
+                "elapsed_wall_ns": 397677129,
+                "ended_ns": 2606627530,
+                "error": null,
+                "height": 8,
+                "packet_index": 3,
+                "public_request_body_digest": "a476d40bc04a793c3d116ab3f90630fada9fe65a86c2cb111f1b4074564b91f3",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5d854e850a35cc563dec7822bd18210ee2fcaa993e5a07b7918f6290045e8683",
+                "returned_after_window": false,
+                "started_ns": 2208989511,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 100461462,
+                "elapsed_wall_ns": 399260207,
+                "ended_ns": 3006161781,
+                "error": null,
+                "height": 9,
+                "packet_index": 4,
+                "public_request_body_digest": "5eaece200390ad38fe6e90fb6ff17a9388139415d85dd6c7ab59536a14cc7632",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5b9f398cfebce64b06fb504d58a0cbad9ca83f51aa64ff2db65b8ab8e468af31",
+                "returned_after_window": false,
+                "started_ns": 2606941755,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 103170817,
+                "elapsed_wall_ns": 414279496,
+                "ended_ns": 3420702492,
+                "error": null,
+                "height": 10,
+                "packet_index": 5,
+                "public_request_body_digest": "5c390a2190b40a33698920c7ec5fb819d3cc00a6f2ba945c81f538ee0d971117",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "35d2e2bf217d728f38cb09b6fbd61ee88343799e61721be5274c3a98103d9527",
+                "returned_after_window": false,
+                "started_ns": 3006476957,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 100072750,
+                "elapsed_wall_ns": 389444879,
+                "ended_ns": 3810435887,
+                "error": null,
+                "height": 11,
+                "packet_index": 6,
+                "public_request_body_digest": "38b753d958eabd7fdc5fa490f49f488ff6e40d9df498671a83de564573c188f6",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5898c0cfea2dbfcb4fa1848e3c563f349991294dd3d141ec64b40159514630bd",
+                "returned_after_window": false,
+                "started_ns": 3421029796,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "verifier_errors": {
+          "count": 1,
+          "distinct": 1,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": "PUBLIC_REQUEST_DEADLINE"
+            }
+          ]
+        }
+      }
+    ],
+    "returncode": 101,
+    "streams": {
+      "stderr": {
+        "record": {
+          "bytes": 1615,
+          "sha256": "495f25639e8e171c145ee7569d9cd90e11b24a1e05823726cb3d6a038a8f53ba"
+        },
+        "text": "    Finished `release` profile [optimized] target(s) in 0.04s\n     Running tests/public_v3_multiprocess.rs (/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-f2ec8cfbb025f448)\nP0 native campaign: honest 1024 signed transfers and 21 business blocks\nP0 native campaign: observed producer prepared-generic\nP0 native campaign: observed producer tiled-classical\nP0 native campaign: observed producer tiled-strassen-one-level\nP0 native campaign: observed producer paired-product\nP0 native campaign: observed producer maintenance-periodic\nP0 native campaign: observed producer maintenance-integer-paired\nP0 native campaign: observed producer maintenance-prefix\nP0 native campaign: observed producer maintenance-limb\nP0 native campaign: phase baseline 30s / 0 attacker processes\nP0 native campaign: phase from-zero 30s / 24 attacker processes\nP0 native campaign: phase late-product 30s / 24 attacker processes\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (5053) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1765:5:\nfinite experiment criteria failed; full counterexample retained at /home/runner/work/_temp/pon-native-campaign-42463825169-1/run-2-raw\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (5053) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1541:9:\ncampaign failed; retained /home/runner/work/_temp/pon-native-campaign-42463825169-1/run-2-raw\nerror: test failed, to rerun pass `-p trnm-pon-node --test public_v3_multiprocess`\n"
+      },
+      "stdout": {
+        "record": {
+          "bytes": 271,
+          "sha256": "2a1b4ca857a914955dd8620f2485add1a0bc15eeae86847fe214726612c6d9f3"
+        },
+        "text": "\nrunning 1 test\ntest separate_process_work_and_signed_confirmation_campaign ... FAILED\n\nfailures:\n\nfailures:\n    separate_process_work_and_signed_confirmation_campaign\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 24 filtered out; finished in 106.14s\n\n"
+      }
+    }
+  },
+  {
+    "attempt": 3,
+    "phases": [
+      {
+        "actor_reports_successful_without_cap_or_kill": true,
+        "all_signed_rounds_confirmed_in_window": false,
+        "confirmations": {
+          "count": 2,
+          "distinct": 2,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "confirmed_inside_pressure_window": true,
+                "ended_ns": 19777774737,
+                "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": false,
+                "round": 0,
+                "started_ns": 1001192356,
+                "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30076686689,
+                "included_block": "cb491d5dd5071dbec06dfe4f018c7340e130051c4c701054973a035fa39be709",
+                "observation": null,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": false,
+                "round": 1,
+                "started_ns": 19777818153,
+                "tip": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400",
+                "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+              }
+            }
+          ]
+        },
+        "final_client_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+        "final_receiver_tip": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400",
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "history": {
+          "count": 12,
+          "distinct": 12,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1654957,
+                "elapsed_wall_ns": 11820251,
+                "ended_ns": 2304360677,
+                "error": null,
+                "public_request_body_digest": "0d77e1fd4ec6627e3ebaf6949da8a0b284c8a7102f6fa36442938758b7ed9e85",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "9d9d71e32e945a89361e46c79d82bf15dd4eeaeaada4424b838843ac577a0901",
+                "returned_after_window": false,
+                "started_ns": 2292546975,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1641734,
+                "elapsed_wall_ns": 11726590,
+                "ended_ns": 4497970425,
+                "error": null,
+                "public_request_body_digest": "0afb46d76a62b5aba0f4e4e31356d23480ec75f18a6a6c62398ab3fa5d008ba8",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "033657dc10e8fddad396c73adee4246e7c3a066b21d743f58a6a4a340f4d9d6e",
+                "returned_after_window": false,
+                "started_ns": 4486249533,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1507490,
+                "elapsed_wall_ns": 11268458,
+                "ended_ns": 6206468803,
+                "error": null,
+                "public_request_body_digest": "129eff51a41d43562e889ad1c3ebe6ddc7b65a2d8f0fc6d354f4d44813c85eac",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4c1be786555f5a73bcb414a3400a8d152cfd2eebca89a9c304bc79da9fb8d27d",
+                "returned_after_window": false,
+                "started_ns": 6195207475,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1535514,
+                "elapsed_wall_ns": 10731388,
+                "ended_ns": 7996892107,
+                "error": null,
+                "public_request_body_digest": "cf9bbdad6a08a1a6904038849e1e2288179c30e9d948cf4c334c98c7ae1d882b",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "b06dbb7190b58b119fdf9f70d01aae728f6e0991acefc42820922515d635ae52",
+                "returned_after_window": false,
+                "started_ns": 7986167650,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1598716,
+                "elapsed_wall_ns": 11664471,
+                "ended_ns": 9706320914,
+                "error": null,
+                "public_request_body_digest": "2a74d7db2d961f49843fd8821fe1ede3b6c7bd79112fae0cd57d04bcda71f236",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "29a94131c311af864ab20a404c6d92c2277c092bb09bc02f24b108ea470e8a1c",
+                "returned_after_window": false,
+                "started_ns": 9694662993,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1615989,
+                "elapsed_wall_ns": 11497667,
+                "ended_ns": 11501109057,
+                "error": null,
+                "public_request_body_digest": "192ab3fe2e8969be044c38dd1038eef8728f265d4f9cd297d72ef5341cd02813",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4bdec6d113a4fb325b9726fdcdcdda4cca97264b3ddcc126724e0b68965bfa52",
+                "returned_after_window": false,
+                "started_ns": 11489617600,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1516852,
+                "elapsed_wall_ns": 11583988,
+                "ended_ns": 13302206512,
+                "error": null,
+                "public_request_body_digest": "a54a0fa54030c662585eff56f577e1caed290b8c0b61c7586fd664194273c9f0",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "73784577f811fa9950dddc21b0ee0178694f108cf7a79de9fc430835d88ea337",
+                "returned_after_window": false,
+                "started_ns": 13290629104,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1515718,
+                "elapsed_wall_ns": 11796471,
+                "ended_ns": 21297977747,
+                "error": null,
+                "public_request_body_digest": "5e4f8dd9ae9f855479dc220ace6473f453003fc779e02c5b63f0234612181b18",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "230651af483850417db7b43c31620818d10dab91f4628678eaa49e1bc24d4058",
+                "returned_after_window": false,
+                "started_ns": 21286195088,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1612079,
+                "elapsed_wall_ns": 12086840,
+                "ended_ns": 23191558395,
+                "error": null,
+                "public_request_body_digest": "3acba3f4098aa7311e8e2840c86ac9720715b2b87a237b2b7d0799281daf2b1a",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "99e2c25dd057a4a0ac4fcc1a7a004cb5b31fd9157fee304db6c9cdf5a385e3ab",
+                "returned_after_window": false,
+                "started_ns": 23179480689,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1766625,
+                "elapsed_wall_ns": 11073708,
+                "ended_ns": 24989667868,
+                "error": null,
+                "public_request_body_digest": "259a14053ffd9be086dbee19c7759842024d9df2d4040742df7d98523bfe5371",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "84bcd13e3d26d15c9b06f46950a4d7c43969c41ab29dc38ef3b69930df6c4437",
+                "returned_after_window": false,
+                "started_ns": 24978602462,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1526473,
+                "elapsed_wall_ns": 10809513,
+                "ended_ns": 26793698048,
+                "error": null,
+                "public_request_body_digest": "cdc71c49256ca077f893d8412575445e3cc1260e05798e69f3d82bd00064f5a0",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "149ecbee03f8e58dcbcaccfcf2d71dba02d6fed5e80526f35f2123df2b42cda0",
+                "returned_after_window": false,
+                "started_ns": 26782893963,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 1547494,
+                "elapsed_wall_ns": 11925189,
+                "ended_ns": 28596655672,
+                "error": null,
+                "public_request_body_digest": "2ff1d874f2e1701807b28e54f87652c6a306d763f327d805698e50e06c73b197",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "27f21b9ae97d43aabe1cf79b78dce9a8f9455629d0a60f45f9e6f4186b87210c",
+                "returned_after_window": false,
+                "started_ns": 28584736572,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+        "mode": "baseline",
+        "observer_complete": true,
+        "receiver_client_state_equal": false,
+        "service_outcome": {},
+        "submissions": {
+          "count": 14,
+          "distinct": 14,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 51818454,
+                "elapsed_wall_ns": 177261116,
+                "ended_ns": 1178617349,
+                "error": null,
+                "height": 5,
+                "packet_index": 0,
+                "public_request_body_digest": "3575beaba6b44fd103cd18a20a14f3645859b3310608ca062fdd27130fca1ac1",
+                "recorded_request_bytes": 99445,
+                "recorded_request_digest": "595625067806ed25a7e7d7ed4702c04447f37f699990409b6471435bd17549ac",
+                "returned_after_window": false,
+                "started_ns": 1001390515,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 46439313,
+                "elapsed_wall_ns": 121960976,
+                "ended_ns": 1300853341,
+                "error": null,
+                "height": 6,
+                "packet_index": 1,
+                "public_request_body_digest": "83a76e1064668b636b3f2f1bf56a73e1bdb12b1cc06e58dd84176866a873ab39",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "fdc73dd98cceac9d37cbc3f9d6e210182f6310b283317544f7b2af828f039869",
+                "returned_after_window": false,
+                "started_ns": 1178931363,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 46090845,
+                "elapsed_wall_ns": 122507677,
+                "ended_ns": 1497681886,
+                "error": null,
+                "height": 7,
+                "packet_index": 2,
+                "public_request_body_digest": "d9a96911f9ad6c9dcb19fffba90eb6321a2049c6717d632810cbad05058b9a6a",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "a85f8f7b052127397cac70db89b4ad55dd430dffaf46499890c498ad594b45fa",
+                "returned_after_window": false,
+                "started_ns": 1301173414,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 46210588,
+                "elapsed_wall_ns": 195524902,
+                "ended_ns": 1693491068,
+                "error": null,
+                "height": 8,
+                "packet_index": 3,
+                "public_request_body_digest": "a476d40bc04a793c3d116ab3f90630fada9fe65a86c2cb111f1b4074564b91f3",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5d854e850a35cc563dec7822bd18210ee2fcaa993e5a07b7918f6290045e8683",
+                "returned_after_window": false,
+                "started_ns": 1498006306,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 48480460,
+                "elapsed_wall_ns": 198267893,
+                "ended_ns": 1892064482,
+                "error": null,
+                "height": 9,
+                "packet_index": 4,
+                "public_request_body_digest": "5eaece200390ad38fe6e90fb6ff17a9388139415d85dd6c7ab59536a14cc7632",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5b9f398cfebce64b06fb504d58a0cbad9ca83f51aa64ff2db65b8ab8e468af31",
+                "returned_after_window": false,
+                "started_ns": 1693836059,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 51194631,
+                "elapsed_wall_ns": 211696436,
+                "ended_ns": 2104034522,
+                "error": null,
+                "height": 10,
+                "packet_index": 5,
+                "public_request_body_digest": "5c390a2190b40a33698920c7ec5fb819d3cc00a6f2ba945c81f538ee0d971117",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "35d2e2bf217d728f38cb09b6fbd61ee88343799e61721be5274c3a98103d9527",
+                "returned_after_window": false,
+                "started_ns": 1892376633,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 48208535,
+                "elapsed_wall_ns": 188107732,
+                "ended_ns": 2292403138,
+                "error": null,
+                "height": 11,
+                "packet_index": 6,
+                "public_request_body_digest": "38b753d958eabd7fdc5fa490f49f488ff6e40d9df498671a83de564573c188f6",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5898c0cfea2dbfcb4fa1848e3c563f349991294dd3d141ec64b40159514630bd",
+                "returned_after_window": false,
+                "started_ns": 2104333633,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 57824678,
+                "elapsed_wall_ns": 209919750,
+                "ended_ns": 19987859609,
+                "error": null,
+                "height": 12,
+                "packet_index": 7,
+                "public_request_body_digest": "b8d4868f587c6f1ef479311e045826a9aa36781fe9ebac95013ed4bbcd337fd1",
+                "recorded_request_bytes": 99445,
+                "recorded_request_digest": "84dc69a9edd50c4ff14e07ea666c0f019f143e3c81c488657875a04ce67365f9",
+                "returned_after_window": false,
+                "started_ns": 19777992658,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 53235548,
+                "elapsed_wall_ns": 202144048,
+                "ended_ns": 20190289240,
+                "error": null,
+                "height": 13,
+                "packet_index": 8,
+                "public_request_body_digest": "1dff163d28c64ee8d5c48ea8a27f14bc82a0f981a5d5de7d67ba441a58ee74d3",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "db6a244c4f2b6873d37594154537dd18eacff52d7e90b95decd05b1f3c6869fa",
+                "returned_after_window": false,
+                "started_ns": 19988190069,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 51962376,
+                "elapsed_wall_ns": 203495116,
+                "ended_ns": 20394045431,
+                "error": null,
+                "height": 14,
+                "packet_index": 9,
+                "public_request_body_digest": "c9e7b811d6268cb6475f9cac619813c3f111a8110ffb6db9d9a26017a42de74b",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "a25d742b93cd63d105160fa8960c28dba1faae7ac4cd68efcccca0e5992e6615",
+                "returned_after_window": false,
+                "started_ns": 20190599279,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 52991804,
+                "elapsed_wall_ns": 202284927,
+                "ended_ns": 20596659266,
+                "error": null,
+                "height": 15,
+                "packet_index": 10,
+                "public_request_body_digest": "8524547482a8f5c575928b3bf52baa00655fc0f5cc4efa65d4d0505098fc6def",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "78783b2b571e47775886cbd8a3c9eb96bf5ddd795285d02ddfc02a2613c2e3ab",
+                "returned_after_window": false,
+                "started_ns": 20394420860,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 54905622,
+                "elapsed_wall_ns": 280573151,
+                "ended_ns": 20877556789,
+                "error": null,
+                "height": 16,
+                "packet_index": 11,
+                "public_request_body_digest": "e292942e28e5723d7f6372810b9f1146dc3f618b0c41d007c513ff01120d0187",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "b616f7d16e424a9c554d1762fe4e1e296d67cb591737b6eaf5087e98d951041a",
+                "returned_after_window": false,
+                "started_ns": 20597032111,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "verifier_errors": {
+          "count": 1,
+          "distinct": 1,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": "PUBLIC_REQUEST_DEADLINE"
+            }
+          ]
+        }
+      },
+      {
+        "actor_reports_successful_without_cap_or_kill": true,
+        "all_signed_rounds_confirmed_in_window": false,
+        "confirmations": {
+          "count": 1,
+          "distinct": 1,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30010075142,
+                "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                "observation": null,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": true,
+                "round": 0,
+                "started_ns": 1006289388,
+                "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+              }
+            }
+          ]
+        },
+        "final_client_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+        "final_receiver_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "history": {
+          "count": 6,
+          "distinct": 6,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 20240422,
+                "elapsed_wall_ns": 95481987,
+                "ended_ns": 4008755041,
+                "error": null,
+                "public_request_body_digest": "0d77e1fd4ec6627e3ebaf6949da8a0b284c8a7102f6fa36442938758b7ed9e85",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "9d9d71e32e945a89361e46c79d82bf15dd4eeaeaada4424b838843ac577a0901",
+                "returned_after_window": false,
+                "started_ns": 3913282168,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 24699562,
+                "elapsed_wall_ns": 101680490,
+                "ended_ns": 9513989589,
+                "error": null,
+                "public_request_body_digest": "0afb46d76a62b5aba0f4e4e31356d23480ec75f18a6a6c62398ab3fa5d008ba8",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "033657dc10e8fddad396c73adee4246e7c3a066b21d743f58a6a4a340f4d9d6e",
+                "returned_after_window": false,
+                "started_ns": 9412321027,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 24283590,
+                "elapsed_wall_ns": 100491834,
+                "ended_ns": 14111525284,
+                "error": null,
+                "public_request_body_digest": "129eff51a41d43562e889ad1c3ebe6ddc7b65a2d8f0fc6d354f4d44813c85eac",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4c1be786555f5a73bcb414a3400a8d152cfd2eebca89a9c304bc79da9fb8d27d",
+                "returned_after_window": false,
+                "started_ns": 14011044347,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 21522446,
+                "elapsed_wall_ns": 98112479,
+                "ended_ns": 18610132249,
+                "error": null,
+                "public_request_body_digest": "cf9bbdad6a08a1a6904038849e1e2288179c30e9d948cf4c334c98c7ae1d882b",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "b06dbb7190b58b119fdf9f70d01aae728f6e0991acefc42820922515d635ae52",
+                "returned_after_window": false,
+                "started_ns": 18512027993,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 20889684,
+                "elapsed_wall_ns": 95755266,
+                "ended_ns": 23419213706,
+                "error": null,
+                "public_request_body_digest": "2a74d7db2d961f49843fd8821fe1ede3b6c7bd79112fae0cd57d04bcda71f236",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "29a94131c311af864ab20a404c6d92c2277c092bb09bc02f24b108ea470e8a1c",
+                "returned_after_window": false,
+                "started_ns": 23323467914,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 19449117,
+                "elapsed_wall_ns": 13622108,
+                "ended_ns": 28221352775,
+                "error": null,
+                "public_request_body_digest": "192ab3fe2e8969be044c38dd1038eef8728f265d4f9cd297d72ef5341cd02813",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4bdec6d113a4fb325b9726fdcdcdda4cca97264b3ddcc126724e0b68965bfa52",
+                "returned_after_window": false,
+                "started_ns": 28207738659,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+        "mode": "from-zero",
+        "observer_complete": true,
+        "receiver_client_state_equal": false,
+        "service_outcome": {},
+        "submissions": {
+          "count": 7,
+          "distinct": 7,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 108600300,
+                "elapsed_wall_ns": 410077308,
+                "ended_ns": 1416851850,
+                "error": null,
+                "height": 5,
+                "packet_index": 0,
+                "public_request_body_digest": "3575beaba6b44fd103cd18a20a14f3645859b3310608ca062fdd27130fca1ac1",
+                "recorded_request_bytes": 99445,
+                "recorded_request_digest": "595625067806ed25a7e7d7ed4702c04447f37f699990409b6471435bd17549ac",
+                "returned_after_window": false,
+                "started_ns": 1006812529,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 100076898,
+                "elapsed_wall_ns": 399107172,
+                "ended_ns": 1816271503,
+                "error": null,
+                "height": 6,
+                "packet_index": 1,
+                "public_request_body_digest": "83a76e1064668b636b3f2f1bf56a73e1bdb12b1cc06e58dd84176866a873ab39",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "fdc73dd98cceac9d37cbc3f9d6e210182f6310b283317544f7b2af828f039869",
+                "returned_after_window": false,
+                "started_ns": 1417204483,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 100464334,
+                "elapsed_wall_ns": 402972542,
+                "ended_ns": 2219476277,
+                "error": null,
+                "height": 7,
+                "packet_index": 2,
+                "public_request_body_digest": "d9a96911f9ad6c9dcb19fffba90eb6321a2049c6717d632810cbad05058b9a6a",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "a85f8f7b052127397cac70db89b4ad55dd430dffaf46499890c498ad594b45fa",
+                "returned_after_window": false,
+                "started_ns": 1816579008,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 104446305,
+                "elapsed_wall_ns": 404999291,
+                "ended_ns": 2624779857,
+                "error": null,
+                "height": 8,
+                "packet_index": 3,
+                "public_request_body_digest": "a476d40bc04a793c3d116ab3f90630fada9fe65a86c2cb111f1b4074564b91f3",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5d854e850a35cc563dec7822bd18210ee2fcaa993e5a07b7918f6290045e8683",
+                "returned_after_window": false,
+                "started_ns": 2219835720,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 101862958,
+                "elapsed_wall_ns": 401867939,
+                "ended_ns": 3026928149,
+                "error": null,
+                "height": 9,
+                "packet_index": 4,
+                "public_request_body_digest": "5eaece200390ad38fe6e90fb6ff17a9388139415d85dd6c7ab59536a14cc7632",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5b9f398cfebce64b06fb504d58a0cbad9ca83f51aa64ff2db65b8ab8e468af31",
+                "returned_after_window": false,
+                "started_ns": 2625101363,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 105657640,
+                "elapsed_wall_ns": 483748251,
+                "ended_ns": 3510919226,
+                "error": null,
+                "height": 10,
+                "packet_index": 5,
+                "public_request_body_digest": "5c390a2190b40a33698920c7ec5fb819d3cc00a6f2ba945c81f538ee0d971117",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "35d2e2bf217d728f38cb09b6fbd61ee88343799e61721be5274c3a98103d9527",
+                "returned_after_window": false,
+                "started_ns": 3027234252,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 102747185,
+                "elapsed_wall_ns": 401914635,
+                "ended_ns": 3913101135,
+                "error": null,
+                "height": 11,
+                "packet_index": 6,
+                "public_request_body_digest": "38b753d958eabd7fdc5fa490f49f488ff6e40d9df498671a83de564573c188f6",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5898c0cfea2dbfcb4fa1848e3c563f349991294dd3d141ec64b40159514630bd",
+                "returned_after_window": false,
+                "started_ns": 3511248324,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "verifier_errors": {
+          "count": 1,
+          "distinct": 1,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": "PUBLIC_REQUEST_DEADLINE"
+            }
+          ]
+        }
+      },
+      {
+        "actor_reports_successful_without_cap_or_kill": true,
+        "all_signed_rounds_confirmed_in_window": false,
+        "confirmations": {
+          "count": 1,
+          "distinct": 1,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30001632344,
+                "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                "observation": null,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": true,
+                "round": 0,
+                "started_ns": 1000272876,
+                "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+              }
+            }
+          ]
+        },
+        "final_client_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+        "final_receiver_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "history": {
+          "count": 6,
+          "distinct": 6,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 26840248,
+                "elapsed_wall_ns": 101176095,
+                "ended_ns": 4004057501,
+                "error": null,
+                "public_request_body_digest": "0d77e1fd4ec6627e3ebaf6949da8a0b284c8a7102f6fa36442938758b7ed9e85",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "9d9d71e32e945a89361e46c79d82bf15dd4eeaeaada4424b838843ac577a0901",
+                "returned_after_window": false,
+                "started_ns": 3902893515,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 22916235,
+                "elapsed_wall_ns": 99833225,
+                "ended_ns": 9505722426,
+                "error": null,
+                "public_request_body_digest": "0afb46d76a62b5aba0f4e4e31356d23480ec75f18a6a6c62398ab3fa5d008ba8",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "033657dc10e8fddad396c73adee4246e7c3a066b21d743f58a6a4a340f4d9d6e",
+                "returned_after_window": false,
+                "started_ns": 9405898625,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 18532195,
+                "elapsed_wall_ns": 98651863,
+                "ended_ns": 14710086348,
+                "error": null,
+                "public_request_body_digest": "129eff51a41d43562e889ad1c3ebe6ddc7b65a2d8f0fc6d354f4d44813c85eac",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4c1be786555f5a73bcb414a3400a8d152cfd2eebca89a9c304bc79da9fb8d27d",
+                "returned_after_window": false,
+                "started_ns": 14611443629,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 21248679,
+                "elapsed_wall_ns": 99664717,
+                "ended_ns": 19503668756,
+                "error": null,
+                "public_request_body_digest": "cf9bbdad6a08a1a6904038849e1e2288179c30e9d948cf4c334c98c7ae1d882b",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "b06dbb7190b58b119fdf9f70d01aae728f6e0991acefc42820922515d635ae52",
+                "returned_after_window": false,
+                "started_ns": 19404014064,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 20297594,
+                "elapsed_wall_ns": 100812626,
+                "ended_ns": 24410982805,
+                "error": null,
+                "public_request_body_digest": "2a74d7db2d961f49843fd8821fe1ede3b6c7bd79112fae0cd57d04bcda71f236",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "29a94131c311af864ab20a404c6d92c2277c092bb09bc02f24b108ea470e8a1c",
+                "returned_after_window": false,
+                "started_ns": 24310182227,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 24104994,
+                "elapsed_wall_ns": 101633636,
+                "ended_ns": 29308596933,
+                "error": null,
+                "public_request_body_digest": "192ab3fe2e8969be044c38dd1038eef8728f265d4f9cd297d72ef5341cd02813",
+                "recorded_request_bytes": 164,
+                "recorded_request_digest": "4bdec6d113a4fb325b9726fdcdcdda4cca97264b3ddcc126724e0b68965bfa52",
+                "returned_after_window": false,
+                "started_ns": 29206974264,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+        "mode": "late-product",
+        "observer_complete": true,
+        "receiver_client_state_equal": false,
+        "service_outcome": {},
+        "submissions": {
+          "count": 7,
+          "distinct": 7,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 100054473,
+                "elapsed_wall_ns": 399707007,
+                "ended_ns": 1400337223,
+                "error": null,
+                "height": 5,
+                "packet_index": 0,
+                "public_request_body_digest": "3575beaba6b44fd103cd18a20a14f3645859b3310608ca062fdd27130fca1ac1",
+                "recorded_request_bytes": 99445,
+                "recorded_request_digest": "595625067806ed25a7e7d7ed4702c04447f37f699990409b6471435bd17549ac",
+                "returned_after_window": false,
+                "started_ns": 1000676646,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 103568494,
+                "elapsed_wall_ns": 404169837,
+                "ended_ns": 1804804999,
+                "error": null,
+                "height": 6,
+                "packet_index": 1,
+                "public_request_body_digest": "83a76e1064668b636b3f2f1bf56a73e1bdb12b1cc06e58dd84176866a873ab39",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "fdc73dd98cceac9d37cbc3f9d6e210182f6310b283317544f7b2af828f039869",
+                "returned_after_window": false,
+                "started_ns": 1400672419,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 99825902,
+                "elapsed_wall_ns": 399721403,
+                "ended_ns": 2204790381,
+                "error": null,
+                "height": 7,
+                "packet_index": 2,
+                "public_request_body_digest": "d9a96911f9ad6c9dcb19fffba90eb6321a2049c6717d632810cbad05058b9a6a",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "a85f8f7b052127397cac70db89b4ad55dd430dffaf46499890c498ad594b45fa",
+                "returned_after_window": false,
+                "started_ns": 1805115578,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 102171578,
+                "elapsed_wall_ns": 405196853,
+                "ended_ns": 2610261338,
+                "error": null,
+                "height": 8,
+                "packet_index": 3,
+                "public_request_body_digest": "a476d40bc04a793c3d116ab3f90630fada9fe65a86c2cb111f1b4074564b91f3",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5d854e850a35cc563dec7822bd18210ee2fcaa993e5a07b7918f6290045e8683",
+                "returned_after_window": false,
+                "started_ns": 2205102372,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 101544871,
+                "elapsed_wall_ns": 402928942,
+                "ended_ns": 3013451645,
+                "error": null,
+                "height": 9,
+                "packet_index": 4,
+                "public_request_body_digest": "5eaece200390ad38fe6e90fb6ff17a9388139415d85dd6c7ab59536a14cc7632",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5b9f398cfebce64b06fb504d58a0cbad9ca83f51aa64ff2db65b8ab8e468af31",
+                "returned_after_window": false,
+                "started_ns": 2610561581,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 105334028,
+                "elapsed_wall_ns": 408191870,
+                "ended_ns": 3422039333,
+                "error": null,
+                "height": 10,
+                "packet_index": 5,
+                "public_request_body_digest": "5c390a2190b40a33698920c7ec5fb819d3cc00a6f2ba945c81f538ee0d971117",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "35d2e2bf217d728f38cb09b6fbd61ee88343799e61721be5274c3a98103d9527",
+                "returned_after_window": false,
+                "started_ns": 3013910137,
+                "status": "ok"
+              }
+            },
+            {
+              "count": 1,
+              "value": {
+                "calling_process_cpu_ns": 106675424,
+                "elapsed_wall_ns": 480409470,
+                "ended_ns": 3902697920,
+                "error": null,
+                "height": 11,
+                "packet_index": 6,
+                "public_request_body_digest": "38b753d958eabd7fdc5fa490f49f488ff6e40d9df498671a83de564573c188f6",
+                "recorded_request_bytes": 99043,
+                "recorded_request_digest": "5898c0cfea2dbfcb4fa1848e3c563f349991294dd3d141ec64b40159514630bd",
+                "returned_after_window": false,
+                "started_ns": 3422376893,
+                "status": "ok"
+              }
+            }
+          ]
+        },
+        "verifier_errors": {
+          "count": 1,
+          "distinct": 1,
+          "unique_values": [
+            {
+              "count": 1,
+              "value": "PUBLIC_REQUEST_DEADLINE"
+            }
+          ]
+        }
+      }
+    ],
+    "returncode": 101,
+    "streams": {
+      "stderr": {
+        "record": {
+          "bytes": 1615,
+          "sha256": "27cc81f1ed9dc6af0fbb2f75f2cb7ca0fddd91d0728fe39ae19c5532b71128bb"
+        },
+        "text": "    Finished `release` profile [optimized] target(s) in 0.05s\n     Running tests/public_v3_multiprocess.rs (/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-f2ec8cfbb025f448)\nP0 native campaign: honest 1024 signed transfers and 21 business blocks\nP0 native campaign: observed producer prepared-generic\nP0 native campaign: observed producer tiled-classical\nP0 native campaign: observed producer tiled-strassen-one-level\nP0 native campaign: observed producer paired-product\nP0 native campaign: observed producer maintenance-periodic\nP0 native campaign: observed producer maintenance-integer-paired\nP0 native campaign: observed producer maintenance-prefix\nP0 native campaign: observed producer maintenance-limb\nP0 native campaign: phase baseline 30s / 0 attacker processes\nP0 native campaign: phase from-zero 30s / 24 attacker processes\nP0 native campaign: phase late-product 30s / 24 attacker processes\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (5290) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1765:5:\nfinite experiment criteria failed; full counterexample retained at /home/runner/work/_temp/pon-native-campaign-42463825169-1/run-3-raw\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (5290) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1541:9:\ncampaign failed; retained /home/runner/work/_temp/pon-native-campaign-42463825169-1/run-3-raw\nerror: test failed, to rerun pass `-p trnm-pon-node --test public_v3_multiprocess`\n"
+      },
+      "stdout": {
+        "record": {
+          "bytes": 271,
+          "sha256": "cfd21d3da4bc5934696d22a3775133d21ac8f474fd6e4afc422dbbf4ef181212"
+        },
+        "text": "\nrunning 1 test\ntest separate_process_work_and_signed_confirmation_campaign ... FAILED\n\nfailures:\n\nfailures:\n    separate_process_work_and_signed_confirmation_campaign\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 24 filtered out; finished in 106.48s\n\n"
+      }
+    }
+  }
+]

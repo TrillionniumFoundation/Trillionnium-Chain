@@ -1,0 +1,80 @@
+{
+  "schema": "trnm-final819-w1-package-preparation-v1b",
+  "original_builder_failed_before_directory_created": true,
+  "no_original_artifact_or_business_changed": true,
+  "original64MiBpackedLimitUnchanged": true,
+  "change": "Preserve full text in lossless gzip at level1/mtime0 above256KiB, including original native manifests and duplicate independent derived reports; verify decompression before writing; retain original byte/SHA in FILES.json.",
+  "original_failure": {
+    "audit_recorded": true,
+    "job_id": "1a1b7ace63b-12894-bd6",
+    "stderr": {
+      "eof": true,
+      "next_offset": 467,
+      "offset": 0,
+      "size": 467,
+      "text": "Traceback (most recent call last):\n  File \"/home/qian-qi/throughput-final-ci-observation-20261107/build_w1_metadata_package_v1.py\", line 56, in <module>\n    req(sum(src.stat().st_size for src,_ in plans)<=64*1024**2,\"metadata payload total bound\")\n  File \"/home/qian-qi/throughput-final-ci-observation-20261107/build_w1_metadata_package_v1.py\", line 8, in req\n    if not v:raise ValueError(m)\n             ^^^^^^^^^^^^^^^^^^^\nValueError: metadata payload total bound\n"
+    },
+    "stdout": {
+      "eof": true,
+      "next_offset": 0,
+      "offset": 0,
+      "size": 0,
+      "text": ""
+    }
+  },
+  "original_failure_status": {
+    "at_unix_ms": 1794082932593,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 1,
+    "job_id": "1a1b7ace63b-12894-bd6",
+    "launch_nonce": "f682da36ba49084f02bfe131b7424b7d",
+    "log_bytes": {
+      "stderr": {
+        "seen": 467,
+        "stored": 467
+      },
+      "stdout": {
+        "seen": 0,
+        "stored": 0
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "failed",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "actual_size_inventory": {
+    "audit_recorded": true,
+    "job_id": "1a1b7aec1a5-12894-bd8",
+    "stderr": {
+      "eof": true,
+      "next_offset": 0,
+      "offset": 0,
+      "size": 0,
+      "text": ""
+    },
+    "stdout": {
+      "eof": true,
+      "next_offset": 4699,
+      "offset": 0,
+      "size": 4699,
+      "text": "{\"kinds\": {\"artifact-top\": {\"files\": 148, \"bytes\": 22844941}, \"original-manifest\": {\"files\": 18, \"bytes\": 42137344}, \"pinned-reader\": {\"files\": 44, \"bytes\": 755486}, \"source-root\": {\"files\": 170, \"bytes\": 12009793}}, \"largest\": [{\"kind\": \"original-manifest\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586536526/members/campaign/manifest.json\", \"bytes\": 6067527}, {\"kind\": \"original-manifest\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586616233/members/campaign/manifest.json\", \"bytes\": 6066870}, {\"kind\": \"original-manifest\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586691635/members/campaign/manifest.json\", \"bytes\": 6065895}, {\"kind\": \"original-manifest\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586467463/members/campaign/manifest.json\", \"bytes\": 6065184}, {\"kind\": \"original-manifest\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13585554366/members/w1-legal-strategy-v2/manifest.json\", \"bytes\": 5493822}, {\"kind\": \"original-manifest\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586616185/members/w1-legal-strategy-v2/manifest.json\", \"bytes\": 5493664}, {\"kind\": \"artifact-top\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586691635/independent-v2-campaign.json\", \"bytes\": 2767204}, {\"kind\": \"artifact-top\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586536526/independent-v2-campaign.json\", \"bytes\": 2767169}, {\"kind\": \"artifact-top\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586467463/independent-v2-campaign.json\", \"bytes\": 2766736}, {\"kind\": \"artifact-top\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586616233/independent-v2-campaign.json\", \"bytes\": 2766719}, {\"kind\": \"artifact-top\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13585554366/independent-v2-w1-legal-strategy-v2.json\", \"bytes\": 2590938}, {\"kind\": \"artifact-top\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586616185/independent-v2-w1-legal-strategy-v2.json\", \"bytes\": 2590899}, {\"kind\": \"original-manifest\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586108382/members/w1-legal-strategy-v1/manifest.json\", \"bytes\": 1670566}, {\"kind\": \"original-manifest\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586482467/members/w1-legal-strategy-v1/manifest.json\", \"bytes\": 1670566}, {\"kind\": \"original-manifest\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586257049/members/w1-legal-strategy-v1/manifest.json\", \"bytes\": 1670550}, {\"kind\": \"original-manifest\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586660807/members/w1-legal-strategy-v1/manifest.json\", \"bytes\": 1670234}, {\"kind\": \"source-root\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586467463/members/cargo-graph.json\", \"bytes\": 842733}, {\"kind\": \"source-root\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586536526/members/cargo-graph.json\", \"bytes\": 842733}, {\"kind\": \"source-root\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586616233/members/cargo-graph.json\", \"bytes\": 842733}, {\"kind\": \"source-root\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586691635/members/cargo-graph.json\", \"bytes\": 842733}, {\"kind\": \"source-root\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586043542/members/cargo-graph.json\", \"bytes\": 841183}, {\"kind\": \"source-root\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586332713/members/cargo-graph.json\", \"bytes\": 841183}, {\"kind\": \"source-root\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586462531/members/cargo-graph.json\", \"bytes\": 841183}, {\"kind\": \"source-root\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586686618/members/cargo-graph.json\", \"bytes\": 841183}, {\"kind\": \"source-root\", \"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13585554366/members/cargo-graph.json\", \"bytes\": 838858}], \"frozen_package_exists\": false}\n"
+    }
+  }
+}

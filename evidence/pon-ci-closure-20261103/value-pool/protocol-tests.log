@@ -1,0 +1,22 @@
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-protocol)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.06s
+     Running unittests src/lib.rs (/workspace/scratch/abae1861b451/value-pool-target/debug/deps/trnm_protocol-0e5857e5ae3847da)
+
+running 14 tests
+test pon_wire::state_root_arithmetic::tests::complete_inputs_match_original_across_random_changes_and_reordered_rows ... ok
+test pon_wire::state_root_arithmetic::tests::equal_value_bytes_in_distinct_allocations_are_never_charged_as_one ... ok
+test pon_wire::state_root_arithmetic::tests::exact_string_eligibility_excludes_escapes_controls_and_non_ascii_wire_bytes ... ok
+test pon_wire::state_root_arithmetic::tests::exact_string_hits_cannot_publish_after_failure_collision_or_abandonment ... ok
+test pon_wire::state_root_arithmetic::tests::exact_strings_require_full_current_keys_values_and_complete_row_sets ... ok
+test pon_wire::state_root_arithmetic::tests::exact_strings_share_the_existing_pool_with_tree_priority_and_no_replacement_credit ... ok
+test pon_wire::state_root_arithmetic::tests::incomplete_sources_and_original_wire_limits_publish_no_partial_material ... ok
+test pon_wire::state_root_arithmetic::tests::large_values_reuse_only_identical_complete_leaf_lists ... ok
+test pon_wire::state_root_arithmetic::tests::pending_shared_values_preserve_old_material_and_release_on_every_failed_finish ... ok
+test pon_wire::state_root_arithmetic::tests::retention_refusal_and_eviction_preserve_root_and_existing_budget ... ok
+test pon_wire::state_root_arithmetic::tests::shared_value_index_collisions_and_unique_values_only_limit_optional_retention ... ok
+test pon_wire::state_root_arithmetic::tests::shared_values_charge_only_selected_allocations_and_migrate_unused_old_values ... ok
+test pon_wire::state_root_arithmetic::tests::shared_values_keep_every_key_and_its_original_hashes_in_the_same_small_pool ... ok
+test pon_wire::state_root_arithmetic::tests::single_partition_forks_collision_checks_and_replacement_use_original_roots ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 46 filtered out; finished in 0.88s
+

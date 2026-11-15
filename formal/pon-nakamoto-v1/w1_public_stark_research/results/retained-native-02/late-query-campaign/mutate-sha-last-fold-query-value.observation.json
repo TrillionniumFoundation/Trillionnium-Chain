@@ -1,0 +1,46 @@
+{
+  "label": "mutate-sha-last-fold-query-value",
+  "command": [
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/mutate_last_query",
+    "last-fold-query-value",
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-02/sha.proof.bin",
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-02/late-query-campaign/sha-last-fold-query-value/sha.proof.bin"
+  ],
+  "exit_code": 0,
+  "outer_wall_seconds": 0.6432848139666021,
+  "expected_success": true,
+  "matched_exit_expectation": true,
+  "final": {
+    "changed_byte_count": 1,
+    "component": "sha",
+    "cost_scope": "one controlled path only; last nonempty multiproof round is not a global worst-case rejection bound",
+    "degree_bits": 13,
+    "input": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-02/sha.proof.bin",
+    "mode": "last-fold-query-value",
+    "mutation": {
+      "control_scope": "last fold of the last query; the verifier walks all query fold chains and final-polynomial checks before commit-phase MMCS authentication; actual rejection subtype must be observed",
+      "field_encoding_after_hex": "04a323a3d44d811ad3615525f8e1ae5f",
+      "field_encoding_before_hex": "03a323a3d44d811ad3615525f8e1ae5f",
+      "query_index_zero_based": 63,
+      "round_index_zero_based": 12,
+      "sibling_value_index_zero_based": 0,
+      "typed_path": "opening_proof.commit_phase_openings[12].sibling_values[63][0]"
+    },
+    "output": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-02/late-query-campaign/sha-last-fold-query-value/sha.proof.bin",
+    "proof_bytes_after": 4356101,
+    "proof_bytes_before": 4356101,
+    "proof_sha256_after": "762ed0feb2cfb4cdcda708d15588d5ccd718f0d58318b385d4c77658b4629a9f",
+    "proof_sha256_before": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+    "public_and_expected_inputs_must_remain_unchanged": true,
+    "qualification": "HOLD_NO_GO",
+    "queries": 64,
+    "retained_verifier_order": "input multiproofs; all 64 query fold chains and final-polynomial checks; shared commit-phase authentication in round order",
+    "status": "MUTATED_RESEARCH_PROOF_ONLY",
+    "transcript_fields_sha256": "6fac6c36f1e0a4d7ad056e49a4d50714059d3a255c0ce8f1119a077c14c18cdf",
+    "transcript_fields_unchanged": true,
+    "verification_pending": true
+  },
+  "phase_events": [],
+  "resource_text": "\tCommand being timed: \"/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/mutate_last_query last-fold-query-value /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-02/sha.proof.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-02/late-query-campaign/sha-last-fold-query-value/sha.proof.bin\"\n\tUser time (seconds): 0.10\n\tSystem time (seconds): 0.01\n\tPercent of CPU this job got: 18%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.64\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 19144\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 5543\n\tVoluntary context switches: 6\n\tInvoluntary context switches: 1\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 8512\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+  "combined_log_sha256": "2c6a62b59d6cca7ca62186c406bf243deb2070fa92c044bf4bd5d01c8c9dbfbc"
+}

@@ -1,0 +1,2844 @@
+{
+  "archive_checks_are_native_test_results": false,
+  "candidate": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
+  "captured_utc": "2026-11-06T11:43:13.457681+00:00",
+  "copied_bytes": 111534485,
+  "copied_files": 5569,
+  "declared_raw_binding_checks": [
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13489194424-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "6ffb440c9d6e8044b51e0c109c431764dd2c04e4172f58b207001c6c1f7b2a68",
+      "verified_entries": 19
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13489949767-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "96f6bed6d5813c8f9dd08fc74840b7ec6221b660b741e5503d0aeb00477f8df3",
+      "verified_entries": 17
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13490042577-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "42de79aa4c0e707643dfab02b97ae5fc932f41f3a8c92cbbfdb25872423b56bf",
+      "verified_entries": 19
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13490194791-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "9a6e7cdf43098c0cdddf7c0f88a6be8205f6db67ed41a753539d630e7c6f23ce",
+      "verified_entries": 17
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13490323605-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "4229cf93fbf3c5b61d2610dd89b7df32d797c9e002c7d111342109d31093a877",
+      "verified_entries": 58
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13490449272-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "25b21e9918d513321fd2190bb62b48a5b9b16dd3342f62d031a24867261a3a5f",
+      "verified_entries": 205
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13490457483-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "df940266204eea5270d170b425b9cf9df8cdc63908fa135e8cbaa810da817854",
+      "verified_entries": 10
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13490595939-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "414c70667847141b379e87f4c33b0de69a2087fbe73ef9f40353987583ed6cb6",
+      "verified_entries": 58
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13490623143-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "aad88f7c749cfcee5357c6e009a5fefed33dd1741e4d249330c45695e0ca3dd2",
+      "verified_entries": 17
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13490757679-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "a0ffc5ce71775eac63a6d7fd6f79ad35c265bb494c93709bdfcc33d8b86c1006",
+      "verified_entries": 36
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13490870250-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "5d4bcc2ed4560afdb852589bbb9e3effae0e1c45e0dad95c60df4721778c44c3",
+      "verified_entries": 19
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13491057222-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "5ebf857c82348f8c9d081c5fb8aa409315e5a93028b3d6170aae64113d17bb34",
+      "verified_entries": 10
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13491085810-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "51e361915952d54c51bd0d54701e178b4a48308ca08dd1937d2da0166b4caaf1",
+      "verified_entries": 10
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13491088216-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "1edfc7de0439cb4ad438c981d4310b372b6624d56c257d68ea05af88d16e08f5",
+      "verified_entries": 10
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13491201344-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "384a86e165b391ff52beeac1c3306830e21bebff90a4b60a0c0829a853b713aa",
+      "verified_entries": 53
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13491202601-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "087a0d2970394a9d91cd814380682331a2b85076ea9e3ebe16e337c423a052d3",
+      "verified_entries": 19
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13491207762-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "8401fa2c0d54b4bdd71d65768e5c68c91e1bfc1d70d5e419fad128e4d2a123ed",
+      "verified_entries": 292
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13491252906-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "801ccdcc7d237f6bdcee5a8e6053b0221bfd6461a58eeacb490dafd1e142bbc7",
+      "verified_entries": 391
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13491428974-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "28579ab44c6460521999bb407f393fd1144626aed3aa4dc3f2de1a22f98b1982",
+      "verified_entries": 292
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13491610670-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "2ea768d31755d90138cf6237587700c5c0178348cbd40e37e4586ff0e62e1d23",
+      "verified_entries": 36
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13491727073-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "7ae502df3bc9d50484988ba100c3515c23dfc19a4df4a37dbf59b492b4020240",
+      "verified_entries": 205
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13491737183-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "bb55cc8801cb913f556f78af217c36c329baa9635a7591a7a4cc83e6b63bb25c",
+      "verified_entries": 391
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13491750878-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "e51b5f488925f4ff1db06341ef439d2578b79a278fe6c757b5c75a3cddb48614",
+      "verified_entries": 200
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13491766552-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "c1a5d502a3fa014a249fd9156929ba82a3fa8d40c06d29f64aebab976f754ade",
+      "verified_entries": 391
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13491847154-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "612e2a5c147b2599b757213e3a3ec0c580d1562502e669f4bad266bf7518e9a5",
+      "verified_entries": 205
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13492175782-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "3f80af34becc5ec07ce05a0b34e72fe4090403f869652dcdafe1d4fad9ef8396",
+      "verified_entries": 205
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13492278325-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "81d0b69895a51654093f469b5bb37ed8a8909b3843d1ee0017f2c7c7c347d1ff",
+      "verified_entries": 310
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13492345186-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "3a66e7d6011395798d7528897bc39f8de67cfb63539fbf48c6e951332a925b76",
+      "verified_entries": 391
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13492376245-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "2c45a07a35cccd5d0bc21d6a9ebcb4256c938e2cc1e943e46030c9b1d89433d2",
+      "verified_entries": 17
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13492688777-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "832258ed068d85d239f3c8e2405514686cda2ec0b48fd5d6f910d1dbb631e0cc",
+      "verified_entries": 31
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13492970161-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "4640e34bab8821912fd42ffa40063080c26e0db58607e07d55a76d6b671d31b4",
+      "verified_entries": 292
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13493849369-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "692a5378a526d8e2d272f82a25a0b7b7984c7255fc95786e049554b1f3077a71",
+      "verified_entries": 31
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13494095052-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "2252df8197436b6b8521c52e3beb46f81d8f690b892d7d95661efd913d5bb852",
+      "verified_entries": 31
+    },
+    {
+      "kind": "ci_full_readback",
+      "path": "integration-review/final-code-ci-f85fea4e/artifacts/13494560259-full-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "3a9fc77bdfd7c0c9a5cd2f66901566578c4554db5e64a2c955aa283f851993bf",
+      "verified_entries": 31
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/manifest.json",
+      "scope": "original-byte binding only",
+      "sha256": "e20fc9c30c0fae8102508b12bc9bff6153e85a545f0fe11e2ccc2af7a8c59a3c",
+      "verified_entries": 580
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/preflight.json",
+      "scope": "original-byte binding only",
+      "sha256": "a650b44f77320e5f21f3274d593f842d3144a46ea2284b9c9347fe40d6896c53",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/compiler.json",
+      "scope": "original-byte binding only",
+      "sha256": "4d3a34b575381a1939b49cc687a1181aac3f9460f6eefb4fbb2a9903a502d467",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/locked-workspace-graph.json",
+      "scope": "original-byte binding only",
+      "sha256": "b7440829b3997880802bde63ab540556ca8ffbbd4bd58a34cf30b98214b5ee90",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/locked-fuzz-graph.json",
+      "scope": "original-byte binding only",
+      "sha256": "933909ef653295ccb072b5447a2961f225f9b13ebb27b3fc50506466121292f7",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/format.json",
+      "scope": "original-byte binding only",
+      "sha256": "755e02f5615721c25312cc4cf855784650e4e136b9d1d42fa141db64c1f3b4a8",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/source-pins.json",
+      "scope": "original-byte binding only",
+      "sha256": "9ee3a094b96da469b40cf3e77c1256f62596455be4d74800ba43d6e02e6c1b0f",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/inventory.json",
+      "scope": "original-byte binding only",
+      "sha256": "aef1ccb50c8d353387c4618574cc0577aa32965598be7fe94f8e21aff0e0362d",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/claim-guard.json",
+      "scope": "original-byte binding only",
+      "sha256": "d5b99d22130e35d8c600cc1d28634298fcd74f14f952fa81209c437e83a8d22a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/repository.json",
+      "scope": "original-byte binding only",
+      "sha256": "5f5369f10bdbca849cc58c2fe16d5bf3655d4a3acf93dcf4352740e318525754",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_ci_contract.json",
+      "scope": "original-byte binding only",
+      "sha256": "61525d1b14e43118d15c8bf976f79ccaef53f397ec4f6b2ae503fe4579224b43",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_ci_source_integrity.json",
+      "scope": "original-byte binding only",
+      "sha256": "5cae21bfdd3f0e6e57f049544a82306b81bf9713fb8ff0d2a11b4c701a911d06",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_record_pq_native_command.json",
+      "scope": "original-byte binding only",
+      "sha256": "5d960b5670874df5ac9989c1e39f66b744cd44dc527343c773b1cd05d1c7634d",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_pq_research_integration.json",
+      "scope": "original-byte binding only",
+      "sha256": "d4cc04bff4dcc1dc2512e8ca6daaa893ef7e030913159a1adea0ed885258d8f0",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_pq_chain_claim_guard.json",
+      "scope": "original-byte binding only",
+      "sha256": "8ef0f6b0a13fcaf606b0808af5528c2cbc7bcd8ec5304303c0a7b2d10d0e5f3a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_pq_authority_surface_scan.json",
+      "scope": "original-byte binding only",
+      "sha256": "af2eea1965b97287546c5b9bc7da99635aa8b9a5d5b591498fc503d06990c81d",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_pq_provider_ci.json",
+      "scope": "original-byte binding only",
+      "sha256": "a400ea12d276b33a3846349e5bdc06bb49a86f6cf501618747c6872684cce98b",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_authenticated_suite_count.json",
+      "scope": "original-byte binding only",
+      "sha256": "30da2acb6552d6e8aa54faccf4f7a21b51998627d26631b1efb8f602270fc8a9",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_branch_migration_count.json",
+      "scope": "original-byte binding only",
+      "sha256": "f04a0abfefd160e74fdbf2f35aed3c014255ef212025d940ef0f5aae0c822139",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_recent_batch_suite_count.json",
+      "scope": "original-byte binding only",
+      "sha256": "846ce1390256c4899f34399fbcc727b5df3463cc47a793f6c33dd98abf30e501",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_w1_factorial_native_gate.json",
+      "scope": "original-byte binding only",
+      "sha256": "f74938f6e29b3251b054813b6cd8c3ce7922ce7789fef7c833fede9e2141d5e3",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_six_workpackage_native_rosters.json",
+      "scope": "original-byte binding only",
+      "sha256": "763c2de8ae6683f94a3f38083fd5e5c90836628825411c81d8951ce91b227bc9",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_w1_full_v2_disposition.json",
+      "scope": "original-byte binding only",
+      "sha256": "12a3819a4302c8c6b80919311b2a37b9867148aab83f582d091ef7ec0e5b396c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_pon_w1_preparation_strategy_reader_v4.json",
+      "scope": "original-byte binding only",
+      "sha256": "488d237b3fa5ac60398a5b87ebad92ac175054add40decbfcc3179c8a3b6270a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/quantum-controls.json",
+      "scope": "original-byte binding only",
+      "sha256": "5522350877605610dcf34e0ff62a68948142b64fb98915be822d678e091ecaad",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_llm_python_runtime_contract.json",
+      "scope": "original-byte binding only",
+      "sha256": "ee260c3f545d6fc9cb58f4889ac1d05526e60ea3d7ecbfb69924e6d8146e0446",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_llm_neural_read_worker.json",
+      "scope": "original-byte binding only",
+      "sha256": "e5e3ea77a5038f0baa3fb26e9210ef06228368f7a4d1ef6ba3b29185a36e64e2",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_llm_material_runtime_bridge.json",
+      "scope": "original-byte binding only",
+      "sha256": "8c270f3d6df17a8ed6761868777d9bac68190585bf556b773e7d262ad4908795",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/test_llm_material_runtime_entry.json",
+      "scope": "original-byte binding only",
+      "sha256": "770e2b8a0020c7d9603a1afbe8ea6a19ea0c4a5a8f772b9130d251e7c4c63cbd",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/source-phase-library.json",
+      "scope": "original-byte binding only",
+      "sha256": "97b470d1a4b2e3fc09cfaa79fe966eff7df4577264daaa9ff5ca56932bcb14ec",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/node-build.json",
+      "scope": "original-byte binding only",
+      "sha256": "f706b59421a302cdc287991731bb33c7e78afd43b337a5ee42e0c7dbf86eed1a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/node-full-feature-library.json",
+      "scope": "original-byte binding only",
+      "sha256": "17e8673fd323d244760f4feeb78c0e4a50e8ad8867baa125b1c7b6f0eadacc90",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-00.json",
+      "scope": "original-byte binding only",
+      "sha256": "fd0adb991d9acd3b6b870352579e2e4b8e90c6e58a87302cecd9370d718bc304",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-00-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "9e3438859d11782be02329e21e5ce2d7832e967bafac72cf667e5b2497c00ab0",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-01.json",
+      "scope": "original-byte binding only",
+      "sha256": "8f380e5726526c92552f0a98b8e672593bf7c8b7f571571c465ee7da2c985fed",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-01-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "15019869a9fb3a622d99bcb193bcc2bf85c36146f893535f05bf87f473d335dc",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-02.json",
+      "scope": "original-byte binding only",
+      "sha256": "a1f0d66feff368d72501f9b0a9630e98394e78f6a5e688bc3c0062236ae236f5",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-02-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "5d0094beef21b20bf560762ac6ec448bcbc3b7c61e590731032b373aa425a680",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-03.json",
+      "scope": "original-byte binding only",
+      "sha256": "faadafa0512cdf0f6772fdb0b38ed74191955590a98916a1f42b93ed6a736d0c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-03-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "c45126dea286cda3f8d4288dee2fbf5b8daef8c6a4b79fc349c4e5b094b2c57b",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-04.json",
+      "scope": "original-byte binding only",
+      "sha256": "1953e4d06d518576a0188f5ad1bf75d88e687236761061bdd1c663e81657783c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-04-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "3dca7e2fdbd6f0c2cd6f5f0f9f10ae4aa6a3a36c578d0085e8c708b65bd3312f",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-05.json",
+      "scope": "original-byte binding only",
+      "sha256": "0a6cd475e66dfc937d9ed2f01a5e9c06a3cde2f871689b8d2411ca6ad6213c9a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-05-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "82ca11cccd903cf09ba0c7098b2d65eb8811bcc30361eaa252b975f6525728ad",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-06.json",
+      "scope": "original-byte binding only",
+      "sha256": "3a284b7f084bd70a7edc61c6315040e9c4e6a44a504b06795586abbafe6fadf9",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-06-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "01ee7074cca5f3e80b495b1c14ea2af35fb374d4b3d220d3009983c02edcb1f2",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-07.json",
+      "scope": "original-byte binding only",
+      "sha256": "771ad6aa434783739e76449bb9e98d5b60a072310951be8590c00f4bd039e789",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-07-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "5b460d3d664cc529c763cef6f0f238e009ac4c310a3334477770358556fef01c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-08.json",
+      "scope": "original-byte binding only",
+      "sha256": "45995b5aab676e0eccd85ba627153595360e82e63ca2dea81d5daddaeaa7f7cd",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-08-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "b9e49fc109e45472a8f420db8c938b5db05bc608c3eb14e513f1c0fe5ee279dd",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-09.json",
+      "scope": "original-byte binding only",
+      "sha256": "7a3ef868811b049f1c9d729e348e25c3911101bd7f1a2ac98b12294f48847009",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-09-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "1063f1fab046a0498d0a3e3b603e8ee76ccc5dc6d17028241f0693d637631b52",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-10.json",
+      "scope": "original-byte binding only",
+      "sha256": "a51910f908f9db39f49056fbf695ba7d820629a2853b866faaa2b17d4d3191e6",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-10-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "8181d1807a6e11097d7837b22810d7dc2e1393d4fadb0be0b1797f931629bb7c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-11.json",
+      "scope": "original-byte binding only",
+      "sha256": "087fa56c8ac11a389d117c7b7e2bcf6d3eaeb92bce16553708d67dcfc2d93de5",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-11-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "64c3e29972621901459a578ee9cc7d658743fca988d18dce793ec9556745489e",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-12.json",
+      "scope": "original-byte binding only",
+      "sha256": "cd83936d3b19f05c803afdfa8cf7a3c5fc74ede9ea5b5e39378bd0df602d9887",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-12-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "25fe64561daf4ea1659364ec4b9691db659a0caed9e0d02570adbb770e1fa9f6",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-13.json",
+      "scope": "original-byte binding only",
+      "sha256": "cac56c327f5726924a9a75baf837200d12342b49fb48e31b3b507818ac90721a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-13-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "1781c6ce604108672df3b87e12b90a77ce7636c46cac3b56efea480eb8291816",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-14.json",
+      "scope": "original-byte binding only",
+      "sha256": "59bcc197a30ab4ec68d3620c80456f97e2d530f1e30477e8536691f41c3c747c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-14-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "086bcbba12001423a357efb404fd95563bedb0692f974aba097ce623d329d42e",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-15.json",
+      "scope": "original-byte binding only",
+      "sha256": "83ca3b617083e55b3b8ad6d3a3da04590f4aafdb686e290cbb4d16dbf328f0ec",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-15-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "e19780a967ef8a005500cc0f41fa3e3e9ab2a523cfa5f65f7b61c1e197d63805",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-16.json",
+      "scope": "original-byte binding only",
+      "sha256": "c8c23c19297cb1fa3b856e8c934811de618660a691db73763daefd8511d71bc9",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-16-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "613d60e5b037861655d552993d95836565300524ea5dff4e3fbf96672ad7c26b",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-17.json",
+      "scope": "original-byte binding only",
+      "sha256": "6a16b8f296a6f91883a3647f1192d287ac074d3eb4f9f369d72fb6984f24f803",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-17-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "de3b9d1d3b10ecd4b90e5a6a37bf43708ad1faea94ed03a10c4a6a5d994b0965",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-18.json",
+      "scope": "original-byte binding only",
+      "sha256": "74a3acc28bb00693cb45550d28837e3dfede8e2471a3e30cb986a675a9f0b46c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-18-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "280fd47bf14cb84b94a0f5b5e0c3115fb9f9443e35e2cb452172ddf0b4215233",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-19.json",
+      "scope": "original-byte binding only",
+      "sha256": "9a8566d1d799250a9eb496c05807a755f4b96c70c0b904efcc528f3e9891f312",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-19-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "de271a87511de51adf5ad424bacd670059dafdc12a7af99944a32f32a3321af5",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-20.json",
+      "scope": "original-byte binding only",
+      "sha256": "31384759a99b92e18c58274f5522eee783e23f5e532ee4eac172f8b26b8cddeb",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-20-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "a978e5fdea90a9eb3faf1e9b844847930612805f3ffba41ccaa49ef461a12457",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-21.json",
+      "scope": "original-byte binding only",
+      "sha256": "28476018459be64b12e46f0e5ac8f7c7863995357600718dde745d5fdedc7ae5",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-21-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "e22e1f2f17fc7557e0b91d1582058165a3cf28ffd91f5dbb5cbee7c7f57e2686",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-22.json",
+      "scope": "original-byte binding only",
+      "sha256": "801696405b84d5aa43ff28ec3006addaba174fb0a643a506e0ed5f904ade748f",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-22-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "18362d697c3c82c222da88485ff098d05f46a0f5ee3abde60e40afc6c6f106e7",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-23.json",
+      "scope": "original-byte binding only",
+      "sha256": "65ef142a8144494d67215bc16c570e094a45846102a6eeda1cb5262f0343e47e",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-23-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "da2f6da0c4d4fd7bb04c94046e60f682407e9949c43137c36a0131052f82e39f",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-24.json",
+      "scope": "original-byte binding only",
+      "sha256": "f7dbaae5efcf81c06d105238250b644c326f995a7a0e3938b22dbe302908d88a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-24-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "5495ead44821e30c62e424031ff790898ca539e94281d1867d53362b7a66e78a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-25.json",
+      "scope": "original-byte binding only",
+      "sha256": "8a5398fa7ada1c2ff846848608222852528dda27ab08371d1f8b0784cc6f9a35",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-25-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "8dc2aad8efd800b5fd674691b1f98d676db55e25ef879334f424e47e43ed28e0",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-26.json",
+      "scope": "original-byte binding only",
+      "sha256": "9a6e2a749bf4cce0105353f30bec904752d047a1730c6d1a795d5973f6e37ca4",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-26-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "535858bb04437d8f3a779a1f66cdda3ebbb2a423b8cb693575a0f4bcbabb997a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-27.json",
+      "scope": "original-byte binding only",
+      "sha256": "40570da8f0391739653e9cf1082d6da30026b7b1e3279f97d4e86d89ce60937a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-27-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "0b580510dcd4620522753f99c7ddecb13019c736afd558bdbb8c5c12bd5cea84",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-28.json",
+      "scope": "original-byte binding only",
+      "sha256": "9ed698606fdbe417cb9f034c420621e85256781f84770f10123baf4d37332569",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-28-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "7167b99de4e49bccef7c2e4fda3f6f75dc0391c3ebc201cbfd5d889e9b900210",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-29.json",
+      "scope": "original-byte binding only",
+      "sha256": "aa9c70096c2c40f2e2b3e1345463b1a2fcc7ff2835b008aaad81f0ad8e97a31a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-29-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "3baa3a3aebcbcf882f51ee46616d8cf61174bbce56cd9232a7f1a33f81996977",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-30.json",
+      "scope": "original-byte binding only",
+      "sha256": "389164bf024000eef9d472716c7f7c877f71aa40bc8d65547fb924fd4654c0b5",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-30-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "d17d12f19d6025817a29f8e3377cd164c274222bed0a85031a789d0af5381631",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-31.json",
+      "scope": "original-byte binding only",
+      "sha256": "457ac91335d54884e9c2ab28dd7efbe840ba63e3e7af06195a5b0dd483a018a6",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-31-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "11652cf5497bdfeb08f09127c16d92193bc847ea0b427c077e2fef376fadc9d1",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-32.json",
+      "scope": "original-byte binding only",
+      "sha256": "f7cf37993b286295de41a7ecb92b47361d86aa0cf104ce3ea1eb6817c4804047",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-32-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "dfda049914ea5ba5eff5a8058b0806ee8fdf54334a831dc2776ef6efb307bdb5",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-33.json",
+      "scope": "original-byte binding only",
+      "sha256": "cf9f056aadf90d882626d2d0c7f9b593d6ba8d3f642f7b504148a990a5e80e16",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-33-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "b69b55a54d512f2c554a9b6b119161a137cb2dbb70ca16cb93d3efa5c5a573ee",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-34.json",
+      "scope": "original-byte binding only",
+      "sha256": "46727881a5908539ef6a00c2e10dd7b3534b27ad93f648a9f77424c2e597ff56",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-34-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "d6322268d41658ebfa5963eb4136b8e6e26bf28e8f47bf6e4d4e3b9d585386c0",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-35.json",
+      "scope": "original-byte binding only",
+      "sha256": "4e06d741d179953d926b7400ed57a057c17ff4706a1b70de6ad1b75e138d74ea",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-35-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "433fa08502c289832697408d5010a8b2b1ec1627ea73523178306e7fc2ff3b75",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-36.json",
+      "scope": "original-byte binding only",
+      "sha256": "c345af35e889f8894b6c87bb854b1a556627bce14af9433adad4f3d04d4f6547",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-36-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "6fa46b2f5fd24cd94b785373ddbbd61f1e22daf7e1fb0874837cf01da78f6bb4",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-37.json",
+      "scope": "original-byte binding only",
+      "sha256": "5337b100c8538678e2539fa1f886d817f3b46cb71719ccfe77c79f96ba1aa331",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-37-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "ff01e32b4dd29561d4788dec34ce46516c51993a3555af68c36c8a6326c8a743",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-38.json",
+      "scope": "original-byte binding only",
+      "sha256": "b0bdf18c076444457d2930653c3efa859969a278477c36b281007bdc4f7a4ac9",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-38-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "45a57c832f1a98b92ce9eb7a82f23cd1b95a43a7f6827de06c1a752bf56756ce",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-39.json",
+      "scope": "original-byte binding only",
+      "sha256": "2d0b034c7c8b59df21018e9d0a45a902b1bb06c57821de17b09c83910c96f84e",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-39-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "698c90ef8114479ab2bdd6e20b2ef04595e52333f974af43df7118b2ae2e8897",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-40.json",
+      "scope": "original-byte binding only",
+      "sha256": "7eacc18e3066cd4d58d51c970cae0f108c833569b59aed7efce17e94ed654b41",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-40-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "83c81abf92d5dc06af1f563520afa20238eff25376ec94560275dbda9abcbb3a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-41.json",
+      "scope": "original-byte binding only",
+      "sha256": "0e4ddb1f3c06928dd314755076dfb1788dbf0f956b71bb94328c220749dda7c1",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-41-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "d200567ebe532bce0904f7837247c78c5db4c655b9ea6b5515edc037af0d8c12",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-42.json",
+      "scope": "original-byte binding only",
+      "sha256": "53bfc98f1557ecee433e409dc7bd18ba87ac3a83be7bb7bf5372438ec4b11a88",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-42-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "618419c98f946a4625b499bab23d2fe4baae6b0d437e8e5c8d96dc816fd17aa5",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-43.json",
+      "scope": "original-byte binding only",
+      "sha256": "e8d6023c430fc0bad002f1c51738bfb4beb4a260442208b5f01058e79c8e7a88",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-43-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "a9fcf561f9c83055ab51f301084da03a69de75373a76f85d73aa01393e7fa310",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-44.json",
+      "scope": "original-byte binding only",
+      "sha256": "d779e514256d90c5481b54e3444358b871d60508364c53624421d37ccfdae11e",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-44-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "f8075a2ac67aacaee34f5bea901a4da3a17821a3b55e43c5d609b3295d02e89b",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-45.json",
+      "scope": "original-byte binding only",
+      "sha256": "2cdd00e465d208d60a93a2c12dce6e8b89dafd9d01849c9ed5a14572d717a471",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-45-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "7338759870efc2c032acade2d001807f3c9382bb5c61f6b8d4e9b705fdfe9177",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-46.json",
+      "scope": "original-byte binding only",
+      "sha256": "2d6ef732f3e69a886bf1f542a686446e8197ce7b019173e974ae087a016d2755",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-46-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "d15b479ec9fc3eb75424b6f09e0945b44df4415649d6b52b77938971984ad52f",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-47.json",
+      "scope": "original-byte binding only",
+      "sha256": "7ee3d246cd1a29b0973a0de03aab527d01d89aa6d46650168255d400fc4cefc8",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-47-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "f573b5a810ba6d597f30029233d57c6023b7d9231faea36f4533be1b609f045f",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-48.json",
+      "scope": "original-byte binding only",
+      "sha256": "9a57493e4450a4c02d487900c54400520224e63d34874b8a9bd565e0e3e2a723",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-48-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "57608e1b94e1394832d35ee3e86008cf9b6dff7243f67243496988f9caef7069",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-49.json",
+      "scope": "original-byte binding only",
+      "sha256": "235c9c63fdb0f1e41905bb3a31b9809f2cd88c243b70f6f2bc43b41ce17b624a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-49-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "fd3477acaaae07164a4bed10cf81a9cc0bffecfe025f6f2c5211e76c50d6fd0e",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-50.json",
+      "scope": "original-byte binding only",
+      "sha256": "5ce55c96eb91b36801ae53625581311a48a602032c26fe8f7792ce0bd952ff88",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-50-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "53983b5f3aad9af93d6ed263fd29741391e4b64163c14db41a8aac719bccd5ee",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-51.json",
+      "scope": "original-byte binding only",
+      "sha256": "1e6fa6b1038b48bc736634facb98d49a2998e5ea12bab30c2200d2eb2f46eb17",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/original-native-51-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "85018af95ba87d2cca9876eea81a687ab42c272a52d6e0ee1a82d63cc355ad97",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/source-phase-tls.json",
+      "scope": "original-byte binding only",
+      "sha256": "7973a460a8394666b8e8583e9af4d93a5f8d752bcdd009492706c00784d2fa8c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-registry.json",
+      "scope": "original-byte binding only",
+      "sha256": "f0e67f18b3dc99ced1f9de54bb4c80bc4ac1e98c43b3181f6eabac8d2066edc0",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-cli-registry.json",
+      "scope": "original-byte binding only",
+      "sha256": "f9bae733f56500546bed2407334800ec44ce39f84df2c5172f0fc4e413fd4ea0",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-feature-off-registry.json",
+      "scope": "original-byte binding only",
+      "sha256": "909eaafbfdbef5bb164dbd07ed334ec2c4856b3eaa2c5db598ef44fce0d713e9",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-registry-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "dd5f143c0d6ae20cd6571dff3568aa632cc3447721662ea3b481004e4c224d21",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-00.json",
+      "scope": "original-byte binding only",
+      "sha256": "02f1831b349257bf0fc50204494a09e7a94e9f2d2ae2c6a6c1bb2f165f796738",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-00-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "2e4faa21e6ed710c7a52cb491088eabac8bad715bdd61e00c86c7b8a449d1f85",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-01.json",
+      "scope": "original-byte binding only",
+      "sha256": "a4723f3cd24af9abfdde21118e534128a17896a975adb8a1c88e7683edcae751",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-01-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "1ee783ea5f46c56c9de6c41952e966496fe97b770ce805d6c16537c558efca4a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-02.json",
+      "scope": "original-byte binding only",
+      "sha256": "eb4d35f556ad351220c7126a20773f250dccbffa55022e4da9a052bf3fca94a5",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-02-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "f30e7ae890f8d2504e1d2d89b4217d033ea7cbd53eb5641e5146e68e87545df3",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-03.json",
+      "scope": "original-byte binding only",
+      "sha256": "e904e92af936b99189ec8941e0781b2775f2a03642445f484ea265779a8b0181",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-03-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "08a2ab3f03e13568b7b6e6e57a8c11d27a81484bda596ccad8e7a55774886433",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-04.json",
+      "scope": "original-byte binding only",
+      "sha256": "2d0f6c7d04b0da022fffa06284680fcce4fac8904ab1dc0faf26f2111d7b39d4",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-04-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "c4c7cf4a1d332b2d6ded0a1c352f979a7fb15a9091fceb0d2e40ad1acf2f5bea",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-05.json",
+      "scope": "original-byte binding only",
+      "sha256": "599789ad19d07504c5d21593821a754169cfc1c27aa9ce69233ca5d57df08650",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-05-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "ea953f207dbd58051221e2d89009c533a4740014cee02a5c2cc691d151c86d5e",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-06.json",
+      "scope": "original-byte binding only",
+      "sha256": "3ed7f3a9e8556fd14310de8081a6ef0ccf7fb253bbe719ef611dd7db164bf84a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-06-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "87e5df444ca6a9e52ff59f19f7903f897535befd07a2975c43779a953d5338c5",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-07.json",
+      "scope": "original-byte binding only",
+      "sha256": "0b6f7db70fcb0348135774d522e516ce6c991cbb633736e983666ab919b67903",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-07-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "ed1978cd92d03b77c77f2861c41a5f5f78e25b9c7089aa28647373e97f23bdfc",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-08.json",
+      "scope": "original-byte binding only",
+      "sha256": "0b9dd4dea30ce36697119968ba782b51d992b88ef8354b530cb64e25dffe82f9",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-08-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "50854a32c4c76326153494811da281078b691b1b0a2a7a78efb390b94a8eb6cc",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-09.json",
+      "scope": "original-byte binding only",
+      "sha256": "46032697f5a67ed4cb90c3bdedb26807f87448b403af1ca57000ed8fe4d10ffb",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-09-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "7542eb2aa4991bc053cf40bae4227646b931f264218e49fcad8255ca0abfddb4",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-10.json",
+      "scope": "original-byte binding only",
+      "sha256": "ebcbb9563f3f0f991f4d314a6340f95a472dcdeb36178a5c850f927704d337d4",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-10-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "1861f38fd889483e28aacbe4d221a2bd830f9adf2838be012e55dd0f6da88236",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-11.json",
+      "scope": "original-byte binding only",
+      "sha256": "1b8ee936294323f8293b54b28de2a00a553c38d2b5c01c900ed3e28c5ae8cc22",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-11-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "7ec344fcd32c596045956779754fa98bb91bee1ddb8aae8fd27be3492e89c21d",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-12.json",
+      "scope": "original-byte binding only",
+      "sha256": "c230b4b4c1d9e1b4d778f95efdd768cd6854cff64010fb9796fc12565d02764f",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-lib-12-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "39bac225df5245f0bb044502436d1cc8b9949c6781ecb2854e847d4d197f64ac",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-cli-00.json",
+      "scope": "original-byte binding only",
+      "sha256": "35ba686a74a43b40c539cc43ad83abf2d3f24bd184e9b1f78d7a26af81fc3812",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-cli-00-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "f7ed10c1feab016c9559ebc612ce65e40b7822eddcde55b6f5fd91a2dc5ad301",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-cli-01.json",
+      "scope": "original-byte binding only",
+      "sha256": "bd932864f15a82b5a576bca8448357381819f486084dd82e2fa2b885f8cf1aaa",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-cli-01-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "d95e920c18f1df7ded2ea3f40705e9792ba72ee6f5fc3679c5aadff54f9eb3bf",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-cli-02.json",
+      "scope": "original-byte binding only",
+      "sha256": "c8787627525334d17a4fff8595557091055c5bbadfe211f0af6d3845731a7e54",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-cli-02-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "83f1b6f3b134c35ae25e4816e5198836b96c39ba763d909cdd135a4552ca84f8",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-cli-03.json",
+      "scope": "original-byte binding only",
+      "sha256": "37e9cc45261e6ce997e201c474e79ecc62f186875f15e05ca7eb6ff7de81adb1",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-cli-03-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "d326d77af742630fcaf34709689ab5e1cae8ceb3c9fea35c05ac0bdab6ae556e",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-feature-off-00.json",
+      "scope": "original-byte binding only",
+      "sha256": "9b573c9508c1962647c87facc059d15f6e05526fc7610379431c16afd3828d01",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/tls-feature-off-00-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "c800a2dfaf8ec26b19610dcf62575687b0dc15b9161a6aa6b11eeb0c5674b146",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/public-submit-pq-owner.json",
+      "scope": "original-byte binding only",
+      "sha256": "d4a7abe51d89dd52d976b8b353238e40158d7095b7debcce2b8d42981e36e127",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/public-submit-pq-owner-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "32e7a397208e3f13ea93997533f21f603a683be2c71ef75d5115dcaa119792e5",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/public-submit-recovery.json",
+      "scope": "original-byte binding only",
+      "sha256": "b65d6d803b135ecc7a669e3bab114306948917a4275374da026a4dea695d711b",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-00.json",
+      "scope": "original-byte binding only",
+      "sha256": "401c6f43fe6aa32ae0b8caf0c2e2ad6ef08ba0038735068d3c8d0b904ea8ac79",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-00-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "0ecf1fe5bcee630ba71672bd13b5768155e2050ff561c1dbe398f3ac26420462",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-01.json",
+      "scope": "original-byte binding only",
+      "sha256": "f9e35bc3444a8ca9f7b0f5d986f7d5cc7c0bf83711af799d866414b0d6ae72ea",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-01-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "244b3cc538f8a3657bc2b5780ef778648347463e5fd807d22ac208088af65c6c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-02.json",
+      "scope": "original-byte binding only",
+      "sha256": "287bfaed5efdfd91e99ec025e4dcb9cfd2dd11652bbcf7dcd3e7811ed3cd014d",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-02-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "2e541f5d4217ffd48aa282f12eceb074a80760b3d80fe3c576636a8528826cb1",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-03.json",
+      "scope": "original-byte binding only",
+      "sha256": "d967327dda16a8384b04cf46f4cd692a3040b0e89d44e525374cf43cb3fe6d79",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-03-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "bf68de71fe1841ed439698d470c902d00a3d288c01cf9408d29824c09bb42f8e",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-04.json",
+      "scope": "original-byte binding only",
+      "sha256": "7b5116ae9e390cab48e576c6dc8b4deb9dd39635922cba3b9bf5d2ee044f4927",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-04-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "b1388990aeb07915470af6dd05c0a3e3478a981a5b02e8c30caf94b0ff31f88c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-05.json",
+      "scope": "original-byte binding only",
+      "sha256": "f0be747f2fdd4cc233f7caf7a784bc3f7c254193aca8b38edc6b2f95a88db32a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-05-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "1b53980c445d000d6e478a0cebd2fa35b5af863fb99ec2a853737f31ace6b949",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-06.json",
+      "scope": "original-byte binding only",
+      "sha256": "4905edcc23bc12a679a88af582a7172a5fdaa4f591e08c825537becc2de21ae7",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-06-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "8be184f9155f0aabcb4f0d47a5d5aec967aa3c481951d485052b07b54d96ea3b",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-07.json",
+      "scope": "original-byte binding only",
+      "sha256": "b4e65894ce5df4b587ca2ee9299fd39f88218ae7e1e19a8a347f171d0a19f4f4",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-07-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "59396946ad9873c0dbdd92aa2ecf8c1b4bf0ef17f695613fce52418472666335",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-08.json",
+      "scope": "original-byte binding only",
+      "sha256": "1a9a9d322b4640beb1367defd8209a4d66250a25e3bbb244676cb29dfbb1c7f9",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-08-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "fc7813cb79ca40f80685465fed6519467cc7462b6bf552fcd9071587f91638f6",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-09.json",
+      "scope": "original-byte binding only",
+      "sha256": "571d4486838706ac9f874fe91349fe631959122a03d447f700276e4cee808d49",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-09-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "7a885ef359dfe49bfed16ea893051c2d2c4c3154274171109fb8dc8200947376",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-10.json",
+      "scope": "original-byte binding only",
+      "sha256": "e2960a7d66ffbc7c2a66bc1877e4cb18fa1165f280c27ce2eeb84fe521766d4e",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-10-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "31b0b7709951c4ae3b1521b7e33f8e3bf26eb180ab2ac440fea628bdfba7f960",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-11.json",
+      "scope": "original-byte binding only",
+      "sha256": "eb19ef9b55dbb0cf0bd36006f086818a8586ba6b234b999029b7dcfec8f2a498",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-11-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "9be4b6e1d43da6c4a36acc12b257899be2345e4959c47c346cf108b96a9b332d",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-12.json",
+      "scope": "original-byte binding only",
+      "sha256": "fc239c5f0f39f293ae1a10f5f6c1c4839a57a73ecd8cd6f433afa10415a3a902",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/transaction-scope-12-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "d78bb3646fc2bd3948f00258b9682f907d5096b1e08a316f5293eb6d2b083f66",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/recovery-release-components.json",
+      "scope": "original-byte binding only",
+      "sha256": "6fe45464756a8b03d66b7a91641bc86596191f402b6175235a46e524baed9bd0",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/cell-current-authority.json",
+      "scope": "original-byte binding only",
+      "sha256": "a9dcb1219813eaff4398ba590808891aab70206d42eaa8b93bc36e7e349804ee",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/cell-current-api.json",
+      "scope": "original-byte binding only",
+      "sha256": "a88aba44aa56ffa927a650e1d20c265285b14d76b92fac2c8d98239112135b7a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/cell-current-api-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "62f9fb261e2a1eb2ecd15f82959446d0fcaf5d5f334876f543a59fcc2fa3eb27",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/source-phase-new-base.json",
+      "scope": "original-byte binding only",
+      "sha256": "ba8acdf2b79decf5193c2db32f1b792a0d3cab48acd9cf46dd050a9302373dd1",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-cell-lib-registry.json",
+      "scope": "original-byte binding only",
+      "sha256": "225bd7fbe9d0cd81b80885cc5963c166d22c01ff20db6c53a617cbaa94744746",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-cell-persistent-cli-registry.json",
+      "scope": "original-byte binding only",
+      "sha256": "6284e0ef97c82e2ccaa05c246eece038801c3e1dcb7a63e668324be7997bcd73",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-node-lib-registry.json",
+      "scope": "original-byte binding only",
+      "sha256": "49b4d61676c775c93c7f6740c0a66763982440dd8ac81b02c93db75f5cdeedc0",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-cell-tensor-cli-registry.json",
+      "scope": "original-byte binding only",
+      "sha256": "4f65ca8714a78d428c3d828f4873d98e355cf24bc3dc0b11d69ae6601b131eca",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-w1-preparation-example-registry.json",
+      "scope": "original-byte binding only",
+      "sha256": "05b98cf2e8cee027415080e87690725ca798462dbd061b67d8501a2edc9d39e7",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-registry-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "bdfecf4b6be39e5099199f62ad5f44416ae55e2c9701c957ada41a3bbb9a4011",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-node-coverage-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "dda864d5f5afb0543a2a94c0fdedd04860df297d0261c222048de80cefc10e6b",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-00.json",
+      "scope": "original-byte binding only",
+      "sha256": "573c6a3397ecb2ccadccbceec6ca65cafe97da97cf5b58c16fe410128c807eb1",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-00-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "d01c391650ddffbaf9a4eb1f15ffff6d5054355f9d40b29b6c5fcb194bce20da",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-01.json",
+      "scope": "original-byte binding only",
+      "sha256": "f0b20e1b95b67b8b1d5fda7d9376853e191024fbaf54ad57cd7d6932e81143f6",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-01-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "81c1f10adfd5a071d0c09346f8ad42e77fba626e92f41ae1e9560027bd55d85a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-02.json",
+      "scope": "original-byte binding only",
+      "sha256": "6dd9330f6b3bf6dbe0cd90997c40c0cdad1f561e59e35249d07380026b7503e8",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-02-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "f0b7771d2e1489055c16618611c9329a79bd7d6b5889269d97921097d813b785",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-03.json",
+      "scope": "original-byte binding only",
+      "sha256": "104b5530b54a358ca63299c0aa0609e46f4e98535a96ef59e9260070cecc36de",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-03-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "7d330f8af75b967de06eabbe3710b80688655af8b6b7f434686aeba709c73507",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-04.json",
+      "scope": "original-byte binding only",
+      "sha256": "69dfc7f456aa29183f6155db7e2456d9cd1c7f8148a5cdd6f8b934169c25bf9f",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-04-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "8809ef0cc5680e3431ee1a90a9ba285e1600bd3c224452a755163b080d9ab208",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-05.json",
+      "scope": "original-byte binding only",
+      "sha256": "b2be806694c51e6d47b42c4833441170b13e0c6b83c0fad7b49bc339dde2c7c7",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-05-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "0b538fb05bcb142b8aea5f3edb122892aa3ad3655a63ed72c7b5909d50d81bf6",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-06.json",
+      "scope": "original-byte binding only",
+      "sha256": "2d158023e3ecfb497eca34e9229633ac6b58c297c793db4f78ccec486e0fd8df",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-06-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "f29db32737f3e031220b60ff091218a55d06834cd203e67d6fc7c8937cc465fc",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-07.json",
+      "scope": "original-byte binding only",
+      "sha256": "19c74bccc3313e99a12306c90d58a5fdb402e115ddeb0d292f49b39bfe686ad0",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-07-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "130c4ac95f88636822735135da3f7050547844425274a3d04b1d5665449d87fe",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-08.json",
+      "scope": "original-byte binding only",
+      "sha256": "579c39d825d663f23582e1fa51c049419ce41007efb8c58e3cb40423b20d85b6",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-08-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "64576cda94fcb1c4de13a1181fc68b3bbc88ca0ac1e29b2d1857acd061ce4876",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-09.json",
+      "scope": "original-byte binding only",
+      "sha256": "8c55b35dbbfa5e8e6d49bdada09fd540ccf4189ab7c204c7331992a0d2368fe2",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-09-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "d1f29e6482c7d5ffb224a72f9fa8a19bf0c89f9e5a88d3aa5b4bf5d3648f173b",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-10.json",
+      "scope": "original-byte binding only",
+      "sha256": "776a481c5096815e9a17944100e9333fddaf904efa9a686ecc10372790169ec2",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-10-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "12bd5bda9e7adb3003ebffc2b000cd8f229bbba3be6d8d1a1ca77b6eedfb2e14",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-11.json",
+      "scope": "original-byte binding only",
+      "sha256": "0f4391b6d21ce30c44552e279bbca131532094137c18ef5b3e589cb26265bd63",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-11-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "2b9a0b52b0aafca986d3f28f9cf91e7b73932e1f86e8ad3dc4c7c4be46aac6ed",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-12.json",
+      "scope": "original-byte binding only",
+      "sha256": "76d297ddfbb6ed35419003ae9fd5e495de52ef734a9815bc9430b925b244dbd1",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g00-12-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "f2ebc11a0cdb6b756855dd06ebf1dc2b55edb1633b3fbe074a4ab17ce942a862",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g01-00.json",
+      "scope": "original-byte binding only",
+      "sha256": "fcd44912a9b02a4a5e1ef1ff4bac3480a273b9c189e7d8779eedce71ae3406d8",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g01-00-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "1bf04c397f2ce8959e16e521339fcc23eb8e022b68037cc724a9936a4f673618",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g01-01.json",
+      "scope": "original-byte binding only",
+      "sha256": "1ddcc22439e314440550355b6b7d916944abe506ba9d003f90229fae48f921d6",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g01-01-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "f33431a13caa2797fdba6ea0daa76e0374490a915c5d1c427744634d1f75b94c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g01-02.json",
+      "scope": "original-byte binding only",
+      "sha256": "28d915728b8cecc22c542aeb37114af46ba4919790557920827cc41cc3a654fc",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g01-02-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "2219d5e3244a0ab50ed966e2f179bce8861a4ad90c807a6209dbcb8f66fbbfc2",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g02-00.json",
+      "scope": "original-byte binding only",
+      "sha256": "a0a7a9454bc078964512894c596019b1959a6bf7478f95bdebf6f98ca59edf93",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g02-00-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "e04450b51a7ad673c1b222c6c736b94e713b3facf7080bc8d75b57b46c6d06cf",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g02-01.json",
+      "scope": "original-byte binding only",
+      "sha256": "04602bcfbf2f9f26985556c0f0c3a61253f404a69648fbed48350387dbb592a9",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g02-01-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "15bad83715b67e42134c81ed2486ee52c8d441e133712089023356b4a03239db",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g05-00.json",
+      "scope": "original-byte binding only",
+      "sha256": "1950e5873cbceea01b90a28c946c0a2be2908d009eb84f74ebca71ddef328a7d",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g05-00-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "366be0f71158057d59e4a7b177d4d3ee26c084f30f3da4a9f369381475df38dc",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g06-00.json",
+      "scope": "original-byte binding only",
+      "sha256": "9debd4d6b5c032a9eaa844920efb599954a5b1831ff0881af11d34845b9d64a3",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g06-00-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "26a465fd891013eb040634f61f8277e7f8572e2677c17ce36de1435678d08b73",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g06-01.json",
+      "scope": "original-byte binding only",
+      "sha256": "61a868e395bdaf67c5bec50c02fbc94e62390fa5b796f469c2315f14fccfca80",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g06-01-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "b1b473ccf5d0c02b794545dd476c783fcf44019e808e8f3f9782b7652b949db5",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g06-02.json",
+      "scope": "original-byte binding only",
+      "sha256": "63e427def55021f714bf7f89e8110d137c7e53a52b0c80b9c311aa1f289f8ffb",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g06-02-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "7f2256a8870ed040500e7e10bb051be6d48d6da0451ec161ed127000a4171669",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g06-03.json",
+      "scope": "original-byte binding only",
+      "sha256": "8dd158ebfc58faba874c1b1f17f7a5e2d8300589526166b14d7c22abdc05e6c6",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g06-03-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "1f67509aaf063377bad4dc815433b3db17a0884d6b2de86a3c2250f0e531365c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g06-04.json",
+      "scope": "original-byte binding only",
+      "sha256": "8e2089edd0e3965eaef793605b165738d5984c9498d7d12552f086b9ff1eccb2",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g06-04-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "ca7e2e9fa536ce43572a4d61aa1c22bba9855800d068204070aa4aa74250f7e4",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g06-05.json",
+      "scope": "original-byte binding only",
+      "sha256": "08238540dc10e20dbc5ff1f8c4d9750243a1f70025dd7a9578758ddaa618e531",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g06-05-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "1c22703a4f4463ea73f3bfd0ea6ef8d779034c720b97c3394380939e127770af",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g06-06.json",
+      "scope": "original-byte binding only",
+      "sha256": "445a6f6298d3b6e0942329377764f5cd599b65cc64b6f50ed6de62945d22b339",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/new-base-g06-06-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "d920dc23e76fb759c8fe8ea4519f03f0f52770be71c403dfb67eb4f826d29067",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/source-phase-clippy.json",
+      "scope": "original-byte binding only",
+      "sha256": "2168f8fd37fa1880e8c053ff531e1082948032facdafc9d544c1b25723d82560",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/green-f85fea4e-20261106-v1/strict-workspace-clippy.json",
+      "scope": "original-byte binding only",
+      "sha256": "05eaa665328f51c0e56cd81e03c903e5f8359874bdb76ba04628ecf8b75a6b67",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "r4-expiry-accounting-fix/committed-source-gates/preflight.json",
+      "scope": "original-byte binding only",
+      "sha256": "32fbbd9f2933096b21c7afec08692c40ff937ef80c26fd0871c81d785e00000d",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "r4-expiry-accounting-fix/committed-source-gates/locked-workspace-graph.json",
+      "scope": "original-byte binding only",
+      "sha256": "d396b5edc95ec8c4258f1c8b3ab9efe5d1af1d72ccfbc8c79f4e9d9686f52827",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "r4-expiry-accounting-fix/committed-source-gates/workspace-format.json",
+      "scope": "original-byte binding only",
+      "sha256": "6efd786c0f069464d752a72d33f9fab34ed50a7358e92ea7c761f0ee59f0450c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "r4-expiry-accounting-fix/committed-source-gates/distributed-inventory.json",
+      "scope": "original-byte binding only",
+      "sha256": "0de5694481fcf0a623dde9a0762491cbe6ffb8d0e373945d2dcdf0da795e4cdf",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "r4-expiry-accounting-fix/committed-source-gates/ci-contract.json",
+      "scope": "original-byte binding only",
+      "sha256": "5be0d4ac5a4e04ff7828a1d0a0fa38644a6a1fef8e2601361452cde5fb706baf",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "r4-expiry-accounting-fix/committed-source-gates/ci-contract-tests.json",
+      "scope": "original-byte binding only",
+      "sha256": "b635401432cee29214ddc2f84a20c7f9ecb8233fcf406115128cdb51a22a464c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "r4-expiry-accounting-fix/committed-source-gates/source-integrity-tests.json",
+      "scope": "original-byte binding only",
+      "sha256": "adf9da80879fe4f40cf0db4a4e927916178b8c2e2b702f306048066d941a76c8",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "r4-expiry-accounting-fix/committed-source-gates/pq-source-corpus.json",
+      "scope": "original-byte binding only",
+      "sha256": "e7a94490662c3817ab3d660adf11e13fa9e323eadcf3313407ad6c57faaa792f",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "r4-expiry-accounting-fix/committed-source-gates/pq-source-corpus-tests.json",
+      "scope": "original-byte binding only",
+      "sha256": "8e30507239569a8111a16d79c9e338c7ac8794caf14dd9d05be487c9cb81ea22",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "r4-expiry-accounting-fix/committed-source-gates/whole-chain-claim-guard.json",
+      "scope": "original-byte binding only",
+      "sha256": "6a1fc2c0b45748620695a40f1e491bbcb05f7cf24acb3e5c2886c29289746545",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "r4-expiry-accounting-fix/committed-source-gates/whole-chain-claim-tests.json",
+      "scope": "original-byte binding only",
+      "sha256": "65432f9366e24630c794aed100f28d7d73249b61dabca1bb3c991393b11a278f",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "r4-expiry-accounting-fix/committed-source-gates/repository-links-and-truth.json",
+      "scope": "original-byte binding only",
+      "sha256": "fd04caf3171b8899936e00e9bdc81f41cbad9bef44b838a2106ee4dd372becba",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "r4-expiry-accounting-fix/committed-source-gates/diff-check.json",
+      "scope": "original-byte binding only",
+      "sha256": "7462ff7b7ff9c33affb008e6f16701980660ac55e21ea3cd1b8124474c7c4bdc",
+      "verified_entries": 1
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/manifest.json",
+      "scope": "original-byte binding only",
+      "sha256": "754b565c4994ca01ae5d67abe574d3c66268e77071fdcff5fbadcb0a61e55357",
+      "verified_entries": 142
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "quantum-readback-cad4c18f/desktop-ebd-auth-cost-failure-v1/manifest.json",
+      "scope": "original-byte binding only",
+      "sha256": "fb6435eb760b7279e89bc9a18bba1d822808e4df750d6b07ba2954a8b82a7d4d",
+      "verified_entries": 17
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/preflight.json",
+      "scope": "original-byte binding only",
+      "sha256": "4be4ac58fc2627fc2937cba73a3d4c1687f46906e3fc5526a4f0f27d6ebbb692",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/compiler.json",
+      "scope": "original-byte binding only",
+      "sha256": "f5a89d6dc3e75a2881d7bfc066f72f65d6dbabdf45461ab7f5c7567641a4c2a9",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/locked-workspace-graph.json",
+      "scope": "original-byte binding only",
+      "sha256": "a114f60d512ae1436d1ad1a5af265362eeacfeb46a800c47404d0161dfccc906",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/format.json",
+      "scope": "original-byte binding only",
+      "sha256": "9d22a5c1e88836a16d7ead414927ce450d5d604dc8c6cc524b4f5fd8ead8db37",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/reviewed-source-inputs.json",
+      "scope": "original-byte binding only",
+      "sha256": "a405a255e2ea9bbf48726982be38baacd122a1ba19f67312f3d6749664764942",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/source-phase-r4.json",
+      "scope": "original-byte binding only",
+      "sha256": "e8156b00c96ae9492bd99c474d9333c7acd80e34bcc1d415e870f5e56f20b2ef",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/node-no-run.json",
+      "scope": "original-byte binding only",
+      "sha256": "8b9717bec16a48aa96f1a9cb969641b4def5d3ec434c08c9554166d7b8e6c5b2",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/node-registry.json",
+      "scope": "original-byte binding only",
+      "sha256": "4da501d14b6e695fcef9a47ea5d752a82ca139ad9c81244dadebe7973ba96db1",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/m06-registry.json",
+      "scope": "original-byte binding only",
+      "sha256": "e12eb9524bceb6f3f085fa3ccc114ac909798ee7f2a036b4f75cb3c189cd1107",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/registry-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "c15d8e0e874692932b7d5aafb7c0e23e85d2533d882ed39136de0a682166a283",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_typed_full_and_poison_keep_lane_body_reservations_atomic.json",
+      "scope": "original-byte binding only",
+      "sha256": "15a7ae124bdda55ba719c4c8fbe8264baa8bad6444ea9d4e43ec3ee70173e5e5",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_typed_full_and_poison_keep_lane_body_reservations_atomic-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "556c44d3f48cb62642088d4fefe13709696f74cf41daa0e351a925061b0f8b9d",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_pending_heads_use_validated_readiness_and_original_expiry_boundaries.json",
+      "scope": "original-byte binding only",
+      "sha256": "61a9440937df34a144f65d4fb8401b0501eab3e0417856c39e89a57e754a680a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_pending_heads_use_validated_readiness_and_original_expiry_boundaries-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "d70e762c8bf02917abff8f458f2893151575945c24f2cc95598a8561315c9dfc",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_correctly_signed_old_and_new_challenges_are_incompatible_both_directions.json",
+      "scope": "original-byte binding only",
+      "sha256": "73037b6ba6a7a20b265235dc7eea1d017465e89473a62844d24b0b16eee24405",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_correctly_signed_old_and_new_challenges_are_incompatible_both_directions-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "1fb7186e867a4c8a8ae5a8b08d99b9f4dc990e7b14b78dcc8a74710cf0c157de",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_real_paid_fifo_read_service_and_native_admission_after_holder_release.json",
+      "scope": "original-byte binding only",
+      "sha256": "bba747f717730dc070a43f09339805b8a5cb1bb6b94cdbebd068ec40c54a676b",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_real_paid_fifo_read_service_and_native_admission_after_holder_release-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "a6afa490865b0bb855b80abf79a04e1385af4d635aabf0a9e6795974c3912c66",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_pending_stage_deadline_error_counts_expiry_once_and_releases_connection.json",
+      "scope": "original-byte binding only",
+      "sha256": "e6be2aededf853b6abbfc2db578577a87a945a40d74e5f44257b3637d4744520",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_pending_stage_deadline_error_counts_expiry_once_and_releases_connection-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "a145444c463a09a7e6b97d30b602009147bcc3f5f9ebe00cf0f6078e34ead2a1",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_pending_early_stop_eof_and_cancelled_errors_are_not_expiry.json",
+      "scope": "original-byte binding only",
+      "sha256": "f442ffcdeb630911838a4ca7c82a8f24d61ca54f6644490a2d1969e046900829",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_pending_early_stop_eof_and_cancelled_errors_are_not_expiry-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "a7688e3d943f11312d7ee7592d44ae6bef3b76ef899ea1d2ba5c810ce9dfce58",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_cookie_time_refusal_counts_expiry_only_after_original_deadline.json",
+      "scope": "original-byte binding only",
+      "sha256": "602b9ef2d1a07a2e8e76a4417de14682401c8ac7abac5a5d91dcaa2bc885e463",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_cookie_time_refusal_counts_expiry_only_after_original_deadline-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "e43ea1474d53f435d87de340072c2adcd15643f7c124bdd6619616560eb45d9a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_unrelated_eof_after_deadline_keeps_its_original_error_class.json",
+      "scope": "original-byte binding only",
+      "sha256": "e115c1509bdca10b5d9bc0838106703e840c9747630155b994abddc1dcfb2e98",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_unrelated_eof_after_deadline_keeps_its_original_error_class-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "1a404f2e8aef52b96f20855c05fc0403198ff4da3912cdcf70410eb261d249cb",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_paid_pending_eof_original_expiry_and_shutdown_never_create_body_or_work.json",
+      "scope": "original-byte binding only",
+      "sha256": "10bab4d4cf957abe8693451fa563bd65d45afd5d0bcd73333ab62c967a8f7b6c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_paid_pending_eof_original_expiry_and_shutdown_never_create_body_or_work-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "4291b8224a2e3e569cba5012f221a2170963e4d094a558868ca11bbaf4d452c0",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_challenge_burst_waits_with_existing_read_reserve_and_actual_shutdown.json",
+      "scope": "original-byte binding only",
+      "sha256": "f34724af5c92e23b5d5a754113566ac8a284a243f232b5d6caae56210c00205e",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/r4_challenge_burst_waits_with_existing_read_reserve_and_actual_shutdown-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "2fcf0c4aadc12c4d9cb21097459a92edf95b6e42d0b6433b57a6a7e27a90ae20",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/source-phase-costs.json",
+      "scope": "original-byte binding only",
+      "sha256": "9a9843af893423a4aead80b2fadb7f0eeec5209bd2b76dcf67fd1fcde83b4c3d",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/cost-output-freshness.json",
+      "scope": "original-byte binding only",
+      "sha256": "358cf09cf2a7850fa455d3a6d742a281c138a5adf53d8a69fe9ef838606b10d1",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/cost-history_inline_record_complete_call_cost.json",
+      "scope": "original-byte binding only",
+      "sha256": "971c693a6266ab5a48c1acd5f101c1f7290bbfe75b3ec6d8593ee288ed3800ae",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/cost-history_inline_record_complete_call_cost-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "c7a10cad3c9c89e8f0b13711a298105dae32419184efe9d4de8e659a478b83de",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/cost-pq_caller_authentication_complete_cost.json",
+      "scope": "original-byte binding only",
+      "sha256": "d848e7f553b8adbd8dc94c2f6236c8e906b21b296fb21336a7c4e57e8215d4bd",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/cost-pq_caller_authentication_complete_cost-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "6e9f94584e271545ebb7a9cef676531c7c33dab6f7ad815ba90fd6b9fe5acf6c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/cost-native_root_digest_paired_complete_root_cost_observation.json",
+      "scope": "original-byte binding only",
+      "sha256": "0faae5d422025360e7a7df3caa68595399f23e530a6490820436be22a48432ec",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/cost-native_root_digest_paired_complete_root_cost_observation-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "0571b6f486ac9af2cb14a3b3b57c24f5faf3c520e6008fd33f669e92e6a77d4c",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/cost-unchanged_snapshot_full_binding_cost.json",
+      "scope": "original-byte binding only",
+      "sha256": "e9e6a6fc1787e21c444f7da77ddad4ff7d386f7dbc91e0eff2573840c46c9506",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/cost-unchanged_snapshot_full_binding_cost-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "b61871a8a6ab5ed8d54a5e22e2f977dc2bfa3b4ef48cbdb3a8b7dafe4d3e04a1",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/control-artifact-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "2945f62bc623b14a5e061a0d2f3a657d45fff4fccd22a40ad0b31ad06e58d1ad",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/cost-sample-readback.json",
+      "scope": "original-byte binding only",
+      "sha256": "3aebaa895f2435abb59121cd6e132360f43b1c1a3d88b2a7daa85a655a796704",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/source-phase-clippy.json",
+      "scope": "original-byte binding only",
+      "sha256": "01c0a350fcf05b033d28953b1812db652bc036197d1218e93e3f43788b95984a",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/supplement-ebd3c06d-14-controls-20261106-v1/strict-workspace-clippy.json",
+      "scope": "original-byte binding only",
+      "sha256": "824f2ba58611f18e1ddd2fe6157b0e44b9a18c1dc83836ef646be36771fa7dc3",
+      "verified_entries": 1
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/auth-cost-failure-ebd3c06d-snapshot-v1/manifest.json",
+      "scope": "original-byte binding only",
+      "sha256": "fb6435eb760b7279e89bc9a18bba1d822808e4df750d6b07ba2954a8b82a7d4d",
+      "verified_entries": 17
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "integration-review/final-delivery-three-file-manifest.json",
+      "scope": "original-byte binding only",
+      "sha256": "6dd959433827b8126341e52bee0982bb43acc4fa9d6e638d5d7fc770b151811a",
+      "verified_entries": 3
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/preflight.json",
+      "scope": "original-byte binding only",
+      "sha256": "cf8598674888d68946b068975e2d65578607e22e8994cd683e6edd1eb23d8436",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/locked-workspace-graph.json",
+      "scope": "original-byte binding only",
+      "sha256": "bd81d548f69205bbb4879f2413d77555f42501a0dbc1b20cf0b28082868a1a66",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/workspace-format.json",
+      "scope": "original-byte binding only",
+      "sha256": "7a829e8998b7d61e4251f774d949f77a55a48f6e788f04d5379a0411f6ad828d",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/distributed-inventory.json",
+      "scope": "original-byte binding only",
+      "sha256": "8f60148fdcd1eabc251b910767c8ddea3afe09057cf21c114d1b51b1986da9a1",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/ci-contract.json",
+      "scope": "original-byte binding only",
+      "sha256": "07d4c4f193104776c2f8212e9d1f2d331d4d76d9815db8d5f40bb939636d16db",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/ci-contract-tests.json",
+      "scope": "original-byte binding only",
+      "sha256": "988c9533fd15cd6780eacff434eb097f251c605b90b07619608abaeed1d9e9de",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/source-integrity-tests.json",
+      "scope": "original-byte binding only",
+      "sha256": "dd4aa7379a4f654111b323ea489429c9d739c834e7f7347387803290a3daaba7",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/pq-source-corpus.json",
+      "scope": "original-byte binding only",
+      "sha256": "399c7e68db525ec73407692f4082c39018292887cd4eb19f811343a2baf82b6f",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/pq-source-corpus-tests.json",
+      "scope": "original-byte binding only",
+      "sha256": "2ed3ae57873ebd022b9aa8161dfae4a47f7f785488f95e0d859d3b466cfcf9e5",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/whole-chain-claim-guard.json",
+      "scope": "original-byte binding only",
+      "sha256": "fd0439d49c77fa2df806ca6b4ac0dea24bc59d8db672e7940162e68aa9246792",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/whole-chain-claim-tests.json",
+      "scope": "original-byte binding only",
+      "sha256": "c23c4292315e9e559b5167a719d4ecd143be38cd9c25b1e9f9908ed63b3d526b",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/repository-links-and-truth.json",
+      "scope": "original-byte binding only",
+      "sha256": "dc38b42e90487e4c5091d437708ba27d9a5bb3ea4b6bb3f3adcdfa0415dbdeaf",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/diff-check.json",
+      "scope": "original-byte binding only",
+      "sha256": "f2252eefc312993d2a6555777eeab2cc6e30b6b0053a7aaa45d9ceb6dc9160ec",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/locked-w1-graph-0.json",
+      "scope": "original-byte binding only",
+      "sha256": "824a1b0b9575379948a76344521ad396d138b3999dfc198368d9b72fd45b0c6f",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/locked-w1-graph-1.json",
+      "scope": "original-byte binding only",
+      "sha256": "cc83a059916b63e85704da48ef6a90dee4f185fe407224ccbf297a5a64a628c3",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/locked-w1-graph-2.json",
+      "scope": "original-byte binding only",
+      "sha256": "9cffd43d270dc10b474998ef0004de6815091e72d52480044cb0d914d29bad4b",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/locked-w1-graph-3.json",
+      "scope": "original-byte binding only",
+      "sha256": "068233c977b2fe207399a63a600c801ce50bb790e74b8dcdb40b0547f6673a89",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/locked-w1-graph-4.json",
+      "scope": "original-byte binding only",
+      "sha256": "018f6e77f0f1353f2ee9ebdba7f02b2b0347555ee62e3cca3b8b506827dcb561",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/verifier-environment.json",
+      "scope": "original-byte binding only",
+      "sha256": "d44867dbf43b460f231b476cbb094b73597b7f2da7bbc7f26c5ffd937876bf71",
+      "verified_entries": 1
+    },
+    {
+      "kind": "receipt_log",
+      "path": "late-target-513e92/committed-source-gates/runtime-material-tests.json",
+      "scope": "original-byte binding only",
+      "sha256": "915ba0e1568946936edabb5e2359e1910afec955ea992e3c94c050e555df8c6f",
+      "verified_entries": 1
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "terminal-evidence-preparation-v1/frozen-selection-ready-v4.json",
+      "scope": "original-byte binding only",
+      "sha256": "087e83c31b9529c2da25664e623179e81b63308ba0f40199ca29d4816816888c",
+      "verified_entries": 5444
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "terminal-evidence-preparation-v1/root-late-terminal-frozen-handoff-v1.json",
+      "scope": "original-byte binding only",
+      "sha256": "b2c9f1f0cc25cb24ee5fa2dd966af9745682b8ff81385f494e178dd935f03de9",
+      "verified_entries": 103
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "integration-review/release-audit-late-handoff-manifest-v1.json",
+      "scope": "original-byte binding only",
+      "sha256": "c4e6e733ea40da351199426a7e88d6599a9c8e29f96dc6c3211a609a7797a19a",
+      "verified_entries": 11
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "integration-review/final-delivery-v2-three-file-manifest.json",
+      "scope": "original-byte binding only",
+      "sha256": "1c4a5906cab044c794cfdeb5b6ae7f58d1ef0fecb94ea11d1ad7872ec3a428f6",
+      "verified_entries": 3
+    },
+    {
+      "kind": "flat_manifest",
+      "path": "terminal-evidence-preparation-v1/advanced-base-static-additions-v5-candidate.json",
+      "scope": "original-byte binding only",
+      "sha256": "ffbc5c4b868513a77ec8e3696bf64635dcb93a7af2536fdb0347ea1b1365c33c",
+      "verified_entries": 12
+    }
+  ],
+  "input_bytes_rechecked_after_copy": true,
+  "native_tests_executed_by_collector": 0,
+  "package_state": "HOLD_NO_GO. Retained f85 broad terminal observations and ebd scoped native failures retain their exact sources. ca4 is the current composed source with only its twenty finite source/Python/locked-graph gates. No native or full hosted CI result is transferred to ca4, and no whole-chain PQ qualification is claimed.",
+  "pending_observations_from_owner_plan": [
+    "At the retained f85 CI cutoff the repository-truth baseline workflow was pending with zero actual jobs; no later execution is inferred.",
+    "ca4 has no newly executed native library/Clippy/cost qualification. Its composed corpus is a changed compiled provenance input despite no additional Rust implementation change.",
+    "A future evidence-only successor of ca4 receives no test results merely by ancestry."
+  ],
+  "production_activated": false,
+  "schema": "trnm-terminal-increment-collection-v1",
+  "scope": "Copies frozen raw observations and explicit owner classifications. It does not infer test success, manufacture a terminal CI state, or transfer results across source commits.",
+  "selection_plan_sha256": "a13a654264d6409f40d642c8f04976fb6ed1f146403b45ed42f4217778b047fa",
+  "source_scopes_from_frozen_owner_plan": [
+    {
+      "candidate": "f85fea4e8da02404d513d074ceb35ad5292b017b",
+      "name": "f85 GHA exact head and same-tree prospective merge",
+      "native_results_reassigned_to_new_ebd_source": false,
+      "observed_baseline_run_pending": true,
+      "tree": "0c1da9d2c13052b30af600e2a32a5eb286e985de"
+    },
+    {
+      "actual_elf_provider_source_cleanup": "retained original records",
+      "candidate": "f85fea4e8da02404d513d074ceb35ad5292b017b",
+      "command_observations": 271,
+      "name": "f85 original desktop batch",
+      "native_batch_success": false,
+      "no_transfer_to_ebd": true,
+      "status_counts": {
+        "blocked": 1,
+        "succeeded": 269,
+        "timed_out": 1
+      },
+      "tree": "0c1da9d2c13052b30af600e2a32a5eb286e985de",
+      "unique_business_test_total": null
+    },
+    {
+      "candidate": "ebd3c06da7d5f2bd136b7a24f24604508d420279",
+      "commands_succeeded": 13,
+      "name": "ebd committed-source gates",
+      "native_product_tests_executed": 0,
+      "python_test_observations": 207,
+      "tree": "367b4cadbf5d9ec0f3e4cfcbb0de4e6fc91a2895"
+    },
+    {
+      "aggregate_native_pass": false,
+      "authentication_samples": 512,
+      "candidate": "ebd3c06da7d5f2bd136b7a24f24604508d420279",
+      "command_observations": 44,
+      "f85_observations_reclassified": false,
+      "failed_control": "ingress::public_v3::pq_identity::verifier_cache::tests::pq_caller_authentication_complete_cost",
+      "failed_native_controls": 1,
+      "full_node_suite_repeated": false,
+      "name": "ebd scoped 14 native controls and original strict workspace Clippy",
+      "named_native_controls": 14,
+      "native_job_exit": 1,
+      "original_cost_controls_passed": 3,
+      "passed_native_controls": 13,
+      "r4_controls_passed": 10,
+      "status_counts": {
+        "blocked": 3,
+        "failed": 1,
+        "succeeded": 40
+      },
+      "strict_workspace_clippy": "succeeded with original complete workspace/all-targets/all-features scope",
+      "tree": "367b4cadbf5d9ec0f3e4cfcbb0de4e6fc91a2895",
+      "unexpected_authentication_samples": 67,
+      "unexpected_samples_are_original_budget_refusals": true
+    },
+    {
+      "candidate": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
+      "command_observations": 20,
+      "commands_succeeded": 20,
+      "compiled_provenance_input_changed": true,
+      "independent_readback": "integration-review/ca4-committed-source-gates-independent-readback-release.json",
+      "locked_graph_commands": 6,
+      "name": "ca4 exact canonical merge finite source/Python/locked graph gates",
+      "native_product_tests_executed": 0,
+      "native_results_transferred_from_f85_or_ebd": false,
+      "new_native_clippy_executed": false,
+      "parents": [
+        "ebd3c06da7d5f2bd136b7a24f24604508d420279",
+        "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f"
+      ],
+      "python_unittest_observations": 232,
+      "runtime_material_methods": 25,
+      "summary": "late-target-513e92/committed-source-gates/summary.json",
+      "tree": "ba691b8b5f06a0cfeb062261d6a33f0c086f06b0"
+    }
+  ],
+  "tree": "ba691b8b5f06a0cfeb062261d6a33f0c086f06b0",
+  "whole_chain_pq_qualified": false
+}

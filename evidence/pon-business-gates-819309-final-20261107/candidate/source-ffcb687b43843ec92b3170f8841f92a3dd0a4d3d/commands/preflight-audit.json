@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--audit"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+  "end_utc": "2026-11-07T22:02:02.645986+00:00",
+  "exit_code": 0,
+  "log": "logs/preflight-audit.log",
+  "log_bytes": 173,
+  "log_sha256": "65acaf68e8d77f449e453466da4f35e0b8572dd016568fcb11d975a2f12b2156",
+  "name": "preflight-audit",
+  "pid": 1899405,
+  "start_utc": "2026-11-07T22:02:02.487235+00:00",
+  "supervisor_timeout_seconds": 600,
+  "timed_out": false,
+  "wall_ns": 158760406
+}

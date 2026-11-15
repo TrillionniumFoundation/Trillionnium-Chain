@@ -1,0 +1,308 @@
+{
+  "status": "F3A_CHECKOUT_READY",
+  "observed_at_utc": "2026-11-05T09:58:01.945585+00:00",
+  "head": "f3a597f274833121d5ec408cb6a1cad83996d7f2",
+  "tree": "86ca08c321e0866d2f49811c74e77c9dedb0c06a",
+  "base": "32c3d63c907d0060a5b02cd678c74b01e54ec0f9",
+  "commits": [
+    {
+      "sha": "74a7d9683c732023879bc75cf392494bfa82a905",
+      "tree": "a7bc2077097e13c7b50d106c74803fdc89122afd",
+      "parents": [
+        "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "c17e2782e9be80fd4d2656a2ec497d1ee6344d06",
+      "tree": "4ab4de91a418479e342f61a488c0ebddbaa35d16",
+      "parents": [
+        "619c5f80856fb15bb6896d8008df91f58c215229",
+        "74a7d9683c732023879bc75cf392494bfa82a905"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "bdab616e853df2c373a850886a8220ed1fda5041",
+      "tree": "37953760dea7556922ebf6300ccd3aedd937c82e",
+      "parents": [
+        "32c3d63c907d0060a5b02cd678c74b01e54ec0f9",
+        "c17e2782e9be80fd4d2656a2ec497d1ee6344d06"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "f3a597f274833121d5ec408cb6a1cad83996d7f2",
+      "tree": "86ca08c321e0866d2f49811c74e77c9dedb0c06a",
+      "parents": [
+        "bdab616e853df2c373a850886a8220ed1fda5041"
+      ],
+      "raw_sha1_verified": true
+    }
+  ],
+  "changed_files": [
+    {
+      "filename": "config/pon/pq-cross-branch-corpus-v1.json",
+      "sha": "21c3550298870b6fa62e50cd0d5200815ae3ead6",
+      "status": "modified"
+    },
+    {
+      "filename": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha": "5b2eb7c1e8ac7fde1c74afa56d07aea7504cab5e",
+      "status": "modified"
+    },
+    {
+      "filename": "docs/development/specs/pon/SHARED_CELL_WORK_V1.md",
+      "sha": "c4124430a9de3ab8eb3ee897b8497c9d043f4a17",
+      "status": "modified"
+    },
+    {
+      "filename": "docs/development/specs/pon/USEFUL_CELL_RELATION_V1.md",
+      "sha": "c13a34b2eb1f8d4a8d1e2273725fcf2dff928468",
+      "status": "added"
+    },
+    {
+      "filename": "evidence/pon-useful-cell-relation-v1-20261105/README.md",
+      "sha": "62dcae8da433d0bb04eb0e4d24ead6f6b2e045b9",
+      "status": "added"
+    },
+    {
+      "filename": "evidence/pon-useful-cell-relation-v1-20261105/composition.json",
+      "sha": "12b663c726a81b4c53ab53b7c6110be0d1eef5da",
+      "status": "added"
+    },
+    {
+      "filename": "evidence/pon-useful-cell-relation-v1-20261105/latest.json",
+      "sha": "8e4015143e4af86d360a7d8e3b265bdcb4eaedc9",
+      "status": "added"
+    },
+    {
+      "filename": "evidence/pon-useful-cell-relation-v1-20261105/manifest.json",
+      "sha": "53261c08a2da1f28b3f7a58e52a883aa7dca82f7",
+      "status": "added"
+    },
+    {
+      "filename": "formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py",
+      "sha": "b401be0faca27c4664a279947a0dc14373ce6263",
+      "status": "added"
+    },
+    {
+      "filename": "formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py",
+      "sha": "c29bba9dcca10a2e355fc0e2dd0fddc8a2cb5a9c",
+      "status": "added"
+    },
+    {
+      "filename": "formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py",
+      "sha": "93dc70b851c66254ad57ccb941d89ca2e637ad7d",
+      "status": "added"
+    },
+    {
+      "filename": "formal/pon-nakamoto-v1/useful_cell_numeric_v1.py",
+      "sha": "66025b9708f6fba2d215600a81402790dfb9c662",
+      "status": "added"
+    },
+    {
+      "filename": "formal/pon-nakamoto-v1/useful_cell_relation_v1.py",
+      "sha": "1b8c0d9c09cb1a21e12ffe9c38058c321e26fadc",
+      "status": "added"
+    },
+    {
+      "filename": "scripts/ci/check_ci_contract.py",
+      "sha": "0870c4ce279ed91f8d1a6a2aab3d05e606e68da1",
+      "status": "modified"
+    },
+    {
+      "filename": "scripts/ci/ci_job.sh",
+      "sha": "a4a78966f053773b987a75c4e94895a8cf61aeb9",
+      "status": "modified"
+    },
+    {
+      "filename": "scripts/ci/test_ci_contract.py",
+      "sha": "caf8d83bca729a98e7703f9910e64871514d0425",
+      "status": "modified"
+    }
+  ],
+  "changed_blobs_raw_sha1_verified": 16,
+  "all_directory_trees_raw_sha1_verified": 1121,
+  "recursive_entries": 11225,
+  "available_unique_tree_blob_objects": 10003,
+  "objects_imported": [
+    {
+      "sha": "86ca08c321e0866d2f49811c74e77c9dedb0c06a",
+      "type": "tree",
+      "bytes": 882
+    },
+    {
+      "sha": "584d4e6407e990f72cab7ca776a2d2d6e11b9048",
+      "type": "tree",
+      "bytes": 377
+    },
+    {
+      "sha": "5025091ee43b66724cca026c798f198c6fd21404",
+      "type": "tree",
+      "bytes": 1940
+    },
+    {
+      "sha": "21c3550298870b6fa62e50cd0d5200815ae3ead6",
+      "type": "blob",
+      "bytes": 94118
+    },
+    {
+      "sha": "b75343e3cff2377564b4e9ed62ea266b908773a0",
+      "type": "tree",
+      "bytes": 268
+    },
+    {
+      "sha": "b051952817e54ab9b4ec7cbbc4ebfc0126e54dd1",
+      "type": "tree",
+      "bytes": 840
+    },
+    {
+      "sha": "5b2eb7c1e8ac7fde1c74afa56d07aea7504cab5e",
+      "type": "blob",
+      "bytes": 529744
+    },
+    {
+      "sha": "c9065026b7dd8926d3e31a0073a9f9f1e876bf8e",
+      "type": "tree",
+      "bytes": 30
+    },
+    {
+      "sha": "035a67299c6de0a713e4242592c424d537bb3739",
+      "type": "tree",
+      "bytes": 1091
+    },
+    {
+      "sha": "c4124430a9de3ab8eb3ee897b8497c9d043f4a17",
+      "type": "blob",
+      "bytes": 12421
+    },
+    {
+      "sha": "c13a34b2eb1f8d4a8d1e2273725fcf2dff928468",
+      "type": "blob",
+      "bytes": 16571
+    },
+    {
+      "sha": "cf902f2cd1e4ae31edf1f229ac33c229d7b87e4f",
+      "type": "tree",
+      "bytes": 9794
+    },
+    {
+      "sha": "7c960cc091c9508155c624c7383319c98d2fe738",
+      "type": "tree",
+      "bytes": 161
+    },
+    {
+      "sha": "62dcae8da433d0bb04eb0e4d24ead6f6b2e045b9",
+      "type": "blob",
+      "bytes": 10361
+    },
+    {
+      "sha": "12b663c726a81b4c53ab53b7c6110be0d1eef5da",
+      "type": "blob",
+      "bytes": 7728
+    },
+    {
+      "sha": "8e4015143e4af86d360a7d8e3b265bdcb4eaedc9",
+      "type": "blob",
+      "bytes": 20828
+    },
+    {
+      "sha": "53261c08a2da1f28b3f7a58e52a883aa7dca82f7",
+      "type": "blob",
+      "bytes": 23581
+    },
+    {
+      "sha": "64adc6b6f148f234b69bebaf88b56f54ae7e7641",
+      "type": "tree",
+      "bytes": 88
+    },
+    {
+      "sha": "080c587e944384ea187e393ffba391376ad99748",
+      "type": "tree",
+      "bytes": 11690
+    },
+    {
+      "sha": "3a773b5b0299b4232eec70e3de286a4b77cc0716",
+      "type": "tree",
+      "bytes": 1822
+    },
+    {
+      "sha": "b401be0faca27c4664a279947a0dc14373ce6263",
+      "type": "blob",
+      "bytes": 12808
+    },
+    {
+      "sha": "c29bba9dcca10a2e355fc0e2dd0fddc8a2cb5a9c",
+      "type": "blob",
+      "bytes": 15312
+    },
+    {
+      "sha": "93dc70b851c66254ad57ccb941d89ca2e637ad7d",
+      "type": "blob",
+      "bytes": 34803
+    },
+    {
+      "sha": "66025b9708f6fba2d215600a81402790dfb9c662",
+      "type": "blob",
+      "bytes": 9878
+    },
+    {
+      "sha": "1b8c0d9c09cb1a21e12ffe9c38058c321e26fadc",
+      "type": "blob",
+      "bytes": 28876
+    },
+    {
+      "sha": "5e767eacd594898dcfbb751fb70d164b7bc69ecc",
+      "type": "tree",
+      "bytes": 7492
+    },
+    {
+      "sha": "68f60dd1c35d3850a395b4c80e71b096ffd8c06e",
+      "type": "tree",
+      "bytes": 8510
+    },
+    {
+      "sha": "0870c4ce279ed91f8d1a6a2aab3d05e606e68da1",
+      "type": "blob",
+      "bytes": 61231
+    },
+    {
+      "sha": "a4a78966f053773b987a75c4e94895a8cf61aeb9",
+      "type": "blob",
+      "bytes": 24695
+    },
+    {
+      "sha": "caf8d83bca729a98e7703f9910e64871514d0425",
+      "type": "blob",
+      "bytes": 87351
+    },
+    {
+      "sha": "74a7d9683c732023879bc75cf392494bfa82a905",
+      "type": "commit",
+      "bytes": 487
+    },
+    {
+      "sha": "c17e2782e9be80fd4d2656a2ec497d1ee6344d06",
+      "type": "commit",
+      "bytes": 639
+    },
+    {
+      "sha": "bdab616e853df2c373a850886a8220ed1fda5041",
+      "type": "commit",
+      "bytes": 698
+    },
+    {
+      "sha": "f3a597f274833121d5ec408cb6a1cad83996d7f2",
+      "type": "commit",
+      "bytes": 611
+    }
+  ],
+  "source": "Exact GitHub APIs; reconstructed objects matched expected SHA-1 before writing.",
+  "real_index_writes": false,
+  "head_or_ref_writes": false,
+  "working_tree_writes": false,
+  "alternate_changes": false,
+  "other_workspace_writes": false,
+  "scope": "Current tree, changed blobs, new commit parents/hashes only; no old source-test inheritance. No disk-backed temporary index or payload cache."
+}

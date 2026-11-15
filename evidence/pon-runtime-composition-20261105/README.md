@@ -1,0 +1,7 @@
+# Runtime composition source registration
+
+The Growth, schema-readback and History reverse-spool candidates are composed without changing their acceptance rules. The concurrent PQ evidence through `6ee529046` is retained.
+
+The original History candidate omitted the updated workflow pin and the new reverse-path module from the embedded distributed source inventory. [Failed checks](source-registration-failures.txt) remain recorded. The composition regenerates the inventory, pins its new bytes and the updated workflow, and explicitly registers the reverse-path source as required. No source guard is bypassed.
+
+After the separate bounded W1 proof ended, combined source `bfe61375f80170e8b034f0eec4094b69b037d5bc` (tree `167ea18cacd5565a5622e32a1b0c311029c7f789`) passed 398 distinct native tests in the original Node test profile, with 13 existing ignored tests across eight selectors. Strict workspace/all-target/all-feature Clippy, formatting and the locked all-feature graph passed. The 43 source controls, 35 PQ controls, 28 W1 observer controls and 488 source pins passed. [Exact source, test IDs and receipt summary](combined-source/verification.json) and [commands](combined-source/verify-schema-composition.sh) retain the measured scope. This evidence-only follow-up does not relabel those executions as a new native run. Earlier branch results are not combined-source passes. Neither the 4,105-block History gate nor fixed-Host four-second confirmation is closed. No net end-to-end gain, qualification, activation or deployment is claimed.

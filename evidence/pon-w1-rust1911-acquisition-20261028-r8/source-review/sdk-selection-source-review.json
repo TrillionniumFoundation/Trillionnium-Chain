@@ -1,0 +1,39 @@
+{
+  "schema": "TRNM-OFFICIAL-COMPILER-SELECTION-SOURCE-REVIEW1",
+  "unix_ns": 1793162410331574658,
+  "files": [
+    {
+      "path": "/tmp/pure-pon-cargo-20261027/registry/src/index.crates.io-1949cf8c6b5b557f/risc0-build-3.0.6/src/lib.rs",
+      "bytes": 30265,
+      "sha256": "30a523d2474299139a0616de729a0b034527bf018aaf3b490e72d900b79b88ea"
+    },
+    {
+      "path": "/tmp/pure-pon-cargo-20261027/registry/src/index.crates.io-1949cf8c6b5b557f/rzup-0.5.2/src/env.rs",
+      "bytes": 13063,
+      "sha256": "916ca3efb6887b271a236975d2d77fabbbc4b3092eec7fac20123a02048a96be"
+    },
+    {
+      "path": "/tmp/pure-pon-cargo-20261027/registry/src/index.crates.io-1949cf8c6b5b557f/rzup-0.5.2/src/settings.rs",
+      "bytes": 8502,
+      "sha256": "2dad62e5227fa96024d8432c6b365c6882977c2fc695caea1b311aa430b802b4"
+    },
+    {
+      "path": "/tmp/pure-pon-cargo-20261027/registry/src/index.crates.io-1949cf8c6b5b557f/rzup-0.5.2/src/paths.rs",
+      "bytes": 8952,
+      "sha256": "70cf6ee9ef8d889fc0ba512fe8ef66dc693c98bc3aabd5e9f74ed0cf563d9c7a"
+    },
+    {
+      "path": "/tmp/pure-pon-cargo-20261027/registry/src/index.crates.io-1949cf8c6b5b557f/rzup-0.5.2/src/registry.rs",
+      "bytes": 9633,
+      "sha256": "319d2beb19eac3c44f22d1d07926b3e4e1dbf7a27d5504d419b5fbbbf447707b"
+    }
+  ],
+  "sdk_version": "3.0.6",
+  "rzup_version": "0.5.2",
+  "mechanism": "SDK rust_toolchain() uses rzup::get_default_version(RustToolchain); rzup supports explicit RISC0_HOME and [default_versions] rust=1.91.1; directory is toolchains/v1.91.1-rust-x86_64-unknown-linux-gnu",
+  "required_build_precondition": "Assert exact isolated home, settings bytes and single expected compiler tree before SDK invocation. Registry has a highest-installed fallback if the requested version is absent, so a mere config value is insufficient.",
+  "sdk_or_home_mutated": false,
+  "actual_compiler_download_install_execution": false,
+  "actual_sdk_guest_prover_compatibility_established": false,
+  "system_HOME_or_rustup_mutated": false
+}

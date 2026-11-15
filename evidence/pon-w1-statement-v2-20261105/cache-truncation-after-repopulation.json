@@ -1,0 +1,13 @@
+{
+  "unix_ns": 1793841129481689482,
+  "reason": "owned disposable caches reappeared after unlink; truncate only completed build/cross-compiler/download caches to preserve deletion state; retained executables detached first",
+  "truncated_files": 2145,
+  "prior_allocated_bytes": 3284135936,
+  "retained_sha256": {
+    "/workspace/scratch/79360d3567d1/validated-bin/w1-staged-prover-v2": "00f082a35de398d4d2ba59d26f213d8f72eacbd5e7103545d1c113bd9dd53f51",
+    "/workspace/scratch/79360d3567d1/validated-bin/w1-verify-v2": "574f604838be7f9dd9b8edeb68e77349534917d256506b388d8b70959a880e9d",
+    "/workspace/scratch/79360d3567d1/validated-bin/trnm-w1-full-guest-v2.bin": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+    "/workspace/scratch/79360d3567d1/risc0/bin/r0vm": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6"
+  },
+  "available_bytes_after": 4308070400
+}

@@ -1,0 +1,12 @@
+{
+  "args": [
+    "gh",
+    "api",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162489/jobs?per_page=100"
+  ],
+  "exit_code": 0,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 64924,
+  "stdout_sha256": "32bd98faad7e7a418f03926c1b81c8cf980fee5b0bff2ad72f46cd9cc4bcb647"
+}

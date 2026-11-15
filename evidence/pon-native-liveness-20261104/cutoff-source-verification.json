@@ -1,0 +1,27 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "cutoff-source-verification",
+  "command": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+    "--output",
+    "/workspace/scratch/e537ad232c79/cutoff-source-receipt.json"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+  "tree": "923c1aa59bc090baeff79979d950aebeec4def78",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T14:18:36.384772+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 3628205341,
+  "finished_at": "2026-11-04T14:18:40.013257+00:00",
+  "log_bytes": 421,
+  "log_sha256": "7ba142af7bd90d0f14c2710a4b42b835c3def44a75a8a5ba74929d8dbba2265d",
+  "final_head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+  "final_dirty_paths": []
+}

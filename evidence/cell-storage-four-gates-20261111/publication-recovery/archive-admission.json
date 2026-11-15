@@ -1,0 +1,67 @@
+{
+  "all_listed_member_hashes_verified": true,
+  "archives": [
+    {
+      "bytes": 286100,
+      "label": "current",
+      "manifest_files_verified": 205,
+      "manifest_sha256": "2512a6d43341d7a95e0ab8cbb1a288e7e53090dffd913889267ca7b7e9f6e51e",
+      "members": 206,
+      "prefix": "remote-current-records/",
+      "raw_bytes_preserved": true,
+      "sha256": "38519564908a3bd7afbaed914c866f06331b4b421532dbce86b2ebef145b0954",
+      "source_path": "/home/qian-qi/work/chain-cell-four-gates-2bfb-recovered-original-current.tar.gz",
+      "streams_verified": 165
+    },
+    {
+      "bytes": 183220,
+      "label": "prior",
+      "manifest_files_verified": 176,
+      "manifest_sha256": "ed94260e8d5dcc476357244ce63bb72eb696bdae87afd0dcb4297bee96a643ee",
+      "members": 177,
+      "prefix": "",
+      "raw_bytes_preserved": true,
+      "sha256": "64c3d37283e682830f65cd9b9a90d39e806f3f029aa2af5e9c9f9457900b80cc",
+      "source_path": "/home/qian-qi/work/chain-cell-four-gates-2bfb-recovered-original-prior.tar.gz",
+      "streams_verified": 170
+    },
+    {
+      "bytes": 289899,
+      "label": "desktop",
+      "manifest_files_verified": 117,
+      "manifest_sha256": "912d69198f6ca15c0ecbcda05748f2ff72aab741f53d3825a05d5773e175d28c",
+      "members": 119,
+      "prefix": "desktop-publication-records/",
+      "raw_bytes_preserved": true,
+      "sha256": "2fd62f02a7472f854dd851aa91d665b22f86bf6f5ad1a2e56141303df0270e4f",
+      "source_path": "/home/qian-qi/work/desktop-publication-records-export-2bfb-v1/desktop-publication-records.tar.gz",
+      "streams_verified": 108
+    },
+    {
+      "bytes": 20705422,
+      "label": "native-codeql",
+      "manifest_files_verified": 534,
+      "manifest_sha256": "9f9ff7aa40a48146a83e36ec3ca47fe2196286c849959197f29381566dff3375",
+      "members": 534,
+      "prefix": "",
+      "raw_bytes_preserved": true,
+      "sha256": "e5cb5c7cffebf9c48ba0f414ac4b6e2c31af39ce403bdf2a99dbcaeffb459da0",
+      "source_path": "/home/qian-qi/work/chain-cell-four-gates-native-codeql-recovery-2bfb/recovered-native-codeql-selected-raw.tar.gz",
+      "streams_verified": 38
+    },
+    {
+      "bytes": 1530054,
+      "label": "next-work-qrom",
+      "manifest_files_verified": 185,
+      "manifest_sha256": "ab87e5187eb73978a9f20dfe527720589e53f5946dadb242fc297117b1b4c6c4",
+      "members": 186,
+      "prefix": "",
+      "raw_bytes_preserved": true,
+      "sha256": "7438a1a3b4206d305a93e2af9f23ad66e548e330f7d796ea04c9fa3f91f5a6d5",
+      "source_path": "/home/qian-qi/work/chain-cell-four-gates-discovery-ci-recovery-2bfb/recovered-ci-records.tar.gz",
+      "streams_verified": 42
+    }
+  ],
+  "no_native_execution": true,
+  "regular_files_only": true
+}

@@ -1,0 +1,58 @@
+{
+  "schema": "af52-equivalent-tar-xz.v1",
+  "archive": "/home/qq/af52-chain-20261111/publication-export/frozen-validation-3.tar.xz",
+  "archive_size": 336108,
+  "archive_sha256": "5aee11abd71da780a6a6da1deb56a3ab70cfa19fa96e959a0990cd01c94c935b",
+  "compression": "XZ/LZMA2 preset 6, default 8 MiB dictionary",
+  "tar_bytes": 7270400,
+  "tar_sha256": "eec5ccf2282755e0a95d82d1fb8b9f143ba3476f19dcb3cc4ee108de49329922",
+  "same_tar_as_gzip": true,
+  "gzip_sha256": "3bd504b5092d961919881209c442e3cebfea2276cf9af193770e64bf31ca29aa",
+  "member_count": 47,
+  "all_member_bytes_and_sha256_verified": true,
+  "outside_tested_tree": true,
+  "source_commit": "843934e3c377f7344a48b4b462a3672cf4b3f00d",
+  "source_tree": "6c004b08b87daa4a225a8728363b21f3fe08ab4a",
+  "chunks": [
+    {
+      "path": "archive-xz-000.json",
+      "size": 58765,
+      "sha256": "d4099077b6ec73c8f556fd582ec1b35432902056a5cf494c5a3bf92912e93968"
+    },
+    {
+      "path": "archive-xz-001.json",
+      "size": 58769,
+      "sha256": "4661034ad7fa92a9b9ddcb0a3458bfbe57e350e7691fee16e3b47ba3ba77583f"
+    },
+    {
+      "path": "archive-xz-002.json",
+      "size": 58769,
+      "sha256": "a9cd6741003c79594225a64bfc5d868ae4452e5304d5c53dda8703f57b40823e"
+    },
+    {
+      "path": "archive-xz-003.json",
+      "size": 58770,
+      "sha256": "bf4015d34511e71ae0dcbcbe05ed1a3ccf7d6900bc3142212aaee28e7e9b2822"
+    },
+    {
+      "path": "archive-xz-004.json",
+      "size": 58770,
+      "sha256": "237515106d972e3ede18b971912b28b148615dd1893eedb41dc5b0d0f30df9c4"
+    },
+    {
+      "path": "archive-xz-005.json",
+      "size": 58770,
+      "sha256": "56d029099a9d7af56891411d2ebe4f1e6d1ce059e97daa9e5622c3f4ada5b9e6"
+    },
+    {
+      "path": "archive-xz-006.json",
+      "size": 58770,
+      "sha256": "9e843585b18731327ec4504a4e79a09a82861d07ec6b704ab4e0b748c93912f5"
+    },
+    {
+      "path": "archive-xz-007.json",
+      "size": 39714,
+      "sha256": "c26e1d38a71fbd790f670477d98cb6047fad2e3a777b8d862a968d624e4aa4df"
+    }
+  ]
+}

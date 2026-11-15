@@ -1,0 +1,78 @@
+{
+  "schema": "pq-native-exact-source-run-v1",
+  "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-pon-node",
+    "--features",
+    "pq-native-openssl",
+    "--test",
+    "pq_account_native",
+    "--test",
+    "cli_secret_canary",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "parent_commit": "48aaeddb1ab5115169cb1bc8d80647888bba3d2d",
+  "working_tree_candidate": true,
+  "started_utc": "2026-10-28T00:27:18.449779+00:00",
+  "source_manifest_sha256": "1107b633df15b5fe2f14dc3b21de4ac0ac6e60fb9f9a63ce17dd813b287c25ef",
+  "exit_code": 0,
+  "elapsed_seconds": 140.07524343000114,
+  "completed_utc": "2026-10-28T00:29:38.522657+00:00",
+  "stdout": {
+    "bytes": 92097,
+    "sha256": "863d975b85d178a5fde8547a30c95fc68d448dc24c523ae85d8ec6ab864c7023"
+  },
+  "stderr": {
+    "bytes": 698,
+    "sha256": "cd06733166f417b4493716400238f962ff3263f7bcaed836fae0a367f8a0a74f"
+  },
+  "source_unchanged": true,
+  "executables": [
+    {
+      "target": "pq_account_native",
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "path": "/tmp/chain-pq-target-56818e4fba76/debug/deps/pq_account_native-33bf2758c6c9297d",
+      "bytes": 171675824,
+      "sha256": "4fdc25f2e6559df48bfd0671e1fc05ced631d75db49a39530b5e0c72511a619c"
+    },
+    {
+      "target": "cli_secret_canary",
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "path": "/tmp/chain-pq-target-56818e4fba76/debug/deps/cli_secret_canary-0ab719f2468e0356",
+      "bytes": 169492864,
+      "sha256": "583018ae8d291346c4931c5635bdcf030edb8d116a9ce7ebfd6338efde590330"
+    },
+    {
+      "target": "trnm-pon-node",
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "path": "/tmp/chain-pq-target-56818e4fba76/debug/trnm-pon-node",
+      "bytes": 179617792,
+      "sha256": "2562b0f0aba7f772e448433bdfe53cddcfc2203e61cd45e0ed3fbb88e0a774fe"
+    }
+  ]
+}

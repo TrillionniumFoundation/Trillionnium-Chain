@@ -1,0 +1,1 @@
+{"schema": "trnm-w1-shared-permutation-lifecycle-v1", "status": "REFUSED", "error": "epoch: expected exactly ['label', 'offline_forward_queries', 'offline_inverse_queries', 'other_honest_evaluations', 'runs']", "qualification": "HOLD_NO_GO"}

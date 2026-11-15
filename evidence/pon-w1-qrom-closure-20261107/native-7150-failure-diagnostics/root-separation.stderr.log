@@ -1,0 +1,4 @@
+
+thread 'release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay' (263525) panicked at crates/trnm-pon-node/src/release_owner/root_separation_tests.rs:100:84:
+called `Result::unwrap()` on an `Err` value: Custom { kind: Other, error: Error("invalid type: string \"1\", expected u8", line: 0, column: 0) }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

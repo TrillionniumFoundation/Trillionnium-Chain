@@ -1,0 +1,16 @@
+{
+  "schema": "pon-c2-staging-observation-v1",
+  "source_head_before": "c2d67c5cf1ebb4caac525802362d5746b8fd957d",
+  "outer_exit": 1,
+  "failed_command": [
+    "git",
+    "--no-pager",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "failed_command_exit": 2,
+  "source_commit_created": false,
+  "original_log_sha256": "67c5938367007d2079dcb0e1d95b9baa4d534cd6063d0fa5b5ffc77ecfec05ba",
+  "reason": "Git whitespace policy treated original native stream EOF blanks and terminal CRLF as source-format errors. Evidence-local attributes preserve original bytes; no raw log is rewritten."
+}

@@ -1,0 +1,11 @@
+{
+  "scope": "observed local source restoration limitation",
+  "base_commit": "cea95fb44d8152a0eb1138727619fcced056f496",
+  "verified_source_configuration_document_files": 2004,
+  "extra_verified_historical_corpus_files": 17,
+  "full_local_all_files_checkout": false,
+  "observed_git_write_tree_exit": 128,
+  "observed_git_write_tree_error": "invalid object 100644 f5c9fe28cc7913fb655318cf9bdf33eee351f837 for evidence/cell-transient-capacity-retry-v1/optimized-replay/materialize-0-command.json",
+  "observed_git_https_error": "Failed to connect to browser-proxy port 8889: Could not connect to server",
+  "publication_boundary": "Canonical original remote base tree plus exact reviewed changed blobs; independent complete-tree digest, CAS branch update; this does not bypass or claim full-checkout validation."
+}

@@ -1,0 +1,80 @@
+[
+  {
+    "label": "preflight-w1",
+    "exit": 0,
+    "seconds": 0.048,
+    "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+  },
+  {
+    "label": "ff-w1-clock-controls",
+    "exit": 0,
+    "seconds": 0.092,
+    "sha256": "a668b719ce1fc800f2fb0072549ee8b4e05c12675d40ca0f603f14eb10520fb6"
+  },
+  {
+    "label": "preflight-native",
+    "exit": 0,
+    "seconds": 0.046,
+    "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+  },
+  {
+    "label": "merge-native-boundaries",
+    "exit": 0,
+    "seconds": 0.143,
+    "sha256": "b81d966bca1563c65c70543be0a5fef45f18f5555941bf4ceeb0d067e6bb3777"
+  },
+  {
+    "label": "inventory",
+    "exit": 0,
+    "seconds": 0.044,
+    "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+  },
+  {
+    "label": "source-guards",
+    "exit": 0,
+    "seconds": 5.165,
+    "sha256": "7b6aa459682d9346efac4fd096fb27b142022f0a94d3750e7412ee1acf662789"
+  },
+  {
+    "label": "corpus",
+    "exit": 0,
+    "seconds": 0.727,
+    "sha256": "cb230927bbdddca79b5a279c29d08de9fe2275f9821b3d494c057b566a3b6691"
+  },
+  {
+    "label": "ci-contract",
+    "exit": 0,
+    "seconds": 0.07,
+    "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+  },
+  {
+    "label": "fmt",
+    "exit": 0,
+    "seconds": 5.368,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "diff",
+    "exit": 0,
+    "seconds": 0.055,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "precommit",
+    "exit": 0,
+    "seconds": 0.05,
+    "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+  },
+  {
+    "label": "stage",
+    "exit": 0,
+    "seconds": 0.058,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "commit",
+    "exit": 0,
+    "seconds": 0.066,
+    "sha256": "f212904ebc5239523f9be1665046cd832f6e088d1bdfc4bd0c290ce6f8503967"
+  }
+]

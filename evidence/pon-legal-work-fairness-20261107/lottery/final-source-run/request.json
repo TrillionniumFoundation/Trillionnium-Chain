@@ -1,0 +1,6 @@
+{
+  "native_timeout_seconds": 30,
+  "out": "/workspace/scratch/10a9f8f2cba0/evidence-staging/pon-legal-work-fairness-20261107/lottery/final-source-run",
+  "runner": "/workspace/scratch/10a9f8f2cba0/native-target/release/examples/pon_routed_int257_grouped",
+  "source_sha": "a4302cbf401d59391bcd38978ce3e2c68f60e49e"
+}

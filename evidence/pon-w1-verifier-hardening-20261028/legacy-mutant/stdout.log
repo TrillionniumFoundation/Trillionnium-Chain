@@ -1,0 +1,3 @@
+{"identity":{"base":null,"candidate":"64be7c4ad51d432e7736ad135476262e23e968f5","kind":"head","prospective_merge":null,"schema":"trnm-ci-source-v1","tested_commit":"64be7c4ad51d432e7736ad135476262e23e968f5","tested_tree":"4157fb5cec32f74dc0d0fe50a4ad93ee11eafbca","tests_executed_by_identity_check":false,"tracked_bytes":706320655,"tracked_entries":5502,"tracked_worktree_verified":true},"stage":"RAW_COMMITTED_SOURCE_VERIFIED"}
+{"event":{"eligible_as_final":false,"name":"lift-0000","stage":"RECURSIVE_CHECKPOINT_CRYPTOGRAPHICALLY_REVERIFIED"},"unix_ns":1793148271385985345}
+{"event":{"full_proof_complete":false,"index":0,"stage":"LIFT_CALIBRATION_COMPLETE"},"unix_ns":1793148271387267782}

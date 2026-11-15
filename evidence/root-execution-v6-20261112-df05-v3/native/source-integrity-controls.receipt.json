@@ -1,0 +1,29 @@
+{
+  "bytes": 7850,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_ci_source_integrity.py",
+    "-v"
+  ],
+  "cwd": "/data/chain-root-operation-owned-20261112-df05-v4",
+  "elapsed_ns": 18792107023,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "log": "source-integrity-controls.log",
+  "name": "source-integrity-controls",
+  "process_exit_code": 0,
+  "sha256": "48968ddbe440e47b0339e6631f65d807f4ee1af6b2ad9bb039ff9eddd4d41eea",
+  "source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

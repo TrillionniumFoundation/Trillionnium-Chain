@@ -1,0 +1,27 @@
+{
+  "artifacts": {
+    "authority": {
+      "bytes": 8147856,
+      "executable": true,
+      "exists": true,
+      "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_verification_authority_v0",
+      "sha256": "895c08811f5ddfc99470915d4d6cd236dfea29afa4064daabe044fb9f58963ec"
+    },
+    "fresh": {
+      "bytes": 7807888,
+      "executable": true,
+      "exists": true,
+      "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_fresh_admission_v0",
+      "sha256": "d76a3d713149f9ed9660a54c5310244677150fed440f8be730076eb25a2bf1ef"
+    },
+    "grouped": {
+      "bytes": 771136,
+      "executable": true,
+      "exists": true,
+      "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/pon_routed_int257_grouped",
+      "sha256": "2e976435d71e921925f1a1bab08311e050045693ee9a704307168e20baec3cc2"
+    }
+  },
+  "cargo_target_directory": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1",
+  "status": "PASS"
+}

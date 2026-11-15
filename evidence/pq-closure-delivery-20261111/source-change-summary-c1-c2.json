@@ -1,0 +1,57 @@
+{
+  "C1_native_observations_relabelled_C2": false,
+  "all_rust_source_blobs_unchanged": true,
+  "changed_file_count": 3,
+  "changed_files": [
+    {
+      "C1": {
+        "bytes": 202762,
+        "git_blob": "e6b56b770675293c952f0b7d586ee46c5c297bd4",
+        "sha256": "702c54eec9a66541adeea48d6676cb772376565537391bbe1fc4f4affb45c521"
+      },
+      "C2": {
+        "bytes": 202762,
+        "git_blob": "ec2d643f30e2382363eb65ec25a470b5bd492362",
+        "sha256": "a809c7342000b710e4b76dc8f4573261968a1c34872ec424b89ea4091c56d3b4"
+      },
+      "path": "config/pon/pq-cross-branch-corpus-v1.json"
+    },
+    {
+      "C1": {
+        "bytes": 71420,
+        "git_blob": "70a1ef5e8bddd075ebf9d2805164b4ba8a3a5b4a",
+        "sha256": "7ce22c06b557ed5440bbb2361c9a190b2a7c051c8267b7cf221b333685767068"
+      },
+      "C2": {
+        "bytes": 71595,
+        "git_blob": "73e4f87aeefc3f28e077ac1fc4c0cb2ae8114d7d",
+        "sha256": "d73407a28cf7914b5c8f5eb53d2bc8e4fea2bf59e5c0853cd86655da33fd2026"
+      },
+      "path": "scripts/ci/check_public_readiness_evidence.py"
+    },
+    {
+      "C1": {
+        "bytes": 119264,
+        "git_blob": "99b2980efa5d1ffdcdb0dc0de7057fc232794790",
+        "sha256": "55a61e0220f684b8c5ffde00c5b1180c2d2d24757c94f6b0871bacc4ffda198b"
+      },
+      "C2": {
+        "bytes": 120969,
+        "git_blob": "ba6c3badfcd5f173bce619b51c84334eeb9e866d",
+        "sha256": "a5d6d7cc039b85d4c49865fec5866e7891d967446b35a145a66bf66825875696"
+      },
+      "path": "scripts/ci/test_public_readiness_evidence.py"
+    }
+  ],
+  "changed_rust_source_files": [],
+  "child": "0e554f36ffdde3053a5eb1756eb5e526b1935032",
+  "child_tree": "753cdbad6714f00d8ccb9ddbb47f0fd71280ee62",
+  "native_compilation_inputs_all_unchanged": false,
+  "parent": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+  "parent_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+  "production_activation": false,
+  "reason_native_inputs_differ": "The changed corpus JSON is included by Node unit-test and example source-inventory code.",
+  "schema": "TRNM-PQ-C1-C2-SOURCE-DELTA1",
+  "total_tracked_byte_delta": 1880,
+  "whole_chain_pq_qualified": false
+}

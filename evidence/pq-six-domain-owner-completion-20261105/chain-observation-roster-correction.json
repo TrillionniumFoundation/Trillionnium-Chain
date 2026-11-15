@@ -1,0 +1,39 @@
+{
+  "actual_reader": {
+    "change": "fixed roster input SHA only",
+    "path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-observation-final-native.py",
+    "sha256": "1ba10a71ec4e9596a84b18ff7e0ea1e6d16d4c8af82f9034894fac8ebae917a1"
+  },
+  "changed_entry_index": 3,
+  "corrected_name": "ingress::public_v3::paid_settlement_consistency_tests::cancelled_owner_retains_actual_scoped_work_until_join_and_original_settlement",
+  "corrected_roster": {
+    "path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-observation-roster-corrected.json",
+    "sha256": "65bacc4498148df53662ce46147f285aa272090960606fd38eb2c68148f13500"
+  },
+  "historical_reader": {
+    "path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-observation-final-native-before-roster-correction.py",
+    "sha256": "bf2595501c478d6d6b2dd7afda5801868aef76efa04002b6b9070742f0577574"
+  },
+  "native_log_complete_at_correction": false,
+  "native_log_exact_line": "test ingress::public_v3::paid_settlement_consistency_tests::cancelled_owner_retains_actual_scoped_work_until_join_and_original_settlement ... ok",
+  "native_log_line": 264,
+  "native_log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+  "native_tests_rerun_for_correction": false,
+  "observed_utc": "2026-11-05T11:32:17.415119+00:00",
+  "old_name": "ingress::public_v3::tests::cancelled_owner_retains_actual_scoped_work_until_join_and_original_settlement",
+  "old_roster": {
+    "path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-observation-roster.json",
+    "preserved": true,
+    "sha256": "59e338f744de93a61b50b3bb59e0c58c8bb81bd0f9f978b6d1af1d1dd2732b1b"
+  },
+  "repository_or_acceptance_gate_changed": false,
+  "same_37_functions_sources_blobs_targets": true,
+  "schema": "chain-native-roster-module-correction-v1",
+  "source_commit": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+  "source_function_line": 8056,
+  "source_module_declaration_line": 7988,
+  "source_tree": "4a0314e72ebc45659986d03e7ca2f96cab9399ea",
+  "unchanged_source_blob": "891ec08f59a6e2346735bd08b1bf363466fe38a3",
+  "unchanged_source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+  "unchanged_target": "lib"
+}

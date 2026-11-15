@@ -1,0 +1,268 @@
+{
+  "accepted_rows": 80,
+  "actual_cpu_max": "200000 100000",
+  "actual_memory_max": "8589934592",
+  "arm2_over_arm1_proof_inner_median": 0.9953888662698372,
+  "arms": [
+    {
+      "accepted_rows": 40,
+      "cancellation_event_field_state": "ABSENT_BY_SCHEMA",
+      "comparison": {
+        "bytes": 214153,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "sha256": "1c20ddb6496e9576ad84d77f9af1e9220a3ef50fe257d0593d6a651103b4f8bc"
+      },
+      "finite_statistics": {
+        "cold_process_benefit_observed": false,
+        "native": {
+          "cold_process_wall_seconds": {
+            "count": 20,
+            "maximum": 0.3838812238536775,
+            "median": 0.2906128515023738,
+            "minimum": 0.2773780629504472,
+            "p95_nearest_rank": 0.3145924729760736,
+            "p99_nearest_rank": 0.3838812238536775,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          },
+          "verifier_inner_ns": {
+            "count": 20,
+            "maximum": 5470166,
+            "median": 2658634.5,
+            "minimum": 1933305,
+            "p95_nearest_rank": 5012235,
+            "p99_nearest_rank": 5470166,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          },
+          "wait4_cpu_seconds": {
+            "count": 20,
+            "maximum": 0.005813,
+            "median": 0.005135000000000001,
+            "minimum": 0.003546,
+            "p95_nearest_rank": 0.005433,
+            "p99_nearest_rank": 0.005813,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          }
+        },
+        "payload_byte_benefit_observed": false,
+        "proof": {
+          "cold_process_wall_seconds": {
+            "count": 20,
+            "maximum": 0.3241907141637057,
+            "median": 0.29144723305944353,
+            "minimum": 0.2738429568707943,
+            "p95_nearest_rank": 0.3142791260033846,
+            "p99_nearest_rank": 0.3241907141637057,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          },
+          "verifier_inner_ns": {
+            "count": 20,
+            "maximum": 63550505,
+            "median": 34731046.5,
+            "minimum": 30642732,
+            "p95_nearest_rank": 59710534,
+            "p99_nearest_rank": 63550505,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          },
+          "wait4_cpu_seconds": {
+            "count": 20,
+            "maximum": 0.039746000000000004,
+            "median": 0.038655999999999996,
+            "minimum": 0.033684,
+            "p95_nearest_rank": 0.039445,
+            "p99_nearest_rank": 0.039746000000000004,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          }
+        },
+        "proof_over_native_cold_wall_median": 1.0028711103199883,
+        "proof_over_native_inner_median": 13.063490487315951,
+        "receipt_over_native_payload_bytes": 5.191572738657941,
+        "verification_inner_benefit_observed": false
+      },
+      "id": "generation-arm-1",
+      "outer_process": {
+        "bytes": 6206,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/observe-generation-arm-1/result.json",
+        "sha256": "d10369060b24c0288608516c9c0a14f000344f3b141b76c565587ed45ef666b6"
+      },
+      "planned_rows": 40,
+      "receipt": {
+        "bytes": 257014,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-balanced-run-01/proof/checkpoint/succinct.bin",
+        "sha256": "585808f32353a272c310595fa31b33f1ba160add53490c1673bf7fa6c6bc2e57"
+      }
+    },
+    {
+      "accepted_rows": 40,
+      "cancellation_event_field_state": "ABSENT_BY_SCHEMA",
+      "comparison": {
+        "bytes": 214717,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "sha256": "d1a0d767680d1304231088911461b0b42dd7a19a8f6a3f3f282ed073c1c29a3d"
+      },
+      "finite_statistics": {
+        "cold_process_benefit_observed": false,
+        "native": {
+          "cold_process_wall_seconds": {
+            "count": 20,
+            "maximum": 0.48474837793037295,
+            "median": 0.2886295081116259,
+            "minimum": 0.2729562649037689,
+            "p95_nearest_rank": 0.42869339510798454,
+            "p99_nearest_rank": 0.48474837793037295,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          },
+          "verifier_inner_ns": {
+            "count": 20,
+            "maximum": 4988411,
+            "median": 2573996.0,
+            "minimum": 2233490,
+            "p95_nearest_rank": 4003652,
+            "p99_nearest_rank": 4988411,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          },
+          "wait4_cpu_seconds": {
+            "count": 20,
+            "maximum": 0.0051909999999999994,
+            "median": 0.004944,
+            "minimum": 0.003873,
+            "p95_nearest_rank": 0.00516,
+            "p99_nearest_rank": 0.0051909999999999994,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          }
+        },
+        "payload_byte_benefit_observed": false,
+        "proof": {
+          "cold_process_wall_seconds": {
+            "count": 20,
+            "maximum": 0.44589301804080606,
+            "median": 0.3046814830740914,
+            "minimum": 0.279219564050436,
+            "p95_nearest_rank": 0.44166439585387707,
+            "p99_nearest_rank": 0.44589301804080606,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          },
+          "verifier_inner_ns": {
+            "count": 20,
+            "maximum": 60631674,
+            "median": 34570897.0,
+            "minimum": 32722011,
+            "p95_nearest_rank": 60466037,
+            "p99_nearest_rank": 60631674,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          },
+          "wait4_cpu_seconds": {
+            "count": 20,
+            "maximum": 0.041637,
+            "median": 0.038324,
+            "minimum": 0.033525,
+            "p95_nearest_rank": 0.039594,
+            "p99_nearest_rank": 0.041637,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          }
+        },
+        "proof_over_native_cold_wall_median": 1.0556144625249386,
+        "proof_over_native_inner_median": 13.430827786834168,
+        "receipt_over_native_payload_bytes": 5.191572738657941,
+        "verification_inner_benefit_observed": false
+      },
+      "id": "generation-arm-2",
+      "outer_process": {
+        "bytes": 5732,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/observe-generation-arm-2/result.json",
+        "sha256": "1053ad641392ca3f6f64a7aabd2208ddfc38bc5f3fb5131c7ac250c896deb14e"
+      },
+      "planned_rows": 40,
+      "receipt": {
+        "bytes": 257014,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/sequential-unfunded-run-01/postwin/checkpoint/succinct.bin",
+        "sha256": "033586595c7c203acc48b48e16d969b1376a833244fa82f3b64edfdcc35033c2"
+      }
+    }
+  ],
+  "authoritative_launch_response": {
+    "bytes": 1702,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-observation-02/authoritative-launch-response.json",
+    "sha256": "78f9c079ae591884716f81ed0ba219eeec9bcbc8e67995c6ac3fecdd9b058d31"
+  },
+  "authoritative_terminal": {
+    "bytes": 729,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-observation-02/authoritative-job-terminal.json",
+    "sha256": "bc60fa2975e8f00844df1bf83ec0144c21caa89d6ddb4e567ab35f348fa0b099"
+  },
+  "binding": {
+    "bytes": 3043,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-binding-01/binding.json",
+    "sha256": "8a3f3961e29692b7ade104b5060a40d0f467853031d776dd66e8ddb7b6f8a7af"
+  },
+  "first_readback_failure": {
+    "job_id": "1a1b7d01012-12894-c66",
+    "request": {
+      "bytes": 12264,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-observation-02/first-readback-request.json",
+      "sha256": "33520b9004b377811674c1aa10311513082b06fdf22951ed62c9dadc51166c50"
+    },
+    "stderr": {
+      "bytes": 106,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-observation-02/first-readback-stderr.log",
+      "sha256": "4039c45913285b45dab3ce96582ae5dbf0be871959d6fd7cf40e9c355240d5c8"
+    },
+    "terminal": {
+      "bytes": 726,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-observation-02/first-readback-terminal.json",
+      "sha256": "25b7075c1ca80480909c284e45f6aa9bdb2814e3a8f4c396ebc84b19a02f2ddb"
+    }
+  },
+  "fresh_proof_generations": 0,
+  "interpretation": "20 repeated verifications per kind per receipt; finite ratio of medians and nearest-rank p95/p99, not population tail or fresh generation; prior R4/R8 retained separately; cold-process wall includes supervisor polling; no Node/WAN/funding/resource-completeness qualification",
+  "journal_sha256": [
+    "56a5fcd0a18fc4db36aa37583dc8f7f75fe8f811482eec36d9b7121bae6f07ee"
+  ],
+  "mathematical_verification_executed_by_this_readback": false,
+  "missing_optional_event_not_interpreted_as_explicit_false": true,
+  "operation_cancellation_sidecars": [],
+  "original_measurement_files_modified": false,
+  "owned_scope_closed_observed": true,
+  "planned_rows": 80,
+  "raw_file_hashes_equal_before_after_readback": true,
+  "raw_result": {
+    "bytes": 44814,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/result.json",
+    "sha256": "4394fef1f6f862bae295ba53dfcf29cdcafb28e502dfc6fd40c773ecfd92c98f"
+  },
+  "raw_row_count": 80,
+  "readback_complete": true,
+  "readback_script": {
+    "bytes": 10578,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-observation-02/readback02.py",
+    "sha256": "1ac13102c99509de5fafaf9a571a814aa4bbe1e5ecb06950789a3038de2d1f4b"
+  },
+  "row_raw_pins_record": {
+    "bytes": 95503,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-observation-02/row-pins.json",
+    "sha256": "fa07b78f69254064a9399c68776c164e114b8d289a712b8ef0b69957b86e8887"
+  },
+  "schema": "TRNM-W1-COMMON-RAYON2-ACTUAL-READBACK1",
+  "source_after": {
+    "bytes": 423,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/audit/source-after.json",
+    "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+  },
+  "source_before": {
+    "bytes": 423,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/audit/source-before.json",
+    "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+  },
+  "source_states_after": {
+    "A": {
+      "commit": "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+      "status": ""
+    },
+    "C1": {
+      "commit": "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11",
+      "status": ""
+    }
+  },
+  "work_ids": [
+    "ccf544056c6df13a5ab4e6c021e587ff0008d92388270e64f72a6e2168a326cd"
+  ]
+}

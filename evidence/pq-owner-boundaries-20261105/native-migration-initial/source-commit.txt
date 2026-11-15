@@ -1,0 +1,6 @@
+tree 2721dbf2f3b58327b51d1d452d0504fa5427df75
+parent ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155
+author Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793853180 +0900
+committer Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793853180 +0900
+
+fix(pq): reject lossy legacy checkpoint imports

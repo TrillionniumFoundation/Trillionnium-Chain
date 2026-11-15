@@ -1,0 +1,9 @@
+{
+  "action": "remove owned incremental compiler cache after all Cargo native batches finished",
+  "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/incremental",
+  "file_count": 3258,
+  "logical_bytes": 1762831259,
+  "timestamp_unix": 1794442286.3844554,
+  "source_or_elf_modified": false,
+  "compiler_flags_or_features_changed": false
+}

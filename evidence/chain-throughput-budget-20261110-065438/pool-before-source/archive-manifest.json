@@ -1,0 +1,118 @@
+{
+  "archive": "source-packet.tar.xz",
+  "sha256": "740b0297771275d65cf37ebfed3fcf4b82f44dd4283eeff90ac3ca23ad70ce79",
+  "members": [
+    {
+      "path": "README.md",
+      "bytes": 6705,
+      "sha256": "803451db7df3ed7f6a1179e3d3b3eb6b3f81cdc1ee1f9304145342f2e370c23f"
+    },
+    {
+      "path": "SHA256SUMS",
+      "bytes": 2226,
+      "sha256": "572f6a513fe2bafc99de8d6e004d0d18c9bb39a309214286d38f507bda18f52a"
+    },
+    {
+      "path": "base.json",
+      "bytes": 573,
+      "sha256": "18c1bc23fecddaafbf305714a9c317d445d42f408d642d3a4ce8da6e1935c481"
+    },
+    {
+      "path": "build_prefixtest.py",
+      "bytes": 4752,
+      "sha256": "8a6c2617520951a020767f205a62cfaaad30f7245d020045fea5cd5cdda49463"
+    },
+    {
+      "path": "expected-controls.json",
+      "bytes": 3339,
+      "sha256": "a24536ebd06c93ff269163c502f03251cc2b0f3123e2e1d4b211c62a2aab346e"
+    },
+    {
+      "path": "h0-binding.json",
+      "bytes": 1609,
+      "sha256": "133a059f33a7c98776cf65bfb700cf8e0fac0d0bf7a0d300643578691e77b198"
+    },
+    {
+      "path": "h0-source/trillionnium/crates/trnm-pon-node/src/error.rs",
+      "bytes": 33859,
+      "sha256": "e2b758eeae1e25cff63a0fe57824df23bdcc88cfecf3258c3b59c586735e4a66"
+    },
+    {
+      "path": "h0-source/trillionnium/crates/trnm-pon-node/src/mining.rs",
+      "bytes": 43855,
+      "sha256": "9c64a1b06ab5d9d193cacf2dfec37000bf9b5d458ef065d5479dd98d05d3cfee"
+    },
+    {
+      "path": "h0-source/trillionnium/crates/trnm-pon-node/src/pool_run_control_tests.rs",
+      "bytes": 19260,
+      "sha256": "b87c45c0844e1788bb4683fe1a7f59e0c627bf88bfb3f12b61e92ece656ffb93"
+    },
+    {
+      "path": "h0-source/trillionnium/crates/trnm-pon-node/src/store/mempool.rs",
+      "bytes": 89135,
+      "sha256": "ed68c38a4b1abd0e36b54ce0e69e0e11bc273f60f11c65d85e898f39457625b0"
+    },
+    {
+      "path": "h0-source/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 382986,
+      "sha256": "9c8d7688ccf9a311c83df738fba2a1763277af81fef943ea8580d1dceb7686bf"
+    },
+    {
+      "path": "identical-hooks.json",
+      "bytes": 915,
+      "sha256": "49ace8c97befa66301c498aca2868410b21603c54912568af1f053ceea4c277e"
+    },
+    {
+      "path": "narrowing-readback.json",
+      "bytes": 1664,
+      "sha256": "ddad301d146354216a794a288fa8c0aabbfea4bb58fe49d367717f41e9f1efc9"
+    },
+    {
+      "path": "old-production/trillionnium/crates/trnm-pon-node/src/error.rs",
+      "bytes": 33859,
+      "sha256": "e2b758eeae1e25cff63a0fe57824df23bdcc88cfecf3258c3b59c586735e4a66"
+    },
+    {
+      "path": "old-production/trillionnium/crates/trnm-pon-node/src/mining.rs",
+      "bytes": 43243,
+      "sha256": "b54aff8426ceeb113bedffdbf6afe32d334448483d1729ef74c9aabd27f6d31a"
+    },
+    {
+      "path": "old-production/trillionnium/crates/trnm-pon-node/src/store/mempool.rs",
+      "bytes": 88950,
+      "sha256": "a09314a4695874d8ca3cc72e41957017a4170b27fd5d94a493f15b032cb7d5f2"
+    },
+    {
+      "path": "old-production/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 382877,
+      "sha256": "9029e9a362aab349916a6ad417d962aeef3307a3d2e0c724b16d78ffaf1278e3"
+    },
+    {
+      "path": "same-test/trillionnium/crates/trnm-pon-node/src/pool_run_control_tests.rs",
+      "bytes": 19260,
+      "sha256": "b87c45c0844e1788bb4683fe1a7f59e0c627bf88bfb3f12b61e92ece656ffb93"
+    },
+    {
+      "path": "test-pin.json",
+      "bytes": 160,
+      "sha256": "26b54a225caa73b4cead267e01f9315c214c8e92b1a4b2ac2810949a52bd7eac"
+    },
+    {
+      "path": "tests-only.patch",
+      "bytes": 24260,
+      "sha256": "0de56cb17f92385dc26d3c8b60d3f8675209c7c794dd2b532e8e1f6f693a00d8"
+    },
+    {
+      "path": "unchanged-g2-inputs.json",
+      "bytes": 1142,
+      "sha256": "96bc7faf9493e2dddff17dbcc9ee222bf897176b40dd4c9bc8cf968b4b17963a"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 205,
+      "sha256": "1d310caaea81d10f932eec81615162fd9f0ffc0fcf87eb8e85825caf7615b5e2"
+    }
+  ],
+  "roundtrip_all_members_verified": true,
+  "native_execution_performed_by_packaging": false
+}

@@ -1,0 +1,1 @@
+{"pid": 5, "command": ["python3", "-m", "unittest", "discover", "-s", "scripts/ci", "-p", "test_pq_research_integration.py"]}

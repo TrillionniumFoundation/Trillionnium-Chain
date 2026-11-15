@@ -1,0 +1,12 @@
+{
+  "base": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+  "new_parent": "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c",
+  "concurrent_files_preserved": 40,
+  "overlap_resolutions": {
+    "store.rs": "clean three-way merge",
+    "sole_plan": "clean three-way merge; both continuations preserved",
+    "recent_workflow": "remote plus recomputed integrated store blob"
+  },
+  "integrated_store_blob": "cda95433f7bdd6d1c013e506891154c9722ff967",
+  "native_w1_dependency_inputs_changed_by_remote": false
+}

@@ -1,0 +1,40 @@
+{
+  "schema": "TRNM-W1-STAGE-MEASUREMENT1",
+  "command": [
+    "/tmp/trnm-w1-r2-target/release/trnm-w1-hardened-verifier",
+    "controls",
+    "/tmp/w1-staged-full-20261028-r3/header.bin",
+    "/tmp/w1-staged-full-20261028-r3/succinct.bin",
+    "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets"
+  ],
+  "cwd": "/workspace/scratch/56818e4fba76/chain-w1-next",
+  "wall_limit_seconds": 30.0,
+  "termination_grace_seconds": 5,
+  "started_unix_ns": 1793154553065392948,
+  "environment": {
+    "RAYON_NUM_THREADS": null,
+    "RUST_LOG": null,
+    "RISC0_HOME": null
+  },
+  "resource_scope": "wait4 direct child including descendants it has reaped; killed-stage CPU can be a lower bound; maxrss is largest single process, not summed peak",
+  "shared_cgroup": {
+    "cpu.max": "800000 100000",
+    "memory.max": "8589934592"
+  },
+  "finished_unix_ns": 1793154553366690841,
+  "wall_seconds": 0.3010330649995012,
+  "returncode": 0,
+  "timed_out": false,
+  "process_group_remaining_after_child_exit": false,
+  "rusage": {
+    "user_seconds": 0.208452,
+    "system_seconds": 0.011744,
+    "max_single_process_rss_bytes": 10354688,
+    "minor_faults": 2119,
+    "major_faults": 0,
+    "voluntary_context_switches": 200,
+    "involuntary_context_switches": 2
+  },
+  "complete_proof_claim": false,
+  "note": "Stage exit 0 alone is not full proof success. Only a saved Succinct receipt checked in a fresh process against the fixed full image and journal can establish that gate."
+}

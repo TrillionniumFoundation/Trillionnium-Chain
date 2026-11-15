@@ -1,0 +1,44 @@
+{
+  "baseline_head": "6c63f18795e8937e7e8ea11b757fcdbd2ff1e59c",
+  "environment": {
+    "cwd": "formal/pon-nakamoto-v1",
+    "filesystem": "container overlayfs (not independently tested physical power-loss)",
+    "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+    "python": "3.13.5",
+    "sqlite": "3.46.1"
+  },
+  "files": {
+    "docs/security/PQ_PQL3_FORK_RECOVERY_RESEARCH_V1.md": {
+      "bytes": 6189,
+      "git_blob_sha1": "ea33515144baa609a02c200e8be8979c7ef16fbb",
+      "sha256": "9fe3e63be5e904ae0b5006ffe123d6381b9175615c1e3f37e31dcdca902c3094"
+    },
+    "evidence/pon-pq-pql2-recovery-v1/local-unittest.log": {
+      "bytes": 3289,
+      "git_blob_sha1": "d8e55bdf89e3b0d884846bfc8f3d7e727d8abc11",
+      "sha256": "598e7b34624f3045fc459b45ad2a5ef460c38142cff007ff80e994d12e1efef5"
+    },
+    "formal/pon-nakamoto-v1/pq_pql2_fork_recovery.py": {
+      "bytes": 17785,
+      "git_blob_sha1": "746033850d362eeda5830c74b491bb8d9144d1a7",
+      "sha256": "b3b466fdf8f914151282dfc914f884244d2e99632b9be351f69048c5665c955b"
+    },
+    "formal/pon-nakamoto-v1/test_pq_pql2_fork_recovery.py": {
+      "bytes": 16134,
+      "git_blob_sha1": "5294e584265d2f0b7e2c390618872f8fe9bd626a",
+      "sha256": "1f9c21051f20da250376662829dd26d9a81a875cdb05bf6a9717078714f90a94"
+    }
+  },
+  "production_activation": false,
+  "schema": "pon-pql3-research-local-v1",
+  "source_identity": "local-executed-only; compare pushed Git blob hashes after upload",
+  "test_command": "PYTHONWARNINGS=error::ResourceWarning python3 -m unittest -v test_pq_pql2_fork_recovery.py",
+  "tests": {
+    "failed": 0,
+    "full_chain_activated": false,
+    "independent_accepted": false,
+    "native_rust_tested": false,
+    "observed_full_snapshot_rollback_accepted": true,
+    "passed": 21
+  }
+}

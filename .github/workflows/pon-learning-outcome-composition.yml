@@ -1,0 +1,82 @@
+name: PoN learning outcome composition
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-learning-outcome-composition.yml
+      - scripts/cell_learning_local_use_join.py
+      - scripts/capture_cell_learning_local_use.py
+      - scripts/test_cell_learning_local_use_join.py
+      - scripts/cell_learning_local_decision_join.py
+      - scripts/test_cell_learning_local_decision_join.py
+      - scripts/cell_adoption_readback.py
+      - scripts/test_cell_adoption_readback.py
+      - scripts/cell_learning_iteration_join.py
+      - scripts/test_cell_learning_iteration_join.py
+      - scripts/cell_learning_completion_join.py
+      - scripts/capture_cell_learning_completion.py
+      - scripts/cell_learning_scope_join.py
+      - scripts/test_cell_learning_scope_join.py
+      - scripts/ci/verify_ci_source.py
+      - scripts/project-preflight.sh
+      - scripts/ci/project_boundary.py
+      - PROJECT_BOUNDARY.json
+      - PROJECT_ID
+      - evidence/heplcp04-completed-use-20261111/**
+permissions:
+  contents: read
+jobs:
+  native-use-readback:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        lane: [head, prospective-merge]
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      SOURCE: ${{ github.event.pull_request.head.sha }}
+      BASE: ${{ github.event.pull_request.base.sha }}
+      TESTED: ${{ matrix.lane == 'head' && github.event.pull_request.head.sha || github.sha }}
+      LANE: ${{ matrix.lane }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ env.TESTED }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Observe the actual source
+        run: |
+          set -euo pipefail
+          args=(--kind "$LANE" --expected-head "$SOURCE")
+          if test "$LANE" = prospective-merge; then
+            args+=(--expected-base "$BASE" --expected-merge "$TESTED")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$RUNNER_TEMP/local-use-source-before.json"
+          cat "$RUNNER_TEMP/local-use-source-before.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Replay original completed-use exports and composition attacks
+        run: |
+          set -euo pipefail
+          python3 -B scripts/test_cell_learning_local_use_join.py -v 2>&1 | tee "$RUNNER_TEMP/local-use-tests.log"
+      - name: Recheck the actual source
+        if: always()
+        run: |
+          set -euo pipefail
+          args=(--kind "$LANE" --expected-head "$SOURCE")
+          if test "$LANE" = prospective-merge; then
+            args+=(--expected-base "$BASE" --expected-merge "$TESTED")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$RUNNER_TEMP/local-use-source-after.json"
+          cat "$RUNNER_TEMP/local-use-source-after.json"
+          git diff --exit-code
+      - name: Retain exact source and local-use replay logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: heplcp04-local-use-${{ matrix.lane }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/local-use-source-before.json
+            ${{ runner.temp }}/local-use-source-after.json
+            ${{ runner.temp }}/local-use-tests.log
+          if-no-files-found: error
+          retention-days: 30

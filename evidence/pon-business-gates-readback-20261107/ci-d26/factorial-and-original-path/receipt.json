@@ -1,0 +1,42 @@
+{
+  "job_id": 128435635972,
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128435635972/logs"
+  ],
+  "exit_code": 0,
+  "bytes": 239659,
+  "sha256": "3a2326c0c5ee0efe07f140c6eb063feb5b43c534c107446fd023e9eb80d54c0d",
+  "log_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T150832Z-d26e047dedfc-864f9bae/factorial-lint-read-v1/job-128435635972.log",
+  "diagnostics": [
+    {
+      "line": 1825,
+      "text": "2026-11-07T14:58:40.5332705Z     Checking trnm-transport v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport)\n2026-11-07T14:58:40.6030187Z     Checking trnm-mempool v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mempool)\n2026-11-07T14:58:42.2184029Z     Checking trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)\n2026-11-07T14:59:01.3076003Z error: call to `std::mem::drop` with a value that does not implement `Drop`. Dropping such a type only extends its contained lifetimes\n2026-11-07T14:59:01.3076747Z    --> crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs:434:9\n2026-11-07T14:59:01.3077146Z     |\n2026-11-07T14:59:01.3077500Z 434 |         drop(owner);\n2026-11-07T14:59:01.3077706Z     |         ^^^^^^^^^^^\n2026-11-07T14:59:01.3077928Z     |\n2026-11-07T14:59:01.3079374Z note: argument has type `trnm_sqlite_io_boundary::TransactionScope<'_>`\n2026-11-07T14:59:01.3079826Z    --> crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs:434:14\n2026-11-07T14:59:01.3080155Z     |\n2026-11-07T14:59:01.3080324Z 434 |         drop(owner);\n2026-11-07T14:59:01.3080523Z     |              ^^^^^\n2026-11-07T14:59:01.3081195Z     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#drop_non_drop"
+    },
+    {
+      "line": 1836,
+      "text": "2026-11-07T14:59:01.3080155Z     |\n2026-11-07T14:59:01.3080324Z 434 |         drop(owner);\n2026-11-07T14:59:01.3080523Z     |              ^^^^^\n2026-11-07T14:59:01.3081195Z     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#drop_non_drop\n2026-11-07T14:59:01.3081720Z     = note: `-D clippy::drop-non-drop` implied by `-D warnings`\n2026-11-07T14:59:01.3082096Z     = help: to override `-D warnings` add `#[allow(clippy::drop_non_drop)]`\n2026-11-07T14:59:01.3082341Z \n2026-11-07T14:59:04.1022271Z error: could not compile `trnm-pon-node` (lib test) due to 1 previous error\n2026-11-07T14:59:04.1022878Z warning: build failed, waiting for other jobs to finish...\n2026-11-07T14:59:04.2306278Z ##[error]Process completed with exit code 101.\n2026-11-07T14:59:04.2350231Z ##[group]Run env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch \"x64\" --legal-strategy-v3\n2026-11-07T14:59:04.2350726Z \u001b[36;1menv -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch \"x64\" --legal-strategy-v3\u001b[0m\n2026-11-07T14:59:04.2367134Z shell: /usr/bin/bash -e {0}\n2026-11-07T14:59:04.2367277Z env:\n2026-11-07T14:59:04.2367389Z   CI: true"
+    },
+    {
+      "line": 1837,
+      "text": "2026-11-07T14:59:01.3080324Z 434 |         drop(owner);\n2026-11-07T14:59:01.3080523Z     |              ^^^^^\n2026-11-07T14:59:01.3081195Z     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#drop_non_drop\n2026-11-07T14:59:01.3081720Z     = note: `-D clippy::drop-non-drop` implied by `-D warnings`\n2026-11-07T14:59:01.3082096Z     = help: to override `-D warnings` add `#[allow(clippy::drop_non_drop)]`\n2026-11-07T14:59:01.3082341Z \n2026-11-07T14:59:04.1022271Z error: could not compile `trnm-pon-node` (lib test) due to 1 previous error\n2026-11-07T14:59:04.1022878Z warning: build failed, waiting for other jobs to finish...\n2026-11-07T14:59:04.2306278Z ##[error]Process completed with exit code 101.\n2026-11-07T14:59:04.2350231Z ##[group]Run env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch \"x64\" --legal-strategy-v3\n2026-11-07T14:59:04.2350726Z \u001b[36;1menv -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch \"x64\" --legal-strategy-v3\u001b[0m\n2026-11-07T14:59:04.2367134Z shell: /usr/bin/bash -e {0}\n2026-11-07T14:59:04.2367277Z env:\n2026-11-07T14:59:04.2367389Z   CI: true\n2026-11-07T14:59:04.2367502Z   CARGO_INCREMENTAL: 0"
+    },
+    {
+      "line": 1838,
+      "text": "2026-11-07T14:59:01.3080523Z     |              ^^^^^\n2026-11-07T14:59:01.3081195Z     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#drop_non_drop\n2026-11-07T14:59:01.3081720Z     = note: `-D clippy::drop-non-drop` implied by `-D warnings`\n2026-11-07T14:59:01.3082096Z     = help: to override `-D warnings` add `#[allow(clippy::drop_non_drop)]`\n2026-11-07T14:59:01.3082341Z \n2026-11-07T14:59:04.1022271Z error: could not compile `trnm-pon-node` (lib test) due to 1 previous error\n2026-11-07T14:59:04.1022878Z warning: build failed, waiting for other jobs to finish...\n2026-11-07T14:59:04.2306278Z ##[error]Process completed with exit code 101.\n2026-11-07T14:59:04.2350231Z ##[group]Run env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch \"x64\" --legal-strategy-v3\n2026-11-07T14:59:04.2350726Z \u001b[36;1menv -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch \"x64\" --legal-strategy-v3\u001b[0m\n2026-11-07T14:59:04.2367134Z shell: /usr/bin/bash -e {0}\n2026-11-07T14:59:04.2367277Z env:\n2026-11-07T14:59:04.2367389Z   CI: true\n2026-11-07T14:59:04.2367502Z   CARGO_INCREMENTAL: 0\n2026-11-07T14:59:04.2367626Z   CARGO_BUILD_JOBS: 2"
+    },
+    {
+      "line": 1840,
+      "text": "2026-11-07T14:59:01.3081720Z     = note: `-D clippy::drop-non-drop` implied by `-D warnings`\n2026-11-07T14:59:01.3082096Z     = help: to override `-D warnings` add `#[allow(clippy::drop_non_drop)]`\n2026-11-07T14:59:01.3082341Z \n2026-11-07T14:59:04.1022271Z error: could not compile `trnm-pon-node` (lib test) due to 1 previous error\n2026-11-07T14:59:04.1022878Z warning: build failed, waiting for other jobs to finish...\n2026-11-07T14:59:04.2306278Z ##[error]Process completed with exit code 101.\n2026-11-07T14:59:04.2350231Z ##[group]Run env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch \"x64\" --legal-strategy-v3\n2026-11-07T14:59:04.2350726Z \u001b[36;1menv -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch \"x64\" --legal-strategy-v3\u001b[0m\n2026-11-07T14:59:04.2367134Z shell: /usr/bin/bash -e {0}\n2026-11-07T14:59:04.2367277Z env:\n2026-11-07T14:59:04.2367389Z   CI: true\n2026-11-07T14:59:04.2367502Z   CARGO_INCREMENTAL: 0\n2026-11-07T14:59:04.2367626Z   CARGO_BUILD_JOBS: 2\n2026-11-07T14:59:04.2367745Z   RUST_TEST_THREADS: 1\n2026-11-07T14:59:04.2367869Z   CARGO_TERM_COLOR: never"
+    },
+    {
+      "line": 1842,
+      "text": "2026-11-07T14:59:01.3082341Z \n2026-11-07T14:59:04.1022271Z error: could not compile `trnm-pon-node` (lib test) due to 1 previous error\n2026-11-07T14:59:04.1022878Z warning: build failed, waiting for other jobs to finish...\n2026-11-07T14:59:04.2306278Z ##[error]Process completed with exit code 101.\n2026-11-07T14:59:04.2350231Z ##[group]Run env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch \"x64\" --legal-strategy-v3\n2026-11-07T14:59:04.2350726Z \u001b[36;1menv -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch \"x64\" --legal-strategy-v3\u001b[0m\n2026-11-07T14:59:04.2367134Z shell: /usr/bin/bash -e {0}\n2026-11-07T14:59:04.2367277Z env:\n2026-11-07T14:59:04.2367389Z   CI: true\n2026-11-07T14:59:04.2367502Z   CARGO_INCREMENTAL: 0\n2026-11-07T14:59:04.2367626Z   CARGO_BUILD_JOBS: 2\n2026-11-07T14:59:04.2367745Z   RUST_TEST_THREADS: 1\n2026-11-07T14:59:04.2367869Z   CARGO_TERM_COLOR: never\n2026-11-07T14:59:04.2368012Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-07T14:59:04.2368163Z   TRNM_COST_RUNNER_LABEL: ubuntu-24.04"
+    }
+  ]
+}

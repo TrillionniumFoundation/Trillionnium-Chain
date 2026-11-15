@@ -1,0 +1,1878 @@
+{
+  "schema_version": 1,
+  "observation_date": "2026-11-08",
+  "source": {
+    "title": "How to Prove Post-Quantum Security for Succinct Non-Interactive Reductions",
+    "authors": [
+      "Alessandro Chiesa",
+      "Zijing Di",
+      "Zihan Hu",
+      "Yuxi Zheng"
+    ],
+    "history_url": "https://eprint.iacr.org/archive/versions/2025/2166",
+    "pdfs": {
+      "january": {
+        "revision_id": "20260101:061307",
+        "url": "https://eprint.iacr.org/archive/2025/2166/1767247987.pdf",
+        "sha256": "215a62b9a1b5144c89ae103aaabaf6049eab23f7ccb23130bc7d65d597c1eac9",
+        "bytes": 927381
+      },
+      "march": {
+        "revision_id": "20260302:160701",
+        "url": "https://eprint.iacr.org/archive/2025/2166/1772467621.pdf",
+        "sha256": "2cfb88c76732d9f39f4b1943b4aabc0390dd3d17830d91d910c38e16e4bb5a30",
+        "bytes": 927435
+      }
+    }
+  },
+  "render": {
+    "library": "PyMuPDF",
+    "version": "1.26.6",
+    "scale": 1.5,
+    "dpi": 108,
+    "colorspace": "RGB",
+    "alpha": false
+  },
+  "page_count": 102,
+  "text_different_pages": [
+    1,
+    4,
+    100,
+    101,
+    102
+  ],
+  "render_different_pages": [
+    1,
+    4,
+    100,
+    101,
+    102
+  ],
+  "pages": [
+    {
+      "pdf_page": 1,
+      "text_equal": false,
+      "rgb_pixels_equal": false,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "c4b614c5f5acc060ceaafcc8552da3a42d9c24040813f728dfc41c9b7f609cbd",
+      "march_text_sha256": "a9bd5325b05aa3d5cdfb07caf441c7dc57ecec18ba1f2f17714729a1230b5956",
+      "january_rgb_sha256": "941aa5b4f96ca15a866782e6ae1694cd42e5a69187f7f5f8840279c682e6c36c",
+      "march_rgb_sha256": "deb69c89a2ad51d0cdd7585dc423d28b6d2836212211414ea9ceb3d98b92bc2e"
+    },
+    {
+      "pdf_page": 2,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "504362e8ccbf342a9581aeba88f15bebd4b0a6ccfc56967c1fe356941f658b45",
+      "march_text_sha256": "504362e8ccbf342a9581aeba88f15bebd4b0a6ccfc56967c1fe356941f658b45",
+      "january_rgb_sha256": "bee4f1eb4acd2d0990ae623f7e19ca6fe5f3bc0975d629b037db5830dd320bfd",
+      "march_rgb_sha256": "bee4f1eb4acd2d0990ae623f7e19ca6fe5f3bc0975d629b037db5830dd320bfd"
+    },
+    {
+      "pdf_page": 3,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "709b0617adf3eea33836d210761a233253bf8514b77b02bddab9eb1cb8f34e4e",
+      "march_text_sha256": "709b0617adf3eea33836d210761a233253bf8514b77b02bddab9eb1cb8f34e4e",
+      "january_rgb_sha256": "733b30522b6959498e7d06c32a1ad5126e3683298c2c67bd48f77a663b23dbd7",
+      "march_rgb_sha256": "733b30522b6959498e7d06c32a1ad5126e3683298c2c67bd48f77a663b23dbd7"
+    },
+    {
+      "pdf_page": 4,
+      "text_equal": false,
+      "rgb_pixels_equal": false,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "ab12e8afbbc29ec72e75f84308cfcd4ff12599ebc8b2dc41cbe22ba01683ea41",
+      "march_text_sha256": "634fae92b6548ef8da6bafb44068c5309aac5b14ec79d398b7072cee783b2b9e",
+      "january_rgb_sha256": "1f2221c1ce997c339a79292f9a8e3c88fead176b76ab449118d615a65ce05fb8",
+      "march_rgb_sha256": "b78f707a7d1719f7c8d44cc67dca02a585a96312141ce394a49aa6db42c40868"
+    },
+    {
+      "pdf_page": 5,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "e82554b695c1716539be52a29ca44db99af642204cf66c525d587ac3a4f9c9e7",
+      "march_text_sha256": "e82554b695c1716539be52a29ca44db99af642204cf66c525d587ac3a4f9c9e7",
+      "january_rgb_sha256": "90d343ce9e702bedbbd819e68b1bc79480f9f1e4855fd407bb2f5d4e94c9ec61",
+      "march_rgb_sha256": "90d343ce9e702bedbbd819e68b1bc79480f9f1e4855fd407bb2f5d4e94c9ec61"
+    },
+    {
+      "pdf_page": 6,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "73d10922e3ecc5afc7ba3d033da2d2b75ee34ee2049bce7ab9bdface898b5d70",
+      "march_text_sha256": "73d10922e3ecc5afc7ba3d033da2d2b75ee34ee2049bce7ab9bdface898b5d70",
+      "january_rgb_sha256": "a326961a8b30acdfea11f7ca816e3df46366d61460f8eeb8c581ccb82306658f",
+      "march_rgb_sha256": "a326961a8b30acdfea11f7ca816e3df46366d61460f8eeb8c581ccb82306658f"
+    },
+    {
+      "pdf_page": 7,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "620c30be3445329b0cf345afff8895e77e6d7e39ae16db838745be5acb5d6b16",
+      "march_text_sha256": "620c30be3445329b0cf345afff8895e77e6d7e39ae16db838745be5acb5d6b16",
+      "january_rgb_sha256": "cc53cf2cb3c7a65f0353cf770990d4a68f3d717a4aeda0ae15615d260a1aea6f",
+      "march_rgb_sha256": "cc53cf2cb3c7a65f0353cf770990d4a68f3d717a4aeda0ae15615d260a1aea6f"
+    },
+    {
+      "pdf_page": 8,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "3fcdedc1f3cba53031ca1eec038dfb2508a6e26ef5101d7bcc54b5b640eb5980",
+      "march_text_sha256": "3fcdedc1f3cba53031ca1eec038dfb2508a6e26ef5101d7bcc54b5b640eb5980",
+      "january_rgb_sha256": "888baa9ee8670ead9a61b5b5e3954716d3f39bbfbdec90d3162ed4c515f0a897",
+      "march_rgb_sha256": "888baa9ee8670ead9a61b5b5e3954716d3f39bbfbdec90d3162ed4c515f0a897"
+    },
+    {
+      "pdf_page": 9,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "fddd33be8db7a90ba6d08d0c02c185c31be3b50c3fef090f4e33c8c9364f11a4",
+      "march_text_sha256": "fddd33be8db7a90ba6d08d0c02c185c31be3b50c3fef090f4e33c8c9364f11a4",
+      "january_rgb_sha256": "3c4cb8542ec68098ea741b77a6e6cfc8114e5a254e406a77880c34d6ad64bffd",
+      "march_rgb_sha256": "3c4cb8542ec68098ea741b77a6e6cfc8114e5a254e406a77880c34d6ad64bffd"
+    },
+    {
+      "pdf_page": 10,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "85e4a216d9d37437a7cec3371d4693e957387336d86a05e7677440f9e7aca379",
+      "march_text_sha256": "85e4a216d9d37437a7cec3371d4693e957387336d86a05e7677440f9e7aca379",
+      "january_rgb_sha256": "bc56e582d562d4edb8c301439525630d35f67b8bb5a5dfab908aa850a0c6b005",
+      "march_rgb_sha256": "bc56e582d562d4edb8c301439525630d35f67b8bb5a5dfab908aa850a0c6b005"
+    },
+    {
+      "pdf_page": 11,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "555781cc350844e624fcb275e1ee8ba6b7df7e01cb447bc30d94b23d02d76666",
+      "march_text_sha256": "555781cc350844e624fcb275e1ee8ba6b7df7e01cb447bc30d94b23d02d76666",
+      "january_rgb_sha256": "aba5207b11d3fc01b4e207be70d94ca877ddf08dcaece45852b6520b6caf7e78",
+      "march_rgb_sha256": "aba5207b11d3fc01b4e207be70d94ca877ddf08dcaece45852b6520b6caf7e78"
+    },
+    {
+      "pdf_page": 12,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "82e49dffe2abe3cf57b1ea42a537c9467b774daa699c6df713665c2384ec83a0",
+      "march_text_sha256": "82e49dffe2abe3cf57b1ea42a537c9467b774daa699c6df713665c2384ec83a0",
+      "january_rgb_sha256": "0ea2cb88a11842bb58ca943d53df686c835d51503457b60a664a5ddc7abf5ee6",
+      "march_rgb_sha256": "0ea2cb88a11842bb58ca943d53df686c835d51503457b60a664a5ddc7abf5ee6"
+    },
+    {
+      "pdf_page": 13,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "75bbb0a237ff3078fef711fc7cfe66522cd6c066a454d40f1e225222d4b929e1",
+      "march_text_sha256": "75bbb0a237ff3078fef711fc7cfe66522cd6c066a454d40f1e225222d4b929e1",
+      "january_rgb_sha256": "df03b789e8be48cc845c51d7c4c3415fc0fd135b891b1eaff4b235205d3eabe7",
+      "march_rgb_sha256": "df03b789e8be48cc845c51d7c4c3415fc0fd135b891b1eaff4b235205d3eabe7"
+    },
+    {
+      "pdf_page": 14,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "b989a32d11aa707b59cf63f3a599ceaad06e4a78808543f45a9e4fff5ed90a78",
+      "march_text_sha256": "b989a32d11aa707b59cf63f3a599ceaad06e4a78808543f45a9e4fff5ed90a78",
+      "january_rgb_sha256": "1d60c8dcee65ff6e22ff7c509bfb1c75ae2a58849e2812dede2b767b8c20dfc0",
+      "march_rgb_sha256": "1d60c8dcee65ff6e22ff7c509bfb1c75ae2a58849e2812dede2b767b8c20dfc0"
+    },
+    {
+      "pdf_page": 15,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "abf44e5c74b83e15400cc84f271686840a3bfac30d04da05a20912c73a09763d",
+      "march_text_sha256": "abf44e5c74b83e15400cc84f271686840a3bfac30d04da05a20912c73a09763d",
+      "january_rgb_sha256": "f59fe55840c241d2fdd16f02901de2c26fb9b81a117ab90df51cc8af2e5e74ae",
+      "march_rgb_sha256": "f59fe55840c241d2fdd16f02901de2c26fb9b81a117ab90df51cc8af2e5e74ae"
+    },
+    {
+      "pdf_page": 16,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "efda71812f9e3ddc13703a09452440684f5077e92a5ee8515a3cc814525be0cc",
+      "march_text_sha256": "efda71812f9e3ddc13703a09452440684f5077e92a5ee8515a3cc814525be0cc",
+      "january_rgb_sha256": "5f936badc129990d0bc0cd2b80c5ad9bed6b4d1745d3814e264258f4c9e3f9a5",
+      "march_rgb_sha256": "5f936badc129990d0bc0cd2b80c5ad9bed6b4d1745d3814e264258f4c9e3f9a5"
+    },
+    {
+      "pdf_page": 17,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "019f997388eaca336064f28260f11f7cec73dc93d2f13e3e69231db974afdf5a",
+      "march_text_sha256": "019f997388eaca336064f28260f11f7cec73dc93d2f13e3e69231db974afdf5a",
+      "january_rgb_sha256": "c720f5f5b2480974d7f79ff35c4c78be5c2f44db5c4f8c887a8ea07efe8e1e61",
+      "march_rgb_sha256": "c720f5f5b2480974d7f79ff35c4c78be5c2f44db5c4f8c887a8ea07efe8e1e61"
+    },
+    {
+      "pdf_page": 18,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "7097823f282c5241a176f3648f655eed450a920a8f3a0dc934dbd9f110828283",
+      "march_text_sha256": "7097823f282c5241a176f3648f655eed450a920a8f3a0dc934dbd9f110828283",
+      "january_rgb_sha256": "6af648a456cda8886dc2ae61d86bbce966dcee38a3d46127bdb91a37a67c30b0",
+      "march_rgb_sha256": "6af648a456cda8886dc2ae61d86bbce966dcee38a3d46127bdb91a37a67c30b0"
+    },
+    {
+      "pdf_page": 19,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "99374af81d5f4e4843ffa1f753afdf3655aba66f1e73cb0b625d43e7aeb563f4",
+      "march_text_sha256": "99374af81d5f4e4843ffa1f753afdf3655aba66f1e73cb0b625d43e7aeb563f4",
+      "january_rgb_sha256": "eefba2234961ab30b47b1f4d2a7093880237dd4bf2859f9e4230319686450386",
+      "march_rgb_sha256": "eefba2234961ab30b47b1f4d2a7093880237dd4bf2859f9e4230319686450386"
+    },
+    {
+      "pdf_page": 20,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "b1d32944e3b4ba4d4b4fb9b79f8dfc40c9c352be334d0eed2fa08387c9be16ff",
+      "march_text_sha256": "b1d32944e3b4ba4d4b4fb9b79f8dfc40c9c352be334d0eed2fa08387c9be16ff",
+      "january_rgb_sha256": "27506847563427b98067042a5eab8a86c59feeafd398ad49a54cd7493d7322a3",
+      "march_rgb_sha256": "27506847563427b98067042a5eab8a86c59feeafd398ad49a54cd7493d7322a3"
+    },
+    {
+      "pdf_page": 21,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "89a3e961b76088c7d768d763aac6b1345531d1207bc6faa599d7864249644521",
+      "march_text_sha256": "89a3e961b76088c7d768d763aac6b1345531d1207bc6faa599d7864249644521",
+      "january_rgb_sha256": "15af915c30067e552c7429dcc7d268f4040f84bea73194605a71589b49396766",
+      "march_rgb_sha256": "15af915c30067e552c7429dcc7d268f4040f84bea73194605a71589b49396766"
+    },
+    {
+      "pdf_page": 22,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "ecdb12e04fff43e4ca271cb991ab229432344917be80a6a360852ae36ad47d11",
+      "march_text_sha256": "ecdb12e04fff43e4ca271cb991ab229432344917be80a6a360852ae36ad47d11",
+      "january_rgb_sha256": "bfff45eb066805a1a818c8bcfe94ca74c77dd583c63de9a9ddbccbdf930b5429",
+      "march_rgb_sha256": "bfff45eb066805a1a818c8bcfe94ca74c77dd583c63de9a9ddbccbdf930b5429"
+    },
+    {
+      "pdf_page": 23,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "bfd8a4ebcdaee13e6b9d9ee89eb55202616843b3a1c508d1afd7a81001917b88",
+      "march_text_sha256": "bfd8a4ebcdaee13e6b9d9ee89eb55202616843b3a1c508d1afd7a81001917b88",
+      "january_rgb_sha256": "09e21bad1b792a289a540d0d80b23095fe1859b67d62ed2b3a3243df2fb897eb",
+      "march_rgb_sha256": "09e21bad1b792a289a540d0d80b23095fe1859b67d62ed2b3a3243df2fb897eb"
+    },
+    {
+      "pdf_page": 24,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "1c26ef2780d806078207420125232c140d38f5651fc71927cde8e6a8690dbbfa",
+      "march_text_sha256": "1c26ef2780d806078207420125232c140d38f5651fc71927cde8e6a8690dbbfa",
+      "january_rgb_sha256": "12dcda98ce4111776cffde21169ca0a547588f6da427d29e6e2b1ab3e5b70335",
+      "march_rgb_sha256": "12dcda98ce4111776cffde21169ca0a547588f6da427d29e6e2b1ab3e5b70335"
+    },
+    {
+      "pdf_page": 25,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "150dcd7b2bb468c430e6bc75d59d109763d41b94d993dbfa42346ab508db6a2b",
+      "march_text_sha256": "150dcd7b2bb468c430e6bc75d59d109763d41b94d993dbfa42346ab508db6a2b",
+      "january_rgb_sha256": "37b88325bf5419f0e37333c6e4adfc5ad353e7d75404510070a2792d8ea87e54",
+      "march_rgb_sha256": "37b88325bf5419f0e37333c6e4adfc5ad353e7d75404510070a2792d8ea87e54"
+    },
+    {
+      "pdf_page": 26,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "3675e33e3550ab45c58a7c3334c7b4efec1a0287b632fb16ecd9f12e2ad4436a",
+      "march_text_sha256": "3675e33e3550ab45c58a7c3334c7b4efec1a0287b632fb16ecd9f12e2ad4436a",
+      "january_rgb_sha256": "2c4eba1429a9dbdb956d39a1b79368cb1ac4822ea51d12cd9f5fa8d952d6349b",
+      "march_rgb_sha256": "2c4eba1429a9dbdb956d39a1b79368cb1ac4822ea51d12cd9f5fa8d952d6349b"
+    },
+    {
+      "pdf_page": 27,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "80c42f9a2b5f344265084609611fbe5c98e722542a25b84fc96eda6170fa1382",
+      "march_text_sha256": "80c42f9a2b5f344265084609611fbe5c98e722542a25b84fc96eda6170fa1382",
+      "january_rgb_sha256": "e8f7e958b1dd959c88f11b420d73c3bed28c3c4debf62f77cbe1fb3c47e15f4d",
+      "march_rgb_sha256": "e8f7e958b1dd959c88f11b420d73c3bed28c3c4debf62f77cbe1fb3c47e15f4d"
+    },
+    {
+      "pdf_page": 28,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "c4bf778978a2943c51dc0ce178b5de47761bc8a342ae2e98aa445d5e2f88f653",
+      "march_text_sha256": "c4bf778978a2943c51dc0ce178b5de47761bc8a342ae2e98aa445d5e2f88f653",
+      "january_rgb_sha256": "1912203ec7256aceadf31df288a190998280e8f9740461fdf57c853fe7aa9c9f",
+      "march_rgb_sha256": "1912203ec7256aceadf31df288a190998280e8f9740461fdf57c853fe7aa9c9f"
+    },
+    {
+      "pdf_page": 29,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "6bc7b081d52f43502ba5bebb9dcedb61ac24de29d7bb72ff08a8fda27e6dc32e",
+      "march_text_sha256": "6bc7b081d52f43502ba5bebb9dcedb61ac24de29d7bb72ff08a8fda27e6dc32e",
+      "january_rgb_sha256": "d01b56c8fd08bc99f865588856a915a9479611e6a4b5132de227f8f23eb4c253",
+      "march_rgb_sha256": "d01b56c8fd08bc99f865588856a915a9479611e6a4b5132de227f8f23eb4c253"
+    },
+    {
+      "pdf_page": 30,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "3213684baacd832b2d636724e627dcd3a3d63c33b5d88f2d61fe17001f9522ae",
+      "march_text_sha256": "3213684baacd832b2d636724e627dcd3a3d63c33b5d88f2d61fe17001f9522ae",
+      "january_rgb_sha256": "ba08d0c0590f2feb0aea13956e26b1e0fba280b6209e5418787e79a3455ac8bc",
+      "march_rgb_sha256": "ba08d0c0590f2feb0aea13956e26b1e0fba280b6209e5418787e79a3455ac8bc"
+    },
+    {
+      "pdf_page": 31,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "b311b124a00fe983bb749ad82ddf2586669b3fb474e97eba6803d9a3c2099ac5",
+      "march_text_sha256": "b311b124a00fe983bb749ad82ddf2586669b3fb474e97eba6803d9a3c2099ac5",
+      "january_rgb_sha256": "637886fd2a01fc1fb9ab6a39d21d8bbce02a7be71053ea9428aa95caa4ed4541",
+      "march_rgb_sha256": "637886fd2a01fc1fb9ab6a39d21d8bbce02a7be71053ea9428aa95caa4ed4541"
+    },
+    {
+      "pdf_page": 32,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "da172f42440048b14ca456c2bb4588e22822058f711b31982b589f3c88b221b4",
+      "march_text_sha256": "da172f42440048b14ca456c2bb4588e22822058f711b31982b589f3c88b221b4",
+      "january_rgb_sha256": "0c87414b2cab0332cd2dcef81e3f723f13b7b9a0c9e677a3f58adbed9f5c52dd",
+      "march_rgb_sha256": "0c87414b2cab0332cd2dcef81e3f723f13b7b9a0c9e677a3f58adbed9f5c52dd"
+    },
+    {
+      "pdf_page": 33,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "044647086db0e8b49d43cdec31e76ccd48c6a78f68628a1601d74146807bcac4",
+      "march_text_sha256": "044647086db0e8b49d43cdec31e76ccd48c6a78f68628a1601d74146807bcac4",
+      "january_rgb_sha256": "bed13544ec9fc457b5976d7030362253799e2b6f6dabc546f6f0180d17912279",
+      "march_rgb_sha256": "bed13544ec9fc457b5976d7030362253799e2b6f6dabc546f6f0180d17912279"
+    },
+    {
+      "pdf_page": 34,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "0ea7d45c232160b977bcbf1662c3b95777eaf87e8f9a0d9575cd659c8cef7551",
+      "march_text_sha256": "0ea7d45c232160b977bcbf1662c3b95777eaf87e8f9a0d9575cd659c8cef7551",
+      "january_rgb_sha256": "e2d6f3a785d85186e3bfd3a0446b6215988c7c2240547f3192d99833a19cd937",
+      "march_rgb_sha256": "e2d6f3a785d85186e3bfd3a0446b6215988c7c2240547f3192d99833a19cd937"
+    },
+    {
+      "pdf_page": 35,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "2658aa6127c087d5d1040e82af73e0170ce169725ced281e4dba1324f3327b10",
+      "march_text_sha256": "2658aa6127c087d5d1040e82af73e0170ce169725ced281e4dba1324f3327b10",
+      "january_rgb_sha256": "455318c80e28ea4c375a7ac1ca842c93cd82850e670e1e0bc2b43168599409f9",
+      "march_rgb_sha256": "455318c80e28ea4c375a7ac1ca842c93cd82850e670e1e0bc2b43168599409f9"
+    },
+    {
+      "pdf_page": 36,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "0a2b72d65f0afaeeadccef3110b63929b49c19a47d771a6d8287af8b94f53b22",
+      "march_text_sha256": "0a2b72d65f0afaeeadccef3110b63929b49c19a47d771a6d8287af8b94f53b22",
+      "january_rgb_sha256": "b8f57191e19ad9fa01d2a38e781664555aa3964f450e3ac8901c613025b45792",
+      "march_rgb_sha256": "b8f57191e19ad9fa01d2a38e781664555aa3964f450e3ac8901c613025b45792"
+    },
+    {
+      "pdf_page": 37,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "5f689d8465b66a238230b58043f2b6a830a1b6722d6d3fe1b67988c107febe90",
+      "march_text_sha256": "5f689d8465b66a238230b58043f2b6a830a1b6722d6d3fe1b67988c107febe90",
+      "january_rgb_sha256": "ea4e28f885f40fcb733d4cbbee0b0360764b0da6cca579f95bcc38a438a1b65d",
+      "march_rgb_sha256": "ea4e28f885f40fcb733d4cbbee0b0360764b0da6cca579f95bcc38a438a1b65d"
+    },
+    {
+      "pdf_page": 38,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "fdde55a007c828b7882329f77a8f2ba8ea93976736afc76b30dcfb5e5c30247c",
+      "march_text_sha256": "fdde55a007c828b7882329f77a8f2ba8ea93976736afc76b30dcfb5e5c30247c",
+      "january_rgb_sha256": "85d9745715bbf3be97a781bfa703e30eb9dee84f299c19b8f519f78ddd7a9585",
+      "march_rgb_sha256": "85d9745715bbf3be97a781bfa703e30eb9dee84f299c19b8f519f78ddd7a9585"
+    },
+    {
+      "pdf_page": 39,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "bd1a05c5b202ee207762e3ef78d2b7815d739b445031770adc98dd5b7e911baa",
+      "march_text_sha256": "bd1a05c5b202ee207762e3ef78d2b7815d739b445031770adc98dd5b7e911baa",
+      "january_rgb_sha256": "e1dd7277abdf96b78d6f214633408b66a735df3f294913a9de784ffc293c3b29",
+      "march_rgb_sha256": "e1dd7277abdf96b78d6f214633408b66a735df3f294913a9de784ffc293c3b29"
+    },
+    {
+      "pdf_page": 40,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "3dc8091f8279fdf8fa6ae20646e2f430dd5b81ec60a9caf836931ada16882f74",
+      "march_text_sha256": "3dc8091f8279fdf8fa6ae20646e2f430dd5b81ec60a9caf836931ada16882f74",
+      "january_rgb_sha256": "6bc72ffaa0dad4608791a017f682f1f114afdafc0afa2c1ea1702f47f1be89ce",
+      "march_rgb_sha256": "6bc72ffaa0dad4608791a017f682f1f114afdafc0afa2c1ea1702f47f1be89ce"
+    },
+    {
+      "pdf_page": 41,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "b9f5b9d2a9c32f7c43a22fbc9ad2c0104f69ef9983a000749f20512438917311",
+      "march_text_sha256": "b9f5b9d2a9c32f7c43a22fbc9ad2c0104f69ef9983a000749f20512438917311",
+      "january_rgb_sha256": "0585c00ea82f59209755288441ff0346c511e3366f045fa1e62a94167874df99",
+      "march_rgb_sha256": "0585c00ea82f59209755288441ff0346c511e3366f045fa1e62a94167874df99"
+    },
+    {
+      "pdf_page": 42,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "91fabb27a34d667764ce9e5e280b203c7df1f3980fd30308eacedae2871ab458",
+      "march_text_sha256": "91fabb27a34d667764ce9e5e280b203c7df1f3980fd30308eacedae2871ab458",
+      "january_rgb_sha256": "f7199acbc5885cbc7d34fa8b91af44fdebf53a3f73d1f48aa82cea9d81fb8396",
+      "march_rgb_sha256": "f7199acbc5885cbc7d34fa8b91af44fdebf53a3f73d1f48aa82cea9d81fb8396"
+    },
+    {
+      "pdf_page": 43,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "57ac9f00366bf22c472e26baec6a1669ca203a3a556d607d5b7afe155ece385b",
+      "march_text_sha256": "57ac9f00366bf22c472e26baec6a1669ca203a3a556d607d5b7afe155ece385b",
+      "january_rgb_sha256": "c0e63d2ebd32548528ff33e159b4d754408e0841317f1096e027c74d7c191df2",
+      "march_rgb_sha256": "c0e63d2ebd32548528ff33e159b4d754408e0841317f1096e027c74d7c191df2"
+    },
+    {
+      "pdf_page": 44,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "7de365b4055cdd32a33cd4a09c00d1f2092f6d7e27f16afdb91720eb0832a871",
+      "march_text_sha256": "7de365b4055cdd32a33cd4a09c00d1f2092f6d7e27f16afdb91720eb0832a871",
+      "january_rgb_sha256": "7c69394720c600da473403ea779da993a195e1370aebeda85ccaf146ec031256",
+      "march_rgb_sha256": "7c69394720c600da473403ea779da993a195e1370aebeda85ccaf146ec031256"
+    },
+    {
+      "pdf_page": 45,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "c12c3ad64ab1bf44e841245b88ccc0e2e2337678ef3e64f5126640071f1e9c4a",
+      "march_text_sha256": "c12c3ad64ab1bf44e841245b88ccc0e2e2337678ef3e64f5126640071f1e9c4a",
+      "january_rgb_sha256": "536608a8562de25d957deb7c92ecb4cd84996f119d10e0b18d128a590d97fefe",
+      "march_rgb_sha256": "536608a8562de25d957deb7c92ecb4cd84996f119d10e0b18d128a590d97fefe"
+    },
+    {
+      "pdf_page": 46,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "bc76be7541031fddb51153adaf6f464ffbe3ae0e621ec4905ba31da73a67347a",
+      "march_text_sha256": "bc76be7541031fddb51153adaf6f464ffbe3ae0e621ec4905ba31da73a67347a",
+      "january_rgb_sha256": "de228f487325c55f37acd9d5a803d5f8a07f56311a15b6da129c17dcf9587fe4",
+      "march_rgb_sha256": "de228f487325c55f37acd9d5a803d5f8a07f56311a15b6da129c17dcf9587fe4"
+    },
+    {
+      "pdf_page": 47,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "89da46e0afc36fd29e15b599746309575da458f0e9069264af5df31b032f2517",
+      "march_text_sha256": "89da46e0afc36fd29e15b599746309575da458f0e9069264af5df31b032f2517",
+      "january_rgb_sha256": "723f33c851067245c82c9f176f6f3f0a50732838d5ae4704132dc16869628ac4",
+      "march_rgb_sha256": "723f33c851067245c82c9f176f6f3f0a50732838d5ae4704132dc16869628ac4"
+    },
+    {
+      "pdf_page": 48,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "8b500d871231753ee0fc983c6e8c36d31918ac3fa00c37a486f2859dee5fdd17",
+      "march_text_sha256": "8b500d871231753ee0fc983c6e8c36d31918ac3fa00c37a486f2859dee5fdd17",
+      "january_rgb_sha256": "66e87f5a5ceda49fc2c72c89e645d6bcc77d5ba4d0b600beabe046680393acb5",
+      "march_rgb_sha256": "66e87f5a5ceda49fc2c72c89e645d6bcc77d5ba4d0b600beabe046680393acb5"
+    },
+    {
+      "pdf_page": 49,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "999fde11e1ff252e1bad1c6a92ae1fb5d6a18e54fe07f9cfea560c6b84c91c33",
+      "march_text_sha256": "999fde11e1ff252e1bad1c6a92ae1fb5d6a18e54fe07f9cfea560c6b84c91c33",
+      "january_rgb_sha256": "4766600d111e0906c3a66d7590833a9869452ea609fcc2f4db8adfa371b0a9ac",
+      "march_rgb_sha256": "4766600d111e0906c3a66d7590833a9869452ea609fcc2f4db8adfa371b0a9ac"
+    },
+    {
+      "pdf_page": 50,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "37a85002d4fb496b1c50e7fadafd3df4ff6cccd7f057b779466ed9c0d2c6fb0a",
+      "march_text_sha256": "37a85002d4fb496b1c50e7fadafd3df4ff6cccd7f057b779466ed9c0d2c6fb0a",
+      "january_rgb_sha256": "3245e1f0e7118744fbf1cc11d1240810016f09a65429388fe1d4b97e43bc0972",
+      "march_rgb_sha256": "3245e1f0e7118744fbf1cc11d1240810016f09a65429388fe1d4b97e43bc0972"
+    },
+    {
+      "pdf_page": 51,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "5d46ef871d437741ae6c0474a1acea787ddfceda64f9b331c3d2bf77d1d3f4eb",
+      "march_text_sha256": "5d46ef871d437741ae6c0474a1acea787ddfceda64f9b331c3d2bf77d1d3f4eb",
+      "january_rgb_sha256": "123d8bc3f043e6162ba63c622074673e90e2147e22d3da8dc56410a4e2b68f0d",
+      "march_rgb_sha256": "123d8bc3f043e6162ba63c622074673e90e2147e22d3da8dc56410a4e2b68f0d"
+    },
+    {
+      "pdf_page": 52,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "2bbbb9acbb6ff0707df5c165c12c2d1a3949e0eff07401d274fb35204702d276",
+      "march_text_sha256": "2bbbb9acbb6ff0707df5c165c12c2d1a3949e0eff07401d274fb35204702d276",
+      "january_rgb_sha256": "3f4995da11a0655cf7f3b021a4b51a51ffaafd8c7cc05df066f02030e940ed57",
+      "march_rgb_sha256": "3f4995da11a0655cf7f3b021a4b51a51ffaafd8c7cc05df066f02030e940ed57"
+    },
+    {
+      "pdf_page": 53,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "a4019ab5c7d6623ec437c972541598d5c60aac9a0957152ce70b7e2af55296b0",
+      "march_text_sha256": "a4019ab5c7d6623ec437c972541598d5c60aac9a0957152ce70b7e2af55296b0",
+      "january_rgb_sha256": "e18b6233740da3762cd297c507dafabb3d52e8f7bcbaa522c1d5f9957f870fbb",
+      "march_rgb_sha256": "e18b6233740da3762cd297c507dafabb3d52e8f7bcbaa522c1d5f9957f870fbb"
+    },
+    {
+      "pdf_page": 54,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "fa44beeb832a32c2712da5a2b518e1ae5f2a2663310d3e92ca478de0dbdf6eb9",
+      "march_text_sha256": "fa44beeb832a32c2712da5a2b518e1ae5f2a2663310d3e92ca478de0dbdf6eb9",
+      "january_rgb_sha256": "8548aae537a08047b6103561eed5af12b45ddb87448fd3c1370db8bfcbf2b3fe",
+      "march_rgb_sha256": "8548aae537a08047b6103561eed5af12b45ddb87448fd3c1370db8bfcbf2b3fe"
+    },
+    {
+      "pdf_page": 55,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "6fba90c3bd7ffe995d0d7ba4a68dd415d4b05114b63c8cb8e2ea801ac20d5beb",
+      "march_text_sha256": "6fba90c3bd7ffe995d0d7ba4a68dd415d4b05114b63c8cb8e2ea801ac20d5beb",
+      "january_rgb_sha256": "910342f3dcf80d10b4cda559d0b79b65c14dc405b7676bee2d05919881dcb66a",
+      "march_rgb_sha256": "910342f3dcf80d10b4cda559d0b79b65c14dc405b7676bee2d05919881dcb66a"
+    },
+    {
+      "pdf_page": 56,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "d1508877492f421831881b36f62795e7cbfd5d090b6317b225a0dd0a0dfaf008",
+      "march_text_sha256": "d1508877492f421831881b36f62795e7cbfd5d090b6317b225a0dd0a0dfaf008",
+      "january_rgb_sha256": "ac5f54963ed73a1fab988faf89bd4ecccb4dc5e5c4835afc4a7c4f502b06ea3e",
+      "march_rgb_sha256": "ac5f54963ed73a1fab988faf89bd4ecccb4dc5e5c4835afc4a7c4f502b06ea3e"
+    },
+    {
+      "pdf_page": 57,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "3b9e30ae4f0692c8b7076dda7782313899a30afb3357fc018a7cfabe3f1ee744",
+      "march_text_sha256": "3b9e30ae4f0692c8b7076dda7782313899a30afb3357fc018a7cfabe3f1ee744",
+      "january_rgb_sha256": "3385d71e8d9708e2d31310af5d77ed120f8ff52408b9bb30106ab9b71902b371",
+      "march_rgb_sha256": "3385d71e8d9708e2d31310af5d77ed120f8ff52408b9bb30106ab9b71902b371"
+    },
+    {
+      "pdf_page": 58,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "f9191c6bdda0595a7297f6ab06bb986612462c85ef63ceea79ba76088732bdfb",
+      "march_text_sha256": "f9191c6bdda0595a7297f6ab06bb986612462c85ef63ceea79ba76088732bdfb",
+      "january_rgb_sha256": "9311d14e38fb35d9c2ce395c9fa43b02df0e77bc7507a11249670177a0f0984a",
+      "march_rgb_sha256": "9311d14e38fb35d9c2ce395c9fa43b02df0e77bc7507a11249670177a0f0984a"
+    },
+    {
+      "pdf_page": 59,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "183d7ad9255e9dd81fbe3f81b65515b42968b3d86867c571a5aba80035be76e3",
+      "march_text_sha256": "183d7ad9255e9dd81fbe3f81b65515b42968b3d86867c571a5aba80035be76e3",
+      "january_rgb_sha256": "8b4037b8fbbd7aebc7bc3f585afceea3fb62c6c66cc09650b212fe5e59bda380",
+      "march_rgb_sha256": "8b4037b8fbbd7aebc7bc3f585afceea3fb62c6c66cc09650b212fe5e59bda380"
+    },
+    {
+      "pdf_page": 60,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "b9a1a2090b505beafc27eeed0f25182e74d2c4ff83902b4bcbd1ae4e50e15cd7",
+      "march_text_sha256": "b9a1a2090b505beafc27eeed0f25182e74d2c4ff83902b4bcbd1ae4e50e15cd7",
+      "january_rgb_sha256": "4794296dee4767e23aa2afce5912b06f6d425bc9c8de3b14a652dda2571c416d",
+      "march_rgb_sha256": "4794296dee4767e23aa2afce5912b06f6d425bc9c8de3b14a652dda2571c416d"
+    },
+    {
+      "pdf_page": 61,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "201df0333063e3668ad76b93efdc2329d1e15725fd91f2a6df9b529db17f9419",
+      "march_text_sha256": "201df0333063e3668ad76b93efdc2329d1e15725fd91f2a6df9b529db17f9419",
+      "january_rgb_sha256": "3f806d13b93ddc7433a4b3f31b8955eea3ba6a69f41fe6ba4950687c1191fddf",
+      "march_rgb_sha256": "3f806d13b93ddc7433a4b3f31b8955eea3ba6a69f41fe6ba4950687c1191fddf"
+    },
+    {
+      "pdf_page": 62,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "cf0651455bb63834627cefcffa5ae50a11f0517d4c770b8afb72fdff982f2e9e",
+      "march_text_sha256": "cf0651455bb63834627cefcffa5ae50a11f0517d4c770b8afb72fdff982f2e9e",
+      "january_rgb_sha256": "c84f9841bf360cd806927f19d442dcd9a098a902f1313ad625af5cb2cd19959d",
+      "march_rgb_sha256": "c84f9841bf360cd806927f19d442dcd9a098a902f1313ad625af5cb2cd19959d"
+    },
+    {
+      "pdf_page": 63,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "d3eab5bc360433e66452a46aa8dbe67e5e1b66d747910b4db91df1ccf1d9a39e",
+      "march_text_sha256": "d3eab5bc360433e66452a46aa8dbe67e5e1b66d747910b4db91df1ccf1d9a39e",
+      "january_rgb_sha256": "fe44c96f60649c3c45316e4ad44517bd45d6d2435e9cc8caae822138079a69ea",
+      "march_rgb_sha256": "fe44c96f60649c3c45316e4ad44517bd45d6d2435e9cc8caae822138079a69ea"
+    },
+    {
+      "pdf_page": 64,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "352bc5a54425b64b0f7e59f496bf38429598a5c5b03563ac51793aec61ac721c",
+      "march_text_sha256": "352bc5a54425b64b0f7e59f496bf38429598a5c5b03563ac51793aec61ac721c",
+      "january_rgb_sha256": "b72b15db7b1bc72112d7eec57413ad5e19622a8729fccbf19b3682204be1dc46",
+      "march_rgb_sha256": "b72b15db7b1bc72112d7eec57413ad5e19622a8729fccbf19b3682204be1dc46"
+    },
+    {
+      "pdf_page": 65,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "d45415fd437aae448bb64b1c263a8692467d0e17a4ef0689ce32d3a35df25414",
+      "march_text_sha256": "d45415fd437aae448bb64b1c263a8692467d0e17a4ef0689ce32d3a35df25414",
+      "january_rgb_sha256": "3cb9e02b5e45a15fac4b425c664d8ad7083cf5b122bfb1d788dc3a9c63f77697",
+      "march_rgb_sha256": "3cb9e02b5e45a15fac4b425c664d8ad7083cf5b122bfb1d788dc3a9c63f77697"
+    },
+    {
+      "pdf_page": 66,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "a9de52b98725105639de639c69464d5598d4cf25b7063cf80ea0a4e0c5716bae",
+      "march_text_sha256": "a9de52b98725105639de639c69464d5598d4cf25b7063cf80ea0a4e0c5716bae",
+      "january_rgb_sha256": "e07923d68f43cbef3e2c745b666be9f94f5e90727022fd8ccbc20bc61582a101",
+      "march_rgb_sha256": "e07923d68f43cbef3e2c745b666be9f94f5e90727022fd8ccbc20bc61582a101"
+    },
+    {
+      "pdf_page": 67,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "12e75fee249270e7fca827cc5d430f92ae63679dce4856a230618fc121c6a35b",
+      "march_text_sha256": "12e75fee249270e7fca827cc5d430f92ae63679dce4856a230618fc121c6a35b",
+      "january_rgb_sha256": "53e264014f44f819048ed03c3ad89444b9754e900d6266c5f36a09f427241f50",
+      "march_rgb_sha256": "53e264014f44f819048ed03c3ad89444b9754e900d6266c5f36a09f427241f50"
+    },
+    {
+      "pdf_page": 68,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "28433c6251963e6640d60b544f019fc56afe3c90b0af79edae6664ebaa0e2232",
+      "march_text_sha256": "28433c6251963e6640d60b544f019fc56afe3c90b0af79edae6664ebaa0e2232",
+      "january_rgb_sha256": "e929439bcd27e1966441b863ac902e160d237441fbe13565b8f5a03f67b9f347",
+      "march_rgb_sha256": "e929439bcd27e1966441b863ac902e160d237441fbe13565b8f5a03f67b9f347"
+    },
+    {
+      "pdf_page": 69,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "e527b0c0add45e34ba2141ecd9c0fac4b88d9b969e8cf556a0a167e0e072bb3b",
+      "march_text_sha256": "e527b0c0add45e34ba2141ecd9c0fac4b88d9b969e8cf556a0a167e0e072bb3b",
+      "january_rgb_sha256": "4a2dcf50e45781cac473a10285b0461d78bc8d271ae9e0cfa3e0cceedfad7d01",
+      "march_rgb_sha256": "4a2dcf50e45781cac473a10285b0461d78bc8d271ae9e0cfa3e0cceedfad7d01"
+    },
+    {
+      "pdf_page": 70,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "3ff9e7aa611c9f337fd5f6f4709dda1d9203a3838de6c2a6611a53671c9d247a",
+      "march_text_sha256": "3ff9e7aa611c9f337fd5f6f4709dda1d9203a3838de6c2a6611a53671c9d247a",
+      "january_rgb_sha256": "08598cd6dea9b9a4f895e80588e7cdf189e9dffc6916c5a48e911afa32bdd2e2",
+      "march_rgb_sha256": "08598cd6dea9b9a4f895e80588e7cdf189e9dffc6916c5a48e911afa32bdd2e2"
+    },
+    {
+      "pdf_page": 71,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "ea760162a263a4652d9cf4e74c2083e92d38cedbcd413ca8006b79909d484f17",
+      "march_text_sha256": "ea760162a263a4652d9cf4e74c2083e92d38cedbcd413ca8006b79909d484f17",
+      "january_rgb_sha256": "207f1773c931bf9e3f741c9fe824e7cfbd7752547b086dad23641b3662580fc4",
+      "march_rgb_sha256": "207f1773c931bf9e3f741c9fe824e7cfbd7752547b086dad23641b3662580fc4"
+    },
+    {
+      "pdf_page": 72,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "2311c64f0b8ea9e188cabf8f899c33555062087de57bc715e4b42c2b4d3d1b9f",
+      "march_text_sha256": "2311c64f0b8ea9e188cabf8f899c33555062087de57bc715e4b42c2b4d3d1b9f",
+      "january_rgb_sha256": "b3e1d565e3b3511e846cc04347d01df208123710feb9c06e0a6b5dd2a36e2d1e",
+      "march_rgb_sha256": "b3e1d565e3b3511e846cc04347d01df208123710feb9c06e0a6b5dd2a36e2d1e"
+    },
+    {
+      "pdf_page": 73,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "518c40076cad05feba8ea27d6a63f43923483404de06965fb05dc33cf690a72a",
+      "march_text_sha256": "518c40076cad05feba8ea27d6a63f43923483404de06965fb05dc33cf690a72a",
+      "january_rgb_sha256": "08a9a3270a8ce0b39b1d3706adb36394b6c90add046ae5694245dfb98b795c73",
+      "march_rgb_sha256": "08a9a3270a8ce0b39b1d3706adb36394b6c90add046ae5694245dfb98b795c73"
+    },
+    {
+      "pdf_page": 74,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "3e8248807d8a97bd061ffeacc6c3bb144580a2a06f305475cb054977de084649",
+      "march_text_sha256": "3e8248807d8a97bd061ffeacc6c3bb144580a2a06f305475cb054977de084649",
+      "january_rgb_sha256": "c8f877677002be9eb571dc57ca7098c7766b789e32179cbb44511833a9ba11a3",
+      "march_rgb_sha256": "c8f877677002be9eb571dc57ca7098c7766b789e32179cbb44511833a9ba11a3"
+    },
+    {
+      "pdf_page": 75,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "79929dc1d42e1ee1df08e6883edc423d305e37686788d728a6a9550df8651f01",
+      "march_text_sha256": "79929dc1d42e1ee1df08e6883edc423d305e37686788d728a6a9550df8651f01",
+      "january_rgb_sha256": "7995d658c3ddfb5f04c311a69d01e3f3c15104c92300d787e477bd4b47364f4e",
+      "march_rgb_sha256": "7995d658c3ddfb5f04c311a69d01e3f3c15104c92300d787e477bd4b47364f4e"
+    },
+    {
+      "pdf_page": 76,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "4326136cd3a8d9603ba1b9f54ec8cf0a9dbb158bca4a9bd54579c13a4c784fc2",
+      "march_text_sha256": "4326136cd3a8d9603ba1b9f54ec8cf0a9dbb158bca4a9bd54579c13a4c784fc2",
+      "january_rgb_sha256": "09869228ef3b45630ae01cb7db90dc3e2a3a79dcc9f969d2563bdfdbce53ac3a",
+      "march_rgb_sha256": "09869228ef3b45630ae01cb7db90dc3e2a3a79dcc9f969d2563bdfdbce53ac3a"
+    },
+    {
+      "pdf_page": 77,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "82c0be5be4ed2a081eb50416d8df01cb06989f030a917205d54bd41c99f072fa",
+      "march_text_sha256": "82c0be5be4ed2a081eb50416d8df01cb06989f030a917205d54bd41c99f072fa",
+      "january_rgb_sha256": "3bfd096e5ed5b9c4f121a4e15e9c388689d1519aa9400ae9181394b390863be7",
+      "march_rgb_sha256": "3bfd096e5ed5b9c4f121a4e15e9c388689d1519aa9400ae9181394b390863be7"
+    },
+    {
+      "pdf_page": 78,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "c0b3e9a771b641412daa59c6cf6d50ee886ae26991c72de2e01504af16ef14f6",
+      "march_text_sha256": "c0b3e9a771b641412daa59c6cf6d50ee886ae26991c72de2e01504af16ef14f6",
+      "january_rgb_sha256": "cc7e6c5bb623183dedb11f7bb31c216356745b9a1ec02f56307d301aa24ffbe8",
+      "march_rgb_sha256": "cc7e6c5bb623183dedb11f7bb31c216356745b9a1ec02f56307d301aa24ffbe8"
+    },
+    {
+      "pdf_page": 79,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "fb900e9fd353372f7e7febc8b08362f383c9b6a2fc056206db1d92cea155e7e7",
+      "march_text_sha256": "fb900e9fd353372f7e7febc8b08362f383c9b6a2fc056206db1d92cea155e7e7",
+      "january_rgb_sha256": "766881883b74a0812e55aabfa2a19860e523508399a3ec8b380007168ed04a92",
+      "march_rgb_sha256": "766881883b74a0812e55aabfa2a19860e523508399a3ec8b380007168ed04a92"
+    },
+    {
+      "pdf_page": 80,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "d5e4515d2c5c0dbd5c0d28f0c7004ff3943a1df143013f582123d57a0a5309e8",
+      "march_text_sha256": "d5e4515d2c5c0dbd5c0d28f0c7004ff3943a1df143013f582123d57a0a5309e8",
+      "january_rgb_sha256": "b67d8ec70ee3d3dc1c8cffe765ba2c9e4a70e06ebbf57322bd35802b5ecba925",
+      "march_rgb_sha256": "b67d8ec70ee3d3dc1c8cffe765ba2c9e4a70e06ebbf57322bd35802b5ecba925"
+    },
+    {
+      "pdf_page": 81,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "6619063379626e441c80234cd5cbd5da5137bd13340b859d381c5e2436672adb",
+      "march_text_sha256": "6619063379626e441c80234cd5cbd5da5137bd13340b859d381c5e2436672adb",
+      "january_rgb_sha256": "faf49c917f0ad3aea33d3a51f591000507d00de96ebb32f9bd4a9bc3488b8ec5",
+      "march_rgb_sha256": "faf49c917f0ad3aea33d3a51f591000507d00de96ebb32f9bd4a9bc3488b8ec5"
+    },
+    {
+      "pdf_page": 82,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "28e90354bae8d1cdd404313c768a209d7ae86272799a6c3f55df0ed137439764",
+      "march_text_sha256": "28e90354bae8d1cdd404313c768a209d7ae86272799a6c3f55df0ed137439764",
+      "january_rgb_sha256": "fc58f48844a4c64b4e27677cff6120e6661f8301bc6f4e404dde5ef8168dc950",
+      "march_rgb_sha256": "fc58f48844a4c64b4e27677cff6120e6661f8301bc6f4e404dde5ef8168dc950"
+    },
+    {
+      "pdf_page": 83,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "fec844e4a46675cfc0c60ca0d7abb8e4fb6a4ae590eea3e186f84b0179b083e2",
+      "march_text_sha256": "fec844e4a46675cfc0c60ca0d7abb8e4fb6a4ae590eea3e186f84b0179b083e2",
+      "january_rgb_sha256": "5f7167822f3e31bdeafdfb11e8ea26746d99cef47d05ff82915bc737a6c81897",
+      "march_rgb_sha256": "5f7167822f3e31bdeafdfb11e8ea26746d99cef47d05ff82915bc737a6c81897"
+    },
+    {
+      "pdf_page": 84,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "65f3f0adba347fb124c5357b3db02a626d9b0415445654e8e0441b0482152e8f",
+      "march_text_sha256": "65f3f0adba347fb124c5357b3db02a626d9b0415445654e8e0441b0482152e8f",
+      "january_rgb_sha256": "752cd8a29515fe89af1ed93770188961eb6ccb58d366ba8ebbb5e8e8a096da03",
+      "march_rgb_sha256": "752cd8a29515fe89af1ed93770188961eb6ccb58d366ba8ebbb5e8e8a096da03"
+    },
+    {
+      "pdf_page": 85,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "9ad5fa40138d7e15aa56994e3a0343e6cd327994c8b9794d2def19b9c48923f4",
+      "march_text_sha256": "9ad5fa40138d7e15aa56994e3a0343e6cd327994c8b9794d2def19b9c48923f4",
+      "january_rgb_sha256": "6315fefb9c222e2d3952220e540c65bdb992b21ce86a4b33da41f411464b4be0",
+      "march_rgb_sha256": "6315fefb9c222e2d3952220e540c65bdb992b21ce86a4b33da41f411464b4be0"
+    },
+    {
+      "pdf_page": 86,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "9f30567eda0ca4a477bf8dbc89c6f4b522600252f144f92ac456cd31b704ffb2",
+      "march_text_sha256": "9f30567eda0ca4a477bf8dbc89c6f4b522600252f144f92ac456cd31b704ffb2",
+      "january_rgb_sha256": "0090e3fbdbb80e4041937e23d6f69c15623525f10b44810c559aae1111652c67",
+      "march_rgb_sha256": "0090e3fbdbb80e4041937e23d6f69c15623525f10b44810c559aae1111652c67"
+    },
+    {
+      "pdf_page": 87,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "ae40e9ca0065b20440570c8d47049ffe5f047ae3cff6563c553f2c9518949af5",
+      "march_text_sha256": "ae40e9ca0065b20440570c8d47049ffe5f047ae3cff6563c553f2c9518949af5",
+      "january_rgb_sha256": "965d685b0bc5a209bf5fe4e165fa043b4326cfe46d4bd856444e4e9a6da9891c",
+      "march_rgb_sha256": "965d685b0bc5a209bf5fe4e165fa043b4326cfe46d4bd856444e4e9a6da9891c"
+    },
+    {
+      "pdf_page": 88,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "cd12dd222f05d57ec188137b1c8df6a3242d5eed5385085299733058e716fcd1",
+      "march_text_sha256": "cd12dd222f05d57ec188137b1c8df6a3242d5eed5385085299733058e716fcd1",
+      "january_rgb_sha256": "1731fd595f6314feeee1cdb24cf4276f9f423d53f0513302a0bd51d4fb5b1283",
+      "march_rgb_sha256": "1731fd595f6314feeee1cdb24cf4276f9f423d53f0513302a0bd51d4fb5b1283"
+    },
+    {
+      "pdf_page": 89,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "57e7f9120de9f08ba611b61576d50113e8f6770883a3a88214079c8cd68d51b9",
+      "march_text_sha256": "57e7f9120de9f08ba611b61576d50113e8f6770883a3a88214079c8cd68d51b9",
+      "january_rgb_sha256": "75903010dac252716d180ffa29ec388f2608a1b9336c32bbaa0ab04489bcbb85",
+      "march_rgb_sha256": "75903010dac252716d180ffa29ec388f2608a1b9336c32bbaa0ab04489bcbb85"
+    },
+    {
+      "pdf_page": 90,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "0fb822002fe6a52a832843c3f786dad7ae0e69f928970fc59162cf5cfd253e33",
+      "march_text_sha256": "0fb822002fe6a52a832843c3f786dad7ae0e69f928970fc59162cf5cfd253e33",
+      "january_rgb_sha256": "0c83bdf0bcb5702ae7c2e8a7302836ec7fb10c7ae16059d72dacc0368a6a7c07",
+      "march_rgb_sha256": "0c83bdf0bcb5702ae7c2e8a7302836ec7fb10c7ae16059d72dacc0368a6a7c07"
+    },
+    {
+      "pdf_page": 91,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "507bce6b72e19125f718d87532683b1761ca268a7beec4d739298e5b95319816",
+      "march_text_sha256": "507bce6b72e19125f718d87532683b1761ca268a7beec4d739298e5b95319816",
+      "january_rgb_sha256": "4698bb58d32f4e9c56a226478fec5ba62aabc915379d76c96244d1f5ddfdbcb8",
+      "march_rgb_sha256": "4698bb58d32f4e9c56a226478fec5ba62aabc915379d76c96244d1f5ddfdbcb8"
+    },
+    {
+      "pdf_page": 92,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "80cda692dc371141412f052d5c7031708b76ec4f6439185add8528f581bd99d6",
+      "march_text_sha256": "80cda692dc371141412f052d5c7031708b76ec4f6439185add8528f581bd99d6",
+      "january_rgb_sha256": "1a193789a532aa623057f18116013b02e28f5f446ee0ce091205af71328afec4",
+      "march_rgb_sha256": "1a193789a532aa623057f18116013b02e28f5f446ee0ce091205af71328afec4"
+    },
+    {
+      "pdf_page": 93,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "ca8200eed50abc07c2d6aef4a22e76444fd90981ef20fe2615edf5c7a0ef9381",
+      "march_text_sha256": "ca8200eed50abc07c2d6aef4a22e76444fd90981ef20fe2615edf5c7a0ef9381",
+      "january_rgb_sha256": "560f13b1e8bae44a54c2e5ac8784c477c6eac55a6073a1c76cd74328e75f1d7a",
+      "march_rgb_sha256": "560f13b1e8bae44a54c2e5ac8784c477c6eac55a6073a1c76cd74328e75f1d7a"
+    },
+    {
+      "pdf_page": 94,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "eade133d976d5e97fee92587fd1a32690642b94f3ff14ed6907fd3233af42f10",
+      "march_text_sha256": "eade133d976d5e97fee92587fd1a32690642b94f3ff14ed6907fd3233af42f10",
+      "january_rgb_sha256": "790b582bfb86d47b4173c3456c820347578fc4aa8b8a3d9bea7b07ad95fa5b6e",
+      "march_rgb_sha256": "790b582bfb86d47b4173c3456c820347578fc4aa8b8a3d9bea7b07ad95fa5b6e"
+    },
+    {
+      "pdf_page": 95,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "5f8be0b3f20482875818690d505405d47d08d72a10c0dd912242c65a306163a6",
+      "march_text_sha256": "5f8be0b3f20482875818690d505405d47d08d72a10c0dd912242c65a306163a6",
+      "january_rgb_sha256": "c57f130e549caf4bc358c0feb39f897a166c9435890990e6a8b50a6a52daabe0",
+      "march_rgb_sha256": "c57f130e549caf4bc358c0feb39f897a166c9435890990e6a8b50a6a52daabe0"
+    },
+    {
+      "pdf_page": 96,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "81c2857005e7d032c34a4143a051bb9b75e0f191cf35ac286fc933be8c482f71",
+      "march_text_sha256": "81c2857005e7d032c34a4143a051bb9b75e0f191cf35ac286fc933be8c482f71",
+      "january_rgb_sha256": "05bd322c8d57fec4c990e077bdea46c7ceb192361f5dcc9458acc6f318116518",
+      "march_rgb_sha256": "05bd322c8d57fec4c990e077bdea46c7ceb192361f5dcc9458acc6f318116518"
+    },
+    {
+      "pdf_page": 97,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "29db6fc6465e435b3bc4df570f851240adb0edc9b13305f253e1b9c3836c3785",
+      "march_text_sha256": "29db6fc6465e435b3bc4df570f851240adb0edc9b13305f253e1b9c3836c3785",
+      "january_rgb_sha256": "e02bc8eac48387eb2eff69a4f9857eafba20fba47063218517bc649d5e11284d",
+      "march_rgb_sha256": "e02bc8eac48387eb2eff69a4f9857eafba20fba47063218517bc649d5e11284d"
+    },
+    {
+      "pdf_page": 98,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "1fd8f12b4f329ea8595681560f78de87c08322cb80c94e2a8ab05fa19f047b0d",
+      "march_text_sha256": "1fd8f12b4f329ea8595681560f78de87c08322cb80c94e2a8ab05fa19f047b0d",
+      "january_rgb_sha256": "dad996f31c09dc6bd1d47ccc81beb0f3fd434f9ceeecb04a55ea3d177c20dff4",
+      "march_rgb_sha256": "dad996f31c09dc6bd1d47ccc81beb0f3fd434f9ceeecb04a55ea3d177c20dff4"
+    },
+    {
+      "pdf_page": 99,
+      "text_equal": true,
+      "rgb_pixels_equal": true,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "2240740ef571acd4f5488127470bc1a1c3044094074cf1489b7709aa8c215ce9",
+      "march_text_sha256": "2240740ef571acd4f5488127470bc1a1c3044094074cf1489b7709aa8c215ce9",
+      "january_rgb_sha256": "489498600d076854f2c18cdea2fa9df93c28476043bdcd37872bcbd46e01b7ce",
+      "march_rgb_sha256": "489498600d076854f2c18cdea2fa9df93c28476043bdcd37872bcbd46e01b7ce"
+    },
+    {
+      "pdf_page": 100,
+      "text_equal": false,
+      "rgb_pixels_equal": false,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "a6d89cc2e1579db159a0958dbea7131cb8eadf72baee555b0a9beed4cdccd7e7",
+      "march_text_sha256": "549e42d0b7450ab4b01d2e517facf3b49179f904ca881f8ede9abb414559f402",
+      "january_rgb_sha256": "6febf976efc297c022b83cf2911f9bc8604b575bc2b38fd3a5c6193b49cb7a41",
+      "march_rgb_sha256": "4ef36a4f26441ea9d4822af670dad29f5b4247edfc71d0030578fc2199de4209"
+    },
+    {
+      "pdf_page": 101,
+      "text_equal": false,
+      "rgb_pixels_equal": false,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "f77f2f5b1f5981877f93f520d0277f19927a7c3954baa256237c9fdf017e6080",
+      "march_text_sha256": "aea9dcf1fc89019cb81e3e4dbf2cd919eb97d7f1fca50c03d101cda72d5f5432",
+      "january_rgb_sha256": "9e9c5532f8a5e922be75a1de48f45317a693a77e9f6e99fa26ebe9d6f077e34f",
+      "march_rgb_sha256": "30e3ac21c2228dba2ccdab4ec47ae5f3c45d5ebd52135e99305f2a545379c620"
+    },
+    {
+      "pdf_page": 102,
+      "text_equal": false,
+      "rgb_pixels_equal": false,
+      "january_dimensions": [
+        918,
+        1188
+      ],
+      "march_dimensions": [
+        918,
+        1188
+      ],
+      "january_text_sha256": "40e84f790196030844559d1f695d262bea258230b1c6e63601a252c7898f3bbb",
+      "march_text_sha256": "6205e10526e235defd7c14d66d273507d07e8a254041a4d1508d2cb15ffd2e44",
+      "january_rgb_sha256": "cc824c142fda6b73b46c1a1a9a6e2ea23153cfd1225008e8c3a8227f92b970cd",
+      "march_rgb_sha256": "78d22b1891c353ef426e6f223ce8d3af2b1fed5d62a000af3c9b9c65f7221524"
+    }
+  ],
+  "theorem_start_pages": [
+    {
+      "identifier": "1 (informal)",
+      "start_page": 5,
+      "start_page_text_equal": true,
+      "start_page_render_equal": true
+    },
+    {
+      "identifier": "2 (informal)",
+      "start_page": 5,
+      "start_page_text_equal": true,
+      "start_page_render_equal": true
+    },
+    {
+      "identifier": "3 (informal)",
+      "start_page": 6,
+      "start_page_text_equal": true,
+      "start_page_render_equal": true
+    },
+    {
+      "identifier": "5.4",
+      "start_page": 31,
+      "start_page_text_equal": true,
+      "start_page_render_equal": true
+    },
+    {
+      "identifier": "6.9",
+      "start_page": 44,
+      "start_page_text_equal": true,
+      "start_page_render_equal": true
+    },
+    {
+      "identifier": "6.10",
+      "start_page": 46,
+      "start_page_text_equal": true,
+      "start_page_render_equal": true
+    },
+    {
+      "identifier": "8.3",
+      "start_page": 53,
+      "start_page_text_equal": true,
+      "start_page_render_equal": true
+    },
+    {
+      "identifier": "8.4",
+      "start_page": 53,
+      "start_page_text_equal": true,
+      "start_page_render_equal": true
+    },
+    {
+      "identifier": "10.6",
+      "start_page": 72,
+      "start_page_text_equal": true,
+      "start_page_render_equal": true
+    },
+    {
+      "identifier": "11.3",
+      "start_page": 78,
+      "start_page_text_equal": true,
+      "start_page_render_equal": true
+    },
+    {
+      "identifier": "A.1",
+      "start_page": 98,
+      "start_page_text_equal": true,
+      "start_page_render_equal": true
+    }
+  ],
+  "text_extractor": {
+    "program": "pdftotext",
+    "version": "pdftotext version 25.03.0"
+  },
+  "whole_document_poppler_diffs": {
+    "layout": {
+      "january_sha256": "1d9e4e32e85dd179b6d26352c43d44619b14d4dc3d3b65e6cff4132ab7c309d4",
+      "march_sha256": "e27d0e7492e45c400e1b44bb856b85fe19bf688cc2e68dc7415df96c19dbc9d2",
+      "unified_diff_sha256": "dfe907d9e8c425451321559981af7d1439b46549d8c6a2993bdb6a513265116c",
+      "unified_diff": "--- January\n+++ March\n@@ -8,7 +8,7 @@\n                         zihan.hu@epfl.ch                       yuxi.zheng@epfl.ch\n                               EPFL                                    EPFL\n \n-                                             January 1, 2026\n+                                             March 2, 2026\n \n \n                                                   Abstract\n@@ -125,8 +125,8 @@\n non-interactive reductions (SNRDXs) [BMNW25b] suffices. For example, while initially based on SNARGs\n [BCCT13; BCTV14], proof-carrying data [CT10] and incrementally verifiable computation [Val08] can be\n efficiently achieved via lightweight primitives such as accumulation schemes and folding schemes [BGH19;\n-BCMS20; BCLMS21; KST22; BC23; KS24; EG23; BMNW25a; BC24; FKNP24; BMNW25b; BC25; NS25;\n-BCFW25]. These primitives are examples of SNRDXs, and are also widely deployed in practice.\n+BCMS20; BCLMS21; KST22; BC23; KS24; EG23; BMNW25a; BC25a; FKNP24; BMNW25b; BC25b;\n+NS25; BCFW25]. These primitives are examples of SNRDXs, and are also widely deployed in practice.\n Hash-based succinct non-interactive reductions. The BCS transformation can be extended to work with\n an interactive oracle reduction (IOR) [BCGGRS19; BMNW25b], rather than an IOP, yielding a corresponding\n hash-based SNRDX [BMNW25b]. Recent IORs yield highly-efficient hash-based SNRDXs [BMNW25b;\n@@ -6858,9 +6858,10 @@\n [BC23]        Benedikt Bünz and Binyi Chen. “Protostar: Generic Efficient Accumulation/Folding for Special-Sound\n               Protocols”. In: Proceedings of the 29th International Conference on the Theory and Application of\n               Cryptology and Information Security. ASIACRYPT ’23. 2023, pp. 77–110.\n-[BC24]        Dan Boneh and Binyi Chen. LatticeFold: A Lattice-based Folding Scheme and its Applications to\n-              Succinct Proof Systems. Cryptology ePrint Archive, Paper 2024/257. 2024.\n-[BC25]        Dan Boneh and Binyi Chen. “LatticeFold+: Faster, Simpler, Shorter Lattice-Based Folding for Suc-\n+[BC25a]       Dan Boneh and Binyi Chen. “LatticeFold: A Lattice-Based Folding Scheme and Its Applications to\n+              Succinct Proof Systems”. In: Proceedings of the 31st International Conference on the Theory and\n+              Application of Cryptology and Information Security. ASIACRYPT ’25. 2025, pp. 330–362.\n+[BC25b]       Dan Boneh and Binyi Chen. “LatticeFold+: Faster, Simpler, Shorter Lattice-Based Folding for Suc-\n               cinct Proof Systems”. In: Proceedings of the 45th Annual International Cryptology Conference.\n               CRYPTO ’25. 2025, pp. 327–361.\n [BCCT13]      Nir Bitansky, Ran Canetti, Alessandro Chiesa, and Eran Tromer. “Recursive Composition and Boot-\n@@ -6882,12 +6883,13 @@\n [BCTV14]      Eli Ben-Sasson, Alessandro Chiesa, Eran Tromer, and Madars Virza. “Scalable Zero Knowledge via\n               Cycles of Elliptic Curves”. In: Proceedings of the 34th Annual International Cryptology Conference.\n               CRYPTO ’14. 2014, pp. 276–294.\n-[BGH19]       Sean Bowe, Jack Grigg, and Daira Hopwood. Halo: Recursive Proof Composition without a Trusted\n-              Setup. Cryptology ePrint Archive, Paper 2019/1021. 2019.\n+\n \n \n                                                      100\n \f+[BGH19]      Sean Bowe, Jack Grigg, and Daira Hopwood. Halo: Recursive Proof Composition without a Trusted\n+             Setup. Cryptology ePrint Archive, Paper 2019/1021. 2019.\n [BGKS20]     Eli Ben-Sasson, Lior Goldberg, Swastik Kopparty, and Shubhangi Saraf. “DEEP-FRI: Sampling Out-\n              side the Box Improves Soundness”. In: Proceedings of the 11th Innovations in Theoretical Computer\n              Science Conference. ITCS’ 20. 2020, 5:1–5:32.\n@@ -6931,13 +6933,14 @@\n              Folding Scheme from Unstructured Lattices”. In: Proceedings of the 30th International Conference\n              on the Theory and Application of Cryptology and Information Security. ASIACRYPT ’24. 2024,\n              pp. 303–326.\n-[Gro96]      Lov K. Grover. “A Fast Quantum Mechanical Algorithm for Database Search”. In: Proceedings of the\n-             28th Annual ACM Symposium on Theory of Computing. STOC ’96. 1996, pp. 212–219.\n-[Ham25]      Yassine Hamoudi. A Brief Introduction to Quantum Query Complexity. ArXiv abs/2508.08852. 2025.\n+\n \n \n                                                    101\n \f+[Gro96]   Lov K. Grover. “A Fast Quantum Mechanical Algorithm for Database Search”. In: Proceedings of the\n+          28th Annual ACM Symposium on Theory of Computing. STOC ’96. 1996, pp. 212–219.\n+[Ham25]   Yassine Hamoudi. A Brief Introduction to Quantum Query Complexity. ArXiv abs/2508.08852. 2025.\n [KS24]    Abhiram Kothapalli and Srinath T. V. Setty. “HyperNova: Recursive Arguments for Customizable\n           Constraint Systems”. In: Proceedings of the 44th Annual International Cryptology Conference.\n           CRYPTO ’24. 2024, pp. 345–379.\n"
+    },
+    "raw": {
+      "january_sha256": "cdde2c684a1a93018b32fe5834c67b80d9d59e0012229ed7fcecfc4e26a72439",
+      "march_sha256": "7235cea3d95d01dfc416163eb71a5579b782eb3e83c0dd229b483fb7a094c1e9",
+      "unified_diff_sha256": "f4d1523ca0cabcd3b5b9c185d9e3c1a3e8ca41b8a4ed2345d11eb77d49482335",
+      "unified_diff": "--- January\n+++ March\n@@ -12,7 +12,7 @@\n Yuxi Zheng\n yuxi.zheng@epfl.ch\n EPFL\n-January 1, 2026\n+March 2, 2026\n Abstract\n Hash-based succinct non-interactive arguments (SNARGs) are widely used in practice, owing to their\n ease of deployment, notable efficiency, and post-quantum properties. They are constructed via the BCS\n@@ -102,8 +102,8 @@\n non-interactive reductions (SNRDXs) [BMNW25b] suffices. For example, while initially based on SNARGs\n [BCCT13; BCTV14], proof-carrying data [CT10] and incrementally verifiable computation [Val08] can be\n efficiently achieved via lightweight primitives such as accumulation schemes and folding schemes [BGH19;\n-BCMS20; BCLMS21; KST22; BC23; KS24; EG23; BMNW25a; BC24; FKNP24; BMNW25b; BC25; NS25;\n-BCFW25]. These primitives are examples of SNRDXs, and are also widely deployed in practice.\n+BCMS20; BCLMS21; KST22; BC23; KS24; EG23; BMNW25a; BC25a; FKNP24; BMNW25b; BC25b;\n+NS25; BCFW25]. These primitives are examples of SNRDXs, and are also widely deployed in practice.\n Hash-based succinct non-interactive reductions. The BCS transformation can be extended to work with\n an interactive oracle reduction (IOR) [BCGGRS19; BMNW25b], rather than an IOP, yielding a corresponding\n hash-based SNRDX [BMNW25b]. Recent IORs yield highly-efficient hash-based SNRDXs [BMNW25b;\n@@ -11331,9 +11331,10 @@\n [BC23] Benedikt Bünz and Binyi Chen. “Protostar: Generic Efficient Accumulation/Folding for Special-Sound\n Protocols”. In: Proceedings of the 29th International Conference on the Theory and Application of\n Cryptology and Information Security. ASIACRYPT ’23. 2023, pp. 77–110.\n-[BC24] Dan Boneh and Binyi Chen. LatticeFold: A Lattice-based Folding Scheme and its Applications to\n-Succinct Proof Systems. Cryptology ePrint Archive, Paper 2024/257. 2024.\n-[BC25] Dan Boneh and Binyi Chen. “LatticeFold+: Faster, Simpler, Shorter Lattice-Based Folding for Suc-\n+[BC25a] Dan Boneh and Binyi Chen. “LatticeFold: A Lattice-Based Folding Scheme and Its Applications to\n+Succinct Proof Systems”. In: Proceedings of the 31st International Conference on the Theory and\n+Application of Cryptology and Information Security. ASIACRYPT ’25. 2025, pp. 330–362.\n+[BC25b] Dan Boneh and Binyi Chen. “LatticeFold+: Faster, Simpler, Shorter Lattice-Based Folding for Suc-\n cinct Proof Systems”. In: Proceedings of the 45th Annual International Cryptology Conference.\n CRYPTO ’25. 2025, pp. 327–361.\n [BCCT13] Nir Bitansky, Ran Canetti, Alessandro Chiesa, and Eran Tromer. “Recursive Composition and Boot-\n@@ -11355,10 +11356,10 @@\n [BCTV14] Eli Ben-Sasson, Alessandro Chiesa, Eran Tromer, and Madars Virza. “Scalable Zero Knowledge via\n Cycles of Elliptic Curves”. In: Proceedings of the 34th Annual International Cryptology Conference.\n CRYPTO ’14. 2014, pp. 276–294.\n+100\n+\f [BGH19] Sean Bowe, Jack Grigg, and Daira Hopwood. Halo: Recursive Proof Composition without a Trusted\n Setup. Cryptology ePrint Archive, Paper 2019/1021. 2019.\n-100\n-\f [BGKS20] Eli Ben-Sasson, Lior Goldberg, Swastik Kopparty, and Shubhangi Saraf. “DEEP-FRI: Sampling Out-\n side the Box Improves Soundness”. In: Proceedings of the 11th Innovations in Theoretical Computer\n Science Conference. ITCS’ 20. 2020, 5:1–5:32.\n@@ -11402,11 +11403,11 @@\n Folding Scheme from Unstructured Lattices”. In: Proceedings of the 30th International Conference\n on the Theory and Application of Cryptology and Information Security. ASIACRYPT ’24. 2024,\n pp. 303–326.\n+101\n+\f [Gro96] Lov K. Grover. “A Fast Quantum Mechanical Algorithm for Database Search”. In: Proceedings of the\n 28th Annual ACM Symposium on Theory of Computing. STOC ’96. 1996, pp. 212–219.\n [Ham25] Yassine Hamoudi. A Brief Introduction to Quantum Query Complexity. ArXiv abs/2508.08852. 2025.\n-101\n-\f [KS24] Abhiram Kothapalli and Srinath T. V. Setty. “HyperNova: Recursive Arguments for Customizable\n Constraint Systems”. In: Proceedings of the 44th Annual International Cryptology Conference.\n CRYPTO ’24. 2024, pp. 345–379.\n"
+    }
+  },
+  "claims": {
+    "version_consistency_review": true,
+    "independent_proof_correctness_certification": false,
+    "implementation_security_certification": false
+  }
+}

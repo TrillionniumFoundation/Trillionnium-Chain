@@ -1,0 +1,36 @@
+{
+  "source_sha": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+  "source_tree": "4a0314e72ebc45659986d03e7ca2f96cab9399ea",
+  "recorded_at": "2026-11-05T10:24:36.905379+00:00",
+  "independent_deployment_qualified": false,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_INCREMENTAL": "0",
+    "RUST_TEST_THREADS": "1",
+    "CARGO_TARGET_DIR": "/workspace/scratch/768fd621f7e2/target",
+    "CARGO_NET_OFFLINE": "true",
+    "OPENSSL_DIR": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "TRNM_PQ_OPENSSL_SHA256": "35f28c82e7e4fdcd06b0a42062efd224a5fd5d32d5cc9894252f8206219d496e",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/lib/ossl-modules",
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_PROFILE_TEST_DEBUG": null
+  },
+  "files": {
+    "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+  },
+  "tools": {
+    "rustc +1.95.0 --version --verbose": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2",
+    "cargo +1.95.0 --version": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/bin/openssl version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)"
+  },
+  "provider_sha256": "35f28c82e7e4fdcd06b0a42062efd224a5fd5d32d5cc9894252f8206219d496e",
+  "preflight_log": "chain-final-native-preflight.log",
+  "preflight_log_sha256": "1620576ebd51d7de5281b6cdbc4ffa3b6bc1a2f67653c0d26055ed2d1cf8a9af"
+}

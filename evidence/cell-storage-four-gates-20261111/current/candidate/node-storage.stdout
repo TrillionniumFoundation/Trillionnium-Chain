@@ -1,0 +1,49 @@
+
+running 44 tests
+test store::storage_service::tests::cache_quota::cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention ... ok
+test store::storage_service::tests::height_window::native_cell_repair_height_window_preserves_recovery_without_reserving_new_work ... ok
+test store::storage_service::tests::height_window::native_cell_storage_height_window_refuses_before_reservation_and_recovers_original_effect ... ok
+test store::storage_service::tests::native_cell_expired_storage_request_creates_no_budget_or_physical_obligation ... ok
+test store::storage_service::tests::native_cell_failed_initial_copy_needs_a_separate_funded_repair_and_preserves_unknown_cost ... ok
+test store::storage_service::tests::native_cell_physical_writer_wait_spends_original_storage_deadline ... ok
+test store::storage_service::tests::native_cell_repair_cpu_owner_cannot_move_threads_or_resume_after_exhaustion ... ok
+test store::storage_service::tests::native_cell_retirement_cannot_release_a_pending_effect_before_reconciliation ... ok
+test store::storage_service::tests::native_cell_retirement_rejects_another_chain_and_reconciles_orphaned_funding ... ok
+test store::storage_service::tests::native_cell_storage_escrow_replay_and_reorg_keep_physical_obligation ... ok
+test store::storage_service::tests::native_cell_storage_subject_and_real_byte_block_capacity_are_required_before_effect ... ok
+test store::storage_service::tests::release::native_release_complete_tasks_reopen_and_shared_members_keep_original_effects ... ok
+test store::storage_service::tests::release::native_release_interrupted_members_need_distinct_repairs_without_redispatch ... ok
+test store::storage_service::tests::release::native_release_outer_history_cannot_invent_missing_member_intents ... ok
+test store::storage_service::tests::release::native_release_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement ... ok
+test store::storage_service::tests::release::native_release_repair_scope_deadline_and_exact_old_reconciliation_remain_distinct ... ok
+test store::storage_service::tests::release::native_release_scope_alias_and_late_funding_errors_precede_every_reservation ... ok
+test store::storage_service::tests::replay_owner::native_cell_cancelled_native_funding_reconciles_old_effects_without_new_dispatch ... ok
+test store::storage_service::tests::replay_owner::native_cell_completed_repair_refuses_foreign_owner_and_recovers_orphaned_effect ... ok
+test store::storage_service::tests::replay_owner::native_cell_completed_retain_refuses_foreign_owner_and_recovers_orphaned_effect ... ok
+test store::storage_service::tests::replay_owner::native_cell_pending_repair_refuses_foreign_owner_and_recovers_orphaned_effect ... ok
+test store::storage_service::tests::replay_owner::native_cell_pending_retain_refuses_foreign_owner_and_recovers_orphaned_effect ... ok
+test store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present ... ok
+test store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits ... ok
+test store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire ... ok
+test store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents ... ok
+test store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source ... ok
+test store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement ... ok
+test store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done ... ok
+test store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation ... ok
+test store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_checks_last_page_before_any_provider_effect ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_corrupt_last_page_refuses_before_any_effect_or_debit ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_counts_retired_provider_history_before_first_new_effect ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_reopens_done_without_sources_or_fresh_allowance ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_unknown_final_slot_never_replays_source_copy ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::recovery_tests::native_paged_shard_recovery_missing_quorum_preserves_whole_attempt_charge ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::recovery_tests::native_paged_shard_recovery_pending_last_page_never_redispatches_the_original_repair ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::recovery_tests::native_paged_shard_recovery_preflights_last_page_authority_and_exact_global_budget ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::recovery_tests::native_paged_shard_recovery_repairs_both_pages_from_four_original_targets_and_reopens_done ... ok
+test store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted ... ok
+test store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding ... ok
+test store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies ... ok
+test store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads ... ok
+
+test result: ok. 44 passed; 0 failed; 0 ignored; 0 measured; 1351 filtered out; finished in 16.02s
+

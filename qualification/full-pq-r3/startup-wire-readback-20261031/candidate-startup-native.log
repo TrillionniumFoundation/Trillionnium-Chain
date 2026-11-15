@@ -1,0 +1,34 @@
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 5m 08s
+     Running unittests src/lib.rs (/tmp/chain-pq-startup-repair-target/release/deps/trnm_pon_node-a8515e07877dcc8f)
+
+running 7 tests
+test operator_pq_startup::tests::pq_continuous_atomic_renewal_reconciles_actual_task_v5_owner_and_strict_lease_edge ... ok
+test operator_pq_startup::tests::pq_continuous_original_search_owner_produces_registered_work_and_cannot_replay_allocation ... ok
+test operator_pq_startup::tests::pq_continuous_real_bootstrap_receiver_and_cold_reopen_keep_state_fees_work_and_local_revocation ... FAILED
+test operator_pq_startup::tests::pq_continuous_real_controller_nonempty_search_receiver_restart_and_wire_limits ... FAILED
+test operator_pq_startup::tests::pq_continuous_revoked_actual_task_blocks_cold_restart_without_replaying_bootstrap ... ok
+test operator_pq_startup::tests::pq_startup_invalid_work_spends_original_journal_and_refuses_automatic_retry ... ok
+test operator_pq_startup::tests::pq_startup_strict_genesis_wire_shape_and_signature_boundaries_refuse_mutations ... ok
+
+failures:
+
+---- operator_pq_startup::tests::pq_continuous_real_bootstrap_receiver_and_cold_reopen_keep_state_fees_work_and_local_revocation stdout ----
+
+thread 'operator_pq_startup::tests::pq_continuous_real_bootstrap_receiver_and_cold_reopen_keep_state_fees_work_and_local_revocation' (1111772) panicked at crates/trnm-pon-node/src/operator_pq_startup_tests.rs:621:6:
+called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "OWNER_CONTINUOUS:ExternalContext", source: None, request_history_budget: false }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- operator_pq_startup::tests::pq_continuous_real_controller_nonempty_search_receiver_restart_and_wire_limits stdout ----
+
+thread 'operator_pq_startup::tests::pq_continuous_real_controller_nonempty_search_receiver_restart_and_wire_limits' (1111781) panicked at crates/trnm-pon-node/src/operator_pq_startup_tests.rs:671:6:
+called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "OWNER_CONTINUOUS:ExternalContext", source: None, request_history_budget: false }
+
+
+failures:
+    operator_pq_startup::tests::pq_continuous_real_bootstrap_receiver_and_cold_reopen_keep_state_fees_work_and_local_revocation
+    operator_pq_startup::tests::pq_continuous_real_controller_nonempty_search_receiver_restart_and_wire_limits
+
+test result: FAILED. 5 passed; 2 failed; 0 ignored; 0 measured; 803 filtered out; finished in 1.26s
+
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

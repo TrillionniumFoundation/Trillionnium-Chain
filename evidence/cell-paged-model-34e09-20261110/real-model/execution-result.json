@@ -1,0 +1,102 @@
+{
+  "child_max_rss_kib": 48936,
+  "child_system_cpu_seconds": 1.870291,
+  "child_user_cpu_seconds": 291.289368,
+  "elapsed_seconds": 300.12551043508574,
+  "exit_code": 1,
+  "identity": {
+    "commit": "c57a384abe3edf88e79ca7ecbd0de645df4934c6",
+    "status": "",
+    "tree": "a3e6a456d9dd6ae1c6242413611ea1648f66fe46"
+  },
+  "native_error": "cell: retention deadline",
+  "native_passed": false,
+  "native_result_sha256": "f1c343d62ced05c6d66c80f2606f2b5f5e1bf7c1938e31110772bb0d4a29416c",
+  "native_stage": "original TCA3 complete physical retention",
+  "paged_custody": {
+    "actual_provider_read_attempts": 0,
+    "callback_attempts": 0,
+    "catalog_anchor": "435641330000000000000002a0c96d520aabed1f828821a2f56b8af2bb4777cf0f8ea0041ed7374256d4e11d",
+    "catalog_payload_unavailable": false,
+    "catalog_zero_bytes": 0,
+    "chunk_count": 95,
+    "codec_budget": {
+      "attempts_committed": 0,
+      "cache_bytes_committed": 0,
+      "input_bytes_committed": 0,
+      "reconstruction_bytes_committed": 0
+    },
+    "current_slot": {
+      "chunk_in_page": 56,
+      "operation": "567fe67e45863d865dc2630ad8225acf1432d60da854c3db4435c2e70e69829b",
+      "outcome": "pending_original_target_observation",
+      "page": 0,
+      "slot": 2
+    },
+    "custody_completion_granted": false,
+    "custody_elapsed_ms": 134350,
+    "elapsed_ms": 300011,
+    "elapsed_ms_scope": "whole operation including earlier stages",
+    "error": "cell: retention deadline",
+    "execution_granted": false,
+    "independent_failure_domains": false,
+    "m12_funding_admitted": false,
+    "obtained_wire_bytes": 0,
+    "operation_elapsed_ms": 300011,
+    "page_count": 2,
+    "passed": false,
+    "payload_bytes": 280269602,
+    "plan": "c76a590bfaed077f456e733ec3a7a83d9ab0e2ca8f20b33634df11c131c20841",
+    "potential": {
+      "cache_bytes": 560539204,
+      "input_bytes": 420450624,
+      "provider_reads": 570,
+      "readback_chunks": 95,
+      "readback_payload_bytes": 280269602,
+      "reconstruction_bytes": 700720226
+    },
+    "profile": "676b97beb87759572fbc68cb7e490a552a7dea7df2e82ef2e9b25c6c123dd8d4",
+    "provider_capacity_bytes": 70414336,
+    "provider_reads": 0,
+    "provider_reads_are_logical_callback_attempts": true,
+    "provider_repair_dispatched": false,
+    "provider_root": "/home/qq/work/chain-cell-paged-model-34e09-20261110-operation-01/paged-shard-providers",
+    "provider_slots": [
+      0,
+      2,
+      4,
+      5
+    ],
+    "provider_wire_bytes": 70075104,
+    "published_slots": 338,
+    "readback_budget": {
+      "attempted_scans": 0,
+      "reserved_chunks": 0,
+      "reserved_payload_bytes": 0
+    },
+    "restore_budget": {
+      "attempts_committed": 0,
+      "cache_bytes_committed": 0,
+      "chunks_committed": 0,
+      "input_bytes_committed": 0,
+      "provider_reads_committed": 0,
+      "readback_chunks_committed": 0,
+      "readback_payload_bytes_committed": 0,
+      "reconstruction_bytes_committed": 0
+    },
+    "retention_heights_are_research_terms": true,
+    "schema": "trnm.cell-sealed-paged-custody-observation.v1",
+    "stage": "stage and acknowledge six original provider targets",
+    "staged_chunks": 57,
+    "staging_key_bytes": 36480,
+    "staging_logical_bytes": 420642144,
+    "staging_manifest_bytes": 155040,
+    "staging_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110-operation-01/paged-shard-staging.sqlite",
+    "unavailable_callbacks": 0
+  },
+  "scope": "Original native process wait4 with joined descendants; compilation retained separately; no deadline credit or refund.",
+  "stderr_sha256": "ff249f56ccbe84d68102a033c9d6d509b9b8a1269a9adbeb5e737e6551f915c4",
+  "stdout_sha256": "9278cb8a3dbe58b8a535694a6e750a5917d09367079044907a8f2ed17c766cd3",
+  "wait_status": 256,
+  "watchdog_terminated": false
+}

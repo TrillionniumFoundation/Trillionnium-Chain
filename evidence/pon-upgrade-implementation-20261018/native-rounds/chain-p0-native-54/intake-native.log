@@ -1,0 +1,26 @@
+    Finished `test` profile [unoptimized] target(s) in 0.12s
+     Running unittests src/lib.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain/debug/deps/trnm_pon_node-14a3694a122b3579)
+
+running 19 tests
+test ingress::public_v3::intake::tests::cold_restart_has_no_challenge_burst_and_refills_from_its_own_clock ... ok
+test ingress::public_v3::intake::tests::pressure_lease_cannot_refund_a_slot_or_revive_after_selection ... ok
+test ingress::public_v3::intake::tests::pressure_protects_server_owed_and_paid_stages_and_observed_input_progress ... ok
+test ingress::public_v3::intake::tests::concurrent_challenge_requests_share_one_burst_without_keys ... ok
+test ingress::public_v3::intake::tests::shared_challenge_reserve_and_no_second_refill_at_stale_time ... ok
+test ingress::public_v3::intake::tests::pressure_registry_poison_and_wrong_original_pool_fail_closed ... ok
+test ingress::public_v3::intake::tests::unavailable_challenge_lock_does_not_create_another_budget ... ok
+test ingress::public_v3::intake_domain_tests::all_public_v3_library_wrappers_reject_external_socket_before_binding_owner_or_workers ... ok
+test ingress::public_v3::intake_domain_tests::connections_outputs_and_both_lanes_share_their_original_caps ... ok
+test ingress::public_v3::intake_domain_tests::independent_operator_domains_do_not_accidentally_share_pools ... ok
+test ingress::public_v3::intake_domain_tests::listener_reconstruction_reuses_all_original_pools_and_outstanding_reservations ... ok
+test ingress::public_v3::intake_domain_tests::mutation_cannot_spend_shared_read_body_or_control_output_reserve ... ok
+test ingress::public_v3::intake_domain_tests::actual_two_listeners_use_shared_connection_slots_and_release_on_stop ... ok
+test ingress::public_v3::intake_domain_tests::one_node_cannot_spawn_a_fifth_worker_queue_service_from_the_same_domain ... ok
+test ingress::public_v3::intake_domain_tests::one_plain_node_must_not_accept_independent_cpu_domains_through_two_real_listeners ... ok
+test ingress::public_v3::intake_domain_tests::public_cli_process_cold_start_never_receives_an_instant_fresh_cpu_or_cookie_burst ... ok
+test ingress::public_v3::intake_domain_tests::public_library_external_listener_cannot_bypass_the_fixed_host_kernel_parent ... ok
+test ingress::public_v3::intake_domain_tests::shared_domain_cannot_mint_a_second_listener_body_budget ... ok
+test ingress::public_v3::intake_domain_tests::pinned_normal_node_recovers_same_budget_after_listener_stop_and_key_rotation ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 508 filtered out; finished in 0.92s
+

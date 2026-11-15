@@ -1,0 +1,13 @@
+{
+  "b811": "27920633e57be739926218c370ecfbdfea624df71d84b89c2f9e3fc6f48605d2",
+  "69d2": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+  "file_count_each": 1190,
+  "differences": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+      "b811_sha256": "9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9",
+      "69d2_sha256": "b2e0639a9c2e0ba1c003d8a4ea40748b9c01793bf13c7eaa6999266745e5406c"
+    }
+  ],
+  "interpretation": "Different source maps and ELF identities; both native result sets retained separately despite the single integration-test-source difference."
+}

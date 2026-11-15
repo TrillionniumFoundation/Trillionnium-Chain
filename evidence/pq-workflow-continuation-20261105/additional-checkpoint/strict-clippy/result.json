@@ -1,0 +1,121 @@
+{
+  "schema": "trnm-fixed-pair-strict-clippy-v1",
+  "chain_sha": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+  "chain_tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+  "runtime_sha": "d206c3c787f6b67c771b67a8e1d46c8261810042",
+  "started_utc": "2026-11-05T04:14:07.013457+00:00",
+  "argv": [
+    "/root/.cargo/bin/cargo",
+    "+1.95.0",
+    "clippy",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/workspace/scratch/822cc50e24f0/round2-chain-green",
+  "environment_overrides": {
+    "PATH": "/root/.cargo/bin:/root/.codex/tmp/arg0-linux/codex-arg0DUr19p:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+    "CARGO_HOME": "/root/.cargo",
+    "RUSTUP_HOME": "/root/.rustup",
+    "RUSTUP_TOOLCHAIN": "1.95.0-x86_64-unknown-linux-gnu",
+    "RUSTC": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "CARGO_TARGET_DIR": "/workspace/scratch/822cc50e24f0/state-scheduling-restored/native-target-canonical",
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_NET_OFFLINE": "true",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "environment_unset": [
+    "RUSTC_WRAPPER",
+    "RUSTC_WORKSPACE_WRAPPER",
+    "RUSTFLAGS",
+    "CARGO_ENCODED_RUSTFLAGS"
+  ],
+  "scope": "Required original workspace/all-target/all-feature Clippy; no native tests and no performance acceptance",
+  "timeout_seconds": 1200,
+  "available_memory_floor_bytes": 536870912,
+  "storage_floor_bytes": 134217728,
+  "memory_before": {
+    "host_available": 5558013952,
+    "cgroup_limit": "8589934592",
+    "cgroup_current": 8582774784,
+    "events": "low 0\nhigh 0\nmax 540372\noom 0\noom_kill 0\noom_group_kill 0\n",
+    "event_counters": {
+      "low": 0,
+      "high": 0,
+      "max": 540372,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    },
+    "effective_available": 560648192,
+    "hard_cgroup_headroom": 7159808,
+    "reclaimable_inactive_file_estimate": 553488384,
+    "memory_stat_inputs": {
+      "file": 3367075840,
+      "shmem": 147456,
+      "file_dirty": 229376,
+      "file_writeback": 0,
+      "inactive_file": 553488384
+    }
+  },
+  "memory_monitor_sha256": "ae20081596e452c1f0b8a5f7db17acc0fba650e840fed9a9914bdedd24cba52f",
+  "runner_sha256": "be68260152487d587c77b29effc5b2c355a94850ce39c246fdabfb87af7baffb",
+  "compiler_sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+  "compiler_version": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "preflight_exit_code": 0,
+  "result": "ABORTED_RESOURCE",
+  "exit_code": -15,
+  "native_tests_executed": false,
+  "production_activation": false,
+  "min_available_memory_bytes": 526848000,
+  "cargo_pid": 32,
+  "abort_reason": "ABORTED_RESOURCE",
+  "wall_seconds": 1.512649,
+  "finished_utc": "2026-11-05T04:14:08.547382+00:00",
+  "memory_after": {
+    "host_available": 5337260032,
+    "cgroup_limit": "8589934592",
+    "cgroup_current": 8584531968,
+    "events": "low 0\nhigh 0\nmax 542184\noom 0\noom_kill 0\noom_group_kill 0\n",
+    "event_counters": {
+      "low": 0,
+      "high": 0,
+      "max": 542184,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    },
+    "effective_available": 531931136,
+    "hard_cgroup_headroom": 5402624,
+    "reclaimable_inactive_file_estimate": 526528512,
+    "memory_stat_inputs": {
+      "file": 3133382656,
+      "shmem": 147456,
+      "file_dirty": 28110848,
+      "file_writeback": 0,
+      "inactive_file": 526528512
+    }
+  },
+  "memory_events_delta": {
+    "low": 0,
+    "high": 0,
+    "max": 1812,
+    "oom": 0,
+    "oom_kill": 0,
+    "oom_group_kill": 0
+  },
+  "head_after": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+  "tree_after": "8be28a72673ce318d60a464898ab610d9ba39216",
+  "status_after": "",
+  "log_sha256": "99c66143d68e47f32a5259e55cbe81cb404362ecedf057ddfc504e5b02fa3a43",
+  "log_bytes": 86
+}

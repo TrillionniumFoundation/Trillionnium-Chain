@@ -1,0 +1,17 @@
+{
+  "all_metadata_unchanged": true,
+  "archive_parts_unchanged": true,
+  "metadata_files_checked": 100,
+  "process_receipts": 48,
+  "readbacks": 48,
+  "remaining_duplicate_raw_or_copy_bytes": 0,
+  "remaining_duplicate_raw_or_copy_files": 0,
+  "remaining_files_over_2_mib": [
+    {
+      "bytes": 5015051,
+      "path": "strategy/v4-cpu-1/grid-readback.json"
+    }
+  ],
+  "total_file_count": 186,
+  "total_logical_bytes": 38539494
+}

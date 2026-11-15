@@ -1,0 +1,14 @@
+test_all_write_families_use_returned_bytes_and_preserve_errors (__main__.SyscallProfileTests.test_all_write_families_use_returned_bytes_and_preserve_errors) ... ok
+test_capture_hashes_filtered_commands_and_binary_exec_must_match (__main__.SyscallProfileTests.test_capture_hashes_filtered_commands_and_binary_exec_must_match) ... ok
+test_complete_trace_keeps_failed_native_exit_and_fsync_error_denominator (__main__.SyscallProfileTests.test_complete_trace_keeps_failed_native_exit_and_fsync_error_denominator) ... ok
+test_interleaved_resume_counts_once_and_fd_reuse_uses_each_calls_path (__main__.SyscallProfileTests.test_interleaved_resume_counts_once_and_fd_reuse_uses_each_calls_path) ... ok
+test_partial_unknown_and_restart_results_are_not_successful_zero (__main__.SyscallProfileTests.test_partial_unknown_and_restart_results_are_not_successful_zero) ... ok
+test_pid_reuse_truncation_missing_exits_and_unknown_lines_force_partial (__main__.SyscallProfileTests.test_pid_reuse_truncation_missing_exits_and_unknown_lines_force_partial) ... ok
+test_unknown_exec_result_cannot_inherit_previously_bound_binary (__main__.SyscallProfileTests.test_unknown_exec_result_cannot_inherit_previously_bound_binary) ... ok
+test_unmatched_wrong_name_and_ambiguous_resumes_never_inherit_fd (__main__.SyscallProfileTests.test_unmatched_wrong_name_and_ambiguous_resumes_never_inherit_fd) ... ok
+test_unparseable_line_quarantines_pending_call_and_duplicate_receipt_refuses (__main__.SyscallProfileTests.test_unparseable_line_quarantines_pending_call_and_duplicate_receipt_refuses) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.144s
+
+OK

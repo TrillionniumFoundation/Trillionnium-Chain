@@ -1,0 +1,121 @@
+[
+  {
+    "stage": "preflight",
+    "args": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.10463428497314453
+  },
+  {
+    "stage": "rustfmt",
+    "args": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+      "--edition",
+      "2021",
+      "trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs",
+      "trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs",
+      "trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.06771492958068848
+  },
+  {
+    "stage": "git-head",
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.0026617050170898438
+  },
+  {
+    "stage": "git-status",
+    "args": [
+      "git",
+      "status",
+      "--short"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 1.2682428359985352
+  },
+  {
+    "stage": "native-tests",
+    "args": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--config",
+      "profile.test.package.trnm-pon-node.opt-level=0",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_risk_ledger",
+      "--",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 98.85697078704834
+  },
+  {
+    "stage": "build-example",
+    "args": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "build",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--example",
+      "native_risk_ledger_v1"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 60.82382535934448
+  },
+  {
+    "stage": "actual-native-scenario",
+    "args": [
+      "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/examples/native_risk_ledger_v1",
+      "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/native-risk-attempt-01/native-run"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 51.93755888938904
+  },
+  {
+    "stage": "independent-reader",
+    "args": [
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+      "formal/pon-nakamoto-v1/native_risk_ledger.py",
+      "--run",
+      "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/native-risk-attempt-01/native-run/run.json",
+      "--output",
+      "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/native-risk-attempt-01/checked.json"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.21631598472595215
+  },
+  {
+    "stage": "reader-tests",
+    "args": [
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/pon-nakamoto-v1",
+      "-p",
+      "test_native_risk_ledger.py",
+      "-v"
+    ],
+    "returncode": 1,
+    "elapsed_seconds": 0.26791834831237793
+  }
+]

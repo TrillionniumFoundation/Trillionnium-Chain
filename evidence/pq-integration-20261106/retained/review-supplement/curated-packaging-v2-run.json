@@ -1,0 +1,51 @@
+{
+  "builder_sha256": "c8aec08982fd67336c37d21e271ff2dd9aa9d3e3ad8abed06bb5be18028b64eb",
+  "command": [
+    "python3",
+    "-B",
+    "integration-review/build_curated_evidence_f85_v2.py",
+    "--output",
+    "/workspace/scratch/8a6ecb667c1e/final-evidence-curated-f85fea4e-v2"
+  ],
+  "cwd": "/workspace/scratch/8a6ecb667c1e",
+  "exit_code": 0,
+  "final_native_and_ci_pending": true,
+  "independent_review": {
+    "path": "integration-review/curated-archive-v2-independent-roundtrip-release.json",
+    "sha256": "66acbebee9be8cdadf4e0d9e8043b6b1fe91728fd9b05b2aa7518a4ade1e583d"
+  },
+  "log_bytes": 847,
+  "log_sha256": "600ba2e97e43fa3357acda2efbe81cbf16734e0aeb1abaf10d53568609e82f96",
+  "native_tests_executed": 0,
+  "original_source_records_modified": false,
+  "preserved_preceding_attempt": "integration-review/curated-packaging-attempts/attempt-v1.json",
+  "result": {
+    "archive_bytes": 14283750,
+    "archive_members": 1848,
+    "archive_sha256": "78142ab292525bcd911029ee07177bbad1630d74b512c0152125afbf0f89ab0f",
+    "copied_bytes": 51024830,
+    "copied_files": 1844,
+    "final_native_and_ci_pending": true,
+    "output": "/workspace/scratch/8a6ecb667c1e/final-evidence-curated-f85fea4e-v2",
+    "part_max_bytes": 1572864,
+    "parts": 10,
+    "publication_file_count_excluding_manifest": 17,
+    "verification": {
+      "archive_bytes": 14283750,
+      "archive_sha256": "78142ab292525bcd911029ee07177bbad1630d74b512c0152125afbf0f89ab0f",
+      "index_sha256": "675e0d08c19b13e53f3175f33eb774d6780c0ae51e8a6859c01cb8eb0f9f07e7",
+      "native_tests_executed": 0,
+      "raw_member_bytes": 52289044,
+      "result": "PASS_ARCHIVE_CONTENT_ONLY",
+      "schema": "trnm-curated-evidence-archive-verification-v1",
+      "verified_members": 1848,
+      "verified_parts": 10,
+      "whole_chain_pq_qualified": false
+    }
+  },
+  "schema": "trnm-curated-evidence-build-observation-v1",
+  "scope": "archive-only process observation, not validation of chain behavior",
+  "stdout_stderr_log": "/workspace/scratch/8a6ecb667c1e/integration-review/curated-packaging-v2-run.log",
+  "tool_exec_session_id": 33539,
+  "tool_terminal_chunk_id": "177f57"
+}

@@ -1,0 +1,43 @@
+{
+  "artifact_id": 13578407453,
+  "preserved_observer_errors": [
+    "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578407453/source.json'"
+  ],
+  "download_exit": 0,
+  "expected_zip_bytes": 5555057,
+  "recorded_zip_bytes": 5555057,
+  "actual_zip_bytes": 5555057,
+  "zip_sha256": "ec9ba72ba6d6927509e2cae9c84bb9f732a2a94393582e89bb9256ddcade39ea",
+  "expected_digest": "sha256:ec9ba72ba6d6927509e2cae9c84bb9f732a2a94393582e89bb9256ddcade39ea",
+  "download_stderr": "",
+  "errors": [],
+  "source_binding": {
+    "kind": "head",
+    "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+    "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+    "before_after_equal": true,
+    "resolver_context_equal": true,
+    "source_before_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578407453/source-before.json",
+    "source_before_sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa"
+  },
+  "manifests": [
+    {
+      "path": "w1-false-trace-reuse-v1/manifest.json",
+      "schema": "trnm-w1-false-trace-reuse-execution-v1",
+      "result": "PASS",
+      "error": null,
+      "observation_denominator": 5,
+      "artifact_file_hashes_verified": 12,
+      "nonzero_or_timedout_observations": []
+    },
+    {
+      "path": "w1-full-limb-reuse-v1/manifest.json",
+      "schema": "trnm-w1-full-limb-reuse-execution-v1",
+      "result": "PASS",
+      "error": null,
+      "observation_denominator": 5,
+      "artifact_file_hashes_verified": 12,
+      "nonzero_or_timedout_observations": []
+    }
+  ]
+}

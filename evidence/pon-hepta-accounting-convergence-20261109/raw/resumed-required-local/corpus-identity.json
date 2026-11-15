@@ -1,0 +1,62 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+    "tested_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2495315152,
+    "tracked_entries": 26132,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+    "tested_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2495315152,
+    "tracked_entries": 26132,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/workspace/scratch/d9bbb5ad0229/chain-accounting-convergence",
+  "elapsed_ns": 5660757003,
+  "environment": {
+    "CARGO_BUILD_JOBS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": null,
+    "CARGO_TARGET_DIR": null,
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 0,
+  "log_bytes": 557,
+  "log_file": "corpus-identity.log",
+  "log_sha256": "049ea5dda28da5d075f30488ec5359d5e6a69dc1fbc81c3d62af17ad211911de",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-09T04:43:16.131431+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

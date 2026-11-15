@@ -1,0 +1,242 @@
+//! Protocol-shaped lease mechanisms; not Native/State/source evidence.
+use super::*;
+pub(crate) fn fixture() -> (DeclaredBinding, DeclaredBinding, LeaseEdge) {
+    let mut lease = DemandLeaseV2 {
+        slot: 0,
+        purpose: trnm_protocol::qualified_work_task::TaskPurpose::Maintenance,
+        network: [1; 32],
+        parameters: [2; 32],
+        demand_id: [0; 32],
+        requester: [3; 32],
+        source: [4; 32],
+        source_record: [5; 32],
+        authorization_scope: [6; 32],
+        availability_manifest: [7; 32],
+        availability_root: [8; 32],
+        generation: 1,
+        revision: 1,
+        not_before: 0,
+        expires: 100,
+        available_until: 200,
+        cost_class: 1,
+    };
+    lease.demand_id = lease.derived_demand_id();
+    let old_raw = lease.encode().unwrap();
+    lease.revision = 2;
+    lease.expires = 200;
+    lease.available_until = 300;
+    let new_raw = lease.encode().unwrap();
+    let mut old = crate::operator_continuous_test_support::binding();
+    old.task.lease_sha256 = crate::operator_task_policy::digest_bytes(&old_raw);
+    let mut new = old.clone();
+    new.task.lease_sha256 = crate::operator_task_policy::digest_bytes(&new_raw);
+    let edge = LeaseEdge {
+        schema: "restricted-continuous-lease-edge-v1".into(),
+        actual_parent: "12".repeat(32),
+        actual_generation: 1,
+        native_task: old.task.native_task.clone(),
+        old_task_binding: declared_binding_digest(&old).unwrap(),
+        new_task_binding: declared_binding_digest(&new).unwrap(),
+        old_complete_lease: hex::encode(old_raw),
+        new_complete_lease: hex::encode(new_raw),
+        renewal_packet_sha256: crate::operator_task_policy::digest_bytes(
+            b"actual retained packet fixture",
+        ),
+        new_registry2_declaration_digest: "13".repeat(32),
+    };
+    (old, new, edge)
+}
+#[test]
+fn mode5_lease_edge_only_changes_complete_lease_and_exact_one_revision() {
+    let (old, new, edge) = fixture();
+    assert!(edge.check_declarations(&old, &new).is_ok());
+    let mut changed = new.clone();
+    changed.instance_class = "zero".into();
+    assert!(edge.check_declarations(&old, &changed).is_err());
+    changed = new.clone();
+    changed.task.b_sha256 = "ff".repeat(32);
+    assert!(edge.check_declarations(&old, &changed).is_err());
+    changed = new.clone();
+    changed.task.model_material = "ff".repeat(32);
+    assert!(edge.check_declarations(&old, &changed).is_err());
+    let mut bad = edge.clone();
+    let mut lease = DemandLeaseV2::decode(&hex::decode(&bad.new_complete_lease).unwrap()).unwrap();
+    lease.revision = 3;
+    bad.new_complete_lease = hex::encode(lease.encode().unwrap());
+    changed = new;
+    changed.task.lease_sha256 =
+        crate::operator_task_policy::digest_bytes(&hex::decode(&bad.new_complete_lease).unwrap());
+    bad.new_task_binding = declared_binding_digest(&changed).unwrap();
+    assert!(bad.check_declarations(&old, &changed).is_err());
+}
+#[test]
+fn mode5_lease_edge_requires_actual_parent_generation_and_whole_original_bytes() {
+    let (_old, _new, edge) = fixture();
+    let old = hex::decode(&edge.old_complete_lease).unwrap();
+    let new = hex::decode(&edge.new_complete_lease).unwrap();
+    let packet = b"actual retained packet fixture";
+    assert!(edge.check_actual([0x12; 32], 1, &old, &new, packet).is_ok());
+    assert!(edge
+        .check_actual([0x12; 32], 2, &old, &new, packet)
+        .is_err());
+    assert!(edge
+        .check_actual([0x11; 32], 1, &old, &new, packet)
+        .is_err());
+    assert!(edge
+        .check_actual([0x12; 32], 1, &new, &old, packet)
+        .is_err());
+    assert!(edge
+        .check_actual([0x12; 32], 1, &old, &new, b"different packet")
+        .is_err());
+}
+#[test]
+fn mode5_lease_edge_forbids_duplicate_or_unknown_json_fields_and_partial_lease() {
+    let (_, _, mut edge) = fixture();
+    let mut value = serde_json::to_value(&edge).unwrap();
+    value["refund"] = serde_json::json!(true);
+    assert!(serde_json::from_value::<LeaseEdge>(value).is_err());
+    let full = serde_json::to_string(&edge).unwrap();
+    let duplicated = full.replacen('{', r#"{"actual_generation":1,"#, 1);
+    assert!(serde_json::from_str::<LeaseEdge>(&duplicated).is_err());
+    edge.new_complete_lease
+        .truncate(edge.new_complete_lease.len() - 2);
+    assert!(edge.payload().is_err());
+}
+
+#[test]
+fn mode5_lease_edge_refuses_immutable_source_da_and_expiry_rebinding_even_after_rehash() {
+    // Adversarial supplier replaces QDL2 and refreshes *both* declaration
+    // hashes. All seven replacements remain valid QDL2 encodings.
+    for case in 0..7 {
+        let (old, mut next, mut edge) = fixture();
+        let mut lease =
+            DemandLeaseV2::decode(&hex::decode(&edge.new_complete_lease).unwrap()).unwrap();
+        match case {
+            0 => lease.source_record = [0x41; 32],
+            1 => lease.authorization_scope = [0x42; 32],
+            2 => lease.availability_manifest = [0x43; 32],
+            3 => lease.availability_root = [0x44; 32],
+            4 => lease.not_before = 101, // old.expires == 100
+            5 => {
+                lease.expires = 100; // unchanged expiry
+                lease.available_until = 200;
+            }
+            6 => {
+                lease.expires = 99; // regressed expiry
+                lease.available_until = 199;
+            }
+            _ => unreachable!(),
+        }
+        let raw = lease.encode().unwrap();
+        next.task.lease_sha256 = crate::operator_task_policy::digest_bytes(&raw);
+        edge.new_complete_lease = hex::encode(&raw);
+        edge.new_task_binding = declared_binding_digest(&next).unwrap();
+        assert!(
+            edge.check_declarations(&old, &next).is_err(),
+            "Q4 invalid successor accepted after rehash: case {case}"
+        );
+    }
+}
+
+#[test]
+fn mode5_lease_edge_accepts_valid_final_height_overlap_without_granting_authority() {
+    let (old, mut next, mut edge) = fixture();
+    let mut lease = DemandLeaseV2::decode(&hex::decode(&edge.new_complete_lease).unwrap()).unwrap();
+    lease.not_before = 100; // inclusion possible at old.expires == 100
+    lease.expires = 101;
+    lease.available_until = 201;
+    let raw = lease.encode().unwrap();
+    next.task.lease_sha256 = crate::operator_task_policy::digest_bytes(&raw);
+    edge.new_complete_lease = hex::encode(&raw);
+    edge.new_task_binding = declared_binding_digest(&next).unwrap();
+    assert!(edge.check_declarations(&old, &next).is_ok());
+    // No source signature, current parent, executable task, inclusion,
+    // maintenance fallback or FinalUse authority is created by this check.
+}
+
+#[test]
+fn q4_renewal_window_is_advisory_and_never_resurrects_expired_source() {
+    let (_, _, edge) = fixture();
+    let old = DemandLeaseV2::decode(&hex::decode(&edge.old_complete_lease).unwrap()).unwrap();
+    let next = DemandLeaseV2::decode(&hex::decode(&edge.new_complete_lease).unwrap()).unwrap();
+
+    let ready = forecast_q4_renewal_window(&old, &next, 50, 5, 10).unwrap();
+    assert_eq!(ready.phase, Q4RenewalPhase::WindowOpenByTime);
+    assert_eq!(ready.earliest_possible_height, 50);
+    assert_eq!(ready.last_legal_height, 100);
+    assert_eq!(ready.inclusion_slack_blocks, 50);
+
+    let risk = forecast_q4_renewal_window(&old, &next, 90, 10, 10).unwrap();
+    assert_eq!(risk.phase, Q4RenewalPhase::AtRisk);
+    assert_eq!(risk.inclusion_slack_blocks, 10);
+
+    // Inclusion at the final legal height is valid only with no modeled delay.
+    assert_eq!(
+        forecast_q4_renewal_window(&old, &next, 100, 0, 0)
+            .unwrap()
+            .phase,
+        Q4RenewalPhase::WindowOpenByTime,
+    );
+    assert_eq!(
+        forecast_q4_renewal_window(&old, &next, 101, 0, 0)
+            .unwrap()
+            .phase,
+        Q4RenewalPhase::Expired,
+    );
+    assert_eq!(
+        forecast_q4_renewal_window(&old, &next, 101, 0, 0)
+            .unwrap()
+            .inclusion_slack_blocks,
+        0,
+    );
+
+    let mut later = next.clone();
+    later.not_before = 95;
+    assert_eq!(
+        forecast_q4_renewal_window(&old, &later, 50, 0, 0)
+            .unwrap()
+            .phase,
+        Q4RenewalPhase::AwaitSignedWindow,
+    );
+    assert_eq!(
+        forecast_q4_renewal_window(&old, &later, 50, 0, 0)
+            .unwrap()
+            .earliest_possible_height,
+        95,
+    );
+
+    // New future signed start 95 is legally possible only through height
+    // 100, leaving five inclusion heights. Queue lag 10 + margin 10 is
+    // already impossible even at observation height 50: do not report merely
+    // AwaitSignedWindow when the configured timing budget cannot fit.
+    let future_but_at_risk = forecast_q4_renewal_window(&old, &later, 50, 10, 10).unwrap();
+    assert_eq!(future_but_at_risk.phase, Q4RenewalPhase::AtRisk);
+    assert_eq!(future_but_at_risk.earliest_possible_height, 95);
+    assert_eq!(future_but_at_risk.last_legal_height, 100);
+    assert_eq!(future_but_at_risk.inclusion_slack_blocks, 5);
+    assert_eq!(future_but_at_risk.assumed_queue_lag_blocks, 10);
+    assert_eq!(future_but_at_risk.assumed_safety_margin_blocks, 10);
+
+    // Existing zero-lag case remains AwaitSignedWindow, and an already
+    // expired observed height takes precedence over any remaining timing risk.
+    assert_eq!(
+        forecast_q4_renewal_window(&old, &later, 101, 10, 10)
+            .unwrap()
+            .phase,
+        Q4RenewalPhase::Expired,
+    );
+
+    let mut bad = next.clone();
+    bad.revision = old.revision;
+    assert!(forecast_q4_renewal_window(&old, &bad, 50, 0, 0).is_err());
+    bad = next.clone();
+    bad.source = [77; 32];
+    assert!(forecast_q4_renewal_window(&old, &bad, 50, 0, 0).is_err());
+    bad = next.clone();
+    bad.not_before = 101;
+    assert!(forecast_q4_renewal_window(&old, &bad, 50, 0, 0).is_err());
+    assert!(forecast_q4_renewal_window(&old, &next, 50, u64::MAX, 1).is_err());
+
+    // Forecast never verifies requester/source signatures or signs replacements.
+    // A reorg must re-read the actual parent lease and inspect it again.
+}

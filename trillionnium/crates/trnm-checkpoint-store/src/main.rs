@@ -1,6 +1,9 @@
 use std::{env, ffi::OsString, path::PathBuf, process::ExitCode};
 
-use trnm_checkpoint_store::run_daemon;
+use trnm_checkpoint_store::{
+    read_external_journal_checkpoint_v1, run_daemon, run_daemon_with_external_checkpoint,
+    write_new_external_journal_checkpoint_v1, UnixExternalCheckpointStoreV2,
+};
 
 mod node_commit_ledger_v1;
 
@@ -12,7 +15,7 @@ use node_commit_ledger_v1::{
 
 fn usage() -> ! {
     eprintln!(
-        "usage:\n  trnm-external-node-checkpoint-v2 <socket-path> <log-path>\n  trnm-external-node-checkpoint-v2 ledger-init <ledger-dir> <anchor-checkpoint-bin>\n  trnm-external-node-checkpoint-v2 ledger-advance <ledger-dir> <source-checkpoint-bin> <target-checkpoint-bin>\n  trnm-external-node-checkpoint-v2 ledger-resolve <ledger-dir> <source-checkpoint-bin> <target-checkpoint-bin>"
+        "usage:\n  trnm-external-node-checkpoint-v2 register-new <socket-path> <log-path>\n  trnm-external-node-checkpoint-v2 reopen <socket-path> <log-path> <independently-retained-journal-checkpoint-bin>\n  trnm-external-node-checkpoint-v2 journal-checkpoint <live-socket-path> <new-export-bin>\n  trnm-external-node-checkpoint-v2 ledger-init <ledger-dir> <anchor-checkpoint-bin>\n  trnm-external-node-checkpoint-v2 ledger-advance <ledger-dir> <source-checkpoint-bin> <target-checkpoint-bin>\n  trnm-external-node-checkpoint-v2 ledger-resolve <ledger-dir> <source-checkpoint-bin> <target-checkpoint-bin>\nRecovery never derives an expected checkpoint from the local journal or its sibling head."
     );
     std::process::exit(64);
 }
@@ -37,6 +40,57 @@ fn main() -> ExitCode {
     let first = args.next().unwrap_or_else(|| usage());
 
     match first.to_str() {
+        Some("register-new") => {
+            let socket = next_path(&mut args);
+            let log = next_path(&mut args);
+            if args.next().is_some() {
+                usage();
+            }
+            match run_daemon(socket, log) {
+                Ok(()) => ExitCode::SUCCESS,
+                Err(error) => fail(error),
+            }
+        }
+        Some("reopen") => {
+            let socket = next_path(&mut args);
+            let log = next_path(&mut args);
+            let expected_path = next_path(&mut args);
+            if args.next().is_some() {
+                usage();
+            }
+            let expected = match read_external_journal_checkpoint_v1(expected_path) {
+                Ok(value) => value,
+                Err(error) => return fail(error),
+            };
+            match run_daemon_with_external_checkpoint(socket, log, expected) {
+                Ok(()) => ExitCode::SUCCESS,
+                Err(error) => fail(error),
+            }
+        }
+        Some("journal-checkpoint") => {
+            let socket = next_path(&mut args);
+            let export_path = next_path(&mut args);
+            if args.next().is_some() {
+                usage();
+            }
+            let result = UnixExternalCheckpointStoreV2::new(socket)
+                .and_then(|client| client.journal_checkpoint_v1())
+                .and_then(|checkpoint| {
+                    write_new_external_journal_checkpoint_v1(export_path, checkpoint)?;
+                    Ok(checkpoint)
+                });
+            match result {
+                Ok(checkpoint) => {
+                    println!(
+                        "journal_checkpoint_v1 status=exported record_count={} root={}",
+                        checkpoint.record_count(),
+                        hex_digest(checkpoint.root())
+                    );
+                    ExitCode::SUCCESS
+                }
+                Err(error) => fail(error),
+            }
+        }
         Some("ledger-init") => {
             let root = next_path(&mut args);
             let anchor_path = next_path(&mut args);
@@ -126,17 +180,7 @@ fn main() -> ExitCode {
                 Err(error) => fail(error),
             }
         }
-        _ => {
-            let socket = PathBuf::from(first);
-            let log = args.next().map(PathBuf::from).unwrap_or_else(|| usage());
-            if args.next().is_some() {
-                usage();
-            }
-            match run_daemon(socket, log) {
-                Ok(()) => ExitCode::SUCCESS,
-                Err(error) => fail(error),
-            }
-        }
+        _ => usage(),
     }
 }
 

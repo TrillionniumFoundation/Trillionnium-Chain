@@ -1,0 +1,31 @@
+{
+  "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+  "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310",
+  "binary_before": "68a31cc8b95aee51e6202c275807ee48b0fab8ffd4498d30e30f1a6dbac374e1",
+  "binary_after": "68a31cc8b95aee51e6202c275807ee48b0fab8ffd4498d30e30f1a6dbac374e1",
+  "source_before_after_equal": true,
+  "named_tests_returned_zero": 5,
+  "native_execution_completed": true,
+  "original_acceptance": false,
+  "original_failures": [
+    "CONFIRMATION_TARGET"
+  ],
+  "phases": [
+    {
+      "mode": "attack-free-baseline",
+      "confirmed": 1,
+      "unconfirmed": 0,
+      "unknown": 0
+    },
+    {
+      "mode": "from-zero-pressure",
+      "confirmed": 0,
+      "unconfirmed": 1,
+      "unknown": 0
+    }
+  ],
+  "actual_joint_obligations_closed": 0,
+  "native_CP_CG_CQ_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "production_activation": false
+}

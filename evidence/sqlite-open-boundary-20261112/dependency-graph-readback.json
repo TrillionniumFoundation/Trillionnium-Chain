@@ -1,0 +1,65 @@
+{
+  "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+  "cargo_metadata_sha256": "4faf273b18ed289f1081f03e995c5b89023f5df1be029d4bbc85f5750812ffcd",
+  "workspace_member_count": 26,
+  "resolved_packages": 177,
+  "selected": [
+    {
+      "name": "libsqlite3-sys",
+      "version": "0.39.0",
+      "id": "registry+https://github.com/rust-lang/crates.io-index#libsqlite3-sys@0.39.0",
+      "features": [
+        "bundled",
+        "bundled_bindings",
+        "cc",
+        "default",
+        "min_sqlite_version_3_45_3",
+        "pkg-config",
+        "vcpkg"
+      ],
+      "manifest_path": "/workspace/scratch/3069292387f3/sqlite-cargo-home/registry/src/index.crates.io-1949cf8c6b5b557f/libsqlite3-sys-0.39.0/Cargo.toml"
+    },
+    {
+      "name": "rusqlite",
+      "version": "0.41.0",
+      "id": "registry+https://github.com/rust-lang/crates.io-index#rusqlite@0.41.0",
+      "features": [
+        "bundled",
+        "cache",
+        "default",
+        "fallible_uint",
+        "ffi-sqlite-wasm-rs",
+        "hashlink",
+        "hooks",
+        "modern_sqlite",
+        "trace",
+        "wal"
+      ],
+      "manifest_path": "/workspace/scratch/3069292387f3/sqlite-cargo-home/registry/src/index.crates.io-1949cf8c6b5b557f/rusqlite-0.41.0/Cargo.toml"
+    },
+    {
+      "name": "rustix",
+      "version": "1.1.6",
+      "id": "registry+https://github.com/rust-lang/crates.io-index#rustix@1.1.6",
+      "features": [
+        "alloc",
+        "default",
+        "event",
+        "fs",
+        "net",
+        "process",
+        "rand",
+        "std",
+        "time"
+      ],
+      "manifest_path": "/workspace/scratch/3069292387f3/sqlite-cargo-home/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.6/Cargo.toml"
+    }
+  ],
+  "bundled_amalgamation": {
+    "SQLITE_VERSION": "\"3.54.0\"",
+    "SQLITE_VERSION_NUMBER": "3054000",
+    "SQLITE_SOURCE_ID": "\"2026-10-09 15:46:58 be8d059e9a49089ab2dce5ed26dd87aaf598fdc5fbe0b107c0dd758464bcd5e3\"",
+    "path": "/workspace/scratch/3069292387f3/sqlite-cargo-home/registry/src/index.crates.io-1949cf8c6b5b557f/libsqlite3-sys-0.39.0/sqlite3/sqlite3.c",
+    "sha256": "2da161e310ef0aba3465f22a4d12b8a43723236f0942fa76e8aac523c3317243"
+  }
+}

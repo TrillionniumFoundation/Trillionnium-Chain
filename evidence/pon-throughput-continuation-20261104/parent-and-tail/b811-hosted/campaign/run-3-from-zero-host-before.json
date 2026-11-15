@@ -1,0 +1,46 @@
+{
+  "boot_id": "770b9b0c-8d4f-4a9c-b2e9-7b2f407f839b",
+  "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+  "consensus_or_model_authority": false,
+  "counters": {
+    "cgroup.events": "populated 1\nfrozen 0",
+    "cpu.stat": "usage_usec 59187639\nuser_usec 25862515\nsystem_usec 33325123\nnice_usec 26103000\ncore_sched.force_idle_usec 0\nnr_periods 2412\nnr_throttled 2350\nthrottled_usec 460941750\nnr_bursts 0\nburst_usec 0",
+    "memory.current": "131379200",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "pids.current": "1"
+  },
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "gid": 1001,
+  "host_readiness_only": true,
+  "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+  "limits": {
+    "cpu.max": "25000 100000",
+    "cpu.max.burst": "0",
+    "memory.max": "2147483648",
+    "memory.swap.max": "0",
+    "pids.max": "256"
+  },
+  "observed_utc": "2026-11-04T08:04:46.835136+00:00",
+  "parent": {
+    "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+    "device": 31,
+    "directory": true,
+    "gid": 0,
+    "inode": 7066,
+    "mode": 493,
+    "symlink": false,
+    "uid": 0
+  },
+  "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+  "phase": "public-phase-before",
+  "pid": 5112,
+  "read_errors": {},
+  "schema": "trnm-ci-original-public-host-observation-v1",
+  "service": "trnm-phase-41795899819-1-original-campaign-5108.service",
+  "thread_cgroup": "0::/trnmponpublic.slice/trnm-phase-41795899819-1-original-campaign-5108.service",
+  "thread_privileges": {
+    "CapBnd": "0000000000000000",
+    "NoNewPrivs": "1"
+  },
+  "uid": 1001
+}

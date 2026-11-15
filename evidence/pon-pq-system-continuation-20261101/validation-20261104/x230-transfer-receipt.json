@@ -1,0 +1,123 @@
+{
+  "remote": {
+    "metadata": {
+      "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gid": 1000,
+      "link_count": 1,
+      "metadata_platform": "linux",
+      "mode": 384,
+      "uid": 1000,
+      "xattr_names": [],
+      "xattr_sha256": {}
+    },
+    "mode": 384,
+    "path": "/home/qian/trillionnium-review-source/pq-composed-60dae3-20261104-validation-evidence.tar.gz",
+    "sha256": "8c78b54131dff27ae99963aeea9e0b4de2cd605d972c00f91534ca63df5d2f69",
+    "size": 172084,
+    "version": "2053:349682:172084:1793761699770378891:1793761699770378891"
+  },
+  "chunks": [
+    {
+      "chunk_sha256": "1597a1a931cf26132cdc92d933125e0108a9a3fe49c247ff736c925c39b1a0d7",
+      "eof": false,
+      "next_offset": 16384,
+      "offset": 0,
+      "path": "/home/qian/trillionnium-review-source/pq-composed-60dae3-20261104-validation-evidence.tar.gz",
+      "size": 172084,
+      "version": "2053:349682:172084:1793761699770378891:1793761699770378891"
+    },
+    {
+      "chunk_sha256": "feed9d62ac168c853cedfb5cb6ffb39fbeb0daf6b5f21df1011753def25b44dd",
+      "eof": false,
+      "next_offset": 32768,
+      "offset": 16384,
+      "path": "/home/qian/trillionnium-review-source/pq-composed-60dae3-20261104-validation-evidence.tar.gz",
+      "size": 172084,
+      "version": "2053:349682:172084:1793761699770378891:1793761699770378891"
+    },
+    {
+      "chunk_sha256": "450965695aa48851f479900dac0d517e074443680a89065a4d9d77b81414399b",
+      "eof": false,
+      "next_offset": 49152,
+      "offset": 32768,
+      "path": "/home/qian/trillionnium-review-source/pq-composed-60dae3-20261104-validation-evidence.tar.gz",
+      "size": 172084,
+      "version": "2053:349682:172084:1793761699770378891:1793761699770378891"
+    },
+    {
+      "chunk_sha256": "b169e5a85db66ebda0754a90c7382a71e7318a51b9747ba1cc699747d76ac366",
+      "eof": false,
+      "next_offset": 65536,
+      "offset": 49152,
+      "path": "/home/qian/trillionnium-review-source/pq-composed-60dae3-20261104-validation-evidence.tar.gz",
+      "size": 172084,
+      "version": "2053:349682:172084:1793761699770378891:1793761699770378891"
+    },
+    {
+      "chunk_sha256": "f645e7dc4d35dd480e83e062a01bbe03f9b0f80d92e365f1ee78234227562604",
+      "eof": false,
+      "next_offset": 81920,
+      "offset": 65536,
+      "path": "/home/qian/trillionnium-review-source/pq-composed-60dae3-20261104-validation-evidence.tar.gz",
+      "size": 172084,
+      "version": "2053:349682:172084:1793761699770378891:1793761699770378891"
+    },
+    {
+      "chunk_sha256": "c739f9bfad524f449251f9286bce1ab953b08a9830c9107eed1e18632250f06d",
+      "eof": false,
+      "next_offset": 98304,
+      "offset": 81920,
+      "path": "/home/qian/trillionnium-review-source/pq-composed-60dae3-20261104-validation-evidence.tar.gz",
+      "size": 172084,
+      "version": "2053:349682:172084:1793761699770378891:1793761699770378891"
+    },
+    {
+      "chunk_sha256": "85f3827a631f2bdaeabeaddc44c028793b29a622f449e9a12fe6436cbf2ad511",
+      "eof": false,
+      "next_offset": 114688,
+      "offset": 98304,
+      "path": "/home/qian/trillionnium-review-source/pq-composed-60dae3-20261104-validation-evidence.tar.gz",
+      "size": 172084,
+      "version": "2053:349682:172084:1793761699770378891:1793761699770378891"
+    },
+    {
+      "chunk_sha256": "5827866a3f54b8cb13d9e3877db9bd1ab29f0ddaf853608ce34823650ed38def",
+      "eof": false,
+      "next_offset": 131072,
+      "offset": 114688,
+      "path": "/home/qian/trillionnium-review-source/pq-composed-60dae3-20261104-validation-evidence.tar.gz",
+      "size": 172084,
+      "version": "2053:349682:172084:1793761699770378891:1793761699770378891"
+    },
+    {
+      "chunk_sha256": "e8e4b0dcfff2bd498cbe84a150b4fb4c5a425450d96395001fc36c319aaeaf01",
+      "eof": false,
+      "next_offset": 147456,
+      "offset": 131072,
+      "path": "/home/qian/trillionnium-review-source/pq-composed-60dae3-20261104-validation-evidence.tar.gz",
+      "size": 172084,
+      "version": "2053:349682:172084:1793761699770378891:1793761699770378891"
+    },
+    {
+      "chunk_sha256": "68fc24a3e6ebd9d8142a6cb58eb2a1f7c33e999b32262f3b7d4f88a1d41b5164",
+      "eof": false,
+      "next_offset": 163840,
+      "offset": 147456,
+      "path": "/home/qian/trillionnium-review-source/pq-composed-60dae3-20261104-validation-evidence.tar.gz",
+      "size": 172084,
+      "version": "2053:349682:172084:1793761699770378891:1793761699770378891"
+    },
+    {
+      "chunk_sha256": "7bff5e0c96c3bbeaa4e652169907447b29ee861c5a05fb3d21dfd67e55bf2ff8",
+      "eof": true,
+      "next_offset": 172084,
+      "offset": 163840,
+      "path": "/home/qian/trillionnium-review-source/pq-composed-60dae3-20261104-validation-evidence.tar.gz",
+      "size": 172084,
+      "version": "2053:349682:172084:1793761699770378891:1793761699770378891"
+    }
+  ],
+  "local_path": "/workspace/scratch/f4aa9e32ef1c/x230-pq-validation/pq-composed-60dae3-20261104-validation-evidence.tar.gz",
+  "all_chunks_verified": true,
+  "whole_file_sha256_verified": true
+}

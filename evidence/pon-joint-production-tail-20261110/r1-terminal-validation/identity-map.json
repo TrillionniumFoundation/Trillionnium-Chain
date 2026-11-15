@@ -1,0 +1,8 @@
+{
+  "local_executed_commit": "2a06d2933a466675b081bb3b004a732f676d8028",
+  "published_evidence_commit": "46bcaed1a3c9b8c8e06628936d3d95e1173a7f73",
+  "identical_tree": "b1b73e10f3e8f4eb152d11bc0278a6a65fc47f9b",
+  "metadata_difference": "GitHub connector sets author/committer metadata; commits are distinct, the tree is equal",
+  "native_tested_source": "4716bade250f327b012a098418f4eece6b73fcaa",
+  "native_gates_executed": 0
+}

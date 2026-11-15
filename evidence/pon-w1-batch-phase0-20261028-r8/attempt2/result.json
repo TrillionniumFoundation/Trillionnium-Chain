@@ -1,0 +1,95 @@
+{
+  "assessment": "supervision result only; no build, cryptographic, or proof validity claim",
+  "command_returncode": 1,
+  "cpu_peak_seconds": 16.077483,
+  "declaration_file": "declaration.json",
+  "elapsed_seconds": 27.56534154500696,
+  "errors": [],
+  "kill_monotonic": null,
+  "last_sample": {
+    "cpu_peak_seconds": 16.077483,
+    "cpu_seconds": 16.077483,
+    "elapsed_seconds": 27.56524845500826,
+    "free_bytes": 1452326912,
+    "processes": [],
+    "reaped_cpu_seconds": 16.077483,
+    "rss_bytes": 0,
+    "scan_seconds": 0.05668668200087268,
+    "target_bytes": 2122338304,
+    "target_growth_bytes": 19316736,
+    "wait4_peak_process_rss_bytes": 262406144
+  },
+  "remaining_owned_processes": [],
+  "sampled_peak_rss_bytes": 353595392,
+  "sampled_peak_target_growth_bytes": 19316736,
+  "seen_identities": [
+    {
+      "birth": 7384138,
+      "local_pid": 5,
+      "pid": 959827,
+      "pid_namespace": "pid:[4026532277]"
+    },
+    {
+      "birth": 7384138,
+      "local_pid": 6,
+      "pid": 959828,
+      "pid_namespace": "pid:[4026532277]"
+    },
+    {
+      "birth": 7384143,
+      "local_pid": 8,
+      "pid": 959830,
+      "pid_namespace": "pid:[4026532277]"
+    },
+    {
+      "birth": 7384996,
+      "local_pid": 55,
+      "pid": 959975,
+      "pid_namespace": "pid:[4026532277]"
+    },
+    {
+      "birth": 7385039,
+      "local_pid": 67,
+      "pid": 960000,
+      "pid_namespace": "pid:[4026532277]"
+    },
+    {
+      "birth": 7385130,
+      "local_pid": 90,
+      "pid": 960023,
+      "pid_namespace": "pid:[4026532277]"
+    },
+    {
+      "birth": 7385155,
+      "local_pid": 110,
+      "pid": 960043,
+      "pid_namespace": "pid:[4026532277]"
+    },
+    {
+      "birth": 7385768,
+      "local_pid": 150,
+      "pid": 960098,
+      "pid_namespace": "pid:[4026532277]"
+    },
+    {
+      "birth": 7385770,
+      "local_pid": 153,
+      "pid": 960101,
+      "pid_namespace": "pid:[4026532277]"
+    }
+  ],
+  "source_sha256": "9981c3a138c4aefb6c4662f1e2c4c05cf5ef26e302c46763a42a2366a6334217",
+  "status": "command_failed",
+  "stop_reason": null,
+  "term_monotonic": null,
+  "wait4_peak_process_rss_bytes": 262406144,
+  "wait4_records": [
+    {
+      "maxrss_kib": 256256,
+      "pid": 5,
+      "returncode": 1,
+      "system_seconds": 2.022268,
+      "user_seconds": 14.055215
+    }
+  ]
+}

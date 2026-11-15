@@ -1,0 +1,4 @@
+$ bash scripts/project-preflight.sh
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-w1-statement-v2-20261104", "remote_policy_mutated": false}
+
+exit_code=0

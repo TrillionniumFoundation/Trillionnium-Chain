@@ -1,0 +1,609 @@
+{
+  "artifact_id": 13586253351,
+  "metadata": {
+    "id": 13586253351,
+    "name": "w1-legal-strategy-v2-prospective-merge-arm64-28df21f965e0348690836c9c854dab645827a03d-1",
+    "size_in_bytes": 140620167,
+    "digest": "sha256:be29cf54d47cff4a05c50936b3bfa8512866992300d636689d0cbf45655c6dcf",
+    "expired": false,
+    "created_at": "2026-11-07T18:54:22Z",
+    "updated_at": "2026-11-07T18:54:22Z",
+    "workflow_run": {
+      "id": 42402618462,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "archive_authenticated": true,
+  "source_bound": true,
+  "manifest_hashes_complete": true,
+  "pure_read_status": "NOT_RUN",
+  "business_qualification": false,
+  "zip_get_attempted": true,
+  "transport_version": 2,
+  "family": "legal-v2",
+  "arch": "arm64",
+  "source_kind": "prospective-merge",
+  "tested_commit": "28df21f965e0348690836c9c854dab645827a03d",
+  "job": {
+    "id": 128493695771,
+    "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+    "family": "legal-v2",
+    "arch": "arm64",
+    "source": "prospective-merge",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "download": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586253351/zip"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "error": null,
+    "bytes": 140620167,
+    "sha256": "be29cf54d47cff4a05c50936b3bfa8512866992300d636689d0cbf45655c6dcf"
+  },
+  "archive_inventory": [
+    {
+      "name": "cargo-graph.json",
+      "bytes": 838858,
+      "sha256": "5f9bf7e25461b6522c68d33d7cab5aa52bdf3a42dc80d9b6b33d82ab8ddc59d8",
+      "retained_expanded": true
+    },
+    {
+      "name": "format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "legal-clippy.log",
+      "bytes": 4019,
+      "sha256": "ba6cefa908adab740e5a50508351b89954fb0fd684bbd2284d88e84d7bcd83f7",
+      "retained_expanded": true
+    },
+    {
+      "name": "legal-native-controls.log",
+      "bytes": 4989,
+      "sha256": "04514ed77ffe212c0b1fdb37864ef729f20717bd15f9bb4d25e895604dbc477f",
+      "retained_expanded": true
+    },
+    {
+      "name": "legal-reader-controls.log",
+      "bytes": 111,
+      "sha256": "a028ffd2ea422a5f74b764a7d31b0fbefc383e78ec88927d01c32ab2b1deefc1",
+      "retained_expanded": true
+    },
+    {
+      "name": "legal-reader-v2-controls.log",
+      "bytes": 111,
+      "sha256": "a02ffc89e0295b9ad05321d03ce019970a97c38d9072506c5a613625e83cee8f",
+      "retained_expanded": true
+    },
+    {
+      "name": "preflight.log",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "retained_expanded": true
+    },
+    {
+      "name": "push-source-context.json",
+      "bytes": 2356,
+      "sha256": "61782a6bfc1287c8dea4f345f76ecf1b939b0b237812fa9314f33ee45f100973",
+      "retained_expanded": true
+    },
+    {
+      "name": "runner-controls.log",
+      "bytes": 148,
+      "sha256": "ebc3040a070f8638d2a0eaf5e487449699a8dc4736103acfc7c7f0462adb7e17",
+      "retained_expanded": true
+    },
+    {
+      "name": "source-after.json",
+      "bytes": 512,
+      "sha256": "bdca5e149877335223e365561edb2df9f8f2249922bccf618a5b15d11ea13b50",
+      "retained_expanded": true
+    },
+    {
+      "name": "source-before.json",
+      "bytes": 512,
+      "sha256": "bdca5e149877335223e365561edb2df9f8f2249922bccf618a5b15d11ea13b50",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/build.stderr",
+      "bytes": 3766,
+      "sha256": "2a03599a9781639de2599973a740665f1c8f07690016c5f3901b82886c92ad96",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/build.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-00.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-00.stdout",
+      "bytes": 939973,
+      "sha256": "fd0be9869a7759ca90e24b517f38e24c9e4af9f89bd85f2238edad9b84fc2b27",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-01.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-01.stdout",
+      "bytes": 6978057,
+      "sha256": "dccd3420f5dabc861876f2157843c91892edcd5f4bf5e32ff965efdac1866681",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-02.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-02.stdout",
+      "bytes": 55389976,
+      "sha256": "026a31243fc9788a6e7ba320c9f0864bf8f2b1baaf561f6c03b069496453304f",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-03.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-04.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-04.stdout",
+      "bytes": 8210405,
+      "sha256": "bb16fc48ed21acf27dad838049f8a114b892d4fcaa8d08d23d7c160bb9ce04bc",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-05.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-03.stdout",
+      "bytes": 1046577,
+      "sha256": "1f9973d5edc3d9813ddc4194d778e462de3e5f65cd409abcbb4f47920d9762cf",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-05.stdout",
+      "bytes": 65942435,
+      "sha256": "49c912460055f52048b2ede5e4c7c4a85c859cac086ea5129be4dd40528f8659",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-06.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-06.stdout",
+      "bytes": 936621,
+      "sha256": "f8ef2646095644578c81d83cac817c296c99b3df487276d272d986431a8b13c1",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-07.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-07.stdout",
+      "bytes": 6989189,
+      "sha256": "c08dc0a12a3d96cad9266229f64f5cb80a78bf7bb0b86941e65dbfbe7eee3730",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-08.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-08.stdout",
+      "bytes": 55387741,
+      "sha256": "3f448656ba2b481ca489aa649da3f1aa1c4f4b27730bb977478536b1f80f62a6",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-09.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-09.stdout",
+      "bytes": 1131987,
+      "sha256": "f2df527418344d9cf00f5865a09f59ee76799e88305fe8546644d8bb57ac7153",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-10.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-10.stdout",
+      "bytes": 8295377,
+      "sha256": "bab18c0de4ea17aa62ae7c99bd3cb8d6b610f74f06f454c4de86566f76bfa1da",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-11.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-11.stdout",
+      "bytes": 65594447,
+      "sha256": "ff812b6bf16b38c24f2680287bfdacca40186a71af3da17c30f470fcca201a17",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-12.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-12.stdout",
+      "bytes": 933733,
+      "sha256": "a694bcfec44a34cd405d7deae270a7dfe4f75303291325d970343fb3f602fa64",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-13.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-13.stdout",
+      "bytes": 6976423,
+      "sha256": "1a67a8cd9e6b730e073e3e7a993090bf0526559ae892498b40386d3c5abbf93a",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-14.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-14.stdout",
+      "bytes": 55393429,
+      "sha256": "3fd4a9914816e435ca4a130e5893e45f5c11da435cbdbbc13264df5487a291c9",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-15.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-15.stdout",
+      "bytes": 1026589,
+      "sha256": "72a144d95340540246c2a908d1de64ffc8607596c52ae0b5a7402b5680464286",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-16.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-16.stdout",
+      "bytes": 8130403,
+      "sha256": "bfb997f04ee3740a86df26d2f79a9d79135730ce43fce46c19ea049a6925f224",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-17.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-17.stdout",
+      "bytes": 66160353,
+      "sha256": "14fc560d4a8fbfc67cd75e85cf1132d8e6b477a96f502cbca007463296b2b857",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-18.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-18.stdout",
+      "bytes": 936855,
+      "sha256": "c89b64b9b04852050b8fa9b7bef6251523383b5d47811e5704c26a8c0326180a",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-19.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-19.stdout",
+      "bytes": 6990785,
+      "sha256": "0da3c8553891be53b12deaebad5306eae207429408b087060ad2787b0e705f0c",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-20.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-20.stdout",
+      "bytes": 55365873,
+      "sha256": "e508ba0df6333bf94744c3e241867162ed20d6874f32488e828d82af39794a1d",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-21.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-21.stdout",
+      "bytes": 1140471,
+      "sha256": "f78885fd7f027df698a82ce318cdc76bf2057c03b26c9bfe9946d2187fd0ccd5",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-22.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-22.stdout",
+      "bytes": 8329943,
+      "sha256": "453d144581cc3b6dcf931cf216c2af298ce11151642570938981a4c7eea86cb7",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-23.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-23.stdout",
+      "bytes": 65753875,
+      "sha256": "63b37a83aa130ca556d68003e0ee380e0e68bb6e8b51c42f6a0ed7f47767e21b",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-24.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-24.stdout",
+      "bytes": 937537,
+      "sha256": "4979b32714434c7a9e2559234b7de53ff46b0c085b585ccc3d0497afedf59743",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-25.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-25.stdout",
+      "bytes": 6979117,
+      "sha256": "7334f514fa086d8be377d16aff0abbe7a87ae85ebe219f292f76e68421db9550",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-26.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-26.stdout",
+      "bytes": 55400212,
+      "sha256": "86c87f6c5d59bdcbeca2383dbf5720c32baec6f01816c688d61e6b9f1834d0c4",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-27.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-27.stdout",
+      "bytes": 1061343,
+      "sha256": "44d1226de8c31e6e114499d5b38ac6b1bb62f93b0a6f0980cfaee96f498e1ef1",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-28.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-28.stdout",
+      "bytes": 8248809,
+      "sha256": "93e90d7c9873e7c1338976488719652fcfbce8752fc7b4d03c74057798796585",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-29.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/campaign-29.stdout",
+      "bytes": 65871431,
+      "sha256": "42977f1467c2c32008b87413c32afd2db47621373baec2b14aa89ad7ffab9551",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/cargo.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/cargo.stdout",
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/cpuinfo.txt",
+      "bytes": 1596,
+      "sha256": "b5fa6a99573b7a65c024b6b15f2c0f52fca8cfedf9047998f0885fb4e95e1c36",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/manifest.json",
+      "bytes": 5493822,
+      "sha256": "f72c3e2c37866fa49c77240dd5cc0e6608b19ae00b60327d6729f9ffaf365089",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/pon_w1_legal_strategy_v1",
+      "bytes": 880600,
+      "sha256": "634e937c38b5b767f43577f737c5c36e004321d4a7f73fa33a58887941af2965",
+      "retained_expanded": false,
+      "elf_machine": 183
+    },
+    {
+      "name": "w1-legal-strategy-v2/rustc.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/rustc.stdout",
+      "bytes": 197,
+      "sha256": "9e52f76a6e81c8cce82c76c2ee87a3c9999e56d92106b19142416460b9d2c727",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/uname.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-legal-strategy-v2/uname.stdout",
+      "bytes": 131,
+      "sha256": "cf87f933675fd523838de37746f681eb975a9b476ebda0f73318abdbf1d9904c",
+      "retained_expanded": true
+    }
+  ],
+  "source_before": {
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+    "kind": "prospective-merge",
+    "prospective_merge": "28df21f965e0348690836c9c854dab645827a03d",
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "28df21f965e0348690836c9c854dab645827a03d",
+    "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1277471450,
+    "tracked_entries": 12639,
+    "tracked_worktree_verified": true
+  },
+  "source_after": {
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+    "kind": "prospective-merge",
+    "prospective_merge": "28df21f965e0348690836c9c854dab645827a03d",
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "28df21f965e0348690836c9c854dab645827a03d",
+    "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1277471450,
+    "tracked_entries": 12639,
+    "tracked_worktree_verified": true
+  },
+  "manifests": [
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-transport-v2/13586253351/members/w1-legal-strategy-v2/manifest.json",
+      "member": "w1-legal-strategy-v2/manifest.json",
+      "schema": "trnm-w1-legal-strategy-execution-v2",
+      "result": "PASS",
+      "file_hashes_verified": 70,
+      "observations": 34,
+      "planned_shards": 30,
+      "shards": 30,
+      "manifest_sha256": "f72c3e2c37866fa49c77240dd5cc0e6608b19ae00b60327d6729f9ffaf365089"
+    }
+  ],
+  "job_log": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128493695771/logs"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "error": null,
+    "bytes": 183325,
+    "sha256": "8f8e869bdd8df22276ccf3f28ec36ca801b15665a0da5d4b59801ef096c094a3"
+  },
+  "coverage_status": "ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING",
+  "finished_utc": "2026-11-07T20:34:32.678523+00:00"
+}

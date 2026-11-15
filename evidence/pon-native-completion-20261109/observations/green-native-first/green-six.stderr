@@ -1,0 +1,30 @@
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4m 35s
+     Running unittests src/lib.rs (/data/chain-abg-70ae-20261108/target/debug/deps/trnm_pon_node-571a85d65bb41857)
+
+thread 'ingress::public_v3::scalar_cpu::native_completion_tests::native_completion_priority_requires_full_relation_on_detached_owner' (3245251) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:141:5:
+assertion `left == right` failed
+  left: [1, 1, 1, 0]
+ right: [0, 0, 1, 0]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'ingress::public_v3::scalar_cpu::native_completion_tests::native_completion_priority_requires_full_relation_on_exclusive_history' (3245261) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:359:5:
+assertion `left == right` failed
+  left: [1, 2, 3, 3]
+ right: [0, 0, 1, 1]
+
+thread 'ingress::public_v3::scalar_cpu::native_completion_tests::native_completion_priority_requires_full_relation_on_growth_owner' (3245489) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:141:5:
+assertion `left == right` failed
+  left: [1, 1, 1, 0]
+ right: [0, 0, 1, 0]
+
+thread 'ingress::public_v3::scalar_cpu::native_completion_tests::native_completion_priority_requires_full_relation_on_held_owner' (3245536) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:141:5:
+assertion `left == right` failed
+  left: [1, 1, 1, 0]
+ right: [0, 0, 1, 0]
+
+thread 'ingress::public_v3::scalar_cpu::native_completion_tests::native_completion_priority_requires_full_relation_on_shared_history' (3245563) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:359:5:
+assertion `left == right` failed
+  left: [1, 2, 3, 3]
+ right: [0, 0, 1, 1]
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

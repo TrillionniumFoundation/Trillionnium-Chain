@@ -1,0 +1,212 @@
+{
+  "frozen_source_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+  "native_import_analysis": {
+    "accepted_replays": 20,
+    "deadline_replays": 1,
+    "directory": "/home/qian-qi/chain-throughput-local-admin-20261107/analysis-native-import-819309-20261107",
+    "files": [
+      {
+        "bytes": 59630,
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/analysis-native-import-819309-20261107/native-import-core-v1.json",
+        "sha256": "658c6cf3210511b821b7d99e17226f891f9c9a1d42b4ba9065d463fb73e0f9ff"
+      },
+      {
+        "bytes": 8662,
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/analysis-native-import-819309-20261107/README-v1.md",
+        "sha256": "12d8cf3fe657d610267773e81a3345fb99a85fc1264c510555742f7b253bb2ba"
+      },
+      {
+        "bytes": 10449,
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/analysis-native-import-819309-20261107/analysis-reader-v1.py",
+        "sha256": "d53c66c96616e4faf9fb47fa6950c58665ca5625029ae7d7abaf6d49a6b82d79"
+      }
+    ],
+    "host_checkpoint_calls": 25509,
+    "host_rejections": 0,
+    "not_a_new_performance_run": true,
+    "observed_replays": 21,
+    "owner_wait_phases_entered": 0
+  },
+  "no_whole_tree_reverification_claimed": true,
+  "preparation_observations": [
+    {
+      "detail": "root reported an incorrect guessed scripts/ci/refresh_distributed_source_inventory.py path; actual path is scripts/refresh_distributed_source_inventory.py",
+      "job_id": "1a1b79dcafe-12894-ba7",
+      "native_or_ci_failure": false,
+      "owner": "root",
+      "source_changed": false,
+      "type": "FileNotFoundError"
+    },
+    {
+      "detail": "guessed examples/public_v3_from_zero.rs did not exist; original stderr retained; corrected by rg --files to tests/public_v3_from_zero.rs",
+      "job_id": "1a1b7a14402-12894-bb2",
+      "native_or_ci_failure": false,
+      "owner": "inbound",
+      "source_changed": false,
+      "type": "nested_rg_exit2"
+    },
+    {
+      "detail": "attempted stdout offset16000 beyond actual2205-byte log; remote refused silent rewind; full already-read stdout was used, no command retry or omitted source result",
+      "job_id": "1a1b7a6b192-12894-bc4",
+      "native_or_ci_failure": false,
+      "owner": "inbound",
+      "source_changed": false,
+      "type": "read_cursor_INVALID_ARGUMENT"
+    },
+    {
+      "detail": "v1 subprocess exception path omitted attempted command/partial output; v2 reviewed fix preserves both; neither source integration script executed during review",
+      "native_or_ci_failure": false,
+      "owner": "root_integration_v1_review",
+      "source_changed": false,
+      "type": "unexecuted_static_failure_receipt_gap"
+    }
+  ],
+  "preserved_future_controls": {
+    "adaptation": "new external copy may change only worktree binding after explicit future H/tree; original runner/roster retained; actual source names/hashes rechecked before launch",
+    "expected_test_count": 666,
+    "not_executed_by_this_review": true,
+    "original_roster_v3_sha256": "950e9ceff839a8c599f4ebdb4a1b6d72bd7719f48557c76c832b74b8518aed72",
+    "original_run_final_controls_v3_sha256": "27bde97006593d37a7fbae3b93d10d81c0178c9342659e8671f585c4c3b09c81"
+  },
+  "readonly_process_jobs": [
+    {
+      "authoritative_state": "succeeded",
+      "automatic_retry": false,
+      "exit_code": 0,
+      "job_id": "1a1b79d502f-12894-ba4",
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "native_execution": false,
+      "output_complete": true,
+      "output_durable": true,
+      "purpose": "initial sealed large-parent/static source locator",
+      "terminal_publication_confirmed": true
+    },
+    {
+      "authoritative_state": "succeeded",
+      "automatic_retry": false,
+      "exit_code": 0,
+      "job_id": "1a1b7a14402-12894-bb2",
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "native_execution": false,
+      "output_complete": true,
+      "output_durable": true,
+      "purpose": "plan/Host source locator; one nested rg path error retained",
+      "terminal_publication_confirmed": true
+    },
+    {
+      "authoritative_state": "succeeded",
+      "automatic_retry": false,
+      "exit_code": 0,
+      "job_id": "1a1b7a23d7d-12894-bb5",
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "native_execution": false,
+      "output_complete": true,
+      "output_durable": true,
+      "purpose": "narrow plan sections and actual rg --files harness paths",
+      "terminal_publication_confirmed": true
+    },
+    {
+      "authoritative_state": "succeeded",
+      "automatic_retry": false,
+      "exit_code": 0,
+      "job_id": "1a1b7a427ab-12894-bb9",
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "native_execution": false,
+      "output_complete": true,
+      "output_durable": true,
+      "purpose": "held fixture, scalar accounting and source locations",
+      "terminal_publication_confirmed": true
+    },
+    {
+      "authoritative_state": "succeeded",
+      "automatic_retry": false,
+      "exit_code": 0,
+      "job_id": "1a1b7a566eb-12894-bbe",
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "native_execution": false,
+      "output_complete": true,
+      "output_durable": true,
+      "purpose": "Host wrapper, verifier/receiver/thread construction and scalar ownership",
+      "terminal_publication_confirmed": true
+    },
+    {
+      "authoritative_state": "succeeded",
+      "automatic_retry": false,
+      "exit_code": 0,
+      "job_id": "1a1b7a6b192-12894-bc4",
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "native_execution": false,
+      "output_complete": true,
+      "output_durable": true,
+      "purpose": "whole current source exact helper-name search excluding evidence",
+      "terminal_publication_confirmed": true
+    },
+    {
+      "authoritative_state": "succeeded",
+      "automatic_retry": false,
+      "exit_code": 0,
+      "job_id": "1a1b7a8d8f2-12894-bc9",
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "native_execution": false,
+      "output_complete": true,
+      "output_durable": true,
+      "purpose": "two retained reports and owner-domain source readback",
+      "terminal_publication_confirmed": true
+    },
+    {
+      "authoritative_state": "succeeded",
+      "automatic_retry": false,
+      "exit_code": 0,
+      "job_id": "1a1b7aa6c52-12894-bca",
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "native_execution": false,
+      "output_complete": true,
+      "output_durable": true,
+      "purpose": "FIFO, live Host and duplicate-check removal source readback",
+      "terminal_publication_confirmed": true
+    },
+    {
+      "authoritative_state": "succeeded",
+      "automatic_retry": false,
+      "exit_code": 0,
+      "job_id": "1a1b7af4bbb-12894-bdc",
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "native_execution": false,
+      "output_complete": true,
+      "output_durable": true,
+      "purpose": "corpus in-memory format checks and23 source SHA values",
+      "terminal_publication_confirmed": true
+    }
+  ],
+  "schema": "trnm-readonly-review-provenance-v1",
+  "scope": "read-only source and already-retained observations; no native/test/benchmark/profile commands; external report creation only",
+  "source_binding_scope": "Only the23 enumerated files were freshly matched to exact819 Git blobs; this is not the whole-source/native source-after verifier.",
+  "written_utc": "2026-11-07T20:35:21.324576+00:00"
+}

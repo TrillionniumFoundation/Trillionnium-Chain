@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_pq_research_integration.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 138.9822414650116,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794124208.815968,
+  "label": "pq-integration-negatives",
+  "logs": {
+    "pq-integration-negatives.stderr.log": {
+      "bytes": 8869,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-01/pq-integration-negatives.stderr.log",
+      "sha256": "d27d546a5aa634aef214a4c33c853a284a0fe6cd923f01bcd1f9d7d035d48239"
+    },
+    "pq-integration-negatives.stdout.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-01/pq-integration-negatives.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "reported_test_counts": [
+      55
+    ]
+  },
+  "started_unix_seconds": 1794124069.8337262
+}

@@ -1,0 +1,2021 @@
+{
+  "jobs": [
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654473",
+      "completed_at": "2026-11-08T08:40:33Z",
+      "conclusion": "success",
+      "created_at": "2026-11-08T08:39:00Z",
+      "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654473",
+      "id": 128678654473,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "TAP21 actual SDK interoperability (ubuntu-24.04-arm, prospective-merge)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9dhyCQ",
+      "run_attempt": 1,
+      "run_id": 42463825160,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000045237,
+      "runner_name": "GitHub Actions 1000045237",
+      "started_at": "2026-11-08T08:39:06Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T08:39:08Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:07Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:46Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:08Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:47Z",
+          "conclusion": "success",
+          "name": "Read the exact supported SDK source",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:46Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:53Z",
+          "conclusion": "success",
+          "name": "Install the original pinned compiler",
+          "number": 4,
+          "started_at": "2026-11-08T08:39:47Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:29Z",
+          "conclusion": "success",
+          "name": "Compare real SDK and product adapter signatures",
+          "number": 5,
+          "started_at": "2026-11-08T08:39:53Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:30Z",
+          "conclusion": "success",
+          "name": "Retain SDK interoperability including failures",
+          "number": 6,
+          "started_at": "2026-11-08T08:40:29Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:30Z",
+          "conclusion": "success",
+          "name": "Post Read the exact supported SDK source",
+          "number": 11,
+          "started_at": "2026-11-08T08:40:30Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:30Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 12,
+          "started_at": "2026-11-08T08:40:30Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:30Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 13,
+          "started_at": "2026-11-08T08:40:30Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654473",
+      "workflow_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654586",
+      "completed_at": "2026-11-08T08:41:31Z",
+      "conclusion": "failure",
+      "created_at": "2026-11-08T08:39:00Z",
+      "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654586",
+      "id": 128678654586,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9dhyeg",
+      "run_attempt": 1,
+      "run_id": 42463825160,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000045195,
+      "runner_name": "GitHub Actions 1000045195",
+      "started_at": "2026-11-08T08:39:03Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T08:39:04Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:04Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:42Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:04Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:43Z",
+          "conclusion": "success",
+          "name": "Prepare exact-source command records",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:42Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:28Z",
+          "conclusion": "failure",
+          "name": "Require retained source and claim controls",
+          "number": 4,
+          "started_at": "2026-11-08T08:39:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:28Z",
+          "conclusion": "skipped",
+          "name": "Install the original pinned compiler",
+          "number": 5,
+          "started_at": "2026-11-08T08:41:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:28Z",
+          "conclusion": "skipped",
+          "name": "Prepare the independently pinned OpenSSL provider",
+          "number": 6,
+          "started_at": "2026-11-08T08:41:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:28Z",
+          "conclusion": "skipped",
+          "name": "Record compiler, exact locked graph and formatting",
+          "number": 7,
+          "started_at": "2026-11-08T08:41:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:28Z",
+          "conclusion": "skipped",
+          "name": "Execute every required native effect and rejection control",
+          "number": 8,
+          "started_at": "2026-11-08T08:41:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:28Z",
+          "conclusion": "skipped",
+          "name": "Require admitted migration handoff and checkpoint endpoint ownership",
+          "number": 9,
+          "started_at": "2026-11-08T08:41:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:28Z",
+          "conclusion": "skipped",
+          "name": "Execute anchored NPQ6 migration and source-preservation controls",
+          "number": 10,
+          "started_at": "2026-11-08T08:41:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:28Z",
+          "conclusion": "skipped",
+          "name": "Refuse classical submit recovery for retained PQ network owners",
+          "number": 11,
+          "started_at": "2026-11-08T08:41:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:28Z",
+          "conclusion": "skipped",
+          "name": "Require native TLS and ordinary binary controls from actual registries",
+          "number": 12,
+          "started_at": "2026-11-08T08:41:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:28Z",
+          "conclusion": "skipped",
+          "name": "Require the explicit TLS witness CLI controls from the actual binary",
+          "number": 13,
+          "started_at": "2026-11-08T08:41:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:28Z",
+          "conclusion": "skipped",
+          "name": "Require original transaction scope controls",
+          "number": 14,
+          "started_at": "2026-11-08T08:41:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:28Z",
+          "conclusion": "skipped",
+          "name": "Require actual build-fence cache requalification",
+          "number": 15,
+          "started_at": "2026-11-08T08:41:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:28Z",
+          "conclusion": "skipped",
+          "name": "Preserve native control records before the complete regression",
+          "number": 16,
+          "started_at": "2026-11-08T08:41:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:28Z",
+          "conclusion": "skipped",
+          "name": "Preserve the complete original Node library regression suite",
+          "number": 17,
+          "started_at": "2026-11-08T08:41:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:28Z",
+          "conclusion": "skipped",
+          "name": "Check strict Clippy without rewriting source",
+          "number": 18,
+          "started_at": "2026-11-08T08:41:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:28Z",
+          "conclusion": "skipped",
+          "name": "Observe complete component costs with unchanged native budgets",
+          "number": 19,
+          "started_at": "2026-11-08T08:41:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:29Z",
+          "conclusion": "success",
+          "name": "Preserve complete records including failures",
+          "number": 20,
+          "started_at": "2026-11-08T08:41:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:30Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 40,
+          "started_at": "2026-11-08T08:41:29Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:30Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 41,
+          "started_at": "2026-11-08T08:41:30Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654586",
+      "workflow_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654596",
+      "completed_at": "2026-11-08T08:45:54Z",
+      "conclusion": "success",
+      "created_at": "2026-11-08T08:39:00Z",
+      "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654596",
+      "id": 128678654596,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "ML-DSA independent C implementation (ubuntu-24.04-arm, prospective-merge)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9dhyhA",
+      "run_attempt": 1,
+      "run_id": 42463825160,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000045239,
+      "runner_name": "GitHub Actions 1000045239",
+      "started_at": "2026-11-08T08:39:06Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T08:39:08Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:07Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:20Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:08Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:21Z",
+          "conclusion": "success",
+          "name": "Read the exact independent implementation",
+          "number": 3,
+          "started_at": "2026-11-08T08:40:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:27Z",
+          "conclusion": "success",
+          "name": "Install the original pinned compiler",
+          "number": 4,
+          "started_at": "2026-11-08T08:40:21Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:43:09Z",
+          "conclusion": "success",
+          "name": "Run independent primitives on the exact candidate",
+          "number": 5,
+          "started_at": "2026-11-08T08:40:27Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:45:48Z",
+          "conclusion": "success",
+          "name": "Require initial-root and quorum controls from the complete release registry",
+          "number": 6,
+          "started_at": "2026-11-08T08:43:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:45:51Z",
+          "conclusion": "success",
+          "name": "Run root-quorum codec and policy test doubles without native crypto claims",
+          "number": 7,
+          "started_at": "2026-11-08T08:45:48Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:45:52Z",
+          "conclusion": "success",
+          "name": "Retain independent primitive results including failures",
+          "number": 8,
+          "started_at": "2026-11-08T08:45:51Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:45:52Z",
+          "conclusion": "success",
+          "name": "Post Read the exact independent implementation",
+          "number": 15,
+          "started_at": "2026-11-08T08:45:52Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:45:52Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 16,
+          "started_at": "2026-11-08T08:45:52Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:45:52Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 17,
+          "started_at": "2026-11-08T08:45:52Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654596",
+      "workflow_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654598",
+      "completed_at": "2026-11-08T08:42:12Z",
+      "conclusion": "failure",
+      "created_at": "2026-11-08T08:39:00Z",
+      "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654598",
+      "id": 128678654598,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9dhyhg",
+      "run_attempt": 1,
+      "run_id": 42463825160,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000045236,
+      "runner_name": "GitHub Actions 1000045236",
+      "started_at": "2026-11-08T08:39:06Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T08:39:08Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:07Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:45Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:08Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:47Z",
+          "conclusion": "success",
+          "name": "Prepare exact-source command records",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:45Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "failure",
+          "name": "Require retained source and claim controls",
+          "number": 4,
+          "started_at": "2026-11-08T08:39:47Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Install the original pinned compiler",
+          "number": 5,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Prepare the independently pinned OpenSSL provider",
+          "number": 6,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Record compiler, exact locked graph and formatting",
+          "number": 7,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Execute every required native effect and rejection control",
+          "number": 8,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Require admitted migration handoff and checkpoint endpoint ownership",
+          "number": 9,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Execute anchored NPQ6 migration and source-preservation controls",
+          "number": 10,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Refuse classical submit recovery for retained PQ network owners",
+          "number": 11,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Require native TLS and ordinary binary controls from actual registries",
+          "number": 12,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Require the explicit TLS witness CLI controls from the actual binary",
+          "number": 13,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Require original transaction scope controls",
+          "number": 14,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Require actual build-fence cache requalification",
+          "number": 15,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Preserve native control records before the complete regression",
+          "number": 16,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Preserve the complete original Node library regression suite",
+          "number": 17,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Check strict Clippy without rewriting source",
+          "number": 18,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Observe complete component costs with unchanged native budgets",
+          "number": 19,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:10Z",
+          "conclusion": "success",
+          "name": "Preserve complete records including failures",
+          "number": 20,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:10Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 40,
+          "started_at": "2026-11-08T08:42:10Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:10Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 41,
+          "started_at": "2026-11-08T08:42:10Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654598",
+      "workflow_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654600",
+      "completed_at": "2026-11-08T08:40:38Z",
+      "conclusion": "success",
+      "created_at": "2026-11-08T08:39:00Z",
+      "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654600",
+      "id": 128678654600,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "TAP21 actual SDK interoperability (ubuntu-24.04, prospective-merge)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9dhyiA",
+      "run_attempt": 1,
+      "run_id": 42463825160,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000045197,
+      "runner_name": "GitHub Actions 1000045197",
+      "started_at": "2026-11-08T08:39:03Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T08:39:05Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:04Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:44Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:45Z",
+          "conclusion": "success",
+          "name": "Read the exact supported SDK source",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:44Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:54Z",
+          "conclusion": "success",
+          "name": "Install the original pinned compiler",
+          "number": 4,
+          "started_at": "2026-11-08T08:39:45Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:34Z",
+          "conclusion": "success",
+          "name": "Compare real SDK and product adapter signatures",
+          "number": 5,
+          "started_at": "2026-11-08T08:39:54Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:36Z",
+          "conclusion": "success",
+          "name": "Retain SDK interoperability including failures",
+          "number": 6,
+          "started_at": "2026-11-08T08:40:34Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:36Z",
+          "conclusion": "success",
+          "name": "Post Read the exact supported SDK source",
+          "number": 11,
+          "started_at": "2026-11-08T08:40:36Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:36Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 12,
+          "started_at": "2026-11-08T08:40:36Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:36Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 13,
+          "started_at": "2026-11-08T08:40:36Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654600",
+      "workflow_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654608",
+      "completed_at": "2026-11-08T08:41:06Z",
+      "conclusion": "success",
+      "created_at": "2026-11-08T08:39:00Z",
+      "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654608",
+      "id": 128678654608,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "CPQ1 complete candidate observations (ubuntu-24.04, head)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9dhykA",
+      "run_attempt": 1,
+      "run_id": 42463825160,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000045196,
+      "runner_name": "GitHub Actions 1000045196",
+      "started_at": "2026-11-08T08:39:03Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T08:39:05Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:04Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:48Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:57Z",
+          "conclusion": "success",
+          "name": "Install the original pinned compiler",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:48Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:03Z",
+          "conclusion": "success",
+          "name": "Observe actual CPQ1 APIs and independently recompute every sample",
+          "number": 4,
+          "started_at": "2026-11-08T08:39:57Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:05Z",
+          "conclusion": "success",
+          "name": "Retain complete CPQ1 records including failures",
+          "number": 5,
+          "started_at": "2026-11-08T08:41:03Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:05Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 10,
+          "started_at": "2026-11-08T08:41:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:05Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "started_at": "2026-11-08T08:41:05Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654608",
+      "workflow_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654628",
+      "completed_at": "2026-11-08T08:46:20Z",
+      "conclusion": "success",
+      "created_at": "2026-11-08T08:39:00Z",
+      "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654628",
+      "id": 128678654628,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "ML-DSA independent C implementation (ubuntu-24.04, head)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9dhypA",
+      "run_attempt": 1,
+      "run_id": 42463825160,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000045198,
+      "runner_name": "GitHub Actions 1000045198",
+      "started_at": "2026-11-08T08:39:04Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T08:39:05Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:44Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:45Z",
+          "conclusion": "success",
+          "name": "Read the exact independent implementation",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:44Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:55Z",
+          "conclusion": "success",
+          "name": "Install the original pinned compiler",
+          "number": 4,
+          "started_at": "2026-11-08T08:39:45Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:45Z",
+          "conclusion": "success",
+          "name": "Run independent primitives on the exact candidate",
+          "number": 5,
+          "started_at": "2026-11-08T08:39:55Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:46:13Z",
+          "conclusion": "success",
+          "name": "Require initial-root and quorum controls from the complete release registry",
+          "number": 6,
+          "started_at": "2026-11-08T08:42:45Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:46:16Z",
+          "conclusion": "success",
+          "name": "Run root-quorum codec and policy test doubles without native crypto claims",
+          "number": 7,
+          "started_at": "2026-11-08T08:46:13Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:46:17Z",
+          "conclusion": "success",
+          "name": "Retain independent primitive results including failures",
+          "number": 8,
+          "started_at": "2026-11-08T08:46:16Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:46:18Z",
+          "conclusion": "success",
+          "name": "Post Read the exact independent implementation",
+          "number": 15,
+          "started_at": "2026-11-08T08:46:17Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:46:18Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 16,
+          "started_at": "2026-11-08T08:46:18Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:46:18Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 17,
+          "started_at": "2026-11-08T08:46:18Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654628",
+      "workflow_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654638",
+      "completed_at": "2026-11-08T08:40:36Z",
+      "conclusion": "success",
+      "created_at": "2026-11-08T08:39:00Z",
+      "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654638",
+      "id": 128678654638,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "TAP21 actual SDK interoperability (ubuntu-24.04-arm, head)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9dhyrg",
+      "run_attempt": 1,
+      "run_id": 42463825160,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000045240,
+      "runner_name": "GitHub Actions 1000045240",
+      "started_at": "2026-11-08T08:39:06Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T08:39:08Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:07Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:47Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:08Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:48Z",
+          "conclusion": "success",
+          "name": "Read the exact supported SDK source",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:47Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:54Z",
+          "conclusion": "success",
+          "name": "Install the original pinned compiler",
+          "number": 4,
+          "started_at": "2026-11-08T08:39:48Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:32Z",
+          "conclusion": "success",
+          "name": "Compare real SDK and product adapter signatures",
+          "number": 5,
+          "started_at": "2026-11-08T08:39:54Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:33Z",
+          "conclusion": "success",
+          "name": "Retain SDK interoperability including failures",
+          "number": 6,
+          "started_at": "2026-11-08T08:40:32Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:33Z",
+          "conclusion": "success",
+          "name": "Post Read the exact supported SDK source",
+          "number": 11,
+          "started_at": "2026-11-08T08:40:33Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:33Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 12,
+          "started_at": "2026-11-08T08:40:33Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:34Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 13,
+          "started_at": "2026-11-08T08:40:33Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654638",
+      "workflow_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654640",
+      "completed_at": "2026-11-08T08:45:12Z",
+      "conclusion": "success",
+      "created_at": "2026-11-08T08:39:00Z",
+      "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654640",
+      "id": 128678654640,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "ML-DSA independent C implementation (ubuntu-24.04-arm, head)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9dhysA",
+      "run_attempt": 1,
+      "run_id": 42463825160,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000045238,
+      "runner_name": "GitHub Actions 1000045238",
+      "started_at": "2026-11-08T08:39:06Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T08:39:08Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:07Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:45Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:08Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:47Z",
+          "conclusion": "success",
+          "name": "Read the exact independent implementation",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:45Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:52Z",
+          "conclusion": "success",
+          "name": "Install the original pinned compiler",
+          "number": 4,
+          "started_at": "2026-11-08T08:39:47Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:29Z",
+          "conclusion": "success",
+          "name": "Run independent primitives on the exact candidate",
+          "number": 5,
+          "started_at": "2026-11-08T08:39:52Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:45:05Z",
+          "conclusion": "success",
+          "name": "Require initial-root and quorum controls from the complete release registry",
+          "number": 6,
+          "started_at": "2026-11-08T08:42:29Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:45:08Z",
+          "conclusion": "success",
+          "name": "Run root-quorum codec and policy test doubles without native crypto claims",
+          "number": 7,
+          "started_at": "2026-11-08T08:45:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:45:09Z",
+          "conclusion": "success",
+          "name": "Retain independent primitive results including failures",
+          "number": 8,
+          "started_at": "2026-11-08T08:45:08Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:45:10Z",
+          "conclusion": "success",
+          "name": "Post Read the exact independent implementation",
+          "number": 15,
+          "started_at": "2026-11-08T08:45:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:45:10Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 16,
+          "started_at": "2026-11-08T08:45:10Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:45:10Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 17,
+          "started_at": "2026-11-08T08:45:10Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654640",
+      "workflow_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654658",
+      "completed_at": "2026-11-08T08:42:12Z",
+      "conclusion": "failure",
+      "created_at": "2026-11-08T08:39:00Z",
+      "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654658",
+      "id": 128678654658,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9dhywg",
+      "run_attempt": 1,
+      "run_id": 42463825160,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000045241,
+      "runner_name": "GitHub Actions 1000045241",
+      "started_at": "2026-11-08T08:39:06Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T08:39:07Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:07Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:45Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:07Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:47Z",
+          "conclusion": "success",
+          "name": "Prepare exact-source command records",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:45Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "failure",
+          "name": "Require retained source and claim controls",
+          "number": 4,
+          "started_at": "2026-11-08T08:39:47Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Install the original pinned compiler",
+          "number": 5,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Prepare the independently pinned OpenSSL provider",
+          "number": 6,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Record compiler, exact locked graph and formatting",
+          "number": 7,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Execute every required native effect and rejection control",
+          "number": 8,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Require admitted migration handoff and checkpoint endpoint ownership",
+          "number": 9,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Execute anchored NPQ6 migration and source-preservation controls",
+          "number": 10,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Refuse classical submit recovery for retained PQ network owners",
+          "number": 11,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Require native TLS and ordinary binary controls from actual registries",
+          "number": 12,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Require the explicit TLS witness CLI controls from the actual binary",
+          "number": 13,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Require original transaction scope controls",
+          "number": 14,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Require actual build-fence cache requalification",
+          "number": 15,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Preserve native control records before the complete regression",
+          "number": 16,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Preserve the complete original Node library regression suite",
+          "number": 17,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Check strict Clippy without rewriting source",
+          "number": 18,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:09Z",
+          "conclusion": "skipped",
+          "name": "Observe complete component costs with unchanged native budgets",
+          "number": 19,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:10Z",
+          "conclusion": "success",
+          "name": "Preserve complete records including failures",
+          "number": 20,
+          "started_at": "2026-11-08T08:42:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:10Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 40,
+          "started_at": "2026-11-08T08:42:10Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:11Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 41,
+          "started_at": "2026-11-08T08:42:10Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654658",
+      "workflow_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654668",
+      "completed_at": "2026-11-08T08:40:54Z",
+      "conclusion": "success",
+      "created_at": "2026-11-08T08:39:00Z",
+      "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654668",
+      "id": 128678654668,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "CPQ1 complete candidate observations (ubuntu-24.04, prospective-merge)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9dhyzA",
+      "run_attempt": 1,
+      "run_id": 42463825160,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000045199,
+      "runner_name": "GitHub Actions 1000045199",
+      "started_at": "2026-11-08T08:39:04Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T08:39:05Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:45Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:53Z",
+          "conclusion": "success",
+          "name": "Install the original pinned compiler",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:45Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:50Z",
+          "conclusion": "success",
+          "name": "Observe actual CPQ1 APIs and independently recompute every sample",
+          "number": 4,
+          "started_at": "2026-11-08T08:39:53Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:52Z",
+          "conclusion": "success",
+          "name": "Retain complete CPQ1 records including failures",
+          "number": 5,
+          "started_at": "2026-11-08T08:40:50Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:52Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 10,
+          "started_at": "2026-11-08T08:40:52Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:52Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "started_at": "2026-11-08T08:40:52Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654668",
+      "workflow_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654677",
+      "completed_at": "2026-11-08T08:40:32Z",
+      "conclusion": "success",
+      "created_at": "2026-11-08T08:39:00Z",
+      "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654677",
+      "id": 128678654677,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "TAP21 actual SDK interoperability (ubuntu-24.04, head)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9dhy1Q",
+      "run_attempt": 1,
+      "run_id": 42463825160,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000045200,
+      "runner_name": "GitHub Actions 1000045200",
+      "started_at": "2026-11-08T08:39:03Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T08:39:05Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:04Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:44Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:45Z",
+          "conclusion": "success",
+          "name": "Read the exact supported SDK source",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:44Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:53Z",
+          "conclusion": "success",
+          "name": "Install the original pinned compiler",
+          "number": 4,
+          "started_at": "2026-11-08T08:39:45Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:29Z",
+          "conclusion": "success",
+          "name": "Compare real SDK and product adapter signatures",
+          "number": 5,
+          "started_at": "2026-11-08T08:39:53Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:30Z",
+          "conclusion": "success",
+          "name": "Retain SDK interoperability including failures",
+          "number": 6,
+          "started_at": "2026-11-08T08:40:29Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:30Z",
+          "conclusion": "success",
+          "name": "Post Read the exact supported SDK source",
+          "number": 11,
+          "started_at": "2026-11-08T08:40:30Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:30Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 12,
+          "started_at": "2026-11-08T08:40:30Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:30Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 13,
+          "started_at": "2026-11-08T08:40:30Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654677",
+      "workflow_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654712",
+      "completed_at": "2026-11-08T08:40:55Z",
+      "conclusion": "success",
+      "created_at": "2026-11-08T08:39:00Z",
+      "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654712",
+      "id": 128678654712,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "CPQ1 complete candidate observations (ubuntu-24.04-arm, prospective-merge)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9dhy-A",
+      "run_attempt": 1,
+      "run_id": 42463825160,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000045242,
+      "runner_name": "GitHub Actions 1000045242",
+      "started_at": "2026-11-08T08:39:06Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T08:39:07Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:07Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:44Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:07Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:49Z",
+          "conclusion": "success",
+          "name": "Install the original pinned compiler",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:44Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:53Z",
+          "conclusion": "success",
+          "name": "Observe actual CPQ1 APIs and independently recompute every sample",
+          "number": 4,
+          "started_at": "2026-11-08T08:39:49Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:54Z",
+          "conclusion": "success",
+          "name": "Retain complete CPQ1 records including failures",
+          "number": 5,
+          "started_at": "2026-11-08T08:40:53Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:54Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 10,
+          "started_at": "2026-11-08T08:40:54Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:54Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "started_at": "2026-11-08T08:40:54Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654712",
+      "workflow_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654716",
+      "completed_at": "2026-11-08T08:41:06Z",
+      "conclusion": "success",
+      "created_at": "2026-11-08T08:39:00Z",
+      "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654716",
+      "id": 128678654716,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "CPQ1 complete candidate observations (ubuntu-24.04-arm, head)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9dhy_A",
+      "run_attempt": 1,
+      "run_id": 42463825160,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000045243,
+      "runner_name": "GitHub Actions 1000045243",
+      "started_at": "2026-11-08T08:39:09Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T08:39:11Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:10Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:55Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:11Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:01Z",
+          "conclusion": "success",
+          "name": "Install the original pinned compiler",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:55Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:03Z",
+          "conclusion": "success",
+          "name": "Observe actual CPQ1 APIs and independently recompute every sample",
+          "number": 4,
+          "started_at": "2026-11-08T08:40:01Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:05Z",
+          "conclusion": "success",
+          "name": "Retain complete CPQ1 records including failures",
+          "number": 5,
+          "started_at": "2026-11-08T08:41:03Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:05Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 10,
+          "started_at": "2026-11-08T08:41:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:41:05Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "started_at": "2026-11-08T08:41:05Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654716",
+      "workflow_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654762",
+      "completed_at": "2026-11-08T08:46:28Z",
+      "conclusion": "success",
+      "created_at": "2026-11-08T08:39:00Z",
+      "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654762",
+      "id": 128678654762,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "ML-DSA independent C implementation (ubuntu-24.04, prospective-merge)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9dhzKg",
+      "run_attempt": 1,
+      "run_id": 42463825160,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000045201,
+      "runner_name": "GitHub Actions 1000045201",
+      "started_at": "2026-11-08T08:39:04Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T08:39:05Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:03Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:04Z",
+          "conclusion": "success",
+          "name": "Read the exact independent implementation",
+          "number": 3,
+          "started_at": "2026-11-08T08:40:03Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:40:12Z",
+          "conclusion": "success",
+          "name": "Install the original pinned compiler",
+          "number": 4,
+          "started_at": "2026-11-08T08:40:04Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:51Z",
+          "conclusion": "success",
+          "name": "Run independent primitives on the exact candidate",
+          "number": 5,
+          "started_at": "2026-11-08T08:40:12Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:46:20Z",
+          "conclusion": "success",
+          "name": "Require initial-root and quorum controls from the complete release registry",
+          "number": 6,
+          "started_at": "2026-11-08T08:42:51Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:46:23Z",
+          "conclusion": "success",
+          "name": "Run root-quorum codec and policy test doubles without native crypto claims",
+          "number": 7,
+          "started_at": "2026-11-08T08:46:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:46:25Z",
+          "conclusion": "success",
+          "name": "Retain independent primitive results including failures",
+          "number": 8,
+          "started_at": "2026-11-08T08:46:23Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:46:25Z",
+          "conclusion": "success",
+          "name": "Post Read the exact independent implementation",
+          "number": 15,
+          "started_at": "2026-11-08T08:46:25Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:46:25Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 16,
+          "started_at": "2026-11-08T08:46:25Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:46:25Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 17,
+          "started_at": "2026-11-08T08:46:25Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654762",
+      "workflow_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654780",
+      "completed_at": "2026-11-08T08:42:46Z",
+      "conclusion": "failure",
+      "created_at": "2026-11-08T08:39:00Z",
+      "head_branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160/job/128678654780",
+      "id": 128678654780,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "PQ network and witness (ubuntu-24.04, head)",
+      "node_id": "CR_kwDOTty1_c8AAAAd9dhzPA",
+      "run_attempt": 1,
+      "run_id": 42463825160,
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825160",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000045202,
+      "runner_name": "GitHub Actions 1000045202",
+      "started_at": "2026-11-08T08:39:04Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-08T08:39:06Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:45Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:06Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:39:47Z",
+          "conclusion": "success",
+          "name": "Prepare exact-source command records",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:45Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:43Z",
+          "conclusion": "failure",
+          "name": "Require retained source and claim controls",
+          "number": 4,
+          "started_at": "2026-11-08T08:39:47Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:43Z",
+          "conclusion": "skipped",
+          "name": "Install the original pinned compiler",
+          "number": 5,
+          "started_at": "2026-11-08T08:42:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:43Z",
+          "conclusion": "skipped",
+          "name": "Prepare the independently pinned OpenSSL provider",
+          "number": 6,
+          "started_at": "2026-11-08T08:42:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:43Z",
+          "conclusion": "skipped",
+          "name": "Record compiler, exact locked graph and formatting",
+          "number": 7,
+          "started_at": "2026-11-08T08:42:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:43Z",
+          "conclusion": "skipped",
+          "name": "Execute every required native effect and rejection control",
+          "number": 8,
+          "started_at": "2026-11-08T08:42:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:43Z",
+          "conclusion": "skipped",
+          "name": "Require admitted migration handoff and checkpoint endpoint ownership",
+          "number": 9,
+          "started_at": "2026-11-08T08:42:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:43Z",
+          "conclusion": "skipped",
+          "name": "Execute anchored NPQ6 migration and source-preservation controls",
+          "number": 10,
+          "started_at": "2026-11-08T08:42:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:43Z",
+          "conclusion": "skipped",
+          "name": "Refuse classical submit recovery for retained PQ network owners",
+          "number": 11,
+          "started_at": "2026-11-08T08:42:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:43Z",
+          "conclusion": "skipped",
+          "name": "Require native TLS and ordinary binary controls from actual registries",
+          "number": 12,
+          "started_at": "2026-11-08T08:42:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:43Z",
+          "conclusion": "skipped",
+          "name": "Require the explicit TLS witness CLI controls from the actual binary",
+          "number": 13,
+          "started_at": "2026-11-08T08:42:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:43Z",
+          "conclusion": "skipped",
+          "name": "Require original transaction scope controls",
+          "number": 14,
+          "started_at": "2026-11-08T08:42:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:43Z",
+          "conclusion": "skipped",
+          "name": "Require actual build-fence cache requalification",
+          "number": 15,
+          "started_at": "2026-11-08T08:42:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:43Z",
+          "conclusion": "skipped",
+          "name": "Preserve native control records before the complete regression",
+          "number": 16,
+          "started_at": "2026-11-08T08:42:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:43Z",
+          "conclusion": "skipped",
+          "name": "Preserve the complete original Node library regression suite",
+          "number": 17,
+          "started_at": "2026-11-08T08:42:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:43Z",
+          "conclusion": "skipped",
+          "name": "Check strict Clippy without rewriting source",
+          "number": 18,
+          "started_at": "2026-11-08T08:42:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:43Z",
+          "conclusion": "skipped",
+          "name": "Observe complete component costs with unchanged native budgets",
+          "number": 19,
+          "started_at": "2026-11-08T08:42:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:44Z",
+          "conclusion": "success",
+          "name": "Preserve complete records including failures",
+          "number": 20,
+          "started_at": "2026-11-08T08:42:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:44Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "number": 40,
+          "started_at": "2026-11-08T08:42:44Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T08:42:44Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 41,
+          "started_at": "2026-11-08T08:42:44Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654780",
+      "workflow_name": "PoN PQ network and rollback witness"
+    }
+  ],
+  "total_count": 16
+}

@@ -1,0 +1,35 @@
+{
+  "all_members_read_back_and_hashed": true,
+  "all_originals_unchanged_after": true,
+  "archive": {
+    "bytes": 2543023,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-evidence-C1b-01/qualification-raw.tar.gz",
+    "sha256": "c7200a0e87a2323637b5e39cf67de3d642a8dc663686e4fa4d189fd155c05d06"
+  },
+  "completed": true,
+  "errors": [],
+  "excluded_count": 0,
+  "finished_monotonic_ns": 1166710436154197,
+  "fresh_proof_generations": 0,
+  "historical_C1_archive": {
+    "bytes": 1414611,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-evidence-C1-01/qualification-raw.tar.gz",
+    "sha256": "dd43317265e13c8014079adfe146dcf60b15ae0830d108abc480c0a499be1325"
+  },
+  "index": {
+    "bytes": 325344,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-evidence-C1b-01/qualification-raw-index.json",
+    "sha256": "30282de6967c2d82daa631c62f53593d0fa33adcd7278441eb75fe791ae1ce1e"
+  },
+  "inventory": {
+    "bytes": 328531,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-evidence-C1b-01/inventory.json",
+    "sha256": "9c91073846920ba4b5cc4952ca3e8b4721bd0c832bafbd5e43c215b2a640db72"
+  },
+  "member_count": 502,
+  "schema": "TRNM-W1-C1B-QUALIFICATION-ARCHIVE-READBACK1",
+  "source_commit": "0f18f93f2d35b62c6ca6d63faf4f336d55cbf4bf",
+  "source_tree": "94334bb6b52cfd13040059a5e71f47d8cc9603f2",
+  "started_monotonic_ns": 1166708959877501,
+  "uncompressed_bytes": 24700388
+}

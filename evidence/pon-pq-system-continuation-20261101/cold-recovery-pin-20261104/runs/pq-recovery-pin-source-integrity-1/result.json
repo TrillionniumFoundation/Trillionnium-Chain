@@ -1,0 +1,29 @@
+{
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_pq_research_integration.py"
+  ],
+  "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+  "returncode": 0,
+  "failure": null,
+  "elapsed_ns": 12433624656,
+  "timeout_seconds": 300,
+  "files": {
+    "stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr.log": {
+      "bytes": 134,
+      "sha256": "1d2dde7cd64256dd7c60cefda436f439575e5d7b0f1c40c49a9fdbce094e2088"
+    }
+  },
+  "profile_overrides": false,
+  "acceptance_granted": false
+}

@@ -1,0 +1,9 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: unknown or duplicate Cargo loader directory: observed="/workspace/scratch/e08750459604/pon-v3-target-682/release"; derived_normal={"/tmp/trnm-original-budget-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib", "/tmp/trnm-original-budget-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib", "/workspace/scratch/e08750459604/pon-v3-target-682/x86_64-unknown-linux-gnu/release", "/workspace/scratch/e08750459604/pon-v3-target-682/x86_64-unknown-linux-gnu/release/deps"}
+    Finished `release` profile [optimized] target(s) in 0.27s
+     Running unittests src/lib.rs (/workspace/scratch/e08750459604/pon-v3-target-682/x86_64-unknown-linux-gnu/release/deps/trnm_pon_node-62418a327cf7d485)
+
+running 1 test
+test ingress::public_v3::tests::w1_negative_cache_is_explicit_bounded_and_never_activated_by_default ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 843 filtered out; finished in 0.00s
+

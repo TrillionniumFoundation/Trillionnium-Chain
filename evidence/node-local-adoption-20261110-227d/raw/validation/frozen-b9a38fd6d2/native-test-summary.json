@@ -1,0 +1,209 @@
+{
+  "source_commit": "b9a38fd6d245e20849c7edd848dbbe18298cad7e",
+  "profile_overrides": {},
+  "totals": {
+    "passed": 786,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0
+  },
+  "target_summaries": [
+    {
+      "target": "Running unittests src/lib.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/deps/trnm_data_availability-831f43839ce52b8a)",
+      "passed": 741,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "145.45s"
+    },
+    {
+      "target": "Running unittests src/bin/trnm-cell.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/deps/trnm_cell-bb98bea509c4720e)",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.00s"
+    },
+    {
+      "target": "Running unittests src/bin/trnm-cell-adoption.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/deps/trnm_cell_adoption-2722087fd84f173d)",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.00s"
+    },
+    {
+      "target": "Running unittests src/bin/trnm-cell-discovery.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/deps/trnm_cell_discovery-3e7bb873dbb45094)",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.00s"
+    },
+    {
+      "target": "Running tests/cell_adoption_cli.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/deps/cell_adoption_cli-93c5335ddb3ac0b2)",
+      "passed": 11,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.89s"
+    },
+    {
+      "target": "Running tests/cell_cache_wal_cli.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/deps/cell_cache_wal_cli-23e523836b8bf91d)",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.09s"
+    },
+    {
+      "target": "Running tests/cell_closure_cli.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/deps/cell_closure_cli-4173114e2fde3203)",
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.38s"
+    },
+    {
+      "target": "Running tests/cell_discovery_cli.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/deps/cell_discovery_cli-33dcfa4e95c7c394)",
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.31s"
+    },
+    {
+      "target": "Running tests/cell_fetch_deadline_cli.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/deps/cell_fetch_deadline_cli-7e949ad1cb0a98cf)",
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.22s"
+    },
+    {
+      "target": "Running tests/cell_persistent_cli.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/deps/cell_persistent_cli-4f9f159a2dbcc291)",
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.30s"
+    },
+    {
+      "target": "Running tests/cell_provider_ready_cli.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/deps/cell_provider_ready_cli-4927fefacf1f956f)",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.06s"
+    },
+    {
+      "target": "Running tests/cell_release_cli.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/deps/cell_release_cli-ea061f9ad2e18acf)",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.21s"
+    },
+    {
+      "target": "Running tests/cell_tensor_cli.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/deps/cell_tensor_cli-bb4ef255ebea9d76)",
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.43s"
+    },
+    {
+      "target": "Running tests/pq_cell_cli.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/deps/pq_cell_cli-27ddca74a3fc1900)",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.25s"
+    },
+    {
+      "target": "Running unittests examples/cell_bep52_cost_v1.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/examples/cell_bep52_cost_v1-7d1cf8fea0863656)",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.00s"
+    },
+    {
+      "target": "Running unittests examples/cell_delta_workload_observer.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/examples/cell_delta_workload_observer-45ac36a05419e333)",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.00s"
+    },
+    {
+      "target": "Running unittests examples/cell_residency_observer.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/examples/cell_residency_observer-299c4854343a5730)",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.00s"
+    },
+    {
+      "target": "Running unittests examples/cell_rs46_cost_v1.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/examples/cell_rs46_cost_v1-affd547c28e70fe8)",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.00s"
+    },
+    {
+      "target": "Running unittests examples/cell_sealed_research_next_use_v1.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/examples/cell_sealed_research_next_use_v1-66ab358da2a98b15)",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.00s"
+    },
+    {
+      "target": "Running unittests examples/cell_serving_ab_observer.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/examples/cell_serving_ab_observer-5b5dad86f52bb981)",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.00s"
+    },
+    {
+      "target": "Running unittests examples/cell_signed_sealed_pipeline_v1.rs (/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/examples/cell_signed_sealed_pipeline_v1-29bd26975f5c5a5a)",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "elapsed": "0.00s"
+    }
+  ],
+  "new_owner_boundary_resident_cases": 26,
+  "new_cases": [
+    "test cell::adoption::tests::a_retained_child_can_be_explicitly_readopted_after_rollback_at_a_new_revision ... ok",
+    "test cell::adoption::tests::a_surviving_recovery_floor_rejects_whole_database_restore ... ok",
+    "test cell::adoption::tests::all_four_actions_rollback_with_a_new_revision_and_exact_cold_readback ... ok",
+    "test cell::adoption::tests::an_exact_nonorigin_anchor_bootstraps_without_claiming_historical_reverification ... ok",
+    "test cell::adoption::tests::complete_parent_bytes_and_local_selection_history_are_required ... ok",
+    "test cell::adoption::tests::execution_boundary_changes_and_unselected_versions_never_enter_consumer ... ok",
+    "test cell::adoption::tests::finite_history_survives_reopen_and_idempotence_never_spends_another_slot ... ok",
+    "test cell::adoption::tests::lost_reply_reconciles_the_original_request_and_precommit_cut_rolls_back ... ok",
+    "test cell::adoption::tests::model_evidence_cannot_change_immutable_policy_or_bootstrap_another_origin ... ok",
+    "test cell::adoption::tests::observations_and_same_candidate_two_node_choices_do_not_force_adoption ... ok",
+    "test cell::adoption::tests::observed_committed_floor_survives_consumer_and_request_failure ... ok",
+    "test cell::adoption::tests::replacement_and_hard_link_alias_refusal_are_latched ... ok",
+    "test cell::adoption::tests::schema_history_and_reference_tampering_refuse_before_use ... ok",
+    "test cell::adoption::tests::selected_callback_excludes_cooperating_writer_without_wait_or_deadlock ... ok",
+    "test cell::adoption::tests::snapshot_roundtrip_is_exact_but_does_not_authenticate_a_floor ... ok",
+    "test cell::adoption::tests::stale_snapshot_and_changed_request_bytes_refuse_without_state_effects ... ok",
+    "test cell::adoption_boundary::tests::a_consistent_complete_version_still_cannot_replace_the_environment ... ok",
+    "test cell::adoption_boundary::tests::candidate_cannot_change_loader_file_roles_paths_or_dependency_graph ... ok",
+    "test cell::adoption_boundary::tests::candidate_cannot_replace_frozen_tokenizer_or_model_interface ... ok",
+    "test cell::adoption_boundary::tests::each_protected_execution_identity_is_rechecked_independently ... ok",
+    "test cell::adoption_boundary::tests::model_policy_cannot_allow_configuration_or_unbounded_payloads ... ok",
+    "test cell::adoption_boundary::tests::permitted_weights_change_without_changing_frozen_tokenizer_or_environment ... ok",
+    "test cell::residency::version::selected_tests::rollback_reads_retained_parent_but_never_revives_an_old_selection_snapshot ... ok",
+    "test cell::residency::version::selected_tests::selected_use_holds_writer_fence_through_actual_consumer_callback ... ok",
+    "test cell::residency::version::selected_tests::selected_use_still_requires_live_task_and_unchanged_host_execution_pins ... ok",
+    "test cell::residency::version::selected_tests::two_nodes_consume_different_actual_bytes_after_adopt_and_defer ... ok"
+  ]
+}

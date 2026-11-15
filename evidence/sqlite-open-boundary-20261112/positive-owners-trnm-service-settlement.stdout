@@ -1,0 +1,7 @@
+
+running 2 tests
+test tests::sqlite_sidecar_inspection_error_refuses_before_database_creation ... ok
+test tests::sqlite_sidecar_objects_refuse_creation_and_reopen_without_file_effects ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 71 filtered out; finished in 0.08s
+

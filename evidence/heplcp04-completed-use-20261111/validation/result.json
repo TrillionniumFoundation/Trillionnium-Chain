@@ -1,0 +1,20 @@
+{
+  "authority": "DENY_ALL",
+  "base_commit": "c2d67c5cf1ebb4caac525802362d5746b8fd957d",
+  "capture_exit_code": 0,
+  "current_permission": "NOT_EXPORTED",
+  "native_stdout_bytes": 235411,
+  "native_stdout_sha256": "3e7ee2dcd9019949256a2987a3c8612d976952a58503d7050198adaab11a5261",
+  "prior_missing_fixture_original_sha256": "d4c4bef1fd99746476e5a076d615e9771bb042dc3ab1480f30d7ad6c3e648e38",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "source_sha256": {
+    ".github/workflows/pon-learning-outcome-composition.yml": "9d9b9cb19054cf6801ffafc14d4ed9da00f44026bb9bb7c80f62af1f988156a2",
+    "scripts/capture_cell_learning_local_use.py": "e7546bf1e936f519af7a31f54b3e29e3fe15cc5f7ebd2eeadc877442f66731ab",
+    "scripts/cell_learning_local_use_join.py": "7af37cdad0913a56ae31484e5fc46975de3a0328fc89197cc0aad9869a8700e4",
+    "scripts/test_cell_learning_local_use_join.py": "fd9241c32e40d065d41a0fd8acdb49805238ed2acef942e21bc1dfd2d7947032"
+  },
+  "test_exit_code": 0,
+  "tests_ran": 19,
+  "tracked_worktree_source_verification": false
+}

@@ -1,0 +1,22 @@
+{
+  "head": "96a98a635def8c13b2d4f234aa1daee59c57afa0",
+  "tree": "0fe4e15495f0ce643db9f222ca087e518618df7b",
+  "command": [
+    "python3",
+    "scripts/run_pon_root_supplement.py",
+    "prepare",
+    "--out",
+    "/tmp/trnm-pn-convergence-20261023/evidence-root/pn1-root-final-prepare",
+    "--expected-head",
+    "96a98a635def8c13b2d4f234aa1daee59c57afa0",
+    "--expected-tree",
+    "0fe4e15495f0ce643db9f222ca087e518618df7b",
+    "--target-dir",
+    "/tmp/trnm-pn-convergence-20261023/target-integration",
+    "--cargo",
+    "/home/qian-qi/.cargo/bin/cargo"
+  ],
+  "returncode": 0,
+  "seconds": 8.672447261982597,
+  "log_sha256": "64519d8d8d7ae324beefad126c68810263538ef132f2c33ce815fdbef7995904"
+}

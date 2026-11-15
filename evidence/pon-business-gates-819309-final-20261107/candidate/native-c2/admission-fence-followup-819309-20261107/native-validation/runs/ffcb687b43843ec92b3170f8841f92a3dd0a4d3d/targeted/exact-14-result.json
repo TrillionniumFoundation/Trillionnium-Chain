@@ -1,0 +1,41 @@
+{
+  "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+  "native_effective_exit_code": 0,
+  "required_reader_exit_code": 0,
+  "actual_running_paths": [
+    "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/admission-fence-target/debug/deps/trnm_pon_node-3d075b189916f208"
+  ],
+  "running_matches_unique_inventory_binary": true,
+  "all_summaries": [
+    {
+      "line": 13,
+      "status": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 1204,
+      "seconds": 47.39
+    }
+  ],
+  "outer_summary": {
+    "line": 13,
+    "status": "ok",
+    "passed": 1,
+    "failed": 0,
+    "ignored": 0,
+    "measured": 0,
+    "filtered": 1204,
+    "seconds": 47.39
+  },
+  "abnormal_process_diagnostics": [],
+  "supervised_interruption": false,
+  "verified_named_pass": true,
+  "raw": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-14.log",
+    "bytes": 70665,
+    "sha256": "277bc24b2b2222ee32c75243d05d4ce8d85b074bfd76a8406a8a13a03d515084"
+  },
+  "child_or_ambiguous_summaries_are_not_outer_totals": true,
+  "label": "exact-14"
+}

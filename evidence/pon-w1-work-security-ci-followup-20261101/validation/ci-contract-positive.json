@@ -1,0 +1,12 @@
+{
+  "name": "ci-contract-positive",
+  "command": [
+    "python3",
+    "scripts/ci/check_ci_contract.py"
+  ],
+  "exit_code": 0,
+  "started_unix_ns": 1793524915805212291,
+  "ended_unix_ns": 1793524915886440023,
+  "stdout_bytes": 154,
+  "stderr_bytes": 0
+}

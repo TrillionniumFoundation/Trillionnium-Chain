@@ -1,0 +1,252 @@
+[
+  {
+    "label": "scope-controls",
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/test_cell_learning_scope_join.py",
+      "-v"
+    ],
+    "started_at": "2026-11-09T14:09:03.569002+00:00",
+    "completed_at": "2026-11-09T14:09:04.480025+00:00",
+    "elapsed_seconds": 0.9110258709988557,
+    "exit": 5,
+    "error": null,
+    "source_commit": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+    "tracked_status_before": "",
+    "tracked_status_after": "",
+    "head_after": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+    "logs": {
+      "stdout": {
+        "path": "scope-controls.stdout.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "scope-controls.stderr.log",
+        "bytes": 1258,
+        "sha256": "f528b57a8fdbe22d34fb6b4ba5b41df063a927a96eca27900323a73738af9b32"
+      }
+    }
+  },
+  {
+    "label": "campaign-reader-controls",
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_audit_native_campaign_outcomes.py",
+      "-v"
+    ],
+    "started_at": "2026-11-09T14:09:04.525647+00:00",
+    "completed_at": "2026-11-09T14:09:05.296490+00:00",
+    "elapsed_seconds": 0.7708430029997544,
+    "exit": 0,
+    "error": null,
+    "source_commit": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+    "tracked_status_before": "",
+    "tracked_status_after": "",
+    "head_after": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+    "logs": {
+      "stdout": {
+        "path": "campaign-reader-controls.stdout.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "campaign-reader-controls.stderr.log",
+        "bytes": 3529,
+        "sha256": "eef68c7779b0d6cbded16dbff1444da77b97365e635f6ffec2bef64c85ee6cc3"
+      }
+    }
+  },
+  {
+    "label": "corpus-controls",
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_pq_research_integration.py",
+      "-v"
+    ],
+    "started_at": "2026-11-09T14:09:05.307263+00:00",
+    "completed_at": "2026-11-09T14:13:05.427290+00:00",
+    "elapsed_seconds": 240.12000932699993,
+    "exit": null,
+    "error": "harness_timeout_240_seconds",
+    "source_commit": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+    "tracked_status_before": "",
+    "tracked_status_after": " M scripts/ci/test_ci_contract.py\n",
+    "head_after": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+    "logs": {
+      "stdout": {
+        "path": "corpus-controls.stdout.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "corpus-controls.stderr.log",
+        "bytes": 3635,
+        "sha256": "0dea5f6f9a0357f85957f6af1241191652776f6d0f0de614d9ab9933c08660c3"
+      }
+    }
+  },
+  {
+    "label": "corpus-inspect",
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "started_at": "2026-11-09T14:13:05.431607+00:00",
+    "completed_at": "2026-11-09T14:13:05.812050+00:00",
+    "elapsed_seconds": 0.380450958999063,
+    "exit": 1,
+    "error": null,
+    "source_commit": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+    "tracked_status_before": " M scripts/ci/test_ci_contract.py\n",
+    "tracked_status_after": " M scripts/ci/test_ci_contract.py\n",
+    "head_after": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+    "logs": {
+      "stdout": {
+        "path": "corpus-inspect.stdout.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "corpus-inspect.stderr.log",
+        "bytes": 59,
+        "sha256": "ad12de072c7fb74c37e024517c6c3f3b9d459dbe3a2fe0eb35190c1a7bc2ea3e"
+      }
+    }
+  },
+  {
+    "label": "inventory-check",
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "started_at": "2026-11-09T14:13:05.816391+00:00",
+    "completed_at": "2026-11-09T14:13:06.131329+00:00",
+    "elapsed_seconds": 0.3149453429996356,
+    "exit": 0,
+    "error": null,
+    "source_commit": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+    "tracked_status_before": " M scripts/ci/test_ci_contract.py\n",
+    "tracked_status_after": " M scripts/ci/test_ci_contract.py\n",
+    "head_after": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+    "logs": {
+      "stdout": {
+        "path": "inventory-check.stdout.log",
+        "bytes": 35,
+        "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+      },
+      "stderr": {
+        "path": "inventory-check.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  {
+    "label": "proof-profile-inspect",
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/pq_proof_profile_binding.py",
+      "--expected-profile-descriptor-sha256",
+      "da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c"
+    ],
+    "started_at": "2026-11-09T14:13:06.136895+00:00",
+    "completed_at": "2026-11-09T14:13:06.378502+00:00",
+    "elapsed_seconds": 0.24161974899834604,
+    "exit": 0,
+    "error": null,
+    "source_commit": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+    "tracked_status_before": " M scripts/ci/test_ci_contract.py\n",
+    "tracked_status_after": " M scripts/ci/test_ci_contract.py\n",
+    "head_after": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+    "logs": {
+      "stdout": {
+        "path": "proof-profile-inspect.stdout.log",
+        "bytes": 8272,
+        "sha256": "e19e35919217ebe95829cb61092ac2b79526e62dd7fdac1d58c030593dedd998"
+      },
+      "stderr": {
+        "path": "proof-profile-inspect.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  {
+    "label": "metadata-all-features",
+    "argv": [
+      "cargo",
+      "+1.95.0",
+      "metadata",
+      "--offline",
+      "--locked",
+      "--all-features",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "started_at": "2026-11-09T14:13:06.383135+00:00",
+    "completed_at": "2026-11-09T14:13:06.879192+00:00",
+    "elapsed_seconds": 0.49606434799898125,
+    "exit": 0,
+    "error": null,
+    "source_commit": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+    "tracked_status_before": " M scripts/ci/test_ci_contract.py\n",
+    "tracked_status_after": " M scripts/ci/test_ci_contract.py\n",
+    "head_after": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+    "logs": {
+      "stdout": {
+        "path": "metadata-all-features.stdout.log",
+        "bytes": 848392,
+        "sha256": "1c60b87b5b663b5984a8b113f3ffe17bd511b220e3ad692f69ffa1a91f80c725"
+      },
+      "stderr": {
+        "path": "metadata-all-features.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  {
+    "label": "rustfmt-check",
+    "argv": [
+      "cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "started_at": "2026-11-09T14:13:06.896231+00:00",
+    "completed_at": "2026-11-09T14:13:31.939355+00:00",
+    "elapsed_seconds": 25.04312677100097,
+    "exit": 0,
+    "error": null,
+    "source_commit": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+    "tracked_status_before": " M scripts/ci/test_ci_contract.py\n",
+    "tracked_status_after": " M scripts/ci/test_ci_contract.py\n",
+    "head_after": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+    "logs": {
+      "stdout": {
+        "path": "rustfmt-check.stdout.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "rustfmt-check.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  }
+]

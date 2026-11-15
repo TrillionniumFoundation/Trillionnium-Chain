@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "bash",
+    "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+    "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+    "--list",
+    "--ignored",
+    "--format",
+    "terse"
+  ],
+  "child_system_seconds": 0.0037229999999999997,
+  "child_user_seconds": 0.0,
+  "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+  "exit_code": 0,
+  "finished_at": "2026-11-04T08:39:36.247580+00:00",
+  "label": "registry-ignored",
+  "max_child_rss_kib": 14572,
+  "started_at": "2026-11-04T08:39:36.243643+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "dda33d1617b05e9f47f63690fa7aa55a7eed9b5ba8a486e3a53dd2865d660b1d",
+  "wall_ns": 3939623
+}

@@ -1,0 +1,1249 @@
+{
+  "schema": "independent-component-native-artifact-readback-v1",
+  "workflow_run": 42938943118,
+  "run_attempt": 1,
+  "head": "7d6567b92575d1d84766afd49d0720b6f197b0e0",
+  "tree": "ea0f6792497d72cbad92cffdeeedbcba7b6f9a06",
+  "workflow_conclusion": "failure",
+  "scope": "seven component controls; no campaign or TPS qualification",
+  "arms": [
+    {
+      "mode": "fixed",
+      "source_commit": "7d6567b92575d1d84766afd49d0720b6f197b0e0",
+      "source_tree": "ea0f6792497d72cbad92cffdeeedbcba7b6f9a06",
+      "source_before_after_equal": true,
+      "all_driver_subject_bytes_verified": true,
+      "build_exit_code": 0,
+      "profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": true
+      },
+      "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+      "artifact_id": 13820743494,
+      "zip_sha256": "f14479eb27957c6f5bd45fe5602137544db7597d74bcece3e9fbc6df1d0638b0",
+      "binary_sha256": "d91c8eac80a343c08703484174831ab4e224d4b6a2abd4dd17f0ab85cc06f824",
+      "binary_bytes": 101739464,
+      "actual_libtest_roster": 1338,
+      "required_names_once_each": true,
+      "recorded_stream_digests_verified": true,
+      "runner_result": "FAIL",
+      "runner_errors": [
+        "ingress::history_import::tests::detached_budget_controls::shared_detached_history_continues_from_real_deficit_without_new_credit: ValueError: NATIVE_PROCESS_OUTCOME",
+        "ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_keeps_original_resource_cancellation: ValueError: ORIGINAL_CPU_ACCOUNT_REQUIRED",
+        "ValueError: SEVEN_EXPECTED_OUTCOMES_REQUIRED"
+      ],
+      "cases": [
+        {
+          "index": 1,
+          "name": "ingress::history_import::tests::detached_budget_controls::shared_detached_history_continues_from_real_deficit_without_new_credit",
+          "exit_code": 101,
+          "actual_libtest_summary": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1337 filtered out;",
+          "runner_expected_outcome_observed": false,
+          "runner_error": "ValueError: NATIVE_PROCESS_OUTCOME",
+          "raw_panic": "\nthread 'ingress::history_import::tests::detached_budget_controls::shared_detached_history_continues_from_real_deficit_without_new_credit' (5573) panicked at crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs:145:31:\ncalled `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuUnavailable), kind: DependencyUnavailable, message: \"PUBLIC_MUTATION_CPU_UNAVAILABLE\", source: None, request_history_budget: false }\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n",
+          "stdout_sha256": "b661a7d6d064276800b1dec5070654ec96b37754844e178878118b780bf53352",
+          "stderr_sha256": "68f735e80caa3f236b1c07e3d54b69ce5eb06ab37e8c2a6fcce695f910d0203c",
+          "history_minimal": {
+            "flow": null,
+            "mode": "Continue",
+            "native_campaign_executed": false,
+            "outcome": {
+              "Err": "PUBLIC_MUTATION_CPU_UNAVAILABLE"
+            },
+            "refill_resource_checks": 42,
+            "replay": {
+              "actual_thread_cpu_ns": 165286479,
+              "completed_native_replays": 323,
+              "projected_paid_credit_ns": 140205941
+            },
+            "schema": "history-detached-original-refill-control-v1"
+          },
+          "history_phases": [
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "decode",
+              "started": true,
+              "thread_cpu_ns": 282207,
+              "wall_ns": 282177
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "context",
+              "started": true,
+              "thread_cpu_ns": 11461,
+              "wall_ns": 11330
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_wait",
+              "started": true,
+              "thread_cpu_ns": 2660993,
+              "wall_ns": 399683034
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "history_epoch_open",
+              "started": true,
+              "thread_cpu_ns": 112260,
+              "wall_ns": 317745
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+              "phase": "history_epoch_close",
+              "started": true,
+              "thread_cpu_ns": 2354,
+              "wall_ns": 2926
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+              "phase": "history_import",
+              "started": true,
+              "thread_cpu_ns": 172450883,
+              "wall_ns": 677973714
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_settle",
+              "started": true,
+              "thread_cpu_ns": 4478,
+              "wall_ns": 4508
+            }
+          ],
+          "packet_phases": [
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "context",
+              "started": true,
+              "thread_cpu_ns": 186437,
+              "wall_ns": 186368
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "work",
+              "started": true,
+              "thread_cpu_ns": 1494328,
+              "wall_ns": 1494306
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "admission_owner_wait",
+              "started": true,
+              "thread_cpu_ns": 10009,
+              "wall_ns": 10048
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_BUDGET",
+              "phase": "admission",
+              "started": true,
+              "thread_cpu_ns": 167532248,
+              "wall_ns": 273765984
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "admission_prepare",
+              "started": true,
+              "thread_cpu_ns": 300270,
+              "wall_ns": 300072
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "execution",
+              "started": true,
+              "thread_cpu_ns": 166397822,
+              "wall_ns": 272631381
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "commit_owner_wait",
+              "started": true,
+              "thread_cpu_ns": 5250,
+              "wall_ns": 5290
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_BUDGET",
+              "phase": "commit",
+              "started": true,
+              "thread_cpu_ns": 822384,
+              "wall_ns": 822058
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_wait",
+              "started": true,
+              "thread_cpu_ns": 21380,
+              "wall_ns": 2077999
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_BUDGET",
+              "phase": "history_import",
+              "started": true,
+              "thread_cpu_ns": 169352434,
+              "wall_ns": 277642708
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_settle",
+              "started": true,
+              "thread_cpu_ns": 3957,
+              "wall_ns": 4098
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "root_commitment",
+              "started": true,
+              "thread_cpu_ns": 146863,
+              "wall_ns": 147005
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "name": "ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_keeps_original_resource_cancellation",
+          "exit_code": 0,
+          "actual_libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1337 filtered out;",
+          "runner_expected_outcome_observed": false,
+          "runner_error": "ValueError: ORIGINAL_CPU_ACCOUNT_REQUIRED",
+          "raw_panic": "",
+          "stdout_sha256": "ba95022463bddb6a43345997b8b3e8145de510238430fc6177b094ebb24809c8",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "history_minimal": {
+            "flow": null,
+            "mode": "Cancel",
+            "native_campaign_executed": false,
+            "outcome": {
+              "Err": "PUBLIC_MUTATION_CPU_UNAVAILABLE"
+            },
+            "refill_resource_checks": 1,
+            "replay": {
+              "actual_thread_cpu_ns": 165486289,
+              "completed_native_replays": 325,
+              "projected_paid_credit_ns": 140357380
+            },
+            "schema": "history-detached-original-refill-control-v1"
+          },
+          "history_phases": [
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "decode",
+              "started": true,
+              "thread_cpu_ns": 242983,
+              "wall_ns": 242874
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "context",
+              "started": true,
+              "thread_cpu_ns": 12884,
+              "wall_ns": 12754
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_wait",
+              "started": true,
+              "thread_cpu_ns": 2771010,
+              "wall_ns": 399777331
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "history_epoch_open",
+              "started": true,
+              "thread_cpu_ns": 115054,
+              "wall_ns": 363190
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+              "phase": "history_epoch_close",
+              "started": true,
+              "thread_cpu_ns": 2104,
+              "wall_ns": 2264
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+              "phase": "history_import",
+              "started": true,
+              "thread_cpu_ns": 171104304,
+              "wall_ns": 570546911
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_settle",
+              "started": true,
+              "thread_cpu_ns": 4719,
+              "wall_ns": 4809
+            }
+          ],
+          "packet_phases": [
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "context",
+              "started": true,
+              "thread_cpu_ns": 187019,
+              "wall_ns": 186990
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "work",
+              "started": true,
+              "thread_cpu_ns": 1496031,
+              "wall_ns": 1496010
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "admission_owner_wait",
+              "started": true,
+              "thread_cpu_ns": 10400,
+              "wall_ns": 10489
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_REQUEST_CANCELLED",
+              "phase": "admission",
+              "started": true,
+              "thread_cpu_ns": 166131356,
+              "wall_ns": 166258540
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "admission_prepare",
+              "started": true,
+              "thread_cpu_ns": 304147,
+              "wall_ns": 303989
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_REQUEST_CANCELLED",
+              "phase": "execution",
+              "started": true,
+              "thread_cpu_ns": 165823873,
+              "wall_ns": 165950965
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_wait",
+              "started": true,
+              "thread_cpu_ns": 18525,
+              "wall_ns": 2075944
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_REQUEST_CANCELLED",
+              "phase": "history_import",
+              "started": true,
+              "thread_cpu_ns": 167931294,
+              "wall_ns": 170116109
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_settle",
+              "started": true,
+              "thread_cpu_ns": 3346,
+              "wall_ns": 3446
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "name": "ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_cannot_renew_original_deadline",
+          "exit_code": 0,
+          "actual_libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1337 filtered out;",
+          "runner_expected_outcome_observed": true,
+          "runner_error": null,
+          "raw_panic": "",
+          "stdout_sha256": "f502bf8f5f149fa27122642c83f6b48d45713f0656726130c180205fef2bf98c",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "history_minimal": {
+            "flow": {
+              "balance_identity_verified": true,
+              "booked_reservation_ns": 0,
+              "credited_refill_ns": 1250051266,
+              "discarded_refill_ns": 0,
+              "initial_credit_ns": 0,
+              "live_debited_cpu_ns": 168122278,
+              "live_owners": 0,
+              "paid_cpu_debit_ns": 168125324,
+              "remaining_paid_credit_ns": 1081925942,
+              "schema": "public-v3-local-actual-cpu-flow-v1",
+              "settled_full_cpu_ns": 168125324,
+              "settlement_discard_ns": 0,
+              "settlement_residual_cpu_ns": 3046,
+              "stored_credit_ns": 1081925942,
+              "unsettled_known_live_cpu_ns": 0
+            },
+            "mode": "Expire",
+            "native_campaign_executed": false,
+            "outcome": {
+              "Err": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "refill_resource_checks": 1,
+            "replay": {
+              "actual_thread_cpu_ns": 165398967,
+              "completed_native_replays": 321,
+              "projected_paid_credit_ns": 140267815
+            },
+            "schema": "history-detached-original-refill-control-v1"
+          },
+          "history_phases": [
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "decode",
+              "started": true,
+              "thread_cpu_ns": 202838,
+              "wall_ns": 202910
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "context",
+              "started": true,
+              "thread_cpu_ns": 10941,
+              "wall_ns": 10801
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_wait",
+              "started": true,
+              "thread_cpu_ns": 2605157,
+              "wall_ns": 399575372
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "history_epoch_open",
+              "started": true,
+              "thread_cpu_ns": 114223,
+              "wall_ns": 314458
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "history_epoch_close",
+              "started": true,
+              "thread_cpu_ns": 257780,
+              "wall_ns": 691624
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_REQUEST_DEADLINE",
+              "phase": "history_import",
+              "started": true,
+              "thread_cpu_ns": 171145164,
+              "wall_ns": 5000539142
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_settle",
+              "started": true,
+              "thread_cpu_ns": 3737,
+              "wall_ns": 3807
+            }
+          ],
+          "packet_phases": [
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "context",
+              "started": true,
+              "thread_cpu_ns": 186127,
+              "wall_ns": 185978
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "work",
+              "started": true,
+              "thread_cpu_ns": 1506170,
+              "wall_ns": 1506118
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "admission_owner_wait",
+              "started": true,
+              "thread_cpu_ns": 7884,
+              "wall_ns": 7915
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_REQUEST_DEADLINE",
+              "phase": "admission",
+              "started": true,
+              "thread_cpu_ns": 166106869,
+              "wall_ns": 4595835746
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "admission_prepare",
+              "started": true,
+              "thread_cpu_ns": 302263,
+              "wall_ns": 302165
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_REQUEST_DEADLINE",
+              "phase": "execution",
+              "started": true,
+              "thread_cpu_ns": 165800197,
+              "wall_ns": 4595526127
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_wait",
+              "started": true,
+              "thread_cpu_ns": 18835,
+              "wall_ns": 2075243
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_REQUEST_DEADLINE",
+              "phase": "history_import",
+              "started": true,
+              "thread_cpu_ns": 167924209,
+              "wall_ns": 4599709724
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_settle",
+              "started": true,
+              "thread_cpu_ns": 7264,
+              "wall_ns": 7494
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "name": "mining::prepare_control_tests::registered_prepare_pre_cancel_keeps_error_before_material_or_parent_io",
+          "exit_code": 0,
+          "actual_libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1337 filtered out;",
+          "runner_expected_outcome_observed": true,
+          "runner_error": null,
+          "raw_panic": "",
+          "stdout_sha256": "319611b3d1b15c25cb6a477c481b82fd7c344bdc6fec22131f7c183de7930b11",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "index": 5,
+          "name": "mining::prepare_control_tests::registered_prepare_cancels_inside_active_row_scan_before_execution",
+          "exit_code": 0,
+          "actual_libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1337 filtered out;",
+          "runner_expected_outcome_observed": true,
+          "runner_error": null,
+          "raw_panic": "",
+          "stdout_sha256": "03885a55c124736e55da5286d9187eb4f06a2fcdb9900d4850ffff5d265297d4",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "index": 6,
+          "name": "mining::prepare_control_tests::registered_prepare_cancels_during_inactive_ancestry_read_and_retries",
+          "exit_code": 0,
+          "actual_libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1337 filtered out;",
+          "runner_expected_outcome_observed": true,
+          "runner_error": null,
+          "raw_panic": "",
+          "stdout_sha256": "43bb71c92f0082d5b96a7b229e8e0a83ea59a63e484731935a4512371b6d1fde",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "index": 7,
+          "name": "mining::prepare_control_tests::registered_prepare_control_preserves_packets_errors_and_cold_commit",
+          "exit_code": 0,
+          "actual_libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1337 filtered out;",
+          "runner_expected_outcome_observed": true,
+          "runner_error": null,
+          "raw_panic": "",
+          "stdout_sha256": "5b78a50da75ba2bf7c81136982b6986ee9f95bfb3dc88e043da95b7ca37ac450",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "mode": "before",
+      "source_commit": "d6bbac6baf9e5356721ab56f7432058d07b6b49b",
+      "source_tree": "653b1a8b483ccdbf69b272255ec0369d98296302",
+      "source_before_after_equal": true,
+      "all_driver_subject_bytes_verified": true,
+      "build_exit_code": 0,
+      "profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": true
+      },
+      "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+      "artifact_id": 13820199912,
+      "zip_sha256": "cc7b922af95c21fb295173e771118b224f2557e2927bd38ea9949d79f7353aef",
+      "binary_sha256": "5b99a297e80535672996d6b53dc8da428bae927d95138212c2e04eafca2d749d",
+      "binary_bytes": 101682368,
+      "actual_libtest_roster": 1338,
+      "required_names_once_each": true,
+      "recorded_stream_digests_verified": true,
+      "runner_result": "FAIL",
+      "runner_errors": [
+        "ingress::history_import::tests::detached_budget_controls::shared_detached_history_continues_from_real_deficit_without_new_credit: ValueError: ORIGINAL_CPU_ACCOUNT_REQUIRED",
+        "ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_keeps_original_resource_cancellation: ValueError: ORIGINAL_CPU_ACCOUNT_REQUIRED",
+        "ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_cannot_renew_original_deadline: ValueError: ORIGINAL_CPU_ACCOUNT_REQUIRED",
+        "ValueError: SEVEN_EXPECTED_OUTCOMES_REQUIRED"
+      ],
+      "cases": [
+        {
+          "index": 1,
+          "name": "ingress::history_import::tests::detached_budget_controls::shared_detached_history_continues_from_real_deficit_without_new_credit",
+          "exit_code": 101,
+          "actual_libtest_summary": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1337 filtered out;",
+          "runner_expected_outcome_observed": false,
+          "runner_error": "ValueError: ORIGINAL_CPU_ACCOUNT_REQUIRED",
+          "raw_panic": "\nthread 'ingress::history_import::tests::detached_budget_controls::shared_detached_history_continues_from_real_deficit_without_new_credit' (5470) panicked at crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs:133:5:\ndetached execution refused actual debt before its original refill control: Err(Error { code: Some(PublicMutationCpuUnavailable), kind: DependencyUnavailable, message: \"PUBLIC_MUTATION_CPU_UNAVAILABLE\", source: None, request_history_budget: false })\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n",
+          "stdout_sha256": "a4779f6ddd22f4a123739f922ba504c28908b4f5ec8d4c7175b4637ae9a136c6",
+          "stderr_sha256": "e67091c477c7d3a7a9791a81b4d9d7a29a5822ede88719f446d4ee3f0ac8d6e2",
+          "history_minimal": {
+            "flow": null,
+            "mode": "Continue",
+            "native_campaign_executed": false,
+            "outcome": {
+              "Err": "PUBLIC_MUTATION_CPU_UNAVAILABLE"
+            },
+            "refill_resource_checks": 0,
+            "replay": {
+              "actual_thread_cpu_ns": 165209007,
+              "completed_native_replays": 324,
+              "projected_paid_credit_ns": 140039012
+            },
+            "schema": "history-detached-original-refill-control-v1"
+          },
+          "history_phases": [
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "decode",
+              "started": true,
+              "thread_cpu_ns": 265105,
+              "wall_ns": 265098
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "context",
+              "started": true,
+              "thread_cpu_ns": 10780,
+              "wall_ns": 10650
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_wait",
+              "started": true,
+              "thread_cpu_ns": 2362220,
+              "wall_ns": 401262166
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "history_epoch_open",
+              "started": true,
+              "thread_cpu_ns": 110145,
+              "wall_ns": 364093
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+              "phase": "history_epoch_close",
+              "started": true,
+              "thread_cpu_ns": 2705,
+              "wall_ns": 2876
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+              "phase": "history_import",
+              "started": true,
+              "thread_cpu_ns": 170549663,
+              "wall_ns": 569774662
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_settle",
+              "started": true,
+              "thread_cpu_ns": 4328,
+              "wall_ns": 4348
+            }
+          ],
+          "packet_phases": [
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "context",
+              "started": true,
+              "thread_cpu_ns": 219309,
+              "wall_ns": 219201
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "work",
+              "started": true,
+              "thread_cpu_ns": 1562088,
+              "wall_ns": 1562074
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "admission_owner_wait",
+              "started": true,
+              "thread_cpu_ns": 10569,
+              "wall_ns": 10710
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_BUDGET",
+              "phase": "admission",
+              "started": true,
+              "thread_cpu_ns": 165885594,
+              "wall_ns": 165951956
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "admission_prepare",
+              "started": true,
+              "thread_cpu_ns": 325739,
+              "wall_ns": 325611
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_BUDGET",
+              "phase": "execution",
+              "started": true,
+              "thread_cpu_ns": 165556239,
+              "wall_ns": 165622518
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_wait",
+              "started": true,
+              "thread_cpu_ns": 5250,
+              "wall_ns": 5350
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_BUDGET",
+              "phase": "history_import",
+              "started": true,
+              "thread_cpu_ns": 167772199,
+              "wall_ns": 167838930
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_settle",
+              "started": true,
+              "thread_cpu_ns": 4058,
+              "wall_ns": 4238
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "name": "ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_keeps_original_resource_cancellation",
+          "exit_code": 101,
+          "actual_libtest_summary": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1337 filtered out;",
+          "runner_expected_outcome_observed": false,
+          "runner_error": "ValueError: ORIGINAL_CPU_ACCOUNT_REQUIRED",
+          "raw_panic": "\nthread 'ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_keeps_original_resource_cancellation' (5472) panicked at crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs:133:5:\ndetached execution refused actual debt before its original refill control: Err(Error { code: Some(PublicMutationCpuUnavailable), kind: DependencyUnavailable, message: \"PUBLIC_MUTATION_CPU_UNAVAILABLE\", source: None, request_history_budget: false })\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n",
+          "stdout_sha256": "71b04c80188ce1ea94cd18d5a130156a862584fa80662e9d04cbf7e940a0ae3f",
+          "stderr_sha256": "09bb94e31dd5d62eef6ff922784f0a14781925ff1ed7d41f12b1679301a982c1",
+          "history_minimal": {
+            "flow": null,
+            "mode": "Cancel",
+            "native_campaign_executed": false,
+            "outcome": {
+              "Err": "PUBLIC_MUTATION_CPU_UNAVAILABLE"
+            },
+            "refill_resource_checks": 0,
+            "replay": {
+              "actual_thread_cpu_ns": 165535289,
+              "completed_native_replays": 326,
+              "projected_paid_credit_ns": 140306457
+            },
+            "schema": "history-detached-original-refill-control-v1"
+          },
+          "history_phases": [
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "decode",
+              "started": true,
+              "thread_cpu_ns": 198752,
+              "wall_ns": 198753
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "context",
+              "started": true,
+              "thread_cpu_ns": 12744,
+              "wall_ns": 12584
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_wait",
+              "started": true,
+              "thread_cpu_ns": 2476571,
+              "wall_ns": 399466835
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "history_epoch_open",
+              "started": true,
+              "thread_cpu_ns": 107241,
+              "wall_ns": 331273
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+              "phase": "history_epoch_close",
+              "started": true,
+              "thread_cpu_ns": 2554,
+              "wall_ns": 2735
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+              "phase": "history_import",
+              "started": true,
+              "thread_cpu_ns": 170795460,
+              "wall_ns": 570085548
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_settle",
+              "started": true,
+              "thread_cpu_ns": 3847,
+              "wall_ns": 3957
+            }
+          ],
+          "packet_phases": [
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "context",
+              "started": true,
+              "thread_cpu_ns": 191849,
+              "wall_ns": 191840
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "work",
+              "started": true,
+              "thread_cpu_ns": 1474665,
+              "wall_ns": 1474660
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "admission_owner_wait",
+              "started": true,
+              "thread_cpu_ns": 8185,
+              "wall_ns": 8296
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_BUDGET",
+              "phase": "admission",
+              "started": true,
+              "thread_cpu_ns": 166187446,
+              "wall_ns": 166202209
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "admission_prepare",
+              "started": true,
+              "thread_cpu_ns": 306853,
+              "wall_ns": 306766
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_BUDGET",
+              "phase": "execution",
+              "started": true,
+              "thread_cpu_ns": 165877246,
+              "wall_ns": 165891875
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_wait",
+              "started": true,
+              "thread_cpu_ns": 18525,
+              "wall_ns": 2075609
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_BUDGET",
+              "phase": "history_import",
+              "started": true,
+              "thread_cpu_ns": 167972451,
+              "wall_ns": 170044385
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_settle",
+              "started": true,
+              "thread_cpu_ns": 3877,
+              "wall_ns": 4228
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "name": "ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_cannot_renew_original_deadline",
+          "exit_code": 101,
+          "actual_libtest_summary": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1337 filtered out;",
+          "runner_expected_outcome_observed": false,
+          "runner_error": "ValueError: ORIGINAL_CPU_ACCOUNT_REQUIRED",
+          "raw_panic": "\nthread 'ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_cannot_renew_original_deadline' (5474) panicked at crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs:133:5:\ndetached execution refused actual debt before its original refill control: Err(Error { code: Some(PublicMutationCpuUnavailable), kind: DependencyUnavailable, message: \"PUBLIC_MUTATION_CPU_UNAVAILABLE\", source: None, request_history_budget: false })\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n",
+          "stdout_sha256": "c176d7d40ce7eff020bc9fed9358b5b91eb72ef8be9fdd34744d6d9e15c7bb0a",
+          "stderr_sha256": "d8f24b711dc9dad914c57bfe63a3d46f1f873c94c8084414e79338e79968d577",
+          "history_minimal": {
+            "flow": null,
+            "mode": "Expire",
+            "native_campaign_executed": false,
+            "outcome": {
+              "Err": "PUBLIC_MUTATION_CPU_UNAVAILABLE"
+            },
+            "refill_resource_checks": 0,
+            "replay": {
+              "actual_thread_cpu_ns": 165557333,
+              "completed_native_replays": 323,
+              "projected_paid_credit_ns": 140238262
+            },
+            "schema": "history-detached-original-refill-control-v1"
+          },
+          "history_phases": [
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "decode",
+              "started": true,
+              "thread_cpu_ns": 250488,
+              "wall_ns": 250651
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "context",
+              "started": true,
+              "thread_cpu_ns": 13155,
+              "wall_ns": 13024
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_wait",
+              "started": true,
+              "thread_cpu_ns": 2396739,
+              "wall_ns": 399394570
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "history_epoch_open",
+              "started": true,
+              "thread_cpu_ns": 112841,
+              "wall_ns": 338336
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+              "phase": "history_epoch_close",
+              "started": true,
+              "thread_cpu_ns": 2385,
+              "wall_ns": 2554
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+              "phase": "history_import",
+              "started": true,
+              "thread_cpu_ns": 170810363,
+              "wall_ns": 570117087
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_settle",
+              "started": true,
+              "thread_cpu_ns": 4829,
+              "wall_ns": 4939
+            }
+          ],
+          "packet_phases": [
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "context",
+              "started": true,
+              "thread_cpu_ns": 200654,
+              "wall_ns": 200636
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "work",
+              "started": true,
+              "thread_cpu_ns": 1480235,
+              "wall_ns": 1480270
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "admission_owner_wait",
+              "started": true,
+              "thread_cpu_ns": 7895,
+              "wall_ns": 7945
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_BUDGET",
+              "phase": "admission",
+              "started": true,
+              "thread_cpu_ns": 166203415,
+              "wall_ns": 166225993
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "admission_prepare",
+              "started": true,
+              "thread_cpu_ns": 306142,
+              "wall_ns": 306035
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_BUDGET",
+              "phase": "execution",
+              "started": true,
+              "thread_cpu_ns": 165893566,
+              "wall_ns": 165916021
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_wait",
+              "started": true,
+              "thread_cpu_ns": 20448,
+              "wall_ns": 2076710
+            },
+            {
+              "accepted": false,
+              "completed": true,
+              "error_code": "PUBLIC_MUTATION_CPU_BUDGET",
+              "phase": "history_import",
+              "started": true,
+              "thread_cpu_ns": 168008978,
+              "wall_ns": 170087926
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "error_code": null,
+              "phase": "cpu_settle",
+              "started": true,
+              "thread_cpu_ns": 3898,
+              "wall_ns": 4137
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "name": "mining::prepare_control_tests::registered_prepare_pre_cancel_keeps_error_before_material_or_parent_io",
+          "exit_code": 101,
+          "actual_libtest_summary": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1337 filtered out;",
+          "runner_expected_outcome_observed": true,
+          "runner_error": null,
+          "raw_panic": "\nthread 'mining::prepare_control_tests::registered_prepare_pre_cancel_keeps_error_before_material_or_parent_io' (5476) panicked at crates/trnm-pon-node/src/mining_prepare_control_tests.rs:82:17:\nassertion failed: error.is(code)\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n",
+          "stdout_sha256": "b10f0eacc905364dc870dfdb33f9683b9e172989a020eb8aeed2e6d5049072ce",
+          "stderr_sha256": "f85f7ee30cc22a3029e33a9344b111183c7d26f8c49e4545d86fbe04fc3b477a"
+        },
+        {
+          "index": 5,
+          "name": "mining::prepare_control_tests::registered_prepare_cancels_inside_active_row_scan_before_execution",
+          "exit_code": 101,
+          "actual_libtest_summary": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1337 filtered out;",
+          "runner_expected_outcome_observed": true,
+          "runner_error": null,
+          "raw_panic": "\nthread 'mining::prepare_control_tests::registered_prepare_cancels_inside_active_row_scan_before_execution' (5478) panicked at crates/trnm-pon-node/src/mining_prepare_control_tests.rs:124:13:\nassertion `left == right` failed\n  left: BeforeStateClone\n right: BeforeParentBinding\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n",
+          "stdout_sha256": "7a3ede4c7b65c6f0a9f4b6575a982d7fb54f1efce7471b93ab4e330b93b45d41",
+          "stderr_sha256": "1f5e8aa377bdbec32b6c1c6cbce05b30fcdfdffef59230a7159b611258525e45"
+        },
+        {
+          "index": 6,
+          "name": "mining::prepare_control_tests::registered_prepare_cancels_during_inactive_ancestry_read_and_retries",
+          "exit_code": 101,
+          "actual_libtest_summary": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1337 filtered out;",
+          "runner_expected_outcome_observed": true,
+          "runner_error": null,
+          "raw_panic": "\nthread 'mining::prepare_control_tests::registered_prepare_cancels_during_inactive_ancestry_read_and_retries' (5480) panicked at crates/trnm-pon-node/src/mining_prepare_control_tests.rs:176:9:\nassertion `left == right` failed\n  left: BeforeStateClone\n right: BeforeParentBinding\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n",
+          "stdout_sha256": "e555dc2d0a70bd83b47949521e6bbb973b854322dfbeaaf3584a07d36d29b52f",
+          "stderr_sha256": "f278d33dc1af98825e52899978ff3ef3204ebe9c09358ab955730b4c81c64900"
+        },
+        {
+          "index": 7,
+          "name": "mining::prepare_control_tests::registered_prepare_control_preserves_packets_errors_and_cold_commit",
+          "exit_code": 0,
+          "actual_libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1337 filtered out;",
+          "runner_expected_outcome_observed": true,
+          "runner_error": null,
+          "raw_panic": "",
+          "stdout_sha256": "3908d25d8a97ade8206153467767be6502981bdba9d7beb4cccdcb7360825429",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    }
+  ]
+}

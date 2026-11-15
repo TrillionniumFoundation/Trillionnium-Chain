@@ -1,0 +1,259 @@
+{
+  "archive": "readiness-capture-v1.tar.gz",
+  "archive_bytes": 415145,
+  "archive_sha256": "ae8a1cf4f2ba77770a3baf0ae3ac28e46036485245f7b0a25c4d62aa976c3d2d",
+  "container_metadata_normalized": true,
+  "member_bytes_unchanged": true,
+  "member_count": 41,
+  "members": [
+    {
+      "bytes": 3660,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/inputs/archive_capture.py",
+      "sha256": "36d32c3095034f86acee93881018c683323a84ceb3aeaa4f5995dc08e417104f"
+    },
+    {
+      "bytes": 279645,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/inputs/hepta-cpu-readiness-evidence-v0.json",
+      "sha256": "92caaee252618d3015d09dfe1be1462c29f03f242927ea5cced8a401f002f72f"
+    },
+    {
+      "bytes": 27032,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/inputs/owner-independent-audit-portable-v2.py",
+      "sha256": "9dcb1f34775d63634c01a5efc4c5ae85cae382cbcc191764677f2eb78575a047"
+    },
+    {
+      "bytes": 128,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/inputs/requirements-source-e95.txt",
+      "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5"
+    },
+    {
+      "bytes": 50299,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/inputs/runtime-launch-provenance-v1.json",
+      "sha256": "812d13fa382fc17e94db1200bea9216c8ccf19c816abed3b2f0c1b7d5ae77367"
+    },
+    {
+      "bytes": 125304,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/preparation/cache-copy-manifest.json",
+      "sha256": "d1c7d4a6106b47013bab5b598a7fe0b2aefaa6869ead093d44c704f56463ab4e"
+    },
+    {
+      "bytes": 11244,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/preparation/campaign-summary-v1.json",
+      "sha256": "ebab5022e0d6dcfd40ad296396532ee78b05501a1b731c43dbe00e06ca7fb433"
+    },
+    {
+      "bytes": 428,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/preparation/locked-cache-readiness.json",
+      "sha256": "1aeb2cc0e69a9fdb709b9686e1dd7a34b36b869b6b7c2e52c84cf0ab171a2b9d"
+    },
+    {
+      "bytes": 1985,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/preparation/material-source-and-provider-readiness-v0.json",
+      "sha256": "60cf75ad35c5bfc824c9ebac157e52db2a5a50af295078ee0893dcf20305a33c"
+    },
+    {
+      "bytes": 24465,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/preparation/material-source-and-provider-readiness-v1.json",
+      "sha256": "cfd9ae0a4d90ea0d7f74ca67930d1dd0085af7722d5a7d13c08d2681103c4437"
+    },
+    {
+      "bytes": 30538,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/preparation/owner-independent-audit-v2.json",
+      "sha256": "1e916cc460b37cc2779ad96aa08503f2bf45f3d731c86eb31426cc019b818234"
+    },
+    {
+      "bytes": 2889,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/preparation/preparation-events.ndjson",
+      "sha256": "74fef54d2eddbff78f0d49bb0a3d29cf3c7e696cd37f04fee9015b58b5dc4750"
+    },
+    {
+      "bytes": 140498,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/preparation/preparation-plan.json",
+      "sha256": "3050ed62fcb16fe23ff00ad1d941d1f3168e684de85fdace6a844ca8cc7191c2"
+    },
+    {
+      "bytes": 678,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/preparation/provider-evidence-copy-v0.json",
+      "sha256": "1fe97ed181a582864dadb0f21d54cf64ab9a869cc4bcff51029057986eccabb7"
+    },
+    {
+      "bytes": 455,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/preparation/rustup-loader-environment-v1.json",
+      "sha256": "5badbed41b8a090ace4e1ce8c1af2954eb5291512f5172f258e1dd6ac6665e0c"
+    },
+    {
+      "bytes": 392,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/preparation/source-dependency-events-v1.ndjson",
+      "sha256": "55aaa6d0fdac418d269ce70fb12a46c01b4f8e4f17e220aa949248ab627ca5fe"
+    },
+    {
+      "bytes": 8967,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/preparation/source-dependency-events-v2.ndjson",
+      "sha256": "a0e688f230b29ea85d61a6fdb9e0671683703e538014fec3ccfda4ea5c640c1d"
+    },
+    {
+      "bytes": 498,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/preparation/source-dependency-events.ndjson",
+      "sha256": "0926f32dda2d739f955953bc77c88937833dad21d395fc07eaa6ca39495df363"
+    },
+    {
+      "bytes": 16980,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/preparation/sqlite-qualification-review-v1.json",
+      "sha256": "36f410dd267b825e1b9f30960925e7b224a92c3569ef3b2979161b29d96b1002"
+    },
+    {
+      "bytes": 3602731,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/preparation/validation-log-review-v0.json",
+      "sha256": "df4f4fcd2dd5f9dcf46b8a40fd231611c94363d989f4195bee31156fe4df3751"
+    },
+    {
+      "bytes": 1338098,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/provider-evidence/build-and-smoke.log",
+      "sha256": "96857c8b34adf2b48786f4a99bf6977b2cc4065c480568d6a372e2d5abe9acc9"
+    },
+    {
+      "bytes": 3049,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/provider-evidence/provider.json",
+      "sha256": "8f38de77d89c99060882aaa73551c71faceacd5bba4375887c311131dbd9be73"
+    },
+    {
+      "bytes": 5984,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/db3b6bfb95261072-unix_layout_witness.o",
+      "sha256": "69d1c6f620bb09b8f0805e74d013b1199f832036a65f6529b7cb63a8ec1d0421"
+    },
+    {
+      "bytes": 6336,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/libtrnm_sqlite_layout_witness.a",
+      "sha256": "1326940a15e14c0f49193bc2695c49d72cfda9afb9c0827e57c63d308f524843"
+    },
+    {
+      "bytes": 5385,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/output",
+      "sha256": "2f372cc5d5b24bb08f5e0214c19f3d94a5194d66fa479aad255b873594806f25"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/trnm-witness-symbols.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 220,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/trnm-witness-symbols.stdout",
+      "sha256": "37f7d8a71c793ab01ae5dd4a1308e269c5644c0e6501b498c5df9748c63aed8b"
+    },
+    {
+      "bytes": 5984,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/db3b6bfb95261072-unix_layout_witness.o",
+      "sha256": "69d1c6f620bb09b8f0805e74d013b1199f832036a65f6529b7cb63a8ec1d0421"
+    },
+    {
+      "bytes": 6336,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/libtrnm_sqlite_layout_witness.a",
+      "sha256": "1326940a15e14c0f49193bc2695c49d72cfda9afb9c0827e57c63d308f524843"
+    },
+    {
+      "bytes": 5385,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/output",
+      "sha256": "4e0fd1c9c944e8f6883d56a813306fbb81792f50d65a04fd6be19bd7580ec3b6"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/trnm-witness-symbols.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 220,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/trnm-witness-symbols.stdout",
+      "sha256": "37f7d8a71c793ab01ae5dd4a1308e269c5644c0e6501b498c5df9748c63aed8b"
+    },
+    {
+      "bytes": 5984,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/release/trnm-sqlite-io-boundary-d0d961e6a3e112d9/db3b6bfb95261072-unix_layout_witness.o",
+      "sha256": "69d1c6f620bb09b8f0805e74d013b1199f832036a65f6529b7cb63a8ec1d0421"
+    },
+    {
+      "bytes": 6336,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/release/trnm-sqlite-io-boundary-d0d961e6a3e112d9/libtrnm_sqlite_layout_witness.a",
+      "sha256": "1326940a15e14c0f49193bc2695c49d72cfda9afb9c0827e57c63d308f524843"
+    },
+    {
+      "bytes": 5387,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/release/trnm-sqlite-io-boundary-d0d961e6a3e112d9/output",
+      "sha256": "dc49f10de97cff98ee47ff2ddf817d3a7990bdce8ca0552bf3cc9f3c743f98ba"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/release/trnm-sqlite-io-boundary-d0d961e6a3e112d9/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/release/trnm-sqlite-io-boundary-d0d961e6a3e112d9/trnm-witness-symbols.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 220,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/sqlite-qualification-evidence-v1/release/trnm-sqlite-io-boundary-d0d961e6a3e112d9/trnm-witness-symbols.stdout",
+      "sha256": "37f7d8a71c793ab01ae5dd4a1308e269c5644c0e6501b498c5df9748c63aed8b"
+    },
+    {
+      "bytes": 15595,
+      "mode": "0o600",
+      "path": "readiness-capture-v1/stage-manifest.json",
+      "sha256": "ce4d7a60e0b95f637d12445b5a4fbed2211801d5d32c168679d75b46f6f93548"
+    }
+  ],
+  "payload_bytes": 5739335,
+  "readback_verified": true,
+  "schema": "pon-evidence-archive-members-v0"
+}

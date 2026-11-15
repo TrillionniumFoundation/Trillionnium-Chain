@@ -1,0 +1,39 @@
+{
+  "schema": "trnm-pr-body-update-summary-v1",
+  "body_update_verified": true,
+  "actor": "ProfHepta",
+  "pr": {
+    "author": "ProfHepta",
+    "base": "fix/chain-pq-live-retry-20261111-fa62381e",
+    "base_sha": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+    "draft": true,
+    "head": "fix/chain-hash-transitive-20261111-976f",
+    "head_repo": "TrillionniumFoundation/Trillionnium-Chain",
+    "head_sha": "9fd6ee29a7a663cef547040d9d42cc36a371a17e",
+    "number": 927,
+    "state": "open",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/927",
+    "body_sha256": "5a58379500cfee23d8dba30ec009befc830faee17e6ba1e0a1c07e87720bbc1d",
+    "body_bytes": 7100
+  },
+  "source_head": "9fd6ee29a7a663cef547040d9d42cc36a371a17e",
+  "source_tree": "7351f83fa9ac5c0e7540fa64bce06ea6f328602f",
+  "previous_body_sha256": "74413ba018a7e3a3e26c58a3df63a7dcc669f25b11915c391573c3ac906f4e47",
+  "expected_initial_body_sha256": "74413ba018a7e3a3e26c58a3df63a7dcc669f25b11915c391573c3ac906f4e47",
+  "new_body_sha256": "5a58379500cfee23d8dba30ec009befc830faee17e6ba1e0a1c07e87720bbc1d",
+  "write_performed_this_run": true,
+  "preflight": "PASS",
+  "source_changed": false,
+  "production_activation": false,
+  "observed_unix_ms": 1794446652457,
+  "execution": {
+    "kind": "HeptaRuntime local GitHub PTY",
+    "session_id": "dpty-12e63b595b0592e685edd5eb31867e76aac144ff0feb6d9e3c931b1d8907939b",
+    "idempotency_key": "hash-transitive-976f-mac-pr927-body-v1",
+    "exit_code": 0,
+    "output_complete": true,
+    "log_bytes": 6219,
+    "log_sha256": "eb4583a5e1996b0c619603a88748541421f654b430de95dc11b24ddc05a3036f"
+  },
+  "initial_publication_job": "1a1cd5368e2-2564-1251"
+}

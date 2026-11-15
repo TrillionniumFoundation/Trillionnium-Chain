@@ -1,0 +1,238 @@
+{
+  "additional_post_campaign_audit_costs": {
+    "audit_process_cpu_ns": 66214721,
+    "post_campaign_audit_chain_step_queries": 384,
+    "post_campaign_audit_cost_scope": "Additional independent audit, outside original campaign K and timing. Include in an expanded assistance/accounting horizon; endpoints are not exported by this report.",
+    "post_campaign_audit_reference_additions": 48,
+    "post_campaign_audit_reference_macs": 37008,
+    "post_campaign_audit_seed_queries": 6,
+    "whole_before_audit_report_wall_ns": 77015886
+  },
+  "authorization_and_security_scope": [
+    "All keys are public fixtures: signatures exercise byte binding and verification, not independent task/target authorization, key custody or real demand.",
+    "The K*1*64 bound applies only to counted chain-step callbacks at the sole trusted protected owner. Seed queries, signatures, parsing, preparation, cached responses, persistence and transport are additional costs.",
+    "Cloning the same policy into another ledger can add capacity. A public-network global cap needs separately established admission/payment/consensus and anti-reset coverage.",
+    "Cached receipts are historical, award zero new work and do not revalidate current expiry/reorg context.",
+    "The service provides canonical products as preparation assistance; a miner neural-cost lower bound is not established.",
+    "Process crash/reconnect and SQLite state are exercised on local tmpfs; power-loss durability and malicious host rollback resistance are not established.",
+    "Aggregate query accounting does not prove a positive attacker-owned CPU/GPU/energy/funding lower bound, and says nothing about coherent quantum queries."
+  ],
+  "budget": {
+    "actual_callback_seeds": 11,
+    "actual_callback_steps": 704,
+    "aggregate_network_cap_established": false,
+    "conditional_callback_step_upper": 768,
+    "epoch_reservations": 12,
+    "final_complete": 11,
+    "final_reserved_unused_closed_candidate": 1,
+    "first_candidate_completions": 3,
+    "native_replays_per_started_callback_upper": 1,
+    "neural_resource_floor_established": false,
+    "outcomes": {
+      "relation_rejected": 8,
+      "verified_hit": 3
+    },
+    "per_candidate_reservation_cap": 4,
+    "physical_resource_floor_established": false,
+    "quantum_security_established": false,
+    "remaining": 0,
+    "steps_per_complete_replay": 64
+  },
+  "bytes": {
+    "from_owner": 34333,
+    "request_frames": 30,
+    "response_frames": 30,
+    "scope": "30 retained newline-delimited application frame pairs in the one-frame-per-connection fixture. Excludes TCP/IP/TLS/WAN overhead and does not bound malicious trailing bytes discarded by buffered reads.",
+    "to_owner": 53460
+  },
+  "campaign_report_sha256": "d8b7fe1095650129730f53c1caed3c5e936768e29a1981fe8457088fbf8ca4e4",
+  "checks_passed": 308,
+  "created_utc": "2026-11-07T14:39:20.106699+00:00",
+  "development_failures_preserved": [
+    {
+      "reason": "test slice/array comparison type mismatch; corrected to target[..]",
+      "stage": "initial test build"
+    },
+    {
+      "reason": "/tmp ENOSPC, 17 fixture setup failures, one no-work helper passed; unchanged test semantics rerun under task-specific TMPDIR and 18 passed",
+      "stage": "18 test execution third"
+    },
+    {
+      "reason": "large_enum_variant; Receipt boxed",
+      "stage": "clippy first"
+    },
+    {
+      "reason": "Rust1.95 manual_is_multiple_of lint; replaced modulo boolean",
+      "stage": "clippy second"
+    },
+    {
+      "partial_stage_costs": null,
+      "reason": "generic contract canonical serializer rejects floating rusage seconds; artifact serializer corrected while all integer protocol/config bytes remain canonical",
+      "stage": "smoke1"
+    }
+  ],
+  "development_manifest_original_unchanged": true,
+  "final_native_tests": {
+    "count": 18,
+    "exit_code": 0,
+    "strict_clippy_log": "logs/native-owner-clippy-third.log"
+  },
+  "historical_log_manifest_comparisons": [
+    {
+      "copied_current_sha256": "7b05a91d5e6bf5f23cd61acb84d4d2da2e9f690cfd178173f14d4f7d0c67113d",
+      "original_manifest_matches": true,
+      "original_manifest_sha256": "7b05a91d5e6bf5f23cd61acb84d4d2da2e9f690cfd178173f14d4f7d0c67113d",
+      "path": "/dev/shm/native-owner-clippy-first.log"
+    },
+    {
+      "copied_current_sha256": "fd31ed8e1168bbbba1624310a1b03cf26d57042d6718063655f29f4d12f769cd",
+      "original_manifest_matches": true,
+      "original_manifest_sha256": "fd31ed8e1168bbbba1624310a1b03cf26d57042d6718063655f29f4d12f769cd",
+      "path": "/dev/shm/native-owner-clippy-second.log"
+    },
+    {
+      "copied_current_sha256": "d6c982b208ddd1f6dd60a801256f2ef5263d9def4cfb4f10576b96e2d5353755",
+      "original_manifest_matches": true,
+      "original_manifest_sha256": "d6c982b208ddd1f6dd60a801256f2ef5263d9def4cfb4f10576b96e2d5353755",
+      "path": "/dev/shm/native-owner-clippy-third.log"
+    },
+    {
+      "copied_current_sha256": "b668d929aca3af2f0a381fb2c27257d54831392b5249f08c7f283c8e8539751c",
+      "original_manifest_matches": true,
+      "original_manifest_sha256": "b668d929aca3af2f0a381fb2c27257d54831392b5249f08c7f283c8e8539751c",
+      "path": "/dev/shm/native-owner-example-first.log"
+    },
+    {
+      "copied_current_sha256": "11199b7043e2d029325e413830660f662492c61a7578be8f59697a4f44b806c9",
+      "original_manifest_matches": true,
+      "original_manifest_sha256": "11199b7043e2d029325e413830660f662492c61a7578be8f59697a4f44b806c9",
+      "path": "/dev/shm/native-owner-example-second.log"
+    },
+    {
+      "copied_current_sha256": "b668d929aca3af2f0a381fb2c27257d54831392b5249f08c7f283c8e8539751c",
+      "original_manifest_matches": true,
+      "original_manifest_sha256": "b668d929aca3af2f0a381fb2c27257d54831392b5249f08c7f283c8e8539751c",
+      "path": "/dev/shm/native-owner-final-0.log"
+    },
+    {
+      "copied_current_sha256": "c01f63470695700840a5efc2ad6196e762f28b7f237ac1811004e3bcdedd734e",
+      "original_manifest_matches": true,
+      "original_manifest_sha256": "c01f63470695700840a5efc2ad6196e762f28b7f237ac1811004e3bcdedd734e",
+      "path": "/dev/shm/native-owner-final-1.log"
+    },
+    {
+      "copied_current_sha256": "221b131dbc5d77a892a0d3321f52582bc916be5c2e5339c6952c58fe5742307c",
+      "original_manifest_matches": true,
+      "original_manifest_sha256": "221b131dbc5d77a892a0d3321f52582bc916be5c2e5339c6952c58fe5742307c",
+      "path": "/dev/shm/native-owner-smoke-first.log"
+    },
+    {
+      "copied_current_sha256": "5b8180037b83e76299aeb6b1053b1e131583ab35b2434964c4858ce6e267bb88",
+      "original_manifest_matches": true,
+      "original_manifest_sha256": "5b8180037b83e76299aeb6b1053b1e131583ab35b2434964c4858ce6e267bb88",
+      "path": "/dev/shm/native-owner-smoke-second.log"
+    },
+    {
+      "copied_current_sha256": "b5fc3787ef9c5be0c278035d0c9ca1524bc74f90c47053ece093f9f4cb540dba",
+      "original_manifest_matches": true,
+      "original_manifest_sha256": "b5fc3787ef9c5be0c278035d0c9ca1524bc74f90c47053ece093f9f4cb540dba",
+      "path": "/dev/shm/native-owner-tests-fourth.log"
+    },
+    {
+      "copied_current_sha256": "92e5f7e4a763b240dfd2d096758323747702f8e8804dc3d730cfc6c88bec0261",
+      "original_manifest_matches": true,
+      "original_manifest_sha256": "92e5f7e4a763b240dfd2d096758323747702f8e8804dc3d730cfc6c88bec0261",
+      "path": "/dev/shm/native-owner-tests-third.log"
+    },
+    {
+      "copied_current_sha256": "47ac6994c761c1c0e9d5a3319aa1bc50b4bb7ceb012c23986728a525f5dd5e56",
+      "original_manifest_matches": true,
+      "original_manifest_sha256": "47ac6994c761c1c0e9d5a3319aa1bc50b4bb7ceb012c23986728a525f5dd5e56",
+      "path": "/workspace/scratch/10a9f8f2cba0/budget-native-observations/native-tests-second.log"
+    },
+    {
+      "copied_current_sha256": "fcf2f7bcb64a63f1edd129f26fe50144973a6fd954e14c122f600982185fd936",
+      "original_manifest_matches": true,
+      "original_manifest_sha256": "fcf2f7bcb64a63f1edd129f26fe50144973a6fd954e14c122f600982185fd936",
+      "path": "/workspace/scratch/10a9f8f2cba0/budget-native-observations/first-test-build.json"
+    }
+  ],
+  "history_scope": [
+    "The formal result describes one run and one journal. Development smoke runs, native tests, source generators and post-campaign audit are separate executions, not free assistance.",
+    "Fixtures and deterministic challenge material were used in prior development. Fixing the present schedule before its recorded probes does not establish historically unseen, independent, unpredictable challenges.",
+    "All assistance in an expanded accounting horizon, including prior smoke and subsequent audit queries, must be added or independently bounded. Missing partial-run costs remain unknown.",
+    "Three verified hits among the fixed scheduled valid candidates are observations only. They do not estimate ticket probability or prove random-oracle assumptions.",
+    "No time or energy multiplier is inferred by comparing this K=12 owner workload with the separate per-journal fanout workload."
+  ],
+  "independent_signature_checks": {
+    "capsule": 2,
+    "owner_response": 30,
+    "receiver_request": 30,
+    "total": 62
+  },
+  "original_campaign_costs": {
+    "all_children_cpu_seconds": 0.9515989999999999,
+    "all_children_system_seconds": 0.389414,
+    "all_children_user_seconds": 0.5621849999999999,
+    "cached_model_merge_additions_per_startup": 2313,
+    "controller_process_cpu_ns": 467804997,
+    "controller_wall_ns": 1416463437,
+    "cost_scope": [
+      "Per-PID wait4 includes native process loader/startup/exit; main-thread and nested phase counters must not be added again.",
+      "Total child CPU additionally includes source replay and git helpers; the separately listed child rusage is a subset.",
+      "Owner startup computes all 16 direct business products on each restart; this assistance is outside K and is explicitly charged.",
+      "K caps expensive owner callbacks in one pinned epoch; signatures, framing, cached replies and transport remain additional costs.",
+      "Step-domain queries are not all SHA256 invocations/compressions, elapsed time, energy or physical cost.",
+      "Parent startup/import/exit and final report encoding are outside the reported parent interval; WAN/TLS, availability, production proofs and real authorization services are not measured.",
+      "A whole-controller kill can leave process metadata/stage counts unknown; started owner rows retain conservative replay bounds."
+    ],
+    "direct_macs_per_startup": 394752,
+    "direct_observations_per_startup": 16,
+    "forged_endpoint_producer_chain_steps": 0,
+    "independent_python_reference_additions": 48,
+    "independent_python_reference_macs": 37008,
+    "native_incomplete_cell_macs_unknown_upper": 0,
+    "native_verified_cell_calls": 11,
+    "native_verified_cell_macs": 407088,
+    "native_wait4_cpu_seconds_by_role": {
+      "owner": 0.092682,
+      "prepare": 0.018604999999999997,
+      "receiver": 0.021802
+    },
+    "native_wait4_cpu_seconds_total": 0.13308899999999999,
+    "nested_callback_wall_ns": 4684426,
+    "producer_seed_queries": 3,
+    "producer_step_queries": 192,
+    "startup_count": 5,
+    "startup_direct_business_macs": 1973760,
+    "startup_merge_additions": 11565
+  },
+  "relative_paths": {
+    "development_history": "development",
+    "formal_campaign": "formal-campaign",
+    "frozen_build": "build/native-owner-final-build.json",
+    "independent_audit": "audit",
+    "logs": "logs"
+  },
+  "runner_sha256": "b3919ad3b5983f727a0dc11178d2d7d5363193a179567bf0ce264f4e5fadff48",
+  "schema": "pon-grouped-owner-source-bound-review-v0",
+  "source_commit": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+  "source_qualification": "Recorded exact committed bytes and source replay; local release build log plus matching frozen owner sources; not a reproducible-build or physical-durability attestation.",
+  "source_tree": "c815d3710d5f7feffc043aed1aa6e003e03d3a10",
+  "source_untouched_by_this_archive": true,
+  "status": "PASS",
+  "topology": {
+    "all_keys_public_test_fixtures": true,
+    "all_native_process_instances": 13,
+    "chainwork_awarded": 0,
+    "independent_operators": false,
+    "owner_process_instances": 4,
+    "preparation_process_instances": 1,
+    "production_activation": false,
+    "protected_journal_count": 1,
+    "receiver_process_instances": 8,
+    "registered_public_fixture_receiver_keys": 2,
+    "trusted_owner_count": 1
+  },
+  "tracked_source_clean_at_campaign_boundaries": true
+}

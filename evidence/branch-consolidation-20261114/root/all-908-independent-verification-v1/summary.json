@@ -1,0 +1,35 @@
+{
+  "head": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+  "tree": "8f26631e80c14a3c750210019606df13327d633f",
+  "manifest_refs": 908,
+  "unique_tips_present_as_commits": 892,
+  "terminal_tips": 296,
+  "terminal_scopes": {
+    "prci11": 11,
+    "production20": 20,
+    "first80": 80,
+    "latter80": 80,
+    "ci81": 81,
+    "custody8": 8,
+    "architecture10": 10,
+    "ci6": 6
+  },
+  "all_ref_pairs_equal_remote0170_and_0208": true,
+  "current_ancestor_refs": 435,
+  "nonancestor_witnesses_verified": 473,
+  "selected_port_ancestors_independently_verified": 60,
+  "archive_verified": false,
+  "qualification_granted": false,
+  "zip_members_verified": 38,
+  "bundle_sha256": "d52ad6f7b22e2a8a93d61fee5f10d60758b7ccfb28d7734645e81f5bd9161f3f",
+  "ledger_sha256": "a8064b7da972de7ff6a4dc50b0ac8db41860be02ff04aadf28bab13904125e52",
+  "phase_receipt_inspection": [
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-current-phase.log",
+      "sha256": "b1d40010924918cbe3e3bad89cd0344e33b169658119a7018f5bfac7508e5056",
+      "ran": [],
+      "tail": "t_v4_scope_is_explicit_and_does_not_relabel_v3) ... ok\ntest_zero_body_digest_is_known_but_malformed_digest_rejects (__main__.ReaderTests.test_zero_body_digest_is_known_but_malformed_digest_rejects) ... ok\ntest_zero_or_nonmultiple_required_work_cannot_satisfy_original_confirmation_policy (__main__.ReaderTests.test_zero_or_nonmultiple_required_work_cannot_satisfy_original_confirmation_policy) ... ok\n\n----------------------------------------------------------------------\nRan 95 tests in 0.217s\n\nOK\n"
+    }
+  ],
+  "remote_writes": false
+}

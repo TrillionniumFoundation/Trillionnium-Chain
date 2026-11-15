@@ -1,0 +1,57 @@
+{
+  "schema": "trnm-native-run-concurrent-preparation-context-v1",
+  "candidate": "ffcb687b43843ec92b3170f8841f92a3dd0a4d3d",
+  "native_job_id": "1a1b8120837-12894-d32",
+  "preparation_job_id": "1a1b81736df-12894-d45",
+  "root_reported_start_utc": "2026-11-07T22:18:11.551Z",
+  "root_reported_end_utc": "2026-11-07T22:18:22.133Z",
+  "root_reported_outcome": "succeeded, exit 0, complete",
+  "root_reported_operation": "Independent D checkout (~1.64GB) plus 124 frozen small evidence files, 7,266,424 bytes; no tests/bench, no C2 source or target writes",
+  "observed_first_exact_body_command_start_utc": "2026-11-07T22:19:33.240783+00:00",
+  "timing_is_not_a_paired_performance_comparison": true,
+  "qualification": {
+    "original_business_gates": false,
+    "history_4105": false,
+    "four_second_pressure": false,
+    "throughput": false
+  },
+  "preparation_authoritative_status": {
+    "at_unix_ms": 1794089902133,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1b81736df-12894-d45",
+    "launch_nonce": "4797a25b2718b8d0f740024f924b216b",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 551,
+        "stored": 551
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "reported_preparation_ended_before_first_exact_command": true,
+  "reported_gap_seconds": 71.107783
+}

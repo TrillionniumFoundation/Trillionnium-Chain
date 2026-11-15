@@ -1,0 +1,2 @@
+    Checking trnm-pon-node v0.1.0 (/workspace/scratch/56818e4fba76/chain-recovered/trillionnium/crates/trnm-pon-node)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.50s

@@ -1,0 +1,11 @@
+[
+  {
+    "attempt": 1,
+    "tool": "h_process_start",
+    "executable": "python3",
+    "result": "INVALID_ARGUMENT",
+    "message": "executable must be an absolute path without parent traversal",
+    "job_created": false,
+    "gate_executed": false
+  }
+]

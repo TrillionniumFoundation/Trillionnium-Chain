@@ -1,0 +1,6 @@
+{"strategy": "dense_bank_cache1", "gates": 512, "attempts": 7, "winner": 561, "useful_products": 2, "prefix_compressions": 2748}
+{"strategy": "global_affine_bank_cache1", "gates": 512, "attempts": 7, "winner": 561, "useful_products": 2, "prefix_compressions": 2748}
+{"strategy": "dense_online_direct", "gates": 50, "attempts": 50, "winner": 561, "useful_products": 50, "prefix_compressions": 3254}
+{"strategy": "dense_online_cache1", "gates": 50, "attempts": 50, "winner": 561, "useful_products": 50, "prefix_compressions": 3254}
+{"strategy": "global_affine_online", "gates": 50, "attempts": 50, "winner": 561, "useful_products": 50, "prefix_compressions": 3254}
+{"audit_accepted_nonces": [561, 605, 644, 654, 764, 770, 775, 790, 835, 863, 918, 946, 998], "full_byte_comparisons": 164}

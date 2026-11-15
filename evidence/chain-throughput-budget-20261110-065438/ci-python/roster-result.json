@@ -1,0 +1,18 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_w1_factorial_native_gate.py"
+  ],
+  "head": "e4abb172147e941b62483652b0ceabaae4317624",
+  "scope": "Actual existing Python workflow gate mutation tests on integration working tree; fixture count is not native roster evidence",
+  "exit_code": 0,
+  "elapsed_seconds": 31.62172960299995,
+  "files_before": {
+    ".github/workflows/pon-w1-work-security.yml": "b7b27bd043cb7bd8b3e83026edaa41c925b9824bde23f5c45166068f19d766db",
+    "scripts/ci/test_w1_factorial_native_gate.py": "86b8e3b0a6fd1cfa6396f8c160abee9d3cb1df5479145330c25559456c60510a"
+  },
+  "files_after": {
+    ".github/workflows/pon-w1-work-security.yml": "b7b27bd043cb7bd8b3e83026edaa41c925b9824bde23f5c45166068f19d766db",
+    "scripts/ci/test_w1_factorial_native_gate.py": "86b8e3b0a6fd1cfa6396f8c160abee9d3cb1df5479145330c25559456c60510a"
+  }
+}

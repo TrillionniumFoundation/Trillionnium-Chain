@@ -1,0 +1,215 @@
+[
+  {
+    "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54",
+    "reason": "literal command-line fixture input",
+    "source": "scripts/ci/ci_job.sh"
+  },
+  {
+    "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963",
+    "reason": "literal command-line fixture input",
+    "source": "scripts/ci/ci_job.sh"
+  },
+  {
+    "path": "evidence/pon-v1/manifest.json",
+    "reason": "validate_contract required manifest for v1",
+    "source": "config/pon/module-maturity-v1.json"
+  },
+  {
+    "path": "evidence/pon-v3/manifest.json",
+    "reason": "validate_contract required manifest for v3",
+    "source": "config/pon/module-maturity-v1.json"
+  },
+  {
+    "path": "evidence/pon-v3/qualification/report.json",
+    "reason": "validate_contract required qualification for v3",
+    "source": "config/pon/module-maturity-v1.json"
+  },
+  {
+    "path": "evidence/pon-v4/manifest.json",
+    "reason": "validate_contract required manifest for v4",
+    "source": "config/pon/module-maturity-v1.json"
+  },
+  {
+    "path": "evidence/pon-v4/qualification/report.json",
+    "reason": "validate_contract required qualification for v4",
+    "source": "config/pon/module-maturity-v1.json"
+  },
+  {
+    "path": "evidence/pon-evaluation-bundle-v1/manifest.json",
+    "reason": "validate_contract required manifest for e3",
+    "source": "config/pon/module-maturity-v1.json"
+  },
+  {
+    "path": "evidence/pon-evaluation-bundle-v1/qualification.json",
+    "reason": "validate_contract required qualification for e3",
+    "source": "config/pon/module-maturity-v1.json"
+  },
+  {
+    "path": "evidence/pon-client-confirmation-v1/manifest.json",
+    "reason": "validate_contract required manifest for client_confirmation",
+    "source": "config/pon/module-maturity-v1.json"
+  },
+  {
+    "path": "evidence/pon-client-confirmation-v1/qualification.json",
+    "reason": "validate_contract required qualification for client_confirmation",
+    "source": "config/pon/module-maturity-v1.json"
+  },
+  {
+    "path": "evidence/pon-native-session-v1/manifest.json",
+    "reason": "validate_contract required manifest for native_session",
+    "source": "config/pon/module-maturity-v1.json"
+  },
+  {
+    "path": "evidence/pon-native-session-v1/qualification.json",
+    "reason": "validate_contract required qualification for native_session",
+    "source": "config/pon/module-maturity-v1.json"
+  },
+  {
+    "path": "evidence/pon-native-node-v1/manifest.json",
+    "reason": "validate_contract required manifest for native_node",
+    "source": "config/pon/module-maturity-v1.json"
+  },
+  {
+    "path": "evidence/pon-native-node-v1/qualification.json",
+    "reason": "validate_contract required qualification for native_node",
+    "source": "config/pon/module-maturity-v1.json"
+  },
+  {
+    "line": 147,
+    "path": "evidence/pon-v3/manifest.json",
+    "reason": "statically folded repo path",
+    "source": "scripts/ci/check_invariant_evidence.py"
+  },
+  {
+    "line": 147,
+    "path": "evidence/pon-v3/manifest.json",
+    "reason": "literal evidence path",
+    "source": "scripts/ci/check_invariant_evidence.py"
+  },
+  {
+    "line": 149,
+    "path": "evidence/pon-v3/",
+    "reason": "literal evidence path",
+    "source": "scripts/ci/check_invariant_evidence.py"
+  },
+  {
+    "line": 39,
+    "path": "evidence/pon-v3",
+    "reason": "literal evidence path",
+    "source": "scripts/ci/check_invariant_evidence.py"
+  },
+  {
+    "line": 28,
+    "path": "evidence/pon-six-workpackages-20261106/next/service/run_reorg_abba.py",
+    "reason": "statically folded repo path",
+    "source": "scripts/ci/run_legacy_reorg_root_abba.py"
+  },
+  {
+    "line": 28,
+    "path": "evidence/pon-six-workpackages-20261106/next/service/run_reorg_abba.py",
+    "reason": "literal evidence path",
+    "source": "scripts/ci/run_legacy_reorg_root_abba.py"
+  },
+  {
+    "line": 29,
+    "path": "evidence/pon-six-workpackages-20261106/next/service/run_reorg_abba.py",
+    "reason": "statically folded repo path",
+    "source": "scripts/ci/run_legacy_reorg_root_abba.py"
+  },
+  {
+    "line": 92,
+    "path": "evidence/pon-six-workpackages-20261106/next/service/run_reorg_abba.py",
+    "reason": "statically folded repo path",
+    "source": "scripts/ci/run_legacy_reorg_root_abba.py"
+  },
+  {
+    "line": 412,
+    "path": "evidence/ledger.sqlite3",
+    "reason": "literal evidence path",
+    "source": "scripts/ci/test_llm_hosted_once.py"
+  },
+  {
+    "line": 419,
+    "path": "evidence/ledger.sqlite3",
+    "reason": "literal evidence path",
+    "source": "scripts/ci/test_llm_hosted_once.py"
+  },
+  {
+    "line": 462,
+    "path": "evidence/run/artifact.safetensors",
+    "reason": "literal evidence path",
+    "source": "scripts/ci/test_llm_hosted_once.py"
+  },
+  {
+    "line": 463,
+    "path": "evidence/run/profiler.json",
+    "reason": "literal evidence path",
+    "source": "scripts/ci/test_llm_hosted_once.py"
+  },
+  {
+    "line": 464,
+    "path": "evidence/venv",
+    "reason": "literal evidence path",
+    "source": "scripts/ci/test_llm_hosted_once.py"
+  },
+  {
+    "line": 549,
+    "path": "evidence/run/loader-1thread/process.log",
+    "reason": "literal evidence path",
+    "source": "scripts/ci/test_llm_hosted_once.py"
+  },
+  {
+    "line": 819,
+    "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/public-v3-multiprocess/report.json",
+    "reason": "statically folded repo path",
+    "source": "scripts/ci/test_pon_public_v3_phase_read.py"
+  },
+  {
+    "line": 819,
+    "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/public-v3-multiprocess/report.json",
+    "reason": "literal evidence path",
+    "source": "scripts/ci/test_pon_public_v3_phase_read.py"
+  },
+  {
+    "line": 89,
+    "path": "evidence/absent.json",
+    "reason": "literal evidence path",
+    "source": "scripts/ci/test_responsibility_evidence.py"
+  },
+  {
+    "line": 21,
+    "path": "evidence/pon-six-workpackages-20261106/ci",
+    "reason": "statically folded repo path",
+    "source": "scripts/ci/test_six_workpackage_native_rosters.py"
+  },
+  {
+    "line": 21,
+    "path": "evidence/pon-six-workpackages-20261106/ci",
+    "reason": "literal evidence path",
+    "source": "scripts/ci/test_six_workpackage_native_rosters.py"
+  },
+  {
+    "line": 48,
+    "path": "evidence/pon-six-workpackages-20261106/ci/workspace-head-original.zip",
+    "reason": "statically folded repo path",
+    "source": "scripts/ci/test_six_workpackage_native_rosters.py"
+  },
+  {
+    "line": 48,
+    "path": "evidence/pon-six-workpackages-20261106/ci",
+    "reason": "statically folded repo path",
+    "source": "scripts/ci/test_six_workpackage_native_rosters.py"
+  },
+  {
+    "line": 108,
+    "path": "evidence/pon-v3/work/structured.json",
+    "reason": "statically folded repo path",
+    "source": "scripts/ci/test_work_cost_report.py"
+  },
+  {
+    "line": 108,
+    "path": "evidence/pon-v3/work/structured.json",
+    "reason": "literal evidence path",
+    "source": "scripts/ci/test_work_cost_report.py"
+  }
+]

@@ -1,0 +1,124 @@
+{
+  "assessment": "Source binding portion accepted after independent static/read-only review; final combined consumer acceptance awaits the explicitly identified corrections.",
+  "base": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+  "checks": {
+    "HOLD_false_null_qualifications_limits_and_budgets_unchanged": true,
+    "actual_six_crate_cargo_reachability_and_eight_literal_includes_confirmed": true,
+    "all_union_declared_actual_fixed_git_and_dba_sources_equal": true,
+    "changed_corpus_pins_exact_actual_git_blobs": 29,
+    "current_git_provenance_not_upgraded": true,
+    "historical_lifetime_twenty_hashes_unchanged": true,
+    "historical_v1_proof_helpers_and_policy_not_refreshed": true,
+    "literal_difference_order": [
+      "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    ],
+    "original_frozen_historical_job_sha256": "f88c5e041b943ea39be2de6665e9621b0b6a0c056c44dcae2a6215615eb6b130",
+    "profile_descriptor_sha256": "8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1",
+    "qrom_prior140": {
+      "added": 5,
+      "changed": 9,
+      "removed": 0,
+      "unchanged": 131
+    },
+    "rosters": {
+      "current": {
+        "actual_AST_names_match": true,
+        "after": 77,
+        "all_prior_names_retained": true,
+        "before": 75
+      },
+      "supplemental": {
+        "actual_AST_names_match": true,
+        "after": 24,
+        "before": 22,
+        "current_after": 16,
+        "current_before": 14,
+        "historical_after": 8,
+        "historical_before": 8
+      }
+    },
+    "route_source_set_sha256": "0ecde8d4e43ba120318c9777e78e317f3f2fdfc12bc65d7e2e893abaec8bcdd7",
+    "scope_counts": {
+      "authority": 44,
+      "lifetime": 20,
+      "qrom_local": 145,
+      "root_dependency": 46,
+      "unique_union": 232
+    },
+    "source_revision_bound_flags_unchanged_false": true
+  },
+  "independent_evidence": [
+    {
+      "bytes": 105034,
+      "file": "independent-static-source-bindings-v1.json",
+      "sha256": "75adf22d995d97304202027cff3a73507b6a47ea9dc6b93d8bbf07c60344cadf"
+    },
+    {
+      "bytes": 13942,
+      "file": "independent-profile-and-history-v1.json",
+      "sha256": "14763fb067fdce64c98372a1388ebd6d90bf93bccb4e5906203076797c154882"
+    },
+    {
+      "bytes": 4235,
+      "file": "independent-runtime-delta-and-crate-closure-v1.json",
+      "sha256": "dbee7546c2bc6f627705dde2b826247e4dee73128122200b6130467dbd7c690b"
+    },
+    {
+      "bytes": 1401,
+      "file": "four-path-independent-counterexamples-v1.json",
+      "sha256": "a23a9abda503012dae2a1fb5dd12fff4b5eb4e94243aea7d3322f0c23fc324be"
+    }
+  ],
+  "not_claimed": {
+    "complete_repository_runtime_security": false,
+    "current_upstream_profile_use_eligible": false,
+    "hosted_four_second_gate_passed": false,
+    "native_runs_repeated": false,
+    "other_worktrees_edited": false,
+    "remote_writes": false
+  },
+  "open_items": [
+    {
+      "accepted_fix_scope": "New explicit current CORRESPONDENCE3 with two independent path/index/historical/current hash records; read both physical current locks; allow exactly those two pointers and canonical-compare every remaining report property. Keep guest row index1 and both original saved-report bytes frozen.",
+      "finding": "Existing CORRESPONDENCE2 permits only /provenance/lock_checks/2/sha256. Current source has separately reviewed lock changes at indices 0 and 2. Current test also treats the old 20261109 one-lock saved report as exact current output.",
+      "id": "BIND-CONSUMER-01",
+      "kind": "current-consumer mismatch already detected by architecture original validation",
+      "path": "scripts/ci/w1_qrom_closure_current_controls.py",
+      "status": "architecture preparing bounded correction"
+    },
+    {
+      "accepted_fix_scope": "Validate unchanged historical job hash, then extract between exact unique job boundaries and retain original step/heredoc uniqueness checks. Do not edit historical job bytes or drop original controls.",
+      "finding": "Whole-workflow unique named_tests lookup now sees two explicitly separate source jobs.",
+      "id": "BIND-CONSUMER-02",
+      "kind": "test setup scope mismatch already detected by architecture",
+      "path": "scripts/ci/test_w1_qrom_workflow_gate.py",
+      "status": "architecture preparing bounded correction"
+    },
+    {
+      "accepted_fix_scope": "Add self_consistent_substitution and self_consistent_reorder cases inside the existing mutation test method. Preserve names and77/24 roster identities.",
+      "finding": "Existing mutually edited omission/extra cases change difference count to3/5, so they would not detect a defective len==4-only replacement. Exact current guard correctly rejects both same-count substitution and same-count reordering.",
+      "id": "BIND-CONTROL-03",
+      "kind": "independent reviewer negative-control coverage gap; actual production guard is correct",
+      "path": "scripts/ci/test_w1_qrom_current_ci.py",
+      "status": "architecture accepted addition"
+    }
+  ],
+  "patch": {
+    "bytes": 97296,
+    "changed_paths": 30,
+    "path": "/private/tmp/chain-final-current-bindings-evidence-20261114/current-ci-coupling-v1/working.patch",
+    "sha256": "66c04ffa14b60cf6383fb456158a68630638c1b2715454c903c9cc4c9a753c3c"
+  },
+  "previous_draft_review_count_resolution": {
+    "after_T01": 96,
+    "evidence": "/private/tmp/chain-consolidation-20261114-root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-current-phase.log",
+    "root_S04": 95,
+    "sha256": "b1d40010924918cbe3e3bad89cd0344e33b169658119a7018f5bfac7508e5056",
+    "subcomponent_phase": 93,
+    "verified_by": "root; not rerun by this review"
+  },
+  "schema": "independent-final-current-binding-review-v1"
+}

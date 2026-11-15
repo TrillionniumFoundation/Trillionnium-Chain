@@ -1,0 +1,112 @@
+{
+  "AGENTS.md": {
+    "bytes": 1286,
+    "retained_path": "sources/AGENTS.md.source",
+    "sha256": "3b856784057789dd600615f752364012d9ef8965d884352795b9590e0f121b91"
+  },
+  "formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md": {
+    "bytes": 16582,
+    "retained_path": "sources/formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md.source",
+    "sha256": "58a72603cbdfa134288bad49b16b4316d01818d30b0eae580b532f244fe79766"
+  },
+  "formal/pon-nakamoto-v1/native_owner_journal.py": {
+    "bytes": 38511,
+    "retained_path": "sources/formal/pon-nakamoto-v1/native_owner_journal.py",
+    "sha256": "9a8a3eae2615d4c84194d58578897849ac3f0714408a98184a18365dabe34338"
+  },
+  "formal/pon-nakamoto-v1/native_risk_ledger.py": {
+    "bytes": 19432,
+    "retained_path": "sources/formal/pon-nakamoto-v1/native_risk_ledger.py",
+    "sha256": "cb18be8a6642b6981c28797928c58a45152ae7b39c11b162a1afea1fc4c3dfce"
+  },
+  "formal/pon-nakamoto-v1/test_native_risk_ledger.py": {
+    "bytes": 19893,
+    "retained_path": "sources/formal/pon-nakamoto-v1/test_native_risk_ledger.py",
+    "sha256": "0741b21b4f6bb3880caafb8923f1017dc3a6ad6c2984471b91fee07c603a07ec"
+  },
+  "scripts/ci/check_ci_contract.py": {
+    "bytes": 73544,
+    "retained_path": "sources/scripts/ci/check_ci_contract.py",
+    "sha256": "98a45badeb974f7166d3ca4dfd470463669d1afd120f10002d10d6e85db32fe7"
+  },
+  "scripts/ci/ci_job.sh": {
+    "bytes": 29915,
+    "retained_path": "sources/scripts/ci/ci_job.sh",
+    "sha256": "84a2d42ccf600356e4bf7f1c2467e3e3437353aebc9dd0ea5a9baebec5d5cfe6"
+  },
+  "scripts/ci/test_ci_contract.py": {
+    "bytes": 96207,
+    "retained_path": "sources/scripts/ci/test_ci_contract.py",
+    "sha256": "4fa6af19f14733862ec4c7c9cca50606334f72168b327fcffd35db9555e3d173"
+  },
+  "scripts/ci/test_ci_execution.py": {
+    "bytes": 14642,
+    "retained_path": "sources/scripts/ci/test_ci_execution.py",
+    "sha256": "19e74cf4dbbd247e36a3ce4625503d42aabadff871a5e7a1991b3f0b7092f04b"
+  },
+  "scripts/ci/test_ci_source_integrity.py": {
+    "bytes": 25907,
+    "retained_path": "sources/scripts/ci/test_ci_source_integrity.py",
+    "sha256": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e"
+  },
+  "trillionnium/Cargo.lock": {
+    "bytes": 40044,
+    "retained_path": "sources/trillionnium/Cargo.lock",
+    "sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be"
+  },
+  "trillionnium/Cargo.toml": {
+    "bytes": 2204,
+    "retained_path": "sources/trillionnium/Cargo.toml",
+    "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+  },
+  "trillionnium/crates/trnm-pon-node/Cargo.toml": {
+    "bytes": 1794,
+    "retained_path": "sources/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "sha256": "98f1a0ee417eb117c7a5a425de49160b21c4a147a756db0a0fa815ec9dbdeb7b"
+  },
+  "trillionnium/crates/trnm-pon-node/examples/native_owner_journal_v1.rs": {
+    "bytes": 1177,
+    "retained_path": "sources/trillionnium/crates/trnm-pon-node/examples/native_owner_journal_v1.rs",
+    "sha256": "f0eabedf188b9eb097e3dd963c22bbaa1c53eecc9ff02a442bf0bf610a15a761"
+  },
+  "trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs": {
+    "bytes": 1096,
+    "retained_path": "sources/trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs",
+    "sha256": "f0255574fcb54e8c5c2e2a255a7869289821c3a062d3df13eb0b594013de6007"
+  },
+  "trillionnium/crates/trnm-pon-node/examples/support/native_owner_scenario.rs": {
+    "bytes": 15479,
+    "retained_path": "sources/trillionnium/crates/trnm-pon-node/examples/support/native_owner_scenario.rs",
+    "sha256": "a2b3c707da26441cfc2033430fdd2ad0db5a67ddb38d015d9a18a7e32acf9ba9"
+  },
+  "trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs": {
+    "bytes": 11480,
+    "retained_path": "sources/trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs",
+    "sha256": "b291ff343fb0d91151513a5007ff834c0999ebde9edb695546e3bfd68d5aaf2e"
+  },
+  "trillionnium/crates/trnm-pon-node/src/lib.rs": {
+    "bytes": 33658,
+    "retained_path": "sources/trillionnium/crates/trnm-pon-node/src/lib.rs",
+    "sha256": "110a36db8e7e2257b4e1c8e606911d69abfde36e172ef1d27801bf0f9ee8f80e"
+  },
+  "trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs": {
+    "bytes": 45618,
+    "retained_path": "sources/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs",
+    "sha256": "ae0f83bbc9c5d76b7ded11272ca31b403b65a68b0a8930eb8ee5a3070f1de5be"
+  },
+  "trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs": {
+    "bytes": 39210,
+    "retained_path": "sources/trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs",
+    "sha256": "f905f87408a11235d086cc50037df02b124a1929f1d04c78b1644eac9ba883cd"
+  },
+  "trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs": {
+    "bytes": 13335,
+    "retained_path": "sources/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs",
+    "sha256": "618f7c94365006bd54435701e77f9b16ac51b20ea8632f823b571ddcf7512ed7"
+  },
+  "trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs": {
+    "bytes": 16096,
+    "retained_path": "sources/trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs",
+    "sha256": "675cbfb8a47ee9481301340d5426a787480c116ade6b1dcb93bc4a4bee5c17b3"
+  }
+}

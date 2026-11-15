@@ -1,0 +1,51 @@
+{
+  "schema": "pn4-controlled-terminal-charge-readback-v1",
+  "testedSource": "ec0f58d36cf3929df23b36e9d796696b3dbf1884",
+  "mechanicsOnly": true,
+  "modelLoaded": false,
+  "wholeUnitSuccess": false,
+  "outerReconciliation": "UNKNOWN",
+  "reservation": "RETAINED",
+  "files": [
+    {
+      "path": "SCOPE.md",
+      "bytes": 1727,
+      "sha256": "9e46e7364f90b21f4a65b2057391a8f8b530c3220ff47f99f81b708e84f4ae6e"
+    },
+    {
+      "path": "chain-subset.json",
+      "bytes": 2553,
+      "sha256": "c0014f21d48ecc1ca5057bd1430d91f6b17d0418c27c4fc5b6279556113b4a78"
+    },
+    {
+      "path": "observation.json",
+      "bytes": 1530,
+      "sha256": "764863e3511fa2d4e450fb3a1320dbc3c9e03a407afa0d45977332998668089d"
+    },
+    {
+      "path": "owner-controls.log.gz",
+      "bytes": 2504,
+      "sha256": "c7941e98f66cdcfeae59b3ab19f06c19b6af18d8115c4f3926bae344ece4bc2d"
+    },
+    {
+      "path": "peer-source-review.json.gz",
+      "bytes": 1911,
+      "sha256": "c653929a9f0c69f318e1d9f878e02891942997848c3380eab2e11b7b968f5374"
+    },
+    {
+      "path": "readback-manifest.json",
+      "bytes": 3966,
+      "sha256": "37adf103bac42079a8d2eaf2f894d35d036374c854415bb02d260b0b4a5ca54c"
+    },
+    {
+      "path": "remote-evidence.tar.gz",
+      "bytes": 13623,
+      "sha256": "ac00c8e88b6b3de750676ad5dcd13b508a12b9a4cb502085735b8b458a47021a"
+    },
+    {
+      "path": "source-freeze.json",
+      "bytes": 2214,
+      "sha256": "dc7321340935425f2f1dd4a605e882e21c3e8d2ae3f8db8a21fc63b1041666cd"
+    }
+  ]
+}

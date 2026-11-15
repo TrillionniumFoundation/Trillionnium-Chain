@@ -1,0 +1,10 @@
+{
+  "affected": "first local chunk write before Python executed",
+  "attempt": 0,
+  "error": "/bin/bash: line 1: cannot create temp file for here-document: No space left on device",
+  "local_archive_published": false,
+  "next": "direct python argv payload without shell heredoc temp file",
+  "remote_artifacts_changed": false,
+  "schema": "pon-evidence-transfer-observation-v0",
+  "status": "LOCAL_TRANSPORT_ATTEMPT_FAILED"
+}

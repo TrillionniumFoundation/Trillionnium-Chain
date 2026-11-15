@@ -1,0 +1,43 @@
+{
+  "schema": "pn-closure-tested-overlay-v1",
+  "parent_head": "96a98a635def8c13b2d4f234aa1daee59c57afa0",
+  "captured_utc": "2026-10-23T07:43:14.685757+00:00",
+  "scope": "Post-test overlay readback; runtime/test bytes unchanged since recorded native gates. This is not a clean final-head or actual merge execution.",
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 296814,
+      "sha256": "debb13662b9d80c10380de4fc29684c4899c738515ae3c079b867032a40dc87c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/admission_parent_tests.rs",
+      "bytes": 13283,
+      "sha256": "f1ea691e46ecb3a48f4ebffedb39e9fe16401076c6ef1d89bdfe8fbe10deefad"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "bytes": 281923,
+      "sha256": "e0cfbcdc7b4d9ca628309f77dba40c6874098417ce272f2fb5a211902e59424a"
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "bytes": 21154,
+      "sha256": "46eb2fa1fa62f9fda1b1eda452598a37aaa3a98c37bc37907f6e6b99e74dcc96"
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "bytes": 45800,
+      "sha256": "7c34b0779880e4f14dffdc9a52add73ee5ffd73aae4f5f8b68399c5a667a0b33"
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "bytes": 71128,
+      "sha256": "2d8757e2f4d3fca9f21a6aa9583ab1ecf146bd82c19429415ed947cb1f34889b"
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "bytes": 27922,
+      "sha256": "2d74a260ae1f7f55c3538531433b924da073fd969f0864fbeec91df0f04bbfb5"
+    }
+  ]
+}

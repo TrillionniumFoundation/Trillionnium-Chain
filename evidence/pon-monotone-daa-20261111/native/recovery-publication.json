@@ -1,0 +1,38 @@
+{
+  "affected_all_feature_clippy": "PASS",
+  "cargo_formatting": "PASS",
+  "executed_source_commit": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+  "executed_source_tree": "72b106b4458299c37da146b0218b8f5276195b6d",
+  "independent_reader_status_at_publication": "PENDING",
+  "logical_validation_clock_schedule": true,
+  "native_archive": {
+    "bytes": 4657951,
+    "file": "native-run-d23488c5-v1.tar.gz",
+    "sha256": "6c33da56842862608e365acb7c69d72175538556a2a76b74254f7b0357de9c81"
+  },
+  "native_descriptor": {
+    "bytes": 193,
+    "file": "native-run-d23488c5-v1-archive.json",
+    "sha256": "74dbde813897144c0d220584eb1731c72ccd5f8ff597c0de85924b9eb7939a15"
+  },
+  "native_execution_repeated": false,
+  "native_tests": {
+    "failed": 0,
+    "filtered_out": 0,
+    "ignored": 0,
+    "passed": 4,
+    "test_body_seconds": 65.77
+  },
+  "observed_utc": "2026-11-12T01:16:11.025649+00:00",
+  "open_proof_obligations": 13,
+  "original_native_source_before_after": "PASS",
+  "phase": "intermediate-original-byte-recovery",
+  "production_activation": false,
+  "public_network_qualification": false,
+  "purpose": "Publish sealed original bytes for reliable retrieval; implementation remains the executed source.",
+  "qualification": "HOLD_NO_GO",
+  "quantum_attack_profitability_measured": false,
+  "schema": "pon-native-recovery-publication-v1",
+  "unknown_environment_inputs": 18,
+  "wall_clock_mining_cadence_measured": false
+}

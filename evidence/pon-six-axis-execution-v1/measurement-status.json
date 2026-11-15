@@ -1,0 +1,81 @@
+{
+  "schema": "pon-six-axis-measurement-status-v1",
+  "status": "NOT_STARTED_COMPILATION_RESOURCE_BLOCKED",
+  "registered_plan": {
+    "file": "measurement-plan.json",
+    "sha256": "e2714a9b9976bfb83658af5e8aab7efa2d16017c7a726d68042ed1cc8342efeb",
+    "changed_after_registration": false
+  },
+  "latest_execution_declaration": "measurement-execution-declaration-v3.json",
+  "execution_declarations": [
+    {
+      "version": 1,
+      "file": "measurement-execution-declaration-v1.json",
+      "bytes": 1325,
+      "sha256": "8beed3fac2900f56a175223cd88e330a551df083722413d222341d611c198a7c",
+      "git_blob": "ff1a6525e349568c43d745aa200fd661695db9bc"
+    },
+    {
+      "version": 2,
+      "file": "measurement-execution-declaration-v2.json",
+      "bytes": 1652,
+      "sha256": "67c59d599530fc276b6e6a7983f25462766a1bd381e057cdfc15d3086d44043d",
+      "git_blob": "7cd99bea7b412b14c9108b6e8978a67419debbb8"
+    },
+    {
+      "version": 3,
+      "file": "measurement-execution-declaration-v3.json",
+      "bytes": 2482,
+      "sha256": "aa81a27a086d345f9626af0c1e0bc5fa1a4114c5045b97533570609108a86a52",
+      "git_blob": "e731795cf3cfdbce4390a739d358fcee8a93a9b4"
+    }
+  ],
+  "declared_source_checkpoint": "2d529aa0a1c65df9c43a5fd278c72ab0c0be3814",
+  "source_declaration_must_be_refreshed_before_any_future_different_source_run": true,
+  "parser_component": {
+    "planned_completed_samples": 320,
+    "planned_parser_calls": 2560,
+    "samples_started": 0,
+    "samples_completed": 0,
+    "cohort_results": null,
+    "performance_gate": "NOT_EVALUATED_NO_DATA",
+    "performance_pass": null,
+    "planned_rule": "All five cohorts, 16 ABBA rounds, eight calls/sample; median paired B/A <=1.10 everywhere and <=0.50 for (8 accounts,65528 working rows); retain all attempted samples."
+  },
+  "fixed_touched_set_native_matrix": {
+    "planned_cohorts": 9,
+    "planned_measured_blocks": 72,
+    "planned_deliberate_cancellations": 9,
+    "planned_returned_native_stages": 153,
+    "planned_warmup_blocks": 432,
+    "cohorts_started": 0,
+    "measurements_started": 0,
+    "measurements_completed": 0,
+    "actual_returned_native_stages": 0,
+    "cohort_results": null,
+    "correctness_gate": "NOT_EVALUATED_NO_DATA",
+    "latency_acceptance_gate": false,
+    "original_4105_history_gate_substitution": false
+  },
+  "analysis_helper": {
+    "file": "parse_measurements.py",
+    "bytes": 32498,
+    "sha256": "1044cb7eb885dc0837b4008c97345f70b8234243ac5dba17a1e91472222a936d",
+    "git_blob": "023501e51479c8c3707f9e9dca77ad586a9610ac"
+  },
+  "whole_command_resource_observer": {
+    "file": "observe_resources.py",
+    "bytes": 2627,
+    "sha256": "dc70719af44b12a3bc507cc21d0b91a8f141a8b39bf6c54cbf59591fae61dbb6",
+    "git_blob": "688bc81e763c3f6d17c45cbb3dd0afa429570297",
+    "executed_for_a_measurement": false
+  },
+  "build_failures_are_not_zero_cost_request_samples": true,
+  "native_database_on_tmpfs": false,
+  "native_deadlines_or_resource_limits_changed": false,
+  "whole_request_speedup_claim": false,
+  "p99": null,
+  "throughput_claim": false,
+  "full_fixed_host_performance_pass": false,
+  "production_activation": false
+}

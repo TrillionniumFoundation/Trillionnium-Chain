@@ -1,0 +1,67 @@
+{
+  "observation": "Original isolated full shallow clone reached its configured timeout; no alternative source substituted.",
+  "host": "mac",
+  "job_id": "1a1bae9e6c4-12894-1e4b",
+  "created_unix_ms": 1794137253572,
+  "timeout_seconds": 900,
+  "requested_destination": "/Users/qianqi/work/chain-cell-six-capabilities-20261108-d95a",
+  "requested_origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+  "requested_branch": "feature/chain-next-architecture-security-20261108",
+  "expected_base": "9f54b05c643185a5041fc1f78cef77e95877f52a",
+  "note": "The outer Python command captured git subprocess output until completion, so the durable job log contains admission only. Git stderr is unavailable; no Git error cause is inferred. Redundant raw-byte hex fields are omitted from this archive.",
+  "status": {
+    "at_unix_ms": 1794138173764,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 124,
+    "job_id": "1a1bae9e6c4-12894-1e4b",
+    "launch_nonce": "4f4deda436b0577976981f0d6a574a98",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 127,
+        "stored": 127
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "timed_out",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": true
+  },
+  "read": {
+    "audit_recorded": true,
+    "job_id": "1a1bae9e6c4-12894-1e4b",
+    "stderr": {
+      "eof": true,
+      "next_offset": 0,
+      "offset": 0,
+      "size": 0,
+      "text": ""
+    },
+    "stdout": {
+      "eof": true,
+      "next_offset": 127,
+      "offset": 0,
+      "size": 127,
+      "text": "{\"phase\": \"admission\", \"destination\": \"/Users/qianqi/work/chain-cell-six-capabilities-20261108-d95a\", \"already_exists\": false}\n"
+    }
+  }
+}

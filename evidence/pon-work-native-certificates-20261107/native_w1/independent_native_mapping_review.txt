@@ -1,0 +1,172 @@
+Independent review: paid-deficit and early/later execution mapping
+Reviewer: code_audit agent, 2026-11-07
+
+RESULT
+
+The final deterministic equations (1)--(7) and conditional probability
+composition (8)--(9) in NATIVE_EXECUTION_CERTIFICATE_V1.md are valid under
+their stated premises, with the boundary corrections below incorporated.
+The code implements the finite declared-trace accounting and explicitly
+does not claim to implement the stopped pacer theorem or native attestation.
+This is a mathematical/source review, not a native network experiment.
+
+Reviewed base: 2789e9d9999920d858c1b65d3bff29122079cb4e.
+Reviewed working-file SHA-256 values:
+  formal/pon-nakamoto-v1/native_execution_certificate.py
+    8ee16a5e0378ba97a5a1bd45085f5b94aff2005d0a67cae7318342f556183033
+  formal/pon-nakamoto-v1/test_native_execution_certificate.py
+    8de10de99f4733b9837f9ab591c092e518bda90c2ab0621008f72a9677c2cc81
+  formal/pon-nakamoto-v1/NATIVE_EXECUTION_CERTIFICATE_V1.md
+    511fd7050202f051f1285f574216860f28ed2d6f79b30a03db7976904187800d
+Preflight passed before writing this review. The implementation owner's
+reported test execution is separate from this independent proof review.
+
+1. EXACT DEFICIT IDENTITY
+
+For selected score D<=M, direct case analysis at R<=M or R>M gives
+
+  (R-M)_+ + (min(R,M)-D)_+ = (R-D)_+.
+
+The candidate set must contain the selected chain. This is not an argmax
+assumption: raw lag M-D may be positive. The capped split correctly avoids
+charging all raw lag when M exceeds the chosen reference R.
+
+With a=LCA(C0,D), the competing suffix has exactly its old-ready, new-A,
+and new-H weights. Adding the deficit gives max(S(D),R)-S(a)>=R-S(a).
+This proves (2), including pre-propagation cross-view mismatches. A local
+strict activation can supply a strict comparison to its incumbent, but an
+arbitrary cross-view comparison cannot be made strict for that reason.
+
+2. RELATIVE INVENTORY AND THE ALL-FORK BOUND
+
+Readiness must be an irrevocable ancestor-complete output fact, with a
+prefix-closed ready set. The old part of a later competing suffix is then
+one prefix ending at F. Because a was already on the confirmed chain and
+F excludes b,
+
+  I = S(F)-S(a) <= B0 + S(parent(b))-S(a).
+
+The all-fork new-A total dominates this fork's new-A suffix, and the all-fork
+honest b-free total dominates its new-H suffix. Substitution proves (3).
+No independence between branches, inventory, or producer labels is used.
+All producers' old ready stock belongs in B0. Future-timestamp eligibility
+and publication do not create a second output credit.
+
+The counter must use the same completion clock as a resource theorem.
+Proofs finished earlier but awaiting ancestry at the cut require residual
+potential or a separate carry-in when relating the two clocks. The final
+document makes this requirement explicit.
+
+3. EARLY OBSERVATIONS
+
+If the observer already has an eligible b-containing chain Q, then
+S(D)=M-q>=S(Q)-q. The same old-prefix inequality gives
+
+  A+H_off >= S(Q)-S(parent(b))-q-B0.
+
+This proves (4)--(5). A useful positive threshold requires the delivered
+score margin to exceed the paid inventory, honest off-branch, and selection
+terms. If the observer has never received b, there need not be a positive
+margin: an all-honest remote genesis view can disagree with a confirmation
+elsewhere while A=0. The finite accounting correctly charges availability
+instead of asserting an adversarial-work event that did not happen.
+
+4. PACER LEMMA AND THE NECESSARY BOUNDARY REPAIRS
+
+The accepted final statement applies to an observation cut c at or after the
+anchor-delivery deadline cut r=t_tau+Delta_pub. It finds a crossing r<=rho<=c.
+Earlier observations continue to use the full-cut/early accounting. This
+restriction is essential: applying (7) to every c>tau would contradict the
+unseen-anchor all-honest example.
+
+Crossings are searched from r, while pacers start strictly after
+s=r+Gamma. Crossings range over every causal cut, including view changes or
+loss, not only new completions. A physical deadline means the cut after ALL
+events at that timestamp. This includes ready events occurring at the exact
+Gamma boundary, not only delivery events. These repairs are present in the
+final document and agree with the finite checker's deadline convention.
+
+Let ell=max(s_H,s_V). Before the first crossing, a b-free parent binding
+beta>=r is impossible: its raw lag bound would give parent score at least
+P_b(beta)-ell, so that ready parent would itself be an earlier crossing.
+Binding causally precedes completion even if timestamps coincide. Therefore
+honest b-free completions at or before rho either finish by s from bindings
+before r, or belong to the rho<=s case. In either case H_off(rho)<=H_init.
+This proof does not assume common prefix already holds.
+
+For spaced pacers, t_j-t_(j-1)>Delta_pub+Gamma gives
+
+  t_bind_j >= t_j-Gamma > t_(j-1)+Delta_pub.
+
+The previous pacer baseline is already delivered and retained at this bind.
+The next score is at least the retained baseline+w_j-s_H; retaining the old
+baseline supplies positive-part gain g_j=(w_j-s_H)_+. The lag is paid for
+EVERY pacer. A single endpoint deduction would not justify the accumulated
+progress bound.
+
+At rho, an undelivered completed pacer lies in the closed interval
+[t_rho-Delta_pub,t_rho]. Strict spacing leaves at most one. Its paid gain is
+at most its own weight, hence at most w_max. Causally later completions with
+the same timestamp are not counted. This proves the common-frontier lower
+bound S(C0)+sum g_j-w_max. Combine it with the crossing score, the relative
+B0 prefix, and H_init to obtain (7). The w_max term pays one unresolved
+spaced pacer, not an arbitrary batch of simultaneous outputs.
+
+The environment premises include complete data, application/work validation,
+timestamp eligibility, queueing, retained availability, all relevant miners,
+and final-binding-to-completion delay. Mere network transit delay or an
+observer-local request timer does not establish these premises.
+
+5. PROBABILITY COMPOSITION
+
+Equations (8)--(9) use event inclusion and a conditional maximal inequality,
+not independence. The tail remains under the original law; conditioning it
+on future contract success without proof would be invalid. All parameters
+chosen at tau must be measurable there, and the resource potential must
+remain valid for the joint filtration, including public/helper information.
+
+The final text requires theta>0, kappa>=0, finite V_tau, and a measurable m.
+If the progress/resource envelope can fail, that failure is included in
+epsilon_late or paid by a separate epsilon_env. Failures of random B0 or
+H_init caps likewise cannot disappear. Under these conditions, a crossing
+A-J_g>=d and kappa R-theta J_g<=theta m imply
+theta A-kappa R>=theta(d-m), so the stated supermartingale/Ville bound follows.
+
+A fresh global-oracle theorem can cover a fixed epoch by total-output event
+inclusion. It does not automatically become the conditional risk following
+an adaptively chosen confirmation. Moreover MU1 credit 16u and current native
+required_work(target) are different processes. The final document explicitly
+requires a relation/identity/clock/weight bridge before substituting one for
+the other. Neither bridge is supplied merely by this review.
+
+6. EXECUTABLE SCOPE
+
+The reviewed replay computes actual maxima over its supplied eligible sets,
+retains historical readiness when availability is lost, checks owner and
+generation consistency, and implements strict submitted-target versus
+incumbent selection. compare() computes both capped deficits and the early
+raw-lag threshold directly from the relevant cut. These operations agree
+with the deterministic statements.
+
+The flags distinguish record/schema algebra, completeness of a declared
+finite model, actual world coverage, physical clock authentication, native
+runtime attestation, and probabilistic qualification. Native labels and
+hash-shaped strings never turn the last categories true. The window helper
+explicitly reports checks_are_not_a_stopped_pacer_theorem. No real W1 replay,
+actual target-derived weight validation, or physical resource minimum is
+performed by this checker; those limitations are stated.
+
+The native six-successor arithmetic K>=7w(b) follows only when the included
+weight is the present required_work(target). If a future u-weight rule is
+introduced without changing the six-times-target-work threshold, the correct
+margin is u*d+6*d, not automatically 7u*d. The reviewed document retains this
+distinction and does not retroactively certify the current confirmation rule.
+
+CONCLUSION
+
+No remaining mathematical correction was identified in the final reviewed
+files. The deterministic model mapping and explicitly conditional theorem
+are approved within their stated scope. Physical work-tail certification,
+authenticated native execution coverage, environment probabilities, and the
+existing six-successor risk remain unproved; production/security qualification
+remains HOLD.

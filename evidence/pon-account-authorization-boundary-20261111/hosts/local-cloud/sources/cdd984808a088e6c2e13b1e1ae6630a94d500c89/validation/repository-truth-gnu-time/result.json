@@ -1,0 +1,27 @@
+{
+  "id": "repository-truth-gnu-time",
+  "argv": [
+    "env",
+    "TRNM_GNU_TIME=/workspace/scratch/a4188f5c86b5/validation-tools/gnu-time-desktop/usr/bin/time",
+    "bash",
+    "scripts/ci/ci_job.sh",
+    "repository-truth"
+  ],
+  "returncode": 1,
+  "launch_error": null,
+  "elapsed_seconds": 199.96168033499998,
+  "finished_utc": "2026-11-11T02:01:07.685112+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "8097d76f264733b356788e38a7c6c75e657c3d72fee6633f27c457be452a9627",
+  "stderr_sha256": "72923b1922129f05ab285b1dd1f0b71492b47089ede054b6f0f683a1903d863b",
+  "pass": false,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 180.12931500000002,
+    "system_cpu_seconds": 14.288626,
+    "maximum_rss_kib": 185640,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

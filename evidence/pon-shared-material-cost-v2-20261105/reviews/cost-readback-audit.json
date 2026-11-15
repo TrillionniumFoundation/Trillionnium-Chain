@@ -1,0 +1,171 @@
+{
+  "controls_log_sha256": "0b5bd6b396eaaf294729eb7c10d97e8e66c534bc017571ab613d536d4e941d2b",
+  "controls_passed": 61,
+  "controls_skipped": 0,
+  "controls_tests": 61,
+  "cost_reader_output": "/workspace/scratch/708bcecd45db/audit-notes/cost-v2-pair-readback.json",
+  "cost_reader_output_sha256": "a27c9e3411f6133ac828d7b42d899788d021cf60d1a3c1d912bf797b02bad170",
+  "full_system_cost": null,
+  "net_compute_benefit": null,
+  "observations": [
+    {
+      "actual_attempts": 14,
+      "actual_full_native_verifier_calls": 5,
+      "all_children_cpu_ns": 1161762000,
+      "baseline_parent_phase_cpu_ns": 23577921,
+      "baseline_timed_diagnostics_cpu_ns": 22595797,
+      "baseline_warm_cpu_median_ns": 84576,
+      "child_cpu_ns": 39798000,
+      "consumer_run_process_tree_cpu_ns": 1967879614,
+      "direct_product_consumption_cpu_ns": 1638401,
+      "directory": "/workspace/scratch/708bcecd45db/campaign-v2/paired-r0-t0-full-limb-dense",
+      "full_system_cost": null,
+      "local_same_clock_comparison": {
+        "child_cpu_to_ordinary_warm_cpu_ratio": 470.5590238365494,
+        "child_wall_to_ordinary_warm_wall_ratio": 511.3112202430498,
+        "scope": "observed local child only; diagnostics included; no global net-saving claim"
+      },
+      "mathematical_stream_sha256": "f33640a0244b94cf12d77f4f06890562da70ed4e380fb4c242b9258df04fec23",
+      "net_compute_benefit": null,
+      "per_tile_process_margins": [
+        {
+          "child_cpu_minus_native_run_cpu_ns": 1703374,
+          "child_wall_minus_native_run_wall_ns": 2082318,
+          "tile": 0
+        },
+        {
+          "child_cpu_minus_native_run_cpu_ns": 1147581,
+          "child_wall_minus_native_run_wall_ns": 1416698,
+          "tile": 1
+        },
+        {
+          "child_cpu_minus_native_run_cpu_ns": 1608392,
+          "child_wall_minus_native_run_wall_ns": 1950561,
+          "tile": 2
+        },
+        {
+          "child_cpu_minus_native_run_cpu_ns": 1672566,
+          "child_wall_minus_native_run_wall_ns": 2035432,
+          "tile": 3
+        },
+        {
+          "child_cpu_minus_native_run_cpu_ns": 1350797,
+          "child_wall_minus_native_run_wall_ns": 1704922,
+          "tile": 4
+        }
+      ],
+      "preparation": "dense",
+      "qualification": false,
+      "raw_leaf_subtotals": {
+        "native_verifier_subtotal": {
+          "cpu_ns": 3390482,
+          "wall_ns": 3386747
+        },
+        "producer_subtotal": {
+          "cpu_ns": 8447646,
+          "wall_ns": 8446121
+        },
+        "reference_verifier_subtotal": {
+          "cpu_ns": 7376271,
+          "wall_ns": 7370764
+        },
+        "run_through_before_summary": {
+          "cpu_ns": 32315290,
+          "wall_ns": 33810320
+        },
+        "typed_copy_subtotal": {
+          "cpu_ns": 6711,
+          "wall_ns": 6800
+        }
+      },
+      "sequential_child_wall_ns": 43000251,
+      "source_head": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+      "source_tree": "5487be5fe9075298429c0a8cad60e33cf330f8bf",
+      "supervisor_exchange_cpu_ns": 5583791,
+      "supervisor_run_cpu_ns": 806117614
+    },
+    {
+      "actual_attempts": 14,
+      "actual_full_native_verifier_calls": 5,
+      "all_children_cpu_ns": 919449000,
+      "baseline_parent_phase_cpu_ns": 18649848,
+      "baseline_timed_diagnostics_cpu_ns": 17844199,
+      "baseline_warm_cpu_median_ns": 84075,
+      "child_cpu_ns": 32785000,
+      "consumer_run_process_tree_cpu_ns": 1790528004,
+      "direct_product_consumption_cpu_ns": 2520665,
+      "directory": "/workspace/scratch/708bcecd45db/campaign-v2/paired-r0-t0-full-limb-sparse",
+      "full_system_cost": null,
+      "local_same_clock_comparison": {
+        "child_cpu_to_ordinary_warm_cpu_ratio": 389.94944989592625,
+        "child_wall_to_ordinary_warm_wall_ratio": 439.13083766194995,
+        "scope": "observed local child only; diagnostics included; no global net-saving claim"
+      },
+      "mathematical_stream_sha256": "f33640a0244b94cf12d77f4f06890562da70ed4e380fb4c242b9258df04fec23",
+      "net_compute_benefit": null,
+      "per_tile_process_margins": [
+        {
+          "child_cpu_minus_native_run_cpu_ns": 1733112,
+          "child_wall_minus_native_run_wall_ns": 2137737,
+          "tile": 0
+        },
+        {
+          "child_cpu_minus_native_run_cpu_ns": 1312505,
+          "child_wall_minus_native_run_wall_ns": 1623809,
+          "tile": 1
+        },
+        {
+          "child_cpu_minus_native_run_cpu_ns": 1134947,
+          "child_wall_minus_native_run_wall_ns": 1519483,
+          "tile": 2
+        },
+        {
+          "child_cpu_minus_native_run_cpu_ns": 1175248,
+          "child_wall_minus_native_run_wall_ns": 1498511,
+          "tile": 3
+        },
+        {
+          "child_cpu_minus_native_run_cpu_ns": 2078650,
+          "child_wall_minus_native_run_wall_ns": 2357081,
+          "tile": 4
+        }
+      ],
+      "preparation": "sparse",
+      "qualification": false,
+      "raw_leaf_subtotals": {
+        "native_verifier_subtotal": {
+          "cpu_ns": 3211635,
+          "wall_ns": 3208893
+        },
+        "producer_subtotal": {
+          "cpu_ns": 6222402,
+          "wall_ns": 6222052
+        },
+        "reference_verifier_subtotal": {
+          "cpu_ns": 3690650,
+          "wall_ns": 3688692
+        },
+        "run_through_before_summary": {
+          "cpu_ns": 25350538,
+          "wall_ns": 27638391
+        },
+        "typed_copy_subtotal": {
+          "cpu_ns": 5539,
+          "wall_ns": 5499
+        }
+      },
+      "sequential_child_wall_ns": 36775012,
+      "source_head": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+      "source_tree": "5487be5fe9075298429c0a8cad60e33cf330f8bf",
+      "supervisor_exchange_cpu_ns": 4586290,
+      "supervisor_run_cpu_ns": 871079004
+    }
+  ],
+  "paired_stream_matches": true,
+  "qualification": false,
+  "read_only": true,
+  "repo_status_porcelain_after": "",
+  "same_material_distinct_output_credit": 1,
+  "schema": "pon-shared-cost-v2-independent-readback-audit-v1",
+  "scope": "independent arithmetic readback; measurement author not authenticated; no new performance observation; internal consumer.run scope excludes Python startup/import/exit; campaign outer envelope is not added"
+}

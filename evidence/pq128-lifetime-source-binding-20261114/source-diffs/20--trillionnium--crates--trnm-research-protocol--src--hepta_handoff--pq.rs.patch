@@ -1,0 +1,70 @@
+diff --git a/trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs b/trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs
+index 9734363a3e8884189468b0ca706aa96094d826f7..f6e24fba99f1b23008ba6a96f812964d53a2a1a0 100644
+--- a/trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs
++++ b/trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs
+@@ -180,6 +180,56 @@ impl SignedHeptaAdmissionV2 {
+         Ok(())
+     }
+ 
++    /// Read caller-trusted time after one actual ML-DSA verification.
++    ///
++    /// Both the owner admission and the independently pinned authority must
++    /// still be live at that later reading. The callback must read current
++    /// trusted time; no signed field or cached observation can supply it.
++    /// This remains a point-in-time research observation. Before any effect,
++    /// the receiving owner must obtain its current withdrawal and journal
++    /// state; this method creates no FinalUse or execution capability.
++    pub fn verify_for_context_with_fresh_time(
++        &self,
++        pins: &PqHeptaAuthoritySetV2,
++        expected_chain_id: &str,
++        expected_admission: &HeptaArtifactAdmissionV1,
++        now_unix_s: u64,
++        after_verify_unix_s: impl FnOnce() -> u64,
++    ) -> Result<(), PqHeptaHandoffError> {
++        self.verify_for_context(pins, expected_chain_id, expected_admission, now_unix_s)?;
++        let current = after_verify_unix_s();
++        if current < now_unix_s {
++            return Err(PqHeptaHandoffError::TimeMovedBackwards);
++        }
++        // Admission expiry is inclusive; the current authority's expiry and
++        // revocation boundaries are exclusive. Retain both existing contracts.
++        expected_admission.validate_at(current)?;
++        pins.authorized(self, current)?;
++        Ok(())
++    }
++
++    /// Parse only the current bounded THP2 wire, then verify current external
++    /// owner and authority pins before observing time again. The untrusted
++    /// envelope never chooses its own key or grants authority to the parser.
++    pub fn decode_for_context_with_fresh_time(
++        wire: &[u8],
++        pins: &PqHeptaAuthoritySetV2,
++        expected_chain_id: &str,
++        expected_admission: &HeptaArtifactAdmissionV1,
++        now_unix_s: u64,
++        after_verify_unix_s: impl FnOnce() -> u64,
++    ) -> Result<Self, PqHeptaHandoffError> {
++        let signed = Self::decode_untrusted(wire)?;
++        signed.verify_for_context_with_fresh_time(
++            pins,
++            expected_chain_id,
++            expected_admission,
++            now_unix_s,
++            after_verify_unix_s,
++        )?;
++        Ok(signed)
++    }
++
+     fn validate_unsigned(&self) -> Result<(), PqHeptaHandoffError> {
+         if !valid_chain(&self.chain_id)
+             || !valid_did(&self.signer_did)
+@@ -348,6 +398,8 @@ pub enum PqHeptaHandoffError {
+     UnauthorizedAuthority,
+     #[error("ML-DSA-65 signature invalid")]
+     InvalidSignature,
++    #[error("trusted Hepta time moved backwards after verification")]
++    TimeMovedBackwards,
+     #[error("current Hepta owner or chain context mismatch: {0}")]
+     ContextMismatch(&'static str),
+ }

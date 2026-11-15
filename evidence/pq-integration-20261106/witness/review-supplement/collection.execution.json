@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "python3",
+    "/workspace/scratch/chain-pq-root-recovery-20261106-v1/witness-composition-4c76/collect_witness_release_increment_recovery_v2.py",
+    "collect-package",
+    "--plan",
+    "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/final-increment-selection-v1/frozen-selection.json",
+    "--output",
+    "/workspace/scratch/chain-pq-root-recovery-20261106-v1/final-witness-increment-v1"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.8688089847564697,
+  "stdout_sha256": "7adb2ecb717a0d804206dc7edf037e312e9cd25c7c66381e79ec5518c2f70d09",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "native_tests_executed": 0
+}

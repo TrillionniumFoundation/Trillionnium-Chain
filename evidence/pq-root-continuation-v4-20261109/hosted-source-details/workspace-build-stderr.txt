@@ -1,0 +1,248 @@
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded anstyle-query v1.1.5
+  Downloaded block-buffer v0.10.4
+  Downloaded anstyle v1.0.14
+  Downloaded bitflags v2.11.0
+  Downloaded utf8parse v0.2.2
+  Downloaded getrandom v0.4.2
+  Downloaded rustc_version v0.4.1
+  Downloaded hybrid-array v0.4.15
+  Downloaded clap v4.6.0
+  Downloaded wait-timeout v0.2.1
+  Downloaded toml_parser v1.1.3+spec-1.1.0
+  Downloaded crypto-common v0.2.2
+  Downloaded subtle v2.6.1
+  Downloaded thiserror-impl v1.0.69
+  Downloaded hashbrown v0.16.1
+  Downloaded zmij v1.0.21
+  Downloaded heck v0.5.0
+  Downloaded unicode-ident v1.0.24
+  Downloaded spki v0.7.3
+  Downloaded keccak v0.2.2
+  Downloaded typenum v1.20.1
+  Downloaded tempfile v3.27.0
+  Downloaded once_cell v1.21.4
+  Downloaded ml-dsa v0.1.1
+  Downloaded winnow v1.0.4
+  Downloaded serde_derive v1.0.228
+  Downloaded vcpkg v0.2.15
+  Downloaded serde_json v1.0.149
+  Downloaded der v0.8.3
+  Downloaded proc-macro2 v1.0.106
+  Downloaded ed25519-dalek v2.2.0
+  Downloaded libc v0.2.184
+  Downloaded bytes v1.12.1
+  Downloaded serde v1.0.228
+  Downloaded cc v1.2.59
+  Downloaded borsh v1.8.0
+  Downloaded num-traits v0.2.19
+  Downloaded memchr v2.8.0
+  Downloaded rusqlite v0.39.0
+  Downloaded ctutils v0.4.6
+  Downloaded const-oid v0.10.2
+  Downloaded curve25519-dalek v4.1.3
+  Downloaded const-oid v0.9.6
+  Downloaded openssl v0.10.81
+  Downloaded colorchoice v1.0.5
+  Downloaded clap_lex v1.1.0
+  Downloaded rustix v1.1.4
+  Downloaded syn v2.0.117
+  Downloaded strsim v0.11.1
+  Downloaded sponge-cursor v0.1.0
+  Downloaded shake v0.1.0
+  Downloaded nix v0.30.1
+  Downloaded signature v2.2.0
+  Downloaded serde_core v1.0.228
+  Downloaded spki v0.8.1
+  Downloaded sha2 v0.10.9
+  Downloaded foldhash v0.2.0
+  Downloaded find-msvc-tools v0.1.9
+  Downloaded cfg-if v1.0.4
+  Downloaded signature v3.0.0
+  Downloaded shell-escape v0.1.5
+  Downloaded semver v1.0.27
+  Downloaded proc-macro-crate v3.5.0
+  Downloaded pkg-config v0.3.32
+  Downloaded itoa v1.0.18
+  Downloaded cfg_aliases v0.2.2
+  Downloaded der v0.7.10
+  Downloaded crypto-common v0.1.7
+  Downloaded borsh-derive v1.8.0
+  Downloaded zeroize v1.9.1
+  Downloaded toml_edit v0.25.13+spec-1.1.0
+  Downloaded toml_datetime v1.1.1+spec-1.1.0
+  Downloaded thiserror v1.0.69
+  Downloaded quote v1.0.45
+  Downloaded openssl-sys v0.9.117
+  Downloaded digest v0.10.7
+  Downloaded cmov v0.5.4
+  Downloaded smallvec v1.15.1
+  Downloaded rand_core v0.6.4
+  Downloaded pkcs8 v0.10.2
+  Downloaded module-lattice v0.2.3
+  Downloaded indexmap v2.13.1
+  Downloaded fs2 v0.4.3
+  Downloaded clap_derive v4.6.0
+  Downloaded clap_builder v4.6.0
+  Downloaded version_check v0.9.5
+  Downloaded sha2-asm v0.6.4
+  Downloaded rand_core v0.10.1
+  Downloaded pkcs8 v0.11.0
+  Downloaded openssl-macros v0.1.1
+  Downloaded hashlink v0.11.1
+  Downloaded getrandom v0.2.17
+  Downloaded fallible-streaming-iterator v0.1.9
+  Downloaded equivalent v1.0.2
+  Downloaded is_terminal_polyfill v1.70.2
+  Downloaded hex v0.4.3
+  Downloaded generic-array v0.14.7
+  Downloaded foreign-types-shared v0.1.1
+  Downloaded foreign-types v0.3.2
+  Downloaded fallible-iterator v0.3.0
+  Downloaded errno v0.3.14
+  Downloaded curve25519-dalek-derive v0.1.1
+  Downloaded cpufeatures v0.2.17
+  Downloaded anyhow v1.0.103
+  Downloaded anstyle-parse v1.0.0
+  Downloaded shlex v1.3.0
+  Downloaded fastrand v2.3.0
+  Downloaded ed25519 v2.2.3
+  Downloaded digest v0.11.3
+  Downloaded base64ct v1.8.3
+  Downloaded autocfg v1.5.1
+  Downloaded anstream v1.0.0
+  Downloaded linux-raw-sys v0.12.1
+  Downloaded libsqlite3-sys v0.37.0
+   Compiling find-msvc-tools v0.1.9
+   Compiling shlex v1.3.0
+   Compiling cc v1.2.59
+   Compiling cfg-if v1.0.4
+   Compiling version_check v0.9.5
+   Compiling generic-array v0.14.7
+   Compiling typenum v1.20.1
+   Compiling cpufeatures v0.2.17
+   Compiling trnm-mempool v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mempool)
+   Compiling sha2-asm v0.6.4
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling proc-macro2 v1.0.106
+   Compiling sha2 v0.10.9
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.45
+   Compiling libc v0.2.184
+   Compiling syn v2.0.117
+   Compiling zeroize v1.9.1
+   Compiling serde_core v1.0.228
+   Compiling bitflags v2.11.0
+   Compiling zmij v1.0.21
+   Compiling serde_json v1.0.149
+   Compiling itoa v1.0.18
+   Compiling serde v1.0.228
+   Compiling memchr v2.8.0
+   Compiling getrandom v0.4.2
+   Compiling serde_derive v1.0.228
+   Compiling rand_core v0.10.1
+   Compiling semver v1.0.27
+   Compiling hex v0.4.3
+   Compiling rustc_version v0.4.1
+   Compiling curve25519-dalek v4.1.3
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling subtle v2.6.1
+   Compiling signature v2.2.0
+   Compiling ed25519 v2.2.3
+   Compiling rustix v1.1.4
+   Compiling linux-raw-sys v0.12.1
+   Compiling ed25519-dalek v2.2.0
+   Compiling pkg-config v0.3.32
+   Compiling vcpkg v0.2.15
+   Compiling cmov v0.5.4
+   Compiling ctutils v0.4.6
+   Compiling hybrid-array v0.4.15
+   Compiling autocfg v1.5.1
+   Compiling num-traits v0.2.19
+   Compiling crypto-common v0.2.2
+   Compiling const-oid v0.10.2
+   Compiling thiserror v1.0.69
+   Compiling digest v0.11.3
+   Compiling thiserror-impl v1.0.69
+   Compiling der v0.8.3
+   Compiling keccak v0.2.2
+   Compiling sponge-cursor v0.1.0
+   Compiling shake v0.1.0
+   Compiling module-lattice v0.2.3
+   Compiling spki v0.8.1
+   Compiling pkcs8 v0.11.0
+   Compiling signature v3.0.0
+   Compiling anyhow v1.0.103
+   Compiling ml-dsa v0.1.1
+   Compiling trnm-protocol v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol)
+   Compiling openssl-sys v0.9.117
+   Compiling foreign-types-shared v0.1.1
+   Compiling openssl v0.10.81
+   Compiling foreign-types v0.3.2
+   Compiling openssl-macros v0.1.1
+   Compiling trnm-crypto-primitives v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives)
+   Compiling fastrand v2.3.0
+   Compiling once_cell v1.21.4
+   Compiling tempfile v3.27.0
+   Compiling libsqlite3-sys v0.37.0
+   Compiling foldhash v0.2.0
+   Compiling hashbrown v0.16.1
+   Compiling hashlink v0.11.1
+   Compiling smallvec v1.15.1
+   Compiling fallible-iterator v0.3.0
+   Compiling cfg_aliases v0.2.2
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling rusqlite v0.39.0
+   Compiling winnow v1.0.4
+   Compiling equivalent v1.0.2
+   Compiling indexmap v2.13.1
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling proc-macro-crate v3.5.0
+   Compiling borsh v1.8.0
+   Compiling borsh-derive v1.8.0
+   Compiling fs2 v0.4.3
+   Compiling trnm-verification-profiles v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-task-kernel v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel)
+   Compiling nix v0.30.1
+   Compiling trnm-transport v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport)
+   Compiling trnm-service-settlement v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-release-bundle v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-release-bundle)
+   Compiling trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+   Compiling trnm-types v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-types)
+   Compiling trnm-peer-lease v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-peer-lease)
+   Compiling utf8parse v0.2.2
+   Compiling anstyle-parse v1.0.0
+   Compiling trnm-checkpoint-types v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-checkpoint-types)
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling colorchoice v1.0.5
+   Compiling anstyle v1.0.14
+   Compiling anstyle-query v1.1.5
+   Compiling anstream v1.0.0
+   Compiling clap_lex v1.1.0
+   Compiling strsim v0.11.1
+   Compiling heck v0.5.0
+   Compiling clap_derive v4.6.0
+   Compiling clap_builder v4.6.0
+   Compiling trnm-checkpoint-store v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-checkpoint-store)
+   Compiling clap v4.6.0
+   Compiling wait-timeout v0.2.1
+   Compiling shell-escape v0.1.5
+   Compiling trnm-research-protocol v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-research-protocol)
+   Compiling trnm-audit-events v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-audit-events)
+   Compiling trnm-executor v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-executor)
+   Compiling trnm-bench v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-bench)
+   Compiling trnm-escrow-vault v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-escrow-vault)
+   Compiling trnm-governance-guard v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-governance-guard)
+   Compiling trnm-worker-agent v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-worker-agent)
+   Compiling trnm-state-import v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-state-import)
+   Compiling trnm-oracle v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-oracle)
+   Compiling trnm-control-plane v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-control-plane)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14m 02s

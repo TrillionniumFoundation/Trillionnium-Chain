@@ -1,0 +1,42 @@
+{
+  "schema": "pon-native-public-evaluation-quorum-v2",
+  "id": "native-public-evaluation-quorum-dev-v2",
+  "storage_revision": 3,
+  "record_namespace": "evaluation-record-v3",
+  "maximum_record_bytes": 4096,
+  "genesis_overrides": {
+    "chain_label": "trnm-pon-native-public-evaluation-evolution-devnet-16",
+    "consensus_revision": 16,
+    "evaluation_profile": "native-public-evaluation-quorum-dev-v2"
+  },
+  "candidate_end_offset": 15,
+  "commit_end_offset": 31,
+  "reveal_end_offset": 47,
+  "adoption_start_offset": 56,
+  "appeal_limit_per_candidate": 16,
+  "archive_retention_blocks": 256,
+  "round_blocks": 128,
+  "maximum_candidates_per_round": 512,
+  "base_fee_units": {
+    "14": 160,
+    "15": 160,
+    "16": 160,
+    "17": 160
+  },
+  "development_evaluators": 4,
+  "roster": "four controlled development keys; freeze all non-author keys, including evidenced disqualified keys in the denominator",
+  "aggregation": "ceil(2*n/3) real matching native-checked reveals; disqualified keys never count; frozen denominator never decreases",
+  "native_model_profiles": [
+    "linear-model-evolution-dev-v5"
+  ],
+  "native_evidence_review_policy_override": "native-replay-quorum-and-record-only-appeals-v2",
+  "appeals": "bounded hash-only audit records; no adoption veto, suspension, synthetic votes, score changes or past-effect reversal",
+  "conflicts": "strictly verified signed equivocation excludes that key from current and future counts; recount in the same native adoption transaction",
+  "generation_binding": "network, parameters, family, model/evaluation plan, dataset root, actual parent release and round number",
+  "fresh_dataset_activation": false,
+  "objective_model_quality": false,
+  "independent_governance_accepted": false,
+  "consensus_finality": false,
+  "execution_authority": false,
+  "production_activation": false
+}

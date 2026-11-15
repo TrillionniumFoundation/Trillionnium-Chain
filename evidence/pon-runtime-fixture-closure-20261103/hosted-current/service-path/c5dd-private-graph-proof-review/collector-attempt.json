@@ -1,0 +1,8 @@
+{
+  "at": "2026-11-03T23:20:47.029976+00:00",
+  "exit_code": 0,
+  "stdout_sha256": "b2aae9dd4caf48f511fa394b23e6a07094785644300d1116aba537c3654d5e05",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "native_executions": 0,
+  "corrected_dependency_readback": "Verify existing crate archive against Cargo.lock checksum, then exact source archive member; unavailable checksum-file assumption preserved in collector-attempt-1."
+}

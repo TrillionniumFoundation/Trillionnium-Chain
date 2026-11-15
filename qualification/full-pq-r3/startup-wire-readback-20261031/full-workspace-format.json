@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/tmp/pq-r3-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "exit_code": 1,
+  "scope": "complete workspace; retained bbc baseline formatting failures outside this focused repair",
+  "affected_unmodified_paths": [
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs"
+  ]
+}

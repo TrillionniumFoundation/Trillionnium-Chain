@@ -1,0 +1,24 @@
+{
+  "actual_oid": "9eecd2da8e65e44d4589a2384395e1870e6a4b73",
+  "bytes": 1657172,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "9eecd2da8e65e44d4589a2384395e1870e6a4b73"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1657172,
+  "expected_oid": "9eecd2da8e65e44d4589a2384395e1870e6a4b73",
+  "finished_at": "2026-11-12T01:41:57.574853+00:00",
+  "path": "evidence/pon-w1-runtime-recovery-20261107/validation-raw.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXcxLXJ1bnRpbWUtcmVjb3ZlcnktMjAyNjExMDcvdmFsaWRhdGlvbi1yYXcudGFyLmd6",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "6993f9eb9e91d2440f3d65d0531cdce696b3444fc92acb1e624b9f4da40396b6",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:57.539212+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

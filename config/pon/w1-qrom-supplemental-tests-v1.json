@@ -1,0 +1,54 @@
+{
+  "expected_tests": 24,
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "post_quantum_soundness_qualified": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false,
+    "security_bits_quantum": null
+  },
+  "schema": "TRNM-W1-QROM-SUPPLEMENTAL-TESTS1",
+  "scope": "Separate exact named historical materialization and current-source mapping controls; no proof or quantum security qualification.",
+  "suites": [
+    {
+      "expected_tests": 8,
+      "module": "test_w1_qrom_historical_fixture",
+      "suite": "historical",
+      "tests": [
+        "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_cli_publishes_three_separate_scopes_and_never_overwrites",
+        "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_exact_real_historical_mapping_keeps_current_tree_unqualified",
+        "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_git_replace_cannot_substitute_the_historical_object",
+        "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_git_symlink_entry_is_refused_even_with_matching_bytes",
+        "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_historical_blob_ignores_changed_worktree_and_new_head",
+        "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_missing_commit_never_falls_back_to_present_worktree",
+        "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_original_reader_acceptance_is_not_a_current_refusal",
+        "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_wrong_size_digest_path_and_commit_type_are_refused"
+      ]
+    },
+    {
+      "expected_tests": 16,
+      "module": "test_w1_qrom_current_implementation_audit",
+      "suite": "current",
+      "tests": [
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_all_lifetime_and_cryptographic_obligations_remain_unknown",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_all_six_local_crates_and_literal_inputs_are_bound",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_cli_report_is_created_once_and_never_replaces_prior_evidence",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_consolidated_local_sources_have_independent_reviewed_pins",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_contract_edit_cannot_relabel_unreviewed_source",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_current_mapping_reaches_the_original_complete_saved_fixture",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_each_consolidated_source_refuses_omission_and_mutation",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_fixed_parameters_and_fri_mapping_are_preserved",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_historical_reader_bytes_are_preserved",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_included_work_profile_change_requires_review",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_local_path_manifest_change_requires_review",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_missing_funded_source_is_refused",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_new_local_build_script_requires_review",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_old_contract_and_its_failure_remain_visible",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_project_input_digests_are_the_reviewed_values",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_unlisted_rust_file_is_not_silently_accepted"
+      ]
+    }
+  ]
+}

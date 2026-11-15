@@ -1,0 +1,24 @@
+{
+  "actual_oid": "ee4ad99bdfbcb6eeff032b29b534f8df790f5fb7",
+  "bytes": 1058988,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "ee4ad99bdfbcb6eeff032b29b534f8df790f5fb7"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1058988,
+  "expected_oid": "ee4ad99bdfbcb6eeff032b29b534f8df790f5fb7",
+  "finished_at": "2026-11-12T01:55:18.440397+00:00",
+  "path": "evidence/pon-resource-transfer-20261107/rog/fanout-exact-rog-v1.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXJlc291cmNlLXRyYW5zZmVyLTIwMjYxMTA3L3JvZy9mYW5vdXQtZXhhY3Qtcm9nLXYxLnRhci5neg==",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:18.415968+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

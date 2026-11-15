@@ -1,0 +1,30 @@
+{
+  "archive_bytes_verified": true,
+  "groups": [
+    {
+      "group": "preliminary",
+      "verified_files": 28
+    },
+    {
+      "group": "attempt-1f7ff410",
+      "verified_files": 48,
+      "source": "1f7ff4106f14e5b514d95a9faf2c5eea1233aea5",
+      "commands_passed": 29,
+      "commands_total": 35
+    },
+    {
+      "group": "attempt-a44344b2",
+      "verified_files": 48,
+      "source": "a44344b25d12328fedd883a335585f03d059060b",
+      "commands_passed": 35,
+      "commands_total": 35
+    },
+    {
+      "group": "hosted-a44344b2",
+      "verified_files": 31
+    }
+  ],
+  "independent_provenance_authenticated": false,
+  "status": "HOLD",
+  "whole_chain_pq_qualified": false
+}

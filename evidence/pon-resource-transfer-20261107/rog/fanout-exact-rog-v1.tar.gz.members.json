@@ -1,0 +1,2389 @@
+{
+  "archive": "fanout-exact-rog-v1.tar.gz",
+  "archive_bytes": 1058988,
+  "archive_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89",
+  "container_metadata_normalized": true,
+  "member_bytes_unchanged": true,
+  "member_count": 396,
+  "members": [
+    {
+      "bytes": 4109,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/demand-bridge-audit.json",
+      "sha256": "1a05597f969f8a7f26512172dbb1e191f48b71d2797c414d1483bfb6e5eba34d"
+    },
+    {
+      "bytes": 11830,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/client-attempts.ndjson",
+      "sha256": "27e7080125fe6a91df59e42bc9a6f618b816e8108a540d4d307f52b5cd2e3d7e"
+    },
+    {
+      "bytes": 1787,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/budget-fill.json",
+      "sha256": "ab102931970ccfc3b0539331cc02c123f62d59c8ddf7f78af15cb748b44ecfe7"
+    },
+    {
+      "bytes": 40083,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/configuration.json",
+      "sha256": "33c0c0ac3620feb8a9fe1f5d93e445ad1d94b7ad6e715e9a8dbcdc361c3c8811"
+    },
+    {
+      "bytes": 862,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/native-session/capsule.bin",
+      "sha256": "6bbea842ceb7a90cc2288c42d62fe480620b63214fa22402f7a02a08e8bad4d6"
+    },
+    {
+      "bytes": 728,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/native-session/expected-body.bin",
+      "sha256": "f12529b14d9f49d3a2efba29b66c79331702bcca6e23eeb0cecd3f11bd9daf03"
+    },
+    {
+      "bytes": 2086,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/native-session/expected-policy.json",
+      "sha256": "ce0a1306626a5ea248bf4f2e7ec5fb65c693b1ff6394685fc1c0fc5fd6a2c484"
+    },
+    {
+      "bytes": 840,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/native-session/frozen-request.json",
+      "sha256": "20f5ad113e1802e5669ed25b4444ba03dcdf7ee11d355ad679c900549c9e4038"
+    },
+    {
+      "bytes": 147456,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/native-session/native-node.sqlite/native.sqlite",
+      "sha256": "163bab044a359137fb6a660a579b5ea82e5a99882da12a8239b8a3ae267ce0d4"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/native-session/native-node.sqlite/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 93013,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/native-session/requests.ndjson",
+      "sha256": "be1c62d6cd88432bf7408c2e8852d3d1ad8402f8048655d6e41e9c5c53c681b2"
+    },
+    {
+      "bytes": 57344,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/native-session/research-ledger.sqlite",
+      "sha256": "5657463894c9bf806c1e982962242546dd1bac9c07e4431ffcad41dadd43bb7c"
+    },
+    {
+      "bytes": 239111,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/native-session/responses.ndjson",
+      "sha256": "1779fba757c6f3fd94eaa4a7c91eface88b4091a5d21ef78faa953af16574de6"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/native.stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 93013,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/native.stdin.ndjson",
+      "sha256": "be1c62d6cd88432bf7408c2e8852d3d1ad8402f8048655d6e41e9c5c53c681b2"
+    },
+    {
+      "bytes": 239111,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/native.stdout.ndjson",
+      "sha256": "1779fba757c6f3fd94eaa4a7c91eface88b4091a5d21ef78faa953af16574de6"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/packet-0000.bin",
+      "sha256": "eb5979fc09845e9b9a0f8cf5f652fadca6a0d282e2ec59818d5fd400583103d3"
+    },
+    {
+      "bytes": 3525,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/packet-0001.bin",
+      "sha256": "7903b69a4de17c61398293ba524529b5ad20bcef9261aa77bfccb5fb8a08a8ed"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/packet-0002.bin",
+      "sha256": "51326e6747671eae8456cb813322f25e675ff76ba23eb5da2cd955d85fbefdaf"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/packet-0003.bin",
+      "sha256": "da1d24d2b5cdaf82d49389acdaf60d34863197f3726e1760f674d3d52072f376"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/packet-0004.bin",
+      "sha256": "eb5979fc09845e9b9a0f8cf5f652fadca6a0d282e2ec59818d5fd400583103d3"
+    },
+    {
+      "bytes": 1184,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/ready.json",
+      "sha256": "7486905eb60ef09b22a13fba8b58f939d8f7bf0d845e8b2d85a96722665b2c3a"
+    },
+    {
+      "bytes": 2543,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/receipt-0000.json",
+      "sha256": "a7d99a5d5577a78e1a108c043aa51dfbd073e5bbdaf1f1d9a7dc5362ddbd1da8"
+    },
+    {
+      "bytes": 2541,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/receipt-0001.json",
+      "sha256": "8c208999f9c52de49bd48b608fd9e0d8f3edf975142d028aff939eb039bbc2c7"
+    },
+    {
+      "bytes": 1336,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/receipt-0002.json",
+      "sha256": "a8a2e6ec1b782e42a50ddfc5e455508b4b6b8201695dbbccb518c3af566be21c"
+    },
+    {
+      "bytes": 2541,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/receipt-0003.json",
+      "sha256": "b081733d17e7eda580d7a57b424ac022bc6390fa734fedc505cc97b601030c99"
+    },
+    {
+      "bytes": 626,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/receipt-0004.json",
+      "sha256": "b08fa230c0860dc4b66885dfb36e20f0fee4a3af92ff40a346f8549df8595c2b"
+    },
+    {
+      "bytes": 13932,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/server-attempts.ndjson",
+      "sha256": "9eb1f3fa34a5d2035bfded2b9c47426730f1b9f14cb8352ad55a7890bbd53f88"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2840,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/tcp-00-ack.bin",
+      "sha256": "290f4133f5aeb25da656d258df59037da669a605a4a0efa3741a38ac10f9f709"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/tcp-00-incoming.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 2847,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/tcp-01-ack.bin",
+      "sha256": "ff310d22cb6e83e09929b35ce0ad387187aa65e90419c67255a67a12da848a8d"
+    },
+    {
+      "bytes": 3529,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/tcp-01-incoming.bin",
+      "sha256": "8e39d843894370c6a4cf3cd77c8f99427d4df0300057318aaf4eeee3ec56df79"
+    },
+    {
+      "bytes": 1644,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/tcp-02-ack.bin",
+      "sha256": "28d0e4a5fa0cb5f715301be179f1e30efc86deebcbcbe40dbfc397ade0cb23be"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/tcp-02-incoming.bin",
+      "sha256": "fcc65d7723b73cd9769b604dce09db7a6635da4f3735a7a20956a0bf07b6afa1"
+    },
+    {
+      "bytes": 87,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/tcp-03-ack.bin",
+      "sha256": "ea5cfd4ab52eea9a24ceab8a4ce96db826fbcb8f9f9280b1da426403e1b8a512"
+    },
+    {
+      "bytes": 21,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/tcp-03-incoming.bin",
+      "sha256": "a5dc70dc7d76a1b16f9c6f1d5124b365c3f3c3eae2f2921a39b1dffa37ef802c"
+    },
+    {
+      "bytes": 2853,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/tcp-04-ack.bin",
+      "sha256": "803d91b6c99e4dd77f06728deae7ed8197bdd9aa0e990c87541b4f2b4e3acc5b"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/tcp-04-incoming.bin",
+      "sha256": "4c78771b9445a8394ca62458d777bd52bee7437196dc9e65726be04d29b5aed7"
+    },
+    {
+      "bytes": 934,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/tcp-05-ack.bin",
+      "sha256": "0ad16a7edc9c04a000736ec7f886c9608bef1943e26541366bd0226f8fb4a55a"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/tcp-05-incoming.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 35887,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0/worker-report.json",
+      "sha256": "effad2f16757c7be433605d9a52767d48e1fddcc061347283d39ce4f3958fd9e"
+    },
+    {
+      "bytes": 938,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0-after_local_cap-received.bin",
+      "sha256": "1b066d787b5c39311a7901a43c7ed9cd8015f2ee89098ec76fab4bfc5f085f51"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0-after_local_cap-sent.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 2851,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0-carrier_replay-received.bin",
+      "sha256": "719a78f71704a73417f25c2de67686bcde2161680ee4956eeb6fef7173f61706"
+    },
+    {
+      "bytes": 3529,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0-carrier_replay-sent.bin",
+      "sha256": "8e39d843894370c6a4cf3cd77c8f99427d4df0300057318aaf4eeee3ec56df79"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0-discarded_response-received.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0-discarded_response-sent.bin",
+      "sha256": "4c78771b9445a8394ca62458d777bd52bee7437196dc9e65726be04d29b5aed7"
+    },
+    {
+      "bytes": 1648,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0-forged_endpoint-received.bin",
+      "sha256": "e85997e045dac2f8c3c9c75097616cca42a11bef5fc1f71cfa2404c91e756aa6"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0-forged_endpoint-sent.bin",
+      "sha256": "fcc65d7723b73cd9769b604dce09db7a6635da4f3735a7a20956a0bf07b6afa1"
+    },
+    {
+      "bytes": 91,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0-truncated_cancel-received.bin",
+      "sha256": "691daa728864533edb17f3a68b905c5457df5ef4785cc5105aa0f60f74ca22e0"
+    },
+    {
+      "bytes": 21,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0-truncated_cancel-sent.bin",
+      "sha256": "a5dc70dc7d76a1b16f9c6f1d5124b365c3f3c3eae2f2921a39b1dffa37ef802c"
+    },
+    {
+      "bytes": 2844,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0-valid-received.bin",
+      "sha256": "ccae72c63d34d401485e0e0884c2756f0c80e767a07817523125ce1cd4874b0b"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/receiver-0-valid-sent.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 51285,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-1/report.json",
+      "sha256": "c986a1b122171061c4d41fd2d819adc53cd6828045c068b35739e56093e9a41d"
+    },
+    {
+      "bytes": 23683,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/client-attempts.ndjson",
+      "sha256": "0eff8bbaddef0e7658b878fa74012fa588b11e5e08c377b95d89cb434623ee2d"
+    },
+    {
+      "bytes": 1787,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/budget-fill.json",
+      "sha256": "299016371c1ba661469d52e9f04515d16daf794d28b4cc27b4c9570510c20bf0"
+    },
+    {
+      "bytes": 40083,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/configuration.json",
+      "sha256": "e682faeb5b7470d68f88a6f7ae94b60c469bf466d32f720ba22ef9ba9077d924"
+    },
+    {
+      "bytes": 862,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/native-session/capsule.bin",
+      "sha256": "6bbea842ceb7a90cc2288c42d62fe480620b63214fa22402f7a02a08e8bad4d6"
+    },
+    {
+      "bytes": 728,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/native-session/expected-body.bin",
+      "sha256": "f12529b14d9f49d3a2efba29b66c79331702bcca6e23eeb0cecd3f11bd9daf03"
+    },
+    {
+      "bytes": 2086,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/native-session/expected-policy.json",
+      "sha256": "ce0a1306626a5ea248bf4f2e7ec5fb65c693b1ff6394685fc1c0fc5fd6a2c484"
+    },
+    {
+      "bytes": 840,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/native-session/frozen-request.json",
+      "sha256": "20f5ad113e1802e5669ed25b4444ba03dcdf7ee11d355ad679c900549c9e4038"
+    },
+    {
+      "bytes": 147456,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/native-session/native-node.sqlite/native.sqlite",
+      "sha256": "163bab044a359137fb6a660a579b5ea82e5a99882da12a8239b8a3ae267ce0d4"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/native-session/native-node.sqlite/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 93049,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/native-session/requests.ndjson",
+      "sha256": "02dfc62e42de275c2e2decf415fb4d463bee2ed55e2cb08ec81d917b909ad14b"
+    },
+    {
+      "bytes": 57344,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/native-session/research-ledger.sqlite",
+      "sha256": "5657463894c9bf806c1e982962242546dd1bac9c07e4431ffcad41dadd43bb7c"
+    },
+    {
+      "bytes": 239115,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/native-session/responses.ndjson",
+      "sha256": "03a1237f42227c2a78686eb265cc1d37ef3217453c09e7595685af3ede2315b2"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/native.stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 93049,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/native.stdin.ndjson",
+      "sha256": "02dfc62e42de275c2e2decf415fb4d463bee2ed55e2cb08ec81d917b909ad14b"
+    },
+    {
+      "bytes": 239115,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/native.stdout.ndjson",
+      "sha256": "03a1237f42227c2a78686eb265cc1d37ef3217453c09e7595685af3ede2315b2"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/packet-0000.bin",
+      "sha256": "eb5979fc09845e9b9a0f8cf5f652fadca6a0d282e2ec59818d5fd400583103d3"
+    },
+    {
+      "bytes": 3525,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/packet-0001.bin",
+      "sha256": "7903b69a4de17c61398293ba524529b5ad20bcef9261aa77bfccb5fb8a08a8ed"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/packet-0002.bin",
+      "sha256": "51326e6747671eae8456cb813322f25e675ff76ba23eb5da2cd955d85fbefdaf"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/packet-0003.bin",
+      "sha256": "da1d24d2b5cdaf82d49389acdaf60d34863197f3726e1760f674d3d52072f376"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/packet-0004.bin",
+      "sha256": "eb5979fc09845e9b9a0f8cf5f652fadca6a0d282e2ec59818d5fd400583103d3"
+    },
+    {
+      "bytes": 1184,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/ready.json",
+      "sha256": "4d1db6f66833ebbdd97b578054e3d587da8e0615a1656c409b3e1ef91ae77ff2"
+    },
+    {
+      "bytes": 2548,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/receipt-0000.json",
+      "sha256": "45ade26e05f151d3319a2d9878db6ce01c051f3fec4b3f38001a687745369a8e"
+    },
+    {
+      "bytes": 2547,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/receipt-0001.json",
+      "sha256": "701ced1e901375557f769da3c13b98ef60cb1dc953307bab107ccf589ad24136"
+    },
+    {
+      "bytes": 1338,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/receipt-0002.json",
+      "sha256": "900ce03cd376af2b8326b279da94e02e758af51afb9264b602bb44fdf018ff7c"
+    },
+    {
+      "bytes": 2543,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/receipt-0003.json",
+      "sha256": "4d7efe174a7fa5ddc77bb3e2fd728165436540a9174773bb3cea5fa46f2efdbe"
+    },
+    {
+      "bytes": 624,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/receipt-0004.json",
+      "sha256": "f8d4a5eb64d27d5ac21507933fd227619b1f71a52e8ec319dd9ea52a464b9541"
+    },
+    {
+      "bytes": 13944,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/server-attempts.ndjson",
+      "sha256": "af452cf87d41d7ae4c56f3bf31086d9ecfc50216010f08f20d03543c57fad05f"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2846,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/tcp-00-ack.bin",
+      "sha256": "70d7807ea09a57cdf755787d1122bfad48a2e6c2bb49608a36aeb950695b86ce"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/tcp-00-incoming.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 2854,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/tcp-01-ack.bin",
+      "sha256": "410263b2517a3fc6cfdbe546b54b0e115969d49a166a15a65308cfea639e8ce1"
+    },
+    {
+      "bytes": 3529,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/tcp-01-incoming.bin",
+      "sha256": "8e39d843894370c6a4cf3cd77c8f99427d4df0300057318aaf4eeee3ec56df79"
+    },
+    {
+      "bytes": 1646,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/tcp-02-ack.bin",
+      "sha256": "9956f98283a86df569cf1c49ff6e92998a4a80595d495e90adf69235a6403bb8"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/tcp-02-incoming.bin",
+      "sha256": "fcc65d7723b73cd9769b604dce09db7a6635da4f3735a7a20956a0bf07b6afa1"
+    },
+    {
+      "bytes": 87,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/tcp-03-ack.bin",
+      "sha256": "ea5cfd4ab52eea9a24ceab8a4ce96db826fbcb8f9f9280b1da426403e1b8a512"
+    },
+    {
+      "bytes": 21,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/tcp-03-incoming.bin",
+      "sha256": "a5dc70dc7d76a1b16f9c6f1d5124b365c3f3c3eae2f2921a39b1dffa37ef802c"
+    },
+    {
+      "bytes": 2854,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/tcp-04-ack.bin",
+      "sha256": "3b0831a30f144f601b2450588e49f462fdea96cd0d36c95100ca93cfcff4241e"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/tcp-04-incoming.bin",
+      "sha256": "4c78771b9445a8394ca62458d777bd52bee7437196dc9e65726be04d29b5aed7"
+    },
+    {
+      "bytes": 930,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/tcp-05-ack.bin",
+      "sha256": "fd5ead2364fcfae5c6e33667df8c387aa55e402be7be6070d0e35b1129523353"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/tcp-05-incoming.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 35874,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0/worker-report.json",
+      "sha256": "aa057375f555876b6e3da174cb9a7911902063b2baf759edebd132e3b1f32ca8"
+    },
+    {
+      "bytes": 934,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0-after_local_cap-received.bin",
+      "sha256": "c460bf5def8c266193d7902b59f1a22c49011f7a8070bedc6b1a641b48a22aab"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0-after_local_cap-sent.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 2858,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0-carrier_replay-received.bin",
+      "sha256": "31e837f5cc0093f4101e4b3a3b31187e648b9f25624f3ae07ae0194b9378a1c4"
+    },
+    {
+      "bytes": 3529,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0-carrier_replay-sent.bin",
+      "sha256": "8e39d843894370c6a4cf3cd77c8f99427d4df0300057318aaf4eeee3ec56df79"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0-discarded_response-received.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0-discarded_response-sent.bin",
+      "sha256": "4c78771b9445a8394ca62458d777bd52bee7437196dc9e65726be04d29b5aed7"
+    },
+    {
+      "bytes": 1650,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0-forged_endpoint-received.bin",
+      "sha256": "d40cf7195f4c00b3479ceb030477f888a799a39edb469390b841061a1dde4f3d"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0-forged_endpoint-sent.bin",
+      "sha256": "fcc65d7723b73cd9769b604dce09db7a6635da4f3735a7a20956a0bf07b6afa1"
+    },
+    {
+      "bytes": 91,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0-truncated_cancel-received.bin",
+      "sha256": "691daa728864533edb17f3a68b905c5457df5ef4785cc5105aa0f60f74ca22e0"
+    },
+    {
+      "bytes": 21,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0-truncated_cancel-sent.bin",
+      "sha256": "a5dc70dc7d76a1b16f9c6f1d5124b365c3f3c3eae2f2921a39b1dffa37ef802c"
+    },
+    {
+      "bytes": 2850,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0-valid-received.bin",
+      "sha256": "e0c6fab764ce3577a5272e43aac171fba0daf1a7fb8e0468e45ef3134f88ab20"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-0-valid-sent.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 1787,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/budget-fill.json",
+      "sha256": "6770713b03c622b8295e814e0423730952a6bdbf16fd60917c1d0bc3e4fadca3"
+    },
+    {
+      "bytes": 40083,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/configuration.json",
+      "sha256": "7fbb4e97dbc4e47296053790d1e29f27fbe893a0575e8fc21c79d90051d54d61"
+    },
+    {
+      "bytes": 862,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/native-session/capsule.bin",
+      "sha256": "6bbea842ceb7a90cc2288c42d62fe480620b63214fa22402f7a02a08e8bad4d6"
+    },
+    {
+      "bytes": 728,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/native-session/expected-body.bin",
+      "sha256": "f12529b14d9f49d3a2efba29b66c79331702bcca6e23eeb0cecd3f11bd9daf03"
+    },
+    {
+      "bytes": 2086,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/native-session/expected-policy.json",
+      "sha256": "ce0a1306626a5ea248bf4f2e7ec5fb65c693b1ff6394685fc1c0fc5fd6a2c484"
+    },
+    {
+      "bytes": 840,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/native-session/frozen-request.json",
+      "sha256": "20f5ad113e1802e5669ed25b4444ba03dcdf7ee11d355ad679c900549c9e4038"
+    },
+    {
+      "bytes": 147456,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/native-session/native-node.sqlite/native.sqlite",
+      "sha256": "163bab044a359137fb6a660a579b5ea82e5a99882da12a8239b8a3ae267ce0d4"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/native-session/native-node.sqlite/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 93049,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/native-session/requests.ndjson",
+      "sha256": "2e7d8b5fcc9973a83811993d88fc83781f4e5f629c75299259409748f25ca0a1"
+    },
+    {
+      "bytes": 57344,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/native-session/research-ledger.sqlite",
+      "sha256": "5657463894c9bf806c1e982962242546dd1bac9c07e4431ffcad41dadd43bb7c"
+    },
+    {
+      "bytes": 239112,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/native-session/responses.ndjson",
+      "sha256": "9d242de66a959e5607b7d6c1260dc385505fef000c13e72d79643d59512f02b9"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/native.stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 93049,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/native.stdin.ndjson",
+      "sha256": "2e7d8b5fcc9973a83811993d88fc83781f4e5f629c75299259409748f25ca0a1"
+    },
+    {
+      "bytes": 239112,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/native.stdout.ndjson",
+      "sha256": "9d242de66a959e5607b7d6c1260dc385505fef000c13e72d79643d59512f02b9"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/packet-0000.bin",
+      "sha256": "eb5979fc09845e9b9a0f8cf5f652fadca6a0d282e2ec59818d5fd400583103d3"
+    },
+    {
+      "bytes": 3525,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/packet-0001.bin",
+      "sha256": "7903b69a4de17c61398293ba524529b5ad20bcef9261aa77bfccb5fb8a08a8ed"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/packet-0002.bin",
+      "sha256": "51326e6747671eae8456cb813322f25e675ff76ba23eb5da2cd955d85fbefdaf"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/packet-0003.bin",
+      "sha256": "da1d24d2b5cdaf82d49389acdaf60d34863197f3726e1760f674d3d52072f376"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/packet-0004.bin",
+      "sha256": "eb5979fc09845e9b9a0f8cf5f652fadca6a0d282e2ec59818d5fd400583103d3"
+    },
+    {
+      "bytes": 1184,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/ready.json",
+      "sha256": "ca66ea1066afed8390e8858ae4bca2656f58891427e774ccc95e1f82eefff8cb"
+    },
+    {
+      "bytes": 2548,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/receipt-0000.json",
+      "sha256": "2607582ea9055e8295d1e5d2861ff79e75a116c85438c624e7a20dad02d13bae"
+    },
+    {
+      "bytes": 2547,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/receipt-0001.json",
+      "sha256": "5786263bce80d7efc4a9b02e36f6bfa5460b0ecfed341e49f87e0c14d3db79af"
+    },
+    {
+      "bytes": 1341,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/receipt-0002.json",
+      "sha256": "86555801d26fd3a88de674a62fa6ad4bfce58ffede15a5985a979188f4dec5cc"
+    },
+    {
+      "bytes": 2543,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/receipt-0003.json",
+      "sha256": "2b054fd60faa6dca2a147ed6b3ac4a14085904e991318f434a9164896dd70442"
+    },
+    {
+      "bytes": 621,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/receipt-0004.json",
+      "sha256": "724478d405bb0c4bde6af3f75edd71cd1ed2dd4e21f6bf5de710a7fb10134a27"
+    },
+    {
+      "bytes": 13943,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/server-attempts.ndjson",
+      "sha256": "cdfc2413b565c9303617cde75ddf055cc4c317115f34e2a43558b511284fc07f"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2846,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/tcp-00-ack.bin",
+      "sha256": "a33d59c408e94bb3b0296e2a955baaaddc4161e88ff89e49a3c8d89c5e5cd6f2"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/tcp-00-incoming.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 2854,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/tcp-01-ack.bin",
+      "sha256": "278463d98de3f3014bd7d0aa28dd6ebea44bc27a849a9dc96fb7e1e3647f2980"
+    },
+    {
+      "bytes": 3529,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/tcp-01-incoming.bin",
+      "sha256": "8e39d843894370c6a4cf3cd77c8f99427d4df0300057318aaf4eeee3ec56df79"
+    },
+    {
+      "bytes": 1649,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/tcp-02-ack.bin",
+      "sha256": "bb1294dabbd829b5c7da701bd1c3a9995bbf71e4227cefddb726a6436b3d2f46"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/tcp-02-incoming.bin",
+      "sha256": "fcc65d7723b73cd9769b604dce09db7a6635da4f3735a7a20956a0bf07b6afa1"
+    },
+    {
+      "bytes": 87,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/tcp-03-ack.bin",
+      "sha256": "ea5cfd4ab52eea9a24ceab8a4ce96db826fbcb8f9f9280b1da426403e1b8a512"
+    },
+    {
+      "bytes": 21,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/tcp-03-incoming.bin",
+      "sha256": "a5dc70dc7d76a1b16f9c6f1d5124b365c3f3c3eae2f2921a39b1dffa37ef802c"
+    },
+    {
+      "bytes": 2854,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/tcp-04-ack.bin",
+      "sha256": "0f33599fd0ae21c1fd505b14f951a20320930cdbd9faec5b99390c28c71b2ec6"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/tcp-04-incoming.bin",
+      "sha256": "4c78771b9445a8394ca62458d777bd52bee7437196dc9e65726be04d29b5aed7"
+    },
+    {
+      "bytes": 927,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/tcp-05-ack.bin",
+      "sha256": "bc4c28dc8ec65af22a1f35fd0ea034d13e3c3b8936e59d88c10c3afb40ba243a"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/tcp-05-incoming.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 35888,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1/worker-report.json",
+      "sha256": "2b3f132d44145fd770350f5399071bbbf7bdcabd5c842e61a246b97554fe8cf4"
+    },
+    {
+      "bytes": 931,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1-after_local_cap-received.bin",
+      "sha256": "a013137b17533aa548953420c57d499f9d5b332036d123bb97aeabafde1fd291"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1-after_local_cap-sent.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 2858,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1-carrier_replay-received.bin",
+      "sha256": "dcd4170e0ccf67838e72c7b6d5618f989bf03573637a3363ec9f9e8347af584f"
+    },
+    {
+      "bytes": 3529,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1-carrier_replay-sent.bin",
+      "sha256": "8e39d843894370c6a4cf3cd77c8f99427d4df0300057318aaf4eeee3ec56df79"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1-discarded_response-received.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1-discarded_response-sent.bin",
+      "sha256": "4c78771b9445a8394ca62458d777bd52bee7437196dc9e65726be04d29b5aed7"
+    },
+    {
+      "bytes": 1653,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1-forged_endpoint-received.bin",
+      "sha256": "a701bc455efff88dd9677aba74ca0c5f80feee2fe27c1383f1481335d4a6bb62"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1-forged_endpoint-sent.bin",
+      "sha256": "fcc65d7723b73cd9769b604dce09db7a6635da4f3735a7a20956a0bf07b6afa1"
+    },
+    {
+      "bytes": 91,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1-truncated_cancel-received.bin",
+      "sha256": "691daa728864533edb17f3a68b905c5457df5ef4785cc5105aa0f60f74ca22e0"
+    },
+    {
+      "bytes": 21,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1-truncated_cancel-sent.bin",
+      "sha256": "a5dc70dc7d76a1b16f9c6f1d5124b365c3f3c3eae2f2921a39b1dffa37ef802c"
+    },
+    {
+      "bytes": 2850,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1-valid-received.bin",
+      "sha256": "d89362e492f9ac9a1d86186875e8e8efef7de6c11d40a5dcb215b6f1fd2f9760"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/receiver-1-valid-sent.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 101406,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-2/report.json",
+      "sha256": "8fdd5717ec82f0b52bc02c95f9aa3802cf2a145e92382d6a1df977596b15ba02"
+    },
+    {
+      "bytes": 47347,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/client-attempts.ndjson",
+      "sha256": "a8cd144084db0e37a64d71b8a02b74e3b506cfd6491ec9d4462cd3787a2936f9"
+    },
+    {
+      "bytes": 1787,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/budget-fill.json",
+      "sha256": "02c97be15e429974d52b9d4121008e86366d9834f2d9c738275318850f54927c"
+    },
+    {
+      "bytes": 40083,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/configuration.json",
+      "sha256": "4f2ca2df10548d046a10943a161940a68197eee5742d1724e959dc7dd80d855e"
+    },
+    {
+      "bytes": 862,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/native-session/capsule.bin",
+      "sha256": "6bbea842ceb7a90cc2288c42d62fe480620b63214fa22402f7a02a08e8bad4d6"
+    },
+    {
+      "bytes": 728,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/native-session/expected-body.bin",
+      "sha256": "f12529b14d9f49d3a2efba29b66c79331702bcca6e23eeb0cecd3f11bd9daf03"
+    },
+    {
+      "bytes": 2086,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/native-session/expected-policy.json",
+      "sha256": "ce0a1306626a5ea248bf4f2e7ec5fb65c693b1ff6394685fc1c0fc5fd6a2c484"
+    },
+    {
+      "bytes": 840,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/native-session/frozen-request.json",
+      "sha256": "20f5ad113e1802e5669ed25b4444ba03dcdf7ee11d355ad679c900549c9e4038"
+    },
+    {
+      "bytes": 147456,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/native-session/native-node.sqlite/native.sqlite",
+      "sha256": "163bab044a359137fb6a660a579b5ea82e5a99882da12a8239b8a3ae267ce0d4"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/native-session/native-node.sqlite/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 93069,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/native-session/requests.ndjson",
+      "sha256": "0a0b6194315fd1df9b51839c22385f8927dd1bb51a8568d65840d2666efdd93c"
+    },
+    {
+      "bytes": 57344,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/native-session/research-ledger.sqlite",
+      "sha256": "5657463894c9bf806c1e982962242546dd1bac9c07e4431ffcad41dadd43bb7c"
+    },
+    {
+      "bytes": 239110,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/native-session/responses.ndjson",
+      "sha256": "06d95ca324893054c4116ea26e8ad099afa6c695377684c445015c1f56497b12"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/native.stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 93069,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/native.stdin.ndjson",
+      "sha256": "0a0b6194315fd1df9b51839c22385f8927dd1bb51a8568d65840d2666efdd93c"
+    },
+    {
+      "bytes": 239110,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/native.stdout.ndjson",
+      "sha256": "06d95ca324893054c4116ea26e8ad099afa6c695377684c445015c1f56497b12"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/packet-0000.bin",
+      "sha256": "eb5979fc09845e9b9a0f8cf5f652fadca6a0d282e2ec59818d5fd400583103d3"
+    },
+    {
+      "bytes": 3525,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/packet-0001.bin",
+      "sha256": "7903b69a4de17c61398293ba524529b5ad20bcef9261aa77bfccb5fb8a08a8ed"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/packet-0002.bin",
+      "sha256": "51326e6747671eae8456cb813322f25e675ff76ba23eb5da2cd955d85fbefdaf"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/packet-0003.bin",
+      "sha256": "da1d24d2b5cdaf82d49389acdaf60d34863197f3726e1760f674d3d52072f376"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/packet-0004.bin",
+      "sha256": "eb5979fc09845e9b9a0f8cf5f652fadca6a0d282e2ec59818d5fd400583103d3"
+    },
+    {
+      "bytes": 1184,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/ready.json",
+      "sha256": "ec343c8781fe9c635014e16981795df016383e814b5bcd64751e740e3cca0ae9"
+    },
+    {
+      "bytes": 2547,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/receipt-0000.json",
+      "sha256": "5fe505946d02f39dc918896605f478a9be62017f7af56f0ebe1379dabfe93eb5"
+    },
+    {
+      "bytes": 2547,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/receipt-0001.json",
+      "sha256": "27359ccd805d882c67cb869b054287bec9e2716b70974a404b07b9077dd30b73"
+    },
+    {
+      "bytes": 1339,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/receipt-0002.json",
+      "sha256": "51c3500b48f316e7bc486fa6379467b383d5a8e5e5385d56fc8a9f81afdd0221"
+    },
+    {
+      "bytes": 2543,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/receipt-0003.json",
+      "sha256": "5b7644b8c53a40b71fdef8db681902ed6925f27658eba4a68cfa89a8986b48b1"
+    },
+    {
+      "bytes": 622,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/receipt-0004.json",
+      "sha256": "449dfc92412cf3c5d845c5c83e0325ed66f7d8edfb20993bcf5aa28001c47905"
+    },
+    {
+      "bytes": 13942,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/server-attempts.ndjson",
+      "sha256": "4e60204b8b91fe0c9ecfb0b48aa5962fcf32561b8acdae34f8559cf8dfb96275"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2845,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/tcp-00-ack.bin",
+      "sha256": "05f9a8cf9b8f937c448e6a3d4bfda53ec765c9b7fc3993d2dd12677217ba39df"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/tcp-00-incoming.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 2854,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/tcp-01-ack.bin",
+      "sha256": "ffd0260330c076ab173a365edffed96c9fb16304e1bd3c0d47a8a23912cb9e20"
+    },
+    {
+      "bytes": 3529,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/tcp-01-incoming.bin",
+      "sha256": "8e39d843894370c6a4cf3cd77c8f99427d4df0300057318aaf4eeee3ec56df79"
+    },
+    {
+      "bytes": 1647,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/tcp-02-ack.bin",
+      "sha256": "3a72064aa40b994587ff663dc906b8940877213d2fa814d12049c94a90d12565"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/tcp-02-incoming.bin",
+      "sha256": "fcc65d7723b73cd9769b604dce09db7a6635da4f3735a7a20956a0bf07b6afa1"
+    },
+    {
+      "bytes": 87,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/tcp-03-ack.bin",
+      "sha256": "ea5cfd4ab52eea9a24ceab8a4ce96db826fbcb8f9f9280b1da426403e1b8a512"
+    },
+    {
+      "bytes": 21,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/tcp-03-incoming.bin",
+      "sha256": "a5dc70dc7d76a1b16f9c6f1d5124b365c3f3c3eae2f2921a39b1dffa37ef802c"
+    },
+    {
+      "bytes": 2854,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/tcp-04-ack.bin",
+      "sha256": "73a61287d0f927c5b377f75292a62557597ee114c95fb3fbd86406aed92f4a62"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/tcp-04-incoming.bin",
+      "sha256": "4c78771b9445a8394ca62458d777bd52bee7437196dc9e65726be04d29b5aed7"
+    },
+    {
+      "bytes": 928,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/tcp-05-ack.bin",
+      "sha256": "61acdcd7fe42af9bd0a172b70d4726743523196f3a0a1a685dcdeb35796f18be"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/tcp-05-incoming.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 35897,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0/worker-report.json",
+      "sha256": "71ae7848c46ee180a2da88fe4bfa2592906b56cee0c044686b1cd70e7eebefe3"
+    },
+    {
+      "bytes": 932,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0-after_local_cap-received.bin",
+      "sha256": "68d22d33e31b00bab1b5a8719f6c749381d34653bc60adf6af252fa3dd59e90d"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0-after_local_cap-sent.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 2858,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0-carrier_replay-received.bin",
+      "sha256": "b89cb4b191fd36a381f636efda22238845d4505297111a438ee63ecaa19de4e2"
+    },
+    {
+      "bytes": 3529,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0-carrier_replay-sent.bin",
+      "sha256": "8e39d843894370c6a4cf3cd77c8f99427d4df0300057318aaf4eeee3ec56df79"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0-discarded_response-received.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0-discarded_response-sent.bin",
+      "sha256": "4c78771b9445a8394ca62458d777bd52bee7437196dc9e65726be04d29b5aed7"
+    },
+    {
+      "bytes": 1651,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0-forged_endpoint-received.bin",
+      "sha256": "78bde26021ca78626fc2d0ae05a9371ad025250a453341eba7af333fc9a92cb9"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0-forged_endpoint-sent.bin",
+      "sha256": "fcc65d7723b73cd9769b604dce09db7a6635da4f3735a7a20956a0bf07b6afa1"
+    },
+    {
+      "bytes": 91,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0-truncated_cancel-received.bin",
+      "sha256": "691daa728864533edb17f3a68b905c5457df5ef4785cc5105aa0f60f74ca22e0"
+    },
+    {
+      "bytes": 21,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0-truncated_cancel-sent.bin",
+      "sha256": "a5dc70dc7d76a1b16f9c6f1d5124b365c3f3c3eae2f2921a39b1dffa37ef802c"
+    },
+    {
+      "bytes": 2849,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0-valid-received.bin",
+      "sha256": "f0fd0d1ec2646df25de4e9b4cac3593f5369b989c49a69f7070b8fb60ccd9a19"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-0-valid-sent.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 1787,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/budget-fill.json",
+      "sha256": "9d4540a6a3502144b8b83004137d50e0d486c8c7688d3e7c61f7335139e2f300"
+    },
+    {
+      "bytes": 40083,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/configuration.json",
+      "sha256": "2bfd728724cf29311f3982dcb3c8c1a43c23056fd3751f36ae0552705731d6f8"
+    },
+    {
+      "bytes": 862,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/native-session/capsule.bin",
+      "sha256": "6bbea842ceb7a90cc2288c42d62fe480620b63214fa22402f7a02a08e8bad4d6"
+    },
+    {
+      "bytes": 728,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/native-session/expected-body.bin",
+      "sha256": "f12529b14d9f49d3a2efba29b66c79331702bcca6e23eeb0cecd3f11bd9daf03"
+    },
+    {
+      "bytes": 2086,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/native-session/expected-policy.json",
+      "sha256": "ce0a1306626a5ea248bf4f2e7ec5fb65c693b1ff6394685fc1c0fc5fd6a2c484"
+    },
+    {
+      "bytes": 840,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/native-session/frozen-request.json",
+      "sha256": "20f5ad113e1802e5669ed25b4444ba03dcdf7ee11d355ad679c900549c9e4038"
+    },
+    {
+      "bytes": 147456,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/native-session/native-node.sqlite/native.sqlite",
+      "sha256": "163bab044a359137fb6a660a579b5ea82e5a99882da12a8239b8a3ae267ce0d4"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/native-session/native-node.sqlite/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 93068,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/native-session/requests.ndjson",
+      "sha256": "2e21e831d4e9e126963d6725b81cbd6201e0a500d2e5a4701b200d1351c28a4b"
+    },
+    {
+      "bytes": 57344,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/native-session/research-ledger.sqlite",
+      "sha256": "5657463894c9bf806c1e982962242546dd1bac9c07e4431ffcad41dadd43bb7c"
+    },
+    {
+      "bytes": 239109,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/native-session/responses.ndjson",
+      "sha256": "3ca6e1770e87fa1a3c8c9346fb2f03ea655f9f012a9490defca1c3e8289829cb"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/native.stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 93068,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/native.stdin.ndjson",
+      "sha256": "2e21e831d4e9e126963d6725b81cbd6201e0a500d2e5a4701b200d1351c28a4b"
+    },
+    {
+      "bytes": 239109,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/native.stdout.ndjson",
+      "sha256": "3ca6e1770e87fa1a3c8c9346fb2f03ea655f9f012a9490defca1c3e8289829cb"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/packet-0000.bin",
+      "sha256": "eb5979fc09845e9b9a0f8cf5f652fadca6a0d282e2ec59818d5fd400583103d3"
+    },
+    {
+      "bytes": 3525,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/packet-0001.bin",
+      "sha256": "7903b69a4de17c61398293ba524529b5ad20bcef9261aa77bfccb5fb8a08a8ed"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/packet-0002.bin",
+      "sha256": "51326e6747671eae8456cb813322f25e675ff76ba23eb5da2cd955d85fbefdaf"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/packet-0003.bin",
+      "sha256": "da1d24d2b5cdaf82d49389acdaf60d34863197f3726e1760f674d3d52072f376"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/packet-0004.bin",
+      "sha256": "eb5979fc09845e9b9a0f8cf5f652fadca6a0d282e2ec59818d5fd400583103d3"
+    },
+    {
+      "bytes": 1184,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/ready.json",
+      "sha256": "5d2e9f4350c90f53badd21c366762eb4571bbdf0ddcf2bc1875c96b85c33fd8e"
+    },
+    {
+      "bytes": 2543,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/receipt-0000.json",
+      "sha256": "015541e10f07e98a8403de07fbf34304fea975547c4ad68387e5be08c3c4ac87"
+    },
+    {
+      "bytes": 2543,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/receipt-0001.json",
+      "sha256": "6d1e2b1c750c775a4431ecc415ed1fa063c2b1303227c079f4ad6d7995cedd76"
+    },
+    {
+      "bytes": 1338,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/receipt-0002.json",
+      "sha256": "eb101f682814b308da914c4f1a6395a6793158246ab9769498cbad20901298c4"
+    },
+    {
+      "bytes": 2541,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/receipt-0003.json",
+      "sha256": "bcb853f8441bce06058e9e91586890a10c676290b2fa3bbda14f33c6475fb4b2"
+    },
+    {
+      "bytes": 624,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/receipt-0004.json",
+      "sha256": "cf6299f918990006b8bf381ade839965a876df1f989a457c8c8f94fcbf023ff4"
+    },
+    {
+      "bytes": 13934,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/server-attempts.ndjson",
+      "sha256": "1dad769947f9546be80c75c1463f46c41835a0fec0834f7734dd31f0a0e1e8cd"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2841,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/tcp-00-ack.bin",
+      "sha256": "8b696878ca5ec5b96300617da7e2b79b952c265369f5a0517367715c104eb6a4"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/tcp-00-incoming.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 2850,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/tcp-01-ack.bin",
+      "sha256": "c6a13cd5d833dde44f807bd38b34a6e2014947899ff5688a0a5dafde2aff0beb"
+    },
+    {
+      "bytes": 3529,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/tcp-01-incoming.bin",
+      "sha256": "8e39d843894370c6a4cf3cd77c8f99427d4df0300057318aaf4eeee3ec56df79"
+    },
+    {
+      "bytes": 1646,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/tcp-02-ack.bin",
+      "sha256": "c3dd8d3e3e2e75301a23f71d3d5922a4f2d0403dc23f644496e7ed24f3b15362"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/tcp-02-incoming.bin",
+      "sha256": "fcc65d7723b73cd9769b604dce09db7a6635da4f3735a7a20956a0bf07b6afa1"
+    },
+    {
+      "bytes": 87,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/tcp-03-ack.bin",
+      "sha256": "ea5cfd4ab52eea9a24ceab8a4ce96db826fbcb8f9f9280b1da426403e1b8a512"
+    },
+    {
+      "bytes": 21,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/tcp-03-incoming.bin",
+      "sha256": "a5dc70dc7d76a1b16f9c6f1d5124b365c3f3c3eae2f2921a39b1dffa37ef802c"
+    },
+    {
+      "bytes": 2852,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/tcp-04-ack.bin",
+      "sha256": "1f7c005deb4deacbdab77773e1c5f03469fa67771da2bc12029e298d0ea67f76"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/tcp-04-incoming.bin",
+      "sha256": "4c78771b9445a8394ca62458d777bd52bee7437196dc9e65726be04d29b5aed7"
+    },
+    {
+      "bytes": 931,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/tcp-05-ack.bin",
+      "sha256": "cda1841b005c23e7758cbfa8f8ff4377e52e204e8fda0a320638ea333c460b0a"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/tcp-05-incoming.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 35890,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1/worker-report.json",
+      "sha256": "a0123d746a5d463e45fbb73c478771261a6bc0024fba8cd5811d8f4527f8972e"
+    },
+    {
+      "bytes": 935,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1-after_local_cap-received.bin",
+      "sha256": "b182550811b131311b218e493dc7f0db48a7fedec0b43c0ca8588f00cd94f196"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1-after_local_cap-sent.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 2854,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1-carrier_replay-received.bin",
+      "sha256": "71688bd373bdfaf065316cea1ea6eb574eeaddd339915edd88e575ddcb61c858"
+    },
+    {
+      "bytes": 3529,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1-carrier_replay-sent.bin",
+      "sha256": "8e39d843894370c6a4cf3cd77c8f99427d4df0300057318aaf4eeee3ec56df79"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1-discarded_response-received.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1-discarded_response-sent.bin",
+      "sha256": "4c78771b9445a8394ca62458d777bd52bee7437196dc9e65726be04d29b5aed7"
+    },
+    {
+      "bytes": 1650,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1-forged_endpoint-received.bin",
+      "sha256": "dfd4f618ba2884a2b00f75fb796bb6a04b0c3aa317fe0459ee86eabf4f81a0d3"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1-forged_endpoint-sent.bin",
+      "sha256": "fcc65d7723b73cd9769b604dce09db7a6635da4f3735a7a20956a0bf07b6afa1"
+    },
+    {
+      "bytes": 91,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1-truncated_cancel-received.bin",
+      "sha256": "691daa728864533edb17f3a68b905c5457df5ef4785cc5105aa0f60f74ca22e0"
+    },
+    {
+      "bytes": 21,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1-truncated_cancel-sent.bin",
+      "sha256": "a5dc70dc7d76a1b16f9c6f1d5124b365c3f3c3eae2f2921a39b1dffa37ef802c"
+    },
+    {
+      "bytes": 2845,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1-valid-received.bin",
+      "sha256": "822ca689d169cff4ea3cf97fc5090b65d5c665f5d30190ab2362c42c0728ca2b"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-1-valid-sent.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 1787,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/budget-fill.json",
+      "sha256": "fc862623a5720336036e19c6ae550026f12374cb6a9e18a271899125ea069b8c"
+    },
+    {
+      "bytes": 40083,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/configuration.json",
+      "sha256": "ef398756696a42a75eb6599263cc2e434fb07a146a65d63c02ea4c1f8bb61485"
+    },
+    {
+      "bytes": 862,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/native-session/capsule.bin",
+      "sha256": "6bbea842ceb7a90cc2288c42d62fe480620b63214fa22402f7a02a08e8bad4d6"
+    },
+    {
+      "bytes": 728,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/native-session/expected-body.bin",
+      "sha256": "f12529b14d9f49d3a2efba29b66c79331702bcca6e23eeb0cecd3f11bd9daf03"
+    },
+    {
+      "bytes": 2086,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/native-session/expected-policy.json",
+      "sha256": "ce0a1306626a5ea248bf4f2e7ec5fb65c693b1ff6394685fc1c0fc5fd6a2c484"
+    },
+    {
+      "bytes": 840,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/native-session/frozen-request.json",
+      "sha256": "20f5ad113e1802e5669ed25b4444ba03dcdf7ee11d355ad679c900549c9e4038"
+    },
+    {
+      "bytes": 147456,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/native-session/native-node.sqlite/native.sqlite",
+      "sha256": "163bab044a359137fb6a660a579b5ea82e5a99882da12a8239b8a3ae267ce0d4"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/native-session/native-node.sqlite/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 93068,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/native-session/requests.ndjson",
+      "sha256": "89c2c70c8aa0d3a9fc0d7a8bc67bca16ec7aa9a3c3182335baa22ef31c9a75bc"
+    },
+    {
+      "bytes": 57344,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/native-session/research-ledger.sqlite",
+      "sha256": "5657463894c9bf806c1e982962242546dd1bac9c07e4431ffcad41dadd43bb7c"
+    },
+    {
+      "bytes": 239109,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/native-session/responses.ndjson",
+      "sha256": "981bbb267906c582e598c9f7b2b4d6e2c2692f82c338532569a994e54f8019fe"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/native.stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 93068,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/native.stdin.ndjson",
+      "sha256": "89c2c70c8aa0d3a9fc0d7a8bc67bca16ec7aa9a3c3182335baa22ef31c9a75bc"
+    },
+    {
+      "bytes": 239109,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/native.stdout.ndjson",
+      "sha256": "981bbb267906c582e598c9f7b2b4d6e2c2692f82c338532569a994e54f8019fe"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/packet-0000.bin",
+      "sha256": "eb5979fc09845e9b9a0f8cf5f652fadca6a0d282e2ec59818d5fd400583103d3"
+    },
+    {
+      "bytes": 3525,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/packet-0001.bin",
+      "sha256": "7903b69a4de17c61398293ba524529b5ad20bcef9261aa77bfccb5fb8a08a8ed"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/packet-0002.bin",
+      "sha256": "51326e6747671eae8456cb813322f25e675ff76ba23eb5da2cd955d85fbefdaf"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/packet-0003.bin",
+      "sha256": "da1d24d2b5cdaf82d49389acdaf60d34863197f3726e1760f674d3d52072f376"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/packet-0004.bin",
+      "sha256": "eb5979fc09845e9b9a0f8cf5f652fadca6a0d282e2ec59818d5fd400583103d3"
+    },
+    {
+      "bytes": 1184,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/ready.json",
+      "sha256": "b7b924eca5202be89185b705116f7f0cf81ac01ab774e8186bb1c558b8dd8564"
+    },
+    {
+      "bytes": 2547,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/receipt-0000.json",
+      "sha256": "6e2c09051d4be41a387bcdca4c1c228781e0f0faf8dedd3101e60e8701ea7d4b"
+    },
+    {
+      "bytes": 2547,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/receipt-0001.json",
+      "sha256": "0dcd14c49daa5a2a851e63b56d7e1a7a1246bea5b37bd894cbf1ca9a1a95a405"
+    },
+    {
+      "bytes": 1337,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/receipt-0002.json",
+      "sha256": "fa31702a796b800ae04483b6de1063a95e2922dbb80b952455a9173fc8be8056"
+    },
+    {
+      "bytes": 2540,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/receipt-0003.json",
+      "sha256": "2a9c6fa607a7d25013bec9f68c9d6ba64f91cda01ef58d39c1a527653b6ecbcc"
+    },
+    {
+      "bytes": 621,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/receipt-0004.json",
+      "sha256": "5a8a1f060b0a73bac24f2204f62aa57c91c6902c20928935a45840c244d6c0cc"
+    },
+    {
+      "bytes": 13935,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/server-attempts.ndjson",
+      "sha256": "915890709e62dc570b4c54479e3d135e75ac68e0f4d1ca66931bdd711b5b865b"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2845,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/tcp-00-ack.bin",
+      "sha256": "4cea4383d6a248abe3b2ccce0072c2f5d9bf22ca1ba6c73c337ec890f57e463c"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/tcp-00-incoming.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 2854,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/tcp-01-ack.bin",
+      "sha256": "80963437f6c78b8eded48477c5ae52c081366bc15df734475b08584c41105f0d"
+    },
+    {
+      "bytes": 3529,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/tcp-01-incoming.bin",
+      "sha256": "8e39d843894370c6a4cf3cd77c8f99427d4df0300057318aaf4eeee3ec56df79"
+    },
+    {
+      "bytes": 1645,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/tcp-02-ack.bin",
+      "sha256": "3154cfdeccc5bfbb99b22c014a7a627f62ae3e3fc3eb53a7160907fa5908de15"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/tcp-02-incoming.bin",
+      "sha256": "fcc65d7723b73cd9769b604dce09db7a6635da4f3735a7a20956a0bf07b6afa1"
+    },
+    {
+      "bytes": 87,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/tcp-03-ack.bin",
+      "sha256": "ea5cfd4ab52eea9a24ceab8a4ce96db826fbcb8f9f9280b1da426403e1b8a512"
+    },
+    {
+      "bytes": 21,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/tcp-03-incoming.bin",
+      "sha256": "a5dc70dc7d76a1b16f9c6f1d5124b365c3f3c3eae2f2921a39b1dffa37ef802c"
+    },
+    {
+      "bytes": 2851,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/tcp-04-ack.bin",
+      "sha256": "5ff2306dfcd63ff8495b73f668b948ab54db6df9f366c763a86d7b739c76e244"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/tcp-04-incoming.bin",
+      "sha256": "4c78771b9445a8394ca62458d777bd52bee7437196dc9e65726be04d29b5aed7"
+    },
+    {
+      "bytes": 927,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/tcp-05-ack.bin",
+      "sha256": "543bf1ec330a6497ccb5c8c6e596fa254e957d69fb41d522456c176f7408e307"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/tcp-05-incoming.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 35868,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2/worker-report.json",
+      "sha256": "1f454786a873ece497fe4edb0fff7bae6fd8b9d5dca99e1f0b891e4d3dcfa0cf"
+    },
+    {
+      "bytes": 931,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2-after_local_cap-received.bin",
+      "sha256": "ad0a2e63a8b18c865cdcd5524869b012bc5b6499ec57b3ebd3553d714b78433e"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2-after_local_cap-sent.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 2858,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2-carrier_replay-received.bin",
+      "sha256": "4fdd58a8fb127759e7f01f173ef70e5ebd7a45f063d43c8e914d5ae09cd13bf9"
+    },
+    {
+      "bytes": 3529,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2-carrier_replay-sent.bin",
+      "sha256": "8e39d843894370c6a4cf3cd77c8f99427d4df0300057318aaf4eeee3ec56df79"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2-discarded_response-received.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2-discarded_response-sent.bin",
+      "sha256": "4c78771b9445a8394ca62458d777bd52bee7437196dc9e65726be04d29b5aed7"
+    },
+    {
+      "bytes": 1649,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2-forged_endpoint-received.bin",
+      "sha256": "5e1a3f3c2f78af4c0a8f5773127d9cc1ff236158d58c8c9d04c481cbd5824992"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2-forged_endpoint-sent.bin",
+      "sha256": "fcc65d7723b73cd9769b604dce09db7a6635da4f3735a7a20956a0bf07b6afa1"
+    },
+    {
+      "bytes": 91,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2-truncated_cancel-received.bin",
+      "sha256": "691daa728864533edb17f3a68b905c5457df5ef4785cc5105aa0f60f74ca22e0"
+    },
+    {
+      "bytes": 21,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2-truncated_cancel-sent.bin",
+      "sha256": "a5dc70dc7d76a1b16f9c6f1d5124b365c3f3c3eae2f2921a39b1dffa37ef802c"
+    },
+    {
+      "bytes": 2849,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2-valid-received.bin",
+      "sha256": "257d2788b07fab7a628c140f01a540a910b9f1f012acf47b90d9e5347ebdd55b"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-2-valid-sent.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 1787,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/budget-fill.json",
+      "sha256": "5a19f8eb3a47755f90c6adbdc12cbdbefac2d21c8e1e3a18e1b20cfe582b0599"
+    },
+    {
+      "bytes": 40083,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/configuration.json",
+      "sha256": "5cb135519c5e94fee6befd6cdd1f02f63ffc0b760949505464531b68e0c91988"
+    },
+    {
+      "bytes": 862,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/native-session/capsule.bin",
+      "sha256": "6bbea842ceb7a90cc2288c42d62fe480620b63214fa22402f7a02a08e8bad4d6"
+    },
+    {
+      "bytes": 728,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/native-session/expected-body.bin",
+      "sha256": "f12529b14d9f49d3a2efba29b66c79331702bcca6e23eeb0cecd3f11bd9daf03"
+    },
+    {
+      "bytes": 2086,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/native-session/expected-policy.json",
+      "sha256": "ce0a1306626a5ea248bf4f2e7ec5fb65c693b1ff6394685fc1c0fc5fd6a2c484"
+    },
+    {
+      "bytes": 840,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/native-session/frozen-request.json",
+      "sha256": "20f5ad113e1802e5669ed25b4444ba03dcdf7ee11d355ad679c900549c9e4038"
+    },
+    {
+      "bytes": 147456,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/native-session/native-node.sqlite/native.sqlite",
+      "sha256": "163bab044a359137fb6a660a579b5ea82e5a99882da12a8239b8a3ae267ce0d4"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/native-session/native-node.sqlite/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 93068,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/native-session/requests.ndjson",
+      "sha256": "3d163e2cff4bf6f2c3a1c465065740908e45d946aab8bc233213453e9b4d777a"
+    },
+    {
+      "bytes": 57344,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/native-session/research-ledger.sqlite",
+      "sha256": "5657463894c9bf806c1e982962242546dd1bac9c07e4431ffcad41dadd43bb7c"
+    },
+    {
+      "bytes": 239110,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/native-session/responses.ndjson",
+      "sha256": "928d67cd0f957dc448d5ae5489788fbeb88e9b009151703c309fb16b65fd6358"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/native.stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 93068,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/native.stdin.ndjson",
+      "sha256": "3d163e2cff4bf6f2c3a1c465065740908e45d946aab8bc233213453e9b4d777a"
+    },
+    {
+      "bytes": 239110,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/native.stdout.ndjson",
+      "sha256": "928d67cd0f957dc448d5ae5489788fbeb88e9b009151703c309fb16b65fd6358"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/packet-0000.bin",
+      "sha256": "eb5979fc09845e9b9a0f8cf5f652fadca6a0d282e2ec59818d5fd400583103d3"
+    },
+    {
+      "bytes": 3525,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/packet-0001.bin",
+      "sha256": "7903b69a4de17c61398293ba524529b5ad20bcef9261aa77bfccb5fb8a08a8ed"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/packet-0002.bin",
+      "sha256": "51326e6747671eae8456cb813322f25e675ff76ba23eb5da2cd955d85fbefdaf"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/packet-0003.bin",
+      "sha256": "da1d24d2b5cdaf82d49389acdaf60d34863197f3726e1760f674d3d52072f376"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/packet-0004.bin",
+      "sha256": "eb5979fc09845e9b9a0f8cf5f652fadca6a0d282e2ec59818d5fd400583103d3"
+    },
+    {
+      "bytes": 1184,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/ready.json",
+      "sha256": "ac18ce9726209666d774f10b65c80733b2a441482bd27fd3bf53d03c6c1138d7"
+    },
+    {
+      "bytes": 2545,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/receipt-0000.json",
+      "sha256": "1367a06345ddd85c272b8eaa420dcdb366381963ebe5ce5af852a2219227dfd0"
+    },
+    {
+      "bytes": 2545,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/receipt-0001.json",
+      "sha256": "425285ecc79c1ac157e0c7e7b8d44416d99d67716f89a45649019e6de04f587c"
+    },
+    {
+      "bytes": 1339,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/receipt-0002.json",
+      "sha256": "dce471375cc4775d37bbc5d5f2495878458a6c5b225624e0eb016654f79c767b"
+    },
+    {
+      "bytes": 2542,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/receipt-0003.json",
+      "sha256": "4f61f105122020a847c1a222ff5beeec043b54fcc47dcf95e15ae2f472618747"
+    },
+    {
+      "bytes": 621,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/receipt-0004.json",
+      "sha256": "d612f1f79ee414992f88dcf5c39af3b0c07c9020ff64ce30669015aacd8d98d4"
+    },
+    {
+      "bytes": 13937,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/server-attempts.ndjson",
+      "sha256": "a3274111c499500f3ca707095b9d8e548402e24f351a3f052f13fba6483b4197"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2843,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/tcp-00-ack.bin",
+      "sha256": "b6f19b279a7b6f97b81c8062a28936ca5b5df705834319a6144d698cdb422966"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/tcp-00-incoming.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 2852,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/tcp-01-ack.bin",
+      "sha256": "98a793cc5b3632453a896f254d83bdbf3d2a5ca4d3715c90149a9ce2d25915db"
+    },
+    {
+      "bytes": 3529,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/tcp-01-incoming.bin",
+      "sha256": "8e39d843894370c6a4cf3cd77c8f99427d4df0300057318aaf4eeee3ec56df79"
+    },
+    {
+      "bytes": 1647,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/tcp-02-ack.bin",
+      "sha256": "f37d4ba7c36d9ea955f9bece7ae944406b12087ef3e808497579f65fdd3d278e"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/tcp-02-incoming.bin",
+      "sha256": "fcc65d7723b73cd9769b604dce09db7a6635da4f3735a7a20956a0bf07b6afa1"
+    },
+    {
+      "bytes": 87,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/tcp-03-ack.bin",
+      "sha256": "ea5cfd4ab52eea9a24ceab8a4ce96db826fbcb8f9f9280b1da426403e1b8a512"
+    },
+    {
+      "bytes": 21,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/tcp-03-incoming.bin",
+      "sha256": "a5dc70dc7d76a1b16f9c6f1d5124b365c3f3c3eae2f2921a39b1dffa37ef802c"
+    },
+    {
+      "bytes": 2853,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/tcp-04-ack.bin",
+      "sha256": "4a7c80e646d6fff3b0ac9bfd69edcc21f70b9c5277f2b0eeae5a90b11f3b642f"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/tcp-04-incoming.bin",
+      "sha256": "4c78771b9445a8394ca62458d777bd52bee7437196dc9e65726be04d29b5aed7"
+    },
+    {
+      "bytes": 928,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/tcp-05-ack.bin",
+      "sha256": "8b6258034c5f197d9f245cbe3f51a244f188ee1ded3912d8d11c99580650f968"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/tcp-05-incoming.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 35881,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3/worker-report.json",
+      "sha256": "2a8dc202d8627254baca86598f1d86ed6e862c3394646d4090dde3b1a11fac7e"
+    },
+    {
+      "bytes": 932,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3-after_local_cap-received.bin",
+      "sha256": "86d728f4206ad60ab4066fb26361066e6efedfa79310464d4ba780e275747b6f"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3-after_local_cap-sent.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 2856,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3-carrier_replay-received.bin",
+      "sha256": "d33a13eddf8daec7a7c9f8c2a8ae5c5a047bd18195f7d47c7aee21c4f1f2ff7b"
+    },
+    {
+      "bytes": 3529,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3-carrier_replay-sent.bin",
+      "sha256": "8e39d843894370c6a4cf3cd77c8f99427d4df0300057318aaf4eeee3ec56df79"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3-discarded_response-received.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3-discarded_response-sent.bin",
+      "sha256": "4c78771b9445a8394ca62458d777bd52bee7437196dc9e65726be04d29b5aed7"
+    },
+    {
+      "bytes": 1651,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3-forged_endpoint-received.bin",
+      "sha256": "196e2fb36c689dc3d68276021a2d83f26cfccad0997f353b795e063cd2317721"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3-forged_endpoint-sent.bin",
+      "sha256": "fcc65d7723b73cd9769b604dce09db7a6635da4f3735a7a20956a0bf07b6afa1"
+    },
+    {
+      "bytes": 91,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3-truncated_cancel-received.bin",
+      "sha256": "691daa728864533edb17f3a68b905c5457df5ef4785cc5105aa0f60f74ca22e0"
+    },
+    {
+      "bytes": 21,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3-truncated_cancel-sent.bin",
+      "sha256": "a5dc70dc7d76a1b16f9c6f1d5124b365c3f3c3eae2f2921a39b1dffa37ef802c"
+    },
+    {
+      "bytes": 2847,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3-valid-received.bin",
+      "sha256": "978afb4528a4fba2ce631773fce6944bf553910486e1906c99d5ff8b3b0bfa75"
+    },
+    {
+      "bytes": 3526,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/receiver-3-valid-sent.bin",
+      "sha256": "da0a69e765b240a357336c0bf7f6300ad039752424e8931d2de8f9f9efad693f"
+    },
+    {
+      "bytes": 201545,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/fanout-4/report.json",
+      "sha256": "19c542af5a9b24c06dd1e29c2bf6740a27ca9b22c027c20a8ef0c58eee49ab40"
+    },
+    {
+      "bytes": 770,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/plan.json",
+      "sha256": "8dd1a8bedfa69814c9cb2220e75347f7231253487b24b7f645f186aae5a4ad37"
+    },
+    {
+      "bytes": 862,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/producer/native-session/capsule.bin",
+      "sha256": "6bbea842ceb7a90cc2288c42d62fe480620b63214fa22402f7a02a08e8bad4d6"
+    },
+    {
+      "bytes": 728,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/producer/native-session/expected-body.bin",
+      "sha256": "f12529b14d9f49d3a2efba29b66c79331702bcca6e23eeb0cecd3f11bd9daf03"
+    },
+    {
+      "bytes": 2086,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/producer/native-session/expected-policy.json",
+      "sha256": "ce0a1306626a5ea248bf4f2e7ec5fb65c693b1ff6394685fc1c0fc5fd6a2c484"
+    },
+    {
+      "bytes": 840,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/producer/native-session/frozen-request.json",
+      "sha256": "20f5ad113e1802e5669ed25b4444ba03dcdf7ee11d355ad679c900549c9e4038"
+    },
+    {
+      "bytes": 147456,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/producer/native-session/native-node.sqlite/native.sqlite",
+      "sha256": "163bab044a359137fb6a660a579b5ea82e5a99882da12a8239b8a3ae267ce0d4"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/producer/native-session/native-node.sqlite/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1100,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/producer/native-session/requests.ndjson",
+      "sha256": "f2d4d3a5c64b85cc3ca6d61e45e310180f612e02ec935c5ddcb4ca4d9c7129e6"
+    },
+    {
+      "bytes": 24576,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/producer/native-session/research-ledger.sqlite",
+      "sha256": "62970e18f6de04c0174b580dd8a1c876a2b38f514dbed476bcfca2917b656226"
+    },
+    {
+      "bytes": 16467,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/producer/native-session/responses.ndjson",
+      "sha256": "c2340bcddc31cf574afc12b5300c0fb604db9b74a9848ca93d18f7dc1a1cdbc2"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/producer/native.stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1100,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/producer/native.stdin.ndjson",
+      "sha256": "f2d4d3a5c64b85cc3ca6d61e45e310180f612e02ec935c5ddcb4ca4d9c7129e6"
+    },
+    {
+      "bytes": 16467,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/producer/native.stdout.ndjson",
+      "sha256": "c2340bcddc31cf574afc12b5300c0fb604db9b74a9848ca93d18f7dc1a1cdbc2"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/producer/packet-1.bin",
+      "sha256": "eb5979fc09845e9b9a0f8cf5f652fadca6a0d282e2ec59818d5fd400583103d3"
+    },
+    {
+      "bytes": 3522,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/producer/packet-2.bin",
+      "sha256": "da1d24d2b5cdaf82d49389acdaf60d34863197f3726e1760f674d3d52072f376"
+    },
+    {
+      "bytes": 21414,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/producer/report.json",
+      "sha256": "216999136c75cbe3da06c6009f780800d0a0b5020e3e73ec5d9b2985710fb09a"
+    },
+    {
+      "bytes": 402979,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/report.json",
+      "sha256": "915485a66d8b9ee4d1aadece413edb928274640a1830a840f818571b3042df96"
+    },
+    {
+      "bytes": 932,
+      "mode": "0o600",
+      "path": "fanout-exact-rog/request.json",
+      "sha256": "a5ee167548411ea7f881dfafb7b4dc4d86791511fd9d7add8667d9633d864f9e"
+    }
+  ],
+  "payload_bytes": 8426422,
+  "readback_verified": true,
+  "schema": "pon-evidence-archive-members-v0"
+}

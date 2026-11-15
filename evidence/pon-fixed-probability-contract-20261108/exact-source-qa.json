@@ -1,0 +1,269 @@
+{
+  "schema": "pon-fixed-probability-exact-source-qa-v1",
+  "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "checks": [
+    {
+      "label": "qa-00-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 0.09392894594930112,
+      "unittest_count": []
+    },
+    {
+      "label": "qa-01-contract",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_fixed_probability_contract.py",
+        "-v"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 0.16479068086482584,
+      "unittest_count": [
+        "16"
+      ]
+    },
+    {
+      "label": "qa-02-credit",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_credit_feasibility.py",
+        "-v"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 1.627509461948648,
+      "unittest_count": [
+        "31"
+      ]
+    },
+    {
+      "label": "qa-03-potential",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_amortized_cost_potential*.py",
+        "-v"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 5.834877088898793,
+      "unittest_count": [
+        "40"
+      ]
+    },
+    {
+      "label": "qa-04-work-scale",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_work_scale_contract.py",
+        "-v"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 1.0815460288431495,
+      "unittest_count": [
+        "24"
+      ]
+    },
+    {
+      "label": "qa-05-stateful-tail",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/stateful_tail.py"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 1.3866922850720584,
+      "unittest_count": []
+    },
+    {
+      "label": "qa-06-contract-audit",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/fixed_probability_contract.py"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 0.10259669995866716,
+      "unittest_count": []
+    },
+    {
+      "label": "qa-07-potential-certificates",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/amortized_cost_potential.py",
+        "--compact"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 0.5591796590015292,
+      "unittest_count": []
+    },
+    {
+      "label": "qa-credit-exact-solve",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/credit_feasibility.py",
+        "solve",
+        "formal/pon-nakamoto-v1/vectors/fixed-probability-credit/synthetic-linear-sqrt-exact.json",
+        "--output",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/credit-exact-certificate.json"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 0.10898684710264206,
+      "unittest_count": []
+    },
+    {
+      "label": "qa-credit-exact-verify",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/credit_feasibility.py",
+        "verify",
+        "formal/pon-nakamoto-v1/vectors/fixed-probability-credit/synthetic-linear-sqrt-exact.json",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/credit-exact-certificate.json"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 0.12294083507731557,
+      "unittest_count": []
+    },
+    {
+      "label": "qa-credit-gamma2-solve",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/credit_feasibility.py",
+        "solve",
+        "formal/pon-nakamoto-v1/vectors/fixed-probability-credit/synthetic-linear-sqrt-gamma2.json",
+        "--output",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/credit-gamma2-certificate.json"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 0.1059140230063349,
+      "unittest_count": []
+    },
+    {
+      "label": "qa-credit-gamma2-verify",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/credit_feasibility.py",
+        "verify",
+        "formal/pon-nakamoto-v1/vectors/fixed-probability-credit/synthetic-linear-sqrt-gamma2.json",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/credit-gamma2-certificate.json"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 0.10375458397902548,
+      "unittest_count": []
+    },
+    {
+      "label": "qa-08-source-integrity",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 5.095091575058177,
+      "unittest_count": [
+        "43"
+      ]
+    },
+    {
+      "label": "qa-09-ci-execution",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_execution.py"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 28.060216308105737,
+      "unittest_count": [
+        "77"
+      ]
+    },
+    {
+      "label": "qa-10-project-boundary",
+      "argv": [
+        "python3",
+        "scripts/ci/test_project_boundary.py"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 11.32075973204337,
+      "unittest_count": [
+        "16"
+      ]
+    },
+    {
+      "label": "qa-11-inventory",
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit": 1,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 0.6027004548814148,
+      "unittest_count": []
+    },
+    {
+      "label": "qa-12-ci-contract",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 95.26162100606598,
+      "unittest_count": [
+        "111"
+      ]
+    },
+    {
+      "label": "qa-13-repository",
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "duration_seconds": 109.28078642906621,
+      "unittest_count": []
+    }
+  ],
+  "all_passed": false,
+  "source_unchanged": true,
+  "native_consensus_qualified": false,
+  "minimum_cost_qualified": false
+}

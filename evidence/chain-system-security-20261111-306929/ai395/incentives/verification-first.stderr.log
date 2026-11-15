@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/3069292387f3/incentives/evidence/chain-system-security-20261111-306929/ai395/incentives/verify_archive.py", line 284, in <module>
+    main()
+  File "/workspace/scratch/3069292387f3/incentives/evidence/chain-system-security-20261111-306929/ai395/incentives/verify_archive.py", line 218, in main
+    require(split["split"]["alias_net_account_change_after_all_own_fees"]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: unsupported operand type(s) for -: 'str' and 'str'

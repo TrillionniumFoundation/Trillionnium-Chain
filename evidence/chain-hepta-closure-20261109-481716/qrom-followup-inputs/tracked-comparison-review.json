@@ -1,0 +1,24 @@
+{
+  "observation_date": "2026-11-09",
+  "source_revision": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+  "scope": "internal_consistency_of_existing_tracked_comparison_only",
+  "pdfs_reacquired": false,
+  "pdf_rendering_rerun": false,
+  "checks": {
+    "all_102_pages_present_once_in_order": true,
+    "page_count_is_102": true,
+    "pdf_pins_equal_fixed_comparator": true,
+    "all_render_dimensions_expected": true,
+    "text_boolean_matches_recorded_hash_equality": true,
+    "rgb_boolean_matches_recorded_hash_equality": true,
+    "changed_text_pages_match_rollup": true,
+    "changed_rgb_pages_match_rollup": true,
+    "all_pages_5_through_99_record_equal": true,
+    "all_11_theorem_starts_match_comparator": true,
+    "all_theorem_start_rollups_match_pages": true,
+    "both_poppler_diff_digests_match": true,
+    "claim_scope_retains_proof_and_implementation_false": true
+  },
+  "checks_passed": 13,
+  "checks_total": 13
+}

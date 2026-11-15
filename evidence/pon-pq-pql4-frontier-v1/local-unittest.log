@@ -1,0 +1,17 @@
+test_effect_bookkeeping_changes_state_digest_even_with_same_active_tip (test_pq_pql4_signed_frontier.PQL4ActualTests.test_effect_bookkeeping_changes_state_digest_even_with_same_active_tip) ... ok
+test_every_signed_header_byte_mutation_refused (test_pq_pql4_signed_frontier.PQL4ActualTests.test_every_signed_header_byte_mutation_refused) ... ok
+test_foreign_schema_trigger_view_and_wrong_import_metadata_refused (test_pq_pql4_signed_frontier.PQL4ActualTests.test_foreign_schema_trigger_view_and_wrong_import_metadata_refused) ... ok
+test_new_tip_and_effects_are_signed_into_same_read_snapshot (test_pq_pql4_signed_frontier.PQL4ActualTests.test_new_tip_and_effects_are_signed_into_same_read_snapshot) ... ok
+test_nonce_gap_and_import_floor_reset_refused (test_pq_pql4_signed_frontier.PQL4ActualTests.test_nonce_gap_and_import_floor_reset_refused) ... ok
+test_nonce_quarantine_parent_effect_and_generation_attacks (test_pq_pql4_signed_frontier.PQL4ActualTests.test_nonce_quarantine_parent_effect_and_generation_attacks) ... ok
+test_real_ml_dsa_signature_and_exact_storage_snapshot (test_pq_pql4_signed_frontier.PQL4ActualTests.test_real_ml_dsa_signature_and_exact_storage_snapshot) ... ok
+test_signature_mutation_wrong_key_and_classical_downgrade (test_pq_pql4_signed_frontier.PQL4ActualTests.test_signature_mutation_wrong_key_and_classical_downgrade) ... ok
+test_stale_previous_sequence_expiry_and_network_refused (test_pq_pql4_signed_frontier.PQL4ActualTests.test_stale_previous_sequence_expiry_and_network_refused) ... ok
+test_strict_codec_types_and_no_signature_ambiguity (test_pq_pql4_signed_frontier.PQL4ActualTests.test_strict_codec_types_and_no_signature_ambiguity) ... ok
+test_symlink_and_wrong_file_kind_and_missing_refused (test_pq_pql4_signed_frontier.PQL4ActualTests.test_symlink_and_wrong_file_kind_and_missing_refused) ... ok
+test_whole_database_clone_rollback_detected_against_fresh_external_frontier (test_pq_pql4_signed_frontier.PQL4ActualTests.test_whole_database_clone_rollback_detected_against_fresh_external_frontier) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 4.332s
+
+OK

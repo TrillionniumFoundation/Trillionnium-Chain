@@ -1,0 +1,46 @@
+{
+  "bytes": 7236,
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "clippy",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+  "elapsed_ns": 190610642719,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "log": "strict-workspace-clippy.log",
+  "name": "strict-workspace-clippy",
+  "process_exit_code": 0,
+  "sha256": "999ae4c2d515f972881292b4b8e46310e5a4366311bc730033e9a8a5b80aff31",
+  "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "target_after_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_before_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_identity_error": null,
+  "timed_out": false
+}

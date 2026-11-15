@@ -1,0 +1,16 @@
+
+running 11 tests
+test actual_legacy_and_authenticated_restart_preserve_unadmitted_output_identity ... ok
+test actual_two_branch_process_cut_recovery_and_saved_checkpoint_rollback ... ok
+test dropped_pending_native_activation_blocks_reuse_and_remains_unresolved_after_reopen ... ok
+test input_artifact_budget_refuses_before_any_native_admission_intent ... ok
+test invalid_same_id_packet_never_inherits_another_packets_valid_native_weight ... ok
+test native_journal_process_child ... ignored, owned subprocess helper, actually executed by the process-cut test
+test referenced_packet_corruption_is_refused_and_never_overwritten_on_resume ... ok
+test sidecar_lock_is_exclusive_and_new_namespace_never_claims_fresh_resources ... ok
+test terminal_budget_failure_preserves_real_native_effect_and_unresolved_debt ... ok
+test torn_tail_is_preserved_and_refused_before_reopening_native_store ... ok
+test wrong_prior_checkpoint_refuses_without_appending_an_open_intent ... ok
+
+test result: ok. 10 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 43.06s
+

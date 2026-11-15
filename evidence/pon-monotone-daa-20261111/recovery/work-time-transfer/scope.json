@@ -1,0 +1,6 @@
+{
+  "scope": "original direct-part transfer metadata and tool responses; the complete payload is retained once as python/work-time-recovery.tar.gz",
+  "part00_to_part04": "MCP timeout; remote publication effect UNKNOWN; not used as delivery inputs",
+  "part05": "write acknowledgement matched expected size and SHA; not used as the canonical archive publication",
+  "canonical_archive_transfer": "separate fixed upload identity and whole-file digest; its final result must be independently recorded"
+}

@@ -1,0 +1,410 @@
+{
+  "schema": "trnm-cell-learning-business-hosted-observations-v1",
+  "observed_at": "2026-11-09 13:57:13 UTC",
+  "sources": {
+    "run": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628162579",
+    "jobs": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628162579/jobs",
+    "artifacts": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628162579/artifacts",
+    "logs": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/129197234025/logs"
+  },
+  "run": {
+    "id": 42628162579,
+    "name": "Cell learning business readback controls",
+    "node_id": "WFR_kwLOTty1_c8AAAAJ7NYkEw",
+    "head_branch": "fix/chain-learning-business-closure-20261109-1a404f66",
+    "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+    "path": ".github/workflows/cell-learning-business-readback.yml",
+    "display_title": "feat: bind learning completion to native business observations",
+    "run_number": 1,
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "workflow_id": 412128694,
+    "check_suite_id": 115455757471,
+    "check_suite_node_id": "CS_kwDOTty1_c8AAAAa4bMMnw",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628162579",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628162579",
+    "pull_requests": [
+      {
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/840",
+        "id": 5224869711,
+        "number": 840,
+        "head": {
+          "ref": "fix/chain-learning-business-closure-20261109-1a404f66",
+          "sha": "d72a0a23a50957401b850effc1938e144c075c49",
+          "repo": {
+            "id": 1323087357,
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+            "name": "Trillionnium-Chain"
+          }
+        },
+        "base": {
+          "ref": "fix/chain-seven-source-convergence-20261109-9fe3",
+          "sha": "e2a02f9271b49f146e70806c8a66e161b5973971",
+          "repo": {
+            "id": 1323087357,
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+            "name": "Trillionnium-Chain"
+          }
+        }
+      }
+    ],
+    "created_at": "2026-11-09T13:44:47Z",
+    "updated_at": "2026-11-09T13:51:46Z",
+    "actor": {
+      "login": "ProfHepta",
+      "id": 102159240,
+      "node_id": "U_kgDOBhbTiA",
+      "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ProfHepta",
+      "html_url": "https://github.com/ProfHepta",
+      "followers_url": "https://api.github.com/users/ProfHepta/followers",
+      "following_url": "https://api.github.com/users/ProfHepta/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ProfHepta/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ProfHepta/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ProfHepta/subscriptions",
+      "organizations_url": "https://api.github.com/users/ProfHepta/orgs",
+      "repos_url": "https://api.github.com/users/ProfHepta/repos",
+      "events_url": "https://api.github.com/users/ProfHepta/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ProfHepta/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "run_attempt": 1,
+    "referenced_workflows": [],
+    "run_started_at": "2026-11-09T13:44:47Z",
+    "triggering_actor": {
+      "login": "ProfHepta",
+      "id": 102159240,
+      "node_id": "U_kgDOBhbTiA",
+      "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ProfHepta",
+      "html_url": "https://github.com/ProfHepta",
+      "followers_url": "https://api.github.com/users/ProfHepta/followers",
+      "following_url": "https://api.github.com/users/ProfHepta/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ProfHepta/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ProfHepta/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ProfHepta/subscriptions",
+      "organizations_url": "https://api.github.com/users/ProfHepta/orgs",
+      "repos_url": "https://api.github.com/users/ProfHepta/repos",
+      "events_url": "https://api.github.com/users/ProfHepta/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ProfHepta/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628162579/jobs",
+    "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628162579/logs",
+    "check_suite_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-suites/115455757471",
+    "artifacts_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628162579/artifacts",
+    "cancel_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628162579/cancel",
+    "rerun_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42628162579/rerun",
+    "previous_attempt_url": null,
+    "workflow_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/412128694",
+    "head_commit": {
+      "id": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+      "tree_id": "93fbb686a983fa57e33791411fd3a18d6b2258ae",
+      "message": "feat: bind learning completion to native business observations\n\nKeep same-operation source and complete-version bindings explicit, separate development service fees from rewards and consensus credit, and preserve immutable historical facts across bounded recovery readbacks. All authentication, FinalUse and production gates remain DENY_ALL / HOLD.\n\nAdd exact-head scoped Python controls and original-material readbacks without changing the existing native owners or required CI gates.",
+      "timestamp": "2026-11-09T13:44:45Z",
+      "author": {
+        "name": "Qian QI",
+        "email": "102159240+ProfHepta@users.noreply.github.com"
+      },
+      "committer": {
+        "name": "Qian QI",
+        "email": "102159240+ProfHepta@users.noreply.github.com"
+      }
+    },
+    "repository": {
+      "id": 1323087357,
+      "node_id": "R_kgDOTty1_Q",
+      "name": "Trillionnium-Chain",
+      "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+      "private": false,
+      "owner": {
+        "login": "TrillionniumFoundation",
+        "id": 262513357,
+        "node_id": "O_kgDOD6WizQ",
+        "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/TrillionniumFoundation",
+        "html_url": "https://github.com/TrillionniumFoundation",
+        "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+        "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+        "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+        "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+        "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+        "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+        "type": "Organization",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+      "description": "Trillionnium consensus, canonical runtime/state, proofs, finality, and operator tooling.",
+      "fork": false,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+      "forks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/forks",
+      "keys_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/keys{/key_id}",
+      "collaborators_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/collaborators{/collaborator}",
+      "teams_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/teams",
+      "hooks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/hooks",
+      "issue_events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/events{/number}",
+      "events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/events",
+      "assignees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/assignees{/user}",
+      "branches_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches{/branch}",
+      "tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/tags",
+      "blobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs{/sha}",
+      "git_tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/tags{/sha}",
+      "git_refs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs{/sha}",
+      "trees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees{/sha}",
+      "statuses_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/statuses/{sha}",
+      "languages_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/languages",
+      "stargazers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/stargazers",
+      "contributors_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contributors",
+      "subscribers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscribers",
+      "subscription_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscription",
+      "commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits{/sha}",
+      "git_commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits{/sha}",
+      "comments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/comments{/number}",
+      "issue_comment_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/comments{/number}",
+      "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/{+path}",
+      "compare_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/{base}...{head}",
+      "merges_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/merges",
+      "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/{archive_format}{/ref}",
+      "downloads_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/downloads",
+      "issues_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues{/number}",
+      "pulls_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls{/number}",
+      "milestones_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/milestones{/number}",
+      "notifications_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/notifications{?since,all,participating}",
+      "labels_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/labels{/name}",
+      "releases_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/releases{/id}",
+      "deployments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/deployments"
+    },
+    "head_repository": {
+      "id": 1323087357,
+      "node_id": "R_kgDOTty1_Q",
+      "name": "Trillionnium-Chain",
+      "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+      "private": false,
+      "owner": {
+        "login": "TrillionniumFoundation",
+        "id": 262513357,
+        "node_id": "O_kgDOD6WizQ",
+        "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/TrillionniumFoundation",
+        "html_url": "https://github.com/TrillionniumFoundation",
+        "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+        "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+        "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+        "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+        "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+        "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+        "type": "Organization",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+      "description": "Trillionnium consensus, canonical runtime/state, proofs, finality, and operator tooling.",
+      "fork": false,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+      "forks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/forks",
+      "keys_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/keys{/key_id}",
+      "collaborators_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/collaborators{/collaborator}",
+      "teams_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/teams",
+      "hooks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/hooks",
+      "issue_events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/events{/number}",
+      "events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/events",
+      "assignees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/assignees{/user}",
+      "branches_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches{/branch}",
+      "tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/tags",
+      "blobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs{/sha}",
+      "git_tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/tags{/sha}",
+      "git_refs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs{/sha}",
+      "trees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees{/sha}",
+      "statuses_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/statuses/{sha}",
+      "languages_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/languages",
+      "stargazers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/stargazers",
+      "contributors_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contributors",
+      "subscribers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscribers",
+      "subscription_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscription",
+      "commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits{/sha}",
+      "git_commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits{/sha}",
+      "comments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/comments{/number}",
+      "issue_comment_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/comments{/number}",
+      "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/{+path}",
+      "compare_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/{base}...{head}",
+      "merges_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/merges",
+      "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/{archive_format}{/ref}",
+      "downloads_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/downloads",
+      "issues_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues{/number}",
+      "pulls_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls{/number}",
+      "milestones_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/milestones{/number}",
+      "notifications_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/notifications{?since,all,participating}",
+      "labels_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/labels{/name}",
+      "releases_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/releases{/id}",
+      "deployments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/deployments"
+    }
+  },
+  "jobs": {
+    "jobs": [
+      {
+        "id": 129197234025,
+        "name": "Cell learning business readback (head, unqualified)",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 42628162579,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Checkout exact candidate",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Verify full tracked source before execution",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Execute six control suites and two original-material readbacks",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Verify full tracked source after execution",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Retain all outputs and failures without granting qualification",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Post Checkout exact candidate",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13
+          }
+        ]
+      }
+    ]
+  },
+  "artifacts": {
+    "artifacts": [
+      {
+        "id": 13679402795,
+        "name": "cell-learning-business-readback-f0e702475e19f4ec456b11dce682f20cf59a81aa-42628162579-1",
+        "size_in_bytes": 38964,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13679402795",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13679402795/zip",
+        "expired": false,
+        "created_at": "2026-11-09T13:51:43Z",
+        "expires_at": "2026-12-09T13:51:42Z",
+        "updated_at": "2026-11-09T13:51:43Z",
+        "digest": "sha256:6c78ce96f11d182aca43136d1f260222d17936df936c56be602d3fd70dd4851d",
+        "workflow_run": {
+          "id": 42628162579,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-learning-business-closure-20261109-1a404f66",
+          "head_sha": "f0e702475e19f4ec456b11dce682f20cf59a81aa"
+        }
+      }
+    ]
+  },
+  "secondary_same_code_pr_job_observation": {
+    "run_id": 42628225393,
+    "source_commit": "f0e702475e19f4ec456b11dce682f20cf59a81aa",
+    "jobs": {
+      "jobs": [
+        {
+          "id": 129197449104,
+          "name": "Cell learning business readback (head, unqualified)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 42628225393,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Verify full tracked source before execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Execute six control suites and two original-material readbacks",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify full tracked source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Retain all outputs and failures without granting qualification",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            }
+          ]
+        }
+      ]
+    },
+    "note": "Status observation only; primary preserved and byte-verified artifact is push run 42628162579. Repeated tests are not added to the test count."
+  }
+}

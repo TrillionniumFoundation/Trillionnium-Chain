@@ -1,0 +1,92 @@
+{
+  "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+  "cwd": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final",
+  "argv": [
+    "cargo",
+    "clippy",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "environment": {
+    "CARGO_HOME": "/home/qian-qi/.cargo",
+    "CARGO_TARGET_DIR": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final-target",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0",
+    "RUST_TEST_THREADS": "1",
+    "CARGO_TERM_COLOR": "never",
+    "CARGO_NET_OFFLINE": "true",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "OPENSSL_DIR": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "41d5b79f937beed7f94d9623be504db72c5048fcd952965fc0e13305d2802a33",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/lib/ossl-modules",
+    "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+    "LD_LIBRARY_PATH": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+    "TMPDIR": "/home/qian-qi/chain-pq-a418-final-tmp",
+    "OPENSSL_LIB_DIR": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/lib",
+    "OPENSSL_INCLUDE_DIR": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/include",
+    "TRNM_GNU_TIME": "/usr/bin/time",
+    "PATH_prefix": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin",
+    "TRNM_CI_RECEIPT_DIR": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/strict-workspace-clippy/native-receipts"
+  },
+  "inherited_build_overrides": {
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "RUSTUP_TOOLCHAIN": null,
+    "CARGO_PROFILE_TEST_DEBUG": null,
+    "CARGO_PROFILE_DEV_DEBUG": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "CARGO_BUILD_RUSTFLAGS": null,
+    "CARGO_TARGET_DIR": null,
+    "LD_LIBRARY_PATH": null,
+    "MAKEFLAGS": null,
+    "CFLAGS": null,
+    "CXXFLAGS": null,
+    "LDFLAGS": null,
+    "CARGO_BUILD_JOBS": null
+  },
+  "provider_files": [
+    {
+      "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/bin/openssl",
+      "sha256": "41d5b79f937beed7f94d9623be504db72c5048fcd952965fc0e13305d2802a33",
+      "bytes": 8933408
+    },
+    {
+      "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/include/openssl/opensslv.h",
+      "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda",
+      "bytes": 3449
+    },
+    {
+      "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/include/openssl/configuration.h",
+      "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996",
+      "bytes": 4729
+    },
+    {
+      "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/lib/libcrypto.a",
+      "sha256": "005a0f7d9f6a073e6530cc556c90b3c415df7c6bc2475e333d29aa9bfa409bfb",
+      "bytes": 12381424
+    },
+    {
+      "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/lib/libssl.a",
+      "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727",
+      "bytes": 2123138
+    }
+  ],
+  "started_utc": "2026-11-11T02:11:19.419383+00:00",
+  "native_result_claimed_before_execution": false,
+  "recorder_sha256": "10089fad39140cbb56c15b85c72c8e5e8c76fc368d74c2ac2cb11233b1310562"
+}

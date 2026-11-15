@@ -1,0 +1,30 @@
+{
+  "archive_bytes": 4591284,
+  "archive_format": "single XZ-compressed tar",
+  "archive_sha256": "1f3f04c393e43c1c36fbb8b1569f810d9b8c9b31013d5389410ff2787a252a83",
+  "ordered_reassembly_verified": true,
+  "original_archive_preserved": "/home/qian-qi/work/w1-baseline-9082-evidence-165d.tar.xz",
+  "original_reader_limit_unchanged": true,
+  "part_reader_limit_bytes": 4194304,
+  "parts": [
+    {
+      "bytes": 4194304,
+      "git_blob": "f5499043c0a689147ae2cde60e2104b74bd7eb5d",
+      "offset": 0,
+      "path": "native-evidence.tar.xz.part-000",
+      "sha256": "4e4598cd3caa6958e31630f924200c850dbd819096ac56b7d2370406b6293466"
+    },
+    {
+      "bytes": 396980,
+      "git_blob": "f7d9e6f609944322a46870a74169bdeba2752b83",
+      "offset": 4194304,
+      "path": "native-evidence.tar.xz.part-001",
+      "sha256": "c0afc0744b8c461ad65ba04e7922dd68e79394e6c6a462a9ab60a4cc9e7465ad"
+    }
+  ],
+  "production_activation": false,
+  "schema": "TRNM-W1-ZERO-PAIRED-LAZY-ARCHIVE-PARTS1",
+  "security_qualified": false,
+  "source_commit": "165d286b687e0a73d7fe68148d2179274fc0c0b8",
+  "source_tree": "2eb4f5e888a7a02f573d72a2fdf4d5a7cfc352e0"
+}

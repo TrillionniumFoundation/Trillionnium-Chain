@@ -1,0 +1,191 @@
+    Checking typenum v1.20.1
+    Checking cfg-if v1.0.4
+    Checking trnm-mempool v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-mempool)
+    Checking generic-array v0.14.7
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking digest v0.10.7
+    Checking cpufeatures v0.2.17
+    Checking sha2-asm v0.6.4
+    Checking sha2 v0.10.9
+    Checking libc v0.2.184
+    Checking zeroize v1.8.2
+    Checking serde_core v1.0.228
+    Checking bitflags v2.11.0
+    Checking serde v1.0.228
+    Checking hex v0.4.3
+   Compiling getrandom v0.4.2
+   Compiling curve25519-dalek v4.1.3
+    Checking rand_core v0.10.1
+    Checking subtle v2.6.1
+    Checking signature v2.2.0
+    Checking ed25519 v2.2.3
+   Compiling serde_json v1.0.149
+    Checking zmij v1.0.21
+    Checking itoa v1.0.18
+    Checking memchr v2.8.0
+    Checking ed25519-dalek v2.2.0
+    Checking linux-raw-sys v0.12.1
+    Checking cmov v0.5.4
+    Checking ctutils v0.4.6
+    Checking hybrid-array v0.4.15
+    Checking rustix v1.1.4
+    Checking crypto-common v0.2.2
+    Checking const-oid v0.10.2
+    Checking thiserror v1.0.69
+    Checking der v0.8.3
+    Checking digest v0.11.3
+    Checking num-traits v0.2.19
+    Checking keccak v0.2.2
+    Checking sponge-cursor v0.1.0
+    Checking shake v0.1.0
+    Checking module-lattice v0.2.3
+    Checking signature v3.0.0
+    Checking trnm-protocol v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-protocol)
+    Checking spki v0.8.1
+    Checking pkcs8 v0.11.0
+    Checking ml-dsa v0.1.1
+    Checking anyhow v1.0.103
+   Compiling openssl-sys v0.9.117
+   Compiling openssl v0.10.81
+    Checking foreign-types-shared v0.1.1
+    Checking foreign-types v0.3.2
+   Compiling openssl-macros v0.1.1
+    Checking fastrand v2.3.0
+    Checking once_cell v1.21.4
+    Checking tempfile v3.27.0
+    Checking foldhash v0.2.0
+    Checking hashbrown v0.16.1
+    Checking hashlink v0.11.1
+    Checking libsqlite3-sys v0.37.0
+    Checking fallible-iterator v0.3.0
+    Checking smallvec v1.15.1
+    Checking fallible-streaming-iterator v0.1.9
+    Checking rusqlite v0.39.0
+    Checking borsh v1.8.0
+    Checking fs2 v0.4.3
+    Checking trnm-verification-profiles v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-verification-profiles)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-sqlite-io-boundary)
+    Checking trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-task-kernel v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-task-kernel)
+    Checking trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-data-availability v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-data-availability)
+    Checking trnm-transport v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-transport)
+    Checking trnm-service-settlement v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-service-settlement)
+    Checking trnm-types v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-types)
+    Checking trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-pon-node)
+    Checking trnm-peer-lease v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-peer-lease)
+    Checking utf8parse v0.2.2
+    Checking anstyle-parse v1.0.0
+    Checking anstyle-query v1.1.5
+    Checking anstyle v1.0.14
+    Checking colorchoice v1.0.5
+    Checking is_terminal_polyfill v1.70.2
+    Checking anstream v1.0.0
+    Checking strsim v0.11.1
+   Compiling heck v0.5.0
+    Checking clap_lex v1.1.0
+    Checking clap_builder v4.6.0
+   Compiling clap_derive v4.6.0
+    Checking clap v4.6.0
+    Checking trnm-checkpoint-types v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-checkpoint-types)
+    Checking trnm-checkpoint-store v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-checkpoint-store)
+    Checking wait-timeout v0.2.1
+    Checking shlex v1.3.0
+    Checking shell-escape v0.1.5
+    Checking trnm-audit-events v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-audit-events)
+    Checking trnm-executor v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-executor)
+    Checking trnm-research-protocol v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-research-protocol)
+    Checking trnm-bench v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-bench)
+    Checking trnm-escrow-vault v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-escrow-vault)
+    Checking trnm-governance-guard v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-governance-guard)
+    Checking trnm-worker-agent v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-worker-agent)
+error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope
+   --> crates/trnm-pon-node/tests/../../trnm-mvcc-fee/tests/pq_account_owner.rs:119:19
+    |
+119 |             PKey::private_key_from_seed(None, KeyType::ML_DSA_65, None, &[*seed; 32]).unwrap()
+    |                   ^^^^^^^^^^^^^^^^^^^^^ function or associated item not found in `openssl::pkey::PKey<_>`
+    |
+note: if you're trying to build a new `openssl::pkey::PKey<_>` consider using one of the following associated functions:
+      openssl::pkey::PKey::<T>::from_rsa
+      openssl::pkey::PKey::<T>::from_dsa
+      openssl::pkey::PKey::<T>::from_dh
+      openssl::pkey::PKey::<T>::from_dhx
+      and 23 others
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:514:5
+    |
+514 |     pub fn from_rsa(rsa: Rsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+527 |     pub fn from_dsa(dsa: Dsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+539 |     pub fn from_dh(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+550 |     pub fn from_dhx(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: there is an associated function `private_key_from_der` with a similar name
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/macros.rs:108:9
+    |
+108 |           pub fn $n(der: &[u8]) -> Result<$t, crate::error::ErrorStack> {
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+   ::: /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:766:5
+    |
+766 | /     from_der! {
+767 | |         /// Decodes a DER-encoded private key.
+768 | |         ///
+769 | |         /// This function will attempt to automatically detect the underlying key format, and
+...   |
+775 | |         ffi::d2i_AutoPrivateKey
+776 | |     }
+    | |_____- in this macro invocation
+    = note: this error originates in the macro `from_der` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope
+   --> crates/trnm-pon-node/tests/pq_account_native.rs:28:21
+    |
+ 28 |     let key = PKey::private_key_from_seed(None, KeyType::ML_DSA_65, None, &[seed; 32]).unwrap();
+    |                     ^^^^^^^^^^^^^^^^^^^^^ function or associated item not found in `openssl::pkey::PKey<_>`
+    |
+note: if you're trying to build a new `openssl::pkey::PKey<_>` consider using one of the following associated functions:
+      openssl::pkey::PKey::<T>::from_rsa
+      openssl::pkey::PKey::<T>::from_dsa
+      openssl::pkey::PKey::<T>::from_dh
+      openssl::pkey::PKey::<T>::from_dhx
+      and 23 others
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:514:5
+    |
+514 |     pub fn from_rsa(rsa: Rsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+527 |     pub fn from_dsa(dsa: Dsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+539 |     pub fn from_dh(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+550 |     pub fn from_dhx(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: there is an associated function `private_key_from_der` with a similar name
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/macros.rs:108:9
+    |
+108 |           pub fn $n(der: &[u8]) -> Result<$t, crate::error::ErrorStack> {
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+   ::: /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:766:5
+    |
+766 | /     from_der! {
+767 | |         /// Decodes a DER-encoded private key.
+768 | |         ///
+769 | |         /// This function will attempt to automatically detect the underlying key format, and
+...   |
+775 | |         ffi::d2i_AutoPrivateKey
+776 | |     }
+    | |_____- in this macro invocation
+    = note: this error originates in the macro `from_der` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `trnm-pon-node` (test "pq_account_native") due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...

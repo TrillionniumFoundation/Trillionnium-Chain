@@ -1,0 +1,106 @@
+{
+  "base": "ae90d186b79a9269bdb7d9ac8dfc0bcf7e5bfe0c",
+  "head": "103cdf67108a667d8570388f9dd402210c160157",
+  "changes": [
+    {
+      "status": "M",
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    },
+    {
+      "status": "A",
+      "path": "docs/protocol/pon-nakamoto-v1/details/BRANCH_WORK_SCHEDULE_RESEARCH_V1.md"
+    },
+    {
+      "status": "A",
+      "path": "docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md"
+    },
+    {
+      "status": "A",
+      "path": "formal/pon-nakamoto-v1/AMORTIZED_COST_POTENTIAL_V1.md"
+    },
+    {
+      "status": "A",
+      "path": "formal/pon-nakamoto-v1/CREDIT_FEASIBILITY_V1.md"
+    },
+    {
+      "status": "A",
+      "path": "formal/pon-nakamoto-v1/amortized_cost_potential.py"
+    },
+    {
+      "status": "A",
+      "path": "formal/pon-nakamoto-v1/credit_feasibility.py"
+    },
+    {
+      "status": "A",
+      "path": "formal/pon-nakamoto-v1/fixed_probability_contract.py"
+    },
+    {
+      "status": "A",
+      "path": "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json"
+    },
+    {
+      "status": "A",
+      "path": "formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py"
+    },
+    {
+      "status": "A",
+      "path": "formal/pon-nakamoto-v1/test_amortized_cost_potential.py"
+    },
+    {
+      "status": "A",
+      "path": "formal/pon-nakamoto-v1/test_amortized_cost_potential_independent.py"
+    },
+    {
+      "status": "A",
+      "path": "formal/pon-nakamoto-v1/test_credit_feasibility.py"
+    },
+    {
+      "status": "A",
+      "path": "formal/pon-nakamoto-v1/test_fixed_probability_contract.py"
+    },
+    {
+      "status": "A",
+      "path": "formal/pon-nakamoto-v1/vectors/fixed-probability-credit/synthetic-linear-sqrt-exact.json"
+    },
+    {
+      "status": "A",
+      "path": "formal/pon-nakamoto-v1/vectors/fixed-probability-credit/synthetic-linear-sqrt-gamma2.json"
+    },
+    {
+      "status": "M",
+      "path": "scripts/ci/check_ci_contract.py"
+    },
+    {
+      "status": "M",
+      "path": "scripts/ci/ci_job.sh"
+    },
+    {
+      "status": "M",
+      "path": "scripts/ci/test_ci_contract.py"
+    },
+    {
+      "status": "A",
+      "path": "scripts/ci/test_pon_branch_work_schedule_reader.py"
+    },
+    {
+      "status": "A",
+      "path": "scripts/pon_branch_work_schedule_reader.py"
+    },
+    {
+      "status": "M",
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+    },
+    {
+      "status": "M",
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs"
+    },
+    {
+      "status": "A",
+      "path": "trillionnium/crates/trnm-pon-node/src/research_work_schedule.rs"
+    },
+    {
+      "status": "A",
+      "path": "trillionnium/crates/trnm-pon-node/tests/research_work_schedule.rs"
+    }
+  ]
+}

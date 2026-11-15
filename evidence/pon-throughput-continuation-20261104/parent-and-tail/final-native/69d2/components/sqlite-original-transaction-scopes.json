@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "bash",
+    "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+    "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_sqlite_io_boundary-664efef7e8321112",
+    "transaction_scope::tests::",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "child_system_seconds": 0.0019100000000005224,
+  "child_user_seconds": 0.0019109999999784577,
+  "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+  "exit_code": 0,
+  "finished_at": "2026-11-04T08:55:46.320321+00:00",
+  "label": "sqlite-original-transaction-scopes",
+  "max_child_rss_kib": 1508176,
+  "started_at": "2026-11-04T08:55:46.311901+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "708bd18f02d4b6325beadea4ced5fb25b5dd5cd37c8c1bf6959d340a0aa09565",
+  "wall_ns": 8424410
+}

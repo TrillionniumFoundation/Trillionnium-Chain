@@ -1,0 +1,35 @@
+{
+  "schema": "trnm-host-checkpoint-review-artifacts-v1",
+  "files": {
+    "host-checkpoint-readback.json": {
+      "bytes": 98996,
+      "sha256": "ca3302f2bb99112a74901a3bad1e2822eb62e375a33edd4f1cf614b8331ec14e"
+    },
+    "read_checkpoint_cost.py": {
+      "bytes": 7908,
+      "sha256": "6362b92728ad38f6d8afca779c8a3237b82bd169ecc16dce1fd085332dcf518b"
+    },
+    "review.json": {
+      "bytes": 18128,
+      "sha256": "aea380dcb3891b0691d5b6d9d45b26bf950c90ef7b9afca4c74cddc3bc0d11c0"
+    },
+    "rust-1.95.0-small_c_string-source.json": {
+      "bytes": 367,
+      "sha256": "afde65b2b4a4742fac7bb48a887e0d2bf42153de99895ccc054e82d62733f26b"
+    },
+    "rust-1.95.0-small_c_string.rs": {
+      "bytes": 1937,
+      "sha256": "6f8b59e7841fcd20e24809e2f182b7120e4c2edff2917877e6de2a5cf5436a73"
+    },
+    "rust-1.95.0-unix-source.json": {
+      "bytes": 337,
+      "sha256": "bcfbaf1954fdac78fb65a47decea0ff3ad3c8c42d2c625c3297fad4e658b1c82"
+    },
+    "rust-1.95.0-unix.rs": {
+      "bytes": 88655,
+      "sha256": "77c6419ee048c348d9ed4bef226ce6ceb735d6077d0eb9f6bcac0ef46fa7b86d"
+    }
+  },
+  "no_new_native_measurement": true,
+  "production_changes": false
+}

@@ -1,0 +1,104 @@
+{
+  "schema": "TRNM-W1-QROM-PROOF-CHAIN-TESTS1",
+  "suites": [
+    {
+      "module": "test_w1_query_expression_feasibility",
+      "tests": [
+        "test_w1_query_expression_feasibility.QueryExpressionTests.test_cli_default_and_explicit_hypothesis",
+        "test_w1_query_expression_feasibility.QueryExpressionTests.test_cli_invalid_and_resource_inputs_return_structured_refusal",
+        "test_w1_query_expression_feasibility.QueryExpressionTests.test_equality_is_allowed_but_strict_johnson_boundary_is_different",
+        "test_w1_query_expression_feasibility.QueryExpressionTests.test_extremely_close_to_one_is_refused_before_integer_powers",
+        "test_w1_query_expression_feasibility.QueryExpressionTests.test_finite_search_stops_when_bernoulli_shortcut_does_not_apply",
+        "test_w1_query_expression_feasibility.QueryExpressionTests.test_fixed_p3_expression_and_six_exact_minima",
+        "test_w1_query_expression_feasibility.QueryExpressionTests.test_float_bool_and_invalid_domains_are_refused",
+        "test_w1_query_expression_feasibility.QueryExpressionTests.test_no_default_alpha_can_leak_between_profiles",
+        "test_w1_query_expression_feasibility.QueryExpressionTests.test_non_power_of_two_factor_and_zero_target",
+        "test_w1_query_expression_feasibility.QueryExpressionTests.test_size_limits_are_checked_before_exponentiation",
+        "test_w1_query_expression_feasibility.QueryExpressionTests.test_successful_arithmetic_never_outputs_project_bits_or_qualification"
+      ]
+    },
+    {
+      "module": "test_w1_fri_query_replay",
+      "tests": [
+        "test_w1_fri_query_replay.FriQueryReplayTests.test_actual_seal_all_paths_and_qualification_boundary",
+        "test_w1_fri_query_replay.FriQueryReplayTests.test_all_actual_transcript_events_match_independent_raw_matrix_reference",
+        "test_w1_fri_query_replay.FriQueryReplayTests.test_canonical_changes_to_public_values_coefficients_or_any_cap_fail_real_replay",
+        "test_w1_fri_query_replay.FriQueryReplayTests.test_changed_upstream_source_or_local_helper_cannot_repin_the_replay",
+        "test_w1_fri_query_replay.FriQueryReplayTests.test_each_oracle_leaf_or_path_and_final_sibling_are_checked",
+        "test_w1_fri_query_replay.FriQueryReplayTests.test_folded_index_duplicates_are_reported_without_replacing_query_count",
+        "test_w1_fri_query_replay.FriQueryReplayTests.test_noncanonical_endian_truncation_and_surplus_encodings_are_refused",
+        "test_w1_fri_query_replay.FriQueryReplayTests.test_path_order_and_query_position_are_not_interchangeable",
+        "test_w1_fri_query_replay.FriQueryReplayTests.test_sampler_consumes_four_values_including_zero_fallback_cases",
+        "test_w1_fri_query_replay.FriQueryReplayTests.test_skipping_squeeze_to_absorb_permutation_is_detected",
+        "test_w1_fri_query_replay.FriQueryReplayTests.test_unparsed_outer_suffix_is_still_identity_bound",
+        "test_w1_fri_query_replay.FriQueryReplayTests.test_upstream_golden_vectors_are_real_external_expected_values",
+        "test_w1_fri_query_replay.FriQueryReplayTests.test_wrong_montgomery_interpretation_and_context_order_are_detected"
+      ]
+    },
+    {
+      "module": "test_w1_qrom_composition_budget",
+      "tests": [
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_cli_duplicate_nonfinite_deep_and_oversized_input_fail_structurally",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_cli_example_roundtrip_retains_exact_inputs",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_component_must_cover_shifted_queries_not_only_original_t",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_enlarged_query_points_and_commutator_are_not_simple_error_sum",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_exact_target_boundary_and_large_expression_are_not_clamped",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_input_cannot_override_version_security_or_qualification",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_intermediate_size_requires_common_slice_coverage",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_known_parameter_or_instance_slice_mismatch_is_refused",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_missing_description_blocks_conditional_claim_not_raw_arithmetic",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_numeric_coercion_negative_coefficients_and_unknown_models_are_refused",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_only_dependencies_of_missing_query_cost_are_suppressed",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_strict_relaxed_and_all_oracle_components_must_match",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_unknown_commutativity_does_not_disappear_under_zero_coefficient",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_unknown_inputs_never_become_zero_or_security_bits",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_zero_assumed_errors_never_qualify_three_independent_security_lines",
+        "test_w1_qrom_composition_budget.CompositionBudgetTests.test_zero_envelope_without_domain_or_parameter_scope_stays_unknown"
+      ]
+    },
+    {
+      "module": "test_w1_qrom_conditional_budget",
+      "tests": [
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_256_is_only_an_explicit_hypothetical_width_and_can_fail_budget",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_bool_float_and_malformed_fractions_are_rejected",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_cli_deep_json_below_byte_limit_returns_structured_rejection",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_cli_exact_input_round_trip_and_duplicate_or_nonfinite_rejection",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_domain_and_query_mass_inconsistencies_are_rejected",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_exact_threshold_and_one_rational_step_above_it",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_expression_floor_distinguishes_impossible_and_zero_allowance",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_fractional_mass_and_expression_above_one_are_not_rounded_or_clamped",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_input_cannot_override_qualification_or_request_project_certification",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_merkle_components_are_distinct_and_exact",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_no_inputs_remain_unknown_without_classical_or_width_defaults",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_passing_every_component_never_qualifies_a_project",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_unknown_factor_is_not_zero_or_silently_replaced_by_t"
+      ]
+    },
+    {
+      "module": "test_w1_qrom_bcs_budget",
+      "tests": [
+        "test_w1_qrom_bcs_budget.BCSBudgetTests.test_all_purposes_cannot_independently_receive_full_budget",
+        "test_w1_qrom_bcs_budget.BCSBudgetTests.test_cli_duplicate_nonfinite_and_oversize_input_are_refused",
+        "test_w1_qrom_bcs_budget.BCSBudgetTests.test_continuous_simplex_max_covers_fractional_masses_and_is_attained",
+        "test_w1_qrom_bcs_budget.BCSBudgetTests.test_enlarged_query_domain_rejects_original_t_only",
+        "test_w1_qrom_bcs_budget.BCSBudgetTests.test_example_matches_separate_exact_hand_calculation",
+        "test_w1_qrom_bcs_budget.BCSBudgetTests.test_invalid_numeric_scope_and_qualification_overrides_are_refused",
+        "test_w1_qrom_bcs_budget.BCSBudgetTests.test_missing_domain_blocks_conditional_expression_only",
+        "test_w1_qrom_bcs_budget.BCSBudgetTests.test_unhelpful_expression_is_not_clamped_and_passing_example_does_not_qualify",
+        "test_w1_qrom_bcs_budget.BCSBudgetTests.test_unknown_factor_survives_zero_mass_and_zero_rrbr",
+        "test_w1_qrom_bcs_budget.BCSBudgetTests.test_unknown_inputs_never_supply_digest_width_or_security_bits",
+        "test_w1_qrom_bcs_budget.BCSBudgetTests.test_verifier_checks_are_charged_to_ordinary_vc_mass"
+      ]
+    },
+    {
+      "module": "test_w1_qrom_proof_chain_controls",
+      "tests": [
+        "test_w1_qrom_proof_chain_controls.ProofChainCompletionTests.test_complete_record_keeps_security_unknown",
+        "test_w1_qrom_proof_chain_controls.ProofChainCompletionTests.test_duplicate_success_cannot_replace_a_test",
+        "test_w1_qrom_proof_chain_controls.ProofChainCompletionTests.test_forged_qualification_source_and_boolean_count_are_refused",
+        "test_w1_qrom_proof_chain_controls.ProofChainCompletionTests.test_skip_expected_failure_and_exception_are_not_passes",
+        "test_w1_qrom_proof_chain_controls.ProofChainCompletionTests.test_zero_exit_or_missing_names_cannot_complete"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+[
+  {
+    "name": "actor",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "pr",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/784"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "checks-1",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/commits/b5c655ebe9611b3d62cf739e61e6867decc053e3/check-runs?per_page=100&page=1"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "checks-2",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/commits/b5c655ebe9611b3d62cf739e61e6867decc053e3/check-runs?per_page=100&page=2"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "statuses-1",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/commits/b5c655ebe9611b3d62cf739e61e6867decc053e3/status?per_page=100&page=1"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "actions-1",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs?head_sha=b5c655ebe9611b3d62cf739e61e6867decc053e3&per_page=100&page=1"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "local-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "local-clean",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=normal"
+    ],
+    "returncode": 0
+  }
+]

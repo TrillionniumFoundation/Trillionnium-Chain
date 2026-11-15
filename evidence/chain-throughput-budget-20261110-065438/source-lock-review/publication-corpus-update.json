@@ -1,0 +1,58 @@
+{
+  "schema": "trnm-published-source-corpus-reanchor-v1",
+  "local_source": "9029f2ab2c6382aaaf096b841a20fbf335f4b172",
+  "published_source": "b7e38fdc2e43c468692abc52aec03737f2df7f1b",
+  "same_source_tree": "b75d318fc7b7b027a810f4a70a9cd91e0b3930f8",
+  "prior_corpus_sha256": "1e2c7c93a80a31284cfc376a550e5a8b7f0c9b0350b6a8e4e961ade991cc9b04",
+  "current_corpus_sha256": "2418cb595b3c01337c348b7a0d0736fa28dfe1a4abd3f362e1dffc465d405d3f",
+  "current_corpus_git_blob": "2a454fe4a413217439a49db3d4b9e8adc8a1611d",
+  "updated_pins": [
+    {
+      "path": "config/pon/pq-authority-effects-v1.json",
+      "local_binding_git_blob": "72a89daf64fc5fe07802f1fb39d8a77764b903c2",
+      "published_binding_git_blob": "103fb15598aae38dcd9e1f2727472238c7e1b6eb",
+      "sha256": "0ad405804f94c508fa671ab6b1262a489658ce775037bd56cc31a13ce4df8da6"
+    },
+    {
+      "path": "config/pon/pq128-lifetime-budget-v1.json",
+      "local_binding_git_blob": "8120a8f4207fbb6fe20d23cc640dbaeb89e2970e",
+      "published_binding_git_blob": "bb75a6e0745d80fe42c09480f64f92d56972fc1d",
+      "sha256": "ef20a89be64acc12221219c7505b596e1071f5e831839dc840cec22ca99f30b6"
+    },
+    {
+      "path": "config/pon/pq128-source-lock-v1.json",
+      "local_binding_git_blob": "502208beadb2683f37275da508101e4fb124b886",
+      "published_binding_git_blob": "4c77569e608c8b0a93f6d71d3734b4eba357205f",
+      "sha256": "af0ceb6ae756031305b9b73f1b6695664c830558fed7a13b6c2e7ff255592f92"
+    },
+    {
+      "path": "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+      "local_binding_git_blob": "8c102ca0b15e897e9fd571b648919f2d15d794de",
+      "published_binding_git_blob": "d7826b3bc3fc6ac37b0be373f904b7543a9345d7",
+      "sha256": "9b2a9ec98b1126b8e90f6f5ecd4d1de93fb2bd2c7e18fc0b0e256e154c586f1a"
+    },
+    {
+      "path": "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "local_binding_git_blob": "1ec8ca924df7003479f4e5709c5cbb6b384d65ce",
+      "published_binding_git_blob": "687c6247d315e8ab38dae181e3a04ce410729393",
+      "sha256": "f3b69c6d9c4f8bd77989a110bbe0d33667b44f3496225c9cd82075dcfce5de9b"
+    },
+    {
+      "path": "scripts/ci/pq_authority_effect_register.py",
+      "local_binding_git_blob": "d31ec5465ab7b86a6c2d05893d5284952da110cc",
+      "published_binding_git_blob": "37fbabbc484ecaab19ebc47062e73fcf88d733c8",
+      "sha256": "a7bf39c732657fbd4434e618700456760c0b540b59b686c03cbc1ef68309ad94"
+    },
+    {
+      "path": "scripts/ci/test_pq_authority_effect_register.py",
+      "local_binding_git_blob": "4bcaeedd4d6f9e615e435f3829fde5d764607e8a",
+      "published_binding_git_blob": "e44fa06dfcabddd22d3e3aa33a0394b5ccec708c",
+      "sha256": "90bd0d62e13862c70a07ad5f88db9e81dc8cfea109a4bbee872bfd03da7b3021"
+    }
+  ],
+  "pin_count": 1080,
+  "required_count": 988,
+  "path_sets_and_other_corpus_fields_unchanged": true,
+  "runtime_source_bytes_changed": false,
+  "production_activation": false
+}

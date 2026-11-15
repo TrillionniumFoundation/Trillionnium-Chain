@@ -1,0 +1,59 @@
+{
+  "checks": [
+    "All 74 distinct names have at least one accepted exit-zero, non-timeout observation with raw_verified=true.",
+    "All four referenced summary files were read and matched their indexed exact sizes and SHA256.",
+    "All 164 distinct stdout/stderr files supporting the 82 accepted observations were read and matched their indexed exact sizes and SHA256.",
+    "The index runner SHA matches the actual frozen-B runner bytes; the index source is frozen B."
+  ],
+  "distinct_required_commands": 74,
+  "distinct_success_stream_files_verified": 164,
+  "index": {
+    "bytes": 117420,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/publication-stage/evidence/cell-bt-owner-convergence-20261112/candidate-gate-coverage.json",
+    "sha256": "274c8356b6a0199501cbdbdbfff06d59a56133b75ab6873b06489c1daa40b30b"
+  },
+  "limitations": [
+    "This is a read-only check of retained raw observations, not new test execution.",
+    "The four campaigns keep their separate source/environment/command receipts and actual failures. No single campaign is relabelled as passing.",
+    "Counts are command requirements, successful observations and distinct streams, respectively, not three alternative test counts.",
+    "The index does not qualify a native model operation, continuous current-checkout integrity, durable CURRENT, independent operators, FinalUse or production."
+  ],
+  "native_model_execution_qualified": false,
+  "new_tests_executed": false,
+  "passed": true,
+  "production_qualified": false,
+  "review_only": true,
+  "reviewer": "release_acceptance",
+  "runner": {
+    "bytes": 18507,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/frozen-B-four-gates.py",
+    "sha256": "8f82ae65d146be8513d0bc9fb14ed8f08e2df378f5db8e3471d99301d78fd3d9"
+  },
+  "schema": "trnm.bt-separate-candidate-gate-coverage-independent-review.v1",
+  "single_campaign_claimed_passed": false,
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "successful_observations_verified": 82,
+  "successful_stream_manifest_sha256": "1f1f14fe1559c8a81d544103d05d639fcb594ed6fa2fdac5ba04cf18c52c0566",
+  "summary_pins": [
+    {
+      "bytes": 45429,
+      "path": "cloud/frozen-candidate-01/summary.json",
+      "sha256": "64ee04d0f1ca821278c71ae3c04be69ae62da8cd5eeb76d7906007f6ae50da1c"
+    },
+    {
+      "bytes": 3378,
+      "path": "cloud/frozen-candidate-dependency-recheck-01/summary.json",
+      "sha256": "0432e3602630b15e2a3116318e3b3245313f175a9acfe257b9ef359df5fdcf5b"
+    },
+    {
+      "bytes": 50666,
+      "path": "remote/remaining-gates-02/summary.json",
+      "sha256": "19a503f6e4ebe3e4dd329a72eb07bb583a8c9ff8218ef0af97a64e0952e152f3"
+    },
+    {
+      "bytes": 17881,
+      "path": "remote/static-recheck-01/summary.json",
+      "sha256": "0da7b83afa38549de5cd97f2df1e87e1ad23d07fd785fe9181c99cebcf5a9f9d"
+    }
+  ]
+}

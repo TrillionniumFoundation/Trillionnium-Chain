@@ -1,0 +1,110 @@
+{
+  "schema": "frozen-node-registry-readback-v1",
+  "created_at": "2026-11-04T08:49:55.759929+00:00",
+  "scope": "Offline inspection of the root-provided final-b811-native Node registry. No native build or test execution by this readback. No final M06 registry supplied in this observation.",
+  "source": {
+    "base_commit": "b8116f65789a85148254f870c678a44f895316de",
+    "source_kind": "dirty composed b811 source; not a clean-commit result",
+    "native_input_files": 1190,
+    "native_manifest_sha256": "27920633e57be739926218c370ecfbdfea624df71d84b89c2f9e3fc6f48605d2",
+    "source_before_original_sha256": "250b3f64f9a355753a4bde67500e8d65afda9a4acbaf10ff2d2063e352f0e9ba",
+    "source_after_original_sha256": "250b3f64f9a355753a4bde67500e8d65afda9a4acbaf10ff2d2063e352f0e9ba",
+    "source_before_after_actual_bytes_equal": true,
+    "source_manifest_digest_is_from_original_receipt": true,
+    "elf_sha256": "7cef941c2174339125cbc43d56ed6b79976466ec225388860e1b20415ff889c3",
+    "elf_after_sha256": "7cef941c2174339125cbc43d56ed6b79976466ec225388860e1b20415ff889c3",
+    "elf_bytes": 395050296,
+    "base_workspace_blob_sha1": "490ec2b916657f0ce4af9f3e59222fdc45aad5f1",
+    "head_at_packaging_only_not_under_test": "69d2e06c48bbbd1e22432f9b557727b140aba361"
+  },
+  "observed": {
+    "node_registered": 1019,
+    "node_ignored": 27,
+    "node_workspace_selected_actual_registry": 40,
+    "node_selected_ignored": 0,
+    "m06_workspace_selected_static_only": 18,
+    "workspace_declared_total": 58,
+    "original_b811_declared_total_preserved": 56,
+    "new_direct_append": 2
+  },
+  "limitations": [
+    "M06 18 entries are statically preserved but no M06 registry was read in this package.",
+    "Registered names do not establish test execution or test success.",
+    "The complete Node suite was not run in the supplied observation.",
+    "This package makes no public service, throughput, F0, campaign or 69d2-source qualification claim.",
+    "The ELF and original source-after bytes are represented by the supplied native receipt and matching hashes; the large ELF is not duplicated here."
+  ],
+  "artifacts": {
+    "registry_all_stdout": {
+      "path": "raw/registry-all.stdout.gz",
+      "compression": "gzip",
+      "original_bytes": 114182,
+      "original_sha256": "e68e056d703230abd8928979a0b4e206b5ed34bef9aff8b7d873393bc8c6bddb",
+      "stored_sha256": "c3eefc295751dfc8f96e1a2777ee4a896237f0fca74206378c4c0b09c3d98cc7"
+    },
+    "registry_all_stderr": {
+      "path": "raw/registry-all.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "registry_all_receipt": {
+      "path": "raw/registry-all.json",
+      "compression": "none",
+      "original_bytes": 732,
+      "original_sha256": "4d1c720c6d94b64820c623bc465efd7a6d78a01820fa47b06a9ac5a1fff4180d",
+      "stored_sha256": "4d1c720c6d94b64820c623bc465efd7a6d78a01820fa47b06a9ac5a1fff4180d"
+    },
+    "registry_ignored_stdout": {
+      "path": "raw/registry-ignored.stdout.gz",
+      "compression": "gzip",
+      "original_bytes": 2691,
+      "original_sha256": "dda33d1617b05e9f47f63690fa7aa55a7eed9b5ba8a486e3a53dd2865d660b1d",
+      "stored_sha256": "e1d94ef8dac9b05a7f70f5198a7594c3ba4dee190cda818891a19b6d6072317c"
+    },
+    "registry_ignored_stderr": {
+      "path": "raw/registry-ignored.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "registry_ignored_receipt": {
+      "path": "raw/registry-ignored.json",
+      "compression": "none",
+      "original_bytes": 766,
+      "original_sha256": "bdadbaa5932c6d3f7298379894fcf81daef7fb5a9b63d7ae94bf32c630fbb3ad",
+      "stored_sha256": "bdadbaa5932c6d3f7298379894fcf81daef7fb5a9b63d7ae94bf32c630fbb3ad"
+    },
+    "source_before": {
+      "path": "raw/source-before.json.gz",
+      "compression": "gzip",
+      "original_bytes": 176577,
+      "original_sha256": "250b3f64f9a355753a4bde67500e8d65afda9a4acbaf10ff2d2063e352f0e9ba",
+      "stored_sha256": "5d9f79cea8fa00b19c91f163379f77707c2131a13bf98316a8ed01d7a7b45a3f"
+    },
+    "native_observation": {
+      "path": "raw/native-result.json",
+      "compression": "none",
+      "original_bytes": 16157,
+      "original_sha256": "ac57651d94dc49bb6831e2b4ac518578816415e82808eff264d4881dd19de64c",
+      "stored_sha256": "ac57651d94dc49bb6831e2b4ac518578816415e82808eff264d4881dd19de64c"
+    },
+    "base_workspace_workflow": {
+      "path": "raw/workspace-b811.yml.gz",
+      "compression": "gzip",
+      "original_bytes": 29385,
+      "original_sha256": "5fc4762309966c7222eb85607d31a4f0addef2792516c6996a5bbc74a4300c1e",
+      "stored_sha256": "bcaa82527662f471c8a43102ff96f30c6b6c3dee6e7338b7609af77cb00f95eb"
+    },
+    "final_workspace_workflow": {
+      "path": "../pon-original-workspace-large-state-cpu.yml.gz",
+      "compression": "gzip",
+      "original_bytes": 29673,
+      "original_sha256": "28bdbe712b26e6e6f12ba67b5dc5d1fe43e5fbdf8a81b3d8a3d86c8a937642c9",
+      "stored_sha256": "fa80cf3a7220d653478031fae0fcd168a77c8bd0321c2f30a3fa5c6b7dfafb3f"
+    }
+  },
+  "parent_existing_sha256sums_sha256": "b1c021c60901fe0d2a7829c8fb285f2a7a9aba0cd3dbcc503d0e70b8bdeb9a69"
+}

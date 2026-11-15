@@ -1,0 +1,19 @@
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/10366560c781/chain-effects/trillionnium/crates/trnm-service-settlement)
+error[E0277]: `native_generation_budget_v2::DispatchDecisionV2` doesn't implement `Debug`
+   --> crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs:530:18
+    |
+530 |                 .unwrap_err()
+    |                  ^^^^^^^^^^ the trait `Debug` is not implemented for `native_generation_budget_v2::DispatchDecisionV2`
+    |
+    = note: add `#[derive(Debug)]` to `native_generation_budget_v2::DispatchDecisionV2` or manually `impl Debug for native_generation_budget_v2::DispatchDecisionV2`
+note: required by a bound in `std::result::Result::<T, E>::unwrap_err`
+   --> /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/core/src/result.rs:1324:4
+help: consider annotating `native_generation_budget_v2::DispatchDecisionV2` with `#[derive(Debug)]`
+   --> crates/trnm-service-settlement/src/native_generation_budget_v2.rs:605:1
+    |
+605 + #[derive(Debug)]
+606 | pub enum DispatchDecisionV2 {
+    |
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `trnm-service-settlement` (lib test) due to 1 previous error

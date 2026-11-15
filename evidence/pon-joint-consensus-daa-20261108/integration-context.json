@@ -1,0 +1,134 @@
+{
+  "contexts": {
+    ".github/workflows/pon-recent-batch-acceptance.yml": [
+      {
+        "72": "          python3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$out/source.json\""
+      },
+      {
+        "73": "          test \"$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs)\" = 44acbb5d854a8e0a7c4979b4715bd9949b656cd5"
+      },
+      {
+        "74": "          test \"$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs)\" = a6eb85aa2c2e3ad17244890128ef86975d71ecc9"
+      },
+      {
+        "75": "          test \"$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner_tests.rs)\" = 6119f98bb45fda6399d2528db9f61a69751e397f"
+      },
+      {
+        "76": "<<<<<<< b5c655ebe9611b3d62cf739e61e6867decc053e3"
+      },
+      {
+        "77": "          # The whole-file pin covers the opt-in owner census and the"
+      },
+      {
+        "78": "          # integrated admission/readback refinements under retained cost controls."
+      },
+      {
+        "79": "          test \"$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)\" = 88c3190ba9c0f4b5ec56136ef8ce9a252cbaf16b"
+      },
+      {
+        "80": "======="
+      },
+      {
+        "81": "          test \"$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)\" = b9c6f42733d5477836dc184b47bb9381a8be7b3e"
+      },
+      {
+        "82": ">>>>>>> 62d2d90c9e1f4c8450c89843f1e08360a24283ce"
+      },
+      {
+        "83": "          test \"$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)\" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9"
+      },
+      {
+        "84": "          test \"$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)\" = c98c5333ab3609b30b11fd0a700917ce7f2a8999"
+      },
+      {
+        "85": "          test \"$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)\" = e99453b1abe6ce589f003be199b5553241cba398"
+      },
+      {
+        "86": "          test \"$(git hash-object trillionnium/crates/trnm-pon-node/src/store/task_observation.rs)\" = eed2c350e3dfd17a66d7c4f4225ee2f02d3c0e60"
+      }
+    ],
+    "config/pon/pq-cross-branch-corpus-v1.json": [
+      {
+        "143": "    \".github/workflows/pon-branch-encoding-acceptance.yml\": \"b459945f8b071c70f83cc5fce0fa895225d5c8d0\","
+      },
+      {
+        "144": "    \".github/workflows/pon-legacy-reorg-cost-20261104.yml\": \"822a4ab34e0b88dd7fae0f136ef4a1368f8ccd49\","
+      },
+      {
+        "145": "    \".github/workflows/pon-original-workspace-large-state-cpu.yml\": \"516ca1abb0dfeb6c52b3a99efc8f041390d78223\","
+      },
+      {
+        "146": "    \".github/workflows/pon-pq-system-continuation.yml\": \"f6b862182b361eefef62a553f59c3e79e90e1868\","
+      },
+      {
+        "147": "<<<<<<< b5c655ebe9611b3d62cf739e61e6867decc053e3"
+      },
+      {
+        "148": "    \".github/workflows/pon-recent-batch-acceptance.yml\": \"92d03597f3bcac48daedda52b140f15f6c07f907\","
+      },
+      {
+        "149": "======="
+      },
+      {
+        "150": "    \".github/workflows/pon-recent-batch-acceptance.yml\": \"7d426d03f9a56de9c4b745da535e774e552673f2\","
+      },
+      {
+        "151": ">>>>>>> 62d2d90c9e1f4c8450c89843f1e08360a24283ce"
+      },
+      {
+        "152": "    \".github/workflows/pon-w1-work-security.yml\": \"c9ab642e0f23194b32a7b283107d215deb534c7a\","
+      },
+      {
+        "153": "    \".github/workflows/trnm-required-baseline.yml\": \"beff089827ed0c138edb8b653026a9be7cc1f4a6\","
+      },
+      {
+        "154": "    \"config/consensus-mainline.json\": \"b193c404177350c5e1443104f02bb0ac114f6aeb\","
+      },
+      {
+        "155": "    \"config/pon/binary-diverse60-training-v3.json\": \"4bad08228c9e85570a67a30f5a546b9cf418bd01\","
+      },
+      {
+        "607": "    \"trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs\": \"ef2494869bfe78083d890e400ec6be7642bef033\","
+      },
+      {
+        "608": "    \"trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs\": \"e7c3a2f010ae5669501897bf87badbc6d043e488\","
+      },
+      {
+        "609": "    \"trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs\": \"655f0701562203f2e57c4e71591e08b301ac8b92\","
+      },
+      {
+        "610": "    \"trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs\": \"f680b26569b39923f63eeb2ccb347e33ea46e03e\","
+      },
+      {
+        "611": "<<<<<<< b5c655ebe9611b3d62cf739e61e6867decc053e3"
+      },
+      {
+        "612": "    \"trillionnium/crates/trnm-pon-node/src/store.rs\": \"88c3190ba9c0f4b5ec56136ef8ce9a252cbaf16b\","
+      },
+      {
+        "613": "======="
+      },
+      {
+        "614": "    \"trillionnium/crates/trnm-pon-node/src/store.rs\": \"b9c6f42733d5477836dc184b47bb9381a8be7b3e\","
+      },
+      {
+        "615": ">>>>>>> 62d2d90c9e1f4c8450c89843f1e08360a24283ce"
+      },
+      {
+        "616": "    \"trillionnium/crates/trnm-pon-node/src/store/admission_header_tests.rs\": \"bae5cba609b84c78550c7f4d7e67d0ab9ffde24a\","
+      },
+      {
+        "617": "    \"trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs\": \"d82f5368baa7e0a2f4d906fdf3ffb3dee525d7aa\","
+      },
+      {
+        "618": "    \"trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs\": \"13f87f83a1c6ee7f73963beb5f19c19f1236c150\","
+      },
+      {
+        "619": "    \"trillionnium/crates/trnm-pon-node/src/store/authenticated_pending_activation.rs\": \"93f14af5f15018c4cf05269ce63e369411b2f555\","
+      }
+    ]
+  },
+  "merged_store_blob": "20181ce2072f530296b4cda95c931ea3c0691902",
+  "merged_test_blob": "f30e827038dddb0285716af8ff8c04316ee148bd",
+  "store_patch": "diff --git a/trillionnium/crates/trnm-pon-node/src/store.rs b/trillionnium/crates/trnm-pon-node/src/store.rs\nindex 88c3190ba..20181ce20 100644\n--- a/trillionnium/crates/trnm-pon-node/src/store.rs\n+++ b/trillionnium/crates/trnm-pon-node/src/store.rs\n@@ -2906,10 +2906,19 @@ impl Node {\n         self.check_active_before_commit_with_root_arithmetic(progress, readback, None)\n     }\n     fn check_active_before_commit_with_root_arithmetic(\n+        &self,\n+        progress: &mut dyn FnMut() -> Result<()>,\n+        readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,\n+        arithmetic: Option<&pon_commitment::FullRootArithmetic>,\n+    ) -> Result<()> {\n+        self.check_active_before_commit_with_root_role(progress, readback, arithmetic, false)\n+    }\n+    fn check_active_before_commit_with_root_role(\n         &self,\n         progress: &mut dyn FnMut() -> Result<()>,\n         mut readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,\n         arithmetic: Option<&pon_commitment::FullRootArithmetic>,\n+        preserve_staging: bool,\n     ) -> Result<()> {\n         progress()?;\n         self.namespace()?;\n@@ -2925,6 +2934,16 @@ impl Node {\n         if let Some(scope) = readback.as_deref_mut() {\n             scope.nominate_active(&self.db, selected.0)?;\n         }\n+        // During initial full-history activation, the still-published genesis\n+        // State alternates with staging State. Do not evict staging's bounded\n+        // pure arithmetic with that small, unrelated active input. All rows and\n+        // the root are still checked by the original complete-root algorithm.\n+        // Other active tips and every non-reorg caller keep their old policy.\n+        let arithmetic = if preserve_staging && selected.0 == self.settings.genesis() {\n+            None\n+        } else {\n+            arithmetic\n+        };\n         self.check_persisted_state_with_root_arithmetic(\n             selected.0,\n             &state,\n@@ -5841,14 +5860,15 @@ impl Node {\n                             .history\n                             .observe(native_authenticated::HistoryStage::ReadActive)\n                     });\n-                let arithmetic =\n-                    matches!(commit_site, native_authenticated::SqlCommitSite::ReorgStep)\n-                        .then(|| self.legacy_persisted_root_arithmetic())\n-                        .flatten();\n-                self.check_active_before_commit_with_root_arithmetic(\n+                let reorg = matches!(commit_site, native_authenticated::SqlCommitSite::ReorgStep);\n+                let arithmetic = reorg\n+                    .then(|| self.legacy_persisted_root_arithmetic())\n+                    .flatten();\n+                self.check_active_before_commit_with_root_role(\n                     progress,\n                     readback.as_mut(),\n                     arithmetic,\n+                    reorg,\n                 )?;\n             }\n             self.continuous_scope_checkpoint()?;\n"
+}

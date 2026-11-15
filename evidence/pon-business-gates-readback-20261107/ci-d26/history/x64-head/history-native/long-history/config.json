@@ -1,0 +1,14 @@
+{
+  "blocks": 4105,
+  "clock_scope": "10-second logical headers under observed wall clock; no real-time long-window claim",
+  "evaluation_policy": "native-public-evaluation-dev-v1",
+  "genesis": "e769b1e50f6148bffb1b9d94592d2296500ab103eb1e3e7540fe52717e06b6d2",
+  "genesis_timestamp": 1794022050,
+  "hardness_accepted": false,
+  "network": "62dcf1db06e1fa0094f77ad89db0a16f07b82e362f01b9cabf809eae1e807765",
+  "parameters": "804c2e0b9b9a21be24149ae8509b20caee2f339271593c59be50e840335ba326",
+  "production_activation": false,
+  "public_network_ready": false,
+  "renew_every": 900,
+  "task_profile": "signed-task-lifecycle-dev-v3"
+}

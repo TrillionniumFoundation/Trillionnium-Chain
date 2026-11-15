@@ -1,0 +1,96 @@
+{
+  "account_email_redacted": true,
+  "raw_receipt_set_sha256": "8402483fbd415139ee51ea11be15438a6561b8051c2e80bfb80ee44610245141",
+  "receipts": {
+    "gpu_bind_launch": {
+      "content": [
+        {
+          "text": "{\"audit_recorded\":true,\"job\":{\"args\":[\"/home/qian-qi/.local/share/hepta-colab/releases/20261107-d2d977949417/account_launcher.py\",\"qiqian\",\"manage\",\"bind\",\"--key\",\"pon-legal-gpu-10a9-20261107-01\"],\"created_unix_ms\":1794050515756,\"cwd\":null,\"env_keys\":[],\"executable\":\"/home/qian-qi/.local/share/hepta-colab/releases/20261107-d2d977949417/venv/bin/python\",\"execution_mode\":\"operator\",\"host\":\"rog\",\"id\":\"1a1b5be632c-12894-db\",\"idempotency_key\":\"pon-legal-gpu-10a9-20261107-bind\",\"launch_error\":null,\"launch_state\":\"launched\",\"remote_job_dir\":\"/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b5be632c-12894-db\",\"request_digest\":\"db8ec38df92c4d29a3ed0efb2fb0ddec3f01546a1840355d4a49b634456835c3\",\"request_fingerprint\":15820797555537366313,\"ssh_target\":\"rog-ts\",\"system_jobctl\":false,\"unit\":\"hepta-runtime-job-1a1b5be632c-12894-db\"},\"launch\":{\"backend\":\"systemd\",\"launcher_pid\":null,\"ok\":true,\"unit\":\"hepta-runtime-job-1a1b5be632c-12894-db\"},\"local_record_pending\":false,\"reused\":false}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": null
+    },
+    "gpu_bind_read": {
+      "content": [
+        {
+          "text": "{\"audit_recorded\":true,\"job_id\":\"1a1b5be632c-12894-db\",\"stderr\":{\"eof\":true,\"next_offset\":0,\"offset\":0,\"size\":0,\"text\":\"\"},\"stdout\":{\"eof\":true,\"next_offset\":0,\"offset\":0,\"size\":0,\"text\":\"\"}}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": null
+    },
+    "gpu_bind_status": {
+      "content": [
+        {
+          "text": "{\"audit_recorded\":true,\"backend\":\"systemd\",\"job_id\":\"1a1b5be632c-12894-db\",\"state\":\"running\",\"systemd\":{\"ActiveState\":\"active\",\"Description\":\"Hepta Runtime job 1a1b5be632c-12894-db 3eb96cc4f36ab481ff26bda068e1c7d1\",\"ExecMainCode\":\"0\",\"ExecMainPID\":\"2428870\",\"ExecMainStatus\":\"0\",\"InvocationID\":\"ed3da8b9516f4e15a99b1ff981cea193\",\"LoadState\":\"loaded\",\"Result\":\"success\",\"SubState\":\"running\"}}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": null
+    },
+    "gpu_create_launch": {
+      "content": [
+        {
+          "text": "{\"audit_recorded\":true,\"job\":{\"args\":[\"/home/qian-qi/.local/share/hepta-colab/releases/20261107-d2d977949417/account_launcher.py\",\"qiqian\",\"manage\",\"create\",\"--key\",\"pon-legal-gpu-10a9-20261107-01\",\"--kind\",\"gpu\",\"--accelerator\",\"T4\",\"--shape\",\"standard\"],\"created_unix_ms\":1794050473341,\"cwd\":null,\"env_keys\":[],\"executable\":\"/home/qian-qi/.local/share/hepta-colab/releases/20261107-d2d977949417/venv/bin/python\",\"execution_mode\":\"operator\",\"host\":\"rog\",\"id\":\"1a1b5bdbd7d-12894-d8\",\"idempotency_key\":\"pon-legal-gpu-10a9-20261107-create\",\"launch_error\":null,\"launch_state\":\"launched\",\"remote_job_dir\":\"/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b5bdbd7d-12894-d8\",\"request_digest\":\"31a697700ec38b2e8a1be7c4249977df8bf73e51ce3d06d01020b85ecd26443f\",\"request_fingerprint\":3577713461532265262,\"ssh_target\":\"rog-ts\",\"system_jobctl\":false,\"unit\":\"hepta-runtime-job-1a1b5bdbd7d-12894-d8\"},\"launch\":{\"backend\":\"systemd\",\"launcher_pid\":null,\"ok\":true,\"unit\":\"hepta-runtime-job-1a1b5bdbd7d-12894-d8\"},\"local_record_pending\":false,\"reused\":false}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": null
+    },
+    "gpu_create_read": {
+      "content": [
+        {
+          "text": "{\"audit_recorded\":true,\"job_id\":\"1a1b5bdbd7d-12894-d8\",\"stderr\":{\"eof\":true,\"next_offset\":0,\"offset\":0,\"size\":0,\"text\":\"\"},\"stdout\":{\"eof\":true,\"next_offset\":655,\"offset\":0,\"size\":655,\"text\":\"{\\\"account_email\\\":\\\"<account:qiqian>\\\",\\\"actual_spec\\\":{\\\"accelerator\\\":\\\"T4\\\",\\\"shape\\\":\\\"STANDARD\\\",\\\"variant\\\":\\\"GPU\\\"},\\\"client_session_id\\\":\\\"052291b7-fede-4405-9e9c-38eec5fd6ede\\\",\\\"created_at\\\":\\\"2026-11-07T11:21:25.981763+00:00\\\",\\\"endpoint\\\":\\\"gpu-t4-s-ass1c2-186dzx8vobpjh\\\",\\\"kernel_submit_attempts\\\":0,\\\"key\\\":\\\"pon-legal-gpu-10a9-20261107-01\\\",\\\"notebook_hash\\\":\\\"31aee2a9-246b-4d2f-8f5f-ce94a1aefd9c\\\",\\\"owned_kernel\\\":false,\\\"owned_runtime\\\":true,\\\"phase\\\":\\\"runtime_ready\\\",\\\"requested_spec\\\":{\\\"accelerator\\\":\\\"T4\\\",\\\"shape\\\":\\\"STANDARD\\\",\\\"variant\\\":\\\"GPU\\\"},\\\"runtime_submit_attempts\\\":1,\\\"session_name\\\":\\\"hepta-4373a3eeb189409a94427ef3fb9c16b1\\\",\\\"updated_at\\\":\\\"2026-11-07T11:21:29.939702+00:00\\\"}\"}}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": null
+    },
+    "gpu_create_status": {
+      "content": [
+        {
+          "text": "{\"at_unix_ms\":1794050490016,\"audit_recorded\":true,\"automatic_retry\":false,\"cancelled\":false,\"exit_code\":0,\"job_id\":\"1a1b5bdbd7d-12894-d8\",\"launch_nonce\":\"04fdf684445b3c23ad16e6e92c5a17f7\",\"log_bytes\":{\"stderr\":{\"seen\":0,\"stored\":0},\"stdout\":{\"seen\":655,\"stored\":655}},\"log_errors\":{\"stderr\":null,\"stdout\":null},\"log_synced\":{\"stderr\":true,\"stdout\":true},\"log_truncated\":{\"stderr\":false,\"stdout\":false},\"output_complete\":true,\"output_durable\":true,\"state\":\"succeeded\",\"terminal_publication_confirmed\":true,\"terminal_publication_protocol\":1,\"timed_out\":false}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": null
+    },
+    "gpu_upload_verify_launch": {
+      "content": [
+        {
+          "text": "{\"audit_recorded\":true,\"job\":{\"args\":[\"-c\",\"import hashlib,json,pathlib; p=pathlib.Path('/home/qian-qi/.local/share/hepta-colab/pon-legal-10a9-20261107/workload.py'); r=p.read_bytes(); print(json.dumps({'sha256':hashlib.sha256(r).hexdigest(),'bytes':len(r)}))\"],\"created_unix_ms\":1794050432812,\"cwd\":null,\"env_keys\":[],\"executable\":\"/home/qian-qi/.local/share/hepta-colab/releases/20261107-d2d977949417/venv/bin/python\",\"execution_mode\":\"operator\",\"host\":\"rog\",\"id\":\"1a1b5bd1f2c-12894-d4\",\"idempotency_key\":\"pon-legal-gpu-10a9-20261107-upload-verify\",\"launch_error\":null,\"launch_state\":\"launched\",\"remote_job_dir\":\"/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b5bd1f2c-12894-d4\",\"request_digest\":\"38e247d49c61cbe11a51584857f5954af2b4d941f33406bdc3f1eafe82df0d11\",\"request_fingerprint\":4098917589342866401,\"ssh_target\":\"rog-ts\",\"system_jobctl\":false,\"unit\":\"hepta-runtime-job-1a1b5bd1f2c-12894-d4\"},\"launch\":{\"backend\":\"systemd\",\"launcher_pid\":null,\"ok\":true,\"unit\":\"hepta-runtime-job-1a1b5bd1f2c-12894-d4\"},\"local_record_pending\":false,\"reused\":false}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": null
+    },
+    "gpu_upload_verify_read": {
+      "content": [
+        {
+          "text": "{\"audit_recorded\":true,\"job_id\":\"1a1b5bd1f2c-12894-d4\",\"stderr\":{\"eof\":true,\"next_offset\":0,\"offset\":0,\"size\":0,\"text\":\"\"},\"stdout\":{\"eof\":true,\"next_offset\":95,\"offset\":0,\"size\":95,\"text\":\"{\\\"bytes\\\":69609,\\\"sha256\\\":\\\"5a63bfeeae1ff764dd49004af099346935c102f269663444f5a1ee7dd7f592f1\\\"}\"}}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": null
+    },
+    "gpu_workload_upload_receipt": {
+      "content": [
+        {
+          "text": "File created successfully with 69609 bytes",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": null
+    }
+  }
+}

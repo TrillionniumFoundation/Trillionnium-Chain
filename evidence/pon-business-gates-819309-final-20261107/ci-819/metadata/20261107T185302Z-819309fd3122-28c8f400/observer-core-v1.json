@@ -1,0 +1,2359 @@
+{
+  "schema": "trnm-final819-observer-core-v1",
+  "head": "819309fd312298e099642e1253b1d4ba07113e98",
+  "snapshot": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T185302Z-819309fd3122-28c8f400",
+  "snapshot_sha256": "fcd05f1f581f9c3f7b2db58a94bc06adb3bfbb924562be0239e79f8baad7f28e",
+  "started_utc": "2026-11-07T18:53:02.968720+00:00",
+  "finished_utc": "2026-11-07T18:53:31.936776+00:00",
+  "metadata_coverage_complete": true,
+  "metadata_issues": [],
+  "all_head_runs": [
+    {
+      "id": 42402626579,
+      "workflow_id": 351261903,
+      "name": "PR #688",
+      "event": "dynamic",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "run_attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-11-07T18:42:41Z",
+      "updated_at": "2026-11-07T18:42:46Z"
+    },
+    {
+      "id": 42402618518,
+      "workflow_id": 378180520,
+      "name": "PoN priority acceptance",
+      "event": "push",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "run_attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-11-07T18:42:35Z",
+      "updated_at": "2026-11-07T18:43:28Z"
+    },
+    {
+      "id": 42402618358,
+      "workflow_id": 408972293,
+      "name": "CodeQL exact-source analysis and SARIF retention",
+      "event": "push",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "run_attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-11-07T18:42:34Z",
+      "updated_at": "2026-11-07T18:42:38Z"
+    },
+    {
+      "id": 42402618462,
+      "workflow_id": 403419146,
+      "name": "PoN W1 work security observations",
+      "event": "push",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "run_attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-11-07T18:42:34Z",
+      "updated_at": "2026-11-07T18:43:34Z"
+    }
+  ],
+  "target_runs": [
+    {
+      "actor": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+        "events_url": "https://api.github.com/users/ProfHepta/events{/privacy}",
+        "followers_url": "https://api.github.com/users/ProfHepta/followers",
+        "following_url": "https://api.github.com/users/ProfHepta/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ProfHepta/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/ProfHepta",
+        "id": 102159240,
+        "login": "ProfHepta",
+        "node_id": "U_kgDOBhbTiA",
+        "organizations_url": "https://api.github.com/users/ProfHepta/orgs",
+        "received_events_url": "https://api.github.com/users/ProfHepta/received_events",
+        "repos_url": "https://api.github.com/users/ProfHepta/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/ProfHepta/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ProfHepta/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/ProfHepta",
+        "user_view_type": "public"
+      },
+      "conclusion": null,
+      "created_at": "2026-11-07T18:42:34Z",
+      "event": "push",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462",
+      "id": 42402618462,
+      "name": "PoN W1 work security observations",
+      "run_attempt": 1,
+      "status": "in_progress",
+      "triggering_actor": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+        "events_url": "https://api.github.com/users/ProfHepta/events{/privacy}",
+        "followers_url": "https://api.github.com/users/ProfHepta/followers",
+        "following_url": "https://api.github.com/users/ProfHepta/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ProfHepta/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/ProfHepta",
+        "id": 102159240,
+        "login": "ProfHepta",
+        "node_id": "U_kgDOBhbTiA",
+        "organizations_url": "https://api.github.com/users/ProfHepta/orgs",
+        "received_events_url": "https://api.github.com/users/ProfHepta/received_events",
+        "repos_url": "https://api.github.com/users/ProfHepta/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/ProfHepta/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ProfHepta/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/ProfHepta",
+        "user_view_type": "public"
+      },
+      "updated_at": "2026-11-07T18:43:34Z",
+      "workflow_id": 403419146
+    },
+    {
+      "actor": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+        "events_url": "https://api.github.com/users/ProfHepta/events{/privacy}",
+        "followers_url": "https://api.github.com/users/ProfHepta/followers",
+        "following_url": "https://api.github.com/users/ProfHepta/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ProfHepta/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/ProfHepta",
+        "id": 102159240,
+        "login": "ProfHepta",
+        "node_id": "U_kgDOBhbTiA",
+        "organizations_url": "https://api.github.com/users/ProfHepta/orgs",
+        "received_events_url": "https://api.github.com/users/ProfHepta/received_events",
+        "repos_url": "https://api.github.com/users/ProfHepta/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/ProfHepta/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ProfHepta/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/ProfHepta",
+        "user_view_type": "public"
+      },
+      "conclusion": null,
+      "created_at": "2026-11-07T18:42:35Z",
+      "event": "push",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518",
+      "id": 42402618518,
+      "name": "PoN priority acceptance",
+      "run_attempt": 1,
+      "status": "in_progress",
+      "triggering_actor": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+        "events_url": "https://api.github.com/users/ProfHepta/events{/privacy}",
+        "followers_url": "https://api.github.com/users/ProfHepta/followers",
+        "following_url": "https://api.github.com/users/ProfHepta/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ProfHepta/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/ProfHepta",
+        "id": 102159240,
+        "login": "ProfHepta",
+        "node_id": "U_kgDOBhbTiA",
+        "organizations_url": "https://api.github.com/users/ProfHepta/orgs",
+        "received_events_url": "https://api.github.com/users/ProfHepta/received_events",
+        "repos_url": "https://api.github.com/users/ProfHepta/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/ProfHepta/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ProfHepta/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/ProfHepta",
+        "user_view_type": "public"
+      },
+      "updated_at": "2026-11-07T18:43:28Z",
+      "workflow_id": 378180520
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "jobs": 37,
+      "expected_jobs": 37,
+      "native_lanes": 34,
+      "expected_native_lanes": 34,
+      "missing_job_names": [],
+      "unexpected_job_names": [],
+      "duplicate_job_names": 0,
+      "head_mismatches": [],
+      "workflow_counts": {
+        "completed/success": 15,
+        "in_progress/None": 19,
+        "completed/failure": 3
+      },
+      "native_counts": {
+        "completed/success": 13,
+        "in_progress/None": 19,
+        "completed/failure": 2
+      },
+      "source_steps": {
+        "materialize:completed/success": 34,
+        "before:completed/success": 34,
+        "after:completed/success": 15,
+        "context:completed/success": 15,
+        "after:pending/None": 19,
+        "context:pending/None": 19
+      },
+      "native": [
+        {
+          "id": 128493695647,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 false trace reuse (x64, head)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-07T18:43:30Z",
+          "completed_at": "2026-11-07T18:50:40Z",
+          "runner_name": "GitHub Actions 1000041702",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "false-trace",
+          "arch": "x64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:03Z",
+              "completed_at": "2026-11-07T18:44:06Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:06Z",
+              "completed_at": "2026-11-07T18:44:08Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:50:35Z",
+              "completed_at": "2026-11-07T18:50:36Z"
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:50:36Z",
+              "completed_at": "2026-11-07T18:50:36Z"
+            }
+          },
+          "current_steps": [],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695650,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 false trace reuse (arm64, prospective-merge)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-07T18:43:33Z",
+          "completed_at": "2026-11-07T18:52:19Z",
+          "runner_name": "GitHub Actions 1000041696",
+          "labels": [
+            "ubuntu-24.04-arm"
+          ],
+          "family": "false-trace",
+          "arch": "arm64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:21Z",
+              "completed_at": "2026-11-07T18:44:24Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:24Z",
+              "completed_at": "2026-11-07T18:44:25Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:52:13Z",
+              "completed_at": "2026-11-07T18:52:15Z"
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:52:15Z",
+              "completed_at": "2026-11-07T18:52:15Z"
+            }
+          },
+          "current_steps": [],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695658,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 false trace reuse (arm64, head)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-07T18:43:33Z",
+          "completed_at": "2026-11-07T18:52:05Z",
+          "runner_name": "GitHub Actions 1000041695",
+          "labels": [
+            "ubuntu-24.04-arm"
+          ],
+          "family": "false-trace",
+          "arch": "arm64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:07Z",
+              "completed_at": "2026-11-07T18:44:09Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:09Z",
+              "completed_at": "2026-11-07T18:44:11Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:51:58Z",
+              "completed_at": "2026-11-07T18:52:00Z"
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:52:00Z",
+              "completed_at": "2026-11-07T18:52:00Z"
+            }
+          },
+          "current_steps": [],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695680,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 factorial legal strategies v3 (arm64, head)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:33Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041697",
+          "labels": [
+            "ubuntu-24.04-arm"
+          ],
+          "family": "factorial",
+          "arch": "arm64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:06Z",
+              "completed_at": "2026-11-07T18:44:09Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:09Z",
+              "completed_at": "2026-11-07T18:44:11Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Prepare pinned provider required by native all-feature controls"
+          ],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695687,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 complete legal strategies (v1, arm64, head)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-07T18:43:33Z",
+          "completed_at": "2026-11-07T18:52:23Z",
+          "runner_name": "GitHub Actions 1000041699",
+          "labels": [
+            "ubuntu-24.04-arm"
+          ],
+          "family": "legal-v1",
+          "arch": "arm64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:16Z",
+              "completed_at": "2026-11-07T18:44:19Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:19Z",
+              "completed_at": "2026-11-07T18:44:20Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:52:14Z",
+              "completed_at": "2026-11-07T18:52:15Z"
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:52:15Z",
+              "completed_at": "2026-11-07T18:52:15Z"
+            }
+          },
+          "current_steps": [],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695689,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 paid rank and batch v5 (arm64, head)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-07T18:43:33Z",
+          "completed_at": "2026-11-07T18:52:12Z",
+          "runner_name": "GitHub Actions 1000041701",
+          "labels": [
+            "ubuntu-24.04-arm"
+          ],
+          "family": "rank-batch",
+          "arch": "arm64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:21Z",
+              "completed_at": "2026-11-07T18:44:24Z"
+            },
+            "before": {
+              "name": "Reserve records and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:24Z",
+              "completed_at": "2026-11-07T18:44:26Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:52:05Z",
+              "completed_at": "2026-11-07T18:52:06Z"
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:52:06Z",
+              "completed_at": "2026-11-07T18:52:06Z"
+            }
+          },
+          "current_steps": [],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695691,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 paid rank and batch v5 (arm64, prospective-merge)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-07T18:43:33Z",
+          "completed_at": "2026-11-07T18:52:06Z",
+          "runner_name": "GitHub Actions 1000041715",
+          "labels": [
+            "ubuntu-24.04-arm"
+          ],
+          "family": "rank-batch",
+          "arch": "arm64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:21Z",
+              "completed_at": "2026-11-07T18:44:25Z"
+            },
+            "before": {
+              "name": "Reserve records and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:25Z",
+              "completed_at": "2026-11-07T18:44:26Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:51:58Z",
+              "completed_at": "2026-11-07T18:51:59Z"
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:51:59Z",
+              "completed_at": "2026-11-07T18:51:59Z"
+            }
+          },
+          "current_steps": [],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695693,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 false trace reuse (x64, prospective-merge)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-07T18:43:31Z",
+          "completed_at": "2026-11-07T18:51:52Z",
+          "runner_name": "GitHub Actions 1000041703",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "false-trace",
+          "arch": "x64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:04Z",
+              "completed_at": "2026-11-07T18:44:08Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:08Z",
+              "completed_at": "2026-11-07T18:44:10Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:51:46Z",
+              "completed_at": "2026-11-07T18:51:47Z"
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:51:47Z",
+              "completed_at": "2026-11-07T18:51:47Z"
+            }
+          },
+          "current_steps": [],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695708,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 complete legal strategies (v2, x64, prospective-merge)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:31Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041704",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "legal-v2",
+          "arch": "x64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:20Z",
+              "completed_at": "2026-11-07T18:44:24Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:24Z",
+              "completed_at": "2026-11-07T18:44:26Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Execute all thirty original-budget legal strategy shards"
+          ],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695710,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 paid rank and batch v5 (x64, prospective-merge)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-07T18:43:31Z",
+          "completed_at": "2026-11-07T18:52:52Z",
+          "runner_name": "GitHub Actions 1000041705",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "rank-batch",
+          "arch": "x64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:04Z",
+              "completed_at": "2026-11-07T18:44:07Z"
+            },
+            "before": {
+              "name": "Reserve records and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:07Z",
+              "completed_at": "2026-11-07T18:44:09Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:52:44Z",
+              "completed_at": "2026-11-07T18:52:45Z"
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:52:45Z",
+              "completed_at": "2026-11-07T18:52:45Z"
+            }
+          },
+          "current_steps": [],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695715,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:31Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041706",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "factorial",
+          "arch": "x64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:05Z",
+              "completed_at": "2026-11-07T18:44:09Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:09Z",
+              "completed_at": "2026-11-07T18:44:11Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Prepare pinned provider required by native all-feature controls"
+          ],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695716,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 fresh challenge service (x64, head)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-07T18:43:31Z",
+          "completed_at": "2026-11-07T18:49:04Z",
+          "runner_name": "GitHub Actions 1000041710",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "fresh",
+          "arch": "x64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:05Z",
+              "completed_at": "2026-11-07T18:44:09Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:09Z",
+              "completed_at": "2026-11-07T18:44:10Z"
+            },
+            "after": {
+              "name": "Verify observed source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:48:58Z",
+              "completed_at": "2026-11-07T18:49:00Z"
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:49:00Z",
+              "completed_at": "2026-11-07T18:49:00Z"
+            }
+          },
+          "current_steps": [],
+          "failed_steps": [
+            {
+              "name": "Execute original and fresh service with original Host resources",
+              "status": "completed",
+              "conclusion": "failure",
+              "started_at": "2026-11-07T18:44:41Z",
+              "completed_at": "2026-11-07T18:48:58Z"
+            }
+          ],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695717,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 complete legal strategies (v2, arm64, head)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:33Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041700",
+          "labels": [
+            "ubuntu-24.04-arm"
+          ],
+          "family": "legal-v2",
+          "arch": "arm64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:07Z",
+              "completed_at": "2026-11-07T18:44:10Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:10Z",
+              "completed_at": "2026-11-07T18:44:11Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Execute all thirty original-budget legal strategy shards"
+          ],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695730,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:33Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041716",
+          "labels": [
+            "ubuntu-24.04-arm"
+          ],
+          "family": "factorial",
+          "arch": "arm64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:04Z",
+              "completed_at": "2026-11-07T18:44:07Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:07Z",
+              "completed_at": "2026-11-07T18:44:08Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Prepare pinned provider required by native all-feature controls"
+          ],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695738,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 factorial legal strategies v3 (x64, head)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:31Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041712",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "factorial",
+          "arch": "x64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:30Z",
+              "completed_at": "2026-11-07T18:44:34Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:34Z",
+              "completed_at": "2026-11-07T18:44:35Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Run strict native lint for all affected owners"
+          ],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695743,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 complete legal strategies (v1, arm64, prospective-merge)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-07T18:43:33Z",
+          "completed_at": "2026-11-07T18:52:06Z",
+          "runner_name": "GitHub Actions 1000041714",
+          "labels": [
+            "ubuntu-24.04-arm"
+          ],
+          "family": "legal-v1",
+          "arch": "arm64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:15Z",
+              "completed_at": "2026-11-07T18:44:17Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:17Z",
+              "completed_at": "2026-11-07T18:44:19Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:51:57Z",
+              "completed_at": "2026-11-07T18:51:58Z"
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:51:58Z",
+              "completed_at": "2026-11-07T18:51:58Z"
+            }
+          },
+          "current_steps": [],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695748,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 complete legal strategies (v1, x64, head)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-07T18:43:31Z",
+          "completed_at": "2026-11-07T18:52:48Z",
+          "runner_name": "GitHub Actions 1000041708",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "legal-v1",
+          "arch": "x64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:10Z",
+              "completed_at": "2026-11-07T18:44:13Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:13Z",
+              "completed_at": "2026-11-07T18:44:15Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:52:39Z",
+              "completed_at": "2026-11-07T18:52:40Z"
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:52:40Z",
+              "completed_at": "2026-11-07T18:52:40Z"
+            }
+          },
+          "current_steps": [],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695753,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 paid rank and batch v5 (x64, head)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-07T18:43:31Z",
+          "completed_at": "2026-11-07T18:52:49Z",
+          "runner_name": "GitHub Actions 1000041711",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "rank-batch",
+          "arch": "x64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:02Z",
+              "completed_at": "2026-11-07T18:44:06Z"
+            },
+            "before": {
+              "name": "Reserve records and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:06Z",
+              "completed_at": "2026-11-07T18:44:08Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:52:41Z",
+              "completed_at": "2026-11-07T18:52:43Z"
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:52:43Z",
+              "completed_at": "2026-11-07T18:52:43Z"
+            }
+          },
+          "current_steps": [],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695759,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 complete legal strategies (v2, x64, head)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-07T18:43:31Z",
+          "completed_at": "2026-11-07T18:51:34Z",
+          "runner_name": "GitHub Actions 1000041707",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "legal-v2",
+          "arch": "x64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:43:57Z",
+              "completed_at": "2026-11-07T18:44:00Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:00Z",
+              "completed_at": "2026-11-07T18:44:01Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:51:20Z",
+              "completed_at": "2026-11-07T18:51:21Z"
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:51:21Z",
+              "completed_at": "2026-11-07T18:51:21Z"
+            }
+          },
+          "current_steps": [],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695770,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 complete legal strategies (v1, x64, prospective-merge)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-07T18:43:31Z",
+          "completed_at": "2026-11-07T18:51:18Z",
+          "runner_name": "GitHub Actions 1000041709",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "legal-v1",
+          "arch": "x64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:22Z",
+              "completed_at": "2026-11-07T18:44:25Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:25Z",
+              "completed_at": "2026-11-07T18:44:27Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:51:09Z",
+              "completed_at": "2026-11-07T18:51:11Z"
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:51:11Z",
+              "completed_at": "2026-11-07T18:51:11Z"
+            }
+          },
+          "current_steps": [],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695771,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:33Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041698",
+          "labels": [
+            "ubuntu-24.04-arm"
+          ],
+          "family": "legal-v2",
+          "arch": "arm64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:05Z",
+              "completed_at": "2026-11-07T18:44:08Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:08Z",
+              "completed_at": "2026-11-07T18:44:09Z"
+            },
+            "after": {
+              "name": "Verify measured source after execution",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Execute all thirty original-budget legal strategy shards"
+          ],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493695831,
+          "run_id": 42402618462,
+          "run_attempt": 1,
+          "name": "W1 fresh challenge service (x64, prospective-merge)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-07T18:43:31Z",
+          "completed_at": "2026-11-07T18:48:27Z",
+          "runner_name": "GitHub Actions 1000041713",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "fresh",
+          "arch": "x64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:06Z",
+              "completed_at": "2026-11-07T18:44:10Z"
+            },
+            "before": {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:10Z",
+              "completed_at": "2026-11-07T18:44:11Z"
+            },
+            "after": {
+              "name": "Verify observed source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:48:20Z",
+              "completed_at": "2026-11-07T18:48:21Z"
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:48:21Z",
+              "completed_at": "2026-11-07T18:48:21Z"
+            }
+          },
+          "current_steps": [],
+          "failed_steps": [
+            {
+              "name": "Execute original and fresh service with original Host resources",
+              "status": "completed",
+              "conclusion": "failure",
+              "started_at": "2026-11-07T18:44:42Z",
+              "completed_at": "2026-11-07T18:48:20Z"
+            }
+          ],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493671755,
+          "run_id": 42402618518,
+          "run_attempt": 1,
+          "name": "native priorities (ubuntu-24.04, head, state)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:24Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041685",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "state",
+          "arch": "x64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:43:51Z",
+              "completed_at": "2026-11-07T18:43:54Z"
+            },
+            "before": {
+              "name": "Verify source and original project boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:43:54Z",
+              "completed_at": "2026-11-07T18:43:55Z"
+            },
+            "after": {
+              "name": "Reverify exact unchanged source",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Execute original native full-capacity test"
+          ],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493671759,
+          "run_id": 42402618518,
+          "run_attempt": 1,
+          "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:27Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041683",
+          "labels": [
+            "ubuntu-24.04-arm"
+          ],
+          "family": "service-model",
+          "arch": "arm64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:14Z",
+              "completed_at": "2026-11-07T18:44:17Z"
+            },
+            "before": {
+              "name": "Verify source and original project boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:17Z",
+              "completed_at": "2026-11-07T18:44:19Z"
+            },
+            "after": {
+              "name": "Reverify exact unchanged source",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Execute original public service cancellation and actual CPU accounting controls"
+          ],
+          "failed_steps": [
+            {
+              "name": "Execute original release from-zero controls",
+              "status": "completed",
+              "conclusion": "failure",
+              "started_at": "2026-11-07T18:44:37Z",
+              "completed_at": "2026-11-07T18:49:06Z"
+            }
+          ],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493671763,
+          "run_id": 42402618518,
+          "run_attempt": 1,
+          "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:27Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041684",
+          "labels": [
+            "ubuntu-24.04-arm"
+          ],
+          "family": "state",
+          "arch": "arm64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:43:59Z",
+              "completed_at": "2026-11-07T18:44:02Z"
+            },
+            "before": {
+              "name": "Verify source and original project boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:02Z",
+              "completed_at": "2026-11-07T18:44:04Z"
+            },
+            "after": {
+              "name": "Reverify exact unchanged source",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Execute original native full-capacity test"
+          ],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493671778,
+          "run_id": 42402618518,
+          "run_attempt": 1,
+          "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:24Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041686",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "service-model",
+          "arch": "x64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:10Z",
+              "completed_at": "2026-11-07T18:44:12Z"
+            },
+            "before": {
+              "name": "Verify source and original project boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:12Z",
+              "completed_at": "2026-11-07T18:44:13Z"
+            },
+            "after": {
+              "name": "Reverify exact unchanged source",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Execute original public service cancellation and actual CPU accounting controls"
+          ],
+          "failed_steps": [
+            {
+              "name": "Execute original release from-zero controls",
+              "status": "completed",
+              "conclusion": "failure",
+              "started_at": "2026-11-07T18:44:30Z",
+              "completed_at": "2026-11-07T18:47:47Z"
+            }
+          ],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493671802,
+          "run_id": 42402618518,
+          "run_attempt": 1,
+          "name": "native priorities (ubuntu-24.04, head, history)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:25Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041687",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "history",
+          "arch": "x64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:43:58Z",
+              "completed_at": "2026-11-07T18:44:02Z"
+            },
+            "before": {
+              "name": "Verify source and original project boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:02Z",
+              "completed_at": "2026-11-07T18:44:04Z"
+            },
+            "after": {
+              "name": "Reverify exact unchanged source",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Execute 4105 real work blocks and paid public full sync"
+          ],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493671818,
+          "run_id": 42402618518,
+          "run_attempt": 1,
+          "name": "native priorities (ubuntu-24.04-arm, head, state)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:27Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041691",
+          "labels": [
+            "ubuntu-24.04-arm"
+          ],
+          "family": "state",
+          "arch": "arm64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:17Z",
+              "completed_at": "2026-11-07T18:44:21Z"
+            },
+            "before": {
+              "name": "Verify source and original project boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:21Z",
+              "completed_at": "2026-11-07T18:44:22Z"
+            },
+            "after": {
+              "name": "Reverify exact unchanged source",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Execute original native full-capacity test"
+          ],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493671825,
+          "run_id": 42402618518,
+          "run_attempt": 1,
+          "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:27Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041694",
+          "labels": [
+            "ubuntu-24.04-arm"
+          ],
+          "family": "service-model",
+          "arch": "arm64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:43:59Z",
+              "completed_at": "2026-11-07T18:44:03Z"
+            },
+            "before": {
+              "name": "Verify source and original project boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:03Z",
+              "completed_at": "2026-11-07T18:44:04Z"
+            },
+            "after": {
+              "name": "Reverify exact unchanged source",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Execute original public service cancellation and actual CPU accounting controls"
+          ],
+          "failed_steps": [
+            {
+              "name": "Execute original release from-zero controls",
+              "status": "completed",
+              "conclusion": "failure",
+              "started_at": "2026-11-07T18:44:22Z",
+              "completed_at": "2026-11-07T18:48:46Z"
+            }
+          ],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493671829,
+          "run_id": 42402618518,
+          "run_attempt": 1,
+          "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:27Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041692",
+          "labels": [
+            "ubuntu-24.04-arm"
+          ],
+          "family": "history",
+          "arch": "arm64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:43:58Z",
+              "completed_at": "2026-11-07T18:44:02Z"
+            },
+            "before": {
+              "name": "Verify source and original project boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:02Z",
+              "completed_at": "2026-11-07T18:44:03Z"
+            },
+            "after": {
+              "name": "Reverify exact unchanged source",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Execute 4105 real work blocks and paid public full sync"
+          ],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493671830,
+          "run_id": 42402618518,
+          "run_attempt": 1,
+          "name": "native priorities (ubuntu-24.04, head, service-model)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:25Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041688",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "service-model",
+          "arch": "x64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:43:58Z",
+              "completed_at": "2026-11-07T18:44:02Z"
+            },
+            "before": {
+              "name": "Verify source and original project boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:02Z",
+              "completed_at": "2026-11-07T18:44:03Z"
+            },
+            "after": {
+              "name": "Reverify exact unchanged source",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Execute original public service cancellation and actual CPU accounting controls"
+          ],
+          "failed_steps": [
+            {
+              "name": "Execute original release from-zero controls",
+              "status": "completed",
+              "conclusion": "failure",
+              "started_at": "2026-11-07T18:44:25Z",
+              "completed_at": "2026-11-07T18:49:02Z"
+            }
+          ],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493671835,
+          "run_id": 42402618518,
+          "run_attempt": 1,
+          "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:25Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041689",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "state",
+          "arch": "x64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:43:59Z",
+              "completed_at": "2026-11-07T18:44:03Z"
+            },
+            "before": {
+              "name": "Verify source and original project boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:03Z",
+              "completed_at": "2026-11-07T18:44:05Z"
+            },
+            "after": {
+              "name": "Reverify exact unchanged source",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Execute original native full-capacity test"
+          ],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493671854,
+          "run_id": 42402618518,
+          "run_attempt": 1,
+          "name": "native priorities (ubuntu-24.04-arm, head, history)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:27Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041693",
+          "labels": [
+            "ubuntu-24.04-arm"
+          ],
+          "family": "history",
+          "arch": "arm64",
+          "source": "head",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:00Z",
+              "completed_at": "2026-11-07T18:44:03Z"
+            },
+            "before": {
+              "name": "Verify source and original project boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:03Z",
+              "completed_at": "2026-11-07T18:44:04Z"
+            },
+            "after": {
+              "name": "Reverify exact unchanged source",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Execute 4105 real work blocks and paid public full sync"
+          ],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        },
+        {
+          "id": 128493671940,
+          "run_id": 42402618518,
+          "run_attempt": 1,
+          "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-07T18:43:25Z",
+          "completed_at": null,
+          "runner_name": "GitHub Actions 1000041690",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "family": "history",
+          "arch": "x64",
+          "source": "prospective-merge",
+          "source_controls": {
+            "materialize": {
+              "name": "Reproduce the frozen integration-push source",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:43:59Z",
+              "completed_at": "2026-11-07T18:44:02Z"
+            },
+            "before": {
+              "name": "Verify source and original project boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-07T18:44:02Z",
+              "completed_at": "2026-11-07T18:44:04Z"
+            },
+            "after": {
+              "name": "Reverify exact unchanged source",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            "context": {
+              "name": "Preserve this lane's actual push source context",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          },
+          "current_steps": [
+            "Execute 4105 real work blocks and paid public full sync"
+          ],
+          "failed_steps": [],
+          "artifact_readback_status": "NOT_EVALUATED_BY_METADATA",
+          "native_gate_validated": false
+        }
+      ],
+      "auxiliary": [
+        {
+          "id": 128493479159,
+          "run_id": 42402618462,
+          "name": "Freeze actual integration push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 128493479963,
+          "run_id": 42402618518,
+          "name": "retained-pressure-failure",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 128493480004,
+          "run_id": 42402618518,
+          "name": "Freeze actual integration push source",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 13586691635,
+      "name": "w1-rank-batch-v5-head-x64-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 45105785,
+      "digest": "sha256:589293114da744680c85b81e68bc4ea650b9ab0cc92b748881fbd91695ba04c6",
+      "expired": false,
+      "created_at": "2026-11-07T18:52:47Z",
+      "updated_at": "2026-11-07T18:52:47Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13586686618,
+      "name": "w1-false-trace-prospective-merge-x64-28df21f965e0348690836c9c854dab645827a03d-1",
+      "size_in_bytes": 5571609,
+      "digest": "sha256:37760c10cc44d25b56a3f8f16cf695dd2310df747c7972da018f249a467c2182",
+      "expired": false,
+      "created_at": "2026-11-07T18:51:49Z",
+      "updated_at": "2026-11-07T18:51:49Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13586660807,
+      "name": "w1-legal-strategy-prospective-merge-x64-28df21f965e0348690836c9c854dab645827a03d-1",
+      "size_in_bytes": 35964047,
+      "digest": "sha256:6c8c6da997690aa8da7499537f47fddb64d8ae74559f5e30df47687f3a72d6a1",
+      "expired": false,
+      "created_at": "2026-11-07T18:51:14Z",
+      "updated_at": "2026-11-07T18:51:14Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13586616233,
+      "name": "w1-rank-batch-v5-prospective-merge-arm64-28df21f965e0348690836c9c854dab645827a03d-1",
+      "size_in_bytes": 45039428,
+      "digest": "sha256:8d6f72ec358f49d11127d6ff09d895c3642b69798e7fa98f8b5c7a6bf9c9a188",
+      "expired": false,
+      "created_at": "2026-11-07T18:52:03Z",
+      "updated_at": "2026-11-07T18:52:03Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13586616185,
+      "name": "w1-legal-strategy-v2-head-x64-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 140607077,
+      "digest": "sha256:bcce993f4795c50b1ca5710994b2bbf351552994c8df5ee4f192d591a946c3a4",
+      "expired": false,
+      "created_at": "2026-11-07T18:51:31Z",
+      "updated_at": "2026-11-07T18:51:31Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13586581750,
+      "name": "w1-fresh-service-head-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 5525534,
+      "digest": "sha256:5bcae89f4f14aa35bd7cf6ca84fd329bb4e648ac45cc49d91c74f77cb5b27451",
+      "expired": false,
+      "created_at": "2026-11-07T18:49:01Z",
+      "updated_at": "2026-11-07T18:49:01Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13586536526,
+      "name": "w1-rank-batch-v5-prospective-merge-x64-28df21f965e0348690836c9c854dab645827a03d-1",
+      "size_in_bytes": 45108509,
+      "digest": "sha256:b6fe37dd45f84c4b6ebeff790ac2d1e613be4955b7f900a34a5d022a46e20fab",
+      "expired": false,
+      "created_at": "2026-11-07T18:52:49Z",
+      "updated_at": "2026-11-07T18:52:49Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13586482467,
+      "name": "w1-legal-strategy-prospective-merge-arm64-28df21f965e0348690836c9c854dab645827a03d-1",
+      "size_in_bytes": 35957706,
+      "digest": "sha256:aafda9013de74c359062dca9ab21969b3a94adfd11e53de8cd9f1950557a4430",
+      "expired": false,
+      "created_at": "2026-11-07T18:52:02Z",
+      "updated_at": "2026-11-07T18:52:02Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13586467463,
+      "name": "w1-rank-batch-v5-head-arm64-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 45041931,
+      "digest": "sha256:032c0088864254e61e5bdee931ecad188f50307780529e30e82324796b12b6b3",
+      "expired": false,
+      "created_at": "2026-11-07T18:52:10Z",
+      "updated_at": "2026-11-07T18:52:10Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13586462531,
+      "name": "w1-false-trace-head-arm64-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 5555008,
+      "digest": "sha256:7d33e8d542921b3a335e5242aa5251893687fbfb6d6699e2810228ecda8dfbfa",
+      "expired": false,
+      "created_at": "2026-11-07T18:52:02Z",
+      "updated_at": "2026-11-07T18:52:02Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13586332713,
+      "name": "w1-false-trace-head-x64-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 5571925,
+      "digest": "sha256:b827fdd429d518b24a53c7dd7ace1d65bf43a874eb932bb0860c9f94ac959bf3",
+      "expired": false,
+      "created_at": "2026-11-07T18:50:38Z",
+      "updated_at": "2026-11-07T18:50:38Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13586257049,
+      "name": "w1-legal-strategy-head-x64-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 35968945,
+      "digest": "sha256:f1a2f4bd5c6915f631f166251d2120908fe8ac94765c08ac21d8ff9e7456baf3",
+      "expired": false,
+      "created_at": "2026-11-07T18:52:45Z",
+      "updated_at": "2026-11-07T18:52:45Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13586108382,
+      "name": "w1-legal-strategy-head-arm64-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 35957803,
+      "digest": "sha256:ce587a522eb334d30aa07eb6960f11f6aebbe0e0803272ac982adcce24894c3d",
+      "expired": false,
+      "created_at": "2026-11-07T18:52:19Z",
+      "updated_at": "2026-11-07T18:52:19Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13586043542,
+      "name": "w1-false-trace-prospective-merge-arm64-28df21f965e0348690836c9c854dab645827a03d-1",
+      "size_in_bytes": 5555051,
+      "digest": "sha256:5febfc19867dd5296940a94079edde5146ade58fb4d9a6f075f5b999862f4aae",
+      "expired": false,
+      "created_at": "2026-11-07T18:52:16Z",
+      "updated_at": "2026-11-07T18:52:16Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13585963261,
+      "name": "w1-fresh-service-prospective-merge-28df21f965e0348690836c9c854dab645827a03d-1",
+      "size_in_bytes": 5622867,
+      "digest": "sha256:5bbd11368d4c893b3c80ed488bb519b7aff365e0cb46f61b48abf24dbff89591",
+      "expired": false,
+      "created_at": "2026-11-07T18:48:23Z",
+      "updated_at": "2026-11-07T18:48:23Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13584974949,
+      "name": "integration-push-source-42402618462-1",
+      "size_in_bytes": 1363,
+      "digest": "sha256:3e309a7049f917ec0aa9680066afab2e939bc597512bb44b1806a92970eceeca",
+      "expired": false,
+      "created_at": "2026-11-07T18:43:26Z",
+      "updated_at": "2026-11-07T18:43:26Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13585647797,
+      "name": "integration-push-source-42402618518-1",
+      "size_in_bytes": 1362,
+      "digest": "sha256:9c5ef9faf60ce9e36a817633fc10493b3f11d12248fb39c977d4bee1d2d96a1e",
+      "expired": false,
+      "created_at": "2026-11-07T18:43:20Z",
+      "updated_at": "2026-11-07T18:43:20Z",
+      "workflow_run": {
+        "id": 42402618518,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    }
+  ],
+  "native_gate_validated": false
+}

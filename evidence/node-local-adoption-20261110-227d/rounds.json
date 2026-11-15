@@ -1,0 +1,205 @@
+{
+  "all_rounds_passed_claim": false,
+  "rounds": [
+    {
+      "cargo_exit_code": null,
+      "compiler_signal": 9,
+      "files": [
+        "adoption-first-tests.log",
+        "initial-cargo-check.log",
+        "fmt-initial-check.log"
+      ],
+      "id": "pre_freeze_compile",
+      "missing_receipt": "No structured command/exit/source receipt was retained for the initial SIGKILL or fmt log; do not infer one from later runs.",
+      "native_tests_executed_in_failed_libtest": 0,
+      "observed": "Initial libtest compilation ended with rustc signal 9 SIGKILL before tests ran. The earlier library check completed with an unused-import warning. Initial fmt output contains a formatting difference.",
+      "source_state": "unfrozen-working-tree; exact snapshot not retained in these logs"
+    },
+    {
+      "exit_code": 101,
+      "files": [
+        "cell-adoption-cli-first.log",
+        "cell-adoption-cli-first-result.json"
+      ],
+      "fix": "Fixture now imports real temporary payload bytes through public CellStoreV1::pack_file; production visibility was not expanded.",
+      "id": "pre_freeze_cli_constructor",
+      "observed": "E0624: integration fixture called private CellManifestV1::new; compilation failed before CLI tests ran.",
+      "source_state": "unfrozen-working-tree; exact source snapshot not in retained result"
+    },
+    {
+      "files": [
+        "repository-and-links.log",
+        "ci-contract.log",
+        "source-integrity-negatives.log",
+        "cell-learning-iteration-compatibility.log",
+        "cell-learning-completion-compatibility.log",
+        "cell-learning-scope-compatibility.log",
+        "cell-learning-reader-compatibility-result.json"
+      ],
+      "id": "pre_freeze_static",
+      "learning_reader_tests": 51,
+      "observed": "Static repository/CI reports and Python tests passed in their recorded scopes; CI declarations are not executed native controls.",
+      "source_integrity_tests": 43,
+      "source_state": "dirty candidate over df927b6ffaecff293b9e9428e3ba516f47cd101a; later reader run retains file SHA-256 pins"
+    },
+    {
+      "exclude_prefix": "frozen-4668fd87f1/static/",
+      "exit_code": 101,
+      "failed": 11,
+      "id": "frozen_4668_cli",
+      "observed": "Production correctly rejected test operator directories that did not meet the required private-directory permissions.",
+      "passed": 0,
+      "prefix": "frozen-4668fd87f1/",
+      "source_state": "frozen 4668fd87f1c4c7f6f4e206572e817a0c22201582"
+    },
+    {
+      "cargo_metadata_packages": 177,
+      "id": "frozen_4668_static",
+      "learning_reader_tests": 51,
+      "observed": "Static commands and all 94 Python tests passed; final source guard refused dirty source before a full rescan. Aggregate all_passed remains false.",
+      "prefix": "frozen-4668fd87f1/static/",
+      "source_after_exit_code": 1,
+      "source_before_exit_code": 0,
+      "source_integrity_tests": 43,
+      "source_state": "clean 4668fd87 before; same HEAD with three authorized Rust fixture changes after",
+      "workspace_members": 26
+    },
+    {
+      "exit_code": 0,
+      "failed": 0,
+      "id": "cli_fixture_fix",
+      "observed": "Test-owned operator directories were canonicalized and provisioned 0700; operator files remain private. Production checks were not weakened.",
+      "passed": 11,
+      "prefix": "cli-fixture-permission-fix/",
+      "source_state": "4668fd87 plus retained, unchanged working patch; not a clean 68595 native run"
+    },
+    {
+      "files": [
+        "h-channel-probes.json"
+      ],
+      "id": "h_channel_probe",
+      "observed": "Configured-host read and exact Mac identity probe returned MCP Internal error. Identity-process launch is unknown and no job ID exists; no new-key retry occurred. Connector identity does not establish the HeptaRuntime channel.",
+      "publishing_scope": "No remote Git write occurred in this retained probe. A later connector publication is a separate planned action, not evidence that H recovered.",
+      "source_state": "read-only publishing-channel probe; no remote Git write",
+      "status": "probe-error-at-recorded-time"
+    },
+    {
+      "elapsed_seconds": 1215.568,
+      "exit_code": 101,
+      "id": "frozen_68595_native",
+      "observed": "Original all-targets/all-features -j1 --test-threads=1 run failed compiling libtest with rustc SIGKILL 9 before any test result. Cause beyond the signal is not established. Original CLI binary identity is retained separately and supplies no libtest success.",
+      "profile_overrides": {},
+      "source_state": "clean 68595a91127e14fd598b17215d7c2c3e4f8f2d62 before/after; original repository test profile",
+      "source_unchanged": true,
+      "tests_started_observed": false
+    },
+    {
+      "elapsed_seconds": 178.709,
+      "exit_code": 101,
+      "id": "frozen_68595_clippy",
+      "observed": "Strict all-targets/all-features Clippy refused one manual_is_multiple_of lint under -D warnings. Clippy executes no native tests.",
+      "profile_overrides": {},
+      "source_state": "68595a91127e14fd598b17215d7c2c3e4f8f2d62; original profile"
+    },
+    {
+      "elapsed_seconds": 81.084,
+      "exit_code": 101,
+      "id": "clippy_fix_dirty_68595",
+      "observed": "After the equivalent is_multiple_of fix, strict all-targets Clippy failed during libtest metadata compilation with SIGKILL 9. This remains a failed gate.",
+      "profile_overrides": {},
+      "source_state": "68595a91127e14fd598b17215d7c2c3e4f8f2d62 plus retained patch 96705308b19a36929c1deeee8150126e883ad4e091848bfcbfd5ff9f516530cf; original profile"
+    },
+    {
+      "id": "h_channel_recheck",
+      "observed": "MCP Internal error persisted; launch status unknown, no job ID, no fresh-key retry, no remote Git write.",
+      "publishing_scope": "No remote Git write occurred in this retained probe. A later connector publication is a separate planned action, not evidence that H recovered.",
+      "source_state": "one exact same-key reconciliation of the earlier read-only Mac identity request",
+      "status": "probe-error-at-recorded-time"
+    },
+    {
+      "all_static_checks_passed": false,
+      "cargo_metadata_packages": 177,
+      "full_source_guard_runs": 1,
+      "id": "frozen_95a2_static",
+      "learning_reader_tests": 51,
+      "observed": "Repository/CI/94 Python tests/locked offline metadata/full source guard passed. cargo fmt --all --check exited 1 for one cell.rs residency re-export ordering difference. No Cargo build/test/clippy was run in this static round.",
+      "source_integrity_tests": 43,
+      "source_state": "clean exact 95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13 before and after; task-file SHA256 unchanged",
+      "tracked_bytes": 2551682835,
+      "tracked_entries": 27867,
+      "workspace_members": 26
+    },
+    {
+      "elapsed_seconds": 186.621,
+      "exit_code": 0,
+      "failed": 0,
+      "id": "frozen_95a2_diagnostic",
+      "observed": "Diagnostic behavior completed; it is retained separately and is not counted again or substituted for original-profile acceptance.",
+      "passed": 741,
+      "profile_overrides": {
+        "profile.test.package.trnm-data-availability.debug": 0
+      },
+      "source_state": "clean 95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13; explicit package debug=0 diagnostic"
+    },
+    {
+      "elapsed_seconds": 6.204,
+      "exit_code": 0,
+      "failed": 0,
+      "id": "frozen_95a2_original_cli",
+      "observed": "Targeted CLI subprocess suite; repeated controls are not added to the later 786 total.",
+      "passed": 11,
+      "profile_overrides": {},
+      "source_state": "clean 95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13; original profile"
+    },
+    {
+      "elapsed_seconds": 103.473,
+      "exit_code": 0,
+      "failed": 0,
+      "id": "frozen_95a2_release_boundaries",
+      "observed": "Original trnm-release-bundle authority-boundary tests relevant to M15; package and dependency source remain unchanged at b9. This is a separate package, not part of the 786 DA total.",
+      "passed": 55,
+      "profile_overrides": {},
+      "source_state": "clean 95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13; original profile"
+    },
+    {
+      "elapsed_seconds": 13.276,
+      "exit_code": 0,
+      "id": "frozen_95a2_production_clippy",
+      "observed": "Strict --lib --bins --all-features Clippy; no native tests executed by Clippy.",
+      "profile_overrides": {},
+      "source_state": "clean 95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13; original profile"
+    },
+    {
+      "id": "frozen_95a2_native_metadata",
+      "observed": "Summary/source metadata refers to the separately retained commands; it is not an additional execution.",
+      "source_state": "shared 95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13 source and command summaries"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "format_elapsed_seconds": 23.768,
+      "format_exit_code": 0,
+      "id": "frozen_b9_original_acceptance",
+      "ignored": 0,
+      "integration_passed": 45,
+      "library_passed": 741,
+      "native_elapsed_seconds": 234.619,
+      "native_exit_code": 0,
+      "new_cli_controls_included": 11,
+      "new_library_controls_included": 26,
+      "observed": "Full locked/offline DA all-targets/all-features -j1 --test-threads=1 run, full strict all-targets Clippy, and workspace fmt passed on this source. New 26 library and 11 CLI controls are subsets of 786. Historical failures and diagnostic repeats remain separate.",
+      "passed": 786,
+      "profile_overrides": {},
+      "source_state": "clean b9a38fd6d245e20849c7edd848dbbe18298cad7e before/after; original repository profile",
+      "strict_clippy_elapsed_seconds": 51.206,
+      "strict_clippy_exit_code": 0
+    },
+    {
+      "id": "b9_private_cache_release",
+      "observed": "After terminal original-profile acceptance, four tested binary SHA256 records were saved and the private target removed to free space. No source, evidence, shared registry, or Hepta target was removed. These are identity/cleanup observations, not additional tests.",
+      "source_state": "post-validation cleanup of this task-owned regenerable DA Cargo target; source and evidence retained"
+    }
+  ],
+  "schema": "trnm.node-local-adoption.evidence-rounds.v1",
+  "scope": "engineering evidence; preserve failures and separate source states"
+}

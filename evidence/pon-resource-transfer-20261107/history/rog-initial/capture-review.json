@@ -1,0 +1,76 @@
+{
+  "all_original_hashes_rechecked": true,
+  "archive_root": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-initial-v0",
+  "commands_passed": 24,
+  "commands_planned": 24,
+  "helper_sha256": "36d32c3095034f86acee93881018c683323a84ceb3aeaa4f5995dc08e417104f",
+  "history_only_not_final_canonical_validation": true,
+  "original_files_unchanged": true,
+  "original_summary_status": "PASS",
+  "python_original_files": [
+    {
+      "bytes": 75530,
+      "original_path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/receipts/python-install-v0.json",
+      "relative_path": "receipts/python-install-v0.json",
+      "sha256": "bdcc25d89db21c539c2cdb0b09bb877c33dedf1e3aad150ab1ef3a3ad6e17948"
+    },
+    {
+      "bytes": 311,
+      "original_path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/receipts/python-versions-v0.json",
+      "relative_path": "receipts/python-versions-v0.json",
+      "sha256": "5c4b9fb8a38f2c251e3e4773f04b6a71f33b2219d5e2f7c887b8d6469d2ca4cd"
+    },
+    {
+      "bytes": 1950,
+      "original_path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/receipts/python-environment-setup-v0.json",
+      "relative_path": "receipts/python-environment-setup-v0.json",
+      "sha256": "a7e81fbe544296acaa3d7596ea94db0ca13d37ffcce92f7e1011fa2b644a8840"
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/logs/python-venv-create-v0.log",
+      "relative_path": "logs/python-venv-create-v0.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1740,
+      "original_path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/logs/python-pip-install-v0.log",
+      "relative_path": "logs/python-pip-install-v0.log",
+      "sha256": "4c9b5429c3cb2315749180ebbad4d13b53780277f0cb0fa6d44222ba635f03f9"
+    }
+  ],
+  "schema": "pon-rog-initial-history-capture-v0",
+  "unqualified_warning_lines": [
+    {
+      "file": "authority-native-build.log",
+      "line": 1,
+      "text": "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\"]; observed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/release\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/release/deps\"]; allowed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/release\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/release/deps\"]"
+    },
+    {
+      "file": "fresh-native-build.log",
+      "line": 50,
+      "text": "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\"]; observed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/release\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/release/deps\"]; allowed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/release\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/release/deps\"]"
+    },
+    {
+      "file": "native-fresh-admission.log",
+      "line": 1,
+      "text": "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\"]; observed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug/deps\"]; allowed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug/deps\"]"
+    },
+    {
+      "file": "native-header-binding.log",
+      "line": 41,
+      "text": "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\"]; observed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug/deps\"]; allowed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug/deps\"]"
+    },
+    {
+      "file": "native-verification-authority.log",
+      "line": 1,
+      "text": "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\"]; observed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug/deps\"]; allowed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug/deps\"]"
+    },
+    {
+      "file": "strict-workspace-clippy.log",
+      "line": 72,
+      "text": "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\"]; observed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug/deps\"]; allowed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug/deps\"]"
+    }
+  ],
+  "validation_source": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/validation-exact-rog"
+}

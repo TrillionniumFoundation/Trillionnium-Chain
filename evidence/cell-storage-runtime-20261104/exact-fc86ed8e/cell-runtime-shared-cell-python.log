@@ -1,0 +1,14 @@
+test_bias_coordinate_cannot_be_truncated (test_shared_cell_operator_v1.SharedCellOperatorTests.test_bias_coordinate_cannot_be_truncated) ... ok
+test_frozen_model_input_and_bundle_tampering_is_refused (test_shared_cell_operator_v1.SharedCellOperatorTests.test_frozen_model_input_and_bundle_tampering_is_refused) ... ok
+test_in_range_wrong_operator_output_is_detected (test_shared_cell_operator_v1.SharedCellOperatorTests.test_in_range_wrong_operator_output_is_detected) ... ok
+test_material_only_is_not_a_completed_proof_run (test_shared_cell_operator_v1.SharedCellOperatorTests.test_material_only_is_not_a_completed_proof_run) ... ok
+test_missing_or_wrong_tile_is_refused (test_shared_cell_operator_v1.SharedCellOperatorTests.test_missing_or_wrong_tile_is_refused) ... ok
+test_native_failure_missing_verifier_or_truncation_cannot_pass (test_shared_cell_operator_v1.SharedCellOperatorTests.test_native_failure_missing_verifier_or_truncation_cannot_pass) ... ok
+test_native_proof_typed_product_and_request_binding (test_shared_cell_operator_v1.SharedCellOperatorTests.test_native_proof_typed_product_and_request_binding) ... ok
+test_noncanonical_padding_and_signed_range_are_refused (test_shared_cell_operator_v1.SharedCellOperatorTests.test_noncanonical_padding_and_signed_range_are_refused) ... ok
+test_real_source_all_257_features_and_complete_routing (test_shared_cell_operator_v1.SharedCellOperatorTests.test_real_source_all_257_features_and_complete_routing) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 1.507s
+
+OK

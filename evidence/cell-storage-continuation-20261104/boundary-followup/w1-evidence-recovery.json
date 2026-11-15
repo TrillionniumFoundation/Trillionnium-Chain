@@ -1,0 +1,86 @@
+{
+  "schema": "trnm-hash-bound-w1-evidence-recovery-v1",
+  "failed_integration_commit": "b72d44476a12ed1b0dbf0891556adf280eba661b",
+  "source_clone_origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+  "source_clone_modified": false,
+  "restored_files": [
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/lifecycle21-direct.log",
+      "bytes": 120,
+      "sha256": "1205ea3854b6568b5ab7e085e0cc3bd791eb48d468acebab0f025e1f71c0b6a6",
+      "git_blob_sha1": "9bad37729b369d430f21e1cbc4774f194e0fee82",
+      "declared_by": "evidence/pon-w1-statement-v2-20261105/workflow-lifecycle-followup.json",
+      "metadata_sha256": "aa39039f4846159a27ab8a640984844c932525966998c2a5d02ca395ecafe4bd",
+      "read_only_source_path": "/workspace/scratch/79360d3567d1/chain/evidence/pon-w1-statement-v2-20261105/lifecycle21-direct.log",
+      "original_absolute_log_path": null
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/interrupted-locked-build.log",
+      "bytes": 5078,
+      "sha256": "3539963d95dd72f3a37b3c98c8f1f75977139829bd8f65d460783ba475ec2ae1",
+      "git_blob_sha1": "9304eebf2c6ccd31348f844f0e8923f17078e112",
+      "declared_by": "evidence/pon-w1-statement-v2-20261105/interrupted-locked-build.json",
+      "metadata_sha256": "df44268378a9777e8b8f7f16c9b5bb515ea8d5eea77ffbf217d10583b97b2a73",
+      "read_only_source_path": "/workspace/scratch/79360d3567d1/chain/evidence/pon-w1-statement-v2-20261105/interrupted-locked-build.log",
+      "original_absolute_log_path": null
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/build-v2-recovered.log",
+      "bytes": 922,
+      "sha256": "cb72f52641dcaa3e948204204bbe9935924edf9e6e0c465eb6f740944287d321",
+      "git_blob_sha1": "6317d65e9e1a8b826d677d96c5f40dc8c8192276",
+      "declared_by": "evidence/pon-w1-statement-v2-20261105/build-v2-recovered.json",
+      "metadata_sha256": "37157fde6f44a39335ded2dcfc535cb3a48cdc62556401729ca454b38f2eca70",
+      "read_only_source_path": "/workspace/scratch/79360d3567d1/chain/evidence/pon-w1-statement-v2-20261105/build-v2-recovered.log",
+      "original_absolute_log_path": "/workspace/scratch/79360d3567d1/continuation-runtime/build-v2-recovered.log"
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/clippy-v2-recovered.log",
+      "bytes": 5593,
+      "sha256": "120a2ea4cf3c50938a442505e6e96624c0cdf58764353007b1ed661f8beb5943",
+      "git_blob_sha1": "0598523ee4c396e232f3908e981689095cd24d6e",
+      "declared_by": "evidence/pon-w1-statement-v2-20261105/clippy-v2-recovered.json",
+      "metadata_sha256": "26af97d1deed52920b54aef76df6dea44161a97b126a2502368241e2b6646d42",
+      "read_only_source_path": "/workspace/scratch/79360d3567d1/chain/evidence/pon-w1-statement-v2-20261105/clippy-v2-recovered.log",
+      "original_absolute_log_path": "/workspace/scratch/79360d3567d1/continuation-runtime/clippy-v2-recovered.log"
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/fmt-v2-recovered.log",
+      "bytes": 116,
+      "sha256": "e8e2c4d9f4d48940f39b92a51988c7018eb0daea3fec3034e11e1fd16044ea70",
+      "git_blob_sha1": "f63dd0562f778da93dfa7366f35d078683155ace",
+      "declared_by": "evidence/pon-w1-statement-v2-20261105/fmt-v2-recovered.json",
+      "metadata_sha256": "a412f96231dfeebaeb9d742b6f3f88d5b928a67ce962dc61589f421f90229910",
+      "read_only_source_path": "/workspace/scratch/79360d3567d1/chain/evidence/pon-w1-statement-v2-20261105/fmt-v2-recovered.log",
+      "original_absolute_log_path": "/workspace/scratch/79360d3567d1/continuation-runtime/fmt-v2-recovered.log"
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/preflight-v2-recovered.log",
+      "bytes": 214,
+      "sha256": "b4f637a2da972844afd89e1d36018496aef6fd6de8d1b3262750717a23f155a5",
+      "git_blob_sha1": "59c53398b4473fa6ee035834ca615cd8732d4640",
+      "declared_by": "evidence/pon-w1-statement-v2-20261105/preflight-v2-recovered.json",
+      "metadata_sha256": "ba6edc58a90eec6ba9d949e6f29889f89f0fe2635c4f7e8486acc3eaac479d0f",
+      "read_only_source_path": "/workspace/scratch/79360d3567d1/chain/evidence/pon-w1-statement-v2-20261105/preflight-v2-recovered.log",
+      "original_absolute_log_path": "/workspace/scratch/79360d3567d1/continuation-runtime/preflight-v2-recovered.log"
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/test-v2-recovered.log",
+      "bytes": 867,
+      "sha256": "c846d32307c010cfd66b4d1c56734c255310fd6b09d06b5635ce8a6cda12c962",
+      "git_blob_sha1": "3be62eced579b161234675fe03e5a405d70fc731",
+      "declared_by": "evidence/pon-w1-statement-v2-20261105/test-v2-recovered.json",
+      "metadata_sha256": "a4392853482cb40b6d8de79dc53ec348442927f000149d9bf623b019143555aa",
+      "read_only_source_path": "/workspace/scratch/79360d3567d1/chain/evidence/pon-w1-statement-v2-20261105/test-v2-recovered.log",
+      "original_absolute_log_path": "/workspace/scratch/79360d3567d1/continuation-runtime/test-v2-recovered.log"
+    }
+  ],
+  "all_preexisting_metadata_unchanged": true,
+  "all_hashes_match_preexisting_committed_declarations": true,
+  "reason": "Recover the missing linked original lifecycle log and six other metadata-bound original logs omitted by the *.log ignore rule. Preserve existing README links and absolute execution-snapshot paths.",
+  "scope": "These are original-session observations, not new executions on E or its evidence successor. Lifecycle metadata has no execution commit/tree, so the metadata-introduction commit is not treated as an execution identity.",
+  "native_tests_executed_by_recovery": 0,
+  "interrupted_build_observed_success": false,
+  "interrupted_build_exit_code": null,
+  "additional_unbound_logs_not_imported": 11
+}

@@ -1,0 +1,911 @@
+{
+  "schema": "selected-legal-cost-frontier-observation-v1",
+  "generated_utc": "2026-11-08T03:30:54.837079+00:00",
+  "upstream_manifest_sha256": "c19639f4cc9e560071e6564be6cec93621be00781d69e43d3853b9cde092e56f",
+  "draws_per_strategy": 512,
+  "strategies": [
+    {
+      "name": "dense_direct",
+      "preparation": {
+        "sha256_calls": 254,
+        "sha256_input_bytes": 68006,
+        "sha256_compression_blocks": 1146,
+        "scalar_multiplications": 0,
+        "scalar_additions": 0,
+        "field_equality_checks": 0,
+        "recognition_words": 0
+      },
+      "cache_after_preparation": {
+        "lookups": 0,
+        "hits": 0,
+        "misses": 0,
+        "computed_useful_products": 0,
+        "insertions": 0,
+        "entries": 0,
+        "capacity": 512,
+        "cached_result_payload_bytes": 0,
+        "coordinate_key_minimum_payload_bytes": 0,
+        "compiled_field_payload_bytes": 0,
+        "python_object_and_allocator_overhead_included": false
+      },
+      "horizons": {
+        "1": {
+          "whole_campaign": {
+            "sha256_calls": 294,
+            "sha256_input_bytes": 72899,
+            "sha256_compression_blocks": 1242,
+            "scalar_multiplications": 2048,
+            "scalar_additions": 1920,
+            "field_equality_checks": 0,
+            "recognition_words": 0
+          },
+          "cache": {
+            "lookups": 0,
+            "hits": 0,
+            "misses": 0,
+            "computed_useful_products": 1,
+            "insertions": 0,
+            "entries": 0,
+            "capacity": 512,
+            "cached_result_payload_bytes": 0,
+            "coordinate_key_minimum_payload_bytes": 0,
+            "compiled_field_payload_bytes": 0,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "45": {
+          "whole_campaign": {
+            "sha256_calls": 2054,
+            "sha256_input_bytes": 288191,
+            "sha256_compression_blocks": 5466,
+            "scalar_multiplications": 92160,
+            "scalar_additions": 86400,
+            "field_equality_checks": 0,
+            "recognition_words": 0
+          },
+          "cache": {
+            "lookups": 0,
+            "hits": 0,
+            "misses": 0,
+            "computed_useful_products": 45,
+            "insertions": 0,
+            "entries": 0,
+            "capacity": 512,
+            "cached_result_payload_bytes": 0,
+            "coordinate_key_minimum_payload_bytes": 0,
+            "compiled_field_payload_bytes": 0,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "128": {
+          "whole_campaign": {
+            "sha256_calls": 5374,
+            "sha256_input_bytes": 694310,
+            "sha256_compression_blocks": 13434,
+            "scalar_multiplications": 262144,
+            "scalar_additions": 245760,
+            "field_equality_checks": 0,
+            "recognition_words": 0
+          },
+          "cache": {
+            "lookups": 0,
+            "hits": 0,
+            "misses": 0,
+            "computed_useful_products": 128,
+            "insertions": 0,
+            "entries": 0,
+            "capacity": 512,
+            "cached_result_payload_bytes": 0,
+            "coordinate_key_minimum_payload_bytes": 0,
+            "compiled_field_payload_bytes": 0,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "512": {
+          "whole_campaign": {
+            "sha256_calls": 20734,
+            "sha256_input_bytes": 2573222,
+            "sha256_compression_blocks": 50298,
+            "scalar_multiplications": 1048576,
+            "scalar_additions": 983040,
+            "field_equality_checks": 0,
+            "recognition_words": 0
+          },
+          "cache": {
+            "lookups": 0,
+            "hits": 0,
+            "misses": 0,
+            "computed_useful_products": 512,
+            "insertions": 0,
+            "entries": 0,
+            "capacity": 512,
+            "cached_result_payload_bytes": 0,
+            "coordinate_key_minimum_payload_bytes": 0,
+            "compiled_field_payload_bytes": 0,
+            "python_object_and_allocator_overhead_included": false
+          }
+        }
+      },
+      "fresh_acceptance_replays": 6,
+      "all_witnesses_match_dense_direct": true
+    },
+    {
+      "name": "dense_eager",
+      "preparation": {
+        "sha256_calls": 254,
+        "sha256_input_bytes": 68006,
+        "sha256_compression_blocks": 1146,
+        "scalar_multiplications": 262144,
+        "scalar_additions": 229376,
+        "field_equality_checks": 0,
+        "recognition_words": 0
+      },
+      "cache_after_preparation": {
+        "lookups": 0,
+        "hits": 0,
+        "misses": 0,
+        "computed_useful_products": 512,
+        "insertions": 512,
+        "entries": 512,
+        "capacity": 512,
+        "cached_result_payload_bytes": 131072,
+        "coordinate_key_minimum_payload_bytes": 1024,
+        "compiled_field_payload_bytes": 0,
+        "python_object_and_allocator_overhead_included": false
+      },
+      "horizons": {
+        "1": {
+          "whole_campaign": {
+            "sha256_calls": 294,
+            "sha256_input_bytes": 72899,
+            "sha256_compression_blocks": 1242,
+            "scalar_multiplications": 263680,
+            "scalar_additions": 230848,
+            "field_equality_checks": 0,
+            "recognition_words": 0
+          },
+          "cache": {
+            "lookups": 1,
+            "hits": 1,
+            "misses": 0,
+            "computed_useful_products": 512,
+            "insertions": 512,
+            "entries": 512,
+            "capacity": 512,
+            "cached_result_payload_bytes": 131072,
+            "coordinate_key_minimum_payload_bytes": 1024,
+            "compiled_field_payload_bytes": 0,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "45": {
+          "whole_campaign": {
+            "sha256_calls": 2054,
+            "sha256_input_bytes": 288191,
+            "sha256_compression_blocks": 5466,
+            "scalar_multiplications": 331264,
+            "scalar_additions": 295616,
+            "field_equality_checks": 0,
+            "recognition_words": 0
+          },
+          "cache": {
+            "lookups": 45,
+            "hits": 45,
+            "misses": 0,
+            "computed_useful_products": 512,
+            "insertions": 512,
+            "entries": 512,
+            "capacity": 512,
+            "cached_result_payload_bytes": 131072,
+            "coordinate_key_minimum_payload_bytes": 1024,
+            "compiled_field_payload_bytes": 0,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "128": {
+          "whole_campaign": {
+            "sha256_calls": 5374,
+            "sha256_input_bytes": 694310,
+            "sha256_compression_blocks": 13434,
+            "scalar_multiplications": 458752,
+            "scalar_additions": 417792,
+            "field_equality_checks": 0,
+            "recognition_words": 0
+          },
+          "cache": {
+            "lookups": 128,
+            "hits": 128,
+            "misses": 0,
+            "computed_useful_products": 512,
+            "insertions": 512,
+            "entries": 512,
+            "capacity": 512,
+            "cached_result_payload_bytes": 131072,
+            "coordinate_key_minimum_payload_bytes": 1024,
+            "compiled_field_payload_bytes": 0,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "512": {
+          "whole_campaign": {
+            "sha256_calls": 20734,
+            "sha256_input_bytes": 2573222,
+            "sha256_compression_blocks": 50298,
+            "scalar_multiplications": 1048576,
+            "scalar_additions": 983040,
+            "field_equality_checks": 0,
+            "recognition_words": 0
+          },
+          "cache": {
+            "lookups": 512,
+            "hits": 512,
+            "misses": 0,
+            "computed_useful_products": 512,
+            "insertions": 512,
+            "entries": 512,
+            "capacity": 512,
+            "cached_result_payload_bytes": 131072,
+            "coordinate_key_minimum_payload_bytes": 1024,
+            "compiled_field_payload_bytes": 0,
+            "python_object_and_allocator_overhead_included": false
+          }
+        }
+      },
+      "fresh_acceptance_replays": 6,
+      "all_witnesses_match_dense_direct": true
+    },
+    {
+      "name": "dense_lazy_full",
+      "preparation": {
+        "sha256_calls": 254,
+        "sha256_input_bytes": 68006,
+        "sha256_compression_blocks": 1146,
+        "scalar_multiplications": 0,
+        "scalar_additions": 0,
+        "field_equality_checks": 0,
+        "recognition_words": 0
+      },
+      "cache_after_preparation": {
+        "lookups": 0,
+        "hits": 0,
+        "misses": 0,
+        "computed_useful_products": 0,
+        "insertions": 0,
+        "entries": 0,
+        "capacity": 512,
+        "cached_result_payload_bytes": 0,
+        "coordinate_key_minimum_payload_bytes": 0,
+        "compiled_field_payload_bytes": 0,
+        "python_object_and_allocator_overhead_included": false
+      },
+      "horizons": {
+        "1": {
+          "whole_campaign": {
+            "sha256_calls": 294,
+            "sha256_input_bytes": 72899,
+            "sha256_compression_blocks": 1242,
+            "scalar_multiplications": 2048,
+            "scalar_additions": 1920,
+            "field_equality_checks": 0,
+            "recognition_words": 0
+          },
+          "cache": {
+            "lookups": 1,
+            "hits": 0,
+            "misses": 1,
+            "computed_useful_products": 1,
+            "insertions": 1,
+            "entries": 1,
+            "capacity": 512,
+            "cached_result_payload_bytes": 256,
+            "coordinate_key_minimum_payload_bytes": 2,
+            "compiled_field_payload_bytes": 0,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "45": {
+          "whole_campaign": {
+            "sha256_calls": 2054,
+            "sha256_input_bytes": 288191,
+            "sha256_compression_blocks": 5466,
+            "scalar_multiplications": 91136,
+            "scalar_additions": 85504,
+            "field_equality_checks": 0,
+            "recognition_words": 0
+          },
+          "cache": {
+            "lookups": 45,
+            "hits": 2,
+            "misses": 43,
+            "computed_useful_products": 43,
+            "insertions": 43,
+            "entries": 43,
+            "capacity": 512,
+            "cached_result_payload_bytes": 11008,
+            "coordinate_key_minimum_payload_bytes": 86,
+            "compiled_field_payload_bytes": 0,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "128": {
+          "whole_campaign": {
+            "sha256_calls": 5374,
+            "sha256_input_bytes": 694310,
+            "sha256_compression_blocks": 13434,
+            "scalar_multiplications": 254976,
+            "scalar_additions": 239488,
+            "field_equality_checks": 0,
+            "recognition_words": 0
+          },
+          "cache": {
+            "lookups": 128,
+            "hits": 14,
+            "misses": 114,
+            "computed_useful_products": 114,
+            "insertions": 114,
+            "entries": 114,
+            "capacity": 512,
+            "cached_result_payload_bytes": 29184,
+            "coordinate_key_minimum_payload_bytes": 228,
+            "compiled_field_payload_bytes": 0,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "512": {
+          "whole_campaign": {
+            "sha256_calls": 20734,
+            "sha256_input_bytes": 2573222,
+            "sha256_compression_blocks": 50298,
+            "scalar_multiplications": 951808,
+            "scalar_additions": 898368,
+            "field_equality_checks": 0,
+            "recognition_words": 0
+          },
+          "cache": {
+            "lookups": 512,
+            "hits": 189,
+            "misses": 323,
+            "computed_useful_products": 323,
+            "insertions": 323,
+            "entries": 323,
+            "capacity": 512,
+            "cached_result_payload_bytes": 82688,
+            "coordinate_key_minimum_payload_bytes": 646,
+            "compiled_field_payload_bytes": 0,
+            "python_object_and_allocator_overhead_included": false
+          }
+        }
+      },
+      "fresh_acceptance_replays": 6,
+      "all_witnesses_match_dense_direct": true
+    },
+    {
+      "name": "dense_lazy_16",
+      "preparation": {
+        "sha256_calls": 254,
+        "sha256_input_bytes": 68006,
+        "sha256_compression_blocks": 1146,
+        "scalar_multiplications": 0,
+        "scalar_additions": 0,
+        "field_equality_checks": 0,
+        "recognition_words": 0
+      },
+      "cache_after_preparation": {
+        "lookups": 0,
+        "hits": 0,
+        "misses": 0,
+        "computed_useful_products": 0,
+        "insertions": 0,
+        "entries": 0,
+        "capacity": 16,
+        "cached_result_payload_bytes": 0,
+        "coordinate_key_minimum_payload_bytes": 0,
+        "compiled_field_payload_bytes": 0,
+        "python_object_and_allocator_overhead_included": false
+      },
+      "horizons": {
+        "1": {
+          "whole_campaign": {
+            "sha256_calls": 294,
+            "sha256_input_bytes": 72899,
+            "sha256_compression_blocks": 1242,
+            "scalar_multiplications": 2048,
+            "scalar_additions": 1920,
+            "field_equality_checks": 0,
+            "recognition_words": 0
+          },
+          "cache": {
+            "lookups": 1,
+            "hits": 0,
+            "misses": 1,
+            "computed_useful_products": 1,
+            "insertions": 1,
+            "entries": 1,
+            "capacity": 16,
+            "cached_result_payload_bytes": 256,
+            "coordinate_key_minimum_payload_bytes": 2,
+            "compiled_field_payload_bytes": 0,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "45": {
+          "whole_campaign": {
+            "sha256_calls": 2054,
+            "sha256_input_bytes": 288191,
+            "sha256_compression_blocks": 5466,
+            "scalar_multiplications": 91648,
+            "scalar_additions": 85952,
+            "field_equality_checks": 0,
+            "recognition_words": 0
+          },
+          "cache": {
+            "lookups": 45,
+            "hits": 1,
+            "misses": 44,
+            "computed_useful_products": 44,
+            "insertions": 16,
+            "entries": 16,
+            "capacity": 16,
+            "cached_result_payload_bytes": 4096,
+            "coordinate_key_minimum_payload_bytes": 32,
+            "compiled_field_payload_bytes": 0,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "128": {
+          "whole_campaign": {
+            "sha256_calls": 5374,
+            "sha256_input_bytes": 694310,
+            "sha256_compression_blocks": 13434,
+            "scalar_multiplications": 259072,
+            "scalar_additions": 243072,
+            "field_equality_checks": 0,
+            "recognition_words": 0
+          },
+          "cache": {
+            "lookups": 128,
+            "hits": 6,
+            "misses": 122,
+            "computed_useful_products": 122,
+            "insertions": 16,
+            "entries": 16,
+            "capacity": 16,
+            "cached_result_payload_bytes": 4096,
+            "coordinate_key_minimum_payload_bytes": 32,
+            "compiled_field_payload_bytes": 0,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "512": {
+          "whole_campaign": {
+            "sha256_calls": 20734,
+            "sha256_input_bytes": 2573222,
+            "sha256_compression_blocks": 50298,
+            "scalar_multiplications": 1037312,
+            "scalar_additions": 973184,
+            "field_equality_checks": 0,
+            "recognition_words": 0
+          },
+          "cache": {
+            "lookups": 512,
+            "hits": 22,
+            "misses": 490,
+            "computed_useful_products": 490,
+            "insertions": 16,
+            "entries": 16,
+            "capacity": 16,
+            "cached_result_payload_bytes": 4096,
+            "coordinate_key_minimum_payload_bytes": 32,
+            "compiled_field_payload_bytes": 0,
+            "python_object_and_allocator_overhead_included": false
+          }
+        }
+      },
+      "fresh_acceptance_replays": 6,
+      "all_witnesses_match_dense_direct": true
+    },
+    {
+      "name": "affine_direct",
+      "preparation": {
+        "sha256_calls": 254,
+        "sha256_input_bytes": 68006,
+        "sha256_compression_blocks": 1146,
+        "scalar_multiplications": 448,
+        "scalar_additions": 8512,
+        "field_equality_checks": 8192,
+        "recognition_words": 8192
+      },
+      "cache_after_preparation": {
+        "lookups": 0,
+        "hits": 0,
+        "misses": 0,
+        "computed_useful_products": 0,
+        "insertions": 0,
+        "entries": 0,
+        "capacity": 512,
+        "cached_result_payload_bytes": 0,
+        "coordinate_key_minimum_payload_bytes": 0,
+        "compiled_field_payload_bytes": 2048,
+        "python_object_and_allocator_overhead_included": false
+      },
+      "horizons": {
+        "1": {
+          "whole_campaign": {
+            "sha256_calls": 294,
+            "sha256_input_bytes": 72899,
+            "sha256_compression_blocks": 1242,
+            "scalar_multiplications": 1989,
+            "scalar_additions": 10055,
+            "field_equality_checks": 8192,
+            "recognition_words": 8192
+          },
+          "cache": {
+            "lookups": 0,
+            "hits": 0,
+            "misses": 0,
+            "computed_useful_products": 1,
+            "insertions": 0,
+            "entries": 0,
+            "capacity": 512,
+            "cached_result_payload_bytes": 0,
+            "coordinate_key_minimum_payload_bytes": 0,
+            "compiled_field_payload_bytes": 2048,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "45": {
+          "whole_campaign": {
+            "sha256_calls": 2054,
+            "sha256_input_bytes": 288191,
+            "sha256_compression_blocks": 5466,
+            "scalar_multiplications": 69793,
+            "scalar_additions": 77947,
+            "field_equality_checks": 8192,
+            "recognition_words": 8192
+          },
+          "cache": {
+            "lookups": 0,
+            "hits": 0,
+            "misses": 0,
+            "computed_useful_products": 45,
+            "insertions": 0,
+            "entries": 0,
+            "capacity": 512,
+            "cached_result_payload_bytes": 0,
+            "coordinate_key_minimum_payload_bytes": 0,
+            "compiled_field_payload_bytes": 2048,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "128": {
+          "whole_campaign": {
+            "sha256_calls": 5374,
+            "sha256_input_bytes": 694310,
+            "sha256_compression_blocks": 13434,
+            "scalar_multiplications": 197696,
+            "scalar_additions": 206016,
+            "field_equality_checks": 8192,
+            "recognition_words": 8192
+          },
+          "cache": {
+            "lookups": 0,
+            "hits": 0,
+            "misses": 0,
+            "computed_useful_products": 128,
+            "insertions": 0,
+            "entries": 0,
+            "capacity": 512,
+            "cached_result_payload_bytes": 0,
+            "coordinate_key_minimum_payload_bytes": 0,
+            "compiled_field_payload_bytes": 2048,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "512": {
+          "whole_campaign": {
+            "sha256_calls": 20734,
+            "sha256_input_bytes": 2573222,
+            "sha256_compression_blocks": 50298,
+            "scalar_multiplications": 789440,
+            "scalar_additions": 798528,
+            "field_equality_checks": 8192,
+            "recognition_words": 8192
+          },
+          "cache": {
+            "lookups": 0,
+            "hits": 0,
+            "misses": 0,
+            "computed_useful_products": 512,
+            "insertions": 0,
+            "entries": 0,
+            "capacity": 512,
+            "cached_result_payload_bytes": 0,
+            "coordinate_key_minimum_payload_bytes": 0,
+            "compiled_field_payload_bytes": 2048,
+            "python_object_and_allocator_overhead_included": false
+          }
+        }
+      },
+      "fresh_acceptance_replays": 6,
+      "all_witnesses_match_dense_direct": true
+    },
+    {
+      "name": "affine_lazy_full",
+      "preparation": {
+        "sha256_calls": 254,
+        "sha256_input_bytes": 68006,
+        "sha256_compression_blocks": 1146,
+        "scalar_multiplications": 448,
+        "scalar_additions": 8512,
+        "field_equality_checks": 8192,
+        "recognition_words": 8192
+      },
+      "cache_after_preparation": {
+        "lookups": 0,
+        "hits": 0,
+        "misses": 0,
+        "computed_useful_products": 0,
+        "insertions": 0,
+        "entries": 0,
+        "capacity": 512,
+        "cached_result_payload_bytes": 0,
+        "coordinate_key_minimum_payload_bytes": 0,
+        "compiled_field_payload_bytes": 2048,
+        "python_object_and_allocator_overhead_included": false
+      },
+      "horizons": {
+        "1": {
+          "whole_campaign": {
+            "sha256_calls": 294,
+            "sha256_input_bytes": 72899,
+            "sha256_compression_blocks": 1242,
+            "scalar_multiplications": 1989,
+            "scalar_additions": 10055,
+            "field_equality_checks": 8192,
+            "recognition_words": 8192
+          },
+          "cache": {
+            "lookups": 1,
+            "hits": 0,
+            "misses": 1,
+            "computed_useful_products": 1,
+            "insertions": 1,
+            "entries": 1,
+            "capacity": 512,
+            "cached_result_payload_bytes": 256,
+            "coordinate_key_minimum_payload_bytes": 2,
+            "compiled_field_payload_bytes": 2048,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "45": {
+          "whole_campaign": {
+            "sha256_calls": 2054,
+            "sha256_input_bytes": 288191,
+            "sha256_compression_blocks": 5466,
+            "scalar_multiplications": 69783,
+            "scalar_additions": 77805,
+            "field_equality_checks": 8192,
+            "recognition_words": 8192
+          },
+          "cache": {
+            "lookups": 45,
+            "hits": 2,
+            "misses": 43,
+            "computed_useful_products": 43,
+            "insertions": 43,
+            "entries": 43,
+            "capacity": 512,
+            "cached_result_payload_bytes": 11008,
+            "coordinate_key_minimum_payload_bytes": 86,
+            "compiled_field_payload_bytes": 2048,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "128": {
+          "whole_campaign": {
+            "sha256_calls": 5374,
+            "sha256_input_bytes": 694310,
+            "sha256_compression_blocks": 13434,
+            "scalar_multiplications": 197626,
+            "scalar_additions": 205022,
+            "field_equality_checks": 8192,
+            "recognition_words": 8192
+          },
+          "cache": {
+            "lookups": 128,
+            "hits": 14,
+            "misses": 114,
+            "computed_useful_products": 114,
+            "insertions": 114,
+            "entries": 114,
+            "capacity": 512,
+            "cached_result_payload_bytes": 29184,
+            "coordinate_key_minimum_payload_bytes": 228,
+            "compiled_field_payload_bytes": 2048,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "512": {
+          "whole_campaign": {
+            "sha256_calls": 20734,
+            "sha256_input_bytes": 2573222,
+            "sha256_compression_blocks": 50298,
+            "scalar_multiplications": 788495,
+            "scalar_additions": 785109,
+            "field_equality_checks": 8192,
+            "recognition_words": 8192
+          },
+          "cache": {
+            "lookups": 512,
+            "hits": 189,
+            "misses": 323,
+            "computed_useful_products": 323,
+            "insertions": 323,
+            "entries": 323,
+            "capacity": 512,
+            "cached_result_payload_bytes": 82688,
+            "coordinate_key_minimum_payload_bytes": 646,
+            "compiled_field_payload_bytes": 2048,
+            "python_object_and_allocator_overhead_included": false
+          }
+        }
+      },
+      "fresh_acceptance_replays": 6,
+      "all_witnesses_match_dense_direct": true
+    },
+    {
+      "name": "affine_eager",
+      "preparation": {
+        "sha256_calls": 254,
+        "sha256_input_bytes": 68006,
+        "sha256_compression_blocks": 1146,
+        "scalar_multiplications": 3008,
+        "scalar_additions": 44864,
+        "field_equality_checks": 8192,
+        "recognition_words": 8192
+      },
+      "cache_after_preparation": {
+        "lookups": 0,
+        "hits": 0,
+        "misses": 0,
+        "computed_useful_products": 512,
+        "insertions": 512,
+        "entries": 512,
+        "capacity": 512,
+        "cached_result_payload_bytes": 131072,
+        "coordinate_key_minimum_payload_bytes": 1024,
+        "compiled_field_payload_bytes": 2048,
+        "python_object_and_allocator_overhead_included": false
+      },
+      "horizons": {
+        "1": {
+          "whole_campaign": {
+            "sha256_calls": 294,
+            "sha256_input_bytes": 72899,
+            "sha256_compression_blocks": 1242,
+            "scalar_multiplications": 4544,
+            "scalar_additions": 46336,
+            "field_equality_checks": 8192,
+            "recognition_words": 8192
+          },
+          "cache": {
+            "lookups": 1,
+            "hits": 1,
+            "misses": 0,
+            "computed_useful_products": 512,
+            "insertions": 512,
+            "entries": 512,
+            "capacity": 512,
+            "cached_result_payload_bytes": 131072,
+            "coordinate_key_minimum_payload_bytes": 1024,
+            "compiled_field_payload_bytes": 2048,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "45": {
+          "whole_campaign": {
+            "sha256_calls": 2054,
+            "sha256_input_bytes": 288191,
+            "sha256_compression_blocks": 5466,
+            "scalar_multiplications": 72128,
+            "scalar_additions": 111104,
+            "field_equality_checks": 8192,
+            "recognition_words": 8192
+          },
+          "cache": {
+            "lookups": 45,
+            "hits": 45,
+            "misses": 0,
+            "computed_useful_products": 512,
+            "insertions": 512,
+            "entries": 512,
+            "capacity": 512,
+            "cached_result_payload_bytes": 131072,
+            "coordinate_key_minimum_payload_bytes": 1024,
+            "compiled_field_payload_bytes": 2048,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "128": {
+          "whole_campaign": {
+            "sha256_calls": 5374,
+            "sha256_input_bytes": 694310,
+            "sha256_compression_blocks": 13434,
+            "scalar_multiplications": 199616,
+            "scalar_additions": 233280,
+            "field_equality_checks": 8192,
+            "recognition_words": 8192
+          },
+          "cache": {
+            "lookups": 128,
+            "hits": 128,
+            "misses": 0,
+            "computed_useful_products": 512,
+            "insertions": 512,
+            "entries": 512,
+            "capacity": 512,
+            "cached_result_payload_bytes": 131072,
+            "coordinate_key_minimum_payload_bytes": 1024,
+            "compiled_field_payload_bytes": 2048,
+            "python_object_and_allocator_overhead_included": false
+          }
+        },
+        "512": {
+          "whole_campaign": {
+            "sha256_calls": 20734,
+            "sha256_input_bytes": 2573222,
+            "sha256_compression_blocks": 50298,
+            "scalar_multiplications": 789440,
+            "scalar_additions": 798528,
+            "field_equality_checks": 8192,
+            "recognition_words": 8192
+          },
+          "cache": {
+            "lookups": 512,
+            "hits": 512,
+            "misses": 0,
+            "computed_useful_products": 512,
+            "insertions": 512,
+            "entries": 512,
+            "capacity": 512,
+            "cached_result_payload_bytes": 131072,
+            "coordinate_key_minimum_payload_bytes": 1024,
+            "compiled_field_payload_bytes": 2048,
+            "python_object_and_allocator_overhead_included": false
+          }
+        }
+      },
+      "fresh_acceptance_replays": 6,
+      "all_witnesses_match_dense_direct": true
+    }
+  ],
+  "target_probability": {
+    "numerator": "1",
+    "denominator": "64",
+    "decimal": "0.015625"
+  },
+  "first_hit_nonce": 24,
+  "accepted_nonces": [
+    24,
+    45,
+    57,
+    170,
+    300,
+    407
+  ],
+  "distinct_coordinates": 323,
+  "sha256_bounded_prefix_whole_campaign_compressions": {
+    "preparation": 894,
+    "1": 951,
+    "45": 3019,
+    "128": 6920,
+    "512": 24968
+  },
+  "sha256_bounded_prefix_digest_checks": true,
+  "native_timing_claim": false,
+  "all_strategy_physical_lower_bound_claim": false,
+  "same_old_accepted_witness_reproduced": true,
+  "witness_comparison": "exact complete bytes for every nonce, not only digest comparison",
+  "candidate_rows_sha256": "874fe56b9f16d2927ff38397d6420ec5ed22fc44d16af7f9c65058bbc8a57f0d"
+}

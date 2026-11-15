@@ -1,0 +1,14 @@
+{
+  "command": [
+    "bash",
+    "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+    "python3",
+    "-c",
+    "import os,json,subprocess; keys=['RUSTUP_TOOLCHAIN','RUSTUP_HOME','CARGO_HOME','CARGO_TARGET_DIR','CARGO_BUILD_JOBS','CARGO_INCREMENTAL','RUSTFLAGS','CARGO_ENCODED_RUSTFLAGS','RUSTDOCFLAGS','RUSTC_WRAPPER','RUSTC_WORKSPACE_WRAPPER','RUSTC','RUSTDOC','CC','CXX','AR','CFLAGS','CXXFLAGS','CPPFLAGS','LDFLAGS','OPENSSL_DIR','OPENSSL_LIB_DIR','OPENSSL_INCLUDE_DIR','OPENSSL_STATIC','OPENSSL_NO_VENDOR','OPENSSL_CONF','OPENSSL_MODULES','PKG_CONFIG_PATH','PKG_CONFIG_LIBDIR','LIBRARY_PATH','LD_LIBRARY_PATH','RUST_TEST_THREADS']; print(json.dumps({'environment':{k:os.environ.get(k) for k in keys},'compiler':subprocess.check_output(['rustc','-vV'],text=True),'cargo':subprocess.check_output(['cargo','--version'],text=True),'cc':subprocess.check_output(['cc','--version'],text=True),'features':'--all-features','profile':'unchanged Cargo test profile'}))"
+  ],
+  "exit_code": 0,
+  "finished_at": "2026-11-04T07:30:09.230197+00:00",
+  "started_at": "2026-11-04T07:30:09.166083+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "e769d333351c9e471385161d2ddce94d4e38b276274f420bab6d6646fb20ce4d"
+}

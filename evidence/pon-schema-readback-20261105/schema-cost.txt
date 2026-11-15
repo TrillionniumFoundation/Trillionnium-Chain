@@ -1,0 +1,16 @@
+round=0 cached=false ns=269493714
+round=0 cached=true ns=237988594
+round=1 cached=true ns=233895046
+round=1 cached=false ns=271985573
+round=2 cached=false ns=253490098
+round=2 cached=true ns=215157737
+round=3 cached=true ns=221603841
+round=3 cached=false ns=251094715
+round=4 cached=false ns=281536852
+round=4 cached=true ns=235532519
+round=5 cached=true ns=228783126
+round=5 cached=false ns=255349128
+round=6 cached=false ns=261898634
+round=6 cached=true ns=220858674
+round=7 cached=true ns=231070411
+round=7 cached=false ns=248972986

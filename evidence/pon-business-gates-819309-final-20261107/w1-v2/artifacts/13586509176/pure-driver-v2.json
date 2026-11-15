@@ -1,0 +1,19 @@
+{
+  "artifact_id": 13586509176,
+  "status": "UNKNOWN",
+  "attempted": false,
+  "errors": [
+    "archive/source/manifest not authenticated; pure reader not attempted"
+  ],
+  "business_qualification": false,
+  "family": "factorial",
+  "arch": "arm64",
+  "source_kind": "head",
+  "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+  "stage1_status": null,
+  "stage1_errors": [
+    "TransportTimeout: original artifact GET exceeded independent transport-v2 900s bound; no further retry"
+  ],
+  "stage1_sha256": "d05556109638efe056429c5a785e09e3106221f4b6b2b51bea0d3969e4350c8b",
+  "finished_utc": "2026-11-07T20:49:38.834105+00:00"
+}

@@ -1,0 +1,35 @@
+{
+  "scope": "Preparation observations only; none grants qualification or contributes a passing test denominator.",
+  "raw_artifact_status": "These early observations were visible in tool transcripts but were not captured as complete source-bound command receipts. This file preserves that limitation; it is not a reconstructed raw log.",
+  "observations": [
+    {
+      "name": "initial-format-check",
+      "tool_session": 69509,
+      "returncode": 1,
+      "result": "Formatting differences reported before formatting the new candidate.",
+      "qualification": false
+    },
+    {
+      "name": "node-preparation-compilation",
+      "tool_session": 26310,
+      "returncode": 101,
+      "compiler_diagnostic": "E0599: with_recovery_fence_v3 was unavailable in the dependency artifact while Node source already referenced it.",
+      "source_frozen": false,
+      "tests_executed": 0,
+      "environment_note": "The preparation invocation also lacked the later absolute RUSTC binding and emitted an UNQUALIFIED SQLite-boundary warning.",
+      "qualification": false
+    },
+    {
+      "name": "direct-cargo-format-invocation",
+      "returncode": 101,
+      "result": "Invoking the absolute cargo binary without adding its bin directory to PATH could not locate the fmt subcommand. The corrected PATH invocation succeeded.",
+      "qualification": false
+    },
+    {
+      "name": "source-pin-check-during-refresh",
+      "returncode": 1,
+      "result": "The source checker ran before the pending pin-refresh command completed and reported the new recovery specification as changed. After refresh completion the unchanged checker passed with HOLD_NO_GO preserved.",
+      "qualification": false
+    }
+  ]
+}

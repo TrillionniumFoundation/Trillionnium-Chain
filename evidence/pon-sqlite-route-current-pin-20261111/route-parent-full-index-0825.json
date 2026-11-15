@@ -1,0 +1,61 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "94ffff4f339b8550667a4cf27026c99241b8fd27",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "94ffff4f339b8550667a4cf27026c99241b8fd27",
+    "tested_tree": "321f3b266b7a1d36ab190899ded95be076eb2546",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2550872629,
+    "tracked_entries": 26775,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "scripts/ci/test_w1_stark_route_audit.py"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "94ffff4f339b8550667a4cf27026c99241b8fd27",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "94ffff4f339b8550667a4cf27026c99241b8fd27",
+    "tested_tree": "321f3b266b7a1d36ab190899ded95be076eb2546",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2550872629,
+    "tracked_entries": 26775,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/home/qq/work/chain-sqlite-advisory-20261110",
+  "elapsed_ns": 7111902028,
+  "environment": {
+    "CARGO_BUILD_JOBS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": null,
+    "CARGO_TARGET_DIR": null,
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 1,
+  "log_bytes": 10284,
+  "log_file": "route-parent-full-index-0825.log",
+  "log_sha256": "d0a8d5d4e6a6d683afa2d681d7d72a2e16455f3fbe094f20ba2b9255397afdf0",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-11T08:15:06.805089+00:00",
+  "status": "command_failed",
+  "whole_chain_quantum_security_qualified": false
+}

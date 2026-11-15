@@ -1,0 +1,55 @@
+[
+  {
+    "name": "preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+    "timeout_seconds": 30,
+    "exit_code": 0,
+    "elapsed_seconds": 0.11513888812623918,
+    "stdout": {
+      "bytes": 172,
+      "sha256": "4c58882a4134d8adc21e7bcf4a095a3d15d31c83a068667459aa26e612434295"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "original-native-invalid-priority",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "ingress::public_v3::scalar_cpu_completion_tests::same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority",
+      "--",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+    "timeout_seconds": 1500,
+    "exit_code": 0,
+    "elapsed_seconds": 710.5075364871882,
+    "stdout": {
+      "bytes": 116,
+      "sha256": "50796be36de284b3b98b58d0db368facf7b78d7b6d042df71aaa0db426547e55"
+    },
+    "stderr": {
+      "bytes": 4083,
+      "sha256": "5aeae601b2349215617652d0c5c690d0c839ff4bc991cc7bf920baa3abfc49ff"
+    }
+  }
+]

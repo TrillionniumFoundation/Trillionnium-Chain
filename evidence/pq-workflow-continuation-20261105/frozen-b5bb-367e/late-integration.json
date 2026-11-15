@@ -1,0 +1,79 @@
+{
+  "schema": "trnm-late-concurrent-source-boundary-v1",
+  "observed_head": "04be5f02c84cf5cb626a53f34bc03a5bd6ff5137",
+  "observed_tree": "d4f4a85c439982d8decec9265c1993408f3577cf",
+  "parent": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+  "selected_frozen_evidence_pair": {
+    "chain": {
+      "sha": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+      "tree": "8be28a72673ce318d60a464898ab610d9ba39216"
+    },
+    "runtime": {
+      "sha": "367e27fb6bf30443641b9e23a063d24e49eda9f7",
+      "tree": "6a2465606f0270eeecec83c2b7d9dbef5dc96076"
+    }
+  },
+  "changed_paths": [
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 3
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+      "status": "modified",
+      "additions": 57,
+      "deletions": 4
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1/capacity_range_tests.rs",
+      "status": "added",
+      "additions": 361,
+      "deletions": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "status": "modified",
+      "additions": 10,
+      "deletions": 1
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs",
+      "status": "modified",
+      "additions": 80,
+      "deletions": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "status": "modified",
+      "additions": 7,
+      "deletions": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+      "status": "modified",
+      "additions": 174,
+      "deletions": 0
+    }
+  ],
+  "contains_production_code_change": true,
+  "changed_paths_native_tests_run_by_this_continuation": false,
+  "latest_head_native_acceptance": false,
+  "latest_head_static_acceptance": false,
+  "comparison_is_execution_evidence": false,
+  "source_tree_identical_to_b5bb": false,
+  "prior_233_checks_relabelled": false,
+  "prior_growth_red_relabelled": false,
+  "prior_f0_relabelled": false,
+  "prior_prospective_merge_check_relabelled": false,
+  "preservation_policy": "Append evidence and the sole-plan continuation on top of this actual remote head, using expected-head non-force update; preserve all concurrent source. Re-read/reconcile if the head changes again.",
+  "scope": "This is a source-boundary observation, not review/acceptance of the concurrent patch. frozen-b5bb-367e remains the immutable observation pair. The integration branch's newer code requires its own exact-source validation.",
+  "production_activation": false
+}

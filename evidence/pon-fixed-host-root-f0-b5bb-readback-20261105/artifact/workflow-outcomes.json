@@ -1,0 +1,9 @@
+{
+  "ARM_OUTCOME": "success",
+  "EXECUTION_OUTCOME": "failure",
+  "F0_SOURCE_AFTER_STATUS": "0",
+  "FINALIZATION_OUTCOME": "failure",
+  "PREPARATION_OUTCOME": "success",
+  "SOURCE_OUTCOME": "success",
+  "TOOLCHAIN_OUTCOME": "success"
+}

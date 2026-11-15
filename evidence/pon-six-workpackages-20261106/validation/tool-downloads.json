@@ -1,0 +1,16 @@
+[
+  {
+    "name": "clippy-preview",
+    "url": "https://static.rust-lang.org/dist/2026-04-16/clippy-1.95.0-x86_64-unknown-linux-gnu.tar.xz",
+    "sha256": "ac779bc9839dd47180806b133e4e2563c4a34716284cd5b8fede8ef289f452ca",
+    "bytes": 4697128,
+    "directory": "/workspace/scratch/62902f6722b7/toolchain-extra/clippy-preview"
+  },
+  {
+    "name": "rustfmt-preview",
+    "url": "https://static.rust-lang.org/dist/2026-04-16/rustfmt-1.95.0-x86_64-unknown-linux-gnu.tar.xz",
+    "sha256": "f1b2a7301513ffdd95ebf22ebbdd932e4d17fc806f748d93924740d0297b1396",
+    "bytes": 2164880,
+    "directory": "/workspace/scratch/62902f6722b7/toolchain-extra/rustfmt-preview"
+  }
+]

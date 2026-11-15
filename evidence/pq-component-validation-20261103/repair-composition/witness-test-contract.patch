@@ -1,0 +1,35 @@
+--- a/trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs
+@@ -479,10 +479,17 @@
+         .is_err());
+     client.current().unwrap();
+     assert!(Checkpoint::new(u64::MAX, [4; 64]).is_err());
+-    error(
+-        client.advance(initial, Checkpoint::new(2, [3; 64]).unwrap()),
+-        "PQ_WITNESS_CAS",
+-    );
++    let fork = Checkpoint::new(2, [3; 64]).unwrap();
++    error(
++        client.advance(initial, fork),
++        "PQ_WITNESS_OBSERVATION_ROLLBACK",
++    );
++    assert_eq!(client.current().unwrap(), next);
++    assert_eq!(f.head(), next);
++
++    // An unobserved client must still reach the owner CAS check.
++    let mut unobserved = f.client();
++    error(unobserved.advance(initial, fork), "PQ_WITNESS_CAS");
+     assert_eq!(f.head(), next);
+ }
+ 
+--- a/config/pon/pq-cross-branch-corpus-v1.json
++++ b/config/pon/pq-cross-branch-corpus-v1.json
+@@ -679,7 +679,7 @@
+     "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs": "a6fd9c8e4f514d19ca58295272cde7968b9b5abd",
+     "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs": "97f614be188d2acecef88e81da690c8121c7a595",
+     "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs": "fd63e47468369b99c55171f7e13de111b6dcd3e5",
+-    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs": "eec489b294971613d4fd1d27da0e9b2ece960dd6",
++    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs": "9434a12dca6b66da00c0862a07ece1a2b26166ce",
+     "config/pon/performance-six-axis-v1.json": "bc246a75439d8db2522c41f53e868d24a09a9971",
+     "scripts/ci/check_growth_scale_observation.py": "13591630c3164b53117c46700db4a237f1a6e021",
+     "scripts/ci/test_growth_scale_observation.py": "599ee4d2ad82413aed3d66efbec786ef4dc54e44",

@@ -1,0 +1,44 @@
+{
+  "actual_lifetime_failure_bound": null,
+  "base_head": "80f4b50b1a2933aac37d016bd86ff8c76d3e50fe",
+  "diff_check_passed": true,
+  "host": "ai395",
+  "production_activation": false,
+  "python_compile_passed": true,
+  "qualification": "HOLD_NO_GO",
+  "related_original_ci": {
+    "archive_sha256": "033ed670b3d930ea7bf76ad90b6917954b0bf89c6e05c0159b8216dd9e37b9ef",
+    "artifact_id": 13800988598,
+    "history_import_deadline_phases": 8,
+    "original_window_ns": 30000000000,
+    "run2_fromzero_native_reported_confirmation_end_ns": 30192354000,
+    "run_id": 42897622391,
+    "success_campaigns": 0,
+    "success_phases": 0,
+    "total_campaigns": 3,
+    "total_phases": 9
+  },
+  "schema": "pq-root-postwindow-native-diagnostic-v1",
+  "scope": "read-only native-campaign diagnostic and synthetic negative controls only",
+  "source_after": {
+    "evidence/pq-root-postwindow-native-confirmation-20261110/20-tests-native-diagnostic.log": {
+      "bytes": 3905,
+      "sha256": "49215bc7c8b742c83095b25f9783f908395d7537b2034e742d7342114e640532"
+    },
+    "scripts/ci/inspect_native_campaign_failure.py": {
+      "bytes": 18116,
+      "sha256": "29f44ae13434fa65ddfa674fe399a48cf195d63f1958eb997a31f2e50bcf8fd3"
+    },
+    "scripts/ci/test_inspect_native_campaign_failure.py": {
+      "bytes": 19158,
+      "sha256": "a9560000eedfdecaa084389067f0b1768f5ac2d39517dede4ea38a919c0df475"
+    }
+  },
+  "source_before_sha256": {
+    "scripts/ci/inspect_native_campaign_failure.py": "10f8b0e609b826bbced12638fafaad608e69014c54457d47c09a3bd5eb327906",
+    "scripts/ci/test_inspect_native_campaign_failure.py": "dff3e746555c3f671ef79cfba95e4cb15adf5eb1608a06232579bbfc5f6f9551"
+  },
+  "test_command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s scripts/ci -p test_inspect_native_campaign_failure.py -v",
+  "tests_failed": 0,
+  "tests_passed": 20
+}

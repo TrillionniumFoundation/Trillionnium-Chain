@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/workspace/scratch/4a0b199bc6c0/model-preparation/tools/runtime_preflight.py", line 93, in <module>
+    main()
+  File "/workspace/scratch/4a0b199bc6c0/model-preparation/tools/runtime_preflight.py", line 58, in main
+    state=profile['prepare_runtime'](inputs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_cell_sealed_worker_v1.py", line 376, in prepare_runtime
+    snapshot = decode_runtime_snapshot(inputs, helper)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_cell_sealed_worker_v1.py", line 345, in decode_runtime_snapshot
+    require(Path(inputs.grant['python']).is_absolute() and
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1162, in __init__
+    super().__init__(*args)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 373, in __init__
+    raise TypeError(
+TypeError: argument should be a str or an os.PathLike object where __fspath__ returns a str, not 'dict'

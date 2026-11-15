@@ -1,0 +1,26 @@
+{
+  "schema": "trnm-joint-link-audit-observed-summary-v1",
+  "artifact": "link_audit.json",
+  "full_content_preserved": false,
+  "original_git_blob_sha": null,
+  "observed_original_bytes": 170187,
+  "observed_original_sha256": "445baf39b04ed4115e332a023d3be39d80b0adc71ab8440606fa18f244af8fd8",
+  "observed_result": "PASS",
+  "observed_exit_code": 0,
+  "source_base": "e2a02f9271b49f146e70806c8a66e161b5973971",
+  "source_commit": "73b5a70fc3f4ffa5a1a99da366591c243d384786",
+  "source_tree": "33734d72a3d893fb8dfb438b17a42fa3a20e2114",
+  "worktree_clean_before": true,
+  "worktree_clean_after": true,
+  "script_sha256": "0064f0f9729d8455f7e463c74fc7ce320a16270d71e8cb5d4e9f1b0353a822f4",
+  "counts": {
+    "changed_paths": 12,
+    "changed_markdown_documents": 4,
+    "relative_path_references": 472,
+    "tree_present_unmaterialized_references": 223,
+    "cross_document_fragment_references": 20,
+    "matched_fragments": 20,
+    "issues": 0
+  },
+  "scope": "Observed summary and reproducible script; no reconstructed per-reference records. External URLs, same-document fragments, reference-style links and browser rendering were not checked."
+}

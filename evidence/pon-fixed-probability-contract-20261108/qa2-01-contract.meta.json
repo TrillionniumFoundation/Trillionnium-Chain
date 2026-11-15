@@ -1,0 +1,20 @@
+{
+  "label": "qa2-01-contract",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "test_fixed_probability_contract.py",
+    "-v"
+  ],
+  "exit": 0,
+  "source_head": "103cdf67108a667d8570388f9dd402210c160157",
+  "duration_seconds": 0.16128772590309381,
+  "unittest_count": [
+    "16"
+  ]
+}

@@ -1,0 +1,526 @@
+//! Synthetic native mechanism controls; these never claim a real model run.
+use super::*;
+use sha2::{Digest, Sha256};
+use std::{sync::atomic::AtomicBool, time::Duration};
+
+struct Fixture {
+    directory: tempfile::TempDir,
+    source: CellStoreV1,
+    received: CellStoreV1,
+    version: CellVersionManifestV1,
+    snapshot: CellReleaseSnapshotV1,
+    content: CellVersionContentV2,
+    model: CellLoaderContextV1,
+    environment: CellLoaderContextV1,
+}
+fn owner(
+    closure: &CellReleaseClosureV1,
+    required_roles: Vec<CellFileRoleV1>,
+) -> CellLoaderContextV1 {
+    CellLoaderContextV1 {
+        closure_id: closure.id(),
+        context: closure.release().context().clone(),
+        selected_generation: closure.selected_generation(),
+        loader_profile: closure.loader_profile(),
+        required_roles,
+        max_payload_bytes: CAPTURE_BOUND,
+        max_chunks: 2_048,
+    }
+}
+fn fixture() -> Fixture {
+    let directory = tempfile::tempdir().unwrap();
+    let source = empty_cache(&directory.path().join("publisher.sqlite")).unwrap();
+    let received = empty_cache(&directory.path().join("bep52-received.sqlite")).unwrap();
+    let context = |runtime| CellContextV1 {
+        family: "synthetic-native-shard-research-v2".into(),
+        base: [1; 32],
+        parent: [2; 32],
+        tokenizer: [3; 32],
+        layout: [4; 32],
+        runtime,
+    };
+    let pack = |name: &str, bytes: &[u8], ctx: CellContextV1| {
+        let path = directory.path().join(name);
+        fs::write(&path, bytes).unwrap();
+        source.pack_file(&path, ctx, 16_384).unwrap()
+    };
+    let file = |manifest: &CellManifestV1, name: &str, role, dependencies| CellClosureFileV1 {
+        path: name.into(),
+        role,
+        manifest: manifest.id(),
+        payload_sha256: manifest.payload_sha256(),
+        payload_bytes: manifest.size(),
+        dependencies,
+    };
+    let env = pack(
+        "runtime.bin",
+        b"bounded explicit synthetic runtime",
+        context([5; 32]),
+    );
+    let environment_closure = CellReleaseClosureV1::new(
+        env.context().clone(),
+        1,
+        [6; 32],
+        vec![0],
+        vec![file(
+            &env,
+            "runtime.bin",
+            CellFileRoleV1::Configuration,
+            vec![],
+        )],
+    )
+    .unwrap();
+    let ctx = context(environment_closure.id());
+    let header = br#"{"weight":{"dtype":"F32","shape":[131072],"data_offsets":[0,524288]}}"#;
+    let mut dense = (header.len() as u64).to_le_bytes().to_vec();
+    dense.extend_from_slice(header);
+    for _ in 0..131_072 {
+        dense.extend_from_slice(&1.25_f32.to_le_bytes());
+    }
+    let base = pack("base.safetensors", &dense, ctx.clone());
+    let rules = pack(
+        "rules.json",
+        br#"{"profile":"synthetic-dense-v1"}"#,
+        ctx.clone(),
+    );
+    let tokenizer = pack("tokenizer.json", br#"{"tokens":["yes","no"]}"#, ctx);
+    let model_closure = CellReleaseClosureV1::new(
+        base.context().clone(),
+        2,
+        [7; 32],
+        vec![0],
+        vec![
+            file(&base, "base.safetensors", CellFileRoleV1::Base, vec![1, 2]),
+            file(&rules, "rules.json", CellFileRoleV1::Configuration, vec![]),
+            file(
+                &tokenizer,
+                "tokenizer.json",
+                CellFileRoleV1::Tokenizer,
+                vec![],
+            ),
+        ],
+    )
+    .unwrap();
+    let model = owner(
+        &model_closure,
+        vec![
+            CellFileRoleV1::Base,
+            CellFileRoleV1::Configuration,
+            CellFileRoleV1::Tokenizer,
+        ],
+    );
+    let environment = owner(&environment_closure, vec![CellFileRoleV1::Configuration]);
+    let root = CellModelReleaseRootV1::new(model_closure, vec![]).unwrap();
+    let contract = CellTensorContractV1::new(
+        root.id(),
+        vec![CellTensorFileV1 {
+            file_index: 0,
+            tensors: vec![CellTensorSpecV1 {
+                name: "weight".into(),
+                dtype: CellTensorDTypeV1::F32,
+                shape: vec![131_072],
+            }],
+        }],
+    )
+    .unwrap();
+    let tensors = CellTensorModelManifestV1::new(root.clone(), contract).unwrap();
+    let mut manifests = vec![env, base, rules, tokenizer];
+    manifests.sort_by_key(CellManifestV1::id);
+    let version = CellVersionManifestV1::new(root, environment_closure, manifests).unwrap();
+    for manifest in version.manifests() {
+        received
+            .put_manifest(manifest.id(), &manifest.encode())
+            .unwrap();
+        for chunk in manifest.chunks() {
+            received
+                .put_chunk(chunk, &source.chunk(chunk.sha256).unwrap().unwrap())
+                .unwrap();
+        }
+    }
+    let snapshot = CellReleaseSnapshotV1::new(version.clone(), tensors, 1, [8; 32]).unwrap();
+    let expected = CellVersionLoaderContextV1 {
+        commitment: version.commitment(),
+        model: &model,
+        environment: &environment,
+    };
+    let mut session = CellContentReadSessionV2::new(
+        CellReleaseLimitsV1 {
+            max_payload_bytes: CAPTURE_BOUND,
+            max_chunks: 2_048,
+            deadline: Instant::now() + Duration::from_secs(300),
+        },
+        1,
+    )
+    .unwrap();
+    let content =
+        CellVersionContentV2::capture_cached(&version, &received, &expected, &mut session).unwrap();
+    Fixture {
+        directory,
+        source,
+        received,
+        version,
+        snapshot,
+        content,
+        model,
+        environment,
+    }
+}
+
+#[test]
+fn native_callback_cold_reconstructs_all_pages_from_four_original_providers() {
+    let Fixture {
+        directory,
+        source,
+        received,
+        version,
+        snapshot,
+        content,
+        model,
+        environment,
+    } = fixture();
+    let deadline = Instant::now() + Duration::from_secs(300);
+    let chunks: usize = version.manifests().iter().map(|m| m.chunks().len()).sum();
+    // Equal chunk SHA values at distinct manifest indices must stay distinct
+    // RS bindings, even though the underlying CAS deduplicates equal bytes.
+    assert!(chunks > 32);
+    let base = version
+        .model()
+        .closure()
+        .files()
+        .iter()
+        .find(|f| f.path == "base.safetensors")
+        .unwrap();
+    let manifest = version
+        .manifests()
+        .iter()
+        .find(|m| m.id() == base.manifest)
+        .unwrap();
+    assert!(manifest
+        .chunks()
+        .windows(2)
+        .any(|pair| pair[0].sha256 == pair[1].sha256));
+    let mut report = json!({});
+    let consumer_result = retain(
+        CellResearchRetentionInputsV2 {
+            operation: Sha256::digest(b"synthetic-native-cycle-operation").into(),
+            output: directory.path(),
+            deadline,
+            version: &version,
+            snapshot: &snapshot,
+            content: &content,
+            model_owner: &model,
+            environment_owner: &environment,
+            source,
+            source_path: &directory.path().join("publisher.sqlite"),
+            received,
+            received_path: &directory.path().join("bep52-received.sqlite"),
+        },
+        &mut report,
+    );
+    let consumer = match consumer_result {
+        Ok(consumer) => consumer,
+        Err(error) => {
+            let retained = directory.keep();
+            panic!(
+                "native callback failed: {error}; retained_fixture={}",
+                retained.display()
+            );
+        }
+    };
+    assert_eq!(report["native_shard_cycle"]["complete"], true);
+    assert_eq!(report["native_shard_cycle"]["pages"], 2);
+    assert_eq!(
+        report["native_shard_cycle"]["recovery"]["detected_damage"],
+        2 * chunks
+    );
+    assert_eq!(
+        report["native_shard_cycle"]["restore"]["restored_original_chunks"],
+        chunks
+    );
+    assert_eq!(
+        report["cold_restore"]["source_catalog_not_used_for_reconstruction"],
+        true
+    );
+    assert_eq!(
+        report["native_shard_cycle"]["independent_real_money_funding"],
+        false
+    );
+    assert_eq!(report["native_shard_cycle"]["hepta_final_use"], false);
+    let parent_groups = chunks.div_ceil(16);
+    let tasks = version.manifests().len() + 1 + 8 * parent_groups;
+    assert_eq!(report["native_shard_cycle"]["m12_parent_claims"], tasks);
+    assert!(tasks < 256);
+    assert_eq!(report["native_shard_cycle"]["v3_children"], 8 * chunks);
+    assert_eq!(
+        report["native_shard_cycle"]["storage_parent_groups"],
+        6 * parent_groups
+    );
+    assert_eq!(
+        report["native_shard_cycle"]["repair_parent_groups"],
+        2 * parent_groups
+    );
+    assert_eq!(
+        report["native_shard_cycle"]["all_parent_tasks_currently_funded"],
+        true
+    );
+    let records: Vec<Value> =
+        std::fs::read_to_string(directory.path().join("native-shards/funding.jsonl"))
+            .unwrap()
+            .lines()
+            .map(|line| serde_json::from_str(line).unwrap())
+            .collect();
+    assert_eq!(
+        records
+            .iter()
+            .filter(|r| r["event"] == "signed_transaction")
+            .count(),
+        tasks
+    );
+    assert_eq!(
+        records
+            .iter()
+            .filter(|r| r["event"] == "native_funding_readback" && r["matches_expected"] == true)
+            .count(),
+        tasks
+    );
+    for record in records
+        .iter()
+        .filter(|r| r["event"] == "signed_transaction")
+    {
+        let wire = hex::decode(record["signed_wire_hex"].as_str().unwrap()).unwrap();
+        assert_eq!(
+            hex::encode(Sha256::digest(&wire)),
+            record["signed_wire_sha256"]
+        );
+    }
+    let live: Value = serde_json::from_slice(
+        &std::fs::read(
+            directory
+                .path()
+                .join("native-shards/native-current-funding.json"),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    assert_eq!(live["all_match"], true);
+    assert_eq!(live["sources"].as_array().unwrap().len(), tasks);
+    let wire_grant = &report["native_shard_cycle"]["wire_cache_metadata_grant"];
+    assert_eq!(wire_grant["storage"]["max_manifest_rows"], 6 * MAX_CHUNKS);
+    assert_eq!(wire_grant["storage"]["expected_manifest_rows"], 6 * chunks);
+    assert_eq!(wire_grant["repair"]["expected_manifest_rows"], 2 * chunks);
+    assert_eq!(wire_grant["storage"]["max_logical_bytes"], CAPTURE_BOUND);
+    assert_eq!(
+        wire_grant["storage"]["input_and_consumer_max_manifest_rows"],
+        128
+    );
+    assert_eq!(wire_grant["original_128_temporary_wire_gate_passed"], false);
+    assert_eq!(
+        consumer.cache_usage().unwrap().manifest_rows,
+        version.manifests().len() as u64
+    );
+    let limits = CellResidencyConfigV1 {
+        max_resident_bytes: CAPTURE_BOUND,
+        max_resident_closures: 2,
+        max_chunk_references: 2_048,
+    };
+    let cancelled = AtomicBool::new(false);
+    let mut pool = CellResidencyV1::new(limits).unwrap();
+    for (closure, owner) in [
+        (version.model().closure(), &model),
+        (version.environment(), &environment),
+    ] {
+        pool.prepare_cached(&consumer, closure, owner, deadline, &cancelled)
+            .unwrap();
+    }
+    let expected = CellReleaseSnapshotLoaderContextV1 {
+        snapshot: snapshot.commitment(),
+        composition_profile: snapshot.composition_profile(),
+        version: CellVersionLoaderContextV1 {
+            commitment: version.commitment(),
+            model: &model,
+            environment: &environment,
+        },
+    };
+    let admitted = pool
+        .admit_local_release_snapshot([40; 32], &snapshot, &expected, limits, deadline, &cancelled)
+        .unwrap();
+    admitted
+        .with_local([40; 32], &expected, |view| {
+            let weight = view.tensors().tensor(0, "weight").unwrap();
+            assert_eq!(weight.read_f32(0).unwrap(), 1.25);
+            assert_eq!(weight.read_f32(131_071).unwrap(), 1.25);
+        })
+        .unwrap();
+}
+
+#[test]
+fn expired_callback_cannot_start_funding_or_remove_original_caches() {
+    let Fixture {
+        directory,
+        source,
+        received,
+        version,
+        snapshot,
+        content,
+        model,
+        environment,
+    } = fixture();
+    let mut report = json!({});
+    let result = retain(
+        CellResearchRetentionInputsV2 {
+            operation: [17; 32],
+            output: directory.path(),
+            deadline: Instant::now() - Duration::from_secs(1),
+            version: &version,
+            snapshot: &snapshot,
+            content: &content,
+            model_owner: &model,
+            environment_owner: &environment,
+            source,
+            source_path: &directory.path().join("publisher.sqlite"),
+            received,
+            received_path: &directory.path().join("bep52-received.sqlite"),
+        },
+        &mut report,
+    );
+    assert!(result.is_err());
+    assert!(!directory.path().join("native-shards").exists());
+    assert!(directory.path().join("publisher.sqlite").exists());
+    assert!(directory.path().join("bep52-received.sqlite").exists());
+}
+
+#[test]
+fn native_callback_requires_complete_current_release_selection_after_recovery() {
+    let Fixture {
+        directory,
+        source,
+        received,
+        version,
+        snapshot,
+        content,
+        model,
+        environment,
+    } = fixture();
+    let operation = Sha256::digest(b"native-callback-complete-selection-v1").into();
+    let deadline = Instant::now() + Duration::from_secs(300);
+    let mut report = json!({});
+    // This is the actual callback selected by the native research entry. The
+    // operation performs its Node/M12 funding, paged retention, physical loss,
+    // shard repair and cold reconstruction before any selection is attempted.
+    let callback = retain;
+    let consumer = callback(
+        CellResearchRetentionInputsV2 {
+            operation,
+            output: directory.path(),
+            deadline,
+            version: &version,
+            snapshot: &snapshot,
+            content: &content,
+            model_owner: &model,
+            environment_owner: &environment,
+            source,
+            source_path: &directory.path().join("publisher.sqlite"),
+            received,
+            received_path: &directory.path().join("bep52-received.sqlite"),
+        },
+        &mut report,
+    )
+    .unwrap();
+    assert_eq!(report["m12_funding_admitted"], true);
+    assert_eq!(report["native_shard_cycle"]["complete"], true);
+    assert_eq!(report["native_shard_cycle"]["hepta_final_use"], false);
+    assert!(!directory.path().join("publisher.sqlite").exists());
+    assert!(!directory.path().join("bep52-received.sqlite").exists());
+
+    let limits = CellResidencyConfigV1 {
+        max_resident_bytes: CAPTURE_BOUND,
+        max_resident_closures: 2,
+        max_chunk_references: 2_048,
+    };
+    let cancelled = AtomicBool::new(false);
+    let mut pool = CellResidencyV1::new(limits).unwrap();
+    let expected = CellReleaseSnapshotLoaderContextV1 {
+        snapshot: snapshot.commitment(),
+        composition_profile: snapshot.composition_profile(),
+        version: CellVersionLoaderContextV1 {
+            commitment: version.commitment(),
+            model: &model,
+            environment: &environment,
+        },
+    };
+    pool.prepare_cached(
+        &consumer,
+        version.model().closure(),
+        &model,
+        deadline,
+        &cancelled,
+    )
+    .unwrap();
+    // Successful native funding admission and recovery still require complete selection.
+    // A model-only pool must refuse without publishing a partial ticket.
+    assert!(pool
+        .select_local_release_snapshot(
+            None, operation, &snapshot, &expected, limits, deadline, &cancelled,
+        )
+        .is_err());
+    assert_eq!(pool.local_selection(), None);
+    pool.prepare_cached(
+        &consumer,
+        version.environment(),
+        &environment,
+        deadline,
+        &cancelled,
+    )
+    .unwrap();
+    let mut changed_environment = environment.clone();
+    changed_environment.selected_generation += 1;
+    let changed = CellReleaseSnapshotLoaderContextV1 {
+        version: CellVersionLoaderContextV1 {
+            environment: &changed_environment,
+            ..expected.version
+        },
+        ..expected
+    };
+    assert!(pool
+        .select_local_release_snapshot(
+            None, operation, &snapshot, &changed, limits, deadline, &cancelled,
+        )
+        .is_err());
+    assert_eq!(pool.local_selection(), None);
+
+    let selected = pool
+        .select_local_release_snapshot(
+            None, operation, &snapshot, &expected, limits, deadline, &cancelled,
+        )
+        .unwrap();
+    assert_eq!(selected.snapshot(), snapshot.commitment());
+    assert_eq!(selected.version(), version.commitment());
+    assert_eq!(selected.model_closure(), version.model().closure().id());
+    assert_eq!(selected.environment_closure(), version.environment().id());
+    assert_eq!(selected.revision(), 1);
+    assert_eq!(pool.selection(), None);
+    assert!(pool
+        .admit_selected_local_release_snapshot(
+            selected, operation, &snapshot, &changed, limits, deadline, &cancelled,
+        )
+        .is_err());
+    assert_eq!(pool.release_selection(), Some(selected));
+    let admitted = pool
+        .admit_selected_local_release_snapshot(
+            selected, operation, &snapshot, &expected, limits, deadline, &cancelled,
+        )
+        .unwrap();
+    admitted
+        .with_local(operation, &expected, |view| {
+            let weight = view.tensors().tensor(0, "weight").unwrap();
+            assert_eq!(weight.read_f32(0).unwrap(), 1.25);
+            assert_eq!(weight.read_f32(131_071).unwrap(), 1.25);
+        })
+        .unwrap();
+    drop(admitted);
+    assert!(pool.evict(model.closure_id).is_err());
+    assert!(pool.evict(environment.closure_id).is_err());
+    assert_eq!(pool.release_selection(), Some(selected));
+    assert_eq!(report["native_shard_cycle"]["service_fee_paid"], false);
+    assert_eq!(report["native_shard_cycle"]["production_activation"], false);
+}

@@ -1,0 +1,10 @@
+{"kind": "wait4", "monotonic": 72944.519116646, "pid": 9, "returncode": 0, "user_seconds": 0.010196, "system_seconds": 0.010452999999999999, "maxrss_kib": 12672}
+{"kind": "stop_requested", "monotonic": 72945.020319613, "reason": "wall"}
+{"kind": "signal", "monotonic": 72945.020339312, "pid": 954990, "local_pid": 10, "birth": 7294403, "signal": 15}
+{"kind": "signal", "monotonic": 72945.020349147, "pid": 954990, "local_pid": 10, "birth": 7294403, "signal": 15}
+{"kind": "signal", "monotonic": 72945.52019195, "pid": 954990, "local_pid": 10, "birth": 7294403, "signal": 15}
+{"kind": "signal", "monotonic": 72946.020589376, "pid": 954990, "local_pid": 10, "birth": 7294403, "signal": 15}
+{"kind": "signal", "monotonic": 72946.520330762, "pid": 954990, "local_pid": 10, "birth": 7294403, "signal": 15}
+{"kind": "signal", "monotonic": 72947.020899535, "pid": 954990, "local_pid": 10, "birth": 7294403, "signal": 15}
+{"kind": "signal", "monotonic": 72947.520797616, "pid": 954990, "local_pid": 10, "birth": 7294403, "signal": 9}
+{"kind": "wait4", "monotonic": 72948.020172261, "pid": 10, "returncode": -9, "user_seconds": 0.00438, "system_seconds": 0.008159, "maxrss_kib": 8448}

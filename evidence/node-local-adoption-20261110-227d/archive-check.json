@@ -1,0 +1,23 @@
+{
+  "all_gzip_roundtrips_exact": true,
+  "all_original_and_stored_hashes_verified": true,
+  "all_retained_originals_still_match": true,
+  "code_bytes_bound": 35602388,
+  "code_paths_bound": 2103,
+  "gzip_logs": 56,
+  "gzip_mtime_zero": true,
+  "gzip_original_files": 60,
+  "gzip_patches_and_diffs": 4,
+  "local_readme_links_checked": 12,
+  "metadata_sha256": {
+    "README.md": "2b92bdae0d13c3863c073cdcf88eebbed9c923cffb6d5a0d8807f9618d3f2a5f",
+    "code-binding.json": "d759c7264f760e995371c2daad86230f64d328c4ddf596b83753c7d1116b402a",
+    "code-path-hashes.json.gz": "f0842dd8b12cc8802e46077ec61a221540ea731a8e55b0cd8a4659e25f342118",
+    "index.json": "79263dc486841730b740d596fc60c19199d3a4e0790d0883370a24b49580d4b8",
+    "rounds.json": "008c8128ac42d201cb7398d3a6f3bd74c56bdc1ddd79c9b3fe4ae0d32055863e"
+  },
+  "original_files": 125,
+  "runtime_commit": "b9a38fd6d245e20849c7edd848dbbe18298cad7e",
+  "scope": "archive-integrity-verification; native results remain source/profile-bound to original logs",
+  "source_rounds": 19
+}

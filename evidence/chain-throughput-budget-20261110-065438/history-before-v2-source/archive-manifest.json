@@ -1,0 +1,103 @@
+{
+  "archive": "source-packet.tar.xz",
+  "sha256": "7f5a03f6d90c7e3b5e8e669145988f526f487aa21a99296c834611e2ed0a515e",
+  "members": [
+    {
+      "path": "README.md",
+      "bytes": 3216,
+      "sha256": "480e4787bdefdfad016d6af154cc4d2c725d542e9ab89e77e23f8e21c66be716"
+    },
+    {
+      "path": "binding.json",
+      "bytes": 4120,
+      "sha256": "7f2bc15a6291585359673e313a0234f3e5d6a07ebc1174abe5009647b38292e0"
+    },
+    {
+      "path": "build_prefixtest.py",
+      "bytes": 5783,
+      "sha256": "7047c36e55cc5537d8fac9b06af153ab1f4df164be449154c016a296c58c1db9"
+    },
+    {
+      "path": "from-pool-h0.patch",
+      "bytes": 17334,
+      "sha256": "7b0e4ab6ec9e79d3a5c7c89670ead92b299a404b88ed0f351a66d3d4d4782ba8"
+    },
+    {
+      "path": "g0-source/trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "bytes": 25696,
+      "sha256": "ef69939abed6c800c298472881b11a6037885839e88ba57b4297fa1ca5a58d7c"
+    },
+    {
+      "path": "g0-source/trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+      "bytes": 65517,
+      "sha256": "7e930f7643b2c96a6edc739ded324de0f16a68b5700572909ccbc394e8d96ffc"
+    },
+    {
+      "path": "g0-source/trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "bytes": 217196,
+      "sha256": "7a0ea0cc4a000a693d94faa43b6acf8541cf1f8965f9fe837d01e7d757a0bee7"
+    },
+    {
+      "path": "g0-source/trillionnium/crates/trnm-pon-node/src/mining.rs",
+      "bytes": 42791,
+      "sha256": "0c623ce0b0ba35ebaf96a5751f4e65b389c2d401042d8f6b18d2cba83253c8b2"
+    },
+    {
+      "path": "g0-source/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 382866,
+      "sha256": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554"
+    },
+    {
+      "path": "pool-hooks.json",
+      "bytes": 2616,
+      "sha256": "ae3f9399d1380336a543721f5140948d7a5d9d6eec14f1000acdb96c052417b7"
+    },
+    {
+      "path": "replacement-source/trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "bytes": 25926,
+      "sha256": "b997dfe1dd2b7b2c02effe72e671c6a61a5bd960494d2860a01b1820abf955d3"
+    },
+    {
+      "path": "replacement-source/trillionnium/crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs",
+      "bytes": 12090,
+      "sha256": "8481cd8ace6188f0d8874de62bebc7f887739a650e802dc695b04b330a2176fa"
+    },
+    {
+      "path": "replacement-source/trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+      "bytes": 65517,
+      "sha256": "7e930f7643b2c96a6edc739ded324de0f16a68b5700572909ccbc394e8d96ffc"
+    },
+    {
+      "path": "replacement-source/trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "bytes": 217196,
+      "sha256": "7a0ea0cc4a000a693d94faa43b6acf8541cf1f8965f9fe837d01e7d757a0bee7"
+    },
+    {
+      "path": "replacement-source/trillionnium/crates/trnm-pon-node/src/mining.rs",
+      "bytes": 43403,
+      "sha256": "e238e616949b0c1d26a446c4a3feaf1dac95cb91d603aaab82b01f94e8742c2c"
+    },
+    {
+      "path": "replacement-source/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 382975,
+      "sha256": "c9e99b4275fec734d0ed22eea5b178457cb9caaaf83318b57f67ca65857afac0"
+    },
+    {
+      "path": "same-test/trillionnium/crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs",
+      "bytes": 12090,
+      "sha256": "8481cd8ace6188f0d8874de62bebc7f887739a650e802dc695b04b330a2176fa"
+    },
+    {
+      "path": "test-pin.json",
+      "bytes": 200,
+      "sha256": "add2ec36162128b3a25ff16518c6bfc6f055830bee4c5aa70d8da7f5ddce48dc"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 285,
+      "sha256": "477ee5cee6d44a77292185d4892ebaf221a10c666e4ef4b36816979e504817fa"
+    }
+  ],
+  "roundtrip_all_members_verified": true,
+  "native_execution_performed_by_packaging": false
+}

@@ -1,0 +1,83 @@
+{
+  "schema": "pon-native-profile-exact-source-process-receipts-v1",
+  "source_v1": {
+    "process": {
+      "at_unix_ms": 1794096711555,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 1,
+      "job_id": "1a1b87b3448-12894-fb5",
+      "launch_nonce": "b05c6b8800db8297dbcedfac81d81197",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 36452,
+          "stored": 36452
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "failed",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "source_sha": "7e941e3c148008ab7264ecc7a3148153183fa6b5"
+  },
+  "source_v2": {
+    "process": {
+      "at_unix_ms": 1794097010289,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b880da7e-12894-fd5",
+      "launch_nonce": "1e6ffb70c804001a66eb79cf71e72212",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 37475,
+          "stored": 37475
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "source_sha": "732b8ff5e8cae74bb0fb6490550d9984f2f5b0d6"
+  }
+}

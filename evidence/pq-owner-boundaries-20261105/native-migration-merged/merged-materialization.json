@@ -1,0 +1,12 @@
+{
+  "head": "14fcbede085b414a9621aef3f288d2b1ca1839ae",
+  "tree": "64b1a7e4072eddac05604d4bb4b1ef713e10d874",
+  "literal_include_paths_checked": 107,
+  "missing": [],
+  "input_sha256": {
+    "trillionnium/Cargo.lock": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs": "c26d0f9838628a0a254e803f231dee8781c31899b2d5de6f7e9f8b18af3aec3d",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs": "c4b6248c8cee8d2ad31110fcc6e87e9d6306fdf34981c0a428341b5f9c3b6751"
+  },
+  "scope": "literal include materialization and retained input identity, not native execution"
+}

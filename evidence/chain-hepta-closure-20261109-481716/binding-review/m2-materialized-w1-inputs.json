@@ -1,0 +1,80 @@
+{
+  "schema": "exact-tracked-input-materialization-v1",
+  "source_commit": "44e96b1a841a50613d0b93484c5e576caec9f81f",
+  "source_tree": "c297ebb14fcbeeb5f8acf13b3143a66b8b3b6db8",
+  "index_modified": false,
+  "files": [
+    {
+      "path": "evidence/pon-w1-complete-succinct-20261028/full-proof/header.bin",
+      "bytes": 318,
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "git_blob_sha1": "7e84b7b2e9c47b23569d6c98916e25a172b3e7ec",
+      "index_blob_sha1": "7e84b7b2e9c47b23569d6c98916e25a172b3e7ec"
+    },
+    {
+      "path": "evidence/pon-w1-complete-succinct-20261028/full-proof/succinct.bin",
+      "bytes": 256886,
+      "sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b",
+      "git_blob_sha1": "6529249998aba001dcd0080322e3b454c312428c",
+      "index_blob_sha1": "6529249998aba001dcd0080322e3b454c312428c"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+      "bytes": 64,
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+      "git_blob_sha1": "8a1e552cc362202bb9829e49912f241497bfd4f8",
+      "index_blob_sha1": "8a1e552cc362202bb9829e49912f241497bfd4f8"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/guest.bin",
+      "bytes": 375928,
+      "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+      "git_blob_sha1": "7452c0d2f180eb2a88719aaf09da74f1e03b52a8",
+      "index_blob_sha1": "7452c0d2f180eb2a88719aaf09da74f1e03b52a8"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/header.bin",
+      "bytes": 318,
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "git_blob_sha1": "7e84b7b2e9c47b23569d6c98916e25a172b3e7ec",
+      "index_blob_sha1": "7e84b7b2e9c47b23569d6c98916e25a172b3e7ec"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/input.bin",
+      "bytes": 49506,
+      "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+      "git_blob_sha1": "d4a4d2f9af938e85df5f3b85a8ad8764b1f7420a",
+      "index_blob_sha1": "d4a4d2f9af938e85df5f3b85a8ad8764b1f7420a"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/proof-result.json",
+      "bytes": 198014,
+      "sha256": "a2bbd9ed141b87823ea6d50322c0d65f706e32aca028d1b5ab19f1327c1194cc",
+      "git_blob_sha1": "882a48d27c8ad7848c7a9e7eb6b2efcc6459e76a",
+      "index_blob_sha1": "882a48d27c8ad7848c7a9e7eb6b2efcc6459e76a"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/succinct.bin",
+      "bytes": 257014,
+      "sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+      "git_blob_sha1": "b406d90892c277fede192978af9811f4d12e62d0",
+      "index_blob_sha1": "b406d90892c277fede192978af9811f4d12e62d0"
+    },
+    {
+      "path": "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz",
+      "bytes": 69332,
+      "sha256": "f6be3667106df6843f5f29c0954cdce8e2617da36c9c91a7a5198665675e0253",
+      "git_blob_sha1": "bf398d326cce1069beaa1b053ca39ef3e157e386",
+      "index_blob_sha1": "bf398d326cce1069beaa1b053ca39ef3e157e386"
+    },
+    {
+      "path": "evidence/pon-w1-verifier-hardening-20261028/real-lift-0000.bin",
+      "bytes": 223154,
+      "sha256": "d2b06a1feca2d15e8dc5741b43f481a82c32d7d3dab01e413d357012467093d3",
+      "git_blob_sha1": "90f4a1ce7115d75c17e48b220f4f8da5c80ca566",
+      "index_blob_sha1": "90f4a1ce7115d75c17e48b220f4f8da5c80ca566"
+    }
+  ],
+  "file_count": 10,
+  "bytes": 1430534
+}

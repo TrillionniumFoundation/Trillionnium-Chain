@@ -1,0 +1,32 @@
+[
+  {
+    "shell_source": "env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch \"x64\"",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "shell_source": "env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch \"x64\" --suite zero-locality --zero-version 2",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "shell_source": "env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch \"x64\" --suite one-zero-locality",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "shell_source": "env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch \"x64\" --suite maintenance-paired",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "shell_source": "env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_reused_cost_v3.py --arch \"x64\"",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

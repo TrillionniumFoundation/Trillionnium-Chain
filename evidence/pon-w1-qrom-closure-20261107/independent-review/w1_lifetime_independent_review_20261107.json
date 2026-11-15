@@ -1,0 +1,65 @@
+{
+  "blocking_findings": [],
+  "limitations": [
+    "Selected source semantic assertions were not independently re-executed.",
+    "Uniform error/reference labels remain caller premises, not certificates."
+  ],
+  "probes": [
+    {
+      "observation": "Counts [6,4,6,40,10,14,22]; two shared groups pay 102+204 and global declared overhead 15.",
+      "passed": true,
+      "probe": "processor_failure_recursive_phase_arithmetic"
+    },
+    {
+      "observation": "Only hypothetical expression meets target; project bound null.",
+      "passed": true,
+      "probe": "conditional_union_and_no_project_qualification"
+    },
+    {
+      "observation": "lifetime/coverage/query-unit scope changed",
+      "passed": true,
+      "probe": "shared_query_unit_cannot_be_native_permutations"
+    },
+    {
+      "observation": "complete_relation_verification_opportunities: bound query domain does not cover the declared lifetime envelope",
+      "passed": true,
+      "probe": "domain_must_cover_reduction_enlargement"
+    },
+    {
+      "observation": "complete_relation_verification_opportunities: bound query domain does not cover the declared lifetime envelope",
+      "passed": true,
+      "probe": "one_query_short_domain_rejected"
+    },
+    {
+      "observation": "complete_relation_verification_opportunities: marginal/fresh-instance/accepted-only bounds do not compose here",
+      "passed": true,
+      "probe": "fresh_statement_error_refused"
+    },
+    {
+      "observation": "groups: exact required field set missing or extended",
+      "passed": true,
+      "probe": "shared_primitive_cannot_split_to_unlisted_independent_group"
+    },
+    {
+      "observation": "Hypothetical target remains null; raw event arithmetic may remain numeric but is not a qualified bound.",
+      "passed": true,
+      "probe": "unclassified_budget_unknown_suppresses_comparison"
+    },
+    {
+      "observation": "Hypothetical target remains null; raw event arithmetic may remain numeric but is not a qualified bound.",
+      "passed": true,
+      "probe": "missing_error_domain_suppresses_comparison"
+    },
+    {
+      "observation": "Hypothetical target remains null; raw event arithmetic may remain numeric but is not a qualified bound.",
+      "passed": true,
+      "probe": "missing_mass_suppresses_comparison"
+    },
+    {
+      "observation": "32001-byte, 16000-level JSON rejected with exit2 and structured stderr.",
+      "passed": true,
+      "probe": "deep_json_structured_rejection"
+    }
+  ],
+  "script_sha256": "7e494ba406c63442dfbd17147d006b967cb07d7f6c886ce5779a0f2f05fceef6"
+}

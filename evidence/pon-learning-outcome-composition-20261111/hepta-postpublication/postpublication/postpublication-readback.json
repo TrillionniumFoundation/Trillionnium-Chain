@@ -1,0 +1,83 @@
+{
+  "schema": "hepta.pon-outcome.postpublication-readback.v1",
+  "started_at": "2026-11-12T01:12:21.334716+00:00",
+  "finished_at": "2026-11-12T01:12:31.246780+00:00",
+  "verification": "PASS",
+  "verification_mode": "read-only, after original publication",
+  "python_optimize": 0,
+  "debug_guards_active": true,
+  "runtime_source": "93fc43f6e87c4514485adcb01a7ffec8ad3b632f",
+  "runtime_tree": "1de575fdbba23d25c483f539a15b455c9e8859cb",
+  "published_head": "ef3a398d460574813957a25f5455e12c60db6d5d",
+  "published_tree": "80d920485ac56be440140099658610b5eda08ab8",
+  "native7_exit": 0,
+  "native8_exit": 0,
+  "native7_log_sha256": "3e7ee2dcd9019949256a2987a3c8612d976952a58503d7050198adaab11a5261",
+  "native8_log_sha256": "bf752718b91d313dfd2a626e998f52c95dcb5e41d4a63705a4f63fbf9b1b375e",
+  "native8_finished_at": "2026-11-12T00:35:34.274321+00:00",
+  "maintenance": [
+    {
+      "label": "maintenance-fmt",
+      "exit": 0,
+      "log_bytes": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "maintenance-fix",
+      "exit": 0,
+      "log_bytes": 68648,
+      "log_sha256": "050531b8d82c40fcee281b51827462e3a7f4107ba00b9aac762321c09e8f53af"
+    },
+    {
+      "label": "maintenance-final-fmt",
+      "exit": 0,
+      "log_bytes": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "native8",
+      "exit": 0,
+      "log_bytes": 31925,
+      "log_sha256": "bf752718b91d313dfd2a626e998f52c95dcb5e41d4a63705a4f63fbf9b1b375e"
+    }
+  ],
+  "original_marker_slices_verified": 26,
+  "original_files_verified": 36,
+  "committed_files_verified": 41,
+  "sha256sums_verified": 40,
+  "original_publisher_pid_present": false,
+  "original_publisher_sha256": "f64d0d25738cbe1697c292168f15dcb7711b0381022709ac62c8bc954d7fa68f",
+  "original_publisher_optimization_mode_verified": false,
+  "new_publisher_started": false,
+  "new_remote_writes": false,
+  "original_push_exit": 0,
+  "original_create_exit": 0,
+  "effective_push_urls": [
+    "https://github.com/TrillionniumFoundation/hepta-private-ci.git"
+  ],
+  "pull_request": {
+    "number": 6062,
+    "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/pull/6062",
+    "state": "OPEN",
+    "isDraft": true,
+    "headRefName": "codex/pon-outcome-readback-20261111-7612",
+    "baseRefName": "codex/ordinary-owner-assembly-20261111-af52",
+    "headRefOid": "ef3a398d460574813957a25f5455e12c60db6d5d",
+    "baseRefOid": "3c8dabe46598599e91b2b8b80081e09069ff9426",
+    "author": {
+      "login": "ProfHepta"
+    }
+  },
+  "parent_pr": {
+    "state": "OPEN",
+    "headRefName": "codex/ordinary-owner-assembly-20261111-af52",
+    "headRefOid": "3c8dabe46598599e91b2b8b80081e09069ff9426"
+  },
+  "historical_cloud_attempt_exit": 101,
+  "historical_cloud_tests_executed": 0,
+  "output_ack_event_verified": false,
+  "full_caller_or_root_gate_claimed": false,
+  "authority": "DENY_ALL",
+  "current_permission": "NOT_EXPORTED",
+  "production_qualification": "HOLD_NO_GO"
+}

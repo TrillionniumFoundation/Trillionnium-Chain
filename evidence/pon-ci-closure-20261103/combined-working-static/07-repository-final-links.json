@@ -1,0 +1,27 @@
+{
+  "label": "07-repository-final-links",
+  "command": [
+    "python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/workspace/scratch/abae1861b451/chain-post-ci",
+  "started_at": "2026-11-03T16:39:11.072148+00:00",
+  "elapsed_seconds": 52.30273001800015,
+  "exit_code": 0,
+  "stdout": {
+    "path": "/workspace/scratch/abae1861b451/post-ci-static-validation/07-repository-final-links.stdout",
+    "bytes": 307,
+    "sha256": "0c982629ae88c7a13c39710b70d18d87cbd1ecd712af4e9236b02bc5a2a66dea"
+  },
+  "stderr": {
+    "path": "/workspace/scratch/abae1861b451/post-ci-static-validation/07-repository-final-links.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "actual_unittest_count": null,
+  "unittest_harness_seconds": null,
+  "skipped_lines": [],
+  "source_before_receipt": "/workspace/scratch/abae1861b451/post-ci-static-validation/source-after.json",
+  "source_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "scope": "Original read-only candidate gate; test mutations, if any, confined by the original test to temporary fixtures. Not native runtime acceptance."
+}

@@ -1,0 +1,11 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running unittests src/lib.rs (/workspace/shared/chain-growth-target/debug/deps/trnm_pon_node-2aaee31106a4dfcc)
+
+running 4 tests
+test store::reverse_path::tests::reverse_spool_batches_io_without_skipping_a_locator ... ok
+test store::reverse_path::tests::reverse_spool_does_not_hide_truncated_spill ... ok
+test store::reverse_path::tests::reverse_spool_preserves_every_locator_across_original_long_chain ... ok
+test store::reverse_path::tests::reverse_spool_propagates_failed_write_before_reusing_buffer ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 1081 filtered out; finished in 0.00s
+

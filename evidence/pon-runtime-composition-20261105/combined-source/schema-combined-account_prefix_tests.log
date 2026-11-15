@@ -1,0 +1,12 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running unittests src/lib.rs (/workspace/shared/chain-growth-target/debug/deps/trnm_pon_node-2aaee31106a4dfcc)
+
+running 5 tests
+test account_archive_execution::state_witness::native_growth::account_prefix_tests::native_growth_account_prefix_cost_keeps_complete_roots_and_recovery ... ok
+test account_archive_prototype::account_prefix_tests::prefix_range_component_cost_abba ... ignored, explicit paired parser wall observation; no Node/service performance gate
+test account_archive_prototype::account_prefix_tests::prefix_range_preserves_account_value_grammar_and_first_error_order ... ok
+test account_archive_prototype::account_prefix_tests::prefix_range_preserves_all_account_suffixes_and_neighboring_keys ... ok
+test account_archive_prototype::account_prefix_tests::prefix_range_visits_fixed_account_rows_when_working_state_grows ... ok
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 1080 filtered out; finished in 9.14s
+

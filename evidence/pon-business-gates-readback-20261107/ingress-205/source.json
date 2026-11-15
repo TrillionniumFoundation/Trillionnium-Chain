@@ -1,0 +1,32 @@
+{
+  "base": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "worktree": "/home/qian-qi/chain-throughput-local-admin-20261107/work-ingress-canonical-d26",
+  "tests_executed": false,
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "bytes": 217185,
+      "sha256": "40572400a127fecb6a2b69b7bb8d8fafecde8f2ae1b6aef634284dfd440567b2"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "bytes": 388846,
+      "sha256": "14d6c18454e557d8f550f2186dc7fedbb240a66f96c144339338ade72f783092"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet.rs",
+      "bytes": 2445,
+      "sha256": "58e50e5014daa332547f8787f55be33bc2845af967445b34e3597e3800255cce"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet/tests.rs",
+      "bytes": 14405,
+      "sha256": "01f15c8676f970db582ae8063d6c57896f514027ef68ac8f4c53ebce0a5b0598"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/input_decode_tests.rs",
+      "bytes": 7512,
+      "sha256": "6bae48442c13b2b9aac9c03e51cb2e5f9704064e93d0402705fb3602767c1550"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "base_file_git_blobs": {
+    "scripts/ci/inspect_native_campaign_failure.py": "7586a9c5ec306c1111bc3dcfd892352690c9fa0f",
+    "scripts/ci/test_inspect_native_campaign_failure.py": "09a1783682117fdc52cf53c3a4ff63aa562ba52d"
+  },
+  "base_source_commit": "c26807d576bacc02e7e32b5293743f15b568b659",
+  "original_native_campaign": "HOLD_NO_GO",
+  "patched_tests": {
+    "log_sha256": "95f21e88064d29db4cdd55f2052f38a2a6576688535811588bb004fde657d768",
+    "passed": 18,
+    "python_compile": true,
+    "total": 18
+  },
+  "post_files_sha256": {
+    "scripts/ci/inspect_native_campaign_failure.py": "10f8b0e609b826bbced12638fafaad608e69014c54457d47c09a3bd5eb327906",
+    "scripts/ci/test_inspect_native_campaign_failure.py": "dff3e746555c3f671ef79cfba95e4cb15adf5eb1608a06232579bbfc5f6f9551"
+  },
+  "pre_fix_tests": {
+    "failed": 2,
+    "log_sha256": "31682383b347f7c7a1d39f4adb4e3e15258bdb344ab242caa37bc845b327df37",
+    "specific": "claimed-success unentered stages and network failure each misclassified no_terminal_import_failure",
+    "total": 17
+  },
+  "schema": "pqroot-affirmative-terminal-observation-v1",
+  "scope": "diagnostic fail-closed only; no native workload run, Host relaxation, production activation, or proof of cryptographic security"
+}

@@ -1,0 +1,15 @@
+test_arbitrary_compressor_collision_for_chosen_digests (test_hash_role_audit.HashRoleAuditTests.test_arbitrary_compressor_collision_for_chosen_digests) ... ok
+test_collision_certificate_rejects_coordinate_mutations (test_hash_role_audit.HashRoleAuditTests.test_collision_certificate_rejects_coordinate_mutations) ... ok
+test_each_fixed_leaf_final_state_is_in_compressor_domain (test_hash_role_audit.HashRoleAuditTests.test_each_fixed_leaf_final_state_is_in_compressor_domain) ... ok
+test_fixed_two_and_four_field_roles_overlap (test_hash_role_audit.HashRoleAuditTests.test_fixed_two_and_four_field_roles_overlap) ... ok
+test_four_field_leaf_is_zero_right_compression (test_hash_role_audit.HashRoleAuditTests.test_four_field_leaf_is_zero_right_compression) ... ok
+test_invalid_field_or_shape_is_rejected (test_hash_role_audit.HashRoleAuditTests.test_invalid_field_or_shape_is_rejected) ... ok
+test_matrix_inverse_certificates_on_basis (test_hash_role_audit.HashRoleAuditTests.test_matrix_inverse_certificates_on_basis) ... ok
+test_no_security_certificate_or_fake_attack (test_hash_role_audit.HashRoleAuditTests.test_no_security_certificate_or_fake_attack) ... ok
+test_official_known_answer_and_inverse (test_hash_role_audit.HashRoleAuditTests.test_official_known_answer_and_inverse) ... ok
+test_primary_source_mutation_is_rejected (test_hash_role_audit.HashRoleAuditTests.test_primary_source_mutation_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.645s
+
+OK

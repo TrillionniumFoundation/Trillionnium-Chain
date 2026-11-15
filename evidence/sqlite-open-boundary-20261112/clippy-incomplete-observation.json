@@ -1,0 +1,29 @@
+{
+  "schema": "sqlite-clippy-incomplete-v1",
+  "status": "INCOMPLETE",
+  "expected_source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+  "snapshot_at_utc": "2026-11-12T00:46:32.252019+00:00",
+  "terminal_receipt_observed": false,
+  "command_exit_code": null,
+  "observed_compile_errors": [
+    "error: could not compile `trnm-mvcc-fee` (lib test)",
+    "error: could not compile `trnm-data-availability` (lib test)"
+  ],
+  "sigkill_reports": 2,
+  "cause_established": false,
+  "serial_retry_started": false,
+  "gzip_completion_receipt_observed": false,
+  "source_qualification": "The start event reported the expected HEAD; no completed per-command source receipt was recovered.",
+  "acceptance_granted": false,
+  "production_activation": false,
+  "streams": {
+    "gate-clippy.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "gate-clippy.stderr": {
+      "bytes": 8146,
+      "sha256": "c7e2752ce8921876a6351089e86cdb2fdcdb627c0c6c13fefed44cd5b9a7924a"
+    }
+  }
+}

@@ -1,0 +1,308 @@
+{
+  "schema": "bebb-reader-independent-final-review-v1",
+  "reviewed_at": "2026-11-03T16:06:09.580761+00:00",
+  "result": "PASS_CURRENT_ARTIFACT_READBACK_WITH_RESOLVED_LATE_IMPORT_FINDING",
+  "head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "actual_merge": "0153600a002c420d20128983c3280ff6c16e70c4",
+  "tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+  "reviewed_input_files": {
+    "extract_cpu_outcomes.py": {
+      "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/root/extract_cpu_outcomes.py",
+      "bytes": 8769,
+      "sha256": "0868b4abe6b74afcbee3f3d58b186ab1f1983b6145b3bed99c31bd78c8eb6bd2"
+    },
+    "extract_service_outcomes.py": {
+      "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/root/extract_service_outcomes.py",
+      "bytes": 16838,
+      "sha256": "2a72d0342f1fa70c1243accd418c4d2182fbded13ebb8b418e3a2aa47e10039d"
+    },
+    "bebb-original-cpu-outcomes.json": {
+      "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/root/bebb-original-cpu-outcomes.json",
+      "bytes": 242898,
+      "sha256": "4acaab2d6d9c3d6fd3b2056bf5baf9d1c9dec6e216401698a41e7e5acf74ca68"
+    },
+    "bebb-original-service-outcomes.json": {
+      "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/root/bebb-original-service-outcomes.json",
+      "bytes": 1073992,
+      "sha256": "e66b8f048673667431ebea14a4fed0cb1c4eeb4fd13bdf9655c1608e2dbc209e"
+    }
+  },
+  "prior_independent_review": {
+    "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/bebb-reader-independent-audit.json",
+    "bytes": 30014,
+    "sha256": "92c17065b39dab4efbc9f0fc1cc5cafa32e6240abf7b6649a4f95895619cfa70"
+  },
+  "github_artifact_digest_checks": 8,
+  "source_member_checks": 26,
+  "cpu_receipt_and_stage_delta_comparisons": 12,
+  "headlines": {
+    "four_second_pressure_confirmations": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "four_second_pressure_planned_confirmations": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "F0_confirmations": 1,
+    "F0_planned_confirmations": 6,
+    "F0_four_second_slo_successes": 0,
+    "campaign_confirmations": 3,
+    "campaign_planned_confirmations": 27,
+    "campaign_planned_packet_exposures": 189,
+    "campaign_observed_rounds": 12,
+    "campaign_unobserved_rounds": 15,
+    "campaign_actual_submission_attempts": 72,
+    "campaign_distinct_attempted_packets": 72,
+    "campaign_unattempted_packet_exposures": 117,
+    "campaign_timely_ACKs": 69
+  },
+  "late_import_finding": {
+    "status": "resolved",
+    "old_reader_sha256": "1c16f04cf226fb85bb45068a428559c91173e0b2d612b9b8ff9411498796681b",
+    "old_report_sha256": "3c8ea61a017a2eb907b1b459a104f79ca277c459eac66d002e0ecde2932299c0",
+    "source_artifact": 13241387206,
+    "raw_member": "run-2-raw/late-product.json",
+    "raw_member_sha256": "e39fa3455052b8b91d498b9c1185dfbf92eab409c22d8f310727b7322c0fa8a0",
+    "history_index": 2,
+    "started_ns": 22683890388,
+    "ended_ns": 30082335559,
+    "original_window_end_ns": 30000000000,
+    "native_succeeded": true,
+    "caller_cpu_ns": 691557585,
+    "original_native_success_preserved": true,
+    "updated_group": {
+      "scope": "campaign/2/late-product",
+      "calls": 3,
+      "accepted": 3,
+      "timely_accepted": 2,
+      "accepted_at_or_after_window": 1,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    "confirmations": 0
+  },
+  "all_import_fields_checked": 86,
+  "import_groups": [
+    {
+      "scope": "head/original/attack-free-baseline",
+      "calls": 7,
+      "accepted": 7,
+      "timely_accepted": 7,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "head/original/from-zero-pressure",
+      "calls": 1,
+      "accepted": 1,
+      "timely_accepted": 1,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "head/fresh/attack-free-baseline",
+      "calls": 7,
+      "accepted": 7,
+      "timely_accepted": 7,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "head/fresh/from-zero-pressure",
+      "calls": 1,
+      "accepted": 0,
+      "timely_accepted": 0,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "prospective-merge/original/attack-free-baseline",
+      "calls": 7,
+      "accepted": 7,
+      "timely_accepted": 7,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "prospective-merge/original/from-zero-pressure",
+      "calls": 2,
+      "accepted": 2,
+      "timely_accepted": 2,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "prospective-merge/fresh/attack-free-baseline",
+      "calls": 7,
+      "accepted": 7,
+      "timely_accepted": 7,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "prospective-merge/fresh/from-zero-pressure",
+      "calls": 2,
+      "accepted": 1,
+      "timely_accepted": 1,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "F0/baseline",
+      "calls": 9,
+      "accepted": 8,
+      "timely_accepted": 8,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "F0/valid-work-root",
+      "calls": 0,
+      "accepted": 0,
+      "timely_accepted": 0,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "campaign/1/baseline",
+      "calls": 7,
+      "accepted": 7,
+      "timely_accepted": 7,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "campaign/1/from-zero",
+      "calls": 4,
+      "accepted": 3,
+      "timely_accepted": 3,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "campaign/1/late-product",
+      "calls": 3,
+      "accepted": 3,
+      "timely_accepted": 3,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "campaign/2/baseline",
+      "calls": 7,
+      "accepted": 7,
+      "timely_accepted": 7,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "campaign/2/from-zero",
+      "calls": 4,
+      "accepted": 3,
+      "timely_accepted": 3,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "campaign/2/late-product",
+      "calls": 3,
+      "accepted": 3,
+      "timely_accepted": 2,
+      "accepted_at_or_after_window": 1,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "campaign/3/baseline",
+      "calls": 7,
+      "accepted": 7,
+      "timely_accepted": 7,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "campaign/3/from-zero",
+      "calls": 4,
+      "accepted": 3,
+      "timely_accepted": 3,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    },
+    {
+      "scope": "campaign/3/late-product",
+      "calls": 4,
+      "accepted": 3,
+      "timely_accepted": 3,
+      "accepted_at_or_after_window": 0,
+      "accepted_timing_unknown": 0,
+      "all_original_fields_and_native_observations_preserved": true
+    }
+  ],
+  "reader_boundary_control": {
+    "synthetic_rows": 7,
+    "strict_before": 1,
+    "exact_boundary_and_later": 2,
+    "unknown_or_noninteger_end": 2,
+    "rejected_retained": 1,
+    "unknown_outcome_retained": 1,
+    "unknown_cpu_preserved": 7,
+    "unknown_window_preserved": true,
+    "native_tests_executed": 0
+  },
+  "evidence_copies_match": [
+    {
+      "path": "/workspace/scratch/abae1861b451/chain-post-ci/evidence/pon-ci-closure-20261103/bebb-hosted/extract_cpu_outcomes.py",
+      "bytes": 8769,
+      "sha256": "0868b4abe6b74afcbee3f3d58b186ab1f1983b6145b3bed99c31bd78c8eb6bd2"
+    },
+    {
+      "path": "/workspace/scratch/abae1861b451/chain-post-ci/evidence/pon-ci-closure-20261103/bebb-hosted/extract_service_outcomes.py",
+      "bytes": 16838,
+      "sha256": "2a72d0342f1fa70c1243accd418c4d2182fbded13ebb8b418e3a2aa47e10039d"
+    },
+    {
+      "path": "/workspace/scratch/abae1861b451/chain-post-ci/evidence/pon-ci-closure-20261103/bebb-hosted/bebb-original-cpu-outcomes.json",
+      "bytes": 242898,
+      "sha256": "4acaab2d6d9c3d6fd3b2056bf5baf9d1c9dec6e216401698a41e7e5acf74ca68"
+    },
+    {
+      "path": "/workspace/scratch/abae1861b451/chain-post-ci/evidence/pon-ci-closure-20261103/bebb-hosted/bebb-original-service-outcomes.json",
+      "bytes": 1073992,
+      "sha256": "e66b8f048673667431ebea14a4fed0cb1c4eeb4fd13bdf9655c1608e2dbc209e"
+    }
+  ],
+  "scope_findings": [
+    "CPU outer Ok is only the MeteredWorkFactOutcome container; separate native Err is retained. Tail CPU settlement does not rewrite native outcome.",
+    "Null active-state-refusal readback remains unknown; all twelve original CPU receipts/deltas match raw logs and retain failures.",
+    "Legacy non-authenticated backend has zero authenticated-stage counters; this is not proof of zero work. Positive original CPU receipts are retained.",
+    "Four-second call CPU source is client_thread_cpu_ns; F0/campaign network call CPU source is calling_process_cpu_ns. No cross-scope total or ratio is inferred.",
+    "Import/page/packet/Host CPU spans remain inclusive; F0 graph snapshots include later confirmation/read_active. No graph/import ratio or nested-stage sum is computed.",
+    "Window end is the original phase epoch bound; business_started_ns is not added.",
+    "F0 actual attempts are 14 baseline plus 15 valid-work-root (12 error, 3 ok), with 14 plus 4 distinct attempted packets and 14 plus 3 timely ACKs; planned denominator remains 42 exposures."
+  ],
+  "production_activation": false,
+  "native_rerun": false,
+  "root_readers_or_reports_modified_by_auditor": false
+}

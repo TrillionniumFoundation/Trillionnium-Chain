@@ -1,0 +1,241 @@
+{
+  "schema": "native-liveness-composition-preservation-audit-v1",
+  "created_at_utc": "2026-11-04T14:00:17.873070+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "audit_mode": "read-only Git object and source inspection; output artifact outside repository",
+  "qualification": false,
+  "source": {
+    "commit": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+    "tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+    "parents": [
+      "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+      "d4816ca5d1375347d8ed341a434158e350c29bbc"
+    ],
+    "parent_roles": {
+      "ours": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+      "remote": "d4816ca5d1375347d8ed341a434158e350c29bbc"
+    },
+    "bindings_verified": true
+  },
+  "result": {
+    "source_preservation": "PASS",
+    "blocking_merge_issues_found": [],
+    "native_runtime_executed_on_merge": false,
+    "native_results_from_ours_or_earlier_relabelled": false,
+    "build_clippy_or_runtime_pass_claimed": false
+  },
+  "exact_file_relations": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "git_blob_sha1": {
+        "ours": "1cb46ea79a361c56f7c808bd92b77d9f620615a6",
+        "remote": "4056ebb4146c711e8c62588bf8e0a7881900c02b",
+        "merged": "1cb46ea79a361c56f7c808bd92b77d9f620615a6"
+      },
+      "verified_relation": "identical_to_ours"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+      "git_blob_sha1": {
+        "ours": "776988b6e4ce5f69013ecec78f19a0133bc3f725",
+        "remote": "a105a2ea1d057a9999e7bb31d2c1e8002720ce40",
+        "merged": "776988b6e4ce5f69013ecec78f19a0133bc3f725"
+      },
+      "verified_relation": "identical_to_ours"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "git_blob_sha1": {
+        "ours": "8af15e409691099f528d2a6932d0d836e996b0f4",
+        "remote": "c12b91dcb9d5a45b9782a78486660b2712a15e8b",
+        "merged": "8af15e409691099f528d2a6932d0d836e996b0f4"
+      },
+      "verified_relation": "identical_to_ours"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "git_blob_sha1": {
+        "ours": "2bf114c585424d1e5b19a3bfec300600be01d908",
+        "remote": "7c1ceca413da2f7004603b17cb19713b9bf681c6",
+        "merged": "2bf114c585424d1e5b19a3bfec300600be01d908"
+      },
+      "verified_relation": "identical_to_ours"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "git_blob_sha1": {
+        "ours": "e0c8bc3d2264347c3b0ac1326dcd9f525d728358",
+        "remote": "b67bdcc21c9f2cf6d8dfd6ef85ca9ea1cc52b3a2",
+        "merged": "e0c8bc3d2264347c3b0ac1326dcd9f525d728358"
+      },
+      "verified_relation": "identical_to_ours"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "git_blob_sha1": {
+        "ours": "ba10f535aa85bff07935d48c6e09452a9718f26e",
+        "remote": "0d8ea0bf4b5f64b354b6a12c2b90efe670b8883f",
+        "merged": "ba10f535aa85bff07935d48c6e09452a9718f26e"
+      },
+      "verified_relation": "identical_to_ours"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/admission_header_tests.rs",
+      "git_blob_sha1": {
+        "ours": "bae5cba609b84c78550c7f4d7e67d0ab9ffde24a",
+        "remote": null,
+        "merged": "bae5cba609b84c78550c7f4d7e67d0ab9ffde24a"
+      },
+      "verified_relation": "identical_to_ours"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_window.rs",
+      "git_blob_sha1": {
+        "ours": "ea1e2a7c9a108063abfda2084abb61ade8838efe",
+        "remote": null,
+        "merged": "ea1e2a7c9a108063abfda2084abb61ade8838efe"
+      },
+      "verified_relation": "identical_to_ours"
+    },
+    {
+      "path": "config/pon/performance-six-axis-v1.json",
+      "git_blob_sha1": {
+        "ours": "a4a75e7a0dd5350522ce825a49643dad7f57aac7",
+        "remote": "026118d39aca5f15e9b12de76f272784b43a4e4d",
+        "merged": "a4a75e7a0dd5350522ce825a49643dad7f57aac7"
+      },
+      "verified_relation": "identical_to_ours"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+      "git_blob_sha1": {
+        "ours": "a6fd9c8e4f514d19ca58295272cde7968b9b5abd",
+        "remote": "02673f72fac1d5d919a9604be876d4e93efd7cfe",
+        "merged": "02673f72fac1d5d919a9604be876d4e93efd7cfe"
+      },
+      "verified_relation": "identical_to_remote"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+      "git_blob_sha1": {
+        "ours": "ca80f9e69580c2fabb7b94aa91f0ef1400afcdb4",
+        "remote": "08cef9af222b5f8a72d030acdc56e8de5ce867a1",
+        "merged": "08cef9af222b5f8a72d030acdc56e8de5ce867a1"
+      },
+      "verified_relation": "identical_to_remote"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs",
+      "git_blob_sha1": {
+        "ours": "d196d99231008100c5019533eb5d9f741532d2f2",
+        "remote": "aa64069cf7a5c667d1bb2ce0f98faf1d64df88c7",
+        "merged": "aa64069cf7a5c667d1bb2ce0f98faf1d64df88c7"
+      },
+      "verified_relation": "identical_to_remote"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+      "git_blob_sha1": {
+        "ours": "3e553781cf89fcd4dc9e7b04e9ac236d722673fd",
+        "remote": "d248078e438dfc89562f15bb41ac927c18559d43",
+        "merged": "d248078e438dfc89562f15bb41ac927c18559d43"
+      },
+      "verified_relation": "identical_to_remote"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+      "git_blob_sha1": {
+        "ours": "c53cb3e0f2db356b5d93da362224d9cf10a3262a",
+        "remote": "f33fecef7776e0f8ee98176a19e5e31d45489a83",
+        "merged": "5a881abe6b660933f31f4c16b66e1f1f42daf5cd"
+      },
+      "verified_relation": "differs_from_both_parents; remote_payload_count_and_ours_typed_header_hooks_preserved"
+    }
+  ],
+  "directory_relations": [
+    {
+      "prefix": "trillionnium/crates/trnm-data-availability",
+      "reference_commit": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+      "verified_relation": "remote_cell_crate_preserved",
+      "differing_paths": []
+    },
+    {
+      "prefix": "trillionnium/crates/trnm-crypto-primitives/src",
+      "reference_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+      "verified_relation": "native_crypto_unchanged",
+      "differing_paths": []
+    },
+    {
+      "prefix": "trillionnium/crates/trnm-protocol/src",
+      "reference_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+      "verified_relation": "native_protocol_unchanged",
+      "differing_paths": []
+    }
+  ],
+  "node_source_paths_changed_from_ours": [
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs"
+  ],
+  "inventory": {
+    "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "git_blob_sha1": {
+      "ours": "e094b471877c2b754b8a8ee4b61b5dc962ae74c7",
+      "remote": "b1224168450ebf1b40dc4787ff25081df6ec7cb4",
+      "merged": "a345ff585a7c56c6676304b6d67d5e0a39f212f6"
+    },
+    "counts": {
+      "ours": 1182,
+      "remote": 1201,
+      "merged": 1203
+    },
+    "union_count": 1203,
+    "equals_parent_union": true,
+    "missing_from_parent_union": [],
+    "extra_outside_parent_union": [],
+    "duplicate_entries": 0
+  },
+  "resolved_manifest": {
+    "path": "config/pon/pq-cross-branch-corpus-v1.json",
+    "git_blob_sha1": "4f448f61f6fb8605197b57e32ded999db0eaf579",
+    "pin_map_key": "pinned_blobs",
+    "pin_count": 444,
+    "pin_hash_mismatches": [],
+    "both_new_regression_files_pinned": true
+  },
+  "detached_composition": {
+    "relative_to_ours": "Remote CanonicalPayloadLength replaces temporary per-cell canonical Vec with streaming serialized-byte count; SnapshotPayload gains equality derives.",
+    "relative_to_remote": [
+      "CommitFence::validate receives original ExecutionControl and emits BeforeHeaderContext.",
+      "prepare_shared_admission forwards the actual typed ExecutionProgress.",
+      "commit_shared_admission emits BeforeHeaderContext after owner reacquisition."
+    ],
+    "preserved_semantics": [
+      "Same serde_json serialization and key-byte plus value-wire-byte length.",
+      "Same MAX_SNAPSHOT_PAYLOAD and Fits/HeldRequired scheduling boundary.",
+      "Same BeforeParentBinding checkpoint every 256 inspected rows.",
+      "Serialization errors retain precedence over count overflow.",
+      "Original owner, backend, epoch, namespace, transaction and post-write readback constraints remain.",
+      "No new deadline, CPU account, consensus permission or caller-selected schedule."
+    ],
+    "tests_exact_remote": true,
+    "original_tests_removed": [],
+    "new_tests": [
+      "snapshot_payload_count_keeps_exact_json_bytes_and_serialization_errors",
+      "snapshot_payload_count_preserves_exact_capacity_and_cancellation_boundaries"
+    ]
+  },
+  "cell_model_composition": {
+    "cell_crate_exact_remote": true,
+    "public_evaluation_exact_remote": true,
+    "existing_m06_hydrate_mandatory_adoption_calls_preserved": true,
+    "native_protocol_or_crypto_source_changed": false,
+    "new_serde_preserve_order_feature_introduced": false
+  },
+  "limits": [
+    "Source inspection only; no native runtime was executed on this merge by this audit.",
+    "Earlier native results remain bound to 2b4d7b46 or their earlier exact sources.",
+    "Payload counting still scans and serializes the full State; only temporary per-cell output allocation is removed.",
+    "Inventory and source hash preservation do not qualify the original 4-second/16-hostile-W1 gate, CPU envelope, or concurrent Cell/model runtime.",
+    "This audit does not constitute a full functional review of all remote Cell/model features."
+  ]
+}

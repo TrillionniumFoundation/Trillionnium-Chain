@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "-c",
+    "from pathlib import Path\nimport re, sys\ntext = Path(sys.argv[1]).read_text()\nrows = re.findall(r'^test result: ok\\. ([0-9]+) passed; 0 failed; 0 ignored;', text, re.M)\nif rows != ['8']:\n    raise SystemExit('four retained legal, two versioned legal and two shared material controls did not execute')\n",
+    "/workspace/scratch/23345083847a/Trillionnium-Chain/evidence/pon-open-consensus-continuation-20261110-2334/validation/cost/portable-replay-01/hosted-spans/legal-native-controls.log"
+  ],
+  "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+  "exit_code": 1,
+  "expected_exit_code": 1,
+  "name": "hosted-legal-before",
+  "native_executed": false,
+  "reader_or_control_wall_ns": 53413733,
+  "stderr_bytes": 90,
+  "stderr_sha256": "58d92f4f4da778bfbbdf56997ad672a53e6aba46cd36459a7cdede0aa0da9fc4",
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

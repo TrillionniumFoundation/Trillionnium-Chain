@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "test_fixed_probability_contract.py",
+    "-v"
+  ],
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "env_overrides": {
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_TERMINAL_PROMPT": "0",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONHASHSEED": "0"
+  },
+  "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+  "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+  "started_utc": "2026-11-09T03:42:48.162985+00:00",
+  "timeout_seconds": 180
+}

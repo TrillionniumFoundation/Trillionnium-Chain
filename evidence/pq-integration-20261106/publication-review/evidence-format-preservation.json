@@ -1,0 +1,27 @@
+{
+  "schema": "trnm-frozen-evidence-format-preservation-v1",
+  "reason": "Preserve the exact already frozen Markdown report/guide bytes: two-space hard line breaks in each guide and final blank report lines.",
+  "original_check": "publication-whitespace-before-attributes.json",
+  "core_whitespace": "default (unset)",
+  "rules": [
+    {
+      "path": "/README.md",
+      "attribute": "whitespace=-blank-at-eof"
+    },
+    {
+      "path": "retained/publication/README.md",
+      "attribute": "whitespace=-blank-at-eol"
+    },
+    {
+      "path": "terminal/publication/README.md",
+      "attribute": "whitespace=-blank-at-eol"
+    }
+  ],
+  "attribute_file": "evidence/pq-integration-20261106/.gitattributes",
+  "affects_native_code_tests_or_budgets": false,
+  "other_paths_keep_default_checks": true,
+  "original_archives_indexes_and_frozen_documents_modified": false,
+  "independent_readonly_review_completed": true,
+  "native_tests_executed": 0,
+  "whole_chain_pq_qualified": false
+}

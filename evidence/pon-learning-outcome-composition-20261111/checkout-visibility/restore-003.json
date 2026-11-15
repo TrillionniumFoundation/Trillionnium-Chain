@@ -1,0 +1,24 @@
+{
+  "actual_oid": "7a7d7b3a043f1801c5e029f3fbde3225e402177b",
+  "bytes": 1776321,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "7a7d7b3a043f1801c5e029f3fbde3225e402177b"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1776321,
+  "expected_oid": "7a7d7b3a043f1801c5e029f3fbde3225e402177b",
+  "finished_at": "2026-11-12T01:41:45.968257+00:00",
+  "path": "evidence/chain-seven-source-convergence-20261109/repository-controls.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvY2hhaW4tc2V2ZW4tc291cmNlLWNvbnZlcmdlbmNlLTIwMjYxMTA5L3JlcG9zaXRvcnktY29udHJvbHMudGFyLmd6",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "32707b6eb14893eb8128d458e7dc49324668d972eaccfb132cd984485c609b04",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:45.931103+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

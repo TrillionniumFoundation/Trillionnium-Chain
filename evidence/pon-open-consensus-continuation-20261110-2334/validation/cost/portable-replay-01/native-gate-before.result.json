@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "scripts/ci/test_w1_factorial_native_gate.py",
+    "-v"
+  ],
+  "cwd": "/tmp/pon-cost-replay-work-_xx02ntd/before-fix-overlay",
+  "exit_code": 1,
+  "expected_exit_code": 1,
+  "expected_failure_subtests": 3,
+  "expected_test_methods": 9,
+  "name": "native-gate-before",
+  "native_executed": false,
+  "observed_failure_summaries": [
+    "failures=3"
+  ],
+  "observed_test_methods": [
+    9
+  ],
+  "reader_or_control_wall_ns": 12040116735,
+  "stderr_bytes": 6108,
+  "stderr_sha256": "eeeb1ab77393809f7f4b25db1dd885c6612f85e33426972a06633d06f27fd971",
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

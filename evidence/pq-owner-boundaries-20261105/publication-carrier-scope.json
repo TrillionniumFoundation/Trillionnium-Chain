@@ -1,0 +1,461 @@
+{
+  "schema": "pq-owner-publication-carrier-scope-v1",
+  "observed_utc": "2026-11-05T07:05:42.450Z",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "frozen_source_review_candidate": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+  "frozen_runtime_source_review_candidate": "70115620a7f540c8618a9b0d32ead20f8bc508f0",
+  "previous_evidence_carrier": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+  "publication_parent": "2e3e1cc2df14f809dcbfb560b94bca2b37a48a35",
+  "publication_parent_tree": "a8785b53959dc3ae94fefb1eda91d4b3c2531018",
+  "publication_parent_parents": [
+    "70d071807028bb8dd6df706c12814b1753129639",
+    "a635200956843f0d2f335f929977d602b48b36ec"
+  ],
+  "commits_added_since_previous_carrier": 7,
+  "changed_paths_since_previous_carrier": [
+    {
+      "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "status": "modified",
+      "git_blob": "2112fe60b9aa770f5cecc5ef21073202d52d9ca4"
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "status": "modified",
+      "git_blob": "640e963b3e41157584b00bcb51cb9e2649044cc2"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/README.md",
+      "status": "modified",
+      "git_blob": "9d6ddf761f19e51e0b14d936f79d83e384b88591"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/concurrent-regression-selection.json",
+      "status": "added",
+      "git_blob": "78457d159431893c2d9e22421fa40c3af170092e"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-55257c61/cell-runtime-checks.json",
+      "status": "added",
+      "git_blob": "e01a8e5cad96fd81cd77155a5cd15b2ea516424e"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-55257c61/cell-runtime-checks.log.gz",
+      "status": "added",
+      "git_blob": "4157bb9b07cf50f909e0e9157ef378297a0f4677"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-55257c61/cell-runtime-clippy.json",
+      "status": "added",
+      "git_blob": "a0f72f569754ba6ef54e3e6ec8993104d0dd0812"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-55257c61/cell-runtime-clippy.log",
+      "status": "added",
+      "git_blob": "2a3162c26fd37ce967d22c2169f0f28d6a005639"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-55257c61/cell-runtime-native-retry.json",
+      "status": "added",
+      "git_blob": "eed8a4c6af981c196b13cec588097dca90c5887d"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-55257c61/cell-runtime-native-retry.log",
+      "status": "added",
+      "git_blob": "ff7cc22918a5af9f58e0126885fd3aeb657f4f7e"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-55257c61/cell-runtime-native.json",
+      "status": "added",
+      "git_blob": "541214479e6376e5efca0abc6e6bc2a2234c2347"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-55257c61/cell-runtime-native.log",
+      "status": "added",
+      "git_blob": "e20e089c51733cbfb61e4e7ea10aae68c578e82f"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-55257c61/cell-runtime-workloads.json",
+      "status": "added",
+      "git_blob": "c3a8c0a85acab307828f736c8623494d58100be8"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-55257c61/cell-runtime-workloads.log",
+      "status": "added",
+      "git_blob": "e9e25c32da931eb5a590bd9063ebfe0c07e32bd9"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-checks.json",
+      "status": "added",
+      "git_blob": "0a96d6c0734fe593a346bc741f96c31e29cb2c68"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-checks.log.gz",
+      "status": "added",
+      "git_blob": "ad8260197c625f0f0fe34f90491e600e63f7d891"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-clippy.json",
+      "status": "added",
+      "git_blob": "307f734442786675bcfd0b0e6780948ce235d1d4"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-clippy.log",
+      "status": "added",
+      "git_blob": "2112e09d1d351b89d6c5c4d7bb18550d030d6281"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-from-zero-python.json",
+      "status": "added",
+      "git_blob": "d1da9aa98d7f6f7de94db8c1ac7dd4c82b423912"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-from-zero-python.log",
+      "status": "added",
+      "git_blob": "2961309501b436759cf0adb70c374c4744e1839d"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-native.json",
+      "status": "added",
+      "git_blob": "16c51f967539c05194fb0fe75d44701b05f5eba8"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-native.log",
+      "status": "added",
+      "git_blob": "2cb7e737bc6e308d4ef48cc3de6968be3fdbb6dc"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-overlap-capacity-progress.json",
+      "status": "added",
+      "git_blob": "a26f5bff81fd97e7dafa184b402eb9788e8eb6a1"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-overlap-capacity-progress.log",
+      "status": "added",
+      "git_blob": "1fbe41878acba3dac21522d73730f0839a8aa911"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-overlap-continuity-new-range-tests.json",
+      "status": "added",
+      "git_blob": "e933ee175947e7d88b292ef3d314eba1baea1f20"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-overlap-continuity-new-range-tests.log",
+      "status": "added",
+      "git_blob": "52d74a8d76842df6d2e573c35bab80ff9cdcf535"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-overlap-diagnostic-lifecycle-publication.json",
+      "status": "added",
+      "git_blob": "ada8a2039a0398e41099bff36ef447d2bc3fd59c"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-overlap-diagnostic-lifecycle-publication.log",
+      "status": "added",
+      "git_blob": "88250857b17599cfe48d8944375f465396572f70"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-overlap-growth-new-range-tests.json",
+      "status": "added",
+      "git_blob": "779bdc9f50995670eecf4efe44e44db39bd52c3f"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-overlap-growth-new-range-tests.log",
+      "status": "added",
+      "git_blob": "a171c87931a4f5109bd87030d1c5f73b27c61e36"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-overlap-listener-domain-admission.json",
+      "status": "added",
+      "git_blob": "2df8abe5460a1081c8e7bdfdfe7a0b9933a802ac"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-overlap-listener-domain-admission.log",
+      "status": "added",
+      "git_blob": "9605c7198159f44c9056be14b408c492347497be"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-overlap-mandatory-owner-funding-path.json",
+      "status": "added",
+      "git_blob": "9b6a291450a2da7dc6cc865e7e78757bca0f4062"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-overlap-mandatory-owner-funding-path.log",
+      "status": "added",
+      "git_blob": "46b6c1f2a5b59fdef00758ec0ea77d753542c68b"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-overlap-startup-epoch-cancellation.json",
+      "status": "added",
+      "git_blob": "2e950cd76a3e1ab7503b98d69c12075c3d019edf"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-overlap-startup-epoch-cancellation.log",
+      "status": "added",
+      "git_blob": "d1f96a36859be8376cfd81acc50438755f6d386f"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-owner-python.json",
+      "status": "added",
+      "git_blob": "4dd0f9c676c50ab9b86d40a60e68a5cdbab04c79"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-owner-python.log",
+      "status": "added",
+      "git_blob": "e709a2c3f989fc2cf4734b9e6d1f493e5a1e30d7"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-shared-cell-python.json",
+      "status": "added",
+      "git_blob": "0a302b430cf54ac7347fa5d7b7e4f0d4dbe2468e"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-shared-cell-python.log",
+      "status": "added",
+      "git_blob": "907a503d126a5d6264512e9e0336809bfe8233f9"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-staged-python.json",
+      "status": "added",
+      "git_blob": "013a0605fef81afbef5ee5a1d0759a3b6195d9bb"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-staged-python.log",
+      "status": "added",
+      "git_blob": "3c0157cfaadc2459ae781eec34cb6b462bc441c8"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-workloads.json",
+      "status": "added",
+      "git_blob": "7ea9c199266433b7b522d630c018880d3de14381"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/cell-runtime-workloads.log",
+      "status": "added",
+      "git_blob": "e9e25c32da931eb5a590bd9063ebfe0c07e32bd9"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/exact-fc86ed8e/concurrent-owner-executions.json",
+      "status": "added",
+      "git_blob": "02c494df13a6e986e0a70e4a5afb89af9ed7fec4"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/publication-70df2c64/cell-publication-checks.json",
+      "status": "added",
+      "git_blob": "7db69647a411542c44b74dfe87932de3ec7fad8b"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/publication-70df2c64/cell-publication-checks.log.gz",
+      "status": "added",
+      "git_blob": "a5e8f603016301ba3ba1ac4264a834fbd7d49cce"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/publication-70df2c64/cell-publication-clippy.json",
+      "status": "added",
+      "git_blob": "29e9acdce4082bf2aeac730f1d50c1cec673925c"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/publication-70df2c64/cell-publication-clippy.log",
+      "status": "added",
+      "git_blob": "4cb086ad62c8d63b635bdec333852b315c7628e1"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/publication-preservation.json",
+      "status": "added",
+      "git_blob": "f18a4b407332c50338dad0c04854cef4d4c40a60"
+    },
+    {
+      "path": "evidence/cell-storage-runtime-20261104/verification.json",
+      "status": "modified",
+      "git_blob": "1488dc43a4284c155c5dbd1a230a2a7a41983cc7"
+    },
+    {
+      "path": "evidence/growth-delta-row-20261105/README.md",
+      "status": "added",
+      "git_blob": "d0150d4de728b28cc8364f42f6196aef68432839"
+    },
+    {
+      "path": "evidence/growth-delta-row-20261105/account-prefix-green.log",
+      "status": "added",
+      "git_blob": "737fe06955596c700b73edacae9cbc82fea8f180"
+    },
+    {
+      "path": "evidence/growth-delta-row-20261105/baseline-failure.log",
+      "status": "added",
+      "git_blob": "2b1194a1a2f43e1d0d43d299f5bf3b53eed546c2"
+    },
+    {
+      "path": "evidence/growth-delta-row-20261105/clippy.log",
+      "status": "added",
+      "git_blob": "143b46ef2e33e9adf08776add60ecd681dfd95a3"
+    },
+    {
+      "path": "evidence/growth-delta-row-20261105/growth-storage-green.log",
+      "status": "added",
+      "git_blob": "dbb1101d5622157f71d1cd46e84d5606476be0ac"
+    },
+    {
+      "path": "evidence/growth-delta-row-20261105/initial-source-pin-failure.log",
+      "status": "added",
+      "git_blob": "5c826aa8a51f2175b49ccb27dd6101df6566c676"
+    },
+    {
+      "path": "evidence/growth-delta-row-20261105/native-primitives-green.log",
+      "status": "added",
+      "git_blob": "7f29798ed1e77c31e462c641d512a91892276e30"
+    },
+    {
+      "path": "evidence/growth-delta-row-20261105/native-store-green.log",
+      "status": "added",
+      "git_blob": "78ccf837f814f1270feff86deef78a3d5eae5f20"
+    },
+    {
+      "path": "evidence/growth-delta-row-20261105/pq-source-check.json",
+      "status": "added",
+      "git_blob": "bbdba97559f3813e08f78e5cf4a19447d56d7937"
+    },
+    {
+      "path": "evidence/growth-delta-row-20261105/pq-source-tests.log",
+      "status": "added",
+      "git_blob": "cbed2ce5fcc813dbb77c36e67c0827ab6c0927bc"
+    },
+    {
+      "path": "evidence/growth-delta-row-20261105/repository-check.json",
+      "status": "added",
+      "git_blob": "a6894a7df4c7dfd0b6c33bad31f047c1022d1010"
+    },
+    {
+      "path": "evidence/growth-delta-row-20261105/source-files.json",
+      "status": "added",
+      "git_blob": "23e9269df558c37e49f9fb9ba6075cca1ab5c042"
+    },
+    {
+      "path": "evidence/growth-delta-row-20261105/source-integrity.log",
+      "status": "added",
+      "git_blob": "6758f6d6bf95dd2a1aa84f6c4700ee2a0a8a6e25"
+    },
+    {
+      "path": "evidence/growth-delta-row-20261105/workflow-pin-failure.log",
+      "status": "added",
+      "git_blob": "0d572c9b5973c9fb51f88c078fa0343a3b92220a"
+    },
+    {
+      "path": "evidence/pon-w1-rebuild-preflight-20261105/README.md",
+      "status": "added",
+      "git_blob": "737bb50fb3d57d2a37b2cb242b2919d7a33445e3"
+    },
+    {
+      "path": "evidence/pon-w1-rebuild-preflight-20261105/actual-prepared-manifest.json",
+      "status": "added",
+      "git_blob": "6b6e24b80f5dc61d1d02cce07359af032697781b"
+    },
+    {
+      "path": "evidence/pon-w1-rebuild-preflight-20261105/host-attempt1-rzup-path.log",
+      "status": "added",
+      "git_blob": "bf84f123da29f4a6a8e7b20450a8feaca8181aa0"
+    },
+    {
+      "path": "evidence/pon-w1-rebuild-preflight-20261105/host-attempt2-cargo-home.log",
+      "status": "added",
+      "git_blob": "0e292f2bcb1370d4a933341bcb2c7f20c9eee2ce"
+    },
+    {
+      "path": "evidence/pon-w1-rebuild-preflight-20261105/host-build.log",
+      "status": "added",
+      "git_blob": "897c3ff950baf73c32d08426238a6efb220a4c87"
+    },
+    {
+      "path": "evidence/pon-w1-rebuild-preflight-20261105/image-rejection.json",
+      "status": "added",
+      "git_blob": "4d25316e4217cfffce572d8da9490c9dcf6c89f3"
+    },
+    {
+      "path": "evidence/pon-w1-rebuild-preflight-20261105/interrupted-original-run.log",
+      "status": "added",
+      "git_blob": "4435637bb98e59b5857f76ae8b604d9f88db0172"
+    },
+    {
+      "path": "evidence/pon-w1-rebuild-preflight-20261105/source-integrity-controls.log",
+      "status": "added",
+      "git_blob": "bd793b95e1b2e84d6c6b659efb342aae65024863"
+    },
+    {
+      "path": "evidence/pon-w1-rebuild-preflight-20261105/summary.json",
+      "status": "added",
+      "git_blob": "eebbe019dfc94a700c1447c84863c5a12d2fe79e"
+    },
+    {
+      "path": "evidence/pon-w1-rebuild-preflight-20261105/w1-native-preproof.json",
+      "status": "added",
+      "git_blob": "87704cc3a4fe7c1330cba0c6add118ddcb3346e1"
+    },
+    {
+      "path": "evidence/pon-w1-rebuild-preflight-20261105/w1-observer-after.log",
+      "status": "added",
+      "git_blob": "91efd3c5d3c50687ed0ca07d256983eb61936dc5"
+    },
+    {
+      "path": "evidence/pon-w1-rebuild-preflight-20261105/w1-verifier-build.log",
+      "status": "added",
+      "git_blob": "dd6e26171db16308122071d9ba349c610e70f7e1"
+    },
+    {
+      "path": "evidence/pon-w1-rebuild-preflight-20261105/w1-verifier-clippy.log",
+      "status": "added",
+      "git_blob": "159fd40376086a6eb8ab171698305b4152cb974a"
+    },
+    {
+      "path": "evidence/pon-w1-rebuild-preflight-20261105/w1-verifier-tests.log",
+      "status": "added",
+      "git_blob": "f4016f1e662bcceaf295bf67a3b9561b18ae3c59"
+    },
+    {
+      "path": "evidence/throughput-contracts-20261104/REPRODUCE.md",
+      "status": "modified",
+      "git_blob": "b3af4256cbe7d1d6b864ed8eb0c4ffe57e10bcf5"
+    },
+    {
+      "path": "evidence/throughput-contracts-20261104/run-node-regressions.py",
+      "status": "added",
+      "git_blob": "9236148b569cd94cb9f76eb5e6e6dd07a40ea243"
+    },
+    {
+      "path": "evidence/throughput-contracts-20261104/verification.json",
+      "status": "added",
+      "git_blob": "7bd89c0b56e748096b3e4eadb5c6e0008c1a85fa"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+      "status": "modified",
+      "git_blob": "b0ca5d614a683531e9eb0543c9060aa5a421b29e"
+    },
+    {
+      "path": "scripts/ci/test_w1_staged_observer.py",
+      "status": "modified",
+      "git_blob": "54e119d085612e5870778f572d7ceb049612ef05"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "status": "modified",
+      "git_blob": "3ac7b48c55ed48f125dbab3ec2b23c0507ab3c13"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "status": "modified",
+      "git_blob": "a60285e56487e026d77a21668d44f841b8b985b4"
+    }
+  ],
+  "non_evidence_paths": [
+    ".github/workflows/pon-branch-encoding-acceptance.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+    "scripts/ci/test_w1_staged_observer.py",
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs"
+  ],
+  "same_production_source_as_frozen_chain_candidate": false,
+  "candidate_source_pair_changed": false,
+  "evidence_overlay_changes_production_source": false,
+  "qualification_transferred_to_carrier": false,
+  "carrier_native_or_whole_repository_validation_by_this_continuation": "NOT_RUN",
+  "scope": "Preserve the concurrent Growth/Cell/W1 source, workflow and evidence changes in the original PR. Publish only this continuation's evidence on that parent. The immutable S/R2 review candidate remains unchanged. The PR head is a newer publication carrier and must not replace the pinned candidate or inherit its source checks or any older native results. P0-1 installed-combination acceptance remains unmet."
+}

@@ -1,0 +1,25 @@
+{
+  "cgroup_membership": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b70a9872-12894-8bb.service\n",
+  "deadline_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "effective_deadline_monotonic": 1150022.102923622,
+  "entered_monotonic_ns": 1149962103127541,
+  "hostname": "qian-qi",
+  "identities": {
+    "expected_artifacts_sha256": "d5c32e48b698e49d9431511410d7c4d88e70467f65a5625a76725e0d072f9051",
+    "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+    "receipt_sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+    "verifier_sha256": "582b53d8607cca6ec228c18de8047e1d6564f0fd9cd3cdeafa06c66f460ad3d5"
+  },
+  "node_admission": false,
+  "pid": 1123277,
+  "resource_scope_complete": false,
+  "schema": "TRNM-W1-RECEIVER-ACK2",
+  "sender_original_local_deadline_supplied": true,
+  "statement": {
+    "expected_artifacts_sha256": "d5c32e48b698e49d9431511410d7c4d88e70467f65a5625a76725e0d072f9051",
+    "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+    "schema": "TRNM-W1-INDEPENDENT-RECEIVER-STATEMENT2",
+    "verifier_profile": "trnm-w1-risc0-3.0.6-poseidon2-join-v2"
+  },
+  "statement_sha256": "cad8286172eb2715c82091ae34f96411bd5aecfdf87e904bcc7c5a6eaffde7d0"
+}

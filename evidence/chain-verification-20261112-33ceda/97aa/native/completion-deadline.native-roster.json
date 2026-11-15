@@ -1,0 +1,17 @@
+{
+  "executed_tests": 10,
+  "result": "PASS",
+  "scope": "native-libtest-transcript-and-process-exit-only",
+  "tests": [
+    "ingress::public_v3::completion_deadline_tests::completion_at_or_after_work_deadline_cannot_start_output_or_rewrite_native_outcome",
+    "ingress::public_v3::completion_deadline_tests::completion_for_closed_connection_releases_only_its_output_reservation",
+    "ingress::public_v3::completion_deadline_tests::completion_gate_enforces_original_total_service_stop_and_cancel_before_encoding_error",
+    "ingress::public_v3::completion_deadline_tests::completion_gate_keeps_live_serialization_and_orphan_outcomes_distinct",
+    "ingress::public_v3::completion_deadline_tests::late_completion_cannot_revive_work_deadline_or_lose_native_outcome",
+    "ingress::public_v3::completion_deadline_tests::queued_completion_expiry_keeps_worker_reservations_until_actual_release",
+    "ingress::public_v3::completion_deadline_tests::rejected_completion_releases_output_before_connection_slot_and_close_observation",
+    "ingress::public_v3::completion_deadline_tests::timely_completion_keeps_output_bytes_and_original_total_deadline",
+    "ingress::public_v3::completion_deadline_tests::timely_completion_transfers_output_under_original_total_and_service_caps",
+    "ingress::public_v3::completion_deadline_tests::unreserved_completion_bytes_close_without_output_or_native_outcome_rewrite"
+  ]
+}

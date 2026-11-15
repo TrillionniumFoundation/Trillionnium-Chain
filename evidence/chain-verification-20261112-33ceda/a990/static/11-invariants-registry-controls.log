@@ -1,0 +1,24 @@
+test_binding_cannot_grant_execution (__main__.InvariantRegistryTests.test_binding_cannot_grant_execution) ... ok
+test_boolean_revision_is_not_integer (__main__.InvariantRegistryTests.test_boolean_revision_is_not_integer) ... ok
+test_class_name_is_not_a_test_function (__main__.InvariantRegistryTests.test_class_name_is_not_a_test_function) ... ok
+test_duplicate_identity_rejected (__main__.InvariantRegistryTests.test_duplicate_identity_rejected) ... ok
+test_independence_cannot_be_granted (__main__.InvariantRegistryTests.test_independence_cannot_be_granted) ... ok
+test_known_revoke_obligation_cannot_be_omitted (__main__.InvariantRegistryTests.test_known_revoke_obligation_cannot_be_omitted) ... ok
+test_missing_atomic_boundary (__main__.InvariantRegistryTests.test_missing_atomic_boundary) ... ok
+test_no_counterexample_schedule (__main__.InvariantRegistryTests.test_no_counterexample_schedule) ... ok
+test_prose_rephrase_and_heading_change_do_not_fake_a_failure (__main__.InvariantRegistryTests.test_prose_rephrase_and_heading_change_do_not_fake_a_failure) ... ok
+test_real_function_bindings (__main__.InvariantRegistryTests.test_real_function_bindings) ... ok
+test_stale_genesis_revision_rejected (__main__.InvariantRegistryTests.test_stale_genesis_revision_rejected) ... ok
+test_wrong_test_selector_rejected (__main__.InvariantRegistryTests.test_wrong_test_selector_rejected) ... ok
+test_comment_decoys_do_not_bind_native_test (__main__.NativeSelectorBindingTests.test_comment_decoys_do_not_bind_native_test) ... ok
+test_helper_or_different_native_test_cannot_replace_exact_selector (__main__.NativeSelectorBindingTests.test_helper_or_different_native_test_cannot_replace_exact_selector) ... ok
+test_ignored_native_test_binds_without_claiming_execution (__main__.NativeSelectorBindingTests.test_ignored_native_test_binds_without_claiming_execution) ... ok
+test_intervening_attributes_and_comments_preserve_native_binding (__main__.NativeSelectorBindingTests.test_intervening_attributes_and_comments_preserve_native_binding) ... ok
+test_ordinary_attributed_native_test_remains_bound (__main__.NativeSelectorBindingTests.test_ordinary_attributed_native_test_remains_bound) ... ok
+test_python_class_is_still_not_a_function_binding (__main__.NativeSelectorBindingTests.test_python_class_is_still_not_a_function_binding) ... ok
+test_string_decoys_do_not_bind_native_test (__main__.NativeSelectorBindingTests.test_string_decoys_do_not_bind_native_test) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 4.348s
+
+OK

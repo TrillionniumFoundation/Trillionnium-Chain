@@ -1,0 +1,685 @@
+{
+  "schema": "trnm-smollm-cell-replica-local-qualification-v1",
+  "native_base_commit": "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251",
+  "native_build_profile": "debug",
+  "python": "3.12.14",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "source_and_retained_files": {
+    "training-input.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/training-input.json",
+      "source_sha256": "1d4a4469a44bc142bc093b9de70eaca6e4cfa5a2f7a0329be1014bacb4818964",
+      "retained_sha256": "1d4a4469a44bc142bc093b9de70eaca6e4cfa5a2f7a0329be1014bacb4818964"
+    },
+    "training/gen1/actual-receipt.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen1/worker/actual-receipt.json",
+      "source_sha256": "8dc89c733c69b04edbc5897772d7f6971ccead6a15d08c3d8fab22ed51820953",
+      "retained_sha256": "8dc89c733c69b04edbc5897772d7f6971ccead6a15d08c3d8fab22ed51820953"
+    },
+    "training/gen1/parent-material.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen1/worker/parent-material.json",
+      "source_sha256": "9ee99491551fa0646072a24c25e3a1c62b071361816af5b48bdaba919aeb5f86",
+      "retained_sha256": "9ee99491551fa0646072a24c25e3a1c62b071361816af5b48bdaba919aeb5f86"
+    },
+    "training/gen1/target-contract.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen1/worker/target-contract.json",
+      "source_sha256": "97c456c986104fb88ade884e822886f88e4e8424afa3e3019f5f89dfe4ba7851",
+      "retained_sha256": "97c456c986104fb88ade884e822886f88e4e8424afa3e3019f5f89dfe4ba7851"
+    },
+    "training/gen1/wrapped-adapter.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen1/worker/wrapped-adapter.json",
+      "source_sha256": "bfe25e803d11a68278a2e61d60a143680f6f48fa7949af19c986bc5ea3959dc0",
+      "retained_sha256": "bfe25e803d11a68278a2e61d60a143680f6f48fa7949af19c986bc5ea3959dc0"
+    },
+    "training/gen1/supervisor.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen1/supervisor.json",
+      "source_sha256": "b347f0a51d440ffb34e2cfe679f2e4ca67c3341cddb518f071c945f5627c1f22",
+      "retained_sha256": "b347f0a51d440ffb34e2cfe679f2e4ca67c3341cddb518f071c945f5627c1f22"
+    },
+    "training/gen1/execution-plan.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen1/execution-plan.json",
+      "source_sha256": "601ca2b0bf8ef1f0f3051106001cb9b906cdd8bb33ad78513547ec964fad3a82",
+      "retained_sha256": "601ca2b0bf8ef1f0f3051106001cb9b906cdd8bb33ad78513547ec964fad3a82"
+    },
+    "training/gen1/command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen1-command.json",
+      "source_sha256": "857db72a9ef4de87df3f1caeb3c02badfd8492c65b2f5aaf577e430f2b903b1a",
+      "retained_sha256": "857db72a9ef4de87df3f1caeb3c02badfd8492c65b2f5aaf577e430f2b903b1a"
+    },
+    "training/gen1/command.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen1-command.log",
+      "source_sha256": "cebdf1fa7a3594329a4d55053430b80b137557e8a0d3cae72d301623c77008fa",
+      "retained_sha256": "cebdf1fa7a3594329a4d55053430b80b137557e8a0d3cae72d301623c77008fa"
+    },
+    "training/gen2/actual-receipt.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen2/worker/actual-receipt.json",
+      "source_sha256": "732850df8b222305e58b712a3d9e39ceeb1f0a6ad886e3ed13bafe68b6ac3f86",
+      "retained_sha256": "732850df8b222305e58b712a3d9e39ceeb1f0a6ad886e3ed13bafe68b6ac3f86"
+    },
+    "training/gen2/parent-material.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen2/worker/parent-material.json",
+      "source_sha256": "907a0f1d999e27e97f6412d61f4755d4f65d71ea015b60fbc26bb0380ac39c88",
+      "retained_sha256": "907a0f1d999e27e97f6412d61f4755d4f65d71ea015b60fbc26bb0380ac39c88"
+    },
+    "training/gen2/target-contract.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen2/worker/target-contract.json",
+      "source_sha256": "97c456c986104fb88ade884e822886f88e4e8424afa3e3019f5f89dfe4ba7851",
+      "retained_sha256": "97c456c986104fb88ade884e822886f88e4e8424afa3e3019f5f89dfe4ba7851"
+    },
+    "training/gen2/wrapped-adapter.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen2/worker/wrapped-adapter.json",
+      "source_sha256": "e2da61652d3a12313390b61e9ab4b761079e34573f8f5786bd23b84c65aad4e4",
+      "retained_sha256": "e2da61652d3a12313390b61e9ab4b761079e34573f8f5786bd23b84c65aad4e4"
+    },
+    "training/gen2/supervisor.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen2/supervisor.json",
+      "source_sha256": "820428f960fae53465e72adbc1dc9d9d8ed3168048100f87d0c753564e6ba672",
+      "retained_sha256": "820428f960fae53465e72adbc1dc9d9d8ed3168048100f87d0c753564e6ba672"
+    },
+    "training/gen2/execution-plan.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen2/execution-plan.json",
+      "source_sha256": "a8b74d2dc9d0c27d623fe2a09b7ba53e31b79aca088349467c01f3d47fba1146",
+      "retained_sha256": "a8b74d2dc9d0c27d623fe2a09b7ba53e31b79aca088349467c01f3d47fba1146"
+    },
+    "training/gen2/command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen2-command.json",
+      "source_sha256": "e28121d2c7d9caf91fd399527bd83503782df8840a6e7c37e2c0bcd4457655bb",
+      "retained_sha256": "e28121d2c7d9caf91fd399527bd83503782df8840a6e7c37e2c0bcd4457655bb"
+    },
+    "training/gen2/command.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen2-command.log",
+      "source_sha256": "63b9e480652e31f722004dba41888234d31360a191224338b06fdaf3f2df28d3",
+      "retained_sha256": "63b9e480652e31f722004dba41888234d31360a191224338b06fdaf3f2df28d3"
+    },
+    "training/gen3/actual-receipt.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen3/worker/actual-receipt.json",
+      "source_sha256": "3d70c36bd864f8df939a666b91372327965dc916d0b78f2cfec4137ac3b9c6a2",
+      "retained_sha256": "3d70c36bd864f8df939a666b91372327965dc916d0b78f2cfec4137ac3b9c6a2"
+    },
+    "training/gen3/parent-material.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen3/worker/parent-material.json",
+      "source_sha256": "976b61c3e8f801d4c241cbb94eb648819c20a449095157f3d938cb1fe490d708",
+      "retained_sha256": "976b61c3e8f801d4c241cbb94eb648819c20a449095157f3d938cb1fe490d708"
+    },
+    "training/gen3/target-contract.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen3/worker/target-contract.json",
+      "source_sha256": "97c456c986104fb88ade884e822886f88e4e8424afa3e3019f5f89dfe4ba7851",
+      "retained_sha256": "97c456c986104fb88ade884e822886f88e4e8424afa3e3019f5f89dfe4ba7851"
+    },
+    "training/gen3/wrapped-adapter.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen3/worker/wrapped-adapter.json",
+      "source_sha256": "ff08061e81f16a0fc0401064da0070423336d0ffa1c73f414af16b33d0706b18",
+      "retained_sha256": "ff08061e81f16a0fc0401064da0070423336d0ffa1c73f414af16b33d0706b18"
+    },
+    "training/gen3/supervisor.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen3/supervisor.json",
+      "source_sha256": "370df786b368b8a22d120d3f4a3f9a048e3a26f1172d68c57629a4e368bff859",
+      "retained_sha256": "370df786b368b8a22d120d3f4a3f9a048e3a26f1172d68c57629a4e368bff859"
+    },
+    "training/gen3/execution-plan.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen3/execution-plan.json",
+      "source_sha256": "4dda4e2961aa50ddac631c068c7a7ad9648eb82c1d90a8c84b1afb48d3065f03",
+      "retained_sha256": "4dda4e2961aa50ddac631c068c7a7ad9648eb82c1d90a8c84b1afb48d3065f03"
+    },
+    "training/gen3/command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen3-command.json",
+      "source_sha256": "02432fe5e929658e2437615b318e5357536fe684dd5d781b41d06b3c5df53644",
+      "retained_sha256": "02432fe5e929658e2437615b318e5357536fe684dd5d781b41d06b3c5df53644"
+    },
+    "training/gen3/command.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen3-command.log",
+      "source_sha256": "4fe0ad4b57d63c770b9b61f26afb3124f77b51cec37053afab401c713ecb6fc8",
+      "retained_sha256": "4fe0ad4b57d63c770b9b61f26afb3124f77b51cec37053afab401c713ecb6fc8"
+    },
+    "actual/actions.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/actions.json",
+      "source_sha256": "8206fd8d4161d3c6a274c0bfd2a7c0bb517af1246128af8ba55a76eeb44b1988",
+      "retained_sha256": "8206fd8d4161d3c6a274c0bfd2a7c0bb517af1246128af8ba55a76eeb44b1988"
+    },
+    "actual/baseline-read-observations.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/baseline-read-observations.json",
+      "source_sha256": "981a4376c83e5010811a3b316b48b4b040add3fdf0c661d611135069103fb2e3",
+      "retained_sha256": "981a4376c83e5010811a3b316b48b4b040add3fdf0c661d611135069103fb2e3"
+    },
+    "actual/candidate-read-stderr.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/candidate-read-stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "actual/research-result.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/research-result.json",
+      "source_sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+      "retained_sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592"
+    },
+    "actual/baseline-read-process.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/baseline-read-process.json",
+      "source_sha256": "2aff70bd5ab4ef370d75559842bfaa32fe4af7a03e5ea460baf35e11173d1be1",
+      "retained_sha256": "2aff70bd5ab4ef370d75559842bfaa32fe4af7a03e5ea460baf35e11173d1be1"
+    },
+    "actual/frozen-comparison.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/frozen-comparison.json",
+      "source_sha256": "8b603a6ff9443a917885bd948ec130b01e3ab9d69c513d85794740e8c04c582f",
+      "retained_sha256": "8b603a6ff9443a917885bd948ec130b01e3ab9d69c513d85794740e8c04c582f"
+    },
+    "actual/candidate-read-stdout.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/candidate-read-stdout.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "actual/baseline-read-stderr.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/baseline-read-stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "actual/baseline-read-stdout.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/baseline-read-stdout.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "actual/candidate-read-process.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/candidate-read-process.json",
+      "source_sha256": "fbc458a85ad6e6f2e171b445225e56ec1f15712a34c0e9bfd5003a8a00e1263e",
+      "retained_sha256": "fbc458a85ad6e6f2e171b445225e56ec1f15712a34c0e9bfd5003a8a00e1263e"
+    },
+    "actual/candidate-read-observations.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/candidate-read-observations.json",
+      "source_sha256": "dc3ce114b2184746283dbfd60f9a78c34632f7a1386be45d66408baca95d6903",
+      "retained_sha256": "dc3ce114b2184746283dbfd60f9a78c34632f7a1386be45d66408baca95d6903"
+    },
+    "actual/transport/pack-3-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-3-command.json",
+      "source_sha256": "8b664a12767770d5e107506ff8bfa6418e4a100c10bc6c7dca2ebd647ba674e5",
+      "retained_sha256": "8b664a12767770d5e107506ff8bfa6418e4a100c10bc6c7dca2ebd647ba674e5"
+    },
+    "actual/transport/materialize-10.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-10.log",
+      "source_sha256": "6e2e8b1d07a4d2a7506a787107cb21b1cf8edff5593c26ae15f5a620b3bc76a3",
+      "retained_sha256": "6e2e8b1d07a4d2a7506a787107cb21b1cf8edff5593c26ae15f5a620b3bc76a3"
+    },
+    "actual/transport/offline-publisher-negative-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/offline-publisher-negative-command.json",
+      "source_sha256": "6e715004fd086739816318846ae7c5d3328f1f3df891957d80486a55675e8493",
+      "retained_sha256": "6e715004fd086739816318846ae7c5d3328f1f3df891957d80486a55675e8493"
+    },
+    "actual/transport/materialize-1.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-1.log",
+      "source_sha256": "894713d9a4cc50088bf8a7816c8ad0ece59da15939a604d55d0bbce9f422f8b0",
+      "retained_sha256": "894713d9a4cc50088bf8a7816c8ad0ece59da15939a604d55d0bbce9f422f8b0"
+    },
+    "actual/transport/materialize-10-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-10-command.json",
+      "source_sha256": "37e7ed7aeaa73f0f31006a9e8f189cea0e0006e8bd9aa5d5ded03b52bb8cbec2",
+      "retained_sha256": "37e7ed7aeaa73f0f31006a9e8f189cea0e0006e8bd9aa5d5ded03b52bb8cbec2"
+    },
+    "actual/transport/publisher-to-replica-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/publisher-to-replica-command.json",
+      "source_sha256": "99eacfaf5cbc057265a65f01d3cbcc0dc300f81b08e99fa8513697a5d1abbe3a",
+      "retained_sha256": "99eacfaf5cbc057265a65f01d3cbcc0dc300f81b08e99fa8513697a5d1abbe3a"
+    },
+    "actual/transport/pack-1.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-1.log",
+      "source_sha256": "ec543d6f39a288c4f6badd0e2661c9d9b70b34a0498ce5f818320c97fafcf0ed",
+      "retained_sha256": "ec543d6f39a288c4f6badd0e2661c9d9b70b34a0498ce5f818320c97fafcf0ed"
+    },
+    "actual/transport/materialize-8-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-8-command.json",
+      "source_sha256": "b6dd2487b243e41167312c876dab32f4564488429ec86eaaa896ae50549a2b5b",
+      "retained_sha256": "b6dd2487b243e41167312c876dab32f4564488429ec86eaaa896ae50549a2b5b"
+    },
+    "actual/transport/pack-9-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-9-command.json",
+      "source_sha256": "8f5cb3aaf6fdd02ee54798095a863dd28f2aae26898045961677e92afa82919f",
+      "retained_sha256": "8f5cb3aaf6fdd02ee54798095a863dd28f2aae26898045961677e92afa82919f"
+    },
+    "actual/transport/materialize-3.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-3.log",
+      "source_sha256": "6e40f94ec51a52b8e89d435341932872054bb9919406f70639ec0c6f73e545a6",
+      "retained_sha256": "6e40f94ec51a52b8e89d435341932872054bb9919406f70639ec0c6f73e545a6"
+    },
+    "actual/transport/materialize-4.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-4.log",
+      "source_sha256": "7118223e3a07bd56315b70a196bb6fd2a3cffe771e66cb8b17554c74132779be",
+      "retained_sha256": "7118223e3a07bd56315b70a196bb6fd2a3cffe771e66cb8b17554c74132779be"
+    },
+    "actual/transport/pack-10.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-10.log",
+      "source_sha256": "97bd2c2ada829b6d6f3859326e730e03dfa4e3b23f249cb1defd9554f05105ad",
+      "retained_sha256": "97bd2c2ada829b6d6f3859326e730e03dfa4e3b23f249cb1defd9554f05105ad"
+    },
+    "actual/transport/pack-4-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-4-command.json",
+      "source_sha256": "ec627665b28f3cd80a71d37b800ed18aa35c8b2580a5f087248a2e188f4c3602",
+      "retained_sha256": "ec627665b28f3cd80a71d37b800ed18aa35c8b2580a5f087248a2e188f4c3602"
+    },
+    "actual/transport/pack-3.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-3.log",
+      "source_sha256": "3a546d6c659f83f8041fc0d9b41fc943eb7df142aa54592108a92e7b77b91a06",
+      "retained_sha256": "3a546d6c659f83f8041fc0d9b41fc943eb7df142aa54592108a92e7b77b91a06"
+    },
+    "actual/transport/publisher-stderr.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/publisher-stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "actual/transport/materialize-7-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-7-command.json",
+      "source_sha256": "cea06fb540eb735511d74dacc386e2c85c4ab19a84432ba2991af6c6d779bf3c",
+      "retained_sha256": "cea06fb540eb735511d74dacc386e2c85c4ab19a84432ba2991af6c6d779bf3c"
+    },
+    "actual/transport/pack-6-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-6-command.json",
+      "source_sha256": "e0fee921ebb6ae6f55cadec71e5f9aa0966b4babfba1a37394fb06b0ceaf46d7",
+      "retained_sha256": "e0fee921ebb6ae6f55cadec71e5f9aa0966b4babfba1a37394fb06b0ceaf46d7"
+    },
+    "actual/transport/pack-6.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-6.log",
+      "source_sha256": "eb03155c969ec31e015eba3a8d0b2550914ca178a3f6c4f2a90a323cf72493ad",
+      "retained_sha256": "eb03155c969ec31e015eba3a8d0b2550914ca178a3f6c4f2a90a323cf72493ad"
+    },
+    "actual/transport/materialize-8.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-8.log",
+      "source_sha256": "210cd20078c60cb112b6eae7b7b3b87c04bd3e0ee3acb8c37502982921921fcd",
+      "retained_sha256": "210cd20078c60cb112b6eae7b7b3b87c04bd3e0ee3acb8c37502982921921fcd"
+    },
+    "actual/transport/replica-process.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/replica-process.json",
+      "source_sha256": "586b30e567bfbd361f8415f6e3e2218936f7caf4b21d6b663cd3a03e0d569dca",
+      "retained_sha256": "586b30e567bfbd361f8415f6e3e2218936f7caf4b21d6b663cd3a03e0d569dca"
+    },
+    "actual/transport/pack-7-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-7-command.json",
+      "source_sha256": "12fdac4bae8915b6d76b94b69c2259ddaa5c779a9ce331834e7ea7a219693607",
+      "retained_sha256": "12fdac4bae8915b6d76b94b69c2259ddaa5c779a9ce331834e7ea7a219693607"
+    },
+    "actual/transport/pack-5-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-5-command.json",
+      "source_sha256": "94b2d5ce91f132f5a7e7d50b2b9d6e1a54abdab8703d41e0629fe9406a842518",
+      "retained_sha256": "94b2d5ce91f132f5a7e7d50b2b9d6e1a54abdab8703d41e0629fe9406a842518"
+    },
+    "actual/transport/materialize-6.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-6.log",
+      "source_sha256": "cedc5bd2a44560a9c206fd71514c2d357add5e3399607398837030debed79474",
+      "retained_sha256": "cedc5bd2a44560a9c206fd71514c2d357add5e3399607398837030debed79474"
+    },
+    "actual/transport/offline-publisher-negative.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/offline-publisher-negative.log",
+      "source_sha256": "a304dbcf1f319e27c2325085df789b0cb12e99597cad5987c6305b6bfef29e69",
+      "retained_sha256": "a304dbcf1f319e27c2325085df789b0cb12e99597cad5987c6305b6bfef29e69"
+    },
+    "actual/transport/pack-0-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-0-command.json",
+      "source_sha256": "b9929a2d4c797a5568422e1de636f0f02b1b7f90818b7ecdc9f2c80c4cffaacf",
+      "retained_sha256": "b9929a2d4c797a5568422e1de636f0f02b1b7f90818b7ecdc9f2c80c4cffaacf"
+    },
+    "actual/transport/materialize-7.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-7.log",
+      "source_sha256": "029a276dc74108795a2c6c77a2c520b6c3aa6a89e52f941319fda5029775efae",
+      "retained_sha256": "029a276dc74108795a2c6c77a2c520b6c3aa6a89e52f941319fda5029775efae"
+    },
+    "actual/transport/replica-to-consumer.tcr1": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/replica-to-consumer.tcr1",
+      "source_sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed",
+      "retained_sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed"
+    },
+    "actual/transport/materialize-0.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-0.log",
+      "source_sha256": "690ef1ea9609692f0b2d9dfce03fcf2a2a5c76a06545ad4cb55421ac98fd89c4",
+      "retained_sha256": "690ef1ea9609692f0b2d9dfce03fcf2a2a5c76a06545ad4cb55421ac98fd89c4"
+    },
+    "actual/transport/pack-4.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-4.log",
+      "source_sha256": "9ad5aa8fd763899b9f4eecc1ae7d7ff446ba156c6d5cc303a926f0a9e0030cec",
+      "retained_sha256": "9ad5aa8fd763899b9f4eecc1ae7d7ff446ba156c6d5cc303a926f0a9e0030cec"
+    },
+    "actual/transport/materialize-9.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-9.log",
+      "source_sha256": "b1acfe5bdc09305f8a4468d6b40f3449fa04c55161c1de4ca5c1b6bec8df4051",
+      "retained_sha256": "b1acfe5bdc09305f8a4468d6b40f3449fa04c55161c1de4ca5c1b6bec8df4051"
+    },
+    "actual/transport/pack-2-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-2-command.json",
+      "source_sha256": "77bdde59cd9ff637a9f31e23d03c69792589861a921f0c7d2cf8df128c3730f4",
+      "retained_sha256": "77bdde59cd9ff637a9f31e23d03c69792589861a921f0c7d2cf8df128c3730f4"
+    },
+    "actual/transport/materialize-2.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-2.log",
+      "source_sha256": "5329e63a5751684577859f10ce7c6ed4683cd9cb08cb106944b0fc7e5a076f15",
+      "retained_sha256": "5329e63a5751684577859f10ce7c6ed4683cd9cb08cb106944b0fc7e5a076f15"
+    },
+    "actual/transport/prepare-release-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/prepare-release-command.json",
+      "source_sha256": "7ad3bd91f21dc824fd4664470c1c6657f3129af4869dfefb15dfb5fdf1ab242d",
+      "retained_sha256": "7ad3bd91f21dc824fd4664470c1c6657f3129af4869dfefb15dfb5fdf1ab242d"
+    },
+    "actual/transport/materialize-5.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-5.log",
+      "source_sha256": "afc7ed1c3175205f251c2bcfb0e0bbf112751a592f9540472d1f969f3b66c500",
+      "retained_sha256": "afc7ed1c3175205f251c2bcfb0e0bbf112751a592f9540472d1f969f3b66c500"
+    },
+    "actual/transport/prepare-release.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/prepare-release.log",
+      "source_sha256": "d901c8770ae12272b6ff1682bb2884627931ffbdd92a523dc128a960be7136f0",
+      "retained_sha256": "d901c8770ae12272b6ff1682bb2884627931ffbdd92a523dc128a960be7136f0"
+    },
+    "actual/transport/materialize-6-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-6-command.json",
+      "source_sha256": "e4264d7e8b5065de5ce8743c127c2e79577849bd30f24483ffea6083780fa031",
+      "retained_sha256": "e4264d7e8b5065de5ce8743c127c2e79577849bd30f24483ffea6083780fa031"
+    },
+    "actual/transport/source-release.tcr1": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/source-release.tcr1",
+      "source_sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed",
+      "retained_sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed"
+    },
+    "actual/transport/pack-0.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-0.log",
+      "source_sha256": "80dd338926daf1871f02192070e4fdf350f02fee1449d6f262d3b418ec777bb7",
+      "retained_sha256": "80dd338926daf1871f02192070e4fdf350f02fee1449d6f262d3b418ec777bb7"
+    },
+    "actual/transport/replica-to-consumer-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/replica-to-consumer-command.json",
+      "source_sha256": "d23ff3debbeacdd6db30066aa5bda54004ac0e2b0577437c6008043f14265ad1",
+      "retained_sha256": "d23ff3debbeacdd6db30066aa5bda54004ac0e2b0577437c6008043f14265ad1"
+    },
+    "actual/transport/materialize-9-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-9-command.json",
+      "source_sha256": "af31d53621e7aca80e141474dec86d754e2d92e502d9d5dec0610a623b6c97c8",
+      "retained_sha256": "af31d53621e7aca80e141474dec86d754e2d92e502d9d5dec0610a623b6c97c8"
+    },
+    "actual/transport/replica-to-consumer.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/replica-to-consumer.log",
+      "source_sha256": "d9f633f888e06fd4ae6eecd4453558987de25d04add63b556066ed225f72eed3",
+      "retained_sha256": "d9f633f888e06fd4ae6eecd4453558987de25d04add63b556066ed225f72eed3"
+    },
+    "actual/transport/pack-7.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-7.log",
+      "source_sha256": "fea5e12d3b0d833fd3a3f74a0c629d01437445a334d4613bb0624667d34a8416",
+      "retained_sha256": "fea5e12d3b0d833fd3a3f74a0c629d01437445a334d4613bb0624667d34a8416"
+    },
+    "actual/transport/publisher-to-replica.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/publisher-to-replica.log",
+      "source_sha256": "d9f633f888e06fd4ae6eecd4453558987de25d04add63b556066ed225f72eed3",
+      "retained_sha256": "d9f633f888e06fd4ae6eecd4453558987de25d04add63b556066ed225f72eed3"
+    },
+    "actual/transport/pack-8.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-8.log",
+      "source_sha256": "1ea748f3316110c9469293cdf20d7d9bd73f47ce06d1a6a7615f1e68cf94a4da",
+      "retained_sha256": "1ea748f3316110c9469293cdf20d7d9bd73f47ce06d1a6a7615f1e68cf94a4da"
+    },
+    "actual/transport/pack-1-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-1-command.json",
+      "source_sha256": "34a1efc3673944f7a067733c7f288d17743d796db0fa8306b9424f20a159c2a6",
+      "retained_sha256": "34a1efc3673944f7a067733c7f288d17743d796db0fa8306b9424f20a159c2a6"
+    },
+    "actual/transport/replica-stderr.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/replica-stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "actual/transport/publisher-process.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/publisher-process.json",
+      "source_sha256": "82216c1b1e7fd6c2fe7c6a7d71fff63fa75c0773d84811a49df5bd052fb9e8ae",
+      "retained_sha256": "82216c1b1e7fd6c2fe7c6a7d71fff63fa75c0773d84811a49df5bd052fb9e8ae"
+    },
+    "actual/transport/pack-8-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-8-command.json",
+      "source_sha256": "fee1aab7aa30df4840122000770a6c4a8df8f5fd7b8b930e8e53abb7b22ab4e1",
+      "retained_sha256": "fee1aab7aa30df4840122000770a6c4a8df8f5fd7b8b930e8e53abb7b22ab4e1"
+    },
+    "actual/transport/pack-2.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-2.log",
+      "source_sha256": "6bcf3a44160b27ef73eec77afe548e99e4fadef081456e92f9fda08fe38bee4e",
+      "retained_sha256": "6bcf3a44160b27ef73eec77afe548e99e4fadef081456e92f9fda08fe38bee4e"
+    },
+    "actual/transport/transport-report.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/transport-report.json",
+      "source_sha256": "ea92fbd3e1a8d5b1e3fed2038b9edf5b1c5aac70757777b579356733220e8bdc",
+      "retained_sha256": "ea92fbd3e1a8d5b1e3fed2038b9edf5b1c5aac70757777b579356733220e8bdc"
+    },
+    "actual/transport/materialize-1-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-1-command.json",
+      "source_sha256": "ab51056c73123423769a6be318683cfc13fd19060f5d484da0175e3e51cc4315",
+      "retained_sha256": "ab51056c73123423769a6be318683cfc13fd19060f5d484da0175e3e51cc4315"
+    },
+    "actual/transport/pack-5.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-5.log",
+      "source_sha256": "bc8d70cc9e9950aba465332db66b166c80b08b43d307c32ea03427a9c38de189",
+      "retained_sha256": "bc8d70cc9e9950aba465332db66b166c80b08b43d307c32ea03427a9c38de189"
+    },
+    "actual/transport/pack-9.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-9.log",
+      "source_sha256": "3c464bd12013d673953dbb14824a20deb0876eb7b2302ba7d13848e2d2afe96e",
+      "retained_sha256": "3c464bd12013d673953dbb14824a20deb0876eb7b2302ba7d13848e2d2afe96e"
+    },
+    "actual/transport/publisher-to-replica.tcr1": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/publisher-to-replica.tcr1",
+      "source_sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed",
+      "retained_sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed"
+    },
+    "actual/transport/materialize-0-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-0-command.json",
+      "source_sha256": "e1bc3a0a02d9c08dad95f6fb58e474defe2b7623f003893a29c8f8be8fcce3d6",
+      "retained_sha256": "e1bc3a0a02d9c08dad95f6fb58e474defe2b7623f003893a29c8f8be8fcce3d6"
+    },
+    "actual/transport/materialize-3-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-3-command.json",
+      "source_sha256": "d1e3772b9e17021ed6e5b80dc9bad97cc7111a57e804e59268b1c43d9330c8cc",
+      "retained_sha256": "d1e3772b9e17021ed6e5b80dc9bad97cc7111a57e804e59268b1c43d9330c8cc"
+    },
+    "actual/transport/materialize-4-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-4-command.json",
+      "source_sha256": "b60e103caa5ada51673866c66049de4f73464646853775b086338ea12e18bd67",
+      "retained_sha256": "b60e103caa5ada51673866c66049de4f73464646853775b086338ea12e18bd67"
+    },
+    "actual/transport/materialize-2-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-2-command.json",
+      "source_sha256": "ae6c4e8494d10bdddebab7222852614f61dc43d4bb47589c6ec3a7e412673ec0",
+      "retained_sha256": "ae6c4e8494d10bdddebab7222852614f61dc43d4bb47589c6ec3a7e412673ec0"
+    },
+    "actual/transport/materialize-5-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/materialize-5-command.json",
+      "source_sha256": "27cfc779d984403c11f1e7caaec0f9d6def4da001ce542db7db104a7e4fa8218",
+      "retained_sha256": "27cfc779d984403c11f1e7caaec0f9d6def4da001ce542db7db104a7e4fa8218"
+    },
+    "actual/transport/publisher-stdout.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/publisher-stdout.log",
+      "source_sha256": "65e3ace3153b359787bb9fe1b1510f7e8659d142256c415370d5323cbf166d88",
+      "retained_sha256": "65e3ace3153b359787bb9fe1b1510f7e8659d142256c415370d5323cbf166d88"
+    },
+    "actual/transport/replica-stdout.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/replica-stdout.log",
+      "source_sha256": "c305d1501afc352ca215bdbcbdc62d90364894c4eaf57c4b840f10d58eb0c88f",
+      "retained_sha256": "c305d1501afc352ca215bdbcbdc62d90364894c4eaf57c4b840f10d58eb0c88f"
+    },
+    "actual/transport/pack-10-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/pack-10-command.json",
+      "source_sha256": "e9e3fc0b6f00363012806c5fe70aa03c2f6dc422e9b9a7e0ef572d7d3de8c129",
+      "retained_sha256": "e9e3fc0b6f00363012806c5fe70aa03c2f6dc422e9b9a7e0ef572d7d3de8c129"
+    },
+    "actual/baseline-read/ready.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/baseline-read/worker/ready.json",
+      "source_sha256": "275a9942f6e27083a035052fd2efe0a675c3093bbcedc5d13b00abfe55430288",
+      "retained_sha256": "275a9942f6e27083a035052fd2efe0a675c3093bbcedc5d13b00abfe55430288"
+    },
+    "actual/baseline-read/worker-plan.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/baseline-read/worker-plan.json",
+      "source_sha256": "8d27598a78a046389f7e3b3b3daa998909065072d6dfb37ccf071a0a54a6fe9f",
+      "retained_sha256": "8d27598a78a046389f7e3b3b3daa998909065072d6dfb37ccf071a0a54a6fe9f"
+    },
+    "actual/candidate-read/ready.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/candidate-read/worker/ready.json",
+      "source_sha256": "7f43f30edff361d0934dbabb13442ac8ee95aacd387b453a791b239b8e028ef5",
+      "retained_sha256": "7f43f30edff361d0934dbabb13442ac8ee95aacd387b453a791b239b8e028ef5"
+    },
+    "actual/candidate-read/worker-plan.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/candidate-read/worker-plan.json",
+      "source_sha256": "1e496a7e7e36e0f87eee1acdbf1552427aa29f1c9202c62d6c33cad28f8cb1ec",
+      "retained_sha256": "1e496a7e7e36e0f87eee1acdbf1552427aa29f1c9202c62d6c33cad28f8cb1ec"
+    },
+    "failures/optimized-original/pack-3-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-3-command.json",
+      "source_sha256": "f658a5629a5666d31abff78a727b0dd24511eef59f40c8407c08fb7ea24fd4de",
+      "retained_sha256": "f658a5629a5666d31abff78a727b0dd24511eef59f40c8407c08fb7ea24fd4de"
+    },
+    "failures/optimized-original/publisher-to-replica-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/publisher-to-replica-command.json",
+      "source_sha256": "0ecdff32dc7611c4f7efc35797d7230c88ec905ed91ed6bd0afa81c24cfc1141",
+      "retained_sha256": "0ecdff32dc7611c4f7efc35797d7230c88ec905ed91ed6bd0afa81c24cfc1141"
+    },
+    "failures/optimized-original/pack-1.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-1.log",
+      "source_sha256": "ec543d6f39a288c4f6badd0e2661c9d9b70b34a0498ce5f818320c97fafcf0ed",
+      "retained_sha256": "ec543d6f39a288c4f6badd0e2661c9d9b70b34a0498ce5f818320c97fafcf0ed"
+    },
+    "failures/optimized-original/pack-9-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-9-command.json",
+      "source_sha256": "1da6c4850af1ed4cb6c5d4b9e2769d7a29844e0a7b27c5c91602d7c063f10fce",
+      "retained_sha256": "1da6c4850af1ed4cb6c5d4b9e2769d7a29844e0a7b27c5c91602d7c063f10fce"
+    },
+    "failures/optimized-original/pack-10.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-10.log",
+      "source_sha256": "97bd2c2ada829b6d6f3859326e730e03dfa4e3b23f249cb1defd9554f05105ad",
+      "retained_sha256": "97bd2c2ada829b6d6f3859326e730e03dfa4e3b23f249cb1defd9554f05105ad"
+    },
+    "failures/optimized-original/pack-4-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-4-command.json",
+      "source_sha256": "2786adf35ee08927eded4e149ce0ead9e7b16a74f34df25293c919ed2bc58f19",
+      "retained_sha256": "2786adf35ee08927eded4e149ce0ead9e7b16a74f34df25293c919ed2bc58f19"
+    },
+    "failures/optimized-original/pack-3.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-3.log",
+      "source_sha256": "3a546d6c659f83f8041fc0d9b41fc943eb7df142aa54592108a92e7b77b91a06",
+      "retained_sha256": "3a546d6c659f83f8041fc0d9b41fc943eb7df142aa54592108a92e7b77b91a06"
+    },
+    "failures/optimized-original/publisher-stderr.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/publisher-stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "failures/optimized-original/pack-6-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-6-command.json",
+      "source_sha256": "83f2a025bdaad6ba05d46e852fe43f4b230d23cfcd2f0c2a38e085fd97a51015",
+      "retained_sha256": "83f2a025bdaad6ba05d46e852fe43f4b230d23cfcd2f0c2a38e085fd97a51015"
+    },
+    "failures/optimized-original/pack-6.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-6.log",
+      "source_sha256": "eb03155c969ec31e015eba3a8d0b2550914ca178a3f6c4f2a90a323cf72493ad",
+      "retained_sha256": "eb03155c969ec31e015eba3a8d0b2550914ca178a3f6c4f2a90a323cf72493ad"
+    },
+    "failures/optimized-original/pack-7-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-7-command.json",
+      "source_sha256": "ac05b501628bbab256698aeb55e0277f8ead7d75f20674c4511d00a768cf04f9",
+      "retained_sha256": "ac05b501628bbab256698aeb55e0277f8ead7d75f20674c4511d00a768cf04f9"
+    },
+    "failures/optimized-original/pack-5-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-5-command.json",
+      "source_sha256": "4caa3400980a19e645ad431a9dc83c17ec9ec52b7bfec0fe79d1cb4559af08a1",
+      "retained_sha256": "4caa3400980a19e645ad431a9dc83c17ec9ec52b7bfec0fe79d1cb4559af08a1"
+    },
+    "failures/optimized-original/pack-0-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-0-command.json",
+      "source_sha256": "a9242228488e7d6c64ab587af7590b32fb1660f83ebc0293598cfc2ad4268bbe",
+      "retained_sha256": "a9242228488e7d6c64ab587af7590b32fb1660f83ebc0293598cfc2ad4268bbe"
+    },
+    "failures/optimized-original/pack-4.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-4.log",
+      "source_sha256": "9ad5aa8fd763899b9f4eecc1ae7d7ff446ba156c6d5cc303a926f0a9e0030cec",
+      "retained_sha256": "9ad5aa8fd763899b9f4eecc1ae7d7ff446ba156c6d5cc303a926f0a9e0030cec"
+    },
+    "failures/optimized-original/pack-2-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-2-command.json",
+      "source_sha256": "f6d0622973c8fff18910147c2c8817a0707c851d8fb1b6e88ea77cf66ae76c51",
+      "retained_sha256": "f6d0622973c8fff18910147c2c8817a0707c851d8fb1b6e88ea77cf66ae76c51"
+    },
+    "failures/optimized-original/prepare-release-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/prepare-release-command.json",
+      "source_sha256": "e83ac26f1249ff6aef99221de4a6e4ef7a1130a8caa0156497dcd965a6bc10d9",
+      "retained_sha256": "e83ac26f1249ff6aef99221de4a6e4ef7a1130a8caa0156497dcd965a6bc10d9"
+    },
+    "failures/optimized-original/prepare-release.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/prepare-release.log",
+      "source_sha256": "d901c8770ae12272b6ff1682bb2884627931ffbdd92a523dc128a960be7136f0",
+      "retained_sha256": "d901c8770ae12272b6ff1682bb2884627931ffbdd92a523dc128a960be7136f0"
+    },
+    "failures/optimized-original/source-release.tcr1": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/source-release.tcr1",
+      "source_sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed",
+      "retained_sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed"
+    },
+    "failures/optimized-original/pack-0.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-0.log",
+      "source_sha256": "80dd338926daf1871f02192070e4fdf350f02fee1449d6f262d3b418ec777bb7",
+      "retained_sha256": "80dd338926daf1871f02192070e4fdf350f02fee1449d6f262d3b418ec777bb7"
+    },
+    "failures/optimized-original/pack-7.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-7.log",
+      "source_sha256": "fea5e12d3b0d833fd3a3f74a0c629d01437445a334d4613bb0624667d34a8416",
+      "retained_sha256": "fea5e12d3b0d833fd3a3f74a0c629d01437445a334d4613bb0624667d34a8416"
+    },
+    "failures/optimized-original/publisher-to-replica.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/publisher-to-replica.log",
+      "source_sha256": "106122f18775a760f77ae68728e90a7409ea8cb4e579b48402193fa98c3ff842",
+      "retained_sha256": "106122f18775a760f77ae68728e90a7409ea8cb4e579b48402193fa98c3ff842"
+    },
+    "failures/optimized-original/pack-8.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-8.log",
+      "source_sha256": "1ea748f3316110c9469293cdf20d7d9bd73f47ce06d1a6a7615f1e68cf94a4da",
+      "retained_sha256": "1ea748f3316110c9469293cdf20d7d9bd73f47ce06d1a6a7615f1e68cf94a4da"
+    },
+    "failures/optimized-original/pack-1-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-1-command.json",
+      "source_sha256": "d43bde1ffcd8a89979cd2bc492735640f4ac4a7174c8623d71b38d12ce0f2159",
+      "retained_sha256": "d43bde1ffcd8a89979cd2bc492735640f4ac4a7174c8623d71b38d12ce0f2159"
+    },
+    "failures/optimized-original/publisher-process.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/publisher-process.json",
+      "source_sha256": "6cb91494abdbbf1e40d704cfa3a9bfeaacd2a11bad853b35f84730decb73398f",
+      "retained_sha256": "6cb91494abdbbf1e40d704cfa3a9bfeaacd2a11bad853b35f84730decb73398f"
+    },
+    "failures/optimized-original/pack-8-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-8-command.json",
+      "source_sha256": "e79172ece4e474ff801c1a58a117b8083439d715dab51f028c9264cbea34dbbf",
+      "retained_sha256": "e79172ece4e474ff801c1a58a117b8083439d715dab51f028c9264cbea34dbbf"
+    },
+    "failures/optimized-original/pack-2.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-2.log",
+      "source_sha256": "6bcf3a44160b27ef73eec77afe548e99e4fadef081456e92f9fda08fe38bee4e",
+      "retained_sha256": "6bcf3a44160b27ef73eec77afe548e99e4fadef081456e92f9fda08fe38bee4e"
+    },
+    "failures/optimized-original/pack-5.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-5.log",
+      "source_sha256": "bc8d70cc9e9950aba465332db66b166c80b08b43d307c32ea03427a9c38de189",
+      "retained_sha256": "bc8d70cc9e9950aba465332db66b166c80b08b43d307c32ea03427a9c38de189"
+    },
+    "failures/optimized-original/pack-9.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-9.log",
+      "source_sha256": "3c464bd12013d673953dbb14824a20deb0876eb7b2302ba7d13848e2d2afe96e",
+      "retained_sha256": "3c464bd12013d673953dbb14824a20deb0876eb7b2302ba7d13848e2d2afe96e"
+    },
+    "failures/optimized-original/publisher-stdout.log": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/publisher-stdout.log",
+      "source_sha256": "f81b8529c34f137bf4759d55a30fcb2a2b2bdf2d6e46c74683d5f6e7fc6ec85d",
+      "retained_sha256": "f81b8529c34f137bf4759d55a30fcb2a2b2bdf2d6e46c74683d5f6e7fc6ec85d"
+    },
+    "failures/optimized-original/pack-10-command.json": {
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/pack-10-command.json",
+      "source_sha256": "33e3d89606f9a1c694172c93b9fc6ade7a8653eb6284b664a0f0c907ae212e1c",
+      "retained_sha256": "33e3d89606f9a1c694172c93b9fc6ade7a8653eb6284b664a0f0c907ae212e1c"
+    }
+  },
+  "log_normalization": "terminal empty lines only; original and retained SHA-256 both recorded",
+  "weights_committed": false,
+  "public_model_revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+  "source_git_blobs": {
+    "scripts/run_smollm_cell_replica_research.py": "6e0cd1935ec88983cab160bd9b6e7628c7332b7e",
+    "scripts/llm_runtime_pilot.py": "943709db6dfe5e86cac36d046dc71921f0291026",
+    "scripts/llm_inherited_runtime.py": "8a7f8a7ecbc96fd19e0c1846f523276f61c3aae0",
+    "scripts/llm_neural_read_worker.py": "870ef3df83d09bb1466cf8ea8da042f692b28921",
+    "scripts/llm_parent_material.py": "0ab8c72724c87df7963c03180a821205ee9ee2af",
+    "config/pon/model-family-smollm2-135m-v1.json": "125fabd9e147a7e9057ca7960e87f519124a8b68",
+    "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs": "05ed36d638596c5df0f51b9a5db4c35990f7605e",
+    "trillionnium/crates/trnm-data-availability/src/cell/store.rs": "7c83e46c81640f078607e94939331ff320dc601a",
+    "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "323064b1a7be025ec2c032d0a57991614a0f7392",
+    "trillionnium/Cargo.lock": "5c1034aee0ccb777d020e244e94ff1b0981913ac"
+  }
+}

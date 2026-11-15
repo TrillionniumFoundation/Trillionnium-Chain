@@ -1,0 +1,9 @@
+{
+  "base": "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+  "phase": "original kernel with new regression tests",
+  "sha256": {
+    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": "093a791afdc25617411d9da7ce83042a9fcc45e29316a176a326ea7363882d82",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs": "d07034b3a674a687135aa344e23ab8644dacefd9e1e587fbe76c07150ab0df6e",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs": "25424c1550148823b5d93b96019e0bb1048ed0ded6145ed37ec686a5d6a66dac"
+  }
+}

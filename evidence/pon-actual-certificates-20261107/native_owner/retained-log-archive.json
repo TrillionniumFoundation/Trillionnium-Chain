@@ -1,0 +1,10 @@
+{
+  "schema": "pon-retained-raw-log-archive-v1",
+  "reason": "lossless retention of original trailing blank line while keeping source whitespace gate unchanged",
+  "raw_path": "test-attempt-02.log",
+  "raw_bytes": 1329,
+  "raw_sha256": "1524c7722f1c7fe7e32b300a33462145c5c7dc7f86c626d18d12284672c7ff8c",
+  "archive_path": "test-attempt-02.log.gz",
+  "archive_sha256": "44ee6ef65296c12fb270a27e883df7ca101c7e2d5353ac820b0246ee9d348a65",
+  "verification_manifest_interprets_sha256_after_decompression": true
+}

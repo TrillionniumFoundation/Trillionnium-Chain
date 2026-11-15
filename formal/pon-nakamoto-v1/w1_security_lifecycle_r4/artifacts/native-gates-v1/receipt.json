@@ -1,0 +1,61 @@
+[
+  {
+    "name": "preflight",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "seconds": 0.09104490280151367
+  },
+  {
+    "name": "metadata",
+    "command": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--no-deps",
+      "--format-version",
+      "1"
+    ],
+    "exit_code": 0,
+    "seconds": 0.06136178970336914
+  },
+  {
+    "name": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0,
+    "seconds": 0.2161545753479004
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--release",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+      "--example",
+      "r4_lifecycle_probe",
+      "--target-dir",
+      "/home/qian-qi/work/w1-security-r4-target-f16ac",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit_code": 0,
+    "seconds": 14.614781141281128
+  }
+]

@@ -1,0 +1,47 @@
+{
+  "schema": "trnm-pq-ci-readback-20261107-v1",
+  "pq_head": "b08e4f624c122175583094ea94f5c8c3150cec5d",
+  "integration_head": "e70f13448aad715286fb8eb56fc802b09db643a3",
+  "notes": [
+    "Read-only API/log/source review; no workflow was dispatched, retried, canceled or mutated.",
+    "Exact head b08e4f62 had total_count=0 at all-events runs endpoint; zero CI does not qualify the source.",
+    "Exact head e70f1344 had 20 workflow runs: 10 success / 10 failure; includes 18 PR-triggered runs plus dynamic CodeQL success and push CodeQL failure."
+  ],
+  "m09": {
+    "historical_run": 42323049446,
+    "historical_job": 128251866889,
+    "historical_commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+    "historical_result": "352 passed / 1 failed / 0 ignored",
+    "historical_failure": "fixture_setup_wait_preserves_original_tcp_announcement_budget; WouldBlock errno11 at elapsed_ns205378918 after setup completed",
+    "current_run": 42352433711,
+    "current_job": 128344391177,
+    "current_result": "2026-11-07T08:14:21.8971607Z test result: ok. 353 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 32.13s",
+    "current_test": "2026-11-07T08:13:58.5968091Z test cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget ... ok",
+    "sequence_tests_changed": false,
+    "interpretation": "Latest actual execution passed; there is no demonstrated causal fix for the earlier failure. Whole data-availability crate differs only Cargo.toml and cell/pq.rs between recorded sources."
+  },
+  "pq_source": {
+    "run": 42352433649,
+    "job": 128343245485,
+    "error": "HOLD_NO_GO: changed source: scripts/ci/check_sqlite_build_requalification.py",
+    "native_suite_executed": false,
+    "interpretation": "Guard refuses changed measured input; review canonical-toolchain environment repair and repin exact source without weakening checks."
+  },
+  "codeql": {
+    "run": 42352433630,
+    "job": 128343245440,
+    "error": "CodeQL analyses from advanced configurations cannot be processed when the default setup is enabled",
+    "generated_sarif": "/home/runner/work/_temp/codeql-results/python/head/python.sarif",
+    "verify_and_artifact_retention_steps": "skipped after analyze upload failure",
+    "safe_code_repair": "Run existing real SARIF validation and artifact retention under always(), retaining original remote upload failure; do not change upload always to never or use continue-on-error to claim acceptance.",
+    "remaining_gate": "Resolving advanced/default setup conflict requires an authorized repository-security configuration decision; local SARIF is not remote exact-source acceptance."
+  },
+  "sqlite_review": {
+    "relative_to": "987e0a476c3780d89d2d2333aa8b5fa5583cdcfd",
+    "changed_helper": "scripts/ci/check_sqlite_build_requalification.py",
+    "strict_native_fence_unchanged": true,
+    "original_four_phase_test_unchanged": true,
+    "source_pre_post_check_unchanged": true,
+    "claimed_scope": "Controlled pinned-toolchain cache requalification only. No dependency provenance, SQLite operations, public service, or whole-PQ acceptance."
+  }
+}

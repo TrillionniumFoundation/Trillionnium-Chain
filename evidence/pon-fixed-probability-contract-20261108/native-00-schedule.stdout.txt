@@ -1,0 +1,19 @@
+
+running 12 tests
+test anchors_and_profile_hints_are_bound_to_the_actual_parent_fork ... ok
+test c0_keeps_target_over_multiple_legacy_boundaries_and_counts_exact_work ... ok
+test c1_activation_block_keeps_legacy_credit_then_uses_anchor_parent_time ... ok
+test complete_path_namespace_links_heights_and_duplicate_ids_are_checked ... ok
+test legacy_nonmonotone_history_is_not_reinterpreted_after_activation ... ok
+test local_clock_rollback_only_changes_defer_status_not_history_or_target ... ok
+test native_asert_fractional_i128_and_full_u256_boundaries ... ok
+test native_asert_matches_all_18_pinned_bchn_raw_target_vectors ... ok
+test native_asert_rejects_invalid_parameters_and_signed_intermediate_overflow ... ok
+test new_time_rules_allow_equal_parent_only_when_strictly_above_mtp ... ok
+test pgh2_fresh_complete_work_time_refusal_and_native_cold_readback ... RESEARCH_EVIDENCE pgh2-growth /home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/native-schedule/pgh2-growth 5a80454acc7f899d3440bdfdda2a7856df5030c3bf7ba089e96abe8a405add04
+ok
+test pnh1_fresh_complete_work_time_refusal_and_native_cold_readback ... RESEARCH_EVIDENCE pnh1-authenticated /home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/native-schedule/pnh1-authenticated e3fd4c236991529124ab5a493c31c0559694403aa57ec570267f8ac7ad0fec6d
+ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.60s
+

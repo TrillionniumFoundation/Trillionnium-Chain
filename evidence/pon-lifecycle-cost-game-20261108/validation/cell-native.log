@@ -1,0 +1,53 @@
+   Compiling foldhash v0.2.0
+   Compiling curve25519-dalek v4.1.3
+   Compiling hashbrown v0.16.1
+   Compiling hashlink v0.11.1
+   Compiling libsqlite3-sys v0.37.0
+   Compiling fallible-iterator v0.3.0
+   Compiling smallvec v1.15.1
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling rusqlite v0.39.0
+   Compiling serde v1.0.228
+   Compiling ed25519-dalek v2.2.0
+   Compiling libc v0.2.184
+   Compiling thiserror v1.0.69
+   Compiling borsh v1.8.0
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/68dd104c2e6a/chain-lifecycle/trillionnium/crates/trnm-protocol)
+   Compiling sha2 v0.10.9
+   Compiling getrandom v0.4.2
+   Compiling linux-raw-sys v0.12.1
+   Compiling rustix v1.1.4
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/68dd104c2e6a/chain-lifecycle/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/68dd104c2e6a/chain-lifecycle/trillionnium/crates/trnm-sqlite-io-boundary)
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute
+   Compiling fs2 v0.4.3
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/68dd104c2e6a/chain-lifecycle/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/workspace/scratch/68dd104c2e6a/chain-lifecycle/trillionnium/crates/trnm-verification-profiles)
+   Compiling once_cell v1.21.4
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/68dd104c2e6a/chain-lifecycle/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/68dd104c2e6a/chain-lifecycle/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/68dd104c2e6a/chain-lifecycle/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-transport v0.1.0 (/workspace/scratch/68dd104c2e6a/chain-lifecycle/trillionnium/crates/trnm-transport)
+   Compiling trnm-mempool v0.1.0 (/workspace/scratch/68dd104c2e6a/chain-lifecycle/trillionnium/crates/trnm-mempool)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/68dd104c2e6a/chain-lifecycle/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 2m 01s
+     Running tests/cell_native_v1.rs (/workspace/scratch/68dd104c2e6a/cargo-target/debug/deps/cell_native_v1-52005d3b8f8e3f21)
+
+running 12 tests
+test a_following_native_task_really_consumes_the_verified_successor_model_and_state ... ok
+test every_w1_tile_requires_full_material_product_transcript_and_challenge ... ok
+test historical_is_repeatable_after_expiry_but_live_checks_both_clock_cuts ... ok
+test malformed_owner_schema_numbers_masks_and_utf8_fail_before_any_proof ... ok
+test maximum_batch_and_raw_source_token_cap_replay_all_columns_and_reject_one_more ... ok
+test native_cli_refuses_writable_symlinked_missing_owner_inputs_and_new_store_creation ... ok
+test ordinary_native_cli_uses_separate_owner_input_and_real_node_parent_for_cold_historical_replay ... ok
+test owner_pin_and_foreign_task_never_come_from_the_claim ... ok
+test rehashed_intermediate_tensor_and_checkpoint_substitution_fail_after_valid_w1 ... ok
+test seven_python_v2_controls_match_native_complete_values_and_all_five_w1_tiles ... ok
+test state_counter_weight_and_action_rules_refuse_instead_of_saturation_or_fallback ... ok
+test two_real_node_stores_and_cold_recovery_agree_on_history_after_active_tip_changes ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.69s
+

@@ -1,0 +1,31 @@
+    Finished `release` profile [optimized] target(s) in 0.05s
+     Running tests/public_v3_multiprocess.rs (/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-bd08d87a63720d19)
+P0 native campaign: honest 1024 signed transfers and 21 business blocks
+P0 native campaign: observed producer prepared-generic
+P0 native campaign: observed producer tiled-classical
+P0 native campaign: observed producer tiled-strassen-one-level
+P0 native campaign: observed producer paired-product
+P0 native campaign: observed producer maintenance-periodic
+P0 native campaign: observed producer maintenance-integer-paired
+P0 native campaign: observed producer maintenance-prefix
+P0 native campaign: observed producer maintenance-limb
+P0 native campaign: phase baseline 30s / 0 attacker processes
+
+thread 'separate_process_work_and_signed_confirmation_campaign' (4158) panicked at crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs:389:5:
+actual public phase or Host failed; raw logs retained
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+P0 native campaign: phase from-zero 30s / 24 attacker processes
+
+thread 'separate_process_work_and_signed_confirmation_campaign' (4158) panicked at crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs:389:5:
+actual public phase or Host failed; raw logs retained
+P0 native campaign: phase late-product 30s / 24 attacker processes
+
+thread 'separate_process_work_and_signed_confirmation_campaign' (4158) panicked at crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs:389:5:
+actual public phase or Host failed; raw logs retained
+
+thread 'separate_process_work_and_signed_confirmation_campaign' (4158) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1744:5:
+finite experiment criteria failed; full counterexample retained at /home/runner/work/_temp/pon-native-campaign-40615636719-1/run-1-raw
+
+thread 'separate_process_work_and_signed_confirmation_campaign' (4158) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1520:9:
+campaign failed; retained /home/runner/work/_temp/pon-native-campaign-40615636719-1/run-1-raw
+error: test failed, to rerun pass `-p trnm-pon-node --test public_v3_multiprocess`

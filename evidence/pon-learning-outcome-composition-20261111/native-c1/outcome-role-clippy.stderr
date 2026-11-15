@@ -1,0 +1,28 @@
+   Compiling generic-array v0.14.7
+    Checking libc v0.2.184
+    Checking serde_json v1.0.149
+    Checking rusqlite v0.41.0
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.4
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+    Checking trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-crypto-primitives)
+    Checking rustix v1.1.4
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-sqlite-io-boundary)
+    Checking getrandom v0.4.2
+    Checking trnm-task-kernel v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-task-kernel)
+    Checking getrandom v0.2.17
+    Checking fs2 v0.4.3
+    Checking trnm-verification-profiles v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-verification-profiles)
+    Checking tempfile v3.27.0
+    Checking trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-data-availability v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-data-availability)
+    Checking trnm-service-settlement v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-service-settlement)
+    Checking nix v0.30.1
+    Checking trnm-release-bundle v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-release-bundle)
+    Checking trnm-mempool v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-mempool)
+    Checking trnm-transport v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-transport)
+    Checking trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-pon-node)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 55.13s

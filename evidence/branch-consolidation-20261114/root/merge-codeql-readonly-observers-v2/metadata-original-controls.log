@@ -1,0 +1,31 @@
+test_binary_tail_has_exact_range_and_no_full_stream_claim (__main__.MetadataControls.test_binary_tail_has_exact_range_and_no_full_stream_claim) ... ok
+test_changed_file_is_not_copied (__main__.MetadataControls.test_changed_file_is_not_copied) ... ok
+test_cooperative_deadline_keeps_unread_rows_explicit (__main__.MetadataControls.test_cooperative_deadline_keeps_unread_rows_explicit) ... ok
+test_directory_fifo_and_hardlink_are_not_regular_single_link_inputs (__main__.MetadataControls.test_directory_fifo_and_hardlink_are_not_regular_single_link_inputs) ... ok
+test_exact_full_file_limit_is_preserved (__main__.MetadataControls.test_exact_full_file_limit_is_preserved) ... ok
+test_existing_output_is_not_overwritten (__main__.MetadataControls.test_existing_output_is_not_overwritten) ... ok
+test_full_json_file_limit_is_not_silent_truncation (__main__.MetadataControls.test_full_json_file_limit_is_not_silent_truncation) ... ok
+test_input_root_symlink_is_not_read (__main__.MetadataControls.test_input_root_symlink_is_not_read) ... ok
+test_intermediate_symlink_is_not_read (__main__.MetadataControls.test_intermediate_symlink_is_not_read) ... ok
+test_invalid_requested_identity_is_refused_before_output (__main__.MetadataControls.test_invalid_requested_identity_is_refused_before_output) ... ok
+test_json_total_budget_does_not_consume_reserved_log_budget (__main__.MetadataControls.test_json_total_budget_does_not_consume_reserved_log_budget) ... ok
+test_leaf_symlink_is_not_read (__main__.MetadataControls.test_leaf_symlink_is_not_read) ... ok
+test_log_total_budget_is_explicit (__main__.MetadataControls.test_log_total_budget_is_explicit) ... ok
+test_malformed_duplicate_and_nonfinite_json_are_retained_without_validation_claim (__main__.MetadataControls.test_malformed_duplicate_and_nonfinite_json_are_retained_without_validation_claim) ... ok
+test_missing_root_stays_unavailable_in_every_row (__main__.MetadataControls.test_missing_root_stays_unavailable_in_every_row) ... ok
+test_output_inside_input_is_refused (__main__.MetadataControls.test_output_inside_input_is_refused) ... ok
+test_oversized_sarif_remains_refused_and_never_truncated (__main__.MetadataControls.test_oversized_sarif_remains_refused_and_never_truncated) ... ok
+test_read_error_stays_unknown_not_empty_success (__main__.MetadataControls.test_read_error_stays_unknown_not_empty_success) ... ok
+test_reported_success_does_not_promote_collector_security_flags (__main__.MetadataControls.test_reported_success_does_not_promote_collector_security_flags) ... ok
+test_sarif_profile_does_not_relax_other_json_size_bounds (__main__.MetadataControls.test_sarif_profile_does_not_relax_other_json_size_bounds) ... ok
+test_separate_sarif_retains_complete_bytes_above_metadata_limit (__main__.MetadataControls.test_separate_sarif_retains_complete_bytes_above_metadata_limit) ... ok
+test_separate_sarif_still_refuses_links_and_records_missing_source (__main__.MetadataControls.test_separate_sarif_still_refuses_links_and_records_missing_source) ... ok
+test_short_and_empty_retained_files_are_not_complete_process_streams (__main__.MetadataControls.test_short_and_empty_retained_files_are_not_complete_process_streams) ... ok
+test_synthetic_failure_bytes_and_returncode_are_not_promoted (__main__.MetadataControls.test_synthetic_failure_bytes_and_returncode_are_not_promoted) ... ok
+test_traversal_and_output_parent_symlink_are_refused (__main__.MetadataControls.test_traversal_and_output_parent_symlink_are_refused) ... ok
+test_unlisted_files_and_database_are_not_enumerated_or_copied (__main__.MetadataControls.test_unlisted_files_and_database_are_not_enumerated_or_copied) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.034s
+
+OK

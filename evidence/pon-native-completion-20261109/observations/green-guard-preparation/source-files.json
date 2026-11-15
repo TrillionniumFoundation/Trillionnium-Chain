@@ -1,0 +1,22 @@
+{
+  "base_head": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "files": {
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "dc542f965c61af9c7f187ec38c6f87f4b8aea7d093bd365ea8290a48bcb2331c",
+    "trillionnium/crates/trnm-pon-node/src/ingress.rs": "4514db9bcd61e4fb06980d3b4ef09f585ebd958377eddecbf929a7ba240352c7",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs": "67839adbbf8b5a1813a5f2086a86cd51c4da49d611f9d808397bf58a08950a82",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs": "65cfbc5d070f9a364c53e214b679411db2978be2cb96cea426b60fd1855fb0d5",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "a4c914c82ad93e252be4c1b9acb0a977add490cb0d59913651f4a6559ee3d263",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs": "df913c8aca6c21b2f2e4bacda181f0e4baf572e8eeb61159f1695d1491cbfd92",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs": "06cfdaedfeafd157c5f3e90c065cb407a5fa2c40fee8f990f9c9de24f957f99b",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs": "e896ffc4f47ebc7ae80004a6e0293e7a927f9cb92c51bce98d97091720b31919",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs": "c5f0b9025f5f5b7e69bc766dd5c79403d8b8e4321157c3403d2c68144a92867f",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "42d835b168b312742a0d4055b723a55ddae63706cf8ff877a291e8d210c8b757",
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs": "407236cc880695c5cf6d56de85a6ef8f59a216c4702ed80328bf655ba38a93da",
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission/prepared_held_native_completion_tests.rs": "d44cfc08fcd919e1ca806aaf560320fb0b203424a237151ef7eaa8a2ec8ea1af",
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs": "c945c2e398003c086a13aed265db08c5bd1ad703c4d6d232e7c6e395680b4e3c",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs": "5ba2704b48e02dc1aa8a33eb3226b9e21f0e6c127fc976d4c7ae2bfd538863b1",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked.rs": "6e961948607155c6846c947a9c767e8727028bc98d3445b015a8ceefb2096842"
+  },
+  "test_identity_note": "Final formatter output will be copied unchanged into red control tree for exact-byte red/green rerun",
+  "qualification": "HOLD_NO_GO"
+}

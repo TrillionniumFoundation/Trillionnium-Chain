@@ -1,0 +1,291 @@
+{
+  "actual_member_bytes": 21817264,
+  "actual_members": 971,
+  "all_966_live_frozen_originals_equal_archived_bytes": true,
+  "all_member_hashes_and_deterministic_metadata_verified": true,
+  "archive": {
+    "bytes": 1121155,
+    "parts": 1,
+    "sha256": "9f84ba375daa13b11650e173133bb042183bc4ed8570ff040aacc93c8e23027a"
+  },
+  "archive_code_executed": false,
+  "archive_elf_or_provider_bodies_rehashed_locally": false,
+  "archive_integrity_is_native_pass": false,
+  "assertions_not_reached": [
+    "Equality of the second response to the first receipt.",
+    "Running::finish report and metrics.accepted == 2 for this child.",
+    "External witness sequence/root advancement after those two accepted requests.",
+    "Replay of the identical receipt after a later real process reopen.",
+    "Restoration of the entire closed Node directory and rejection before listener readiness.",
+    "External witness checkpoint unchanged after the old-directory refusal."
+  ],
+  "binding_list_sha256": "54323dd8c74f9659fc8570caa065453f54ad317bfb07b20f5b46827982a8e2e4",
+  "failed_control_panic_preserved": "pq_tls_witness_cli.rs:71:14: Connection reset by peer (os error 104)",
+  "generated_members": [
+    "FILES.tsv",
+    "README.md",
+    "collection-status.json",
+    "file-manifest.json",
+    "selection-plan.json"
+  ],
+  "historical_ca4_f85_ebd_qualification_object_preserved": true,
+  "historical_d6_source_only": {
+    "failed": 4,
+    "failed_labels": [
+      "locked-w1-graph-1",
+      "locked-w1-graph-2",
+      "locked-w1-graph-3",
+      "locked-w1-graph-4"
+    ],
+    "native_executed": 0,
+    "passed": 16
+  },
+  "index": {
+    "bytes": 239946,
+    "path": "/workspace/scratch/chain-pq-root-recovery-20261106-v1/final-witness-increment-v1/publication/archive-index.json",
+    "sha256": "88d098f87c21e7e5170aa7f2440d0f73ec48f11b66081b9e67dca765825969ad"
+  },
+  "later_reopen_or_rollback_qualified": false,
+  "manifest_binding_checks": [
+    {
+      "path": "quantum-current-c07-terminal-v1/payload/manifest.json",
+      "sha256": "bfa63c02b548e625c63d0f0c8bcdeba41ed4864212d1863e37bbf38cdaa48763",
+      "verified_entries": 677
+    },
+    {
+      "path": "integration-review/d6-source20-full-readback-recovery-v1/originals/manifest.json",
+      "sha256": "bef3151a9b4222616548d6b6a553409b8ac7e0defa3451afc0706558c98fd1f3",
+      "verified_entries": 102
+    },
+    {
+      "path": "integration-review/c07-static-recovery-review-v1/handoff-manifest.json",
+      "sha256": "3904f2b1b36f8c0c3b51fa55e6db3c7663837e438aa7e2976c9f81a6b4fba813",
+      "verified_entries": 8
+    },
+    {
+      "path": "integration-review/tls-audit-recovery-v2/final-handoff-v1.json",
+      "sha256": "0e5a3f653e65669917fed065becb8e51fd100bb89f1fc767dbe2d502e64cd61d",
+      "verified_entries": 27
+    },
+    {
+      "path": "integration-review/c07-terminal-reader-recovery-v2/readback-handoff-final-v1.json",
+      "sha256": "d920bf3fb909aa85fbccf673bd8bab6cb879dd05fb04914b53ba3071186741ab",
+      "verified_entries": 16
+    },
+    {
+      "path": "integration-review/c07-terminal-reader-recovery-v2/final-v6-qa-addendum-manifest-v1.json",
+      "sha256": "c6c53238c5b725ce3ade08776e42826c49489b38b04eaedd25eac84effbb9cd9",
+      "verified_entries": 9
+    },
+    {
+      "path": "integration-review/tls-audit-recovery-v2/post-handoff-supplement-v2.json",
+      "sha256": "1bfc4ced4e6869ad79a264e7df75fb5cb8e201dda15a19dfd63e0bdc209c74c4",
+      "verified_entries": 6
+    },
+    {
+      "path": "integration-review/final-mapping-readback-v1/manifest.json",
+      "sha256": "973341effc55eab30a87814885ac610ca6972f82f9a348d0b01deab2375979a7",
+      "verified_entries": 8
+    },
+    {
+      "path": "integration-review/final-publication-checker-review-v1/manifest.json",
+      "sha256": "87a14192cf2a489e08bd551bf4680c2309da83cce55181913d1607298cef0530",
+      "verified_entries": 2
+    }
+  ],
+  "manifest_bindings_checked": 855,
+  "member_identity_list_sha256": "8268f943dea3e09ef321a77cf5fc79d407c95729049acf46710a86588a04fbd7",
+  "method_sha256": "dc989f2c41ab7cd6661d97920905828c3a1a65bfe527ff60475e89d7062b349b",
+  "native_original_result": {
+    "command_observations": 77,
+    "durable_exit_code": 1,
+    "status_counts": {
+      "blocked": 2,
+      "failed": 1,
+      "succeeded": 74
+    },
+    "success": false
+  },
+  "node_actual_named_observations": [
+    {
+      "exit_code": 0,
+      "label": "tls-lib-00",
+      "selector": "ingress::pq_network::tls::tests::real_tls_node_submit_lost_ack_exact_receipt_and_cold_reopen",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-lib-01",
+      "selector": "ingress::pq_network::tls::tests::tls_required_policy_refuses_plaintext_before_io_and_old_ledger_reopen",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-lib-02",
+      "selector": "ingress::pq_network::tls::tests::tls_peer_cannot_relay_another_rostered_signers_request_into_node",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-lib-03",
+      "selector": "ingress::pq_network::tls::tests::tls_ca_hostname_and_local_identity_pins_refuse",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-lib-04",
+      "selector": "ingress::pq_network::tls::tests::actual_tls_node_refuses_classical_group_tls12_missing_certificate_and_plaintext",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-lib-05",
+      "selector": "ingress::pq_network::tls::tests::tls_handshake_does_not_reset_the_original_client_deadline",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-lib-06",
+      "selector": "ingress::pq_network::tls::tests::tls_invalid_intermediate_same_subject_chain_and_signature_spend_handshake_only",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-lib-07",
+      "selector": "ingress::pq_network::tls::tests::tls_handshake_attempt_cap_is_durable_and_refuses_before_handshake_after_reopen",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-lib-08",
+      "selector": "ingress::pq_network::tls::tests::tls_authentication_does_not_replace_native_work_or_pnq_signature_checks",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-lib-09",
+      "selector": "ingress::pq_network::tls::tests::actual_tcp_bio_refuses_byte_65537_before_openssl_and_preserves_durable_debit",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-lib-10",
+      "selector": "ingress::pq_network::tls::tests::tls_local_server_certificate_constraints_refuse_before_serving",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-lib-11",
+      "selector": "ingress::pq_network::tls::tests::tls_local_client_certificate_time_purpose_and_root_leaf_refuse",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-lib-12",
+      "selector": "ingress::pq_network::tls::tests::tls_local_role_specific_certificates_accept_without_client_hostname",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-cli-00",
+      "selector": "ordinary_binary_pq_tls_serve_dispatches_original_node_and_preserves_replay_after_exit",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-cli-01",
+      "selector": "ordinary_binary_bad_config_pin_refuses_before_owner_creation",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-cli-02",
+      "selector": "ordinary_binary_tls_nonloopback_refuses_before_config_and_owner",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-cli-03",
+      "selector": "ordinary_binary_local_certificate_constraints_refuse_before_owner_creation",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 101,
+      "label": "tls-witness-cli-00",
+      "selector": "witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database",
+      "status": "failed"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-witness-cli-01",
+      "selector": "witness_schema_identity_and_private_key_refusals_precede_owner_and_witness_io",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-witness-cli-02",
+      "selector": "witness_existing_mode_never_creates_or_reenrolls_and_create_never_reopens",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-witness-cli-03",
+      "selector": "witness_missing_and_backlogged_endpoints_refuse_without_owner_or_listener",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-witness-cli-04",
+      "selector": "witness_wrong_authenticated_service_binding_cannot_publish_ready_or_advance",
+      "status": "succeeded"
+    },
+    {
+      "exit_code": 0,
+      "label": "tls-feature-off-00",
+      "selector": "ordinary_binary_without_tls_feature_refuses_without_classical_fallback",
+      "status": "succeeded"
+    }
+  ],
+  "node_failed": 1,
+  "node_passed": 22,
+  "old_retained_and_terminal_archives_repacked": false,
+  "original_bytes": 20785236,
+  "original_members": 966,
+  "original_merge_format_failure": {
+    "exit_code": 2,
+    "label": "staged-diff-check",
+    "preserved": true
+  },
+  "production_activated": false,
+  "project_or_native_commands_executed": 0,
+  "publication_native_results_transferred": false,
+  "root_cause_established": false,
+  "schema": "trnm-final-increment-independent-integrity-review-v1",
+  "selection": {
+    "bytes": 417794,
+    "path": "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/final-increment-selection-v1/frozen-selection.json",
+    "sha256": "2357bb2951cd794e2e84ceeb3a7b2b285e72ecbbd022aac1ab45d4f7ba200850"
+  },
+  "source_verifiers_executed": 0,
+  "state": "ARCHIVE_INTEGRITY_AND_FAILURE_PRESERVATION_VERIFIED",
+  "tested_code": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+  "tested_tree": "35125592c14098385eab8693bbf05df0506d3610",
+  "v6_actual_three_files": [
+    {
+      "bytes": 65179,
+      "path": "final-evidence-delivery-v6/README.md",
+      "sha256": "e26bd2977d8d61f6709338b73bb63527e5cfe9b31aec536d503d86205ed1de97"
+    },
+    {
+      "bytes": 73250,
+      "path": "final-evidence-delivery-v6/qualification.json",
+      "sha256": "3b9568451dc3273cbd30a95d9869c4a85050249c880b12a86a931657204f23c4"
+    },
+    {
+      "bytes": 13234,
+      "path": "final-evidence-delivery-v6/source-publication-map.json",
+      "sha256": "ae5aa7f763bfb679f4de26064d06da31889add63b2de076623e3eefd7ddd0635"
+    }
+  ],
+  "whole_chain_pq_qualified": false
+}

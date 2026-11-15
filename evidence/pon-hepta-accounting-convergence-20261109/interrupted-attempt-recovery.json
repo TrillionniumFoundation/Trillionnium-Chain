@@ -1,0 +1,23 @@
+{
+  "schema": "pon-hepta-accounting-interrupted-attempt-recovery-v1",
+  "source_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "recorded_utc": "2026-11-09T04:46:26.278760+00:00",
+  "original_session_id": 58416,
+  "original_receipt": "raw/local-original/gates-c1/source-negatives.json",
+  "original_receipt_sha256": "c072e83316726537f6f26f746a655534149ef04938891cb1e1f3c24b18186e60",
+  "original_receipt_status": "running",
+  "original_exit_code": null,
+  "original_log_recovered": false,
+  "original_terminal_summary_recovered": false,
+  "session_resume_observation": {
+    "status": "unavailable",
+    "tool_error": "write_stdin failed: Unified exec process failed: exec-server transport disconnected; failed to resume exec-server session: recovery timed out after 45s",
+    "scope": "Observed tool error; not a process terminal receipt"
+  },
+  "original_attempt_qualified_as_pass": false,
+  "original_receipts_modified": false,
+  "raw_local_records_recovered": true,
+  "recovery_did_not_rerun_completed_python_native_cli_tests": true,
+  "required_incomplete_gates_resumed_separately": true,
+  "qualification": "HOLD_NO_GO"
+}

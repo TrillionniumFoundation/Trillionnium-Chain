@@ -1,0 +1,146 @@
+{
+  "artifact_id": 13567030544,
+  "artifact_sha256": "2641a4d92ceb00a169e06df909d7f870535fbbf0e41e5915ce8d76410a295899",
+  "source": {
+    "commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+    "tree": "1fc19c44ab2d4b35672b25d0f4e4039b769cadea",
+    "tracked_source_identity": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "head",
+      "tested_commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+      "tested_tree": "1fc19c44ab2d4b35672b25d0f4e4039b769cadea",
+      "candidate": "e70f13448aad715286fb8eb56fc802b09db643a3",
+      "base": null,
+      "prospective_merge": null,
+      "tracked_worktree_verified": true,
+      "tracked_entries": 10677,
+      "tracked_bytes": 1026721261,
+      "tests_executed_by_identity_check": false
+    },
+    "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+  },
+  "all_named_tests_passed": true,
+  "failures": [
+    "CONFIRMATION_TARGET"
+  ],
+  "passed": false,
+  "phases": [
+    {
+      "mode": "attack-free-baseline",
+      "workers": 0,
+      "window_ns": 4000000000,
+      "business": {
+        "required_signed_transactions": 1,
+        "business_start_delay_ns": 165170,
+        "business_started_before_original_window_end": true,
+        "original_window_remaining_at_business_start_ns": 3999834830,
+        "pre_business_window_overrun_ns": 0,
+        "reported_independently_confirmed_in_window": 1,
+        "unconfirmed": 0,
+        "unknown": 0,
+        "independent_confirmed_transactions_per_window_second": 0.25,
+        "observed_success_latency_ns": 3111907073,
+        "successful_latency": {
+          "samples": 1,
+          "missing_samples": 0,
+          "min_ns": 3111907073,
+          "max_ns": 3111907073,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "p50_ns": null,
+          "p95_ns": null,
+          "p99_ns": null
+        },
+        "unconfirmed_latency_lower_bound_ns": null,
+        "lower_bound_reaches_original_window_end": null,
+        "reported_finite_business_target_met": true
+      },
+      "signed_submit_ack": {
+        "attempts": 7,
+        "successful_in_original_window": 7,
+        "failed_or_late": 0
+      },
+      "history_response": {
+        "attempts": 7,
+        "successful_in_original_window": 7,
+        "failed_or_late": 0
+      },
+      "independent_page_replay": {
+        "attempts": 7,
+        "accepted_in_original_window": 7,
+        "failed_or_late": 0,
+        "known_calling_thread_cpu_sum_ns": 536803976
+      },
+      "head_response": {
+        "attempts": 55,
+        "successful_in_original_window": 55,
+        "failed_or_late": 0
+      },
+      "verification_errors": []
+    },
+    {
+      "mode": "from-zero-pressure",
+      "workers": 16,
+      "window_ns": 4000000000,
+      "business": {
+        "required_signed_transactions": 1,
+        "business_start_delay_ns": 99191389,
+        "business_started_before_original_window_end": true,
+        "original_window_remaining_at_business_start_ns": 3900808611,
+        "pre_business_window_overrun_ns": 0,
+        "reported_independently_confirmed_in_window": 0,
+        "unconfirmed": 1,
+        "unknown": 0,
+        "independent_confirmed_transactions_per_window_second": 0.0,
+        "observed_success_latency_ns": null,
+        "successful_latency": {
+          "samples": 0,
+          "missing_samples": 0,
+          "min_ns": null,
+          "max_ns": null,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "p50_ns": null,
+          "p95_ns": null,
+          "p99_ns": null
+        },
+        "unconfirmed_latency_lower_bound_ns": 3900808611,
+        "lower_bound_reaches_original_window_end": true,
+        "reported_finite_business_target_met": false
+      },
+      "signed_submit_ack": {
+        "attempts": 7,
+        "successful_in_original_window": 7,
+        "failed_or_late": 0
+      },
+      "history_response": {
+        "attempts": 1,
+        "successful_in_original_window": 1,
+        "failed_or_late": 0
+      },
+      "independent_page_replay": {
+        "attempts": 1,
+        "accepted_in_original_window": 0,
+        "failed_or_late": 1,
+        "known_calling_thread_cpu_sum_ns": 81176200
+      },
+      "head_response": {
+        "attempts": 20,
+        "successful_in_original_window": 19,
+        "failed_or_late": 1
+      },
+      "verification_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    }
+  ],
+  "scope": "Readback of original artifact, no re-execution; all budget/denominators retained."
+}

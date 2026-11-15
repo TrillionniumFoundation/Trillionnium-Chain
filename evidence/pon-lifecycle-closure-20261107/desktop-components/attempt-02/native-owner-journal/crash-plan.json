@@ -1,0 +1,53 @@
+{
+  "store": "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/attempt-02/native-owner-journal/crash-store",
+  "journal": "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/attempt-02/native-owner-journal/crash-journal",
+  "checkpoint": {
+    "journal_id": "202ae373a344d77e2e35dadd4af5ab70329454adabb2a4d11af4d125f6e173d4",
+    "sequence": 48,
+    "record_hash": "aa6a852491af8e3d95c9078b4bae6adf6ab546e045bc7df8eb124edadc926dbe"
+  },
+  "packets": [
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/attempt-02/native-owner-journal/bob-journal/packets/776dc990e3543a9c4e9957c796a88b2c7901aa3d23816490efe19ce4b0c7b3c5.pnp1",
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/attempt-02/native-owner-journal/bob-journal/packets/bf2ec604f1eb1d6b326074f5184a657730e7b1c846f99dcccdd4ac0063f0f9ee.pnp1",
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/attempt-02/native-owner-journal/bob-journal/packets/83e5904ac17b2c3f58cd8243de4220d2b5fe324e8a640cca48dbb7f04bde3e14.pnp1",
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/attempt-02/native-owner-journal/bob-journal/packets/4b2a10c6cb264552378c8fec99f40d200816fc558ca2c05ae423268d1a1f4e78.pnp1",
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/attempt-02/native-owner-journal/bob-journal/packets/89ec206947d46e4280541b8eafc72250763b315cdde2457398f6b796c6656cb7.pnp1",
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/attempt-02/native-owner-journal/bob-journal/packets/2fb14f1b46b51aa45fe54f2824738d2b2becf69384dc046e14dbc29fe7ea8f6e.pnp1",
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/attempt-02/native-owner-journal/bob-journal/packets/4376d1102a405753673dbcd2b59523e23d50493779b7cf2d00b725c85fb185bd.pnp1",
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/attempt-02/native-owner-journal/bob-journal/packets/ae71245e9159ae093183ff7011370d167ecdfbdb32041ec9a19ca6fafe33cd06.pnp1"
+  ],
+  "target": [
+    136,
+    220,
+    246,
+    145,
+    208,
+    175,
+    120,
+    242,
+    169,
+    32,
+    77,
+    78,
+    177,
+    100,
+    148,
+    108,
+    166,
+    130,
+    17,
+    224,
+    36,
+    41,
+    77,
+    100,
+    60,
+    29,
+    52,
+    76,
+    238,
+    175,
+    28,
+    17
+  ]
+}

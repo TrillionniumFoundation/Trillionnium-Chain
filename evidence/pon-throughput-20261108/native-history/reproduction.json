@@ -1,0 +1,11 @@
+{
+  "archive_git_blob_sha1": "3f669d1907fb2c10a0cae6a15ffbbda3590ea277",
+  "archive_sha256": "c1d4701d6ec353958b178f2838d17ec90a41572b52f62b54b1f9af4ad725efd0",
+  "exit_code": 1,
+  "new_native_executions": 0,
+  "original_preregistration_sha256": "e7687531f92da803ae0f5dd3d02cb25271ef7d1d09dbe371e9808b9fddc4117e",
+  "qualified_confirmed_tps": null,
+  "reader_sha256": "30eed67a4d43b1dc0cd4c3b886db8c8a3420f9e7dac0539047faf24915c32615",
+  "source_commit": "812589d9bb189b6abbf33b916a424121199dee75",
+  "source_path": "evidence/pon-native-fullpath-20261108-a1a69c624/complete-processes.tar.gz"
+}

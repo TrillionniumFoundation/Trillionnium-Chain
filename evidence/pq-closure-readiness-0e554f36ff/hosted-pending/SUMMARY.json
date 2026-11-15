@@ -1,0 +1,49 @@
+{
+  "schema": "TRNM-C2-REQUIRED-BASELINE-BOUNDED-READBACK1",
+  "observed_utc": "2026-11-11T05:29:16Z",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "pull_request": {
+    "number": 901,
+    "draft": true,
+    "head": "0e554f36ffdde3053a5eb1756eb5e526b1935032",
+    "base": "31543fb6dde565b62b47436e0b1d399b6d0bd772",
+    "merge_commit_sha": "491afb8b411f497a4e1f4610db6b128f52926558"
+  },
+  "scope": "One bounded read of C2 required-baseline only; no workload reexecution, no H request, no large artifact download, no C1 result attributed to C2.",
+  "workflow_run": {
+    "id": 42964980662,
+    "workflow_id": 345677268,
+    "path": ".github/workflows/trnm-required-baseline.yml",
+    "head_sha": "0e554f36ffdde3053a5eb1756eb5e526b1935032",
+    "event": "pull_request",
+    "run_attempt": 1,
+    "status": "pending",
+    "conclusion": null,
+    "created_at": "2026-11-11T05:19:13Z",
+    "updated_at": "2026-11-11T05:19:14Z",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42964980662"
+  },
+  "jobs_returned": 0,
+  "target_jobs": [
+    {
+      "name": "external-evidence-contract (head)",
+      "terminal_result_observed": false,
+      "tests_observed": null
+    },
+    {
+      "name": "external-evidence-contract (merge)",
+      "terminal_result_observed": false,
+      "tests_observed": null
+    }
+  ],
+  "conclusion": "Pending. The jobs read returned an empty array. No terminal result or executed 71-control count for either repaired lane is established by this observation.",
+  "errors": [
+    {
+      "observation": "required_baseline_runs",
+      "type": "unsupported-fetch-endpoint",
+      "note": "Workflow filename collection URL rejected with INVALID_ARGUMENT/HTTP 400 before read; not a GitHub authorization denial. Supported commit-workflow-runs wrapper then returned the C2 run, read individually."
+    }
+  ],
+  "whole_chain_pq_qualified": false,
+  "further_polling_performed": false
+}

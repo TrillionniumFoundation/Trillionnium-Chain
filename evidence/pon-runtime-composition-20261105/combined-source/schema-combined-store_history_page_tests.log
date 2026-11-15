@@ -1,0 +1,15 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running unittests src/lib.rs (/workspace/shared/chain-growth-target/debug/deps/trnm_pon_node-2aaee31106a4dfcc)
+
+running 8 tests
+test store::history_page::tests::history_page_complete_call_cost ... ignored, finite paired native history cost; requires a new output directory
+test store::history_page::tests::history_page_native_pages_keep_complete_bytes_cursor_cancellation_and_reopen ... ok
+test store::history_page::tests::history_page_record_errors_keep_origin_and_validation_order ... ok
+test store::history_page::tests::inline_record_tests::history_inline_record_complete_call_cost ... ignored, paired complete native history call cost; run explicitly in release mode
+test store::history_page::tests::inline_record_tests::history_inline_record_complete_pages_and_foreign_corruption_match_original ... ok
+test store::history_page::tests::inline_record_tests::history_inline_record_types_widths_and_error_precedence_match_original ... ok
+test store::history_page::tests::packet_reservation_history_complete_call_cost ... ignored, paired complete native read/response cost; needs a new output directory
+test store::history_page::tests::packet_reservation_history_keeps_cancel_errors_and_reopen ... ok
+
+test result: ok. 5 passed; 0 failed; 3 ignored; 0 measured; 1077 filtered out; finished in 15.58s
+

@@ -1,0 +1,31 @@
+{
+  "actual_c4_overall_status": "failed",
+  "actual_original_outer_exit_code": 1,
+  "all_source_files_unchanged": true,
+  "archive": {
+    "bytes": 243888,
+    "path": "/tmp/chain-pq-fa62381e-c4-retained-final-evidence/c4-final-output-evidence.tar.xz",
+    "sha256": "9cd12948d25bc1a08f9c86eb79c3b03555a223671cea3a67aef90c95c9798176"
+  },
+  "archive_limit_bytes_exclusive": 4194304,
+  "archive_members": 317,
+  "complete_source_receipts": 23,
+  "compressed_stream_fully_read_back": true,
+  "failed_labels": [
+    "corpus-source",
+    "focused-native-batch"
+  ],
+  "manifest": {
+    "bytes": 106949,
+    "sha256": "bec0f8183313300be9bf3725f9c6b453aa9923ff66ce083058b887d67756feab"
+  },
+  "new_tests_executed_by_collector": false,
+  "schema": "trnm-c4-retained-evidence-archive-result-v1",
+  "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+  "status": "original-failed-C4-evidence-copied-and-revalidated",
+  "tree": "15fd9e7a2f4121dce861e9e96b78d8196d3892fb",
+  "verification": {
+    "bytes": 36887,
+    "sha256": "dff3c28f4a80af0e1c194c08fef702c5d852ded05baaafce3329af8b846fc9c5"
+  }
+}

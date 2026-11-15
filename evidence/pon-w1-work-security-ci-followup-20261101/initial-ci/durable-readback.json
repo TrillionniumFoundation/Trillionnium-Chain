@@ -1,0 +1,63 @@
+{
+  "schema": "trnm-w1-service-durable-readback-v1",
+  "run_id": 41292410360,
+  "scope": "read-only exact archived database verification; no simulated service",
+  "observations": [
+    {
+      "source_kind": "head",
+      "scenario": "original",
+      "zip_sha256": "6805eb3194b9a706c66d4a98f95d7b60253c7c0798654f7728b413ab7f184c00",
+      "database_path_in_zip": "fresh-service/original/pressure/independent-client/native.sqlite",
+      "database_sha256": "dc3ff57c202f49cc418d73f824ccdeb8f3413024c3818b1188e5957cc1be2d96",
+      "readonly_uri_parameters": "mode=ro&immutable=1",
+      "query": "SELECT count(*), min(height), max(height) FROM blocks",
+      "result": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "source_kind": "head",
+      "scenario": "fresh",
+      "zip_sha256": "6805eb3194b9a706c66d4a98f95d7b60253c7c0798654f7728b413ab7f184c00",
+      "database_path_in_zip": "fresh-service/fresh/pressure/independent-client/native.sqlite",
+      "database_sha256": "dc3ff57c202f49cc418d73f824ccdeb8f3413024c3818b1188e5957cc1be2d96",
+      "readonly_uri_parameters": "mode=ro&immutable=1",
+      "query": "SELECT count(*), min(height), max(height) FROM blocks",
+      "result": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "source_kind": "merge",
+      "scenario": "original",
+      "zip_sha256": "8e7e3c44de4a92348b5025ecc42948a73725d43ce6650522ed6a7ccb6df9bae9",
+      "database_path_in_zip": "fresh-service/original/pressure/independent-client/native.sqlite",
+      "database_sha256": "dc3ff57c202f49cc418d73f824ccdeb8f3413024c3818b1188e5957cc1be2d96",
+      "readonly_uri_parameters": "mode=ro&immutable=1",
+      "query": "SELECT count(*), min(height), max(height) FROM blocks",
+      "result": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "source_kind": "merge",
+      "scenario": "fresh",
+      "zip_sha256": "8e7e3c44de4a92348b5025ecc42948a73725d43ce6650522ed6a7ccb6df9bae9",
+      "database_path_in_zip": "fresh-service/fresh/pressure/independent-client/native.sqlite",
+      "database_sha256": "dc3ff57c202f49cc418d73f824ccdeb8f3413024c3818b1188e5957cc1be2d96",
+      "readonly_uri_parameters": "mode=ro&immutable=1",
+      "query": "SELECT count(*), min(height), max(height) FROM blocks",
+      "result": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

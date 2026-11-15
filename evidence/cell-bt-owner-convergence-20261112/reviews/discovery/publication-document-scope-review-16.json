@@ -1,0 +1,105 @@
+{
+  "blocking_findings": [],
+  "checks": {
+    "actual_cgroup_resource_scope_and_nonadditive_timings_preserved": true,
+    "actual_native_and_wrapper_and_summary_operation_content_pins_match": true,
+    "actual_observation_file_readback_matches_stage_and_previous_expected_bytes": true,
+    "all_four_controls_require_no_output_and_original_authentication_selection_budgets_unchanged": true,
+    "complete_authenticated_conflict_zero_provider_dials_distinct_from_truncated_or_bad_signature_one_verified_trap": true,
+    "copy_and_native_original_v2_distinct_from_independently_pinned_paged_wrapper": true,
+    "cts1_outer_envelope_not_in_bep52_plan_distinct_from_transported_runtime_snapshot_json_and_external_host_dependency_bytes": true,
+    "desktop_104_missing_paths_distinct_from_ai395_102_and_no_writer_attribution": true,
+    "desktop_new_preparation_pass_not_a_commit_push_or_hosted_ci_pass": true,
+    "discovery_original_exact_test_name_correct": true,
+    "historical_hosted_higher_sequence_root_cause_remains_unestablished": true,
+    "no_new_model_text_or_forward_in_score_interpretation": true,
+    "research_pass_does_not_qualify_original_owner_durable_current_finaluse_independence_payment_or_model_efficacy": true,
+    "separate_debug_expiry_and_compiler_sigkill_preserved_without_causal_claim": true,
+    "two_original_score_rows_and_offline_argmax_true_false_correctness_match": true,
+    "v3_temporary_wire_metadata_grant_not_a_pass_of_original_128_row_gate": true
+  },
+  "github_write_performed_by_review": false,
+  "links": {
+    "markdown_relative_links_checked": 27,
+    "missing_evidence_links": [],
+    "missing_summary_references": [],
+    "summary_relative_references_checked": 16,
+    "unchanged_source_only_target": {
+      "included_in_publication_overlay": false,
+      "path": "docs/development/specs/pon/CELL_SEALED_RESEARCH_NEXT_USE_V2.md",
+      "verified_at_original_040_github_blob": "d0451d11b7b89da029e67594570bdcefb3ebf3f1"
+    }
+  },
+  "operation": "bf34a669dc4b3617d97bee356f1cadf3504f3c5993999c5136ce1d6b0cd6f9c2",
+  "original_readback_references": [
+    {
+      "bytes": 3490,
+      "path": "validation/durable-current-remote/model-observation-actual-readback/observation.json",
+      "sha256": "f90651535d987073260a69c14aaa66e5a05de98b1c8f53c7ea9e61507c7fae50"
+    },
+    {
+      "bytes": 5155,
+      "path": "validation/durable-current-remote/model-observation-actual-readback/read.response.json",
+      "sha256": "0a42a429026ea56d784768dbb9505faef147d973d27752d520e1eb834555be5e"
+    },
+    {
+      "bytes": 82443,
+      "path": "publication-stage/evidence/cell-bt-owner-convergence-20261112/model/native-result.json",
+      "sha256": "7e69ad30d35e984cf8e7d871bce91f7ec50f5e7c530a29c584454eab79c262a0"
+    },
+    {
+      "bytes": 2354,
+      "path": "publication-stage/evidence/cell-bt-owner-convergence-20261112/model/next-use-observations.json",
+      "sha256": "5cc5bf2bdd55158d6636689de9f72840b88cbc072a21dfd0ea70eb9a5768a097"
+    },
+    {
+      "bytes": 61020,
+      "path": "publication-stage/evidence/cell-bt-owner-convergence-20261112/publication/publication02-source-01/summary.json",
+      "sha256": "55144152a53f63a11badbb1c55003acd753e69b0311c03d8a5bb4b7c92b1af85"
+    },
+    {
+      "bytes": 910,
+      "path": "publication-stage/evidence/cell-bt-owner-convergence-20261112/publication/publication02-source-01/authoritative-status-original-sdk.json",
+      "sha256": "60c1a12eb5d121dc2d4a109d185c96b6a763137220b6fb778444c8367c744d17"
+    }
+  ],
+  "remaining_evidence_assembly": "Final source/audit raw readback and complete preparation/model archive closure are separately handled. This is a document-scope review of the pinned snapshots, not a claim that every archive member has already been received.",
+  "review_complete_for_document_scope": true,
+  "reviewed_document_snapshots": [
+    {
+      "bytes": 19031,
+      "intended_repository_path": "evidence/cell-bt-owner-convergence-20261112/README.md",
+      "path": "publication-stage/evidence/cell-bt-owner-convergence-20261112/README.md",
+      "sha256": "5e30920d0ca20e37efea91698fe54b07faa9b6268f556d64806fd62bcc9be42e"
+    },
+    {
+      "bytes": 15863,
+      "intended_repository_path": "evidence/cell-bt-owner-convergence-20261112/summary.json",
+      "path": "publication-stage/evidence/cell-bt-owner-convergence-20261112/summary.json",
+      "sha256": "db0a5f70aa1438474bdb15966a05158b175c9bc8c4edab3325d57fd9ebda4b58"
+    },
+    {
+      "bytes": 10959,
+      "intended_repository_path": "docs/development/specs/pon/CELL_BT_OWNER_CONVERGENCE_V1.md",
+      "path": "preparation/publication-docs-draft/CELL_BT_OWNER_CONVERGENCE_V1.md",
+      "sha256": "58120263d940bb6400b3cd41eb421f34817ce5eb6f69099a5318b86c251ca32c"
+    },
+    {
+      "bytes": 24979,
+      "intended_repository_path": "docs/development/specs/pon/CELL_NATIVE_SHARD_RESEARCH_V2.md",
+      "path": "preparation/publication-docs-draft/CELL_NATIVE_SHARD_RESEARCH_V2.md",
+      "sha256": "26c3aae0f4ec921f39edc3d2dfb193c03c40991b1d748540d6536c8ec6581a04"
+    },
+    {
+      "bytes": 3635,
+      "intended_repository_path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "path": "preparation/publication-docs-draft/plan-prefix.txt",
+      "sha256": "b8101f5ca772a5106bb03e6cc0d8117f85c6dbe10e4534e5a708f2a2c0f9dbf9"
+    }
+  ],
+  "schema": "trnm.bt-publication-document-scope-review.v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_or_model_modified": false,
+  "tests_or_model_executed_by_review": false,
+  "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+}

@@ -1,0 +1,69 @@
+{
+  "schema": "c1-current-terminal-supplement-handoff-v1",
+  "observed_utc": "2026-11-03T23:03:03.141536+00:00",
+  "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "prior_frozen_handoff": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/current-business-terminal-handoff.json",
+    "bytes": 3666,
+    "sha256": "b811562aabceb2712acd7d0dd3f48ea038d0d5a624f58003b844c1c9ef1652c0"
+  },
+  "records": [
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-head-fromzero-terminal-readback.json",
+      "bytes": 73173,
+      "sha256": "d107a9fe5c54823fd441b7c2c15e2c547d0bf3ecdc0f82de34c30297a9316b06"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-head-fromzero-original-records.json.gz",
+      "bytes": 1024873,
+      "sha256": "4a69ce849e1c8aaec37e9921e9cc321ddb22fb4d991a3bbf25cda455a72cb0a2"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/cost-x64-fromzero-terminal-readback.json",
+      "bytes": 72847,
+      "sha256": "b3d0228ce580cf2445c542e0121bc965a574c36266a51a397bda4788b161503e"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/cost-x64-fromzero-original-records.json.gz",
+      "bytes": 767226,
+      "sha256": "1e23545944c52d745311e422d5d1b7cfbb5b428f1ef88a5ad8edba89638482b6"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/cost-arm64-fromzero-terminal-readback.json",
+      "bytes": 72935,
+      "sha256": "16fc14aca64337a3bc92da8f6561c9039b1f2181e6a301cbb88a8fc2ab09a8b2"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/cost-arm64-fromzero-original-records.json.gz",
+      "bytes": 776787,
+      "sha256": "1832c212ca2f60c1813fc846a07d9a2e3547cf8433cffd0d6405483597c3bcf9"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-head-13277997507-readback.json",
+      "bytes": 288846,
+      "sha256": "373388ded2c97d4ccb0f96836e7e72614f7ac48f648ca92428018dd5f2e078eb"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-head-13277997507-original-records.json.gz",
+      "bytes": 956062,
+      "sha256": "3a0d2471046cdc2bb389538eafb681ec4366ec6c32d47ce4353ae8e887cbb9fe"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-merge-13277323560-readback.json",
+      "bytes": 289305,
+      "sha256": "26b222d70d91c01cca9485d875abe28e882f1d4c93a0a8efd95c982e5e96b87e"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-merge-13277323560-original-records.json.gz",
+      "bytes": 957673,
+      "sha256": "984601525c9c9c92e7937c9c5745abd514be195b4be34ce76cbb9d3ea58bf0c1"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/runtime-original-deadline-readback.json",
+      "bytes": 4065,
+      "sha256": "48f2378335f489979d645409e748e559ba023ce4beccf79ac240de629d87ed74"
+    }
+  ],
+  "native_qualification": "Both x64 lanes each have 951 PASS, 0 FAIL, and 23 original ignored entries in the full 974 registry; the 43 original selectors overlap the full suite and pass. Strict Clippy also passed in original command records. Each additional from-zero gate has five unique native PASS results but CONFIRMATION_TARGET failure under the original four-second window. ARM and runtime remained in progress at the 23:00 snapshot; absence or duration is not a failure.",
+  "workspace_cpu_scope": "Four jobs report success. Four original artifacts of about 320 KB each were downloaded once. Complete independent qualification readback is not finished, and no complete workspace PASS is claimed."
+}

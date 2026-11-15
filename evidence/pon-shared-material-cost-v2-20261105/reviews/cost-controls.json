@@ -1,0 +1,18 @@
+{
+  "actual_run": "/workspace/scratch/708bcecd45db/campaign-v2/paired-r0-t0-full-limb-dense",
+  "command": [
+    "python",
+    "scripts/ci/test_shared_material_cost_v2.py",
+    "--actual-run",
+    "/workspace/scratch/708bcecd45db/campaign-v2/paired-r0-t0-full-limb-dense",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/708bcecd45db/chain",
+  "finished_utc": "2026-11-05T09:08:20.768849+00:00",
+  "log": "/workspace/scratch/708bcecd45db/audit-notes/cost-v2-actual-controls.log",
+  "log_sha256": "0b5bd6b396eaaf294729eb7c10d97e8e66c534bc017571ab613d536d4e941d2b",
+  "returncode": 0,
+  "scope": "read-only audit; disposable mutation copies are outside the repository; no native measurement or compilation started",
+  "started_utc": "2026-11-05T09:08:16.907065+00:00",
+  "wall_ns": 3861867469
+}

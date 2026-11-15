@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/68dd104c2e6a/chain-lifecycle/scripts/ci/verify_ci_source.py", line 219, in <module>
+    main()
+  File "/workspace/scratch/68dd104c2e6a/chain-lifecycle/scripts/ci/verify_ci_source.py", line 210, in main
+    result = verify(args.kind, args.expected_head, args.expected_base, args.expected_merge)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/68dd104c2e6a/chain-lifecycle/scripts/ci/verify_ci_source.py", line 156, in verify
+    clean()
+  File "/workspace/scratch/68dd104c2e6a/chain-lifecycle/scripts/ci/verify_ci_source.py", line 137, in clean
+    raise ValueError('source is not clean')
+ValueError: source is not clean

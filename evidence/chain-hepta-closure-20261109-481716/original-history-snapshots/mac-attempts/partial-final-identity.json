@@ -1,0 +1,17 @@
+{
+  "metadata": {
+    "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gid": 20,
+    "link_count": 1,
+    "metadata_platform": "darwin",
+    "mode": 384,
+    "uid": 501,
+    "xattr_names": [],
+    "xattr_sha256": {}
+  },
+  "mode": 384,
+  "path": "/Users/qianqi/chain-hepta-closure-481716/history-snapshot-recovery/artifact-13662172930-download-01.part",
+  "sha256": "e504ce83690af060d28952417aaebc338102ac2b0621232efbb453d87f20db8a",
+  "size": 11599872,
+  "version": "16777233:598263075:11599872:1794240786064785117:1794240786064785117"
+}

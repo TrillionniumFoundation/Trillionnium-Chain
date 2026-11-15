@@ -1,0 +1,28 @@
+{
+  "name": "component-abba",
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "--all-features",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "ingress::public_v3::canonical_packet::tests::body_packet_decode_component_abba_retains_every_trial",
+    "--",
+    "--ignored",
+    "--exact",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "started_unix_ns": 1794070468532402748,
+  "ended_unix_ns": 1794070470371313082,
+  "exit_code": 0,
+  "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/component-abba.log",
+  "log_bytes": 282402,
+  "log_sha256": "a765a65ba449b7c356d4763a96fc471b9f902ab32dd88064b0d5720b894392b3"
+}

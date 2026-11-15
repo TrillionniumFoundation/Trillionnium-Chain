@@ -1,0 +1,389 @@
+{
+  "schema": "trnm-independent-d26-fresh-pure-read-v1",
+  "scope": "pinned pure report validators and retained path observations only; no replay/new Host attestation; original failures retained",
+  "results": [
+    {
+      "artifact_id": 13578867108,
+      "cohorts": {
+        "original": {
+          "sha256": "fe9281dd293ad9497cc19a29ffc8947497e8a85c410d021966dc89725a5dcab8",
+          "path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T145800Z-d26e047dedfc-3ca4a7ff/fresh-artifact-read-v1/13578867108/fresh-service/original/report.json",
+          "strict_report_error": "ValueError: CONFIRMATION_TARGET",
+          "independent_observation": {
+            "path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T145800Z-d26e047dedfc-3ca4a7ff/fresh-artifact-read-v1/independent-pure-read-v1/13578867108-original-observation-v2.json",
+            "original_gate_validated": false,
+            "original_gate_validation_error": "CONFIRMATION_TARGET"
+          }
+        },
+        "fresh": {
+          "sha256": "a73b842c90db8d29cca14a420979c49774588c5941dab7d286f4524d846f5bf3",
+          "path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T145800Z-d26e047dedfc-3ca4a7ff/fresh-artifact-read-v1/13578867108/fresh-service/fresh/report.json",
+          "strict_report_error": "ValueError: FRESH_BUSINESS_TARGET",
+          "cache_read": {
+            "schema": "public-v3-fresh-negative-cache-readback-v1",
+            "enabled": true,
+            "configuration": {
+              "slots": 256,
+              "retained_software_bytes": 14400,
+              "lifetime_ms": 30000,
+              "lifetime_seconds": 30,
+              "lifetime_subsec_nanos": 0
+            },
+            "phases": [
+              {
+                "mode": "attack-free-baseline",
+                "relation_attempts": 7,
+                "completed_cache_observations": 7,
+                "incomplete_cache_observations": 0,
+                "key_hashed": 7,
+                "lookup_contended": 0,
+                "lookup_poisoned": 0,
+                "exact_fact_found": 0,
+                "cached_rejection_returned": 0,
+                "native_verifier_started": 7,
+                "native_verifier_returned": 7,
+                "full_replay_started": 7
+              },
+              {
+                "mode": "from-zero-pressure",
+                "relation_attempts": 202,
+                "completed_cache_observations": 202,
+                "incomplete_cache_observations": 0,
+                "key_hashed": 202,
+                "lookup_contended": 0,
+                "lookup_poisoned": 0,
+                "exact_fact_found": 0,
+                "cached_rejection_returned": 0,
+                "native_verifier_started": 202,
+                "native_verifier_returned": 202,
+                "full_replay_started": 202
+              }
+            ],
+            "scope": "actual relation-attempt path observations; native verifier entry is not full replay, started replay is not completion; path counters cover only completed observations, incomplete paths remain unknown; CPU remains nested"
+          }
+        }
+      },
+      "native_gate_validated": false,
+      "host_span": [
+        {
+          "phase": "inside-before-native",
+          "observed_utc": "2026-11-07T14:53:58.789708+00:00",
+          "pid": 5439,
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "counters": {
+            "cgroup.events": "populated 1\nfrozen 0",
+            "cpu.stat": "usage_usec 114466\nuser_usec 96190\nsystem_usec 18276\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 6\nnr_throttled 4\nthrottled_usec 263700\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "17539072",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "1"
+          },
+          "read_errors": {}
+        },
+        {
+          "phase": "inside-after-native",
+          "observed_utc": "2026-11-07T14:54:59.691802+00:00",
+          "pid": 5439,
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "counters": {
+            "cgroup.events": "populated 1\nfrozen 0",
+            "cpu.stat": "usage_usec 14910825\nuser_usec 9790477\nsystem_usec 5120347\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 615\nnr_throttled 588\nthrottled_usec 68385290\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "50298880",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "1"
+          },
+          "read_errors": {}
+        }
+      ]
+    },
+    {
+      "artifact_id": 13579195615,
+      "cohorts": {
+        "original": {
+          "sha256": "bfccb69f222d47c81f1993799de161d4332cbaaf79e04c8749586f4ca776eebb",
+          "path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T145800Z-d26e047dedfc-3ca4a7ff/fresh-artifact-read-v1/13579195615/fresh-service/original/report.json",
+          "strict_report_error": "ValueError: CONFIRMATION_TARGET",
+          "independent_observation": {
+            "path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T145800Z-d26e047dedfc-3ca4a7ff/fresh-artifact-read-v1/independent-pure-read-v1/13579195615-original-observation-v2.json",
+            "original_gate_validated": false,
+            "original_gate_validation_error": "CONFIRMATION_TARGET"
+          }
+        },
+        "fresh": {
+          "sha256": "9e6ca962f1e1accefbe5814266f593c0352d156c46d63e015a19d054a2d4cc6f",
+          "path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T145800Z-d26e047dedfc-3ca4a7ff/fresh-artifact-read-v1/13579195615/fresh-service/fresh/report.json",
+          "strict_report_error": "ValueError: FRESH_BUSINESS_TARGET",
+          "cache_read": {
+            "schema": "public-v3-fresh-negative-cache-readback-v1",
+            "enabled": true,
+            "configuration": {
+              "slots": 256,
+              "retained_software_bytes": 14400,
+              "lifetime_ms": 30000,
+              "lifetime_seconds": 30,
+              "lifetime_subsec_nanos": 0
+            },
+            "phases": [
+              {
+                "mode": "attack-free-baseline",
+                "relation_attempts": 7,
+                "completed_cache_observations": 7,
+                "incomplete_cache_observations": 0,
+                "key_hashed": 7,
+                "lookup_contended": 0,
+                "lookup_poisoned": 0,
+                "exact_fact_found": 0,
+                "cached_rejection_returned": 0,
+                "native_verifier_started": 7,
+                "native_verifier_returned": 7,
+                "full_replay_started": 7
+              },
+              {
+                "mode": "from-zero-pressure",
+                "relation_attempts": 243,
+                "completed_cache_observations": 243,
+                "incomplete_cache_observations": 0,
+                "key_hashed": 243,
+                "lookup_contended": 0,
+                "lookup_poisoned": 0,
+                "exact_fact_found": 0,
+                "cached_rejection_returned": 0,
+                "native_verifier_started": 243,
+                "native_verifier_returned": 243,
+                "full_replay_started": 243
+              }
+            ],
+            "scope": "actual relation-attempt path observations; native verifier entry is not full replay, started replay is not completion; path counters cover only completed observations, incomplete paths remain unknown; CPU remains nested"
+          }
+        }
+      },
+      "native_gate_validated": false,
+      "host_span": [
+        {
+          "phase": "inside-before-native",
+          "observed_utc": "2026-11-07T14:53:15.787160+00:00",
+          "pid": 4943,
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "counters": {
+            "cgroup.events": "populated 1\nfrozen 0",
+            "cpu.stat": "usage_usec 92144\nuser_usec 84302\nsystem_usec 7842\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 5\nnr_throttled 3\nthrottled_usec 214470\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "17276928",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "1"
+          },
+          "read_errors": {}
+        },
+        {
+          "phase": "inside-after-native",
+          "observed_utc": "2026-11-07T14:54:09.795757+00:00",
+          "pid": 4943,
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "counters": {
+            "cgroup.events": "populated 1\nfrozen 0",
+            "cpu.stat": "usage_usec 12928117\nuser_usec 8090742\nsystem_usec 4837374\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 545\nnr_throttled 509\nthrottled_usec 59363110\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "52977664",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "1"
+          },
+          "read_errors": {}
+        }
+      ]
+    }
+  ],
+  "head_original_pressure_groups": {
+    "no_relation_attempt": {
+      "records": 37,
+      "publication": {
+        "\"not_observed\"": 37
+      },
+      "dispatch_errors": {
+        "null": 37
+      },
+      "costs": {
+        "dispatch_thread_cpu_ns": {
+          "known_count": 23,
+          "unknown_count": 14,
+          "sum_known": 6531868
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 0,
+          "unknown_count": 37,
+          "sum_known": 0
+        },
+        "challenge_wait_wall_ns": {
+          "known_count": 37,
+          "unknown_count": 0,
+          "sum_known": 436476517
+        },
+        "grant_wait_wall_ns": {
+          "known_count": 32,
+          "unknown_count": 5,
+          "sum_known": 793911136
+        },
+        "paid_task_queue_wait_wall_ns": {
+          "known_count": 25,
+          "unknown_count": 12,
+          "sum_known": 488743593
+        },
+        "response_write_wall_ns": {
+          "known_count": 23,
+          "unknown_count": 14,
+          "sum_known": 6130117
+        }
+      }
+    },
+    "native_rejected": {
+      "records": 49,
+      "publication": {
+        "\"retained\"": 49
+      },
+      "dispatch_errors": {
+        "null": 49
+      },
+      "costs": {
+        "dispatch_thread_cpu_ns": {
+          "known_count": 49,
+          "unknown_count": 0,
+          "sum_known": 101127699
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 49,
+          "unknown_count": 0,
+          "sum_known": 69990981
+        },
+        "challenge_wait_wall_ns": {
+          "known_count": 49,
+          "unknown_count": 0,
+          "sum_known": 1328690477
+        },
+        "grant_wait_wall_ns": {
+          "known_count": 49,
+          "unknown_count": 0,
+          "sum_known": 2505840744
+        },
+        "paid_task_queue_wait_wall_ns": {
+          "known_count": 49,
+          "unknown_count": 0,
+          "sum_known": 1426747538
+        },
+        "response_write_wall_ns": {
+          "known_count": 49,
+          "unknown_count": 0,
+          "sum_known": 2126937
+        }
+      }
+    },
+    "cached_rejection": {
+      "records": 249,
+      "publication": {
+        "\"none\"": 249
+      },
+      "dispatch_errors": {
+        "null": 249
+      },
+      "costs": {
+        "dispatch_thread_cpu_ns": {
+          "known_count": 249,
+          "unknown_count": 0,
+          "sum_known": 167805046
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 249,
+          "unknown_count": 0,
+          "sum_known": 10113953
+        },
+        "challenge_wait_wall_ns": {
+          "known_count": 249,
+          "unknown_count": 0,
+          "sum_known": 5445367887
+        },
+        "grant_wait_wall_ns": {
+          "known_count": 249,
+          "unknown_count": 0,
+          "sum_known": 14981398166
+        },
+        "paid_task_queue_wait_wall_ns": {
+          "known_count": 249,
+          "unknown_count": 0,
+          "sum_known": 4735689649
+        },
+        "response_write_wall_ns": {
+          "known_count": 249,
+          "unknown_count": 0,
+          "sum_known": 9834426
+        }
+      }
+    },
+    "native_accepted": {
+      "records": 7,
+      "publication": {
+        "\"none\"": 7
+      },
+      "dispatch_errors": {
+        "null": 7
+      },
+      "costs": {
+        "dispatch_thread_cpu_ns": {
+          "known_count": 7,
+          "unknown_count": 0,
+          "sum_known": 46379019
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 7,
+          "unknown_count": 0,
+          "sum_known": 11764759
+        },
+        "challenge_wait_wall_ns": {
+          "known_count": 7,
+          "unknown_count": 0,
+          "sum_known": 277636819
+        },
+        "grant_wait_wall_ns": {
+          "known_count": 7,
+          "unknown_count": 0,
+          "sum_known": 137769696
+        },
+        "paid_task_queue_wait_wall_ns": {
+          "known_count": 7,
+          "unknown_count": 0,
+          "sum_known": 443937546
+        },
+        "response_write_wall_ns": {
+          "known_count": 7,
+          "unknown_count": 0,
+          "sum_known": 159828
+        }
+      }
+    }
+  },
+  "head_original_record_coverage": {
+    "accepted_connections_seen": 342,
+    "records_not_retained": 0,
+    "measurement_failures": 0,
+    "counter_overflow": false
+  },
+  "native_gate_validated": false
+}

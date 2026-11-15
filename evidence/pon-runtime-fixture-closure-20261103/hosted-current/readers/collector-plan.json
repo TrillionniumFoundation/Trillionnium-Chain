@@ -1,0 +1,180 @@
+{
+  "schema": "new-candidate-readonly-hosted-collector-preparation-v1",
+  "prepared_utc": "2026-11-03T22:06:44.947573+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "candidate": null,
+  "trigger_required": "Parent must supply the exact new candidate SHA before any GitHub monitoring; no old b280 polling.",
+  "network_reads_performed_during_preparation": false,
+  "remote_mutations_allowed": false,
+  "source_status": "Local frozen-source preparation only; rebind to exact new commit and actual merge before native qualification.",
+  "poll_interval_seconds": [
+    300,
+    600
+  ],
+  "artifact_policy": {
+    "available_bytes_at_preparation": 2670465024,
+    "reserve_bytes": 1073741824,
+    "max_artifact_bytes_without_further_review": 268435456,
+    "reuse_existing_digest_matched_artifact": true,
+    "never_redownload_same_artifact_id": true,
+    "select_original_records_only": true,
+    "execute_downloaded_code": false,
+    "record_hash_size_and_zip_index": true
+  },
+  "public_host_fixtures": [
+    {
+      "target": "architecture_delivery_compare",
+      "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+      "cli_required": false,
+      "host_execution_observed": false
+    },
+    {
+      "target": "public_intake_v2",
+      "selector": "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+      "cli_required": false,
+      "host_execution_observed": false
+    },
+    {
+      "target": "public_intake_v2",
+      "selector": "one_packet_history_preserves_partial_progress_and_independent_validation",
+      "cli_required": false,
+      "host_execution_observed": false
+    },
+    {
+      "target": "public_cli",
+      "selector": "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+      "cli_required": true,
+      "host_execution_observed": false
+    },
+    {
+      "target": "public_pool_cli",
+      "selector": "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+      "cli_required": true,
+      "host_execution_observed": false
+    },
+    {
+      "target": "public_pool_cli",
+      "selector": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+      "cli_required": true,
+      "host_execution_observed": false
+    },
+    {
+      "target": "mining_service_budget",
+      "selector": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+      "cli_required": true,
+      "host_execution_observed": false
+    },
+    {
+      "target": "evaluation_sync_observation",
+      "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+      "cli_required": true,
+      "host_execution_observed": false
+    },
+    {
+      "target": "native_node",
+      "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+      "cli_required": true,
+      "host_execution_observed": false
+    }
+  ],
+  "required_node_lanes": [
+    "x64-head",
+    "arm64-head",
+    "x64-actual-merge",
+    "arm64-actual-merge"
+  ],
+  "native_registry_reference": {
+    "file": "/workspace/scratch/b5a148b09b11/next-validation/full-node-fixture-diagnostics/plan.json",
+    "sha256": "c85222711cb8ef0a65c11a828d8471cfc6f7faa7bd9b9a6228f745530171e27d",
+    "expected_registered": 974,
+    "original_ignored": 23,
+    "qualification": "Registry membership must match the new frozen source; this does not assert any execution result."
+  },
+  "w1_history": {
+    "filter": "ingress::history_import::tests::",
+    "expected_passed": 25,
+    "expected_original_ignored": 1,
+    "qualification": "Original release command and named outer harness counts required; workflow status insufficient."
+  },
+  "original_business_gates": [
+    "original four-second receiver and client service",
+    "fixed Host ROOT F0",
+    "three predeclared native campaigns"
+  ],
+  "mandatory_bindings": [
+    "event head SHA",
+    "actual tested commit and tree",
+    "ordered actual-merge parents",
+    "run ID and attempt",
+    "job ID and runner architecture",
+    "complete command and native profile",
+    "source before and after",
+    "ELF and CLI binary hashes before and after",
+    "original raw logs and named outer counts",
+    "Host preparation/controller/cleanup and unchanged limits",
+    "original business reader gates and denominators"
+  ],
+  "unknown_policy": "Cancelled, pending, skipped, missing and unobserved remain unqualified. Workflow success does not establish native PASS. Preserve failed observations.",
+  "source_files": [
+    {
+      "path": "scripts/ci/run_public_fixture_native.py",
+      "bytes": 29037,
+      "sha256": "23e7a41ab61e0266483b51e51e58cac80be6d06fd2977835bd76c50c76f35df8",
+      "git_blob": "253fbc7806b6631f5a29220ea42b0711f853f278"
+    },
+    {
+      "path": "scripts/ci/public_fixture_host_lease.py",
+      "bytes": 11040,
+      "sha256": "792c1c599082b0ce67e128e6dbbf0c99f583dd41f4af0091838cc10adcc98d70",
+      "git_blob": "69ecbe1183ef9e6123d3014376f9c50a3f43a063"
+    },
+    {
+      "path": "scripts/ci/rust_baseline_shards.py",
+      "bytes": 8725,
+      "sha256": "3a2a0f960c0f58dd8dbe8a5b9c889fee963c9bba8ecadb9c751af6def4c543e5",
+      "git_blob": "1721caeab93868a5c0f3c1fe0ce4dbb7f0f3dd49"
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "bytes": 22306,
+      "sha256": "e20c602e1a378b391f6f37ed289041a70ea377a69b06e9f2911cf36ba910cb60",
+      "git_blob": "3aa25ccde7db9fedad8b4b29c5600ef01fc38e56"
+    },
+    {
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "bytes": 7725,
+      "sha256": "d931e90315cef8054b25523e051376bb1c52ae43768aeb31a2251900ed2a7e97",
+      "git_blob": "229e5bfaa9fd619b0c21031a0d6fee26d6c6c715"
+    },
+    {
+      "path": ".github/workflows/pon-w1-work-security.yml",
+      "bytes": 24549,
+      "sha256": "7434725504d9ea31e96226d027fbaa2cf2080d56c5a58f41c453685311dc79cf",
+      "git_blob": "b19f39c6876b29cea5aaefe222c3fbd6bb707c52"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/architecture_compare.py",
+      "bytes": 12790,
+      "sha256": "02d04dfb5fc11bf8125d29cca79be612d7fef6ad4088b8ec50d3c96a12204ac4",
+      "git_blob": "451c6d0acad437ddfc654081445eb14de2907861"
+    },
+    {
+      "path": "trillionnium/Cargo.toml",
+      "bytes": 2204,
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "git_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65"
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "bytes": 39745,
+      "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+      "git_blob": "7a298d02ad14470a8c45094b4791c24109fc4519"
+    }
+  ],
+  "reader": {
+    "file": "/workspace/scratch/b5a148b09b11/next-hosted/new-candidate-preparation/collect_readback.py",
+    "sha256": "49ded99fea63f85b68b64162b3a60c0d971fcabb74d368d7c666d3ad827dee5a",
+    "syntax_checked": true,
+    "executes_native_code": false
+  }
+}

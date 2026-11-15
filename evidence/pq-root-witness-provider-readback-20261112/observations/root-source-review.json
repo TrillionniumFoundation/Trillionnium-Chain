@@ -1,0 +1,27 @@
+{
+  "canonical_source_map_sha256": "e1ee97550a6ec20b79f8d917793f2b4268772864e611448a6846869999bcb19b",
+  "changed": {
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/effect_readback_v4.rs": {
+      "new": "668ddfbc25501a404a572675dc37ffeb6df9d8d70f1e732865b9a8143006e6f0",
+      "old": "30b638eb31f17e7256e705dfce23e9332205b6b24af687b6f386e848a255ec5e"
+    },
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs": {
+      "new": "b99689ac3ad81acb0b7a4a5a2dabcdb322eba64d639b47e1fe9d427b8b76e1ec",
+      "old": "e0f41b22bf8ed8f444fc0b004a8e030f8c548ea96022e6cf5b35230c6be39f96"
+    },
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/provider_readback.rs": {
+      "new": "5718852b21c79114ac17d5cbc99e6ae96d02e3d5b783d3ca1e950425c2d6306e",
+      "old": null
+    },
+    "trillionnium/crates/trnm-pon-node/tests/root_witness_provider_v5_native.rs": {
+      "new": "fcc876855687f144b25d72bc298d54da4a539f4f09b973eb712815b8f8064be1",
+      "old": null
+    }
+  },
+  "file_count": 43,
+  "parent_review": "454ae116159867ff6cddd91b964523df7f7e16f0",
+  "production_activation": false,
+  "runtime_source": "225ab38e1e5f7e0852a28372bd8dd769eec1084b",
+  "unchanged_existing_files": 39,
+  "whole_chain_pq_qualified": false
+}

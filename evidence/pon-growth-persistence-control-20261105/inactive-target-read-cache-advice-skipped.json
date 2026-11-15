@@ -1,0 +1,9 @@
+{
+  "target": "/workspace/scratch/822cc50e24f0/state-scheduling-restored/native-target",
+  "resolved": "/workspace/scratch/822cc50e24f0/state-scheduling-restored/native-target",
+  "is_symlink": false,
+  "cache_tag_exists": false,
+  "cache_tag": null,
+  "advice_executed": false,
+  "reason": "Conservative optional cache-tag check did not pass; no cache advice or data modifications performed."
+}

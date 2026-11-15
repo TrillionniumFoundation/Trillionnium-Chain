@@ -1,0 +1,1558 @@
+{
+  "schema": "chain-fixed-remote-head-observation-v1",
+  "observed_utc": "2026-11-05 10:29:36 UTC",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "pr": {
+    "number": 688,
+    "state": "open",
+    "draft": true,
+    "head": "cbead1508ce8b6d9deb2a86b4bc3181da09694e7",
+    "branch": "fix/chain-six-axis-performance-20261103",
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "updated_at": "2026-11-05T10:07:56Z"
+  },
+  "source_under_native_validation": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+  "observed_tree": "624c8aad419ee05dc71a4aac507abea429018289",
+  "comparison": {
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/1d6a9f9b5e8abd9e86457f45199a4922f9376360...cbead1508ce8b6d9deb2a86b4bc3181da09694e7",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/compare/1d6a9f9b5e8abd9e86457f45199a4922f9376360...cbead1508ce8b6d9deb2a86b4bc3181da09694e7",
+    "status": "ahead",
+    "ahead_by": 21,
+    "behind_by": 0,
+    "total_commits": 21,
+    "base": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+    "merge_base": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+    "commits": [
+      {
+        "sha": "dabd154ee4fb207c763494df6b91423e3e934cab",
+        "tree": "8b0d31a48f8a5f3518567dbd96b6beedab9abc4d",
+        "parents": [
+          "6ee529046d295e3175f09112492abee373f1f54c"
+        ],
+        "subject": "research(pon): compare sparse legal preparation and reconcile shared-material costs"
+      },
+      {
+        "sha": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+        "tree": "5487be5fe9075298429c0a8cad60e33cf330f8bf",
+        "parents": [
+          "dabd154ee4fb207c763494df6b91423e3e934cab"
+        ],
+        "subject": "test(pon): preserve exact medians in cost tamper controls"
+      },
+      {
+        "sha": "cfa57cd04751427451302b5c10539b3984d7f8db",
+        "tree": "155213c2468edc411325f4f1853b471a6b25f355",
+        "parents": [
+          "657bf2a462ff13a6101ebcb4fbe0fb91c515c972"
+        ],
+        "subject": "fix(cell): retain deadlines and bind installed runtime admission"
+      },
+      {
+        "sha": "d4c0c4b8a1b31d1c9a1d0e6851f1029c21f8daa8",
+        "tree": "f65b857f2b31e38f267a03ca8e9867dc33d48a2a",
+        "parents": [
+          "2a8fee974b41fab6e2c4e662dcce1807fcd19bdd"
+        ],
+        "subject": "fix(ci): require complete Growth read dependency source pins"
+      },
+      {
+        "sha": "5f0c4fdf8185fa9667769cbd3c8bf727dadda9ef",
+        "tree": "cb20b888405423f67088eaa39ce11fbea67b791e",
+        "parents": [
+          "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb",
+          "cfa57cd04751427451302b5c10539b3984d7f8db"
+        ],
+        "subject": "merge(cell): preserve concurrent architecture and release ownership work"
+      },
+      {
+        "sha": "abf7986fe338e09fef9729a1738b9b5127700d8f",
+        "tree": "80e609a20b17ace972ccdc4d9c92a10e3e7e71d3",
+        "parents": [
+          "4e42b620ed1ce306bca6e7d5da3819417aa0f397"
+        ],
+        "subject": "feat(pon): implement exact routed grouped integer research relation"
+      },
+      {
+        "sha": "c962f6ddac5beaed87f094852743168e156d118d",
+        "tree": "133645c1f7c5452bc2aac9423afe3e8757cd2cff",
+        "parents": [
+          "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb",
+          "eeedfe33f9c7cd27a1855b865e7faa458047dcd1"
+        ],
+        "subject": "research(pon): retain paired shared-material costs and legal sparse preparation"
+      },
+      {
+        "sha": "e0fc4df37bed96050db2a07d91d427829921e5fa",
+        "tree": "7f1b7af0351d87032950e01858ea767074c0d032",
+        "parents": [
+          "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+          "abf7986fe338e09fef9729a1738b9b5127700d8f"
+        ],
+        "subject": "merge(pon): preserve owner controls with grouped operator research"
+      },
+      {
+        "sha": "619c5f80856fb15bb6896d8008df91f58c215229",
+        "tree": "501607a6f76d4e5fc4e31a79bfdbff00c4bb007f",
+        "parents": [
+          "e0fc4df37bed96050db2a07d91d427829921e5fa",
+          "d4c0c4b8a1b31d1c9a1d0e6851f1029c21f8daa8"
+        ],
+        "subject": "merge(ci): bind Growth read dependencies without dropping concurrent owner work"
+      },
+      {
+        "sha": "13a9d30669785fa84a85985dfbcc744b2a8e3732",
+        "tree": "48ce61dbffcca4d765be216d3be6291c1d269558",
+        "parents": [
+          "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+          "c962f6ddac5beaed87f094852743168e156d118d"
+        ],
+        "subject": "merge(pon): preserve concurrent owner controls with shared-material costs"
+      },
+      {
+        "sha": "32c3d63c907d0060a5b02cd678c74b01e54ec0f9",
+        "tree": "f35ca28e45ff563aac85164e971b7c1ae4d71def",
+        "parents": [
+          "619c5f80856fb15bb6896d8008df91f58c215229",
+          "13a9d30669785fa84a85985dfbcc744b2a8e3732"
+        ],
+        "subject": "merge(pon): retain grouped research and exact shared-material cost evidence"
+      },
+      {
+        "sha": "74a7d9683c732023879bc75cf392494bfa82a905",
+        "tree": "a7bc2077097e13c7b50d106c74803fdc89122afd",
+        "parents": [
+          "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb"
+        ],
+        "subject": "feat(pon): bind useful Cell decisions to a versioned complete relation"
+      },
+      {
+        "sha": "c17e2782e9be80fd4d2656a2ec497d1ee6344d06",
+        "tree": "4ab4de91a418479e342f61a488c0ebddbaa35d16",
+        "parents": [
+          "619c5f80856fb15bb6896d8008df91f58c215229",
+          "74a7d9683c732023879bc75cf392494bfa82a905"
+        ],
+        "subject": "merge(pon): preserve complete useful relation and concurrent grouped research"
+      },
+      {
+        "sha": "bdab616e853df2c373a850886a8220ed1fda5041",
+        "tree": "37953760dea7556922ebf6300ccd3aedd937c82e",
+        "parents": [
+          "32c3d63c907d0060a5b02cd678c74b01e54ec0f9",
+          "c17e2782e9be80fd4d2656a2ec497d1ee6344d06"
+        ],
+        "subject": "merge(pon): bind useful relation to concurrent shared-cost source"
+      },
+      {
+        "sha": "f3a597f274833121d5ec408cb6a1cad83996d7f2",
+        "tree": "86ca08c321e0866d2f49811c74e77c9dedb0c06a",
+        "parents": [
+          "bdab616e853df2c373a850886a8220ed1fda5041"
+        ],
+        "subject": "docs(pon): retain fresh useful-relation proof and exact publication identities"
+      },
+      {
+        "sha": "94f99177b43dc6bfbf7b88ba6391c503f71f064d",
+        "tree": "20395db83fa4f40ea185f14cad2d896d28f225a9",
+        "parents": [
+          "f3a597f274833121d5ec408cb6a1cad83996d7f2"
+        ],
+        "subject": "docs(pon): retain exact composed-source validation for shared costs"
+      },
+      {
+        "sha": "c2211d2a97a6c0b4de25b910f9b101eeef487125",
+        "tree": "54a09ef1bd66eba16b4bf02ddcf55e5cf4d7a79b",
+        "parents": [
+          "f3a597f274833121d5ec408cb6a1cad83996d7f2"
+        ],
+        "subject": "evidence(pon): bind grouped measurements and composed compatibility"
+      },
+      {
+        "sha": "22ef7177e3c4e119911bf7d657af5c2d1a83ee03",
+        "tree": "a82804baeca600b2cf66c83411545b4563884fe1",
+        "parents": [
+          "f3a597f274833121d5ec408cb6a1cad83996d7f2",
+          "cfa57cd04751427451302b5c10539b3984d7f8db",
+          "5f0c4fdf8185fa9667769cbd3c8bf727dadda9ef"
+        ],
+        "subject": "merge(cell): preserve concurrent controls and archive fixed-source evidence"
+      },
+      {
+        "sha": "648faf393e53a9ab851b1a348c2652bc1d329f59",
+        "tree": "4cf88160ae6240cf6aa6a173c50ce5409bd3f9b8",
+        "parents": [
+          "94f99177b43dc6bfbf7b88ba6391c503f71f064d",
+          "c2211d2a97a6c0b4de25b910f9b101eeef487125"
+        ],
+        "subject": "merge(pon): preserve concurrent receipts with grouped final evidence"
+      },
+      {
+        "sha": "2ae4c1d8be0a136df516dafa6aa80ce9d18b4b0d",
+        "tree": "86dac718c5e83926f46d17ee0e9cf4557e820fa8",
+        "parents": [
+          "648faf393e53a9ab851b1a348c2652bc1d329f59"
+        ],
+        "subject": "docs(evidence): bind fixed Chain Hepta inputs and preserve full HOLD record"
+      },
+      {
+        "sha": "cbead1508ce8b6d9deb2a86b4bc3181da09694e7",
+        "tree": "624c8aad419ee05dc71a4aac507abea429018289",
+        "parents": [
+          "2ae4c1d8be0a136df516dafa6aa80ce9d18b4b0d",
+          "cfa57cd04751427451302b5c10539b3984d7f8db",
+          "5f0c4fdf8185fa9667769cbd3c8bf727dadda9ef",
+          "22ef7177e3c4e119911bf7d657af5c2d1a83ee03"
+        ],
+        "subject": "merge(cell): retain concurrent source-bound records and runtime controls"
+      }
+    ]
+  },
+  "files": [
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "status": "modified",
+      "sha": "5e430a54ea595e8896fe945ea00997cbe678413c",
+      "additions": 59,
+      "deletions": 20,
+      "changes": 79
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "status": "modified",
+      "sha": "ae2b5193ca7bce349b39ea659cb3e9f326ef453e",
+      "additions": 141,
+      "deletions": 0,
+      "changes": 141
+    },
+    {
+      "path": "docs/development/specs/pon/CELL_ORDINARY_HOST_HANDOFF_V2.md",
+      "status": "modified",
+      "sha": "568a68d48ece8aa856928fe87a14f7db07e47996",
+      "additions": 43,
+      "deletions": 0,
+      "changes": 43
+    },
+    {
+      "path": "docs/development/specs/pon/GROUPED_CELL_OPERATOR_V0.md",
+      "status": "added",
+      "sha": "32bd8770a3d54e8877dda9a2dd4560f2dac51e49",
+      "additions": 199,
+      "deletions": 0,
+      "changes": 199
+    },
+    {
+      "path": "docs/development/specs/pon/SHARED_CELL_COST_V2.md",
+      "status": "added",
+      "sha": "53b968d1431f33185e1fd38105d9f2dd8883301c",
+      "additions": 146,
+      "deletions": 0,
+      "changes": 146
+    },
+    {
+      "path": "docs/development/specs/pon/SHARED_CELL_WORK_V1.md",
+      "status": "modified",
+      "sha": "c4124430a9de3ab8eb3ee897b8497c9d043f4a17",
+      "additions": 15,
+      "deletions": 3,
+      "changes": 18
+    },
+    {
+      "path": "docs/development/specs/pon/USEFUL_CELL_RELATION_V1.md",
+      "status": "added",
+      "sha": "c13a34b2eb1f8d4a8d1e2273725fcf2dff928468",
+      "additions": 284,
+      "deletions": 0,
+      "changes": 284
+    },
+    {
+      "path": "docs/modules/M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md",
+      "status": "modified",
+      "sha": "fd13a6f936902b9712022f6629d9284260d51901",
+      "additions": 12,
+      "deletions": 0,
+      "changes": 12
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/README.md",
+      "status": "added",
+      "sha": "df5a08d1138701c4ee14641b53b7e2328622757a",
+      "additions": 117,
+      "deletions": 0,
+      "changes": 117
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/SHA256SUMS",
+      "status": "added",
+      "sha": "e6d5f330718bbdc45ee7efd4bbddc7c639cb23d4",
+      "additions": 23,
+      "deletions": 0,
+      "changes": 23
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/cell-concurrent-integration.json",
+      "status": "added",
+      "sha": "6692919ead9d5665a0427cafd0266eb45ce62153",
+      "additions": 62,
+      "deletions": 0,
+      "changes": 62
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/cell-concurrent-integration.log",
+      "status": "added",
+      "sha": "59202dfd3c0cc14e51a6514c451da30cc253790f",
+      "additions": 228,
+      "deletions": 0,
+      "changes": 228
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/cell-final-cargo-graph.json",
+      "status": "added",
+      "sha": "e7f126ff52f7fe467133821fdf432db82192e220",
+      "additions": 62,
+      "deletions": 0,
+      "changes": 62
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/cell-final-cargo-graph.log",
+      "status": "added",
+      "sha": "b2e597790215cd91a093cc3f9bcd236ad6d31c26",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/cell-final-combined.json",
+      "status": "added",
+      "sha": "b07b05c395622de05ab18b3835565cb06bfe3dd5",
+      "additions": 61,
+      "deletions": 0,
+      "changes": 61
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/cell-final-combined.log",
+      "status": "added",
+      "sha": "d5b0a2f6a04b4e3610e1b06f71c7f059b4d9dcd1",
+      "additions": 757,
+      "deletions": 0,
+      "changes": 757
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/chain-concurrent-integration-tested-commit.raw",
+      "status": "added",
+      "sha": "d05982ed92d0f8b3dd5e6670fd0de778712bcbb0",
+      "additions": 7,
+      "deletions": 0,
+      "changes": 7
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/chain-source-local-tested-commit.raw",
+      "status": "added",
+      "sha": "3d265a8ea19d2e85fb97de8c285c17b15d1ebbfc",
+      "additions": 6,
+      "deletions": 0,
+      "changes": 6
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/chain-source-remote-commit.raw",
+      "status": "added",
+      "sha": "fdbaa6fc68a3d5b0c9f8a7b2c44adee9859ae911",
+      "additions": 10,
+      "deletions": 0,
+      "changes": 10
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/concurrent-32c3-import.json",
+      "status": "added",
+      "sha": "8447aeb514974e0d59684131bdc0478ad8892bc4",
+      "additions": 379,
+      "deletions": 0,
+      "changes": 379
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/concurrent-cf8-import.json",
+      "status": "added",
+      "sha": "551e4b701492f7be61c48eb819544e755510f333",
+      "additions": 299,
+      "deletions": 0,
+      "changes": 299
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/concurrent-e0f-import.json",
+      "status": "added",
+      "sha": "e79bcc337168d69281f6793a5e21cb32580d61cb",
+      "additions": 474,
+      "deletions": 0,
+      "changes": 474
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/concurrent-f3a-import.json",
+      "status": "added",
+      "sha": "ea4e38617afb4ede434a49f9459205b56b469b24",
+      "additions": 308,
+      "deletions": 0,
+      "changes": 308
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/concurrent657-import.json",
+      "status": "added",
+      "sha": "77d7f0fa85fc2ad12761a4f971f818f25c22fd75",
+      "additions": 279,
+      "deletions": 0,
+      "changes": 279
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/delta-targeted-attempt1-stale-shared-target.log",
+      "status": "added",
+      "sha": "dbfa700af22de94e7bacb2c8389bd6f9a9c71073",
+      "additions": 14,
+      "deletions": 0,
+      "changes": 14
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/delta-targeted-fresh.log",
+      "status": "added",
+      "sha": "94169f7414906c1b531edb09cde93d5dd2184ccd",
+      "additions": 19,
+      "deletions": 0,
+      "changes": 19
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/discovery-red-attempt1-missing-vectors.log",
+      "status": "added",
+      "sha": "1aa6cffa94feef2c7f10f3bc94295b415abb3b28",
+      "additions": 32,
+      "deletions": 0,
+      "changes": 32
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/stale-target-observation.json",
+      "status": "added",
+      "sha": "65ead91485dff8e9cdfc1a35bb7237a80d81d35d",
+      "additions": 7,
+      "deletions": 0,
+      "changes": 7
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/summary.json",
+      "status": "added",
+      "sha": "9861853777b333c11bb6a60f41ca62cb66aeaa2b",
+      "additions": 233,
+      "deletions": 0,
+      "changes": 233
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/workspace-clippy-first.log",
+      "status": "added",
+      "sha": "32beb60665d90d43beeb346e3917274b47dde0e0",
+      "additions": 105,
+      "deletions": 0,
+      "changes": 105
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/records/workspace-clippy-second.log",
+      "status": "added",
+      "sha": "1ff91fba8b26ac6a41836f73fee65ee1de9d02bd",
+      "additions": 18,
+      "deletions": 0,
+      "changes": 18
+    },
+    {
+      "path": "evidence/cell-contract-continuation-20261105/verify-chain.sh",
+      "status": "added",
+      "sha": "a1e58d00f63d6b4de07246eb9daaacbe9a31888e",
+      "additions": 27,
+      "deletions": 0,
+      "changes": 27
+    },
+    {
+      "path": "evidence/cell-delta-cancellation-20261105/README.md",
+      "status": "added",
+      "sha": "67cedd99a3e28bb738b8519aa515b8853a3008d0",
+      "additions": 103,
+      "deletions": 0,
+      "changes": 103
+    },
+    {
+      "path": "evidence/cell-discovery-deadline-20261105/README.md",
+      "status": "added",
+      "sha": "3440e83281ff0f7b11189653cdc86b297c451798",
+      "additions": 87,
+      "deletions": 0,
+      "changes": 87
+    },
+    {
+      "path": "evidence/cell-discovery-deadline-20261105/discovery-old-production-red.log",
+      "status": "added",
+      "sha": "c0ea2484ff707a4f33ea260d0f0f7ccf33e3eb00",
+      "additions": 76,
+      "deletions": 0,
+      "changes": 76
+    },
+    {
+      "path": "evidence/cell-discovery-deadline-20261105/discovery-targeted-first.log",
+      "status": "added",
+      "sha": "adc6caf463493efc2e30cca4a7e324a87ed0f4bc",
+      "additions": 20,
+      "deletions": 0,
+      "changes": 20
+    },
+    {
+      "path": "evidence/cell-discovery-deadline-20261105/red-discovery-source.json",
+      "status": "added",
+      "sha": "704dbaf3bdc3679c5c32b09e0923843d7ceeb160",
+      "additions": 13,
+      "deletions": 0,
+      "changes": 13
+    },
+    {
+      "path": "evidence/cell-python-runtime-review-20261105/README.md",
+      "status": "added",
+      "sha": "48b24b0d53b7199475ae6f65a1b71c503adc129d",
+      "additions": 106,
+      "deletions": 0,
+      "changes": 106
+    },
+    {
+      "path": "evidence/cell-python-runtime-review-20261105/bytecode-source.json",
+      "status": "added",
+      "sha": "df93053e621afe0f3472b542075bec0277319390",
+      "additions": 10,
+      "deletions": 0,
+      "changes": 10
+    },
+    {
+      "path": "evidence/cell-python-runtime-review-20261105/import_review.py",
+      "status": "added",
+      "sha": "b4b3d87a7dfc8cdfa104e774ec3dc7a8af7bbf56",
+      "additions": 176,
+      "deletions": 0,
+      "changes": 176
+    },
+    {
+      "path": "evidence/cell-python-runtime-review-20261105/manifest.json",
+      "status": "added",
+      "sha": "cae7d06b94bc56f930b39a2037148e85f32a79ba",
+      "additions": 72,
+      "deletions": 0,
+      "changes": 72
+    },
+    {
+      "path": "evidence/cell-python-runtime-review-20261105/metadata-green.json",
+      "status": "added",
+      "sha": "734cab894668cedc12c8e463559a9fd921b96196",
+      "additions": 12,
+      "deletions": 0,
+      "changes": 12
+    },
+    {
+      "path": "evidence/cell-python-runtime-review-20261105/original-red-observations.json",
+      "status": "added",
+      "sha": "0381392e73a35c2366e1e8a1d1e00ca7467068df",
+      "additions": 22,
+      "deletions": 0,
+      "changes": 22
+    },
+    {
+      "path": "evidence/cell-python-runtime-review-20261105/project-shadow.json",
+      "status": "added",
+      "sha": "2119c6e3a259ccc87afc0fbd11d0981d1cb8b7d0",
+      "additions": 16,
+      "deletions": 0,
+      "changes": 16
+    },
+    {
+      "path": "evidence/cell-python-runtime-review-20261105/provenance.json",
+      "status": "added",
+      "sha": "ae1887746429fd7fc63c77a9146950fde5322456",
+      "additions": 45,
+      "deletions": 0,
+      "changes": 45
+    },
+    {
+      "path": "evidence/cell-python-runtime-review-20261105/ready-field-shape.json",
+      "status": "added",
+      "sha": "46175845e330f00acbb6c5ca3c26c81c73933597",
+      "additions": 36,
+      "deletions": 0,
+      "changes": 36
+    },
+    {
+      "path": "evidence/cell-python-runtime-review-20261105/startup-underscore-pth.json",
+      "status": "added",
+      "sha": "b36e7ac5515f5b55e381fc3695caeaa1d9d30ba0",
+      "additions": 11,
+      "deletions": 0,
+      "changes": 11
+    },
+    {
+      "path": "evidence/cell-python-runtime-review-20261105/startup-zip.json",
+      "status": "added",
+      "sha": "11e7da1bd0ae387fa3da446ce7f398fc8036673c",
+      "additions": 17,
+      "deletions": 0,
+      "changes": 17
+    },
+    {
+      "path": "evidence/cell-python-runtime-review-20261105/underscore_pth_review.py",
+      "status": "added",
+      "sha": "bc32ed7cdab218a69e0ae30cc86316691e7f69b5",
+      "additions": 69,
+      "deletions": 0,
+      "changes": 69
+    },
+    {
+      "path": "evidence/cell-python-runtime-review-20261105/withdrawn-alternate-venv.json",
+      "status": "added",
+      "sha": "69bd52255b576c3dd9b889ad05765d0a3815694f",
+      "additions": 12,
+      "deletions": 0,
+      "changes": 12
+    },
+    {
+      "path": "evidence/pon-routed-grouped-v0-20261105/README.md",
+      "status": "added",
+      "sha": "6b9bb791627cb7f4106521220a2dc01fca0a94ba",
+      "additions": 251,
+      "deletions": 0,
+      "changes": 251
+    },
+    {
+      "path": "evidence/pon-routed-grouped-v0-20261105/REPRODUCE.md",
+      "status": "added",
+      "sha": "69f4a60ac388aafc6be5a3d9dc60a1dd6976b7d1",
+      "additions": 218,
+      "deletions": 0,
+      "changes": 218
+    },
+    {
+      "path": "evidence/pon-routed-grouped-v0-20261105/composition-validation.json",
+      "status": "added",
+      "sha": "f1efe5bbf35214dcd2141478317f7192535b8566",
+      "additions": 375,
+      "deletions": 0,
+      "changes": 375
+    },
+    {
+      "path": "evidence/pon-routed-grouped-v0-20261105/raw-artifacts-index.json",
+      "status": "added",
+      "sha": "13d12fa0fdc25d85add38766ec6880673c6272ec",
+      "additions": 597,
+      "deletions": 0,
+      "changes": 597
+    },
+    {
+      "path": "evidence/pon-routed-grouped-v0-20261105/source-manifest.json",
+      "status": "added",
+      "sha": "84a0c04395b565393449497d4da0edfac065c7bb",
+      "additions": 324,
+      "deletions": 0,
+      "changes": 324
+    },
+    {
+      "path": "evidence/pon-routed-grouped-v0-20261105/summary.json",
+      "status": "added",
+      "sha": "01253a8578ac956d002a6b903ed322abe33d321e",
+      "additions": 1168,
+      "deletions": 0,
+      "changes": 1168
+    },
+    {
+      "path": "evidence/pon-routed-grouped-v0-20261105/validation.json",
+      "status": "added",
+      "sha": "96a7f1e6ff186b3294bcfe8f132e570be82e0216",
+      "additions": 359,
+      "deletions": 0,
+      "changes": 359
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/README.md",
+      "status": "added",
+      "sha": "0c0f8476d9f40d42041e91879caa7570df85bbfb",
+      "additions": 190,
+      "deletions": 0,
+      "changes": 190
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/REPRODUCE.md",
+      "status": "added",
+      "sha": "526e7467456109eb159f0b45d5f4a0c639033ab7",
+      "additions": 165,
+      "deletions": 0,
+      "changes": 165
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/archive.json",
+      "status": "added",
+      "sha": "40a1c03609013f4e0eed7c1c0e8653b1b15f1d6a",
+      "additions": 17,
+      "deletions": 0,
+      "changes": 17
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/campaign.json",
+      "status": "added",
+      "sha": "3ef3fbd8f234cee635bf11e6c9b78e0023ebf306",
+      "additions": 453,
+      "deletions": 0,
+      "changes": 453
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/README.md",
+      "status": "added",
+      "sha": "4ec41b5d2665c8315f4de3cbd2af4392a7db4830",
+      "additions": 38,
+      "deletions": 0,
+      "changes": 38
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/logs/rust/example-tests.log",
+      "status": "added",
+      "sha": "b2322b2574905903e6b846e83562c35edbe13b38",
+      "additions": 17,
+      "deletions": 0,
+      "changes": 17
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/logs/rust/lib-tests.log",
+      "status": "added",
+      "sha": "78c0660feaf3bf2fe0fe6c9d4a12ba5a72deeb4e",
+      "additions": 176,
+      "deletions": 0,
+      "changes": 176
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/logs/rust/preflight.log",
+      "status": "added",
+      "sha": "3cb3f316b22d8b5fccb10da4b8c0f1b375612573",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/logs/rust/strict-clippy.log",
+      "status": "added",
+      "sha": "703177c4f55161e962fe7c7cca4a611ebdf99fc4",
+      "additions": 2,
+      "deletions": 0,
+      "changes": 2
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/logs/rust/workspace-fmt.log",
+      "status": "added",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/logs/static/cargo-metadata.json.gz",
+      "status": "added",
+      "sha": "59a3e46c718ca30a6c46a1e688a7f5c887d7750a",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/logs/static/ci-contract-tests.log",
+      "status": "added",
+      "sha": "fe28e0a2cbc8f27cab57c0294f9c3ef561c6ca11",
+      "additions": 103,
+      "deletions": 0,
+      "changes": 103
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/logs/static/ci-contract.log",
+      "status": "added",
+      "sha": "994f9ac61e0d7c41e2cbdb2838eb5139ec54ca02",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/logs/static/distributed-source-inventory.log",
+      "status": "added",
+      "sha": "377f4ef57d19f3b41daa3be227d631fbbb09ce0f",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/logs/static/exact-head-source.log",
+      "status": "added",
+      "sha": "18c5d71c1c2c9dc755dc0be76cca0e7d0b59c01c",
+      "additions": 13,
+      "deletions": 0,
+      "changes": 13
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/logs/static/pq-integration-tests.log",
+      "status": "added",
+      "sha": "bebd0781248be08ebe624bba5a0c44687c29338a",
+      "additions": 42,
+      "deletions": 0,
+      "changes": 42
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/logs/static/pq-source-gate.log",
+      "status": "added",
+      "sha": "c73b761c357b7e16e870b96bfabc38f0e65dbf6f",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/logs/static/preflight.log",
+      "status": "added",
+      "sha": "3cb3f316b22d8b5fccb10da4b8c0f1b375612573",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/logs/static/repository-and-links.log",
+      "status": "added",
+      "sha": "a08577f516d3e28fc9db98f1de26b67cf4daf791",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/logs/static/source-integrity-negative-tests.log",
+      "status": "added",
+      "sha": "cf6aca4485d049b31636f79fe470658cc6c048ec",
+      "additions": 54,
+      "deletions": 0,
+      "changes": 54
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/publication-context.json",
+      "status": "added",
+      "sha": "17fe2ea08da4c67767975537e332cfed4c6887f3",
+      "additions": 32,
+      "deletions": 0,
+      "changes": 32
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/rust-validation.json",
+      "status": "added",
+      "sha": "47b0918c9959c017120f20e7015fdcf0c04a5647",
+      "additions": 174,
+      "deletions": 0,
+      "changes": 174
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/static-validation.json",
+      "status": "added",
+      "sha": "1a3c1087ecf9c88a4a579bb6471a28a8f6308636",
+      "additions": 368,
+      "deletions": 0,
+      "changes": 368
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/composed-source-32c3d63c/summary.json",
+      "status": "added",
+      "sha": "da78c56b340f97f8ceaca7bdb21ecdc0f9c49e39",
+      "additions": 136,
+      "deletions": 0,
+      "changes": 136
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/cost-readback.json",
+      "status": "added",
+      "sha": "c7ff53a2da63387b79d292e38e09164e015d266f",
+      "additions": 9900,
+      "deletions": 0,
+      "changes": 9900
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/cost-scenarios.json",
+      "status": "added",
+      "sha": "1546c9cadbe274c2442ecd50d99151c1fae7bb34",
+      "additions": 6,
+      "deletions": 0,
+      "changes": 6
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/integration-preservation.json",
+      "status": "added",
+      "sha": "f2e2c282df2aae85d1ce0affe518ead3d711b0e4",
+      "additions": 73,
+      "deletions": 0,
+      "changes": 73
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/plan.json",
+      "status": "added",
+      "sha": "93fde867886f5315ee2bd526cda2a8e03f699a8b",
+      "additions": 337,
+      "deletions": 0,
+      "changes": 337
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/prior-model-settlement.json",
+      "status": "added",
+      "sha": "3dc857dc42f6e757b85955ace3a1698d80b32916",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/publication-latest.json",
+      "status": "added",
+      "sha": "80da764913ab28fc83a77035660973956324bb50",
+      "additions": 81,
+      "deletions": 0,
+      "changes": 81
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/publication-tail.json",
+      "status": "added",
+      "sha": "9f30a76255836a3a89ad7fd37348bbe3dca070e3",
+      "additions": 76,
+      "deletions": 0,
+      "changes": 76
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/publication-validation.json",
+      "status": "added",
+      "sha": "92470a31f69ede973363f919b6a5d6bdb32e48f5",
+      "additions": 738,
+      "deletions": 0,
+      "changes": 738
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/reviews/cost-controls.json",
+      "status": "added",
+      "sha": "3a325c39305393b73c7981310eb68740c92db883",
+      "additions": 18,
+      "deletions": 0,
+      "changes": 18
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/reviews/cost-readback-audit.json",
+      "status": "added",
+      "sha": "a1372217cdf60eeb77ff8ca33d693dcfe519bc2e",
+      "additions": 171,
+      "deletions": 0,
+      "changes": 171
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/reviews/fanout-reuse-exhaustion.json",
+      "status": "added",
+      "sha": "403066e1f6a100c2d7283e7b1f63110c1cd8eaf0",
+      "additions": 324,
+      "deletions": 0,
+      "changes": 324
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/reviews/legal-algebra-audit.json",
+      "status": "added",
+      "sha": "c6316272adfd7f64a5abd5f957d7b3c05f801178",
+      "additions": 16203,
+      "deletions": 0,
+      "changes": 16203
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/reviews/legal-algebra-audit.md",
+      "status": "added",
+      "sha": "eaed01a98d88db14f6074a48ee4a667e6e267684",
+      "additions": 165,
+      "deletions": 0,
+      "changes": 165
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/reviews/paired-cohort-review.json",
+      "status": "added",
+      "sha": "0fd37ba6b3e1895a36eba23fd02505b36635a5de",
+      "additions": 507,
+      "deletions": 0,
+      "changes": 507
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/reviews/scientific-reporting-boundaries.md",
+      "status": "added",
+      "sha": "408bb7a85205466b5c78e38f641f2c935ea81d42",
+      "additions": 148,
+      "deletions": 0,
+      "changes": 148
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/reviews/statistics-crosscheck.json",
+      "status": "added",
+      "sha": "ddb533f79b294b12bbffd86cb20f5e3b1bd31f12",
+      "additions": 416,
+      "deletions": 0,
+      "changes": 416
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/reviews/summary-reproduction.json",
+      "status": "added",
+      "sha": "81509330d945e9fb3c78ba1a649ca5c183f9aa9d",
+      "additions": 31,
+      "deletions": 0,
+      "changes": 31
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/source-files.json",
+      "status": "added",
+      "sha": "4488dc4cd50484f236a856342823a70d6e2d60a2",
+      "additions": 107,
+      "deletions": 0,
+      "changes": 107
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/summarize.py",
+      "status": "added",
+      "sha": "c0e13173d8e44de23bdb12412884bdcbe8764052",
+      "additions": 412,
+      "deletions": 0,
+      "changes": 412
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/summary.json",
+      "status": "added",
+      "sha": "dcee5e85ef79a6977f2d73fc3181137ab4df6f67",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1
+    },
+    {
+      "path": "evidence/pon-shared-material-cost-v2-20261105/validation.json",
+      "status": "added",
+      "sha": "ed3263fd0b559b3b90ba7fd9a376884b897764e9",
+      "additions": 387,
+      "deletions": 0,
+      "changes": 387
+    },
+    {
+      "path": "evidence/pon-useful-cell-relation-v1-20261105/README.md",
+      "status": "added",
+      "sha": "62dcae8da433d0bb04eb0e4d24ead6f6b2e045b9",
+      "additions": 180,
+      "deletions": 0,
+      "changes": 180
+    },
+    {
+      "path": "evidence/pon-useful-cell-relation-v1-20261105/composition.json",
+      "status": "added",
+      "sha": "12b663c726a81b4c53ab53b7c6110be0d1eef5da",
+      "additions": 153,
+      "deletions": 0,
+      "changes": 153
+    },
+    {
+      "path": "evidence/pon-useful-cell-relation-v1-20261105/latest.json",
+      "status": "added",
+      "sha": "8e4015143e4af86d360a7d8e3b265bdcb4eaedc9",
+      "additions": 538,
+      "deletions": 0,
+      "changes": 538
+    },
+    {
+      "path": "evidence/pon-useful-cell-relation-v1-20261105/manifest.json",
+      "status": "added",
+      "sha": "53261c08a2da1f28b3f7a58e52a883aa7dca82f7",
+      "additions": 589,
+      "deletions": 0,
+      "changes": 589
+    },
+    {
+      "path": "evidence/system-integration-20261105/README.md",
+      "status": "added",
+      "sha": "07ff0d523707403b7d76b8e18739080d69300db2",
+      "additions": 79,
+      "deletions": 0,
+      "changes": 79
+    },
+    {
+      "path": "evidence/system-integration-20261105/SHA256SUMS",
+      "status": "added",
+      "sha": "a6f2d78f7f4dadcb76351d192ff2709fc1638bd7",
+      "additions": 2,
+      "deletions": 0,
+      "changes": 2
+    },
+    {
+      "path": "evidence/system-integration-20261105/fixed-pair.json",
+      "status": "added",
+      "sha": "d9366ebd8797173b2e7d3f2191e2bf5fa6a0faee",
+      "additions": 451,
+      "deletions": 0,
+      "changes": 451
+    },
+    {
+      "path": "evidence/system-integration-20261105/frozen-source-619/README.md",
+      "status": "added",
+      "sha": "76074c0fdc48e5a9fc030af9a34baec122e433eb",
+      "additions": 27,
+      "deletions": 0,
+      "changes": 27
+    },
+    {
+      "path": "evidence/system-integration-20261105/frozen-source-619/index.json",
+      "status": "added",
+      "sha": "4561e5e688c0bb3c941c9066c3f093d70bd6802a",
+      "additions": 347,
+      "deletions": 0,
+      "changes": 347
+    },
+    {
+      "path": "evidence/system-integration-20261105/frozen-source-619/raw.zip",
+      "status": "added",
+      "sha": "f1982da007ca62f3e6edf41d0350b468ca5cd892",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "evidence/system-integration-20261105/observations-through-2a8/README.md",
+      "status": "added",
+      "sha": "8177e952ee6110e481a601541755af0e5d2eb0ad",
+      "additions": 194,
+      "deletions": 0,
+      "changes": 194
+    },
+    {
+      "path": "evidence/system-integration-20261105/observations-through-2a8/SHA256SUMS",
+      "status": "added",
+      "sha": "b5d52daf916fb79e57b54b449672750e9fd7f96a",
+      "additions": 6,
+      "deletions": 0,
+      "changes": 6
+    },
+    {
+      "path": "evidence/system-integration-20261105/observations-through-2a8/assemble_evidence.py",
+      "status": "added",
+      "sha": "fbfa1a3a1e28ff7b250b10a5172c3b14aecd94aa",
+      "additions": 388,
+      "deletions": 0,
+      "changes": 388
+    },
+    {
+      "path": "evidence/system-integration-20261105/observations-through-2a8/evidence.json",
+      "status": "added",
+      "sha": "c3fba08d8ea0f9db6ce0534bbb8c00f90e6edf57",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "evidence/system-integration-20261105/observations-through-2a8/packaging-validation.json",
+      "status": "added",
+      "sha": "a51eb19ef22d730f06053be19257c1e156884c38",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "evidence/system-integration-20261105/observations-through-2a8/raw.zip",
+      "status": "added",
+      "sha": "33fb51c43f424793575384690d5bbbf2a55c3603",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "evidence/system-integration-20261105/observations-through-2a8/verify_evidence.py",
+      "status": "added",
+      "sha": "8d88c8aa41c7f5dd70bab1ca91725371342aaaf1",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/grouped_cell_operator_v0.py",
+      "status": "added",
+      "sha": "8532a4ab3957bdec97103697aaa65b242bb1a9a5",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py",
+      "status": "modified",
+      "sha": "735f0b1a5bfd738dc709d5c195aaa3136d9d968e",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py",
+      "status": "added",
+      "sha": "b401be0faca27c4664a279947a0dc14373ce6263",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/grouped_low_rank_v0.py",
+      "status": "added",
+      "sha": "76dfac378233bfb9bac44bfdf438c8a653effbfa",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/grouped_request_batch_v0.py",
+      "status": "added",
+      "sha": "60f63a3935933bfadd5a534eb91184addca1d69e",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_grouped_cell_operator_v0.py",
+      "status": "added",
+      "sha": "057d8e4e4cb12afde97a15311896a930f2a35c41",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_grouped_low_rank_v0.py",
+      "status": "added",
+      "sha": "a99a11ba7e275ad96909b4fc09ec8f5939f23ce0",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_grouped_request_batch_v0.py",
+      "status": "added",
+      "sha": "63b91719861dca985d474c0a1262de3a2a8eefc7",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_shared_cell_operator_v1.py",
+      "status": "modified",
+      "sha": "3e76d0d9fd355feb7856948cabcaeb5be7c9b2cb",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py",
+      "status": "added",
+      "sha": "c29bba9dcca10a2e355fc0e2dd0fddc8a2cb5a9c",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py",
+      "status": "added",
+      "sha": "93dc70b851c66254ad57ccb941d89ca2e637ad7d",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/useful_cell_numeric_v1.py",
+      "status": "added",
+      "sha": "66025b9708f6fba2d215600a81402790dfb9c662",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/useful_cell_relation_v1.py",
+      "status": "added",
+      "sha": "1b8c0d9c09cb1a21e12ffe9c38058c321e26fadc",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "status": "modified",
+      "sha": "cb8e51a25109bc26d1d1912bb6a4b9183c81162a",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "status": "modified",
+      "sha": "4043f42cf98b9d8ece3d8bcc87d5dc7a345cc89d",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "status": "modified",
+      "sha": "bc2a53b07e5cc75af99be7103ff645d336d825b6",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/ci/run_shared_material_campaign_v2.py",
+      "status": "added",
+      "sha": "e12c65f67b8674500b834b26bf7e9a4d2a071a60",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/ci/run_shared_material_security_v1.py",
+      "status": "modified",
+      "sha": "faecdfaf4cf0035fb0b448c8502aca4dbbc3da1e",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/ci/shared_material_cost_v2.py",
+      "status": "added",
+      "sha": "9be6e2beaa796d3ace2ac8485a63ca0fc7a59724",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "status": "modified",
+      "sha": "7d786edb222ad74fbaf7708dcea44d4adf43479b",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/ci/test_llm_cell_handoff_deadline.py",
+      "status": "modified",
+      "sha": "fc9bb2b9f5996088917469166ce6c86048058cbf",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/ci/test_llm_cell_host_handoff.py",
+      "status": "modified",
+      "sha": "c11c27571496843887f31f500aae69d90ac18da1",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/ci/test_llm_cell_installed_host.py",
+      "status": "modified",
+      "sha": "5c4c8297c9fc1c2d7f4fe4f87865ee385e849034",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/ci/test_pq_research_integration.py",
+      "status": "modified",
+      "sha": "e3a7361573931580afbdb0c838bb57b078f12587",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/ci/test_shared_material_campaign_v2.py",
+      "status": "added",
+      "sha": "2adbe76b1b86ac9d55d1672a16ff2e6587d57412",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/ci/test_shared_material_cost_v2.py",
+      "status": "added",
+      "sha": "0d64175d2657b9818449cb6d45dc0c41f294ef81",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/ci/test_shared_material_security_v1.py",
+      "status": "added",
+      "sha": "1e3b92edc96bc84a41e1f5c24f705bc12c4354a4",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/llm_cell_host_handoff.py",
+      "status": "modified",
+      "sha": "ba245691983091df938d538d4095c9dcfc8c6989",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/llm_cell_release.py",
+      "status": "modified",
+      "sha": "bf1fa79be98000ccbeb9a4c3aa512cd02df7e0cd",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/llm_neural_read_worker.py",
+      "status": "modified",
+      "sha": "5f69e3658172ff226e88e231a9b4cddcc1fc4faf",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/llm_python_runtime_contract.py",
+      "status": "added",
+      "sha": "e6278d95b3c3e2542c91ad359632bf8b0955a875",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/run_llm_cell_native_handoff.py",
+      "status": "modified",
+      "sha": "3249f6fe218fafc2097343ecb90f814c6fc4233b",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/run_smollm_cell_replica_research.py",
+      "status": "modified",
+      "sha": "626c73c9257e4e39b30da9594484586e86989873",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/test_llm_cell_release.py",
+      "status": "modified",
+      "sha": "f7c80c1af1293b1d423923a6ab1a4661adb1b657",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "scripts/test_llm_python_runtime_contract.py",
+      "status": "added",
+      "sha": "0d70d68935cf222270e37173c185efb5f366e89b",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_routed_int257_grouped.rs",
+      "status": "added",
+      "sha": "42f2bcf15929acbf02c55ff0e5c88a31b5b2bd60",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_shared_material_v1.rs",
+      "status": "modified",
+      "sha": "9df0e4a48cfc62d6cca4aea9b26a98eca107b361",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+      "status": "modified",
+      "sha": "530d3097745eb2448300876aaaf34862b8a6aec0",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_routed_int257_grouped.rs",
+      "status": "added",
+      "sha": "7f82a73b41c6841b05cd2e54a4fb1fd750efb555",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs",
+      "status": "modified",
+      "sha": "b1c5952de1a4b957f85f418d3e6ab66d8a64607a",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/delta.rs",
+      "status": "modified",
+      "sha": "1f96ce2949d0f0ca0ee26052fb687bd9ca237188",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/delta_network_tests.rs",
+      "status": "modified",
+      "sha": "1e32a361bd99ffcd685f997a91f89c8d05071bb5",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/delta_tests.rs",
+      "status": "modified",
+      "sha": "2df0a5c5abcb5ccefbd98c0a5da83e0c10511055",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+      "status": "modified",
+      "sha": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory.rs",
+      "status": "modified",
+      "sha": "ff03160e76637f33128a5002f22f97d1192bfa20",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory_deadline_tests.rs",
+      "status": "added",
+      "sha": "d7ea67cae2f5af87e356868eb431b9819e3044f6",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory_wait.rs",
+      "status": "added",
+      "sha": "871b365435ca4c3270a9dc3f041d494f96cd712e",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs",
+      "status": "modified",
+      "sha": "33487be0f39e8c372baf8f5138273727494a6a40",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "status": "modified",
+      "sha": "98f27b597f5438ea70bf4de42365b8afc4c97e62",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0
+    }
+  ],
+  "native_results_transfer_to_observed_head": false,
+  "worktree_or_index_mutated": false
+}

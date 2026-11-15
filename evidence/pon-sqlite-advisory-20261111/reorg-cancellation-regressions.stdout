@@ -1,0 +1,27 @@
+
+running 16 tests
+test store::reorg_cancellation::tests::actual_full_w1_depletion_terminates_intent_and_admits_an_independent_honest_mutation ... ignored, actual full W1 depletion; preserves all attempts and original account
+test store::reorg_cancellation::tests::an_original_live_epoch_binds_once_and_unknown_owner_blocks_metered_reuse ... ok
+test store::reorg_cancellation::tests::cancellation_terminates_only_staging_and_preserves_full_active_state ... ok
+test store::reorg_cancellation::tests::cancelled_lifecycle_survives_explicit_authenticated_migration_without_rewriting_source ... ok
+test store::reorg_cancellation::tests::cleanup_authorizer_blocks_trigger_writes_and_restores_after_error ... ok
+test store::reorg_cancellation::tests::cleanup_panic_rolls_back_and_restores_sql_guards_without_refunding_unknown_cpu ... ok
+test store::reorg_cancellation::tests::foreign_sqlite_commit_cannot_use_a_stale_termination_reservation ... ok
+test store::reorg_cancellation::tests::forgotten_termination_principal_cannot_be_reported_as_a_clean_cpu_close ... ok
+test store::reorg_cancellation::tests::late_staging_cancellation_and_postcommit_control_cannot_rewrite_active_facts ... ok
+test store::reorg_cancellation::tests::old_schema_or_old_namespace_is_refused_without_automatic_migration ... ok
+test store::reorg_cancellation::tests::paid_cancellation_reserves_headroom_and_settles_the_original_account_once ... ok
+test store::reorg_cancellation::tests::paid_intent_rejects_missing_or_foreign_original_cpu_before_persisting ... ok
+test store::reorg_cancellation::tests::reorg_cancellation_kill_child ... ignored, subprocess fixture: only parent chooses a real SIGKILL cut
+test store::reorg_cancellation::tests::repeated_aborts_reclaim_old_staging_only_in_the_next_native_intent_transaction ... ok
+test store::reorg_cancellation::tests::separate_history_snapshot_rechecks_the_cancelled_owner_lifecycle ... ok
+test store::reorg_cancellation::tests::three_actual_sigkill_cuts_keep_active_state_replay_and_unknown_cpu_fence ... 
+running 1 test
+
+running 1 test
+
+running 1 test
+ok
+
+test result: ok. 14 passed; 0 failed; 2 ignored; 0 measured; 1377 filtered out; finished in 0.71s
+

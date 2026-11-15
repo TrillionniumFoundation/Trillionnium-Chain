@@ -1,0 +1,86 @@
+{
+  "mode": "pool-before-v2",
+  "cases": [
+    {
+      "test": "mining::pool_run_control_tests::pool_run_stop_interrupts_batch_parent_scan",
+      "group": "pool",
+      "expected": "fail",
+      "exit_code": 101,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "0e08fd85db141bcf96c8cfb18ad14aaee298646d4e6fe6bf3f166d644492fdf0",
+      "stderr_sha256": "34a01fa132bbabd52f0bdefe6cfad493514b398a6513685cca351f919de77565",
+      "panic_headers": [
+        "thread 'mining::pool_run_control_tests::pool_run_stop_interrupts_batch_parent_scan' (5059) panicked at crates/trnm-pon-node/src/pool_run_control_tests.rs:283:9:"
+      ]
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_stop_interrupts_registered_and_legacy_prepare",
+      "group": "pool",
+      "expected": "fail",
+      "exit_code": 101,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "0e4d3ae5226c18bcbf36f30c936525cf726cd0332601f8dec9f6b0dd54ad74b7",
+      "stderr_sha256": "4fd50651e15c198c96f9074b405a4d5b5032cd220217430798a6a7f225d7a657",
+      "panic_headers": [
+        "thread 'mining::pool_run_control_tests::pool_run_stop_interrupts_registered_and_legacy_prepare' (5061) panicked at crates/trnm-pon-node/src/pool_run_control_tests.rs:283:9:"
+      ]
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_stop_interrupts_post_search_revalidation",
+      "group": "pool",
+      "expected": "fail",
+      "exit_code": 101,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "6125c4e4b45c17df3ff8c2fd3642c30a8f44a3b505541f0992ce26bbd9a22f45",
+      "stderr_sha256": "037ca52051d68b8c682e586ba4f8dcb4f74d3de790c92ead7ee915729ce462df",
+      "panic_headers": [
+        "thread 'mining::pool_run_control_tests::pool_run_stop_interrupts_post_search_revalidation' (5063) panicked at crates/trnm-pon-node/src/pool_run_control_tests.rs:283:9:"
+      ]
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_original_deadline_interrupts_parent_scan",
+      "group": "pool",
+      "expected": "fail",
+      "exit_code": 101,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "c7beced5abdf9211098d4808633305cc81a25933f7ec815b266d6d74cd62ec63",
+      "stderr_sha256": "f5b4bcaad23ab1f3d04127c42d6b246ab5d5ee5c5701b9fd6d432f2d3bfe4a10",
+      "panic_headers": [
+        "thread 'mining::pool_run_control_tests::pool_run_original_deadline_interrupts_parent_scan' (5065) panicked at crates/trnm-pon-node/src/pool_run_control_tests.rs:283:9:"
+      ]
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_cancelled_preview_keeps_queue_without_completed_m06",
+      "group": "pool",
+      "expected": "fail",
+      "exit_code": 101,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "6470d21edf4822e4d118ddd7cdaafe81e9ee23c621557b6721163f69dbf7f09a",
+      "stderr_sha256": "06bfacdeeae96e5bd99cb6731b0a7d301cbf431d46a363ed00747cb9b3edb05e",
+      "panic_headers": [
+        "thread 'mining::pool_run_control_tests::pool_run_cancelled_preview_keeps_queue_without_completed_m06' (5069) panicked at crates/trnm-pon-node/src/pool_run_control_tests.rs:278:9:"
+      ]
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_native_and_sql_failures_survive_concurrent_stop",
+      "group": "pool",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "91f9d55d375becf6641067385fadd45ae43884898ee7480b469bb786fbca9ca9",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_completed_packet_and_reconcile_failure_remain_durable",
+      "group": "pool",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "4f630dea4ace20d2b019cb24b59a4fc3cc7b6541c379d976ea7c85e7f95a4855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    }
+  ],
+  "integration": null
+}

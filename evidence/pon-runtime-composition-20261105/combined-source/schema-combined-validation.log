@@ -1,0 +1,28 @@
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-integration-w1-20261105", "remote_policy_mutated": false}
+
+test result: ok. 113 passed; 0 failed; 1 ignored; 0 measured; 971 filtered out; finished in 83.02s
+
+
+test result: ok. 202 passed; 0 failed; 1 ignored; 0 measured; 882 filtered out; finished in 27.06s
+
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 1080 filtered out; finished in 9.14s
+
+
+test result: ok. 7 passed; 0 failed; 2 ignored; 0 measured; 1076 filtered out; finished in 0.21s
+
+
+test result: ok. 11 passed; 0 failed; 3 ignored; 0 measured; 1071 filtered out; finished in 0.39s
+
+
+test result: ok. 52 passed; 0 failed; 2 ignored; 0 measured; 1031 filtered out; finished in 22.78s
+
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 1081 filtered out; finished in 0.00s
+
+
+test result: ok. 5 passed; 0 failed; 3 ignored; 0 measured; 1077 filtered out; finished in 15.58s
+
+    Checking trnm-release-bundle v0.1.0 (/workspace/scratch/29755d2a47ef/chain-integrate-verified/trillionnium/crates/trnm-release-bundle)
+    Checking trnm-pon-node v0.1.0 (/workspace/scratch/29755d2a47ef/chain-integrate-verified/trillionnium/crates/trnm-pon-node)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 42s

@@ -1,0 +1,16 @@
+{
+  "changed_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/security/PQ_AUTHORITY_PREFLIGHT_20261108.md",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/service_tests.rs"
+  ],
+  "from_commit": "af6b06fa1cb944e639148b58e9765fe2bb0065ab",
+  "from_tree": "5c624c637c9db17e0a7410d112369ad7b3bb2d73",
+  "patch": {
+    "bytes": 7287,
+    "relative_path": "source-correction.patch",
+    "sha256": "50d1469c9e0b12827459938a53f344cfab443e65e416c35314f2bab4ccff01de"
+  },
+  "to_commit": "a14b7e2b51af9772210e5114945dfa7e309bf97b",
+  "to_tree": "16da421e676ab516b44c35cd7a9319af7be32b4f"
+}

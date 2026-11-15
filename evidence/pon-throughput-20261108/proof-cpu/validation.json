@@ -1,0 +1,64 @@
+{
+  "after": {
+    "evidence/pon-throughput-20261108/proof-cpu/originals/00-retained-A.resource.txt": "6fff7ed3a199779dcbc3f8726c96c9096ffe2f06e98a50abc50a37ce56495c46",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/01-retained-B.resource.txt": "3a34a2c3ce610252d33cc79c8e3ac38ad755a995060e6553e4b60dd7bf18cc39",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/02-retained-B.resource.txt": "afdca3298c30c99a5daefd2d407a71b23702f2a1c9fa878c4ea98677c4da5259",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/03-retained-A.resource.txt": "2dcd81c10d625b336db17656db487c17c14189e43dd358aa51f4333f4e1c901e",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/04-dense-A.resource.txt": "a9ac690a2d0d9594872e292138eed519fc405b3fa178010c7ca764fb7defe72d",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/05-dense-B.resource.txt": "a2e242bff8e5c894c1cf86da30313e390516bbb7525af9ad1c3261ed1576ee0d",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/06-dense-B.resource.txt": "b19b0e7a8d2e5f787be8ce93f99e023e2ad6b3fbfe61ee595db62ebb6ecfa0fa",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/07-dense-A.resource.txt": "4db05e3d23329cce2842412587f223c77e57747d3683145cd96099f5434f33b9",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/manifest.json": "ea0380c4dbdaa253ef7a6fb779e7fe2efbe1fff012af36a1e8b7debc00f96137",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/summary.json": "65b519541152e400c79f08e59a954a8f1ba516fbaea60dbf0ac3dd9123dc0de0",
+    "formal/throughput-v1/proof_cpu_metrics.py": "e39d76eca2b6d58c9afa92d4d5e408571b6f53aa077e13be0d55e7705c61bafb",
+    "formal/throughput-v1/test_proof_cpu_metrics.py": "1e5c2f92697d01739068988524182a8c2096acfb3b07cce3f37267d889251a29"
+  },
+  "before": {
+    "evidence/pon-throughput-20261108/proof-cpu/originals/00-retained-A.resource.txt": "6fff7ed3a199779dcbc3f8726c96c9096ffe2f06e98a50abc50a37ce56495c46",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/01-retained-B.resource.txt": "3a34a2c3ce610252d33cc79c8e3ac38ad755a995060e6553e4b60dd7bf18cc39",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/02-retained-B.resource.txt": "afdca3298c30c99a5daefd2d407a71b23702f2a1c9fa878c4ea98677c4da5259",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/03-retained-A.resource.txt": "2dcd81c10d625b336db17656db487c17c14189e43dd358aa51f4333f4e1c901e",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/04-dense-A.resource.txt": "a9ac690a2d0d9594872e292138eed519fc405b3fa178010c7ca764fb7defe72d",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/05-dense-B.resource.txt": "a2e242bff8e5c894c1cf86da30313e390516bbb7525af9ad1c3261ed1576ee0d",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/06-dense-B.resource.txt": "b19b0e7a8d2e5f787be8ce93f99e023e2ad6b3fbfe61ee595db62ebb6ecfa0fa",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/07-dense-A.resource.txt": "4db05e3d23329cce2842412587f223c77e57747d3683145cd96099f5434f33b9",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/manifest.json": "ea0380c4dbdaa253ef7a6fb779e7fe2efbe1fff012af36a1e8b7debc00f96137",
+    "evidence/pon-throughput-20261108/proof-cpu/originals/summary.json": "65b519541152e400c79f08e59a954a8f1ba516fbaea60dbf0ac3dd9123dc0de0",
+    "formal/throughput-v1/proof_cpu_metrics.py": "e39d76eca2b6d58c9afa92d4d5e408571b6f53aa077e13be0d55e7705c61bafb",
+    "formal/throughput-v1/test_proof_cpu_metrics.py": "1e5c2f92697d01739068988524182a8c2096acfb3b07cce3f37267d889251a29"
+  },
+  "commands": [
+    {
+      "argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/throughput-v1",
+        "-p",
+        "test_proof_cpu_metrics.py",
+        "-v"
+      ],
+      "exit_code": 1,
+      "name": "unit-tests",
+      "wall_seconds": 0.7394009600102436
+    },
+    {
+      "argv": [
+        "python",
+        "formal/throughput-v1/proof_cpu_metrics.py",
+        "--evidence-dir",
+        "evidence/pon-throughput-20261108/proof-cpu",
+        "--output",
+        "evidence/pon-throughput-20261108/proof-cpu/report.json"
+      ],
+      "exit_code": 0,
+      "name": "readback",
+      "wall_seconds": 0.1966095930110896
+    }
+  ],
+  "result": "FAIL",
+  "scope": "local Python reader validation; no new proofs or original resource campaign",
+  "source_unchanged": true
+}

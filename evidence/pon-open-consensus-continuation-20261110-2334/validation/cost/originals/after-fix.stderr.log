@@ -1,0 +1,20 @@
+test_attempt_error_preserves_unknown_and_unfinished_search (test_w1_lifecycle_cost_v4.Readback.test_attempt_error_preserves_unknown_and_unfinished_search) ... ok
+test_consistent_material_relabelling_and_changed_recipe_are_refused (test_w1_lifecycle_cost_v4.Readback.test_consistent_material_relabelling_and_changed_recipe_are_refused) ... ok
+test_duplicate_json_key_and_boolean_sequence_are_rejected (test_w1_lifecycle_cost_v4.Readback.test_duplicate_json_key_and_boolean_sequence_are_rejected) ... ok
+test_equal_winner_cannot_hide_a_changed_losing_trial (test_w1_lifecycle_cost_v4.Readback.test_equal_winner_cannot_hide_a_changed_losing_trial) ... ok
+test_every_complete_line_prefix_remains_incomplete_and_unknown (test_w1_lifecycle_cost_v4.Readback.test_every_complete_line_prefix_remains_incomplete_and_unknown) ... ok
+test_fixed_material_recipes_accept_without_claiming_native_execution (test_w1_lifecycle_cost_v4.Readback.test_fixed_material_recipes_accept_without_claiming_native_execution) ... ok
+test_half_written_attempt_is_retained_as_partial_not_zero_cost (test_w1_lifecycle_cost_v4.Readback.test_half_written_attempt_is_retained_as_partial_not_zero_cost) ... ok
+test_injected_end_cannot_close_unfinished_native_work (test_w1_lifecycle_cost_v4.Readback.test_injected_end_cannot_close_unfinished_native_work) ... ok
+test_losing_trial_digest_must_bind_complete_fixed_proof_bytes (test_w1_lifecycle_cost_v4.Readback.test_losing_trial_digest_must_bind_complete_fixed_proof_bytes) ... ok
+test_material_provenance_label_is_frozen (test_w1_lifecycle_cost_v4.Readback.test_material_provenance_label_is_frozen) ... ok
+test_measured_scope_text_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_measured_scope_text_cannot_be_relabelled) ... ok
+test_missing_start_deletion_and_duplicate_sequence_are_refused (test_w1_lifecycle_cost_v4.Readback.test_missing_start_deletion_and_duplicate_sequence_are_refused) ... ok
+test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) ... ok
+test_no_more_records_can_follow_failure (test_w1_lifecycle_cost_v4.Readback.test_no_more_records_can_follow_failure) ... ok
+test_wrong_challenge_or_extra_credit_authority_is_refused (test_w1_lifecycle_cost_v4.Readback.test_wrong_challenge_or_extra_credit_authority_is_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 1.124s
+
+OK

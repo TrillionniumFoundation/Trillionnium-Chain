@@ -1,0 +1,182 @@
+{
+  "schema": "local-public-fixture-freeze-v1",
+  "checkout_head": "1c18878c42727e5261c7706d996fbfb672a8dc3c",
+  "entrypoint": "python3 scripts/ci/test_from_zero_host_ci.py",
+  "control_counts": {
+    "OriginalHostControls": 22,
+    "HistoryAdapterControls": 15,
+    "ArchitectureAdapterControls": 17,
+    "PublicFixtureProcessControls": 7,
+    "PublicFixtureLeaseControls": 12,
+    "PublicFixtureLockControls": 5
+  },
+  "actual_control_run": {
+    "passed": 78,
+    "failed": 0,
+    "elapsed_seconds": 1.027,
+    "log": "public-fixture-controls.log",
+    "log_sha256": "472d5db51680ae573898f9a2d08dd8009f10fcda655d79ace13223889e1e703e"
+  },
+  "files": [
+    {
+      "path": "/workspace/scratch/b5a148b09b11/chain-six-axis/scripts/ci/run_from_zero_host.py",
+      "sha256": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/chain-six-axis/scripts/ci/run_public_fixture_native.py",
+      "sha256": "23e7a41ab61e0266483b51e51e58cac80be6d06fd2977835bd76c50c76f35df8"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/chain-six-axis/scripts/ci/public_fixture_host_lease.py",
+      "sha256": "792c1c599082b0ce67e128e6dbbf0c99f583dd41f4af0091838cc10adcc98d70"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/chain-six-axis/scripts/ci/test_from_zero_host_ci.py",
+      "sha256": "dacbf0878bbdae540de1b2338a70ce7810608be221d4c2479a55a739302b32a3"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/chain-six-axis/scripts/ci/test_architecture_host_ci.py",
+      "sha256": "a44a2a0780b5ab4151a7761aff362f6ca0c1e325ab362555f8a4137e1ab4f943"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/chain-six-axis/scripts/ci/test_public_fixture_process.py",
+      "sha256": "c6738dd79fda62118343190ab58545944c6780a2ec3103f221f28cd3d3cab86e"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/chain-six-axis/scripts/ci/test_public_fixture_lease.py",
+      "sha256": "54ad5dc7d20f95986394d19244ff1ce770140e208c9c107c88de756f73cc04cc"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/chain-six-axis/scripts/ci/run_from_zero_native.py",
+      "sha256": "01715b107dee86678e4706ff13b70d99c6556ae4f845eb4120f491001c22f9a8"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/chain-six-axis/scripts/ci/test_run_from_zero_native.py",
+      "sha256": "c81926c9afa416d7913f53d2e78dbee64d0db5baaf9fee7c30513a5513f2e73d"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/support/current_elf_host.rs",
+      "sha256": "ef7582a4f8e00c0bb3162a951b3bfbe9f322e56c13244942b005e34398f9354e"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+      "sha256": "42dabc0e2b6a2282ffa1cd6612d7a7f491dc375af2c87eff396cff210bde4bfb"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+      "sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429"
+    }
+  ],
+  "native_host_executed_locally": false,
+  "business_performance_acceptance": false,
+  "files_after_3898_composition": [
+    {
+      "path": "scripts/ci/run_from_zero_host.py",
+      "sha256": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791",
+      "same_as_agent_freeze": true
+    },
+    {
+      "path": "scripts/ci/run_public_fixture_native.py",
+      "sha256": "23e7a41ab61e0266483b51e51e58cac80be6d06fd2977835bd76c50c76f35df8",
+      "same_as_agent_freeze": true
+    },
+    {
+      "path": "scripts/ci/public_fixture_host_lease.py",
+      "sha256": "792c1c599082b0ce67e128e6dbbf0c99f583dd41f4af0091838cc10adcc98d70",
+      "same_as_agent_freeze": true
+    },
+    {
+      "path": "scripts/ci/test_from_zero_host_ci.py",
+      "sha256": "dacbf0878bbdae540de1b2338a70ce7810608be221d4c2479a55a739302b32a3",
+      "same_as_agent_freeze": true
+    },
+    {
+      "path": "scripts/ci/test_architecture_host_ci.py",
+      "sha256": "a44a2a0780b5ab4151a7761aff362f6ca0c1e325ab362555f8a4137e1ab4f943",
+      "same_as_agent_freeze": true
+    },
+    {
+      "path": "scripts/ci/test_public_fixture_process.py",
+      "sha256": "c6738dd79fda62118343190ab58545944c6780a2ec3103f221f28cd3d3cab86e",
+      "same_as_agent_freeze": true
+    },
+    {
+      "path": "scripts/ci/test_public_fixture_lease.py",
+      "sha256": "54ad5dc7d20f95986394d19244ff1ce770140e208c9c107c88de756f73cc04cc",
+      "same_as_agent_freeze": true
+    },
+    {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "sha256": "01715b107dee86678e4706ff13b70d99c6556ae4f845eb4120f491001c22f9a8",
+      "same_as_agent_freeze": true
+    },
+    {
+      "path": "scripts/ci/test_run_from_zero_native.py",
+      "sha256": "c81926c9afa416d7913f53d2e78dbee64d0db5baaf9fee7c30513a5513f2e73d",
+      "same_as_agent_freeze": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/current_elf_host.rs",
+      "sha256": "ef7582a4f8e00c0bb3162a951b3bfbe9f322e56c13244942b005e34398f9354e",
+      "same_as_agent_freeze": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+      "sha256": "101c3e33f9378f959a9aace7c80f910f8f28654967b0ee2f54117f60d520d72d",
+      "same_as_agent_freeze": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+      "sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+      "same_as_agent_freeze": true
+    }
+  ],
+  "composition_note": "Only the architecture Rust target additionally preserves concurrent 3898 bounded failure diagnostics; original agent Rust hash is retained. Python/control sources unchanged.",
+  "actual_fixed_host_executed_locally": false,
+  "format_copy": {
+    "command": [
+      "python3",
+      "scripts/ci/test_run_from_zero_native.py"
+    ],
+    "passed": 104,
+    "failed": 0,
+    "wall_seconds": 12.737,
+    "log_sha256": "a8a552f2e8f1eb9251a9168b32cefbf6fa40f257c0b16eb29a46a36f26927132",
+    "log": "format-copy-controls.log",
+    "before": {
+      "scope": "real old format-copy fixture reproduction; no native execution or acceptance",
+      "head": "45962558a7133375b16c0ac2600f2edb4a115585",
+      "command": [
+        "/workspace/scratch/b5a148b09b11/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+        "--edition",
+        "2021",
+        "/workspace/scratch/b5a148b09b11/next-hosted/format-copy-fixture-459/before/format-copy-source/tests/public_v3_from_zero.rs"
+      ],
+      "exit": 1,
+      "stderr_sha256": "53d9ac5554094df5727c81de16029510cbdec96cc3d42109aa1481bb448bec30",
+      "missing_module": "public_v3_from_zero/fresh_challenge.rs"
+    },
+    "after": {
+      "scope": "real format-copy fixture validation; no native execution or performance acceptance",
+      "head": "45962558a7133375b16c0ac2600f2edb4a115585",
+      "command": [
+        "/workspace/scratch/b5a148b09b11/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+        "--edition",
+        "2021",
+        "/workspace/scratch/b5a148b09b11/next-hosted/format-copy-fixture-459/after/format-copy-source/tests/public_v3_from_zero.rs"
+      ],
+      "exit": 0,
+      "source_hashes_before": {
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+        "trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs": "65a20cbd8ffdf5e4873b5c97768988dacc01369a0b584abd416c368709246b6a",
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs": "c45c0b04d09ffe045883e3fdae245588dd21cb8a9f9c64c16b6fbe288b636a3f"
+      },
+      "source_hashes_after": {
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+        "trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs": "65a20cbd8ffdf5e4873b5c97768988dacc01369a0b584abd416c368709246b6a",
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs": "c45c0b04d09ffe045883e3fdae245588dd21cb8a9f9c64c16b6fbe288b636a3f"
+      },
+      "original_source_unchanged": true
+    }
+  }
+}

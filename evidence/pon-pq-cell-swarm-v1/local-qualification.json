@@ -1,0 +1,69 @@
+{
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_pq_cell_custody.py",
+    "test_pq_cell_swarm.py"
+  ],
+  "environment": {
+    "filesystem": "overlayfs",
+    "machine": "x86_64",
+    "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+    "os": "Linux",
+    "python": "3.13.5",
+    "rust_toolchain_executed": false,
+    "sqlite": "3.46.1"
+  },
+  "independent_accepted": false,
+  "known_limits": [
+    "No independently signed PCB1/Hepta source admission",
+    "No peer TLS on research loopback listener",
+    "No WAN, no long-term custody, no erasure repair",
+    "No native Rust Node or production HSM",
+    "No quantum PoN work lower bound or independent review"
+  ],
+  "log_sha256": "910680898b4b4ab520653291c68969408b59fa2ede07e27d1857fb022dd085bb",
+  "measured_exact_parent": "5396fb177fef3b15aa325573f06b45a26bddc738",
+  "ordinary_hepta_entry": false,
+  "production_activation": false,
+  "research_only": true,
+  "results": {
+    "independent_provider_operators": false,
+    "max_chunk_bytes": 1048576,
+    "max_provider_attempts_per_chunk": 8,
+    "new_tests": 15,
+    "p2p_wan": false,
+    "real_cryptography": "OpenSSL ML-DSA-65",
+    "real_peer_processes": 3,
+    "retained_tests": 15,
+    "tests_executed": 30,
+    "tests_failed": 0
+  },
+  "schema": "pon-pq-cell-swarm-qualification-v1",
+  "source_files": {
+    "pq_cell_custody.py": {
+      "git_blob_sha1": "5dabec97985cebe3de8feff51089267bd8650aea",
+      "sha256": "09ce81a7a004f2c6c1087a4b4fc7c7cc9cca8f1ad4f4cd2d037df0b7b36b7990",
+      "size": 18743
+    },
+    "pq_cell_swarm.py": {
+      "git_blob_sha1": "9bca3efd6ff82b6e96baa2df3d2f05a3ecff8984",
+      "sha256": "bb483510159ff77ec431e87d13e08e646702232a9bdc274ac7361108e011c25d",
+      "size": 15226
+    },
+    "pq_envelope.py": {
+      "git_blob_sha1": "27e40b04ac8eaa381ad4dc017f23f226f99f3f41",
+      "sha256": "d3fdc1faef02d7911f8e073c73fb82e2236093a0bd98395805cba22dde7bfbbb",
+      "size": 9442
+    },
+    "test_pq_cell_swarm.py": {
+      "git_blob_sha1": "86f056ef41f7754c1eee2b15ae03f0542dcd7110",
+      "sha256": "f8f9302abb214c97876c7b3b05c6ab4137fecd936e087fe805dc3d3c4f716c9a",
+      "size": 11981
+    }
+  },
+  "transport": "loopback 127.0.0.1, ephemeral TCP; separate OS processes under one administrator",
+  "whole_chain_pq_secure": false
+}

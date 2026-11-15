@@ -1,0 +1,118 @@
+{
+  "commands": {
+    "preflight-before-edits": {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.03183489106595516,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "f9ceb2e281f6c13617d7d0e20b4af06f62759d3b5898d367160daeca0e53c8d2"
+    },
+    "stage-owned-new-files-with-raw-logs": {
+      "argv": [
+        "git",
+        "add",
+        "--sparse",
+        "-f",
+        "--",
+        ".github/workflows/cell-learning-local-decision-readback.yml",
+        "docs/development/specs/pon/HEPLCP04_LOCAL_DECISION_INTEROP_V1.md",
+        "evidence/heplcp04-interop-20261111/BUILD_CONTEXT.json",
+        "evidence/heplcp04-interop-20261111/LEGACY_FIXTURE_INPUTS.json",
+        "evidence/heplcp04-interop-20261111/README.md",
+        "evidence/heplcp04-interop-20261111/SOURCE_MANIFEST.json",
+        "evidence/heplcp04-interop-20261111/STATIC_REVIEW.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/ERROR.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/local-commit.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/local-commit.stderr",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/local-commit.stdout",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/preflight-before-edits.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/preflight-before-edits.stderr",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/preflight-before-edits.stdout",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/preflight-staged.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/preflight-staged.stderr",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/preflight-staged.stdout",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/stage-owned-new-files.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/stage-owned-new-files.stderr",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/stage-owned-new-files.stdout",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/staged-whitespace.json",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/staged-whitespace.stderr",
+        "evidence/heplcp04-interop-20261111/attempts/freeze-initial/staged-whitespace.stdout",
+        "evidence/heplcp04-interop-20261111/attempts/preflight-allowed-branch.json",
+        "evidence/heplcp04-interop-20261111/attempts/preflight-allowed-branch.log",
+        "evidence/heplcp04-interop-20261111/attempts/preflight-initial.json",
+        "evidence/heplcp04-interop-20261111/attempts/preflight-initial.log",
+        "evidence/heplcp04-interop-20261111/attempts/reader-attempt1.json",
+        "evidence/heplcp04-interop-20261111/attempts/reader-attempt1.stderr.log",
+        "evidence/heplcp04-interop-20261111/attempts/reader-attempt1.stdout.log",
+        "evidence/heplcp04-interop-20261111/attempts/reader-attempt2.json",
+        "evidence/heplcp04-interop-20261111/attempts/reader-attempt2.stderr.log",
+        "evidence/heplcp04-interop-20261111/attempts/reader-attempt2.stdout.log",
+        "evidence/heplcp04-interop-20261111/attempts/test-pin-change.json",
+        "evidence/heplcp04-interop-20261111/exporter-package.toml",
+        "evidence/heplcp04-interop-20261111/exporter.rs",
+        "evidence/heplcp04-interop-20261111/isolated-Cargo.lock",
+        "evidence/heplcp04-interop-20261111/isolated-workspace.toml",
+        "evidence/heplcp04-interop-20261111/native-export-attempt1.json",
+        "evidence/heplcp04-interop-20261111/native-export.attempt1.stderr.log",
+        "evidence/heplcp04-interop-20261111/native-fixture.attempt1.stdout",
+        "evidence/heplcp04-interop-20261111/native-fixture.json",
+        "evidence/heplcp04-interop-20261111/reproduce_native.py",
+        "evidence/heplcp04-interop-20261111/reproduction/RESULT.json",
+        "evidence/heplcp04-interop-20261111/reproduction/stderr.log",
+        "evidence/heplcp04-interop-20261111/reproduction/stdout.json",
+        "scripts/cell_learning_local_decision_join.py",
+        "scripts/test_cell_learning_local_decision_join.py"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.03182241087779403,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "staged-whitespace": {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.007498600985854864,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 2,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "0ce2dd12d2a76cfeec67cbc891ff755f5430d0afd325e1e8897b520d7d9b40ae"
+    },
+    "unstage-runtime-transfer-artifact": {
+      "argv": [
+        "git",
+        "restore",
+        "--staged",
+        "--",
+        "evidence/heplcp04-interop-20261111/.hepta-lock-c33cb9ca6a86e14c7bcbbc9a"
+      ],
+      "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+      "elapsed_seconds": 0.015672168927267194,
+      "explicit_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "error": "ValueError('required command failed: staged-whitespace')",
+  "source_head": "297bb40798ca1b4e4a987ef00582067282cda4e9"
+}

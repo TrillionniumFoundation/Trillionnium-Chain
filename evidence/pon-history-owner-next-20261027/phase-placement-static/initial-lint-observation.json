@@ -1,0 +1,10 @@
+{
+  "scope": "development-tool observation; first raw streams not separately retained",
+  "python_contract_tests": {
+    "passed": 10,
+    "failed": 0
+  },
+  "ruff_exit": 1,
+  "diagnostic": "E731 test_native_phase_host.py:112 assigned raw lambda; rewritten as def before final lint",
+  "native_or_host_execution": false
+}

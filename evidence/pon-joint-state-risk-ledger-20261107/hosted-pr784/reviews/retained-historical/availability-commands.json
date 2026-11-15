@@ -1,0 +1,44 @@
+[
+  {
+    "name": "historical-run",
+    "args": [
+      "gh",
+      "api",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/37730166589"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 2.0472906441427767,
+    "stdout_sha256": "f3b053260f8fa180509afb93a1ec8ada172926914f8f9702adfc1e8d7f44f08a",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "historical-artifacts",
+    "args": [
+      "gh",
+      "api",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/37730166589/artifacts?per_page=100"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 1.8113007731735706,
+    "stdout_sha256": "244563f989470892c537c9a4622920af0d228ee4528f7d00c64a06d6cd95856c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "pinned-artifact",
+    "args": [
+      "gh",
+      "api",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/11531476198"
+    ],
+    "exit_code": 1,
+    "elapsed_seconds": 1.581898831995204,
+    "stdout_sha256": "706afc3b2c7b96e18bb0e38cba9855b65a4d7417718585377e793912fe51b1a2",
+    "stderr_sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+  }
+]

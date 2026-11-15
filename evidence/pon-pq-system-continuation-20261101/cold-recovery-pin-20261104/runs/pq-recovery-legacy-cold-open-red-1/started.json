@@ -1,0 +1,1 @@
+{"pid": 11, "command": ["cargo", "+1.95.0", "test", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-pon-node", "--lib", "--all-features", "pq_rollback_witness::tests::cold_reopen_requires_exact_independently_retained_checkpoint", "--", "--exact", "--show-output", "--test-threads=1"]}

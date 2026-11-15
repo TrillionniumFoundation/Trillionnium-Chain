@@ -1,0 +1,631 @@
+{
+  "schema": "pon-six-axis-final-source-validation-v1",
+  "decision": "HOLD",
+  "code_commit": "751e75b8f11fecad612bb95c33ea3a2567dc131b",
+  "code_tree": "24e310522368f3816b333fc0b80e4f67a8ecb669",
+  "final_evidence_child_scope": "This receipt and other evidence-only additions do not change any native source/config/profile input. Final head must verify identical native-input hash and exact tracked source before publication.",
+  "clean_committed_source_identity": {
+    "base": null,
+    "candidate": "751e75b8f11fecad612bb95c33ea3a2567dc131b",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "751e75b8f11fecad612bb95c33ea3a2567dc131b",
+    "tested_tree": "24e310522368f3816b333fc0b80e4f67a8ecb669",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 863045424,
+    "tracked_entries": 7348,
+    "tracked_worktree_verified": true
+  },
+  "native_source_identity": {
+    "files": 1156,
+    "unchanged": true,
+    "source_manifest_sha256": "7b5a6d2b8e3a841a11e4371ce3fe4444cd6f98a1fb5f7016599d47301670ea9e"
+  },
+  "native_identity_algorithm": "Sort rg --files trillionnium/crates config -g *.rs -g Cargo.toml -g *.json; add trillionnium/Cargo.toml and trillionnium/Cargo.lock; map each path to SHA-256; JSON indent=2 plus newline. All 1,156 files are tracked in code_commit.",
+  "environment": {
+    "rust": "1.95.0",
+    "native_profile": "original workspace test",
+    "node_and_m06_features": "all-features",
+    "pq_provider": "pinned OpenSSL 3.5.9",
+    "cargo_build_jobs": 2,
+    "comparison_scope": "Local component/correctness controls. Shared host; no strict native CPU speed ratio or hosted qualification."
+  },
+  "first_final_build_attempt": [
+    {
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 0.05392024000002493,
+      "stdout_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "node-build",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "--no-run"
+      ],
+      "exit_code": 101,
+      "elapsed_s": 308.884928724,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "02c719ac29a99c8abacf43b44d159ed0087070d056f4fd9ddad056c5440f10ca"
+    },
+    {
+      "name": "node-controls",
+      "command": [
+        "python3",
+        "/workspace/scratch/b5a148b09b11/validation/run_node_controls.py",
+        "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+        "/workspace/scratch/b5a148b09b11/validation/final-isolated/node-controls"
+      ],
+      "status": "not-run-build-failed"
+    },
+    {
+      "name": "m06-library",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--lib",
+        "--all-features",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 122.7950811339997,
+      "stdout_sha256": "2c84b8ace2e193959819e57728b2dd86663a5f8518bd8c598199d8f48e826f41",
+      "stderr_sha256": "9aa81f20b09d2509e8f5ad768e8f5a9f7c8a7c87cb5f584ee5055d4423d8d078"
+    },
+    {
+      "name": "da-library",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "--all-features"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 6.132616800999585,
+      "stdout_sha256": "fd32fdde97cddf4e6649d9fccb8da501d577cf3d52a966c1e483e9c0a7145db3",
+      "stderr_sha256": "0e86e9b5e539e40dd1f8a48e3d92271a299dd8b5859949550ea3658b62194566"
+    },
+    {
+      "name": "strict-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 148.9437440759998,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "459f73efee42c6ec53ef5a62132321b0a9b862d2ead6610e4ea1e4b39e9cc7fb"
+    },
+    {
+      "name": "format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 15.532467540000198,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "locked-graph",
+      "command": [
+        "cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1",
+        "--filter-platform",
+        "x86_64-unknown-linux-gnu"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 0.30691631399986363,
+      "stdout_sha256": "071f3d1da3092ae8b590438133d9d1ab48f1354cc80a9e664df98377a1879f91",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "stale_artifact_diagnosis": {
+    "schema": "borrowed-node-link-preparation-failure-v1",
+    "library_sha256": "8585b2b1f634d6972f97b9542aac2b11947e34f50bc526ff73eb3b49c127617a",
+    "nm_exit": 0,
+    "symbols": [
+      "0000000000000000 T _ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState20root_with_arithmetic17h9b239dc0a3856701E",
+      "0000000000000000 T _ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState3len17h1d224f8b3d5dcf18E",
+      "0000000000000000 T _ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState3new17h876225e3adb642d9E",
+      "0000000000000000 T _ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState4iter17h3ec15ef83dd8ab0fE",
+      "0000000000000000 T _ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState4root17he155567f8cda29fdE",
+      "0000000000000000 T _ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState8is_empty17h4811f4c1093a50ccE"
+    ],
+    "stderr": "nm: lib.rmeta: no symbols\n",
+    "failure_log_sha256": "02c719ac29a99c8abacf43b44d159ed0087070d056f4fd9ddad056c5440f10ca",
+    "observation": "The linked library has old six-method symbols and no get; consumer expects descriptor hashes and get. Source declarations are public and unconditionally present. Clean same-source package rebuild is required; no profile or source workaround."
+  },
+  "clean_package_rebuild": [
+    {
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 0.061148372999923595,
+      "stdout_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "package-clean",
+      "command": [
+        "cargo",
+        "clean",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "-p",
+        "trnm-pon-node"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 0.3440144180003699,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "45f6435d1350eb24335d2aa7647828c3d19e8e8cd84df3ab19ccb323a1cf83cb"
+    },
+    {
+      "name": "node-build",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "--no-run"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 400.89895986400006,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "d279ff2df97eb2836dc6ec4e76a4aa8e2aae1150638320c6ff7f537c6d43e9e9"
+    },
+    {
+      "name": "node-controls",
+      "command": [
+        "python3",
+        "/workspace/scratch/b5a148b09b11/validation/run_node_controls.py",
+        "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+        "/workspace/scratch/b5a148b09b11/validation/final-clean-build/node-controls"
+      ],
+      "exit_code": 1,
+      "elapsed_s": 132.09292163400005,
+      "stdout_sha256": "d78e880659d740fdf07df0ff5a6eb5bf2aa0bd969aa6eabff32e62080775247d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "m06-library",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--lib",
+        "--all-features",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 77.70157046399981,
+      "stdout_sha256": "ab041b932cbcfe2ebd2bc0237ea3cc3f2406ddfd3b85c5258d5f2b6fed153863",
+      "stderr_sha256": "5a09f1f962514326ad70daee593775b5c6133a43d12c91a8d3976d5e3017bd2e"
+    },
+    {
+      "name": "all-feature-locked-graph",
+      "command": [
+        "cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1",
+        "--filter-platform",
+        "x86_64-unknown-linux-gnu"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 0.21346543100025883,
+      "stdout_sha256": "ec6c0813ae5d406663cfba94b923a79501dd18db3f19c248958b65ce21bc1a2b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "node_selected_controls": {
+    "totals": {
+      "passed": 120,
+      "failed": 1,
+      "ignored": 1
+    },
+    "binary_sha256": "0172342ed1585e328ba75ded85fff52969a65d7de9f06e916e3d090e2983d7f6",
+    "selectors": [
+      {
+        "name": "observer",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+          "pq_rollback_witness::test_observation::tests",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 0.009717106999232783,
+        "binary_sha256": "0172342ed1585e328ba75ded85fff52969a65d7de9f06e916e3d090e2983d7f6",
+        "expected_passed": 4,
+        "expected_ignored": 0,
+        "observed": [
+          4,
+          0,
+          0
+        ],
+        "accepted": true
+      },
+      {
+        "name": "authenticated",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+          "store::native_authenticated::",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 33.71646463900015,
+        "binary_sha256": "0172342ed1585e328ba75ded85fff52969a65d7de9f06e916e3d090e2983d7f6",
+        "expected_passed": 85,
+        "expected_ignored": 1,
+        "observed": [
+          85,
+          0,
+          1
+        ],
+        "accepted": true
+      },
+      {
+        "name": "state",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+          "store::native_authenticated_tests::",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 33.68005182700017,
+        "binary_sha256": "0172342ed1585e328ba75ded85fff52969a65d7de9f06e916e3d090e2983d7f6",
+        "expected_passed": 21,
+        "expected_ignored": 0,
+        "observed": [
+          21,
+          0,
+          0
+        ],
+        "accepted": true
+      },
+      {
+        "name": "reorg",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+          "store::reorg_readback_tests::",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 5.296311730000525,
+        "binary_sha256": "0172342ed1585e328ba75ded85fff52969a65d7de9f06e916e3d090e2983d7f6",
+        "expected_passed": 6,
+        "expected_ignored": 0,
+        "observed": [
+          6,
+          0,
+          0
+        ],
+        "accepted": true
+      },
+      {
+        "name": "ancestry",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+          "store::native_ancestry_commit_tests::",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 2.0898765119991367,
+        "binary_sha256": "0172342ed1585e328ba75ded85fff52969a65d7de9f06e916e3d090e2983d7f6",
+        "expected_passed": 3,
+        "expected_ignored": 0,
+        "observed": [
+          3,
+          0,
+          0
+        ],
+        "accepted": true
+      },
+      {
+        "name": "large-parent",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+          "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "--nocapture",
+          "--test-threads=1",
+          "--exact"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 38.546992431000035,
+        "binary_sha256": "0172342ed1585e328ba75ded85fff52969a65d7de9f06e916e3d090e2983d7f6",
+        "expected_passed": 1,
+        "expected_ignored": 0,
+        "observed": [
+          1,
+          0,
+          0
+        ],
+        "accepted": true,
+        "raw_log_sha256": "7887659f3edd4e86a7a875bfdd4834743212a269a7e04cf90355a4b9e886ecbc"
+      },
+      {
+        "name": "large-parent-auth",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+          "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "--nocapture",
+          "--test-threads=1",
+          "--exact"
+        ],
+        "exit_code": 101,
+        "elapsed_s": 18.120335435000015,
+        "binary_sha256": "0172342ed1585e328ba75ded85fff52969a65d7de9f06e916e3d090e2983d7f6",
+        "expected_passed": 1,
+        "expected_ignored": 0,
+        "observed": [
+          0,
+          1,
+          0
+        ],
+        "accepted": false,
+        "raw_log_sha256": "0d9c7f8b2d28472d492efe500217187a6c644b3be446516a6bc2a1040e07d319"
+      }
+    ],
+    "remaining_failure": "authenticated_large_parent_original_schedule_supplementary_denominator: PUBLIC_MUTATION_CPU_BUDGET",
+    "no_retry_to_green": true,
+    "original_cpu_receipts": [
+      {
+        "selector_group": "large-parent",
+        "receipt": {
+          "admitted_parent": "0d8bc316c037050a8ae9a58ba53c84970c48792f8bf471999ee5644672b1c6a2",
+          "all_honest_service_qualified": false,
+          "authenticated_backend": false,
+          "budget_depletion_demonstrated": false,
+          "complete_key_utf8_and_canonical_value_bytes": 8625548,
+          "early_capacity_observed_lower_bound_bytes": 8391103,
+          "genesis": "46f490f617a7aae11650bf20b790943699528de11341fd730b06b2017e24283a",
+          "genesis_fixture": "2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth",
+          "genesis_state_root": "afd8ca7ce215c51c620ca9d5823e9d7b3e4ccc47231ada4ef102366c15e66159",
+          "host_qualified": false,
+          "native_result": {
+            "Ok": "ok"
+          },
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 2248522308,
+            "live_refused": false,
+            "owner_cpu_ns": 2248205968,
+            "residual_cpu_ns": 3055,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 319395,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 2248525363
+          },
+          "schema": "native-large-parent-schedule-parity-v1"
+        }
+      },
+      {
+        "selector_group": "large-parent",
+        "receipt": {
+          "admitted_parent": "0d8bc316c037050a8ae9a58ba53c84970c48792f8bf471999ee5644672b1c6a2",
+          "all_honest_service_qualified": false,
+          "authenticated_backend": true,
+          "budget_depletion_demonstrated": false,
+          "complete_key_utf8_and_canonical_value_bytes": 8625548,
+          "early_capacity_observed_lower_bound_bytes": 8391103,
+          "genesis": "46f490f617a7aae11650bf20b790943699528de11341fd730b06b2017e24283a",
+          "genesis_fixture": "2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth",
+          "genesis_state_root": "afd8ca7ce215c51c620ca9d5823e9d7b3e4ccc47231ada4ef102366c15e66159",
+          "host_qualified": false,
+          "native_result": {
+            "Ok": "ok"
+          },
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 2515518703,
+            "live_refused": false,
+            "owner_cpu_ns": 2515096685,
+            "residual_cpu_ns": 2032,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 424050,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 2515520735
+          },
+          "schema": "native-large-parent-schedule-parity-v1"
+        }
+      },
+      {
+        "selector_group": "large-parent-auth",
+        "receipt": {
+          "admitted_parent": "0d8bc316c037050a8ae9a58ba53c84970c48792f8bf471999ee5644672b1c6a2",
+          "all_honest_service_qualified": false,
+          "authenticated_backend": true,
+          "budget_depletion_demonstrated": false,
+          "complete_key_utf8_and_canonical_value_bytes": 8625548,
+          "early_capacity_observed_lower_bound_bytes": 8391103,
+          "genesis": "46f490f617a7aae11650bf20b790943699528de11341fd730b06b2017e24283a",
+          "genesis_fixture": "2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth",
+          "genesis_state_root": "afd8ca7ce215c51c620ca9d5823e9d7b3e4ccc47231ada4ef102366c15e66159",
+          "host_qualified": false,
+          "native_result": {
+            "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+          },
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 2689920711,
+            "live_refused": true,
+            "owner_cpu_ns": 2689573325,
+            "residual_cpu_ns": 2023,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 349409,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 2689922734
+          },
+          "schema": "native-large-parent-schedule-parity-v1"
+        }
+      }
+    ]
+  },
+  "m06_library_after_clean": {
+    "passed": 101,
+    "failed": 0,
+    "ignored": 6,
+    "ignored_controls": [
+      "test pon_commitment::bounded_encoding_tests::actual_state_fallback_encoding_cost ... ignored, explicit whole-test process RSS comparison; no Node or throughput qualification",
+      "test pon_commitment::bounded_encoding_tests::canonical_buffer_reuse_component_timing ... ignored, explicit encoder allocation A/B; excludes SQLite, roots, execution and networking",
+      "test pon_commitment::checked_binding_tests::checked_binding_complete_cost_observation ... ignored, explicit same-operation binding cost; not Node or network throughput",
+      "test pon_commitment::tests::immutable_parent_preview_component_timing ... ignored, explicit component timing; excludes SQLite, M05 and Node lock wait",
+      "test pon_commitment::tests::warm_parent_binding_component_timing ... ignored, explicit binding A/B timing; excludes execution, SQLite and Node locks",
+      "test pon_executor::streaming_root_tests::complete_root_encoding_cost ... ignored, explicit paired complete-root cost; synthetic values, not native ledger growth"
+    ]
+  },
+  "da_library": {
+    "passed": 173,
+    "failed": 0,
+    "ignored": 0,
+    "ignored_controls": []
+  },
+  "source_negative_checks": [
+    {
+      "name": "ci-contract",
+      "exit_code": 0,
+      "executions": 98,
+      "stdout_sha256": "f426d1efae21d6c7219d3b57bcfb08260e0877620d911e5e3d2e5b30a6549ca4",
+      "all_passed": true
+    },
+    {
+      "name": "ci-execution",
+      "exit_code": 0,
+      "executions": 67,
+      "stdout_sha256": "c57600a1b4de6670aa796715022ed7e64d603ce9a1f99767f33cebb31f2c71a3",
+      "all_passed": true
+    },
+    {
+      "name": "pq-source",
+      "exit_code": 0,
+      "executions": 34,
+      "stdout_sha256": "0c558d6cd6659b5faf47304a88652248f70aef63d2b0aa06f9bef7fff9799e15",
+      "all_passed": true
+    },
+    {
+      "name": "project-boundary",
+      "exit_code": 0,
+      "executions": 16,
+      "stdout_sha256": "e2cc26b275f155fc1c03c767c413fb457f85168f80e4f61a1476275c86d39c1d",
+      "all_passed": true
+    }
+  ],
+  "source_checks_repeated_on_final_evidence_commit": "Final clean-worktree readback and portable/source checks must run before branch publication; this field is a requirement, not a fabricated result.",
+  "graph": {
+    "workspace_packages": 26,
+    "default_linux_nodes": 133,
+    "all_features_linux_nodes": 138,
+    "lockfile_sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+    "manifest_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "lockfile_unchanged": true
+  },
+  "da_removed_wait_negative_control": {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-data-availability",
+      "--lib",
+      "cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget",
+      "--",
+      "--exact",
+      "--nocapture"
+    ],
+    "exit_code": 101,
+    "elapsed_s": 2.2000324200000705,
+    "candidate_source_sha256": "ace9499fa1e7526bdd13194f20846b7fa5396629ea7469ccbe3c663d0a067627",
+    "negative_source_sha256": "18cb2f4a3789a8b2c8bec4081da46977ffe94b75330352e47f9806ce03635cea",
+    "negative_change": "only rendezvous readiness wait removed; all budgets and original TCP fixture retained"
+  },
+  "archive_whitespace": "Historical patches retain single-space context lines and raw Rust logs retain trailing blank lines. Generic git diff --check flags these exact archival bytes; current editable source passes the scoped whitespace check. No archived byte was normalized and no repository gate changed.",
+  "not_claimed": [
+    "entire current Node library executed locally",
+    "new head or prospective-merge hosted PASS",
+    "public service CPU/goodput acceptance",
+    "whole-chain PQ qualification",
+    "activation"
+  ]
+}

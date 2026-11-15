@@ -1,0 +1,8 @@
+/workspace/scratch/e537ad232c79/native-tested-source.bundle is okay
+The bundle contains this ref:
+0647ba9e0a928e772946a2f055a2edfbe3fd2870 HEAD
+The bundle requires these 3 refs:
+d0737cf5434894ce47fad8082376fc417313c2cb 
+245146c7d2e6f7dfcda463f6a7dd342d4d7ca818 
+d4816ca5d1375347d8ed341a434158e350c29bbc 
+The bundle uses this hash algorithm: sha1

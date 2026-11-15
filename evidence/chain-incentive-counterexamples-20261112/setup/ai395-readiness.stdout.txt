@@ -1,0 +1,8 @@
+{"destination_exists": false, "destination_symlink": false, "home_disk": {"free": 372181393408, "total": 1966736678912, "used": 1494575034368}, "phase": "read-only preparation", "source_exists": true, "source_git": true, "uid": 1000}
+{"argv": ["/home/qq/.cargo/bin/rustup", "toolchain", "list"], "exit": 0, "stderr": "", "stdout": "stable-x86_64-unknown-linux-gnu (active, default)\n1.93.0-x86_64-unknown-linux-gnu\n1.95.0-x86_64-unknown-linux-gnu\n1.96.0-x86_64-unknown-linux-gnu\n1.98.0-x86_64-unknown-linux-gnu\n"}
+{"argv": ["/home/qq/.cargo/bin/rustc", "-vV"], "exit": 0, "stderr": "", "stdout": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.1\nLLVM version: 23.1.1\n"}
+{"argv": ["/home/qq/.cargo/bin/cargo", "--version"], "exit": 0, "stderr": "", "stdout": "cargo 1.99.1 (5f94df478 2026-08-27)\n"}
+{"argv": ["git", "--version"], "exit": 0, "stderr": "", "stdout": "git version 2.53.0\n"}
+{"argv": ["python3", "--version"], "exit": 0, "stderr": "", "stdout": "Python 3.14.4\n"}
+{"argv": ["git", "-C", "/home/qq/pq-root-readback-debt-20261110", "rev-parse", "--git-dir"], "exit": 0, "stderr": "", "stdout": "/home/qq/trnm-v4-e12ecc-recovery/repo/.git/worktrees/pq-root-readback-debt-20261110\n"}
+{"argv": ["git", "-C", "/home/qq/pq-root-readback-debt-20261110", "rev-parse", "HEAD"], "exit": 0, "stderr": "", "stdout": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0\n"}

@@ -1,0 +1,19 @@
+{
+  "base_revision": "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+  "baseline_subtree_objects": {
+    "formal": "d70adb65116059d5d0ce96d8846dcb2f8b9f553b",
+    "trillionnium": "8805951d59ec5353de11a0a4797696cc4d8dac49"
+  },
+  "complete_repository_check_pass": false,
+  "native_execution_claimed": false,
+  "new_document_links_checked": 9,
+  "new_document_links_pass": true,
+  "pq_128_qualified": false,
+  "production_activation": false,
+  "runtime_and_formal_diff_empty": true,
+  "schema": "trnm-pq128-budget-local-validation-v1",
+  "source_files": 14,
+  "sources_unchanged_during_validation": true,
+  "status": "HOLD_NO_GO",
+  "whole_chain_pq_qualified": false
+}

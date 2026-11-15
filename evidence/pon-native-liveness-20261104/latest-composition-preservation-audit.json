@@ -1,0 +1,54 @@
+{
+  "schema": "native-liveness-late-merge-source-review-v1",
+  "commit": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+  "tree": "924397c8ca6ea1d0d8e9c003f4ca7f3c6a9022be",
+  "parents": [
+    "184c99c76fffe331df8432de41632909ca311fda",
+    "33a170e863a413279d6611457d907913a54e9e5a"
+  ],
+  "remote_files_unchanged": [
+    "evidence/pon-throughput-continuation-20261104/request-working-data/README.md",
+    "evidence/pon-throughput-continuation-20261104/request-working-data/reproduction.json",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/test_pon_public_v3_phase_read.py",
+    "scripts/pon_public_v3_phase_read.py",
+    "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/residency.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/growth_cli.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/evaluation_observation.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/evaluation_round_observation.rs",
+    "trillionnium/crates/trnm-pon-node/tests/native_growth_cli.rs"
+  ],
+  "composed_files": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "trillionnium/crates/trnm-pon-node/src/store/growth.rs"
+  ],
+  "earlier_core_files_unchanged": [
+    "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_window.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs",
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+  ],
+  "cell_crate_tree_equal_to_remote": true,
+  "exact_source_pins": 452,
+  "source_preservation": "PASS",
+  "reviewed_flow": [
+    "Single current header window and final Some/None growth epoch fences remain.",
+    "Original W1, typed ExecutionControl and CommitFence are preserved.",
+    "Growth observation uses PNP2 binding and bounded working state; no full permanent account-State fallback.",
+    "Observation completion rolls back its snapshot then checks growth epoch and current tip/generation."
+  ],
+  "limitations": [
+    "New local observation API has no complete request ExecutionControl/deadline parameter; bounded read-only observation does not close lifecycle budgets.",
+    "Source review is not native execution or external independent acceptance.",
+    "Latest SIGBUS/ENOSPC failures are retained; previous runtime/lint outcomes are not relabelled."
+  ],
+  "native_runtime_executed": false,
+  "qualification": false
+}

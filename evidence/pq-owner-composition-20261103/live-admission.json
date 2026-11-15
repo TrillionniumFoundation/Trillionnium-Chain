@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/workspace/scratch/df0a4a720ed8/chain-target/debug/deps/trnm_pon_node-7f586ee1702a3d35",
+    "ingress::pq_network::live_admission_tests::",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "cwd": "trillionnium/crates/trnm-pon-node",
+  "exit_code": 0,
+  "elapsed_seconds": 3.612,
+  "same_native_binary_as": "chain-combined-diagnostic.log",
+  "log_sha256": "c9294f7fcd98c7be3027e3baa5589d253dc47efbc4fdde511aed063a3ece69bb",
+  "original_time_limits_unchanged": true
+}

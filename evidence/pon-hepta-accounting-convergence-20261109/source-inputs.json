@@ -1,0 +1,83 @@
+{
+  "schema": "pon-hepta-accounting-selective-source-v1",
+  "base": "fd1cf356fcc557dbd2aee2318ffc524d17aa02f0",
+  "selective_source": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+  "source_is_ancestor": false,
+  "files": [
+    {
+      "path": "formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py",
+      "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+      "source_blob": "d7fd9ffc55260b5dc1608a24818b3a21b2ae1add",
+      "bytes": 25674,
+      "sha256": "aa02dcc782b45d70975ac8024a9d5c6fc953ec153a5108655482fb61c1fff2db",
+      "base_sha256": "eeec2e1cc1fa5b269635d3dfa1fcf800325b5d3a6ebe5dba2c935638d4bf3773"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/service_work_settlement_v1.py",
+      "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+      "source_blob": "7eb9aeca054c1d7971e31d95cc1157ea18e4dc25",
+      "bytes": 31262,
+      "sha256": "e9fcb38c6f964678fb24de545a65085ab8dbdf6eb4b470aefc98626dfe05e899",
+      "base_sha256": "42f8b451b9ccbfab0ee2ac7c432f5f4ff6042710620e13e407d69e6f6a32dda2"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/grouped_fresh_fanout_v0.py",
+      "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+      "source_blob": "c7efd801684389233fe2f6d2f064b08a7ae5022c",
+      "bytes": 43417,
+      "sha256": "aa1aef8264333b91e6df4adb8a3ccf94207d02123ed3301f2d63104693156af3",
+      "base_sha256": "2eb7a2aa940dcaf53be76bea0ae5bbc0a72c7dac5337fd5516a620e9be614b94"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py",
+      "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+      "source_blob": "dc4371daae3989a22adc54507b3e1a5a90f27483",
+      "bytes": 11203,
+      "sha256": "c1663aa6dea82fcd8dace728b8213aa4cb6359f149805b4e80fb38ea02af9b5e",
+      "base_sha256": "3ac9a625421addd573aba827da1830ab6579af17fff82cf24dcf35222d1208a9"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_grouped_fanout_reanalysis_v1.py",
+      "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+      "source_blob": "a6a31d3a393ca6eb49616acfa17f3a761e359e03",
+      "bytes": 19697,
+      "sha256": "aa5d1a1a1c01e505a07378af9b16b37e666f1e1be5916e9cff94021af9964624",
+      "base_sha256": "03f24af7ba0db3d05ef87220803b6511fbb678df108b96677f00950c0576ca56"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py",
+      "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+      "source_blob": "f73bf4181f985779895f2d58c3cd63be7f26deb1",
+      "bytes": 35737,
+      "sha256": "af0ca743bd003762ffbabfb4f8d0262ca698a221c5c3189b38e98edfe9438eeb",
+      "base_sha256": "9ce117792b57c2ee6656f2141094404b2eb829d0272910fe3481980b89c90dab"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_service_work_settlement_v1.py",
+      "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+      "source_blob": "c9fb542ea739cef718f7d8b2a291bb1d6c1b7b07",
+      "bytes": 35328,
+      "sha256": "0fd97146f9bb9cb10abfa03b6929381627a9ab9e4f257da63d57a5732b5b4023",
+      "base_sha256": "bf51ff532d996962f44b574435020f83bef0566186dacc7d6fe191889f5c77a6"
+    },
+    {
+      "path": "docs/development/specs/pon/GROUPED_SECURITY_WORK_METERING_V1.md",
+      "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+      "source_blob": "987884cf40fa02a6a58844db23dced775ee2d433",
+      "bytes": 12385,
+      "sha256": "004ec14765fe815a13f40e443158a8e146e3ff351f1fdfecf98cd1320106fac3",
+      "base_sha256": "66bec0d9bf69587715b02c2c04d194163433533318d5f41bddff07dc811fe1c1"
+    },
+    {
+      "path": "docs/development/specs/pon/SERVICE_WORK_SETTLEMENT_V1.md",
+      "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+      "source_blob": "2ecd6eca2966ac88dbc30294dd9a50b27ee25e09",
+      "bytes": 20274,
+      "sha256": "7a4aa9c1b7a05dcb0b774c13311115518ad2dbc381f028f765758198879f56de",
+      "base_sha256": "f478337bf8cc6dec859ae5b06a573a718ac29fa4a375e42042f3076bee10d550"
+    }
+  ],
+  "native_rust_changed": false,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO"
+}

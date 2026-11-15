@@ -1,0 +1,57 @@
+{
+  "schema": "p3-native-v1-preservation-v1",
+  "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v1",
+  "git_status_porcelain": "",
+  "base_commit": "cfef87ff6e09f998cb8fc5d3165fce8ac9eb2da1",
+  "retained_tree": "272acfe0eecd33f5331e3bb0617f251d1208e84d",
+  "profile_comparison": {
+    "schema": "p3-base-sync-source-comparison-v1",
+    "tagged_profile_files_unchanged": [
+      "src/tagged_sha3.rs",
+      "src/tagged_sha3_wire.rs",
+      "examples/tagged_sha3_backend.rs",
+      "examples/tagged_sha3_wire_controls.rs",
+      "tests/tagged_sha3_profile.rs",
+      "tests/tagged_sha3_reference_vectors.json"
+    ],
+    "changed_existing_files": {
+      "src/lib.rs": {
+        "v1_sha256": "120b056b00d3be748c52cff23232b2ea871ce97d88b67b783bc999e7662dddc8",
+        "v2_sha256": "f5b78f17de48d51276cc1fcaf62cd10e51f3c41d88d1c97b150f747c0448f1a4"
+      },
+      "src/proof_config.rs": {
+        "v1_sha256": "b39c2405e8c2263cfd52fc162e6a92ccfdc7c83ce8ebaca179b32e2187b8137d",
+        "v2_sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+      },
+      "src/proof_wire.rs": {
+        "v1_sha256": "5933e95cc02e35ca33348728ca57cbca87ac52bc4c3e2ee6a39045aba85cc70b",
+        "v2_sha256": "e8660e3b91849f538713b32835035f0eb39425326268dd9302b3c7b01b090921"
+      },
+      "examples/mutate_last_query.rs": {
+        "v1_sha256": "83093cbb54842cc3000a2e44e0e3f558df42d722c599c9359f839ba45b960834",
+        "v2_sha256": "3695900e5341c2a7790b37657a35398b9044d5ed9bc057e1b2bf0b7275b6546f"
+      },
+      "examples/mutate_structure.rs": {
+        "v1_sha256": "557fea51de7637c2b74e29251cf5e585b29a001e280abcca6ee5c52c1482e011",
+        "v2_sha256": "bccf2cca0381cb49d04e5733259c45ea8a7a797ee2cbd0814ed6a3751a6fcdb8"
+      },
+      "tests/wire_admission.rs": {
+        "v1_sha256": "45bcce0d49d0cefcac1748977ad5b22d95d7172115a02676cd3e95d4e724d247",
+        "v2_sha256": "5b6c870bee358f122fdc79a81cf7ad2e4bd5f01178184c20bc8f07dbd57a8d63"
+      },
+      "Cargo.toml": {
+        "v1_sha256": "082425d937d0be1ea67f5c1f1c1df280ad803398b35199772123f680c22a82e7",
+        "v2_sha256": "f4b3ac509ba9ff16fef73f16f096e89436ebd7d6b11eb0158113dc6a2d5c39f5"
+      }
+    },
+    "added_files": {
+      "src/sha_schedule_air.rs": "88557607225e402b6f16ec7edffb7c8b90ddfe14cc7e87a2640042a205011a64",
+      "examples/scheduled_sha_backend.rs": "2782d4004889ea40be680cc752844ca1d48bb537e54d8ef5fe1d77f6888702ad",
+      "examples/r4_lifecycle_probe.rs": "1d2deb4e6e79877de6a21ab2fcc2d0dedb7fcf86fa92c0f808a48ebc980c096e",
+      "tests/schedule_proof.rs": "a4174b6bc56bf3845abe4b60e0ecee4a81d4410e86ca84d8c426e795bfd42813"
+    },
+    "removed_files": [],
+    "cargo_toml_parsed_equal_to_v1": true,
+    "cargo_toml_difference_only_terminal_blank_lines": true
+  }
+}

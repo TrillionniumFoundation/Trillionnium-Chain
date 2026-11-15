@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--test",
+    "research_work_schedule",
+    "--",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "exit": 0,
+  "duration_seconds": 332.9504566618707,
+  "cwd": "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38",
+  "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3"
+}

@@ -1,0 +1,62 @@
+[
+  {
+    "name": "growth-file-read-green",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "growth_rehearsal_",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 332.65735232597217,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/growth-file-read-green.log",
+    "log_sha256": "71e6904883f301308aef5d607b5c7b356922775f89bc37c1e80633ed983b73a8"
+  },
+  {
+    "name": "growth-work-prechecked-green",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "native_growth_v2",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 33.51728315197397,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/growth-work-prechecked-green.log",
+    "log_sha256": "40c581593eab83eb3d17824fd1ab1ddd40eef204f436fd77857411f61c754445"
+  },
+  {
+    "name": "growth-prereq-cli",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_growth_cli",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 142.12763743905816,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/growth-prereq-cli.log",
+    "log_sha256": "3e6d7c9b3bf082ed455e146ce642d1a1925f51f35f91f4af51e6bf0212e4d7ba"
+  }
+]

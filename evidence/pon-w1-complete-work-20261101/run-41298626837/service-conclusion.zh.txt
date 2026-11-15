@@ -1,0 +1,42 @@
+run 41298626837：默认 FullLimb 实际服务失败独立复核
+
+结论：8327719e 的默认 FullLimb 已在真实接收方 Submit 与独立 History 路径执行；原始 4 秒/16 worker/固定 Host 0.25 CPU 配置下，四个压力业务目标仍全部失败。ACK、独立持久化、活跃高度、确认分别记账。
+
+源 head: 8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47
+源 prospective merge: a7169139ce2a24f0d582ac348be8f74d56d44f9f
+同一源码 tree: 7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a
+同一保留 binary SHA256: 5c95269910f98cb10ec026070ac30a4f4c25d804707766c8950946e31af34529
+
+两个 artifact 的全部 106 个文件、49,675,576 字节已读入；manifest 引用的 52 个文件 SHA256 全一致；8327 固定源码原 reader 的四个失败标签与原收据完全一致；独立校验 11,887 项通过。没有修改项目源码、预算或原始结果，也没有重新执行原生 W1。
+
+lane | fixture | baseline确认秒 | 第7个ACK秒 | 攻击调用 | Transcript回执 | 网络/截止错误 | History取得 | 独立stored/active | 确认
+head | original | 3.573343 | 2.455315 | 212 | 196 | 16 | 1 | 0/0 | 0
+head | fresh | 3.394795 | 2.655375 | 184 | 168 | 16 | 1 | 0/0 | 0
+prospective-merge | original | 2.676337 | 1.361812 | 321 | 306 | 15 | 3 | 2/0 | 0
+prospective-merge | fresh | 2.598662 | 1.656130 | 284 | 269 | 15 | 2 | 2/0 | 0
+
+baseline 四场均在原4秒窗口内独立激活高度7、确认depth=6，finalized=false、execution_authority=false。压力四场接收方均激活高度7、累计工作14；数据库只存原来七块合法业务，没有攻击包入库。两个head独立客户端尚未存入第一块；两个merge存入高度1、2，但活跃tip仍为创世块。
+
+失败路径要分开记录：
+- head repeated、head fresh、merge repeated：本地公共History导入抛PUBLIC_REQUEST_DEADLINE。
+- merge fresh：verification_errors=[]，并非成功。其第三次History请求在3.952986514秒开始、4.049417909秒以FRAME_DEADLINE结束；failed_stage=challenge，returned_after_window=true，未进入本地导入。它只取得并存入前两块，活跃高度0、确认0。
+
+原始Rust diagnostic的exit0只验证安全/记账不变量，reader因finite_target_met=false拒绝CONFIRMATION_TARGET。fresh native实际执行到业务assert后exit101，wrapper因前置进程退出码检查返回FRESH_NATIVE_PROCESS_REQUIRED；直接读报告则拒绝FRESH_BUSINESS_TARGET。两job并非构建、fmt或未执行测试的假失败。
+
+lane | fixture | receiver mutation CPU秒 | W1嵌套CPU秒 | attacker setup+worker CPU秒 | independent replay/confirmation CPU秒 | 结束credit秒
+head | original | 0.524157 | 0.286531 | 0.263534 | 0.087271 | 1.998125
+head | fresh | 0.467357 | 0.250478 | 0.343958 | 0.055327 | 1.998950
+prospective-merge | original | 0.487473 | 0.295668 | 0.229482 | 0.172603 | 1.999981
+prospective-merge | fresh | 0.448287 | 0.268419 | 0.306082 | 0.138261 | 1.999522
+
+所有phase的mutation_cpu_refusals=0、clock_failures=0，started=finished，结束in-flight=0。初始credit2秒、结束约1.998–2.000秒；初末采样不证明中途从未下降，但没有观察到应用层CPU额度耗尽拒绝。work_started/finished包括中途取消，不能将它们全部称为完成完整transcript；客户端明确收到的WORK:Transcript回执是完整拒绝的直接证据。
+
+Host限制保持cpu.max=25000 100000、burst0、内存2GiB、swap0、pids256。controller、receiver、attacker、reader、independent verifier在同一父组共享0.25CPU。整个wrapper head CPU增量12.231751秒、wall50.113770秒；merge CPU增量9.267835秒、wall39.909470秒。它们不是四秒phase或receiver独占CPU测量，不能把全wrapper CPU或throttled_usec按业务窗口分摊。
+
+两fixture仍为PublicServer::new，无ArithmeticFactCache和RejectionCache；公开Submit及独立History都调用默认verify_with_progress，8327源代码明确选FullLimb。producer/PreparedTask没有随验证器切换。
+
+原语优化与服务结果：以前同capture中不同核的CPU比较支持局部算术成本观察；本轮实际默认切换后服务门槛仍失败，故不能据原语快约若干百分比推导整体业务达标。三轮具有不同Host/boot与不同运行负载，没有随机化同机因果对照。merge本轮部分进度好于第二轮，head本轮部分时刻慢于第二轮，均不能直接归因于FullLimb。
+
+History检查位置仍是原合同：每个native checkpoint检查实际Host与CPU，完整合法proof共1099 callbacks，另30次稀疏分支额外Host检查；不能删掉guard或扩大预算来制造通过。现有收据没有独立History逐阶段或syscall归因；下一项有判别力的工作是在原预算和全部撤销/取消/补额语义下分别计量decode、W1、Host核验、M06、activation、SQLite commit。
+
+资格：service_target_accepted=false，work_hardness_accepted=false，resource_fairness_qualified=false，independent_wan_accepted=false，production_activation=false。

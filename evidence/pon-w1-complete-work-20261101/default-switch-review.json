@@ -1,0 +1,988 @@
+{
+  "schema": "pon-w1-default-switch-static-review-v1",
+  "observed_at_utc": "2026-11-01T10:42:51.714528+00:00",
+  "result": "PASS_STATIC_REVIEW_ONLY",
+  "scope": "Minimal draft default selection and explicit historical transposed API, compared with the preceding formatting-fix source; this is not native execution or activation approval.",
+  "source": {
+    "baseline_commit": "e885a4a284d83019077c9b8f3420d39988a11eef",
+    "head_before": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "head_after": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "reviewed_state": "working-tree candidate; source identities are the file hashes below",
+    "reviewed_files_unchanged_during_capture": true,
+    "files_sha256": {
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "4d2d858f0b156aac24d0c73ee4cccba06b85b2a4d927b5cf64bd0522dedeb17b",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d",
+      "trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs": "cbfac5fbae745581020a12937eb12085069fefc95cbbfecf1045abf6d9123c71",
+      "tests/fuzz/fuzz_targets/support/work_certificate.rs": "2aa0c14985dbadcfd341da9d6a9a1658fad6bad48d6334ee8a49db0c22a85a60",
+      "docs/protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md": "9c6241e2f9aa3af0b0d723c92be55580fc22237741c0266c59d96a872542541d",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs": "66efd9327f84dab70dfc01365478ea0e3d3a8a196cb958301884432549d2d65f",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs": "996c3bf296b5116612ef4906241eb24aa0cfdbb992951aebc6703246eb9eab1b",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs": "78dd6d0c59d8bfc8ed07bda4319ca17e79acaeab9662508d178bd92d8810fc53"
+    }
+  },
+  "static_checks": [
+    {
+      "id": "signed_domains_wire_types_and_reference_producer",
+      "result": "PASS",
+      "basis": "exact bytes unchanged against baseline",
+      "region_sha256": "3c40aeabb150a17e2e5a87f91655b614ed83036bb4ed3cf8f1a9aa7f9aac2dd0"
+    },
+    {
+      "id": "checked_proof_inputs_and_complete_verification_order",
+      "result": "PASS",
+      "basis": "exact bytes unchanged against baseline",
+      "region_sha256": "ece0a683874906e09ca33d8f9f39c871e7555a7d892335c4ea04c497bcc554e8"
+    },
+    {
+      "id": "all_private_arithmetic_helpers_and_prepared_producer",
+      "result": "PASS",
+      "basis": "exact bytes unchanged against baseline",
+      "region_sha256": "0bc5b69cef343e2ed23bd110da3436062b93edb293dffe695527046044aff69f"
+    },
+    {
+      "id": "arithmetic_facts_module_unchanged",
+      "result": "PASS",
+      "basis": "exact bytes unchanged against baseline",
+      "sha256": "66efd9327f84dab70dfc01365478ea0e3d3a8a196cb958301884432549d2d65f"
+    },
+    {
+      "id": "facts_module_unchanged",
+      "result": "PASS",
+      "basis": "exact bytes unchanged against baseline",
+      "sha256": "996c3bf296b5116612ef4906241eb24aa0cfdbb992951aebc6703246eb9eab1b"
+    },
+    {
+      "id": "rejection_cache_module_unchanged",
+      "result": "PASS",
+      "basis": "exact bytes unchanged against baseline",
+      "sha256": "78dd6d0c59d8bfc8ed07bda4319ca17e79acaeab9662508d178bd92d8810fc53"
+    },
+    {
+      "id": "default_selects_existing_complete_limb",
+      "result": "PASS",
+      "basis": "default progress body exactly equals the baseline explicit full-limb progress body"
+    },
+    {
+      "id": "explicit_transposed_retains_original_default",
+      "result": "PASS",
+      "basis": "new progress body exactly equals the baseline default progress body; non-progress wrapper differs only in callee name"
+    },
+    {
+      "id": "maintenance_limb_arithmetic_unchanged",
+      "result": "PASS",
+      "basis": "all non-comment lines identical"
+    },
+    {
+      "id": "old_v1_diagnostic_identity_preserved",
+      "result": "PASS",
+      "basis": "all non-comment bytes identical after replacing only the two new explicit API names with their previous names"
+    }
+  ],
+  "invariants": {
+    "cheap_reject_order": [
+      "exact proof length",
+      "PNW1 magic",
+      "nonzero target",
+      "canonical C words",
+      "canonical A words",
+      "canonical B words",
+      "exact expected task",
+      "ticket from current challenge and claimed trace <= target",
+      "first progress callback"
+    ],
+    "progress_sequence": {
+      "order": [
+        "BeforeReplay",
+        "Noise(label=0..3, original increasing counter sequence)",
+        "MatrixRow for each of the two N-row noise products",
+        "TranscriptTile in bi,bj,bk order, each index 0..7",
+        "complete trace comparison",
+        "BeforeProduct",
+        "MatrixRow for corrections with row counts 64,64,8,64",
+        "complete product comparison",
+        "BeforeVerifiedWork",
+        "construct VerifiedWork"
+      ],
+      "successful_replay_matrix_row_callbacks": 328,
+      "transcript_tile_callbacks": 512,
+      "noise_callbacks": "Data-dependent rejection-sampling counts unchanged because expand_with_progress and challenge binding are byte-identical. Each label retains the 128-counter bound.",
+      "basis": "Shared control-flow bodies and helper definitions unchanged; kernel choices alter only exact dot accumulation.",
+      "physical_preemption_claim": false
+    },
+    "transcript_before_product": "Any mismatching trace returns Transcript after complete replay and before BeforeProduct or any correction multiplication. A matching trace still requires exact product bytes.",
+    "verified_work_encapsulation": "Struct fields, getters and constructor sites are unchanged. The raw verifier constructs only after all relation checks and the final cancellable checkpoint. Existing internal cache construction requires their unchanged verified/computed facts. No public constructor, field setter, serializer, or admission authority was added.",
+    "cancellation": "Every callback error still propagates through Cancelled immediately. Local intermediates are dropped; no new cache or publication path was introduced.",
+    "wire_consensus_and_ownership": "PROFILE, q/N/R, PNW1 bytes, signed domains, task/ticket/challenge binding, difficulty/work accounting, producer selection, owner permits and budget configuration were not edited by this switch."
+  },
+  "call_impact": {
+    "default": {
+      "before": "Transposed",
+      "after": "FullLimb",
+      "entries": [
+        "verify",
+        "verify_with_progress"
+      ]
+    },
+    "explicit_historical_baseline": {
+      "entries": [
+        "verify_transposed",
+        "verify_transposed_with_progress"
+      ],
+      "kernel": "Transposed",
+      "uses": [
+        "pon_rejection_cost v1 timed path and probe",
+        "existing complete proof/error/challenge/cancellation tests",
+        "shared fuzz differential entry 5"
+      ],
+      "existing_v1_label": "production-transposed"
+    },
+    "runtime_direct": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "lines": [
+          585,
+          629
+        ],
+        "effect": "WorkCheckedPacket ordinary and cancellable replay selects FullLimb; current-context validation and packet/owner binding unchanged."
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked.rs",
+        "lines": [
+          23
+        ],
+        "effect": "GrowthWorkCheckedPacket selects FullLimb; PGH2 witness-bound challenge and progress forwarding unchanged."
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+        "lines": [
+          116,
+          673
+        ],
+        "effect": "Growth mining candidate validation and stored-growth recovery verification select FullLimb; producer/target/checkpoint logic unchanged."
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration.rs",
+        "lines": [
+          1031
+        ],
+        "effect": "Migration work replay selects FullLimb with original progress/error mapping."
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+        "lines": [
+          493
+        ],
+        "effect": "Paid task verification selects FullLimb; task/material checks and execution remain outside and unchanged."
+      }
+    ],
+    "transitive_owner_paths": [
+      "ordinary ingress and public_v2 dispatch",
+      "public_v3 ordinary work and rejection-cache misses",
+      "PQ network ingress",
+      "history import",
+      "operator mining and continuous owners",
+      "growth ingress/admission/recovery",
+      "WorkFactCache leader replay"
+    ],
+    "caches": {
+      "WorkFactCache": "Current checks still explicitly use Transposed admission grammar. A leader miss calls super::verify_with_progress and therefore now replays FullLimb. Exact key, successful product cache, wait/poll/cancellation, eviction and hit comparison remain unchanged.",
+      "RejectionCache": "Wrong-length bypass and misses call verify_with_progress and now use FullLimb. Exact key/TTL/bounds and previously computed Transcript/Product hit behavior remain unchanged.",
+      "ArithmeticFactCache": "Entire module is byte-identical. It explicitly uses Transposed precheck, evaluate_transposed_with_progress::<false,E>, and finish_transposed_with_progress; its fresh arithmetic stays Transposed. Exact challenge+A/B key, claim rechecks, trace/product publication, nonblocking contention fallback, poison handling and cancellation behavior are unchanged. No FullLimb speedup is attributed to this opt-in path."
+    },
+    "measurement_contracts": {
+      "fixed_old_schema": "pon-work-rejection-cost-v1 retains production-transposed bound to explicit Transposed; fields, ratios and reader are unchanged.",
+      "source_bound_default_schemas": "Existing cost, producer/reuse/locality, V2/V3, budget and new legal/false-trace observations that label ordinary verify as production now measure FullLimb only on the new source. Historical captures retain their original source and kernel.",
+      "same_kernel_labels": [
+        "production",
+        "full-limb-experimental"
+      ],
+      "same_kernel_labels_are_independent_algorithms": false,
+      "prepared_cost_reference_baseline": "pon_prepared_cost continues to call verify_reference; no label drift.",
+      "offline_bridges": "pon_work and pon_work_io verification select FullLimb; proof bytes/output/error interface stay unchanged."
+    },
+    "reference_inventory": [
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_adversarial_cost.rs",
+        "symbols_and_lines": {
+          "verify": [
+            48,
+            66
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_cost.rs",
+        "symbols_and_lines": {
+          "verify": [
+            19,
+            29
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs",
+        "symbols_and_lines": {
+          "verify": [
+            411,
+            643
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_locality_cost.rs",
+        "symbols_and_lines": {
+          "verify": [
+            364,
+            532
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_producer_comparison.rs",
+        "symbols_and_lines": {
+          "verify": [
+            321
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs",
+        "symbols_and_lines": {
+          "verify_transposed": [
+            79
+          ],
+          "verify_transposed_with_progress": [
+            379
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs",
+        "symbols_and_lines": {
+          "verify": [
+            361,
+            541
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work.rs",
+        "symbols_and_lines": {
+          "verify": [
+            21
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs",
+        "symbols_and_lines": {
+          "verify": [
+            32
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs",
+        "symbols_and_lines": {
+          "verify": [
+            351,
+            509
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs",
+        "symbols_and_lines": {
+          "verify": [
+            27
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs",
+        "symbols_and_lines": {
+          "verify": [
+            67,
+            94,
+            109,
+            161,
+            279,
+            300,
+            399,
+            463,
+            467
+          ],
+          "verify_with_progress": [
+            240
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs",
+        "symbols_and_lines": {
+          "verify": [
+            42,
+            81,
+            85
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs",
+        "symbols_and_lines": {
+          "verify": [
+            236,
+            279,
+            283
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs",
+        "symbols_and_lines": {
+          "verify": [
+            172,
+            183
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
+        "symbols_and_lines": {
+          "verify": [
+            342
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs",
+        "symbols_and_lines": {
+          "verify_with_progress": [
+            187
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
+        "symbols_and_lines": {
+          "verify": [
+            387,
+            406
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs",
+        "symbols_and_lines": {
+          "verify": [
+            225,
+            231,
+            243
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
+        "symbols_and_lines": {
+          "verify": [
+            550,
+            556,
+            568
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs",
+        "symbols_and_lines": {
+          "verify": [
+            316
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+        "symbols_and_lines": {
+          "verify_with_progress": [
+            89,
+            97
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
+        "symbols_and_lines": {
+          "verify": [
+            503,
+            594
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "symbols_and_lines": {
+          "verify_with_progress": [
+            393,
+            1241,
+            1271,
+            1613,
+            1684,
+            2323,
+            2382,
+            2406,
+            2420,
+            2443,
+            2478,
+            2485
+          ],
+          "verify_transposed_with_progress": [
+            429,
+            1629,
+            1703
+          ],
+          "verify": [
+            1338,
+            1530,
+            1535,
+            1600,
+            1939,
+            1957,
+            2019,
+            2040,
+            2044,
+            2048,
+            2059,
+            2066,
+            2070,
+            2084,
+            2119,
+            2225,
+            2239,
+            2289,
+            2317,
+            2381,
+            2402,
+            2525
+          ],
+          "verify_transposed": [
+            1584,
+            1943,
+            1961
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/qualified_work_task.rs",
+        "symbols_and_lines": {
+          "verify": [
+            260
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/tests/checkpoint_tile_material_v1.rs",
+        "symbols_and_lines": {
+          "verify": [
+            120
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/tests/qualified_task_lifecycle_v2.rs",
+        "symbols_and_lines": {
+          "verify": [
+            243
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_budget_report.rs",
+        "symbols_and_lines": {
+          "verify_with_progress": [
+            335,
+            407
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_cost_matrix_v2.rs",
+        "symbols_and_lines": {
+          "verify": [
+            226,
+            503,
+            510,
+            530
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_false_trace_reuse_v1.rs",
+        "symbols_and_lines": {
+          "verify": [
+            184,
+            314
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_legal_strategy_v1.rs",
+        "symbols_and_lines": {
+          "verify": [
+            300,
+            477
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_reused_cost_v3.rs",
+        "symbols_and_lines": {
+          "verify": [
+            136,
+            268
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs",
+        "symbols_and_lines": {
+          "verify": [
+            171
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/mining.rs",
+        "symbols_and_lines": {
+          "verify": [
+            988
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/operator_pq_startup_tests.rs",
+        "symbols_and_lines": {
+          "verify": [
+            692
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/peer_polling.rs",
+        "symbols_and_lines": {
+          "verify": [
+            1009,
+            1371
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration.rs",
+        "symbols_and_lines": {
+          "verify_with_progress": [
+            1031
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+        "symbols_and_lines": {
+          "verify": [
+            493
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+        "symbols_and_lines": {
+          "verify": [
+            116,
+            673
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+        "symbols_and_lines": {
+          "verify": [
+            286
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked.rs",
+        "symbols_and_lines": {
+          "verify_with_progress": [
+            23
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/historical_commitment_tests.rs",
+        "symbols_and_lines": {
+          "verify": [
+            263
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/root_rejection_cache_tests.rs",
+        "symbols_and_lines": {
+          "verify": [
+            33
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "symbols_and_lines": {
+          "verify": [
+            585
+          ],
+          "verify_with_progress": [
+            629
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/daa_adversarial_schedule.rs",
+        "symbols_and_lines": {
+          "verify": [
+            111
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/derived_commitment.rs",
+        "symbols_and_lines": {
+          "verify": [
+            254
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/maintenance_paired_conformance.rs",
+        "symbols_and_lines": {
+          "verify": [
+            65
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/one_zero_task_preparation_lifecycle.rs",
+        "symbols_and_lines": {
+          "verify": [
+            215
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/operator_actors.rs",
+        "symbols_and_lines": {
+          "verify": [
+            624
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+        "symbols_and_lines": {
+          "verify": [
+            49
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+        "symbols_and_lines": {
+          "verify": [
+            637,
+            743,
+            909
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+        "symbols_and_lines": {
+          "verify": [
+            298
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_request_accounting.rs",
+        "symbols_and_lines": {
+          "verify": [
+            92
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_service_campaign.rs",
+        "symbols_and_lines": {
+          "verify": [
+            79
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs",
+        "symbols_and_lines": {
+          "verify": [
+            216
+          ]
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs",
+        "symbols_and_lines": {
+          "verify": [
+            163,
+            315
+          ]
+        }
+      },
+      {
+        "path": "tests/fuzz/fuzz_targets/support/work_certificate.rs",
+        "symbols_and_lines": {
+          "verify_with_progress": [
+            73
+          ],
+          "verify_transposed_with_progress": [
+            89
+          ]
+        }
+      }
+    ],
+    "inventory_method": "Read-only rg search and lexical inspection of active trillionnium/ and tests/fuzz/ Rust source, including imported bare functions, super:: calls, direct calls and function references. Inventory includes test-only callers; runtime effects are classified separately above. This is not a compiler-produced whole-program call graph."
+  },
+  "documentation": {
+    "path": "docs/protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md",
+    "all_local_links_exist": true,
+    "local_link_count": 22,
+    "external_link_count": 1,
+    "links": [
+      {
+        "line": 3,
+        "target": "W1_SAME_TARGET_BUDGET_REPORT.md",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "docs/protocol/pon-nakamoto-v1/details/W1_SAME_TARGET_BUDGET_REPORT.md"
+      },
+      {
+        "line": 42,
+        "target": "../../../../trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs"
+      },
+      {
+        "line": 116,
+        "target": "../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs"
+      },
+      {
+        "line": 118,
+        "target": "../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs"
+      },
+      {
+        "line": 190,
+        "target": "../../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs"
+      },
+      {
+        "line": 232,
+        "target": "../../../../formal/pon-nakamoto-v1/test_zero_work.py",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "formal/pon-nakamoto-v1/test_zero_work.py"
+      },
+      {
+        "line": 358,
+        "target": "../../../../trillionnium/crates/trnm-pon-node/tests/one_zero_task_preparation_lifecycle.rs",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "trillionnium/crates/trnm-pon-node/tests/one_zero_task_preparation_lifecycle.rs"
+      },
+      {
+        "line": 370,
+        "target": "../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs"
+      },
+      {
+        "line": 434,
+        "target": "../../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs"
+      },
+      {
+        "line": 451,
+        "target": "../../../../trillionnium/crates/trnm-pon-node/tests/maintenance_paired_conformance.rs",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "trillionnium/crates/trnm-pon-node/tests/maintenance_paired_conformance.rs"
+      },
+      {
+        "line": 471,
+        "target": "../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs"
+      },
+      {
+        "line": 521,
+        "target": "../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs"
+      },
+      {
+        "line": 530,
+        "target": "../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs"
+      },
+      {
+        "line": 617,
+        "target": "../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs"
+      },
+      {
+        "line": 750,
+        "target": "../../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_paired_io.rs",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_paired_io.rs"
+      },
+      {
+        "line": 763,
+        "target": "../../../../formal/pon-nakamoto-v1/test_paired_work.py",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "formal/pon-nakamoto-v1/test_paired_work.py"
+      },
+      {
+        "line": 814,
+        "target": "../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+      },
+      {
+        "line": 891,
+        "target": "../../../development/specs/pon/W1_FALSE_TRACE_ACTUAL_REUSE_V1.md",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "docs/development/specs/pon/W1_FALSE_TRACE_ACTUAL_REUSE_V1.md"
+      },
+      {
+        "line": 892,
+        "target": "../../../../evidence/pon-w1-work-security-20261101/README.md",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "evidence/pon-w1-work-security-20261101/README.md"
+      },
+      {
+        "line": 903,
+        "target": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41297071118",
+        "kind": "external",
+        "result": "PASS",
+        "basis": "GitHub GET returned this exact html_url, run ID and documented head SHA"
+      },
+      {
+        "line": 942,
+        "target": "../../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs"
+      },
+      {
+        "line": 1037,
+        "target": "../../../../scripts/pon_work_rejection_report.py",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "scripts/pon_work_rejection_report.py"
+      },
+      {
+        "line": 1058,
+        "target": "../../../architecture/CI_EXECUTION_CONTRACT.md",
+        "kind": "repository",
+        "result": "PASS",
+        "resolved_path": "docs/architecture/CI_EXECUTION_CONTRACT.md"
+      }
+    ],
+    "external_run": {
+      "api_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41297071118",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41297071118",
+      "id": 41297071118,
+      "head_sha": "8d9a7015cadd39780c4a047b5a36e0fd4d5f494b",
+      "head_tree": "721b601aca93a069d3d9d20e1502983789924877",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "verification_method": "read-only GitHub connector GET during this review"
+    },
+    "planned_archive": {
+      "path": "evidence/pon-w1-complete-work-20261101/run-41297071118/",
+      "status": "planned separate evidence branch as specified by parent; not used as existing evidence in this document",
+      "exists_in_reviewed_checkout": false,
+      "linked_by_comparison_document": false
+    },
+    "claims_checked": [
+      "Earlier head and merge source IDs remain distinct from the unexecuted default-switch candidate.",
+      "Whole workflow failure remains preserved and is not relabeled as PASS.",
+      "x64 head legal/Product full-limb CPU about 3.8% above older limb remains disclosed.",
+      "18-26 ratios are per-material; 19.2-22.0 are whole-lane aggregates.",
+      "Five kernels behind six public entry families are stated; production/full-limb labels are the same kernel after this change."
+    ]
+  },
+  "validation": {
+    "native_rust_build_executed_by_this_review": false,
+    "native_tests_executed_by_this_review": false,
+    "rustfmt_executed_by_this_review": false,
+    "test_items_added_by_switch": 0,
+    "existing_test_names_retained": true,
+    "prior_local_legacy_reader_regression": {
+      "command": "python3 scripts/ci/test_work_rejection_report.py",
+      "tests": 87,
+      "result": "PASS",
+      "scope": "previous implementation-turn execution; unchanged reader source, not a native Rust check"
+    },
+    "remaining_gates": [
+      "Exact new committed source Rustfmt/build/101 W1 tests/3 legacy-rejection example tests/4 legal example tests/6 fuzz semantics and strict Clippy.",
+      "Exact new source head/merge native x64 and ARM64 measurements.",
+      "Unchanged original and fresh-challenge service budgets and independent client confirmation checks."
+    ]
+  },
+  "limitations": [
+    "Static byte/control-flow review does not establish compiler correctness, physical CPU bounds, cheapest adversary cost, permissionless work hardness, public service acceptance, or production approval.",
+    "Default change affects computation time, not the accepted relation; full expensive rejection still exists.",
+    "Reviewed working-tree identities must be matched to the eventual committed/published source before reusing this receipt."
+  ],
+  "production_activation": false,
+  "work_hardness_accepted": false,
+  "public_service_accepted": false,
+  "post_publication_source_binding": {
+    "observed_at_utc": "2026-11-01T10:50:15.806992+00:00",
+    "commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "tree": "7b3bf58b08cf59ba1466059f3e0d5a7d8a96e74a",
+    "all_reviewed_file_bytes_match_committed_source": true,
+    "files_checked": 8,
+    "method": "git show exact committed file contents against the originally recorded review SHA-256; original working-tree review identity retained",
+    "native_execution_performed": false
+  },
+  "implementation_author_self_review": true,
+  "independent_external_security_review": false
+}

@@ -1,0 +1,22 @@
+{
+  "all_members_matched": true,
+  "allowlist_sha256": "ced808f68a940b0d59b5217d8eaf98d3bec309e350ca3ae7379362f4d814bab0",
+  "archive": {
+    "bytes": 3671184,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-C3-reconciliation-01/reconciliation-raw.tar.gz",
+    "sha256": "00a7c8d8d52b584d8df29a83ecbc5b5bd3c28c1d7bcf3125035be8c90af07c3b"
+  },
+  "completed": true,
+  "databases_or_ELFs_published": false,
+  "errors": [],
+  "git_pack_published": false,
+  "members_read_back": 194,
+  "new_funds_operations": 0,
+  "new_proofs": 0,
+  "originals_unchanged_after": true,
+  "schema": "TRNM-W1-C3-RECONCILIATION-ARCHIVE-READBACK1",
+  "source_commit": "abab79dac0cb89eb2753d3f579119ac135650eb5",
+  "source_runtime_changed": false,
+  "source_tree": "194808f4a0db5d642aa746beb251ca9e9532cebb",
+  "uncompressed_bytes": 11402211
+}

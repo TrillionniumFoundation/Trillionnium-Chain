@@ -1,0 +1,1649 @@
+{
+  "started": "2026-11-07T15:52:20.043159+00:00",
+  "finished": "2026-11-07T15:53:12.557090+00:00",
+  "issues": [],
+  "run_statuses": [
+    {
+      "actor": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+        "events_url": "https://api.github.com/users/ProfHepta/events{/privacy}",
+        "followers_url": "https://api.github.com/users/ProfHepta/followers",
+        "following_url": "https://api.github.com/users/ProfHepta/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ProfHepta/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/ProfHepta",
+        "id": 102159240,
+        "login": "ProfHepta",
+        "node_id": "U_kgDOBhbTiA",
+        "organizations_url": "https://api.github.com/users/ProfHepta/orgs",
+        "received_events_url": "https://api.github.com/users/ProfHepta/received_events",
+        "repos_url": "https://api.github.com/users/ProfHepta/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/ProfHepta/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ProfHepta/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/ProfHepta",
+        "user_view_type": "public"
+      },
+      "conclusion": "failure",
+      "created_at": "2026-11-07T14:49:08Z",
+      "event": "push",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42383368504",
+      "id": 42383368504,
+      "name": "PoN W1 work security observations",
+      "run_attempt": 1,
+      "status": "completed",
+      "triggering_actor": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+        "events_url": "https://api.github.com/users/ProfHepta/events{/privacy}",
+        "followers_url": "https://api.github.com/users/ProfHepta/followers",
+        "following_url": "https://api.github.com/users/ProfHepta/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ProfHepta/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/ProfHepta",
+        "id": 102159240,
+        "login": "ProfHepta",
+        "node_id": "U_kgDOBhbTiA",
+        "organizations_url": "https://api.github.com/users/ProfHepta/orgs",
+        "received_events_url": "https://api.github.com/users/ProfHepta/received_events",
+        "repos_url": "https://api.github.com/users/ProfHepta/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/ProfHepta/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ProfHepta/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/ProfHepta",
+        "user_view_type": "public"
+      },
+      "updated_at": "2026-11-07T15:10:05Z",
+      "workflow_id": 403419146
+    },
+    {
+      "actor": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+        "events_url": "https://api.github.com/users/ProfHepta/events{/privacy}",
+        "followers_url": "https://api.github.com/users/ProfHepta/followers",
+        "following_url": "https://api.github.com/users/ProfHepta/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ProfHepta/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/ProfHepta",
+        "id": 102159240,
+        "login": "ProfHepta",
+        "node_id": "U_kgDOBhbTiA",
+        "organizations_url": "https://api.github.com/users/ProfHepta/orgs",
+        "received_events_url": "https://api.github.com/users/ProfHepta/received_events",
+        "repos_url": "https://api.github.com/users/ProfHepta/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/ProfHepta/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ProfHepta/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/ProfHepta",
+        "user_view_type": "public"
+      },
+      "conclusion": "failure",
+      "created_at": "2026-11-07T14:49:08Z",
+      "event": "push",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42383368690",
+      "id": 42383368690,
+      "name": "PoN priority acceptance",
+      "run_attempt": 1,
+      "status": "completed",
+      "triggering_actor": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+        "events_url": "https://api.github.com/users/ProfHepta/events{/privacy}",
+        "followers_url": "https://api.github.com/users/ProfHepta/followers",
+        "following_url": "https://api.github.com/users/ProfHepta/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ProfHepta/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/ProfHepta",
+        "id": 102159240,
+        "login": "ProfHepta",
+        "node_id": "U_kgDOBhbTiA",
+        "organizations_url": "https://api.github.com/users/ProfHepta/orgs",
+        "received_events_url": "https://api.github.com/users/ProfHepta/received_events",
+        "repos_url": "https://api.github.com/users/ProfHepta/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/ProfHepta/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ProfHepta/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/ProfHepta",
+        "user_view_type": "public"
+      },
+      "updated_at": "2026-11-07T15:44:57Z",
+      "workflow_id": 378180520
+    }
+  ],
+  "status_counts": {
+    "success": 22,
+    "failure": 15
+  },
+  "jobs": [
+    {
+      "id": 128435500321,
+      "run_id": 42383368504,
+      "name": "Freeze actual integration push source",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:11Z",
+      "completed_at": "2026-11-07T14:49:44Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040682",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635859,
+      "run_id": 42383368504,
+      "name": "W1 false trace reuse (x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:46Z",
+      "completed_at": "2026-11-07T14:56:38Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040689",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635867,
+      "run_id": 42383368504,
+      "name": "W1 paid rank and batch v5 (arm64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:50Z",
+      "completed_at": "2026-11-07T14:57:34Z",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_name": "GitHub Actions 1000040705",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635871,
+      "run_id": 42383368504,
+      "name": "W1 false trace reuse (arm64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:49Z",
+      "completed_at": "2026-11-07T14:58:11Z",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_name": "GitHub Actions 1000040694",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635875,
+      "run_id": 42383368504,
+      "name": "W1 paid rank and batch v5 (x64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:47Z",
+      "completed_at": "2026-11-07T14:57:21Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040692",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635877,
+      "run_id": 42383368504,
+      "name": "W1 factorial legal strategies v3 (x64, head)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T14:49:46Z",
+      "completed_at": "2026-11-07T15:10:04Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040690",
+      "failed_steps": [
+        "Run strict native lint for all affected owners"
+      ],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635901,
+      "run_id": 42383368504,
+      "name": "W1 complete legal strategies (v2, x64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:46Z",
+      "completed_at": "2026-11-07T14:57:19Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040691",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635906,
+      "run_id": 42383368504,
+      "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T14:49:49Z",
+      "completed_at": "2026-11-07T15:09:43Z",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_name": "GitHub Actions 1000040695",
+      "failed_steps": [
+        "Run strict native lint for all affected owners"
+      ],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635920,
+      "run_id": 42383368504,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T14:49:47Z",
+      "completed_at": "2026-11-07T14:54:16Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040697",
+      "failed_steps": [
+        "Execute original and fresh service with original Host resources"
+      ],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635921,
+      "run_id": 42383368504,
+      "name": "W1 fresh challenge service (x64, head)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T14:49:47Z",
+      "completed_at": "2026-11-07T14:55:07Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040700",
+      "failed_steps": [
+        "Execute original and fresh service with original Host resources"
+      ],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635935,
+      "run_id": 42383368504,
+      "name": "W1 factorial legal strategies v3 (arm64, head)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T14:49:49Z",
+      "completed_at": "2026-11-07T15:09:36Z",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_name": "GitHub Actions 1000040707",
+      "failed_steps": [
+        "Run strict native lint for all affected owners"
+      ],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635938,
+      "run_id": 42383368504,
+      "name": "W1 false trace reuse (arm64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:50Z",
+      "completed_at": "2026-11-07T14:57:58Z",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_name": "GitHub Actions 1000040704",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635939,
+      "run_id": 42383368504,
+      "name": "W1 paid rank and batch v5 (arm64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:49Z",
+      "completed_at": "2026-11-07T14:57:29Z",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_name": "GitHub Actions 1000040696",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635951,
+      "run_id": 42383368504,
+      "name": "W1 paid rank and batch v5 (x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:47Z",
+      "completed_at": "2026-11-07T14:55:37Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040702",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635969,
+      "run_id": 42383368504,
+      "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:50Z",
+      "completed_at": "2026-11-07T14:59:45Z",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_name": "GitHub Actions 1000040706",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635972,
+      "run_id": 42383368504,
+      "name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T14:49:47Z",
+      "completed_at": "2026-11-07T15:05:07Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040699",
+      "failed_steps": [
+        "Run strict native lint for all affected owners"
+      ],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635980,
+      "run_id": 42383368504,
+      "name": "W1 complete legal strategies (v1, x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:46Z",
+      "completed_at": "2026-11-07T14:58:25Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040693",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635988,
+      "run_id": 42383368504,
+      "name": "W1 complete legal strategies (v2, arm64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:50Z",
+      "completed_at": "2026-11-07T15:00:26Z",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_name": "GitHub Actions 1000040708",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435635991,
+      "run_id": 42383368504,
+      "name": "W1 false trace reuse (x64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:47Z",
+      "completed_at": "2026-11-07T14:56:26Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040698",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435636007,
+      "run_id": 42383368504,
+      "name": "W1 complete legal strategies (v2, x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:47Z",
+      "completed_at": "2026-11-07T14:57:35Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040701",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435636028,
+      "run_id": 42383368504,
+      "name": "W1 complete legal strategies (v1, arm64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:49Z",
+      "completed_at": "2026-11-07T14:57:55Z",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_name": "GitHub Actions 1000040709",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435636075,
+      "run_id": 42383368504,
+      "name": "W1 complete legal strategies (v1, x64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:47Z",
+      "completed_at": "2026-11-07T14:58:18Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040703",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435636120,
+      "run_id": 42383368504,
+      "name": "W1 complete legal strategies (v1, arm64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:50Z",
+      "completed_at": "2026-11-07T14:58:05Z",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_name": "GitHub Actions 1000040710",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435501294,
+      "run_id": 42383368690,
+      "name": "retained-pressure-failure",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T14:49:11Z",
+      "completed_at": "2026-11-07T14:49:15Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040683",
+      "failed_steps": [
+        "Retrieve exact historical failed artifact without reclassifying it"
+      ],
+      "active_steps": [],
+      "skipped_steps": [
+        "Expose bounded original honest-submit and state diagnostics"
+      ]
+    },
+    {
+      "id": 128435501426,
+      "run_id": 42383368690,
+      "name": "Freeze actual integration push source",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:49:12Z",
+      "completed_at": "2026-11-07T14:49:59Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040684",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": []
+    },
+    {
+      "id": 128435695005,
+      "run_id": 42383368690,
+      "name": "native priorities (ubuntu-24.04, head, service-model)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T14:50:02Z",
+      "completed_at": "2026-11-07T15:10:45Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040713",
+      "failed_steps": [
+        "Execute original release from-zero controls"
+      ],
+      "active_steps": [],
+      "skipped_steps": [
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions",
+        "Build the original long-history test separately from measurement",
+        "Execute 4105 real work blocks and paid public full sync"
+      ]
+    },
+    {
+      "id": 128435695013,
+      "run_id": 42383368690,
+      "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T14:50:04Z",
+      "completed_at": "2026-11-07T15:10:26Z",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_name": "GitHub Actions 1000040715",
+      "failed_steps": [
+        "Execute original release from-zero controls"
+      ],
+      "active_steps": [],
+      "skipped_steps": [
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions",
+        "Build the original long-history test separately from measurement",
+        "Execute 4105 real work blocks and paid public full sync"
+      ]
+    },
+    {
+      "id": 128435695023,
+      "run_id": 42383368690,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T14:50:02Z",
+      "completed_at": "2026-11-07T15:40:24Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040712",
+      "failed_steps": [
+        "Execute 4105 real work blocks and paid public full sync"
+      ],
+      "active_steps": [],
+      "skipped_steps": [
+        "Execute original window owner and context-bound consumer controls",
+        "Execute original release from-zero controls",
+        "Execute actual CLI observation boundaries and retain every child result",
+        "Execute isolated original debug pressure regression",
+        "Execute original public service cancellation and actual CPU accounting controls",
+        "Reject valid W1 state-root replay without durable admission",
+        "Require actual shared CPU depletion and native public recovery",
+        "Execute real native model lifecycle and adverse decisions",
+        "Require native replay, packet encoding and admissible DAA controls",
+        "Observe complete native history and packet response cost",
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions"
+      ]
+    },
+    {
+      "id": 128435695024,
+      "run_id": 42383368690,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T14:50:01Z",
+      "completed_at": "2026-11-07T15:04:16Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040711",
+      "failed_steps": [
+        "Execute original release from-zero controls"
+      ],
+      "active_steps": [],
+      "skipped_steps": [
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions",
+        "Build the original long-history test separately from measurement",
+        "Execute 4105 real work blocks and paid public full sync"
+      ]
+    },
+    {
+      "id": 128435695055,
+      "run_id": 42383368690,
+      "name": "native priorities (ubuntu-24.04, head, history)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T14:50:02Z",
+      "completed_at": "2026-11-07T15:40:17Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040714",
+      "failed_steps": [
+        "Execute 4105 real work blocks and paid public full sync"
+      ],
+      "active_steps": [],
+      "skipped_steps": [
+        "Execute original window owner and context-bound consumer controls",
+        "Execute original release from-zero controls",
+        "Execute actual CLI observation boundaries and retain every child result",
+        "Execute isolated original debug pressure regression",
+        "Execute original public service cancellation and actual CPU accounting controls",
+        "Reject valid W1 state-root replay without durable admission",
+        "Require actual shared CPU depletion and native public recovery",
+        "Execute real native model lifecycle and adverse decisions",
+        "Require native replay, packet encoding and admissible DAA controls",
+        "Observe complete native history and packet response cost",
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions"
+      ]
+    },
+    {
+      "id": 128435695075,
+      "run_id": 42383368690,
+      "name": "native priorities (ubuntu-24.04-arm, head, history)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T14:50:04Z",
+      "completed_at": "2026-11-07T15:43:25Z",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_name": "GitHub Actions 1000040717",
+      "failed_steps": [
+        "Execute 4105 real work blocks and paid public full sync"
+      ],
+      "active_steps": [],
+      "skipped_steps": [
+        "Execute original window owner and context-bound consumer controls",
+        "Execute original release from-zero controls",
+        "Execute actual CLI observation boundaries and retain every child result",
+        "Execute isolated original debug pressure regression",
+        "Execute original public service cancellation and actual CPU accounting controls",
+        "Reject valid W1 state-root replay without durable admission",
+        "Require actual shared CPU depletion and native public recovery",
+        "Execute real native model lifecycle and adverse decisions",
+        "Require native replay, packet encoding and admissible DAA controls",
+        "Observe complete native history and packet response cost",
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions"
+      ]
+    },
+    {
+      "id": 128435695076,
+      "run_id": 42383368690,
+      "name": "native priorities (ubuntu-24.04, head, state)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:50:02Z",
+      "completed_at": "2026-11-07T15:40:04Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040721",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": [
+        "Execute original window owner and context-bound consumer controls",
+        "Execute original release from-zero controls",
+        "Execute actual CLI observation boundaries and retain every child result",
+        "Execute isolated original debug pressure regression",
+        "Execute original public service cancellation and actual CPU accounting controls",
+        "Reject valid W1 state-root replay without durable admission",
+        "Require actual shared CPU depletion and native public recovery",
+        "Execute real native model lifecycle and adverse decisions",
+        "Require native replay, packet encoding and admissible DAA controls",
+        "Observe complete native history and packet response cost",
+        "Build the original long-history test separately from measurement",
+        "Execute 4105 real work blocks and paid public full sync"
+      ]
+    },
+    {
+      "id": 128435695082,
+      "run_id": 42383368690,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:50:04Z",
+      "completed_at": "2026-11-07T15:31:34Z",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_name": "GitHub Actions 1000040720",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": [
+        "Execute original window owner and context-bound consumer controls",
+        "Execute original release from-zero controls",
+        "Execute actual CLI observation boundaries and retain every child result",
+        "Execute isolated original debug pressure regression",
+        "Execute original public service cancellation and actual CPU accounting controls",
+        "Reject valid W1 state-root replay without durable admission",
+        "Require actual shared CPU depletion and native public recovery",
+        "Execute real native model lifecycle and adverse decisions",
+        "Require native replay, packet encoding and admissible DAA controls",
+        "Observe complete native history and packet response cost",
+        "Build the original long-history test separately from measurement",
+        "Execute 4105 real work blocks and paid public full sync"
+      ]
+    },
+    {
+      "id": 128435695086,
+      "run_id": 42383368690,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T14:50:04Z",
+      "completed_at": "2026-11-07T15:42:11Z",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_name": "GitHub Actions 1000040716",
+      "failed_steps": [
+        "Execute 4105 real work blocks and paid public full sync"
+      ],
+      "active_steps": [],
+      "skipped_steps": [
+        "Execute original window owner and context-bound consumer controls",
+        "Execute original release from-zero controls",
+        "Execute actual CLI observation boundaries and retain every child result",
+        "Execute isolated original debug pressure regression",
+        "Execute original public service cancellation and actual CPU accounting controls",
+        "Reject valid W1 state-root replay without durable admission",
+        "Require actual shared CPU depletion and native public recovery",
+        "Execute real native model lifecycle and adverse decisions",
+        "Require native replay, packet encoding and admissible DAA controls",
+        "Observe complete native history and packet response cost",
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions"
+      ]
+    },
+    {
+      "id": 128435695112,
+      "run_id": 42383368690,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T14:50:04Z",
+      "completed_at": "2026-11-07T15:10:54Z",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_name": "GitHub Actions 1000040718",
+      "failed_steps": [
+        "Execute original release from-zero controls"
+      ],
+      "active_steps": [],
+      "skipped_steps": [
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions",
+        "Build the original long-history test separately from measurement",
+        "Execute 4105 real work blocks and paid public full sync"
+      ]
+    },
+    {
+      "id": 128435695117,
+      "run_id": 42383368690,
+      "name": "native priorities (ubuntu-24.04-arm, head, state)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:50:04Z",
+      "completed_at": "2026-11-07T15:32:01Z",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_name": "GitHub Actions 1000040719",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": [
+        "Execute original window owner and context-bound consumer controls",
+        "Execute original release from-zero controls",
+        "Execute actual CLI observation boundaries and retain every child result",
+        "Execute isolated original debug pressure regression",
+        "Execute original public service cancellation and actual CPU accounting controls",
+        "Reject valid W1 state-root replay without durable admission",
+        "Require actual shared CPU depletion and native public recovery",
+        "Execute real native model lifecycle and adverse decisions",
+        "Require native replay, packet encoding and admissible DAA controls",
+        "Observe complete native history and packet response cost",
+        "Build the original long-history test separately from measurement",
+        "Execute 4105 real work blocks and paid public full sync"
+      ]
+    },
+    {
+      "id": 128435695218,
+      "run_id": 42383368690,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T14:50:02Z",
+      "completed_at": "2026-11-07T15:44:56Z",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_name": "GitHub Actions 1000040722",
+      "failed_steps": [],
+      "active_steps": [],
+      "skipped_steps": [
+        "Execute original window owner and context-bound consumer controls",
+        "Execute original release from-zero controls",
+        "Execute actual CLI observation boundaries and retain every child result",
+        "Execute isolated original debug pressure regression",
+        "Execute original public service cancellation and actual CPU accounting controls",
+        "Reject valid W1 state-root replay without durable admission",
+        "Require actual shared CPU depletion and native public recovery",
+        "Execute real native model lifecycle and adverse decisions",
+        "Require native replay, packet encoding and admissible DAA controls",
+        "Observe complete native history and packet response cost",
+        "Build the original long-history test separately from measurement",
+        "Execute 4105 real work blocks and paid public full sync"
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 13579195615,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3OTE5NTYxNQ==",
+      "name": "w1-fresh-service-prospective-merge-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "size_in_bytes": 5617444,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579195615",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579195615/zip",
+      "expired": false,
+      "digest": "sha256:c732158f899431143fc022a841c485db227d9a2ba00cd5433a7d1a1a9b132ace",
+      "created_at": "2026-11-07T14:54:13Z",
+      "updated_at": "2026-11-07T14:54:13Z",
+      "expires_at": "2026-12-07T14:54:12Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13579090794,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3OTA5MDc5NA==",
+      "name": "w1-false-trace-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "size_in_bytes": 5571548,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579090794",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579090794/zip",
+      "expired": false,
+      "digest": "sha256:2ebdaf94cac1d234f6160d18c25bcbd60a09379160c6dd9c0fe65db6be269ff3",
+      "created_at": "2026-11-07T14:56:35Z",
+      "updated_at": "2026-11-07T14:56:35Z",
+      "expires_at": "2026-12-07T14:56:34Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13579071557,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3OTA3MTU1Nw==",
+      "name": "w1-legal-strategy-v2-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "size_in_bytes": 140617119,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip",
+      "expired": false,
+      "digest": "sha256:878bb7120c04dd9e10c0159df975c92995187c88940322c02e24917654cf4fbd",
+      "created_at": "2026-11-07T14:57:31Z",
+      "updated_at": "2026-11-07T14:57:31Z",
+      "expires_at": "2026-12-07T14:57:22Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13579025854,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3OTAyNTg1NA==",
+      "name": "w1-rank-batch-v5-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "size_in_bytes": 45021233,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579025854",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579025854/zip",
+      "expired": false,
+      "digest": "sha256:1e875ea6579e1eeadcfa36916c200057de84ace18e816fa41a889fc517af5b24",
+      "created_at": "2026-11-07T14:55:34Z",
+      "updated_at": "2026-11-07T14:55:34Z",
+      "expires_at": "2026-12-07T14:55:32Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578947026,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODk0NzAyNg==",
+      "name": "w1-false-trace-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 5571168,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578947026",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578947026/zip",
+      "expired": false,
+      "digest": "sha256:95017dffd112b5cb0c7fdc282e132831e6f286b7a59e470db8a18f80ed7c18a1",
+      "created_at": "2026-11-07T14:56:23Z",
+      "updated_at": "2026-11-07T14:56:23Z",
+      "expires_at": "2026-12-07T14:56:22Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578922475,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODkyMjQ3NQ==",
+      "name": "w1-legal-strategy-prospective-merge-arm64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "size_in_bytes": 35956683,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578922475",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578922475/zip",
+      "expired": false,
+      "digest": "sha256:bddfba898cbb65140c16d3e906788d78dd0aa7b9c93b76039b23d1fa6553c097",
+      "created_at": "2026-11-07T14:58:02Z",
+      "updated_at": "2026-11-07T14:58:02Z",
+      "expires_at": "2026-12-07T14:57:59Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578867108,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODg2NzEwOA==",
+      "name": "w1-fresh-service-head-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 5496855,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578867108",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578867108/zip",
+      "expired": false,
+      "digest": "sha256:83e5b2f7241a77ba483c4b069e7e193c08f363661de60b638be7abf43e7217d9",
+      "created_at": "2026-11-07T14:55:04Z",
+      "updated_at": "2026-11-07T14:55:04Z",
+      "expires_at": "2026-12-07T14:55:02Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578842636,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODg0MjYzNg==",
+      "name": "w1-legal-strategy-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 35964573,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578842636",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578842636/zip",
+      "expired": false,
+      "digest": "sha256:1e9c0632c92ae029f509ff6b6385a527a884e2abaa07b746f21468f55d0b2b09",
+      "created_at": "2026-11-07T14:58:14Z",
+      "updated_at": "2026-11-07T14:58:14Z",
+      "expires_at": "2026-12-07T14:58:10Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578807518,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODgwNzUxOA==",
+      "name": "w1-rank-batch-v5-prospective-merge-arm64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "size_in_bytes": 45040010,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578807518",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578807518/zip",
+      "expired": false,
+      "digest": "sha256:e18888d094dd08928d146253b4485877fbd6ad2010049aaada5d0a0d8cb59dda",
+      "created_at": "2026-11-07T14:57:31Z",
+      "updated_at": "2026-11-07T14:57:31Z",
+      "expires_at": "2026-12-07T14:57:28Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578793210,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODc5MzIxMA==",
+      "name": "w1-legal-strategy-v2-head-arm64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 140623469,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578793210",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578793210/zip",
+      "expired": false,
+      "digest": "sha256:735652334fa116597213d1854c4f4faea1f8e7cef48670680b74b51f89ba9aaa",
+      "created_at": "2026-11-07T15:00:23Z",
+      "updated_at": "2026-11-07T15:00:23Z",
+      "expires_at": "2026-12-07T15:00:12Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578752856,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODc1Mjg1Ng==",
+      "name": "w1-legal-strategy-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "size_in_bytes": 35971082,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578752856",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578752856/zip",
+      "expired": false,
+      "digest": "sha256:9896425d35413be1479c95a10efed59531ff895fdb181da21ca7516d3093977d",
+      "created_at": "2026-11-07T14:58:22Z",
+      "updated_at": "2026-11-07T14:58:22Z",
+      "expires_at": "2026-12-07T14:58:18Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578719689,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODcxOTY4OQ==",
+      "name": "w1-legal-factorial-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 174302954,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578719689",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578719689/zip",
+      "expired": false,
+      "digest": "sha256:bf1491af933216e66db32afc786139e76989907cdb6ee465482ac9632d60a4c2",
+      "created_at": "2026-11-07T15:10:01Z",
+      "updated_at": "2026-11-07T15:10:01Z",
+      "expires_at": "2026-12-07T15:09:45Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578623077,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODYyMzA3Nw==",
+      "name": "w1-rank-batch-v5-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 45071166,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578623077",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578623077/zip",
+      "expired": false,
+      "digest": "sha256:042b5c6b17d7efa7f2ff0d6e350179cdc7d3890db7d2a7a73e4b89f07334ac52",
+      "created_at": "2026-11-07T14:57:17Z",
+      "updated_at": "2026-11-07T14:57:17Z",
+      "expires_at": "2026-12-07T14:57:13Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578583134,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODU4MzEzNA==",
+      "name": "w1-legal-strategy-v2-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 140615000,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578583134",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578583134/zip",
+      "expired": false,
+      "digest": "sha256:0f56fed42c70fb760b372b77bb5bd8809ae4062a68c9e3c2299f671b0af4a816",
+      "created_at": "2026-11-07T14:57:16Z",
+      "updated_at": "2026-11-07T14:57:16Z",
+      "expires_at": "2026-12-07T14:57:07Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578524978,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODUyNDk3OA==",
+      "name": "w1-legal-factorial-head-arm64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 174186741,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578524978",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578524978/zip",
+      "expired": false,
+      "digest": "sha256:ce9a5390df8aadc7c4d08e2584f27bdac7b1574dc3c184cc7d7e7ed26ca79e29",
+      "created_at": "2026-11-07T15:09:33Z",
+      "updated_at": "2026-11-07T15:09:33Z",
+      "expires_at": "2026-12-07T15:09:20Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578458532,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODQ1ODUzMg==",
+      "name": "w1-rank-batch-v5-head-arm64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 45034611,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578458532",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578458532/zip",
+      "expired": false,
+      "digest": "sha256:cb395850fdee8cf09d7766701acea37fef46032fcfee75e1d83a9cf97ff4e773",
+      "created_at": "2026-11-07T14:57:27Z",
+      "updated_at": "2026-11-07T14:57:27Z",
+      "expires_at": "2026-12-07T14:57:23Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578437522,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODQzNzUyMg==",
+      "name": "integration-push-source-42383368504-1",
+      "size_in_bytes": 1362,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578437522",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578437522/zip",
+      "expired": false,
+      "digest": "sha256:1b9a6dcaa65a5b849b8be457684658eaaac78630f47ff25e7249150b23bff17f",
+      "created_at": "2026-11-07T14:49:42Z",
+      "updated_at": "2026-11-07T14:49:42Z",
+      "expires_at": "2026-12-07T14:49:41Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578418855,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODQxODg1NQ==",
+      "name": "w1-false-trace-prospective-merge-arm64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "size_in_bytes": 5554955,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578418855",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578418855/zip",
+      "expired": false,
+      "digest": "sha256:d8862f291bd17cd600865d2e646d4b68d8d5336a401b1d35fb11e5aaa597284d",
+      "created_at": "2026-11-07T14:57:54Z",
+      "updated_at": "2026-11-07T14:57:54Z",
+      "expires_at": "2026-12-07T14:57:52Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578407453,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODQwNzQ1Mw==",
+      "name": "w1-false-trace-head-arm64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 5555057,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578407453",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578407453/zip",
+      "expired": false,
+      "digest": "sha256:ec9ba72ba6d6927509e2cae9c84bb9f732a2a94393582e89bb9256ddcade39ea",
+      "created_at": "2026-11-07T14:58:09Z",
+      "updated_at": "2026-11-07T14:58:09Z",
+      "expires_at": "2026-12-07T14:58:07Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578383843,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODM4Mzg0Mw==",
+      "name": "w1-legal-strategy-head-arm64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 35957567,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578383843",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578383843/zip",
+      "expired": false,
+      "digest": "sha256:a647f82c1cb766915ec3e9ee458abf6f4d4565646796e26027c6af72c9185957",
+      "created_at": "2026-11-07T14:57:53Z",
+      "updated_at": "2026-11-07T14:57:53Z",
+      "expires_at": "2026-12-07T14:57:50Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578254252,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODI1NDI1Mg==",
+      "name": "w1-legal-factorial-prospective-merge-arm64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "size_in_bytes": 174189052,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578254252",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578254252/zip",
+      "expired": false,
+      "digest": "sha256:6ec5e8b5d47a992ed47333dfa4bbc9399bd57ed308cc7d5afb2fc14ab185f700",
+      "created_at": "2026-11-07T15:09:40Z",
+      "updated_at": "2026-11-07T15:09:40Z",
+      "expires_at": "2026-12-07T15:09:27Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578223381,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODIyMzM4MQ==",
+      "name": "w1-legal-strategy-v2-prospective-merge-arm64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "size_in_bytes": 140612389,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578223381",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578223381/zip",
+      "expired": false,
+      "digest": "sha256:7f993726d5845d1136af559666cb85b761244ad04e7c157bceee7e1b69793d8f",
+      "created_at": "2026-11-07T14:59:43Z",
+      "updated_at": "2026-11-07T14:59:43Z",
+      "expires_at": "2026-12-07T14:59:32Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578024702,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODAyNDcwMg==",
+      "name": "w1-legal-factorial-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "size_in_bytes": 174171610,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578024702",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578024702/zip",
+      "expired": false,
+      "digest": "sha256:a751bf30e315ebd0a794236ce7258d7e5849645dae23ef43ebfb73d9e5657e78",
+      "created_at": "2026-11-07T15:05:04Z",
+      "updated_at": "2026-11-07T15:05:04Z",
+      "expires_at": "2026-12-07T15:04:52Z",
+      "workflow_run": {
+        "id": 42383368504,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13580406034,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU4MDQwNjAzNA==",
+      "name": "priority-ubuntu-24.04-head-state-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 20147,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13580406034",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13580406034/zip",
+      "expired": false,
+      "digest": "sha256:a2450406a2e12f6a1b88a2868281289172944a40725aaf833775aca3b02fdb94",
+      "created_at": "2026-11-07T15:40:02Z",
+      "updated_at": "2026-11-07T15:40:02Z",
+      "expires_at": "2026-12-07T15:40:02Z",
+      "workflow_run": {
+        "id": 42383368690,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13580221274,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU4MDIyMTI3NA==",
+      "name": "priority-ubuntu-24.04-head-history-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 59922265,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13580221274",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13580221274/zip",
+      "expired": false,
+      "digest": "sha256:a883f3f1da5fffca27a162d3caa6d6cfd15d0f4b8bf93258e6a72829d16e6c04",
+      "created_at": "2026-11-07T15:40:14Z",
+      "updated_at": "2026-11-07T15:40:14Z",
+      "expires_at": "2026-12-07T15:40:09Z",
+      "workflow_run": {
+        "id": 42383368690,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13580181082,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU4MDE4MTA4Mg==",
+      "name": "priority-ubuntu-24.04-arm-prospective-merge-state-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 20166,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13580181082",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13580181082/zip",
+      "expired": false,
+      "digest": "sha256:116ae16723ab9f1c7fd59e81390dcfad3a42d574938f0b65b1ff69ded2007f5a",
+      "created_at": "2026-11-07T15:31:32Z",
+      "updated_at": "2026-11-07T15:31:32Z",
+      "expires_at": "2026-12-07T15:31:31Z",
+      "workflow_run": {
+        "id": 42383368690,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13579719821,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3OTcxOTgyMQ==",
+      "name": "priority-ubuntu-24.04-prospective-merge-state-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 20207,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579719821",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579719821/zip",
+      "expired": false,
+      "digest": "sha256:2f73669d9e973eeada84fb665982992201eabe2ce5be6db89950cfd828d92a03",
+      "created_at": "2026-11-07T15:44:52Z",
+      "updated_at": "2026-11-07T15:44:52Z",
+      "expires_at": "2026-12-07T15:44:52Z",
+      "workflow_run": {
+        "id": 42383368690,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13579620050,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3OTYyMDA1MA==",
+      "name": "priority-ubuntu-24.04-head-service-model-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 7804473,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579620050",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579620050/zip",
+      "expired": false,
+      "digest": "sha256:c3f582743158f811b74130d1acb5953662c2e2a557c88b68cb631c10c6d2ac10",
+      "created_at": "2026-11-07T15:10:42Z",
+      "updated_at": "2026-11-07T15:10:42Z",
+      "expires_at": "2026-12-07T15:10:39Z",
+      "workflow_run": {
+        "id": 42383368690,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13579533384,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3OTUzMzM4NA==",
+      "name": "priority-ubuntu-24.04-arm-head-history-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 61216363,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579533384",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579533384/zip",
+      "expired": false,
+      "digest": "sha256:7ee66be5d2a3624d8995e6e44e43df39e01bea329ff9682bb9737ea6549cfc84",
+      "created_at": "2026-11-07T15:43:23Z",
+      "updated_at": "2026-11-07T15:43:23Z",
+      "expires_at": "2026-12-07T15:43:16Z",
+      "workflow_run": {
+        "id": 42383368690,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13579459911,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3OTQ1OTkxMQ==",
+      "name": "priority-ubuntu-24.04-arm-prospective-merge-history-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 61188818,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579459911",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579459911/zip",
+      "expired": false,
+      "digest": "sha256:c03726d47d07bfe3914b3f188ad3b87617d5e0bf62351a88fc0828d757b37f9c",
+      "created_at": "2026-11-07T15:42:08Z",
+      "updated_at": "2026-11-07T15:42:08Z",
+      "expires_at": "2026-12-07T15:42:00Z",
+      "workflow_run": {
+        "id": 42383368690,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13579429780,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3OTQyOTc4MA==",
+      "name": "priority-ubuntu-24.04-prospective-merge-history-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 59967843,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579429780",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579429780/zip",
+      "expired": false,
+      "digest": "sha256:eb9921c6960e95a3bd2111083caf44f9ef5662260f8d41d1ad5c4f863807a508",
+      "created_at": "2026-11-07T15:40:22Z",
+      "updated_at": "2026-11-07T15:40:22Z",
+      "expires_at": "2026-12-07T15:40:17Z",
+      "workflow_run": {
+        "id": 42383368690,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13579398677,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3OTM5ODY3Nw==",
+      "name": "priority-ubuntu-24.04-arm-head-state-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 20081,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579398677",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579398677/zip",
+      "expired": false,
+      "digest": "sha256:f14d80546f1cbd149b6a7e69a571c1bb02d7ea36daa8245d75c719fc3d04e7cc",
+      "created_at": "2026-11-07T15:31:59Z",
+      "updated_at": "2026-11-07T15:31:59Z",
+      "expires_at": "2026-12-07T15:31:58Z",
+      "workflow_run": {
+        "id": 42383368690,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13579291550,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3OTI5MTU1MA==",
+      "name": "priority-ubuntu-24.04-arm-head-service-model-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 7790671,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579291550",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579291550/zip",
+      "expired": false,
+      "digest": "sha256:d1631f17851ed112b6b4d395898d6f0dc37c1949c137ad505e1c08012218cdb1",
+      "created_at": "2026-11-07T15:10:23Z",
+      "updated_at": "2026-11-07T15:10:23Z",
+      "expires_at": "2026-12-07T15:10:22Z",
+      "workflow_run": {
+        "id": 42383368690,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578932781,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODkzMjc4MQ==",
+      "name": "priority-ubuntu-24.04-arm-prospective-merge-service-model-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 7779730,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578932781",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578932781/zip",
+      "expired": false,
+      "digest": "sha256:25c261dec21fb0564425ad7e133d81e763e86e5a5a6e2b27828c0ed36e52b688",
+      "created_at": "2026-11-07T15:10:52Z",
+      "updated_at": "2026-11-07T15:10:52Z",
+      "expires_at": "2026-12-07T15:10:50Z",
+      "workflow_run": {
+        "id": 42383368690,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578359852,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODM1OTg1Mg==",
+      "name": "priority-ubuntu-24.04-prospective-merge-service-model-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "size_in_bytes": 8006598,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578359852",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578359852/zip",
+      "expired": false,
+      "digest": "sha256:60dfe6224be8dfef98680b878b8305bfcd3ea763c5dd538157ec98d9647f6d80",
+      "created_at": "2026-11-07T15:04:13Z",
+      "updated_at": "2026-11-07T15:04:13Z",
+      "expires_at": "2026-12-07T15:04:12Z",
+      "workflow_run": {
+        "id": 42383368690,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    },
+    {
+      "id": 13578352816,
+      "node_id": "MDg6QXJ0aWZhY3QxMzU3ODM1MjgxNg==",
+      "name": "integration-push-source-42383368690-1",
+      "size_in_bytes": 1363,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578352816",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578352816/zip",
+      "expired": false,
+      "digest": "sha256:d9771423e4d2dc9878fd71f6779242680eaa4d6ad2e6113695c73beebfcc65d0",
+      "created_at": "2026-11-07T14:49:56Z",
+      "updated_at": "2026-11-07T14:49:56Z",
+      "expires_at": "2026-12-07T14:49:55Z",
+      "workflow_run": {
+        "id": 42383368690,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+      }
+    }
+  ],
+  "all_runs": [
+    {
+      "id": 42383373868,
+      "workflow_id": 351261903,
+      "name": "PR #688",
+      "event": "dynamic",
+      "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 42383368491,
+      "workflow_id": 408972293,
+      "name": "CodeQL exact-source analysis and SARIF retention",
+      "event": "push",
+      "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 42383368504,
+      "workflow_id": 403419146,
+      "name": "PoN W1 work security observations",
+      "event": "push",
+      "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 42383368690,
+      "workflow_id": 378180520,
+      "name": "PoN priority acceptance",
+      "event": "push",
+      "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ]
+}

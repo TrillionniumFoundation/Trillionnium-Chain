@@ -1,0 +1,41 @@
+{
+  "argv": [
+    "cargo",
+    "+1.95.0",
+    "test",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--no-default-features",
+    "--example",
+    "distributed_pipeline",
+    "tests::resume_requires_exact_source_config_identity_and_exclusive_owner",
+    "--",
+    "--exact",
+    "--test-threads=1"
+  ],
+  "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+  "elapsed_seconds": 0.316425,
+  "exact_test_line": "test tests::resume_requires_exact_source_config_identity_and_exclusive_owner ... ok",
+  "exact_test_name": "tests::resume_requires_exact_source_config_identity_and_exclusive_owner",
+  "exception": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-08T13:07:08.406439+00:00",
+  "native_test_counts": {
+    "failed": 0,
+    "filtered_out": 8,
+    "ignored": 0,
+    "measured": 0,
+    "passed": 1
+  },
+  "passed": true,
+  "stage": "distributed-resume-identity",
+  "started_utc": "2026-11-08T13:07:08.090021+00:00",
+  "stderr": "distributed-resume-identity.stderr.log",
+  "stderr_sha256": "4c494b181af92e97dc8ea614062acf131665d53f798802607738162a2ed3e60f",
+  "stdout": "distributed-resume-identity.stdout.log",
+  "stdout_sha256": "b4c2976dc20fab5555d26532f51291d3363d0509df9335ddf5482395995af181"
+}

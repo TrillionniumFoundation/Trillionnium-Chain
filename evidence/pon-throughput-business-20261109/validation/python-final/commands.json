@@ -1,0 +1,163 @@
+[
+  {
+    "name": "whole-block-reader",
+    "argv": [
+      "python3",
+      "formal/throughput-v1/test_whole_block_cost_metrics.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "elapsed_ns": 251264904,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "26628456e6220637daa604a40f25d0d475f4c26f210c0fdc258486e85f37b99c"
+  },
+  {
+    "name": "useful-task-reader",
+    "argv": [
+      "python3",
+      "formal/throughput-v1/test_useful_task_metrics.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "elapsed_ns": 925179056,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "9448e481ab3e04e83b4bdd553690fab56e441972c38fb2ae232e6704b598b5be"
+  },
+  {
+    "name": "cell-reader-retained",
+    "argv": [
+      "python3",
+      "formal/throughput-v1/test_cell_model_metrics.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "elapsed_ns": 2814020393,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "8da1c5bf0571b7ec5eb2ac3ee5fda60aa6599fb198d3e1bb7ea19a76ee547a93"
+  },
+  {
+    "name": "execution-report",
+    "argv": [
+      "python3",
+      "formal/throughput-v1/test_execution_report.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "elapsed_ns": 2396287164,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5dc04da3b6c4361e363136978fea0c5df81b957a9f4dbb920e6247ff7e50a251"
+  },
+  {
+    "name": "phase-reader",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pon_public_v3_phase_read.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "elapsed_ns": 1833833140,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "3a7836d2ec6772b4d78ec3a9175b3bfe36140527b74d687dd45c209b789536de"
+  },
+  {
+    "name": "proof-cpu-reader",
+    "argv": [
+      "python3",
+      "formal/throughput-v1/test_proof_cpu_metrics.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "elapsed_ns": 1311944019,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "8576a2a171e6eba8990c38029247133ac59d12ddc13d50a15278e8233eded3c1"
+  },
+  {
+    "name": "sqlite-reader",
+    "argv": [
+      "python3",
+      "formal/throughput-v1/test_sqlite_syscall_profile.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "elapsed_ns": 788628684,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "797ea4b212e8a140532989ef0d9a20c8bd4fc7c891e66c8783d7d476241ce461"
+  },
+  {
+    "name": "reproduction-controls",
+    "argv": [
+      "python3",
+      "formal/throughput-v1/test_reproduce_reports.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "elapsed_ns": 481161172,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "36c96d4160582b9bb9714a6291ce380ac68a0df052dc7bbc25ba890026236f99"
+  },
+  {
+    "name": "source-integrity-negative-controls",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_ci_source_integrity.py",
+      "-v"
+    ],
+    "exit_code": 1,
+    "elapsed_ns": 65199641707,
+    "stdout_sha256": "f2985e7dadff2868d7c876cc1ce8e7da23b90f6822412c38895f43b4de6edee0",
+    "stderr_sha256": "425b2be3add8f1e01d1349189ffb53230dd6fa4d8561a042df7b7a84f832435a"
+  },
+  {
+    "name": "unchanged-report-reproduction",
+    "argv": [
+      "python3",
+      "formal/throughput-v1/reproduce_reports.py",
+      "--output",
+      "/workspace/scratch/a0d4983b1065/validation/python-final-20261109/reproduction"
+    ],
+    "exit_code": 1,
+    "elapsed_ns": 1398982903,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "15edc4284c80167a645f3f6f38bb113e94d305047077c70b7b9b3766cd9b3a29"
+  },
+  {
+    "name": "pq-source-pins",
+    "argv": [
+      "python3",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "exit_code": 1,
+    "elapsed_ns": 491684835,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e8fcdebd462321ee1f9b6b174b892083fb66c187f97b037de8736e6550756ba2"
+  },
+  {
+    "name": "ci-contract",
+    "argv": [
+      "python3",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "exit_code": 1,
+    "elapsed_ns": 512851613,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "968be83854e3511677c061b36f3239ff26c990d5d2ea0ee555dfc92712e83a24"
+  },
+  {
+    "name": "source-inventory",
+    "argv": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "exit_code": 0,
+    "elapsed_ns": 589431263,
+    "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

@@ -1,0 +1,66 @@
+{
+  "schema": "trnm.cell.c156-concurrent-source-audit.v1",
+  "parents": [
+    "c156c2310346d1367b8f9b1111171f412b5ffce2",
+    "a0a9fa3ae8545735123e0a6612b82e4afb1c8ae8"
+  ],
+  "prior_storage_runtime_tested_commit": "b110ba5bc1f755e5988c1b1f710243677976bcc8",
+  "original_m09_m06_m12_scopes_unchanged": [
+    "trillionnium/crates/trnm-data-availability",
+    "trillionnium/crates/trnm-mvcc-fee",
+    "trillionnium/crates/trnm-service-settlement"
+  ],
+  "node_source_and_tests_exactly_match_latest_parent": "c156c2310346d1367b8f9b1111171f412b5ffce2",
+  "incoming_preserved_paths": [
+    {
+      "path": "evidence/joint-source-closure-20261104/README.md",
+      "incoming_blob": "abc4ab2662a631ada12b296e7ffb1d40398bd3ca",
+      "composed_blob": "abc4ab2662a631ada12b296e7ffb1d40398bd3ca"
+    },
+    {
+      "path": "evidence/joint-source-closure-20261104/measure_snapshot_payload.py",
+      "incoming_blob": "a64af65d81d245947749f8bd0a7f1e784d58ac1f",
+      "composed_blob": "a64af65d81d245947749f8bd0a7f1e784d58ac1f"
+    },
+    {
+      "path": "evidence/joint-source-closure-20261104/summary.json",
+      "incoming_blob": "ee620897aeaed230d562ae07209241f89c34c96d",
+      "composed_blob": "ee620897aeaed230d562ae07209241f89c34c96d"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/REVERSIBLE_COMPONENTS.md",
+      "incoming_blob": "d05f47534804a6240c5f1f920716210f80c2caa1",
+      "composed_blob": "d05f47534804a6240c5f1f920716210f80c2caa1"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/reversible_components.py",
+      "incoming_blob": "721f7efbbf9a7626b7f2971bcd3e8985da79a31c",
+      "composed_blob": "721f7efbbf9a7626b7f2971bcd3e8985da79a31c"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_reversible_components.py",
+      "incoming_blob": "4c6803d96db2eef9751e707aba044ae2f619c96b",
+      "composed_blob": "4c6803d96db2eef9751e707aba044ae2f619c96b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+      "incoming_blob": "f33fecef7776e0f8ee98176a19e5e31d45489a83",
+      "composed_blob": "f33fecef7776e0f8ee98176a19e5e31d45489a83"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+      "incoming_blob": "02673f72fac1d5d919a9604be876d4e93efd7cfe",
+      "composed_blob": "02673f72fac1d5d919a9604be876d4e93efd7cfe"
+    }
+  ],
+  "source_required_paths": 359,
+  "source_pins": 442,
+  "exact_required_and_pin_parent_unions": true,
+  "all_actual_blob_pins_match": true,
+  "qualification_assertions_unchanged": true,
+  "runtime_tests_executed_by_audit": false,
+  "notes": [
+    "The final Node includes the incoming detached-admission changes. Earlier E static/native-command observations retain E as their source.",
+    "The storage implementation itself retains the fully tested C bytes; no later merge is represented as a fresh C runtime execution."
+  ]
+}

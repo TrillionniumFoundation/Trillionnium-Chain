@@ -1,0 +1,156 @@
+{
+  "schema": "native-completion-exact-code-delivery-v1",
+  "code_source": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+  "code_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+  "delivery_identity": "The Git evidence-only child containing this file; not a new test execution source.",
+  "new_test_execution_claim_on_delivery_head": false,
+  "base": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "native": {
+    "actual_distinct_native_passes": 89,
+    "schema": "same-committed-source-native-qualification-v1",
+    "source_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "source_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+    "retained_all_pass": true,
+    "strict_clippy_pass": true,
+    "selected_unique_tests": 91,
+    "ignored_tests": 2,
+    "fixed_host_contract": false,
+    "production_qualification": "HOLD_NO_GO"
+  },
+  "static_gates": [
+    {
+      "label": "source-before",
+      "exit_code": 0,
+      "passed": true,
+      "tests_run": null,
+      "skipped": null,
+      "elapsed_seconds": 6.030636
+    },
+    {
+      "label": "preflight",
+      "exit_code": 0,
+      "passed": true,
+      "tests_run": null,
+      "skipped": null,
+      "elapsed_seconds": 0.115569
+    },
+    {
+      "label": "source-integrity-negative-43",
+      "exit_code": 0,
+      "passed": true,
+      "tests_run": 43,
+      "skipped": 0,
+      "elapsed_seconds": 4.927794
+    },
+    {
+      "label": "pq-research-negative-57",
+      "exit_code": 0,
+      "passed": true,
+      "tests_run": 57,
+      "skipped": 0,
+      "elapsed_seconds": 272.387922
+    },
+    {
+      "label": "repository",
+      "exit_code": 0,
+      "passed": true,
+      "tests_run": null,
+      "skipped": null,
+      "elapsed_seconds": 26.136707
+    },
+    {
+      "label": "distributed-inventory",
+      "exit_code": 0,
+      "passed": true,
+      "tests_run": null,
+      "skipped": null,
+      "elapsed_seconds": 0.16529
+    },
+    {
+      "label": "pq-pinned-source",
+      "exit_code": 0,
+      "passed": true,
+      "tests_run": null,
+      "skipped": null,
+      "elapsed_seconds": 0.86753
+    },
+    {
+      "label": "cargo-version",
+      "exit_code": 0,
+      "passed": true,
+      "tests_run": null,
+      "skipped": null,
+      "elapsed_seconds": 0.064791
+    },
+    {
+      "label": "cargo-metadata-default",
+      "exit_code": 0,
+      "passed": true,
+      "tests_run": null,
+      "skipped": null,
+      "elapsed_seconds": 0.415703
+    },
+    {
+      "label": "cargo-metadata-all-features",
+      "exit_code": 0,
+      "passed": true,
+      "tests_run": null,
+      "skipped": null,
+      "elapsed_seconds": 0.215316
+    },
+    {
+      "label": "cargo-test-dependency-graph",
+      "exit_code": 0,
+      "passed": true,
+      "tests_run": null,
+      "skipped": null,
+      "elapsed_seconds": 0.165275
+    },
+    {
+      "label": "cargo-metadata-fuzz",
+      "exit_code": 0,
+      "passed": true,
+      "tests_run": null,
+      "skipped": null,
+      "elapsed_seconds": 0.366086
+    },
+    {
+      "label": "source-after",
+      "exit_code": 0,
+      "passed": true,
+      "tests_run": null,
+      "skipped": null,
+      "elapsed_seconds": 6.182741
+    }
+  ],
+  "finite_models": {
+    "actual_modules": 9,
+    "actual_tests": 255,
+    "all_finite_suites_pass": true,
+    "summary_sha256": "cdc7808fb5a69caa0c404c27c5832dd5fbc3b3ea355a7109610f4739ed19284a"
+  },
+  "input_summaries": {
+    "r3-native-and-clippy": "ba9f7a28ce909c5be5263c5344afc4d64ce2651d6e615a0297d9d9e7a6ece8aa",
+    "r3-contract-gates": "2b3f32ce5eb9a338ebbc6f82b44c25f5d90326f71a56ba27284094e26a640d46",
+    "r3-def-finite": "cdc7808fb5a69caa0c404c27c5832dd5fbc3b3ea355a7109610f4739ed19284a"
+  },
+  "archive_manifest_sha256": "3d3cc8fa6462f90f4ec9b6f395d8ea3c6dfca77ee021674181986735dd996dea",
+  "same_byte_red_green_test_sha256": "c5f0b9025f5f5b7e69bc766dd5c79403d8b8e4321157c3403d2c68144a92867f",
+  "R1": "Native controls passed; strict Clippy and current inline pin failed.",
+  "R2": "Native and strict Clippy passed; old applicability selector failed.",
+  "invalid_shared_target_observation": "INVALID_CANDIDATE_ARTIFACT_PROVENANCE; not a candidate pass or failure.",
+  "actual_distinct_native_passes": 89,
+  "ignored_native_tests": 2,
+  "production_acceptance": false,
+  "original_fixed_host_contract": false,
+  "ag_joint_acceptance": "HOLD_NO_GO",
+  "related_ac": {
+    "pull_request": 829,
+    "code_source": "0f71bd817164feef370f75ee2ab881227693573d",
+    "evidence_head": "0cdc6ca1878854dd794aad25adfb072bc5fa4422",
+    "owner_query_exit": 2,
+    "owner_query_status": "NO_UPDATE_NEXT_INPUT_OUTPUT_MISMATCH",
+    "independent_source_lineage": true
+  },
+  "delivery_preparation_failures_preserved": true
+}

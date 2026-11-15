@@ -1,0 +1,254 @@
+{
+  "schema": "measured-descriptor-binary-coherence-forensics-v1",
+  "inspected_utc": "2026-11-03T16:26:32.046366+00:00",
+  "manifest_path": "/workspace/scratch/b5a148b09b11/validation/borrowed-descriptor-campaign-v2-manifest.json",
+  "manifest_sha256": "311ed32be4f8bb74acda3b87a4252e7d984a2bc2d8caa8591c015894b6382946",
+  "tools": {
+    "nm": "GNU nm (GNU Binutils for Ubuntu) 2.42",
+    "objdump": "GNU objdump (GNU Binutils for Ubuntu) 2.42",
+    "readelf": "GNU readelf (GNU Binutils for Ubuntu) 2.42"
+  },
+  "commands": [
+    "nm -n --defined-only <binary>",
+    "nm -n -C --defined-only <binary>",
+    "readelf -rW <binary>",
+    "objdump -d --disassemble=<exact symbol> <binary>",
+    "Read ELF64 PT_LOAD bytes for the actual account: literal and hash complete immutable binaries before/after inspection."
+  ],
+  "binary_results": [
+    {
+      "name": "borrowed_non_account_cost",
+      "path": "/workspace/scratch/b5a148b09b11/borrowed-partition-target/debug/examples/borrowed_non_account_cost",
+      "bytes": 51567920,
+      "sha256": "c06237568417674526a369d8d48b4b6eaca5ffbb2aa18abfc152cf3c7501712a",
+      "matches_measured_manifest": true,
+      "hash_unchanged_by_inspection": true,
+      "constructor_symbol": "_ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState3new17h182a277efa579dc3E",
+      "constructor_address": "0x75100",
+      "constructor_count": 1,
+      "constructor_disassembly": [
+        "0000000000075100 <_ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState3new17h182a277efa579dc3E>:",
+        "   75100:\t41 56                \tpush   %r14",
+        "   75102:\t53                   \tpush   %rbx",
+        "   75103:\t48 83 ec 48          \tsub    $0x48,%rsp",
+        "   75107:\t48 89 fb             \tmov    %rdi,%rbx",
+        "   7510a:\t49 89 e6             \tmov    %rsp,%r14",
+        "   7510d:\t4c 89 f7             \tmov    %r14,%rdi",
+        "   75110:\tff 15 82 67 06 00    \tcall   *0x66782(%rip)        # db898 <_DYNAMIC+0x530>",
+        "   75116:\t48 89 df             \tmov    %rbx,%rdi",
+        "   75119:\t4c 89 f6             \tmov    %r14,%rsi",
+        "   7511c:\tff 15 86 69 06 00    \tcall   *0x66986(%rip)        # dbaa8 <_DYNAMIC+0x740>",
+        "   75122:\t48 89 d8             \tmov    %rbx,%rax",
+        "   75125:\t48 83 c4 48          \tadd    $0x48,%rsp",
+        "   75129:\t5b                   \tpop    %rbx",
+        "   7512a:\t41 5e                \tpop    %r14",
+        "   7512c:\tc3                   \tret"
+      ],
+      "constructor_resolved_calls": [
+        {
+          "instruction": "75110:\tff 15 82 67 06 00    \tcall   *0x66782(%rip)        # db898 <_DYNAMIC+0x530>",
+          "got_slot": "0xdb898",
+          "target": "0x8f370",
+          "symbol": "_ZN5alloc11collections5btree3map25BTreeMap$LT$K$C$V$C$A$GT$4iter17h98b941388c9280c0E",
+          "demangled": "alloc::collections::btree::map::BTreeMap<K,V,A>::iter"
+        },
+        {
+          "instruction": "7511c:\tff 15 86 69 06 00    \tcall   *0x66986(%rip)        # dbaa8 <_DYNAMIC+0x740>",
+          "got_slot": "0xdbaa8",
+          "target": "0x702c0",
+          "symbol": "_ZN111_$LT$alloc..vec..Vec$LT$T$GT$$u20$as$u20$alloc..vec..spec_from_iter_nested..SpecFromIterNested$LT$T$C$I$GT$$GT$9from_iter17h3cb8c3c5b5957e9cE",
+          "demangled": "<alloc::vec::Vec<T> as alloc::vec::spec_from_iter_nested::SpecFromIterNested<T,I>>::from_iter"
+        }
+      ],
+      "collection_symbol": "_ZN111_$LT$alloc..vec..Vec$LT$T$GT$$u20$as$u20$alloc..vec..spec_from_iter_nested..SpecFromIterNested$LT$T$C$I$GT$$GT$9from_iter17h3cb8c3c5b5957e9cE",
+      "collection_disassembly_sha256": "bc1ee7824d62ddec85e40a9ae4a95ff87619823aa69622284c1a1bc90cb84bac",
+      "collection_reference_targets": [
+        "<alloc::collections::btree::map::Iter<K,V> as core::iter::traits::iterator::Iterator>::next",
+        "<alloc::collections::btree::map::Iter<K,V> as core::iter::traits::iterator::Iterator>::size_hint",
+        "alloc::raw_vec::RawVecInner<A>::deallocate",
+        "alloc::raw_vec::RawVecInner<A>::with_capacity_in",
+        "alloc::vec::Vec<T,A>::extend_desugared",
+        "anon.fec6dc92c19d8d94ccb05cb3625b4834.5.llvm.5235838808821689040",
+        "core::cmp::Ord::max",
+        "core::panicking::panic_in_cleanup",
+        "core::panicking::panic_nounwind_fmt",
+        "core::str::<impl str>::starts_with"
+      ],
+      "literal_prefix_in_binary": [
+        {
+          "virtual_address": "0x3ce78",
+          "literal_hex": "6163636f756e743a",
+          "literal_ascii": "account:",
+          "instruction": "702dc:\t4c 8d 2d 95 cb fc ff \tlea    -0x3346b(%rip),%r13        # 3ce78 <anon.ce0c222e3ba0815eed92469e476a1360.26.llvm.16984109108871850507>"
+        }
+      ],
+      "collection_descriptor_element_size_bytes": 16,
+      "collection_descriptor_alignment_bytes": 8,
+      "collection_pointer_store_instructions": [
+        "70354:\t4c 89 22             \tmov    %r12,(%rdx)",
+        "70357:\t4c 89 7a 08          \tmov    %r15,0x8(%rdx)"
+      ],
+      "root_method_symbol": "_ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState20root_with_arithmetic17h6a6f82ccae069b6dE",
+      "root_method_disassembly": [
+        "00000000000750e0 <_ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState20root_with_arithmetic17h6a6f82ccae069b6dE>:",
+        "   750e0:\t49 89 d0             \tmov    %rdx,%r8",
+        "   750e3:\t48 8b 46 08          \tmov    0x8(%rsi),%rax",
+        "   750e7:\t48 8b 4e 10          \tmov    0x10(%rsi),%rcx",
+        "   750eb:\t48 89 ca             \tmov    %rcx,%rdx",
+        "   750ee:\t48 c1 e2 04          \tshl    $0x4,%rdx",
+        "   750f2:\t48 01 c2             \tadd    %rax,%rdx",
+        "   750f5:\t48 89 c6             \tmov    %rax,%rsi",
+        "   750f8:\te9 c3 bc ff ff       \tjmp    70dc0 <_ZN13trnm_mvcc_fee12pon_executor25arithmetic_root_from_rows17hc94890df208ce6a1E>"
+      ],
+      "root_reads_vector_pointer_offset": 8,
+      "root_reads_vector_length_offset": 16,
+      "root_descriptor_stride_bytes": 16,
+      "borrowed_arm_symbol": "_ZN25borrowed_non_account_cost7support3Arm9calculate17h3f027101311aa9e2E",
+      "borrowed_arm_first_three_resolved_calls": [
+        {
+          "instruction": "64cb0:\tff 15 d2 6b 07 00    \tcall   *0x76bd2(%rip)        # db888 <_DYNAMIC+0x520>",
+          "got_slot": "0xdb888",
+          "target": "0x75100",
+          "symbol": "_ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState3new17h182a277efa579dc3E",
+          "demangled": "trnm_mvcc_fee::pon_executor::BorrowedNonAccountState::new"
+        },
+        {
+          "instruction": "64cbf:\tff 15 cb 6b 07 00    \tcall   *0x76bcb(%rip)        # db890 <_DYNAMIC+0x528>",
+          "got_slot": "0xdb890",
+          "target": "0x750e0",
+          "symbol": "_ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState20root_with_arithmetic17h6a6f82ccae069b6dE",
+          "demangled": "trnm_mvcc_fee::pon_executor::BorrowedNonAccountState::root_with_arithmetic"
+        },
+        {
+          "instruction": "64cca:\tff 15 70 6b 07 00    \tcall   *0x76b70(%rip)        # db840 <_DYNAMIC+0x4d8>",
+          "got_slot": "0xdb840",
+          "target": "0x71160",
+          "symbol": "_ZN4core3ptr108drop_in_place$LT$alloc..vec..Vec$LT$$LP$$RF$alloc..string..String$C$$RF$serde_json..value..Value$RP$$GT$$GT$17h62827c1fcff62609E",
+          "demangled": "core::ptr::drop_in_place<alloc::vec::Vec<(&alloc::string::String,&serde_json::value::Value)>>"
+        }
+      ],
+      "conclusion": "Measured borrowed arm constructs and consumes Vec descriptors, not the old borrowed State plus count filter. Constructor initializes one BTreeMap iterator; collection advances it under the actual account: prefix filter; subsequent root work walks contiguous 16-byte descriptors and the arm drops Vec reference pairs.",
+      "scope": "Static machine-code inspection only; no binary execution or new performance observation."
+    },
+    {
+      "name": "borrowed_non_account_allocations",
+      "path": "/workspace/scratch/b5a148b09b11/borrowed-partition-target/debug/examples/borrowed_non_account_allocations",
+      "bytes": 51230176,
+      "sha256": "556238b395b74195f61d094dddb7fe9f2cac0b0e985819d4944c565ee25f7ca8",
+      "matches_measured_manifest": true,
+      "hash_unchanged_by_inspection": true,
+      "constructor_symbol": "_ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState3new17h182a277efa579dc3E",
+      "constructor_address": "0x6d7a0",
+      "constructor_count": 1,
+      "constructor_disassembly": [
+        "000000000006d7a0 <_ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState3new17h182a277efa579dc3E>:",
+        "   6d7a0:\t41 56                \tpush   %r14",
+        "   6d7a2:\t53                   \tpush   %rbx",
+        "   6d7a3:\t48 83 ec 48          \tsub    $0x48,%rsp",
+        "   6d7a7:\t48 89 fb             \tmov    %rdi,%rbx",
+        "   6d7aa:\t49 89 e6             \tmov    %rsp,%r14",
+        "   6d7ad:\t4c 89 f7             \tmov    %r14,%rdi",
+        "   6d7b0:\tff 15 6a 4a 06 00    \tcall   *0x64a6a(%rip)        # d2220 <_DYNAMIC+0x2d8>",
+        "   6d7b6:\t48 89 df             \tmov    %rbx,%rdi",
+        "   6d7b9:\t4c 89 f6             \tmov    %r14,%rsi",
+        "   6d7bc:\tff 15 c6 4e 06 00    \tcall   *0x64ec6(%rip)        # d2688 <_DYNAMIC+0x740>",
+        "   6d7c2:\t48 89 d8             \tmov    %rbx,%rax",
+        "   6d7c5:\t48 83 c4 48          \tadd    $0x48,%rsp",
+        "   6d7c9:\t5b                   \tpop    %rbx",
+        "   6d7ca:\t41 5e                \tpop    %r14",
+        "   6d7cc:\tc3                   \tret"
+      ],
+      "constructor_resolved_calls": [
+        {
+          "instruction": "6d7b0:\tff 15 6a 4a 06 00    \tcall   *0x64a6a(%rip)        # d2220 <_DYNAMIC+0x2d8>",
+          "got_slot": "0xd2220",
+          "target": "0x86c10",
+          "symbol": "_ZN5alloc11collections5btree3map25BTreeMap$LT$K$C$V$C$A$GT$4iter17h98b941388c9280c0E",
+          "demangled": "alloc::collections::btree::map::BTreeMap<K,V,A>::iter"
+        },
+        {
+          "instruction": "6d7bc:\tff 15 c6 4e 06 00    \tcall   *0x64ec6(%rip)        # d2688 <_DYNAMIC+0x740>",
+          "got_slot": "0xd2688",
+          "target": "0x68960",
+          "symbol": "_ZN111_$LT$alloc..vec..Vec$LT$T$GT$$u20$as$u20$alloc..vec..spec_from_iter_nested..SpecFromIterNested$LT$T$C$I$GT$$GT$9from_iter17h3cb8c3c5b5957e9cE",
+          "demangled": "<alloc::vec::Vec<T> as alloc::vec::spec_from_iter_nested::SpecFromIterNested<T,I>>::from_iter"
+        }
+      ],
+      "collection_symbol": "_ZN111_$LT$alloc..vec..Vec$LT$T$GT$$u20$as$u20$alloc..vec..spec_from_iter_nested..SpecFromIterNested$LT$T$C$I$GT$$GT$9from_iter17h3cb8c3c5b5957e9cE",
+      "collection_disassembly_sha256": "1fd8e00343c1db46d53f491e213a4a6629d48a8d22ec7ad09073c601065368c7",
+      "collection_reference_targets": [
+        "<alloc::collections::btree::map::Iter<K,V> as core::iter::traits::iterator::Iterator>::next",
+        "<alloc::collections::btree::map::Iter<K,V> as core::iter::traits::iterator::Iterator>::size_hint",
+        "alloc::raw_vec::RawVecInner<A>::deallocate",
+        "alloc::raw_vec::RawVecInner<A>::with_capacity_in",
+        "alloc::vec::Vec<T,A>::extend_desugared",
+        "anon.def801016eef00b10b854a22ce2f48a2.11.llvm.4279760466259208165",
+        "core::cmp::Ord::max",
+        "core::panicking::panic_in_cleanup",
+        "core::panicking::panic_nounwind_fmt",
+        "core::str::<impl str>::starts_with"
+      ],
+      "literal_prefix_in_binary": [
+        {
+          "virtual_address": "0xc990",
+          "literal_hex": "6163636f756e743a",
+          "literal_ascii": "account:",
+          "instruction": "6897c:\t4c 8d 2d 0d 40 fa ff \tlea    -0x5bff3(%rip),%r13        # c990 <anon.432e4065b7c72e78772796fea6cca46e.0.llvm.768191582796241382>"
+        }
+      ],
+      "collection_descriptor_element_size_bytes": 16,
+      "collection_descriptor_alignment_bytes": 8,
+      "collection_pointer_store_instructions": [
+        "689f4:\t4c 89 22             \tmov    %r12,(%rdx)",
+        "689f7:\t4c 89 7a 08          \tmov    %r15,0x8(%rdx)"
+      ],
+      "root_method_symbol": "_ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState20root_with_arithmetic17h6a6f82ccae069b6dE",
+      "root_method_disassembly": [
+        "000000000006d780 <_ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState20root_with_arithmetic17h6a6f82ccae069b6dE>:",
+        "   6d780:\t49 89 d0             \tmov    %rdx,%r8",
+        "   6d783:\t48 8b 46 08          \tmov    0x8(%rsi),%rax",
+        "   6d787:\t48 8b 4e 10          \tmov    0x10(%rsi),%rcx",
+        "   6d78b:\t48 89 ca             \tmov    %rcx,%rdx",
+        "   6d78e:\t48 c1 e2 04          \tshl    $0x4,%rdx",
+        "   6d792:\t48 01 c2             \tadd    %rax,%rdx",
+        "   6d795:\t48 89 c6             \tmov    %rax,%rsi",
+        "   6d798:\te9 c3 bc ff ff       \tjmp    69460 <_ZN13trnm_mvcc_fee12pon_executor25arithmetic_root_from_rows17hc94890df208ce6a1E>"
+      ],
+      "root_reads_vector_pointer_offset": 8,
+      "root_reads_vector_length_offset": 16,
+      "root_descriptor_stride_bytes": 16,
+      "borrowed_arm_symbol": "_ZN32borrowed_non_account_allocations7support3Arm9calculate17h5df8d4c1ee538cceE",
+      "borrowed_arm_first_three_resolved_calls": [
+        {
+          "instruction": "5c270:\tff 15 d2 61 07 00    \tcall   *0x761d2(%rip)        # d2448 <_DYNAMIC+0x500>",
+          "got_slot": "0xd2448",
+          "target": "0x6d7a0",
+          "symbol": "_ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState3new17h182a277efa579dc3E",
+          "demangled": "trnm_mvcc_fee::pon_executor::BorrowedNonAccountState::new"
+        },
+        {
+          "instruction": "5c27f:\tff 15 cb 61 07 00    \tcall   *0x761cb(%rip)        # d2450 <_DYNAMIC+0x508>",
+          "got_slot": "0xd2450",
+          "target": "0x6d780",
+          "symbol": "_ZN13trnm_mvcc_fee12pon_executor23BorrowedNonAccountState20root_with_arithmetic17h6a6f82ccae069b6dE",
+          "demangled": "trnm_mvcc_fee::pon_executor::BorrowedNonAccountState::root_with_arithmetic"
+        },
+        {
+          "instruction": "5c28a:\tff 15 50 60 07 00    \tcall   *0x76050(%rip)        # d22e0 <_DYNAMIC+0x398>",
+          "got_slot": "0xd22e0",
+          "target": "0x69800",
+          "symbol": "_ZN4core3ptr108drop_in_place$LT$alloc..vec..Vec$LT$$LP$$RF$alloc..string..String$C$$RF$serde_json..value..Value$RP$$GT$$GT$17h62827c1fcff62609E",
+          "demangled": "core::ptr::drop_in_place<alloc::vec::Vec<(&alloc::string::String,&serde_json::value::Value)>>"
+        }
+      ],
+      "conclusion": "Measured borrowed arm constructs and consumes Vec descriptors, not the old borrowed State plus count filter. Constructor initializes one BTreeMap iterator; collection advances it under the actual account: prefix filter; subsequent root work walks contiguous 16-byte descriptors and the arm drops Vec reference pairs.",
+      "scope": "Static machine-code inspection only; no binary execution or new performance observation."
+    }
+  ],
+  "both_measured_binaries_have_descriptor_constructor_and_callsite": true,
+  "unrelated_stale_root_archive_note": "The failed root-target library previously exported a different constructor h876225e3adb642d9 returning State pointer plus count, without Vec/get. Neither measured binary calls that old constructor.",
+  "performance_decision_changed": false,
+  "performance_decision": "HOLD",
+  "timing_rerun": false,
+  "sources_or_binaries_modified": false
+}

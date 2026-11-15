@@ -1,0 +1,26 @@
+{
+  "artifact_count": 0,
+  "base_head": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+  "command": [
+    "bash",
+    "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+    "cargo",
+    "test",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--all-features",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "exit_code": 101,
+  "finished_at": "2026-11-04T07:31:09.374038+00:00",
+  "source_manifest_sha256": "e11653cd7fb5633c85bf9d6e4cb4f478e094fcbad0aad81d8f93b573f2a92950",
+  "source_unchanged": true,
+  "started_at": "2026-11-04T07:30:09.230473+00:00",
+  "stderr_sha256": "f969d610fc223ffdabc620a34cb83bb3ccf4db24804a8d0aba408f64ea005b27",
+  "stdout_sha256": "aa290c5bf4a978cd83f54196d3bcb86c25436d6ea66e085bdc28e017b80cbab0"
+}

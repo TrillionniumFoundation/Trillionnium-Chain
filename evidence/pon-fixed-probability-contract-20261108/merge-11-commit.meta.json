@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "git",
+    "commit",
+    "-m",
+    "Merge retained MU1 and joint DAA research into fixed-probability continuation",
+    "-m",
+    "Preserve integration 8d538974 and research b16bae28. Resolve exact pins for the combined owner-observation and replay-prefix implementation. Imported raw evidence is preserved byte for byte, including whitespace. This merge does not activate any profile or certify old observations on the combined source."
+  ],
+  "exit": 0,
+  "duration_seconds": 0.22564380196854472,
+  "cwd": "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38",
+  "source_head": "ae90d186b79a9269bdb7d9ac8dfc0bcf7e5bfe0c"
+}

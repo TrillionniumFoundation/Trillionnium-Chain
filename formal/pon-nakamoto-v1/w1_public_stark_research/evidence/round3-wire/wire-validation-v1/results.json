@@ -1,0 +1,64 @@
+[
+  {
+    "label": "format",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 0.12504707998596132
+  },
+  {
+    "label": "metadata",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "metadata",
+      "--manifest-path",
+      "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 0.19232868892140687
+  },
+  {
+    "label": "wire-tests",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--manifest-path",
+      "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+      "--release",
+      "--locked",
+      "--offline",
+      "--test",
+      "wire_admission",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 106.24111048597842
+  },
+  {
+    "label": "build",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "build",
+      "--manifest-path",
+      "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+      "--release",
+      "--locked",
+      "--offline"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 0.23043049313127995
+  }
+]

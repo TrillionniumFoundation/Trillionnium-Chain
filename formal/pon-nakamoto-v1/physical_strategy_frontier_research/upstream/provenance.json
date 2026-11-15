@@ -1,0 +1,35 @@
+{
+  "schema": "selected-composition-reconstruction-provenance-v2",
+  "reconstruction": true,
+  "prior_round2_files_not_recovered": true,
+  "historical_round2_hashes_not_applied": true,
+  "source_files": {
+    "selected_event_reference.py": {
+      "recovered_source": "/workspace/scratch/89f4ddbb3fd2/recovery/round1/PoN_W1_Continuation_2026-11-07/native_selected/reference/selected_event_reference.py",
+      "sha256": "39575219c2adf0cf73bc58f58acf8ede934d073cbb0a02fc552d9dd4f5963357",
+      "bytes": 7334
+    },
+    "native_lib.rs": {
+      "recovered_source": "/workspace/scratch/89f4ddbb3fd2/recovery/round1/PoN_W1_Continuation_2026-11-07/native_selected/src/lib.rs",
+      "sha256": "4cf25237ed76dcd9bc0a10f4d4e3875f1ed2d6af32a7af1dbae83ee64f840f07",
+      "bytes": 21392
+    },
+    "native_main.rs": {
+      "recovered_source": "/workspace/scratch/89f4ddbb3fd2/recovery/round1/PoN_W1_Continuation_2026-11-07/native_selected/src/main.rs",
+      "sha256": "3f14876f7f706149823fd686d868c9919e4ed571365a466fa6357c6fc6561431",
+      "bytes": 10830
+    }
+  },
+  "recovered_round1_work_bound_path": "/workspace/scratch/89f4ddbb3fd2/recovery/round1/PoN_W1_Continuation_2026-11-07/work_bound",
+  "recovered_round1_work_bound_before": {
+    "SELECTED_EVENT_WORK_BOUND.md": "cee13967d9cf2fdd2fef97a1fa94780614a9e9759ab03e2987b14a979bcb8d0e",
+    "SHA256SUMS": "f2f25ea9535f32847aa4af42f145323ef7cf3feefac18f2cb05610f528d3ded0",
+    "campaign-summary.json": "55427fb296f45f9ac52895edcf02122ba3383af1e09897eede7a1d7b73282411",
+    "native_review.md": "2df5c4684f02f7169b331fd261bd995dc7f720253a9d07435743b0576d794cc7",
+    "selected_event_cost.py": "8f89b0e60980673061c183b7899ba0bd79f50c305d60317ddfbeeb370abafec0",
+    "selected_event_cost_results.json": "f977d2b21db4c67c660e2aa09b001d9f71865b270b9dbda9ac543061342a0e6b",
+    "selected_event_reference.py": "39575219c2adf0cf73bc58f58acf8ede934d073cbb0a02fc552d9dd4f5963357",
+    "test-results.log": "f6496c65c622af4769635e7e74ff114e750f68a899118ae242abba9f307b7e6a",
+    "test_selected_event_cost.py": "1aaab5af91cc5d4b8ca2dbfd0736c07ee13f51e8a45524f20c449f4832cb2ca1"
+  }
+}

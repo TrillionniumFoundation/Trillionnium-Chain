@@ -1,0 +1,462 @@
+{
+  "schema": "pon-service-retained-sqlite-phase-observations-v1",
+  "observed_utc": "2026-11-01T17:54:10.214Z",
+  "database_read_scope": "Exact ZIP member bytes copied to temporary files and opened with SQLite mode=ro&immutable=1 plus PRAGMA query_only=ON; only active/blocks SELECTs; temporary copies removed.",
+  "active_row_columns": [
+    "tip_hex",
+    "height",
+    "generation",
+    "state_slot"
+  ],
+  "stored_blocks_row_columns": [
+    "total_blocks_including_genesis",
+    "max_stored_height",
+    "non_genesis_blocks"
+  ],
+  "phases": [
+    {
+      "artifact": 13093703941,
+      "scenario": "original",
+      "phase": "baseline",
+      "finite_business_target_met": true,
+      "client_confirmation_latency_ns": 1893324759,
+      "client_confirmed_transactions": 1,
+      "client_confirmed_before_original_window_end": true,
+      "verification_errors": [],
+      "confirmation": {
+        "active_generation": 1,
+        "confirmed": true,
+        "depth": 6,
+        "execution_authority": false,
+        "finalized": false,
+        "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+        "included_block": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+        "included_height": 1,
+        "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+        "observed_height": 7,
+        "observed_now": 1793554744,
+        "observed_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+        "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+        "policy": "installed-depth-and-required-work",
+        "reorged": false,
+        "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+        "transaction": "658a6d0d930debbbe5db7ec755727a3b69bd0b173c4e4554c306a8f9d59df9ad",
+        "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c"
+      },
+      "successful_honest_submissions": 7,
+      "history_pages": 7,
+      "dbs": {
+        "independent-client": {
+          "active": [
+            [
+              "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              7,
+              1,
+              1
+            ]
+          ],
+          "stored_blocks": [
+            8,
+            7,
+            7
+          ]
+        },
+        "receiver": {
+          "active": [
+            [
+              "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              7,
+              7,
+              0
+            ]
+          ],
+          "stored_blocks": [
+            8,
+            7,
+            7
+          ]
+        }
+      }
+    },
+    {
+      "artifact": 13093703941,
+      "scenario": "original",
+      "phase": "pressure",
+      "finite_business_target_met": false,
+      "client_confirmation_latency_ns": null,
+      "client_confirmed_transactions": 0,
+      "client_confirmed_before_original_window_end": false,
+      "verification_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "confirmation": null,
+      "successful_honest_submissions": 7,
+      "history_pages": 3,
+      "dbs": {
+        "independent-client": {
+          "active": [
+            [
+              "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              0,
+              0,
+              0
+            ]
+          ],
+          "stored_blocks": [
+            3,
+            2,
+            2
+          ]
+        },
+        "receiver": {
+          "active": [
+            [
+              "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              7,
+              7,
+              0
+            ]
+          ],
+          "stored_blocks": [
+            8,
+            7,
+            7
+          ]
+        }
+      }
+    },
+    {
+      "artifact": 13093703941,
+      "scenario": "fresh",
+      "phase": "baseline",
+      "finite_business_target_met": true,
+      "client_confirmation_latency_ns": 1819485570,
+      "client_confirmed_transactions": 1,
+      "client_confirmed_before_original_window_end": true,
+      "verification_errors": [],
+      "confirmation": {
+        "active_generation": 1,
+        "confirmed": true,
+        "depth": 6,
+        "execution_authority": false,
+        "finalized": false,
+        "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+        "included_block": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+        "included_height": 1,
+        "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+        "observed_height": 7,
+        "observed_now": 1793554759,
+        "observed_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+        "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+        "policy": "installed-depth-and-required-work",
+        "reorged": false,
+        "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+        "transaction": "658a6d0d930debbbe5db7ec755727a3b69bd0b173c4e4554c306a8f9d59df9ad",
+        "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c"
+      },
+      "successful_honest_submissions": 7,
+      "history_pages": 7,
+      "dbs": {
+        "independent-client": {
+          "active": [
+            [
+              "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              7,
+              1,
+              1
+            ]
+          ],
+          "stored_blocks": [
+            8,
+            7,
+            7
+          ]
+        },
+        "receiver": {
+          "active": [
+            [
+              "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              7,
+              7,
+              0
+            ]
+          ],
+          "stored_blocks": [
+            8,
+            7,
+            7
+          ]
+        }
+      }
+    },
+    {
+      "artifact": 13093703941,
+      "scenario": "fresh",
+      "phase": "pressure",
+      "finite_business_target_met": false,
+      "client_confirmation_latency_ns": null,
+      "client_confirmed_transactions": 0,
+      "client_confirmed_before_original_window_end": false,
+      "verification_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "confirmation": null,
+      "successful_honest_submissions": 7,
+      "history_pages": 2,
+      "dbs": {
+        "independent-client": {
+          "active": [
+            [
+              "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              0,
+              0,
+              0
+            ]
+          ],
+          "stored_blocks": [
+            2,
+            1,
+            1
+          ]
+        },
+        "receiver": {
+          "active": [
+            [
+              "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              7,
+              7,
+              0
+            ]
+          ],
+          "stored_blocks": [
+            8,
+            7,
+            7
+          ]
+        }
+      }
+    },
+    {
+      "artifact": 13093384540,
+      "scenario": "original",
+      "phase": "baseline",
+      "finite_business_target_met": true,
+      "client_confirmation_latency_ns": 1985205149,
+      "client_confirmed_transactions": 1,
+      "client_confirmed_before_original_window_end": true,
+      "verification_errors": [],
+      "confirmation": {
+        "active_generation": 1,
+        "confirmed": true,
+        "depth": 6,
+        "execution_authority": false,
+        "finalized": false,
+        "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+        "included_block": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+        "included_height": 1,
+        "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+        "observed_height": 7,
+        "observed_now": 1793554749,
+        "observed_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+        "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+        "policy": "installed-depth-and-required-work",
+        "reorged": false,
+        "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+        "transaction": "658a6d0d930debbbe5db7ec755727a3b69bd0b173c4e4554c306a8f9d59df9ad",
+        "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c"
+      },
+      "successful_honest_submissions": 7,
+      "history_pages": 7,
+      "dbs": {
+        "independent-client": {
+          "active": [
+            [
+              "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              7,
+              1,
+              1
+            ]
+          ],
+          "stored_blocks": [
+            8,
+            7,
+            7
+          ]
+        },
+        "receiver": {
+          "active": [
+            [
+              "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              7,
+              7,
+              0
+            ]
+          ],
+          "stored_blocks": [
+            8,
+            7,
+            7
+          ]
+        }
+      }
+    },
+    {
+      "artifact": 13093384540,
+      "scenario": "original",
+      "phase": "pressure",
+      "finite_business_target_met": false,
+      "client_confirmation_latency_ns": null,
+      "client_confirmed_transactions": 0,
+      "client_confirmed_before_original_window_end": false,
+      "verification_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "confirmation": null,
+      "successful_honest_submissions": 7,
+      "history_pages": 2,
+      "dbs": {
+        "independent-client": {
+          "active": [
+            [
+              "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              0,
+              0,
+              0
+            ]
+          ],
+          "stored_blocks": [
+            2,
+            1,
+            1
+          ]
+        },
+        "receiver": {
+          "active": [
+            [
+              "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              7,
+              7,
+              0
+            ]
+          ],
+          "stored_blocks": [
+            8,
+            7,
+            7
+          ]
+        }
+      }
+    },
+    {
+      "artifact": 13093384540,
+      "scenario": "fresh",
+      "phase": "baseline",
+      "finite_business_target_met": true,
+      "client_confirmation_latency_ns": 1983003985,
+      "client_confirmed_transactions": 1,
+      "client_confirmed_before_original_window_end": true,
+      "verification_errors": [],
+      "confirmation": {
+        "active_generation": 1,
+        "confirmed": true,
+        "depth": 6,
+        "execution_authority": false,
+        "finalized": false,
+        "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+        "included_block": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+        "included_height": 1,
+        "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+        "observed_height": 7,
+        "observed_now": 1793554764,
+        "observed_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+        "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+        "policy": "installed-depth-and-required-work",
+        "reorged": false,
+        "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+        "transaction": "658a6d0d930debbbe5db7ec755727a3b69bd0b173c4e4554c306a8f9d59df9ad",
+        "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c"
+      },
+      "successful_honest_submissions": 7,
+      "history_pages": 7,
+      "dbs": {
+        "independent-client": {
+          "active": [
+            [
+              "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              7,
+              1,
+              1
+            ]
+          ],
+          "stored_blocks": [
+            8,
+            7,
+            7
+          ]
+        },
+        "receiver": {
+          "active": [
+            [
+              "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              7,
+              7,
+              0
+            ]
+          ],
+          "stored_blocks": [
+            8,
+            7,
+            7
+          ]
+        }
+      }
+    },
+    {
+      "artifact": 13093384540,
+      "scenario": "fresh",
+      "phase": "pressure",
+      "finite_business_target_met": false,
+      "client_confirmation_latency_ns": null,
+      "client_confirmed_transactions": 0,
+      "client_confirmed_before_original_window_end": false,
+      "verification_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "confirmation": null,
+      "successful_honest_submissions": 7,
+      "history_pages": 2,
+      "dbs": {
+        "independent-client": {
+          "active": [
+            [
+              "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              0,
+              0,
+              0
+            ]
+          ],
+          "stored_blocks": [
+            2,
+            1,
+            1
+          ]
+        },
+        "receiver": {
+          "active": [
+            [
+              "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              7,
+              7,
+              0
+            ]
+          ],
+          "stored_blocks": [
+            8,
+            7,
+            7
+          ]
+        }
+      }
+    }
+  ]
+}

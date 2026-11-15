@@ -1,0 +1,23 @@
+{
+  "base": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "source_manifest_file_count": 1107,
+  "source_before_equals_after": true,
+  "unchanged_files_verified_against_base": 1097,
+  "patched_files_sha256_verified_against_measured_manifest": 10,
+  "all_source_manifest_files_reconstructable_by_base_plus_descriptor_patch": true,
+  "patch_checks": [
+    {
+      "variant": "filtered_v1",
+      "git_apply_check_cached_exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "variant": "descriptor_v2",
+      "git_apply_check_cached_exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "scope": "Replay patch and recorded-source verification only; no new tests, builds or timing campaigns."
+}

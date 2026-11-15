@@ -1,0 +1,11 @@
+{
+  "source_head": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "source_tree": "f77b6240b845425e0fc75e88abb09e6cfa3a71c0",
+  "source_clean": true,
+  "modules": 9,
+  "actual_tests": 255,
+  "all_pass": true,
+  "scope": "Existing finite-model tests only; no empirical cost bounds or production qualification",
+  "concurrent_load": "Fresh isolated baseline Cargo compilation; original fixed-host pressure contract not exercised",
+  "production_qualification": "HOLD_NO_GO"
+}

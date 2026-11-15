@@ -1,0 +1,19 @@
+{
+  "id": 13741424505,
+  "name": "w1-fresh-service-head-da1374a200022bc14dc2bd325cc9ba29dbcd24ab-1",
+  "size_in_bytes": 5823146,
+  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13741424505",
+  "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13741424505/zip",
+  "expired": false,
+  "created_at": "2026-11-10T06:56:09Z",
+  "expires_at": "2026-12-10T06:56:07Z",
+  "updated_at": "2026-11-10T06:56:09Z",
+  "digest": "sha256:50d19f5690bbac21e5a7a6c8e9d6578f26acb57437e77dfde9ba64a231e966de",
+  "workflow_run": {
+    "id": 42771007925,
+    "repository_id": 1323087357,
+    "head_repository_id": 1323087357,
+    "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+    "head_sha": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab"
+  }
+}

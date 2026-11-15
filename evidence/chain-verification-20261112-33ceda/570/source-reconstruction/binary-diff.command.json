@@ -1,0 +1,21 @@
+{
+  "cwd": "/home/qq/chain-verification-counterfactual-v4-33ceda-20261112",
+  "argv": [
+    "git",
+    "--no-lazy-fetch",
+    "--no-replace-objects",
+    "diff",
+    "--binary",
+    "--full-index",
+    "--no-ext-diff",
+    "--no-textconv",
+    "--no-color",
+    "--src-prefix=a/",
+    "--dst-prefix=b/",
+    "97aa8539aad3ee7f497136c6d2f64e420605c1fa",
+    "570801af9995a65f3f6c12a339bbca935e32282b",
+    "--"
+  ],
+  "stdout": "counterfactual-from-97aa.patch",
+  "stdin_sha256": null
+}

@@ -1,0 +1,5131 @@
+{
+  "schema": "pon-native-execution-model-evidence-v1",
+  "base_commit": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+  "source_bindings": {
+    "formal/pon-nakamoto-v1/native_execution_certificate.py": "8ee16a5e0378ba97a5a1bd45085f5b94aff2005d0a67cae7318342f556183033",
+    "formal/pon-nakamoto-v1/test_native_execution_certificate.py": "8de10de99f4733b9837f9ab591c092e518bda90c2ab0621008f72a9677c2cc81",
+    "formal/pon-nakamoto-v1/NATIVE_EXECUTION_CERTIFICATE_V1.md": "511fd7050202f051f1285f574216860f28ed2d6f79b30a03db7976904187800d",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "4ee068a792c6750d82d117f4dac370e5927d250a9b333ff3e8913019dee2ffdd",
+    "trillionnium/crates/trnm-pon-node/src/consensus.rs": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs": "e00f2b736cb22c42468cd494eece859eb78fe1005a7c83c621f14c319c74f743",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs": "fdd161cfee7e994f092e048020ae8dce140e852edf0c9e99ec9edce1cc838d21",
+    "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+  },
+  "model_fixtures": {
+    "early_unseen_anchor": {
+      "schema": "pon-native-execution-certificate-v1",
+      "provenance": {
+        "origin": "model_fixture",
+        "role": "declared_finite_model",
+        "source_commit": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+        "evidence_id": "early_unseen_anchor",
+        "raw_artifact_hashes": {}
+      },
+      "clock": {
+        "domain": "model_ticks",
+        "unit": "tick",
+        "binding_receipt": null
+      },
+      "scope": {
+        "execution_id": "model-early_unseen_anchor",
+        "first_seq": 0,
+        "last_seq": 30,
+        "start_time": 0,
+        "end_time": 7,
+        "nodes": [
+          "h0",
+          "h1"
+        ],
+        "declared_all_branches": true,
+        "declared_no_missing_events": true
+      },
+      "owners": [
+        {
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "namespace": "model-only-early_unseen_anchor",
+          "configuration_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "namespace": "model-only-early_unseen_anchor",
+          "configuration_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "initial": {
+        "ready": [
+          "g"
+        ],
+        "available": {
+          "h0": [
+            "g"
+          ],
+          "h1": [
+            "g"
+          ]
+        },
+        "active": {
+          "h0": "g",
+          "h1": "g"
+        },
+        "generations": {
+          "h0": 0,
+          "h1": 0
+        },
+        "complete_material": {
+          "body": true,
+          "proof": true,
+          "application": true
+        },
+        "residual_state": {
+          "status": "declared_empty_model",
+          "reference": null
+        }
+      },
+      "blocks": [
+        {
+          "id": "a1",
+          "parent": "g",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a2",
+          "parent": "a1",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a3",
+          "parent": "a2",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a4",
+          "parent": "a3",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a5",
+          "parent": "a4",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a6",
+          "parent": "a5",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a7",
+          "parent": "a6",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        }
+      ],
+      "events": [
+        {
+          "seq": 1,
+          "time": 0,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 0,
+          "block": "a1",
+          "parent": "g"
+        },
+        {
+          "seq": 2,
+          "time": 1,
+          "kind": "ready",
+          "block": "a1",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 3,
+          "time": 1,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 0,
+          "block": "a1"
+        },
+        {
+          "seq": 4,
+          "time": 1,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 0,
+          "generation_after": 1,
+          "candidate": "a1",
+          "selected": "a1"
+        },
+        {
+          "seq": 5,
+          "time": 1,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 1,
+          "block": "a2",
+          "parent": "a1"
+        },
+        {
+          "seq": 6,
+          "time": 2,
+          "kind": "ready",
+          "block": "a2",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 7,
+          "time": 2,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 1,
+          "block": "a2"
+        },
+        {
+          "seq": 8,
+          "time": 2,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 1,
+          "generation_after": 2,
+          "candidate": "a2",
+          "selected": "a2"
+        },
+        {
+          "seq": 9,
+          "time": 2,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 2,
+          "block": "a3",
+          "parent": "a2"
+        },
+        {
+          "seq": 10,
+          "time": 3,
+          "kind": "ready",
+          "block": "a3",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 11,
+          "time": 3,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 2,
+          "block": "a3"
+        },
+        {
+          "seq": 12,
+          "time": 3,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 2,
+          "generation_after": 3,
+          "candidate": "a3",
+          "selected": "a3"
+        },
+        {
+          "seq": 13,
+          "time": 3,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 3,
+          "block": "a4",
+          "parent": "a3"
+        },
+        {
+          "seq": 14,
+          "time": 4,
+          "kind": "ready",
+          "block": "a4",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 15,
+          "time": 4,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 3,
+          "block": "a4"
+        },
+        {
+          "seq": 16,
+          "time": 4,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 3,
+          "generation_after": 4,
+          "candidate": "a4",
+          "selected": "a4"
+        },
+        {
+          "seq": 17,
+          "time": 4,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 4,
+          "block": "a5",
+          "parent": "a4"
+        },
+        {
+          "seq": 18,
+          "time": 5,
+          "kind": "ready",
+          "block": "a5",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 19,
+          "time": 5,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 4,
+          "block": "a5"
+        },
+        {
+          "seq": 20,
+          "time": 5,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 4,
+          "generation_after": 5,
+          "candidate": "a5",
+          "selected": "a5"
+        },
+        {
+          "seq": 21,
+          "time": 5,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 5,
+          "block": "a6",
+          "parent": "a5"
+        },
+        {
+          "seq": 22,
+          "time": 6,
+          "kind": "ready",
+          "block": "a6",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 23,
+          "time": 6,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 5,
+          "block": "a6"
+        },
+        {
+          "seq": 24,
+          "time": 6,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 5,
+          "generation_after": 6,
+          "candidate": "a6",
+          "selected": "a6"
+        },
+        {
+          "seq": 25,
+          "time": 6,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 6,
+          "block": "a7",
+          "parent": "a6"
+        },
+        {
+          "seq": 26,
+          "time": 7,
+          "kind": "ready",
+          "block": "a7",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 27,
+          "time": 7,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 6,
+          "block": "a7"
+        },
+        {
+          "seq": 28,
+          "time": 7,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 6,
+          "generation_after": 7,
+          "candidate": "a7",
+          "selected": "a7"
+        },
+        {
+          "seq": 29,
+          "time": 7,
+          "kind": "observe",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "tip": "a7",
+          "included": "a1",
+          "claim_confirmed": true,
+          "observation_id": "confirmed"
+        },
+        {
+          "seq": 30,
+          "time": 7,
+          "kind": "observe",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 0,
+          "tip": "g",
+          "included": null,
+          "claim_confirmed": null,
+          "observation_id": "other_view"
+        }
+      ],
+      "comparisons": [
+        {
+          "name": "comparison",
+          "confirmed_observation": "confirmed",
+          "later_observation": "other_view"
+        }
+      ]
+    },
+    "early_partial_view_positive_gap": {
+      "schema": "pon-native-execution-certificate-v1",
+      "provenance": {
+        "origin": "model_fixture",
+        "role": "declared_finite_model",
+        "source_commit": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+        "evidence_id": "early_partial_view_positive_gap",
+        "raw_artifact_hashes": {}
+      },
+      "clock": {
+        "domain": "model_ticks",
+        "unit": "tick",
+        "binding_receipt": null
+      },
+      "scope": {
+        "execution_id": "model-early_partial_view_positive_gap",
+        "first_seq": 0,
+        "last_seq": 34,
+        "start_time": 0,
+        "end_time": 8,
+        "nodes": [
+          "h0",
+          "h1"
+        ],
+        "declared_all_branches": true,
+        "declared_no_missing_events": true
+      },
+      "owners": [
+        {
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "namespace": "model-only-early_partial_view_positive_gap",
+          "configuration_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "namespace": "model-only-early_partial_view_positive_gap",
+          "configuration_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "initial": {
+        "ready": [
+          "g"
+        ],
+        "available": {
+          "h0": [
+            "g"
+          ],
+          "h1": [
+            "g"
+          ]
+        },
+        "active": {
+          "h0": "g",
+          "h1": "g"
+        },
+        "generations": {
+          "h0": 0,
+          "h1": 0
+        },
+        "complete_material": {
+          "body": true,
+          "proof": true,
+          "application": true
+        },
+        "residual_state": {
+          "status": "declared_empty_model",
+          "reference": null
+        }
+      },
+      "blocks": [
+        {
+          "id": "a1",
+          "parent": "g",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a2",
+          "parent": "a1",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a3",
+          "parent": "a2",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a4",
+          "parent": "a3",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a5",
+          "parent": "a4",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a6",
+          "parent": "a5",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a7",
+          "parent": "a6",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "rival",
+          "parent": "g",
+          "weight": 1,
+          "producer": "A",
+          "miner": "adversary",
+          "header_timestamp": 1
+        }
+      ],
+      "events": [
+        {
+          "seq": 1,
+          "time": 0,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 0,
+          "block": "a1",
+          "parent": "g"
+        },
+        {
+          "seq": 2,
+          "time": 1,
+          "kind": "ready",
+          "block": "a1",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 3,
+          "time": 1,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 0,
+          "block": "a1"
+        },
+        {
+          "seq": 4,
+          "time": 1,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 0,
+          "generation_after": 1,
+          "candidate": "a1",
+          "selected": "a1"
+        },
+        {
+          "seq": 5,
+          "time": 1,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 1,
+          "block": "a2",
+          "parent": "a1"
+        },
+        {
+          "seq": 6,
+          "time": 2,
+          "kind": "ready",
+          "block": "a2",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 7,
+          "time": 2,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 1,
+          "block": "a2"
+        },
+        {
+          "seq": 8,
+          "time": 2,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 1,
+          "generation_after": 2,
+          "candidate": "a2",
+          "selected": "a2"
+        },
+        {
+          "seq": 9,
+          "time": 2,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 2,
+          "block": "a3",
+          "parent": "a2"
+        },
+        {
+          "seq": 10,
+          "time": 3,
+          "kind": "ready",
+          "block": "a3",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 11,
+          "time": 3,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 2,
+          "block": "a3"
+        },
+        {
+          "seq": 12,
+          "time": 3,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 2,
+          "generation_after": 3,
+          "candidate": "a3",
+          "selected": "a3"
+        },
+        {
+          "seq": 13,
+          "time": 3,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 3,
+          "block": "a4",
+          "parent": "a3"
+        },
+        {
+          "seq": 14,
+          "time": 4,
+          "kind": "ready",
+          "block": "a4",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 15,
+          "time": 4,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 3,
+          "block": "a4"
+        },
+        {
+          "seq": 16,
+          "time": 4,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 3,
+          "generation_after": 4,
+          "candidate": "a4",
+          "selected": "a4"
+        },
+        {
+          "seq": 17,
+          "time": 4,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 4,
+          "block": "a5",
+          "parent": "a4"
+        },
+        {
+          "seq": 18,
+          "time": 5,
+          "kind": "ready",
+          "block": "a5",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 19,
+          "time": 5,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 4,
+          "block": "a5"
+        },
+        {
+          "seq": 20,
+          "time": 5,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 4,
+          "generation_after": 5,
+          "candidate": "a5",
+          "selected": "a5"
+        },
+        {
+          "seq": 21,
+          "time": 5,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 5,
+          "block": "a6",
+          "parent": "a5"
+        },
+        {
+          "seq": 22,
+          "time": 6,
+          "kind": "ready",
+          "block": "a6",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 23,
+          "time": 6,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 5,
+          "block": "a6"
+        },
+        {
+          "seq": 24,
+          "time": 6,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 5,
+          "generation_after": 6,
+          "candidate": "a6",
+          "selected": "a6"
+        },
+        {
+          "seq": 25,
+          "time": 6,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 6,
+          "block": "a7",
+          "parent": "a6"
+        },
+        {
+          "seq": 26,
+          "time": 7,
+          "kind": "ready",
+          "block": "a7",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 27,
+          "time": 7,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 6,
+          "block": "a7"
+        },
+        {
+          "seq": 28,
+          "time": 7,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 6,
+          "generation_after": 7,
+          "candidate": "a7",
+          "selected": "a7"
+        },
+        {
+          "seq": 29,
+          "time": 7,
+          "kind": "observe",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "tip": "a7",
+          "included": "a1",
+          "claim_confirmed": true,
+          "observation_id": "confirmed"
+        },
+        {
+          "seq": 30,
+          "time": 8,
+          "kind": "available",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 0,
+          "block": "a1"
+        },
+        {
+          "seq": 31,
+          "time": 8,
+          "kind": "ready",
+          "block": "rival",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 32,
+          "time": 8,
+          "kind": "available",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 0,
+          "block": "rival"
+        },
+        {
+          "seq": 33,
+          "time": 8,
+          "kind": "select",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation_before": 0,
+          "generation_after": 1,
+          "candidate": "rival",
+          "selected": "rival"
+        },
+        {
+          "seq": 34,
+          "time": 8,
+          "kind": "observe",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 1,
+          "tip": "rival",
+          "included": null,
+          "claim_confirmed": null,
+          "observation_id": "other_view"
+        }
+      ],
+      "comparisons": [
+        {
+          "name": "comparison",
+          "confirmed_observation": "confirmed",
+          "later_observation": "other_view"
+        }
+      ]
+    },
+    "known_heavier_b_chain_selection_backlog": {
+      "schema": "pon-native-execution-certificate-v1",
+      "provenance": {
+        "origin": "model_fixture",
+        "role": "declared_finite_model",
+        "source_commit": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+        "evidence_id": "known_heavier_b_chain_selection_backlog",
+        "raw_artifact_hashes": {}
+      },
+      "clock": {
+        "domain": "model_ticks",
+        "unit": "tick",
+        "binding_receipt": null
+      },
+      "scope": {
+        "execution_id": "model-known_heavier_b_chain_selection_backlog",
+        "first_seq": 0,
+        "last_seq": 36,
+        "start_time": 0,
+        "end_time": 9,
+        "nodes": [
+          "h0",
+          "h1"
+        ],
+        "declared_all_branches": true,
+        "declared_no_missing_events": true
+      },
+      "owners": [
+        {
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "namespace": "model-only-known_heavier_b_chain_selection_backlog",
+          "configuration_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "namespace": "model-only-known_heavier_b_chain_selection_backlog",
+          "configuration_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "initial": {
+        "ready": [
+          "g"
+        ],
+        "available": {
+          "h0": [
+            "g"
+          ],
+          "h1": [
+            "g"
+          ]
+        },
+        "active": {
+          "h0": "g",
+          "h1": "g"
+        },
+        "generations": {
+          "h0": 0,
+          "h1": 0
+        },
+        "complete_material": {
+          "body": true,
+          "proof": true,
+          "application": true
+        },
+        "residual_state": {
+          "status": "declared_empty_model",
+          "reference": null
+        }
+      },
+      "blocks": [
+        {
+          "id": "a1",
+          "parent": "g",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a2",
+          "parent": "a1",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a3",
+          "parent": "a2",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a4",
+          "parent": "a3",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a5",
+          "parent": "a4",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a6",
+          "parent": "a5",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a7",
+          "parent": "a6",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "known_score_100",
+          "parent": "a7",
+          "weight": 93,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "rival_score_8",
+          "parent": "g",
+          "weight": 8,
+          "producer": "A",
+          "miner": "adversary",
+          "header_timestamp": 1
+        }
+      ],
+      "events": [
+        {
+          "seq": 1,
+          "time": 0,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 0,
+          "block": "a1",
+          "parent": "g"
+        },
+        {
+          "seq": 2,
+          "time": 1,
+          "kind": "ready",
+          "block": "a1",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 3,
+          "time": 1,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 0,
+          "block": "a1"
+        },
+        {
+          "seq": 4,
+          "time": 1,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 0,
+          "generation_after": 1,
+          "candidate": "a1",
+          "selected": "a1"
+        },
+        {
+          "seq": 5,
+          "time": 1,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 1,
+          "block": "a2",
+          "parent": "a1"
+        },
+        {
+          "seq": 6,
+          "time": 2,
+          "kind": "ready",
+          "block": "a2",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 7,
+          "time": 2,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 1,
+          "block": "a2"
+        },
+        {
+          "seq": 8,
+          "time": 2,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 1,
+          "generation_after": 2,
+          "candidate": "a2",
+          "selected": "a2"
+        },
+        {
+          "seq": 9,
+          "time": 2,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 2,
+          "block": "a3",
+          "parent": "a2"
+        },
+        {
+          "seq": 10,
+          "time": 3,
+          "kind": "ready",
+          "block": "a3",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 11,
+          "time": 3,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 2,
+          "block": "a3"
+        },
+        {
+          "seq": 12,
+          "time": 3,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 2,
+          "generation_after": 3,
+          "candidate": "a3",
+          "selected": "a3"
+        },
+        {
+          "seq": 13,
+          "time": 3,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 3,
+          "block": "a4",
+          "parent": "a3"
+        },
+        {
+          "seq": 14,
+          "time": 4,
+          "kind": "ready",
+          "block": "a4",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 15,
+          "time": 4,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 3,
+          "block": "a4"
+        },
+        {
+          "seq": 16,
+          "time": 4,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 3,
+          "generation_after": 4,
+          "candidate": "a4",
+          "selected": "a4"
+        },
+        {
+          "seq": 17,
+          "time": 4,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 4,
+          "block": "a5",
+          "parent": "a4"
+        },
+        {
+          "seq": 18,
+          "time": 5,
+          "kind": "ready",
+          "block": "a5",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 19,
+          "time": 5,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 4,
+          "block": "a5"
+        },
+        {
+          "seq": 20,
+          "time": 5,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 4,
+          "generation_after": 5,
+          "candidate": "a5",
+          "selected": "a5"
+        },
+        {
+          "seq": 21,
+          "time": 5,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 5,
+          "block": "a6",
+          "parent": "a5"
+        },
+        {
+          "seq": 22,
+          "time": 6,
+          "kind": "ready",
+          "block": "a6",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 23,
+          "time": 6,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 5,
+          "block": "a6"
+        },
+        {
+          "seq": 24,
+          "time": 6,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 5,
+          "generation_after": 6,
+          "candidate": "a6",
+          "selected": "a6"
+        },
+        {
+          "seq": 25,
+          "time": 6,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 6,
+          "block": "a7",
+          "parent": "a6"
+        },
+        {
+          "seq": 26,
+          "time": 7,
+          "kind": "ready",
+          "block": "a7",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 27,
+          "time": 7,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 6,
+          "block": "a7"
+        },
+        {
+          "seq": 28,
+          "time": 7,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 6,
+          "generation_after": 7,
+          "candidate": "a7",
+          "selected": "a7"
+        },
+        {
+          "seq": 29,
+          "time": 7,
+          "kind": "observe",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "tip": "a7",
+          "included": "a1",
+          "claim_confirmed": true,
+          "observation_id": "confirmed"
+        },
+        {
+          "seq": 30,
+          "time": 8,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "block": "known_score_100",
+          "parent": "a7"
+        },
+        {
+          "seq": 31,
+          "time": 9,
+          "kind": "ready",
+          "block": "known_score_100",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 32,
+          "time": 9,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "block": "known_score_100"
+        },
+        {
+          "seq": 33,
+          "time": 9,
+          "kind": "ready",
+          "block": "rival_score_8",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 34,
+          "time": 9,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "block": "rival_score_8"
+        },
+        {
+          "seq": 35,
+          "time": 9,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 7,
+          "generation_after": 8,
+          "candidate": "rival_score_8",
+          "selected": "rival_score_8"
+        },
+        {
+          "seq": 36,
+          "time": 9,
+          "kind": "observe",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 8,
+          "tip": "rival_score_8",
+          "included": null,
+          "claim_confirmed": null,
+          "observation_id": "rollback"
+        }
+      ],
+      "comparisons": [
+        {
+          "name": "comparison",
+          "confirmed_observation": "confirmed",
+          "later_observation": "rollback"
+        }
+      ]
+    },
+    "hidden_complete_inventory": {
+      "schema": "pon-native-execution-certificate-v1",
+      "provenance": {
+        "origin": "model_fixture",
+        "role": "declared_finite_model",
+        "source_commit": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+        "evidence_id": "hidden_complete_inventory",
+        "raw_artifact_hashes": {}
+      },
+      "clock": {
+        "domain": "model_ticks",
+        "unit": "tick",
+        "binding_receipt": null
+      },
+      "scope": {
+        "execution_id": "model-hidden_complete_inventory",
+        "first_seq": 0,
+        "last_seq": 33,
+        "start_time": 0,
+        "end_time": 8,
+        "nodes": [
+          "h0",
+          "h1"
+        ],
+        "declared_all_branches": true,
+        "declared_no_missing_events": true
+      },
+      "owners": [
+        {
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "namespace": "model-only-hidden_complete_inventory",
+          "configuration_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "namespace": "model-only-hidden_complete_inventory",
+          "configuration_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "initial": {
+        "ready": [
+          "g"
+        ],
+        "available": {
+          "h0": [
+            "g"
+          ],
+          "h1": [
+            "g"
+          ]
+        },
+        "active": {
+          "h0": "g",
+          "h1": "g"
+        },
+        "generations": {
+          "h0": 0,
+          "h1": 0
+        },
+        "complete_material": {
+          "body": true,
+          "proof": true,
+          "application": true
+        },
+        "residual_state": {
+          "status": "declared_empty_model",
+          "reference": null
+        }
+      },
+      "blocks": [
+        {
+          "id": "hidden_8",
+          "parent": "g",
+          "weight": 8,
+          "producer": "A",
+          "miner": "adversary",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a1",
+          "parent": "g",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a2",
+          "parent": "a1",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a3",
+          "parent": "a2",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a4",
+          "parent": "a3",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a5",
+          "parent": "a4",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a6",
+          "parent": "a5",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a7",
+          "parent": "a6",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        }
+      ],
+      "events": [
+        {
+          "seq": 1,
+          "time": 0,
+          "kind": "ready",
+          "block": "hidden_8",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 2,
+          "time": 0,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 0,
+          "block": "a1",
+          "parent": "g"
+        },
+        {
+          "seq": 3,
+          "time": 1,
+          "kind": "ready",
+          "block": "a1",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 4,
+          "time": 1,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 0,
+          "block": "a1"
+        },
+        {
+          "seq": 5,
+          "time": 1,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 0,
+          "generation_after": 1,
+          "candidate": "a1",
+          "selected": "a1"
+        },
+        {
+          "seq": 6,
+          "time": 1,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 1,
+          "block": "a2",
+          "parent": "a1"
+        },
+        {
+          "seq": 7,
+          "time": 2,
+          "kind": "ready",
+          "block": "a2",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 8,
+          "time": 2,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 1,
+          "block": "a2"
+        },
+        {
+          "seq": 9,
+          "time": 2,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 1,
+          "generation_after": 2,
+          "candidate": "a2",
+          "selected": "a2"
+        },
+        {
+          "seq": 10,
+          "time": 2,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 2,
+          "block": "a3",
+          "parent": "a2"
+        },
+        {
+          "seq": 11,
+          "time": 3,
+          "kind": "ready",
+          "block": "a3",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 12,
+          "time": 3,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 2,
+          "block": "a3"
+        },
+        {
+          "seq": 13,
+          "time": 3,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 2,
+          "generation_after": 3,
+          "candidate": "a3",
+          "selected": "a3"
+        },
+        {
+          "seq": 14,
+          "time": 3,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 3,
+          "block": "a4",
+          "parent": "a3"
+        },
+        {
+          "seq": 15,
+          "time": 4,
+          "kind": "ready",
+          "block": "a4",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 16,
+          "time": 4,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 3,
+          "block": "a4"
+        },
+        {
+          "seq": 17,
+          "time": 4,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 3,
+          "generation_after": 4,
+          "candidate": "a4",
+          "selected": "a4"
+        },
+        {
+          "seq": 18,
+          "time": 4,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 4,
+          "block": "a5",
+          "parent": "a4"
+        },
+        {
+          "seq": 19,
+          "time": 5,
+          "kind": "ready",
+          "block": "a5",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 20,
+          "time": 5,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 4,
+          "block": "a5"
+        },
+        {
+          "seq": 21,
+          "time": 5,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 4,
+          "generation_after": 5,
+          "candidate": "a5",
+          "selected": "a5"
+        },
+        {
+          "seq": 22,
+          "time": 5,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 5,
+          "block": "a6",
+          "parent": "a5"
+        },
+        {
+          "seq": 23,
+          "time": 6,
+          "kind": "ready",
+          "block": "a6",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 24,
+          "time": 6,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 5,
+          "block": "a6"
+        },
+        {
+          "seq": 25,
+          "time": 6,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 5,
+          "generation_after": 6,
+          "candidate": "a6",
+          "selected": "a6"
+        },
+        {
+          "seq": 26,
+          "time": 6,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 6,
+          "block": "a7",
+          "parent": "a6"
+        },
+        {
+          "seq": 27,
+          "time": 7,
+          "kind": "ready",
+          "block": "a7",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 28,
+          "time": 7,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 6,
+          "block": "a7"
+        },
+        {
+          "seq": 29,
+          "time": 7,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 6,
+          "generation_after": 7,
+          "candidate": "a7",
+          "selected": "a7"
+        },
+        {
+          "seq": 30,
+          "time": 7,
+          "kind": "observe",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "tip": "a7",
+          "included": "a1",
+          "claim_confirmed": true,
+          "observation_id": "confirmed"
+        },
+        {
+          "seq": 31,
+          "time": 8,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "block": "hidden_8"
+        },
+        {
+          "seq": 32,
+          "time": 8,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 7,
+          "generation_after": 8,
+          "candidate": "hidden_8",
+          "selected": "hidden_8"
+        },
+        {
+          "seq": 33,
+          "time": 8,
+          "kind": "observe",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 8,
+          "tip": "hidden_8",
+          "included": null,
+          "claim_confirmed": null,
+          "observation_id": "rollback"
+        }
+      ],
+      "comparisons": [
+        {
+          "name": "comparison",
+          "confirmed_observation": "confirmed",
+          "later_observation": "rollback"
+        }
+      ]
+    },
+    "honest_stale_parent_pipeline": {
+      "schema": "pon-native-execution-certificate-v1",
+      "provenance": {
+        "origin": "model_fixture",
+        "role": "declared_finite_model",
+        "source_commit": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+        "evidence_id": "honest_stale_parent_pipeline",
+        "raw_artifact_hashes": {}
+      },
+      "clock": {
+        "domain": "model_ticks",
+        "unit": "tick",
+        "binding_receipt": null
+      },
+      "scope": {
+        "execution_id": "model-honest_stale_parent_pipeline",
+        "first_seq": 0,
+        "last_seq": 34,
+        "start_time": 0,
+        "end_time": 100,
+        "nodes": [
+          "h0",
+          "h1"
+        ],
+        "declared_all_branches": true,
+        "declared_no_missing_events": true
+      },
+      "owners": [
+        {
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "namespace": "model-only-honest_stale_parent_pipeline",
+          "configuration_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "namespace": "model-only-honest_stale_parent_pipeline",
+          "configuration_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "initial": {
+        "ready": [
+          "g"
+        ],
+        "available": {
+          "h0": [
+            "g"
+          ],
+          "h1": [
+            "g"
+          ]
+        },
+        "active": {
+          "h0": "g",
+          "h1": "g"
+        },
+        "generations": {
+          "h0": 0,
+          "h1": 0
+        },
+        "complete_material": {
+          "body": true,
+          "proof": true,
+          "application": true
+        },
+        "residual_state": {
+          "status": "declared_empty_model",
+          "reference": null
+        }
+      },
+      "blocks": [
+        {
+          "id": "old_parent_8",
+          "parent": "g",
+          "weight": 8,
+          "producer": "H",
+          "miner": "h1",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a1",
+          "parent": "g",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a2",
+          "parent": "a1",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a3",
+          "parent": "a2",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a4",
+          "parent": "a3",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a5",
+          "parent": "a4",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a6",
+          "parent": "a5",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a7",
+          "parent": "a6",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        }
+      ],
+      "events": [
+        {
+          "seq": 1,
+          "time": 0,
+          "kind": "bind",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 0,
+          "block": "old_parent_8",
+          "parent": "g"
+        },
+        {
+          "seq": 2,
+          "time": 0,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 0,
+          "block": "a1",
+          "parent": "g"
+        },
+        {
+          "seq": 3,
+          "time": 1,
+          "kind": "ready",
+          "block": "a1",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 4,
+          "time": 1,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 0,
+          "block": "a1"
+        },
+        {
+          "seq": 5,
+          "time": 1,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 0,
+          "generation_after": 1,
+          "candidate": "a1",
+          "selected": "a1"
+        },
+        {
+          "seq": 6,
+          "time": 1,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 1,
+          "block": "a2",
+          "parent": "a1"
+        },
+        {
+          "seq": 7,
+          "time": 2,
+          "kind": "ready",
+          "block": "a2",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 8,
+          "time": 2,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 1,
+          "block": "a2"
+        },
+        {
+          "seq": 9,
+          "time": 2,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 1,
+          "generation_after": 2,
+          "candidate": "a2",
+          "selected": "a2"
+        },
+        {
+          "seq": 10,
+          "time": 2,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 2,
+          "block": "a3",
+          "parent": "a2"
+        },
+        {
+          "seq": 11,
+          "time": 3,
+          "kind": "ready",
+          "block": "a3",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 12,
+          "time": 3,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 2,
+          "block": "a3"
+        },
+        {
+          "seq": 13,
+          "time": 3,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 2,
+          "generation_after": 3,
+          "candidate": "a3",
+          "selected": "a3"
+        },
+        {
+          "seq": 14,
+          "time": 3,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 3,
+          "block": "a4",
+          "parent": "a3"
+        },
+        {
+          "seq": 15,
+          "time": 4,
+          "kind": "ready",
+          "block": "a4",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 16,
+          "time": 4,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 3,
+          "block": "a4"
+        },
+        {
+          "seq": 17,
+          "time": 4,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 3,
+          "generation_after": 4,
+          "candidate": "a4",
+          "selected": "a4"
+        },
+        {
+          "seq": 18,
+          "time": 4,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 4,
+          "block": "a5",
+          "parent": "a4"
+        },
+        {
+          "seq": 19,
+          "time": 5,
+          "kind": "ready",
+          "block": "a5",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 20,
+          "time": 5,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 4,
+          "block": "a5"
+        },
+        {
+          "seq": 21,
+          "time": 5,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 4,
+          "generation_after": 5,
+          "candidate": "a5",
+          "selected": "a5"
+        },
+        {
+          "seq": 22,
+          "time": 5,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 5,
+          "block": "a6",
+          "parent": "a5"
+        },
+        {
+          "seq": 23,
+          "time": 6,
+          "kind": "ready",
+          "block": "a6",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 24,
+          "time": 6,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 5,
+          "block": "a6"
+        },
+        {
+          "seq": 25,
+          "time": 6,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 5,
+          "generation_after": 6,
+          "candidate": "a6",
+          "selected": "a6"
+        },
+        {
+          "seq": 26,
+          "time": 6,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 6,
+          "block": "a7",
+          "parent": "a6"
+        },
+        {
+          "seq": 27,
+          "time": 7,
+          "kind": "ready",
+          "block": "a7",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 28,
+          "time": 7,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 6,
+          "block": "a7"
+        },
+        {
+          "seq": 29,
+          "time": 7,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 6,
+          "generation_after": 7,
+          "candidate": "a7",
+          "selected": "a7"
+        },
+        {
+          "seq": 30,
+          "time": 7,
+          "kind": "observe",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "tip": "a7",
+          "included": "a1",
+          "claim_confirmed": true,
+          "observation_id": "confirmed"
+        },
+        {
+          "seq": 31,
+          "time": 100,
+          "kind": "ready",
+          "block": "old_parent_8",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 32,
+          "time": 100,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "block": "old_parent_8"
+        },
+        {
+          "seq": 33,
+          "time": 100,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 7,
+          "generation_after": 8,
+          "candidate": "old_parent_8",
+          "selected": "old_parent_8"
+        },
+        {
+          "seq": 34,
+          "time": 100,
+          "kind": "observe",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 8,
+          "tip": "old_parent_8",
+          "included": null,
+          "claim_confirmed": null,
+          "observation_id": "rollback"
+        }
+      ],
+      "comparisons": [
+        {
+          "name": "comparison",
+          "confirmed_observation": "confirmed",
+          "later_observation": "rollback"
+        }
+      ]
+    },
+    "all_honest_bounded_delay_burst": {
+      "schema": "pon-native-execution-certificate-v1",
+      "provenance": {
+        "origin": "model_fixture",
+        "role": "declared_finite_model",
+        "source_commit": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+        "evidence_id": "all_honest_bounded_delay_burst",
+        "raw_artifact_hashes": {}
+      },
+      "clock": {
+        "domain": "model_ticks",
+        "unit": "tick",
+        "binding_receipt": null
+      },
+      "scope": {
+        "execution_id": "model-all_honest_bounded_delay_burst",
+        "first_seq": 0,
+        "last_seq": 65,
+        "start_time": 0,
+        "end_time": 9,
+        "nodes": [
+          "h0",
+          "h1"
+        ],
+        "declared_all_branches": true,
+        "declared_no_missing_events": true
+      },
+      "owners": [
+        {
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "namespace": "model-only-all_honest_bounded_delay_burst",
+          "configuration_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "namespace": "model-only-all_honest_bounded_delay_burst",
+          "configuration_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "initial": {
+        "ready": [
+          "g"
+        ],
+        "available": {
+          "h0": [
+            "g"
+          ],
+          "h1": [
+            "g"
+          ]
+        },
+        "active": {
+          "h0": "g",
+          "h1": "g"
+        },
+        "generations": {
+          "h0": 0,
+          "h1": 0
+        },
+        "complete_material": {
+          "body": true,
+          "proof": true,
+          "application": true
+        },
+        "residual_state": {
+          "status": "declared_empty_model",
+          "reference": null
+        }
+      },
+      "blocks": [
+        {
+          "id": "a1",
+          "parent": "g",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "b1",
+          "parent": "g",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h1",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a2",
+          "parent": "a1",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "b2",
+          "parent": "b1",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h1",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a3",
+          "parent": "a2",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "b3",
+          "parent": "b2",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h1",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a4",
+          "parent": "a3",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "b4",
+          "parent": "b3",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h1",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a5",
+          "parent": "a4",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "b5",
+          "parent": "b4",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h1",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a6",
+          "parent": "a5",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "b6",
+          "parent": "b5",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h1",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a7",
+          "parent": "a6",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "b7",
+          "parent": "b6",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h1",
+          "header_timestamp": 1
+        },
+        {
+          "id": "b8",
+          "parent": "b7",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h1",
+          "header_timestamp": 1
+        }
+      ],
+      "events": [
+        {
+          "seq": 1,
+          "time": 0,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 0,
+          "block": "a1",
+          "parent": "g"
+        },
+        {
+          "seq": 2,
+          "time": 0,
+          "kind": "bind",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 0,
+          "block": "b1",
+          "parent": "g"
+        },
+        {
+          "seq": 3,
+          "time": 1,
+          "kind": "ready",
+          "block": "a1",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 4,
+          "time": 1,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 0,
+          "block": "a1"
+        },
+        {
+          "seq": 5,
+          "time": 1,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 0,
+          "generation_after": 1,
+          "candidate": "a1",
+          "selected": "a1"
+        },
+        {
+          "seq": 6,
+          "time": 1,
+          "kind": "ready",
+          "block": "b1",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 7,
+          "time": 1,
+          "kind": "available",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 0,
+          "block": "b1"
+        },
+        {
+          "seq": 8,
+          "time": 1,
+          "kind": "select",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation_before": 0,
+          "generation_after": 1,
+          "candidate": "b1",
+          "selected": "b1"
+        },
+        {
+          "seq": 9,
+          "time": 1,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 1,
+          "block": "a2",
+          "parent": "a1"
+        },
+        {
+          "seq": 10,
+          "time": 1,
+          "kind": "bind",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 1,
+          "block": "b2",
+          "parent": "b1"
+        },
+        {
+          "seq": 11,
+          "time": 2,
+          "kind": "ready",
+          "block": "a2",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 12,
+          "time": 2,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 1,
+          "block": "a2"
+        },
+        {
+          "seq": 13,
+          "time": 2,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 1,
+          "generation_after": 2,
+          "candidate": "a2",
+          "selected": "a2"
+        },
+        {
+          "seq": 14,
+          "time": 2,
+          "kind": "ready",
+          "block": "b2",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 15,
+          "time": 2,
+          "kind": "available",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 1,
+          "block": "b2"
+        },
+        {
+          "seq": 16,
+          "time": 2,
+          "kind": "select",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation_before": 1,
+          "generation_after": 2,
+          "candidate": "b2",
+          "selected": "b2"
+        },
+        {
+          "seq": 17,
+          "time": 2,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 2,
+          "block": "a3",
+          "parent": "a2"
+        },
+        {
+          "seq": 18,
+          "time": 2,
+          "kind": "bind",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 2,
+          "block": "b3",
+          "parent": "b2"
+        },
+        {
+          "seq": 19,
+          "time": 3,
+          "kind": "ready",
+          "block": "a3",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 20,
+          "time": 3,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 2,
+          "block": "a3"
+        },
+        {
+          "seq": 21,
+          "time": 3,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 2,
+          "generation_after": 3,
+          "candidate": "a3",
+          "selected": "a3"
+        },
+        {
+          "seq": 22,
+          "time": 3,
+          "kind": "ready",
+          "block": "b3",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 23,
+          "time": 3,
+          "kind": "available",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 2,
+          "block": "b3"
+        },
+        {
+          "seq": 24,
+          "time": 3,
+          "kind": "select",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation_before": 2,
+          "generation_after": 3,
+          "candidate": "b3",
+          "selected": "b3"
+        },
+        {
+          "seq": 25,
+          "time": 3,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 3,
+          "block": "a4",
+          "parent": "a3"
+        },
+        {
+          "seq": 26,
+          "time": 3,
+          "kind": "bind",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 3,
+          "block": "b4",
+          "parent": "b3"
+        },
+        {
+          "seq": 27,
+          "time": 4,
+          "kind": "ready",
+          "block": "a4",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 28,
+          "time": 4,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 3,
+          "block": "a4"
+        },
+        {
+          "seq": 29,
+          "time": 4,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 3,
+          "generation_after": 4,
+          "candidate": "a4",
+          "selected": "a4"
+        },
+        {
+          "seq": 30,
+          "time": 4,
+          "kind": "ready",
+          "block": "b4",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 31,
+          "time": 4,
+          "kind": "available",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 3,
+          "block": "b4"
+        },
+        {
+          "seq": 32,
+          "time": 4,
+          "kind": "select",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation_before": 3,
+          "generation_after": 4,
+          "candidate": "b4",
+          "selected": "b4"
+        },
+        {
+          "seq": 33,
+          "time": 4,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 4,
+          "block": "a5",
+          "parent": "a4"
+        },
+        {
+          "seq": 34,
+          "time": 4,
+          "kind": "bind",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 4,
+          "block": "b5",
+          "parent": "b4"
+        },
+        {
+          "seq": 35,
+          "time": 5,
+          "kind": "ready",
+          "block": "a5",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 36,
+          "time": 5,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 4,
+          "block": "a5"
+        },
+        {
+          "seq": 37,
+          "time": 5,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 4,
+          "generation_after": 5,
+          "candidate": "a5",
+          "selected": "a5"
+        },
+        {
+          "seq": 38,
+          "time": 5,
+          "kind": "ready",
+          "block": "b5",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 39,
+          "time": 5,
+          "kind": "available",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 4,
+          "block": "b5"
+        },
+        {
+          "seq": 40,
+          "time": 5,
+          "kind": "select",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation_before": 4,
+          "generation_after": 5,
+          "candidate": "b5",
+          "selected": "b5"
+        },
+        {
+          "seq": 41,
+          "time": 5,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 5,
+          "block": "a6",
+          "parent": "a5"
+        },
+        {
+          "seq": 42,
+          "time": 5,
+          "kind": "bind",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 5,
+          "block": "b6",
+          "parent": "b5"
+        },
+        {
+          "seq": 43,
+          "time": 6,
+          "kind": "ready",
+          "block": "a6",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 44,
+          "time": 6,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 5,
+          "block": "a6"
+        },
+        {
+          "seq": 45,
+          "time": 6,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 5,
+          "generation_after": 6,
+          "candidate": "a6",
+          "selected": "a6"
+        },
+        {
+          "seq": 46,
+          "time": 6,
+          "kind": "ready",
+          "block": "b6",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 47,
+          "time": 6,
+          "kind": "available",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 5,
+          "block": "b6"
+        },
+        {
+          "seq": 48,
+          "time": 6,
+          "kind": "select",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation_before": 5,
+          "generation_after": 6,
+          "candidate": "b6",
+          "selected": "b6"
+        },
+        {
+          "seq": 49,
+          "time": 6,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 6,
+          "block": "a7",
+          "parent": "a6"
+        },
+        {
+          "seq": 50,
+          "time": 6,
+          "kind": "bind",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 6,
+          "block": "b7",
+          "parent": "b6"
+        },
+        {
+          "seq": 51,
+          "time": 7,
+          "kind": "ready",
+          "block": "a7",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 52,
+          "time": 7,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 6,
+          "block": "a7"
+        },
+        {
+          "seq": 53,
+          "time": 7,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 6,
+          "generation_after": 7,
+          "candidate": "a7",
+          "selected": "a7"
+        },
+        {
+          "seq": 54,
+          "time": 7,
+          "kind": "observe",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "tip": "a7",
+          "included": "a1",
+          "claim_confirmed": true,
+          "observation_id": "confirmed"
+        },
+        {
+          "seq": 55,
+          "time": 7,
+          "kind": "ready",
+          "block": "b7",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 56,
+          "time": 7,
+          "kind": "available",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 6,
+          "block": "b7"
+        },
+        {
+          "seq": 57,
+          "time": 7,
+          "kind": "select",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation_before": 6,
+          "generation_after": 7,
+          "candidate": "b7",
+          "selected": "b7"
+        },
+        {
+          "seq": 58,
+          "time": 7,
+          "kind": "bind",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 7,
+          "block": "b8",
+          "parent": "b7"
+        },
+        {
+          "seq": 59,
+          "time": 8,
+          "kind": "ready",
+          "block": "b8",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 60,
+          "time": 8,
+          "kind": "available",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 7,
+          "block": "b8"
+        },
+        {
+          "seq": 61,
+          "time": 8,
+          "kind": "select",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation_before": 7,
+          "generation_after": 8,
+          "candidate": "b8",
+          "selected": "b8"
+        },
+        {
+          "seq": 62,
+          "time": 8,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "block": "b8"
+        },
+        {
+          "seq": 63,
+          "time": 8,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 7,
+          "generation_after": 8,
+          "candidate": "b8",
+          "selected": "b8"
+        },
+        {
+          "seq": 64,
+          "time": 8,
+          "kind": "observe",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 8,
+          "tip": "b8",
+          "included": null,
+          "claim_confirmed": null,
+          "observation_id": "rollback"
+        },
+        {
+          "seq": 65,
+          "time": 9,
+          "kind": "available",
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "generation": 8,
+          "block": "a7"
+        }
+      ],
+      "comparisons": [
+        {
+          "name": "comparison",
+          "confirmed_observation": "confirmed",
+          "later_observation": "rollback"
+        }
+      ]
+    },
+    "same_timestamp_after_crossing_is_not_prior_progress": {
+      "schema": "pon-native-execution-certificate-v1",
+      "provenance": {
+        "origin": "model_fixture",
+        "role": "declared_finite_model",
+        "source_commit": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+        "evidence_id": "same_timestamp_after_crossing_is_not_prior_progress",
+        "raw_artifact_hashes": {}
+      },
+      "clock": {
+        "domain": "model_ticks",
+        "unit": "tick",
+        "binding_receipt": null
+      },
+      "scope": {
+        "execution_id": "model-same_timestamp_after_crossing_is_not_prior_progress",
+        "first_seq": 0,
+        "last_seq": 37,
+        "start_time": 0,
+        "end_time": 8,
+        "nodes": [
+          "h0",
+          "h1"
+        ],
+        "declared_all_branches": true,
+        "declared_no_missing_events": true
+      },
+      "owners": [
+        {
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "namespace": "model-only-same_timestamp_after_crossing_is_not_prior_progress",
+          "configuration_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "namespace": "model-only-same_timestamp_after_crossing_is_not_prior_progress",
+          "configuration_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "initial": {
+        "ready": [
+          "g"
+        ],
+        "available": {
+          "h0": [
+            "g"
+          ],
+          "h1": [
+            "g"
+          ]
+        },
+        "active": {
+          "h0": "g",
+          "h1": "g"
+        },
+        "generations": {
+          "h0": 0,
+          "h1": 0
+        },
+        "complete_material": {
+          "body": true,
+          "proof": true,
+          "application": true
+        },
+        "residual_state": {
+          "status": "declared_empty_model",
+          "reference": null
+        }
+      },
+      "blocks": [
+        {
+          "id": "a1",
+          "parent": "g",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a2",
+          "parent": "a1",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a3",
+          "parent": "a2",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a4",
+          "parent": "a3",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a5",
+          "parent": "a4",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a6",
+          "parent": "a5",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a7",
+          "parent": "a6",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "later_b_score_100",
+          "parent": "a7",
+          "weight": 93,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "rival_8",
+          "parent": "g",
+          "weight": 8,
+          "producer": "A",
+          "miner": "adversary",
+          "header_timestamp": 1
+        }
+      ],
+      "events": [
+        {
+          "seq": 1,
+          "time": 0,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 0,
+          "block": "a1",
+          "parent": "g"
+        },
+        {
+          "seq": 2,
+          "time": 1,
+          "kind": "ready",
+          "block": "a1",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 3,
+          "time": 1,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 0,
+          "block": "a1"
+        },
+        {
+          "seq": 4,
+          "time": 1,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 0,
+          "generation_after": 1,
+          "candidate": "a1",
+          "selected": "a1"
+        },
+        {
+          "seq": 5,
+          "time": 1,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 1,
+          "block": "a2",
+          "parent": "a1"
+        },
+        {
+          "seq": 6,
+          "time": 2,
+          "kind": "ready",
+          "block": "a2",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 7,
+          "time": 2,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 1,
+          "block": "a2"
+        },
+        {
+          "seq": 8,
+          "time": 2,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 1,
+          "generation_after": 2,
+          "candidate": "a2",
+          "selected": "a2"
+        },
+        {
+          "seq": 9,
+          "time": 2,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 2,
+          "block": "a3",
+          "parent": "a2"
+        },
+        {
+          "seq": 10,
+          "time": 3,
+          "kind": "ready",
+          "block": "a3",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 11,
+          "time": 3,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 2,
+          "block": "a3"
+        },
+        {
+          "seq": 12,
+          "time": 3,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 2,
+          "generation_after": 3,
+          "candidate": "a3",
+          "selected": "a3"
+        },
+        {
+          "seq": 13,
+          "time": 3,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 3,
+          "block": "a4",
+          "parent": "a3"
+        },
+        {
+          "seq": 14,
+          "time": 4,
+          "kind": "ready",
+          "block": "a4",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 15,
+          "time": 4,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 3,
+          "block": "a4"
+        },
+        {
+          "seq": 16,
+          "time": 4,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 3,
+          "generation_after": 4,
+          "candidate": "a4",
+          "selected": "a4"
+        },
+        {
+          "seq": 17,
+          "time": 4,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 4,
+          "block": "a5",
+          "parent": "a4"
+        },
+        {
+          "seq": 18,
+          "time": 5,
+          "kind": "ready",
+          "block": "a5",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 19,
+          "time": 5,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 4,
+          "block": "a5"
+        },
+        {
+          "seq": 20,
+          "time": 5,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 4,
+          "generation_after": 5,
+          "candidate": "a5",
+          "selected": "a5"
+        },
+        {
+          "seq": 21,
+          "time": 5,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 5,
+          "block": "a6",
+          "parent": "a5"
+        },
+        {
+          "seq": 22,
+          "time": 6,
+          "kind": "ready",
+          "block": "a6",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 23,
+          "time": 6,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 5,
+          "block": "a6"
+        },
+        {
+          "seq": 24,
+          "time": 6,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 5,
+          "generation_after": 6,
+          "candidate": "a6",
+          "selected": "a6"
+        },
+        {
+          "seq": 25,
+          "time": 6,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 6,
+          "block": "a7",
+          "parent": "a6"
+        },
+        {
+          "seq": 26,
+          "time": 7,
+          "kind": "ready",
+          "block": "a7",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 27,
+          "time": 7,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 6,
+          "block": "a7"
+        },
+        {
+          "seq": 28,
+          "time": 7,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 6,
+          "generation_after": 7,
+          "candidate": "a7",
+          "selected": "a7"
+        },
+        {
+          "seq": 29,
+          "time": 7,
+          "kind": "observe",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "tip": "a7",
+          "included": "a1",
+          "claim_confirmed": true,
+          "observation_id": "confirmed"
+        },
+        {
+          "seq": 30,
+          "time": 7,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "block": "later_b_score_100",
+          "parent": "a7"
+        },
+        {
+          "seq": 31,
+          "time": 8,
+          "kind": "ready",
+          "block": "rival_8",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 32,
+          "time": 8,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "block": "rival_8"
+        },
+        {
+          "seq": 33,
+          "time": 8,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 7,
+          "generation_after": 8,
+          "candidate": "rival_8",
+          "selected": "rival_8"
+        },
+        {
+          "seq": 34,
+          "time": 8,
+          "kind": "observe",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 8,
+          "tip": "rival_8",
+          "included": null,
+          "claim_confirmed": null,
+          "observation_id": "first_cut"
+        },
+        {
+          "seq": 35,
+          "time": 8,
+          "kind": "ready",
+          "block": "later_b_score_100",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 36,
+          "time": 8,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 8,
+          "block": "later_b_score_100"
+        },
+        {
+          "seq": 37,
+          "time": 8,
+          "kind": "observe",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 8,
+          "tip": "rival_8",
+          "included": null,
+          "claim_confirmed": null,
+          "observation_id": "later_same_time_cut"
+        }
+      ],
+      "comparisons": [
+        {
+          "name": "before_later_completion",
+          "confirmed_observation": "confirmed",
+          "later_observation": "first_cut"
+        },
+        {
+          "name": "after_later_completion",
+          "confirmed_observation": "confirmed",
+          "later_observation": "later_same_time_cut"
+        }
+      ]
+    },
+    "unit_weight_batch_ready": {
+      "schema": "pon-native-execution-certificate-v1",
+      "provenance": {
+        "origin": "model_fixture",
+        "role": "declared_finite_model",
+        "source_commit": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+        "evidence_id": "unit_weight_batch_ready",
+        "raw_artifact_hashes": {}
+      },
+      "clock": {
+        "domain": "model_ticks",
+        "unit": "tick",
+        "binding_receipt": null
+      },
+      "scope": {
+        "execution_id": "model-unit_weight_batch_ready",
+        "first_seq": 0,
+        "last_seq": 40,
+        "start_time": 0,
+        "end_time": 8,
+        "nodes": [
+          "h0",
+          "h1"
+        ],
+        "declared_all_branches": true,
+        "declared_no_missing_events": true
+      },
+      "owners": [
+        {
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "namespace": "model-only-unit_weight_batch_ready",
+          "configuration_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "node": "h1",
+          "owner_instance": "model-owner-h1",
+          "namespace": "model-only-unit_weight_batch_ready",
+          "configuration_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "initial": {
+        "ready": [
+          "g"
+        ],
+        "available": {
+          "h0": [
+            "g"
+          ],
+          "h1": [
+            "g"
+          ]
+        },
+        "active": {
+          "h0": "g",
+          "h1": "g"
+        },
+        "generations": {
+          "h0": 0,
+          "h1": 0
+        },
+        "complete_material": {
+          "body": true,
+          "proof": true,
+          "application": true
+        },
+        "residual_state": {
+          "status": "declared_empty_model",
+          "reference": null
+        }
+      },
+      "blocks": [
+        {
+          "id": "a1",
+          "parent": "g",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a2",
+          "parent": "a1",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a3",
+          "parent": "a2",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a4",
+          "parent": "a3",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a5",
+          "parent": "a4",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a6",
+          "parent": "a5",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "a7",
+          "parent": "a6",
+          "weight": 1,
+          "producer": "H",
+          "miner": "h0",
+          "header_timestamp": 1
+        },
+        {
+          "id": "r0",
+          "parent": "g",
+          "weight": 1,
+          "producer": "A",
+          "miner": "adversary",
+          "header_timestamp": 1
+        },
+        {
+          "id": "r1",
+          "parent": "r0",
+          "weight": 1,
+          "producer": "A",
+          "miner": "adversary",
+          "header_timestamp": 1
+        },
+        {
+          "id": "r2",
+          "parent": "r1",
+          "weight": 1,
+          "producer": "A",
+          "miner": "adversary",
+          "header_timestamp": 1
+        },
+        {
+          "id": "r3",
+          "parent": "r2",
+          "weight": 1,
+          "producer": "A",
+          "miner": "adversary",
+          "header_timestamp": 1
+        },
+        {
+          "id": "r4",
+          "parent": "r3",
+          "weight": 1,
+          "producer": "A",
+          "miner": "adversary",
+          "header_timestamp": 1
+        },
+        {
+          "id": "r5",
+          "parent": "r4",
+          "weight": 1,
+          "producer": "A",
+          "miner": "adversary",
+          "header_timestamp": 1
+        },
+        {
+          "id": "r6",
+          "parent": "r5",
+          "weight": 1,
+          "producer": "A",
+          "miner": "adversary",
+          "header_timestamp": 1
+        },
+        {
+          "id": "r7",
+          "parent": "r6",
+          "weight": 1,
+          "producer": "A",
+          "miner": "adversary",
+          "header_timestamp": 1
+        }
+      ],
+      "events": [
+        {
+          "seq": 1,
+          "time": 0,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 0,
+          "block": "a1",
+          "parent": "g"
+        },
+        {
+          "seq": 2,
+          "time": 1,
+          "kind": "ready",
+          "block": "a1",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 3,
+          "time": 1,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 0,
+          "block": "a1"
+        },
+        {
+          "seq": 4,
+          "time": 1,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 0,
+          "generation_after": 1,
+          "candidate": "a1",
+          "selected": "a1"
+        },
+        {
+          "seq": 5,
+          "time": 1,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 1,
+          "block": "a2",
+          "parent": "a1"
+        },
+        {
+          "seq": 6,
+          "time": 2,
+          "kind": "ready",
+          "block": "a2",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 7,
+          "time": 2,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 1,
+          "block": "a2"
+        },
+        {
+          "seq": 8,
+          "time": 2,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 1,
+          "generation_after": 2,
+          "candidate": "a2",
+          "selected": "a2"
+        },
+        {
+          "seq": 9,
+          "time": 2,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 2,
+          "block": "a3",
+          "parent": "a2"
+        },
+        {
+          "seq": 10,
+          "time": 3,
+          "kind": "ready",
+          "block": "a3",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 11,
+          "time": 3,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 2,
+          "block": "a3"
+        },
+        {
+          "seq": 12,
+          "time": 3,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 2,
+          "generation_after": 3,
+          "candidate": "a3",
+          "selected": "a3"
+        },
+        {
+          "seq": 13,
+          "time": 3,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 3,
+          "block": "a4",
+          "parent": "a3"
+        },
+        {
+          "seq": 14,
+          "time": 4,
+          "kind": "ready",
+          "block": "a4",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 15,
+          "time": 4,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 3,
+          "block": "a4"
+        },
+        {
+          "seq": 16,
+          "time": 4,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 3,
+          "generation_after": 4,
+          "candidate": "a4",
+          "selected": "a4"
+        },
+        {
+          "seq": 17,
+          "time": 4,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 4,
+          "block": "a5",
+          "parent": "a4"
+        },
+        {
+          "seq": 18,
+          "time": 5,
+          "kind": "ready",
+          "block": "a5",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 19,
+          "time": 5,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 4,
+          "block": "a5"
+        },
+        {
+          "seq": 20,
+          "time": 5,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 4,
+          "generation_after": 5,
+          "candidate": "a5",
+          "selected": "a5"
+        },
+        {
+          "seq": 21,
+          "time": 5,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 5,
+          "block": "a6",
+          "parent": "a5"
+        },
+        {
+          "seq": 22,
+          "time": 6,
+          "kind": "ready",
+          "block": "a6",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 23,
+          "time": 6,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 5,
+          "block": "a6"
+        },
+        {
+          "seq": 24,
+          "time": 6,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 5,
+          "generation_after": 6,
+          "candidate": "a6",
+          "selected": "a6"
+        },
+        {
+          "seq": 25,
+          "time": 6,
+          "kind": "bind",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 6,
+          "block": "a7",
+          "parent": "a6"
+        },
+        {
+          "seq": 26,
+          "time": 7,
+          "kind": "ready",
+          "block": "a7",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 27,
+          "time": 7,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 6,
+          "block": "a7"
+        },
+        {
+          "seq": 28,
+          "time": 7,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 6,
+          "generation_after": 7,
+          "candidate": "a7",
+          "selected": "a7"
+        },
+        {
+          "seq": 29,
+          "time": 7,
+          "kind": "observe",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "tip": "a7",
+          "included": "a1",
+          "claim_confirmed": true,
+          "observation_id": "confirmed"
+        },
+        {
+          "seq": 30,
+          "time": 8,
+          "kind": "ready",
+          "block": "r0",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 31,
+          "time": 8,
+          "kind": "ready",
+          "block": "r1",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 32,
+          "time": 8,
+          "kind": "ready",
+          "block": "r2",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 33,
+          "time": 8,
+          "kind": "ready",
+          "block": "r3",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 34,
+          "time": 8,
+          "kind": "ready",
+          "block": "r4",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 35,
+          "time": 8,
+          "kind": "ready",
+          "block": "r5",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 36,
+          "time": 8,
+          "kind": "ready",
+          "block": "r6",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 37,
+          "time": 8,
+          "kind": "ready",
+          "block": "r7",
+          "complete_material": {
+            "body": true,
+            "proof": true,
+            "application": true
+          }
+        },
+        {
+          "seq": 38,
+          "time": 8,
+          "kind": "available",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 7,
+          "block": "r7"
+        },
+        {
+          "seq": 39,
+          "time": 8,
+          "kind": "select",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation_before": 7,
+          "generation_after": 8,
+          "candidate": "r7",
+          "selected": "r7"
+        },
+        {
+          "seq": 40,
+          "time": 8,
+          "kind": "observe",
+          "node": "h0",
+          "owner_instance": "model-owner-h0",
+          "generation": 8,
+          "tip": "r7",
+          "included": null,
+          "claim_confirmed": null,
+          "observation_id": "rollback"
+        }
+      ],
+      "comparisons": [
+        {
+          "name": "comparison",
+          "confirmed_observation": "confirmed",
+          "later_observation": "rollback"
+        }
+      ]
+    }
+  },
+  "model_results": {
+    "early_unseen_anchor": {
+      "schema": "pon-native-execution-accounting-result-v1",
+      "certificate_sha256": "e6c717b64ac4efb15c3c4c5b2be768036d718b7a466a00edfab90f434f5a116a",
+      "origin_as_declared": "model_fixture",
+      "record_schema_and_finite_algebra_valid": true,
+      "complete_declared_model_checked": true,
+      "source_commit_as_declared": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+      "events_checked": 30,
+      "blocks_in_declared_universe": 8,
+      "owner_fields_consistent": true,
+      "physical_clock_authenticated": false,
+      "native_runtime_attested": false,
+      "all_branch_world_coverage_attested": false,
+      "initial_residual_state_attested": false,
+      "probabilistic_environment_bound": false,
+      "six_successor_risk_qualified": false,
+      "native_execution_qualified": false,
+      "qualification_refusals": [
+        "MODEL_FIXTURE_IS_NOT_NATIVE_OBSERVATION",
+        "NATIVE_LIFECYCLE_EXPORT_NOT_AUTHENTICATED",
+        "PHYSICAL_CLOCK_NOT_AUTHENTICATED",
+        "PRIVATE_INITIAL_INVENTORY_NOT_AUTHENTICATED",
+        "WORLD_ALL_BRANCH_COVERAGE_NOT_AUTHENTICATED",
+        "W1_AND_APPLICATION_VALIDITY_NOT_REPLAYED",
+        "PROBABILISTIC_ENVIRONMENT_ENVELOPE_NOT_PROVED",
+        "NO_INDEPENDENT_CLOCK_BINDING"
+      ],
+      "comparisons": [
+        {
+          "name": "comparison",
+          "outcome": "prefix_failure_with_paid_deficit_witness",
+          "tau_seq": 29,
+          "comparison_seq": 30,
+          "tau_time": 7,
+          "comparison_time": 7,
+          "observer": "h1",
+          "included": "a1",
+          "confirmed_tip": "a7",
+          "selected_tip": "g",
+          "lca": "g",
+          "confirmation_cut_from_parent": 7,
+          "inclusion_weight": 1,
+          "reference_score": 7,
+          "reference_growth": 0,
+          "reference_definition": "max(original_confirmation_score, b_scores_in_declared_complete_views)",
+          "view_maximum_score": 0,
+          "selected_score": 0,
+          "availability_score_deficit": 7,
+          "selection_score_deficit": 0,
+          "raw_selection_score_deficit": 0,
+          "total_comparison_score_deficit": 7,
+          "competing_suffix_inventory_all_producers": 0,
+          "new_adversarial_competing_weight": 0,
+          "new_honest_competing_weight": 0,
+          "relative_initial_inventory_all_branches": 0,
+          "new_adversarial_all_branch_weight": 0,
+          "new_honest_all_b_free_weight": 0,
+          "exact_cut_left": 7,
+          "exact_cut_right": 7,
+          "global_left": 7,
+          "global_right": 7,
+          "first_local_removal_seq": null,
+          "early_known_b_reference_score": null,
+          "early_required_new_attack_weight": null,
+          "early_threshold_is_positive": false,
+          "adversarial_resource_accounts_as_declared": {},
+          "physical_cost_authenticated": false,
+          "probability_bound": null
+        }
+      ]
+    },
+    "early_partial_view_positive_gap": {
+      "schema": "pon-native-execution-accounting-result-v1",
+      "certificate_sha256": "3429a343b497fb0f31024fda1e697273bc20f265f22862e4697c39e1cd73497d",
+      "origin_as_declared": "model_fixture",
+      "record_schema_and_finite_algebra_valid": true,
+      "complete_declared_model_checked": true,
+      "source_commit_as_declared": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+      "events_checked": 34,
+      "blocks_in_declared_universe": 9,
+      "owner_fields_consistent": true,
+      "physical_clock_authenticated": false,
+      "native_runtime_attested": false,
+      "all_branch_world_coverage_attested": false,
+      "initial_residual_state_attested": false,
+      "probabilistic_environment_bound": false,
+      "six_successor_risk_qualified": false,
+      "native_execution_qualified": false,
+      "qualification_refusals": [
+        "MODEL_FIXTURE_IS_NOT_NATIVE_OBSERVATION",
+        "NATIVE_LIFECYCLE_EXPORT_NOT_AUTHENTICATED",
+        "PHYSICAL_CLOCK_NOT_AUTHENTICATED",
+        "PRIVATE_INITIAL_INVENTORY_NOT_AUTHENTICATED",
+        "WORLD_ALL_BRANCH_COVERAGE_NOT_AUTHENTICATED",
+        "W1_AND_APPLICATION_VALIDITY_NOT_REPLAYED",
+        "PROBABILISTIC_ENVIRONMENT_ENVELOPE_NOT_PROVED",
+        "NO_INDEPENDENT_CLOCK_BINDING"
+      ],
+      "comparisons": [
+        {
+          "name": "comparison",
+          "outcome": "prefix_failure_with_paid_deficit_witness",
+          "tau_seq": 29,
+          "comparison_seq": 34,
+          "tau_time": 7,
+          "comparison_time": 8,
+          "observer": "h1",
+          "included": "a1",
+          "confirmed_tip": "a7",
+          "selected_tip": "rival",
+          "lca": "g",
+          "confirmation_cut_from_parent": 7,
+          "inclusion_weight": 1,
+          "reference_score": 7,
+          "reference_growth": 0,
+          "reference_definition": "max(original_confirmation_score, b_scores_in_declared_complete_views)",
+          "view_maximum_score": 1,
+          "selected_score": 1,
+          "availability_score_deficit": 6,
+          "selection_score_deficit": 0,
+          "raw_selection_score_deficit": 0,
+          "total_comparison_score_deficit": 6,
+          "competing_suffix_inventory_all_producers": 0,
+          "new_adversarial_competing_weight": 1,
+          "new_honest_competing_weight": 0,
+          "relative_initial_inventory_all_branches": 0,
+          "new_adversarial_all_branch_weight": 1,
+          "new_honest_all_b_free_weight": 0,
+          "exact_cut_left": 7,
+          "exact_cut_right": 7,
+          "global_left": 7,
+          "global_right": 7,
+          "first_local_removal_seq": null,
+          "early_known_b_reference_score": 1,
+          "early_required_new_attack_weight": 1,
+          "early_threshold_is_positive": true,
+          "adversarial_resource_accounts_as_declared": {},
+          "physical_cost_authenticated": false,
+          "probability_bound": null
+        }
+      ]
+    },
+    "known_heavier_b_chain_selection_backlog": {
+      "schema": "pon-native-execution-accounting-result-v1",
+      "certificate_sha256": "913a4fdddb7f871aad0159427d38866d53f70b855423ac27d9b66b3af88ff4df",
+      "origin_as_declared": "model_fixture",
+      "record_schema_and_finite_algebra_valid": true,
+      "complete_declared_model_checked": true,
+      "source_commit_as_declared": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+      "events_checked": 36,
+      "blocks_in_declared_universe": 10,
+      "owner_fields_consistent": true,
+      "physical_clock_authenticated": false,
+      "native_runtime_attested": false,
+      "all_branch_world_coverage_attested": false,
+      "initial_residual_state_attested": false,
+      "probabilistic_environment_bound": false,
+      "six_successor_risk_qualified": false,
+      "native_execution_qualified": false,
+      "qualification_refusals": [
+        "MODEL_FIXTURE_IS_NOT_NATIVE_OBSERVATION",
+        "NATIVE_LIFECYCLE_EXPORT_NOT_AUTHENTICATED",
+        "PHYSICAL_CLOCK_NOT_AUTHENTICATED",
+        "PRIVATE_INITIAL_INVENTORY_NOT_AUTHENTICATED",
+        "WORLD_ALL_BRANCH_COVERAGE_NOT_AUTHENTICATED",
+        "W1_AND_APPLICATION_VALIDITY_NOT_REPLAYED",
+        "PROBABILISTIC_ENVIRONMENT_ENVELOPE_NOT_PROVED",
+        "NO_INDEPENDENT_CLOCK_BINDING"
+      ],
+      "comparisons": [
+        {
+          "name": "comparison",
+          "outcome": "prefix_failure_with_paid_deficit_witness",
+          "tau_seq": 29,
+          "comparison_seq": 36,
+          "tau_time": 7,
+          "comparison_time": 9,
+          "observer": "h0",
+          "included": "a1",
+          "confirmed_tip": "a7",
+          "selected_tip": "rival_score_8",
+          "lca": "g",
+          "confirmation_cut_from_parent": 7,
+          "inclusion_weight": 1,
+          "reference_score": 100,
+          "reference_growth": 93,
+          "reference_definition": "max(original_confirmation_score, b_scores_in_declared_complete_views)",
+          "view_maximum_score": 100,
+          "selected_score": 8,
+          "availability_score_deficit": 0,
+          "selection_score_deficit": 92,
+          "raw_selection_score_deficit": 92,
+          "total_comparison_score_deficit": 92,
+          "competing_suffix_inventory_all_producers": 0,
+          "new_adversarial_competing_weight": 8,
+          "new_honest_competing_weight": 0,
+          "relative_initial_inventory_all_branches": 0,
+          "new_adversarial_all_branch_weight": 8,
+          "new_honest_all_b_free_weight": 0,
+          "exact_cut_left": 100,
+          "exact_cut_right": 100,
+          "global_left": 100,
+          "global_right": 100,
+          "first_local_removal_seq": 35,
+          "early_known_b_reference_score": 100,
+          "early_required_new_attack_weight": 8,
+          "early_threshold_is_positive": true,
+          "adversarial_resource_accounts_as_declared": {},
+          "physical_cost_authenticated": false,
+          "probability_bound": null
+        }
+      ]
+    },
+    "hidden_complete_inventory": {
+      "schema": "pon-native-execution-accounting-result-v1",
+      "certificate_sha256": "13d96ee6e9a9c16c19ccc062d0dcc9df17c8e4c21ae5f8979990beb1fb2bd34f",
+      "origin_as_declared": "model_fixture",
+      "record_schema_and_finite_algebra_valid": true,
+      "complete_declared_model_checked": true,
+      "source_commit_as_declared": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+      "events_checked": 33,
+      "blocks_in_declared_universe": 9,
+      "owner_fields_consistent": true,
+      "physical_clock_authenticated": false,
+      "native_runtime_attested": false,
+      "all_branch_world_coverage_attested": false,
+      "initial_residual_state_attested": false,
+      "probabilistic_environment_bound": false,
+      "six_successor_risk_qualified": false,
+      "native_execution_qualified": false,
+      "qualification_refusals": [
+        "MODEL_FIXTURE_IS_NOT_NATIVE_OBSERVATION",
+        "NATIVE_LIFECYCLE_EXPORT_NOT_AUTHENTICATED",
+        "PHYSICAL_CLOCK_NOT_AUTHENTICATED",
+        "PRIVATE_INITIAL_INVENTORY_NOT_AUTHENTICATED",
+        "WORLD_ALL_BRANCH_COVERAGE_NOT_AUTHENTICATED",
+        "W1_AND_APPLICATION_VALIDITY_NOT_REPLAYED",
+        "PROBABILISTIC_ENVIRONMENT_ENVELOPE_NOT_PROVED",
+        "NO_INDEPENDENT_CLOCK_BINDING"
+      ],
+      "comparisons": [
+        {
+          "name": "comparison",
+          "outcome": "prefix_failure_with_paid_deficit_witness",
+          "tau_seq": 30,
+          "comparison_seq": 33,
+          "tau_time": 7,
+          "comparison_time": 8,
+          "observer": "h0",
+          "included": "a1",
+          "confirmed_tip": "a7",
+          "selected_tip": "hidden_8",
+          "lca": "g",
+          "confirmation_cut_from_parent": 7,
+          "inclusion_weight": 1,
+          "reference_score": 7,
+          "reference_growth": 0,
+          "reference_definition": "max(original_confirmation_score, b_scores_in_declared_complete_views)",
+          "view_maximum_score": 8,
+          "selected_score": 8,
+          "availability_score_deficit": 0,
+          "selection_score_deficit": 0,
+          "raw_selection_score_deficit": 0,
+          "total_comparison_score_deficit": 0,
+          "competing_suffix_inventory_all_producers": 8,
+          "new_adversarial_competing_weight": 0,
+          "new_honest_competing_weight": 0,
+          "relative_initial_inventory_all_branches": 8,
+          "new_adversarial_all_branch_weight": 0,
+          "new_honest_all_b_free_weight": 0,
+          "exact_cut_left": 8,
+          "exact_cut_right": 7,
+          "global_left": 8,
+          "global_right": 7,
+          "first_local_removal_seq": 32,
+          "early_known_b_reference_score": 7,
+          "early_required_new_attack_weight": -1,
+          "early_threshold_is_positive": false,
+          "adversarial_resource_accounts_as_declared": {},
+          "physical_cost_authenticated": false,
+          "probability_bound": null
+        }
+      ]
+    },
+    "honest_stale_parent_pipeline": {
+      "schema": "pon-native-execution-accounting-result-v1",
+      "certificate_sha256": "3b360e0accbbd602f445d51786aa1b8f5a3f87a325603d1eae98660eb0bf71e7",
+      "origin_as_declared": "model_fixture",
+      "record_schema_and_finite_algebra_valid": true,
+      "complete_declared_model_checked": true,
+      "source_commit_as_declared": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+      "events_checked": 34,
+      "blocks_in_declared_universe": 9,
+      "owner_fields_consistent": true,
+      "physical_clock_authenticated": false,
+      "native_runtime_attested": false,
+      "all_branch_world_coverage_attested": false,
+      "initial_residual_state_attested": false,
+      "probabilistic_environment_bound": false,
+      "six_successor_risk_qualified": false,
+      "native_execution_qualified": false,
+      "qualification_refusals": [
+        "MODEL_FIXTURE_IS_NOT_NATIVE_OBSERVATION",
+        "NATIVE_LIFECYCLE_EXPORT_NOT_AUTHENTICATED",
+        "PHYSICAL_CLOCK_NOT_AUTHENTICATED",
+        "PRIVATE_INITIAL_INVENTORY_NOT_AUTHENTICATED",
+        "WORLD_ALL_BRANCH_COVERAGE_NOT_AUTHENTICATED",
+        "W1_AND_APPLICATION_VALIDITY_NOT_REPLAYED",
+        "PROBABILISTIC_ENVIRONMENT_ENVELOPE_NOT_PROVED",
+        "NO_INDEPENDENT_CLOCK_BINDING"
+      ],
+      "comparisons": [
+        {
+          "name": "comparison",
+          "outcome": "prefix_failure_with_paid_deficit_witness",
+          "tau_seq": 30,
+          "comparison_seq": 34,
+          "tau_time": 7,
+          "comparison_time": 100,
+          "observer": "h0",
+          "included": "a1",
+          "confirmed_tip": "a7",
+          "selected_tip": "old_parent_8",
+          "lca": "g",
+          "confirmation_cut_from_parent": 7,
+          "inclusion_weight": 1,
+          "reference_score": 7,
+          "reference_growth": 0,
+          "reference_definition": "max(original_confirmation_score, b_scores_in_declared_complete_views)",
+          "view_maximum_score": 8,
+          "selected_score": 8,
+          "availability_score_deficit": 0,
+          "selection_score_deficit": 0,
+          "raw_selection_score_deficit": 0,
+          "total_comparison_score_deficit": 0,
+          "competing_suffix_inventory_all_producers": 0,
+          "new_adversarial_competing_weight": 0,
+          "new_honest_competing_weight": 8,
+          "relative_initial_inventory_all_branches": 0,
+          "new_adversarial_all_branch_weight": 0,
+          "new_honest_all_b_free_weight": 8,
+          "exact_cut_left": 8,
+          "exact_cut_right": 7,
+          "global_left": 8,
+          "global_right": 7,
+          "first_local_removal_seq": 33,
+          "early_known_b_reference_score": 7,
+          "early_required_new_attack_weight": -1,
+          "early_threshold_is_positive": false,
+          "adversarial_resource_accounts_as_declared": {},
+          "physical_cost_authenticated": false,
+          "probability_bound": null
+        }
+      ]
+    },
+    "all_honest_bounded_delay_burst": {
+      "schema": "pon-native-execution-accounting-result-v1",
+      "certificate_sha256": "c6a62aa758c53b64ef3c733ddc3da147755f2499492c191855233c73ca0dc47f",
+      "origin_as_declared": "model_fixture",
+      "record_schema_and_finite_algebra_valid": true,
+      "complete_declared_model_checked": true,
+      "source_commit_as_declared": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+      "events_checked": 65,
+      "blocks_in_declared_universe": 16,
+      "owner_fields_consistent": true,
+      "physical_clock_authenticated": false,
+      "native_runtime_attested": false,
+      "all_branch_world_coverage_attested": false,
+      "initial_residual_state_attested": false,
+      "probabilistic_environment_bound": false,
+      "six_successor_risk_qualified": false,
+      "native_execution_qualified": false,
+      "qualification_refusals": [
+        "MODEL_FIXTURE_IS_NOT_NATIVE_OBSERVATION",
+        "NATIVE_LIFECYCLE_EXPORT_NOT_AUTHENTICATED",
+        "PHYSICAL_CLOCK_NOT_AUTHENTICATED",
+        "PRIVATE_INITIAL_INVENTORY_NOT_AUTHENTICATED",
+        "WORLD_ALL_BRANCH_COVERAGE_NOT_AUTHENTICATED",
+        "W1_AND_APPLICATION_VALIDITY_NOT_REPLAYED",
+        "PROBABILISTIC_ENVIRONMENT_ENVELOPE_NOT_PROVED",
+        "NO_INDEPENDENT_CLOCK_BINDING"
+      ],
+      "comparisons": [
+        {
+          "name": "comparison",
+          "outcome": "prefix_failure_with_paid_deficit_witness",
+          "tau_seq": 54,
+          "comparison_seq": 64,
+          "tau_time": 7,
+          "comparison_time": 8,
+          "observer": "h0",
+          "included": "a1",
+          "confirmed_tip": "a7",
+          "selected_tip": "b8",
+          "lca": "g",
+          "confirmation_cut_from_parent": 7,
+          "inclusion_weight": 1,
+          "reference_score": 7,
+          "reference_growth": 0,
+          "reference_definition": "max(original_confirmation_score, b_scores_in_declared_complete_views)",
+          "view_maximum_score": 8,
+          "selected_score": 8,
+          "availability_score_deficit": 0,
+          "selection_score_deficit": 0,
+          "raw_selection_score_deficit": 0,
+          "total_comparison_score_deficit": 0,
+          "competing_suffix_inventory_all_producers": 6,
+          "new_adversarial_competing_weight": 0,
+          "new_honest_competing_weight": 2,
+          "relative_initial_inventory_all_branches": 6,
+          "new_adversarial_all_branch_weight": 0,
+          "new_honest_all_b_free_weight": 2,
+          "exact_cut_left": 8,
+          "exact_cut_right": 7,
+          "global_left": 8,
+          "global_right": 7,
+          "first_local_removal_seq": 63,
+          "early_known_b_reference_score": 7,
+          "early_required_new_attack_weight": -1,
+          "early_threshold_is_positive": false,
+          "adversarial_resource_accounts_as_declared": {},
+          "physical_cost_authenticated": false,
+          "probability_bound": null
+        }
+      ]
+    },
+    "same_timestamp_after_crossing_is_not_prior_progress": {
+      "schema": "pon-native-execution-accounting-result-v1",
+      "certificate_sha256": "12b4dce2dc9aef65c221a7d3e5cbe19801d1cc9a39d9829e6231c0169001914d",
+      "origin_as_declared": "model_fixture",
+      "record_schema_and_finite_algebra_valid": true,
+      "complete_declared_model_checked": true,
+      "source_commit_as_declared": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+      "events_checked": 37,
+      "blocks_in_declared_universe": 10,
+      "owner_fields_consistent": true,
+      "physical_clock_authenticated": false,
+      "native_runtime_attested": false,
+      "all_branch_world_coverage_attested": false,
+      "initial_residual_state_attested": false,
+      "probabilistic_environment_bound": false,
+      "six_successor_risk_qualified": false,
+      "native_execution_qualified": false,
+      "qualification_refusals": [
+        "MODEL_FIXTURE_IS_NOT_NATIVE_OBSERVATION",
+        "NATIVE_LIFECYCLE_EXPORT_NOT_AUTHENTICATED",
+        "PHYSICAL_CLOCK_NOT_AUTHENTICATED",
+        "PRIVATE_INITIAL_INVENTORY_NOT_AUTHENTICATED",
+        "WORLD_ALL_BRANCH_COVERAGE_NOT_AUTHENTICATED",
+        "W1_AND_APPLICATION_VALIDITY_NOT_REPLAYED",
+        "PROBABILISTIC_ENVIRONMENT_ENVELOPE_NOT_PROVED",
+        "NO_INDEPENDENT_CLOCK_BINDING"
+      ],
+      "comparisons": [
+        {
+          "name": "before_later_completion",
+          "outcome": "prefix_failure_with_paid_deficit_witness",
+          "tau_seq": 29,
+          "comparison_seq": 34,
+          "tau_time": 7,
+          "comparison_time": 8,
+          "observer": "h0",
+          "included": "a1",
+          "confirmed_tip": "a7",
+          "selected_tip": "rival_8",
+          "lca": "g",
+          "confirmation_cut_from_parent": 7,
+          "inclusion_weight": 1,
+          "reference_score": 7,
+          "reference_growth": 0,
+          "reference_definition": "max(original_confirmation_score, b_scores_in_declared_complete_views)",
+          "view_maximum_score": 8,
+          "selected_score": 8,
+          "availability_score_deficit": 0,
+          "selection_score_deficit": 0,
+          "raw_selection_score_deficit": 0,
+          "total_comparison_score_deficit": 0,
+          "competing_suffix_inventory_all_producers": 0,
+          "new_adversarial_competing_weight": 8,
+          "new_honest_competing_weight": 0,
+          "relative_initial_inventory_all_branches": 0,
+          "new_adversarial_all_branch_weight": 8,
+          "new_honest_all_b_free_weight": 0,
+          "exact_cut_left": 8,
+          "exact_cut_right": 7,
+          "global_left": 8,
+          "global_right": 7,
+          "first_local_removal_seq": 33,
+          "early_known_b_reference_score": 7,
+          "early_required_new_attack_weight": 7,
+          "early_threshold_is_positive": true,
+          "adversarial_resource_accounts_as_declared": {},
+          "physical_cost_authenticated": false,
+          "probability_bound": null
+        },
+        {
+          "name": "after_later_completion",
+          "outcome": "prefix_failure_with_paid_deficit_witness",
+          "tau_seq": 29,
+          "comparison_seq": 37,
+          "tau_time": 7,
+          "comparison_time": 8,
+          "observer": "h0",
+          "included": "a1",
+          "confirmed_tip": "a7",
+          "selected_tip": "rival_8",
+          "lca": "g",
+          "confirmation_cut_from_parent": 7,
+          "inclusion_weight": 1,
+          "reference_score": 100,
+          "reference_growth": 93,
+          "reference_definition": "max(original_confirmation_score, b_scores_in_declared_complete_views)",
+          "view_maximum_score": 100,
+          "selected_score": 8,
+          "availability_score_deficit": 0,
+          "selection_score_deficit": 92,
+          "raw_selection_score_deficit": 92,
+          "total_comparison_score_deficit": 92,
+          "competing_suffix_inventory_all_producers": 0,
+          "new_adversarial_competing_weight": 8,
+          "new_honest_competing_weight": 0,
+          "relative_initial_inventory_all_branches": 0,
+          "new_adversarial_all_branch_weight": 8,
+          "new_honest_all_b_free_weight": 0,
+          "exact_cut_left": 100,
+          "exact_cut_right": 100,
+          "global_left": 100,
+          "global_right": 100,
+          "first_local_removal_seq": 33,
+          "early_known_b_reference_score": 100,
+          "early_required_new_attack_weight": 8,
+          "early_threshold_is_positive": true,
+          "adversarial_resource_accounts_as_declared": {},
+          "physical_cost_authenticated": false,
+          "probability_bound": null
+        }
+      ]
+    },
+    "unit_weight_batch_ready": {
+      "schema": "pon-native-execution-accounting-result-v1",
+      "certificate_sha256": "ee3e38033406a74efa22afe6c8583aaa7c5da18e842b63b58ea975d8b4bfe8a0",
+      "origin_as_declared": "model_fixture",
+      "record_schema_and_finite_algebra_valid": true,
+      "complete_declared_model_checked": true,
+      "source_commit_as_declared": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+      "events_checked": 40,
+      "blocks_in_declared_universe": 16,
+      "owner_fields_consistent": true,
+      "physical_clock_authenticated": false,
+      "native_runtime_attested": false,
+      "all_branch_world_coverage_attested": false,
+      "initial_residual_state_attested": false,
+      "probabilistic_environment_bound": false,
+      "six_successor_risk_qualified": false,
+      "native_execution_qualified": false,
+      "qualification_refusals": [
+        "MODEL_FIXTURE_IS_NOT_NATIVE_OBSERVATION",
+        "NATIVE_LIFECYCLE_EXPORT_NOT_AUTHENTICATED",
+        "PHYSICAL_CLOCK_NOT_AUTHENTICATED",
+        "PRIVATE_INITIAL_INVENTORY_NOT_AUTHENTICATED",
+        "WORLD_ALL_BRANCH_COVERAGE_NOT_AUTHENTICATED",
+        "W1_AND_APPLICATION_VALIDITY_NOT_REPLAYED",
+        "PROBABILISTIC_ENVIRONMENT_ENVELOPE_NOT_PROVED",
+        "NO_INDEPENDENT_CLOCK_BINDING"
+      ],
+      "comparisons": [
+        {
+          "name": "comparison",
+          "outcome": "prefix_failure_with_paid_deficit_witness",
+          "tau_seq": 29,
+          "comparison_seq": 40,
+          "tau_time": 7,
+          "comparison_time": 8,
+          "observer": "h0",
+          "included": "a1",
+          "confirmed_tip": "a7",
+          "selected_tip": "r7",
+          "lca": "g",
+          "confirmation_cut_from_parent": 7,
+          "inclusion_weight": 1,
+          "reference_score": 7,
+          "reference_growth": 0,
+          "reference_definition": "max(original_confirmation_score, b_scores_in_declared_complete_views)",
+          "view_maximum_score": 8,
+          "selected_score": 8,
+          "availability_score_deficit": 0,
+          "selection_score_deficit": 0,
+          "raw_selection_score_deficit": 0,
+          "total_comparison_score_deficit": 0,
+          "competing_suffix_inventory_all_producers": 0,
+          "new_adversarial_competing_weight": 8,
+          "new_honest_competing_weight": 0,
+          "relative_initial_inventory_all_branches": 0,
+          "new_adversarial_all_branch_weight": 8,
+          "new_honest_all_b_free_weight": 0,
+          "exact_cut_left": 8,
+          "exact_cut_right": 7,
+          "global_left": 8,
+          "global_right": 7,
+          "first_local_removal_seq": 39,
+          "early_known_b_reference_score": 7,
+          "early_required_new_attack_weight": 7,
+          "early_threshold_is_positive": true,
+          "adversarial_resource_accounts_as_declared": {},
+          "physical_cost_authenticated": false,
+          "probability_bound": null
+        }
+      ]
+    }
+  },
+  "native_runtime_reexecuted": false,
+  "actual_physical_execution_qualified": false,
+  "common_prefix_proved": false,
+  "native_six_successor_risk_bound": null
+}

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/pon-factorial-d78-analysis/analyze_completed_factorial.py", line 278, in <module>
+    main()
+  File "/tmp/pon-factorial-d78-analysis/analyze_completed_factorial.py", line 97, in main
+    require(manifest.get('reader', {}).get('complete_fixed_grid') is True, 'INCOMPLETE: final full-grid readback required')
+  File "/tmp/pon-factorial-d78-analysis/analyze_completed_factorial.py", line 34, in require
+    raise ValueError(message)
+ValueError: INCOMPLETE: final full-grid readback required

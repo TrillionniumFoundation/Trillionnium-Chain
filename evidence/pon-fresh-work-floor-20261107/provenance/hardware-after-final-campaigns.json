@@ -1,0 +1,39 @@
+{
+  "recorded_utc": "2026-11-07T12:56:58.373341+00:00",
+  "observation_scope": "post-run snapshot; no hardware isolation or stable quota guarantee",
+  "source": "1e0eba75f4f4a4e24e17cbd0f263f915c1493ac7",
+  "concurrent_work": "validation and the two finite source campaigns overlapped on a shared host",
+  "new_gpu_allocations_this_continuation": 0,
+  "hardware": {
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+    "python": "3.12.14",
+    "processor": "x86_64",
+    "cpu_count": 9,
+    "numpy_version": "2.3.5",
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1"
+    },
+    "isolation": "uncontrolled-shared-host; observations are not a performance qualification",
+    "cgroup_observations": {
+      "/proc/self/cgroup": "0::/",
+      "/sys/fs/cgroup/cpu.max": "800000 100000",
+      "/sys/fs/cgroup/cpu.stat": "usage_usec 50848752205\nuser_usec 38020290008\nsystem_usec 12828462196\nnice_usec 1073177556\nnr_periods 358534\nnr_throttled 1965\nthrottled_usec 102031954\nnr_bursts 0\nburst_usec 0",
+      "/sys/fs/cgroup/memory.max": "8589934592",
+      "/sys/fs/cgroup/memory.current": "8589926400",
+      "/sys/fs/cgroup/cpuset.cpus.effective": "0-8"
+    },
+    "cpu_model": "AMD EPYC 9V74 80-Core Processor"
+  }
+}

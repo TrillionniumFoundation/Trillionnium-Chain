@@ -1,0 +1,15 @@
+test_post_open_trigger_cannot_delete_new_record (test_pq_cell_custody_journal_hardening.JournalOwnerHardeningTests.test_post_open_trigger_cannot_delete_new_record) ... FAIL
+
+======================================================================
+FAIL: test_post_open_trigger_cannot_delete_new_record (test_pq_cell_custody_journal_hardening.JournalOwnerHardeningTests.test_post_open_trigger_cannot_delete_new_record)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/pq-work/baseline/test_pq_cell_custody_journal_hardening.py", line 92, in test_post_open_trigger_cannot_delete_new_record
+    with self.assertRaisesRegex(Reject, 'schema changed'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Reject not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.013s
+
+FAILED (failures=1)

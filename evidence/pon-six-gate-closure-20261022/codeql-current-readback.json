@@ -1,0 +1,4493 @@
+{
+  "schema": "trnm-codeql-current-source-readback-v1",
+  "source": "5eb30bdedba2bb4933f5c97211426fc2df21bb7c",
+  "observed_at_utc": "2026-10-22T04:52:44.624345+00:00",
+  "check_id": 119630322566,
+  "check_result": "failure",
+  "check_summary": {
+    "critical": 1,
+    "high": 17
+  },
+  "branch_sarif_results": 224,
+  "annotations": [
+    {
+      "annotation_index": 0,
+      "annotation": {
+        "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/tests/fuzz/fuzz_targets/authenticated_state.rs",
+        "start_line": 359,
+        "start_column": 17,
+        "end_line": 359,
+        "end_column": 27,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [accounts(...)](1) to a log file.\nThis operation writes [account_root(...)](2) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "            1 => proof.parent_id[0] ^= 1,",
+        "            2 => {",
+        "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());",
+        "            }",
+        "            3 => proof.rows.reverse(),"
+      ],
+      "source_semantic_classification": "collection_mutation_labeled_as_logging",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1087,
+          "fingerprints": {
+            "primaryLocationLineHash": "1304561b40a66ef4:1"
+          },
+          "message": {
+            "text": "This operation writes [accounts(...)](1) to a log file.\nThis operation writes [account_root(...)](2) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 321,
+                  "startColumn": 27,
+                  "startLine": 321
+                },
+                "expression": "accounts(...)",
+                "source_line": "    let parent_accounts = accounts(parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 50,
+                  "endLine": 321,
+                  "startColumn": 27,
+                  "startLine": 321
+                },
+                "expression": "TryExpr",
+                "source_line": "    let parent_accounts = accounts(parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 80,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "check_parent_source(...)",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 81,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "TryExpr",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 90,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "prepare_state_witness(...)",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 91,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "TryExpr",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 7,
+                  "endLine": 260,
+                  "startColumn": 5,
+                  "startLine": 258
+                },
+                "expression": "prepare_with_progress(...)",
+                "source_line": "    prepare_with_progress(settings, archive, parent_checkpoint, parent_state, &|_| {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 261,
+                  "startColumn": 25,
+                  "startLine": 257
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<RangeProof> {"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 86,
+                  "endLine": 299,
+                  "startColumn": 13,
+                  "startLine": 299
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 95,
+                  "endLine": 299,
+                  "startColumn": 13,
+                  "startLine": 299
+                },
+                "expression": "... .unwrap()",
+                "source_line": "            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 298,
+                  "startColumn": 13,
+                  "startLine": 298
+                },
+                "expression": "mut proof",
+                "source_line": "        let mut proof ="
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 33,
+                  "endLine": 347,
+                  "startColumn": 28,
+                  "startLine": 347
+                },
+                "expression": "proof",
+                "source_line": "                monetary: &proof,"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 21,
+                  "endLine": 351,
+                  "startColumn": 16,
+                  "startLine": 351
+                },
+                "expression": "proof",
+                "source_line": "        check(&proof, &result);"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 27,
+                  "endLine": 359,
+                  "startColumn": 17,
+                  "startLine": 359
+                },
+                "expression": "proof.rows",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              }
+            ],
+            [
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 321,
+                  "startColumn": 27,
+                  "startLine": 321
+                },
+                "expression": "accounts(...)",
+                "source_line": "    let parent_accounts = accounts(parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 50,
+                  "endLine": 321,
+                  "startColumn": 27,
+                  "startLine": 321
+                },
+                "expression": "TryExpr",
+                "source_line": "    let parent_accounts = accounts(parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 80,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "check_parent_source(...)",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 38,
+                  "endLine": 298,
+                  "startColumn": 9,
+                  "startLine": 298
+                },
+                "expression": "TuplePat",
+                "source_line": "    let (checkpoint, parent_accounts) ="
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 300,
+                  "startColumn": 39,
+                  "startLine": 300
+                },
+                "expression": "checkpoint",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 300,
+                  "startColumn": 38,
+                  "startLine": 300
+                },
+                "expression": "&checkpoint",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 28,
+                  "endLine": 532,
+                  "startColumn": 5,
+                  "startLine": 532
+                },
+                "expression": "...: ...",
+                "source_line": "    checkpoint: &Checkpoint,"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 23,
+                  "endLine": 547,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "checkpoint",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+                "region": {
+                  "endColumn": 35,
+                  "endLine": 126,
+                  "startColumn": 30,
+                  "startLine": 126
+                },
+                "expression": "SelfParam",
+                "source_line": "    pub fn source_state_root(&self) -> Option<Hash> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+                "region": {
+                  "endColumn": 6,
+                  "endLine": 128,
+                  "startColumn": 53,
+                  "startLine": 126
+                },
+                "expression": "{ ... }",
+                "source_line": "    pub fn source_state_root(&self) -> Option<Hash> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 37,
+                  "endLine": 548,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "checkpoint.source_state_root()",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 51,
+                  "endLine": 549,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "... .ok_or(...) [Ok]",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 52,
+                  "endLine": 549,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "TryExpr",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 82,
+                  "endLine": 300,
+                  "startColumn": 5,
+                  "startLine": 300
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 301,
+                  "startColumn": 27,
+                  "startLine": 297
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<StateWitness> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 90,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "prepare_state_witness(...)",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 91,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "TryExpr",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 7,
+                  "endLine": 260,
+                  "startColumn": 5,
+                  "startLine": 258
+                },
+                "expression": "prepare_with_progress(...)",
+                "source_line": "    prepare_with_progress(settings, archive, parent_checkpoint, parent_state, &|_| {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 261,
+                  "startColumn": 25,
+                  "startLine": 257
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<RangeProof> {"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 86,
+                  "endLine": 299,
+                  "startColumn": 13,
+                  "startLine": 299
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 95,
+                  "endLine": 299,
+                  "startColumn": 13,
+                  "startLine": 299
+                },
+                "expression": "... .unwrap()",
+                "source_line": "            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 298,
+                  "startColumn": 13,
+                  "startLine": 298
+                },
+                "expression": "mut proof",
+                "source_line": "        let mut proof ="
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 33,
+                  "endLine": 347,
+                  "startColumn": 28,
+                  "startLine": 347
+                },
+                "expression": "proof",
+                "source_line": "                monetary: &proof,"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 21,
+                  "endLine": 351,
+                  "startColumn": 16,
+                  "startLine": 351
+                },
+                "expression": "proof",
+                "source_line": "        check(&proof, &result);"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 27,
+                  "endLine": 359,
+                  "startColumn": 17,
+                  "startLine": 359
+                },
+                "expression": "proof.rows",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              }
+            ],
+            [
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 71,
+                  "endLine": 323,
+                  "startColumn": 41,
+                  "startLine": 323
+                },
+                "expression": "account_root(...)",
+                "source_line": "        || checkpoint.account_root() != account_root(&parent_accounts)?"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 72,
+                  "endLine": 323,
+                  "startColumn": 41,
+                  "startLine": 323
+                },
+                "expression": "TryExpr",
+                "source_line": "        || checkpoint.account_root() != account_root(&parent_accounts)?"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 80,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "check_parent_source(...)",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 81,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "TryExpr",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 90,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "prepare_state_witness(...)",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 91,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "TryExpr",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 7,
+                  "endLine": 260,
+                  "startColumn": 5,
+                  "startLine": 258
+                },
+                "expression": "prepare_with_progress(...)",
+                "source_line": "    prepare_with_progress(settings, archive, parent_checkpoint, parent_state, &|_| {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 261,
+                  "startColumn": 25,
+                  "startLine": 257
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<RangeProof> {"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 86,
+                  "endLine": 299,
+                  "startColumn": 13,
+                  "startLine": 299
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 95,
+                  "endLine": 299,
+                  "startColumn": 13,
+                  "startLine": 299
+                },
+                "expression": "... .unwrap()",
+                "source_line": "            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 298,
+                  "startColumn": 13,
+                  "startLine": 298
+                },
+                "expression": "mut proof",
+                "source_line": "        let mut proof ="
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 33,
+                  "endLine": 347,
+                  "startColumn": 28,
+                  "startLine": 347
+                },
+                "expression": "proof",
+                "source_line": "                monetary: &proof,"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 21,
+                  "endLine": 351,
+                  "startColumn": 16,
+                  "startLine": 351
+                },
+                "expression": "proof",
+                "source_line": "        check(&proof, &result);"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 27,
+                  "endLine": 359,
+                  "startColumn": 17,
+                  "startLine": 359
+                },
+                "expression": "proof.rows",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              }
+            ],
+            [
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 71,
+                  "endLine": 323,
+                  "startColumn": 41,
+                  "startLine": 323
+                },
+                "expression": "account_root(...)",
+                "source_line": "        || checkpoint.account_root() != account_root(&parent_accounts)?"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 72,
+                  "endLine": 323,
+                  "startColumn": 41,
+                  "startLine": 323
+                },
+                "expression": "TryExpr",
+                "source_line": "        || checkpoint.account_root() != account_root(&parent_accounts)?"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 80,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "check_parent_source(...)",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 38,
+                  "endLine": 298,
+                  "startColumn": 9,
+                  "startLine": 298
+                },
+                "expression": "TuplePat",
+                "source_line": "    let (checkpoint, parent_accounts) ="
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 300,
+                  "startColumn": 39,
+                  "startLine": 300
+                },
+                "expression": "checkpoint",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 300,
+                  "startColumn": 38,
+                  "startLine": 300
+                },
+                "expression": "&checkpoint",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 28,
+                  "endLine": 532,
+                  "startColumn": 5,
+                  "startLine": 532
+                },
+                "expression": "...: ...",
+                "source_line": "    checkpoint: &Checkpoint,"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 23,
+                  "endLine": 547,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "checkpoint",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+                "region": {
+                  "endColumn": 35,
+                  "endLine": 126,
+                  "startColumn": 30,
+                  "startLine": 126
+                },
+                "expression": "SelfParam",
+                "source_line": "    pub fn source_state_root(&self) -> Option<Hash> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+                "region": {
+                  "endColumn": 6,
+                  "endLine": 128,
+                  "startColumn": 53,
+                  "startLine": 126
+                },
+                "expression": "{ ... }",
+                "source_line": "    pub fn source_state_root(&self) -> Option<Hash> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 37,
+                  "endLine": 548,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "checkpoint.source_state_root()",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 51,
+                  "endLine": 549,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "... .ok_or(...) [Ok]",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 52,
+                  "endLine": 549,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "TryExpr",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 82,
+                  "endLine": 300,
+                  "startColumn": 5,
+                  "startLine": 300
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 301,
+                  "startColumn": 27,
+                  "startLine": 297
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<StateWitness> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 90,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "prepare_state_witness(...)",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 91,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "TryExpr",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 7,
+                  "endLine": 260,
+                  "startColumn": 5,
+                  "startLine": 258
+                },
+                "expression": "prepare_with_progress(...)",
+                "source_line": "    prepare_with_progress(settings, archive, parent_checkpoint, parent_state, &|_| {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 261,
+                  "startColumn": 25,
+                  "startLine": 257
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<RangeProof> {"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 86,
+                  "endLine": 299,
+                  "startColumn": 13,
+                  "startLine": 299
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 95,
+                  "endLine": 299,
+                  "startColumn": 13,
+                  "startLine": 299
+                },
+                "expression": "... .unwrap()",
+                "source_line": "            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 298,
+                  "startColumn": 13,
+                  "startLine": 298
+                },
+                "expression": "mut proof",
+                "source_line": "        let mut proof ="
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 33,
+                  "endLine": 347,
+                  "startColumn": 28,
+                  "startLine": 347
+                },
+                "expression": "proof",
+                "source_line": "                monetary: &proof,"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 21,
+                  "endLine": 351,
+                  "startColumn": 16,
+                  "startLine": 351
+                },
+                "expression": "proof",
+                "source_line": "        check(&proof, &result);"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 27,
+                  "endLine": 359,
+                  "startColumn": 17,
+                  "startLine": 359
+                },
+                "expression": "proof.rows",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 1,
+      "annotation": {
+        "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/tests/fuzz/fuzz_targets/authenticated_state.rs",
+        "start_line": 359,
+        "start_column": 35,
+        "end_line": 359,
+        "end_column": 74,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [accounts(...)](1) to a log file.\nThis operation writes [account_root(...)](2) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "            1 => proof.parent_id[0] ^= 1,",
+        "            2 => {",
+        "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());",
+        "            }",
+        "            3 => proof.rows.reverse(),"
+      ],
+      "source_semantic_classification": "collection_mutation_labeled_as_logging",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1092,
+          "fingerprints": {
+            "primaryLocationLineHash": "1304561b40a66ef4:1"
+          },
+          "message": {
+            "text": "This operation writes [accounts(...)](1) to a log file.\nThis operation writes [account_root(...)](2) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 321,
+                  "startColumn": 27,
+                  "startLine": 321
+                },
+                "expression": "accounts(...)",
+                "source_line": "    let parent_accounts = accounts(parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 50,
+                  "endLine": 321,
+                  "startColumn": 27,
+                  "startLine": 321
+                },
+                "expression": "TryExpr",
+                "source_line": "    let parent_accounts = accounts(parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 80,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "check_parent_source(...)",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 81,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "TryExpr",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 90,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "prepare_state_witness(...)",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 91,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "TryExpr",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 7,
+                  "endLine": 260,
+                  "startColumn": 5,
+                  "startLine": 258
+                },
+                "expression": "prepare_with_progress(...)",
+                "source_line": "    prepare_with_progress(settings, archive, parent_checkpoint, parent_state, &|_| {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 261,
+                  "startColumn": 25,
+                  "startLine": 257
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<RangeProof> {"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 86,
+                  "endLine": 299,
+                  "startColumn": 13,
+                  "startLine": 299
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 95,
+                  "endLine": 299,
+                  "startColumn": 13,
+                  "startLine": 299
+                },
+                "expression": "... .unwrap()",
+                "source_line": "            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 298,
+                  "startColumn": 13,
+                  "startLine": 298
+                },
+                "expression": "mut proof",
+                "source_line": "        let mut proof ="
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 33,
+                  "endLine": 347,
+                  "startColumn": 28,
+                  "startLine": 347
+                },
+                "expression": "proof",
+                "source_line": "                monetary: &proof,"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 21,
+                  "endLine": 351,
+                  "startColumn": 16,
+                  "startLine": 351
+                },
+                "expression": "proof",
+                "source_line": "        check(&proof, &result);"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 68,
+                  "endLine": 359,
+                  "startColumn": 58,
+                  "startLine": 359
+                },
+                "expression": "proof.rows",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 74,
+                  "endLine": 359,
+                  "startColumn": 58,
+                  "startLine": 359
+                },
+                "expression": "... .len()",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 74,
+                  "endLine": 359,
+                  "startColumn": 35,
+                  "startLine": 359
+                },
+                "expression": "... % ...",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 74,
+                  "endLine": 359,
+                  "startColumn": 35,
+                  "startLine": 359
+                },
+                "expression": "... % ...",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              }
+            ],
+            [
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 321,
+                  "startColumn": 27,
+                  "startLine": 321
+                },
+                "expression": "accounts(...)",
+                "source_line": "    let parent_accounts = accounts(parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 50,
+                  "endLine": 321,
+                  "startColumn": 27,
+                  "startLine": 321
+                },
+                "expression": "TryExpr",
+                "source_line": "    let parent_accounts = accounts(parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 80,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "check_parent_source(...)",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 38,
+                  "endLine": 298,
+                  "startColumn": 9,
+                  "startLine": 298
+                },
+                "expression": "TuplePat",
+                "source_line": "    let (checkpoint, parent_accounts) ="
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 300,
+                  "startColumn": 39,
+                  "startLine": 300
+                },
+                "expression": "checkpoint",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 300,
+                  "startColumn": 38,
+                  "startLine": 300
+                },
+                "expression": "&checkpoint",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 28,
+                  "endLine": 532,
+                  "startColumn": 5,
+                  "startLine": 532
+                },
+                "expression": "...: ...",
+                "source_line": "    checkpoint: &Checkpoint,"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 23,
+                  "endLine": 547,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "checkpoint",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+                "region": {
+                  "endColumn": 35,
+                  "endLine": 126,
+                  "startColumn": 30,
+                  "startLine": 126
+                },
+                "expression": "SelfParam",
+                "source_line": "    pub fn source_state_root(&self) -> Option<Hash> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+                "region": {
+                  "endColumn": 6,
+                  "endLine": 128,
+                  "startColumn": 53,
+                  "startLine": 126
+                },
+                "expression": "{ ... }",
+                "source_line": "    pub fn source_state_root(&self) -> Option<Hash> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 37,
+                  "endLine": 548,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "checkpoint.source_state_root()",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 51,
+                  "endLine": 549,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "... .ok_or(...) [Ok]",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 52,
+                  "endLine": 549,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "TryExpr",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 82,
+                  "endLine": 300,
+                  "startColumn": 5,
+                  "startLine": 300
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 301,
+                  "startColumn": 27,
+                  "startLine": 297
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<StateWitness> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 90,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "prepare_state_witness(...)",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 91,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "TryExpr",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 7,
+                  "endLine": 260,
+                  "startColumn": 5,
+                  "startLine": 258
+                },
+                "expression": "prepare_with_progress(...)",
+                "source_line": "    prepare_with_progress(settings, archive, parent_checkpoint, parent_state, &|_| {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 261,
+                  "startColumn": 25,
+                  "startLine": 257
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<RangeProof> {"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 86,
+                  "endLine": 299,
+                  "startColumn": 13,
+                  "startLine": 299
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 95,
+                  "endLine": 299,
+                  "startColumn": 13,
+                  "startLine": 299
+                },
+                "expression": "... .unwrap()",
+                "source_line": "            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 298,
+                  "startColumn": 13,
+                  "startLine": 298
+                },
+                "expression": "mut proof",
+                "source_line": "        let mut proof ="
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 33,
+                  "endLine": 347,
+                  "startColumn": 28,
+                  "startLine": 347
+                },
+                "expression": "proof",
+                "source_line": "                monetary: &proof,"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 21,
+                  "endLine": 351,
+                  "startColumn": 16,
+                  "startLine": 351
+                },
+                "expression": "proof",
+                "source_line": "        check(&proof, &result);"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 68,
+                  "endLine": 359,
+                  "startColumn": 58,
+                  "startLine": 359
+                },
+                "expression": "proof.rows",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 74,
+                  "endLine": 359,
+                  "startColumn": 58,
+                  "startLine": 359
+                },
+                "expression": "... .len()",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 74,
+                  "endLine": 359,
+                  "startColumn": 35,
+                  "startLine": 359
+                },
+                "expression": "... % ...",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 74,
+                  "endLine": 359,
+                  "startColumn": 35,
+                  "startLine": 359
+                },
+                "expression": "... % ...",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              }
+            ],
+            [
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 71,
+                  "endLine": 323,
+                  "startColumn": 41,
+                  "startLine": 323
+                },
+                "expression": "account_root(...)",
+                "source_line": "        || checkpoint.account_root() != account_root(&parent_accounts)?"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 72,
+                  "endLine": 323,
+                  "startColumn": 41,
+                  "startLine": 323
+                },
+                "expression": "TryExpr",
+                "source_line": "        || checkpoint.account_root() != account_root(&parent_accounts)?"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 80,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "check_parent_source(...)",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 81,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "TryExpr",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 90,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "prepare_state_witness(...)",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 91,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "TryExpr",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 7,
+                  "endLine": 260,
+                  "startColumn": 5,
+                  "startLine": 258
+                },
+                "expression": "prepare_with_progress(...)",
+                "source_line": "    prepare_with_progress(settings, archive, parent_checkpoint, parent_state, &|_| {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 261,
+                  "startColumn": 25,
+                  "startLine": 257
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<RangeProof> {"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 86,
+                  "endLine": 299,
+                  "startColumn": 13,
+                  "startLine": 299
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 95,
+                  "endLine": 299,
+                  "startColumn": 13,
+                  "startLine": 299
+                },
+                "expression": "... .unwrap()",
+                "source_line": "            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 298,
+                  "startColumn": 13,
+                  "startLine": 298
+                },
+                "expression": "mut proof",
+                "source_line": "        let mut proof ="
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 33,
+                  "endLine": 347,
+                  "startColumn": 28,
+                  "startLine": 347
+                },
+                "expression": "proof",
+                "source_line": "                monetary: &proof,"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 21,
+                  "endLine": 351,
+                  "startColumn": 16,
+                  "startLine": 351
+                },
+                "expression": "proof",
+                "source_line": "        check(&proof, &result);"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 68,
+                  "endLine": 359,
+                  "startColumn": 58,
+                  "startLine": 359
+                },
+                "expression": "proof.rows",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 74,
+                  "endLine": 359,
+                  "startColumn": 58,
+                  "startLine": 359
+                },
+                "expression": "... .len()",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 74,
+                  "endLine": 359,
+                  "startColumn": 35,
+                  "startLine": 359
+                },
+                "expression": "... % ...",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 74,
+                  "endLine": 359,
+                  "startColumn": 35,
+                  "startLine": 359
+                },
+                "expression": "... % ...",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              }
+            ],
+            [
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 71,
+                  "endLine": 323,
+                  "startColumn": 41,
+                  "startLine": 323
+                },
+                "expression": "account_root(...)",
+                "source_line": "        || checkpoint.account_root() != account_root(&parent_accounts)?"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 72,
+                  "endLine": 323,
+                  "startColumn": 41,
+                  "startLine": 323
+                },
+                "expression": "TryExpr",
+                "source_line": "        || checkpoint.account_root() != account_root(&parent_accounts)?"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 80,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "check_parent_source(...)",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 38,
+                  "endLine": 298,
+                  "startColumn": 9,
+                  "startLine": 298
+                },
+                "expression": "TuplePat",
+                "source_line": "    let (checkpoint, parent_accounts) ="
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 300,
+                  "startColumn": 39,
+                  "startLine": 300
+                },
+                "expression": "checkpoint",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 300,
+                  "startColumn": 38,
+                  "startLine": 300
+                },
+                "expression": "&checkpoint",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 28,
+                  "endLine": 532,
+                  "startColumn": 5,
+                  "startLine": 532
+                },
+                "expression": "...: ...",
+                "source_line": "    checkpoint: &Checkpoint,"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 23,
+                  "endLine": 547,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "checkpoint",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+                "region": {
+                  "endColumn": 35,
+                  "endLine": 126,
+                  "startColumn": 30,
+                  "startLine": 126
+                },
+                "expression": "SelfParam",
+                "source_line": "    pub fn source_state_root(&self) -> Option<Hash> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+                "region": {
+                  "endColumn": 6,
+                  "endLine": 128,
+                  "startColumn": 53,
+                  "startLine": 126
+                },
+                "expression": "{ ... }",
+                "source_line": "    pub fn source_state_root(&self) -> Option<Hash> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 37,
+                  "endLine": 548,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "checkpoint.source_state_root()",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 51,
+                  "endLine": 549,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "... .ok_or(...) [Ok]",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 52,
+                  "endLine": 549,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "TryExpr",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 82,
+                  "endLine": 300,
+                  "startColumn": 5,
+                  "startLine": 300
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 301,
+                  "startColumn": 27,
+                  "startLine": 297
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<StateWitness> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 90,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "prepare_state_witness(...)",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 91,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "TryExpr",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 7,
+                  "endLine": 260,
+                  "startColumn": 5,
+                  "startLine": 258
+                },
+                "expression": "prepare_with_progress(...)",
+                "source_line": "    prepare_with_progress(settings, archive, parent_checkpoint, parent_state, &|_| {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 261,
+                  "startColumn": 25,
+                  "startLine": 257
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<RangeProof> {"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 86,
+                  "endLine": 299,
+                  "startColumn": 13,
+                  "startLine": 299
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 95,
+                  "endLine": 299,
+                  "startColumn": 13,
+                  "startLine": 299
+                },
+                "expression": "... .unwrap()",
+                "source_line": "            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 298,
+                  "startColumn": 13,
+                  "startLine": 298
+                },
+                "expression": "mut proof",
+                "source_line": "        let mut proof ="
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 33,
+                  "endLine": 347,
+                  "startColumn": 28,
+                  "startLine": 347
+                },
+                "expression": "proof",
+                "source_line": "                monetary: &proof,"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 21,
+                  "endLine": 351,
+                  "startColumn": 16,
+                  "startLine": 351
+                },
+                "expression": "proof",
+                "source_line": "        check(&proof, &result);"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 68,
+                  "endLine": 359,
+                  "startColumn": 58,
+                  "startLine": 359
+                },
+                "expression": "proof.rows",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 74,
+                  "endLine": 359,
+                  "startColumn": 58,
+                  "startLine": 359
+                },
+                "expression": "... .len()",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 74,
+                  "endLine": 359,
+                  "startColumn": 35,
+                  "startLine": 359
+                },
+                "expression": "... % ...",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 74,
+                  "endLine": 359,
+                  "startColumn": 35,
+                  "startLine": 359
+                },
+                "expression": "... % ...",
+                "source_line": "                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 2,
+      "annotation": {
+        "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/tests/fuzz/fuzz_targets/authenticated_state.rs",
+        "start_line": 474,
+        "start_column": null,
+        "end_line": 475,
+        "end_column": null,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [witness.non_accounts](1) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "            }",
+        "            2 => {",
+        "                witness",
+        "                    .non_accounts",
+        "                    .remove(usize::from(byte(1)) % witness.non_accounts.len());",
+        "            }"
+      ],
+      "source_semantic_classification": "collection_mutation_labeled_as_logging",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1088,
+          "fingerprints": {
+            "primaryLocationLineHash": "93d6eb1fd2353d07:1"
+          },
+          "message": {
+            "text": "This operation writes [witness.non_accounts](1) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 34,
+                  "endLine": 475,
+                  "startColumn": 17,
+                  "startLine": 474
+                },
+                "expression": "witness.non_accounts",
+                "source_line": "                witness"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 34,
+                  "endLine": 475,
+                  "startColumn": 17,
+                  "startLine": 474
+                },
+                "expression": "witness.non_accounts",
+                "source_line": "                witness"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 3,
+      "annotation": {
+        "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/tests/fuzz/fuzz_targets/authenticated_state.rs",
+        "start_line": 476,
+        "start_column": 29,
+        "end_line": 476,
+        "end_column": 78,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [... .len()](1) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "                witness",
+        "                    .non_accounts",
+        "                    .remove(usize::from(byte(1)) % witness.non_accounts.len());",
+        "            }",
+        "            3 => witness.non_accounts.reverse(),"
+      ],
+      "source_semantic_classification": "collection_mutation_labeled_as_logging",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1093,
+          "fingerprints": {
+            "primaryLocationLineHash": "60f51f99d302ef24:1"
+          },
+          "message": {
+            "text": "This operation writes [... .len()](1) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 78,
+                  "endLine": 476,
+                  "startColumn": 52,
+                  "startLine": 476
+                },
+                "expression": "... .len()",
+                "source_line": "                    .remove(usize::from(byte(1)) % witness.non_accounts.len());"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 78,
+                  "endLine": 476,
+                  "startColumn": 29,
+                  "startLine": 476
+                },
+                "expression": "... % ...",
+                "source_line": "                    .remove(usize::from(byte(1)) % witness.non_accounts.len());"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 78,
+                  "endLine": 476,
+                  "startColumn": 29,
+                  "startLine": 476
+                },
+                "expression": "... % ...",
+                "source_line": "                    .remove(usize::from(byte(1)) % witness.non_accounts.len());"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 4,
+      "annotation": {
+        "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/tests/fuzz/fuzz_targets/authenticated_state.rs",
+        "start_line": 487,
+        "start_column": 17,
+        "end_line": 487,
+        "end_column": 42,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [... .accounts](1) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "            }",
+        "            5 => {",
+        "                compact.accounts.accounts.remove(0);",
+        "            }",
+        "            6 => compact"
+      ],
+      "source_semantic_classification": "collection_mutation_labeled_as_logging",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1089,
+          "fingerprints": {
+            "primaryLocationLineHash": "fcb4cdd300f080d4:1"
+          },
+          "message": {
+            "text": "This operation writes [... .accounts](1) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 42,
+                  "endLine": 487,
+                  "startColumn": 17,
+                  "startLine": 487
+                },
+                "expression": "... .accounts",
+                "source_line": "                compact.accounts.accounts.remove(0);"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 42,
+                  "endLine": 487,
+                  "startColumn": 17,
+                  "startLine": 487
+                },
+                "expression": "... .accounts",
+                "source_line": "                compact.accounts.accounts.remove(0);"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 5,
+      "annotation": {
+        "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/tests/fuzz/fuzz_targets/authenticated_state.rs",
+        "start_line": 540,
+        "start_column": null,
+        "end_line": 541,
+        "end_column": null,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [witness.non_accounts](1) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "        }",
+        "        2 => {",
+        "            witness",
+        "                .non_accounts",
+        "                .remove(usize::from(byte(1)) % witness.non_accounts.len());",
+        "        }"
+      ],
+      "source_semantic_classification": "collection_mutation_labeled_as_logging",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1090,
+          "fingerprints": {
+            "primaryLocationLineHash": "93d6eb1fd2353d07:2"
+          },
+          "message": {
+            "text": "This operation writes [witness.non_accounts](1) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 30,
+                  "endLine": 541,
+                  "startColumn": 13,
+                  "startLine": 540
+                },
+                "expression": "witness.non_accounts",
+                "source_line": "            witness"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 30,
+                  "endLine": 541,
+                  "startColumn": 13,
+                  "startLine": 540
+                },
+                "expression": "witness.non_accounts",
+                "source_line": "            witness"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 6,
+      "annotation": {
+        "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/tests/fuzz/fuzz_targets/authenticated_state.rs",
+        "start_line": 542,
+        "start_column": 25,
+        "end_line": 542,
+        "end_column": 74,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [... .len()](1) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "            witness",
+        "                .non_accounts",
+        "                .remove(usize::from(byte(1)) % witness.non_accounts.len());",
+        "        }",
+        "        3 => witness.non_accounts.reverse(),"
+      ],
+      "source_semantic_classification": "collection_mutation_labeled_as_logging",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1094,
+          "fingerprints": {
+            "primaryLocationLineHash": "60f51f99d302ef24:2"
+          },
+          "message": {
+            "text": "This operation writes [... .len()](1) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 74,
+                  "endLine": 542,
+                  "startColumn": 48,
+                  "startLine": 542
+                },
+                "expression": "... .len()",
+                "source_line": "                .remove(usize::from(byte(1)) % witness.non_accounts.len());"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 74,
+                  "endLine": 542,
+                  "startColumn": 25,
+                  "startLine": 542
+                },
+                "expression": "... % ...",
+                "source_line": "                .remove(usize::from(byte(1)) % witness.non_accounts.len());"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 74,
+                  "endLine": 542,
+                  "startColumn": 25,
+                  "startLine": 542
+                },
+                "expression": "... % ...",
+                "source_line": "                .remove(usize::from(byte(1)) % witness.non_accounts.len());"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 7,
+      "annotation": {
+        "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/tests/fuzz/fuzz_targets/authenticated_state.rs",
+        "start_line": 549,
+        "start_column": 13,
+        "end_line": 549,
+        "end_column": 30,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [prepared.accounts](1) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "        }",
+        "        5 => {",
+        "            prepared.accounts.remove(0);",
+        "        }",
+        "        6 => prepared.accounts.push(prepared.accounts[0].clone()),"
+      ],
+      "source_semantic_classification": "collection_mutation_labeled_as_logging",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1091,
+          "fingerprints": {
+            "primaryLocationLineHash": "c3fac149e48f3141:1"
+          },
+          "message": {
+            "text": "This operation writes [prepared.accounts](1) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 30,
+                  "endLine": 549,
+                  "startColumn": 13,
+                  "startLine": 549
+                },
+                "expression": "prepared.accounts",
+                "source_line": "            prepared.accounts.remove(0);"
+              },
+              {
+                "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+                "region": {
+                  "endColumn": 30,
+                  "endLine": 549,
+                  "startColumn": 13,
+                  "startLine": 549
+                },
+                "expression": "prepared.accounts",
+                "source_line": "            prepared.accounts.remove(0);"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 8,
+      "annotation": {
+        "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_budget_report.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/trillionnium/crates/trnm-pon-node/examples/pon_w1_budget_report.rs",
+        "start_line": 257,
+        "start_column": 17,
+        "end_line": 257,
+        "end_column": 18,
+        "annotation_level": "failure",
+        "title": "Hard-coded cryptographic value",
+        "message": "This hard-coded value is used as [a nonce](1).",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "            sample,",
+        "            if matches!(prepared, Producer::FalseTrace(_)) {",
+        "                0",
+        "            } else {",
+        "                nonce"
+      ],
+      "source_semantic_classification": "benchmark_fixed_challenge_nonce",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/hard-coded-cryptographic-value",
+          "severity": "9.8",
+          "alert_number": 1333,
+          "fingerprints": {
+            "primaryLocationLineHash": "90ddfe286139c387:1"
+          },
+          "message": {
+            "text": "This hard-coded value is used as [a nonce](1)."
+          },
+          "flows": [
+            [
+              {
+                "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_budget_report.rs",
+                "region": {
+                  "endColumn": 18,
+                  "endLine": 257,
+                  "startColumn": 17,
+                  "startLine": 257
+                },
+                "expression": "0",
+                "source_line": "                0"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_budget_report.rs",
+                "region": {
+                  "endColumn": 14,
+                  "endLine": 260,
+                  "startColumn": 13,
+                  "startLine": 256
+                },
+                "expression": "if ... {...} else {...}",
+                "source_line": "            if matches!(prepared, Producer::FalseTrace(_)) {"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 9,
+      "annotation": {
+        "path": "trillionnium/crates/trnm-pon-node/examples/support/state_witness_artifact.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/trillionnium/crates/trnm-pon-node/examples/support/state_witness_artifact.rs",
+        "start_line": 234,
+        "start_column": 23,
+        "end_line": 234,
+        "end_column": 48,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [... .non_accounts](1) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "            })",
+        "            .unwrap();",
+        "        let removed = case.witness.non_accounts.remove(index);",
+        "        if label == \"missing-future-reward\" {",
+        "            assert!(removed.value[\"maturity\"].as_u64().unwrap() > 2);"
+      ],
+      "source_semantic_classification": "collection_mutation_labeled_as_logging",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1084,
+          "fingerprints": {
+            "primaryLocationLineHash": "9511af29004a3e68:1"
+          },
+          "message": {
+            "text": "This operation writes [... .non_accounts](1) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "trillionnium/crates/trnm-pon-node/examples/support/state_witness_artifact.rs",
+                "region": {
+                  "endColumn": 48,
+                  "endLine": 234,
+                  "startColumn": 23,
+                  "startLine": 234
+                },
+                "expression": "... .non_accounts",
+                "source_line": "        let removed = case.witness.non_accounts.remove(index);"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/examples/support/state_witness_artifact.rs",
+                "region": {
+                  "endColumn": 48,
+                  "endLine": 234,
+                  "startColumn": 23,
+                  "startLine": 234
+                },
+                "expression": "... .non_accounts",
+                "source_line": "        let removed = case.witness.non_accounts.remove(index);"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 10,
+      "annotation": {
+        "path": "trillionnium/crates/trnm-pon-node/examples/support/state_witness_artifact.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/trillionnium/crates/trnm-pon-node/examples/support/state_witness_artifact.rs",
+        "start_line": 283,
+        "start_column": 5,
+        "end_line": 283,
+        "end_column": 30,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [... .non_accounts](1) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "        StateWitnessError::AccountRow,",
+        "    );",
+        "    case.witness.non_accounts.insert(",
+        "        0,",
+        "        StateRow {"
+      ],
+      "source_semantic_classification": "collection_mutation_labeled_as_logging",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1081,
+          "fingerprints": {
+            "primaryLocationLineHash": "16b6f1d75d7d66aa:1"
+          },
+          "message": {
+            "text": "This operation writes [... .non_accounts](1) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "trillionnium/crates/trnm-pon-node/examples/support/state_witness_artifact.rs",
+                "region": {
+                  "endColumn": 30,
+                  "endLine": 283,
+                  "startColumn": 5,
+                  "startLine": 283
+                },
+                "expression": "... .non_accounts",
+                "source_line": "    case.witness.non_accounts.insert("
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/examples/support/state_witness_artifact.rs",
+                "region": {
+                  "endColumn": 30,
+                  "endLine": 283,
+                  "startColumn": 5,
+                  "startLine": 283
+                },
+                "expression": "... .non_accounts",
+                "source_line": "    case.witness.non_accounts.insert("
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 11,
+      "annotation": {
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
+        "start_line": 211,
+        "start_column": 5,
+        "end_line": 211,
+        "end_column": 18,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [item.accounts](1) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "    invalid.push(item);",
+        "    let mut item = proof.clone();",
+        "    item.accounts.insert(1, item.accounts[0].clone());",
+        "    invalid.push(item);",
+        "    let mut item = proof.clone();"
+      ],
+      "source_semantic_classification": "collection_mutation_labeled_as_logging",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1082,
+          "fingerprints": {
+            "primaryLocationLineHash": "8c10a4a069f737e3:1"
+          },
+          "message": {
+            "text": "This operation writes [item.accounts](1) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
+                "region": {
+                  "endColumn": 18,
+                  "endLine": 211,
+                  "startColumn": 5,
+                  "startLine": 211
+                },
+                "expression": "item.accounts",
+                "source_line": "    item.accounts.insert(1, item.accounts[0].clone());"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
+                "region": {
+                  "endColumn": 18,
+                  "endLine": 211,
+                  "startColumn": 5,
+                  "startLine": 211
+                },
+                "expression": "item.accounts",
+                "source_line": "    item.accounts.insert(1, item.accounts[0].clone());"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 12,
+      "annotation": {
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+        "start_line": 477,
+        "start_column": null,
+        "end_line": 479,
+        "end_column": null,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [check_state_with_account_access(...)](1) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "    let open = signed(&settings, 1, 10, payload);",
+        "    eprintln!(",
+        "        \"authenticated full capacity: initialized real {}-key test genesis in {:?}\",",
+        "        settings.initial.len(),",
+        "        started.elapsed()",
+        "    );",
+        "    for height in 1..=20u64 {"
+      ],
+      "source_semantic_classification": "actual_test_public_metric_output",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1097,
+          "fingerprints": {
+            "primaryLocationLineHash": "ecc3f49500ee0d9c:1"
+          },
+          "message": {
+            "text": "This operation writes [check_state_with_account_access(...)](1) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+                "region": {
+                  "endColumn": 62,
+                  "endLine": 317,
+                  "startColumn": 5,
+                  "startLine": 317
+                },
+                "expression": "check_state_with_account_access(...)",
+                "source_line": "    check_state_with_account_access(state, height, cfg, None)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 318,
+                  "startColumn": 76,
+                  "startLine": 316
+                },
+                "expression": "{ ... }",
+                "source_line": "pub fn check_state(state: &State, height: u64, cfg: &Config) -> Result<()> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+                "region": {
+                  "endColumn": 58,
+                  "endLine": 417,
+                  "startColumn": 13,
+                  "startLine": 417
+                },
+                "expression": "...::check_state(...)",
+                "source_line": "            continuity_v1::check_state(&initial, 0, &app)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+                "region": {
+                  "endColumn": 59,
+                  "endLine": 417,
+                  "startColumn": 13,
+                  "startLine": 417
+                },
+                "expression": "TryExpr",
+                "source_line": "            continuity_v1::check_state(&initial, 0, &app)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+                "region": {
+                  "endColumn": 10,
+                  "endLine": 255,
+                  "startColumn": 9,
+                  "startLine": 249
+                },
+                "expression": "...::development_with_model_profiles_and_task_windows(...)",
+                "source_line": "        Self::development_with_model_profiles_and_task_windows("
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+                "region": {
+                  "endColumn": 6,
+                  "endLine": 256,
+                  "startColumn": 23,
+                  "startLine": 248
+                },
+                "expression": "{ ... }",
+                "source_line": "    ) -> Result<Self> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+                "region": {
+                  "endColumn": 10,
+                  "endLine": 241,
+                  "startColumn": 9,
+                  "startLine": 236
+                },
+                "expression": "...::development_with_model_profiles(...)",
+                "source_line": "        Self::development_with_model_profiles("
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+                "region": {
+                  "endColumn": 6,
+                  "endLine": 242,
+                  "startColumn": 23,
+                  "startLine": 235
+                },
+                "expression": "{ ... }",
+                "source_line": "    ) -> Result<Self> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+                "region": {
+                  "endColumn": 6,
+                  "endLine": 400,
+                  "startColumn": 24,
+                  "startLine": 396
+                },
+                "expression": "...::development_with_profiles(...)",
+                "source_line": "    let mut settings = Settings::development_with_profiles("
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+                "region": {
+                  "endColumn": 14,
+                  "endLine": 401,
+                  "startColumn": 24,
+                  "startLine": 396
+                },
+                "expression": "... .unwrap()",
+                "source_line": "    let mut settings = Settings::development_with_profiles("
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+                "region": {
+                  "endColumn": 21,
+                  "endLine": 396,
+                  "startColumn": 9,
+                  "startLine": 396
+                },
+                "expression": "mut settings",
+                "source_line": "    let mut settings = Settings::development_with_profiles("
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+                "region": {
+                  "endColumn": 13,
+                  "endLine": 428,
+                  "startColumn": 5,
+                  "startLine": 428
+                },
+                "expression": "settings",
+                "source_line": "    settings.genesis = hash("
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+                "region": {
+                  "endColumn": 32,
+                  "endLine": 475,
+                  "startColumn": 24,
+                  "startLine": 475
+                },
+                "expression": "settings",
+                "source_line": "    let open = signed(&settings, 1, 10, payload);"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+                "region": {
+                  "endColumn": 25,
+                  "endLine": 478,
+                  "startColumn": 9,
+                  "startLine": 478
+                },
+                "expression": "settings.initial",
+                "source_line": "        settings.initial.len(),"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+                "region": {
+                  "endColumn": 31,
+                  "endLine": 478,
+                  "startColumn": 9,
+                  "startLine": 478
+                },
+                "expression": "... .len()",
+                "source_line": "        settings.initial.len(),"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+                "region": {
+                  "endColumn": 26,
+                  "endLine": 479,
+                  "startColumn": 9,
+                  "startLine": 477
+                },
+                "expression": "MacroExpr",
+                "source_line": "        \"authenticated full capacity: initialized real {}-key test genesis in {:?}\","
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 13,
+      "annotation": {
+        "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+        "start_line": 175,
+        "start_column": 9,
+        "end_line": 175,
+        "end_column": 19,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [accounts(...)](1) to a log file.\nThis operation writes [account_root(...)](2) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "            .position(|row| row.key == omitted_key)",
+        "            .unwrap();",
+        "        proof.rows.remove(index);",
+        "        assert!(matches!(",
+        "            execution::execute_with_monetary_state_witness("
+      ],
+      "source_semantic_classification": "collection_mutation_labeled_as_logging",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1085,
+          "fingerprints": {
+            "primaryLocationLineHash": "afb75bfd542592e4:1"
+          },
+          "message": {
+            "text": "This operation writes [accounts(...)](1) to a log file.\nThis operation writes [account_root(...)](2) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 321,
+                  "startColumn": 27,
+                  "startLine": 321
+                },
+                "expression": "accounts(...)",
+                "source_line": "    let parent_accounts = accounts(parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 50,
+                  "endLine": 321,
+                  "startColumn": 27,
+                  "startLine": 321
+                },
+                "expression": "TryExpr",
+                "source_line": "    let parent_accounts = accounts(parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 80,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "check_parent_source(...)",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 81,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "TryExpr",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 90,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "prepare_state_witness(...)",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 91,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "TryExpr",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 7,
+                  "endLine": 260,
+                  "startColumn": 5,
+                  "startLine": 258
+                },
+                "expression": "prepare_with_progress(...)",
+                "source_line": "    prepare_with_progress(settings, archive, parent_checkpoint, parent_state, &|_| {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 261,
+                  "startColumn": 25,
+                  "startLine": 257
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<RangeProof> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 96,
+                  "endLine": 154,
+                  "startColumn": 9,
+                  "startLine": 154
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "        obligation_ranges::prepare(&self.settings, &self.archive, self.checkpoint.id(), parent)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 155,
+                  "startColumn": 9,
+                  "startLine": 154
+                },
+                "expression": "... .unwrap()",
+                "source_line": "        obligation_ranges::prepare(&self.settings, &self.archive, self.checkpoint.id(), parent)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 6,
+                  "endLine": 156,
+                  "startColumn": 51,
+                  "startLine": 153
+                },
+                "expression": "{ ... }",
+                "source_line": "    fn proof(&self, parent: &State) -> RangeProof {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 46,
+                  "endLine": 169,
+                  "startColumn": 25,
+                  "startLine": 169
+                },
+                "expression": "self.proof(...)",
+                "source_line": "        let mut proof = self.proof(&before.2);"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 169,
+                  "startColumn": 13,
+                  "startLine": 169
+                },
+                "expression": "mut proof",
+                "source_line": "        let mut proof = self.proof(&before.2);"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 19,
+                  "endLine": 175,
+                  "startColumn": 9,
+                  "startLine": 175
+                },
+                "expression": "proof.rows",
+                "source_line": "        proof.rows.remove(index);"
+              }
+            ],
+            [
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 321,
+                  "startColumn": 27,
+                  "startLine": 321
+                },
+                "expression": "accounts(...)",
+                "source_line": "    let parent_accounts = accounts(parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 50,
+                  "endLine": 321,
+                  "startColumn": 27,
+                  "startLine": 321
+                },
+                "expression": "TryExpr",
+                "source_line": "    let parent_accounts = accounts(parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 80,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "check_parent_source(...)",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 38,
+                  "endLine": 298,
+                  "startColumn": 9,
+                  "startLine": 298
+                },
+                "expression": "TuplePat",
+                "source_line": "    let (checkpoint, parent_accounts) ="
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 300,
+                  "startColumn": 39,
+                  "startLine": 300
+                },
+                "expression": "checkpoint",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 300,
+                  "startColumn": 38,
+                  "startLine": 300
+                },
+                "expression": "&checkpoint",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 28,
+                  "endLine": 532,
+                  "startColumn": 5,
+                  "startLine": 532
+                },
+                "expression": "...: ...",
+                "source_line": "    checkpoint: &Checkpoint,"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 23,
+                  "endLine": 547,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "checkpoint",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+                "region": {
+                  "endColumn": 35,
+                  "endLine": 126,
+                  "startColumn": 30,
+                  "startLine": 126
+                },
+                "expression": "SelfParam",
+                "source_line": "    pub fn source_state_root(&self) -> Option<Hash> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+                "region": {
+                  "endColumn": 6,
+                  "endLine": 128,
+                  "startColumn": 53,
+                  "startLine": 126
+                },
+                "expression": "{ ... }",
+                "source_line": "    pub fn source_state_root(&self) -> Option<Hash> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 37,
+                  "endLine": 548,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "checkpoint.source_state_root()",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 51,
+                  "endLine": 549,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "... .ok_or(...) [Ok]",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 52,
+                  "endLine": 549,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "TryExpr",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 82,
+                  "endLine": 300,
+                  "startColumn": 5,
+                  "startLine": 300
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 301,
+                  "startColumn": 27,
+                  "startLine": 297
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<StateWitness> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 90,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "prepare_state_witness(...)",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 91,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "TryExpr",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 7,
+                  "endLine": 260,
+                  "startColumn": 5,
+                  "startLine": 258
+                },
+                "expression": "prepare_with_progress(...)",
+                "source_line": "    prepare_with_progress(settings, archive, parent_checkpoint, parent_state, &|_| {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 261,
+                  "startColumn": 25,
+                  "startLine": 257
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<RangeProof> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 96,
+                  "endLine": 154,
+                  "startColumn": 9,
+                  "startLine": 154
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "        obligation_ranges::prepare(&self.settings, &self.archive, self.checkpoint.id(), parent)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 155,
+                  "startColumn": 9,
+                  "startLine": 154
+                },
+                "expression": "... .unwrap()",
+                "source_line": "        obligation_ranges::prepare(&self.settings, &self.archive, self.checkpoint.id(), parent)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 6,
+                  "endLine": 156,
+                  "startColumn": 51,
+                  "startLine": 153
+                },
+                "expression": "{ ... }",
+                "source_line": "    fn proof(&self, parent: &State) -> RangeProof {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 46,
+                  "endLine": 169,
+                  "startColumn": 25,
+                  "startLine": 169
+                },
+                "expression": "self.proof(...)",
+                "source_line": "        let mut proof = self.proof(&before.2);"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 169,
+                  "startColumn": 13,
+                  "startLine": 169
+                },
+                "expression": "mut proof",
+                "source_line": "        let mut proof = self.proof(&before.2);"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 19,
+                  "endLine": 175,
+                  "startColumn": 9,
+                  "startLine": 175
+                },
+                "expression": "proof.rows",
+                "source_line": "        proof.rows.remove(index);"
+              }
+            ],
+            [
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 71,
+                  "endLine": 323,
+                  "startColumn": 41,
+                  "startLine": 323
+                },
+                "expression": "account_root(...)",
+                "source_line": "        || checkpoint.account_root() != account_root(&parent_accounts)?"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 72,
+                  "endLine": 323,
+                  "startColumn": 41,
+                  "startLine": 323
+                },
+                "expression": "TryExpr",
+                "source_line": "        || checkpoint.account_root() != account_root(&parent_accounts)?"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 80,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "check_parent_source(...)",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 81,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "TryExpr",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 90,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "prepare_state_witness(...)",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 91,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "TryExpr",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 7,
+                  "endLine": 260,
+                  "startColumn": 5,
+                  "startLine": 258
+                },
+                "expression": "prepare_with_progress(...)",
+                "source_line": "    prepare_with_progress(settings, archive, parent_checkpoint, parent_state, &|_| {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 261,
+                  "startColumn": 25,
+                  "startLine": 257
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<RangeProof> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 96,
+                  "endLine": 154,
+                  "startColumn": 9,
+                  "startLine": 154
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "        obligation_ranges::prepare(&self.settings, &self.archive, self.checkpoint.id(), parent)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 155,
+                  "startColumn": 9,
+                  "startLine": 154
+                },
+                "expression": "... .unwrap()",
+                "source_line": "        obligation_ranges::prepare(&self.settings, &self.archive, self.checkpoint.id(), parent)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 6,
+                  "endLine": 156,
+                  "startColumn": 51,
+                  "startLine": 153
+                },
+                "expression": "{ ... }",
+                "source_line": "    fn proof(&self, parent: &State) -> RangeProof {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 46,
+                  "endLine": 169,
+                  "startColumn": 25,
+                  "startLine": 169
+                },
+                "expression": "self.proof(...)",
+                "source_line": "        let mut proof = self.proof(&before.2);"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 169,
+                  "startColumn": 13,
+                  "startLine": 169
+                },
+                "expression": "mut proof",
+                "source_line": "        let mut proof = self.proof(&before.2);"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 19,
+                  "endLine": 175,
+                  "startColumn": 9,
+                  "startLine": 175
+                },
+                "expression": "proof.rows",
+                "source_line": "        proof.rows.remove(index);"
+              }
+            ],
+            [
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 71,
+                  "endLine": 323,
+                  "startColumn": 41,
+                  "startLine": 323
+                },
+                "expression": "account_root(...)",
+                "source_line": "        || checkpoint.account_root() != account_root(&parent_accounts)?"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 72,
+                  "endLine": 323,
+                  "startColumn": 41,
+                  "startLine": 323
+                },
+                "expression": "TryExpr",
+                "source_line": "        || checkpoint.account_root() != account_root(&parent_accounts)?"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 80,
+                  "endLine": 299,
+                  "startColumn": 9,
+                  "startLine": 299
+                },
+                "expression": "check_parent_source(...)",
+                "source_line": "        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 38,
+                  "endLine": 298,
+                  "startColumn": 9,
+                  "startLine": 298
+                },
+                "expression": "TuplePat",
+                "source_line": "    let (checkpoint, parent_accounts) ="
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 300,
+                  "startColumn": 39,
+                  "startLine": 300
+                },
+                "expression": "checkpoint",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 300,
+                  "startColumn": 38,
+                  "startLine": 300
+                },
+                "expression": "&checkpoint",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 28,
+                  "endLine": 532,
+                  "startColumn": 5,
+                  "startLine": 532
+                },
+                "expression": "...: ...",
+                "source_line": "    checkpoint: &Checkpoint,"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 23,
+                  "endLine": 547,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "checkpoint",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+                "region": {
+                  "endColumn": 35,
+                  "endLine": 126,
+                  "startColumn": 30,
+                  "startLine": 126
+                },
+                "expression": "SelfParam",
+                "source_line": "    pub fn source_state_root(&self) -> Option<Hash> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+                "region": {
+                  "endColumn": 6,
+                  "endLine": 128,
+                  "startColumn": 53,
+                  "startLine": 126
+                },
+                "expression": "{ ... }",
+                "source_line": "    pub fn source_state_root(&self) -> Option<Hash> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 37,
+                  "endLine": 548,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "checkpoint.source_state_root()",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 51,
+                  "endLine": 549,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "... .ok_or(...) [Ok]",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+                "region": {
+                  "endColumn": 52,
+                  "endLine": 549,
+                  "startColumn": 13,
+                  "startLine": 547
+                },
+                "expression": "TryExpr",
+                "source_line": "            checkpoint"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 82,
+                  "endLine": 300,
+                  "startColumn": 5,
+                  "startLine": 300
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 301,
+                  "startColumn": 27,
+                  "startLine": 297
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<StateWitness> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 90,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "prepare_state_witness(...)",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 91,
+                  "endLine": 270,
+                  "startColumn": 17,
+                  "startLine": 270
+                },
+                "expression": "TryExpr",
+                "source_line": "    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 7,
+                  "endLine": 260,
+                  "startColumn": 5,
+                  "startLine": 258
+                },
+                "expression": "prepare_with_progress(...)",
+                "source_line": "    prepare_with_progress(settings, archive, parent_checkpoint, parent_state, &|_| {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 261,
+                  "startColumn": 25,
+                  "startLine": 257
+                },
+                "expression": "{ ... }",
+                "source_line": ") -> Result<RangeProof> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 96,
+                  "endLine": 154,
+                  "startColumn": 9,
+                  "startLine": 154
+                },
+                "expression": "...::prepare(...)",
+                "source_line": "        obligation_ranges::prepare(&self.settings, &self.archive, self.checkpoint.id(), parent)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 155,
+                  "startColumn": 9,
+                  "startLine": 154
+                },
+                "expression": "... .unwrap()",
+                "source_line": "        obligation_ranges::prepare(&self.settings, &self.archive, self.checkpoint.id(), parent)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 6,
+                  "endLine": 156,
+                  "startColumn": 51,
+                  "startLine": 153
+                },
+                "expression": "{ ... }",
+                "source_line": "    fn proof(&self, parent: &State) -> RangeProof {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 46,
+                  "endLine": 169,
+                  "startColumn": 25,
+                  "startLine": 169
+                },
+                "expression": "self.proof(...)",
+                "source_line": "        let mut proof = self.proof(&before.2);"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 169,
+                  "startColumn": 13,
+                  "startLine": 169
+                },
+                "expression": "mut proof",
+                "source_line": "        let mut proof = self.proof(&before.2);"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+                "region": {
+                  "endColumn": 19,
+                  "endLine": 175,
+                  "startColumn": 9,
+                  "startLine": 175
+                },
+                "expression": "proof.rows",
+                "source_line": "        proof.rows.remove(index);"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 14,
+      "annotation": {
+        "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+        "start_line": 1281,
+        "start_column": 23,
+        "end_line": 1281,
+        "end_column": 63,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [capacity_with_account_access(...)](1) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "        }",
+        "        if [1, 48, 56, 76, 78, 128, 305, 306].contains(&height) {",
+        "            eprintln!(\"v4 native height{height}: {capacity:?}\");",
+        "        }",
+        "    }"
+      ],
+      "source_semantic_classification": "actual_test_public_metric_output",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1098,
+          "fingerprints": {
+            "primaryLocationLineHash": "e89c2f2acfb7b7a0:1"
+          },
+          "message": {
+            "text": "This operation writes [capacity_with_account_access(...)](1) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+                "region": {
+                  "endColumn": 59,
+                  "endLine": 160,
+                  "startColumn": 5,
+                  "startLine": 160
+                },
+                "expression": "capacity_with_account_access(...)",
+                "source_line": "    capacity_with_account_access(state, height, cfg, None)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 161,
+                  "startColumn": 79,
+                  "startLine": 159
+                },
+                "expression": "{ ... }",
+                "source_line": "pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+                "region": {
+                  "endColumn": 67,
+                  "endLine": 1127,
+                  "startColumn": 24,
+                  "startLine": 1127
+                },
+                "expression": "...::capacity(...)",
+                "source_line": "        let capacity = continuity_v1::capacity(&after, height, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+                "region": {
+                  "endColumn": 76,
+                  "endLine": 1127,
+                  "startColumn": 24,
+                  "startLine": 1127
+                },
+                "expression": "... .unwrap()",
+                "source_line": "        let capacity = continuity_v1::capacity(&after, height, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+                "region": {
+                  "endColumn": 21,
+                  "endLine": 1127,
+                  "startColumn": 13,
+                  "startLine": 1127
+                },
+                "expression": "capacity",
+                "source_line": "        let capacity = continuity_v1::capacity(&after, height, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+                "region": {
+                  "endColumn": 63,
+                  "endLine": 1281,
+                  "startColumn": 23,
+                  "startLine": 1281
+                },
+                "expression": "MacroExpr",
+                "source_line": "            eprintln!(\"v4 native height{height}: {capacity:?}\");"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 15,
+      "annotation": {
+        "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+        "start_line": 1322,
+        "start_column": 15,
+        "end_line": 1322,
+        "end_column": 158,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [capacity_with_account_access(...)](1) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "    assert_eq!(state[&release_key][\"status\"], \"expired\");",
+        "    continuity_v1::check_state(&state, 1076, &c).unwrap();",
+        "    eprintln!(\"v4 lifecycle: native_packets={native_packets}, direct_expiry_transitions=770, peak_required_keys={peak_required}, full_capacity_fixture=false\");",
+        "}",
+        ""
+      ],
+      "source_semantic_classification": "actual_test_public_metric_output",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1099,
+          "fingerprints": {
+            "primaryLocationLineHash": "1725a627414e1ef0:1"
+          },
+          "message": {
+            "text": "This operation writes [capacity_with_account_access(...)](1) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+                "region": {
+                  "endColumn": 59,
+                  "endLine": 160,
+                  "startColumn": 5,
+                  "startLine": 160
+                },
+                "expression": "capacity_with_account_access(...)",
+                "source_line": "    capacity_with_account_access(state, height, cfg, None)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 161,
+                  "startColumn": 79,
+                  "startLine": 159
+                },
+                "expression": "{ ... }",
+                "source_line": "pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+                "region": {
+                  "endColumn": 69,
+                  "endLine": 971,
+                  "startColumn": 29,
+                  "startLine": 971
+                },
+                "expression": "...::capacity(...)",
+                "source_line": "    let mut peak_required = continuity_v1::capacity(&initial, 0, &c)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+                "region": {
+                  "endColumn": 18,
+                  "endLine": 972,
+                  "startColumn": 29,
+                  "startLine": 971
+                },
+                "expression": "... .unwrap()",
+                "source_line": "    let mut peak_required = continuity_v1::capacity(&initial, 0, &c)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+                "region": {
+                  "endColumn": 26,
+                  "endLine": 971,
+                  "startColumn": 9,
+                  "startLine": 971
+                },
+                "expression": "mut peak_required",
+                "source_line": "    let mut peak_required = continuity_v1::capacity(&initial, 0, &c)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+                "region": {
+                  "endColumn": 158,
+                  "endLine": 1322,
+                  "startColumn": 15,
+                  "startLine": 1322
+                },
+                "expression": "MacroExpr",
+                "source_line": "    eprintln!(\"v4 lifecycle: native_packets={native_packets}, direct_expiry_transitions=770, peak_required_keys={peak_required}, full_capacity_fixture=false\");"
+              }
+            ],
+            [
+              {
+                "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+                "region": {
+                  "endColumn": 59,
+                  "endLine": 160,
+                  "startColumn": 5,
+                  "startLine": 160
+                },
+                "expression": "capacity_with_account_access(...)",
+                "source_line": "    capacity_with_account_access(state, height, cfg, None)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 161,
+                  "startColumn": 79,
+                  "startLine": 159
+                },
+                "expression": "{ ... }",
+                "source_line": "pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+                "region": {
+                  "endColumn": 67,
+                  "endLine": 1127,
+                  "startColumn": 24,
+                  "startLine": 1127
+                },
+                "expression": "...::capacity(...)",
+                "source_line": "        let capacity = continuity_v1::capacity(&after, height, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+                "region": {
+                  "endColumn": 76,
+                  "endLine": 1127,
+                  "startColumn": 24,
+                  "startLine": 1127
+                },
+                "expression": "... .unwrap()",
+                "source_line": "        let capacity = continuity_v1::capacity(&after, height, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+                "region": {
+                  "endColumn": 21,
+                  "endLine": 1127,
+                  "startColumn": 13,
+                  "startLine": 1127
+                },
+                "expression": "capacity",
+                "source_line": "        let capacity = continuity_v1::capacity(&after, height, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+                "region": {
+                  "endColumn": 65,
+                  "endLine": 1135,
+                  "startColumn": 43,
+                  "startLine": 1135
+                },
+                "expression": "capacity.required_keys",
+                "source_line": "        peak_required = peak_required.max(capacity.required_keys);"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+                "region": {
+                  "endColumn": 66,
+                  "endLine": 1135,
+                  "startColumn": 25,
+                  "startLine": 1135
+                },
+                "expression": "peak_required.max(...)",
+                "source_line": "        peak_required = peak_required.max(capacity.required_keys);"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+                "region": {
+                  "endColumn": 22,
+                  "endLine": 1135,
+                  "startColumn": 9,
+                  "startLine": 1135
+                },
+                "expression": "peak_required",
+                "source_line": "        peak_required = peak_required.max(capacity.required_keys);"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+                "region": {
+                  "endColumn": 158,
+                  "endLine": 1322,
+                  "startColumn": 15,
+                  "startLine": 1322
+                },
+                "expression": "MacroExpr",
+                "source_line": "    eprintln!(\"v4 lifecycle: native_packets={native_packets}, direct_expiry_transitions=770, peak_required_keys={peak_required}, full_capacity_fixture=false\");"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 16,
+      "annotation": {
+        "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+        "start_line": 1465,
+        "start_column": 23,
+        "end_line": 1465,
+        "end_column": 63,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [capacity_with_account_access(...)](1) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "        }",
+        "        if [1, 48, 56, 76, 128, 256, 305, 306].contains(&height) {",
+        "            eprintln!(\"combined height {height}: {capacity:?}\");",
+        "        }",
+        "    }"
+      ],
+      "source_semantic_classification": "actual_test_public_metric_output",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1100,
+          "fingerprints": {
+            "primaryLocationLineHash": "ba7d04729744ea7a:1"
+          },
+          "message": {
+            "text": "This operation writes [capacity_with_account_access(...)](1) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+                "region": {
+                  "endColumn": 59,
+                  "endLine": 160,
+                  "startColumn": 5,
+                  "startLine": 160
+                },
+                "expression": "capacity_with_account_access(...)",
+                "source_line": "    capacity_with_account_access(state, height, cfg, None)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 161,
+                  "startColumn": 79,
+                  "startLine": 159
+                },
+                "expression": "{ ... }",
+                "source_line": "pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 67,
+                  "endLine": 1350,
+                  "startColumn": 24,
+                  "startLine": 1350
+                },
+                "expression": "...::capacity(...)",
+                "source_line": "        let capacity = continuity_v1::capacity(&after, height, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 76,
+                  "endLine": 1350,
+                  "startColumn": 24,
+                  "startLine": 1350
+                },
+                "expression": "... .unwrap()",
+                "source_line": "        let capacity = continuity_v1::capacity(&after, height, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 21,
+                  "endLine": 1350,
+                  "startColumn": 13,
+                  "startLine": 1350
+                },
+                "expression": "capacity",
+                "source_line": "        let capacity = continuity_v1::capacity(&after, height, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 63,
+                  "endLine": 1465,
+                  "startColumn": 23,
+                  "startLine": 1465
+                },
+                "expression": "MacroExpr",
+                "source_line": "            eprintln!(\"combined height {height}: {capacity:?}\");"
+              }
+            ],
+            [
+              {
+                "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+                "region": {
+                  "endColumn": 59,
+                  "endLine": 160,
+                  "startColumn": 5,
+                  "startLine": 160
+                },
+                "expression": "capacity_with_account_access(...)",
+                "source_line": "    capacity_with_account_access(state, height, cfg, None)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 161,
+                  "startColumn": 79,
+                  "startLine": 159
+                },
+                "expression": "{ ... }",
+                "source_line": "pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 67,
+                  "endLine": 1350,
+                  "startColumn": 24,
+                  "startLine": 1350
+                },
+                "expression": "...::capacity(...)",
+                "source_line": "        let capacity = continuity_v1::capacity(&after, height, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 76,
+                  "endLine": 1350,
+                  "startColumn": 24,
+                  "startLine": 1350
+                },
+                "expression": "... .unwrap()",
+                "source_line": "        let capacity = continuity_v1::capacity(&after, height, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 21,
+                  "endLine": 1350,
+                  "startColumn": 13,
+                  "startLine": 1350
+                },
+                "expression": "capacity",
+                "source_line": "        let capacity = continuity_v1::capacity(&after, height, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 25,
+                  "endLine": 1424,
+                  "startColumn": 17,
+                  "startLine": 1424
+                },
+                "expression": "capacity",
+                "source_line": "                capacity"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 63,
+                  "endLine": 1465,
+                  "startColumn": 23,
+                  "startLine": 1465
+                },
+                "expression": "MacroExpr",
+                "source_line": "            eprintln!(\"combined height {height}: {capacity:?}\");"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "annotation_index": 17,
+      "annotation": {
+        "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+        "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5eb30bdedba2bb4933f5c97211426fc2df21bb7c/trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+        "start_line": 1475,
+        "start_column": 9,
+        "end_line": 1475,
+        "end_column": 132,
+        "annotation_level": "failure",
+        "title": "Cleartext logging of sensitive information",
+        "message": "This operation writes [capacity_with_account_access(...)](1) to a log file.",
+        "raw_details": null
+      },
+      "source_excerpt": [
+        "    continuity_v1::check_state(&completed.2, 306, &c).unwrap();",
+        "    eprintln!(",
+        "        \"combined lifecycle: native_packets={native_packets}, peak_required_keys={peak_required_keys}, full_capacity_fixture=false\"",
+        "    );",
+        "}"
+      ],
+      "source_semantic_classification": "actual_test_public_metric_output",
+      "review_disposition": "external_review_required",
+      "code_changed": false,
+      "alerts_dismissed": false,
+      "sarif_matches": [
+        {
+          "rule_id": "rust/cleartext-logging",
+          "severity": "7.5",
+          "alert_number": 1101,
+          "fingerprints": {
+            "primaryLocationLineHash": "70909057e4136f0:1"
+          },
+          "message": {
+            "text": "This operation writes [capacity_with_account_access(...)](1) to a log file."
+          },
+          "flows": [
+            [
+              {
+                "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+                "region": {
+                  "endColumn": 59,
+                  "endLine": 160,
+                  "startColumn": 5,
+                  "startLine": 160
+                },
+                "expression": "capacity_with_account_access(...)",
+                "source_line": "    capacity_with_account_access(state, height, cfg, None)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 161,
+                  "startColumn": 79,
+                  "startLine": 159
+                },
+                "expression": "{ ... }",
+                "source_line": "pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 68,
+                  "endLine": 1255,
+                  "startColumn": 28,
+                  "startLine": 1255
+                },
+                "expression": "...::capacity(...)",
+                "source_line": "    let initial_capacity = continuity_v1::capacity(&initial, 0, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 77,
+                  "endLine": 1255,
+                  "startColumn": 28,
+                  "startLine": 1255
+                },
+                "expression": "... .unwrap()",
+                "source_line": "    let initial_capacity = continuity_v1::capacity(&initial, 0, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 25,
+                  "endLine": 1255,
+                  "startColumn": 9,
+                  "startLine": 1255
+                },
+                "expression": "initial_capacity",
+                "source_line": "    let initial_capacity = continuity_v1::capacity(&initial, 0, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 31,
+                  "endLine": 1303,
+                  "startColumn": 9,
+                  "startLine": 1303
+                },
+                "expression": "mut peak_required_keys",
+                "source_line": "    let mut peak_required_keys = initial_capacity.required_keys;"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 132,
+                  "endLine": 1475,
+                  "startColumn": 9,
+                  "startLine": 1475
+                },
+                "expression": "MacroExpr",
+                "source_line": "        \"combined lifecycle: native_packets={native_packets}, peak_required_keys={peak_required_keys}, full_capacity_fixture=false\""
+              }
+            ],
+            [
+              {
+                "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+                "region": {
+                  "endColumn": 59,
+                  "endLine": 160,
+                  "startColumn": 5,
+                  "startLine": 160
+                },
+                "expression": "capacity_with_account_access(...)",
+                "source_line": "    capacity_with_account_access(state, height, cfg, None)"
+              },
+              {
+                "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+                "region": {
+                  "endColumn": 2,
+                  "endLine": 161,
+                  "startColumn": 79,
+                  "startLine": 159
+                },
+                "expression": "{ ... }",
+                "source_line": "pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 67,
+                  "endLine": 1350,
+                  "startColumn": 24,
+                  "startLine": 1350
+                },
+                "expression": "...::capacity(...)",
+                "source_line": "        let capacity = continuity_v1::capacity(&after, height, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 76,
+                  "endLine": 1350,
+                  "startColumn": 24,
+                  "startLine": 1350
+                },
+                "expression": "... .unwrap()",
+                "source_line": "        let capacity = continuity_v1::capacity(&after, height, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 21,
+                  "endLine": 1350,
+                  "startColumn": 13,
+                  "startLine": 1350
+                },
+                "expression": "capacity",
+                "source_line": "        let capacity = continuity_v1::capacity(&after, height, &c).unwrap();"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 75,
+                  "endLine": 1358,
+                  "startColumn": 53,
+                  "startLine": 1358
+                },
+                "expression": "capacity.required_keys",
+                "source_line": "        peak_required_keys = peak_required_keys.max(capacity.required_keys);"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 76,
+                  "endLine": 1358,
+                  "startColumn": 30,
+                  "startLine": 1358
+                },
+                "expression": "peak_required_keys.max(...)",
+                "source_line": "        peak_required_keys = peak_required_keys.max(capacity.required_keys);"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 27,
+                  "endLine": 1358,
+                  "startColumn": 9,
+                  "startLine": 1358
+                },
+                "expression": "peak_required_keys",
+                "source_line": "        peak_required_keys = peak_required_keys.max(capacity.required_keys);"
+              },
+              {
+                "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+                "region": {
+                  "endColumn": 132,
+                  "endLine": 1475,
+                  "startColumn": 9,
+                  "startLine": 1475
+                },
+                "expression": "MacroExpr",
+                "source_line": "        \"combined lifecycle: native_packets={native_packets}, peak_required_keys={peak_required_keys}, full_capacity_fixture=false\""
+              }
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "independent_security_acceptance": false,
+  "gate_changed": false,
+  "scope": "Semantic source review of exact exported API SARIF and annotations; matching is explicit source/span evidence, not external gate mapping or alert disposition."
+}

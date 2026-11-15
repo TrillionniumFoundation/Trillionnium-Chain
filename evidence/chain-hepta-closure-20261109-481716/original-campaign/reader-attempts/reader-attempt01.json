@@ -1,0 +1,8 @@
+{
+  "command": "audit_native_campaign_outcomes.py with pinned campaign0746 ZIP/source/manifest",
+  "returncode": 137,
+  "stdout_bytes": 0,
+  "observed": "shell reported Killed",
+  "cause_established": false,
+  "subsequent_change": "release each raw report and phase projection before parsing the next campaign"
+}

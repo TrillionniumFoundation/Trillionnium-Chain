@@ -1,0 +1,32 @@
+{
+  "source_commit": "784274926d97207e9ee94cf76eef22e1006d84e1",
+  "commands": [
+    {
+      "mode": "run",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/w1_qrom_proof_chain_controls.py",
+        "run",
+        "--output",
+        "/workspace/scratch/be35ba3f1307/stark-integrated-proofchain/controls"
+      ],
+      "exit_code": 0,
+      "seconds": 9.85
+    },
+    {
+      "mode": "check",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/w1_qrom_proof_chain_controls.py",
+        "check",
+        "--output",
+        "/workspace/scratch/be35ba3f1307/stark-integrated-proofchain/controls"
+      ],
+      "exit_code": 0,
+      "seconds": 0.094
+    }
+  ],
+  "scope": "actual retained named proof-chain controls; overlaps replay; no security qualification"
+}

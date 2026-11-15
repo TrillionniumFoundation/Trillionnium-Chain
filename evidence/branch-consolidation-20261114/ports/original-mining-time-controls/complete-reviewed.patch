@@ -1,0 +1,340 @@
+diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json
+index 3c4b59aa753ff8b192909bb450eaed90c120daed..e4d8ba71432c0f4eb50c48dbd9a730eccda83325 100644
+--- a/config/pon/pq-cross-branch-corpus-v1.json
++++ b/config/pon/pq-cross-branch-corpus-v1.json
+@@ -211,7 +211,7 @@
+     "config/systemd/trnmponpublic.slice": "8981b6aeed4c08c21679664940366b36a991444a",
+     "docs/development/INCENTIVE_LIABILITY_BOUNDARIES_20261112.md": "f35458d00efc7e373a395a0daadcd43fbee5394d",
+     "docs/development/SOURCE_INCENTIVE_RESEARCH_CONTRACT_20261112.md": "402c845c07991a5111fc714c4491da9211279e50",
+-    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "e5985ea4008337f0753076cd682c7c92cc2170e0",
++    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "94f9ffef5bf0b244048eb6d3f5e5149045ed9c61",
+     "docs/development/TRNM_PUBLIC_CALLER_GRANTS_R20_20261114.md": "eed255c9a0160788699087c4ddb92c67dd1d55f4",
+     "docs/development/specs/pon/CELL_BEP52_PEER_V1.md": "b83e92b8b31b217337ff3685668290a9e03d3a3b",
+     "docs/development/specs/pon/CELL_BRANCH_COMPOSITION_20261113.md": "7713e91ebd6613059fe5c768c3511fdf15611447",
+@@ -1713,7 +1713,7 @@
+     "scripts/ci/check_cpq1_parameter_observation.py": "335f25c09eeac7123f58af53b60f2d0943fab3cc",
+     "scripts/ci/check_growth_scale_observation.py": "0a239b85ffd00bc3ce5609f7dd190fc2562c00b8",
+     "scripts/ci/check_native_constants_roster.py": "22921da3bac06cde78319b5b9492a56751f4c6ae",
+-    "scripts/ci/check_pq_research_integration.py": "1a38aa58bd64722c7dc630f43db4186828e938e6",
++    "scripts/ci/check_pq_research_integration.py": "0a4459727ff2d316b7cd99a4685d30a7e71a9b54",
+     "scripts/ci/check_public_readiness_evidence.py": "d5919849d69b0d4adc89615b1005c1279140f79d",
+     "scripts/ci/check_sqlite_build_requalification.py": "568f4b9a00235a69f48d63a517a0fb2910fe9653",
+     "scripts/ci/check_w1_native_roster.py": "ddfa94842a5ddcf5f217184b61b23d9c6034e684",
+@@ -1803,7 +1803,7 @@
+     "scripts/ci/test_pq_lifetime_budget.py": "fde7fa3f388db9ab9f9760b9229f928a7b2f2767",
+     "scripts/ci/test_pq_lifetime_composition.py": "5350c9232e030d0de6d6e0102d9f9b5b64604f50",
+     "scripts/ci/test_pq_proof_profile_binding.py": "2a3992af77a06302b6beb8959cffe9fdc694245e",
+-    "scripts/ci/test_pq_research_integration.py": "de4c17a63cb95f1fda3e229ccb253240290d7096",
++    "scripts/ci/test_pq_research_integration.py": "0be18a592ba14e5d06400515076aaaa66db98071",
+     "scripts/ci/test_pq_root_campaign_readback.py": "0531ba2435fe03dd384f50cb97a8614653d1f274",
+     "scripts/ci/test_pq_root_custody_review_v1.py": "63d1dd99c10daa80705c4a1aa74f72b7e37294c9",
+     "scripts/ci/test_pq_root_custody_review_v2.py": "0c08ba2bd1c849f76bf8ca27260af63dc232d8e3",
+@@ -2570,6 +2570,7 @@
+     "trillionnium/crates/trnm-pon-node/tests/funded_service_contract.rs": "d0a8b3af5d6c2ed79399ff7e940af2ec15417a29",
+     "trillionnium/crates/trnm-pon-node/tests/growth_persistence_cancellation.rs": "336b191524aeaad6fc9d97e25f9c2f2563e16949",
+     "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs": "0ad34d092863dd32c5e9793daa618a91cd6c15f8",
++    "trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs": "6567b922649750fb7388e25ea6544d2898f5fbca",
+     "trillionnium/crates/trnm-pon-node/tests/model_composition_v6.rs": "787a29a3df50953a8f635c9d6589ec45541f37cc",
+     "trillionnium/crates/trnm-pon-node/tests/model_source_composition_v6.rs": "0ded667c9d7263774fa65c83741eebb066b4d652",
+     "trillionnium/crates/trnm-pon-node/tests/native_active_anchor.rs": "4cf874fbfc4657f1db2d0852c16f914ab046e074",
+@@ -5049,6 +5050,7 @@
+     "trillionnium/crates/trnm-pon-node/tests/funded_service_contract.rs",
+     "trillionnium/crates/trnm-pon-node/tests/growth_persistence_cancellation.rs",
+     "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs",
++    "trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs",
+     "trillionnium/crates/trnm-pon-node/tests/model_composition_v6.rs",
+     "trillionnium/crates/trnm-pon-node/tests/model_source_composition_v6.rs",
+     "trillionnium/crates/trnm-pon-node/tests/native_active_anchor.rs",
+diff --git a/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md b/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+index e5985ea4008337f0753076cd682c7c92cc2170e0..94f9ffef5bf0b244048eb6d3f5e5149045ed9c61 100644
+--- a/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
++++ b/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+@@ -14775,3 +14775,16 @@ neither is evidence that the first failure was reproduced or explained. Ordinary
+ miss ordering is a selected behavior policy, not a claim of improvement for every
+ peer arrangement, a four-second confirmation result, activation or release
+ qualification.
++
++### Original wall-clock MTP controls, 2026-11-14
++
++Two complete historical wall-clock controls now exercise the current Registered
++bootstrap task material and make_with_registered_material interface. Only their
++fixture adapter changes; original statements, exact event timestamp equality,
++explicit full W1 verification, persisted packet byte equality, pool-state checks
++and diagnostic records remain. The successful branch retains 4,096 search
++attempts and a two-second runtime. The future-median refusal retains its original
++150-millisecond runtime and zero-search/zero-work assertions. Existing
++pool_mining controls and all production mining, consensus and admission owners
++remain unchanged. These local controls do not establish hosted four-second
++confirmation, activation or production qualification.
+diff --git a/scripts/ci/check_pq_research_integration.py b/scripts/ci/check_pq_research_integration.py
+index 1a38aa58bd64722c7dc630f43db4186828e938e6..0a4459727ff2d316b7cd99a4685d30a7e71a9b54 100644
+--- a/scripts/ci/check_pq_research_integration.py
++++ b/scripts/ci/check_pq_research_integration.py
+@@ -1542,6 +1542,12 @@ CELL_PEER_FAILURE_ORDER_REQUIRED_PATHS = frozenset((
+ ))
+ NATIVE_REQUIRED_PATHS |= CELL_PEER_FAILURE_ORDER_REQUIRED_PATHS
+ 
++# These original wall-clock controls use current Registered task material.
++MINING_TIMESTAMP_ORIGINAL_CONTROLS_REQUIRED_PATHS = frozenset((
++    "trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs",
++))
++NATIVE_REQUIRED_PATHS |= MINING_TIMESTAMP_ORIGINAL_CONTROLS_REQUIRED_PATHS
++
+ 
+ class IntegrityError(ValueError):
+     pass
+diff --git a/scripts/ci/test_pq_research_integration.py b/scripts/ci/test_pq_research_integration.py
+index de4c17a63cb95f1fda3e229ccb253240290d7096..0be18a592ba14e5d06400515076aaaa66db98071 100644
+--- a/scripts/ci/test_pq_research_integration.py
++++ b/scripts/ci/test_pq_research_integration.py
+@@ -2052,5 +2052,36 @@ class CorpusGateTests(unittest.TestCase):
+         self.assertIs(result["node_activated"], False)
+ 
+ 
++
++    def test_original_mining_timestamp_controls_cannot_omit_or_mutate(self):
++        name = "trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs"
++        self.assertIn(name, NATIVE_REQUIRED_PATHS)
++        original = copy.deepcopy(self.manifest)
++        for omission in ("required", "pin", "required-and-pin"):
++            with self.subTest(omission=omission):
++                self.manifest = copy.deepcopy(original)
++                if omission in ("required", "required-and-pin"):
++                    self.manifest["required_paths"].remove(name)
++                if omission in ("pin", "required-and-pin"):
++                    del self.manifest["pinned_blobs"][name]
++                self.save()
++                with self.assertRaises(IntegrityError):
++                    check(self.root)
++        self.manifest = original
++        self.save()
++        source = self.root / name
++        before = source.read_bytes()
++        try:
++            source.write_bytes(before + b"changed original wall-clock controls")
++            with self.assertRaisesRegex(IntegrityError, "changed source"):
++                check(self.root)
++        finally:
++            source.write_bytes(before)
++        result = check(self.root)
++        self.assertEqual(result["status"], "HOLD_NO_GO")
++        self.assertIs(result["cryptographic_acceptance"], False)
++        self.assertIs(result["node_activated"], False)
++
++
+ if __name__ == "__main__":
+     unittest.main()
+diff --git a/trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs b/trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs
+new file mode 100644
+index 0000000000000000000000000000000000000000..6567b922649750fb7388e25ea6544d2898f5fbca
+--- /dev/null
++++ b/trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs
+@@ -0,0 +1,208 @@
++//! Actual wall-clock mining on a valid branch with future-dated ancestors.
++//! No logical mining clock, difficulty change or proof shortcut is introduced.
++use std::{
++    sync::{atomic::AtomicBool, Arc, Mutex},
++    time::Duration,
++};
++use trnm_crypto_primitives::{pon_work, sign_hex, signing_key_from_hex};
++use trnm_pon_node::{
++    development_public, ingress,
++    mining::{run_pool_mining, MiningConfig, MiningMaterial},
++    Node, PoolLimits, PoolState, Settings,
++};
++use trnm_protocol::{
++    pon_wire::{hash, Envelope},
++    qualified_work_task::lifecycle_v3::PROFILE,
++};
++
++fn setup(path: &std::path::Path, now: u64) -> (Node, Settings, MiningConfig) {
++    let settings = Settings::development_with_profiles(
++        Some(now - 100),
++        "native-public-evaluation-dev-v1",
++        PROFILE,
++    )
++    .unwrap();
++    let mut node = Node::open(path, settings.clone(), 2).unwrap();
++    let miner = development_public(0).unwrap();
++    node.enable_local_mempool(PoolLimits {
++        max_records: 32,
++        max_bytes: 65536,
++        max_group_members: 16,
++        critical_reserve: 0,
++        max_removals: 32,
++        preview_miner: miner,
++    })
++    .unwrap();
++    let (model, input, _, _) = settings.bootstrap_task_material().unwrap();
++    let config = MiningConfig {
++        miner,
++        material: MiningMaterial::Registered { model, input },
++        max_transactions: 256,
++        max_transaction_bytes: 524288,
++        search_attempts: 4096,
++        pace: Duration::from_secs(1),
++        runtime: Duration::from_secs(2),
++        max_blocks: 1,
++    };
++    (node, settings, config)
++}
++
++fn queued_transfer(settings: &Settings) -> Vec<u8> {
++    let mut payload = development_public(1).unwrap().to_vec();
++    payload.extend(7u64.to_le_bytes());
++    let mut tx = Envelope {
++        network: settings.network(),
++        sender: development_public(0).unwrap(),
++        nonce: 1,
++        expiry: 2000,
++        fee_limit: 1_000_000,
++        tag: 1,
++        payload,
++        signature: [0; 64],
++    };
++    let key =
++        signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()]))).unwrap();
++    tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))
++        .unwrap()
++        .try_into()
++        .unwrap();
++    tx.encode().unwrap()
++}
++
++fn append(node: &mut Node, settings: &Settings, timestamp: u64, observed_now: u64) -> Vec<u8> {
++    let (model, input, _, _) = settings.bootstrap_task_material().unwrap();
++    let packet = node
++        .make_with_registered_material(
++            node.active().unwrap().0,
++            Vec::new(),
++            development_public(0).unwrap(),
++            timestamp,
++            4096,
++            &model,
++            &input,
++        )
++        .unwrap();
++    // A target hit alone is not sufficient: both the full verifier and the
++    // actual ordinary Node admission/activation execute for every ancestor.
++    pon_work::verify(
++        packet.header.challenge(),
++        packet.header.work_task,
++        packet.header.target,
++        &packet.proof,
++    )
++    .unwrap();
++    let id = node.admit(&packet, observed_now).unwrap();
++    node.activate_observed(id, observed_now).unwrap();
++    packet.encode().unwrap()
++}
++
++#[test]
++fn valid_future_tip_does_not_suppress_real_wall_clock_successor() {
++    let directory = tempfile::tempdir().unwrap();
++    let wall = ingress::now().unwrap();
++    let (mut node, settings, config) = setup(directory.path(), wall);
++    let ancestors = [wall - 80, wall - 70, wall + 60]
++        .map(|timestamp| hex::encode(append(&mut node, &settings, timestamp, wall)));
++    let future_parent = node.active().unwrap();
++    let raw = queued_transfer(&settings);
++    node.pool_submit(raw.clone()).unwrap();
++    let owner = Arc::new(Mutex::new(node));
++    let mut events = Vec::new();
++    let report = run_pool_mining(
++        owner.clone(),
++        config,
++        Arc::new(AtomicBool::new(false)),
++        |event| {
++            events.push(serde_json::to_value(event)?);
++            Ok(())
++        },
++    )
++    .unwrap();
++    let mut node = owner.lock().unwrap();
++    let actual = node.active().unwrap();
++    eprintln!(
++        "PON_MINING_TIME_OBSERVATION {}",
++        serde_json::json!({
++            "schema":"pon-wall-clock-median-regression-v1",
++            "case":"valid-future-tip", "wall_before":wall,
++            "ancestor_packets_hex":ancestors, "queued_transfer_hex":hex::encode(&raw),
++            "parent":hex::encode(future_parent.0), "active_after":hex::encode(actual.0),
++            "active_packet_hex":hex::encode(node.packet(actual.0).unwrap().encode().unwrap()),
++            "report":report, "events":events,
++            "logical_mining_clock":false, "production_qualified":false
++        })
++    );
++    assert_eq!(
++        report.activated_blocks, 1,
++        "an admissible real-wall child must be searched"
++    );
++    assert_eq!(report.included_transactions, 1);
++    assert_eq!(report.stop_reason, "block-limit");
++    let packet = node.packet(actual.0).unwrap();
++    assert_eq!(packet.header.parent, future_parent.0);
++    assert_eq!(packet.transactions, vec![raw]);
++    assert_eq!(
++        packet.header.timestamp,
++        events[0]["observed_wall_seconds"].as_u64().unwrap()
++    );
++    assert!(packet.header.timestamp >= wall);
++    assert!(packet.header.timestamp < wall + 60);
++    assert!(packet.header.timestamp > wall - 70);
++    pon_work::verify(
++        packet.header.challenge(),
++        packet.header.work_task,
++        packet.header.target,
++        &packet.proof,
++    )
++    .unwrap();
++    let pool = node.pool_status().unwrap();
++    assert_eq!(pool.retained_records, 1);
++    assert_eq!(pool.groups[0].state, PoolState::SequenceConsumed);
++    let encoded = packet.encode().unwrap();
++    drop(node);
++    drop(owner);
++    let reopened = Node::open(directory.path(), settings, 2).unwrap();
++    assert_eq!(reopened.active().unwrap(), actual);
++    assert_eq!(
++        reopened.packet(actual.0).unwrap().encode().unwrap(),
++        encoded
++    );
++}
++
++#[test]
++fn future_median_still_waits_without_advancing_the_mining_clock() {
++    let directory = tempfile::tempdir().unwrap();
++    let wall = ingress::now().unwrap();
++    let (mut node, settings, mut config) = setup(directory.path(), wall);
++    let ancestors = [wall + 60, wall + 61, wall + 62]
++        .map(|timestamp| hex::encode(append(&mut node, &settings, timestamp, wall)));
++    let before = node.active().unwrap();
++    node.pool_submit(queued_transfer(&settings)).unwrap();
++    config.runtime = Duration::from_millis(150);
++    let owner = Arc::new(Mutex::new(node));
++    let report = run_pool_mining(
++        owner.clone(),
++        config,
++        Arc::new(AtomicBool::new(false)),
++        |_| panic!("future median cannot authorize a wall-clock search"),
++    )
++    .unwrap();
++    eprintln!(
++        "PON_MINING_TIME_OBSERVATION {}",
++        serde_json::json!({
++            "schema":"pon-wall-clock-median-regression-v1",
++            "case":"future-median", "wall_before":wall,
++            "ancestor_packets_hex":ancestors, "report":report,
++            "logical_mining_clock":false, "production_qualified":false
++        })
++    );
++    assert_eq!(report.activated_blocks, 0);
++    assert_eq!(report.attempted_searches, 0);
++    assert_eq!(report.observed_work_trials, 0);
++    assert_eq!(report.stop_reason, "runtime");
++    let mut node = owner.lock().unwrap();
++    assert_eq!(node.active().unwrap(), before);
++    let pool = node.pool_status().unwrap();
++    assert_eq!(pool.retained_records, 1);
++    assert_eq!(pool.groups[0].state, PoolState::Queued);
++}

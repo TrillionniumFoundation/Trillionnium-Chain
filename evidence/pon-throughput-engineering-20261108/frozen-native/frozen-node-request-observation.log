@@ -1,0 +1,45 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/chain-throughput-engineering-20261108-86a09d93/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 26.39s
+     Running unittests src/lib.rs (/home/qian-qi/chain-throughput-engineering-20261108-86a09d93-target/debug/deps/trnm_pon_node-fc27c767cf2f262e)
+
+running 30 tests
+test ingress::public_v3::request_observation::tests::bounded_records_and_saturating_counter_overflow_remain_explicit ... ok
+test ingress::public_v3::request_observation::tests::capture_contention_and_arithmetic_overflow_never_block_task_release ... ok
+test ingress::public_v3::request_observation::tests::connection_and_task_close_on_different_threads_complete_once_without_aliasing ... ok
+test ingress::public_v3::request_observation::tests::connection_observation_does_not_wait_for_independent_task_progress ... ok
+test ingress::public_v3::request_observation::tests::coverage_rejects_a_poisoned_record_even_when_retained_records_are_complete ... 
+thread '<unnamed>' (1163226) panicked at crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:2250:13:
+injected observation writer failure
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+ok
+test ingress::public_v3::request_observation::tests::cpu_clock_intervals_stay_on_the_execution_thread_and_are_nested ... ok
+test ingress::public_v3::request_observation::tests::dispatch_diagnostic_survives_distinct_terminal_cancellation_without_changing_codes ... ok
+test ingress::public_v3::request_observation::tests::error_diagnostic_contention_does_not_block_or_reclassify_rejection ... ok
+test ingress::public_v3::request_observation::tests::error_diagnostics_preserve_typed_identity_origin_and_bounded_utf8 ... ok
+test ingress::public_v3::request_observation::tests::first_error_time_keeps_original_cause_phase_and_owner_clock ... ok
+test ingress::public_v3::request_observation::tests::fixed_phase_slots_never_overwrite_a_previous_failure_with_a_retry ... ok
+test ingress::public_v3::request_observation::tests::independent_task_observation_survives_connection_frame_update ... ok
+test ingress::public_v3::request_observation::tests::lifecycle_keeps_task_and_connection_closure_order_independent ... ok
+test ingress::public_v3::request_observation::tests::lifecycle_retains_disconnect_until_actual_task_owner_exits ... ok
+test ingress::public_v3::request_observation::tests::lifecycle_snapshot_hides_clocks_until_their_close_publication_is_observed ... ok
+test ingress::public_v3::request_observation::tests::lifecycle_unknown_clock_is_not_zero_and_snapshot_cannot_block_closure ... ok
+test ingress::public_v3::request_observation::tests::observed_native_submit_keeps_rejection_success_and_duplicate_phase_boundaries ... ok
+test ingress::public_v3::request_observation::tests::queue_cancellation_keeps_original_identity_and_dropped_wait_interval ... ok
+test ingress::public_v3::request_observation::tests::reactor_io_capture_contention_and_overflow_do_not_block_or_manufacture_zero_cost ... ok
+test ingress::public_v3::request_observation::tests::reactor_io_cpu_clock_cannot_migrate_between_threads ... ok
+test ingress::public_v3::request_observation::tests::reactor_io_keeps_unknown_clocks_and_error_attempts_in_their_denominators ... ok
+test ingress::public_v3::request_observation::tests::registry_concurrent_connections_are_retained_once_within_capacity ... ok
+test ingress::public_v3::request_observation::tests::registry_snapshot_does_not_omit_unrelated_accepted_connections ... ok
+test ingress::public_v3::request_observation::tests::submit_phase_capture_contention_is_optional_and_does_not_block_dispatch ... ok
+test ingress::public_v3::request_observation::tests::submit_phase_outcomes_are_bounded_and_keep_abandoned_measurements_unknown ... 
+thread 'ingress::public_v3::request_observation::tests::submit_phase_outcomes_are_bounded_and_keep_abandoned_measurements_unknown' (1163258) panicked at crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1836:13:
+observation must retain unfinished admission
+ok
+test ingress::public_v3::request_observation::tests::task_contention_still_records_unknown_without_blocking_release ... ok
+test ingress::public_v3::request_observation::tests::terminal_error_contention_marks_first_event_coverage_unknown ... ok
+test ingress::public_v3::tests::request_observer_matches_independent_client_received_signed_frame_lengths ... ok
+test ingress::public_v3::tests::request_observer_records_actual_partial_read_eof_and_quantum_writes ... ok
+test ingress::public_v3::tests::request_observer_retains_partial_output_bytes_after_actual_write_error ... ok
+
+test result: ok. 30 passed; 0 failed; 0 ignored; 0 measured; 1163 filtered out; finished in 0.48s
+

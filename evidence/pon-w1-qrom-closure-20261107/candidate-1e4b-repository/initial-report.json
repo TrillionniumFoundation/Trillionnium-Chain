@@ -1,0 +1,35 @@
+{
+  "candidate": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+  "driver_sha256": "e369a120cb242759025a3aa0ab26a20f138f91be2eb496821b6b12028d8d5d9b",
+  "finished_utc": "2026-11-07T15:14:16.527622+00:00",
+  "post_quantum_soundness_qualified": false,
+  "production_qualified": false,
+  "record": {
+    "args": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "command_passed": false,
+    "exit_code": 2,
+    "expected_tests": null,
+    "final_plain_OK": false,
+    "label": "repository-check",
+    "non_ok_verbose_lines": [],
+    "reported_counts": [],
+    "seconds": 1.719367342069745,
+    "stderr_bytes": 158,
+    "stderr_sha256": "8df0cc04c894ff23b61527f455916dcc6ef5a70b451aa32bae11809b5f1d4749",
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "successful_verbose_test_lines": 0,
+    "timed_out": false,
+    "timeout_seconds": 600,
+    "verbose_test_line_count": 0
+  },
+  "schema": "TRNM-W1-A-DESKTOP-REPOSITORY-CHECK1",
+  "selected_source_before_after_identical": true,
+  "selected_source_bytes": 52119220,
+  "selected_source_count": 2830,
+  "tree": "23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0",
+  "whole_source_qualified": false
+}

@@ -26,11 +26,12 @@ def verify_observation(directory,expected_bundle):
         record=json.loads(read_bounded(directory/(partition+'-result.json'),MAX_TASK_BYTES),object_pairs_hook=unique)
         exact={'evaluation_bundle':expected_bundle,'evaluation_partition':partition,
                'model_artifact':bundle['candidate_artifact'],'predictions':result['predictions'],
+               'value_claim':result['value_claim'],
                'whole_gain':dict(result['primary'],score=result['primary']['exploratory_score']),
                'marginal':[dict(r,score=r['exploratory_score'])for r in result['marginal']],
                'strong_reference':bundle['selected'],'strong_reference_artifact':result['reference_artifact']}
         for key,value in exact.items():
-            require(record.get(key)==value and observed['results'][partition].get(key)==value,'OBSERVED_EVALUATION_MISMATCH')
+            require(canonical(record.get(key))==canonical(value) and canonical(observed['results'][partition].get(key))==canonical(value),'OBSERVED_EVALUATION_MISMATCH')
     return observed,bundle['candidate']
 
 def run(directory,out,expected_bundle):

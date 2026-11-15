@@ -1,0 +1,2326 @@
+{
+  "root": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final-target",
+  "utc": "2026-11-11T03:43:57Z",
+  "groups": {
+    ".rustc_info.json": 4096,
+    "CACHEDIR.TAG": 4096,
+    "debug/trnm-payload-replay-recovery-v1": 12132352,
+    "debug/trnm-peer-lease-daemon": 12759040,
+    "debug/trnm-payload-replay-recovery-owner-v1": 12095488,
+    "debug/trnm-cell": 74969088,
+    "debug/trnm-mempool": 4833280,
+    "debug/trnm-worker-agent": 27996160,
+    "debug/trnm-pon-node": 275226624,
+    "debug/.cargo-lock": 0,
+    "debug/trnm-cell-discovery": 74694656,
+    "debug/trnm-peer-lease-daemon-v1": 12759040,
+    "debug/trnm-external-node-checkpoint-v2": 6668288,
+    "debug/deps": 51607646208,
+    "debug/examples": 4431855616,
+    "debug/build": 313847808,
+    "debug/.fingerprint": 27529216
+  },
+  "large_files": [
+    {
+      "path": "debug/deps/trnm_pon_node-dc84cb72cb1cb37e",
+      "bytes": 534395832,
+      "allocated": 534294528,
+      "mode": 448,
+      "mtime_ns": 1794364955470775351,
+      "inode": 60881318,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/trnm_pon_node-2cfc25289c60243c",
+      "bytes": 534183024,
+      "allocated": 534110208,
+      "mode": 448,
+      "mtime_ns": 1794368064734051900,
+      "inode": 60882207,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/libtrnm_pon_node-948c362b9f890486.rlib",
+      "bytes": 330510760,
+      "allocated": 330539008,
+      "mode": 384,
+      "mtime_ns": 1794367286995610765,
+      "inode": 63409,
+      "elf": false,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/libtrnm_pon_node-11220bd418214a36.rlib",
+      "bytes": 330126804,
+      "allocated": 330141696,
+      "mode": 384,
+      "mtime_ns": 1794364037306086997,
+      "inode": 588076,
+      "elf": false,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/libtrnm_pon_node-44b419f889fdb5fd.rlib",
+      "bytes": 318105352,
+      "allocated": 318132224,
+      "mode": 384,
+      "mtime_ns": 1794366537094965697,
+      "inode": 719422,
+      "elf": false,
+      "links": 1
+    },
+    {
+      "path": "debug/examples/llm_zero_gain_round-884ee2e0dcfcbb24",
+      "bytes": 284204616,
+      "allocated": 284176384,
+      "mode": 448,
+      "mtime_ns": 1794364444082886051,
+      "inode": 60617679,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/examples/llm_zero_gain_round-f41b760d8890219c",
+      "bytes": 283432648,
+      "allocated": 283414528,
+      "mode": 448,
+      "mtime_ns": 1794367305786026176,
+      "inode": 60617902,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/examples/operator_pool_fixture-6b7b50a27dd4b446",
+      "bytes": 282702456,
+      "allocated": 282669056,
+      "mode": 448,
+      "mtime_ns": 1794364783350162313,
+      "inode": 60617691,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/examples/operator_pool_fixture-99171c0c073212a1",
+      "bytes": 281776688,
+      "allocated": 281776128,
+      "mode": 448,
+      "mtime_ns": 1794368128190458843,
+      "inode": 60618449,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/nonce_speculation_cost-354eafc6749587c7",
+      "bytes": 280922432,
+      "allocated": 280895488,
+      "mode": 448,
+      "mtime_ns": 1794365050798802084,
+      "inode": 60881356,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/nonce_speculation_cost-57b1fee23f12e488",
+      "bytes": 280148280,
+      "allocated": 280141824,
+      "mode": 448,
+      "mtime_ns": 1794367808169123510,
+      "inode": 60881845,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/trnm_pon_node-ac1d3166947e8a49",
+      "bytes": 276076120,
+      "allocated": 276025344,
+      "mode": 448,
+      "mtime_ns": 1794365124562505414,
+      "inode": 60881377,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/trnm-pon-node",
+      "bytes": 275273576,
+      "allocated": 275226624,
+      "mode": 448,
+      "mtime_ns": 1794367355160371358,
+      "inode": 60879978,
+      "elf": true,
+      "links": 2
+    },
+    {
+      "path": "debug/deps/trnm_pon_node-5ea3cc6467699626",
+      "bytes": 275273576,
+      "allocated": 275226624,
+      "mode": 448,
+      "mtime_ns": 1794367355160371358,
+      "inode": 60879978,
+      "elf": true,
+      "links": 2
+    },
+    {
+      "path": "debug/deps/public_v3_multiprocess-1a68d36d2e47db80",
+      "bytes": 272541584,
+      "allocated": 272506880,
+      "mode": 448,
+      "mtime_ns": 1794364256310916168,
+      "inode": 60881212,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_v3_multiprocess-05ecb67af98e97e0",
+      "bytes": 271742888,
+      "allocated": 271728640,
+      "mode": 448,
+      "mtime_ns": 1794367437410218509,
+      "inode": 60879990,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_compact_execution-885474bd6caf4993",
+      "bytes": 264673064,
+      "allocated": 264642560,
+      "mode": 448,
+      "mtime_ns": 1794365062826427376,
+      "inode": 60881353,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/trnm_pon_node-d55ea9ca39dd0c4f",
+      "bytes": 264387360,
+      "allocated": 264351744,
+      "mode": 448,
+      "mtime_ns": 1794364635484815190,
+      "inode": 60881272,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_compact_execution-86e71cac37c3bf78",
+      "bytes": 264119600,
+      "allocated": 264114176,
+      "mode": 448,
+      "mtime_ns": 1794368229071869951,
+      "inode": 60882249,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_v3_from_zero-57141f5cbe260064",
+      "bytes": 263916216,
+      "allocated": 263876608,
+      "mode": 448,
+      "mtime_ns": 1794364598949033293,
+      "inode": 60881269,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/trnm_pon_node-90d9ce449d2d67af",
+      "bytes": 263512576,
+      "allocated": 263487488,
+      "mode": 448,
+      "mtime_ns": 1794367757201239942,
+      "inode": 60881840,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_v3_from_zero-5c7d3e2a65b3089a",
+      "bytes": 263174744,
+      "allocated": 263159808,
+      "mode": 448,
+      "mtime_ns": 1794368098393210596,
+      "inode": 60882228,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/account_archive_execution-540a84489959059e",
+      "bytes": 262258496,
+      "allocated": 262221824,
+      "mode": 448,
+      "mtime_ns": 1794364130850002068,
+      "inode": 60881153,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/architecture_delivery_compare-8427959798dda83b",
+      "bytes": 261745112,
+      "allocated": 261713920,
+      "mode": 448,
+      "mtime_ns": 1794364999711394706,
+      "inode": 60881346,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/account_archive_execution-6ecd5377091c91a8",
+      "bytes": 261381936,
+      "allocated": 261361664,
+      "mode": 448,
+      "mtime_ns": 1794368059494182083,
+      "inode": 60882231,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_submit_recovery-53c469e017cf086e",
+      "bytes": 260959584,
+      "allocated": 260927488,
+      "mode": 448,
+      "mtime_ns": 1794364747369292097,
+      "inode": 60881297,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/architecture_delivery_compare-cf5693a6075474df",
+      "bytes": 260937976,
+      "allocated": 260923392,
+      "mode": 448,
+      "mtime_ns": 1794367925742424683,
+      "inode": 60882205,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/account_obligation_ranges-fe5f12cf3733b8a0",
+      "bytes": 260412584,
+      "allocated": 260382720,
+      "mode": 448,
+      "mtime_ns": 1794364551756463170,
+      "inode": 60881262,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/growth_persistence_cancellation-188bc3298fd777f7",
+      "bytes": 260193528,
+      "allocated": 260161536,
+      "mode": 448,
+      "mtime_ns": 1794364323063762206,
+      "inode": 60881226,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_v3_service_campaign-14887d3816363315",
+      "bytes": 260183720,
+      "allocated": 260149248,
+      "mode": 448,
+      "mtime_ns": 1794364799469656623,
+      "inode": 60881306,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_parent_npq6_cli-c28de8a05891980d",
+      "bytes": 260070928,
+      "allocated": 260030464,
+      "mode": 448,
+      "mtime_ns": 1794365037345221325,
+      "inode": 60881350,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_submit_recovery-de26c3fb680b0625",
+      "bytes": 260013872,
+      "allocated": 259997696,
+      "mode": 448,
+      "mtime_ns": 1794368148902932635,
+      "inode": 60882256,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_node-689de16417fdbece",
+      "bytes": 259994712,
+      "allocated": 259964928,
+      "mode": 448,
+      "mtime_ns": 1794364769793587817,
+      "inode": 60881301,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_v3_request_accounting-0e80c13066d3959c",
+      "bytes": 259965136,
+      "allocated": 259940352,
+      "mode": 448,
+      "mtime_ns": 1794364985802828606,
+      "inode": 60881341,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_owner_observation-5cb820b1c4cf0ca4",
+      "bytes": 259746528,
+      "allocated": 259710976,
+      "mode": 448,
+      "mtime_ns": 1794365009890077251,
+      "inode": 60881345,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/account_obligation_ranges-19c2b4daf2c1897a",
+      "bytes": 259645504,
+      "allocated": 259629056,
+      "mode": 448,
+      "mtime_ns": 1794367605142333459,
+      "inode": 60881811,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/evaluation_sync_observation-54eabcbbf84b83ff",
+      "bytes": 259507256,
+      "allocated": 259473408,
+      "mode": 448,
+      "mtime_ns": 1794364511289747070,
+      "inode": 60881257,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/growth_persistence_cancellation-9d75d4e11a97e709",
+      "bytes": 259472336,
+      "allocated": 259457024,
+      "mode": 448,
+      "mtime_ns": 1794367779647752636,
+      "inode": 60881842,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/research_work_schedule-fdb20ffee6283000",
+      "bytes": 259314536,
+      "allocated": 259284992,
+      "mode": 448,
+      "mtime_ns": 1794364496525216236,
+      "inode": 60881255,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pinned_peer_polling-828be8db8f26725c",
+      "bytes": 259283584,
+      "allocated": 259248128,
+      "mode": 448,
+      "mtime_ns": 1794365073414097602,
+      "inode": 60881351,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/protected_ingress-a0f734e893915a5c",
+      "bytes": 259282608,
+      "allocated": 259248128,
+      "mode": 448,
+      "mtime_ns": 1794364342567135154,
+      "inode": 60881230,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_parent_npq6_cli-07af51ae97017cc5",
+      "bytes": 259269152,
+      "allocated": 259244032,
+      "mode": 448,
+      "mtime_ns": 1794367472798664920,
+      "inode": 60879997,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_v3_request_accounting-f191a25726032978",
+      "bytes": 259187680,
+      "allocated": 259162112,
+      "mode": 448,
+      "mtime_ns": 1794367728412854305,
+      "inode": 60881837,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_node-cb09098402fef7b0",
+      "bytes": 259086424,
+      "allocated": 259076096,
+      "mode": 448,
+      "mtime_ns": 1794368165672504495,
+      "inode": 60882245,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_full_relation_context-fba7e411b7dd72ab",
+      "bytes": 258960920,
+      "allocated": 258924544,
+      "mode": 448,
+      "mtime_ns": 1794364426644442542,
+      "inode": 60881248,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/examples/distributed_pipeline-55222e953bd0a7ec",
+      "bytes": 258955888,
+      "allocated": 258920448,
+      "mode": 448,
+      "mtime_ns": 1794364064065200732,
+      "inode": 60617653,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/evaluation_sync_observation-d9e8dbf1ab7a5570",
+      "bytes": 258699440,
+      "allocated": 258678784,
+      "mode": 448,
+      "mtime_ns": 1794367939870090109,
+      "inode": 60882208,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pinned_peer_polling-28306a40d79306fb",
+      "bytes": 258533984,
+      "allocated": 258527232,
+      "mode": 448,
+      "mtime_ns": 1794368181822090470,
+      "inode": 60882252,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/research_work_schedule-d2b9db3c98e85c6a",
+      "bytes": 258431032,
+      "allocated": 258412544,
+      "mode": 448,
+      "mtime_ns": 1794367856233039716,
+      "inode": 60882182,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/protected_ingress-cd52eb335061fe8a",
+      "bytes": 258354232,
+      "allocated": 258322432,
+      "mode": 448,
+      "mtime_ns": 1794367535462609127,
+      "inode": 60881795,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_full_relation_context-adf10518d12b3678",
+      "bytes": 258241280,
+      "allocated": 258232320,
+      "mode": 448,
+      "mtime_ns": 1794367980763110576,
+      "inode": 60882215,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_account_native-3d7b8eb6d87998ac",
+      "bytes": 258186928,
+      "allocated": 258154496,
+      "mode": 448,
+      "mtime_ns": 1794364458347431314,
+      "inode": 60881251,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/model_composition_v4-bab4c3fb165579b5",
+      "bytes": 258153232,
+      "allocated": 258117632,
+      "mode": 448,
+      "mtime_ns": 1794364729798844334,
+      "inode": 60881294,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_application_local_cli-364901e51d1d94bb",
+      "bytes": 258051920,
+      "allocated": 258019328,
+      "mode": 448,
+      "mtime_ns": 1794364180608375154,
+      "inode": 60881186,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/cell_native_v1-a1dcfd4f13e50f61",
+      "bytes": 258034952,
+      "allocated": 258011136,
+      "mode": 448,
+      "mtime_ns": 1794364944257125534,
+      "inode": 60881342,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/examples/distributed_pipeline-52f5a335eb8ab901",
+      "bytes": 258024464,
+      "allocated": 258011136,
+      "mode": 448,
+      "mtime_ns": 1794368243437496291,
+      "inode": 60618459,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/history_stage_diagnostic-3e77558fa5729367",
+      "bytes": 257951136,
+      "allocated": 257921024,
+      "mode": 448,
+      "mtime_ns": 1794364523076372814,
+      "inode": 60881259,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/operator_actors-e943a67396282d0b",
+      "bytes": 257845624,
+      "allocated": 257814528,
+      "mode": 448,
+      "mtime_ns": 1794364656868140592,
+      "inode": 60881277,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_task_operation_v2-28daf1f9ef387659",
+      "bytes": 257753320,
+      "allocated": 257712128,
+      "mode": 448,
+      "mtime_ns": 1794364374886098166,
+      "inode": 60881238,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_pool_v3-760f7364f8c0af43",
+      "bytes": 257574888,
+      "allocated": 257540096,
+      "mode": 448,
+      "mtime_ns": 1794364820740989721,
+      "inode": 60881303,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/ancestry_long_sync-da620651b0e33f9f",
+      "bytes": 257511840,
+      "allocated": 257486848,
+      "mode": 448,
+      "mtime_ns": 1794364907790265021,
+      "inode": 60881331,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pool_mining-2447862716f96a8e",
+      "bytes": 257406152,
+      "allocated": 257376256,
+      "mode": 448,
+      "mtime_ns": 1794364277607227617,
+      "inode": 60881217,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_risk_ledger-a4f60c62f8da1544",
+      "bytes": 257376312,
+      "allocated": 257347584,
+      "mode": 448,
+      "mtime_ns": 1794364564643054901,
+      "inode": 60881265,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_account_native-74b3cad85cfc3d5b",
+      "bytes": 257331904,
+      "allocated": 257310720,
+      "mode": 448,
+      "mtime_ns": 1794367498364245377,
+      "inode": 60881788,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_parent_cli-47e85e6ceda1bf4a",
+      "bytes": 257338712,
+      "allocated": 257302528,
+      "mode": 448,
+      "mtime_ns": 1794364842286314685,
+      "inode": 60881315,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/model_composition_v4-530f21da85cfb013",
+      "bytes": 257278216,
+      "allocated": 257257472,
+      "mode": 448,
+      "mtime_ns": 1794367519088893831,
+      "inode": 60881793,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_application_local_cli-542cf119e870ceb4",
+      "bytes": 257165840,
+      "allocated": 257142784,
+      "mode": 448,
+      "mtime_ns": 1794367370379173117,
+      "inode": 60879980,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/cell_native_v1-e0ca9a5fe2d64e0b",
+      "bytes": 257127512,
+      "allocated": 257118208,
+      "mode": 448,
+      "mtime_ns": 1794367642478610496,
+      "inode": 60881819,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/history_stage_diagnostic-73daade73b6f2185",
+      "bytes": 257128616,
+      "allocated": 257114112,
+      "mode": 448,
+      "mtime_ns": 1794367484510474703,
+      "inode": 60879999,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_task_operation_v2-3a5ad35862686ba3",
+      "bytes": 257044936,
+      "allocated": 257032192,
+      "mode": 448,
+      "mtime_ns": 1794368194694759284,
+      "inode": 60882254,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/checkpoint_tile_operator-08a60886d09e4a18",
+      "bytes": 257036088,
+      "allocated": 257007616,
+      "mode": 448,
+      "mtime_ns": 1794364402535212987,
+      "inode": 60881244,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/operator_actors-95d27e8048d095d2",
+      "bytes": 257018976,
+      "allocated": 257003520,
+      "mode": 448,
+      "mtime_ns": 1794368208581400878,
+      "inode": 60882259,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_owner_journal-578be77351df38d2",
+      "bytes": 256867792,
+      "allocated": 256835584,
+      "mode": 448,
+      "mtime_ns": 1794364812318253737,
+      "inode": 60881308,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_pool_v3-e2bfaf32be0fe139",
+      "bytes": 256816824,
+      "allocated": 256815104,
+      "mode": 448,
+      "mtime_ns": 1794368115645776105,
+      "inode": 60882236,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/local_mempool-9a34f3a9e8c5f620",
+      "bytes": 256839160,
+      "allocated": 256806912,
+      "mode": 448,
+      "mtime_ns": 1794365113211858617,
+      "inode": 60881380,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/ancestry_long_sync-3965a86afc8890c6",
+      "bytes": 256726424,
+      "allocated": 256724992,
+      "mode": 448,
+      "mtime_ns": 1794368242482521166,
+      "inode": 60882263,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_tls_cli-33a75a3e78aed077",
+      "bytes": 256488800,
+      "allocated": 256458752,
+      "mode": 448,
+      "mtime_ns": 1794364871350404776,
+      "inode": 60881324,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_parent_cli-63c7a6df6e54e947",
+      "bytes": 256470568,
+      "allocated": 256454656,
+      "mode": 448,
+      "mtime_ns": 1794368221146075605,
+      "inode": 60882270,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_application_migration_v6-d4f8805cd7c752d9",
+      "bytes": 256471816,
+      "allocated": 256442368,
+      "mode": 448,
+      "mtime_ns": 1794364687960160814,
+      "inode": 60881286,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_intake_v2-21b7dfbf575921c1",
+      "bytes": 256457616,
+      "allocated": 256425984,
+      "mode": 448,
+      "mtime_ns": 1794365018367812900,
+      "inode": 60881339,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/model_evidence_v3-a56934014d6a7b48",
+      "bytes": 256398672,
+      "allocated": 256368640,
+      "mode": 448,
+      "mtime_ns": 1794364670928697355,
+      "inode": 60881274,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_pool_cli-79d55a33c0a92a39",
+      "bytes": 256391544,
+      "allocated": 256360448,
+      "mode": 448,
+      "mtime_ns": 1794365100939240590,
+      "inode": 60881372,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_v3_observer-8e84abd59bc145d0",
+      "bytes": 256384296,
+      "allocated": 256348160,
+      "mode": 448,
+      "mtime_ns": 1794364706122589057,
+      "inode": 60881282,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pool_mining-0bc03afeebf46032",
+      "bytes": 256350568,
+      "allocated": 256335872,
+      "mode": 448,
+      "mtime_ns": 1794367665257157016,
+      "inode": 60881818,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/checkpoint_tile_operator-8bc94b15c9fed1b6",
+      "bytes": 256106384,
+      "allocated": 256081920,
+      "mode": 448,
+      "mtime_ns": 1794367684691763051,
+      "inode": 60881828,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_owner_journal-a81fd5f49a375766",
+      "bytes": 256046224,
+      "allocated": 256036864,
+      "mode": 448,
+      "mtime_ns": 1794368101931121674,
+      "inode": 60882226,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_demand_evidence-cd95d014cd701d69",
+      "bytes": 256065456,
+      "allocated": 256024576,
+      "mode": 448,
+      "mtime_ns": 1794364095035178884,
+      "inode": 60881081,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/mining_service_budget-17fe63c9e6c336db",
+      "bytes": 255945424,
+      "allocated": 255918080,
+      "mode": 448,
+      "mtime_ns": 1794364699272804641,
+      "inode": 60881288,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/local_mempool-cb092fb8e40a8121",
+      "bytes": 255916312,
+      "allocated": 255885312,
+      "mode": 448,
+      "mtime_ns": 1794367577927843578,
+      "inode": 60881807,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_application_migration_v6-52296a965e8bde0b",
+      "bytes": 255742392,
+      "allocated": 255725568,
+      "mode": 448,
+      "mtime_ns": 1794367818830885589,
+      "inode": 60881854,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_intake_v2-18c910cd1778f9a5",
+      "bytes": 255695032,
+      "allocated": 255688704,
+      "mode": 448,
+      "mtime_ns": 1794367794395428686,
+      "inode": 60881841,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/no_gain_fees-6300b34b084402dc",
+      "bytes": 255710232,
+      "allocated": 255672320,
+      "mode": 448,
+      "mtime_ns": 1794364849881076840,
+      "inode": 60881310,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_v3_observer-9c8127938370ca1e",
+      "bytes": 255632408,
+      "allocated": 255639552,
+      "mode": 448,
+      "mtime_ns": 1794368227766903836,
+      "inode": 60882269,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_migration_inventory-9ef766e003c7a984",
+      "bytes": 255653704,
+      "allocated": 255623168,
+      "mode": 448,
+      "mtime_ns": 1794364963197534113,
+      "inode": 60881328,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_tls_cli-35d4d8d451b06270",
+      "bytes": 255637968,
+      "allocated": 255614976,
+      "mode": 448,
+      "mtime_ns": 1794367950866828293,
+      "inode": 60882210,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/model_evidence_v3-07f4a92faeb32bfe",
+      "bytes": 255543072,
+      "allocated": 255533056,
+      "mode": 448,
+      "mtime_ns": 1794367962783543234,
+      "inode": 60882202,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/task_lifecycle_v4-d7919432228b3fef",
+      "bytes": 255501808,
+      "allocated": 255467520,
+      "mode": 448,
+      "mtime_ns": 1794364158222105988,
+      "inode": 60881160,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_pool_cli-fe7df5462f48a0fe",
+      "bytes": 255458024,
+      "allocated": 255447040,
+      "mode": 448,
+      "mtime_ns": 1794367713957158102,
+      "inode": 60881835,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_v3_observation_cli-aad6b4d97ea6fa66",
+      "bytes": 255456240,
+      "allocated": 255426560,
+      "mode": 448,
+      "mtime_ns": 1794364359958576814,
+      "inode": 60881235,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_active_anchor-422cc3887626df89",
+      "bytes": 255410192,
+      "allocated": 255373312,
+      "mode": 448,
+      "mtime_ns": 1794364044489848755,
+      "inode": 60881069,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/evaluation_round_observation-11b8d484acbfadf1",
+      "bytes": 255349360,
+      "allocated": 255324160,
+      "mode": 448,
+      "mtime_ns": 1794365059787522041,
+      "inode": 60881365,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_demand_evidence-d1a2ad98327d6e2c",
+      "bytes": 255328720,
+      "allocated": 255315968,
+      "mode": 448,
+      "mtime_ns": 1794368143223077223,
+      "inode": 60882242,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/daa_joint_consensus-2bf78ac3367865ad",
+      "bytes": 255343784,
+      "allocated": 255311872,
+      "mode": 448,
+      "mtime_ns": 1794364466841160739,
+      "inode": 60881246,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/evolution_cli-2c6f78231911fe1e",
+      "bytes": 255325496,
+      "allocated": 255291392,
+      "mode": 448,
+      "mtime_ns": 1794364300177499297,
+      "inode": 60881223,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/derived_commitment-fb8246fffd180f63",
+      "bytes": 255213784,
+      "allocated": 255188992,
+      "mode": 448,
+      "mtime_ns": 1794364970846295355,
+      "inode": 60881319,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/integer_factor_candidate_v2-d47c6a2e36363b75",
+      "bytes": 255174480,
+      "allocated": 255139840,
+      "mode": 448,
+      "mtime_ns": 1794364952963853629,
+      "inode": 60881337,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_packet_observer-f572b766c2234a99",
+      "bytes": 255068696,
+      "allocated": 255041536,
+      "mode": 448,
+      "mtime_ns": 1794364081033640360,
+      "inode": 60881078,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/grouped_verification_authority_v0-b6c848cd3bd2f31b",
+      "bytes": 255053624,
+      "allocated": 255016960,
+      "mode": 448,
+      "mtime_ns": 1794364829162725806,
+      "inode": 60881307,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/mining_service_budget-57f9dca7a408633d",
+      "bytes": 255009296,
+      "allocated": 254992384,
+      "mode": 448,
+      "mtime_ns": 1794367991458851769,
+      "inode": 60882217,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/daa_adversarial_schedule-a3a4bfde96e1f264",
+      "bytes": 255013568,
+      "allocated": 254988288,
+      "mode": 448,
+      "mtime_ns": 1794364980072007429,
+      "inode": 60881335,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/accepted_task_observation-1da0ae0998dc426b",
+      "bytes": 255003568,
+      "allocated": 254976000,
+      "mode": 448,
+      "mtime_ns": 1794365081973831041,
+      "inode": 60881364,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/no_gain_fees-9701d2819adc8c04",
+      "bytes": 254982120,
+      "allocated": 254955520,
+      "mode": 448,
+      "mtime_ns": 1794367672282015348,
+      "inode": 60881820,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_cli-10895cc9a332ea9d",
+      "bytes": 254965864,
+      "allocated": 254939136,
+      "mode": 448,
+      "mtime_ns": 1794364290573809024,
+      "inode": 60881221,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_evaluation-2e4211f112c3f448",
+      "bytes": 254956048,
+      "allocated": 254926848,
+      "mode": 448,
+      "mtime_ns": 1794364072072936128,
+      "inode": 60881071,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/cli_secret_canary-e5d5021085060b59",
+      "bytes": 254885992,
+      "allocated": 254861312,
+      "mode": 448,
+      "mtime_ns": 1794364573168784941,
+      "inode": 60881267,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_migration_inventory-a87cd3ad27ae8e98",
+      "bytes": 254823936,
+      "allocated": 254799872,
+      "mode": 448,
+      "mtime_ns": 1794367627640900906,
+      "inode": 60881817,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/task_lifecycle_v4-0ec6d9fde509ff29",
+      "bytes": 254738552,
+      "allocated": 254713856,
+      "mode": 448,
+      "mtime_ns": 1794367692592601093,
+      "inode": 60881823,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_active_anchor-6ce53e2db5fdceb5",
+      "bytes": 254682112,
+      "allocated": 254664704,
+      "mode": 448,
+      "mtime_ns": 1794368135187281413,
+      "inode": 60882235,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_growth_public_cli-9e60d0a9bfda1272",
+      "bytes": 254689624,
+      "allocated": 254660608,
+      "mode": 448,
+      "mtime_ns": 1794364165650863268,
+      "inode": 60881161,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/daa_joint_consensus-365a1c7b37faf331",
+      "bytes": 254595120,
+      "allocated": 254574592,
+      "mode": 448,
+      "mtime_ns": 1794367453397972427,
+      "inode": 60879988,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/evaluation_round_observation_cli-08549e7a0ea9d325",
+      "bytes": 254570848,
+      "allocated": 254541824,
+      "mode": 448,
+      "mtime_ns": 1794364349789903181,
+      "inode": 60881227,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/evaluation_observation_cli-24c95c5605ca893b",
+      "bytes": 254539520,
+      "allocated": 254509056,
+      "mode": 448,
+      "mtime_ns": 1794364642824048315,
+      "inode": 60881266,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_v3_observation_cli-9beacbf0543b8a02",
+      "bytes": 254514008,
+      "allocated": 254504960,
+      "mode": 448,
+      "mtime_ns": 1794368089786426537,
+      "inode": 60882227,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/evaluation_round_observation-b7042341c5d2311e",
+      "bytes": 254483632,
+      "allocated": 254464000,
+      "mode": 448,
+      "mtime_ns": 1794367875817590127,
+      "inode": 60882181,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/account_archive_projection-46143e2f15702886",
+      "bytes": 254482096,
+      "allocated": 254447616,
+      "mode": 448,
+      "mtime_ns": 1794364896765609726,
+      "inode": 60881320,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_growth_cli-a105b4c297a7fc98",
+      "bytes": 254460112,
+      "allocated": 254431232,
+      "mode": 448,
+      "mtime_ns": 1794364150104371448,
+      "inode": 60881152,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/evolution_cli-3e4b21d986151189",
+      "bytes": 254356096,
+      "allocated": 254337024,
+      "mode": 448,
+      "mtime_ns": 1794367651382434323,
+      "inode": 60881814,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/derived_commitment-8a58eca7b7f9275d",
+      "bytes": 254310104,
+      "allocated": 254304256,
+      "mode": 448,
+      "mtime_ns": 1794367999720651144,
+      "inode": 60882211,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/trnm_pon_node-a44bfc50b096a4c2",
+      "bytes": 254332920,
+      "allocated": 254287872,
+      "mode": 448,
+      "mtime_ns": 1794366568334991216,
+      "inode": 60879975,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/grouped_verification_authority_v0-03ad5024774db972",
+      "bytes": 254300720,
+      "allocated": 254283776,
+      "mode": 448,
+      "mtime_ns": 1794367560033170835,
+      "inode": 60881796,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/daa_adversarial_schedule-5b5e514fb83132f5",
+      "bytes": 254277784,
+      "allocated": 254275584,
+      "mode": 448,
+      "mtime_ns": 1794368079411686097,
+      "inode": 60882206,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/qualified_tasks-fae888711289cf10",
+      "bytes": 254291000,
+      "allocated": 254259200,
+      "mode": 448,
+      "mtime_ns": 1794364712669383063,
+      "inode": 60881280,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/integer_factor_candidate_v2-550192324c213698",
+      "bytes": 254268912,
+      "allocated": 254251008,
+      "mode": 448,
+      "mtime_ns": 1794368127107486276,
+      "inode": 60882225,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_evaluation-c5079aac598f4a25",
+      "bytes": 254241248,
+      "allocated": 254234624,
+      "mode": 448,
+      "mtime_ns": 1794367826716708682,
+      "inode": 60881848,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_packet_observer-e388df41bffd0a39",
+      "bytes": 254231544,
+      "allocated": 254210048,
+      "mode": 448,
+      "mtime_ns": 1794367552046314732,
+      "inode": 60881791,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/authenticated_storage_cli-9a5b7c82e33c1c74",
+      "bytes": 254230304,
+      "allocated": 254197760,
+      "mode": 448,
+      "mtime_ns": 1794364929282593316,
+      "inode": 60881333,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/task_output_root_parity-80b0d498d289c642",
+      "bytes": 254196584,
+      "allocated": 254160896,
+      "mode": 448,
+      "mtime_ns": 1794364913884074531,
+      "inode": 60881321,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/accepted_task_observation-33ee9e70687d8e56",
+      "bytes": 254091384,
+      "allocated": 254083072,
+      "mode": 448,
+      "mtime_ns": 1794367613141180772,
+      "inode": 60881805,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/evaluation_observation-68fb634e504b6a83",
+      "bytes": 254058424,
+      "allocated": 254029824,
+      "mode": 448,
+      "mtime_ns": 1794364408687016276,
+      "inode": 60881239,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/funded_service_contract-27ba6414b680e3ef",
+      "bytes": 254025944,
+      "allocated": 253997056,
+      "mode": 448,
+      "mtime_ns": 1794364263017699181,
+      "inode": 60881175,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/cli_secret_canary-604c214926c881e2",
+      "bytes": 254013592,
+      "allocated": 253992960,
+      "mode": 448,
+      "mtime_ns": 1794367883952402090,
+      "inode": 60882196,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/task_lifecycle_v3-bc6fa3846cdb88d1",
+      "bytes": 253986896,
+      "allocated": 253956096,
+      "mode": 448,
+      "mtime_ns": 1794364380835907535,
+      "inode": 60881228,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/task_lifecycle-2d9e40b88b2e680f",
+      "bytes": 253964008,
+      "allocated": 253939712,
+      "mode": 448,
+      "mtime_ns": 1794364968981353565,
+      "inode": 60881325,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/grouped_fresh_admission_v0-c09a5790056224c8",
+      "bytes": 253954968,
+      "allocated": 253923328,
+      "mode": 448,
+      "mtime_ns": 1794365088140639027,
+      "inode": 60881359,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_growth_public_cli-03bcbea4cc96a620",
+      "bytes": 253797672,
+      "allocated": 253775872,
+      "mode": 448,
+      "mtime_ns": 1794368017864208433,
+      "inode": 60882220,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/account_archive_projection-54d35c8d69d7467f",
+      "bytes": 253723920,
+      "allocated": 253702144,
+      "mode": 448,
+      "mtime_ns": 1794367377207081865,
+      "inode": 60879973,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/operation_local_parent-513631488d6f04f1",
+      "bytes": 253689888,
+      "allocated": 253665280,
+      "mode": 448,
+      "mtime_ns": 1794364859691769679,
+      "inode": 60881312,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/one_zero_task_preparation_lifecycle-193f216c9d5fc455",
+      "bytes": 253679848,
+      "allocated": 253648896,
+      "mode": 448,
+      "mtime_ns": 1794365072801116692,
+      "inode": 60881366,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/evaluation_observation_cli-4e47d4f577af4ef4",
+      "bytes": 253641512,
+      "allocated": 253628416,
+      "mode": 448,
+      "mtime_ns": 1794367891647223541,
+      "inode": 60882193,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/zero_task_preparation_lifecycle-68dc44f49873171d",
+      "bytes": 253647720,
+      "allocated": 253616128,
+      "mode": 448,
+      "mtime_ns": 1794364918681421152,
+      "inode": 60881322,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/continuity_authenticated-470f0745faa2de48",
+      "bytes": 253634152,
+      "allocated": 253612032,
+      "mode": 448,
+      "mtime_ns": 1794365042587057965,
+      "inode": 60881340,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/maintenance_paired_conformance-0605df7d500e614b",
+      "bytes": 253614784,
+      "allocated": 253583360,
+      "mode": 448,
+      "mtime_ns": 1794364854539930966,
+      "inode": 60881305,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/native_growth_cli-4ef0258833ae0129",
+      "bytes": 253560224,
+      "allocated": 253546496,
+      "mode": 448,
+      "mtime_ns": 1794367543501467168,
+      "inode": 60881787,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/qualified_tasks-4114de61a2736ddc",
+      "bytes": 253549408,
+      "allocated": 253542400,
+      "mode": 448,
+      "mtime_ns": 1794368072300863525,
+      "inode": 60881798,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/task_output_root_parity-22ff76b63bd69bdf",
+      "bytes": 253451688,
+      "allocated": 253423616,
+      "mode": 448,
+      "mtime_ns": 1794367387197945814,
+      "inode": 60879976,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/authenticated_storage_cli-a37d55e1fbe09ed6",
+      "bytes": 253367632,
+      "allocated": 253345792,
+      "mode": 448,
+      "mtime_ns": 1794367863004884764,
+      "inode": 60881852,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/evaluation_observation-eac63f8bf50ee00f",
+      "bytes": 253345016,
+      "allocated": 253341696,
+      "mode": 448,
+      "mtime_ns": 1794368162760578971,
+      "inode": 60882251,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/funded_service_contract-e4eeb4da97d482ec",
+      "bytes": 253260216,
+      "allocated": 253243392,
+      "mode": 448,
+      "mtime_ns": 1794367786117610881,
+      "inode": 60881838,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/task_lifecycle-ccc09fa30a4237db",
+      "bytes": 253227704,
+      "allocated": 253218816,
+      "mode": 448,
+      "mtime_ns": 1794368148770935997,
+      "inode": 60882255,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/grouped_fresh_admission_v0-c5a0d0a7d4836e1d",
+      "bytes": 253215424,
+      "allocated": 253198336,
+      "mode": 448,
+      "mtime_ns": 1794367800437295127,
+      "inode": 60881843,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_tls_witness_cli-721931c407ca9d41",
+      "bytes": 253105384,
+      "allocated": 253087744,
+      "mode": 448,
+      "mtime_ns": 1794364889785828014,
+      "inode": 60881326,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/one_zero_task_preparation_lifecycle-0f0d20f3f57f6af6",
+      "bytes": 252919920,
+      "allocated": 252915712,
+      "mode": 448,
+      "mtime_ns": 1794368103230089002,
+      "inode": 60881853,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/zero_task_preparation_lifecycle-6b2318c059c0e6eb",
+      "bytes": 252922736,
+      "allocated": 252903424,
+      "mode": 448,
+      "mtime_ns": 1794367503286162797,
+      "inode": 60879992,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/continuity_authenticated-d7de9eca67457958",
+      "bytes": 252901776,
+      "allocated": 252899328,
+      "mode": 448,
+      "mtime_ns": 1794368131964363184,
+      "inode": 60882229,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/maintenance_paired_conformance-d01cadff8aecbbb9",
+      "bytes": 252883616,
+      "allocated": 252862464,
+      "mode": 448,
+      "mtime_ns": 1794367617743092376,
+      "inode": 60881803,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_tls_witness_cli-dc4525673dbd45f3",
+      "bytes": 252197072,
+      "allocated": 252194816,
+      "mode": 448,
+      "mtime_ns": 1794368119007691189,
+      "inode": 60882233,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/root_effect_readback_v4_native-bf9492f383a8a18a",
+      "bytes": 248476496,
+      "allocated": 248467456,
+      "mode": 448,
+      "mtime_ns": 1794364389600626865,
+      "inode": 60881233,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/root_recovery_v3_native-5d428089d84631e7",
+      "bytes": 248347120,
+      "allocated": 248336384,
+      "mode": 448,
+      "mtime_ns": 1794364087047442052,
+      "inode": 60881079,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/recovery_floor_v4_native-c5f1789b63509a09",
+      "bytes": 247966208,
+      "allocated": 247959552,
+      "mode": 448,
+      "mtime_ns": 1794364752277137908,
+      "inode": 60881291,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/root_effect_readback_v4_native-746f335cb9f2c139",
+      "bytes": 247886536,
+      "allocated": 247881728,
+      "mode": 448,
+      "mtime_ns": 1794367566377055577,
+      "inode": 60881797,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/root_recovery_v3_native-6868e642b2622200",
+      "bytes": 247759048,
+      "allocated": 247771136,
+      "mode": 448,
+      "mtime_ns": 1794368010739382625,
+      "inode": 60882216,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/recovery_floor_v4_native-596679b412184395",
+      "bytes": 247384776,
+      "allocated": 247394304,
+      "mode": 448,
+      "mtime_ns": 1794368004666530749,
+      "inode": 60882213,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/root_budget_v4_native-b5bc7347688695dc",
+      "bytes": 247124224,
+      "allocated": 247128064,
+      "mode": 448,
+      "mtime_ns": 1794364922389808697,
+      "inode": 60881327,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/root_budget_v4_native-fc3dc189d246d519",
+      "bytes": 246534960,
+      "allocated": 246534144,
+      "mode": 448,
+      "mtime_ns": 1794367380973030934,
+      "inode": 60879972,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_cache_modes-157ae18fc8c04614",
+      "bytes": 242124648,
+      "allocated": 242130944,
+      "mode": 448,
+      "mtime_ns": 1794364658430091341,
+      "inode": 60881256,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/account_archive_prototype-06cc7c57f60e9ec2",
+      "bytes": 242071312,
+      "allocated": 242069504,
+      "mode": 448,
+      "mtime_ns": 1794364141539651789,
+      "inode": 60881159,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/public_cache_modes-152b91619850a0fd",
+      "bytes": 241546136,
+      "allocated": 241561600,
+      "mode": 448,
+      "mtime_ns": 1794368019454169500,
+      "inode": 60882204,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/account_archive_prototype-91ab1bc4a575251f",
+      "bytes": 241349448,
+      "allocated": 241381376,
+      "mode": 448,
+      "mtime_ns": 1794367901735988456,
+      "inode": 60882203,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/examples/continuous_pipeline-ea95f1009eccc384",
+      "bytes": 240600056,
+      "allocated": 240590848,
+      "mode": 448,
+      "mtime_ns": 1794364606784721644,
+      "inode": 60617683,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/examples/continuous_pipeline-1df9c1d2437f8dfc",
+      "bytes": 239872840,
+      "allocated": 239878144,
+      "mode": 448,
+      "mtime_ns": 1794368156922728114,
+      "inode": 60618451,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/release_finality_v2-807dac4e1a1ced1e",
+      "bytes": 238983576,
+      "allocated": 238981120,
+      "mode": 448,
+      "mtime_ns": 1794364188964102817,
+      "inode": 60881210,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/release_finality_v2-0e9c61a89fd6b237",
+      "bytes": 238093408,
+      "allocated": 238100480,
+      "mode": 448,
+      "mtime_ns": 1794368071146892282,
+      "inode": 60882209,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/examples/lifecycle_atomic_continuity-2e052903b561fb31",
+      "bytes": 236018248,
+      "allocated": 236027904,
+      "mode": 448,
+      "mtime_ns": 1794364383758813916,
+      "inode": 60617662,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/examples/lifecycle_continuity-110791e7513df745",
+      "bytes": 236017968,
+      "allocated": 236023808,
+      "mode": 448,
+      "mtime_ns": 1794364199343764847,
+      "inode": 60617646,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/examples/lifecycle_continuity-60bb6abfda27293f",
+      "bytes": 235479072,
+      "allocated": 235511808,
+      "mode": 448,
+      "mtime_ns": 1794368231804798955,
+      "inode": 60618443,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/examples/lifecycle_atomic_continuity-c4d37b98a53f8850",
+      "bytes": 235479256,
+      "allocated": 235511808,
+      "mode": 448,
+      "mtime_ns": 1794368168418434216,
+      "inode": 60618452,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/trnm_data_availability-206231ff342af726",
+      "bytes": 134261992,
+      "allocated": 134242304,
+      "mode": 448,
+      "mtime_ns": 1794365191944410062,
+      "inode": 60881418,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/operation_local_parent-b03f6e5f4d734074.tmp53967da",
+      "bytes": 252963128,
+      "allocated": 112566272,
+      "mode": 448,
+      "mtime_ns": 1794368248464365267,
+      "inode": 60882261,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/trnm_mvcc_fee-ec02b2e80dba6971",
+      "bytes": 87045568,
+      "allocated": 87027712,
+      "mode": 448,
+      "mtime_ns": 1794365284317509225,
+      "inode": 60881446,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/libtrnm_data_availability-f798f0dd30441a75.rlib",
+      "bytes": 84977092,
+      "allocated": 84983808,
+      "mode": 384,
+      "mtime_ns": 1794363574499123147,
+      "inode": 2159204,
+      "elf": false,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/libtrnm_data_availability-6c58396037a144f4.rlib",
+      "bytes": 84914946,
+      "allocated": 84922368,
+      "mode": 384,
+      "mtime_ns": 1794366838673565604,
+      "inode": 850495,
+      "elf": false,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/libtrnm_data_availability-3e8c7d26189d89c9.rlib",
+      "bytes": 84863342,
+      "allocated": 84869120,
+      "mode": 384,
+      "mtime_ns": 1794366256317735371,
+      "inode": 187512,
+      "elf": false,
+      "links": 1
+    },
+    {
+      "path": "debug/trnm-cell",
+      "bytes": 75006624,
+      "allocated": 74969088,
+      "mode": 448,
+      "mtime_ns": 1794365131050303562,
+      "inode": 60881390,
+      "elf": true,
+      "links": 2
+    },
+    {
+      "path": "debug/deps/trnm_cell-53dd9970ca3bca37",
+      "bytes": 75006624,
+      "allocated": 74969088,
+      "mode": 448,
+      "mtime_ns": 1794365131050303562,
+      "inode": 60881390,
+      "elf": true,
+      "links": 2
+    },
+    {
+      "path": "debug/trnm-cell-discovery",
+      "bytes": 74727696,
+      "allocated": 74694656,
+      "mode": 448,
+      "mtime_ns": 1794365133725220345,
+      "inode": 60881375,
+      "elf": true,
+      "links": 2
+    },
+    {
+      "path": "debug/deps/trnm_cell_discovery-ba127758c1fb59c9",
+      "bytes": 74727696,
+      "allocated": 74694656,
+      "mode": 448,
+      "mtime_ns": 1794365133725220345,
+      "inode": 60881375,
+      "elf": true,
+      "links": 2
+    },
+    {
+      "path": "debug/deps/pq_account_owner-8e5792c07b0cc43f",
+      "bytes": 74449464,
+      "allocated": 74432512,
+      "mode": 448,
+      "mtime_ns": 1794363690129957657,
+      "inode": 60881012,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/libtrnm_mvcc_fee-7df429b76db18745.rlib",
+      "bytes": 73295924,
+      "allocated": 73302016,
+      "mode": 384,
+      "mtime_ns": 1794366857410982004,
+      "inode": 1109188,
+      "elf": false,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/libtrnm_mvcc_fee-16b31fa0180505d7.rlib",
+      "bytes": 72967250,
+      "allocated": 72974336,
+      "mode": 384,
+      "mtime_ns": 1794363618531520801,
+      "inode": 2159222,
+      "elf": false,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/libtrnm_mvcc_fee-6312288f23280cbd.rlib",
+      "bytes": 71173800,
+      "allocated": 71180288,
+      "mode": 384,
+      "mtime_ns": 1794366328710472024,
+      "inode": 63176,
+      "elf": false,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/trnm_crypto_primitives-052cbe2ec9c52bb7",
+      "bytes": 70208056,
+      "allocated": 70201344,
+      "mode": 448,
+      "mtime_ns": 1794365396943878381,
+      "inode": 60881799,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq5_task_renewal-92634768fe2fae2c",
+      "bytes": 68876584,
+      "allocated": 68861952,
+      "mode": 448,
+      "mtime_ns": 1794363706556376392,
+      "inode": 60881024,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/incremental_prefix-280aaa84226c5f4d",
+      "bytes": 68725320,
+      "allocated": 68706304,
+      "mode": 448,
+      "mtime_ns": 1794363696408735193,
+      "inode": 60881022,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/cell_tensor_cli-b7e337af341d76ee",
+      "bytes": 68434128,
+      "allocated": 68411392,
+      "mode": 448,
+      "mtime_ns": 1794365130452322166,
+      "inode": 60881384,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/cell_discovery_cli-524e6a176a46ca46",
+      "bytes": 68066304,
+      "allocated": 68046848,
+      "mode": 448,
+      "mtime_ns": 1794365135222173776,
+      "inode": 60881409,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/cell_closure_cli-d2c7a07e43b2abca",
+      "bytes": 67851264,
+      "allocated": 67833856,
+      "mode": 448,
+      "mtime_ns": 1794365132722251547,
+      "inode": 60881393,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/account_development_scope-79ba6ec9f9a908f7",
+      "bytes": 67808552,
+      "allocated": 67792896,
+      "mode": 448,
+      "mtime_ns": 1794363714098110315,
+      "inode": 60881057,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/cell_provider_ready_cli-26a8a93de49bee3f",
+      "bytes": 67750712,
+      "allocated": 67727360,
+      "mode": 448,
+      "mtime_ns": 1794365131765281318,
+      "inode": 60881382,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq4_task_authority-9814780912f62c8e",
+      "bytes": 67596584,
+      "allocated": 67584000,
+      "mode": 448,
+      "mtime_ns": 1794363737647282616,
+      "inode": 60881064,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pon_commitment-4476d5ffb9a93e5d",
+      "bytes": 67432856,
+      "allocated": 67416064,
+      "mode": 448,
+      "mtime_ns": 1794363682852215963,
+      "inode": 60881007,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/cell_fetch_deadline_cli-7567a22f2055af13",
+      "bytes": 67432424,
+      "allocated": 67416064,
+      "mode": 448,
+      "mtime_ns": 1794365128439384791,
+      "inode": 60881392,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/cell_release_cli-4dba7bbabfeff382",
+      "bytes": 67372704,
+      "allocated": 67358720,
+      "mode": 448,
+      "mtime_ns": 1794365126788436157,
+      "inode": 60881378,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq3_quota_authority-67097427181ce460",
+      "bytes": 67333648,
+      "allocated": 67313664,
+      "mode": 448,
+      "mtime_ns": 1794363725156721048,
+      "inode": 60881056,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/cell_persistent_cli-61110d66b92ef747",
+      "bytes": 67327128,
+      "allocated": 67313664,
+      "mode": 448,
+      "mtime_ns": 1794365135280171972,
+      "inode": 60881410,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq2_authority_capacity-a27179de4dcac20f",
+      "bytes": 67320408,
+      "allocated": 67301376,
+      "mode": 448,
+      "mtime_ns": 1794363720357889841,
+      "inode": 60881027,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/cell_cache_wal_cli-3daa42083189a730",
+      "bytes": 67249656,
+      "allocated": 67239936,
+      "mode": 448,
+      "mtime_ns": 1794365133569225198,
+      "inode": 60881400,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/examples/pon_w1_cost_matrix_v2-323eaacd430600ef",
+      "bytes": 67119480,
+      "allocated": 67121152,
+      "mode": 448,
+      "mtime_ns": 1794365068050264660,
+      "inode": 60617698,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/model_evolution_v5-644e1552d3ad9c4b",
+      "bytes": 67090712,
+      "allocated": 67076096,
+      "mode": 448,
+      "mtime_ns": 1794363709253281187,
+      "inode": 60881017,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/pq_cell_cli-e08461beb681d31b",
+      "bytes": 66881536,
+      "allocated": 66871296,
+      "mode": 448,
+      "mtime_ns": 1794365131746281910,
+      "inode": 60881381,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/examples/pon_w1_cost_matrix_v2-223aa3934724ab75",
+      "bytes": 66533504,
+      "allocated": 66535424,
+      "mode": 448,
+      "mtime_ns": 1794367867753775780,
+      "inode": 60618430,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/qualified_task_lifecycle_v2-b099a2a8156924c4",
+      "bytes": 66445728,
+      "allocated": 66433024,
+      "mode": 448,
+      "mtime_ns": 1794363732066478347,
+      "inode": 60881026,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/checkpoint_tile_material_v1-c8fd7fb48d2a6e01",
+      "bytes": 66123320,
+      "allocated": 66117632,
+      "mode": 448,
+      "mtime_ns": 1794363730114546867,
+      "inode": 60881058,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/continuity_v1-ebec274228fcd839",
+      "bytes": 66057688,
+      "allocated": 66039808,
+      "mode": 448,
+      "mtime_ns": 1794365114615814925,
+      "inode": 60881363,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/continuity_cli-fa062b7bf8a00949",
+      "bytes": 65985536,
+      "allocated": 65986560,
+      "mode": 448,
+      "mtime_ns": 1794367701900408992,
+      "inode": 60881821,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/evaluation_quorum_cli-4a9b53a07e457a66",
+      "bytes": 65874056,
+      "allocated": 65875968,
+      "mode": 448,
+      "mtime_ns": 1794367580597794184,
+      "inode": 60881792,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/evaluation_quorum_v2-6c21f60ea5a0a7d8",
+      "bytes": 65216808,
+      "allocated": 65212416,
+      "mode": 448,
+      "mtime_ns": 1794363716206036035,
+      "inode": 60881019,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/qualified_task_lifecycle_v4-2354da43a244e33d",
+      "bytes": 64924248,
+      "allocated": 64921600,
+      "mode": 448,
+      "mtime_ns": 1794363698402664619,
+      "inode": 60881015,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/qualified_task_lifecycle_v3-d10d343c346916fc",
+      "bytes": 64648648,
+      "allocated": 64647168,
+      "mode": 448,
+      "mtime_ns": 1794363687238060241,
+      "inode": 60881008,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/capacity_progress-cf5c715483944244",
+      "bytes": 64549104,
+      "allocated": 64544768,
+      "mode": 448,
+      "mtime_ns": 1794363685377126293,
+      "inode": 60881005,
+      "elf": true,
+      "links": 1
+    },
+    {
+      "path": "debug/deps/checkpoint_tile_policy_v1-92e2ac650885b09d",
+      "bytes": 64104320,
+      "allocated": 64098304,
+      "mode": 448,
+      "mtime_ns": 1794363678883357032,
+      "inode": 60880999,
+      "elf": true,
+      "links": 1
+    }
+  ],
+  "read_only_target": true
+}

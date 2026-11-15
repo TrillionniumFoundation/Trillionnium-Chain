@@ -1,0 +1,45 @@
+{
+  "total_count": 2,
+  "artifacts": [
+    {
+      "id": 13772825234,
+      "node_id": "MDg6QXJ0aWZhY3QxMzc3MjgyNTIzNA==",
+      "name": "work-time-contract-prospective-merge-a040a36e5a16822e56cbed29a6dce31b8c265f67-1",
+      "size_in_bytes": 1812805,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13772825234",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13772825234/zip",
+      "expired": false,
+      "digest": "sha256:ac9d2f524915bcafb19cd86e4115bd96437c74f0d3991ff43d40c3e39e0d4c07",
+      "created_at": "2026-11-10T14:18:15Z",
+      "updated_at": "2026-11-10T14:18:15Z",
+      "expires_at": "2026-12-10T14:18:15Z",
+      "workflow_run": {
+        "id": 42815422267,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-joint-production-tail-20261110-8e76",
+        "head_sha": "341b7b6195a44d3f4a758c98f846457567ac1de3"
+      }
+    },
+    {
+      "id": 13772381773,
+      "node_id": "MDg6QXJ0aWZhY3QxMzc3MjM4MTc3Mw==",
+      "name": "work-time-contract-head-341b7b6195a44d3f4a758c98f846457567ac1de3-1",
+      "size_in_bytes": 1812663,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13772381773",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13772381773/zip",
+      "expired": false,
+      "digest": "sha256:b219f24375e0572622ad575924b84a9c5062e03eea9e8a252d8c1fd4c2c145f7",
+      "created_at": "2026-11-10T14:17:33Z",
+      "updated_at": "2026-11-10T14:17:33Z",
+      "expires_at": "2026-12-10T14:17:32Z",
+      "workflow_run": {
+        "id": 42815422267,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-joint-production-tail-20261110-8e76",
+        "head_sha": "341b7b6195a44d3f4a758c98f846457567ac1de3"
+      }
+    }
+  ]
+}

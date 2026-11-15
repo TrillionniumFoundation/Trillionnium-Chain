@@ -1,0 +1,244 @@
+{
+  "artifact_id": 13579071557,
+  "metadata": {
+    "id": 13579071557,
+    "node_id": "MDg6QXJ0aWZhY3QxMzU3OTA3MTU1Nw==",
+    "name": "w1-legal-strategy-v2-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+    "size_in_bytes": 140617119,
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557",
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip",
+    "expired": false,
+    "digest": "sha256:878bb7120c04dd9e10c0159df975c92995187c88940322c02e24917654cf4fbd",
+    "created_at": "2026-11-07T14:57:31Z",
+    "updated_at": "2026-11-07T14:57:31Z",
+    "expires_at": "2026-12-07T14:57:22Z",
+    "workflow_run": {
+      "id": 42383368504,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+    }
+  },
+  "prefix_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13579071557/artifact.zip",
+  "prefix_bytes": 81199104,
+  "prefix_original_errors": [
+    "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip']' timed out after 599.9999658360612 seconds"
+  ],
+  "requests": [
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "--include",
+        "--header",
+        "Range: bytes=81199104-89587711",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip"
+      ],
+      "start": 81199104,
+      "end": 89587711,
+      "exit_code": 0,
+      "status": 206,
+      "body_bytes": 8388608,
+      "body_sha256": "11b5de7540806c4d1cdb0eb9ac248663b6529190e2241c6a6ad67fe02d3494d8",
+      "headers": {
+        "content-length": "8388608",
+        "content-range": "bytes 81199104-89587711/140617119",
+        "content-type": "application/zip",
+        "etag": "\"0x8DF3CDF73225B56\""
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "--include",
+        "--header",
+        "Range: bytes=89587712-97976319",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip"
+      ],
+      "start": 89587712,
+      "end": 97976319,
+      "exit_code": 0,
+      "status": 206,
+      "body_bytes": 8388608,
+      "body_sha256": "22c528667cb202717e4468e5f4633ee160c4484a85f2ff2fce447b19d569bd03",
+      "headers": {
+        "content-length": "8388608",
+        "content-range": "bytes 89587712-97976319/140617119",
+        "content-type": "application/zip",
+        "etag": "\"0x8DF3CDF73225B56\""
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "--include",
+        "--header",
+        "Range: bytes=97976320-106364927",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip"
+      ],
+      "start": 97976320,
+      "end": 106364927,
+      "exit_code": 0,
+      "status": 206,
+      "body_bytes": 8388608,
+      "body_sha256": "7da29c94020c0e59a4e33bed516143021ee4a5ce01c20776e4934ce4d1700e29",
+      "headers": {
+        "content-length": "8388608",
+        "content-range": "bytes 97976320-106364927/140617119",
+        "content-type": "application/zip",
+        "etag": "\"0x8DF3CDF73225B56\""
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "--include",
+        "--header",
+        "Range: bytes=106364928-114753535",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip"
+      ],
+      "start": 106364928,
+      "end": 114753535,
+      "exit_code": 0,
+      "status": 206,
+      "body_bytes": 8388608,
+      "body_sha256": "f37bd4ff4de7f0ac2f32cb065123af47b7017d2c8089adf42c5f99f5f6036293",
+      "headers": {
+        "content-length": "8388608",
+        "content-range": "bytes 106364928-114753535/140617119",
+        "content-type": "application/zip",
+        "etag": "\"0x8DF3CDF73225B56\""
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "--include",
+        "--header",
+        "Range: bytes=114753536-123142143",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip"
+      ],
+      "start": 114753536,
+      "end": 123142143,
+      "exit_code": 0,
+      "status": 206,
+      "body_bytes": 8388608,
+      "body_sha256": "535cf3c5639f275439476ca7dd22aee1bb097e77fc75cb481cc6a870d04c66c9",
+      "headers": {
+        "content-length": "8388608",
+        "content-range": "bytes 114753536-123142143/140617119",
+        "content-type": "application/zip",
+        "etag": "\"0x8DF3CDF73225B56\""
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "--include",
+        "--header",
+        "Range: bytes=123142144-131530751",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip"
+      ],
+      "start": 123142144,
+      "end": 131530751,
+      "exit_code": 0,
+      "status": 206,
+      "body_bytes": 8388608,
+      "body_sha256": "092c9bd515e8270e2cf47a1bd8a2339ae8420f0c12ab1506e0a27694106e4d99",
+      "headers": {
+        "content-length": "8388608",
+        "content-range": "bytes 123142144-131530751/140617119",
+        "content-type": "application/zip",
+        "etag": "\"0x8DF3CDF73225B56\""
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "--include",
+        "--header",
+        "Range: bytes=131530752-139919359",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip"
+      ],
+      "start": 131530752,
+      "end": 139919359,
+      "exit_code": 0,
+      "status": 206,
+      "body_bytes": 8388608,
+      "body_sha256": "8a031618b5c8f43e81571714d8ee3cb1f05c615a1c97159d6bb7b3980eeb6f9c",
+      "headers": {
+        "content-length": "8388608",
+        "content-range": "bytes 131530752-139919359/140617119",
+        "content-type": "application/zip",
+        "etag": "\"0x8DF3CDF73225B56\""
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "--include",
+        "--header",
+        "Range: bytes=139919360-140617118",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip"
+      ],
+      "start": 139919360,
+      "end": 140617118,
+      "exit_code": 0,
+      "status": 206,
+      "body_bytes": 697759,
+      "body_sha256": "1cd4bca9ed68e5c8e6a0fac433a8e8c843bf1aea7ed707d9b3817f8dcb78a791",
+      "headers": {
+        "content-length": "697759",
+        "content-range": "bytes 139919360-140617118/140617119",
+        "content-type": "application/zip",
+        "etag": "\"0x8DF3CDF73225B56\""
+      }
+    }
+  ],
+  "errors": [],
+  "completed": true,
+  "native_gate_validated": false,
+  "prefix_sha256": "f1e3d7cff9988bbaf651135e8505b97b0af6dfc3eb1909eecf976e07586d2988",
+  "zip_bytes": 140617119,
+  "zip_sha256": "878bb7120c04dd9e10c0159df975c92995187c88940322c02e24917654cf4fbd"
+}

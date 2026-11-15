@@ -1,0 +1,22 @@
+{
+  "status": "HOLD_NO_GO",
+  "execution_source_commit": "6b9495d0c712040d4426895037d6ca6201f9af49",
+  "execution_source_tree": "cfd4aa6c66b86e8445162100fc221cf9d4e629f2",
+  "python_suite_counts": {
+    "composition": 57,
+    "legacy-budget": 58,
+    "root-register": 42,
+    "claim-guard": 49,
+    "ci-contract": 108,
+    "pq-source-tests": 55
+  },
+  "python_total": 369,
+  "source_unchanged": true,
+  "actual_lifetime_failure_bound": null,
+  "composition_coverage_proved": false,
+  "whole_chain_hash_query_scope_closed": false,
+  "whole_chain_pq_qualified": false,
+  "production_activation": false,
+  "all_repository_gates_passed": false,
+  "native_clippy_requalified": false
+}

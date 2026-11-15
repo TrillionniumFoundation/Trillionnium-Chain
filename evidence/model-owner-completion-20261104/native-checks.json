@@ -1,0 +1,87 @@
+{
+  "schema": "model-owner-native-retained-checks-v1",
+  "source_commit": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+  "native_subtree_unchanged": true,
+  "native_tree": "fd06481ff4570407744f0cbedef120f2e9cf066d",
+  "cargo_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+  "workspace_members": 26,
+  "resolved_packages": 175,
+  "native_test_summary_count": 25,
+  "native_test_totals": {
+    "passed": 229,
+    "failed": 0,
+    "ignored": 7,
+    "measured": 0,
+    "filtered_out": 0
+  },
+  "commands": [
+    {
+      "name": "cargo-metadata",
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "log_sha256": "4e91839d5bb8137c9f2270565c1d0608a61c9ae29c57d2bd425778d3207d4aa8",
+      "provider_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955"
+    },
+    {
+      "name": "cargo-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provider_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955"
+    },
+    {
+      "name": "m06-tests",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--all-targets",
+        "--all-features"
+      ],
+      "exit_code": 0,
+      "log_sha256": "c12c24b327ee82404e46e4fe4c80b79bf5c0bd31a5c6ced5c279e7eee49afce4",
+      "provider_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955"
+    },
+    {
+      "name": "m06-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "log_sha256": "a9a01b3be1066ccc8df6accfe93d1540df36bdf6a927ee7b68e3f3b7132e4b9c",
+      "provider_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955"
+    }
+  ],
+  "qualification": false
+}

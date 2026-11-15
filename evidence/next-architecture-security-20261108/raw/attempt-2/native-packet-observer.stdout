@@ -1,0 +1,14 @@
+
+running 9 tests
+test packet_status_cli_absence_is_local_only_and_does_not_execute ... ok
+test packet_status_cli_decodes_all_completed_reorg_fields_like_the_original_writer ... ok
+test packet_status_cli_does_not_activate_an_admitted_packet ... ok
+test packet_status_cli_never_creates_a_store_or_recreates_a_missing_owner_lock ... ok
+test packet_status_cli_preserves_context_exact_bytes_and_snapshot_budget ... ok
+test packet_status_cli_preserves_recovery_candidate_checks_for_an_unrelated_query ... ok
+test packet_status_cli_refuses_recovery_and_owner_markers_without_sqlite_cleanup ... ok
+test packet_status_cli_refuses_the_live_owner_without_touching_its_files ... ok
+test packet_status_cli_refuses_unfinished_native_reorg_without_recovering ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.49s
+

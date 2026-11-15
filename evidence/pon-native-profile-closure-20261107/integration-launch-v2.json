@@ -1,0 +1,61 @@
+{
+  "combined_validator_started": false,
+  "output": {
+    "audit_recorded": true,
+    "job_id": "1a1b878bf79-12894-fa6",
+    "stderr": {
+      "eof": true,
+      "next_offset": 797,
+      "offset": 0,
+      "size": 797,
+      "text": "error: the following file has changes staged in the index:\n    evidence/pon-native-profile-closure-20261107/native-pruning-correction-v1.patch\n(use --cached to keep the file, or -f to force removal)\nTraceback (most recent call last):\n  File \"<string>\", line 13, in <module>\n    subprocess.run(['git','rm','--',str(patch.relative_to(repo))],cwd=repo,check=True)\n    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.14/subprocess.py\", line 578, in run\n    raise CalledProcessError(retcode, process.args,\n                             output=stdout, stderr=stderr)\nsubprocess.CalledProcessError: Command '['git', 'rm', '--', 'evidence/pon-native-profile-closure-20261107/native-pruning-correction-v1.patch']' returned non-zero exit status 1.\n"
+    },
+    "stdout": {
+      "eof": true,
+      "next_offset": 172,
+      "offset": 0,
+      "size": 172,
+      "text": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-native-profile-closure-20261107\", \"remote_policy_mutated\": false}\n"
+    }
+  },
+  "reason": "Git refused removing a newly staged artifact; preserve index/worktree equality and move the uncompressed original outside the checkout.",
+  "schema": "pon-native-profile-precommit-launch-failure-v1",
+  "source_committed": false,
+  "status": {
+    "at_unix_ms": 1794096289105,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 1,
+    "job_id": "1a1b878bf79-12894-fa6",
+    "launch_nonce": "edf75e8dd4ab418656cd8d2b12f6f82d",
+    "log_bytes": {
+      "stderr": {
+        "seen": 797,
+        "stored": 797
+      },
+      "stdout": {
+        "seen": 172,
+        "stored": 172
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "failed",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  }
+}

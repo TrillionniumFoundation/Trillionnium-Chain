@@ -1,0 +1,254 @@
+{
+  "schema": "all908-disposition-delivery-index-v1",
+  "members": [
+    {
+      "member": "all-908-branch-dispositions-v1.json",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/all-908-final-disposition-ledger-v1/all-908-branch-dispositions-v1.json",
+      "bytes": 3470559,
+      "sha256": "a8064b7da972de7ff6a4dc50b0ac8db41860be02ff04aadf28bab13904125e52"
+    },
+    {
+      "member": "current-source-overlay-v1.json",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/all-908-final-disposition-ledger-v1/current-source-overlay-v1.json",
+      "bytes": 17891,
+      "sha256": "eaffb139c9a8e4d501d9c79ca714ea3e269799ef703e653749f2226546ceb014"
+    },
+    {
+      "member": "all-908-ref-summary.csv",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/all-908-final-disposition-ledger-v1/all-908-ref-summary.csv",
+      "bytes": 192819,
+      "sha256": "476e1403e2e8219f7f62ddc6a2cabec77101455b1aaa95be1ec5bdced4d35e21"
+    },
+    {
+      "member": "README.md",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/all-908-final-disposition-ledger-v1/README.md",
+      "bytes": 2482,
+      "sha256": "caeb04c0fc795e27ffb3a819f70778e55ecbe2ca3280c799b8f02a24e0d49971"
+    },
+    {
+      "member": "inputs/first80.json",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/first80-final-semantic-ledger-v1/first80-semantic-dispositions-v1.json",
+      "bytes": 6950421,
+      "sha256": "d04fbe181facead18020a3315f2c7df0854e6ef74cc120e9b230355a82c37878"
+    },
+    {
+      "member": "inputs/latter80.json",
+      "path": "/private/tmp/chain-architecture-prior80-review-20261114/latter80-semantic-dispositions-v2.json",
+      "bytes": 1302635,
+      "sha256": "ae4ea761a83621fe271f4cff15b30c53c51fa5914b634f2b655de8f33f2b55dd"
+    },
+    {
+      "member": "inputs/ci81.json",
+      "path": "/private/tmp/chain-ci-branch-dispositions-20261114/ci-controls-81-dispositions-v2.json",
+      "bytes": 2013206,
+      "sha256": "18aa4ba7d52498e70979e79558886ee7aa2daec8a599f478808d1f0abff7cad5"
+    },
+    {
+      "member": "inputs/architecture10.json",
+      "path": "/private/tmp/chain-architecture-multibase-review-20261114/ten-head-semantic-dispositions-v2.json",
+      "bytes": 5790564,
+      "sha256": "c4e3801048c53b5bd445f426807ad2623bdadfde3c50cea45dc2b0e2b741d350"
+    },
+    {
+      "member": "inputs/ci6.json",
+      "path": "/private/tmp/chain-ci-multi-base6-review-20261114/six-head-semantic-dispositions-v1.json",
+      "bytes": 900657,
+      "sha256": "fe6c81d8bebf2d3e5e7ae291e5c85c907c801f8786fe6c3bf149e536325f1cab"
+    },
+    {
+      "member": "inputs/prci11.json",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/eleven-head-final-semantic-ledger-v1/eleven-head-semantic-dispositions-v1.json",
+      "bytes": 14948861,
+      "sha256": "294438e8cfa89d57329556fc9575c9e2c3a89cfcbe6590fbe4c03431712afa59"
+    },
+    {
+      "member": "inputs/production20.json",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/production-and-remaining-terminal-final-v1/production17-and-three-terminal-dispositions-v1.json",
+      "bytes": 12616152,
+      "sha256": "f54db0f293f84ec0455937e77b8b2a81161ac03383df8f84ab807c2142b737af"
+    },
+    {
+      "member": "inputs/custody8.json",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/custody-eight-final-review-v1/eight-bounded-terminal-dispositions-v1.json",
+      "bytes": 1095997,
+      "sha256": "8755f0b8e9daae2095ce6089780ede778a69e83c1d51ccff64790295ee5708f4"
+    },
+    {
+      "member": "inputs/remote0170.json",
+      "path": "/private/tmp/chain-consolidation-20261114-root/remote-readonly-refresh-0170-v1/branches.json",
+      "bytes": 132555,
+      "sha256": "e52bb1c8c0963b2ddd303761ffe7ba949c080b3a0f72983f508978f8971e7734"
+    },
+    {
+      "member": "inputs/baseline_ref_checkpoint.json",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/all-908-ref-disposition-checkpoint-v1.json",
+      "bytes": 1867485,
+      "sha256": "e8d55aac2fd71032d95bd0c870f03ba3fd9d636506faa6471314bac68862c220"
+    },
+    {
+      "member": "inputs/baseline_ancestry.json",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/branch-ancestry-v1.json",
+      "bytes": 175952,
+      "sha256": "1fa174d3bee314cf55b49fb2aa3524fc7962623e9e3ca850bf7486cfd9f8ed7d"
+    },
+    {
+      "member": "inputs/unmerged_graph.json",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/unmerged-commit-graph-v1.json",
+      "bytes": 258636,
+      "sha256": "13208f8e566dad9195f5efd5f8d0fe42e9b790a9a97fd8ae087ed5dbe7b40a1c"
+    },
+    {
+      "member": "inputs/nonancestor_path_deltas.json",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/nonancestor-tip-deltas-v1.json",
+      "bytes": 15187188,
+      "sha256": "7af27e30ea03f8c1c12e5bea54236538fb0aa9b64c06d4c85a99354c6b82e9e7"
+    },
+    {
+      "member": "inputs/old_archive_parent_receipt_historical_only.json",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/archive-parent-verification-v1.json",
+      "bytes": 915,
+      "sha256": "7a25c10806127d7760861793b5943739f920a10d30c4c8593f12a4e027623c1f"
+    },
+    {
+      "member": "inputs/archive_correction.json",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/custody-eight-final-review-v1/archive-preservation-correction-overlay-v1.json",
+      "bytes": 1116,
+      "sha256": "a126f2114d4891544d016c68f86b8d4962bd01be4ac65a75789ff3d4dc5b39ea"
+    },
+    {
+      "member": "inputs/ci81_7f_appendix.json",
+      "path": "/private/tmp/chain-ci-branch-dispositions-20261114/ci-controls-post-baseline-7f-appendix-v1.json",
+      "bytes": 14713,
+      "sha256": "f32c2203769ecc46b714379d774c5ded1c21b03fab1d53f115400aa415e1d428"
+    },
+    {
+      "member": "inputs/ci6_validation_overlay.json",
+      "path": "/private/tmp/chain-ci-multi-base6-review-20261114/six-head-post-baseline-validation-overlay-v1.json",
+      "bytes": 67616,
+      "sha256": "5f100b487d6b3df9df824f20c1bea466dbfe2b5bcfd8b591b2fc8c21392e6f41"
+    },
+    {
+      "member": "inputs/architecture10_scope_clarification.json",
+      "path": "/private/tmp/chain-architecture-multibase-review-20261114/ten-head-audit-coverage-clarification-v1.json",
+      "bytes": 1589,
+      "sha256": "a8eb14ab8bb9d95675e0f65c99b256779ae79a9b217b25c482746667360b4896"
+    },
+    {
+      "member": "inputs/relay_four_head.json",
+      "path": "/private/tmp/chain-relay-preflight-fresh-time-evidence-20261114/relay-four-head-semantic-dispositions-v1.json",
+      "bytes": 5445,
+      "sha256": "da0f3667773b62462fbc21e857c437e6bcc593e422a702e86e7a9c9aa59020bf"
+    },
+    {
+      "member": "inputs/protocol_selection.json",
+      "path": "/private/tmp/chain-consolidation-20261114-root/protocol-selection-review-v1/root-selected-protocol-decisions-v1.json",
+      "bytes": 33753,
+      "sha256": "93e32fa78fa387e263ec621efc9966603421db96a52d220b60954cfe83ed6786"
+    },
+    {
+      "member": "inputs/finite_tail_T01_T04_T05.json",
+      "path": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/finite-tail-T01-T04-T05-disposition-overlay-v1.json",
+      "bytes": 10960,
+      "sha256": "4a7bb0a8f27a404d3ab453e8f1efc1669173ed6cd6e07bb296eb4b948e543fd2"
+    },
+    {
+      "member": "inputs/T03_commit.json",
+      "path": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/commit-summary.json",
+      "bytes": 22238,
+      "sha256": "b94e787e44f3a799df25a477b027d54ebc97e795d3f726761662226381ed8f2e"
+    },
+    {
+      "member": "inputs/T03_raw_receipt_index.json",
+      "path": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/final-custody-v1/custody-manifest.json",
+      "bytes": 14565,
+      "sha256": "b18dda48f4902b1362e157d092c6f5278fce7c5cd99a0c84cd2809987fcf3a87"
+    },
+    {
+      "member": "inputs/T03_original_execution.zip",
+      "path": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/final-custody-v1/t03-original-execution-evidence.zip",
+      "bytes": 335800,
+      "sha256": "b2082f28c92af18d73624cfc67abfd01f39e98ffee1caa8935b52c6cd533b5a5"
+    },
+    {
+      "member": "inputs/Cell_MTP_original_execution.zip",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/final-native-original-receipts-v1/cell-and-mtp-original-receipts-v1.zip",
+      "bytes": 83754,
+      "sha256": "e0cb88f09e7b1730088e0d0da0088a13dc25e36ab1760b84db0f97cfd57fed0b"
+    },
+    {
+      "member": "inputs/Cell_MTP_original_receipt_index.json",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/final-native-original-receipts-v1/index.json",
+      "bytes": 13737,
+      "sha256": "bd4cd88d9bafc57945f136eb872a88cff621fc897cdc96023ff1746c25634191"
+    },
+    {
+      "member": "inputs/Cell_commit.json",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/selected-6a5-cell-peer-order-port-v1/commit-summary.json",
+      "bytes": 3037,
+      "sha256": "f6e6a90c09373e97155e6145de5f5c2597aa6a3d0fc0124832036efd6cffc0b0"
+    },
+    {
+      "member": "inputs/MTP_commit.json",
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/selected-t08-mining-time-controls-port-v1/commit-summary.json",
+      "bytes": 2638,
+      "sha256": "09c48ad7efffc70e0ccd01a7b844b3d6062465a21df4c188ecb89aab89b639ed"
+    },
+    {
+      "member": "inputs/root_dba_native_summary.json",
+      "path": "/private/tmp/chain-consolidation-20261114-root/native-final-rust-dba-summary.json",
+      "bytes": 8723,
+      "sha256": "1fe1d5a9e62ed3d1ffdd71f8f85ae4c66945a92164d7bb9e82cf629dcf578084"
+    },
+    {
+      "member": "inputs/root_dba_native_index.json",
+      "path": "/private/tmp/chain-consolidation-20261114-root/native-final-rust-dba-receipt-index.json",
+      "bytes": 5163,
+      "sha256": "2657bfbdb36c3c46bd9986bc925b51d31d4b05bdeeb897ccec085342c7cf0ca5"
+    },
+    {
+      "member": "inputs/root_dba_native_terminal.json",
+      "path": "/private/tmp/chain-consolidation-20261114-root/native-final-rust-dba-terminal.json",
+      "bytes": 1494,
+      "sha256": "92d58ba5ab88948f52c9c4eb3d12f97a1ef49acbad244bab9601529926b1a770"
+    },
+    {
+      "member": "inputs/root_dba_native_original.zip",
+      "path": "/private/tmp/chain-consolidation-20261114-root/native-final-rust-dba-receipts-v1.zip",
+      "bytes": 205820,
+      "sha256": "0d45640aa16a7d9362be50d421bd8db7cc99dae2a48e800c87ed8a4258bed50a"
+    },
+    {
+      "member": "inputs/four_second_failure.json",
+      "path": "/private/tmp/chain-ci-protocol-failure-20261114/confirmation-causal-summary-v6.json",
+      "bytes": 43297,
+      "sha256": "9fc1752f3cecae7b36cc1991991b82b0faa7e25ab927fb401c181d5abc9e6275"
+    }
+  ],
+  "counts": {
+    "branches": 908,
+    "unique_remote_tips": 892,
+    "terminal_tips": 296,
+    "baseline_ancestor_refs": 435,
+    "baseline_nonancestor_refs": 473,
+    "current_ancestor_refs": 435,
+    "current_nonancestor_refs": 473,
+    "terminal_scope_counts": {
+      "first80": 80,
+      "latter80": 80,
+      "ci81": 81,
+      "architecture10": 10,
+      "ci6": 6,
+      "prci11": 11,
+      "production20": 20,
+      "custody8": 8
+    },
+    "unclassified_refs": 0,
+    "unclassified_terminal_tips": 0,
+    "missing_terminal_decisions": 0,
+    "duplicated_terminal_owners": 0,
+    "remote_ref_changes_from_baseline": 1,
+    "selected_port_commits_checked": 60
+  },
+  "archive_verified": false,
+  "deletion_authorized": false
+}

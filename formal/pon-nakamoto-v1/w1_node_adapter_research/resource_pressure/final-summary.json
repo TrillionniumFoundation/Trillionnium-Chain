@@ -1,0 +1,217 @@
+{
+  "schema": "w1-node-pressure-r4-final-summary-v1",
+  "qualification": "HOLD_NO_GO",
+  "job_id": "1a1b9afa6de-12894-160e",
+  "new_complete_proofs": 0,
+  "preflight_mutators": 4,
+  "preflight_exercises": 5,
+  "campaign_exercises": 23,
+  "total_exercises_including_preflight": 28,
+  "campaign_distinct_fixture_count": 1,
+  "legitimate_requests": 7,
+  "malicious_requests": 16,
+  "malicious_distinct_mutations": 4,
+  "malicious_repeats_per_mutation": 4,
+  "binary_sha256": "271ac45cc709d1d6e91e9ff78c004668e5e4d2a690e3b4e963220e750bcbeb1b",
+  "source_head_at_measurement": "7a7dfb9002406f4345a57e416d7a36504461c0df",
+  "source_head_note": "The Node adapter was uncommitted frozen v4 source above this HEAD; exact source hashes/copies, not HEAD alone, identify the binary.",
+  "proof_origin": "/home/qian-qi/work/w1-r4-evidence-f16ac5/node-full-proof-v1/proof",
+  "all_original_source_binary_inputs_unchanged": true,
+  "all_copied_inputs_unchanged": true,
+  "campaign": {
+    "requested": 23,
+    "malicious_requested": 16,
+    "legitimate_requested": 7,
+    "legitimate_distinct_fixtures": 1,
+    "single_node_service": false,
+    "spawned": 23,
+    "adapter_exec_observed": 23,
+    "exec_success_evidence_observed": 23,
+    "rejection_observed_by_deadline": 0,
+    "admission_observed_by_deadline": 0,
+    "controlled_rejection_observed_after_deadline": 0,
+    "native_admission_observed_after_deadline": 0,
+    "sigkill_incomplete": 23,
+    "receiver_node_created": 0,
+    "malicious_receiver_created": 0,
+    "unobserved_exit": 0,
+    "sum_worker_user_cpu_seconds": 0.841371,
+    "sum_worker_system_cpu_seconds": 0.241195,
+    "input_files_unchanged": true,
+    "cleanup_confirmed": true,
+    "fatal_error": null,
+    "qualification": "HOLD_NO_GO",
+    "status_counts": {
+      "sigkill_incomplete_not_rejection": 23
+    }
+  },
+  "wall_seconds_from_first_attempt": {
+    "declared_deadline": 4.0,
+    "first_gate_release": 0.002315029,
+    "last_gate_release": 0.042419212,
+    "all_adapter_execs_observed_by": 1.009297562,
+    "deadline_decision_observed": 4.072751647,
+    "kill_requested": 4.075439652,
+    "kill_returned": 4.075496438,
+    "last_wait4": 4.213890717,
+    "cgroup_absent_confirmed": 4.262711254,
+    "observer_total": 4.455564439
+  },
+  "deadline_overrun_ms_at_kill_request": 75.439652,
+  "hard_four_second_termination_established": false,
+  "resource_limits_initial_and_last": {
+    "initial": {
+      "cpu.max": "25000 100000",
+      "cpu.max.burst": "0",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    },
+    "last": {
+      "cpu.max": "25000 100000",
+      "cpu.max.burst": "0",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    }
+  },
+  "sampled_limits_equal_initial": true,
+  "resource_snapshot_count": 74,
+  "continuous_drift_abort": false,
+  "last_observed_kernel_memory_peak_bytes": 175022080,
+  "last_observed_kernel_pids_peak": 24,
+  "sentinel_included_in_cgroup_pid_and_resource_counts": true,
+  "last_observed_kernel_memory_events": {
+    "low": 0,
+    "high": 0,
+    "max": 0,
+    "oom": 0,
+    "oom_kill": 0,
+    "oom_group_kill": 0,
+    "sock_throttled": 0
+  },
+  "last_observed_kernel_pids_events": {
+    "max": 0
+  },
+  "cpu_usage_delta_until_pre_kill_snapshot_seconds": 1.052663,
+  "pre_kill_cpu_stat": {
+    "usage_usec": 1054455,
+    "user_usec": 838386,
+    "system_usec": 216068,
+    "nice_usec": 0,
+    "core_sched.force_idle_usec": 0,
+    "nr_periods": 41,
+    "nr_throttled": 40,
+    "throttled_usec": 26914842,
+    "nr_bursts": 0,
+    "burst_usec": 0
+  },
+  "post_kill_systemd_cpu_usage_ns": 1078721000,
+  "post_kill_systemd_memory_peak_reported": "262144",
+  "systemd_memory_peak_not_used_as_cgroup_peak": true,
+  "worker_wait4_user_cpu_seconds": 0.841371,
+  "worker_wait4_system_cpu_seconds": 0.241195,
+  "worker_cpu_and_cgroup_cpu_have_different_boundaries": true,
+  "request_output_directories_created": 23,
+  "receiver_node_directories_created": 0,
+  "exercise_receipts_created": 0,
+  "node_opened_report_unknown_count": 23,
+  "checkpoint_counts": {},
+  "before_proof_checkpoint_observed": 0,
+  "late_pcs_rejection_measured_in_campaign": false,
+  "preflight_results": [
+    {
+      "name": "valid",
+      "result": "PASS",
+      "outer_wall_seconds": 1.270593369,
+      "max_rss_kib": 122912,
+      "error": null,
+      "node_opened": true,
+      "stages": [
+        "BeforeProof",
+        "BeforeShaSetup",
+        "BeforeShaVerify",
+        "BeforeArithmeticSetup",
+        "BeforeArithmeticVerify",
+        "ProofVerified",
+        "BeforeNodeAdmission",
+        "NodeCommitted",
+        "BeforeActivation"
+      ]
+    },
+    {
+      "name": "sha-last-fold-query-value",
+      "result": "PASS",
+      "outer_wall_seconds": 0.8227216,
+      "max_rss_kib": 64332,
+      "error": "SHA_PROOF:InvalidOpeningArgument(FinalPolyMismatch)",
+      "node_opened": false,
+      "stages": [
+        "BeforeProof",
+        "BeforeShaSetup",
+        "BeforeShaVerify"
+      ]
+    },
+    {
+      "name": "sha-last-fold-auth-sibling",
+      "result": "PASS",
+      "outer_wall_seconds": 0.769561533,
+      "max_rss_kib": 63900,
+      "error": "SHA_PROOF:InvalidOpeningArgument(CommitPhaseMmcsError(CapMismatch))",
+      "node_opened": false,
+      "stages": [
+        "BeforeProof",
+        "BeforeShaSetup",
+        "BeforeShaVerify"
+      ]
+    },
+    {
+      "name": "arith-last-fold-query-value",
+      "result": "PASS",
+      "outer_wall_seconds": 1.319424872,
+      "max_rss_kib": 123172,
+      "error": "ARITHMETIC_PROOF:InvalidOpeningArgument(FinalPolyMismatch)",
+      "node_opened": false,
+      "stages": [
+        "BeforeProof",
+        "BeforeShaSetup",
+        "BeforeShaVerify",
+        "BeforeArithmeticSetup",
+        "BeforeArithmeticVerify"
+      ]
+    },
+    {
+      "name": "arith-last-fold-auth-sibling",
+      "result": "PASS",
+      "outer_wall_seconds": 4.378274605,
+      "max_rss_kib": 123192,
+      "error": "ARITHMETIC_PROOF:InvalidOpeningArgument(CommitPhaseMmcsError(CapMismatch))",
+      "node_opened": false,
+      "stages": [
+        "BeforeProof",
+        "BeforeShaSetup",
+        "BeforeShaVerify",
+        "BeforeArithmeticSetup",
+        "BeforeArithmeticVerify"
+      ]
+    }
+  ],
+  "preflight_loadavg_after": {
+    "valid": "12.88 11.31 10.67 10/4486 3318660",
+    "sha-last-fold-query-value": "12.88 11.31 10.67 10/4486 3318688",
+    "sha-last-fold-auth-sibling": "12.88 11.31 10.67 5/4488 3318751",
+    "arith-last-fold-query-value": "12.88 11.31 10.67 8/4487 3318786",
+    "arith-last-fold-auth-sibling": "13.21 11.40 10.70 9/4496 3318914"
+  },
+  "shared_host_exclusive": false,
+  "machine_load_sampled_during_campaign": false,
+  "root_and_security_heavy_work_coordination_retained": true,
+  "cleanup_controller_and_independent_checks_pass": true,
+  "single_node_service": false,
+  "seven_independent_production_submissions": false,
+  "production_slice_used": false,
+  "global_malicious_rejection_bound": false,
+  "controller_and_observer_cpu_in_workload_quota": false,
+  "adapter_input_read_binding_and_archive_persistence_in_worker_quota": true,
+  "interpretation": "Finite negative diagnostic: all 23 execs observed, no checkpoint/final receipt before SIGKILL, no receiver store. It establishes neither a global rejection bound nor a production-service starvation theorem."
+}

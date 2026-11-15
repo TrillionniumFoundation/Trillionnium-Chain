@@ -1,0 +1,57 @@
+{
+  "backend_exported": true,
+  "build_directory": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.2AGQvnnl",
+  "cli_executable": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.2AGQvnnl/install/bin/openssl",
+  "cli_sha256": "a544d92b46ccb118e80f7bb857a091818816e7fc71c964ec67de9c7186054a4e",
+  "cli_version_output": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+  "elapsed_wall_seconds": 96,
+  "exit_code": 0,
+  "github_actions_reported": true,
+  "independent_cryptographic_implementation_claim": false,
+  "install_prefix": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.2AGQvnnl/install",
+  "last_stage": "complete",
+  "ml_dsa_65_sign_verify_and_wrong_message_rejection": true,
+  "native_backend_inputs": [
+    {
+      "bytes": 8933408,
+      "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.2AGQvnnl/install/bin/openssl",
+      "sha256": "a544d92b46ccb118e80f7bb857a091818816e7fc71c964ec67de9c7186054a4e"
+    },
+    {
+      "bytes": 3449,
+      "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.2AGQvnnl/install/include/openssl/opensslv.h",
+      "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+    },
+    {
+      "bytes": 4729,
+      "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.2AGQvnnl/install/include/openssl/configuration.h",
+      "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+    },
+    {
+      "bytes": 12381088,
+      "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.2AGQvnnl/install/lib/libcrypto.a",
+      "sha256": "14e8341477eb9ad8ce3c5599eaced8d2a1799d7e3036b96d093f8bfe42ca4718"
+    },
+    {
+      "bytes": 2123138,
+      "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.2AGQvnnl/install/lib/libssl.a",
+      "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727"
+    }
+  ],
+  "native_rust_pq_tests_run_by_preparation": false,
+  "openssl_conf": "/dev/null",
+  "openssl_modules": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.2AGQvnnl/install/lib/ossl-modules",
+  "preparation_script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+  "production_activation": false,
+  "result": "PREPARED_AND_SMOKE_VERIFIED",
+  "runner_environment_reported": "github-hosted",
+  "schema": "trnm-ci-pq-provider-v3",
+  "source_archive_sha256_expected": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+  "source_digest_verified": true,
+  "source_transport": "download",
+  "source_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+  "static_build": true,
+  "upstream_full_tests_run": false,
+  "version": "3.5.9",
+  "whole_chain_quantum_security_qualified": false
+}

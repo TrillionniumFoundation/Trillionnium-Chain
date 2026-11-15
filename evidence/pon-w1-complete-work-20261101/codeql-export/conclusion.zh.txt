@@ -1,0 +1,11 @@
+CodeQL export 失败读回：没有取得精确源码的分析收据
+
+run 41299973434，job 124828823806，source 7c5caf5bce1396976808a0f504c4163fbc1aed44。唯一失败是 step5“Export exact PR analyses with the existing read-only token”。该 workflow 是读取既有分析的导出器，不是编译或扫描任务本身。
+
+源码前后身份一致、preflight 与 16 个 exporter 离线测试成功。按原 --wait-seconds 1200 --poll-seconds 30 执行，实际保存 39 份 snapshot、打印 38 次等待；约 1191.644902 秒后因剩余预算不足下一次间隔，报 CodeQL analyses/checks did not complete and stabilize before the deadline。
+
+唯一必要小产物 artifact13081197356（293507字节）已经按 GitHub SHA256、大小与 ZIP CRC 校验，并核对其两级文件摘要。39 次原始响应全部一致：head7c5 和实际 merge c2d5 的 check-runs 都是 total_count=0/check_runs=[]，PR675 的 analyses 列表也是 []。各次 PR head/base 未漂移；实际 merge 的有序父节点为原 base 和 head。result 保留 complete=false、last_checks=[]、analyses=[]、target_pr_gate_authenticated=false、target_pr_gate_verdict=null。
+
+这证明原观察区间没有取得 CodeQL check/analysis receipt。现有证据不能证明上游为何没有触发、调度或返回分析；也没有漏洞结果、编译错误、原生断言失败或服务业务指标失败的证据。不能把空分析列表当作安全通过。导出器和 workflow 源码均与8327相同。
+
+未改 gate、预算或源码，也未发起重试。所有 205 个原始 artifact 文件无损保留在 retained-artifact-13081197356-contents.tar.xz，原 ZIP 摘要/大小及逐成员摘要在 RETAINED_CAPTURE_INDEX.json。完整失败 job 日志、精简源码和元数据同时保留。没有临时下载/物化 URL 或凭据；此前冻结目录不变。

@@ -1,0 +1,430 @@
+{
+  "base": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "branch": "fix/chain-w1-qrom-implementation-map-20261107",
+  "bundle": {
+    "bytes": 4778605,
+    "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/W1_QROM_closure_1a14f7d48263.bundle",
+    "sha256": "9aa10404c58ba6e053dec7e7724a92861c033e05518c896d82b00a4a3a2f8085"
+  },
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "bundle",
+        "verify",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/W1_QROM_closure_1a14f7d48263.bundle"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-closure-publish-20261107",
+      "exit_code": 0,
+      "label": "bundle-verify",
+      "seconds": 0.05815598997287452,
+      "stderr_bytes": 102,
+      "stderr_sha256": "868d0d52216caf47de1b41125e6edbfc9bf7e4f83d73399739f21796de3ea29c",
+      "stdout_bytes": 207,
+      "stdout_sha256": "c075093eace817b3b78006cb9865ba863d448ad8133eb03a9a5500d90858c9f8"
+    },
+    {
+      "argv": [
+        "git",
+        "bundle",
+        "list-heads",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/W1_QROM_closure_1a14f7d48263.bundle"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-closure-publish-20261107",
+      "exit_code": 0,
+      "label": "bundle-heads",
+      "seconds": 0.0029470520094037056,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 46,
+      "stdout_sha256": "933cf1fb9fab2b4e51fb0dc7c5312cddeac43c609a8d77c869866702f9773e05"
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "--no-tags",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/W1_QROM_closure_1a14f7d48263.bundle",
+        "HEAD:refs/heads/w1-qrom-publish-import-1a14f7d48263"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-closure-publish-20261107",
+      "exit_code": 0,
+      "label": "fetch-bundle",
+      "seconds": 0.6401514590252191,
+      "stderr_bytes": 177,
+      "stderr_sha256": "664cb604ac52f9c54fe186d5b04b4131cdffa01f5e778e8b50426196bcd9a40e",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "1a14f7d4826363daefac9ec10131c66d7e70ece7"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-closure-publish-20261107",
+      "exit_code": 0,
+      "label": "base-ancestor",
+      "seconds": 0.004145242972299457,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.hooksPath=.githooks",
+        "checkout",
+        "-B",
+        "fix/chain-w1-qrom-implementation-map-20261107",
+        "refs/heads/w1-qrom-publish-import-1a14f7d48263"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-closure-publish-20261107",
+      "exit_code": 0,
+      "label": "checkout-complete-attempt",
+      "seconds": 39.6656334081199,
+      "stderr_bytes": 76591,
+      "stderr_sha256": "ae16ceca33ecf39e7028f4196b82f927a0b249fe2cae91305e08710caee6ac3a",
+      "stdout_bytes": 39449,
+      "stdout_sha256": "afbc0c8fc393c9e812e28e699e94151d369f01f6cc8d52265bcbf514076a9dfc"
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.hooksPath=.githooks",
+        "checkout",
+        "fix/chain-w1-qrom-implementation-map-20261107"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-closure-publish-20261107",
+      "exit_code": 0,
+      "label": "checkout-selected-branch",
+      "seconds": 0.2892840669956058,
+      "stderr_bytes": 341,
+      "stderr_sha256": "097278f6a12eb72e35efb6676afafa9c5798a08e2363c7deb237b40f449c8a5a",
+      "stdout_bytes": 39449,
+      "stdout_sha256": "afbc0c8fc393c9e812e28e699e94151d369f01f6cc8d52265bcbf514076a9dfc"
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-closure-publish-20261107",
+      "exit_code": 0,
+      "label": "preflight-dev",
+      "seconds": 1.0610854751430452,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 176,
+      "stdout_sha256": "c7c16fa4063ae662f66ad87360110011edd94c2df0a2066a261de290db051c78"
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-closure-publish-20261107",
+      "exit_code": 0,
+      "label": "preflight-audit",
+      "seconds": 0.09471561084501445,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 178,
+      "stdout_sha256": "51a5abc2021052aea213b79dde0b32428dc5a763c2cc00d35986433f71cab67b"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-closure-publish-20261107",
+      "exit_code": 0,
+      "label": "generated-inventory-check",
+      "seconds": 1.8027631079312414,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 35,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-closure-publish-20261107",
+      "exit_code": 0,
+      "label": "actual-worktree-status",
+      "seconds": 0.05912546394392848,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 39790,
+      "stdout_sha256": "656eefdb3db33f6367a66df9cd4b872c46bbe764c8b634da2f2f12fde9000923"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+        "--output",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/publication-final-1a14f7d48263/complete-source.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-closure-publish-20261107",
+      "exit_code": 1,
+      "label": "complete-source-check",
+      "seconds": 2.4707306399941444,
+      "stderr_bytes": 781,
+      "stderr_sha256": "8c8dcba7dcc6d420b22284ee96460ed85c44d0d4ee40cca801225c35e3afbf22",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.hooksPath=.githooks",
+        "push",
+        "origin",
+        "HEAD:refs/heads/fix/chain-w1-qrom-implementation-map-20261107"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-closure-publish-20261107",
+      "exit_code": 0,
+      "label": "normal-hook-push",
+      "seconds": 14.916104044066742,
+      "stderr_bytes": 430,
+      "stderr_sha256": "4bc90b82831cc4c0933aec100d3c7bba7af7be8886aa5b4414ec1b82f705cf15",
+      "stdout_bytes": 177,
+      "stdout_sha256": "feb92ae2fdf98c368dc4d5c0a4b1dd3de7924117ae624bd2772a727a84486de7"
+    },
+    {
+      "argv": [
+        "git",
+        "ls-remote",
+        "--heads",
+        "origin",
+        "refs/heads/fix/chain-w1-qrom-implementation-map-20261107"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-closure-publish-20261107",
+      "exit_code": 0,
+      "label": "remote-head-readback",
+      "seconds": 3.479382468154654,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 98,
+      "stdout_sha256": "f0509ef714f11aebd68674d7fd0bf753845c1a7bad2329cc6ad5fc3c3e63fd4f"
+    },
+    {
+      "argv": [
+        "gh",
+        "pr",
+        "view",
+        "778",
+        "--repo",
+        "TrillionniumFoundation/Trillionnium-Chain",
+        "--json",
+        "number,baseRefName,headRefName,headRefOid,isDraft,url"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-closure-publish-20261107",
+      "exit_code": 0,
+      "label": "pr-identity-before-body",
+      "seconds": 3.827172701014206,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 276,
+      "stdout_sha256": "7a2fe60c1a1fb895f46fedf17a60341e57316aedcfce1bd2289262f22d8fc26b"
+    },
+    {
+      "argv": [
+        "gh",
+        "run",
+        "list",
+        "--repo",
+        "TrillionniumFoundation/Trillionnium-Chain",
+        "--branch",
+        "fix/chain-w1-qrom-implementation-map-20261107",
+        "--commit",
+        "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+        "--limit",
+        "30",
+        "--json",
+        "databaseId,workflowName,status,conclusion,headSha,url,event"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-closure-publish-20261107",
+      "exit_code": 0,
+      "label": "workflow-runs-after-push",
+      "seconds": 23.550596983172,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 4038,
+      "stdout_sha256": "a7ff91894155101c7ff9a6d7d94ad8abb8b5b741b2679cae7b3f40d74853e046"
+    }
+  ],
+  "complete_checkout_attempt_exit": 0,
+  "complete_source_worktree_verified": false,
+  "driver_sha256": "cacf31d6e49c9a39e4f03c1299a4f25aa827422d92cf069be47e662b72d3854d",
+  "missing_historical_evidence_count": 488,
+  "native_checkout": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+  "post_quantum_soundness_qualified": false,
+  "pr_before_body": {
+    "baseRefName": "fix/chain-w1-v2-proof-ci-20261106",
+    "headRefName": "fix/chain-w1-qrom-implementation-map-20261107",
+    "headRefOid": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+    "isDraft": true,
+    "number": 778,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/778"
+  },
+  "production_qualified": false,
+  "publication_checkout": "/home/qian-qi/work/chain-qrom-closure-publish-20261107",
+  "push_verified": true,
+  "remote_head": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+  "schema": "TRNM-W1-NORMAL-PUBLICATION1",
+  "selected_source": {
+    "bytes": 43699093,
+    "changed_paths_checked": 94,
+    "count": 2547,
+    "full_source_claim": false
+  },
+  "target_head": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+  "target_tree": "e08b5dcd9ae2e90d0a36cb5d85e6ce1def387e85",
+  "workflow_runs_after_push": [
+    {
+      "conclusion": "",
+      "databaseId": 42379162369,
+      "event": "pull_request",
+      "headSha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "status": "in_progress",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162369",
+      "workflowName": "PoN original large-state CPU acceptance"
+    },
+    {
+      "conclusion": "",
+      "databaseId": 42379162386,
+      "event": "pull_request",
+      "headSha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "status": "in_progress",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162386",
+      "workflowName": "Release finality reference and native baseline"
+    },
+    {
+      "conclusion": "",
+      "databaseId": 42379162367,
+      "event": "pull_request",
+      "headSha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "status": "in_progress",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162367",
+      "workflowName": "PoN baseline diagnostic readback"
+    },
+    {
+      "conclusion": "",
+      "databaseId": 42379162602,
+      "event": "pull_request",
+      "headSha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "status": "in_progress",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162602",
+      "workflowName": "PoN original workspace test-profile CPU acceptance"
+    },
+    {
+      "conclusion": "",
+      "databaseId": 42379162375,
+      "event": "pull_request",
+      "headSha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "status": "in_progress",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162375",
+      "workflowName": "PoN priority acceptance"
+    },
+    {
+      "conclusion": "",
+      "databaseId": 42379162513,
+      "event": "pull_request",
+      "headSha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "status": "in_progress",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162513",
+      "workflowName": "PoN PQ network and rollback witness"
+    },
+    {
+      "conclusion": "",
+      "databaseId": 42379162474,
+      "event": "pull_request",
+      "headSha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "status": "in_progress",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162474",
+      "workflowName": "CodeQL exact-source analysis export"
+    },
+    {
+      "conclusion": "",
+      "databaseId": 42379162439,
+      "event": "pull_request",
+      "headSha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "status": "in_progress",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162439",
+      "workflowName": "PoN original native campaign"
+    },
+    {
+      "conclusion": "",
+      "databaseId": 42379162438,
+      "event": "pull_request",
+      "headSha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "status": "in_progress",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162438",
+      "workflowName": "PoN owned process cleanup"
+    },
+    {
+      "conclusion": "",
+      "databaseId": 42379162489,
+      "event": "pull_request",
+      "headSha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "status": "in_progress",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162489",
+      "workflowName": "trnm-required-baseline"
+    },
+    {
+      "conclusion": "",
+      "databaseId": 42379162522,
+      "event": "pull_request",
+      "headSha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "status": "in_progress",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162522",
+      "workflowName": "PoN W1 transparent candidate observations"
+    },
+    {
+      "conclusion": "",
+      "databaseId": 42379162582,
+      "event": "pull_request",
+      "headSha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "status": "in_progress",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162582",
+      "workflowName": "PoN W1 QROM closure observations"
+    },
+    {
+      "conclusion": "",
+      "databaseId": 42379162421,
+      "event": "pull_request",
+      "headSha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "status": "in_progress",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162421",
+      "workflowName": "PoN W1 work security observations"
+    },
+    {
+      "conclusion": "",
+      "databaseId": 42379162380,
+      "event": "pull_request",
+      "headSha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "status": "in_progress",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42379162380",
+      "workflowName": "PoN W1 QROM implementation observations"
+    }
+  ]
+}

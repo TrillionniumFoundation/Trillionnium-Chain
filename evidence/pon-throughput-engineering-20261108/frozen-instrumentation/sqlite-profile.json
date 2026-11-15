@@ -1,0 +1,649 @@
+{
+  "binding": {
+    "binary_sha256": "23c27c528b172274819be31a23d21d82bc5b29a151e4ffb6fb088a6b1cdb44be",
+    "capture_receipt_sha256": "6cdeeb1631b43763eb4dc35ff62c9aab605c2a9c104a3724449b38c7ab44c5f2",
+    "source_binding_scope": "supplied source receipt bytes; not independent recompilation proof",
+    "source_commit_claim": "92529f8492545e6c395044165b4f5d7c3fb0972a",
+    "source_receipt_sha256": "fe3647e3f6f126ba63d13f92d944f7c69f0adee568c4d5951c9e864d5fb9f18c",
+    "source_tree_claim": "e96be99451284479b474acb5dce7443ef0a957b4",
+    "trace_sha256": "50cac91776fbde491386d4da306ba4ff596114c48b6310b1b7361f85623fdc65"
+  },
+  "capture": {
+    "command": [
+      "/usr/bin/strace",
+      "-f",
+      "-ttt",
+      "-T",
+      "-yy",
+      "-s",
+      "1",
+      "-e",
+      "trace=execve,execveat,pwrite64,pwritev,pwritev2,write,writev,fsync,fdatasync",
+      "-o",
+      "/home/qian-qi/chain-throughput-engineering-20261108-86a09d93-evidence/frozen-instrumentation/accounting.strace",
+      "--",
+      "/home/qian-qi/chain-throughput-engineering-20261108-86a09d93-target/debug/deps/public_v3_request_accounting-2ab408a826e488ef",
+      "--exact",
+      "actual_paid_native_work_rejection_read_frames_and_partial_eof_are_attributed",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "lines": 425,
+    "root_termination": {
+      "exit_code": 0
+    },
+    "root_tid": 1198944,
+    "strace_returncode": 0,
+    "terminations_observed": {
+      "1198944": {
+        "exit_code": 0
+      },
+      "1198960": {
+        "exit_code": 0
+      },
+      "1199289": {
+        "exit_code": 0
+      },
+      "1199293": {
+        "exit_code": 0
+      },
+      "1199294": {
+        "exit_code": 0
+      },
+      "1199295": {
+        "exit_code": 0
+      }
+    },
+    "tids_observed": [
+      1198944,
+      1198960,
+      1199289,
+      1199293,
+      1199294,
+      1199295
+    ],
+    "trace_first_unix_ns": 1794160501625282000,
+    "trace_last_unix_ns": 1794160506656102000
+  },
+  "complete_selected_wal_totals": {
+    "/tmp/.tmpmF3WVw/native.sqlite-wal": {
+      "fdatasync": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "fsync": {
+        "attempt_starts_observed": 9,
+        "duration_ns_known_sum": 1660591000,
+        "duration_ns_max": 594580000,
+        "duration_samples": 9,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 9,
+        "terminal_records_observed": 9,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "pwrite64": {
+        "attempt_starts_observed": 133,
+        "duration_ns_known_sum": 3331000,
+        "duration_ns_max": 102000,
+        "duration_samples": 133,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 271952,
+        "successes_observed": 133,
+        "terminal_records_observed": 133,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "pwritev": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "pwritev2": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "write": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "writev": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      }
+    },
+    "/tmp/.tmpwpZJP9/native.sqlite-wal": {
+      "fdatasync": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "fsync": {
+        "attempt_starts_observed": 5,
+        "duration_ns_known_sum": 735332000,
+        "duration_ns_max": 264145000,
+        "duration_samples": 5,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 5,
+        "terminal_records_observed": 5,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "pwrite64": {
+        "attempt_starts_observed": 121,
+        "duration_ns_known_sum": 3569000,
+        "duration_ns_max": 80000,
+        "duration_samples": 121,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 247232,
+        "successes_observed": 121,
+        "terminal_records_observed": 121,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "pwritev": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "pwritev2": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "write": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "writev": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      }
+    }
+  },
+  "issues": {
+    "counts": {},
+    "examples": []
+  },
+  "limits": {
+    "bytes_scope": "successful write-family return values, not device or network bytes",
+    "campaign_30s_contract_accepted": false,
+    "duration_scope": "strace instrumented syscall elapsed; sums may overlap and are not CPU time",
+    "failed_and_unknown_calls_retained": true,
+    "original_4s_contract_accepted": false,
+    "path_scope": "path annotations, not inode identities or fd lifetimes",
+    "physical_durability_proven": false
+  },
+  "observed": {
+    "other_annotated_fds": {
+      "fdatasync": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "fsync": {
+        "attempt_starts_observed": 18,
+        "duration_ns_known_sum": 1951536000,
+        "duration_ns_max": 308953000,
+        "duration_samples": 18,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 18,
+        "terminal_records_observed": 18,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "pwrite64": {
+        "attempt_starts_observed": 118,
+        "duration_ns_known_sum": 4428000,
+        "duration_ns_max": 93000,
+        "duration_samples": 118,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 402472,
+        "successes_observed": 118,
+        "terminal_records_observed": 118,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "pwritev": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "pwritev2": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "write": {
+        "attempt_starts_observed": 14,
+        "duration_ns_known_sum": 660000,
+        "duration_ns_max": 187000,
+        "duration_samples": 14,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 41114,
+        "successes_observed": 14,
+        "terminal_records_observed": 14,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "writev": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      }
+    },
+    "unattributed_fds": {
+      "fdatasync": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "fsync": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "pwrite64": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "pwritev": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "pwritev2": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "write": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      },
+      "writev": {
+        "attempt_starts_observed": 0,
+        "duration_ns_known_sum": 0,
+        "duration_ns_max": null,
+        "duration_samples": 0,
+        "errors_observed": {},
+        "failures_observed": 0,
+        "returned_write_bytes_known": 0,
+        "successes_observed": 0,
+        "terminal_records_observed": 0,
+        "uncompleted_calls_observed": 0,
+        "unknown_results_observed": 0
+      }
+    },
+    "unmatched_resumes": 0,
+    "wal_by_exact_path": {
+      "/tmp/.tmpmF3WVw/native.sqlite-wal": {
+        "fdatasync": {
+          "attempt_starts_observed": 0,
+          "duration_ns_known_sum": 0,
+          "duration_ns_max": null,
+          "duration_samples": 0,
+          "errors_observed": {},
+          "failures_observed": 0,
+          "returned_write_bytes_known": 0,
+          "successes_observed": 0,
+          "terminal_records_observed": 0,
+          "uncompleted_calls_observed": 0,
+          "unknown_results_observed": 0
+        },
+        "fsync": {
+          "attempt_starts_observed": 9,
+          "duration_ns_known_sum": 1660591000,
+          "duration_ns_max": 594580000,
+          "duration_samples": 9,
+          "errors_observed": {},
+          "failures_observed": 0,
+          "returned_write_bytes_known": 0,
+          "successes_observed": 9,
+          "terminal_records_observed": 9,
+          "uncompleted_calls_observed": 0,
+          "unknown_results_observed": 0
+        },
+        "pwrite64": {
+          "attempt_starts_observed": 133,
+          "duration_ns_known_sum": 3331000,
+          "duration_ns_max": 102000,
+          "duration_samples": 133,
+          "errors_observed": {},
+          "failures_observed": 0,
+          "returned_write_bytes_known": 271952,
+          "successes_observed": 133,
+          "terminal_records_observed": 133,
+          "uncompleted_calls_observed": 0,
+          "unknown_results_observed": 0
+        },
+        "pwritev": {
+          "attempt_starts_observed": 0,
+          "duration_ns_known_sum": 0,
+          "duration_ns_max": null,
+          "duration_samples": 0,
+          "errors_observed": {},
+          "failures_observed": 0,
+          "returned_write_bytes_known": 0,
+          "successes_observed": 0,
+          "terminal_records_observed": 0,
+          "uncompleted_calls_observed": 0,
+          "unknown_results_observed": 0
+        },
+        "pwritev2": {
+          "attempt_starts_observed": 0,
+          "duration_ns_known_sum": 0,
+          "duration_ns_max": null,
+          "duration_samples": 0,
+          "errors_observed": {},
+          "failures_observed": 0,
+          "returned_write_bytes_known": 0,
+          "successes_observed": 0,
+          "terminal_records_observed": 0,
+          "uncompleted_calls_observed": 0,
+          "unknown_results_observed": 0
+        },
+        "write": {
+          "attempt_starts_observed": 0,
+          "duration_ns_known_sum": 0,
+          "duration_ns_max": null,
+          "duration_samples": 0,
+          "errors_observed": {},
+          "failures_observed": 0,
+          "returned_write_bytes_known": 0,
+          "successes_observed": 0,
+          "terminal_records_observed": 0,
+          "uncompleted_calls_observed": 0,
+          "unknown_results_observed": 0
+        },
+        "writev": {
+          "attempt_starts_observed": 0,
+          "duration_ns_known_sum": 0,
+          "duration_ns_max": null,
+          "duration_samples": 0,
+          "errors_observed": {},
+          "failures_observed": 0,
+          "returned_write_bytes_known": 0,
+          "successes_observed": 0,
+          "terminal_records_observed": 0,
+          "uncompleted_calls_observed": 0,
+          "unknown_results_observed": 0
+        }
+      },
+      "/tmp/.tmpwpZJP9/native.sqlite-wal": {
+        "fdatasync": {
+          "attempt_starts_observed": 0,
+          "duration_ns_known_sum": 0,
+          "duration_ns_max": null,
+          "duration_samples": 0,
+          "errors_observed": {},
+          "failures_observed": 0,
+          "returned_write_bytes_known": 0,
+          "successes_observed": 0,
+          "terminal_records_observed": 0,
+          "uncompleted_calls_observed": 0,
+          "unknown_results_observed": 0
+        },
+        "fsync": {
+          "attempt_starts_observed": 5,
+          "duration_ns_known_sum": 735332000,
+          "duration_ns_max": 264145000,
+          "duration_samples": 5,
+          "errors_observed": {},
+          "failures_observed": 0,
+          "returned_write_bytes_known": 0,
+          "successes_observed": 5,
+          "terminal_records_observed": 5,
+          "uncompleted_calls_observed": 0,
+          "unknown_results_observed": 0
+        },
+        "pwrite64": {
+          "attempt_starts_observed": 121,
+          "duration_ns_known_sum": 3569000,
+          "duration_ns_max": 80000,
+          "duration_samples": 121,
+          "errors_observed": {},
+          "failures_observed": 0,
+          "returned_write_bytes_known": 247232,
+          "successes_observed": 121,
+          "terminal_records_observed": 121,
+          "uncompleted_calls_observed": 0,
+          "unknown_results_observed": 0
+        },
+        "pwritev": {
+          "attempt_starts_observed": 0,
+          "duration_ns_known_sum": 0,
+          "duration_ns_max": null,
+          "duration_samples": 0,
+          "errors_observed": {},
+          "failures_observed": 0,
+          "returned_write_bytes_known": 0,
+          "successes_observed": 0,
+          "terminal_records_observed": 0,
+          "uncompleted_calls_observed": 0,
+          "unknown_results_observed": 0
+        },
+        "pwritev2": {
+          "attempt_starts_observed": 0,
+          "duration_ns_known_sum": 0,
+          "duration_ns_max": null,
+          "duration_samples": 0,
+          "errors_observed": {},
+          "failures_observed": 0,
+          "returned_write_bytes_known": 0,
+          "successes_observed": 0,
+          "terminal_records_observed": 0,
+          "uncompleted_calls_observed": 0,
+          "unknown_results_observed": 0
+        },
+        "write": {
+          "attempt_starts_observed": 0,
+          "duration_ns_known_sum": 0,
+          "duration_ns_max": null,
+          "duration_samples": 0,
+          "errors_observed": {},
+          "failures_observed": 0,
+          "returned_write_bytes_known": 0,
+          "successes_observed": 0,
+          "terminal_records_observed": 0,
+          "uncompleted_calls_observed": 0,
+          "unknown_results_observed": 0
+        },
+        "writev": {
+          "attempt_starts_observed": 0,
+          "duration_ns_known_sum": 0,
+          "duration_ns_max": null,
+          "duration_samples": 0,
+          "errors_observed": {},
+          "failures_observed": 0,
+          "returned_write_bytes_known": 0,
+          "successes_observed": 0,
+          "terminal_records_observed": 0,
+          "uncompleted_calls_observed": 0,
+          "unknown_results_observed": 0
+        }
+      }
+    }
+  },
+  "schema": "sqlite-wal-syscall-profile-v1",
+  "status": "complete",
+  "status_scope": "closure of this selected syscall diagnostic; never service acceptance"
+}

@@ -1,0 +1,50 @@
+{
+  "schema": "trnm-heplcp03-original-reader-observation-v1",
+  "chain_source_commit": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+  "original_reader_sha256": "b602e6217b9ec2bb143c141ea02e27ec666ef75ddf993eb794c23eb3ded5da7d",
+  "hepta_source_commit": "f97f3c90ac1ac3d5171fd9f25b3e34431f44a367",
+  "native_fixture_sha256": "492d1f9d27a9e8561aecc4cac9c55c8052ffb2d64dc86b2eff24c429826ff2f0",
+  "cuts": [
+    {
+      "cut": "initial",
+      "sha256": "c143b7dd01c88d63f2363e70cbdbcf91bc969c5183c671b219fe405479a4b488",
+      "bytes": 1332,
+      "magic": "HEPLCP02",
+      "accepted": true,
+      "next_stage": 0
+    },
+    {
+      "cut": "dataset",
+      "sha256": "cd3d68048e8b12db81a8edf56866142f77ab7c0f916b50a049ad17d8bfd5dea2",
+      "bytes": 1800,
+      "magic": "HEPLCP02",
+      "accepted": true,
+      "next_stage": 2
+    },
+    {
+      "cut": "training",
+      "sha256": "fba82f1b4225f1860543a5fa3c74d2ed98d8370dce398ea46546f9048558b3e6",
+      "bytes": 2060,
+      "magic": "HEPLCP03",
+      "accepted": false,
+      "error": "LEARNING_CHECKPOINT_VERSION"
+    },
+    {
+      "cut": "selection",
+      "sha256": "3be08de10ed1ece76d196ee090e037db45bab52481996dbeb647d0d53d823617",
+      "bytes": 2272,
+      "magic": "HEPLCP03",
+      "accepted": false,
+      "error": "LEARNING_CHECKPOINT_VERSION"
+    },
+    {
+      "cut": "completed",
+      "sha256": "4750e49d8c6f3cf4df1b6a5267ad1cdaacbc969515fe718b5b78cdedef273663",
+      "bytes": 2754,
+      "magic": "HEPLCP03",
+      "accepted": false,
+      "error": "LEARNING_CHECKPOINT_VERSION"
+    }
+  ],
+  "qualification": "HOLD_NO_GO"
+}

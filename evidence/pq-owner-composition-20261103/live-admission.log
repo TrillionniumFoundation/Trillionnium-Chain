@@ -1,0 +1,19 @@
+
+running 5 tests
+test ingress::pq_network::live_admission_tests::cancelled_intake_does_not_allocate_or_spend_connection_credit ... ok
+test ingress::pq_network::live_admission_tests::deadline_cancels_signature_owner_wait_without_waiting_for_unlock ... ok
+test ingress::pq_network::live_admission_tests::elapsed_deadline_refuses_before_charge_and_cached_replay_stays_live_only ... ok
+test ingress::pq_network::live_admission_tests::expiry_cancels_signature_owner_wait_and_preserves_unused_sequence ... ok
+test ingress::pq_network::live_admission_tests::failed_signature_keeps_charge_then_same_sequence_executes_real_pq_transfer ... ok
+
+successes:
+
+successes:
+    ingress::pq_network::live_admission_tests::cancelled_intake_does_not_allocate_or_spend_connection_credit
+    ingress::pq_network::live_admission_tests::deadline_cancels_signature_owner_wait_without_waiting_for_unlock
+    ingress::pq_network::live_admission_tests::elapsed_deadline_refuses_before_charge_and_cached_replay_stays_live_only
+    ingress::pq_network::live_admission_tests::expiry_cancels_signature_owner_wait_and_preserves_unused_sequence
+    ingress::pq_network::live_admission_tests::failed_signature_keeps_charge_then_same_sequence_executes_real_pq_transfer
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 896 filtered out; finished in 3.61s
+

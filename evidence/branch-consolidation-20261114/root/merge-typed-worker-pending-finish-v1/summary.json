@@ -1,0 +1,111 @@
+{
+  "prior": "dba81d56be6598cec9df2774446ca3ab7fccca98",
+  "selected": "898532d47f11c1a4cf92d769b7bb7264fb23ce36",
+  "base": "e82419698aa3fd527c6f828da11cc8749dcb007b",
+  "commit": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+  "tree": "8f26631e80c14a3c750210019606df13327d633f",
+  "selected_blobs": {
+    "scripts/llm_runtime_exit_worker_observation.py": "29a44edcc86580167e3c0db4e65cbfc1cb94eff4",
+    "scripts/test_llm_runtime_exit_binding_pending.py": "797fecc6919fadf594bca8a271b595e2dbc10d41",
+    "scripts/test_llm_runtime_exit_initial_pending.py": "d8b193743c0505e3d894eb0d8af617b5f257226b",
+    "scripts/test_llm_runtime_exit_post_binding_retirement.py": "46f46cb0f00f1bf8c2c3b61f40e90e804015402b",
+    "scripts/test_llm_runtime_exit_worker_observation.py": "50ce81d8375c42c48640c58a54c4e90db223f1b8",
+    "scripts/test_llm_runtime_pilot.py": "7d3c6699e5f536b1e7ff0ff562a721fd91ee2516"
+  },
+  "conflicts": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "original_steps": [
+    {
+      "label": "preflight",
+      "exit": 0,
+      "seconds": 0.054,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "merge",
+      "exit": 1,
+      "seconds": 0.195,
+      "sha256": "394722d1d7a5c20b6c03c027893fc9f3292ab6601165a0e98973f2351b8746ba"
+    },
+    {
+      "label": "stage-resolved",
+      "exit": 0,
+      "seconds": 0.04,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "typed-pending-wiring-negative",
+      "exit": 0,
+      "seconds": 0.263,
+      "sha256": "1b5eeffd4ebf5b668abade1e04b41d7108c2c56cd226cba6f68644acd1610b86"
+    },
+    {
+      "label": "typed-pending-source-negative",
+      "exit": 0,
+      "seconds": 2.271,
+      "sha256": "a041fbd71d7cb7e0fda11521d45152ae7e92b1845f962e510ca6f7c0afcc9b46"
+    },
+    {
+      "label": "current-corpus",
+      "exit": 0,
+      "seconds": 0.668,
+      "sha256": "5f1fe207ff94b51831ba165f387faaaed9a527754a4bce334fb5c20cbb421546"
+    },
+    {
+      "label": "current-ci-contract",
+      "exit": 0,
+      "seconds": 0.076,
+      "sha256": "04a27d4ea2af1ccbbf7ed70f56bad64b02ba958a2645254d6d547d8a28102c55"
+    },
+    {
+      "label": "repository-check",
+      "exit": 2,
+      "seconds": 0.013,
+      "sha256": "6d70e549b960f0e949b35ea5e11563de6f6bf78c6fdbe45081244f5dd7689dfd"
+    }
+  ],
+  "continuation_steps": [
+    {
+      "label": "repository-check-correct-path",
+      "exit": 0,
+      "seconds": 8.929,
+      "sha256": "577f6b7417ad5b50ef9a7acfcb261b574170b0bfa7cb68713e32a116c3e936a2"
+    },
+    {
+      "label": "fmt",
+      "exit": 0,
+      "seconds": 5.438,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "diff-check",
+      "exit": 0,
+      "seconds": 0.017,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "precommit-preflight",
+      "exit": 0,
+      "seconds": 0.054,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "commit",
+      "exit": 0,
+      "seconds": 0.067,
+      "sha256": "5a85e025c473c18d7c4db6a6d11c4d37b8f882bc77238e06e7fdf11096dcbdfd"
+    }
+  ],
+  "original_control_methods_independently_compared": 36,
+  "existing_worker_methods": 23,
+  "native_passed": 59,
+  "native_skips": 0,
+  "unresolved_relative_events_not_source_verified": 7331,
+  "retained_driver_failure": "incorrect repository checker path; no source or test modification in continuation",
+  "correct_repository_checker": "scripts/ci/check_repository.py",
+  "historical_recipe_refreshed": false,
+  "hosted_confirmation_qualified": false,
+  "remote_writes": false
+}

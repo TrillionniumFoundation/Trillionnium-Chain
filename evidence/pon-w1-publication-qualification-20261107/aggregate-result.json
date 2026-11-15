@@ -1,0 +1,87 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo",
+      "exit": 0,
+      "label": "aggregate/preflight",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/preflight.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/preflight.stdout",
+      "stdout_sha256": "22e2178221fa739d1cacc4bd4cfc5debe14a6dcccbe6f397a79e0b0c43b25b07"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "cc4dd8bdd89309c635831db30b508af2f89419d7",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo",
+      "exit": 0,
+      "label": "aggregate/source-before",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/source-before.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/source-before.stdout",
+      "stdout_sha256": "863fe8c81b74365a4a69b65eec394208068feb304d8fe1ed13db9294eeba0738"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/fixed-backend-01/r0vm",
+        "--version"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo",
+      "exit": 0,
+      "label": "aggregate/r0vm-version",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/r0vm-version.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/r0vm-version.stdout",
+      "stdout_sha256": "23b765c616c3240aa069b42ddab21169793e1af4530c68ddc1da72b7456b3d30"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "cc4dd8bdd89309c635831db30b508af2f89419d7",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo",
+      "exit": 0,
+      "label": "aggregate/source-after",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/source-after.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/source-after.stdout",
+      "stdout_sha256": "863fe8c81b74365a4a69b65eec394208068feb304d8fe1ed13db9294eeba0738"
+    }
+  ],
+  "completed": true,
+  "completed_monotonic_ns": 1169329856583647,
+  "errors": [],
+  "fresh_proof_generations": 0,
+  "qualification": {
+    "bytes": 226149,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/qualification.json",
+    "sha256": "01947ed12ac65cd24dc4d9364f3e12af93a6539fb6abcfac26b7b43ed3587dbb"
+  },
+  "schema": "TRNM-W1-C2-AGGREGATE-ATTEMPT1",
+  "source_commit": "cc4dd8bdd89309c635831db30b508af2f89419d7",
+  "source_tree": "161d3a4e8ab8c865869352339ec8c66f6609449a",
+  "test_bodies_executed": false,
+  "wrapper": {
+    "bytes": 30303,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/build_qualification.py",
+    "sha256": "dbd76d406345cd120c73b5e5ae318d19fde13293294cd39752630569e3c0bd12"
+  }
+}

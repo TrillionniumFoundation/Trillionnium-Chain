@@ -1,0 +1,1043 @@
+{
+  "head/original": {
+    "finite_target_met": false,
+    "schema": "public-v3-signed-confirmation-pressure-v1",
+    "phases": [
+      {
+        "mode": "attack-free-baseline",
+        "client_confirmed_transactions": 1,
+        "confirmation_ended_ns": 3395307114,
+        "finite_business_target_met": true,
+        "attacker_workers_cpu_ns": 0,
+        "independent_replay_and_confirmation_cpu_ns": 602818930,
+        "independent_replay_and_confirmation_wall_ns": 3086891425,
+        "maximum_honest_head_gap_ns": 107835724,
+        "verification_errors": [],
+        "no_attack_accepted": true,
+        "invariant_target_met": true,
+        "submits": [
+          {
+            "height": 1,
+            "status": "ok",
+            "error": null,
+            "started_ns": 621268,
+            "ended_ns": 19929071
+          },
+          {
+            "height": 2,
+            "status": "ok",
+            "error": null,
+            "started_ns": 20415328,
+            "ended_ns": 91842891
+          },
+          {
+            "height": 3,
+            "status": "ok",
+            "error": null,
+            "started_ns": 92302758,
+            "ended_ns": 111576117
+          },
+          {
+            "height": 4,
+            "status": "ok",
+            "error": null,
+            "started_ns": 112106305,
+            "ended_ns": 187302173
+          },
+          {
+            "height": 5,
+            "status": "ok",
+            "error": null,
+            "started_ns": 187850585,
+            "ended_ns": 208141441
+          },
+          {
+            "height": 6,
+            "status": "ok",
+            "error": null,
+            "started_ns": 208731340,
+            "ended_ns": 286314448
+          },
+          {
+            "height": 7,
+            "status": "ok",
+            "error": null,
+            "started_ns": 286910039,
+            "ended_ns": 308193485
+          }
+        ],
+        "history_calls": [
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 308420758,
+            "ended_ns": 320673400
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 994654615,
+            "ended_ns": 1006417813
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 1386249761,
+            "ended_ns": 1398811158
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 1701756820,
+            "ended_ns": 1713871273
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2096560280,
+            "ended_ns": 2108623157
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2493921799,
+            "ended_ns": 2506454442
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2892177155,
+            "ended_ns": 2904215466
+          }
+        ],
+        "metrics": {
+          "work_started": 7,
+          "work_finished": 7,
+          "work_failed": 0,
+          "work_ns": 61296637,
+          "mutation_full_work_cpu_ns": 11159465,
+          "mutation_dispatch_excluding_work_cpu_ns": 43362098,
+          "mutation_cpu_charged_ns": 54521563,
+          "mutation_cpu_refusals": 0,
+          "pending_challenge_wait_ns": 123514204,
+          "pending_grant_wait_ns": 117739982,
+          "queue_wait_ns": 71249199,
+          "queue_backpressure_events": 0,
+          "abandoned_tasks": 0,
+          "retained_phase_errors": {}
+        },
+        "observer_counts": {
+          "accepted_connections_seen": 66,
+          "records_not_retained": 0,
+          "measurement_failures": 0,
+          "records": 66
+        },
+        "attack_calls": 0,
+        "client_errors": {},
+        "response_errors": {},
+        "attempt_caps": []
+      },
+      {
+        "mode": "from-zero-pressure",
+        "client_confirmed_transactions": 0,
+        "confirmation_ended_ns": null,
+        "finite_business_target_met": false,
+        "attacker_workers_cpu_ns": 260794554,
+        "independent_replay_and_confirmation_cpu_ns": 69370216,
+        "independent_replay_and_confirmation_wall_ns": 1496171321,
+        "maximum_honest_head_gap_ns": 297094687,
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "no_attack_accepted": true,
+        "invariant_target_met": true,
+        "submits": [
+          {
+            "height": 1,
+            "status": "ok",
+            "error": null,
+            "started_ns": 154983656,
+            "ended_ns": 461287929
+          },
+          {
+            "height": 2,
+            "status": "ok",
+            "error": null,
+            "started_ns": 461810774,
+            "ended_ns": 854398713
+          },
+          {
+            "height": 3,
+            "status": "ok",
+            "error": null,
+            "started_ns": 855131378,
+            "ended_ns": 1162839535
+          },
+          {
+            "height": 4,
+            "status": "ok",
+            "error": null,
+            "started_ns": 1163444503,
+            "ended_ns": 1472645587
+          },
+          {
+            "height": 5,
+            "status": "ok",
+            "error": null,
+            "started_ns": 1553896403,
+            "ended_ns": 1858776805
+          },
+          {
+            "height": 6,
+            "status": "ok",
+            "error": null,
+            "started_ns": 1859405828,
+            "ended_ns": 2161242304
+          },
+          {
+            "height": 7,
+            "status": "ok",
+            "error": null,
+            "started_ns": 2161865856,
+            "ended_ns": 2559799481
+          }
+        ],
+        "history_calls": [
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2559979296,
+            "ended_ns": 2755697403
+          }
+        ],
+        "metrics": {
+          "work_started": 202,
+          "work_finished": 202,
+          "work_failed": 195,
+          "work_ns": 2906535139,
+          "mutation_full_work_cpu_ns": 301466372,
+          "mutation_dispatch_excluding_work_cpu_ns": 227153624,
+          "mutation_cpu_charged_ns": 528619996,
+          "mutation_cpu_refusals": 0,
+          "pending_challenge_wait_ns": 5564455922,
+          "pending_grant_wait_ns": 19455972402,
+          "queue_wait_ns": 5015679262,
+          "queue_backpressure_events": 550,
+          "abandoned_tasks": 4,
+          "retained_phase_errors": {
+            "body": 1,
+            "queue": 2,
+            "solution": 8,
+            "work": 4
+          }
+        },
+        "observer_counts": {
+          "accepted_connections_seen": 237,
+          "records_not_retained": 0,
+          "measurement_failures": 0,
+          "records": 237
+        },
+        "attack_calls": 210,
+        "client_errors": {
+          "None": 194,
+          "IO: Resource temporarily unavailable (os error 11)": 13,
+          "FRAME_DEADLINE": 3
+        },
+        "response_errors": {
+          "WORK:Transcript": 194,
+          "no_response": 16
+        },
+        "attempt_caps": [
+          false
+        ]
+      }
+    ]
+  },
+  "head/fresh": {
+    "finite_target_met": false,
+    "schema": "public-v3-fresh-challenge-confirmation-pressure-v1",
+    "phases": [
+      {
+        "mode": "attack-free-baseline",
+        "client_confirmed_transactions": 1,
+        "confirmation_ended_ns": 3399360833,
+        "finite_business_target_met": true,
+        "attacker_workers_cpu_ns": 0,
+        "independent_replay_and_confirmation_cpu_ns": 604743239,
+        "independent_replay_and_confirmation_wall_ns": 3090125289,
+        "maximum_honest_head_gap_ns": 105475139,
+        "verification_errors": [],
+        "no_attack_accepted": true,
+        "invariant_target_met": true,
+        "submits": [
+          {
+            "height": 1,
+            "status": "ok",
+            "error": null,
+            "started_ns": 624885,
+            "ended_ns": 20090031
+          },
+          {
+            "height": 2,
+            "status": "ok",
+            "error": null,
+            "started_ns": 20581937,
+            "ended_ns": 99330044
+          },
+          {
+            "height": 3,
+            "status": "ok",
+            "error": null,
+            "started_ns": 99817874,
+            "ended_ns": 120023720
+          },
+          {
+            "height": 4,
+            "status": "ok",
+            "error": null,
+            "started_ns": 120541225,
+            "ended_ns": 188430329
+          },
+          {
+            "height": 5,
+            "status": "ok",
+            "error": null,
+            "started_ns": 188970135,
+            "ended_ns": 209112913
+          },
+          {
+            "height": 6,
+            "status": "ok",
+            "error": null,
+            "started_ns": 209604309,
+            "ended_ns": 287231887
+          },
+          {
+            "height": 7,
+            "status": "ok",
+            "error": null,
+            "started_ns": 287739443,
+            "ended_ns": 309018781
+          }
+        ],
+        "history_calls": [
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 309266172,
+            "ended_ns": 321444684
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 993489875,
+            "ended_ns": 1006062812
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 1387361553,
+            "ended_ns": 1399711826
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 1703706661,
+            "ended_ns": 1793231928
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2097914547,
+            "ended_ns": 2109560947
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2495563667,
+            "ended_ns": 2508216684
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2893396179,
+            "ended_ns": 2905047458
+          }
+        ],
+        "metrics": {
+          "work_started": 7,
+          "work_finished": 7,
+          "work_failed": 0,
+          "work_ns": 58706457,
+          "mutation_full_work_cpu_ns": 10901673,
+          "mutation_dispatch_excluding_work_cpu_ns": 43704764,
+          "mutation_cpu_charged_ns": 54606437,
+          "mutation_cpu_refusals": 0,
+          "pending_challenge_wait_ns": 124595418,
+          "pending_grant_wait_ns": 178170742,
+          "queue_wait_ns": 72326182,
+          "queue_backpressure_events": 0,
+          "abandoned_tasks": 0,
+          "retained_phase_errors": {}
+        },
+        "observer_counts": {
+          "accepted_connections_seen": 67,
+          "records_not_retained": 0,
+          "measurement_failures": 0,
+          "records": 67
+        },
+        "attack_calls": 0,
+        "client_errors": {},
+        "response_errors": {},
+        "attempt_caps": []
+      },
+      {
+        "mode": "from-zero-pressure",
+        "client_confirmed_transactions": 0,
+        "confirmation_ended_ns": null,
+        "finite_business_target_met": false,
+        "attacker_workers_cpu_ns": 340569668,
+        "independent_replay_and_confirmation_cpu_ns": 42569972,
+        "independent_replay_and_confirmation_wall_ns": 1299982415,
+        "maximum_honest_head_gap_ns": 300479793,
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "no_attack_accepted": true,
+        "invariant_target_met": true,
+        "submits": [
+          {
+            "height": 1,
+            "status": "ok",
+            "error": null,
+            "started_ns": 160510763,
+            "ended_ns": 553526887
+          },
+          {
+            "height": 2,
+            "status": "ok",
+            "error": null,
+            "started_ns": 553980222,
+            "ended_ns": 862972662
+          },
+          {
+            "height": 3,
+            "status": "ok",
+            "error": null,
+            "started_ns": 950515457,
+            "ended_ns": 1260304252
+          },
+          {
+            "height": 4,
+            "status": "ok",
+            "error": null,
+            "started_ns": 1351268621,
+            "ended_ns": 1662381739
+          },
+          {
+            "height": 5,
+            "status": "ok",
+            "error": null,
+            "started_ns": 1750647330,
+            "ended_ns": 2058893276
+          },
+          {
+            "height": 6,
+            "status": "ok",
+            "error": null,
+            "started_ns": 2059533710,
+            "ended_ns": 2451828756
+          },
+          {
+            "height": 7,
+            "status": "ok",
+            "error": null,
+            "started_ns": 2452457128,
+            "ended_ns": 2753075509
+          }
+        ],
+        "history_calls": [
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2753256206,
+            "ended_ns": 2954876358
+          }
+        ],
+        "metrics": {
+          "work_started": 176,
+          "work_finished": 176,
+          "work_failed": 169,
+          "work_ns": 2926125307,
+          "mutation_full_work_cpu_ns": 273874994,
+          "mutation_dispatch_excluding_work_cpu_ns": 216678243,
+          "mutation_cpu_charged_ns": 490553237,
+          "mutation_cpu_refusals": 0,
+          "pending_challenge_wait_ns": 5270828487,
+          "pending_grant_wait_ns": 16757922140,
+          "queue_wait_ns": 4576410413,
+          "queue_backpressure_events": 342,
+          "abandoned_tasks": 0,
+          "retained_phase_errors": {
+            "body": 1,
+            "hello": 2,
+            "queue": 2,
+            "solution": 4
+          }
+        },
+        "observer_counts": {
+          "accepted_connections_seen": 209,
+          "records_not_retained": 0,
+          "measurement_failures": 0,
+          "records": 209
+        },
+        "attack_calls": 183,
+        "client_errors": {
+          "None": 167,
+          "IO: Resource temporarily unavailable (os error 11)": 15,
+          "FRAME_DEADLINE": 1
+        },
+        "response_errors": {
+          "WORK:Transcript": 167,
+          "no_response": 16
+        },
+        "attempt_caps": [
+          false
+        ]
+      }
+    ],
+    "construction_coverage": {
+      "accounting_scope": "construction intervals are nested in joined attacker worker CPU; never add them twice; shared public material setup is separate",
+      "all_context_bindings_and_challenges_unique": true,
+      "all_nested_cpu_measurements_known": true,
+      "constructed": 183,
+      "exhausted": 0,
+      "full_transcript_rejections": 167,
+      "nested_from_zero_construction_cpu_ns": 98104249,
+      "submitted": 183,
+      "unique_challenges": 183,
+      "unique_packet_indices": 183
+    }
+  },
+  "merge/original": {
+    "finite_target_met": false,
+    "schema": "public-v3-signed-confirmation-pressure-v1",
+    "phases": [
+      {
+        "mode": "attack-free-baseline",
+        "client_confirmed_transactions": 1,
+        "confirmation_ended_ns": 3473539186,
+        "finite_business_target_met": true,
+        "attacker_workers_cpu_ns": 0,
+        "independent_replay_and_confirmation_cpu_ns": 597815021,
+        "independent_replay_and_confirmation_wall_ns": 3159149585,
+        "maximum_honest_head_gap_ns": 112406625,
+        "verification_errors": [],
+        "no_attack_accepted": true,
+        "invariant_target_met": true,
+        "submits": [
+          {
+            "height": 1,
+            "status": "ok",
+            "error": null,
+            "started_ns": 616210,
+            "ended_ns": 80621661
+          },
+          {
+            "height": 2,
+            "status": "ok",
+            "error": null,
+            "started_ns": 81126443,
+            "ended_ns": 99201683
+          },
+          {
+            "height": 3,
+            "status": "ok",
+            "error": null,
+            "started_ns": 99684535,
+            "ended_ns": 176076073
+          },
+          {
+            "height": 4,
+            "status": "ok",
+            "error": null,
+            "started_ns": 176573011,
+            "ended_ns": 196748673
+          },
+          {
+            "height": 5,
+            "status": "ok",
+            "error": null,
+            "started_ns": 197227857,
+            "ended_ns": 217425901
+          },
+          {
+            "height": 6,
+            "status": "ok",
+            "error": null,
+            "started_ns": 217903904,
+            "ended_ns": 292442762
+          },
+          {
+            "height": 7,
+            "status": "ok",
+            "error": null,
+            "started_ns": 292918260,
+            "ended_ns": 314157307
+          }
+        ],
+        "history_calls": [
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 314394801,
+            "ended_ns": 375415178
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 1080092187,
+            "ended_ns": 1091904192
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 1394371687,
+            "ended_ns": 1475438755
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 1786294213,
+            "ended_ns": 1797309169
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2181231638,
+            "ended_ns": 2192866432
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2577457869,
+            "ended_ns": 2589791649
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2972803847,
+            "ended_ns": 2985527614
+          }
+        ],
+        "metrics": {
+          "work_started": 7,
+          "work_finished": 7,
+          "work_failed": 0,
+          "work_ns": 10831356,
+          "mutation_full_work_cpu_ns": 10830400,
+          "mutation_dispatch_excluding_work_cpu_ns": 42426067,
+          "mutation_cpu_charged_ns": 53256467,
+          "mutation_cpu_refusals": 0,
+          "pending_challenge_wait_ns": 72391532,
+          "pending_grant_wait_ns": 168721258,
+          "queue_wait_ns": 69062666,
+          "queue_backpressure_events": 0,
+          "abandoned_tasks": 0,
+          "retained_phase_errors": {}
+        },
+        "observer_counts": {
+          "accepted_connections_seen": 64,
+          "records_not_retained": 0,
+          "measurement_failures": 0,
+          "records": 64
+        },
+        "attack_calls": 0,
+        "client_errors": {},
+        "response_errors": {},
+        "attempt_caps": []
+      },
+      {
+        "mode": "from-zero-pressure",
+        "client_confirmed_transactions": 0,
+        "confirmation_ended_ns": null,
+        "finite_business_target_met": false,
+        "attacker_workers_cpu_ns": 250123503,
+        "independent_replay_and_confirmation_cpu_ns": 82315145,
+        "independent_replay_and_confirmation_wall_ns": 1693173352,
+        "maximum_honest_head_gap_ns": 300978060,
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "no_attack_accepted": true,
+        "invariant_target_met": true,
+        "submits": [
+          {
+            "height": 1,
+            "status": "ok",
+            "error": null,
+            "started_ns": 148719333,
+            "ended_ns": 450088610
+          },
+          {
+            "height": 2,
+            "status": "ok",
+            "error": null,
+            "started_ns": 450566894,
+            "ended_ns": 753480813
+          },
+          {
+            "height": 3,
+            "status": "ok",
+            "error": null,
+            "started_ns": 753903863,
+            "ended_ns": 1057437419
+          },
+          {
+            "height": 4,
+            "status": "ok",
+            "error": null,
+            "started_ns": 1057853596,
+            "ended_ns": 1359965605
+          },
+          {
+            "height": 5,
+            "status": "ok",
+            "error": null,
+            "started_ns": 1360454488,
+            "ended_ns": 1749226749
+          },
+          {
+            "height": 6,
+            "status": "ok",
+            "error": null,
+            "started_ns": 1749683562,
+            "ended_ns": 2057008276
+          },
+          {
+            "height": 7,
+            "status": "ok",
+            "error": null,
+            "started_ns": 2057565116,
+            "ended_ns": 2356676925
+          }
+        ],
+        "history_calls": [
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2356845721,
+            "ended_ns": 2452083778
+          }
+        ],
+        "metrics": {
+          "work_started": 199,
+          "work_finished": 199,
+          "work_failed": 192,
+          "work_ns": 3458495478,
+          "mutation_full_work_cpu_ns": 308248329,
+          "mutation_dispatch_excluding_work_cpu_ns": 233339442,
+          "mutation_cpu_charged_ns": 541587771,
+          "mutation_cpu_refusals": 0,
+          "pending_challenge_wait_ns": 3504670962,
+          "pending_grant_wait_ns": 19684216700,
+          "queue_wait_ns": 5114169153,
+          "queue_backpressure_events": 609,
+          "abandoned_tasks": 2,
+          "retained_phase_errors": {
+            "hello": 2,
+            "queue": 2,
+            "solution": 8,
+            "work": 2
+          }
+        },
+        "observer_counts": {
+          "accepted_connections_seen": 235,
+          "records_not_retained": 0,
+          "measurement_failures": 0,
+          "records": 235
+        },
+        "attack_calls": 206,
+        "client_errors": {
+          "None": 190,
+          "IO: Resource temporarily unavailable (os error 11)": 15,
+          "FRAME_DEADLINE": 1
+        },
+        "response_errors": {
+          "WORK:Transcript": 190,
+          "no_response": 16
+        },
+        "attempt_caps": [
+          false
+        ]
+      }
+    ]
+  },
+  "merge/fresh": {
+    "finite_target_met": false,
+    "schema": "public-v3-fresh-challenge-confirmation-pressure-v1",
+    "phases": [
+      {
+        "mode": "attack-free-baseline",
+        "client_confirmed_transactions": 1,
+        "confirmation_ended_ns": 3410195625,
+        "finite_business_target_met": true,
+        "attacker_workers_cpu_ns": 0,
+        "independent_replay_and_confirmation_cpu_ns": 604215974,
+        "independent_replay_and_confirmation_wall_ns": 3105713963,
+        "maximum_honest_head_gap_ns": 106825873,
+        "verification_errors": [],
+        "no_attack_accepted": true,
+        "invariant_target_met": true,
+        "submits": [
+          {
+            "height": 1,
+            "status": "ok",
+            "error": null,
+            "started_ns": 717954,
+            "ended_ns": 20084855
+          },
+          {
+            "height": 2,
+            "status": "ok",
+            "error": null,
+            "started_ns": 20608099,
+            "ended_ns": 39614373
+          },
+          {
+            "height": 3,
+            "status": "ok",
+            "error": null,
+            "started_ns": 40128821,
+            "ended_ns": 106446081
+          },
+          {
+            "height": 4,
+            "status": "ok",
+            "error": null,
+            "started_ns": 106960469,
+            "ended_ns": 127431442
+          },
+          {
+            "height": 5,
+            "status": "ok",
+            "error": null,
+            "started_ns": 127920324,
+            "ended_ns": 204251722
+          },
+          {
+            "height": 6,
+            "status": "ok",
+            "error": null,
+            "started_ns": 204743519,
+            "ended_ns": 226136852
+          },
+          {
+            "height": 7,
+            "status": "ok",
+            "error": null,
+            "started_ns": 226658444,
+            "ended_ns": 304273488
+          }
+        ],
+        "history_calls": [
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 304486251,
+            "ended_ns": 316655512
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 1010754733,
+            "ended_ns": 1022980058
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 1402529245,
+            "ended_ns": 1414398374
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 1716923256,
+            "ended_ns": 1728703731
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2114741009,
+            "ended_ns": 2127118790
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2509838066,
+            "ended_ns": 2521971692
+          },
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2908870372,
+            "ended_ns": 2920221793
+          }
+        ],
+        "metrics": {
+          "work_started": 7,
+          "work_finished": 7,
+          "work_failed": 0,
+          "work_ns": 57041686,
+          "mutation_full_work_cpu_ns": 10985816,
+          "mutation_dispatch_excluding_work_cpu_ns": 43281608,
+          "mutation_cpu_charged_ns": 54267424,
+          "mutation_cpu_refusals": 0,
+          "pending_challenge_wait_ns": 74461732,
+          "pending_grant_wait_ns": 121896221,
+          "queue_wait_ns": 71434592,
+          "queue_backpressure_events": 0,
+          "abandoned_tasks": 0,
+          "retained_phase_errors": {}
+        },
+        "observer_counts": {
+          "accepted_connections_seen": 66,
+          "records_not_retained": 0,
+          "measurement_failures": 0,
+          "records": 66
+        },
+        "attack_calls": 0,
+        "client_errors": {},
+        "response_errors": {},
+        "attempt_caps": []
+      },
+      {
+        "mode": "from-zero-pressure",
+        "client_confirmed_transactions": 0,
+        "confirmation_ended_ns": null,
+        "finite_business_target_met": false,
+        "attacker_workers_cpu_ns": 338149407,
+        "independent_replay_and_confirmation_cpu_ns": 45488768,
+        "independent_replay_and_confirmation_wall_ns": 1391593266,
+        "maximum_honest_head_gap_ns": 501628531,
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "no_attack_accepted": true,
+        "invariant_target_met": true,
+        "submits": [
+          {
+            "height": 1,
+            "status": "ok",
+            "error": null,
+            "started_ns": 176976836,
+            "ended_ns": 575681905
+          },
+          {
+            "height": 2,
+            "status": "ok",
+            "error": null,
+            "started_ns": 576203198,
+            "ended_ns": 881015160
+          },
+          {
+            "height": 3,
+            "status": "ok",
+            "error": null,
+            "started_ns": 881466953,
+            "ended_ns": 1273110335
+          },
+          {
+            "height": 4,
+            "status": "ok",
+            "error": null,
+            "started_ns": 1273729971,
+            "ended_ns": 1583012641
+          },
+          {
+            "height": 5,
+            "status": "ok",
+            "error": null,
+            "started_ns": 1583453804,
+            "ended_ns": 1981501903
+          },
+          {
+            "height": 6,
+            "status": "ok",
+            "error": null,
+            "started_ns": 1981939660,
+            "ended_ns": 2374171933
+          },
+          {
+            "height": 7,
+            "status": "ok",
+            "error": null,
+            "started_ns": 2374714656,
+            "ended_ns": 2683511116
+          }
+        ],
+        "history_calls": [
+          {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2683687465,
+            "ended_ns": 2877016883
+          }
+        ],
+        "metrics": {
+          "work_started": 181,
+          "work_finished": 181,
+          "work_failed": 174,
+          "work_ns": 3296076922,
+          "mutation_full_work_cpu_ns": 277970540,
+          "mutation_dispatch_excluding_work_cpu_ns": 217494401,
+          "mutation_cpu_charged_ns": 495464941,
+          "mutation_cpu_refusals": 0,
+          "pending_challenge_wait_ns": 5034287700,
+          "pending_grant_wait_ns": 18249305039,
+          "queue_wait_ns": 3724387386,
+          "queue_backpressure_events": 164,
+          "abandoned_tasks": 1,
+          "retained_phase_errors": {
+            "hello": 2,
+            "queue": 1,
+            "solution": 3,
+            "work": 1
+          }
+        },
+        "observer_counts": {
+          "accepted_connections_seen": 215,
+          "records_not_retained": 0,
+          "measurement_failures": 0,
+          "records": 215
+        },
+        "attack_calls": 189,
+        "client_errors": {
+          "None": 173,
+          "IO: Resource temporarily unavailable (os error 11)": 14,
+          "PUBLIC_CLIENT_DEADLINE": 1,
+          "FRAME_DEADLINE": 1
+        },
+        "response_errors": {
+          "WORK:Transcript": 173,
+          "no_response": 16
+        },
+        "attempt_caps": [
+          false
+        ]
+      }
+    ],
+    "construction_coverage": {
+      "accounting_scope": "construction intervals are nested in joined attacker worker CPU; never add them twice; shared public material setup is separate",
+      "all_context_bindings_and_challenges_unique": true,
+      "all_nested_cpu_measurements_known": true,
+      "constructed": 189,
+      "exhausted": 0,
+      "full_transcript_rejections": 173,
+      "nested_from_zero_construction_cpu_ns": 94036087,
+      "submitted": 189,
+      "unique_challenges": 189,
+      "unique_packet_indices": 189
+    }
+  }
+}

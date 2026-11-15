@@ -1,0 +1,11 @@
+{
+  "label": "qa-06-contract-audit",
+  "argv": [
+    "python3",
+    "formal/pon-nakamoto-v1/fixed_probability_contract.py"
+  ],
+  "exit": 0,
+  "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "duration_seconds": 0.10259669995866716,
+  "unittest_count": []
+}

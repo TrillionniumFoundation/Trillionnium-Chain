@@ -1,0 +1,19 @@
+{
+  "C2_or_later_commits_qualified": false,
+  "WAN_or_independent_operator_qualification": false,
+  "base": "31543fb6dde565b62b47436e0b1d399b6d0bd772",
+  "fresh_challenge_4s_6depth_qualified": false,
+  "head": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+  "native_tests_started_by_collection": 0,
+  "old315_results_cover_C1": false,
+  "original_from_zero_4s_qualified": false,
+  "original_native_30s_qualified": false,
+  "original_zip_hashes_are_integrity_references_not_security_verdicts": true,
+  "production_activation": false,
+  "prospective_merge": "61589dddd13e7495369aaecad9212668049417c1",
+  "schema": "c1-hosted-evidence-scope-v1",
+  "source_identities_remain_distinct_despite_equal_tree": true,
+  "temporary_download_urls_retained": false,
+  "tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+  "whole_chain_pq_qualified": false
+}

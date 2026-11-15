@@ -1,0 +1,135 @@
+{
+  "actions_checkout_or_upload_executed": false,
+  "all_required_shell_blocks_passed": true,
+  "checkout_prerequisite_basis": "preexisting clean local checkout verified by real source blocks",
+  "historical_positive_lanes_executed": false,
+  "job": "closure",
+  "native_execution_or_security_qualification_inferred": false,
+  "prospective_merge_lane_executed": false,
+  "records": [
+    {
+      "exit_code": 0,
+      "id": "observations",
+      "seconds": 0.004,
+      "shell_sha256": "5f8ac9a6533b5eb6f60b41a72f7ab4938a75b98b9cc947166cfeb4524a43e5ca"
+    },
+    {
+      "basis": "existing isolated local clone; not actions/checkout execution",
+      "id": "checkout",
+      "source_identity": {
+        "head": "784274926d97207e9ee94cf76eef22e1006d84e1",
+        "status": "",
+        "tree": "ebe84c04a79dd6bedf75d8b2ba852a87dbfd749f"
+      }
+    },
+    {
+      "exit_code": 0,
+      "id": "source_before",
+      "seconds": 2.527,
+      "shell_sha256": "85eeb14ed3e07e218f566ae2edb5a625ac39af9f2fd52aaeff5bf19153969d6f"
+    },
+    {
+      "exit_code": 0,
+      "id": "preflight",
+      "seconds": 0.063,
+      "shell_sha256": "759c2650cbee7eee6be3e01595adcf9a5ed776c48e43448a703a6cc891d73dcc"
+    },
+    {
+      "exit_code": 0,
+      "id": "named_controls",
+      "seconds": 21.907,
+      "shell_sha256": "7c9b521437d1cffe5e7694b4dd94642edd3e262007869cbf6f1c8ffb2f01041c"
+    },
+    {
+      "exit_code": 0,
+      "id": "historical_refusal",
+      "seconds": 0.139,
+      "shell_sha256": "f53f6955687341f0c718f7514617809928d473a3e199bf44d56e83a6db812305"
+    },
+    {
+      "exit_code": 0,
+      "id": "reproduce",
+      "seconds": 2.495,
+      "shell_sha256": "7c02e83d9ae6794c5970b081a4ae02e5939b495dbd97f91e35724d7c2b43e4e7"
+    },
+    {
+      "exit_code": 0,
+      "id": "source_after",
+      "seconds": 2.524,
+      "shell_sha256": "c7a6af0a710b9c7ba28d9ac0df6b81d27400895cd055633a7bbe7e9a793dd274"
+    },
+    {
+      "exit_code": 0,
+      "id": "completion",
+      "seconds": 0.065,
+      "shell_sha256": "7af6f02e540bf86f8099ed5c7b5fbc144e83a6ec115cf63165725aaeb220eee0"
+    },
+    {
+      "basis": "not executed locally",
+      "id": null,
+      "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+    }
+  ],
+  "required_shell_blocks": [
+    "observations",
+    "source_before",
+    "preflight",
+    "named_controls",
+    "historical_refusal",
+    "reproduce",
+    "source_after",
+    "completion"
+  ],
+  "schema": "TRNM-LOCAL-ACTUAL-CURRENT-WORKFLOW-BLOCKS1",
+  "scope": "local head source; actual stored shell blocks; not hosted Actions",
+  "source_after": {
+    "head": "784274926d97207e9ee94cf76eef22e1006d84e1",
+    "status": "",
+    "tree": "ebe84c04a79dd6bedf75d8b2ba852a87dbfd749f"
+  },
+  "source_before": {
+    "head": "784274926d97207e9ee94cf76eef22e1006d84e1",
+    "status": "",
+    "tree": "ebe84c04a79dd6bedf75d8b2ba852a87dbfd749f"
+  },
+  "step_results_from_actual_execution": {
+    "checkout": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "completion": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "historical_refusal": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "named_controls": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "observations": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "preflight": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "reproduce": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "source_after": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "source_before": {
+      "conclusion": "success",
+      "outcome": "success"
+    }
+  },
+  "workflow": "pon-w1-qrom-closure.yml",
+  "workflow_sha256": "c8e8e9314a6e66919496992988d0af729bac7f0fc9fbf31da49444ee0568c35e"
+}

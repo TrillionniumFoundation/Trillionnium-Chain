@@ -1,0 +1,42 @@
+{
+  "actual_native_PQ_process_exchanges": 1,
+  "actual_native_W1_exchanges": 5,
+  "actual_native_W1_expected_rejections": 1,
+  "actual_native_W1_successes": 4,
+  "actual_sha_preprocessing_composition": false,
+  "all_lifecycle_resources_attested": false,
+  "base_commit": "f8362822b406463ac3dfcc911a0c3eda1686e32d",
+  "complete_public_help_mediation_attested": false,
+  "cryptography_version": "50.0.0",
+  "initial_state_attested": false,
+  "key_handling": {
+    "algorithm": "ML-DSA-65",
+    "fresh_ephemeral_keys": 2,
+    "private_key_exported": false,
+    "real_independent_trust_root": false
+  },
+  "native_PQ_verification_items": 12,
+  "native_confirmation_risk": false,
+  "openssl_version": "OpenSSL 4.0.1 9 Jun 2026",
+  "physical_resource_tail": false,
+  "production_qualified": false,
+  "result": "PASS",
+  "schema": "pon-work-lifecycle-observation-v1",
+  "source_ledgers_cryptographically_verified": 2,
+  "source_sha256": {
+    "formal/pon-nakamoto-v1/WORK_LIFECYCLE_CERTIFICATE_V1.md": "460d1cd99cb6f501f54f22567fab1ea52b2a33d0f25d8c6f12a6f801c3542576",
+    "formal/pon-nakamoto-v1/bounded_process.py": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+    "formal/pon-nakamoto-v1/mandatory_units_query.py": "8127186bf3355ab749d753494caeeb14adbb875e13c7edf629df213f04e4ce0e",
+    "formal/pon-nakamoto-v1/mandatory_units_relation.py": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834",
+    "formal/pon-nakamoto-v1/work_lifecycle_certificate.py": "301ce5fb234b02332f60db1ed41c61302e54046a9d29753d76d2bf5ceb405d44",
+    "formal/pon-nakamoto-v1/work_lifecycle_help.py": "0347e577f7d581ef880525d6b2e484c9831ee0ce76859069a1325e15fbcb08f7",
+    "formal/pon-nakamoto-v1/work_lifecycle_observe.py": "9a4e70c3f9b919762246f6b4ffb5e80ead8578bba64dd29fe1e1624aa793210b",
+    "formal/pon-nakamoto-v1/work_lifecycle_tests.py": "ec981772a51cf1737aa8d648cf17f2ebc811a3c96ee82f24352a64a3a779800f",
+    "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+    "native/pon_work_io": "41222016523672bd32670358f693476560f8641c03f6c738c7a75a2f0f0c7437",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs": "2377bbb748a67fb238c2d113799adce472e905465b5ac46372597ff7ab4dd0b3",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs": "19f4aab9534761342378a70631c52891d24c1ad82d0670f9f3254afeb52e36e5",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "2ed59c0c6adeda7c27b503d7465680bc08b02139d2d19ec9f5d4f44c1e02477b"
+  }
+}

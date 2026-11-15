@@ -1,0 +1,22 @@
+{
+  "schema": "trnm-final819-w1-transport-v2-plan",
+  "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+  "original_run": 42402618462,
+  "artifact_ids": [
+    13586134600,
+    13586253351,
+    13586459476,
+    13586509176,
+    13586791050,
+    13587135201
+  ],
+  "per_archive_get_seconds": 900,
+  "maximum_parallel_downloads": 2,
+  "get_attempts_per_selected_artifact": 1,
+  "other_integrity_or_identity_error_stops_new_GETs": true,
+  "already_inflight_GETs_preserved": true,
+  "v1_seal_sha256": "c44f24f7f219a41d9a613b06e84a322ab052bd1a091e9d9c9bb8202ab94bd215",
+  "original_v1_unknown_preserved": 6,
+  "no_ci_or_native_execution": true,
+  "original_business_limits_unchanged": true
+}

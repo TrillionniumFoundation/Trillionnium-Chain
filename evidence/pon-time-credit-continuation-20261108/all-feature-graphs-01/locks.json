@@ -1,0 +1,10 @@
+{
+  "trillionnium/Cargo.lock": {
+    "bytes": 40044,
+    "sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be"
+  },
+  "tests/fuzz/Cargo.lock": {
+    "bytes": 33630,
+    "sha256": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1"
+  }
+}

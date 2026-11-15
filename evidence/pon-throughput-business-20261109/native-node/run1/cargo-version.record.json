@@ -1,0 +1,44 @@
+{
+  "argv": [
+    "/workspace/scratch/a6fe7c2e72c7/pq-validation/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "--version",
+    "--verbose"
+  ],
+  "cwd": "/workspace/scratch/a0d4983b1065/chain-throughput",
+  "disk_after": {
+    "free_bytes": 6301020160,
+    "total_bytes": 67586535424,
+    "used_bytes": 57832767488
+  },
+  "disk_before": {
+    "free_bytes": 6301028352,
+    "total_bytes": 67586535424,
+    "used_bytes": 57832759296
+  },
+  "exit_code": 0,
+  "extra_env": {},
+  "name": "cargo-version",
+  "rusage": {
+    "ru_idrss": 0,
+    "ru_inblock": 68608,
+    "ru_isrss": 0,
+    "ru_ixrss": 0,
+    "ru_majflt": 16,
+    "ru_maxrss": 17988,
+    "ru_minflt": 1254,
+    "ru_msgrcv": 0,
+    "ru_msgsnd": 0,
+    "ru_nivcsw": 38,
+    "ru_nsignals": 0,
+    "ru_nswap": 0,
+    "ru_nvcsw": 22,
+    "ru_oublock": 8,
+    "ru_stime": 0.062046,
+    "ru_utime": 0.011009999999999999
+  },
+  "rusage_maxrss_unit": "KiB (Linux)",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "c6cd47fb28b137d9450165b5b0796de3dfdac887c91ea225c53506f3fc5f6add",
+  "waited_pid": 36,
+  "wall_ns": 159413538
+}

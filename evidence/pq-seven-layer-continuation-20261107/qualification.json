@@ -1,0 +1,579 @@
+{
+  "build_components": {
+    "all_feature_packages": 181,
+    "default_feature_packages": 176,
+    "sqlite_optional_layout_witness_qualified": [
+      false,
+      true,
+      false,
+      true
+    ],
+    "sqlite_real_cargo_exit_codes": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "sqlite_same_target_without_cleaning": true,
+    "strict_workspace_all_targets_all_features_clippy_exit": 0,
+    "workspace_members": 26
+  },
+  "codeql_composition": {
+    "concurrent_worktree_observation_block_preserved": true,
+    "default_setup_changed": false,
+    "genuine_sarif_required_for_main_artifact": true,
+    "local_controls": 12,
+    "local_lane_upload": "never",
+    "new_codeql_execution_claimed_by_local_tests": false,
+    "pinned_action": "1fc58d04a4d4374f921bdac573c3811c240f9c26",
+    "real_query_execution_required": true,
+    "source_failures_preserved": true
+  },
+  "consensus_authority": false,
+  "historical_failures_preserved": true,
+  "host_blockers": {
+    "checkpoint_scope": "12 failed controls retained separately; three cross-process errors only say daemon exited, so their exact child cause is not newly asserted",
+    "node_journal_initialization_enoent": 23,
+    "node_unix_listener_bind_eperm": 12,
+    "observed_time_namespace_interface": "/proc/self/ns/time",
+    "release_fixture_clock_stamp_reached": false,
+    "source_guards_or_budgets_relaxed": false,
+    "specific_host_policy_causing_eperm_identified": false,
+    "witness_cli_fixture_unix_listener_bind_eperm": 5
+  },
+  "independent_end_to_end_qualified": false,
+  "initial_composition": {
+    "integration_parent": "e70f13448aad715286fb8eb56fc802b09db643a3",
+    "merge_commit": "79075c36cb8a9d27f922920c1f4958895efc32b5",
+    "pq_parent": "b08e4f624c122175583094ea94f5c8c3150cec5d"
+  },
+  "native_elf_bodies_archived": false,
+  "native_phase": {
+    "commands": 13,
+    "doc_tests_executed": false,
+    "failed_commands": [
+      "node-full",
+      "tls-cli-and-witness",
+      "checkpoint-release"
+    ],
+    "node_command_timed_out": false,
+    "node_failed_names": [
+      "ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_call_cap_reservation_survives_cold_open_without_native_dispatch",
+      "ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_hybrid_tls_parent_recovery_and_cold_membership_keep_one_original_campaign",
+      "ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_lost_ack_and_cold_resume_reuse_exact_wire_without_history_consuming_sequence",
+      "ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_plain_parent_recovery_and_cold_membership_keep_one_original_campaign",
+      "ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_repeated_eof_and_cold_open_keep_the_original_three_attempt_limit",
+      "ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_signed_expiry_label_cannot_fence_a_healthy_local_campaign_or_gain_a_retry",
+      "public_submit::pq::journal::tests::journal_actual_fsynced_candidate_inode_is_bound_for_fresh_and_existing_pending",
+      "public_submit::pq::journal::tests::journal_blob_prewrite_cut_leaves_inert_orphan_without_sequence_or_budget_credit",
+      "public_submit::pq::journal::tests::journal_changed_held_blob_or_prepared_predecessor_never_becomes_a_new_publication",
+      "public_submit::pq::journal::tests::journal_cold_open_cannot_renew_expired_epoch_or_change_boot_namespace_identity",
+      "public_submit::pq::journal::tests::journal_cold_open_preserves_exact_wire_sequence_epoch_and_history_budget",
+      "public_submit::pq::journal::tests::journal_cold_replay_rejects_context_initial_sequence_bad_signature_and_wrong_signed_sequence",
+      "public_submit::pq::journal::tests::journal_direct_send_expiry_fence_requires_exact_prepared_and_prior_attempt",
+      "public_submit::pq::journal::tests::journal_expired_unknown_request_is_never_resigned_or_replaced_by_new_expiry",
+      "public_submit::pq::journal::tests::journal_expiry_after_durable_attempt_keeps_the_reservation_and_fences_all_reentry",
+      "public_submit::pq::journal::tests::journal_expiry_fence_prepared_cut_is_sticky_and_cold_completion_never_reopens",
+      "public_submit::pq::journal::tests::journal_hard_links_symlinks_fifo_oversize_and_broad_modes_refuse_before_decode",
+      "public_submit::pq::journal::tests::journal_lock_inode_and_named_directory_replacement_fence_before_snapshot_publication",
+      "public_submit::pq::journal::tests::journal_lost_actual_tcp_ack_replays_original_wire_and_durably_consumes_only_signed_reply",
+      "public_submit::pq::journal::tests::journal_original_rpc_submit_and_parent_caps_survive_real_cold_open",
+      "public_submit::pq::journal::tests::journal_pre_io_recheck_binds_named_snapshot_without_changing_durable_budget",
+      "public_submit::pq::journal::tests::journal_prepared_request_and_attempt_fsync_cuts_finish_exact_local_transition_on_cold_open",
+      "public_submit::pq::journal::tests::journal_unknown_publication_is_sticky_and_cold_replay_does_not_refund_attempt",
+      "release_owner::service_tests::actual_signed_clock_wrong_request_nonce_namespace_or_backward_floor_fences",
+      "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch",
+      "release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas",
+      "release_owner::service_tests::durable_preparation_then_real_elapsed_expiry_refuses_without_cas",
+      "release_owner::service_tests::last_clock_callback_lock_row_or_provisioning_drift_refuses_and_retains_fault",
+      "release_owner::service_tests::prepared_failure_keeps_canonical_row_and_temp_is_not_admission",
+      "release_owner::service_tests::signed_cas_uses_exact_old_once_and_returns_only_the_observed_lower_floor",
+      "release_owner::service_tests::wrong_signature_domain_binding_namespace_and_nonce_cannot_mutate_or_fence",
+      "store::pq_existing_owner_tests::existing_pq_owner_rejects_link_special_file_and_incompatible_owner_without_repair",
+      "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+      "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics",
+      "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart"
+    ],
+    "node_ignored_names": [
+      "account_archive_execution::state_witness::growth_v2_tests::growth_v2_crosses_legacy_total_key_cap_without_changing_old_profile",
+      "account_archive_prototype::account_prefix_tests::prefix_range_component_cost_abba",
+      "account_archive_prototype::native_primitive_tests::native_branch_single_buffer_cost_observation",
+      "account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost",
+      "account_archive_prototype::native_primitive_tests::shared_branch_kernel_complete_call_cost",
+      "account_archive_prototype::native_root_digest::tests::native_root_digest_paired_complete_root_cost_observation",
+      "account_archive_prototype::native_store::apply_reader_tests::native_apply_reader_paired_complete_apply_cost_observation",
+      "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+      "account_archive_prototype::native_store::node_reader::tests::native_node_reader_paired_graph_cost_observation",
+      "account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation",
+      "account_archive_prototype::native_store::tests::native_lift_cache_complete_graph_cost_observation",
+      "ancestry_index::cost_tests::retained_4105_actual_history_index_cost",
+      "ingress::history_import::tests::history_kill_cut_child",
+      "ingress::public_v3::pq_identity::verifier_cache::tests::pq_caller_authentication_complete_cost",
+      "ingress::tests::authenticated_activation_recovery::withheld_original_frame_must_not_stall_a_different_honest_signed_mutation",
+      "operator_pq_startup::tests::m15_native_fixture::export_existing_npq6_inputs_for_isolated_m15_native_suite",
+      "operator_task_policy::file_tests::held_file_substitution_child",
+      "release_owner::native_consumer_tests::isolated_fixed_root_static_node_claim_refresh_and_revocation",
+      "store::detached_admission::tests::detached_full_state_cost_uses_real_signed_history_and_reports_scope",
+      "store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen",
+      "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
+      "store::growth_reference::tests::native_growth_reference_65537_signed_accounts_and_cold_reopen",
+      "store::history_page::tests::history_page_complete_call_cost",
+      "store::history_page::tests::inline_record_tests::history_inline_record_complete_call_cost",
+      "store::history_page::tests::packet_reservation_history_complete_call_cost",
+      "store::init_marker_tests::initialization_marker_special_file_child",
+      "store::mempool::binding_tests::normal_256_signed_raw_binding_component_timing",
+      "store::mempool::incremental_prefix_tests::normal_m05_signature_reuse_component_timing",
+      "store::native_authenticated::stored_delta_stream_tests::retained_delta_stream_cost_preserves_all_paired_observations",
+      "store::native_budget::tests::native_budget_abrupt_exit_worker",
+      "store::public_reader::tests::readonly_history_whole_operation_and_retained_growth_cost",
+      "store::reorg_cancellation::tests::actual_full_w1_depletion_terminates_intent_and_admits_an_independent_honest_mutation",
+      "store::reorg_cancellation::tests::reorg_cancellation_kill_child"
+    ],
+    "node_parent_summary": {
+      "failed": 35,
+      "filtered": 0,
+      "ignored": 33,
+      "line": 3280,
+      "measured": 0,
+      "outcome": "FAILED",
+      "passed": 1217,
+      "seconds": 1405.0
+    },
+    "node_registry": 1285,
+    "not_executed": [],
+    "ordinary_isolated_m15_control_executed": false,
+    "original_command_cap_seconds": 1500,
+    "reader_check_status_counts": {
+      "FAIL": 7,
+      "PASS": 14
+    },
+    "reader_status": "FAIL",
+    "required_core_count": 52,
+    "required_core_passes": 51,
+    "required_rosters_are_subsets_of_parent": true,
+    "required_tls_library_count": 13,
+    "required_tls_library_passes": 13,
+    "separate_harnesses": [
+      {
+        "added_to_node_library_count": false,
+        "failed_names": [],
+        "ignored_names": [],
+        "kind": "integration",
+        "package": "trnm-pon-node",
+        "parent_summary": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "line": 16,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 4,
+          "seconds": 5.9
+        },
+        "source": "trillionnium/crates/trnm-pon-node/tests/pq_tls_cli.rs",
+        "status": "PASS"
+      },
+      {
+        "added_to_node_library_count": false,
+        "failed_names": [
+          "witness_existing_mode_never_creates_or_reenrolls_and_create_never_reopens",
+          "witness_missing_and_backlogged_endpoints_refuse_without_owner_or_listener",
+          "witness_schema_identity_and_private_key_refusals_precede_owner_and_witness_io",
+          "witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database",
+          "witness_wrong_authenticated_service_binding_cannot_publish_ready_or_advance"
+        ],
+        "ignored_names": [],
+        "kind": "integration",
+        "package": "trnm-pon-node",
+        "parent_summary": {
+          "failed": 5,
+          "filtered": 0,
+          "ignored": 0,
+          "line": 49,
+          "measured": 0,
+          "outcome": "FAILED",
+          "passed": 0,
+          "seconds": 0.31
+        },
+        "source": "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli.rs",
+        "status": "FAIL"
+      },
+      {
+        "added_to_node_library_count": false,
+        "failed_names": [],
+        "ignored_names": [],
+        "kind": "integration",
+        "package": "trnm-pon-node",
+        "parent_summary": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "line": 14,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 3,
+          "seconds": 1.78
+        },
+        "source": "trillionnium/crates/trnm-pon-node/tests/pq_application_migration_v6.rs",
+        "status": "PASS"
+      },
+      {
+        "added_to_node_library_count": false,
+        "failed_names": [],
+        "ignored_names": [],
+        "kind": "integration",
+        "package": "trnm-pon-node",
+        "parent_summary": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "line": 10,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1,
+          "seconds": 0.0
+        },
+        "source": "trillionnium/crates/trnm-pon-node/tests/pq_tls_feature_gate.rs",
+        "status": "PASS"
+      },
+      {
+        "added_to_node_library_count": false,
+        "failed_names": [
+          "socket_owner_v1::tests::endpoint_lease_prevents_live_socket_replacement_and_permits_owner_restart",
+          "socket_owner_v1::tests::fresh_lease_never_authorizes_removing_an_unleased_socket",
+          "socket_owner_v1::tests::live_owner_rejects_replaced_lease_path",
+          "socket_owner_v1::tests::live_owner_rejects_replaced_socket_path",
+          "socket_owner_v1::tests::live_owner_rejects_same_inode_lease_record_rewrite",
+          "socket_owner_v1::tests::rejected_socket_parent_preserves_existing_listener",
+          "tests::unix_client_round_trip_uses_separate_thread_authority"
+        ],
+        "ignored_names": [],
+        "kind": "lib",
+        "package": "trnm-checkpoint-store",
+        "parent_summary": {
+          "failed": 7,
+          "filtered": 0,
+          "ignored": 0,
+          "line": 88,
+          "measured": 0,
+          "outcome": "FAILED",
+          "passed": 11,
+          "seconds": 2.03
+        },
+        "source": "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+        "status": "FAIL"
+      },
+      {
+        "added_to_node_library_count": false,
+        "failed_names": [],
+        "ignored_names": [],
+        "kind": "bin",
+        "package": "trnm-checkpoint-store",
+        "parent_summary": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "line": 38,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 15,
+          "seconds": 0.18
+        },
+        "source": "trillionnium/crates/trnm-checkpoint-store/src/main.rs",
+        "status": "PASS"
+      },
+      {
+        "added_to_node_library_count": false,
+        "failed_names": [],
+        "ignored_names": [],
+        "kind": "integration",
+        "package": "trnm-checkpoint-store",
+        "parent_summary": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "line": 38,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 15,
+          "seconds": 0.07
+        },
+        "source": "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs",
+        "status": "PASS"
+      },
+      {
+        "added_to_node_library_count": false,
+        "failed_names": [
+          "competing_owner_cannot_reopen_or_reregister_a_live_namespace",
+          "daemon_cold_restart_requires_external_pin_and_rejects_complete_snapshot_rollback",
+          "standalone_daemon_is_cross_process_and_rejects_truncated_log"
+        ],
+        "ignored_names": [],
+        "kind": "integration",
+        "package": "trnm-checkpoint-store",
+        "parent_summary": {
+          "failed": 3,
+          "filtered": 0,
+          "ignored": 0,
+          "line": 41,
+          "measured": 0,
+          "outcome": "FAILED",
+          "passed": 3,
+          "seconds": 0.09
+        },
+        "source": "trillionnium/crates/trnm-checkpoint-store/tests/cross_process.rs",
+        "status": "FAIL"
+      },
+      {
+        "added_to_node_library_count": false,
+        "failed_names": [
+          "different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint",
+          "rejected_nonprivate_socket_parent_does_not_unlink_existing_listener"
+        ],
+        "ignored_names": [],
+        "kind": "integration",
+        "package": "trnm-checkpoint-store",
+        "parent_summary": {
+          "failed": 2,
+          "filtered": 0,
+          "ignored": 0,
+          "line": 31,
+          "measured": 0,
+          "outcome": "FAILED",
+          "passed": 0,
+          "seconds": 0.01
+        },
+        "source": "trillionnium/crates/trnm-checkpoint-store/tests/socket_ownership.rs",
+        "status": "FAIL"
+      },
+      {
+        "added_to_node_library_count": false,
+        "failed_names": [],
+        "ignored_names": [],
+        "kind": "example",
+        "package": "trnm-checkpoint-store",
+        "parent_summary": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "line": 8,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0,
+          "seconds": 0.0
+        },
+        "source": "trillionnium/crates/trnm-checkpoint-store/examples/checkpoint_fault_domain_probe.rs",
+        "status": "PASS"
+      },
+      {
+        "added_to_node_library_count": false,
+        "failed_names": [],
+        "ignored_names": [],
+        "kind": "lib",
+        "package": "trnm-release-bundle",
+        "parent_summary": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "line": 94,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 43,
+          "seconds": 41.41
+        },
+        "source": "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+        "status": "PASS"
+      }
+    ],
+    "status": "FAIL"
+  },
+  "pq_128_qualified": false,
+  "production_activation": false,
+  "public_wan_qualified": false,
+  "publication_composition": {
+    "containing_commit": "d1e6e279593b63049f538af081b0c0757a4f4506",
+    "left_parent": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+    "native_observations_relabelled": false,
+    "right_parent": "3d1b6507671ec694ce58e86d4063a125c8deeb66",
+    "runtime_and_formal_subtrees_byte_identical_to_tested_source": true
+  },
+  "publication_source_validation": {
+    "cargo_exit": 101,
+    "compiler_termination": "SIGKILL 9",
+    "failed_command": "strict-clippy",
+    "graphs": {
+      "all_features_workspace": {
+        "packages": 181,
+        "resolved_nodes": 181,
+        "workspace_members": 26
+      },
+      "default_workspace": {
+        "packages": 176,
+        "resolved_nodes": 176,
+        "workspace_members": 26
+      },
+      "standalone_primitive_analysis": {
+        "packages": 12,
+        "resolved_nodes": 12,
+        "workspace_members": 1
+      }
+    },
+    "native_observations_relabelled": false,
+    "new_native_execution": false,
+    "receipt": "publication-source/receipt.json",
+    "source_commands": 13,
+    "source_unittest_cases": 270,
+    "status": "SOURCE_PASS_STATIC_FAILURE",
+    "supplementary_failed": 1,
+    "supplementary_static_commands": 3,
+    "supplementary_succeeded": 2,
+    "termination_cause": "UNATTRIBUTED",
+    "tested_commit": "276a1e26f1989aef4b3d75263ff5b55e073b46e9",
+    "tested_tree": "d2a3d83d2800c8e0829e3a951cb2f0f6aa233e56"
+  },
+  "quantum_mining_security_qualified": false,
+  "quantum_phase": {
+    "commands": 13,
+    "constructive_cases": 4,
+    "minimum_quantum_attack_cost_proved": false,
+    "native_rust_admission_executed_by_campaigns": false,
+    "native_shape_python_scalar_pnw1_checks": 3,
+    "readback_result": "RECORDED_EXECUTION_AND_OUTPUT_CONSISTENCY_PASS",
+    "resource_claim": "constructive upper bounds, not lower bounds or cheapest legal attack costs",
+    "restricted_cases": 5,
+    "restricted_literal_candidates": 60,
+    "unittest_cases": 182
+  },
+  "reader_repair": {
+    "complete_wrapper_suites_passed": 92,
+    "post_fix_passed": 28,
+    "pre_fix_commit": "79075c36cb8a9d27f922920c1f4958895efc32b5",
+    "pre_fix_errors": 1,
+    "pre_fix_failed": 24,
+    "pre_fix_passed": 3,
+    "same_scheduling_controls": 28,
+    "whole_checkout_immutability_claimed": false,
+    "wrapper_suites_already_in_source_phase": true
+  },
+  "schema": "trnm-pq-seven-layer-continuation-v1",
+  "source_phase": {
+    "actual_claim_guard": {
+      "gates": {
+        "authorization": {
+          "source_paths": [
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+            "trillionnium/crates/trnm-pon-node/src/public_submit.rs",
+            "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+            "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/closure.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/release.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/funding.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+            "scripts/ci/pq_authority_surface_scan.py",
+            "scripts/ci/test_pq_authority_surface_scan.py",
+            "docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md"
+          ],
+          "status": "UNQUALIFIED"
+        },
+        "capacity_and_invalid_input": {
+          "source_paths": [
+            "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+            "config/pon/post-quantum-transition-v1.json"
+          ],
+          "status": "UNQUALIFIED"
+        },
+        "independent_end_to_end": {
+          "source_paths": [
+            "docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md",
+            "config/pon/pq-cross-branch-corpus-v1.json",
+            "scripts/ci/pq_source_reader.py"
+          ],
+          "status": "UNQUALIFIED"
+        },
+        "migration_and_rollback": {
+          "source_paths": [
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+            "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+            "scripts/ci/pq_external_rollback_oracle.py",
+            "scripts/ci/test_pq_external_rollback_oracle.py",
+            "docs/security/PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md",
+            "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+            "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+            "docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md"
+          ],
+          "status": "UNQUALIFIED"
+        },
+        "proof_pq128": {
+          "source_paths": [
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+            "docs/security/POST_QUANTUM_TRANSITION_V1.md"
+          ],
+          "status": "UNQUALIFIED"
+        },
+        "quantum_mining_fork_choice": {
+          "source_paths": [
+            "config/pon/devnet-v1.json",
+            "docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md",
+            "scripts/ci/pq_quantum_daa_scenarios.py",
+            "scripts/ci/test_pq_quantum_daa_scenarios.py",
+            "docs/security/PQ_QUANTUM_DAA_SENSITIVITY_20261031.md"
+          ],
+          "status": "UNQUALIFIED"
+        }
+      },
+      "note": "Source/flag refusal only; no independent crypto, quantum cost, WAN, rollback or production evidence.",
+      "pq_128_qualified": false,
+      "production_activation": false,
+      "schema": "trnm-whole-chain-pq-claim-guard-v1",
+      "status": "HOLD",
+      "whole_chain_pq_qualified": false
+    },
+    "all_commands_succeeded": true,
+    "commands": 13,
+    "pinned_paths": 713,
+    "required_paths": 632,
+    "suites": {
+      "test_ci_contract": 104,
+      "test_ci_source_integrity": 43,
+      "test_codeql_retention": 4,
+      "test_pq_authority_surface_scan": 15,
+      "test_pq_chain_claim_guard": 37,
+      "test_pq_research_integration": 55,
+      "test_record_pq_native_command": 4
+    },
+    "unittest_cases": 262
+  },
+  "status": "HOLD_NO_GO",
+  "subsequent_analysis_input_composition": {
+    "changed_upstream_paths": [
+      "evidence/codeql-standalone-lock-20261107/README.md",
+      "evidence/codeql-standalone-lock-20261107/validation.json",
+      "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/crypto/Cargo.lock"
+    ],
+    "containing_commit": "276a1e26f1989aef4b3d75263ff5b55e073b46e9",
+    "containing_tree": "d2a3d83d2800c8e0829e3a951cb2f0f6aa233e56",
+    "left_parent": "d1e6e279593b63049f538af081b0c0757a4f4506",
+    "original_native_execution_relabelled": false,
+    "right_parent": "adebe0bd78e6e1bdb55a599179ffe2313997170e",
+    "runtime_and_formal_subtrees_byte_identical_to_tested_source": true,
+    "source_pins_changed_again": false
+  },
+  "tested_commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+  "tested_tree": "b2586f06e82de55484a2e5752563e8b669c3ea17",
+  "whole_chain_pq_qualified": false,
+  "whole_node_rollback_protection": false
+}

@@ -1,0 +1,942 @@
+{
+  "schema": "trnm.cpq1-owner-continuation.compact-local-results.v1",
+  "scope": "Actual local component observations, source controls and preserved failures; not whole-chain qualification",
+  "implementation_source": {
+    "commit": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+    "tree": "e25d21e5dbfd308abb0095d1a5845e583e399b0d",
+    "parent": "b525fbc6dc780343c78710c98a94616f7cff59e4"
+  },
+  "publication_scope": "Later publication adds CI host metadata, documentation, this compact index and the independently hashed reproduction helper; Rust benchmark/profiles/limits/W1 and original controls are unchanged.",
+  "cpq1": {
+    "status": "COMPLETE_LOCAL_OBSERVATION",
+    "wire_format": "CPQ1",
+    "signature_mode": "FIPS204-Pure",
+    "fips_context_hex": "",
+    "cases": 32,
+    "measurement_rows": 352,
+    "samples_per_case_operation": 64,
+    "raw_sample_values": 22528,
+    "warmup_groups": 352,
+    "raw_log_sha256": "cf26fa3a8fc90efe1587b5c109c70cae166ae308e78454c396af11c0a67d0228",
+    "raw_log_bytes": 4565765,
+    "binary_sha256": "baf1d639b1bcba4f678b1c6359bb0653e1c7c7f3a03dc207b0c79298ba9e0b71",
+    "binary_before_after_equal": true,
+    "independent_reader_exit_code": 0,
+    "reader_scope": "Framing, identity, accounting and every raw timing statistic; not independent signature math or source execution attestation",
+    "all_case_sizes": [
+      {
+        "case_id": "ML-DSA-65/1/empty",
+        "payload_bytes": 0,
+        "signed_message_bytes": 271,
+        "wire_bytes": 5548
+      },
+      {
+        "case_id": "ML-DSA-87/1/empty",
+        "payload_bytes": 0,
+        "signed_message_bytes": 271,
+        "wire_bytes": 7506
+      },
+      {
+        "case_id": "ML-DSA-65/1/176",
+        "payload_bytes": 176,
+        "signed_message_bytes": 447,
+        "wire_bytes": 5724
+      },
+      {
+        "case_id": "ML-DSA-87/1/176",
+        "payload_bytes": 176,
+        "signed_message_bytes": 447,
+        "wire_bytes": 7682
+      },
+      {
+        "case_id": "ML-DSA-65/1/4096",
+        "payload_bytes": 4096,
+        "signed_message_bytes": 4367,
+        "wire_bytes": 9644
+      },
+      {
+        "case_id": "ML-DSA-87/1/4096",
+        "payload_bytes": 4096,
+        "signed_message_bytes": 4367,
+        "wire_bytes": 11602
+      },
+      {
+        "case_id": "ML-DSA-65/1/maximum",
+        "payload_bytes": 65265,
+        "signed_message_bytes": 65536,
+        "wire_bytes": 70813
+      },
+      {
+        "case_id": "ML-DSA-87/1/maximum",
+        "payload_bytes": 65265,
+        "signed_message_bytes": 65536,
+        "wire_bytes": 72771
+      },
+      {
+        "case_id": "ML-DSA-65/2/empty",
+        "payload_bytes": 0,
+        "signed_message_bytes": 335,
+        "wire_bytes": 10881
+      },
+      {
+        "case_id": "ML-DSA-87/2/empty",
+        "payload_bytes": 0,
+        "signed_message_bytes": 335,
+        "wire_bytes": 14797
+      },
+      {
+        "case_id": "ML-DSA-65/2/176",
+        "payload_bytes": 176,
+        "signed_message_bytes": 511,
+        "wire_bytes": 11057
+      },
+      {
+        "case_id": "ML-DSA-87/2/176",
+        "payload_bytes": 176,
+        "signed_message_bytes": 511,
+        "wire_bytes": 14973
+      },
+      {
+        "case_id": "ML-DSA-65/2/4096",
+        "payload_bytes": 4096,
+        "signed_message_bytes": 4431,
+        "wire_bytes": 14977
+      },
+      {
+        "case_id": "ML-DSA-87/2/4096",
+        "payload_bytes": 4096,
+        "signed_message_bytes": 4431,
+        "wire_bytes": 18893
+      },
+      {
+        "case_id": "ML-DSA-65/2/maximum",
+        "payload_bytes": 65201,
+        "signed_message_bytes": 65536,
+        "wire_bytes": 76082
+      },
+      {
+        "case_id": "ML-DSA-87/2/maximum",
+        "payload_bytes": 65201,
+        "signed_message_bytes": 65536,
+        "wire_bytes": 79998
+      },
+      {
+        "case_id": "ML-DSA-65/4/empty",
+        "payload_bytes": 0,
+        "signed_message_bytes": 463,
+        "wire_bytes": 21547
+      },
+      {
+        "case_id": "ML-DSA-87/4/empty",
+        "payload_bytes": 0,
+        "signed_message_bytes": 463,
+        "wire_bytes": 29379
+      },
+      {
+        "case_id": "ML-DSA-65/4/176",
+        "payload_bytes": 176,
+        "signed_message_bytes": 639,
+        "wire_bytes": 21723
+      },
+      {
+        "case_id": "ML-DSA-87/4/176",
+        "payload_bytes": 176,
+        "signed_message_bytes": 639,
+        "wire_bytes": 29555
+      },
+      {
+        "case_id": "ML-DSA-65/4/4096",
+        "payload_bytes": 4096,
+        "signed_message_bytes": 4559,
+        "wire_bytes": 25643
+      },
+      {
+        "case_id": "ML-DSA-87/4/4096",
+        "payload_bytes": 4096,
+        "signed_message_bytes": 4559,
+        "wire_bytes": 33475
+      },
+      {
+        "case_id": "ML-DSA-65/4/maximum",
+        "payload_bytes": 65073,
+        "signed_message_bytes": 65536,
+        "wire_bytes": 86620
+      },
+      {
+        "case_id": "ML-DSA-87/4/maximum",
+        "payload_bytes": 65073,
+        "signed_message_bytes": 65536,
+        "wire_bytes": 94452
+      },
+      {
+        "case_id": "ML-DSA-65/8/empty",
+        "payload_bytes": 0,
+        "signed_message_bytes": 719,
+        "wire_bytes": 42879
+      },
+      {
+        "case_id": "ML-DSA-87/8/empty",
+        "payload_bytes": 0,
+        "signed_message_bytes": 719,
+        "wire_bytes": 58543
+      },
+      {
+        "case_id": "ML-DSA-65/8/176",
+        "payload_bytes": 176,
+        "signed_message_bytes": 895,
+        "wire_bytes": 43055
+      },
+      {
+        "case_id": "ML-DSA-87/8/176",
+        "payload_bytes": 176,
+        "signed_message_bytes": 895,
+        "wire_bytes": 58719
+      },
+      {
+        "case_id": "ML-DSA-65/8/4096",
+        "payload_bytes": 4096,
+        "signed_message_bytes": 4815,
+        "wire_bytes": 46975
+      },
+      {
+        "case_id": "ML-DSA-87/8/4096",
+        "payload_bytes": 4096,
+        "signed_message_bytes": 4815,
+        "wire_bytes": 62639
+      },
+      {
+        "case_id": "ML-DSA-65/8/maximum",
+        "payload_bytes": 64817,
+        "signed_message_bytes": 65536,
+        "wire_bytes": 107696
+      },
+      {
+        "case_id": "ML-DSA-87/8/maximum",
+        "payload_bytes": 64817,
+        "signed_message_bytes": 65536,
+        "wire_bytes": 123360
+      }
+    ],
+    "selected_latencies": [
+      {
+        "case_id": "ML-DSA-65/1/4096",
+        "payload_bytes": 4096,
+        "signed_message_bytes": 4367,
+        "cpq1_wire_bytes": 9644,
+        "latency_ns": {
+          "sign_self_verify_encode": {
+            "observed_samples": 64,
+            "p50_ns": 756896,
+            "p99_ns": 9553158
+          },
+          "cold_pin_verify": {
+            "observed_samples": 64,
+            "p50_ns": 327462,
+            "p99_ns": 366000
+          },
+          "hot_verify": {
+            "observed_samples": 64,
+            "p50_ns": 142354,
+            "p99_ns": 194752
+          }
+        }
+      },
+      {
+        "case_id": "ML-DSA-87/1/4096",
+        "payload_bytes": 4096,
+        "signed_message_bytes": 4367,
+        "cpq1_wire_bytes": 11602,
+        "latency_ns": {
+          "sign_self_verify_encode": {
+            "observed_samples": 64,
+            "p50_ns": 1379181,
+            "p99_ns": 33799617
+          },
+          "cold_pin_verify": {
+            "observed_samples": 64,
+            "p50_ns": 389465,
+            "p99_ns": 21826293
+          },
+          "hot_verify": {
+            "observed_samples": 64,
+            "p50_ns": 150166,
+            "p99_ns": 203786
+          }
+        }
+      },
+      {
+        "case_id": "ML-DSA-65/1/maximum",
+        "payload_bytes": 65265,
+        "signed_message_bytes": 65536,
+        "cpq1_wire_bytes": 70813,
+        "latency_ns": {
+          "sign_self_verify_encode": {
+            "observed_samples": 64,
+            "p50_ns": 3145785,
+            "p99_ns": 11940469
+          },
+          "cold_pin_verify": {
+            "observed_samples": 64,
+            "p50_ns": 495054,
+            "p99_ns": 3861269
+          },
+          "hot_verify": {
+            "observed_samples": 64,
+            "p50_ns": 357767,
+            "p99_ns": 5337877
+          }
+        }
+      },
+      {
+        "case_id": "ML-DSA-87/1/maximum",
+        "payload_bytes": 65265,
+        "signed_message_bytes": 65536,
+        "cpq1_wire_bytes": 72771,
+        "latency_ns": {
+          "sign_self_verify_encode": {
+            "observed_samples": 64,
+            "p50_ns": 1159552,
+            "p99_ns": 10014311
+          },
+          "cold_pin_verify": {
+            "observed_samples": 64,
+            "p50_ns": 838930,
+            "p99_ns": 2909750
+          },
+          "hot_verify": {
+            "observed_samples": 64,
+            "p50_ns": 507272,
+            "p99_ns": 7671472
+          }
+        }
+      },
+      {
+        "case_id": "ML-DSA-65/8/4096",
+        "payload_bytes": 4096,
+        "signed_message_bytes": 4815,
+        "cpq1_wire_bytes": 46975,
+        "latency_ns": {
+          "sign_self_verify_encode": {
+            "observed_samples": 64,
+            "p50_ns": 5962722,
+            "p99_ns": 17837711
+          },
+          "cold_pin_verify": {
+            "observed_samples": 64,
+            "p50_ns": 1500214,
+            "p99_ns": 3272499
+          },
+          "hot_verify": {
+            "observed_samples": 64,
+            "p50_ns": 641865,
+            "p99_ns": 9650905
+          }
+        }
+      },
+      {
+        "case_id": "ML-DSA-87/8/4096",
+        "payload_bytes": 4096,
+        "signed_message_bytes": 4815,
+        "cpq1_wire_bytes": 62639,
+        "latency_ns": {
+          "sign_self_verify_encode": {
+            "observed_samples": 64,
+            "p50_ns": 10445550,
+            "p99_ns": 22283718
+          },
+          "cold_pin_verify": {
+            "observed_samples": 64,
+            "p50_ns": 3999952,
+            "p99_ns": 20982887
+          },
+          "hot_verify": {
+            "observed_samples": 64,
+            "p50_ns": 945942,
+            "p99_ns": 4172521
+          }
+        }
+      },
+      {
+        "case_id": "ML-DSA-65/8/maximum",
+        "payload_bytes": 64817,
+        "signed_message_bytes": 65536,
+        "cpq1_wire_bytes": 107696,
+        "latency_ns": {
+          "sign_self_verify_encode": {
+            "observed_samples": 64,
+            "p50_ns": 14288536,
+            "p99_ns": 60902100
+          },
+          "cold_pin_verify": {
+            "observed_samples": 64,
+            "p50_ns": 4095615,
+            "p99_ns": 13751278
+          },
+          "hot_verify": {
+            "observed_samples": 64,
+            "p50_ns": 3303075,
+            "p99_ns": 12410383
+          }
+        }
+      },
+      {
+        "case_id": "ML-DSA-87/8/maximum",
+        "payload_bytes": 64817,
+        "signed_message_bytes": 65536,
+        "cpq1_wire_bytes": 123360,
+        "latency_ns": {
+          "sign_self_verify_encode": {
+            "observed_samples": 64,
+            "p50_ns": 11346875,
+            "p99_ns": 124023102
+          },
+          "cold_pin_verify": {
+            "observed_samples": 64,
+            "p50_ns": 6108933,
+            "p99_ns": 18188146
+          },
+          "hot_verify": {
+            "observed_samples": 64,
+            "p50_ns": 3513411,
+            "p99_ns": 5116249
+          }
+        }
+      }
+    ],
+    "measured_outcome_totals": {
+      "accepted_authentications": 6144,
+      "encoded_frames": 4096,
+      "input_wire_bytes": 2582975488,
+      "policy_budget_rejections": 4096,
+      "policy_encoding_rejections": 65536,
+      "policy_size_rejections": 4096,
+      "reserved_verification_attempts": 200192,
+      "reserved_wire_bytes": 2582961152,
+      "returned_verified_signatures": 23040,
+      "sign_and_self_verify_calls": 7680,
+      "signature_arithmetic_rejections": 2048,
+      "sticky_budget_checks": 2048,
+      "verification_api_calls": 81920
+    },
+    "reservations_are_not_signature_arithmetic_calls": true,
+    "p99_interpretation": "Nearest rank: ceil(0.99 * 64) = 64, so every reported p99 is the observed maximum, not a qualified production population tail.",
+    "timing_scope": "inclusive operation, outcome checks and owned temporary drops; fixture key generation and initial signatures outside samples; output IO outside samples"
+  },
+  "host": {
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+    "cpu_model": "AMD EPYC 9V74 80-Core Processor",
+    "cpu_quota": "800000 100000",
+    "memory_max": "8589934592",
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "load_before": [
+      17.5966796875,
+      11.263671875,
+      7.271484375
+    ],
+    "load_after": [
+      15.1005859375,
+      11.609375,
+      7.6201171875
+    ],
+    "shared_host": true,
+    "arm_executed": false,
+    "prospective_merge_executed": false,
+    "original_hardware_or_wan_qualification": false
+  },
+  "openssl_one_way": {
+    "passed": true,
+    "direction": "Rust-generated full CPQ1 fixtures -> OpenSSL default-provider Pure ML-DSA verification",
+    "cases": 32,
+    "checks": {
+      "accepted_original": 120,
+      "nonempty_context_empty_rejection_controls": 2,
+      "nonempty_context_positive_controls": 2,
+      "rejected_nonempty_context": 120,
+      "rejected_signature_challenge_bitflip": 120,
+      "rejected_wrong_message": 120
+    },
+    "per_algorithm_checks": {
+      "ML-DSA-65": {
+        "accepted_original": 60,
+        "rejected_nonempty_context": 60,
+        "rejected_signature_challenge_bitflip": 60,
+        "rejected_wrong_message": 60
+      },
+      "ML-DSA-87": {
+        "accepted_original": 60,
+        "rejected_nonempty_context": 60,
+        "rejected_signature_challenge_bitflip": 60,
+        "rejected_wrong_message": 60
+      }
+    },
+    "commands": 494,
+    "version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+    "binary_sha256": "35f28c82e7e4fdcd06b0a42062efd224a5fd5d32d5cc9894252f8206219d496e",
+    "provider_reused": true,
+    "provider_built_this_turn": false,
+    "original_provider_source_archive_sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+    "helper_path": "verify_openssl_fixtures.py",
+    "helper_sha256": "ba1b036a14ab75dc1ef863b492ebc2dc81455a0d54f1b0d79fe6b3b59c82d9da",
+    "summary_sha256": "353e351dc65827f7c7f0bc4b4dacbf3d640417eb1ad43e39698b88e25e6d488e",
+    "commands_jsonl_sha256": "494f18bec6f7c31d768f088eab2e192acafbc580d80689e0b1265fb5659325b3",
+    "exact_negative_classification": {
+      "cli_parameter_parse_and_other_errors_count_as_rejection": false,
+      "exit_code": 1,
+      "stderr": "empty or the sole exact EVP_DigestVerify 030000EA provider signature failure diagnostic",
+      "stdout": "Signature Verification Failure"
+    },
+    "context_option_positive_controls": 2,
+    "reverse_interoperability_tested": false,
+    "fips_module_certification_claimed": false,
+    "source_execution_provenance_note": "Helper source association is caller-supplied; the original recorder separately binds the frozen checkout and terminal command status. The helper self-hash binds the external script, not inclusion in the implementation commit."
+  },
+  "validation": {
+    "candidate_crypto_primitives": {
+      "passed": 143,
+      "failed": 0,
+      "ignored": 0
+    },
+    "candidate_protocol": {
+      "passed": 102,
+      "failed": 0,
+      "ignored": 2,
+      "ignored_changed": false
+    },
+    "candidate_compile_fail_doctests": {
+      "passed": 4,
+      "failed": 0
+    },
+    "workspace_all_targets_all_features_strict_clippy": {
+      "exit_code": 0,
+      "warnings_denied": true
+    },
+    "python_tests": {
+      "passed": 238,
+      "failed": 0,
+      "skipped": 0,
+      "suites": {
+        "source_integrity": 34,
+        "recorder": 4,
+        "research_integration": 35,
+        "claim_guard": 22,
+        "authority_surface": 11,
+        "required_native_reader": 9,
+        "cpq1_reader": 25,
+        "ci_contract": 98
+      }
+    },
+    "static_commands": {
+      "completed": 18,
+      "succeeded": 17,
+      "failed": 1,
+      "known_failure": "repository-check exits 2 for three incorrect relative links; publication fixes links and requires a new repository-check receipt"
+    },
+    "original_node_roster": {
+      "required": 49,
+      "executed": 0,
+      "qualified": false,
+      "reason": "Original all-feature Node library build on unchanged parent was killed by SIGKILL; no Node test executable was produced."
+    },
+    "additional_owner_controls": {
+      "union_with_original_roster": 94,
+      "executed": 0,
+      "qualified": false
+    },
+    "whole_node_library_suite": {
+      "executed": false,
+      "qualified": false
+    }
+  },
+  "preserved_failures": [
+    {
+      "kind": "interrupted_baseline_start",
+      "receipt": "base/baseline-crypto-protocol.json",
+      "receipt_sha256": "322e665dfe7647e51fcd539642cc2ecbfddf85675107ee810b7e1db0d39593b2",
+      "terminal_status_in_original_receipt": null,
+      "observed_process_exit": 130,
+      "success_credit": false,
+      "reason": "Local baseline branch name failed preflight; interrupted accidentally continued dependency build, retained incomplete receipt, renamed local branch and restarted after preflight passed."
+    },
+    {
+      "kind": "node_build",
+      "source": "b525fbc6dc780343c78710c98a94616f7cff59e4",
+      "cargo_exit_code": 101,
+      "compiler_signal": "SIGKILL (9)",
+      "success_credit": false,
+      "cgroup_oom_kill_counter_start": 0,
+      "cgroup_oom_kill_counter_after": 3,
+      "counter_scope": "Shared executor; not per-command attribution",
+      "compiler_profiles_and_original_limits_relaxed": false
+    },
+    {
+      "kind": "repository_links",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "exit_code": 2,
+      "later_fix": "Three relative links corrected in publication; original failed receipt remains unchanged."
+    },
+    {
+      "kind": "independent_openssl_harness_probe",
+      "run": "run-1",
+      "passed": false,
+      "success_credit": false,
+      "reason": "Initial harness rejected all stderr, including the expected OpenSSL provider signature failure diagnostic. Corrected classification after checking the actual provider path; all original failed records retained.",
+      "summary_sha256": "a38133a91609fccf3e1cf57788b0cf2d5f628f714fa97468fce6f4be4571ae37"
+    }
+  ],
+  "protected_source_sha256_unchanged_from_parent": {
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/Cargo.lock": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+    "config/pon/pq-system-required-tests-v1.json": "e01f5dd331a160d926d029f85a24714ae5c9ccaf3067819692544c115f1a6ebb",
+    "scripts/ci/record_pq_native_command.py": "3cf16e76cae957cb34226a0d2118ac15bbe2d1946d3758efc9426c25612cdc39",
+    "scripts/ci/check_required_native_test.py": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28",
+    "trillionnium/crates/trnm-protocol/src/crypto_profile.rs": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "e6eb2c0dddc4a59add47cb295c8c66397956cd94bff729a7472d52653a427b5f"
+  },
+  "key_command_receipts": [
+    {
+      "receipt": "base/baseline-crypto-protocol-retry.json",
+      "receipt_sha256": "84c881f86b06ec574133fd702f00937c88e8ab484a5131f17d65f6f135deba8d",
+      "source": "b525fbc6dc780343c78710c98a94616f7cff59e4",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:06:47.840037+00:00",
+      "elapsed_ns": 235691521390,
+      "log_sha256": "e568b40a11da8257d23b6b401d174fbb3fb8e2bd448b3f5ae34f79aa0130ce3f",
+      "log_bytes": 28178
+    },
+    {
+      "receipt": "base/baseline-node-build.json",
+      "receipt_sha256": "c52cc5cfa6b697bdc2f47231eaff06839509008c2eb41fd3d955a8a48cb7f14a",
+      "source": "b525fbc6dc780343c78710c98a94616f7cff59e4",
+      "status": "command_failed",
+      "exit_code": 101,
+      "started_utc": "2026-11-05T04:10:43.594413+00:00",
+      "elapsed_ns": 986549320146,
+      "log_sha256": "808d0739ec617b0b6c932323207eb71a6123737fe2e1f6b1ac178657b0ae6b81",
+      "log_bytes": 109765
+    },
+    {
+      "receipt": "candidate/cpq1-build.json",
+      "receipt_sha256": "3c53a6d79671b47a336e6c62ce531e0a7248d6cd4fa0b1b18c9558636138287c",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:21:35.151482+00:00",
+      "elapsed_ns": 22881608284,
+      "log_sha256": "1781ec5e4158294c15c2e10ee6ffc82bf0f335678d544a859d7bd4a56cf6362d",
+      "log_bytes": 62
+    },
+    {
+      "receipt": "candidate/cpq1-clippy.json",
+      "receipt_sha256": "1f75e5c25b6f893aeb248521b78777c3994597bed508563c9d64e7c17b0609bd",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:23:09.078778+00:00",
+      "elapsed_ns": 47778519111,
+      "log_sha256": "144b8f226f79f8a3650bc583e13c8b4c7c046ca413e6cf3b552e3c3b93fbf075",
+      "log_bytes": 1373
+    },
+    {
+      "receipt": "candidate/cpq1.json",
+      "receipt_sha256": "2d711d0dba88edba32d0d25894ccf73ca1d6143b072832b5bf8ac39ba7c66bf3",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:23:26.341597+00:00",
+      "elapsed_ns": 37999381817,
+      "log_sha256": "cf26fa3a8fc90efe1587b5c109c70cae166ae308e78454c396af11c0a67d0228",
+      "log_bytes": 4565765
+    },
+    {
+      "receipt": "candidate/cpq1-readback.json",
+      "receipt_sha256": "a11b3d4c0aa175c443f6cc410bc4ffb47daff80a8131e3278b1ab3a3ecc07efb",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:24:20.373377+00:00",
+      "elapsed_ns": 15117612060,
+      "log_sha256": "6d3a86091ff9f578ca9de1eddb4f14e5372f913ec6d084344982fe9cf3b480da",
+      "log_bytes": 1125
+    },
+    {
+      "receipt": "candidate/cpq1-host-before.json",
+      "receipt_sha256": "ee36c4beff1354a617fd8e9a536e3713c9ff84c91e4561bd16523f1852016d5c",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:22:43.171972+00:00",
+      "elapsed_ns": 42991931488,
+      "log_sha256": "772a63f10ff079931bc77abc909d9493b2659142b74cb73f29094242c6840d9b",
+      "log_bytes": 2577
+    },
+    {
+      "receipt": "candidate/cpq1-host-after.json",
+      "receipt_sha256": "61fc6865302cd1a0b325d6fcb613c5b08ab2f391ed4ab9467048ee68b5f9a58a",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:24:04.481604+00:00",
+      "elapsed_ns": 15722070030,
+      "log_sha256": "95ed0f841459617b7829eddacddcf99b5b616e277053b1647f8cb1d7859be4db",
+      "log_bytes": 2575
+    },
+    {
+      "receipt": "candidate/candidate-crypto-protocol.json",
+      "receipt_sha256": "bb66deaeb917aea4b0fdd71f02cf7041236425d5c717bb89b0641498729e2603",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:27:54.924681+00:00",
+      "elapsed_ns": 37392101034,
+      "log_sha256": "e04fe4ac54fa5c93b856686fefd7071b369ca0e6bdb42a6e1c130636bd7a226e",
+      "log_bytes": 26216
+    },
+    {
+      "receipt": "candidate/candidate-doc-contracts.json",
+      "receipt_sha256": "7803cacac9fbb176541c91d1c9c511bd2b01964f1346fcdc2a402ddccaac22fc",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:28:32.430080+00:00",
+      "elapsed_ns": 42915727188,
+      "log_sha256": "f813f62d4230d6e0534506eec3bad3c0ae18f6fce38f59370580f74957a82d09",
+      "log_bytes": 1021
+    },
+    {
+      "receipt": "candidate/candidate-workspace-clippy.json",
+      "receipt_sha256": "1036e5e81b1e15b91d04029795cdaf40702cda9696437d47ce8b2bd277ae769e",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:29:15.431099+00:00",
+      "elapsed_ns": 387437522043,
+      "log_sha256": "35dba794237ccf05071c9ca2e71df1cd16e78723f92983082c4f613a405c9220",
+      "log_bytes": 5661
+    },
+    {
+      "receipt": "candidate/cpq1-independent-openssl.json",
+      "receipt_sha256": "ca0789de073ece844b9d797afe7080050161dc2b2065b67ecb0e535d1b8447a5",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:37:00.015671+00:00",
+      "elapsed_ns": 23217094237,
+      "log_sha256": "22d4c9e9e941082a171e80c9bc0808b92a2846d55eefe91cd68732326f9849bd",
+      "log_bytes": 730
+    }
+  ],
+  "static_command_receipts": [
+    {
+      "receipt": "candidate-static/cargo-fmt.json",
+      "receipt_sha256": "1e86f8ce7f6cd1e0ccf0d4cdb9603a979268ce9488a0b4a4659d55dd0d6acd70",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:24:47.370042+00:00",
+      "elapsed_ns": 38895266704,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0
+    },
+    {
+      "receipt": "candidate-static/cargo-metadata-locked-offline.json",
+      "receipt_sha256": "2482759196099d84d76452c88d1e43d63f7b2bcb0be9fb4c4f00d44ca0686243",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:25:26.384180+00:00",
+      "elapsed_ns": 103968349092,
+      "log_sha256": "39089dca24e45bb0e3fd99a8f7057fcca3157aea96d0129dce57389b737880b2",
+      "log_bytes": 804632
+    },
+    {
+      "receipt": "candidate-static/ci-contract-check.json",
+      "receipt_sha256": "e962c4467a40db9ea02f4b7a4c0f9a3b7472b6d33be0e1ad89f9be7e1b92df6c",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:27:37.332105+00:00",
+      "elapsed_ns": 3381672944,
+      "log_sha256": "9e1991fcbac915b303bd1a6b9db2ce04a4094fa15bb6f05e83d57504313bf975",
+      "log_bytes": 180
+    },
+    {
+      "receipt": "candidate-static/distributed-source-inventory.json",
+      "receipt_sha256": "31e89a7c94c2f4d755ccddb4fd96587362a1e66c414315b37a3c8abc7755f899",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:27:10.424884+00:00",
+      "elapsed_ns": 5055721667,
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "log_bytes": 35
+    },
+    {
+      "receipt": "candidate-static/pq-authority-surface-summary.json",
+      "receipt_sha256": "20cf73410035af67fa47a8fa5328b1e3ff240f8fce547963aac58a767b3667fe",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:27:24.448932+00:00",
+      "elapsed_ns": 7504751449,
+      "log_sha256": "c506c32efacc66dff428e4c2e28c53acfb838ae86760459140d8311b508c9146",
+      "log_bytes": 382
+    },
+    {
+      "receipt": "candidate-static/pq-chain-claim-guard.json",
+      "receipt_sha256": "e81d8533f19632505cd03937b98c4bc5822158229567096b846a465802b9f629",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:27:18.817833+00:00",
+      "elapsed_ns": 5569351830,
+      "log_sha256": "6235b839d36b92351665414a731c9433441f007e727860d0c3bd138e7d731690",
+      "log_bytes": 3333
+    },
+    {
+      "receipt": "candidate-static/pq-research-integration.json",
+      "receipt_sha256": "5f0992f76af93c84619e99115dad054c5417a280adb1ee13270cbaea6fec0010",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:27:15.573870+00:00",
+      "elapsed_ns": 3059145033,
+      "log_sha256": "09e903565827d745aea0f023a9f625b5d7b79745f92ef6226dadc414e1ca1cd5",
+      "log_bytes": 557
+    },
+    {
+      "receipt": "candidate-static/preflight-audit.json",
+      "receipt_sha256": "060387bff5f578c0d5fb4eb33230a0007bb2ca59b07e8f134f9b3f7648abf15d",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:23:59.118257+00:00",
+      "elapsed_ns": 15249073714,
+      "log_sha256": "566f2f49baeeddfe0489a01d0034243c32dfe6fe9889b2e1ed83299061827f1e",
+      "log_bytes": 173
+    },
+    {
+      "receipt": "candidate-static/repository-check.json",
+      "receipt_sha256": "fa9ded52005a33a788b577cd40b91efc808ca8d3e1dd121349ab15e165aa325e",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_failed",
+      "exit_code": 2,
+      "started_utc": "2026-11-05T04:27:32.024664+00:00",
+      "elapsed_ns": 5234043245,
+      "log_sha256": "19ba42adbe472fda2e1949441d7f29f7545790c776aece4d12c26a703a9cc2eb",
+      "log_bytes": 156
+    },
+    {
+      "receipt": "candidate-static/rustc-version.json",
+      "receipt_sha256": "e534d62af2ac636c1f0a0d7d05b844bda0afa9d86da1d1ea730f4d9d1e55ee1b",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:24:34.550244+00:00",
+      "elapsed_ns": 12741023463,
+      "log_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "log_bytes": 196
+    },
+    {
+      "receipt": "candidate-static/test-ci-contract.json",
+      "receipt_sha256": "811d7609e6b649cccd26be7d84cccd1280c1292186e829f070f2c5e6efa6e56c",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:29:29.311021+00:00",
+      "elapsed_ns": 27534486283,
+      "log_sha256": "c90416994a9410f9226ef00f8305acf75772972a008c28f7336c5bf94e02df71",
+      "log_bytes": 17102
+    },
+    {
+      "receipt": "candidate-static/test-ci-source-integrity.json",
+      "receipt_sha256": "d44f1bbdf8f9f1addaaaaded9c15798ce95b2f039c1854970a59f7fe83b86500",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:27:40.782047+00:00",
+      "elapsed_ns": 11820889517,
+      "log_sha256": "466657fed49636460859c25e34d1c4dbf8923c99e2fac889a5bd18377de5c184",
+      "log_bytes": 6053
+    },
+    {
+      "receipt": "candidate-static/test-cpq1-parameter-reader.json",
+      "receipt_sha256": "2eac8b9dae92f7b239602dc6b5b1bf6a220ca121df0152de17536b9edb01f41f",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:29:19.136750+00:00",
+      "elapsed_ns": 10120598337,
+      "log_sha256": "4a19fb6e657ee637ea2c8884bc08398150d20d505f09e73d138866ad7094dfea",
+      "log_bytes": 4743
+    },
+    {
+      "receipt": "candidate-static/test-pq-authority-surface.json",
+      "receipt_sha256": "7399d81fffefaf5ab72c2a092a7e97a9ef20a4827144762c81c718862bc7fb34",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:28:59.147750+00:00",
+      "elapsed_ns": 8444700982,
+      "log_sha256": "658d54099c748f679c5506e52d0a04dd119a9b7d097ff753902b6aad7e646d61",
+      "log_bytes": 2034
+    },
+    {
+      "receipt": "candidate-static/test-pq-chain-claim-guard.json",
+      "receipt_sha256": "ab957f7415d4313b6ceca8d813dade74ce4a1080ec9042f049ce5facfefbd657",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:28:47.705772+00:00",
+      "elapsed_ns": 11385831944,
+      "log_sha256": "17f442ee42160b42319fb417437903b3f39b9930af2ee9507530d0296123d268",
+      "log_bytes": 3007
+    },
+    {
+      "receipt": "candidate-static/test-pq-native-recorder.json",
+      "receipt_sha256": "027e88b2c8d26d1f9defadfe7720e7a88f3bc49a3446b2b47c63d29068fd251a",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:27:52.653596+00:00",
+      "elapsed_ns": 8220719976,
+      "log_sha256": "b69f6285cffa7c1b1b10f7a4e014ad8dbe7f56aa842206bc5c0a87a1327bbc81",
+      "log_bytes": 1250
+    },
+    {
+      "receipt": "candidate-static/test-pq-research-integration.json",
+      "receipt_sha256": "9a9d1e2f516ae012b9d408c4482a10d55184923fa120d1ce86cde2d0201b473b",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:28:00.945047+00:00",
+      "elapsed_ns": 46689518359,
+      "log_sha256": "96f7c6fbe184fa78499819abe1e45073a1751c2f43482c92d6e32d8a06b771e5",
+      "log_bytes": 5706
+    },
+    {
+      "receipt": "candidate-static/test-required-native-reader.json",
+      "receipt_sha256": "ae06dfef69c7e5dae060ac7732c273d7fe70666b58f8d43c67e109d201f37313",
+      "source": "13986046c9c0e0e3d0d1c76b399bea11878e0ab6",
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "started_utc": "2026-11-05T04:29:07.668090+00:00",
+      "elapsed_ns": 11347549296,
+      "log_sha256": "91a384f468c03a6f40412f5a6a4709e17fd3d7353df91c8b7c44ecb827d7b04c",
+      "log_bytes": 1350
+    }
+  ],
+  "remaining_gates": {
+    "authorization": "UNQUALIFIED",
+    "capacity_and_invalid_input": "UNQUALIFIED",
+    "independent_end_to_end": "UNQUALIFIED",
+    "migration_and_rollback": "UNQUALIFIED",
+    "proof_pq128": "UNQUALIFIED",
+    "quantum_mining_fork_choice": "UNQUALIFIED"
+  },
+  "whole_chain_pq_qualified": false,
+  "production_activation": false,
+  "raw_output_policy": "Raw per-command logs and public fixtures remain external execution artifacts; this file is a compact index, not a replacement for raw evidence."
+}

@@ -1,0 +1,142 @@
+{
+  "files": [
+    {
+      "name": "cargo-identity.stderr",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/cargo-identity.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "version": "66306:46268849:0:1794199428283740043:1794199428283740043"
+    },
+    {
+      "name": "cargo-identity.stdout",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/cargo-identity.stdout",
+      "sha256": "c034ed37e1ee0ec102326f27e9b3b8fe6a481f8c8ad28df58a2e117b241c0f0e",
+      "size": 339,
+      "version": "66306:46268848:339:1794199428293719315:1794199428293719315"
+    },
+    {
+      "name": "preflight.stderr",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "version": "66306:46268842:0:1794199428198722675:1794199428198722675"
+    },
+    {
+      "name": "preflight.stdout",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/preflight.stdout",
+      "sha256": "118d30aadf0b69f8e01a98ce46f2eef79d0a32bbff3663d771d11bbbb3a564c6",
+      "size": 183,
+      "version": "66306:46268841:183:1794199428223721791:1794199428223721791"
+    },
+    {
+      "name": "preparation-commands.json",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/preparation-commands.json",
+      "sha256": "e523b691213414a657f113486dc8f8179dc24bd8972fa9e40a954958de8d8258",
+      "size": 4061,
+      "version": "66306:46268843:4061:1794199569397604123:1794199569397604123"
+    },
+    {
+      "name": "provider-version.stderr",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/provider-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "version": "66306:46268852:0:1794199428295400708:1794199428295400708"
+    },
+    {
+      "name": "provider-version.stdout",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/provider-version.stdout",
+      "sha256": "ce02e695a9cdef937642d2397d874af20e0dbca21e9f43e0395d6809813a0547",
+      "size": 63,
+      "version": "66306:46268851:63:1794199428295719245:1794199428295719245"
+    },
+    {
+      "name": "retained-provider-original.env",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/retained-provider-original.env",
+      "sha256": "6eb7842501dc1e58325aacbd0c461c5eb8fc1608bd374e14e6fe774066ca7e83",
+      "size": 546,
+      "version": "66306:46268845:546:1794199428229061101:1794199428229061101"
+    },
+    {
+      "name": "retained-provider-original.json",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/retained-provider-original.json",
+      "sha256": "194fa809eeb74ae99703a64f427eba28d5030063c772c46dcefa13c81ddbb9d9",
+      "size": 3059,
+      "version": "66306:46268844:3059:1794199428228856168:1794199428228856168"
+    },
+    {
+      "name": "rustc-identity.stderr",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/rustc-identity.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "version": "66306:46268847:0:1794199428268720200:1794199428268720200"
+    },
+    {
+      "name": "rustc-identity.stdout",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/rustc-identity.stdout",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "size": 196,
+      "version": "66306:46268846:196:1794199428281719740:1794199428281719740"
+    },
+    {
+      "name": "strict-clippy-recorder.stderr",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/strict-clippy-recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "version": "66306:46268856:0:1794199428300260890:1794199428300260890"
+    },
+    {
+      "name": "strict-clippy-recorder.stdout",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/strict-clippy-recorder.stdout",
+      "sha256": "f3118af02c9fd0e01089c3dc6ef202c991cb6557eaa2e114b0ddff0986a122f8",
+      "size": 137,
+      "version": "66306:46268855:137:1794199569390331459:1794199569390331459"
+    },
+    {
+      "name": "strict-clippy.json",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/strict-clippy.json",
+      "sha256": "a08f59427ecbac8551d6f9af5ab287b38d0af86f0f503097ab89c022e092a964",
+      "size": 2452,
+      "version": "66306:46268838:2452:1794199569390331459:1794199569390331459"
+    },
+    {
+      "name": "strict-clippy.log",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/strict-clippy.log",
+      "sha256": "97b46f7ac20867973b519045b4c440f64b72f7dc32c6870aaf4fae046cffae91",
+      "size": 6704,
+      "version": "66306:46268857:6704:1794199567793751053:1794199567793751053"
+    },
+    {
+      "name": "summary.json",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/summary.json",
+      "sha256": "3d32328ab822c2fecc39489b10f907677afaee88ad2b5599c6457a893b30df51",
+      "size": 9887,
+      "version": "66306:46268854:9887:1794199569427951596:1794199569427951596"
+    },
+    {
+      "name": "runner.py.txt",
+      "remote_path": "/home/qq/work/run-chain-c1-gates-resume-20261109-cadence-01.py",
+      "sha256": "d35ffc0074e2e9a8b02985f8a63d378b60581008b178ecbb52edc27477b3a082",
+      "size": 7278,
+      "version": "66306:46179372:7278:1794199400785830434:1794199400787142809"
+    },
+    {
+      "name": "artifact-index.json",
+      "remote_path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/artifact-index.json",
+      "sha256": "8f35ede8fe315178e608446cff24a154a7cb90d32b87fdf95fd79ce7455bf3dc",
+      "size": 4387,
+      "version": "66306:46273487:4387:1794199569428524926:1794199569428524926"
+    }
+  ],
+  "job_id": "1a1be9e96a7-5e21-1b7",
+  "output_complete": true,
+  "output_durable": true,
+  "qualification": "HOLD_NO_GO",
+  "record_kind": "postrun_original_byte_transfer_and_receipt_crosscheck",
+  "schema": "chain-c1-clippy-resume-transfer-audit-v1",
+  "source": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "terminal_exit_code": 0,
+  "tool_payload_classification": "Exact returned text payloads, not the transport envelope; process bytes_hex retains original streams.",
+  "transferred_utc": "2026-11-09T04:48:59.825382+00:00",
+  "tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+  "whole_chain_quantum_security_qualified": false
+}

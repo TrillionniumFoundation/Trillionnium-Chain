@@ -1,0 +1,25 @@
+test_agreement_denominators_are_separate_and_complete (__main__.BehaviorComparisonTests.test_agreement_denominators_are_separate_and_complete) ... ok
+test_equal_numbers_do_not_imply_equal_decision_observations (__main__.BehaviorComparisonTests.test_equal_numbers_do_not_imply_equal_decision_observations) ... ok
+test_float_bool_and_mismatched_observations_are_rejected (__main__.BehaviorComparisonTests.test_float_bool_and_mismatched_observations_are_rejected) ... ok
+test_tiny_exact_error_can_cross_the_stop_threshold (__main__.BehaviorComparisonTests.test_tiny_exact_error_can_cross_the_stop_threshold) ... ok
+test_tiny_exact_error_can_flip_lowest_index_route (__main__.BehaviorComparisonTests.test_tiny_exact_error_can_flip_lowest_index_route) ... ok
+test_complete_integer_products_equal_centered_field_contraction (__main__.ExactCellTests.test_complete_integer_products_equal_centered_field_contraction) ... ok
+test_declared_scales_and_integer_only_semantics (__main__.ExactCellTests.test_declared_scales_and_integer_only_semantics) ... ok
+test_extreme_positive_and_negative_outputs_are_not_rescaled_or_saturated (__main__.ExactCellTests.test_extreme_positive_and_negative_outputs_are_not_rescaled_or_saturated) ... ok
+test_input_shape_bias_type_range_and_batch_are_enforced (__main__.ExactCellTests.test_input_shape_bias_type_range_and_batch_are_enforced) ... ok
+test_invalid_artifact_numbers_and_unknown_numeric_schemas_are_rejected (__main__.ExactCellTests.test_invalid_artifact_numbers_and_unknown_numeric_schemas_are_rejected) ... ok
+test_lowest_index_ties_include_negative_and_nonzero_winners (__main__.ExactCellTests.test_lowest_index_ties_include_negative_and_nonzero_winners) ... ok
+test_no_inference_rounding_erases_a_small_integer_score (__main__.ExactCellTests.test_no_inference_rounding_erases_a_small_integer_score) ... ok
+test_seeded_integer_predictions_match_existing_scalar_contract (__main__.ExactCellTests.test_seeded_integer_predictions_match_existing_scalar_contract) ... ok
+test_sparse_all_tile_regions_and_bias_have_exact_known_outputs (__main__.ExactCellTests.test_sparse_all_tile_regions_and_bias_have_exact_known_outputs) ... ok
+test_ambiguous_or_noninteger_moduli_are_rejected (__main__.SignedBoundsTests.test_ambiguous_or_noninteger_moduli_are_rejected) ... ok
+test_bound_construction_does_not_wrap_or_overflow_abs (__main__.SignedBoundsTests.test_bound_construction_does_not_wrap_or_overflow_abs) ... ok
+test_centered_decode_requires_canonical_residues (__main__.SignedBoundsTests.test_centered_decode_requires_canonical_residues) ... ok
+test_merged_weights_require_their_own_doubled_bound (__main__.SignedBoundsTests.test_merged_weights_require_their_own_doubled_bound) ... ok
+test_negative_limits_and_noninteger_aliases_are_rejected (__main__.SignedBoundsTests.test_negative_limits_and_noninteger_aliases_are_rejected) ... ok
+test_odd_half_boundary_uses_exact_doubling (__main__.SignedBoundsTests.test_odd_half_boundary_uses_exact_doubling) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.156s
+
+OK

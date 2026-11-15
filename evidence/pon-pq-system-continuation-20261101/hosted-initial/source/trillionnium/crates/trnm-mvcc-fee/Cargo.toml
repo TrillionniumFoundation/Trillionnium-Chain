@@ -1,0 +1,35 @@
+[package]
+name = "trnm-mvcc-fee"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Trillionnium Contributors"]
+publish = false
+
+[package.metadata.trnm]
+module = "M06"
+role = "portable-component"
+profile = "portable-local-v2"
+production_activation = false
+consensus_authority = false
+
+[features]
+default = []
+pq-native-openssl = ["trnm-crypto-primitives/pq-native-openssl", "dep:openssl"]
+
+[dependencies]
+trnm-verification-profiles = { version = "=0.1.0", path = "../trnm-verification-profiles" }
+trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
+trnm-crypto-primitives = { version = "=0.1.0", path = "../trnm-crypto-primitives" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+hex = "0.4"
+borsh = { version = "1", features = ["derive"] }
+rusqlite = { version = "=0.39.0", features = ["bundled", "fallible_uint"] }
+sha2 = "0.10"
+openssl = { version = "=0.10.81", optional = true }
+
+[dev-dependencies]
+ml-dsa = "=0.1.1"
+serde_json = "1"
+tempfile = "3"

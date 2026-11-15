@@ -1,0 +1,6 @@
+   Compiling diff v0.1.13
+   Compiling yansi v1.0.1
+   Compiling pretty_assertions v1.4.1
+   Compiling codex-hepta-learning-artifacts v0.0.0 (/workspace/scratch/b4d6d3702e3a/chain-nextuse-native-export/hepta-learning-artifacts)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.17s
+     Running unittests src/lib.rs (chain-nextuse-native-export/target/debug/deps/codex_hepta_learning_artifacts-8db9adbaecb554f3)

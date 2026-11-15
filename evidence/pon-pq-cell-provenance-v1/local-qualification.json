@@ -1,0 +1,58 @@
+{
+  "schema": "trnm-pon-pq-cell-provenance-local-qualification-v1",
+  "source_basis": {
+    "upstream_pr": 408,
+    "upstream_head": "7cca6f76c5b6c7ac71bcccc1ce94da380360af40",
+    "branch": "research/pq-cell-provenance-verified-release-20261026"
+  },
+  "test_environment": {
+    "os": "Linux",
+    "architecture": "x86_64",
+    "kernel": "6.18.55",
+    "filesystem": "overlayfs",
+    "python": "3.13.5",
+    "openssl": "3.5.5",
+    "rust_toolchain_available": false,
+    "network": "no WAN testing"
+  },
+  "executed": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "-v",
+      "test_pq_cell_custody.py",
+      "test_pq_cell_provenance.py"
+    ],
+    "working_directory": "formal/pon-nakamoto-v1",
+    "note": "Local staged exact-Git-blob source files, not a new full repository clean-checkout run",
+    "exit_code": 0,
+    "passes": 25,
+    "failures": 0,
+    "elapsed_seconds": 2.473,
+    "output": "local-unittest.log",
+    "output_git_blob": "6427542eee6b2940a2b90988deeb06df8246cda0",
+    "output_sha256": "d90504ea3ee24add876c1b135e81f7ed00789b1117ddb695673ee39d0eabc8de"
+  },
+  "code_git_blobs": {
+    "formal/pon-nakamoto-v1/pq_envelope.py": "27e40b04ac8eaa381ad4dc017f23f226f99f3f41",
+    "formal/pon-nakamoto-v1/pq_cell_custody.py": "5dabec97985cebe3de8feff51089267bd8650aea",
+    "formal/pon-nakamoto-v1/test_pq_cell_custody.py": "4a93c30e57087fb50737a13bf53d8d680676d463",
+    "formal/pon-nakamoto-v1/pq_cell_provenance.py": "fd66d313a3873f78729cf8742d5046efe3009ed6",
+    "formal/pon-nakamoto-v1/test_pq_cell_provenance.py": "8042f8ee23ec181cc4ee64799768a442a5b66a82"
+  },
+  "acceptance_scope": {
+    "real_ml_dsa_65": true,
+    "canonical_pcb1_evaluator_release_catalog_and_complete_cell": true,
+    "independent_operators": false,
+    "normal_hepta_entry": false,
+    "production_node": false,
+    "native_rust_executed": false,
+    "historical_pq_migration": false,
+    "quantum_pon_work_hardness_accepted": false,
+    "public_wan": false,
+    "full_artifact_availability": false,
+    "external_crypto_review": false,
+    "production_activation": false
+  }
+}

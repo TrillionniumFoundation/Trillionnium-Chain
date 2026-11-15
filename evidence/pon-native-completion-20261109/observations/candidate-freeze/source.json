@@ -1,0 +1,45 @@
+{
+  "head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+  "tree": "46164cd85fff00e3a080acc29fef25a27751082b",
+  "parent": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "branch": "fix/chain-native-completion-20261108-70ae",
+  "author": {
+    "name": "ProfHepta",
+    "email": "102159240+ProfHepta@users.noreply.github.com",
+    "date": "2026-11-09T02:59:20+00:00"
+  },
+  "committer": {
+    "name": "ProfHepta",
+    "email": "102159240+ProfHepta@users.noreply.github.com",
+    "date": "2026-11-09T02:59:20+00:00"
+  },
+  "message": "fix(pon): require complete native admission for completion priority\n\nPreserve the original CPU interval and commit fences across public, Growth, and History admission. Keep signed resource semantics in a fresh r18 namespace and retain cold-progress and same-byte regression controls.\n",
+  "paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "evidence/pon-native-completion-20261109/README.md",
+    "evidence/pon-native-completion-20261109/review/ag-closure-matrix-review.md",
+    "evidence/pon-native-completion-20261109/review/b-peer-review.json",
+    "evidence/pon-native-completion-20261109/review/def-call-sites.txt",
+    "evidence/pon-native-completion-20261109/review/def-python-commands.json",
+    "evidence/pon-native-completion-20261109/review/def-review.json",
+    "evidence/pon-native-completion-20261109/review/unbound-helper-guard-manifest.json",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission/prepared_held_native_completion_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked.rs"
+  ],
+  "qualification": "HOLD_NO_GO",
+  "runtime_validation": "pending exact committed-source campaign"
+}

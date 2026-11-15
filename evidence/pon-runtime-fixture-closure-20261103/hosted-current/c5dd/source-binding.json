@@ -1,0 +1,99 @@
+{
+  "schema": "c5dd7c-hosted-source-binding-v1",
+  "observed_utc": "2026-11-03T22:12:34.876587+00:00",
+  "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "head_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+  "head_parent": "8ebded733d90bf74e7d8e3adbd2458ad8b572159",
+  "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "actual_merge": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+  "actual_merge_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+  "ordered_actual_merge_parents": [
+    "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1"
+  ],
+  "candidate_remote_receipt": {
+    "file": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/20261103T221112657Z-candidate-commit-tool.json",
+    "sha256": "41599a7875e8cb39e03d86bef0e52645ebc79ee7c64ea1600541d72dd38ce43b"
+  },
+  "actual_merge_remote_receipt_from_root": {
+    "file": "/workspace/scratch/b5a148b09b11/next-validation/final-publication/actual-merge-commit.json",
+    "sha256": "4a142a136c42dac9800c362937d76aeea7998316aeb08ca068c617952b19292d"
+  },
+  "actual_merge_git_metadata": {
+    "sha": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+    "node_id": "C_kwDOTty1_doAKDdhM2UxMjVjYjM0M2JkODVmYjgwNmFiYTg3YTIxZjk5ZWFjMDgyZGU",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/7a3e125cb343bd85fb806aba87a21f99eac082de",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/7a3e125cb343bd85fb806aba87a21f99eac082de",
+    "author": {
+      "name": "Tomasrgbsf",
+      "email": "273673612+Tomasrgbsf@users.noreply.github.com",
+      "date": "2026-11-03T22:10:49Z"
+    },
+    "committer": {
+      "name": "GitHub",
+      "email": "noreply@github.com",
+      "date": "2026-11-03T22:10:49Z"
+    },
+    "tree": {
+      "sha": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/30f59a8ec2abdc269bf91e228c58206b23add43d"
+    },
+    "message": "Merge c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1 into dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "parents": [
+      {
+        "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+      },
+      {
+        "sha": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1"
+      }
+    ],
+    "verification": {
+      "verified": true,
+      "reason": "valid",
+      "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJq6lvpCRC1aQ7uu5UhlAAA/ZoQAE6nydocVxQKYA8hTDnHr39x\nM5ks5UVxbZ6KfV4rVEN/Nb9iaBeHeVLfwmJ7E4ne8/2VQVOVL9OP13DzpRwIqxhh\nL0BOLxIh7djFw5CwPkywnG9ZjVJb3o8h1cH9iRYXd5rOFt05KIoxdqcl0AiS30cq\n8PA8ef/JKxM2gpJjmnOv0Jj3oyzQumLfE0cm0G+Vi0DbEAjNq0N/ASvLB01jDAYs\noNsuroXfqKLQ4qsXn4tj4L6adYHozfL40lgqk3GACFuQscF6H4qtzXIWABd4dVYb\nExjB8tHjThfxuk0Xh1/lLDJRxBlXPr4XjCG8wgrJPwj9aA5rlb9PLuKMMjrHu8Aa\nEva5V3ztrTN4UiqtFo7a62D5mKGvIHwnb+K/xdf7mpeSXEieBj7I9jfN+0UCBBo7\ndA3o0zchNEsnsMsnAoMkyvpiC4IAvImajPnFNa1LWVwWlfaDneXs+iSW9hNHNyOI\nwwK34hsUs67I6UqIbzF8pyQH9MYe8sXzM17mcxUw4zBX3lNPLMFp3HQW8tnRbYNO\nNeYFKtOz6TuK1QRJhFRQyvHuJ2OVdQ6Vr8nc9DoDdP1ASyV7824AcdqwvIcepfam\no52OdEp3n2ko7/JHBCGuiPZb0TRJq3H+FqLxJ1g2YLlMpzSYHL5zbFqZJ4jlqr2F\nXjelkcFs2dc2jIYdV/Av\n=p2AY\n-----END PGP SIGNATURE-----\n",
+      "payload": "tree 30f59a8ec2abdc269bf91e228c58206b23add43d\nparent dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\nparent c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1\nauthor Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793743849 +0000\ncommitter GitHub <noreply@github.com> 1793743849 +0000\n\nMerge c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1 into dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n",
+      "verified_at": "2026-11-03T22:10:50Z"
+    }
+  },
+  "candidate_git_metadata": {
+    "sha": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "node_id": "C_kwDOTty1_doAKGM1ZGQ3Yzc3MTg5MjViOTUxZGM2ZTRkNWNjYzVhODZjY2ZhOGUzYzE",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "author": {
+      "name": "Tomasrgbsf",
+      "email": "273673612+Tomasrgbsf@users.noreply.github.com",
+      "date": "2026-11-03T22:08:41Z"
+    },
+    "committer": {
+      "name": "Tomasrgbsf",
+      "email": "273673612+Tomasrgbsf@users.noreply.github.com",
+      "date": "2026-11-03T22:08:41Z"
+    },
+    "tree": {
+      "sha": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/30f59a8ec2abdc269bf91e228c58206b23add43d"
+    },
+    "message": "fix(pon): preserve evaluation CPU ownership and bounded failure diagnostics\n\nActivate prepared evaluation forks through the existing metered path and original CPU domain after listener join. Preserve packet, generation, storage, credit and original fixture budgets; add an actual TCP restart control.\n\nRetain separately versioned non-authoritative bounded dispatch/terminal diagnostics without changing typed error identity, authorization or retry behavior. Correct the stale History result count to its actual original 25/1 registry.\n\nPreserve complete source-bound b280 and diagnostic validation, actual hosted failures, failed service gates, interrupted UNKNOWN observations and the final-composition prepublish snapshot. Final 974-entry and exact-source hosted acceptance remain separately reported; Draft/HOLD, no activation claim.",
+    "parents": [
+      {
+        "sha": "8ebded733d90bf74e7d8e3adbd2458ad8b572159",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/8ebded733d90bf74e7d8e3adbd2458ad8b572159",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/8ebded733d90bf74e7d8e3adbd2458ad8b572159"
+      }
+    ],
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "native_qualification": false,
+  "scope": "Remote Git identity binding only; workflow and native results remain separately observed."
+}

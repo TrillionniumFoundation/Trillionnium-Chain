@@ -1,0 +1,57 @@
+[
+  {
+    "id": 13080304568,
+    "archive_name": "artifact-13080304568.zip",
+    "sha256": "cfc3c39f5f7ddd342a9e2211de111f79551cb101bfd3e61d836819ae12d9e15b",
+    "bytes": 5172760,
+    "files": 71,
+    "uncompressed_bytes": 33303329,
+    "github_digest_matched": true,
+    "safe_paths": true,
+    "crc32_all_members_valid": true
+  },
+  {
+    "id": 13080373152,
+    "archive_name": "artifact-13080373152.zip",
+    "sha256": "6fa6cc95ecf00f594fa23520b796c5b85b541a8c06ebc9667e5a95c6a1be4773",
+    "bytes": 5221662,
+    "files": 71,
+    "uncompressed_bytes": 34466762,
+    "github_digest_matched": true,
+    "safe_paths": true,
+    "crc32_all_members_valid": true
+  },
+  {
+    "id": 13080422819,
+    "archive_name": "artifact-13080422819.zip",
+    "sha256": "de70b1d8205c11d791b10c12212cf4a15ff28c4bbc2fe60434d69f9769503d03",
+    "bytes": 7604439,
+    "files": 147,
+    "uncompressed_bytes": 44710866,
+    "github_digest_matched": true,
+    "safe_paths": true,
+    "crc32_all_members_valid": true
+  },
+  {
+    "id": 13080717011,
+    "archive_name": "artifact-13080717011.zip",
+    "sha256": "c82e71a2f6b4a0ad763d9acc7ff03f7b69cd30540d02b5ea18ef253471d94b3f",
+    "bytes": 7368649,
+    "files": 147,
+    "uncompressed_bytes": 44040480,
+    "github_digest_matched": true,
+    "safe_paths": true,
+    "crc32_all_members_valid": true
+  },
+  {
+    "id": 13080886111,
+    "archive_name": "artifact-13080886111.zip",
+    "sha256": "6df4c8623a235617209833342bf87cab608457e54b7c23e07a9077140fea0665",
+    "bytes": 49766434,
+    "files": 1766,
+    "uncompressed_bytes": 235972899,
+    "github_digest_matched": true,
+    "safe_paths": true,
+    "crc32_all_members_valid": true
+  }
+]

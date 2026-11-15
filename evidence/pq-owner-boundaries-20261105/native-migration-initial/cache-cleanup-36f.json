@@ -1,0 +1,157 @@
+{
+  "scope": "owned rebuildable 36f test executable cache only; primary libtest retained",
+  "reason": "14fc component source requires fresh test binaries; preserve space for serialized native builds",
+  "removed": [
+    {
+      "target": "tests/capacity_progress.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/capacity_progress-74341374d4a728a6",
+      "bytes": 57416432,
+      "sha256": "f8ad7e7f6daa53e92733a03510fc60694682b24cc03b5d8ea20fe314167547e6"
+    },
+    {
+      "target": "tests/checkpoint_tile_material_v1.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/checkpoint_tile_material_v1-c953c96734f7b5da",
+      "bytes": 59127448,
+      "sha256": "7bdc86aef9b365a2f3e9cc4c9aab4444e1c1bdb124b55e31be9939935b750f21"
+    },
+    {
+      "target": "tests/checkpoint_tile_policy_v1.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/checkpoint_tile_policy_v1-cdfbdac0ce279077",
+      "bytes": 57162448,
+      "sha256": "18e0f19437e34f0ca92e168667dd45899df473fc8eee892676c65c42a0e7cd68"
+    },
+    {
+      "target": "tests/continuity_v1.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/continuity_v1-452dfa4744ffe4ff",
+      "bytes": 58982744,
+      "sha256": "3ba7feb89dbaec1f2ae69d354de82daa25f42a29faed04d31725e8fa6f586780"
+    },
+    {
+      "target": "tests/evaluation_quorum_v2.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/evaluation_quorum_v2-8f89c890289ba966",
+      "bytes": 58114008,
+      "sha256": "a166a7a8c095d68ac194f3f75f9dd011d735e314aba356b3477a82f57ea06101"
+    },
+    {
+      "target": "tests/incremental_prefix.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/incremental_prefix-e48f543af0d32fa7",
+      "bytes": 61607024,
+      "sha256": "9860a558e463d31f55d8772ebe9f4d995966f7fc36bc57cc277fea358c7f824b"
+    },
+    {
+      "target": "tests/model_evolution_v5.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/model_evolution_v5-74dabf3ae601722f",
+      "bytes": 60005496,
+      "sha256": "57bef716f67ef3ff04a5a26631d3877bccc2b5463609d6e2396e89f63b8f0068"
+    },
+    {
+      "target": "tests/pon_commitment.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/pon_commitment-f62b0ca22de9e8a9",
+      "bytes": 60351248,
+      "sha256": "97ef9d55e8e2bb249a13d516c7129913945f43bafabd1de98f0e14237d8b5349"
+    },
+    {
+      "target": "tests/pq2_authority_capacity.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/pq2_authority_capacity-2cad572f9b950d38",
+      "bytes": 60227104,
+      "sha256": "d4d679f99047d79d55ca4f5c4318d2fdca37c6d9a1c9f4b7775988688adb2fab"
+    },
+    {
+      "target": "tests/pq3_quota_authority.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/pq3_quota_authority-cb20c39dfc36d66f",
+      "bytes": 60239016,
+      "sha256": "0addd7ef0706bd6c301e2ed400d447b14916bd4a7e95a881cfdf23d3af0831c1"
+    },
+    {
+      "target": "tests/pq4_task_authority.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/pq4_task_authority-fb92be26110af7b9",
+      "bytes": 60511240,
+      "sha256": "14080edbf2cd186c317c0921c276c9004c1b27bafbd68ed00bb491124d658f91"
+    },
+    {
+      "target": "tests/pq5_task_renewal.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/pq5_task_renewal-9ea60ab5acccf421",
+      "bytes": 61734984,
+      "sha256": "776c1180877ba8154de6d2c57e821ac4f3ac45728f613363000a572f28163b1b"
+    },
+    {
+      "target": "tests/pq_account_owner.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/pq_account_owner-607c0ba6c5885273",
+      "bytes": 67369416,
+      "sha256": "832e5fc90deb3193e4ba453d9f344a8134b9efdeb4caff1fd1d0c8cc4c6b2000"
+    },
+    {
+      "target": "tests/qualified_task_lifecycle_v2.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/qualified_task_lifecycle_v2-ea80326d4f02bb75",
+      "bytes": 59370008,
+      "sha256": "963c2f9f84fa20ccaf013fc13b66c6ca646787132cb0431d9d2af7f56c895cc5"
+    },
+    {
+      "target": "tests/qualified_task_lifecycle_v3.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/qualified_task_lifecycle_v3-aace9b7ba16dc21a",
+      "bytes": 57703144,
+      "sha256": "257bb302588ab7cb5a0cbbe0bd9c62db49c61b2a20b66fa290f6036af199bae0"
+    },
+    {
+      "target": "tests/qualified_task_lifecycle_v4.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/qualified_task_lifecycle_v4-1436bb3607ff29bd",
+      "bytes": 57977192,
+      "sha256": "0aad0847d2a7fc78d60d6e23e4b8edbd91f61c7bad835902869d068eb901c52f"
+    },
+    {
+      "target": "unittests examples/borrowed_non_account_allocations.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/examples/borrowed_non_account_allocations-187ae7b6440d940c",
+      "bytes": 7103184,
+      "sha256": "81d0993064558123023dbca65e21c368ad5f5e785bc6f9ed74550825e989f0ad"
+    },
+    {
+      "target": "unittests examples/borrowed_non_account_cost.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/examples/borrowed_non_account_cost-0a3f68fac45bf92f",
+      "bytes": 6879848,
+      "sha256": "59eeab7cf4f3eb08d89178750ca816fc7aae6570bae5fe921d656d849b45c975"
+    },
+    {
+      "target": "unittests examples/checkpoint_tile_material_v1.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/examples/checkpoint_tile_material_v1-053b63ca763c224d",
+      "bytes": 6879864,
+      "sha256": "12d995db696f685ad71db1982d5ef9a4d8eef97aeabe13f3a36806cbcd1a64f0"
+    },
+    {
+      "target": "unittests examples/continuity_transition_vectors.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/examples/continuity_transition_vectors-4cce16e480a01845",
+      "bytes": 6879880,
+      "sha256": "4c41e2770de124fccd44294994696ce19aa0f69ea97a40654ab6f3b6dc26fb4a"
+    },
+    {
+      "target": "unittests examples/continuity_vectors.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/examples/continuity_vectors-177e27a1083ec6b9",
+      "bytes": 6879800,
+      "sha256": "f963d67634b0ca9547550653b20b97f295755c4afe24f872db51cf8bd9699ab4"
+    },
+    {
+      "target": "unittests examples/pon_commitment_resource_bounds.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/examples/pon_commitment_resource_bounds-22381a73ea68ba0f",
+      "bytes": 6879880,
+      "sha256": "d0de486a3cdb50f1c7d2ed3f972eead5a28face9548e690774e70b05105dcd26"
+    },
+    {
+      "target": "unittests examples/pon_execute.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/examples/pon_execute-8d24c1ec95560b03",
+      "bytes": 6879752,
+      "sha256": "8545ec84945dff1de2c41c8c2da9cdd2bb6f1e849376aaf507625dd32d560961"
+    },
+    {
+      "target": "unittests examples/pon_execute_session.rs",
+      "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/examples/pon_execute_session-78f10c5da27a4dda",
+      "bytes": 6879808,
+      "sha256": "96ba7b4c3a6927585bab9a929b8d79b164ca4adfb5ffc0db63ca9fc6f0f56492"
+    }
+  ],
+  "removed_bytes": 1013160968,
+  "retained_primary": {
+    "target": "unittests src/lib.rs",
+    "path": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
+    "bytes": 74899992,
+    "sha256": "c4616e4731963337a72bc02efc804e15c3c575581c9a2ab1c2a54db9caa1ed3f"
+  }
+}

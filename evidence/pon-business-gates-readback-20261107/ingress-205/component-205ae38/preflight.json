@@ -1,0 +1,13 @@
+{
+  "name": "preflight",
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "started_unix_ns": 1794070455575467356,
+  "ended_unix_ns": 1794070455683672002,
+  "exit_code": 0,
+  "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/preflight.log",
+  "log_bytes": 173,
+  "log_sha256": "5b7f93acd60822d8dd80aefe71ae927306835ec4fa601e7e0072e7dc5ef29327"
+}

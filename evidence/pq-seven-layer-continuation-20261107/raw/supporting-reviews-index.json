@@ -1,0 +1,270 @@
+{
+  "archive": "supporting-reviews.tar.gz",
+  "build_caches_included": false,
+  "bytes": 120535,
+  "entries": [
+    {
+      "bytes": 3563,
+      "path": "codeql-composition-v2/README.md",
+      "sha256": "2a2638a505719c360da28c048c0c2b455039bc689c10fc77b0bbe8bcc59cd29f"
+    },
+    {
+      "bytes": 9936,
+      "path": "codeql-composition-v2/candidate/.github/workflows/codeql-real-exact-source.yml",
+      "sha256": "bde700cd2ccfaf1bafd7ac82851dd8e028793162798568bd69c85631eaa73d30"
+    },
+    {
+      "bytes": 16867,
+      "path": "codeql-composition-v2/candidate/scripts/ci/test_codeql_retention.py",
+      "sha256": "87f71f203f63bbcf90096f3a2e33d4475a078cc28d7aeb20b1c4bb06e29eb255"
+    },
+    {
+      "bytes": 11231,
+      "path": "codeql-composition-v2/candidate/scripts/ci/verify_ci_source.py",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    },
+    {
+      "bytes": 24125,
+      "path": "codeql-composition-v2/combined.patch",
+      "sha256": "b9e403a194ac4eb56b5f416f04707e488bafdee07a5763fcd15dcab67b12b513"
+    },
+    {
+      "bytes": 685,
+      "path": "codeql-composition-v2/concurrent-observation-block.txt",
+      "sha256": "78212449f820799f2c063d0112791e8a26cac82ffcfaba1a3789678b90053c3b"
+    },
+    {
+      "bytes": 7035,
+      "path": "codeql-composition-v2/concurrent/.github/workflows/codeql-real-exact-source.yml",
+      "sha256": "f6ee7b00ba3bc64ead9141478882c195adbaef8fad3c9909c07dd0e751ffb426"
+    },
+    {
+      "bytes": 2142,
+      "path": "codeql-composition-v2/controls.stderr",
+      "sha256": "42de4ab5afda7e5c25c6a6a1513a1f621b126a837fff59e5e1c21d374957403e"
+    },
+    {
+      "bytes": 0,
+      "path": "codeql-composition-v2/controls.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 4801,
+      "path": "codeql-composition-v2/e36/.github/workflows/codeql-real-exact-source.yml",
+      "sha256": "c025e047e5619e2edc17701fbe345ca10b1508b1fb7602ec691ab56e119ddc85"
+    },
+    {
+      "bytes": 5266,
+      "path": "codeql-composition-v2/e36/scripts/ci/test_codeql_retention.py",
+      "sha256": "2260edb549b2e166de0028f4cbbe46d490965d84849314c31f9e1626da05258c"
+    },
+    {
+      "bytes": 11231,
+      "path": "codeql-composition-v2/e36/scripts/ci/verify_ci_source.py",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    },
+    {
+      "bytes": 0,
+      "path": "codeql-composition-v2/patch-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "codeql-composition-v2/patch-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1587,
+      "path": "codeql-composition-v2/prior-v1-files.json",
+      "sha256": "2c3014871194d0d2988f20e1c12c163754ed7c1c534e35590d97a61b68f9da10"
+    },
+    {
+      "bytes": 2365,
+      "path": "codeql-composition-v2/validation-summary.json",
+      "sha256": "d4ca8f963391bdb7f4e4aa35cb3b631df87698f4d7c18f582064510a758e304f"
+    },
+    {
+      "bytes": 4025,
+      "path": "codeql-composition/README.md",
+      "sha256": "e636c363c85c3f5b9129a05fc232a19dc278cdbd1cf350dce681d4cc43cf7ce7"
+    },
+    {
+      "bytes": 9251,
+      "path": "codeql-composition/candidate/.github/workflows/codeql-real-exact-source.yml",
+      "sha256": "92b3b9202248c6b7a570c6ce465ee85543c1ac043c45585df028ddcaa82ca8dd"
+    },
+    {
+      "bytes": 14698,
+      "path": "codeql-composition/candidate/scripts/ci/test_codeql_retention.py",
+      "sha256": "83c7f92939c9baaad722af7561c9898a2aa9fcc8560fc48a361ff1e6afac9ae2"
+    },
+    {
+      "bytes": 11231,
+      "path": "codeql-composition/candidate/scripts/ci/verify_ci_source.py",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    },
+    {
+      "bytes": 21228,
+      "path": "codeql-composition/combined.patch",
+      "sha256": "09f590b0cd7882b89910248e67c9a19f0698d78173ed06cc7a80ce8b94f86371"
+    },
+    {
+      "bytes": 6350,
+      "path": "codeql-composition/concurrent/.github/workflows/codeql-real-exact-source.yml",
+      "sha256": "f87a7ea256b25d5a2f8fcb363348368c0288e93fe8defb1fa3ac4af307992068"
+    },
+    {
+      "bytes": 11231,
+      "path": "codeql-composition/concurrent/scripts/ci/verify_ci_source.py",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    },
+    {
+      "bytes": 1950,
+      "path": "codeql-composition/controls.stderr",
+      "sha256": "f8a953414f3d2ff935976d20af4c0e4090c078585fe818e41afd33e5662f665e"
+    },
+    {
+      "bytes": 0,
+      "path": "codeql-composition/controls.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 4801,
+      "path": "codeql-composition/e36/.github/workflows/codeql-real-exact-source.yml",
+      "sha256": "c025e047e5619e2edc17701fbe345ca10b1508b1fb7602ec691ab56e119ddc85"
+    },
+    {
+      "bytes": 5266,
+      "path": "codeql-composition/e36/scripts/ci/test_codeql_retention.py",
+      "sha256": "2260edb549b2e166de0028f4cbbe46d490965d84849314c31f9e1626da05258c"
+    },
+    {
+      "bytes": 11231,
+      "path": "codeql-composition/e36/scripts/ci/verify_ci_source.py",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    },
+    {
+      "bytes": 0,
+      "path": "codeql-composition/patch-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "codeql-composition/patch-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1709,
+      "path": "codeql-composition/validation-summary.json",
+      "sha256": "b8c07f17702e73659d8334bdccfc8fe60af398a4a8cbd80d97ed7ca25ff1ba8f"
+    },
+    {
+      "bytes": 631,
+      "path": "completed-node-elf-retirement.json",
+      "sha256": "7bf3a62c24e4452fd6fae0e6afa67022cead7b9e8745a47074459c9a0f5a3752"
+    },
+    {
+      "bytes": 151055,
+      "path": "component-readback/components-e36cfb88.json",
+      "sha256": "c42d3da52a2e622023e86415ea5dcd25955bb08bf3ebbba644079a2539d13a70"
+    },
+    {
+      "bytes": 19738,
+      "path": "component-readback/read_components.py",
+      "sha256": "813e8a196f09cddffed3f138057e40b6ebd783096cb0336a7bc4ca271f206016"
+    },
+    {
+      "bytes": 741,
+      "path": "component-readback/readback-run.json",
+      "sha256": "f0131980d4ff20b6160396be69a5c3a3ea9c07506a59d85e649073745e805daa"
+    },
+    {
+      "bytes": 0,
+      "path": "component-readback/readback.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 240,
+      "path": "component-readback/readback.stdout.log",
+      "sha256": "ca84a340658533e55d269c21540bafa4da926dd176707bdd1b93d4ed190fa542"
+    },
+    {
+      "bytes": 2425,
+      "path": "composition-pin-receipt.json",
+      "sha256": "b212dd283181672f4ef5a989dc6fbce6fcd371afa76e1529e3a14f8249969c0e"
+    },
+    {
+      "bytes": 36013,
+      "path": "installer-readback/m15-entrypoints-e36cfb88.json",
+      "sha256": "e3c44aebc6d83eeb58f228ae6a896bed87b6d6fcf639201249c2d4a851c680e5"
+    },
+    {
+      "bytes": 9309,
+      "path": "installer-readback/m15-entrypoints-e36cfb88.md",
+      "sha256": "75e44048ebebeccafea957ef1ae91005455677c365a6dabb85341b7afa079334"
+    },
+    {
+      "bytes": 2928,
+      "path": "native-reader-controls/README.md",
+      "sha256": "9e4505f552f6038b8f36367f3ba92aa2a7e6272688f9b837bb270b272998f6e1"
+    },
+    {
+      "bytes": 11914,
+      "path": "native-reader-controls/recording-01-new/controls-report.json",
+      "sha256": "8b6f07c4ef2de7336226c72b1df56631aab635ee1b950aeedd5882bd86a3ea95"
+    },
+    {
+      "bytes": 0,
+      "path": "native-reader-controls/recording-01-new/controls.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 7886,
+      "path": "native-reader-controls/recording-01-new/controls.stdout.log",
+      "sha256": "d9f19bca4424a2de9314c15bb8b1f1b6e3de5548da39f108fced070bb3da9751"
+    },
+    {
+      "bytes": 1996,
+      "path": "native-reader-controls/recording-01-new/run.json",
+      "sha256": "cf1f8fad6457bfa8ac798cd08fcc2968785dad766891209d77d3cbf0c526e476"
+    },
+    {
+      "bytes": 19629,
+      "path": "native-reader-controls/run_controls.py",
+      "sha256": "e51eeadd145dbb271f590f88994fd3e65f8110d4223e12dc40381056b27b05f3"
+    },
+    {
+      "bytes": 236,
+      "path": "recovery-failure-readback/SHA256SUMS.txt",
+      "sha256": "d91d9e7a705dbc56e27e02bc412f28c5478e260a28f22c1677c1f15cd7845851"
+    },
+    {
+      "bytes": 99724,
+      "path": "recovery-failure-readback/readback.json",
+      "sha256": "4eb1b212440a1ea2b16e3e6babc08782b5cc1e564948010e1ebc09ac02ab8213"
+    },
+    {
+      "bytes": 6901,
+      "path": "recovery-failure-readback/readback.md",
+      "sha256": "23228df2b24ae40fbae64dac90ad248de0d27b7c679a5cf531cdf9cb5e093dc2"
+    },
+    {
+      "bytes": 22941,
+      "path": "recovery-failure-readback/readback.py",
+      "sha256": "a4aca00c210e1b79c1f2b0b587c3bfc4c418cd3ad10930d57903ba1c377e9d9c"
+    },
+    {
+      "bytes": 1254,
+      "path": "security-pin-receipt.json",
+      "sha256": "9ce3885ff9436a6ca475927fe0f60e4ee8a8be263ad0899ad3a104deaa5e10e1"
+    },
+    {
+      "bytes": 1241,
+      "path": "self-time-namespace-observation.json",
+      "sha256": "8b369cc2093cb76afd5d7fa901fb80ade1ca2691c62b48809408a03401a38a09"
+    }
+  ],
+  "native_elf_bodies_included": false,
+  "sha256": "1227280df9f8bc15d30fc9ef34d49ce1ecbcea7c39090f10bb3fb65d4cf614b7",
+  "uncompressed_bytes": 600607
+}

@@ -1,0 +1,27 @@
+test_complete_current_native_roster_passes (__main__.LegalGateTests.test_complete_current_native_roster_passes) ... ok
+test_every_retained_versioned_material_and_observer_control_executes_once (__main__.LegalGateTests.test_every_retained_versioned_material_and_observer_control_executes_once) ... ok
+test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused (__main__.LegalGateTests.test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused) ... ok
+test_actual_workflow_uses_both_strict_gates_without_changing_native_selectors (__main__.NativeGateTests.test_actual_workflow_uses_both_strict_gates_without_changing_native_selectors) ... ok
+test_cli_failure_never_writes_success_report (__main__.NativeGateTests.test_cli_failure_never_writes_success_report) ... ok
+test_cli_fifo_and_symlink_log_refuse_without_waiting (__main__.NativeGateTests.test_cli_fifo_and_symlink_log_refuse_without_waiting) ... ok
+test_complete_roster_passes (__main__.NativeGateTests.test_complete_roster_passes) ... ok
+test_detached_diagnostics_keep_exact_success_and_refuse_bad_records (__main__.NativeGateTests.test_detached_diagnostics_keep_exact_success_and_refuse_bad_records) ... ok
+test_every_named_control_requires_one_successful_terminal (__main__.NativeGateTests.test_every_named_control_requires_one_successful_terminal) ... ok
+test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary (__main__.NativeGateTests.test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary) ... ok
+test_factorial_example_does_not_accept_filtered_or_measured_tests (__main__.NativeGateTests.test_factorial_example_does_not_accept_filtered_or_measured_tests) ... ok
+test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control (__main__.NativeGateTests.test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control) ... ok
+test_fixture_counts_match_frozen_complete_named_rosters (__main__.NativeGateTests.test_fixture_counts_match_frozen_complete_named_rosters) ... ok
+test_frozen_names_equal_current_native_source_and_retained_counts (__main__.NativeGateTests.test_frozen_names_equal_current_native_source_and_retained_counts) ... ok
+test_history_named_controls_remain_required_once (__main__.NativeGateTests.test_history_named_controls_remain_required_once) ... ok
+test_ignored_child_is_exact_and_parent_still_must_pass (__main__.NativeGateTests.test_ignored_child_is_exact_and_parent_still_must_pass) ... ok
+test_kernel_rejects_missing_duplicate_or_replaced_named_control (__main__.NativeGateTests.test_kernel_rejects_missing_duplicate_or_replaced_named_control) ... ok
+test_nocapture_retains_name_until_its_serial_success_terminal (__main__.NativeGateTests.test_nocapture_retains_name_until_its_serial_success_terminal) ... ok
+test_original_old_counts_cannot_certify_the_current_roster (__main__.NativeGateTests.test_original_old_counts_cannot_certify_the_current_roster) ... ok
+test_previous_incomplete_positive_fixture_is_refused (__main__.NativeGateTests.test_previous_incomplete_positive_fixture_is_refused) ... ok
+test_retained_diagnostic_helper_cannot_borrow_another_terminal (__main__.NativeGateTests.test_retained_diagnostic_helper_cannot_borrow_another_terminal) ... ok
+test_selected_native_suites_keep_nonzero_filtered_observations (__main__.NativeGateTests.test_selected_native_suites_keep_nonzero_filtered_observations) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 4.749s
+
+OK

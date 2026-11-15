@@ -1,0 +1,31 @@
+test_account_owner_or_report_cannot_be_omitted (test_pq_research_integration.CorpusGateTests.test_account_owner_or_report_cannot_be_omitted) ... ok
+test_account_profile_cannot_claim_complete_authority_or_miner_roster (test_pq_research_integration.CorpusGateTests.test_account_profile_cannot_claim_complete_authority_or_miner_roster) ... ok
+test_changed_signature_or_source_refuses (test_pq_research_integration.CorpusGateTests.test_changed_signature_or_source_refuses) ... ok
+test_default_chain_activation_refuses (test_pq_research_integration.CorpusGateTests.test_default_chain_activation_refuses) ... ok
+test_duplicate_json_field_refuses (test_pq_research_integration.CorpusGateTests.test_duplicate_json_field_refuses) ... ok
+test_duplicate_required_pin_refuses_but_base_fixture_is_unique (test_pq_research_integration.CorpusGateTests.test_duplicate_required_pin_refuses_but_base_fixture_is_unique) ... ok
+test_malformed_pq_gate_refuses (test_pq_research_integration.CorpusGateTests.test_malformed_pq_gate_refuses) ... ok
+test_missing_source_pin_refuses (test_pq_research_integration.CorpusGateTests.test_missing_source_pin_refuses) ... ok
+test_missing_source_refuses (test_pq_research_integration.CorpusGateTests.test_missing_source_refuses) ... ok
+test_native_evidence_must_exist_but_never_grants_acceptance (test_pq_research_integration.CorpusGateTests.test_native_evidence_must_exist_but_never_grants_acceptance) ... ok
+test_native_evidence_traversal_or_symlink_refuses (test_pq_research_integration.CorpusGateTests.test_native_evidence_traversal_or_symlink_refuses) ... ok
+test_native_owner_guards_and_cli_cannot_be_dropped_from_required_pins (test_pq_research_integration.CorpusGateTests.test_native_owner_guards_and_cli_cannot_be_dropped_from_required_pins) ... ok
+test_native_profile_is_mandatory_and_stays_transport_only (test_pq_research_integration.CorpusGateTests.test_native_profile_is_mandatory_and_stays_transport_only) ... ok
+test_native_wire_numeric_claims_refuse_bool_or_wrong_version (test_pq_research_integration.CorpusGateTests.test_native_wire_numeric_claims_refuse_bool_or_wrong_version) ... ok
+test_nested_symlink_directory_refuses_even_without_named_pq_file (test_pq_research_integration.CorpusGateTests.test_nested_symlink_directory_refuses_even_without_named_pq_file) ... ok
+test_new_unpinned_pq_implementations_fail_closed (test_pq_research_integration.CorpusGateTests.test_new_unpinned_pq_implementations_fail_closed) ... ok
+test_pinned_nested_source_is_checked_by_byte_identity (test_pq_research_integration.CorpusGateTests.test_pinned_nested_source_is_checked_by_byte_identity) ... ok
+test_pinned_pq_named_module_keeps_original_byte_identity (test_pq_research_integration.CorpusGateTests.test_pinned_pq_named_module_keeps_original_byte_identity) ... ok
+test_pq_source_directory_symlink_is_not_trusted (test_pq_research_integration.CorpusGateTests.test_pq_source_directory_symlink_is_not_trusted) ... ok
+test_pqg_native_dual_signature_source_must_have_exact_blob_pin (test_pq_research_integration.CorpusGateTests.test_pqg_native_dual_signature_source_must_have_exact_blob_pin) ... ok
+test_source_symlink_refuses (test_pq_research_integration.CorpusGateTests.test_source_symlink_refuses) ... ok
+test_traversal_budget_refuses_before_unbounded_tree_scan (test_pq_research_integration.CorpusGateTests.test_traversal_budget_refuses_before_unbounded_tree_scan) ... ok
+test_traversal_pin_refuses (test_pq_research_integration.CorpusGateTests.test_traversal_pin_refuses) ... ok
+test_unpinned_pq_named_nested_module_rejects_renamed_native_file (test_pq_research_integration.CorpusGateTests.test_unpinned_pq_named_nested_module_rejects_renamed_native_file) ... ok
+test_unreviewed_overlay_refuses (test_pq_research_integration.CorpusGateTests.test_unreviewed_overlay_refuses) ... ok
+test_valid_offline_fixture_is_still_hold (test_pq_research_integration.CorpusGateTests.test_valid_offline_fixture_is_still_hold) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 1.198s
+
+OK

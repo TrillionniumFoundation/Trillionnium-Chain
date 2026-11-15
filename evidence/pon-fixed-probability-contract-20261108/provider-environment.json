@@ -1,0 +1,9 @@
+{
+  "OPENSSL_DIR": "/home/qian-qi/chain-w1-ingress-r17-20261107/provider-runtime/trnm-pq-provider-3.5.9.lq0uAtbU/install",
+  "OPENSSL_STATIC": "1",
+  "OPENSSL_CONF": "/dev/null",
+  "OPENSSL_MODULES": "/home/qian-qi/chain-w1-ingress-r17-20261107/provider-runtime/trnm-pq-provider-3.5.9.lq0uAtbU/install/lib/ossl-modules",
+  "TRNM_PQ_OPENSSL": "/home/qian-qi/chain-w1-ingress-r17-20261107/provider-runtime/trnm-pq-provider-3.5.9.lq0uAtbU/install/bin/openssl",
+  "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+  "TRNM_PQ_OPENSSL_SHA256": "4467365b708d585d6d01da86ae47d43f096bc61454ebc24fb099544f52ca028d"
+}

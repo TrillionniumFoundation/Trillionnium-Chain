@@ -1,0 +1,61 @@
+{
+  "composed_pins": 710,
+  "left": "b08e4f624c122175583094ea94f5c8c3150cec5d",
+  "left_pins": 694,
+  "required_paths": 629,
+  "retained_left_paths": true,
+  "retained_right_paths": true,
+  "reviewed_rebindings": [
+    {
+      "base": "f502450773e39fd023d33152098397de1ec6ebe6",
+      "composed": "70bc322e71f992794259a3f37bd8397c6f16907a",
+      "left": "0b88495f873c048ced030005716f2e7b8b7e5ace",
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "right": "f6b862182b361eefef62a553f59c3e79e90e1868"
+    },
+    {
+      "base": "18aa6e06366f649d4061e492d1f988ef8924494d",
+      "composed": "3c4b2e2c68708793cb73fed67fbc2e119bc082c1",
+      "left": "ca5e3a76a33d4b430c5b6cc210b6cb70e79164a4",
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "right": "a80140754b738f125845d5fa79e70c61aa7841c5"
+    },
+    {
+      "base": "d7675db8181af34bfec9dad0fead5f34f67f1dc1",
+      "composed": "647a6d9f2bb15877987d293d7e6740c44d14fc9a",
+      "left": "0b85178bc940c6f18e2f21fc660265698650e77b",
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "right": "18667f2ff0178e855485759d6303ed7c253c18e7"
+    },
+    {
+      "base": null,
+      "composed": "54440d8968cf5eee063605aabf81ea0f4438daf0",
+      "left": null,
+      "path": "scripts/ci/check_sqlite_build_requalification.py",
+      "right": "3790ce2b25faf674258b6cd9c4e1a16b4ec74817"
+    },
+    {
+      "base": "47fc0afb71777049bdaee58e2ff5910f486de8ff",
+      "composed": "b14cda97a3ec4e86b174d0cfc51436e55b014be8",
+      "left": "cceb16bc35214a3dd51c9bbcae9c3a407a40a95a",
+      "path": "scripts/ci/ci_job.sh",
+      "right": "2378c02d1c73fc9c67d716018ab4e1dddbf56c99"
+    },
+    {
+      "base": "5c38c39f46f63ab82661f64ced2e0f12f7f392bf",
+      "composed": "dc4914b370d7bd179cf1aa07d9633a2e224dc7bd",
+      "left": "f71f66d606d9a17ab4cf3cc2c4bc06fa53f596b5",
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "right": "3cec8fae2a55d6708d23ee1f37026aeba23b4fe5"
+    },
+    {
+      "base": "70e42fd48d21755af43c5157c89ebfe5f09663ce",
+      "composed": "2dae36d2021844029e675a7353e30f0b65927e1c",
+      "left": "ced1f5145e78721376ac854bd51daa21a633928b",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "right": "5f6f16ddabde5d7fa67d0c993e9d508e804ef3b7"
+    }
+  ],
+  "right": "e70f13448aad715286fb8eb56fc802b09db643a3",
+  "right_pins": 558
+}

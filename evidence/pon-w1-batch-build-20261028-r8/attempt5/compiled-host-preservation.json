@@ -1,0 +1,15 @@
+{
+  "schema": "TRNM-W1-BATCH-COMPILED-HOST-PRESERVATION1",
+  "source_path": "/tmp/trnm-w1-r2-target/release/trnm-w1-batch-host",
+  "source_bytes": 39608224,
+  "source_sha256": "f077a55e73a18ff054d651aa878c755e16377319e534644f09c1f43cf1adeb19",
+  "preserved_gzip": "compiled-host.gz",
+  "gzip_bytes": 11496239,
+  "gzip_sha256": "fcdb5ccfbeea25b55bb1ba2a4dbb72f55872385d03c34706cabeaa417971da38",
+  "complete_decompress_check_bytes": 39608224,
+  "complete_decompress_check_sha256": "f077a55e73a18ff054d651aa878c755e16377319e534644f09c1f43cf1adeb19",
+  "original_host_retained": true,
+  "wall_seconds": 0.5424146370060043,
+  "process_cpu_seconds": 0.530349,
+  "native_execution_or_guest_execution_or_proof": false
+}

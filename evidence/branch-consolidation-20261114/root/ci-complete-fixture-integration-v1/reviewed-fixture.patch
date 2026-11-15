@@ -1,0 +1,54 @@
+diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json
+index 242c54ebf8de04e2b67839673ac88b5227463849..9301a8240e4268e718a2008f24b1c87737dc660e 100644
+--- a/config/pon/pq-cross-branch-corpus-v1.json
++++ b/config/pon/pq-cross-branch-corpus-v1.json
+@@ -1780,7 +1780,7 @@
+     "scripts/ci/test_chain_hepta_command_binding.py": "2297f6afe201f503eb9e0de8dcb7fa1a4f840cfd",
+     "scripts/ci/test_chain_hepta_qualification.py": "a52c8e3f8b81525290867355f2f0a00a089bf5e9",
+     "scripts/ci/test_chain_system_security.py": "f919a47c0882bc1945e359e9525fc3fd0538b784",
+-    "scripts/ci/test_ci_contract.py": "b8f39d29a0cd3382f54bcafa43808f1a0a871429",
++    "scripts/ci/test_ci_contract.py": "8683f6b319cb6104bf7dc201e3b363c648901468",
+     "scripts/ci/test_ci_observation_process.py": "83a132a161d1b93c569e7382f238046609a229fc",
+     "scripts/ci/test_codeql_retention.py": "719db201b9e08f649a8f243858088a0a4d65adac",
+     "scripts/ci/test_codeql_semantic_observations_v1.py": "2ab766684e6c6d1a2cfbe14b1032000f9cceebf0",
+diff --git a/scripts/ci/test_ci_contract.py b/scripts/ci/test_ci_contract.py
+index b8f39d29a0cd3382f54bcafa43808f1a0a871429..8683f6b319cb6104bf7dc201e3b363c648901468 100644
+--- a/scripts/ci/test_ci_contract.py
++++ b/scripts/ci/test_ci_contract.py
+@@ -2638,15 +2638,32 @@ cargo() {
+                         self.assertEqual((output / 'native-account-verification-cost.log').exists(),
+                                          len(expected_calls) == 4)
+ 
++    def current_model_observation_block(self):
++        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
++        marker = '    (\n      trnm_model_receipt_root='
++        self.assertEqual(original.count(marker), 1)
++        start = original.index(marker)
++        end = original.index('    )\n', start) + len('    )\n')
++        block = original[start:end]
++        # Keep actual comments in the moved fixture while checking every command.
++        commands = ''.join(line for line in block.splitlines(keepends=True)
++                           if not line.lstrip().startswith('#'))
++        self.assertEqual(commands, MODEL_OBSERVATION_BLOCK)
++        return block
++
+     def test_model_observation_block_cannot_move_to_another_lane(self):
+         original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+-        changed = original.replace(MODEL_OBSERVATION_BLOCK, '').replace('  fuzz-smoke)\n',
+-                                                                              '  fuzz-smoke)\n' + MODEL_OBSERVATION_BLOCK)
++        block = self.current_model_observation_block()
++        changed = original.replace(block, '', 1).replace('  fuzz-smoke)\n',
++                                                        '  fuzz-smoke)\n' + block, 1)
++        self.assertEqual(changed.count(block), 1)
++        self.assertEqual(sorted(changed.splitlines()), sorted(original.splitlines()))
+         self.rejected('scripts/ci/ci_job.sh', original, changed)
+ 
+     def test_model_oracles_must_precede_documentation_tests(self):
+-        self.rejected('scripts/ci/ci_job.sh', MODEL_OBSERVATION_BLOCK + NATIVE_RELEASE_BLOCK + RUST_DOCS,
+-                      RUST_DOCS + MODEL_OBSERVATION_BLOCK + NATIVE_RELEASE_BLOCK)
++        block = self.current_model_observation_block()
++        self.rejected('scripts/ci/ci_job.sh', block + NATIVE_RELEASE_BLOCK + RUST_DOCS,
++                      RUST_DOCS + block + NATIVE_RELEASE_BLOCK)
+ 
+     def test_model_exports_cannot_leak_into_doc_or_clippy_commands(self):
+         self.rejected('scripts/ci/ci_job.sh', '    )\n' + RUST_DOCS, RUST_DOCS + '    )\n')

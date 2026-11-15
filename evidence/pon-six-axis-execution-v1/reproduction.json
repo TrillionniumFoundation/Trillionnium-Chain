@@ -1,0 +1,933 @@
+{
+  "schema": "pon-six-axis-execution-reproduction-v2",
+  "status": "HOLD_COMPONENTS_VERIFIED_NODE_RUNTIME_AND_COST_OPEN",
+  "integration_pr": 688,
+  "publication_source": {
+    "code_composition_commit": "23a56123e3112de06d7c684ef2057578759176ff",
+    "code_composition_tree": "31121e474271432c2b038672fea514872e1f1166",
+    "followup_changes_native_implementation": false,
+    "code_scope": "Native Rust trillionnium/ tree, Cargo manifests/lock and root toolchain are exactly composition23. Current model Python, CI workflows and config are compositionffb, separately checked. This own evidence overlay updates documentation and external analysis helpers only.",
+    "aggregate_algorithm": "SHA256 of sorted relative UTF-8 path + NUL + raw SHA256(file bytes), concatenated for every path in the stated scope.",
+    "trillionnium_and_scripts": {
+      "files": 1473,
+      "sha256": "663983b80ab292780af6774754d47a85631ae0a4113926a53bed7ca8f0938d2a"
+    },
+    "trillionnium_scripts_config": {
+      "files": 1515,
+      "sha256": "a502f8a778e605abdd209ee3b19b55dd8cb466a92cbe53604dffb5f60397c302"
+    },
+    "trillionnium_scripts_config_and_root_toolchain": {
+      "files": 1516,
+      "sha256": "9fd9ab472fa3884920be318b5a9eea8c1f9b825d9843b3620318f44a890ef753"
+    },
+    "static_checker_separate_aggregate": {
+      "sha256": "e9eff789643efe859ba1f0e165df5626bcad4ffe84381f488726051281d49864",
+      "files": 1515,
+      "algorithm": "sha256 of sorted UTF-8 path + NUL + lowercase file-content SHA256 + newline",
+      "do_not_compare_as_same_encoding": true,
+      "full_validation_input_sha256": "75e834a15c0b2c391b2fbb9acd14d39da07fff5ae1997fa3534e2c038debee4d",
+      "full_validation_input_count": 1539
+    },
+    "key_paths_in_followup": {
+      ".github/workflows/pon-branch-encoding-acceptance.yml": {
+        "bytes": 14436,
+        "sha256": "b2acc0f6f5969e5bcb0061d510b9d44e43938448eb6975b389e10f4b44400e9a",
+        "git_blob": "6be4b067f694c94a04c178cea2e8252a9bf86cbe"
+      },
+      "config/pon/pq-cross-branch-corpus-v1.json": {
+        "bytes": 87132,
+        "sha256": "fb3fce21d1832f2a3470ec2093cbe43fc33b542ac6fe6e8263286b919756381f",
+        "git_blob": "32714148c0c737c0f8532c4777013953420201e8"
+      },
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+        "bytes": 508486,
+        "sha256": "e9b7f6f18983b1b7811f66b5a14209f7ae236eb7cb580306dbe9aff706948b09",
+        "git_blob": "a3ee76f855f3989b7641eba2d92511c2c02bbadd"
+      },
+      "docs/protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md": {
+        "bytes": 66894,
+        "sha256": "ac99e47d3f69f780761cb5df4fd63375d1c88cd015e8f0a92ce69e74125401f2",
+        "git_blob": "1f98e4b5907c3c7d30f73d8f5c57ed85b80d8e5b"
+      },
+      "docs/protocol/pon-nakamoto-v1/details/PUBLIC_REQUEST_RESOURCE_OBSERVATION.md": {
+        "bytes": 10198,
+        "sha256": "1af668274946e629ce5c6a73b6cf303b8665990d183b2c738487140283512988",
+        "git_blob": "836e0b997a79eb03a0b4a5a92a928da136322ba3"
+      },
+      "rust-toolchain.toml": {
+        "bytes": 86,
+        "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+        "git_blob": "8770b1d875864c5356dc4abad904b69ec484817f"
+      },
+      "scripts/ci/ci_job.sh": {
+        "bytes": 23605,
+        "sha256": "54ca75843778372ee33d299d47c47639cc106e9cf9704364231dbce6d6547931",
+        "git_blob": "818d4b4a6a1af46818d1d069ac84085058d1aed9"
+      },
+      "scripts/ci/test_ci_source_integrity.py": {
+        "bytes": 25907,
+        "sha256": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e",
+        "git_blob": "47bf35a471696e0fc1072ab2d4b6167490bfdf1c"
+      },
+      "scripts/ci/test_pon_public_v3_phase_read.py": {
+        "bytes": 65203,
+        "sha256": "18a51381d808cd9c63d7e1f30e3686291c7a60b2653ad4d49e0a892a6d94c17c",
+        "git_blob": "ad20815839712fb167ec72cedd82db06818f1e8d"
+      },
+      "scripts/ci/verify_ci_source.py": {
+        "bytes": 11231,
+        "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+        "git_blob": "c775290c138c3b41a32e654f56ed5cbe9acec3ee"
+      },
+      "scripts/pon_public_v3_phase_read.py": {
+        "bytes": 58685,
+        "sha256": "6cef46999bc11572471f4fe1aadfd8b010f80e2332bbfa1b1eb079cd56114311",
+        "git_blob": "0f46577524e1e352c5ec8cfdb30e7af75c773031"
+      },
+      "trillionnium/Cargo.lock": {
+        "bytes": 40033,
+        "sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+        "git_blob": "17e1155502ae7a15a9eea151a045dd24df2aae50"
+      },
+      "trillionnium/Cargo.toml": {
+        "bytes": 2204,
+        "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+        "git_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65"
+      },
+      "trillionnium/crates/trnm-data-availability/src/cell/network/persistent.rs": {
+        "bytes": 17359,
+        "sha256": "82ed7c852d25b5bdf13f852edea1e039a9097d21d13cce927f3b0cbb9a69042f",
+        "git_blob": "c17a1149d6336b57f5d717b2ee426a037933aeae"
+      },
+      "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/tests.rs": {
+        "bytes": 37235,
+        "sha256": "c146e3bff4d8a955c9d04ff53bf3ca0ef9ea3358a35cf8a28fc9aa8f4031cbc2",
+        "git_blob": "2ab5d20fb40523cb6540c260172f9dd133c43721"
+      },
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": {
+        "bytes": 149355,
+        "sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c",
+        "git_blob": "867ade35cb43cc3d1dc9bba60c4c47be2d918e2b"
+      },
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/growth.rs": {
+        "bytes": 10775,
+        "sha256": "acbd79b01ce588859c648baae9ae96bc5ad18d1b87286b9fa9ecc0f7a5356757",
+        "git_blob": "8528cb9e4504a776b8cfb7d4ded52988a396d6a4"
+      },
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": {
+        "bytes": 337763,
+        "sha256": "45c21a33728b2b8027c02a01da57b3dabb0c65850b9f02e904b0e8fa004cf7c6",
+        "git_blob": "b7eb36f77d93bf2c3ae272b34c5b8e66de7d8f5e"
+      },
+      "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth.rs": {
+        "bytes": 5612,
+        "sha256": "0a10cb1508eaec964cb664716cd13c7639fbe42d0d21871e5315090040f7421b",
+        "git_blob": "68d6c3e13eca1f032de9a12532f74d17370f9984"
+      },
+      "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth/account_prefix_tests.rs": {
+        "bytes": 8304,
+        "sha256": "e759d9c65d8203ba25d0b6f354c242909a6bcc5a42af5db5be32f2102a064bb5",
+        "git_blob": "10cccefbab932cc22569eb4a8c035f6de7defc05"
+      },
+      "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs": {
+        "bytes": 48515,
+        "sha256": "346ab49e53d8c78a6d98298abf1f98d5501350a9124960276006840678d6bd95",
+        "git_blob": "3e74d19498f9ba3893a8f0ff48c4a7e6182694a6"
+      },
+      "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/account_prefix_tests.rs": {
+        "bytes": 9838,
+        "sha256": "759daff9f2e9d3c8b81f3e1e2b59d7400334e8c93ac6f53e87308fb769b2f0d5",
+        "git_blob": "22da87350cdb670feec4bba6775e0cf56b616db2"
+      },
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
+        "bytes": 379826,
+        "sha256": "c719d0bdd0c9e68a30707ccbe70c58e14082ff113c9554706b46404b006223ed",
+        "git_blob": "45a9167acf5b5671eac72a54ea3e687b63eae7d4"
+      },
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs": {
+        "bytes": 9197,
+        "sha256": "1a4814c8fa97b66eb75d5a5decda4f64b68b4ff600105c696d577e9d37899b19",
+        "git_blob": "de2f56bc0143553ea628c8e9c707043a4e95526c"
+      },
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs": {
+        "bytes": 26695,
+        "sha256": "b22cff0169f2731ad8038de736c7c59d7957c1bb8ccd0ed1355d903d6bb047df",
+        "git_blob": "1111d532383b19a4e623de311795a883202410f2"
+      },
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs": {
+        "bytes": 67274,
+        "sha256": "2cc710fec391bdb36f9f1e013db7a801bc461a63fbc9133cbba17121fe2cc41f",
+        "git_blob": "9e7e8e5d97cb1390121edbf9327eb2c71f61070b"
+      },
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs": {
+        "bytes": 7040,
+        "sha256": "0424c5063e8a8eadb5b32e09fc38b3c455e0ae9488f4a26288d9b58be59b6e1d",
+        "git_blob": "72f5f1145cd03d70f4df423a69b142c3199dffdc"
+      },
+      "trillionnium/crates/trnm-pon-node/src/main.rs": {
+        "bytes": 124665,
+        "sha256": "c56b50263e5e47c1da51dc9b2c679a8383762e4837cadd24cfd8ca82aebccc66",
+        "git_blob": "13ed1b33668335970ffbf98099bb4ee7757dab80"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store/growth.rs": {
+        "bytes": 31911,
+        "sha256": "828e89150c238393f9f61506641e0a3788bc80c3353aeddd4d50e04f4bf445a2",
+        "git_blob": "d5a09cf485dfc4d27d332c251b6633501f890c1d"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs": {
+        "bytes": 30547,
+        "sha256": "6533b7115812fc9b3ce0b579a1a08aa77882f351f96d96f2ce5848afa48ff6f7",
+        "git_blob": "87ece5b2846e00fa28ba0b2b51d3b837383e9843"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs": {
+        "bytes": 84707,
+        "sha256": "39870e7194e274c404bc45f373fcd73b73d2b87e3324577975cb7bf3bc5f5ddc",
+        "git_blob": "304683bc8e7863670b92a4a6f864e12fb45cc803"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store/growth/tests/parallel_preparation.rs": {
+        "bytes": 16584,
+        "sha256": "5b8ebe93e25f170a3084aa4a7d0db5038078457885e77b2b5da00727bcb03c49",
+        "git_blob": "0ab229471a9d1e05b1a477ab35824a24f7be9210"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/current_accounts_tests.rs": {
+        "bytes": 17093,
+        "sha256": "61c979708c26ec7f8b4e7ad034f3513dd29ee5b14e25bb7cea0ffff00bed49b1",
+        "git_blob": "3090e7a1b60b7d4d135166c7530383cc7be1aca5"
+      },
+      "trillionnium/crates/trnm-pon-node/tests/public_cache_modes.rs": {
+        "bytes": 2809,
+        "sha256": "64722f31d663a63ef250b57bcdb160d0c636531c7033c72889107eb84de1775f",
+        "git_blob": "f16f40edb24b73d80360fa13846090ff8852b109"
+      },
+      "trillionnium/crates/trnm-pon-node/tests/public_v3_request_accounting.rs": {
+        "bytes": 37248,
+        "sha256": "4633f293d089caf91297b035a8f7e2d503b324b477605bb2c32ffc395710c7dc",
+        "git_blob": "f6f4f0aa32811ffe2132d8539aa3e8dd93debdeb"
+      },
+      ".github/workflows/pon-smollm-hosted-once.yml": {
+        "bytes": 1988,
+        "sha256": "f9bd0275cfae5cd0e644b3a2142ba60b049f8da4ade1432c13f39890bb8215ff",
+        "git_blob": "15638b7be5eb2448f56a434fd99fe944febb71aa"
+      },
+      "scripts/ci/check_pq_research_integration.py": {
+        "bytes": 37686,
+        "sha256": "825f15ad3047f0ae3b90e3ecf36b8dd15ceeea0bb1456bde3984a72cc5231fc2",
+        "git_blob": "07478837d0fe0ab748cc7c1c4b0ba88e5c2d042c"
+      },
+      "scripts/ci/llm_hosted_once.py": {
+        "bytes": 35958,
+        "sha256": "3e1085487fd5c2387164a26cc85822fab857391f0caa373475ebb5205dc3120b",
+        "git_blob": "76e37d0118b44d61bd01f304b21b3d7a62f23e43"
+      },
+      "scripts/ci/test_llm_hosted_once.py": {
+        "bytes": 31146,
+        "sha256": "8307d85afd7b13ed0973d97fa75ab4e77cc1eb742fbc61040dadf880fb776b8f",
+        "git_blob": "314eedb441a34e2d352f8c8871463525bec8da01"
+      },
+      "scripts/llm_base_material.py": {
+        "bytes": 10405,
+        "sha256": "10d4c21419dd297dcdee6bd128c7cc1fdc1d343e1a62017da61bc1787fde113b",
+        "git_blob": "bbb954b3fb9341543af26fc6e65e68a20f6fc94f"
+      },
+      "scripts/llm_cell_host_handoff.py": {
+        "bytes": 21566,
+        "sha256": "3721be33cd7ccd6b6b31f040c9dc707790cc80ff34c25e90ac52e820f0c04f57",
+        "git_blob": "52e59d08b0859af7497d3d5dca38486677ab2daf"
+      },
+      "scripts/llm_cell_release.py": {
+        "bytes": 11913,
+        "sha256": "77b61ea2e4a135eab5fa20ed3f26439295f6a9a76f10f04720aae11ee4225216",
+        "git_blob": "ee2d88543620a90ff60e4b30a83d8718782ae1d4"
+      },
+      "scripts/llm_inherited_runtime.py": {
+        "bytes": 16320,
+        "sha256": "069ad93e4adde21761a3e5343a181128b36fe7697e881d2d41c5a6fbc06f155b",
+        "git_blob": "c3e577ef34f7406d4083b08bc72bba4c86d3c03d"
+      },
+      "scripts/llm_initial_trainable_setup_v2.py": {
+        "bytes": 12681,
+        "sha256": "f5efaed18989631d4453357e36d839e8f5adc64dfd7d7121d1e6921a5473de79",
+        "git_blob": "6c5c9e241d9ece2abdc89e631064cec4a306ce6d"
+      },
+      "scripts/llm_runtime_README.md": {
+        "bytes": 60510,
+        "sha256": "733c2467ede3e245981163e3a9b372a731876ab083a647481a4095b7fb42c5d7",
+        "git_blob": "1c34435347a61f60a4289d4eccc6253ef179a348"
+      },
+      "scripts/llm_runtime_assessment.py": {
+        "bytes": 19645,
+        "sha256": "10045ea089335c96d351dcdc710f47f3f7b31fbe49c0ca91675b92ae3526149c",
+        "git_blob": "5709d7ef4ffbc8f04f3026bb4a49fbc979fe890e"
+      },
+      "scripts/llm_runtime_parent_step.py": {
+        "bytes": 25575,
+        "sha256": "e5034a325645e73df977305eb0286a1d3319d52d13d3690ad79d68f171dd0c31",
+        "git_blob": "4798f2be0cdbe0f243ed9b298f5c28c9c9bfac75"
+      },
+      "scripts/llm_runtime_pilot.py": {
+        "bytes": 122588,
+        "sha256": "83c02578857447ff9a8366d3fe29cd00a57ce436ff6f94c37e5a21d42623301b",
+        "git_blob": "e681b1aba19f9a2838e337f2aabb91372fc6f864"
+      },
+      "scripts/llm_runtime_trial_ledger.py": {
+        "bytes": 51246,
+        "sha256": "fc61ecbfba09a3bccd7c1ba1c8862ff684e24a866cd6f8bf4e0e14b87ff7806f",
+        "git_blob": "9a094168f78ef0cbd0dc5da2f171001afc218264"
+      },
+      "scripts/test_llm_base_material.py": {
+        "bytes": 7833,
+        "sha256": "eb66c8cd0f0ba2d33a4d1ba7d37f0ad1f0691352b542fd7ac6afd1c8a0bff5e9",
+        "git_blob": "ec8839d778495b52bc26d83734d88aa59aec8225"
+      },
+      "scripts/test_llm_base_material_torch.py": {
+        "bytes": 13121,
+        "sha256": "7740f63d1346a21f915a53152f3b873bb3a6f6a3e2375d994c3b9290bef08d5d",
+        "git_blob": "10f4e8ccd4d7b377efa2c57442d7c822f90f1c6d"
+      },
+      "scripts/test_llm_base_source_closure.py": {
+        "bytes": 12777,
+        "sha256": "253bb9b4343f30c6da3e913a574fd30749bb8ee1243e759ad14be7369c7fe57c",
+        "git_blob": "f478fe4201c82b59393f5ae78a27e47d99f8c55d"
+      },
+      "scripts/test_llm_runtime_assessment.py": {
+        "bytes": 26750,
+        "sha256": "4114a838513dbcb5cc78c477cfb6fae804157b5e0844e501d54c75d36ff1f4d5",
+        "git_blob": "805a52be4340aeb3660d62ac6f902112d3709153"
+      },
+      "scripts/test_llm_runtime_exit_worker_frontier.py": {
+        "bytes": 14457,
+        "sha256": "40b2cc957177874535a5f8718e5f89f1cf32884678a269bb57677c46694b505f",
+        "git_blob": "82c197f3770e48500b387b2349e2d00fc0cf5b00"
+      },
+      "scripts/test_llm_runtime_parent_step.py": {
+        "bytes": 21904,
+        "sha256": "9d2cb839665253c218c2e3049c8a555c6518683f3febd9abffa70a5c7e6e6c16",
+        "git_blob": "04fd3e3209020725601a114a1a06969b6ab51e07"
+      },
+      "scripts/test_llm_runtime_pilot.py": {
+        "bytes": 13690,
+        "sha256": "aad1114afd858c9129e54d184d8b2431c2c695397883de2285644496eaf885f7",
+        "git_blob": "704ec9ef76d45814aa4c6633677cfacc7ae32337"
+      },
+      "scripts/test_llm_runtime_rss_owner.py": {
+        "bytes": 57604,
+        "sha256": "af8980e604fda8d1796c5fcbe19fd5ebaec6175ca889b62a6cdbd2b7f1a8c173",
+        "git_blob": "d70e5a2d9ba249aabbcc30a4842a3e079e4c261a"
+      },
+      "scripts/test_llm_runtime_trial_replay.py": {
+        "bytes": 28617,
+        "sha256": "8db662e19f9ecc0fafef2077d83dcacf82a449fd7030df517ede9a7d97505ecb",
+        "git_blob": "cf123f5d2295dc6f10ef02d55bfb8d27d89da1e9"
+      }
+    },
+    "exact_composition_node_runtime_qualified": false,
+    "code_anchor_parents": [
+      "963f2119cfa4f81d3fab225f3cf69c8e8d62b178",
+      "2d529aa0a1c65df9c43a5fd278c72ab0c0be3814"
+    ],
+    "delivery_parent_commit": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+    "delivery_parent_tree": "acef282613e9f6d61ab4bfc5d27b3b1c55257018",
+    "delivery_parent_native_scripts_config_toolchain_equal_code_anchor": false,
+    "historical_composition23_to670_identity": {
+      "delivery_parent_commit": "67097f5add069c49788fc5ba21c35d1db07167c4",
+      "delivery_parent_tree": "3fdb49e094b12d21d2a79d2ec0de7568e6125712",
+      "delivery_parent_native_scripts_config_toolchain_equal_code_anchor": true,
+      "concurrent_documentation_preservation": {
+        "incoming_changed_paths": 116,
+        "unchanged_incoming_paths": 115,
+        "only_overlap": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "plan_merge": "three-way merge-file exit0; all concurrent additions retained; only the local twelve-line six-axis status patch differs from incoming plan",
+        "merged_plan_sha256": "94bd93b107da70aae3292d268277f628cc707ef1af6b476e131c6e4aad95c0cc",
+        "native_source_changes": 0
+      },
+      "trillionnium_and_scripts": {
+        "files": 1466,
+        "sha256": "12dcc4d639010ae2ac8a835301e12177824bf9181e7c599c882f6a55dd60afa2"
+      },
+      "trillionnium_scripts_config": {
+        "files": 1508,
+        "sha256": "d4a4b792c5356cc58f514d0d7af08eddde1bf36b9857be14b55312e839784caf"
+      },
+      "trillionnium_scripts_config_and_root_toolchain": {
+        "files": 1509,
+        "sha256": "3b41e5ee97e1e54600c267ade822cc750e2f2bf111010f456742eb922db3349e"
+      },
+      "static_checker_separate_aggregate": {
+        "sha256": "1f4ac048b3c6300da7761471e959c0a6640f2785edcd1c42f6677a22fafc51b6",
+        "algorithm": "sha256 of sorted UTF-8 path + NUL + lowercase file-content SHA256 + newline",
+        "do_not_compare_as_same_encoding": true
+      }
+    },
+    "native_scripts_config_changes_from_tested_2d529_to_composition23": [
+      {
+        "path": "config/pon/pq-cross-branch-corpus-v1.json",
+        "tested_2d529": {
+          "bytes": 86614,
+          "sha256": "1f57ee5eaf78e8728c7f967116caabbfc1068655d6fe3353f5255ea6ff375d37",
+          "git_blob": "19dca9d1161bac56feda2fe4f375fde8544b34da"
+        },
+        "composition_23": {
+          "bytes": 86614,
+          "sha256": "6c83c81ddd103e59001b8df30f4f8796c2ed2c855aea0e83c40573b75e437e0c",
+          "git_blob": "9ea6a468c6669ad0017bd479a7063364d4178f64"
+        }
+      },
+      {
+        "path": "scripts/ci/ci_job.sh",
+        "tested_2d529": {
+          "bytes": 23450,
+          "sha256": "4e161438dc5a45042489643e7c9caad0be98f0da44043ebee8deed7438f39728",
+          "git_blob": "cf572eb46d453e6661cd74bc764af3a77d7e5cbb"
+        },
+        "composition_23": {
+          "bytes": 23555,
+          "sha256": "6ad9a14bfdffcd74958a0255370adb3f36cb0f40e5f9b3750fa2be1059ff17d5",
+          "git_blob": "a2ca334bfc7f58abeb634645475267260c65bdd2"
+        }
+      },
+      {
+        "path": "scripts/ci/test_ci_source_integrity.py",
+        "tested_2d529": {
+          "bytes": 18703,
+          "sha256": "8341e6186ea07caa97265481cb7b2f6e947ad528ce229dcab2babfdec4ba7b82",
+          "git_blob": "43751886f9600b69d7965c7bd97d7259cc940e49"
+        },
+        "composition_23": {
+          "bytes": 25907,
+          "sha256": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e",
+          "git_blob": "47bf35a471696e0fc1072ab2d4b6167490bfdf1c"
+        }
+      },
+      {
+        "path": "scripts/ci/verify_ci_source.py",
+        "tested_2d529": {
+          "bytes": 7722,
+          "sha256": "07fb32c6b1d6a5c9bd6200a4ef4f5916b0f25caa3ba4ac887a3ba58a407b7ff6",
+          "git_blob": "5d2c5857a78738c30f30c2b89839a9696e6a2fdc"
+        },
+        "composition_23": {
+          "bytes": 11231,
+          "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+          "git_blob": "c775290c138c3b41a32e654f56ed5cbe9acec3ee"
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "tested_2d529": {
+          "bytes": 337507,
+          "sha256": "45b5c0f3f62219db7e637c70057a164ae3afcc1f05c5528a9e18b2b9784d9402",
+          "git_blob": "961c313a510fbc1d95268ad77d32c83e6f77da60"
+        },
+        "composition_23": {
+          "bytes": 337763,
+          "sha256": "45c21a33728b2b8027c02a01da57b3dabb0c65850b9f02e904b0e8fa004cf7c6",
+          "git_blob": "b7eb36f77d93bf2c3ae272b34c5b8e66de7d8f5e"
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "tested_2d529": {
+          "bytes": 379754,
+          "sha256": "666e310cc9367fceb9a6cf71ea5616e5acaf6bbef426118e6a446f400d0a5f27",
+          "git_blob": "3d190a35086fb6869d9ee9d97a0591daabe735c4"
+        },
+        "composition_23": {
+          "bytes": 379826,
+          "sha256": "c719d0bdd0c9e68a30707ccbe70c58e14082ff113c9554706b46404b006223ed",
+          "git_blob": "45a9167acf5b5671eac72a54ea3e687b63eae7d4"
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs",
+        "tested_2d529": {
+          "bytes": 6955,
+          "sha256": "77897cfbb758edfa1063dbc8c8d6df5be04457bb2a6f72b27ba91e475e9c9fef",
+          "git_blob": "1cf6803bfe9e87da00bb972707daac71f5d24440"
+        },
+        "composition_23": {
+          "bytes": 7040,
+          "sha256": "0424c5063e8a8eadb5b32e09fc38b3c455e0ae9488f4a26288d9b58be59b6e1d",
+          "git_blob": "72f5f1145cd03d70f4df423a69b142c3199dffdc"
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_cache_modes.rs",
+        "tested_2d529": null,
+        "composition_23": {
+          "bytes": 2809,
+          "sha256": "64722f31d663a63ef250b57bcdb160d0c636531c7033c72889107eb84de1775f",
+          "git_blob": "f16f40edb24b73d80360fa13846090ff8852b109"
+        }
+      }
+    ],
+    "delivery_parent_trillionnium_and_root_toolchain_equal_code_anchor": true,
+    "concurrent_source_and_evidence_preservation": {
+      "incoming_from": "67097f5add069c49788fc5ba21c35d1db07167c4",
+      "incoming_to": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+      "incoming_changed_paths": 204,
+      "unchanged_incoming_paths": 203,
+      "only_overlap": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "plan_merge": "three-way merge-file exit0; all concurrent additions retained; only the local twelve-line six-axis status patch differs from incoming plan",
+      "merged_plan_sha256": "e9b7f6f18983b1b7811f66b5a14209f7ae236eb7cb580306dbe9aff706948b09",
+      "native_rust_source_changes": 0,
+      "changed_scripts_config_workflow_paths": [
+        ".github/workflows/pon-smollm-hosted-once.yml",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "scripts/ci/check_pq_research_integration.py",
+        "scripts/ci/ci_job.sh",
+        "scripts/ci/llm_hosted_once.py",
+        "scripts/ci/test_llm_hosted_once.py",
+        "scripts/llm_base_material.py",
+        "scripts/llm_cell_host_handoff.py",
+        "scripts/llm_cell_release.py",
+        "scripts/llm_inherited_runtime.py",
+        "scripts/llm_initial_trainable_setup_v2.py",
+        "scripts/llm_runtime_README.md",
+        "scripts/llm_runtime_assessment.py",
+        "scripts/llm_runtime_parent_step.py",
+        "scripts/llm_runtime_pilot.py",
+        "scripts/llm_runtime_trial_ledger.py",
+        "scripts/test_llm_base_material.py",
+        "scripts/test_llm_base_material_torch.py",
+        "scripts/test_llm_base_source_closure.py",
+        "scripts/test_llm_runtime_assessment.py",
+        "scripts/test_llm_runtime_exit_worker_frontier.py",
+        "scripts/test_llm_runtime_parent_step.py",
+        "scripts/test_llm_runtime_pilot.py",
+        "scripts/test_llm_runtime_rss_owner.py",
+        "scripts/test_llm_runtime_trial_replay.py"
+      ],
+      "model_hosted_attempt_executed_by_this_continuation": false,
+      "concurrent_w1_readme_preserved_byte_for_byte": true
+    },
+    "prior_evidence_checkpoint_parent": "ac4246dbd916f1a292dcc34fb76e715ab268c992",
+    "complete_trillionnium_tree": "72c1c7ab529ef6b4df3bec5b45bbc9a3009755ff"
+  },
+  "source_sets": {
+    "checkpoint95_negative_pair": {
+      "commit": "95d37c7c31c601fb6ee319bc965a5956c7250f68",
+      "original_implementation_parent": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+      "original_implementation_plus_final_tests": {
+        "passed": 10,
+        "failed": 5,
+        "exit": 101
+      },
+      "paired_fix_plus_same_tests": {
+        "passed": 15,
+        "failed": 0,
+        "exit": 0
+      },
+      "independent_from_after385_results": true,
+      "record": "implementation-checkpoint-reproduction.json"
+    },
+    "integrated_after385_components": {
+      "equivalent_commit": "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0",
+      "wrapper_source_paths_sha256": "a1c5c81c26b78565b926388c8b13cf83e2b49343e0facc77f6acde929527c383",
+      "wrapper_scope": [
+        "trillionnium/",
+        "scripts/"
+      ],
+      "native_scripts_config_sha256": "03f8f617384207dc13cd0aa37d701a8b910d02c0b3281316fdfd6a2ff3006dba",
+      "native_scripts_config_toolchain_sha256": "b87aafdc601faad0e1602510030628be3c5610d8487bff954ff84cac9260e236",
+      "m09_m06_and_workspace_manifests_unchanged_through_23": true,
+      "full_composition_rerun_claim": false,
+      "record": "component-validation.json"
+    },
+    "node_import_fix": {
+      "equivalent_commit": "2d529aa0a1c65df9c43a5fd278c72ab0c0be3814",
+      "strict_clippy_launch_head": "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0",
+      "receipt_launch_head_rewritten": false,
+      "wrapper_source_paths_sha256": "cbab71f8f7537ef31db035ed3ebfaa285f24ce03adc1417dee73608d364e9076",
+      "native_scripts_config_sha256": "b3aee16d92cf4fd0cb02c2a9ffdcde18f0c71d7442fbe47ed5c69c1248bdb9ea",
+      "native_scripts_config_toolchain_sha256": "f64bd00d86d906960418313170b21291babdade76374fc5f96a0075969a9096e",
+      "after_integration_source_comparison_sha256": "f73311c4c6995330cefc4facfad64f9c44a7ec8b9ca5fdb8e37390a7d98bb996",
+      "runtime_cases_executed": 0,
+      "record": "node-validation.json"
+    },
+    "composition23_static": {
+      "commit": "23a56123e3112de06d7c684ef2057578759176ff",
+      "record": "final-static-validation.json",
+      "native_runtime_inherited": false
+    },
+    "composition670_documentation": {
+      "commit": "67097f5add069c49788fc5ba21c35d1db07167c4",
+      "native_code_anchor": "23a56123e3112de06d7c684ef2057578759176ff",
+      "source_equivalence_verified": true,
+      "record": "final-static-validation.json",
+      "native_runtime_inherited": false
+    },
+    "compositionffb_static": {
+      "commit": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+      "tree": "acef282613e9f6d61ab4bfc5d27b3b1c55257018",
+      "native_code_anchor": "23a56123e3112de06d7c684ef2057578759176ff",
+      "complete_trillionnium_and_root_toolchain_unchanged": true,
+      "scripts_config_workflows_changed": true,
+      "record": "final-static-validation.json",
+      "record_section": "current_composition",
+      "pq_exact_source_blobs": 468,
+      "source_integrity_controls_passed": 43,
+      "historical_runtime_inherited": false,
+      "model_hosted_execute_run": false
+    }
+  },
+  "build_contexts": {
+    "earlier_component_and_node_clippy_context": {
+      "cargo_incremental_override_added_by_invocation_or_wrapper": false,
+      "inherited_incremental_value_recorded_in_original_wrapper_receipt": false,
+      "separate_from_ci_incremental_zero": true,
+      "per_package_profile_is_authoritative_over_cargo_finish_label": true,
+      "record": "component-validation.json"
+    },
+    "later_node_original_ci_context": {
+      "CARGO_INCREMENTAL": "0",
+      "applies_from": "node-2d529-lib-build-attempt3",
+      "source": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      "source_sha256": "28bdbe712b26e6e6f12ba67b5dc5d1fe43e5fbdf8a81b3d8a3d86c8a937642c9",
+      "actual_node_rustc": {
+        "opt_level": 3,
+        "debuginfo": 2,
+        "debug_assertions": true
+      },
+      "profile_or_other_rust_flags_changed": false,
+      "record": "node-validation.json"
+    }
+  },
+  "test_environment": {
+    "rust_toolchain": "1.95.0",
+    "cargo_locked": true,
+    "cargo_offline": true,
+    "cargo_build_jobs": 1,
+    "independent_offline_cargo_cache": true,
+    "shared_cgroup_memory_limit_bytes": 8589934592,
+    "shared_cgroup_cpu_max": "800000 100000",
+    "pinned_openssl_version": "3.5.9",
+    "pinned_openssl_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+    "native_deadlines_or_resource_limits_changed": false,
+    "local_environment_is_original_acceptance_host": false
+  },
+  "successful_elf_retention": {
+    "record": "elf-preservation.json",
+    "method": "Historically gzip and full decompressed SHA256/length checks preceded removing two original executable paths. Subsequent environment reset made both archives and compiler-cache archive unavailable; original receipts remain unchanged.",
+    "native_execution_or_database_location_changed": false,
+    "inactive_compiler_cache_record": "build-cache-preservation.json",
+    "native_executions_after_cache_preservation": 0,
+    "historical_preservation_verified_before_reset": true,
+    "current_binary_bytes_available": false,
+    "current_availability_record": "evidence-availability.json"
+  },
+  "verification": {
+    "components": {
+      "record": "component-validation.json",
+      "M09_library_passed": 302,
+      "M09_persistent_subset_passed": 17,
+      "M06_library_passed": 126,
+      "M06_original_ignored": 7,
+      "M09_strict_clippy": "PASS",
+      "M06_strict_clippy": "PASS",
+      "counts_not_added_to_historical_runs": true
+    },
+    "node": {
+      "record": "node-validation.json",
+      "cargo_attempts": 7,
+      "strict_clippy_passes": 1,
+      "source_compile_failures_fixed": 1,
+      "enospc_attempts": 3,
+      "sigkill_attempts": 2,
+      "unit_test_cases_executed": 0,
+      "integration_test_cases_executed": 0,
+      "unit_test_cases_passed": 0,
+      "integration_test_cases_passed": 0,
+      "test_case_failures_observed": 0,
+      "cost_samples": 0,
+      "actual_observer_snapshots_or_reports": 0,
+      "completed_original_plan_commands": 1,
+      "original_plan_commands": 13,
+      "pending_lib_selectors": 10,
+      "pending_integration_targets": 2,
+      "runtime_acceptance": "HOLD",
+      "cost_acceptance": "HOLD",
+      "strict_clippy_source": "2d529aa0a1c65df9c43a5fd278c72ab0c0be3814",
+      "strict_clippy_does_not_prove_linked_runtime_execution": true
+    },
+    "final_static": {
+      "record": "final-static-validation.json",
+      "source": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+      "native_execution": false,
+      "composition23_historical_repository_links": "PASS",
+      "composition670_historical_repository_links": "PASS",
+      "compositionffb_repository_links": "PASS",
+      "complete_trillionnium_and_root_toolchain_bytes_unchanged_from_23": true,
+      "scripts_config_workflows_bytes_unchanged_from_23": false,
+      "fresh_pq_pins": 468,
+      "fresh_source_integrity_controls_passed": 43,
+      "compiled_or_executed_native": false,
+      "model_hosted_execute_run": false,
+      "final_repository_local_links": 2913,
+      "final_repository_markdown_files": 445,
+      "final_repository_receipt_sha256": "8266e4250cf811dd54fe6b13173ffefe872dc9abfcabcd27a18f1444c9c6ea97",
+      "final_source_and_markdown_remain_equal_to_recorded_checker_inputs": true
+    },
+    "measurements": {
+      "record": "measurement-status.json",
+      "plan_sha256": "e2714a9b9976bfb83658af5e8aab7efa2d16017c7a726d68042ed1cc8342efeb",
+      "actual_samples_started": 0,
+      "performance_pass": null
+    },
+    "historical_reader_and_fixture_controls": {
+      "record": "implementation-checkpoint-reproduction.json",
+      "python_distinct_reader_controls_passed": 89,
+      "legacy_v1_v4_byte_identical_comparisons": 10,
+      "old_fixture_controls_passed": 183,
+      "new_composition_source_integrity_controls_are_a_separate_run": true,
+      "old_results_qualify_changed_current_checker": false
+    },
+    "evidence_recovery": {
+      "record": "evidence-availability.json",
+      "exact_recovered_text_record": "recovered-validation.json",
+      "original_text_records": 37,
+      "original_text_bytes": 250821,
+      "all_original_hashes_matched": true,
+      "native_commands_reexecuted": false,
+      "successful_elf_or_cache_archive_bytes_currently_available": false
+    }
+  },
+  "qualification": {
+    "production_activation": false,
+    "original_four_second_sixteen_hostile_w1_gate_replaced": false,
+    "original_4105_block_history_gate_replaced": false,
+    "full_request_p99_qualified": false,
+    "whole_chain_pq_qualified": false,
+    "full_fixed_host_performance_pass": false
+  },
+  "semantic_scope": {
+    "parallel_workers": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "default_workers": 1,
+    "only_preparation_and_signatures_parallel": true,
+    "account_witness_access_and_state_apply_owner": "original canonical owner",
+    "worker_meter": "original paid dispatch scoped-worker meter",
+    "cpu_settle_interval_additive_to_dispatch_cpu": false,
+    "cold_replay": "independent serial path",
+    "pq_batching_or_aggregation_added": false,
+    "growth_tcp_test_observes_settlement_json": false,
+    "settlement_json_coverage": "common public finish_observed path in the classic signed Submit observer tests"
+  },
+  "cache_audit": {
+    "cache_implementations_changed": false,
+    "full_explicit_per_entry_versioned_key_acceptance_closed": false,
+    "audit_sha256": "33becdbc954bdeb368dec6cb4583d6deec8aedc63d19017ba66dc408e7cf3070",
+    "policy_epoch_distinct_from_ledger_active_generation": true,
+    "scope": "current selected entry points only; no cross-upgrade or cross-process authorization-cache claim",
+    "cache_implementations_changed_scope": "six-axis mathematical cache cores only",
+    "composed_cache_mode_initialization_guards_changed": true,
+    "composed_guards_source": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+    "default_cache_modes_or_current_authorization_changed": false,
+    "constructor_controls_replace_paid_runtime_tests": false
+  },
+  "retained_failures": [
+    {
+      "item": "Original baseline regression negative controls",
+      "status": "10 passed /5 failed /exit101; expected distinguishing evidence, not discarded."
+    },
+    {
+      "item": "Earlier M09 candidate full-library test synchronization failure",
+      "status": "294 passed /1 failed /exit101; keep prior failure and synchronized rerun separately."
+    },
+    {
+      "item": "Stale original ELF attempt",
+      "status": "Keep excluded-artifact failure; never count as candidate run."
+    },
+    {
+      "item": "Environment interruption during final baseline build",
+      "status": "No native test result or observed exit; do not invent one."
+    },
+    {
+      "item": "From-zero full Python suite wrapper timeout",
+      "status": "90 seconds, no final test count; partial child output not retained."
+    },
+    {
+      "item": "M09 merged library attempt1",
+      "status": "ENOSPC in wrapper before cargo_started; original0B receipt plus .failure.json retained. Summary0B file is not evidence."
+    },
+    {
+      "item": "Node Clippy attempt1",
+      "status": "ENOSPC; cargo exit unknown, wrapper exit1; original0B receipt plus enospc observation retained."
+    },
+    {
+      "item": "Node Clippy attempt2",
+      "status": "Actual unresolved-import failure101; then import fix + exact Clippy rerun pass."
+    },
+    {
+      "item": "Node default incremental builds1/2",
+      "status": "Both ENOSPC; zero test cases; second planned tmpfs migration ineffective."
+    },
+    {
+      "item": "Node CI incremental-zero unit and production-lib builds",
+      "status": "Both rustc SIGKILL and exit101; no test execution; avoid claiming uniquely attributed OOM from cumulative counters."
+    },
+    {
+      "item": "merged385 repository-link check",
+      "status": "First exit2 broken lifecycle21-direct.log link retained; actual README-link fix and attempt2 pass retained."
+    },
+    {
+      "item": "Storage failures in static/object receipts",
+      "status": "Keep original0B files and original first observations; restoration/resumption must use new create-only receipts."
+    }
+  ],
+  "open_gates": [
+    {
+      "gate": "original_four_second_16_hostile_W1",
+      "state": "OPEN",
+      "constraint": "Original host/budget and independent six-deep confirmation; include failed/cancelled/unknown requests and confirmation drain."
+    },
+    {
+      "gate": "original_4105_block_history",
+      "state": "OPEN",
+      "constraint": "0/16/128 descriptive A/H matrix cannot replace it; old nonce/debt/reorg recovery obligations remain."
+    },
+    {
+      "gate": "exact_publication_Node_and_workspace",
+      "state": "OPEN",
+      "constraint": "Node unit/integration runtime, complete workspace regression, exact-source strict gates, remote required/prospective-merge checks are not inferred from component tests."
+    },
+    {
+      "gate": "full_ingress_to_client_confirmation_p99",
+      "state": "OPEN",
+      "constraint": "No estimate from72 blocks, parser microbenchmark, aggregate waiter time or1/2/4/8 worker counts."
+    },
+    {
+      "gate": "prefix_ABBA_and_native_A_H_measurements",
+      "state": "NOT_RUN",
+      "constraint": "320 sample returns (5x16xABBA,8calls each), all failed/missing retained; A/H 9cohorts72 measurements9cancellations153stage returns. No planned count is an observed count."
+    },
+    {
+      "gate": "cache_cross_upgrade_and_authorization",
+      "state": "OPEN",
+      "constraint": "Explicit per-entry full input/proof/profile/version identity and current generation/revocation/expiry authorizations remain semantically distinct; setup-mode guards do not close the full acceptance item."
+    },
+    {
+      "gate": "full_state_clone_root_legacy_history",
+      "state": "OPEN",
+      "constraint": "Account prefix-range parsing removes unrelated rows only for that parser; no blanket touched-set bound for all hot paths."
+    },
+    {
+      "gate": "whole_host_resources_and_PQ",
+      "state": "OPEN",
+      "constraint": "Cross-process CPU/RAM/network isolation, host/model/PQ independent qualification, full fixed-host performance; all production/public-network activation claims false."
+    },
+    {
+      "gate": "parallel_1_2_4_8_native_atomicity_and_cost",
+      "state": "OPEN",
+      "constraint": "Pending Node runtime assertions for canonical error order, exact CPU owner/children, joined panic/cancellation, SQL rollback, roots, old nonce and cold replay; no throughput inference from worker count."
+    },
+    {
+      "gate": "bounded_batch_pipeline_and_confirmation_drain",
+      "state": "OPEN",
+      "constraint": "TCQ2 correctness and byte bounds do not establish group-commit speed, head-of-line blocking, batch retry cost or independent confirmation drain under the original workload."
+    }
+  ],
+  "artifact_manifest": {
+    "implementation-checkpoint-reproduction.json": {
+      "bytes": 37290,
+      "sha256": "46e1c299ae85a387eec1a7197c63f7bc780b1c68f124edc5cbcc4af926838064",
+      "git_blob": "ff186559851c8655e310afa41fa02ee2ead3f290"
+    },
+    "component-validation.json": {
+      "bytes": 20354,
+      "sha256": "18cbe4f9be8a90648d9289d5f32d9cfc2a29e0d289e7564f26f7deb7706c60d1",
+      "git_blob": "3be8e8545973c238eb2ee519949a747ceb4e78dc"
+    },
+    "node-validation.json": {
+      "bytes": 34249,
+      "sha256": "9f6d81d7db7aa0ff3b84ad60bcaff112ab72c4f422e4af68e13107855b58c4f8",
+      "git_blob": "6d3df3d876b78317e5b5c37adbc2bfdeafb0fef2"
+    },
+    "elf-preservation.json": {
+      "bytes": 8281,
+      "sha256": "8753fc2e04ecd2fa77569e388fea8adafee8c70584e9180599e5df93e3f5dff7",
+      "git_blob": "b1a54a03ceb83720a407142c2a6b96e8a0383e22"
+    },
+    "measurement-execution-declaration-v1.json": {
+      "bytes": 1325,
+      "sha256": "8beed3fac2900f56a175223cd88e330a551df083722413d222341d611c198a7c",
+      "git_blob": "ff1a6525e349568c43d745aa200fd661695db9bc"
+    },
+    "measurement-execution-declaration-v2.json": {
+      "bytes": 1652,
+      "sha256": "67c59d599530fc276b6e6a7983f25462766a1bd381e057cdfc15d3086d44043d",
+      "git_blob": "7cd99bea7b412b14c9108b6e8978a67419debbb8"
+    },
+    "measurement-execution-declaration-v3.json": {
+      "bytes": 2482,
+      "sha256": "aa81a27a086d345f9626af0c1e0bc5fa1a4114c5045b97533570609108a86a52",
+      "git_blob": "e731795cf3cfdbce4390a739d358fcee8a93a9b4"
+    },
+    "measurement-status.json": {
+      "bytes": 3144,
+      "sha256": "8e8f5c30fcd36c8eb0b6fe1a95c0769618e3ed2b0bb34eeb35c2aa3895c268a5",
+      "git_blob": "35c7210446a6885ec62ebb5fc481ecc29852ab96"
+    },
+    "final-static-validation.json": {
+      "bytes": 39779,
+      "sha256": "a74f41601e509dd4763b5cc609b5383828af543b3fa58cece3b7b9cb775f6134",
+      "git_blob": "be44e3fafc0f63d94ed863b89aab6e2b0936e9f1"
+    },
+    "measurement-plan.json": {
+      "bytes": 3075,
+      "sha256": "e2714a9b9976bfb83658af5e8aab7efa2d16017c7a726d68042ed1cc8342efeb",
+      "git_blob": "3386b0b1d35a47066d765d0c31f3a2b8e5c5de85"
+    },
+    "parse_measurements.py": {
+      "bytes": 32498,
+      "sha256": "1044cb7eb885dc0837b4008c97345f70b8234243ac5dba17a1e91472222a936d",
+      "git_blob": "023501e51479c8c3707f9e9dca77ad586a9610ac"
+    },
+    "observe_resources.py": {
+      "bytes": 2627,
+      "sha256": "dc70719af44b12a3bc507cc21d0b91a8f141a8b39bf6c54cbf59591fae61dbb6",
+      "git_blob": "688bc81e763c3f6d17c45cbb3dd0afa429570297"
+    },
+    "check_legacy_reader.py": {
+      "bytes": 2962,
+      "sha256": "b29b0c03761efb4c8c83d85b383918029b6ed2f08e9e811b4c771ff13d8e2ca7",
+      "git_blob": "c12eedb7fd224bde38288479e8d97d0c24255afd"
+    },
+    "build-cache-preservation.json": {
+      "bytes": 4424,
+      "sha256": "8a2726da335bd61536eb0d85195a0f1ea0a3982a6b3ddcf422b7bb35aa7b3f62",
+      "git_blob": "12415664fe3470bc2b5d140d065244dc83c25d6f"
+    },
+    "evidence-availability.json": {
+      "bytes": 10577,
+      "sha256": "c2fe6b03c328c33681e03a9c06062a729dc274186c37d3d2a38ad8dad699c8fc",
+      "git_blob": "2ade8648320682355790d4d6152182d0c99e2f28"
+    },
+    "recovered-validation.json": {
+      "bytes": 268570,
+      "sha256": "e1ff341f41f2a7080219933b0f8339fcfba0462bf27a20aa986418cbd1ded301",
+      "git_blob": "d2d340e4f2191e8bf7a8edf07b0c362cd9c86eda"
+    },
+    "README.md": {
+      "bytes": 16683,
+      "sha256": "655399a6dad3149310ac6d8040a31f8eed929d848890d778ffdaa7005dcfeca6",
+      "git_blob": "61037e7df3b370434b772c9e79cc1b426c4f1196"
+    }
+  },
+  "limitations": [
+    "Recipe commands in README are not claimed passes unless an executed receipt is included.",
+    "Local component costs do not qualify full ingress-to-client-confirmation latency.",
+    "Original complete-State cloning/root work and O(history) paths remain separately scoped.",
+    "No remote CI or prospective-merge gate is inferred from these local results.",
+    "Incomplete and stale-artifact attempts are retained separately from candidate executions.",
+    "An exact immutable source/build identity is required for each attempt; code composition23 is not represented as the same whole-source execution as38 or2d.",
+    "No native cost samples were generated. Missing data is neither a measured regression nor a zero-cost or passing performance observation.",
+    "Shared-cgroup counters are not PID-specific OOM attribution.",
+    "Successful component ELF/archive bytes are now unavailable after the execution-environment reset. Exact compact validation records and recovered raw logs retain their original identities; a hash alone does not make missing bytes available.",
+    "Concurrent model Python/CI/config updates at ffb retain their own runtime/model evidence. This continuation ran fresh static checks only, never the hosted model attempt, and does not grant runtime qualification to that composition."
+  ],
+  "retained_failures_scope": "The original failures remain recorded without relabelling. Statements inside historical records describe retention at execution time; current raw-file availability after reset is governed by evidence-availability.json."
+}

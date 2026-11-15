@@ -1,0 +1,27 @@
+$ cargo test --locked --release --manifest-path formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml -p trnm-w1-zk-relation
+   Compiling trnm-w1-zk-relation v0.1.0 (/workspace/scratch/79360d3567d1/chain/formal/pon-nakamoto-v1/w1_zkvm/relation)
+    Finished `release` profile [optimized + debuginfo] target(s) in 6.11s
+     Running unittests src/lib.rs (/workspace/scratch/79360d3567d1/continuation-runtime/target-relation/release/deps/trnm_w1_zk_relation-e4ea0447893b4712)
+
+running 10 tests
+test tests::canonical_task_product_and_transcript_forgeries_match_scalar_rejection ... ok
+test tests::every_noncanonical_u32_is_rejected_in_all_three_matrices ... ok
+test tests::public_binding_rejects_header_trace_ticket_id_and_noncanonical_product ... ok
+test tests::rejects_all_omission_classes_before_any_proof_can_be_issued ... ok
+test v2::tests::v1_and_v2_domains_lengths_and_headers_cannot_be_substituted ... ok
+test tests::exact_native_product_ticket_trace_and_unique_identity_are_public ... ok
+test v2::tests::wrong_manifest_commitments_and_cross_task_artifacts_are_rejected ... ok
+test v2::tests::full_native_replay_rejects_each_matrix_transcript_and_noncanonical_material ... ok
+test tests::boundary_products_and_journals_agree_with_full_scalar_replay ... ok
+test v2::tests::original_native_scalar_artifact_and_v1_identity_controls_agree ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+   Doc-tests trnm_w1_zk_relation
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+exit_code=0

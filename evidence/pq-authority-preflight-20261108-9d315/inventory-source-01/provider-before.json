@@ -1,0 +1,39 @@
+{
+  "env_file": {
+    "bytes": 609,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/provider.env",
+    "sha256": "0564a963b39cd9bfa08e14ef470a8eeedba053762b870f701d2d03d2cc73db3f"
+  },
+  "native_inputs": [
+    {
+      "bytes": 8933408,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/bin/openssl",
+      "sha256": "8ff7dd91270fd4a8fc377031f0fd2f2cee1cd17a32ce30e4fd773a25730a120f"
+    },
+    {
+      "bytes": 3449,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/include/openssl/opensslv.h",
+      "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+    },
+    {
+      "bytes": 4729,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/include/openssl/configuration.h",
+      "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+    },
+    {
+      "bytes": 12381776,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/lib/libcrypto.a",
+      "sha256": "dabf2189afd2e29591c5b597ac2cb9b7cd7066eaf7ce674106123614da32eb0f"
+    },
+    {
+      "bytes": 2123138,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/lib/libssl.a",
+      "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727"
+    }
+  ],
+  "receipt": {
+    "bytes": 3248,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/pq-provider/provider.json",
+    "sha256": "ceabed0dca2eb705ff1bd37222466c55bf1a7d3df32901075a1e2f2c5881230a"
+  }
+}

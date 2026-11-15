@@ -1,0 +1,4190 @@
+{
+  "schema": "trnm-native-liveness-evidence-draft-v1",
+  "draft": false,
+  "created_utc": "2026-11-04T13:41:16.172361+00:00",
+  "result": "HOLD_ORIGINAL_GATE_UNMET_NEW_NATIVE_NOT_RUN_FINAL_COMPOSITION_CHECKS_FAILED",
+  "source": {
+    "baseline_commit": "d0737cf5434894ce47fad8082376fc417313c2cb",
+    "frozen_commit": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+    "frozen_tree": "72d12bd434055f67c5f6becf2ee480a9ec09b99e",
+    "full_source_guard_receipt": {
+      "base": null,
+      "candidate": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+      "tested_tree": "72d12bd434055f67c5f6becf2ee480a9ec09b99e",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 941197770,
+      "tracked_entries": 8782,
+      "tracked_worktree_verified": true
+    },
+    "earlier_results_relabelled_as_current": false,
+    "last_native_experiment_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+    "last_native_experiment_tree": "0296ed99dde48e287038fc27e47ef9e310d40117",
+    "native_experiment_delta_from_frozen": "Equivalent test-only .max(11).min(20) to .clamp(11,20), with corresponding source pin.",
+    "merged_source_commit": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+    "merged_source_tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+    "merged_remote_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+    "final_implementation_source_commit": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+    "final_implementation_source_tree": "923c1aa59bc090baeff79979d950aebeec4def78",
+    "latest_composition_commit": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+    "latest_composition_tree": "87f974c3ad327d5da2c61286ec86fcb1580b3fcf",
+    "latest_remote_parent": "1c885019fdf1cc2f33af8da0780da603fff1c353",
+    "latest_composition_full_clippy_passed": false,
+    "latest_composition_reader_suite_passed": false,
+    "latest_composition_native_executed": false,
+    "previous_composition_commit": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+    "previous_composition_tree": "924397c8ca6ea1d0d8e9c003f4ca7f3c6a9022be",
+    "previous_remote_parent": "33a170e863a413279d6611457d907913a54e9e5a",
+    "latest_composition_full_clippy_status": "NOT_RUN_AFTER_RECORDED_RESOURCE_FAILURES",
+    "latest_composition_reader_suite_status": "NOT_RUN_AFTER_RECORDED_RESOURCE_FAILURES"
+  },
+  "checks": [
+    {
+      "name": "frozen-source-verification",
+      "result": "PASS",
+      "details": {
+        "tracked_entries": 8782,
+        "tracked_bytes": 941197770,
+        "native_tests_executed": 0
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "frozen-source-verification",
+        "command": [
+          "python3",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+          "--output",
+          "/workspace/scratch/e537ad232c79/frozen-source-receipt.json"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+        "tree": "72d12bd434055f67c5f6becf2ee480a9ec09b99e",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:13:19.529185+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 56073994063,
+        "finished_at": "2026-11-04T13:14:15.606271+00:00",
+        "log_bytes": 421,
+        "log_sha256": "9444c65256a6a399dd11e00b13f0e814b9bbf6a50adbd884eebea62ff8add251",
+        "final_head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "frozen-source-verification.json",
+      "log_file": "frozen-source-verification.log"
+    },
+    {
+      "name": "repository-check",
+      "result": "PASS",
+      "details": {
+        "local_links": 2468,
+        "workspace_packages": 26
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "repository-check",
+        "command": [
+          "python3",
+          "scripts/ci/check_repository.py"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+        "tree": "72d12bd434055f67c5f6becf2ee480a9ec09b99e",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:15:05.432797+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 75007600491,
+        "finished_at": "2026-11-04T13:16:20.441677+00:00",
+        "log_bytes": 307,
+        "log_sha256": "5570ef1e9672caf0ce84072b8768439958cf73193ff6dd449e34a007bbb5ae9f",
+        "final_head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "repository-check.json",
+      "log_file": "repository-check.log"
+    },
+    {
+      "name": "corpus-check",
+      "result": "HOLD_NO_GO",
+      "details": {
+        "exact_source_blobs": 412,
+        "source_consistency_check_passed": true,
+        "cryptographic_acceptance": false
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "corpus-check",
+        "command": [
+          "python3",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+        "tree": "72d12bd434055f67c5f6becf2ee480a9ec09b99e",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:17:21.461626+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 238904338,
+        "finished_at": "2026-11-04T13:17:21.700809+00:00",
+        "log_bytes": 557,
+        "log_sha256": "61bc31416f3ddb7b3a28132d18c42bb960f5921cdbb0f4620fcfe1b1755937cb",
+        "final_head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "corpus-check.json",
+      "log_file": "corpus-check.log"
+    },
+    {
+      "name": "final-reader-tests",
+      "result": "PASS",
+      "details": {
+        "python_tests_passed": 160,
+        "modules": [
+          "test_run_from_zero_native",
+          "test_growth_scale_observation"
+        ]
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "final-reader-tests",
+        "command": [
+          "python3",
+          "-c",
+          "import sys,unittest; sys.path.insert(0,\"scripts/ci\"); s=unittest.defaultTestLoader.loadTestsFromNames([\"test_run_from_zero_native\",\"test_growth_scale_observation\"]); r=unittest.TextTestRunner(verbosity=1).run(s); sys.exit(not r.wasSuccessful())"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+        "tree": "72d12bd434055f67c5f6becf2ee480a9ec09b99e",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:28:56.705966+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 20813927618,
+        "finished_at": "2026-11-04T13:29:17.520166+00:00",
+        "log_bytes": 261,
+        "log_sha256": "2675b4daae4e4b34f03a9cc7ab5799820c1151fa1291442bd6947811d3dc106c",
+        "final_head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "final-reader-tests.json",
+      "log_file": "final-reader-tests.log"
+    },
+    {
+      "name": "source-control-tests",
+      "result": "PASS",
+      "details": {
+        "python_tests_passed": 135,
+        "modules": [
+          "test_ci_source_integrity",
+          "test_repository",
+          "test_project_boundary",
+          "test_pq_research_integration"
+        ],
+        "expected_negative_control_refusals_retained": true
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "source-control-tests",
+        "command": [
+          "python3",
+          "-c",
+          "import sys,unittest; sys.path.insert(0,\"scripts/ci\"); suite=unittest.defaultTestLoader.loadTestsFromNames([\"test_ci_source_integrity\",\"test_repository\",\"test_project_boundary\",\"test_pq_research_integration\"]); r=unittest.TextTestRunner(verbosity=1).run(suite); sys.exit(not r.wasSuccessful())"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+        "tree": "72d12bd434055f67c5f6becf2ee480a9ec09b99e",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:17:21.463411+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 642689881595,
+        "finished_at": "2026-11-04T13:28:04.153535+00:00",
+        "log_bytes": 721,
+        "log_sha256": "4582897b08a46a199525bac4b690de82e90c2a89a1707cf83f47f6d3e4680437",
+        "final_head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "source-control-tests.json",
+      "log_file": "source-control-tests.log"
+    },
+    {
+      "name": "strict-clippy",
+      "result": "FAIL",
+      "details": {
+        "diagnostic": "clippy::manual_clamp",
+        "diagnostic_count": 1,
+        "native_tests_executed": 0
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "strict-clippy",
+        "command": [
+          "bash",
+          "/workspace/scratch/e537ad232c79/run-native.sh",
+          "cargo",
+          "clippy",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-features",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+        "tree": "72d12bd434055f67c5f6becf2ee480a9ec09b99e",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:22:18.205916+00:00",
+        "returncode": 101,
+        "completed": true,
+        "wall_ns": 486632132651,
+        "finished_at": "2026-11-04T13:30:24.838336+00:00",
+        "log_bytes": 6585,
+        "log_sha256": "b60fc4d4c42fa2453c839d07cd81f55e37af07b28a2bf3d1321b9dbc47ca1b80",
+        "final_head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "strict-clippy.json",
+      "log_file": "strict-clippy.log"
+    },
+    {
+      "name": "strict-clippy-fixed",
+      "result": "PASS",
+      "details": {
+        "scope": "workspace/all-features/all-targets/-D warnings",
+        "native_tests_executed": 0
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "strict-clippy-fixed",
+        "command": [
+          "bash",
+          "/workspace/scratch/e537ad232c79/run-native.sh",
+          "cargo",
+          "clippy",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-features",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "tree": "0296ed99dde48e287038fc27e47ef9e310d40117",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:31:23.142570+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 168514810869,
+        "finished_at": "2026-11-04T13:34:11.657634+00:00",
+        "log_bytes": 2407,
+        "log_sha256": "090c467e492d551384e7cb75d878d2cee7e07253f237ee3e35f58f6eadf13c40",
+        "final_head": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "strict-clippy-fixed.json",
+      "log_file": "strict-clippy-fixed.log"
+    },
+    {
+      "name": "original-four-second-native",
+      "result": "PASS_INVARIANTS_ONLY_BUSINESS_TARGET_NOT_MET",
+      "details": {
+        "native_selector_executed": 1,
+        "native_selector_passed": 1,
+        "native_selector_filtered_out": 5,
+        "finite_target_met": false,
+        "invariant_target_met": true,
+        "business_confirmed": 0,
+        "business_required_across_two_phases": 2,
+        "original_window_ns": 4000000000,
+        "hostile_producers": 16,
+        "fixed_host_qualified": false
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "original-four-second-native",
+        "command": [
+          "env",
+          "TRNM_PUBLIC_V3_CONFIRMATION_DIR=/workspace/scratch/e537ad232c79/original-confirmation",
+          "bash",
+          "/workspace/scratch/e537ad232c79/run-native.sh",
+          "cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_from_zero",
+          "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "--",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "tree": "0296ed99dde48e287038fc27e47ef9e310d40117",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:34:39.479331+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 408675635760,
+        "finished_at": "2026-11-04T13:41:28.155224+00:00",
+        "log_bytes": 4347,
+        "log_sha256": "3d5dd35a672bb52568b1b913bf868888095c36efc7977b1053f4d741c27609d1",
+        "final_head": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "original-four-second-native.json",
+      "log_file": "original-four-second-native.log"
+    },
+    {
+      "name": "original-confirmation-readback",
+      "result": "FAIL",
+      "details": {
+        "original_gate_validated": false,
+        "original_gate_validation_error": "CONFIRMATION_TARGET",
+        "independent_replay_failures": 32,
+        "independent_replay_error": "PUBLIC_HOST_KERNEL_PARENT",
+        "pressure_overlap_demonstrated": false,
+        "network_capacity_qualified": false,
+        "tail_latency_qualified": false,
+        "production_activation": false
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "original-confirmation-readback",
+        "command": [
+          "python3",
+          "scripts/ci/run_from_zero_native.py",
+          "--summarize-confirmation",
+          "/workspace/scratch/e537ad232c79/original-confirmation/report.json"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "tree": "0296ed99dde48e287038fc27e47ef9e310d40117",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:42:12.609618+00:00",
+        "returncode": 1,
+        "completed": true,
+        "wall_ns": 275725072,
+        "finished_at": "2026-11-04T13:42:12.885883+00:00",
+        "log_bytes": 25117,
+        "log_sha256": "77a3370ec8f7ab788061ee3dab8cc497c61bc605e87b20b0da9adf396e7ebbb7",
+        "final_head": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "original-confirmation-readback.json",
+      "log_file": "original-confirmation-readback.log"
+    },
+    {
+      "name": "composition-cargo-graph",
+      "result": "PASS",
+      "details": {},
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "composition-cargo-graph",
+        "command": [
+          "bash",
+          "/workspace/scratch/e537ad232c79/run-native.sh",
+          "cargo",
+          "metadata",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all-features",
+          "--format-version",
+          "1",
+          "--no-deps"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T14:01:07.314919+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 44601580,
+        "finished_at": "2026-11-04T14:01:07.359784+00:00",
+        "log_bytes": 160060,
+        "log_sha256": "deeba8e89bc92b879cfd9407561765d88c74a77b1aa97075652cb1af0a8de7ee",
+        "final_head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "composition-cargo-graph.json",
+      "log_file": "composition-cargo-graph.log"
+    },
+    {
+      "name": "composition-clippy",
+      "result": "PASS",
+      "details": {
+        "all_targets": true,
+        "all_features": true,
+        "warnings_denied": true,
+        "native_tests_executed": 0
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "composition-clippy",
+        "command": [
+          "bash",
+          "/workspace/scratch/e537ad232c79/run-native.sh",
+          "cargo",
+          "clippy",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-features",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:55:58.040603+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 223264121976,
+        "finished_at": "2026-11-04T13:59:41.305104+00:00",
+        "log_bytes": 6341,
+        "log_sha256": "93174fb0c272eeac7a525c4082f274e6c9992ae20b0d572772c64595c2e686b9",
+        "final_head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "composition-clippy.json",
+      "log_file": "composition-clippy.log"
+    },
+    {
+      "name": "composition-corpus",
+      "result": "PASS",
+      "details": {
+        "exact_source_blobs": 444,
+        "reported_status": "HOLD_NO_GO",
+        "source_consistency_only": true,
+        "cryptographic_acceptance": false
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "composition-corpus",
+        "command": [
+          "python3",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:57:59.630727+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 259837431,
+        "finished_at": "2026-11-04T13:57:59.890813+00:00",
+        "log_bytes": 557,
+        "log_sha256": "090ddef889f5a6714b4a5d56a7299342e3a0ddc22d23853134428359002228ec",
+        "final_head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "composition-corpus.json",
+      "log_file": "composition-corpus.log"
+    },
+    {
+      "name": "composition-format",
+      "result": "PASS",
+      "details": {},
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "composition-format",
+        "command": [
+          "bash",
+          "/workspace/scratch/e537ad232c79/run-native.sh",
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:58:00.006528+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 15409025615,
+        "finished_at": "2026-11-04T13:58:15.415763+00:00",
+        "log_bytes": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "final_head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "composition-format.json",
+      "log_file": "composition-format.log"
+    },
+    {
+      "name": "composition-full-cargo-graph",
+      "result": "PASS",
+      "details": {},
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "composition-full-cargo-graph",
+        "command": [
+          "bash",
+          "/workspace/scratch/e537ad232c79/run-native.sh",
+          "cargo",
+          "metadata",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all-features",
+          "--format-version",
+          "1"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T14:01:35.931515+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 291197930,
+        "finished_at": "2026-11-04T14:01:36.222925+00:00",
+        "log_bytes": 846068,
+        "log_sha256": "8f6094e1ec81226f4a8a061a0c56973b3a16f73f43c935660593e1e42f0ce5ee",
+        "final_head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "composition-full-cargo-graph.json",
+      "log_file": "composition-full-cargo-graph.log"
+    },
+    {
+      "name": "composition-owner-controls",
+      "result": "FAIL",
+      "details": {
+        "planned_python_tests": 66,
+        "python_tests_passed": null,
+        "native_tests_executed": 0,
+        "failure": "RepositoryMutants fixture copy reported ENOSPC; no successful suite summary."
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "composition-owner-controls",
+        "command": [
+          "python3",
+          "-c",
+          "import sys,unittest; sys.path.insert(0,\"scripts/ci\"); suite=unittest.defaultTestLoader.loadTestsFromNames([\"test_repository\",\"test_project_boundary\"]); result=unittest.TextTestRunner(verbosity=1).run(suite); sys.exit(not result.wasSuccessful())"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T14:09:33.901357+00:00",
+        "returncode": 1,
+        "completed": true,
+        "wall_ns": 4007039384,
+        "finished_at": "2026-11-04T14:09:37.908664+00:00",
+        "log_bytes": 4131,
+        "log_sha256": "87e6e5de3e82c5a24f64f45d39e194977db84ea005cc3ff76234693ddda08bbf",
+        "final_head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "composition-owner-controls.json",
+      "log_file": "composition-owner-controls.log"
+    },
+    {
+      "name": "composition-reader-controls",
+      "result": "PASS",
+      "details": {
+        "python_tests_passed": 229,
+        "native_tests_executed": 0
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "composition-reader-controls",
+        "command": [
+          "python3",
+          "-c",
+          "import sys,unittest; sys.path.insert(0,\"scripts/ci\"); suite=unittest.defaultTestLoader.loadTestsFromNames([\"test_run_from_zero_native\",\"test_growth_scale_observation\",\"test_ci_source_integrity\",\"test_pq_research_integration\"]); result=unittest.TextTestRunner(verbosity=1).run(suite); sys.exit(not result.wasSuccessful())"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:55:59.254612+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 49485937191,
+        "finished_at": "2026-11-04T13:56:48.740829+00:00",
+        "log_bytes": 814,
+        "log_sha256": "ee68d5bac1abdd14175b3a786f2202d3b1b82b75d4708bcd46956b74f50bf9c4",
+        "final_head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "composition-reader-controls.json",
+      "log_file": "composition-reader-controls.log"
+    },
+    {
+      "name": "composition-repository",
+      "result": "PASS",
+      "details": {
+        "workspace_packages": 26,
+        "rust_files": 1125,
+        "local_links": 2593
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "composition-repository",
+        "command": [
+          "python3",
+          "scripts/ci/check_repository.py"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:57:59.630768+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 55967651772,
+        "finished_at": "2026-11-04T13:58:55.598614+00:00",
+        "log_bytes": 307,
+        "log_sha256": "abe94cccc9d67a4430c0f8cfe305487fdcd868eca979aad52d2d9b2ceb85f22b",
+        "final_head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "composition-repository.json",
+      "log_file": "composition-repository.log"
+    },
+    {
+      "name": "composition-source-verification",
+      "result": "PASS",
+      "details": {},
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "composition-source-verification",
+        "command": [
+          "python3",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+          "--output",
+          "/workspace/scratch/e537ad232c79/composition-source-receipt.json"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:55:59.242223+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 3204922094,
+        "finished_at": "2026-11-04T13:56:02.447378+00:00",
+        "log_bytes": 421,
+        "log_sha256": "8fdc2678701cd96d944bc3909e08e35651e611e2b2515421df5643faa6b1c575",
+        "final_head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "composition-source-verification.json",
+      "log_file": "composition-source-verification.log"
+    },
+    {
+      "name": "cutoff-clippy",
+      "result": "PASS",
+      "details": {
+        "all_targets": true,
+        "all_features": true,
+        "warnings_denied": true,
+        "native_tests_executed": 0
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "cutoff-clippy",
+        "command": [
+          "bash",
+          "/workspace/scratch/e537ad232c79/run-native.sh",
+          "cargo",
+          "clippy",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-features",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "tree": "923c1aa59bc090baeff79979d950aebeec4def78",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T14:18:35.149828+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 78847015341,
+        "finished_at": "2026-11-04T14:19:53.997074+00:00",
+        "log_bytes": 181,
+        "log_sha256": "e71bd08e0bac732ecb11513a8b1f6ea53c4a2845bc9806ba631563e5c6b21899",
+        "final_head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "cutoff-clippy.json",
+      "log_file": "cutoff-clippy.log"
+    },
+    {
+      "name": "cutoff-corpus",
+      "result": "PASS",
+      "details": {
+        "exact_source_blobs": 444,
+        "reported_status": "HOLD_NO_GO",
+        "source_consistency_only": true,
+        "cryptographic_acceptance": false
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "cutoff-corpus",
+        "command": [
+          "python3",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "tree": "923c1aa59bc090baeff79979d950aebeec4def78",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T14:18:40.140811+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 219118651,
+        "finished_at": "2026-11-04T14:18:40.360284+00:00",
+        "log_bytes": 557,
+        "log_sha256": "090ddef889f5a6714b4a5d56a7299342e3a0ddc22d23853134428359002228ec",
+        "final_head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "cutoff-corpus.json",
+      "log_file": "cutoff-corpus.log"
+    },
+    {
+      "name": "cutoff-format",
+      "result": "PASS",
+      "details": {},
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "cutoff-format",
+        "command": [
+          "bash",
+          "/workspace/scratch/e537ad232c79/run-native.sh",
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "tree": "923c1aa59bc090baeff79979d950aebeec4def78",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T14:18:40.508200+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 15881128268,
+        "finished_at": "2026-11-04T14:18:56.389596+00:00",
+        "log_bytes": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "final_head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "cutoff-format.json",
+      "log_file": "cutoff-format.log"
+    },
+    {
+      "name": "cutoff-reader-controls",
+      "result": "PASS",
+      "details": {
+        "python_tests_passed": 229,
+        "native_tests_executed": 0
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "cutoff-reader-controls",
+        "command": [
+          "python3",
+          "-c",
+          "import sys,unittest; sys.path.insert(0,\"scripts/ci\"); suite=unittest.defaultTestLoader.loadTestsFromNames([\"test_run_from_zero_native\",\"test_growth_scale_observation\",\"test_ci_source_integrity\",\"test_pq_research_integration\"]); result=unittest.TextTestRunner(verbosity=1).run(suite); sys.exit(not result.wasSuccessful())"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "tree": "923c1aa59bc090baeff79979d950aebeec4def78",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T14:18:36.357764+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 52698051221,
+        "finished_at": "2026-11-04T14:19:29.059606+00:00",
+        "log_bytes": 814,
+        "log_sha256": "18ae8d3f75a684a0a5de4af35e3f1d2504c66581edc30d91903e4d49651d9482",
+        "final_head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "cutoff-reader-controls.json",
+      "log_file": "cutoff-reader-controls.log"
+    },
+    {
+      "name": "cutoff-source-bundle",
+      "result": "PASS",
+      "details": {},
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "cutoff-source-bundle",
+        "command": [
+          "git",
+          "bundle",
+          "verify",
+          "/workspace/scratch/e537ad232c79/native-tested-source.bundle"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "tree": "923c1aa59bc090baeff79979d950aebeec4def78",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T14:20:47.221584+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 23388252,
+        "finished_at": "2026-11-04T14:20:47.245213+00:00",
+        "log_bytes": 346,
+        "log_sha256": "cacad0d9a95a74c0e2dbff508976210199bc0167564773468bb1833ee94c1146",
+        "final_head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "cutoff-source-bundle.json",
+      "log_file": "cutoff-source-bundle.log"
+    },
+    {
+      "name": "cutoff-source-verification",
+      "result": "PASS",
+      "details": {},
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "cutoff-source-verification",
+        "command": [
+          "python3",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+          "--output",
+          "/workspace/scratch/e537ad232c79/cutoff-source-receipt.json"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "tree": "923c1aa59bc090baeff79979d950aebeec4def78",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T14:18:36.384772+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 3628205341,
+        "finished_at": "2026-11-04T14:18:40.013257+00:00",
+        "log_bytes": 421,
+        "log_sha256": "7ba142af7bd90d0f14c2710a4b42b835c3def44a75a8a5ba74929d8dbba2265d",
+        "final_head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "cutoff-source-verification.json",
+      "log_file": "cutoff-source-verification.log"
+    },
+    {
+      "name": "publication-staged-source-refusal",
+      "result": "FAIL",
+      "details": {
+        "reason": "The verifier was invoked before the staged raw logs had been committed; it correctly refused an unclean source. No clean-source pass was produced by this invocation.",
+        "native_tests_executed": 0
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "publication-source-after-cache-cleanup",
+        "command": [
+          "python3",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "1470e4e166945e8eb4ce4aed4706e1c2b36dc97b",
+          "--output",
+          "/workspace/scratch/e537ad232c79/publication-source-after-cache-cleanup-receipt.json"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "1470e4e166945e8eb4ce4aed4706e1c2b36dc97b",
+        "tree": "02835d9b865008c0e733efc53b5b2a56437d2549",
+        "dirty_paths": [
+          "M  evidence/pon-native-liveness-20261104/README.md",
+          "A  evidence/pon-native-liveness-20261104/component-lib-build.log",
+          "A  evidence/pon-native-liveness-20261104/composition-cargo-graph.log",
+          "A  evidence/pon-native-liveness-20261104/composition-clippy.log",
+          "A  evidence/pon-native-liveness-20261104/composition-corpus.log",
+          "A  evidence/pon-native-liveness-20261104/composition-format.log",
+          "A  evidence/pon-native-liveness-20261104/composition-full-cargo-graph.log",
+          "A  evidence/pon-native-liveness-20261104/composition-owner-controls.log",
+          "A  evidence/pon-native-liveness-20261104/composition-reader-controls.log",
+          "A  evidence/pon-native-liveness-20261104/composition-repository.log",
+          "A  evidence/pon-native-liveness-20261104/composition-source-verification.log",
+          "A  evidence/pon-native-liveness-20261104/corpus-check.log",
+          "A  evidence/pon-native-liveness-20261104/cutoff-clippy.log",
+          "A  evidence/pon-native-liveness-20261104/cutoff-corpus.log",
+          "A  evidence/pon-native-liveness-20261104/cutoff-format.log",
+          "A  evidence/pon-native-liveness-20261104/cutoff-reader-controls.log",
+          "A  evidence/pon-native-liveness-20261104/cutoff-source-bundle.log",
+          "A  evidence/pon-native-liveness-20261104/cutoff-source-verification.log",
+          "A  evidence/pon-native-liveness-20261104/draft-node-check.log",
+          "A  evidence/pon-native-liveness-20261104/final-format.log",
+          "A  evidence/pon-native-liveness-20261104/final-lib-build.log",
+          "A  evidence/pon-native-liveness-20261104/final-reader-tests.log",
+          "A  evidence/pon-native-liveness-20261104/frozen-source-verification.log",
+          "A  evidence/pon-native-liveness-20261104/original-confirmation-readback.log",
+          "A  evidence/pon-native-liveness-20261104/original-four-second-native.log",
+          "A  evidence/pon-native-liveness-20261104/publication-enospc-observation.json",
+          "A  evidence/pon-native-liveness-20261104/repository-check.log",
+          "M  evidence/pon-native-liveness-20261104/results.json",
+          "A  evidence/pon-native-liveness-20261104/source-control-tests.log",
+          "A  evidence/pon-native-liveness-20261104/strict-clippy-fixed.log",
+          "A  evidence/pon-native-liveness-20261104/strict-clippy.log"
+        ],
+        "started_at": "2026-11-04T14:24:59.411670+00:00",
+        "returncode": 1,
+        "completed": true,
+        "wall_ns": 114805122,
+        "finished_at": "2026-11-04T14:24:59.526825+00:00",
+        "log_bytes": 712,
+        "log_sha256": "9e167bab56d2324301bc3f789593428f8652b56be24537fbf09e24366c13411f",
+        "final_head": "1470e4e166945e8eb4ce4aed4706e1c2b36dc97b",
+        "final_dirty_paths": [
+          "M  evidence/pon-native-liveness-20261104/README.md",
+          "A  evidence/pon-native-liveness-20261104/component-lib-build.log",
+          "A  evidence/pon-native-liveness-20261104/composition-cargo-graph.log",
+          "A  evidence/pon-native-liveness-20261104/composition-clippy.log",
+          "A  evidence/pon-native-liveness-20261104/composition-corpus.log",
+          "A  evidence/pon-native-liveness-20261104/composition-format.log",
+          "A  evidence/pon-native-liveness-20261104/composition-full-cargo-graph.log",
+          "A  evidence/pon-native-liveness-20261104/composition-owner-controls.log",
+          "A  evidence/pon-native-liveness-20261104/composition-reader-controls.log",
+          "A  evidence/pon-native-liveness-20261104/composition-repository.log",
+          "A  evidence/pon-native-liveness-20261104/composition-source-verification.log",
+          "A  evidence/pon-native-liveness-20261104/corpus-check.log",
+          "A  evidence/pon-native-liveness-20261104/cutoff-clippy.log",
+          "A  evidence/pon-native-liveness-20261104/cutoff-corpus.log",
+          "A  evidence/pon-native-liveness-20261104/cutoff-format.log",
+          "A  evidence/pon-native-liveness-20261104/cutoff-reader-controls.log",
+          "A  evidence/pon-native-liveness-20261104/cutoff-source-bundle.log",
+          "A  evidence/pon-native-liveness-20261104/cutoff-source-verification.log",
+          "A  evidence/pon-native-liveness-20261104/draft-node-check.log",
+          "A  evidence/pon-native-liveness-20261104/final-format.log",
+          "A  evidence/pon-native-liveness-20261104/final-lib-build.log",
+          "A  evidence/pon-native-liveness-20261104/final-reader-tests.log",
+          "A  evidence/pon-native-liveness-20261104/frozen-source-verification.log",
+          "A  evidence/pon-native-liveness-20261104/original-confirmation-readback.log",
+          "A  evidence/pon-native-liveness-20261104/original-four-second-native.log",
+          "A  evidence/pon-native-liveness-20261104/publication-enospc-observation.json",
+          "A  evidence/pon-native-liveness-20261104/repository-check.log",
+          "M  evidence/pon-native-liveness-20261104/results.json",
+          "A  evidence/pon-native-liveness-20261104/source-control-tests.log",
+          "A  evidence/pon-native-liveness-20261104/strict-clippy-fixed.log",
+          "A  evidence/pon-native-liveness-20261104/strict-clippy.log"
+        ]
+      },
+      "receipt_file": "publication-source-after-cache-cleanup.json",
+      "log_file": "publication-source-after-cache-cleanup.log"
+    },
+    {
+      "name": "latest-composition-clippy",
+      "result": "FAIL",
+      "details": {
+        "native_tests_executed": 0,
+        "observed_failure": "getrandom build-script linker SIGBUS; no final Clippy pass"
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "latest-composition-clippy",
+        "command": [
+          "bash",
+          "/workspace/scratch/e537ad232c79/run-native.sh",
+          "cargo",
+          "clippy",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-features",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+        "tree": "924397c8ca6ea1d0d8e9c003f4ca7f3c6a9022be",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T14:30:48.606158+00:00",
+        "returncode": 101,
+        "completed": true,
+        "wall_ns": 14863989022,
+        "finished_at": "2026-11-04T14:31:03.470386+00:00",
+        "log_bytes": 2336,
+        "log_sha256": "642ea21c1c5460ccba474acb31d80df895a7ac525a1f6cccb581aa4cd3c310c4",
+        "final_head": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "latest-composition-clippy.json",
+      "log_file": "latest-composition-clippy.log"
+    },
+    {
+      "name": "latest-composition-corpus",
+      "result": "PASS",
+      "details": {
+        "native_tests_executed": 0,
+        "exact_source_blobs": 452,
+        "reported_status": "HOLD_NO_GO",
+        "source_consistency_only": true
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "latest-composition-corpus",
+        "command": [
+          "python3",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+        "tree": "924397c8ca6ea1d0d8e9c003f4ca7f3c6a9022be",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T14:30:52.551097+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 172220158,
+        "finished_at": "2026-11-04T14:30:52.723741+00:00",
+        "log_bytes": 557,
+        "log_sha256": "b01666bd8d16b02a650094456b046e71a1ecbdbc224daae5db4743e61b8337b5",
+        "final_head": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "latest-composition-corpus.json",
+      "log_file": "latest-composition-corpus.log"
+    },
+    {
+      "name": "latest-composition-format",
+      "result": "PASS",
+      "details": {
+        "native_tests_executed": 0
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "latest-composition-format",
+        "command": [
+          "bash",
+          "/workspace/scratch/e537ad232c79/run-native.sh",
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+        "tree": "924397c8ca6ea1d0d8e9c003f4ca7f3c6a9022be",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T14:34:33.916178+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 15328394117,
+        "finished_at": "2026-11-04T14:34:49.244809+00:00",
+        "log_bytes": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "final_head": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "latest-composition-format.json",
+      "log_file": "latest-composition-format.log"
+    },
+    {
+      "name": "latest-composition-reader-controls",
+      "result": "FAIL",
+      "details": {
+        "native_tests_executed": 0,
+        "successful_suite_count": null,
+        "observed_failure": "ENOSPC during fixture creation; no final successful suite summary"
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "latest-composition-reader-controls",
+        "command": [
+          "python3",
+          "-c",
+          "import sys,unittest; sys.path.insert(0,\"scripts/ci\"); suite=unittest.defaultTestLoader.loadTestsFromNames([\"test_run_from_zero_native\",\"test_growth_scale_observation\",\"test_ci_source_integrity\",\"test_pq_research_integration\",\"test_pon_public_v3_phase_read\"]); result=unittest.TextTestRunner(verbosity=1).run(suite); sys.exit(not result.wasSuccessful())"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+        "tree": "924397c8ca6ea1d0d8e9c003f4ca7f3c6a9022be",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T14:30:49.873284+00:00",
+        "returncode": 120,
+        "completed": true,
+        "wall_ns": 14938479392,
+        "finished_at": "2026-11-04T14:31:04.812163+00:00",
+        "log_bytes": 69632,
+        "log_sha256": "e19288b106f91c0f4ec67ea318689147304c3b3057d480c9048ff64ea5ee1727",
+        "final_head": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "latest-composition-reader-controls.json",
+      "log_file": "latest-composition-reader-controls.log"
+    },
+    {
+      "name": "latest-composition-source-bundle",
+      "result": "PASS",
+      "details": {
+        "native_tests_executed": 0
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "latest-composition-source-bundle",
+        "command": [
+          "git",
+          "bundle",
+          "verify",
+          "/workspace/scratch/e537ad232c79/final-source-history.bundle"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+        "tree": "924397c8ca6ea1d0d8e9c003f4ca7f3c6a9022be",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T14:37:51.598056+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 15019471,
+        "finished_at": "2026-11-04T14:37:51.613763+00:00",
+        "log_bytes": 388,
+        "log_sha256": "f58fe76bca46b319a995a38c6922942ccfbf1b19adee7db9194e95fa1b0b4ba2",
+        "final_head": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "latest-composition-source-bundle.json",
+      "log_file": "latest-composition-source-bundle.log"
+    },
+    {
+      "name": "latest-composition-source",
+      "result": "PASS",
+      "details": {
+        "native_tests_executed": 0
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "latest-composition-source",
+        "command": [
+          "python3",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "0ba09db0cf1c684013a896dd83f29c327f58521e",
+          "--output",
+          "/workspace/scratch/e537ad232c79/latest-composition-source-receipt.json"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+        "tree": "924397c8ca6ea1d0d8e9c003f4ca7f3c6a9022be",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T14:30:49.875859+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 2585434036,
+        "finished_at": "2026-11-04T14:30:52.461499+00:00",
+        "log_bytes": 421,
+        "log_sha256": "34b8c82c0658b14c87ff62452366976e0b81035c59121befc0a76a17659a1e25",
+        "final_head": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "latest-composition-source.json",
+      "log_file": "latest-composition-source.log"
+    },
+    {
+      "name": "publication-composed-source",
+      "result": "PASS",
+      "details": {
+        "native_tests_executed": 0
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "publication-composed-source",
+        "command": [
+          "python3",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+          "--output",
+          "/dev/shm/trnm-final-checks/publication-composed-source-receipt.json"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+        "tree": "87f974c3ad327d5da2c61286ec86fcb1580b3fcf",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T15:07:56.696311+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 3060260995,
+        "finished_at": "2026-11-04T15:07:59.756773+00:00",
+        "log_bytes": 421,
+        "log_sha256": "8d7124bdfd3b09264484d73a4a20636aabeb996ef5694e3db400cc53f7ea8c8e",
+        "final_head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "publication-composed-source.json",
+      "log_file": "publication-composed-source.log"
+    },
+    {
+      "name": "publication-composed-format",
+      "result": "PASS",
+      "details": {
+        "native_tests_executed": 0
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "publication-composed-format",
+        "command": [
+          "bash",
+          "/workspace/scratch/e537ad232c79/run-native.sh",
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+        "tree": "87f974c3ad327d5da2c61286ec86fcb1580b3fcf",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T15:07:56.685348+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 14465490940,
+        "finished_at": "2026-11-04T15:08:11.151096+00:00",
+        "log_bytes": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "final_head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "publication-composed-format.json",
+      "log_file": "publication-composed-format.log"
+    },
+    {
+      "name": "publication-composed-corpus",
+      "result": "PASS",
+      "details": {
+        "native_tests_executed": 0,
+        "reported_status": "HOLD_NO_GO",
+        "source_consistency_only": true
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "publication-composed-corpus",
+        "command": [
+          "python3",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+        "tree": "87f974c3ad327d5da2c61286ec86fcb1580b3fcf",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T15:07:56.669453+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 187373762,
+        "finished_at": "2026-11-04T15:07:56.857021+00:00",
+        "log_bytes": 557,
+        "log_sha256": "b01666bd8d16b02a650094456b046e71a1ecbdbc224daae5db4743e61b8337b5",
+        "final_head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "publication-composed-corpus.json",
+      "log_file": "publication-composed-corpus.log"
+    },
+    {
+      "name": "publication-composed-repository",
+      "result": "PASS",
+      "details": {
+        "native_tests_executed": 0
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "publication-composed-repository",
+        "command": [
+          "python3",
+          "scripts/ci/check_repository.py"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+        "tree": "87f974c3ad327d5da2c61286ec86fcb1580b3fcf",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T15:07:56.696835+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 50312947433,
+        "finished_at": "2026-11-04T15:08:47.009969+00:00",
+        "log_bytes": 307,
+        "log_sha256": "d87664c923e41716df64c47ded98bf6f57e9046c84cdc7fa37ae12ba9f70a9e9",
+        "final_head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "publication-composed-repository.json",
+      "log_file": "publication-composed-repository.log"
+    },
+    {
+      "name": "publication-source-bundle",
+      "result": "PASS",
+      "details": {
+        "native_tests_executed": 0
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "publication-source-bundle",
+        "command": [
+          "git",
+          "bundle",
+          "create",
+          "/dev/shm/trnm-final-checks/publication-source.bundle",
+          "HEAD",
+          "^0ba09db0cf1c684013a896dd83f29c327f58521e",
+          "^1c885019fdf1cc2f33af8da0780da603fff1c353"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+        "tree": "87f974c3ad327d5da2c61286ec86fcb1580b3fcf",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T15:09:06.786357+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 77046779,
+        "finished_at": "2026-11-04T15:09:06.863599+00:00",
+        "log_bytes": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "final_head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "publication-source-bundle.json",
+      "log_file": "publication-source-bundle.log"
+    },
+    {
+      "name": "publication-source-bundle-verify",
+      "result": "PASS",
+      "details": {
+        "native_tests_executed": 0
+      },
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "publication-source-bundle-verify",
+        "command": [
+          "git",
+          "bundle",
+          "verify",
+          "/dev/shm/trnm-final-checks/publication-source.bundle"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+        "tree": "87f974c3ad327d5da2c61286ec86fcb1580b3fcf",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T15:09:12.084025+00:00",
+        "returncode": 0,
+        "completed": true,
+        "wall_ns": 14181774,
+        "finished_at": "2026-11-04T15:09:12.098462+00:00",
+        "log_bytes": 297,
+        "log_sha256": "fff450c7eb2e2dd896848b55bf9accd8a258fa2aecbc1bdab526d5fc0c326d54",
+        "final_head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "publication-source-bundle-verify.json",
+      "log_file": "publication-source-bundle-verify.log"
+    }
+  ],
+  "native_build_attempts": [
+    {
+      "name": "base-lib-build",
+      "source_commit": "d0737cf5434894ce47fad8082376fc417313c2cb",
+      "scope": "Node library tests, all features, no-run, original test profile",
+      "exact_cargo_argv": null,
+      "exact_cargo_argv_note": "No separate terminal command receipt is available in this draft; the actual rustc invocation and build-finished=false are retained in raw logs.",
+      "cargo_returncode": null,
+      "result": "BUILD_FAILED_COMPILER_SIGKILL",
+      "compiler_signal": {
+        "number": 9,
+        "name": "SIGKILL"
+      },
+      "termination_cause": null,
+      "native_tests_executed": 0,
+      "log_files": [
+        "base-build.stderr",
+        "base-build.jsonl"
+      ],
+      "sqlite_build_boundary": "UNQUALIFIED_NORMAL_LOADER_SET_INCOMPLETE"
+    },
+    {
+      "name": "final-lib-build",
+      "source_commit": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+      "scope": "Node library tests, all features, no-run",
+      "profile_overrides": {
+        "profile.test.package.trnm-pon-node.debug": 0,
+        "profile.test.package.trnm-mvcc-fee.debug": 0
+      },
+      "result": "BUILD_FAILED_COMPILER_SIGKILL",
+      "compiler_signal": {
+        "number": 9,
+        "name": "SIGKILL"
+      },
+      "termination_cause": null,
+      "native_tests_executed": 0,
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "final-lib-build",
+        "command": [
+          "bash",
+          "/workspace/scratch/e537ad232c79/run-native.sh",
+          "cargo",
+          "--config",
+          "profile.test.package.trnm-pon-node.debug=0",
+          "--config",
+          "profile.test.package.trnm-mvcc-fee.debug=0",
+          "test",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+        "tree": "72d12bd434055f67c5f6becf2ee480a9ec09b99e",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:03:43.844860+00:00",
+        "returncode": 101,
+        "completed": true,
+        "wall_ns": 290497901153,
+        "finished_at": "2026-11-04T13:08:34.343109+00:00",
+        "log_bytes": 117506,
+        "log_sha256": "8f1925b4d71330b576c9461640e2e24278b521193daf91fcda8084ab268228e7",
+        "final_head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "final-lib-build.json",
+      "log_files": [
+        "final-lib-build.log"
+      ],
+      "sqlite_build_boundary": "QUALIFIED_BUILD_CFG_OBSERVED"
+    },
+    {
+      "name": "component-lib-build",
+      "source_commit": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+      "scope": "Node library tests, all features, no-run",
+      "profile_overrides": {
+        "profile.test.debug": 0,
+        "profile.test.package.trnm-pon-node.opt-level": 0
+      },
+      "result": "BUILD_FAILED_COMPILER_SIGKILL",
+      "compiler_signal": {
+        "number": 9,
+        "name": "SIGKILL"
+      },
+      "termination_cause": null,
+      "native_tests_executed": 0,
+      "command_receipt": {
+        "schema": "local-native-liveness-command-v1",
+        "name": "component-lib-build",
+        "command": [
+          "bash",
+          "/workspace/scratch/e537ad232c79/run-native.sh",
+          "cargo",
+          "--config",
+          "profile.test.debug=0",
+          "--config",
+          "profile.test.package.trnm-pon-node.opt-level=0",
+          "test",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "cwd": "/workspace/scratch/e537ad232c79/chain",
+        "head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+        "tree": "72d12bd434055f67c5f6becf2ee480a9ec09b99e",
+        "dirty_paths": [],
+        "started_at": "2026-11-04T13:10:37.581072+00:00",
+        "returncode": 101,
+        "completed": true,
+        "wall_ns": 637621864386,
+        "finished_at": "2026-11-04T13:21:15.203301+00:00",
+        "log_bytes": 118395,
+        "log_sha256": "48ee4a9a1060e7d3b831b0e286af43abd6a7f0475634a23297f43d46dd3dccf7",
+        "final_head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+        "final_dirty_paths": []
+      },
+      "receipt_file": "component-lib-build.json",
+      "log_files": [
+        "component-lib-build.log"
+      ],
+      "sqlite_build_boundary": "QUALIFIED_BUILD_CFG_OBSERVED"
+    }
+  ],
+  "new_native_regressions": {
+    "planned": 23,
+    "executed": 0,
+    "passed": 0,
+    "failed_at_runtime": 0,
+    "not_run": 23,
+    "runtime_outcomes_unknown": 23,
+    "pass_rate_of_executed": null,
+    "result": "NOT_RUN_NATIVE_ACCEPTANCE_OPEN",
+    "counting_note": "The unknown runtime outcomes are the same not-run tests, not an additional category. The three earlier native build failures and newly added completion tests retain their separate scopes.",
+    "old_binary_results_reused": false,
+    "tests": [
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/store/admission_header_tests.rs",
+        "selector": "store::admission_header_tests::admission_header_public_precheck_honors_each_original_cancellation",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/store/admission_header_tests.rs",
+        "selector": "store::admission_header_tests::admission_header_target_and_time_share_only_one_current_window",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/store/admission_header_tests.rs",
+        "selector": "store::admission_header_tests::admission_header_epoch_change_never_becomes_consensus_invalid_or_success",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/store/admission_header_tests.rs",
+        "selector": "store::admission_header_tests::admission_header_epoch_change_keeps_original_resource_refusal",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/store/admission_header_tests.rs",
+        "selector": "store::admission_header_tests::admission_header_checks_do_not_replace_or_close_callers_transaction",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_window.rs",
+        "selector": "store::growth::tests::header_window::native_growth_v2_single_header_window_preserves_retarget_time_and_error_order",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_window.rs",
+        "selector": "store::growth::tests::header_window::native_growth_v2_single_header_window_reloads_each_admission_context",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_window.rs",
+        "selector": "store::growth::tests::header_window::native_growth_v2_single_header_window_still_rejects_changed_retained_headers",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_window.rs",
+        "selector": "store::growth::tests::header_window::native_growth_v2_single_header_window_foreign_write_refuses_before_work_or_duplicate_return",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_window.rs",
+        "selector": "store::growth::tests::header_window::native_growth_v2_single_header_window_keeps_epoch_fences_before_and_after_precheck",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "selector": "ingress::tests::public_v3_header_resource_refusal_precedes_parent_state_and_work",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::tests::dropped_queue_task_is_not_observed_closed_before_its_last_grant_releases",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::tests::connection_is_not_observed_closed_before_its_original_slot_releases",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::tests::accepted_setup_error_closes_socket_before_releasing_slot_and_observation",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::tests::finished_queue_and_failed_send_keep_output_owned_until_request_closes",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::tests::shutdown_joins_all_workers_and_releases_queued_permits_before_returning_first_error",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs",
+        "selector": "ingress::public_v3::pq_identity::tests::pq_response_expiry_stop_and_cancel_do_not_start_signing",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs",
+        "selector": "ingress::public_v3::pq_identity::tests::pq_response_cancellation_between_encoding_and_signing_stops_new_work",
+        "result": "NOT_RUN_BUILD_BLOCKED",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::completion_deadline_tests::completion_at_or_after_work_deadline_cannot_start_output_or_rewrite_native_outcome",
+        "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::completion_deadline_tests::completion_gate_enforces_original_total_service_stop_and_cancel_before_encoding_error",
+        "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::completion_deadline_tests::timely_completion_transfers_output_under_original_total_and_service_caps",
+        "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::completion_deadline_tests::rejected_completion_releases_output_before_connection_slot_and_close_observation",
+        "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::completion_deadline_tests::completion_gate_keeps_live_serialization_and_orphan_outcomes_distinct",
+        "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+        "executed": false,
+        "runtime_outcome": null
+      }
+    ]
+  },
+  "original_acceptance": {
+    "result": "ORIGINAL_BUSINESS_GATE_NOT_MET_HOST_GATED",
+    "draft_placeholder": false,
+    "source_commit": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+    "source_tree": "0296ed99dde48e287038fc27e47ef9e310d40117",
+    "command": [
+      "env",
+      "TRNM_PUBLIC_V3_CONFIRMATION_DIR=/workspace/scratch/e537ad232c79/original-confirmation",
+      "bash",
+      "/workspace/scratch/e537ad232c79/run-native.sh",
+      "cargo",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "public_v3_from_zero",
+      "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+      "--",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cwd": "/workspace/scratch/e537ad232c79/chain",
+    "command_started_at": "2026-11-04T13:34:39.479331+00:00",
+    "receipt_file": "original-four-second-native.json",
+    "log_file": "original-four-second-native.log",
+    "completed": true,
+    "cargo_returncode": 0,
+    "test_executed": true,
+    "report_present": true,
+    "report_sha256": "a8dfce1f27c3f164131aae98ba001e7bf466693f78075e84738419a0c75d5f5c",
+    "strict_report_validation_result": "FAIL",
+    "attack_free_baseline_result": "0_OF_1_UNCONFIRMED_HOST_GATED",
+    "from_zero_pressure_result": "0_OF_1_UNCONFIRMED_HOST_GATED",
+    "required_window_ns": 4000000000,
+    "required_hostile_producers": 16,
+    "planned_phases": [
+      {
+        "mode": "attack-free-baseline",
+        "hostile_producers": 0,
+        "required_signed_transactions": 1
+      },
+      {
+        "mode": "from-zero-pressure",
+        "hostile_producers": 16,
+        "required_signed_transactions": 1
+      }
+    ],
+    "required_independent_confirmation_depth": 6,
+    "confirmed_transactions": 0,
+    "confirmation_latency_ns": null,
+    "cargo_success_alone_is_business_acceptance": false,
+    "substituted_30_second_24_attacker_campaign": false,
+    "fixed_host_qualified": false,
+    "denominator_rule": "Retain failed, cancelled, late, unconfirmed and unknown operations; do not infer performance from successful requests alone or restart the original window.",
+    "command_receipt": {
+      "schema": "local-native-liveness-command-v1",
+      "name": "original-four-second-native",
+      "command": [
+        "env",
+        "TRNM_PUBLIC_V3_CONFIRMATION_DIR=/workspace/scratch/e537ad232c79/original-confirmation",
+        "bash",
+        "/workspace/scratch/e537ad232c79/run-native.sh",
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_v3_from_zero",
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e537ad232c79/chain",
+      "head": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+      "tree": "0296ed99dde48e287038fc27e47ef9e310d40117",
+      "dirty_paths": [],
+      "started_at": "2026-11-04T13:34:39.479331+00:00",
+      "returncode": 0,
+      "completed": true,
+      "wall_ns": 408675635760,
+      "finished_at": "2026-11-04T13:41:28.155224+00:00",
+      "log_bytes": 4347,
+      "log_sha256": "3d5dd35a672bb52568b1b913bf868888095c36efc7977b1053f4d741c27609d1",
+      "final_head": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+      "final_dirty_paths": []
+    },
+    "native_selector_result": "PASS_INVARIANTS_ONLY",
+    "native_tests_executed": 1,
+    "native_tests_passed_in_selector": 1,
+    "native_tests_filtered_out": 5,
+    "reported_release_build_seconds": 400,
+    "reported_test_execution_seconds": 8.4,
+    "report_file": "original-confirmation/report.json",
+    "report_bytes": 14612673,
+    "strict_report_validation_returncode": 1,
+    "strict_report_validation_error": "CONFIRMATION_TARGET",
+    "strict_report_validation_receipt_file": "original-confirmation-readback.json",
+    "strict_report_validation_log_file": "original-confirmation-readback.log",
+    "strict_report_validation_command_receipt": {
+      "schema": "local-native-liveness-command-v1",
+      "name": "original-confirmation-readback",
+      "command": [
+        "python3",
+        "scripts/ci/run_from_zero_native.py",
+        "--summarize-confirmation",
+        "/workspace/scratch/e537ad232c79/original-confirmation/report.json"
+      ],
+      "cwd": "/workspace/scratch/e537ad232c79/chain",
+      "head": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+      "tree": "0296ed99dde48e287038fc27e47ef9e310d40117",
+      "dirty_paths": [],
+      "started_at": "2026-11-04T13:42:12.609618+00:00",
+      "returncode": 1,
+      "completed": true,
+      "wall_ns": 275725072,
+      "finished_at": "2026-11-04T13:42:12.885883+00:00",
+      "log_bytes": 25117,
+      "log_sha256": "77a3370ec8f7ab788061ee3dab8cc497c61bc605e87b20b0da9adf396e7ebbb7",
+      "final_head": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+      "final_dirty_paths": []
+    },
+    "finite_target_met": false,
+    "invariant_target_met": true,
+    "same_packet_sequence_in_both_runs": true,
+    "test_success_scope": "native protocol/accounting invariants; finite business target is a separately retained actual outcome and cannot be inferred from cargo exit zero",
+    "phase_business_offer_totals": {
+      "required": 2,
+      "confirmed": 0,
+      "unconfirmed": 2,
+      "unknown": 0,
+      "scope": "One required signed business transaction per phase using the same packet sequence; two phase offers, not two distinct business transactions or saturated TPS."
+    },
+    "phases": [
+      {
+        "mode": "attack-free-baseline",
+        "workers": 0,
+        "requested_window_ns": 4000000000,
+        "business_started_ns": 217759,
+        "client_confirmed_transactions": 0,
+        "client_confirmed_before_original_window_end": false,
+        "confirmation_ended_ns": null,
+        "client_confirmation_latency_ns": null,
+        "finite_business_target_met": false,
+        "invariant_target_met": true,
+        "accounting_closed": true,
+        "no_attack_accepted": true,
+        "receiver_matches_valid_honest_prefix": true,
+        "full_native_state_equal": false,
+        "independent_client_confirmation": null,
+        "independent_final_confirmation_stage": null,
+        "independent_operator_accepted": false,
+        "overlap_demonstrated": true,
+        "overlapping_false_calls": 0,
+        "completed_false_calls_before_business": 0,
+        "completed_false_calls_at_confirmation": 0,
+        "resource_fairness_qualified": false,
+        "work_profile_qualified": false,
+        "public_network_ready": false,
+        "production_activation": false,
+        "result": "UNCONFIRMED_HOST_GATED",
+        "business_denominator": {
+          "business_start_delay_ns": 217759,
+          "business_started_before_original_window_end": true,
+          "independent_confirmed_transactions_per_window_second": 0.0,
+          "lower_bound_reaches_original_window_end": false,
+          "observed_success_latency_ns": null,
+          "original_window_remaining_at_business_start_ns": 3999782241,
+          "pre_business_window_overrun_ns": 0,
+          "reported_finite_business_target_met": false,
+          "reported_independently_confirmed_in_window": 0,
+          "required_signed_transactions": 1,
+          "successful_latency": {
+            "max_ns": null,
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "min_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "missing_samples": 0,
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null,
+            "samples": 0
+          },
+          "unconfirmed": 1,
+          "unconfirmed_latency_lower_bound_ns": 3981335005,
+          "unknown": 0
+        },
+        "client_operation_outcomes": {
+          "all_recorded_calls": {
+            "attempts": 102,
+            "status_counts": {
+              "ok": 102
+            },
+            "errors": {},
+            "refusal_response_errors": {},
+            "returned_after_original_window": 0,
+            "returned_after_call_deadline": 0,
+            "missing_status": 0,
+            "missing_window_outcome": 0,
+            "missing_deadline_outcome": 0
+          },
+          "honest_submit_ack": {
+            "attempts": 7,
+            "status_counts": {
+              "ok": 7
+            },
+            "errors": {},
+            "refusal_response_errors": {},
+            "returned_after_original_window": 0,
+            "returned_after_call_deadline": 0,
+            "missing_status": 0,
+            "missing_window_outcome": 0,
+            "missing_deadline_outcome": 0
+          },
+          "honest_history_response": {
+            "attempts": 16,
+            "status_counts": {
+              "ok": 16
+            },
+            "errors": {},
+            "refusal_response_errors": {},
+            "returned_after_original_window": 0,
+            "returned_after_call_deadline": 0,
+            "missing_status": 0,
+            "missing_window_outcome": 0,
+            "missing_deadline_outcome": 0
+          },
+          "honest_heads_response": {
+            "attempts": 79,
+            "status_counts": {
+              "ok": 79
+            },
+            "errors": {},
+            "refusal_response_errors": {},
+            "returned_after_original_window": 0,
+            "returned_after_call_deadline": 0,
+            "missing_status": 0,
+            "missing_window_outcome": 0,
+            "missing_deadline_outcome": 0
+          },
+          "hostile_calls": {
+            "attempts": 0,
+            "status_counts": {},
+            "errors": {},
+            "refusal_response_errors": {},
+            "returned_after_original_window": 0,
+            "returned_after_call_deadline": 0,
+            "missing_status": 0,
+            "missing_window_outcome": 0,
+            "missing_deadline_outcome": 0
+          }
+        },
+        "hostile_workers_recorded": 0,
+        "hostile_worker_outcomes": [],
+        "independent_page_replay": {
+          "attempts": 16,
+          "accepted": 0,
+          "refused": 16,
+          "missing_outcome": 0,
+          "error_counts": {
+            "PUBLIC_HOST_KERNEL_PARENT": 16
+          },
+          "host_checks_by_stage": {
+            "checkpoint": {
+              "calls_started": 0,
+              "calls_completed": 0,
+              "calls_accepted": 0,
+              "calls_rejected": 0,
+              "calls_unfinished": 0,
+              "cpu_clock_unknown_calls": 0,
+              "wall_clock_unknown_calls": 0
+            },
+            "final": {
+              "calls_started": 0,
+              "calls_completed": 0,
+              "calls_accepted": 0,
+              "calls_rejected": 0,
+              "calls_unfinished": 0,
+              "cpu_clock_unknown_calls": 0,
+              "wall_clock_unknown_calls": 0
+            },
+            "initial": {
+              "calls_started": 0,
+              "calls_completed": 0,
+              "calls_accepted": 0,
+              "calls_rejected": 0,
+              "calls_unfinished": 0,
+              "cpu_clock_unknown_calls": 0,
+              "wall_clock_unknown_calls": 0
+            },
+            "resolve": {
+              "calls_started": 16,
+              "calls_completed": 16,
+              "calls_accepted": 0,
+              "calls_rejected": 16,
+              "calls_unfinished": 0,
+              "cpu_clock_unknown_calls": 0,
+              "wall_clock_unknown_calls": 0
+            }
+          },
+          "reader_summary": {
+            "accepted_in_original_window": 0,
+            "accepted_wall": {
+              "max_ns": null,
+              "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+              "min_ns": null,
+              "minimum_samples": {
+                "p50": 2,
+                "p95": 20,
+                "p99": 100
+              },
+              "missing_samples": 0,
+              "p50_ns": null,
+              "p95_ns": null,
+              "p99_ns": null,
+              "samples": 0
+            },
+            "attempts": 16,
+            "calling_thread_cpu": {
+              "max_ns": 108232,
+              "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+              "min_ns": 31346,
+              "minimum_samples": {
+                "p50": 2,
+                "p95": 20,
+                "p99": 100
+              },
+              "missing_samples": 0,
+              "p50_ns": 35903,
+              "p95_ns": null,
+              "p99_ns": null,
+              "samples": 16
+            },
+            "cpu_scope": "caller thread only; excludes separately owned worker CPU",
+            "failed_or_late": 16,
+            "failed_or_late_wall": {
+              "max_ns": 108354,
+              "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+              "min_ns": 31417,
+              "minimum_samples": {
+                "p50": 2,
+                "p95": 20,
+                "p99": 100
+              },
+              "missing_samples": 0,
+              "p50_ns": 36135,
+              "p95_ns": null,
+              "p99_ns": null,
+              "samples": 16
+            },
+            "known_calling_thread_cpu_sum_ns": 696236,
+            "native_stage_scope": "optional local snapshots; old absence remains unknown; Host/native/packet intervals are nested, not added to replay CPU",
+            "native_stage_snapshots_missing": 0,
+            "native_stage_snapshots_retained": 16
+          }
+        },
+        "verification_error_counts": {
+          "PUBLIC_HOST_KERNEL_PARENT": 16
+        },
+        "service_error": null,
+        "service_metrics": {
+          "abandoned_tasks": 0,
+          "accepted_connections": 102,
+          "body_bytes_received": 697354,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "cleanup_scans": 193,
+          "completed_pool_status": 0,
+          "completed_pool_submit": 0,
+          "completed_read": 95,
+          "completed_submit": 7,
+          "connections_closed_on_shutdown": 0,
+          "delivered_response_frames": 102,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "enqueued_after_backpressure": 0,
+          "executor_refusals": 0,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "issued_challenges": 102,
+          "lane_capacity_refusals": 0,
+          "mutating_grants_after_shutdown": 0,
+          "mutation_body_decode_cpu_ns": 2027260,
+          "mutation_cpu_charged_ns": 50970164,
+          "mutation_cpu_clock_failures": 0,
+          "mutation_cpu_credit_ns_after_shutdown": 1986326224,
+          "mutation_cpu_debt_ns_after_shutdown": 0,
+          "mutation_cpu_in_flight_after_shutdown": 0,
+          "mutation_cpu_refusals": 0,
+          "mutation_cpu_reservations": 7,
+          "mutation_cpu_unavailable_after_shutdown": false,
+          "mutation_dispatch_excluding_work_cpu_ns": 44164602,
+          "mutation_full_work_cpu_ns": 6805562,
+          "mutation_response_cpu_ns": 433808,
+          "output_reserved_bytes_after_shutdown": 0,
+          "output_serialization_failures": 0,
+          "paid_body_capacity_refusals": 0,
+          "paid_body_reserved_bytes_after_shutdown": 0,
+          "parse_refusals": 0,
+          "peak_connections": 2,
+          "peak_mutating_grants": 1,
+          "peak_output_reserved_bytes": 8470528,
+          "peak_paid_body_bytes": 298374,
+          "peak_pending_challenge": 2,
+          "peak_pending_enqueue": 1,
+          "peak_pending_grant": 2,
+          "peak_read_grants": 2,
+          "peak_spent": 63,
+          "pending_challenge_closed": 0,
+          "pending_challenge_entered": 102,
+          "pending_challenge_granted": 102,
+          "pending_challenge_wait_ns": 130024915,
+          "pending_grant_closed": 0,
+          "pending_grant_entered": 102,
+          "pending_grant_granted": 102,
+          "pending_grant_wait_ns": 119139346,
+          "pool_submit_failed": 0,
+          "pool_submit_finished": 0,
+          "pool_submit_ns": 0,
+          "pool_submit_started": 0,
+          "pq_authentication_attempts": 0,
+          "pq_authentication_bytes": 0,
+          "pq_authentication_thread_cpu_ns": 0,
+          "pq_authentication_unavailable": false,
+          "preface_refusals": 0,
+          "queue_backpressure_events": 0,
+          "queue_refusals": 0,
+          "queue_wait_ns": 113403474,
+          "read_grants_after_shutdown": 0,
+          "replay_refusals": 0,
+          "response_bytes_written": 1732056,
+          "response_write_failures": 0,
+          "retained_phase_errors": {},
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "spent_reservations": 102,
+          "tasks_dequeued": 102,
+          "tasks_enqueued": 102,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unknown_caller_durable_rows": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0,
+          "work_failed": 0,
+          "work_finished": 7,
+          "work_ns": 7658344,
+          "work_started": 7
+        },
+        "request_observations": {
+          "accepted_connections_seen": 102,
+          "capacity": 16384,
+          "counter_overflow": false,
+          "cpu_includes_reactor_authentication": false,
+          "cpu_includes_reactor_authentication_or_response_signing": true,
+          "cpu_intervals_are_nested_not_additive": true,
+          "cpu_wait_is_outside_dispatch": true,
+          "dispatch_cpu_includes_paid_body_decode": true,
+          "dispatch_cpu_includes_response_signing": true,
+          "measurement_failures": 0,
+          "monotonic_epoch_is_observer_local": true,
+          "observation_has_consensus_authority": false,
+          "phase_parent_links_are_inclusive": true,
+          "records_not_retained": 0,
+          "schema": "public-v3-local-request-resource-observation-v4",
+          "stream_bytes_are_physical_network_bytes": false,
+          "submit_phase_cpu_excludes_scoped_workers": true,
+          "retained_records": 102,
+          "record_value_counts": {
+            "complete": {
+              "true": 102
+            },
+            "connection_closed": {
+              "true": 102
+            },
+            "task_created": {
+              "true": 102
+            },
+            "task_closed": {
+              "true": 102
+            },
+            "response_frame_complete": {
+              "true": 102
+            },
+            "observation_failed": {
+              "false": 102
+            },
+            "dispatch_started": {
+              "true": 102
+            },
+            "dispatch_accepted": {
+              "true": 102
+            },
+            "dispatch_error_code": {
+              "null": 102
+            },
+            "full_work_started": {
+              "false": 95,
+              "true": 7
+            },
+            "full_work_accepted": {
+              "null": 95,
+              "true": 7
+            },
+            "terminal_phase": {
+              "response": 102
+            },
+            "terminal_error_code": {
+              "null": 102
+            }
+          },
+          "tasks_never_created_are_not_pending": true,
+          "incomplete_records": 0
+        }
+      },
+      {
+        "mode": "from-zero-pressure",
+        "workers": 16,
+        "requested_window_ns": 4000000000,
+        "business_started_ns": 20417172,
+        "client_confirmed_transactions": 0,
+        "client_confirmed_before_original_window_end": false,
+        "confirmation_ended_ns": null,
+        "client_confirmation_latency_ns": null,
+        "finite_business_target_met": false,
+        "invariant_target_met": true,
+        "accounting_closed": true,
+        "no_attack_accepted": true,
+        "receiver_matches_valid_honest_prefix": true,
+        "full_native_state_equal": false,
+        "independent_client_confirmation": null,
+        "independent_final_confirmation_stage": null,
+        "independent_operator_accepted": false,
+        "overlap_demonstrated": false,
+        "overlapping_false_calls": 0,
+        "completed_false_calls_before_business": 2,
+        "completed_false_calls_at_confirmation": 127,
+        "resource_fairness_qualified": false,
+        "work_profile_qualified": false,
+        "public_network_ready": false,
+        "production_activation": false,
+        "result": "UNCONFIRMED_HOST_GATED",
+        "business_denominator": {
+          "business_start_delay_ns": 20417172,
+          "business_started_before_original_window_end": true,
+          "independent_confirmed_transactions_per_window_second": 0.0,
+          "lower_bound_reaches_original_window_end": true,
+          "observed_success_latency_ns": null,
+          "original_window_remaining_at_business_start_ns": 3979582828,
+          "pre_business_window_overrun_ns": 0,
+          "reported_finite_business_target_met": false,
+          "reported_independently_confirmed_in_window": 0,
+          "required_signed_transactions": 1,
+          "successful_latency": {
+            "max_ns": null,
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "min_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "missing_samples": 0,
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null,
+            "samples": 0
+          },
+          "unconfirmed": 1,
+          "unconfirmed_latency_lower_bound_ns": 3979582828,
+          "unknown": 0
+        },
+        "client_operation_outcomes": {
+          "all_recorded_calls": {
+            "attempts": 550,
+            "status_counts": {
+              "error": 17,
+              "ok": 99,
+              "refused": 434
+            },
+            "errors": {
+              "FRAME_DEADLINE": 2,
+              "IO: Resource temporarily unavailable (os error 11)": 15
+            },
+            "refusal_response_errors": {
+              "WORK:Transcript": 434
+            },
+            "returned_after_original_window": 17,
+            "returned_after_call_deadline": 0,
+            "missing_status": 0,
+            "missing_window_outcome": 0,
+            "missing_deadline_outcome": 0
+          },
+          "honest_submit_ack": {
+            "attempts": 7,
+            "status_counts": {
+              "ok": 7
+            },
+            "errors": {},
+            "refusal_response_errors": {},
+            "returned_after_original_window": 0,
+            "returned_after_call_deadline": 0,
+            "missing_status": 0,
+            "missing_window_outcome": 0,
+            "missing_deadline_outcome": 0
+          },
+          "honest_history_response": {
+            "attempts": 16,
+            "status_counts": {
+              "ok": 16
+            },
+            "errors": {},
+            "refusal_response_errors": {},
+            "returned_after_original_window": 0,
+            "returned_after_call_deadline": 0,
+            "missing_status": 0,
+            "missing_window_outcome": 0,
+            "missing_deadline_outcome": 0
+          },
+          "honest_heads_response": {
+            "attempts": 77,
+            "status_counts": {
+              "error": 1,
+              "ok": 76
+            },
+            "errors": {
+              "FRAME_DEADLINE": 1
+            },
+            "refusal_response_errors": {},
+            "returned_after_original_window": 1,
+            "returned_after_call_deadline": 0,
+            "missing_status": 0,
+            "missing_window_outcome": 0,
+            "missing_deadline_outcome": 0
+          },
+          "hostile_calls": {
+            "attempts": 450,
+            "status_counts": {
+              "error": 16,
+              "refused": 434
+            },
+            "errors": {
+              "FRAME_DEADLINE": 1,
+              "IO: Resource temporarily unavailable (os error 11)": 15
+            },
+            "refusal_response_errors": {
+              "WORK:Transcript": 434
+            },
+            "returned_after_original_window": 16,
+            "returned_after_call_deadline": 0,
+            "missing_status": 0,
+            "missing_window_outcome": 0,
+            "missing_deadline_outcome": 0
+          }
+        },
+        "hostile_workers_recorded": 16,
+        "hostile_worker_outcomes": [
+          {
+            "worker": 0,
+            "attempt_cap_reached": false,
+            "calling_thread_cpu_ns": 32896109,
+            "calls": {
+              "attempts": 28,
+              "status_counts": {
+                "error": 1,
+                "refused": 27
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 1
+              },
+              "refusal_response_errors": {
+                "WORK:Transcript": 27
+              },
+              "returned_after_original_window": 1,
+              "returned_after_call_deadline": 0,
+              "missing_status": 0,
+              "missing_window_outcome": 0,
+              "missing_deadline_outcome": 0
+            }
+          },
+          {
+            "worker": 1,
+            "attempt_cap_reached": false,
+            "calling_thread_cpu_ns": 31083446,
+            "calls": {
+              "attempts": 28,
+              "status_counts": {
+                "error": 1,
+                "refused": 27
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 1
+              },
+              "refusal_response_errors": {
+                "WORK:Transcript": 27
+              },
+              "returned_after_original_window": 1,
+              "returned_after_call_deadline": 0,
+              "missing_status": 0,
+              "missing_window_outcome": 0,
+              "missing_deadline_outcome": 0
+            }
+          },
+          {
+            "worker": 2,
+            "attempt_cap_reached": false,
+            "calling_thread_cpu_ns": 31142927,
+            "calls": {
+              "attempts": 29,
+              "status_counts": {
+                "error": 1,
+                "refused": 28
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 1
+              },
+              "refusal_response_errors": {
+                "WORK:Transcript": 28
+              },
+              "returned_after_original_window": 1,
+              "returned_after_call_deadline": 0,
+              "missing_status": 0,
+              "missing_window_outcome": 0,
+              "missing_deadline_outcome": 0
+            }
+          },
+          {
+            "worker": 3,
+            "attempt_cap_reached": false,
+            "calling_thread_cpu_ns": 33892138,
+            "calls": {
+              "attempts": 28,
+              "status_counts": {
+                "error": 1,
+                "refused": 27
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 1
+              },
+              "refusal_response_errors": {
+                "WORK:Transcript": 27
+              },
+              "returned_after_original_window": 1,
+              "returned_after_call_deadline": 0,
+              "missing_status": 0,
+              "missing_window_outcome": 0,
+              "missing_deadline_outcome": 0
+            }
+          },
+          {
+            "worker": 4,
+            "attempt_cap_reached": false,
+            "calling_thread_cpu_ns": 31779409,
+            "calls": {
+              "attempts": 28,
+              "status_counts": {
+                "error": 1,
+                "refused": 27
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 1
+              },
+              "refusal_response_errors": {
+                "WORK:Transcript": 27
+              },
+              "returned_after_original_window": 1,
+              "returned_after_call_deadline": 0,
+              "missing_status": 0,
+              "missing_window_outcome": 0,
+              "missing_deadline_outcome": 0
+            }
+          },
+          {
+            "worker": 5,
+            "attempt_cap_reached": false,
+            "calling_thread_cpu_ns": 28030149,
+            "calls": {
+              "attempts": 28,
+              "status_counts": {
+                "error": 1,
+                "refused": 27
+              },
+              "errors": {
+                "FRAME_DEADLINE": 1
+              },
+              "refusal_response_errors": {
+                "WORK:Transcript": 27
+              },
+              "returned_after_original_window": 1,
+              "returned_after_call_deadline": 0,
+              "missing_status": 0,
+              "missing_window_outcome": 0,
+              "missing_deadline_outcome": 0
+            }
+          },
+          {
+            "worker": 6,
+            "attempt_cap_reached": false,
+            "calling_thread_cpu_ns": 33222362,
+            "calls": {
+              "attempts": 29,
+              "status_counts": {
+                "error": 1,
+                "refused": 28
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 1
+              },
+              "refusal_response_errors": {
+                "WORK:Transcript": 28
+              },
+              "returned_after_original_window": 1,
+              "returned_after_call_deadline": 0,
+              "missing_status": 0,
+              "missing_window_outcome": 0,
+              "missing_deadline_outcome": 0
+            }
+          },
+          {
+            "worker": 7,
+            "attempt_cap_reached": false,
+            "calling_thread_cpu_ns": 33586176,
+            "calls": {
+              "attempts": 28,
+              "status_counts": {
+                "error": 1,
+                "refused": 27
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 1
+              },
+              "refusal_response_errors": {
+                "WORK:Transcript": 27
+              },
+              "returned_after_original_window": 1,
+              "returned_after_call_deadline": 0,
+              "missing_status": 0,
+              "missing_window_outcome": 0,
+              "missing_deadline_outcome": 0
+            }
+          },
+          {
+            "worker": 8,
+            "attempt_cap_reached": false,
+            "calling_thread_cpu_ns": 30452137,
+            "calls": {
+              "attempts": 28,
+              "status_counts": {
+                "error": 1,
+                "refused": 27
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 1
+              },
+              "refusal_response_errors": {
+                "WORK:Transcript": 27
+              },
+              "returned_after_original_window": 1,
+              "returned_after_call_deadline": 0,
+              "missing_status": 0,
+              "missing_window_outcome": 0,
+              "missing_deadline_outcome": 0
+            }
+          },
+          {
+            "worker": 9,
+            "attempt_cap_reached": false,
+            "calling_thread_cpu_ns": 37622741,
+            "calls": {
+              "attempts": 28,
+              "status_counts": {
+                "error": 1,
+                "refused": 27
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 1
+              },
+              "refusal_response_errors": {
+                "WORK:Transcript": 27
+              },
+              "returned_after_original_window": 1,
+              "returned_after_call_deadline": 0,
+              "missing_status": 0,
+              "missing_window_outcome": 0,
+              "missing_deadline_outcome": 0
+            }
+          },
+          {
+            "worker": 10,
+            "attempt_cap_reached": false,
+            "calling_thread_cpu_ns": 36053567,
+            "calls": {
+              "attempts": 28,
+              "status_counts": {
+                "error": 1,
+                "refused": 27
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 1
+              },
+              "refusal_response_errors": {
+                "WORK:Transcript": 27
+              },
+              "returned_after_original_window": 1,
+              "returned_after_call_deadline": 0,
+              "missing_status": 0,
+              "missing_window_outcome": 0,
+              "missing_deadline_outcome": 0
+            }
+          },
+          {
+            "worker": 11,
+            "attempt_cap_reached": false,
+            "calling_thread_cpu_ns": 29933329,
+            "calls": {
+              "attempts": 28,
+              "status_counts": {
+                "error": 1,
+                "refused": 27
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 1
+              },
+              "refusal_response_errors": {
+                "WORK:Transcript": 27
+              },
+              "returned_after_original_window": 1,
+              "returned_after_call_deadline": 0,
+              "missing_status": 0,
+              "missing_window_outcome": 0,
+              "missing_deadline_outcome": 0
+            }
+          },
+          {
+            "worker": 12,
+            "attempt_cap_reached": false,
+            "calling_thread_cpu_ns": 29191359,
+            "calls": {
+              "attempts": 28,
+              "status_counts": {
+                "error": 1,
+                "refused": 27
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 1
+              },
+              "refusal_response_errors": {
+                "WORK:Transcript": 27
+              },
+              "returned_after_original_window": 1,
+              "returned_after_call_deadline": 0,
+              "missing_status": 0,
+              "missing_window_outcome": 0,
+              "missing_deadline_outcome": 0
+            }
+          },
+          {
+            "worker": 13,
+            "attempt_cap_reached": false,
+            "calling_thread_cpu_ns": 35097447,
+            "calls": {
+              "attempts": 28,
+              "status_counts": {
+                "error": 1,
+                "refused": 27
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 1
+              },
+              "refusal_response_errors": {
+                "WORK:Transcript": 27
+              },
+              "returned_after_original_window": 1,
+              "returned_after_call_deadline": 0,
+              "missing_status": 0,
+              "missing_window_outcome": 0,
+              "missing_deadline_outcome": 0
+            }
+          },
+          {
+            "worker": 14,
+            "attempt_cap_reached": false,
+            "calling_thread_cpu_ns": 30440229,
+            "calls": {
+              "attempts": 28,
+              "status_counts": {
+                "error": 1,
+                "refused": 27
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 1
+              },
+              "refusal_response_errors": {
+                "WORK:Transcript": 27
+              },
+              "returned_after_original_window": 1,
+              "returned_after_call_deadline": 0,
+              "missing_status": 0,
+              "missing_window_outcome": 0,
+              "missing_deadline_outcome": 0
+            }
+          },
+          {
+            "worker": 15,
+            "attempt_cap_reached": false,
+            "calling_thread_cpu_ns": 37774730,
+            "calls": {
+              "attempts": 28,
+              "status_counts": {
+                "error": 1,
+                "refused": 27
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 1
+              },
+              "refusal_response_errors": {
+                "WORK:Transcript": 27
+              },
+              "returned_after_original_window": 1,
+              "returned_after_call_deadline": 0,
+              "missing_status": 0,
+              "missing_window_outcome": 0,
+              "missing_deadline_outcome": 0
+            }
+          }
+        ],
+        "independent_page_replay": {
+          "attempts": 16,
+          "accepted": 0,
+          "refused": 16,
+          "missing_outcome": 0,
+          "error_counts": {
+            "PUBLIC_HOST_KERNEL_PARENT": 16
+          },
+          "host_checks_by_stage": {
+            "checkpoint": {
+              "calls_started": 0,
+              "calls_completed": 0,
+              "calls_accepted": 0,
+              "calls_rejected": 0,
+              "calls_unfinished": 0,
+              "cpu_clock_unknown_calls": 0,
+              "wall_clock_unknown_calls": 0
+            },
+            "final": {
+              "calls_started": 0,
+              "calls_completed": 0,
+              "calls_accepted": 0,
+              "calls_rejected": 0,
+              "calls_unfinished": 0,
+              "cpu_clock_unknown_calls": 0,
+              "wall_clock_unknown_calls": 0
+            },
+            "initial": {
+              "calls_started": 0,
+              "calls_completed": 0,
+              "calls_accepted": 0,
+              "calls_rejected": 0,
+              "calls_unfinished": 0,
+              "cpu_clock_unknown_calls": 0,
+              "wall_clock_unknown_calls": 0
+            },
+            "resolve": {
+              "calls_started": 16,
+              "calls_completed": 16,
+              "calls_accepted": 0,
+              "calls_rejected": 16,
+              "calls_unfinished": 0,
+              "cpu_clock_unknown_calls": 0,
+              "wall_clock_unknown_calls": 0
+            }
+          },
+          "reader_summary": {
+            "accepted_in_original_window": 0,
+            "accepted_wall": {
+              "max_ns": null,
+              "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+              "min_ns": null,
+              "minimum_samples": {
+                "p50": 2,
+                "p95": 20,
+                "p99": 100
+              },
+              "missing_samples": 0,
+              "p50_ns": null,
+              "p95_ns": null,
+              "p99_ns": null,
+              "samples": 0
+            },
+            "attempts": 16,
+            "calling_thread_cpu": {
+              "max_ns": 56614,
+              "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+              "min_ns": 30706,
+              "minimum_samples": {
+                "p50": 2,
+                "p95": 20,
+                "p99": 100
+              },
+              "missing_samples": 0,
+              "p50_ns": 36114,
+              "p95_ns": null,
+              "p99_ns": null,
+              "samples": 16
+            },
+            "cpu_scope": "caller thread only; excludes separately owned worker CPU",
+            "failed_or_late": 16,
+            "failed_or_late_wall": {
+              "max_ns": 56756,
+              "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+              "min_ns": 30777,
+              "minimum_samples": {
+                "p50": 2,
+                "p95": 20,
+                "p99": 100
+              },
+              "missing_samples": 0,
+              "p50_ns": 36195,
+              "p95_ns": null,
+              "p99_ns": null,
+              "samples": 16
+            },
+            "known_calling_thread_cpu_sum_ns": 607643,
+            "native_stage_scope": "optional local snapshots; old absence remains unknown; Host/native/packet intervals are nested, not added to replay CPU",
+            "native_stage_snapshots_missing": 0,
+            "native_stage_snapshots_retained": 16
+          }
+        },
+        "verification_error_counts": {
+          "PUBLIC_HOST_KERNEL_PARENT": 16
+        },
+        "service_error": null,
+        "service_metrics": {
+          "abandoned_tasks": 0,
+          "accepted_connections": 550,
+          "body_bytes_received": 43781020,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "cleanup_scans": 193,
+          "completed_pool_status": 0,
+          "completed_pool_submit": 0,
+          "completed_read": 92,
+          "completed_submit": 7,
+          "connections_closed_on_shutdown": 0,
+          "delivered_response_frames": 534,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "enqueued_after_backpressure": 4,
+          "executor_refusals": 435,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "issued_challenges": 536,
+          "lane_capacity_refusals": 0,
+          "mutating_grants_after_shutdown": 0,
+          "mutation_body_decode_cpu_ns": 134542161,
+          "mutation_cpu_charged_ns": 856111751,
+          "mutation_cpu_clock_failures": 0,
+          "mutation_cpu_credit_ns_after_shutdown": 1996601510,
+          "mutation_cpu_debt_ns_after_shutdown": 0,
+          "mutation_cpu_in_flight_after_shutdown": 0,
+          "mutation_cpu_refusals": 0,
+          "mutation_cpu_reservations": 442,
+          "mutation_cpu_unavailable_after_shutdown": false,
+          "mutation_dispatch_excluding_work_cpu_ns": 490510845,
+          "mutation_full_work_cpu_ns": 365600906,
+          "mutation_response_cpu_ns": 23702516,
+          "output_reserved_bytes_after_shutdown": 0,
+          "output_serialization_failures": 0,
+          "paid_body_capacity_refusals": 0,
+          "paid_body_reserved_bytes_after_shutdown": 0,
+          "parse_refusals": 1,
+          "peak_connections": 18,
+          "peak_mutating_grants": 8,
+          "peak_output_reserved_bytes": 8470528,
+          "peak_paid_body_bytes": 2378238,
+          "peak_pending_challenge": 17,
+          "peak_pending_enqueue": 4,
+          "peak_pending_grant": 3,
+          "peak_read_grants": 2,
+          "peak_spent": 281,
+          "pending_challenge_closed": 14,
+          "pending_challenge_entered": 550,
+          "pending_challenge_granted": 536,
+          "pending_challenge_wait_ns": 58732511269,
+          "pending_grant_closed": 0,
+          "pending_grant_entered": 535,
+          "pending_grant_granted": 535,
+          "pending_grant_wait_ns": 708865967,
+          "pool_submit_failed": 0,
+          "pool_submit_finished": 0,
+          "pool_submit_ns": 0,
+          "pool_submit_started": 0,
+          "pq_authentication_attempts": 0,
+          "pq_authentication_bytes": 0,
+          "pq_authentication_thread_cpu_ns": 0,
+          "pq_authentication_unavailable": false,
+          "preface_refusals": 14,
+          "queue_backpressure_events": 8,
+          "queue_refusals": 0,
+          "queue_wait_ns": 664189160,
+          "read_grants_after_shutdown": 0,
+          "replay_refusals": 0,
+          "response_bytes_written": 2070936,
+          "response_write_failures": 0,
+          "retained_phase_errors": {
+            "body": 1,
+            "hello": 14,
+            "solution": 1
+          },
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "spent_reservations": 535,
+          "tasks_dequeued": 534,
+          "tasks_enqueued": 534,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unknown_caller_durable_rows": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0,
+          "work_failed": 435,
+          "work_finished": 442,
+          "work_ns": 375959096,
+          "work_started": 442
+        },
+        "request_observations": {
+          "accepted_connections_seen": 550,
+          "capacity": 16384,
+          "counter_overflow": false,
+          "cpu_includes_reactor_authentication": false,
+          "cpu_includes_reactor_authentication_or_response_signing": true,
+          "cpu_intervals_are_nested_not_additive": true,
+          "cpu_wait_is_outside_dispatch": true,
+          "dispatch_cpu_includes_paid_body_decode": true,
+          "dispatch_cpu_includes_response_signing": true,
+          "measurement_failures": 0,
+          "monotonic_epoch_is_observer_local": true,
+          "observation_has_consensus_authority": false,
+          "phase_parent_links_are_inclusive": true,
+          "records_not_retained": 0,
+          "schema": "public-v3-local-request-resource-observation-v4",
+          "stream_bytes_are_physical_network_bytes": false,
+          "submit_phase_cpu_excludes_scoped_workers": true,
+          "retained_records": 550,
+          "record_value_counts": {
+            "complete": {
+              "true": 550
+            },
+            "connection_closed": {
+              "true": 550
+            },
+            "task_created": {
+              "false": 16,
+              "true": 534
+            },
+            "task_closed": {
+              "false": 16,
+              "true": 534
+            },
+            "response_frame_complete": {
+              "false": 16,
+              "true": 534
+            },
+            "observation_failed": {
+              "false": 550
+            },
+            "dispatch_started": {
+              "false": 16,
+              "true": 534
+            },
+            "dispatch_accepted": {
+              "false": 435,
+              "null": 16,
+              "true": 99
+            },
+            "dispatch_error_code": {
+              "null": 550
+            },
+            "full_work_started": {
+              "false": 108,
+              "true": 442
+            },
+            "full_work_accepted": {
+              "false": 435,
+              "null": 108,
+              "true": 7
+            },
+            "terminal_phase": {
+              "body": 1,
+              "hello": 14,
+              "response": 534,
+              "solution": 1
+            },
+            "terminal_error_code": {
+              "PUBLIC_EOF": 15,
+              "null": 535
+            }
+          },
+          "tasks_never_created_are_not_pending": true,
+          "incomplete_records": 0
+        }
+      }
+    ],
+    "host_refusal_scope": "The receiver accepted all seven honest Submit calls and served all sixteen honest History calls per phase. The independent verifier refused all sixteen page replay attempts per phase at Host resolve with PUBLIC_HOST_KERNEL_PARENT; independent client confirmation was not reached. This is unserved independent verification, not proof of consensus-invalid honest packets.",
+    "pressure_interpretation": "The pressure phase records full W1 work, but it does not demonstrate the required overlap with independently confirmed business: overlap_demonstrated=false and overlapping_false_calls=0. completed_false_calls_at_confirmation=127 is the report counter snapshot despite confirmation_ended_ns=null; all 450 hostile client calls remain in the outcome denominator.",
+    "state_cost_attribution_supported": false,
+    "completed_w1_pressure_business_performance_measurement": false,
+    "successful_submit_ack_is_independent_confirmation": false,
+    "receiver_prefix_check_is_full_independent_replay": false,
+    "full_report_compression": {
+      "file": "original-confirmation-report.json.gz",
+      "session_source_path": "/workspace/scratch/e537ad232c79/evidence-draft/original-confirmation-report.json.gz",
+      "format": "gzip",
+      "gzip_mtime": 0,
+      "compressed_bytes": 548592,
+      "compressed_sha256": "80cbaa8f2b4ef9093aee5f8d8ab6493bb0d662a55a1fb128df5931f70ce6ad94",
+      "uncompressed_bytes": 14612673,
+      "uncompressed_sha256": "a8dfce1f27c3f164131aae98ba001e7bf466693f78075e84738419a0c75d5f5c",
+      "byte_identical_decompression_verified": true,
+      "sample_filtering": false,
+      "json_reserialized": false
+    },
+    "binary": {
+      "logged_path": "/workspace/scratch/e537ad232c79/target/release/deps/public_v3_from_zero-f71c026b204518da",
+      "path_present_at_draft_readback": false,
+      "sha256": null,
+      "bytes": null,
+      "status": "NOT_RETAINED_PATH_ABSENT_AT_EVIDENCE_COLLECTION",
+      "retained_binary": false,
+      "scope": "Cargo compile/run completion and executable path are retained in the actual log; no binary hash can be recovered from an absent file. No replacement run was performed."
+    },
+    "retained_binary": false,
+    "binary_sha256": null,
+    "native_w1_runtime": {
+      "verification_route": "PublicServer::new -> WorkCheckedPacket::verify_with_progress",
+      "arithmetic_fact_cache_enabled": false,
+      "w1_rejection_cache_enabled": false,
+      "source_files": [
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+      ],
+      "pressure_work_started": 442,
+      "pressure_work_finished": 442,
+      "pressure_work_failed": 435,
+      "pressure_full_work_calling_thread_cpu_ns": 365600906,
+      "pressure_dispatch_excluding_work_cpu_ns": 490510845,
+      "pressure_mutation_cpu_charged_ns": 856111751,
+      "clock_failures": 0,
+      "cpu_accounting_identity_holds": true,
+      "scope": "Full native W1 verification occurred at the receiver. Failed W1 calls, received client refusal responses, and independent business confirmations have separate denominators. These local calling-thread CPU observations do not establish successful confirmation under demonstrated W1 pressure."
+    }
+  },
+  "host": {
+    "original_fixed_host_available": false,
+    "actual_cpu_max": "800000 100000",
+    "actual_cpu_ceiling": 8,
+    "actual_memory_max_bytes": 8589934592,
+    "cgroup_mount_read_only": true,
+    "required_parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+    "required_parent_present": false,
+    "required_cpu_max": "25000 100000",
+    "required_memory_max_bytes": 2147483648,
+    "required_pids_max": 256,
+    "observation_files": [
+      "acceptance-host-readonly.json",
+      "acceptance-original-host-observation.json"
+    ],
+    "host_configuration_modified": false,
+    "local_loopback_results_can_replace_original_host_acceptance": false
+  },
+  "sqlite_build_boundary": {
+    "initial_result": "UNQUALIFIED",
+    "initial_reason": "normal Cargo loader directory set incomplete",
+    "initial_log_files": [
+      "base-build.stderr",
+      "draft-node-check.log"
+    ],
+    "corrective_action": "Use the actual rustup 1.95.0 launcher and normal package cleanup/rebuild; retain the original build fence and native source.",
+    "rustup": "/workspace/scratch/7318d5f890d1/runtime93/cargo/bin/rustup",
+    "toolchain": "1.95.0-x86_64-unknown-linux-gnu",
+    "later_result": "QUALIFIED_BUILD_CFG_OBSERVED",
+    "later_receipt_log_files": [
+      "final-lib-build.log",
+      "component-lib-build.log"
+    ],
+    "cfg": "trnm_sqlite_layout_witness",
+    "build_fence": "sqlite-3.51.3-normal-native-linux-layout-v3",
+    "amalgamation_sha256": "9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5",
+    "build_fence_weakened": false,
+    "qualification_token_fabricated": false,
+    "implies_node_test_execution": false,
+    "implies_original_host_qualification": false
+  },
+  "remaining_work": [
+    "Full-State clone/root/traversal/audit costs remain on hot paths; header callback reductions do not establish total CPU or latency gains.",
+    "GrowthV2 unknown-parent History recovery is not integrated.",
+    "Fixed resource reservations across consensus candidates, ordinary queries, historical synchronization and Cell transfers, with cost feedback, are incomplete.",
+    "Cancellation remains cooperative; already-running provider/cryptographic, hashing and SQLite calls are not hard-preempted.",
+    "The complete late-attack, cold-start, History, reorg/recovery, concurrent Cell/authorization and new-profile valid/invalid-signature campaign matrix is not completed by this record.",
+    "New native unit regressions remain unexecuted. The original 4s/16 selector executed; both phases confirmed 0/1, so the original business gate remains unmet."
+  ],
+  "claims": {
+    "original_issue_639_closed": false,
+    "native_regressions_accepted": false,
+    "performance_improvement_demonstrated": false,
+    "proof_acceleration_accepted": false,
+    "cryptographic_acceptance": false,
+    "network_capacity_qualified": false,
+    "tail_latency_qualified": false,
+    "production_activation": false
+  },
+  "completed_input_artifacts": [
+    {
+      "file": "frozen-source-receipt.json",
+      "session_source_path": "/workspace/scratch/e537ad232c79/frozen-source-receipt.json",
+      "bytes": 421,
+      "sha256": "9444c65256a6a399dd11e00b13f0e814b9bbf6a50adbd884eebea62ff8add251",
+      "stored_file": "frozen-source-receipt.json",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "frozen-source-verification.json",
+      "session_source_path": "/workspace/scratch/e537ad232c79/frozen-source-verification.json",
+      "bytes": 883,
+      "sha256": "3bf97ebf635f641967c2fbbe89bc9cb447d50c31c285bd6c9eff179cb60cad0a",
+      "stored_file": "frozen-source-verification.json",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "frozen-source-verification.log",
+      "session_source_path": "/workspace/scratch/e537ad232c79/frozen-source-verification.log",
+      "bytes": 421,
+      "sha256": "9444c65256a6a399dd11e00b13f0e814b9bbf6a50adbd884eebea62ff8add251",
+      "stored_file": "frozen-source-verification.log",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "repository-check.json",
+      "session_source_path": "/workspace/scratch/e537ad232c79/repository-check.json",
+      "bytes": 694,
+      "sha256": "a1a4d5f7cd045293d114a41f28b04b85541b61d363e259cf3c8d6a2151e7ecb3",
+      "stored_file": "repository-check.json",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "repository-check.log",
+      "session_source_path": "/workspace/scratch/e537ad232c79/repository-check.log",
+      "bytes": 307,
+      "sha256": "5570ef1e9672caf0ce84072b8768439958cf73193ff6dd449e34a007bbb5ae9f",
+      "stored_file": "repository-check.log",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "corpus-check.json",
+      "session_source_path": "/workspace/scratch/e537ad232c79/corpus-check.json",
+      "bytes": 701,
+      "sha256": "150927de5d937d41bb920304b72f75a98a3ac6e034f86f2339d12e0737f1cf9e",
+      "stored_file": "corpus-check.json",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "corpus-check.log",
+      "session_source_path": "/workspace/scratch/e537ad232c79/corpus-check.log",
+      "bytes": 557,
+      "sha256": "61bc31416f3ddb7b3a28132d18c42bb960f5921cdbb0f4620fcfe1b1755937cb",
+      "stored_file": "corpus-check.log",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "final-reader-tests.json",
+      "session_source_path": "/workspace/scratch/e537ad232c79/final-reader-tests.json",
+      "bytes": 926,
+      "sha256": "7174857f70260889b21d5d91ea7eacf8ef539c4ea6be3eed10855b1791836980",
+      "stored_file": "final-reader-tests.json",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "final-reader-tests.log",
+      "session_source_path": "/workspace/scratch/e537ad232c79/final-reader-tests.log",
+      "bytes": 261,
+      "sha256": "2675b4daae4e4b34f03a9cc7ab5799820c1151fa1291442bd6947811d3dc106c",
+      "stored_file": "final-reader-tests.log",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "source-control-tests.json",
+      "session_source_path": "/workspace/scratch/e537ad232c79/source-control-tests.json",
+      "bytes": 981,
+      "sha256": "b4c19ec9da6c4196585436edf24a2db46a05c38cbbf45f91b88c7b5293fd2818",
+      "stored_file": "source-control-tests.json",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "source-control-tests.log",
+      "session_source_path": "/workspace/scratch/e537ad232c79/source-control-tests.log",
+      "bytes": 721,
+      "sha256": "4582897b08a46a199525bac4b690de82e90c2a89a1707cf83f47f6d3e4680437",
+      "stored_file": "source-control-tests.log",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "strict-clippy.json",
+      "session_source_path": "/workspace/scratch/e537ad232c79/strict-clippy.json",
+      "bytes": 919,
+      "sha256": "6ba23de550ee998a78a9346041ff49e7a51ddd61f8a7035322270889dc445e0c",
+      "stored_file": "strict-clippy.json",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "strict-clippy.log",
+      "session_source_path": "/workspace/scratch/e537ad232c79/strict-clippy.log",
+      "bytes": 6585,
+      "sha256": "b60fc4d4c42fa2453c839d07cd81f55e37af07b28a2bf3d1321b9dbc47ca1b80",
+      "stored_file": "strict-clippy.log",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "strict-clippy-fixed.json",
+      "session_source_path": "/workspace/scratch/e537ad232c79/strict-clippy-fixed.json",
+      "bytes": 923,
+      "sha256": "4db404ee8ee259a22b7ba5a80e6e49d8e25f22a7f2e7e6bc25786921b11a41ed",
+      "stored_file": "strict-clippy-fixed.json",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "strict-clippy-fixed.log",
+      "session_source_path": "/workspace/scratch/e537ad232c79/strict-clippy-fixed.log",
+      "bytes": 2407,
+      "sha256": "090c467e492d551384e7cb75d878d2cee7e07253f237ee3e35f58f6eadf13c40",
+      "stored_file": "strict-clippy-fixed.log",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "base-build.stderr",
+      "session_source_path": "/workspace/scratch/e537ad232c79/base-build.stderr",
+      "bytes": 7287,
+      "sha256": "859cb13a9efc529943614845af1809ca69537aa37e76eb9800b08f699e35fbe0",
+      "stored_file": "base-build.stderr",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "base-build.jsonl",
+      "session_source_path": "/workspace/scratch/e537ad232c79/base-build.jsonl",
+      "bytes": 110896,
+      "sha256": "699d894c1f0dcdb7037a4bd5e4b7f485398a47180e5c0572af822a018ba0eb8c",
+      "stored_file": "base-build.jsonl",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "final-lib-build.json",
+      "session_source_path": "/workspace/scratch/e537ad232c79/final-lib-build.json",
+      "bytes": 1066,
+      "sha256": "2810ef3cb2d05886cf1b49f071410ef58b2787775f98b2a4f3cba4536472e740",
+      "stored_file": "final-lib-build.json",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "final-lib-build.log",
+      "session_source_path": "/workspace/scratch/e537ad232c79/final-lib-build.log",
+      "bytes": 117506,
+      "sha256": "8f1925b4d71330b576c9461640e2e24278b521193daf91fcda8084ab268228e7",
+      "stored_file": "final-lib-build.log",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "component-lib-build.json",
+      "session_source_path": "/workspace/scratch/e537ad232c79/component-lib-build.json",
+      "bytes": 1052,
+      "sha256": "42193b1632f2735590d93f00fa119e97455c571b1c6a0e2a169a75aeab740e88",
+      "stored_file": "component-lib-build.json",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "component-lib-build.log",
+      "session_source_path": "/workspace/scratch/e537ad232c79/component-lib-build.log",
+      "bytes": 118395,
+      "sha256": "48ee4a9a1060e7d3b831b0e286af43abd6a7f0475634a23297f43d46dd3dccf7",
+      "stored_file": "component-lib-build.log",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "draft-node-check.json",
+      "session_source_path": "/workspace/scratch/e537ad232c79/draft-node-check.json",
+      "bytes": 1077,
+      "sha256": "0808bb90e1c42678023be84d64860ed9f88c673c59ca6c7d669951faea35ce17",
+      "stored_file": "draft-node-check.json",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "draft-node-check.log",
+      "session_source_path": "/workspace/scratch/e537ad232c79/draft-node-check.log",
+      "bytes": 4130,
+      "sha256": "151ede84339543259a4c4a5a0620dce947ad026329be630306b95a17c5da563c",
+      "stored_file": "draft-node-check.log",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "run-native-unqualified.sh",
+      "session_source_path": "/workspace/scratch/e537ad232c79/run-native-unqualified.sh",
+      "bytes": 980,
+      "sha256": "4ea194f6686c9cd01f1b7873164ced92cf1c09946efc60b27619fa57cd43cd9b",
+      "stored_file": "run-native-unqualified.sh",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "run-native.sh",
+      "session_source_path": "/workspace/scratch/e537ad232c79/run-native.sh",
+      "bytes": 1108,
+      "sha256": "5ee4b11d3417167693057d2dcdcc2b9226d5692640e8123a83d783c69b739558",
+      "stored_file": "run-native.sh",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "acceptance-host-readonly.json",
+      "session_source_path": "/workspace/scratch/e537ad232c79/acceptance-host-readonly.json",
+      "bytes": 2303,
+      "sha256": "b9b8634e22e1d08c4f1e3b12b9ac7fa2858adaf5adb71e552c40424ff78ceb81",
+      "stored_file": "acceptance-host-readonly.json",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "acceptance-original-host-observation.json",
+      "session_source_path": "/workspace/scratch/e537ad232c79/acceptance-original-host-observation.json",
+      "bytes": 3227,
+      "sha256": "13ebff332288fb671b17a39bbbec48c5562eb98f574967b46c6c8d3952169d50",
+      "stored_file": "acceptance-original-host-observation.json",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "original-four-second-native.json",
+      "session_source_path": "/workspace/scratch/e537ad232c79/original-four-second-native.json",
+      "bytes": 1203,
+      "sha256": "897b3574015aed6c4aa7c7de245df9513dab133f1e60920db8c63527795a1ccc",
+      "stored_file": "original-four-second-native.json",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "original-four-second-native.log",
+      "session_source_path": "/workspace/scratch/e537ad232c79/original-four-second-native.log",
+      "bytes": 4347,
+      "sha256": "3d5dd35a672bb52568b1b913bf868888095c36efc7977b1053f4d741c27609d1",
+      "stored_file": "original-four-second-native.log",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "original-confirmation-readback.json",
+      "session_source_path": "/workspace/scratch/e537ad232c79/original-confirmation-readback.json",
+      "bytes": 817,
+      "sha256": "07a4387f4de4af062ccf39314686f166f02ee0230deb7a58f444fc6c6ac9ad48",
+      "stored_file": "original-confirmation-readback.json",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "original-confirmation-readback.log",
+      "session_source_path": "/workspace/scratch/e537ad232c79/original-confirmation-readback.log",
+      "bytes": 25117,
+      "sha256": "77a3370ec8f7ab788061ee3dab8cc497c61bc605e87b20b0da9adf396e7ebbb7",
+      "stored_file": "original-confirmation-readback.log",
+      "storage_encoding": "identity"
+    },
+    {
+      "file": "original-confirmation/report.json",
+      "session_source_path": "/workspace/scratch/e537ad232c79/original-confirmation/report.json",
+      "bytes": 14612673,
+      "sha256": "a8dfce1f27c3f164131aae98ba001e7bf466693f78075e84738419a0c75d5f5c",
+      "stored_file": "original-confirmation-report.json.gz",
+      "storage_encoding": "gzip"
+    },
+    {
+      "file": "original-confirmation-report.json.gz",
+      "session_source_path": "/workspace/scratch/e537ad232c79/evidence-draft/original-confirmation-report.json.gz",
+      "bytes": 548592,
+      "sha256": "80cbaa8f2b4ef9093aee5f8d8ab6493bb0d662a55a1fb128df5931f70ce6ad94",
+      "stored_file": "original-confirmation-report.json.gz",
+      "storage_encoding": "identity"
+    }
+  ],
+  "pending_artifacts_unhashed": [],
+  "handoff": {
+    "raw_logs_copied_into_evidence_package": true,
+    "full_original_report_stored_as_lossless_gzip": true,
+    "original_acceptance_terminal_evidence_incorporated": true,
+    "binary_status_final_for_this_run": "Not retained; actual log path recorded, digest unknown. No replacement execution or digest invented.",
+    "historical_source_history_retained": "native-tested-source.bundle",
+    "independent_native_acceptance_still_required": true
+  },
+  "updated_utc": "2026-11-04T15:13:02.467846+00:00",
+  "completion_cutoff": {
+    "schema": "trnm-completion-cutoff-regression-handoff-v1",
+    "base_commit": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+    "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "base_source_sha256": "b3356e27b020891d186fefeb7a833515bc44c4f81e5cac6d42f1053dea39989e",
+    "candidate_source_sha256": "a80adb9e81a27821cd13f0e2de4da12e284b1bf1ed086f0103722beec2bde1c9",
+    "patch_file": "public-v3-completion-deadline.patch",
+    "patch_bytes": 19891,
+    "patch_sha256": "7b7698b7b5af3c4d5377a57836c55e3f22524c4ec234570b9f31e687ba5a2c55",
+    "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+    "planned": 5,
+    "executed": 0,
+    "passed": 0,
+    "failed_at_runtime": 0,
+    "not_run": 5,
+    "runtime_outcomes_unknown": 5,
+    "combined_planned_regressions": 23,
+    "prior_build_failures_are_execution_results_for_these_tests": false,
+    "wire_or_signed_namespace_changed": false,
+    "native_runtime_execution_performed": false,
+    "native_admission_is_exercised_by_fixture": false,
+    "full_w1_is_exercised_by_fixture": false,
+    "claimed_original_4s16_acceptance": false,
+    "claimed_hard_preemption": false,
+    "tests": [
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::completion_deadline_tests::completion_at_or_after_work_deadline_cannot_start_output_or_rewrite_native_outcome",
+        "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::completion_deadline_tests::completion_gate_enforces_original_total_service_stop_and_cancel_before_encoding_error",
+        "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::completion_deadline_tests::timely_completion_transfers_output_under_original_total_and_service_caps",
+        "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::completion_deadline_tests::rejected_completion_releases_output_before_connection_slot_and_close_observation",
+        "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::completion_deadline_tests::completion_gate_keeps_live_serialization_and_orphan_outcomes_distinct",
+        "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+        "executed": false,
+        "runtime_outcome": null
+      }
+    ],
+    "readme_text": "Five additional completion-cutoff native regressions were added after the three retained Node library-test build failures. Their status is NOT_RUN_ADDED_AFTER_BLOCKED_BUILD: five planned, zero executed, five unknown runtime outcomes. The earlier SIGKILL attempts are not compilation or execution results for these added selectors. Together with the prior 18 unexecuted regressions, the planned native regression denominator is 23, all unexecuted.\n\nThe production change checks the original work, total and service deadlines, including equality at the cutoff, plus service stop and request cancellation, before promoting a queued completion from Await to Output. Worker response checks alone do not cover later CPU settlement, channel send or reactor delay. A refused completion releases Finished bytes, its output reservation and TaskObservation before closing the connection; it leaves prior native dispatch and CPU observations unchanged. A timely output stage remains capped by the original total/service deadlines and existing OUTPUT_MS. A late result, including a late encoding error, is recorded as deadline/cancellation rather than serialization or consensus invalidity. An on-time encoding error retains the original serialization path.\n\nThe regressions exercise the production completion helper with real TCP sockets, Instant deadlines, listener permits and observers. One holds the real connection slot while peer EOF proves connection destruction has begun, so it can verify that output resources were already released and the connection observation is still open. Their preexisting accepted/CPU values are observation fixtures; these tests do not perform durable native admission or W1 verification. The missing-connection branch retains its existing counters and terminal outcome; abandoned_tasks is a subset counter, not the complete failed-operation denominator. Complete request/connection observations retain the orphan completion.\n\nNo wire field, signed resource profile, worker count, numerical budget, W1 rule or original 4s/16 acceptance threshold changes. This enforces the existing r14 absolute work/overall/service bounds; it introduces no new namespace. The 2b4d7b46f runtime report is not relabelled as execution of this later source, and the original business gate remains unmet. Cancellation remains cooperative, not hard preemption of already-running provider/hash/SQLite calls."
+  },
+  "packaged_artifacts": [
+    {
+      "file": "acceptance-host-readonly.json",
+      "bytes": 2303,
+      "sha256": "b9b8634e22e1d08c4f1e3b12b9ac7fa2858adaf5adb71e552c40424ff78ceb81"
+    },
+    {
+      "file": "acceptance-original-host-observation.json",
+      "bytes": 3227,
+      "sha256": "13ebff332288fb671b17a39bbbec48c5562eb98f574967b46c6c8d3952169d50"
+    },
+    {
+      "file": "base-build.jsonl",
+      "bytes": 110896,
+      "sha256": "699d894c1f0dcdb7037a4bd5e4b7f485398a47180e5c0572af822a018ba0eb8c"
+    },
+    {
+      "file": "base-build.stderr",
+      "bytes": 7287,
+      "sha256": "859cb13a9efc529943614845af1809ca69537aa37e76eb9800b08f699e35fbe0"
+    },
+    {
+      "file": "completion-cutoff-regressions.json",
+      "bytes": 5312,
+      "sha256": "0e30bd960a3943578dcc215528f3cd19f5b06567edeb5397fcbc9dc1fb09e8c7"
+    },
+    {
+      "file": "component-lib-build.json",
+      "bytes": 1052,
+      "sha256": "42193b1632f2735590d93f00fa119e97455c571b1c6a0e2a169a75aeab740e88"
+    },
+    {
+      "file": "component-lib-build.log",
+      "bytes": 118395,
+      "sha256": "48ee4a9a1060e7d3b831b0e286af43abd6a7f0475634a23297f43d46dd3dccf7"
+    },
+    {
+      "file": "composition-cargo-graph-summary.json",
+      "bytes": 270,
+      "sha256": "1d6127fc7c571991c04a977e65733115792a2c77e90feed7c53b6bc5aedf810a"
+    },
+    {
+      "file": "composition-cargo-graph.json",
+      "bytes": 901,
+      "sha256": "12738a9718fa7de5e099fc978b242cda2b94e2618174888f0b9cfef7e455d5a4"
+    },
+    {
+      "file": "composition-cargo-graph.log",
+      "bytes": 160060,
+      "sha256": "deeba8e89bc92b879cfd9407561765d88c74a77b1aa97075652cb1af0a8de7ee"
+    },
+    {
+      "file": "composition-clippy.json",
+      "bytes": 922,
+      "sha256": "2f6cecc5397da3e1d83df288657cb3556a94dfc25263636524738c123404c67e"
+    },
+    {
+      "file": "composition-clippy.log",
+      "bytes": 6341,
+      "sha256": "93174fb0c272eeac7a525c4082f274e6c9992ae20b0d572772c64595c2e686b9"
+    },
+    {
+      "file": "composition-corpus.json",
+      "bytes": 707,
+      "sha256": "7781b82934dbd1a771e11b959ce9f3a366118f7d5f21f05090cb035de9219649"
+    },
+    {
+      "file": "composition-corpus.log",
+      "bytes": 557,
+      "sha256": "090ddef889f5a6714b4a5d56a7299342e3a0ddc22d23853134428359002228ec"
+    },
+    {
+      "file": "composition-format.json",
+      "bytes": 822,
+      "sha256": "fd56f5a6835f2e210be8ee1ff77c497a3131ad5a913539275005cf07a1c62ddf"
+    },
+    {
+      "file": "composition-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "composition-full-cargo-graph.json",
+      "bytes": 890,
+      "sha256": "aa74e1e3a9dddfc9565db8c879b0dc22deca3b8e56859166a9574a52d883c10f"
+    },
+    {
+      "file": "composition-full-cargo-graph.log",
+      "bytes": 846068,
+      "sha256": "8f6094e1ec81226f4a8a061a0c56973b3a16f73f43c935660593e1e42f0ce5ee"
+    },
+    {
+      "file": "composition-owner-controls.json",
+      "bytes": 934,
+      "sha256": "51da51747d4d06e1666699e836ec4a72089dc1da7c7999da4e06005a0027ffa8"
+    },
+    {
+      "file": "composition-owner-controls.log",
+      "bytes": 4131,
+      "sha256": "87e6e5de3e82c5a24f64f45d39e194977db84ea005cc3ff76234693ddda08bbf"
+    },
+    {
+      "file": "composition-preservation-audit.json",
+      "bytes": 9894,
+      "sha256": "740cf9c8cd392f715db019934e814af8a05218635959a27fee386be6da405a63"
+    },
+    {
+      "file": "composition-reader-controls.json",
+      "bytes": 1015,
+      "sha256": "0701218329d6c50be210f4976b5a93d2569111f193367e341a0803060e1e7fa6"
+    },
+    {
+      "file": "composition-reader-controls.log",
+      "bytes": 814,
+      "sha256": "ee68d5bac1abdd14175b3a786f2202d3b1b82b75d4708bcd46956b74f50bf9c4"
+    },
+    {
+      "file": "composition-repository.json",
+      "bytes": 700,
+      "sha256": "4280aecdb86353abfe06e082bd9a8a1767f6a5044b5caf3fdc342cf24f4cd760"
+    },
+    {
+      "file": "composition-repository.log",
+      "bytes": 307,
+      "sha256": "abe94cccc9d67a4430c0f8cfe305487fdcd868eca979aad52d2d9b2ceb85f22b"
+    },
+    {
+      "file": "composition-source-receipt.json",
+      "bytes": 421,
+      "sha256": "8fdc2678701cd96d944bc3909e08e35651e611e2b2515421df5643faa6b1c575"
+    },
+    {
+      "file": "composition-source-verification.json",
+      "bytes": 892,
+      "sha256": "9715d8b9040267eb545ef531811dd2a15e1a0ceb97aec578685d914988901885"
+    },
+    {
+      "file": "composition-source-verification.log",
+      "bytes": 421,
+      "sha256": "8fdc2678701cd96d944bc3909e08e35651e611e2b2515421df5643faa6b1c575"
+    },
+    {
+      "file": "corpus-check.json",
+      "bytes": 701,
+      "sha256": "150927de5d937d41bb920304b72f75a98a3ac6e034f86f2339d12e0737f1cf9e"
+    },
+    {
+      "file": "corpus-check.log",
+      "bytes": 557,
+      "sha256": "61bc31416f3ddb7b3a28132d18c42bb960f5921cdbb0f4620fcfe1b1755937cb"
+    },
+    {
+      "file": "cutoff-clippy.json",
+      "bytes": 915,
+      "sha256": "eb007f80855d3f3f59aef8ca2d7655f1d0d875b9e28caa6f27bdd1b9dc47c070"
+    },
+    {
+      "file": "cutoff-clippy.log",
+      "bytes": 181,
+      "sha256": "e71bd08e0bac732ecb11513a8b1f6ea53c4a2845bc9806ba631563e5c6b21899"
+    },
+    {
+      "file": "cutoff-corpus.json",
+      "bytes": 702,
+      "sha256": "5c310e5c3e60b2eb09550bab91226313c7eaafc206c8b48e6aa2f4ab77686815"
+    },
+    {
+      "file": "cutoff-corpus.log",
+      "bytes": 557,
+      "sha256": "090ddef889f5a6714b4a5d56a7299342e3a0ddc22d23853134428359002228ec"
+    },
+    {
+      "file": "cutoff-format.json",
+      "bytes": 817,
+      "sha256": "bfb086b51777dc210100bff5975c6f6d6573ddbc804d3b2f707b87af2f6e2164"
+    },
+    {
+      "file": "cutoff-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "cutoff-reader-controls.json",
+      "bytes": 1010,
+      "sha256": "9a46cf3005ad9a08e5b1fcda275536952f2e33fa523097a801b0f8c748d75f73"
+    },
+    {
+      "file": "cutoff-reader-controls.log",
+      "bytes": 814,
+      "sha256": "18ae8d3f75a684a0a5de4af35e3f1d2504c66581edc30d91903e4d49651d9482"
+    },
+    {
+      "file": "cutoff-source-bundle.json",
+      "bytes": 748,
+      "sha256": "7bac31bdf9468c23193e79c798ce60f57018a16316fd2686d8ccfc11671a7a3f"
+    },
+    {
+      "file": "cutoff-source-bundle.log",
+      "bytes": 346,
+      "sha256": "cacad0d9a95a74c0e2dbff508976210199bc0167564773468bb1833ee94c1146"
+    },
+    {
+      "file": "cutoff-source-delta.json",
+      "bytes": 1017,
+      "sha256": "e2755419c7b53a24e243bd5e95652006d2e53525daca3818d8c3152a69f1949f"
+    },
+    {
+      "file": "cutoff-source-receipt.json",
+      "bytes": 421,
+      "sha256": "7ba142af7bd90d0f14c2710a4b42b835c3def44a75a8a5ba74929d8dbba2265d"
+    },
+    {
+      "file": "cutoff-source-verification.json",
+      "bytes": 882,
+      "sha256": "15b6f720ee845643e5e2623e707a3c609115eafacee859bb17dac0bbd549b337"
+    },
+    {
+      "file": "cutoff-source-verification.log",
+      "bytes": 421,
+      "sha256": "7ba142af7bd90d0f14c2710a4b42b835c3def44a75a8a5ba74929d8dbba2265d"
+    },
+    {
+      "file": "draft-node-check.json",
+      "bytes": 1077,
+      "sha256": "0808bb90e1c42678023be84d64860ed9f88c673c59ca6c7d669951faea35ce17"
+    },
+    {
+      "file": "draft-node-check.log",
+      "bytes": 4130,
+      "sha256": "151ede84339543259a4c4a5a0620dce947ad026329be630306b95a17c5da563c"
+    },
+    {
+      "file": "final-format.json",
+      "bytes": 816,
+      "sha256": "8fec0349fe735124284ef1526e73a012dbb1c92507e2ef293c6fa44121b97587"
+    },
+    {
+      "file": "final-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "final-lib-build.json",
+      "bytes": 1066,
+      "sha256": "2810ef3cb2d05886cf1b49f071410ef58b2787775f98b2a4f3cba4536472e740"
+    },
+    {
+      "file": "final-lib-build.log",
+      "bytes": 117506,
+      "sha256": "8f1925b4d71330b576c9461640e2e24278b521193daf91fcda8084ab268228e7"
+    },
+    {
+      "file": "final-reader-tests.json",
+      "bytes": 926,
+      "sha256": "7174857f70260889b21d5d91ea7eacf8ef539c4ea6be3eed10855b1791836980"
+    },
+    {
+      "file": "final-reader-tests.log",
+      "bytes": 261,
+      "sha256": "2675b4daae4e4b34f03a9cc7ab5799820c1151fa1291442bd6947811d3dc106c"
+    },
+    {
+      "file": "final-source-history.bundle",
+      "bytes": 766385,
+      "sha256": "15cbe76b8514f09c5623411018888a1f7e191e4c28e94c444688401b2ead8a41"
+    },
+    {
+      "file": "frozen-source-receipt.json",
+      "bytes": 421,
+      "sha256": "9444c65256a6a399dd11e00b13f0e814b9bbf6a50adbd884eebea62ff8add251"
+    },
+    {
+      "file": "frozen-source-verification.json",
+      "bytes": 883,
+      "sha256": "3bf97ebf635f641967c2fbbe89bc9cb447d50c31c285bd6c9eff179cb60cad0a"
+    },
+    {
+      "file": "frozen-source-verification.log",
+      "bytes": 421,
+      "sha256": "9444c65256a6a399dd11e00b13f0e814b9bbf6a50adbd884eebea62ff8add251"
+    },
+    {
+      "file": "latest-composition-cargo-closure.json",
+      "bytes": 297,
+      "sha256": "f374268b6abecadb53dcceb07c3685c549234d1e98d1290dba13a8d885d1148e"
+    },
+    {
+      "file": "latest-composition-clippy.json",
+      "bytes": 930,
+      "sha256": "bb783433698b4feea4b08871a58c9a4215a043dc3f5e445bc433b9c152ea5959"
+    },
+    {
+      "file": "latest-composition-clippy.log",
+      "bytes": 2336,
+      "sha256": "642ea21c1c5460ccba474acb31d80df895a7ac525a1f6cccb581aa4cd3c310c4"
+    },
+    {
+      "file": "latest-composition-corpus.json",
+      "bytes": 714,
+      "sha256": "e7516f952e403141a3590aea3bdbcb78eb8011c90ddaf9cd559400ded2551cb8"
+    },
+    {
+      "file": "latest-composition-corpus.log",
+      "bytes": 557,
+      "sha256": "b01666bd8d16b02a650094456b046e71a1ecbdbc224daae5db4743e61b8337b5"
+    },
+    {
+      "file": "latest-composition-format.json",
+      "bytes": 829,
+      "sha256": "12e4dd80272e2f0366013d57e0f6330577d7f62e09e167eb8faa4e2864c8a8c8"
+    },
+    {
+      "file": "latest-composition-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "latest-composition-preservation-audit.json",
+      "bytes": 2904,
+      "sha256": "ced7c60e821cfe07183f284671e36d0aa48daccd8fbdd60d91374d0253210588"
+    },
+    {
+      "file": "latest-composition-reader-controls.json",
+      "bytes": 1060,
+      "sha256": "0eda9733e6e1f990380988fd1fe51a1241b13c27c0c6b96f39ffbfe9b9d533c9"
+    },
+    {
+      "file": "latest-composition-reader-controls.log",
+      "bytes": 69632,
+      "sha256": "e19288b106f91c0f4ec67ea318689147304c3b3057d480c9048ff64ea5ee1727"
+    },
+    {
+      "file": "latest-composition-resource-observation.json",
+      "bytes": 1072,
+      "sha256": "9604327173a6982e852a10de5f9bb30fc64fb8548f60e18ab7c9f835f6312388"
+    },
+    {
+      "file": "latest-composition-source-bundle.json",
+      "bytes": 760,
+      "sha256": "0e7b7688663437096681ced74d71d846f9aca62d96cbda77d730bf0072bf059c"
+    },
+    {
+      "file": "latest-composition-source-bundle.log",
+      "bytes": 388,
+      "sha256": "f58fe76bca46b319a995a38c6922942ccfbf1b19adee7db9194e95fa1b0b4ba2"
+    },
+    {
+      "file": "latest-composition-source-receipt.json",
+      "bytes": 421,
+      "sha256": "34b8c82c0658b14c87ff62452366976e0b81035c59121befc0a76a17659a1e25"
+    },
+    {
+      "file": "latest-composition-source.json",
+      "bytes": 893,
+      "sha256": "5ca9692dc48cdc8f6d346d39ab47723011bdf62cb5576ad12c79be4f5f741ae3"
+    },
+    {
+      "file": "latest-composition-source.log",
+      "bytes": 421,
+      "sha256": "34b8c82c0658b14c87ff62452366976e0b81035c59121befc0a76a17659a1e25"
+    },
+    {
+      "file": "native-tested-source.bundle",
+      "bytes": 68458,
+      "sha256": "68dbef2a07afdea6c52200e84b165162b47ab664b380015cfa31aeb8d58dc9b7"
+    },
+    {
+      "file": "original-confirmation-readback.json",
+      "bytes": 817,
+      "sha256": "07a4387f4de4af062ccf39314686f166f02ee0230deb7a58f444fc6c6ac9ad48"
+    },
+    {
+      "file": "original-confirmation-readback.log",
+      "bytes": 25117,
+      "sha256": "77a3370ec8f7ab788061ee3dab8cc497c61bc605e87b20b0da9adf396e7ebbb7"
+    },
+    {
+      "file": "original-confirmation-report.json.gz",
+      "bytes": 548592,
+      "sha256": "80cbaa8f2b4ef9093aee5f8d8ab6493bb0d662a55a1fb128df5931f70ce6ad94"
+    },
+    {
+      "file": "original-four-second-native.json",
+      "bytes": 1203,
+      "sha256": "897b3574015aed6c4aa7c7de245df9513dab133f1e60920db8c63527795a1ccc"
+    },
+    {
+      "file": "original-four-second-native.log",
+      "bytes": 4347,
+      "sha256": "3d5dd35a672bb52568b1b913bf868888095c36efc7977b1053f4d741c27609d1"
+    },
+    {
+      "file": "post-merge-resource-observation.json",
+      "bytes": 1718,
+      "sha256": "98f5abb8beae54ab512b715d3b107a62d0b626abeca8e63f5371a10fef792023"
+    },
+    {
+      "file": "prepublication-evidence-review.json",
+      "bytes": 14756,
+      "sha256": "5b358b771e4323405c4c5c57a0836f53827409519e4f8f13d38ed67006b5d356"
+    },
+    {
+      "file": "public-v3-completion-deadline.patch",
+      "bytes": 19891,
+      "sha256": "7b7698b7b5af3c4d5377a57836c55e3f22524c4ec234570b9f31e687ba5a2c55"
+    },
+    {
+      "file": "publication-completion-review.json",
+      "bytes": 1833,
+      "sha256": "129f7bc19119a037d4149e7a853684d38acf93b31d6503309c3edf48dc6cca13"
+    },
+    {
+      "file": "publication-composed-corpus.json",
+      "bytes": 716,
+      "sha256": "c33fe4f44d39857defd2a1f4104884391e3f1e386405ff8867bbf8d065f0c901"
+    },
+    {
+      "file": "publication-composed-corpus.log",
+      "bytes": 557,
+      "sha256": "b01666bd8d16b02a650094456b046e71a1ecbdbc224daae5db4743e61b8337b5"
+    },
+    {
+      "file": "publication-composed-format.json",
+      "bytes": 831,
+      "sha256": "a81eac8929560744a12798ff77ab5b349953dad5a2b3844e1ecbf06abe56963e"
+    },
+    {
+      "file": "publication-composed-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "publication-composed-repository.json",
+      "bytes": 709,
+      "sha256": "27b020e682c7fdf7d2ab7019e481681217ebaf477d05aee8544b31501ade38b2"
+    },
+    {
+      "file": "publication-composed-repository.log",
+      "bytes": 307,
+      "sha256": "d87664c923e41716df64c47ded98bf6f57e9046c84cdc7fa37ae12ba9f70a9e9"
+    },
+    {
+      "file": "publication-composed-source-receipt.json",
+      "bytes": 421,
+      "sha256": "8d7124bdfd3b09264484d73a4a20636aabeb996ef5694e3db400cc53f7ea8c8e"
+    },
+    {
+      "file": "publication-composed-source.json",
+      "bytes": 892,
+      "sha256": "25f0b9e782236a250a94b509ae0a3d5f5212b875aafd46f870d2ad9c8c337227"
+    },
+    {
+      "file": "publication-composed-source.log",
+      "bytes": 421,
+      "sha256": "8d7124bdfd3b09264484d73a4a20636aabeb996ef5694e3db400cc53f7ea8c8e"
+    },
+    {
+      "file": "publication-composition-review.json",
+      "bytes": 20637,
+      "sha256": "292811ec9807f9eee98fdd5861acca5a08cf47e5b80317484fc0ab6b271174f4"
+    },
+    {
+      "file": "publication-enospc-observation.json",
+      "bytes": 970,
+      "sha256": "28b9fd1b85f7fdaeba31c82ee49759cd64ce95e0abbe83b3a97f9c464dc039fb"
+    },
+    {
+      "file": "publication-growth-review.json",
+      "bytes": 11750,
+      "sha256": "2b5e84ce82a699da8b6c437f2d7368b6223c3ea1ac41999b76992daaf090c31a"
+    },
+    {
+      "file": "publication-source-after-cache-cleanup.json",
+      "bytes": 5418,
+      "sha256": "ad9d2d3abc8ae90930c93752769d2d338b98c6843e3f881838e911efae01731f"
+    },
+    {
+      "file": "publication-source-after-cache-cleanup.log",
+      "bytes": 712,
+      "sha256": "9e167bab56d2324301bc3f789593428f8652b56be24537fbf09e24366c13411f"
+    },
+    {
+      "file": "publication-source-bundle-verify.json",
+      "bytes": 753,
+      "sha256": "1076f1020f514bf87b1595eeb1438502173c9337da51bcf37ca879665b50f4d3"
+    },
+    {
+      "file": "publication-source-bundle-verify.log",
+      "bytes": 297,
+      "sha256": "fff450c7eb2e2dd896848b55bf9accd8a258fa2aecbc1bdab526d5fc0c326d54"
+    },
+    {
+      "file": "publication-source-bundle.json",
+      "bytes": 854,
+      "sha256": "d08d2a4f0670c9435598d33cd01ee233568e8069dae0c9f0e2bace0f41426afb"
+    },
+    {
+      "file": "publication-source-bundle.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "publication-source.bundle",
+      "bytes": 786712,
+      "sha256": "254fd30fa8a3ca5d7ad3919c8d1ead1c0193eb3fff0fddaecd48e86f96b71a95"
+    },
+    {
+      "file": "repository-check.json",
+      "bytes": 694,
+      "sha256": "a1a4d5f7cd045293d114a41f28b04b85541b61d363e259cf3c8d6a2151e7ecb3"
+    },
+    {
+      "file": "repository-check.log",
+      "bytes": 307,
+      "sha256": "5570ef1e9672caf0ce84072b8768439958cf73193ff6dd449e34a007bbb5ae9f"
+    },
+    {
+      "file": "run-check.py",
+      "bytes": 1900,
+      "sha256": "95dfeccdc8d3d37a8bcf6cfdc05dfd30b838ef8bb235433e34661508b086a652"
+    },
+    {
+      "file": "run-native-unqualified.sh",
+      "bytes": 980,
+      "sha256": "4ea194f6686c9cd01f1b7873164ced92cf1c09946efc60b27619fa57cd43cd9b"
+    },
+    {
+      "file": "run-native.sh",
+      "bytes": 1108,
+      "sha256": "5ee4b11d3417167693057d2dcdcc2b9226d5692640e8123a83d783c69b739558"
+    },
+    {
+      "file": "source-control-tests.json",
+      "bytes": 981,
+      "sha256": "b4c19ec9da6c4196585436edf24a2db46a05c38cbbf45f91b88c7b5293fd2818"
+    },
+    {
+      "file": "source-control-tests.log",
+      "bytes": 721,
+      "sha256": "4582897b08a46a199525bac4b690de82e90c2a89a1707cf83f47f6d3e4680437"
+    },
+    {
+      "file": "strict-clippy-fixed.json",
+      "bytes": 923,
+      "sha256": "4db404ee8ee259a22b7ba5a80e6e49d8e25f22a7f2e7e6bc25786921b11a41ed"
+    },
+    {
+      "file": "strict-clippy-fixed.log",
+      "bytes": 2407,
+      "sha256": "090c467e492d551384e7cb75d878d2cee7e07253f237ee3e35f58f6eadf13c40"
+    },
+    {
+      "file": "strict-clippy.json",
+      "bytes": 919,
+      "sha256": "6ba23de550ee998a78a9346041ff49e7a51ddd61f8a7035322270889dc445e0c"
+    },
+    {
+      "file": "strict-clippy.log",
+      "bytes": 6585,
+      "sha256": "b60fc4d4c42fa2453c839d07cd81f55e37af07b28a2bf3d1321b9dbc47ca1b80"
+    },
+    {
+      "file": "unqualified-sqlite-build-outputs.json",
+      "bytes": 713,
+      "sha256": "f44f863cfe49dd083d2cb856ff775a215b52f50508ef4f0b7a641ecd826d4b5b"
+    }
+  ],
+  "publication_packaging_failure_retained": "publication-enospc-observation.json",
+  "hold_reasons": [
+    "Original local independent 4s/16 business gate remains unmet; historical qualified-Host issue #639 failure remains open.",
+    "This work 23 new native regressions and four incoming completion regressions are unexecuted on the final composition.",
+    "Final composition strict Clippy and reader/source-suite execution remain unavailable after retained 0ba SIGBUS/ENOSPC failures. Prior successes are not relabelled.",
+    "Original fixed Host and complete requested campaign matrix remain unavailable or unexecuted."
+  ],
+  "publication_composition": {
+    "source_commit": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+    "source_tree": "87f974c3ad327d5da2c61286ec86fcb1580b3fcf",
+    "incoming_commit": "1c885019fdf1cc2f33af8da0780da603fff1c353",
+    "review_file": "publication-composition-review.json",
+    "source_bundle": "publication-source.bundle",
+    "source_bundle_prerequisites": [
+      "0ba09db0cf1c684013a896dd83f29c327f58521e",
+      "1c885019fdf1cc2f33af8da0780da603fff1c353"
+    ],
+    "original_acceptance_reexecuted": false,
+    "native_runtime_executed": false,
+    "original_23_regressions_executed_on_this_composition": 0,
+    "incoming_completion_regressions": [
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::completion_deadline_tests::late_completion_cannot_revive_work_deadline_or_lose_native_outcome",
+        "result": "NOT_RUN_ON_THIS_COMPOSITION",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::completion_deadline_tests::timely_completion_keeps_output_bytes_and_original_total_deadline",
+        "result": "NOT_RUN_ON_THIS_COMPOSITION",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::completion_deadline_tests::queued_completion_expiry_keeps_worker_reservations_until_actual_release",
+        "result": "NOT_RUN_ON_THIS_COMPOSITION",
+        "executed": false,
+        "runtime_outcome": null
+      },
+      {
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "selector": "ingress::public_v3::completion_deadline_tests::completion_for_closed_connection_releases_only_its_output_reservation",
+        "result": "NOT_RUN_ON_THIS_COMPOSITION",
+        "executed": false,
+        "runtime_outcome": null
+      }
+    ],
+    "scoped_combined_native_inventory": {
+      "planned": 27,
+      "executed": 0,
+      "passed": 0,
+      "not_run": 27,
+      "unknown_runtime_outcomes": 27,
+      "scope": "This work original 23 plus four incoming completion tests; not every native regression in the shared PR. Unknown and not-run are the same tests."
+    },
+    "completion_tests_present": 9,
+    "historical_completion_metadata_preserved": "completion_cutoff and its patch remain evidence of 0647. This composition retains secondary output failures while primary remains Deadline/Cancelled.",
+    "static_reviews": [
+      "publication-growth-review.json",
+      "publication-completion-review.json"
+    ],
+    "old_evidence_review": "prepublication-evidence-review.json",
+    "strict_clippy_status": "NOT_RUN_AFTER_RECORDED_RESOURCE_FAILURES",
+    "reader_suite_status": "NOT_RUN_AFTER_RECORDED_RESOURCE_FAILURES",
+    "activation": false,
+    "cargo_input_count_correction": {
+      "tracked_Cargo_toml_and_Cargo_lock_files": 57,
+      "same_count_at_0647_0ba_3e601": true,
+      "previous_prose_count_62_corrected": true,
+      "contents_unchanged_by_correction": true
+    },
+    "packaging": {
+      "materialization_failure": "ENOSPC while copying publication-source.bundle into the checkout; its zero-byte pending file was removed and all bytes remain in RAM and Git objects.",
+      "method": "Final documentation and evidence are assembled into a verified Git tree from RAM, then uploaded through the selected GitHub connector.",
+      "last_full_worktree_guard_commit": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+      "full_worktree_guard_claimed_for_later_documentation_commit": false,
+      "source_and_native_results_relabelled": false,
+      "original_source_worktree_preserved": true
+    },
+    "later_remote_preservation": {
+      "incoming_commit": "0ceffc048e733e2116841385a1d3b3abb35bc9c5",
+      "files": 5,
+      "scope": "Research documentation/evidence only; sole plan merged at non-overlapping hunks.",
+      "incoming_paths": [
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "evidence/pon-quantum-construction-20261104/README.md",
+        "evidence/pon-quantum-construction-20261104/reproduce_resource_matrix.py",
+        "evidence/pon-quantum-construction-20261104/reproduction.json",
+        "formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md"
+      ],
+      "trillionnium_config_scripts_github_subtrees_byte_identical_to": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+      "fresh_native_or_clippy_result_claimed": false
+    }
+  }
+}

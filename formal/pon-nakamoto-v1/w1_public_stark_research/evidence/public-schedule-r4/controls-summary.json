@@ -1,0 +1,26 @@
+{
+  "schema": "w1-public-schedule-controls-summary-v1",
+  "qualification": "HOLD_NO_GO",
+  "result": "PASS",
+  "planned": {
+    "positive": 1,
+    "ordinary": 11,
+    "late": 4,
+    "shape": 8
+  },
+  "passed": {
+    "positive": 1,
+    "ordinary": 11,
+    "late": 4,
+    "shape": 8
+  },
+  "verifier_processes": 24,
+  "mutator_processes": 12,
+  "new_proofs_generated": 0,
+  "source_binaries_inputs_unchanged": true,
+  "global_rejection_bound": false,
+  "NI_security_claim": false,
+  "PQ128_claim": false,
+  "Node_qualification": false,
+  "failures": []
+}

@@ -1,0 +1,105 @@
+{
+  "consensus_admission": false,
+  "end_to_end_benefit_established": false,
+  "expected_source": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+  "production_qualified": false,
+  "quantum_soundness_qualified": false,
+  "schema": "TRNM-W1-TRANSPARENT-CI-OBSERVATION1",
+  "scope": "Continuous candidate checks; failed and partial observations are retained.",
+  "source_kind": "head",
+  "steps": {
+    "budget_tests": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "checkout": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {
+        "commit": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+        "ref": ""
+      }
+    },
+    "comparison": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "component_budget": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "hardened": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "mapper_tests": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "native": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "observer_tests": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "profile": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "receipt_controls": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "receipt_controls_v2": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "source": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "source_after": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "source_controls": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "source_map": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "staged_tests": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "toolchain": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    },
+    "verifier_v2": {
+      "conclusion": "success",
+      "outcome": "success",
+      "outputs": {}
+    }
+  }
+}

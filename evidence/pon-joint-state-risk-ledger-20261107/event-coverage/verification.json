@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "certificate_event_coverage_tests.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "log_sha256": "02d9c38d29fb09ca692852a04cf89e31638c1f5dd553133232991b654d30c302",
+  "native_program_executed": false,
+  "python": "3.12.14"
+}

@@ -1,0 +1,17 @@
+{
+  "action": "explicit git add --sparse for this new evidence directory only",
+  "compressed": [
+    "complete-roster/stdout.txt.gz",
+    "node-genesis-split/stdout.txt.gz"
+  ],
+  "initial_git_diff_cached_check_exit": 2,
+  "initial_regular_git_add_rejected": true,
+  "native_reexecuted": false,
+  "reason": "new requested evidence path outside the local sparse-checkout definition",
+  "resolution": "lossless deterministic gzip of the two complete original stdout streams; decoded bytes verified equal; no whitespace gate changed",
+  "schema": "incentive-evidence-staging-observations-v1",
+  "whitespace_refusals": [
+    "complete-roster/stdout.txt:13: new blank line at EOF",
+    "node-genesis-split/stdout.txt:6: new blank line at EOF"
+  ]
+}

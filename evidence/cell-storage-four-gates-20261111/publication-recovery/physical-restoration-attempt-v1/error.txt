@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/qian-qi/work/chain-cell-four-gates-2bfb-restore-missing-tracked-v1.py", line 54, in <module>
+    with tmp.open('xb') as dst:
+         ^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileExistsError: [Errno 17] File exists: '/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/final-publication/physical-restoration/d57a91a2fe54e6c51c3f4865e2731a71c7ba39e0.blob'

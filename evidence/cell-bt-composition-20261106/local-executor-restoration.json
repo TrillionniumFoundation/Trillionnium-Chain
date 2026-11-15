@@ -1,0 +1,23 @@
+{
+  "schema": "trnm-cell-local-executor-restoration-v1",
+  "observed_at_utc": "2026-11-06T07:04:42.833756+00:00",
+  "source_commit": "c16c7e0e93cf5eb14f6dac140358441a47d82c7e",
+  "source_tree": "4aa564ca3eb297f6afa03976f16eacb6ffd7554a",
+  "source_clean": true,
+  "original_local_failure_log_recovered": true,
+  "original_local_failure_log_sha256": "ef773126b696d83709839ca2429bf70ae5acf979b71d9e7ad3c9881563dad4ef",
+  "original_local_h2_success_log_recovered": true,
+  "original_local_h2_success_log_sha256": "ed61cb0158547c99c71abcde5f0f2f9189dbd38b8e850caa8ba26abafb08a6f9",
+  "local_gate_outer_terminal_receipt_available": false,
+  "local_gate_known_completed": [
+    "preflight",
+    "corpus",
+    "corpus-negative",
+    "repository"
+  ],
+  "remaining_local_gate_results": "NOT_OBSERVED; remote exact-source recovery is separately recorded",
+  "archive": "local-records.tar.xz",
+  "archive_bytes": 505684,
+  "archive_sha256": "ba549e0818466e73e9628fb13020482d1d960bf16d92cb4ede21298c5325f8e5",
+  "original_h1_failure_cause": "UNATTRIBUTED; later successful calls do not explain the failed original"
+}

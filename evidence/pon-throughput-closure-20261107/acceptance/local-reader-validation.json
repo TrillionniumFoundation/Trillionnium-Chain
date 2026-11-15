@@ -1,0 +1,59 @@
+{
+  "schema": "trnm-throughput-reader-local-controls-v1",
+  "scope": "Local Python reader/component controls only; no native service campaign and no combined-source acceptance. Observed tool exit statuses are retained; integration owner must run final exact-source checks.",
+  "sources": {
+    "scripts/ci/run_from_zero_native.py": "baa7cba8096a3908c9b7ebe0705949b95061191ec78846006527fd80e6a5a0c8",
+    "scripts/ci/test_run_from_zero_native.py": "d94052e5777392461da80c3470d08222cc72f14a0e82f9b477b9fcf0da3f870b"
+  },
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_run_from_zero_native.py",
+        "-v"
+      ],
+      "passed": 149,
+      "failed": 0,
+      "exit_code": 0,
+      "wall_seconds": 19.291
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_run_w1_fresh_service_v1.py"
+      ],
+      "passed": 20,
+      "failed": 0,
+      "exit_code": 0,
+      "wall_seconds": 1.386
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "passed": 37,
+      "failed": 0,
+      "exit_code": 0,
+      "scope": "Ran immediately after the exact PR768 one-blob repair, before other combined-source changes."
+    }
+  ],
+  "original_report_readback": {
+    "strict_gate_accepted": false,
+    "validation_error": "CONFIRMATION_TARGET",
+    "exit_code": 1
+  },
+  "production_activation": false
+}

@@ -1,0 +1,8 @@
+{
+  "correction": "explicitly add the bounded retained raw-log paths; preserve original C1 observations",
+  "failure": "tracked-artifact audit refused an ignored raw .log file",
+  "original_job": "1a1c444f8e1-cf39-1eb",
+  "publication_attempt_commit": "804b4290856629c27b215750254616b3e0da4b4c",
+  "runtime_commit": "c8214f7e41f8c8f1d885bf990dba6b7ddf829ea2",
+  "runtime_gate_result_changed": false
+}

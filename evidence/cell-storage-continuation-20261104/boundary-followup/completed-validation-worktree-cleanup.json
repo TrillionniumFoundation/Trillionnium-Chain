@@ -1,0 +1,10 @@
+{
+  "schema": "trnm-completed-owned-worktree-cleanup-v1",
+  "observed_utc": "2026-11-05T01:40:36.080432+00:00",
+  "removed_path": "/workspace/scratch/73305aff6ced/validation-a9b860",
+  "retained_commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+  "worktree_clean_before_removal": true,
+  "all_own_runs_completed": true,
+  "logs_receipts_and_git_objects_preserved": true,
+  "reason": "Reclaim only the redundant completed validation checkout under this task to save and integrate evidence after ENOSPC; immutable Git history and all observations remain."
+}

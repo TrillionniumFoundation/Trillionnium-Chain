@@ -1,0 +1,11 @@
+{
+  "schema": "model-owner-complete-git-storage-relocation-v1",
+  "reason": "Own complete clone object store relocated to available tmpfs after concurrent overlay exhaustion; no history, source, guard or authority was changed.",
+  "worktree": "/workspace/scratch/f4976366a32a/hosted-source-complete",
+  "git_directory": "/dev/shm/trnm-model-owner-f4976366a32a-complete-git",
+  "head_before_after": "db757e7f76257a78e58cf1157269593e9ffba851",
+  "all_git_file_sha256_equal": true,
+  "git_files": 106,
+  "shallow": "false",
+  "overlay_physical_free": 1638023168
+}

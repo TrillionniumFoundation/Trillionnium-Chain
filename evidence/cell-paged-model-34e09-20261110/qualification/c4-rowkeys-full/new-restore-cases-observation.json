@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-data-availability",
+    "paged_consumer_restore",
+    "--",
+    "--test-threads=1"
+  ],
+  "completed_at_utc": "2026-11-10T10:02:16.811025+00:00",
+  "elapsed_seconds": 41.16453109285794,
+  "exit_code": 0,
+  "failure": null,
+  "log_sha256": "d08c114e70e5297f02edd58b92d089f8d0949c65b43ab2b7dad1a2759554865d",
+  "name": "new-restore-cases",
+  "started_at_utc": "2026-11-10T10:01:35.646504+00:00"
+}

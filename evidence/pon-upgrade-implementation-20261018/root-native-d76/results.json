@@ -1,0 +1,91 @@
+{
+  "head": "d76a0d0d1f8d8d685d40816ad1978b52f3aa97d0",
+  "tree": "50bb47d35473a059d75af5416bfd9bfcb3dbe672",
+  "results": [
+    {
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.08994454698404297,
+      "log": "/home/qian-qi/work/pon-upgrade-implementation-20261018/root-native-d76/preflight.log"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 15.450095246022101,
+      "log": "/home/qian-qi/work/pon-upgrade-implementation-20261018/root-native-d76/fmt.log"
+    },
+    {
+      "name": "worker",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "-p",
+        "trnm-worker-agent"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 218.15113525697961,
+      "log": "/home/qian-qi/work/pon-upgrade-implementation-20261018/root-native-d76/worker.log"
+    },
+    {
+      "name": "accepted-task",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "accepted_task_observation"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 64.23508197697811,
+      "log": "/home/qian-qi/work/pon-upgrade-implementation-20261018/root-native-d76/accepted-task.log"
+    },
+    {
+      "name": "native-node",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "native_node"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 35.423361889028456,
+      "log": "/home/qian-qi/work/pon-upgrade-implementation-20261018/root-native-d76/native-node.log"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "clippy",
+        "--locked",
+        "-p",
+        "trnm-worker-agent",
+        "-p",
+        "trnm-pon-node",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 36.280632262991276,
+      "log": "/home/qian-qi/work/pon-upgrade-implementation-20261018/root-native-d76/clippy.log"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+AGENTS.md:5:Actual M00-M17 source ownership is in `config/portability-inventory-v1.json`.
+AGENTS.md:20:Verify the exact Cargo graph, lockfile, retained tests, strict Clippy and formatting,
+scripts/ci/test_maintenance_cost.py:326:    def test_explicit_historical_artifact_version_preserves_v1_shape_and_source_inventory(self):
+scripts/ci/test_maintenance_cost.py:347:    def test_explicit_historical_v2_artifact_preserves_shape_and_exact_source_inventory(self):
+scripts/ci/pq_authority_surface_scan.py:162:    return {'schema': 'trnm-pq-rust-source-authority-inventory-v1',
+scripts/ci/project_boundary.py:37:    inventory=json.loads(source('config/portability-inventory-v1.json',mode))
+scripts/ci/project_boundary.py:38:    require(set(members)=={'crates/'+r['package'] for r in inventory['packages']},'workspace/source inventory mismatch')
+scripts/ci/rust_baseline_shards.py:46:    # --locked; docs and Clippy also build before unchanged offline release tests.
+scripts/ci/check_four_priority_evidence.py:131:    inventory = cost.source_inventory(set(cost.git('ls-tree', '-r', '--name-only', COMMIT).splitlines()))
+scripts/ci/check_four_priority_evidence.py:132:    require(bool(native_inputs) and set(native_inputs) == inventory, 'native source inventory')
+scripts/ci/check_four_priority_evidence.py:135:            'paired source inventory must equal native inputs plus recorded policy')
+scripts/ci/check_four_priority_evidence.py:155:    require(set(preview['source']['sha256']) == PREVIEW_SOURCE_PATHS, 'preview source inventory')
+scripts/ci/check_applicability.py:255:            data['source_inventory'] == 'config/portability-inventory-v1.json',
+scripts/ci/check_applicability.py:257:    safe(root, data['source_inventory'])
+scripts/ci/test_pq_provider_ci.py:28:    "        run:", "        if: matrix.lane == 'repository-truth'\n        run:")
+scripts/ci/test_pq_provider_ci.py:69:                        'explicit Clippy condition must require prepared backend')
+scripts/ci/test_pq_provider_ci.py:112:    for name, expected in (("repository-truth", READ), ("prospective-merge", MERGE_READ)):
+scripts/ci/test_pq_provider_ci.py:115:        consumer = ("      - name: Run actual repository-truth checks\n" if name == "repository-truth"
+scripts/ci/check_client_confirmation_evidence.py:101:            {p for p in q['source_files_sha256'] if runtime_path(p)}, 'measured/current runtime inventory')
+scripts/ci/test_repository.py:56:    def test_actual_source(self):self.assertEqual(check(self.root)['workspace_packages'],len(json.loads((self.root/'config/portability-inventory-v1.json').read_text())['packages']))
+scripts/ci/check_public_readiness_evidence.py:114:def source_inventory(root, commit):
+scripts/ci/check_public_readiness_evidence.py:130:    expected = source_inventory(root, commit)
+scripts/ci/check_public_readiness_evidence.py:131:    require(report['source_files_sha256'] == expected and expected, 'source inventory/hash mismatch')
+scripts/ci/check_public_readiness_evidence.py:134:        require({p for p in paths if relevant(p)} == set(expected), 'current source inventory changed')
+scripts/ci/test_project_boundary.py:207:    def test_source_inventory_and_external_path_dependency_still_reject(self):
+scripts/ci/test_project_boundary.py:209:        self.rejected(self.preflight(), 'workspace/source inventory mismatch')
+scripts/ci/test_ci_execution.py:15:# Include the raw-worktree negatives in both existing repository-truth lanes.
+scripts/ci/test_native_session_evidence.py:51:        with self.assertRaisesRegex(ValueError,'current source differs|runtime inventory'):
+scripts/ci/test_pq_authority_surface_scan.py:72:    def test_checkout_ancestor_symlink_refuses_redirected_source_inventory(self):
+scripts/ci/test_work_cost_report.py:14:from pon_work_cost_report import SOURCE_PATHS, encoded, source_inventory, summarize, target_value
+scripts/ci/test_work_cost_report.py:114:    def test_source_inventory_cannot_omit_collector_or_configuration(self):
+scripts/ci/test_work_cost_report.py:116:            source_inventory(SOURCE_PATHS - {'config/pon/work-profile-v1.json'})
+scripts/ci/test_work_cost_report.py:120:        result = source_inventory(paths)
+scripts/ci/check_evaluation_bundle_evidence.py:46: require({p for p in q['source_files_sha256'] if runtime(p)}==measured_runtime,'measured runtime inventory mismatch')
+scripts/ci/test_work_rejection_report.py:698:    def test_shared_process_source_is_in_the_measured_input_inventory(self):
+scripts/ci/ci_job.sh:5:  repository-truth)
+scripts/ci/ci_job.sh:57:    python3 scripts/refresh_distributed_source_inventory.py --check
+scripts/ci/test_public_readiness_evidence.py:228:        self.report = {'source_commit':self.commit,'source_tree':self.tree,'source_files_sha256':check.source_inventory(self.root,self.commit)}
+scripts/ci/test_public_readiness_evidence.py:242:    def test_source_inventory_cannot_omit_script_config_or_workflow(self):
+scripts/ci/test_ci_contract.py:152:        self.lanes = {'repository-truth', 'protocol-contract', 'fuzz-smoke',
+scripts/ci/test_ci_contract.py:173:                'moved to repository-truth': self.script.replace(command, '').replace(
+scripts/ci/test_ci_contract.py:174:                    '  repository-truth)\n', '  repository-truth)\n' + command),
+scripts/ci/test_ci_contract.py:175:                'duplicated in repository-truth': self.script.replace(
+scripts/ci/test_ci_contract.py:176:                    '  repository-truth)\n', '  repository-truth)\n' + command),
+scripts/ci/test_ci_contract.py:428:            '  repository-truth)\n', '  repository-truth)\n' + GSC2_SYNTHETIC_ORACLE)
+scripts/ci/test_ci_contract.py:1664:            '  repository-truth)\n', '  repository-truth)\n' + MANDATORY_UNITS_NATIVE)
+scripts/ci/test_ci_contract.py:1689:            changed = original.replace(block, '').replace('  repository-truth)\n',
+scripts/ci/test_ci_contract.py:1690:                                                          '  repository-truth)\n' + block)
+scripts/ci/test_ci_contract.py:1709:            changed = original.replace(block, '').replace('  repository-truth)\n',
+scripts/ci/test_ci_contract.py:1710:                                                          '  repository-truth)\n' + block)
+scripts/ci/test_ci_contract.py:1714:        # merge lanes install the pinned wheel; repository-truth does not.
+scripts/ci/test_ci_contract.py:1719:        moved = original.replace(command, '').replace('  repository-truth)\n',
+scripts/ci/test_ci_contract.py:1720:                                                       '  repository-truth)\n' + command)
+scripts/ci/test_ci_contract.py:1739:        moved_lane = original.replace(block, '').replace('  repository-truth)\n',
+scripts/ci/test_ci_contract.py:1740:                                                        '  repository-truth)\n' + block)
+scripts/ci/test_ci_contract.py:2120:                      'lane: [repository-truth, protocol-contract, fuzz-smoke, external-evidence-contract]',
+scripts/ci/test_ci_contract.py:2121:                      'lane: [repository-truth]')
+scripts/ci/test_ci_contract.py:2231:        self.required = {"repository-truth", "protocol-contract", "fuzz-smoke",
+scripts/ci/test_ci_contract.py:2465:            ('cargo +1.95.0 metadata --locked', 'true # cargo +1.95.0 metadata --locked'),
+scripts/ci/test_ci_contract.py:2571:        'credit': ('repository-truth', '    bash scripts/project-preflight.sh --audit\n', (
+scripts/ci/test_ci_contract.py:2575:        'pq_effect_root': ('repository-truth', '    python3 scripts/ci/pq_lifetime_budget.py\n', (
+scripts/ci/test_ci_contract.py:2580:        'fixed_probability': ('repository-truth',
+scripts/ci/test_ci_contract.py:2597:        self.required = {'repository-truth', 'protocol-contract', 'fuzz-smoke',
+scripts/ci/test_ci_contract.py:2668:        for lane in ('repository-truth', 'external-evidence-contract'):
+scripts/ci/check_ci_contract.py:32:    '        shell: bash\n', "        if: matrix.lane == 'repository-truth'\n        shell: bash\n")
+scripts/ci/check_ci_contract.py:668:    python3 scripts/refresh_distributed_source_inventory.py --check
+scripts/ci/check_ci_contract.py:1046:          cargo +1.95.0 metadata --locked --manifest-path "$w1_manifest" --format-version 1 > "$W1_PROFILE_OUT/v2-cargo-graph.json" 2> "$W1_PROFILE_OUT/v2-metadata.stderr.log"
+scripts/ci/check_ci_contract.py:1243:                'W1 post-win required repository-truth controls cannot be duplicated into an optional workflow')
+scripts/ci/check_ci_contract.py:1267:        require(code_lines(lanes['repository-truth']).count(command) == 1
+scripts/ci/check_ci_contract.py:1269:                'current cost, policy and cell deadline reader controls must execute exactly once in repository-truth')
+scripts/ci/check_ci_contract.py:1271:        require(code_lines(lanes['repository-truth']).count(command) == 1
+scripts/ci/check_ci_contract.py:1273:                'proof latency controls must execute exactly once in repository-truth')
+scripts/ci/check_ci_contract.py:1276:        require(sum(line.count(name) for line in code_lines(lanes['repository-truth'])) == 1
+scripts/ci/check_ci_contract.py:1278:                'W1 post-win controls must execute exactly once globally and in repository-truth')
+scripts/ci/check_ci_contract.py:1318:        require(code_lines(lanes['repository-truth']).count(command) == 1
+scripts/ci/check_ci_contract.py:1320:                'work/native model controls must execute exactly once in repository-truth')
+scripts/ci/check_ci_contract.py:1325:        require(code_lines(lanes['repository-truth']).count(command) == 1
+scripts/ci/check_ci_contract.py:1327:                'PQ authority effect and root recovery controls must execute exactly once in repository-truth')
+scripts/ci/check_ci_contract.py:1334:                               (COST_BOUNDARY_READERS, 'repository-truth', 'work-cost and DAA reader controls'),
+scripts/ci/check_ci_contract.py:1335:                               (ORIGINAL_CAMPAIGN_READER, 'repository-truth', 'original campaign source-pinned reader controls')]:
+scripts/ci/check_ci_contract.py:1351:            'one actual workspace test must collect fresh native observations, check every independent reader, explicitly execute all four release controls, then run docs/Clippy outside exports')
+scripts/ci/check_ci_contract.py:1375:        require(code_lines(lanes['repository-truth']).count(command) == 1
+scripts/ci/check_ci_contract.py:1377:                'credit model controls must execute exactly once in repository-truth')
+scripts/ci/check_ci_contract.py:1380:    require(code_lines(lanes['repository-truth'])[:3] == code_lines(CREDIT_MODEL_PREFIX),
+scripts/ci/check_ci_contract.py:1382:    repository_commands = code_lines(re.sub(r'\\\n[ \t]*', ' ', lanes['repository-truth']))
+scripts/ci/check_ci_contract.py:1386:            'repository-truth controls must retain a straight-line command sequence')
+scripts/ci/check_ci_contract.py:1389:    require(code_lines(lanes['repository-truth']) == code_lines(REPOSITORY_TRUTH_BLOCK),
+scripts/ci/check_ci_contract.py:1390:            'W1 post-win controls and all retained repository-truth commands require one straight-line lane without skipped or swallowed failures')
+scripts/ci/check_ci_contract.py:1542:            'required repository-truth retains public Host CI refusal controls')
+scripts/ci/check_ci_contract.py:1692:            ('repository-truth', RUNTIME_RELEASE_PYTHON,
+scripts/ci/check_ci_contract.py:1693:             '      - name: Run actual repository-truth checks\n'),
+scripts/ci/check_ci_contract.py:1697:                'both repository-truth lanes install the pinned verifier dependency before execution')
+scripts/ci/check_ci_contract.py:1865:        require(budget_command in dict(lane_pairs)['repository-truth'] and
+scripts/ci/check_ci_contract.py:1867:                'PQ lifetime and root recovery refusal controls execute once in repository-truth')
+scripts/ci/check_ci_contract.py:1868:    require(RUNTIME_RELEASE_COMMAND in dict(lane_pairs)['repository-truth']
+scripts/ci/check_ci_contract.py:1872:    require(zero_negative in dict(lane_pairs)['repository-truth'] and script.count(zero_negative) == 1,
+scripts/ci/check_ci_contract.py:1873:            'zero locality evidence negative checks must execute in repository-truth')
+scripts/ci/check_ci_contract.py:1875:    require(one_zero_negative in dict(lane_pairs)['repository-truth'] and script.count(one_zero_negative) == 1,
+scripts/ci/check_ci_contract.py:1876:            'one-zero locality evidence negative checks must execute in repository-truth')
+scripts/ci/check_ci_contract.py:1878:    require(maintenance_negative in dict(lane_pairs)['repository-truth'] and
+scripts/ci/check_ci_contract.py:1880:            'fixed maintenance evidence negative checks must execute once in repository-truth')
+scripts/ci/check_ci_contract.py:1882:    require(rejection_negative in dict(lane_pairs)['repository-truth'] and
+scripts/ci/check_ci_contract.py:1884:            'actual rejection cost evidence negatives must execute once in repository-truth')
+scripts/ci/check_ci_contract.py:1889:        require(command in dict(lane_pairs)['repository-truth'] and
+scripts/ci/check_ci_contract.py:1891:                'six-workpackage reader must execute once in repository-truth: ' + reader)
+scripts/ci/check_ci_contract.py:1893:    require(archive_negative in dict(lane_pairs)['repository-truth'] and script.count(archive_negative) == 1,
+scripts/ci/check_ci_contract.py:1894:            'archive native/oracle receipt negatives must execute once in repository-truth')
+scripts/ci/check_ci_contract.py:1896:    require(execution_negative in dict(lane_pairs)['repository-truth'] and script.count(execution_negative) == 1,
+scripts/ci/check_ci_contract.py:1897:            'account execution receipt negatives must execute once in repository-truth')

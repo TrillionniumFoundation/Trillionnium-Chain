@@ -1,0 +1,61 @@
+{
+  "actual_native_process_exchanges": 1,
+  "binary_sha256": "6b09f07b94b03099bedea5b55c48e6fefa1ea7af3f0092a207980deb03372ae1",
+  "cases": [
+    {
+      "accepted": true,
+      "label": "public-helper/start/valid"
+    },
+    {
+      "accepted": false,
+      "label": "public-helper/start/changed-message"
+    },
+    {
+      "accepted": false,
+      "label": "public-helper/start/zero-signature"
+    },
+    {
+      "accepted": true,
+      "label": "public-helper/end/valid"
+    },
+    {
+      "accepted": false,
+      "label": "public-helper/end/changed-message"
+    },
+    {
+      "accepted": false,
+      "label": "public-helper/end/zero-signature"
+    },
+    {
+      "accepted": true,
+      "label": "receiver/start/valid"
+    },
+    {
+      "accepted": false,
+      "label": "receiver/start/changed-message"
+    },
+    {
+      "accepted": false,
+      "label": "receiver/start/zero-signature"
+    },
+    {
+      "accepted": true,
+      "label": "receiver/end/valid"
+    },
+    {
+      "accepted": false,
+      "label": "receiver/end/changed-message"
+    },
+    {
+      "accepted": false,
+      "label": "receiver/end/zero-signature"
+    }
+  ],
+  "negative_controls": 8,
+  "positive_signatures": 4,
+  "result": "PASS",
+  "stderr_utf8": "",
+  "stdin_sha256": "16864038b096b070497e6ad270228ce79e54b28c78cc2428602055f3073ac274",
+  "stdout_sha256": "89927999d2cc695cba05cf672da5a6f8e6a09a281414736b8330be6e8843ba79",
+  "verification_items": 12
+}

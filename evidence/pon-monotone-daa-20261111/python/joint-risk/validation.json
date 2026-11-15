@@ -1,0 +1,308 @@
+{
+  "actual_lifetime_failure_bound": null,
+  "artifact_sha256": {
+    "fixture-after.json": "650b9b8eee5e21b5bdcc844f7141b0c21133ddad27d51b8b0abfab1c31999c92",
+    "fixture-before.json": "650b9b8eee5e21b5bdcc844f7141b0c21133ddad27d51b8b0abfab1c31999c92",
+    "joint-check.command.json": "30e5a412d72a46c0c0d35488dc281fbde1e5f1cb6d43ead60bac45ddfecd0e12",
+    "joint-check.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "joint-check.stdout.log": "d37d5e0121421363d399164ace713cbc899a3159ea1f32f6e5085ed9846f957e",
+    "joint-qualification-tests.command.json": "768fdf735c958021231eca8bebed3c488e24439cd3555ec3bac4f416b18b5526",
+    "joint-qualification-tests.stderr.log": "d1e2848fe5810ef853433e3b279c70cdf494934f2b2c03af0fe3cf6293d8659d",
+    "joint-qualification-tests.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "joint-require-qualified.command.json": "2fa6a48b0c2da1dccff1082ce429304445f64d1918e547752ee717250372ba8e",
+    "joint-require-qualified.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "joint-require-qualified.stdout.log": "f55c8d1b7ebbe4b512a35af8ccd619a52b818e848167e77762ea023504592fc5",
+    "preflight.command.json": "bb34147dcb0da22615a9823ab32341351db56850ef2d77d7b20396542d250db0",
+    "preflight.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "preflight.stdout.log": "f02d051544b06277430cab47b70669e0c9037420144ee74422af5711d0bf99ee",
+    "risk-tests.command.json": "bf3755e2521f5ad5f5ab010b534b3633c800605754ab2ca5d91572d88b2ccab1",
+    "risk-tests.stderr.log": "aab6c6fea92bc1fbde50e2ce62907445394c0509d7316cf36070bf3582db463e",
+    "risk-tests.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source-after.json": "1321e585c37840a2b5ad95ee63092b66dc7d4e0299bcb38cefc3c016f1aa6ce1",
+    "source-before.json": "1321e585c37840a2b5ad95ee63092b66dc7d4e0299bcb38cefc3c016f1aa6ce1"
+  },
+  "completed_at_utc": "2026-11-11T23:59:32.729018+00:00",
+  "expected_head": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+  "expected_tree": "72b106b4458299c37da146b0218b8f5276195b6d",
+  "fixture_bytes_unchanged": true,
+  "fixture_directory": "/workspace/scratch/7f73fe002713/daa-risk-typed-probe/fixture-copy",
+  "fixture_file_count": 31,
+  "fixture_scope": "historical native artifact copy; missing empty foreign-native/packets restored without changing 31 original files",
+  "new_native_execution": false,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "production_activation": false,
+  "python_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+  "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "results": [
+    {
+      "actual_relevant_env": {
+        "LANG": "C.UTF-8",
+        "LC_ALL": "C.UTF-8",
+        "NATIVE_RISK_LEDGER_RUN": null,
+        "PYTHONDONTWRITEBYTECODE": null,
+        "PYTHONHASHSEED": null,
+        "PYTHONHOME": null,
+        "PYTHONNOUSERSITE": null,
+        "PYTHONPATH": null,
+        "TZ": null,
+        "VIRTUAL_ENV": null
+      },
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+        "--check"
+      ],
+      "completed_at_utc": "2026-11-11T23:59:18.839499+00:00",
+      "cwd": "/workspace/scratch/7f73fe002713/chain-daa",
+      "elapsed_wall_ns": 4756665523,
+      "env_overrides": {},
+      "environment_capture_scope": "execution-relevant-nonsensitive-variables; inherited environment otherwise retained",
+      "exit_code": 0,
+      "exit_matches_expectation": true,
+      "expected_exit": 0,
+      "name": "joint-check",
+      "open_obligations_count": 13,
+      "qualification_observation": {
+        "actual_lifetime_failure_bound": null,
+        "contract_validation": "PASS",
+        "production_activation": false,
+        "qualification": "HOLD_NO_GO",
+        "qualification_request": null,
+        "security_probability_calibrated": false
+      },
+      "started_at_utc": "2026-11-11T23:59:14.082209+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "joint-check.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 9301,
+        "path": "joint-check.stdout.log",
+        "sha256": "d37d5e0121421363d399164ace713cbc899a3159ea1f32f6e5085ed9846f957e"
+      },
+      "unknown_parameter_count": 18
+    },
+    {
+      "actual_relevant_env": {
+        "LANG": "C.UTF-8",
+        "LC_ALL": "C.UTF-8",
+        "NATIVE_RISK_LEDGER_RUN": null,
+        "PYTHONDONTWRITEBYTECODE": null,
+        "PYTHONHASHSEED": null,
+        "PYTHONHOME": null,
+        "PYTHONNOUSERSITE": null,
+        "PYTHONPATH": "/workspace/scratch/7f73fe002713/chain-daa/formal/pon-nakamoto-v1",
+        "TZ": null,
+        "VIRTUAL_ENV": null
+      },
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-m",
+        "unittest",
+        "-v",
+        "test_joint_consensus_qualification"
+      ],
+      "completed_at_utc": "2026-11-11T23:59:20.273698+00:00",
+      "cwd": "/workspace/scratch/7f73fe002713/chain-daa",
+      "elapsed_wall_ns": 6196168285,
+      "env_overrides": {
+        "PYTHONPATH": "/workspace/scratch/7f73fe002713/chain-daa/formal/pon-nakamoto-v1"
+      },
+      "environment_capture_scope": "execution-relevant-nonsensitive-variables; inherited environment otherwise retained",
+      "exit_code": 0,
+      "exit_matches_expectation": true,
+      "expected_exit": 0,
+      "expected_tests": 34,
+      "name": "joint-qualification-tests",
+      "started_at_utc": "2026-11-11T23:59:14.074383+00:00",
+      "stderr": {
+        "bytes": 5867,
+        "path": "joint-qualification-tests.stderr.log",
+        "sha256": "d1e2848fe5810ef853433e3b279c70cdf494934f2b2c03af0fe3cf6293d8659d"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "joint-qualification-tests.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "tests_match_expectation": true,
+      "tests_run": 34
+    },
+    {
+      "actual_relevant_env": {
+        "LANG": "C.UTF-8",
+        "LC_ALL": "C.UTF-8",
+        "NATIVE_RISK_LEDGER_RUN": null,
+        "PYTHONDONTWRITEBYTECODE": null,
+        "PYTHONHASHSEED": null,
+        "PYTHONHOME": null,
+        "PYTHONNOUSERSITE": null,
+        "PYTHONPATH": null,
+        "TZ": null,
+        "VIRTUAL_ENV": null
+      },
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+        "--require-qualified"
+      ],
+      "completed_at_utc": "2026-11-11T23:59:15.000808+00:00",
+      "cwd": "/workspace/scratch/7f73fe002713/chain-daa",
+      "elapsed_wall_ns": 906479698,
+      "env_overrides": {},
+      "environment_capture_scope": "execution-relevant-nonsensitive-variables; inherited environment otherwise retained",
+      "exit_code": 3,
+      "exit_matches_expectation": true,
+      "expected_exit": 3,
+      "name": "joint-require-qualified",
+      "open_obligations_count": 13,
+      "qualification_observation": {
+        "actual_lifetime_failure_bound": null,
+        "contract_validation": "PASS",
+        "production_activation": false,
+        "qualification": "HOLD_NO_GO",
+        "qualification_request": "REFUSED_UNPROVED_JOINT_CONSENSUS",
+        "security_probability_calibrated": false
+      },
+      "started_at_utc": "2026-11-11T23:59:14.093911+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "joint-require-qualified.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 9364,
+        "path": "joint-require-qualified.stdout.log",
+        "sha256": "f55c8d1b7ebbe4b512a35af8ccd619a52b818e848167e77762ea023504592fc5"
+      },
+      "unknown_parameter_count": 18
+    },
+    {
+      "actual_relevant_env": {
+        "LANG": "C.UTF-8",
+        "LC_ALL": "C.UTF-8",
+        "NATIVE_RISK_LEDGER_RUN": null,
+        "PYTHONDONTWRITEBYTECODE": null,
+        "PYTHONHASHSEED": null,
+        "PYTHONHOME": null,
+        "PYTHONNOUSERSITE": null,
+        "PYTHONPATH": null,
+        "TZ": null,
+        "VIRTUAL_ENV": null
+      },
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "completed_at_utc": "2026-11-11T23:59:14.042934+00:00",
+      "cwd": "/workspace/scratch/7f73fe002713/chain-daa",
+      "elapsed_wall_ns": 2071283571,
+      "env_overrides": {},
+      "environment_capture_scope": "execution-relevant-nonsensitive-variables; inherited environment otherwise retained",
+      "exit_code": 0,
+      "exit_matches_expectation": true,
+      "expected_exit": 0,
+      "name": "preflight",
+      "started_at_utc": "2026-11-11T23:59:11.971186+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "preflight.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 175,
+        "path": "preflight.stdout.log",
+        "sha256": "f02d051544b06277430cab47b70669e0c9037420144ee74422af5711d0bf99ee"
+      }
+    },
+    {
+      "actual_relevant_env": {
+        "LANG": "C.UTF-8",
+        "LC_ALL": "C.UTF-8",
+        "NATIVE_RISK_LEDGER_RUN": "/workspace/scratch/7f73fe002713/daa-risk-typed-probe/fixture-copy/run.json",
+        "PYTHONDONTWRITEBYTECODE": null,
+        "PYTHONHASHSEED": null,
+        "PYTHONHOME": null,
+        "PYTHONNOUSERSITE": null,
+        "PYTHONPATH": "/workspace/scratch/7f73fe002713/chain-daa/formal/pon-nakamoto-v1",
+        "TZ": null,
+        "VIRTUAL_ENV": null
+      },
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-m",
+        "unittest",
+        "-v",
+        "test_native_risk_ledger"
+      ],
+      "completed_at_utc": "2026-11-11T23:59:32.007715+00:00",
+      "cwd": "/workspace/scratch/7f73fe002713/chain-daa",
+      "elapsed_wall_ns": 17808915950,
+      "env_overrides": {
+        "NATIVE_RISK_LEDGER_RUN": "/workspace/scratch/7f73fe002713/daa-risk-typed-probe/fixture-copy/run.json",
+        "PYTHONPATH": "/workspace/scratch/7f73fe002713/chain-daa/formal/pon-nakamoto-v1"
+      },
+      "environment_capture_scope": "execution-relevant-nonsensitive-variables; inherited environment otherwise retained",
+      "exit_code": 0,
+      "exit_matches_expectation": true,
+      "expected_exit": 0,
+      "expected_tests": 27,
+      "name": "risk-tests",
+      "started_at_utc": "2026-11-11T23:59:14.071780+00:00",
+      "stderr": {
+        "bytes": 5111,
+        "path": "risk-tests.stderr.log",
+        "sha256": "aab6c6fea92bc1fbde50e2ce62907445394c0509d7316cf36070bf3582db463e"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "risk-tests.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "tests_match_expectation": true,
+      "tests_run": 27
+    }
+  ],
+  "schema": "pon-final-joint-risk-validation-v1",
+  "security_probability_calibrated": false,
+  "source_after": {
+    "expected_head_and_tree_match": true,
+    "head": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+    "selected_input_sha256": {
+      "config/pon/joint-consensus-qualification-v1.json": "c9f8c02768b8937f601dd9824f9bd7f32f810e47840d9ece4f09d1d60ef78607",
+      "formal/pon-nakamoto-v1/joint_consensus_qualification.py": "833fc34df404a9211b543852293c5592131145d6a10b30343ad53d15d59a1894",
+      "formal/pon-nakamoto-v1/native_execution_certificate.py": "8ee16a5e0378ba97a5a1bd45085f5b94aff2005d0a67cae7318342f556183033",
+      "formal/pon-nakamoto-v1/native_owner_journal.py": "9a8a3eae2615d4c84194d58578897849ac3f0714408a98184a18365dabe34338",
+      "formal/pon-nakamoto-v1/native_owner_score_bridge.py": "a249eb26e1d6144e83d20a7fcc93a31af85da66d495102a04c26e251a79b7bb0",
+      "formal/pon-nakamoto-v1/native_risk_ledger.py": "2444750cf32a584b48b1a8f6c9afc1849d643b9ca1dadbd2a48076f68ae4bd4d",
+      "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py": "f7cf2191b5af7425d8e34c20c4d09229b46c8b7675e3abc10a65529c1deedc3b",
+      "formal/pon-nakamoto-v1/test_native_risk_ledger.py": "28b2f1e88c60e4b143b3195cd13e700eed59af60839e979319b90bee28d19aff",
+      "scripts/project-preflight.sh": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f"
+    },
+    "tracked_status_porcelain": "",
+    "tracked_tree_clean": true,
+    "tree": "72b106b4458299c37da146b0218b8f5276195b6d"
+  },
+  "source_before": {
+    "expected_head_and_tree_match": true,
+    "head": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+    "selected_input_sha256": {
+      "config/pon/joint-consensus-qualification-v1.json": "c9f8c02768b8937f601dd9824f9bd7f32f810e47840d9ece4f09d1d60ef78607",
+      "formal/pon-nakamoto-v1/joint_consensus_qualification.py": "833fc34df404a9211b543852293c5592131145d6a10b30343ad53d15d59a1894",
+      "formal/pon-nakamoto-v1/native_execution_certificate.py": "8ee16a5e0378ba97a5a1bd45085f5b94aff2005d0a67cae7318342f556183033",
+      "formal/pon-nakamoto-v1/native_owner_journal.py": "9a8a3eae2615d4c84194d58578897849ac3f0714408a98184a18365dabe34338",
+      "formal/pon-nakamoto-v1/native_owner_score_bridge.py": "a249eb26e1d6144e83d20a7fcc93a31af85da66d495102a04c26e251a79b7bb0",
+      "formal/pon-nakamoto-v1/native_risk_ledger.py": "2444750cf32a584b48b1a8f6c9afc1849d643b9ca1dadbd2a48076f68ae4bd4d",
+      "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py": "f7cf2191b5af7425d8e34c20c4d09229b46c8b7675e3abc10a65529c1deedc3b",
+      "formal/pon-nakamoto-v1/test_native_risk_ledger.py": "28b2f1e88c60e4b143b3195cd13e700eed59af60839e979319b90bee28d19aff",
+      "scripts/project-preflight.sh": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f"
+    },
+    "tracked_status_porcelain": "",
+    "tracked_tree_clean": true,
+    "tree": "72b106b4458299c37da146b0218b8f5276195b6d"
+  },
+  "source_guard_unchanged": true,
+  "started_at_utc": "2026-11-11T23:59:11.377615+00:00",
+  "validation_expectations_met": true
+}

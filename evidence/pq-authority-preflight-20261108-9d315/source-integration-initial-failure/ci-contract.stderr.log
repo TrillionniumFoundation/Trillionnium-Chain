@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo/scripts/ci/check_ci_contract.py", line 1052, in <module>
+    print(json.dumps(validate(), sort_keys=True))
+                     ^^^^^^^^^^
+  File "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo/scripts/ci/check_ci_contract.py", line 1041, in validate
+    require(dependency in edges,
+  File "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo/scripts/ci/check_ci_contract.py", line 608, in require
+    raise ValueError('CI contract: ' + message)
+ValueError: CI contract: fuzz lock missing required local dependency edge: trnm-release-bundle -> trnm-protocol

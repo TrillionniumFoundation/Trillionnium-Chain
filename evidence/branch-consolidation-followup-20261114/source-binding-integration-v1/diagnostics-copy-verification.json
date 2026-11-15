@@ -1,0 +1,220 @@
+{
+  "all_member_raw_bytes_already_verified_on_rog": true,
+  "chunks": [
+    {
+      "chunk_sha256": "792f2dd53c749bf862003df01135134e47df780e34f09a15290a95f58f4ce47c",
+      "eof": false,
+      "file": 0,
+      "next_offset": 65535,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-package-v1/original-diagnostics-7d8d4c-v1.zip",
+      "size": 180498,
+      "version": "66306:35440349:180498:1794641788683515657:1794641788683515657"
+    },
+    {
+      "chunk_sha256": "c26453fe9184f2a539814d36706665296a2a1172a53b483a1d61576ea09fedcf",
+      "eof": false,
+      "file": 0,
+      "next_offset": 131070,
+      "offset": 65535,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-package-v1/original-diagnostics-7d8d4c-v1.zip",
+      "size": 180498,
+      "version": "66306:35440349:180498:1794641788683515657:1794641788683515657"
+    },
+    {
+      "chunk_sha256": "3bf3b62eba3a705dbfef7b7ae4da48337f4cfac515fc804fb7b5d5e257393408",
+      "eof": true,
+      "file": 0,
+      "next_offset": 180498,
+      "offset": 131070,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-package-v1/original-diagnostics-7d8d4c-v1.zip",
+      "size": 180498,
+      "version": "66306:35440349:180498:1794641788683515657:1794641788683515657"
+    },
+    {
+      "chunk_sha256": "917cc9da93a42cb180ff457044f6981162c693b21f9a99e079f9dc5d39ddf788",
+      "eof": false,
+      "file": 1,
+      "next_offset": 65535,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-package-v1/EVIDENCE_INDEX.json",
+      "size": 97406,
+      "version": "66306:35440348:97406:1794641788673397229:1794641788673397229"
+    },
+    {
+      "chunk_sha256": "d4d510eff06110993eb71d4d220f99281ea679bccdf2072ef63040a5759fb1ed",
+      "eof": true,
+      "file": 1,
+      "next_offset": 97406,
+      "offset": 65535,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-package-v1/EVIDENCE_INDEX.json",
+      "size": 97406,
+      "version": "66306:35440348:97406:1794641788673397229:1794641788673397229"
+    },
+    {
+      "chunk_sha256": "33da1db12ba8dad3d1e078f64b053cc4dc993651e7345152a5bffe504b426bdf",
+      "eof": true,
+      "file": 2,
+      "next_offset": 2956,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-package-v1/summary.json",
+      "size": 2956,
+      "version": "66306:35440350:2956:1794641788694115088:1794641788694115088"
+    }
+  ],
+  "independent_mac_copy_verified": true,
+  "internal_zip_roster_verified": 267,
+  "mac_repeated_all_member_read": false,
+  "nonzero_units": [
+    1,
+    6,
+    10,
+    22,
+    23,
+    107
+  ],
+  "original_actual_command_units_verified": 122,
+  "qualification_granted": false,
+  "remote_package": {
+    "ci_observation_files": 12,
+    "index": {
+      "bytes": 97406,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-package-v1/EVIDENCE_INDEX.json",
+      "sha256": "4711b610ad6cf1f9711947caece9bc562002a8857d0ce454bc295806ad608ac1"
+    },
+    "nonzero": [
+      {
+        "exit": 2,
+        "label": "unit-001-lines-66-66",
+        "line_start": 66,
+        "ordinal": 1,
+        "original_shell": "    python3 scripts/ci/hash_use_contract.py\n"
+      },
+      {
+        "exit": 1,
+        "label": "unit-006-lines-74-74",
+        "line_start": 74,
+        "ordinal": 6,
+        "original_shell": "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_probability_contract.py' -v\n"
+      },
+      {
+        "exit": 1,
+        "label": "unit-010-lines-78-78",
+        "line_start": 78,
+        "ordinal": 10,
+        "original_shell": "    python3 formal/pon-nakamoto-v1/fixed_probability_contract.py\n"
+      },
+      {
+        "exit": 2,
+        "label": "unit-022-lines-90-90",
+        "line_start": 90,
+        "ordinal": 22,
+        "original_shell": "    python3 formal/pon-nakamoto-v1/joint_consensus_qualification.py --check\n"
+      },
+      {
+        "exit": 1,
+        "label": "unit-023-lines-91-91",
+        "line_start": 91,
+        "ordinal": 23,
+        "original_shell": "    python3 formal/pon-nakamoto-v1/test_joint_consensus_qualification.py\n"
+      },
+      {
+        "exit": 1,
+        "label": "unit-107-lines-222-222",
+        "line_start": 222,
+        "ordinal": 107,
+        "original_shell": "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_native_bridge.py' -v\n"
+      }
+    ],
+    "original_bytes": 754912,
+    "original_files": 266,
+    "summary_bytes": 2956,
+    "summary_path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-package-v1/summary.json",
+    "summary_sha256": "33da1db12ba8dad3d1e078f64b053cc4dc993651e7345152a5bffe504b426bdf",
+    "zip": {
+      "bytes": 180498,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-package-v1/original-diagnostics-7d8d4c-v1.zip",
+      "sha256": "038fb138c75fef1eca35422e08f7d5e2c784bec70fcc739695c4ca71b5637c5a"
+    }
+  },
+  "schema": "root-diagnostic-official-copy-transfer-v1",
+  "sources": [
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 1000,
+        "link_count": 1,
+        "metadata_platform": "linux",
+        "mode": 384,
+        "uid": 1000,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-package-v1/original-diagnostics-7d8d4c-v1.zip",
+      "sha256": "038fb138c75fef1eca35422e08f7d5e2c784bec70fcc739695c4ca71b5637c5a",
+      "size": 180498,
+      "version": "66306:35440349:180498:1794641788683515657:1794641788683515657"
+    },
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 1000,
+        "link_count": 1,
+        "metadata_platform": "linux",
+        "mode": 384,
+        "uid": 1000,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-package-v1/EVIDENCE_INDEX.json",
+      "sha256": "4711b610ad6cf1f9711947caece9bc562002a8857d0ce454bc295806ad608ac1",
+      "size": 97406,
+      "version": "66306:35440348:97406:1794641788673397229:1794641788673397229"
+    },
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 1000,
+        "link_count": 1,
+        "metadata_platform": "linux",
+        "mode": 384,
+        "uid": 1000,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-package-v1/summary.json",
+      "sha256": "33da1db12ba8dad3d1e078f64b053cc4dc993651e7345152a5bffe504b426bdf",
+      "size": 2956,
+      "version": "66306:35440350:2956:1794641788694115088:1794641788694115088"
+    }
+  ],
+  "writes": [
+    {
+      "mode": 384,
+      "path": "/private/tmp/chain-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-copy-v1/original-diagnostics-7d8d4c-v1.zip",
+      "sha256": "038fb138c75fef1eca35422e08f7d5e2c784bec70fcc739695c4ca71b5637c5a",
+      "size": 180498,
+      "version": "16777233:606628425:180498:1794641896885298522:1794641896885813185",
+      "written": 180498
+    },
+    {
+      "mode": 384,
+      "path": "/private/tmp/chain-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-copy-v1/EVIDENCE_INDEX.json",
+      "sha256": "4711b610ad6cf1f9711947caece9bc562002a8857d0ce454bc295806ad608ac1",
+      "size": 97406,
+      "version": "16777233:606628691:97406:1794641906859840562:1794641906860296476",
+      "written": 97406
+    },
+    {
+      "mode": 384,
+      "path": "/private/tmp/chain-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-copy-v1/summary.json",
+      "sha256": "33da1db12ba8dad3d1e078f64b053cc4dc993651e7345152a5bffe504b426bdf",
+      "size": 2956,
+      "version": "16777233:606628833:2956:1794641909310556760:1794641909311004007",
+      "written": 2956
+    }
+  ]
+}

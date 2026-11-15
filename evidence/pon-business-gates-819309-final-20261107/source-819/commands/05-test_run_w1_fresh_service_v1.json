@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "scripts/ci/test_run_w1_fresh_service_v1.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+  "end_utc": "2026-11-07T18:36:02.088309+00:00",
+  "exit_code": 0,
+  "log": "logs/05-test_run_w1_fresh_service_v1.log",
+  "log_bytes": 5432,
+  "log_sha256": "1662aa2fafa3679b91b0ac839868ab6257083ba6368ae962f1c5d055a4b32785",
+  "name": "05-test_run_w1_fresh_service_v1",
+  "pid": 1335573,
+  "start_utc": "2026-11-07T18:35:54.949884+00:00",
+  "supervisor_timeout_seconds": 1800,
+  "timed_out": false,
+  "wall_ns": 7138427967
+}

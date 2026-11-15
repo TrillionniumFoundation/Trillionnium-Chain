@@ -1,0 +1,122 @@
+{
+  "actual_bindings_summary_matches_independent_expected_operation_preimage_17_paths_normal_copy_and_all_declared_input_hashes": true,
+  "actual_bindings_summary_read": {
+    "bytes": 12034,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/frozen02-bindings-readback/preparation-success.json",
+    "sha256": "47a7e2a60c9e77f763ca4778be254371579a154973c237cfe0d3c488bca633a8"
+  },
+  "actual_bindings_summary_transport_verified": true,
+  "all_four_gates_passed": false,
+  "config_factory_observed_static_requirements": [
+    "Exact source3d4, audit2a5, operationbf34, env2/model1 and original source limits.",
+    "Exact observer463 and same-byte normal release ELFef4; exact independent copyreceipt614686 and original accepted buildreceiptb135 with release opt3/profile.test=false.",
+    "Actual original tail and static summaries plus every recorded command output size/SHA; fixed root-reviewed coverage274c of all74 candidate commands without claiming a single originally passing campaign.",
+    "Actual source preparation success and original complete physical verification of B; actual new binding producer and all31 unchanged pins.",
+    "Actual full runtime import success by observer3142/helperd29; before/after source and pins unchanged; raw command outcomes and exact physical stdout418dec.",
+    "Original prepare_runtime/runtime_import/verify_runtime_ready, full inventory/import/native-origin guards; actual Torch intraop4/interop1 and elapsed<180 seconds.",
+    "Keep generated_source_verified as an actual observation, not an unconditional invented true gate.",
+    "Keep preflight CTS1/CHB1/model/Hepta/FinalUse/production/whole-job-memory qualification false.",
+    "Run the unchanged complete source verifier again immediately before a config exists; invoke original observer inputs() for all31 inputs and recompute30 payload files/279627268 bytes/95 chunks; rehash ELF and all prerequisite artifacts.",
+    "Only create a new model config and preparation receipt; no model command, no --execute and no source/runtime changes."
+  ],
+  "config_request_embedded_launcher_and_factory_match_reviewed_bytes": true,
+  "final_model_config_preparation_callers": [
+    {
+      "bytes": 15678,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_prepare_model_config_frozen02_v1.py",
+      "sha256": "23a71c5c8a69630fd55ef07e3dca117d0f4842b714db28fd431d2ec032cea8ad"
+    },
+    {
+      "bytes": 1579,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_start_model_config_frozen02_v1.py",
+      "sha256": "6b9da3b90d25e05df5bf63938633b28e8312e62684c9f988ff6ddfca0ec2e226"
+    },
+    {
+      "bytes": 18256,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote-model-config-frozen02-request.json",
+      "sha256": "b4d1e2ec70a83d27322314b0c79260f2598d30f58f5cceb59e509acd8d256f4c"
+    }
+  ],
+  "final_runtime_callers": [
+    {
+      "bytes": 7990,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_full_preflight_frozen02_v1.py",
+      "sha256": "d29aa959df9625df90b379a15e4d98dfd41da6cb5d715ddf1b32aab3e9d84633"
+    },
+    {
+      "bytes": 12954,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_observe_full_preflight_frozen02_v2.py",
+      "sha256": "3142c91629ebb9420857e35bd5cb66574ae3c6fbde0679150324b115ce145394"
+    },
+    {
+      "bytes": 2090,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_start_full_preflight_frozen02_v2.py",
+      "sha256": "246979d649ce04ba89aef48fdeb752a85efb9386db7717a2e2635e546931639b"
+    },
+    {
+      "bytes": 24422,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote-full-preflight-frozen02-request.json",
+      "sha256": "d3a5edf38c64b8fd73cb4a977d2b88b74619743a683a1c7d9da3c60474155a38"
+    }
+  ],
+  "hepta_final_use": false,
+  "individual_new_source_audit_bytes_and_full_runtime_actual_result_not_yet_read_by_this_reviewer": true,
+  "model_operation": "bf34a669dc4b3617d97bee356f1cadf3504f3c5993999c5136ce1d6b0cd6f9c2",
+  "native_model_run_claimed": false,
+  "no_model_go_from_this_review": true,
+  "original_wrapper_config_contract": {
+    "actual_original_guards": [
+      "CONFIG_PATH --execute argv",
+      "pinned source/audit/binary/wrapper and prerequisite hashes",
+      "actual memory.max 8589934592",
+      "actual CPU quota four times period",
+      "spec tuple300/536870912/8589934592/4",
+      "fresh output and wrapper directory",
+      "complete native custody rosters and two forward receipts",
+      "original internal and observed native elapsed under300seconds",
+      "source/inputs/wrapper/config/binary final recheck"
+    ],
+    "configuration_load": "json.loads(config_path.read_text())",
+    "explicit_configuration_byte_ceiling": null,
+    "explicit_schema_check": false,
+    "factory_also_checks_gate_bytes": true,
+    "factory_supplies_all_required_keys": true,
+    "gate_fields_consumed": [
+      "path",
+      "sha256"
+    ],
+    "metadata_not_consumed_as_authority": [
+      "schema",
+      "requires_root_explicit_model_go",
+      "required_native_seconds",
+      "required_memory_max_bytes",
+      "required_whole_job_cpu_quota_percent",
+      "torch_intraop_threads",
+      "torch_interop_threads",
+      "cargo_profile_name"
+    ],
+    "required_keys": [
+      "audit",
+      "audit_sha256",
+      "binary",
+      "binary_sha256",
+      "gate_artifacts",
+      "head",
+      "source",
+      "source_sha256",
+      "tree",
+      "wrapper_sha256"
+    ],
+    "root_explicit_go_required_outside_original_wrapper": true
+  },
+  "outer_preparation_seconds": 900,
+  "production_activation": false,
+  "runtime_child_seconds": 180,
+  "runtime_import_admitted_by_this_review": false,
+  "runtime_observer_v2_change": "Strengthens v1 by requiring the independent exact 2304-byte normal-main-copy receipt SHA614686 and actual regular 19752832-byte ELF SHAef4 before import; no runtime guard, deadline, isolation flag or false scope changes.",
+  "runtime_request_embedded_launcher_helper_and_observer_match_reviewed_bytes": true,
+  "schema": "trnm.bt-independent-review.frozen02-final-preparation-callers.v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "static_review_blocking_finding": false,
+  "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+}

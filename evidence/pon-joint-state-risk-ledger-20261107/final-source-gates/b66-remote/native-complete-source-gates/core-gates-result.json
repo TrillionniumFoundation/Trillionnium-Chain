@@ -1,0 +1,8 @@
+{
+  "status": "PASS_WAITING_FOR_SAME_HEAD_COMPLETE_TREE_GATE_BEFORE_PUSH",
+  "head": "b66e66d2465258d808c0f56ff851123306d4bdb4",
+  "tree": "11eee4a56ccab63394102a19204ab3922021d87c",
+  "all_stages_exit_zero": true,
+  "standalone_example_reexecuted": false,
+  "changed_source": false
+}

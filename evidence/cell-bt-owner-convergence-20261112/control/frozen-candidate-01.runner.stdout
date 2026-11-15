@@ -1,0 +1,91 @@
+{"started": "preflight", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "preflight", "exit_code": 0, "timed_out": false}
+{"started": "source-before", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "source-before", "exit_code": 0, "timed_out": false}
+{"started": "rustc-version", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "rustc-version", "exit_code": 0, "timed_out": false}
+{"started": "cargo-version", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "cargo-version", "exit_code": 0, "timed_out": false}
+{"started": "locked-graph", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "locked-graph", "exit_code": 101, "timed_out": false}
+{"started": "locked-all-feature-graph", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "locked-all-feature-graph", "exit_code": 101, "timed_out": false}
+{"started": "format", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "format", "exit_code": 0, "timed_out": false}
+{"started": "inventory", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "inventory", "exit_code": 0, "timed_out": false}
+{"started": "test_cell_discovery_v3_ci", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "test_cell_discovery_v3_ci", "exit_code": 0, "timed_out": false}
+{"started": "test_cell_storage_convergence_ci", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "test_cell_storage_convergence_ci", "exit_code": 0, "timed_out": false}
+{"started": "test_ci_source_integrity", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "test_ci_source_integrity", "exit_code": 0, "timed_out": false}
+{"started": "check_pq_research_integration", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "check_pq_research_integration", "exit_code": 0, "timed_out": false}
+{"started": "test_pq_research_integration", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "test_pq_research_integration", "exit_code": 0, "timed_out": false}
+{"started": "check_repository", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "check_repository", "exit_code": 0, "timed_out": false}
+{"started": "next-architecture-python", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "next-architecture-python", "exit_code": 0, "timed_out": false}
+{"started": "counterexample-fixture", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "counterexample-fixture", "exit_code": 0, "timed_out": false}
+{"started": "cell_complete_version_vector", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "cell_complete_version_vector", "exit_code": 0, "timed_out": false}
+{"started": "cell_discovery_epoch_v3_vector", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "cell_discovery_epoch_v3_vector", "exit_code": 0, "timed_out": false}
+{"started": "cell_version_content_vector", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "cell_version_content_vector", "exit_code": 0, "timed_out": false}
+{"started": "cell_version_retention_v3_vector", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "cell_version_retention_v3_vector", "exit_code": 0, "timed_out": false}
+{"started": "cell_storage_descriptor_reference", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "cell_storage_descriptor_reference", "exit_code": 0, "timed_out": false}
+{"started": "sealed-research-python-controls", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "sealed-research-python-controls", "exit_code": 1, "timed_out": false}
+{"started": "sealed-research-python-readback", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "sealed-research-python-readback", "exit_code": 1, "timed_out": false}
+{"started": "da-complete", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "da-complete", "exit_code": 0, "timed_out": false}
+{"started": "da-required-01", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "da-required-01", "exit_code": 0, "timed_out": false}
+{"started": "da-required-01-readback", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "da-required-01-readback", "exit_code": 0, "timed_out": false}
+{"started": "da-required-02", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "da-required-02", "exit_code": 0, "timed_out": false}
+{"started": "da-required-02-readback", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "da-required-02-readback", "exit_code": 0, "timed_out": false}
+{"started": "da-required-03", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "da-required-03", "exit_code": 0, "timed_out": false}
+{"started": "da-required-03-readback", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "da-required-03-readback", "exit_code": 0, "timed_out": false}
+{"started": "da-required-04", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "da-required-04", "exit_code": 0, "timed_out": false}
+{"started": "da-required-04-readback", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "da-required-04-readback", "exit_code": 0, "timed_out": false}
+{"started": "da-required-05", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "da-required-05", "exit_code": 0, "timed_out": false}
+{"started": "da-required-05-readback", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "da-required-05-readback", "exit_code": 0, "timed_out": false}
+{"started": "cell_sealed_research_next_use_v2-tests", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "cell_sealed_research_next_use_v2-tests", "exit_code": 0, "timed_out": false}
+{"started": "cell_sealed_research_paged_next_use_v1-tests", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "cell_sealed_research_paged_next_use_v1-tests", "exit_code": 0, "timed_out": false}
+{"started": "native-grouped-example-default", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "native-grouped-example-default", "exit_code": 0, "timed_out": false}
+{"started": "native-complete-selection-default", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "native-complete-selection-default", "exit_code": 0, "timed_out": false}
+{"started": "native-complete-selection-default-readback", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "native-complete-selection-default-readback", "exit_code": 0, "timed_out": false}
+{"started": "native-grouped-example-pq", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "native-grouped-example-pq", "exit_code": 101, "timed_out": false}
+{"started": "native-complete-selection-pq", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "native-complete-selection-pq", "exit_code": 101, "timed_out": false}
+{"started": "native-complete-selection-pq-readback", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "native-complete-selection-pq-readback", "exit_code": 1, "timed_out": false}
+{"started": "node-storage-default", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "node-storage-default", "exit_code": 101, "timed_out": false}
+{"started": "node-required-01", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "node-required-01", "exit_code": 101, "timed_out": false}
+{"started": "node-required-01-readback", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}
+{"completed": "node-required-01-readback", "exit_code": 1, "timed_out": false}
+{"started": "node-required-02", "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"}

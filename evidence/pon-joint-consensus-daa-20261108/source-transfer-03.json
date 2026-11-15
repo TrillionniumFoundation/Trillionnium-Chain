@@ -1,0 +1,5 @@
+{
+  "scripts/pon_joint_daa_reader.py": "a20040fe5b7ce73a12e7bca6bd868ba974e3e959bb4cddb59ae8818c8e68b3f6",
+  "scripts/ci/test_pon_joint_daa_reader.py": "51fcfe6d090ca8f15f6eb3fd6e39d4c4be5062cbb155040395b641c3729095ef",
+  "docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_DAA_AUDIT_20261108.md": "8ee536c3ab0af6347920e6c006ed6de941bc2c0fc95d2e75dafaaee1f3847676"
+}

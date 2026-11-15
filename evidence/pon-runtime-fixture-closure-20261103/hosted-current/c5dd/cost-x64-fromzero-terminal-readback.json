@@ -1,0 +1,1734 @@
+{
+  "schema": "c5dd-original-from-zero-one-lane-readback-v1",
+  "observed_utc": "2026-11-03T22:54:37.848631+00:00",
+  "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+  "lane": "cost-x64",
+  "job_id": 126245171809,
+  "run_id": 41728500537,
+  "artifact_receipt": {
+    "schema": "artifact-download-digest-check-v1",
+    "observed_utc": "2026-11-03T22:51:09.855876+00:00",
+    "artifact_id": 13277686228,
+    "file_name": "c5dd7c-cost-x64-13277686228.zip",
+    "file_id": "file_000000001e0881f59fe039c01a23cb00",
+    "metadata": {
+      "id": 13277686228,
+      "name": "cost-x64-c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1-1",
+      "size_in_bytes": 8054415,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13277686228",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13277686228/zip",
+      "expired": false,
+      "created_at": "2026-11-03T22:36:52Z",
+      "expires_at": "2026-12-03T22:36:50Z",
+      "updated_at": "2026-11-03T22:36:52Z",
+      "digest": "sha256:44b167105aa29e0a998b7a25991c9cd5492c929bce3f79fba57dfdb63348b0b3",
+      "workflow_run": {
+        "id": 41728500537,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1"
+      }
+    },
+    "matched": true,
+    "data_only": true,
+    "executed": false,
+    "actual_bytes": 8054415,
+    "actual_sha256": "44b167105aa29e0a998b7a25991c9cd5492c929bce3f79fba57dfdb63348b0b3"
+  },
+  "workflow_source": {
+    "base": null,
+    "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 882506480,
+    "tracked_entries": 7723,
+    "tracked_worktree_verified": true
+  },
+  "native_source_before_after": {
+    "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+    "tracked_source_identity": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "head",
+      "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+      "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "base": null,
+      "prospective_merge": null,
+      "tracked_worktree_verified": true,
+      "tracked_entries": 7723,
+      "tracked_bytes": 882506480,
+      "tests_executed_by_identity_check": false
+    },
+    "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0"
+  },
+  "all_manifest_files_verified": [
+    {
+      "member": "from-zero-native/build/process.json",
+      "bytes": 894,
+      "sha256": "fb457c335ea634c3d012bd9f24c0c93fe0d1c5ba18b4ae34c45f3ac7f919c2e4"
+    },
+    {
+      "member": "from-zero-native/build/stderr",
+      "bytes": 62,
+      "sha256": "0de31bb8485638adca3b21dd27a3da83f5bdd092455b92448f3a6f4e707f716b"
+    },
+    {
+      "member": "from-zero-native/build/stdout",
+      "bytes": 109230,
+      "sha256": "b6aa2ef6ae99e46319cdaeaf75f271ad2b87aacf5505be6d63fc061d343701bc"
+    },
+    {
+      "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "bytes": 885,
+      "sha256": "82c34fbd260fce5da6a9209da5ebb208b1af2cf23bbb6c33d33bac41cf4937e4"
+    },
+    {
+      "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "bytes": 189,
+      "sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5"
+    },
+    {
+      "member": "from-zero-native/confirmation/baseline/independent-client/native.sqlite",
+      "bytes": 499712,
+      "sha256": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769"
+    },
+    {
+      "member": "from-zero-native/confirmation/baseline/independent-client/owner.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/confirmation/baseline/receiver/native.sqlite",
+      "bytes": 499712,
+      "sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14"
+    },
+    {
+      "member": "from-zero-native/confirmation/baseline/receiver/owner.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/confirmation/pressure/independent-client/native.sqlite",
+      "bytes": 147456,
+      "sha256": "dc3ff57c202f49cc418d73f824ccdeb8f3413024c3818b1188e5957cc1be2d96"
+    },
+    {
+      "member": "from-zero-native/confirmation/pressure/independent-client/owner.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/confirmation/pressure/receiver/native.sqlite",
+      "bytes": 499712,
+      "sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14"
+    },
+    {
+      "member": "from-zero-native/confirmation/pressure/receiver/owner.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/confirmation/producer/native.sqlite",
+      "bytes": 499712,
+      "sha256": "0d5e8e88b221b194617e773a59987dbca33fde482bfe5b8edd23a976a6c2b770"
+    },
+    {
+      "member": "from-zero-native/confirmation/producer/owner.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/confirmation/report.json",
+      "bytes": 7534281,
+      "sha256": "f5b604e40926290d271ddac7f7c30982a91bdf6b85c1854e4fecf15bc946d48c"
+    },
+    {
+      "member": "from-zero-native/format-check/process.json",
+      "bytes": 793,
+      "sha256": "d929e4944fee0654bb95282d375d5ebaedd0a91625bd21816c74db0236943862"
+    },
+    {
+      "member": "from-zero-native/format-check/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/format-check/stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/format-copy/process.json",
+      "bytes": 820,
+      "sha256": "34edb13eecf52ee29417ec876fd40489cc061a21be2c25791efe07518c553884"
+    },
+    {
+      "member": "from-zero-native/format-copy/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/format-copy/stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/format-copy-source/examples/support/w1_from_zero.rs",
+      "bytes": 1035,
+      "sha256": "65a20cbd8ffdf5e4873b5c97768988dacc01369a0b584abd416c368709246b6a"
+    },
+    {
+      "member": "from-zero-native/format-copy-source/tests/public_v3_from_zero/fresh_challenge.rs",
+      "bytes": 10907,
+      "sha256": "c45c0b04d09ffe045883e3fdae245588dd21cb8a9f9c64c16b6fbe288b636a3f"
+    },
+    {
+      "member": "from-zero-native/format-copy-source/tests/public_v3_from_zero.rs",
+      "bytes": 77894,
+      "sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0"
+    },
+    {
+      "member": "from-zero-native/formatted.rs",
+      "bytes": 77894,
+      "sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0"
+    },
+    {
+      "member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "bytes": 897,
+      "sha256": "93a6c96f807791aed6612a65b55eece21a869f6588d244196b78171ce95411ae"
+    },
+    {
+      "member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "bytes": 3363,
+      "sha256": "d4187bb3c87079d0ff05cde63bfc521a4af58dad1e40e85b7130b6d6e20d6c70"
+    },
+    {
+      "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "bytes": 898,
+      "sha256": "4ec1a37249bb7c2d023dadfd8f41f0640aceb210a6286f55f6ade6d92a24ac6c"
+    },
+    {
+      "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "bytes": 195,
+      "sha256": "b57a1ea2f91bdcdecac12aeb853e4f0c47690a5c3ab51028786aad6ad4fb5376"
+    },
+    {
+      "member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "bytes": 911,
+      "sha256": "534b5db707ee2c71d2085f979b7a508a483009e512990f787352d7ff6ea61f53"
+    },
+    {
+      "member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "bytes": 915,
+      "sha256": "46e7fd9456f25965e6c5f5f35b5b85401bcb05f81edb0adb5c363841fe2d8a28"
+    },
+    {
+      "member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "bytes": 949,
+      "sha256": "c38657911cd99b185ab8c6c9e85c2fc00783f90845f1f0147ea7129781b8abfc"
+    },
+    {
+      "member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "bytes": 407,
+      "sha256": "fd9abd398c861875e38b86b8848925b42e2a1f788158f6b115f82bb5b43fae45"
+    },
+    {
+      "member": "from-zero-native/native/producer/native.sqlite",
+      "bytes": 245760,
+      "sha256": "6e32184bac8c1848f3bf89b9ec63b88b153c216ef3f6c031f432dbcc61c76074"
+    },
+    {
+      "member": "from-zero-native/native/producer/owner.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/native/receiver/native.sqlite",
+      "bytes": 245760,
+      "sha256": "cf4458f99bce9757643c4897d82b3df7d6dd8898bddbf110658b39d58dad23ef"
+    },
+    {
+      "member": "from-zero-native/native/receiver/owner.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/native/report.json",
+      "bytes": 3477469,
+      "sha256": "066cec252d813e39089f525bbf7d27e94c9a413a532301b711d21a18e5e0fd18"
+    },
+    {
+      "member": "from-zero-native/native/sustained/producer/native.sqlite",
+      "bytes": 245760,
+      "sha256": "6014d4da91f1606f11071237372516420ace59dbc2f185471cc9b32b0c59f250"
+    },
+    {
+      "member": "from-zero-native/native/sustained/producer/owner.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/native/sustained/receiver/native.sqlite",
+      "bytes": 245760,
+      "sha256": "5b246c26d3e66de7576ba5dd7839c52df52fee00d04cd52619f7839242975b49"
+    },
+    {
+      "member": "from-zero-native/native/sustained/receiver/owner.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "from-zero-native/native/sustained/report.json",
+      "bytes": 10974554,
+      "sha256": "c853e87ca2a192664401eaec0c63adc19e688cbf0703aa8472205a1c6aedda04"
+    },
+    {
+      "member": "from-zero-native/public_v3_from_zero",
+      "bytes": 10793120,
+      "sha256": "ba15ab76414499b70a0a0aea98575a5fe72a1cb1edbaf984d538a573dcdb5c13"
+    }
+  ],
+  "native_elf": {
+    "bytes": 10793120,
+    "sha256": "ba15ab76414499b70a0a0aea98575a5fe72a1cb1edbaf984d538a573dcdb5c13",
+    "before_after_identical": true,
+    "e_machine": 62
+  },
+  "compiler_artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node#0.1.0",
+    "manifest_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "target": {
+      "kind": [
+        "test"
+      ],
+      "crate_types": [
+        "bin"
+      ],
+      "name": "public_v3_from_zero",
+      "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "edition": "2021",
+      "doc": false,
+      "doctest": false,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": true
+    },
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bf8dae960d76ab8c"
+    ],
+    "executable": "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bf8dae960d76ab8c",
+    "fresh": true
+  },
+  "build": {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "public_v3_from_zero",
+      "--no-run",
+      "--message-format=json"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "wall_ns": 414697525,
+    "user_cpu_ns": 72436000,
+    "system_cpu_ns": 38698000,
+    "cpu_ns": 111134000,
+    "max_rss_kib": 50856,
+    "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+    "minor_faults": 12624,
+    "major_faults": 0,
+    "voluntary_switches": 6,
+    "involuntary_switches": 4,
+    "cpu_scope": "entire child, not apportioned to nested wall intervals",
+    "wait4_cpu_resolution_ns": 1000,
+    "stdout_sha256": "b6aa2ef6ae99e46319cdaeaf75f271ad2b87aacf5505be6d63fc061d343701bc",
+    "stderr_sha256": "0de31bb8485638adca3b21dd27a3da83f5bdd092455b92448f3a6f4e707f716b"
+  },
+  "format": {
+    "command": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "wall_ns": 51889272465,
+    "user_cpu_ns": 12635735000,
+    "system_cpu_ns": 116862000,
+    "cpu_ns": 12752597000,
+    "max_rss_kib": 200352,
+    "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+    "minor_faults": 36264,
+    "major_faults": 0,
+    "voluntary_switches": 16,
+    "involuntary_switches": 652,
+    "cpu_scope": "entire child, not apportioned to nested wall intervals",
+    "wait4_cpu_resolution_ns": 1000,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "runs": [
+    {
+      "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bf8dae960d76ab8c",
+          "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 5541577,
+        "user_cpu_ns": 0,
+        "system_cpu_ns": 1805000,
+        "cpu_ns": 1805000,
+        "max_rss_kib": 39584,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "minor_faults": 156,
+        "major_faults": 0,
+        "voluntary_switches": 4,
+        "involuntary_switches": 0,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "wait4_cpu_resolution_ns": 1000,
+        "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": true,
+      "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "named_execution": {
+        "result": "PASS",
+        "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      },
+      "logs": {
+        "stdout": {
+          "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+          "bytes": 189,
+          "sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+          "text": "\nrunning 1 test\ntest caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s\n\n"
+        },
+        "stderr": {
+          "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "text": ""
+        }
+      },
+      "native_outer_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bf8dae960d76ab8c",
+          "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 80673818,
+        "user_cpu_ns": 1796000,
+        "system_cpu_ns": 1796000,
+        "cpu_ns": 3592000,
+        "max_rss_kib": 39584,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "minor_faults": 246,
+        "major_faults": 0,
+        "voluntary_switches": 3,
+        "involuntary_switches": 1,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "wait4_cpu_resolution_ns": 1000,
+        "stdout_sha256": "b57a1ea2f91bdcdecac12aeb853e4f0c47690a5c3ab51028786aad6ad4fb5376",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": true,
+      "stdout_sha256": "b57a1ea2f91bdcdecac12aeb853e4f0c47690a5c3ab51028786aad6ad4fb5376",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "named_execution": {
+        "result": "PASS",
+        "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      },
+      "logs": {
+        "stdout": {
+          "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+          "bytes": 195,
+          "sha256": "b57a1ea2f91bdcdecac12aeb853e4f0c47690a5c3ab51028786aad6ad4fb5376",
+          "text": "\nrunning 1 test\ntest from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.08s\n\n"
+        },
+        "stderr": {
+          "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "text": ""
+        }
+      },
+      "native_outer_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.08s"
+    },
+    {
+      "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bf8dae960d76ab8c",
+          "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 96983080,
+        "user_cpu_ns": 15828000,
+        "system_cpu_ns": 6517000,
+        "cpu_ns": 22345000,
+        "max_rss_kib": 39584,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "minor_faults": 508,
+        "major_faults": 0,
+        "voluntary_switches": 28,
+        "involuntary_switches": 1,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "wait4_cpu_resolution_ns": 1000,
+        "stdout_sha256": "d4187bb3c87079d0ff05cde63bfc521a4af58dad1e40e85b7130b6d6e20d6c70",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": true,
+      "stdout_sha256": "d4187bb3c87079d0ff05cde63bfc521a4af58dad1e40e85b7130b6d6e20d6c70",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "named_execution": {
+        "result": "PASS",
+        "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      },
+      "logs": {
+        "stdout": {
+          "member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+          "bytes": 3363,
+          "sha256": "d4187bb3c87079d0ff05cde63bfc521a4af58dad1e40e85b7130b6d6e20d6c70",
+          "text": "\nrunning 1 test\ntest four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged ... {\"cases\":[{\"full_verify_cpu_ns\":576016,\"full_verify_wall_ns\":577086,\"native_admission_cpu_ns\":628734,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":630165,\"nonce\":2,\"proof_identity\":\"96349f483ee6eea1d56a657d5393ff31c6439f0ed44654dcbda2793a0277ed0b\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"231e83a5db9828a934e810454fab15855a3e183a1bd01f19dfabe36d3708fd9d\",\"trace\":\"25645b8c943be1b29d511e5f80e238717d06ccde1b877c02bca7954454152319\",\"verified_work\":false},{\"full_verify_cpu_ns\":515823,\"full_verify_wall_ns\":517285,\"native_admission_cpu_ns\":592837,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":594128,\"nonce\":3,\"proof_identity\":\"f311caf7ef568671a1c87a95aa4ee8a766401f01f2f1b6ba8395c8e101813ef5\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"4f9a7695e427a9b7ae88df35cc77efdb5abd55d6564fb007bc4b8db9e4ce9b13\",\"trace\":\"17a1be889543c7f00b604f5015379313ddd1e614f75da1cf411ea4ebc6d174b9\",\"verified_work\":false},{\"full_verify_cpu_ns\":531163,\"full_verify_wall_ns\":532493,\"native_admission_cpu_ns\":582769,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":584120,\"nonce\":4,\"proof_identity\":\"3cf754f85733b7d35917651652881d3ca5f638e58ed20ca201837ee6baa76a1a\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"74566d81e6c7b8cf719951967937687e1186cbbcd174c985b6f6f240c3f0f4d3\",\"trace\":\"feb0a1711aaaba18a6f5536ac0bd0ec70e9964866f94723f4eb9c178bcb1d3af\",\"verified_work\":false},{\"full_verify_cpu_ns\":528036,\"full_verify_wall_ns\":529457,\"native_admission_cpu_ns\":565136,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":566547,\"nonce\":5,\"proof_identity\":\"04ae5041ac6d292775112620488e7f7731e8d12dce53949be84ea627af0b1ebe\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"6403a2573517b2db6090dfd547482aae0d68cbd9c48258c6adeb7fa184e07d13\",\"trace\":\"3f6db32dbefe857851463e0d70196b838a8d7adecaca52aaa9c1e4fa1e998c0f\",\"verified_work\":false}],\"challenge\":\"4b0daf222559cf092d45ed96f6321230064ac71f2dfb8a796bb2c4f91619b1a0\",\"header\":\"504e48310100f04b6d35100ec688aeeb589be764205cd36d69fddeb95f59a2bac0bfa5bcbf7594b399d981fb90b3a9e5f4c9849296fd0a877a70231c057180502556530e5315cf25736ba068c2f55b54cd3cc2d5c0fd57d926874ef6eb66746cca82a60f6efc01000000000000008561ea6a000000007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e960b273ffeb6f5a0a175febce9cb53af426cfc39b6ea148f7388787d5820f03f90000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000056dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f341027000000000000\",\"independent_accepted\":false,\"native_state_and_chainwork_unchanged\":true,\"production_activation\":false,\"proof_search_bound\":128,\"public_network_ready\":false,\"schema\":\"trnm-p0-four-from-zero-native-v1\",\"target\":\"7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"task\":\"56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34\",\"total_construction_cpu_ns\":135333,\"total_construction_wall_ns\":139019,\"valid_proof_generation\":false}\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.09s\n\n"
+        },
+        "stderr": {
+          "member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "text": ""
+        }
+      },
+      "native_outer_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.09s"
+    },
+    {
+      "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bf8dae960d76ab8c",
+          "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 9813952243,
+        "user_cpu_ns": 1805081000,
+        "system_cpu_ns": 633959000,
+        "cpu_ns": 2439040000,
+        "max_rss_kib": 100272,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "minor_faults": 24780,
+        "major_faults": 0,
+        "voluntary_switches": 8621,
+        "involuntary_switches": 1051,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "wait4_cpu_resolution_ns": 1000,
+        "stdout_sha256": "46e7fd9456f25965e6c5f5f35b5b85401bcb05f81edb0adb5c363841fe2d8a28",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": true,
+      "stdout_sha256": "46e7fd9456f25965e6c5f5f35b5b85401bcb05f81edb0adb5c363841fe2d8a28",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "named_execution": {
+        "result": "PASS",
+        "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      },
+      "logs": {
+        "stdout": {
+          "member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+          "bytes": 915,
+          "sha256": "46e7fd9456f25965e6c5f5f35b5b85401bcb05f81edb0adb5c363841fe2d8a28",
+          "text": "\nrunning 1 test\ntest from_zero_service_shares_cpu_with_honest_work_and_reopened_owner ... {\"finite_target_met\":true,\"public_network_ready\":false,\"schema\":\"public-v3-local-from-zero-service-v2\"}\n{\"finite_service_target_met\":true,\"phases\":[{\"accounting_closed\":true,\"full_native_state_equal\":true,\"invariant_target_met\":true,\"measurement_failures\":0,\"phase\":0,\"reads_on_time\":20,\"records_not_retained\":0,\"requested_reads\":20,\"service_target_met\":true},{\"accounting_closed\":true,\"full_native_state_equal\":true,\"invariant_target_met\":true,\"measurement_failures\":0,\"phase\":1,\"reads_on_time\":21,\"records_not_retained\":0,\"requested_reads\":21,\"service_target_met\":true}],\"report_path\":\"/home/runner/work/_temp/ci-observations/from-zero-native/native/sustained/report.json\",\"schema\":\"public-v3-sustained-local-from-zero-v1\"}\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 9.81s\n\n"
+        },
+        "stderr": {
+          "member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "text": ""
+        }
+      },
+      "native_outer_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 9.81s"
+    },
+    {
+      "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bf8dae960d76ab8c",
+          "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 8698529915,
+        "user_cpu_ns": 1029234000,
+        "system_cpu_ns": 909453000,
+        "cpu_ns": 1938687000,
+        "max_rss_kib": 63744,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "minor_faults": 15261,
+        "major_faults": 0,
+        "voluntary_switches": 14884,
+        "involuntary_switches": 683,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "wait4_cpu_resolution_ns": 1000,
+        "stdout_sha256": "fd9abd398c861875e38b86b8848925b42e2a1f788158f6b115f82bb5b43fae45",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": true,
+      "stdout_sha256": "fd9abd398c861875e38b86b8848925b42e2a1f788158f6b115f82bb5b43fae45",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "named_execution": {
+        "result": "PASS",
+        "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      },
+      "logs": {
+        "stdout": {
+          "member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+          "bytes": 407,
+          "sha256": "fd9abd398c861875e38b86b8848925b42e2a1f788158f6b115f82bb5b43fae45",
+          "text": "\nrunning 1 test\ntest from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/ci-observations/from-zero-native/confirmation/report.json\",\"schema\":\"public-v3-signed-confirmation-pressure-v1\"}\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.69s\n\n"
+        },
+        "stderr": {
+          "member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "text": ""
+        }
+      },
+      "native_outer_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.69s"
+    }
+  ],
+  "unique_named_native_passes": 5,
+  "named_native_failures": 0,
+  "business_failures": [
+    "CONFIRMATION_TARGET"
+  ],
+  "original_business_gate_passed": false,
+  "execution_finished_field": false,
+  "confirmation_report": {
+    "member": "from-zero-native/confirmation/report.json",
+    "bytes": 7534281,
+    "sha256": "f5b604e40926290d271ddac7f7c30982a91bdf6b85c1854e4fecf15bc946d48c"
+  },
+  "confirmation_observation": {
+    "schema": "trnm-original-confirmation-observation-v1",
+    "sha256": "f5b604e40926290d271ddac7f7c30982a91bdf6b85c1854e4fecf15bc946d48c",
+    "original_gate_validated": false,
+    "original_gate_validation_error": "CONFIRMATION_TARGET",
+    "simulated_control": false,
+    "phases": [
+      {
+        "mode": "attack-free-baseline",
+        "workers": 0,
+        "window_ns": 4000000000,
+        "business": {
+          "required_signed_transactions": 1,
+          "reported_independently_confirmed_in_window": 1,
+          "unconfirmed": 0,
+          "unknown": 0,
+          "independent_confirmed_transactions_per_window_second": 0.25,
+          "observed_success_latency_ns": 3108107100,
+          "successful_latency": {
+            "samples": 1,
+            "missing_samples": 0,
+            "min_ns": 3108107100,
+            "max_ns": 3108107100,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "unconfirmed_latency_lower_bound_ns": null,
+          "lower_bound_reaches_original_window_end": null,
+          "reported_finite_business_target_met": true
+        },
+        "signed_submit_ack": {
+          "attempts": 7,
+          "successful_in_original_window": 7,
+          "failed_or_late": 0,
+          "successful_latency": {
+            "samples": 7,
+            "missing_samples": 0,
+            "min_ns": 18037454,
+            "max_ns": 72041215,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 19250295,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "failed_or_late_terminal_duration": {
+            "samples": 0,
+            "missing_samples": 0,
+            "min_ns": null,
+            "max_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "calling_thread_cpu": {
+            "samples": 7,
+            "missing_samples": 0,
+            "min_ns": 782792,
+            "max_ns": 1022700,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 861309,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "acknowledgements_per_window_second": 1.75
+        },
+        "history_response": {
+          "attempts": 7,
+          "successful_in_original_window": 7,
+          "failed_or_late": 0,
+          "successful_latency": {
+            "samples": 7,
+            "missing_samples": 0,
+            "min_ns": 11538626,
+            "max_ns": 12664446,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 11914056,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "failed_or_late_terminal_duration": {
+            "samples": 0,
+            "missing_samples": 0,
+            "min_ns": null,
+            "max_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "calling_thread_cpu": {
+            "samples": 7,
+            "missing_samples": 0,
+            "min_ns": 730234,
+            "max_ns": 870544,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 776060,
+            "p95_ns": null,
+            "p99_ns": null
+          }
+        },
+        "independent_page_replay": {
+          "attempts": 7,
+          "accepted_in_original_window": 7,
+          "failed_or_late": 0,
+          "accepted_wall": {
+            "samples": 7,
+            "missing_samples": 0,
+            "min_ns": 293860630,
+            "max_ns": 688100585,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 376420238,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "failed_or_late_wall": {
+            "samples": 0,
+            "missing_samples": 0,
+            "min_ns": null,
+            "max_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "calling_thread_cpu": {
+            "samples": 7,
+            "missing_samples": 0,
+            "min_ns": 69521852,
+            "max_ns": 95722988,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 73838601,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "known_calling_thread_cpu_sum_ns": 539529083,
+          "cpu_scope": "caller thread only; excludes separately owned worker CPU",
+          "native_stage_snapshots_retained": 7,
+          "native_stage_snapshots_missing": 0,
+          "native_stage_scope": "optional local snapshots; old absence remains unknown; Host/native/packet intervals are nested, not added to replay CPU"
+        },
+        "head_response": {
+          "attempts": 56,
+          "successful_in_original_window": 56,
+          "failed_or_late": 0,
+          "successful_latency": {
+            "samples": 56,
+            "missing_samples": 0,
+            "min_ns": 9145884,
+            "max_ns": 64448978,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 10059749,
+            "p95_ns": 62134622,
+            "p99_ns": null
+          },
+          "failed_or_late_terminal_duration": {
+            "samples": 0,
+            "missing_samples": 0,
+            "min_ns": null,
+            "max_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "calling_thread_cpu": {
+            "samples": 56,
+            "missing_samples": 0,
+            "min_ns": 404815,
+            "max_ns": 699437,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 472373,
+            "p95_ns": 642220,
+            "p99_ns": null
+          }
+        },
+        "verification_errors": [],
+        "service_totals": {
+          "abandoned_tasks": 0,
+          "accepted_connections": 70,
+          "body_bytes_received": 695579,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "cleanup_scans": 141,
+          "completed_pool_status": 0,
+          "completed_pool_submit": 0,
+          "completed_read": 63,
+          "completed_submit": 7,
+          "connections_closed_on_shutdown": 0,
+          "delivered_response_frames": 70,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "enqueued_after_backpressure": 0,
+          "executor_refusals": 0,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "issued_challenges": 70,
+          "lane_capacity_refusals": 0,
+          "mutating_grants_after_shutdown": 0,
+          "mutation_body_decode_cpu_ns": 1800683,
+          "mutation_cpu_charged_ns": 46726917,
+          "mutation_cpu_clock_failures": 0,
+          "mutation_cpu_credit_ns_after_shutdown": 1996824026,
+          "mutation_cpu_debt_ns_after_shutdown": 0,
+          "mutation_cpu_in_flight_after_shutdown": 0,
+          "mutation_cpu_refusals": 0,
+          "mutation_cpu_reservations": 7,
+          "mutation_cpu_unavailable_after_shutdown": false,
+          "mutation_dispatch_excluding_work_cpu_ns": 36882811,
+          "mutation_full_work_cpu_ns": 9844106,
+          "mutation_response_cpu_ns": 319968,
+          "output_reserved_bytes_after_shutdown": 0,
+          "output_serialization_failures": 0,
+          "paid_body_capacity_refusals": 0,
+          "paid_body_reserved_bytes_after_shutdown": 0,
+          "parse_refusals": 0,
+          "peak_connections": 2,
+          "peak_mutating_grants": 1,
+          "peak_output_reserved_bytes": 8404992,
+          "peak_paid_body_bytes": 298374,
+          "peak_pending_challenge": 2,
+          "peak_pending_enqueue": 1,
+          "peak_pending_grant": 2,
+          "peak_read_grants": 1,
+          "peak_spent": 39,
+          "pending_challenge_closed": 0,
+          "pending_challenge_entered": 70,
+          "pending_challenge_granted": 70,
+          "pending_challenge_wait_ns": 126885149,
+          "pending_grant_closed": 0,
+          "pending_grant_entered": 70,
+          "pending_grant_granted": 70,
+          "pending_grant_wait_ns": 224006527,
+          "pool_submit_failed": 0,
+          "pool_submit_finished": 0,
+          "pool_submit_ns": 0,
+          "pool_submit_started": 0,
+          "pq_authentication_attempts": 0,
+          "pq_authentication_bytes": 0,
+          "pq_authentication_thread_cpu_ns": 0,
+          "pq_authentication_unavailable": false,
+          "preface_refusals": 0,
+          "queue_backpressure_events": 0,
+          "queue_refusals": 0,
+          "queue_wait_ns": 121182542,
+          "read_grants_after_shutdown": 0,
+          "replay_refusals": 0,
+          "response_bytes_written": 790099,
+          "response_write_failures": 0,
+          "retained_phase_errors": {},
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "spent_reservations": 70,
+          "tasks_dequeued": 70,
+          "tasks_enqueued": 70,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unknown_caller_durable_rows": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0,
+          "work_failed": 0,
+          "work_finished": 7,
+          "work_ns": 9845049,
+          "work_started": 7
+        },
+        "service_totals_scope": "whole service including shutdown; not per-request p99 or in-window proof/s"
+      },
+      {
+        "mode": "from-zero-pressure",
+        "workers": 16,
+        "window_ns": 4000000000,
+        "business": {
+          "required_signed_transactions": 1,
+          "reported_independently_confirmed_in_window": 0,
+          "unconfirmed": 1,
+          "unknown": 0,
+          "independent_confirmed_transactions_per_window_second": 0.0,
+          "observed_success_latency_ns": null,
+          "successful_latency": {
+            "samples": 0,
+            "missing_samples": 0,
+            "min_ns": null,
+            "max_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "unconfirmed_latency_lower_bound_ns": 3845517556,
+          "lower_bound_reaches_original_window_end": true,
+          "reported_finite_business_target_met": false
+        },
+        "signed_submit_ack": {
+          "attempts": 7,
+          "successful_in_original_window": 7,
+          "failed_or_late": 0,
+          "successful_latency": {
+            "samples": 7,
+            "missing_samples": 0,
+            "min_ns": 297694875,
+            "max_ns": 301427017,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 299487803,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "failed_or_late_terminal_duration": {
+            "samples": 0,
+            "missing_samples": 0,
+            "min_ns": null,
+            "max_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "calling_thread_cpu": {
+            "samples": 7,
+            "missing_samples": 0,
+            "min_ns": 745541,
+            "max_ns": 1020629,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 858853,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "acknowledgements_per_window_second": 1.75
+        },
+        "history_response": {
+          "attempts": 1,
+          "successful_in_original_window": 1,
+          "failed_or_late": 0,
+          "successful_latency": {
+            "samples": 1,
+            "missing_samples": 0,
+            "min_ns": 198851311,
+            "max_ns": 198851311,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "failed_or_late_terminal_duration": {
+            "samples": 0,
+            "missing_samples": 0,
+            "min_ns": null,
+            "max_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "calling_thread_cpu": {
+            "samples": 1,
+            "missing_samples": 0,
+            "min_ns": 887277,
+            "max_ns": 887277,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          }
+        },
+        "independent_page_replay": {
+          "attempts": 1,
+          "accepted_in_original_window": 0,
+          "failed_or_late": 1,
+          "accepted_wall": {
+            "samples": 0,
+            "missing_samples": 0,
+            "min_ns": null,
+            "max_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "failed_or_late_wall": {
+            "samples": 1,
+            "missing_samples": 0,
+            "min_ns": 1601439455,
+            "max_ns": 1601439455,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "calling_thread_cpu": {
+            "samples": 1,
+            "missing_samples": 0,
+            "min_ns": 73554295,
+            "max_ns": 73554295,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "known_calling_thread_cpu_sum_ns": 73554295,
+          "cpu_scope": "caller thread only; excludes separately owned worker CPU",
+          "native_stage_snapshots_retained": 1,
+          "native_stage_snapshots_missing": 0,
+          "native_stage_scope": "optional local snapshots; old absence remains unknown; Host/native/packet intervals are nested, not added to replay CPU"
+        },
+        "head_response": {
+          "attempts": 19,
+          "successful_in_original_window": 19,
+          "failed_or_late": 0,
+          "successful_latency": {
+            "samples": 19,
+            "missing_samples": 0,
+            "min_ns": 11611321,
+            "max_ns": 201761939,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 105747381,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "failed_or_late_terminal_duration": {
+            "samples": 0,
+            "missing_samples": 0,
+            "min_ns": null,
+            "max_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "calling_thread_cpu": {
+            "samples": 19,
+            "missing_samples": 0,
+            "min_ns": 442136,
+            "max_ns": 647770,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 559265,
+            "p95_ns": null,
+            "p99_ns": null
+          }
+        },
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "service_totals": {
+          "abandoned_tasks": 3,
+          "accepted_connections": 246,
+          "body_bytes_received": 21493144,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "cleanup_scans": 43,
+          "completed_pool_status": 0,
+          "completed_pool_submit": 0,
+          "completed_read": 20,
+          "completed_submit": 7,
+          "connections_closed_on_shutdown": 0,
+          "delivered_response_frames": 233,
+          "disconnected_await_requests": 4,
+          "disconnected_before_enqueue": 1,
+          "enqueued_after_backpressure": 47,
+          "executor_refusals": 209,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "issued_challenges": 246,
+          "lane_capacity_refusals": 0,
+          "mutating_grants_after_shutdown": 0,
+          "mutation_body_decode_cpu_ns": 61817511,
+          "mutation_cpu_charged_ns": 521759050,
+          "mutation_cpu_clock_failures": 0,
+          "mutation_cpu_credit_ns_after_shutdown": 1997528711,
+          "mutation_cpu_debt_ns_after_shutdown": 0,
+          "mutation_cpu_in_flight_after_shutdown": 0,
+          "mutation_cpu_refusals": 0,
+          "mutation_cpu_reservations": 216,
+          "mutation_cpu_unavailable_after_shutdown": false,
+          "mutation_dispatch_excluding_work_cpu_ns": 226279719,
+          "mutation_full_work_cpu_ns": 295479331,
+          "mutation_response_cpu_ns": 10208422,
+          "output_reserved_bytes_after_shutdown": 0,
+          "output_serialization_failures": 0,
+          "paid_body_capacity_refusals": 0,
+          "paid_body_reserved_bytes_after_shutdown": 0,
+          "parse_refusals": 3,
+          "peak_connections": 18,
+          "peak_mutating_grants": 8,
+          "peak_output_reserved_bytes": 8536064,
+          "peak_paid_body_bytes": 2378277,
+          "peak_pending_challenge": 13,
+          "peak_pending_enqueue": 5,
+          "peak_pending_grant": 9,
+          "peak_read_grants": 2,
+          "peak_spent": 139,
+          "pending_challenge_closed": 0,
+          "pending_challenge_entered": 246,
+          "pending_challenge_granted": 246,
+          "pending_challenge_wait_ns": 5745955058,
+          "pending_grant_closed": 4,
+          "pending_grant_entered": 244,
+          "pending_grant_granted": 240,
+          "pending_grant_wait_ns": 18993505025,
+          "pool_submit_failed": 0,
+          "pool_submit_finished": 0,
+          "pool_submit_ns": 0,
+          "pool_submit_started": 0,
+          "pq_authentication_attempts": 0,
+          "pq_authentication_bytes": 0,
+          "pq_authentication_thread_cpu_ns": 0,
+          "pq_authentication_unavailable": false,
+          "preface_refusals": 0,
+          "queue_backpressure_events": 237,
+          "queue_refusals": 0,
+          "queue_wait_ns": 3605932637,
+          "read_grants_after_shutdown": 0,
+          "replay_refusals": 0,
+          "response_bytes_written": 297375,
+          "response_write_failures": 0,
+          "retained_phase_errors": {
+            "body": 3,
+            "queue": 1,
+            "solution": 6,
+            "work": 3
+          },
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "spent_reservations": 244,
+          "tasks_dequeued": 236,
+          "tasks_enqueued": 236,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unknown_caller_durable_rows": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0,
+          "work_failed": 207,
+          "work_finished": 214,
+          "work_ns": 3006857316,
+          "work_started": 214
+        },
+        "service_totals_scope": "whole service including shutdown; not per-request p99 or in-window proof/s"
+      }
+    ],
+    "network_capacity_qualified": false,
+    "tail_latency_qualified": false,
+    "production_activation": false,
+    "scope": "same original finite offer, 1 signed transaction per 4s phase; not saturated chain TPS; reported native observations only, no independent proof/state oracle"
+  },
+  "host_controller": {
+    "cleanup": "already-collected",
+    "command_argv": [
+      "python3",
+      "scripts/ci/run_from_zero_native.py",
+      "--out",
+      "/home/runner/work/_temp/ci-observations/from-zero-native"
+    ],
+    "consensus_or_model_authority": false,
+    "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+    "failure": null,
+    "final_host_errors": [],
+    "final_parent_lease": {
+      "consensus_or_model_authority": false,
+      "creator_service": "trnm-from-zero-41728500537-1-cross-arch-cost-4281.service",
+      "current_service": "trnm-from-zero-41728500537-1-cross-arch-cost-4281.service",
+      "host_readiness_only": true,
+      "parent_identity": {
+        "boot_id": "ab2680a2-ed55-418f-9494-b2379f193602",
+        "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+        "limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "parent": {
+          "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+          "device": 31,
+          "directory": true,
+          "gid": 0,
+          "inode": 7343,
+          "mode": 493,
+          "symlink": false,
+          "uid": 0
+        },
+        "unit_file": {
+          "ctime_ns": 1793745323847023392,
+          "device": 29,
+          "inode": 1509,
+          "mtime_ns": 1793745323847023392,
+          "path": "/run/systemd/system/trnmponpublic.slice",
+          "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+          "size_bytes": 325
+        }
+      },
+      "schema": "trnm-ci-public-fixture-parent-binding-v1",
+      "seal_file": {
+        "ctime_ns": 1793745325160074088,
+        "device": 29,
+        "inode": 1555,
+        "mtime_ns": 1793745325160074088,
+        "path": "/run/trnm-public-fixture-41728500537-1-cross-arch-cost/parent.json",
+        "sha256": "1723bb02a975c8e20892453c9fcb20c22df4ab78e610cc13f5de0bdba4cc6f59",
+        "size_bytes": 3195
+      },
+      "seal_sha256": "1723bb02a975c8e20892453c9fcb20c22df4ab78e610cc13f5de0bdba4cc6f59"
+    },
+    "gid": 1001,
+    "host_readiness_only": true,
+    "parent_lease": {
+      "consensus_or_model_authority": false,
+      "creator_service": "trnm-from-zero-41728500537-1-cross-arch-cost-4281.service",
+      "current_service": "trnm-from-zero-41728500537-1-cross-arch-cost-4281.service",
+      "host_readiness_only": true,
+      "parent_identity": {
+        "boot_id": "ab2680a2-ed55-418f-9494-b2379f193602",
+        "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+        "limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "parent": {
+          "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+          "device": 31,
+          "directory": true,
+          "gid": 0,
+          "inode": 7343,
+          "mode": 493,
+          "symlink": false,
+          "uid": 0
+        },
+        "unit_file": {
+          "ctime_ns": 1793745323847023392,
+          "device": 29,
+          "inode": 1509,
+          "mtime_ns": 1793745323847023392,
+          "path": "/run/systemd/system/trnmponpublic.slice",
+          "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+          "size_bytes": 325
+        }
+      },
+      "schema": "trnm-ci-public-fixture-parent-binding-v1",
+      "seal_file": {
+        "ctime_ns": 1793745325160074088,
+        "device": 29,
+        "inode": 1555,
+        "mtime_ns": 1793745325160074088,
+        "path": "/run/trnm-public-fixture-41728500537-1-cross-arch-cost/parent.json",
+        "sha256": "1723bb02a975c8e20892453c9fcb20c22df4ab78e610cc13f5de0bdba4cc6f59",
+        "size_bytes": 3195
+      },
+      "seal_sha256": "1723bb02a975c8e20892453c9fcb20c22df4ab78e610cc13f5de0bdba4cc6f59"
+    },
+    "parent_reused": false,
+    "passed": false,
+    "preparation": {
+      "binary_path": "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bf8dae960d76ab8c",
+      "binary_sha256": "ba15ab76414499b70a0a0aea98575a5fe72a1cb1edbaf984d538a573dcdb5c13",
+      "build_env": {
+        "CARGO_BUILD_JOBS": "2",
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "CARGO_HOME": "/home/runner/work/_temp/cargo-cross-arch-cost",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TARGET_DIR": "/home/runner/work/_temp/target-cross-arch-cost",
+        "OPENSSL_CONF": null,
+        "OPENSSL_DIR": null,
+        "OPENSSL_MODULES": null,
+        "OPENSSL_STATIC": null,
+        "RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "TRNM_PQ_OPENSSL": null,
+        "TRNM_PQ_OPENSSL_SHA256": null,
+        "TRNM_PQ_OPENSSL_VERSION": null
+      },
+      "completed": true,
+      "consensus_or_model_authority": false,
+      "failure_type": null,
+      "native_tests_executed": false,
+      "process": {
+        "command": [
+          "cargo",
+          "test",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_from_zero",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "cpu_ns": 311620765000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 2704,
+        "major_faults": 2048,
+        "max_rss_kib": 1403384,
+        "minor_faults": 3436388,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "9140f329f72a6cd7a7bd13fc7175d89da4b00f23b202639a58940ce9acc102aa",
+        "stdout_sha256": "e1a4bf10dd97e46b5dbc0c23a3dbb5742ca883cbe508ee90811345f451dbef67",
+        "system_cpu_ns": 10501649000,
+        "timed_out": false,
+        "user_cpu_ns": 301119116000,
+        "voluntary_switches": 12798,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 159581197655
+      },
+      "schema": "trnm-ci-original-native-build-preparation-v1",
+      "service_resource_observation": false,
+      "source_after": {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 882506480,
+          "tracked_entries": 7723,
+          "tracked_worktree_verified": true
+        },
+        "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+      },
+      "source_before": {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 882506480,
+          "tracked_entries": 7723,
+          "tracked_worktree_verified": true
+        },
+        "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d"
+      },
+      "source_error": null
+    },
+    "schema": "trnm-ci-original-public-host-controller-v2",
+    "service": "trnm-from-zero-41728500537-1-cross-arch-cost-4281.service",
+    "systemd_run_exit": 1,
+    "uid": 1001
+  },
+  "host_child": {
+    "command_argv": [
+      "python3",
+      "scripts/ci/run_from_zero_native.py",
+      "--out",
+      "/home/runner/work/_temp/ci-observations/from-zero-native"
+    ],
+    "consensus_or_model_authority": false,
+    "host_errors": [],
+    "host_readiness_only": true,
+    "native_child_exit": 1,
+    "schema": "trnm-ci-original-public-host-child-v1"
+  },
+  "host_snapshots": {
+    "inside-before": {
+      "boot_id": "ab2680a2-ed55-418f-9494-b2379f193602",
+      "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+      "consensus_or_model_authority": false,
+      "counters": {
+        "cgroup.events": "populated 1\nfrozen 0",
+        "cpu.stat": "usage_usec 96426\nuser_usec 85603\nsystem_usec 10823\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 5\nnr_throttled 3\nthrottled_usec 178912\nnr_bursts 0\nburst_usec 0",
+        "memory.current": "14872576",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "pids.current": "1"
+      },
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "gid": 1001,
+      "host_readiness_only": true,
+      "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "observed_utc": "2026-11-03T22:35:26.446559+00:00",
+      "parent": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 31,
+        "directory": true,
+        "gid": 0,
+        "inode": 7343,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+      "phase": "inside-before-native",
+      "pid": 6344,
+      "read_errors": {},
+      "schema": "trnm-ci-original-public-host-observation-v1",
+      "service": "trnm-from-zero-41728500537-1-cross-arch-cost-4281.service",
+      "thread_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-41728500537-1-cross-arch-cost-4281.service",
+      "thread_privileges": {
+        "CapBnd": "0000000000000000",
+        "NoNewPrivs": "1"
+      },
+      "uid": 1001
+    },
+    "inside-after": {
+      "boot_id": "ab2680a2-ed55-418f-9494-b2379f193602",
+      "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+      "consensus_or_model_authority": false,
+      "counters": {
+        "cgroup.events": "populated 1\nfrozen 0",
+        "cpu.stat": "usage_usec 20338445\nuser_usec 17879235\nsystem_usec 2459210\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 824\nnr_throttled 810\nthrottled_usec 96594689\nnr_bursts 0\nburst_usec 0",
+        "memory.current": "53202944",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "pids.current": "1"
+      },
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "gid": 1001,
+      "host_readiness_only": true,
+      "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "observed_utc": "2026-11-03T22:36:48.345959+00:00",
+      "parent": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 31,
+        "directory": true,
+        "gid": 0,
+        "inode": 7343,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+      "phase": "inside-after-native",
+      "pid": 6344,
+      "read_errors": {},
+      "schema": "trnm-ci-original-public-host-observation-v1",
+      "service": "trnm-from-zero-41728500537-1-cross-arch-cost-4281.service",
+      "thread_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-41728500537-1-cross-arch-cost-4281.service",
+      "thread_privileges": {
+        "CapBnd": "0000000000000000",
+        "NoNewPrivs": "1"
+      },
+      "uid": 1001
+    },
+    "outside-after": {
+      "boot_id": "ab2680a2-ed55-418f-9494-b2379f193602",
+      "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+      "consensus_or_model_authority": false,
+      "counters": {
+        "cgroup.events": "populated 0\nfrozen 0",
+        "cpu.stat": "usage_usec 20347636\nuser_usec 17886384\nsystem_usec 2461251\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 825\nnr_throttled 811\nthrottled_usec 96668002\nnr_bursts 0\nburst_usec 0",
+        "memory.current": "37937152",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "pids.current": "0"
+      },
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "gid": 1001,
+      "host_readiness_only": true,
+      "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "observed_utc": "2026-11-03T22:36:48.442115+00:00",
+      "parent": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 31,
+        "directory": true,
+        "gid": 0,
+        "inode": 7343,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+      "phase": "outside-after-child",
+      "pid": 4281,
+      "read_errors": {},
+      "schema": "trnm-ci-original-public-host-observation-v1",
+      "service": "trnm-from-zero-41728500537-1-cross-arch-cost-4281.service",
+      "thread_cgroup": "0::/system.slice/hosted-compute-agent.service",
+      "thread_privileges": {
+        "CapBnd": "000001ffffffffff",
+        "NoNewPrivs": "0"
+      },
+      "uid": 1001
+    }
+  },
+  "scope": "Original five native selectors PASS on this exact lane; independent original four-second business reader fails. Other cost/rejection artifacts and later workflow steps are outside this qualification; no cross-source/native/Host/performance inheritance."
+}

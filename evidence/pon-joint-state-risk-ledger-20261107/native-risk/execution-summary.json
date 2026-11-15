@@ -1,0 +1,90 @@
+{
+  "actual_native_runs": 2,
+  "all_final_stages_passed": true,
+  "build_qualification_output": "sqlite-build-qualification-output.json",
+  "checkpoint_authenticity_is_not_inferred_from_equality": true,
+  "final_native_tests": {
+    "failed": 0,
+    "helper_run_as_real_child_twice": true,
+    "ignored_helper": 1,
+    "passed": 11
+  },
+  "final_reader_tests": {
+    "failed": 0,
+    "passed": 25
+  },
+  "final_source_snapshot": "attempt-03/remote/source-sha256.json",
+  "final_stage_log": "attempt-03/remote/stages.json",
+  "final_validation_job": "1a1b86b72a3-12894-f34",
+  "first_attempt_failed_harness_and_environment_warning_preserved": true,
+  "host": "desktop",
+  "known_invalid_trace_reproduction": {
+    "after": "attempt-03/after-repro.json",
+    "before": "attempt-03/before-repro.json",
+    "rejection": "R_NATIVE_START_STATE",
+    "same_negative_bytes": true
+  },
+  "local_reader_result_byte_identical_to_remote": true,
+  "local_source_matches_final_native_build_snapshot": {
+    "formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md": true,
+    "formal/pon-nakamoto-v1/native_risk_ledger.py": true,
+    "formal/pon-nakamoto-v1/test_native_risk_ledger.py": true,
+    "trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs": true,
+    "trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs": true,
+    "trillionnium/crates/trnm-pon-node/src/lib.rs": true,
+    "trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs": true,
+    "trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs": true
+  },
+  "observations": {
+    "actual_probability_law_authenticated": false,
+    "all_observed_native_confirmation_intents_registered": true,
+    "all_registered_starts_charged_without_refunds": true,
+    "budget_units": 40,
+    "conditional_allowances_proved": false,
+    "epochs": 5,
+    "global_failure_probability": null,
+    "latest_checkpoint_authenticated": false,
+    "native_conditional_risk_certified": false,
+    "native_confirmation_intents_covered": 7,
+    "outcomes_recorded": 6,
+    "physical_pre_registration_independently_attested": false,
+    "records_checked": 23,
+    "remaining_units": 4,
+    "spent_units": 36,
+    "starts_registered": 8,
+    "trusted_history_anchor": false,
+    "unit_denominator": 1000,
+    "unresolved_starts": [
+      12,
+      18
+    ],
+    "world_confirmation_attempts_covered": false
+  },
+  "original_archives_sha256_verified": true,
+  "owned_source_sha256": {
+    "formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md": "58a72603cbdfa134288bad49b16b4316d01818d30b0eae580b532f244fe79766",
+    "formal/pon-nakamoto-v1/native_risk_ledger.py": "cb18be8a6642b6981c28797928c58a45152ae7b39c11b162a1afea1fc4c3dfce",
+    "formal/pon-nakamoto-v1/test_native_risk_ledger.py": "0741b21b4f6bb3880caafb8923f1017dc3a6ad6c2984471b91fee07c603a07ec",
+    "trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs": "f0255574fcb54e8c5c2e2a255a7869289821c3a062d3df13eb0b594013de6007",
+    "trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs": "b291ff343fb0d91151513a5007ff834c0999ebde9edb695546e3bfd68d5aaf2e",
+    "trillionnium/crates/trnm-pon-node/src/lib.rs": "110a36db8e7e2257b4e1c8e606911d69abfde36e172ef1d27801bf0f9ee8f80e",
+    "trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs": "f905f87408a11235d086cc50037df02b124a1929f1d04c78b1644eac9ba883cd",
+    "trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs": "675cbfb8a47ee9481301340d5426a787480c116ade6b1dcb93bc4a4bee5c17b3"
+  },
+  "pre_dispatch_only_rollback_without_newer_pin_is_explicit_counterexample": true,
+  "retained_source_path_maps_verified": true,
+  "same_epoch_recorded_native_readiness_enforced": true,
+  "schema": "pon-native-risk-execution-evidence-v1",
+  "source_bytes_stable": true,
+  "standalone_native_example_runs": {
+    "count": 2,
+    "new_source_actual_scenario_exercised_inside_rust_test_target": true,
+    "rerun_after_readiness_fix": false,
+    "source_snapshots": [
+      "attempt-01/source-sha256.json",
+      "attempt-02/source-sha256.json"
+    ]
+  },
+  "status": "PASS_WITH_EXPLICIT_UNQUALIFIED_SECURITY_ASSUMPTIONS",
+  "strict_clippy_exit": 0
+}

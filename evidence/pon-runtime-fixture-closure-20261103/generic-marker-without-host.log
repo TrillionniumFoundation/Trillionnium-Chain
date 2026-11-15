@@ -1,0 +1,22 @@
+
+running 1 test
+test signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract ... FAILED
+
+successes:
+
+successes:
+
+failures:
+
+---- signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract stdout ----
+
+thread 'signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract' (15) panicked at crates/trnm-pon-node/tests/support/current_elf_host.rs:20:9:
+public fixture child must satisfy the actual original kernel checks
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+

@@ -1,0 +1,21 @@
+{
+  "module": "store::native_authenticated::post_write_readback::tests::",
+  "test_announcements": 35,
+  "unique_test_announcements": 35,
+  "pre_write_announcements": 12,
+  "summary": [
+    "test result: ok. 34 passed; 0 failed; 1 ignored; 0 measured; 994 filtered out; finished in 4.19s"
+  ],
+  "exit_code": 0,
+  "raw_sha256": "aaebf54310698e35ccdf170a08ba4ed891ba3cd042323a28d42d570cf36bdeb1",
+  "source_and_binary": {
+    "head": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+    "binary_sha256": "dd6a1dee07568ba26022ccd690933af13788696e1925e442fe3ba471927f856f",
+    "binary_expected_sha256": "dd6a1dee07568ba26022ccd690933af13788696e1925e442fe3ba471927f856f",
+    "source_manifest_sha256": "f56cc35bd9c9462c931776cc4e08fedeeaa7c73df5f00b2907cc2a057bc81381",
+    "source_files_verified": 1194,
+    "mismatches": [],
+    "source_and_binary_unchanged": true
+  },
+  "scope": "34 native controls passed, including all 11 new ordinary prewrite tests; one cost diagnostic intentionally ignored in this module invocation"
+}

@@ -1,0 +1,19 @@
+{
+  "all_members_read_back_and_hashed": true,
+  "all_originals_unchanged_after": true,
+  "allowlist_sha256": "1170508c8ffd4191ef8cbff9caed725214a0276b68108936b060aac1a9aa9664",
+  "archive": {
+    "bytes": 1374623,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-C2-late-github-readback-01/raw-logs.tar.gz",
+    "sha256": "54d8d94c1505ad02c9be59bb081eca4f5c87805725658c0ed3768032914f0140"
+  },
+  "candidate_source_commit": "cc4dd8bdd89309c635831db30b508af2f89419d7",
+  "completed": true,
+  "errors": [],
+  "member_count": 75,
+  "new_test_or_workflow": false,
+  "readme_sha256": "4e6b1910a54346c41c6e28459263400bc755338000c3f31db017344060d55b49",
+  "schema": "TRNM-W1-C2-LATE-GITHUB-ARCHIVE-READBACK1",
+  "summary_sha256": "2538e620156027fc145d117496023f2325de029d9db03f4de1501c419a59f017",
+  "uncompressed_bytes": 12495568
+}

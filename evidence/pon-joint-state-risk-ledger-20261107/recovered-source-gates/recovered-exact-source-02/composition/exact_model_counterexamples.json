@@ -1,0 +1,520 @@
+{
+  "actual_network_or_quantum_experiment": false,
+  "native_six_successor_probability": null,
+  "omitted_empty_payload_timing": {
+    "coarse_record_can_fit_policy_without_complete_mediation": true,
+    "complete_policy_support_including_absence": 17,
+    "distinct_payload_values": 1,
+    "helper_fresh_classical_queries": 16,
+    "model": "finite-empty-payload-visible-timing-help-v1",
+    "p": {
+      "denominator": 16,
+      "numerator": 1
+    },
+    "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "physical_time_channel_experiment": false,
+    "receiver_new_queries": 0,
+    "record_fit_authenticates_complete_observable_alphabet": false,
+    "success_exceeds_fresh_bound": true,
+    "success_probability": {
+      "denominator": 18446744073709551616,
+      "numerator": 11878335717996660991
+    },
+    "unpaid_helper_fresh_bound": {
+      "denominator": 16,
+      "numerator": 1
+    },
+    "visible_arrival_bins": 16
+  },
+  "paid_prefix": {
+    "conditional_bank": {
+      "actual_native_probability_law_authenticated": false,
+      "actual_prefix_and_initial_state_authenticated": false,
+      "finite_declared_joint_law": {
+        "actual_conditional_residual_potential_attested": false,
+        "actual_probability_law_authenticated": false,
+        "all_declared_history_cells_checked": true,
+        "conditional_checks": [
+          {
+            "allowance": {
+              "denominator": 1,
+              "numerator": 1
+            },
+            "attempt": "selected_paid_hit",
+            "conditional_failure_probability": {
+              "denominator": 1,
+              "numerator": 1
+            },
+            "start_mass": {
+              "denominator": 16,
+              "numerator": 1
+            }
+          }
+        ],
+        "expected_allowance_spent": {
+          "denominator": 16,
+          "numerator": 1
+        },
+        "failure_union_probability": {
+          "denominator": 16,
+          "numerator": 1
+        },
+        "independence_between_attempts_required": false,
+        "maximum_path_allowance_spent": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "native_confirmation_risk_qualified": false,
+        "total_allowance": {
+          "denominator": 1,
+          "numerator": 1
+        }
+      },
+      "independence_between_attempts_required": false,
+      "model_reports_recomputed": true,
+      "native_six_successor_risk_certified": false,
+      "probability_scopes": [
+        "conditional_on_complete_coalition_prefix"
+      ],
+      "schema": "pon-composition-declared-risk-bank-v1"
+    },
+    "global_bank": {
+      "actual_native_probability_law_authenticated": false,
+      "actual_prefix_and_initial_state_authenticated": false,
+      "finite_declared_joint_law": {
+        "actual_conditional_residual_potential_attested": false,
+        "actual_probability_law_authenticated": false,
+        "all_declared_history_cells_checked": true,
+        "conditional_checks": [
+          {
+            "allowance": {
+              "denominator": 256,
+              "numerator": 31
+            },
+            "attempt": "whole_lifetime",
+            "conditional_failure_probability": {
+              "denominator": 256,
+              "numerator": 31
+            },
+            "start_mass": {
+              "denominator": 1,
+              "numerator": 1
+            }
+          }
+        ],
+        "expected_allowance_spent": {
+          "denominator": 256,
+          "numerator": 31
+        },
+        "failure_union_probability": {
+          "denominator": 256,
+          "numerator": 31
+        },
+        "independence_between_attempts_required": false,
+        "maximum_path_allowance_spent": {
+          "denominator": 256,
+          "numerator": 31
+        },
+        "native_confirmation_risk_qualified": false,
+        "total_allowance": {
+          "denominator": 256,
+          "numerator": 31
+        }
+      },
+      "independence_between_attempts_required": false,
+      "model_reports_recomputed": true,
+      "native_six_successor_risk_certified": false,
+      "probability_scopes": [
+        "global_unconditioned_from_independent_joint_initial_state"
+      ],
+      "schema": "pon-composition-declared-risk-bank-v1"
+    },
+    "global_report": {
+      "actual_sha_independent_uniform_tickets_proved": false,
+      "all_coherent_list_bound": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "bound": {
+        "denominator": 256,
+        "numerator": 31
+      },
+      "classical_prefix_cap_C": 1,
+      "complete_outputs_cap_M": 1,
+      "credit_threshold": 128,
+      "global_prefix_law_may_be_reused_at_observed_start": false,
+      "hidden_inventory_output_extraction_and_cap_attested": false,
+      "input_parameters_attest_complete_joint_initial_state": false,
+      "input_parameters_attest_full_lifetime_query_coverage": false,
+      "mandatory_u_minimum_gate_cost_proved": false,
+      "maximum_identity_credit": 128,
+      "model": "mu1-ideal-lifetime-prefix-list-v1",
+      "native_identity_and_weight_bridge_proved": false,
+      "native_six_successor_risk_certified": false,
+      "p": {
+        "denominator": 16,
+        "numerator": 1
+      },
+      "padded_distinct_prefix_C_effective": 1,
+      "physical_resource_tail_proved": false,
+      "post_prefix_cap_Q": 0,
+      "prefix_cases": [
+        {
+          "bound": {
+            "denominator": 16,
+            "numerator": 1
+          },
+          "exact_relaxed_game_when_Q_zero": true,
+          "global_prefix_probability": {
+            "denominator": 16,
+            "numerator": 15
+          },
+          "known_successes_s": 0,
+          "required_unknown_successes": 1,
+          "unknown_output_slots": 1
+        },
+        {
+          "bound": {
+            "denominator": 1,
+            "numerator": 1
+          },
+          "global_prefix_probability": {
+            "denominator": 16,
+            "numerator": 1
+          },
+          "known_successes_at_least": 1
+        }
+      ],
+      "prefix_convolution_bound": {
+        "denominator": 256,
+        "numerator": 31
+      },
+      "probability_scope": "global_unconditioned_from_independent_joint_initial_state",
+      "production_qualified": false,
+      "required_distinct_successes": 1,
+      "terminal_domain_size": 13407807929942597099574024998205846127479365820592393377723561443721764030073546976801874298166903427690031858186486050853753882811946569946433649006084096,
+      "virtual_output_queries_added": 0
+    },
+    "illegal_global_reuse": {
+      "error": "GLOBAL_BOUND_IS_NOT_CONDITIONAL",
+      "error_type": "CompositionError",
+      "rejected": true
+    },
+    "observed_hit_report": {
+      "actual_distinct_seen": 1,
+      "actual_marked_seen": 1,
+      "actual_sha_independent_uniform_tickets_proved": false,
+      "bound": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "complete_outputs_M": 1,
+      "credit_threshold": 128,
+      "domain_size": 13407807929942597099574024998205846127479365820592393377723561443721764030073546976801874298166903427690031858186486050853753882811946569946433649006084096,
+      "exact_relaxed_game_when_Q_zero": true,
+      "hidden_inventory_output_extraction_and_cap_attested": false,
+      "input_parameters_attest_complete_joint_initial_state": false,
+      "input_parameters_attest_full_lifetime_query_coverage": false,
+      "mandatory_u_minimum_gate_cost_proved": false,
+      "maximum_identity_credit": 128,
+      "model": "mu1-complete-classical-prefix-continuation-v1",
+      "native_identity_and_weight_bridge_proved": false,
+      "native_six_successor_risk_certified": false,
+      "p": {
+        "denominator": 16,
+        "numerator": 1
+      },
+      "physical_resource_tail_proved": false,
+      "post_prefix_Q": 0,
+      "probability_scope": "conditional_on_complete_coalition_prefix",
+      "production_qualified": false,
+      "required_distinct_successes": 1,
+      "required_unknown_successes": 0,
+      "unknown_output_slots": 0
+    }
+  },
+  "post_coherent_classical_reveal": {
+    "actual_quantum_hardware_executed": false,
+    "actual_reveal_hit_probability_in_model": {
+      "denominator": 32768,
+      "numerator": 13073
+    },
+    "domain_size": 16,
+    "incorrect_new_classical_prefix_probability": {
+      "denominator": 16,
+      "numerator": 1
+    },
+    "later_owner_may_reset_global_prefix": false,
+    "model": "exact-finite-Bernoulli-phase-diffusion-v1",
+    "oracle_count_cases": [
+      {
+        "conditional_hit": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "oracle_mark_count": 0,
+        "probability": {
+          "denominator": 18446744073709551616,
+          "numerator": 6568408355712890625
+        }
+      },
+      {
+        "conditional_hit": {
+          "denominator": 256,
+          "numerator": 121
+        },
+        "oracle_mark_count": 1,
+        "probability": {
+          "denominator": 1152921504606846976,
+          "numerator": 437893890380859375
+        }
+      },
+      {
+        "conditional_hit": {
+          "denominator": 32,
+          "numerator": 25
+        },
+        "oracle_mark_count": 2,
+        "probability": {
+          "denominator": 2305843009213693952,
+          "numerator": 437893890380859375
+        }
+      },
+      {
+        "conditional_hit": {
+          "denominator": 256,
+          "numerator": 243
+        },
+        "oracle_mark_count": 3,
+        "probability": {
+          "denominator": 1152921504606846976,
+          "numerator": 68116827392578125
+        }
+      },
+      {
+        "conditional_hit": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "oracle_mark_count": 4,
+        "probability": {
+          "denominator": 4611686018427387904,
+          "numerator": 59034583740234375
+        }
+      },
+      {
+        "conditional_hit": {
+          "denominator": 256,
+          "numerator": 245
+        },
+        "oracle_mark_count": 5,
+        "probability": {
+          "denominator": 1152921504606846976,
+          "numerator": 2361383349609375
+        }
+      },
+      {
+        "conditional_hit": {
+          "denominator": 32,
+          "numerator": 27
+        },
+        "oracle_mark_count": 6,
+        "probability": {
+          "denominator": 2305843009213693952,
+          "numerator": 577227041015625
+        }
+      },
+      {
+        "conditional_hit": {
+          "denominator": 256,
+          "numerator": 175
+        },
+        "oracle_mark_count": 7,
+        "probability": {
+          "denominator": 1152921504606846976,
+          "numerator": 27487001953125
+        }
+      },
+      {
+        "conditional_hit": {
+          "denominator": 2,
+          "numerator": 1
+        },
+        "oracle_mark_count": 8,
+        "probability": {
+          "denominator": 9223372036854775808,
+          "numerator": 16492201171875
+        }
+      },
+      {
+        "conditional_hit": {
+          "denominator": 256,
+          "numerator": 81
+        },
+        "oracle_mark_count": 9,
+        "probability": {
+          "denominator": 1152921504606846976,
+          "numerator": 122164453125
+        }
+      },
+      {
+        "conditional_hit": {
+          "denominator": 32,
+          "numerator": 5
+        },
+        "oracle_mark_count": 10,
+        "probability": {
+          "denominator": 2305843009213693952,
+          "numerator": 11402015625
+        }
+      },
+      {
+        "conditional_hit": {
+          "denominator": 256,
+          "numerator": 11
+        },
+        "oracle_mark_count": 11,
+        "probability": {
+          "denominator": 1152921504606846976,
+          "numerator": 207309375
+        }
+      },
+      {
+        "conditional_hit": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "oracle_mark_count": 12,
+        "probability": {
+          "denominator": 4611686018427387904,
+          "numerator": 23034375
+        }
+      },
+      {
+        "conditional_hit": {
+          "denominator": 256,
+          "numerator": 13
+        },
+        "oracle_mark_count": 13,
+        "probability": {
+          "denominator": 1152921504606846976,
+          "numerator": 118125
+        }
+      },
+      {
+        "conditional_hit": {
+          "denominator": 32,
+          "numerator": 7
+        },
+        "oracle_mark_count": 14,
+        "probability": {
+          "denominator": 2305843009213693952,
+          "numerator": 3375
+        }
+      },
+      {
+        "conditional_hit": {
+          "denominator": 256,
+          "numerator": 135
+        },
+        "oracle_mark_count": 15,
+        "probability": {
+          "denominator": 1152921504606846976,
+          "numerator": 15
+        }
+      },
+      {
+        "conditional_hit": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "oracle_mark_count": 16,
+        "probability": {
+          "denominator": 18446744073709551616,
+          "numerator": 1
+        }
+      }
+    ],
+    "p": {
+      "denominator": 16,
+      "numerator": 1
+    },
+    "prior_coherent_bit_queries": 1,
+    "subsequent_classical_reveals": 1
+  },
+  "repeated_allowance": {
+    "proper_shared_budget": {
+      "actual_native_probability_law_authenticated": false,
+      "actual_prefix_and_initial_state_authenticated": false,
+      "finite_declared_joint_law": {
+        "actual_conditional_residual_potential_attested": false,
+        "actual_probability_law_authenticated": false,
+        "all_declared_history_cells_checked": true,
+        "conditional_checks": [
+          {
+            "allowance": {
+              "denominator": 16,
+              "numerator": 1
+            },
+            "attempt": "one",
+            "conditional_failure_probability": {
+              "denominator": 16,
+              "numerator": 1
+            },
+            "start_mass": {
+              "denominator": 1,
+              "numerator": 1
+            }
+          },
+          {
+            "allowance": {
+              "denominator": 16,
+              "numerator": 1
+            },
+            "attempt": "two",
+            "conditional_failure_probability": {
+              "denominator": 16,
+              "numerator": 1
+            },
+            "start_mass": {
+              "denominator": 1,
+              "numerator": 1
+            }
+          }
+        ],
+        "expected_allowance_spent": {
+          "denominator": 8,
+          "numerator": 1
+        },
+        "failure_union_probability": {
+          "denominator": 256,
+          "numerator": 31
+        },
+        "independence_between_attempts_required": false,
+        "maximum_path_allowance_spent": {
+          "denominator": 8,
+          "numerator": 1
+        },
+        "native_confirmation_risk_qualified": false,
+        "total_allowance": {
+          "denominator": 8,
+          "numerator": 1
+        }
+      },
+      "independence_between_attempts_required": false,
+      "model_reports_recomputed": true,
+      "native_six_successor_risk_certified": false,
+      "probability_scopes": [
+        "global_unconditioned_from_independent_joint_initial_state",
+        "global_unconditioned_from_independent_joint_initial_state"
+      ],
+      "schema": "pon-composition-declared-risk-bank-v1"
+    },
+    "single_budget_reuse": {
+      "error": "PREDICTABLE_RISK_BUDGET_OVERSPENT",
+      "error_type": "ObservabilityError",
+      "rejected": true
+    }
+  },
+  "schema": "pon-composition-exact-model-counterexamples-v1"
+}

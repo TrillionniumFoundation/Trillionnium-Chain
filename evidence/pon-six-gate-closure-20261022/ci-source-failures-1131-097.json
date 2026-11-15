@@ -1,0 +1,1024 @@
+{
+  "schema": "readonly-current-ci-rootcause-checkpoint-v1",
+  "snapshot_captured_utc": "2026-10-22T06:09:04.142Z",
+  "assembled_utc": "2026-10-22T06:11:09.508141+00:00",
+  "source_and_git_provenance": {
+    "source": {
+      "chain": {
+        "number": 323,
+        "base": "main",
+        "base_sha": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+        "head": "fix/chain-bulk-state-tree-20261017",
+        "head_sha": "1131d067f7ae4e6ccb1bf27e05df34818311daec",
+        "merge_commit_sha": "64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b",
+        "draft": true
+      },
+      "hepta": {
+        "number": 2559,
+        "base": "ci/hepta-chain321-flush-private-current-main-20261016",
+        "base_sha": "75531105b27329abaeb955e77c2c04a6d14f3bcb",
+        "head": "ci/hepta-chain322-current-main-20261017",
+        "head_sha": "097d97137a43aee84fb96be12e44135278776748",
+        "merge_commit_sha": "5a915bb6eb6704a789ced9976dd26acf706146ac",
+        "draft": true
+      }
+    },
+    "git": {
+      "chain_head": {
+        "sha": "1131d067f7ae4e6ccb1bf27e05df34818311daec",
+        "node_id": "C_kwDOTty1_doAKDExMzFkMDY3ZjdhZTRlNmNjYjFiZjI3ZTA1ZGYzNDgxODMxMWRhZWM",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/1131d067f7ae4e6ccb1bf27e05df34818311daec",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/1131d067f7ae4e6ccb1bf27e05df34818311daec",
+        "author": {
+          "name": "Qian QI",
+          "email": "102159240+ProfHepta@users.noreply.github.com",
+          "date": "2026-10-22T05:19:17Z"
+        },
+        "committer": {
+          "name": "Qian QI",
+          "email": "102159240+ProfHepta@users.noreply.github.com",
+          "date": "2026-10-22T05:19:17Z"
+        },
+        "tree": {
+          "sha": "0e57df7986857fc6ff7ecfb05817b639663955ce",
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/0e57df7986857fc6ff7ecfb05817b639663955ce"
+        },
+        "message": "feat(acceptance): harden W1 evidence and growth bindings, validate real parent material and separate budgets\n\nBind receiver policy and complete replay semantics, require a private verified growth relation, preflight pinned LoRA factor bytes, and model five finite resource/funding lanes with globally unique external operations. Retain current security findings and original pressure failures. These are bounded development increments; native growth, three real model rounds and independent WAN acceptance remain open.",
+        "parents": [
+          {
+            "sha": "5eb30bdedba2bb4933f5c97211426fc2df21bb7c",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/5eb30bdedba2bb4933f5c97211426fc2df21bb7c",
+            "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/5eb30bdedba2bb4933f5c97211426fc2df21bb7c"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      },
+      "chain_base": {
+        "sha": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+        "node_id": "C_kwDOTty1_doAKDlmZWRmN2VjYmJlMDcxNzcwNjljMDMwNTkyYjRlMDNkY2ZmZWJiODE",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/9fedf7ecbbe07177069c030592b4e03dcffebb81",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/9fedf7ecbbe07177069c030592b4e03dcffebb81",
+        "author": {
+          "name": "Qian QI",
+          "email": "102159240+ProfHepta@users.noreply.github.com",
+          "date": "2026-09-29T08:33:22Z"
+        },
+        "committer": {
+          "name": "GitHub",
+          "email": "noreply@github.com",
+          "date": "2026-09-29T08:33:22Z"
+        },
+        "tree": {
+          "sha": "af52e79d69de2224fa709309704ba6a971453579",
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/af52e79d69de2224fa709309704ba6a971453579"
+        },
+        "message": "PoN: freeze evaluation evidence and complete consumer consent\n\nContinue the current PoN owners with sealed parent/candidate/control/calibration/task inputs, source-group-correct evaluation, recomputed controlled settlement evidence and full output/cost/nonce consent. Bind exact-source native regressions, 84 invariant selectors, three no-update optimization attempts and nine identical results on three owned hosts. Preserve all historical evidence, actual zero-reward/stronger-control outcomes and explicit ordinary-Hepta/future-independent/work-security limits. Root README remains blank; production remains disabled. Hosted CI was queued at the last observation and is not represented as passed.",
+        "parents": [
+          {
+            "sha": "6cdbf9551aae1754e489773bac29bc0598e20a9b",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/6cdbf9551aae1754e489773bac29bc0598e20a9b",
+            "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/6cdbf9551aae1754e489773bac29bc0598e20a9b"
+          }
+        ],
+        "verification": {
+          "verified": true,
+          "reason": "valid",
+          "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqu3fSCRC1aQ7uu5UhlAAAB74QAFbdH5fZqe4FqR4YM66TG8xv\n8CT9fvkOHHVKPC2wTU+lr5o20HsWsUK7DakrJJgXc6E84gGVq340kn1aY+zEdbp1\nsPCRaCAUdokm6uN/3FggkTal94CLAJVFseGgeSqJXu9uryDXh+kh7kZaONLCLi6l\nqlfvjUChJbBnhFryUAwB/z+BzUVsC3eB29MblNFMl2qncZ4ADAdWZe+4MsL5NfAv\nEMvQjhdqtbr4oe0J3wWj5lre1NUVLu+SvGY9ab2YWlfb7+hK/JABfF3sz8Au855o\n/SmSbOWbQTjT3X5qWa/Zyn9AJngo6jQV+NCcBM9uJhiVwpVLn30fixBGDAHhovmb\nls5wDK2IS5TcRwJNE1nOfAZmuHb18koIT3oVZaQhXZlaSERObzk83BQaPIeA6pOx\nxHncsioPENbl9XTKWjh0gb8n11SyQ/+gj6po4FTL+0Z2ySF08XthiGo2l9H9d01M\nv/TJ3DDxUM52uREBCEgiylxoXLiukL0kGx6tGX3NGJKV4wUtdHL3wyTYrFbZ2Xes\n+p4sTIThL7t99mwvEW873UInJLh3IcWTHu2oWNA8oUp3TDXQwoDe0dfTulxuXczM\nK31et4b4zeAKO8tdcHmmbg8C51c7WJNkhXQ0lsUBLxu0kdS7OlYFYrzOph6hz3aV\nyUbiZIARypJGMulSuSXP\n=Baeg\n-----END PGP SIGNATURE-----\n",
+          "payload": "tree af52e79d69de2224fa709309704ba6a971453579\nparent 6cdbf9551aae1754e489773bac29bc0598e20a9b\nauthor Qian QI <102159240+ProfHepta@users.noreply.github.com> 1790670802 +0800\ncommitter GitHub <noreply@github.com> 1790670802 +0800\n\nPoN: freeze evaluation evidence and complete consumer consent\n\nContinue the current PoN owners with sealed parent/candidate/control/calibration/task inputs, source-group-correct evaluation, recomputed controlled settlement evidence and full output/cost/nonce consent. Bind exact-source native regressions, 84 invariant selectors, three no-update optimization attempts and nine identical results on three owned hosts. Preserve all historical evidence, actual zero-reward/stronger-control outcomes and explicit ordinary-Hepta/future-independent/work-security limits. Root README remains blank; production remains disabled. Hosted CI was queued at the last observation and is not represented as passed.",
+          "verified_at": "2026-09-29T08:33:23Z"
+        }
+      },
+      "chain_merge": {
+        "sha": "64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b",
+        "node_id": "C_kwDOTty1_doAKDY0YWE2ODI5OTZiMzZjM2YxZWU2YmM0ZWQwZjNjY2VlY2I4YTA4NmI",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b",
+        "author": {
+          "name": "Qian QI",
+          "email": "102159240+ProfHepta@users.noreply.github.com",
+          "date": "2026-10-22T05:19:48Z"
+        },
+        "committer": {
+          "name": "GitHub",
+          "email": "noreply@github.com",
+          "date": "2026-10-22T05:19:48Z"
+        },
+        "tree": {
+          "sha": "0e57df7986857fc6ff7ecfb05817b639663955ce",
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/0e57df7986857fc6ff7ecfb05817b639663955ce"
+        },
+        "message": "Merge 1131d067f7ae4e6ccb1bf27e05df34818311daec into 9fedf7ecbbe07177069c030592b4e03dcffebb81",
+        "parents": [
+          {
+            "sha": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/9fedf7ecbbe07177069c030592b4e03dcffebb81",
+            "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/9fedf7ecbbe07177069c030592b4e03dcffebb81"
+          },
+          {
+            "sha": "1131d067f7ae4e6ccb1bf27e05df34818311daec",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/1131d067f7ae4e6ccb1bf27e05df34818311daec",
+            "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/1131d067f7ae4e6ccb1bf27e05df34818311daec"
+          }
+        ],
+        "verification": {
+          "verified": true,
+          "reason": "valid",
+          "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJq2Zz0CRC1aQ7uu5UhlAAAHxIQABrMdAsNzhg/9H5Vc14D1HlT\n4Jk2tXwof8Zwulch6RN8ccDXUti/hxzrNFNJDMV06H/efpM9dy9S84PX4Off/3ok\nszzakdZs7Z35jyDBP6LPTTY7BIDQcm6FXJ2lHhF5ZSb+rNFmSEw6OIHp3hW3h3N8\nedHSSnfMDR6hlacIm4Dq2QREtHgzo00MZFhXewuaG+fDsHBDEPF3QVDatx8V2P57\nvwy9bt1L219IN3bdXHjBzX2vUoFEl4lDScOKaNdHPFOHBYR91X2tfUZXy4luku0c\nfSNoUm0uXoLIJu9UwUlbtwHmof4cxrwOYvdEBE+P83Tywy4+C0E7EJln3ImgUikv\nQjrjs5eR4yIpw1M1ZcZA3KImr4YKzq46GRvsAnLQNIwmG3ksB7ld65Liy8LhVTOt\nqpoutPLj2DC0FJUNV2i0DxrfM9BgSDrQ1GZgWp8dYsgwAa7n0bqt/c8MHXK9uoMW\nnsgPBL5ILXGD8sQ+dDlXUw3Pmy54U9BUWZJo3FEJt9fGhza79m8Ni3slrNDDdbVV\n05DLEuBbhbIip/WnhIq/ahnXXD47muyYunGO/7XHaqvst6M2vJo3Fqd925AWCsqt\n4iw5hs100xzaUtAzJT8RbZUHZD6V1Q/dnTFsI20//roNxF25X9FSUDS3LWyfb+26\nBl32gfduSxpPky1nUFTw\n=6qCi\n-----END PGP SIGNATURE-----\n",
+          "payload": "tree 0e57df7986857fc6ff7ecfb05817b639663955ce\nparent 9fedf7ecbbe07177069c030592b4e03dcffebb81\nparent 1131d067f7ae4e6ccb1bf27e05df34818311daec\nauthor Qian QI <102159240+ProfHepta@users.noreply.github.com> 1792646388 +0000\ncommitter GitHub <noreply@github.com> 1792646388 +0000\n\nMerge 1131d067f7ae4e6ccb1bf27e05df34818311daec into 9fedf7ecbbe07177069c030592b4e03dcffebb81\n",
+          "verified_at": "2026-10-22T05:19:48Z"
+        }
+      },
+      "hepta_head": {
+        "sha": "097d97137a43aee84fb96be12e44135278776748",
+        "node_id": "C_kwDOTrgxoNoAKDA5N2Q5NzEzN2E0M2FlZTg0ZmI5NmJlMTJlNDQxMzUyNzg3NzY3NDg",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/hepta-private-ci/git/commits/097d97137a43aee84fb96be12e44135278776748",
+        "html_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/commit/097d97137a43aee84fb96be12e44135278776748",
+        "author": {
+          "name": "Qian QI",
+          "email": "102159240+ProfHepta@users.noreply.github.com",
+          "date": "2026-10-22T05:24:24Z"
+        },
+        "committer": {
+          "name": "Qian QI",
+          "email": "102159240+ProfHepta@users.noreply.github.com",
+          "date": "2026-10-22T05:24:24Z"
+        },
+        "tree": {
+          "sha": "c3c4a1dce2622df239f6dd7d6a77674b1c17de6a",
+          "url": "https://api.github.com/repos/TrillionniumFoundation/hepta-private-ci/git/trees/c3c4a1dce2622df239f6dd7d6a77674b1c17de6a"
+        },
+        "message": "ci(pon): freeze the hardened Chain pair and refresh exact source observations\n\nPin Chain head 1131d067 and its actual main-target merge 64aa6829. Refresh only changed source identities in 27 maps and the generated plasticity status; preserve all authority, acceptance, native test and resource gates. Source navigation is not native execution or neural/WAN qualification.",
+        "parents": [
+          {
+            "sha": "7a56b99e2839cda8fe207e5c1787a8e9320d3bac",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/hepta-private-ci/git/commits/7a56b99e2839cda8fe207e5c1787a8e9320d3bac",
+            "html_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/commit/7a56b99e2839cda8fe207e5c1787a8e9320d3bac"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      },
+      "hepta_base": {
+        "sha": "75531105b27329abaeb955e77c2c04a6d14f3bcb",
+        "node_id": "C_kwDOTrgxoNoAKDc1NTMxMTA1YjI3MzI5YWJhZWI5NTVlNzdjMmMwNGE2ZDE0ZjNiY2I",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/hepta-private-ci/git/commits/75531105b27329abaeb955e77c2c04a6d14f3bcb",
+        "html_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/commit/75531105b27329abaeb955e77c2c04a6d14f3bcb",
+        "author": {
+          "name": "Qian QI",
+          "email": "102159240+ProfHepta@users.noreply.github.com",
+          "date": "2026-10-16T15:16:36Z"
+        },
+        "committer": {
+          "name": "Qian QI",
+          "email": "102159240+ProfHepta@users.noreply.github.com",
+          "date": "2026-10-16T15:16:36Z"
+        },
+        "tree": {
+          "sha": "7ebf8e193535cfc9a472991b1adf30ac9cc42077",
+          "url": "https://api.github.com/repos/TrillionniumFoundation/hepta-private-ci/git/trees/7ebf8e193535cfc9a472991b1adf30ac9cc42077"
+        },
+        "message": "ci: repin current-main Hepta native pair to Chain #321 private dry-run fix",
+        "parents": [
+          {
+            "sha": "d3bda1a0a65ede9b81d6c7685f862069b1748cb8",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/hepta-private-ci/git/commits/d3bda1a0a65ede9b81d6c7685f862069b1748cb8",
+            "html_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/commit/d3bda1a0a65ede9b81d6c7685f862069b1748cb8"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      },
+      "hepta_merge": {
+        "sha": "5a915bb6eb6704a789ced9976dd26acf706146ac",
+        "node_id": "C_kwDOTrgxoNoAKDVhOTE1YmI2ZWI2NzA0YTc4OWNlZDk5NzZkZDI2YWNmNzA2MTQ2YWM",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/hepta-private-ci/git/commits/5a915bb6eb6704a789ced9976dd26acf706146ac",
+        "html_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/commit/5a915bb6eb6704a789ced9976dd26acf706146ac",
+        "author": {
+          "name": "Qian QI",
+          "email": "102159240+ProfHepta@users.noreply.github.com",
+          "date": "2026-10-22T05:25:33Z"
+        },
+        "committer": {
+          "name": "GitHub",
+          "email": "noreply@github.com",
+          "date": "2026-10-22T05:25:33Z"
+        },
+        "tree": {
+          "sha": "c3c4a1dce2622df239f6dd7d6a77674b1c17de6a",
+          "url": "https://api.github.com/repos/TrillionniumFoundation/hepta-private-ci/git/trees/c3c4a1dce2622df239f6dd7d6a77674b1c17de6a"
+        },
+        "message": "Merge 097d97137a43aee84fb96be12e44135278776748 into 75531105b27329abaeb955e77c2c04a6d14f3bcb",
+        "parents": [
+          {
+            "sha": "75531105b27329abaeb955e77c2c04a6d14f3bcb",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/hepta-private-ci/git/commits/75531105b27329abaeb955e77c2c04a6d14f3bcb",
+            "html_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/commit/75531105b27329abaeb955e77c2c04a6d14f3bcb"
+          },
+          {
+            "sha": "097d97137a43aee84fb96be12e44135278776748",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/hepta-private-ci/git/commits/097d97137a43aee84fb96be12e44135278776748",
+            "html_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/commit/097d97137a43aee84fb96be12e44135278776748"
+          }
+        ],
+        "verification": {
+          "verified": true,
+          "reason": "valid",
+          "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJq2Z5NCRC1aQ7uu5UhlAAA7ukQAGjtWE2hKWK1e5ZqewxA6oZk\no5oMqAM8/nOFkRuobv5DMasn5mkcbvWVBh11+kkky8mkZYa518UuR1OSkcDBtNu/\nEb47e1WEw36VYp9AtP29Mzt35+xEEJfQEMv28kWP1vuG9NV0kFJ4Qw1s70JRLHW7\nRMlh88Lw399bJ3APXxiTJnsyduy4kvLIZuPK53URxbeaoh1tImZcPlbJdw2PWD7F\njbUzK77jRmAJG4ff8oPsy7dRAbN0YQRop/lgevMMya46YLtdi8Ad/6lBRjLwBqsL\nQypVF9Xu6Jj8MmPpxOl7xaJv6EO2GRVWI1eheLm9fIBro1h9v9tVOkpWy1pc3PYQ\nR7Ra+zSoeLs4oBkWQDUayg2eqxQb2xnDvQv3fIorkTEb+wp+10aOtiTSGlkjhPEk\n8M9nP0CqiICaLYjWRv/KZEb646dbpKWdycB1cSYXWSSJFfxq9C0bJEgjspxvd67w\nxMITNHwrzqPb8cFUaAvCx+pbFzq4BuW8SHxFpSqQa4SOiEb2+riCuyOvAe+Seraa\nB5Neg+WuZNSmHWD2CBu5YWracCBY4ZHh1ulny2HVx2a6TjoJvY1fAVinOgMEbynF\n+vbPt5ce+1AiFaElTkdAk5bc1Y+WtRmKhUD5g4hz4Wn07ynckDehAW0sEk7wC7fW\ntP6HIGLVyvkHPGrO3r1w\n=l8uk\n-----END PGP SIGNATURE-----\n",
+          "payload": "tree c3c4a1dce2622df239f6dd7d6a77674b1c17de6a\nparent 75531105b27329abaeb955e77c2c04a6d14f3bcb\nparent 097d97137a43aee84fb96be12e44135278776748\nauthor Qian QI <102159240+ProfHepta@users.noreply.github.com> 1792646733 +0000\ncommitter GitHub <noreply@github.com> 1792646733 +0000\n\nMerge 097d97137a43aee84fb96be12e44135278776748 into 75531105b27329abaeb955e77c2c04a6d14f3bcb\n",
+          "verified_at": "2026-10-22T05:25:34Z"
+        }
+      }
+    }
+  },
+  "check_run_counts": {
+    "chain": {
+      "total_count": 33,
+      "counts": {
+        "failure": 5,
+        "success": 24,
+        "queued": 2,
+        "in_progress": 2
+      },
+      "current_failures": [
+        {
+          "id": 119663251440,
+          "name": "CodeQL",
+          "head_sha": "1131d067f7ae4e6ccb1bf27e05df34818311daec",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/runs/119663251440",
+          "output": {
+            "title": "18 new alerts including 1 critical severity security vulnerability",
+            "summary": "### New alerts in code changed by this pull request\n\nSecurity Alerts:\n * 1 critical\n * 17 high\n\n\n_Alerts not introduced by this pull request might have been detected because the code changes were too large._\n\nSee annotations below for details.\n\n[View all branch alerts](/TrillionniumFoundation/Trillionnium-Chain/security/code-scanning?query=pr%3A323+tool%3ACodeQL+is%3Aopen).",
+            "text": null,
+            "annotations_count": 18,
+            "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/119663251440/annotations"
+          }
+        },
+        {
+          "id": 119654348954,
+          "name": "recent batch (ubuntu-24.04-arm, head)",
+          "head_sha": "1131d067f7ae4e6ccb1bf27e05df34818311daec",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39727391608/job/119654348954",
+          "output": {
+            "title": null,
+            "summary": null,
+            "text": null,
+            "annotations_count": 3,
+            "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/119654348954/annotations"
+          }
+        },
+        {
+          "id": 119654348950,
+          "name": "recent batch (ubuntu-24.04, prospective-merge)",
+          "head_sha": "1131d067f7ae4e6ccb1bf27e05df34818311daec",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39727391608/job/119654348950",
+          "output": {
+            "title": null,
+            "summary": null,
+            "text": null,
+            "annotations_count": 3,
+            "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/119654348950/annotations"
+          }
+        },
+        {
+          "id": 119654348924,
+          "name": "recent batch (ubuntu-24.04-arm, prospective-merge)",
+          "head_sha": "1131d067f7ae4e6ccb1bf27e05df34818311daec",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39727391608/job/119654348924",
+          "output": {
+            "title": null,
+            "summary": null,
+            "text": null,
+            "annotations_count": 3,
+            "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/119654348924/annotations"
+          }
+        },
+        {
+          "id": 119654348606,
+          "name": "recent batch (ubuntu-24.04, head)",
+          "head_sha": "1131d067f7ae4e6ccb1bf27e05df34818311daec",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39727391608/job/119654348606",
+          "output": {
+            "title": null,
+            "summary": null,
+            "text": null,
+            "annotations_count": 3,
+            "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/119654348606/annotations"
+          }
+        }
+      ]
+    },
+    "hepta": {
+      "total_count": 59,
+      "counts": {
+        "skipped": 2,
+        "queued": 28,
+        "in_progress": 16,
+        "success": 10,
+        "failure": 3
+      },
+      "current_failures": [
+        {
+          "id": 119656130750,
+          "name": "Native Windows deletion boundary (source-head)",
+          "head_sha": "097d97137a43aee84fb96be12e44135278776748",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/39727952366/job/119656130750",
+          "output": {
+            "title": null,
+            "summary": null,
+            "text": null,
+            "annotations_count": 6,
+            "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/hepta-private-ci/check-runs/119656130750/annotations"
+          }
+        },
+        {
+          "id": 119656130230,
+          "name": "Native Windows deletion boundary (base-merge)",
+          "head_sha": "097d97137a43aee84fb96be12e44135278776748",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/39727952366/job/119656130230",
+          "output": {
+            "title": null,
+            "summary": null,
+            "text": null,
+            "annotations_count": 6,
+            "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/hepta-private-ci/check-runs/119656130230/annotations"
+          }
+        },
+        {
+          "id": 119656119209,
+          "name": "Tests — ubuntu-24.04-arm - aarch64-unknown-linux-gnu / Build nextest archive",
+          "head_sha": "097d97137a43aee84fb96be12e44135278776748",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/39727948126/job/119656119209",
+          "output": {
+            "title": null,
+            "summary": null,
+            "text": null,
+            "annotations_count": 4,
+            "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/hepta-private-ci/check-runs/119656119209/annotations"
+          }
+        }
+      ]
+    }
+  },
+  "all_checks_and_runs_original_api_snapshot": "refresh3-exact-source-and-ci-snapshot.json",
+  "current_source_workflow_blob_pins": {
+    "direct_pin_count": 20,
+    "recent_batch_pin_count": 16,
+    "mismatches": [
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 79,
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+        "expected": "59daa5d549e84f43f75583040bc7c451bc7f375d",
+        "actual": "e30d035e1d0d4d4fb20bc1b79102ae904c93a047",
+        "matches": false
+      }
+    ],
+    "all_pins": "workflow-blob-pin-readback-1131.json",
+    "immutable_workflows": {
+      ".github/workflows/pon-branch-encoding-acceptance.yml": {
+        "git_blob": "9c76cec0fd445f7457fc877206c68a7986116888",
+        "copy": "workflow-source-1131/.github/workflows/pon-branch-encoding-acceptance.yml",
+        "bytes": 13452,
+        "sha256": "e1b5b4a7d485aa5e9ca1ce4bb85146a25babd1941cd3c1e15f7fedae2086af79"
+      },
+      ".github/workflows/pon-recent-batch-acceptance.yml": {
+        "git_blob": "3ffaa74617af484979bd68e847b3bc738ff35b07",
+        "copy": "workflow-source-1131/.github/workflows/pon-recent-batch-acceptance.yml",
+        "bytes": 27922,
+        "sha256": "ee20236881140f00e6cdc814037a73644e8afa2360c7300bd903c76c3ac6afa5"
+      }
+    }
+  },
+  "new_current_recent_batch_failures": [
+    {
+      "run": 39727391608,
+      "job": 119654348606,
+      "lane": "linux-x64/source-head",
+      "head_sha": "1131d067f7ae4e6ccb1bf27e05df34818311daec",
+      "base_sha": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+      "actual_merge_sha": "64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b",
+      "raw_log": "chain-recent-batch-job-119654348606.raw.log",
+      "bytes": 58128,
+      "sha256": "e0c5ca33c8e1745c4cfb800cf4dcdcc872e7e57bc796ad9e0b809f93f0d7c39b",
+      "first_failure": "Pinned state_witness.rs blob mismatch in pre-test source pin shell guard; no compiler or recent-batch test was reached.",
+      "secondary_failure": "always hash step finds no .log files because the earlier source guard aborted before tests; it must not replace the primary failure.",
+      "raw_failure_contexts": [
+        {
+          "raw_log_line": 436,
+          "context": [
+            {
+              "line": 424,
+              "text": "2026-10-22T05:54:16.7750657Z   \"base\": null,"
+            },
+            {
+              "line": 425,
+              "text": "2026-10-22T05:54:16.7751116Z   \"candidate\": \"1131d067f7ae4e6ccb1bf27e05df34818311daec\","
+            },
+            {
+              "line": 426,
+              "text": "2026-10-22T05:54:16.7751634Z   \"kind\": \"head\","
+            },
+            {
+              "line": 427,
+              "text": "2026-10-22T05:54:16.7751983Z   \"prospective_merge\": null,"
+            },
+            {
+              "line": 428,
+              "text": "2026-10-22T05:54:16.7752771Z   \"schema\": \"trnm-ci-source-v1\","
+            },
+            {
+              "line": 429,
+              "text": "2026-10-22T05:54:16.7753427Z   \"tested_commit\": \"1131d067f7ae4e6ccb1bf27e05df34818311daec\","
+            },
+            {
+              "line": 430,
+              "text": "2026-10-22T05:54:16.7754273Z   \"tested_tree\": \"0e57df7986857fc6ff7ecfb05817b639663955ce\","
+            },
+            {
+              "line": 431,
+              "text": "2026-10-22T05:54:16.7754935Z   \"tests_executed_by_identity_check\": false,"
+            },
+            {
+              "line": 432,
+              "text": "2026-10-22T05:54:16.7755515Z   \"tracked_bytes\": 680110220,"
+            },
+            {
+              "line": 433,
+              "text": "2026-10-22T05:54:16.7756018Z   \"tracked_entries\": 4176,"
+            },
+            {
+              "line": 434,
+              "text": "2026-10-22T05:54:16.7756521Z   \"tracked_worktree_verified\": true"
+            },
+            {
+              "line": 435,
+              "text": "2026-10-22T05:54:16.7757040Z }"
+            },
+            {
+              "line": 436,
+              "text": "2026-10-22T05:54:16.8050545Z ##[error]Process completed with exit code 1."
+            },
+            {
+              "line": 437,
+              "text": "2026-10-22T05:54:16.8239373Z ##[group]Run set -euo pipefail"
+            },
+            {
+              "line": 438,
+              "text": "2026-10-22T05:54:16.8239726Z \u001b[36;1mset -euo pipefail\u001b[0m"
+            }
+          ]
+        },
+        {
+          "raw_log_line": 474,
+          "context": [
+            {
+              "line": 462,
+              "text": "2026-10-22T05:54:17.6435589Z   \"candidate\": \"1131d067f7ae4e6ccb1bf27e05df34818311daec\","
+            },
+            {
+              "line": 463,
+              "text": "2026-10-22T05:54:17.6435933Z   \"kind\": \"head\","
+            },
+            {
+              "line": 464,
+              "text": "2026-10-22T05:54:17.6436168Z   \"prospective_merge\": null,"
+            },
+            {
+              "line": 465,
+              "text": "2026-10-22T05:54:17.6436443Z   \"schema\": \"trnm-ci-source-v1\","
+            },
+            {
+              "line": 466,
+              "text": "2026-10-22T05:54:17.6436790Z   \"tested_commit\": \"1131d067f7ae4e6ccb1bf27e05df34818311daec\","
+            },
+            {
+              "line": 467,
+              "text": "2026-10-22T05:54:17.6437227Z   \"tested_tree\": \"0e57df7986857fc6ff7ecfb05817b639663955ce\","
+            },
+            {
+              "line": 468,
+              "text": "2026-10-22T05:54:17.6437589Z   \"tests_executed_by_identity_check\": false,"
+            },
+            {
+              "line": 469,
+              "text": "2026-10-22T05:54:17.6437891Z   \"tracked_bytes\": 680110220,"
+            },
+            {
+              "line": 470,
+              "text": "2026-10-22T05:54:17.6438147Z   \"tracked_entries\": 4176,"
+            },
+            {
+              "line": 471,
+              "text": "2026-10-22T05:54:17.6438399Z   \"tracked_worktree_verified\": true"
+            },
+            {
+              "line": 472,
+              "text": "2026-10-22T05:54:17.6438662Z }"
+            },
+            {
+              "line": 473,
+              "text": "2026-10-22T05:54:17.6524722Z sha256sum: '/home/runner/work/_temp/recent-exact/*.log': No such file or directory"
+            },
+            {
+              "line": 474,
+              "text": "2026-10-22T05:54:17.6530976Z ##[error]Process completed with exit code 1."
+            },
+            {
+              "line": 475,
+              "text": "2026-10-22T05:54:17.6606678Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+            },
+            {
+              "line": 476,
+              "text": "2026-10-22T05:54:17.6607116Z with:"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run": 39727391608,
+      "job": 119654348950,
+      "lane": "linux-x64/base-merge",
+      "head_sha": "1131d067f7ae4e6ccb1bf27e05df34818311daec",
+      "base_sha": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+      "actual_merge_sha": "64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b",
+      "raw_log": "chain-recent-batch-job-119654348950.raw.log",
+      "bytes": 58712,
+      "sha256": "3e083f6f7ee3245a6107d77ad539b0dbdf5b8d2b62da384851acaf93704b6ea0",
+      "first_failure": "Pinned state_witness.rs blob mismatch in pre-test source pin shell guard; no compiler or recent-batch test was reached.",
+      "secondary_failure": "always hash step finds no .log files because the earlier source guard aborted before tests; it must not replace the primary failure.",
+      "raw_failure_contexts": [
+        {
+          "raw_log_line": 437,
+          "context": [
+            {
+              "line": 425,
+              "text": "2026-10-22T05:57:53.7489177Z   \"base\": \"9fedf7ecbbe07177069c030592b4e03dcffebb81\","
+            },
+            {
+              "line": 426,
+              "text": "2026-10-22T05:57:53.7489803Z   \"candidate\": \"1131d067f7ae4e6ccb1bf27e05df34818311daec\","
+            },
+            {
+              "line": 427,
+              "text": "2026-10-22T05:57:53.7490167Z   \"kind\": \"prospective-merge\","
+            },
+            {
+              "line": 428,
+              "text": "2026-10-22T05:57:53.7490518Z   \"prospective_merge\": \"64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b\","
+            },
+            {
+              "line": 429,
+              "text": "2026-10-22T05:57:53.7490918Z   \"schema\": \"trnm-ci-source-v1\","
+            },
+            {
+              "line": 430,
+              "text": "2026-10-22T05:57:53.7491233Z   \"tested_commit\": \"64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b\","
+            },
+            {
+              "line": 431,
+              "text": "2026-10-22T05:57:53.7491617Z   \"tested_tree\": \"0e57df7986857fc6ff7ecfb05817b639663955ce\","
+            },
+            {
+              "line": 432,
+              "text": "2026-10-22T05:57:53.7491965Z   \"tests_executed_by_identity_check\": false,"
+            },
+            {
+              "line": 433,
+              "text": "2026-10-22T05:57:53.7492250Z   \"tracked_bytes\": 680110220,"
+            },
+            {
+              "line": 434,
+              "text": "2026-10-22T05:57:53.7492489Z   \"tracked_entries\": 4176,"
+            },
+            {
+              "line": 435,
+              "text": "2026-10-22T05:57:53.7492727Z   \"tracked_worktree_verified\": true"
+            },
+            {
+              "line": 436,
+              "text": "2026-10-22T05:57:53.7492972Z }"
+            },
+            {
+              "line": 437,
+              "text": "2026-10-22T05:57:53.7791691Z ##[error]Process completed with exit code 1."
+            },
+            {
+              "line": 438,
+              "text": "2026-10-22T05:57:53.7972167Z ##[group]Run set -euo pipefail"
+            },
+            {
+              "line": 439,
+              "text": "2026-10-22T05:57:53.7972502Z \u001b[36;1mset -euo pipefail\u001b[0m"
+            }
+          ]
+        },
+        {
+          "raw_log_line": 475,
+          "context": [
+            {
+              "line": 463,
+              "text": "2026-10-22T05:57:54.6215020Z   \"candidate\": \"1131d067f7ae4e6ccb1bf27e05df34818311daec\","
+            },
+            {
+              "line": 464,
+              "text": "2026-10-22T05:57:54.6215394Z   \"kind\": \"prospective-merge\","
+            },
+            {
+              "line": 465,
+              "text": "2026-10-22T05:57:54.6215755Z   \"prospective_merge\": \"64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b\","
+            },
+            {
+              "line": 466,
+              "text": "2026-10-22T05:57:54.6216133Z   \"schema\": \"trnm-ci-source-v1\","
+            },
+            {
+              "line": 467,
+              "text": "2026-10-22T05:57:54.6216457Z   \"tested_commit\": \"64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b\","
+            },
+            {
+              "line": 468,
+              "text": "2026-10-22T05:57:54.6216864Z   \"tested_tree\": \"0e57df7986857fc6ff7ecfb05817b639663955ce\","
+            },
+            {
+              "line": 469,
+              "text": "2026-10-22T05:57:54.6217221Z   \"tests_executed_by_identity_check\": false,"
+            },
+            {
+              "line": 470,
+              "text": "2026-10-22T05:57:54.6217520Z   \"tracked_bytes\": 680110220,"
+            },
+            {
+              "line": 471,
+              "text": "2026-10-22T05:57:54.6217763Z   \"tracked_entries\": 4176,"
+            },
+            {
+              "line": 472,
+              "text": "2026-10-22T05:57:54.6218004Z   \"tracked_worktree_verified\": true"
+            },
+            {
+              "line": 473,
+              "text": "2026-10-22T05:57:54.6218249Z }"
+            },
+            {
+              "line": 474,
+              "text": "2026-10-22T05:57:54.6293596Z sha256sum: '/home/runner/work/_temp/recent-exact/*.log': No such file or directory"
+            },
+            {
+              "line": 475,
+              "text": "2026-10-22T05:57:54.6300061Z ##[error]Process completed with exit code 1."
+            },
+            {
+              "line": 476,
+              "text": "2026-10-22T05:57:54.6373261Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+            },
+            {
+              "line": 477,
+              "text": "2026-10-22T05:57:54.6374045Z with:"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run": 39727391608,
+      "job": 119654348954,
+      "lane": "linux-arm64/source-head",
+      "head_sha": "1131d067f7ae4e6ccb1bf27e05df34818311daec",
+      "base_sha": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+      "actual_merge_sha": "64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b",
+      "raw_log": "chain-recent-batch-job-119654348954.raw.log",
+      "bytes": 56548,
+      "sha256": "1fd4531bd44457896b11d070feb0266a503151b3430080472898fc3033b601ca",
+      "first_failure": "Pinned state_witness.rs blob mismatch in pre-test source pin shell guard; no compiler or recent-batch test was reached.",
+      "secondary_failure": "always hash step finds no .log files because the earlier source guard aborted before tests; it must not replace the primary failure.",
+      "raw_failure_contexts": [
+        {
+          "raw_log_line": 410,
+          "context": [
+            {
+              "line": 398,
+              "text": "2026-10-22T05:49:41.5494283Z   \"base\": null,"
+            },
+            {
+              "line": 399,
+              "text": "2026-10-22T05:49:41.5494790Z   \"candidate\": \"1131d067f7ae4e6ccb1bf27e05df34818311daec\","
+            },
+            {
+              "line": 400,
+              "text": "2026-10-22T05:49:41.5495139Z   \"kind\": \"head\","
+            },
+            {
+              "line": 401,
+              "text": "2026-10-22T05:49:41.5495412Z   \"prospective_merge\": null,"
+            },
+            {
+              "line": 402,
+              "text": "2026-10-22T05:49:41.5495728Z   \"schema\": \"trnm-ci-source-v1\","
+            },
+            {
+              "line": 403,
+              "text": "2026-10-22T05:49:41.5496122Z   \"tested_commit\": \"1131d067f7ae4e6ccb1bf27e05df34818311daec\","
+            },
+            {
+              "line": 404,
+              "text": "2026-10-22T05:49:41.5496594Z   \"tested_tree\": \"0e57df7986857fc6ff7ecfb05817b639663955ce\","
+            },
+            {
+              "line": 405,
+              "text": "2026-10-22T05:49:41.5496970Z   \"tests_executed_by_identity_check\": false,"
+            },
+            {
+              "line": 406,
+              "text": "2026-10-22T05:49:41.5497299Z   \"tracked_bytes\": 680110220,"
+            },
+            {
+              "line": 407,
+              "text": "2026-10-22T05:49:41.5497575Z   \"tracked_entries\": 4176,"
+            },
+            {
+              "line": 408,
+              "text": "2026-10-22T05:49:41.5497878Z   \"tracked_worktree_verified\": true"
+            },
+            {
+              "line": 409,
+              "text": "2026-10-22T05:49:41.5498182Z }"
+            },
+            {
+              "line": 410,
+              "text": "2026-10-22T05:49:41.5803259Z ##[error]Process completed with exit code 1."
+            },
+            {
+              "line": 411,
+              "text": "2026-10-22T05:49:41.6028616Z ##[group]Run set -euo pipefail"
+            },
+            {
+              "line": 412,
+              "text": "2026-10-22T05:49:41.6029066Z \u001b[36;1mset -euo pipefail\u001b[0m"
+            }
+          ]
+        },
+        {
+          "raw_log_line": 448,
+          "context": [
+            {
+              "line": 436,
+              "text": "2026-10-22T05:49:42.2611385Z   \"candidate\": \"1131d067f7ae4e6ccb1bf27e05df34818311daec\","
+            },
+            {
+              "line": 437,
+              "text": "2026-10-22T05:49:42.2611733Z   \"kind\": \"head\","
+            },
+            {
+              "line": 438,
+              "text": "2026-10-22T05:49:42.2612043Z   \"prospective_merge\": null,"
+            },
+            {
+              "line": 439,
+              "text": "2026-10-22T05:49:42.2612368Z   \"schema\": \"trnm-ci-source-v1\","
+            },
+            {
+              "line": 440,
+              "text": "2026-10-22T05:49:42.2612736Z   \"tested_commit\": \"1131d067f7ae4e6ccb1bf27e05df34818311daec\","
+            },
+            {
+              "line": 441,
+              "text": "2026-10-22T05:49:42.2613151Z   \"tested_tree\": \"0e57df7986857fc6ff7ecfb05817b639663955ce\","
+            },
+            {
+              "line": 442,
+              "text": "2026-10-22T05:49:42.2613521Z   \"tests_executed_by_identity_check\": false,"
+            },
+            {
+              "line": 443,
+              "text": "2026-10-22T05:49:42.2613875Z   \"tracked_bytes\": 680110220,"
+            },
+            {
+              "line": 444,
+              "text": "2026-10-22T05:49:42.2614199Z   \"tracked_entries\": 4176,"
+            },
+            {
+              "line": 445,
+              "text": "2026-10-22T05:49:42.2614984Z   \"tracked_worktree_verified\": true"
+            },
+            {
+              "line": 446,
+              "text": "2026-10-22T05:49:42.2615285Z }"
+            },
+            {
+              "line": 447,
+              "text": "2026-10-22T05:49:42.2700726Z sha256sum: '/home/runner/work/_temp/recent-exact/*.log': No such file or directory"
+            },
+            {
+              "line": 448,
+              "text": "2026-10-22T05:49:42.2707239Z ##[error]Process completed with exit code 1."
+            },
+            {
+              "line": 449,
+              "text": "2026-10-22T05:49:42.2804939Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+            },
+            {
+              "line": 450,
+              "text": "2026-10-22T05:49:42.2805739Z with:"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run": 39727391608,
+      "job": 119654348924,
+      "lane": "linux-arm64/base-merge",
+      "head_sha": "1131d067f7ae4e6ccb1bf27e05df34818311daec",
+      "base_sha": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+      "actual_merge_sha": "64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b",
+      "raw_log": "chain-recent-batch-job-119654348924.raw.log",
+      "bytes": 57322,
+      "sha256": "eb6d1d39aae86ded12b7c609c4b01564f366ba09a226de4da58375250a39636c",
+      "first_failure": "Pinned state_witness.rs blob mismatch in pre-test source pin shell guard; no compiler or recent-batch test was reached.",
+      "secondary_failure": "always hash step finds no .log files because the earlier source guard aborted before tests; it must not replace the primary failure.",
+      "raw_failure_contexts": [
+        {
+          "raw_log_line": 414,
+          "context": [
+            {
+              "line": 402,
+              "text": "2026-10-22T05:48:25.7672185Z   \"base\": \"9fedf7ecbbe07177069c030592b4e03dcffebb81\","
+            },
+            {
+              "line": 403,
+              "text": "2026-10-22T05:48:25.7672948Z   \"candidate\": \"1131d067f7ae4e6ccb1bf27e05df34818311daec\","
+            },
+            {
+              "line": 404,
+              "text": "2026-10-22T05:48:25.7673329Z   \"kind\": \"prospective-merge\","
+            },
+            {
+              "line": 405,
+              "text": "2026-10-22T05:48:25.7673892Z   \"prospective_merge\": \"64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b\","
+            },
+            {
+              "line": 406,
+              "text": "2026-10-22T05:48:25.7674349Z   \"schema\": \"trnm-ci-source-v1\","
+            },
+            {
+              "line": 407,
+              "text": "2026-10-22T05:48:25.7674913Z   \"tested_commit\": \"64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b\","
+            },
+            {
+              "line": 408,
+              "text": "2026-10-22T05:48:25.7675349Z   \"tested_tree\": \"0e57df7986857fc6ff7ecfb05817b639663955ce\","
+            },
+            {
+              "line": 409,
+              "text": "2026-10-22T05:48:25.7675908Z   \"tests_executed_by_identity_check\": false,"
+            },
+            {
+              "line": 410,
+              "text": "2026-10-22T05:48:25.7676219Z   \"tracked_bytes\": 680110220,"
+            },
+            {
+              "line": 411,
+              "text": "2026-10-22T05:48:25.7676493Z   \"tracked_entries\": 4176,"
+            },
+            {
+              "line": 412,
+              "text": "2026-10-22T05:48:25.7676809Z   \"tracked_worktree_verified\": true"
+            },
+            {
+              "line": 413,
+              "text": "2026-10-22T05:48:25.7677062Z }"
+            },
+            {
+              "line": 414,
+              "text": "2026-10-22T05:48:25.7920908Z ##[error]Process completed with exit code 1."
+            },
+            {
+              "line": 415,
+              "text": "2026-10-22T05:48:25.8129285Z ##[group]Run set -euo pipefail"
+            },
+            {
+              "line": 416,
+              "text": "2026-10-22T05:48:25.8129723Z \u001b[36;1mset -euo pipefail\u001b[0m"
+            }
+          ]
+        },
+        {
+          "raw_log_line": 452,
+          "context": [
+            {
+              "line": 440,
+              "text": "2026-10-22T05:48:26.4403721Z   \"candidate\": \"1131d067f7ae4e6ccb1bf27e05df34818311daec\","
+            },
+            {
+              "line": 441,
+              "text": "2026-10-22T05:48:26.4404061Z   \"kind\": \"prospective-merge\","
+            },
+            {
+              "line": 442,
+              "text": "2026-10-22T05:48:26.4404480Z   \"prospective_merge\": \"64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b\","
+            },
+            {
+              "line": 443,
+              "text": "2026-10-22T05:48:26.4404897Z   \"schema\": \"trnm-ci-source-v1\","
+            },
+            {
+              "line": 444,
+              "text": "2026-10-22T05:48:26.4405280Z   \"tested_commit\": \"64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b\","
+            },
+            {
+              "line": 445,
+              "text": "2026-10-22T05:48:26.4405831Z   \"tested_tree\": \"0e57df7986857fc6ff7ecfb05817b639663955ce\","
+            },
+            {
+              "line": 446,
+              "text": "2026-10-22T05:48:26.4406180Z   \"tests_executed_by_identity_check\": false,"
+            },
+            {
+              "line": 447,
+              "text": "2026-10-22T05:48:26.4406537Z   \"tracked_bytes\": 680110220,"
+            },
+            {
+              "line": 448,
+              "text": "2026-10-22T05:48:26.4406794Z   \"tracked_entries\": 4176,"
+            },
+            {
+              "line": 449,
+              "text": "2026-10-22T05:48:26.4407076Z   \"tracked_worktree_verified\": true"
+            },
+            {
+              "line": 450,
+              "text": "2026-10-22T05:48:26.4407361Z }"
+            },
+            {
+              "line": 451,
+              "text": "2026-10-22T05:48:26.4479614Z sha256sum: '/home/runner/work/_temp/recent-exact/*.log': No such file or directory"
+            },
+            {
+              "line": 452,
+              "text": "2026-10-22T05:48:26.4484646Z ##[error]Process completed with exit code 1."
+            },
+            {
+              "line": 453,
+              "text": "2026-10-22T05:48:26.4576450Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+            },
+            {
+              "line": 454,
+              "text": "2026-10-22T05:48:26.4576999Z with:"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "codeql_current_failure": {
+    "check": 119663251440,
+    "conclusion": "failure",
+    "annotation_count": 18,
+    "sourceflow_and_raw_annotations_report": "codeql-1131-18-annotations-sourceflow.json",
+    "raw_export_zip": "chain-codeql-1131.zip",
+    "bytes": 207851,
+    "sha256": "91f6f8be157e168009df7d8cc89becd6d7864d96a87baa4d4c64b3d92162c0a8",
+    "external_review_acceptance": null,
+    "annotation_analysis_association": "unproven",
+    "complete_pr_gate_alert_mapping": false
+  },
+  "remote_writes_performed": false,
+  "source_edits_performed": false,
+  "new_hepta_failure_logs_owners": {
+    "windows_boundary": "/root/w1_qualification",
+    "arm_gnu_nextest_archive": "/root/hepta_ci_fix"
+  }
+}

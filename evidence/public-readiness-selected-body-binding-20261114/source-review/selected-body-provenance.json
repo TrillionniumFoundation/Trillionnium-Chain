@@ -1,0 +1,87 @@
+{
+  "current_body_equals_published_C0": true,
+  "delta": {
+    "bytes": 1147,
+    "path": "/private/tmp/chain-architecture-C0-readiness-selected-source-review-20261114-v1/selected-body-proof-v1/2bb-to-E1-body.patch",
+    "sha256": "7246424ddc982603fcaa019300f9e24a7f6e93220b7ffba27d6c07d226674049"
+  },
+  "expected_observation_only_body_sha256": "e89baea593c5a31e16760c3ad42854d9112775b2e51a8994262f06eee379f1d3",
+  "extraction": "Actual nested direct/bodies/body ASTs and imported actual rust_code/rust_group_end, without invoking the readiness validator or any test/native execution.",
+  "matching_historical_rows": [
+    "historical-2bb",
+    "candidate-332d"
+  ],
+  "read_only": true,
+  "rows": [
+    {
+      "body": {
+        "bytes": 20493,
+        "path": "/private/tmp/chain-architecture-C0-readiness-selected-source-review-20261114-v1/selected-body-proof-v1/historical-2bb-open_selected_mode.rs.original",
+        "sha256": "e89baea593c5a31e16760c3ad42854d9112775b2e51a8994262f06eee379f1d3"
+      },
+      "checker_git_oid": "73e4f87aeefc3f28e077ac1fc4c0cb2ae8114d7d",
+      "label": "historical-2bb",
+      "revision": "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8",
+      "store_bytes": 387798,
+      "store_git_oid": "6ef5f01142a33eace66256dd6ecc81d34681d194",
+      "store_sha256": "df2e303798678fe0b7437cf707bdc1d9cd6559ece47fcf2dd8c7ba8de0b29a17"
+    },
+    {
+      "body": {
+        "bytes": 20493,
+        "path": "/private/tmp/chain-architecture-C0-readiness-selected-source-review-20261114-v1/selected-body-proof-v1/candidate-332d-open_selected_mode.rs.original",
+        "sha256": "e89baea593c5a31e16760c3ad42854d9112775b2e51a8994262f06eee379f1d3"
+      },
+      "checker_git_oid": "73e4f87aeefc3f28e077ac1fc4c0cb2ae8114d7d",
+      "label": "candidate-332d",
+      "revision": "332d7f723d71707d88a2cffa52b3754579a46926",
+      "store_bytes": 387798,
+      "store_git_oid": "6ef5f01142a33eace66256dd6ecc81d34681d194",
+      "store_sha256": "df2e303798678fe0b7437cf707bdc1d9cd6559ece47fcf2dd8c7ba8de0b29a17"
+    },
+    {
+      "body": {
+        "bytes": 20846,
+        "path": "/private/tmp/chain-architecture-C0-readiness-selected-source-review-20261114-v1/selected-body-proof-v1/published-dc42-open_selected_mode.rs.original",
+        "sha256": "f79b2baf4938ca8f410a26559118505fb36ba3b21b50efb3971bc9ba82845978"
+      },
+      "checker_git_oid": "d5919849d69b0d4adc89615b1005c1279140f79d",
+      "label": "published-dc42",
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "store_bytes": 391470,
+      "store_git_oid": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+      "store_sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+    },
+    {
+      "body": {
+        "bytes": 20846,
+        "path": "/private/tmp/chain-architecture-C0-readiness-selected-source-review-20261114-v1/selected-body-proof-v1/F2-open_selected_mode.rs.original",
+        "sha256": "f79b2baf4938ca8f410a26559118505fb36ba3b21b50efb3971bc9ba82845978"
+      },
+      "checker_git_oid": "d5919849d69b0d4adc89615b1005c1279140f79d",
+      "label": "F2",
+      "revision": "6418023d7f60e6e0c42f08c8726085a2b983757b",
+      "store_bytes": 391470,
+      "store_git_oid": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+      "store_sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+    },
+    {
+      "body": {
+        "bytes": 20846,
+        "path": "/private/tmp/chain-architecture-C0-readiness-selected-source-review-20261114-v1/selected-body-proof-v1/E1-open_selected_mode.rs.original",
+        "sha256": "f79b2baf4938ca8f410a26559118505fb36ba3b21b50efb3971bc9ba82845978"
+      },
+      "checker_git_oid": "d5919849d69b0d4adc89615b1005c1279140f79d",
+      "label": "E1",
+      "revision": "e1bf4299a0c57ba797baf2cc50192321e8843b6b",
+      "store_bytes": 391470,
+      "store_git_oid": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+      "store_sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+    }
+  ],
+  "schema": "C0-readiness-selected-body-provenance-v1",
+  "source_paths": {
+    "reader": "scripts/ci/check_public_readiness_evidence.py",
+    "store": "trillionnium/crates/trnm-pon-node/src/store.rs"
+  }
+}

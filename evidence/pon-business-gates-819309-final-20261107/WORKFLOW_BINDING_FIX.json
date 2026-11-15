@@ -1,0 +1,28 @@
+{
+  "schema": "trnm-workflow-self-binding-correction-v1",
+  "parent_candidate": "fa6388d06195711b5d72217b2b7f10b03756e886",
+  "parent_tree": "4bb21bcd9a931eac6d56aa4ef472a97f435444f9",
+  "parent_source_control_result": {
+    "named_methods_passed": 666,
+    "named_methods_expected": 666,
+    "suites": 17,
+    "overall_pass": false,
+    "static_failures": [
+      "pq-research-integration"
+    ],
+    "source_before_after_equal": true,
+    "native_executed": false
+  },
+  "changed_config": "config/pon/pq-cross-branch-corpus-v1.json",
+  "field": "pinned_blobs[.github/workflows/pon-recent-batch-acceptance.yml]",
+  "old_blob": "c7cef34077a54258d936d505451fc1483e13149f",
+  "actual_blob": "3468dab27c330c086ac8b05f59675d7afe88445a",
+  "workflow_bytes": 35802,
+  "workflow_sha256": "42ce9274b00f7c27fc206ae0155a5f2e8cfdb17adb9a861758a96f5b42c4b8e0",
+  "checker_modified": false,
+  "workflow_modified_by_this_fix": false,
+  "production_rust_modified_by_this_fix": false,
+  "source_attempt_copy_files": 84,
+  "source_attempt_copy_bytes": 1241203,
+  "source_attempt_original_summary_sha256": "427e0a09ab39c667060dbe5b42acc83ac319ec72b375c273a1ed22191316d608"
+}

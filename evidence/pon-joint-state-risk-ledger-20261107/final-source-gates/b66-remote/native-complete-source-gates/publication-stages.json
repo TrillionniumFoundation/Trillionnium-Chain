@@ -1,0 +1,110 @@
+[
+  {
+    "stage": "preflight-before-push",
+    "args": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.15367189282551408
+  },
+  {
+    "stage": "head-before-push",
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.002818100852891803
+  },
+  {
+    "stage": "tree-before-push",
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.005444123176857829
+  },
+  {
+    "stage": "clean-before-push",
+    "args": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.04162439005449414
+  },
+  {
+    "stage": "branch-before-push",
+    "args": [
+      "git",
+      "branch",
+      "--show-current"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.0026492690667510033
+  },
+  {
+    "stage": "github-repository",
+    "args": [
+      "gh",
+      "repo",
+      "view",
+      "--json",
+      "nameWithOwner",
+      "--jq",
+      ".nameWithOwner"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 1.731230391887948
+  },
+  {
+    "stage": "git-push",
+    "args": [
+      "git",
+      "push",
+      "origin",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 21.468756493879482
+  },
+  {
+    "stage": "github-branch-readback",
+    "args": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-pon-joint-state-risk-ledger-20261107",
+      "--jq",
+      ".object.sha"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 1.6072488999925554
+  },
+  {
+    "stage": "head-after-push",
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.0026933900080621243
+  },
+  {
+    "stage": "clean-after-push",
+    "args": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.021769413957372308
+  }
+]

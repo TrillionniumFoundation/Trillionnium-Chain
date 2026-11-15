@@ -1,0 +1,19 @@
+{
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_w1_lifecycle_cost_v4.py",
+    "-v"
+  ],
+  "exit_code": 1,
+  "reader_sha256": "da6b94cccafc0d32518afc2ffeb3fac5d4f3bb91c6b6b646590cd3e4d85bf6ba",
+  "source_head": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "stderr_sha256": "386a8c57659f5aa9ba91e6ca994172ec1220fd4f7b3f0bd671ca23f16e1a3b6e",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_sha256": "5b012c8a82eb07cb70d87e8a0c1a55f3bcb3fd043355c0bf31c8a7218870e8f6"
+}

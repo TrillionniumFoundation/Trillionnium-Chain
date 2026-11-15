@@ -1,0 +1,25 @@
+{
+  "payload_sha256": "1174261d4498350937d5b30c2c6c9b3b7cf7ab1a47a2a6c2b649b92a0c9672b4",
+  "base": "ae90d186b79a9269bdb7d9ac8dfc0bcf7e5bfe0c",
+  "new_files": {
+    "docs/protocol/pon-nakamoto-v1/details/BRANCH_WORK_SCHEDULE_RESEARCH_V1.md": "a8747f23145610da86503cd10e0b865eec6350b67be9b1cc4c01c1762b01c410",
+    "docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md": "0d18da6ed19032cf2dcf2794c3938ce828df573191b217bf0d7c311dc10e55b1",
+    "formal/pon-nakamoto-v1/AMORTIZED_COST_POTENTIAL_V1.md": "76537ba41eeccc599f2b9453b1d173299a7257efd5eca3a3b47a49ffafded980",
+    "formal/pon-nakamoto-v1/CREDIT_FEASIBILITY_V1.md": "49b5c11e8c0cbb33823e37cebded636a99d74282e5f28fd4ba73e8a42d01ec00",
+    "formal/pon-nakamoto-v1/amortized_cost_potential.py": "150ec117b58b0c2bbf2f6b5943c35a3e4d17a0f49534403f56ea290944494e7b",
+    "formal/pon-nakamoto-v1/credit_feasibility.py": "5581fe0cd9a53f973c1e4f99faf0205973d88415af96c94c4a83c0e9c8249bc1",
+    "formal/pon-nakamoto-v1/fixed_probability_contract.py": "5d797bfe7b82f11613162636d2ae30778b4e17070e6570705041e86e9fbd75bc",
+    "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json": "e249dfcda10720a1fc388cef9613302253a96b125c0ab1f0eda1b584b72cebef",
+    "formal/pon-nakamoto-v1/test_amortized_cost_potential.py": "ab5a0ae200315c0695414afa1407347102125b96d76709947f3b3a30822150a6",
+    "formal/pon-nakamoto-v1/test_amortized_cost_potential_independent.py": "bec5e19103cfe8f8fc9995f01d665a10dd26e9341b92ab9e8934eae87b72e111",
+    "formal/pon-nakamoto-v1/test_credit_feasibility.py": "3fb1a62693c6f88491e06217bc1871e9814da2a67b5033c2b95eec3560cda760",
+    "formal/pon-nakamoto-v1/test_fixed_probability_contract.py": "d84bf207c8aec58de95912f6f282109145e6fa1be010e942908d2122a2c4cf51",
+    "formal/pon-nakamoto-v1/vectors/fixed-probability-credit/synthetic-linear-sqrt-exact.json": "f30c15be11aba55b50e46adad208108286a6f11308745e88a986a6856e14e89b",
+    "formal/pon-nakamoto-v1/vectors/fixed-probability-credit/synthetic-linear-sqrt-gamma2.json": "19f42f3256c561e5fff4a60a497db7b819625c0f3c2bbb51fbf48fc976310644",
+    "scripts/ci/test_pon_branch_work_schedule_reader.py": "27a41365e7f8635799495528bc4e7a547f3eebd769d552a2a2981fbc2eec7590",
+    "scripts/pon_branch_work_schedule_reader.py": "c00759c694596a1e55e18b3fadc6113dad565dca338ef808a0231923bec62199",
+    "trillionnium/crates/trnm-pon-node/src/research_work_schedule.rs": "a1c54d03e879f44812cc6848bceddf3110f3f5ba05258f64c3cb8c02bac830ca",
+    "trillionnium/crates/trnm-pon-node/tests/research_work_schedule.rs": "49b054a8139f779977f4157ac863a7298f7cc3723339ffc537c8627c5d7edf29"
+  },
+  "ci_reconciliation": "inserted new mandatory checks into current #794 lane; preserved existing joint DAA exports and controls"
+}

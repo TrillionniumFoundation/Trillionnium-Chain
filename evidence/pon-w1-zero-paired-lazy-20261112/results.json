@@ -1,0 +1,1076 @@
+{
+  "aggregation": "sum of complete per-cohort producer costs / sum of accepted winners within each fixed arm, target, horizon",
+  "binary_sha256": "106475d07ddd75e0eced90b19ec84a7658732951a207bebd764c37f10a1aace1",
+  "cheapest_strategy_proven": false,
+  "cohort_count_per_arm_cell": 8,
+  "confidence_intervals": null,
+  "controls": [
+    {
+      "arms": [
+        {
+          "attempts": 24,
+          "exhausted": 8,
+          "hits": 0,
+          "materialized": 24,
+          "misses": 24,
+          "name": "full-limb-sparse-eager"
+        },
+        {
+          "attempts": 24,
+          "exhausted": 8,
+          "hits": 0,
+          "materialized": 0,
+          "misses": 24,
+          "name": "full-limb-sparse-lazy"
+        },
+        {
+          "attempts": 24,
+          "exhausted": 8,
+          "hits": 0,
+          "materialized": 24,
+          "misses": 24,
+          "name": "zero-paired-legacy"
+        },
+        {
+          "attempts": 24,
+          "exhausted": 8,
+          "hits": 0,
+          "materialized": 24,
+          "misses": 24,
+          "name": "zero-paired-eager"
+        },
+        {
+          "attempts": 24,
+          "exhausted": 8,
+          "hits": 0,
+          "materialized": 0,
+          "misses": 24,
+          "name": "zero-paired-lazy"
+        }
+      ],
+      "comparative_rates": null,
+      "counts": {
+        "attempts": 120,
+        "cohorts": 40,
+        "exhausted": 40,
+        "hits": 0,
+        "materialized": 72,
+        "misses": 120,
+        "searches": 40,
+        "setup_calls": 40,
+        "verification_calls": 240
+      },
+      "horizon": 1,
+      "purpose": "exhaustion-control",
+      "target_index": 2
+    },
+    {
+      "arms": [
+        {
+          "attempts": 8,
+          "exhausted": 0,
+          "hits": 8,
+          "materialized": 8,
+          "misses": 0,
+          "name": "full-limb-sparse-eager"
+        },
+        {
+          "attempts": 8,
+          "exhausted": 0,
+          "hits": 8,
+          "materialized": 8,
+          "misses": 0,
+          "name": "full-limb-sparse-lazy"
+        },
+        {
+          "attempts": 8,
+          "exhausted": 0,
+          "hits": 8,
+          "materialized": 8,
+          "misses": 0,
+          "name": "zero-paired-legacy"
+        },
+        {
+          "attempts": 8,
+          "exhausted": 0,
+          "hits": 8,
+          "materialized": 8,
+          "misses": 0,
+          "name": "zero-paired-eager"
+        },
+        {
+          "attempts": 8,
+          "exhausted": 0,
+          "hits": 8,
+          "materialized": 8,
+          "misses": 0,
+          "name": "zero-paired-lazy"
+        }
+      ],
+      "comparative_rates": null,
+      "counts": {
+        "attempts": 40,
+        "cohorts": 40,
+        "exhausted": 0,
+        "hits": 40,
+        "materialized": 40,
+        "misses": 0,
+        "searches": 40,
+        "setup_calls": 40,
+        "verification_calls": 160
+      },
+      "horizon": 1,
+      "purpose": "first-hit-control",
+      "target_index": 3
+    }
+  ],
+  "cost_cells": [
+    {
+      "arms": [
+        {
+          "attempts": 12,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              1.187554,
+              5.114603
+            ],
+            "wall_ns": [
+              1.191632,
+              5.124345
+            ]
+          },
+          "exhausted": 0,
+          "hits": 8,
+          "materialized": 12,
+          "misses": 4,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 2.01729175,
+            "wall_ns": 2.022981625
+          },
+          "name": "full-limb-sparse-eager",
+          "paid_setup_ns": {
+            "cpu_ns": 311210,
+            "wall_ns": 318385
+          },
+          "producer_total_ns": {
+            "cpu_ns": 16138334,
+            "wall_ns": 16183853
+          }
+        },
+        {
+          "attempts": 12,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              1.201385,
+              4.922988
+            ],
+            "wall_ns": [
+              1.20547,
+              4.931901
+            ]
+          },
+          "exhausted": 0,
+          "hits": 8,
+          "materialized": 8,
+          "misses": 4,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 1.973124625,
+            "wall_ns": 1.97851825
+          },
+          "name": "full-limb-sparse-lazy",
+          "paid_setup_ns": {
+            "cpu_ns": 263535,
+            "wall_ns": 270534
+          },
+          "producer_total_ns": {
+            "cpu_ns": 15784997,
+            "wall_ns": 15828146
+          }
+        },
+        {
+          "attempts": 12,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              1.402388,
+              5.251399
+            ],
+            "wall_ns": [
+              1.406179,
+              5.260011
+            ]
+          },
+          "exhausted": 0,
+          "hits": 8,
+          "materialized": 12,
+          "misses": 4,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 2.164616,
+            "wall_ns": 2.169790625
+          },
+          "name": "zero-paired-legacy",
+          "paid_setup_ns": {
+            "cpu_ns": 80439,
+            "wall_ns": 87051
+          },
+          "producer_total_ns": {
+            "cpu_ns": 17316928,
+            "wall_ns": 17358325
+          }
+        },
+        {
+          "attempts": 12,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              1.281941,
+              5.351126
+            ],
+            "wall_ns": [
+              1.285675,
+              5.359922
+            ]
+          },
+          "exhausted": 0,
+          "hits": 8,
+          "materialized": 12,
+          "misses": 4,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 2.133688125,
+            "wall_ns": 2.13979175
+          },
+          "name": "zero-paired-eager",
+          "paid_setup_ns": {
+            "cpu_ns": 89178,
+            "wall_ns": 95883
+          },
+          "producer_total_ns": {
+            "cpu_ns": 17069505,
+            "wall_ns": 17118334
+          }
+        },
+        {
+          "attempts": 12,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              1.276219,
+              5.236977
+            ],
+            "wall_ns": [
+              1.280037,
+              5.245687
+            ]
+          },
+          "exhausted": 0,
+          "hits": 8,
+          "materialized": 8,
+          "misses": 4,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 2.143376125,
+            "wall_ns": 2.14866125
+          },
+          "name": "zero-paired-lazy",
+          "paid_setup_ns": {
+            "cpu_ns": 83230,
+            "wall_ns": 90056
+          },
+          "producer_total_ns": {
+            "cpu_ns": 17147009,
+            "wall_ns": 17189290
+          }
+        }
+      ],
+      "counts": {
+        "attempts": 60,
+        "cohorts": 40,
+        "exhausted": 0,
+        "hits": 40,
+        "materialized": 52,
+        "misses": 20,
+        "searches": 40,
+        "setup_calls": 40,
+        "verification_calls": 160
+      },
+      "horizon": 1,
+      "reference_over_zero_lazy": [
+        {
+          "cpu": 1.0099095416582566,
+          "reference": "zero-paired-legacy",
+          "wall": 1.0098337394970938
+        },
+        {
+          "cpu": 0.9954800280328774,
+          "reference": "zero-paired-eager",
+          "wall": 0.995872080813111
+        },
+        {
+          "cpu": 0.9205685376382552,
+          "reference": "full-limb-sparse-lazy",
+          "wall": 0.9208144140915652
+        }
+      ],
+      "target_index": 0
+    },
+    {
+      "arms": [
+        {
+          "attempts": 120,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              1.871965375,
+              4.11334125
+            ],
+            "wall_ns": [
+              1.875749875,
+              4.121853875
+            ]
+          },
+          "exhausted": 0,
+          "hits": 64,
+          "materialized": 120,
+          "misses": 56,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 2.467305828125,
+            "wall_ns": 2.473525953125
+          },
+          "name": "full-limb-sparse-eager",
+          "paid_setup_ns": {
+            "cpu_ns": 351946,
+            "wall_ns": 359289
+          },
+          "producer_total_ns": {
+            "cpu_ns": 157907573,
+            "wall_ns": 158305661
+          }
+        },
+        {
+          "attempts": 120,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              1.885308625,
+              3.664018375
+            ],
+            "wall_ns": [
+              1.889061875,
+              3.67363275
+            ]
+          },
+          "exhausted": 0,
+          "hits": 64,
+          "materialized": 64,
+          "misses": 56,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 2.4140765625,
+            "wall_ns": 2.419570265625
+          },
+          "name": "full-limb-sparse-lazy",
+          "paid_setup_ns": {
+            "cpu_ns": 271396,
+            "wall_ns": 278259
+          },
+          "producer_total_ns": {
+            "cpu_ns": 154500900,
+            "wall_ns": 154852497
+          }
+        },
+        {
+          "attempts": 120,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              2.0911595,
+              4.020447875
+            ],
+            "wall_ns": [
+              2.094985875,
+              4.028102625
+            ]
+          },
+          "exhausted": 0,
+          "hits": 64,
+          "materialized": 120,
+          "misses": 56,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 2.6375895,
+            "wall_ns": 2.64390115625
+          },
+          "name": "zero-paired-legacy",
+          "paid_setup_ns": {
+            "cpu_ns": 91255,
+            "wall_ns": 97690
+          },
+          "producer_total_ns": {
+            "cpu_ns": 168805728,
+            "wall_ns": 169209674
+          }
+        },
+        {
+          "attempts": 120,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              2.07082075,
+              3.761866375
+            ],
+            "wall_ns": [
+              2.07443775,
+              3.767565375
+            ]
+          },
+          "exhausted": 0,
+          "hits": 64,
+          "materialized": 120,
+          "misses": 56,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 2.673937796875,
+            "wall_ns": 2.67844884375
+          },
+          "name": "zero-paired-eager",
+          "paid_setup_ns": {
+            "cpu_ns": 93497,
+            "wall_ns": 100062
+          },
+          "producer_total_ns": {
+            "cpu_ns": 171132019,
+            "wall_ns": 171420726
+          }
+        },
+        {
+          "attempts": 120,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              2.11460875,
+              3.7502855
+            ],
+            "wall_ns": [
+              2.1183185,
+              3.756111125
+            ]
+          },
+          "exhausted": 0,
+          "hits": 64,
+          "materialized": 64,
+          "misses": 56,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 2.646782171875,
+            "wall_ns": 2.65158971875
+          },
+          "name": "zero-paired-lazy",
+          "paid_setup_ns": {
+            "cpu_ns": 106700,
+            "wall_ns": 113665
+          },
+          "producer_total_ns": {
+            "cpu_ns": 169394059,
+            "wall_ns": 169701742
+          }
+        }
+      ],
+      "counts": {
+        "attempts": 600,
+        "cohorts": 40,
+        "exhausted": 0,
+        "hits": 320,
+        "materialized": 488,
+        "misses": 280,
+        "searches": 320,
+        "setup_calls": 40,
+        "verification_calls": 1280
+      },
+      "horizon": 8,
+      "reference_over_zero_lazy": [
+        {
+          "cpu": 0.9965268498584121,
+          "reference": "zero-paired-legacy",
+          "wall": 0.9971003951155669
+        },
+        {
+          "cpu": 1.0102598639542606,
+          "reference": "zero-paired-eager",
+          "wall": 1.0101294422776166
+        },
+        {
+          "cpu": 0.9120798032237954,
+          "reference": "full-limb-sparse-lazy",
+          "wall": 0.9124979813112348
+        }
+      ],
+      "target_index": 0
+    },
+    {
+      "arms": [
+        {
+          "attempts": 324,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              11.324405,
+              102.737212
+            ],
+            "wall_ns": [
+              11.341878,
+              102.885053
+            ]
+          },
+          "exhausted": 0,
+          "hits": 8,
+          "materialized": 324,
+          "misses": 316,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 52.57230675,
+            "wall_ns": 52.6484535
+          },
+          "name": "full-limb-sparse-eager",
+          "paid_setup_ns": {
+            "cpu_ns": 352740,
+            "wall_ns": 359856
+          },
+          "producer_total_ns": {
+            "cpu_ns": 420578454,
+            "wall_ns": 421187628
+          }
+        },
+        {
+          "attempts": 324,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              11.485555,
+              98.267962
+            ],
+            "wall_ns": [
+              11.504096,
+              98.40421
+            ]
+          },
+          "exhausted": 0,
+          "hits": 8,
+          "materialized": 8,
+          "misses": 316,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 51.437077625,
+            "wall_ns": 51.512632375
+          },
+          "name": "full-limb-sparse-lazy",
+          "paid_setup_ns": {
+            "cpu_ns": 242692,
+            "wall_ns": 249116
+          },
+          "producer_total_ns": {
+            "cpu_ns": 411496621,
+            "wall_ns": 412101059
+          }
+        },
+        {
+          "attempts": 324,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              12.976614,
+              103.877728
+            ],
+            "wall_ns": [
+              13.058027,
+              104.005182
+            ]
+          },
+          "exhausted": 0,
+          "hits": 8,
+          "materialized": 324,
+          "misses": 316,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 56.592506875,
+            "wall_ns": 56.672928875
+          },
+          "name": "zero-paired-legacy",
+          "paid_setup_ns": {
+            "cpu_ns": 95597,
+            "wall_ns": 101895
+          },
+          "producer_total_ns": {
+            "cpu_ns": 452740055,
+            "wall_ns": 453383431
+          }
+        },
+        {
+          "attempts": 324,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              12.2148,
+              105.031065
+            ],
+            "wall_ns": [
+              12.232093,
+              105.168651
+            ]
+          },
+          "exhausted": 0,
+          "hits": 8,
+          "materialized": 324,
+          "misses": 316,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 56.659023625,
+            "wall_ns": 56.74819225
+          },
+          "name": "zero-paired-eager",
+          "paid_setup_ns": {
+            "cpu_ns": 95047,
+            "wall_ns": 101369
+          },
+          "producer_total_ns": {
+            "cpu_ns": 453272189,
+            "wall_ns": 453985538
+          }
+        },
+        {
+          "attempts": 324,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              12.026124,
+              104.251765
+            ],
+            "wall_ns": [
+              12.042917,
+              104.37558
+            ]
+          },
+          "exhausted": 0,
+          "hits": 8,
+          "materialized": 8,
+          "misses": 316,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 56.326994875,
+            "wall_ns": 56.3975225
+          },
+          "name": "zero-paired-lazy",
+          "paid_setup_ns": {
+            "cpu_ns": 86499,
+            "wall_ns": 93023
+          },
+          "producer_total_ns": {
+            "cpu_ns": 450615959,
+            "wall_ns": 451180180
+          }
+        }
+      ],
+      "counts": {
+        "attempts": 1620,
+        "cohorts": 40,
+        "exhausted": 0,
+        "hits": 40,
+        "materialized": 988,
+        "misses": 1580,
+        "searches": 40,
+        "setup_calls": 40,
+        "verification_calls": 160
+      },
+      "horizon": 1,
+      "reference_over_zero_lazy": [
+        {
+          "cpu": 1.0047137611475496,
+          "reference": "zero-paired-legacy",
+          "wall": 1.0048833062658027
+        },
+        {
+          "cpu": 1.005894664729351,
+          "reference": "zero-paired-eager",
+          "wall": 1.0062178218910236
+        },
+        {
+          "cpu": 0.9131869672640689,
+          "reference": "full-limb-sparse-lazy",
+          "wall": 0.9133846681828975
+        }
+      ],
+      "target_index": 1
+    },
+    {
+      "arms": [
+        {
+          "attempts": 2080,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              23.575140125,
+              62.7804835
+            ],
+            "wall_ns": [
+              23.6148475,
+              62.876932875
+            ]
+          },
+          "exhausted": 0,
+          "hits": 64,
+          "materialized": 2080,
+          "misses": 2016,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 40.583794390625,
+            "wall_ns": 40.647993140625
+          },
+          "name": "full-limb-sparse-eager",
+          "paid_setup_ns": {
+            "cpu_ns": 383629,
+            "wall_ns": 390546
+          },
+          "producer_total_ns": {
+            "cpu_ns": 2597362841,
+            "wall_ns": 2601471561
+          }
+        },
+        {
+          "attempts": 2080,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              23.132296125,
+              62.945726
+            ],
+            "wall_ns": [
+              23.165877875,
+              63.03941675
+            ]
+          },
+          "exhausted": 0,
+          "hits": 64,
+          "materialized": 64,
+          "misses": 2016,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 40.004134671875,
+            "wall_ns": 40.065570625
+          },
+          "name": "full-limb-sparse-lazy",
+          "paid_setup_ns": {
+            "cpu_ns": 316293,
+            "wall_ns": 322729
+          },
+          "producer_total_ns": {
+            "cpu_ns": 2560264619,
+            "wall_ns": 2564196520
+          }
+        },
+        {
+          "attempts": 2080,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              25.91607425,
+              70.981592375
+            ],
+            "wall_ns": [
+              25.9503025,
+              71.07866925
+            ]
+          },
+          "exhausted": 0,
+          "hits": 64,
+          "materialized": 2080,
+          "misses": 2016,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 44.962674140625,
+            "wall_ns": 45.02507353125
+          },
+          "name": "zero-paired-legacy",
+          "paid_setup_ns": {
+            "cpu_ns": 96719,
+            "wall_ns": 103053
+          },
+          "producer_total_ns": {
+            "cpu_ns": 2877611145,
+            "wall_ns": 2881604706
+          }
+        },
+        {
+          "attempts": 2080,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              26.25612225,
+              71.416474625
+            ],
+            "wall_ns": [
+              26.291105875,
+              71.521473375
+            ]
+          },
+          "exhausted": 0,
+          "hits": 64,
+          "materialized": 2080,
+          "misses": 2016,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 44.7950934375,
+            "wall_ns": 44.858415
+          },
+          "name": "zero-paired-eager",
+          "paid_setup_ns": {
+            "cpu_ns": 114242,
+            "wall_ns": 120565
+          },
+          "producer_total_ns": {
+            "cpu_ns": 2866885980,
+            "wall_ns": 2870938560
+          }
+        },
+        {
+          "attempts": 2080,
+          "cohort_ms_per_winner_range": {
+            "cpu_ns": [
+              25.740273875,
+              70.6805115
+            ],
+            "wall_ns": [
+              25.77626925,
+              70.777486
+            ]
+          },
+          "exhausted": 0,
+          "hits": 64,
+          "materialized": 64,
+          "misses": 2016,
+          "ms_per_accepted_winner": {
+            "cpu_ns": 44.701399140625,
+            "wall_ns": 44.76268371875
+          },
+          "name": "zero-paired-lazy",
+          "paid_setup_ns": {
+            "cpu_ns": 101950,
+            "wall_ns": 108198
+          },
+          "producer_total_ns": {
+            "cpu_ns": 2860889545,
+            "wall_ns": 2864811758
+          }
+        }
+      ],
+      "counts": {
+        "attempts": 10400,
+        "cohorts": 40,
+        "exhausted": 0,
+        "hits": 320,
+        "materialized": 6368,
+        "misses": 10080,
+        "searches": 320,
+        "setup_calls": 40,
+        "verification_calls": 1280
+      },
+      "horizon": 8,
+      "reference_over_zero_lazy": [
+        {
+          "cpu": 1.0058448953505474,
+          "reference": "zero-paired-legacy",
+          "wall": 1.0058617980581466
+        },
+        {
+          "cpu": 1.0020960036749689,
+          "reference": "zero-paired-eager",
+          "wall": 1.0021386403427348
+        },
+        {
+          "cpu": 0.8949190728018827,
+          "reference": "full-limb-sparse-lazy",
+          "wall": 0.8950663207938425
+        }
+      ],
+      "target_index": 1
+    }
+  ],
+  "excerpt_sha256": "d3826d35aa254d441a14315ef24319eea926d0de0c80104f4ab06a841ebf831c",
+  "execution_ledger": {
+    "archive": {
+      "archive": "/home/qian-qi/work/w1-baseline-9082-evidence-165d.tar.xz",
+      "archive_bytes": 4591284,
+      "archive_integrity_is_not_test_success": true,
+      "archive_sha256": "1f3f04c393e43c1c36fbb8b1569f810d9b8c9b31013d5389410ff2787a252a83",
+      "campaign_phase_success": true,
+      "checks_phase_success": false,
+      "declared_input_snapshot_complete": true,
+      "elapsed_seconds": 36.56881642341614,
+      "head": "165d286b687e0a73d7fe68148d2179274fc0c0b8",
+      "manifest_bytes": 368282,
+      "manifest_sha256": "57ff2f46de6d8167431736191ab5b08e7471158ab76912dd794f514f31279e56",
+      "member_count": 784,
+      "missing_inputs": [],
+      "production_activation": false,
+      "result": "COMPLETE_BYTE_VERIFIED_ARCHIVE",
+      "schema": "TRNM-W1-ZERO-PAIRED-LAZY-ARCHIVE-READBACK1",
+      "security_qualified": false,
+      "written_tar": {
+        "bytes": 67256320,
+        "sha256": "f46817e836c7404bbf55f76ec84fdffd970622c281e6dc017a856c81cf4786ea"
+      },
+      "xz": {
+        "bytes": 67256320,
+        "sha256": "f46817e836c7404bbf55f76ec84fdffd970622c281e6dc017a856c81cf4786ea",
+        "single_complete_xz_stream": true
+      }
+    },
+    "final_evidence_child_validation": "Separate external receipt and PR exact-head ledger; not assigned by this precommit file",
+    "first_provider_supplement": {
+      "clippy_executed": false,
+      "exit_code": 1,
+      "reason": "index hides tracked worktree entries",
+      "result": "HOLD"
+    },
+    "index_restoration": {
+      "fetch_requested": false,
+      "flagged_path_count": 115,
+      "flags_origin": "unknown-not-attributed",
+      "native_campaign_run": false,
+      "receipt_sha256": "90fbc792bf4d9469fb4af9d2edb068235a5bb49bf88258fc4f3cc1a6b3e07bae",
+      "restored_bytes": 800519979,
+      "restored_path_count": 115,
+      "scope": "read-only original restoration receipt summary",
+      "source_after": {
+        "base": null,
+        "candidate": "165d286b687e0a73d7fe68148d2179274fc0c0b8",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "165d286b687e0a73d7fe68148d2179274fc0c0b8",
+        "tested_tree": "2eb4f5e888a7a02f573d72a2fdf4d5a7cfc352e0",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2578833390,
+        "tracked_entries": 28330,
+        "tracked_worktree_verified": true
+      },
+      "source_guard_passed": true,
+      "status": "RESTORED_RECORDED_PATHS_AND_ORIGINAL_SOURCE_GUARD_PASSED"
+    },
+    "native_campaign": "COMPLETE_COMPONENT_OBSERVATION",
+    "original_checks_phase": {
+      "diagnostic": "E0599 private_key_from_seed API unavailable under the original provider selection",
+      "success": false,
+      "workspace_clippy_exit_code": 101
+    },
+    "parent_c5_native": {
+      "failed_controls": [
+        "pnq2-42",
+        "cleanup-01"
+      ],
+      "passed": 62,
+      "status": "FAIL",
+      "total": 64
+    },
+    "parent_pr": 908,
+    "production_activation": false,
+    "second_provider_supplement": {
+      "archived_supplement_exactly_matches_original": true,
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "elapsed_ns": 80087346103,
+      "executed": true,
+      "exit_code": 0,
+      "features_reduced": false,
+      "final_errors": [],
+      "global_cpu_complete": false,
+      "head": "165d286b687e0a73d7fe68148d2179274fc0c0b8",
+      "included_archive_member": "validation/supplemental-provider-clippy-2/supplement.json",
+      "original_failure_replaced": false,
+      "original_timeout_increased": false,
+      "process_exit_code": 0,
+      "process_usage_scope": "wait4; unreaped-descendant costs may be missing",
+      "provider_before_after_five_pins_match": true,
+      "provider_pins": [
+        {
+          "bytes": 8933408,
+          "matches": true,
+          "relative": "bin/openssl",
+          "sha256": "9c55ae4a8820dd89dcd57359579e15b92a6e827eb5d4be8b07d9dc211c7b4fed"
+        },
+        {
+          "bytes": 3449,
+          "matches": true,
+          "relative": "include/openssl/opensslv.h",
+          "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+        },
+        {
+          "bytes": 4729,
+          "matches": true,
+          "relative": "include/openssl/configuration.h",
+          "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+        },
+        {
+          "bytes": 12381456,
+          "matches": true,
+          "relative": "lib/libcrypto.a",
+          "sha256": "053ccb2992b187a71af3389204e87c86d2e15597fa29c00eef16c5b24a9c6675"
+        },
+        {
+          "bytes": 2123138,
+          "matches": true,
+          "relative": "lib/libssl.a",
+          "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727"
+        }
+      ],
+      "provider_version_output": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+      "result": "SUPPLEMENTAL_WORKSPACE_CLIPPY_PASSED",
+      "schema": "TRNM-W1-SUPPLEMENT-V2-READONLY-SUMMARY1",
+      "source_before_after_equal": true,
+      "source_identity": {
+        "base": null,
+        "candidate": "165d286b687e0a73d7fe68148d2179274fc0c0b8",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "165d286b687e0a73d7fe68148d2179274fc0c0b8",
+        "tested_tree": "2eb4f5e888a7a02f573d72a2fdf4d5a7cfc352e0",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2578833390,
+        "tracked_entries": 28330,
+        "tracked_worktree_verified": true
+      },
+      "source_receipt": {
+        "bytes": 41048,
+        "path": "/home/qian-qi/work/w1-baseline-9082-validation-165d/supplemental-provider-clippy-2/supplement.json",
+        "sha256": "c553bfe7e162ec3974dd30040a4686248f91c0acaf1eed5476d5b77d442bd85d"
+      },
+      "timed_out": false,
+      "timeout_seconds": 3600,
+      "wait4_cpu_ns": 277226751000
+    },
+    "security_qualified": false
+  },
+  "inclusive_timers_added": false,
+  "manifest_bytes": 403864,
+  "manifest_sha256": "1972cd517095034d809b48f509b53dd0d51d24f1b5d37a71bdd0e7c91a5373f6",
+  "paired_sample_identity_independently_verified_from_excerpt": false,
+  "per_sample_fastest_selection": false,
+  "pool_targets_or_horizons": false,
+  "producer_cost_excludes": [
+    "separately reported audit/evidence",
+    "separately reported verifier timing",
+    "pre-header material construction",
+    "source and build validation"
+  ],
+  "producer_cost_includes": [
+    "paid setup",
+    "every attempt producer",
+    "losing-proof disposal",
+    "cleanup",
+    "teardown"
+  ],
+  "production_activation": false,
+  "ratio_definition": "reference cost per accepted winner / zero-paired-lazy cost per accepted winner",
+  "schema": "pon-w1-zero-paired-lazy-excerpt-results-v1",
+  "scope": "independent arithmetic on a formal manifest numeric excerpt; not complete journal verification",
+  "source": {
+    "commit": "165d286b687e0a73d7fe68148d2179274fc0c0b8",
+    "source_state": "committed-clean",
+    "tracked_bytes": 2578833390,
+    "tracked_entries": 28330,
+    "tracked_worktree_verified": true,
+    "tree": "2eb4f5e888a7a02f573d72a2fdf4d5a7cfc352e0"
+  },
+  "source_execution_authenticated_by_this_analysis": false,
+  "total_counts": {
+    "attempts": 12840,
+    "cohorts": 240,
+    "exhausted": 40,
+    "hits": 760,
+    "materialized": 8008,
+    "misses": 12080,
+    "searches": 800,
+    "setup_calls": 240,
+    "verification_calls": 3280
+  }
+}

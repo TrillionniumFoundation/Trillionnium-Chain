@@ -1,0 +1,23 @@
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/56818e4fba76/chain-pq-next/trillionnium/crates/trnm-mvcc-fee)
+warning: type `Prepared` is more private than the item `pq_accounts::prepare`
+    --> crates/trnm-mvcc-fee/src/pon_executor/pq_accounts.rs:498:1
+     |
+ 498 | / pub(crate) fn prepare(
+ 499 | |     raw: &[u8],
+ 500 | |     height: u64,
+ 501 | |     cfg: &Config,
+ 502 | |     signatures: &AtomicUsize,
+ 503 | |     policy: &AccountPolicy,
+ 504 | | ) -> Result<Prepared> {
+     | |_____________________^ function `pq_accounts::prepare` is reachable at visibility `pub(crate)`
+     |
+note: but type `Prepared` is only usable at visibility `pub(self)`
+    --> crates/trnm-mvcc-fee/src/pon_executor.rs:1215:1
+     |
+1215 | struct Prepared {
+     | ^^^^^^^^^^^^^^^
+     = note: `#[warn(private_interfaces)]` on by default
+
+warning: `trnm-mvcc-fee` (lib) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 25.18s
+     Running tests/pq_account_owner.rs (/tmp/chain-pq-target-56818e4fba76/debug/deps/pq_account_owner-430c9bf424187cfd)

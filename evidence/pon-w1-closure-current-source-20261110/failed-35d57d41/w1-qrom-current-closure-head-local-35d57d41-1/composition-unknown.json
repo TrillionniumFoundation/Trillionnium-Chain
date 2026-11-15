@@ -1,0 +1,209 @@
+{
+  "arithmetic_extraction_upper_expression": null,
+  "commutativity_upper_expression": null,
+  "component_evaluations": [
+    {
+      "component": "extractability",
+      "expression": null,
+      "query_point": "left_extractability",
+      "required_queries": null,
+      "stage": "left",
+      "unknown_dependencies": [
+        "missing_component_envelope"
+      ]
+    },
+    {
+      "component": "extractability",
+      "expression": null,
+      "query_point": "right_extractability",
+      "required_queries": null,
+      "stage": "right",
+      "unknown_dependencies": [
+        "missing_component_envelope"
+      ]
+    },
+    {
+      "component": "commutativity",
+      "expression": null,
+      "query_point": "shared_commutativity",
+      "required_queries": null,
+      "stage": "left",
+      "unknown_dependencies": [
+        "missing_component_envelope"
+      ]
+    },
+    {
+      "component": "commutativity",
+      "expression": null,
+      "query_point": "shared_commutativity",
+      "required_queries": null,
+      "stage": "right",
+      "unknown_dependencies": [
+        "missing_component_envelope"
+      ]
+    },
+    {
+      "component": "simulation",
+      "expression": null,
+      "query_point": "simulation",
+      "required_queries": null,
+      "stage": "left",
+      "unknown_dependencies": [
+        "missing_component_envelope"
+      ]
+    },
+    {
+      "component": "simulation",
+      "expression": null,
+      "query_point": "simulation",
+      "required_queries": null,
+      "stage": "right",
+      "unknown_dependencies": [
+        "missing_component_envelope"
+      ]
+    },
+    {
+      "component": "commutativity",
+      "expression": null,
+      "query_point": "commutativity",
+      "required_queries": null,
+      "stage": "left",
+      "unknown_dependencies": [
+        "missing_component_envelope"
+      ]
+    },
+    {
+      "component": "commutativity",
+      "expression": null,
+      "query_point": "commutativity",
+      "required_queries": null,
+      "stage": "right",
+      "unknown_dependencies": [
+        "missing_component_envelope"
+      ]
+    }
+  ],
+  "composed_extractor_query_bound": null,
+  "composed_verifier_query_bound": null,
+  "conditional_extraction_upper_expression": null,
+  "description_checks": {
+    "all_relation_descriptions_present": null,
+    "checks_prove_the_hypotheses": false,
+    "complete_hypothetical_descriptions": false,
+    "declared_intermediate_instances_fit_common_n": null,
+    "middle_strict_and_relaxed_relation_descriptions_match": null,
+    "same_emulated_oracle_description": null
+  },
+  "expression_exceeds_one": null,
+  "expression_meets_hypothetical_target": null,
+  "inputs": {
+    "input_kind": "hypothetical",
+    "instance_size_bound": null,
+    "intermediate_instance_size_bound": null,
+    "left": {
+      "emulated_oracle": {
+        "extraction_oracle_specification_sha256": null,
+        "init_specification_sha256": null,
+        "ordinary_oracle_specification_sha256": null
+      },
+      "errors": {
+        "commutativity": null,
+        "extractability": null,
+        "simulation": null
+      },
+      "input_relation": {
+        "relaxed_specification_sha256": null,
+        "strict_specification_sha256": null
+      },
+      "output_relation": {
+        "relaxed_specification_sha256": null,
+        "strict_specification_sha256": null
+      }
+    },
+    "queries": {
+      "q_com": null,
+      "q_e1": null,
+      "q_e2": null,
+      "q_r2": null,
+      "q_r3": null,
+      "q_sim": null,
+      "q_v1": null,
+      "q_v2": null,
+      "t": null
+    },
+    "right": {
+      "emulated_oracle": {
+        "extraction_oracle_specification_sha256": null,
+        "init_specification_sha256": null,
+        "ordinary_oracle_specification_sha256": null
+      },
+      "errors": {
+        "commutativity": null,
+        "extractability": null,
+        "simulation": null
+      },
+      "input_relation": {
+        "relaxed_specification_sha256": null,
+        "strict_specification_sha256": null
+      },
+      "output_relation": {
+        "relaxed_specification_sha256": null,
+        "strict_specification_sha256": null
+      }
+    },
+    "schema": "TRNM-W1-CDHZ-JAN1-COMPOSITION-INPUT1",
+    "security_parameter": null,
+    "target_error": null
+  },
+  "qualification": {
+    "actual_emulated_oracle_hypothesis_proved": false,
+    "actual_relation_compatibility_proved": false,
+    "complete_w1_soundness_qualified": false,
+    "component_envelopes_proved": false,
+    "consensus_admission": false,
+    "full_recursive_security_bits": null,
+    "latest_revision_equivalence_verified": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "qrom_theorem_instantiated": false,
+    "quantum_security_bits": null,
+    "quantum_work_qualified": false,
+    "unconditional_project_security_bits": null
+  },
+  "query_bound_scope": "The displayed composite costs add calls in Construction 10.5 and its E3; the declared algorithm costs and common instance-size coverage are not proved.",
+  "query_points": {
+    "commutativity": null,
+    "left_extractability": null,
+    "right_extractability": null,
+    "shared_commutativity": null,
+    "simulation": null
+  },
+  "schema": "TRNM-W1-CDHZ-JAN1-COMPOSITION-EXPRESSION1",
+  "simulation_upper_expression": null,
+  "source": {
+    "indexed_copy": "https://files01.core.ac.uk/download/690750245.pdf",
+    "latest_revision_equivalence_verified": false,
+    "manuscript_date": "2026-01-01",
+    "paper": "https://eprint.iacr.org/2025/2166",
+    "statement": "Theorem 10.6, pages 72-73; Definition 10.3 and Remark 10.4",
+    "whole_manuscript_proof_audited": false
+  },
+  "status": "hypothetical_sequential_expression_only",
+  "terms": {
+    "common_commutativity_at_shifted_queries": null,
+    "commutator_addend": null,
+    "commutator_coefficient": null,
+    "twice_left_extraction": null,
+    "twice_right_extraction": null
+  },
+  "theorem_11_3_instantiated_bound": null,
+  "unresolved_obligations": [
+    "Both full NRDX algorithms need Definition 10.3 guarantees relative to one identical Init/U1/U2 emulation, including quantum side information and adaptive statements.",
+    "Ordinary oracle queries must commute perfectly; classical repetition must preserve outputs and internal state. Extraction-query commutators need the claimed envelope.",
+    "Strict and relaxed intermediate relations, verifier traces and extractor witnesses must match.",
+    "Every polynomial must be proved an upper bound for its entire declared query/parameter domain.",
+    "All intermediate instances must be covered by the common n slice used for both error functions.",
+    "The actual recursive verifier must implement the sequential construction or have a proved reduction to it.",
+    "The January/authoritative-version correspondence remains unverified; no Theorem 11.3 substitution is made."
+  ]
+}

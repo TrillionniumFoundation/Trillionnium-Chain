@@ -1,0 +1,10 @@
+{
+  "command": [
+    "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150-sealed-fields/metadata-field-probe"
+  ],
+  "elapsed_seconds": 0.06462280196137726,
+  "exit_code": 0,
+  "started_utc": "2026-11-07T14:27:53.222757+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "db40bb16d4a8cac84c28bd0b945ab6cbd440ad87f20764517f58fad8223244e5"
+}

@@ -1,0 +1,51 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_tensor_cli-01c0ff6c929d5bb4",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "child_reaped": true,
+  "cwd": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability",
+  "dispatch_object": {
+    "bytes": 4024120,
+    "device": 2050,
+    "inode": 52884524,
+    "sha256": "d933b5a39319d7d7042ea58f635e45e8590294faafd136094cbc09da097982cd"
+  },
+  "dispatch_object_after_sha256": "d933b5a39319d7d7042ea58f635e45e8590294faafd136094cbc09da097982cd",
+  "dispatch_object_stable": true,
+  "elapsed_ns": 695062860,
+  "exit_code": 0,
+  "label": "08-cell_tensor_cli-native",
+  "native_observation": {
+    "bytes": 4024120,
+    "device": 2050,
+    "exe_link": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_tensor_cli-01c0ff6c929d5bb4",
+    "executable_opened_monotonic_ns": 1472177643760680,
+    "hash_finished_monotonic_ns": 1472177659654790,
+    "inode": 52884524,
+    "observation_started_monotonic_ns": 1472177643684094,
+    "process": {
+      "parent_pid": 68035,
+      "pid": 91725,
+      "start_ticks": 147217764
+    },
+    "process_binding_finished_monotonic_ns": 1472177643791613,
+    "sha256": "d933b5a39319d7d7042ea58f635e45e8590294faafd136094cbc09da097982cd",
+    "status": "OBSERVED"
+  },
+  "owned_pid": 91725,
+  "performance_measurement": false,
+  "started_unix_ns": 1794394511634505058,
+  "status": "command_succeeded",
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/08-cell_tensor_cli-native.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 749,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/08-cell_tensor_cli-native.stdout.log",
+    "sha256": "31603ed6cc399d76229e59e18b1d20ed745e68d0370053f014e48a69ee80b872"
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "adaptive_statement_selection": {
+    "experiment": "Uniform R in 0..15; statement x fails exactly when x=R. History reveals R before x is selected.",
+    "failure_for_adaptively_selected_statement_R": {
+      "denominator": "1",
+      "numerator": "1"
+    },
+    "failure_for_fixed_statement_zero": {
+      "denominator": "16",
+      "numerator": "1"
+    },
+    "scope": "A fixed-statement marginal bound is not uniform conditional soundness."
+  },
+  "difficulty_weight_cost": {
+    "harder": {
+      "bits": "256",
+      "ideal_expected_credit_per_distinct_classical_first_query": {
+        "denominator": "1",
+        "numerator": "1"
+      },
+      "ideal_hit_probability": {
+        "denominator": "4096",
+        "numerator": "1"
+      },
+      "target": "28269553036454149273332760011886696253239742350009903329945699220681916415",
+      "weight": "4096"
+    },
+    "hypothetical_quantum_cost_ratio": "4",
+    "hypothetical_weight_per_cost_advantage": {
+      "denominator": "1",
+      "numerator": "4"
+    },
+    "ordinary": {
+      "bits": "256",
+      "ideal_expected_credit_per_distinct_classical_first_query": {
+        "denominator": "1",
+        "numerator": "1"
+      },
+      "ideal_hit_probability": {
+        "denominator": "256",
+        "numerator": "1"
+      },
+      "target": "452312848583266388373324160190187140051835877600158453279131187530910662655",
+      "weight": "256"
+    },
+    "scope": "Assumes equal full-oracle cost and square-root search scaling; no reachability, quantum clock, attack or finality theorem.",
+    "weight_ratio": {
+      "denominator": "1",
+      "numerator": "16"
+    }
+  },
+  "per_event_target": {
+    "meets_whole_lifetime_target": false,
+    "opportunities": "64",
+    "per_opportunity_error": {
+      "denominator": "340282366920938463463374607431768211456",
+      "numerator": "1"
+    },
+    "union_expression": {
+      "denominator": "5316911983139663491615228241121378304",
+      "numerator": "1"
+    },
+    "whole_lifetime_target": {
+      "denominator": "340282366920938463463374607431768211456",
+      "numerator": "1"
+    }
+  },
+  "query_reset": {
+    "partitions": [
+      "10",
+      "10"
+    ],
+    "powers": {
+      "2": {
+        "incorrect_sum_of_reset_powers": "200",
+        "shared_total_power": "400",
+        "understatement_factor": {
+          "denominator": "1",
+          "numerator": "2"
+        }
+      },
+      "3": {
+        "incorrect_sum_of_reset_powers": "2000",
+        "shared_total_power": "8000",
+        "understatement_factor": {
+          "denominator": "1",
+          "numerator": "4"
+        }
+      }
+    },
+    "scope": "Polynomial accounting counterexample, not a concrete QROM bound."
+  }
+}

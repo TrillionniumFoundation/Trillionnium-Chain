@@ -1,0 +1,373 @@
+{
+  "artifact_id": 13586462531,
+  "metadata": {
+    "id": 13586462531,
+    "name": "w1-false-trace-head-arm64-819309fd312298e099642e1253b1d4ba07113e98-1",
+    "size_in_bytes": 5555008,
+    "digest": "sha256:7d33e8d542921b3a335e5242aa5251893687fbfb6d6699e2810228ecda8dfbfa",
+    "expired": false,
+    "created_at": "2026-11-07T18:52:02Z",
+    "updated_at": "2026-11-07T18:52:02Z",
+    "workflow_run": {
+      "id": 42402618462,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "archive_authenticated": true,
+  "source_bound": true,
+  "manifest_hashes_complete": true,
+  "pure_read_status": "NOT_RUN",
+  "business_qualification": false,
+  "family": "false-trace",
+  "arch": "arm64",
+  "source_kind": "head",
+  "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+  "job": {
+    "id": 128493695658,
+    "name": "W1 false trace reuse (arm64, head)",
+    "family": "false-trace",
+    "arch": "arm64",
+    "source": "head",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "download": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586462531/zip"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "error": null,
+    "bytes": 5555008,
+    "sha256": "7d33e8d542921b3a335e5242aa5251893687fbfb6d6699e2810228ecda8dfbfa"
+  },
+  "archive_inventory": [
+    {
+      "name": "cargo-graph.json",
+      "bytes": 841183,
+      "sha256": "73ea25d09d5a8fbad28a4a2fd409b5a31292480be37d47c46edf5074f33b1526",
+      "retained_expanded": true
+    },
+    {
+      "name": "preflight.log",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "retained_expanded": true
+    },
+    {
+      "name": "format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "push-source-context.json",
+      "bytes": 2267,
+      "sha256": "5a1ea114d87384bb6b4674126366592d707c77414861a79f91691e7454c7a225",
+      "retained_expanded": true
+    },
+    {
+      "name": "query-work-controls.log",
+      "bytes": 3080,
+      "sha256": "87c6c7bf0721a4f53e6a18bfbc66c921595a7ccfa3d0de9c1113463796474c43",
+      "retained_expanded": true
+    },
+    {
+      "name": "reader-controls.log",
+      "bytes": 118,
+      "sha256": "e78a0d13ebb28eb968e960310562b92b7ff08ad590540d0cd6ac54ee98f64bb1",
+      "retained_expanded": true
+    },
+    {
+      "name": "retained-rejection-clippy.log",
+      "bytes": 216,
+      "sha256": "37c441e5ce4dc968e1d32bee0c3c579c10c3866219bae35f46e203104d107305",
+      "retained_expanded": true
+    },
+    {
+      "name": "retained-rejection-reader-controls.log",
+      "bytes": 192,
+      "sha256": "bb67b938f56372d945be9b79da916ddc0c5ed0b0c15509d0944c82f978658f57",
+      "retained_expanded": true
+    },
+    {
+      "name": "retained-rejection-tests.log",
+      "bytes": 729,
+      "sha256": "ee3f8a6d42c652e6241001c4e6bfbd3560ae212642b9768fba216807d5517ba7",
+      "retained_expanded": true
+    },
+    {
+      "name": "runner-controls.log",
+      "bytes": 148,
+      "sha256": "3ba86dd6e5f2a78d6ba30359e5105b56a61d3cd1d1d7e5941f20ea56ad96ec35",
+      "retained_expanded": true
+    },
+    {
+      "name": "source-after.json",
+      "bytes": 423,
+      "sha256": "5759d06c351357aa4d7b24e1b56c03607da60870788f30139a8e10460744c6b6",
+      "retained_expanded": true
+    },
+    {
+      "name": "source-before.json",
+      "bytes": 423,
+      "sha256": "5759d06c351357aa4d7b24e1b56c03607da60870788f30139a8e10460744c6b6",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-clippy.log",
+      "bytes": 1973,
+      "sha256": "939fec4f83bb88ebbd2f3ac270d463d3c810cee0718e24646ca38cc008969d9b",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/build.stderr",
+      "bytes": 3775,
+      "sha256": "904816b9003c954e483cd57b811ebd9c8e5c67fadc012e1111195b6b966341f0",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/build.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/campaign.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/campaign.stdout",
+      "bytes": 30021460,
+      "sha256": "5a62a5bba2694cf1cd9f0be6e6b5eef88b8abc055c41d88d1762b555af8e0e5a",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/cargo.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/cargo.stdout",
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/cpuinfo.txt",
+      "bytes": 1596,
+      "sha256": "b5fa6a99573b7a65c024b6b15f2c0f52fca8cfedf9047998f0885fb4e95e1c36",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/manifest.json",
+      "bytes": 24131,
+      "sha256": "997df2b72b1546bee95f997566886ac1da2b0636da6b090a07b0320e94e90dde",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/pon_w1_false_trace_reuse_v1",
+      "bytes": 725504,
+      "sha256": "40cc5491486318587d4b1db4a305309cd1b6c9b5382926005d191359738083ce",
+      "retained_expanded": false,
+      "elf_machine": 183
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/rustc.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/rustc.stdout",
+      "bytes": 197,
+      "sha256": "9e52f76a6e81c8cce82c76c2ee87a3c9999e56d92106b19142416460b9d2c727",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/uname.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/uname.stdout",
+      "bytes": 131,
+      "sha256": "cf87f933675fd523838de37746f681eb975a9b476ebda0f73318abdbf1d9904c",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/build.stderr",
+      "bytes": 611,
+      "sha256": "5adf260b54b939fcc17502c210cf779cf7463a6f2fb3ee0e16f2114d2ef6a67f",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/build.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/campaign.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/campaign.stdout",
+      "bytes": 30174221,
+      "sha256": "49341f0f4a81e71c55c05c044c9446dce217402a47ca5a73edcae983f6e231e3",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/cargo.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/cargo.stdout",
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/cpuinfo.txt",
+      "bytes": 1596,
+      "sha256": "b5fa6a99573b7a65c024b6b15f2c0f52fca8cfedf9047998f0885fb4e95e1c36",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/manifest.json",
+      "bytes": 26500,
+      "sha256": "887f4f2a7c58ea2d070d2b340afff3dae38b1bc8d1269da36544a5465cd126ac",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/pon_w1_false_trace_reuse_v1",
+      "bytes": 725504,
+      "sha256": "40cc5491486318587d4b1db4a305309cd1b6c9b5382926005d191359738083ce",
+      "retained_expanded": false,
+      "elf_machine": 183
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/rustc.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/rustc.stdout",
+      "bytes": 197,
+      "sha256": "9e52f76a6e81c8cce82c76c2ee87a3c9999e56d92106b19142416460b9d2c727",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/uname.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/uname.stdout",
+      "bytes": 131,
+      "sha256": "cf87f933675fd523838de37746f681eb975a9b476ebda0f73318abdbf1d9904c",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-fuzz-semantics.log",
+      "bytes": 3695,
+      "sha256": "15abd180327d76d74569bdc1d672863c98b5a64fe6caafd677e2ab5cb4a770a8",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-tests.log",
+      "bytes": 16947,
+      "sha256": "4f8d78da24020c5052bbe38924a9d341f9d423fc272900c5bc2943362c0118fa",
+      "retained_expanded": true
+    }
+  ],
+  "source_before": {
+    "base": null,
+    "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+    "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1277471450,
+    "tracked_entries": 12639,
+    "tracked_worktree_verified": true
+  },
+  "source_after": {
+    "base": null,
+    "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+    "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1277471450,
+    "tracked_entries": 12639,
+    "tracked_worktree_verified": true
+  },
+  "manifests": [
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586462531/members/w1-false-trace-reuse-v1/manifest.json",
+      "member": "w1-false-trace-reuse-v1/manifest.json",
+      "schema": "trnm-w1-false-trace-reuse-execution-v1",
+      "result": "PASS",
+      "file_hashes_verified": 12,
+      "observations": 5,
+      "planned_shards": 0,
+      "shards": 0,
+      "manifest_sha256": "997df2b72b1546bee95f997566886ac1da2b0636da6b090a07b0320e94e90dde"
+    },
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586462531/members/w1-full-limb-reuse-v1/manifest.json",
+      "member": "w1-full-limb-reuse-v1/manifest.json",
+      "schema": "trnm-w1-full-limb-reuse-execution-v1",
+      "result": "PASS",
+      "file_hashes_verified": 12,
+      "observations": 5,
+      "planned_shards": 0,
+      "shards": 0,
+      "manifest_sha256": "887f4f2a7c58ea2d070d2b340afff3dae38b1bc8d1269da36544a5465cd126ac"
+    }
+  ],
+  "job_log": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128493695658/logs"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "error": null,
+    "bytes": 209494,
+    "sha256": "d7f8fc84d2fe0a5fef05b62bb2145921ff94430a17e97157543340b9d0a272e9"
+  },
+  "coverage_status": "ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING",
+  "finished_utc": "2026-11-07T20:04:55.210388+00:00"
+}

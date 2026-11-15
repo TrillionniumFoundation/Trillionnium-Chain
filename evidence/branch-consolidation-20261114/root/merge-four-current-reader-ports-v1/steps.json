@@ -1,0 +1,86 @@
+[
+  {
+    "label": "preflight",
+    "exit": 0,
+    "seconds": 0.089,
+    "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+  },
+  {
+    "label": "merge",
+    "exit": 1,
+    "seconds": 0.209,
+    "sha256": "087223236aeba640ba6d0d8debe5134f17e3d64ffd689c7624e331a96eb2216c"
+  },
+  {
+    "label": "stage-resolved",
+    "exit": 0,
+    "seconds": 0.048,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "sqlite-controls",
+    "exit": 0,
+    "seconds": 0.091,
+    "sha256": "aeeb3112288ef157a3cb7a46d440e01e56ed1b453c801a7cdc41a9ef70432807"
+  },
+  {
+    "label": "rank-observation-controls",
+    "exit": 0,
+    "seconds": 0.072,
+    "sha256": "1e4515408367d2a9bb9a53e68bf2f4202f88d3a83feb56b9129dc1f258f7b8a6"
+  },
+  {
+    "label": "acquisition-controls",
+    "exit": 0,
+    "seconds": 0.071,
+    "sha256": "4292934649cc1af2da6af20e38f49e0d1e11bb1ee0c4d5092447a05d487d76dc"
+  },
+  {
+    "label": "source-guards",
+    "exit": 0,
+    "seconds": 4.72,
+    "sha256": "a637f440a29e7bd53b9e35898d08400b70296ddea3505c183a022a7ffff3994e"
+  },
+  {
+    "label": "ci-contract",
+    "exit": 0,
+    "seconds": 0.084,
+    "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+  },
+  {
+    "label": "corpus",
+    "exit": 0,
+    "seconds": 0.71,
+    "sha256": "cb734c3e14ca3b254f78036894454cc31b0a9b0a9456b661a9b88e6656507c85"
+  },
+  {
+    "label": "shell",
+    "exit": 0,
+    "seconds": 0.018,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "diff",
+    "exit": 0,
+    "seconds": 0.05,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "precommit",
+    "exit": 0,
+    "seconds": 0.047,
+    "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+  },
+  {
+    "label": "stage",
+    "exit": 0,
+    "seconds": 0.03,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "commit",
+    "exit": 0,
+    "seconds": 0.066,
+    "sha256": "35ea354fd56c4442aa57a474864e4f787178f39f8c21587fd4e34b9d67f3f1c9"
+  }
+]

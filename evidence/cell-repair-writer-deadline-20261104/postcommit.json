@@ -1,0 +1,121 @@
+{
+  "schema": "trnm-cell-repair-postcommit-observation-v1",
+  "recorded_at_utc": "2026-11-04T07:04:11.929512+00:00",
+  "base_commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+  "imported_cell_fix_parent_commit": "6e15bf135408305416d2966da42e46c42a724690",
+  "tests_commit": "d0b5c9c1114f179bb8da66bdceb3943cb9f96a44",
+  "tested_tree": "0e37d94d90b1f2fd538cfea44a0d39ebed0c4829",
+  "patch": {
+    "path": "cell-postcommit-tests.patch",
+    "sha256": "c38e414db976fa8256b3e1f134d29867d528a6fc95748f972eeb31cae05b5db9",
+    "files_changed": 1,
+    "lines_added": 198
+  },
+  "source_sha256": {
+    "trillionnium/crates/trnm-data-availability/src/cell/retention.rs": "37ebf33ffec0a96de94e875bd9de0e60555f10cae216ef2307c6adc8279e8a13",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs": "f3a09c6bffbce364b8c8ab850c7d6d83cbe19031cf6e95df7a1a01b150ad21a6",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/Cargo.lock": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a"
+  },
+  "runtime_changed_from_reviewed_cell_fix": false,
+  "baseline_tests_sha256": "f4023fdf634e8c8eb3bdbc6b213c482b2ef1cbb03cb67d165439645936574b78",
+  "control": "separate SQLite reader observes exact committed operation/obligation/amount/completion; cancellation is triggered by row state, never callback counts",
+  "fixture": {
+    "payload_bytes": 5000,
+    "arena_bytes": 8192,
+    "initial_copy_bytes_committed": 5000,
+    "postcommit_call_deadline_ms": 1000,
+    "original_connection_busy_timeout_ms": 2000,
+    "payload_rewrite_observation": "complete byte comparison and native file mtime set to a past sentinel; completed exact retries also use a verified-empty source cache"
+  },
+  "observations": [
+    "case=Completion committed_amount=5000 committed_complete=true observed_pending=true reopened_charge=5000 original_busy_ms=2000 exact_retry_added_charge=0 exact_retry_payload_write=false",
+    "case=Intent committed_amount=5000 committed_complete=false observed_pending=true reopened_charge=5000 original_busy_ms=2000 exact_retry_added_charge=0 exact_retry_payload_write=false",
+    "case=MissingIntentReconciliation committed_amount=0 committed_complete=true observed_pending=false reopened_charge=0 original_busy_ms=2000 exact_retry_added_charge=0 exact_retry_payload_write=false"
+  ],
+  "case_results": {
+    "Intent": "durable 5000-byte charge and incomplete intent survive cancellation/reopen; exact repair with a complete source and target-only reconciliation refuse incomplete target without another charge or payload write",
+    "MissingIntentReconciliation": "durable zero-byte completed identity survives cancellation/reopen; empty-source exact retry and target-only reconciliation succeed with unchanged initial/repair charges and no payload write",
+    "Completion": "real pending intent and payload copy precede committed completion; cancellation/reopen preserve the 5000-byte charge and complete identity; empty-source exact retry and target-only reconciliation add no charge or payload write"
+  },
+  "checks": {
+    "new_native_controls": {
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    "complete_native_m09_library": {
+      "passed": 186,
+      "failed": 0,
+      "ignored": 0,
+      "test_threads": 1
+    },
+    "strict_all_target_clippy": "PASS",
+    "rustfmt": "PASS",
+    "preflight": "PASS",
+    "diff_whitespace": "PASS",
+    "source_integrity_negative_controls": {
+      "passed": 34
+    },
+    "locked_offline_cargo_metadata": "PASS",
+    "whole_repository_contract": {
+      "result": "FAIL",
+      "reason": "sparse checkout omits evidence/pon-v1/README.md linked from docs/README.md; retain this outcome and use root full-checkout gate"
+    }
+  },
+  "commands": [
+    "cargo test --manifest-path trillionnium/Cargo.toml --locked --offline -p trnm-data-availability --lib repair_post_commit_ -- --test-threads=1 --nocapture",
+    "cargo test --manifest-path trillionnium/Cargo.toml --locked --offline -p trnm-data-availability --lib -- --test-threads=1 --nocapture",
+    "cargo clippy --manifest-path trillionnium/Cargo.toml --locked --offline -p trnm-data-availability --all-targets -- -D warnings",
+    "cargo fmt --manifest-path trillionnium/Cargo.toml -p trnm-data-availability -- --check",
+    "python3 scripts/ci/test_ci_source_integrity.py"
+  ],
+  "native_binary": {
+    "path": "trnm_data_availability-860e4d3b2378d360",
+    "sha256": "959f062bc71ea33d76454045b4df3acb3995342e79967f0240b5864ee95c03a1"
+  },
+  "logs": [
+    {
+      "path": "cell-postcommit-focused.log",
+      "sha256": "e10219613afec3a18521ead3b0f147f60b0b5585b764ba449f5e86fd40ae9bcd",
+      "bytes": 2903
+    },
+    {
+      "path": "cell-postcommit-complete-lib.log",
+      "sha256": "3b3f889bdabfa78844960de0183f3765aebafd4e67ea4ed6afe6a30303e655b6",
+      "bytes": 27507
+    },
+    {
+      "path": "cell-postcommit-clippy.log",
+      "sha256": "6a1e7cf08047ac498c9edd07b16b4f63b15a6a09119c21efaa4fbc392a25abc4",
+      "bytes": 1186
+    },
+    {
+      "path": "cell-postcommit-source-negatives.log",
+      "sha256": "6bff78f6efb3798e1da79f8996104ae8d5cf0634210a5759ae6b473d97d82366",
+      "bytes": 5509
+    },
+    {
+      "path": "cell-postcommit-repository.log",
+      "sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361",
+      "bytes": 84
+    },
+    {
+      "path": "cell-postcommit-cargo-metadata.json",
+      "sha256": "f1be7bbbf9f115be63d19de1e1d585abfba38328d2032d486a8bfe14b1059f4d",
+      "bytes": 163188
+    }
+  ],
+  "environment": {
+    "rust": "1.95.0 x86_64-unknown-linux-gnu",
+    "profile": "unchanged repository test profile",
+    "shared_host": true,
+    "CARGO_TARGET_DIR": "target-w1"
+  },
+  "qualification": {
+    "production_activation": false,
+    "independent_custody_accepted": false,
+    "global_external_rollback_recovery_accepted": false
+  },
+  "note": "Coverage addition passes on the existing reviewed helper; no new runtime bug or baseline failure is asserted. The original 100-ms writer controls and public budgets/profiles are unchanged."
+}

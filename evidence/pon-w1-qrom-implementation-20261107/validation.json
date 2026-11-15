@@ -1,0 +1,714 @@
+{
+  "all_w1_tests": 209,
+  "final_local_workflow_trial": {
+    "all_selected_stages_passed": true,
+    "before_after_inputs_identical": true,
+    "ci_source_after_executed": false,
+    "ci_source_before_executed": false,
+    "ci_status_finalization_executed": false,
+    "executed_stages": [
+      {
+        "elapsed_seconds": 0.115,
+        "exit_code": 0,
+        "stage": "preflight"
+      },
+      {
+        "elapsed_seconds": 2.638,
+        "exit_code": 0,
+        "stage": "named_tests"
+      },
+      {
+        "elapsed_seconds": 0.315,
+        "exit_code": 0,
+        "stage": "implementation"
+      },
+      {
+        "elapsed_seconds": 0.064,
+        "exit_code": 0,
+        "stage": "budget_unknown"
+      },
+      {
+        "elapsed_seconds": 0.115,
+        "exit_code": 0,
+        "stage": "budget_hypothetical"
+      },
+      {
+        "elapsed_seconds": 0.065,
+        "exit_code": 0,
+        "stage": "report_scopes"
+      }
+    ],
+    "output_directory": "/workspace/scratch/4a83c49617d8/w1_qrom_workflow_local_20261107_hardened_vcz2idhv/observations",
+    "post_quantum_soundness_qualified": false,
+    "required_test_roster_sha256": "ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8",
+    "schema": "TRNM-W1-QROM-LOCAL-WORKFLOW-OBSERVATION2",
+    "scope": "Local execution of selected hardened workflow stage bodies on the current working tree, bound to recorded input bytes. Not remote CI and not an exact-commit source identity check.",
+    "selected_stage_shell_sha256": {
+      "budget_hypothetical": "4033acf5ba185a7b7f8c3860fec5218278c6035ef8c25ca3b84e88eac71afd29",
+      "budget_unknown": "a87e32cc037f49c960c09b43ef294b966c47219e911772acb3129f80cd52d634",
+      "implementation": "bab4e5038112d962f039f23a4905ed136e278310877fb14b7dafcbb60b5a93d2",
+      "named_tests": "4bcd223ad2625ef32e0368b9a5835b0e7cad0c66f6b5cabca0b9f38396e8235b",
+      "preflight": "24f5ead3fa11a12daeab7f8db9be4c80987925707e90675e564a9b4b89e02729",
+      "report_scopes": "2e11c2ca3e6c0172db4bc93c24f55ec5e989f78c61634d3ed09f31c3b03bb3ad"
+    },
+    "source_hashes_after": [
+      {
+        "bytes": 38772,
+        "path": ".github/workflows/pon-w1-qrom-implementation.yml",
+        "sha256": "e01f7fdc80164b0c7d9874421a2bf44d62602527d9005a392a1c7cdca5f462af"
+      },
+      {
+        "bytes": 21678,
+        "path": "scripts/w1_qrom_implementation_audit.py",
+        "sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354"
+      },
+      {
+        "bytes": 18002,
+        "path": "scripts/w1_control_tree_audit.py",
+        "sha256": "0e9b8e2fd9f6905f98b3df1a52b4ac2a46481b101b1d1a6afd29c2f5502f4865"
+      },
+      {
+        "bytes": 33723,
+        "path": "scripts/w1_profile_source_map.py",
+        "sha256": "324dc1726fc5bfcfd79e5d78d890737bfdd3c5877d74e417d2ed8018254523b0"
+      },
+      {
+        "bytes": 23660,
+        "path": "scripts/w1_fri_transcript_audit.py",
+        "sha256": "12cc991999f68d925f078888d1e18302739171ee6187bbeb2f3bfb17c19a88fc"
+      },
+      {
+        "bytes": 6875,
+        "path": "config/pon/w1-qrom-implementation-v1.json",
+        "sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22"
+      },
+      {
+        "bytes": 13887,
+        "path": "scripts/ci/test_w1_control_tree_audit.py",
+        "sha256": "6a85b71660aeed309367896e18b35b150cb4c83ec22de2377f53b9b815a451b1"
+      },
+      {
+        "bytes": 11405,
+        "path": "scripts/ci/test_w1_qrom_conditional_budget.py",
+        "sha256": "2e5c5b736d35122b46f8b3599eeb83c90c9590bb3b728241799f0429ffc2f82f"
+      },
+      {
+        "bytes": 10834,
+        "path": "scripts/ci/test_w1_qrom_implementation_audit.py",
+        "sha256": "56cb5f923e3082118ac71fee5ead5dedc8bcf29330320333a3d5a1f39eb0faf2"
+      },
+      {
+        "bytes": 6048,
+        "path": "scripts/ci/test_w1_fri_transcript_audit.py",
+        "sha256": "4e41bf3d92d9ba1061619d06dd8ae046161abab62ad724ad35385993f501e287"
+      },
+      {
+        "bytes": 18386,
+        "path": "scripts/ci/test_w1_qrom_workflow_gate.py",
+        "sha256": "9c787224ef93427688991791016e458f40b03cea2daea62e00569203fcc0ca85"
+      },
+      {
+        "bytes": 14985,
+        "path": "scripts/w1_qrom_conditional_budget.py",
+        "sha256": "7a70aed728c174009d63db7d3269531de0c67964558a680e548d89bcd847efca"
+      },
+      {
+        "bytes": 10677,
+        "path": "config/pon/w1-qrom-required-tests-v1.json",
+        "sha256": "ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8"
+      },
+      {
+        "bytes": 242,
+        "path": "scripts/project-preflight.sh",
+        "sha256": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f"
+      }
+    ],
+    "source_hashes_before": [
+      {
+        "bytes": 38772,
+        "path": ".github/workflows/pon-w1-qrom-implementation.yml",
+        "sha256": "e01f7fdc80164b0c7d9874421a2bf44d62602527d9005a392a1c7cdca5f462af"
+      },
+      {
+        "bytes": 21678,
+        "path": "scripts/w1_qrom_implementation_audit.py",
+        "sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354"
+      },
+      {
+        "bytes": 18002,
+        "path": "scripts/w1_control_tree_audit.py",
+        "sha256": "0e9b8e2fd9f6905f98b3df1a52b4ac2a46481b101b1d1a6afd29c2f5502f4865"
+      },
+      {
+        "bytes": 33723,
+        "path": "scripts/w1_profile_source_map.py",
+        "sha256": "324dc1726fc5bfcfd79e5d78d890737bfdd3c5877d74e417d2ed8018254523b0"
+      },
+      {
+        "bytes": 23660,
+        "path": "scripts/w1_fri_transcript_audit.py",
+        "sha256": "12cc991999f68d925f078888d1e18302739171ee6187bbeb2f3bfb17c19a88fc"
+      },
+      {
+        "bytes": 6875,
+        "path": "config/pon/w1-qrom-implementation-v1.json",
+        "sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22"
+      },
+      {
+        "bytes": 13887,
+        "path": "scripts/ci/test_w1_control_tree_audit.py",
+        "sha256": "6a85b71660aeed309367896e18b35b150cb4c83ec22de2377f53b9b815a451b1"
+      },
+      {
+        "bytes": 11405,
+        "path": "scripts/ci/test_w1_qrom_conditional_budget.py",
+        "sha256": "2e5c5b736d35122b46f8b3599eeb83c90c9590bb3b728241799f0429ffc2f82f"
+      },
+      {
+        "bytes": 10834,
+        "path": "scripts/ci/test_w1_qrom_implementation_audit.py",
+        "sha256": "56cb5f923e3082118ac71fee5ead5dedc8bcf29330320333a3d5a1f39eb0faf2"
+      },
+      {
+        "bytes": 6048,
+        "path": "scripts/ci/test_w1_fri_transcript_audit.py",
+        "sha256": "4e41bf3d92d9ba1061619d06dd8ae046161abab62ad724ad35385993f501e287"
+      },
+      {
+        "bytes": 18386,
+        "path": "scripts/ci/test_w1_qrom_workflow_gate.py",
+        "sha256": "9c787224ef93427688991791016e458f40b03cea2daea62e00569203fcc0ca85"
+      },
+      {
+        "bytes": 14985,
+        "path": "scripts/w1_qrom_conditional_budget.py",
+        "sha256": "7a70aed728c174009d63db7d3269531de0c67964558a680e548d89bcd847efca"
+      },
+      {
+        "bytes": 10677,
+        "path": "config/pon/w1-qrom-required-tests-v1.json",
+        "sha256": "ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8"
+      },
+      {
+        "bytes": 242,
+        "path": "scripts/project-preflight.sh",
+        "sha256": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f"
+      }
+    ],
+    "source_roles": {
+      "audit_helpers": [
+        "scripts/w1_control_tree_audit.py",
+        "scripts/w1_profile_source_map.py",
+        "scripts/w1_fri_transcript_audit.py"
+      ],
+      "conditional_budget": "scripts/w1_qrom_conditional_budget.py",
+      "contract": "config/pon/w1-qrom-implementation-v1.json",
+      "main": "scripts/w1_qrom_implementation_audit.py",
+      "preflight": "scripts/project-preflight.sh",
+      "roster": "config/pon/w1-qrom-required-tests-v1.json",
+      "tests": [
+        "scripts/ci/test_w1_control_tree_audit.py",
+        "scripts/ci/test_w1_qrom_conditional_budget.py",
+        "scripts/ci/test_w1_qrom_implementation_audit.py",
+        "scripts/ci/test_w1_fri_transcript_audit.py",
+        "scripts/ci/test_w1_qrom_workflow_gate.py"
+      ],
+      "workflow": ".github/workflows/pon-w1-qrom-implementation.yml"
+    },
+    "unconditional_project_security_bits": null,
+    "workflow_sha256": "e01f7fdc80164b0c7d9874421a2bf44d62602527d9005a392a1c7cdca5f462af"
+  },
+  "historical_trial_policy": "The initial and scope-updated trials predate the CI completeness repairs and are retained as superseded observations.",
+  "hosted_ci": {
+    "observed_for_published_candidate_in_this_record": false,
+    "required_lanes": [
+      "head",
+      "prospective-merge"
+    ],
+    "scope": "Publish/read back hosted jobs separately; local trials do not supply their source identity."
+  },
+  "materialization": {
+    "additional_large_text_blobs_verified": 5,
+    "additional_small_blobs_verified": 174,
+    "empty_responses_substituted_for_expected_blobs": false,
+    "full_local_tracked_source_verified": false,
+    "large_historical_binary_fragments_still_absent": 29,
+    "selected_audit_inputs_complete_and_pinned": true
+  },
+  "native_rust_gate": {
+    "first_missing_chain_dependency": "nix",
+    "first_missing_v2_verifier_dependency": "bincode",
+    "formatting_passed": true,
+    "full_locked_graph_resolved": false,
+    "native_tests_completed": false,
+    "rust_sources_and_lockfiles_changed": false,
+    "strict_clippy_completed": false
+  },
+  "new_named_tests": 81,
+  "passing_observations": [
+    {
+      "command": [
+        "env",
+        "PYTHONDONTWRITEBYTECODE=1",
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_w1*.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/4a83c49617d8/chain_pq",
+      "elapsed_seconds": 14.024098169999888,
+      "exit_code": 0,
+      "name": "all-w1-controls-final",
+      "retained_prefix": "local/all-w1-controls-final",
+      "scope": "Observed command result, not cryptographic or production qualification.",
+      "started_utc": "2026-11-07T11:59:03.175413+00:00",
+      "stderr_bytes": 34612,
+      "stderr_sha256": "d88ac1fde409ad0fc7534597eefe9621277510c270380331f9113b18daeee7ec",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "env",
+        "PYTHONDONTWRITEBYTECODE=1",
+        "PYTHONPATH=scripts/ci:scripts",
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_ci_source_integrity"
+      ],
+      "cwd": "/workspace/scratch/4a83c49617d8/chain_pq",
+      "elapsed_seconds": 3.673596409000311,
+      "exit_code": 0,
+      "name": "source-integrity-controls",
+      "retained_prefix": "local/source-integrity-controls",
+      "scope": "Observed command result, not cryptographic or production qualification.",
+      "started_utc": "2026-11-07T11:36:44.610716+00:00",
+      "stderr_bytes": 7102,
+      "stderr_sha256": "9d86ae78127be62a281243a924a6abf3df45a3d67cf165e7be3a644eac960e8f",
+      "stdout_bytes": 484,
+      "stdout_sha256": "237b91b28b5c41412e736a2b3ab95a1a93ff1f558f4817e8fa2a5192e2d4a6a3",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "env",
+        "PYTHONDONTWRITEBYTECODE=1",
+        "PYTHONPATH=scripts/ci:scripts",
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_ci_contract"
+      ],
+      "cwd": "/workspace/scratch/4a83c49617d8/chain_pq",
+      "elapsed_seconds": 9.987846826999885,
+      "exit_code": 0,
+      "name": "ci-contract-tests",
+      "retained_prefix": "local/ci-contract-tests",
+      "scope": "Observed command result, not cryptographic or production qualification.",
+      "started_utc": "2026-11-07T11:38:04.018847+00:00",
+      "stderr_bytes": 18170,
+      "stderr_sha256": "196ae4079dc40f880b9a1b77d6d9f53ce355149522d048f8192d7895803e7a35",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "env",
+        "CARGO_HOME=/workspace/scratch/270e2a9ce94f/toolchain/cargo",
+        "CARGO_NET_OFFLINE=true",
+        "PATH=/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/usr/bin:/bin",
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/workspace/scratch/4a83c49617d8/chain_pq",
+      "elapsed_seconds": 16.453204868000284,
+      "exit_code": 0,
+      "name": "cargo-fmt-chain",
+      "retained_prefix": "local/cargo-fmt-chain",
+      "scope": "Observed command result, not cryptographic or production qualification.",
+      "started_utc": "2026-11-07T11:36:44.652036+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "env",
+        "PYTHONDONTWRITEBYTECODE=1",
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "cwd": "/workspace/scratch/4a83c49617d8/chain_pq",
+      "elapsed_seconds": 59.4918303150007,
+      "exit_code": 0,
+      "name": "repository-check-expanded",
+      "retained_prefix": "local/repository-check-expanded",
+      "scope": "Observed command result, not cryptographic or production qualification.",
+      "started_utc": "2026-11-07T11:53:38.479604+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 307,
+      "stdout_sha256": "998e939b577fb1c9ff2446c60c9b80a1590549005365d20488eeac0aef239b51",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "env",
+        "PYTHONDONTWRITEBYTECODE=1",
+        "python3",
+        "/workspace/scratch/4a83c49617d8/check_changed_markdown.py"
+      ],
+      "cwd": "/workspace/scratch/4a83c49617d8/chain_pq",
+      "elapsed_seconds": 0.27025138399949356,
+      "exit_code": 0,
+      "name": "changed-markdown-links",
+      "retained_prefix": "local/changed-markdown-links",
+      "scope": "Observed command result, not cryptographic or production qualification.",
+      "started_utc": "2026-11-07T11:47:17.369767+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 62077,
+      "stdout_sha256": "77952453b7ef679f9f3a6c85b7f44e2eb91cb78d7fcbd8bec068512cc24612b0",
+      "timed_out": false
+    }
+  ],
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "post_quantum_soundness_qualified": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false,
+    "security_bits_quantum": null
+  },
+  "retained_failed_observations": [
+    {
+      "command": [
+        "env",
+        "PYTHONDONTWRITEBYTECODE=1",
+        "PYTHONPATH=scripts/ci:scripts",
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_w1_factorial_native_gate",
+        "test_w1_full_v2_disposition",
+        "test_w1_profile_source_map",
+        "test_w1_security_budget",
+        "test_w1_staged_observer",
+        "test_w1_transparent_compare",
+        "test_w1_v2_controls_gate"
+      ],
+      "cwd": "/workspace/scratch/4a83c49617d8/chain_pq",
+      "elapsed_seconds": 5.813250844999857,
+      "exit_code": 1,
+      "name": "retained-w1-tests",
+      "retained_prefix": "local/retained-w1-tests",
+      "scope": "Observed command result, not cryptographic or production qualification.",
+      "started_utc": "2026-11-07T11:36:44.616860+00:00",
+      "stderr_bytes": 30174,
+      "stderr_sha256": "c8861180a72d067b80c2823542842818855d7703f35ef01f86b24d7629c4a597",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "env",
+        "PYTHONDONTWRITEBYTECODE=1",
+        "PYTHONPATH=scripts/ci:scripts",
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_w1_factorial_native_gate",
+        "test_w1_full_v2_disposition",
+        "test_w1_profile_source_map",
+        "test_w1_security_budget",
+        "test_w1_staged_observer",
+        "test_w1_transparent_compare",
+        "test_w1_v2_controls_gate"
+      ],
+      "cwd": "/workspace/scratch/4a83c49617d8/chain_pq",
+      "elapsed_seconds": 11.977446799000063,
+      "exit_code": 1,
+      "name": "retained-w1-tests-materialized",
+      "retained_prefix": "local/retained-w1-tests-materialized",
+      "scope": "Observed command result, not cryptographic or production qualification.",
+      "started_utc": "2026-11-07T11:38:04.042735+00:00",
+      "stderr_bytes": 19898,
+      "stderr_sha256": "5d7c6b6f639f29239539c794964c93aa117ca1c94191124070f6fefe81e7fb72",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "env",
+        "CARGO_HOME=/workspace/scratch/270e2a9ce94f/toolchain/cargo",
+        "CARGO_NET_OFFLINE=true",
+        "PATH=/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/usr/bin:/bin",
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/workspace/scratch/4a83c49617d8/chain_pq",
+      "elapsed_seconds": 0.13016256300034001,
+      "exit_code": 101,
+      "name": "cargo-metadata-chain",
+      "retained_prefix": "local/cargo-metadata-chain",
+      "scope": "Observed command result, not cryptographic or production qualification.",
+      "started_utc": "2026-11-07T11:36:44.605484+00:00",
+      "stderr_bytes": 385,
+      "stderr_sha256": "6d9be2283c9b1bf8dd2e0c3fd0e6e0b687ba10195c8e534377c2d093dc9d55bd",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "env",
+        "CARGO_HOME=/workspace/scratch/270e2a9ce94f/toolchain/cargo",
+        "CARGO_NET_OFFLINE=true",
+        "PATH=/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/usr/bin:/bin",
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/workspace/scratch/4a83c49617d8/chain_pq",
+      "elapsed_seconds": 0.08417946699955792,
+      "exit_code": 101,
+      "name": "cargo-metadata-v2",
+      "retained_prefix": "local/cargo-metadata-v2",
+      "scope": "Observed command result, not cryptographic or production qualification.",
+      "started_utc": "2026-11-07T11:36:44.651056+00:00",
+      "stderr_bytes": 670,
+      "stderr_sha256": "137032f28d911841dab6e2281943d0187f71e9b190e0030d8b48792df0eefda3",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "env",
+        "CARGO_HOME=/workspace/scratch/270e2a9ce94f/toolchain/cargo",
+        "CARGO_NET_OFFLINE=true",
+        "CARGO_TARGET_DIR=/workspace/scratch/4a83c49617d8/cargo-target",
+        "PATH=/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/usr/bin:/bin",
+        "cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline"
+      ],
+      "cwd": "/workspace/scratch/4a83c49617d8/chain_pq",
+      "elapsed_seconds": 0.23867234699991968,
+      "exit_code": 101,
+      "name": "cargo-test-chain",
+      "retained_prefix": "local/cargo-test-chain",
+      "scope": "Observed command result, not cryptographic or production qualification.",
+      "started_utc": "2026-11-07T11:38:04.011646+00:00",
+      "stderr_bytes": 385,
+      "stderr_sha256": "6d9be2283c9b1bf8dd2e0c3fd0e6e0b687ba10195c8e534377c2d093dc9d55bd",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "env",
+        "CARGO_HOME=/workspace/scratch/270e2a9ce94f/toolchain/cargo",
+        "CARGO_NET_OFFLINE=true",
+        "CARGO_TARGET_DIR=/workspace/scratch/4a83c49617d8/cargo-target",
+        "PATH=/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/usr/bin:/bin",
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/4a83c49617d8/chain_pq",
+      "elapsed_seconds": 0.21073545400031435,
+      "exit_code": 1,
+      "name": "cargo-clippy-chain",
+      "retained_prefix": "local/cargo-clippy-chain",
+      "scope": "Observed command result, not cryptographic or production qualification.",
+      "started_utc": "2026-11-07T11:38:04.038736+00:00",
+      "stderr_bytes": 148,
+      "stderr_sha256": "c39e7b5270dc80bab48cf83740a76b9e3421ed3936839b94e4bc9454e23ce782",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "env",
+        "RUSTUP_HOME=/workspace/scratch/270e2a9ce94f/toolchain/rustup",
+        "CARGO_HOME=/workspace/scratch/270e2a9ce94f/toolchain/cargo",
+        "CARGO_NET_OFFLINE=true",
+        "CARGO_TARGET_DIR=/workspace/scratch/4a83c49617d8/cargo-target",
+        "PATH=/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/usr/bin:/bin",
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/4a83c49617d8/chain_pq",
+      "elapsed_seconds": 0.1859903230006239,
+      "exit_code": 101,
+      "name": "cargo-clippy-chain-correct-toolchain",
+      "retained_prefix": "local/cargo-clippy-chain-correct-toolchain",
+      "scope": "Observed command result, not cryptographic or production qualification.",
+      "started_utc": "2026-11-07T11:38:40.953172+00:00",
+      "stderr_bytes": 385,
+      "stderr_sha256": "6d9be2283c9b1bf8dd2e0c3fd0e6e0b687ba10195c8e534377c2d093dc9d55bd",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "command": [
+        "env",
+        "PYTHONDONTWRITEBYTECODE=1",
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "cwd": "/workspace/scratch/4a83c49617d8/chain_pq",
+      "elapsed_seconds": 0.968533367999953,
+      "exit_code": 2,
+      "name": "repository-full-check-sparse",
+      "retained_prefix": "local/repository-full-check-sparse",
+      "scope": "Observed command result, not cryptographic or production qualification.",
+      "started_utc": "2026-11-07T11:45:18.259166+00:00",
+      "stderr_bytes": 84,
+      "stderr_sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    }
+  ],
+  "schema": "TRNM-W1-QROM-VALIDATION1",
+  "separate_existing_ci_contract_tests": 104,
+  "separate_source_integrity_tests": 43,
+  "source_base_commit": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+  "source_files": [
+    {
+      "bytes": 38772,
+      "path": ".github/workflows/pon-w1-qrom-implementation.yml",
+      "sha256": "e01f7fdc80164b0c7d9874421a2bf44d62602527d9005a392a1c7cdca5f462af"
+    },
+    {
+      "bytes": 6875,
+      "path": "config/pon/w1-qrom-implementation-v1.json",
+      "sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22"
+    },
+    {
+      "bytes": 10677,
+      "path": "config/pon/w1-qrom-required-tests-v1.json",
+      "sha256": "ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8"
+    },
+    {
+      "bytes": 18002,
+      "path": "scripts/w1_control_tree_audit.py",
+      "sha256": "0e9b8e2fd9f6905f98b3df1a52b4ac2a46481b101b1d1a6afd29c2f5502f4865"
+    },
+    {
+      "bytes": 23660,
+      "path": "scripts/w1_fri_transcript_audit.py",
+      "sha256": "12cc991999f68d925f078888d1e18302739171ee6187bbeb2f3bfb17c19a88fc"
+    },
+    {
+      "bytes": 33723,
+      "path": "scripts/w1_profile_source_map.py",
+      "sha256": "324dc1726fc5bfcfd79e5d78d890737bfdd3c5877d74e417d2ed8018254523b0"
+    },
+    {
+      "bytes": 21678,
+      "path": "scripts/w1_qrom_implementation_audit.py",
+      "sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354"
+    },
+    {
+      "bytes": 14985,
+      "path": "scripts/w1_qrom_conditional_budget.py",
+      "sha256": "7a70aed728c174009d63db7d3269531de0c67964558a680e548d89bcd847efca"
+    },
+    {
+      "bytes": 13887,
+      "path": "scripts/ci/test_w1_control_tree_audit.py",
+      "sha256": "6a85b71660aeed309367896e18b35b150cb4c83ec22de2377f53b9b815a451b1"
+    },
+    {
+      "bytes": 6048,
+      "path": "scripts/ci/test_w1_fri_transcript_audit.py",
+      "sha256": "4e41bf3d92d9ba1061619d06dd8ae046161abab62ad724ad35385993f501e287"
+    },
+    {
+      "bytes": 10834,
+      "path": "scripts/ci/test_w1_qrom_implementation_audit.py",
+      "sha256": "56cb5f923e3082118ac71fee5ead5dedc8bcf29330320333a3d5a1f39eb0faf2"
+    },
+    {
+      "bytes": 11405,
+      "path": "scripts/ci/test_w1_qrom_conditional_budget.py",
+      "sha256": "2e5c5b736d35122b46f8b3599eeb83c90c9590bb3b728241799f0429ffc2f82f"
+    },
+    {
+      "bytes": 18386,
+      "path": "scripts/ci/test_w1_qrom_workflow_gate.py",
+      "sha256": "9c787224ef93427688991791016e458f40b03cea2daea62e00569203fcc0ca85"
+    },
+    {
+      "bytes": 11231,
+      "path": "scripts/ci/verify_ci_source.py",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    },
+    {
+      "bytes": 242,
+      "path": "scripts/project-preflight.sh",
+      "sha256": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f"
+    }
+  ],
+  "source_state": "Candidate file identities recorded; full local tracked-source verification unavailable."
+}

@@ -1,0 +1,18 @@
+{
+  "command": {
+    "args": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_repository.py"
+    ],
+    "elapsed_seconds": 58.57673874706961,
+    "exit_code": 0,
+    "name": "repository-after-physical-restore",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "d9b7c72bf5078d46903a0ab809b77faece0a562e8db3169562b35cabaa90b5b5"
+  },
+  "no_checker_changes": true,
+  "no_native_execution": true,
+  "result": "PASS",
+  "scope": "original complete repository checker after exact tracked-byte restoration"
+}

@@ -1,0 +1,58 @@
+{
+  "argv": [
+    "/home/agent/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+    "--version"
+  ],
+  "cwd": "/workspace/scratch/b6ec4f0afca8/chain-joint-daa",
+  "elapsed_seconds": 0.3158230419994652,
+  "ended_at_utc": "2026-11-09T13:49:43.269132+00:00",
+  "expected_head": "73b5a70fc3f4ffa5a1a99da366591c243d384786",
+  "label": "installed-rustfmt",
+  "native_mining_or_attack_scenario_executed": false,
+  "passed": true,
+  "process_exit_code": 0,
+  "production_qualification": false,
+  "source_after": {
+    "complete_repository_raw_bytes_attested": false,
+    "head": "73b5a70fc3f4ffa5a1a99da366591c243d384786",
+    "listed_input_bytes_match_head": true,
+    "listed_inputs_sha256": {
+      "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+      "scripts/ci/ci_job.sh": "3da995a05212c9d961dffc2037efc95357e7afd81d443aa39fc05ca2bb5eedf1",
+      "scripts/ci/ci_observation.py": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+      "scripts/ci/run_fuzz_smoke.py": "7de4c8111796eb5cde023fb4cbd699d610daab543cd90d4209ada44b8d3921d9",
+      "scripts/ci/run_supply_chain.py": "3ba25e784966e4d52efe22d400ddb73657a02550a8d7ac955c2968b652d839f6",
+      "scripts/ci/test_ci_source_integrity.py": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e",
+      "scripts/ci/verify_ci_source.py": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+      "trillionnium/Cargo.lock": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+      "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    "status": "",
+    "tree": "33734d72a3d893fb8dfb438b17a42fa3a20e2114"
+  },
+  "source_before": {
+    "complete_repository_raw_bytes_attested": false,
+    "head": "73b5a70fc3f4ffa5a1a99da366591c243d384786",
+    "listed_input_bytes_match_head": true,
+    "listed_inputs_sha256": {
+      "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+      "scripts/ci/ci_job.sh": "3da995a05212c9d961dffc2037efc95357e7afd81d443aa39fc05ca2bb5eedf1",
+      "scripts/ci/ci_observation.py": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+      "scripts/ci/run_fuzz_smoke.py": "7de4c8111796eb5cde023fb4cbd699d610daab543cd90d4209ada44b8d3921d9",
+      "scripts/ci/run_supply_chain.py": "3ba25e784966e4d52efe22d400ddb73657a02550a8d7ac955c2968b652d839f6",
+      "scripts/ci/test_ci_source_integrity.py": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e",
+      "scripts/ci/verify_ci_source.py": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+      "trillionnium/Cargo.lock": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+      "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    "status": "",
+    "tree": "33734d72a3d893fb8dfb438b17a42fa3a20e2114"
+  },
+  "source_observation_unchanged": true,
+  "started_at_utc": "2026-11-09T13:49:42.953309+00:00",
+  "stderr": "installed-rustfmt.stderr.log",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "installed-rustfmt.stdout.log",
+  "stdout_sha256": "21e923568a260155c34a6f780f9513d3962c088aa3bbe8c91ab5385f470547d1",
+  "timed_out": false
+}

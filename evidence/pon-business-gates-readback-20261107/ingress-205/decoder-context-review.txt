@@ -1,0 +1,79 @@
+PATH trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs function body_maximum
+635: fn body_maximum(op: u8) -> Result<usize> {
+636:     match op {
+637:         1 | 6 | 7 => Ok(MAX_BODY),
+638:         4 => Ok(MAX_POOL_BODY),
+639:         2 | 3 | 5 | 8 => Ok(MAX_READ_BODY),
+640:         _ => Err("PUBLIC_OPERATION".into()),
+641:     }
+642: }
+
+PATH trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs function lower_hex
+643: fn lower_hex(text: &[u8]) -> bool {
+644:     text.iter()
+645:         .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(b))
+646: }
+647: /// Check cardinality and every hex row before serde can allocate a Vec<String>.
+
+PATH trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs function canonical_request
+1044: fn canonical_request(bytes: &[u8], op: u8) -> Result<Request> {
+1045:     ensure(
+1046:         !bytes.is_empty() && bytes.len() <= body_maximum(op)?,
+1047:         "PUBLIC_BODY_LIMIT",
+1048:     )?;
+1049:     if op == 4 {
+1050:         pool_bundle_body_guard(bytes)?;
+1051:     }
+1052:     if matches!(op, 1 | 6 | 7) {
+1053:         // Every packet-bearing profile rejects noncanonical hex before allocation.
+1054:         let prefix: &[u8] = match op {
+1055:             1 => br#"{"op":"submit","packet":""#,
+1056:             6 => br#"{"op":"growth_submit_v1","packet":""#,
+1057:             7 => br#"{"op":"growth_packet_status_v1","packet":""#,
+1058:             _ => unreachable!(),
+1059:         };
+1060:         let text = bytes
+1061:             .strip_prefix(prefix)
+1062:             .and_then(|b| b.strip_suffix(br#""}"#))
+1063:             .ok_or("PUBLIC_REQUEST_CANONICAL")?;
+1064:         ensure(
+1065:             text.len() <= 2 * MAX_PACKET && text.len().is_multiple_of(2) && lower_hex(text),
+1066:             "PUBLIC_PACKET_TEXT",
+1067:         )?;
+1068:         // The exact envelope and complete lowercase ASCII grammar already
+1069:         // establish the same serde representation. Avoid a second JSON parse
+1070:         // and streaming re-serialization of this potentially 2-MiB string.
+1071:         // Nothing has established Packet, Work, current owner or State validity;
+1072:         // those original checks still execute after this transport-only decode.
+1073:         let packet = std::str::from_utf8(text)
+1074:             .map_err(|_| "PUBLIC_PACKET_TEXT")?
+1075:             .to_owned();
+1076:         return Ok(match op {
+1077:             1 => Request::Submit { packet },
+1078:             6 => Request::GrowthSubmitV1 { packet },
+1079:             7 => Request::GrowthPacketStatusV1 { packet },
+1080:             _ => unreachable!(),
+1081:         });
+1082:     }
+1083:     let request: Request = serde_json::from_slice(bytes)?;
+1084:     let mut writer = ExactCanonical { bytes, cursor: 0 };
+1085:     serde_json::to_writer(&mut writer, &request).map_err(|_| "PUBLIC_REQUEST_CANONICAL")?;
+1086:     ensure(
+1087:         writer.cursor == bytes.len() && request_op(&request)? == op,
+1088:         "PUBLIC_REQUEST_CANONICAL",
+1089:     )?;
+1090:     Ok(request)
+1091: }
+
+PATH trillionnium/crates/trnm-pon-node/src/ingress.rs function hex_packet
+931: fn hex_packet(text: &str) -> Result<Packet> {
+932:     decode_hex_packet(text, None)
+933: }
+
+PATH trillionnium/crates/trnm-pon-node/src/ingress.rs function decode_hex_packet
+940: fn decode_hex_packet(text: &str, settings: Option<&Settings>) -> Result<Packet> {
+941:     decode_hex_packet_with(text, |raw| match settings {
+942:         Some(settings) => Packet::decode_for_settings(raw, settings),
+943:         None => Packet::decode(raw),
+944:     })
+945: }

@@ -1,0 +1,24 @@
+{
+  "head": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+  "tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+  "parent": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+  "branch": "fix/chain-native-completion-20261108-70ae",
+  "author": {
+    "name": "ProfHepta",
+    "email": "102159240+ProfHepta@users.noreply.github.com",
+    "date": "2026-11-09T03:40:07+00:00"
+  },
+  "committer": {
+    "name": "ProfHepta",
+    "email": "102159240+ProfHepta@users.noreply.github.com",
+    "date": "2026-11-09T03:40:07+00:00"
+  },
+  "paths": {
+    ".github/workflows/pon-recent-batch-acceptance.yml": "fff4e7603dd8cc7450a5de9d59d56bde3b71990f",
+    "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs": "674a79f988a2dd6353aa7ab9e2c927af9d7ce32b",
+    "config/pon/pq-cross-branch-corpus-v1.json": "b8e151a84fd4847b9a8c7153c92a0b92d2182e37"
+  },
+  "patch_sha256": "c964a864a1d20c34400b4710f173ec75bc15b6ba764c266fd767338e8753eff0",
+  "qualification": "HOLD_NO_GO",
+  "runtime_validation": "pending exact committed-source R2 campaign"
+}

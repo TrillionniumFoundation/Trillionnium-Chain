@@ -1,0 +1,22 @@
+test_all_actions_have_distinct_native_identity (__main__.RootNativeStructureTests.test_all_actions_have_distinct_native_identity) ... ok
+test_expired_or_cancelled_original_budget_refuses_without_backend (__main__.RootNativeStructureTests.test_expired_or_cancelled_original_budget_refuses_without_backend) ... ok
+test_input_size_depth_boolean_and_message_bounds (__main__.RootNativeStructureTests.test_input_size_depth_boolean_and_message_bounds) ... ok
+test_noncanonical_or_trailing_spki_and_unknown_suite_rejected (__main__.RootNativeStructureTests.test_noncanonical_or_trailing_spki_and_unknown_suite_rejected) ... ok
+test_normal_and_revoke_cannot_supply_hidden_successor (__main__.RootNativeStructureTests.test_normal_and_revoke_cannot_supply_hidden_successor) ... ok
+test_one_family_duplicates_unknown_fields_and_wrong_signature_sizes (__main__.RootNativeStructureTests.test_one_family_duplicates_unknown_fields_and_wrong_signature_sizes) ... ok
+test_possession_roles_and_intents_are_distinct (__main__.RootNativeStructureTests.test_possession_roles_and_intents_are_distinct) ... ok
+test_public_result_boundary_never_grants_whole_chain_or_production (__main__.RootNativeStructureTests.test_public_result_boundary_never_grants_whole_chain_or_production) ... ok
+test_quorum_selection_is_not_part_of_operation_identity (__main__.RootNativeStructureTests.test_quorum_selection_is_not_part_of_operation_identity) ... ok
+test_roster_requires_all_six_and_no_extra_key (__main__.RootNativeStructureTests.test_roster_requires_all_six_and_no_extra_key) ... ok
+test_spki_same_length_shake_oid_is_rejected (__main__.RootNativeStructureTests.test_spki_same_length_shake_oid_is_rejected) ... ok
+test_spki_sizes_and_suite_framed_identity (__main__.RootNativeStructureTests.test_spki_sizes_and_suite_framed_identity) ... ok
+test_statement_frame_has_full_maximum_payload_and_successor (__main__.RootNativeStructureTests.test_statement_frame_has_full_maximum_payload_and_successor) ... ok
+test_successor_policy_and_every_possession_checked_before_backend (__main__.RootNativeStructureTests.test_successor_policy_and_every_possession_checked_before_backend) ... ok
+test_trusted_scope_sequence_revocation_and_replay_precede_backend (__main__.RootNativeStructureTests.test_trusted_scope_sequence_revocation_and_replay_precede_backend) ... ok
+test_unused_third_key_cannot_be_mislabeled_or_omitted (__main__.RootNativeStructureTests.test_unused_third_key_cannot_be_mislabeled_or_omitted) ... ok
+test_whole_policy_checks_every_inactive_path (__main__.RootNativeStructureTests.test_whole_policy_checks_every_inactive_path) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.058s
+
+OK

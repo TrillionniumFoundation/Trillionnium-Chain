@@ -1,0 +1,656 @@
+{
+  "schema": "rog-native-controller-terminal-receipts-v1",
+  "full_commands_in_saved_request_files": true,
+  "start_args_omitted_from_this_compact_index": true,
+  "jobs": [
+    {
+      "role": "rog_native_host_probe",
+      "job_id": "1a1c0b4b6d0-11c5a-26",
+      "stable_key": "chain-hepta-481716-native-host-probe-01",
+      "start_receipt": {
+        "audit_recorded": true,
+        "job": {
+          "created_unix_ms": 1794234431184,
+          "cwd": null,
+          "env_keys": [],
+          "executable": "/usr/bin/python3",
+          "execution_mode": "operator",
+          "host": "rog",
+          "id": "1a1c0b4b6d0-11c5a-26",
+          "idempotency_key": "chain-hepta-481716-native-host-probe-01",
+          "launch_error": null,
+          "launch_state": "launched",
+          "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1c0b4b6d0-11c5a-26",
+          "request_digest": "78a1257bc8d1961f9d13bc742f3c09497b8ce60134e9ace4827ad8f6ca078e27",
+          "request_fingerprint": 8692269969382152000,
+          "ssh_target": "rog-ts",
+          "system_jobctl": false,
+          "unit": "hepta-runtime-job-1a1c0b4b6d0-11c5a-26"
+        },
+        "launch": {
+          "backend": "systemd",
+          "launcher_pid": null,
+          "ok": true,
+          "unit": "hepta-runtime-job-1a1c0b4b6d0-11c5a-26"
+        },
+        "local_record_pending": false,
+        "reused": false
+      },
+      "status": {
+        "at_unix_ms": 1794234440009,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1c0b4b6d0-11c5a-26",
+        "launch_nonce": "c8a2a5b22090a195e64336ba8a9de9a4",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 1435,
+            "stored": 1435
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "role": "rog_m4_directory",
+      "job_id": "1a1c0ba20df-11c5a-3f",
+      "stable_key": "chain-hepta-481716-native-dir-01",
+      "start_receipt": {
+        "audit_recorded": true,
+        "job": {
+          "created_unix_ms": 1794234786015,
+          "cwd": null,
+          "env_keys": [],
+          "executable": "/usr/bin/python3",
+          "execution_mode": "operator",
+          "host": "rog",
+          "id": "1a1c0ba20df-11c5a-3f",
+          "idempotency_key": "chain-hepta-481716-native-dir-01",
+          "launch_error": null,
+          "launch_state": "launched",
+          "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1c0ba20df-11c5a-3f",
+          "request_digest": "271fe57e77da05827d4bedbec56edce0ebfb4326a84972ba98489aaae8621de5",
+          "request_fingerprint": 2819224223096637000,
+          "ssh_target": "rog-ts",
+          "system_jobctl": false,
+          "unit": "hepta-runtime-job-1a1c0ba20df-11c5a-3f"
+        },
+        "launch": {
+          "backend": "systemd",
+          "launcher_pid": null,
+          "ok": true,
+          "unit": "hepta-runtime-job-1a1c0ba20df-11c5a-3f"
+        },
+        "local_record_pending": false,
+        "reused": false
+      },
+      "status": {
+        "at_unix_ms": 1794234786847,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1c0ba20df-11c5a-3f",
+        "launch_nonce": "16d00fadeb5f228f9201a6f08306e4ee",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 544,
+            "stored": 544
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "role": "rog_m4_source",
+      "job_id": "1a1c0c08bec-11c5a-56",
+      "stable_key": "chain-hepta-481716-native-source-01",
+      "start_receipt": {
+        "audit_recorded": true,
+        "job": {
+          "created_unix_ms": 1794235206636,
+          "cwd": "/home/qian-qi/chain-hepta-481716-native-check",
+          "env_keys": [],
+          "executable": "/usr/bin/python3",
+          "execution_mode": "operator",
+          "host": "rog",
+          "id": "1a1c0c08bec-11c5a-56",
+          "idempotency_key": "chain-hepta-481716-native-source-01",
+          "launch_error": null,
+          "launch_state": "launched",
+          "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1c0c08bec-11c5a-56",
+          "request_digest": "f0c62f72554709c268f6f7aa3d7b7ec655d77987ba03d2c35f1197efc1310296",
+          "request_fingerprint": 17349606782594910000,
+          "ssh_target": "rog-ts",
+          "system_jobctl": false,
+          "unit": "hepta-runtime-job-1a1c0c08bec-11c5a-56"
+        },
+        "launch": {
+          "backend": "systemd",
+          "launcher_pid": null,
+          "ok": true,
+          "unit": "hepta-runtime-job-1a1c0c08bec-11c5a-56"
+        },
+        "local_record_pending": false,
+        "reused": false
+      },
+      "status": {
+        "at_unix_ms": 1794235270892,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1c0c08bec-11c5a-56",
+        "launch_nonce": "63e229bb84d2141fcc52a24ba0d60b3c",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 1826,
+            "stored": 1826
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "role": "rog_m4_check",
+      "job_id": "1a1c0c2ef89-11c5a-5a",
+      "stable_key": "chain-hepta-481716-native-check-01",
+      "start_receipt": {
+        "audit_recorded": true,
+        "job": {
+          "created_unix_ms": 1794235363209,
+          "cwd": "/home/qian-qi/chain-hepta-481716-native-check/source",
+          "env_keys": [
+            "PYTHONDONTWRITEBYTECODE"
+          ],
+          "executable": "/usr/bin/python3",
+          "execution_mode": "operator",
+          "host": "rog",
+          "id": "1a1c0c2ef89-11c5a-5a",
+          "idempotency_key": "chain-hepta-481716-native-check-01",
+          "launch_error": null,
+          "launch_state": "launched",
+          "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1c0c2ef89-11c5a-5a",
+          "request_digest": "fe4bdf9aed66d6e6808cd40156dc68908f99823014cbd4f5c95779896d477e73",
+          "request_fingerprint": 18323985365387893000,
+          "ssh_target": "rog-ts",
+          "system_jobctl": false,
+          "unit": "hepta-runtime-job-1a1c0c2ef89-11c5a-5a"
+        },
+        "launch": {
+          "backend": "systemd",
+          "launcher_pid": null,
+          "ok": true,
+          "unit": "hepta-runtime-job-1a1c0c2ef89-11c5a-5a"
+        },
+        "local_record_pending": false,
+        "reused": false
+      },
+      "status": {
+        "at_unix_ms": 1794235436514,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1c0c2ef89-11c5a-5a",
+        "launch_nonce": "5738de3cf1ad1c1213d6264fa40e0531",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 3445,
+            "stored": 3445
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "role": "rog_m4_tests",
+      "job_id": "1a1c0cc9c04-11c5a-74",
+      "stable_key": "native-retained-tests-01",
+      "start_receipt": {
+        "audit_recorded": true,
+        "job": {
+          "created_unix_ms": 1794235997188,
+          "cwd": "/home/qian-qi/chain-hepta-481716-native-check/source",
+          "env_keys": [
+            "PYTHONDONTWRITEBYTECODE"
+          ],
+          "executable": "/usr/bin/python3",
+          "execution_mode": "operator",
+          "host": "rog",
+          "id": "1a1c0cc9c04-11c5a-74",
+          "idempotency_key": "native-retained-tests-01",
+          "launch_error": null,
+          "launch_state": "launched",
+          "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1c0cc9c04-11c5a-74",
+          "request_digest": "89af47e8022b3cba66aee9d35de8e5406f59ec999094565ae611d1021f45df40",
+          "request_fingerprint": 9921227565914866000,
+          "ssh_target": "rog-ts",
+          "system_jobctl": false,
+          "unit": "hepta-runtime-job-1a1c0cc9c04-11c5a-74"
+        },
+        "launch": {
+          "backend": "systemd",
+          "launcher_pid": null,
+          "ok": true,
+          "unit": "hepta-runtime-job-1a1c0cc9c04-11c5a-74"
+        },
+        "local_record_pending": false,
+        "reused": false
+      },
+      "status": {
+        "at_unix_ms": 1794235998128,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 2,
+        "job_id": "1a1c0cc9c04-11c5a-74",
+        "launch_nonce": "770e4efee941e3b4d3124edc9d1ef952",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 1295,
+            "stored": 1295
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "failed",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "role": "rog_m4_tests2",
+      "job_id": "1a1c0d2c5a4-336d-3",
+      "stable_key": "native-retained-tests-02",
+      "start_receipt": {
+        "audit_recorded": true,
+        "job": {
+          "created_unix_ms": 1794236401060,
+          "cwd": "/home/qian-qi/chain-hepta-481716-native-check/source",
+          "env_keys": [
+            "PYTHONDONTWRITEBYTECODE"
+          ],
+          "executable": "/usr/bin/python3",
+          "execution_mode": "operator",
+          "host": "rog",
+          "id": "1a1c0d2c5a4-336d-3",
+          "idempotency_key": "native-retained-tests-02",
+          "launch_error": null,
+          "launch_state": "launched",
+          "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1c0d2c5a4-336d-3",
+          "request_digest": "44b9bc73045c7ae5d371222c158dcaaa21b841d9c988fe2cc78738f33cd49b66",
+          "request_fingerprint": 4952196467451002000,
+          "ssh_target": "rog-ts",
+          "system_jobctl": false,
+          "unit": "hepta-runtime-job-1a1c0d2c5a4-336d-3"
+        },
+        "launch": {
+          "backend": "systemd",
+          "launcher_pid": null,
+          "ok": true,
+          "unit": "hepta-runtime-job-1a1c0d2c5a4-336d-3"
+        },
+        "local_record_pending": false,
+        "reused": false
+      },
+      "status": {
+        "at_unix_ms": 1794237251892,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 2,
+        "job_id": "1a1c0d2c5a4-336d-3",
+        "launch_nonce": "d6edb40243265466c8e30dc8b629201f",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 73807,
+            "stored": 73807
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "failed",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "role": "rog_m4_stop_review",
+      "job_id": "1a1c0e69e1e-336d-27",
+      "stable_key": "native-retained-tests-02-stop-review-01",
+      "start_receipt": {
+        "audit_recorded": true,
+        "job": {
+          "created_unix_ms": 1794237701662,
+          "cwd": "/home/qian-qi/chain-hepta-481716-native-check",
+          "env_keys": [],
+          "executable": "/usr/bin/python3",
+          "execution_mode": "operator",
+          "host": "rog",
+          "id": "1a1c0e69e1e-336d-27",
+          "idempotency_key": "native-retained-tests-02-stop-review-01",
+          "launch_error": null,
+          "launch_state": "launched",
+          "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1c0e69e1e-336d-27",
+          "request_digest": "46c0a52aa6c128449257281b3a7903a75cf72276ef8aa77962ed6c04992aa49d",
+          "request_fingerprint": 5098256380788287000,
+          "ssh_target": "rog-ts",
+          "system_jobctl": false,
+          "unit": "hepta-runtime-job-1a1c0e69e1e-336d-27"
+        },
+        "launch": {
+          "backend": "systemd",
+          "launcher_pid": null,
+          "ok": true,
+          "unit": "hepta-runtime-job-1a1c0e69e1e-336d-27"
+        },
+        "local_record_pending": false,
+        "reused": false
+      },
+      "status": {
+        "at_unix_ms": 1794237703712,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1c0e69e1e-336d-27",
+        "launch_nonce": "065dc9468f659472c303abdb420500c9",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 1569,
+            "stored": 1569
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "role": "rog_m4_tests3",
+      "job_id": "1a1c0e8f2ea-336d-2b",
+      "stable_key": "native-retained-tests-03",
+      "start_receipt": {
+        "audit_recorded": true,
+        "job": {
+          "created_unix_ms": 1794237854442,
+          "cwd": "/home/qian-qi/chain-hepta-481716-native-check/source",
+          "env_keys": [
+            "PYTHONDONTWRITEBYTECODE"
+          ],
+          "executable": "/usr/bin/python3",
+          "execution_mode": "operator",
+          "host": "rog",
+          "id": "1a1c0e8f2ea-336d-2b",
+          "idempotency_key": "native-retained-tests-03",
+          "launch_error": null,
+          "launch_state": "launched",
+          "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1c0e8f2ea-336d-2b",
+          "request_digest": "dd28495dd324c77dbeed6abfc6652436762221beab11996bfbfac95e36191618",
+          "request_fingerprint": 15936067948773690000,
+          "ssh_target": "rog-ts",
+          "system_jobctl": false,
+          "unit": "hepta-runtime-job-1a1c0e8f2ea-336d-2b"
+        },
+        "launch": {
+          "backend": "systemd",
+          "launcher_pid": null,
+          "ok": true,
+          "unit": "hepta-runtime-job-1a1c0e8f2ea-336d-2b"
+        },
+        "local_record_pending": false,
+        "reused": false
+      },
+      "status": {
+        "at_unix_ms": 1794237879290,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 2,
+        "job_id": "1a1c0e8f2ea-336d-2b",
+        "launch_nonce": "9ab76497083f9a0af5ffbe51d10d3875",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 75047,
+            "stored": 75047
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "failed",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "role": "rog_m4_collect",
+      "job_id": "1a1c0ef211a-336d-39",
+      "stable_key": "chain-hepta-481716-native-collect-01",
+      "start_receipt": {
+        "audit_recorded": true,
+        "job": {
+          "created_unix_ms": 1794238259482,
+          "cwd": "/home/qian-qi/chain-hepta-481716-native-check",
+          "env_keys": [
+            "PYTHONDONTWRITEBYTECODE"
+          ],
+          "executable": "/usr/bin/python3",
+          "execution_mode": "operator",
+          "host": "rog",
+          "id": "1a1c0ef211a-336d-39",
+          "idempotency_key": "chain-hepta-481716-native-collect-01",
+          "launch_error": null,
+          "launch_state": "launched",
+          "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1c0ef211a-336d-39",
+          "request_digest": "9b35abc75fa535b1b93a31a84a3a5c150f775d4e222afd70dee313733370e086",
+          "request_fingerprint": 11184034122436000000,
+          "ssh_target": "rog-ts",
+          "system_jobctl": false,
+          "unit": "hepta-runtime-job-1a1c0ef211a-336d-39"
+        },
+        "launch": {
+          "backend": "systemd",
+          "launcher_pid": null,
+          "ok": true,
+          "unit": "hepta-runtime-job-1a1c0ef211a-336d-39"
+        },
+        "local_record_pending": false,
+        "reused": false
+      },
+      "status": {
+        "at_unix_ms": 1794238260462,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1c0ef211a-336d-39",
+        "launch_nonce": "902f9309277f5c3538e0fc432d3d8234",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 16717,
+            "stored": 16717
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    }
+  ]
+}

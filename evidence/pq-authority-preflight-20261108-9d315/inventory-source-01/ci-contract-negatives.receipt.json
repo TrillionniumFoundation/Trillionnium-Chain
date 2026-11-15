@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/test_ci_contract.py"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 42.58258652011864,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794129556.1163895,
+  "label": "ci-contract-negatives",
+  "logs": {
+    "ci-contract-negatives.stderr.log": {
+      "bytes": 19591,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/inventory-source-01/ci-contract-negatives.stderr.log",
+      "sha256": "82a477375e3eafb40eb797488faa03bc02302016164191ceaef7153d73ce3cde"
+    },
+    "ci-contract-negatives.stdout.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/inventory-source-01/ci-contract-negatives.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "reported_test_counts": [
+      116
+    ]
+  },
+  "started_unix_seconds": 1794129513.533803
+}

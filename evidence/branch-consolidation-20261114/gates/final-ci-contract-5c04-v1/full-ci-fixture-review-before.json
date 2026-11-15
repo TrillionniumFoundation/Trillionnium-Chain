@@ -1,0 +1,51 @@
+{
+  "excerpts": {
+    "W1ReuseV3LaneTests.test_v3_lane_is_additive_and_keeps_all_four_exact_source_cells": {
+      "line": 1320,
+      "end": 1326,
+      "source": "    def test_v3_lane_is_additive_and_keeps_all_four_exact_source_cells(self):\n        report = validate(ROOT)\n        self.assertEqual(report['native_cost_architectures'], 2)\n        self.assertEqual(report['w1_actual_reuse_v3_cells'], 4)\n        text = (ROOT / '.github/workflows/trnm-required-baseline.yml').read_text()\n        self.assertEqual(text.count('  cross-arch-w1-reuse-v3:\\n'), 1)\n        self.assertEqual(text.count('run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_reused_cost_v3.py'), 1)\n"
+    },
+    "CiContractTests.setUpClass": {
+      "line": 1778,
+      "end": 1792,
+      "source": "    def setUpClass(cls):\n        cls.temporary = tempfile.TemporaryDirectory(prefix='trnm-ci-contract-')\n        cls.root = Path(cls.temporary.name) / 'source'\n        ignored = shutil.ignore_patterns('.git', 'target', '__pycache__', 'artifacts')\n\n        def ignore(directory, names):\n            excluded = ignored(directory, names)\n            if Path(directory) == ROOT:\n                # These validators consume source and literal workflow pins,\n                # not retained execution archives. Positive fixture validation\n                # still rejects any future pin whose input is missing.\n                excluded.add('evidence')\n            return excluded\n\n        shutil.copytree(ROOT, cls.root, ignore=ignore)\n"
+    },
+    "CiContractTests.tearDownClass": {
+      "line": 1795,
+      "end": 1796,
+      "source": "    def tearDownClass(cls):\n        cls.temporary.cleanup()\n"
+    },
+    "CiContractTests.rejected": {
+      "line": 1798,
+      "end": 1807,
+      "source": "    def rejected(self, path, before, after):\n        path = self.root / path\n        original = path.read_text()\n        self.assertIn(before, original)\n        try:\n            path.write_text(original.replace(before, after, 1))\n            with self.assertRaises(ValueError):\n                validate(self.root)\n        finally:\n            path.write_text(original)\n"
+    },
+    "CiContractTests.test_current_execution_contract": {
+      "line": 1809,
+      "end": 1811,
+      "source": "    def test_current_execution_contract(self):\n        self.assertEqual(validate(self.root)['merge_lanes'], 5)\n        current_validate(self.root)\n"
+    },
+    "CiContractTests.test_missing_useful_cell_sources_fail_contract_and_actual_ci_command": {
+      "line": 1813,
+      "end": 1839,
+      "source": "    def test_missing_useful_cell_sources_fail_contract_and_actual_ci_command(self):\n        script = (self.root / 'scripts/ci/ci_job.sh').read_text()\n        for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py',\n                     'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',\n                     'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',\n                     'test_useful_cell_multimodal_execution_v3.py',\n                     'test_useful_cell_multimodal_relation_v3.py',\n                     'test_lifecycle_cost_v1.py', 'test_cell_lottery_cost_audit_v1.py',\n                     'test_service_work_settlement_v1.py', 'test_four_propositions_v1.py',\n                     'test_four_propositions_w1_v2.py'):\n            path = self.root / 'formal/pon-nakamoto-v1' / name\n            command = next(line.strip() for line in script.splitlines()\n                           if line.strip() == 'python3 formal/pon-nakamoto-v1/' + name + ' -v')\n            raw = path.read_bytes()\n            try:\n                path.unlink()\n                with self.subTest(test=name), self.assertRaisesRegex(\n                        ValueError, 'required useful Cell test source is missing'):\n                    validate(self.root)\n                result = subprocess.run(['bash', '-euo', 'pipefail', '-c', command],\n                                        cwd=self.root, text=True, capture_output=True)\n                with self.subTest(test=name, actual_command=command):\n                    self.assertEqual(result.returncode, 2, result.stderr)\n                    self.assertIn(name, result.stderr)\n                    self.assertNotIn('Ran 0 tests', result.stderr)\n            finally:\n                path.write_bytes(raw)\n"
+    },
+    "CiContractTests.test_root_recovery_suite_files_cannot_be_deleted_or_replaced_by_symlinks": {
+      "line": 2030,
+      "end": 2053,
+      "source": "    def test_root_recovery_suite_files_cannot_be_deleted_or_replaced_by_symlinks(self):\n        paths = (\n            'formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py',\n            'formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py',\n            'formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_native_v2.py',\n            'formal/pon-nakamoto-v1/test_pq_root_effect_readback_native_v2.py',\n            'formal/pon-nakamoto-v1/test_pq_root_recovery_journal_native_v2.py',\n        )\n        for relative in paths:\n            path = self.root / relative\n            original = path.read_bytes()\n            try:\n                path.unlink()\n                with self.subTest(path=relative, change='deleted'), self.assertRaisesRegex(\n                        ValueError, 'root recovery CI suite must remain a regular source file'):\n                    validate(self.root)\n                path.symlink_to('test_pq_root_recovery_policy_v1.py')\n                with self.subTest(path=relative, change='symlink'), self.assertRaisesRegex(\n                        ValueError, 'root recovery CI suite must remain a regular source file'):\n                    validate(self.root)\n            finally:\n                if path.is_symlink():\n                    path.unlink()\n                path.write_bytes(original)\n"
+    },
+    "CiContractTests.test_journal_cleanup_file_cannot_be_deleted_or_symlinked": {
+      "line": 2055,
+      "end": 2071,
+      "source": "    def test_journal_cleanup_file_cannot_be_deleted_or_symlinked(self):\n        relative = 'formal/pon-nakamoto-v1/test_pq_root_journal_cleanup.py'\n        path = self.root / relative\n        original = path.read_bytes()\n        try:\n            path.unlink()\n            with self.subTest(change='deleted'), self.assertRaisesRegex(\n                    ValueError, 'root recovery CI suite must remain a regular source file'):\n                validate(self.root)\n            path.symlink_to('test_pq_root_recovery_policy_v1.py')\n            with self.subTest(change='symlink'), self.assertRaisesRegex(\n                    ValueError, 'root recovery CI suite must remain a regular source file'):\n                validate(self.root)\n        finally:\n            if path.is_symlink():\n                path.unlink()\n            path.write_bytes(original)\n"
+    }
+  },
+  "observed_fail_lines": [
+    "test_model_oracles_must_precede_documentation_tests (__main__.CiContractTests.test_model_oracles_must_precede_documentation_tests) ... FAIL",
+    "FAIL: test_model_oracles_must_precede_documentation_tests (__main__.CiContractTests.test_model_oracles_must_precede_documentation_tests)",
+    "Ran 225 tests in 60.050s",
+    "FAILED (failures=1)"
+  ],
+  "log_tail": "ll-targets --all-features -- -D warnings\\n    ;;\\n  external-evidence-contract)\\n    python3 scripts/ci/prepare_evidence_sources.py\\n    python3 scripts/ci/test_evidence_sources.py\\n    python3 scripts/ci/check_repository.py\\n    python3 scripts/ci/test_repository.py EvidenceBoundaryTests\\n    python3 scripts/ci/check_pon_evidence.py\\n    python3 scripts/ci/test_pon_evidence.py\\n    python3 scripts/ci/check_invariant_evidence.py --historical\\n    python3 scripts/ci/test_invariant_evidence.py\\n    python3 scripts/ci/check_completion_evidence.py --historical\\n    python3 scripts/ci/test_completion_evidence.py\\n    python3 scripts/ci/check_evaluation_bundle_evidence.py --historical\\n    python3 scripts/ci/check_client_confirmation_evidence.py --historical\\n    python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-session-v1\\n    python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-node-v1\\n    python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-closed-round-v1\\n    python3 scripts/ci/check_public_readiness_evidence.py --historical --evidence evidence/pon-public-readiness-v1\\n    python3 scripts/ci/test_public_readiness_evidence.py\\n    python3 scripts/ci/check_native_node_supplements.py --historical\\n    python3 scripts/ci/test_native_node_supplements.py\\n    python3 scripts/ci/test_native_session_evidence.py\\n    python3 scripts/ci/test_client_confirmation_evidence.py\\n    python3 scripts/ci/test_evaluation_bundle_evidence.py\\n    python3 scripts/ci/report_module_evidence.py --format markdown\\n    python3 scripts/pon_work_cost_report.py --verify evidence/pon-contract-authority-v1/work-cost --historical\\n    python3 scripts/pon_work_cost_report.py --verify evidence/pon-native-session-v1/work-cost --historical\\n    python3 scripts/pon_work_cost_report.py --verify evidence/pon-native-node-v1/work-cost --historical\\n    python3 scripts/pon_work_cost_report.py --verify evidence/pon-closed-round-v1/work-cost --historical\\n    python3 scripts/ci/check_four_priority_evidence.py\\n    python3 scripts/ci/test_four_priority_evidence.py\\n    python3 scripts/pon_work_cost_report.py --verify evidence/pon-four-priority-audit-v1/work-cost --historical\\n    ;;\\n  *) printf \\'%s\\\\n\\' \\'unknown CI job\\' >&2; exit 2 ;;\\nesac\\n'\n\n----------------------------------------------------------------------\nRan 225 tests in 60.050s\n\nFAILED (failures=1)\n"
+}

@@ -1,0 +1,144 @@
+{
+  "failed_job": 128678654704,
+  "hosted_ci_passed": false,
+  "observations": [
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654704/annotations"
+      ],
+      "exit_code": 0,
+      "files": {
+        "annotations.stderr.raw": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "annotations.stdout.raw": {
+          "bytes": 940,
+          "sha256": "dc47c655f4e0897595f682618ba2d86f3f340bb39b5fe30565b1b06cdfab71de"
+        }
+      },
+      "label": "annotations",
+      "observation": [
+        {
+          "annotation_level": "warning",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+          "end_column": null,
+          "end_line": 2,
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+          "path": ".github",
+          "raw_details": "",
+          "start_column": null,
+          "start_line": 2,
+          "title": ""
+        },
+        {
+          "annotation_level": "failure",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+          "end_column": null,
+          "end_line": 22,
+          "message": "Unable to download artifact(s): None of the provided artifact IDs were found",
+          "path": ".github",
+          "raw_details": "",
+          "start_column": null,
+          "start_line": 22,
+          "title": ""
+        }
+      ]
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/11531476198"
+      ],
+      "error_text": "gh: Not Found (HTTP 404)\n",
+      "exit_code": 1,
+      "files": {
+        "historical-artifact.stderr.raw": {
+          "bytes": 25,
+          "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+        },
+        "historical-artifact.stdout.raw": {
+          "bytes": 123,
+          "sha256": "706afc3b2c7b96e18bb0e38cba9855b65a4d7417718585377e793912fe51b1a2"
+        }
+      },
+      "label": "historical-artifact",
+      "observation": {
+        "created_at": null,
+        "expired": null,
+        "expires_at": null,
+        "id": null,
+        "message": "Not Found",
+        "name": null,
+        "size_in_bytes": null,
+        "status": "404",
+        "workflow_run": null
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/37730166589/artifacts?per_page=100"
+      ],
+      "exit_code": 0,
+      "files": {
+        "historical-run-artifacts.stderr.raw": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "historical-run-artifacts.stdout.raw": {
+          "bytes": 32,
+          "sha256": "244563f989470892c537c9a4622920af0d228ee4528f7d00c64a06d6cd95856c"
+        }
+      },
+      "label": "historical-run-artifacts",
+      "observation": {
+        "artifacts": [],
+        "message": null,
+        "total_count": 0
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654704/logs"
+      ],
+      "exit_code": 0,
+      "files": {
+        "failed-job-log.stderr.raw": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "failed-job-log.stdout.raw": {
+          "bytes": 4112,
+          "sha256": "c36d51853a1b37c43a1c9c6a0c110c51678514f2bb10bf1ba7e3fd83f7a80b0f"
+        }
+      },
+      "label": "failed-job-log",
+      "observation": [
+        "2026-11-08T08:39:05.0229068Z Download action repository 'actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0' (SHA:634f93cb2916e3fdff6788551b99b062d0335ce0)",
+        "2026-11-08T08:39:05.5827108Z ##[group]Run actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0",
+        "2026-11-08T08:39:05.5828520Z   artifact-ids: 11531476198",
+        "2026-11-08T08:39:05.8947954Z Downloading artifacts by ID",
+        "2026-11-08T08:39:05.8949460Z Fetching artifact list for workflow run 37730166589 in repository TrillionniumFoundation/Trillionnium-Chain",
+        "2026-11-08T08:39:05.9193021Z (node:2056) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.",
+        "2026-11-08T08:39:06.1388673Z Found 0 artifact(s)",
+        "2026-11-08T08:39:06.1412368Z ##[error]Unable to download artifact(s): None of the provided artifact IDs were found",
+        "2026-11-08T08:39:06.1933050Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+      ]
+    }
+  ],
+  "observed_unix_seconds": 1794127387.5563004,
+  "production_activation": false,
+  "pull_request": 796,
+  "result": "OBSERVED",
+  "run_id": 42463825143,
+  "schema": "trnm-hosted-ci-readback-v1",
+  "source_head": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+  "source_unchanged": true
+}

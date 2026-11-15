@@ -1,0 +1,425 @@
+{
+  "causal_service_effect_established": false,
+  "runs": [
+    {
+      "cases": [
+        {
+          "acks": 7,
+          "attacker_setup_and_worker_cpu_ns": 251701304,
+          "attacks": 212,
+          "baseline_confirmation_ns": 3491568595,
+          "confirmations": 0,
+          "fixture": "original",
+          "history_errors": [],
+          "history_fetched": 1,
+          "host_boot_id": "be31d330-44ba-4b80-913f-9f18cf7f3016",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "independent_active_height": 0,
+          "independent_replay_and_confirmation_cpu_ns": 84405825,
+          "independent_stored_height": 0,
+          "lane": "head",
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "pressure_last_ack_ns": 2351625185,
+          "receiver_active_height": 7,
+          "receiver_full_work_nested_cpu_ns": 312188268,
+          "receiver_mutation_cpu_ns": 538089257,
+          "source_commit": "8d9a7015cadd39780c4a047b5a36e0fd4d5f494b",
+          "transcript_refusals": 196,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "acks": 7,
+          "attacker_setup_and_worker_cpu_ns": 326564660,
+          "attacks": 185,
+          "baseline_confirmation_ns": 3405565726,
+          "confirmations": 0,
+          "fixture": "fresh",
+          "history_errors": [],
+          "history_fetched": 1,
+          "host_boot_id": "be31d330-44ba-4b80-913f-9f18cf7f3016",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "independent_active_height": 0,
+          "independent_replay_and_confirmation_cpu_ns": 55803443,
+          "independent_stored_height": 0,
+          "lane": "head",
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "pressure_last_ack_ns": 2561124787,
+          "receiver_active_height": 7,
+          "receiver_full_work_nested_cpu_ns": 276597502,
+          "receiver_mutation_cpu_ns": 488689851,
+          "source_commit": "8d9a7015cadd39780c4a047b5a36e0fd4d5f494b",
+          "transcript_refusals": 169,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "acks": 7,
+          "attacker_setup_and_worker_cpu_ns": 229068207,
+          "attacks": 306,
+          "baseline_confirmation_ns": 2595850331,
+          "confirmations": 0,
+          "fixture": "original",
+          "history_errors": [],
+          "history_fetched": 3,
+          "host_boot_id": "ac6dd4c1-d236-44bc-84ed-4e1357eaeca4",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "independent_active_height": 0,
+          "independent_replay_and_confirmation_cpu_ns": 153345110,
+          "independent_stored_height": 2,
+          "lane": "prospective-merge",
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "pressure_last_ack_ns": 1560887629,
+          "receiver_active_height": 7,
+          "receiver_full_work_nested_cpu_ns": 313982535,
+          "receiver_mutation_cpu_ns": 503637413,
+          "source_commit": "bc2ed69f8aa9c53b07a57efbd88342d3234c1a87",
+          "transcript_refusals": 290,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "acks": 7,
+          "attacker_setup_and_worker_cpu_ns": 291667749,
+          "attacks": 277,
+          "baseline_confirmation_ns": 2698705168,
+          "confirmations": 0,
+          "fixture": "fresh",
+          "history_errors": [],
+          "history_fetched": 3,
+          "host_boot_id": "ac6dd4c1-d236-44bc-84ed-4e1357eaeca4",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "independent_active_height": 0,
+          "independent_replay_and_confirmation_cpu_ns": 140139933,
+          "independent_stored_height": 2,
+          "lane": "prospective-merge",
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "pressure_last_ack_ns": 1582435490,
+          "receiver_active_height": 7,
+          "receiver_full_work_nested_cpu_ns": 283667660,
+          "receiver_mutation_cpu_ns": 460345667,
+          "source_commit": "bc2ed69f8aa9c53b07a57efbd88342d3234c1a87",
+          "transcript_refusals": 262,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ],
+      "default_kernel": "Transposed",
+      "report_sha256": "958aeb9ffd454f9301c6044f3e51e9cd5d6f19ff954ce98933dac8abedd84551",
+      "run_id": 41297071118
+    },
+    {
+      "cases": [
+        {
+          "acks": 7,
+          "attacker_setup_and_worker_cpu_ns": 258533827,
+          "attacks": 211,
+          "baseline_confirmation_ns": 3477388139,
+          "confirmations": 0,
+          "fixture": "original",
+          "history_errors": [],
+          "history_fetched": 1,
+          "host_boot_id": "6107083d-7ee3-4269-88ab-bd27e0788e57",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "independent_active_height": 0,
+          "independent_replay_and_confirmation_cpu_ns": 69572182,
+          "independent_stored_height": 0,
+          "lane": "head",
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "pressure_last_ack_ns": 2349114692,
+          "receiver_active_height": 7,
+          "receiver_full_work_nested_cpu_ns": 307512545,
+          "receiver_mutation_cpu_ns": 534949595,
+          "source_commit": "e885a4a284d83019077c9b8f3420d39988a11eef",
+          "transcript_refusals": 195,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "acks": 7,
+          "attacker_setup_and_worker_cpu_ns": 343586800,
+          "attacks": 190,
+          "baseline_confirmation_ns": 3397061157,
+          "confirmations": 0,
+          "fixture": "fresh",
+          "history_errors": [],
+          "history_fetched": 1,
+          "host_boot_id": "6107083d-7ee3-4269-88ab-bd27e0788e57",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "independent_active_height": 0,
+          "independent_replay_and_confirmation_cpu_ns": 39738461,
+          "independent_stored_height": 0,
+          "lane": "head",
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "pressure_last_ack_ns": 2667509835,
+          "receiver_active_height": 7,
+          "receiver_full_work_nested_cpu_ns": 280686142,
+          "receiver_mutation_cpu_ns": 498951624,
+          "source_commit": "e885a4a284d83019077c9b8f3420d39988a11eef",
+          "transcript_refusals": 174,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "acks": 7,
+          "attacker_setup_and_worker_cpu_ns": 244776509,
+          "attacks": 209,
+          "baseline_confirmation_ns": 3408853908,
+          "confirmations": 0,
+          "fixture": "original",
+          "history_errors": [],
+          "history_fetched": 1,
+          "host_boot_id": "0cb9e0ee-a463-4138-adcb-6b542de934dd",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "independent_active_height": 0,
+          "independent_replay_and_confirmation_cpu_ns": 75013084,
+          "independent_stored_height": 0,
+          "lane": "prospective-merge",
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "pressure_last_ack_ns": 2464836158,
+          "receiver_active_height": 7,
+          "receiver_full_work_nested_cpu_ns": 319906605,
+          "receiver_mutation_cpu_ns": 550445895,
+          "source_commit": "48b7a10a9950278815cfa002a3369a5763329944",
+          "transcript_refusals": 193,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "acks": 7,
+          "attacker_setup_and_worker_cpu_ns": 329037386,
+          "attacks": 186,
+          "baseline_confirmation_ns": 3498986778,
+          "confirmations": 0,
+          "fixture": "fresh",
+          "history_errors": [],
+          "history_fetched": 1,
+          "host_boot_id": "0cb9e0ee-a463-4138-adcb-6b542de934dd",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "independent_active_height": 0,
+          "independent_replay_and_confirmation_cpu_ns": 36796115,
+          "independent_stored_height": 0,
+          "lane": "prospective-merge",
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "pressure_last_ack_ns": 2757725678,
+          "receiver_active_height": 7,
+          "receiver_full_work_nested_cpu_ns": 274522615,
+          "receiver_mutation_cpu_ns": 489815748,
+          "source_commit": "48b7a10a9950278815cfa002a3369a5763329944",
+          "transcript_refusals": 170,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ],
+      "default_kernel": "Transposed",
+      "report_sha256": "e398f2de2828fd81f3c5edc69d0c4cf58eb1e60c920845f07c9e9703525a4ea1",
+      "run_id": 41297714882
+    },
+    {
+      "cases": [
+        {
+          "acks": 7,
+          "attacker_setup_and_worker_cpu_ns": 263533878,
+          "attacks": 212,
+          "baseline_confirmation_ns": 3573342748,
+          "confirmations": 0,
+          "fixture": "original",
+          "history_errors": [],
+          "history_fetched": 1,
+          "host_boot_id": "dcda0f87-b23e-41f4-8006-6a88a6e86c4f",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "independent_active_height": 0,
+          "independent_replay_and_confirmation_cpu_ns": 87271061,
+          "independent_stored_height": 0,
+          "lane": "head",
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "pressure_last_ack_ns": 2455315220,
+          "receiver_active_height": 7,
+          "receiver_full_work_nested_cpu_ns": 286530517,
+          "receiver_mutation_cpu_ns": 524157102,
+          "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+          "transcript_refusals": 196,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "acks": 7,
+          "attacker_setup_and_worker_cpu_ns": 343958201,
+          "attacks": 184,
+          "baseline_confirmation_ns": 3394795287,
+          "confirmations": 0,
+          "fixture": "fresh",
+          "history_errors": [],
+          "history_fetched": 1,
+          "host_boot_id": "dcda0f87-b23e-41f4-8006-6a88a6e86c4f",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "independent_active_height": 0,
+          "independent_replay_and_confirmation_cpu_ns": 55326736,
+          "independent_stored_height": 0,
+          "lane": "head",
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "pressure_last_ack_ns": 2655374685,
+          "receiver_active_height": 7,
+          "receiver_full_work_nested_cpu_ns": 250478471,
+          "receiver_mutation_cpu_ns": 467356635,
+          "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+          "transcript_refusals": 168,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "acks": 7,
+          "attacker_setup_and_worker_cpu_ns": 229481502,
+          "attacks": 321,
+          "baseline_confirmation_ns": 2676337090,
+          "confirmations": 0,
+          "fixture": "original",
+          "history_errors": [],
+          "history_fetched": 3,
+          "host_boot_id": "e7192257-ebec-4f01-aa5f-96a175454f0d",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "independent_active_height": 0,
+          "independent_replay_and_confirmation_cpu_ns": 172602987,
+          "independent_stored_height": 2,
+          "lane": "prospective-merge",
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "pressure_last_ack_ns": 1361811842,
+          "receiver_active_height": 7,
+          "receiver_full_work_nested_cpu_ns": 295668261,
+          "receiver_mutation_cpu_ns": 487472750,
+          "source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+          "transcript_refusals": 306,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "acks": 7,
+          "attacker_setup_and_worker_cpu_ns": 306081903,
+          "attacks": 284,
+          "baseline_confirmation_ns": 2598662303,
+          "confirmations": 0,
+          "fixture": "fresh",
+          "history_errors": [
+            "FRAME_DEADLINE"
+          ],
+          "history_fetched": 2,
+          "host_boot_id": "e7192257-ebec-4f01-aa5f-96a175454f0d",
+          "host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "independent_active_height": 0,
+          "independent_replay_and_confirmation_cpu_ns": 138260514,
+          "independent_stored_height": 2,
+          "lane": "prospective-merge",
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "pressure_last_ack_ns": 1656130053,
+          "receiver_active_height": 7,
+          "receiver_full_work_nested_cpu_ns": 268419139,
+          "receiver_mutation_cpu_ns": 448286501,
+          "source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+          "transcript_refusals": 269,
+          "verification_errors": []
+        }
+      ],
+      "default_kernel": "FullLimb",
+      "report_sha256": "4f61df80f7de3aa6e48e6b333d91fb9f001991d0b310971ccc7b2ff5b288c6a2",
+      "run_id": 41298626837
+    }
+  ],
+  "same_host_randomized_control": false,
+  "schema": "pon-w1-service-three-run-observation-comparison-v1",
+  "scope": "Twelve retained pressure scenarios and their twelve paired baselines; no budget changes or post-window credit. Different hosts and source versions are observations, not a causal effect estimate."
+}
